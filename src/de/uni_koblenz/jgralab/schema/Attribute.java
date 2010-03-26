@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -24,6 +24,9 @@
 
 package de.uni_koblenz.jgralab.schema;
 
+import de.uni_koblenz.jgralab.AttributedElement;
+import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 /**
  * represents an attribute in the m2 layer, consists of a name and a domain
@@ -49,9 +52,50 @@ public interface Attribute {
 	public String getName();
 
 	/**
+	 * Returns the default value of this Attribute as String conforming to the
+	 * TG representation of the default value.
+	 * 
+	 * 
+	 * @return the default value of this Attribute, or null, if no default value
+	 *         was specified
+	 */
+	public String getDefaultValueAsString();
+
+	/**
+	 * Sets the default value of this Attribute as String conforming to the TG
+	 * representation of the default value. The default value can be set only
+	 * once.
+	 * 
+	 * @param defaultValue
+	 *            the default value of this Attribute in TG syntax
+	 * 
+	 * @throws SchemaException
+	 *             if a default value was already set.
+	 */
+	public void setDefaultValueAsString(String defaultValue)
+			throws SchemaException;
+
+	/**
+	 * Set default value for attributed elements with transaction support.
+	 * 
+	 * @param element
+	 * @throws NoSuchFieldException 
+	 * @throws GraphIOException 
+	 */
+	public void setDefaultTransactionValue(AttributedElement element) throws GraphIOException, NoSuchFieldException;
+	
+	public void setDefaultValue(AttributedElement el) throws GraphIOException,
+			NoSuchFieldException;
+
+	/**
 	 * @return the owning AttributedElementClass
 	 */
 	public AttributedElementClass getAttributedElementClass();
 
+	/**
+	 * Returns a String suitable to sort Attributes of an AttributedElement.
+	 * 
+	 * @return the sort key of this Attribute
+	 */
 	public String getSortKey();
 }

@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -31,6 +31,7 @@ import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
@@ -88,10 +89,10 @@ public class IsAcyclic extends Greql2Function {
 				.getGreqlFunction("topologicalSort");
 		JValue result = topoSort.evaluate(graph, subgraph, arguments);
 		// when topological sort returns a valid list, then it cannot be cyclic
-		System.out.println("isAcyclic(topoSort)= " + result);
-		System.out.println("valid? " + result.isValid());
-		System.out.println("collection? " + result.isCollection());
-		return new JValue(result.isValid() && result.isCollection());
+		// System.out.println("isAcyclic(topoSort)= " + result);
+		// System.out.println("valid? " + result.isValid());
+		// System.out.println("collection? " + result.isCollection());
+		return new JValueImpl(result.isValid() && result.isCollection());
 	}
 
 	@Override

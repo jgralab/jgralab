@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -30,8 +30,7 @@ import de.uni_koblenz.jgralab.greql2.exception.DuplicateVariableException;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Aggregation;
 import de.uni_koblenz.jgralab.greql2.schema.IsBoundVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsDeclaredVarOf;
-import de.uni_koblenz.jgralab.greql2.schema.IsVarOf; // import
-// de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
+import de.uni_koblenz.jgralab.greql2.schema.IsVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
 import de.uni_koblenz.jgralab.greql2.schema.impl.std.SourcePositionImpl;
 

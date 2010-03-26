@@ -1,3 +1,4 @@
+TGraph 2;
 Schema de.uni_koblenz.jgralabtest.tg2schemagraphtest.testschema1.TestSchema1;
 GraphClass DefaultGraphClass;
 Package places;
@@ -15,5 +16,5 @@ VertexClass places.outdoor.Beach: places.outdoor.OutdoorPlace;
 VertexClass places.outdoor.OutdoorPlace: places.Place;
 VertexClass places.outdoor.Pasture: places.outdoor.OutdoorPlace;
 EdgeClass ways.Way from places.Place (1,1) role beginning to places.Place (1,*) role ending;
-EdgeClass ways.ArtificalWay: ways.Way from places.indoor.IndoorPlace (1,1) role beginning to places.indoor.IndoorPlace (1,*) role ending;
-EdgeClass ways.NaturalWay: ways.Way from places.outdoor.OutdoorPlace (1,1) role beginning to places.outdoor.OutdoorPlace (1,*) role ending;
+EdgeClass ways.ArtificalWay: ways.Way from places.indoor.IndoorPlace (1,1) role beginning2 to places.indoor.IndoorPlace (1,*) role ending2;
+EdgeClass ways.NaturalWay: ways.Way from places.outdoor.OutdoorPlace (1,1) role beginning3 to places.outdoor.OutdoorPlace (1,*) role ending3;

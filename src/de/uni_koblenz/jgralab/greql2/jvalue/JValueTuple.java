@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -106,17 +106,17 @@ public class JValueTuple extends JValueList {
 	/**
 	 * adds a JValue to the collection
 	 * 
-	 * @param element
+	 * @param jValue
 	 *            the JValue to be added
 	 * @return true if successfull, false otherwise
 	 */
 	@Override
-	public boolean add(JValue element) {
-		if (element == null) {
+	public boolean add(JValue jValue) {
+		if (jValue == null) {
 			throw new RuntimeException("Nullllllllllllllllll");
 		}
 		storedHashCode = 0;
-		return itemList.add(element);
+		return itemList.add(jValue);
 	}
 
 	/**

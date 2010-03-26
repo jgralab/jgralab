@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -32,7 +32,9 @@ import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
 /**
  * Returns the type of the given attributed element.
@@ -61,7 +63,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public class TypeName extends Greql2Function {
 
 	{
-		JValueType[][] x = { { JValueType.ATTRELEM, JValueType.STRING } };
+		JValueType[][] x = { { JValueType.ATTRELEM, JValueType.STRING },
+				{ JValueType.ATTRELEMCLASS, JValueType.STRING } };
 		signatures = x;
 
 		description = "Returns the qualified type name of the given AttrElem.";
@@ -73,12 +76,21 @@ public class TypeName extends Greql2Function {
 	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		if (checkArguments(arguments) == -1) {
+		AttributedElementClass aec = null;
+		AttributedElement elem = null;
+		switch (checkArguments(arguments)) {
+		case 0:
+			elem = arguments[0].toAttributedElement();
+			aec = elem.getAttributedElementClass();
+			break;
+		case 1:
+			aec = arguments[0].toAttributedElementClass();
+			break;
+		default:
 			throw new WrongFunctionParameterException(this, arguments);
 		}
-		AttributedElement elem = arguments[0].toAttributedElement();
-		return new JValue(elem.getAttributedElementClass().getQualifiedName(),
-				elem);
+
+		return new JValueImpl(aec.getQualifiedName(), elem);
 	}
 
 	@Override

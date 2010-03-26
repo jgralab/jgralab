@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -32,5 +32,5 @@ package de.uni_koblenz.jgralab.greql2.jvalue;
  */
 
 public enum JValueType {
-	BOOL, INT, NUMBER, LONG, DOUBLE, STRING, ENUMVALUE, OBJECT, VERTEX, EDGE, GRAPH, ATTRELEMCLASS, DFA, NFA, STATE, TRANSITION, COLLECTION, RECORD, SUBGRAPH, DECLARATIONLAYER, VARIABLEDECLARATION, PATH, PATHSYSTEM, TYPECOLLECTION, MAP, SLICE, ATTRELEM
+	BOOL, INT, NUMBER, LONG, DOUBLE, STRING, ENUMVALUE, OBJECT, VERTEX, EDGE, GRAPH, ATTRELEMCLASS, AUTOMATON, COLLECTION, RECORD, SUBGRAPH, INTERNAL, PATH, PATHSYSTEM, TYPECOLLECTION, MAP, SLICE, ATTRELEM
 }

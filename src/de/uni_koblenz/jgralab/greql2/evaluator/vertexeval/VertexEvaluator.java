@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -40,6 +40,7 @@ import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclaration;
+import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclarationLayer;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.evaluator.logging.EvaluationLogger;
@@ -207,9 +208,9 @@ public abstract class VertexEvaluator {
 	public JValue getResult(BooleanGraphMarker subgraphMarker)
 			throws EvaluateException {
 		if ((result != null) && (this.subgraph == subgraphMarker)) {
-			// greqlEvaluator.progress(1);
 			return result;
 		}
+
 		// currentIndentation++;
 		// printIndentation();
 		// GreqlEvaluator.println("Evaluating : " + this);
@@ -262,7 +263,7 @@ public abstract class VertexEvaluator {
 				if (this instanceof SimpleDeclarationEvaluator) {
 					int size = 1;
 					for (JValue val : result.toJValueList()) {
-						VariableDeclaration d = val.toVariableDeclaration();
+						VariableDeclaration d = (VariableDeclaration) val.toObject();
 						size *= d.getDefinitionCardinality();
 					}
 					evaluationLogger.logResultSize(getLoggingName(), size);
@@ -270,12 +271,12 @@ public abstract class VertexEvaluator {
 					evaluationLogger.logResultSize(getLoggingName(), result
 							.toCollection().size());
 				}
-			} else if (result.isDeclarationLayer()) {
+			} else if (result.toObject() instanceof VariableDeclarationLayer) {
 				// Declarations return a VariableDeclarationLayer object as
 				// result. The real result size is the number of possible
 				// variable combinations. This cannot be logged here, but it
 				// is done in DeclarationLayer itself.
-			} else if (result.isDFA() || result.isNFA()) {
+			} else if (result.isAutomaton()) {
 				// Result sizes for PathDescriptions are logged as the
 				// number of states the DFA has. That is done in
 				// Forward-/BackwardVertexSet and PathExistance.
@@ -290,6 +291,7 @@ public abstract class VertexEvaluator {
 		// GreqlEvaluator.println("Result is: " + result);
 
 		greqlEvaluator.progress(ownEvaluationCosts);
+
 		return result;
 	}
 

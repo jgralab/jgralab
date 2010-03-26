@@ -10,12 +10,14 @@ import de.uni_koblenz.jgralab.impl.IncidenceImpl;
  * 
  * @author Jose Monte(monte@uni-koblenz.de)
  */
-public abstract class VertexImpl extends de.uni_koblenz.jgralab.impl.VertexImpl {
+public abstract class VertexImpl extends
+		de.uni_koblenz.jgralab.impl.VertexBaseImpl {
 	private VertexImpl nextVertex;
 	private VertexImpl prevVertex;
 	private IncidenceImpl firstIncidence;
 	private IncidenceImpl lastIncidence;
 
+	
 	/**
 	 * holds the version of the vertex structure, for every modification of the
 	 * structure (e.g. adding or deleting an incident edge or changing the
@@ -52,6 +54,7 @@ public abstract class VertexImpl extends de.uni_koblenz.jgralab.impl.VertexImpl 
 
 	@Override
 	public Vertex getPrevVertex() {
+		assert isValid();
 		return prevVertex;
 	}
 
@@ -72,6 +75,7 @@ public abstract class VertexImpl extends de.uni_koblenz.jgralab.impl.VertexImpl 
 
 	@Override
 	public long getIncidenceListVersion() {
+		assert isValid();
 		return incidenceListVersion;
 	}
 
@@ -82,6 +86,7 @@ public abstract class VertexImpl extends de.uni_koblenz.jgralab.impl.VertexImpl 
 	 */
 	protected VertexImpl(int id, Graph graph) {
 		super(id, graph);
+		((GraphImpl) graph).addVertex(this);
 	}
 
 	@Override

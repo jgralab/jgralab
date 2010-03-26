@@ -1,3 +1,4 @@
+TGraph 2;
 Schema de.uni_koblenz.jgralabtest.tg2schemagraphtest.testschema2.TestSchema2;
 GraphClass AttributeGraph;
 EnumDomain CountEnum (ONE, TWO, THREE);

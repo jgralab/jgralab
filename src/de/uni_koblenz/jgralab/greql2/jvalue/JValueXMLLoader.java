@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -32,7 +32,6 @@ import java.util.Stack;
 import javax.xml.stream.XMLStreamException;
 
 import de.uni_koblenz.ist.utilities.xml.XmlProcessor;
-import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
@@ -45,9 +44,9 @@ public class JValueXMLLoader extends XmlProcessor {
 	/**
 	 * Synthetic class to ease XML parsing
 	 */
-	private class JValueRecordComponent extends JValue {
+	private static class JValueRecordComponent extends JValueImpl {
 		String componentName;
-		JValue jvalue;
+		JValueImpl jvalue;
 
 		JValueRecordComponent(String compName) {
 			componentName = compName;
@@ -57,21 +56,20 @@ public class JValueXMLLoader extends XmlProcessor {
 	/**
 	 * Synthetic class to ease XML parsing
 	 */
-	private class JValueMapEntry extends JValue {
-		JValue key = null;
-		JValue value = null;
+	private static class JValueMapEntry extends JValueImpl {
+		JValueImpl key = null;
+		JValueImpl value = null;
 	}
 
 	/**
 	 * Synthetic class to ease XML parsing
 	 */
-	private class JValueBrowsingInfo extends JValue {
-		AttributedElement browsingInfo = null;
+	private static class JValueBrowsingInfo extends JValueImpl {
 	}
 
 	private Map<String, Graph> id2GraphMap = null;
 	private Map<String, Schema> schemaName2Schema = null;
-	private Stack<JValue> stack = new Stack<JValue>();
+	private Stack<JValueImpl> stack = new Stack<JValueImpl>();
 
 	public JValueXMLLoader(Graph... graphs) {
 		id2GraphMap = new HashMap<String, Graph>(graphs.length);
@@ -105,7 +103,7 @@ public class JValueXMLLoader extends XmlProcessor {
 	@Override
 	protected void endElement(String arg0, StringBuilder arg1)
 			throws XMLStreamException {
-		JValue endedElement = stack.pop();
+		JValueImpl endedElement = stack.pop();
 
 		if (stack.isEmpty()) {
 			// This was the top level element, so add it back and return.
@@ -183,7 +181,7 @@ public class JValueXMLLoader extends XmlProcessor {
 
 	@Override
 	protected void startElement(String elem) throws XMLStreamException {
-		JValue val = null;
+		JValueImpl val = null;
 		if (elem.equals(JValueXMLConstants.ATTRIBUTEDELEMENTCLASS)) {
 			String qName = getAttribute(JValueXMLConstants.ATTR_NAME);
 			String schemaName = getAttribute(JValueXMLConstants.ATTR_SCHEMA);
@@ -199,17 +197,17 @@ public class JValueXMLLoader extends XmlProcessor {
 						"Couldn't retrieve attributed element '" + qName
 								+ "' from schema '" + schemaName + "'.", null);
 			}
-			val = new JValue(aec);
+			val = new JValueImpl(aec);
 			// ---------------------------------------------------------------
 		} else if (elem.equals(JValueXMLConstants.BAG)) {
 			val = new JValueBag();
 			// ---------------------------------------------------------------
 		} else if (elem.equals(JValueXMLConstants.BOOLEAN)) {
-			val = new JValue(Boolean
+			val = new JValueImpl(Boolean
 					.valueOf(getAttribute(JValueXMLConstants.ATTR_VALUE)));
 			// ---------------------------------------------------------------
 		} else if (elem.equals(JValueXMLConstants.DOUBLE)) {
-			val = new JValue(Double
+			val = new JValueImpl(Double
 					.valueOf(getAttribute(JValueXMLConstants.ATTR_VALUE)));
 			// ---------------------------------------------------------------
 		} else if (elem.equals(JValueXMLConstants.EDGE)) {
@@ -225,7 +223,7 @@ public class JValueXMLLoader extends XmlProcessor {
 				throw new JValueLoadException("There's no edge with id '" + gid
 						+ "' in graph '" + gid + "'.", null);
 			}
-			val = new JValue(e);
+			val = new JValueImpl(e);
 			// ---------------------------------------------------------------
 		} else if (elem.equals(JValueXMLConstants.ENUMVALUE)) {
 			String litName = getAttribute(JValueXMLConstants.ATTR_VALUE);
@@ -239,17 +237,17 @@ public class JValueXMLLoader extends XmlProcessor {
 				throw new JValueLoadException("There's no graph with id '"
 						+ gid + "'.", null);
 			}
-			val = new JValue(g);
+			val = new JValueImpl(g);
 			// ---------------------------------------------------------------
 		} else if (elem.equals(JValueXMLConstants.INTEGER)) {
-			val = new JValue(Integer
+			val = new JValueImpl(Integer
 					.valueOf(getAttribute(JValueXMLConstants.ATTR_VALUE)));
 			// ---------------------------------------------------------------
 		} else if (elem.equals(JValueXMLConstants.LIST)) {
 			val = new JValueList();
 			// ---------------------------------------------------------------
 		} else if (elem.equals(JValueXMLConstants.LONG)) {
-			val = new JValue(Long
+			val = new JValueImpl(Long
 					.valueOf(getAttribute(JValueXMLConstants.ATTR_VALUE)));
 			// ---------------------------------------------------------------
 		} else if (elem.equals(JValueXMLConstants.MAP)) {
@@ -269,7 +267,7 @@ public class JValueXMLLoader extends XmlProcessor {
 			val = new JValueSet();
 			// ---------------------------------------------------------------
 		} else if (elem.equals(JValueXMLConstants.STRING)) {
-			val = new JValue(getAttribute(JValueXMLConstants.ATTR_VALUE));
+			val = new JValueImpl(getAttribute(JValueXMLConstants.ATTR_VALUE));
 			// ---------------------------------------------------------------
 		} else if (elem.equals(JValueXMLConstants.TABLE)) {
 			JValueTable tab = new JValueTable();
@@ -295,7 +293,7 @@ public class JValueXMLLoader extends XmlProcessor {
 				throw new JValueLoadException("There's no vertex with id '"
 						+ gid + "' in graph '" + gid + "'.", null);
 			}
-			val = new JValue(v);
+			val = new JValueImpl(v);
 			// ---------------------------------------------------------------
 		} else if (elem.equals(JValueXMLConstants.BROWSINGINFO)) {
 			val = new JValueBrowsingInfo();
@@ -315,12 +313,12 @@ public class JValueXMLLoader extends XmlProcessor {
 	}
 
 	@SuppressWarnings("unchecked")
-	private JValue createEnum(String litName, String enumTypeName) {
-		JValue val = null;
+	private JValueImpl createEnum(String litName, String enumTypeName) {
+		JValueImpl val = null;
 		try {
 			Class<? extends Enum> e = (Class<? extends Enum>) Class
 					.forName(enumTypeName);
-			val = new JValue(Enum.valueOf(e, litName));
+			val = new JValueImpl(Enum.valueOf(e, litName));
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 			throw new JValueLoadException("The Enum class '" + enumTypeName

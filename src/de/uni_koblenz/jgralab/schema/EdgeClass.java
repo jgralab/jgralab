@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -24,10 +24,7 @@
 
 package de.uni_koblenz.jgralab.schema;
 
-import java.util.Set;
-
 import de.uni_koblenz.jgralab.Edge;
-import de.uni_koblenz.jgralab.schema.impl.DirectedEdgeClass;
 
 /**
  * Interface for Edge/Aggregation/Composition classes, instances of this class
@@ -50,120 +47,11 @@ public interface EdgeClass extends GraphElementClass {
 	 */
 	public void addSuperClass(EdgeClass superClass);
 
-	/**
-	 * @return the vertex class where the edge class originates
-	 */
-	public VertexClass getFrom();
-
-	/**
-	 * @return the maximum multiplicity at the from-side
-	 */
-	public int getFromMax();
-
-	/**
-	 * @return the minimum multiplicity at the from-side
-	 */
-	public int getFromMin();
-
-	/**
-	 * @return the rolename on the from-side
-	 */
-	public String getFromRolename();
-
-	/**
-	 * @return the set of rolenames that are redefined by the rolename on the
-	 *         from-side
-	 */
-	public Set<String> getRedefinedFromRoles();
-
-	/**
-	 * Redefines the <code>redefinedRoleName</code> with the rolename defined
-	 * while the creation of that edge. That means on the one hand, that edges
-	 * of this class have the new role name as roleName on the from-end and on
-	 * the other hand that the redefined edge is not longer allowed at the
-	 * from-vertex class of this edge
-	 * 
-	 * @param redefinedRoleName
-	 *            the rolename to redefine
-	 */
-	public void redefineFromRole(String redefinedRoleName);
-
-	/**
-	 * Redefines all <code>redefinedRoleNames</code> with the rolename defined
-	 * while the creation of that edge That means on the one hand, that edges of
-	 * this class have the new role name as roleName on the from-end and on the
-	 * other hand that the redefined edges are not longer allowed at the
-	 * from-vertex class of this edge
-	 * 
-	 * @param redefinedRoleNames
-	 *            the rolenames to redefine
-	 */
-	public void redefineFromRole(Set<String> redefinedRoleNames);
-
-	/**
-	 * @return the vertex class where the edge class closes
-	 */
-	public VertexClass getTo();
-
-	/**
-	 * @return the maximum multiplicity at the to-side
-	 */
-	public int getToMax();
-
-	/**
-	 * @return the minimum mulitplicity at the to-side
-	 */
-	public int getToMin();
-
-	/**
-	 * @return the rolename on the to-side
-	 */
-	public String getToRolename();
-
-	/**
-	 * @return the set of rolenames that are redefined by the rolename on the
-	 *         to-side
-	 */
-	public Set<String> getRedefinedToRoles();
-
-	/**
-	 * Redefines the <code>redefinedRoleName</code> with the rolename defined
-	 * while the creation of that edge That means on the one hand, that edges of
-	 * this class have the new role name as roleName on the to-end and on the
-	 * other hand that the redefined edge is not longer allowed at the to-vertex
-	 * class of this edge
-	 * 
-	 * @param redefinedRoleName
-	 *            the rolename to redefine
-	 */
-	public void redefineToRole(String redefinedRoleName);
-
-	/**
-	 * Redefines all <code>redefinedRoleNames</code> with the rolename defined
-	 * while the creation of that edge That means on the one hand, that edges of
-	 * this class have the new role name as roleName on the to-end and on the
-	 * other hand that the redefined edges are not longer allowed at the
-	 * to-vertex class of this edge
-	 * 
-	 * @param redefinedRoleNames
-	 *            the rolenames to redefine
-	 */
-	public void redefineToRole(Set<String> redefinedRoleNames);
-
-	/**
-	 * @return returns the DirectedEdgeClass-Object consisting of this edge
-	 *         class with direction EdgeDirection.IN
-	 * 
-	 */
-	public DirectedEdgeClass getInEdgeClass();
-
-	/**
-	 * @return returns the DirectedEdgeClass-Object consisting of this edge
-	 *         class with direction EdgeDirection.OUT
-	 * 
-	 */
-	public DirectedEdgeClass getOutEdgeClass();
-
+		
+	public IncidenceClass getFrom();
+	
+	public IncidenceClass getTo();
+	
 	/*
 	 * (non-Javadoc)
 	 * 

@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -32,9 +32,9 @@ import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.funlib.Greql2Function;
-import de.uni_koblenz.jgralab.greql2.funlib.Greql2Function.Category;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
@@ -120,7 +120,7 @@ public class IsPrime extends Greql2Function {
 		}
 
 		y = x * x % n;
-		if (y == 1 && x != 1 && x != n - 1) {
+		if ((y == 1) && (x != 1) && (x != n - 1)) {
 			return 0;
 		}
 
@@ -183,10 +183,10 @@ public class IsPrime extends Greql2Function {
 		long number = arguments[0].toLong();
 
 		if (number < 2) {
-			return new JValue(JValueBoolean.getFalseValue());
+			return new JValueImpl(JValueBoolean.getFalseValue());
 		}
 
-		return new JValue(isPrime(number, noOfTestRuns));
+		return new JValueImpl(isPrime(number, noOfTestRuns));
 	}
 
 	@Override
@@ -206,7 +206,6 @@ public class IsPrime extends Greql2Function {
 	 */
 	@Override
 	public double getSelectivity() {
-
 		return SELECTIVITY;
 	}
 }

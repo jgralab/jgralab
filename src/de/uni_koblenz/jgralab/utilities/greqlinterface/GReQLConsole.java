@@ -41,10 +41,13 @@ public class GReQLConsole {
 	 * @param filename
 	 *            the name of the file that contains the schema and the graph
 	 */
-	public GReQLConsole(String filename) {
+	public GReQLConsole(String filename, boolean loadSchema) {
 		try {
-			Schema schema = GraphIO.loadSchemaFromFile(filename);
-			schema.compile(CodeGeneratorConfiguration.WITHOUT_TRANSACTIONS);
+			if (loadSchema) {
+				System.out.println("Loading schema from file");
+				Schema schema = GraphIO.loadSchemaFromFile(filename);
+				schema.compile(CodeGeneratorConfiguration.WITHOUT_TRANSACTIONS);
+			}
 			graph = GraphIO.loadGraphFromFile(filename,
 					new ProgressFunctionImpl());
 		} catch (GraphIOException e) {
@@ -108,14 +111,21 @@ public class GReQLConsole {
 				System.out.println(query);
 				GreqlEvaluator eval = new GreqlEvaluator(query, graph,
 						boundVariables, new ProgressFunctionImpl());
-				// System.out.println("Query parsing took " +
-				// eval.getParseTime() + " Milliseconds");
-				// System.out.println("Optimization took " +
-				// eval.getOptimizationTime() + " Milliseconds");
-				// System.out.println("Whole evaluation took " +
-				// eval.getOverallEvaluationTime() + " Milliseconds");
+				// eval.setOptimize(false);
+				eval.setEvaluationLogger(null);
 				eval.startEvaluation();
+
 				result = eval.getEvaluationResult();
+				System.out.println("Query parsing took " + eval.getParseTime()
+						+ " Milliseconds");
+				System.out.println("Optimization took "
+						+ eval.getOptimizationTime() + " Milliseconds");
+				System.out.println("Whole evaluation took "
+						+ eval.getOverallEvaluationTime() + " Milliseconds");
+				if (result.isCollection()) {
+					System.out.println("Result size is: "
+							+ result.toCollection().size());
+				}
 			}
 		} catch (EvaluateException e) {
 			e.printStackTrace();
@@ -156,15 +166,16 @@ public class GReQLConsole {
 
 		String queryFile = comLine.getOptionValue("q");// args[0];
 		String inputFile = comLine.getOptionValue("g");// args[1];
+		boolean loadSchema = comLine.hasOption("s"); // args[1];
 
 		JGraLab.setLogLevel(Level.SEVERE);
-		GReQLConsole example = new GReQLConsole(inputFile);
+		GReQLConsole example = new GReQLConsole(inputFile, loadSchema);
 		JValue result = example.performQuery(new File(queryFile));
-
-		System.out.println("Result: " + result);
 
 		if (comLine.hasOption("o")) {// args.length == 3) {
 			example.resultToHTML(result, comLine.getOptionValue("o"));// args[2]);
+		} else {
+			// System.out.println("Result: " + result);
 		}
 	}
 
@@ -189,6 +200,10 @@ public class GReQLConsole {
 				"(optional): HTML-file to be generated");
 		output.setArgName("file");
 		oh.addOption(output);
+
+		Option loadschema = new Option("s", "loadschema", false,
+				"(optional): Loads also the schema from the file");
+		oh.addOption(loadschema);
 
 		return oh.parse(args);
 	}

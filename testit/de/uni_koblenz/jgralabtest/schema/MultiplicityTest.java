@@ -359,7 +359,7 @@ public class MultiplicityTest {
 
 	@Test
 	public void multiplicityTest16() throws Exception {
-		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
+		compileSchema("TGraph 2;Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;" + "VertexClass VC1;"
 				+ "VertexClass VC2;"
 				+ "EdgeClass EC1 from VC2 (0,*) to VC1 (2,6);"
@@ -368,7 +368,7 @@ public class MultiplicityTest {
 
 	@Test
 	public void multiplicityTest18() throws Exception {
-		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
+		compileSchema("TGraph 2;Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;" + "VertexClass VC1;"
 				+ "VertexClass VC2;"
 				+ "EdgeClass EC1 from VC2 (0,*) to VC1 (2,6);"
@@ -377,7 +377,7 @@ public class MultiplicityTest {
 
 	@Test
 	public void multiplicityTest22() throws Exception {
-		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
+		compileSchema("TGraph 2;Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;" + "VertexClass VC1;"
 				+ "VertexClass VC2;" + "VertexClass VC3:VC1;"
 				+ "EdgeClass EC1 from VC2 (0,*) to VC1 (2,6);"

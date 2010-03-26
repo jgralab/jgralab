@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -26,6 +26,7 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
@@ -39,6 +40,7 @@ import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.IsConstraintOf;
@@ -59,6 +61,7 @@ public class DeclarationEvaluator extends VertexEvaluator {
 	 * This is the declaration vertex
 	 */
 	private Declaration vertex;
+
 
 	/**
 	 * returns the vertex this VertexEvaluator evaluates
@@ -114,34 +117,21 @@ public class DeclarationEvaluator extends VertexEvaluator {
 				constraintList.add(curEval);
 			}
 		}
-		VariableDeclarationLayer declarationLayer = new VariableDeclarationLayer(
-				constraintList, evaluationLogger);
-		for (IsSimpleDeclOf inc : vertex
-				.getIsSimpleDeclOfIncidences(EdgeDirection.IN)) {
+		/* create list of VariableDeclaration objects */
+		List<VariableDeclaration> varDeclList = new ArrayList<VariableDeclaration>();
+		for (IsSimpleDeclOf inc : vertex.getIsSimpleDeclOfIncidences(EdgeDirection.IN)) {
 			SimpleDeclaration simpleDecl = (SimpleDeclaration) inc.getAlpha();
 			SimpleDeclarationEvaluator simpleDeclEval = (SimpleDeclarationEvaluator) greqlEvaluator
 					.getVertexEvaluatorGraphMarker().getMark(simpleDecl);
-			try {
-				JValue simpleResult = simpleDeclEval.getResult(newSubgraph);
-				if (simpleResult == null) {
-					throw new EvaluateException(
-							"Error creating variable declaration layer, one of the simple declarations returned a nullpointer");
-				}
-				JValueCollection resultCollection = simpleResult.toCollection();
-				Iterator<JValue> iter = resultCollection.iterator();
-				while (iter.hasNext()) {
-					VariableDeclaration varDecl = iter.next()
-							.toVariableDeclaration();
-					declarationLayer.addVariableDeclaration(varDecl);
-				}
-			} catch (JValueInvalidTypeException ex) {
-				throw new EvaluateException(
-						"Error creating variable declaration layer, one of the simple declarations returned an invalid value",
-						ex);
+			JValue simpleResult = simpleDeclEval.getResult(newSubgraph);
+			JValueCollection resultCollection = simpleResult.toCollection();
+			for (JValue v : resultCollection) {
+				varDeclList.add((VariableDeclaration)v.toObject());
 			}
 		}
-
-		return new JValue(declarationLayer);
+		VariableDeclarationLayer declarationLayer = new VariableDeclarationLayer(
+		vertex, varDeclList, constraintList, evaluationLogger);
+		return new JValueImpl(declarationLayer);
 	}
 
 	@Override

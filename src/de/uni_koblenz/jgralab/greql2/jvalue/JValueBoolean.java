@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -57,6 +57,13 @@ import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
  */
 public class JValueBoolean {
 
+	public static final JValue trueJValue = new JValueImpl(true);
+
+	public static final JValue falseJValue = new JValueImpl(false);
+
+	public static final JValue nullJValue = new JValueImpl((Boolean) null);
+	
+	
 	public static final Boolean NULL = null;
 
 	/**
@@ -70,13 +77,26 @@ public class JValueBoolean {
 	 */
 	public static JValue and(JValue first, JValue second)
 			throws JValueInvalidTypeException {
-		Boolean firstBoolean = first.toBoolean();
-		Boolean secondBoolean = second.toBoolean();
-		if ((firstBoolean == Boolean.TRUE) && (secondBoolean == Boolean.TRUE))
-			return new JValue(Boolean.TRUE);
-		if ((firstBoolean == Boolean.FALSE) || (secondBoolean == Boolean.FALSE))
-			return new JValue(Boolean.FALSE);
-		return new JValue(NULL);
+		Boolean b1 = first.toBoolean();
+		Boolean b2 = second.toBoolean();
+
+		boolean isB1Null = b1 == null;
+		boolean isB2Null = b2 == null;
+
+		boolean bothNull = isB1Null && isB2Null;
+		boolean null_True = isB1Null && !isB2Null && b2.booleanValue();
+		boolean true_Null = isB2Null && !isB1Null && b1.booleanValue();
+
+		if (bothNull || null_True || true_Null) {
+			return nullJValue;
+		}
+
+		boolean value = !isB1Null && b1.booleanValue() && !isB2Null
+				&& b2.booleanValue();
+
+		if (value)
+			return trueJValue;
+		return falseJValue;
 	}
 
 	/**
@@ -88,15 +108,28 @@ public class JValueBoolean {
 	 *            The second operand
 	 * @return the result of first OR second
 	 */
+	// TODO
 	public static JValue or(JValue first, JValue second)
 			throws JValueInvalidTypeException {
-		Boolean firstBoolean = first.toBoolean();
-		Boolean secondBoolean = second.toBoolean();
-		if ((firstBoolean == Boolean.TRUE) || (secondBoolean == Boolean.TRUE))
-			return new JValue(Boolean.TRUE);
-		if ((firstBoolean == Boolean.FALSE) && (secondBoolean == Boolean.FALSE))
-			return new JValue(Boolean.FALSE);
-		return new JValue(NULL);
+		Boolean b1 = first.toBoolean();
+		Boolean b2 = second.toBoolean();
+
+		boolean isB1Null = b1 == null;
+		boolean isB2Null = b2 == null;
+
+		boolean bothNull = isB1Null && isB2Null;
+		boolean null_False = isB1Null && !isB2Null && !b2.booleanValue();
+		boolean false_Null = isB2Null && !isB1Null && !b1.booleanValue();
+
+		if (bothNull || null_False || false_Null) {
+			return new JValueImpl(NULL);
+		}
+
+		boolean value = !isB1Null && b1.booleanValue() || !isB2Null
+				&& b2.booleanValue();
+		if (value)
+			return trueJValue;
+		return falseJValue;
 	}
 
 	/**
@@ -108,11 +141,16 @@ public class JValueBoolean {
 	 */
 	public static JValue not(JValue first) throws JValueInvalidTypeException {
 		Boolean firstBoolean = first.toBoolean();
-		if (firstBoolean == Boolean.TRUE)
-			return new JValue(Boolean.FALSE);
-		if (firstBoolean == Boolean.FALSE)
-			return new JValue(Boolean.TRUE);
-		return new JValue(NULL);
+
+		if (first == null) {
+			return nullJValue;
+		}
+
+		boolean value = !firstBoolean.booleanValue();
+		if (value) {
+			return trueJValue;
+		}
+		return falseJValue;
 	}
 
 	/**
@@ -128,13 +166,14 @@ public class JValueBoolean {
 			throws JValueInvalidTypeException {
 		Boolean firstBoolean = first.toBoolean();
 		Boolean secondBoolean = second.toBoolean();
-		if ((firstBoolean == NULL) || (secondBoolean == NULL))
-			return new JValue(NULL);
-		if ((firstBoolean == Boolean.FALSE) && (secondBoolean == Boolean.TRUE))
-			return new JValue(Boolean.TRUE);
-		if ((firstBoolean == Boolean.TRUE) && (secondBoolean == Boolean.FALSE))
-			return new JValue(Boolean.TRUE);
-		return new JValue(Boolean.FALSE);
+		if (firstBoolean == null || secondBoolean == null) {
+			return nullJValue;
+		}
+
+		boolean value = !firstBoolean.equals(secondBoolean);
+		if (value)
+			return trueJValue;
+		return falseJValue;
 	}
 
 	public static Boolean getTrueValue() {
@@ -148,5 +187,13 @@ public class JValueBoolean {
 	public static Boolean getNullValue() {
 		return NULL;
 	}
+	
+	public static JValue getValue(boolean value) {
+		if (value) {
+			return trueJValue;
+		}	
+		return falseJValue;
+	}
+	
 
 }

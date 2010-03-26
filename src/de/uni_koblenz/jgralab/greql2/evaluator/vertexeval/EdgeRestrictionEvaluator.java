@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -34,6 +34,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 import de.uni_koblenz.jgralab.greql2.schema.EdgeRestriction;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
@@ -147,7 +148,7 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator {
 			predicateEvaluator = greqlEvaluator.getVertexEvaluatorGraphMarker()
 					.getMark(predInc.getAlpha());
 		}
-		return new JValue();
+		return new JValueImpl();
 	}
 
 	@Override

@@ -1,9 +1,12 @@
 package de.uni_koblenz.jgralabtest.instancetest;
 
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
@@ -22,7 +25,7 @@ import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.schema.Schema;
-import de.uni_koblenz.jgralab.schema.exception.InheritanceException;
+import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.A;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.B;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.C;
@@ -328,29 +331,29 @@ public class RoleNameTest extends InstanceTest {
 				switch (end) {
 				case 0:
 					e = howToCreate == 0 ? graph.createE(start == 0 ? v1 : v7,
-							v3) : (useAddTarget ? (start == 0 ? v1 : v7)
-							.addX(v3) : v3.addSourceE(start == 0 ? v1 : v7));
+							v3) : useAddTarget ? (start == 0 ? v1 : v7)
+							.add_x(v3) : v3.add_sourceE(start == 0 ? v1 : v7);
 					(start == 0 ? v1Inci : v7Inci).add(e);
 					v3Inci.add(e.getReversedEdge());
 					break;
 				case 1:
 					e = howToCreate == 0 ? graph.createE(start == 0 ? v1 : v7,
-							v4) : (useAddTarget ? (start == 0 ? v1 : v7)
-							.addX(v4) : v4.addSourceE(start == 0 ? v1 : v7));
+							v4) : useAddTarget ? (start == 0 ? v1 : v7)
+							.add_x(v4) : v4.add_sourceE(start == 0 ? v1 : v7);
 					(start == 0 ? v1Inci : v7Inci).add(e);
 					v4Inci.add(e.getReversedEdge());
 					break;
 				case 2:
 					e = howToCreate == 0 ? graph.createE(start == 0 ? v1 : v7,
-							v5) : (useAddTarget ? (start == 0 ? v1 : v7)
-							.addX(v5) : v5.addSourceE(start == 0 ? v1 : v7));
+							v5) : useAddTarget ? (start == 0 ? v1 : v7)
+							.add_x(v5) : v5.add_sourceE(start == 0 ? v1 : v7);
 					(start == 0 ? v1Inci : v7Inci).add(e);
 					v5Inci.add(e.getReversedEdge());
 					break;
 				case 3:
 					e = howToCreate == 0 ? graph.createE(start == 0 ? v1 : v7,
-							v6) : (useAddTarget ? (start == 0 ? v1 : v7)
-							.addX(v6) : v6.addSourceE(start == 0 ? v1 : v7));
+							v6) : useAddTarget ? (start == 0 ? v1 : v7)
+							.add_x(v6) : v6.add_sourceE(start == 0 ? v1 : v7);
 					(start == 0 ? v1Inci : v7Inci).add(e);
 					v6Inci.add(e.getReversedEdge());
 					break;
@@ -363,15 +366,15 @@ public class RoleNameTest extends InstanceTest {
 				switch (end) {
 				case 0:
 					e = howToCreate == 0 ? graph.createF(start == 0 ? v2 : v8,
-							v4) : (useAddTarget ? (start == 0 ? v2 : v8)
-							.addY(v4) : v4.addSourceF(start == 0 ? v2 : v8));
+							v4) : useAddTarget ? (start == 0 ? v2 : v8)
+							.add_y(v4) : v4.add_sourceF(start == 0 ? v2 : v8);
 					(start == 0 ? v2Inci : v8Inci).add(e);
 					v4Inci.add(e.getReversedEdge());
 					break;
 				case 1:
 					e = howToCreate == 0 ? graph.createF(start == 0 ? v2 : v8,
-							v6) : (useAddTarget ? (start == 0 ? v2 : v8)
-							.addY(v6) : v6.addSourceF(start == 0 ? v2 : v8));
+							v6) : useAddTarget ? (start == 0 ? v2 : v8)
+							.add_y(v6) : v6.add_sourceF(start == 0 ? v2 : v8);
 					(start == 0 ? v2Inci : v8Inci).add(e);
 					v6Inci.add(e.getReversedEdge());
 					break;
@@ -384,15 +387,15 @@ public class RoleNameTest extends InstanceTest {
 				switch (end) {
 				case 0:
 					e = howToCreate == 0 ? graph.createG(start == 0 ? v2 : v8,
-							v4) : (useAddTarget ? (start == 0 ? v2 : v8)
-							.addZ(v4) : v4.addSourceG(start == 0 ? v2 : v8));
+							v4) : useAddTarget ? (start == 0 ? v2 : v8)
+							.add_z(v4) : v4.add_sourceG(start == 0 ? v2 : v8);
 					(start == 0 ? v2Inci : v8Inci).add(e);
 					v4Inci.add(e.getReversedEdge());
 					break;
 				case 1:
 					e = howToCreate == 0 ? graph.createG(start == 0 ? v2 : v8,
-							v6) : (useAddTarget ? (start == 0 ? v2 : v8)
-							.addZ(v6) : v6.addSourceG(start == 0 ? v2 : v8));
+							v6) : useAddTarget ? (start == 0 ? v2 : v8)
+							.add_z(v6) : v6.add_sourceG(start == 0 ? v2 : v8);
 					(start == 0 ? v2Inci : v8Inci).add(e);
 					v6Inci.add(e.getReversedEdge());
 					break;
@@ -407,38 +410,38 @@ public class RoleNameTest extends InstanceTest {
 					switch (start) {
 					case 0:
 						e = howToCreate == 0 ? graph.createH(v1, v3)
-								: (useAddTarget ? v1.addW(v3) : v3
-										.addSourceH(v1));
+								: useAddTarget ? v1.add_w(v3) : v3
+										.add_sourceH(v1);
 						v1Inci.add(e);
 						break;
 					case 1:
 						e = howToCreate == 0 ? graph.createH(v2, v3)
-								: (useAddTarget ? v2.addW(v3) : v3
-										.addSourceH(v2));
+								: useAddTarget ? v2.add_w(v3) : v3
+										.add_sourceH(v2);
 						v2Inci.add(e);
 						break;
 					case 2:
 						e = howToCreate == 0 ? graph.createH(v7, v3)
-								: (useAddTarget ? v7.addW(v3) : v3
-										.addSourceH(v7));
+								: useAddTarget ? v7.add_w(v3) : v3
+										.add_sourceH(v7);
 						v7Inci.add(e);
 						break;
 					case 3:
 						e = howToCreate == 0 ? graph.createH(v8, v3)
-								: (useAddTarget ? v8.addW(v3) : v3
-										.addSourceH(v8));
+								: useAddTarget ? v8.add_w(v3) : v3
+										.add_sourceH(v8);
 						v8Inci.add(e);
 						break;
 					case 4:
 						e = howToCreate == 0 ? graph.createH(v9, v3)
-								: (useAddTarget ? v9.addW(v3) : v3
-										.addSourceH(v9));
+								: useAddTarget ? v9.add_w(v3) : v3
+										.add_sourceH(v9);
 						v9Inci.add(e);
 						break;
 					case 5:
 						e = howToCreate == 0 ? graph.createH(v10, v3)
-								: (useAddTarget ? v10.addW(v3) : v3
-										.addSourceH(v10));
+								: useAddTarget ? v10.add_w(v3) : v3
+										.add_sourceH(v10);
 						v10Inci.add(e);
 						break;
 					}
@@ -448,38 +451,38 @@ public class RoleNameTest extends InstanceTest {
 					switch (start) {
 					case 0:
 						e = howToCreate == 0 ? graph.createH(v1, v4)
-								: (useAddTarget ? v1.addW(v4) : v4
-										.addSourceH(v1));
+								: useAddTarget ? v1.add_w(v4) : v4
+										.add_sourceH(v1);
 						v1Inci.add(e);
 						break;
 					case 1:
 						e = howToCreate == 0 ? graph.createH(v2, v4)
-								: (useAddTarget ? v2.addW(v4) : v4
-										.addSourceH(v2));
+								: useAddTarget ? v2.add_w(v4) : v4
+										.add_sourceH(v2);
 						v2Inci.add(e);
 						break;
 					case 2:
 						e = howToCreate == 0 ? graph.createH(v7, v4)
-								: (useAddTarget ? v7.addW(v4) : v4
-										.addSourceH(v7));
+								: useAddTarget ? v7.add_w(v4) : v4
+										.add_sourceH(v7);
 						v7Inci.add(e);
 						break;
 					case 3:
 						e = howToCreate == 0 ? graph.createH(v8, v4)
-								: (useAddTarget ? v8.addW(v4) : v4
-										.addSourceH(v8));
+								: useAddTarget ? v8.add_w(v4) : v4
+										.add_sourceH(v8);
 						v8Inci.add(e);
 						break;
 					case 4:
 						e = howToCreate == 0 ? graph.createH(v9, v4)
-								: (useAddTarget ? v9.addW(v4) : v4
-										.addSourceH(v9));
+								: useAddTarget ? v9.add_w(v4) : v4
+										.add_sourceH(v9);
 						v9Inci.add(e);
 						break;
 					case 5:
 						e = howToCreate == 0 ? graph.createH(v10, v4)
-								: (useAddTarget ? v10.addW(v4) : v4
-										.addSourceH(v10));
+								: useAddTarget ? v10.add_w(v4) : v4
+										.add_sourceH(v10);
 						v10Inci.add(e);
 						break;
 					}
@@ -489,38 +492,38 @@ public class RoleNameTest extends InstanceTest {
 					switch (start) {
 					case 0:
 						e = howToCreate == 0 ? graph.createH(v1, v5)
-								: (useAddTarget ? v1.addW(v5) : v5
-										.addSourceH(v1));
+								: useAddTarget ? v1.add_w(v5) : v5
+										.add_sourceH(v1);
 						v1Inci.add(e);
 						break;
 					case 1:
 						e = howToCreate == 0 ? graph.createH(v2, v5)
-								: (useAddTarget ? v2.addW(v5) : v5
-										.addSourceH(v2));
+								: useAddTarget ? v2.add_w(v5) : v5
+										.add_sourceH(v2);
 						v2Inci.add(e);
 						break;
 					case 2:
 						e = howToCreate == 0 ? graph.createH(v7, v5)
-								: (useAddTarget ? v7.addW(v5) : v5
-										.addSourceH(v7));
+								: useAddTarget ? v7.add_w(v5) : v5
+										.add_sourceH(v7);
 						v7Inci.add(e);
 						break;
 					case 3:
 						e = howToCreate == 0 ? graph.createH(v8, v5)
-								: (useAddTarget ? v8.addW(v5) : v5
-										.addSourceH(v8));
+								: useAddTarget ? v8.add_w(v5) : v5
+										.add_sourceH(v8);
 						v8Inci.add(e);
 						break;
 					case 4:
 						e = howToCreate == 0 ? graph.createH(v9, v5)
-								: (useAddTarget ? v9.addW(v5) : v5
-										.addSourceH(v9));
+								: useAddTarget ? v9.add_w(v5) : v5
+										.add_sourceH(v9);
 						v9Inci.add(e);
 						break;
 					case 5:
 						e = howToCreate == 0 ? graph.createH(v10, v5)
-								: (useAddTarget ? v10.addW(v5) : v5
-										.addSourceH(v10));
+								: useAddTarget ? v10.add_w(v5) : v5
+										.add_sourceH(v10);
 						v10Inci.add(e);
 						break;
 					}
@@ -530,38 +533,38 @@ public class RoleNameTest extends InstanceTest {
 					switch (start) {
 					case 0:
 						e = howToCreate == 0 ? graph.createH(v1, v6)
-								: (useAddTarget ? v1.addW(v6) : v6
-										.addSourceH(v1));
+								: useAddTarget ? v1.add_w(v6) : v6
+										.add_sourceH(v1);
 						v1Inci.add(e);
 						break;
 					case 1:
 						e = howToCreate == 0 ? graph.createH(v2, v6)
-								: (useAddTarget ? v2.addW(v6) : v6
-										.addSourceH(v2));
+								: useAddTarget ? v2.add_w(v6) : v6
+										.add_sourceH(v2);
 						v2Inci.add(e);
 						break;
 					case 2:
 						e = howToCreate == 0 ? graph.createH(v7, v6)
-								: (useAddTarget ? v7.addW(v6) : v6
-										.addSourceH(v7));
+								: useAddTarget ? v7.add_w(v6) : v6
+										.add_sourceH(v7);
 						v7Inci.add(e);
 						break;
 					case 3:
 						e = howToCreate == 0 ? graph.createH(v8, v6)
-								: (useAddTarget ? v8.addW(v6) : v6
-										.addSourceH(v8));
+								: useAddTarget ? v8.add_w(v6) : v6
+										.add_sourceH(v8);
 						v8Inci.add(e);
 						break;
 					case 4:
 						e = howToCreate == 0 ? graph.createH(v9, v6)
-								: (useAddTarget ? v9.addW(v6) : v6
-										.addSourceH(v9));
+								: useAddTarget ? v9.add_w(v6) : v6
+										.add_sourceH(v9);
 						v9Inci.add(e);
 						break;
 					case 5:
 						e = howToCreate == 0 ? graph.createH(v10, v6)
-								: (useAddTarget ? v10.addW(v6) : v6
-										.addSourceH(v10));
+								: useAddTarget ? v10.add_w(v6) : v6
+										.add_sourceH(v10);
 						v10Inci.add(e);
 						break;
 					}
@@ -571,38 +574,38 @@ public class RoleNameTest extends InstanceTest {
 					switch (start) {
 					case 0:
 						e = howToCreate == 0 ? graph.createH(v1, v11)
-								: (useAddTarget ? v1.addW(v11) : v11
-										.addSourceH(v1));
+								: useAddTarget ? v1.add_w(v11) : v11
+										.add_sourceH(v1);
 						v1Inci.add(e);
 						break;
 					case 1:
 						e = howToCreate == 0 ? graph.createH(v2, v11)
-								: (useAddTarget ? v2.addW(v11) : v11
-										.addSourceH(v2));
+								: useAddTarget ? v2.add_w(v11) : v11
+										.add_sourceH(v2);
 						v2Inci.add(e);
 						break;
 					case 2:
 						e = howToCreate == 0 ? graph.createH(v7, v11)
-								: (useAddTarget ? v7.addW(v11) : v11
-										.addSourceH(v7));
+								: useAddTarget ? v7.add_w(v11) : v11
+										.add_sourceH(v7);
 						v7Inci.add(e);
 						break;
 					case 3:
 						e = howToCreate == 0 ? graph.createH(v8, v11)
-								: (useAddTarget ? v8.addW(v11) : v11
-										.addSourceH(v8));
+								: useAddTarget ? v8.add_w(v11) : v11
+										.add_sourceH(v8);
 						v8Inci.add(e);
 						break;
 					case 4:
 						e = howToCreate == 0 ? graph.createH(v9, v11)
-								: (useAddTarget ? v9.addW(v11) : v11
-										.addSourceH(v9));
+								: useAddTarget ? v9.add_w(v11) : v11
+										.add_sourceH(v9);
 						v9Inci.add(e);
 						break;
 					case 5:
 						e = howToCreate == 0 ? graph.createH(v10, v11)
-								: (useAddTarget ? v10.addW(v11) : v11
-										.addSourceH(v10));
+								: useAddTarget ? v10.add_w(v11) : v11
+										.add_sourceH(v10);
 						v10Inci.add(e);
 						break;
 					}
@@ -612,38 +615,38 @@ public class RoleNameTest extends InstanceTest {
 					switch (start) {
 					case 0:
 						e = howToCreate == 0 ? graph.createH(v1, v12)
-								: (useAddTarget ? v1.addW(v12) : v12
-										.addSourceH(v1));
+								: useAddTarget ? v1.add_w(v12) : v12
+										.add_sourceH(v1);
 						v1Inci.add(e);
 						break;
 					case 1:
 						e = howToCreate == 0 ? graph.createH(v2, v12)
-								: (useAddTarget ? v2.addW(v12) : v12
-										.addSourceH(v2));
+								: useAddTarget ? v2.add_w(v12) : v12
+										.add_sourceH(v2);
 						v2Inci.add(e);
 						break;
 					case 2:
 						e = howToCreate == 0 ? graph.createH(v7, v12)
-								: (useAddTarget ? v7.addW(v12) : v12
-										.addSourceH(v7));
+								: useAddTarget ? v7.add_w(v12) : v12
+										.add_sourceH(v7);
 						v7Inci.add(e);
 						break;
 					case 3:
 						e = howToCreate == 0 ? graph.createH(v8, v12)
-								: (useAddTarget ? v8.addW(v12) : v12
-										.addSourceH(v8));
+								: useAddTarget ? v8.add_w(v12) : v12
+										.add_sourceH(v8);
 						v8Inci.add(e);
 						break;
 					case 4:
 						e = howToCreate == 0 ? graph.createH(v9, v12)
-								: (useAddTarget ? v9.addW(v12) : v12
-										.addSourceH(v9));
+								: useAddTarget ? v9.add_w(v12) : v12
+										.add_sourceH(v9);
 						v9Inci.add(e);
 						break;
 					case 5:
 						e = howToCreate == 0 ? graph.createH(v10, v12)
-								: (useAddTarget ? v10.addW(v12) : v12
-										.addSourceH(v10));
+								: useAddTarget ? v10.add_w(v12) : v12
+										.add_sourceH(v10);
 						v10Inci.add(e);
 						break;
 					}
@@ -659,39 +662,27 @@ public class RoleNameTest extends InstanceTest {
 				case 0:
 					switch (start) {
 					case 0:
-						e = howToCreate == 0 ? graph.createI(v1, v1)
-								: (useAddTarget ? v1.addV(v1) : v1
-										.addSourceI(v1));
-						v1Inci.add(e);
+						e = doMagic(useAddTarget, v1, v1, v1Inci, howToCreate);
 						break;
 					case 1:
-						e = howToCreate == 0 ? graph.createI(v2, v1)
-								: (useAddTarget ? v2.addV(v1) : v1
-										.addSourceI(v2));
-						v2Inci.add(e);
+						e = doMagic(useAddTarget, v2, v1, v2Inci, howToCreate);
 						break;
 					case 2:
-						e = howToCreate == 0 ? graph.createI(v7, v1)
-								: (useAddTarget ? v7.addV(v1) : v1
-										.addSourceI(v7));
-						v7Inci.add(e);
+						e = doMagic(useAddTarget, v7, v1, v7Inci, howToCreate);
 						break;
 					case 3:
-						e = howToCreate == 0 ? graph.createI(v8, v1)
-								: (useAddTarget ? v8.addV(v1) : v1
-										.addSourceI(v8));
-						v8Inci.add(e);
+						e = doMagic(useAddTarget, v8, v1, v8Inci, howToCreate);
 						break;
 					case 4:
 						e = howToCreate == 0 ? graph.createI(v9, v1)
-								: (useAddTarget ? v9.addV(v1) : v1
-										.addSourceI(v9));
+								: useAddTarget ? v9.add_v(v1) : v1
+										.add_sourceI(v9);
 						v9Inci.add(e);
 						break;
 					case 5:
 						e = howToCreate == 0 ? graph.createI(v10, v1)
-								: (useAddTarget ? v10.addV(v1) : v1
-										.addSourceI(v10));
+								: useAddTarget ? v10.add_v(v1) : v1
+										.add_sourceI(v10);
 						v10Inci.add(e);
 						break;
 					}
@@ -700,39 +691,33 @@ public class RoleNameTest extends InstanceTest {
 				case 1:
 					switch (start) {
 					case 0:
-						e = howToCreate == 0 ? graph.createI(v1, v2)
-								: (useAddTarget ? v1.addV(v2) : v2
-										.addSourceI(v1));
-						v1Inci.add(e);
+						e = doMagic(useAddTarget, v1, v2, v1Inci, howToCreate);
 						break;
 					case 1:
 						e = howToCreate == 0 ? graph.createI(v2, v2)
-								: (useAddTarget ? v2.addV(v2) : v2
-										.addSourceI(v2));
+								: useAddTarget ? v2.add_v(v2) : v2
+										.add_sourceI(v2);
 						v2Inci.add(e);
 						break;
 					case 2:
-						e = howToCreate == 0 ? graph.createI(v7, v2)
-								: (useAddTarget ? v7.addV(v2) : v2
-										.addSourceI(v7));
-						v7Inci.add(e);
+						e = doMagic(useAddTarget, v7, v2, v7Inci, howToCreate);
 						break;
 					case 3:
 						e = howToCreate == 0 ? graph.createI(v8, v2)
-								: (useAddTarget ? v8.addV(v2) : v2
-										.addSourceI(v8));
+								: useAddTarget ? v8.add_v(v2) : v2
+										.add_sourceI(v8);
 						v8Inci.add(e);
 						break;
 					case 4:
 						e = howToCreate == 0 ? graph.createI(v9, v2)
-								: (useAddTarget ? v9.addV(v2) : v2
-										.addSourceI(v9));
+								: useAddTarget ? v9.add_v(v2) : v2
+										.add_sourceI(v9);
 						v9Inci.add(e);
 						break;
 					case 5:
 						e = howToCreate == 0 ? graph.createI(v10, v2)
-								: (useAddTarget ? v10.addV(v2) : v2
-										.addSourceI(v10));
+								: useAddTarget ? v10.add_v(v2) : v2
+										.add_sourceI(v10);
 						v10Inci.add(e);
 						break;
 					}
@@ -741,39 +726,27 @@ public class RoleNameTest extends InstanceTest {
 				case 2:
 					switch (start) {
 					case 0:
-						e = howToCreate == 0 ? graph.createI(v1, v7)
-								: (useAddTarget ? v1.addV(v7) : v7
-										.addSourceI(v1));
-						v1Inci.add(e);
+						e = doMagic(useAddTarget, v1, v7, v1Inci, howToCreate);
 						break;
 					case 1:
-						e = howToCreate == 0 ? graph.createI(v2, v7)
-								: (useAddTarget ? v2.addV(v7) : v7
-										.addSourceI(v2));
-						v2Inci.add(e);
+						e = doMagic(useAddTarget, v2, v7, v2Inci, howToCreate);
 						break;
 					case 2:
-						e = howToCreate == 0 ? graph.createI(v7, v7)
-								: (useAddTarget ? v7.addV(v7) : v7
-										.addSourceI(v7));
-						v7Inci.add(e);
+						e = doMagic(useAddTarget, v7, v7, v7Inci, howToCreate);
 						break;
 					case 3:
-						e = howToCreate == 0 ? graph.createI(v8, v7)
-								: (useAddTarget ? v8.addV(v7) : v7
-										.addSourceI(v8));
-						v8Inci.add(e);
+						e = doMagic(useAddTarget, v8, v7, v8Inci, howToCreate);
 						break;
 					case 4:
 						e = howToCreate == 0 ? graph.createI(v9, v7)
-								: (useAddTarget ? v9.addV(v7) : v7
-										.addSourceI(v9));
+								: useAddTarget ? v9.add_v(v7) : v7
+										.add_sourceI(v9);
 						v9Inci.add(e);
 						break;
 					case 5:
 						e = howToCreate == 0 ? graph.createI(v10, v7)
-								: (useAddTarget ? v10.addV(v7) : v7
-										.addSourceI(v10));
+								: useAddTarget ? v10.add_v(v7) : v7
+										.add_sourceI(v10);
 						v10Inci.add(e);
 						break;
 					}
@@ -782,40 +755,22 @@ public class RoleNameTest extends InstanceTest {
 				case 3:
 					switch (start) {
 					case 0:
-						e = howToCreate == 0 ? graph.createI(v1, v8)
-								: (useAddTarget ? v1.addV(v8) : v8
-										.addSourceI(v1));
-						v1Inci.add(e);
+						e = doMagic(useAddTarget, v1, v8, v1Inci, howToCreate);
 						break;
 					case 1:
-						e = howToCreate == 0 ? graph.createI(v2, v8)
-								: (useAddTarget ? v2.addV(v8) : v8
-										.addSourceI(v2));
-						v2Inci.add(e);
+						e = doMagic(useAddTarget, v2, v8, v2Inci, howToCreate);
 						break;
 					case 2:
-						e = howToCreate == 0 ? graph.createI(v7, v8)
-								: (useAddTarget ? v7.addV(v8) : v8
-										.addSourceI(v7));
-						v7Inci.add(e);
+						e = doMagic(useAddTarget, v7, v8, v7Inci, howToCreate);
 						break;
 					case 3:
-						e = howToCreate == 0 ? graph.createI(v8, v8)
-								: (useAddTarget ? v8.addV(v8) : v8
-										.addSourceI(v8));
-						v8Inci.add(e);
+						e = doMagic(useAddTarget, v8, v8, v8Inci, howToCreate);
 						break;
 					case 4:
-						e = howToCreate == 0 ? graph.createI(v9, v8)
-								: (useAddTarget ? v9.addV(v8) : v8
-										.addSourceI(v9));
-						v9Inci.add(e);
+						e = doMagic(useAddTarget, v9, v8, v9Inci, howToCreate);
 						break;
 					case 5:
-						e = howToCreate == 0 ? graph.createI(v10, v8)
-								: (useAddTarget ? v10.addV(v8) : v8
-										.addSourceI(v10));
-						v10Inci.add(e);
+						e = doMagic(useAddTarget, v10, v8, v10Inci, howToCreate);
 						break;
 					}
 					v8Inci.add(e.getReversedEdge());
@@ -824,38 +779,38 @@ public class RoleNameTest extends InstanceTest {
 					switch (start) {
 					case 0:
 						e = howToCreate == 0 ? graph.createI(v1, v9)
-								: (useAddTarget ? v1.addV(v9) : v9
-										.addSourceI(v1));
+								: useAddTarget ? v1.add_v(v9) : v9
+										.add_sourceI(v1);
 						v1Inci.add(e);
 						break;
 					case 1:
 						e = howToCreate == 0 ? graph.createI(v2, v9)
-								: (useAddTarget ? v2.addV(v9) : v9
-										.addSourceI(v2));
+								: useAddTarget ? v2.add_v(v9) : v9
+										.add_sourceI(v2);
 						v2Inci.add(e);
 						break;
 					case 2:
 						e = howToCreate == 0 ? graph.createI(v9, v9)
-								: (useAddTarget ? v9.addV(v9) : v9
-										.addSourceI(v9));
+								: useAddTarget ? v9.add_v(v9) : v9
+										.add_sourceI(v9);
 						v9Inci.add(e);
 						break;
 					case 3:
 						e = howToCreate == 0 ? graph.createI(v8, v9)
-								: (useAddTarget ? v8.addV(v9) : v9
-										.addSourceI(v8));
+								: useAddTarget ? v8.add_v(v9) : v9
+										.add_sourceI(v8);
 						v8Inci.add(e);
 						break;
 					case 4:
 						e = howToCreate == 0 ? graph.createI(v9, v9)
-								: (useAddTarget ? v9.addV(v9) : v9
-										.addSourceI(v9));
+								: useAddTarget ? v9.add_v(v9) : v9
+										.add_sourceI(v9);
 						v9Inci.add(e);
 						break;
 					case 5:
 						e = howToCreate == 0 ? graph.createI(v10, v9)
-								: (useAddTarget ? v10.addV(v9) : v9
-										.addSourceI(v10));
+								: useAddTarget ? v10.add_v(v9) : v9
+										.add_sourceI(v10);
 						v10Inci.add(e);
 						break;
 					}
@@ -865,38 +820,38 @@ public class RoleNameTest extends InstanceTest {
 					switch (start) {
 					case 0:
 						e = howToCreate == 0 ? graph.createI(v1, v10)
-								: (useAddTarget ? v1.addV(v10) : v10
-										.addSourceI(v1));
+								: useAddTarget ? v1.add_v(v10) : v10
+										.add_sourceI(v1);
 						v1Inci.add(e);
 						break;
 					case 1:
 						e = howToCreate == 0 ? graph.createI(v2, v10)
-								: (useAddTarget ? v2.addV(v10) : v10
-										.addSourceI(v2));
+								: useAddTarget ? v2.add_v(v10) : v10
+										.add_sourceI(v2);
 						v2Inci.add(e);
 						break;
 					case 2:
 						e = howToCreate == 0 ? graph.createI(v7, v10)
-								: (useAddTarget ? v7.addV(v10) : v10
-										.addSourceI(v7));
+								: useAddTarget ? v7.add_v(v10) : v10
+										.add_sourceI(v7);
 						v7Inci.add(e);
 						break;
 					case 3:
 						e = howToCreate == 0 ? graph.createI(v10, v10)
-								: (useAddTarget ? v10.addV(v10) : v10
-										.addSourceI(v10));
+								: useAddTarget ? v10.add_v(v10) : v10
+										.add_sourceI(v10);
 						v10Inci.add(e);
 						break;
 					case 4:
 						e = howToCreate == 0 ? graph.createI(v9, v10)
-								: (useAddTarget ? v9.addV(v10) : v10
-										.addSourceI(v9));
+								: useAddTarget ? v9.add_v(v10) : v10
+										.add_sourceI(v9);
 						v9Inci.add(e);
 						break;
 					case 5:
 						e = howToCreate == 0 ? graph.createI(v10, v10)
-								: (useAddTarget ? v10.addV(v10) : v10
-										.addSourceI(v10));
+								: useAddTarget ? v10.add_v(v10) : v10
+										.add_sourceI(v10);
 						v10Inci.add(e);
 						break;
 					}
@@ -911,21 +866,32 @@ public class RoleNameTest extends InstanceTest {
 				switch (end) {
 				case 0:
 					e = howToCreate == 0 ? graph.createJ(start == 0 ? v9 : v10,
-							v11) : (useAddTarget ? (start == 0 ? v9 : v10)
-							.addU(v11) : v11.addSourceJ(start == 0 ? v9 : v10));
+							v11) : useAddTarget ? (start == 0 ? v9 : v10)
+							.add_u(v11) : v11
+							.add_sourceJ(start == 0 ? v9 : v10);
 					(start == 0 ? v9Inci : v10Inci).add(e);
 					v11Inci.add(e.getReversedEdge());
 					break;
 				case 1:
 					e = howToCreate == 0 ? graph.createJ(start == 0 ? v9 : v10,
-							v12) : (useAddTarget ? (start == 0 ? v9 : v10)
-							.addU(v12) : v12.addSourceJ(start == 0 ? v9 : v10));
+							v12) : useAddTarget ? (start == 0 ? v9 : v10)
+							.add_u(v12) : v12
+							.add_sourceJ(start == 0 ? v9 : v10);
 					(start == 0 ? v9Inci : v10Inci).add(e);
 					v12Inci.add(e.getReversedEdge());
 					break;
 				}
 			}
 		}
+	}
+
+	private I doMagic(boolean useAddTarget, A v1, A v8,
+			LinkedList<Edge> v1Inci, int howToCreate) {
+		I e;
+		e = howToCreate == 0 ? graph.createI(v1, v8) : useAddTarget ? v1
+				.add_v(v8) : v8.add_sourceI(v1);
+		v1Inci.add(e);
+		return e;
 	}
 
 	/**
@@ -946,8 +912,8 @@ public class RoleNameTest extends InstanceTest {
 			String... rolenames) {
 		for (int i = 0; i < inciFrom.size(); i++) {
 			Edge e = inciFrom.get(i).getNormalEdge();
-			if ((e.getAlpha() == from)
-					&& (e.getOmega() == to)
+			if (e.getAlpha() == from
+					&& e.getOmega() == to
 					&& checkRoleName(useTarget ? e.getThatRole() : e
 							.getThisRole(), rolenames)) {
 				inciFrom.remove(i--);
@@ -955,8 +921,8 @@ public class RoleNameTest extends InstanceTest {
 		}
 		for (int i = 0; i < inciTo.size(); i++) {
 			Edge e = inciTo.get(i).getNormalEdge();
-			if ((e.getAlpha() == from)
-					&& (e.getOmega() == to)
+			if (e.getAlpha() == from
+					&& e.getOmega() == to
 					&& checkRoleName(useTarget ? e.getThatRole() : e
 							.getThisRole(), rolenames)) {
 				inciTo.remove(i--);
@@ -1010,8 +976,7 @@ public class RoleNameTest extends InstanceTest {
 		LinkedList<Vertex> ret = new LinkedList<Vertex>();
 		PriorityQueue<Edge> edges = new PriorityQueue<Edge>();
 		for (Edge e : graph.edges()) {
-			if ((e.getOmega() == to)
-					&& checkRoleName(e.getThisRole(), rolenames)) {
+			if (e.getOmega() == to && checkRoleName(e.getThisRole(), rolenames)) {
 				edges.add(e);
 			}
 		}
@@ -1028,11 +993,14 @@ public class RoleNameTest extends InstanceTest {
 	 * @param expected
 	 * @param actual
 	 */
-	private void compareLists(List<Vertex> expected, Vertex[] actual) {
-		assertEquals(expected.size(), actual.length);
+	private void compareLists(List<Vertex> expected,
+			Iterable<? extends Vertex> actual) {
+		Iterator<? extends Vertex> it = actual.iterator();
 		for (int i = 0; i < expected.size(); i++) {
-			assertEquals(expected.get(i), actual[i]);
+			assertTrue(it.hasNext());
+			assertEquals(expected.get(i), it.next());
 		}
+		assertFalse(it.hasNext());
 	}
 
 	/**
@@ -1061,197 +1029,248 @@ public class RoleNameTest extends InstanceTest {
 
 	/**
 	 * Test if only edges of one type are created via addX.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void eAddTargetrolenameTest0() {
-		onlyTestWithoutTransactionSupport();
+	public void eAddTargetrolenameTest0() throws CommitFailedException {
+		createTransaction(graph);
 		A v1 = graph.createA();
 		B v2 = graph.createB();
 		D v3 = graph.createD();
-		E e1 = v1.addX(v2);
-		E e2 = v1.addX(v2);
-		E e3 = v1.addX(v3);
-		E e4 = v1.addX(v2);
+		E e1 = v1.add_x(v2);
+		E e2 = v1.add_x(v2);
+		E e3 = v1.add_x(v3);
+		E e4 = v1.add_x(v2);
+		commit(graph);
+		createReadOnlyTransaction(graph);
 		testIncidenceList(v1, e1, e2, e3, e4);
 		testIncidenceList(v2, e1.getReversedEdge(), e2.getReversedEdge(), e4
 				.getReversedEdge());
 		testIncidenceList(v3, e3.getReversedEdge());
+		commit(graph);
 	}
 
 	/**
 	 * Test if only edges of one type are created via addX and manually.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void eAddTargetrolenameTest1() {
-		onlyTestWithoutTransactionSupport();
+	public void eAddTargetrolenameTest1() throws CommitFailedException {
+		createTransaction(graph);
 		A v1 = graph.createA();
 		B v2 = graph.createB();
-		E e1 = v1.addX(v2);
+		E e1 = v1.add_x(v2);
 		E e2 = graph.createE(v1, v2);
-		E e3 = v1.addX(v2);
-		E e4 = v1.addX(v2);
+		E e3 = v1.add_x(v2);
+		E e4 = v1.add_x(v2);
+		commit(graph);
+		createReadOnlyTransaction(graph);
 		testIncidenceList(v1, e1, e2, e3, e4);
 		testIncidenceList(v2, e1.getReversedEdge(), e2.getReversedEdge(), e3
 				.getReversedEdge(), e4.getReversedEdge());
+		commit(graph);
 	}
 
 	/**
 	 * Test with cyclic edges.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void eAddTargetrolenameTest2() {
-		onlyTestWithoutTransactionSupport();
+	public void eAddTargetrolenameTest2() throws CommitFailedException {
+		createTransaction(graph);
 		A v1 = graph.createA();
 		A v2 = graph.createA();
 		C v3 = graph.createC();
 		I e1 = graph.createI(v1, v1);
-		I e2 = v1.addV(v2);
-		I e3 = v2.addV(v2);
+		I e2 = v1.add_v(v2);
+		I e3 = v2.add_v(v2);
 		I e4 = graph.createI(v2, v3);
+		commit(graph);
+		createReadOnlyTransaction(graph);
 		testIncidenceList(v1, e1, e1.getReversedEdge(), e2);
 		testIncidenceList(v2, e2.getReversedEdge(), e3, e3.getReversedEdge(),
 				e4);
 		testIncidenceList(v3, e4.getReversedEdge());
+		commit(graph);
 	}
 
 	/**
 	 * Test if an error occurs if an E-edge is created via addX starting at a
 	 * C-vertex.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test(expected = GraphException.class)
-	public void eAddTargetrolenameTestException0() {
-		onlyTestWithoutTransactionSupport();
+	public void eAddTargetrolenameTestException0() throws CommitFailedException {
+		createTransaction(graph);
 		C v1 = graph.createC();
 		B v2 = graph.createB();
-		v1.addX(v2);
+		v1.add_x(v2);
+		commit(graph);
 	}
 
 	/**
 	 * Test if an error occurs if an E-edge is created via createE starting at a
 	 * C-vertex.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test(expected = GraphException.class)
-	public void eAddTargetrolenameTestException1() {
-		onlyTestWithoutTransactionSupport();
+	public void eAddTargetrolenameTestException1() throws CommitFailedException {
+		createTransaction(graph);
 		C v1 = graph.createC();
 		B v2 = graph.createB();
 		graph.createE(v1, v2);
+		commit(graph);
 	}
 
 	/**
 	 * Test if an error occurs if an E-edge is created via createE starting at a
 	 * C2-vertex.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test(expected = GraphException.class)
-	public void eAddTargetrolenameTestException2() {
-		onlyTestWithoutTransactionSupport();
+	public void eAddTargetrolenameTestException2() throws CommitFailedException {
+		createTransaction(graph);
 		C2 v1 = graph.createC2();
 		B v2 = graph.createB();
 		graph.createE(v1, v2);
+		commit(graph);
 	}
 
 	/**
 	 * Test if an error occurs if you try to build an edge with null as omega.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test(expected = GraphException.class)
-	public void eAddTargetrolenameTestException3() {
-		onlyTestWithoutTransactionSupport();
+	public void eAddTargetrolenameTestException3() throws CommitFailedException {
+		createTransaction(graph);
 		A v1 = graph.createA();
-		v1.addX(null);
+		v1.add_x(null);
+		commit(graph);
 	}
 
 	/**
 	 * Test if only edges of one type are created via addX.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void fAddTargetrolenameTest0() {
-		onlyTestWithoutTransactionSupport();
+	public void fAddTargetrolenameTest0() throws CommitFailedException {
+		createTransaction(graph);
 		C v1 = graph.createC();
 		D v2 = graph.createD();
-		F e1 = v1.addY(v2);
-		F e2 = v1.addY(v2);
-		F e3 = v1.addY(v2);
-		F e4 = v1.addY(v2);
+		F e1 = v1.add_y(v2);
+		F e2 = v1.add_y(v2);
+		F e3 = v1.add_y(v2);
+		F e4 = v1.add_y(v2);
+		commit(graph);
+		createReadOnlyTransaction(graph);
 		testIncidenceList(v1, e1, e2, e3, e4);
 		testIncidenceList(v2, e1.getReversedEdge(), e2.getReversedEdge(), e3
 				.getReversedEdge(), e4.getReversedEdge());
+		commit(graph);
 	}
 
 	/**
 	 * Test if only edges of one type are created via addX and manually.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void fAddTargetrolenameTest1() {
-		onlyTestWithoutTransactionSupport();
+	public void fAddTargetrolenameTest1() throws CommitFailedException {
+		createTransaction(graph);
 		C v1 = graph.createC();
 		D v2 = graph.createD();
-		F e1 = v1.addY(v2);
+		F e1 = v1.add_y(v2);
 		F e2 = graph.createF(v1, v2);
-		F e3 = v1.addY(v2);
-		F e4 = v1.addY(v2);
+		F e3 = v1.add_y(v2);
+		F e4 = v1.add_y(v2);
+		commit(graph);
+		createReadOnlyTransaction(graph);
 		testIncidenceList(v1, e1, e2, e3, e4);
 		testIncidenceList(v2, e1.getReversedEdge(), e2.getReversedEdge(), e3
 				.getReversedEdge(), e4.getReversedEdge());
+		commit(graph);
 	}
 
 	/**
 	 * Test if only edges of one type are created via addX.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void gAddTargetrolenameTest0() {
-		onlyTestWithoutTransactionSupport();
+	public void gAddTargetrolenameTest0() throws CommitFailedException {
+		createTransaction(graph);
 		C v1 = graph.createC();
 		D v2 = graph.createD();
-		G e1 = v1.addZ(v2);
-		G e2 = v1.addZ(v2);
-		G e3 = v1.addZ(v2);
-		G e4 = v1.addZ(v2);
+		G e1 = v1.add_z(v2);
+		G e2 = v1.add_z(v2);
+		G e3 = v1.add_z(v2);
+		G e4 = v1.add_z(v2);
+		commit(graph);
+		createReadOnlyTransaction(graph);
 		testIncidenceList(v1, e1, e2, e3, e4);
 		testIncidenceList(v2, e1.getReversedEdge(), e2.getReversedEdge(), e3
 				.getReversedEdge(), e4.getReversedEdge());
+		commit(graph);
 	}
 
 	/**
 	 * Test if only edges of one type are created via addX and manually.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void gAddTargetrolenameTest1() {
-		onlyTestWithoutTransactionSupport();
+	public void gAddTargetrolenameTest1() throws CommitFailedException {
+		createTransaction(graph);
 		C v1 = graph.createC();
 		D v2 = graph.createD();
-		G e1 = v1.addZ(v2);
+		G e1 = v1.add_z(v2);
 		G e2 = graph.createG(v1, v2);
-		G e3 = v1.addZ(v2);
-		G e4 = v1.addZ(v2);
+		G e3 = v1.add_z(v2);
+		G e4 = v1.add_z(v2);
+		commit(graph);
+		createReadOnlyTransaction(graph);
 		testIncidenceList(v1, e1, e2, e3, e4);
 		testIncidenceList(v2, e1.getReversedEdge(), e2.getReversedEdge(), e3
 				.getReversedEdge(), e4.getReversedEdge());
+		commit(graph);
 	}
 
 	/**
 	 * Test if edges of different types are created via addX and manually.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void mixedAddTargetrolenameTest0() {
-		onlyTestWithoutTransactionSupport();
+	public void mixedAddTargetrolenameTest0() throws CommitFailedException {
+		createTransaction(graph);
 		A v1 = graph.createA();
 		B v2 = graph.createB();
 		C v3 = graph.createC();
 		D v4 = graph.createD();
 		B v5 = graph.createB();
 		D v6 = graph.createD();
-		E e1 = v1.addX(v2);
-		E e2 = v1.addX(v4);
-		F e3 = v3.addY(v4);
-		G e4 = v3.addZ(v4);
+		E e1 = v1.add_x(v2);
+		E e2 = v1.add_x(v4);
+		F e3 = v3.add_y(v4);
+		G e4 = v3.add_z(v4);
 		F e5 = graph.createF(v3, v4);
 		E e6 = graph.createE(v1, v4);
 		G e7 = graph.createG(v3, v4);
 		E e8 = graph.createE(v1, v2);
-		E e9 = v1.addX(v5);
-		E e10 = v1.addX(v6);
-		F e11 = v3.addY(v6);
-		G e12 = v3.addZ(v6);
+		E e9 = v1.add_x(v5);
+		E e10 = v1.add_x(v6);
+		F e11 = v3.add_y(v6);
+		G e12 = v3.add_z(v6);
+		commit(graph);
+		createReadOnlyTransaction(graph);
 		testIncidenceList(v1, e1, e2, e6, e8, e9, e10);
 		testIncidenceListOfOneEdge(E.class, v1, e1, e2, e6, e8, e9, e10);
 		testIncidenceListOfOneEdge(F.class, v1);
@@ -1283,14 +1302,17 @@ public class RoleNameTest extends InstanceTest {
 		testIncidenceListOfOneEdge(E.class, v6, e10.getReversedEdge());
 		testIncidenceListOfOneEdge(F.class, v6, e11.getReversedEdge());
 		testIncidenceListOfOneEdge(G.class, v6, e12.getReversedEdge());
+		commit(graph);
 	}
 
 	/**
 	 * Random test
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void addTargetrolenameRandomTest0() {
-		onlyTestWithoutTransactionSupport();
+	public void addTargetrolenameRandomTest0() throws CommitFailedException {
+		createTransaction(graph);
 		A v1 = graph.createA();
 		C v2 = graph.createC();
 		B v3 = graph.createB();
@@ -1309,16 +1331,27 @@ public class RoleNameTest extends InstanceTest {
 		LinkedList<Edge> v8Inci = new LinkedList<Edge>();
 		createRandomGraph(true, v1, v2, v3, v4, v5, v6, v7, v8, v1Inci, v2Inci,
 				v3Inci, v4Inci, v5Inci, v6Inci, v7Inci, v8Inci);
+		commit(graph);
+		createReadOnlyTransaction(graph);
 		testIncidences(v1, v2, v3, v4, v5, v6, v7, v8, v1Inci, v2Inci, v3Inci,
 				v4Inci, v5Inci, v6Inci, v7Inci, v8Inci);
+		commit(graph);
+		createTransaction(graph);
 		deleteRandomEdges(v1Inci, v2Inci, v3Inci, v4Inci, v5Inci, v6Inci,
 				v7Inci, v8Inci);
+		commit(graph);
+		createReadOnlyTransaction(graph);
 		testIncidences(v1, v2, v3, v4, v5, v6, v7, v8, v1Inci, v2Inci, v3Inci,
 				v4Inci, v5Inci, v6Inci, v7Inci, v8Inci);
+		commit(graph);
+		createTransaction(graph);
 		createRandomGraph(true, v1, v2, v3, v4, v5, v6, v7, v8, v1Inci, v2Inci,
 				v3Inci, v4Inci, v5Inci, v6Inci, v7Inci, v8Inci);
+		commit(graph);
+		createReadOnlyTransaction(graph);
 		testIncidences(v1, v2, v3, v4, v5, v6, v7, v8, v1Inci, v2Inci, v3Inci,
 				v4Inci, v5Inci, v6Inci, v7Inci, v8Inci);
+		commit(graph);
 	}
 
 	/*
@@ -1327,92 +1360,126 @@ public class RoleNameTest extends InstanceTest {
 
 	/**
 	 * call removeX when no x exists.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void removeTargetRoleNameTest0() {
-		onlyTestWithoutTransactionSupport();
+	public void removeTargetRoleNameTest0() throws CommitFailedException {
+		createTransaction(graph);
 		A v1 = graph.createA();
 		C v2 = graph.createC();
 		D v3 = graph.createD();
-		F e1 = v2.addY(v3);
-		v1.removeX(v3);
+		F e1 = v2.add_y(v3);
+		v1.remove_x(v3);
+		commit(graph);
+		createReadOnlyTransaction(graph);
 		testIncidenceList(v1);
 		testIncidenceList(v2, e1);
 		testIncidenceList(v3, e1.getReversedEdge());
+		commit(graph);
 	}
 
 	/**
 	 * Remove all x of one vertex.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void removeTargetRoleNameTest1() {
-		onlyTestWithoutTransactionSupport();
+	public void removeTargetRoleNameTest1() throws CommitFailedException {
+		createTransaction(graph);
 		A v1 = graph.createA();
 		C v2 = graph.createC();
 		D v3 = graph.createD();
 		B v4 = graph.createB();
-		v1.addX(v3);
-		v1.addW(v3);
-		E e3 = v1.addX(v4);
-		F e4 = v2.addY(v3);
+		v1.add_x(v3);
+		v1.add_w(v3);
+		E e3 = v1.add_x(v4);
+		F e4 = v2.add_y(v3);
 		graph.createE(v1, v3);
-		H e6 = v1.addW(v4);
-		v1.removeX(v3);
+		H e6 = v1.add_w(v4);
+		v1.remove_x(v3);
+		commit(graph);
+		createReadOnlyTransaction(graph);
 		testIncidenceList(v1, e3, e6);
 		testIncidenceList(v2, e4);
 		testIncidenceList(v3, e4.getReversedEdge());
 		testIncidenceList(v4, e3.getReversedEdge(), e6.getReversedEdge());
+		commit(graph);
 	}
 
 	/**
 	 * Test with cyclic edges.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void removeTargetrolenameTest2() {
-		onlyTestWithoutTransactionSupport();
+	public void removeTargetrolenameTest2() throws CommitFailedException {
+		createTransaction(graph);
 		A v1 = graph.createA();
 		A v2 = graph.createA();
 		C v3 = graph.createC();
 		I e1 = graph.createI(v1, v1);
-		I e2 = v1.addV(v2);
-		v2.addV(v2);
+		I e2 = v1.add_v(v2);
+		v2.add_v(v2);
 		I e4 = graph.createI(v2, v3);
-		v2.removeV(v2);
+		v2.remove_v(v2);
+		commit(graph);
+		createReadOnlyTransaction(graph);
 		testIncidenceList(v1, e1, e1.getReversedEdge(), e2);
 		testIncidenceList(v2, e2.getReversedEdge(), e4);
 		testIncidenceList(v3, e4.getReversedEdge());
+		commit(graph);
 	}
 
 	/**
 	 * Test if an error occurs if an E-edge is removed via removeX starting at a
 	 * C-vertex.
+	 * 
+	 * There should occur no exception and removeX should return 'false'.
+	 * 
+	 * @throws CommitFailedException
 	 */
-	@Test(expected = GraphException.class)
-	public void removeTargetrolenameTestException0() {
-		onlyTestWithoutTransactionSupport();
+	@Test
+	public void removeTargetRolenameTest0() throws CommitFailedException {
+
+		createTransaction(graph);
+
 		C v1 = graph.createC();
 		B v2 = graph.createB();
-		v1.removeX(v2);
+
+		assertFalse(v1.remove_x(v2));
+
+		commit(graph);
 	}
 
 	/**
 	 * Test if an error occurs if an E-edge is removed via removeX starting at a
 	 * C-vertex.
+	 * 
+	 * There should occur no exception and removeX should return 'false'.
+	 * 
+	 * @throws CommitFailedException
 	 */
-	@Test(expected = GraphException.class)
-	public void removeTargetrolenameTestException3() {
-		onlyTestWithoutTransactionSupport();
+	@Test
+	public void removeTargetRolenameTest3() throws CommitFailedException {
+
+		createTransaction(graph);
+
 		C2 v1 = graph.createC2();
 		B v2 = graph.createB();
-		v1.removeX(v2);
+		assertFalse(v1.remove_x(v2));
+
+		commit(graph);
 	}
 
 	/**
 	 * Random test
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void removeTargetrolenameRandomTest0() {
-		onlyTestWithoutTransactionSupport();
+	public void removeTargetrolenameRandomTest0() throws CommitFailedException {
+		createTransaction(graph);
 		A v1 = graph.createA();
 		C v2 = graph.createC();
 		B v3 = graph.createB();
@@ -1432,17 +1499,28 @@ public class RoleNameTest extends InstanceTest {
 		createRandomGraph(true, v1, v2, v3, v4, v5, v6, v7, v8, v1Inci, v2Inci,
 				v3Inci, v4Inci, v5Inci, v6Inci, v7Inci, v8Inci);
 		deleteAll(true, v1, v3, v1Inci, v3Inci, "x", "w");
-		v1.removeX(v3);
+		v1.remove_x(v3);
+		commit(graph);
+		createReadOnlyTransaction(graph);
 		testIncidences(v1, v2, v3, v4, v5, v6, v7, v8, v1Inci, v2Inci, v3Inci,
 				v4Inci, v5Inci, v6Inci, v7Inci, v8Inci);
 		deleteAll(true, v1, v4, v1Inci, v4Inci, "x", "w");
-		v1.removeX(v4);
+		commit(graph);
+		createTransaction(graph);
+		v1.remove_x(v4);
+		commit(graph);
+		createReadOnlyTransaction(graph);
 		testIncidences(v1, v2, v3, v4, v5, v6, v7, v8, v1Inci, v2Inci, v3Inci,
 				v4Inci, v5Inci, v6Inci, v7Inci, v8Inci);
+		commit(graph);
+		createTransaction(graph);
 		deleteAll(true, v7, v6, v7Inci, v6Inci, "w");
-		v7.removeW(v6);
+		v7.remove_w(v6);
+		commit(graph);
+		createReadOnlyTransaction(graph);
 		testIncidences(v1, v2, v3, v4, v5, v6, v7, v8, v1Inci, v2Inci, v3Inci,
 				v4Inci, v5Inci, v6Inci, v7Inci, v8Inci);
+		commit(graph);
 	}
 
 	/*
@@ -1451,82 +1529,77 @@ public class RoleNameTest extends InstanceTest {
 
 	/**
 	 * Test a vertex which has no adjacent x-vertices.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getRoleNameListTest0() {
-		onlyTestWithoutTransactionSupport();
+	public void getRoleNameListTest0() throws CommitFailedException {
+		createTransaction(graph);
 		A v1 = graph.createA();
-		compareLists(new LinkedList<Vertex>(), v1.getXList().toArray(
-				new Vertex[0]));
+		commit(graph);
+		createReadOnlyTransaction(graph);
+		compareLists(new LinkedList<Vertex>(), v1.get_x());
+		commit(graph);
 	}
 
 	/**
 	 * Test a vertex which has adjacent w-vertices.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getRoleNameListTest1() {
-		onlyTestWithoutTransactionSupport();
+	public void getRoleNameListTest1() throws CommitFailedException {
+		createTransaction(graph);
 		C v1 = graph.createC();
 		D v2 = graph.createD();
-		v1.addW(v2);
-		v1.addY(v2);
-		v1.addW(v2);
-		v1.addZ(v2);
-		v1.addW(v2);
+		v1.add_w(v2);
+		v1.add_y(v2);
+		v1.add_w(v2);
+		v1.add_z(v2);
+		v1.add_w(v2);
+		commit(graph);
+
+		createReadOnlyTransaction(graph);
 		LinkedList<Vertex> expected = new LinkedList<Vertex>();
 		expected.add(v2);
 		expected.add(v2);
 		expected.add(v2);
-		compareLists(expected, v1.getWList().toArray(new Vertex[0]));
+		compareLists(expected, v1.get_w());
 		expected = new LinkedList<Vertex>();
 		expected.add(v2);
-		compareLists(expected, v1.getYList().toArray(new Vertex[0]));
-		compareLists(expected, v1.getZList().toArray(new Vertex[0]));
+		compareLists(expected, v1.get_y());
+		compareLists(expected, v1.get_z());
+		commit(graph);
 	}
 
 	/**
 	 * Test with cyclic edges.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getRoleNameListTest2() {
-		onlyTestWithoutTransactionSupport();
+	public void getRoleNameListTest2() throws CommitFailedException {
+		createTransaction(graph);
 		A v1 = graph.createA();
-		v1.addV(v1);
+		v1.add_v(v1);
 		graph.createI(v1, v1);
+		commit(graph);
+		createReadOnlyTransaction(graph);
 		LinkedList<Vertex> expected = new LinkedList<Vertex>();
 		expected.add(v1);
 		expected.add(v1);
-		compareLists(expected, v1.getVList().toArray(new Vertex[0]));
-	}
-
-	/**
-	 * Test if an error occurs if you try to get a list of all x-vertices of one
-	 * C-vertex.
-	 */
-	@Test(expected = GraphException.class)
-	public void getRoleNameListTestException0() {
-		onlyTestWithoutTransactionSupport();
-		C v1 = graph.createC();
-		v1.getXList();
-	}
-
-	/**
-	 * Test if an error occurs if you try to get a list of all x-vertices of one
-	 * C2-vertex.
-	 */
-	@Test(expected = GraphException.class)
-	public void getRoleNameListTestException1() {
-		onlyTestWithoutTransactionSupport();
-		C2 v1 = graph.createC2();
-		v1.getXList();
+		compareLists(expected, v1.get_v());
+		commit(graph);
 	}
 
 	/**
 	 * Random test
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getRoleNameListRandomTest0() {
-		onlyTestWithoutTransactionSupport();
+	public void getRoleNameListRandomTest0() throws CommitFailedException {
+		createTransaction(graph);
 		A v1 = graph.createA();
 		C v2 = graph.createC();
 		B v3 = graph.createB();
@@ -1545,39 +1618,41 @@ public class RoleNameTest extends InstanceTest {
 		LinkedList<Edge> v8Inci = new LinkedList<Edge>();
 		createRandomGraph(true, v1, v2, v3, v4, v5, v6, v7, v8, v1Inci, v2Inci,
 				v3Inci, v4Inci, v5Inci, v6Inci, v7Inci, v8Inci);
-
+		commit(graph);
+		createReadOnlyTransaction(graph);
 		LinkedList<Vertex> expected = getAllVerticesWithRolename(v1Inci, "x",
 				"w");
-		compareLists(expected, v1.getXList().toArray(new Vertex[0]));
+		compareLists(expected, v1.get_x());
 		expected = getAllVerticesWithRolename(v1Inci, "w");
-		compareLists(expected, v1.getWList().toArray(new Vertex[0]));
+		compareLists(expected, v1.get_w());
 		expected = getAllVerticesWithRolename(v1Inci, "v");
-		compareLists(expected, v1.getVList().toArray(new Vertex[0]));
+		compareLists(expected, v1.get_v());
 
 		expected = getAllVerticesWithRolename(v2Inci, "w");
-		compareLists(expected, v2.getWList().toArray(new Vertex[0]));
+		compareLists(expected, v2.get_w());
 		expected = getAllVerticesWithRolename(v2Inci, "v");
-		compareLists(expected, v2.getVList().toArray(new Vertex[0]));
+		compareLists(expected, v2.get_v());
 		expected = getAllVerticesWithRolename(v2Inci, "y");
-		compareLists(expected, v2.getYList().toArray(new Vertex[0]));
+		compareLists(expected, v2.get_y());
 		expected = getAllVerticesWithRolename(v2Inci, "z");
-		compareLists(expected, v2.getZList().toArray(new Vertex[0]));
+		compareLists(expected, v2.get_z());
 
 		expected = getAllVerticesWithRolename(v7Inci, "x", "w");
-		compareLists(expected, v7.getXList().toArray(new Vertex[0]));
+		compareLists(expected, v7.get_x());
 		expected = getAllVerticesWithRolename(v7Inci, "w");
-		compareLists(expected, v7.getWList().toArray(new Vertex[0]));
+		compareLists(expected, v7.get_w());
 		expected = getAllVerticesWithRolename(v7Inci, "v");
-		compareLists(expected, v7.getVList().toArray(new Vertex[0]));
+		compareLists(expected, v7.get_v());
 
 		expected = getAllVerticesWithRolename(v8Inci, "w");
-		compareLists(expected, v8.getWList().toArray(new Vertex[0]));
+		compareLists(expected, v8.get_w());
 		expected = getAllVerticesWithRolename(v8Inci, "v");
-		compareLists(expected, v8.getVList().toArray(new Vertex[0]));
+		compareLists(expected, v8.get_v());
 		expected = getAllVerticesWithRolename(v8Inci, "y");
-		compareLists(expected, v8.getYList().toArray(new Vertex[0]));
+		compareLists(expected, v8.get_y());
 		expected = getAllVerticesWithRolename(v8Inci, "z");
-		compareLists(expected, v8.getZList().toArray(new Vertex[0]));
+		compareLists(expected, v8.get_z());
+		commit(graph);
 	}
 
 	/*
@@ -1590,117 +1665,145 @@ public class RoleNameTest extends InstanceTest {
 
 	/**
 	 * Test if only edges of one type are created via addSourceE.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void addSourcerolenameTest0() {
-		onlyTestWithoutTransactionSupport();
+	public void addSourcerolenameTest0() throws CommitFailedException {
+		createTransaction(graph);
 		A v1 = graph.createA();
 		B v2 = graph.createB();
 		D v3 = graph.createD();
-		E e1 = v2.addSourceE(v1);
-		E e2 = v2.addSourceE(v1);
-		E e3 = v3.addSourceE(v1);
-		E e4 = v2.addSourceE(v1);
+		E e1 = v2.add_sourceE(v1);
+		E e2 = v2.add_sourceE(v1);
+		E e3 = v3.add_sourceE(v1);
+		E e4 = v2.add_sourceE(v1);
+		commit(graph);
+		createReadOnlyTransaction(graph);
 		testIncidenceList(v1, e1, e2, e3, e4);
 		testIncidenceList(v2, e1.getReversedEdge(), e2.getReversedEdge(), e4
 				.getReversedEdge());
 		testIncidenceList(v3, e3.getReversedEdge());
+		commit(graph);
 	}
 
 	/**
 	 * Test if only edges of one type are created via addSourceE and manually.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void addSourcerolenameTest1() {
-		onlyTestWithoutTransactionSupport();
+	public void addSourcerolenameTest1() throws CommitFailedException {
+		createTransaction(graph);
 		A v1 = graph.createA();
 		B v2 = graph.createB();
-		E e1 = v2.addSourceE(v1);
+		E e1 = v2.add_sourceE(v1);
 		E e2 = graph.createE(v1, v2);
-		E e3 = v2.addSourceE(v1);
-		E e4 = v2.addSourceE(v1);
+		E e3 = v2.add_sourceE(v1);
+		E e4 = v2.add_sourceE(v1);
+		commit(graph);
+		createReadOnlyTransaction(graph);
 		testIncidenceList(v1, e1, e2, e3, e4);
 		testIncidenceList(v2, e1.getReversedEdge(), e2.getReversedEdge(), e3
 				.getReversedEdge(), e4.getReversedEdge());
+		commit(graph);
 	}
 
 	/**
 	 * Test with cyclic edges.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void addSourcerolenameTest2() {
-		onlyTestWithoutTransactionSupport();
+	public void addSourcerolenameTest2() throws CommitFailedException {
+		createTransaction(graph);
 		A v1 = graph.createA();
 		A v2 = graph.createA();
 		C v3 = graph.createC();
 		I e1 = graph.createI(v1, v1);
-		I e2 = v2.addSourceI(v1);
-		I e3 = v2.addSourceI(v2);
+		I e2 = v2.add_sourceI(v1);
+		I e3 = v2.add_sourceI(v2);
 		I e4 = graph.createI(v2, v3);
+		commit(graph);
+		createReadOnlyTransaction(graph);
 		testIncidenceList(v1, e1, e1.getReversedEdge(), e2);
 		testIncidenceList(v2, e2.getReversedEdge(), e3, e3.getReversedEdge(),
 				e4);
 		testIncidenceList(v3, e4.getReversedEdge());
+		commit(graph);
 	}
 
 	/**
 	 * Test if an error occurs if an E-edge is created via addSourceE starting
 	 * at a D2-vertex.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test(expected = GraphException.class)
-	public void addSourcerolenameTestException0() {
-		onlyTestWithoutTransactionSupport();
+	public void addSourcerolenameTestException0() throws CommitFailedException {
+		createTransaction(graph);
 		D2 v1 = graph.createD2();
 		A v2 = graph.createA();
-		v1.addSourceE(v2);
+		v1.add_sourceE(v2);
+		commit(graph);
 	}
 
 	/**
 	 * Test if an error occurs if an E-edge is created via createE starting at a
 	 * D2-vertex.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test(expected = GraphException.class)
-	public void addSourcerolenameTestException1() {
-		onlyTestWithoutTransactionSupport();
+	public void addSourcerolenameTestException1() throws CommitFailedException {
+		createTransaction(graph);
 		D2 v1 = graph.createD2();
 		A v2 = graph.createA();
 		graph.createE(v2, v1);
+		commit(graph);
 	}
 
 	/**
 	 * Test if an error occurs if you try to build an edge with null as alpha.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test(expected = GraphException.class)
-	public void addSourcerolenameTestException2() {
-		onlyTestWithoutTransactionSupport();
+	public void addSourcerolenameTestException2() throws CommitFailedException {
+		createTransaction(graph);
 		B v1 = graph.createB();
-		v1.addSourceE(null);
+		v1.add_sourceE(null);
+		commit(graph);
 	}
 
 	/**
 	 * Test if edges of different types are created via addSourceE and manually.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void mixedAddSourcerolenameTest0() {
-		onlyTestWithoutTransactionSupport();
+	public void mixedAddSourcerolenameTest0() throws CommitFailedException {
+		createTransaction(graph);
 		A v1 = graph.createA();
 		B v2 = graph.createB();
 		C v3 = graph.createC();
 		D v4 = graph.createD();
 		B v5 = graph.createB();
 		D v6 = graph.createD();
-		E e1 = v2.addSourceE(v1);
-		E e2 = v4.addSourceE(v1);
-		F e3 = v4.addSourceF(v3);
-		G e4 = v4.addSourceG(v3);
+		E e1 = v2.add_sourceE(v1);
+		E e2 = v4.add_sourceE(v1);
+		F e3 = v4.add_sourceF(v3);
+		G e4 = v4.add_sourceG(v3);
 		F e5 = graph.createF(v3, v4);
 		E e6 = graph.createE(v1, v4);
 		G e7 = graph.createG(v3, v4);
 		E e8 = graph.createE(v1, v2);
-		E e9 = v5.addSourceE(v1);
-		E e10 = v6.addSourceE(v1);
-		F e11 = v6.addSourceF(v3);
-		G e12 = v6.addSourceG(v3);
+		E e9 = v5.add_sourceE(v1);
+		E e10 = v6.add_sourceE(v1);
+		F e11 = v6.add_sourceF(v3);
+		G e12 = v6.add_sourceG(v3);
+		commit(graph);
+		createReadOnlyTransaction(graph);
 		testIncidenceList(v1, e1, e2, e6, e8, e9, e10);
 		testIncidenceListOfOneEdge(E.class, v1, e1, e2, e6, e8, e9, e10);
 		testIncidenceListOfOneEdge(F.class, v1);
@@ -1732,14 +1835,17 @@ public class RoleNameTest extends InstanceTest {
 		testIncidenceListOfOneEdge(E.class, v6, e10.getReversedEdge());
 		testIncidenceListOfOneEdge(F.class, v6, e11.getReversedEdge());
 		testIncidenceListOfOneEdge(G.class, v6, e12.getReversedEdge());
+		commit(graph);
 	}
 
 	/**
 	 * Random test
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void addSourcerolenameRandomTest0() {
-		onlyTestWithoutTransactionSupport();
+	public void addSourcerolenameRandomTest0() throws CommitFailedException {
+		createTransaction(graph);
 		A v1 = graph.createA();
 		C v2 = graph.createC();
 		B v3 = graph.createB();
@@ -1767,17 +1873,28 @@ public class RoleNameTest extends InstanceTest {
 		createRandomGraph(false, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11,
 				v12, v1Inci, v2Inci, v3Inci, v4Inci, v5Inci, v6Inci, v7Inci,
 				v8Inci, v9Inci, v10Inci, v11Inci, v12Inci);
+		commit(graph);
+		createReadOnlyTransaction(graph);
 		testIncidences(v1, v2, v3, v4, v5, v6, v7, v8, v1Inci, v2Inci, v3Inci,
 				v4Inci, v5Inci, v6Inci, v7Inci, v8Inci);
+		commit(graph);
+		createTransaction(graph);
 		deleteRandomEdges(v1Inci, v2Inci, v3Inci, v4Inci, v5Inci, v6Inci,
 				v7Inci, v8Inci, v9Inci, v10Inci, v11Inci, v12Inci);
+		commit(graph);
+		createReadOnlyTransaction(graph);
 		testIncidences(v1, v2, v3, v4, v5, v6, v7, v8, v1Inci, v2Inci, v3Inci,
 				v4Inci, v5Inci, v6Inci, v7Inci, v8Inci);
+		commit(graph);
+		createTransaction(graph);
 		createRandomGraph(false, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11,
 				v12, v1Inci, v2Inci, v3Inci, v4Inci, v5Inci, v6Inci, v7Inci,
 				v8Inci, v9Inci, v10Inci, v11Inci, v12Inci);
+		commit(graph);
+		createReadOnlyTransaction(graph);
 		testIncidences(v1, v2, v3, v4, v5, v6, v7, v8, v1Inci, v2Inci, v3Inci,
 				v4Inci, v5Inci, v6Inci, v7Inci, v8Inci);
+		commit(graph);
 	}
 
 	/*
@@ -1786,80 +1903,85 @@ public class RoleNameTest extends InstanceTest {
 
 	/**
 	 * call removeSourceE when no sourceE exists.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void removeSourceRoleNameTest0() {
-		onlyTestWithoutTransactionSupport();
+	public void removeSourceRoleNameTest0() throws CommitFailedException {
+		createTransaction(graph);
 		A v1 = graph.createA();
 		C v2 = graph.createC();
 		D v3 = graph.createD();
-		F e1 = v2.addY(v3);
-		v3.removeSourceE(v1);
+		F e1 = v2.add_y(v3);
+		v3.remove_sourceE(v1);
+		commit(graph);
+		createReadOnlyTransaction(graph);
 		testIncidenceList(v1);
 		testIncidenceList(v2, e1);
 		testIncidenceList(v3, e1.getReversedEdge());
+		commit(graph);
 	}
 
 	/**
 	 * Remove all sourceE of one vertex.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void removeSourceRoleNameTest1() {
-		onlyTestWithoutTransactionSupport();
+	public void removeSourceRoleNameTest1() throws CommitFailedException {
+		createTransaction(graph);
 		A v1 = graph.createA();
 		C v2 = graph.createC();
 		D v3 = graph.createD();
 		B v4 = graph.createB();
-		v1.addX(v3);
-		v1.addW(v3);
-		E e3 = v1.addX(v4);
-		F e4 = v2.addY(v3);
+		v1.add_x(v3);
+		v1.add_w(v3);
+		E e3 = v1.add_x(v4);
+		F e4 = v2.add_y(v3);
 		graph.createE(v1, v3);
-		H e6 = v1.addW(v4);
-		v3.removeSourceE(v1);
+		H e6 = v1.add_w(v4);
+		v3.remove_sourceE(v1);
+		commit(graph);
+		createReadOnlyTransaction(graph);
 		testIncidenceList(v1, e3, e6);
 		testIncidenceList(v2, e4);
 		testIncidenceList(v3, e4.getReversedEdge());
 		testIncidenceList(v4, e3.getReversedEdge(), e6.getReversedEdge());
+		commit(graph);
 	}
 
 	/**
 	 * Test with cyclic edges.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void removeSourcerolenameTest2() {
-		onlyTestWithoutTransactionSupport();
+	public void removeSourcerolenameTest2() throws CommitFailedException {
+		createTransaction(graph);
 		A v1 = graph.createA();
 		A v2 = graph.createA();
 		C v3 = graph.createC();
 		I e1 = graph.createI(v1, v1);
-		I e2 = v1.addV(v2);
-		v2.addV(v2);
+		I e2 = v1.add_v(v2);
+		v2.add_v(v2);
 		I e4 = graph.createI(v2, v3);
-		v2.removeSourceI(v2);
+		v2.remove_sourceI(v2);
+		commit(graph);
+		createReadOnlyTransaction(graph);
 		testIncidenceList(v1, e1, e1.getReversedEdge(), e2);
 		testIncidenceList(v2, e2.getReversedEdge(), e4);
 		testIncidenceList(v3, e4.getReversedEdge());
-	}
-
-	/**
-	 * Test if an error occurs if an E-edge is removed via removeSourceE ending
-	 * at a D2-vertex.
-	 */
-	@Test(expected = GraphException.class)
-	public void removeSourcerolenameTestException0() {
-		onlyTestWithoutTransactionSupport();
-		C2 v1 = graph.createC2();
-		D2 v2 = graph.createD2();
-		v2.removeSourceE(v1);
+		commit(graph);
 	}
 
 	/**
 	 * Random test
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void removeSourcerolenameRandomTest0() {
-		onlyTestWithoutTransactionSupport();
+	public void removeSourcerolenameRandomTest0() throws CommitFailedException {
+		createTransaction(graph);
 		A v1 = graph.createA();
 		C v2 = graph.createC();
 		B v3 = graph.createB();
@@ -1888,25 +2010,38 @@ public class RoleNameTest extends InstanceTest {
 				v12, v1Inci, v2Inci, v3Inci, v4Inci, v5Inci, v6Inci, v7Inci,
 				v8Inci, v9Inci, v10Inci, v11Inci, v12Inci);
 		deleteAll(false, v1, v3, v1Inci, v3Inci, "sourceE", "sourceH");
-		v3.removeSourceE(v1);
+		v3.remove_sourceE(v1);
+		commit(graph);
+		createReadOnlyTransaction(graph);
 		testIncidences(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12,
 				v1Inci, v2Inci, v3Inci, v4Inci, v5Inci, v6Inci, v7Inci, v8Inci,
 				v9Inci, v10Inci, v11Inci, v12Inci);
+		commit(graph);
+		createTransaction(graph);
 		deleteAll(false, v1, v4, v1Inci, v4Inci, "sourceE", "sourceH");
-		v4.removeSourceE(v1);
+		v4.remove_sourceE(v1);
+		commit(graph);
+		createReadOnlyTransaction(graph);
 		testIncidences(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12,
 				v1Inci, v2Inci, v3Inci, v4Inci, v5Inci, v6Inci, v7Inci, v8Inci,
 				v9Inci, v10Inci, v11Inci, v12Inci);
+		commit(graph);
+		createTransaction(graph);
 		deleteAll(false, v7, v6, v7Inci, v6Inci, "sourceH");
-		v6.removeSourceH(v7);
+		v6.remove_sourceH(v7);
+		commit(graph);
+		createTransaction(graph);
 		testIncidences(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12,
 				v1Inci, v2Inci, v3Inci, v4Inci, v5Inci, v6Inci, v7Inci, v8Inci,
 				v9Inci, v10Inci, v11Inci, v12Inci);
 		deleteAll(false, v9, v11, v9Inci, v11Inci, "sourceJ");
-		v11.removeSourceJ(v9);
+		v11.remove_sourceJ(v9);
+		commit(graph);
+		createReadOnlyTransaction(graph);
 		testIncidences(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12,
 				v1Inci, v2Inci, v3Inci, v4Inci, v5Inci, v6Inci, v7Inci, v8Inci,
 				v9Inci, v10Inci, v11Inci, v12Inci);
+		commit(graph);
 	}
 
 	/*
@@ -1915,71 +2050,76 @@ public class RoleNameTest extends InstanceTest {
 
 	/**
 	 * Test a vertex which has no adjacent sourceE-vertices.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getSourceRoleNameListTest0() {
-		onlyTestWithoutTransactionSupport();
+	public void getSourceRoleNameListTest0() throws CommitFailedException {
+		createTransaction(graph);
 		B v1 = graph.createB();
-		compareLists(new LinkedList<Vertex>(), v1.getSourceEList().toArray(
-				new Vertex[0]));
+		commit(graph);
+		createReadOnlyTransaction(graph);
+		compareLists(new LinkedList<Vertex>(), v1.get_sourceE());
+		commit(graph);
 	}
 
 	/**
 	 * Test a vertex which has adjacent sourceH-vertices.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getSourceRoleNameListTest1() {
-		onlyTestWithoutTransactionSupport();
+	public void getSourceRoleNameListTest1() throws CommitFailedException {
+		createTransaction(graph);
 		C v1 = graph.createC();
 		D v2 = graph.createD();
-		v2.addSourceH(v1);
-		v2.addSourceF(v1);
-		v2.addSourceH(v1);
-		v2.addSourceG(v1);
-		v2.addSourceH(v1);
+		v2.add_sourceH(v1);
+		v2.add_sourceF(v1);
+		v2.add_sourceH(v1);
+		v2.add_sourceG(v1);
+		v2.add_sourceH(v1);
 		LinkedList<Vertex> expected = new LinkedList<Vertex>();
 		expected.add(v1);
 		expected.add(v1);
 		expected.add(v1);
-		compareLists(expected, v2.getSourceHList().toArray(new Vertex[0]));
+		commit(graph);
+		createReadOnlyTransaction(graph);
+		compareLists(expected, v2.get_sourceH());
 		expected = new LinkedList<Vertex>();
 		expected.add(v1);
-		compareLists(expected, v2.getSourceFList().toArray(new Vertex[0]));
-		compareLists(expected, v2.getSourceGList().toArray(new Vertex[0]));
+		compareLists(expected, v2.get_sourceF());
+		compareLists(expected, v2.get_sourceG());
+		commit(graph);
 	}
 
 	/**
 	 * Test with cyclic edges.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getSourceRoleNameListTest2() {
-		onlyTestWithoutTransactionSupport();
+	public void getSourceRoleNameListTest2() throws CommitFailedException {
+		createTransaction(graph);
 		A v1 = graph.createA();
-		v1.addSourceI(v1);
+		v1.add_sourceI(v1);
 		graph.createI(v1, v1);
+		commit(graph);
+		createReadOnlyTransaction(graph);
 		LinkedList<Vertex> expected = new LinkedList<Vertex>();
 		expected.add(v1);
 		expected.add(v1);
-		compareLists(expected, v1.getSourceIList().toArray(new Vertex[0]));
-	}
-
-	/**
-	 * Test if an error occurs if you try to get a list of all sourceE-vertices
-	 * of one D2-vertex.
-	 */
-	@Test(expected = GraphException.class)
-	public void getSourceRoleNameListTestException0() {
-		onlyTestWithoutTransactionSupport();
-		D2 v1 = graph.createD2();
-		v1.getSourceEList();
+		compareLists(expected, v1.get_sourceI());
+		commit(graph);
 	}
 
 	/**
 	 * Random test
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getSourceRoleNameListRandomTest0() {
-		onlyTestWithoutTransactionSupport();
+	public void getSourceRoleNameListRandomTest0() throws CommitFailedException {
+		createTransaction(graph);
 		A v1 = graph.createA();
 		C v2 = graph.createC();
 		B v3 = graph.createB();
@@ -2007,48 +2147,51 @@ public class RoleNameTest extends InstanceTest {
 		createRandomGraph(false, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11,
 				v12, v1Inci, v2Inci, v3Inci, v4Inci, v5Inci, v6Inci, v7Inci,
 				v8Inci, v9Inci, v10Inci, v11Inci, v12Inci);
+		commit(graph);
 
+		createReadOnlyTransaction(graph);
 		LinkedList<Vertex> expected = getAllVerticesWithRolename(v1, "sourceI");
-		compareLists(expected, v1.getSourceIList().toArray(new Vertex[0]));
+		compareLists(expected, v1.get_sourceI());
 
 		expected = getAllVerticesWithRolename(v3, "sourceE", "sourceH");
-		compareLists(expected, v3.getSourceEList().toArray(new Vertex[0]));
+		compareLists(expected, v3.get_sourceE());
 		expected = getAllVerticesWithRolename(v3, "sourceH");
-		compareLists(expected, v3.getSourceHList().toArray(new Vertex[0]));
+		compareLists(expected, v3.get_sourceH());
 
 		expected = getAllVerticesWithRolename(v4, "sourceE", "sourceF",
 				"sourceG", "sourceH");
-		compareLists(expected, v4.getSourceEList().toArray(new Vertex[0]));
+		compareLists(expected, v4.get_sourceE());
 		expected = getAllVerticesWithRolename(v4, "sourceF");
-		compareLists(expected, v4.getSourceFList().toArray(new Vertex[0]));
+		compareLists(expected, v4.get_sourceF());
 		expected = getAllVerticesWithRolename(v4, "sourceG");
-		compareLists(expected, v4.getSourceGList().toArray(new Vertex[0]));
+		compareLists(expected, v4.get_sourceG());
 		expected = getAllVerticesWithRolename(v4, "sourceH");
-		compareLists(expected, v4.getSourceHList().toArray(new Vertex[0]));
+		compareLists(expected, v4.get_sourceH());
 
 		expected = getAllVerticesWithRolename(v5, "sourceE", "sourceH");
-		compareLists(expected, v5.getSourceEList().toArray(new Vertex[0]));
+		compareLists(expected, v5.get_sourceE());
 		expected = getAllVerticesWithRolename(v5, "sourceH");
-		compareLists(expected, v5.getSourceHList().toArray(new Vertex[0]));
+		compareLists(expected, v5.get_sourceH());
 
 		expected = getAllVerticesWithRolename(v6, "sourceE", "sourceF",
 				"sourceG", "sourceH");
-		compareLists(expected, v6.getSourceEList().toArray(new Vertex[0]));
+		compareLists(expected, v6.get_sourceE());
 		expected = getAllVerticesWithRolename(v6, "sourceF");
-		compareLists(expected, v6.getSourceFList().toArray(new Vertex[0]));
+		compareLists(expected, v6.get_sourceF());
 		expected = getAllVerticesWithRolename(v6, "sourceG");
-		compareLists(expected, v6.getSourceGList().toArray(new Vertex[0]));
+		compareLists(expected, v6.get_sourceG());
 		expected = getAllVerticesWithRolename(v6, "sourceH");
-		compareLists(expected, v6.getSourceHList().toArray(new Vertex[0]));
+		compareLists(expected, v6.get_sourceH());
 
 		expected = getAllVerticesWithRolename(v7, "sourceI");
-		compareLists(expected, v7.getSourceIList().toArray(new Vertex[0]));
+		compareLists(expected, v7.get_sourceI());
 
 		expected = getAllVerticesWithRolename(v11, "sourceJ");
-		compareLists(expected, v11.getSourceJList().toArray(new Vertex[0]));
+		compareLists(expected, v11.get_sourceJ());
 
 		expected = getAllVerticesWithRolename(v12, "sourceJ");
-		compareLists(expected, v12.getSourceJList().toArray(new Vertex[0]));
+		compareLists(expected, v12.get_sourceJ());
+		commit(graph);
 	}
 
 	/*
@@ -2062,12 +2205,13 @@ public class RoleNameTest extends InstanceTest {
 	/**
 	 * sourceE A--&gt{E}B targetE<br>
 	 * sourceF A--&gt{F}B targetF<br>
-	 * All rolenames are unique.
+	 * 
+	 * All rolenames are unique. There should be no exception.
 	 */
 	@Test
-	public void illegalRolenamesTest0() throws Exception {
-		onlyTestWithoutTransactionSupport();
-		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
+	public void legalRolenamesTest0() throws GraphIOException {
+		compileSchema("TGraph 2;"
+				+ "Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
 				+ "VertexClass B;"
@@ -2078,12 +2222,13 @@ public class RoleNameTest extends InstanceTest {
 	/**
 	 * sourceE A--&gt{E}B targetE<br>
 	 * sourceF A--&gt{F:E}B targetF<br>
-	 * All rolenames are unique with inheritance.
+	 * 
+	 * All rolenames are unique with inheritance. This test should succeed.
 	 */
 	@Test
-	public void illegalRolenamesTest1() throws Exception {
-		onlyTestWithoutTransactionSupport();
-		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
+	public void legalRolenamesTest1() throws GraphIOException {
+		compileSchema("TGraph 2;"
+				+ "Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
 				+ "VertexClass B;"
@@ -2094,12 +2239,13 @@ public class RoleNameTest extends InstanceTest {
 	/**
 	 * sourceE A--&gt{E}B targetE<br>
 	 * sourceE C--&gt{F}D targetE<br>
-	 * Same rolenames at different vertices.
+	 * 
+	 * Same rolenames at different vertices. This test should succeed.
 	 */
 	@Test
-	public void illegalRolenamesTest2() throws Exception {
-		onlyTestWithoutTransactionSupport();
-		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
+	public void legalRolenamesTest2() throws GraphIOException {
+		compileSchema("TGraph 2;"
+				+ "Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
 				+ "VertexClass B;"
@@ -2112,12 +2258,15 @@ public class RoleNameTest extends InstanceTest {
 	/**
 	 * A--&gt{E}B targetE<br>
 	 * A--&gt{F}B targetE<br>
+	 * 
 	 * Target rolename are the same and no source rolenames exist.<br>
+	 * This test fails, because at vertex A the rolename 'targetE' does not
+	 * tell, if you have an edge of type E or F.
 	 */
-	@Test(expected = InheritanceException.class)
-	public void illegalRolenamesTest3() throws Exception {
-		onlyTestWithoutTransactionSupport();
-		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
+	@Test(expected = GraphIOException.class)
+	public void illegalRolenamesTest3() throws GraphIOException {
+		compileSchema("TGraph 2;"
+				+ "Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;" + "VertexClass A;" + "VertexClass B;"
 				+ "EdgeClass E from A (0,*) to B (0,*) role targetE;"
 				+ "EdgeClass F from A (0,*) to B (0,*) role targetE;");
@@ -2126,12 +2275,13 @@ public class RoleNameTest extends InstanceTest {
 	/**
 	 * sourceE A--&gt{E}B targetE<br>
 	 * sourceE A--&gt{F}B targetE<br>
+	 * 
 	 * Target and source rolenames are the same.
 	 */
-	@Test(expected = InheritanceException.class)
-	public void illegalRolenamesTest4() throws Exception {
-		onlyTestWithoutTransactionSupport();
-		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
+	@Test(expected = GraphIOException.class)
+	public void illegalRolenamesTest4() throws GraphIOException {
+		compileSchema("TGraph 2;"
+				+ "Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
 				+ "VertexClass B;"
@@ -2142,12 +2292,13 @@ public class RoleNameTest extends InstanceTest {
 	/**
 	 * sourceE A--&gt{E}B targetE<br>
 	 * sourceF A--&gt{F}B targetE<br>
+	 * 
 	 * Target rolename are the same, but source rolenames are different.
 	 */
-	@Test(expected = InheritanceException.class)
-	public void illegalRolenamesTest5() throws Exception {
-		onlyTestWithoutTransactionSupport();
-		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
+	@Test(expected = GraphIOException.class)
+	public void illegalRolenamesTest5() throws GraphIOException {
+		compileSchema("TGraph 2;"
+				+ "Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
 				+ "VertexClass B;"
@@ -2157,12 +2308,13 @@ public class RoleNameTest extends InstanceTest {
 
 	/**
 	 * targetE A--&gt{E}B targetE<br>
+	 * 
 	 * Source and target rolename are the same.
 	 */
 	@Test
-	public void illegalRolenamesTest6() throws Exception {
-		onlyTestWithoutTransactionSupport();
-		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
+	public void legalRolenamesTest6() throws GraphIOException {
+		compileSchema("TGraph 2;"
+				+ "Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
 				+ "VertexClass B;"
@@ -2171,12 +2323,13 @@ public class RoleNameTest extends InstanceTest {
 
 	/**
 	 * sourceE A--&gt{E}B:A targetE<br>
+	 * 
 	 * A cyclic edge with different rolenames.
 	 */
 	@Test
-	public void illegalRolenamesTest7() throws Exception {
-		onlyTestWithoutTransactionSupport();
-		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
+	public void legalRolenamesTest7() throws GraphIOException {
+		compileSchema("TGraph 2;"
+				+ "Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
 				+ "VertexClass B:A;"
@@ -2185,12 +2338,13 @@ public class RoleNameTest extends InstanceTest {
 
 	/**
 	 * targetE A--&gt{E}A targetE<br>
+	 * 
 	 * A cyclic edge with the same source and target rolename.
 	 */
-	@Test(expected = InheritanceException.class)
-	public void illegalRolenamesTest8() throws Exception {
-		onlyTestWithoutTransactionSupport();
-		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
+	@Test(expected = GraphIOException.class)
+	public void illegalRolenamesTest8() throws GraphIOException {
+		compileSchema("TGraph 2;"
+				+ "Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
 				+ "EdgeClass E from A (0,*) role targetE to A (0,*) role targetE;");
@@ -2198,13 +2352,14 @@ public class RoleNameTest extends InstanceTest {
 
 	/**
 	 * targetE A--&gt{E}B:A targetE<br>
+	 * 
 	 * Source and target rolename are the same and the edge ends at a subvertex
 	 * of its alpha vertex.
 	 */
-	@Test(expected = InheritanceException.class)
-	public void illegalRolenamesTest9() throws Exception {
-		onlyTestWithoutTransactionSupport();
-		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
+	@Test(expected = GraphIOException.class)
+	public void illegalRolenamesTest9() throws GraphIOException {
+		compileSchema("TGraph 2;"
+				+ "Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
 				+ "VertexClass B:A;"
@@ -2215,11 +2370,13 @@ public class RoleNameTest extends InstanceTest {
 	 * targetE C:A--&gt{E}B:A targetE<br>
 	 * Source and target rolename are the same. Alpha and omega are subclasses
 	 * of the same vertexclass.
+	 * 
+	 * This schema should be valid.
 	 */
 	@Test
-	public void illegalRolenamesTest10() throws Exception {
-		onlyTestWithoutTransactionSupport();
-		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
+	public void legalRolenamesTest10() throws GraphIOException {
+		compileSchema("TGraph 2;"
+				+ "Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
 				+ "VertexClass B:A;"
@@ -2230,11 +2387,13 @@ public class RoleNameTest extends InstanceTest {
 	/**
 	 * sourceE A--&gt{E}B:A targetE<br>
 	 * sourceE B:A--&gt{F}B:A targetE
+	 * 
+	 * This schema should be valid.
 	 */
-	@Test(expected = InheritanceException.class)
-	public void illegalRolenamesTest11() throws Exception {
-		onlyTestWithoutTransactionSupport();
-		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
+	@Test(expected = GraphIOException.class)
+	public void illegalRolenamesTest11() throws GraphIOException {
+		compileSchema("TGraph 2;"
+				+ "Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
 				+ "VertexClass B;"
@@ -2245,11 +2404,13 @@ public class RoleNameTest extends InstanceTest {
 	/**
 	 * sourceE A--&gt{E}B:A targetE<br>
 	 * sourceF B:A--&gt{F}B:A targetE
+	 * 
+	 * This schema should be valid.
 	 */
 	@Test
-	public void illegalRolenamesTest12() throws Exception {
-		onlyTestWithoutTransactionSupport();
-		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
+	public void legalRolenamesTest12() throws GraphIOException {
+		compileSchema("TGraph 2;"
+				+ "Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
 				+ "VertexClass B;"
@@ -2260,11 +2421,13 @@ public class RoleNameTest extends InstanceTest {
 	/**
 	 * sourceE A--&gt{E}B targetE<br>
 	 * sourceF C:A--&gt{F:E}D:B targetF<br>
+	 * 
+	 * This schema should be valid.
 	 */
 	@Test
-	public void illegalRolenamesTest13() throws Exception {
-		onlyTestWithoutTransactionSupport();
-		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
+	public void legalRolenamesTest13() throws GraphIOException {
+		compileSchema("TGraph 2;"
+				+ "Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
 				+ "VertexClass B;"
@@ -2277,11 +2440,14 @@ public class RoleNameTest extends InstanceTest {
 	/**
 	 * sourceE A--&gt{E}B targetE<br>
 	 * sourceE C:A--&gt{F:E}D:B targetF<br>
+	 * 
+	 * There can only be one rolename in the inheritance tree of a vertex. In
+	 * this case B and D.
 	 */
-	@Test
-	public void illegalRolenamesTest14() throws Exception {
-		onlyTestWithoutTransactionSupport();
-		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
+	@Test(expected = GraphIOException.class)
+	public void illegalRolenamesTest14() throws GraphIOException {
+		compileSchema("TGraph 2;"
+				+ "Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
 				+ "VertexClass B;"
@@ -2294,12 +2460,13 @@ public class RoleNameTest extends InstanceTest {
 	/**
 	 * sourceE A--&gt{E}B targetE<br>
 	 * sourceE C:A--&gt{F:E}D:B targetE<br>
-	 *TODO is this wanted??
+	 * 
+	 * A rolename cannot be defined twice in the same inheritance tree.
 	 */
-	@Test
-	public void illegalRolenamesTest15() throws Exception {
-		onlyTestWithoutTransactionSupport();
-		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
+	@Test(expected = GraphIOException.class)
+	public void illegalRolenamesTest15() throws GraphIOException {
+		compileSchema("TGraph 2;"
+				+ "Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
 				+ "VertexClass B;"
@@ -2312,11 +2479,13 @@ public class RoleNameTest extends InstanceTest {
 	/**
 	 * sourceE A--&gt{E}B targetE<br>
 	 * sourceE C:A--&gt{F}D:B targetE<br>
+	 * 
+	 * A rolename cannot be defined twice in the same inheritance tree.
 	 */
-	@Test(expected = InheritanceException.class)
-	public void illegalRolenamesTest16() throws Exception {
-		onlyTestWithoutTransactionSupport();
-		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
+	@Test(expected = GraphIOException.class)
+	public void illegalRolenamesTest16() throws GraphIOException {
+		compileSchema("TGraph 2;"
+				+ "Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
 				+ "VertexClass B;"
@@ -2329,11 +2498,13 @@ public class RoleNameTest extends InstanceTest {
 	/**
 	 * sourceE A--&gt{E}B targetE<br>
 	 * sourceF C--&gt{F}B targetE<br>
+	 * 
+	 * A rolename cannot be defined twice in the same inheritance tree.
 	 */
 	@Test
-	public void illegalRolenamesTest17() throws Exception {
-		onlyTestWithoutTransactionSupport();
-		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
+	public void legalRolenamesTest17() throws GraphIOException {
+		compileSchema("TGraph 2;"
+				+ "Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
 				+ "VertexClass B;"
@@ -2345,11 +2516,14 @@ public class RoleNameTest extends InstanceTest {
 	/**
 	 * sourceE A--&gt{E}B targetE<br>
 	 * sourceE C--&gt{F}B targetE<br>
+	 * 
+	 * A rolename cannot be defined twice for the same vertex. Remember: A
+	 * rolename will become a attribute in the opposite vertex
 	 */
-	@Test(expected = InheritanceException.class)
-	public void illegalRolenamesTest18() throws Exception {
-		onlyTestWithoutTransactionSupport();
-		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
+	@Test(expected = GraphIOException.class)
+	public void illegalRolenamesTest18() throws GraphIOException {
+		compileSchema("TGraph 2;"
+				+ "Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
 				+ "VertexClass B;"
@@ -2365,11 +2539,13 @@ public class RoleNameTest extends InstanceTest {
 	/**
 	 * sourceE A--&gt{E}B targetE<br>
 	 * sourceF C--&gt{F}D targetF redefines targetE<br>
+	 * 
+	 * Only edge inheriting a rolename can redefine it.
 	 */
-	@Test(expected = InheritanceException.class)
-	public void illegalRolenamesTest19() throws Exception {
-		onlyTestWithoutTransactionSupport();
-		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
+	@Test(expected = GraphIOException.class)
+	public void illegalRolenamesTest19() throws GraphIOException {
+		compileSchema("TGraph 2;"
+				+ "Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
 				+ "VertexClass B;"
@@ -2382,11 +2558,13 @@ public class RoleNameTest extends InstanceTest {
 	/**
 	 * sourceE A--&gt{E}B targetE<br>
 	 * sourceF A--&gt{F}B targetF redefines targetE<br>
+	 * 
+	 * Only edge inheriting a rolename can redefine it.
 	 */
-	@Test(expected = InheritanceException.class)
-	public void illegalRolenamesTest23() throws Exception {
-		onlyTestWithoutTransactionSupport();
-		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
+	@Test(expected = GraphIOException.class)
+	public void illegalRolenamesTest23() throws GraphIOException {
+		compileSchema("TGraph 2;"
+				+ "Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
 				+ "VertexClass B;"
@@ -2397,11 +2575,13 @@ public class RoleNameTest extends InstanceTest {
 	/**
 	 * sourceE A--&gt{E}B targetE<br>
 	 * sourceF C:A--&gt{F}D:B targetF redefines targetE<br>
+	 * 
+	 * Only edge inheriting a rolename can redefine it.
 	 */
-	@Test
-	public void illegalRolenamesTest20() throws Exception {
-		onlyTestWithoutTransactionSupport();
-		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
+	@Test(expected = GraphIOException.class)
+	public void illegalRolenamesTest20() throws GraphIOException {
+		compileSchema("TGraph 2;"
+				+ "Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
 				+ "VertexClass B;"
@@ -2414,11 +2594,13 @@ public class RoleNameTest extends InstanceTest {
 	/**
 	 * sourceE A--&gt{E}B targetE<br>
 	 * sourceF C:A--&gt{F}D:B targetE redefines targetE<br>
+	 * 
+	 * Only edge inheriting a rolename can redefine it.
 	 */
-	@Test(expected = InheritanceException.class)
-	public void illegalRolenamesTest21() throws Exception {
-		onlyTestWithoutTransactionSupport();
-		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
+	@Test(expected = GraphIOException.class)
+	public void illegalRolenamesTest21() throws GraphIOException {
+		compileSchema("TGraph 2;"
+				+ "Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
 				+ "VertexClass B;"
@@ -2431,11 +2613,13 @@ public class RoleNameTest extends InstanceTest {
 	/**
 	 * sourceE A--&gt{E}B targetE<br>
 	 * sourceF C--&gt{F}D targetF redefines targetE<br>
+	 * 
+	 * Only edge inheriting a rolename can redefine it.
 	 */
-	@Test(expected = InheritanceException.class)
-	public void illegalRolenamesTest22() throws Exception {
-		onlyTestWithoutTransactionSupport();
-		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
+	@Test(expected = GraphIOException.class)
+	public void illegalRolenamesTest22() throws GraphIOException {
+		compileSchema("TGraph 2;"
+				+ "Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
 				+ "VertexClass B;"
@@ -2448,11 +2632,13 @@ public class RoleNameTest extends InstanceTest {
 	/**
 	 * sourceE A--&gt{E}B targetE<br>
 	 * sourceF A--&gt{F:E}B targetF redefines targetE<br>
+	 * 
+	 * This should be valid schema.
 	 */
-	@Test(expected = InheritanceException.class)
-	public void illegalRolenamesTest24() throws Exception {
-		onlyTestWithoutTransactionSupport();
-		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
+	@Test
+	public void legalRolenamesTest24() throws GraphIOException {
+		compileSchema("TGraph 2;"
+				+ "Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
 				+ "VertexClass B;"
@@ -2463,11 +2649,13 @@ public class RoleNameTest extends InstanceTest {
 	/**
 	 * sourceE A--&gt{E}B targetE<br>
 	 * sourceF C:A--&gt{F:E}D:B targetF redefines targetE<br>
+	 * 
+	 * This should be valid schema.
 	 */
 	@Test
-	public void illegalRolenamesTest25() throws Exception {
-		onlyTestWithoutTransactionSupport();
-		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
+	public void legalRolenamesTest25() throws GraphIOException {
+		compileSchema("TGraph 2;"
+				+ "Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
 				+ "VertexClass B;"
@@ -2482,11 +2670,12 @@ public class RoleNameTest extends InstanceTest {
 	 * sourceF C:A--&gt{F:E}D:B targetE redefines targetE<br>
 	 * <br>
 	 * "x redefines x": this is currently OK in JGraLab, may change in future
-	 * versions
+	 * 
+	 * This should be valid schema.
 	 */
-	public void illegalRolenamesTest26() throws Exception {
-		onlyTestWithoutTransactionSupport();
-		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
+	public void legalRolenamesTest26() throws GraphIOException {
+		compileSchema("TGraph 2;"
+				+ "Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
 				+ "VertexClass B;"
@@ -2499,11 +2688,13 @@ public class RoleNameTest extends InstanceTest {
 	/**
 	 * sourceE A--&gt{E}B targetE<br>
 	 * sourceF redefines sourceE C--&gt{F}B targetE<br>
+	 * 
+	 * Only edge inheriting a rolename can redefine it.
 	 */
-	@Test(expected = InheritanceException.class)
-	public void illegalRolenamesTest27() throws Exception {
-		onlyTestWithoutTransactionSupport();
-		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
+	@Test(expected = GraphIOException.class)
+	public void illegalRolenamesTest27() throws GraphIOException {
+		compileSchema("TGraph 2;"
+				+ "Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
 				+ "VertexClass B;"
@@ -2513,14 +2704,16 @@ public class RoleNameTest extends InstanceTest {
 	}
 
 	/**
-	 * a A--&gt{H}B b<br>
-	 * x redefines y C:D--&gt{F}B v<br>
+	 * a A--&gt{H}B:E b<br>
 	 * y D--&gt{G}E z<br>
+	 * x redefines y C:D--&gt{F:G}B:E v<br>
+	 * 
+	 * Only edge inheriting a rolename can redefine it.
 	 */
-	@Test
-	public void illegalRolenamesTest28() throws Exception {
-		onlyTestWithoutTransactionSupport();
-		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
+	@Test(expected = GraphIOException.class)
+	public void illegalRolenamesTest28() throws GraphIOException {
+		compileSchema("TGraph 2;"
+				+ "Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
 				+ "VertexClass B;"
@@ -2528,18 +2721,20 @@ public class RoleNameTest extends InstanceTest {
 				+ "VertexClass C:D;"
 				+ "VertexClass E;"
 				+ "EdgeClass H from A (0,*) role a to B (0,*) role b;"
-				+ "EdgeClass G from D (0,*) role z to E (0,*) role y;"
-				+ "EdgeClass F from C (0,*) role v to B (0,*) role x redefines y;");
+				+ "EdgeClass G from D (0,*) role y to E (0,*) role z;"
+				+ "EdgeClass F from C (0,*) role x redefines y to B (0,*) role v;");
 	}
 
 	/**
 	 * d D--&gt{E}A a<br>
-	 * b B:D--&gt{F}C c redefines a<br>
+	 * b B:D--&gt{F}C:A c redefines a<br>
+	 * 
+	 * Only edge inheriting a rolename can redefine it.
 	 */
-	@Test
-	public void illegalRolenamesTest29() throws Exception {
-		onlyTestWithoutTransactionSupport();
-		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
+	@Test(expected = GraphIOException.class)
+	public void illegalRolenamesTest29() throws GraphIOException {
+		compileSchema("TGraph 2;"
+				+ "Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
 				+ "VertexClass B:D;"
@@ -2547,17 +2742,5 @@ public class RoleNameTest extends InstanceTest {
 				+ "VertexClass D;"
 				+ "EdgeClass E from D (0,*) role d to A (0,*) role a;"
 				+ "EdgeClass F from B (0,*) role b to C (0,*) role c redefines a;");
-	}
-
-	/**
-	 * Creation of Methods with equal name. TODO
-	 */
-	@Test
-	public void illegalRolenamesTest30() throws Exception {
-		onlyTestWithoutTransactionSupport();
-		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
-				+ "GraphClass TestGraph;" + "VertexClass A {xList: Integer};"
-				+ "VertexClass B;"
-				+ "EdgeClass E from A (0,*) to B (0,*) role x;");
 	}
 }

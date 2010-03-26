@@ -1,7 +1,7 @@
 package de.uni_koblenz.jgralab.impl.trans;
 
 import de.uni_koblenz.jgralab.AttributedElement;
-import de.uni_koblenz.jgralab.trans.JGraLabCloneable;
+import de.uni_koblenz.jgralab.trans.JGraLabTransactionCloneable;
 
 /**
  * This class is responsible for the versioning of cloneable classes in the
@@ -13,8 +13,8 @@ import de.uni_koblenz.jgralab.trans.JGraLabCloneable;
  * @param <E>
  *            the type
  */
-public class VersionedJGraLabCloneableImpl<E extends JGraLabCloneable> extends
-		VersionedDataObjectImpl<E> {
+public class VersionedJGraLabCloneableImpl<E extends JGraLabTransactionCloneable>
+		extends VersionedDataObjectImpl<E> {
 
 	/**
 	 * Should be used for attributes.
@@ -56,19 +56,16 @@ public class VersionedJGraLabCloneableImpl<E extends JGraLabCloneable> extends
 	public VersionedJGraLabCloneableImpl(AttributedElement attributedElement) {
 		super(attributedElement);
 	}
-	
-	public VersionedJGraLabCloneableImpl() {
-		super();
-	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public E copyOf(E dataObject) {
-		if (dataObject == null)
+		if (dataObject == null) {
 			return null;
+		}
 		return (E) dataObject.clone();
 	}
-	
+
 	@Override
 	public boolean isCloneable() {
 		return true;

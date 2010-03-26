@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -79,18 +79,31 @@ public abstract class GraphElementClassImpl extends AttributedElementClassImpl
 		output.append(attributesToString());
 
 		if (this instanceof VertexClass) {
-			output.append("may connect to edgeclasses: ");
-			boolean first = true;
-			for (AttributedElementClass aec : ((VertexClass) this)
-					.getEdgeClasses()) {
-				if (first) {
-					first = false;
-				} else {
-					output.append(", ");
-				}
-				output.append(aec.getQualifiedName());
-
-			}
+			output.append("outgoing edge classes: ");
+//			boolean first = true;
+//			for (IncidenceClass ic : ((VertexClass) this)
+//					.getOwnOutIncidenceClasses()) {
+//				if (first) {
+//					first = false;
+//				} else {
+//					output.append(", ");
+//				}
+//				output.append(ic.getEdgeClass().getQualifiedName());
+//
+//			}
+			output.append("\n");
+			output.append("incomming edge classes: ");
+//			first = true;
+//			for (IncidenceClass ic : ((VertexClass) this)
+//					.getOwnInIncidenceClasses()) {
+//				if (first) {
+//					first = false;
+//				} else {
+//					output.append(", ");
+//				}
+//				output.append(ic.getEdgeClass().getQualifiedName());
+//
+//			}
 			output.append("\n");
 		}
 		output.append("\n");

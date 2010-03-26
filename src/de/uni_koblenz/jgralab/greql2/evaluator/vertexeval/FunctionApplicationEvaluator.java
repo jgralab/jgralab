@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -66,7 +66,13 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 
 	private ArrayList<VertexEvaluator> parameterEvaluators = null;
 
-	private JValueTypeCollection typeArgument;
+	private JValueTypeCollection typeArgument = null;
+
+	private JValue[] parameters = null;
+
+	private int paramEvalCount = 0;
+
+	boolean listCreated = false;
 
 	/**
 	 * The name of this function
@@ -110,6 +116,10 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 			}
 			greql2Function = Greql2FunctionLibrary.instance().getGreqlFunction(
 					functionName);
+			if (greql2Function == null) {
+				throw new UndefinedFunctionException(vertex,
+						createPossibleSourcePositions());
+			}
 		}
 		return greql2Function;
 	}
@@ -176,23 +186,23 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 	 */
 	@Override
 	public JValue evaluate() throws EvaluateException {
-		typeArgument = createTypeArgument();
-		parameterEvaluators = createVertexEvaluatorList();
-		int parameterCount = parameterEvaluators.size();
-		if (typeArgument != null) {
-			parameterCount++;
-		}
-		JValue[] parameters = new JValue[parameterCount];
-		if (typeArgument != null) {
-			parameters[parameterCount - 1] = typeArgument;
-		}
-		getGreql2Function();
-		if (greql2Function == null) {
-			throw new UndefinedFunctionException(vertex,
-					createPossibleSourcePositions());
+		if (!listCreated) {
+			typeArgument = createTypeArgument();
+			parameterEvaluators = createVertexEvaluatorList();
+			int parameterCount = parameterEvaluators.size();
+			if (typeArgument != null) {
+				parameterCount++;
+			}
+			parameters = new JValue[parameterCount];
+			if (typeArgument != null) {
+				parameters[parameterCount - 1] = typeArgument;
+			}
+			paramEvalCount = parameterEvaluators.size();
+			getGreql2Function();
+			listCreated = true;
 		}
 
-		for (int i = 0; i < parameterEvaluators.size(); i++) {
+		for (int i = 0; i < paramEvalCount; i++) {
 			parameters[i] = parameterEvaluators.get(i).getResult(subgraph);
 		}
 
@@ -200,7 +210,7 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 			result = greql2Function.evaluate(graph, subgraph, parameters);
 		} catch (EvaluateException ex) {
 			throw new QuerySourceException(ex.getMessage(), vertex,
-					createPossibleSourcePositions(), ex);
+						createPossibleSourcePositions(), ex);
 		}
 		return result;
 	}

@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -28,8 +28,8 @@ import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.AggregationPathDescriptionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.AlternativePathDescriptionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.BackwardVertexSetEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.BagComprehensionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.BagConstructionEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ComprehensionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ConditionalExpressionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.DeclarationEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.DefinitionEvaluator;
@@ -43,7 +43,6 @@ import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.FunctionApplicationEva
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.Greql2ExpressionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.IntermediateVertexPathDescriptionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.IteratedPathDescriptionEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.LetExpressionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ListConstructionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ListRangeConstructionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.MapComprehensionEvaluator;
@@ -66,7 +65,6 @@ import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.TypeIdEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VariableEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexSetExpressionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexSubgraphExpressionEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.WhereExpressionEvaluator;
 
 /**
  * This interface is implemented by all costmodels.
@@ -110,7 +108,7 @@ public interface CostModel {
 			BackwardVertexSetEvaluator e, GraphSize graphSize);
 
 	public VertexCosts calculateCostsBagComprehension(
-			BagComprehensionEvaluator e, GraphSize graphSize);
+			ComprehensionEvaluator e, GraphSize graphSize);
 
 	public VertexCosts calculateCostsBagConstruction(
 			BagConstructionEvaluator e, GraphSize graphSize);
@@ -154,8 +152,6 @@ public interface CostModel {
 	public VertexCosts calculateCostsIteratedPathDescription(
 			IteratedPathDescriptionEvaluator e, GraphSize graphSize);
 
-	public VertexCosts calculateCostsLetExpression(LetExpressionEvaluator e,
-			GraphSize graphSize);
 
 	public VertexCosts calculateCostsListConstruction(
 			ListConstructionEvaluator e, GraphSize graphSize);
@@ -228,9 +224,6 @@ public interface CostModel {
 	public VertexCosts calculateCostsVertexSubgraphExpression(
 			VertexSubgraphExpressionEvaluator e, GraphSize graphSize);
 
-	public VertexCosts calculateCostsWhereExpression(
-			WhereExpressionEvaluator e, GraphSize graphSize);
-
 	/*
 	 * The methods to calculate the cardinality
 	 */
@@ -239,7 +232,7 @@ public interface CostModel {
 			BackwardVertexSetEvaluator e, GraphSize graphSize);
 
 	public long calculateCardinalityBagComprehension(
-			BagComprehensionEvaluator e, GraphSize graphSize);
+			ComprehensionEvaluator e, GraphSize graphSize);
 
 	public long calculateCardinalityBagConstruction(BagConstructionEvaluator e,
 			GraphSize graphSize);

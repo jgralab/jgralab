@@ -1,5 +1,7 @@
 package de.uni_koblenz.jgralab.trans;
 
+import de.uni_koblenz.jgralab.impl.trans.TransactionImpl;
+
 /**
  * This interface represents a versioned data-object of type <code>E</code>. It
  * is responsible for the (centralized) management of persistent versions of the

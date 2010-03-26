@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -38,8 +38,8 @@ import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclarationLayer;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTable;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTuple;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
@@ -62,10 +62,45 @@ public class TableComprehensionEvaluator extends VertexEvaluator {
 	 * The TableComprehension-Vertex this evaluator evaluates
 	 */
 	private TableComprehension vertex;
+	
+	private VariableDeclarationLayer declarationLayer;
+	
+	private VertexEvaluator columnHeaderEval = null;
+	
+	private VertexEvaluator rowHeaderEval = null;
+	
+	private VertexEvaluator resultDefEval = null;
+	
+	private boolean initialized = false;
+	
+	private void initialize() {
+		Declaration d = (Declaration) vertex.getFirstIsCompDeclOf(
+				EdgeDirection.IN).getAlpha();
+		DeclarationEvaluator declEval = (DeclarationEvaluator) greqlEvaluator
+				.getVertexEvaluatorGraphMarker().getMark(d);
+		declarationLayer = (VariableDeclarationLayer) declEval.getResult(subgraph).toObject();
+
+		Expression columnHeader = (Expression) vertex
+				.getFirstIsColumnHeaderExprOf(EdgeDirection.IN).getAlpha();
+		columnHeaderEval = greqlEvaluator
+				.getVertexEvaluatorGraphMarker().getMark(columnHeader);
+		Expression rowHeader = (Expression) vertex.getFirstIsRowHeaderExprOf(
+				EdgeDirection.IN).getAlpha();
+		rowHeaderEval = greqlEvaluator
+				.getVertexEvaluatorGraphMarker().getMark(rowHeader);
+		Expression resultDef = (Expression) vertex.getFirstIsCompResultDefOf(
+				EdgeDirection.IN).getAlpha();
+		resultDefEval = greqlEvaluator
+				.getVertexEvaluatorGraphMarker().getMark(resultDef);
+		initialized = true;
+	}
+	
+	
 
 	/**
 	 * returns the vertex this VertexEvaluator evaluates
 	 */
+	@Override
 	public Greql2Vertex getVertex() {
 		return vertex;
 	}
@@ -84,37 +119,18 @@ public class TableComprehensionEvaluator extends VertexEvaluator {
 		this.vertex = vertex;
 	}
 
+	@Override
 	public JValue evaluate() throws EvaluateException {
-		Declaration d = (Declaration) vertex.getFirstIsCompDeclOf(
-				EdgeDirection.IN).getAlpha();
-		DeclarationEvaluator declEval = (DeclarationEvaluator) greqlEvaluator
-				.getVertexEvaluatorGraphMarker().getMark(d);
-		VariableDeclarationLayer declLayer = null;
-		try {
-			declLayer = declEval.getResult(subgraph).toDeclarationLayer();
-		} catch (JValueInvalidTypeException exception) {
-			throw new EvaluateException("Error evaluating TableComprehension",
-					exception);
+		if (!initialized) {
+			initialize();
 		}
-
-		Expression columnHeader = (Expression) vertex
-				.getFirstIsColumnHeaderExprOf(EdgeDirection.IN).getAlpha();
-		VertexEvaluator columnHeaderEval = greqlEvaluator
-				.getVertexEvaluatorGraphMarker().getMark(columnHeader);
-		Expression rowHeader = (Expression) vertex.getFirstIsRowHeaderExprOf(
-				EdgeDirection.IN).getAlpha();
-		VertexEvaluator rowHeaderEval = greqlEvaluator
-				.getVertexEvaluatorGraphMarker().getMark(rowHeader);
-		Expression resultDef = (Expression) vertex.getFirstIsCompResultDefOf(
-				EdgeDirection.IN).getAlpha();
-		VertexEvaluator resultDefEval = greqlEvaluator
-				.getVertexEvaluatorGraphMarker().getMark(resultDef);
 		TreeMap<JValue, HashMap<JValue, JValue>> tableMap = new TreeMap<JValue, HashMap<JValue, JValue>>();
 		Set<JValue> completeColumnHeaderTuple = new HashSet<JValue>();
 		TreeSet<JValue> rowHeaderSet = new TreeSet<JValue>();
 
 		int noOfVarCombinations = 0;
-		while (declLayer.iterate(subgraph)) {
+		declarationLayer.reset();
+		while (declarationLayer.iterate(subgraph)) {
 			noOfVarCombinations++;
 			JValue columnHeaderEntry = columnHeaderEval.getResult(subgraph);
 			completeColumnHeaderTuple.add(columnHeaderEntry);
@@ -133,9 +149,9 @@ public class TableComprehensionEvaluator extends VertexEvaluator {
 		JValueTable resultTable = new JValueTable();
 		JValueTuple headerTuple = resultTable.getHeader();
 		TreeSet<JValue> completeColumnHeaderTreeSet = new TreeSet<JValue>();
-		for (Iterator<JValue> iter = completeColumnHeaderTuple.iterator(); iter
-				.hasNext();)
-			completeColumnHeaderTreeSet.add(iter.next());
+		for (JValue jValueImpl : completeColumnHeaderTuple) {
+			completeColumnHeaderTreeSet.add(jValueImpl);
+		}
 		Iterator<JValue> colIter = completeColumnHeaderTreeSet.iterator();
 		IsTableHeaderOf tHeader = vertex
 				.getFirstIsTableHeaderOf(EdgeDirection.IN);
@@ -145,11 +161,13 @@ public class TableComprehensionEvaluator extends VertexEvaluator {
 					.getMark(tHeader.getAlpha());
 			headerTuple.add(theval.getResult(subgraph));
 		} else {
-			headerTuple.add(new JValue("")); // dummy entry in the upper left
+			headerTuple.add(new JValueImpl("")); // dummy entry in the upper
+			// left
 			// corner
 		}
-		while (colIter.hasNext())
+		while (colIter.hasNext()) {
 			headerTuple.add(colIter.next());
+		}
 		Iterator<Entry<JValue, HashMap<JValue, JValue>>> rowIter = tableMap
 				.entrySet().iterator();
 		while (rowIter.hasNext()) {
@@ -163,8 +181,9 @@ public class TableComprehensionEvaluator extends VertexEvaluator {
 			rowTuple.add(currentRowHeader);
 			while (colIter.hasNext()) {
 				JValue cellEntry = currentRow.get(colIter.next());
-				if (cellEntry == null)
-					cellEntry = new JValue();
+				if (cellEntry == null) {
+					cellEntry = new JValueImpl();
+				}
 				rowTuple.add(cellEntry);
 			}
 			resultTable.add(rowTuple);

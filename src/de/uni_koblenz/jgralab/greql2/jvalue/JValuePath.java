@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -41,7 +41,7 @@ import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
  * @author ist@uni-koblenz.de
  * 
  */
-public class JValuePath extends JValue {
+public class JValuePath extends JValueImpl {
 
 	/**
 	 * returns a JValuePath-Reference to this JValue object
@@ -266,7 +266,7 @@ public class JValuePath extends JValue {
 		Iterator<Vertex> iter = vertices.iterator();
 		while (iter.hasNext()) {
 			// TODO
-			nodeList.add(new JValue(iter.next(), null));
+			nodeList.add(new JValueImpl(iter.next(), null));
 		}
 		return nodeList;
 	}
@@ -286,7 +286,7 @@ public class JValuePath extends JValue {
 		Iterator<Edge> iter = edges.iterator();
 		while (iter.hasNext()) {
 			Edge edge = iter.next();
-			edgeList.add(new JValue(edge, edge));
+			edgeList.add(new JValueImpl(edge, edge));
 		}
 		return edgeList;
 	}
@@ -300,9 +300,9 @@ public class JValuePath extends JValue {
 		Iterator<Edge> eiter = edges.iterator();
 		Iterator<Vertex> viter = vertices.iterator();
 		while (viter.hasNext()) {
-			list.add(new JValue(viter.next()));
+			list.add(new JValueImpl(viter.next()));
 			if (eiter.hasNext()) {
-				list.add(new JValue(eiter.next()));
+				list.add(new JValueImpl(eiter.next()));
 			}
 		}
 		return list;
@@ -387,12 +387,12 @@ public class JValuePath extends JValue {
 			if ((index < edges.size()) && (index > 0)) {
 				if (orientation) {
 					if (edges.get(index).getOmega() == vertex) {
-						returnSet.add(new JValue(edges.get(index), edges
+						returnSet.add(new JValueImpl(edges.get(index), edges
 								.get(index)));
 					}
 				} else {
 					if (edges.get(index).getAlpha() == vertex) {
-						returnSet.add(new JValue(edges.get(index), edges
+						returnSet.add(new JValueImpl(edges.get(index), edges
 								.get(index)));
 					}
 				}
@@ -419,7 +419,7 @@ public class JValuePath extends JValue {
 				if ((edges.get(index).getOmega() == vertex)
 						|| (edges.get(index).getAlpha() == vertex)) {
 					returnSet
-							.add(new JValue(edges.get(index), edges.get(index)));
+							.add(new JValueImpl(edges.get(index), edges.get(index)));
 				}
 			}
 		}
@@ -434,7 +434,7 @@ public class JValuePath extends JValue {
 		Iterator<Vertex> iter = vertices.iterator();
 		while (iter.hasNext()) {
 			// TODO
-			resultSet.add(new JValue(iter.next().getAttributedElementClass(),
+			resultSet.add(new JValueImpl(iter.next().getAttributedElementClass(),
 					null));
 		}
 		return resultSet;
@@ -448,7 +448,7 @@ public class JValuePath extends JValue {
 		Iterator<Edge> iter = edges.iterator();
 		while (iter.hasNext()) {
 			Edge edge = iter.next();
-			resultSet.add(new JValue(edge.getAttributedElementClass(), edge));
+			resultSet.add(new JValueImpl(edge.getAttributedElementClass(), edge));
 		}
 		return resultSet;
 	}

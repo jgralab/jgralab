@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -24,6 +24,7 @@
 
 package de.uni_koblenz.jgralab;
 
+import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 
 /**
@@ -319,5 +320,33 @@ public interface Edge extends GraphElement {
 	 * returns true if this edge is the "normal" edge, false otherwise
 	 */
 	public boolean isNormal();
-
+	
+	
+	/**
+	 * @return the semantics of this edge, e.g. AggregationKind.NONE, SHARED or COMPOSITE
+	 */
+	public AggregationKind getSemantics();
+	
+	
+	/**
+	 * @return the semantics of the alpha end of this edge, e.g. AggregationKind.NONE, SHARED or COMPOSITE
+	 */
+	public AggregationKind getAlphaSemantics();
+	
+	/**
+	 * @return the semantics of the omega end of this edge, e.g. AggregationKind.NONE, SHARED or COMPOSITE
+	 */
+	public AggregationKind getOmegaSemantics();
+	
+	/**
+	 * @return the semantics of the this end of this edge, e.g. AggregationKind.NONE, SHARED or COMPOSITE
+	 */
+	public AggregationKind getThisSemantics();
+	
+	/**
+	 * @return the semantics of the that end of this edge, e.g. AggregationKind.NONE, SHARED or COMPOSITE
+	 */
+	public AggregationKind getThatSemantics();
+	
+	
 }

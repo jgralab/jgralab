@@ -14,10 +14,15 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.GraphException;
+import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.GraphStructureChangedListener;
+import de.uni_koblenz.jgralab.JGraLabList;
+import de.uni_koblenz.jgralab.JGraLabMap;
+import de.uni_koblenz.jgralab.JGraLabSet;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.FreeIndexList;
 import de.uni_koblenz.jgralab.impl.IncidenceImpl;
+import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
@@ -35,7 +40,8 @@ import de.uni_koblenz.jgralab.trans.VersionedDataObject;
  * 
  * @author Jose Monte(monte@uni-koblenz.de)
  */
-public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
+public abstract class GraphImpl extends
+		de.uni_koblenz.jgralab.impl.GraphBaseImpl {
 	// the transactions of this instance are managed by a transaction manager
 	private TransactionManager transactionManager;
 
@@ -115,11 +121,6 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 	 */
 	protected long getPersistentVersionCounter() {
 		return getGraphVersion();
-	}
-
-	@Override
-	public long getGraphVersion() {
-		return graphVersion;
 	}
 
 	@Override
@@ -292,12 +293,12 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 	 * @return the delete vertex list of the current transaction
 	 */
 	@Override
-	protected List<de.uni_koblenz.jgralab.impl.VertexImpl> getDeleteVertexList() {
+	protected List<de.uni_koblenz.jgralab.impl.VertexBaseImpl> getDeleteVertexList() {
 		TransactionImpl transaction = (TransactionImpl) getCurrentTransaction();
 		assert ((transaction != null) && ((transaction.getState() == TransactionState.RUNNING) || (transaction
 				.getState() == TransactionState.WRITING)));
 		if (transaction.deleteVertexList == null) {
-			transaction.deleteVertexList = new LinkedList<de.uni_koblenz.jgralab.impl.VertexImpl>();
+			transaction.deleteVertexList = new LinkedList<de.uni_koblenz.jgralab.impl.VertexBaseImpl>();
 		}
 		return transaction.deleteVertexList;
 	}
@@ -315,17 +316,17 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 	 */
 	@Override
 	public void setGraphVersion(long graphVersion) {
-		if ((this.graphVersion != -1) && !isLoading()) {
+		if ((getGraphVersion() != -1) && !isLoading()) {
 			Transaction transaction = getCurrentTransaction();
 			assert (transaction != null);
 			// only update graphVersion (persistentVersionCounter) when
 			// transaction is in writing-phase
 			if (transaction.getState() == TransactionState.WRITING) {
-				this.graphVersion = graphVersion;
+				super.setGraphVersion(graphVersion);
 			}
 		} else {
 			// for initialization
-			this.graphVersion = graphVersion;
+			super.setGraphVersion(graphVersion);
 		}
 	}
 
@@ -339,7 +340,7 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 	}
 
 	@Override
-	protected void setEdge(de.uni_koblenz.jgralab.impl.EdgeImpl[] edge) {
+	protected void setEdge(de.uni_koblenz.jgralab.impl.EdgeBaseImpl[] edge) {
 		edgeSync.readLock().lock();
 		try {
 			this.edge.setValidValue((EdgeImpl[]) edge, getCurrentTransaction());
@@ -350,7 +351,7 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 
 	@Override
 	protected void setFirstEdgeInGraph(
-			de.uni_koblenz.jgralab.impl.EdgeImpl firstEdge) {
+			de.uni_koblenz.jgralab.impl.EdgeBaseImpl firstEdge) {
 		if ((this.firstEdge == null) || isLoading()) {
 			this.firstEdge = new VersionedReferenceImpl<EdgeImpl>(this,
 					(EdgeImpl) firstEdge);
@@ -362,7 +363,7 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 
 	@Override
 	protected void setFirstVertex(
-			de.uni_koblenz.jgralab.impl.VertexImpl firstVertex) {
+			de.uni_koblenz.jgralab.impl.VertexBaseImpl firstVertex) {
 		if ((this.firstVertex == null) || isLoading()) {
 			this.firstVertex = new VersionedReferenceImpl<VertexImpl>(this,
 					(VertexImpl) firstVertex);
@@ -374,7 +375,7 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 
 	@Override
 	protected void setLastEdgeInGraph(
-			de.uni_koblenz.jgralab.impl.EdgeImpl lastEdge) {
+			de.uni_koblenz.jgralab.impl.EdgeBaseImpl lastEdge) {
 		if ((this.lastEdge == null) || isLoading()) {
 			this.lastEdge = new VersionedReferenceImpl<EdgeImpl>(this,
 					(EdgeImpl) lastEdge);
@@ -386,7 +387,7 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 
 	@Override
 	protected void setLastVertex(
-			de.uni_koblenz.jgralab.impl.VertexImpl lastVertex) {
+			de.uni_koblenz.jgralab.impl.VertexBaseImpl lastVertex) {
 		if ((this.lastVertex == null) || isLoading()) {
 			this.lastVertex = new VersionedReferenceImpl<VertexImpl>(this,
 					(VertexImpl) lastVertex);
@@ -398,7 +399,7 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 
 	@Override
 	protected void setRevEdge(
-			de.uni_koblenz.jgralab.impl.ReversedEdgeImpl[] revEdge) {
+			de.uni_koblenz.jgralab.impl.ReversedEdgeBaseImpl[] revEdge) {
 		edgeSync.readLock().lock();
 		try {
 			this.revEdge.setValidValue((ReversedEdgeImpl[]) revEdge,
@@ -418,7 +419,7 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 	}
 
 	@Override
-	protected void setVertex(de.uni_koblenz.jgralab.impl.VertexImpl[] vertex) {
+	protected void setVertex(de.uni_koblenz.jgralab.impl.VertexBaseImpl[] vertex) {
 		vertexSync.readLock().lock();
 		try {
 			this.vertex.setValidValue((VertexImpl[]) vertex,
@@ -453,7 +454,7 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 	 */
 	@Override
 	protected void setDeleteVertexList(
-			List<de.uni_koblenz.jgralab.impl.VertexImpl> deleteVertexList) {
+			List<de.uni_koblenz.jgralab.impl.VertexBaseImpl> deleteVertexList) {
 		// do nothing here
 	}
 
@@ -536,7 +537,7 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 			assert ((transaction != null)
 					&& (transaction.getState() != TransactionState.NOTRUNNING)
 					&& transaction.isValid() && !transaction.isReadOnly());
-			if (transaction.changedAttributes != null) {
+			if (transaction.changedAttributes == null) {
 				transaction.changedAttributes = new HashMap<AttributedElement, Set<VersionedDataObject<?>>>(
 						1, TransactionManagerImpl.LOAD_FACTOR);
 			}
@@ -672,7 +673,7 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 		if ((transaction.getState() == TransactionState.COMMITTING)
 				|| (transaction.getState() == TransactionState.ABORTING)) {
 			synchronized (freeVertexList) {
-				if (isEdgeIndexReferenced(index)) {
+				if (isVertexIndexReferenced(index)) {
 					if (vertexIndexesToBeFreed == null) {
 						vertexIndexesToBeFreed = new ArrayList<Integer>();
 					}
@@ -729,11 +730,8 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 	protected boolean canAddGraphElement(int graphElementId) {
 		Transaction transaction = getCurrentTransaction();
 		assert (transaction != null);
-		if ((transaction.getState() == TransactionState.WRITING)
-				|| (transaction.getState() == TransactionState.RUNNING)) {
-			return true;
-		}
-		return false;
+		return ((transaction.getState() == TransactionState.WRITING) || (transaction
+				.getState() == TransactionState.RUNNING));
 	}
 
 	@Override
@@ -845,16 +843,14 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 						"Read-only transactions are not allowed to add edges.");
 			}
 			// It should not be possible to add newEdge, if alpha isn't
-			// valid in
-			// the current transaction.
+			// valid in the current transaction.
 			if (!alpha.isValid()) {
 				throw new GraphException("Alpha-vertex " + alpha
 						+ " is not valid within the current transaction "
 						+ transaction + ".");
 			}
 			// It should not be possible to add newEdge, if omega isn't
-			// valid in
-			// the current transaction.
+			// valid in the current transaction.
 			if (!omega.isValid()) {
 				throw new GraphException("Omega-vertex " + omega
 						+ " is not valid within the current transaction "
@@ -863,31 +859,15 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 			synchronized (transaction) {
 				// create temporary versions of edge and revEdge if not already
 				// existing
-				boolean firstCreated = false;
 				if (transaction.getState() == TransactionState.RUNNING) {
 					edgeSync.writeLock().lock();
-					edge.handleSavepoint(transaction);
-					if (!edge.hasTemporaryValue(transaction)) {
-						firstCreated = true;
-						edge.createNewTemporaryValue(transaction);
-					}
-					revEdge.handleSavepoint(transaction);
-					if (!revEdge.hasTemporaryValue(transaction)) {
-						assert (firstCreated);
-						revEdge.createNewTemporaryValue(transaction);
-					}
+					edge.prepareValueChangeAfterReference(transaction);
+					revEdge.prepareValueChangeAfterReference(transaction);
 					edgeSync.writeLock().unlock();
 				}
 				try {
 					super.addEdge(newEdge, alpha, omega);
 				} catch (GraphException e) {
-					assert (transaction != null);
-					if (firstCreated) {
-						edgeSync.writeLock().lock();
-						edge.removeAllTemporaryValues(transaction);
-						revEdge.removeAllTemporaryValues(transaction);
-						edgeSync.writeLock().unlock();
-					}
 					throw e;
 				}
 				assert ((transaction != null) && !transaction.isReadOnly()
@@ -906,24 +886,6 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 		}
 	}
 
-	// TODO better put it in addEdge, so that noone can add false vertices to
-	// addedVertices set from outside?!
-	// @Override
-	// public void edgeAdded(Edge newEdge) {
-	// TransactionImpl transaction = (TransactionImpl) getCurrentTransaction();
-	// assert (transaction != null && !transaction.isReadOnly()
-	// && transaction.isValid() && transaction.getState() !=
-	// TransactionState.NOTRUNNING);
-	// if (transaction.getState() == TransactionState.RUNNING) {
-	// if (transaction.addedEdges == null)
-	// transaction.addedEdges = new HashSet<EdgeImpl>(1, 0.2f);
-	// transaction.addedEdges
-	// .add((de.uni_koblenz.jgralab.impl.trans.EdgeImpl) (newEdge));
-	// if (transaction.deletedEdges != null)
-	// transaction.deletedEdges.remove(newEdge);
-	// }
-	// }
-
 	@Override
 	protected void addVertex(Vertex newVertex) {
 		if (isLoading()) {
@@ -938,25 +900,14 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 						"Read-only transactions are not allowed to add vertices.");
 			}
 			synchronized (transaction) {
-				boolean firstCreated = false;
 				if (transaction.getState() == TransactionState.RUNNING) {
 					vertexSync.writeLock().lock();
-					vertex.handleSavepoint(transaction);
-					if (!vertex.hasTemporaryValue(transaction)) {
-						firstCreated = true;
-						vertex.createNewTemporaryValue(transaction);
-					}
+					vertex.prepareValueChangeAfterReference(transaction);
 					vertexSync.writeLock().unlock();
 				}
 				try {
 					super.addVertex(newVertex);
 				} catch (GraphException e) {
-					assert (transaction != null);
-					if (firstCreated) {
-						vertexSync.writeLock().lock();
-						vertex.removeAllTemporaryValues(transaction);
-						vertexSync.writeLock().unlock();
-					}
 					throw e;
 				}
 				assert ((transaction != null) && !transaction.isReadOnly()
@@ -975,27 +926,11 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 		}
 	}
 
-	// TODO better put it in addVertex, so that noone can add false vertices to
-	// addedVertices set from outside?!
-	// @Override
-	// public void vertexAdded(Vertex newVertex) {
-	// TransactionImpl transaction = (TransactionImpl) getCurrentTransaction();
-	// assert (transaction != null && !transaction.isReadOnly()
-	// && transaction.isValid() && transaction.getState() !=
-	// TransactionState.NOTRUNNING);
-	// if (transaction.getState() == TransactionState.RUNNING) {
-	// if(transaction.addedVertices == null)
-	// transaction.addedVertices = new HashSet<VertexImpl>(1, 0.2f);
-	// transaction.addedVertices
-	// .add((de.uni_koblenz.jgralab.impl.trans.VertexImpl) (newVertex));
-	// if (transaction.deletedVertices != null)
-	// transaction.deletedVertices.remove(newVertex);
-	// }
-	// }
-
 	@Override
-	protected Edge internalCreateEdge(Class<? extends Edge> cls) {
-		return graphFactory.createEdgeWithTransactionSupport(cls, 0, this);
+	protected Edge internalCreateEdge(Class<? extends Edge> cls, Vertex alpha,
+			Vertex omega) {
+		return graphFactory.createEdgeWithTransactionSupport(cls, 0, this,
+				alpha, omega);
 	}
 
 	@Override
@@ -1020,31 +955,15 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 					+ " isn't valid within current transaction.");
 		}
 		synchronized (transaction) {
-			boolean firstCreated = false;
 			if (transaction.getState() == TransactionState.RUNNING) {
 				edgeSync.writeLock().lock();
-				edge.handleSavepoint(transaction);
-				if (!edge.hasTemporaryValue(transaction)) {
-					firstCreated = true;
-					edge.createNewTemporaryValue(transaction);
-				}
-				revEdge.handleSavepoint(transaction);
-				if (!revEdge.hasTemporaryValue(transaction)) {
-					assert (firstCreated);
-					revEdge.createNewTemporaryValue(transaction);
-				}
+				edge.prepareValueChangeAfterReference(transaction);
+				revEdge.prepareValueChangeAfterReference(transaction);
 				edgeSync.writeLock().unlock();
 			}
 			try {
 				super.deleteEdge(edgeToBeDeleted);
 			} catch (GraphException e) {
-				assert (transaction != null);
-				if (firstCreated) {
-					edgeSync.writeLock().lock();
-					edge.removeAllTemporaryValues(transaction);
-					revEdge.removeAllTemporaryValues(transaction);
-					edgeSync.writeLock().unlock();
-				}
 				throw e;
 			}
 
@@ -1129,25 +1048,14 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 					+ " isn't valid within current transaction.");
 		}
 		synchronized (transaction) {
-			boolean firstCreated = false;
 			if (transaction.getState() == TransactionState.RUNNING) {
 				vertexSync.writeLock().lock();
-				vertex.handleSavepoint(transaction);
-				if (!vertex.hasTemporaryValue(transaction)) {
-					firstCreated = true;
-					vertex.createNewTemporaryValue(transaction);
-				}
+				vertex.prepareValueChangeAfterReference(transaction);
 				vertexSync.writeLock().unlock();
 			}
 			try {
 				super.deleteVertex(vertexToBeDeleted);
 			} catch (GraphException e) {
-				assert (transaction != null);
-				if (firstCreated) {
-					vertexSync.writeLock().lock();
-					vertex.removeAllTemporaryValues(transaction);
-					vertexSync.writeLock().unlock();
-				}
 				throw e;
 			}
 		}
@@ -1211,8 +1119,8 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 
 	@Override
 	public void putEdgeBeforeInGraph(
-			de.uni_koblenz.jgralab.impl.EdgeImpl targetEdge,
-			de.uni_koblenz.jgralab.impl.EdgeImpl movedEdge) {
+			de.uni_koblenz.jgralab.impl.EdgeBaseImpl targetEdge,
+			de.uni_koblenz.jgralab.impl.EdgeBaseImpl movedEdge) {
 		TransactionImpl transaction = (TransactionImpl) getCurrentTransaction();
 		if (transaction == null) {
 			throw new GraphException("Current transaction is null.");
@@ -1273,8 +1181,8 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 
 	@Override
 	public void putEdgeAfterInGraph(
-			de.uni_koblenz.jgralab.impl.EdgeImpl targetEdge,
-			de.uni_koblenz.jgralab.impl.EdgeImpl movedEdge) {
+			de.uni_koblenz.jgralab.impl.EdgeBaseImpl targetEdge,
+			de.uni_koblenz.jgralab.impl.EdgeBaseImpl movedEdge) {
 		TransactionImpl transaction = (TransactionImpl) getCurrentTransaction();
 		if (transaction == null) {
 			throw new GraphException("Current transaction is null.");
@@ -1335,8 +1243,8 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 
 	@Override
 	protected void putVertexAfter(
-			de.uni_koblenz.jgralab.impl.VertexImpl targetVertex,
-			de.uni_koblenz.jgralab.impl.VertexImpl movedVertex) {
+			de.uni_koblenz.jgralab.impl.VertexBaseImpl targetVertex,
+			de.uni_koblenz.jgralab.impl.VertexBaseImpl movedVertex) {
 		TransactionImpl transaction = (TransactionImpl) getCurrentTransaction();
 		if (transaction == null) {
 			throw new GraphException("Current transaction is null.");
@@ -1398,8 +1306,8 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 
 	@Override
 	protected void putVertexBefore(
-			de.uni_koblenz.jgralab.impl.VertexImpl targetVertex,
-			de.uni_koblenz.jgralab.impl.VertexImpl movedVertex) {
+			de.uni_koblenz.jgralab.impl.VertexBaseImpl targetVertex,
+			de.uni_koblenz.jgralab.impl.VertexBaseImpl movedVertex) {
 		TransactionImpl transaction = (TransactionImpl) getCurrentTransaction();
 		if (transaction == null) {
 			throw new GraphException("Current transaction is null.");
@@ -1504,7 +1412,7 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 	}
 
 	@Override
-	protected void appendEdgeToESeq(de.uni_koblenz.jgralab.impl.EdgeImpl e) {
+	protected void appendEdgeToESeq(de.uni_koblenz.jgralab.impl.EdgeBaseImpl e) {
 		edgeSync.readLock().lock();
 		try {
 			super.appendEdgeToESeq(e);
@@ -1514,7 +1422,8 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 	}
 
 	@Override
-	protected void appendVertexToVSeq(de.uni_koblenz.jgralab.impl.VertexImpl v) {
+	protected void appendVertexToVSeq(
+			de.uni_koblenz.jgralab.impl.VertexBaseImpl v) {
 		vertexSync.readLock().lock();
 		try {
 			super.appendVertexToVSeq(v);
@@ -1551,108 +1460,103 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 	}
 
 	@Override
-	public <T> List<T> createList(Class<T> type) {
+	public <T> JGraLabList<T> createList() {
 		if (!isLoading() && getCurrentTransaction().isReadOnly()) {
 			throw new GraphException(
 					"Read-only transactions are not allowed to create Lists.");
 		}
-		return new JGraLabList<T>(this);
+		return new JGraLabListImpl<T>(this);
 	}
 
 	@Override
-	public <T> List<T> createList(Class<T> type,
-			Collection<? extends T> collection) {
+	public <T> JGraLabList<T> createList(Collection<? extends T> collection) {
 		if (!isLoading() && getCurrentTransaction().isReadOnly()) {
 			throw new GraphException(
 					"Read-only transactions are not allowed to create Lists.");
 		}
-		return new JGraLabList<T>(this, collection);
+		return new JGraLabListImpl<T>(this, collection);
 	}
 
 	@Override
-	public <T> List<T> createList(Class<T> type, int initialCapacity) {
+	public <T> JGraLabList<T> createList(int initialCapacity) {
 		if (!isLoading() && getCurrentTransaction().isReadOnly()) {
 			throw new GraphException(
 					"Read-only transactions are not allowed to create Lists.");
 		}
-		return new JGraLabList<T>(this, initialCapacity);
+		return new JGraLabListImpl<T>(this, initialCapacity);
 	}
 
 	@Override
-	public <T> Set<T> createSet(Class<T> type) {
+	public <T> JGraLabSet<T> createSet() {
 		if (!isLoading() && getCurrentTransaction().isReadOnly()) {
 			throw new GraphException(
 					"Read-only transactions are not allowed to create Sets.");
 		}
-		return new JGraLabSet<T>(this);
+		return new JGraLabSetImpl<T>(this);
 	}
 
 	@Override
-	public <T> Set<T> createSet(Class<T> type,
-			Collection<? extends T> collection) {
+	public <T> JGraLabSet<T> createSet(Collection<? extends T> collection) {
 		if (!isLoading() && getCurrentTransaction().isReadOnly()) {
 			throw new GraphException(
 					"Read-only transactions are not allowed to create Sets.");
 		}
-		return new JGraLabSet<T>(this, collection);
+		return new JGraLabSetImpl<T>(this, collection);
 	}
 
 	@Override
-	public <T> Set<T> createSet(Class<T> type, int initialCapacity) {
+	public <T> JGraLabSet<T> createSet(int initialCapacity) {
 		if (!isLoading() && getCurrentTransaction().isReadOnly()) {
 			throw new GraphException(
 					"Read-only transactions are not allowed to create Sets.");
 		}
-		return new JGraLabSet<T>(this, initialCapacity);
+		return new JGraLabSetImpl<T>(this, initialCapacity);
 	}
 
 	@Override
-	public <T> Set<T> createSet(Class<T> type, int initialCapacity,
+	public <T> JGraLabSet<T> createSet(int initialCapacity, float loadFactor) {
+		if (!isLoading() && getCurrentTransaction().isReadOnly()) {
+			throw new GraphException(
+					"Read-only transactions are not allowed to create Sets.");
+		}
+		return new JGraLabSetImpl<T>(this, initialCapacity, loadFactor);
+	}
+
+	@Override
+	public <K, V> JGraLabMap<K, V> createMap() {
+		if (!isLoading() && getCurrentTransaction().isReadOnly()) {
+			throw new GraphException(
+					"Read-only transactions are not allowed to create Maps.");
+		}
+		return new JGraLabMapImpl<K, V>(this);
+	}
+
+	@Override
+	public <K, V> JGraLabMap<K, V> createMap(Map<? extends K, ? extends V> map) {
+		if (!isLoading() && getCurrentTransaction().isReadOnly()) {
+			throw new GraphException(
+					"Read-only transactions are not allowed to create Maps.");
+		}
+		return new JGraLabMapImpl<K, V>(this, map);
+	}
+
+	@Override
+	public <K, V> JGraLabMap<K, V> createMap(int initialCapacity) {
+		if (!isLoading() && getCurrentTransaction().isReadOnly()) {
+			throw new GraphException(
+					"Read-only transactions are not allowed to create Maps.");
+		}
+		return new JGraLabMapImpl<K, V>(this, initialCapacity);
+	}
+
+	@Override
+	public <K, V> JGraLabMap<K, V> createMap(int initialCapacity,
 			float loadFactor) {
 		if (!isLoading() && getCurrentTransaction().isReadOnly()) {
 			throw new GraphException(
-					"Read-only transactions are not allowed to create Sets.");
-		}
-		return new JGraLabSet<T>(this, initialCapacity, loadFactor);
-	}
-
-	@Override
-	public <K, V> Map<K, V> createMap(Class<K> key, Class<V> value) {
-		if (!isLoading() && getCurrentTransaction().isReadOnly()) {
-			throw new GraphException(
 					"Read-only transactions are not allowed to create Maps.");
 		}
-		return new JGraLabMap<K, V>(this);
-	}
-
-	@Override
-	public <K, V> Map<K, V> createMap(Class<K> key, Class<V> value,
-			Map<? extends K, ? extends V> map) {
-		if (!isLoading() && getCurrentTransaction().isReadOnly()) {
-			throw new GraphException(
-					"Read-only transactions are not allowed to create Maps.");
-		}
-		return new JGraLabMap<K, V>(this, map);
-	}
-
-	@Override
-	public <K, V> Map<K, V> createMap(Class<K> key, Class<V> value,
-			int initialCapacity) {
-		if (!isLoading() && getCurrentTransaction().isReadOnly()) {
-			throw new GraphException(
-					"Read-only transactions are not allowed to create Maps.");
-		}
-		return new JGraLabMap<K, V>(this, initialCapacity);
-	}
-
-	@Override
-	public <K, V> Map<K, V> createMap(Class<K> key, Class<V> value,
-			int initialCapacity, float loadFactor) {
-		if (!isLoading() && getCurrentTransaction().isReadOnly()) {
-			throw new GraphException(
-					"Read-only transactions are not allowed to create Maps.");
-		}
-		return new JGraLabMap<K, V>(this, initialCapacity, loadFactor);
+		return new JGraLabMapImpl<K, V>(this, initialCapacity, loadFactor);
 	}
 
 	private boolean isWriting() {
@@ -1661,42 +1565,46 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 
 	@Override
 	protected void internalVertexDeleted(
-			de.uni_koblenz.jgralab.impl.VertexImpl v) {
+			de.uni_koblenz.jgralab.impl.VertexBaseImpl v) {
 		if (isWriting()) {
 			super.internalVertexDeleted(v);
 		}
 	}
 
 	@Override
-	protected void internalVertexAdded(de.uni_koblenz.jgralab.impl.VertexImpl v) {
+	protected void internalVertexAdded(
+			de.uni_koblenz.jgralab.impl.VertexBaseImpl v) {
 		if (isWriting()) {
 			super.internalVertexAdded(v);
 		}
 	}
 
 	@Override
-	protected void internalEdgeDeleted(de.uni_koblenz.jgralab.impl.EdgeImpl e) {
+	protected void internalEdgeDeleted(
+			de.uni_koblenz.jgralab.impl.EdgeBaseImpl e) {
 		if (isWriting()) {
 			super.internalEdgeDeleted(e);
 		}
 	}
 
 	@Override
-	protected void internalEdgeAdded(de.uni_koblenz.jgralab.impl.EdgeImpl e) {
+	protected void internalEdgeAdded(de.uni_koblenz.jgralab.impl.EdgeBaseImpl e) {
 		if (isWriting()) {
 			super.internalEdgeAdded(e);
 		}
 	}
 
 	@Override
-	public void addGraphStructureChangedListener(GraphStructureChangedListener newListener) {
+	public void addGraphStructureChangedListener(
+			GraphStructureChangedListener newListener) {
 		synchronized (graphStructureChangedListeners) {
 			super.addGraphStructureChangedListener(newListener);
 		}
 	}
 
 	@Override
-	public void removeGraphStructureChangedListener(GraphStructureChangedListener listener) {
+	public void removeGraphStructureChangedListener(
+			GraphStructureChangedListener listener) {
 		synchronized (graphStructureChangedListeners) {
 			super.removeGraphStructureChangedListener(listener);
 		}
@@ -1709,4 +1617,23 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 		}
 	}
 
+	@Override
+	public void initializeAttributesWithDefaultValues() {
+		try {
+			Transaction defaultValuesTransaction = newTransaction();
+			super.initializeAttributesWithDefaultValues();
+			defaultValuesTransaction.commit();
+		} catch (Exception e) {
+			throw new GraphException(
+					"The initialization for the default values of the graph failed.\n"
+							+ " Caused by: " + e.getClass() + " - "
+							+ e.getLocalizedMessage());
+		}
+	}
+
+	@Override
+	protected void internalSetDefaultValue(Attribute attr)
+			throws GraphIOException, NoSuchFieldException {
+		attr.setDefaultTransactionValue(this);
+	}
 }

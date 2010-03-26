@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -26,7 +26,6 @@ package de.uni_koblenz.jgralab.greql2.evaluator.fa;
 
 import java.util.Set;
 
-import de.uni_koblenz.jgralab.Aggregation;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
@@ -36,9 +35,10 @@ import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 import de.uni_koblenz.jgralab.greql2.schema.ThisEdge;
-import de.uni_koblenz.jgralab.schema.AggregationClass;
+import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
 /**
@@ -212,19 +212,16 @@ public class AggregationTransition extends Transition {
 	@Override
 	public boolean accepts(Vertex v, Edge e, BooleanGraphMarker subgraph)
 			throws EvaluateException {
-		if ((e == null) || !(e instanceof Aggregation)) {
+		if (e == null) {
 			return false;
 		}
-		if (e.isNormal()) {
-			AggregationClass aggClass = (AggregationClass) e
-					.getAttributedElementClass();
-			if (aggClass.isAggregateFrom() != aggregateFrom) {
+
+		if (aggregateFrom) {
+			if (e.getThatSemantics() == AggregationKind.NONE) {
 				return false;
 			}
 		} else {
-			AggregationClass aggClass = (AggregationClass) e
-					.getAttributedElementClass();
-			if (aggClass.isAggregateFrom() == aggregateFrom) {
+			if (e.getThisSemantics() == AggregationKind.NONE) {
 				return false;
 			}
 		}
@@ -250,11 +247,11 @@ public class AggregationTransition extends Transition {
 
 		// checks if a boolean expression exists and if it evaluates to true
 		if (predicateEvaluator != null) {
-			thisEdgeEvaluator.setValue(new JValue(e));
+			thisEdgeEvaluator.setValue(new JValueImpl(e));
 			JValue res = predicateEvaluator.getResult(subgraph);
 			if (res.isBoolean()) {
 				try {
-					if (res.toBoolean() == Boolean.TRUE) {
+					if (res.toBoolean().equals(Boolean.TRUE)) {
 						return true;
 					}
 				} catch (JValueInvalidTypeException ex) {
@@ -276,4 +273,20 @@ public class AggregationTransition extends Transition {
 		return e.getThat();
 	}
 
+	@Override
+	public String prettyPrint() {
+		StringBuilder b = new StringBuilder();
+		String delim = "";
+		for (AttributedElementClass c : typeCollection.getAllowedTypes()) {
+			b.append(delim);
+			b.append(c.getSimpleName());
+			delim = ",";
+		}	
+		String symbol = "--<>";
+		if (aggregateFrom)
+			symbol = "<>--";
+
+		return symbol + "{" + b + "}";
+	}
+	
 }

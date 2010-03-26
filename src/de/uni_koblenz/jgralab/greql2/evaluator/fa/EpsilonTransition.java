@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -118,6 +118,11 @@ public class EpsilonTransition extends Transition {
 	public String edgeString() {
 		String desc = "EpsilonTransition";
 		return desc;
+	}
+
+	@Override
+	public String prettyPrint() {
+		return "epsilon";
 	}
 
 }

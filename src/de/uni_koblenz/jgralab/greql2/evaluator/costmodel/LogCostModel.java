@@ -11,8 +11,8 @@ import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql2.evaluator.logging.EvaluationLogReader;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.AlternativePathDescriptionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.BackwardVertexSetEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.BagComprehensionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.BagConstructionEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ComprehensionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ConditionalExpressionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.DeclarationEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.EdgePathDescriptionEvaluator;
@@ -160,7 +160,7 @@ public class LogCostModel extends DefaultCostModel {
 	 */
 	@Override
 	public long calculateCardinalityBagComprehension(
-			BagComprehensionEvaluator e, GraphSize graphSize) {
+			ComprehensionEvaluator e, GraphSize graphSize) {
 		return getMeanCardinality(logReader
 				.getAvgResultSize(e.getLoggingName()), super
 				.calculateCardinalityBagComprehension(e, graphSize));

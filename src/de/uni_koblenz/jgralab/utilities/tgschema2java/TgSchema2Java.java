@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -307,6 +307,11 @@ public class TgSchema2Java {
 		if (comLine.hasOption('w')) {
 			config.setTypeSpecificMethodsSupport(false);
 		}
+		if (comLine.hasOption('f')) {
+			config.setMethodsForSubclassesSupport(true);
+		} else {
+			config.setMethodsForSubclassesSupport(false);
+		}
 
 	}
 
@@ -336,8 +341,7 @@ public class TgSchema2Java {
 	private List<File> findFilesInDirectory(File folder) throws Exception {
 		List<File> javaSources = new ArrayList<File>();
 		for (File file : folder.listFiles()) {
-			if ((file != null) && file.isFile()
-					&& file.getName().endsWith(".java")) {
+			if (file.isFile() && file.getName().endsWith(".java")) {
 				javaSources.add(file);
 			} else if (file.isDirectory()) {
 				javaSources.addAll(findFilesInDirectory(file));
@@ -405,7 +409,6 @@ public class TgSchema2Java {
 	 */
 	public static void main(String[] args) {
 		TgSchema2Java tgSchema2Java = new TgSchema2Java(args);
-
 		tgSchema2Java.execute();
 	}
 
@@ -454,6 +457,11 @@ public class TgSchema2Java {
 				"(optional): Don't create typespecific methods in classes");
 		without_types.setRequired(false);
 		oh.addOption(without_types);
+		
+		Option subtype_flag = new Option("f", "subtype-flag", false,
+		"(optional): Create separate methods with subtype flag");
+		subtype_flag.setRequired(false);
+		oh.addOption(subtype_flag);
 
 		Option path = new Option(
 				"p",

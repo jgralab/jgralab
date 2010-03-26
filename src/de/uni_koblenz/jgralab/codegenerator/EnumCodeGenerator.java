@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -67,7 +67,7 @@ public class EnumCodeGenerator extends CodeGenerator {
 			valueOfCode
 					.add(
 							"public static #simpleClassName# valueOfPermitNull(String val) {",
-							"\tif (val.equals(de.uni_koblenz.jgralab.GraphIO.NULL_LITERAL) || val.equals(de.uni_koblenz.jgralab.GraphIO.OLD_NULL_LITERAL)) {",
+							"\tif (val.equals(de.uni_koblenz.jgralab.GraphIO.NULL_LITERAL)) {",
 							"\t\treturn null;", "\t}",
 							"\treturn valueOf(val);", "}");
 			result.add(constCode);
@@ -78,8 +78,9 @@ public class EnumCodeGenerator extends CodeGenerator {
 
 	@Override
 	protected CodeBlock createHeader() {
-		if (currentCycle.isClassOnly())
+		if (currentCycle.isClassOnly()) {
 			return new CodeSnippet(true, "public enum #simpleClassName# {");
+		}
 		return new CodeSnippet();
 	}
 }

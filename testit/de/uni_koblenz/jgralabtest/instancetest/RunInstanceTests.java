@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -35,7 +35,7 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses( { EdgeListTest.class, IncidenceListTest.class,
 		LoadTest.class, VertexListTest.class, VertexTest.class, EdgeTest.class,
 		RoleNameTest.class, GraphTest.class,
-		GraphStructureChangedListenerTest.class })
+		GraphStructureChangedListenerTest.class, DefaultValueTest.class })
 public class RunInstanceTests {
 
 }

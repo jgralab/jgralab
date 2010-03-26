@@ -12,6 +12,7 @@ import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
@@ -74,7 +75,7 @@ public abstract class Incidences extends Greql2Function {
 		return 1;
 	}
 
-	protected JValue evaluate(BooleanGraphMarker subgraph, JValue[] arguments,
+	protected JValueImpl evaluate(BooleanGraphMarker subgraph, JValue[] arguments,
 			EdgeDirection direction) throws EvaluateException {
 		JValuePath path = null;
 		JValuePathSystem pathSystem = null;
@@ -119,7 +120,7 @@ public abstract class Incidences extends Greql2Function {
 		if (typeCol == null) {
 			while (inc != null) {
 				if ((subgraph == null) || (subgraph.isMarked(inc))) {
-					resultSet.add(new JValue(inc));
+					resultSet.add(new JValueImpl(inc));
 				}
 				inc = inc.getNextEdge(direction);
 			}
@@ -127,7 +128,7 @@ public abstract class Incidences extends Greql2Function {
 			while (inc != null) {
 				if ((subgraph == null) || (subgraph.isMarked(inc))) {
 					if (typeCol.acceptsType(inc.getAttributedElementClass())) {
-						resultSet.add(new JValue(inc));
+						resultSet.add(new JValueImpl(inc));
 					}
 				}
 				inc = inc.getNextEdge(direction);

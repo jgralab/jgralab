@@ -6,6 +6,7 @@ package de.uni_koblenz.jgralab.greql2.optimizer;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.Edge;
@@ -15,12 +16,15 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql2.optimizer.condexp.Formula;
+import de.uni_koblenz.jgralab.greql2.schema.BoolLiteral;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
+import de.uni_koblenz.jgralab.greql2.schema.IsConstraintOf;
 import de.uni_koblenz.jgralab.greql2.schema.Literal;
+import de.uni_koblenz.jgralab.greql2.schema.TrivalentBoolean;
 
 /**
  * TODO: (heimdall) Comment class!
@@ -70,7 +74,7 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 	@Override
 	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
 			throws OptimizerException {
-		Formula.setSimplifiedOrOptimized(false);
+		boolean simplifiedOrOptimized = false;
 
 		FunctionApplication top = findAndOrNotFunApp(syntaxgraph
 				.getFirstGreql2Expression());
@@ -80,7 +84,7 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 			top.delete();
 			Formula optimizedFormula = formula.simplify().optimize();
 			if (!formula.equals(optimizedFormula)) {
-				Formula.setSimplifiedOrOptimized(true);
+				simplifiedOrOptimized = true;
 				logger.fine(optimizerHeaderString()
 						+ "Transformed constraint\n    " + formula
 						+ "\nto\n    " + optimizedFormula + ".");
@@ -92,9 +96,29 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 			}
 		}
 
+		// delete "with true" constraints
+		Set<Vertex> verticesToDelete = new HashSet<Vertex>();
+		for (IsConstraintOf ico : syntaxgraph.getIsConstraintOfEdges()) {
+			Vertex alpha = ico.getAlpha();
+			if (alpha instanceof BoolLiteral) {
+				BoolLiteral bl = (BoolLiteral) alpha;
+				if (bl.get_boolValue() == TrivalentBoolean.TRUE) {
+					verticesToDelete.add(bl);
+				}
+			}
+		}
+		for (Vertex bl : verticesToDelete) {
+			bl.delete();
+		}
+
 		recreateVertexEvaluators(eval);
 		OptimizerUtility.createMissingSourcePositions(syntaxgraph);
-		return Formula.isSimplifiedOrOptimized();
+
+		// Tg2Dot.printGraphAsDot(syntaxgraph, true, "/home/horn/ceo.dot");
+		// System.out.println("Afted CEO:");
+		// System.out.println(((SerializableGreql2) syntaxgraph).serialize());
+
+		return simplifiedOrOptimized;
 	}
 
 	@SuppressWarnings("unchecked")

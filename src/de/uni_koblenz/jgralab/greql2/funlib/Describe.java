@@ -12,6 +12,7 @@ import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueRecord;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTuple;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
@@ -87,23 +88,23 @@ public class Describe extends Greql2Function {
 		}
 
 		JValueTuple tuple = new JValueTuple();
-		tuple.add(new JValue(attrElem.getAttributedElementClass()
+		tuple.add(new JValueImpl(attrElem.getAttributedElementClass()
 				.getQualifiedName()));
 		if (attrElem instanceof Graph) {
 			Graph g = (Graph) attrElem;
 			JValueRecord idRecord = new JValueRecord();
-			idRecord.add("id", new JValue(g.getId()));
-			idRecord.add("version", new JValue(g.getGraphVersion()));
+			idRecord.add("id", new JValueImpl(g.getId()));
+			idRecord.add("version", new JValueImpl(g.getGraphVersion()));
 			tuple.add(idRecord);
 		} else {
 			GraphElement ge = (GraphElement) attrElem;
-			tuple.add(new JValue(ge.getId()));
+			tuple.add(new JValueImpl(ge.getId()));
 		}
 		JValueRecord attrRecord = new JValueRecord();
 		for (Attribute attr : attrElem.getAttributedElementClass()
 				.getAttributeList()) {
 			try {
-				attrRecord.add(attr.getName(), JValue.fromObject(attrElem
+				attrRecord.add(attr.getName(), JValueImpl.fromObject(attrElem
 						.getAttribute(attr.getName())));
 			} catch (NoSuchFieldException e) {
 				e.printStackTrace();

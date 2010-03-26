@@ -2,7 +2,7 @@
 
 <!--
     - JGraLab - The Java graph laboratory
-    - (c) 2006-2009 Institute for Software Technology
+    - (c) 2006-2010 Institute for Software Technology
     -               University of Koblenz-Landau, Germany
     -
     -               ist@uni-koblenz.de
@@ -26,9 +26,6 @@
 
 
 <project name="de.uni_koblenz.jgralab" basedir="." default="build">
-
-    <property name="enable-xmlrpc"
-          value="no"/>
 
     <!-- project name -->
     <property name="projectname"
@@ -128,7 +125,6 @@
         <ant dir="${common.dir}" antfile="build.xml" target="compile">
             <property name="src.dir" value="${src.dir}/de/uni_koblenz/${projectname}"/>
             <property name="compileincludes" value="*.java graphmarker/** schema/** codegenerator/** impl/** jniserver/** trans/**"/>
-            <property name="compileexcludes" value="xmlrpc/**"/>
         </ant>
     </target>
 
@@ -196,29 +192,6 @@
     </target>
 
 
-    <!-- Check XML-RPC -->
-    <target name="checkxmlrpc">
-        <condition property="is_xmlrpc_enabled">
-            <or>
-                <equals arg1="${enable-xmlrpc}"
-                    arg2="true"
-                    casesensitive="no"/>
-                <equals arg1="${enable-xmlrpc}"
-                    arg2="yes"
-                    casesensitive="no"/>
-            </or>
-        </condition>
-    </target>
-
-    <target name="xmlrpc" depends="checkxmlrpc" if="is_xmlrpc_enabled">
-        <ant dir="${common.dir}" antfile="build.xml" target="compile">
-            <property name="src.dir"
-                      value="${src.dir}/de/uni_koblenz/${projectname}"/>
-            <property name="compileincludes" value="xmlrpc/**"/>
-            <!-- <property name="compileexcludes" value="impl/list/**"/> -->
-        </ant>
-    </target>
-
     <!-- tgtools (utils which are needed for schema creation (TgSchema2Java)
          and that don't depend on schemas themselves) -->
     <target name="tgtools" depends="jgralab">
@@ -264,10 +237,11 @@
         </ant>
     </target>
 
-    <target name="grumlsources" depends="xmlrpc,tgtools">
+    <target name="grumlsources" depends="tgtools">
         <!-- calls target generateschema in general ant file ${ant}/build.xml -->
         <ant dir="${common.dir}" antfile="build.xml" target="generateschema">
             <property name="subprojectname" value = "utilities/tg2schemagraph/"/>
+            <property name="generateschema.opts" value = "-so"/>
             <property name="schemafile"
                 value = "GrumlSchema.tg"/>
         </ant>
@@ -317,7 +291,7 @@
         </unjar>
         <!-- add license information -->
         <copy todir="${tmp.dir}/META-INF/license">
-                <fileset dir="license" includes="jdom/** jgralab/** xmlrpc/**"/>
+                <fileset dir="license" includes="jdom/** jgralab/**"/>
         </copy>
         <!-- add xmi2tgschema -->
         <copy file="${src.dir}/de/uni_koblenz/jgralab/utilities/xmi2tgschema/XMI2TGSchema.xsl"
@@ -368,8 +342,6 @@
         <mkdir dir="${tmp.dir}/source/common/lib/jdom"/>
         <mkdir dir="${tmp.dir}/source/jgralab"/>
         <mkdir dir="${tmp.dir}/source/jgralab/lib"/>
-        <mkdir dir="${tmp.dir}/source/jgralab/lib/xmlrpc"/>
-        <mkdir dir="${tmp.dir}/source/jgralab/lib/javaee"/>
         <mkdir dir="${tmp.dir}/source/jgralab/src"/>
         <mkdir dir="${tmp.dir}/source/jgralab/license"/>
         <copy file="build.xml" todir="${tmp.dir}/source/jgralab"/>

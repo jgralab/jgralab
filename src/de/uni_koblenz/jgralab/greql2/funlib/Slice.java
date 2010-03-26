@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -55,7 +55,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>SLICE slice(v:SET&lt;VERTEX&gt;, dfa:DFA)</code></dd>
+ * <dd><code>SLICE slice(v:SET&lt;VERTEX&gt;, dfa:AUTOMATON)</code></dd>
  * <dd>&nbsp;</dd>
  * <dd>This function can be used with the (<code>:-)</code>)-Operator:
  * <code>v :-) rpe</code></dd>
@@ -84,10 +84,8 @@ public class Slice extends Greql2Function {
 
 	{
 		JValueType[][] x = {
-				{ JValueType.COLLECTION, JValueType.DFA, JValueType.SLICE },
-				{ JValueType.COLLECTION, JValueType.NFA, JValueType.SLICE },
-				{ JValueType.VERTEX, JValueType.DFA, JValueType.SLICE },
-				{ JValueType.VERTEX, JValueType.NFA, JValueType.SLICE } };
+				{ JValueType.COLLECTION, JValueType.AUTOMATON, JValueType.SLICE },
+				{ JValueType.VERTEX, JValueType.AUTOMATON, JValueType.SLICE } };
 		signatures = x;
 
 		description = "Returns a slice, starting at root(s) and structured according to path description.";
@@ -220,8 +218,7 @@ public class Slice extends Greql2Function {
 				for (Transition currentTransition : currentEntry.state.outTransitions) {
 					Vertex nextVertex = currentTransition.getNextVertex(
 							currentEntry.vertex, inc);
-					if (!isMarked(nextVertex, currentTransition.getEndState(),
-							inc)
+					if (!isMarked(nextVertex, currentTransition.endState, inc)
 							&& currentTransition.accepts(currentEntry.vertex,
 									inc, subgraph)) {
 						Edge traversedEdge = inc;
@@ -237,14 +234,14 @@ public class Slice extends Greql2Function {
 						 * doesn't matter but only the state
 						 */
 						if (!isMarked(nextVertex, currentTransition
-								.getEndState())) {
+								.endState)) {
 							queue.add(new PathSystemQueueEntry(nextVertex,
-									currentTransition.getEndState(),
+									currentTransition.endState,
 									traversedEdge, currentEntry.state,
 									distanceToRoot));
 						}
 						/* mark the vertex with all reachability information */
-						markVertex(nextVertex, currentTransition.getEndState(),
+						markVertex(nextVertex, currentTransition.endState,
 								currentEntry.vertex, traversedEdge,
 								currentEntry.state, distanceToRoot);
 					}
@@ -267,22 +264,13 @@ public class Slice extends Greql2Function {
 		JValueSet vertices;
 		switch (checkArguments(arguments)) {
 		case 0:
-			dfa = arguments[1].toDFA();
+			dfa = arguments[1].toAutomaton().getDFA();
 			vertices = arguments[0].toJValueSet();
 			break;
 		case 1:
-			dfa = new DFA(arguments[1].toNFA());
-			vertices = arguments[0].toJValueSet();
-			break;
-		case 2:
 			vertices = new JValueSet();
 			vertices.add(arguments[0]);
-			dfa = arguments[1].toDFA();
-			break;
-		case 3:
-			vertices = new JValueSet();
-			vertices.add(arguments[0]);
-			dfa = new DFA(arguments[1].toNFA());
+			dfa = arguments[1].toAutomaton().getDFA();
 			break;
 		default:
 			throw new WrongFunctionParameterException(this, arguments);

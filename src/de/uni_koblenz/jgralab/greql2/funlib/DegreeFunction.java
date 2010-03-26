@@ -12,6 +12,7 @@ import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
@@ -37,7 +38,7 @@ public abstract class DegreeFunction extends Greql2Function {
 		categories = c;
 	}
 
-	public JValue evaluate(BooleanGraphMarker subgraph, JValue[] arguments,
+	public JValueImpl evaluate(BooleanGraphMarker subgraph, JValue[] arguments,
 			EdgeDirection direction) throws EvaluateException {
 		JValueTypeCollection typeCol = null;
 		JValuePathSystem pathSystem = null;
@@ -47,13 +48,13 @@ public abstract class DegreeFunction extends Greql2Function {
 		case 0:
 			break;
 		case 1:
-			typeCol = arguments[1].toJValueTypeCollection();
+			typeCol = (JValueTypeCollection) arguments[1];
 			break;
 		case 2:
 			path = arguments[1].toPath();
 			break;
 		case 4:
-			typeCol = arguments[2].toJValueTypeCollection();
+			typeCol = (JValueTypeCollection) arguments[2];
 		case 3:
 			pathSystem = arguments[1].toPathSystem();
 			break;
@@ -64,7 +65,7 @@ public abstract class DegreeFunction extends Greql2Function {
 
 		if ((path == null) && (pathSystem == null)) {
 			if (typeCol == null) {
-				return new JValue(vertex.getDegree(direction));
+				return new JValueImpl(vertex.getDegree(direction));
 			} else {
 				Edge inc = vertex.getFirstEdge(direction);
 				int count = 0;
@@ -76,26 +77,26 @@ public abstract class DegreeFunction extends Greql2Function {
 					}
 					inc = inc.getNextEdge(direction);
 				}
-				return new JValue(count);
+				return new JValueImpl(count);
 			}
 		}
 		if (pathSystem != null) {
 			switch (direction) {
 			case IN:
-				return new JValue(pathSystem.degree(vertex, true, typeCol));
+				return new JValueImpl(pathSystem.degree(vertex, true, typeCol));
 			case OUT:
-				return new JValue(pathSystem.degree(vertex, false, typeCol));
+				return new JValueImpl(pathSystem.degree(vertex, false, typeCol));
 			default:
-				return new JValue(pathSystem.degree(vertex, typeCol));
+				return new JValueImpl(pathSystem.degree(vertex, typeCol));
 			}
 		}
 		switch (direction) {
 		case IN:
-			return new JValue(path.degree(vertex, true));
+			return new JValueImpl(path.degree(vertex, true));
 		case OUT:
-			return new JValue(path.degree(vertex, false));
+			return new JValueImpl(path.degree(vertex, false));
 		default:
-			return new JValue(path.degree(vertex));
+			return new JValueImpl(path.degree(vertex));
 		}
 	}
 

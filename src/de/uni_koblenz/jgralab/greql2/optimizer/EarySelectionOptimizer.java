@@ -225,55 +225,6 @@ public class EarySelectionOptimizer extends OptimizerBase {
 		return aTransformationWasDone;
 	}
 
-	/**
-	 * Split the given {@link SimpleDeclaration} so that there's one
-	 * {@link SimpleDeclaration} that declares the {@link Variable}s in
-	 * <code>varsToBeSplit</code> and one for the rest.
-	 * 
-	 * @param sd
-	 *            the {@link SimpleDeclaration} to be split
-	 * @param varsToBeSplit
-	 *            a {@link Set} of {@link Variable}s that should have their own
-	 *            {@link SimpleDeclaration}
-	 */
-	private void splitSimpleDeclaration(SimpleDeclaration sd,
-			Set<Variable> varsToBeSplit) {
-		Set<Variable> varsDeclaredBySD = OptimizerUtility
-				.collectVariablesDeclaredBy(sd);
-
-		logger.finer(optimizerHeaderString() + "(S) Splitting out "
-				+ varsToBeSplit + " of " + sd + " that declares "
-				+ varsDeclaredBySD);
-
-		if (varsDeclaredBySD.size() == varsToBeSplit.size()) {
-			// there's nothing to split out anymore
-			return;
-		}
-		Declaration parentDecl = (Declaration) sd.getFirstIsSimpleDeclOf(
-				EdgeDirection.OUT).getOmega();
-		SimpleDeclaration newSD = syntaxgraph.createSimpleDeclaration();
-		syntaxgraph.createIsSimpleDeclOf(newSD, parentDecl);
-		syntaxgraph.createIsTypeExprOfDeclaration((Expression) sd
-				.getFirstIsTypeExprOfDeclaration(EdgeDirection.IN).getAlpha(),
-				newSD);
-
-		for (Variable var : varsToBeSplit) {
-			IsDeclaredVarOf inc = sd.getFirstIsDeclaredVarOf(EdgeDirection.IN);
-			HashSet<IsDeclaredVarOf> relinkIncs = new HashSet<IsDeclaredVarOf>();
-			while (inc != null) {
-				if (inc.getAlpha() == var) {
-					// This inc is now declared by newSD, so we need to relink
-					// the edge.
-					relinkIncs.add(inc);
-				}
-				inc = inc.getNextIsDeclaredVarOf(EdgeDirection.IN);
-			}
-			for (IsDeclaredVarOf relinkEdge : relinkIncs) {
-				relinkEdge.setOmega(newSD);
-			}
-		}
-	}
-
 	private void movePredicatesToMultiVarSimpleDeclaration(
 			SimpleDeclaration origSD, Set<Expression> predicates,
 			Set<Variable> varsDeclaredByOrigSD) throws OptimizerException {
@@ -673,29 +624,6 @@ public class EarySelectionOptimizer extends OptimizerBase {
 			}
 		}
 		return neededLocalVars;
-	}
-
-	/**
-	 * Find the nearest {@link Declaration} above <code>vertex</code>.
-	 * 
-	 * @param vertex
-	 *            a {@link Vertex}
-	 * @return nearest {@link Declaration} above <code>vertex</code>
-	 */
-	private Declaration findNearestDeclarationAbove(Vertex vertex) {
-		if (vertex instanceof Declaration) {
-			return (Declaration) vertex;
-		}
-		Declaration result = null;
-		Edge inc = vertex.getFirstEdge(EdgeDirection.OUT);
-		while (inc != null) {
-			result = findNearestDeclarationAbove(inc.getOmega());
-			if (result != null) {
-				return result;
-			}
-			inc = inc.getNextEdge(EdgeDirection.OUT);
-		}
-		return null;
 	}
 
 	/**

@@ -10,18 +10,17 @@ import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclarationLayer;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueMap;
-import de.uni_koblenz.jgralab.greql2.schema.Declaration;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
+import de.uni_koblenz.jgralab.greql2.schema.Comprehension;
 import de.uni_koblenz.jgralab.greql2.schema.MapComprehension;
 
 /**
  * @author Tassilo Horn <horn@uni-koblenz.de>
  * 
  */
-public class MapComprehensionEvaluator extends VertexEvaluator {
+public class MapComprehensionEvaluator extends ComprehensionEvaluator {
 	private MapComprehension vertex;
 
 	public MapComprehensionEvaluator(MapComprehension vertex,
@@ -52,17 +51,7 @@ public class MapComprehensionEvaluator extends VertexEvaluator {
 	 */
 	@Override
 	public JValue evaluate() throws EvaluateException {
-		Declaration d = (Declaration) vertex.getFirstIsCompDeclOf(
-				EdgeDirection.IN).getAlpha();
-		DeclarationEvaluator declEval = (DeclarationEvaluator) greqlEvaluator
-				.getVertexEvaluatorGraphMarker().getMark(d);
-		VariableDeclarationLayer declLayer = null;
-		try {
-			declLayer = declEval.getResult(subgraph).toDeclarationLayer();
-		} catch (JValueInvalidTypeException exception) {
-			throw new EvaluateException("Error evaluating MapComprehension",
-					exception);
-		}
+		VariableDeclarationLayer declLayer = getVariableDeclationLayer();
 
 		JValueMap resultMap = new JValueMap();
 
@@ -75,10 +64,11 @@ public class MapComprehensionEvaluator extends VertexEvaluator {
 				.getAlpha();
 		VertexEvaluator valEval = greqlEvaluator
 				.getVertexEvaluatorGraphMarker().getMark(val);
-
+		declLayer.reset();
 		while (declLayer.iterate(subgraph)) {
-			resultMap.put(keyEval.getResult(subgraph), valEval
-					.getResult(subgraph));
+			JValue jkey = keyEval.getResult(subgraph);
+			JValue jval = valEval.getResult(subgraph);
+			resultMap.put(jkey, jval);
 		}
 		return resultMap;
 	}
@@ -91,7 +81,7 @@ public class MapComprehensionEvaluator extends VertexEvaluator {
 	 * ()
 	 */
 	@Override
-	public Greql2Vertex getVertex() {
+	public Comprehension getVertex() {
 		return vertex;
 	}
 
@@ -99,6 +89,11 @@ public class MapComprehensionEvaluator extends VertexEvaluator {
 	public long calculateEstimatedCardinality(GraphSize graphSize) {
 		return greqlEvaluator.getCostModel()
 				.calculateCardinalityMapComprehension(this, graphSize);
+	}
+
+	@Override
+	protected JValueCollection getResultDatastructure() {
+		return null;
 	}
 
 }

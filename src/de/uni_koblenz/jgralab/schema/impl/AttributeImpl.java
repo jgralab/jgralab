@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -24,9 +24,13 @@
 
 package de.uni_koblenz.jgralab.schema.impl;
 
+import de.uni_koblenz.jgralab.AttributedElement;
+import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.JGraLabCloneable;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Domain;
+import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 /**
  * TODO add comment
@@ -38,22 +42,32 @@ public class AttributeImpl implements Attribute, Comparable<Attribute> {
 	/**
 	 * the name of the attribute
 	 */
-	private String name;
+	private final String name;
 
 	/**
 	 * the domain of the attribute
 	 */
-	private Domain domain;
+	private final Domain domain;
 
 	/**
 	 * the owning AttributedElementClass of the atribute
 	 */
-	private AttributedElementClass aec;
+	private final AttributedElementClass aec;
 
 	/**
 	 * defines a total order of all attributes
 	 */
-	private String sortKey;
+	private final String sortKey;
+
+	private String defaultValueAsString;
+
+	private Object defaultValue;
+
+	private Object defaultTransactionValue;
+
+	private boolean defaultTransactionValueComputed;
+
+	private boolean defaultValueComputed;
 
 	/**
 	 * builds a new attribute
@@ -65,12 +79,17 @@ public class AttributeImpl implements Attribute, Comparable<Attribute> {
 	 * @param aec
 	 *            the {@link AttributedElementClass} owning the
 	 *            {@link Attribute}
+	 * @param defaultValue
+	 *            a String in TG value format denoting the default value of this
+	 *            Attribute, or null if no default value shall be specified.
 	 */
-	public AttributeImpl(String name, Domain domain, AttributedElementClass aec) {
+	public AttributeImpl(String name, Domain domain,
+			AttributedElementClass aec, String defaultValue) {
 		this.name = name;
 		this.domain = domain;
 		this.aec = aec;
 		this.sortKey = name + ":" + domain.getQualifiedName();
+		setDefaultValueAsString(defaultValue);
 	}
 
 	/*
@@ -124,5 +143,64 @@ public class AttributeImpl implements Attribute, Comparable<Attribute> {
 
 	public String getSortKey() {
 		return sortKey;
+	}
+
+	@Override
+	public String getDefaultValueAsString() {
+		return defaultValueAsString;
+	}
+
+	@Override
+	public void setDefaultValueAsString(String defaultValue)
+			throws SchemaException {
+		if (defaultValueAsString != null) {
+			throw new SchemaException(
+					"Cannot assign a new default value to Attribute " + name
+							+ " of " + aec.getQualifiedName() + ".");
+		}
+		defaultValueAsString = defaultValue;
+
+	}
+
+	@Override
+	public void setDefaultTransactionValue(AttributedElement element)
+			throws GraphIOException, NoSuchFieldException {
+		if (defaultValueAsString != null) {
+			if (!defaultTransactionValueComputed) {
+				element
+						.readAttributeValueFromString(name,
+								defaultValueAsString);
+				if (!domain.isComposite()) {
+					defaultTransactionValue = element.getAttribute(name);
+					defaultTransactionValueComputed = true;
+				}
+			} else {
+				element.setAttribute(name, defaultTransactionValue);
+			}
+		}
+	}
+
+	@Override
+	public void setDefaultValue(AttributedElement element)
+			throws GraphIOException, NoSuchFieldException {
+		if (!defaultValueComputed) {
+			if (defaultValueAsString != null) {
+				element
+						.readAttributeValueFromString(name,
+								defaultValueAsString);
+			}
+			defaultValue = element.getAttribute(name);
+			defaultValueComputed = true;
+		} else {
+			Object cloneOfDefaultValue = null;
+
+			if (defaultValue instanceof JGraLabCloneable) {
+				cloneOfDefaultValue = ((JGraLabCloneable) defaultValue).clone();
+			} else {
+				cloneOfDefaultValue = defaultValue;
+			}
+
+			element.setAttribute(name, cloneOfDefaultValue);
+		}
 	}
 }

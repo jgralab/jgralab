@@ -1,3 +1,4 @@
+TGraph 2;
 Schema test.Test;
 GraphClass GC { lastUpdate: util.Date, boundary: .Polygon } ["Nur ein Test"  "true"  ];
  
@@ -11,8 +12,8 @@ VertexClass D: B;
 VertexClass E: C;
 VertexClass F: D;
 EdgeClass Ab from A (1, 1) role a to B (1, 1) role b;
-abstract AggregationClass Cd from D (0, *) role d to C (1, 1) role c aggregate to;
-CompositionClass Ef from F (1, 1) role f redefines a, c to E (0, *) role e redefines b aggregate from;
+abstract EdgeClass Cd from D (0, *) role d aggregation shared to C (1, 1) role c;
+EdgeClass Ef from F (1, 1) role f to E (0, *) role e aggregation composite;
  
 Package util;
 EnumDomain Month (JAN, FEB, MAR, APR, MAY, JUN, JUL, AUG, SEP, OCT, NOV, DEC);

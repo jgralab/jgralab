@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -29,12 +29,11 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
-import de.uni_koblenz.jgralab.greql2.evaluator.fa.DFA;
-import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
@@ -84,7 +83,7 @@ public class PathExistenceEvaluator extends PathSearchEvaluator {
 		 * restrictedExpression may return a null-value
 		 */
 		if (!res.isValid()) {
-			return new JValue();
+			return new JValueImpl();
 		}
 		Vertex startVertex = null;
 		try {
@@ -94,8 +93,9 @@ public class PathExistenceEvaluator extends PathSearchEvaluator {
 					"Error evaluation ForwardVertexSet, StartExpression doesn't evaluate to a vertex",
 					exception);
 		}
-		if (startVertex == null)
-			return new JValue();
+		if (startVertex == null) {
+			return new JValueImpl();
+		}
 		Expression targetExpression = (Expression) vertex
 				.getFirstIsTargetExprOf(EdgeDirection.IN).getAlpha();
 		VertexEvaluator targetEval = greqlEvaluator
@@ -103,7 +103,7 @@ public class PathExistenceEvaluator extends PathSearchEvaluator {
 		Vertex targetVertex = null;
 		res = targetEval.getResult(subgraph);
 		if (!res.isValid()) {
-			return new JValue();
+			return new JValueImpl();
 		}
 		try {
 			targetVertex = res.toVertex();
@@ -113,13 +113,10 @@ public class PathExistenceEvaluator extends PathSearchEvaluator {
 					exception);
 		}
 		if (targetVertex == null) {
-			return new JValue();
+			return new JValueImpl();
 		}
-		// GreqlEvaluator.println("Try to create DFA");
 		if (searchAutomaton == null) {
-			NFA createdNFA = pathDescEval.getNFA();
-			// createdNFA.printAscii();
-			searchAutomaton = new DFA(createdNFA);
+			searchAutomaton = pathDescEval.getNFA().getDFA();
 			// searchAutomaton.printAscii();
 			// We log the number of states as the result size of the underlying
 			// PathDescription.
@@ -128,15 +125,14 @@ public class PathExistenceEvaluator extends PathSearchEvaluator {
 						searchAutomaton.stateList.size());
 			}
 		}
-		// GreqlEvaluator.println("Successfull created DFA");
 		if (function == null) {
 			function = Greql2FunctionLibrary.instance().getGreqlFunction(
 					"isReachable");
 		}
-		JValue[] arguments = new JValue[3];
-		arguments[0] = new JValue(startVertex);
-		arguments[1] = new JValue(targetVertex);
-		arguments[2] = new JValue(searchAutomaton);
+		JValueImpl[] arguments = new JValueImpl[3];
+		arguments[0] = new JValueImpl(startVertex);
+		arguments[1] = new JValueImpl(targetVertex);
+		arguments[2] = new JValueImpl(searchAutomaton);
 
 		JValue tempResult = function.evaluate(graph, subgraph, arguments);
 		return tempResult;

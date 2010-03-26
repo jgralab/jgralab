@@ -114,7 +114,7 @@ public class VariableDeclarationOrderUnit implements
 			if (sd == simpleDeclarationOfVariable) {
 				continue;
 			}
-			for (Variable var : sd.getDeclaredVarList()) {
+			for (Variable var : sd.get_declaredVar()) {
 				// if it is already in the set, then the extension was already
 				// done.
 				if (!dependentVertices.contains(var)) {
@@ -151,9 +151,7 @@ public class VariableDeclarationOrderUnit implements
 		int costs = 0;
 		for (Vertex vertex : dependentVertices) {
 			VertexEvaluator eval = vertexEvalMarker.getMark(vertex);
-			if (eval == null) {
-				System.err.println("NULL: " + vertex);
-			}
+			assert eval != null;
 			costs += eval.getOwnEvaluationCosts(graphSize);
 		}
 		return costs;
@@ -231,6 +229,20 @@ public class VariableDeclarationOrderUnit implements
 		} else {
 			return 1;
 		}
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof VariableDeclarationOrderUnit)) {
+			return false;
+		}
+		return compareTo((VariableDeclarationOrderUnit) o) == 0;
+	}
+
+	@Override
+	public int hashCode() {
+		int x = 991;
+		return x * variable.hashCode() + x;
 	}
 
 	/**

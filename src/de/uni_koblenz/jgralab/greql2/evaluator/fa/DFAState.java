@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -59,7 +59,7 @@ public class DFAState extends State {
 		while (newTransitionIter.hasNext()) {
 			Transition newTransition = newTransitionIter.next();
 			newTransition.setStartState(this);
-			newTransition.setEndState(newTransition.getEndState());
+			newTransition.setEndState(newTransition.endState);
 		}
 	}
 

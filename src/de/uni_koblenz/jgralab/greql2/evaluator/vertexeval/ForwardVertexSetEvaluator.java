@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -32,9 +32,8 @@ import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.DFA;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
-import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
+import de.uni_koblenz.jgralab.greql2.funlib.ReachableVertices;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.ForwardVertexSet;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
@@ -64,58 +63,45 @@ public class ForwardVertexSetEvaluator extends PathSearchEvaluator {
 		this.vertex = vertex;
 	}
 
-	@Override
-	public JValue evaluate() throws EvaluateException {
-		PathDescription p = (PathDescription) vertex.getFirstIsPathOf(
-				EdgeDirection.IN).getAlpha();
+	private boolean initialized = false;
+	
+	private VertexEvaluator startEval = null;
+
+	private final void initialize() {
+		PathDescription p = (PathDescription) vertex.getFirstIsPathOf(EdgeDirection.IN).getAlpha();
 		PathDescriptionEvaluator pathDescEval = (PathDescriptionEvaluator) greqlEvaluator
 				.getVertexEvaluatorGraphMarker().getMark(p);
+		
 		Expression startExpression = (Expression) vertex.getFirstIsStartExprOf(
 				EdgeDirection.IN).getAlpha();
-		VertexEvaluator startEval = greqlEvaluator
-				.getVertexEvaluatorGraphMarker().getMark(startExpression);
-		JValue res = startEval.getResult(subgraph);
+		startEval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(startExpression);
+		searchAutomaton = new DFA(pathDescEval.getNFA());
 
-		assert (res != null) : "The evaluator " + startEval
-				+ " returned null!!!!!!";
-
-		/**
-		 * check if the result is invalid, this may occur because the
-		 * restrictedExpression may return a null-value
-		 */
-		if (!res.isValid()) {
-			return new JValueSet(0);
+			
+		// We log the number of states as the result size of the underlying
+		// PathDescription.
+		if (evaluationLogger != null) {
+			evaluationLogger.logResultSize("PathDescription",
+					searchAutomaton.stateList.size());
+		}
+		initialized = true;
+	}
+	
+	
+	@Override
+	public JValue evaluate() throws EvaluateException {
+		if (!initialized) {
+			initialize();
 		}
 		Vertex startVertex = null;
 		try {
-			startVertex = res.toVertex();
+			startVertex = startEval.getResult(subgraph).toVertex();
 		} catch (JValueInvalidTypeException exception) {
 			throw new EvaluateException(
 					"Error evaluation ForwardVertexSet, StartExpression doesn't evaluate to a vertex",
 					exception);
 		}
-		if (startVertex == null) {
-			return new JValue();
-		}
-		if (searchAutomaton == null) {
-			searchAutomaton = new DFA(pathDescEval.getNFA());
-			// We log the number of states as the result size of the underlying
-			// PathDescription.
-			if (evaluationLogger != null) {
-				evaluationLogger.logResultSize("PathDescription",
-						searchAutomaton.stateList.size());
-			}
-		}
-		if (function == null) {
-			function = Greql2FunctionLibrary.instance().getGreqlFunction(
-					"reachableVertices");
-		}
-		JValue[] arguments = new JValue[3];
-		arguments[0] = new JValue(startVertex);
-		arguments[1] = new JValue(searchAutomaton);
-		arguments[2] = new JValue(subgraph);
-
-		return function.evaluate(graph, subgraph, arguments);
+		return ReachableVertices.search(startVertex, searchAutomaton, subgraph);
 	}
 
 	@Override

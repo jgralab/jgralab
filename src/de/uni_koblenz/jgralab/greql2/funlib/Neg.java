@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -31,6 +31,7 @@ import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
@@ -80,11 +81,11 @@ public class Neg extends Greql2Function {
 			JValue[] arguments) throws EvaluateException {
 		switch (checkArguments(arguments)) {
 		case 0:
-			return new JValue(-arguments[0].toLong());
+			return new JValueImpl(-arguments[0].toLong());
 		case 1:
-			return new JValue(-arguments[0].toInteger());
+			return new JValueImpl(-arguments[0].toInteger());
 		case 2:
-			return new JValue(-arguments[0].toDouble());
+			return new JValueImpl(-arguments[0].toDouble());
 		default:
 			throw new WrongFunctionParameterException(this, arguments);
 		}

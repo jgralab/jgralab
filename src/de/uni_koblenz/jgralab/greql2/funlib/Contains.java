@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -32,6 +32,7 @@ import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
@@ -87,34 +88,37 @@ public class Contains extends Greql2Function {
 				Category.PATHS_AND_PATHSYSTEMS_AND_SLICES };
 		categories = c;
 	}
+	
+	public static int count = 0;
 
 	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-
+		count++;
 		switch (checkArguments(arguments)) {
 		case 0:
 			JValueCollection col = arguments[0].toCollection();
-			return new JValue(col.contains(arguments[1]));
+			JValue val =  JValueBoolean.getValue(col.contains(arguments[1]));
+			return val;
 		case 1:
 			JValuePath path = arguments[0].toPath();
-			return new JValue(path.contains((GraphElement) arguments[1]
+			return JValueBoolean.getValue(path.contains((GraphElement) arguments[1]
 					.toAttributedElement()));
 		case 2:
 			JValuePathSystem pathsys = arguments[0].toPathSystem();
-			return new JValue(pathsys.contains((GraphElement) arguments[1]
+			return JValueBoolean.getValue(pathsys.contains((GraphElement) arguments[1]
 					.toAttributedElement()));
 		case 3:
 			JValueSlice slice = arguments[0].toSlice();
-			return new JValue(slice.contains((GraphElement) arguments[1]
+			return JValueBoolean.getValue(slice.contains((GraphElement) arguments[1]
 					.toAttributedElement()));
 		case 4:
 			JValuePathSystem pathsys2 = arguments[0].toPathSystem();
 			JValuePath path2 = arguments[1].toPath();
-			return new JValue(pathsys2.containsPath(path2));
+			return JValueBoolean.getValue(pathsys2.containsPath(path2));
 		case 5:
-			BooleanGraphMarker m = arguments[0].toSubgraphTempAttribute();
-			return new JValue(m.isMarked(arguments[1].toAttributedElement()));
+			BooleanGraphMarker m = (BooleanGraphMarker) arguments[0].toObject();
+			return JValueBoolean.getValue(m.isMarked(arguments[1].toAttributedElement()));
 		default:
 			throw new WrongFunctionParameterException(this, arguments);
 		}

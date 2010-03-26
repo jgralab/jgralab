@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -33,9 +33,8 @@ import de.uni_koblenz.jgralab.greql2.evaluator.fa.DFA;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
-import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
+import de.uni_koblenz.jgralab.greql2.funlib.ReachableVertices;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.greql2.schema.BackwardVertexSet;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
@@ -64,60 +63,46 @@ public class BackwardVertexSetEvaluator extends PathSearchEvaluator {
 		super(eval);
 		this.vertex = vertex;
 	}
+	
+	private boolean initialized = false;
+	
+	private VertexEvaluator targetEval = null;
+
+	private final void initialize() {
+		PathDescription p = (PathDescription) vertex.getFirstIsPathOf(EdgeDirection.IN).getAlpha();
+		PathDescriptionEvaluator pathDescEval = (PathDescriptionEvaluator) greqlEvaluator
+				.getVertexEvaluatorGraphMarker().getMark(p);
+		
+		Expression targetExpression = (Expression) vertex.getFirstIsTargetExprOf(
+				EdgeDirection.IN).getAlpha();
+		targetEval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(targetExpression);
+		NFA revertedNFA = NFA.revertNFA(pathDescEval.getNFA());
+		searchAutomaton = new DFA(revertedNFA);
+			
+		// We log the number of states as the result size of the underlying
+		// PathDescription.
+		if (evaluationLogger != null) {
+			evaluationLogger.logResultSize("PathDescription",
+					searchAutomaton.stateList.size());
+		}
+		initialized = true;
+	}
+	
 
 	@Override
 	public JValue evaluate() throws EvaluateException {
-		PathDescription p = (PathDescription) vertex.getFirstIsPathOf(
-				EdgeDirection.IN).getAlpha();
-		PathDescriptionEvaluator pathDescEval = (PathDescriptionEvaluator) greqlEvaluator
-				.getVertexEvaluatorGraphMarker().getMark(p);
-		Expression targetExpression = (Expression) vertex
-				.getFirstIsTargetExprOf(EdgeDirection.IN).getAlpha();
-		VertexEvaluator targetEval = greqlEvaluator
-				.getVertexEvaluatorGraphMarker().getMark(targetExpression);
-		JValue res = targetEval.getResult(subgraph);
-
-		assert (res != null) : "The evaluator " + targetEval
-				+ " returned null!!!!!!";
-
-		/**
-		 * check if the result is invalid, this may occur because the
-		 * restrictedExpression may return a null-value
-		 */
-		if (!res.isValid()) {
-			return new JValueSet(0);
+		if (!initialized) {
+			initialize();
 		}
 		Vertex targetVertex = null;
 		try {
-			targetVertex = res.toVertex();
+			targetVertex = targetEval.getResult(subgraph).toVertex();
 		} catch (JValueInvalidTypeException exception) {
 			throw new EvaluateException(
 					"Error evaluation BackwardVertexSet, TargetExpression doesn't evaluate to a vertex",
 					exception);
 		}
-		if (targetVertex == null) {
-			return new JValue();
-		}
-		if (searchAutomaton == null) {
-			NFA revertedNFA = NFA.revertNFA(pathDescEval.getNFA());
-			searchAutomaton = new DFA(revertedNFA);
-			// We log the number of states as the result size of the underlying
-			// PathDescription.
-			if (evaluationLogger != null) {
-				evaluationLogger.logResultSize("PathDescription",
-						searchAutomaton.stateList.size());
-			}
-		}
-		if (function == null) {
-			function = Greql2FunctionLibrary.instance().getGreqlFunction(
-					"reachableVertices");
-		}
-		JValue[] arguments = new JValue[3];
-		arguments[0] = new JValue(targetVertex);
-		arguments[1] = new JValue(searchAutomaton);
-		arguments[2] = new JValue(subgraph);
-
-		return function.evaluate(graph, subgraph, arguments);
+		return ReachableVertices.search(targetVertex, searchAutomaton, subgraph);
 	}
 
 	@Override

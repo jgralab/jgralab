@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -98,8 +98,9 @@ public class IsTree extends Greql2Function {
 				}
 				Vertex v = (Vertex) ae;
 				int inDegree = v.getDegree(EdgeDirection.IN);
-				if (inDegree > 1 || inDegree == 0 && foundOneRoot) {
-					return new JValue(JValueBoolean.getFalseValue());
+				if ((inDegree > 1) || ((inDegree == 0) && foundOneRoot)) {
+					return JValueBoolean
+							.getValue(JValueBoolean.getFalseValue());
 				}
 				if (inDegree == 0) {
 					foundOneRoot = true;
@@ -108,15 +109,16 @@ public class IsTree extends Greql2Function {
 		} else {
 			for (Vertex v : graph.vertices()) {
 				int inDegree = v.getDegree(EdgeDirection.IN);
-				if (inDegree > 1 || inDegree == 0 && foundOneRoot) {
-					return new JValue(JValueBoolean.getFalseValue());
+				if ((inDegree > 1) || ((inDegree == 0) && foundOneRoot)) {
+					return JValueBoolean
+							.getValue(JValueBoolean.getFalseValue());
 				}
 				if (inDegree == 0) {
 					foundOneRoot = true;
 				}
 			}
 		}
-		return new JValue(foundOneRoot);
+		return JValueBoolean.getValue(foundOneRoot);
 	}
 
 	@Override

@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -37,7 +37,7 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
  * @author ist@uni-koblenz.de
  * 
  */
-public class JValueTypeCollection extends JValue {
+public class JValueTypeCollection extends JValueImpl {
 
 	/**
 	 * The list of allowed types
@@ -57,6 +57,11 @@ public class JValueTypeCollection extends JValue {
 		return new HashSet<AttributedElementClass>(allowedTypes);
 	}
 
+	
+	public JValueTypeCollection toObject() {
+		return this;
+	}
+	
 	/**
 	 * returns the list of forbidden types. Creates a copy of that list so the
 	 * internal list is not affected by changes of the returned list
@@ -112,6 +117,14 @@ public class JValueTypeCollection extends JValue {
 			return false;
 		}
 		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		int x = 379;
+		x = x * forbiddenTypes.hashCode() + x;
+		x = x * allowedTypes.hashCode() + x;
+		return x;
 	}
 
 	/**

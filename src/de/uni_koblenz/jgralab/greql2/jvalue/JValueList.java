@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -25,6 +25,7 @@
 package de.uni_koblenz.jgralab.greql2.jvalue;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 
 public class JValueList extends JValueOrderedCollection {
@@ -268,5 +269,10 @@ public class JValueList extends JValueOrderedCollection {
 			result.add(jv.toObject());
 		}
 		return result;
+	}
+
+	@Override
+	public void sort() {
+		Collections.sort(itemList);
 	}
 }

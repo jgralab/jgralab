@@ -17,6 +17,7 @@ import de.uni_koblenz.jgralab.greql2.optimizer.MergeSimpleDeclarationsOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.Optimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.OptimizerBase;
 import de.uni_koblenz.jgralab.greql2.optimizer.PathExistenceOptimizer;
+import de.uni_koblenz.jgralab.greql2.optimizer.PathExistenceToDirectedPathExpressionOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.VariableDeclarationOrderOptimizer;
 import de.uni_koblenz.jgralab.greql2.parser.ManualGreqlParser;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
@@ -24,6 +25,7 @@ import de.uni_koblenz.jgralabtest.greql2.GenericTests;
 import de.uni_koblenz.jgralabtest.greql2.testfunctions.IsPrime;
 
 public class OptimizerTest extends GenericTests {
+
 	static {
 		Greql2FunctionLibrary.instance().registerUserDefinedFunction(
 				IsPrime.class);
@@ -32,6 +34,7 @@ public class OptimizerTest extends GenericTests {
 	private Optimizer cso = new CommonSubgraphOptimizer();
 	private Optimizer eso = new EarySelectionOptimizer();
 	private Optimizer peo = new PathExistenceOptimizer();
+	private Optimizer petdpeo = new PathExistenceToDirectedPathExpressionOptimizer();
 	private Optimizer defo = new DefaultOptimizer();
 	private Optimizer vdoo = new VariableDeclarationOrderOptimizer();
 	private Optimizer csoAndMsdo = new CommonSubgraphAndMergeSDOptimizer();
@@ -340,6 +343,52 @@ public class OptimizerTest extends GenericTests {
 				+ "     reportBag a, b, c end";
 		execTimedTest(query, "PathExistenceOptimizer3()", peo,
 				getPathExistenceOptimizerTestGraph());
+	}
+
+	@Test
+	public void testPathExistenceToDirectedPathExpOptimizer1() throws Exception {
+		String query = "from a : V{Variable},             "
+				+ "          b : V{SimpleDeclaration}     "
+				+ "     with a --> b                      "
+				+ "     reportBag a, b end";
+		execTimedTest(query, "PathExistenceToDirectedPathExpOptimizer1()",
+				petdpeo, getPathExistenceOptimizerTestGraph());
+	}
+
+	@Test
+	public void testPathExistenceToDirectedPathExpOptimizer2() throws Exception {
+		String query = "from a : V{Variable},             "
+				+ "          b : V     "
+				+ "     with a --> <>-- b                      "
+				+ "     reportBag a, b end";
+		execTimedTest(query, "PathExistenceToDirectedPathExpOptimizer2()",
+				petdpeo, getPathExistenceOptimizerTestGraph());
+	}
+
+	@Test
+	public void testPathExistenceToDirectedPathExpOptimizer3() throws Exception {
+		String query = "from a, b : V             "
+				+ "     with a --> <>-- b                      "
+				+ "     reportBag a, b end";
+		execTimedTest(query, "PathExistenceToDirectedPathExpOptimizer3()",
+				petdpeo, getPathExistenceOptimizerTestGraph());
+	}
+
+	@Test
+	public void testPathExistenceToDirectedPathExpOptimizer4() throws Exception {
+		String query = "from a, b : V             "
+				+ "     reportBag a, a --> <>-- b end";
+		execTimedTest(query, "PathExistenceToDirectedPathExpOptimizer4()",
+				petdpeo, getPathExistenceOptimizerTestGraph());
+	}
+
+	@Test
+	public void testPathExistenceToDirectedPathExpOptimizer5() throws Exception {
+		String query = "from a, b: V, c: V{Variable}             "
+				+ "     with a (-->|--<>)+ c and c --> b"
+				+ "     reportBag a, a --> <>-- b end";
+		execTimedTest(query, "PathExistenceToDirectedPathExpOptimizer5()",
+				petdpeo, getPathExistenceOptimizerTestGraph());
 	}
 
 	@Test

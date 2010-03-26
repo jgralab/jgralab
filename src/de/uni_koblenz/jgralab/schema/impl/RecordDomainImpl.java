@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -24,11 +24,11 @@
 
 package de.uni_koblenz.jgralab.schema.impl;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.Map.Entry;
 
 import de.uni_koblenz.jgralab.codegenerator.CodeBlock;
 import de.uni_koblenz.jgralab.codegenerator.CodeGenerator;
@@ -49,7 +49,7 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 	/**
 	 * holds a list of the components of the record
 	 */
-	private final Map<String, Domain> components = new TreeMap<String, Domain>();
+	private final Map<String, RecordComponent> components = new TreeMap<String, RecordComponent>();
 
 	/**
 	 * @param qn
@@ -57,15 +57,18 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 	 * @param components
 	 *            a list of the components of the record
 	 */
-	RecordDomainImpl(String sn, Package pkg, Map<String, Domain> components) {
+	RecordDomainImpl(String sn, Package pkg,
+			Collection<RecordComponent> components) {
 		super(sn, pkg);
-		for (Entry<String, Domain> e : components.entrySet()) {
-			addComponent(e.getKey(), e.getValue());
+		if (components != null) {
+			for (RecordComponent c : components) {
+				addComponent(c.getName(), c.getDomain());
+			}
 		}
 	}
 
 	@Override
-	public void addComponent(String name, Domain aDomain) {
+	public void addComponent(String name, Domain domain) {
 		if (name.isEmpty()) {
 			throw new InvalidNameException(
 					"Cannot create a record component with an empty name.");
@@ -74,28 +77,32 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 			throw new DuplicateRecordComponentException(name,
 					getQualifiedName());
 		}
-		if (parentPackage.getSchema().getDomain(aDomain.getQualifiedName()) != aDomain) {
-			throw new WrongSchemaException(aDomain.getQualifiedName()
+		if (parentPackage.getSchema().getDomain(domain.getQualifiedName()) != domain) {
+			throw new WrongSchemaException(domain.getQualifiedName()
 					+ " must be a domain of the schema "
 					+ parentPackage.getSchema().getQualifiedName());
 		}
-		if (!staysAcyclicAfterAdding(aDomain)) {
+		if (!staysAcyclicAfterAdding(domain)) {
 			throw new RecordCycleException(
-					"The creation of a component, which has the type "
-							+ aDomain
+					"The creation of a component, which has the type " + domain
 							+ ", would create a cycle of RecordDomains.");
 		}
-		components.put(name, aDomain);
+		RecordComponent c = new RecordComponent(name, domain);
+		components.put(name, c);
 	}
 
 	@Override
 	public Set<Domain> getAllComponentDomains() {
-		return new HashSet<Domain>(components.values());
+		Set<Domain> domains = new HashSet<Domain>();
+		for (RecordComponent c : components.values()) {
+			domains.add(c.getDomain());
+		}
+		return domains;
 	}
 
 	@Override
-	public Map<String, Domain> getComponents() {
-		return components;
+	public Collection<RecordComponent> getComponents() {
+		return components.values();
 	}
 
 	@Override
@@ -103,7 +110,7 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 		if (!components.containsKey(name)) {
 			throw new NoSuchRecordComponentException(getQualifiedName(), name);
 		}
-		return components.get(name);
+		return components.get(name).getDomain();
 	}
 
 	@Override
@@ -172,8 +179,11 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 	public String toString() {
 		StringBuilder output = new StringBuilder("Record " + getQualifiedName());
 		String delim = " (";
-		for (Entry<String, Domain> c : components.entrySet()) {
-			output.append(delim + c.toString());
+		for (RecordComponent component : components.values()) {
+			output.append(delim);
+			output.append(component.getName());
+			output.append('=');
+			output.append(component.getDomain());
 			delim = ", ";
 		}
 		output.append(")");
@@ -191,7 +201,7 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 			if (!qualifiedName.equals(other.getQualifiedName())) {
 				return false;
 			}
-			return components.equals(other.getComponents());
+			return getComponents().equals(other.getComponents());
 		}
 		return false;
 	}
@@ -200,13 +210,12 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 			String variableName, String graphIoVariableName) {
 		code.add("#init#");
 		code.add("if (" + graphIoVariableName + ".isNextToken(\"(\")) {");
-		code.add("\t" + "#name# = ((" + schemaPrefix + "."
+		/*code.add("\t" + "#name# = ((" + schemaPrefix + "."
 				+ parentPackage.getSchema().getGraphClass().getSimpleName()
-				+ ")" + "graph).create" + getSimpleName() + "(io);");
+				+ ")" + "graph).create" + getSimpleName() + "(io);");*/
+		code.add("\t" + "#name# = #theGraph#.createRecord(" + getSimpleName() + "Impl.class, io);");
 		code.add("} else if (" + graphIoVariableName
-				+ ".isNextToken(GraphIO.NULL_LITERAL) || "
-				+ graphIoVariableName
-				+ ".isNextToken(GraphIO.OLD_NULL_LITERAL)) {");
+				+ ".isNextToken(GraphIO.NULL_LITERAL)) {");
 		code.add("\t" + graphIoVariableName + ".match();");
 		code.add("\t" + variableName + " = null;");
 		code.add("} else {");

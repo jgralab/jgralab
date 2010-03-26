@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -32,6 +32,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 import de.uni_koblenz.jgralab.greql2.schema.EdgePathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.IsTypeRestrOf;
@@ -70,7 +71,7 @@ public class EdgePathDescriptionEvaluator extends
 		}
 		createdNFA = NFA.createEdgePathDescriptionNFA(getEdgeDirection(vertex),
 				typeCollection, getEdgeRoles(edgeRestEval), edgeEval, predicateEvaluator, greqlEvaluator.getVertexEvaluatorGraphMarker());
-		return new JValue(createdNFA);
+		return new JValueImpl(createdNFA);
 	}
 
 	@Override

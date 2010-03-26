@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
@@ -43,19 +44,19 @@ public abstract class CompareFunction extends Greql2Function {
 			d2 = arguments[1].toDouble();
 			switch (op) {
 			case GR_EQUAL:
-				result = new JValue(d1 >= d2);
+				result = JValueBoolean.getValue(d1 >= d2);
 				break;
 			case GR_THAN:
-				result = new JValue(d1 > d2);
+				result = JValueBoolean.getValue(d1 > d2);
 				break;
 			case LE_EQUAL:
-				result = new JValue(d1 <= d2);
+				result = JValueBoolean.getValue(d1 <= d2);
 				break;
 			case LE_THAN:
-				result = new JValue(d1 < d2);
+				result = JValueBoolean.getValue(d1 < d2);
 				break;
 			case NOT_EQUAL:
-				result = new JValue(d1 != d2);
+				result = JValueBoolean.getValue(d1 != d2);
 				break;
 			default:
 				throw new EvaluateException("Unknown operator: " + op);
@@ -66,19 +67,19 @@ public abstract class CompareFunction extends Greql2Function {
 			s2 = arguments[1].toString();
 			switch (op) {
 			case GR_EQUAL:
-				result = new JValue(s1.compareTo(s2) >= 0);
+				result = JValueBoolean.getValue(s1.compareTo(s2) >= 0);
 				break;
 			case GR_THAN:
-				result = new JValue(s1.compareTo(s2) == 1);
+				result = JValueBoolean.getValue(s1.compareTo(s2) == 1);
 				break;
 			case LE_EQUAL:
-				result = new JValue(s1.compareTo(s2) <= 0);
+				result = JValueBoolean.getValue(s1.compareTo(s2) <= 0);
 				break;
 			case LE_THAN:
-				result = new JValue(s1.compareTo(s2) == -1);
+				result = JValueBoolean.getValue(s1.compareTo(s2) == -1);
 				break;
 			case NOT_EQUAL:
-				result = new JValue(s1.compareTo(s2) != 0);
+				result = JValueBoolean.getValue(s1.compareTo(s2) != 0);
 				break;
 			default:
 				throw new EvaluateException("Unknown operator: " + op);

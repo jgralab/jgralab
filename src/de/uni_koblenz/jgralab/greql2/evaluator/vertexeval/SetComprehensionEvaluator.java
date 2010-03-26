@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -24,18 +24,11 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
-import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclarationLayer;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
-import de.uni_koblenz.jgralab.greql2.schema.Declaration;
-import de.uni_koblenz.jgralab.greql2.schema.Expression;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.SetComprehension;
 
 /**
@@ -44,7 +37,7 @@ import de.uni_koblenz.jgralab.greql2.schema.SetComprehension;
  * @author ist@uni-koblenz.de
  * 
  */
-public class SetComprehensionEvaluator extends VertexEvaluator {
+public class SetComprehensionEvaluator extends ComprehensionEvaluator {
 
 	/**
 	 * The SetComprehension-Vertex this evaluator evaluates
@@ -55,7 +48,7 @@ public class SetComprehensionEvaluator extends VertexEvaluator {
 	 * returns the vertex this VertexEvaluator evaluates
 	 */
 	@Override
-	public Greql2Vertex getVertex() {
+	public SetComprehension getVertex() {
 		return vertex;
 	}
 
@@ -72,31 +65,11 @@ public class SetComprehensionEvaluator extends VertexEvaluator {
 		super(eval);
 		this.vertex = vertex;
 	}
-
-	@Override
-	public JValue evaluate() throws EvaluateException {
-		Declaration d = (Declaration) vertex.getFirstIsCompDeclOf(
-				EdgeDirection.IN).getAlpha();
-		DeclarationEvaluator declEval = (DeclarationEvaluator) greqlEvaluator
-				.getVertexEvaluatorGraphMarker().getMark(d);
-		VariableDeclarationLayer declLayer = null;
-		try {
-			declLayer = declEval.getResult(subgraph).toDeclarationLayer();
-		} catch (JValueInvalidTypeException exception) {
-			throw new EvaluateException("Error evaluating SetComprehension",
-					exception);
-		}
-		Expression resultDef = (Expression) vertex.getFirstIsCompResultDefOf(
-				EdgeDirection.IN).getAlpha();
-		VertexEvaluator resultDefEval = greqlEvaluator
-				.getVertexEvaluatorGraphMarker().getMark(resultDef);
-		JValueSet resultSet = new JValueSet();
-
-		while (declLayer.iterate(subgraph)) {
-			resultSet.add(resultDefEval.getResult(subgraph));
-		}
-		return resultSet;
+	
+	protected JValueCollection getResultDatastructure() {
+		return new JValueSet();
 	}
+	
 
 	@Override
 	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {

@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -70,8 +70,31 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 	}
 
 	@Override
+	public String getTransactionJavaAttributeImplementationTypeName(
+			String schemaRootPackagePrefix) {
+		return "de.uni_koblenz.jgralab.impl.trans.JGraLabListImpl<"
+				+ baseDomain
+						.getTransactionJavaClassName(schemaRootPackagePrefix)
+				+ ">";
+	}
+
+	@Override
 	public String getJavaClassName(String schemaRootPackagePrefix) {
 		return getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
+	}
+
+	@Override
+	public String getTransactionJavaClassName(String schemaRootPackagePrefix) {
+		//return "de.uni_koblenz.jgralab.impl.trans.JGraLabListImpl";
+		//return getTransactionJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
+		return getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
+	}
+
+	@Override
+	public String getVersionedClass(String schemaRootPackagePrefix) {
+		return "de.uni_koblenz.jgralab.impl.trans.VersionedJGraLabCloneableImpl<"
+				+ getTransactionJavaAttributeImplementationTypeName(schemaRootPackagePrefix)
+				+ ">";
 	}
 
 	@Override
@@ -122,19 +145,20 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 				.add(new CodeSnippet(
 						"java.util.LinkedList<#basedom#> #tmpname# = new java.util.LinkedList<#basedom#>();",
 						"#io#.match(\"[\");",
-						"while (!#io#.isNextToken(\"]\")) {",
-						"\t#basetype# $#name#Element;"));
+						"while (!#io#.isNextToken(\"]\")) {"));
+		if (getBaseDomain().isComposite())
+			code.add(new CodeSnippet("\t#basetype# $#name#Element = null;"));
+		else
+			code.add(new CodeSnippet("\t#basetype# $#name#Element;"));
 		code.add(getBaseDomain().getReadMethod(schemaPrefix,
 				"$" + variableName + "Element", graphIoVariableName), 1);
 		code.add(new CodeSnippet("\t#tmpname#.add($#name#Element);", "}",
 				"#io#.match(\"]\");"));
-		code
-				.add(new CodeSnippet(
-						"#name# = #theGraph#.createList(#basedom#.class, #tmpname#.size());"));
+		code.add(new CodeSnippet(
+				"#name# = #theGraph#.createList(#tmpname#.size());"));
 		code.add(new CodeSnippet("#name#.addAll(#tmpname#);"));
-		code
-				.addNoIndent(new CodeSnippet(
-						"} else if (#io#.isNextToken(GraphIO.NULL_LITERAL) || #io#.isNextToken(GraphIO.OLD_NULL_LITERAL)) {"));
+		code.addNoIndent(new CodeSnippet(
+				"} else if (#io#.isNextToken(GraphIO.NULL_LITERAL)) {"));
 
 		code.add(new CodeSnippet("#io#.match();"));
 		code.addNoIndent(new CodeSnippet("}"));
@@ -150,11 +174,16 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 						schemaRootPackagePrefix));
 		code.setVariable("io", graphIoVariableName);
 
+		String element = variableName + "Element";
+		element = element.replace('(', '_');
+		element = element.replace(')', '_');
+		code.setVariable("element", element);
+	
 		code.addNoIndent(new CodeSnippet("if (#name# != null) {"));
 		code.add(new CodeSnippet("#io#.writeSpace();", "#io#.write(\"[\");",
-				"#io#.noSpace();", "for (#basetype# element: #name#) {"));
+				"#io#.noSpace();", "for (#basetype# #element# : #name#) {"));
 		code.add(getBaseDomain().getWriteMethod(schemaRootPackagePrefix,
-				"element", graphIoVariableName), 1);
+				code.getVariable("element"), graphIoVariableName), 1);
 		code.add(new CodeSnippet("}", "#io#.write(\"]\");", "#io#.space();"));
 		code.addNoIndent(new CodeSnippet("} else {"));
 		code.add(new CodeSnippet(graphIoVariableName
@@ -181,27 +210,6 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 		internalGetWriteMethod(code, schemaRootPackagePrefix, variableName,
 				graphIoVariableName);
 		return code;
-	}
-
-	@Override
-	public String getTransactionJavaAttributeImplementationTypeName(
-			String schemaRootPackagePrefix) {
-		return "de.uni_koblenz.jgralab.impl.trans.JGraLabList<"
-				+ baseDomain
-						.getTransactionJavaClassName(schemaRootPackagePrefix)
-				+ ">";
-	}
-
-	@Override
-	public String getTransactionJavaClassName(String schemaRootPackagePrefix) {
-		return "de.uni_koblenz.jgralab.impl.trans.JGraLabList";
-	}
-
-	@Override
-	public String getVersionedClass(String schemaRootPackagePrefix) {
-		return "de.uni_koblenz.jgralab.impl.trans.VersionedJGraLabCloneableImpl<"
-				+ getTransactionJavaAttributeImplementationTypeName(schemaRootPackagePrefix)
-				+ ">";
 	}
 
 	@Override

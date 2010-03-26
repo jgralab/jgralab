@@ -60,28 +60,23 @@ public class Not extends Formula {
 		Formula f = formula.simplify();
 
 		if (f instanceof True) {
-			simplifiedOrOptimized = true;
 			return new False(greqlEvaluator);
 		}
 
 		if (f instanceof False) {
-			simplifiedOrOptimized = true;
 			return new True(greqlEvaluator);
 		}
 
 		if (f instanceof Null) {
-			simplifiedOrOptimized = true;
 			return f;
 		}
 
 		if (f instanceof Not) {
-			simplifiedOrOptimized = true;
 			Not not = (Not) f;
 			return not.formula.simplify();
 		}
 
 		if (f instanceof And) {
-			simplifiedOrOptimized = true;
 			And and = (And) f;
 			Formula left = and.leftHandSide;
 			Formula right = and.rightHandSide;
@@ -90,7 +85,6 @@ public class Not extends Formula {
 		}
 
 		if (f instanceof Or) {
-			simplifiedOrOptimized = true;
 			Or or = (Or) f;
 			Formula left = or.leftHandSide;
 			Formula right = or.rightHandSide;

@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -32,6 +32,7 @@ import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTuple;
@@ -89,15 +90,15 @@ public class Pos extends Greql2Function {
 		JValueCollection col = arguments[0].toCollection();
 		if (col.isJValueList()) {
 			JValueList list = col.toJValueList();
-			return new JValue(list.indexOf(object));
+			return new JValueImpl(list.indexOf(object));
 		}
 		if (col.isJValueTuple()) {
 			JValueTuple tup = col.toJValueTuple();
-			return new JValue(tup.indexOf(object));
+			return new JValueImpl(tup.indexOf(object));
 		}
 		if (col.isJValueSet()) {
 			JValueSet set = col.toJValueSet();
-			return new JValue(set.indexOf(object));
+			return new JValueImpl(set.indexOf(object));
 		}
 		throw new EvaluateException(
 				"Pos has to be called with a LIST, TUPLE or sorted SET.");

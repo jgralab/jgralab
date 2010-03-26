@@ -1,10 +1,10 @@
 package de.uni_koblenz.jgralabtest.utilities.tg2schemagraph;
 
-import org.junit.Assert;
+import static org.junit.Assert.fail;
+
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.GraphIO;
-import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.grumlschema.SchemaGraph;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.utilities.tg2schemagraph.Schema2SchemaGraph;
@@ -31,12 +31,12 @@ public class TG2SchemaGraphTest {
 			new CompareSchemaWithSchemaGraph().compare(schema, schemaGraph);
 			System.out.println("\t\t\t\tdone");
 			System.out.println("Succesful!");
-		} catch (GraphIOException e) {
-			System.err.print("An ERROR occurred!");
-			System.out.println("");
-			Assert.fail(e.toString());
+		} catch (Exception e) {
+			System.out.println("An error occurred.\n");
+			e.printStackTrace();
+			fail(e.toString());
 		} finally {
-			System.out.println("");
+			System.out.println("\n");
 		}
 
 	}
@@ -73,8 +73,18 @@ public class TG2SchemaGraphTest {
 	}
 
 	@Test
+	public void testCommentTestSchema() {
+		testSchema2SchemaGraph("testit/testschemas/CommentTestSchema.tg");
+	}
+
+	@Test
 	public void testConstraintSchema() {
 		testSchema2SchemaGraph("testit/testschemas/ConstrainedSchema.tg");
+	}
+
+	@Test
+	public void testJniTestSchema() {
+		testSchema2SchemaGraph("testit/testschemas/jnitestschema.tg");
 	}
 
 	@Test
@@ -83,12 +93,18 @@ public class TG2SchemaGraphTest {
 	}
 
 	@Test
+	public void testMotorWayMapSchema() {
+		testSchema2SchemaGraph("testit/testschemas/motorwaymapschema.tg");
+	}
+
+	@Test
+	public void testRecordTestSchema() {
+		testSchema2SchemaGraph("testit/testschemas/RecordTestSchema.tg");
+	}
+
+	@Test
 	public void testVertexTestSchema() {
 		testSchema2SchemaGraph("testit/testschemas/VertexTestSchema.tg");
 	}
 
-	@Test
-	public void testMotorWayMapSchema() {
-		testSchema2SchemaGraph("testit/testschemas/motorwaymapschema.tg");
-	}
 }

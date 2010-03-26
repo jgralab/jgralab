@@ -5,13 +5,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedMap; //import java.util.SortedSet;
+import java.util.SortedMap;
 import java.util.Map.Entry;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphException; //import de.uni_koblenz.jgralab.graphvalidator.ConstraintViolation;
-//import de.uni_koblenz.jgralab.graphvalidator.GraphValidator;
+import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.impl.IncidenceImpl;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralab.trans.InvalidSavepointException;
@@ -55,7 +54,7 @@ public class TransactionImpl implements Transaction {
 	protected Map<AttributedElement, Set<VersionedDataObject<?>>> changedAttributes;
 
 	protected List<VertexImpl> deletedVerticesWhileWriting;
-	protected List<de.uni_koblenz.jgralab.impl.VertexImpl> deleteVertexList;
+	protected List<de.uni_koblenz.jgralab.impl.VertexBaseImpl> deleteVertexList;
 
 	protected SavepointImpl latestDefinedSavepoint;
 	protected SavepointImpl latestRestoredSavepoint;
@@ -114,7 +113,7 @@ public class TransactionImpl implements Transaction {
 			GraphImpl graph, int ID, boolean readOnly) {
 		this.transactionManager = transactionManager;
 		this.graph = graph;
-		this.id = ID;
+		id = ID;
 		this.readOnly = readOnly;
 		temporaryVersionCounter = 0;
 		latestDefinedSavepoint = null;
@@ -130,9 +129,10 @@ public class TransactionImpl implements Transaction {
 
 	@Override
 	public void abort() {
-		if (thread != Thread.currentThread())
+		if (thread != Thread.currentThread()) {
 			throw new GraphException(
 					"Transaction is not active in current thread.");
+		}
 		if (!readOnly) {
 			// remove all temporary values created...
 			removeAllTemporaryValues();
@@ -171,14 +171,14 @@ public class TransactionImpl implements Transaction {
 		savepointList = null;
 		changedDuringCommit = null;
 		temporaryValueMap = null;
-		//System.gc();
 	}
 
 	@Override
 	public void bot() {
-		if (thread != Thread.currentThread())
+		if (thread != Thread.currentThread()) {
 			throw new GraphException(
 					"Transaction is not active in current thread.");
+		}
 		if (state == TransactionState.NOTRUNNING) {
 			transactionManager.botWritingSync.readLock().lock();
 			persistentVersionAtBot = graph.getPersistentVersionCounter();
@@ -189,11 +189,14 @@ public class TransactionImpl implements Transaction {
 
 	@Override
 	public void commit() throws CommitFailedException {
-		if (thread != Thread.currentThread())
+		if (thread != Thread.currentThread()) {
 			throw new GraphException(
 					"Transaction is not active in current thread.");
-		assert (state == TransactionState.RUNNING);
+		}
+		assert state == TransactionState.RUNNING : "Expected TransactionState RUNNING, but it's "
+				+ state + ".";
 		state = TransactionState.COMMITTING;
+		// case Read-Write-Transaction
 		if (!readOnly) {
 			// only one transaction at a time should be able to execute COMMIT
 			transactionManager.commitSync.writeLock().lock();
@@ -203,21 +206,15 @@ public class TransactionImpl implements Transaction {
 				throw new CommitFailedException(this, validationComponent
 						.getConflictReason());
 			}
-			/*
-			 * SortedSet<ConstraintViolation> constraintViolations =
-			 * validateConstraints(); if (!constraintViolations.isEmpty()) {
-			 * state = TransactionState.RUNNING;
-			 * transactionManager.commitSync.writeLock().unlock(); throw new
-			 * CommitFailedException(this, constraintViolations); }
-			 */
 			// make sure no other transaction is executing isInConflict()-method
 			transactionManager.commitValidatingSync.writeLock().lock();
 			// make sure no other transaction is doing its BOT
 			transactionManager.botWritingSync.writeLock().lock();
 
 			persistentVersionAtCommit = graph.getPersistentVersionCounter();
-			if (writingComponent == null)
+			if (writingComponent == null) {
 				writingComponent = new WritingComponent(this);
+			}
 			try {
 				state = TransactionState.WRITING;
 				writingComponent.write();
@@ -255,7 +252,6 @@ public class TransactionImpl implements Transaction {
 			graph.freeStoredIndexes();
 			removeAllTemporaryValues();
 
-			// TODO check if something changes now - was outside lock before
 			state = TransactionState.COMMITTED;
 			transactionManager.removeTransactionForThread(Thread
 					.currentThread());
@@ -264,6 +260,12 @@ public class TransactionImpl implements Transaction {
 			transactionManager.botWritingSync.writeLock().unlock();
 			transactionManager.commitValidatingSync.writeLock().unlock();
 			transactionManager.commitSync.writeLock().unlock();
+		// case Read-Only-Transaction
+		} else {
+			state = TransactionState.COMMITTED;
+			transactionManager.removeTransactionForThread(Thread
+					.currentThread());
+			transactionManager.removeTransaction(this);
 		}
 
 		// free memory
@@ -280,7 +282,6 @@ public class TransactionImpl implements Transaction {
 		savepointList = null;
 		changedDuringCommit = null;
 		temporaryValueMap = null;
-		//System.gc();
 	}
 
 	/**
@@ -290,8 +291,8 @@ public class TransactionImpl implements Transaction {
 		// garbage collection - delete all persistent versions no longer
 		// needed and all temporary versions for transaction
 		long maxVersionNumber = 0;
-		TransactionImpl oldestTransaction = ((TransactionImpl) transactionManager
-				.getOldestTransaction());
+		TransactionImpl oldestTransaction = (TransactionImpl) transactionManager
+				.getOldestTransaction();
 		// if current transaction is oldest transaction, take the next
 		// transaction is oldest transaction (if any exists)
 		if (oldestTransaction == this
@@ -304,19 +305,14 @@ public class TransactionImpl implements Transaction {
 		// of this transaction...
 		if (changedDuringCommit != null) {
 			for (VersionedDataObjectImpl<?> versionedDataObject : changedDuringCommit) {
-				/*
-				 * if(versionedDataObject == graph.edge || versionedDataObject ==
-				 * graph.revEdge) graph.edgeSync.writeLock().lock(); if
-				 * (versionedDataObject == graph.vertex)
-				 * graph.vertexSync.writeLock().lock();
-				 */
 				// if current transaction is oldest and the only transaction
 				// currently active, then set maxVersionNumber as the current
 				// highest persistent version of versionedDataObject
 				if (oldestTransaction == this
-						&& transactionManager.getTransactions().size() == 1)
+						&& transactionManager.getTransactions().size() == 1) {
 					maxVersionNumber = versionedDataObject
 							.getLatestPersistentVersion();
+				}
 				versionedDataObject.removePersistentValues(maxVersionNumber);
 				versionedDataObject.removeAllTemporaryValues(this);
 				long minRange = 0;
@@ -328,28 +324,23 @@ public class TransactionImpl implements Transaction {
 				// data-object in between two versions...
 				synchronized (transactionManager.transactionList) {
 					if (transactionManager.transactionList.size() > 1) {
-						for (int i = 0; i < (transactionManager.transactionList
-								.size() - 1); i++) {
+						for (int i = 0; i < transactionManager.transactionList
+								.size() - 1; i++) {
 							TransactionImpl t1 = (TransactionImpl) transactionManager
 									.getTransactions().get(i);
 							TransactionImpl t2 = (TransactionImpl) transactionManager
 									.getTransactions().get(i + 1);
 							minRange = t1.persistentVersionAtBot;
 							maxRange = t2.persistentVersionAtBot;
-							if (minRange > maxRange)
+							if (minRange > maxRange) {
 								throw new GraphException(
 										"This should not happen. The transactions in transaction list should be sorted asc by persistentVersionAtBot.");
+							}
 							versionedDataObject.removePersistentValues(
 									minRange, maxRange);
 						}
 					}
 				}
-				/*
-				 * if(versionedDataObject == graph.edge || versionedDataObject ==
-				 * graph.revEdge) graph.edgeSync.writeLock().unlock(); if
-				 * (versionedDataObject == graph.vertex)
-				 * graph.vertexSync.writeLock().unlock();
-				 */
 			}
 		}
 	}
@@ -360,47 +351,50 @@ public class TransactionImpl implements Transaction {
 	private void removeAllTemporaryValues() {
 		// remove all temporary values created...
 		if (temporaryValueMap != null) {
-			synchronized (temporaryValueMap) {
-				temporaryValueMap.clear();
-				temporaryValueMap = null;
-			}
+			// synchronized (temporaryValueMap) {
+			temporaryValueMap.clear();
+			temporaryValueMap = null;
+			// }
 		}
 		if (temporaryVersionMap != null) {
 			temporaryVersionMap.clear();
 			temporaryVersionMap = null;
 		}
-		//System.gc();
 	}
 
 	@Override
 	public Savepoint defineSavepoint() {
-		if (thread != Thread.currentThread())
+		if (thread != Thread.currentThread()) {
 			throw new GraphException(
 					"Transaction is not active in current thread.");
-		if (readOnly)
+		}
+		if (readOnly) {
 			throw new GraphException(
 					"Read-only transactions are not allowed to define save-points.");
+		}
 		// initialize save-point list if needed
-		if (savepointList == null)
+		if (savepointList == null) {
 			savepointList = new ArrayList<Savepoint>(1);
-		synchronized (savepointList) {
-			SavepointImpl savepoint = new SavepointImpl(this,
-					++savepointIdCounter);
-			latestDefinedSavepoint = savepoint;
-			savepointList.add(savepoint);
-			// if save-point is defined and temporary values don't have mappings
-			// with version numbers yet, then it has to be done now...
-			if (temporaryValueMap != null) {
-				synchronized (temporaryValueMap) {
-					Set<VersionedDataObject<?>> versionedDataObjects = new HashSet<VersionedDataObject<?>>(
-							temporaryValueMap.keySet());
-					for (VersionedDataObject<?> dataObject : versionedDataObjects) {
-						dataObject.createNewTemporaryValue(this);
-					}
+		}
+		// synchronized (savepointList) {
+		SavepointImpl savepoint = new SavepointImpl(this, ++savepointIdCounter);
+		latestDefinedSavepoint = savepoint;
+		savepointList.add(savepoint);
+		// if save-point is defined and temporary values don't have mappings
+		// with version numbers yet, then it has to be done now...
+		if (temporaryValueMap != null) {
+			synchronized (temporaryValueMap) {
+				Set<VersionedDataObject<?>> versionedDataObjects = new HashSet<VersionedDataObject<?>>(
+						temporaryValueMap.keySet());
+				for (VersionedDataObject<?> dataObject : versionedDataObjects) {
+					// dataObject.createNewTemporaryValue(this);
+					((VersionedDataObjectImpl<?>) dataObject)
+							.moveTemporaryVersion(this);
 				}
 			}
-			return savepoint;
 		}
+		return savepoint;
+		// }
 	}
 
 	@Override
@@ -415,11 +409,13 @@ public class TransactionImpl implements Transaction {
 
 	@Override
 	public List<Savepoint> getSavepoints() {
-		if (thread != Thread.currentThread())
+		if (thread != Thread.currentThread()) {
 			throw new GraphException(
 					"Transaction is not active in current thread.");
-		if (savepointList == null)
+		}
+		if (savepointList == null) {
 			return new ArrayList<Savepoint>(1);
+		}
 		synchronized (savepointList) {
 			// return a copy
 			List<Savepoint> savepointList = new ArrayList<Savepoint>(
@@ -450,12 +446,14 @@ public class TransactionImpl implements Transaction {
 	@Override
 	public void restoreSavepoint(Savepoint savepoint)
 			throws InvalidSavepointException {
-		if (thread != Thread.currentThread())
+		if (thread != Thread.currentThread()) {
 			throw new GraphException(
 					"Transaction is not active in current thread.");
+		}
 		if (savepointList == null || !savepointList.contains(savepoint)
-				|| savepoint.getTransaction() != this)
+				|| savepoint.getTransaction() != this) {
 			throw new InvalidSavepointException(this, savepoint);
+		}
 		SavepointImpl sp = (SavepointImpl) savepoint;
 		// mark restored save-point in this transaction...
 		latestDefinedSavepoint = sp;
@@ -469,7 +467,6 @@ public class TransactionImpl implements Transaction {
 		changedVseqVertices = sp.changedVseqVertices;
 		changedIncidences = sp.changedIncidences;
 		changedAttributes = sp.changedAttributes;
-		//System.gc();
 	}
 
 	/**
@@ -477,12 +474,14 @@ public class TransactionImpl implements Transaction {
 	 * and executing the first write-operation.
 	 */
 	protected void removeInvalidSavepoints() {
-		assert (latestDefinedSavepoint != null && latestRestoredSavepoint != null);
+		assert latestDefinedSavepoint != null
+				&& latestRestoredSavepoint != null;
 		// remove all invalid save-points which have been defined after the
 		// latest restored save-point
 		for (int i = savepointList.indexOf(latestRestoredSavepoint) + 1; i < savepointList
-				.size(); i++)
+				.size(); i++) {
 			savepointList.remove(i);
+		}
 		// remove all invalid temporary values...
 		if (temporaryVersionMap != null) {
 			// avoids CurrentModificationException!!!
@@ -495,22 +494,23 @@ public class TransactionImpl implements Transaction {
 						latestRestoredSavepoint.versionAtSavepoint, this);
 				// if there are no temporary values left for current versioned
 				// data-object then remove mapping...
-				if (!versionedDataObject.hasTemporaryValue(this))
+				if (!versionedDataObject.hasTemporaryValue(this)) {
 					temporaryVersionMap.remove(versionedDataObject);
+				}
 			}
 		}
 		temporaryVersionCounter = latestRestoredSavepoint.versionAtSavepoint;
 		// now this can be set to <code>null<code> again, because invalid
 		// temporary values have been removed...
 		latestRestoredSavepoint = null;
-		//System.gc();
 	}
 
 	@Override
 	public boolean isInConflict() {
-		if (thread != Thread.currentThread())
+		if (thread != Thread.currentThread()) {
 			throw new GraphException(
 					"Transaction is not active in current thread.");
+		}
 		state = TransactionState.VALIDATING;
 		boolean result = false;
 		// validation and COMMIT synchronized
@@ -526,23 +526,27 @@ public class TransactionImpl implements Transaction {
 	 * @return if a conflict could be detected
 	 */
 	private boolean internalIsInConflict() {
-		assert (thread == Thread.currentThread());
+		assert thread == Thread.currentThread();
 		state = TransactionState.VALIDATING;
-		if (readOnly)
+		if (readOnly) {
 			return false;
-		if (validationComponent == null)
+		}
+		if (validationComponent == null) {
 			validationComponent = new ValidationComponent(this);
+		}
 		return validationComponent.isInConflict();
 	}
 
 	@Override
 	public void removeSavepoint(Savepoint savepoint) {
-		if (thread != Thread.currentThread())
+		if (thread != Thread.currentThread()) {
 			throw new GraphException(
 					"Transaction is not active in current thread.");
-		if (savepoint.getTransaction() != this)
+		}
+		if (savepoint.getTransaction() != this) {
 			throw new GraphException(
 					"This savepoint doesn't belong to this transaction.");
+		}
 		if (savepointList != null && !savepointList.isEmpty()) {
 			synchronized (savepointList) {
 				int position = savepointList.indexOf(savepoint);
@@ -566,10 +570,11 @@ public class TransactionImpl implements Transaction {
 					temporaryVersionMap = null;
 				} else {
 					// savepoint is the latest defined
-					if(savepointList.size() == position)
+					if (savepointList.size() == position) {
 						;// TODO implement
-					else
+					} else {
 						;// TODO implement
+					}
 				}
 			}
 		}
@@ -585,18 +590,6 @@ public class TransactionImpl implements Transaction {
 	public String toString() {
 		return "TA-" + id + "_Graph-" + graph.getId() + "-" + state;
 	}
-
-	/**
-	 * TODO maybe implement someday?!
-	 * 
-	 * @return
-	 */
-	/*
-	 * protected SortedSet<ConstraintViolation> validateConstraints() {
-	 * if(persistentVersionAtBot == persistentVersionAtCommit) state =
-	 * TransactionState.RUNNING; GraphValidator graphValidator = new
-	 * GraphValidator(graph); return graphValidator.validate(); }
-	 */
 
 	/**
 	 * 
@@ -616,22 +609,28 @@ public class TransactionImpl implements Transaction {
 		if (versionedDataObjects.size() > 0) {
 			Set<EdgeImpl> edges = new HashSet<EdgeImpl>();
 			Set<ReversedEdgeImpl> reversedEdges = new HashSet<ReversedEdgeImpl>();
-			if (addedEdges != null)
+			if (addedEdges != null) {
 				edges.addAll(addedEdges);
-			if (changedEdges != null)
+			}
+			if (changedEdges != null) {
 				edges.addAll(changedEdges.keySet());
-			if (changedEseqEdges != null)
+			}
+			if (changedEseqEdges != null) {
 				edges.addAll(changedEseqEdges.keySet());
-			if (deletedEdges != null)
+			}
+			if (deletedEdges != null) {
 				edges.addAll(deletedEdges);
+			}
 			if (changedIncidences != null) {
 				for (Map<IncidenceImpl, Map<ListPosition, Boolean>> map : changedIncidences
 						.values()) {
 					for (IncidenceImpl incidence : map.keySet()) {
-						if (incidence instanceof EdgeImpl)
+						if (incidence instanceof EdgeImpl) {
 							edges.add((EdgeImpl) incidence);
-						if (incidence instanceof ReversedEdgeImpl)
+						}
+						if (incidence instanceof ReversedEdgeImpl) {
 							reversedEdges.add((ReversedEdgeImpl) incidence);
+						}
 					}
 				}
 			}
@@ -648,14 +647,18 @@ public class TransactionImpl implements Transaction {
 				versionedDataObjects.remove(reversedEdge.prevIncidence);
 			}
 			Set<VertexImpl> vertices = new HashSet<VertexImpl>();
-			if (addedVertices != null)
+			if (addedVertices != null) {
 				vertices.addAll(addedVertices);
-			if (changedVseqVertices != null)
+			}
+			if (changedVseqVertices != null) {
 				vertices.addAll(changedVseqVertices.keySet());
-			if (deletedVertices != null)
+			}
+			if (deletedVertices != null) {
 				vertices.addAll(deletedVertices);
-			if (changedIncidences != null)
+			}
+			if (changedIncidences != null) {
 				vertices.addAll(changedIncidences.keySet());
+			}
 			for (VertexImpl vertex : vertices) {
 				versionedDataObjects.remove(vertex.firstIncidence);
 				versionedDataObjects.remove(vertex.incidenceListVersion);

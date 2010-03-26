@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -24,7 +24,7 @@
 
 package de.uni_koblenz.jgralab.schema;
 
-import java.util.Map;
+import java.util.Collection;
 
 /**
  * Represents a RecordDomain, instances may exist multiple times per schema.
@@ -33,10 +33,55 @@ import java.util.Map;
  */
 public interface RecordDomain extends CompositeDomain {
 
+	public static class RecordComponent {
+		private String name;
+		private Domain domain;
+
+		public RecordComponent(String name, Domain domain) {
+			this.name = name;
+			this.domain = domain;
+		}
+
+		@Override
+		public String toString() {
+			return getName() + ": " + getDomain();
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public Domain getDomain() {
+			return domain;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.lang.Object#equals(java.lang.Object)
+		 */
+		@Override
+		public boolean equals(Object obj) {
+			if (!(obj instanceof RecordComponent)) {
+				return false;
+			}
+			RecordComponent other = (RecordComponent) obj;
+			return name.equals(other.name) && domain.equals(other.domain);
+		}
+
+		@Override
+		public int hashCode() {
+			int x = 31;
+			x = x * name.hashCode() + x;
+			x = x * domain.hashCode() + x;
+			return x;
+		}
+	}
+
 	/**
 	 * @return a map of all the record domain components
 	 */
-	public Map<String, Domain> getComponents();
+	public Collection<RecordComponent> getComponents();
 
 	/**
 	 * @param name
@@ -55,9 +100,9 @@ public interface RecordDomain extends CompositeDomain {
 	 *            the domain of the component
 	 */
 	public void addComponent(String name, Domain domain);
-	
+
 	/**
-	 * Returns the standard-implementation-class (folder impl.std) 
+	 * Returns the standard-implementation-class (folder impl.std)
 	 * 
 	 * @return java representation of this attribute
 	 */

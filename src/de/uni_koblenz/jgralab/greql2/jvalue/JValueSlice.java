@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -42,7 +42,7 @@ import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 
-public class JValueSlice extends JValue {
+public class JValueSlice extends JValueImpl {
 
 	private static Logger logger = Logger.getLogger(JValuePathSystem.class
 			.getName());
@@ -79,7 +79,7 @@ public class JValueSlice extends JValue {
 		JValueSet resultSet = new JValueSet();
 
 		for (Vertex v : sliCritVertices) {
-			resultSet.add(new JValue(v));
+			resultSet.add(new JValueImpl(v));
 		}
 		return resultSet;
 	}
@@ -263,7 +263,7 @@ public class JValueSlice extends JValue {
 		JValueSet resultSet = new JValueSet();
 
 		for (PathSystemEntry entry : keyToEntryMap.get(key)) {
-			resultSet.add(new JValue(entry.getParentVertex(), entry
+			resultSet.add(new JValueImpl(entry.getParentVertex(), entry
 					.getParentVertex()));
 		}
 
@@ -280,7 +280,7 @@ public class JValueSlice extends JValue {
 				.entrySet()) {
 			for (PathSystemEntry thisEntry : mapEntry.getValue()) {
 				if (thisEntry.getParentEdge() != null) {
-					resultSet.add(new JValue(thisEntry.getParentEdge()));
+					resultSet.add(new JValueImpl(thisEntry.getParentEdge()));
 				}
 			}
 		}
@@ -315,7 +315,7 @@ public class JValueSlice extends JValue {
 		clearPathSystem();
 		JValueSet resultSet = new JValueSet();
 		for (PathSystemKey mapKey : keyToEntryMap.keySet()) {
-			resultSet.add(new JValue(mapKey.getVertex()));
+			resultSet.add(new JValueImpl(mapKey.getVertex()));
 		}
 
 		return resultSet;
@@ -334,7 +334,7 @@ public class JValueSlice extends JValue {
 			for (PathSystemEntry entry : mapEntry.getValue()) {
 				if ((!entry.isStateIsFinal())
 						&& (entry.getParentVertex() != null)) {
-					resultSet.add(new JValue(mapEntry.getKey().getVertex()));
+					resultSet.add(new JValueImpl(mapEntry.getKey().getVertex()));
 				}
 			}
 		}
@@ -354,7 +354,7 @@ public class JValueSlice extends JValue {
 		}
 		// create the set of leaves out of the key set
 		for (PathSystemKey key : leafKeys) {
-			leaves.add(new JValue(key.getVertex()));
+			leaves.add(new JValueImpl(key.getVertex()));
 		}
 		return leaves;
 	}

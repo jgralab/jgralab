@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -30,6 +30,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.schema.ConditionalExpression;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
@@ -81,17 +82,18 @@ public class ConditionalExpressionEvaluator extends VertexEvaluator {
 		JValue conditionResult = conditionEvaluator.getResult(subgraph);
 		Expression expressionToEvaluate = null;
 		if (conditionResult.isBoolean()) {
-			if (conditionResult.toBoolean() == Boolean.TRUE) {
-				expressionToEvaluate = (Expression) vertex
-						.getFirstIsTrueExprOf(EdgeDirection.IN).getAlpha();
-			} else if (conditionResult.toBoolean() == Boolean.FALSE) {
-				expressionToEvaluate = (Expression) vertex
-						.getFirstIsFalseExprOf(EdgeDirection.IN).getAlpha();
-			} else {
+			Boolean value = conditionResult.toBoolean();
+			if (value == null) {
 				if (vertex.getFirstIsNullExprOf(EdgeDirection.IN) != null) {
 					expressionToEvaluate = (Expression) vertex
 							.getFirstIsNullExprOf(EdgeDirection.IN).getAlpha();
 				}
+			} else if (value.booleanValue()) {
+				expressionToEvaluate = (Expression) vertex
+						.getFirstIsTrueExprOf(EdgeDirection.IN).getAlpha();
+			} else {
+				expressionToEvaluate = (Expression) vertex
+						.getFirstIsFalseExprOf(EdgeDirection.IN).getAlpha();
 			}
 		} else {
 			if (vertex.getFirstIsNullExprOf(EdgeDirection.IN) != null) {
@@ -106,14 +108,14 @@ public class ConditionalExpressionEvaluator extends VertexEvaluator {
 							expressionToEvaluate);
 			result = exprEvaluator.getResult(subgraph);
 		} else {
-			result = new JValue();
+			result = new JValueImpl();
 		}
 		return result;
 	}
 
 	@Override
 	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
-		return this.greqlEvaluator.getCostModel()
+		return greqlEvaluator.getCostModel()
 				.calculateCostsConditionalExpression(this, graphSize);
 	}
 

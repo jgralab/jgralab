@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -24,7 +24,16 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+
+import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Aggregation;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
+import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.ThisEdge;
 
 /**
@@ -43,7 +52,40 @@ public class ThisEdgeEvaluator extends VariableEvaluator {
 	 */
 	public ThisEdgeEvaluator(ThisEdge vertex, GreqlEvaluator eval) {
 		super(vertex, eval);
-	//	this.vertex = vertex;
+		// this.vertex = vertex;
+	}
+
+	// calculates the set of depending expressions of this evaluator, but using
+	// a fs-approach
+	// which stops at the first path description of each path
+	@Override
+	protected List<VertexEvaluator> calculateDependingExpressions() {
+		Queue<Greql2Vertex> queue = new LinkedList<Greql2Vertex>();
+		List<VertexEvaluator> dependingEvaluators = new ArrayList<VertexEvaluator>();
+		queue.add(vertex);
+		while (!queue.isEmpty()) {
+			Greql2Vertex currentVertex = queue.poll();
+			VertexEvaluator eval = greqlEvaluator
+					.getVertexEvaluatorGraphMarker().getMark(currentVertex);
+
+			if ((eval != null) && (!dependingEvaluators.contains(eval))
+					&& (!(eval instanceof PathDescriptionEvaluator))
+					&& (!(eval instanceof DeclarationEvaluator))
+					&& (!(eval instanceof SimpleDeclarationEvaluator))) {
+				dependingEvaluators.add(eval);
+			}
+			Greql2Aggregation currentEdge = currentVertex
+					.getFirstGreql2Aggregation(EdgeDirection.OUT);
+			while (currentEdge != null) {
+				Greql2Vertex nextVertex = (Greql2Vertex) currentEdge.getThat();
+				if (!(nextVertex instanceof PathDescription)) {
+					queue.add(nextVertex);
+				}
+				currentEdge = currentEdge
+						.getNextGreql2Aggregation(EdgeDirection.OUT);
+			}
+		}
+		return dependingEvaluators;
 	}
 
 }

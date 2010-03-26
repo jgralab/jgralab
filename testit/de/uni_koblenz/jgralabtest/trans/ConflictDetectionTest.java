@@ -14,6 +14,8 @@ import org.junit.Test;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.JGraLabList;
+import de.uni_koblenz.jgralab.JGraLabSet;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralab.trans.Transaction;
@@ -90,8 +92,8 @@ public class ConflictDetectionTest {
 	}
 
 	/**
-	 * Adding and deleting of vertices by <code>readWriteTransaction1</code>
-	 * and <code>readWriteTransaction2</code>. No conflicts expected.
+	 * Adding and deleting of vertices by <code>readWriteTransaction1</code> and
+	 * <code>readWriteTransaction2</code>. No conflicts expected.
 	 * 
 	 * @see dpthesis Tab 4.1
 	 */
@@ -138,9 +140,8 @@ public class ConflictDetectionTest {
 	}
 
 	/**
-	 * Adding and deleting of vertices by <code>readWriteTransaction1</code>
-	 * and <code>readWriteTransaction2</code> (in parallel). No conflicts
-	 * expected.
+	 * Adding and deleting of vertices by <code>readWriteTransaction1</code> and
+	 * <code>readWriteTransaction2</code> (in parallel). No conflicts expected.
 	 * 
 	 * <code>readWriteTransaction1</code> commits first.
 	 * 
@@ -152,9 +153,8 @@ public class ConflictDetectionTest {
 	}
 
 	/**
-	 * Adding and deleting of vertices by <code>readWriteTransaction1</code>
-	 * and <code>readWriteTransaction2</code> (in parallel). No conflicts
-	 * expected.
+	 * Adding and deleting of vertices by <code>readWriteTransaction1</code> and
+	 * <code>readWriteTransaction2</code> (in parallel). No conflicts expected.
 	 * 
 	 * <code>readWriteTransaction2</code> commits first.
 	 * 
@@ -250,8 +250,8 @@ public class ConflictDetectionTest {
 	}
 
 	/**
-	 * <code>readWriteTransaction1</code> trying to delete a
-	 * <code>Vertex</code> (v24) which isn't valid within the transaction.
+	 * <code>readWriteTransaction1</code> trying to delete a <code>Vertex</code>
+	 * (v24) which isn't valid within the transaction.
 	 * 
 	 * Note: test case parallel missing, because scenario is not (easily)
 	 * reproducible.
@@ -355,8 +355,7 @@ public class ConflictDetectionTest {
 
 	/**
 	 * Adding and deleting of edges by <code>readWriteTransaction1</code> and
-	 * <code>readWriteTransaction2</code> (in parallel). No conflicts
-	 * expected.
+	 * <code>readWriteTransaction2</code> (in parallel). No conflicts expected.
 	 * 
 	 * <code>readWriteTransaction1</code> commits first.
 	 * 
@@ -369,8 +368,7 @@ public class ConflictDetectionTest {
 
 	/**
 	 * Adding and deleting of edges by <code>readWriteTransaction1</code> and
-	 * <code>readWriteTransaction2</code> (in parallel). No conflicts
-	 * expected.
+	 * <code>readWriteTransaction2</code> (in parallel). No conflicts expected.
 	 * 
 	 * <code>readWriteTransaction2</code> commits first.
 	 * 
@@ -483,8 +481,8 @@ public class ConflictDetectionTest {
 	}
 
 	/**
-	 * <code>readWriteTransaction1</code> trying to delete an
-	 * <code>Edge</code> (e22) which isn't valid within the transaction.
+	 * <code>readWriteTransaction1</code> trying to delete an <code>Edge</code>
+	 * (e22) which isn't valid within the transaction.
 	 * 
 	 * Note: test case parallel missing, because scenario is not (easily)
 	 * reproducible.
@@ -532,9 +530,9 @@ public class ConflictDetectionTest {
 	}
 
 	/**
-	 * <code>readWriteTransaction2</code> tries to delete a
-	 * <code>Vertex</code> (v1) which has been used in
-	 * <code>readWriteTransaction1</code> to add a <code>Edge</code> (e21).
+	 * <code>readWriteTransaction2</code> tries to delete a <code>Vertex</code>
+	 * (v1) which has been used in <code>readWriteTransaction1</code> to add a
+	 * <code>Edge</code> (e21).
 	 * 
 	 * @see dpthesis Tab 4.5
 	 */
@@ -575,10 +573,9 @@ public class ConflictDetectionTest {
 	}
 
 	/**
-	 * <code>readWriteTransaction2</code> tries to delete a
-	 * <code>Vertex</code> (v1) which has been used in
-	 * <code>readWriteTransaction1</code> to add a <code>Edge</code> (e21)
-	 * (in parallel).
+	 * <code>readWriteTransaction2</code> tries to delete a <code>Vertex</code>
+	 * (v1) which has been used in <code>readWriteTransaction1</code> to add a
+	 * <code>Edge</code> (e21) (in parallel).
 	 * 
 	 * <code>readWriteTransaction1</code> commits first.
 	 * 
@@ -591,10 +588,9 @@ public class ConflictDetectionTest {
 	}
 
 	/**
-	 * <code>readWriteTransaction2</code> tries to delete a
-	 * <code>Vertex</code> (v1) which has been used in
-	 * <code>readWriteTransaction1</code> to add a <code>Edge</code> (e21)
-	 * (in parallel).
+	 * <code>readWriteTransaction2</code> tries to delete a <code>Vertex</code>
+	 * (v1) which has been used in <code>readWriteTransaction1</code> to add a
+	 * <code>Edge</code> (e21) (in parallel).
 	 * 
 	 * <code>readWriteTransaction2</code> commits first.
 	 * 
@@ -1624,8 +1620,8 @@ public class ConflictDetectionTest {
 	}
 
 	/**
-	 * Lost Update of the changes made in <code>readWriteTransaction1</code>
-	 * for <code>Edge</code> e4.
+	 * Lost Update of the changes made in <code>readWriteTransaction1</code> for
+	 * <code>Edge</code> e4.
 	 * 
 	 * @see dpthesis Tab. 4.16
 	 */
@@ -4357,7 +4353,7 @@ public class ConflictDetectionTest {
 		try {
 			motorwayMap.setCurrentTransaction(readWriteTransaction1);
 			City city = motorwayMap.getFirstCity();
-			Set<String> set = city.getGraph().createSet(String.class);
+			Set<String> set = city.getGraph().createSet();
 			set.add("Test1");
 			set.add("Test2");
 			assertEquals(2, set.size());
@@ -4396,7 +4392,7 @@ public class ConflictDetectionTest {
 		try {
 			motorwayMap.setCurrentTransaction(readWriteTransaction1);
 			City city = motorwayMap.getFirstCity();
-			Set<String> set = city.getGraph().createSet(String.class);
+			Set<String> set = city.getGraph().createSet();
 			set.add("Test1");
 			set.add("Test2");
 			assertEquals(2, set.size());
@@ -4436,13 +4432,15 @@ public class ConflictDetectionTest {
 		try {
 			motorwayMap.setCurrentTransaction(readWriteTransaction1);
 			City city = motorwayMap.getFirstCity();
-			List<TestRecord> list = motorwayMap.createList(TestRecord.class);
-			list.add(motorwayMap.createTestRecord("Test1", motorwayMap
-					.createList(String.class), motorwayMap
-					.createSet(String.class), 3, 3, 3, true));
-			list.add(motorwayMap.createTestRecord("Test2", motorwayMap
-					.createList(String.class), motorwayMap
-					.createSet(String.class), 3, 3, 3, true));
+			List<TestRecord> list = motorwayMap.createList();
+			JGraLabList<String> list1 = motorwayMap.createList();
+			JGraLabSet<String> set1 = motorwayMap.createSet();
+			list.add(motorwayMap.createTestRecord("Test1", list1, set1, 3, 3,
+					3, true));
+			List<String> list2 = motorwayMap.createList();
+			Set<String> set2 = motorwayMap.createSet();
+			list.add(motorwayMap.createTestRecord("Test2", list2, set2, 3, 3,
+					3, true));
 			assertEquals(2, list.size());
 			city.set_testList(list);
 			readWriteTransaction1.commit();
@@ -4451,17 +4449,19 @@ public class ConflictDetectionTest {
 			motorwayMap.setCurrentTransaction(t1);
 			List<TestRecord> t1_list = city.get_testList();
 			assertEquals(2, t1_list.size());
-			t1_list.add(motorwayMap.createTestRecord("Test3", motorwayMap
-					.createList(String.class), motorwayMap
-					.createSet(String.class), 3, 3, 3, true));
+			List<String> list3 = motorwayMap.createList();
+			Set<String> set3 = motorwayMap.createSet();
+			t1_list.add(motorwayMap.createTestRecord("Test3", list3, set3, 3,
+					3, 3, true));
 			assertEquals(3, t1_list.size());
 			Transaction t2 = motorwayMap.newTransaction();
 			motorwayMap.setCurrentTransaction(t2);
 			List<TestRecord> t2_list = city.get_testList();
 			assertEquals(2, t2_list.size());
-			t2_list.add(motorwayMap.createTestRecord("Test4", motorwayMap
-					.createList(String.class), motorwayMap
-					.createSet(String.class), 3, 3, 4, true));
+			List<String> list4 = motorwayMap.createList();
+			Set<String> set4 = motorwayMap.createSet();
+			t2_list.add(motorwayMap.createTestRecord("Test4", list4, set4, 3,
+					3, 4, true));
 			assertEquals(3, t2_list.size());
 			motorwayMap.setCurrentTransaction(t1);
 			t1.commit();
@@ -4481,23 +4481,25 @@ public class ConflictDetectionTest {
 		try {
 			motorwayMap.setCurrentTransaction(readWriteTransaction1);
 			City city = motorwayMap.getFirstCity();
-			List<TestRecord> list = motorwayMap.createList(TestRecord.class);
-			TestRecord test = motorwayMap.createTestRecord("Test1", motorwayMap
-					.createList(String.class), motorwayMap
-					.createSet(String.class), 3, 3, 3, true);
+
+			List<TestRecord> list = motorwayMap.createList();
+			List<String> list1 = motorwayMap.createList();
+			Set<String> set1 = motorwayMap.createSet();
+			TestRecord test = motorwayMap.createTestRecord("Test1",list1, set1, 3, 3, 3, true);
 			list.add(test);
-			list.add(motorwayMap.createTestRecord("Test2", motorwayMap
-					.createList(String.class), motorwayMap
-					.createSet(String.class), 3, 3, 3, true));
+			List<String> list2 = motorwayMap.createList();
+			Set<String> set2 = motorwayMap.createSet();
+			list.add(motorwayMap.createTestRecord("Test2", list2, set2, 3, 3, 3, true));
 			assertEquals(2, list.size());
 			city.set_testList(list);
 			readWriteTransaction1.commit();
 
 			Transaction t1 = motorwayMap.newTransaction();
 			motorwayMap.setCurrentTransaction(t1);
+			List<String> list3 = motorwayMap.createList();
+			Set<String> set3 = motorwayMap.createSet();
 			TestRecord test2 = motorwayMap.createTestRecord("Test3",
-					motorwayMap.createList(String.class), motorwayMap
-							.createSet(String.class), 3, 3, 3, true);
+					list3, set3, 3, 3, 3, true);
 			List<TestRecord> t1List = city.get_testList();
 			assertEquals(2, t1List.size());
 			t1List.add(test2);
@@ -4506,9 +4508,10 @@ public class ConflictDetectionTest {
 
 			Transaction t2 = motorwayMap.newTransaction();
 			motorwayMap.setCurrentTransaction(t2);
+			List<String> list4 = motorwayMap.createList();
+			Set<String> set4 = motorwayMap.createSet();
 			TestRecord test3 = motorwayMap.createTestRecord("Test3",
-					motorwayMap.createList(String.class), motorwayMap
-							.createSet(String.class), 3, 3, 3, true);
+					list4, set4, 3, 3, 3, true);
 			List<TestRecord> t2List = city.get_testList();
 			assertEquals(2, t2List.size());
 			t2List.add(test3);
@@ -4544,8 +4547,7 @@ public class ConflictDetectionTest {
 		try {
 			motorwayMap.setCurrentTransaction(readWriteTransaction1);
 			City city = motorwayMap.getFirstCity();
-			Map<String, String> map = motorwayMap.createMap(String.class,
-					String.class);
+			Map<String, String> map = motorwayMap.createMap();
 			map.put("Key1", "Value1");
 			map.put("Key2", "Value2");
 			assertEquals(2, map.size());
@@ -4586,8 +4588,7 @@ public class ConflictDetectionTest {
 		try {
 			motorwayMap.setCurrentTransaction(readWriteTransaction1);
 			City city = motorwayMap.getFirstCity();
-			Map<String, String> map = motorwayMap.createMap(String.class,
-					String.class);
+			Map<String, String> map = motorwayMap.createMap();
 			map.put("Key1", "Value1");
 			map.put("Key2", "Value2");
 			assertEquals(2, map.size());
@@ -4629,9 +4630,10 @@ public class ConflictDetectionTest {
 		try {
 			motorwayMap.setCurrentTransaction(readWriteTransaction1);
 			City city = motorwayMap.getFirstCity();
-			TestRecord record = motorwayMap.createTestRecord("Test1", motorwayMap
-					.createList(String.class), motorwayMap
-					.createSet(String.class), 3, 3, 3, true);
+			List<String> list = motorwayMap.createList();
+			Set<String> set = motorwayMap.createSet();
+			TestRecord record = motorwayMap.createTestRecord("Test1",
+					list, set, 3, 3, 3, true);
 			city.set_testRecord(record);
 			readWriteTransaction1.commit();
 
@@ -4657,29 +4659,30 @@ public class ConflictDetectionTest {
 			assertTrue(true);
 		}
 	}
-	
+
 	@Test
 	public void changeRecordWithoutSetterConflict2() {
 		try {
 			motorwayMap.setCurrentTransaction(readWriteTransaction1);
 			City city = motorwayMap.getFirstCity();
-			TestRecord record = motorwayMap.createTestRecord("Test1", motorwayMap
-					.createList(String.class), motorwayMap
-					.createSet(String.class), 3, 3, 3, true);
+			List<String> list = motorwayMap.createList();
+			Set<String> set = motorwayMap.createSet();
+			TestRecord record = motorwayMap.createTestRecord("Test1",
+					list, set, 3, 3, 3, true);
 			city.set_testRecord(record);
 			readWriteTransaction1.commit();
 
 			Transaction t1 = motorwayMap.newTransaction();
 			motorwayMap.setCurrentTransaction(t1);
 			TestRecord t1_record = city.get_testRecord();
-			List<String> list1 = motorwayMap.createList(String.class);
+			List<String> list1 = motorwayMap.createList();
 			list1.add("Entry1");
 			t1_record.set_c2(list1);
 
 			Transaction t2 = motorwayMap.newTransaction();
 			motorwayMap.setCurrentTransaction(t2);
 			TestRecord t2_record = city.get_testRecord();
-			List<String> list2 = motorwayMap.createList(String.class);
+			List<String> list2 = motorwayMap.createList();
 			list2.add("Entry2");
 			t2_record.set_c2(list2);
 
@@ -4695,29 +4698,30 @@ public class ConflictDetectionTest {
 			assertTrue(true);
 		}
 	}
-	
+
 	@Test
 	public void changeRecordWithoutSetterConflict3() {
 		try {
 			motorwayMap.setCurrentTransaction(readWriteTransaction1);
 			City city = motorwayMap.getFirstCity();
-			TestRecord record = motorwayMap.createTestRecord("Test1", motorwayMap
-					.createList(String.class), motorwayMap
-					.createSet(String.class), 3, 3, 3, true);
+			List<String> list = motorwayMap.createList();
+			Set<String> set = motorwayMap.createSet();
+			TestRecord record = motorwayMap.createTestRecord("Test1",
+					list, set, 3, 3, 3, true);
 			city.set_testRecord(record);
 			readWriteTransaction1.commit();
 
 			Transaction t1 = motorwayMap.newTransaction();
 			motorwayMap.setCurrentTransaction(t1);
 			TestRecord t1_record = city.get_testRecord();
-			Set<String> set1 = motorwayMap.createSet(String.class);
+			Set<String> set1 = motorwayMap.createSet();
 			set1.add("Entry1");
 			t1_record.set_c4(set1);
 
 			Transaction t2 = motorwayMap.newTransaction();
 			motorwayMap.setCurrentTransaction(t2);
 			TestRecord t2_record = city.get_testRecord();
-			Set<String> set2 = motorwayMap.createSet(String.class);
+			Set<String> set2 = motorwayMap.createSet();
 			set2.add("Entry2");
 			t2_record.set_c4(set2);
 
@@ -4733,21 +4737,23 @@ public class ConflictDetectionTest {
 			assertTrue(true);
 		}
 	}
-	
+
 	@Test
 	public void changeRecordWithoutSetterConflict4() {
 		try {
 			motorwayMap.setCurrentTransaction(readWriteTransaction1);
 			City city = motorwayMap.getFirstCity();
-			TestRecord record = motorwayMap.createTestRecord("Test1", motorwayMap
-					.createList(String.class), motorwayMap
-					.createSet(String.class), 3, 3, 3, true);
+			List<String> list = motorwayMap.createList();
+			Set<String> set = motorwayMap.createSet();
+			TestRecord record = motorwayMap.createTestRecord("Test1",
+					list, set, 3, 3, 3, true);
 			city.set_testRecord(record);
 			readWriteTransaction1.commit();
 
 			Transaction t1 = motorwayMap.newTransaction();
 			motorwayMap.setCurrentTransaction(t1);
-			TestRecord t1_record = city.get_testRecord();;
+			TestRecord t1_record = city.get_testRecord();
+			;
 			t1_record.set_c6(1);
 
 			Transaction t2 = motorwayMap.newTransaction();
@@ -4767,21 +4773,23 @@ public class ConflictDetectionTest {
 			assertTrue(true);
 		}
 	}
-	
+
 	@Test
 	public void changeRecordWithoutSetterConflict5() {
 		try {
 			motorwayMap.setCurrentTransaction(readWriteTransaction1);
 			City city = motorwayMap.getFirstCity();
-			TestRecord record = motorwayMap.createTestRecord("Test1", motorwayMap
-					.createList(String.class), motorwayMap
-					.createSet(String.class), 3, 3, 3, true);
+			List<String> list = motorwayMap.createList();
+			Set<String> set = motorwayMap.createSet();
+			TestRecord record = motorwayMap.createTestRecord("Test1",
+					list, set, 3, 3, 3, true);
 			city.set_testRecord(record);
 			readWriteTransaction1.commit();
 
 			Transaction t1 = motorwayMap.newTransaction();
 			motorwayMap.setCurrentTransaction(t1);
-			TestRecord t1_record = city.get_testRecord();;
+			TestRecord t1_record = city.get_testRecord();
+			;
 			t1_record.set_c7(1);
 
 			Transaction t2 = motorwayMap.newTransaction();
@@ -4801,21 +4809,23 @@ public class ConflictDetectionTest {
 			assertTrue(true);
 		}
 	}
-	
+
 	@Test
 	public void changeRecordWithoutSetterConflict6() {
 		try {
 			motorwayMap.setCurrentTransaction(readWriteTransaction1);
 			City city = motorwayMap.getFirstCity();
-			TestRecord record = motorwayMap.createTestRecord("Test1", motorwayMap
-					.createList(String.class), motorwayMap
-					.createSet(String.class), 3, 3, 3, true);
+			List<String> list = motorwayMap.createList();
+			Set<String> set = motorwayMap.createSet();
+			TestRecord record = motorwayMap.createTestRecord("Test1",
+					list, set, 3, 3, 3, true);
 			city.set_testRecord(record);
 			readWriteTransaction1.commit();
 
 			Transaction t1 = motorwayMap.newTransaction();
 			motorwayMap.setCurrentTransaction(t1);
-			TestRecord t1_record = city.get_testRecord();;
+			TestRecord t1_record = city.get_testRecord();
+			;
 			t1_record.set_c8(1);
 
 			Transaction t2 = motorwayMap.newTransaction();
@@ -4835,21 +4845,23 @@ public class ConflictDetectionTest {
 			assertTrue(true);
 		}
 	}
-	
+
 	@Test
 	public void changeRecordWithoutSetterConflict7() {
 		try {
 			motorwayMap.setCurrentTransaction(readWriteTransaction1);
 			City city = motorwayMap.getFirstCity();
-			TestRecord record = motorwayMap.createTestRecord("Test1", motorwayMap
-					.createList(String.class), motorwayMap
-					.createSet(String.class), 3, 3, 3, true);
+			List<String> list = motorwayMap.createList();
+			Set<String> set = motorwayMap.createSet();
+			TestRecord record = motorwayMap.createTestRecord("Test1", list,
+					set, 3, 3, 3, true);
 			city.set_testRecord(record);
 			readWriteTransaction1.commit();
 
 			Transaction t1 = motorwayMap.newTransaction();
 			motorwayMap.setCurrentTransaction(t1);
-			TestRecord t1_record = city.get_testRecord();;
+			TestRecord t1_record = city.get_testRecord();
+			;
 			t1_record.set_c9(true);
 
 			Transaction t2 = motorwayMap.newTransaction();
@@ -4869,15 +4881,16 @@ public class ConflictDetectionTest {
 			assertTrue(true);
 		}
 	}
-	
+
 	@Test
 	public void changeRecordWithoutSetterNoConflict1() {
 		try {
 			motorwayMap.setCurrentTransaction(readWriteTransaction1);
 			City city = motorwayMap.getFirstCity();
-			TestRecord record = motorwayMap.createTestRecord("Test1", motorwayMap
-					.createList(String.class), motorwayMap
-					.createSet(String.class), 3, 3, 3, true);
+			List<String> list = motorwayMap.createList();
+			Set<String> set = motorwayMap.createSet();
+			TestRecord record = motorwayMap.createTestRecord("Test1", list,
+					set, 3, 3, 3, true);
 			city.set_testRecord(record);
 			readWriteTransaction1.commit();
 
@@ -4904,29 +4917,30 @@ public class ConflictDetectionTest {
 			fail();
 		}
 	}
-	
+
 	@Test
 	public void changeRecordWithoutSetterNoConflict2() {
 		try {
+			List<String> list = motorwayMap.createList();
+			Set<String> set = motorwayMap.createSet();
 			motorwayMap.setCurrentTransaction(readWriteTransaction1);
 			City city = motorwayMap.getFirstCity();
-			TestRecord record = motorwayMap.createTestRecord("Test1", motorwayMap
-					.createList(String.class), motorwayMap
-					.createSet(String.class), 3, 3, 3, true);
+			TestRecord record = motorwayMap.createTestRecord("Test1", list,
+					set, 3, 3, 3, true);
 			city.set_testRecord(record);
 			readWriteTransaction1.commit();
 
 			Transaction t1 = motorwayMap.newTransaction();
 			motorwayMap.setCurrentTransaction(t1);
 			TestRecord t1_record = city.get_testRecord();
-			List<String> list1 = motorwayMap.createList(String.class);
+			List<String> list1 = motorwayMap.createList();
 			list1.add("Entry1");
 			t1_record.set_c2(list1);
 
 			Transaction t2 = motorwayMap.newTransaction();
 			motorwayMap.setCurrentTransaction(t2);
 			TestRecord t2_record = city.get_testRecord();
-			List<String> list2 = motorwayMap.createList(String.class);
+			List<String> list2 = motorwayMap.createList();
 			list2.add("Entry1");
 			t2_record.set_c2(list2);
 
@@ -4943,31 +4957,32 @@ public class ConflictDetectionTest {
 			fail();
 		}
 	}
-	
+
 	@Test
 	public void changeRecordWithoutSetterNoConflict3() {
 		try {
 			motorwayMap.setCurrentTransaction(readWriteTransaction1);
 			City city = motorwayMap.getFirstCity();
-			TestRecord record = motorwayMap.createTestRecord("Test1", motorwayMap
-					.createList(String.class), motorwayMap
-					.createSet(String.class), 3, 3, 3, true);
+			List<String> list1 = motorwayMap.createList();
+			Set<String> set1 = motorwayMap.createSet();
+			TestRecord record = motorwayMap.createTestRecord("Test1", list1,
+					set1, 3, 3, 3, true);
 			city.set_testRecord(record);
 			readWriteTransaction1.commit();
 
 			Transaction t1 = motorwayMap.newTransaction();
 			motorwayMap.setCurrentTransaction(t1);
 			TestRecord t1_record = city.get_testRecord();
-			Set<String> set1 = motorwayMap.createSet(String.class);
-			set1.add("Entry1");
-			t1_record.set_c4(set1);
+			Set<String> set2 = motorwayMap.createSet();
+			set2.add("Entry1");
+			t1_record.set_c4(set2);
 
 			Transaction t2 = motorwayMap.newTransaction();
 			motorwayMap.setCurrentTransaction(t2);
 			TestRecord t2_record = city.get_testRecord();
-			Set<String> set2 = motorwayMap.createSet(String.class);
-			set2.add("Entry1");
-			t2_record.set_c4(set2);
+			Set<String> set3 = motorwayMap.createSet();
+			set3.add("Entry1");
+			t2_record.set_c4(set3);
 
 			motorwayMap.setCurrentTransaction(t1);
 			t1.commit();
@@ -4982,21 +4997,23 @@ public class ConflictDetectionTest {
 			fail();
 		}
 	}
-	
+
 	@Test
 	public void changeRecordWithoutSetterNoConflict4() {
 		try {
+			List<String> list1 = motorwayMap.createList();
+			Set<String> set1 = motorwayMap.createSet();
 			motorwayMap.setCurrentTransaction(readWriteTransaction1);
 			City city = motorwayMap.getFirstCity();
-			TestRecord record = motorwayMap.createTestRecord("Test1", motorwayMap
-					.createList(String.class), motorwayMap
-					.createSet(String.class), 3, 3, 3, true);
+			TestRecord record = motorwayMap.createTestRecord("Test1", list1,
+					set1, 3, 3, 3, true);
 			city.set_testRecord(record);
 			readWriteTransaction1.commit();
 
 			Transaction t1 = motorwayMap.newTransaction();
 			motorwayMap.setCurrentTransaction(t1);
-			TestRecord t1_record = city.get_testRecord();;
+			TestRecord t1_record = city.get_testRecord();
+			;
 			t1_record.set_c6(1);
 
 			Transaction t2 = motorwayMap.newTransaction();
@@ -5017,21 +5034,23 @@ public class ConflictDetectionTest {
 			fail();
 		}
 	}
-	
+
 	@Test
 	public void changeRecordWithoutSetterNoConflict5() {
 		try {
 			motorwayMap.setCurrentTransaction(readWriteTransaction1);
 			City city = motorwayMap.getFirstCity();
-			TestRecord record = motorwayMap.createTestRecord("Test1", motorwayMap
-					.createList(String.class), motorwayMap
-					.createSet(String.class), 3, 3, 3, true);
+			List<String> list1 = motorwayMap.createList();
+			Set<String> set1 = motorwayMap.createSet();
+			TestRecord record = motorwayMap.createTestRecord("Test1", list1,
+					set1, 3, 3, 3, true);
 			city.set_testRecord(record);
 			readWriteTransaction1.commit();
 
 			Transaction t1 = motorwayMap.newTransaction();
 			motorwayMap.setCurrentTransaction(t1);
-			TestRecord t1_record = city.get_testRecord();;
+			TestRecord t1_record = city.get_testRecord();
+			;
 			t1_record.set_c7(1);
 
 			Transaction t2 = motorwayMap.newTransaction();
@@ -5052,21 +5071,23 @@ public class ConflictDetectionTest {
 			fail();
 		}
 	}
-	
+
 	@Test
 	public void changeRecordWithoutSetterNoConflict6() {
 		try {
 			motorwayMap.setCurrentTransaction(readWriteTransaction1);
 			City city = motorwayMap.getFirstCity();
-			TestRecord record = motorwayMap.createTestRecord("Test1", motorwayMap
-					.createList(String.class), motorwayMap
-					.createSet(String.class), 3, 3, 3, true);
+			List<String> list1 = motorwayMap.createList();
+			Set<String> set1 = motorwayMap.createSet();
+			TestRecord record = motorwayMap.createTestRecord("Test1", list1,
+					set1, 3, 3, 3, true);
 			city.set_testRecord(record);
 			readWriteTransaction1.commit();
 
 			Transaction t1 = motorwayMap.newTransaction();
 			motorwayMap.setCurrentTransaction(t1);
-			TestRecord t1_record = city.get_testRecord();;
+			TestRecord t1_record = city.get_testRecord();
+			;
 			t1_record.set_c8(1);
 
 			Transaction t2 = motorwayMap.newTransaction();
@@ -5087,21 +5108,23 @@ public class ConflictDetectionTest {
 			fail();
 		}
 	}
-	
+
 	@Test
 	public void changeRecordWithoutSetterNoConflict7() {
 		try {
 			motorwayMap.setCurrentTransaction(readWriteTransaction1);
 			City city = motorwayMap.getFirstCity();
-			TestRecord record = motorwayMap.createTestRecord("Test1", motorwayMap
-					.createList(String.class), motorwayMap
-					.createSet(String.class), 3, 3, 3, true);
+			List<String> list1 = motorwayMap.createList();
+			Set<String> set1 = motorwayMap.createSet();
+			TestRecord record = motorwayMap.createTestRecord("Test1", list1,
+					set1, 3, 3, 3, true);
 			city.set_testRecord(record);
 			readWriteTransaction1.commit();
 
 			Transaction t1 = motorwayMap.newTransaction();
 			motorwayMap.setCurrentTransaction(t1);
-			TestRecord t1_record = city.get_testRecord();;
+			TestRecord t1_record = city.get_testRecord();
+			;
 			t1_record.set_c9(true);
 
 			Transaction t2 = motorwayMap.newTransaction();
@@ -5122,7 +5145,6 @@ public class ConflictDetectionTest {
 			fail();
 		}
 	}
-
 	/**
 	 * 
 	 * @return

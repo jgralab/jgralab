@@ -3,16 +3,10 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry excluding="testdata/|testgraphs/|testschemas/" kind="src" path="testit"/>
 	<classpathentry kind="var" path="UKOISTHOME/jgralab/lib/plist/org.riediger.plist.jar"/>
-	<classpathentry kind="var" path="UKOISTHOME/jgralab/lib/xmlrpc/commons-logging-1.1.jar"/>
-	<classpathentry kind="var" path="UKOISTHOME/jgralab/lib/xmlrpc/ws-commons-util-1.0.1.jar"/>
-	<classpathentry kind="var" path="UKOISTHOME/jgralab/lib/xmlrpc/xmlrpc-client-3.0.jar"/>
-	<classpathentry kind="var" path="UKOISTHOME/jgralab/lib/xmlrpc/xmlrpc-common-3.0.jar"/>
-	<classpathentry kind="var" path="UKOISTHOME/jgralab/lib/xmlrpc/xmlrpc-server-3.0.jar"/>
 	<classpathentry kind="var" path="UKOISTHOME/common/lib/jdom/jdom.jar"/>
-	<classpathentry kind="var" path="UKOISTHOME/common/lib/javaee/javaee.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="var" path="UKOISTHOME/common/lib/apache/commons/cli/commons-cli-1.2.jar"/>
-	<classpathentry kind="var" path="UKOISTHOME/common/lib/ist_utilities/ist_utilities.jar"/>
-	<classpathentry kind="output" path="build/classes"/>
+	<classpathentry kind="var" path="UKOISTHOME/common/lib/ist_utilities/ist_utilities.jar" sourcepath="/UKOISTHOME/common/tools/ist_utilities/src"/>
+	<classpathentry kind="output" path="bin"/>
 </classpath>

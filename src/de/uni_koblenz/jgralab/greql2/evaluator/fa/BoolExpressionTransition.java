@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -28,11 +28,12 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
+import de.uni_koblenz.jgralab.greql2.Greql2Serializer;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ThisVertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.schema.ThisVertex;
 
 /**
@@ -112,7 +113,8 @@ public class BoolExpressionTransition extends Transition {
 			VertexEvaluator boolEval, GraphMarker<VertexEvaluator> graphMarker) {
 		super(start, end);
 		boolExpressionEvaluator = boolEval;
-		Vertex v = graphMarker.getGraph().getFirstVertexOfClass(ThisVertex.class);
+		Vertex v = graphMarker.getGraph().getFirstVertexOfClass(
+				ThisVertex.class);
 		if (v != null) {
 			thisVertexEvaluator = (ThisVertexEvaluator) graphMarker.getMark(v);
 		}
@@ -138,17 +140,11 @@ public class BoolExpressionTransition extends Transition {
 	public boolean accepts(Vertex v, Edge e, BooleanGraphMarker subgraph)
 			throws EvaluateException {
 		if (thisVertexEvaluator != null) {
-			thisVertexEvaluator.setValue(new JValue(v));
+			thisVertexEvaluator.setValue(new JValueImpl(v));
 		}
 		JValue res = boolExpressionEvaluator.getResult(subgraph);
-		if (res.isBoolean()) {
-			try {
-				if (res.toBoolean() == Boolean.TRUE) {
-					return true;
-				}
-			} catch (JValueInvalidTypeException ex) {
-				ex.printStackTrace();
-			}
+		if (res.isBoolean() && res.toBoolean().equals(Boolean.TRUE)) {
+			return true;
 		}
 		return false;
 	}
@@ -156,5 +152,13 @@ public class BoolExpressionTransition extends Transition {
 	@Override
 	public Vertex getNextVertex(Vertex v, Edge e) {
 		return v;
+	}
+
+	@Override
+	public String prettyPrint() {
+		return "IntermediateVertex "
+				+ new Greql2Serializer()
+						.serializeGreql2Vertex(boolExpressionEvaluator
+								.getVertex());
 	}
 }

@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -29,6 +29,7 @@ import java.util.Iterator;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
+import de.uni_koblenz.jgralab.greql2.Greql2Serializer;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
@@ -47,9 +48,11 @@ public class IntermediateVertexTransition extends Transition {
 	 * returns true if this transition and the given transition t accept the
 	 * same edges
 	 */
+	@Override
 	public boolean equalSymbol(Transition t) {
-		if (!(t instanceof IntermediateVertexTransition))
+		if (!(t instanceof IntermediateVertexTransition)) {
 			return false;
+		}
 		IntermediateVertexTransition vt = (IntermediateVertexTransition) t;
 		if (intermediateVertexEvaluator != vt.intermediateVertexEvaluator) {
 			return false;
@@ -85,6 +88,7 @@ public class IntermediateVertexTransition extends Transition {
 	/**
 	 * returns a copy of this transition
 	 */
+	@Override
 	public Transition copy(boolean addToStates) {
 		return new IntermediateVertexTransition(this, addToStates);
 	}
@@ -94,6 +98,7 @@ public class IntermediateVertexTransition extends Transition {
 	 * 
 	 * @return true if this transition is an epsilon-transition, false otherwise
 	 */
+	@Override
 	public boolean isEpsilon() {
 		return false;
 	}
@@ -101,6 +106,7 @@ public class IntermediateVertexTransition extends Transition {
 	/**
 	 * returns a string which describes the edge
 	 */
+	@Override
 	public String edgeString() {
 		String desc = "IndermediateVertexTransition";
 		return desc;
@@ -112,6 +118,7 @@ public class IntermediateVertexTransition extends Transition {
 	 * @see greql2.evaluator.fa.Transition#accepts(jgralab.Vertex, jgralab.Edge,
 	 * greql2.evaluator.SubgraphTempAttribute)
 	 */
+	@Override
 	public boolean accepts(Vertex v, Edge e, BooleanGraphMarker subgraph)
 			throws EvaluateException {
 		// checks if a intermediateVertexExpression exists and if the end-vertex
@@ -125,13 +132,15 @@ public class IntermediateVertexTransition extends Transition {
 							.toCollection();
 					Iterator<JValue> iter = intermediateVertices.iterator();
 					while (iter.hasNext()) {
-						if (iter.next().toVertex().equals(v))
+						if (iter.next().toVertex().equals(v)) {
 							return true;
+						}
 					}
 				} else {
 					Vertex intermediateVertex = tempRes.toVertex();
-					if (v == intermediateVertex)
+					if (v == intermediateVertex) {
 						return true;
+					}
 				}
 			} catch (JValueInvalidTypeException exception) {
 				throw new EvaluateException("Error in Transition.accept : "
@@ -148,6 +157,14 @@ public class IntermediateVertexTransition extends Transition {
 	@Override
 	public Vertex getNextVertex(Vertex v, Edge e) {
 		return v;
+	}
+
+	@Override
+	public String prettyPrint() {
+		return "IntermediateVertex "
+				+ new Greql2Serializer()
+						.serializeGreql2Vertex(intermediateVertexEvaluator
+								.getVertex());
 	}
 
 }

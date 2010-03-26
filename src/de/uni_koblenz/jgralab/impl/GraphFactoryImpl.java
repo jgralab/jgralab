@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -29,6 +29,7 @@ import java.util.HashMap;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphFactory;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.exception.M1ClassAccessException;
@@ -55,7 +56,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 	protected HashMap<Class<? extends Edge>, Constructor<? extends Edge>> edgeTransactionMap;
 	protected HashMap<Class<? extends Vertex>, Constructor<? extends Vertex>> vertexTransactionMap;
 
-	public GraphFactoryImpl() {
+	protected GraphFactoryImpl() {
 		graphMap = new HashMap<Class<? extends Graph>, Constructor<? extends Graph>>();
 		vertexMap = new HashMap<Class<? extends Vertex>, Constructor<? extends Vertex>>();
 		edgeMap = new HashMap<Class<? extends Edge>, Constructor<? extends Edge>>();
@@ -65,10 +66,13 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 
 	}
 
-	public Edge createEdge(Class<? extends Edge> edgeClass, int id, Graph g) {
+	public Edge createEdge(Class<? extends Edge> edgeClass, int id, Graph g, Vertex alpha, Vertex omega) {
 		try {
-			return edgeMap.get(edgeClass).newInstance(id, g);
+			Edge e = edgeMap.get(edgeClass).newInstance(id, g, alpha, omega);
+			return e;
 		} catch (Exception ex) {
+			if(ex.getCause() instanceof GraphException)
+				throw new GraphException(ex.getCause().getLocalizedMessage());
 			throw new M1ClassAccessException("Cannot create edge of class "
 					+ edgeClass.getCanonicalName(), ex);
 		}
@@ -77,7 +81,8 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 	public Graph createGraph(Class<? extends Graph> graphClass, String id,
 			int vMax, int eMax) {
 		try {
-			return graphMap.get(graphClass).newInstance(id, vMax, eMax);
+			Graph g = graphMap.get(graphClass).newInstance(id, vMax, eMax);
+			return g;
 		} catch (Exception ex) {
 			throw new M1ClassAccessException("Cannot create graph of class "
 					+ graphClass.getCanonicalName(), ex);
@@ -86,7 +91,8 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 
 	public Graph createGraph(Class<? extends Graph> graphClass, String id) {
 		try {
-			return graphMap.get(graphClass).newInstance(id, 1000, 1000);
+			Graph g =  graphMap.get(graphClass).newInstance(id, 1000, 1000);
+			return g;
 		} catch (Exception ex) {
 			throw new M1ClassAccessException("Cannot create graph of class "
 					+ graphClass.getCanonicalName(), ex);
@@ -96,8 +102,11 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 	public Vertex createVertex(Class<? extends Vertex> vertexClass, int id,
 			Graph g) {
 		try {
-			return vertexMap.get(vertexClass).newInstance(id, g);
+			Vertex v = vertexMap.get(vertexClass).newInstance(id, g);
+			return v;
 		} catch (Exception ex) {
+			if(ex.getCause() instanceof GraphException)
+				throw new GraphException(ex.getCause().getLocalizedMessage());
 			throw new M1ClassAccessException("Cannot create vertex of class "
 					+ vertexClass.getCanonicalName(), ex);
 		}
@@ -138,10 +147,14 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 	}
 
 	public Edge createEdgeWithTransactionSupport(
-			Class<? extends Edge> edgeClass, int id, Graph g) {
+			Class<? extends Edge> edgeClass, int id, Graph g, Vertex alpha, Vertex omega) {
 		try {
-			return edgeTransactionMap.get(edgeClass).newInstance(id, g);
+			Edge e =  edgeTransactionMap.get(edgeClass).newInstance(id, g, alpha, omega);
+			e.initializeAttributesWithDefaultValues();
+			return e;
 		} catch (Exception ex) {
+			if(ex.getCause() instanceof GraphException)
+				throw new GraphException(ex.getCause().getLocalizedMessage());
 			throw new M1ClassAccessException("Cannot create edge of class "
 					+ edgeClass.getCanonicalName(), ex);
 		}
@@ -150,9 +163,12 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 	public Graph createGraphWithTransactionSupport(
 			Class<? extends Graph> graphClass, String id, int vMax, int eMax) {
 		try {
-			return graphTransactionMap.get(graphClass).newInstance(id, vMax,
+			Graph g = graphTransactionMap.get(graphClass).newInstance(id, vMax,
 					eMax);
+			return g;
 		} catch (Exception ex) {
+			if(ex.getCause() instanceof GraphException)
+				throw new GraphException(ex.getCause().getLocalizedMessage());
 			throw new M1ClassAccessException("Cannot create graph of class "
 					+ graphClass.getCanonicalName(), ex);
 		}
@@ -161,9 +177,12 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 	public Graph createGraphWithTransactionSupport(
 			Class<? extends Graph> graphClass, String id) {
 		try {
-			return graphTransactionMap.get(graphClass).newInstance(id, 1000,
+			Graph g =  graphTransactionMap.get(graphClass).newInstance(id, 1000,
 					1000);
+			return g;
 		} catch (Exception ex) {
+			if(ex.getCause() instanceof GraphException)
+				throw new GraphException(ex.getCause().getLocalizedMessage());
 			throw new M1ClassAccessException("Cannot create graph of class "
 					+ graphClass.getCanonicalName(), ex);
 		}
@@ -172,8 +191,11 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 	public Vertex createVertexWithTransactionSupport(
 			Class<? extends Vertex> vertexClass, int id, Graph g) {
 		try {
-			return vertexTransactionMap.get(vertexClass).newInstance(id, g);
+			Vertex v =  vertexTransactionMap.get(vertexClass).newInstance(id, g);
+			return v;
 		} catch (Exception ex) {
+			if(ex.getCause() instanceof GraphException)
+				throw new GraphException(ex.getCause().getLocalizedMessage());
 			throw new M1ClassAccessException("Cannot create vertex of class "
 					+ vertexClass.getCanonicalName(), ex);
 		}
@@ -219,7 +241,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 			Class<? extends Edge> implementationClass) {
 		if (isSuperclassOrEqual(originalClass, implementationClass)) {
 			try {
-				Class[] params = { int.class, Graph.class };
+				Class[] params = { int.class, Graph.class, Vertex.class, Vertex.class };
 				edgeTransactionMap.put(originalClass, implementationClass
 						.getConstructor(params));
 			} catch (NoSuchMethodException ex) {
@@ -235,7 +257,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 			Class<? extends Edge> implementationClass) {
 		if (isSuperclassOrEqual(originalClass, implementationClass)) {
 			try {
-				Class[] params = { int.class, Graph.class };
+				Class[] params = { int.class, Graph.class, Vertex.class, Vertex.class };
 				edgeMap.put(originalClass, implementationClass
 						.getConstructor(params));
 			} catch (NoSuchMethodException ex) {

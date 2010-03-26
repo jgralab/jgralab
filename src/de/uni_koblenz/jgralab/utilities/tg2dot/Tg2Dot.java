@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -31,6 +31,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
+import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -162,20 +163,34 @@ public class Tg2Dot extends Tg2Whatever {
 		EdgeClass cls = (EdgeClass) e.getAttributedElementClass();
 
 		if (roleNames) {
-			String toRole = cls.getToRolename();
+			String toRole = cls.getTo().getRolename();
 			if ((toRole != null) && (toRole.length() > 0)) {
 				out.print((reversedEdges ? "tail" : "head") + "label=\""
 						+ stringQuote(toRole) + "\" ");
 			}
-			String fromRole = cls.getFromRolename();
+			String fromRole = cls.getFrom().getRolename();
 			if ((fromRole != null) && (fromRole.length() > 0)) {
 				out.print((reversedEdges ? "head" : "tail") + "label=\""
 						+ stringQuote(fromRole) + "\" ");
 			}
 		}
 
+		out.print("dir=\"both\" ");
+		assert e.isNormal();
+		if (e.getThatSemantics() == AggregationKind.SHARED) {
+			out.print("arrowtail=\"odiamond\" ");
+		} else if (e.getThatSemantics() == AggregationKind.COMPOSITE) {
+			out.print("arrowtail=\"diamond\" ");
+		} else if (e.getThisSemantics() == AggregationKind.SHARED) {
+			out.print("arrowhead=\"odiamond\" ");
+		} else if (e.getThisSemantics() == AggregationKind.COMPOSITE) {
+			out.print("arrowhead=\"diamond\" ");
+		} else {
+			out.print("arrowtail=\"none\" ");
+		}
+
 		out.print("label=\"e" + e.getId() + ": "
-				+ cls.getUniqueName().replace('$', '.') + "");
+				+ cls.getUniqueName().replace('$', '.'));
 
 		if (edgeAttributes && (cls.getAttributeCount() > 0)) {
 			out.print("\\l");

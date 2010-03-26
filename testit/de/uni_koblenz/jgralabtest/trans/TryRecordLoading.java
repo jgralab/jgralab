@@ -31,7 +31,7 @@ public class TryRecordLoading {
 
 		// load graph with transaction support
 
-		RecordTestGraph graphTS = RecordTestSchema.instance()
+		RecordTestSchema.instance()
 				.loadRecordTestGraphWithTransactionSupport(filename,
 						new ProgressFunctionImpl());
 

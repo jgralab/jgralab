@@ -8,13 +8,15 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
-import de.uni_koblenz.jgralab.greql2.exception.Greql2Exception;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueMap;
@@ -29,6 +31,8 @@ public class GreqlServer extends Thread {
 	private BufferedReader in;
 	private PrintWriter out;
 	private GreqlEvaluator eval;
+	private static Map<String, Graph> dataGraphs = Collections
+			.synchronizedMap(new HashMap<String, Graph>());
 
 	public GreqlServer(Socket s) throws IOException {
 		socket = s;
@@ -66,64 +70,23 @@ public class GreqlServer extends Thread {
 	@Override
 	public void run() {
 		try {
-			String currentGraphFile = null;
 			String line = null;
 			while (((line = in.readLine()) != null) && !isInterrupted()) {
 				if (line.startsWith("g:")) {
 					String newGraphFile = line.substring(2);
-					if (newGraphFile.equals(currentGraphFile)) {
-						println("This graph is already set.",
-								PrintTarget.SERVER, false);
-						continue;
+					Graph g = dataGraphs.get(newGraphFile);
+					if (g == null) {
+						println("Loading " + newGraphFile + ".",
+								PrintTarget.BOTH, true);
+						g = GraphIO.loadSchemaAndGraphFromFile(newGraphFile,
+								CodeGeneratorConfiguration.MINIMAL,
+								new ProgressFunctionImpl());
+						dataGraphs.put(newGraphFile, g);
 					}
-					currentGraphFile = newGraphFile;
-					println("Loading " + currentGraphFile + ".",
-							PrintTarget.BOTH, true);
-					eval.setDatagraph(GraphIO.loadSchemaAndGraphFromFile(
-							currentGraphFile,
-							CodeGeneratorConfiguration.MINIMAL,
-							new ProgressFunctionImpl()));
+					eval.setDatagraph(g);
 				} else if (line.startsWith("q:")) {
 					String f = line.substring(2);
-					println("Evaling query file " + f + ".", PrintTarget.BOTH,
-							true);
-					eval.setQueryFile(new File(f));
-					try {
-						eval.startEvaluation();
-						JValue result = eval.getEvaluationResult();
-						println("<result not printed>", PrintTarget.SERVER,
-								false);
-						out.println();
-						out.println("Evaluation Result:");
-						out.println("==================");
-						if (result.isCollection()) {
-							JValueCollection coll = result.toCollection();
-							println("Result contains " + coll.size()
-									+ " elements.\n", PrintTarget.CLIENT, true);
-							for (JValue jv : coll) {
-								println(jv.toString(), PrintTarget.CLIENT,
-										false);
-							}
-						} else if (result.isMap()) {
-							JValueMap map = result.toJValueMap();
-							println("Result contains " + map.size()
-									+ " map entries.\n", PrintTarget.CLIENT,
-									true);
-							for (Entry<JValue, JValue> e : map.entrySet()) {
-								println(e.getKey() + " --> " + e.getValue(),
-										PrintTarget.CLIENT, false);
-							}
-						} else {
-							println("Result is a single element.\n",
-									PrintTarget.CLIENT, true);
-							println(result.toString(), PrintTarget.CLIENT,
-									false);
-						}
-						out.flush();
-					} catch (Greql2Exception e) {
-						e.printStackTrace();
-						e.printStackTrace(out);
-					}
+					evalQuery(f);
 				} else {
 					println("Don't understand line '" + line + "'.",
 							PrintTarget.BOTH, true);
@@ -133,11 +96,49 @@ public class GreqlServer extends Thread {
 			}
 			println("GreqlServer says goodbye!", PrintTarget.BOTH, true);
 			in.close();
-			out.close();
 			socket.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+			e.printStackTrace(out);
+		} finally {
+			out.close();
 			synchronized (GreqlServer.class) {
 				clients.remove(this);
 			}
+		}
+	}
+
+	private void evalQuery(String queryFile) throws IOException {
+		println("Evaling query file " + queryFile + ".", PrintTarget.BOTH, true);
+		eval.setQueryFile(new File(queryFile));
+		try {
+			eval.startEvaluation();
+			JValue result = eval.getEvaluationResult();
+			println("<result not printed>", PrintTarget.SERVER, false);
+			out.println();
+			out.println("Evaluation Result:");
+			out.println("==================");
+			if (result.isCollection()) {
+				JValueCollection coll = result.toCollection();
+				println("Result contains " + coll.size() + " elements.\n",
+						PrintTarget.CLIENT, true);
+				for (JValue jv : coll) {
+					println(jv.toString(), PrintTarget.CLIENT, false);
+				}
+			} else if (result.isMap()) {
+				JValueMap map = result.toJValueMap();
+				println("Result contains " + map.size() + " map entries.\n",
+						PrintTarget.CLIENT, true);
+				for (Entry<JValue, JValue> e : map.entrySet()) {
+					println(e.getKey() + " --> " + e.getValue(),
+							PrintTarget.CLIENT, false);
+				}
+			} else {
+				println("Result is a single element.\n", PrintTarget.CLIENT,
+						true);
+				println(result.toString(), PrintTarget.CLIENT, false);
+			}
+			out.flush();
 		} catch (Exception e) {
 			e.printStackTrace();
 			e.printStackTrace(out);

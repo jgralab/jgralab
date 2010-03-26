@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -24,7 +24,7 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.logging.EvaluationLogger;
@@ -46,19 +46,18 @@ import de.uni_koblenz.jgralab.greql2.schema.Declaration;
  * @author ist@uni-koblenz.de
  * 
  */
-public class VariableDeclarationLayer implements
-		Comparable<VariableDeclarationLayer> {
+public class VariableDeclarationLayer {
 
 	/**
 	 * Holds a VariableDeclaration for each Variable which is declared in this
 	 * Declaration
 	 */
-	private ArrayList<VariableDeclaration> variableDeclarations;
+	private List<VariableDeclaration> variableDeclarations;
 
 	/**
 	 * this is the list of constraint vertices
 	 */
-	private ArrayList<VertexEvaluator> constraintList;
+	private List<VertexEvaluator> constraintList;
 
 	/**
 	 * true if the next variable iteration is the first one, that means, if
@@ -66,17 +65,19 @@ public class VariableDeclarationLayer implements
 	 */
 	private boolean firstIteration = true;
 
-	/**
-	 * holds a number which identifies this declaration layer
-	 */
-	private int identifier = 0;
-
 	private EvaluationLogger logger;
 	private int possibleCombinations = 0;
 
 	/**
+	 * The declaration I belong to.
+	 */
+	private Declaration declaration = null;
+
+	/**
 	 * Creates a new {@link VariableDeclarationLayer} for iterating over all
 	 * variable combinations that fulfil the constraints in constraintList.
+	 * 
+	 * @param vertex
 	 * 
 	 * @param constraintList
 	 *            a list of constraints
@@ -88,25 +89,13 @@ public class VariableDeclarationLayer implements
 	 *            constraints) before iterating the layer. So the logging of the
 	 *            result size {@link Declaration} is done here.
 	 */
-	public VariableDeclarationLayer(ArrayList<VertexEvaluator> constraintList,
-			EvaluationLogger logger) {
-		variableDeclarations = new ArrayList<VariableDeclaration>();
+	public VariableDeclarationLayer(Declaration vertex,
+			List<VariableDeclaration> varDecls,
+			List<VertexEvaluator> constraintList, EvaluationLogger logger) {
+		this.declaration = vertex;
+		variableDeclarations = varDecls;
 		this.constraintList = constraintList;
 		this.logger = logger;
-	}
-
-	/**
-	 * Adds the given VariableDeclaration to the DeclarationLayer
-	 * 
-	 * @return true if the VariableDeclaration was added successfull, false
-	 *         otherwise
-	 */
-	public boolean addVariableDeclaration(VariableDeclaration d) {
-		if (firstIteration == true) {
-			variableDeclarations.add(d);
-			return true;
-		}
-		return false;
 	}
 
 	/**
@@ -118,11 +107,24 @@ public class VariableDeclarationLayer implements
 	 */
 	public boolean iterate(BooleanGraphMarker subgraph)
 			throws EvaluateException {
+		StringBuilder sb = null;
+		if (GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS) {
+			sb = new StringBuilder();
+			sb.append("### New Declaration Layer Iteration (");
+			sb.append(declaration);
+			sb.append(")\n");
+		}
 		boolean constraintsFullfilled = false;
 		if (firstIteration) {
 			if (!getFirstCombination(subgraph)) {
 				if (logger != null) {
 					logger.logResultSize("Declaration", possibleCombinations);
+				}
+				if (GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS) {
+					sb.append("## 1st. iteration: returning false (");
+					sb.append(declaration);
+					sb.append(")");
+					System.out.println(sb.toString());
 				}
 				return false; // no more combinations exists
 			}
@@ -134,11 +136,35 @@ public class VariableDeclarationLayer implements
 				if (logger != null) {
 					logger.logResultSize("Declaration", possibleCombinations);
 				}
+				if (GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS) {
+					sb.append("## nth iteration: returning false (");
+					sb.append(declaration);
+					sb.append(")");
+					System.out.println(sb.toString());
+				}
 				return false; // no more combinations exists
 			}
 			constraintsFullfilled = fullfillsConstraints(subgraph);
 		}
+
 		possibleCombinations++;
+
+		if (GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS) {
+			boolean first = true;
+			for (VariableDeclaration dec : variableDeclarations) {
+				if (first) {
+					first = false;
+				} else {
+					sb.append(", ");
+				}
+				sb.append(dec);
+			}
+			sb.append(" (");
+			sb.append(declaration);
+			sb.append(")");
+			System.out.println(sb.toString());
+		}
+
 		return true;
 	}
 
@@ -162,24 +188,32 @@ public class VariableDeclarationLayer implements
 	 * @return true if a next combination exists, false otherwise
 	 * @throws EvaluateException
 	 */
+	
+	
 	private boolean getNextCombination(BooleanGraphMarker subgraphMarker,
 			int pointer) throws EvaluateException {
-		int size = variableDeclarations.size();
-		VariableDeclaration currDecl = null;
+		boolean iterate;
 		do {
-			if (pointer < 0) {
-				return false;
+			iterate = false;
+			VariableDeclaration currDecl = null; //pointer = 0
+			do {
+				if (pointer < 0) {
+					return false;
+				}
+				currDecl = variableDeclarations.get(pointer--); //pointer = -1 
+			} while (!currDecl.iterate());
+			pointer += 2; //pointer = 3
+			int size = variableDeclarations.size();
+			while (pointer < size) {
+				currDecl = variableDeclarations.get(pointer++); 
+				currDecl.reset();
+				if (!currDecl.iterate()) {
+					pointer-= 2;
+					iterate = true;
+					break;
+				}
 			}
-			currDecl = variableDeclarations.get(pointer--);
-		} while (!currDecl.iterate());
-		pointer += 2;
-		while (pointer < size) {
-			currDecl = variableDeclarations.get(pointer++);
-			currDecl.reset();
-			if (!currDecl.iterate()) {
-				return getNextCombination(subgraphMarker, pointer - 2);
-			}
-		}
+		} while (iterate);
 		return true;
 	}
 
@@ -195,7 +229,8 @@ public class VariableDeclarationLayer implements
 		if ((constraintList == null) || (constraintList.isEmpty())) {
 			return true;
 		}
-		for (VertexEvaluator currentEval : constraintList) {
+		for (int i = 0; i < constraintList.size(); i++) {
+			VertexEvaluator currentEval = constraintList.get(i);
 			JValue tempResult = currentEval.getResult(subgraphMarker);
 			try {
 				if (tempResult.isBoolean()) {
@@ -216,20 +251,9 @@ public class VariableDeclarationLayer implements
 		return true;
 	}
 
-	public int getId() {
-		if (identifier == 0) {
-			for (VertexEvaluator currentEval : constraintList) {
-				identifier += currentEval.getVertex().getId();
-			}
-			for (VariableDeclaration currDecl : variableDeclarations) {
-				identifier += currDecl.hashCode();
-			}
-		}
-		return identifier;
-	}
-
-	public int compareTo(VariableDeclarationLayer l) {
-		return getId() - l.getId();
+	public void reset() {
+		firstIteration = true;
+		possibleCombinations = 0;
 	}
 
 }

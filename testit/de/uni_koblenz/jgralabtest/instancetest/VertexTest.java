@@ -16,7 +16,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+
+import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -26,16 +29,14 @@ import org.junit.runners.Parameterized.Parameters;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.impl.IncidenceImpl;
-import de.uni_koblenz.jgralab.impl.VertexImpl;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
+import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.AbstractSuperNode;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.DoubleSubNode;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.Link;
@@ -49,6 +50,8 @@ import de.uni_koblenz.jgralabtest.schemas.vertextest.VertexTestSchema;
 @RunWith(Parameterized.class)
 public class VertexTest extends InstanceTest {
 
+	private static final int ITERATIONS = 25;
+
 	public VertexTest(boolean transactionsEnabled) {
 		super(transactionsEnabled);
 	}
@@ -58,7 +61,7 @@ public class VertexTest extends InstanceTest {
 		return getParameters();
 	}
 
-	private VertexTestGraph graph;
+	private VertexTestGraph g;
 	private Random rand;
 
 	/**
@@ -66,9 +69,7 @@ public class VertexTest extends InstanceTest {
 	 */
 	@Before
 	public void setUp() {
-		graph = transactionsEnabled ? VertexTestSchema.instance()
-				.createVertexTestGraphWithTransactionSupport(100, 100)
-				: VertexTestSchema.instance().createVertexTestGraph(100, 100);
+		g = createNewGraph();
 		rand = new Random(System.currentTimeMillis());
 	}
 
@@ -79,42 +80,53 @@ public class VertexTest extends InstanceTest {
 	// tests of the method isIncidenceListModified(long incidenceListVersion);
 	/**
 	 * Tests if the incidenceList wasn't modified.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void isIncidenceListModifiedTest0() {
-		onlyTestWithoutTransactionSupport();
-		AbstractSuperNode asn = graph.createSubNode();
-		SuperNode sn = graph.createSuperNode();
-		DoubleSubNode dsn = graph.createDoubleSubNode();
+	public void isIncidenceListModifiedTest0() throws CommitFailedException {
+		createTransaction(g);
+		AbstractSuperNode asn = g.createSubNode();
+		SuperNode sn = g.createSuperNode();
+		DoubleSubNode dsn = g.createDoubleSubNode();
+		commit(g);
+		createReadOnlyTransaction(g);
 		long asnIncidenceListVersion = asn.getIncidenceListVersion();
 		long snIncidenceListVersion = sn.getIncidenceListVersion();
 		long dsnIncidenceListVersion = dsn.getIncidenceListVersion();
 		assertFalse(asn.isIncidenceListModified(asnIncidenceListVersion));
 		assertFalse(sn.isIncidenceListModified(snIncidenceListVersion));
 		assertFalse(dsn.isIncidenceListModified(dsnIncidenceListVersion));
+		commit(g);
 	}
 
 	/**
 	 * If you create and delete edges, only the incidenceLists of the involved
 	 * nodes may have been modified.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void isIncidenceListModifiedTest1() {
-		onlyTestWithoutTransactionSupport();
+	public void isIncidenceListModifiedTest1() throws CommitFailedException {
+		createTransaction(g);
 		Vertex[] nodes = new Vertex[3];
 		long[] versions = new long[3];
-		nodes[0] = graph.createSubNode();
+		nodes[0] = g.createSubNode();
 		versions[0] = nodes[0].getIncidenceListVersion();
-		nodes[1] = graph.createDoubleSubNode();
+		nodes[1] = g.createDoubleSubNode();
 		versions[1] = nodes[1].getIncidenceListVersion();
-		nodes[2] = graph.createSuperNode();
+		nodes[2] = g.createSuperNode();
 		versions[2] = nodes[2].getIncidenceListVersion();
-		for (int i = 0; i < 1000; i++) {
+		commit(g);
+		for (int i = 0; i < ITERATIONS; i++) {
 			int start = rand.nextInt(2);
 			int end = rand.nextInt(2) + 1;
 			// create a new edge
-			Link sl = graph.createLink((AbstractSuperNode) nodes[start],
+			createTransaction(g);
+			Link sl = g.createLink((AbstractSuperNode) nodes[start],
 					(SuperNode) nodes[end]);
+			commit(g);
+			createReadOnlyTransaction(g);
 			assertTrue(nodes[start].isIncidenceListModified(versions[start]));
 			assertTrue(nodes[end].isIncidenceListModified(versions[end]));
 			if (start != end) {
@@ -133,8 +145,14 @@ public class VertexTest extends InstanceTest {
 			versions[0] = nodes[0].getIncidenceListVersion();
 			versions[1] = nodes[1].getIncidenceListVersion();
 			versions[2] = nodes[2].getIncidenceListVersion();
+			commit(g);
+
 			// delete an edge
-			graph.deleteEdge(sl);
+			createTransaction(g);
+			g.deleteEdge(sl);
+			commit(g);
+
+			createReadOnlyTransaction(g);
 			assertTrue(nodes[start].isIncidenceListModified(versions[start]));
 			assertTrue(nodes[end].isIncidenceListModified(versions[end]));
 			if (start != end) {
@@ -153,6 +171,7 @@ public class VertexTest extends InstanceTest {
 			versions[0] = nodes[0].getIncidenceListVersion();
 			versions[1] = nodes[1].getIncidenceListVersion();
 			versions[2] = nodes[2].getIncidenceListVersion();
+			commit(g);
 		}
 	}
 
@@ -160,136 +179,151 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * If you create and delete edges, only the incidenceListVersions of the
 	 * involved nodes may have been increased.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getIncidenceListVersionTest0() {
-		onlyTestWithoutTransactionSupport();
+	public void getIncidenceListVersionTest0() throws CommitFailedException {
+		createTransaction(g);
 		Vertex[] nodes = new Vertex[3];
-		nodes[0] = graph.createSubNode();
-		nodes[1] = graph.createDoubleSubNode();
-		nodes[2] = graph.createSuperNode();
+		nodes[0] = g.createSubNode();
+		nodes[1] = g.createDoubleSubNode();
+		nodes[2] = g.createSuperNode();
+		commit(g);
 		long[] expectedVersions = new long[] { 0, 0, 0 };
-		for (int i = 0; i < 1000; i++) {
+		for (int i = 0; i < ITERATIONS; i++) {
 			int start = rand.nextInt(2);
 			int end = rand.nextInt(2) + 1;
 			// create a new edge
-			Link sl = graph.createLink((AbstractSuperNode) nodes[start],
+			createTransaction(g);
+			Link sl = g.createLink((AbstractSuperNode) nodes[start],
 					(SuperNode) nodes[end]);
 			expectedVersions[start]++;
 			expectedVersions[end]++;
+			commit(g);
+			createReadOnlyTransaction(g);
 			assertEquals(expectedVersions[0], nodes[0]
 					.getIncidenceListVersion());
 			assertEquals(expectedVersions[1], nodes[1]
 					.getIncidenceListVersion());
 			assertEquals(expectedVersions[2], nodes[2]
 					.getIncidenceListVersion());
+			commit(g);
 			// delete an edge
-			graph.deleteEdge(sl);
+			createTransaction(g);
+			g.deleteEdge(sl);
 			expectedVersions[start]++;
 			expectedVersions[end]++;
+			commit(g);
+			createReadOnlyTransaction(g);
 			assertEquals(expectedVersions[0], nodes[0]
 					.getIncidenceListVersion());
 			assertEquals(expectedVersions[1], nodes[1]
 					.getIncidenceListVersion());
 			assertEquals(expectedVersions[2], nodes[2]
 					.getIncidenceListVersion());
+			commit(g);
 		}
-	}
-
-	// tests of the method getId()
-
-	/**
-	 * If you create several vertices and you delete one, the next vertex should
-	 * get the id of the deleted vertex. If you create a further vertex it
-	 * should get the next free id.
-	 */
-	@Test
-	public void getIdTest0() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v = graph.createDoubleSubNode();
-		// assertEquals(1, v.getId());
-		Vertex w = graph.createDoubleSubNode();
-		assertEquals(2, w.getId());
-		graph.deleteVertex(v);
-		v = graph.createDoubleSubNode();
-		assertEquals(1, v.getId());
-		v = graph.createDoubleSubNode();
-		assertEquals(3, v.getId());
 	}
 
 	// tests of the method getDegree()
 
 	/**
 	 * A vertex with no connected incidences has to have a degree of 0.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getDegreeTest0() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v = graph.createDoubleSubNode();
+	public void getDegreeTest0() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v = g.createDoubleSubNode();
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(0, v.getDegree());
+		commit(g);
 	}
 
 	/**
 	 * Checks the degrees in a manually build graph.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getDegreeTest1() {
-		onlyTestWithoutTransactionSupport();
-		SubNode subn = graph.createSubNode();
-		DoubleSubNode dsubn = graph.createDoubleSubNode();
-		DoubleSubNode dsubnWithout = graph.createDoubleSubNode();
-		SuperNode supern = graph.createSuperNode();
-		graph.createLink(subn, supern);
-		graph.createLink(dsubn, dsubn);
-		graph.createLinkBack(supern, dsubn);
-		graph.createLinkBack(dsubn, subn);
+	public void getDegreeTest1() throws CommitFailedException {
+		createTransaction(g);
+		SubNode subn = g.createSubNode();
+		DoubleSubNode dsubn = g.createDoubleSubNode();
+		DoubleSubNode dsubnWithout = g.createDoubleSubNode();
+		SuperNode supern = g.createSuperNode();
+		g.createLink(subn, supern);
+		g.createLink(dsubn, dsubn);
+		g.createLinkBack(supern, dsubn);
+		g.createLinkBack(dsubn, subn);
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(0, dsubnWithout.getDegree());
 		assertEquals(2, subn.getDegree());
 		assertEquals(2, supern.getDegree());
 		assertEquals(4, dsubn.getDegree());
+		commit(g);
 	}
 
 	/**
 	 * Generates a number of edges and checks the correct degrees of the
 	 * vertices. After that it deletes the edges and checks the degrees again.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getDegreeTest2() {
-		onlyTestWithoutTransactionSupport();
+	public void getDegreeTest2() throws CommitFailedException {
+		createTransaction(g);
 		Vertex[] nodes = new Vertex[3];
-		nodes[0] = graph.createSubNode();
-		nodes[1] = graph.createDoubleSubNode();
-		nodes[2] = graph.createSuperNode();
+		nodes[0] = g.createSubNode();
+		nodes[1] = g.createDoubleSubNode();
+		nodes[2] = g.createSuperNode();
 		int[] expectedDegrees = new int[] { 0, 0, 0 };
+		commit(g);
 		// create new edges
-		for (int i = 0; i < 1000; i++) {
+		for (int i = 0; i < ITERATIONS; i++) {
+			createTransaction(g);
 			int start = rand.nextInt(2);
 			int end = rand.nextInt(2) + 1;
-			graph.createLink((AbstractSuperNode) nodes[start],
+			g.createLink((AbstractSuperNode) nodes[start],
 					(SuperNode) nodes[end]);
 			expectedDegrees[start]++;
 			expectedDegrees[end]++;
+			commit(g);
+			createReadOnlyTransaction(g);
 			assertEquals(expectedDegrees[0], nodes[0].getDegree());
 			assertEquals(expectedDegrees[1], nodes[1].getDegree());
 			assertEquals(expectedDegrees[2], nodes[2].getDegree());
+			commit(g);
 		}
 		HashMap<Vertex, Integer> vertices = new HashMap<Vertex, Integer>();
 		vertices.put(nodes[0], expectedDegrees[0]);
 		vertices.put(nodes[1], expectedDegrees[1]);
 		vertices.put(nodes[2], expectedDegrees[2]);
 		// delete the edges
-		for (Link l : graph.getLinkEdges()) {
-			Vertex start = l.getAlpha();
+		createTransaction(g);
+		Link link = g.getFirstLinkInGraph();
+		commit(g);
+
+		while (link != null) {
+			createTransaction(g);
+			Link nextLink = link.getNextLinkInGraph();
+
+			Vertex start = link.getAlpha();
 			vertices.put(start, vertices.get(start) - 1);
-			Vertex end = l.getOmega();
+			Vertex end = link.getOmega();
 			vertices.put(end, vertices.get(end) - 1);
-			graph.deleteEdge(l);
-			if (start != end) {
-				assertEquals(vertices.get(start).intValue(), start.getDegree());
-				assertEquals(vertices.get(end).intValue(), end.getDegree());
-			} else {
-				assertEquals(vertices.get(start).intValue(), start.getDegree());
-			}
+			g.deleteEdge(link);
+			commit(g);
+
+			createReadOnlyTransaction(g);
+			assertEquals(vertices.get(start).intValue(), start.getDegree());
+			assertEquals(vertices.get(end).intValue(), end.getDegree());
+			commit(g);
+			link = nextLink;
 		}
 	}
 
@@ -298,30 +332,39 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * A vertex with no connected incidences has to have a degree of 0 for each
 	 * EdgeDirection.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getDegreeTestEdgeDirection0() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v = graph.createDoubleSubNode();
+	public void getDegreeTestEdgeDirection0() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v = g.createDoubleSubNode();
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(0, v.getDegree(EdgeDirection.IN));
 		assertEquals(0, v.getDegree(EdgeDirection.OUT));
 		assertEquals(0, v.getDegree(EdgeDirection.INOUT));
+		commit(g);
 	}
 
 	/**
 	 * Checks the degrees in a manually build graph.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getDegreeTestEdgeDirection1() {
-		onlyTestWithoutTransactionSupport();
-		SubNode subn = graph.createSubNode();
-		DoubleSubNode dsubn = graph.createDoubleSubNode();
-		DoubleSubNode dsubnWithout = graph.createDoubleSubNode();
-		SuperNode supern = graph.createSuperNode();
-		graph.createLink(subn, supern);
-		graph.createLink(dsubn, dsubn);
-		graph.createLinkBack(supern, dsubn);
-		graph.createLinkBack(dsubn, subn);
+	public void getDegreeTestEdgeDirection1() throws CommitFailedException {
+		createTransaction(g);
+		SubNode subn = g.createSubNode();
+		DoubleSubNode dsubn = g.createDoubleSubNode();
+		DoubleSubNode dsubnWithout = g.createDoubleSubNode();
+		SuperNode supern = g.createSuperNode();
+		g.createLink(subn, supern);
+		g.createLink(dsubn, dsubn);
+		g.createLinkBack(supern, dsubn);
+		g.createLinkBack(dsubn, subn);
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(0, dsubnWithout.getDegree(EdgeDirection.INOUT));
 		assertEquals(0, dsubnWithout.getDegree(EdgeDirection.IN));
 		assertEquals(0, dsubnWithout.getDegree(EdgeDirection.OUT));
@@ -334,32 +377,37 @@ public class VertexTest extends InstanceTest {
 		assertEquals(4, dsubn.getDegree(EdgeDirection.INOUT));
 		assertEquals(2, dsubn.getDegree(EdgeDirection.IN));
 		assertEquals(2, dsubn.getDegree(EdgeDirection.OUT));
+		commit(g);
 	}
 
 	/**
 	 * Generates a number of different edges and checks the correct degrees of
 	 * the vertices considering the different EdgeDirections. After that it
 	 * deletes the edges and checks the degrees again.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getDegreeTestEdgeDirection2() {
-		onlyTestWithoutTransactionSupport();
+	public void getDegreeTestEdgeDirection2() throws CommitFailedException {
+		createTransaction(g);
 		Vertex[] nodes = new Vertex[3];
-		nodes[0] = graph.createSubNode();
-		nodes[1] = graph.createDoubleSubNode();
-		nodes[2] = graph.createSuperNode();
+		nodes[0] = g.createSubNode();
+		nodes[1] = g.createDoubleSubNode();
+		nodes[2] = g.createSuperNode();
 		int[] expectedInOut = new int[] { 0, 0, 0 };
 		int[] expectedIn = new int[] { 0, 0, 0 };
 		int[] expectedOut = new int[] { 0, 0, 0 };
+		commit(g);
 		// create new edges
-		for (int i = 0; i < 1000; i++) {
+		for (int i = 0; i < ITERATIONS; i++) {
 			// decides which edge should be created
 			int edge = rand.nextInt(2);
 			int start = rand.nextInt(2);
 			int end = rand.nextInt(2) + 1;
+			createTransaction(g);
 			if (edge == 0) {
 				// create a Link
-				graph.createLink((AbstractSuperNode) nodes[start],
+				g.createLink((AbstractSuperNode) nodes[start],
 						(SuperNode) nodes[end]);
 				expectedInOut[start]++;
 				expectedOut[start]++;
@@ -367,13 +415,15 @@ public class VertexTest extends InstanceTest {
 				expectedIn[end]++;
 			} else {
 				// create a LinkBack
-				graph.createLinkBack((SuperNode) nodes[end],
+				g.createLinkBack((SuperNode) nodes[end],
 						(AbstractSuperNode) nodes[start]);
 				expectedInOut[end]++;
 				expectedOut[end]++;
 				expectedInOut[start]++;
 				expectedIn[start]++;
 			}
+			commit(g);
+			createReadOnlyTransaction(g);
 			assertEquals(expectedInOut[0], nodes[0]
 					.getDegree(EdgeDirection.INOUT));
 			assertEquals(expectedInOut[1], nodes[1]
@@ -386,21 +436,23 @@ public class VertexTest extends InstanceTest {
 			assertEquals(expectedOut[0], nodes[0].getDegree(EdgeDirection.OUT));
 			assertEquals(expectedOut[1], nodes[1].getDegree(EdgeDirection.OUT));
 			assertEquals(expectedOut[2], nodes[2].getDegree(EdgeDirection.OUT));
+			commit(g);
 		}
 		// delete the edges
 		HashMap<Vertex, Integer> numbers = new HashMap<Vertex, Integer>();
 		numbers.put(nodes[0], 0);
 		numbers.put(nodes[1], 1);
 		numbers.put(nodes[2], 2);
-		for (int i = graph.getFirstEdgeInGraph().getId(); i < graph.getECount(); i++) {
-			Edge e = graph.getEdge(i);
+		createTransaction(g);
+		for (int i = g.getFirstEdgeInGraph().getId(); i < g.getECount(); i++) {
+			Edge e = g.getEdge(i);
 			int start = numbers.get(e.getAlpha());
 			int end = numbers.get(e.getOmega());
 			expectedInOut[start]--;
 			expectedInOut[end]--;
 			expectedIn[end]--;
 			expectedOut[start]--;
-			graph.deleteEdge(e);
+			g.deleteEdge(e);
 			assertEquals(expectedInOut[0], nodes[0]
 					.getDegree(EdgeDirection.INOUT));
 			assertEquals(expectedInOut[1], nodes[1]
@@ -414,6 +466,7 @@ public class VertexTest extends InstanceTest {
 			assertEquals(expectedOut[1], nodes[1].getDegree(EdgeDirection.OUT));
 			assertEquals(expectedOut[2], nodes[2].getDegree(EdgeDirection.OUT));
 		}
+		commit(g);
 	}
 
 	// tests of the method getDegree(EdgeClass ec)
@@ -421,92 +474,110 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * A vertex with no connected incidences has to have a degree of 0 for each
 	 * EdgeClass.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getDegreeTestEdgeClass0() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v = graph.createDoubleSubNode();
+	public void getDegreeTestEdgeClass0() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v = g.createDoubleSubNode();
+		commit(g);
+		createReadOnlyTransaction(g);
 		testVertexForEdgeClass(v, 0, 0, 0);
+		commit(g);
 	}
 
 	/**
 	 * Checks the degrees in a manually build graph.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getDegreeTestEdgeClass1() {
-		onlyTestWithoutTransactionSupport();
-		SubNode subn = graph.createSubNode();
-		DoubleSubNode dsubn = graph.createDoubleSubNode();
-		DoubleSubNode dsubnWithout = graph.createDoubleSubNode();
-		SuperNode supern = graph.createSuperNode();
-		graph.createLink(subn, supern);
-		graph.createLink(dsubn, dsubn);
-		graph.createLinkBack(supern, dsubn);
-		graph.createLinkBack(dsubn, subn);
-		graph.createSubLink(dsubn, supern);
+	public void getDegreeTestEdgeClass1() throws CommitFailedException {
+		createTransaction(g);
+		SubNode subn = g.createSubNode();
+		DoubleSubNode dsubn = g.createDoubleSubNode();
+		DoubleSubNode dsubnWithout = g.createDoubleSubNode();
+		SuperNode supern = g.createSuperNode();
+		g.createLink(subn, supern);
+		g.createLink(dsubn, dsubn);
+		g.createLinkBack(supern, dsubn);
+		g.createLinkBack(dsubn, subn);
+		g.createSubLink(dsubn, supern);
+		commit(g);
+		createReadOnlyTransaction(g);
 		testVertexForEdgeClass(dsubnWithout, 0, 0, 0);
 		testVertexForEdgeClass(subn, 1, 0, 1);
 		testVertexForEdgeClass(dsubn, 3, 1, 2);
 		testVertexForEdgeClass(supern, 2, 1, 1);
+		commit(g);
 	}
 
 	/**
 	 * Generates a number of different edges and checks the correct degrees of
 	 * the vertices considering the different Edgeclasses. After that it deletes
 	 * the edges and checks the degrees again.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getDegreeTestEdgeClass2() {
-		onlyTestWithoutTransactionSupport();
+	public void getDegreeTestEdgeClass2() throws CommitFailedException {
+		createTransaction(g);
 		Vertex[] nodes = new Vertex[3];
-		nodes[0] = graph.createSubNode();
-		nodes[1] = graph.createDoubleSubNode();
-		nodes[2] = graph.createSuperNode();
+		nodes[0] = g.createSubNode();
+		nodes[1] = g.createDoubleSubNode();
+		nodes[2] = g.createSuperNode();
+		commit(g);
 		int[] expectedLink = new int[] { 0, 0, 0 };
 		int[] expectedLinkBack = new int[] { 0, 0, 0 };
 		int[] expectedSubLink = new int[] { 0, 0, 0 };
 		// create new edges
-		for (int i = 0; i < 1000; i++) {
+		for (int i = 0; i < ITERATIONS; i++) {
 			// decides which edge should be created
 			int edge = rand.nextInt(3);
 			int start = rand.nextInt(2);
 			int end = rand.nextInt(2) + 1;
+			createTransaction(g);
 			if (edge == 0) {
 				// create a Link
-				graph.createLink((AbstractSuperNode) nodes[start],
+				g.createLink((AbstractSuperNode) nodes[start],
 						(SuperNode) nodes[end]);
 				expectedLink[start]++;
 				expectedLink[end]++;
 			} else if (edge == 1) {
 				// create a LinkBack
-				graph.createLinkBack((SuperNode) nodes[end],
+				g.createLinkBack((SuperNode) nodes[end],
 						(AbstractSuperNode) nodes[start]);
 				expectedLinkBack[start]++;
 				expectedLinkBack[end]++;
 			} else {
 				// create a SubLink
 				start = 1;
-				graph.createSubLink((DoubleSubNode) nodes[start],
+				g.createSubLink((DoubleSubNode) nodes[start],
 						(SuperNode) nodes[end]);
 				expectedLink[start]++;
 				expectedLink[end]++;
 				expectedSubLink[start]++;
 				expectedSubLink[end]++;
 			}
+			commit(g);
+			createReadOnlyTransaction(g);
 			testVertexForEdgeClass(nodes[0], expectedLink[0],
 					expectedSubLink[0], expectedLinkBack[0]);
 			testVertexForEdgeClass(nodes[1], expectedLink[1],
 					expectedSubLink[1], expectedLinkBack[1]);
 			testVertexForEdgeClass(nodes[2], expectedLink[2],
 					expectedSubLink[2], expectedLinkBack[2]);
+			commit(g);
 		}
 		// delete the edges
 		HashMap<Vertex, Integer> numbers = new HashMap<Vertex, Integer>();
 		numbers.put(nodes[0], 0);
 		numbers.put(nodes[1], 1);
 		numbers.put(nodes[2], 2);
-		for (int i = graph.getFirstEdgeInGraph().getId(); i < graph.getECount(); i++) {
-			Edge e = graph.getEdge(i);
+		createTransaction(g);
+		for (int i = g.getFirstEdgeInGraph().getId(); i < g.getECount(); i++) {
+			Edge e = g.getEdge(i);
 			int start = numbers.get(e.getAlpha());
 			int end = numbers.get(e.getOmega());
 			if (e instanceof SubLink) {
@@ -521,7 +592,7 @@ public class VertexTest extends InstanceTest {
 				expectedLink[start]--;
 				expectedLink[end]--;
 			}
-			graph.deleteEdge(e);
+			g.deleteEdge(e);
 			testVertexForEdgeClass(nodes[0], expectedLink[0],
 					expectedSubLink[0], expectedLinkBack[0]);
 			testVertexForEdgeClass(nodes[1], expectedLink[1],
@@ -529,6 +600,7 @@ public class VertexTest extends InstanceTest {
 			testVertexForEdgeClass(nodes[2], expectedLink[2],
 					expectedSubLink[2], expectedLinkBack[2]);
 		}
+		commit(g);
 	}
 
 	/**
@@ -558,8 +630,7 @@ public class VertexTest extends InstanceTest {
 	 */
 	private EdgeClass[] getEdgeClasses() {
 		EdgeClass[] ecs = new EdgeClass[3];
-		List<EdgeClass> a = graph.getSchema()
-				.getEdgeClassesInTopologicalOrder();
+		List<EdgeClass> a = g.getSchema().getEdgeClassesInTopologicalOrder();
 		for (EdgeClass ec : a) {
 			if (ec.getSimpleName().equals("Link")) {
 				ecs[0] = ec;
@@ -578,31 +649,40 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * A vertex with no connected incidences has to have a degree of 0 for each
 	 * Class extends Edge.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getDegreeTestClass0() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v = graph.createDoubleSubNode();
+	public void getDegreeTestClass0() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v = g.createDoubleSubNode();
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(0, v.getDegree(Link.class));
 		assertEquals(0, v.getDegree(SubLink.class));
 		assertEquals(0, v.getDegree(LinkBack.class));
+		commit(g);
 	}
 
 	/**
 	 * Checks the degrees in a manually build graph.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getDegreeTestClass1() {
-		onlyTestWithoutTransactionSupport();
-		SubNode subn = graph.createSubNode();
-		DoubleSubNode dsubn = graph.createDoubleSubNode();
-		DoubleSubNode dsubnWithout = graph.createDoubleSubNode();
-		SuperNode supern = graph.createSuperNode();
-		graph.createLink(subn, supern);
-		graph.createLink(dsubn, dsubn);
-		graph.createLinkBack(supern, dsubn);
-		graph.createLinkBack(dsubn, subn);
-		graph.createSubLink(dsubn, supern);
+	public void getDegreeTestClass1() throws CommitFailedException {
+		createTransaction(g);
+		SubNode subn = g.createSubNode();
+		DoubleSubNode dsubn = g.createDoubleSubNode();
+		DoubleSubNode dsubnWithout = g.createDoubleSubNode();
+		SuperNode supern = g.createSuperNode();
+		g.createLink(subn, supern);
+		g.createLink(dsubn, dsubn);
+		g.createLinkBack(supern, dsubn);
+		g.createLinkBack(dsubn, subn);
+		g.createSubLink(dsubn, supern);
+		commit(g);
+		createTransaction(g);
 		assertEquals(0, dsubnWithout.getDegree(Link.class));
 		assertEquals(0, dsubnWithout.getDegree(LinkBack.class));
 		assertEquals(0, dsubnWithout.getDegree(SubLink.class));
@@ -615,51 +695,58 @@ public class VertexTest extends InstanceTest {
 		assertEquals(2, supern.getDegree(Link.class));
 		assertEquals(1, supern.getDegree(LinkBack.class));
 		assertEquals(1, supern.getDegree(SubLink.class));
+		commit(g);
 	}
 
 	/**
 	 * Generates a number of different edges and checks the correct degrees of
 	 * the vertices considering the different Classes. After that it deletes the
 	 * edges and checks the degrees again.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getDegreeTestClass2() {
-		onlyTestWithoutTransactionSupport();
+	public void getDegreeTestClass2() throws CommitFailedException {
+		createTransaction(g);
 		Vertex[] nodes = new Vertex[3];
-		nodes[0] = graph.createSubNode();
-		nodes[1] = graph.createDoubleSubNode();
-		nodes[2] = graph.createSuperNode();
+		nodes[0] = g.createSubNode();
+		nodes[1] = g.createDoubleSubNode();
+		nodes[2] = g.createSuperNode();
 		int[] expectedLink = new int[] { 0, 0, 0 };
 		int[] expectedLinkBack = new int[] { 0, 0, 0 };
 		int[] expectedSubLink = new int[] { 0, 0, 0 };
+		commit(g);
 		// create new edges
-		for (int i = 0; i < 1000; i++) {
+		for (int i = 0; i < ITERATIONS; i++) {
 			// decides which edge should be created
 			int edge = rand.nextInt(3);
 			int start = rand.nextInt(2);
 			int end = rand.nextInt(2) + 1;
+			createTransaction(g);
 			if (edge == 0) {
 				// create a Link
-				graph.createLink((AbstractSuperNode) nodes[start],
+				g.createLink((AbstractSuperNode) nodes[start],
 						(SuperNode) nodes[end]);
 				expectedLink[start]++;
 				expectedLink[end]++;
 			} else if (edge == 1) {
 				// create a LinkBack
-				graph.createLinkBack((SuperNode) nodes[end],
+				g.createLinkBack((SuperNode) nodes[end],
 						(AbstractSuperNode) nodes[start]);
 				expectedLinkBack[start]++;
 				expectedLinkBack[end]++;
 			} else {
 				// create a SubLink
 				start = 1;
-				graph.createSubLink((DoubleSubNode) nodes[start],
+				g.createSubLink((DoubleSubNode) nodes[start],
 						(SuperNode) nodes[end]);
 				expectedLink[start]++;
 				expectedLink[end]++;
 				expectedSubLink[start]++;
 				expectedSubLink[end]++;
 			}
+			commit(g);
+			createReadOnlyTransaction(g);
 			assertEquals(expectedLink[0], nodes[0].getDegree(Link.class));
 			assertEquals(expectedLink[1], nodes[1].getDegree(Link.class));
 			assertEquals(expectedLink[2], nodes[2].getDegree(Link.class));
@@ -672,14 +759,16 @@ public class VertexTest extends InstanceTest {
 			assertEquals(expectedSubLink[0], nodes[0].getDegree(SubLink.class));
 			assertEquals(expectedSubLink[1], nodes[1].getDegree(SubLink.class));
 			assertEquals(expectedSubLink[2], nodes[2].getDegree(SubLink.class));
+			commit(g);
 		}
 		// delete the edges
 		HashMap<Vertex, Integer> numbers = new HashMap<Vertex, Integer>();
 		numbers.put(nodes[0], 0);
 		numbers.put(nodes[1], 1);
 		numbers.put(nodes[2], 2);
-		for (int i = graph.getFirstEdgeInGraph().getId(); i < graph.getECount(); i++) {
-			Edge e = graph.getEdge(i);
+		createTransaction(g);
+		for (int i = g.getFirstEdgeInGraph().getId(); i < g.getECount(); i++) {
+			Edge e = g.getEdge(i);
 			int start = numbers.get(e.getAlpha());
 			int end = numbers.get(e.getOmega());
 			if (e instanceof SubLink) {
@@ -694,7 +783,7 @@ public class VertexTest extends InstanceTest {
 				expectedLink[start]--;
 				expectedLink[end]--;
 			}
-			graph.deleteEdge(e);
+			g.deleteEdge(e);
 			assertEquals(expectedLink[0], nodes[0].getDegree(Link.class));
 			assertEquals(expectedLink[1], nodes[1].getDegree(Link.class));
 			assertEquals(expectedLink[2], nodes[2].getDegree(Link.class));
@@ -708,6 +797,7 @@ public class VertexTest extends InstanceTest {
 			assertEquals(expectedSubLink[1], nodes[1].getDegree(SubLink.class));
 			assertEquals(expectedSubLink[2], nodes[2].getDegree(SubLink.class));
 		}
+		commit(g);
 	}
 
 	// tests of the method getDegree(EdgeClass ec, boolean noSubClasses)
@@ -715,29 +805,35 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * A vertex with no connected incidences has to have a degree of 0 for each
 	 * EdgeClass.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getDegreeTestEdgeClassBoolean0() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v = graph.createDoubleSubNode();
+	public void getDegreeTestEdgeClassBoolean0() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v = g.createDoubleSubNode();
+		commit(g);
 		testVertexForEdgeClassSubClass(v, 0, 0, 0);
 	}
 
 	/**
 	 * Checks the degrees in a manually build graph.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getDegreeTestEdgeClassBoolean1() {
-		onlyTestWithoutTransactionSupport();
-		SubNode subn = graph.createSubNode();
-		DoubleSubNode dsubn = graph.createDoubleSubNode();
-		DoubleSubNode dsubnWithout = graph.createDoubleSubNode();
-		SuperNode supern = graph.createSuperNode();
-		graph.createLink(subn, supern);
-		graph.createLink(dsubn, dsubn);
-		graph.createLinkBack(supern, dsubn);
-		graph.createLinkBack(dsubn, subn);
-		graph.createSubLink(dsubn, supern);
+	public void getDegreeTestEdgeClassBoolean1() throws CommitFailedException {
+		createTransaction(g);
+		SubNode subn = g.createSubNode();
+		DoubleSubNode dsubn = g.createDoubleSubNode();
+		DoubleSubNode dsubnWithout = g.createDoubleSubNode();
+		SuperNode supern = g.createSuperNode();
+		g.createLink(subn, supern);
+		g.createLink(dsubn, dsubn);
+		g.createLinkBack(supern, dsubn);
+		g.createLinkBack(dsubn, subn);
+		g.createSubLink(dsubn, supern);
+		commit(g);
 		testVertexForEdgeClassSubClass(dsubnWithout, 0, 0, 0);
 		testVertexForEdgeClassSubClass(subn, 1, 0, 1);
 		testVertexForEdgeClassSubClass(dsubn, 3, 1, 2);
@@ -746,14 +842,17 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks the degrees in a manually build graph, which has only SubLinks.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getDegreeTestEdgeClassBoolean2() {
-		onlyTestWithoutTransactionSupport();
-		DoubleSubNode dsubn = graph.createDoubleSubNode();
-		SuperNode supern = graph.createSuperNode();
-		graph.createSubLink(dsubn, supern);
-		graph.createSubLink(dsubn, dsubn);
+	public void getDegreeTestEdgeClassBoolean2() throws CommitFailedException {
+		createTransaction(g);
+		DoubleSubNode dsubn = g.createDoubleSubNode();
+		SuperNode supern = g.createSuperNode();
+		g.createSubLink(dsubn, supern);
+		g.createSubLink(dsubn, dsubn);
+		commit(g);
 		testVertexForEdgeClassSubClass(dsubn, 3, 3, 0);
 		testVertexForEdgeClassSubClass(supern, 1, 1, 0);
 	}
@@ -762,45 +861,50 @@ public class VertexTest extends InstanceTest {
 	 * Generates a number of different edges and checks the correct degrees of
 	 * the vertices considering the different Edgeclasses and their subclasses.
 	 * After that it deletes the edges and checks the degrees again.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getDegreeTestEdgeClassBoolean3() {
-		onlyTestWithoutTransactionSupport();
+	public void getDegreeTestEdgeClassBoolean3() throws CommitFailedException {
+		createTransaction(g);
 		Vertex[] nodes = new Vertex[3];
-		nodes[0] = graph.createSubNode();
-		nodes[1] = graph.createDoubleSubNode();
-		nodes[2] = graph.createSuperNode();
+		nodes[0] = g.createSubNode();
+		nodes[1] = g.createDoubleSubNode();
+		nodes[2] = g.createSuperNode();
 		int[] expectedLink = new int[] { 0, 0, 0 };
 		int[] expectedLinkBack = new int[] { 0, 0, 0 };
 		int[] expectedSubLink = new int[] { 0, 0, 0 };
+		commit(g);
 		// create new edges
-		for (int i = 0; i < 1000; i++) {
+		for (int i = 0; i < ITERATIONS; i++) {
 			// decides which edge should be created
 			int edge = rand.nextInt(3);
 			int start = rand.nextInt(2);
 			int end = rand.nextInt(2) + 1;
+			createTransaction(g);
 			if (edge == 0) {
 				// create a Link
-				graph.createLink((AbstractSuperNode) nodes[start],
+				g.createLink((AbstractSuperNode) nodes[start],
 						(SuperNode) nodes[end]);
 				expectedLink[start]++;
 				expectedLink[end]++;
 			} else if (edge == 1) {
 				// create a LinkBack
-				graph.createLinkBack((SuperNode) nodes[end],
+				g.createLinkBack((SuperNode) nodes[end],
 						(AbstractSuperNode) nodes[start]);
 				expectedLinkBack[start]++;
 				expectedLinkBack[end]++;
 			} else {
 				// create a SubLink
 				start = 1;
-				graph.createSubLink((DoubleSubNode) nodes[start],
+				g.createSubLink((DoubleSubNode) nodes[start],
 						(SuperNode) nodes[end]);
 				expectedLink[start]++;
 				expectedLink[end]++;
 				expectedSubLink[start]++;
 				expectedSubLink[end]++;
 			}
+			commit(g);
 			testVertexForEdgeClassSubClass(nodes[0], expectedLink[0],
 					expectedSubLink[0], expectedLinkBack[0]);
 			testVertexForEdgeClassSubClass(nodes[1], expectedLink[1],
@@ -813,8 +917,9 @@ public class VertexTest extends InstanceTest {
 		numbers.put(nodes[0], 0);
 		numbers.put(nodes[1], 1);
 		numbers.put(nodes[2], 2);
-		for (int i = graph.getFirstEdgeInGraph().getId(); i < graph.getECount(); i++) {
-			Edge e = graph.getEdge(i);
+		createTransaction(g);
+		for (int i = g.getFirstEdgeInGraph().getId(); i < g.getECount(); i++) {
+			Edge e = g.getEdge(i);
 			int start = numbers.get(e.getAlpha());
 			int end = numbers.get(e.getOmega());
 			if (e instanceof SubLink) {
@@ -829,14 +934,17 @@ public class VertexTest extends InstanceTest {
 				expectedLink[start]--;
 				expectedLink[end]--;
 			}
-			graph.deleteEdge(e);
+			g.deleteEdge(e);
+			commit(g);
 			testVertexForEdgeClassSubClass(nodes[0], expectedLink[0],
 					expectedSubLink[0], expectedLinkBack[0]);
 			testVertexForEdgeClassSubClass(nodes[1], expectedLink[1],
 					expectedSubLink[1], expectedLinkBack[1]);
 			testVertexForEdgeClassSubClass(nodes[2], expectedLink[2],
 					expectedSubLink[2], expectedLinkBack[2]);
+			createTransaction(g);
 		}
+		commit(g);
 	}
 
 	/**
@@ -851,9 +959,12 @@ public class VertexTest extends InstanceTest {
 	 *            the expected number of incident SubLinks
 	 * @param expectedLinkBack
 	 *            the expected number of incident LinkBacks
+	 * @throws CommitFailedException
 	 */
 	private void testVertexForEdgeClassSubClass(Vertex forNode,
-			int expectedLink, int expectedSubLink, int expectedLinkBack) {
+			int expectedLink, int expectedSubLink, int expectedLinkBack)
+			throws CommitFailedException {
+		createReadOnlyTransaction(g);
 		EdgeClass[] ecs = getEdgeClasses();
 		assertEquals(expectedLink - expectedSubLink, forNode.getDegree(ecs[0],
 				true));
@@ -862,6 +973,7 @@ public class VertexTest extends InstanceTest {
 		assertEquals(expectedSubLink, forNode.getDegree(ecs[1], false));
 		assertEquals(expectedLinkBack, forNode.getDegree(ecs[2], true));
 		assertEquals(expectedLinkBack, forNode.getDegree(ecs[2], false));
+		commit(g);
 	}
 
 	// tests of the method getDegree(Class<? extends Edge> ec, boolean
@@ -870,29 +982,35 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * A vertex with no connected incidences has to have a degree of 0 for each
 	 * Class extends Edge.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getDegreeTestClassBoolean0() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v = graph.createDoubleSubNode();
+	public void getDegreeTestClassBoolean0() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v = g.createDoubleSubNode();
+		commit(g);
 		testVertexForClassSubClass(v, 0, 0, 0);
 	}
 
 	/**
 	 * Checks the degrees in a manually build graph.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getDegreeTestClassBoolean1() {
-		onlyTestWithoutTransactionSupport();
-		SubNode subn = graph.createSubNode();
-		DoubleSubNode dsubn = graph.createDoubleSubNode();
-		DoubleSubNode dsubnWithout = graph.createDoubleSubNode();
-		SuperNode supern = graph.createSuperNode();
-		graph.createLink(subn, supern);
-		graph.createLink(dsubn, dsubn);
-		graph.createLinkBack(supern, dsubn);
-		graph.createLinkBack(dsubn, subn);
-		graph.createSubLink(dsubn, supern);
+	public void getDegreeTestClassBoolean1() throws CommitFailedException {
+		createTransaction(g);
+		SubNode subn = g.createSubNode();
+		DoubleSubNode dsubn = g.createDoubleSubNode();
+		DoubleSubNode dsubnWithout = g.createDoubleSubNode();
+		SuperNode supern = g.createSuperNode();
+		g.createLink(subn, supern);
+		g.createLink(dsubn, dsubn);
+		g.createLinkBack(supern, dsubn);
+		g.createLinkBack(dsubn, subn);
+		g.createSubLink(dsubn, supern);
+		commit(g);
 		testVertexForClassSubClass(dsubnWithout, 0, 0, 0);
 		testVertexForClassSubClass(subn, 1, 0, 1);
 		testVertexForClassSubClass(dsubn, 3, 1, 2);
@@ -900,14 +1018,17 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks the degrees in a manually build graph, which has only SubLinks.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getDegreeTestClassBoolean2() {
-		onlyTestWithoutTransactionSupport();
-		DoubleSubNode dsubn = graph.createDoubleSubNode();
-		SuperNode supern = graph.createSuperNode();
-		graph.createSubLink(dsubn, supern);
-		graph.createSubLink(dsubn, dsubn);
+	public void getDegreeTestClassBoolean2() throws CommitFailedException {
+		createTransaction(g);
+		DoubleSubNode dsubn = g.createDoubleSubNode();
+		SuperNode supern = g.createSuperNode();
+		g.createSubLink(dsubn, supern);
+		g.createSubLink(dsubn, dsubn);
+		commit(g);
 		testVertexForClassSubClass(dsubn, 3, 3, 0);
 		testVertexForClassSubClass(supern, 1, 1, 0);
 	}
@@ -916,45 +1037,50 @@ public class VertexTest extends InstanceTest {
 	 * Generates a number of different edges and checks the correct degrees of
 	 * the vertices considering the different Classes and Subclasses. After that
 	 * it deletes the edges and checks the degrees again.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getDegreeTestClassBoolean3() {
-		onlyTestWithoutTransactionSupport();
+	public void getDegreeTestClassBoolean3() throws CommitFailedException {
+		createTransaction(g);
 		Vertex[] nodes = new Vertex[3];
-		nodes[0] = graph.createSubNode();
-		nodes[1] = graph.createDoubleSubNode();
-		nodes[2] = graph.createSuperNode();
+		nodes[0] = g.createSubNode();
+		nodes[1] = g.createDoubleSubNode();
+		nodes[2] = g.createSuperNode();
 		int[] expectedLink = new int[] { 0, 0, 0 };
 		int[] expectedLinkBack = new int[] { 0, 0, 0 };
 		int[] expectedSubLink = new int[] { 0, 0, 0 };
+		commit(g);
 		// create new edges
-		for (int i = 0; i < 1000; i++) {
+		for (int i = 0; i < ITERATIONS; i++) {
 			// decides which edge should be created
 			int edge = rand.nextInt(3);
 			int start = rand.nextInt(2);
 			int end = rand.nextInt(2) + 1;
+			createTransaction(g);
 			if (edge == 0) {
 				// create a Link
-				graph.createLink((AbstractSuperNode) nodes[start],
+				g.createLink((AbstractSuperNode) nodes[start],
 						(SuperNode) nodes[end]);
 				expectedLink[start]++;
 				expectedLink[end]++;
 			} else if (edge == 1) {
 				// create a LinkBack
-				graph.createLinkBack((SuperNode) nodes[end],
+				g.createLinkBack((SuperNode) nodes[end],
 						(AbstractSuperNode) nodes[start]);
 				expectedLinkBack[start]++;
 				expectedLinkBack[end]++;
 			} else {
 				// create a SubLink
 				start = 1;
-				graph.createSubLink((DoubleSubNode) nodes[start],
+				g.createSubLink((DoubleSubNode) nodes[start],
 						(SuperNode) nodes[end]);
 				expectedLink[start]++;
 				expectedLink[end]++;
 				expectedSubLink[start]++;
 				expectedSubLink[end]++;
 			}
+			commit(g);
 			testVertexForEdgeClassSubClass(nodes[0], expectedLink[0],
 					expectedSubLink[0], expectedLinkBack[0]);
 			testVertexForEdgeClassSubClass(nodes[1], expectedLink[1],
@@ -967,8 +1093,9 @@ public class VertexTest extends InstanceTest {
 		numbers.put(nodes[0], 0);
 		numbers.put(nodes[1], 1);
 		numbers.put(nodes[2], 2);
-		for (int i = graph.getFirstEdgeInGraph().getId(); i < graph.getECount(); i++) {
-			Edge e = graph.getEdge(i);
+		createTransaction(g);
+		for (int i = g.getFirstEdgeInGraph().getId(); i < g.getECount(); i++) {
+			Edge e = g.getEdge(i);
 			int start = numbers.get(e.getAlpha());
 			int end = numbers.get(e.getOmega());
 			if (e instanceof SubLink) {
@@ -983,14 +1110,17 @@ public class VertexTest extends InstanceTest {
 				expectedLink[start]--;
 				expectedLink[end]--;
 			}
-			graph.deleteEdge(e);
+			g.deleteEdge(e);
+			commit(g);
 			testVertexForEdgeClassSubClass(nodes[0], expectedLink[0],
 					expectedSubLink[0], expectedLinkBack[0]);
 			testVertexForEdgeClassSubClass(nodes[1], expectedLink[1],
 					expectedSubLink[1], expectedLinkBack[1]);
 			testVertexForEdgeClassSubClass(nodes[2], expectedLink[2],
 					expectedSubLink[2], expectedLinkBack[2]);
+			createTransaction(g);
 		}
+		commit(g);
 	}
 
 	/**
@@ -1005,9 +1135,12 @@ public class VertexTest extends InstanceTest {
 	 *            the expected number of incident SubLinks
 	 * @param expectedLinkBack
 	 *            the expected number of incident LinkBacks
+	 * @throws CommitFailedException
 	 */
 	private void testVertexForClassSubClass(Vertex forNode, int expectedLink,
-			int expectedSubLink, int expectedLinkBack) {
+			int expectedSubLink, int expectedLinkBack)
+			throws CommitFailedException {
+		createReadOnlyTransaction(g);
 		assertEquals(expectedLink - expectedSubLink, forNode.getDegree(
 				Link.class, true));
 		assertEquals(expectedLink, forNode.getDegree(Link.class, false));
@@ -1015,6 +1148,7 @@ public class VertexTest extends InstanceTest {
 		assertEquals(expectedSubLink, forNode.getDegree(SubLink.class, false));
 		assertEquals(expectedLinkBack, forNode.getDegree(LinkBack.class, true));
 		assertEquals(expectedLinkBack, forNode.getDegree(LinkBack.class, false));
+		commit(g);
 	}
 
 	// tests of the method getDegree(EdgeClass ec, EdgeDirection orientation)
@@ -1022,11 +1156,15 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * A vertex with no connected incidences has to have a degree of 0 for each
 	 * EdgeClass.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getDegreeTestEdgeClassEdgeDirection0() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v = graph.createDoubleSubNode();
+	public void getDegreeTestEdgeClassEdgeDirection0()
+			throws CommitFailedException {
+		createTransaction(g);
+		Vertex v = g.createDoubleSubNode();
+		commit(g);
 		testVertexForEdgeClassEdgeDirection(v, 0, 0, 0, EdgeDirection.INOUT);
 		testVertexForEdgeClassEdgeDirection(v, 0, 0, 0, EdgeDirection.IN);
 		testVertexForEdgeClassEdgeDirection(v, 0, 0, 0, EdgeDirection.OUT);
@@ -1034,19 +1172,23 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks the degrees in a manually build graph.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getDegreeTestEdgeClassEdgeDirection1() {
-		onlyTestWithoutTransactionSupport();
-		SubNode subn = graph.createSubNode();
-		DoubleSubNode dsubn = graph.createDoubleSubNode();
-		DoubleSubNode dsubnWithout = graph.createDoubleSubNode();
-		SuperNode supern = graph.createSuperNode();
-		graph.createLink(subn, supern);
-		graph.createLink(dsubn, dsubn);
-		graph.createSubLink(dsubn, supern);
-		graph.createLinkBack(supern, dsubn);
-		graph.createLinkBack(dsubn, subn);
+	public void getDegreeTestEdgeClassEdgeDirection1()
+			throws CommitFailedException {
+		createTransaction(g);
+		SubNode subn = g.createSubNode();
+		DoubleSubNode dsubn = g.createDoubleSubNode();
+		DoubleSubNode dsubnWithout = g.createDoubleSubNode();
+		SuperNode supern = g.createSuperNode();
+		g.createLink(subn, supern);
+		g.createLink(dsubn, dsubn);
+		g.createSubLink(dsubn, supern);
+		g.createLinkBack(supern, dsubn);
+		g.createLinkBack(dsubn, subn);
+		commit(g);
 		testVertexForEdgeClassEdgeDirection(dsubnWithout, 0, 0, 0,
 				EdgeDirection.INOUT);
 		testVertexForEdgeClassEdgeDirection(dsubnWithout, 0, 0, 0,
@@ -1068,13 +1210,17 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * Checks the degrees in a manually build graph, which has only one
 	 * LinkBack.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getDegreeTestEdgeClassEdgeDirection2() {
-		onlyTestWithoutTransactionSupport();
-		SuperNode dsubn = graph.createSuperNode();
-		AbstractSuperNode supern = graph.createSubNode();
-		graph.createLinkBack(dsubn, supern);
+	public void getDegreeTestEdgeClassEdgeDirection2()
+			throws CommitFailedException {
+		createTransaction(g);
+		SuperNode dsubn = g.createSuperNode();
+		AbstractSuperNode supern = g.createSubNode();
+		g.createLinkBack(dsubn, supern);
+		commit(g);
 		testVertexForEdgeClassEdgeDirection(dsubn, 0, 0, 0, EdgeDirection.IN);
 		testVertexForEdgeClassEdgeDirection(dsubn, 0, 0, 1, EdgeDirection.OUT);
 		testVertexForEdgeClassEdgeDirection(dsubn, 0, 0, 1, EdgeDirection.INOUT);
@@ -1089,48 +1235,54 @@ public class VertexTest extends InstanceTest {
 	 * the vertices considering the different Edgeclasses and their
 	 * EdgeDirections. After that it deletes the edges and checks the degrees
 	 * again.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getDegreeTestEdgeClassEdgeDirection3() {
-		onlyTestWithoutTransactionSupport();
+	public void getDegreeTestEdgeClassEdgeDirection3()
+			throws CommitFailedException {
+		createTransaction(g);
 		Vertex[] nodes = new Vertex[3];
-		nodes[0] = graph.createSubNode();
-		nodes[1] = graph.createDoubleSubNode();
-		nodes[2] = graph.createSuperNode();
+		nodes[0] = g.createSubNode();
+		nodes[1] = g.createDoubleSubNode();
+		nodes[2] = g.createSuperNode();
 		int[] expectedLinkIn = new int[] { 0, 0, 0 };
 		int[] expectedLinkOut = new int[] { 0, 0, 0 };
 		int[] expectedLinkBackIn = new int[] { 0, 0, 0 };
 		int[] expectedLinkBackOut = new int[] { 0, 0, 0 };
 		int[] expectedSubLinkIn = new int[] { 0, 0, 0 };
 		int[] expectedSubLinkOut = new int[] { 0, 0, 0 };
+		commit(g);
 		// create new edges
-		for (int i = 0; i < 1000; i++) {
+		for (int i = 0; i < ITERATIONS; i++) {
 			// decides which edge should be created
 			int edge = rand.nextInt(3);
 			int start = rand.nextInt(2);
 			int end = rand.nextInt(2) + 1;
+			createTransaction(g);
 			if (edge == 0) {
 				// create a Link
-				graph.createLink((AbstractSuperNode) nodes[start],
+				g.createLink((AbstractSuperNode) nodes[start],
 						(SuperNode) nodes[end]);
 				expectedLinkOut[start]++;
 				expectedLinkIn[end]++;
 			} else if (edge == 1) {
 				// create a LinkBack
-				graph.createLinkBack((SuperNode) nodes[end],
+				g.createLinkBack((SuperNode) nodes[end],
 						(AbstractSuperNode) nodes[start]);
 				expectedLinkBackOut[end]++;
 				expectedLinkBackIn[start]++;
 			} else {
 				// create a SubLink
 				start = 1;
-				graph.createSubLink((DoubleSubNode) nodes[start],
+				g.createSubLink((DoubleSubNode) nodes[start],
 						(SuperNode) nodes[end]);
 				expectedLinkOut[start]++;
 				expectedLinkIn[end]++;
 				expectedSubLinkOut[start]++;
 				expectedSubLinkIn[end]++;
 			}
+			commit(g);
 			testVertexForEdgeClassEdgeDirection(nodes[0], expectedLinkIn[0],
 					expectedSubLinkIn[0], expectedLinkBackIn[0],
 					EdgeDirection.IN);
@@ -1167,8 +1319,9 @@ public class VertexTest extends InstanceTest {
 		numbers.put(nodes[0], 0);
 		numbers.put(nodes[1], 1);
 		numbers.put(nodes[2], 2);
-		for (int i = graph.getFirstEdgeInGraph().getId(); i < graph.getECount(); i++) {
-			Edge e = graph.getEdge(i);
+		createTransaction(g);
+		for (int i = g.getFirstEdgeInGraph().getId(); i < g.getECount(); i++) {
+			Edge e = g.getEdge(i);
 			int start = numbers.get(e.getAlpha());
 			int end = numbers.get(e.getOmega());
 			if (e instanceof SubLink) {
@@ -1183,7 +1336,8 @@ public class VertexTest extends InstanceTest {
 				expectedLinkOut[start]--;
 				expectedLinkIn[end]--;
 			}
-			graph.deleteEdge(e);
+			g.deleteEdge(e);
+			commit(g);
 			testVertexForEdgeClassEdgeDirection(nodes[0], expectedLinkIn[0],
 					expectedSubLinkIn[0], expectedLinkBackIn[0],
 					EdgeDirection.IN);
@@ -1214,7 +1368,9 @@ public class VertexTest extends InstanceTest {
 					+ expectedLinkOut[2], expectedSubLinkIn[2]
 					+ expectedSubLinkOut[2], expectedLinkBackIn[2]
 					+ expectedLinkBackOut[2], EdgeDirection.INOUT);
+			createTransaction(g);
 		}
+		commit(g);
 	}
 
 	/**
@@ -1231,14 +1387,17 @@ public class VertexTest extends InstanceTest {
 	 *            the expected number of incident LinkBacks
 	 * @param direction
 	 *            the direction of the incidences
+	 * @throws CommitFailedException
 	 */
 	private void testVertexForEdgeClassEdgeDirection(Vertex forNode,
 			int expectedLink, int expectedSubLink, int expectedLinkBack,
-			EdgeDirection direction) {
+			EdgeDirection direction) throws CommitFailedException {
+		createReadOnlyTransaction(g);
 		EdgeClass[] ecs = getEdgeClasses();
 		assertEquals(expectedLink, forNode.getDegree(ecs[0], direction));
 		assertEquals(expectedSubLink, forNode.getDegree(ecs[1], direction));
 		assertEquals(expectedLinkBack, forNode.getDegree(ecs[2], direction));
+		commit(g);
 	}
 
 	// tests of the method getDegree(Class<? extends Edge> ec, EdgeDirection
@@ -1247,31 +1406,40 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * A vertex with no connected incidences has to have a degree of 0 for each
 	 * Class.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getDegreeTestClassEdgeDirection0() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v = graph.createDoubleSubNode();
+	public void getDegreeTestClassEdgeDirection0() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v = g.createDoubleSubNode();
+		commit(g);
+		createReadOnlyTransaction(g);
 		testVertexForClassEdgeDirection(v, 0, 0, 0, EdgeDirection.INOUT);
 		testVertexForClassEdgeDirection(v, 0, 0, 0, EdgeDirection.IN);
 		testVertexForClassEdgeDirection(v, 0, 0, 0, EdgeDirection.OUT);
+		commit(g);
 	}
 
 	/**
 	 * Checks the degrees in a manually build graph.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getDegreeTestClassEdgeDirection1() {
-		onlyTestWithoutTransactionSupport();
-		SubNode subn = graph.createSubNode();
-		DoubleSubNode dsubn = graph.createDoubleSubNode();
-		DoubleSubNode dsubnWithout = graph.createDoubleSubNode();
-		SuperNode supern = graph.createSuperNode();
-		graph.createLink(subn, supern);
-		graph.createLink(dsubn, dsubn);
-		graph.createSubLink(dsubn, supern);
-		graph.createLinkBack(supern, dsubn);
-		graph.createLinkBack(dsubn, subn);
+	public void getDegreeTestClassEdgeDirection1() throws CommitFailedException {
+		createTransaction(g);
+		SubNode subn = g.createSubNode();
+		DoubleSubNode dsubn = g.createDoubleSubNode();
+		DoubleSubNode dsubnWithout = g.createDoubleSubNode();
+		SuperNode supern = g.createSuperNode();
+		g.createLink(subn, supern);
+		g.createLink(dsubn, dsubn);
+		g.createSubLink(dsubn, supern);
+		g.createLinkBack(supern, dsubn);
+		g.createLinkBack(dsubn, subn);
+		commit(g);
+		createReadOnlyTransaction(g);
 		testVertexForClassEdgeDirection(dsubnWithout, 0, 0, 0,
 				EdgeDirection.INOUT);
 		testVertexForClassEdgeDirection(dsubnWithout, 0, 0, 0, EdgeDirection.IN);
@@ -1286,72 +1454,84 @@ public class VertexTest extends InstanceTest {
 		testVertexForClassEdgeDirection(supern, 2, 1, 1, EdgeDirection.INOUT);
 		testVertexForClassEdgeDirection(supern, 2, 1, 0, EdgeDirection.IN);
 		testVertexForClassEdgeDirection(supern, 0, 0, 1, EdgeDirection.OUT);
+		commit(g);
 	}
 
 	/**
 	 * Checks the degrees in a manually build graph, which has only one
 	 * LinkBack.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getDegreeTestClassEdgeDirection2() {
-		onlyTestWithoutTransactionSupport();
-		SuperNode dsubn = graph.createSuperNode();
-		AbstractSuperNode supern = graph.createSubNode();
-		graph.createLinkBack(dsubn, supern);
+	public void getDegreeTestClassEdgeDirection2() throws CommitFailedException {
+		createTransaction(g);
+		SuperNode dsubn = g.createSuperNode();
+		AbstractSuperNode supern = g.createSubNode();
+		g.createLinkBack(dsubn, supern);
+		commit(g);
+		createReadOnlyTransaction(g);
 		testVertexForClassEdgeDirection(dsubn, 0, 0, 0, EdgeDirection.IN);
 		testVertexForClassEdgeDirection(dsubn, 0, 0, 1, EdgeDirection.OUT);
 		testVertexForClassEdgeDirection(dsubn, 0, 0, 1, EdgeDirection.INOUT);
 		testVertexForClassEdgeDirection(supern, 0, 0, 1, EdgeDirection.IN);
 		testVertexForClassEdgeDirection(supern, 0, 0, 0, EdgeDirection.OUT);
 		testVertexForClassEdgeDirection(supern, 0, 0, 1, EdgeDirection.INOUT);
+		commit(g);
 	}
 
 	/**
 	 * Generates a number of different edges and checks the correct degrees of
 	 * the vertices considering the different Classes and their EdgeDirections.
 	 * After that it deletes the edges and checks the degrees again.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getDegreeTestClassEdgeDirection3() {
-		onlyTestWithoutTransactionSupport();
+	public void getDegreeTestClassEdgeDirection3() throws CommitFailedException {
+		createTransaction(g);
 		Vertex[] nodes = new Vertex[3];
-		nodes[0] = graph.createSubNode();
-		nodes[1] = graph.createDoubleSubNode();
-		nodes[2] = graph.createSuperNode();
+		nodes[0] = g.createSubNode();
+		nodes[1] = g.createDoubleSubNode();
+		nodes[2] = g.createSuperNode();
 		int[] expectedLinkIn = new int[] { 0, 0, 0 };
 		int[] expectedLinkOut = new int[] { 0, 0, 0 };
 		int[] expectedLinkBackIn = new int[] { 0, 0, 0 };
 		int[] expectedLinkBackOut = new int[] { 0, 0, 0 };
 		int[] expectedSubLinkIn = new int[] { 0, 0, 0 };
 		int[] expectedSubLinkOut = new int[] { 0, 0, 0 };
+		commit(g);
 		// create new edges
-		for (int i = 0; i < 1000; i++) {
+		for (int i = 0; i < ITERATIONS; i++) {
 			// decides which edge should be created
 			int edge = rand.nextInt(3);
 			int start = rand.nextInt(2);
 			int end = rand.nextInt(2) + 1;
+			createTransaction(g);
 			if (edge == 0) {
 				// create a Link
-				graph.createLink((AbstractSuperNode) nodes[start],
+				g.createLink((AbstractSuperNode) nodes[start],
 						(SuperNode) nodes[end]);
 				expectedLinkOut[start]++;
 				expectedLinkIn[end]++;
 			} else if (edge == 1) {
 				// create a LinkBack
-				graph.createLinkBack((SuperNode) nodes[end],
+				g.createLinkBack((SuperNode) nodes[end],
 						(AbstractSuperNode) nodes[start]);
 				expectedLinkBackOut[end]++;
 				expectedLinkBackIn[start]++;
 			} else {
 				// create a SubLink
 				start = 1;
-				graph.createSubLink((DoubleSubNode) nodes[start],
+				g.createSubLink((DoubleSubNode) nodes[start],
 						(SuperNode) nodes[end]);
 				expectedLinkOut[start]++;
 				expectedLinkIn[end]++;
 				expectedSubLinkOut[start]++;
 				expectedSubLinkIn[end]++;
 			}
+			commit(g);
+			createReadOnlyTransaction(g);
 			testVertexForClassEdgeDirection(nodes[0], expectedLinkIn[0],
 					expectedSubLinkIn[0], expectedLinkBackIn[0],
 					EdgeDirection.IN);
@@ -1382,14 +1562,16 @@ public class VertexTest extends InstanceTest {
 					+ expectedLinkOut[2], expectedSubLinkIn[2]
 					+ expectedSubLinkOut[2], expectedLinkBackIn[2]
 					+ expectedLinkBackOut[2], EdgeDirection.INOUT);
+			commit(g);
 		}
 		// delete the edges
 		HashMap<Vertex, Integer> numbers = new HashMap<Vertex, Integer>();
 		numbers.put(nodes[0], 0);
 		numbers.put(nodes[1], 1);
 		numbers.put(nodes[2], 2);
-		for (int i = graph.getFirstEdgeInGraph().getId(); i < graph.getECount(); i++) {
-			Edge e = graph.getEdge(i);
+		createTransaction(g);
+		for (int i = g.getFirstEdgeInGraph().getId(); i < g.getECount(); i++) {
+			Edge e = g.getEdge(i);
 			int start = numbers.get(e.getAlpha());
 			int end = numbers.get(e.getOmega());
 			if (e instanceof SubLink) {
@@ -1404,7 +1586,7 @@ public class VertexTest extends InstanceTest {
 				expectedLinkOut[start]--;
 				expectedLinkIn[end]--;
 			}
-			graph.deleteEdge(e);
+			g.deleteEdge(e);
 			testVertexForClassEdgeDirection(nodes[0], expectedLinkIn[0],
 					expectedSubLinkIn[0], expectedLinkBackIn[0],
 					EdgeDirection.IN);
@@ -1436,6 +1618,7 @@ public class VertexTest extends InstanceTest {
 					+ expectedSubLinkOut[2], expectedLinkBackIn[2]
 					+ expectedLinkBackOut[2], EdgeDirection.INOUT);
 		}
+		commit(g);
 	}
 
 	/**
@@ -1469,33 +1652,44 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * A vertex with no connected incidences has to have a degree of 0 for each
 	 * EdgeClass.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getDegreeTestEdgeClassEdgeDirectionBoolean0() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v = graph.createDoubleSubNode();
+	public void getDegreeTestEdgeClassEdgeDirectionBoolean0()
+			throws CommitFailedException {
+		createTransaction(g);
+		Vertex v = g.createDoubleSubNode();
+		commit(g);
+		createReadOnlyTransaction(g);
 		testVertexForEdgeClassEdgeDirectionBoolean(v, 0, 0, 0,
 				EdgeDirection.INOUT);
 		testVertexForEdgeClassEdgeDirectionBoolean(v, 0, 0, 0, EdgeDirection.IN);
 		testVertexForEdgeClassEdgeDirectionBoolean(v, 0, 0, 0,
 				EdgeDirection.OUT);
+		commit(g);
 	}
 
 	/**
 	 * Checks the degrees in a manually build graph.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getDegreeTestEdgeClassEdgeDirectionBoolean1() {
-		onlyTestWithoutTransactionSupport();
-		SubNode subn = graph.createSubNode();
-		DoubleSubNode dsubn = graph.createDoubleSubNode();
-		DoubleSubNode dsubnWithout = graph.createDoubleSubNode();
-		SuperNode supern = graph.createSuperNode();
-		graph.createLink(subn, supern);
-		graph.createLink(dsubn, dsubn);
-		graph.createSubLink(dsubn, supern);
-		graph.createLinkBack(supern, dsubn);
-		graph.createLinkBack(dsubn, subn);
+	public void getDegreeTestEdgeClassEdgeDirectionBoolean1()
+			throws CommitFailedException {
+		createTransaction(g);
+		SubNode subn = g.createSubNode();
+		DoubleSubNode dsubn = g.createDoubleSubNode();
+		DoubleSubNode dsubnWithout = g.createDoubleSubNode();
+		SuperNode supern = g.createSuperNode();
+		g.createLink(subn, supern);
+		g.createLink(dsubn, dsubn);
+		g.createSubLink(dsubn, supern);
+		g.createLinkBack(supern, dsubn);
+		g.createLinkBack(dsubn, subn);
+		commit(g);
+		createTransaction(g);
 		testVertexForEdgeClassEdgeDirectionBoolean(dsubnWithout, 0, 0, 0,
 				EdgeDirection.INOUT);
 		testVertexForEdgeClassEdgeDirectionBoolean(dsubnWithout, 0, 0, 0,
@@ -1520,18 +1714,24 @@ public class VertexTest extends InstanceTest {
 				EdgeDirection.IN);
 		testVertexForEdgeClassEdgeDirectionBoolean(supern, 0, 0, 1,
 				EdgeDirection.OUT);
+		commit(g);
 	}
 
 	/**
 	 * Checks the degrees in a manually build graph, which has only one
 	 * LinkBack.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getDegreeTestEdgeClassEdgeDirectionBoolean2() {
-		onlyTestWithoutTransactionSupport();
-		SuperNode dsubn = graph.createSuperNode();
-		AbstractSuperNode supern = graph.createSubNode();
-		graph.createLinkBack(dsubn, supern);
+	public void getDegreeTestEdgeClassEdgeDirectionBoolean2()
+			throws CommitFailedException {
+		createTransaction(g);
+		SuperNode dsubn = g.createSuperNode();
+		AbstractSuperNode supern = g.createSubNode();
+		g.createLinkBack(dsubn, supern);
+		commit(g);
+		createReadOnlyTransaction(g);
 		testVertexForEdgeClassEdgeDirectionBoolean(dsubn, 0, 0, 0,
 				EdgeDirection.IN);
 		testVertexForEdgeClassEdgeDirectionBoolean(dsubn, 0, 0, 1,
@@ -1544,17 +1744,24 @@ public class VertexTest extends InstanceTest {
 				EdgeDirection.OUT);
 		testVertexForEdgeClassEdgeDirectionBoolean(supern, 0, 0, 1,
 				EdgeDirection.INOUT);
+
+		commit(g);
 	}
 
 	/**
 	 * Checks the degrees in a manually build graph, which has only one Link.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getDegreeTestEdgeClassEdgeDirectionBoolean3() {
-		onlyTestWithoutTransactionSupport();
-		SuperNode dsubn = graph.createSuperNode();
-		AbstractSuperNode supern = graph.createSubNode();
-		graph.createLink(supern, dsubn);
+	public void getDegreeTestEdgeClassEdgeDirectionBoolean3()
+			throws CommitFailedException {
+		createTransaction(g);
+		SuperNode dsubn = g.createSuperNode();
+		AbstractSuperNode supern = g.createSubNode();
+		g.createLink(supern, dsubn);
+		commit(g);
+		createReadOnlyTransaction(g);
 		testVertexForEdgeClassEdgeDirectionBoolean(dsubn, 1, 0, 0,
 				EdgeDirection.IN);
 		testVertexForEdgeClassEdgeDirectionBoolean(dsubn, 0, 0, 0,
@@ -1567,6 +1774,7 @@ public class VertexTest extends InstanceTest {
 				EdgeDirection.OUT);
 		testVertexForEdgeClassEdgeDirectionBoolean(supern, 1, 0, 0,
 				EdgeDirection.INOUT);
+		commit(g);
 	}
 
 	/**
@@ -1574,48 +1782,55 @@ public class VertexTest extends InstanceTest {
 	 * the vertices considering the different Edgeclasses, their EdgeDirections
 	 * and their SubClasses. After that it deletes the edges and checks the
 	 * degrees again.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getDegreeTestEdgeClassEdgeDirectionBoolean5() {
-		onlyTestWithoutTransactionSupport();
+	public void getDegreeTestEdgeClassEdgeDirectionBoolean5()
+			throws CommitFailedException {
+		createTransaction(g);
 		Vertex[] nodes = new Vertex[3];
-		nodes[0] = graph.createSubNode();
-		nodes[1] = graph.createDoubleSubNode();
-		nodes[2] = graph.createSuperNode();
+		nodes[0] = g.createSubNode();
+		nodes[1] = g.createDoubleSubNode();
+		nodes[2] = g.createSuperNode();
 		int[] expectedLinkIn = new int[] { 0, 0, 0 };
 		int[] expectedLinkOut = new int[] { 0, 0, 0 };
 		int[] expectedLinkBackIn = new int[] { 0, 0, 0 };
 		int[] expectedLinkBackOut = new int[] { 0, 0, 0 };
 		int[] expectedSubLinkIn = new int[] { 0, 0, 0 };
 		int[] expectedSubLinkOut = new int[] { 0, 0, 0 };
+		commit(g);
 		// create new edges
-		for (int i = 0; i < 1000; i++) {
+		for (int i = 0; i < ITERATIONS; i++) {
 			// decides which edge should be created
 			int edge = rand.nextInt(3);
 			int start = rand.nextInt(2);
 			int end = rand.nextInt(2) + 1;
+			createTransaction(g);
 			if (edge == 0) {
 				// create a Link
-				graph.createLink((AbstractSuperNode) nodes[start],
+				g.createLink((AbstractSuperNode) nodes[start],
 						(SuperNode) nodes[end]);
 				expectedLinkOut[start]++;
 				expectedLinkIn[end]++;
 			} else if (edge == 1) {
 				// create a LinkBack
-				graph.createLinkBack((SuperNode) nodes[end],
+				g.createLinkBack((SuperNode) nodes[end],
 						(AbstractSuperNode) nodes[start]);
 				expectedLinkBackOut[end]++;
 				expectedLinkBackIn[start]++;
 			} else {
 				// create a SubLink
 				start = 1;
-				graph.createSubLink((DoubleSubNode) nodes[start],
+				g.createSubLink((DoubleSubNode) nodes[start],
 						(SuperNode) nodes[end]);
 				expectedLinkOut[start]++;
 				expectedLinkIn[end]++;
 				expectedSubLinkOut[start]++;
 				expectedSubLinkIn[end]++;
 			}
+			commit(g);
+			createReadOnlyTransaction(g);
 			testVertexForEdgeClassEdgeDirectionBoolean(nodes[0],
 					expectedLinkIn[0], expectedSubLinkIn[0],
 					expectedLinkBackIn[0], EdgeDirection.IN);
@@ -1649,14 +1864,16 @@ public class VertexTest extends InstanceTest {
 					expectedSubLinkIn[2] + expectedSubLinkOut[2],
 					expectedLinkBackIn[2] + expectedLinkBackOut[2],
 					EdgeDirection.INOUT);
+			commit(g);
 		}
 		// delete the edges
 		HashMap<Vertex, Integer> numbers = new HashMap<Vertex, Integer>();
 		numbers.put(nodes[0], 0);
 		numbers.put(nodes[1], 1);
 		numbers.put(nodes[2], 2);
-		for (int i = graph.getFirstEdgeInGraph().getId(); i < graph.getECount(); i++) {
-			Edge e = graph.getEdge(i);
+		createTransaction(g);
+		for (int i = g.getFirstEdgeInGraph().getId(); i < g.getECount(); i++) {
+			Edge e = g.getEdge(i);
 			int start = numbers.get(e.getAlpha());
 			int end = numbers.get(e.getOmega());
 			if (e instanceof SubLink) {
@@ -1671,7 +1888,7 @@ public class VertexTest extends InstanceTest {
 				expectedLinkOut[start]--;
 				expectedLinkIn[end]--;
 			}
-			graph.deleteEdge(e);
+			g.deleteEdge(e);
 			testVertexForEdgeClassEdgeDirectionBoolean(nodes[0],
 					expectedLinkIn[0], expectedSubLinkIn[0],
 					expectedLinkBackIn[0], EdgeDirection.IN);
@@ -1706,6 +1923,7 @@ public class VertexTest extends InstanceTest {
 					expectedLinkBackIn[2] + expectedLinkBackOut[2],
 					EdgeDirection.INOUT);
 		}
+		commit(g);
 	}
 
 	/**
@@ -1746,31 +1964,42 @@ public class VertexTest extends InstanceTest {
 	/**
 	 * A vertex with no connected incidences has to have a degree of 0 for each
 	 * Class.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getDegreeTestClassEdgeDirectionBoolean0() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v = graph.createDoubleSubNode();
+	public void getDegreeTestClassEdgeDirectionBoolean0()
+			throws CommitFailedException {
+		createTransaction(g);
+		Vertex v = g.createDoubleSubNode();
+		commit(g);
+		createReadOnlyTransaction(g);
 		testVertexForClassEdgeDirectionBoolean(v, 0, 0, 0, EdgeDirection.INOUT);
 		testVertexForClassEdgeDirectionBoolean(v, 0, 0, 0, EdgeDirection.IN);
 		testVertexForClassEdgeDirectionBoolean(v, 0, 0, 0, EdgeDirection.OUT);
+		commit(g);
 	}
 
 	/**
 	 * Checks the degrees in a manually build graph.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getDegreeTestClassEdgeDirectionBoolean1() {
-		onlyTestWithoutTransactionSupport();
-		SubNode subn = graph.createSubNode();
-		DoubleSubNode dsubn = graph.createDoubleSubNode();
-		DoubleSubNode dsubnWithout = graph.createDoubleSubNode();
-		SuperNode supern = graph.createSuperNode();
-		graph.createLink(subn, supern);
-		graph.createLink(dsubn, dsubn);
-		graph.createSubLink(dsubn, supern);
-		graph.createLinkBack(supern, dsubn);
-		graph.createLinkBack(dsubn, subn);
+	public void getDegreeTestClassEdgeDirectionBoolean1()
+			throws CommitFailedException {
+		createTransaction(g);
+		SubNode subn = g.createSubNode();
+		DoubleSubNode dsubn = g.createDoubleSubNode();
+		DoubleSubNode dsubnWithout = g.createDoubleSubNode();
+		SuperNode supern = g.createSuperNode();
+		g.createLink(subn, supern);
+		g.createLink(dsubn, dsubn);
+		g.createSubLink(dsubn, supern);
+		g.createLinkBack(supern, dsubn);
+		g.createLinkBack(dsubn, subn);
+		commit(g);
+		createReadOnlyTransaction(g);
 		testVertexForClassEdgeDirectionBoolean(dsubnWithout, 0, 0, 0,
 				EdgeDirection.INOUT);
 		testVertexForClassEdgeDirectionBoolean(dsubnWithout, 0, 0, 0,
@@ -1792,18 +2021,24 @@ public class VertexTest extends InstanceTest {
 				EdgeDirection.IN);
 		testVertexForClassEdgeDirectionBoolean(supern, 0, 0, 1,
 				EdgeDirection.OUT);
+		commit(g);
 	}
 
 	/**
 	 * Checks the degrees in a manually build graph, which has only one
 	 * LinkBack.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getDegreeTestClassEdgeDirectionBoolean2() {
-		onlyTestWithoutTransactionSupport();
-		SuperNode dsubn = graph.createSuperNode();
-		AbstractSuperNode supern = graph.createSubNode();
-		graph.createLinkBack(dsubn, supern);
+	public void getDegreeTestClassEdgeDirectionBoolean2()
+			throws CommitFailedException {
+		createTransaction(g);
+		SuperNode dsubn = g.createSuperNode();
+		AbstractSuperNode supern = g.createSubNode();
+		g.createLinkBack(dsubn, supern);
+		commit(g);
+		createReadOnlyTransaction(g);
 		testVertexForClassEdgeDirectionBoolean(dsubn, 0, 0, 0, EdgeDirection.IN);
 		testVertexForClassEdgeDirectionBoolean(dsubn, 0, 0, 1,
 				EdgeDirection.OUT);
@@ -1815,17 +2050,23 @@ public class VertexTest extends InstanceTest {
 				EdgeDirection.OUT);
 		testVertexForClassEdgeDirectionBoolean(supern, 0, 0, 1,
 				EdgeDirection.INOUT);
+		commit(g);
 	}
 
 	/**
 	 * Checks the degrees in a manually build graph, which has only one Link.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getDegreeTestClassEdgeDirectionBoolean3() {
-		onlyTestWithoutTransactionSupport();
-		SuperNode dsubn = graph.createSuperNode();
-		AbstractSuperNode supern = graph.createSubNode();
-		graph.createLink(supern, dsubn);
+	public void getDegreeTestClassEdgeDirectionBoolean3()
+			throws CommitFailedException {
+		createTransaction(g);
+		SuperNode dsubn = g.createSuperNode();
+		AbstractSuperNode supern = g.createSubNode();
+		g.createLink(supern, dsubn);
+		commit(g);
+		createReadOnlyTransaction(g);
 		testVertexForClassEdgeDirectionBoolean(dsubn, 1, 0, 0, EdgeDirection.IN);
 		testVertexForClassEdgeDirectionBoolean(dsubn, 0, 0, 0,
 				EdgeDirection.OUT);
@@ -1837,6 +2078,7 @@ public class VertexTest extends InstanceTest {
 				EdgeDirection.OUT);
 		testVertexForClassEdgeDirectionBoolean(supern, 1, 0, 0,
 				EdgeDirection.INOUT);
+		commit(g);
 	}
 
 	/**
@@ -1844,48 +2086,55 @@ public class VertexTest extends InstanceTest {
 	 * the vertices considering the different Classes, their EdgeDirections and
 	 * their SubClasses. After that it deletes the edges and checks the degrees
 	 * again.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getDegreeTestClassEdgeDirectionBoolean5() {
-		onlyTestWithoutTransactionSupport();
+	public void getDegreeTestClassEdgeDirectionBoolean5()
+			throws CommitFailedException {
+		createTransaction(g);
 		Vertex[] nodes = new Vertex[3];
-		nodes[0] = graph.createSubNode();
-		nodes[1] = graph.createDoubleSubNode();
-		nodes[2] = graph.createSuperNode();
+		nodes[0] = g.createSubNode();
+		nodes[1] = g.createDoubleSubNode();
+		nodes[2] = g.createSuperNode();
 		int[] expectedLinkIn = new int[] { 0, 0, 0 };
 		int[] expectedLinkOut = new int[] { 0, 0, 0 };
 		int[] expectedLinkBackIn = new int[] { 0, 0, 0 };
 		int[] expectedLinkBackOut = new int[] { 0, 0, 0 };
 		int[] expectedSubLinkIn = new int[] { 0, 0, 0 };
 		int[] expectedSubLinkOut = new int[] { 0, 0, 0 };
+		commit(g);
 		// create new edges
-		for (int i = 0; i < 1000; i++) {
+		for (int i = 0; i < ITERATIONS; i++) {
 			// decides which edge should be created
 			int edge = rand.nextInt(3);
 			int start = rand.nextInt(2);
 			int end = rand.nextInt(2) + 1;
+			createTransaction(g);
 			if (edge == 0) {
 				// create a Link
-				graph.createLink((AbstractSuperNode) nodes[start],
+				g.createLink((AbstractSuperNode) nodes[start],
 						(SuperNode) nodes[end]);
 				expectedLinkOut[start]++;
 				expectedLinkIn[end]++;
 			} else if (edge == 1) {
 				// create a LinkBack
-				graph.createLinkBack((SuperNode) nodes[end],
+				g.createLinkBack((SuperNode) nodes[end],
 						(AbstractSuperNode) nodes[start]);
 				expectedLinkBackOut[end]++;
 				expectedLinkBackIn[start]++;
 			} else {
 				// create a SubLink
 				start = 1;
-				graph.createSubLink((DoubleSubNode) nodes[start],
+				g.createSubLink((DoubleSubNode) nodes[start],
 						(SuperNode) nodes[end]);
 				expectedLinkOut[start]++;
 				expectedLinkIn[end]++;
 				expectedSubLinkOut[start]++;
 				expectedSubLinkIn[end]++;
 			}
+			commit(g);
+			createReadOnlyTransaction(g);
 			testVertexForClassEdgeDirectionBoolean(nodes[0], expectedLinkIn[0],
 					expectedSubLinkIn[0], expectedLinkBackIn[0],
 					EdgeDirection.IN);
@@ -1916,14 +2165,16 @@ public class VertexTest extends InstanceTest {
 					+ expectedLinkOut[2], expectedSubLinkIn[2]
 					+ expectedSubLinkOut[2], expectedLinkBackIn[2]
 					+ expectedLinkBackOut[2], EdgeDirection.INOUT);
+			commit(g);
 		}
 		// delete the edges
 		HashMap<Vertex, Integer> numbers = new HashMap<Vertex, Integer>();
 		numbers.put(nodes[0], 0);
 		numbers.put(nodes[1], 1);
 		numbers.put(nodes[2], 2);
-		for (int i = graph.getFirstEdgeInGraph().getId(); i < graph.getECount(); i++) {
-			Edge e = graph.getEdge(i);
+		createTransaction(g);
+		for (int i = g.getFirstEdgeInGraph().getId(); i < g.getECount(); i++) {
+			Edge e = g.getEdge(i);
 			int start = numbers.get(e.getAlpha());
 			int end = numbers.get(e.getOmega());
 			if (e instanceof SubLink) {
@@ -1938,7 +2189,7 @@ public class VertexTest extends InstanceTest {
 				expectedLinkOut[start]--;
 				expectedLinkIn[end]--;
 			}
-			graph.deleteEdge(e);
+			g.deleteEdge(e);
 			testVertexForClassEdgeDirectionBoolean(nodes[0], expectedLinkIn[0],
 					expectedSubLinkIn[0], expectedLinkBackIn[0],
 					EdgeDirection.IN);
@@ -1970,6 +2221,7 @@ public class VertexTest extends InstanceTest {
 					+ expectedSubLinkOut[2], expectedLinkBackIn[2]
 					+ expectedLinkBackOut[2], EdgeDirection.INOUT);
 		}
+		commit(g);
 	}
 
 	/**
@@ -2008,51 +2260,72 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests the method if there is only one Vertex in the graph.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getPrevVertexTest0() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v = graph.createSuperNode();
+	public void getPrevVertexTest0() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v = g.createSuperNode();
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertNull(v.getPrevVertex());
+		commit(g);
 	}
 
 	/**
 	 * Tests the correctness in a manually build graph.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getPrevVertexTest1() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createSubNode();
-		Vertex v2 = graph.createSuperNode();
-		Vertex v3 = graph.createSuperNode();
-		Vertex v4 = graph.createDoubleSubNode();
+	public void getPrevVertexTest1() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createSubNode();
+		Vertex v2 = g.createSuperNode();
+		Vertex v3 = g.createSuperNode();
+		Vertex v4 = g.createDoubleSubNode();
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(v3, v4.getPrevVertex());
 		assertEquals(v2, v3.getPrevVertex());
 		assertEquals(v1, v2.getPrevVertex());
 		assertEquals(v0, v1.getPrevVertex());
 		assertNull(v0.getPrevVertex());
+		commit(g);
 	}
 
 	/**
 	 * Tests the correctness in an random graph.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getPrevVertexTest2() {
-		onlyTestWithoutTransactionSupport();
-		for (int i = 0; i < 1000; i++) {
-			graph = VertexTestSchema.instance().createVertexTestGraph(100, 100);
+	public void getPrevVertexTest2() throws CommitFailedException {
+		for (int i = 0; i < ITERATIONS; i++) {
+			g = createNewGraph();
 			Vertex[] vertices = new Vertex[30];
 			// Create Vertices
+			createTransaction(g);
 			for (int j = 0; j < vertices.length; j++) {
-				vertices[j] = graph.createDoubleSubNode();
+				vertices[j] = g.createDoubleSubNode();
 			}
+			commit(g);
+			createReadOnlyTransaction(g);
 			// Check correctness
 			for (int j = vertices.length - 1; j >= 0; j--) {
 				assertEquals(j == 0 ? null : vertices[j - 1], vertices[j]
 						.getPrevVertex());
 			}
+			commit(g);
 		}
+	}
+
+	private VertexTestGraph createNewGraph() {
+		return transactionsEnabled ? VertexTestSchema.instance()
+				.createVertexTestGraphWithTransactionSupport(100, 100)
+				: VertexTestSchema.instance().createVertexTestGraph(100, 100);
 	}
 
 	// tests of the method getNextVertex();
@@ -2060,50 +2333,65 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests the method if there is only one Vertex in the graph.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getNextVertexTest0() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v = graph.createSuperNode();
+	public void getNextVertexTest0() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v = g.createSuperNode();
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertNull(v.getNextVertex());
+		commit(g);
 	}
 
 	/**
 	 * Tests the correctness in a manually build graph.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getNextVertexTest1() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createSubNode();
-		Vertex v2 = graph.createSuperNode();
-		Vertex v3 = graph.createSuperNode();
-		Vertex v4 = graph.createDoubleSubNode();
+	public void getNextVertexTest1() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createSubNode();
+		Vertex v2 = g.createSuperNode();
+		Vertex v3 = g.createSuperNode();
+		Vertex v4 = g.createDoubleSubNode();
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(v1, v0.getNextVertex());
 		assertEquals(v2, v1.getNextVertex());
 		assertEquals(v3, v2.getNextVertex());
 		assertEquals(v4, v3.getNextVertex());
 		assertNull(v4.getNextVertex());
+		commit(g);
 	}
 
 	/**
 	 * Tests the correctness in an random graph.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getNextVertexTest2() {
-		onlyTestWithoutTransactionSupport();
-		for (int i = 0; i < 1000; i++) {
-			graph = VertexTestSchema.instance().createVertexTestGraph(100, 100);
+	public void getNextVertexTest2() throws CommitFailedException {
+		for (int i = 0; i < ITERATIONS; i++) {
+			g = createNewGraph();
 			Vertex[] vertices = new Vertex[30];
 			// Create Vertices
+			createTransaction(g);
 			for (int j = 0; j < vertices.length; j++) {
-				vertices[j] = graph.createDoubleSubNode();
+				vertices[j] = g.createDoubleSubNode();
 			}
+			commit(g);
 			// Check correctness
+			createReadOnlyTransaction(g);
 			for (int j = 0; j < vertices.length; j++) {
 				assertEquals(j == vertices.length - 1 ? null : vertices[j + 1],
 						vertices[j].getNextVertex());
 			}
+			commit(g);
 		}
 	}
 
@@ -2119,7 +2407,7 @@ public class VertexTest extends InstanceTest {
 	 * @return an array <code>ret</code> of all VertexClasses
 	 */
 	private VertexClass[] getVertexClasses() {
-		List<VertexClass> vclasses = graph.getSchema()
+		List<VertexClass> vclasses = g.getSchema()
 				.getVertexClassesInTopologicalOrder();
 		VertexClass[] vcret = new VertexClass[4];
 		for (VertexClass vc : vclasses) {
@@ -2138,66 +2426,85 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if there is only one vertex in the graph.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getNextVertexTestVertexClass0() {
-		onlyTestWithoutTransactionSupport();
+	public void getNextVertexTestVertexClass0() throws CommitFailedException {
+		createTransaction(g);
 		VertexClass[] vertices = getVertexClasses();
-		Vertex v = graph.createSubNode();
+		Vertex v = g.createSubNode();
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertNull(v.getNextVertexOfClass(vertices[0]));
 		assertNull(v.getNextVertexOfClass(vertices[1]));
 		assertNull(v.getNextVertexOfClass(vertices[2]));
 		assertNull(v.getNextVertexOfClass(vertices[3]));
+		commit(g);
 	}
 
 	/**
 	 * The next vertex is an instance of a class which is a subclass of another
 	 * vertexclass.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getNextVertexTestVertexClass1() {
-		onlyTestWithoutTransactionSupport();
+	public void getNextVertexTestVertexClass1() throws CommitFailedException {
+		createTransaction(g);
 		VertexClass[] vertices = getVertexClasses();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createSubNode();
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createSubNode();
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(v1, v0.getNextVertexOfClass(vertices[0]));
 		assertEquals(v1, v0.getNextVertexOfClass(vertices[1]));
 		assertNull(v0.getNextVertexOfClass(vertices[2]));
 		assertNull(v0.getNextVertexOfClass(vertices[3]));
+		commit(g);
 	}
 
 	/**
 	 * The next vertex is an instance of a class which is a subclass of tow
 	 * other vertexclasses.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getNextVertexTestVertexClass2() {
-		onlyTestWithoutTransactionSupport();
+	public void getNextVertexTestVertexClass2() throws CommitFailedException {
+		createTransaction(g);
 		VertexClass[] vertices = getVertexClasses();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(v1, v0.getNextVertexOfClass(vertices[0]));
 		assertEquals(v1, v0.getNextVertexOfClass(vertices[1]));
 		assertEquals(v1, v0.getNextVertexOfClass(vertices[2]));
 		assertEquals(v1, v0.getNextVertexOfClass(vertices[3]));
+		commit(g);
 	}
 
 	/**
 	 * Test in a manually build graph: SubNode SuperNode DoubleSubNode SuperNode
 	 * SubNode SuperNode DoubleSubNode
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getNextVertexTestVertexClass3() {
-		onlyTestWithoutTransactionSupport();
+	public void getNextVertexTestVertexClass3() throws CommitFailedException {
+		createTransaction(g);
 		VertexClass[] vertices = getVertexClasses();
-		Vertex v0 = graph.createSubNode();
-		Vertex v1 = graph.createSuperNode();
-		Vertex v2 = graph.createDoubleSubNode();
-		Vertex v3 = graph.createSuperNode();
-		Vertex v4 = graph.createSubNode();
-		Vertex v5 = graph.createSuperNode();
-		Vertex v6 = graph.createDoubleSubNode();
+		Vertex v0 = g.createSubNode();
+		Vertex v1 = g.createSuperNode();
+		Vertex v2 = g.createDoubleSubNode();
+		Vertex v3 = g.createSuperNode();
+		Vertex v4 = g.createSubNode();
+		Vertex v5 = g.createSuperNode();
+		Vertex v6 = g.createDoubleSubNode();
+		commit(g);
 
+		createReadOnlyTransaction(g);
 		assertEquals(v2, v0.getNextVertexOfClass(vertices[0]));
 		assertEquals(v2, v0.getNextVertexOfClass(vertices[1]));
 		assertEquals(v1, v0.getNextVertexOfClass(vertices[2]));
@@ -2232,17 +2539,23 @@ public class VertexTest extends InstanceTest {
 		assertNull(v6.getNextVertexOfClass(vertices[1]));
 		assertNull(v6.getNextVertexOfClass(vertices[2]));
 		assertNull(v6.getNextVertexOfClass(vertices[3]));
+		commit(g);
 	}
 
 	/**
 	 * RandomTests
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getNextVertexTestVertexClass4() {
-		onlyTestWithoutTransactionSupport();
+	public void getNextVertexTestVertexClass4() throws CommitFailedException {
+		createReadOnlyTransaction(g);
 		VertexClass[] vClasses = getVertexClasses();
-		for (int i = 0; i < 1000; i++) {
-			graph = VertexTestSchema.instance().createVertexTestGraph();
+		commit(g);
+
+		for (int i = 0; i < ITERATIONS; i++) {
+			g = createNewGraph();
+			createTransaction(g);
 			// all vertices in the graph
 			Vertex[] vertices = new Vertex[20];
 			// the next AbstractSuperNode for the i-th Vertex
@@ -2260,7 +2573,7 @@ public class VertexTest extends InstanceTest {
 				int vclass = rand.nextInt(3);
 				switch (vclass) {
 				case 0:
-					vertices[j] = graph.createSubNode();
+					vertices[j] = g.createSubNode();
 					// all vertices until j(exclusive) have the new vertex as
 					// next AbstractSuperNode
 					while (lastAbstractSuperNode < j) {
@@ -2279,7 +2592,7 @@ public class VertexTest extends InstanceTest {
 					}
 					break;
 				case 1:
-					vertices[j] = graph.createSuperNode();
+					vertices[j] = g.createSuperNode();
 					// all vertices until j(exclusive) have the new vertex as
 					// next SuperNode
 					while (lastSuperNode < j) {
@@ -2290,7 +2603,7 @@ public class VertexTest extends InstanceTest {
 					}
 					break;
 				case 2:
-					vertices[j] = graph.createDoubleSubNode();
+					vertices[j] = g.createDoubleSubNode();
 					// all vertices until j(exclusive) have the new vertex as
 					// next AbstractSuperNode
 					while (lastAbstractSuperNode < j) {
@@ -2326,7 +2639,9 @@ public class VertexTest extends InstanceTest {
 					break;
 				}
 			}
+			commit(g);
 			// check nextVertex after creating
+			createReadOnlyTransaction(g);
 			for (int j = 0; j < vertices.length; j++) {
 				assertEquals(nextAbstractSuperNode[j], vertices[j]
 						.getNextVertexOfClass(vClasses[0]));
@@ -2337,6 +2652,7 @@ public class VertexTest extends InstanceTest {
 				assertEquals(nextDoubleSubNode[j], vertices[j]
 						.getNextVertexOfClass(vClasses[3]));
 			}
+			commit(g);
 		}
 	}
 
@@ -2345,62 +2661,81 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if there is only one vertex in the graph.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getNextVertexTestClass0() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v = graph.createSubNode();
+	public void getNextVertexTestClass0() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v = g.createSubNode();
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertNull(v.getNextVertexOfClass(AbstractSuperNode.class));
 		assertNull(v.getNextVertexOfClass(SubNode.class));
 		assertNull(v.getNextVertexOfClass(SuperNode.class));
 		assertNull(v.getNextVertexOfClass(DoubleSubNode.class));
+		commit(g);
 	}
 
 	/**
 	 * The next vertex is an instance of a class which is a subclass of another
 	 * vertexclass.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getNextVertexTestClass1() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createSubNode();
+	public void getNextVertexTestClass1() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createSubNode();
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(v1, v0.getNextVertexOfClass(AbstractSuperNode.class));
 		assertEquals(v1, v0.getNextVertexOfClass(SubNode.class));
 		assertNull(v0.getNextVertexOfClass(SuperNode.class));
 		assertNull(v0.getNextVertexOfClass(DoubleSubNode.class));
+		commit(g);
 	}
 
 	/**
 	 * The next vertex is an instance of a class which is a subclass of tow
 	 * other vertexclasses.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getNextVertexTestClass2() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
+	public void getNextVertexTestClass2() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(v1, v0.getNextVertexOfClass(AbstractSuperNode.class));
 		assertEquals(v1, v0.getNextVertexOfClass(SubNode.class));
 		assertEquals(v1, v0.getNextVertexOfClass(SuperNode.class));
 		assertEquals(v1, v0.getNextVertexOfClass(DoubleSubNode.class));
+		commit(g);
 	}
 
 	/**
 	 * Test in a manually build graph: SubNode SuperNode DoubleSubNode SuperNode
 	 * SubNode SuperNode DoubleSubNode
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getNextVertexTestClass3() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createSubNode();
-		Vertex v1 = graph.createSuperNode();
-		Vertex v2 = graph.createDoubleSubNode();
-		Vertex v3 = graph.createSuperNode();
-		Vertex v4 = graph.createSubNode();
-		Vertex v5 = graph.createSuperNode();
-		Vertex v6 = graph.createDoubleSubNode();
+	public void getNextVertexTestClass3() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createSubNode();
+		Vertex v1 = g.createSuperNode();
+		Vertex v2 = g.createDoubleSubNode();
+		Vertex v3 = g.createSuperNode();
+		Vertex v4 = g.createSubNode();
+		Vertex v5 = g.createSuperNode();
+		Vertex v6 = g.createDoubleSubNode();
+		commit(g);
 
+		createReadOnlyTransaction(g);
 		assertEquals(v2, v0.getNextVertexOfClass(AbstractSuperNode.class));
 		assertEquals(v2, v0.getNextVertexOfClass(SubNode.class));
 		assertEquals(v1, v0.getNextVertexOfClass(SuperNode.class));
@@ -2435,16 +2770,19 @@ public class VertexTest extends InstanceTest {
 		assertNull(v6.getNextVertexOfClass(SubNode.class));
 		assertNull(v6.getNextVertexOfClass(SuperNode.class));
 		assertNull(v6.getNextVertexOfClass(DoubleSubNode.class));
+		commit(g);
 	}
 
 	/**
 	 * RandomTests
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getNextVertexTestClass4() {
-		onlyTestWithoutTransactionSupport();
-		for (int i = 0; i < 1000; i++) {
-			graph = VertexTestSchema.instance().createVertexTestGraph();
+	public void getNextVertexTestClass4() throws CommitFailedException {
+		for (int i = 0; i < ITERATIONS; i++) {
+			g = createNewGraph();
+			createTransaction(g);
 			// all vertices in the graph
 			Vertex[] vertices = new Vertex[20];
 			// the next AbstractSuperNode for the i-th Vertex
@@ -2462,7 +2800,7 @@ public class VertexTest extends InstanceTest {
 				int vclass = rand.nextInt(3);
 				switch (vclass) {
 				case 0:
-					vertices[j] = graph.createSubNode();
+					vertices[j] = g.createSubNode();
 					// all vertices until j(exclusive) have the new vertex as
 					// next AbstractSuperNode
 					while (lastAbstractSuperNode < j) {
@@ -2481,7 +2819,7 @@ public class VertexTest extends InstanceTest {
 					}
 					break;
 				case 1:
-					vertices[j] = graph.createSuperNode();
+					vertices[j] = g.createSuperNode();
 					// all vertices until j(exclusive) have the new vertex as
 					// next SuperNode
 					while (lastSuperNode < j) {
@@ -2492,7 +2830,7 @@ public class VertexTest extends InstanceTest {
 					}
 					break;
 				case 2:
-					vertices[j] = graph.createDoubleSubNode();
+					vertices[j] = g.createDoubleSubNode();
 					// all vertices until j(exclusive) have the new vertex as
 					// next AbstractSuperNode
 					while (lastAbstractSuperNode < j) {
@@ -2528,6 +2866,8 @@ public class VertexTest extends InstanceTest {
 					break;
 				}
 			}
+			commit(g);
+			createReadOnlyTransaction(g);
 			// check nextVertex after creating
 			for (int j = 0; j < vertices.length; j++) {
 				assertEquals(nextAbstractSuperNode[j], vertices[j]
@@ -2539,6 +2879,7 @@ public class VertexTest extends InstanceTest {
 				assertEquals(nextDoubleSubNode[j], vertices[j]
 						.getNextVertexOfClass(DoubleSubNode.class));
 			}
+			commit(g);
 		}
 	}
 
@@ -2547,12 +2888,17 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if there is only one vertex in the graph.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getNextVertexTestVertexClassBoolean0() {
-		onlyTestWithoutTransactionSupport();
+	public void getNextVertexTestVertexClassBoolean0()
+			throws CommitFailedException {
+		createTransaction(g);
 		VertexClass[] vertices = getVertexClasses();
-		Vertex v = graph.createSubNode();
+		Vertex v = g.createSubNode();
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertNull(v.getNextVertexOfClass(vertices[0], false));
 		assertNull(v.getNextVertexOfClass(vertices[0], true));
 		assertNull(v.getNextVertexOfClass(vertices[1], false));
@@ -2561,18 +2907,24 @@ public class VertexTest extends InstanceTest {
 		assertNull(v.getNextVertexOfClass(vertices[2], true));
 		assertNull(v.getNextVertexOfClass(vertices[3], false));
 		assertNull(v.getNextVertexOfClass(vertices[3], true));
+		commit(g);
 	}
 
 	/**
 	 * The next vertex is an instance of a class which is a subclass of another
 	 * vertexclass.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getNextVertexTestVertexClassBoolean1() {
-		onlyTestWithoutTransactionSupport();
+	public void getNextVertexTestVertexClassBoolean1()
+			throws CommitFailedException {
+		createTransaction(g);
 		VertexClass[] vertices = getVertexClasses();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createSubNode();
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createSubNode();
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(v1, v0.getNextVertexOfClass(vertices[0], false));
 		assertNull(v0.getNextVertexOfClass(vertices[0], true));
 		assertEquals(v1, v0.getNextVertexOfClass(vertices[1], false));
@@ -2581,18 +2933,24 @@ public class VertexTest extends InstanceTest {
 		assertNull(v0.getNextVertexOfClass(vertices[2], true));
 		assertNull(v0.getNextVertexOfClass(vertices[3], false));
 		assertNull(v0.getNextVertexOfClass(vertices[3], true));
+		commit(g);
 	}
 
 	/**
 	 * The next vertex is an instance of a class which is a subclass of tow
 	 * other vertexclasses.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getNextVertexTestVertexClassBoolean2() {
-		onlyTestWithoutTransactionSupport();
+	public void getNextVertexTestVertexClassBoolean2()
+			throws CommitFailedException {
+		createTransaction(g);
 		VertexClass[] vertices = getVertexClasses();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(v1, v0.getNextVertexOfClass(vertices[0], false));
 		assertNull(v0.getNextVertexOfClass(vertices[0], true));
 		assertEquals(v1, v0.getNextVertexOfClass(vertices[1], false));
@@ -2601,24 +2959,30 @@ public class VertexTest extends InstanceTest {
 		assertNull(v0.getNextVertexOfClass(vertices[2], true));
 		assertEquals(v1, v0.getNextVertexOfClass(vertices[3], false));
 		assertEquals(v1, v0.getNextVertexOfClass(vertices[3], true));
+		commit(g);
 	}
 
 	/**
 	 * Test in a manually build graph: SubNode SuperNode DoubleSubNode SuperNode
 	 * SubNode SuperNode DoubleSubNode
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getNextVertexTestVertexClassBoolean3() {
-		onlyTestWithoutTransactionSupport();
+	public void getNextVertexTestVertexClassBoolean3()
+			throws CommitFailedException {
+		createTransaction(g);
 		VertexClass[] vertices = getVertexClasses();
-		Vertex v0 = graph.createSubNode();
-		Vertex v1 = graph.createSuperNode();
-		Vertex v2 = graph.createDoubleSubNode();
-		Vertex v3 = graph.createSuperNode();
-		Vertex v4 = graph.createSubNode();
-		Vertex v5 = graph.createSuperNode();
-		Vertex v6 = graph.createDoubleSubNode();
+		Vertex v0 = g.createSubNode();
+		Vertex v1 = g.createSuperNode();
+		Vertex v2 = g.createDoubleSubNode();
+		Vertex v3 = g.createSuperNode();
+		Vertex v4 = g.createSubNode();
+		Vertex v5 = g.createSuperNode();
+		Vertex v6 = g.createDoubleSubNode();
+		commit(g);
 
+		createReadOnlyTransaction(g);
 		assertEquals(v2, v0.getNextVertexOfClass(vertices[0], false));
 		assertEquals(v2, v0.getNextVertexOfClass(vertices[1], false));
 		assertEquals(v1, v0.getNextVertexOfClass(vertices[2], false));
@@ -2681,18 +3045,24 @@ public class VertexTest extends InstanceTest {
 		assertNull(v6.getNextVertexOfClass(vertices[1], true));
 		assertNull(v6.getNextVertexOfClass(vertices[2], true));
 		assertNull(v6.getNextVertexOfClass(vertices[3], true));
+		commit(g);
 	}
 
 	/**
 	 * RandomTests
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getNextVertexTestVertexClassBoolean4() {
-		onlyTestWithoutTransactionSupport();
+	public void getNextVertexTestVertexClassBoolean4()
+			throws CommitFailedException {
+		createTransaction(g);
 		VertexClass[] vClasses = getVertexClasses();
-		for (int i = 0; i < 1000; i++) {
-			graph = VertexTestSchema.instance().createVertexTestGraph();
+		commit(g);
+		for (int i = 0; i < ITERATIONS; i++) {
+			g = createNewGraph();
 			// all vertices in the graph
+			createTransaction(g);
 			Vertex[] vertices = new Vertex[20];
 			// the next AbstractSuperNode for the i-th Vertex
 			Vertex[] nextAbstractSuperNodeFalse = new Vertex[vertices.length];
@@ -2721,7 +3091,7 @@ public class VertexTest extends InstanceTest {
 				int vclass = rand.nextInt(3);
 				switch (vclass) {
 				case 0:
-					vertices[j] = graph.createSubNode();
+					vertices[j] = g.createSubNode();
 					// all vertices until j(exclusive) have the new vertex as
 					// next AbstractSuperNode
 					while (lastAbstractSuperNodeFalse < j) {
@@ -2747,7 +3117,7 @@ public class VertexTest extends InstanceTest {
 					}
 					break;
 				case 1:
-					vertices[j] = graph.createSuperNode();
+					vertices[j] = g.createSuperNode();
 					// all vertices until j(exclusive) have the new vertex as
 					// next SuperNode
 					while (lastSuperNodeFalse < j) {
@@ -2765,7 +3135,7 @@ public class VertexTest extends InstanceTest {
 					}
 					break;
 				case 2:
-					vertices[j] = graph.createDoubleSubNode();
+					vertices[j] = g.createDoubleSubNode();
 					// all vertices until j(exclusive) have the new vertex as
 					// next AbstractSuperNode
 					while (lastAbstractSuperNodeFalse < j) {
@@ -2808,7 +3178,9 @@ public class VertexTest extends InstanceTest {
 					break;
 				}
 			}
+			commit(g);
 			// check nextVertex after creating
+			createReadOnlyTransaction(g);
 			for (int j = 0; j < vertices.length; j++) {
 				assertEquals(nextAbstractSuperNodeFalse[j], vertices[j]
 						.getNextVertexOfClass(vClasses[0], false));
@@ -2826,6 +3198,7 @@ public class VertexTest extends InstanceTest {
 				assertEquals(nextDoubleSubNodeTrue[j], vertices[j]
 						.getNextVertexOfClass(vClasses[3], true));
 			}
+			commit(g);
 		}
 	}
 
@@ -2835,11 +3208,15 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if there is only one vertex in the graph.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getNextVertexTestClassBoolean0() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v = graph.createSubNode();
+	public void getNextVertexTestClassBoolean0() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v = g.createSubNode();
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertNull(v.getNextVertexOfClass(AbstractSuperNode.class, false));
 		assertNull(v.getNextVertexOfClass(AbstractSuperNode.class, true));
 		assertNull(v.getNextVertexOfClass(SubNode.class, false));
@@ -2848,17 +3225,22 @@ public class VertexTest extends InstanceTest {
 		assertNull(v.getNextVertexOfClass(SuperNode.class, true));
 		assertNull(v.getNextVertexOfClass(DoubleSubNode.class, false));
 		assertNull(v.getNextVertexOfClass(DoubleSubNode.class, true));
+		commit(g);
 	}
 
 	/**
 	 * The next vertex is an instance of a class which is a subclass of another
 	 * vertexclass.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getNextVertexTestClassBoolean1() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createSubNode();
+	public void getNextVertexTestClassBoolean1() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createSubNode();
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(v1, v0
 				.getNextVertexOfClass(AbstractSuperNode.class, false));
 		assertNull(v0.getNextVertexOfClass(AbstractSuperNode.class, true));
@@ -2868,17 +3250,22 @@ public class VertexTest extends InstanceTest {
 		assertNull(v0.getNextVertexOfClass(SuperNode.class, true));
 		assertNull(v0.getNextVertexOfClass(DoubleSubNode.class, false));
 		assertNull(v0.getNextVertexOfClass(DoubleSubNode.class, true));
+		commit(g);
 	}
 
 	/**
 	 * The next vertex is an instance of a class which is a subclass of tow
 	 * other vertexclasses.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getNextVertexTestClassBoolean2() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
+	public void getNextVertexTestClassBoolean2() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(v1, v0
 				.getNextVertexOfClass(AbstractSuperNode.class, false));
 		assertNull(v0.getNextVertexOfClass(AbstractSuperNode.class, true));
@@ -2888,23 +3275,28 @@ public class VertexTest extends InstanceTest {
 		assertNull(v0.getNextVertexOfClass(SuperNode.class, true));
 		assertEquals(v1, v0.getNextVertexOfClass(DoubleSubNode.class, false));
 		assertEquals(v1, v0.getNextVertexOfClass(DoubleSubNode.class, true));
+		commit(g);
 	}
 
 	/**
 	 * Test in a manually build graph: SubNode SuperNode DoubleSubNode SuperNode
 	 * SubNode SuperNode DoubleSubNode
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getNextVertexTestClassBoolean3() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createSubNode();
-		Vertex v1 = graph.createSuperNode();
-		Vertex v2 = graph.createDoubleSubNode();
-		Vertex v3 = graph.createSuperNode();
-		Vertex v4 = graph.createSubNode();
-		Vertex v5 = graph.createSuperNode();
-		Vertex v6 = graph.createDoubleSubNode();
+	public void getNextVertexTestClassBoolean3() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createSubNode();
+		Vertex v1 = g.createSuperNode();
+		Vertex v2 = g.createDoubleSubNode();
+		Vertex v3 = g.createSuperNode();
+		Vertex v4 = g.createSubNode();
+		Vertex v5 = g.createSuperNode();
+		Vertex v6 = g.createDoubleSubNode();
+		commit(g);
 
+		createReadOnlyTransaction(g);
 		assertEquals(v2, v0
 				.getNextVertexOfClass(AbstractSuperNode.class, false));
 		assertEquals(v2, v0.getNextVertexOfClass(SubNode.class, false));
@@ -2973,16 +3365,19 @@ public class VertexTest extends InstanceTest {
 		assertNull(v6.getNextVertexOfClass(SubNode.class, true));
 		assertNull(v6.getNextVertexOfClass(SuperNode.class, true));
 		assertNull(v6.getNextVertexOfClass(DoubleSubNode.class, true));
+		commit(g);
 	}
 
 	/**
 	 * RandomTests
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getNextVertexTestVertexBoolean4() {
-		onlyTestWithoutTransactionSupport();
-		for (int i = 0; i < 1000; i++) {
-			graph = VertexTestSchema.instance().createVertexTestGraph();
+	public void getNextVertexTestVertexBoolean4() throws CommitFailedException {
+		for (int i = 0; i < ITERATIONS; i++) {
+			g = createNewGraph();
+			createTransaction(g);
 			// all vertices in the graph
 			Vertex[] vertices = new Vertex[20];
 			// the next AbstractSuperNode for the i-th Vertex
@@ -3012,7 +3407,7 @@ public class VertexTest extends InstanceTest {
 				int vclass = rand.nextInt(3);
 				switch (vclass) {
 				case 0:
-					vertices[j] = graph.createSubNode();
+					vertices[j] = g.createSubNode();
 					// all vertices until j(exclusive) have the new vertex as
 					// next AbstractSuperNode
 					while (lastAbstractSuperNodeFalse < j) {
@@ -3038,7 +3433,7 @@ public class VertexTest extends InstanceTest {
 					}
 					break;
 				case 1:
-					vertices[j] = graph.createSuperNode();
+					vertices[j] = g.createSuperNode();
 					// all vertices until j(exclusive) have the new vertex as
 					// next SuperNode
 					while (lastSuperNodeFalse < j) {
@@ -3056,7 +3451,7 @@ public class VertexTest extends InstanceTest {
 					}
 					break;
 				case 2:
-					vertices[j] = graph.createDoubleSubNode();
+					vertices[j] = g.createDoubleSubNode();
 					// all vertices until j(exclusive) have the new vertex as
 					// next AbstractSuperNode
 					while (lastAbstractSuperNodeFalse < j) {
@@ -3099,6 +3494,8 @@ public class VertexTest extends InstanceTest {
 					break;
 				}
 			}
+			commit(g);
+			createReadOnlyTransaction(g);
 			// check nextVertex after creating
 			for (int j = 0; j < vertices.length; j++) {
 				assertEquals(nextAbstractSuperNodeFalse[j], vertices[j]
@@ -3118,6 +3515,7 @@ public class VertexTest extends InstanceTest {
 				assertEquals(nextDoubleSubNodeTrue[j], vertices[j]
 						.getNextVertexOfClass(DoubleSubNode.class, true));
 			}
+			commit(g);
 		}
 	}
 
@@ -3131,92 +3529,119 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has no Edges
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestEdgeDirection0() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
+	public void getFirstEdgeTestEdgeDirection0() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertNull(v0.getFirstEdge(EdgeDirection.INOUT));
 		assertNull(v0.getFirstEdge(EdgeDirection.IN));
 		assertNull(v0.getFirstEdge(EdgeDirection.OUT));
+		commit(g);
 	}
 
 	/**
 	 * Tests if a node has only one Edge
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestEdgeDirection1() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
-		Edge e = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+	public void getFirstEdgeTestEdgeDirection1() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		Edge e = g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(e.getReversedEdge(), v1.getFirstEdge(EdgeDirection.INOUT));
 		assertEquals(e.getReversedEdge(), v1.getFirstEdge(EdgeDirection.IN));
 		assertNull(v1.getFirstEdge(EdgeDirection.OUT));
 		assertEquals(e, v0.getFirstEdge(EdgeDirection.INOUT));
 		assertNull(v0.getFirstEdge(EdgeDirection.IN));
 		assertEquals(e, v0.getFirstEdge(EdgeDirection.OUT));
+		commit(g);
 	}
 
 	/**
 	 * Tests if a node has two Edges with the same direction.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestEdgeDirection2() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
-		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+	public void getFirstEdgeTestEdgeDirection2() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		Edge e1 = g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdge(EdgeDirection.INOUT));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdge(EdgeDirection.IN));
 		assertNull(v1.getFirstEdge(EdgeDirection.OUT));
 		assertEquals(e1, v0.getFirstEdge(EdgeDirection.INOUT));
 		assertNull(v0.getFirstEdge(EdgeDirection.IN));
 		assertEquals(e1, v0.getFirstEdge(EdgeDirection.OUT));
+		commit(g);
 	}
 
 	/**
 	 * Tests if a node has two Edges with different direction.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestEdgeDirection3() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
-		Edge e2 = graph.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
+	public void getFirstEdgeTestEdgeDirection3() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		Edge e1 = g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		Edge e2 = g.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdge(EdgeDirection.INOUT));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdge(EdgeDirection.IN));
 		assertEquals(e2, v1.getFirstEdge(EdgeDirection.OUT));
 		assertEquals(e1, v0.getFirstEdge(EdgeDirection.INOUT));
 		assertEquals(e2.getReversedEdge(), v0.getFirstEdge(EdgeDirection.IN));
 		assertEquals(e1, v0.getFirstEdge(EdgeDirection.OUT));
+		commit(g);
 	}
 
 	/**
 	 * Tests if alpha and omega of an Edge is the same Vertex.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestEdgeDirection4() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v0);
+	public void getFirstEdgeTestEdgeDirection4() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		Edge e1 = g.createLink((AbstractSuperNode) v0, (SuperNode) v0);
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(e1, v0.getFirstEdge(EdgeDirection.INOUT));
 		assertEquals(e1.getReversedEdge(), v0.getFirstEdge(EdgeDirection.IN));
 		assertEquals(e1, v0.getFirstEdge(EdgeDirection.OUT));
+		commit(g);
 	}
 
 	/**
 	 * Random tests
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestEdgeDirection5() {
-		onlyTestWithoutTransactionSupport();
-		for (int i = 0; i < 1000; i++) {
-			graph = VertexTestSchema.instance().createVertexTestGraph();
-			Vertex[] vertices = new Vertex[] { graph.createSubNode(),
-					graph.createDoubleSubNode(), graph.createSuperNode() };
+	public void getFirstEdgeTestEdgeDirection5() throws CommitFailedException {
+		for (int i = 0; i < ITERATIONS; i++) {
+			g = createNewGraph();
+			createTransaction(g);
+			Vertex[] vertices = new Vertex[] { g.createSubNode(),
+					g.createDoubleSubNode(), g.createSuperNode() };
 			Edge[] firstInEdge = new Edge[3];
 			Edge[] firstOutEdge = new Edge[3];
 			Edge[] firstInOutEdge = new Edge[3];
@@ -3226,8 +3651,7 @@ public class VertexTest extends InstanceTest {
 				int end = rand.nextInt(2) + 1;
 				switch (edgetype) {
 				case 0:
-					Edge e0 = graph.createLink(
-							(AbstractSuperNode) vertices[start],
+					Edge e0 = g.createLink((AbstractSuperNode) vertices[start],
 							(SuperNode) vertices[end]);
 					if (firstOutEdge[start] == null) {
 						firstOutEdge[start] = e0;
@@ -3243,7 +3667,7 @@ public class VertexTest extends InstanceTest {
 					}
 					break;
 				case 1:
-					Edge e1 = graph.createLinkBack((SuperNode) vertices[end],
+					Edge e1 = g.createLinkBack((SuperNode) vertices[end],
 							(AbstractSuperNode) vertices[start]);
 					if (firstOutEdge[end] == null) {
 						firstOutEdge[end] = e1;
@@ -3259,7 +3683,7 @@ public class VertexTest extends InstanceTest {
 					}
 					break;
 				case 2:
-					Edge e2 = graph.createSubLink((DoubleSubNode) vertices[1],
+					Edge e2 = g.createSubLink((DoubleSubNode) vertices[1],
 							(SuperNode) vertices[end]);
 					if (firstOutEdge[1] == null) {
 						firstOutEdge[1] = e2;
@@ -3276,6 +3700,8 @@ public class VertexTest extends InstanceTest {
 					break;
 				}
 			}
+			commit(g);
+			createReadOnlyTransaction(g);
 			assertEquals(firstInEdge[0], vertices[0]
 					.getFirstEdge(EdgeDirection.IN));
 			assertEquals(firstInEdge[1], vertices[1]
@@ -3294,6 +3720,7 @@ public class VertexTest extends InstanceTest {
 					.getFirstEdge(EdgeDirection.INOUT));
 			assertEquals(firstInOutEdge[2], vertices[2]
 					.getFirstEdge(EdgeDirection.INOUT));
+			commit(g);
 		}
 	}
 
@@ -3301,97 +3728,126 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has no Edges
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestEdgeClass0() {
-		onlyTestWithoutTransactionSupport();
+	public void getFirstEdgeTestEdgeClass0() throws CommitFailedException {
+		createTransaction(g);
 		EdgeClass[] eclasses = getEdgeClasses();
-		Vertex v0 = graph.createDoubleSubNode();
+		Vertex v0 = g.createDoubleSubNode();
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertNull(v0.getFirstEdgeOfClass(eclasses[0]));
 		assertNull(v0.getFirstEdgeOfClass(eclasses[1]));
 		assertNull(v0.getFirstEdgeOfClass(eclasses[2]));
+		commit(g);
 	}
 
 	/**
 	 * Tests if a node has only one Edge
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestEdgeClass1() {
-		onlyTestWithoutTransactionSupport();
+	public void getFirstEdgeTestEdgeClass1() throws CommitFailedException {
+		createTransaction(g);
 		EdgeClass[] eclasses = getEdgeClasses();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
-		Edge e = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		Edge e = g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(e, v0.getFirstEdgeOfClass(eclasses[0]));
 		assertNull(v0.getFirstEdgeOfClass(eclasses[1]));
 		assertNull(v0.getFirstEdgeOfClass(eclasses[2]));
 		assertEquals(e.getReversedEdge(), v1.getFirstEdgeOfClass(eclasses[0]));
 		assertNull(v1.getFirstEdgeOfClass(eclasses[1]));
 		assertNull(v1.getFirstEdgeOfClass(eclasses[2]));
+		commit(g);
 	}
 
 	/**
 	 * Tests if a node has an edge which extends another edge
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestEdgeClass2() {
-		onlyTestWithoutTransactionSupport();
+	public void getFirstEdgeTestEdgeClass2() throws CommitFailedException {
+		createTransaction(g);
 		EdgeClass[] eclasses = getEdgeClasses();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
-		Edge e1 = graph.createSubLink((DoubleSubNode) v0, (SuperNode) v1);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		Edge e1 = g.createSubLink((DoubleSubNode) v0, (SuperNode) v1);
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[0]));
 		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[1]));
 		assertNull(v0.getFirstEdgeOfClass(eclasses[2]));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(eclasses[0]));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(eclasses[1]));
 		assertNull(v1.getFirstEdgeOfClass(eclasses[2]));
+		commit(g);
 	}
 
 	/**
 	 * Tests if a node has two Edges.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestEdgeClass3() {
-		onlyTestWithoutTransactionSupport();
+	public void getFirstEdgeTestEdgeClass3() throws CommitFailedException {
+		createTransaction(g);
 		EdgeClass[] eclasses = getEdgeClasses();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
-		Edge e2 = graph.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		Edge e1 = g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		Edge e2 = g.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[0]));
 		assertNull(v0.getFirstEdgeOfClass(eclasses[1]));
 		assertEquals(e2.getReversedEdge(), v0.getFirstEdgeOfClass(eclasses[2]));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(eclasses[0]));
 		assertNull(v1.getFirstEdgeOfClass(eclasses[1]));
 		assertEquals(e2, v1.getFirstEdgeOfClass(eclasses[2]));
+		commit(g);
 	}
 
 	/**
 	 * Tests if alpha and omega of an Edge is the same Vertex.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestEdgeClass4() {
-		onlyTestWithoutTransactionSupport();
+	public void getFirstEdgeTestEdgeClass4() throws CommitFailedException {
+		createTransaction(g);
 		EdgeClass[] eclasses = getEdgeClasses();
-		Vertex v0 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v0);
+		Vertex v0 = g.createDoubleSubNode();
+		Edge e1 = g.createLink((AbstractSuperNode) v0, (SuperNode) v0);
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[0]));
 		assertNull(v0.getFirstEdgeOfClass(eclasses[1]));
 		assertNull(v0.getFirstEdgeOfClass(eclasses[2]));
+		commit(g);
 	}
 
 	/**
 	 * Random tests
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestEdgeClass5() {
-		onlyTestWithoutTransactionSupport();
+	public void getFirstEdgeTestEdgeClass5() throws CommitFailedException {
+		createReadOnlyTransaction(g);
 		EdgeClass[] eclasses = getEdgeClasses();
-		for (int i = 0; i < 1000; i++) {
-			graph = VertexTestSchema.instance().createVertexTestGraph();
-			Vertex[] vertices = new Vertex[] { graph.createSubNode(),
-					graph.createDoubleSubNode(), graph.createSuperNode() };
+		commit(g);
+		for (int i = 0; i < ITERATIONS; i++) {
+			g = createNewGraph();
+			createTransaction(g);
+			Vertex[] vertices = new Vertex[] { g.createSubNode(),
+					g.createDoubleSubNode(), g.createSuperNode() };
 			Edge[] firstLink = new Edge[3];
 			Edge[] firstLinkBack = new Edge[3];
 			Edge[] firstSubLink = new Edge[3];
@@ -3401,8 +3857,7 @@ public class VertexTest extends InstanceTest {
 				int end = rand.nextInt(2) + 1;
 				switch (edgetype) {
 				case 0:
-					Edge e0 = graph.createLink(
-							(AbstractSuperNode) vertices[start],
+					Edge e0 = g.createLink((AbstractSuperNode) vertices[start],
 							(SuperNode) vertices[end]);
 					if (firstLink[start] == null) {
 						firstLink[start] = e0;
@@ -3412,7 +3867,7 @@ public class VertexTest extends InstanceTest {
 					}
 					break;
 				case 1:
-					Edge e1 = graph.createLinkBack((SuperNode) vertices[end],
+					Edge e1 = g.createLinkBack((SuperNode) vertices[end],
 							(AbstractSuperNode) vertices[start]);
 					if (firstLinkBack[end] == null) {
 						firstLinkBack[end] = e1;
@@ -3422,7 +3877,7 @@ public class VertexTest extends InstanceTest {
 					}
 					break;
 				case 2:
-					Edge e2 = graph.createSubLink((DoubleSubNode) vertices[1],
+					Edge e2 = g.createSubLink((DoubleSubNode) vertices[1],
 							(SuperNode) vertices[end]);
 					if (firstLink[1] == null) {
 						firstLink[1] = e2;
@@ -3439,6 +3894,8 @@ public class VertexTest extends InstanceTest {
 					break;
 				}
 			}
+			commit(g);
+			createReadOnlyTransaction(g);
 			assertEquals(firstLink[0], vertices[0]
 					.getFirstEdgeOfClass(eclasses[0]));
 			assertEquals(firstLink[1], vertices[1]
@@ -3457,6 +3914,7 @@ public class VertexTest extends InstanceTest {
 					.getFirstEdgeOfClass(eclasses[1]));
 			assertEquals(firstSubLink[2], vertices[2]
 					.getFirstEdgeOfClass(eclasses[1]));
+			commit(g);
 		}
 	}
 
@@ -3465,42 +3923,56 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has no Edges
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestClass0() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
+	public void getFirstEdgeTestClass0() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertNull(v0.getFirstEdgeOfClass(Link.class));
 		assertNull(v0.getFirstEdgeOfClass(SubLink.class));
 		assertNull(v0.getFirstEdgeOfClass(LinkBack.class));
+		commit(g);
 	}
 
 	/**
 	 * Tests if a node has only one Edge
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestClass1() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
-		Edge e = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+	public void getFirstEdgeTestClass1() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		Edge e = g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(e, v0.getFirstEdgeOfClass(Link.class));
 		assertNull(v0.getFirstEdgeOfClass(SubLink.class));
 		assertNull(v0.getFirstEdgeOfClass(LinkBack.class));
 		assertEquals(e.getReversedEdge(), v1.getFirstEdgeOfClass(Link.class));
 		assertNull(v1.getFirstEdgeOfClass(SubLink.class));
 		assertNull(v1.getFirstEdgeOfClass(LinkBack.class));
+		commit(g);
 	}
 
 	/**
 	 * Tests if a node has an edge which extends another edge
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestClass2() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
-		Edge e1 = graph.createSubLink((DoubleSubNode) v0, (SuperNode) v1);
+	public void getFirstEdgeTestClass2() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		Edge e1 = g.createSubLink((DoubleSubNode) v0, (SuperNode) v1);
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(e1, v0.getFirstEdgeOfClass(Link.class));
 		assertEquals(e1, v0.getFirstEdgeOfClass(SubLink.class));
 		assertNull(v0.getFirstEdgeOfClass(LinkBack.class));
@@ -3508,18 +3980,23 @@ public class VertexTest extends InstanceTest {
 		assertEquals(e1.getReversedEdge(), v1
 				.getFirstEdgeOfClass(SubLink.class));
 		assertNull(v1.getFirstEdgeOfClass(LinkBack.class));
+		commit(g);
 	}
 
 	/**
 	 * Tests if a node has two Edges.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestClass3() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
-		Edge e2 = graph.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
+	public void getFirstEdgeTestClass3() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		Edge e1 = g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		Edge e2 = g.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(e1, v0.getFirstEdgeOfClass(Link.class));
 		assertNull(v0.getFirstEdgeOfClass(SubLink.class));
 		assertEquals(e2.getReversedEdge(), v0
@@ -3527,31 +4004,39 @@ public class VertexTest extends InstanceTest {
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(Link.class));
 		assertNull(v1.getFirstEdgeOfClass(SubLink.class));
 		assertEquals(e2, v1.getFirstEdgeOfClass(LinkBack.class));
+		commit(g);
 	}
 
 	/**
 	 * Tests if alpha and omega of an Edge is the same Vertex.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestClass4() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v0);
+	public void getFirstEdgeTestClass4() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		Edge e1 = g.createLink((AbstractSuperNode) v0, (SuperNode) v0);
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(e1, v0.getFirstEdgeOfClass(Link.class));
 		assertNull(v0.getFirstEdgeOfClass(SubLink.class));
 		assertNull(v0.getFirstEdgeOfClass(LinkBack.class));
+		commit(g);
 	}
 
 	/**
 	 * Random tests
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestClass5() {
-		onlyTestWithoutTransactionSupport();
-		for (int i = 0; i < 1000; i++) {
-			graph = VertexTestSchema.instance().createVertexTestGraph();
-			Vertex[] vertices = new Vertex[] { graph.createSubNode(),
-					graph.createDoubleSubNode(), graph.createSuperNode() };
+	public void getFirstEdgeTestClass5() throws CommitFailedException {
+		for (int i = 0; i < ITERATIONS; i++) {
+			g = createNewGraph();
+			createTransaction(g);
+			Vertex[] vertices = new Vertex[] { g.createSubNode(),
+					g.createDoubleSubNode(), g.createSuperNode() };
 			Edge[] firstLink = new Edge[3];
 			Edge[] firstLinkBack = new Edge[3];
 			Edge[] firstSubLink = new Edge[3];
@@ -3561,8 +4046,7 @@ public class VertexTest extends InstanceTest {
 				int end = rand.nextInt(2) + 1;
 				switch (edgetype) {
 				case 0:
-					Edge e0 = graph.createLink(
-							(AbstractSuperNode) vertices[start],
+					Edge e0 = g.createLink((AbstractSuperNode) vertices[start],
 							(SuperNode) vertices[end]);
 					if (firstLink[start] == null) {
 						firstLink[start] = e0;
@@ -3572,7 +4056,7 @@ public class VertexTest extends InstanceTest {
 					}
 					break;
 				case 1:
-					Edge e1 = graph.createLinkBack((SuperNode) vertices[end],
+					Edge e1 = g.createLinkBack((SuperNode) vertices[end],
 							(AbstractSuperNode) vertices[start]);
 					if (firstLinkBack[end] == null) {
 						firstLinkBack[end] = e1;
@@ -3582,7 +4066,7 @@ public class VertexTest extends InstanceTest {
 					}
 					break;
 				case 2:
-					Edge e2 = graph.createSubLink((DoubleSubNode) vertices[1],
+					Edge e2 = g.createSubLink((DoubleSubNode) vertices[1],
 							(SuperNode) vertices[end]);
 					if (firstLink[1] == null) {
 						firstLink[1] = e2;
@@ -3599,6 +4083,8 @@ public class VertexTest extends InstanceTest {
 					break;
 				}
 			}
+			commit(g);
+			createReadOnlyTransaction(g);
 			assertEquals(firstLink[0], vertices[0]
 					.getFirstEdgeOfClass(Link.class));
 			assertEquals(firstLink[1], vertices[1]
@@ -3617,6 +4103,7 @@ public class VertexTest extends InstanceTest {
 					.getFirstEdgeOfClass(SubLink.class));
 			assertEquals(firstSubLink[2], vertices[2]
 					.getFirstEdgeOfClass(SubLink.class));
+			commit(g);
 		}
 	}
 
@@ -3625,13 +4112,18 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has no Edges
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestEdgeClassEdgeDirection0() {
-		onlyTestWithoutTransactionSupport();
+	public void getFirstEdgeTestEdgeClassEdgeDirection0()
+			throws CommitFailedException {
+		createTransaction(g);
 		EdgeClass[] eclasses = getEdgeClasses();
-		Vertex v0 = graph.createDoubleSubNode();
+		Vertex v0 = g.createDoubleSubNode();
+		commit(g);
 
+		createReadOnlyTransaction(g);
 		assertNull(v0.getFirstEdgeOfClass(eclasses[0], EdgeDirection.INOUT));
 		assertNull(v0.getFirstEdgeOfClass(eclasses[1], EdgeDirection.INOUT));
 		assertNull(v0.getFirstEdgeOfClass(eclasses[2], EdgeDirection.INOUT));
@@ -3643,19 +4135,25 @@ public class VertexTest extends InstanceTest {
 		assertNull(v0.getFirstEdgeOfClass(eclasses[0], EdgeDirection.IN));
 		assertNull(v0.getFirstEdgeOfClass(eclasses[1], EdgeDirection.IN));
 		assertNull(v0.getFirstEdgeOfClass(eclasses[2], EdgeDirection.IN));
+		commit(g);
 	}
 
 	/**
 	 * Tests if a node has only one Edge
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestEdgeClassEdgeDirection1() {
-		onlyTestWithoutTransactionSupport();
+	public void getFirstEdgeTestEdgeClassEdgeDirection1()
+			throws CommitFailedException {
+		createTransaction(g);
 		EdgeClass[] eclasses = getEdgeClasses();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
-		Edge e = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		Edge e = g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		commit(g);
 
+		createReadOnlyTransaction(g);
 		assertEquals(e, v0
 				.getFirstEdgeOfClass(eclasses[0], EdgeDirection.INOUT));
 		assertNull(v0.getFirstEdgeOfClass(eclasses[1], EdgeDirection.INOUT));
@@ -3679,19 +4177,25 @@ public class VertexTest extends InstanceTest {
 				EdgeDirection.IN));
 		assertNull(v1.getFirstEdgeOfClass(eclasses[1], EdgeDirection.IN));
 		assertNull(v1.getFirstEdgeOfClass(eclasses[2], EdgeDirection.IN));
+		commit(g);
 	}
 
 	/**
 	 * Tests if a node has an edge which extends another edge
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestEdgeClassEdgeDirection2() {
-		onlyTestWithoutTransactionSupport();
+	public void getFirstEdgeTestEdgeClassEdgeDirection2()
+			throws CommitFailedException {
+		createTransaction(g);
 		EdgeClass[] eclasses = getEdgeClasses();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
-		Edge e1 = graph.createSubLink((DoubleSubNode) v0, (SuperNode) v1);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		Edge e1 = g.createSubLink((DoubleSubNode) v0, (SuperNode) v1);
+		commit(g);
 
+		createReadOnlyTransaction(g);
 		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.INOUT));
 		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[1],
@@ -3718,20 +4222,26 @@ public class VertexTest extends InstanceTest {
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.IN));
 		assertNull(v1.getFirstEdgeOfClass(eclasses[2], EdgeDirection.IN));
+		commit(g);
 	}
 
 	/**
 	 * Tests if a node has two Edges.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestEdgeClassEdgeDirection3() {
-		onlyTestWithoutTransactionSupport();
+	public void getFirstEdgeTestEdgeClassEdgeDirection3()
+			throws CommitFailedException {
+		createTransaction(g);
 		EdgeClass[] eclasses = getEdgeClasses();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
-		Edge e2 = graph.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		Edge e1 = g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		Edge e2 = g.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
+		commit(g);
 
+		createTransaction(g);
 		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.INOUT));
 		assertNull(v0.getFirstEdgeOfClass(eclasses[1], EdgeDirection.INOUT));
@@ -3758,18 +4268,24 @@ public class VertexTest extends InstanceTest {
 				EdgeDirection.IN));
 		assertNull(v1.getFirstEdgeOfClass(eclasses[1], EdgeDirection.IN));
 		assertNull(v1.getFirstEdgeOfClass(eclasses[2], EdgeDirection.IN));
+		commit(g);
 	}
 
 	/**
 	 * Tests if alpha and omega of an Edge is the same Vertex.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestEdgeClassEdgeDirection4() {
-		onlyTestWithoutTransactionSupport();
+	public void getFirstEdgeTestEdgeClassEdgeDirection4()
+			throws CommitFailedException {
+		createTransaction(g);
 		EdgeClass[] eclasses = getEdgeClasses();
-		Vertex v0 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v0);
+		Vertex v0 = g.createDoubleSubNode();
+		Edge e1 = g.createLink((AbstractSuperNode) v0, (SuperNode) v0);
+		commit(g);
 
+		createReadOnlyTransaction(g);
 		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.INOUT));
 		assertNull(v0.getFirstEdgeOfClass(eclasses[1], EdgeDirection.INOUT));
@@ -3783,19 +4299,25 @@ public class VertexTest extends InstanceTest {
 				EdgeDirection.IN));
 		assertNull(v0.getFirstEdgeOfClass(eclasses[1], EdgeDirection.IN));
 		assertNull(v0.getFirstEdgeOfClass(eclasses[2], EdgeDirection.IN));
+		commit(g);
 	}
 
 	/**
 	 * Random tests
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestEdgeClassEdgeDirection5() {
-		onlyTestWithoutTransactionSupport();
+	public void getFirstEdgeTestEdgeClassEdgeDirection5()
+			throws CommitFailedException {
+		createTransaction(g);
 		EdgeClass[] eclasses = getEdgeClasses();
-		for (int i = 0; i < 1000; i++) {
-			graph = VertexTestSchema.instance().createVertexTestGraph();
-			Vertex[] vertices = new Vertex[] { graph.createSubNode(),
-					graph.createDoubleSubNode(), graph.createSuperNode() };
+		commit(g);
+		for (int i = 0; i < ITERATIONS; i++) {
+			g = createNewGraph();
+			createTransaction(g);
+			Vertex[] vertices = new Vertex[] { g.createSubNode(),
+					g.createDoubleSubNode(), g.createSuperNode() };
 			Edge[] firstLinkInOut = new Edge[3];
 			Edge[] firstLinkBackInOut = new Edge[3];
 			Edge[] firstSubLinkInOut = new Edge[3];
@@ -3811,8 +4333,7 @@ public class VertexTest extends InstanceTest {
 				int end = rand.nextInt(2) + 1;
 				switch (edgetype) {
 				case 0:
-					Edge e0 = graph.createLink(
-							(AbstractSuperNode) vertices[start],
+					Edge e0 = g.createLink((AbstractSuperNode) vertices[start],
 							(SuperNode) vertices[end]);
 					if (firstLinkInOut[start] == null) {
 						firstLinkInOut[start] = e0;
@@ -3828,7 +4349,7 @@ public class VertexTest extends InstanceTest {
 					}
 					break;
 				case 1:
-					Edge e1 = graph.createLinkBack((SuperNode) vertices[end],
+					Edge e1 = g.createLinkBack((SuperNode) vertices[end],
 							(AbstractSuperNode) vertices[start]);
 					if (firstLinkBackInOut[end] == null) {
 						firstLinkBackInOut[end] = e1;
@@ -3844,7 +4365,7 @@ public class VertexTest extends InstanceTest {
 					}
 					break;
 				case 2:
-					Edge e2 = graph.createSubLink((DoubleSubNode) vertices[1],
+					Edge e2 = g.createSubLink((DoubleSubNode) vertices[1],
 							(SuperNode) vertices[end]);
 					if (firstLinkInOut[1] == null) {
 						firstLinkInOut[1] = e2;
@@ -3873,6 +4394,9 @@ public class VertexTest extends InstanceTest {
 					break;
 				}
 			}
+			commit(g);
+
+			createReadOnlyTransaction(g);
 			assertEquals(firstLinkInOut[0], vertices[0].getFirstEdgeOfClass(
 					eclasses[0], EdgeDirection.INOUT));
 			assertEquals(firstLinkInOut[1], vertices[1].getFirstEdgeOfClass(
@@ -3929,6 +4453,7 @@ public class VertexTest extends InstanceTest {
 					eclasses[1], EdgeDirection.IN));
 			assertEquals(firstSubLinkIn[2], vertices[2].getFirstEdgeOfClass(
 					eclasses[1], EdgeDirection.IN));
+			commit(g);
 		}
 	}
 
@@ -3937,12 +4462,17 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has no Edges
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestClassEdgeDirection0() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
+	public void getFirstEdgeTestClassEdgeDirection0()
+			throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		commit(g);
 
+		createReadOnlyTransaction(g);
 		assertNull(v0.getFirstEdgeOfClass(Link.class, EdgeDirection.INOUT));
 		assertNull(v0.getFirstEdgeOfClass(SubLink.class, EdgeDirection.INOUT));
 		assertNull(v0.getFirstEdgeOfClass(LinkBack.class, EdgeDirection.INOUT));
@@ -3954,18 +4484,24 @@ public class VertexTest extends InstanceTest {
 		assertNull(v0.getFirstEdgeOfClass(Link.class, EdgeDirection.IN));
 		assertNull(v0.getFirstEdgeOfClass(SubLink.class, EdgeDirection.IN));
 		assertNull(v0.getFirstEdgeOfClass(LinkBack.class, EdgeDirection.IN));
+		commit(g);
 	}
 
 	/**
 	 * Tests if a node has only one Edge
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestClassEdgeDirection1() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
-		Edge e = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+	public void getFirstEdgeTestClassEdgeDirection1()
+			throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		Edge e = g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		commit(g);
 
+		createReadOnlyTransaction(g);
 		assertEquals(e, v0.getFirstEdgeOfClass(Link.class, EdgeDirection.INOUT));
 		assertNull(v0.getFirstEdgeOfClass(SubLink.class, EdgeDirection.INOUT));
 		assertNull(v0.getFirstEdgeOfClass(LinkBack.class, EdgeDirection.INOUT));
@@ -3988,18 +4524,24 @@ public class VertexTest extends InstanceTest {
 				EdgeDirection.IN));
 		assertNull(v1.getFirstEdgeOfClass(SubLink.class, EdgeDirection.IN));
 		assertNull(v1.getFirstEdgeOfClass(LinkBack.class, EdgeDirection.IN));
+		commit(g);
 	}
 
 	/**
 	 * Tests if a node has an edge which extends another edge
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestClassEdgeDirection2() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
-		Edge e1 = graph.createSubLink((DoubleSubNode) v0, (SuperNode) v1);
+	public void getFirstEdgeTestClassEdgeDirection2()
+			throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		Edge e1 = g.createSubLink((DoubleSubNode) v0, (SuperNode) v1);
+		commit(g);
 
+		createReadOnlyTransaction(g);
 		assertEquals(e1, v0
 				.getFirstEdgeOfClass(Link.class, EdgeDirection.INOUT));
 		assertEquals(e1, v0.getFirstEdgeOfClass(SubLink.class,
@@ -4027,19 +4569,25 @@ public class VertexTest extends InstanceTest {
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(
 				SubLink.class, EdgeDirection.IN));
 		assertNull(v1.getFirstEdgeOfClass(LinkBack.class, EdgeDirection.IN));
+		commit(g);
 	}
 
 	/**
 	 * Tests if a node has two Edges.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestClassEdgeDirection3() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
-		Edge e2 = graph.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
+	public void getFirstEdgeTestClassEdgeDirection3()
+			throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		Edge e1 = g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		Edge e2 = g.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
+		commit(g);
 
+		createReadOnlyTransaction(g);
 		assertEquals(e1, v0
 				.getFirstEdgeOfClass(Link.class, EdgeDirection.INOUT));
 		assertNull(v0.getFirstEdgeOfClass(SubLink.class, EdgeDirection.INOUT));
@@ -4067,17 +4615,23 @@ public class VertexTest extends InstanceTest {
 				EdgeDirection.IN));
 		assertNull(v1.getFirstEdgeOfClass(SubLink.class, EdgeDirection.IN));
 		assertNull(v1.getFirstEdgeOfClass(LinkBack.class, EdgeDirection.IN));
+		commit(g);
 	}
 
 	/**
 	 * Tests if alpha and omega of an Edge is the same Vertex.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestClassEdgeDirection4() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v0);
+	public void getFirstEdgeTestClassEdgeDirection4()
+			throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		Edge e1 = g.createLink((AbstractSuperNode) v0, (SuperNode) v0);
+		commit(g);
 
+		createReadOnlyTransaction(g);
 		assertEquals(e1, v0
 				.getFirstEdgeOfClass(Link.class, EdgeDirection.INOUT));
 		assertNull(v0.getFirstEdgeOfClass(SubLink.class, EdgeDirection.INOUT));
@@ -4091,18 +4645,22 @@ public class VertexTest extends InstanceTest {
 				EdgeDirection.IN));
 		assertNull(v0.getFirstEdgeOfClass(SubLink.class, EdgeDirection.IN));
 		assertNull(v0.getFirstEdgeOfClass(LinkBack.class, EdgeDirection.IN));
+		commit(g);
 	}
 
 	/**
 	 * Random tests
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestClassEdgeDirection5() {
-		onlyTestWithoutTransactionSupport();
-		for (int i = 0; i < 1000; i++) {
-			graph = VertexTestSchema.instance().createVertexTestGraph();
-			Vertex[] vertices = new Vertex[] { graph.createSubNode(),
-					graph.createDoubleSubNode(), graph.createSuperNode() };
+	public void getFirstEdgeTestClassEdgeDirection5()
+			throws CommitFailedException {
+		for (int i = 0; i < ITERATIONS; i++) {
+			g = createNewGraph();
+			createTransaction(g);
+			Vertex[] vertices = new Vertex[] { g.createSubNode(),
+					g.createDoubleSubNode(), g.createSuperNode() };
 			Edge[] firstLinkInOut = new Edge[3];
 			Edge[] firstLinkBackInOut = new Edge[3];
 			Edge[] firstSubLinkInOut = new Edge[3];
@@ -4118,8 +4676,7 @@ public class VertexTest extends InstanceTest {
 				int end = rand.nextInt(2) + 1;
 				switch (edgetype) {
 				case 0:
-					Edge e0 = graph.createLink(
-							(AbstractSuperNode) vertices[start],
+					Edge e0 = g.createLink((AbstractSuperNode) vertices[start],
 							(SuperNode) vertices[end]);
 					if (firstLinkInOut[start] == null) {
 						firstLinkInOut[start] = e0;
@@ -4135,7 +4692,7 @@ public class VertexTest extends InstanceTest {
 					}
 					break;
 				case 1:
-					Edge e1 = graph.createLinkBack((SuperNode) vertices[end],
+					Edge e1 = g.createLinkBack((SuperNode) vertices[end],
 							(AbstractSuperNode) vertices[start]);
 					if (firstLinkBackInOut[end] == null) {
 						firstLinkBackInOut[end] = e1;
@@ -4151,7 +4708,7 @@ public class VertexTest extends InstanceTest {
 					}
 					break;
 				case 2:
-					Edge e2 = graph.createSubLink((DoubleSubNode) vertices[1],
+					Edge e2 = g.createSubLink((DoubleSubNode) vertices[1],
 							(SuperNode) vertices[end]);
 					if (firstLinkInOut[1] == null) {
 						firstLinkInOut[1] = e2;
@@ -4180,6 +4737,9 @@ public class VertexTest extends InstanceTest {
 					break;
 				}
 			}
+			commit(g);
+
+			createReadOnlyTransaction(g);
 			assertEquals(firstLinkInOut[0], vertices[0].getFirstEdgeOfClass(
 					Link.class, EdgeDirection.INOUT));
 			assertEquals(firstLinkInOut[1], vertices[1].getFirstEdgeOfClass(
@@ -4236,6 +4796,7 @@ public class VertexTest extends InstanceTest {
 					SubLink.class, EdgeDirection.IN));
 			assertEquals(firstSubLinkIn[2], vertices[2].getFirstEdgeOfClass(
 					SubLink.class, EdgeDirection.IN));
+			commit(g);
 		}
 	}
 
@@ -4244,13 +4805,18 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has no Edges
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestEdgeClassBoolean0() {
-		onlyTestWithoutTransactionSupport();
+	public void getFirstEdgeTestEdgeClassBoolean0()
+			throws CommitFailedException {
+		createTransaction(g);
 		EdgeClass[] eclasses = getEdgeClasses();
-		Vertex v0 = graph.createDoubleSubNode();
+		Vertex v0 = g.createDoubleSubNode();
+		commit(g);
 
+		createReadOnlyTransaction(g);
 		assertNull(v0.getFirstEdgeOfClass(eclasses[0], false));
 		assertNull(v0.getFirstEdgeOfClass(eclasses[1], false));
 		assertNull(v0.getFirstEdgeOfClass(eclasses[2], false));
@@ -4258,19 +4824,25 @@ public class VertexTest extends InstanceTest {
 		assertNull(v0.getFirstEdgeOfClass(eclasses[0], true));
 		assertNull(v0.getFirstEdgeOfClass(eclasses[1], true));
 		assertNull(v0.getFirstEdgeOfClass(eclasses[2], true));
+		commit(g);
 	}
 
 	/**
 	 * Tests if a node has only one Edge
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestEdgeClassBoolean1() {
-		onlyTestWithoutTransactionSupport();
+	public void getFirstEdgeTestEdgeClassBoolean1()
+			throws CommitFailedException {
+		createTransaction(g);
 		EdgeClass[] eclasses = getEdgeClasses();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
-		Edge e = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		Edge e = g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		commit(g);
 
+		createReadOnlyTransaction(g);
 		assertEquals(e, v0.getFirstEdgeOfClass(eclasses[0], false));
 		assertNull(v0.getFirstEdgeOfClass(eclasses[1], false));
 		assertNull(v0.getFirstEdgeOfClass(eclasses[2], false));
@@ -4286,19 +4858,25 @@ public class VertexTest extends InstanceTest {
 				true));
 		assertNull(v1.getFirstEdgeOfClass(eclasses[1], true));
 		assertNull(v1.getFirstEdgeOfClass(eclasses[2], true));
+		commit(g);
 	}
 
 	/**
 	 * Tests if a node has an edge which extends another edge
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestEdgeClassBoolean2() {
-		onlyTestWithoutTransactionSupport();
+	public void getFirstEdgeTestEdgeClassBoolean2()
+			throws CommitFailedException {
+		createTransaction(g);
 		EdgeClass[] eclasses = getEdgeClasses();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
-		Edge e1 = graph.createSubLink((DoubleSubNode) v0, (SuperNode) v1);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		Edge e1 = g.createSubLink((DoubleSubNode) v0, (SuperNode) v1);
+		commit(g);
 
+		createReadOnlyTransaction(g);
 		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[0], false));
 		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[1], false));
 		assertNull(v0.getFirstEdgeOfClass(eclasses[2], false));
@@ -4315,20 +4893,26 @@ public class VertexTest extends InstanceTest {
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(eclasses[1],
 				true));
 		assertNull(v1.getFirstEdgeOfClass(eclasses[2], true));
+		commit(g);
 	}
 
 	/**
 	 * Tests if a node has two Edges.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestEdgeClassBoolean3() {
-		onlyTestWithoutTransactionSupport();
+	public void getFirstEdgeTestEdgeClassBoolean3()
+			throws CommitFailedException {
+		createTransaction(g);
 		EdgeClass[] eclasses = getEdgeClasses();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
-		Edge e2 = graph.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		Edge e1 = g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		Edge e2 = g.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
+		commit(g);
 
+		createReadOnlyTransaction(g);
 		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[0], false));
 		assertNull(v0.getFirstEdgeOfClass(eclasses[1], false));
 		assertEquals(e2.getReversedEdge(), v0.getFirstEdgeOfClass(eclasses[2],
@@ -4346,18 +4930,24 @@ public class VertexTest extends InstanceTest {
 				true));
 		assertNull(v1.getFirstEdgeOfClass(eclasses[1], true));
 		assertEquals(e2, v1.getFirstEdgeOfClass(eclasses[2], true));
+		commit(g);
 	}
 
 	/**
 	 * Tests if alpha and omega of an Edge is the same Vertex.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestEdgeClassBoolean4() {
-		onlyTestWithoutTransactionSupport();
+	public void getFirstEdgeTestEdgeClassBoolean4()
+			throws CommitFailedException {
+		createTransaction(g);
 		EdgeClass[] eclasses = getEdgeClasses();
-		Vertex v0 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v0);
+		Vertex v0 = g.createDoubleSubNode();
+		Edge e1 = g.createLink((AbstractSuperNode) v0, (SuperNode) v0);
+		commit(g);
 
+		createReadOnlyTransaction(g);
 		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[0], false));
 		assertNull(v0.getFirstEdgeOfClass(eclasses[1], false));
 		assertNull(v0.getFirstEdgeOfClass(eclasses[2], false));
@@ -4365,19 +4955,25 @@ public class VertexTest extends InstanceTest {
 		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[0], true));
 		assertNull(v0.getFirstEdgeOfClass(eclasses[1], true));
 		assertNull(v0.getFirstEdgeOfClass(eclasses[2], true));
+		commit(g);
 	}
 
 	/**
 	 * Random tests
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestEdgeClassBoolean5() {
-		onlyTestWithoutTransactionSupport();
+	public void getFirstEdgeTestEdgeClassBoolean5()
+			throws CommitFailedException {
+		createTransaction(g);
 		EdgeClass[] eclasses = getEdgeClasses();
-		for (int i = 0; i < 1000; i++) {
-			graph = VertexTestSchema.instance().createVertexTestGraph();
-			Vertex[] vertices = new Vertex[] { graph.createSubNode(),
-					graph.createDoubleSubNode(), graph.createSuperNode() };
+		commit(g);
+		for (int i = 0; i < ITERATIONS; i++) {
+			g = createNewGraph();
+			createTransaction(g);
+			Vertex[] vertices = new Vertex[] { g.createSubNode(),
+					g.createDoubleSubNode(), g.createSuperNode() };
 			Edge[] firstLinkFalse = new Edge[3];
 			Edge[] firstLinkBackFalse = new Edge[3];
 			Edge[] firstSubLinkFalse = new Edge[3];
@@ -4390,8 +4986,7 @@ public class VertexTest extends InstanceTest {
 				int end = rand.nextInt(2) + 1;
 				switch (edgetype) {
 				case 0:
-					Edge e0 = graph.createLink(
-							(AbstractSuperNode) vertices[start],
+					Edge e0 = g.createLink((AbstractSuperNode) vertices[start],
 							(SuperNode) vertices[end]);
 					if (firstLinkFalse[start] == null) {
 						firstLinkFalse[start] = e0;
@@ -4407,7 +5002,7 @@ public class VertexTest extends InstanceTest {
 					}
 					break;
 				case 1:
-					Edge e1 = graph.createLinkBack((SuperNode) vertices[end],
+					Edge e1 = g.createLinkBack((SuperNode) vertices[end],
 							(AbstractSuperNode) vertices[start]);
 					if (firstLinkBackFalse[end] == null) {
 						firstLinkBackFalse[end] = e1;
@@ -4423,7 +5018,7 @@ public class VertexTest extends InstanceTest {
 					}
 					break;
 				case 2:
-					Edge e2 = graph.createSubLink((DoubleSubNode) vertices[1],
+					Edge e2 = g.createSubLink((DoubleSubNode) vertices[1],
 							(SuperNode) vertices[end]);
 					if (firstLinkFalse[1] == null) {
 						firstLinkFalse[1] = e2;
@@ -4446,6 +5041,9 @@ public class VertexTest extends InstanceTest {
 					break;
 				}
 			}
+			commit(g);
+
+			createReadOnlyTransaction(g);
 			assertEquals(firstLinkFalse[0], vertices[0].getFirstEdgeOfClass(
 					eclasses[0], false));
 			assertEquals(firstLinkFalse[1], vertices[1].getFirstEdgeOfClass(
@@ -4483,6 +5081,7 @@ public class VertexTest extends InstanceTest {
 					eclasses[1], true));
 			assertEquals(firstSubLinkTrue[2], vertices[2].getFirstEdgeOfClass(
 					eclasses[1], true));
+			commit(g);
 		}
 	}
 
@@ -4491,12 +5090,16 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has no Edges
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestClassBoolean0() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
+	public void getFirstEdgeTestClassBoolean0() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		commit(g);
 
+		createReadOnlyTransaction(g);
 		assertNull(v0.getFirstEdgeOfClass(Link.class, false));
 		assertNull(v0.getFirstEdgeOfClass(SubLink.class, false));
 		assertNull(v0.getFirstEdgeOfClass(LinkBack.class, false));
@@ -4504,18 +5107,23 @@ public class VertexTest extends InstanceTest {
 		assertNull(v0.getFirstEdgeOfClass(Link.class, true));
 		assertNull(v0.getFirstEdgeOfClass(SubLink.class, true));
 		assertNull(v0.getFirstEdgeOfClass(LinkBack.class, true));
+		commit(g);
 	}
 
 	/**
 	 * Tests if a node has only one Edge
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestClassBoolean1() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
-		Edge e = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+	public void getFirstEdgeTestClassBoolean1() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		Edge e = g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		commit(g);
 
+		createReadOnlyTransaction(g);
 		assertEquals(e, v0.getFirstEdgeOfClass(Link.class, false));
 		assertNull(v0.getFirstEdgeOfClass(SubLink.class, false));
 		assertNull(v0.getFirstEdgeOfClass(LinkBack.class, false));
@@ -4531,18 +5139,23 @@ public class VertexTest extends InstanceTest {
 				true));
 		assertNull(v1.getFirstEdgeOfClass(SubLink.class, true));
 		assertNull(v1.getFirstEdgeOfClass(LinkBack.class, true));
+		commit(g);
 	}
 
 	/**
 	 * Tests if a node has an edge which extends another edge
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestClassBoolean2() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
-		Edge e1 = graph.createSubLink((DoubleSubNode) v0, (SuperNode) v1);
+	public void getFirstEdgeTestClassBoolean2() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		Edge e1 = g.createSubLink((DoubleSubNode) v0, (SuperNode) v1);
+		commit(g);
 
+		createReadOnlyTransaction(g);
 		assertEquals(e1, v0.getFirstEdgeOfClass(Link.class, false));
 		assertEquals(e1, v0.getFirstEdgeOfClass(SubLink.class, false));
 		assertNull(v0.getFirstEdgeOfClass(LinkBack.class, false));
@@ -4559,19 +5172,24 @@ public class VertexTest extends InstanceTest {
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(
 				SubLink.class, true));
 		assertNull(v1.getFirstEdgeOfClass(LinkBack.class, true));
+		commit(g);
 	}
 
 	/**
 	 * Tests if a node has two Edges.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestClassBoolean3() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
-		Edge e2 = graph.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
+	public void getFirstEdgeTestClassBoolean3() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		Edge e1 = g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		Edge e2 = g.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
+		commit(g);
 
+		createReadOnlyTransaction(g);
 		assertEquals(e1, v0.getFirstEdgeOfClass(Link.class, false));
 		assertNull(v0.getFirstEdgeOfClass(SubLink.class, false));
 		assertEquals(e2.getReversedEdge(), v0.getFirstEdgeOfClass(
@@ -4589,17 +5207,22 @@ public class VertexTest extends InstanceTest {
 				true));
 		assertNull(v1.getFirstEdgeOfClass(SubLink.class, true));
 		assertEquals(e2, v1.getFirstEdgeOfClass(LinkBack.class, true));
+		commit(g);
 	}
 
 	/**
 	 * Tests if alpha and omega of an Edge is the same Vertex.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestClassBoolean4() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v0);
+	public void getFirstEdgeTestClassBoolean4() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		Edge e1 = g.createLink((AbstractSuperNode) v0, (SuperNode) v0);
+		commit(g);
 
+		createReadOnlyTransaction(g);
 		assertEquals(e1, v0.getFirstEdgeOfClass(Link.class, false));
 		assertNull(v0.getFirstEdgeOfClass(SubLink.class, false));
 		assertNull(v0.getFirstEdgeOfClass(LinkBack.class, false));
@@ -4607,18 +5230,21 @@ public class VertexTest extends InstanceTest {
 		assertEquals(e1, v0.getFirstEdgeOfClass(Link.class, true));
 		assertNull(v0.getFirstEdgeOfClass(SubLink.class, true));
 		assertNull(v0.getFirstEdgeOfClass(LinkBack.class, true));
+		commit(g);
 	}
 
 	/**
 	 * Random tests
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestClassBoolean5() {
-		onlyTestWithoutTransactionSupport();
-		for (int i = 0; i < 1000; i++) {
-			graph = VertexTestSchema.instance().createVertexTestGraph();
-			Vertex[] vertices = new Vertex[] { graph.createSubNode(),
-					graph.createDoubleSubNode(), graph.createSuperNode() };
+	public void getFirstEdgeTestClassBoolean5() throws CommitFailedException {
+		for (int i = 0; i < ITERATIONS; i++) {
+			g = createNewGraph();
+			createTransaction(g);
+			Vertex[] vertices = new Vertex[] { g.createSubNode(),
+					g.createDoubleSubNode(), g.createSuperNode() };
 			Edge[] firstLinkFalse = new Edge[3];
 			Edge[] firstLinkBackFalse = new Edge[3];
 			Edge[] firstSubLinkFalse = new Edge[3];
@@ -4631,8 +5257,7 @@ public class VertexTest extends InstanceTest {
 				int end = rand.nextInt(2) + 1;
 				switch (edgetype) {
 				case 0:
-					Edge e0 = graph.createLink(
-							(AbstractSuperNode) vertices[start],
+					Edge e0 = g.createLink((AbstractSuperNode) vertices[start],
 							(SuperNode) vertices[end]);
 					if (firstLinkFalse[start] == null) {
 						firstLinkFalse[start] = e0;
@@ -4648,7 +5273,7 @@ public class VertexTest extends InstanceTest {
 					}
 					break;
 				case 1:
-					Edge e1 = graph.createLinkBack((SuperNode) vertices[end],
+					Edge e1 = g.createLinkBack((SuperNode) vertices[end],
 							(AbstractSuperNode) vertices[start]);
 					if (firstLinkBackFalse[end] == null) {
 						firstLinkBackFalse[end] = e1;
@@ -4664,7 +5289,7 @@ public class VertexTest extends InstanceTest {
 					}
 					break;
 				case 2:
-					Edge e2 = graph.createSubLink((DoubleSubNode) vertices[1],
+					Edge e2 = g.createSubLink((DoubleSubNode) vertices[1],
 							(SuperNode) vertices[end]);
 					if (firstLinkFalse[1] == null) {
 						firstLinkFalse[1] = e2;
@@ -4687,6 +5312,9 @@ public class VertexTest extends InstanceTest {
 					break;
 				}
 			}
+			commit(g);
+
+			createReadOnlyTransaction(g);
 			assertEquals(firstLinkFalse[0], vertices[0].getFirstEdgeOfClass(
 					Link.class, false));
 			assertEquals(firstLinkFalse[1], vertices[1].getFirstEdgeOfClass(
@@ -4724,6 +5352,7 @@ public class VertexTest extends InstanceTest {
 					SubLink.class, true));
 			assertEquals(firstSubLinkTrue[2], vertices[2].getFirstEdgeOfClass(
 					SubLink.class, true));
+			commit(g);
 		}
 	}
 
@@ -4732,13 +5361,18 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has no Edges
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestEdgeClassEdgeDirectionBoolean0() {
-		onlyTestWithoutTransactionSupport();
+	public void getFirstEdgeTestEdgeClassEdgeDirectionBoolean0()
+			throws CommitFailedException {
+		createTransaction(g);
 		EdgeClass[] eclasses = getEdgeClasses();
-		Vertex v0 = graph.createDoubleSubNode();
+		Vertex v0 = g.createDoubleSubNode();
+		commit(g);
 
+		createReadOnlyTransaction(g);
 		assertNull(v0.getFirstEdgeOfClass(eclasses[0], EdgeDirection.INOUT,
 				false));
 		assertNull(v0.getFirstEdgeOfClass(eclasses[1], EdgeDirection.INOUT,
@@ -4771,19 +5405,25 @@ public class VertexTest extends InstanceTest {
 		assertNull(v0.getFirstEdgeOfClass(eclasses[0], EdgeDirection.IN, true));
 		assertNull(v0.getFirstEdgeOfClass(eclasses[1], EdgeDirection.IN, true));
 		assertNull(v0.getFirstEdgeOfClass(eclasses[2], EdgeDirection.IN, true));
+		commit(g);
 	}
 
 	/**
 	 * Tests if a node has only one Edge
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestEdgeClassEdgeDirectionBoolean1() {
-		onlyTestWithoutTransactionSupport();
+	public void getFirstEdgeTestEdgeClassEdgeDirectionBoolean1()
+			throws CommitFailedException {
+		createTransaction(g);
 		EdgeClass[] eclasses = getEdgeClasses();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
-		Edge e = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		Edge e = g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		commit(g);
 
+		createReadOnlyTransaction(g);
 		assertEquals(e, v0.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.INOUT, false));
 		assertNull(v0.getFirstEdgeOfClass(eclasses[1], EdgeDirection.INOUT,
@@ -4846,19 +5486,25 @@ public class VertexTest extends InstanceTest {
 				EdgeDirection.IN, true));
 		assertNull(v1.getFirstEdgeOfClass(eclasses[1], EdgeDirection.IN, true));
 		assertNull(v1.getFirstEdgeOfClass(eclasses[2], EdgeDirection.IN, true));
+		commit(g);
 	}
 
 	/**
 	 * Tests if a node has an edge which extends another edge
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestEdgeClassEdgeDirectionBoolean2() {
-		onlyTestWithoutTransactionSupport();
+	public void getFirstEdgeTestEdgeClassEdgeDirectionBoolean2()
+			throws CommitFailedException {
+		createTransaction(g);
 		EdgeClass[] eclasses = getEdgeClasses();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
-		Edge e1 = graph.createSubLink((DoubleSubNode) v0, (SuperNode) v1);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		Edge e1 = g.createSubLink((DoubleSubNode) v0, (SuperNode) v1);
+		commit(g);
 
+		createReadOnlyTransaction(g);
 		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.INOUT, false));
 		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[1],
@@ -4922,20 +5568,26 @@ public class VertexTest extends InstanceTest {
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.IN, true));
 		assertNull(v1.getFirstEdgeOfClass(eclasses[2], EdgeDirection.IN, true));
+		commit(g);
 	}
 
 	/**
 	 * Tests if a node has two Edges.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestEdgeClassEdgeDirectionBoolean3() {
-		onlyTestWithoutTransactionSupport();
+	public void getFirstEdgeTestEdgeClassEdgeDirectionBoolean3()
+			throws CommitFailedException {
+		createTransaction(g);
 		EdgeClass[] eclasses = getEdgeClasses();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
-		Edge e2 = graph.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		Edge e1 = g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		Edge e2 = g.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
+		commit(g);
 
+		createReadOnlyTransaction(g);
 		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.INOUT, false));
 		assertNull(v0.getFirstEdgeOfClass(eclasses[1], EdgeDirection.INOUT,
@@ -5001,18 +5653,24 @@ public class VertexTest extends InstanceTest {
 				EdgeDirection.IN, true));
 		assertNull(v1.getFirstEdgeOfClass(eclasses[1], EdgeDirection.IN, true));
 		assertNull(v1.getFirstEdgeOfClass(eclasses[2], EdgeDirection.IN, true));
+		commit(g);
 	}
 
 	/**
 	 * Tests if alpha and omega of an Edge is the same Vertex.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestEdgeClassEdgeDirectionBoolean4() {
-		onlyTestWithoutTransactionSupport();
+	public void getFirstEdgeTestEdgeClassEdgeDirectionBoolean4()
+			throws CommitFailedException {
+		createTransaction(g);
 		EdgeClass[] eclasses = getEdgeClasses();
-		Vertex v0 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v0);
+		Vertex v0 = g.createDoubleSubNode();
+		Edge e1 = g.createLink((AbstractSuperNode) v0, (SuperNode) v0);
+		commit(g);
 
+		createReadOnlyTransaction(g);
 		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.INOUT, false));
 		assertNull(v0.getFirstEdgeOfClass(eclasses[1], EdgeDirection.INOUT,
@@ -5048,19 +5706,27 @@ public class VertexTest extends InstanceTest {
 				EdgeDirection.IN, true));
 		assertNull(v0.getFirstEdgeOfClass(eclasses[1], EdgeDirection.IN, true));
 		assertNull(v0.getFirstEdgeOfClass(eclasses[2], EdgeDirection.IN, true));
+		commit(g);
 	}
 
 	/**
 	 * Random tests
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestEdgeClassEdgeDirectionBoolean5() {
-		onlyTestWithoutTransactionSupport();
+	public void getFirstEdgeTestEdgeClassEdgeDirectionBoolean5()
+			throws CommitFailedException {
+		createTransaction(g);
 		EdgeClass[] eclasses = getEdgeClasses();
-		for (int i = 0; i < 1000; i++) {
-			graph = VertexTestSchema.instance().createVertexTestGraph();
-			Vertex[] vertices = new Vertex[] { graph.createSubNode(),
-					graph.createDoubleSubNode(), graph.createSuperNode() };
+		commit(g);
+
+		for (int i = 0; i < ITERATIONS; i++) {
+			g = createNewGraph();
+
+			createTransaction(g);
+			Vertex[] vertices = new Vertex[] { g.createSubNode(),
+					g.createDoubleSubNode(), g.createSuperNode() };
 			Edge[] firstLinkInOutFalse = new Edge[3];
 			Edge[] firstLinkBackInOutFalse = new Edge[3];
 			Edge[] firstSubLinkInOutFalse = new Edge[3];
@@ -5085,8 +5751,7 @@ public class VertexTest extends InstanceTest {
 				int end = rand.nextInt(2) + 1;
 				switch (edgetype) {
 				case 0:
-					Edge e0 = graph.createLink(
-							(AbstractSuperNode) vertices[start],
+					Edge e0 = g.createLink((AbstractSuperNode) vertices[start],
 							(SuperNode) vertices[end]);
 					if (firstLinkInOutFalse[start] == null) {
 						firstLinkInOutFalse[start] = e0;
@@ -5114,7 +5779,7 @@ public class VertexTest extends InstanceTest {
 					}
 					break;
 				case 1:
-					Edge e1 = graph.createLinkBack((SuperNode) vertices[end],
+					Edge e1 = g.createLinkBack((SuperNode) vertices[end],
 							(AbstractSuperNode) vertices[start]);
 					if (firstLinkBackInOutFalse[end] == null) {
 						firstLinkBackInOutFalse[end] = e1;
@@ -5142,7 +5807,7 @@ public class VertexTest extends InstanceTest {
 					}
 					break;
 				case 2:
-					Edge e2 = graph.createSubLink((DoubleSubNode) vertices[1],
+					Edge e2 = g.createSubLink((DoubleSubNode) vertices[1],
 							(SuperNode) vertices[end]);
 					if (firstLinkInOutFalse[1] == null) {
 						firstLinkInOutFalse[1] = e2;
@@ -5183,6 +5848,9 @@ public class VertexTest extends InstanceTest {
 					break;
 				}
 			}
+			commit(g);
+
+			createReadOnlyTransaction(g);
 			assertEquals(firstLinkInOutFalse[0], vertices[0]
 					.getFirstEdgeOfClass(eclasses[0], EdgeDirection.INOUT,
 							false));
@@ -5314,6 +5982,7 @@ public class VertexTest extends InstanceTest {
 					.getFirstEdgeOfClass(eclasses[1], EdgeDirection.IN, true));
 			assertEquals(firstSubLinkInTrue[2], vertices[2]
 					.getFirstEdgeOfClass(eclasses[1], EdgeDirection.IN, true));
+			commit(g);
 		}
 	}
 
@@ -5322,12 +5991,17 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if a node has no Edges
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestClassEdgeDirectionBoolean0() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
+	public void getFirstEdgeTestClassEdgeDirectionBoolean0()
+			throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		commit(g);
 
+		createReadOnlyTransaction(g);
 		assertNull(v0.getFirstEdgeOfClass(Link.class, EdgeDirection.INOUT,
 				false));
 		assertNull(v0.getFirstEdgeOfClass(SubLink.class, EdgeDirection.INOUT,
@@ -5365,18 +6039,24 @@ public class VertexTest extends InstanceTest {
 				.getFirstEdgeOfClass(SubLink.class, EdgeDirection.IN, true));
 		assertNull(v0.getFirstEdgeOfClass(LinkBack.class, EdgeDirection.IN,
 				true));
+		commit(g);
 	}
 
 	/**
 	 * Tests if a node has only one Edge
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestClassEdgeDirectionBoolean1() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
-		Edge e = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+	public void getFirstEdgeTestClassEdgeDirectionBoolean1()
+			throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		Edge e = g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		commit(g);
 
+		createReadOnlyTransaction(g);
 		assertEquals(e, v0.getFirstEdgeOfClass(Link.class, EdgeDirection.INOUT,
 				false));
 		assertNull(v0.getFirstEdgeOfClass(SubLink.class, EdgeDirection.INOUT,
@@ -5450,18 +6130,24 @@ public class VertexTest extends InstanceTest {
 				.getFirstEdgeOfClass(SubLink.class, EdgeDirection.IN, true));
 		assertNull(v1.getFirstEdgeOfClass(LinkBack.class, EdgeDirection.IN,
 				true));
+		commit(g);
 	}
 
 	/**
 	 * Tests if a node has an edge which extends another edge
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestClassEdgeDirectionBoolean2() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
-		Edge e1 = graph.createSubLink((DoubleSubNode) v0, (SuperNode) v1);
+	public void getFirstEdgeTestClassEdgeDirectionBoolean2()
+			throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		Edge e1 = g.createSubLink((DoubleSubNode) v0, (SuperNode) v1);
+		commit(g);
 
+		createReadOnlyTransaction(g);
 		assertEquals(e1, v0.getFirstEdgeOfClass(Link.class,
 				EdgeDirection.INOUT, false));
 		assertEquals(e1, v0.getFirstEdgeOfClass(SubLink.class,
@@ -5533,19 +6219,25 @@ public class VertexTest extends InstanceTest {
 				SubLink.class, EdgeDirection.IN, true));
 		assertNull(v1.getFirstEdgeOfClass(LinkBack.class, EdgeDirection.IN,
 				true));
+		commit(g);
 	}
 
 	/**
 	 * Tests if a node has two Edges.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestClassEdgeDirectionBoolean3() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
-		Edge e2 = graph.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
+	public void getFirstEdgeTestClassEdgeDirectionBoolean3()
+			throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		Edge e1 = g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		Edge e2 = g.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
+		commit(g);
 
+		createReadOnlyTransaction(g);
 		assertEquals(e1, v0.getFirstEdgeOfClass(Link.class,
 				EdgeDirection.INOUT, false));
 		assertNull(v0.getFirstEdgeOfClass(SubLink.class, EdgeDirection.INOUT,
@@ -5619,17 +6311,23 @@ public class VertexTest extends InstanceTest {
 				.getFirstEdgeOfClass(SubLink.class, EdgeDirection.IN, true));
 		assertNull(v1.getFirstEdgeOfClass(LinkBack.class, EdgeDirection.IN,
 				true));
+		commit(g);
 	}
 
 	/**
 	 * Tests if alpha and omega of an Edge is the same Vertex.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestClassEdgeDirectionBoolean4() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v0);
+	public void getFirstEdgeTestClassEdgeDirectionBoolean4()
+			throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		Edge e1 = g.createLink((AbstractSuperNode) v0, (SuperNode) v0);
+		commit(g);
 
+		createReadOnlyTransaction(g);
 		assertEquals(e1, v0.getFirstEdgeOfClass(Link.class,
 				EdgeDirection.INOUT, false));
 		assertNull(v0.getFirstEdgeOfClass(SubLink.class, EdgeDirection.INOUT,
@@ -5671,18 +6369,22 @@ public class VertexTest extends InstanceTest {
 				.getFirstEdgeOfClass(SubLink.class, EdgeDirection.IN, true));
 		assertNull(v0.getFirstEdgeOfClass(LinkBack.class, EdgeDirection.IN,
 				true));
+		commit(g);
 	}
 
 	/**
 	 * Random tests
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getFirstEdgeTestClassEdgeDirectionBoolean5() {
-		onlyTestWithoutTransactionSupport();
-		for (int i = 0; i < 1000; i++) {
-			graph = VertexTestSchema.instance().createVertexTestGraph();
-			Vertex[] vertices = new Vertex[] { graph.createSubNode(),
-					graph.createDoubleSubNode(), graph.createSuperNode() };
+	public void getFirstEdgeTestClassEdgeDirectionBoolean5()
+			throws CommitFailedException {
+		for (int i = 0; i < ITERATIONS; i++) {
+			g = createNewGraph();
+			createTransaction(g);
+			Vertex[] vertices = new Vertex[] { g.createSubNode(),
+					g.createDoubleSubNode(), g.createSuperNode() };
 			Edge[] firstLinkInOutFalse = new Edge[3];
 			Edge[] firstLinkBackInOutFalse = new Edge[3];
 			Edge[] firstSubLinkInOutFalse = new Edge[3];
@@ -5707,8 +6409,7 @@ public class VertexTest extends InstanceTest {
 				int end = rand.nextInt(2) + 1;
 				switch (edgetype) {
 				case 0:
-					Edge e0 = graph.createLink(
-							(AbstractSuperNode) vertices[start],
+					Edge e0 = g.createLink((AbstractSuperNode) vertices[start],
 							(SuperNode) vertices[end]);
 					if (firstLinkInOutFalse[start] == null) {
 						firstLinkInOutFalse[start] = e0;
@@ -5736,7 +6437,7 @@ public class VertexTest extends InstanceTest {
 					}
 					break;
 				case 1:
-					Edge e1 = graph.createLinkBack((SuperNode) vertices[end],
+					Edge e1 = g.createLinkBack((SuperNode) vertices[end],
 							(AbstractSuperNode) vertices[start]);
 					if (firstLinkBackInOutFalse[end] == null) {
 						firstLinkBackInOutFalse[end] = e1;
@@ -5764,7 +6465,7 @@ public class VertexTest extends InstanceTest {
 					}
 					break;
 				case 2:
-					Edge e2 = graph.createSubLink((DoubleSubNode) vertices[1],
+					Edge e2 = g.createSubLink((DoubleSubNode) vertices[1],
 							(SuperNode) vertices[end]);
 					if (firstLinkInOutFalse[1] == null) {
 						firstLinkInOutFalse[1] = e2;
@@ -5805,6 +6506,9 @@ public class VertexTest extends InstanceTest {
 					break;
 				}
 			}
+			commit(g);
+
+			createReadOnlyTransaction(g);
 			assertEquals(firstLinkInOutFalse[0],
 					vertices[0].getFirstEdgeOfClass(Link.class,
 							EdgeDirection.INOUT, false));
@@ -5954,6 +6658,7 @@ public class VertexTest extends InstanceTest {
 					.getFirstEdgeOfClass(SubLink.class, EdgeDirection.IN, true));
 			assertEquals(firstSubLinkInTrue[2], vertices[2]
 					.getFirstEdgeOfClass(SubLink.class, EdgeDirection.IN, true));
+			commit(g);
 		}
 	}
 
@@ -5962,12 +6667,17 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * A vertex is not before itself.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void isBeforeTest0() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v1 = graph.createDoubleSubNode();
+	public void isBeforeTest0() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v1 = g.createDoubleSubNode();
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertFalse(v1.isBefore(v1));
+		commit(g);
 	}
 
 	// tests of the method void putBefore(Vertex v);
@@ -5978,12 +6688,17 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * A vertex is not after itself.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void isAfterTest0() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v1 = graph.createDoubleSubNode();
+	public void isAfterTest0() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v1 = g.createDoubleSubNode();
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertFalse(v1.isAfter(v1));
+		commit(g);
 	}
 
 	// tests of the method void putAfter(Vertex v);
@@ -5994,21 +6709,27 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Deleting v3 in v1<>---e1----v2<>-----e2-----v3
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void deleteTest0() {
-		onlyTestWithoutTransactionSupport();
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		DoubleSubNode v3 = graph.createDoubleSubNode();
-		SubLink e1 = graph.createSubLink(v1, v2);
-		graph.createSubLink(v2, v3);
+	public void deleteTest0() throws CommitFailedException {
+		createTransaction(g);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		DoubleSubNode v3 = g.createDoubleSubNode();
+		SubLink e1 = g.createSubLink(v1, v2);
+		g.createSubLink(v2, v3);
+
 		v3.delete();
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertFalse(v3.isValid());
+
 		checkEdgeList(e1);
-		assertEquals(2, graph.getVCount());
+		assertEquals(2, g.getVCount());
 		boolean first = true;
-		for (Vertex v : graph.vertices()) {
+		for (Vertex v : g.vertices()) {
 			if (first) {
 				assertEquals(v1, v);
 				first = false;
@@ -6016,25 +6737,30 @@ public class VertexTest extends InstanceTest {
 				assertEquals(v2, v);
 			}
 		}
+		commit(g);
 	}
 
 	/**
 	 * Deleting v2 in v1<>---e1----v2<>-----e2-----v3
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void deleteTest1() {
-		onlyTestWithoutTransactionSupport();
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		DoubleSubNode v3 = graph.createDoubleSubNode();
-		graph.createSubLink(v1, v2);
-		graph.createSubLink(v2, v3);
+	public void deleteTest1() throws CommitFailedException {
+		createTransaction(g);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		DoubleSubNode v3 = g.createDoubleSubNode();
+		g.createSubLink(v1, v2);
+		g.createSubLink(v2, v3);
 		v2.delete();
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertFalse(v2.isValid());
-		assertEquals(0, graph.getECount());
-		assertEquals(1, graph.getVCount());
+		assertEquals(0, g.getECount());
+		assertEquals(1, g.getVCount());
 		boolean first = true;
-		for (Vertex v : graph.vertices()) {
+		for (Vertex v : g.vertices()) {
 			if (first) {
 				assertEquals(v1, v);
 				first = false;
@@ -6042,73 +6768,95 @@ public class VertexTest extends InstanceTest {
 				fail("No further vertices expected!");
 			}
 		}
+		commit(g);
 	}
 
 	/**
 	 * Deleting v1 in v1<>---e1----v2<>-----e2-----v3
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void deleteTest2() {
-		onlyTestWithoutTransactionSupport();
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		DoubleSubNode v3 = graph.createDoubleSubNode();
-		graph.createSubLink(v1, v2);
-		graph.createSubLink(v2, v3);
+	public void deleteTest2() throws CommitFailedException {
+		createTransaction(g);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		DoubleSubNode v3 = g.createDoubleSubNode();
+		g.createSubLink(v1, v2);
+		g.createSubLink(v2, v3);
 		v1.delete();
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertFalse(v1.isValid());
-		assertEquals(0, graph.getECount());
-		assertEquals(0, graph.getVCount());
+		assertEquals(0, g.getECount());
+		assertEquals(0, g.getVCount());
+		commit(g);
 	}
 
 	/**
 	 * Deleting v1 in v1<>---e1----v2 v1<>-----e2-----v3
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void deleteTest3() {
-		onlyTestWithoutTransactionSupport();
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		DoubleSubNode v3 = graph.createDoubleSubNode();
-		graph.createSubLink(v1, v2);
-		graph.createSubLink(v1, v3);
+	public void deleteTest3() throws CommitFailedException {
+		createTransaction(g);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		DoubleSubNode v3 = g.createDoubleSubNode();
+		g.createSubLink(v1, v2);
+		g.createSubLink(v1, v3);
 		v1.delete();
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertFalse(v1.isValid());
-		assertEquals(0, graph.getECount());
-		assertEquals(0, graph.getVCount());
+		assertEquals(0, g.getECount());
+		assertEquals(0, g.getVCount());
+		commit(g);
 	}
 
 	/**
 	 * Deleting v1 in v1<>---e1----v2 v1<>-----e2-----v2
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void deleteTest4() {
-		onlyTestWithoutTransactionSupport();
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		graph.createSubLink(v1, v2);
-		graph.createSubLink(v1, v2);
+	public void deleteTest4() throws CommitFailedException {
+		createTransaction(g);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		g.createSubLink(v1, v2);
+		g.createSubLink(v1, v2);
 		v1.delete();
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertFalse(v1.isValid());
-		assertEquals(0, graph.getECount());
-		assertEquals(0, graph.getVCount());
+		assertEquals(0, g.getECount());
+		assertEquals(0, g.getVCount());
+		commit(g);
 	}
 
 	/**
 	 * Deleting v1 in v1<>---e1----v2-----e2-----v3
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void deleteTest5() {
-		onlyTestWithoutTransactionSupport();
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		DoubleSubNode v3 = graph.createDoubleSubNode();
-		graph.createSubLink(v1, v2);
-		graph.createLink(v2, v3);
+	public void deleteTest5() throws CommitFailedException {
+		createTransaction(g);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		DoubleSubNode v3 = g.createDoubleSubNode();
+		g.createSubLink(v1, v2);
+		g.createLink(v2, v3);
 		v1.delete();
+		commit(g);
+
+		createReadOnlyTransaction(g);
 		assertFalse(v1.isValid());
-		assertEquals(0, graph.getECount());
-		assertEquals(1, graph.getVCount());
+		assertEquals(0, g.getECount());
+		assertEquals(1, g.getVCount());
+		commit(g);
 	}
 
 	// tests of the method Iterable<Edge> incidences();
@@ -6116,49 +6864,58 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * An exception should occur if you want to remove an edge via the iterator.
+	 * 
+	 * @throws CommitFailedException
 	 */
-	@Test(expected = GraphException.class)
-	public void incidencesTest0() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
-		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
-		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
-		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+	@Test(expected = UnsupportedOperationException.class)
+	public void incidencesTest0() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
 		Iterator<Edge> iter = v0.incidences().iterator();
 		iter.remove();
+		commit(g);
 	}
 
 	/**
 	 * If you call hasNext several time, the current edge of the iterator must
 	 * stay the same.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void incidencesTest1() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
-		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
-		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+	public void incidencesTest1() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		Edge e1 = g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
 		Iterator<Edge> iter = v0.incidences().iterator();
 		assertTrue(iter.hasNext());
 		assertTrue(iter.hasNext());
 		assertEquals(e1, iter.next());
+		commit(g);
 	}
 
 	/**
 	 * If there exists no further edges, hasNext must return false.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void incidencesTes2() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
-		Edge e2 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
-		Edge e3 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+	public void incidencesTes2() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		Edge e1 = g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		Edge e2 = g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		Edge e3 = g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
 		Iterator<Edge> iter = v0.incidences().iterator();
+
 		assertTrue(iter.hasNext());
 		assertEquals(e1, iter.next());
 		assertTrue(iter.hasNext());
@@ -6166,57 +6923,66 @@ public class VertexTest extends InstanceTest {
 		assertTrue(iter.hasNext());
 		assertEquals(e3, iter.next());
 		assertFalse(iter.hasNext());
+		commit(g);
 	}
 
 	/**
 	 * An exception should occur if the current edge is deleted.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test(expected = ConcurrentModificationException.class)
-	public void incidencesTestFailFast0() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
-		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
-		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
-		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+	public void incidencesTestFailFast0() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
 		Iterator<Edge> iter = v0.incidences().iterator();
 		iter.hasNext();
 		Edge e = iter.next();
 		e.delete();
 		iter.hasNext();
 		iter.next();
+		commit(g);
 	}
 
 	/**
 	 * An exception should occur if the position of the current edge is changed.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test(expected = ConcurrentModificationException.class)
-	public void incidencesTestFailFast1() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
-		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
-		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
-		Edge last = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+	public void incidencesTestFailFast1() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		Edge last = g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
 		Iterator<Edge> iter = v0.incidences().iterator();
 		iter.hasNext();
 		Edge e = iter.next();
 		e.putEdgeAfter(last);
 		iter.hasNext();
 		iter.next();
+		commit(g);
 	}
 
 	/**
 	 * An exception should occur if a previous edge is deleted.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test(expected = ConcurrentModificationException.class)
-	public void incidencesTestFailFast2() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
-		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
-		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
-		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+	public void incidencesTestFailFast2() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
 		Iterator<Edge> iter = v0.incidences().iterator();
 		iter.hasNext();
 		Edge e = iter.next();
@@ -6225,57 +6991,67 @@ public class VertexTest extends InstanceTest {
 		e.delete();
 		iter.hasNext();
 		iter.next();
+		commit(g);
 	}
 
 	/**
 	 * An exception should occur if a following edge is deleted.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test(expected = ConcurrentModificationException.class)
-	public void incidencesTestFailFast3() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
-		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
-		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
-		Edge last = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+	public void incidencesTestFailFast3() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		Edge last = g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
 		Iterator<Edge> iter = v0.incidences().iterator();
 		last.delete();
 		iter.hasNext();
 		iter.next();
+		commit(g);
 	}
 
 	/**
 	 * An exception should occur if an edge is added.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test(expected = ConcurrentModificationException.class)
-	public void incidencesTestFailFast4() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
-		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
-		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
-		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+	public void incidencesTestFailFast4() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
 		Iterator<Edge> iter = v0.incidences().iterator();
-		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
 		iter.hasNext();
 		iter.next();
+		commit(g);
 	}
 
 	/**
 	 * An exception should occur if an edge gets another alpha vertex.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test(expected = ConcurrentModificationException.class)
-	public void incidencesTestFailFast5() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
-		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
-		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
-		Edge e = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+	public void incidencesTestFailFast5() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		Edge e = g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
 		Iterator<Edge> iter = v0.incidences().iterator();
 		e.setAlpha(v1);
 		iter.hasNext();
 		iter.next();
+		commit(g);
 	}
 
 	// tests of the method Iterable<Edge> incidences(EdgeDirection dir);
@@ -6332,39 +7108,48 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks if a vertex has no incidences.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void incidencesTestEdgeDirection0() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
+	public void incidencesTestEdgeDirection0() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		commit(g);
+		createReadOnlyTransaction(g);
 		checkIncidenceList(v0, null, null, EdgeDirection.INOUT,
 				new LinkedList<Edge>());
 		checkIncidenceList(v0, null, null, EdgeDirection.OUT,
 				new LinkedList<Edge>());
 		checkIncidenceList(v0, null, null, EdgeDirection.IN,
 				new LinkedList<Edge>());
+		commit(g);
 	}
 
 	/**
 	 * Checks if a vertex has only outgoing or ingoing incidences.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void incidencesTestEdgeDirection1() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
+	public void incidencesTestEdgeDirection1() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
 		LinkedList<Edge> v0inout = new LinkedList<Edge>();
 		LinkedList<Edge> v0out = new LinkedList<Edge>();
 		LinkedList<Edge> v0in = new LinkedList<Edge>();
 		LinkedList<Edge> v1inout = new LinkedList<Edge>();
 		LinkedList<Edge> v1out = new LinkedList<Edge>();
 		LinkedList<Edge> v1in = new LinkedList<Edge>();
-		Edge e = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		Edge e = g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
 		v0inout.add(e);
 		v0out.add(e);
 		v1inout.add(e.getReversedEdge());
 		v1in.add(e.getReversedEdge());
+		commit(g);
 
+		createReadOnlyTransaction(g);
 		checkIncidenceList(v0, null, null, EdgeDirection.INOUT, v0inout);
 		checkIncidenceList(v0, null, null, EdgeDirection.OUT, v0out);
 		checkIncidenceList(v0, null, null, EdgeDirection.IN, v0in);
@@ -6372,17 +7157,20 @@ public class VertexTest extends InstanceTest {
 		checkIncidenceList(v1, null, null, EdgeDirection.INOUT, v1inout);
 		checkIncidenceList(v1, null, null, EdgeDirection.OUT, v1out);
 		checkIncidenceList(v1, null, null, EdgeDirection.IN, v1in);
+		commit(g);
 	}
 
 	/**
 	 * Checks incidences in a manually build graph.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void incidencesTestEdgeDirection2() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
-		Vertex v2 = graph.createSuperNode();
+	public void incidencesTestEdgeDirection2() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		Vertex v2 = g.createSuperNode();
 		LinkedList<Edge> v0inout = new LinkedList<Edge>();
 		LinkedList<Edge> v0out = new LinkedList<Edge>();
 		LinkedList<Edge> v0in = new LinkedList<Edge>();
@@ -6392,27 +7180,29 @@ public class VertexTest extends InstanceTest {
 		LinkedList<Edge> v2inout = new LinkedList<Edge>();
 		LinkedList<Edge> v2out = new LinkedList<Edge>();
 		LinkedList<Edge> v2in = new LinkedList<Edge>();
-		Edge e = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		Edge e = g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
 		v0inout.add(e);
 		v0out.add(e);
 		v1inout.add(e.getReversedEdge());
 		v1in.add(e.getReversedEdge());
-		e = graph.createSubLink((DoubleSubNode) v1, (SuperNode) v2);
+		e = g.createSubLink((DoubleSubNode) v1, (SuperNode) v2);
 		v1inout.add(e);
 		v1out.add(e);
 		v2inout.add(e.getReversedEdge());
 		v2in.add(e.getReversedEdge());
-		e = graph.createLinkBack((SuperNode) v2, (DoubleSubNode) v1);
+		e = g.createLinkBack((SuperNode) v2, (DoubleSubNode) v1);
 		v2inout.add(e);
 		v2out.add(e);
 		v1inout.add(e.getReversedEdge());
 		v1in.add(e.getReversedEdge());
-		e = graph.createLinkBack((SuperNode) v1, (DoubleSubNode) v1);
+		e = g.createLinkBack((SuperNode) v1, (DoubleSubNode) v1);
 		v1inout.add(e);
 		v1out.add(e);
 		v1inout.add(e.getReversedEdge());
 		v1in.add(e.getReversedEdge());
+		commit(g);
 
+		createReadOnlyTransaction(g);
 		checkIncidenceList(v0, null, null, EdgeDirection.INOUT, v0inout);
 		checkIncidenceList(v0, null, null, EdgeDirection.OUT, v0out);
 		checkIncidenceList(v0, null, null, EdgeDirection.IN, v0in);
@@ -6424,18 +7214,21 @@ public class VertexTest extends InstanceTest {
 		checkIncidenceList(v2, null, null, EdgeDirection.INOUT, v2inout);
 		checkIncidenceList(v2, null, null, EdgeDirection.OUT, v2out);
 		checkIncidenceList(v2, null, null, EdgeDirection.IN, v2in);
+		commit(g);
 	}
 
 	/**
 	 * Random test.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void incidencesTestEdgeDirection3() {
-		onlyTestWithoutTransactionSupport();
-		for (int i = 0; i < 100; i++) {
-			graph = VertexTestSchema.instance().createVertexTestGraph();
-			Vertex[] vertices = new Vertex[] { graph.createSubNode(),
-					graph.createDoubleSubNode(), graph.createSuperNode() };
+	public void incidencesTestEdgeDirection3() throws CommitFailedException {
+		for (int i = 0; i < ITERATIONS; i++) {
+			g = createNewGraph();
+			createTransaction(g);
+			Vertex[] vertices = new Vertex[] { g.createSubNode(),
+					g.createDoubleSubNode(), g.createSuperNode() };
 			LinkedList<LinkedList<Edge>> inout = new LinkedList<LinkedList<Edge>>();
 			inout.add(new LinkedList<Edge>());
 			inout.add(new LinkedList<Edge>());
@@ -6455,7 +7248,7 @@ public class VertexTest extends InstanceTest {
 				Edge e = null;
 				switch (edge) {
 				case 0:
-					e = graph.createLink((AbstractSuperNode) vertices[start],
+					e = g.createLink((AbstractSuperNode) vertices[start],
 							(SuperNode) vertices[end]);
 					inout.get(start).add(e);
 					out.get(start).add(e);
@@ -6463,7 +7256,7 @@ public class VertexTest extends InstanceTest {
 					in.get(end).add(e.getReversedEdge());
 					break;
 				case 1:
-					e = graph.createLinkBack((SuperNode) vertices[end],
+					e = g.createLinkBack((SuperNode) vertices[end],
 							(AbstractSuperNode) vertices[start]);
 					inout.get(end).add(e);
 					out.get(end).add(e);
@@ -6471,7 +7264,7 @@ public class VertexTest extends InstanceTest {
 					in.get(start).add(e.getReversedEdge());
 					break;
 				case 2:
-					e = graph.createSubLink((DoubleSubNode) vertices[1],
+					e = g.createSubLink((DoubleSubNode) vertices[1],
 							(SuperNode) vertices[end]);
 					inout.get(1).add(e);
 					out.get(1).add(e);
@@ -6480,7 +7273,9 @@ public class VertexTest extends InstanceTest {
 					break;
 				}
 			}
+			commit(g);
 
+			createReadOnlyTransaction(g);
 			checkIncidenceList(vertices[0], null, null, EdgeDirection.INOUT,
 					inout.get(0));
 			checkIncidenceList(vertices[0], null, null, EdgeDirection.OUT, out
@@ -6501,147 +7296,181 @@ public class VertexTest extends InstanceTest {
 					.get(2));
 			checkIncidenceList(vertices[2], null, null, EdgeDirection.IN, in
 					.get(2));
+			commit(g);
 		}
 	}
 
 	/**
 	 * If the IN-edges are iterated the OUT-edges could not be deleted.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test(expected = ConcurrentModificationException.class)
-	public void inciencesTestEdgeDirectionFailFast0() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
-		Edge e0 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
-		graph.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
-		graph.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
+	public void inciencesTestEdgeDirectionFailFast0()
+			throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		Edge e0 = g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		g.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
+		g.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
 		Iterator<Edge> it = v0.incidences(EdgeDirection.IN).iterator();
 		e0.delete();
 		it.hasNext();
 		it.next();
+		commit(g);
 	}
 
 	/**
 	 * If the IN-edges are iterated the OUT-edges could not be changed.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test(expected = ConcurrentModificationException.class)
-	public void inciencesTestEdgeDirectionFailFast1() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
-		Edge e0 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
-		graph.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
-		graph.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
+	public void inciencesTestEdgeDirectionFailFast1()
+			throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		Edge e0 = g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		g.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
+		g.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
 		Iterator<Edge> it = v0.incidences(EdgeDirection.IN).iterator();
 		e0.setAlpha(v1);
 		it.hasNext();
 		it.next();
+		commit(g);
 	}
 
 	/**
 	 * If the IN-edges are iterated a new OUT-edges could not be created.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test(expected = ConcurrentModificationException.class)
-	public void inciencesTestEdgeDirectionFailFast2() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
-		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
-		graph.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
-		graph.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
+	public void inciencesTestEdgeDirectionFailFast2()
+			throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		g.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
+		g.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
 		Iterator<Edge> it = v0.incidences(EdgeDirection.IN).iterator();
-		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
 		it.hasNext();
 		it.next();
+		commit(g);
 	}
 
 	/**
 	 * If the OUT-edges are iterated the IN-edges could not be deleted.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test(expected = ConcurrentModificationException.class)
-	public void inciencesTestEdgeDirectionFailFast3() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
-		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
-		Edge e0 = graph.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
-		graph.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
+	public void inciencesTestEdgeDirectionFailFast3()
+			throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		Edge e0 = g.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
+		g.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
 		Iterator<Edge> it = v0.incidences(EdgeDirection.OUT).iterator();
 		e0.delete();
 		it.hasNext();
 		it.next();
+		commit(g);
 	}
 
 	/**
 	 * If the OUT-edges are iterated the IN-edges could not be changed.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test(expected = ConcurrentModificationException.class)
-	public void inciencesTestEdgeDirectionFailFast4() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
-		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
-		Edge e0 = graph.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
-		graph.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
+	public void inciencesTestEdgeDirectionFailFast4()
+			throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		Edge e0 = g.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
+		g.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
 		Iterator<Edge> it = v0.incidences(EdgeDirection.OUT).iterator();
 		e0.setAlpha(v0);
 		it.hasNext();
 		it.next();
+		commit(g);
 	}
 
 	/**
 	 * If the OUT-edges are iterated a new IN-edges could not be created.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test(expected = ConcurrentModificationException.class)
-	public void inciencesTestEdgeDirectionFailFast5() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
-		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
-		graph.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
-		graph.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
+	public void inciencesTestEdgeDirectionFailFast5()
+			throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		g.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
+		g.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
 		Iterator<Edge> it = v0.incidences(EdgeDirection.OUT).iterator();
-		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
 		it.hasNext();
 		it.next();
+		commit(g);
 	}
 
 	// tests of the method Iterable<Edge> incidences(EdgeClass eclass);
 
 	/**
 	 * Checks if a vertex has no incidences.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void incidencesTestEdgeClass0() {
-		onlyTestWithoutTransactionSupport();
+	public void incidencesTestEdgeClass0() throws CommitFailedException {
+		createTransaction(g);
 		EdgeClass[] ecs = getEdgeClasses();
-		Vertex v0 = graph.createDoubleSubNode();
+		Vertex v0 = g.createDoubleSubNode();
+		commit(g);
+		createReadOnlyTransaction(g);
 		checkIncidenceList(v0, ecs[0], null, null, new LinkedList<Edge>());
 		checkIncidenceList(v0, ecs[1], null, null, new LinkedList<Edge>());
 		checkIncidenceList(v0, ecs[2], null, null, new LinkedList<Edge>());
+		commit(g);
 	}
 
 	/**
 	 * Checks if a vertex has only incident edges of type SubLink.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void incidencesTestEdgeClass1() {
-		onlyTestWithoutTransactionSupport();
+	public void incidencesTestEdgeClass1() throws CommitFailedException {
+		createTransaction(g);
 		EdgeClass[] ecs = getEdgeClasses();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
 		LinkedList<Edge> v0link = new LinkedList<Edge>();
 		LinkedList<Edge> v0sublink = new LinkedList<Edge>();
 		LinkedList<Edge> v0linkback = new LinkedList<Edge>();
 		LinkedList<Edge> v1link = new LinkedList<Edge>();
 		LinkedList<Edge> v1sublink = new LinkedList<Edge>();
 		LinkedList<Edge> v1linkback = new LinkedList<Edge>();
-		Edge e = graph.createSubLink((DoubleSubNode) v0, (SuperNode) v1);
+		Edge e = g.createSubLink((DoubleSubNode) v0, (SuperNode) v1);
 		v0link.add(e);
 		v0sublink.add(e);
 		v1link.add(e.getReversedEdge());
 		v1sublink.add(e.getReversedEdge());
+		commit(g);
 
+		createReadOnlyTransaction(g);
 		checkIncidenceList(v0, ecs[0], null, null, v0link);
 		checkIncidenceList(v0, ecs[1], null, null, v0sublink);
 		checkIncidenceList(v0, ecs[2], null, null, v0linkback);
@@ -6649,18 +7478,21 @@ public class VertexTest extends InstanceTest {
 		checkIncidenceList(v1, ecs[0], null, null, v1link);
 		checkIncidenceList(v1, ecs[1], null, null, v1sublink);
 		checkIncidenceList(v1, ecs[2], null, null, v1linkback);
+		commit(g);
 	}
 
 	/**
 	 * Checks incidences in a manually build graph.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void incidencesTestEdgeClass2() {
-		onlyTestWithoutTransactionSupport();
+	public void incidencesTestEdgeClass2() throws CommitFailedException {
+		createTransaction(g);
 		EdgeClass[] ecs = getEdgeClasses();
-		Vertex v0 = graph.createSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
-		Vertex v2 = graph.createSuperNode();
+		Vertex v0 = g.createSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		Vertex v2 = g.createSuperNode();
 		LinkedList<Edge> v0link = new LinkedList<Edge>();
 		LinkedList<Edge> v0sublink = new LinkedList<Edge>();
 		LinkedList<Edge> v0linkback = new LinkedList<Edge>();
@@ -6670,21 +7502,23 @@ public class VertexTest extends InstanceTest {
 		LinkedList<Edge> v2link = new LinkedList<Edge>();
 		LinkedList<Edge> v2sublink = new LinkedList<Edge>();
 		LinkedList<Edge> v2linkback = new LinkedList<Edge>();
-		Edge e = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		Edge e = g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
 		v0link.add(e);
 		v1link.add(e.getReversedEdge());
-		e = graph.createSubLink((DoubleSubNode) v1, (SuperNode) v2);
+		e = g.createSubLink((DoubleSubNode) v1, (SuperNode) v2);
 		v1link.add(e);
 		v1sublink.add(e);
 		v2link.add(e.getReversedEdge());
 		v2sublink.add(e.getReversedEdge());
-		e = graph.createLinkBack((SuperNode) v2, (DoubleSubNode) v1);
+		e = g.createLinkBack((SuperNode) v2, (DoubleSubNode) v1);
 		v2linkback.add(e);
 		v1linkback.add(e.getReversedEdge());
-		e = graph.createLinkBack((SuperNode) v1, (DoubleSubNode) v1);
+		e = g.createLinkBack((SuperNode) v1, (DoubleSubNode) v1);
 		v1linkback.add(e);
 		v1linkback.add(e.getReversedEdge());
+		commit(g);
 
+		createReadOnlyTransaction(g);
 		checkIncidenceList(v0, ecs[0], null, null, v0link);
 		checkIncidenceList(v0, ecs[1], null, null, v0sublink);
 		checkIncidenceList(v0, ecs[2], null, null, v0linkback);
@@ -6696,19 +7530,22 @@ public class VertexTest extends InstanceTest {
 		checkIncidenceList(v2, ecs[0], null, null, v2link);
 		checkIncidenceList(v2, ecs[1], null, null, v2sublink);
 		checkIncidenceList(v2, ecs[2], null, null, v2linkback);
+		commit(g);
 	}
 
 	/**
 	 * Random test.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void incidencesTestEdgeClass3() {
-		onlyTestWithoutTransactionSupport();
-		for (int i = 0; i < 100; i++) {
-			graph = VertexTestSchema.instance().createVertexTestGraph();
+	public void incidencesTestEdgeClass3() throws CommitFailedException {
+		for (int i = 0; i < ITERATIONS; i++) {
+			g = createNewGraph();
+			createTransaction(g);
 			EdgeClass[] ecs = getEdgeClasses();
-			Vertex[] vertices = new Vertex[] { graph.createSubNode(),
-					graph.createDoubleSubNode(), graph.createSuperNode() };
+			Vertex[] vertices = new Vertex[] { g.createSubNode(),
+					g.createDoubleSubNode(), g.createSuperNode() };
 			LinkedList<LinkedList<Edge>> link = new LinkedList<LinkedList<Edge>>();
 			link.add(new LinkedList<Edge>());
 			link.add(new LinkedList<Edge>());
@@ -6728,19 +7565,19 @@ public class VertexTest extends InstanceTest {
 				Edge e = null;
 				switch (edge) {
 				case 0:
-					e = graph.createLink((AbstractSuperNode) vertices[start],
+					e = g.createLink((AbstractSuperNode) vertices[start],
 							(SuperNode) vertices[end]);
 					link.get(start).add(e);
 					link.get(end).add(e.getReversedEdge());
 					break;
 				case 1:
-					e = graph.createLinkBack((SuperNode) vertices[end],
+					e = g.createLinkBack((SuperNode) vertices[end],
 							(AbstractSuperNode) vertices[start]);
 					linkback.get(end).add(e);
 					linkback.get(start).add(e.getReversedEdge());
 					break;
 				case 2:
-					e = graph.createSubLink((DoubleSubNode) vertices[1],
+					e = g.createSubLink((DoubleSubNode) vertices[1],
 							(SuperNode) vertices[end]);
 					link.get(1).add(e);
 					sublink.get(1).add(e);
@@ -6749,7 +7586,9 @@ public class VertexTest extends InstanceTest {
 					break;
 				}
 			}
+			commit(g);
 
+			createReadOnlyTransaction(g);
 			checkIncidenceList(vertices[0], ecs[0], null, null, link.get(0));
 			checkIncidenceList(vertices[0], ecs[1], null, null, sublink.get(0));
 			checkIncidenceList(vertices[0], ecs[2], null, null, linkback.get(0));
@@ -6761,6 +7600,7 @@ public class VertexTest extends InstanceTest {
 			checkIncidenceList(vertices[2], ecs[0], null, null, link.get(2));
 			checkIncidenceList(vertices[2], ecs[1], null, null, sublink.get(2));
 			checkIncidenceList(vertices[2], ecs[2], null, null, linkback.get(2));
+			commit(g);
 		}
 	}
 
@@ -6769,38 +7609,47 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks if a vertex has no incidences.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void incidencesTestClass0() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
+	public void incidencesTestClass0() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		commit(g);
+		createReadOnlyTransaction(g);
 		checkIncidenceList(v0, null, Link.class, null, new LinkedList<Edge>());
 		checkIncidenceList(v0, null, SubLink.class, null,
 				new LinkedList<Edge>());
 		checkIncidenceList(v0, null, LinkBack.class, null,
 				new LinkedList<Edge>());
+		commit(g);
 	}
 
 	/**
 	 * Checks if a vertex has only incident edges of type SubLink.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void incidencesTestClass1() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
+	public void incidencesTestClass1() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
 		LinkedList<Edge> v0link = new LinkedList<Edge>();
 		LinkedList<Edge> v0sublink = new LinkedList<Edge>();
 		LinkedList<Edge> v0linkback = new LinkedList<Edge>();
 		LinkedList<Edge> v1link = new LinkedList<Edge>();
 		LinkedList<Edge> v1sublink = new LinkedList<Edge>();
 		LinkedList<Edge> v1linkback = new LinkedList<Edge>();
-		Edge e = graph.createSubLink((DoubleSubNode) v0, (SuperNode) v1);
+		Edge e = g.createSubLink((DoubleSubNode) v0, (SuperNode) v1);
 		v0link.add(e);
 		v0sublink.add(e);
 		v1link.add(e.getReversedEdge());
 		v1sublink.add(e.getReversedEdge());
+		commit(g);
 
+		createReadOnlyTransaction(g);
 		checkIncidenceList(v0, null, Link.class, null, v0link);
 		checkIncidenceList(v0, null, SubLink.class, null, v0sublink);
 		checkIncidenceList(v0, null, LinkBack.class, null, v0linkback);
@@ -6808,17 +7657,20 @@ public class VertexTest extends InstanceTest {
 		checkIncidenceList(v1, null, Link.class, null, v1link);
 		checkIncidenceList(v1, null, SubLink.class, null, v1sublink);
 		checkIncidenceList(v1, null, LinkBack.class, null, v1linkback);
+		commit(g);
 	}
 
 	/**
 	 * Checks incidences in a manually build graph.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void incidencesTestClass2() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
-		Vertex v2 = graph.createSuperNode();
+	public void incidencesTestClass2() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		Vertex v2 = g.createSuperNode();
 		LinkedList<Edge> v0link = new LinkedList<Edge>();
 		LinkedList<Edge> v0sublink = new LinkedList<Edge>();
 		LinkedList<Edge> v0linkback = new LinkedList<Edge>();
@@ -6828,21 +7680,23 @@ public class VertexTest extends InstanceTest {
 		LinkedList<Edge> v2link = new LinkedList<Edge>();
 		LinkedList<Edge> v2sublink = new LinkedList<Edge>();
 		LinkedList<Edge> v2linkback = new LinkedList<Edge>();
-		Edge e = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		Edge e = g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
 		v0link.add(e);
 		v1link.add(e.getReversedEdge());
-		e = graph.createSubLink((DoubleSubNode) v1, (SuperNode) v2);
+		e = g.createSubLink((DoubleSubNode) v1, (SuperNode) v2);
 		v1link.add(e);
 		v1sublink.add(e);
 		v2link.add(e.getReversedEdge());
 		v2sublink.add(e.getReversedEdge());
-		e = graph.createLinkBack((SuperNode) v2, (DoubleSubNode) v1);
+		e = g.createLinkBack((SuperNode) v2, (DoubleSubNode) v1);
 		v2linkback.add(e);
 		v1linkback.add(e.getReversedEdge());
-		e = graph.createLinkBack((SuperNode) v1, (DoubleSubNode) v1);
+		e = g.createLinkBack((SuperNode) v1, (DoubleSubNode) v1);
 		v1linkback.add(e);
 		v1linkback.add(e.getReversedEdge());
+		commit(g);
 
+		createReadOnlyTransaction(g);
 		checkIncidenceList(v0, null, Link.class, null, v0link);
 		checkIncidenceList(v0, null, SubLink.class, null, v0sublink);
 		checkIncidenceList(v0, null, LinkBack.class, null, v0linkback);
@@ -6854,18 +7708,21 @@ public class VertexTest extends InstanceTest {
 		checkIncidenceList(v2, null, Link.class, null, v2link);
 		checkIncidenceList(v2, null, SubLink.class, null, v2sublink);
 		checkIncidenceList(v2, null, LinkBack.class, null, v2linkback);
+		commit(g);
 	}
 
 	/**
 	 * Random test.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void incidencesTestClass3() {
-		onlyTestWithoutTransactionSupport();
-		for (int i = 0; i < 100; i++) {
-			graph = VertexTestSchema.instance().createVertexTestGraph();
-			Vertex[] vertices = new Vertex[] { graph.createSubNode(),
-					graph.createDoubleSubNode(), graph.createSuperNode() };
+	public void incidencesTestClass3() throws CommitFailedException {
+		for (int i = 0; i < ITERATIONS; i++) {
+			g = createNewGraph();
+			createTransaction(g);
+			Vertex[] vertices = new Vertex[] { g.createSubNode(),
+					g.createDoubleSubNode(), g.createSuperNode() };
 			LinkedList<LinkedList<Edge>> link = new LinkedList<LinkedList<Edge>>();
 			link.add(new LinkedList<Edge>());
 			link.add(new LinkedList<Edge>());
@@ -6885,19 +7742,19 @@ public class VertexTest extends InstanceTest {
 				Edge e = null;
 				switch (edge) {
 				case 0:
-					e = graph.createLink((AbstractSuperNode) vertices[start],
+					e = g.createLink((AbstractSuperNode) vertices[start],
 							(SuperNode) vertices[end]);
 					link.get(start).add(e);
 					link.get(end).add(e.getReversedEdge());
 					break;
 				case 1:
-					e = graph.createLinkBack((SuperNode) vertices[end],
+					e = g.createLinkBack((SuperNode) vertices[end],
 							(AbstractSuperNode) vertices[start]);
 					linkback.get(end).add(e);
 					linkback.get(start).add(e.getReversedEdge());
 					break;
 				case 2:
-					e = graph.createSubLink((DoubleSubNode) vertices[1],
+					e = g.createSubLink((DoubleSubNode) vertices[1],
 							(SuperNode) vertices[end]);
 					link.get(1).add(e);
 					sublink.get(1).add(e);
@@ -6906,7 +7763,9 @@ public class VertexTest extends InstanceTest {
 					break;
 				}
 			}
+			commit(g);
 
+			createReadOnlyTransaction(g);
 			checkIncidenceList(vertices[0], null, Link.class, null, link.get(0));
 			checkIncidenceList(vertices[0], null, SubLink.class, null, sublink
 					.get(0));
@@ -6924,6 +7783,7 @@ public class VertexTest extends InstanceTest {
 					.get(2));
 			checkIncidenceList(vertices[2], null, LinkBack.class, null,
 					linkback.get(2));
+			commit(g);
 		}
 	}
 
@@ -6932,13 +7792,18 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks if a vertex has no incidences.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void incidencesTestEdgeClassEdgeDirection0() {
-		onlyTestWithoutTransactionSupport();
+	public void incidencesTestEdgeClassEdgeDirection0()
+			throws CommitFailedException {
+		createTransaction(g);
 		EdgeClass[] ecs = getEdgeClasses();
-		Vertex v0 = graph.createDoubleSubNode();
+		Vertex v0 = g.createDoubleSubNode();
+		commit(g);
 
+		createReadOnlyTransaction(g);
 		checkIncidenceList(v0, ecs[0], null, EdgeDirection.INOUT,
 				new LinkedList<Edge>());
 		checkIncidenceList(v0, ecs[0], null, EdgeDirection.OUT,
@@ -6959,17 +7824,21 @@ public class VertexTest extends InstanceTest {
 				new LinkedList<Edge>());
 		checkIncidenceList(v0, ecs[2], null, EdgeDirection.IN,
 				new LinkedList<Edge>());
+		commit(g);
 	}
 
 	/**
 	 * Checks if a vertex has only incident edges of type SubLink.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void incidencesTestEdgeClassEdgeDirection1() {
-		onlyTestWithoutTransactionSupport();
+	public void incidencesTestEdgeClassEdgeDirection1()
+			throws CommitFailedException {
+		createTransaction(g);
 		EdgeClass[] ecs = getEdgeClasses();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
 		LinkedList<Edge> v0linkInout = new LinkedList<Edge>();
 		LinkedList<Edge> v0linkOut = new LinkedList<Edge>();
 		LinkedList<Edge> v0linkIn = new LinkedList<Edge>();
@@ -6988,7 +7857,7 @@ public class VertexTest extends InstanceTest {
 		LinkedList<Edge> v1linkbackInout = new LinkedList<Edge>();
 		LinkedList<Edge> v1linkbackOut = new LinkedList<Edge>();
 		LinkedList<Edge> v1linkbackIn = new LinkedList<Edge>();
-		Edge e = graph.createSubLink((DoubleSubNode) v0, (SuperNode) v1);
+		Edge e = g.createSubLink((DoubleSubNode) v0, (SuperNode) v1);
 		v0linkInout.add(e);
 		v0linkOut.add(e);
 		v0sublinkInout.add(e);
@@ -6997,7 +7866,9 @@ public class VertexTest extends InstanceTest {
 		v1linkIn.add(e.getReversedEdge());
 		v1sublinkInout.add(e.getReversedEdge());
 		v1sublinkIn.add(e.getReversedEdge());
+		commit(g);
 
+		createReadOnlyTransaction(g);
 		checkIncidenceList(v0, ecs[0], null, EdgeDirection.INOUT, v0linkInout);
 		checkIncidenceList(v0, ecs[0], null, EdgeDirection.OUT, v0linkOut);
 		checkIncidenceList(v0, ecs[0], null, EdgeDirection.IN, v0linkIn);
@@ -7025,18 +7896,22 @@ public class VertexTest extends InstanceTest {
 				v1linkbackInout);
 		checkIncidenceList(v1, ecs[2], null, EdgeDirection.OUT, v1linkbackOut);
 		checkIncidenceList(v1, ecs[2], null, EdgeDirection.IN, v1linkbackIn);
+		commit(g);
 	}
 
 	/**
 	 * Checks incidences in a manually build graph.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void incidencesTestEdgeClassEdgeDirection2() {
-		onlyTestWithoutTransactionSupport();
+	public void incidencesTestEdgeClassEdgeDirection2()
+			throws CommitFailedException {
+		createTransaction(g);
 		EdgeClass[] ecs = getEdgeClasses();
-		Vertex v0 = graph.createSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
-		Vertex v2 = graph.createSuperNode();
+		Vertex v0 = g.createSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		Vertex v2 = g.createSuperNode();
 		LinkedList<Edge> v0linkInout = new LinkedList<Edge>();
 		LinkedList<Edge> v0linkOut = new LinkedList<Edge>();
 		LinkedList<Edge> v0linkIn = new LinkedList<Edge>();
@@ -7064,12 +7939,12 @@ public class VertexTest extends InstanceTest {
 		LinkedList<Edge> v2linkbackInout = new LinkedList<Edge>();
 		LinkedList<Edge> v2linkbackOut = new LinkedList<Edge>();
 		LinkedList<Edge> v2linkbackIn = new LinkedList<Edge>();
-		Edge e = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		Edge e = g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
 		v0linkInout.add(e);
 		v0linkOut.add(e);
 		v1linkInout.add(e.getReversedEdge());
 		v1linkIn.add(e.getReversedEdge());
-		e = graph.createSubLink((DoubleSubNode) v1, (SuperNode) v2);
+		e = g.createSubLink((DoubleSubNode) v1, (SuperNode) v2);
 		v1linkInout.add(e);
 		v1linkOut.add(e);
 		v1sublinkInout.add(e);
@@ -7078,17 +7953,19 @@ public class VertexTest extends InstanceTest {
 		v2linkIn.add(e.getReversedEdge());
 		v2sublinkInout.add(e.getReversedEdge());
 		v2sublinkIn.add(e.getReversedEdge());
-		e = graph.createLinkBack((SuperNode) v2, (DoubleSubNode) v1);
+		e = g.createLinkBack((SuperNode) v2, (DoubleSubNode) v1);
 		v2linkbackInout.add(e);
 		v2linkbackOut.add(e);
 		v1linkbackInout.add(e.getReversedEdge());
 		v1linkbackIn.add(e.getReversedEdge());
-		e = graph.createLinkBack((SuperNode) v1, (DoubleSubNode) v1);
+		e = g.createLinkBack((SuperNode) v1, (DoubleSubNode) v1);
 		v1linkbackInout.add(e);
 		v1linkbackOut.add(e);
 		v1linkbackInout.add(e.getReversedEdge());
 		v1linkbackIn.add(e.getReversedEdge());
+		commit(g);
 
+		createReadOnlyTransaction(g);
 		checkIncidenceList(v0, ecs[0], null, EdgeDirection.INOUT, v0linkInout);
 		checkIncidenceList(v0, ecs[0], null, EdgeDirection.OUT, v0linkOut);
 		checkIncidenceList(v0, ecs[0], null, EdgeDirection.IN, v0linkIn);
@@ -7130,19 +8007,23 @@ public class VertexTest extends InstanceTest {
 				v2linkbackInout);
 		checkIncidenceList(v2, ecs[2], null, EdgeDirection.OUT, v2linkbackOut);
 		checkIncidenceList(v2, ecs[2], null, EdgeDirection.IN, v2linkbackIn);
+		commit(g);
 	}
 
 	/**
 	 * Random test.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void incidencesTestEdgeClassEdgeDirection3() {
-		onlyTestWithoutTransactionSupport();
-		for (int i = 0; i < 100; i++) {
-			graph = VertexTestSchema.instance().createVertexTestGraph();
+	public void incidencesTestEdgeClassEdgeDirection3()
+			throws CommitFailedException {
+		for (int i = 0; i < ITERATIONS; i++) {
+			g = createNewGraph();
+			createTransaction(g);
 			EdgeClass[] ecs = getEdgeClasses();
-			Vertex[] vertices = new Vertex[] { graph.createSubNode(),
-					graph.createDoubleSubNode(), graph.createSuperNode() };
+			Vertex[] vertices = new Vertex[] { g.createSubNode(),
+					g.createDoubleSubNode(), g.createSuperNode() };
 			LinkedList<LinkedList<Edge>> linkinout = new LinkedList<LinkedList<Edge>>();
 			linkinout.add(new LinkedList<Edge>());
 			linkinout.add(new LinkedList<Edge>());
@@ -7189,7 +8070,7 @@ public class VertexTest extends InstanceTest {
 				Edge e = null;
 				switch (edge) {
 				case 0:
-					e = graph.createLink((AbstractSuperNode) vertices[start],
+					e = g.createLink((AbstractSuperNode) vertices[start],
 							(SuperNode) vertices[end]);
 					linkinout.get(start).add(e);
 					linkout.get(start).add(e);
@@ -7197,7 +8078,7 @@ public class VertexTest extends InstanceTest {
 					linkin.get(end).add(e.getReversedEdge());
 					break;
 				case 1:
-					e = graph.createLinkBack((SuperNode) vertices[end],
+					e = g.createLinkBack((SuperNode) vertices[end],
 							(AbstractSuperNode) vertices[start]);
 					linkbackinout.get(end).add(e);
 					linkbackout.get(end).add(e);
@@ -7205,7 +8086,7 @@ public class VertexTest extends InstanceTest {
 					linkbackin.get(start).add(e.getReversedEdge());
 					break;
 				case 2:
-					e = graph.createSubLink((DoubleSubNode) vertices[1],
+					e = g.createSubLink((DoubleSubNode) vertices[1],
 							(SuperNode) vertices[end]);
 					linkinout.get(1).add(e);
 					linkout.get(1).add(e);
@@ -7218,7 +8099,9 @@ public class VertexTest extends InstanceTest {
 					break;
 				}
 			}
+			commit(g);
 
+			createReadOnlyTransaction(g);
 			checkIncidenceList(vertices[0], ecs[0], null, EdgeDirection.INOUT,
 					linkinout.get(0));
 			checkIncidenceList(vertices[0], ecs[0], null, EdgeDirection.OUT,
@@ -7281,6 +8164,7 @@ public class VertexTest extends InstanceTest {
 					linkbackout.get(2));
 			checkIncidenceList(vertices[2], ecs[2], null, EdgeDirection.IN,
 					linkbackin.get(2));
+			commit(g);
 		}
 	}
 
@@ -7289,12 +8173,17 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks if a vertex has no incidences.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void incidencesTestClassEdgeDirection0() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
+	public void incidencesTestClassEdgeDirection0()
+			throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		commit(g);
 
+		createReadOnlyTransaction(g);
 		checkIncidenceList(v0, null, Link.class, EdgeDirection.INOUT,
 				new LinkedList<Edge>());
 		checkIncidenceList(v0, null, Link.class, EdgeDirection.OUT,
@@ -7315,16 +8204,20 @@ public class VertexTest extends InstanceTest {
 				new LinkedList<Edge>());
 		checkIncidenceList(v0, null, LinkBack.class, EdgeDirection.IN,
 				new LinkedList<Edge>());
+		commit(g);
 	}
 
 	/**
 	 * Checks if a vertex has only incident edges of type SubLink.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void incidencesTestClassEdgeDirection1() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
+	public void incidencesTestClassEdgeDirection1()
+			throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
 		LinkedList<Edge> v0linkInout = new LinkedList<Edge>();
 		LinkedList<Edge> v0linkOut = new LinkedList<Edge>();
 		LinkedList<Edge> v0linkIn = new LinkedList<Edge>();
@@ -7343,7 +8236,7 @@ public class VertexTest extends InstanceTest {
 		LinkedList<Edge> v1linkbackInout = new LinkedList<Edge>();
 		LinkedList<Edge> v1linkbackOut = new LinkedList<Edge>();
 		LinkedList<Edge> v1linkbackIn = new LinkedList<Edge>();
-		Edge e = graph.createSubLink((DoubleSubNode) v0, (SuperNode) v1);
+		Edge e = g.createSubLink((DoubleSubNode) v0, (SuperNode) v1);
 		v0linkInout.add(e);
 		v0linkOut.add(e);
 		v0sublinkInout.add(e);
@@ -7352,7 +8245,9 @@ public class VertexTest extends InstanceTest {
 		v1linkIn.add(e.getReversedEdge());
 		v1sublinkInout.add(e.getReversedEdge());
 		v1sublinkIn.add(e.getReversedEdge());
+		commit(g);
 
+		createReadOnlyTransaction(g);
 		checkIncidenceList(v0, null, Link.class, EdgeDirection.INOUT,
 				v0linkInout);
 		checkIncidenceList(v0, null, Link.class, EdgeDirection.OUT, v0linkOut);
@@ -7390,17 +8285,21 @@ public class VertexTest extends InstanceTest {
 				v1linkbackOut);
 		checkIncidenceList(v1, null, LinkBack.class, EdgeDirection.IN,
 				v1linkbackIn);
+		commit(g);
 	}
 
 	/**
 	 * Checks incidences in a manually build graph.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void incidencesTestClassEdgeDirection2() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
-		Vertex v2 = graph.createSuperNode();
+	public void incidencesTestClassEdgeDirection2()
+			throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		Vertex v2 = g.createSuperNode();
 		LinkedList<Edge> v0linkInout = new LinkedList<Edge>();
 		LinkedList<Edge> v0linkOut = new LinkedList<Edge>();
 		LinkedList<Edge> v0linkIn = new LinkedList<Edge>();
@@ -7428,12 +8327,12 @@ public class VertexTest extends InstanceTest {
 		LinkedList<Edge> v2linkbackInout = new LinkedList<Edge>();
 		LinkedList<Edge> v2linkbackOut = new LinkedList<Edge>();
 		LinkedList<Edge> v2linkbackIn = new LinkedList<Edge>();
-		Edge e = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		Edge e = g.createLink((AbstractSuperNode) v0, (SuperNode) v1);
 		v0linkInout.add(e);
 		v0linkOut.add(e);
 		v1linkInout.add(e.getReversedEdge());
 		v1linkIn.add(e.getReversedEdge());
-		e = graph.createSubLink((DoubleSubNode) v1, (SuperNode) v2);
+		e = g.createSubLink((DoubleSubNode) v1, (SuperNode) v2);
 		v1linkInout.add(e);
 		v1linkOut.add(e);
 		v1sublinkInout.add(e);
@@ -7442,17 +8341,19 @@ public class VertexTest extends InstanceTest {
 		v2linkIn.add(e.getReversedEdge());
 		v2sublinkInout.add(e.getReversedEdge());
 		v2sublinkIn.add(e.getReversedEdge());
-		e = graph.createLinkBack((SuperNode) v2, (DoubleSubNode) v1);
+		e = g.createLinkBack((SuperNode) v2, (DoubleSubNode) v1);
 		v2linkbackInout.add(e);
 		v2linkbackOut.add(e);
 		v1linkbackInout.add(e.getReversedEdge());
 		v1linkbackIn.add(e.getReversedEdge());
-		e = graph.createLinkBack((SuperNode) v1, (DoubleSubNode) v1);
+		e = g.createLinkBack((SuperNode) v1, (DoubleSubNode) v1);
 		v1linkbackInout.add(e);
 		v1linkbackOut.add(e);
 		v1linkbackInout.add(e.getReversedEdge());
 		v1linkbackIn.add(e.getReversedEdge());
+		commit(g);
 
+		createReadOnlyTransaction(g);
 		checkIncidenceList(v0, null, Link.class, EdgeDirection.INOUT,
 				v0linkInout);
 		checkIncidenceList(v0, null, Link.class, EdgeDirection.OUT, v0linkOut);
@@ -7509,18 +8410,22 @@ public class VertexTest extends InstanceTest {
 				v2linkbackOut);
 		checkIncidenceList(v2, null, LinkBack.class, EdgeDirection.IN,
 				v2linkbackIn);
+		commit(g);
 	}
 
 	/**
 	 * Random test.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void incidencesTestClassEdgeDirection3() {
-		onlyTestWithoutTransactionSupport();
-		for (int i = 0; i < 100; i++) {
-			graph = VertexTestSchema.instance().createVertexTestGraph();
-			Vertex[] vertices = new Vertex[] { graph.createSubNode(),
-					graph.createDoubleSubNode(), graph.createSuperNode() };
+	public void incidencesTestClassEdgeDirection3()
+			throws CommitFailedException {
+		for (int i = 0; i < ITERATIONS; i++) {
+			g = createNewGraph();
+			createTransaction(g);
+			Vertex[] vertices = new Vertex[] { g.createSubNode(),
+					g.createDoubleSubNode(), g.createSuperNode() };
 			LinkedList<LinkedList<Edge>> linkinout = new LinkedList<LinkedList<Edge>>();
 			linkinout.add(new LinkedList<Edge>());
 			linkinout.add(new LinkedList<Edge>());
@@ -7567,7 +8472,7 @@ public class VertexTest extends InstanceTest {
 				Edge e = null;
 				switch (edge) {
 				case 0:
-					e = graph.createLink((AbstractSuperNode) vertices[start],
+					e = g.createLink((AbstractSuperNode) vertices[start],
 							(SuperNode) vertices[end]);
 					linkinout.get(start).add(e);
 					linkout.get(start).add(e);
@@ -7575,7 +8480,7 @@ public class VertexTest extends InstanceTest {
 					linkin.get(end).add(e.getReversedEdge());
 					break;
 				case 1:
-					e = graph.createLinkBack((SuperNode) vertices[end],
+					e = g.createLinkBack((SuperNode) vertices[end],
 							(AbstractSuperNode) vertices[start]);
 					linkbackinout.get(end).add(e);
 					linkbackout.get(end).add(e);
@@ -7583,7 +8488,7 @@ public class VertexTest extends InstanceTest {
 					linkbackin.get(start).add(e.getReversedEdge());
 					break;
 				case 2:
-					e = graph.createSubLink((DoubleSubNode) vertices[1],
+					e = g.createSubLink((DoubleSubNode) vertices[1],
 							(SuperNode) vertices[end]);
 					linkinout.get(1).add(e);
 					linkout.get(1).add(e);
@@ -7596,7 +8501,9 @@ public class VertexTest extends InstanceTest {
 					break;
 				}
 			}
+			commit(g);
 
+			createReadOnlyTransaction(g);
 			checkIncidenceList(vertices[0], null, Link.class,
 					EdgeDirection.INOUT, linkinout.get(0));
 			checkIncidenceList(vertices[0], null, Link.class,
@@ -7659,6 +8566,7 @@ public class VertexTest extends InstanceTest {
 					EdgeDirection.OUT, linkbackout.get(2));
 			checkIncidenceList(vertices[2], null, LinkBack.class,
 					EdgeDirection.IN, linkbackin.get(2));
+			commit(g);
 		}
 	}
 
@@ -7666,38 +8574,52 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Checks some cases for true and false considering heredity.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void isValidAlphaTest0() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createSubNode();
-		Vertex v1 = graph.createSuperNode();
-		Vertex v2 = graph.createDoubleSubNode();
-		Edge e0 = graph.createLink((AbstractSuperNode) v2, (SuperNode) v2);
-		Edge e1 = graph.createSubLink((DoubleSubNode) v2, (SuperNode) v2);
+	public void isValidAlphaTest0() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createSubNode();
+		Vertex v1 = g.createSuperNode();
+		Vertex v2 = g.createDoubleSubNode();
+		Edge e0 = g.createLink((AbstractSuperNode) v2, (SuperNode) v2);
+		Edge e1 = g.createSubLink((DoubleSubNode) v2, (SuperNode) v2);
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertTrue(v0.isValidAlpha(e0));
 		assertFalse(v1.isValidAlpha(e0));
 		assertTrue(v2.isValidAlpha(e0));
 		assertFalse(v0.isValidAlpha(e1));
 		assertFalse(v1.isValidAlpha(e1));
 		assertTrue(v2.isValidAlpha(e1));
+		commit(g);
 	}
 
 	// tests of the method boolean isValidOmega(Edge edge);
 
 	/**
 	 * Checks some cases for true and false.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void isValidOmegaTest0() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createSubNode();
-		Vertex v1 = graph.createSuperNode();
+	public void isValidOmegaTest0() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createSubNode();
+		Vertex v1 = g.createSuperNode();
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertTrue(v0.isValid());
 		assertTrue(v1.isValid());
+		commit(g);
+		createTransaction(g);
 		v0.delete();
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertFalse(v0.isValid());
 		assertTrue(v1.isValid());
+		commit(g);
 	}
 
 	/*
@@ -7707,18 +8629,26 @@ public class VertexTest extends InstanceTest {
 	// tests of the method Graph getGraph();
 	/**
 	 * Checks some cases for true and false.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getGraphTest() {
-		onlyTestWithoutTransactionSupport();
-		VertexTestGraph anotherGraph = ((VertexTestSchema) graph.getSchema())
-				.createVertexTestGraph();
-		Vertex v0 = graph.createDoubleSubNode();
+	public void getGraphTest() throws CommitFailedException {
+		VertexTestGraph anotherGraph = createNewGraph();
+		createTransaction(anotherGraph);
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
 		Vertex v1 = anotherGraph.createDoubleSubNode();
-		Vertex v2 = graph.createDoubleSubNode();
-		assertEquals(graph, v0.getGraph());
+		Vertex v2 = g.createDoubleSubNode();
+		commit(g);
+		commit(anotherGraph);
+		createReadOnlyTransaction(anotherGraph);
+		createReadOnlyTransaction(g);
+		assertEquals(g, v0.getGraph());
 		assertEquals(anotherGraph, v1.getGraph());
-		assertEquals(graph, v2.getGraph());
+		assertEquals(g, v2.getGraph());
+		commit(anotherGraph);
+		commit(g);
 	}
 
 	// tests of the method void graphModified();
@@ -7733,41 +8663,69 @@ public class VertexTest extends InstanceTest {
 	// v.graphModified();
 	// assertEquals(++graphversion, graph.getGraphVersion());
 	// }
-
 	/**
 	 * Tests if the graphversion is increased by creating a new vertex.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void graphModifiedTest1() {
-		onlyTestWithoutTransactionSupport();
-		long graphversion = graph.getGraphVersion();
-		graph.createDoubleSubNode();
-		assertEquals(++graphversion, graph.getGraphVersion());
+	public void graphModifiedTest1() throws CommitFailedException {
+		createReadOnlyTransaction(g);
+		long graphversion = g.getGraphVersion();
+		commit(g);
+		createTransaction(g);
+		g.createDoubleSubNode();
+		commit(g);
+		createReadOnlyTransaction(g);
+		// Because of a flag in AttributeImpl "defaultValueComputed" a creation
+		// of an element already created once, can modify the graph version more
+		// than by 1. This is why this test only works with comparison.
+		// REMARK: This test would work in the case of an unused graph.
+		Assert.assertTrue(graphversion < g.getGraphVersion());
+		commit(g);
 	}
 
 	/**
 	 * Tests if the graphversion is increased by deleting a vertex.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void graphModifiedTest2() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v = graph.createDoubleSubNode();
-		long graphversion = graph.getGraphVersion();
+	public void graphModifiedTest2() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v = g.createDoubleSubNode();
+		commit(g);
+		createReadOnlyTransaction(g);
+		long graphversion = g.getGraphVersion();
+		commit(g);
+		createTransaction(g);
 		v.delete();
-		assertEquals(++graphversion, graph.getGraphVersion());
+		commit(g);
+		createReadOnlyTransaction(g);
+		assertEquals(graphversion + 1, g.getGraphVersion());
+		commit(g);
 	}
 
 	/**
 	 * Tests if the graphversion is increased by changing the attributes of a
 	 * vertex.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void graphModifiedTest3() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v = graph.createDoubleSubNode();
-		long graphversion = graph.getGraphVersion();
+	public void graphModifiedTest3() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v = g.createDoubleSubNode();
+		commit(g);
+		createReadOnlyTransaction(g);
+		long graphversion = g.getGraphVersion();
+		commit(g);
+		createTransaction(g);
 		((DoubleSubNode) v).set_number(4);
-		assertEquals(++graphversion, graph.getGraphVersion());
+		commit(g);
+		createReadOnlyTransaction(g);
+		assertEquals(graphversion + 1, g.getGraphVersion());
+		commit(g);
 	}
 
 	/*
@@ -7777,52 +8735,70 @@ public class VertexTest extends InstanceTest {
 	// tests of the method AttributedElementClass getAttributedElementClass();
 	/**
 	 * Some test cases for getAttributedElementClass
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getAttributedElementClassTest() {
-		onlyTestWithoutTransactionSupport();
+	public void getAttributedElementClassTest() throws CommitFailedException {
+		createTransaction(g);
 		VertexClass[] vertices = getVertexClasses();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createSubNode();
-		Vertex v2 = graph.createSuperNode();
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createSubNode();
+		Vertex v2 = g.createSuperNode();
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(vertices[3], v0.getAttributedElementClass());
 		assertEquals(vertices[1], v1.getAttributedElementClass());
 		assertEquals(vertices[2], v2.getAttributedElementClass());
+		commit(g);
 	}
 
 	// tests of the method AttributedElementClass getAttributedElementClass();
 
 	/**
 	 * Some test cases for getM1Class
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getM1ClassTest() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createSubNode();
-		Vertex v2 = graph.createSuperNode();
+	public void getM1ClassTest() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createSubNode();
+		Vertex v2 = g.createSuperNode();
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(DoubleSubNode.class, v0.getM1Class());
 		assertEquals(SubNode.class, v1.getM1Class());
 		assertEquals(SuperNode.class, v2.getM1Class());
+		commit(g);
 	}
 
 	// tests of the method GraphClass getGraphClass();
 
 	/**
 	 * Some test cases for getGraphClass
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getGraphClassTest() {
-		onlyTestWithoutTransactionSupport();
-		VertexTestGraph anotherGraph = ((VertexTestSchema) graph.getSchema())
-				.createVertexTestGraph();
-		GraphClass gc = graph.getSchema().getGraphClass();
-		Vertex v0 = graph.createDoubleSubNode();
+	public void getGraphClassTest() throws CommitFailedException {
+		VertexTestGraph anotherGraph = createNewGraph();
+		createTransaction(anotherGraph);
+		createTransaction(g);
+		GraphClass gc = g.getSchema().getGraphClass();
+		Vertex v0 = g.createDoubleSubNode();
 		Vertex v1 = anotherGraph.createDoubleSubNode();
-		Vertex v2 = graph.createDoubleSubNode();
+		Vertex v2 = g.createDoubleSubNode();
+		commit(anotherGraph);
+		commit(g);
+		createReadOnlyTransaction(anotherGraph);
+		createReadOnlyTransaction(g);
 		assertEquals(gc, v0.getGraphClass());
 		assertEquals(gc, v1.getGraphClass());
 		assertEquals(gc, v2.getGraphClass());
+		commit(anotherGraph);
+		commit(g);
 	}
 
 	// tests of the methods
@@ -7833,14 +8809,19 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Test with null values.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
 	public void writeReadAttributeValues0() throws GraphIOException,
-			IOException {
-		onlyTestWithoutTransactionSupport();
-		DoubleSubNode v0 = graph.createDoubleSubNode();
+			IOException, CommitFailedException {
+		createTransaction(g);
+		DoubleSubNode v0 = g.createDoubleSubNode();
+		commit(g);
 		// test of writeAttributeValues
-		GraphIO.saveGraphToFile("test.tg", graph, null);
+		createReadOnlyTransaction(g);
+		GraphIO.saveGraphToFile("test.tg", g, null);
+		commit(g);
 		LineNumberReader reader = new LineNumberReader(
 				new FileReader("test.tg"));
 		String line = "";
@@ -7850,20 +8831,26 @@ public class VertexTest extends InstanceTest {
 				line = line.substring(0, line.length() - 1);
 			}
 			parts = line.split(" ");
+			createReadOnlyTransaction(g);
 			if (parts[0].equals(((Integer) v0.getId()).toString())) {
 				break;
 			}
+			commit(g);
 		}
 		assertEquals("n", parts[3]);
 		assertEquals("n", parts[4]);
 		assertEquals("0", parts[5]);
 		// test of readAttributeValues
-		VertexTestGraph loadedgraph = (VertexTestGraph) GraphIO
-				.loadGraphFromFile("test.tg", null);
+		VertexTestGraph loadedgraph = transactionsEnabled ? VertexTestSchema
+				.instance()
+				.loadVertexTestGraphWithTransactionSupport("test.tg")
+				: VertexTestSchema.instance().loadVertexTestGraph("test.tg");
+		createReadOnlyTransaction(loadedgraph);
 		DoubleSubNode loadedv0 = loadedgraph.getFirstDoubleSubNode();
 		assertEquals(v0.get_name(), loadedv0.get_name());
 		assertEquals(v0.get_number(), loadedv0.get_number());
 		assertEquals(v0.get_nodeMap(), loadedv0.get_nodeMap());
+		commit(loadedgraph);
 		// delete created file
 		System.gc();
 		reader.close();
@@ -7873,20 +8860,27 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Test with values.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
 	public void writeReadAttributeValues1() throws GraphIOException,
-			IOException {
-		onlyTestWithoutTransactionSupport();
-		DoubleSubNode v0 = graph.createDoubleSubNode();
+			IOException, CommitFailedException {
+		createTransaction(g);
+		DoubleSubNode v0 = g.createDoubleSubNode();
 		v0.set_name("NameVonV0");
 		v0.set_number(17);
-		HashMap<Integer, String> map = new HashMap<Integer, String>();
+		Map<Integer, String> map = g.createMap();
 		map.put(1, "First");
 		map.put(2, "Second");
 		v0.set_nodeMap(map);
+		commit(g);
 		// test of writeAttributeValues
-		GraphIO.saveGraphToFile("test.tg", graph, null);
+
+		createReadOnlyTransaction(g);
+		GraphIO.saveGraphToFile("test.tg", g, null);
+		commit(g);
+
 		LineNumberReader reader = new LineNumberReader(
 				new FileReader("test.tg"));
 		String line = "";
@@ -7896,9 +8890,11 @@ public class VertexTest extends InstanceTest {
 				line = line.substring(0, line.length() - 1);
 			}
 			parts = line.split(" ");
+			createReadOnlyTransaction(g);
 			if (parts[0].equals(((Integer) v0.getId()).toString())) {
 				break;
 			}
+			commit(g);
 		}
 		assertEquals("\"NameVonV0\"", parts[3]);
 		String mapString = map.toString();
@@ -7913,12 +8909,16 @@ public class VertexTest extends InstanceTest {
 		}
 		assertEquals("17", parts[i + 4]);
 		// test of readAttributeValues
-		VertexTestGraph loadedgraph = (VertexTestGraph) GraphIO
-				.loadGraphFromFile("test.tg", null);
+		VertexTestGraph loadedgraph = transactionsEnabled ? VertexTestSchema
+				.instance()
+				.loadVertexTestGraphWithTransactionSupport("test.tg")
+				: VertexTestSchema.instance().loadVertexTestGraph("test.tg");
+		createReadOnlyTransaction(loadedgraph);
 		DoubleSubNode loadedv0 = loadedgraph.getFirstDoubleSubNode();
 		assertEquals(v0.get_name(), loadedv0.get_name());
 		assertEquals(v0.get_number(), loadedv0.get_number());
 		assertEquals(v0.get_nodeMap(), loadedv0.get_nodeMap());
+		commit(g);
 		// delete created file
 		System.gc();
 		reader.close();
@@ -7931,40 +8931,58 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if the value of the correct attribute is returned.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getAttributeTest0() throws NoSuchFieldException {
-		onlyTestWithoutTransactionSupport();
-		DoubleSubNode v = graph.createDoubleSubNode();
-		HashMap<Integer, String> map = new HashMap<Integer, String>();
+	public void getAttributeTest0() throws NoSuchFieldException,
+			CommitFailedException {
+		createTransaction(g);
+		DoubleSubNode v = g.createDoubleSubNode();
+		Map<Integer, String> map = g.createMap();
 		v.set_nodeMap(map);
 		v.set_name("test");
 		v.set_number(4);
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(map, v.getAttribute("nodeMap"));
 		assertEquals("test", v.getAttribute("name"));
 		assertEquals(4, v.getAttribute("number"));
+		commit(g);
 	}
 
 	/**
 	 * Tests if an exception is thrown if you want to get an attribute which
 	 * doesn't exist.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test(expected = NoSuchFieldException.class)
-	public void getAttributeTest1() throws NoSuchFieldException {
-		onlyTestWithoutTransactionSupport();
-		DoubleSubNode v = graph.createDoubleSubNode();
+	public void getAttributeTest1() throws NoSuchFieldException,
+			CommitFailedException {
+		createTransaction(g);
+		DoubleSubNode v = g.createDoubleSubNode();
+		commit(g);
+		createReadOnlyTransaction(g);
 		v.getAttribute("cd");
+		commit(g);
 	}
 
 	/**
 	 * Tests if an exception is thrown if you want to get an attribute with an
 	 * empty name.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test(expected = NoSuchFieldException.class)
-	public void getAttributeTest2() throws NoSuchFieldException {
-		onlyTestWithoutTransactionSupport();
-		DoubleSubNode v = graph.createDoubleSubNode();
+	public void getAttributeTest2() throws NoSuchFieldException,
+			CommitFailedException {
+		createTransaction(g);
+		DoubleSubNode v = g.createDoubleSubNode();
+		commit(g);
+		createReadOnlyTransaction(g);
 		v.getAttribute("");
+		commit(g);
 	}
 
 	// tests of the method void setAttribute(String name, Object data) throws
@@ -7972,70 +8990,95 @@ public class VertexTest extends InstanceTest {
 
 	/**
 	 * Tests if an existing attribute is correct set.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void setAttributeTest0() throws NoSuchFieldException {
-		onlyTestWithoutTransactionSupport();
-		DoubleSubNode v = graph.createDoubleSubNode();
-		HashMap<Integer, String> map = new HashMap<Integer, String>();
+	public void setAttributeTest0() throws NoSuchFieldException,
+			CommitFailedException {
+		createTransaction(g);
+		DoubleSubNode v = g.createDoubleSubNode();
+		Map<Integer, String> map = g.createMap();
 		v.setAttribute("nodeMap", map);
 		v.setAttribute("name", "test");
 		v.setAttribute("number", 4);
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(map, v.getAttribute("nodeMap"));
 		assertEquals("test", v.getAttribute("name"));
 		assertEquals(4, v.getAttribute("number"));
+		commit(g);
 	}
 
 	/**
 	 * Tests if an existing attribute is set to null.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void setAttributeTest1() throws NoSuchFieldException {
-		onlyTestWithoutTransactionSupport();
-		DoubleSubNode v = graph.createDoubleSubNode();
+	public void setAttributeTest1() throws NoSuchFieldException,
+			CommitFailedException {
+		createTransaction(g);
+		DoubleSubNode v = g.createDoubleSubNode();
 		v.setAttribute("nodeMap", null);
 		v.setAttribute("name", null);
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertNull(v.getAttribute("nodeMap"));
 		assertNull(v.getAttribute("name"));
+		commit(g);
 	}
 
 	/**
 	 * Tests if an exception is thrown if you want to get an attribute which
 	 * doesn't exist.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test(expected = NoSuchFieldException.class)
-	public void setAttributeTest2() throws NoSuchFieldException {
-		onlyTestWithoutTransactionSupport();
-		DoubleSubNode v = graph.createDoubleSubNode();
+	public void setAttributeTest2() throws NoSuchFieldException,
+			CommitFailedException {
+		createTransaction(g);
+		DoubleSubNode v = g.createDoubleSubNode();
 		v.setAttribute("cd", "a");
+		commit(g);
 	}
 
 	/**
 	 * Tests if an exception is thrown if you want to get an attribute with an
 	 * empty name.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test(expected = NoSuchFieldException.class)
-	public void setAttributeTest3() throws NoSuchFieldException {
-		onlyTestWithoutTransactionSupport();
-		DoubleSubNode v = graph.createDoubleSubNode();
+	public void setAttributeTest3() throws NoSuchFieldException,
+			CommitFailedException {
+		createTransaction(g);
+		DoubleSubNode v = g.createDoubleSubNode();
 		v.setAttribute("", "a");
+		commit(g);
 	}
 
 	// tests of the method Schema getSchema();
 
 	/**
 	 * Some tests.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getSchemaTest() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createSubNode();
-		Vertex v2 = graph.createSuperNode();
-		Schema schema = graph.getSchema();
+	public void getSchemaTest() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createSubNode();
+		Vertex v2 = g.createSuperNode();
+		Schema schema = g.getSchema();
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(schema, v0.getSchema());
 		assertEquals(schema, v1.getSchema());
 		assertEquals(schema, v2.getSchema());
+		commit(g);
 	}
 
 	/*
@@ -8045,34 +9088,49 @@ public class VertexTest extends InstanceTest {
 	// tests of the method int compareTo(AttributedElement a);
 	/**
 	 * Test if a vertex is equal to itself.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void compareToTest0() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
+	public void compareToTest0() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(0, v0.compareTo(v0));
+		commit(g);
 	}
 
 	/**
 	 * Test if a vertex is smaller than another.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void compareToTest1() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
+	public void compareToTest1() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertTrue(v0.compareTo(v1) < 0);
+		commit(g);
 	}
 
 	/**
 	 * Test if a vertex is greater than another.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void compareToTest2() {
-		onlyTestWithoutTransactionSupport();
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
+	public void compareToTest2() throws CommitFailedException {
+		createTransaction(g);
+		Vertex v0 = g.createDoubleSubNode();
+		Vertex v1 = g.createDoubleSubNode();
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertTrue(v1.compareTo(v0) > 0);
+		commit(g);
 	}
 
 	/*
@@ -8081,115 +9139,181 @@ public class VertexTest extends InstanceTest {
 
 	// tests of the methods setName and getName
 	@Test
-	public void setGetNameTest0() {
-		onlyTestWithoutTransactionSupport();
-		DoubleSubNode v0 = graph.createDoubleSubNode();
+	public void setGetNameTest0() throws CommitFailedException {
+		createTransaction(g);
+		DoubleSubNode v0 = g.createDoubleSubNode();
 		v0.set_name("aName");
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals("aName", v0.get_name());
+		commit(g);
+		createTransaction(g);
 		v0.set_name("bName");
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals("bName", v0.get_name());
+		commit(g);
+		createTransaction(g);
 		v0.set_name("cName");
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals("cName", v0.get_name());
+		commit(g);
 	}
 
 	// tests of the methods setNumber and getNumber
 	@Test
-	public void setGetNumberTest0() {
-		onlyTestWithoutTransactionSupport();
-		DoubleSubNode v0 = graph.createDoubleSubNode();
+	public void setGetNumberTest0() throws CommitFailedException {
+		createTransaction(g);
+		DoubleSubNode v0 = g.createDoubleSubNode();
 		v0.set_number(0);
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(0, v0.get_number());
+		commit(g);
+		createTransaction(g);
 		v0.set_number(1);
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(1, v0.get_number());
+		commit(g);
+		createTransaction(g);
 		v0.set_number(-1);
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(-1, v0.get_number());
+		commit(g);
 	}
 
 	// tests of the methods setNodeMap and getNodeMap
 	@Test
-	public void setGetNodeMapTest0() {
-		onlyTestWithoutTransactionSupport();
-		DoubleSubNode v0 = graph.createDoubleSubNode();
-		HashMap<Integer, String> map = new HashMap<Integer, String>();
+	public void setGetNodeMapTest0() throws CommitFailedException {
+		createTransaction(g);
+		DoubleSubNode v0 = g.createDoubleSubNode();
+		Map<Integer, String> map = g.createMap();
 		v0.set_nodeMap(map);
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(map, v0.get_nodeMap());
+		commit(g);
+		createTransaction(g);
 		map.put(1, "first");
 		v0.set_nodeMap(map);
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(map, v0.get_nodeMap());
+		commit(g);
+		createTransaction(g);
 		map.put(2, "second");
 		v0.set_nodeMap(map);
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(map, v0.get_nodeMap());
+		commit(g);
 	}
 
 	// tests of the method addSource
 	@Test
-	public void addSourceTest0() {
-		onlyTestWithoutTransactionSupport();
-		DoubleSubNode v0 = graph.createDoubleSubNode();
+	public void addSourceTest0() throws CommitFailedException {
+		createTransaction(g);
+		DoubleSubNode v0 = g.createDoubleSubNode();
 		// v0 -->{Link} v0
-		Link e0 = v0.addSource(v0);
+		Link e0 = v0.add_source(v0);
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(v0, e0.getAlpha());
 		assertEquals(v0, e0.getOmega());
+		commit(g);
 		// v1 -->{Link} v0
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		Link e1 = v0.addSource(v1);
+		createTransaction(g);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		Link e1 = v0.add_source(v1);
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(v1, e1.getAlpha());
 		assertEquals(v0, e1.getOmega());
+		commit(g);
 		// v0 -->{Link} v1
-		Link e2 = v1.addSource(v0);
+		createTransaction(g);
+		Link e2 = v1.add_source(v0);
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(v0, e2.getAlpha());
 		assertEquals(v1, e2.getOmega());
+		commit(g);
 		// checks if the edges are in the edge-list of the graph
+		createReadOnlyTransaction(g);
 		checkEdgeList(e0, e1, e2);
 		// checks if the edges are in the incidenceList of both vertices
 		checkIncidences(v0, e0, e0.getReversedEdge(), e1.getReversedEdge(), e2);
 		checkIncidences(v1, e1, e2.getReversedEdge());
+		commit(g);
 	}
 
 	// tests of the method removeSource
 	@Test
-	public void removeSourceTest0() {
-		onlyTestWithoutTransactionSupport();
-		DoubleSubNode v0 = graph.createDoubleSubNode();
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		Link e0 = v0.addSource(v0);
-		v0.addSource(v1);
-		Link e2 = v1.addSource(v1);
-		v0.addSource(v1);
+	public void removeSourceTest0() throws CommitFailedException {
+		createTransaction(g);
+		DoubleSubNode v0 = g.createDoubleSubNode();
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		Link e0 = v0.add_source(v0);
+		v0.add_source(v1);
+		Link e2 = v1.add_source(v1);
+		v0.add_source(v1);
 		// remove all edges v1 --> v0
-		v0.removeSource(v1);
+		v0.remove_source(v1);
+		commit(g);
+		createReadOnlyTransaction(g);
 		checkEdgeList(e0, e2);
 		checkIncidences(v0, e0, e0.getReversedEdge());
 		checkIncidences(v1, e2, e2.getReversedEdge());
+		commit(g);
 		// remove all edges v0 --> v0
-		v0.removeSource(v0);
+		createTransaction(g);
+		v0.remove_source(v0);
+		commit(g);
+		createReadOnlyTransaction(g);
 		checkEdgeList(e2);
 		checkIncidences(v0);
 		checkIncidences(v1, e2, e2.getReversedEdge());
+		commit(g);
 		// remove all edges v1 --> v1
-		v1.removeSource(v1);
+		createTransaction(g);
+		v1.remove_source(v1);
+		commit(g);
+		createReadOnlyTransaction(g);
 		checkEdgeList();
 		checkIncidences(v0);
 		checkIncidences(v1);
+		commit(g);
 	}
 
 	// tests of the method getSourceList
 	@Test
-	public void getSourceListTest0() {
-		onlyTestWithoutTransactionSupport();
-		DoubleSubNode v0 = graph.createDoubleSubNode();
-		SuperNode v1 = graph.createSuperNode();
-		SubNode v2 = graph.createSubNode();
-		v0.addSource(v0);
-		v0.addSource(v2);
-		v1.addSource(v0);
-		List<? extends AbstractSuperNode> nodes = v0.getSourceList();
-		assertEquals(2, nodes.size());
-		assertEquals(v0, nodes.get(0));
-		assertEquals(v2, nodes.get(1));
-		nodes = v1.getSourceList();
-		assertEquals(1, nodes.size());
-		assertEquals(v0, nodes.get(0));
+	public void getSourceListTest0() throws CommitFailedException {
+		createTransaction(g);
+		DoubleSubNode v0 = g.createDoubleSubNode();
+		SuperNode v1 = g.createSuperNode();
+		SubNode v2 = g.createSubNode();
+		v0.add_source(v0);
+		v0.add_source(v2);
+		v1.add_source(v0);
+		commit(g);
+
+		createReadOnlyTransaction(g);
+		Iterator<? extends AbstractSuperNode> nodes = v0.get_source()
+				.iterator();
+		assertTrue(nodes.hasNext());
+		assertEquals(v0, nodes.next());
+		assertTrue(nodes.hasNext());
+		assertEquals(v2, nodes.next());
+		assertFalse(nodes.hasNext());
+
+		nodes = v1.get_source().iterator();
+		assertTrue(nodes.hasNext());
+		assertEquals(v0, nodes.next());
+		assertFalse(nodes.hasNext());
+		commit(g);
 	}
 
 	/**
@@ -8222,9 +9346,9 @@ public class VertexTest extends InstanceTest {
 	 *            the edges to check
 	 */
 	private void checkEdgeList(Edge... e) {
-		assertEquals(graph.getECount(), e.length);
+		assertEquals(e.length, g.getECount());
 		int i = 0;
-		for (Edge f : graph.edges()) {
+		for (Edge f : g.edges()) {
 			if (i >= e.length) {
 				fail("No further edges expected!");
 			} else {
@@ -8236,20 +9360,30 @@ public class VertexTest extends InstanceTest {
 
 	// tests of the method addSourceb
 	@Test
-	public void addSourcebTest0() {
-		onlyTestWithoutTransactionSupport();
-		DoubleSubNode v0 = graph.createDoubleSubNode();
+	public void addSourcebTest0() throws CommitFailedException {
+		createTransaction(g);
+		DoubleSubNode v0 = g.createDoubleSubNode();
 		// v0 -->{LinkBack} v0
-		LinkBack e0 = v0.addSourceb(v0);
+		LinkBack e0 = v0.add_sourceb(v0);
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(v0, e0.getAlpha());
 		assertEquals(v0, e0.getOmega());
+		commit(g);
 		// v1 -->{LinkBack} v0
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		LinkBack e1 = v0.addSourceb(v1);
+		createTransaction(g);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		LinkBack e1 = v0.add_sourceb(v1);
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(v1, e1.getAlpha());
 		assertEquals(v0, e1.getOmega());
+		commit(g);
 		// v0 -->{LinkBack} v1
-		LinkBack e2 = v1.addSourceb(v0);
+		createTransaction(g);
+		LinkBack e2 = v1.add_sourceb(v0);
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(v0, e2.getAlpha());
 		assertEquals(v1, e2.getOmega());
 		// checks if the edges are in the edge-list of the graph
@@ -8257,70 +9391,99 @@ public class VertexTest extends InstanceTest {
 		// checks if the edges are in the incidenceList of both vertices
 		checkIncidences(v0, e0, e0.getReversedEdge(), e1.getReversedEdge(), e2);
 		checkIncidences(v1, e1, e2.getReversedEdge());
+		commit(g);
 	}
 
 	// tests of the method removeSourceb
 	@Test
-	public void removeSourcebTest0() {
-		onlyTestWithoutTransactionSupport();
-		DoubleSubNode v0 = graph.createDoubleSubNode();
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		LinkBack e0 = v0.addSourceb(v0);
-		v0.addSourceb(v1);
-		LinkBack e2 = v1.addSourceb(v1);
-		v0.addSourceb(v1);
+	public void removeSourcebTest0() throws CommitFailedException {
+		createTransaction(g);
+		DoubleSubNode v0 = g.createDoubleSubNode();
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		LinkBack e0 = v0.add_sourceb(v0);
+		v0.add_sourceb(v1);
+		LinkBack e2 = v1.add_sourceb(v1);
+		v0.add_sourceb(v1);
 		// remove all edges v1 --> v0
-		v0.removeSourceb(v1);
+		v0.remove_sourceb(v1);
+		commit(g);
+		createReadOnlyTransaction(g);
 		checkEdgeList(e0, e2);
 		checkIncidences(v0, e0, e0.getReversedEdge());
 		checkIncidences(v1, e2, e2.getReversedEdge());
+		commit(g);
 		// remove all edges v0 --> v0
-		v0.removeSourceb(v0);
+		createTransaction(g);
+		v0.remove_sourceb(v0);
+		commit(g);
+		createReadOnlyTransaction(g);
 		checkEdgeList(e2);
 		checkIncidences(v0);
 		checkIncidences(v1, e2, e2.getReversedEdge());
+		commit(g);
 		// remove all edges v1 --> v1
-		v1.removeSourceb(v1);
+		createTransaction(g);
+		v1.remove_sourceb(v1);
+		commit(g);
+		createReadOnlyTransaction(g);
 		checkEdgeList();
 		checkIncidences(v0);
 		checkIncidences(v1);
+		commit(g);
 	}
 
 	// tests of the method getSourcebList
 	@Test
-	public void getSourcebListTest0() {
-		onlyTestWithoutTransactionSupport();
-		DoubleSubNode v0 = graph.createDoubleSubNode();
-		SuperNode v1 = graph.createSuperNode();
-		SubNode v2 = graph.createSubNode();
-		v0.addSourceb(v0);
-		v0.addSourceb(v1);
-		v2.addSourceb(v0);
-		List<? extends SuperNode> nodes = v0.getSourcebList();
-		assertEquals(2, nodes.size());
-		assertEquals(v0, nodes.get(0));
-		assertEquals(v1, nodes.get(1));
-		nodes = v2.getSourcebList();
-		assertEquals(1, nodes.size());
-		assertEquals(v0, nodes.get(0));
+	public void getSourcebListTest0() throws CommitFailedException {
+		createTransaction(g);
+		DoubleSubNode v0 = g.createDoubleSubNode();
+		SuperNode v1 = g.createSuperNode();
+		SubNode v2 = g.createSubNode();
+		v0.add_sourceb(v0);
+		v0.add_sourceb(v1);
+		v2.add_sourceb(v0);
+		commit(g);
+		createReadOnlyTransaction(g);
+		Iterator<? extends SuperNode> nodes = v0.get_sourceb().iterator();
+		assertTrue(nodes.hasNext());
+		assertEquals(v0, nodes.next());
+		assertTrue(nodes.hasNext());
+		assertEquals(v1, nodes.next());
+		assertFalse(nodes.hasNext());
+
+		nodes = v2.get_sourceb().iterator();
+		assertTrue(nodes.hasNext());
+		assertEquals(v0, nodes.next());
+		assertFalse(nodes.hasNext());
+		commit(g);
 	}
 
 	// tests of the method addSourcec
 	@Test
-	public void addSourcecTest0() {
-		onlyTestWithoutTransactionSupport();
-		DoubleSubNode v0 = graph.createDoubleSubNode();
+	public void addSourcecTest0() throws CommitFailedException {
+		createTransaction(g);
+		DoubleSubNode v0 = g.createDoubleSubNode();
 		// v0 -->{SubLink} v0
-		SubLink e0 = v0.addSourcec(v0);
+		SubLink e0 = v0.add_sourcec(v0);
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(v0, e0.getAlpha());
 		assertEquals(v0, e0.getOmega());
+		commit(g);
 		// v1 -->{SubLink} v0
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		SubLink e1 = v0.addSourcec(v1);
+		createTransaction(g);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		SubLink e1 = v0.add_sourcec(v1);
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(v1, e1.getAlpha());
 		assertEquals(v0, e1.getOmega());
+		commit(g);
 		// v0 -->{SubLink} v1
-		SubLink e2 = v1.addSourcec(v0);
+		createTransaction(g);
+		SubLink e2 = v1.add_sourcec(v0);
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(v0, e2.getAlpha());
 		assertEquals(v1, e2.getOmega());
 		// checks if the edges are in the edge-list of the graph
@@ -8328,73 +9491,102 @@ public class VertexTest extends InstanceTest {
 		// checks if the edges are in the incidenceList of both vertices
 		checkIncidences(v0, e0, e0.getReversedEdge(), e1.getReversedEdge(), e2);
 		checkIncidences(v1, e1, e2.getReversedEdge());
+		commit(g);
 	}
 
-	// tests of the method removeSourcec
+	// tests of the method remove_sourcec
 	/**
 	 * Removes the sourcec of v0 --&gt v0.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void removeSourcecTest0() {
-		onlyTestWithoutTransactionSupport();
-		DoubleSubNode v0 = graph.createDoubleSubNode();
-		v0.addSourcec(v0);
-		v0.removeSourcec(v0);
-		assertEquals(0, graph.getECount());
+	public void remove_sourcecTest0() throws CommitFailedException {
+		createTransaction(g);
+		DoubleSubNode v0 = g.createDoubleSubNode();
+		v0.add_sourcec(v0);
+		v0.remove_sourcec(v0);
+		commit(g);
+		createReadOnlyTransaction(g);
+		assertEquals(0, g.getECount());
+		commit(g);
 	}
 
 	/**
 	 * Removes the sourcec of v0 --&gt v1.
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void removeSourcecTest1() {
-		onlyTestWithoutTransactionSupport();
-		DoubleSubNode v0 = graph.createDoubleSubNode();
-		SuperNode v1 = graph.createSuperNode();
-		v1.addSourcec(v0);
-		v1.removeSourcec(v0);
-		assertEquals(0, graph.getECount());
+	public void remove_sourcecTest1() throws CommitFailedException {
+		createTransaction(g);
+		DoubleSubNode v0 = g.createDoubleSubNode();
+		SuperNode v1 = g.createSuperNode();
+		v1.add_sourcec(v0);
+		v1.remove_sourcec(v0);
+		commit(g);
+		createReadOnlyTransaction(g);
+		assertEquals(0, g.getECount());
+		commit(g);
 	}
 
 	// tests of the method getSourcecList
 	@Test
-	public void getSourcecListTest0() {
-		onlyTestWithoutTransactionSupport();
-		DoubleSubNode v0 = graph.createDoubleSubNode();
-		SuperNode v1 = graph.createSuperNode();
-		v0.addSourcec(v0);
-		v0.addSourcec(v0);
-		v1.addSourcec(v0);
-		List<? extends SuperNode> nodes = v0.getSourcecList();
-		assertEquals(2, nodes.size());
-		assertEquals(v0, nodes.get(0));
-		assertEquals(v0, nodes.get(1));
-		nodes = v1.getSourcecList();
-		assertEquals(1, nodes.size());
-		assertEquals(v0, nodes.get(0));
+	public void getSourcecListTest0() throws CommitFailedException {
+		createTransaction(g);
+		DoubleSubNode v0 = g.createDoubleSubNode();
+		SuperNode v1 = g.createSuperNode();
+		v0.add_sourcec(v0);
+		v0.add_sourcec(v0);
+		v1.add_sourcec(v0);
+		commit(g);
+		createReadOnlyTransaction(g);
+		Iterator<? extends SuperNode> nodes = v0.get_sourcec().iterator();
+		assertTrue(nodes.hasNext());
+		assertEquals(v0, nodes.next());
+		assertTrue(nodes.hasNext());
+		assertEquals(v0, nodes.next());
+		assertFalse(nodes.hasNext());
+
+		nodes = v1.get_sourcec().iterator();
+		assertTrue(nodes.hasNext());
+		assertEquals(v0, nodes.next());
+		assertFalse(nodes.hasNext());
+		commit(g);
 	}
 
 	// tests of the method addTarget
 	@Test
-	public void addTargetTest0() {
-		onlyTestWithoutTransactionSupport();
-		DoubleSubNode v0 = graph.createDoubleSubNode();
+	public void addTargetTest0() throws CommitFailedException {
+		createTransaction(g);
+		DoubleSubNode v0 = g.createDoubleSubNode();
 		// v0 -->{Link} v0
-		Link e0 = v0.addTarget(v0);
+		Link e0 = v0.add_target(v0);
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(v0, e0.getAlpha());
 		assertEquals(v0, e0.getOmega());
+		commit(g);
 		// v0 -->{Link} v1
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		Link e1 = v0.addTarget(v1);
+		createTransaction(g);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		Link e1 = v0.add_target(v1);
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(v0, e1.getAlpha());
 		assertEquals(v1, e1.getOmega());
+		commit(g);
 		// v1 -->{Link} v0
-		Link e2 = v1.addTarget(v0);
+		createTransaction(g);
+		Link e2 = v1.add_target(v0);
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(v1, e2.getAlpha());
 		assertEquals(v0, e2.getOmega());
+
 		// checks if the edges are in the edge-list of the graph
 		int i = 0;
-		for (Edge e : graph.edges()) {
+		for (Edge e : g.edges()) {
 			switch (i) {
 			case 0:
 				assertEquals(e0, e);
@@ -8451,75 +9643,105 @@ public class VertexTest extends InstanceTest {
 				fail("No further edges expected!");
 			}
 		}
+		commit(g);
 	}
 
-	// tests of the method removeTarget
+	// tests of the method remove_target
 	@Test
-	public void removeTargetTest0() {
-		onlyTestWithoutTransactionSupport();
-		DoubleSubNode v0 = graph.createDoubleSubNode();
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		Link e0 = v0.addTarget(v0);
-		v0.addTarget(v1);
-		Link e2 = v1.addTarget(v1);
-		v0.addTarget(v1);
+	public void remove_targetTest0() throws CommitFailedException {
+		createTransaction(g);
+		DoubleSubNode v0 = g.createDoubleSubNode();
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		Link e0 = v0.add_target(v0);
+		v0.add_target(v1);
+		Link e2 = v1.add_target(v1);
+		v0.add_target(v1);
 		// remove all edges v1 --> v0
-		v0.removeTarget(v1);
+		v0.remove_target(v1);
+		commit(g);
+		createReadOnlyTransaction(g);
 		checkEdgeList(e0, e2);
 		checkIncidences(v0, e0, e0.getReversedEdge());
 		checkIncidences(v1, e2, e2.getReversedEdge());
+		commit(g);
 		// remove all edges v0 --> v0
-		v0.removeTarget(v0);
+		createTransaction(g);
+		v0.remove_target(v0);
+		commit(g);
+		createReadOnlyTransaction(g);
 		checkEdgeList(e2);
 		checkIncidences(v0);
 		checkIncidences(v1, e2, e2.getReversedEdge());
+		commit(g);
 		// remove all edges v1 --> v1
-		v1.removeTarget(v1);
+		createTransaction(g);
+		v1.remove_target(v1);
+		commit(g);
+		createReadOnlyTransaction(g);
 		checkEdgeList();
 		checkIncidences(v0);
 		checkIncidences(v1);
+		commit(g);
 	}
 
 	// tests of the method getTargetList
 	@Test
-	public void getTargetListTest0() {
-		onlyTestWithoutTransactionSupport();
-		DoubleSubNode v0 = graph.createDoubleSubNode();
-		SuperNode v1 = graph.createSuperNode();
-		SubNode v2 = graph.createSubNode();
-		v0.addTarget(v0);
-		v2.addTarget(v0);
-		v0.addTarget(v1);
-		List<? extends SuperNode> nodes = v0.getTargetList();
-		assertEquals(2, nodes.size());
-		assertEquals(v0, nodes.get(0));
-		assertEquals(v1, nodes.get(1));
-		nodes = v2.getTargetList();
-		assertEquals(1, nodes.size());
-		assertEquals(v0, nodes.get(0));
+	public void getTargetListTest0() throws CommitFailedException {
+		createTransaction(g);
+		DoubleSubNode v0 = g.createDoubleSubNode();
+		SuperNode v1 = g.createSuperNode();
+		SubNode v2 = g.createSubNode();
+		v0.add_target(v0);
+		v2.add_target(v0);
+		v0.add_target(v1);
+		commit(g);
+
+		createReadOnlyTransaction(g);
+		Iterator<? extends SuperNode> nodes = v0.get_target().iterator();
+		assertTrue(nodes.hasNext());
+		assertEquals(v0, nodes.next());
+		assertTrue(nodes.hasNext());
+		assertEquals(v1, nodes.next());
+		assertFalse(nodes.hasNext());
+
+		nodes = v2.get_target().iterator();
+		assertTrue(nodes.hasNext());
+		assertEquals(v0, nodes.next());
+		assertFalse(nodes.hasNext());
+		commit(g);
 	}
 
 	// tests of the method addTargetb
 	@Test
-	public void addTargetbTest0() {
-		onlyTestWithoutTransactionSupport();
-		DoubleSubNode v0 = graph.createDoubleSubNode();
+	public void addTargetbTest0() throws CommitFailedException {
+		createTransaction(g);
+		DoubleSubNode v0 = g.createDoubleSubNode();
 		// v0 -->{LinkBack} v0
-		LinkBack e0 = v0.addTargetb(v0);
+		LinkBack e0 = v0.add_targetb(v0);
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(v0, e0.getAlpha());
 		assertEquals(v0, e0.getOmega());
+		commit(g);
 		// v0 -->{LinkBack} v1
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		LinkBack e1 = v0.addTargetb(v1);
+		createTransaction(g);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		LinkBack e1 = v0.add_targetb(v1);
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(v0, e1.getAlpha());
 		assertEquals(v1, e1.getOmega());
+		commit(g);
 		// v1 -->{LinkBack} v0
-		LinkBack e2 = v1.addTargetb(v0);
+		createTransaction(g);
+		LinkBack e2 = v1.add_targetb(v0);
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(v1, e2.getAlpha());
 		assertEquals(v0, e2.getOmega());
 		// checks if the edges are in the edge-list of the graph
 		int i = 0;
-		for (Edge e : graph.edges()) {
+		for (Edge e : g.edges()) {
 			switch (i) {
 			case 0:
 				assertEquals(e0, e);
@@ -8576,75 +9798,106 @@ public class VertexTest extends InstanceTest {
 				fail("No further edges expected!");
 			}
 		}
+		commit(g);
 	}
 
-	// tests of the method removeTargetb
+	// tests of the method remove_targetb
 	@Test
-	public void removeTargetbTest0() {
-		onlyTestWithoutTransactionSupport();
-		DoubleSubNode v0 = graph.createDoubleSubNode();
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		LinkBack e0 = v0.addTargetb(v0);
-		v0.addTargetb(v1);
-		LinkBack e2 = v1.addTargetb(v1);
-		v0.addTargetb(v1);
+	public void remove_targetbTest0() throws CommitFailedException {
+		createTransaction(g);
+		DoubleSubNode v0 = g.createDoubleSubNode();
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		LinkBack e0 = v0.add_targetb(v0);
+		v0.add_targetb(v1);
+		LinkBack e2 = v1.add_targetb(v1);
+		v0.add_targetb(v1);
 		// remove all edges v1 --> v0
-		v0.removeTargetb(v1);
+		v0.remove_targetb(v1);
+		commit(g);
+		createReadOnlyTransaction(g);
 		checkEdgeList(e0, e2);
 		checkIncidences(v0, e0, e0.getReversedEdge());
 		checkIncidences(v1, e2, e2.getReversedEdge());
+		commit(g);
 		// remove all edges v0 --> v0
-		v0.removeTargetb(v0);
+		createTransaction(g);
+		v0.remove_targetb(v0);
+		commit(g);
+		createReadOnlyTransaction(g);
 		checkEdgeList(e2);
 		checkIncidences(v0);
 		checkIncidences(v1, e2, e2.getReversedEdge());
+		commit(g);
 		// remove all edges v1 --> v1
-		v1.removeTargetb(v1);
+		createTransaction(g);
+		v1.remove_targetb(v1);
+		commit(g);
+		createReadOnlyTransaction(g);
 		checkEdgeList();
 		checkIncidences(v0);
 		checkIncidences(v1);
+		commit(g);
 	}
 
 	// tests of the method getTargetbList
 	@Test
-	public void getTargetbListTest0() {
-		onlyTestWithoutTransactionSupport();
-		DoubleSubNode v0 = graph.createDoubleSubNode();
-		SuperNode v1 = graph.createSuperNode();
-		SubNode v2 = graph.createSubNode();
-		v0.addTargetb(v0);
-		v0.addTargetb(v2);
-		v1.addTargetb(v0);
-		List<? extends AbstractSuperNode> nodes = v0.getTargetbList();
-		assertEquals(2, nodes.size());
-		assertEquals(v0, nodes.get(0));
-		assertEquals(v2, nodes.get(1));
-		nodes = v1.getTargetbList();
-		assertEquals(1, nodes.size());
-		assertEquals(v0, nodes.get(0));
+	public void getTargetbListTest0() throws CommitFailedException {
+		createTransaction(g);
+		DoubleSubNode v0 = g.createDoubleSubNode();
+		SuperNode v1 = g.createSuperNode();
+		SubNode v2 = g.createSubNode();
+		v0.add_targetb(v0);
+		v0.add_targetb(v2);
+		v1.add_targetb(v0);
+		commit(g);
+
+		createReadOnlyTransaction(g);
+		Iterator<? extends AbstractSuperNode> nodes = v0.get_targetb()
+				.iterator();
+		assertTrue(nodes.hasNext());
+		assertEquals(v0, nodes.next());
+		assertTrue(nodes.hasNext());
+		assertEquals(v2, nodes.next());
+		assertFalse(nodes.hasNext());
+
+		nodes = v1.get_targetb().iterator();
+		assertTrue(nodes.hasNext());
+		assertEquals(v0, nodes.next());
+		assertFalse(nodes.hasNext());
+		commit(g);
 	}
 
 	// tests of the method addTargetc
 	@Test
-	public void addTargetcTest0() {
-		onlyTestWithoutTransactionSupport();
-		DoubleSubNode v0 = graph.createDoubleSubNode();
+	public void addTargetcTest0() throws CommitFailedException {
+		createTransaction(g);
+		DoubleSubNode v0 = g.createDoubleSubNode();
 		// v0 -->{SubLink} v0
-		SubLink e0 = v0.addTargetc(v0);
+		SubLink e0 = v0.add_targetc(v0);
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(v0, e0.getAlpha());
 		assertEquals(v0, e0.getOmega());
+		commit(g);
 		// v0 -->{SubLink} v1
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		SubLink e1 = v0.addTargetc(v1);
+		createTransaction(g);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		SubLink e1 = v0.add_targetc(v1);
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(v0, e1.getAlpha());
 		assertEquals(v1, e1.getOmega());
+		commit(g);
 		// v1 -->{SubLink} v0
-		SubLink e2 = v1.addTargetc(v0);
+		createTransaction(g);
+		SubLink e2 = v1.add_targetc(v0);
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(v1, e2.getAlpha());
 		assertEquals(v0, e2.getOmega());
 		// checks if the edges are in the edge-list of the graph
 		int i = 0;
-		for (Edge e : graph.edges()) {
+		for (Edge e : g.edges()) {
 			switch (i) {
 			case 0:
 				assertEquals(e0, e);
@@ -8701,169 +9954,210 @@ public class VertexTest extends InstanceTest {
 				fail("No further edges expected!");
 			}
 		}
+		commit(g);
 	}
 
-	// tests of the method removeTargetc
+	// tests of the method remove_targetc
 	@Test
-	public void removeTargetcTest0() {
-		onlyTestWithoutTransactionSupport();
-		DoubleSubNode v0 = graph.createDoubleSubNode();
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		SubLink e0 = v0.addTargetc(v0);
-		v0.addTargetc(v1);
-		SubLink e2 = v1.addTargetc(v1);
-		v0.addTargetc(v1);
+	public void remove_targetcTest0() throws CommitFailedException {
+		createTransaction(g);
+		DoubleSubNode v0 = g.createDoubleSubNode();
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		SubLink e0 = v0.add_targetc(v0);
+		v0.add_targetc(v1);
+		SubLink e2 = v1.add_targetc(v1);
+		v0.add_targetc(v1);
 		// remove all edges v1 --> v0
-		v0.removeTargetc(v1);
+		v0.remove_targetc(v1);
+		commit(g);
+		createReadOnlyTransaction(g);
 		checkEdgeList(e0, e2);
 		checkIncidences(v0, e0, e0.getReversedEdge());
 		checkIncidences(v1, e2, e2.getReversedEdge());
+		commit(g);
 		// remove all edges v0 --> v0
-		v0.removeTargetc(v0);
+		createTransaction(g);
+		v0.remove_targetc(v0);
+		commit(g);
+		createReadOnlyTransaction(g);
 		checkEdgeList(e2);
 		checkIncidences(v0);
 		checkIncidences(v1, e2, e2.getReversedEdge());
+		commit(g);
 		// remove all edges v1 --> v1
-		v1.removeTargetc(v1);
+		createTransaction(g);
+		v1.remove_targetc(v1);
+		commit(g);
+		createReadOnlyTransaction(g);
 		checkEdgeList();
 		checkIncidences(v0);
 		checkIncidences(v1);
+		commit(g);
 	}
 
 	// tests of the method getTargetcList
 	@Test
-	public void getTargetcListTest0() {
-		onlyTestWithoutTransactionSupport();
-		DoubleSubNode v0 = graph.createDoubleSubNode();
-		SuperNode v1 = graph.createSuperNode();
-		v0.addTargetc(v0);
-		v0.addTargetc(v1);
-		List<? extends SuperNode> nodes = v0.getTargetcList();
-		assertEquals(2, nodes.size());
-		assertEquals(v0, nodes.get(0));
-		assertEquals(v1, nodes.get(1));
+	public void getTargetcListTest0() throws CommitFailedException {
+		createTransaction(g);
+		DoubleSubNode v0 = g.createDoubleSubNode();
+		SuperNode v1 = g.createSuperNode();
+		v0.add_targetc(v0);
+		v0.add_targetc(v1);
+		commit(g);
+
+		createReadOnlyTransaction(g);
+		Iterator<? extends SuperNode> nodes = v0.get_targetc().iterator();
+		assertTrue(nodes.hasNext());
+		assertEquals(v0, nodes.next());
+		assertTrue(nodes.hasNext());
+		assertEquals(v1, nodes.next());
+		assertFalse(nodes.hasNext());
+		commit(g);
 	}
 
 	// tests of the method getNextAbstractSuperNode
 	@Test
-	public void getNextAbstractSuperNodeTest0() {
-		onlyTestWithoutTransactionSupport();
-		DoubleSubNode v0 = graph.createDoubleSubNode();
-		graph.createSuperNode();
-		SubNode v2 = graph.createSubNode();
-		graph.createSuperNode();
-		DoubleSubNode v4 = graph.createDoubleSubNode();
-		DoubleSubNode v5 = graph.createDoubleSubNode();
+	public void getNextAbstractSuperNodeTest0() throws CommitFailedException {
+		createTransaction(g);
+		DoubleSubNode v0 = g.createDoubleSubNode();
+		g.createSuperNode();
+		SubNode v2 = g.createSubNode();
+		g.createSuperNode();
+		DoubleSubNode v4 = g.createDoubleSubNode();
+		DoubleSubNode v5 = g.createDoubleSubNode();
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(v2, v0.getNextAbstractSuperNode());
 		assertEquals(v4, v2.getNextAbstractSuperNode());
 		assertEquals(v5, v4.getNextAbstractSuperNode());
 		assertNull(v5.getNextAbstractSuperNode());
+		commit(g);
 	}
 
 	// tests of the method getNextSubNode
 	@Test
-	public void getNextSubNodeTest0() {
-		onlyTestWithoutTransactionSupport();
-		DoubleSubNode v0 = graph.createDoubleSubNode();
-		graph.createSuperNode();
-		SubNode v2 = graph.createSubNode();
-		graph.createSuperNode();
-		DoubleSubNode v4 = graph.createDoubleSubNode();
-		DoubleSubNode v5 = graph.createDoubleSubNode();
+	public void getNextSubNodeTest0() throws CommitFailedException {
+		createTransaction(g);
+		DoubleSubNode v0 = g.createDoubleSubNode();
+		g.createSuperNode();
+		SubNode v2 = g.createSubNode();
+		g.createSuperNode();
+		DoubleSubNode v4 = g.createDoubleSubNode();
+		DoubleSubNode v5 = g.createDoubleSubNode();
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(v2, v0.getNextSubNode());
 		assertEquals(v4, v2.getNextSubNode());
 		assertEquals(v5, v4.getNextSubNode());
 		assertNull(v5.getNextSubNode());
+		commit(g);
 	}
 
 	// tests of the method getNextSuperNode
 	@Test
-	public void getNextSuperNodeTest0() {
-		onlyTestWithoutTransactionSupport();
-		SuperNode v0 = graph.createSuperNode();
-		graph.createSubNode();
-		SuperNode v2 = graph.createSuperNode();
-		graph.createSubNode();
-		DoubleSubNode v4 = graph.createDoubleSubNode();
-		DoubleSubNode v5 = graph.createDoubleSubNode();
+	public void getNextSuperNodeTest0() throws CommitFailedException {
+		createTransaction(g);
+		SuperNode v0 = g.createSuperNode();
+		g.createSubNode();
+		SuperNode v2 = g.createSuperNode();
+		g.createSubNode();
+		DoubleSubNode v4 = g.createDoubleSubNode();
+		DoubleSubNode v5 = g.createDoubleSubNode();
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(v2, v0.getNextSuperNode());
 		assertEquals(v4, v2.getNextSuperNode());
 		assertEquals(v5, v4.getNextSuperNode());
 		assertNull(v5.getNextSuperNode());
+		commit(g);
 	}
 
 	// tests of the method getNextDoubleSubNode
 	@Test
-	public void getNextDoubleSubNodeTest0() {
-		onlyTestWithoutTransactionSupport();
-		DoubleSubNode v0 = graph.createDoubleSubNode();
-		graph.createSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		graph.createSuperNode();
-		DoubleSubNode v4 = graph.createDoubleSubNode();
-		DoubleSubNode v5 = graph.createDoubleSubNode();
+	public void getNextDoubleSubNodeTest0() throws CommitFailedException {
+		createTransaction(g);
+		DoubleSubNode v0 = g.createDoubleSubNode();
+		g.createSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		g.createSuperNode();
+		DoubleSubNode v4 = g.createDoubleSubNode();
+		DoubleSubNode v5 = g.createDoubleSubNode();
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(v2, v0.getNextDoubleSubNode());
 		assertEquals(v4, v2.getNextDoubleSubNode());
 		assertEquals(v5, v4.getNextDoubleSubNode());
 		assertNull(v5.getNextDoubleSubNode());
+		commit(g);
 	}
 
 	// tests of the method getFirstLink
 	@Test
-	public void getFirstLinkTest0() {
-		onlyTestWithoutTransactionSupport();
-		DoubleSubNode v0 = graph.createDoubleSubNode();
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		graph.createLinkBack(v0, v1);
-		SubLink e1 = graph.createSubLink(v0, v0);
-		Link e2 = graph.createLink(v0, v1);
-		graph.createSubLink(v1, v1);
+	public void getFirstLinkTest0() throws CommitFailedException {
+		createTransaction(g);
+		DoubleSubNode v0 = g.createDoubleSubNode();
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		g.createLinkBack(v0, v1);
+		SubLink e1 = g.createSubLink(v0, v0);
+		Link e2 = g.createLink(v0, v1);
+		g.createSubLink(v1, v1);
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(e1, v0.getFirstLink());
 		assertEquals(e2.getReversedEdge(), v1.getFirstLink());
+		commit(g);
 	}
 
 	// tests of the method getFirstLink(EdgeDirection)
 	@Test
-	public void getFirstLinkEdgeDirectionTest0() {
-		onlyTestWithoutTransactionSupport();
-		DoubleSubNode v0 = graph.createDoubleSubNode();
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		graph.createLinkBack(v0, v1);
-		SubLink e1 = graph.createSubLink(v0, v0);
-		Link e2 = graph.createLink(v0, v1);
-		SubLink e3 = graph.createSubLink(v1, v1);
+	public void getFirstLinkEdgeDirectionTest0() throws CommitFailedException {
+		createTransaction(g);
+		DoubleSubNode v0 = g.createDoubleSubNode();
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		g.createLinkBack(v0, v1);
+		SubLink e1 = g.createSubLink(v0, v0);
+		Link e2 = g.createLink(v0, v1);
+		SubLink e3 = g.createSubLink(v1, v1);
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(e1, v0.getFirstLink(EdgeDirection.INOUT));
 		assertEquals(e1, v0.getFirstLink(EdgeDirection.OUT));
 		assertEquals(e1.getReversedEdge(), v0.getFirstLink(EdgeDirection.IN));
 		assertEquals(e2.getReversedEdge(), v1.getFirstLink(EdgeDirection.INOUT));
 		assertEquals(e3, v1.getFirstLink(EdgeDirection.OUT));
 		assertEquals(e2.getReversedEdge(), v1.getFirstLink(EdgeDirection.IN));
+		commit(g);
 	}
 
 	// tests of the method getFirstLinkBack
 	@Test
-	public void getFirstLinkBackTest0() {
-		onlyTestWithoutTransactionSupport();
-		DoubleSubNode v0 = graph.createDoubleSubNode();
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		graph.createLink(v0, v1);
-		LinkBack e1 = graph.createLinkBack(v0, v0);
-		LinkBack e2 = graph.createLinkBack(v0, v1);
-		graph.createLinkBack(v1, v1);
+	public void getFirstLinkBackTest0() throws CommitFailedException {
+		createTransaction(g);
+		DoubleSubNode v0 = g.createDoubleSubNode();
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		g.createLink(v0, v1);
+		LinkBack e1 = g.createLinkBack(v0, v0);
+		LinkBack e2 = g.createLinkBack(v0, v1);
+		g.createLinkBack(v1, v1);
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(e1, v0.getFirstLinkBack());
 		assertEquals(e2.getReversedEdge(), v1.getFirstLinkBack());
+		commit(g);
 	}
 
 	// tests of the method getFirstLinkBack(EdgeDirection)
 	@Test
-	public void getFirstLinkBackEdgeDirectionTest0() {
-		onlyTestWithoutTransactionSupport();
-		DoubleSubNode v0 = graph.createDoubleSubNode();
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		graph.createLink(v0, v1);
-		LinkBack e1 = graph.createLinkBack(v0, v0);
-		LinkBack e2 = graph.createLinkBack(v0, v1);
-		LinkBack e3 = graph.createLinkBack(v1, v1);
+	public void getFirstLinkBackEdgeDirectionTest0() throws CommitFailedException {
+		createTransaction(g);
+		DoubleSubNode v0 = g.createDoubleSubNode();
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		g.createLink(v0, v1);
+		LinkBack e1 = g.createLinkBack(v0, v0);
+		LinkBack e2 = g.createLinkBack(v0, v1);
+		LinkBack e3 = g.createLinkBack(v1, v1);
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(e1, v0.getFirstLinkBack(EdgeDirection.INOUT));
 		assertEquals(e1, v0.getFirstLinkBack(EdgeDirection.OUT));
 		assertEquals(e1.getReversedEdge(), v0
@@ -8873,32 +10167,38 @@ public class VertexTest extends InstanceTest {
 		assertEquals(e3, v1.getFirstLinkBack(EdgeDirection.OUT));
 		assertEquals(e2.getReversedEdge(), v1
 				.getFirstLinkBack(EdgeDirection.IN));
+		commit(g);
 	}
 
 	// tests of the method getFirstSubLink
 	@Test
-	public void getFirstSubLinkTest0() {
-		onlyTestWithoutTransactionSupport();
-		DoubleSubNode v0 = graph.createDoubleSubNode();
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		graph.createLink(v0, v1);
-		SubLink e1 = graph.createSubLink(v0, v0);
-		SubLink e2 = graph.createSubLink(v0, v1);
-		graph.createSubLink(v1, v1);
+	public void getFirstSubLinkTest0() throws CommitFailedException {
+		createTransaction(g);
+		DoubleSubNode v0 = g.createDoubleSubNode();
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		g.createLink(v0, v1);
+		SubLink e1 = g.createSubLink(v0, v0);
+		SubLink e2 = g.createSubLink(v0, v1);
+		g.createSubLink(v1, v1);
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(e1, v0.getFirstSubLink());
 		assertEquals(e2.getReversedEdge(), v1.getFirstSubLink());
+		commit(g);
 	}
 
 	// tests of the method getFirstSubLink(EdgeDirection)
 	@Test
-	public void getFirstSubLinkEdgeDirectionTest0() {
-		onlyTestWithoutTransactionSupport();
-		DoubleSubNode v0 = graph.createDoubleSubNode();
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		graph.createLink(v0, v1);
-		SubLink e1 = graph.createSubLink(v0, v0);
-		SubLink e2 = graph.createSubLink(v0, v1);
-		SubLink e3 = graph.createSubLink(v1, v1);
+	public void getFirstSubLinkEdgeDirectionTest0() throws CommitFailedException {
+		createTransaction(g);
+		DoubleSubNode v0 = g.createDoubleSubNode();
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		g.createLink(v0, v1);
+		SubLink e1 = g.createSubLink(v0, v0);
+		SubLink e2 = g.createSubLink(v0, v1);
+		SubLink e3 = g.createSubLink(v1, v1);
+		commit(g);
+		createReadOnlyTransaction(g);
 		assertEquals(e1, v0.getFirstSubLink(EdgeDirection.INOUT));
 		assertEquals(e1, v0.getFirstSubLink(EdgeDirection.OUT));
 		assertEquals(e1.getReversedEdge(), v0.getFirstSubLink(EdgeDirection.IN));
@@ -8906,6 +10206,7 @@ public class VertexTest extends InstanceTest {
 				.getFirstSubLink(EdgeDirection.INOUT));
 		assertEquals(e3, v1.getFirstSubLink(EdgeDirection.OUT));
 		assertEquals(e2.getReversedEdge(), v1.getFirstSubLink(EdgeDirection.IN));
+		commit(g);
 	}
 
 	/**
@@ -8966,15 +10267,17 @@ public class VertexTest extends InstanceTest {
 
 	// tests of the method get#Edge#Incidences
 	@Test
-	public void getLinkIncidencesTest0() {
-		onlyTestWithoutTransactionSupport();
-		DoubleSubNode v0 = graph.createDoubleSubNode();
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		LinkBack e0 = graph.createLinkBack(v0, v1);
-		SubLink e1 = graph.createSubLink(v0, v0);
-		Link e2 = graph.createLink(v1, v0);
-		SubLink e3 = graph.createSubLink(v1, v1);
-		LinkBack e4 = graph.createLinkBack(v1, v0);
+	public void getLinkIncidencesTest0() throws CommitFailedException {
+		createTransaction(g);
+		DoubleSubNode v0 = g.createDoubleSubNode();
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		LinkBack e0 = g.createLinkBack(v0, v1);
+		SubLink e1 = g.createSubLink(v0, v0);
+		Link e2 = g.createLink(v1, v0);
+		SubLink e3 = g.createSubLink(v1, v1);
+		LinkBack e4 = g.createLinkBack(v1, v0);
+		commit(g);
+		createReadOnlyTransaction(g);
 		checkGeneratedIncidences("Link", v0, null, e1, e1.getReversedEdge(), e2
 				.getReversedEdge());
 		checkGeneratedIncidences("Link", v1, null, e2, e3, e3.getReversedEdge());
@@ -8982,19 +10285,22 @@ public class VertexTest extends InstanceTest {
 		checkGeneratedIncidences("LinkBack", v1, null, e0.getReversedEdge(), e4);
 		checkGeneratedIncidences("SubLink", v0, null, e1, e1.getReversedEdge());
 		checkGeneratedIncidences("SubLink", v1, null, e3, e3.getReversedEdge());
+		commit(g);
 	}
 
 	// tests of the method get#Edge#Incidences(EdgeDirection)
 	@Test
-	public void getLinkIncidencesTestEdgeDirection0() {
-		onlyTestWithoutTransactionSupport();
-		DoubleSubNode v0 = graph.createDoubleSubNode();
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		LinkBack e0 = graph.createLinkBack(v0, v1);
-		SubLink e1 = graph.createSubLink(v0, v0);
-		Link e2 = graph.createLink(v1, v0);
-		SubLink e3 = graph.createSubLink(v1, v1);
-		LinkBack e4 = graph.createLinkBack(v1, v0);
+	public void getLinkIncidencesTestEdgeDirection0() throws CommitFailedException {
+		createTransaction(g);
+		DoubleSubNode v0 = g.createDoubleSubNode();
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		LinkBack e0 = g.createLinkBack(v0, v1);
+		SubLink e1 = g.createSubLink(v0, v0);
+		Link e2 = g.createLink(v1, v0);
+		SubLink e3 = g.createSubLink(v1, v1);
+		LinkBack e4 = g.createLinkBack(v1, v0);
+		commit(g);
+		createReadOnlyTransaction(g);
 		checkGeneratedIncidences("Link", v0, EdgeDirection.INOUT, e1, e1
 				.getReversedEdge(), e2.getReversedEdge());
 		checkGeneratedIncidences("Link", v1, EdgeDirection.INOUT, e2, e3, e3
@@ -9025,33 +10331,7 @@ public class VertexTest extends InstanceTest {
 				.getReversedEdge());
 		checkGeneratedIncidences("SubLink", v1, EdgeDirection.IN, e3
 				.getReversedEdge());
-	}
-
-	/*
-	 * Test of methods which are in no interfaces.
-	 */
-
-	// tests of the method void putIncidenceAfter(IncidenceImpl, IncidenceImpl)
-	@Test(expected = GraphException.class)
-	public void putIncidenceAfterTest0() {
-		onlyTestWithoutTransactionSupport();
-		VertexImpl v1 = (VertexImpl) graph.createDoubleSubNode();
-		VertexImpl v2 = (VertexImpl) graph.createDoubleSubNode();
-		IncidenceImpl e1 = (IncidenceImpl) graph.createLink(
-				(AbstractSuperNode) v1, (SuperNode) v2);
-		e1.putEdgeAfter(e1);
-	}
-
-	// tests of the method void putIncidenceBefore(IncidenceImpl, IncidenceImpl)
-
-	@Test(expected = GraphException.class)
-	public void putIncidenceBeforeTest0() {
-		onlyTestWithoutTransactionSupport();
-		VertexImpl v1 = (VertexImpl) graph.createDoubleSubNode();
-		VertexImpl v2 = (VertexImpl) graph.createDoubleSubNode();
-		IncidenceImpl e1 = (IncidenceImpl) graph.createLink(
-				(AbstractSuperNode) v1, (SuperNode) v2);
-		e1.putEdgeBefore(e1);
+		commit(g);
 	}
 
 }

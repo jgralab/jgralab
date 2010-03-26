@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -70,6 +70,7 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 				code.add(createNextEdgeInGraphMethods());
 				code.add(createNextEdgeAtVertexMethods());
 			}
+		//	code.add(createValidRolesMethod());
 		}
 		return code;
 	}
@@ -316,5 +317,29 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 		}
 		return null;
 	}
+	
+//	private CodeBlock createValidRolesMethod() {
+//		CodeList list = new CodeList();
+//		CodeSnippet code = new CodeSnippet(true);
+//		code.add("private static Set<String> validRoles;");
+//		list.add(code);
+//		
+//		code = new CodeSnippet(true);
+//		code.add("static {");
+//		code.add("validRoles = new HashSet<String>();");
+//		EdgeClass ec = (EdgeClass) aec;
+//		for (String s : ec.getTo().getAllRoles()) {
+//			code.add("validRoles.add(\"" + s + "\"");
+//		}
+//		code.add("}");
+//		list.add(code);
+//		code = new CodeSnippet(true);
+//		code.add("public boolean acceptsRolename(String rolename) {",
+//				 "\treturn validRoles.contains(rolename);",
+//				 "}");
+//		list.add(code);
+//
+//		return list;		
+//	}
 
 }

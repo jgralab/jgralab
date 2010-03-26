@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -25,12 +25,16 @@
 package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
@@ -77,6 +81,8 @@ public class ReMatch extends Greql2Function {
 		categories = c;
 	}
 
+	static Map<String, Pattern> cachedPatterns = new HashMap<String, Pattern>();
+
 	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
@@ -85,7 +91,13 @@ public class ReMatch extends Greql2Function {
 		}
 		String s = arguments[0].toString();
 		String p = arguments[1].toString();
-		return new JValue(s.matches(p));
+
+		Pattern pattern = cachedPatterns.get(p);
+		if (pattern == null) {
+			pattern = Pattern.compile(p);
+			cachedPatterns.put(p, pattern);
+		}
+		return new JValueImpl(pattern.matcher(s).matches());
 	}
 
 	@Override

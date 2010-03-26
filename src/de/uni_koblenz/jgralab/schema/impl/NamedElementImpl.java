@@ -1,6 +1,9 @@
 package de.uni_koblenz.jgralab.schema.impl;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import de.uni_koblenz.jgralab.schema.BasicDomain;
@@ -71,6 +74,12 @@ public abstract class NamedElementImpl implements NamedElement {
 	 */
 	private static final Pattern ATTRELEM_OR_NOCOLLDOMAIN_PATTERN = Pattern
 			.compile("\\p{Upper}(\\w*\\p{Alnum})?");
+
+	/**
+	 * The list of comments of this NamedElement. Only contains non-empty
+	 * Strings. If no comment exists, <code>comments</code> is null.
+	 */
+	protected List<String> comments;
 
 	/**
 	 * Creates a new named element with the specified name in the given parent
@@ -223,6 +232,7 @@ public abstract class NamedElementImpl implements NamedElement {
 				this.parentPackage = null;
 				this.simpleName = Package.DEFAULTPACKAGE_NAME;
 				this.uniqueName = Package.DEFAULTPACKAGE_NAME;
+				comments = new ArrayList<String>();
 				return;
 			} else {
 				throw new SchemaException("Cannot create the element '"
@@ -326,7 +336,8 @@ public abstract class NamedElementImpl implements NamedElement {
 		 * it.
 		 */
 		uniqueName = simpleName;
-		((SchemaImpl) schema).addToKnownElements(this);
+		((SchemaImpl) schema).addNamedElement(this);
+		comments = new ArrayList<String>();
 	}
 
 	/**
@@ -404,34 +415,12 @@ public abstract class NamedElementImpl implements NamedElement {
 		return uniqueName;
 	}
 
-	/**
-	 * Returns a hash code value for this named element, based upon it's
-	 * qualified name.
-	 * 
-	 * <p>
-	 * <b>Pattern:</b> <code>hash = namedElement.hashCode();</code>
-	 * </p>
-	 * 
-	 * <p>
-	 * <b>Preconditions:</b> none
-	 * </p>
-	 * 
-	 * <p>
-	 * <b>Postconditions:</b> <code>hash</code> is the hash code of
-	 * <code>namedElement.qualifiedName</code>.<br />
-	 * It is computed as described {@link java.lang.String#hashCode() here}, and
-	 * underlies the same rules as described {@link java.lang.Object#hashCode()
-	 * here}.
-	 * </p>
-	 * 
-	 * @return a hash code value for this named element
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 * @see java.lang.String#hashCode()
-	 */
 	@Override
 	public final int hashCode() {
-		return qualifiedName.hashCode();
+		int x = 1723;
+		x = x * qualifiedName.hashCode() + x;
+		x = x * getSchema().hashCode() + x;
+		return x;
 	}
 
 	@Override
@@ -469,5 +458,26 @@ public abstract class NamedElementImpl implements NamedElement {
 	 */
 	public static String toUniqueNameNotation(String qualifiedName) {
 		return qualifiedName.replace('.', '$');
+	}
+
+	@Override
+	public List<String> getComments() {
+		return Collections.unmodifiableList(comments);
+	}
+
+	@Override
+	public void addComment(String... comments) {
+		for (String comment : comments) {
+			if (comment == null) {
+				continue;
+			}
+			comment = comment.trim();
+			if (comment.length() > 0) {
+				if (this.comments == null) {
+					this.comments = new ArrayList<String>();
+				}
+				this.comments.add(comment);
+			}
+		}
 	}
 }

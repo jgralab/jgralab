@@ -24,7 +24,6 @@ import org.junit.runners.Parameterized.Parameters;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
@@ -226,45 +225,6 @@ public class IncidenceListTest extends InstanceTest {
 		return vertexList;
 	}
 
-	private Iterable<Vertex> getVertices() throws CommitFailedException {
-		createReadOnlyTransaction(g);
-		Iterable<Vertex> out = g.vertices();
-		commit(g);
-		return out;
-	}
-
-	@Test(expected = GraphException.class)
-	public void putEdgeBeforeSelf() throws Exception {
-		createTransaction(g);
-		Edge e = g.createLink(nodes[0], nodes[1]);
-		e.putEdgeBefore(e);
-		commit(g);
-	}
-
-	@Test(expected = GraphException.class)
-	public void putEdgeAfterSelf() throws Exception {
-		createTransaction(g);
-		Edge e = g.createLink(nodes[0], nodes[1]);
-		e.putEdgeAfter(e);
-		commit(g);
-	}
-
-	@Test(expected = GraphException.class)
-	public void putEdgeAfterDifferentThis() throws Exception {
-		createTransaction(g);
-		Edge e = g.createLink(nodes[0], nodes[1]);
-		e.putEdgeAfter(e.getReversedEdge());
-		commit(g);
-	}
-
-	@Test(expected = GraphException.class)
-	public void putEdgeBeforeDifferentThis() throws Exception {
-		createTransaction(g);
-		Edge e = g.createLink(nodes[0], nodes[1]);
-		e.putEdgeBefore(e.getReversedEdge());
-		commit(g);
-	}
-
 	@Test
 	public void putEdgeAfterTest() throws Exception {
 		createTransaction(g);
@@ -379,6 +339,7 @@ public class IncidenceListTest extends InstanceTest {
 				// incidences
 				Edge edgeToDelete = incidenceList.remove(rnd
 						.nextInt(incidenceList.size()));
+				createTransaction(g);
 				// if the edge is a loop, we have to remove the other end, too.
 				if (edgeToDelete.isNormal()) {
 					outDegree--;
@@ -393,6 +354,7 @@ public class IncidenceListTest extends InstanceTest {
 						outDegree--;
 					}
 				}
+				commit(g);
 				// now delete it
 				createTransaction(g);
 				edgeToDelete.delete();
@@ -450,7 +412,7 @@ public class IncidenceListTest extends InstanceTest {
 				return Double.compare(mark1.doubleValue(), mark2.doubleValue());
 			}
 		};
-		
+
 		if (transactionsEnabled) {
 			try {
 				isolated.sortIncidences(comp);

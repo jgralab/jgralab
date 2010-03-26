@@ -116,10 +116,10 @@ public class ManualGreqlLexer {
 		return (c == ';') || (c == '<') || (c == '>') || (c == '(')
 				|| (c == ')') || (c == '{') || (c == '}') || (c == ':')
 				|| (c == '[') || (c == ']') || (c == ',') || (c == ' ')
-				|| (c == '.') || (c == '-') || (c == '+') || (c == '*')
-				|| (c == '/') || (c == '%') || (c == '~') || (c == '=')
-				|| (c == '?') || (c == '^') || (c == '|') || (c == '!')
-				|| (c == '@');
+				|| (c == '\n') || (c == '\t') || (c == '.') || (c == '-')
+				|| (c == '+') || (c == '*') || (c == '/') || (c == '%')
+				|| (c == '~') || (c == '=') || (c == '?') || (c == '^')
+				|| (c == '|') || (c == '!') || (c == '@');
 	}
 
 	public Token getNextToken() {
@@ -159,7 +159,7 @@ public class ManualGreqlLexer {
 									query.substring(start, position), start,
 									position - start, query);
 						}
-						if ((query.charAt(position + 1) == '"')
+						if ((query.charAt(position + 1) == '\"')
 								|| (query.charAt(position + 1) == '\\')) {
 							position++;
 						}
@@ -167,13 +167,14 @@ public class ManualGreqlLexer {
 					sb.append(query.charAt(position));
 					position++;
 				}
-				if (query.charAt(position) != '\"') {
+				if ((position >= query.length())
+						|| (query.charAt(position) != '\"')) {
 					throw new ParsingException("String started at position "
 							+ start + " but is not closed in query", sb
 							.toString(), start, position - start, query);
 				}
 				recognizedTokenType = TokenTypes.STRING;
-				recognizedToken = new ComplexToken(TokenTypes.STRING, start,
+				recognizedToken = new ComplexToken(recognizedTokenType, start,
 						position, sb.toString());
 				position++;
 			} else {
@@ -308,13 +309,19 @@ public class ManualGreqlLexer {
 				position++;
 			}
 			// skip single line comments
-			if (query.regionMatches(position, "//", 0, 2)) {
+			if ((position < query.length() - 2)
+					&& (query.substring(position, position + 2).equals("//"))) {
 				while ((position < query.length())
 						&& (query.charAt(position) != '\n')) {
 					position++;
 				}
+				if ((position < query.length()) && (query.charAt(position) == '\n')) {
+					position++;
+				}
 			}
-		} while ((position < query.length()) && isWs(query.charAt(position)));
+		} while (
+				   ((position < query.length()) && (isWs(query.charAt(position)))) 
+			    || ((position < query.length() - 2) && (query.substring(position, position + 2).equals("//"))));
 	}
 
 	public static List<Token> scan(String query) {

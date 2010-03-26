@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -24,18 +24,17 @@
 
 package de.uni_koblenz.jgralab.codegenerator;
 
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.Map.Entry;
 
-import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.VertexClass;
+import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
 
 /**
  * TODO add comment
@@ -96,11 +95,11 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 			for (RecordDomain rd : aec.getSchema().getRecordDomains()) {
 				CodeSnippet cs = new CodeSnippet(true);
 				cs
-				.add("public #rcname# create#rname#(GraphIO io) throws GraphIOException;");
+						.add("public #rcname# create#rname#(GraphIO io) throws GraphIOException;");
 				cs.add("");
 
 				cs
-				.add("public #rcname# create#rname#(Map<String, Object> fields);");
+						.add("public #rcname# create#rname#(Map<String, Object> fields);");
 				cs.add("");
 
 				cs.add("public #rcname# create#rname#(#parawtypes#);");
@@ -122,11 +121,12 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 			for (RecordDomain rd : aec.getSchema().getRecordDomains()) {
 				CodeSnippet cs = new CodeSnippet(true);
 				cs
-				.add("public #rcname# create#rname#(GraphIO io) throws GraphIOException {");
+						.add("public #rcname# create#rname#(GraphIO io) throws GraphIOException {");
 				if (currentCycle.isTransImpl()) {
-					cs.add("\tif(!isLoading() && getCurrentTransaction().isReadOnly())");
 					cs
-					.add("\t\tthrow new #jgPackage#.GraphException(\"Read-only transactions are not allowed to create instances of #rtype#.\");");
+							.add("\tif(!isLoading() && getCurrentTransaction().isReadOnly())");
+					cs
+							.add("\t\tthrow new #jgPackage#.GraphException(\"Read-only transactions are not allowed to create instances of #rtype#.\");");
 					cs.add("\treturn createRecord(#rtranstype#.class, io);");
 				} else {
 					cs.add("\treturn createRecord(#rstdtype#.class, io);");
@@ -135,13 +135,14 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 				cs.add("");
 
 				cs
-				.add("public #rcname# create#rname#(Map<String, Object> fields) {");
+						.add("public #rcname# create#rname#(Map<String, Object> fields) {");
 				if (currentCycle.isTransImpl()) {
-					cs.add("\tif(!isLoading() && getCurrentTransaction().isReadOnly())");
 					cs
-					.add("\t\tthrow new #jgPackage#.GraphException(\"Read-only transactions are not allowed to create instances of #rtype#.\");");
+							.add("\tif(!isLoading() && getCurrentTransaction().isReadOnly())");
 					cs
-					.add("\treturn createRecord(#rtranstype#.class, fields);");
+							.add("\t\tthrow new #jgPackage#.GraphException(\"Read-only transactions are not allowed to create instances of #rtype#.\");");
+					cs
+							.add("\treturn createRecord(#rtranstype#.class, fields);");
 				} else {
 					cs.add("\treturn createRecord(#rstdtype#.class, fields);");
 				}
@@ -157,14 +158,15 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 				cs.add("public #rcname# create#rname#(#parawtypes#) {");
 
 				if (currentCycle.isTransImpl()) {
-					cs.add("\tif(!isLoading() && getCurrentTransaction().isReadOnly())");
 					cs
-					.add("\t\tthrow new #jgPackage#.GraphException(\"Read-only transactions are not allowed to create instances of #rtype#.\");");
+							.add("\tif(!isLoading() && getCurrentTransaction().isReadOnly())");
 					cs
-					.add("\treturn createRecord(#rtranstype#.class, #parawotypes#);");
+							.add("\t\tthrow new #jgPackage#.GraphException(\"Read-only transactions are not allowed to create instances of #rtype#.\");");
+					cs
+							.add("\treturn createRecord(#rtranstype#.class, #parawotypes#);");
 				} else {
 					cs
-					.add("\treturn createRecord(#rstdtype#.class, #parawotypes#);");
+							.add("\treturn createRecord(#rstdtype#.class, #parawotypes#);");
 				}
 				cs.add("}");
 				cs.add("");
@@ -173,20 +175,20 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 						.getJavaClassName(schemaRootPackageName));
 				cs.setVariable("rname", rd.getUniqueName());
 				cs
-				.setVariable(
-						"rtype",
-						rd
-						.getJavaAttributeImplementationTypeName(schemaRootPackageName));
+						.setVariable(
+								"rtype",
+								rd
+										.getJavaAttributeImplementationTypeName(schemaRootPackageName));
 				cs
-				.setVariable(
-						"rtranstype",
-						rd
-						.getTransactionJavaAttributeImplementationTypeName(schemaRootPackageName));
+						.setVariable(
+								"rtranstype",
+								rd
+										.getTransactionJavaAttributeImplementationTypeName(schemaRootPackageName));
 				cs
-				.setVariable(
-						"rstdtype",
-						rd
-						.getStandardJavaAttributeImplementationTypeName(schemaRootPackageName));
+						.setVariable(
+								"rstdtype",
+								rd
+										.getStandardJavaAttributeImplementationTypeName(schemaRootPackageName));
 				code.addNoIndent(cs);
 			}
 		}
@@ -199,22 +201,23 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 	 * @param withTypes
 	 * @return
 	 */
-	private String buildParametersOutput(Map<String, Domain> components,
-			boolean withTypes) {
-		String parameters = "";
+	private String buildParametersOutput(
+			Collection<RecordComponent> components, boolean withTypes) {
+		StringBuilder parameters = new StringBuilder();
 		int count = 0;
-		int size = components.entrySet().size();
-		for (Entry<String, Domain> entry : components.entrySet()) {
-			parameters += (withTypes ? entry.getValue()
-					.getJavaAttributeImplementationTypeName(
-							schemaRootPackageName) : "")
-							+ " _" + entry.getKey();
+		int size = components.size();
+		for (RecordComponent entry : components) {
+			parameters.append(
+					(withTypes ? entry.getDomain()
+							.getJavaAttributeImplementationTypeName(
+									schemaRootPackageName) : "")).append(" _")
+					.append(entry.getName());
 			count++;
 			if (size != count) {
-				parameters += ", ";
+				parameters.append(", ");
 			}
 		}
-		return parameters;
+		return parameters.toString();
 	}
 
 	@Override
@@ -229,40 +232,42 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 		}
 
 		code
-		.add(
-				"/* Constructors and create methods with values for initial vertex and edge count */",
-				"public #simpleClassName#Impl(int vMax, int eMax) {",
-				"\tthis(null, vMax, eMax);",
-				"}",
-				"",
-				"public #simpleClassName#Impl(java.lang.String id, int vMax, int eMax) {",
-				"\tsuper(id, #schemaName#.instance().#schemaVariableName#, vMax, eMax);",
-				"}",
-				"",
-				"public static #javaClassName# create(int vMax, int eMax) {",
-				"\treturn (#javaClassName#) #schemaName#.instance().create#uniqueClassName##createSuffix#(null, vMax, eMax);",
-				"}",
-				"",
-				"public static #javaClassName# create(String id, int vMax, int eMax) {",
-				"\treturn (#javaClassName#) #schemaName#.instance().create#uniqueClassName##createSuffix#(id, vMax, eMax);",
-				"}",
-				"",
-				"/* Constructors and create methods without values for initial vertex and edge count */",
-				"public #simpleClassName#Impl() {",
-				"\tthis(null);",
-				"}",
-				"",
-				"public #simpleClassName#Impl(java.lang.String id) {",
-				"\tsuper(id, #schemaName#.instance().#schemaVariableName#);",
-				"}",
-				"",
-				"public static #javaClassName# create() {",
-				"\treturn (#javaClassName#) #schemaName#.instance().create#uniqueClassName##createSuffix#(null);",
-				"}",
-				"",
-				"public static #javaClassName# create(String id) {",
-				"\treturn (#javaClassName#) #schemaName#.instance().create#uniqueClassName##createSuffix#(id);",
-		"}");
+				.add(
+						"/* Constructors and create methods with values for initial vertex and edge count */",
+						"public #simpleClassName#Impl(int vMax, int eMax) {",
+						"\tthis(null, vMax, eMax);",
+						"}",
+						"",
+						"public #simpleClassName#Impl(java.lang.String id, int vMax, int eMax) {",
+						"\tsuper(id, #schemaName#.instance().#schemaVariableName#, vMax, eMax);",
+						"\tinitializeAttributesWithDefaultValues();",
+						"}",
+						"",
+						"public static #javaClassName# create(int vMax, int eMax) {",
+						"\treturn (#javaClassName#) #schemaName#.instance().create#uniqueClassName##createSuffix#(null, vMax, eMax);",
+						"}",
+						"",
+						"public static #javaClassName# create(String id, int vMax, int eMax) {",
+						"\treturn (#javaClassName#) #schemaName#.instance().create#uniqueClassName##createSuffix#(id, vMax, eMax);",
+						"}",
+						"",
+						"/* Constructors and create methods without values for initial vertex and edge count */",
+						"public #simpleClassName#Impl() {",
+						"\tthis(null);",
+						"}",
+						"",
+						"public #simpleClassName#Impl(java.lang.String id) {",
+						"\tsuper(id, #schemaName#.instance().#schemaVariableName#);",
+						"\tinitializeAttributesWithDefaultValues();",
+						"}",
+						"",
+						"public static #javaClassName# create() {",
+						"\treturn (#javaClassName#) #schemaName#.instance().create#uniqueClassName##createSuffix#(null);",
+						"}",
+						"",
+						"public static #javaClassName# create(String id) {",
+						"\treturn (#javaClassName#) #schemaName#.instance().create#uniqueClassName##createSuffix#(id);",
+						"}");
 		return code;
 	}
 
@@ -278,9 +283,9 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 				code.addNoIndent(gecCode);
 
 				gecCode
-				.addNoIndent(new CodeSnippet(
-						true,
-						"// ------------------------ Code for #ecQualifiedName# ------------------------"));
+						.addNoIndent(new CodeSnippet(
+								true,
+								"// ------------------------ Code for #ecQualifiedName# ------------------------"));
 
 				gecCode.setVariable("ecSimpleName", gec.getSimpleName());
 				gecCode.setVariable("ecUniqueName", gec.getUniqueName());
@@ -326,30 +331,30 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 		CodeSnippet code = new CodeSnippet(true);
 		if (currentCycle.isAbstract()) {
 			code
-			.add("/**",
-			" * @return the first #ecSimpleName# #ecTypeInComment# in this graph");
+					.add("/**",
+							" * @return the first #ecSimpleName# #ecTypeInComment# in this graph");
 			if (withTypeFlag) {
 				code
-				.add(" * @param noSubClasses if set to <code>true</code>, no subclasses of #ecSimpleName# are accepted");
+						.add(" * @param noSubClasses if set to <code>true</code>, no subclasses of #ecSimpleName# are accepted");
 			}
 			code
-			.add(" */",
-			"public #ecJavaClassName# getFirst#ecCamelName##inGraph#(#formalParams#);");
+					.add(" */",
+							"public #ecJavaClassName# getFirst#ecCamelName##inGraph#(#formalParams#);");
 		}
 		if (currentCycle.isStdOrTransImpl()) {
 			code
-			.add(
-					"public #ecJavaClassName# getFirst#ecCamelName##inGraph#(#formalParams#) {",
-					"\treturn (#ecJavaClassName#)getFirst#ecType#OfClass#inGraph#(#schemaName#.instance().#ecSchemaVariableName##actualParams#);",
-			"}");
+					.add(
+							"public #ecJavaClassName# getFirst#ecCamelName##inGraph#(#formalParams#) {",
+							"\treturn (#ecJavaClassName#)getFirst#ecType#OfClass#inGraph#(#schemaName#.instance().#ecSchemaVariableName##actualParams#);",
+							"}");
 		}
 		code.setVariable("inGraph", (gec instanceof VertexClass ? ""
 				: "InGraph"));
 		code.setVariable("formalParams", (withTypeFlag ? "boolean noSubClasses"
 				: ""));
 		code
-		.setVariable("actualParams", (withTypeFlag ? ", noSubClasses"
-				: ""));
+				.setVariable("actualParams", (withTypeFlag ? ", noSubClasses"
+						: ""));
 
 		return code;
 	}
@@ -361,7 +366,9 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 		CodeList code = new CodeList();
 
 		code.addNoIndent(createFactoryMethod(gec, false));
-		code.addNoIndent(createFactoryMethod(gec, true));
+		if (currentCycle.isStdOrTransImpl()) {
+			code.addNoIndent(createFactoryMethod(gec, true));
+		}
 
 		return code;
 	}
@@ -372,53 +379,54 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 				currentCycle.isTransImpl() ? "WithTransactionSupport" : "");
 		if (currentCycle.isAbstract()) {
 			code
-			.add(
-					"/**",
-					" * Creates a new #ecUniqueName# #ecTypeInComment# in this graph.",
-			" *");
+					.add(
+							"/**",
+							" * Creates a new #ecUniqueName# #ecTypeInComment# in this graph.",
+							" *");
 			if (withId) {
 				code
-				.add(" * @param id the <code>id</code> of the #ecTypeInComment#");
+						.add(" * @param id the <code>id</code> of the #ecTypeInComment#");
 			}
 			if (gec instanceof EdgeClass) {
 				code.add(" * @param alpha the start vertex of the edge",
-				" * @param omega the target vertex of the edge");
+						" * @param omega the target vertex of the edge");
 			}
 			code
-			.add("*/",
-			"public #ecJavaClassName# create#ecCamelName#(#formalParams#);");
+					.add("*/",
+							"public #ecJavaClassName# create#ecCamelName#(#formalParams#);");
 		}
 		if (currentCycle.isStdOrTransImpl()) {
 			code
-			.add(
-					"public #ecJavaClassName# create#ecCamelName#(#formalParams#) {",
-					"\t#ecJavaClassName# new#ecType# = (#ecJavaClassName#) graphFactory.create#ecType##transactionSupport#(#ecJavaClassName#.class, #newActualParams#, this);",
-					"\tadd#ecType#(new#ecType##addActualParams#);",
-					"\treturn new#ecType#;", "}");
+					.add(
+							"public #ecJavaClassName# create#ecCamelName#(#formalParams#) {",
+							"\t#ecJavaClassName# new#ecType# = (#ecJavaClassName#) graphFactory.create#ecType##transactionSupport#(#ecJavaClassName#.class, #newActualParams#, this#additionalParams#);",
+							"\treturn new#ecType#;", "}");
+			code.setVariable("additionalParams", "");
 		}
 
 		if (gec instanceof EdgeClass) {
 			EdgeClass ec = (EdgeClass) gec;
-			String fromClass = ec.getFrom().getQualifiedName();
-			String toClass = ec.getTo().getQualifiedName();
+			String fromClass = ec.getFrom().getVertexClass().getQualifiedName();
+			String toClass = ec.getTo().getVertexClass().getQualifiedName();
 			if (fromClass.equals("Vertex")) {
 				code.setVariable("fromClass", rootBlock
 						.getVariable("jgPackage")
 						+ "." + "Vertex");
 			} else {
 				code.setVariable("fromClass", schemaRootPackageName + "."
-						+ ec.getFrom().getQualifiedName());
+						+ fromClass);
 			}
 			if (toClass.equals("Vertex")) {
 				code.setVariable("toClass", rootBlock.getVariable("jgPackage")
 						+ "." + "Vertex");
 			} else {
 				code.setVariable("toClass", schemaRootPackageName + "."
-						+ ec.getTo().getQualifiedName());
+						+ toClass);
 			}
 			code.setVariable("formalParams", (withId ? "int id, " : "")
 					+ "#fromClass# alpha, #toClass# omega");
 			code.setVariable("addActualParams", ", alpha, omega");
+			code.setVariable("additionalParams", ", alpha, omega");
 		} else {
 			code.setVariable("formalParams", (withId ? "int id" : ""));
 			code.setVariable("addActualParams", "");
@@ -458,16 +466,16 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 			if (currentCycle.isAbstract()) {
 				s.add("/**");
 				s
-				.add(" * @return an Iterable for all edges of this graph that are of type #edgeQualifiedName# or subtypes.");
+						.add(" * @return an Iterable for all edges of this graph that are of type #edgeQualifiedName# or subtypes.");
 				s.add(" */");
 				s
-				.add("public Iterable<#edgeJavaClassName#> get#edgeUniqueName#Edges();");
+						.add("public Iterable<#edgeJavaClassName#> get#edgeUniqueName#Edges();");
 			}
 			if (currentCycle.isStdOrTransImpl()) {
 				s
-				.add("public Iterable<#edgeJavaClassName#> get#edgeUniqueName#Edges() {");
+						.add("public Iterable<#edgeJavaClassName#> get#edgeUniqueName#Edges() {");
 				s
-				.add("\treturn new EdgeIterable<#edgeJavaClassName#>(this, #edgeJavaClassName#.class);");
+						.add("\treturn new EdgeIterable<#edgeJavaClassName#>(this, #edgeJavaClassName#.class);");
 				s.add("}");
 			}
 			s.add("");
@@ -476,19 +484,19 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 				if (currentCycle.isAbstract()) {
 					s.add("/**");
 					s
-					.add(" * @return an Iterable for all incidence edges of this graph that are of type #edgeQulifiedName#.");
+							.add(" * @return an Iterable for all incidence edges of this graph that are of type #edgeQulifiedName#.");
 					s.add(" *");
 					s
-					.add(" * @param noSubClasses toggles wether subclasses of #edgeQualifiedName# should be excluded");
+							.add(" * @param noSubClasses toggles wether subclasses of #edgeQualifiedName# should be excluded");
 					s.add(" */");
 					s
-					.add("public Iterable<#edgeJavaClassName#> get#edgeUniqueName#Edges(boolean noSubClasses);");
+							.add("public Iterable<#edgeJavaClassName#> get#edgeUniqueName#Edges(boolean noSubClasses);");
 				}
 				if (currentCycle.isStdOrTransImpl()) {
 					s
-					.add("public Iterable<#edgeJavaClassName#> get#edgeUniqueName#Edges(boolean noSubClasses) {");
+							.add("public Iterable<#edgeJavaClassName#> get#edgeUniqueName#Edges(boolean noSubClasses) {");
 					s
-					.add("\treturn new EdgeIterable<#edgeJavaClassName#>(this, #edgeJavaClassName#.class, noSubClasses);");
+							.add("\treturn new EdgeIterable<#edgeJavaClassName#>(this, #edgeJavaClassName#.class, noSubClasses);");
 					s.add("}\n");
 				}
 			}
@@ -528,16 +536,16 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 			if (currentCycle.isAbstract()) {
 				s.add("/**");
 				s
-				.add(" * @return an Iterable for all vertices of this graph that are of type #vertexQualifiedName# or subtypes.");
+						.add(" * @return an Iterable for all vertices of this graph that are of type #vertexQualifiedName# or subtypes.");
 				s.add(" */");
 				s
-				.add("public Iterable<#vertexJavaClassName#> get#vertexCamelName#Vertices();");
+						.add("public Iterable<#vertexJavaClassName#> get#vertexCamelName#Vertices();");
 			}
 			if (currentCycle.isStdOrTransImpl()) {
 				s
-				.add("public Iterable<#vertexJavaClassName#> get#vertexCamelName#Vertices() {");
+						.add("public Iterable<#vertexJavaClassName#> get#vertexCamelName#Vertices() {");
 				s
-				.add("\treturn new VertexIterable<#vertexJavaClassName#>(this, #vertexJavaClassName#.class);");
+						.add("\treturn new VertexIterable<#vertexJavaClassName#>(this, #vertexJavaClassName#.class);");
 				s.add("}");
 			}
 			s.add("");
@@ -546,19 +554,19 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 				if (currentCycle.isAbstract()) {
 					s.add("/**");
 					s
-					.add(" * @return an Iterable for all incidence vertices of this graph that are of type #vertexQualifiedName#.");
+							.add(" * @return an Iterable for all incidence vertices of this graph that are of type #vertexQualifiedName#.");
 					s.add(" *");
 					s
-					.add(" * @param noSubClasses toggles wether subclasses of #vertexQualifiedName# should be excluded");
+							.add(" * @param noSubClasses toggles wether subclasses of #vertexQualifiedName# should be excluded");
 					s.add(" */");
 					s
-					.add("public Iterable<#vertexJavaClassName#> get#vertexCamelName#Vertices(boolean noSubClasses);");
+							.add("public Iterable<#vertexJavaClassName#> get#vertexCamelName#Vertices(boolean noSubClasses);");
 				}
 				if (currentCycle.isStdOrTransImpl()) {
 					s
-					.add("public Iterable<#vertexJavaClassName#> get#vertexCamelName#Vertices(boolean noSubClasses) {");
+							.add("public Iterable<#vertexJavaClassName#> get#vertexCamelName#Vertices(boolean noSubClasses) {");
 					s
-					.add("\treturn new VertexIterable<#vertexJavaClassName#>(this, #vertexJavaClassName#.class, noSubClasses);");
+							.add("\treturn new VertexIterable<#vertexJavaClassName#>(this, #vertexJavaClassName#.class, noSubClasses);");
 					s.add("}\n");
 				}
 			}
@@ -571,10 +579,4 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 	protected void addCheckValidityCode(CodeSnippet code) {
 		// just do nothing here
 	}
-
-	@Override
-	protected void setGraphReferenceVariable(CodeSnippet code) {
-		code.setVariable("graphreference", "");
-	}
-
 }

@@ -18,6 +18,7 @@ import de.uni_koblenz.jgralab.grumlschema.structure.AttributedElementClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.EdgeClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.GraphElementClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.HasAttribute;
+import de.uni_koblenz.jgralab.grumlschema.structure.IncidenceClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesEdgeClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesVertexClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
@@ -45,7 +46,7 @@ public class SchemaFilter {
 			// accept everything by default
 			Pattern matchesAll = Pattern.compile(".*");
 
-			if (patterns.length <= 0 || patterns[0].trim().startsWith("-")) {
+			if ((patterns.length <= 0) || patterns[0].trim().startsWith("-")) {
 				includeOrExcludeAllGraphElements(true, matchesAll);
 			}
 
@@ -302,9 +303,15 @@ public class SchemaFilter {
 		for (EdgeClass currentEdgeClass : schemaGraph.getEdgeClassVertices()) {
 			if (includes.isMarked(currentEdgeClass)) {
 				// only look at included EdgeClasses
-				if (!includes.isMarked(currentEdgeClass.getFirstTo().getThat())
-						|| !includes.isMarked(currentEdgeClass.getFirstFrom()
-								.getThat())) {
+				IncidenceClass fromIC = (IncidenceClass) currentEdgeClass
+						.getFirstComesFrom().getOmega();
+				VertexClass fromVC = (VertexClass) fromIC.getFirstEndsAt()
+						.getOmega();
+				IncidenceClass toIC = (IncidenceClass) currentEdgeClass
+						.getFirstGoesTo().getOmega();
+				VertexClass toVC = (VertexClass) toIC.getFirstEndsAt()
+						.getOmega();
+				if (!includes.isMarked(fromVC) || !includes.isMarked(toVC)) {
 					// exclude all EdgeClasses whose to or from VertexClasses
 					// are already excluded
 					includes.removeMark(currentEdgeClass);

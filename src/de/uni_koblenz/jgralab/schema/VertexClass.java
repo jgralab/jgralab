@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -24,12 +24,9 @@
 
 package de.uni_koblenz.jgralab.schema;
 
-import java.util.Map;
 import java.util.Set;
 
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.schema.impl.DirectedEdgeClass;
-import de.uni_koblenz.jgralab.schema.impl.RolenameEntry;
 
 /**
  * Represents a VertexClass in the Schema.
@@ -49,58 +46,34 @@ public interface VertexClass extends GraphElementClass {
 	 * 
 	 */
 	public void addSuperClass(VertexClass superClass);
-
-	/**
-	 * adds an edge class to the list of edge classes to which the vertex class
-	 * may be connected to, only used internally!
-	 * 
-	 * @param anEdgeClass
-	 */
-	public void addEdgeClass(EdgeClass anEdgeClass);
-
-	/**
-	 * @return the edge classes to which the vertex class may be connected to
-	 */
-	public Set<EdgeClass> getOwnEdgeClasses();
-
-	/**
-	 * @return all EdgeClasses (including subclasses) which may connect to this
-	 *         vertexclass
-	 */
-	public Set<EdgeClass> getEdgeClasses();
-
-	/**
-	 * @return the set of EdgeClasses that may start at this VertexClass
-	 */
-	public Set<EdgeClass> getValidFromEdgeClasses();
-
-	/**
-	 * @return the set of EdgeClasses that may end at this VertexClass
-	 */
-	public Set<EdgeClass> getValidToEdgeClasses();
-
-	/**
-	 * @return the own set of directed edge classes that may be connected to a
-	 *         vertex of this class. The own set means that only edges that may
-	 *         connect to a vertex of this class but not a superclass are
-	 *         returned
-	 */
-	public Set<DirectedEdgeClass> getOwnDirectedEdgeClasses();
-
-	/**
-	 * @return the set of all directed edge classes that may be connected to a
-	 *         vertex of this class. The set means that edges that may connect
-	 *         to a vertex of this class or a superclass are returned
-	 */
-	public Set<DirectedEdgeClass> getDirectedEdgeClasses();
-
-	/**
-	 * @return a map from String to RolenameEntry that contains all rolenames
-	 *         that are related for this VertexClass or a superclass
-	 */
-	public Map<String, RolenameEntry> getRolenameMap();
+	
+	//public Set<IncidenceClass> getOwnInIncidenceClasses();
+	
+	//public Set<IncidenceClass> getOwnOutIncidenceClasses();
+	
+	public Set<IncidenceClass> getAllInIncidenceClasses();
+	
+	public Set<IncidenceClass> getAllOutIncidenceClasses();
+	
+	public Set<IncidenceClass> getValidFromFarIncidenceClasses();
+	
+	public Set<IncidenceClass> getValidToFarIncidenceClasses();
+	
+	//public Set<IncidenceClass> getOwnAndInheritedFarIncidenceClasses();
+	
+	public void addInIncidenceClass(IncidenceClass ic);
+	
+	public void addOutIncidenceClass(IncidenceClass ic);
 
 	@Override
 	public Class<? extends Vertex> getM1Class();
+
+	public Set<EdgeClass> getValidToEdgeClasses();
+	
+	public Set<EdgeClass> getValidFromEdgeClasses();
+	
+	public Set<EdgeClass> getConnectedEdgeClasses();
+	
+	public Set<EdgeClass> getOwnConnectedEdgeClasses();
 
 }

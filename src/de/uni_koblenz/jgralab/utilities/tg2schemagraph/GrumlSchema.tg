@@ -1,57 +1,60 @@
+TGraph 2;
+
 Schema de.uni_koblenz.jgralab.grumlschema.GrumlSchema;
 
-GraphClass SchemaGraph 
-  ["The GraphClass may not be abstract."
-  "forall gc: V{structure.GraphClass} @ not gc.abstract"
-  "from gc: V{structure.GraphClass} with gc.abstract reportSet gc end"]
-  ["There must be exactly one GraphClass."
-  "count(V{structure.GraphClass}) = 1"
-  "V{structure.GraphClass}"];
+GraphClass SchemaGraph;
 
+Package ;
 Package structure;
-VertexClass Schema {name: String, packagePrefix: String};
-abstract VertexClass AttributedElementClass {abstract: Boolean, qualifiedName: String};
-VertexClass AggregationClass: EdgeClass {aggregateFrom: Boolean};
-VertexClass Attribute {name: String};
-VertexClass CompositionClass: AggregationClass;
-VertexClass Constraint {message: String, offendingElementsQuery: String, predicateQuery: String};
-VertexClass EdgeClass: GraphElementClass;
-VertexClass GraphClass: AttributedElementClass;
-abstract VertexClass GraphElementClass: AttributedElementClass;
-VertexClass Package {qualifiedName: String} ["A Package must either be default or subpackage, but not both" "forall p: V{structure.Package} @ inDegree{structure.ContainsDefaultPackage}(p) + inDegree{structure.ContainsSubPackage}(p) = 1"];
+Comment structure.IncidenceDirection "Direction viewed from vertex class.";
+EnumDomain structure.IncidenceDirection (IN, OUT);
+EnumDomain structure.AggregationKind (NONE, SHARED, COMPOSITE);
+abstract VertexClass NamedElement {qualifiedName: String};
+VertexClass Comment {text: String};
+EdgeClass Annotates from Comment (0,*) role comment to NamedElement (1,1) role annotatedElement;
+Comment structure.IncidenceClass "The implementation in jgralab.schema.impl gets an \"edgeclass\" attribute to ensure two-way navigability of ComesFrom/GoesTo associations.";
+VertexClass IncidenceClass {aggregation: AggregationKind, min: Integer, max: Integer, roleName: String} ["Each IncidenceClass must either have a ComesFrom or a GoesTo Edge." "import structure.*; forall ic : V{IncidenceClass} @ count(ic --<>{ComesFrom, GoesTo}) = 1" "import structure.*; from ic : V{IncidenceClass} with count(ic --<>{ComesFrom, GoesTo}) <> 1 reportSet ic end"];
+EdgeClass EndsAt from IncidenceClass (0,*) role incidence to VertexClass (1,1) role targetclass;
 VertexClass VertexClass: GraphElementClass;
-
-EdgeClass HasDomain from Attribute (0,*) to domains.Domain (1,1);
-CompositionClass HasAttribute from AttributedElementClass (1,1) to Attribute (0,*) aggregate from;
-CompositionClass HasConstraint from AttributedElementClass (1,1)  to Constraint (0,*) aggregate from;
-EdgeClass SpecializesEdgeClass from EdgeClass (0,*) to EdgeClass (0,*);
-AggregationClass To from EdgeClass (0,*) to VertexClass (1,1) aggregate from {max: Integer, min: Integer, redefinedRoles: Set<String>, roleName: String};
-AggregationClass From from EdgeClass (0,*) to VertexClass (1,1) aggregate from {max: Integer, min: Integer, redefinedRoles: Set<String>, roleName: String};
-CompositionClass DefinesGraphClass from Schema (1,1) to GraphClass (1,1) aggregate from;
-CompositionClass ContainsGraphElementClass from Package (1,1) to GraphElementClass (0,*) aggregate from;
-CompositionClass ContainsSubPackage from Package (0,1) to Package (0,*) aggregate from;
-CompositionClass ContainsDefaultPackage from Schema (0,1) to Package (1,1) aggregate from;
-EdgeClass SpecializesVertexClass from VertexClass (0,*) to VertexClass (0,*);
-CompositionClass ContainsDomain from Package (1,1) to domains.Domain (0,*) aggregate from;
-
+VertexClass Schema {name: String, packagePrefix: String};
+VertexClass Package: NamedElement ["A Package must either be default or subpackage, but not both" "import structure.*; forall p: V{Package} @ (inDegree{ContainsDefaultPackage}(p) + inDegree{ContainsSubPackage}(p)) = 1" "import structure.*; from p: V{Package} with (inDegree{ContainsDefaultPackage}(p) + inDegree{ContainsSubPackage}(p)) <> 1 reportSet p end"];
+VertexClass EdgeClass: GraphElementClass ["An EdgeClass may have at most one shared/composite end." "import structure.*; forall ec : V{EdgeClass} @ theElement(ec <>--{ComesFrom}).aggregation = \"NONE\" or theElement(ec <>--{GoesTo}).aggregation = \"NONE\"" "import structure.*; from ec : V{EdgeClass} with theElement(ec <>--{ComesFrom}).aggregation <> \"NONE\" and theElement(ec <>--{GoesTo}).aggregation <> \"NONE\" reportSet ec end"];
+VertexClass GraphClass: AttributedElementClass ["The GraphClass may not be abstract." "forall gc: V{structure.GraphClass} @ not gc.abstract" "from gc: V{structure.GraphClass} with gc.abstract reportSet gc end"] ["There must be exactly one GraphClass." "count(V{structure.GraphClass}) = 1" "V{structure.GraphClass}"];
+abstract VertexClass GraphElementClass: AttributedElementClass;
+VertexClass Constraint {message: String, predicateQuery: String, offendingElementsQuery: String};
+abstract VertexClass AttributedElementClass: NamedElement {abstract: Boolean};
+Comment structure.Attribute "The defaultValue is a string constant in TG syntax, compatible to the Domain of the Attribute.\ndefaultValue may be null (which means no default value is specified).";
+VertexClass Attribute {name: String, defaultValue: String};
+EdgeClass HasDomain from Attribute (0,*) to domains.Domain (1,1) role domain;
+EdgeClass HasConstraint from AttributedElementClass (1,1) role constrainedElement to Constraint (0,*) role constraint aggregation composite;
+EdgeClass HasAttribute from AttributedElementClass (1,1) to Attribute (0,*) role attribute aggregation composite;
+EdgeClass SpecializesEdgeClass from EdgeClass (0,*) role subclass to EdgeClass (0,*) role superclass;
+EdgeClass ContainsSubPackage from Package (0,1) to Package (0,*) role subpackage aggregation composite;
+EdgeClass ContainsDomain from Package (1,1) to domains.Domain (0,*) aggregation composite;
+EdgeClass ContainsGraphElementClass from Package (1,1) to GraphElementClass (0,*) aggregation composite;
+EdgeClass ContainsDefaultPackage from Schema (0,1) to Package (1,1) aggregation composite;
+EdgeClass DefinesGraphClass from Schema (1,1) to GraphClass (1,1) role graphClass aggregation composite;
+EdgeClass SpecializesVertexClass from VertexClass (0,*) role subclass to VertexClass (0,*) role superclass;
+EdgeClass ComesFrom from EdgeClass (0,1) to IncidenceClass (1,1) role from aggregation composite;
+EdgeClass GoesTo from EdgeClass (0,1) to IncidenceClass (1,1) role to aggregation composite;
+EdgeClass Subsets from IncidenceClass (0,*) to IncidenceClass (0,*);
+EdgeClass Redefines: Subsets from IncidenceClass (0,*) to IncidenceClass (0,*);
 Package domains;
-abstract VertexClass Domain {qualifiedName: String};
-abstract VertexClass CompositeDomain: Domain;
-VertexClass EnumDomain: Domain {enumConstants: List<String>};
-VertexClass DoubleDomain: Domain;
-VertexClass IntegerDomain: Domain;
-VertexClass ListDomain: CollectionDomain;
-VertexClass LongDomain: Domain;
-VertexClass MapDomain: Domain
-  ["The key domain of a MapDomain must not be a collection, record, or map"
-  "forall m: V{domains.MapDomain} @ (forall d: m -->{domains.HasKeyDomain} @ not hasType{domains.CollectionDomain, domains.RecordDomain, domains.MapDomain}(d))"];
-VertexClass BooleanDomain: Domain;
-abstract VertexClass CollectionDomain: Domain;
+abstract VertexClass BasicDomain: Domain;
 VertexClass SetDomain: CollectionDomain;
-VertexClass StringDomain: Domain;
+VertexClass StringDomain: BasicDomain;
 VertexClass RecordDomain: Domain;
+VertexClass IntegerDomain: BasicDomain;
+VertexClass ListDomain: CollectionDomain;
+VertexClass LongDomain: BasicDomain;
+VertexClass MapDomain: Domain;
+VertexClass EnumDomain: Domain {enumConstants: List<String>};
+abstract VertexClass Domain: structure.NamedElement;
+VertexClass DoubleDomain: BasicDomain;
+VertexClass BooleanDomain: BasicDomain;
+abstract VertexClass CollectionDomain: Domain;
+EdgeClass HasBaseDomain from CollectionDomain (0,*) to Domain (1,1) role basedomain;
+EdgeClass HasValueDomain from MapDomain (0,*) to Domain (1,1) role valuedomain;
+EdgeClass HasKeyDomain from MapDomain (0,*) to Domain (1,1) role keydomain;
+EdgeClass HasRecordDomainComponent from RecordDomain (0,*) to Domain (1,*) role componentdomain aggregation shared {name: String};
 
-EdgeClass HasBaseDomain from CollectionDomain (0,*) to Domain (1,1);
-AggregationClass HasRecordDomainComponent from RecordDomain (0,*) to Domain (1,*) aggregate from {name: String};
-EdgeClass HasKeyDomain from MapDomain (0,*) to Domain (1,1);
-EdgeClass HasValueDomain from MapDomain (0,*) to Domain (1,1);

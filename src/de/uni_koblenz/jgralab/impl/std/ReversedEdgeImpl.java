@@ -1,9 +1,9 @@
 package de.uni_koblenz.jgralab.impl.std;
 
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.impl.EdgeImpl;
+import de.uni_koblenz.jgralab.impl.EdgeBaseImpl;
 import de.uni_koblenz.jgralab.impl.IncidenceImpl;
-import de.uni_koblenz.jgralab.impl.VertexImpl;
+import de.uni_koblenz.jgralab.impl.VertexBaseImpl;
 
 /**
  * The implementation of an ReversedEdge accessing attributes without
@@ -12,13 +12,13 @@ import de.uni_koblenz.jgralab.impl.VertexImpl;
  * @author Jose Monte(monte@uni-koblenz.de)
  */
 public abstract class ReversedEdgeImpl extends
-		de.uni_koblenz.jgralab.impl.ReversedEdgeImpl {
-	private VertexImpl incidentVertex;
+		de.uni_koblenz.jgralab.impl.ReversedEdgeBaseImpl {
+	private VertexBaseImpl incidentVertex;
 	private IncidenceImpl nextIncidence;
 	private IncidenceImpl prevIncidence;
 
 	@Override
-	protected VertexImpl getIncidentVertex() {
+	protected VertexBaseImpl getIncidentVertex() {
 		return incidentVertex;
 	}
 
@@ -33,7 +33,7 @@ public abstract class ReversedEdgeImpl extends
 	}
 
 	@Override
-	protected void setIncidentVertex(VertexImpl v) {
+	protected void setIncidentVertex(VertexBaseImpl v) {
 		this.incidentVertex = v;
 	}
 
@@ -52,7 +52,7 @@ public abstract class ReversedEdgeImpl extends
 	 * @param normalEdge
 	 * @param graph
 	 */
-	protected ReversedEdgeImpl(EdgeImpl normalEdge, Graph graph) {
+	protected ReversedEdgeImpl(EdgeBaseImpl normalEdge, Graph graph) {
 		super(normalEdge, graph);
 	}
 }

@@ -1,3 +1,4 @@
+TGraph 2;
 Schema de.uni_koblenz.jgralab.grumlschema.GrumlSchema;
 GraphClass SchemaGraph;
  
@@ -16,16 +17,16 @@ abstract VertexClass AttributedElementClass { isAbstract: Boolean, qualifiedName
 VertexClass Attribute { name: String };
 VertexClass AggregationClass: EdgeClass { aggregateFrom: Boolean };
 EdgeClass HasDomain from Attribute (0, *) to domains.Domain (1, 1);
-CompositionClass HasConstraint from AttributedElementClass (1, 1) to Constraint (0, *) aggregate from;
-CompositionClass HasAttribute from AttributedElementClass (1, 1) to Attribute (0, *) aggregate from;
+EdgeClass HasConstraint from AttributedElementClass (1, 1) to Constraint (0, *) aggregation composite;
+EdgeClass HasAttribute from AttributedElementClass (1, 1) to Attribute (0, *) aggregation composite;
 EdgeClass SpecializesEdgeClass from EdgeClass (0, *) to EdgeClass (0, *);
-AggregationClass To from EdgeClass (0, *) to VertexClass (1, 1) aggregate from { min: Integer, max: Integer, roleName: String, redefinedRoles: Set<String> };
-AggregationClass From from EdgeClass (0, *) to VertexClass (1, 1) aggregate from { min: Integer, max: Integer, roleName: String, redefinedRoles: Set<String> };
-CompositionClass ContainsSubPackage from Package (0, 1) to Package (0, *) aggregate from;
-CompositionClass ContainsDomain from Package (1, 1) to domains.Domain (0, *) aggregate from;
-CompositionClass ContainsGraphElementClass from Package (1, 1) to GraphElementClass (0, *) aggregate from;
-CompositionClass ContainsDefaultPackage from Schema (0, 1) to Package (1, 1) aggregate from;
-CompositionClass DefinesGraphClass from Schema (1, 1) to GraphClass (1, 1) aggregate from;
+EdgeClass To from EdgeClass (0, *) to VertexClass (1, 1) aggregation shared { min: Integer, max: Integer, roleName: String, redefinedRoles: Set<String> };
+EdgeClass From from EdgeClass (0, *) to VertexClass (1, 1) aggregation shared { min: Integer, max: Integer, roleName: String, redefinedRoles: Set<String> };
+EdgeClass ContainsSubPackage from Package (0, 1) to Package (0, *) aggregation composite;
+EdgeClass ContainsDomain from Package (1, 1) to domains.Domain (0, *) aggregation composite;
+EdgeClass ContainsGraphElementClass from Package (1, 1) to GraphElementClass (0, *) aggregation composite;
+EdgeClass ContainsDefaultPackage from Schema (0, 1) to Package (1, 1) aggregation composite;
+EdgeClass DefinesGraphClass from Schema (1, 1) to GraphClass (1, 1) aggregation composite;
 EdgeClass SpecializesVertexClass from VertexClass (0, *) to VertexClass (0, *);
  
 Package domains;
@@ -44,4 +45,4 @@ abstract VertexClass CollectionDomain: Domain;
 EdgeClass HasBaseDomain from CollectionDomain (0, *) to Domain (1, 1);
 EdgeClass HasValueDomain from MapDomain (0, *) to Domain (1, 1);
 EdgeClass HasKeyDomain from MapDomain (0, *) to Domain (1, 1);
-AggregationClass HasRecordDomainComponent from RecordDomain (0, *) to Domain (1, *) aggregate from { name: String };
+EdgeClass HasRecordDomainComponent from RecordDomain (0, *) to Domain (1, *) aggregation shared { name: String };

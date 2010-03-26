@@ -46,31 +46,40 @@ public class Rsa2TgTest {
 			IOException, SAXException, ParserConfigurationException,
 			XMLStreamException {
 
-		// Loads the SchemaGraph
-		System.out.println("Testing with: " + folder + filename);
-		System.out
-				.print("Loading XMI, creating SchemaGraph and creating TG-file... ");
-		r.setFilenameDot(null);
-		r.setFilenameValidation(null);
-		r.setFilenameSchema(null);
-		r.setFilenameSchemaGraph(null);
-		r.process(folder + filename);
-		System.out.println("\tdone");
+		try {
 
-		de.uni_koblenz.jgralab.grumlschema.structure.Schema gSchema = r
-				.getSchemaGraph().getFirstSchema();
+			// Loads the SchemaGraph
+			java.io.File file = new java.io.File(folder + filename);
+			System.out.println("Testing with: " + file.getPath());
+			System.out
+					.print("Loading XMI, creating SchemaGraph and creating TG-file... ");
 
-		// Converts the SchemaGraph to a Schema
-		System.out.print("Loading Schema from File ...");
-		Schema schema = GraphIO.loadSchemaFromFile(folder + gSchema.get_name()
-				+ ".rsa.tg");
-		System.out.println("\t\t\t\t\tdone");
+			String tgFilename = file.getPath() + ".rsa.tg";
 
-		// Compares the SchemaGraph with the created Schema
-		System.out.print("Testing ...");
-		new CompareSchemaWithSchemaGraph().compare(schema, r.getSchemaGraph());
-		System.out.println("\t\t\t\t\t\t\tdone");
-		System.out.println();
+			r.setFilenameDot(null);
+			r.setFilenameValidation(null);
+			r.setFilenameSchema(tgFilename);
+			r.setFilenameSchemaGraph(null);
+			r.process(file.getPath());
+			System.out.println("\tdone");
+
+			de.uni_koblenz.jgralab.grumlschema.structure.Schema gSchema = r
+					.getSchemaGraph().getFirstSchema();
+
+			// Converts the SchemaGraph to a Schema
+			System.out.print("Loading Schema from File ... ");
+			System.out.println(folder + gSchema.get_name() + ".rsa.tg");
+			Schema schema = GraphIO.loadSchemaFromFile(tgFilename);
+			System.out.println("\t\t\t\t\tdone");
+
+			// Compares the SchemaGraph with the created Schema
+			System.out.print("Testing ...");
+			new CompareSchemaWithSchemaGraph().compare(schema, r
+					.getSchemaGraph());
+			System.out.println("\t\t\t\t\t\t\tdone");
+		} finally {
+			System.out.println("\n");
+		}
 	}
 
 	@Test
@@ -92,9 +101,9 @@ public class Rsa2TgTest {
 		testASchema("OsmSchema.xmi");
 	}
 
-	@Test
-	public void testSoamig() throws GraphIOException, IOException,
-			SAXException, ParserConfigurationException, XMLStreamException {
-		testASchema("soamig.xmi");
-	}
+	// @Test
+	// public void testSoamig() throws GraphIOException, IOException,
+	// SAXException, ParserConfigurationException, XMLStreamException {
+	// testASchema("soamig.xmi");
+	// }
 }

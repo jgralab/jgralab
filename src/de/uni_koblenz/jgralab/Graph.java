@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -25,9 +25,7 @@
 package de.uni_koblenz.jgralab;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
@@ -43,9 +41,6 @@ import de.uni_koblenz.jgralab.trans.Transaction;
  * 
  * Additionally, convenient methods for traversal, either based on separate
  * calls (getFirst/getNext) or on Iterables, can be used to travers the graph.
- * 
- * Callback methods can be used by subclasses to get informed when a Vertex or
- * an Edge is added or removed.
  * 
  * @author ist@uni-koblenz.de
  */
@@ -331,10 +326,8 @@ public interface Graph extends AttributedElement {
 	 * Returns the Vertex with the specified <code>id</code> if such a vertex
 	 * exists in this Graph.
 	 * 
-	 * Precondition: id > 0
-	 * 
 	 * @param id
-	 *            the id of the vertex
+	 *            the id of the vertex (must be > 0)
 	 * @return the Vertex, or null if no such vertex exists
 	 */
 	public Vertex getVertex(int id);
@@ -344,10 +337,8 @@ public interface Graph extends AttributedElement {
 	 * edge exists in this Graph. If <code>id</code> is positive, the normal
 	 * edge is returned, otherwise, the reversed Edge is returned.
 	 * 
-	 * Precondition: id != 0
-	 * 
 	 * @param id
-	 *            the id of the edge
+	 *            the id of the edge (must be != 0)
 	 * @return the Edge, or null if no such edge exists
 	 */
 	public Edge getEdge(int id);
@@ -579,7 +570,7 @@ public interface Graph extends AttributedElement {
 	 *            the class for the generic type of the list
 	 * @return
 	 */
-	public <T> List<T> createList(Class<T> cls);
+	public <T> JGraLabList<T> createList();
 
 	/**
 	 * 
@@ -590,8 +581,7 @@ public interface Graph extends AttributedElement {
 	 * @param collection
 	 * @return
 	 */
-	public <T> List<T> createList(Class<T> cls,
-			Collection<? extends T> collection);
+	public <T> JGraLabList<T> createList(Collection<? extends T> collection);
 
 	/**
 	 * 
@@ -602,7 +592,7 @@ public interface Graph extends AttributedElement {
 	 * @param initialCapacity
 	 * @return
 	 */
-	public <T> List<T> createList(Class<T> cls, int initialCapacity);
+	public <T> JGraLabList<T> createList(int initialCapacity);
 
 	/**
 	 * 
@@ -612,7 +602,7 @@ public interface Graph extends AttributedElement {
 	 *            the class for the generic type of the set
 	 * @return
 	 */
-	public <T> Set<T> createSet(Class<T> cls);
+	public <T> JGraLabSet<T> createSet();
 
 	/**
 	 * 
@@ -623,7 +613,7 @@ public interface Graph extends AttributedElement {
 	 * @param collection
 	 * @return
 	 */
-	public <T> Set<T> createSet(Class<T> cls, Collection<? extends T> collection);
+	public <T> JGraLabSet<T> createSet(Collection<? extends T> collection);
 
 	/**
 	 * 
@@ -634,7 +624,7 @@ public interface Graph extends AttributedElement {
 	 * @param initialCapacity
 	 * @return
 	 */
-	public <T> Set<T> createSet(Class<T> cls, int initialCapacity);
+	public <T> JGraLabSet<T> createSet(int initialCapacity);
 
 	/**
 	 * 
@@ -646,8 +636,7 @@ public interface Graph extends AttributedElement {
 	 * @param loadFactor
 	 * @return
 	 */
-	public <T> Set<T> createSet(Class<T> cls, int initialCapacity,
-			float loadFactor);
+	public <T> JGraLabSet<T> createSet(int initialCapacity, float loadFactor);
 
 	/**
 	 * 
@@ -661,7 +650,7 @@ public interface Graph extends AttributedElement {
 	 *            the class for the generic type of the value
 	 * @return
 	 */
-	public <K, V> Map<K, V> createMap(Class<K> key, Class<V> value);
+	public <K, V> JGraLabMap<K, V> createMap();
 
 	/**
 	 * 
@@ -676,15 +665,10 @@ public interface Graph extends AttributedElement {
 	 * @param map
 	 * @return
 	 */
-	public <K, V> Map<K, V> createMap(Class<K> key, Class<V> value,
-			Map<? extends K, ? extends V> map);
+	public <K, V> JGraLabMap<K, V> createMap(Map<? extends K, ? extends V> map);
 
 	/**
 	 * 
-	 * @param <K>
-	 *            the generic type for the key
-	 * @param <V>
-	 *            the generic type for the value
 	 * @param key
 	 *            the class for the generic type of the key
 	 * @param value
@@ -692,8 +676,7 @@ public interface Graph extends AttributedElement {
 	 * @param initialCapacity
 	 * @return
 	 */
-	public <K, V> Map<K, V> createMap(Class<K> key, Class<V> value,
-			int initialCapacity);
+	public <K, V> JGraLabMap<K, V> createMap(int initialCapacity);
 
 	/**
 	 * 
@@ -709,8 +692,8 @@ public interface Graph extends AttributedElement {
 	 * @param loadFactor
 	 * @return
 	 */
-	public <K, V> Map<K, V> createMap(Class<K> key, Class<V> value,
-			int initialCapacity, float loadFactor);
+	public <K, V> JGraLabMap<K, V> createMap(int initialCapacity,
+			float loadFactor);
 
 	/**
 	 * Generic creation of records.
@@ -749,7 +732,8 @@ public interface Graph extends AttributedElement {
 	 *            the new <code>GraphStructureChangedListener</code> to
 	 *            register.
 	 */
-	public void addGraphStructureChangedListener(GraphStructureChangedListener newListener);
+	public void addGraphStructureChangedListener(
+			GraphStructureChangedListener newListener);
 
 	/**
 	 * Removes the given <code>listener</code> from the internal listener list.
@@ -757,7 +741,8 @@ public interface Graph extends AttributedElement {
 	 * @param listener
 	 *            the <code>GraphStructureChangedListener</code> to be removed.
 	 */
-	public void removeGraphStructureChangedListener(GraphStructureChangedListener listener);
+	public void removeGraphStructureChangedListener(
+			GraphStructureChangedListener listener);
 
 	/**
 	 * Removes all <code>GraphStructureChangedListener</code> from the internal

@@ -37,7 +37,7 @@ import de.uni_koblenz.jgralabtest.schemas.motorwaymap.impl.trans.CityImpl;
  * 
  * @author Jose Monte(monte@uni-koblenz.de)
  * 
- * TODO think about, if protected-methods should really be tested
+ *         TODO think about, if protected-methods should really be tested
  */
 public class TransactionImplTest {
 	private MotorwayMap motorwayMap;
@@ -56,16 +56,15 @@ public class TransactionImplTest {
 	private Exit ex2;
 	private Exit ex3;
 
-	private final int V = 10;
-	private final int E = 10;
+	private static final int V = 10;
+	private static final int E = 10;
 
 	@Before
 	public void setUp() throws InterruptedException {
 		motorwayMap = MotorwayMapSchema.instance()
 				.createMotorwayMapWithTransactionSupport(V, E);
 
-		readWriteTransaction1 = (TransactionImpl) motorwayMap
-				.newTransaction();
+		readWriteTransaction1 = (TransactionImpl) motorwayMap.newTransaction();
 		readOnlyTransaction = (TransactionImpl) motorwayMap
 				.newReadOnlyTransaction();
 		motorwayMap.setCurrentTransaction(readWriteTransaction1);
@@ -748,20 +747,35 @@ public class TransactionImplTest {
 	 * Change all attributes of vertex c1 in <code>readWriteTransaction1</code>.
 	 * This should be remarked in <code>readWriteTransaction1</code>
 	 * .changedAttributes.
+	 * 
+	 * @throws ClassNotFoundException
 	 */
 	@Test
-	public void testSetAttribute() {
+	public void testSetAttribute() throws ClassNotFoundException {
 		testAddVertex();
 		CityImpl c1Impl = (CityImpl) c1;
+		
 		c1Impl.set_name("test");
+		
 		c1Impl.set_testEnum(TestEnum.Test1);
-		c1Impl.set_testList(c1.getGraph().createList(TestRecord.class));
-		c1Impl.set_testMap(c1.getGraph().createMap(String.class, String.class));
-		c1Impl.set_testSet(c1.getGraph().createSet(String.class));
-		c1Impl.set_testRecord(motorwayMap.createTestRecord("test", c1.getGraph().createList(String.class),
-				c1.getGraph().createSet(String.class), 2, 2D, 2L, false));
+		
+		List<TestRecord> list1 = motorwayMap.createList();
+		c1Impl.set_testList(list1);
+		
+		Map<String, String> map1 = motorwayMap.createMap();
+		c1Impl.set_testMap(map1);
+		
+		Set<String> set1 = motorwayMap.createSet();
+		c1Impl.set_testSet(set1);
+		
+		List<String> list2 = motorwayMap.createList();
+		Set<String> set2 = motorwayMap.createSet();
+		c1Impl.set_testRecord(motorwayMap.createTestRecord("test", list2, set2,
+				2, 2D, 2L, false));
+		
 		Map<AttributedElement, Set<VersionedDataObject<?>>> changedAttributesMap = new HashMap<AttributedElement, Set<VersionedDataObject<?>>>();
 		changedAttributesMap.put(c1, c1Impl.attributes());
+		
 		assertEquals(readWriteTransaction1.changedAttributes,
 				changedAttributesMap);
 	}
@@ -850,6 +864,7 @@ public class TransactionImplTest {
 			ex3.delete();
 			assertTrue(!readWriteTransaction2.changedAttributes
 					.containsKey(ex1));
+			// FinBugs can be ignored in the following lines
 			assertTrue(!(readWriteTransaction2.changedEseqEdges
 					.containsKey(ex1))
 					&& !(readWriteTransaction2.changedEseqEdges
@@ -861,6 +876,7 @@ public class TransactionImplTest {
 			assertTrue(readWriteTransaction2.deletedEdges.contains(ex1));
 			assertTrue(readWriteTransaction2.deletedEdges.contains(ex3));
 		} catch (Exception e) {
+			// denounced by FindBugs, but can be ignored
 			fail();
 		}
 	}

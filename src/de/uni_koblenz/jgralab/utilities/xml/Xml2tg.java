@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -169,7 +169,11 @@ public class Xml2tg {
 		Schema schema = (Schema) inst.invoke(currentSchema);
 
 		Xml2tg xml2tg = null;
-		for (String inputXML : cmdl.getArgs()) {
+		int i = 0;
+		String[] files = cmdl.getArgs();
+		for (String inputXML : files) {
+			System.out.println("Importing " + inputXML + " (" + (++i) + "/"
+					+ files.length + ")");
 			if (xml2tg == null) {
 				xml2tg = new Xml2tg(inputXML, outputFilename, schema);
 				xml2tg.setAssumeVerticesBeforeEdges(cmdl.hasOption('V'));

@@ -3,8 +3,10 @@ package de.uni_koblenz.jgralabtest.schema;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -14,6 +16,7 @@ import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.ListDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.Schema;
+import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
 import de.uni_koblenz.jgralab.schema.exception.InvalidNameException;
 import de.uni_koblenz.jgralab.schema.exception.NoSuchRecordComponentException;
 import de.uni_koblenz.jgralab.schema.exception.RecordCycleException;
@@ -27,18 +30,24 @@ public class RecordDomainTest extends CompositeDomainTest {
 	public void init() {
 		super.init();
 		// Initializing of DomainTest
-		HashMap<String, Domain> elements = new HashMap<String, Domain>();
-		elements.put("int1", schema1.getDomain("Integer"));
-		elements.put("double1", schema1.getDomain("Double"));
-		elements.put("bool1", schema1.getDomain("Boolean"));
-		elements.put("string1", schema1.getDomain("String"));
+		List<RecordComponent> elements = new ArrayList<RecordComponent>();
+		elements.add(new RecordComponent("int1", schema1.getDomain("Integer")));
+		elements
+				.add(new RecordComponent("double1", schema1.getDomain("Double")));
+		elements
+				.add(new RecordComponent("bool1", schema1.getDomain("Boolean")));
+		elements
+				.add(new RecordComponent("string1", schema1.getDomain("String")));
 		schema1.createRecordDomain("package1.Record1", elements);
 		domain1 = schema1.getDomain("package1.Record1");
-		elements = new HashMap<String, Domain>();
-		elements.put("int1", schema2.getDomain("Integer"));
-		elements.put("double1", schema2.getDomain("Double"));
-		elements.put("bool1", schema2.getDomain("Boolean"));
-		elements.put("string1", schema2.getDomain("String"));
+		elements = new ArrayList<RecordComponent>();
+		elements.add(new RecordComponent("int1", schema2.getDomain("Integer")));
+		elements
+				.add(new RecordComponent("double1", schema2.getDomain("Double")));
+		elements
+				.add(new RecordComponent("bool1", schema2.getDomain("Boolean")));
+		elements
+				.add(new RecordComponent("string1", schema2.getDomain("String")));
 		schema2.createRecordDomain("package1.Record1", elements);
 		domain2 = schema2.getDomain("package1.Record1");
 		otherDomain1 = schema1.getDomain("Boolean");
@@ -61,9 +70,10 @@ public class RecordDomainTest extends CompositeDomainTest {
 		// Initializing of CompositeDomainTest
 		domain3 = (CompositeDomain) domain1;
 		schema1.createListDomain(schema1.getDomain("Boolean"));
-		HashMap<String, Domain> element = new HashMap<String, Domain>();
-		element.put("aList", schema1.getDomain("List<Boolean>"));
-		element.put("aRecord", domain1);
+		List<RecordComponent> element = new ArrayList<RecordComponent>();
+		element.add(new RecordComponent("aList", schema1
+				.getDomain("List<Boolean>")));
+		element.add(new RecordComponent("aRecord", domain1));
 		schema1.createRecordDomain("Record4", element);
 		domain4 = (CompositeDomain) schema1.getDomain("Record4");
 		expectedCompositeDomains1 = new HashSet<CompositeDomain>();
@@ -78,7 +88,9 @@ public class RecordDomainTest extends CompositeDomainTest {
 		expectedDomains1.add(schema1.getDomain("Double"));
 		expectedDomains1.add(schema1.getDomain("Boolean"));
 		expectedDomains1.add(schema1.getDomain("String"));
-		expectedDomains2.addAll(elements.values());
+		for (RecordComponent comp : elements) {
+			expectedDomains2.add(comp.getDomain());
+		}
 		expectedDomains3 = expectedDomains1;
 		expectedDomains4 = new HashSet<Domain>();
 		expectedDomains4.add(schema1.getDomain("List<Boolean>"));
@@ -92,21 +104,38 @@ public class RecordDomainTest extends CompositeDomainTest {
 		// testOfCyclicInclusion
 		// testOfIncludingNewDomains
 		// test of normal cases
+
+		String componentName1 = "component1";
+		String componentName2 = "component2";
+		Domain componentType1 = schema1.getDomain("Boolean");
+		Domain componentType2 = schema1.getDomain("Integer");
+
 		schema1.createRecordDomain("package1.Rec1");
 		RecordDomain rec1 = (RecordDomain) schema1.getDomain("package1.Rec1");
-		rec1.addComponent("component1", schema1.getDomain("Boolean"));
+
+		rec1.addComponent(componentName1, componentType1);
 		assertEquals(1, rec1.getComponents().size());
-		assertTrue(rec1.getComponents().containsKey("component1"));
-		assertTrue(rec1.getComponents().containsValue(
-				schema1.getDomain("Boolean")));
-		rec1.addComponent("component2", schema1.getDomain("Integer"));
+		isComponentInRecordDomain(rec1, componentName1, componentType1);
+
+		rec1.addComponent(componentName2, componentType2);
 		assertEquals(2, rec1.getComponents().size());
-		assertTrue(rec1.getComponents().containsKey("component1"));
-		assertTrue(rec1.getComponents().containsValue(
-				schema1.getDomain("Boolean")));
-		assertTrue(rec1.getComponents().containsKey("component2"));
-		assertTrue(rec1.getComponents().containsValue(
-				schema1.getDomain("Integer")));
+		isComponentInRecordDomain(rec1, componentName1, componentType1);
+		isComponentInRecordDomain(rec1, componentName2, componentType2);
+	}
+
+	private boolean isComponentInRecordDomain(RecordDomain recordDomain,
+			String name, Domain domain) {
+
+		Collection<RecordDomain.RecordComponent> components = recordDomain
+				.getComponents();
+
+		boolean isIn = false;
+
+		for (RecordDomain.RecordComponent component : components) {
+			isIn |= component.getName().equals(name)
+					&& component.getDomain().equals(domain);
+		}
+		return isIn;
 	}
 
 	@Test(expected = InvalidNameException.class)
@@ -165,9 +194,9 @@ public class RecordDomainTest extends CompositeDomainTest {
 
 		// now r1 <>-- r2 holds
 
-		HashMap<String, Domain> r3CompMap = new HashMap<String, Domain>();
-		r3CompMap.put("myR2", r2);
-		RecordDomain r3 = s.createRecordDomain("test.R3", r3CompMap);
+		List<RecordComponent> r3Components = new ArrayList<RecordComponent>();
+		r3Components.add(new RecordComponent("myR2", r2));
+		RecordDomain r3 = s.createRecordDomain("test.R3", r3Components);
 
 		// now r1 <>-- r2 --<> r3 holds
 
@@ -230,13 +259,24 @@ public class RecordDomainTest extends CompositeDomainTest {
 		// tests if a map with all components is returned
 		schema1.createRecordDomain("package1.Rec1");
 		RecordDomain rec1 = (RecordDomain) schema1.getDomain("package1.Rec1");
-		assertEquals(new HashMap<String, Domain>(), rec1.getComponents());
-		HashMap<String, Domain> elements = new HashMap<String, Domain>();
-		elements.put("int1", schema1.getDomain("Integer"));
-		elements.put("double1", schema1.getDomain("Double"));
-		elements.put("bool1", schema1.getDomain("Boolean"));
-		elements.put("string1", schema1.getDomain("String"));
-		assertEquals(elements, ((RecordDomain) domain1).getComponents());
+		// It should has no entries.
+		assertEquals(0, rec1.getComponents().size());
+
+		// It should contain all elements
+		Collection<RecordDomain.RecordComponent> components = ((RecordDomain) domain1)
+				.getComponents();
+		List<RecordComponent> elements = new ArrayList<RecordComponent>(4);
+		elements.add(new RecordComponent("int1", schema1.getDomain("Integer")));
+		elements
+				.add(new RecordComponent("double1", schema1.getDomain("Double")));
+		elements
+				.add(new RecordComponent("bool1", schema1.getDomain("Boolean")));
+		elements
+				.add(new RecordComponent("string1", schema1.getDomain("String")));
+
+		for (RecordComponent component : components) {
+			assertTrue(components.contains(component));
+		}
 	}
 
 	@Test

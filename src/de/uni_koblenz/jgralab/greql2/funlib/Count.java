@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -31,6 +31,7 @@ import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
@@ -77,16 +78,16 @@ public class Count extends Greql2Function {
 	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		JValue result = null;
+		JValueImpl result = null;
 		switch (checkArguments(arguments)) {
 		case 0:
-			result = new JValue(arguments[0].toCollection().size());
+			result = new JValueImpl(arguments[0].toCollection().size());
 			break;
 		case 1:
-			result = new JValue(1);
+			result = new JValueImpl(1);
 			break;
 		case 2:
-			result = new JValue(arguments[0].toJValueMap().size());
+			result = new JValueImpl(arguments[0].toJValueMap().size());
 			break;
 		default:
 			throw new WrongFunctionParameterException(this, arguments);

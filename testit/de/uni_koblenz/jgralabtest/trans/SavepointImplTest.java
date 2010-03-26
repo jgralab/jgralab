@@ -32,8 +32,8 @@ public class SavepointImplTest {
 	private Transaction readWriteTransaction2;
 	private Transaction readOnlyTransaction;
 
-	private final int V = 1;
-	private final int E = 1;
+	private static final int V = 1;
+	private static final int E = 1;
 
 	// private final int N = 10;
 
@@ -300,7 +300,7 @@ public class SavepointImplTest {
 	 * 
 	 */
 	@Test
-	public void testRestoreSavepoint6() {
+	public void restoreSavepoint6() {
 		motorwayMap.setCurrentTransaction(readWriteTransaction1);
 		Savepoint sp1 = readWriteTransaction1.defineSavepoint();
 		motorwayMap.setCurrentTransaction(readWriteTransaction2);
@@ -318,7 +318,7 @@ public class SavepointImplTest {
 	 * 
 	 */
 	@Test
-	public void testRemoveSavepoint1() {
+	public void removeSavepoint1() {
 		testDefineAndGetSavepoints();
 		Savepoint sp1 = readWriteTransaction1.getSavepoints().get(0);
 		readWriteTransaction1.removeSavepoint(sp1);
@@ -330,7 +330,7 @@ public class SavepointImplTest {
 	 * 
 	 */
 	@Test
-	public void testRemoveAndRestoreSavepoint1() {
+	public void removeAndRestoreSavepoint1() {
 		testDefineAndGetSavepoints();
 		Savepoint sp1 = readWriteTransaction1.getSavepoints().get(0);
 		readWriteTransaction1.removeSavepoint(sp1);

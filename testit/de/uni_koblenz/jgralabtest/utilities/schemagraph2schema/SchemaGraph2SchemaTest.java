@@ -45,51 +45,52 @@ public class SchemaGraph2SchemaTest {
 
 	public void test(String filename) throws GraphIOException, IOException,
 			SAXException, ParserConfigurationException, XMLStreamException {
+		try {
+			r.process(filename);
 
-		// Loads the SchemaGraph
-		System.out.println("Testing with: " + folder + filename);
-		System.out.print("Loading XMI and creating SchemaGraph ... ");
-		r.setFilenameDot(null);
-		r.setFilenameValidation(null);
-		r.setFilenameSchema(null);
-		r.setFilenameSchemaGraph(null);
-		r.process(folder + filename);
-		System.out.println("\tdone");
+			// Loads the SchemaGraph
+			System.out.println("Testing with: " + folder + filename);
+			System.out.print("Loading XMI and creating SchemaGraph ... ");
+			r.setFilenameDot(null);
+			r.setFilenameValidation(null);
+			r.setFilenameSchema(null);
+			r.setFilenameSchemaGraph(null);
 
-		// Converts the SchemaGraph to a Schema
-		System.out.print("Converting SchemaGraph to Schema ...");
-		Schema schema = new SchemaGraph2Schema().convert(r.getSchemaGraph());
-		System.out.println("\t\tdone");
+			System.out.println("\tdone");
 
-		// Compares the SchemaGraph with the created Schema
-		System.out.print("Testing ...");
-		new CompareSchemaWithSchemaGraph().compare(schema, r.getSchemaGraph());
-		System.out.println("\t\t\t\t\tdone");
-		System.out.println();
+			// Converts the SchemaGraph to a Schema
+			System.out.print("Converting SchemaGraph to Schema ...");
+			Schema schema = new SchemaGraph2Schema()
+					.convert(r.getSchemaGraph());
+			System.out.println("\t\tdone");
+
+			// Compares the SchemaGraph with the created Schema
+			System.out.print("Testing ...");
+			new CompareSchemaWithSchemaGraph().compare(schema, r
+					.getSchemaGraph());
+			System.out.println("\t\t\t\t\tdone");
+
+		} finally {
+			System.out.println("\n");
+		}
 	}
 
 	@Test
 	public void testTest() throws GraphIOException, IOException, SAXException,
 			ParserConfigurationException, XMLStreamException {
-		test("test.xmi");
+		test(folder + "test.xmi");
 
 	}
 
 	@Test
 	public void testgrUML_M3() throws GraphIOException, IOException,
 			SAXException, ParserConfigurationException, XMLStreamException {
-		test("grUML-M3.xmi");
+		test(folder + "grUML-M3.xmi");
 	}
 
 	@Test
 	public void testOsmSchema() throws GraphIOException, IOException,
 			SAXException, ParserConfigurationException, XMLStreamException {
-		test("OsmSchema.xmi");
-	}
-
-	@Test
-	public void testSoamig() throws GraphIOException, IOException,
-			SAXException, ParserConfigurationException, XMLStreamException {
-		test("soamig.xmi");
+		test(folder + "OsmSchema.xmi");
 	}
 }

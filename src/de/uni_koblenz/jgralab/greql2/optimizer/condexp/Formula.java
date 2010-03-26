@@ -37,12 +37,6 @@ public abstract class Formula {
 	protected static Logger logger = JGraLab.getLogger(Formula.class
 			.getPackage().getName());
 
-	/**
-	 * Indicates if a simplification or optimization (condexp-transformation)
-	 * could be done.
-	 */
-	protected static boolean simplifiedOrOptimized = false;
-
 	protected GreqlEvaluator greqlEvaluator;
 
 	@Override
@@ -53,10 +47,8 @@ public abstract class Formula {
 	public static Formula createFormulaFromExpression(Expression exp,
 			GreqlEvaluator eval) {
 		Formula formula = createFormulaFromExpressionInternal(eval, exp);
-
-		OptimizerUtility
-				.deleteOrphanedVerticesBelow(exp, new HashSet<Expression>(
-						formula.getNonConstantTermExpressions()));
+		OptimizerUtility.deleteOrphanedVerticesBelow(exp, new HashSet<Vertex>(
+				formula.getNonConstantTermExpressions()));
 		return formula;
 	}
 
@@ -66,6 +58,7 @@ public abstract class Formula {
 
 	private static Formula createFormulaFromExpressionInternal(
 			GreqlEvaluator eval, Expression exp) {
+		assert exp.isValid() : exp + " is not valid!";
 		if (exp instanceof BoolLiteral) {
 			BoolLiteral bool = (BoolLiteral) exp;
 			TrivalentBoolean value = bool.get_boolValue();
@@ -235,12 +228,4 @@ public abstract class Formula {
 
 	@Override
 	public abstract int hashCode();
-
-	public static boolean isSimplifiedOrOptimized() {
-		return simplifiedOrOptimized;
-	}
-
-	public static void setSimplifiedOrOptimized(boolean simplifiedOrOptimized) {
-		Formula.simplifiedOrOptimized = simplifiedOrOptimized;
-	}
 }

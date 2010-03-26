@@ -3,7 +3,6 @@ package de.uni_koblenz.jgralab.utilities.schemacompare;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.Map.Entry;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
@@ -21,6 +20,7 @@ import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.NamedElement;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.Schema;
+import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
 
 @WorkInProgress(responsibleDevelopers = "horn")
 public class SchemaCompare {
@@ -95,17 +95,21 @@ public class SchemaCompare {
 
 		RecordDomain f = (RecordDomain) e;
 
-		for (Entry<String, Domain> de : d.getComponents().entrySet()) {
-			if (!f.getComponents().containsKey(de.getKey())) {
-				reportDiff("RecordDomain " + d.getQualifiedName() + " has "
-						+ de.getKey() + " component", "no such component");
-			} else if (!f.getComponents().get(de.getKey()).getQualifiedName()
-					.equals(de.getValue().getQualifiedName())) {
-				reportDiff("RecordDomain component " + de.getKey()
-						+ " has Domain " + de.getValue(),
-						"component has Domain "
-								+ f.getComponents().get(de.getKey())
-										.getQualifiedName());
+		for (RecordComponent dc : d.getComponents()) {
+			boolean foundMatch = false;
+			for (RecordComponent fc : f.getComponents()) {
+				if (dc.getName().equals(fc.getName())
+						&& dc.getDomain().getQualifiedName().equals(
+								fc.getDomain().getQualifiedName())) {
+					foundMatch = true;
+					break;
+				}
+			}
+			if (!foundMatch) {
+				reportDiff("RecordDomain " + d.getQualifiedName()
+						+ ", Component: " + dc.getName() + " : "
+						+ dc.getDomain().getQualifiedName(), "RecordDomain "
+						+ f.getQualifiedName() + " has no such component.");
 			}
 		}
 
