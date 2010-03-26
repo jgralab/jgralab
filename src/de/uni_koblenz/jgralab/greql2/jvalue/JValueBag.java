@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -29,7 +29,9 @@ import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.TreeMap;
 import java.util.Map.Entry;
 
 /**
@@ -44,7 +46,7 @@ public class JValueBag extends JValueCollection implements Cloneable {
 	 * The backing instance of <code>HashMap</code> where the elements of this
 	 * set are stored.
 	 */
-	private HashMap<JValue, Integer> myHashMap;
+	private Map<JValue, Integer> myHashMap;
 
 	/**
 	 * Used by JValueCollection.toString()
@@ -374,7 +376,7 @@ public class JValueBag extends JValueCollection implements Cloneable {
 	 *         <code>false</code> otherwise.
 	 * @see #getQuantity
 	 */
-	public final boolean setQuantity(JValue element, int quantity) {
+	public final boolean setQuantity(JValueImpl element, int quantity) {
 		int oldQuantity = getQuantity(element);
 		if (quantity <= 0) {
 			storedSize -= oldQuantity;
@@ -718,5 +720,13 @@ public class JValueBag extends JValueCollection implements Cloneable {
 			result.add(jv.toObject());
 		}
 		return result;
+	}
+
+	@Override
+	public void sort() {
+		if (myHashMap instanceof TreeMap<?, ?>) {
+			return;
+		}
+		myHashMap = new TreeMap<JValue, Integer>(myHashMap);
 	}
 }

@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -59,7 +59,7 @@ public interface GraphFactory {
 	 * creates a Edge-object for the specified class. The returned object may be
 	 * an instance of a subclass of the specified edgeClass.
 	 */
-	public Edge createEdge(Class<? extends Edge> edgeClass, int id, Graph g);
+	public Edge createEdge(Class<? extends Edge> edgeClass, int id, Graph g, Vertex alpha, Vertex omega);
 
 	public void setGraphImplementationClass(
 			Class<? extends Graph> graphM1Class,
@@ -102,7 +102,7 @@ public interface GraphFactory {
 	 * edgeClass.
 	 */
 	public Edge createEdgeWithTransactionSupport(
-			Class<? extends Edge> edgeClass, int id, Graph g);
+			Class<? extends Edge> edgeClass, int id, Graph g, Vertex alpha, Vertex omega);
 
 	/**
 	 * Assigns an implementation class with transaction support for a

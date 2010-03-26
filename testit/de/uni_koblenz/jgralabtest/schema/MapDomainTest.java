@@ -6,7 +6,8 @@ package de.uni_koblenz.jgralabtest.schema;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -15,6 +16,7 @@ import de.uni_koblenz.jgralab.schema.CompositeDomain;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.MapDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
+import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
 import de.uni_koblenz.jgralab.schema.exception.RecordCycleException;
 
 /**
@@ -66,9 +68,9 @@ public class MapDomainTest extends CompositeDomainTest {
 		expectedUniqueName2 = expectedQualifiedName2;
 		// Initializing for the CompositeDomainTest
 		keyDomain3 = schema1.createListDomain(schema1.getDomain("Integer"));
-		HashMap<String, Domain> components = new HashMap<String, Domain>();
-		components.put("aList", keyDomain3);
-		components.put("aMap", domain1);
+		List<RecordComponent> components = new ArrayList<RecordComponent>();
+		components.add(new RecordComponent("aList", keyDomain3));
+		components.add(new RecordComponent("aMap", domain1));
 		valueDomain3 = schema1.createRecordDomain("Record1", components);
 		keyDomain4 = valueDomain4 = domain3 = schema1.createMapDomain(
 				keyDomain3, valueDomain3);

@@ -30,6 +30,7 @@ import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
@@ -90,7 +91,7 @@ public class Split extends Greql2Function {
 		String[] splits = str.split(regex);
 		JValueList result = new JValueList();
 		for (String split : splits) {
-			result.add(new JValue(split));
+			result.add(new JValueImpl(split));
 		}
 		return result;
 	}

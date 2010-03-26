@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -62,14 +62,7 @@ public abstract class Transition {
 	/**
 	 * The state where this transition ends
 	 */
-	protected State endState;
-
-	/**
-	 * @return The endstate of this transition
-	 */
-	public final State getEndState() {
-		return endState;
-	}
+	public State endState;
 
 	/**
 	 * Sets the new endstate of this transition
@@ -119,6 +112,9 @@ public abstract class Transition {
 	 * returns a string which describes the edge
 	 */
 	public abstract String edgeString();
+	
+	/** a pretty-printed string for this tranistion */
+	public abstract String prettyPrint();
 
 	/**
 	 * returns a copy of this transition

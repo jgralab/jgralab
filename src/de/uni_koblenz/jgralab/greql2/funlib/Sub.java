@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -28,6 +28,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 
 /**
  * Calculates a-b for given scalar values a and b.
@@ -49,18 +50,18 @@ public class Sub extends ArithmeticFunction {
 	}
 
 	@Override
-	protected JValue applyFunction(Integer leftHandSide, Integer rightHandSide) {
-		return new JValue(leftHandSide - rightHandSide);
+	protected JValueImpl applyFunction(Integer leftHandSide, Integer rightHandSide) {
+		return new JValueImpl(leftHandSide - rightHandSide);
 	}
 
 	@Override
-	protected JValue applyFunction(Long leftHandSide, Long rightHandSide) {
-		return new JValue(leftHandSide - rightHandSide);
+	protected JValueImpl applyFunction(Long leftHandSide, Long rightHandSide) {
+		return new JValueImpl(leftHandSide - rightHandSide);
 	}
 
 	@Override
-	protected JValue applyFunction(Double leftHandSide, Double rightHandSide) {
-		return new JValue(leftHandSide - rightHandSide);
+	protected JValueImpl applyFunction(Double leftHandSide, Double rightHandSide) {
+		return new JValueImpl(leftHandSide - rightHandSide);
 	}
 
 }

@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -34,7 +34,7 @@ import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
  * @author ist@uni-koblenz.de
  * 
  */
-abstract public class JValueCollection extends JValue implements
+abstract public class JValueCollection extends JValueImpl implements
 		Iterable<JValue> {
 
 	/**
@@ -96,11 +96,11 @@ abstract public class JValueCollection extends JValue implements
 	/**
 	 * adds a JValue to the collection
 	 * 
-	 * @param element
+	 * @param j
 	 *            the JValue to be added
 	 * @return true if successfull, false otherwise
 	 */
-	abstract public boolean add(JValue element);
+	abstract public boolean add(JValue j);
 
 	/**
 	 * adds all elements of given collection to this collection
@@ -140,11 +140,11 @@ abstract public class JValueCollection extends JValue implements
 	/**
 	 * removes a JValue from the collection
 	 * 
-	 * @param element
+	 * @param j
 	 *            the element to be removed
 	 * @return true if successfull, false otherwise
 	 */
-	abstract public boolean remove(JValue element);
+	abstract public boolean remove(JValue j);
 
 	/**
 	 * removes a collection from this collection
@@ -334,5 +334,10 @@ abstract public class JValueCollection extends JValue implements
 		sb.append(this.CLOSING_PAREN);
 		return sb.toString();
 	}
+
+	/**
+	 * Sort this collection according the natural order of its elements.
+	 */
+	public abstract void sort();
 
 }

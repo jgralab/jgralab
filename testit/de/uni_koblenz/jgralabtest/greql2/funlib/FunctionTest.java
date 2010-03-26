@@ -32,6 +32,7 @@ import static org.junit.Assert.fail;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map.Entry;
 
 import org.junit.Test;
 
@@ -42,6 +43,7 @@ import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueMap;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
@@ -105,7 +107,7 @@ public class FunctionTest extends GenericTests {
 	@Test
 	public void testContainsKey1() throws Exception {
 		JValueMap map = new JValueMap();
-		map.put(new JValue(1), new JValue("a string"));
+		map.put(new JValueImpl(1), new JValueImpl("a string"));
 		boundVariables.put("emap", map);
 		String queryString = "using emap: containsKey(emap, 1)";
 		JValue result = evalTestQuery("ContainsKey1", queryString);
@@ -115,7 +117,7 @@ public class FunctionTest extends GenericTests {
 	@Test
 	public void testContainsKey2() throws Exception {
 		JValueMap map = new JValueMap();
-		map.put(new JValue(1), new JValue("a string"));
+		map.put(new JValueImpl(1), new JValueImpl("a string"));
 		boundVariables.put("emap", map);
 		String queryString = "using emap: containsKey(emap, 2)";
 		JValue result = evalTestQuery("ContainsKey2", queryString);
@@ -125,7 +127,7 @@ public class FunctionTest extends GenericTests {
 	@Test
 	public void testContainsValue1() throws Exception {
 		JValueMap map = new JValueMap();
-		map.put(new JValue(1), new JValue("a string"));
+		map.put(new JValueImpl(1), new JValueImpl("a string"));
 		boundVariables.put("emap", map);
 		String queryString = "using emap: containsValue(emap, \"a string\")";
 		JValue result = evalTestQuery("ContainsValue1", queryString);
@@ -135,7 +137,7 @@ public class FunctionTest extends GenericTests {
 	@Test
 	public void testContainsValue2() throws Exception {
 		JValueMap map = new JValueMap();
-		map.put(new JValue(1), new JValue("a string"));
+		map.put(new JValueImpl(1), new JValueImpl("a string"));
 		boundVariables.put("emap", map);
 		String queryString = "using emap: containsValue(emap, 1)";
 		JValue result = evalTestQuery("ContainsValue2", queryString);
@@ -145,7 +147,7 @@ public class FunctionTest extends GenericTests {
 	@Test
 	public void testContainsValue3() throws Exception {
 		JValueMap map = new JValueMap();
-		map.put(new JValue(1), new JValue("a string"));
+		map.put(new JValueImpl(1), new JValueImpl("a string"));
 		boundVariables.put("emap", map);
 		String queryString = "using emap: containsValue(emap, \"string\")";
 		JValue result = evalTestQuery("ContainsValue3", queryString);
@@ -203,6 +205,16 @@ public class FunctionTest extends GenericTests {
 			assertEquals(1, (int) j.toInteger());
 		}
 	}
+	
+	@Test
+	public void testDegree5() throws Exception {
+		String queryString = "from x : V{BagComprehension} report edgesConnected(x) end";
+		JValue result = evalTestQuery("Degree5", queryString);
+		assertEquals(1, result.toCollection().size());
+		for (JValue j : result.toCollection()) {
+			System.out.println(j);
+		}
+	}
 
 	@Test
 	public void testDegree2() throws Exception {
@@ -232,21 +244,21 @@ public class FunctionTest extends GenericTests {
 	public void testDiv() throws Exception {
 		String queryString = "3/3";
 		JValue result = evalTestQuery("Div", queryString);
-		assertEquals(new JValue(1.0), result);
+		assertEquals(new JValueImpl(1.0), result);
 	}
 
 	@Test
 	public void testDiv2() throws Exception {
 		String queryString = "3.0/1";
 		JValue result = evalTestQuery("Div", queryString);
-		assertEquals(new JValue(3.0), result);
+		assertEquals(new JValueImpl(3.0), result);
 	}
 
 	@Test
 	public void testDiv3() throws Exception {
 		String queryString = "3/7";
 		JValue result = evalTestQuery("Div", queryString);
-		assertEquals(new JValue(3.0 / 7), result);
+		assertEquals(new JValueImpl(3.0 / 7), result);
 	}
 
 	@Test
@@ -336,7 +348,7 @@ public class FunctionTest extends GenericTests {
 		JValue result = evalTestQuery("ListAccess", queryString);
 		assertEquals(5, result.toCollection().size());
 		assertTrue(result.toCollection().contains(
-				new JValue("kaenguruhfleisch")));
+				new JValueImpl("kaenguruhfleisch")));
 	}
 
 	/*
@@ -350,7 +362,7 @@ public class FunctionTest extends GenericTests {
 		JValue result = evalTestQuery("RecordAccess", queryString);
 		assertEquals(1, result.toCollection().toJValueSet().size());
 		assertTrue(result.toCollection().toJValueSet().contains(
-				new JValue("kaenguruhfleisch")));
+				new JValueImpl("kaenguruhfleisch")));
 	}
 
 	@Test
@@ -654,7 +666,7 @@ public class FunctionTest extends GenericTests {
 		for (int i = 0; i < 9; i++) {
 			links.add(minimalGraph.createLink(nodes.get(i), nodes.get(i + 1)));
 		}
-		boundVariables.put("rootNode", new JValue(nodes.get(3)));
+		boundVariables.put("rootNode", new JValueImpl(nodes.get(3)));
 
 		String queryString = "using rootNode: nodeTrace(extractPath(pathSystem(rootNode, -->+), 2)[0])";
 		JValue result = evalTestQuery("NodeTrace", queryString, minimalGraph);
@@ -692,12 +704,12 @@ public class FunctionTest extends GenericTests {
 		String queryString = "list(1..3) ++ list(4..6)";
 		JValue result = evalTestQuery("Concat", queryString);
 		JValueList l = new JValueList();
-		l.add(new JValue(1));
-		l.add(new JValue(2));
-		l.add(new JValue(3));
-		l.add(new JValue(4));
-		l.add(new JValue(5));
-		l.add(new JValue(6));
+		l.add(new JValueImpl(1));
+		l.add(new JValueImpl(2));
+		l.add(new JValueImpl(3));
+		l.add(new JValueImpl(4));
+		l.add(new JValueImpl(5));
+		l.add(new JValueImpl(6));
 		assertEquals(l, result);
 	}
 
@@ -722,6 +734,49 @@ public class FunctionTest extends GenericTests {
 		assertEquals(4, result.toCollection().size());
 		for (JValue j : result.toCollection()) {
 			assertTrue(5 <= j.toCollection().size());
+		}
+	}
+
+	@Test
+	public void testSortList() throws Exception {
+		String queryString = "sort(list(4, 1, 2, 10, 9, 7, 8, 3, 5, 6))";
+		JValueList result = evalTestQuery("Sort1", queryString).toJValueList();
+		assertEquals(10, result.size());
+		for (int i = 1; i <= 10; i++) {
+			assertEquals(new JValueImpl(i), result.get(i - 1));
+		}
+	}
+
+	@Test
+	public void testSortSet() throws Exception {
+		String queryString = "sort(set(4, 1, 2, 10, 9, 7, 8, 3, 5, 6))";
+		JValueList result = evalTestQuery("Sort1", queryString).toJValueList();
+		assertEquals(10, result.size());
+		for (int i = 1; i <= 10; i++) {
+			assertEquals(new JValueImpl(i), result.get(i - 1));
+		}
+	}
+
+	@Test
+	public void testSortBag() throws Exception {
+		String queryString = "sort(bag(4, 1, 2, 10, 9, 7, 8, 3, 5, 6))";
+		JValueList result = evalTestQuery("Sort1", queryString).toJValueList();
+		assertEquals(10, result.size());
+		for (int i = 1; i <= 10; i++) {
+			assertEquals(new JValueImpl(i), result.get(i - 1));
+		}
+	}
+
+	@Test
+	public void testSortMap() throws Exception {
+		String queryString = "sort(from i : list (1..10) reportMap i, i*i end)";
+		JValueMap result = evalTestQuery("Sort2", queryString).toJValueMap();
+		assertEquals(10, result.size());
+		int i = 1;
+		for (Entry<JValue, JValue> e : result.entrySet()) {
+			assertEquals(new JValueImpl(i), e.getKey());
+			assertEquals(new JValueImpl(i * i), e.getValue());
+			i++;
 		}
 	}
 
@@ -768,13 +823,13 @@ public class FunctionTest extends GenericTests {
 	@Test
 	public void testUnion2() throws Exception {
 		JValueMap map1 = new JValueMap();
-		map1.put(new JValue(1), new JValue("A"));
-		map1.put(new JValue(2), new JValue("A"));
-		map1.put(new JValue(3), new JValue("B"));
+		map1.put(new JValueImpl(1), new JValueImpl("A"));
+		map1.put(new JValueImpl(2), new JValueImpl("A"));
+		map1.put(new JValueImpl(3), new JValueImpl("B"));
 		JValueMap map2 = new JValueMap();
-		map2.put(new JValue(4), new JValue("A"));
-		map2.put(new JValue(5), new JValue("C"));
-		map2.put(new JValue(6), new JValue("D"));
+		map2.put(new JValueImpl(4), new JValueImpl("A"));
+		map2.put(new JValueImpl(5), new JValueImpl("C"));
+		map2.put(new JValueImpl(6), new JValueImpl("D"));
 
 		boundVariables.put("map1", map1);
 		boundVariables.put("map2", map2);
@@ -783,24 +838,24 @@ public class FunctionTest extends GenericTests {
 		JValue result = evalTestQuery("Union2", queryString);
 		assertEquals(6, result.toJValueMap().size());
 		JValueMap rmap = result.toJValueMap();
-		assertEquals(new JValue("A"), rmap.get(new JValue(1)));
-		assertEquals(new JValue("A"), rmap.get(new JValue(2)));
-		assertEquals(new JValue("B"), rmap.get(new JValue(3)));
-		assertEquals(new JValue("A"), rmap.get(new JValue(4)));
-		assertEquals(new JValue("C"), rmap.get(new JValue(5)));
-		assertEquals(new JValue("D"), rmap.get(new JValue(6)));
+		assertEquals(new JValueImpl("A"), rmap.get(new JValueImpl(1)));
+		assertEquals(new JValueImpl("A"), rmap.get(new JValueImpl(2)));
+		assertEquals(new JValueImpl("B"), rmap.get(new JValueImpl(3)));
+		assertEquals(new JValueImpl("A"), rmap.get(new JValueImpl(4)));
+		assertEquals(new JValueImpl("C"), rmap.get(new JValueImpl(5)));
+		assertEquals(new JValueImpl("D"), rmap.get(new JValueImpl(6)));
 	}
 
 	@Test
 	public void testUnion3() throws Exception {
 		JValueMap map1 = new JValueMap();
-		map1.put(new JValue(1), new JValue("A"));
-		map1.put(new JValue(2), new JValue("A"));
-		map1.put(new JValue(3), new JValue("B"));
+		map1.put(new JValueImpl(1), new JValueImpl("A"));
+		map1.put(new JValueImpl(2), new JValueImpl("A"));
+		map1.put(new JValueImpl(3), new JValueImpl("B"));
 		JValueMap map2 = new JValueMap();
-		map2.put(new JValue(1), new JValue("A"));
-		map2.put(new JValue(3), new JValue("C"));
-		map2.put(new JValue(4), new JValue("D"));
+		map2.put(new JValueImpl(1), new JValueImpl("A"));
+		map2.put(new JValueImpl(3), new JValueImpl("C"));
+		map2.put(new JValueImpl(4), new JValueImpl("D"));
 
 		boundVariables.put("map1", map1);
 		boundVariables.put("map2", map2);
@@ -817,24 +872,24 @@ public class FunctionTest extends GenericTests {
 	@Test
 	public void testUnion4() throws Exception {
 		JValueSet set1 = new JValueSet();
-		set1.add(new JValue(1));
-		set1.add(new JValue(2));
-		set1.add(new JValue(3));
+		set1.add(new JValueImpl(1));
+		set1.add(new JValueImpl(2));
+		set1.add(new JValueImpl(3));
 
 		JValueSet set2 = new JValueSet();
-		set2.add(new JValue(1));
-		set2.add(new JValue(2));
-		set2.add(new JValue(3));
+		set2.add(new JValueImpl(1));
+		set2.add(new JValueImpl(2));
+		set2.add(new JValueImpl(3));
 
 		JValueSet set3 = new JValueSet();
-		set3.add(new JValue(3));
-		set3.add(new JValue(4));
-		set3.add(new JValue(5));
+		set3.add(new JValueImpl(3));
+		set3.add(new JValueImpl(4));
+		set3.add(new JValueImpl(5));
 
 		JValueSet set4 = new JValueSet();
-		set4.add(new JValue(7));
-		set4.add(new JValue(8));
-		set4.add(new JValue(9));
+		set4.add(new JValueImpl(7));
+		set4.add(new JValueImpl(8));
+		set4.add(new JValueImpl(9));
 
 		JValueSet cset = new JValueSet();
 		cset.add(set1);
@@ -848,22 +903,22 @@ public class FunctionTest extends GenericTests {
 		JValue result = evalTestQuery("Union4", queryString);
 		assertEquals(8, result.toJValueSet().size());
 		JValueSet rset = result.toJValueSet();
-		assertTrue(rset.contains(new JValue(1)));
-		assertTrue(rset.contains(new JValue(2)));
-		assertTrue(rset.contains(new JValue(3)));
-		assertTrue(rset.contains(new JValue(4)));
-		assertTrue(rset.contains(new JValue(5)));
-		assertTrue(rset.contains(new JValue(7)));
-		assertTrue(rset.contains(new JValue(8)));
-		assertTrue(rset.contains(new JValue(9)));
+		assertTrue(rset.contains(new JValueImpl(1)));
+		assertTrue(rset.contains(new JValueImpl(2)));
+		assertTrue(rset.contains(new JValueImpl(3)));
+		assertTrue(rset.contains(new JValueImpl(4)));
+		assertTrue(rset.contains(new JValueImpl(5)));
+		assertTrue(rset.contains(new JValueImpl(7)));
+		assertTrue(rset.contains(new JValueImpl(8)));
+		assertTrue(rset.contains(new JValueImpl(9)));
 	}
 
 	@Test
 	public void testIsEmpty1() throws Exception {
 		JValueSet set1 = new JValueSet();
-		set1.add(new JValue(1));
-		set1.add(new JValue(2));
-		set1.add(new JValue(3));
+		set1.add(new JValueImpl(1));
+		set1.add(new JValueImpl(2));
+		set1.add(new JValueImpl(3));
 		boundVariables.put("cset", set1);
 		String queryString = "using cset: isEmpty(cset)";
 		JValue result = evalTestQuery("IsEmpty1", queryString);
@@ -918,12 +973,12 @@ public class FunctionTest extends GenericTests {
 		JValue result = evalTestQuery("KeySet", queryString);
 		JValueSet set = result.toJValueSet();
 		assertEquals(6, set.size());
-		assertTrue(set.contains(new JValue(1)));
-		assertTrue(set.contains(new JValue(2)));
-		assertTrue(set.contains(new JValue(3)));
-		assertTrue(set.contains(new JValue(4)));
-		assertTrue(set.contains(new JValue(5)));
-		assertTrue(set.contains(new JValue(6)));
+		assertTrue(set.contains(new JValueImpl(1)));
+		assertTrue(set.contains(new JValueImpl(2)));
+		assertTrue(set.contains(new JValueImpl(3)));
+		assertTrue(set.contains(new JValueImpl(4)));
+		assertTrue(set.contains(new JValueImpl(5)));
+		assertTrue(set.contains(new JValueImpl(6)));
 	}
 
 	@Test
@@ -937,12 +992,31 @@ public class FunctionTest extends GenericTests {
 		JValue result = evalTestQuery("Get", queryString);
 		JValueSet set = result.toJValueSet();
 		assertEquals(6, set.size());
-		assertTrue(set.contains(new JValue("One")));
-		assertTrue(set.contains(new JValue("Two")));
-		assertTrue(set.contains(new JValue("Three")));
-		assertTrue(set.contains(new JValue("Four")));
-		assertTrue(set.contains(new JValue("Five")));
-		assertTrue(set.contains(new JValue("Six")));
+		assertTrue(set.contains(new JValueImpl("One")));
+		assertTrue(set.contains(new JValueImpl("Two")));
+		assertTrue(set.contains(new JValueImpl("Three")));
+		assertTrue(set.contains(new JValueImpl("Four")));
+		assertTrue(set.contains(new JValueImpl("Five")));
+		assertTrue(set.contains(new JValueImpl("Six")));
+	}
+
+	@Test
+	public void testGet2() throws Exception {
+		String queryString = "let m := map(1 -> \"One\",   2 -> \"Two\",  "
+				+ "                        3 -> \"Three\", 4 -> \"Four\", "
+				+ "                        5 -> \"Five\",  6 -> \"Six\")  "
+				+ "           in                                          "
+				+ "           from x : keySet(m) "
+				+ "           reportSet m[x] end";
+		JValue result = evalTestQuery("Get", queryString);
+		JValueSet set = result.toJValueSet();
+		assertEquals(6, set.size());
+		assertTrue(set.contains(new JValueImpl("One")));
+		assertTrue(set.contains(new JValueImpl("Two")));
+		assertTrue(set.contains(new JValueImpl("Three")));
+		assertTrue(set.contains(new JValueImpl("Four")));
+		assertTrue(set.contains(new JValueImpl("Five")));
+		assertTrue(set.contains(new JValueImpl("Six")));
 	}
 
 	@Test

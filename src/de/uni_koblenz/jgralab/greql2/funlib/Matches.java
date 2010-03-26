@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -40,6 +40,7 @@ import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.funlib.pathsearch.PathSystemQueueEntry;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
@@ -76,8 +77,7 @@ public class Matches extends Greql2Function {
 
 	{
 		JValueType[][] x = {
-				{ JValueType.PATH, JValueType.DFA, JValueType.BOOL },
-				{ JValueType.PATH, JValueType.NFA, JValueType.BOOL } };
+				{ JValueType.PATH, JValueType.AUTOMATON, JValueType.BOOL }};
 		signatures = x;
 
 		description = "Returns true iff the given path description matches the given path.";
@@ -92,10 +92,7 @@ public class Matches extends Greql2Function {
 		DFA dfa = null;
 		switch (checkArguments(arguments)) {
 		case 0:
-			dfa = arguments[1].toDFA();
-			break;
-		case 1:
-			dfa = new DFA(arguments[1].toNFA());
+			dfa = arguments[1].toAutomaton().getDFA();
 			break;
 		default:
 			throw new WrongFunctionParameterException(this, arguments);
@@ -120,14 +117,14 @@ public class Matches extends Greql2Function {
 				Transition currentTransition = transitionIter.next();
 				Vertex nextVertex = currentTransition.getNextVertex(
 						currentEntry.vertex, edge);
-				if (!markers[currentTransition.getEndState().number]
+				if (!markers[currentTransition.endState.number]
 						.isMarked(nextVertex)) {
 					if (currentTransition.accepts(currentEntry.vertex, edge,
 							null)) {
-						markers[currentTransition.getEndState().number]
+						markers[currentTransition.endState.number]
 								.mark(nextVertex);
 						PathSystemQueueEntry nextEntry = new PathSystemQueueEntry(
-								nextVertex, currentTransition.getEndState(),
+								nextVertex, currentTransition.endState,
 								edge, currentEntry.state,
 								currentEntry.distanceToRoot + 1);
 						queue.add(nextEntry);
@@ -136,7 +133,7 @@ public class Matches extends Greql2Function {
 			}
 			currentEntry = queue.poll();
 		}
-		return new JValue(false);
+		return JValueBoolean.getValue(false);
 	}
 
 	@Override

@@ -1,3 +1,4 @@
+TGraph 2;
 Schema de.uni_koblenz.jgralabtest.schemas.record.RecordTestSchema;
 GraphClass RecordTestGraph;
 

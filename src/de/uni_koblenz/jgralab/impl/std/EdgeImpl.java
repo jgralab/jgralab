@@ -2,8 +2,9 @@ package de.uni_koblenz.jgralab.impl.std;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.IncidenceImpl;
-import de.uni_koblenz.jgralab.impl.VertexImpl;
+import de.uni_koblenz.jgralab.impl.VertexBaseImpl;
 
 /**
  * The implementation of an <code>Edge</code> accessing attributes without
@@ -11,13 +12,13 @@ import de.uni_koblenz.jgralab.impl.VertexImpl;
  * 
  * @author Jose Monte(monte@uni-koblenz.de)
  */
-public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeImpl {
+public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl {
 	// global edge sequence
 	private EdgeImpl nextEdge;
 	private EdgeImpl prevEdge;
 
 	// the this-vertex
-	private VertexImpl incidentVertex;
+	private VertexBaseImpl incidentVertex;
 
 	// incidence list
 	private IncidenceImpl nextIncidence;
@@ -25,16 +26,18 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeImpl {
 
 	@Override
 	public Edge getNextEdgeInGraph() {
+		assert isValid();
 		return this.nextEdge;
 	}
 
 	@Override
 	public Edge getPrevEdgeInGraph() {
+		assert isValid();
 		return this.prevEdge;
 	}
 
 	@Override
-	protected VertexImpl getIncidentVertex() {
+	protected VertexBaseImpl getIncidentVertex() {
 		return incidentVertex;
 	}
 
@@ -59,7 +62,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeImpl {
 	}
 
 	@Override
-	protected void setIncidentVertex(VertexImpl v) {
+	protected void setIncidentVertex(VertexBaseImpl v) {
 		this.incidentVertex = v;
 	}
 
@@ -78,8 +81,9 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeImpl {
 	 * @param anId
 	 * @param graph
 	 */
-	protected EdgeImpl(int anId, Graph graph) {
+	protected EdgeImpl(int anId, Graph graph, Vertex alpha, Vertex omega) {
 		super(anId, graph);
+		((GraphImpl) graph).addEdge(this, alpha, omega);
 	}
 
 	@Override

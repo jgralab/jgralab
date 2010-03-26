@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -26,6 +26,8 @@ package de.uni_koblenz.jgralab.impl;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
+import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 
@@ -38,12 +40,12 @@ import de.uni_koblenz.jgralab.schema.Schema;
 public abstract class GraphElementImpl implements GraphElement {
 	protected int id;
 
-	public GraphElementImpl(Graph graph) {
+	protected GraphElementImpl(Graph graph) {
 		assert graph != null;
-		this.graph = (GraphImpl) graph;
+		this.graph = (GraphBaseImpl) graph;
 	}
 
-	protected GraphImpl graph;
+	protected GraphBaseImpl graph;
 
 	public Graph getGraph() {
 		return graph;
@@ -94,4 +96,30 @@ public abstract class GraphElementImpl implements GraphElement {
 	 *            an id
 	 */
 	protected abstract void setId(int id);
+
+	@Override
+	public void initializeAttributesWithDefaultValues() {
+		for (Attribute attr : getAttributedElementClass().getAttributeList()) {
+			try {
+				internalSetDefaultValue(attr);
+			} catch (GraphIOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (NoSuchFieldException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/**
+	 * 
+	 * @param attr
+	 * @throws GraphIOException
+	 * @throws NoSuchFieldException
+	 */
+	protected void internalSetDefaultValue(Attribute attr)
+			throws GraphIOException, NoSuchFieldException {
+		attr.setDefaultValue(this);
+	}
 }

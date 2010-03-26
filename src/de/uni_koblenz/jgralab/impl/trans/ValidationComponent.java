@@ -962,6 +962,7 @@ public class ValidationComponent {
 				switch (entry.getValue()) {
 				case ALPHAOMEGA: {
 					// both cases following have to be processed
+					// intentional fall-through; denounced by FindBugs
 					pass = true;
 				}
 				case ALPHA: {

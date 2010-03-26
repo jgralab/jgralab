@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -29,23 +29,24 @@ import java.util.HashMap;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.State;
 
-public class PathSystemMarkerList extends HashMap<Vertex, PathSystemMarkerEntry> {
+public class PathSystemMarkerList extends
+		HashMap<Vertex, PathSystemMarkerEntry> {
 
-	public static final long serialVersionUID = 1;
+	private static final long serialVersionUID = 1659417425825683420L;
 
-	protected State state;
+	protected transient State state;
 
-	protected Vertex vertex;
+	protected transient Vertex vertex;
 
 	public PathSystemMarkerList(State state, Vertex vertex) {
 		super(6);
 		this.vertex = vertex;
 		this.state = state;
 	}
-	
-	public PathSystemMarkerEntry getPathSystemMarkerEntryWithParentVertex(Vertex parentVertex) {
+
+	public PathSystemMarkerEntry getPathSystemMarkerEntryWithParentVertex(
+			Vertex parentVertex) {
 		return get(parentVertex);
 	}
-	
 
 }

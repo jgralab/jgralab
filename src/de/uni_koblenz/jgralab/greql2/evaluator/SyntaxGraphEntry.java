@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -267,6 +267,12 @@ public class SyntaxGraphEntry {
 					&& costModel.getClass().equals(e.costModel.getClass());
 		}
 		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return queryText.hashCode() + optimizer.getClass().hashCode()
+				+ costModel.getClass().hashCode();
 	}
 
 	public String getQueryText() {

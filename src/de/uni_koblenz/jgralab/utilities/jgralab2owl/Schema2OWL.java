@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -24,8 +24,6 @@
 
 package de.uni_koblenz.jgralab.utilities.jgralab2owl;
 
-import java.util.Map;
-
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
@@ -35,7 +33,6 @@ import org.w3c.dom.Element;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.CompositeDomain;
-import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
 import de.uni_koblenz.jgralab.schema.GraphClass;
@@ -43,6 +40,7 @@ import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
+import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
 
 class Schema2OWL {
 
@@ -359,12 +357,11 @@ class Schema2OWL {
 		writeOwlClassEmptyElement(rd.getQualifiedName());
 
 		// create Properties for "rd"'s components
-		for (Map.Entry<String, Domain> component : rd.getComponents()
-				.entrySet()) {
+		for (RecordComponent component : rd.getComponents()) {
 
 			// if "component" has a CompositeDomain or an EnumDomain (no Object)
-			if (component.getValue().isComposite()
-					|| component.getValue().toString().contains("Enum")) {
+			if (component.getDomain().isComposite()
+					|| component.getDomain().toString().contains("Enum")) {
 				writeOwlObjectPropertyStartElement();
 
 				writeRdfTypeEmptyElement(JGraLab2OWL.owlNS
@@ -372,32 +369,32 @@ class Schema2OWL {
 				writeRdfsDomainEmptyElement("#" + rd.getQualifiedName());
 
 				writeRdfsRangeEmptyElement();
-				if (component.getValue().getTGTypeName(null)
-						.startsWith("List<")) {
+				if (component.getDomain().getTGTypeName(null).startsWith(
+						"List<")) {
 					writer.writeAttribute(JGraLab2OWL.rdfNS, "resource",
 							"#ListElement");
-				} else if (component.getValue().getTGTypeName(null).startsWith(
-						"Set<")) {
+				} else if (component.getDomain().getTGTypeName(null)
+						.startsWith("Set<")) {
 					writer
 							.writeAttribute(JGraLab2OWL.rdfNS, "resource",
 									"#Set");
 				} else {
 					writer.writeAttribute(JGraLab2OWL.rdfNS, "resource", "#"
-							+ component.getValue().getQualifiedName());
+							+ component.getDomain().getQualifiedName());
 				}
 				// if "component" has a BasicDomain
 			} else {
 				writeOwlDatatypePropertyStartElement(HelperMethods
 						.firstToLowerCase(rd.getQualifiedName())
 						+ "Has"
-						+ HelperMethods.firstToUpperCase(component.getKey()));
+						+ HelperMethods.firstToUpperCase(component.getName()));
 
 				writeRdfTypeEmptyElement(JGraLab2OWL.owlNS
 						+ "FunctionalProperty");
 				writeRdfsDomainEmptyElement("#" + rd.getQualifiedName());
 
 				writeRdfsRangeEmptyElement();
-				if (component.getValue().getTGTypeName(null).equals("String")) {
+				if (component.getDomain().getTGTypeName(null).equals("String")) {
 					writer.writeAttribute(JGraLab2OWL.rdfNS, "resource",
 							JGraLab2OWL.xsdNS + "string");
 				} else {
@@ -407,7 +404,7 @@ class Schema2OWL {
 									"resource",
 									JGraLab2OWL.xsdNS
 											+ component
-													.getValue()
+													.getDomain()
 													.getJavaAttributeImplementationTypeName(
 															""));
 				}
@@ -646,11 +643,11 @@ class Schema2OWL {
 			}
 
 			// create subclass restrictions for multiplicities
-			for (EdgeClass ec : vc.getOwnEdgeClasses()) {
-				if (ec.getFrom() == vc) {
+			for (EdgeClass ec : vc.getOwnConnectedEdgeClasses()) {
+				if (ec.getFrom().getVertexClass() == vc) {
 					writeMultiplicityElement(true, ec);
 				}
-				if (ec.getTo() == vc) {
+				if (ec.getTo().getVertexClass() == vc) {
 					writeMultiplicityElement(false, ec);
 				}
 			}
@@ -764,8 +761,10 @@ class Schema2OWL {
 							.firstToLowerCase(superEC.getQualifiedName())
 					+ edgeClassNameSuffix);
 		}
-		writeRdfsDomainEmptyElement("#" + (ec).getFrom().getQualifiedName());
-		writeRdfsRangeEmptyElement("#" + (ec).getTo().getQualifiedName());
+		writeRdfsDomainEmptyElement("#"
+				+ (ec).getFrom().getVertexClass().getQualifiedName());
+		writeRdfsRangeEmptyElement("#"
+				+ (ec).getTo().getVertexClass().getQualifiedName());
 
 		writer.writeEndElement();
 
@@ -785,8 +784,10 @@ class Schema2OWL {
 				+ HelperMethods.firstToLowerCase(ec.getQualifiedName())
 				+ edgeClassNameSuffix);
 
-		writeRdfsDomainEmptyElement("#" + (ec).getTo().getQualifiedName());
-		writeRdfsRangeEmptyElement("#" + (ec).getFrom().getQualifiedName());
+		writeRdfsDomainEmptyElement("#"
+				+ (ec).getTo().getVertexClass().getQualifiedName());
+		writeRdfsRangeEmptyElement("#"
+				+ (ec).getFrom().getVertexClass().getQualifiedName());
 
 		writer.writeEndElement();
 	}
@@ -1000,10 +1001,10 @@ class Schema2OWL {
 		// get name of 'from' or 'to' VertexClass
 		if (from) {
 			direction = "Out";
-			vcName = ec.getFrom().getQualifiedName();
+			vcName = ec.getFrom().getVertexClass().getQualifiedName();
 		} else {
 			direction = "In";
-			vcName = ec.getTo().getQualifiedName();
+			vcName = ec.getTo().getVertexClass().getQualifiedName();
 		}
 
 		// create ObjectProperty for incident EdgeClass
@@ -1055,12 +1056,12 @@ class Schema2OWL {
 		// get multiplicities for "from" or "to" VertexClasses
 		if (from) {
 			direction = "Out";
-			lowerBound = ec.getToMin();
-			upperBound = ec.getToMax();
+			lowerBound = ec.getTo().getMin();
+			upperBound = ec.getTo().getMax();
 		} else {
 			direction = "In";
-			lowerBound = ec.getFromMin();
-			upperBound = ec.getFromMax();
+			lowerBound = ec.getFrom().getMin();
+			upperBound = ec.getFrom().getMax();
 		}
 
 		writeRdfsSubClassOfStartElement();

@@ -1,0 +1,13 @@
+// JGraLab - The Java graph laboratory
+//   Version : Dimetrodon
+//   Revision: 2378
+//   Build ID: 68
+
+TGraph 2;
+Schema de.uni_koblenz.jgralabtest.schemas.defaultvaluetestschema.DefaultValueTestSchema;
+GraphClass DefaultValueTestGraph { boolGraph: Boolean =  "t",  complexListGraph: List<List<Boolean>> =  "[[t] [f] [t]]",  complexMapGraph: Map<List<Boolean>, Set<Boolean>> =  "{[t] - {t} [f] - {f}}",  complexSetGraph: Set<Set<Boolean>> =  "{{t} {f}}",  doubleGraph: Double =  "1.1",  enumGraph: .TestEnumDomain =  "FIRST",  intGraph: Integer =  "1",  listGraph: List<Boolean> =  "[t f t]",  longGraph: Long =  "1",  mapGraph: Map<Integer, Boolean> =  "{1 - t 2 - f 3 - t}",  recordGraph: .TestRecordDomain =  "(t 1.1 FIRST 1 [t f t] 1 {1 - t 2 - f 3 - t} {t f} \"test\")",  setGraph: Set<Boolean> =  "{t f}",  stringGraph: String =  "\"test\"" };
+EnumDomain TestEnumDomain ( FIRST, SECOND, THIRD );
+RecordDomain TestRecordDomain ( boolRecord: Boolean, doubleRecord: Double, enumRecord: TestEnumDomain, intRecord: Integer, listRecord: List<Boolean>, longRecord: Long, mapRecord: Map<Integer, Boolean>, setRecord: Set<Boolean>, stringRecord: String );
+VertexClass TestSubVertex: TestVertex;
+VertexClass TestVertex { boolVertex: Boolean =  "t",  complexListVertex: List<List<Boolean>> =  "[[t] [f] [t]]",  complexMapVertex: Map<List<Boolean>, Set<Boolean>> =  "{[t] - {t} [f] - {f}}",  complexSetVertex: Set<Set<Boolean>> =  "{{t} {f}}",  doubleVertex: Double =  "1.1",  enumVertex: TestEnumDomain =  "FIRST",  intVertex: Integer =  "1",  listVertex: List<Boolean> =  "[t f t]",  longVertex: Long =  "1",  mapVertex: Map<Integer, Boolean> =  "{1 - t 2 - f 3 - t}",  recordVertex: TestRecordDomain =  "(t 1.1 FIRST 1 [t f t] 1 {1 - t 2 - f 3 - t} {t f} \"test\")",  setVertex: Set<Boolean> =  "{t f}",  stringVertex: String =  "\"test\"" };
+EdgeClass TestEdge from TestVertex (0,*) role start to TestVertex (0,*) role end { boolEdge: Boolean =  "t",  complexListEdge: List<List<Boolean>> =  "[[t] [f] [t]]",  complexMapEdge: Map<List<Boolean>, Set<Boolean>> =  "{[t] - {t} [f] - {f}}",  complexSetEdge: Set<Set<Boolean>> =  "{{t} {f}}",  doubleEdge: Double =  "1.1",  enumEdge: TestEnumDomain =  "FIRST",  intEdge: Integer =  "1",  listEdge: List<Boolean> =  "[t f t]",  longEdge: Long =  "1",  mapEdge: Map<Integer, Boolean> =  "{1 - t 2 - f 3 - t}",  recordEdge: TestRecordDomain =  "(t 1.1 FIRST 1 [t f t] 1 {1 - t 2 - f 3 - t} {t f} \"test\")",  setEdge: Set<Boolean> =  "{t f}",  stringEdge: String =  "\"test\"" };

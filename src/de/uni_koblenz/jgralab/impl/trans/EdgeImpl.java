@@ -9,9 +9,11 @@ import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphException;
+import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.IncidenceImpl;
-import de.uni_koblenz.jgralab.impl.VertexImpl;
+import de.uni_koblenz.jgralab.impl.VertexBaseImpl;
+import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.trans.ListPosition;
 import de.uni_koblenz.jgralab.trans.Transaction;
 import de.uni_koblenz.jgralab.trans.TransactionState;
@@ -27,14 +29,14 @@ import de.uni_koblenz.jgralab.trans.VertexPosition;
  * 
  * @author Jose Monte(monte@uni-koblenz.de)
  */
-public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeImpl
+public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 		implements VersionedIncidence {
 	// next and previous edge in Eseq
 	protected VersionedReferenceImpl<EdgeImpl> nextEdge;
 	protected VersionedReferenceImpl<EdgeImpl> prevEdge;
 
 	// attributes inherited from <code>IncidenceImpl</code>
-	protected VersionedReferenceImpl<VertexImpl> incidentVertex;
+	protected VersionedReferenceImpl<VertexBaseImpl> incidentVertex;
 	protected VersionedReferenceImpl<IncidenceImpl> nextIncidence;
 	protected VersionedReferenceImpl<IncidenceImpl> prevIncidence;
 
@@ -48,8 +50,10 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeImpl
 	 * @param graph
 	 *            the corresponding <code>Graph</code>
 	 */
-	protected EdgeImpl(int anId, Graph graph) {
+	protected EdgeImpl(int anId, Graph graph, Vertex alpha, Vertex omega) {
 		super(anId, graph);
+		createReversedEdge();
+		((GraphImpl) graph).addEdge(this, alpha, omega);
 	}
 
 	// --- getter ---//
@@ -92,7 +96,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeImpl
 	}
 
 	@Override
-	protected VertexImpl getIncidentVertex() {
+	protected VertexBaseImpl getIncidentVertex() {
 		if (incidentVertex == null) {
 			return null;
 		}
@@ -206,14 +210,15 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeImpl
 	}
 
 	@Override
-	protected void setIncidentVertex(VertexImpl v) {
+	protected void setIncidentVertex(VertexBaseImpl v) {
 		// graph loading -> new initialization...
 		if (graph.isLoading()) {
-			incidentVertex = new VersionedReferenceImpl<VertexImpl>(this, v);
+			incidentVertex = new VersionedReferenceImpl<VertexBaseImpl>(this, v);
 		} else {
 			// initialization here
 			if (incidentVertex == null) {
-				incidentVertex = new VersionedReferenceImpl<VertexImpl>(this);
+				incidentVertex = new VersionedReferenceImpl<VertexBaseImpl>(
+						this);
 			}
 			incidentVertex.setValidValue(v, graph.getCurrentTransaction());
 		}
@@ -236,7 +241,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeImpl
 			// relevant in writing-phase
 			if (transaction.getState() == TransactionState.WRITING) {
 				if (transaction.changedIncidences != null) {
-					VertexImpl temporaryIncidentVertex = incidentVertex
+					VertexBaseImpl temporaryIncidentVertex = incidentVertex
 							.getTemporaryValue(transaction);
 					Map<IncidenceImpl, Map<ListPosition, Boolean>> incidenceList = transaction.changedIncidences
 							.get(temporaryIncidentVertex);
@@ -274,7 +279,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeImpl
 			// not - only relevant in writing-phase
 			if (transaction.getState() == TransactionState.WRITING) {
 				if (transaction.changedIncidences != null) {
-					VertexImpl temporaryIncidentVertex = incidentVertex
+					VertexBaseImpl temporaryIncidentVertex = incidentVertex
 							.getTemporaryValue(transaction);
 					Map<IncidenceImpl, Map<ListPosition, Boolean>> incidenceList = transaction.changedIncidences
 							.get(temporaryIncidentVertex);
@@ -309,7 +314,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeImpl
 					+ " is not valid within the current transaction.");
 		}
 		// important to temporary store old alpha!!!
-		VertexImpl oldAlpha = getIncidentVertex();
+		VertexBaseImpl oldAlpha = getIncidentVertex();
 		// synchronize <code>transaction</code> to make sure that
 		// <code>transaction</code> cannot be set active in another
 		// <code>Thread</code> while <code>transaction</code> is executing this
@@ -358,7 +363,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeImpl
 					+ " is not valid within the current transaction.");
 		}
 		// important to temporary store old omega!!!
-		VertexImpl oldOmega = ((ReversedEdgeImpl) reversedEdge)
+		VertexBaseImpl oldOmega = ((ReversedEdgeImpl) reversedEdge)
 				.getIncidentVertex();
 		// synchronize <code>transaction</code> to make sure that
 		// <code>transaction</code> cannot be set active in another
@@ -463,5 +468,11 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeImpl
 	@Override
 	public VersionedReferenceImpl<IncidenceImpl> getVersionedPrevIncidence() {
 		return this.prevIncidence;
+	}
+
+	@Override
+	protected void internalSetDefaultValue(Attribute attr)
+			throws GraphIOException, NoSuchFieldException {
+		attr.setDefaultTransactionValue(this);
 	}
 }

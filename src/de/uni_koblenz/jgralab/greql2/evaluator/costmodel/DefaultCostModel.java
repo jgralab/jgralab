@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -33,8 +33,8 @@ import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.AggregationPathDescriptionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.AlternativePathDescriptionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.BackwardVertexSetEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.BagComprehensionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.BagConstructionEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ComprehensionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ConditionalExpressionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.DeclarationEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.DefinitionEvaluator;
@@ -49,7 +49,6 @@ import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.Greql2ExpressionEvalua
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.IntLiteralEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.IntermediateVertexPathDescriptionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.IteratedPathDescriptionEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.LetExpressionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ListConstructionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ListRangeConstructionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.MapComprehensionEvaluator;
@@ -74,7 +73,6 @@ import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VariableEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexSetExpressionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexSubgraphExpressionEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.WhereExpressionEvaluator;
 import de.uni_koblenz.jgralab.greql2.funlib.Greql2Function;
 import de.uni_koblenz.jgralab.greql2.schema.AlternativePathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.BackwardVertexSet;
@@ -98,7 +96,6 @@ import de.uni_koblenz.jgralab.greql2.schema.IsArgumentOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsBoundVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsConstraintOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsDeclaredVarOf;
-import de.uni_koblenz.jgralab.greql2.schema.IsDefinitionOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsFalseExprOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsKeyExprOfConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.IsNullExprOf;
@@ -112,7 +109,6 @@ import de.uni_koblenz.jgralab.greql2.schema.IsTrueExprOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsTypeRestrOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsValueExprOfConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.IteratedPathDescription;
-import de.uni_koblenz.jgralab.greql2.schema.LetExpression;
 import de.uni_koblenz.jgralab.greql2.schema.ListConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.ListRangeConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.MapComprehension;
@@ -135,7 +131,6 @@ import de.uni_koblenz.jgralab.greql2.schema.TypeId;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
 import de.uni_koblenz.jgralab.greql2.schema.VertexSetExpression;
 import de.uni_koblenz.jgralab.greql2.schema.VertexSubgraphExpression;
-import de.uni_koblenz.jgralab.greql2.schema.WhereExpression;
 
 /**
  * This is the default costmodel the evaluator uses if no other costmodel is
@@ -176,7 +171,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 
 	@Override
 	public long calculateCardinalityBagComprehension(
-			BagComprehensionEvaluator e, GraphSize graphSize) {
+			ComprehensionEvaluator e, GraphSize graphSize) {
 		BagComprehension bagComp = (BagComprehension) e.getVertex();
 		Declaration decl = (Declaration) bagComp.getFirstIsCompDeclOf()
 				.getAlpha();
@@ -514,7 +509,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 	 */
 	@Override
 	public VertexCosts calculateCostsBagComprehension(
-			BagComprehensionEvaluator e, GraphSize graphSize) {
+			ComprehensionEvaluator e, GraphSize graphSize) {
 		BagComprehension bagComp = (BagComprehension) e.getVertex();
 		Declaration decl = (Declaration) bagComp.getFirstIsCompDeclOf()
 				.getAlpha();
@@ -922,43 +917,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 		return new VertexCosts(ownCosts, iteratedCosts, subtreeCosts);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
-	 * calculateCostsLetExpression
-	 * (de.uni_koblenz.jgralab.greql2.evaluator.vertexeval
-	 * .LetExpressionEvaluator,
-	 * de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
-	 */
-	@Override
-	public VertexCosts calculateCostsLetExpression(LetExpressionEvaluator e,
-			GraphSize graphSize) {
-		LetExpression letExp = (LetExpression) e.getVertex();
 
-		IsDefinitionOf inc = letExp.getFirstIsDefinitionOf();
-		long definitionCosts = 0;
-		long definitions = 0;
-		while (inc != null) {
-			definitions++;
-			DefinitionEvaluator definEval = (DefinitionEvaluator) greqlEvaluator
-					.getVertexEvaluatorGraphMarker().getMark(inc.getAlpha());
-			definitionCosts += definEval
-					.getCurrentSubtreeEvaluationCosts(graphSize);
-			inc = inc.getNextIsDefinitionOf();
-		}
-
-		VertexEvaluator boundExpressionEval = greqlEvaluator
-				.getVertexEvaluatorGraphMarker().getMark(
-						letExp.getFirstIsBoundExprOfDefinition().getAlpha());
-		long expressionCosts = boundExpressionEval
-				.getCurrentSubtreeEvaluationCosts(graphSize);
-
-		long ownCosts = definitions * definitionExpressionCostsFactor + 2;
-		long iteratedCosts = ownCosts * e.getVariableCombinations(graphSize);
-		long subtreeCosts = iteratedCosts + definitionCosts + expressionCosts;
-		return new VertexCosts(ownCosts, iteratedCosts, subtreeCosts);
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -1490,43 +1449,6 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 		return new VertexCosts(ownCosts, ownCosts, typeRestrCosts + ownCosts);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
-	 * calculateCostsWhereExpression
-	 * (de.uni_koblenz.jgralab.greql2.evaluator.vertexeval
-	 * .WhereExpressionEvaluator,
-	 * de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
-	 */
-	@Override
-	public VertexCosts calculateCostsWhereExpression(
-			WhereExpressionEvaluator e, GraphSize graphSize) {
-		WhereExpression whereExp = (WhereExpression) e.getVertex();
-
-		IsDefinitionOf inc = whereExp.getFirstIsDefinitionOf();
-		long definitionCosts = 0;
-		long definitions = 0;
-		while (inc != null) {
-			definitions++;
-			DefinitionEvaluator definEval = (DefinitionEvaluator) greqlEvaluator
-					.getVertexEvaluatorGraphMarker().getMark(inc.getAlpha());
-			definitionCosts += definEval
-					.getCurrentSubtreeEvaluationCosts(graphSize);
-			inc = inc.getNextIsDefinitionOf();
-		}
-
-		VertexEvaluator boundExpressionEval = greqlEvaluator
-				.getVertexEvaluatorGraphMarker().getMark(
-						whereExp.getFirstIsBoundExprOfDefinition().getAlpha());
-		long expressionCosts = boundExpressionEval
-				.getCurrentSubtreeEvaluationCosts(graphSize);
-
-		long ownCosts = definitions * definitionExpressionCostsFactor + 2;
-		long iteratedCosts = ownCosts * e.getVariableCombinations(graphSize);
-		long subtreeCosts = iteratedCosts + definitionCosts + expressionCosts;
-		return new VertexCosts(ownCosts, iteratedCosts, subtreeCosts);
-	}
 
 	/*
 	 * (non-Javadoc)

@@ -11,6 +11,7 @@ import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
@@ -39,7 +40,7 @@ public class Concat extends Greql2Function {
 			JValue[] arguments) throws EvaluateException {
 		switch (checkArguments(arguments)) {
 		case 0:
-			return new JValue(arguments[0].toString() + arguments[1].toString());
+			return new JValueImpl(arguments[0].toString() + arguments[1].toString());
 		case 1:
 			JValueCollection c1 = arguments[0].toCollection();
 			JValueCollection c2 = arguments[1].toCollection();

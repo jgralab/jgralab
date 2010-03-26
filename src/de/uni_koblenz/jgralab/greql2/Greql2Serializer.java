@@ -3,7 +3,7 @@
  */
 package de.uni_koblenz.jgralab.greql2;
 
-import java.util.List;
+import java.util.Iterator;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.exception.Greql2Exception;
@@ -36,6 +36,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Identifier;
 import de.uni_koblenz.jgralab.greql2.schema.IntLiteral;
 import de.uni_koblenz.jgralab.greql2.schema.IntermediateVertexPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.IteratedPathDescription;
+import de.uni_koblenz.jgralab.greql2.schema.IterationType;
 import de.uni_koblenz.jgralab.greql2.schema.LetExpression;
 import de.uni_koblenz.jgralab.greql2.schema.ListConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.ListRangeConstruction;
@@ -125,7 +126,7 @@ public class Greql2Serializer {
 
 	private void serializeSimpleDeclaration(SimpleDeclaration v) {
 		boolean first = true;
-		for (Variable var : v.getDeclaredVarList()) {
+		for (Variable var : v.get_declaredVar()) {
 			if (first) {
 				first = false;
 			} else {
@@ -134,22 +135,36 @@ public class Greql2Serializer {
 			serializeVariable(var);
 		}
 		sb.append(": ");
-		serializeExpression(v.getTypeExprList().get(0), false);
+		serializeExpression(v.get_typeExpr(), false);
 	}
 
 	private void serializeRecordElement(RecordElement v) {
-		serializeIdentifier(v.getRecordIdList().get(0));
+		serializeIdentifier(v.get_recordId());
 		sb.append(" : ");
-		serializeExpression(v.getRecordExprList().get(0), false);
+		serializeExpression(v.get_recordExpr(), false);
 	}
 
 	private void serializeQuantifier(Quantifier v) {
-		sb.append(v.get_name());
+		switch (v.get_type()) {
+		case EXISTS:
+			sb.append("exists");
+			break;
+		case EXISTSONE:
+			sb.append("exists!");
+			break;
+		case FORALL:
+			sb.append("forall");
+			break;
+		default:
+			throw new RuntimeException(
+					"No case statemant to handle QuantificationType: "
+							+ v.get_type());
+		}
 	}
 
 	private void serializeEdgeVertexList(EdgeVertexList v) {
 		boolean first = true;
-		for (Expression e : v.getEdgeOrVertexExprList()) {
+		for (Expression e : v.get_edgeOrVertexExpr()) {
 			if (first) {
 				first = false;
 			} else {
@@ -160,12 +175,12 @@ public class Greql2Serializer {
 	}
 
 	private void serializeEdgeRestriction(EdgeRestriction v) {
-		if (!v.getTypeIdList().isEmpty()) {
-			serializeIdentifier(v.getTypeIdList().get(0));
+		if (v.get_typeId() != null) {
+			serializeIdentifier(v.get_typeId());
 		}
-		if (!v.getRoleIdList().isEmpty()) {
+		if (v.get_roleId() != null) {
 			sb.append('@');
-			serializeIdentifier(v.getRoleIdList().get(0));
+			serializeIdentifier(v.get_roleId());
 		}
 	}
 
@@ -174,14 +189,14 @@ public class Greql2Serializer {
 	}
 
 	private void serializeDefinition(Definition v) {
-		serializeVariable(v.getVarList().get(0));
+		serializeVariable(v.get_var());
 		sb.append(" := ");
-		serializeExpression(v.getExprList().get(0), false);
+		serializeExpression(v.get_expr(), false);
 	}
 
 	private void serializeDeclaration(Declaration v, boolean declOfFWR) {
 		boolean first = true;
-		for (SimpleDeclaration sd : v.getSimpleDeclList()) {
+		for (SimpleDeclaration sd : v.get_simpleDecl()) {
 			if (first) {
 				first = false;
 			} else {
@@ -190,13 +205,13 @@ public class Greql2Serializer {
 			serializeSimpleDeclaration(sd);
 		}
 
-		if (!v.getSubgraphList().isEmpty()) {
+		if (v.get_subgraph() != null) {
 			sb.append(" in ");
-			serializeExpression(v.getSubgraphList().get(0), false);
+			serializeExpression(v.get_subgraph(), false);
 		}
 
 		first = true;
-		for (Expression constraint : v.getConstraintList()) {
+		for (Expression constraint : v.get_constraint()) {
 			if (declOfFWR) {
 				sb.append(" with ");
 			} else {
@@ -209,10 +224,17 @@ public class Greql2Serializer {
 	}
 
 	private void serializeGreql2Expression(Greql2Expression greql2Expression) {
-		List<? extends Variable> boundVars = greql2Expression.getBoundVarList();
-		if (!boundVars.isEmpty()) {
+		Iterable<? extends Variable> boundVars = greql2Expression
+				.get_boundVar();
+		if (boundVars.iterator().hasNext()) {
 			sb.append("using ");
+			boolean first = true;
 			for (Variable v : boundVars) {
+				if (first) {
+					first = false;
+				} else {
+					sb.append(", ");
+				}
 				serializeVariable(v);
 			}
 			sb.append(':');
@@ -220,7 +242,7 @@ public class Greql2Serializer {
 
 		// TODO: What's the Identifier which may be at the IsIdOf edge???
 
-		serializeExpression(greql2Expression.getQueryExprList().get(0), false);
+		serializeExpression(greql2Expression.get_queryExpr(), false);
 	}
 
 	private void serializeExpression(Expression exp, boolean addSpace) {
@@ -253,6 +275,7 @@ public class Greql2Serializer {
 		} else if (exp instanceof ValueConstruction) {
 			serializeValueConstruction((ValueConstruction) exp);
 		} else {
+			System.err.println("Serialization so far: " + sb.toString());
 			throw new Greql2Exception("Unknown Expression " + exp + ".");
 		}
 		if (addSpace) {
@@ -288,7 +311,7 @@ public class Greql2Serializer {
 			sb.append("tup(");
 		}
 		boolean first = true;
-		for (Expression val : exp.getPartList()) {
+		for (Expression val : exp.get_part()) {
 			if (first) {
 				first = false;
 			} else {
@@ -304,7 +327,7 @@ public class Greql2Serializer {
 	private void serializeSetConstruction(SetConstruction exp) {
 		sb.append("set(");
 		boolean first = true;
-		for (Expression val : exp.getPartList()) {
+		for (Expression val : exp.get_part()) {
 			if (first) {
 				first = false;
 			} else {
@@ -318,7 +341,7 @@ public class Greql2Serializer {
 	private void serializeRecordConstruction(RecordConstruction exp) {
 		sb.append("rec(");
 		boolean first = true;
-		for (RecordElement re : exp.getRecordElementList()) {
+		for (RecordElement re : exp.get_recordElement()) {
 			if (first) {
 				first = false;
 			} else {
@@ -331,10 +354,10 @@ public class Greql2Serializer {
 
 	private void serializePathSystemConstruction(PathSystemConstruction exp) {
 		sb.append("pathsystem(");
-		serializeExpression(exp.getRootList().get(0), true);
+		serializeExpression(exp.get_root(), true);
 		sb.append(", ");
 		boolean first = true;
-		for (EdgeVertexList evl : exp.getEdgeVertexListList()) {
+		for (EdgeVertexList evl : exp.get_edgeVertexList()) {
 			if (first) {
 				first = false;
 			} else {
@@ -350,7 +373,7 @@ public class Greql2Serializer {
 	private void serializePathConstruction(PathConstruction exp) {
 		sb.append("path(");
 		boolean first = true;
-		for (Expression e : exp.getPartList()) {
+		for (Expression e : exp.get_part()) {
 			if (first) {
 				first = false;
 			} else {
@@ -363,16 +386,14 @@ public class Greql2Serializer {
 
 	private void serializeMapConstruction(MapConstruction exp) {
 		sb.append("map(");
-		List<? extends Expression> keys = exp.getKeyExprList();
-		List<? extends Expression> vals = exp.getValueExprList();
-
-		for (int i = 0; i < keys.size(); i++) {
-			if (i > 0) {
-				sb.append(", ");
-			}
-			serializeExpression(keys.get(i), true);
+		Iterator<? extends Expression> vals = exp.get_valueExpr().iterator();
+		String sep = "";
+		for (Expression key : exp.get_keyExpr()) {
+			sb.append(sep);
+			sep = ", ";
+			serializeExpression(key, true);
 			sb.append("-> ");
-			serializeExpression(vals.get(i), false);
+			serializeExpression(vals.next(), false);
 		}
 
 		sb.append(")");
@@ -382,12 +403,12 @@ public class Greql2Serializer {
 		sb.append("list(");
 		if (exp instanceof ListRangeConstruction) {
 			ListRangeConstruction lrc = (ListRangeConstruction) exp;
-			serializeExpression(lrc.getFirstValueList().get(0), false);
+			serializeExpression(lrc.get_firstValue(), false);
 			sb.append("..");
-			serializeExpression(lrc.getLastValueList().get(0), false);
+			serializeExpression(lrc.get_lastValue(), false);
 		} else {
 			boolean first = true;
-			for (Expression val : exp.getPartList()) {
+			for (Expression val : exp.get_part()) {
 				if (first) {
 					first = false;
 				} else {
@@ -402,7 +423,7 @@ public class Greql2Serializer {
 	private void serializeBagConstruction(BagConstruction exp) {
 		sb.append("bag(");
 		boolean first = true;
-		for (Expression val : exp.getPartList()) {
+		for (Expression val : exp.get_part()) {
 			if (first) {
 				first = false;
 			} else {
@@ -424,7 +445,7 @@ public class Greql2Serializer {
 
 		sb.append("Subgraph{");
 		boolean first = true;
-		for (TypeId t : exp.getTypeRestrList()) {
+		for (TypeId t : exp.get_typeRestr()) {
 			if (first) {
 				first = false;
 			} else {
@@ -448,28 +469,28 @@ public class Greql2Serializer {
 	}
 
 	private void serializePathExistence(PathExistence exp) {
-		serializeExpression(exp.getStartExprList().get(0), true);
-		serializeExpression(exp.getPathList().get(0), true);
-		serializeExpression(exp.getTargetExprList().get(0), false);
+		serializeExpression(exp.get_startExpr(), true);
+		serializeExpression(exp.get_path(), true);
+		serializeExpression(exp.get_targetExpr(), false);
 	}
 
 	private void serializeForwardVertexSet(ForwardVertexSet exp) {
-		serializeExpression(exp.getStartExprList().get(0), true);
-		serializeExpression(exp.getPathList().get(0), false);
+		serializeExpression(exp.get_startExpr(), true);
+		serializeExpression(exp.get_path(), false);
 	}
 
 	private void serializeBackwardVertexSet(BackwardVertexSet exp) {
-		serializeExpression(exp.getPathList().get(0), true);
-		serializeExpression(exp.getTargetExprList().get(0), false);
+		serializeExpression(exp.get_path(), true);
+		serializeExpression(exp.get_targetExpr(), false);
 	}
 
 	private void serializePathDescription(PathDescription exp) {
 		if (!((exp instanceof PrimaryPathDescription) || (exp instanceof OptionalPathDescription))) {
 			sb.append('(');
 		}
-		if (!exp.getStartRestrList().isEmpty()) {
+		if (exp.get_startRestr() != null) {
 			sb.append("{");
-			serializeExpression(exp.getStartRestrList().get(0), false);
+			serializeExpression(exp.get_startRestr(), false);
 			sb.append("} & ");
 		}
 
@@ -493,9 +514,9 @@ public class Greql2Serializer {
 			throw new Greql2Exception("Unknown PathDescription " + exp + ".");
 		}
 
-		if (!exp.getGoalRestrList().isEmpty()) {
+		if (exp.get_goalRestr() != null) {
 			sb.append(" & {");
-			serializeExpression(exp.getGoalRestrList().get(0), false);
+			serializeExpression(exp.get_goalRestr(), false);
 			sb.append("}");
 		}
 		if (!((exp instanceof PrimaryPathDescription) || (exp instanceof OptionalPathDescription))) {
@@ -515,10 +536,10 @@ public class Greql2Serializer {
 					+ ".");
 		}
 
-		if (!exp.getEdgeRestrList().isEmpty()) {
+		if (exp.get_edgeRestr().iterator().hasNext()) {
 			sb.append("{");
 			boolean first = true;
-			for (EdgeRestriction er : exp.getEdgeRestrList()) {
+			for (EdgeRestriction er : exp.get_edgeRestr()) {
 				if (first) {
 					first = false;
 				} else {
@@ -540,7 +561,7 @@ public class Greql2Serializer {
 	}
 
 	private void serializeSimplePathDescription(SimplePathDescription exp) {
-		String dir = exp.getDirectionList().get(0).get_dirValue();
+		String dir = exp.get_direction().get_dirValue();
 		if (dir.equals("out")) {
 			sb.append("-->");
 		} else if (dir.equals("in")) {
@@ -551,65 +572,66 @@ public class Greql2Serializer {
 	}
 
 	private void serializeEdgePathDescription(EdgePathDescription exp) {
-		String dir = exp.getDirectionList().get(0).get_dirValue();
+		String dir = exp.get_direction().get_dirValue();
 		if (dir.equals("out")) {
 			sb.append("--");
-			serializeExpression(exp.getEdgeExprList().get(0), false);
+			serializeExpression(exp.get_edgeExpr(), false);
 			sb.append("->");
 		} else if (dir.equals("in")) {
 			sb.append("<-");
-			serializeExpression(exp.getEdgeExprList().get(0), false);
+			serializeExpression(exp.get_edgeExpr(), false);
 			sb.append("--");
 		} else {
 			sb.append("<-");
-			serializeExpression(exp.getEdgeExprList().get(0), false);
+			serializeExpression(exp.get_edgeExpr(), false);
 			sb.append("->");
 		}
 	}
 
 	private void serializeTransposedPathDescription(
 			TransposedPathDescription exp) {
-		serializePathDescription(exp.getTransposedPathList().get(0));
+		serializePathDescription(exp.get_transposedPath());
 		sb.append("^T");
 	}
 
 	private void serializeSequentialPathDescription(
 			SequentialPathDescription exp) {
-		for (PathDescription pd : exp.getSequenceElementList()) {
+		for (PathDescription pd : exp.get_sequenceElement()) {
 			serializePathDescription(pd);
+			sb.append(' ');
 		}
 	}
 
 	private void serializeOptionalPathDescription(OptionalPathDescription exp) {
 		sb.append('[');
-		serializePathDescription(exp.getOptionalPathList().get(0));
+		serializePathDescription(exp.get_optionalPath());
 		sb.append(']');
 	}
 
 	private void serializeIteratedPathDescription(IteratedPathDescription exp) {
-		serializePathDescription(exp.getIteratedPathList().get(0));
-		sb.append(exp.get_times().equals("plus") ? '+' : '*');
+		serializePathDescription(exp.get_iteratedPath());
+		sb.append(exp.get_times() == IterationType.STAR ? '*' : '+');
 	}
 
 	private void serializeIntermediateVertexPathDescription(
 			IntermediateVertexPathDescription exp) {
-		List<? extends PathDescription> sub = exp.getSubPathList();
-		serializePathDescription(sub.get(0));
-		serializeExpression(exp.getIntermediateVertexList().get(0), false);
-		serializePathDescription(sub.get(1));
+		Iterator<? extends PathDescription> sub = exp.get_subPath().iterator();
+		serializePathDescription(sub.next());
+		serializeExpression(exp.get_intermediateVertex(), false);
+		serializePathDescription(sub.next());
 	}
 
 	private void serializeExponentiatedPathDescription(
 			ExponentiatedPathDescription exp) {
-		serializePathDescription(exp.getExponentiatedPathList().get(0));
+		serializePathDescription(exp.get_exponentiatedPath());
 		sb.append('^');
-		serializeLiteral(exp.getExponentList().get(0));
+		serializeLiteral(exp.get_exponent());
 	}
 
 	private void serializeAlternativePathDescription(
 			AlternativePathDescription exp) {
 		boolean first = true;
-		for (PathDescription a : exp.getAlternatePathList()) {
+		for (PathDescription a : exp.get_alternatePath()) {
 			if (first) {
 				first = false;
 			} else {
@@ -629,18 +651,17 @@ public class Greql2Serializer {
 					+ ".");
 		}
 
-		if (exp.getTypeRestrList().isEmpty()) {
+		Iterable<? extends TypeId> typeRestrictions = exp.get_typeRestr();
+
+		if (!typeRestrictions.iterator().hasNext()) {
 			return;
 		}
 
 		sb.append("{");
-		boolean first = true;
-		for (TypeId t : exp.getTypeRestrList()) {
-			if (first) {
-				first = false;
-			} else {
-				sb.append(", ");
-			}
+		String sep = "";
+		for (TypeId t : typeRestrictions) {
+			sb.append(sep);
+			sep = ", ";
 			serializeIdentifier(t);
 		}
 		sb.append("}");
@@ -658,10 +679,10 @@ public class Greql2Serializer {
 	}
 
 	private void serializeWhereExpression(WhereExpression exp) {
-		serializeExpression(exp.getBoundExprOfDefinitionList().get(0), true);
+		serializeExpression(exp.get_boundExprOfDefinition(), true);
 		sb.append("where ");
 		boolean first = true;
-		for (Definition def : exp.getDefinitionList()) {
+		for (Definition def : exp.get_definition()) {
 			if (first) {
 				first = false;
 			} else {
@@ -674,7 +695,7 @@ public class Greql2Serializer {
 	private void serializeLetExpression(LetExpression exp) {
 		sb.append("let ");
 		boolean first = true;
-		for (Definition def : exp.getDefinitionList()) {
+		for (Definition def : exp.get_definition()) {
 			if (first) {
 				first = false;
 			} else {
@@ -683,12 +704,12 @@ public class Greql2Serializer {
 			serializeDefinition(def);
 		}
 		sb.append(" in ");
-		serializeExpression(exp.getBoundExprOfDefinitionList().get(0), true);
+		serializeExpression(exp.get_boundExprOfDefinition(), true);
 	}
 
 	private void serializeComprehension(Comprehension exp) {
 		sb.append("from ");
-		serializeDeclaration(exp.getCompDeclList().get(0), true);
+		serializeDeclaration(exp.get_compDecl(), true);
 		if (exp instanceof SetComprehension) {
 			sb.append(" reportSet ");
 		} else if (exp instanceof BagComprehension) {
@@ -697,11 +718,18 @@ public class Greql2Serializer {
 			sb.append(" reportTable ");
 		} else if (exp instanceof MapComprehension) {
 			sb.append(" reportMap ");
+			MapComprehension mc = (MapComprehension) exp;
+			// MapComprehensions have no compResultDef, but key and valueExprs
+			serializeExpression(mc.get_keyExpr(), false);
+			sb.append(", ");
+			serializeExpression(mc.get_valueExpr(), true);
+			sb.append("end");
+			return;
 		} else {
 			throw new Greql2Exception("Unknown Comprehension " + exp + ".");
 		}
 
-		Expression result = exp.getCompResultDefList().get(0);
+		Expression result = exp.get_compResultDef();
 
 		if (result instanceof TupleConstruction) {
 			// here the tup() can be omitted
@@ -714,19 +742,19 @@ public class Greql2Serializer {
 	}
 
 	private void serializeRestrictedExpression(RestrictedExpression exp) {
-		serializeExpression(exp.getRestrictedExprList().get(0), false);
+		serializeExpression(exp.get_restrictedExpr(), false);
 		sb.append(" & {");
-		serializeExpression(exp.getRestrictionList().get(0), false);
+		serializeExpression(exp.get_restriction(), false);
 		sb.append("}");
 	}
 
 	private void serializeQuantifiedExpression(QuantifiedExpression exp) {
 		sb.append('(');
-		serializeQuantifier(exp.getQuantifierList().get(0));
+		serializeQuantifier(exp.get_quantifier());
 		sb.append(' ');
-		serializeDeclaration(exp.getQuantifiedDeclList().get(0), false);
+		serializeDeclaration(exp.get_quantifiedDecl(), false);
 		sb.append(" @ ");
-		serializeExpression(exp.getBoundExprOfQuantifierList().get(0), false);
+		serializeExpression(exp.get_boundExprOfQuantifier(), false);
 		sb.append(')');
 	}
 
@@ -758,19 +786,19 @@ public class Greql2Serializer {
 	}
 
 	private void serializeFunctionApplication(FunctionApplication exp) {
-		FunctionId fid = exp.getFunctionIdList().get(0);
+		FunctionId fid = exp.get_functionId();
 		String id = fid.get_name();
 
-		if (id.equals("plus")) {
+		if (id.equals("add")) {
 			serializeFunctionApplicationInfix(exp, "+");
 			return;
-		} else if (id.equals("minus")) {
+		} else if (id.equals("sub")) {
 			serializeFunctionApplicationInfix(exp, "-");
 			return;
-		} else if (id.equals("times")) {
+		} else if (id.equals("mul")) {
 			serializeFunctionApplicationInfix(exp, "*");
 			return;
-		} else if (id.equals("dividedBy")) {
+		} else if (id.equals("div")) {
 			serializeFunctionApplicationInfix(exp, "/");
 			return;
 		} else if (id.equals("equals")) {
@@ -794,7 +822,7 @@ public class Greql2Serializer {
 		} else if (id.equals("reMatch")) {
 			serializeFunctionApplicationInfix(exp, "=~");
 			return;
-		} else if (id.equals("modulo")) {
+		} else if (id.equals("mod")) {
 			serializeFunctionApplicationInfix(exp, "%");
 			return;
 		} else if (id.equals("and")) {
@@ -811,7 +839,7 @@ public class Greql2Serializer {
 		serializeIdentifier(fid);
 		sb.append('(');
 		boolean first = true;
-		for (Expression arg : exp.getArgumentList()) {
+		for (Expression arg : exp.get_argument()) {
 			if (first) {
 				first = false;
 			} else {
@@ -826,7 +854,7 @@ public class Greql2Serializer {
 			String operator) {
 		sb.append("(");
 		boolean first = true;
-		for (Expression arg : exp.getArgumentList()) {
+		for (Expression arg : exp.get_argument()) {
 			if (first) {
 				first = false;
 			} else {
@@ -840,14 +868,14 @@ public class Greql2Serializer {
 	}
 
 	private void serializeConditionalExpression(ConditionalExpression expression) {
-		serializeExpression(expression.getConditionList().get(0), true);
+		serializeExpression(expression.get_condition(), true);
 		sb.append("? ");
-		serializeExpression(expression.getTrueExprList().get(0), true);
+		serializeExpression(expression.get_trueExpr(), true);
 		sb.append(": ");
-		serializeExpression(expression.getFalseExprList().get(0), true);
+		serializeExpression(expression.get_falseExpr(), true);
 		if (expression.getFirstIsNullExprOf(EdgeDirection.IN) != null) {
 			sb.append(": ");
-			serializeExpression(expression.getNullExprList().get(0), false);
+			serializeExpression(expression.get_nullExpr(), false);
 		}
 	}
 

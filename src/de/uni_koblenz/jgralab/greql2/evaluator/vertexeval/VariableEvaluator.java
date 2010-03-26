@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -32,16 +32,19 @@ import java.util.Queue;
 import java.util.Set;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
+import de.uni_koblenz.jgralab.greql2.schema.Declaration;
+import de.uni_koblenz.jgralab.greql2.schema.Definition;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Aggregation;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
-import de.uni_koblenz.jgralab.greql2.schema.IsDeclaredVarOf;
-import de.uni_koblenz.jgralab.greql2.schema.IsVarOf;
+import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
 
 /**
@@ -73,7 +76,7 @@ public class VariableEvaluator extends VertexEvaluator {
 	/**
 	 * This is the value that has been set from outside
 	 */
-	private JValue variableValue = new JValue();
+	private JValue variableValue = new JValueImpl();
 
 	/**
 	 * This is the estimated cardinality of the definitionset of this variable
@@ -84,16 +87,18 @@ public class VariableEvaluator extends VertexEvaluator {
 	 * Sets the given value as "result" of this variable, so it can be uses via
 	 * the getResult() method
 	 * 
-	 * @param value
+	 * @param variableValue2
 	 */
-	public void setValue(JValue value) {
+	public void setValue(JValue variableValue2) {
 		if (dependingExpressions == null) {
 			dependingExpressions = calculateDependingExpressions();
 		}
-		for (VertexEvaluator eval : dependingExpressions) {
-			eval.clear();
+
+		int size = dependingExpressions.size();
+		for (int i = 0; i < size; i++) {
+			dependingExpressions.get(i).clear();
 		}
-		variableValue = value;
+		variableValue = variableValue2;
 	}
 
 	/**
@@ -151,21 +156,55 @@ public class VariableEvaluator extends VertexEvaluator {
 	protected List<VertexEvaluator> calculateDependingExpressions() {
 		Queue<Greql2Vertex> queue = new LinkedList<Greql2Vertex>();
 		List<VertexEvaluator> dependingEvaluators = new ArrayList<VertexEvaluator>();
+		List<Vertex> forbiddenVertices = new ArrayList<Vertex>();
+		SimpleDeclaration simpleDecl = null;
+		if (vertex.getFirstIsDeclaredVarOf(EdgeDirection.OUT) != null) {
+			simpleDecl = (SimpleDeclaration) vertex.getFirstIsDeclaredVarOf(
+					EdgeDirection.OUT).getThat();
+		}
+		if (simpleDecl != null) {
+			forbiddenVertices.add(simpleDecl);
+			Declaration declaringVertex = (Declaration) simpleDecl
+					.getFirstIsSimpleDeclOf().getThat();
+			if (declaringVertex.getFirstIsCompDeclOf(EdgeDirection.OUT) != null) {
+				forbiddenVertices.add(declaringVertex.getFirstIsCompDeclOf(
+						EdgeDirection.OUT).getThat());
+			} else {
+				forbiddenVertices.add(declaringVertex
+						.getFirstIsQuantifiedDeclOf(EdgeDirection.OUT)
+						.getThat());
+			}
+		} else {
+			if (vertex.getFirstIsVarOf(EdgeDirection.OUT) != null) {
+				Definition definingVertex = (Definition) vertex
+						.getFirstIsVarOf(EdgeDirection.OUT).getThat();
+				forbiddenVertices.add(definingVertex);
+				forbiddenVertices.add(definingVertex.getFirstIsDefinitionOf(
+						EdgeDirection.OUT).getThat());
+			} else {
+				// thisvertex, thisedge
+
+			}
+		}
+
 		queue.add(vertex);
 		while (!queue.isEmpty()) {
 			Greql2Vertex currentVertex = queue.poll();
 			VertexEvaluator eval = greqlEvaluator
 					.getVertexEvaluatorGraphMarker().getMark(currentVertex);
-			if ((eval != null) && (!dependingEvaluators.contains(eval))) {
+
+			if ((eval != null) && (!dependingEvaluators.contains(eval))
+					&& (!(eval instanceof PathDescriptionEvaluator))
+					&& (!(eval instanceof DeclarationEvaluator))
+					&& (!(eval instanceof SimpleDeclarationEvaluator))) {
 				dependingEvaluators.add(eval);
 			}
 			Greql2Aggregation currentEdge = currentVertex
 					.getFirstGreql2Aggregation(EdgeDirection.OUT);
 			while (currentEdge != null) {
-				if ((!(currentEdge instanceof IsVarOf) && !(currentEdge instanceof IsDeclaredVarOf))
-						|| !(currentEdge.getThis() == vertex)) {
-					Greql2Vertex nextVertex = (Greql2Vertex) currentEdge
-							.getThat();
+				Greql2Vertex nextVertex = (Greql2Vertex) currentEdge.getThat();
+				if (!forbiddenVertices.contains(nextVertex)) {
+					// if (!(nextVertex instanceof SimpleDeclaration)) {
 					queue.add(nextVertex);
 				}
 				currentEdge = currentEdge

@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -36,7 +36,7 @@ public final class HelperMethods {
 	 */
 	static String firstToLowerCase(String string) {
 		char first = Character.toLowerCase(string.charAt(0));
-		return string.replaceFirst(".", Character.toString(first));
+		return first + string.substring(1);
 	}
 
 	/**
@@ -49,6 +49,6 @@ public final class HelperMethods {
 	 */
 	static String firstToUpperCase(String string) {
 		char first = Character.toUpperCase(string.charAt(0));
-		return string.replaceFirst(".", Character.toString(first));
+		return first + string.substring(1);
 	}
 }

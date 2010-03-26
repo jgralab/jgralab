@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -26,9 +26,9 @@ package de.uni_koblenz.jgralab.utilities.tg2gxl;
 //import gnu.getopt.LongOpt;
 
 import java.io.PrintStream;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.cli.CommandLine;
@@ -54,6 +54,7 @@ import de.uni_koblenz.jgralab.schema.ListDomain;
 import de.uni_koblenz.jgralab.schema.LongDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.SetDomain;
+import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
 import de.uni_koblenz.jgralab.utilities.tg2schemagraph.Schema2SchemaGraph;
 import de.uni_koblenz.jgralab.utilities.tg2whatever.Tg2Whatever;
 
@@ -381,17 +382,16 @@ public class Tg2GXL extends Tg2Whatever {
 				out.println("<String>");
 				out.println("" + ((RecordDomain) dom).getQualifiedName());
 				out.println("</String>");
-				Map<String, Domain> components = ((RecordDomain) dom)
+				Collection<RecordComponent> components = ((RecordDomain) dom)
 						.getComponents();
-				for (Map.Entry<String, Domain> component : components
-						.entrySet()) {
+				for (RecordComponent component : components) {
 					out.println("<Tup>");
 					out.println("<String>");
-					out.println("" + stringQuote(component.getKey()));
+					out.println("" + stringQuote(component.getName()));
 					out.println("</String>");
 					try {
-						printComposite(out, component.getValue(), val
-								.getClass().getField(component.getKey()).get(
+						printComposite(out, component.getDomain(), val
+								.getClass().getField(component.getName()).get(
 										val));
 					} catch (Exception e) {
 

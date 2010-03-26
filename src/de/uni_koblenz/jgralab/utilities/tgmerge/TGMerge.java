@@ -23,12 +23,11 @@
  */
 package de.uni_koblenz.jgralab.utilities.tgmerge;
 
-import java.lang.reflect.Method;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
@@ -50,26 +49,31 @@ import de.uni_koblenz.jgralab.schema.Schema;
  * 
  */
 public class TGMerge {
-	private Set<Graph> graphs = new HashSet<Graph>();
+	private List<Graph> additionalGraphs = new LinkedList<Graph>();
 	private Graph targetGraph;
 	private Map<Vertex, Vertex> old2NewVertices = new HashMap<Vertex, Vertex>();
 	private Map<Edge, Edge> new2OldEdges = new HashMap<Edge, Edge>();
 
-	public TGMerge(Set<Graph> graphs) {
+	/**
+	 * @param graphs
+	 *            a list of graphs. The second to last graph will be merged into
+	 *            the first one.
+	 */
+	public TGMerge(List<Graph> graphs) {
 		if (graphs.size() < 2) {
 			throw new RuntimeException(
-					"Merging makes no sense with less than 2 graphs.");
+					"Merging makes no sense with less than 2 additionalGraphs.");
 		}
 
 		Schema s = graphs.iterator().next().getSchema();
 		for (Graph g : graphs) {
 			if (g.getSchema() != s) {
 				throw new RuntimeException(
-						"It's only possible to merge graphs conforming to one schema.");
+						"It's only possible to merge additionalGraphs conforming to one schema.");
 			}
 		}
-
-		this.graphs = graphs;
+		this.targetGraph = graphs.remove(0);
+		this.additionalGraphs = graphs;
 	}
 
 	/**
@@ -81,7 +85,7 @@ public class TGMerge {
 
 		String outputFilename = cmdl.getOptionValue('o').trim();
 
-		HashSet<Graph> graphs = new HashSet<Graph>();
+		List<Graph> graphs = new LinkedList<Graph>();
 		for (String g : cmdl.getArgs()) {
 			graphs
 					.add(GraphIO.loadGraphFromFile(g,
@@ -95,23 +99,10 @@ public class TGMerge {
 				new ProgressFunctionImpl());
 	}
 
-	private Graph merge() {
-		int ecount = 0, vcount = 0;
-		for (Graph g : graphs) {
-			ecount += g.getECount();
-			vcount += g.getVCount();
-		}
-
-		Method create = graphs.iterator().next().getSchema()
-				.getGraphCreateMethod(false);
-		try {
-			targetGraph = (Graph) create.invoke(null, null, vcount, ecount);
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new RuntimeException(e);
-		}
-
-		for (Graph g : graphs) {
+	public Graph merge() {
+		System.out.println("TargetGraph is '" + targetGraph.getId() + "'.");
+		for (Graph g : additionalGraphs) {
+			System.out.println("Merging graph '" + g.getId() + "'...");
 			copyVertices(g);
 			copyEdges(g);
 			sortIncidences();
@@ -126,7 +117,6 @@ public class TGMerge {
 		System.out.println("Sorting incidences...");
 		for (Vertex v : old2NewVertices.values()) {
 			v.sortIncidences(new Comparator<Edge>() {
-
 				@Override
 				public int compare(Edge e1, Edge e2) {
 					Edge old1 = new2OldEdges.get(e1);

@@ -1,3 +1,4 @@
+TGraph 2;
 Schema de.uni_koblenz.jgralabtest.schemas.citymap.CityMapSchema;
 GraphClass CityMap;
 
@@ -6,6 +7,6 @@ VertexClass Intersection: Junction { roundabout: Boolean };
 VertexClass CarPark: Junction { capacity:Integer };
 VertexClass ParkingGarage: CarPark;
 
-abstract EdgeClass Way from Junction (1,6) role 'from to Junction (1,6) role 'to { name:String, length: Integer };
+abstract EdgeClass Way from Junction (1,6) role from to Junction (1,6) role to { name:String, length: Integer };
 EdgeClass Street: Way from Junction (1,6) to Junction (1,6) { oneway: Boolean };
 EdgeClass Bridge: Street from Junction (1,6) to Junction (1,6) { height: Integer };

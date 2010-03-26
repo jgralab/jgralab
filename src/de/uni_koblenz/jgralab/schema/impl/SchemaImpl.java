@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -27,6 +27,7 @@ package de.uni_koblenz.jgralab.schema.impl;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -63,12 +64,10 @@ import de.uni_koblenz.jgralab.codegenerator.RecordCodeGenerator;
 import de.uni_koblenz.jgralab.codegenerator.ReversedEdgeCodeGenerator;
 import de.uni_koblenz.jgralab.codegenerator.SchemaCodeGenerator;
 import de.uni_koblenz.jgralab.codegenerator.VertexCodeGenerator;
-import de.uni_koblenz.jgralab.schema.AggregationClass;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.BooleanDomain;
 import de.uni_koblenz.jgralab.schema.CompositeDomain;
-import de.uni_koblenz.jgralab.schema.CompositionClass;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.DoubleDomain;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -85,6 +84,7 @@ import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.SetDomain;
 import de.uni_koblenz.jgralab.schema.StringDomain;
 import de.uni_koblenz.jgralab.schema.VertexClass;
+import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
 import de.uni_koblenz.jgralab.schema.exception.InvalidNameException;
 import de.uni_koblenz.jgralab.schema.exception.M1ClassAccessException;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
@@ -152,10 +152,6 @@ public class SchemaImpl implements Schema {
 	 */
 	private boolean allowLowercaseEnumConstants = true;
 
-	private AggregationClass defaultAggregationClass;
-
-	private CompositionClass defaultCompositionClass;
-
 	private EdgeClass defaultEdgeClass;
 
 	private GraphClass defaultGraphClass;
@@ -192,11 +188,12 @@ public class SchemaImpl implements Schema {
 	 * The package prefix of this schema.
 	 */
 	private String packagePrefix;
+
 	/**
 	 * Maps from simple names to a set of {@link NamedElement}s which have this
 	 * simple name. Used for creation of unique names.
 	 */
-	private Map<String, Set<NamedElement>> namedElements = new HashMap<String, Set<NamedElement>>();
+	private Map<String, Set<NamedElement>> namedElementsBySimpleName = new HashMap<String, Set<NamedElement>>();
 
 	/**
 	 * Maps from qualified name to the {@link Package} with that qualified name.
@@ -212,7 +209,7 @@ public class SchemaImpl implements Schema {
 	/**
 	 * A set of all qualified names known to this schema.
 	 */
-	private Set<String> knownQualifiedNames = new TreeSet<String>();
+	private Map<String, NamedElement> namedElements = new TreeMap<String, NamedElement>();
 
 	private BooleanDomain booleanDomain;
 
@@ -286,11 +283,6 @@ public class SchemaImpl implements Schema {
 		// Creation of the default GraphElementClasses
 		defaultVertexClass = VertexClassImpl.createDefaultVertexClass(this);
 		defaultEdgeClass = EdgeClassImpl.createDefaultEdgeClass(this);
-		defaultAggregationClass = AggregationClassImpl
-				.createDefaultAggregationClass(this);
-		defaultCompositionClass = CompositionClassImpl
-				.createDefaultCompositionClass(this);
-
 		config = createDefaultConfig();
 	}
 
@@ -323,18 +315,18 @@ public class SchemaImpl implements Schema {
 		packages.put(pkg.getQualifiedName(), pkg);
 	}
 
-	void addToKnownElements(NamedElement namedElement) {
-		assert !knownQualifiedNames.contains(namedElement.getQualifiedName()) : "You are trying to add the NamedElement '"
+	void addNamedElement(NamedElement namedElement) {
+		assert !namedElements.containsKey(namedElement.getQualifiedName()) : "You are trying to add the NamedElement '"
 				+ namedElement.getQualifiedName()
 				+ "' to this Schema, but that does already exist!";
 
-		knownQualifiedNames.add(namedElement.getQualifiedName());
+		namedElements.put(namedElement.getQualifiedName(), namedElement);
 
 		/*
 		 * Check if any element´s unique name needs adaptation after the add of
 		 * the new named element.
 		 */
-		Set<NamedElement> elementsWithSameSimpleName = namedElements
+		Set<NamedElement> elementsWithSameSimpleName = namedElementsBySimpleName
 				.get(namedElement.getSimpleName());
 		// add the element to the map
 		if ((elementsWithSameSimpleName != null)
@@ -343,7 +335,7 @@ public class SchemaImpl implements Schema {
 		} else {
 			elementsWithSameSimpleName = new TreeSet<NamedElement>();
 			elementsWithSameSimpleName.add(namedElement);
-			namedElements.put(namedElement.getSimpleName(),
+			namedElementsBySimpleName.put(namedElement.getSimpleName(),
 					elementsWithSameSimpleName);
 		}
 
@@ -353,6 +345,11 @@ public class SchemaImpl implements Schema {
 				((NamedElementImpl) other).changeUniqueName();
 			}
 		}
+	}
+
+	@Override
+	public NamedElement getNamedElement(String qualifiedName) {
+		return namedElements.get(qualifiedName);
 	}
 
 	@Override
@@ -606,8 +603,8 @@ public class SchemaImpl implements Schema {
 
 	@Override
 	public Attribute createAttribute(String name, Domain dom,
-			AttributedElementClass aec) {
-		return new AttributeImpl(name, dom, aec);
+			AttributedElementClass aec, String defaultValueAsString) {
+		return new AttributeImpl(name, dom, aec, defaultValueAsString);
 	}
 
 	@Override
@@ -643,7 +640,7 @@ public class SchemaImpl implements Schema {
 			throw new InvalidNameException(
 					"A GraphClass must always be in the default package!");
 		}
-		GraphClass gc = new GraphClassImpl(simpleName, this);
+		GraphClassImpl gc = new GraphClassImpl(simpleName, this);
 		gc.addSuperClass(defaultGraphClass);
 		return gc;
 	}
@@ -764,7 +761,7 @@ public class SchemaImpl implements Schema {
 			currentParent = packages.get(parent);
 		}
 
-		// ok, parent existid or is created;
+		// ok, parent existed or is created;
 		assert currentParent.getQualifiedName().equals(parent) : "Something went wrong when creating a package with parents: "
 				+ "parent should be \""
 				+ parent
@@ -793,6 +790,10 @@ public class SchemaImpl implements Schema {
 			components[1] = qualifiedName;
 		} else {
 			components[0] = qualifiedName.substring(0, lastIndex);
+			if ((components[0].length() >= 1)
+					&& (components[0].charAt(0) == '.')) {
+				components[0] = components[0].substring(1);
+			}
 			components[1] = qualifiedName.substring(lastIndex + 1);
 		}
 		return components;
@@ -800,12 +801,12 @@ public class SchemaImpl implements Schema {
 
 	@Override
 	public RecordDomain createRecordDomain(String qualifiedName) {
-		return createRecordDomain(qualifiedName, new TreeMap<String, Domain>());
+		return createRecordDomain(qualifiedName, null);
 	}
 
 	@Override
 	public RecordDomain createRecordDomain(String qualifiedName,
-			Map<String, Domain> recordComponents) {
+			Collection<RecordComponent> recordComponents) {
 		String[] components = splitQualifiedName(qualifiedName);
 		PackageImpl parent = (PackageImpl) createPackageWithParents(components[0]);
 		String simpleName = components[1];
@@ -826,6 +827,11 @@ public class SchemaImpl implements Schema {
 		return (this == other)
 				|| ((other instanceof Schema) && this.qualifiedName
 						.equals(((Schema) other).getQualifiedName()));
+	}
+
+	@Override
+	public int hashCode() {
+		return qualifiedName.hashCode();
 	}
 
 	@Override
@@ -904,16 +910,6 @@ public class SchemaImpl implements Schema {
 	}
 
 	@Override
-	public AggregationClass getDefaultAggregationClass() {
-		return defaultAggregationClass;
-	}
-
-	@Override
-	public CompositionClass getDefaultCompositionClass() {
-		return defaultCompositionClass;
-	}
-
-	@Override
 	public EdgeClass getDefaultEdgeClass() {
 		return defaultEdgeClass;
 	}
@@ -952,9 +948,6 @@ public class SchemaImpl implements Schema {
 		edgeClassSet.addAll(graphClass.getEdgeClasses());
 
 		topologicalOrderList.add(defaultEdgeClass);
-		topologicalOrderList.add(defaultAggregationClass);
-		topologicalOrderList.add(defaultCompositionClass);
-
 		// iteratively add classes from edgeClassSet,
 		// whose superclasses already are in topologicalOrderList,
 		// to topologicalOrderList
@@ -972,7 +965,8 @@ public class SchemaImpl implements Schema {
 	}
 
 	@Override
-	public Method getEdgeCreateMethod(String edgeClassName, boolean transactionSupport) {
+	public Method getEdgeCreateMethod(String edgeClassName,
+			boolean transactionSupport) {
 		// Edge class create method cannot be found directly by its signature
 		// because the vertex parameters are subclassed to match the to- and
 		// from-class. Those subclasses are unknown in this method. Therefore,
@@ -1074,7 +1068,8 @@ public class SchemaImpl implements Schema {
 	@Override
 	public Method getGraphCreateMethod(boolean transactionSupport) {
 		return getCreateMethod(graphClass.getSimpleName(), graphClass
-				.getSimpleName(), GRAPHCLASS_CREATE_SIGNATURE, transactionSupport);
+				.getSimpleName(), GRAPHCLASS_CREATE_SIGNATURE,
+				transactionSupport);
 	}
 
 	@Override
@@ -1155,7 +1150,8 @@ public class SchemaImpl implements Schema {
 	}
 
 	@Override
-	public Method getVertexCreateMethod(String vertexClassName, boolean transactionSupport) {
+	public Method getVertexCreateMethod(String vertexClassName,
+			boolean transactionSupport) {
 		return getCreateMethod(vertexClassName, graphClass.getSimpleName(),
 				VERTEX_CLASS_CREATE_SIGNATURE, transactionSupport);
 	}
@@ -1171,8 +1167,9 @@ public class SchemaImpl implements Schema {
 		if (RESERVED_JAVA_WORDS.contains(name)) {
 			return false;
 		}
-		if (!Character.isJavaIdentifierStart(name.charAt(0)) )
+		if (!Character.isJavaIdentifierStart(name.charAt(0))) {
 			return false;
+		}
 		for (char c : name.toCharArray()) {
 			if (!Character.isJavaIdentifierPart(c)) {
 				return false;
@@ -1180,16 +1177,15 @@ public class SchemaImpl implements Schema {
 		}
 		return true;
 	}
-	
 
 	@Override
 	public boolean knows(String qn) {
-		return knownQualifiedNames.contains(qn);
+		return namedElements.containsKey(qn);
 	}
 
 	@Override
 	public boolean isSimpleNameUnique(String sn) {
-		return namedElements.containsKey(sn);
+		return namedElementsBySimpleName.containsKey(sn);
 	}
 
 	@Override

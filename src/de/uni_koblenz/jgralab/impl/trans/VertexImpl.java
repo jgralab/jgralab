@@ -11,8 +11,10 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphException;
+import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.IncidenceImpl;
+import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.trans.ListPosition;
 import de.uni_koblenz.jgralab.trans.Transaction;
@@ -26,7 +28,8 @@ import de.uni_koblenz.jgralab.trans.VersionedDataObject;
  * 
  * @author Jose Monte(monte@uni-koblenz.de)
  */
-public abstract class VertexImpl extends de.uni_koblenz.jgralab.impl.VertexImpl {
+public abstract class VertexImpl extends
+		de.uni_koblenz.jgralab.impl.VertexBaseImpl {
 	// next and previous vertex in Vseq
 	protected VersionedReferenceImpl<VertexImpl> nextVertex;
 	protected VersionedReferenceImpl<VertexImpl> prevVertex;
@@ -48,6 +51,7 @@ public abstract class VertexImpl extends de.uni_koblenz.jgralab.impl.VertexImpl 
 	 */
 	protected VertexImpl(int anId, Graph graph) {
 		super(anId, graph);
+		((GraphImpl) graph).addVertex(this);
 	}
 
 	// --- getter ---//
@@ -472,5 +476,11 @@ public abstract class VertexImpl extends de.uni_koblenz.jgralab.impl.VertexImpl 
 	@Override
 	public void sortIncidences(Comparator<Edge> comp) {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	protected void internalSetDefaultValue(Attribute attr)
+			throws GraphIOException, NoSuchFieldException {
+		attr.setDefaultTransactionValue(this);
 	}
 }

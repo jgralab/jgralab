@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 public class JValueRecord extends JValueCollection implements
 		Map<String, JValue> {
@@ -46,7 +47,7 @@ public class JValueRecord extends JValueCollection implements
 	public JValueRecord() {
 		super();
 		this.type = JValueType.RECORD;
-		dataMap = new HashMap<String, JValue>();
+		dataMap = new TreeMap<String, JValue>();
 	}
 
 	/**
@@ -56,7 +57,7 @@ public class JValueRecord extends JValueCollection implements
 	public JValueRecord(JValueCollection collection) {
 		super();
 		this.type = JValueType.RECORD;
-		dataMap = new HashMap<String, JValue>();
+		dataMap = new TreeMap<String, JValue>();
 		if (collection.isJValueRecord()) {
 			JValueRecord rec = (JValueRecord) collection;
 			dataMap.putAll(rec.dataMap);
@@ -296,7 +297,7 @@ public class JValueRecord extends JValueCollection implements
 	 *         otherwise
 	 */
 	public JValue remove(Object key) {
-		if (key instanceof JValue) {
+		if (key instanceof JValueImpl) {
 			removeValue((JValue) key);
 			return null;
 		}
@@ -373,5 +374,11 @@ public class JValueRecord extends JValueCollection implements
 		}
 		sb.append(CLOSING_PAREN);
 		return sb.toString();
+	}
+
+	@Override
+	public void sort() {
+		// We use a TreeMap as backend here, so a record is always sorted by its
+		// keys (compontent names)
 	}
 }

@@ -1,3 +1,4 @@
+TGraph 2;
 Schema de.uni_koblenz.jgstreetmap.osmschema.OsmSchema;
 GraphClass OsmGraph;
  
@@ -9,8 +10,8 @@ abstract VertexClass OsmPrimitive { osmId: Long, tags: Map<String,String>, timeS
 VertexClass Way: OsmPrimitive { closed: Boolean, wayType: routing.SegmentType };
 VertexClass Area: Way;
 VertexClass Relation: OsmPrimitive;
-AggregationClass HasNode from Way (0, *) role way to Node (1, *) role node aggregate from;
-AggregationClass HasMember from Relation (0, *) role relation to OsmPrimitive (0, *) role member aggregate from { memberType: String, memberRole: String };
+EdgeClass HasNode from Way (0, *) role way to Node (1, *) role node aggregation shared;
+EdgeClass HasMember from Relation (0, *) role relation to OsmPrimitive (0, *) role member aggregation shared { memberType: String, memberRole: String };
  
 Package routing;
 EnumDomain SegmentType (NOWAY, CYCLEWAY, MOTORWAY, PRIMARY, SECONDARY, TERTIARY, RESIDENTIAL, FOOTWAY, UNSURFACED, SERVICE, WORMHOLE);
@@ -23,7 +24,7 @@ VertexClass NodeSet;
 VertexClass XKey: Key ["Each XKey is either an inner node with 2 children or a leaf with a NodeSet."  "forall k: V{kdtree.XKey} @ degree{kdtree.HasYChild}(v) = 2 xor degree{kdtree.HasNodeSet}(v) = 1"  ];
 VertexClass YKey: Key ["Each YKey is either an inner node with 2 childred or a leaf with a NodeSet."  "forall k: V{kdtree.YKey} @ degree{kdtree.HasXChild}(v) = 2 xor degree{kdtree.HasNodeSet}(v) = 1"  ];
 EdgeClass HasNodeSet from Key (1, 1) role key to NodeSet (0, 1) role set;
-AggregationClass HasElement from NodeSet (0, 1) role set to map.Node (1, *) role element aggregate from;
-AggregationClass HasRoot from KDTree (0, 1) role tree to Key (1, 1) role root aggregate from;
-AggregationClass HasXChild from YKey (0, 1) role parent to XKey (0, 2) role child aggregate from;
-AggregationClass HasYChild from XKey (0, 1) role parent to YKey (0, 2) role child aggregate from;
+EdgeClass HasElement from NodeSet (0, 1) role set to map.Node (1, *) role element aggregation shared;
+EdgeClass HasRoot from KDTree (0, 1) role tree to Key (1, 1) role root aggregation shared;
+EdgeClass HasXChild from YKey (0, 1) role parent to XKey (0, 2) role child aggregation shared;
+EdgeClass HasYChild from XKey (0, 1) role parent to YKey (0, 2) role child aggregation shared;

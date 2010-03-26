@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -239,7 +239,7 @@ public class Greql2FunctionLibrary {
 		if (briefly) {
 			int end = afun.description.indexOf("\n");
 			if (end == -1) {
-				return functionName + ": " + afun.description.substring(0);
+				return functionName + ": " + afun.description;
 			}
 			return functionName + ": " + afun.description.substring(0, end);
 		}
@@ -574,28 +574,26 @@ public class Greql2FunctionLibrary {
 			logger.finer("Found Greql2FunctionLibrary");
 			logger.finer("URL : " + packageUrl.getPath());
 
-			String packagePath = null;
-
 			try {
-				packagePath = URLDecoder.decode(packageUrl.getPath(), "UTF-8");
+				String packagePath = URLDecoder.decode(packageUrl.getPath(),
+						"UTF-8");
+				packagePath = packagePath.substring(0, packagePath
+						.lastIndexOf("/"));
+
+				if (!packagePath.startsWith("/")) {
+					// stripp leading file://
+					packagePath = packagePath.substring(packagePath
+							.indexOf("/"));
+				}
+				if (registerFunctionsInJar(packagePath)) {
+					return;
+				}
+				if (registerFunctionsInDirectory(packagePath)) {
+					return;
+				}
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}
-
-			packagePath = packagePath
-					.substring(0, packagePath.lastIndexOf("/"));
-
-			if (!packagePath.startsWith("/")) {
-				// stripp leading file://
-				packagePath = packagePath.substring(packagePath.indexOf("/"));
-			}
-			if (registerFunctionsInJar(packagePath)) {
-				return;
-			}
-			if (registerFunctionsInDirectory(packagePath)) {
-				return;
-			}
 		}
 	}
-
 }

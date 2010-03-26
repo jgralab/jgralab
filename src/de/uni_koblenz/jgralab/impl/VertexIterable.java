@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -26,6 +26,7 @@ package de.uni_koblenz.jgralab.impl;
 
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
@@ -66,6 +67,8 @@ public class VertexIterable<V extends Vertex> implements Iterable<V> {
 		 */
 		protected Graph graph = null;
 
+		protected Class<? extends Vertex> vc;
+
 		/**
 		 * the version of the vertex list of the graph at the beginning of the
 		 * iteration. This information is used to check if the vertex list has
@@ -80,29 +83,32 @@ public class VertexIterable<V extends Vertex> implements Iterable<V> {
 		 * @param g
 		 *            the graph to work on
 		 */
-		VertexIterator(Graph g) {
+		@SuppressWarnings("unchecked")
+		VertexIterator(Graph g, Class<? extends Vertex> vc) {
 			graph = g;
+			this.vc = vc;
 			vertexListVersion = g.getVertexListVersion();
-			current = getFirst();
+			current = (V) (vc == null ? graph.getFirstVertex() : graph
+					.getFirstVertexOfClass(vc));
 		}
-
-		protected VertexIterator() {
-		};
 
 		/**
 		 * @return the next vertex in the graph which mathes the conditions of
 		 *         this iterator
 		 */
+		@SuppressWarnings("unchecked")
 		public V next() {
 			if (graph.isVertexListModified(vertexListVersion)) {
 				throw new ConcurrentModificationException(
 						"The vertex list of the graph has been modified - the iterator is not longer valid");
 			}
-			V v = current;
-			if (current != null) {
-				current = getNext();
+			if (current == null) {
+				throw new NoSuchElementException();
 			}
-			return v;
+			V result = current;
+			current = (V) (vc == null ? current.getNextVertex() : current
+					.getNextVertexOfClass(vc));
+			return result;
 		}
 
 		/**
@@ -110,26 +116,6 @@ public class VertexIterable<V extends Vertex> implements Iterable<V> {
 		 */
 		public boolean hasNext() {
 			return current != null;
-		}
-
-		/**
-		 * only for internal use, returns the next vertex according to the
-		 * conditions of this iterator, should be overwritten by superclasses so
-		 * the basic algorithm of <code>next()</code> must not be re-implemented
-		 */
-		@SuppressWarnings("unchecked")
-		protected V getNext() {
-			return (V) current.getNextVertex();
-		}
-
-		/**
-		 * only for internal use, returns the first vertex according to the
-		 * conditions of this iterator, should be overwritten by superclasses so
-		 * the basic algorithm of <code>next()</code> must not be re-implemented
-		 */
-		@SuppressWarnings("unchecked")
-		protected V getFirst() {
-			return (V) graph.getFirstVertex();
 		}
 
 		/**
@@ -143,41 +129,17 @@ public class VertexIterable<V extends Vertex> implements Iterable<V> {
 			throw new UnsupportedOperationException(
 					"It is not allowed to remove vertices during iteration.");
 		}
-
-	}
-
-	class VertexIteratorClass extends VertexIterator {
-		Class<? extends Vertex> ec;
-
-		public VertexIteratorClass(Graph g, Class<? extends Vertex> c) {
-			graph = g;
-			vertexListVersion = g.getVertexListVersion();
-			ec = c;
-			current = getFirst();
-		}
-
-		@Override
-		@SuppressWarnings("unchecked")
-		protected V getNext() {
-			return (V) current.getNextVertexOfClass(ec);
-		}
-
-		@Override
-		@SuppressWarnings("unchecked")
-		protected V getFirst() {
-			return (V) graph.getFirstVertexOfClass(ec);
-		}
-
 	}
 
 	private VertexIterator iter;
 
 	public VertexIterable(Graph g) {
-		iter = new VertexIterator(g);
+		this(g, null);
 	}
 
-	public VertexIterable(Graph g, Class<? extends Vertex> ec) {
-		iter = new VertexIteratorClass(g, ec);
+	public VertexIterable(Graph g, Class<? extends Vertex> vc) {
+		assert g != null;
+		iter = new VertexIterator(g, vc);
 	}
 
 	public Iterator<V> iterator() {

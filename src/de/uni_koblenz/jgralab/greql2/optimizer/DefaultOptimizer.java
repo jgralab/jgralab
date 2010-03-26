@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -80,10 +80,12 @@ public class DefaultOptimizer extends OptimizerBase {
 		logger.fine(optimizerHeaderString()
 				+ "Starting optimization.  Fasten your seatbelts!");
 
-		// printGraphAsDot(syntaxgraph, "before-optimization");
+		// Tg2Dot.printGraphAsDot(syntaxgraph, true,
+		// "/home/horn/before-optimization.tg");
 
 		// optimizers
 		Optimizer cso = new CommonSubgraphOptimizer();
+		Optimizer pe2dpeo = new PathExistenceToDirectedPathExpressionOptimizer();
 		Optimizer eso = new EarySelectionOptimizer();
 		Optimizer peo = new PathExistenceOptimizer();
 		Optimizer vdoo = new VariableDeclarationOrderOptimizer();
@@ -107,6 +109,10 @@ public class DefaultOptimizer extends OptimizerBase {
 				// For each declaration merge its constraints into a single
 				// conjunction.
 				| mco.optimize(eval, syntaxgraph)
+				// Then try to pull up path existences as forward/backward
+				// vertex sets into the type expressions of the start or target
+				// expression variabse.
+				| pe2dpeo.optimize(eval, syntaxgraph)
 				// Now move predicates that are part of a conjunction and thus
 				// movable into the type expression of the simple declaration
 				// that declares all needed local variables of it.
@@ -147,8 +153,11 @@ public class DefaultOptimizer extends OptimizerBase {
 		}
 		;
 
-		// printGraphAsDot(syntaxgraph, "after-optimization.tg");
-		// printCosts(eval, syntaxgraph);
+		// Tg2Dot.printGraphAsDot(syntaxgraph, true,
+		// "/home/horn/after-optimization.tg");
+
+		// System.out.println("DefaultOptimizer: "
+		// + ((SerializableGreql2) syntaxgraph).serialize());
 
 		logger.fine(optimizerHeaderString() + " finished after " + noOfRuns
 				+ " iterations.");

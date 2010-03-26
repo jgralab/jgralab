@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -55,25 +55,24 @@ import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
-import de.uni_koblenz.jgralab.impl.GraphImpl;
-import de.uni_koblenz.jgralab.schema.AggregationClass;
+import de.uni_koblenz.jgralab.impl.GraphBaseImpl;
+import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
-import de.uni_koblenz.jgralab.schema.BasicDomain;
-import de.uni_koblenz.jgralab.schema.CompositionClass;
 import de.uni_koblenz.jgralab.schema.Constraint;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
+import de.uni_koblenz.jgralab.schema.MapDomain;
+import de.uni_koblenz.jgralab.schema.NamedElement;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
-import de.uni_koblenz.jgralab.schema.exception.InvalidNameException;
+import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
-import de.uni_koblenz.jgralab.schema.impl.AttributeImpl;
 import de.uni_koblenz.jgralab.schema.impl.BasicDomainImpl;
 import de.uni_koblenz.jgralab.schema.impl.ConstraintImpl;
 import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
@@ -84,8 +83,11 @@ import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
  * @author ist@uni-koblenz.de
  */
 public class GraphIO {
+	/**
+	 * TG File Version this GraphIO recognizes.
+	 */
+	public static int TGFILE_VERSION = 2;
 	public static String NULL_LITERAL = "n";
-	public static String OLD_NULL_LITERAL = "\\null";
 	public static String TRUE_LITERAL = "t";
 	public static String FALSE_LITERAL = "f";
 
@@ -185,6 +187,8 @@ public class GraphIO {
 	 */
 	private Map<String, List<GraphElementClassData>> edgeClassBuffer;
 
+	private Map<String, List<String>> commentData;
+
 	private int putBackChar;
 
 	private String currentPackageName;
@@ -205,6 +209,7 @@ public class GraphIO {
 		graphClass = null;
 		vertexClassBuffer = new TreeMap<String, List<GraphElementClassData>>();
 		edgeClassBuffer = new TreeMap<String, List<GraphElementClassData>>();
+		commentData = new HashMap<String, List<String>>();
 		putBackChar = -1;
 	}
 
@@ -216,6 +221,7 @@ public class GraphIO {
 					new BufferedOutputStream(new FileOutputStream(new File(
 							filename))));
 			io.TGOut = out;
+			io.saveHeader();
 			io.saveSchema(schema);
 			out.flush();
 			out.close();
@@ -230,6 +236,7 @@ public class GraphIO {
 		try {
 			GraphIO io = new GraphIO();
 			io.TGOut = out;
+			io.saveHeader();
 			io.saveSchema(schema);
 			out.flush();
 		} catch (IOException e) {
@@ -238,20 +245,22 @@ public class GraphIO {
 	}
 
 	private void saveSchema(Schema s) throws IOException {
+		// TODO [rie] decide what to do if default schema is used
 		schema = s;
-		TGOut.writeBytes("Schema");
+		write("Schema");
 		space();
 		writeIdentifier(schema.getQualifiedName());
-		TGOut.writeBytes(";\n");
+		write(";\n");
 
 		// write graphclass
 		GraphClass gc = schema.getGraphClass();
-		TGOut.writeBytes("GraphClass");
+		write("GraphClass");
 		space();
 		writeIdentifier(gc.getSimpleName());
 		writeAttributes(null, gc);
 		writeConstraints(gc);
-		TGOut.writeBytes(";\n");
+		write(";\n");
+		writeComments(gc, gc.getSimpleName());
 
 		Queue<de.uni_koblenz.jgralab.schema.Package> worklist = new LinkedList<de.uni_koblenz.jgralab.schema.Package>();
 		worklist.offer(s.getDefaultPackage());
@@ -261,44 +270,46 @@ public class GraphIO {
 
 			// write package declaration
 			if (!pkg.isDefaultPackage()) {
-				TGOut.writeBytes("Package");
+				write("Package");
 				space();
 				writeIdentifier(pkg.getQualifiedName());
-				TGOut.writeBytes(";\n");
+				write(";\n");
 			}
+
 			// write domains
 			for (Domain dom : pkg.getDomains().values()) {
 				if (dom instanceof EnumDomain) {
 					EnumDomain ed = (EnumDomain) dom;
-					TGOut.writeBytes("EnumDomain");
+					write("EnumDomain");
 					space();
 					writeIdentifier(ed.getSimpleName());
-					TGOut.writeBytes(" (");
+					write(" (");
 					for (Iterator<String> eit = ed.getConsts().iterator(); eit
 							.hasNext();) {
 						space();
 						writeIdentifier(eit.next());
 						if (eit.hasNext()) {
-							TGOut.writeBytes(",");
+							write(",");
 						}
 					}
-					TGOut.writeBytes(" );\n");
+					write(" );\n");
+					writeComments(ed, ed.getSimpleName());
 				} else if (dom instanceof RecordDomain) {
 					RecordDomain rd = (RecordDomain) dom;
-					TGOut.writeBytes("RecordDomain");
+					write("RecordDomain");
 					space();
 					writeIdentifier((rd).getSimpleName());
 					String delim = " ( ";
-					for (Map.Entry<String, Domain> rdc : (rd).getComponents()
-							.entrySet()) {
-						TGOut.writeBytes(delim);
+					for (RecordComponent rdc : rd.getComponents()) {
+						write(delim);
 						noSpace();
-						writeIdentifier(rdc.getKey());
-						TGOut.writeBytes(": ");
-						TGOut.writeBytes(rdc.getValue().getTGTypeName(pkg));
+						writeIdentifier(rdc.getName());
+						write(": ");
+						write(rdc.getDomain().getTGTypeName(pkg));
 						delim = ", ";
 					}
-					TGOut.writeBytes(" );\n");
+					write(" );\n");
+					writeComments(rd, rd.getSimpleName());
 				}
 			}
 
@@ -308,15 +319,16 @@ public class GraphIO {
 					continue;
 				}
 				if (vc.isAbstract()) {
-					TGOut.writeBytes("abstract ");
+					write("abstract ");
 				}
-				TGOut.writeBytes("VertexClass");
+				write("VertexClass");
 				space();
 				writeIdentifier(vc.getSimpleName());
 				writeHierarchy(pkg, vc);
 				writeAttributes(pkg, vc);
 				writeConstraints(vc);
-				TGOut.writeBytes(";\n");
+				write(";\n");
+				writeComments(vc, vc.getSimpleName());
 			}
 
 			// write edge classes
@@ -325,81 +337,110 @@ public class GraphIO {
 					continue;
 				}
 				if (ec.isAbstract()) {
-					TGOut.writeBytes("abstract ");
+					write("abstract ");
 				}
-				if (ec instanceof CompositionClass) {
-					TGOut.writeBytes("CompositionClass");
-				} else if (ec instanceof AggregationClass) {
-					TGOut.writeBytes("AggregationClass");
-				} else {
-					TGOut.writeBytes("EdgeClass");
-				}
+				write("EdgeClass");
 				space();
 				writeIdentifier(ec.getSimpleName());
 				writeHierarchy(pkg, ec);
 
 				// from (min,max) rolename
-				TGOut.writeBytes(" from");
+				write(" from");
 				space();
-				writeIdentifier(ec.getFrom().getQualifiedName(pkg));
-				TGOut.writeBytes(" (");
-				TGOut.writeBytes(ec.getFromMin() + ",");
-				if (ec.getFromMax() == Integer.MAX_VALUE) {
-					TGOut.writeBytes("*)");
+				writeIdentifier(ec.getFrom().getVertexClass().getQualifiedName(
+						pkg));
+				write(" (");
+				write(ec.getFrom().getMin() + ",");
+				if (ec.getFrom().getMax() == Integer.MAX_VALUE) {
+					write("*)");
 				} else {
-					TGOut.writeBytes(ec.getFromMax() + ")");
+					write(ec.getFrom().getMax() + ")");
 				}
 
-				if (!ec.getFromRolename().equals("")) {
-					TGOut.writeBytes(" role");
+				if (!ec.getFrom().getRolename().equals("")) {
+					write(" role");
 					space();
-					writeIdentifier(ec.getFromRolename());
+					writeIdentifier(ec.getFrom().getRolename());
 					String delim = " redefines";
-					for (String redefinedRolename : ec.getRedefinedFromRoles()) {
-						TGOut.writeBytes(delim);
+					for (String redefinedRolename : ec.getFrom()
+							.getRedefinedRoles()) {
+						write(delim);
 						delim = ",";
 						space();
 						writeIdentifier(redefinedRolename);
 					}
+				}
+
+				switch (ec.getFrom().getAggregationKind()) {
+				case NONE:
+					// do nothing
+					break;
+				case SHARED:
+					write(" aggregation shared");
+					break;
+				case COMPOSITE:
+					write(" aggregation composite");
+					break;
 				}
 
 				// to (min,max) rolename
-				TGOut.writeBytes(" to");
+				write(" to");
 				space();
-				writeIdentifier(ec.getTo().getQualifiedName(pkg));
-				TGOut.writeBytes(" (");
-				TGOut.writeBytes(ec.getToMin() + ",");
-				if (ec.getToMax() == Integer.MAX_VALUE) {
-					TGOut.writeBytes("*)");
+				writeIdentifier(ec.getTo().getVertexClass().getQualifiedName(
+						pkg));
+				write(" (");
+				write(ec.getTo().getMin() + ",");
+				if (ec.getTo().getMax() == Integer.MAX_VALUE) {
+					write("*)");
 				} else {
-					TGOut.writeBytes(ec.getToMax() + ")");
+					write(ec.getTo().getMax() + ")");
 				}
-				if (!ec.getToRolename().equals("")) {
-					TGOut.writeBytes(" role");
+
+				if (!ec.getTo().getRolename().equals("")) {
+					write(" role");
 					space();
-					writeIdentifier(ec.getToRolename());
+					writeIdentifier(ec.getTo().getRolename());
 					String delim = " redefines";
-					for (String redefinedRolename : ec.getRedefinedToRoles()) {
-						TGOut.writeBytes(delim);
+					for (String redefinedRolename : ec.getTo()
+							.getRedefinedRoles()) {
+						write(delim);
 						delim = ",";
 						space();
 						writeIdentifier(redefinedRolename);
 					}
 				}
 
-				if (ec instanceof AggregationClass) {
-					TGOut.writeBytes(" aggregate ");
-					if (((AggregationClass) ec).isAggregateFrom()) {
-						TGOut.writeBytes("from");
-					} else {
-						TGOut.writeBytes("to");
-					}
+				switch (ec.getTo().getAggregationKind()) {
+				case NONE:
+					// do nothing
+					break;
+				case SHARED:
+					write(" aggregation shared");
+					break;
+				case COMPOSITE:
+					write(" aggregation composite");
+					break;
 				}
 
 				writeAttributes(pkg, ec);
 				writeConstraints(ec);
-				TGOut.writeBytes(";\n");
+				write(";\n");
+				writeComments(ec, ec.getSimpleName());
 			}
+		}
+	}
+
+	private void writeComments(NamedElement elem, String name)
+			throws IOException {
+		if (!elem.getComments().isEmpty()) {
+			write("Comment");
+			space();
+			writeIdentifier(name);
+			space();
+			for (String c : elem.getComments()) {
+				writeUtfString(c);
+			}
+			write(";\n");
 		}
 	}
 
@@ -451,7 +492,8 @@ public class GraphIO {
 	private void saveGraph(Graph graph, ProgressFunction pf)
 			throws IOException, GraphIOException {
 		// Write the jgralab version and license in a comment
-		TGOut.writeBytes(JGraLab.getVersionInfo(true));
+
+		saveHeader();
 
 		schema = graph.getSchema();
 		saveSchema(schema);
@@ -467,15 +509,14 @@ public class GraphIO {
 		}
 
 		space();
-		TGOut.writeBytes("\nGraph "
-				+ toUtfString(graph.getId() + "_" + graph.getGraphVersion()));
+		write("Graph " + toUtfString(graph.getId()) + " "
+				+ graph.getGraphVersion());
 		writeIdentifier(graph.getAttributedElementClass().getQualifiedName());
-		TGOut.writeBytes(" (" + graph.getMaxVCount() + " "
-				+ graph.getMaxECount() + " " + graph.getVCount() + " "
-				+ graph.getECount() + ")");
+		write(" (" + graph.getMaxVCount() + " " + graph.getMaxECount() + " "
+				+ graph.getVCount() + " " + graph.getECount() + ")");
 		space();
 		graph.writeAttributeValues(this);
-		TGOut.writeBytes(";\n");
+		write(";\n");
 
 		Package oldPackage = null;
 		// write vertices
@@ -485,27 +526,27 @@ public class GraphIO {
 			AttributedElementClass aec = nextV.getAttributedElementClass();
 			Package currentPackage = aec.getPackage();
 			if (currentPackage != oldPackage) {
-				TGOut.writeBytes("Package");
+				write("Package");
 				space();
 				writeIdentifier(currentPackage.getQualifiedName());
-				TGOut.writeBytes(";\n");
+				write(";\n");
 				oldPackage = currentPackage;
 			}
-			TGOut.writeBytes(Long.toString(vId));
+			write(Long.toString(vId));
 			space();
 			writeIdentifier(aec.getSimpleName());
 			// write incident edges
 			Edge nextI = nextV.getFirstEdge();
-			TGOut.writeBytes(" <");
+			write(" <");
 			noSpace();
 			while (nextI != null) {
 				writeLong(nextI.getId());
 				nextI = nextI.getNextEdge();
 			}
-			TGOut.writeBytes(">");
+			write(">");
 			space();
 			nextV.writeAttributeValues(this);
-			TGOut.writeBytes(";\n");
+			write(";\n");
 			nextV = nextV.getNextVertex();
 
 			// update progress bar
@@ -523,22 +564,21 @@ public class GraphIO {
 		Edge nextE = graph.getFirstEdgeInGraph();
 		while (nextE != null) {
 			eId = nextE.getId();
-			logger.finer("Writing edge: " + nextE.getId());
 			AttributedElementClass aec = nextE.getAttributedElementClass();
 			Package currentPackage = aec.getPackage();
 			if (currentPackage != oldPackage) {
-				TGOut.writeBytes("Package");
+				write("Package");
 				space();
 				writeIdentifier(currentPackage.getQualifiedName());
-				TGOut.writeBytes(";\n");
+				write(";\n");
 				oldPackage = currentPackage;
 			}
-			TGOut.writeBytes(Long.toString(eId));
+			write(Long.toString(eId));
 			space();
 			writeIdentifier(aec.getSimpleName());
 			space();
 			nextE.writeAttributeValues(this);
-			TGOut.writeBytes(";\n");
+			write(";\n");
 			nextE = nextE.getNextEdgeInGraph();
 
 			// update progress bar
@@ -559,12 +599,17 @@ public class GraphIO {
 		}
 	}
 
+	private void saveHeader() throws IOException {
+		write(JGraLab.getVersionInfo(true));
+		write("TGraph " + TGFILE_VERSION + ";\n");
+	}
+
 	private void writeHierarchy(Package pkg, AttributedElementClass aec)
 			throws IOException {
 		String delim = ":";
 		for (AttributedElementClass superClass : aec.getDirectSuperClasses()) {
 			if (!superClass.isInternal()) {
-				TGOut.writeBytes(delim);
+				write(delim);
 				space();
 				writeIdentifier(superClass.getQualifiedName(pkg));
 				delim = ",";
@@ -575,20 +620,25 @@ public class GraphIO {
 	private void writeAttributes(Package pkg, AttributedElementClass aec)
 			throws IOException {
 		if (aec.hasOwnAttributes()) {
-			TGOut.writeBytes(" {");
+			write(" {");
 		}
 		for (Iterator<Attribute> ait = aec.getOwnAttributeList().iterator(); ait
 				.hasNext();) {
 			Attribute a = ait.next();
 			space();
 			writeIdentifier(a.getName());
-			TGOut.writeBytes(": ");
+			write(": ");
 			String domain = a.getDomain().getTGTypeName(pkg);
-			TGOut.writeBytes(domain);
+			write(domain);
+			if ((a.getDefaultValueAsString() != null)
+					&& (!a.getDefaultValueAsString().equals("n"))) {
+				write(" = ");
+				writeUtfString(a.getDefaultValueAsString());
+			}
 			if (ait.hasNext()) {
-				TGOut.writeBytes(", ");
+				write(", ");
 			} else {
-				TGOut.writeBytes(" }");
+				write(" }");
 			}
 		}
 	}
@@ -652,7 +702,6 @@ public class GraphIO {
 			io.la = io.read();
 			io.match();
 		} catch (GraphIOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -850,7 +899,7 @@ public class GraphIO {
 					(Class<?>[]) null);
 			io.schema = (Schema) instanceMethod.invoke(null, new Object[0]);
 			// ((SchemaImpl) io.schema).setConfiguration(config);
-			GraphImpl g = io.graph(pf, transactionSupport);
+			GraphBaseImpl g = io.graph(pf, transactionSupport);
 			g.internalLoadingCompleted(io.firstIncidence, io.nextIncidence);
 			io.firstIncidence = null;
 			io.nextIncidence = null;
@@ -873,12 +922,31 @@ public class GraphIO {
 		line = 1;
 		la = read();
 		match();
-		schema();
+		header();
+		if (lookAhead.equals("Schema")) {
+			schema();
+		}
 		if (lookAhead.equals("") || lookAhead.equals("Graph")) {
 			return;
 		}
 		throw new GraphIOException("symbol '" + lookAhead
 				+ "' not recognized in line " + line, null);
+	}
+
+	/**
+	 * Reads TG File header and checks if the file version can be processed.
+	 * 
+	 * @throws GraphIOException
+	 *             if version number in file can not be processed
+	 */
+	private void header() throws GraphIOException {
+		match("TGraph");
+		int version = matchInteger();
+		if (version != TGFILE_VERSION) {
+			throw new GraphIOException("Can't read TGFile version " + version
+					+ ". Expected version " + TGFILE_VERSION);
+		}
+		match(";");
 	}
 
 	/**
@@ -941,7 +1009,36 @@ public class GraphIO {
 		domDef(); // create Domains
 		completeGraphClass(); // create GraphClasses with contained elements
 		buildHierarchy(); // build inheritance relationships
+		processComments();
+	}
 
+	/**
+	 * Adds comments collected during schema parsing to the annotated elements.
+	 * 
+	 * @throws GraphIOException
+	 */
+	private void processComments() throws GraphIOException {
+		for (Entry<String, List<String>> e : commentData.entrySet()) {
+			if (!schema.knows(e.getKey())) {
+				throw new GraphIOException("Annotated element '" + e.getKey()
+						+ "' not found in schema " + schema.getQualifiedName());
+			}
+			NamedElement el = schema.getNamedElement(e.getKey());
+			if (el instanceof Package) {
+				throw new GraphIOException(
+						"Packages can not have a comment. Offending package is '"
+								+ e.getKey() + "'");
+			}
+			if ((el instanceof Domain)
+					&& !((el instanceof EnumDomain) || (el instanceof RecordDomain))) {
+				throw new GraphIOException(
+						"Default domains can not have a comment. Offending domain is '"
+								+ e.getKey() + "'");
+			}
+			for (String comment : e.getValue()) {
+				el.addComment(comment);
+			}
+		}
 	}
 
 	/**
@@ -978,9 +1075,11 @@ public class GraphIO {
 		Domain domain;
 
 		for (EnumDomainData enumDomainData : enumDomainBuffer) {
-			domain = schema.createEnumDomain(enumDomainData.getQualifiedName(),
+			String qName = toQNameString(enumDomainData.packageName,
+					enumDomainData.simpleName);
+			domain = schema.createEnumDomain(qName,
 					enumDomainData.enumConstants);
-			domains.put(enumDomainData.getQualifiedName(), domain);
+			domains.put(qName, domain);
 		}
 	}
 
@@ -1005,37 +1104,25 @@ public class GraphIO {
 		Domain domain;
 
 		for (RecordDomainData recordDomainData : recordDomainBuffer) {
-			domain = schema.createRecordDomain(recordDomainData
-					.getQualifiedName(),
+			String qName = toQNameString(recordDomainData.packageName,
+					recordDomainData.simpleName);
+			domain = schema.createRecordDomain(qName,
 					getComponents(recordDomainData.components));
-			domains.put(recordDomainData.getQualifiedName(), domain);
+			domains.put(qName, domain);
 		}
 	}
 
-	/**
-	 * Takes a Map of record component names to lists of Strings as parameter.
-	 * Each list represents a component's domain. This Map is converted to a Map
-	 * of the component names to Domain objects corresponding to the domains
-	 * represented in the lists.
-	 * 
-	 * @param componentsData
-	 *            A Map of record component names to lists of Strings. Each list
-	 *            represents a component's domain.
-	 * @return A Map of record component names to corresponding Domain objects.
-	 * @throws GraphIOException
-	 */
-	private Map<String, Domain> getComponents(
-			Map<String, List<String>> componentsData) throws GraphIOException {
-		Map<String, Domain> componentDomains = new TreeMap<String, Domain>();
-		Domain domain;
+	private List<RecordComponent> getComponents(
+			List<ComponentData> componentsData) throws GraphIOException {
+		List<RecordComponent> result = new ArrayList<RecordComponent>(
+				componentsData.size());
 
-		for (Entry<String, List<String>> componentData : componentsData
-				.entrySet()) {
-			domain = attrDomain(componentData.getValue());
-			componentDomains.put(componentData.getKey(), domain);
+		for (ComponentData ad : componentsData) {
+			RecordComponent c = new RecordComponent(ad.name,
+					attrDomain(ad.domainDescription));
+			result.add(c);
 		}
-
-		return componentDomains;
+		return result;
 	}
 
 	/**
@@ -1045,24 +1132,43 @@ public class GraphIO {
 	 * @throws GraphIOException
 	 */
 	private void parseSchema() throws GraphIOException, SchemaException {
+		while (lookAhead.equals("Comment")) {
+			parseComment();
+		}
 		String currentGraphClassName = parseGraphClass();
 
 		while (lookAhead.equals("Package") || lookAhead.equals("RecordDomain")
 				|| lookAhead.equals("EnumDomain")
 				|| lookAhead.equals("abstract")
 				|| lookAhead.equals("VertexClass")
-				|| lookAhead.equals("EdgeClass")
-				|| lookAhead.equals("AggregationClass")
-				|| lookAhead.equals("CompositionClass")) {
+				|| lookAhead.equals("EdgeClass") || lookAhead.equals("Comment")) {
 			if (lookAhead.equals("Package")) {
 				parsePackage();
 			} else if (lookAhead.equals("RecordDomain")) {
 				parseRecordDomain();
 			} else if (lookAhead.equals("EnumDomain")) {
 				parseEnumDomain();
+			} else if (lookAhead.equals("Comment")) {
+				parseComment();
 			} else {
 				parseGraphElementClass(currentGraphClassName);
 			}
+		}
+	}
+
+	private void parseComment() throws GraphIOException {
+		match("Comment");
+		String qName = toQNameString(matchQualifiedName());
+		List<String> comments = new ArrayList<String>();
+		comments.add(matchUtfString());
+		while (!lookAhead.equals(";")) {
+			comments.add(matchUtfString());
+		}
+		match(";");
+		if (commentData.containsKey(qName)) {
+			commentData.get(qName).addAll(comments);
+		} else {
+			commentData.put(qName, comments);
 		}
 	}
 
@@ -1148,9 +1254,7 @@ public class GraphIO {
 
 		gc.setAbstract(gcData.isAbstract);
 
-		for (Attribute attr : attributes(gcData.attributes, gc).values()) {
-			gc.addAttribute(attr);
-		}
+		addAttributes(gcData.attributes, gc);
 
 		for (Constraint constraint : gcData.constraints) {
 			gc.addConstraint(constraint);
@@ -1179,69 +1283,55 @@ public class GraphIO {
 		return hierarchy;
 	}
 
-	/**
-	 * Reads the attributes (names and domains) of a GraphClass or a
-	 * GraphElementClass from the TG-file.
-	 * 
-	 * @return A Map of attribute names to lists of Strings. Each list
-	 *         represents an attribute's domain.
-	 * @throws GraphIOException
-	 */
-	private Map<String, List<String>> parseAttributes() throws GraphIOException {
-		Map<String, List<String>> attributesData = new TreeMap<String, List<String>>();
-		LinkedList<String> attributeDomain = new LinkedList<String>();
-		String currentAttributeName;
+	private List<AttributeData> parseAttributes() throws GraphIOException {
+		List<AttributeData> attributesData = new ArrayList<AttributeData>();
+		Set<String> names = new TreeSet<String>();
 
 		match("{");
-		currentAttributeName = matchSimpleName(false);
+		AttributeData ad = new AttributeData();
+		ad.name = matchSimpleName(false);
 		match(":");
-		parseAttrDomain(attributeDomain);
-		attributesData.put(currentAttributeName, attributeDomain);
-		while (lookAhead.equals(",")) {
-			attributeDomain = new LinkedList<String>();
+		ad.domainDescription = parseAttrDomain();
+		if (lookAhead.equals("=")) {
 			match();
-			currentAttributeName = matchSimpleName(false);
-			if (attributesData.containsKey(currentAttributeName)) {
-				throw new GraphIOException("duplicate attribute name '"
-						+ currentAttributeName + "' in line " + line);
-			}
+			ad.defaultValue = matchUtfString();
+		}
+		attributesData.add(ad);
+		names.add(ad.name);
+
+		while (lookAhead.equals(",")) {
+			match(",");
+			ad = new AttributeData();
+			ad.name = matchSimpleName(false);
 			match(":");
-			parseAttrDomain(attributeDomain);
-			attributesData.put(currentAttributeName, attributeDomain);
+			ad.domainDescription = parseAttrDomain();
+			if (lookAhead.equals("=")) {
+				match();
+				ad.defaultValue = matchUtfString();
+			}
+			if (names.contains(ad.name)) {
+				throw new GraphIOException("duplicate attribute name '"
+						+ ad.name + "' in line " + line);
+			}
+			attributesData.add(ad);
+			names.add(ad.name);
 		}
 		match("}");
 		return attributesData;
 	}
 
-	/**
-	 * Takes a Map of attribute names to lists of Strings as parameter. Each
-	 * list represents an attribute's domain. This Map is converted to a Map of
-	 * the attribute names to Domain objects corresponding to the domains
-	 * represented in the lists.
-	 * 
-	 * @param componentsData
-	 *            A Map of attribute names to lists of Strings. Each list
-	 *            represents an attribute's domain.
-	 * @param aec
-	 *            the {@link AttributedElementClass} owning the
-	 *            {@link Attribute}s to be created
-	 * @return A Map of attribute names to corresponding Domain objects.
-	 * @throws GraphIOException
-	 */
-	private Map<String, Attribute> attributes(
-			Map<String, List<String>> attributesData, AttributedElementClass aec)
-			throws GraphIOException {
-		Map<String, Attribute> attributes = new TreeMap<String, Attribute>();
-		Attribute attribute;
-
-		for (Entry<String, List<String>> attributeData : attributesData
-				.entrySet()) {
-			Domain domain = attrDomain(attributeData.getValue());
-			attribute = new AttributeImpl(attributeData.getKey(), domain, aec);
-			attributes.put(attribute.getName(), attribute);
+	private void addAttributes(List<AttributeData> attributesData,
+			AttributedElementClass aec) throws GraphIOException {
+		for (AttributeData ad : attributesData) {
+			aec.addAttribute(ad.name, attrDomain(ad.domainDescription),
+					ad.defaultValue);
 		}
+	}
 
-		return attributes;
+	private List<String> parseAttrDomain() throws GraphIOException {
+		List<String> result = new ArrayList<String>();
+		parseAttrDomain(result);
+		return result;
 	}
 
 	/**
@@ -1306,9 +1396,9 @@ public class GraphIO {
 		String domainName;
 		while (it.hasNext()) {
 			domainName = it.next();
+			it.remove();
 			if (domainName.equals("List<")) {
 				try {
-					it.remove();
 					return schema.createListDomain(attrDomain(domainNames));
 				} catch (SchemaException e) {
 					throw new GraphIOException(
@@ -1316,7 +1406,6 @@ public class GraphIO {
 				}
 			} else if (domainName.equals("Set<")) {
 				try {
-					it.remove();
 					return schema.createSetDomain(attrDomain(domainNames));
 				} catch (SchemaException e) {
 					throw new GraphIOException(
@@ -1324,23 +1413,18 @@ public class GraphIO {
 				}
 			} else if (domainName.equals("Map<")) {
 				try {
-					it.remove();
-					Domain keyDomain = schema.getDomain(it.next());
-					it.remove();
+					Domain keyDomain = attrDomain(domainNames);
+					Domain valueDomain = attrDomain(domainNames);
 					if (keyDomain == null) {
 						throw new GraphIOException(
 								"can't create map domain, because no key domain was given in line "
 										+ line);
 					}
-					if (!(keyDomain instanceof BasicDomain)
-							&& !(keyDomain instanceof EnumDomain)) {
-						throw new GraphIOException(
-								"can't create map domain. The key domain must be a basic or enum domain. Line "
-										+ line);
-					}
-					Domain result = schema.createMapDomain(keyDomain,
-							attrDomain(domainNames));
-					// System.out.println("result = " + result);
+					MapDomain result = schema.createMapDomain(keyDomain,
+							valueDomain);
+					// System.out.println("result = Map<"
+					// + keyDomain.getQualifiedName() + ", "
+					// + valueDomain.getQualifiedName() + ">");
 					return result;
 				} catch (SchemaException e) {
 					throw new GraphIOException(
@@ -1361,8 +1445,7 @@ public class GraphIO {
 
 	public final String matchEnumConstant() throws GraphIOException {
 		if (schema.isValidEnumConstant(lookAhead)
-				|| lookAhead.equals(NULL_LITERAL)
-				|| lookAhead.equals(OLD_NULL_LITERAL)) {
+				|| lookAhead.equals(NULL_LITERAL)) {
 			return matchAndNext();
 		}
 		throw new GraphIOException("invalid enumeration constant '" + lookAhead
@@ -1377,10 +1460,7 @@ public class GraphIO {
 	 */
 	private void parseGraphElementClass(String gcName) throws GraphIOException,
 			SchemaException {
-		GraphElementClassData graphElementClassData;
-		String type;
-
-		graphElementClassData = new GraphElementClassData();
+		GraphElementClassData graphElementClassData = new GraphElementClassData();
 
 		if (lookAhead.equals("abstract")) {
 			match();
@@ -1389,8 +1469,6 @@ public class GraphIO {
 
 		if (lookAhead.equals("VertexClass")) {
 			match("VertexClass");
-			graphElementClassData.type = "VertexClass";
-
 			String[] qn = matchQualifiedName(true);
 			graphElementClassData.packageName = qn[0];
 			graphElementClassData.simpleName = qn[1];
@@ -1398,13 +1476,8 @@ public class GraphIO {
 				graphElementClassData.directSuperClasses = parseHierarchy();
 			}
 			vertexClassBuffer.get(gcName).add(graphElementClassData);
-		} else if (lookAhead.equals("EdgeClass")
-				|| lookAhead.equals("AggregationClass")
-				|| lookAhead.equals("CompositionClass")) {
-			type = lookAhead;
-			match(type);
-			graphElementClassData.type = type;
-
+		} else if (lookAhead.equals("EdgeClass")) {
+			match();
 			String[] qn = matchQualifiedName(true);
 			graphElementClassData.packageName = qn[0];
 			graphElementClassData.simpleName = qn[1];
@@ -1417,6 +1490,7 @@ public class GraphIO {
 			graphElementClassData.fromMultiplicity = parseMultiplicity();
 			graphElementClassData.fromRoleName = parseRoleName();
 			graphElementClassData.redefinedFromRoles = parseRolenameRedefinitions();
+			graphElementClassData.fromAggregation = parseAggregation();
 
 			match("to");
 			String[] tqn = matchQualifiedName(true);
@@ -1424,11 +1498,11 @@ public class GraphIO {
 			graphElementClassData.toMultiplicity = parseMultiplicity();
 			graphElementClassData.toRoleName = parseRoleName();
 			graphElementClassData.redefinedToRoles = parseRolenameRedefinitions();
-			if (graphElementClassData.type.equals("AggregationClass")
-					|| graphElementClassData.type.equals("CompositionClass")) {
-				graphElementClassData.aggregateFrom = parseAggregate();
-			}
+			graphElementClassData.toAggregation = parseAggregation();
 			edgeClassBuffer.get(gcName).add(graphElementClassData);
+		} else {
+			throw new SchemaException("Undefined keyword: " + lookAhead
+					+ " at position ");
 		}
 
 		if (lookAhead.equals("{")) {
@@ -1465,9 +1539,7 @@ public class GraphIO {
 		VertexClass vc = gc.createVertexClass(vcd.getQualifiedName());
 		vc.setAbstract(vcd.isAbstract);
 
-		for (Attribute attr : attributes(vcd.attributes, vc).values()) {
-			vc.addAttribute(attr);
-		}
+		addAttributes(vcd.attributes, vc);
 
 		for (Constraint constraint : vcd.constraints) {
 			vc.addConstraint(constraint);
@@ -1479,45 +1551,21 @@ public class GraphIO {
 
 	private EdgeClass createEdgeClass(GraphElementClassData ecd, GraphClass gc)
 			throws GraphIOException, SchemaException {
-		EdgeClass ec;
-		if (ecd.type.equals("EdgeClass")) {
-			ec = gc.createEdgeClass(ecd.getQualifiedName(), gc
-					.getVertexClass(ecd.fromVertexClassName),
-					ecd.fromMultiplicity[0], ecd.fromMultiplicity[1],
-					ecd.fromRoleName, gc.getVertexClass(ecd.toVertexClassName),
-					ecd.toMultiplicity[0], ecd.toMultiplicity[1],
-					ecd.toRoleName);
-		} else if (ecd.type.equals("AggregationClass")) {
-			ec = gc.createAggregationClass(ecd.getQualifiedName(), gc
-					.getVertexClass(ecd.fromVertexClassName),
-					ecd.fromMultiplicity[0], ecd.fromMultiplicity[1],
-					ecd.fromRoleName, ecd.aggregateFrom, gc
-							.getVertexClass(ecd.toVertexClassName),
-					ecd.toMultiplicity[0], ecd.toMultiplicity[1],
-					ecd.toRoleName);
-		} else if (ecd.type.equals("CompositionClass")) {
-			ec = gc.createCompositionClass(ecd.getQualifiedName(), gc
-					.getVertexClass(ecd.fromVertexClassName),
-					ecd.fromMultiplicity[0], ecd.fromMultiplicity[1],
-					ecd.fromRoleName, ecd.aggregateFrom, gc
-							.getVertexClass(ecd.toVertexClassName),
-					ecd.toMultiplicity[0], ecd.toMultiplicity[1],
-					ecd.toRoleName);
-		} else {
-			throw new InvalidNameException("Unknown type " + ecd.type);
-		}
+		EdgeClass ec = gc.createEdgeClass(ecd.getQualifiedName(), gc
+				.getVertexClass(ecd.fromVertexClassName),
+				ecd.fromMultiplicity[0], ecd.fromMultiplicity[1],
+				ecd.fromRoleName, ecd.fromAggregation, gc
+						.getVertexClass(ecd.toVertexClassName),
+				ecd.toMultiplicity[0], ecd.toMultiplicity[1], ecd.toRoleName,
+				ecd.toAggregation);
 
-		for (Attribute attr : attributes(ecd.attributes, ec).values()) {
-			ec.addAttribute(attr);
-		}
+		addAttributes(ecd.attributes, ec);
 
 		for (Constraint constraint : ecd.constraints) {
 			ec.addConstraint(constraint);
 		}
 
 		ec.setAbstract(ecd.isAbstract);
-		ec.redefineFromRole(ecd.redefinedFromRoles);
-		ec.redefineToRole(ecd.redefinedToRoles);
 
 		GECsearch.put(ec, gc);
 		return ec;
@@ -1596,25 +1644,23 @@ public class GraphIO {
 		return result;
 	}
 
-	/**
-	 * Reads whether an AggregationClass or a CompositionClass has its aggregate
-	 * at its "from" VertexClass or at its "to" VertexClass.
-	 * 
-	 * @return True, if the aggregate is at the "from" end. False, if the
-	 *         aggregate is at the "to" end.
-	 * @throws GraphIOException
-	 */
-	private boolean parseAggregate() throws GraphIOException {
-		match("aggregate");
-		if (lookAhead.equals("from")) {
+	private AggregationKind parseAggregation() throws GraphIOException {
+		if (!lookAhead.equals("aggregation")) {
+			return AggregationKind.NONE;
+		}
+		match();
+		if (lookAhead.equals("none")) {
 			match();
-			return true;
-		} else if (lookAhead.equals("to")) {
+			return AggregationKind.NONE;
+		} else if (lookAhead.equals("shared")) {
 			match();
-			return false;
+			return AggregationKind.SHARED;
+		} else if (lookAhead.equals("composite")) {
+			match();
+			return AggregationKind.COMPOSITE;
 		} else {
 			throw new GraphIOException(
-					"invalid aggregate (from/to allowed), but found '"
+					"invalid aggregation: expected none, shared, or composite, but found '"
 							+ lookAhead + "' in line " + line);
 		}
 	}
@@ -1638,34 +1684,32 @@ public class GraphIO {
 		return true;
 	}
 
-	/**
-	 * Reads the components of a RecordDomain from the TG-file.
-	 * 
-	 * @return A map of component names to lists of Strings representing the
-	 *         component's domain.
-	 * @throws GraphIOException
-	 */
-	private Map<String, List<String>> parseRecordComponents()
-			throws GraphIOException {
-		Map<String, List<String>> componentsData = new TreeMap<String, List<String>>();
-		List<String> recordComponentDomain = new LinkedList<String>();
-		String recordComponentName;
+	private List<ComponentData> parseRecordComponents() throws GraphIOException {
+		List<ComponentData> componentsData = new ArrayList<ComponentData>();
+		Set<String> names = new TreeSet<String>();
 
 		match("(");
-		recordComponentName = matchSimpleName(false);
+		ComponentData cd = new ComponentData();
+		cd.name = matchSimpleName(false);
 		match(":");
-		parseAttrDomain(recordComponentDomain);
-		componentsData.put(recordComponentName, recordComponentDomain);
+		cd.domainDescription = parseAttrDomain();
+		componentsData.add(cd);
+		names.add(cd.name);
+
 		while (lookAhead.equals(",")) {
-			recordComponentDomain = new LinkedList<String>();
-			match();
-			recordComponentName = matchSimpleName(false);
+			match(",");
+			cd = new ComponentData();
+			cd.name = matchSimpleName(false);
 			match(":");
-			parseAttrDomain(recordComponentDomain);
-			componentsData.put(recordComponentName, recordComponentDomain);
+			cd.domainDescription = parseAttrDomain();
+			if (names.contains(cd.name)) {
+				throw new GraphIOException("duplicate record component  name '"
+						+ cd.name + "' in line " + line);
+			}
+			componentsData.add(cd);
+			names.add(cd.name);
 		}
 		match(")");
-
 		return componentsData;
 	}
 
@@ -1741,17 +1785,23 @@ public class GraphIO {
 							"undefined AttributedElementClass '"
 									+ eData.getQualifiedName() + "'");
 				}
-				if (aec instanceof EdgeClass) {
-					for (String superClassName : eData.directSuperClasses) {
-						superClass = (EdgeClass) (GECsearch.get(aec)
-								.getGraphElementClass(superClassName));
-						if (superClass == null) {
-							throw new GraphIOException("undefined EdgeClass '"
-									+ superClassName + "'");
-						}
-						((EdgeClass) aec).addSuperClass(superClass);
-					}
+				if (!(aec instanceof EdgeClass)) {
+					throw new GraphIOException("Expected EdgeClass '"
+							+ eData.getQualifiedName() + "', but it's a "
+							+ aec.getM1Class().getSimpleName());
 				}
+				EdgeClass ec = ((EdgeClass) aec);
+				for (String superClassName : eData.directSuperClasses) {
+					superClass = (EdgeClass) (GECsearch.get(aec)
+							.getGraphElementClass(superClassName));
+					if (superClass == null) {
+						throw new GraphIOException("undefined EdgeClass '"
+								+ superClassName + "'");
+					}
+					ec.addSuperClass(superClass);
+				}
+				ec.getFrom().addRedefinedRoles(eData.redefinedFromRoles);
+				ec.getTo().addRedefinedRoles(eData.redefinedToRoles);
 			}
 		}
 	}
@@ -1892,7 +1942,7 @@ public class GraphIO {
 	private final static boolean isSeparator(int c) {
 		return (c == ';') || (c == '<') || (c == '>') || (c == '(')
 				|| (c == ')') || (c == '{') || (c == '}') || (c == ':')
-				|| (c == '[') || (c == ']') || (c == ',');
+				|| (c == '[') || (c == ']') || (c == ',') || (c == '=');
 	}
 
 	private final void skipWs() throws GraphIOException {
@@ -1910,7 +1960,6 @@ public class GraphIO {
 				la = read();
 				if ((la >= 0) && (la == '/')) {
 					// single line comment, skip to the end of the current line
-					logger.finer("Comment detected in line " + line);
 					while ((la >= 0) && (la != '\n')) {
 						la = read();
 					}
@@ -1980,8 +2029,7 @@ public class GraphIO {
 	 */
 	public final String matchSimpleName(boolean isUpperCase)
 			throws GraphIOException {
-		String s = (lookAhead.charAt(0) == '\'') ? lookAhead.substring(1)
-				: lookAhead;
+		String s = lookAhead;
 		boolean ok = isValidIdentifier(s)
 				&& ((isUpperCase && Character.isUpperCase(s.charAt(0))) || (!isUpperCase && Character
 						.isLowerCase(s.charAt(0))));
@@ -2005,17 +2053,12 @@ public class GraphIO {
 	public final String[] matchQualifiedName(boolean isUpperCase)
 			throws GraphIOException {
 
-		String s = (lookAhead.charAt(0) == '\'') ? lookAhead.substring(1)
-				: lookAhead;
-		String c = (s.indexOf('.') >= 0) ? s : toQNameString(
-				currentPackageName, s);
+		String c = (lookAhead.indexOf('.') >= 0) ? lookAhead : toQNameString(
+				currentPackageName, lookAhead);
 		String[] result = SchemaImpl.splitQualifiedName(c);
 
 		boolean ok = true;
-		if ((result[0].length() == 0) && (result[1].charAt(0) != '.')) {
-			// no need to check, because currentPackageName is already checked
-			// by parsePackage();
-		} else if (result[0].length() > 0) {
+		if (result[0].length() > 0) {
 			String[] parts = result[0].split("\\.");
 			ok = ((parts.length == 1) && (parts[0].length() == 0))
 					|| isValidPackageName(parts[0]);
@@ -2030,6 +2073,33 @@ public class GraphIO {
 						.isLowerCase(result[1].charAt(0))));
 
 		if (!ok) {
+			throw new GraphIOException("invalid qualified name '" + lookAhead
+					+ "' in line " + line);
+		}
+		match();
+		return result;
+	}
+
+	public final String[] matchQualifiedName() throws GraphIOException {
+		String c = (lookAhead.indexOf('.') >= 0) ? lookAhead : toQNameString(
+				currentPackageName, lookAhead);
+		String[] result = SchemaImpl.splitQualifiedName(c);
+
+		boolean ok = true;
+		if (result[0].length() > 0) {
+			String[] parts = result[0].split("\\.");
+			ok = ((parts.length == 1) && (parts[0].length() == 0))
+					|| isValidPackageName(parts[0]);
+			for (int i = 1; (i < parts.length) && ok; i++) {
+				ok = ok && isValidPackageName(parts[i]);
+			}
+		}
+
+		ok = ok && isValidIdentifier(result[1]);
+
+		if (!ok) {
+			System.err.println("[0] = '" + result[0] + "'");
+			System.err.println("[1] = '" + result[1] + "'");
 			throw new GraphIOException("invalid qualified name '" + lookAhead
 					+ "' in line " + line);
 		}
@@ -2062,9 +2132,7 @@ public class GraphIO {
 	}
 
 	public final String matchUtfString() throws GraphIOException {
-		if (!isUtfString
-				&& (lookAhead.equals(NULL_LITERAL) || lookAhead
-						.equals(OLD_NULL_LITERAL))) {
+		if (!isUtfString && (lookAhead.equals(NULL_LITERAL))) {
 			match();
 			return null;
 		}
@@ -2088,29 +2156,12 @@ public class GraphIO {
 		return result;
 	}
 
-	private GraphImpl graph(ProgressFunction pf, boolean transactionSupport)
+	private GraphBaseImpl graph(ProgressFunction pf, boolean transactionSupport)
 			throws GraphIOException {
 		currentPackageName = "";
 		match("Graph");
-		String graphIdVersion = matchUtfString();
-		String graphId;
-		long graphVersion;
-
-		try {
-			graphId = graphIdVersion.substring(0, graphIdVersion
-					.lastIndexOf('_'));
-		} catch (IndexOutOfBoundsException e) {
-			graphId = graphIdVersion;
-		}
-
-		try {
-			graphVersion = Long.parseLong(graphIdVersion
-					.substring(graphIdVersion.lastIndexOf('_') + 1));
-		} catch (IndexOutOfBoundsException e1) {
-			graphVersion = 0;
-		} catch (NumberFormatException e2) {
-			graphVersion = 0;
-		}
+		String graphId = matchUtfString();
+		long graphVersion = matchLong();
 
 		gcName = matchAndNext();
 		assert !gcName.contains(".") && isValidIdentifier(gcName) : "illegal characters in graph class '"
@@ -2123,7 +2174,6 @@ public class GraphIO {
 		match("(");
 		int maxV = matchInteger();
 		int maxE = matchInteger();
-
 		int vCount = matchInteger();
 		int eCount = matchInteger();
 		match(")");
@@ -2150,10 +2200,11 @@ public class GraphIO {
 			pf.init(vCount + eCount);
 			interval = pf.getUpdateInterval();
 		}
-		GraphImpl graph = null;
+		GraphBaseImpl graph = null;
 		try {
-			graph = (GraphImpl) schema.getGraphCreateMethod(transactionSupport)
-					.invoke(null, new Object[] { graphId, maxV, maxE });
+			graph = (GraphBaseImpl) schema.getGraphCreateMethod(
+					transactionSupport).invoke(null,
+					new Object[] { graphId, maxV, maxE });
 		} catch (Exception e) {
 			throw new GraphIOException("can't create graph for class '"
 					+ gcName + "'", e);
@@ -2234,11 +2285,9 @@ public class GraphIO {
 			}
 			vertexDescTempObject[0] = vId;
 			vertex = (Vertex) createMethod.invoke(graph, vertexDescTempObject);
-			// vertex = (Vertex) createMethod.invoke(graph, new Object[] { vId
-			// });
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new GraphIOException("cant't create vertex '" + vId + "'", e);
+			throw new GraphIOException("can't create vertex " + vId, e);
 		}
 		parseIncidentEdges(vertex);
 		vertex.readAttributeValues(this);
@@ -2248,19 +2297,12 @@ public class GraphIO {
 	private void edgeDesc(Graph graph, boolean transactionSupport)
 			throws GraphIOException {
 		int eId = eId();
-		String className = className();
-		EdgeClass ec = graph.getGraphClass().getEdgeClass(className);
-
-		assert ec != null : "Could't find edge class " + className
-				+ " in the schema.";
-
-		String ecName = ec.getQualifiedName();
+		String ecName = className();
 		Edge edge;
 		Method createMethod;
 		createMethod = createMethods.get(ecName);
 		try {
 			if (createMethod == null) {
-				logger.finer("Searching create method for edge " + ecName);
 				createMethod = schema.getEdgeCreateMethod(ecName,
 						transactionSupport);
 				createMethods.put(ecName, createMethod);
@@ -2270,7 +2312,7 @@ public class GraphIO {
 			edgeDescTempObject[2] = edgeIn[eId];
 			edge = (Edge) createMethod.invoke(graph, edgeDescTempObject);
 		} catch (Exception e) {
-			throw new GraphIOException("can't create edge '" + eId + "' from "
+			throw new GraphIOException("can't create edge " + eId + " from "
 					+ edgeOut[eId] + " to " + edgeIn[eId], e);
 		}
 		edge.readAttributeValues(this);
@@ -2420,8 +2462,8 @@ public class GraphIO {
 					.iterator(); rdit.hasNext();) {
 				rd = rdit.next();
 				componentDomsInOrderedList = true;
-				for (List<String> componentDomains : rd.components.values()) {
-					for (String componentDomain : componentDomains) {
+				for (ComponentData comp : rd.components) {
+					for (String componentDomain : comp.domainDescription) {
 						if (componentDomain.equals("String")
 								|| componentDomain.equals("Integer")
 								|| componentDomain.equals("Boolean")
@@ -2434,14 +2476,17 @@ public class GraphIO {
 						}
 						componentDomsInOrderedList = false;
 						for (RecordDomainData orderedRd : orderedRdList) {
-							if (componentDomain.equals(orderedRd
-									.getQualifiedName())) {
+							String qName = toQNameString(orderedRd.packageName,
+									orderedRd.simpleName);
+							if (componentDomain.equals(qName)) {
 								componentDomsInOrderedList = true;
 								break;
 							}
 						}
 						for (EnumDomainData ed : enumDomainBuffer) {
-							if (componentDomain.equals(ed.getQualifiedName())) {
+							String qName = toQNameString(ed.packageName,
+									ed.simpleName);
+							if (componentDomain.equals(qName)) {
 								componentDomsInOrderedList = true;
 								break;
 							}
@@ -2455,8 +2500,9 @@ public class GraphIO {
 							definedRdName = false;
 
 							for (RecordDomainData rd2 : recordDomainBuffer) {
-								if (rd2.getQualifiedName().equals(
-										componentDomain)) {
+								String qName = toQNameString(rd2.packageName,
+										rd2.simpleName);
+								if (qName.equals(componentDomain)) {
 									definedRdName = true;
 									break;
 								}
@@ -2633,7 +2679,7 @@ public class GraphIO {
 	 * EnumDomainData contains the parsed data of an EnumDomain. This data is
 	 * used to create an EnumDomain.
 	 */
-	private class EnumDomainData {
+	private static class EnumDomainData {
 		String simpleName;
 		String packageName;
 
@@ -2645,32 +2691,34 @@ public class GraphIO {
 			this.simpleName = simpleName;
 			this.enumConstants = enumConstants;
 		}
-
-		String getQualifiedName() {
-			return toQNameString(packageName, simpleName);
-		}
 	}
 
 	/**
 	 * RecordDomainData contains the parsed data of a RecordDomain. This data is
 	 * used to create a RecordDomain.
 	 */
-	private class RecordDomainData {
+	private static class RecordDomainData {
 		String simpleName;
 		String packageName;
-
-		Map<String, List<String>> components;
+		List<ComponentData> components;
 
 		RecordDomainData(String packageName, String simpleName,
-				Map<String, List<String>> components) {
+				List<ComponentData> components) {
 			this.packageName = packageName;
 			this.simpleName = simpleName;
 			this.components = components;
 		}
+	}
 
-		String getQualifiedName() {
-			return toQNameString(packageName, simpleName);
-		}
+	private static class ComponentData {
+		String name;
+		List<String> domainDescription;
+	}
+
+	private static class AttributeData {
+		String name;
+		List<String> domainDescription;
+		String defaultValue;
 	}
 
 	/**
@@ -2681,7 +2729,7 @@ public class GraphIO {
 		Set<Constraint> constraints = new HashSet<Constraint>(1);
 		String name;
 		boolean isAbstract = false;
-		Map<String, List<String>> attributes = new TreeMap<String, List<String>>();
+		List<AttributeData> attributes = new ArrayList<AttributeData>();
 	}
 
 	/**
@@ -2696,8 +2744,6 @@ public class GraphIO {
 			return toQNameString(packageName, simpleName);
 		}
 
-		String type;
-
 		boolean isAbstract = false;
 
 		List<String> directSuperClasses = new LinkedList<String>();
@@ -2710,6 +2756,8 @@ public class GraphIO {
 
 		Set<String> redefinedFromRoles = null;
 
+		AggregationKind fromAggregation;
+
 		String toVertexClassName;
 
 		int[] toMultiplicity = { 1, Integer.MAX_VALUE };
@@ -2718,9 +2766,9 @@ public class GraphIO {
 
 		Set<String> redefinedToRoles = null;
 
-		boolean aggregateFrom;
+		AggregationKind toAggregation;
 
-		Map<String, List<String>> attributes = new TreeMap<String, List<String>>();
+		List<AttributeData> attributes = new ArrayList<AttributeData>();
 
 		Set<Constraint> constraints = new HashSet<Constraint>(1);
 	}

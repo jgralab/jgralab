@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -25,8 +25,7 @@
 package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.BitSet;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
@@ -37,8 +36,9 @@ import de.uni_koblenz.jgralab.greql2.evaluator.fa.State;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.Transition;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
-import de.uni_koblenz.jgralab.greql2.funlib.pathsearch.PathSearchQueueEntry;
+import de.uni_koblenz.jgralab.greql2.funlib.pathsearch.VertexStateQueue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
@@ -72,11 +72,13 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  */
 public class ReachableVertices extends Greql2Function {
 
+	public static boolean PRINT_STOP_VERTICES = false;
+
 	{
 		JValueType[][] x = {
-				{ JValueType.VERTEX, JValueType.DFA, JValueType.COLLECTION },
-				{ JValueType.VERTEX, JValueType.DFA, JValueType.SUBGRAPH,
-						JValueType.COLLECTION } };
+				{ JValueType.VERTEX, JValueType.AUTOMATON, JValueType.COLLECTION },
+				{ JValueType.VERTEX, JValueType.AUTOMATON, JValueType.SUBGRAPH,
+						JValueType.COLLECTION }};
 		signatures = x;
 
 		description = "Returns all vertices that are reachable from vertex with a path description.";
@@ -85,50 +87,79 @@ public class ReachableVertices extends Greql2Function {
 				Category.PATHS_AND_PATHSYSTEMS_AND_SLICES };
 		categories = c;
 	}
-
+	
 	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		if (checkArguments(arguments) == -1) {
+		DFA dfa = null;
+		switch (checkArguments(arguments)) {
+		case 0:
+		case 1:
+			dfa = arguments[1].toAutomaton().getDFA();
+			break;
+		default:
 			throw new WrongFunctionParameterException(this, arguments);
 		}
-		JValueSet resultSet = new JValueSet();
-		DFA dfa = arguments[1].toDFA();
 		Vertex startVertex = arguments[0].toVertex();
-		BooleanGraphMarker[] markers = new BooleanGraphMarker[dfa.stateList
-				.size()];
+
+		return search(startVertex, dfa, subgraph);
+	}
+	
+	
+	public static final JValueImpl search(Vertex startVertex, DFA dfa, BooleanGraphMarker subgraph) {
+		JValueSet resultSet = new JValueSet();
+				
+		BitSet[] markedElements = new BitSet[dfa.stateList.size()];
+		
 		for (State s : dfa.stateList) {
-			markers[s.number] = new BooleanGraphMarker(graph);
+			markedElements[s.number] = new BitSet();
 		}
-		Queue<PathSearchQueueEntry> queue = new LinkedList<PathSearchQueueEntry>();
-		PathSearchQueueEntry currentEntry = new PathSearchQueueEntry(
-				startVertex, dfa.initialState);
-		markers[currentEntry.state.number].mark(currentEntry.vertex);
-		queue.add(currentEntry);
-		while (!queue.isEmpty()) {
-			currentEntry = queue.poll();
-			if (currentEntry.state.isFinal) {
-				resultSet.add(new JValue(currentEntry.vertex,
-						currentEntry.vertex));
+		VertexStateQueue queue = new VertexStateQueue();
+		markedElements[dfa.initialState.number].set(startVertex.getId());
+		queue.put(startVertex, dfa.initialState);
+		Vertex vertex = null;
+		State state = null;
+		Transition currentTransition = null;
+		Vertex nextVertex = null;
+		while (queue.hasNext()) {
+			vertex = queue.currentVertex;
+			state = queue.currentState;
+			if (state.isFinal) {
+				resultSet.add(new JValueImpl(vertex, vertex));
 			}
-			// markers[currentEntry.state.number].mark(currentEntry.vertex);
-			Edge inc = currentEntry.vertex.getFirstEdge();
+			Edge inc = vertex.getFirstEdge();
 			while (inc != null) {
-				for (Transition currentTransition : currentEntry.state.outTransitions) {
-					Vertex nextVertex = currentTransition.getNextVertex(
-							currentEntry.vertex, inc);
-					if (!markers[currentTransition.getEndState().number]
-							.isMarked(nextVertex)) {
-						if (currentTransition.accepts(currentEntry.vertex, inc,
-								subgraph)) {
-							PathSearchQueueEntry nextEntry = new PathSearchQueueEntry(
-									nextVertex, currentTransition.getEndState());
-							markers[nextEntry.state.number].mark(nextVertex);
-							queue.add(nextEntry);
+				int size = state.outTransitions.size();
+				for (int i=0; i<size; i++) {
+					currentTransition = state.outTransitions.get(i);
+					nextVertex = currentTransition.getNextVertex(vertex, inc);
+					if (!markedElements[currentTransition.endState.number].get(nextVertex.getId())) {
+						if (currentTransition.accepts(vertex, inc, subgraph)) {
+							markedElements[currentTransition.endState.number].set(nextVertex.getId());
+							queue.put(nextVertex, currentTransition.endState);
 						}
 					}
 				}
 				inc = inc.getNextEdge();
+			}
+			if (PRINT_STOP_VERTICES) {
+				if (state.isFinal) {
+					System.out.println("Vertex " + vertex + " is reachable by path");
+				} else {
+					System.out.println("Vertex " + vertex + " is not reachable by path");
+					System.out.println("    Edges at vertex");
+					for (Edge e : vertex.incidences()) {
+						System.out.println("        "
+								+ (e.isNormal() ? "-->" : "<--")
+								+ e.getAttributedElementClass().getSimpleName()
+								+ " " + e.getThatRole());
+					}
+					System.out
+							.println("    Transitions that failed in accepting the pair of edge and vertex");
+					for (Transition t : state.outTransitions) {
+						System.out.println("        " + t.prettyPrint());
+					}
+				}
 			}
 		}
 		return resultSet;

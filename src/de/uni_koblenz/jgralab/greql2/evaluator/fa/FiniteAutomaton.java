@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -37,8 +37,10 @@ import java.util.logging.Logger;
  */
 public abstract class FiniteAutomaton {
 
-	private static Logger logger = Logger.getLogger(EpsilonTransition.class
-			.getName());
+	private static Logger logger = Logger.getLogger(FiniteAutomaton.class
+			.getPackage().getName());
+
+	public abstract DFA getDFA();
 
 	/*
 	 * the one and only initial state of this automat
@@ -75,9 +77,8 @@ public abstract class FiniteAutomaton {
 					.iterator();
 			while (transitionIter.hasNext()) {
 				Transition currentTransition = transitionIter.next();
-				int stateNumber = stateList.indexOf(currentTransition
-						.getEndState());
-				if (finalStates.contains(currentTransition.getEndState())) {
+				int stateNumber = stateList.indexOf(currentTransition.endState);
+				if (finalStates.contains(currentTransition.endState)) {
 					logger.info("      ----" + currentTransition.edgeString()
 							+ "--->    [[" + stateNumber + "]]");
 				} else {
@@ -89,6 +90,29 @@ public abstract class FiniteAutomaton {
 		}
 		logger
 				.info("||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| ");
+	}
+
+	public void printAscii2() {
+		for (State currentState : stateList) {
+			if (currentState.isFinal) {
+				System.out.println("State: [[" + currentState.number + "]]");
+			} else {
+				System.out.println("State: [" + currentState.number + "]");
+			}
+			for (Transition currentTransition : currentState.outTransitions) {
+				int stateNumber = currentTransition.endState.number;
+				if (finalStates.contains(currentTransition.endState)) {
+					System.out.println("      ----"
+							+ currentTransition.edgeString() + "--->    [["
+							+ stateNumber + "]]");
+				} else {
+					System.out.println("      ----"
+							+ currentTransition.edgeString() + "--->    ["
+							+ stateNumber + "]");
+				}
+			}
+			System.out.println("\n--------------------------");
+		}
 	}
 
 	/**

@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -31,7 +31,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.impl.ReversedEdgeImpl;
+import de.uni_koblenz.jgralab.impl.ReversedEdgeBaseImpl;
 
 /**
  * This class can be used to "colorize" graphs, it supports only two "colors",
@@ -63,11 +63,11 @@ public class BooleanGraphMarker extends AbstractGraphMarker<AttributedElement> {
 	 * @return true if this GraphMarker marks the given element, false otherwise
 	 */
 	@Override
-	public boolean isMarked(AttributedElement elem) {
+	public final boolean isMarked(AttributedElement elem) {
 		assert ((elem instanceof GraphElement && ((GraphElement) elem)
 				.getGraph() == graph) || elem == graph);
-		if (elem instanceof ReversedEdgeImpl) {
-			elem = ((ReversedEdgeImpl) elem).getNormalEdge();
+		if (elem instanceof ReversedEdgeBaseImpl) {
+			elem = ((ReversedEdgeBaseImpl) elem).getNormalEdge();
 		}
 		return markedElements.contains(elem);
 	}
@@ -80,11 +80,11 @@ public class BooleanGraphMarker extends AbstractGraphMarker<AttributedElement> {
 	 * @return true if the element has been marked successfull, false if this
 	 *         element is already marked by this GraphMarker
 	 */
-	public boolean mark(AttributedElement elem) {
+	public final boolean mark(AttributedElement elem) {
 		assert ((elem instanceof GraphElement && ((GraphElement) elem)
 				.getGraph() == graph) || elem == graph);
-		if (elem instanceof ReversedEdgeImpl) {
-			elem = ((ReversedEdgeImpl) elem).getNormalEdge();
+		if (elem instanceof ReversedEdgeBaseImpl) {
+			elem = ((ReversedEdgeBaseImpl) elem).getNormalEdge();
 		}
 
 		return markedElements.add(elem);
@@ -100,11 +100,11 @@ public class BooleanGraphMarker extends AbstractGraphMarker<AttributedElement> {
 	 *         <code>false</code> otherwise
 	 */
 	@Override
-	public boolean removeMark(AttributedElement elem) {
+	public final boolean removeMark(AttributedElement elem) {
 		assert ((elem instanceof GraphElement && ((GraphElement) elem)
 				.getGraph() == graph) || elem == graph);
-		if (elem instanceof ReversedEdgeImpl) {
-			elem = ((ReversedEdgeImpl) elem).getNormalEdge();
+		if (elem instanceof ReversedEdgeBaseImpl) {
+			elem = ((ReversedEdgeBaseImpl) elem).getNormalEdge();
 		}
 		return markedElements.remove(elem);
 	}

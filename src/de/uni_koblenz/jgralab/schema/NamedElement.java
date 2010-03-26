@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -23,6 +23,8 @@
  */
 
 package de.uni_koblenz.jgralab.schema;
+
+import java.util.List;
 
 /**
  * NamedElement defines methods to access several parameters evolving around the
@@ -318,4 +320,21 @@ public interface NamedElement {
 	 * </p>
 	 */
 	public String toString();
+
+	/**
+	 * Adds the <code>comment</code> to this NamedElement. First,
+	 * <code>comment</code> is trimmed, and only added if not "".
+	 * 
+	 * @param comment
+	 *            a comment
+	 */
+	public void addComment(String... comment);
+
+	/**
+	 * Returns the comments of this NamedElement.
+	 * 
+	 * @return the List of comments of this NamedElement, or null if there is no
+	 *         comment
+	 */
+	public List<String> getComments();
 }

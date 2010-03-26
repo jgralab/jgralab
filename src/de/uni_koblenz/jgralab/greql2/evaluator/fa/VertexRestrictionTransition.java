@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -146,6 +146,18 @@ public class VertexRestrictionTransition extends Transition {
 	@Override
 	public Vertex getNextVertex(Vertex v, Edge e) {
 		return v;
+	}
+
+	@Override
+	public String prettyPrint() {
+		StringBuilder b = new StringBuilder();
+		String delim = "";
+		for (AttributedElementClass c : typeCollection.getAllowedTypes()) {
+			b.append(delim);
+			b.append(c.getSimpleName());
+			delim = ",";
+		}	
+		return "&{" + b + "}";
 	}
 
 }

@@ -12,22 +12,17 @@ import java.util.logging.Logger;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql2.funlib.Contains;
 import de.uni_koblenz.jgralab.greql2.schema.BackwardVertexSet;
-import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.ForwardVertexSet;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
-import de.uni_koblenz.jgralab.greql2.schema.IsDeclaredVarOf;
-import de.uni_koblenz.jgralab.greql2.schema.IsSimpleDeclOf;
 import de.uni_koblenz.jgralab.greql2.schema.PathExistence;
 import de.uni_koblenz.jgralab.greql2.schema.PathExpression;
-import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
 
 /**
@@ -73,6 +68,10 @@ public class PathExistenceOptimizer extends OptimizerBase {
 	@Override
 	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
 			throws OptimizerException {
+		if (syntaxgraph.getFirstVertexOfClass(PathExistence.class) == null) {
+			return false;
+		}
+
 		anOptimizationWasDone = false;
 		this.syntaxgraph = syntaxgraph;
 
@@ -81,6 +80,10 @@ public class PathExistenceOptimizer extends OptimizerBase {
 		recreateVertexEvaluators(eval);
 
 		OptimizerUtility.createMissingSourcePositions(syntaxgraph);
+
+		// Tg2Dot.printGraphAsDot(syntaxgraph, true, "/home/horn/peo.dot");
+		// System.out.println("Afted PEO:");
+		// System.out.println(((SerializableGreql2) syntaxgraph).serialize());
 
 		return anOptimizationWasDone;
 	}
@@ -239,90 +242,6 @@ public class PathExistenceOptimizer extends OptimizerBase {
 			pathExistenceVertices.add(pe);
 		}
 		return pathExistenceVertices;
-	}
-
-	/**
-	 * Check if <code>var1</code> is declared before <code>var2</code>. A
-	 * {@link Variable} is declared before another variable, if it's declared in
-	 * an outer {@link Declaration}, or if it's declared in the same
-	 * {@link Declaration} but in a {@link SimpleDeclaration} that comes before
-	 * the other {@link Variable}'s {@link SimpleDeclaration}, or if it's
-	 * declared in the same {@link SimpleDeclaration} but is connected to that
-	 * earlier (meaning its {@link IsDeclaredVarOf} edge comes before the
-	 * other's).
-	 * 
-	 * Note that a {@link Variable} is never declared before itself.
-	 * 
-	 * @param var1
-	 *            a {@link Variable}
-	 * @param var2
-	 *            a {@link Variable}
-	 * @return <code>true</code> if <code>var1</code> is declared before
-	 *         <code>var2</code>, <code>false</code> otherwise.
-	 */
-	private boolean isDeclaredBefore(Variable var1, Variable var2) {
-		// GreqlEvaluator.println("isDeclaredBefore(" + var1 + ", " + var2 +
-		// ")");
-		if (var1 == var2) {
-			return false;
-		}
-		SimpleDeclaration sd1 = (SimpleDeclaration) var1
-				.getFirstIsDeclaredVarOf(EdgeDirection.OUT).getOmega();
-		Declaration decl1 = (Declaration) sd1.getFirstIsSimpleDeclOf(
-				EdgeDirection.OUT).getOmega();
-		SimpleDeclaration sd2 = (SimpleDeclaration) var2
-				.getFirstIsDeclaredVarOf(EdgeDirection.OUT).getOmega();
-		Declaration decl2 = (Declaration) sd2.getFirstIsSimpleDeclOf(
-				EdgeDirection.OUT).getOmega();
-
-		if (decl1 == decl2) {
-			if (sd1 == sd2) {
-				// var1 and var2 are declared in the same SimpleDeclaration,
-				// so the order of the IsDeclaredVarOf edges matters.
-				IsDeclaredVarOf inc = sd1
-						.getFirstIsDeclaredVarOf(EdgeDirection.IN);
-				while (inc != null) {
-					if (inc.getAlpha() == var1) {
-						return true;
-					}
-					if (inc.getAlpha() == var2) {
-						return false;
-					}
-					inc = inc.getNextIsDeclaredVarOf(EdgeDirection.IN);
-				}
-			} else {
-				// var1 and var2 are declared in the same Declaration but
-				// different SimpleDeclarations, so the order of the
-				// SimpleDeclarations matters.
-				IsSimpleDeclOf inc = decl1
-						.getFirstIsSimpleDeclOf(EdgeDirection.IN);
-				while (inc != null) {
-					if (inc.getAlpha() == sd1) {
-						return true;
-					}
-					if (inc.getAlpha() == sd2) {
-						return false;
-					}
-					inc = inc.getNextIsSimpleDeclOf(EdgeDirection.IN);
-				}
-			}
-		} else {
-			// start and target are declared in different Declarations, so we
-			// have to check if start was declared in the outer Declaration.
-			Vertex declParent1 = decl1.getFirstEdge(EdgeDirection.OUT)
-					.getOmega();
-			Vertex declParent2 = decl2.getFirstEdge(EdgeDirection.OUT)
-					.getOmega();
-			if (OptimizerUtility.isAbove(declParent1, declParent2)) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-		logger
-				.severe("No case matched in isDeclaredBefore(Variable, Variable)."
-						+ " That must not happen!");
-		return false;
 	}
 
 }

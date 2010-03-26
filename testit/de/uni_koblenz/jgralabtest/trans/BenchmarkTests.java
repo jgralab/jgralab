@@ -15,15 +15,15 @@ import de.uni_koblenz.jgralabtest.schemas.motorwaymap.MotorwayMapSchema;
 public class BenchmarkTests {
 	private MotorwayMap motorwayMap;
 
-	private final int V = 1;
-	private final int E = 1;
+	private static final int V = 1;
+	private static final int E = 1;
 
-	private final int N = 1;
+	private static final int N = 1;
 
-	private final int MULTIPLIER = 5;
-	private final int NROFTHREADS = 20;
+	private static final int MULTIPLIER = 5;
+	private static final int NROFTHREADS = 20;
 
-	private final String FILENAME = "motorwaymap_benchmark.tg";
+	private static final String FILENAME = "motorwaymap_benchmark.tg";
 	private ProgressFunction progressFunction;
 
 	/**
@@ -48,13 +48,13 @@ public class BenchmarkTests {
 	public static void main(String[] args) throws CommitFailedException,
 			InterruptedException, GraphIOException {
 		BenchmarkTests benchmarkTests = new BenchmarkTests();
-		// benchmarkTests.iterateVertices();
-		// benchmarkTests.iterateVerticesWithTransactionSupport();
-		// benchmarkTests.addGraphElements();
-		// benchmarkTests.addGraphElementsWithTransactionSupport();
-		// benchmarkTests.addGraphElementsWithTransactionSupportParallel();
-		// benchmarkTests.loadGraph(false);
-		// benchmarkTests.loadGraph(true);
+		benchmarkTests.iterateVertices();
+		benchmarkTests.iterateVerticesWithTransactionSupport();
+		benchmarkTests.addGraphElements();
+		benchmarkTests.addGraphElementsWithTransactionSupport();
+		benchmarkTests.addGraphElementsWithTransactionSupportParallel();
+		benchmarkTests.loadGraph(false);
+		benchmarkTests.loadGraph(true);
 		benchmarkTests.test();
 	}
 
@@ -63,13 +63,11 @@ public class BenchmarkTests {
 	 * @param testMethodName
 	 */
 	private void printMemoryUsage(String testMethodName) {
-		System.out
-				.println("Speicherverbrauch "
-						+ testMethodName
-						+ ": "
-						+ ((new Double(Runtime.getRuntime().totalMemory()) / 1048576f) - (new Double(
-								Runtime.getRuntime().freeMemory()) / 1048576f))
-						+ " MB.");
+		System.out.println("Speicherverbrauch "
+				+ testMethodName
+				+ ": "
+				+ (Runtime.getRuntime().totalMemory() - Runtime.getRuntime()
+						.freeMemory() / 1048576.0) + " MB.");
 	}
 
 	private void addGraphElements() throws GraphIOException,
@@ -147,28 +145,31 @@ public class BenchmarkTests {
 	}
 
 	private void createGraph(boolean transactionSupport) {
-		if (transactionSupport)
+		if (transactionSupport) {
 			motorwayMap = MotorwayMapSchema.instance()
 					.createMotorwayMapWithTransactionSupport(V, E);
-		else
+		} else {
 			motorwayMap = MotorwayMapSchema.instance().createMotorwayMap(V, E);
+		}
 	}
 
 	@SuppressWarnings("unused")
 	private void loadGraph(boolean transactionSupport) throws GraphIOException {
-		if (transactionSupport)
+		if (transactionSupport) {
 			motorwayMap = MotorwayMapSchema.instance()
 					.loadMotorwayMapWithTransactionSupport(FILENAME,
 							new ProgressFunctionImpl());
-		else
+		} else {
 			motorwayMap = MotorwayMapSchema.instance().loadMotorwayMap(
 					FILENAME, new ProgressFunctionImpl());
+		}
 		printMemoryUsage("loadGraph");
 	}
 
 	private void saveGraph(boolean transactionSupport) throws GraphIOException {
-		if (transactionSupport)
+		if (transactionSupport) {
 			motorwayMap.newReadOnlyTransaction();
+		}
 		GraphIO.saveGraphToFile(FILENAME, motorwayMap,
 				new ProgressFunctionImpl());
 	}

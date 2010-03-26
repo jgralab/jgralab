@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -82,10 +82,10 @@ public class GraphValidator {
 			EdgeClass ec) {
 		SortedSet<MultiplicityConstraintViolation> brokenConstraints = new TreeSet<MultiplicityConstraintViolation>();
 
-		int toMin = ec.getToMin();
-		int toMax = ec.getToMax();
+		int toMin = ec.getTo().getMin();
+		int toMax = ec.getTo().getMax();
 		Set<AttributedElement> badOutgoing = new HashSet<AttributedElement>();
-		for (Vertex v : graph.vertices(ec.getFrom())) {
+		for (Vertex v : graph.vertices(ec.getFrom().getVertexClass())) {
 			int degree = v.getDegree(ec, EdgeDirection.OUT);
 			if ((degree < toMin) || (degree > toMax)) {
 				badOutgoing.add(v);
@@ -99,10 +99,10 @@ public class GraphValidator {
 							+ ").", badOutgoing));
 		}
 
-		int fromMin = ec.getFromMin();
-		int fromMax = ec.getFromMax();
+		int fromMin = ec.getFrom().getMin();
+		int fromMax = ec.getFrom().getMax();
 		Set<AttributedElement> badIncoming = new HashSet<AttributedElement>();
-		for (Vertex v : graph.vertices(ec.getTo())) {
+		for (Vertex v : graph.vertices(ec.getTo().getVertexClass())) {
 			int degree = v.getDegree(ec, EdgeDirection.IN);
 			if ((degree < fromMin) || (degree > fromMax)) {
 				badIncoming.add(v);

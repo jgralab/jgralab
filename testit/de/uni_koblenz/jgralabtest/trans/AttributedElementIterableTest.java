@@ -33,9 +33,9 @@ public class AttributedElementIterableTest {
 	private Transaction readWriteTransaction1;
 	private Transaction readWriteTransaction2;
 
-	private final int V = 1;
-	private final int E = 1;
-	private final int N = 10;
+	private static final int V = 1;
+	private static final int E = 1;
+	private static final int N = 10;
 
 	@Before
 	public void setUp() throws CommitFailedException {

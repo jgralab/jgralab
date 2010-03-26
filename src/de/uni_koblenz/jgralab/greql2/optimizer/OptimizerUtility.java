@@ -69,13 +69,8 @@ public class OptimizerUtility {
 	 *         {@link FunctionApplication} of {@link And}.
 	 */
 	public static boolean isAnd(FunctionApplication funApp) {
-		try {
-			return funApp.getFirstIsFunctionIdOf().getAlpha().getAttribute(
-					"name").equals("and");
-		} catch (NoSuchFieldException e) {
-			e.printStackTrace();
-			return false;
-		}
+		return ((FunctionId) funApp.getFirstIsFunctionIdOf().getAlpha())
+				.get_name().equals("and");
 	}
 
 	/**
@@ -87,13 +82,8 @@ public class OptimizerUtility {
 	 *         {@link FunctionApplication} of {@link And}.
 	 */
 	public static boolean isOr(FunctionApplication funApp) {
-		try {
-			return funApp.getFirstIsFunctionIdOf().getAlpha().getAttribute(
-					"name").equals("or");
-		} catch (NoSuchFieldException e) {
-			e.printStackTrace();
-			return false;
-		}
+		return ((FunctionId) funApp.getFirstIsFunctionIdOf().getAlpha())
+				.get_name().equals("or");
 	}
 
 	/**
@@ -105,13 +95,8 @@ public class OptimizerUtility {
 	 *         {@link FunctionApplication} of {@link And}.
 	 */
 	public static boolean isXor(FunctionApplication funApp) {
-		try {
-			return funApp.getFirstIsFunctionIdOf().getAlpha().getAttribute(
-					"name").equals("xor");
-		} catch (NoSuchFieldException e) {
-			e.printStackTrace();
-			return false;
-		}
+		return ((FunctionId) funApp.getFirstIsFunctionIdOf().getAlpha())
+				.get_name().equals("xor");
 	}
 
 	/**
@@ -123,13 +108,8 @@ public class OptimizerUtility {
 	 *         {@link FunctionApplication} of {@link And}.
 	 */
 	public static boolean isNot(FunctionApplication funApp) {
-		try {
-			return funApp.getFirstIsFunctionIdOf().getAlpha().getAttribute(
-					"name").equals("not");
-		} catch (NoSuchFieldException e) {
-			e.printStackTrace();
-			return false;
-		}
+		return ((FunctionId) funApp.getFirstIsFunctionIdOf().getAlpha())
+				.get_name().equals("not");
 	}
 
 	/**
@@ -271,16 +251,16 @@ public class OptimizerUtility {
 	 *            a set of vertices whose subgraph shouldn't be deleted
 	 */
 	public static void deleteOrphanedVerticesBelow(Vertex vertex,
-			HashSet<? extends Vertex> verticesToOmit) {
-		// GreqlEvaluator.println("deleteOrphanedVerticesBelow(" + vertex +
-		// ")");
+			HashSet<Vertex> verticesToOmit) {
+		// System.out.println("deleteOrphanedVerticesBelow(" + vertex + ")");
 		deleteOrphanedVerticesBelow(vertex, verticesToOmit,
 				new HashSet<Vertex>());
 	}
 
 	private static void deleteOrphanedVerticesBelow(Vertex vertex,
-			HashSet<? extends Vertex> verticesToOmit,
+			HashSet<Vertex> verticesToOmit,
 			HashSet<Vertex> alreadyDeletedVertices) {
+		assert vertex.isValid();
 		if (alreadyDeletedVertices.contains(vertex)) {
 			return;
 		}
@@ -293,7 +273,7 @@ public class OptimizerUtility {
 				&& !verticesToOmit.contains(vertex)) {
 			// vertex is orphaned
 			alreadyDeletedVertices.add(vertex);
-			// GreqlEvaluator.println("deleting " + vertex);
+			// System.out.println("deleting orphan " + vertex);
 			vertex.delete();
 			for (Vertex v : nextOrphans) {
 				deleteOrphanedVerticesBelow(v, verticesToOmit,

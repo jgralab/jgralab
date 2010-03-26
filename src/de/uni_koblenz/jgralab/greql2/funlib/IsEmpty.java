@@ -30,6 +30,7 @@ import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
@@ -53,9 +54,9 @@ public class IsEmpty extends Greql2Function {
 			JValue[] arguments) throws EvaluateException {
 		switch (checkArguments(arguments)) {
 		case 0:
-			return new JValue(arguments[0].toCollection().size() == 0);
+			return new JValueImpl(arguments[0].toCollection().size() == 0);
 		case 1:
-			return new JValue(arguments[0].toJValueMap().size() == 0);
+			return new JValueImpl(arguments[0].toJValueMap().size() == 0);
 		default:
 			throw new WrongFunctionParameterException(this, arguments);
 		}

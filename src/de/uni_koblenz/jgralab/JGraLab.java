@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -52,7 +52,7 @@ public class JGraLab {
 			"  $rev", "  Build ID: $bid" };
 
 	private static final String[] copyrightInfo = {
-			"(c) 2006-2009 Institute for Software Technology",
+			"(c) 2006-2010 Institute for Software Technology",
 			"              University of Koblenz-Landau, Germany",
 			"",
 			"              ist@uni-koblenz.de",
@@ -72,17 +72,9 @@ public class JGraLab {
 			"You should have received a copy of the GNU General Public License",
 			"along with this program; if not, write to the Free Software",
 			"Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.",
-			"",
-			"This software uses:",
-			"",
-			"JDOM 1.0",
+			"", "This software uses:", "", "JDOM 1.0",
 			"Copyright (C) 2000-2004 Jason Hunter & Brett McLaughlin.",
-			"All rights reserved.",
-			"",
-			"Apache XML-RPC 3.0",
-			"Copyright (C) 2001-2008 The Apache Software Foundation",
-			"Please note, you need the Java Enterprise Edition to make full use",
-			"of this part of the software.", "", "Apache Commons CLI 1.2",
+			"All rights reserved.", "", "Apache Commons CLI 1.2",
 			"Copyright 2001-2009 The Apache Software Foundation" };
 
 	private static HashMap<String, Logger> loggerMap = new HashMap<String, Logger>();
@@ -100,30 +92,34 @@ public class JGraLab {
 	}
 
 	public static Logger getRootLogger() {
-		if (rootLogger == null) {
-			rootLogger = Logger.getLogger("");
-			loggerMap.put("", rootLogger);
-			rootLogger.setUseParentHandlers(false);
-			ConsoleHandler consoleHandler = new ConsoleHandler();
-			// the handler logs everything, but what is sent to the handler is
-			// specified by the logger.
-			consoleHandler.setLevel(Level.ALL);
+		synchronized (Logger.class) {
+			if (rootLogger == null) {
+				rootLogger = Logger.getLogger("");
+				loggerMap.put("", rootLogger);
+				rootLogger.setUseParentHandlers(false);
+				ConsoleHandler consoleHandler = new ConsoleHandler();
+				// the handler logs everything, but what is sent to the handler
+				// is
+				// specified by the logger.
+				consoleHandler.setLevel(Level.ALL);
 
-			// simple Formatter for single line output (<level> <method>:
-			// <message>)
-			consoleHandler.setFormatter(new Formatter() {
-				@Override
-				public String format(LogRecord record) {
-					StringBuilder sb = new StringBuilder();
-					sb.append(record.getLevel()).append(" ").append(
-							record.getSourceClassName()).append(".").append(
-							record.getSourceMethodName()).append(": ").append(
-							record.getMessage()).append('\n');
-					return sb.toString();
-				}
-			});
-			removeHandlers(rootLogger);
-			rootLogger.addHandler(consoleHandler);
+				// simple Formatter for single line output (<level> <method>:
+				// <message>)
+				consoleHandler.setFormatter(new Formatter() {
+					@Override
+					public String format(LogRecord record) {
+						StringBuilder sb = new StringBuilder();
+						sb.append(record.getLevel()).append(" ").append(
+								record.getSourceClassName()).append(".")
+								.append(record.getSourceMethodName()).append(
+										": ").append(record.getMessage())
+								.append('\n');
+						return sb.toString();
+					}
+				});
+				removeHandlers(rootLogger);
+				rootLogger.addHandler(consoleHandler);
+			}
 		}
 		return rootLogger;
 	}

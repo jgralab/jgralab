@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
@@ -31,10 +32,10 @@ public abstract class ArithmeticFunction extends Greql2Function {
 		ADD, SUB, DIV, MUL, MOD
 	};
 
-	public JValue evaluate(JValue[] arguments, ArithmeticOperator operator)
+	public JValueImpl evaluate(JValue[] arguments, ArithmeticOperator operator)
 			throws EvaluateException {
 
-		JValue result = null;
+		JValueImpl result = null;
 
 		switch (checkArguments(arguments)) {
 		case 0:
@@ -59,13 +60,13 @@ public abstract class ArithmeticFunction extends Greql2Function {
 		return result;
 	}
 
-	protected abstract JValue applyFunction(Integer leftHandSide,
+	protected abstract JValueImpl applyFunction(Integer leftHandSide,
 			Integer rightHandSide);
 
-	protected abstract JValue applyFunction(Long leftHandSide,
+	protected abstract JValueImpl applyFunction(Long leftHandSide,
 			Long rightHandSide);
 
-	protected abstract JValue applyFunction(Double leftHandSide,
+	protected abstract JValueImpl applyFunction(Double leftHandSide,
 			Double rightHandSide);
 
 	/*

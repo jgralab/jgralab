@@ -3704,26 +3704,6 @@ public class EdgeTest extends InstanceTest {
 	}
 
 	/**
-	 * Tests if an exception is thrown, when two edges have not the same
-	 * this-vertex.
-	 * 
-	 * @throws CommitFailedException
-	 */
-	@Test(expected = GraphException.class)
-	public void isBeforeTest1() throws CommitFailedException {
-		createTransaction(g);
-		DoubleSubNode v1 = g.createDoubleSubNode();
-		DoubleSubNode v2 = g.createDoubleSubNode();
-		Edge e1 = g.createLink(v1, v2);
-		Edge e2 = g.createLink(v2, v1);
-		commit(g);
-
-		createReadOnlyTransaction(g);
-		assertFalse(e1.isBefore(e2));
-		commit(g);
-	}
-
-	/**
 	 * Tests if an edge is direct before another.
 	 * 
 	 * @throws CommitFailedException
@@ -3779,26 +3759,6 @@ public class EdgeTest extends InstanceTest {
 
 		createReadOnlyTransaction(g);
 		assertFalse(e1.isAfter(e1));
-		commit(g);
-	}
-
-	/**
-	 * Tests if an exception is thrown, when two edges have not the same
-	 * this-vertex.
-	 * 
-	 * @throws CommitFailedException
-	 */
-	@Test(expected = GraphException.class)
-	public void isAfterTest1() throws CommitFailedException {
-		createTransaction(g);
-		DoubleSubNode v1 = g.createDoubleSubNode();
-		DoubleSubNode v2 = g.createDoubleSubNode();
-		Edge e1 = g.createLink(v1, v2);
-		Edge e2 = g.createLink(v2, v1);
-		commit(g);
-
-		createReadOnlyTransaction(g);
-		assertFalse(e1.isAfter(e2));
 		commit(g);
 	}
 
@@ -5049,10 +5009,13 @@ public class EdgeTest extends InstanceTest {
 				line = line.substring(0, line.length() - 1);
 			}
 			parts = line.split(" ");
+			createReadOnlyTransaction(g);
 			if (parts[0].equals(((Integer) e1.getId()).toString())
 					&& parts[1].equals(e1.getClass().getName())) {
+				commit(g);
 				break;
 			}
+			commit(g);
 		}
 		assertEquals("n", parts[2]);
 		assertEquals("0", parts[3]);
@@ -5112,10 +5075,13 @@ public class EdgeTest extends InstanceTest {
 				line = line.substring(0, line.length() - 1);
 			}
 			parts = line.split(" ");
+			createReadOnlyTransaction(g);
 			if (parts[0].equals(((Integer) e1.getId()).toString())
 					&& parts[1].equals(e1.getClass().getName())) {
+				commit(g);
 				break;
 			}
+			commit(g);
 		}
 		assertEquals("\"HelloWorld!\"", parts[2]);
 		assertEquals("3", parts[3]);

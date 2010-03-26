@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -26,32 +26,79 @@ package de.uni_koblenz.jgralab.impl;
 
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.Vertex;
 
 /**
- * This class provides an Iterable for the Edges incident to a vertex. Using the
- * vertex' different methods which return an instance of IncidenceIterable, one
- * may use an iterator or the advanced for loop of Java 5 to iterate over all
- * classes. If the list of incidence edges is changed during iteration, an
- * exception if thrown
+ * This class provides an Iterable for the Edges incident to a given vertex.
  * 
  * @author ist@uni-koblenz.de
  */
 public class IncidenceIterable<E extends Edge> implements Iterable<E> {
+	/**
+	 * Creates an Iterable for all incident edges of Vertex <code>v</code>.
+	 * 
+	 * @param v
+	 *            a Vertex
+	 */
+	public IncidenceIterable(Vertex v) {
+		this(v, null, EdgeDirection.INOUT);
+	}
+
+	/**
+	 * Creates an Iterable for all incident edges of Vertex <code>v</code> with
+	 * the specified <code>orientation</code>.
+	 * 
+	 * @param v
+	 *            a Vertex
+	 * @param orientation
+	 *            desired orientation
+	 */
+	public IncidenceIterable(Vertex v, EdgeDirection orientation) {
+		this(v, null, orientation);
+	}
+
+	/**
+	 * Creates an Iterable for all incident edges of Vertex <code>v</code> with
+	 * the specified edgeclass <code>ec</code>.
+	 * 
+	 * @param v
+	 *            a Vertex
+	 * @param ec
+	 *            restricts edges to that class or subclasses
+	 */
+	public IncidenceIterable(Vertex v, Class<? extends Edge> ec) {
+		this(v, ec, EdgeDirection.INOUT);
+	}
+
+	/**
+	 * Creates an Iterable for all incident edges of Vertex <code>v</code> with
+	 * the specified edgeclass <code>ec</code> and <code>orientation</code>.
+	 * 
+	 * @param v
+	 *            a Vertex
+	 * @param ec
+	 *            restricts edges to that class or subclasses
+	 * @param orientation
+	 *            desired orientation
+	 */
+	public IncidenceIterable(Vertex v, Class<? extends Edge> ec,
+			EdgeDirection orientation) {
+		assert v != null && v.isValid();
+		iter = new IncidenceIterator(v, ec, orientation);
+	}
 
 	class IncidenceIterator implements Iterator<E> {
-
-		private boolean first = true;
-
-		private boolean gotNext = true;
-
 		protected E current = null;
 
 		protected Vertex vertex = null;
+
+		protected Class<? extends Edge> ec;
+
+		protected EdgeDirection dir;
 
 		/**
 		 * the version of the incidence list of the vertex at the beginning of
@@ -61,135 +108,50 @@ public class IncidenceIterable<E extends Edge> implements Iterable<E> {
 		 */
 		protected long incidenceListVersion;
 
-		IncidenceIterator(Vertex v) {
-			vertex = v;
-			incidenceListVersion = v.getIncidenceListVersion();
+		@SuppressWarnings("unchecked")
+		public IncidenceIterator(Vertex vertex, Class<? extends Edge> ec,
+				EdgeDirection dir) {
+			this.vertex = vertex;
+			this.ec = ec;
+			this.dir = dir;
+			incidenceListVersion = vertex.getIncidenceListVersion();
+			current = (E) ((ec == null) ? vertex.getFirstEdge(dir) : vertex
+					.getFirstEdgeOfClass(ec, dir));
 		}
 
+		@SuppressWarnings("unchecked")
 		public E next() {
-			if (vertex.isIncidenceListModified(incidenceListVersion))
+			if (vertex.isIncidenceListModified(incidenceListVersion)) {
 				throw new ConcurrentModificationException(
 						"The incidence list of the vertex has been modified - the iterator is not longer valid");
-			gotNext = true;
-			return current;
+			}
+			if (current == null) {
+				throw new NoSuchElementException();
+			}
+			E result = current;
+			current = (E) ((ec == null) ? current.getNextEdge(dir) : current
+					.getNextEdgeOfClass(ec, dir));
+			return result;
 		}
 
 		public boolean hasNext() {
-			if (gotNext) {
-				if (first) {
-					current = getFirst();
-					first = false;
-				} else {
-					current = getNext();
-				}
-				gotNext = false;
-				return current != null;
-			} else
-				return true;
-		}
-
-		@SuppressWarnings("unchecked")
-		protected E getNext() {
-			return (E) current.getNextEdge();
-		}
-
-		@SuppressWarnings("unchecked")
-		protected E getFirst() {
-			return (E) vertex.getFirstEdge();
+			if (vertex.isIncidenceListModified(incidenceListVersion)) {
+				throw new ConcurrentModificationException(
+						"The incidence list of the vertex has been modified - the iterator is not longer valid");
+			}
+			return current != null;
 		}
 
 		public void remove() {
-			throw new GraphException("Cannot remove Edges using Iterator");
-		}
-
-	}
-
-	class IncidenceIteratorEdgeDirection extends IncidenceIterator {
-
-		EdgeDirection direction;
-
-		public IncidenceIteratorEdgeDirection(Vertex v, EdgeDirection dir) {
-			super(v);
-			direction = dir;
-		}
-
-		@SuppressWarnings("unchecked")
-		protected E getNext() {
-			return (E) current.getNextEdge(direction);
-		}
-
-		@SuppressWarnings("unchecked")
-		protected E getFirst() {
-			return (E) vertex.getFirstEdge(direction);
-		}
-
-	}
-
-	class IncidenceIteratorClassExplicit extends IncidenceIterator {
-
-		Class<? extends Edge> ec;
-
-		public IncidenceIteratorClassExplicit(Vertex v, Class<? extends Edge> c) {
-			super(v);
-			ec = c;
-		}
-
-		@SuppressWarnings("unchecked")
-		protected E getNext() {
-			return (E) current.getNextEdgeOfClass(ec);
-		}
-
-		@SuppressWarnings("unchecked")
-		protected E getFirst() {
-			return (E) vertex.getFirstEdgeOfClass(ec);
-		}
-
-	}
-
-	class IncidenceIteratorClassDirection extends
-			IncidenceIteratorClassExplicit {
-
-		EdgeDirection direction;
-
-		public IncidenceIteratorClassDirection(Vertex v,
-				Class<? extends Edge> ec, EdgeDirection dir) {
-			super(v, ec);
-			direction = dir;
-		}
-
-		@SuppressWarnings("unchecked")
-		protected E getNext() {
-			return (E) current.getNextEdgeOfClass(ec, direction);
-		}
-
-		@SuppressWarnings("unchecked")
-		protected E getFirst() {
-			return (E) vertex.getFirstEdgeOfClass(ec, direction);
+			throw new UnsupportedOperationException(
+					"Cannot remove Edges using Iterator");
 		}
 
 	}
 
 	private IncidenceIterator iter = null;
 
-	public IncidenceIterable(Vertex v) {
-		iter = new IncidenceIterator(v);
-	}
-
-	public IncidenceIterable(Vertex v, EdgeDirection orientation) {
-		iter = new IncidenceIteratorEdgeDirection(v, orientation);
-	}
-
-	public IncidenceIterable(Vertex v, Class<? extends Edge> ec) {
-		iter = new IncidenceIteratorClassExplicit(v, ec);
-	}
-
-	public IncidenceIterable(Vertex v, Class<? extends Edge> ec,
-			EdgeDirection orientation) {
-		iter = new IncidenceIteratorClassDirection(v, ec, orientation);
-	}
-
 	public Iterator<E> iterator() {
 		return iter;
 	}
-
 }

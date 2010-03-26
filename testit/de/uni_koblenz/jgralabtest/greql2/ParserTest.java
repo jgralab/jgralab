@@ -64,6 +64,7 @@ import de.uni_koblenz.jgralab.greql2.schema.IteratedPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.ListConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.ListRangeConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.PathExistence;
+import de.uni_koblenz.jgralab.greql2.schema.QuantificationType;
 import de.uni_koblenz.jgralab.greql2.schema.QuantifiedExpression;
 import de.uni_koblenz.jgralab.greql2.schema.Quantifier;
 import de.uni_koblenz.jgralab.greql2.schema.RealLiteral;
@@ -132,10 +133,37 @@ public class ParserTest {
 	}
 
 	@Test
+	public void testWhereWithSameScope() throws ParsingException {
+		Greql2 graph = parseQuery("from a,b:V with connected report a,b end where connected := a-->b");
+		Variable a = null;
+		Variable b = null;
+		Variable connected = null;
+		for (Variable v : graph.getVariableVertices()) {
+			if (v.get_name().equals("a")) {
+				assertNull(a);
+				a = v;
+			} else if (v.get_name().equals("b")) {
+				assertNull(b);
+				b = v;
+			} else if (v.get_name().equals("connected")) {
+				assertNull(connected);
+				connected = v;
+			} else {
+				fail("There is a variable named '"
+						+ v.get_name()
+						+ "' in the graph which is not present in the query text");
+			}
+		}
+		assertNotNull(a);
+		assertNotNull(b);
+		assertNotNull(connected);
+	}
+
+	@Test
 	public void testExistsOne() throws Exception {
 		Greql2 graph = parseQuery("exists! x:list(1..5) @ x = 5");
 		Quantifier quantifier = graph.getFirstQuantifier();
-		assertEquals("exists!", quantifier.get_name());
+		assertEquals(QuantificationType.EXISTSONE, quantifier.get_type());
 		quantifier = quantifier.getNextQuantifier();
 		assertNull(quantifier);
 	}
@@ -470,7 +498,7 @@ public class ParserTest {
 		Quantifier quantifier = (Quantifier) expr.getFirstIsQuantifierOf()
 				.getAlpha();
 		assertNotNull(quantifier);
-		assertEquals("forall", quantifier.get_name());
+		assertEquals(QuantificationType.FORALL, quantifier.get_type());
 	}
 
 	@Test
@@ -484,7 +512,7 @@ public class ParserTest {
 		Quantifier quantifier = (Quantifier) expr.getFirstIsQuantifierOf()
 				.getAlpha();
 		assertNotNull(quantifier);
-		assertEquals("exists", quantifier.get_name());
+		assertEquals(QuantificationType.EXISTS, quantifier.get_type());
 	}
 
 	@Test
@@ -498,7 +526,7 @@ public class ParserTest {
 		Quantifier quantifier = (Quantifier) expr.getFirstIsQuantifierOf()
 				.getAlpha();
 		assertNotNull(quantifier);
-		assertEquals("exists!", quantifier.get_name());
+		assertEquals(QuantificationType.EXISTSONE, quantifier.get_type());
 	}
 
 	// @Test
@@ -1263,6 +1291,18 @@ public class ParserTest {
 		gc.createVertexClass("map.SampleVertex");
 		s.commit(CodeGeneratorConfiguration.WITHOUT_TRANSACTIONS);
 		String query = "import map.SampleVertex;  true ";
+		parseQuery(query);
+	}
+
+	@Test
+	public void testWhereExpressionComplicated() {
+		String query = "from c: V{JavaType} " + "with c.kind = \"CLASS\""
+				+ "and count(deps)>0 "
+				+ "report c.qualifiedName as \"Class\", "
+				+ "deps as \"depends on\" " + "end " + "where "
+				+ "deps := from d: V{JavaType} "
+				+ "with c <--{Defines} -->{Imports} d "
+				+ "report d.qualifiedName as \"Class\" " + "end";
 		parseQuery(query);
 	}
 }

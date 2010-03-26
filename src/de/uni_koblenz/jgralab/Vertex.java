@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -25,9 +25,11 @@
 package de.uni_koblenz.jgralab;
 
 import java.util.Comparator;
+import java.util.List;
 
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
+import de.uni_koblenz.jgralab.schema.impl.DirectedM1EdgeClass;
 
 /**
  * represents a vertex, m1 classes inherit from this class
@@ -412,5 +414,17 @@ public interface Vertex extends GraphElement {
 	 *            the comparator that defines the order of the incidence list.
 	 */
 	public void sortIncidences(Comparator<Edge> comp);
+	
+	
+	public DirectedM1EdgeClass getEdgeForRolename(String rolename);
+	
+	
+	public List<? extends Vertex> adjacences(String role); 
+	
+	public Edge addAdjacence(String role, Vertex other);
+	
+	public List<Vertex> removeAdjacences(String role);
+	
+	public void removeAdjacence(String role, Vertex other);
 
 }

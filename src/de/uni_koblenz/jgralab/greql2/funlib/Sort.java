@@ -4,8 +4,6 @@
 package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
@@ -13,7 +11,7 @@ import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueMap;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
@@ -39,10 +37,11 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  */
 public class Sort extends Greql2Function {
 	{
-		JValueType[][] x = { { JValueType.COLLECTION, JValueType.COLLECTION } };
+		JValueType[][] x = { { JValueType.COLLECTION, JValueType.COLLECTION },
+				{ JValueType.MAP, JValueType.MAP } };
 		signatures = x;
 
-		description = "Sorts the given collection according to natural ordering.";
+		description = "Sorts the given collection or map according to natural ordering.";
 
 		Category[] c = { Category.COLLECTIONS_AND_MAPS };
 		categories = c;
@@ -54,18 +53,12 @@ public class Sort extends Greql2Function {
 		switch (checkArguments(arguments)) {
 		case 0:
 			JValueCollection col = arguments[0].toCollection();
-			List<JValue> l = new ArrayList<JValue>(col.size());
-			for (JValue jv : col) {
-				l.add(jv);
-			}
-
-			Collections.sort(l);
-
-			JValueList jl = new JValueList(col.size());
-			for (JValue jv : l) {
-				jl.add(jv);
-			}
-			return jl;
+			col.sort();
+			return col;
+		case 1:
+			JValueMap map = arguments[0].toJValueMap();
+			map.sort();
+			return map;
 		default:
 			throw new WrongFunctionParameterException(this, arguments);
 		}

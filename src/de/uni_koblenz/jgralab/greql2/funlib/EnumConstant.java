@@ -32,6 +32,7 @@ import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
 import de.uni_koblenz.jgralab.schema.Schema;
@@ -100,7 +101,7 @@ public class EnumConstant extends Greql2Function {
 					+ enumDomainName + "'.");
 		}
 
-		JValue result = null;
+		JValueImpl result = null;
 
 		String enumClassName = enumDomain.getJavaClassName(schema
 				.getPackagePrefix());
@@ -111,7 +112,7 @@ public class EnumConstant extends Greql2Function {
 					new Class<?>[] { String.class });
 			Object constant = fromString.invoke(null,
 					new Object[] { enumConstantName });
-			result = new JValue(constant);
+			result = new JValueImpl(constant);
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

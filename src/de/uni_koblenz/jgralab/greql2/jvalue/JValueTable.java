@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -27,7 +27,6 @@ package de.uni_koblenz.jgralab.greql2.jvalue;
 import java.util.Iterator;
 import java.util.logging.Logger;
 
-import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 
 /**
  * A JValueTable is the Java "replacement" for CvTable (but in fact it has not
@@ -429,8 +428,13 @@ public class JValueTable extends JValueCollection {
 	}
 
 	@Override
-	public Object toObject() throws JValueInvalidTypeException {
+	public Object toObject() {
 		return data.toObject();
+	}
+
+	@Override
+	public void sort() {
+		data.sort();
 	}
 
 }

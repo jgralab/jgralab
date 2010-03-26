@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -32,6 +32,7 @@ import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
@@ -110,19 +111,19 @@ public class HasType extends Greql2Function {
 		AttributedElement elem = arguments[0].toAttributedElement();
 
 		if (typeCollection != null) {
-			return new JValue(typeCollection.acceptsType(elem
+			return new JValueImpl(typeCollection.acceptsType(elem
 					.getAttributedElementClass()), elem);
 		}
 
 		if (aeClass != null) {
-			return new JValue((elem.getAttributedElementClass() == aeClass)
+			return new JValueImpl((elem.getAttributedElementClass() == aeClass)
 					|| elem.getAttributedElementClass().isSubClassOf(aeClass),
 					elem);
 		}
 
 		AttributedElementClass type = elem.getSchema()
 				.getAttributedElementClass(typeName);
-		return new JValue((elem.getAttributedElementClass() == type)
+		return new JValueImpl((elem.getAttributedElementClass() == type)
 				|| elem.getAttributedElementClass().isSubClassOf(type), elem);
 	}
 

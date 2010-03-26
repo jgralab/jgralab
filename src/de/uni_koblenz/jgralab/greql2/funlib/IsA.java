@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -31,6 +31,7 @@ import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Schema;
@@ -44,8 +45,7 @@ import de.uni_koblenz.jgralab.schema.Schema;
  * <dd><code>BOOL isA(typeA:ATTRELEMCLASS, supertype:STRING)</code></dd>
  * <dd><code>BOOL isA(type:STRING, supertypeA:ATTRELEMCLASS)</code></dd>
  * <dd>
- * <code>BOOL isA(typeA:ATTRELEMCLASS, supertypeA:ATTRELEMCLASS)</code>
- * </dd>
+ * <code>BOOL isA(typeA:ATTRELEMCLASS, supertypeA:ATTRELEMCLASS)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>
@@ -75,9 +75,9 @@ public class IsA extends Greql2Function {
 	{
 		JValueType[][] x = {
 				{ JValueType.STRING, JValueType.STRING, JValueType.BOOL },
-				{ JValueType.STRING, JValueType.ATTRELEMCLASS,
-						JValueType.BOOL },
-				{ JValueType.ATTRELEMCLASS, JValueType.STRING,
+				{ JValueType.STRING, JValueType.ATTRELEMCLASS, JValueType.BOOL },
+				{ JValueType.ATTRELEMCLASS, JValueType.STRING, JValueType.BOOL },
+				{ JValueType.ATTRELEMCLASS, JValueType.ATTRELEMCLASS,
 						JValueType.BOOL } };
 		signatures = x;
 
@@ -105,21 +105,25 @@ public class IsA extends Greql2Function {
 			break;
 		case 2:
 			aec1 = arguments[0].toAttributedElementClass();
+			s2 = arguments[1].toString();
+			break;
+		case 3:
+			aec1 = arguments[0].toAttributedElementClass();
 			aec2 = arguments[1].toAttributedElementClass();
 			break;
 		default:
 			throw new WrongFunctionParameterException(this, arguments);
 		}
-		if ((s1 != null) || (s2 != null)) {
-			Schema schema = graph.getGraphClass().getSchema();
-			if (s1 != null) {
-				aec1 = schema.getAttributedElementClass(s1);
-			}
-			if (s2 != null) {
-				aec2 = schema.getAttributedElementClass(s2);
-			}
+
+		Schema schema = graph.getGraphClass().getSchema();
+		if (aec1 == null) {
+			aec1 = schema.getAttributedElementClass(s1);
 		}
-		return new JValue(aec1.isSubClassOf(aec2));
+		if (aec2 == null) {
+			aec2 = schema.getAttributedElementClass(s2);
+		}
+
+		return new JValueImpl(aec1.isSubClassOf(aec2));
 	}
 
 	@Override

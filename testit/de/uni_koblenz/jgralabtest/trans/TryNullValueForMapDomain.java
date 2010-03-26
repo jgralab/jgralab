@@ -1,11 +1,8 @@
 package de.uni_koblenz.jgralabtest.trans;
 
-import java.util.HashMap;
 import java.util.Map;
 
-import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
-import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralabtest.schemas.record.Node;
 import de.uni_koblenz.jgralabtest.schemas.record.RecordTestGraph;

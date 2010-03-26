@@ -102,7 +102,6 @@ import de.uni_koblenz.ist.utilities.xml.IndentingXMLStreamWriter;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.WorkInProgress;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.grumlschema.GrumlSchema;
 import de.uni_koblenz.jgralab.grumlschema.SchemaGraph;
@@ -193,7 +192,6 @@ import de.uni_koblenz.jgralab.utilities.tg2schemagraph.Tg2SchemaGraph;
  * @author mmce@uni-koblenz.de
  * @author strauss@uni-koblenz.de
  */
-@WorkInProgress(description = "Converter from SchemaGraph to XML Schema", responsibleDevelopers = "horn, mmce, riediger", expectedFinishingDate = "2009/06/30")
 public class SchemaGraph2XSD {
 
 	/**
@@ -505,11 +503,8 @@ public class SchemaGraph2XSD {
 
 		schemaGraph = sg;
 
-		// Creates a SchemaGraph2Tg to provide tg-string generation for various
-		// objects of a Schema.
-		// TODO find a better solution
 		sg2tg = new SchemaGraph2Tg(sg, null);
-		sg2tg.setIsFormatted(false);
+		sg2tg.setUseShortNames(false);
 
 		domainMap = new HashMap<Domain, String>();
 		vertices = new HashMap<String, VertexClass>();
@@ -808,7 +803,7 @@ public class SchemaGraph2XSD {
 		collectAttributes(element, attributes);
 
 		// Writes the a tg-comment of the GraphElementClass.
-		xml.writeComment(createGraphElementClassComment(element, attributes));
+		xml.writeComment(getGraphElementClassDescription(element, attributes));
 
 		// Writes the complex type first.
 		writeStartXSDComplexType(type, false, true);
@@ -861,7 +856,7 @@ public class SchemaGraph2XSD {
 		} else if (domain instanceof RecordDomain) {
 			writeXSDRestrictedSimpleType(typeName, XSD_NS_PREFIX_PLUS_COLON
 					+ XSD_DOMAIN_STRING, RECORD_DOMAIN_PATTERNS,
-					getRecordDomainComment((RecordDomain) domain));
+					getRecordDomainDescription((RecordDomain) domain));
 		} else {
 			// Handles unforeseen left out Domain types.
 			throw new RuntimeException("The type '" + domain.getClass()
@@ -1224,8 +1219,8 @@ public class SchemaGraph2XSD {
 	}
 
 	/**
-	 * Creates an appropriate comment for a given GraphElementClass and with a
-	 * map of Attributes and AttributedElementClasses.
+	 * Creates an appropriate comment text for a given GraphElementClass and
+	 * with a map of Attributes and AttributedElementClasses.
 	 * 
 	 * @param geClass
 	 *            GraphElementClass, for which a comment is created.
@@ -1234,11 +1229,18 @@ public class SchemaGraph2XSD {
 	 *            AttributedElementClass.
 	 * @return A comment String for the given GraphElementClass.
 	 */
-	private String createGraphElementClassComment(GraphElementClass geClass,
+	private String getGraphElementClassDescription(GraphElementClass geClass,
 			HashMap<Attribute, AttributedElementClass> attributes) {
 
 		// A StringWriter is created to hold the comment string.
-		StringWriter stringWriter = new StringWriter();
+		StringWriter stringWriter = new StringWriter() {
+			@Override
+			public void write(String str) {
+				super.write(str.replace("-->", "\u27f6").replace("<--",
+						"\u27f5"));
+			}
+
+		};
 		// The StringWriter is set as OutputStream for the SchemaGraph2Tg
 		// object, which is used for first step.
 		sg2tg.setStream(stringWriter);
@@ -1248,9 +1250,9 @@ public class SchemaGraph2XSD {
 		// tg-format to the StringWriter. 'false' means, that no Constraints are
 		// written.
 		if (geClass instanceof VertexClass) {
-			sg2tg.printVertexClassDefinition((VertexClass) geClass, false);
+			sg2tg.printVertexClass((VertexClass) geClass);
 		} else if (geClass instanceof EdgeClass) {
-			sg2tg.printEdgeClassDefinition((EdgeClass) geClass, false);
+			sg2tg.printEdgeClass((EdgeClass) geClass);
 		}
 
 		// A StringBuffer is used in the next steps. It's providing more
@@ -1306,7 +1308,7 @@ public class SchemaGraph2XSD {
 	 *            RecordDomain, for which a comment string should be created.
 	 * @return A comment String of the given RecordDomain.
 	 */
-	private String getRecordDomainComment(RecordDomain domain) {
+	private String getRecordDomainDescription(RecordDomain domain) {
 
 		StringBuilder sb = new StringBuilder();
 		// Begins the comment with ' alphabetically ordered:\n\n'.

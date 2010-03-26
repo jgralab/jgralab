@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -86,7 +86,7 @@ public interface AttributedElementClass extends NamedElement,
 	 * <code>domain</code> to this element.
 	 * 
 	 * <p>
-	 * <b>Pattern:</b> <code>attrElement.addAttribute(name, domain);</code>
+	 * <b>Pattern:</b> <code>attrElement.addAttribute(name, domain, "7");</code>
 	 * </p>
 	 * 
 	 * <p>
@@ -109,11 +109,16 @@ public interface AttributedElementClass extends NamedElement,
 	 * @param domain
 	 *            the <code>domain</code> of the new <code>Attribute</code>
 	 * 
+	 * @param defaultValueAsString
+	 *            a String representing the default value of the nerw Attribute
+	 *            in TG value syntax, or null if no default value is to be
+	 *            specified
 	 * @throws DuplicateAttributeException
 	 *             if this element has a direct or inherited attribute with the
 	 *             same <code>name</code>
 	 */
-	public void addAttribute(String name, Domain domain);
+	public void addAttribute(String name, Domain domain,
+			String defaultValueAsString);
 
 	/**
 	 * Adds a {@link Constraint} to this attributed element. Constraints are

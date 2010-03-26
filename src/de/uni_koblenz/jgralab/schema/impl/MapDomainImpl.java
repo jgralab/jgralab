@@ -14,6 +14,7 @@ import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.MapDomain;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.Schema;
+import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 /**
  * @author Tassilo Horn <horn@uni-koblenz.de>
@@ -37,18 +38,19 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 				+ aValueDomain.getTGTypeName(schema.getDefaultPackage()) + ">",
 				schema.getDefaultPackage());
 
-		assert parentPackage.getSchema().getDomain(
-				aKeyDomain.getQualifiedName()) != null : aKeyDomain
-				.getQualifiedName()
-				+ " must be a domain of the schema "
-				+ parentPackage.getSchema().getQualifiedName();
-
-		assert parentPackage.getSchema().getDomain(
-				aValueDomain.getQualifiedName()) != null : aValueDomain
-				.getQualifiedName()
-				+ " must be a domain of the schema "
-				+ parentPackage.getSchema().getQualifiedName();
-
+		if (parentPackage.getSchema().getDomain(aKeyDomain.getQualifiedName()) == null) {
+			throw new SchemaException("Key domain '"
+					+ aKeyDomain.getQualifiedName()
+					+ "' not existent in schema "
+					+ parentPackage.getSchema().getQualifiedName());
+		}
+		if (parentPackage.getSchema()
+				.getDomain(aValueDomain.getQualifiedName()) == null) {
+			throw new SchemaException("Value domain '"
+					+ aValueDomain.getQualifiedName()
+					+ "' not existent in schema "
+					+ parentPackage.getSchema().getQualifiedName());
+		}
 		keyDomain = aKeyDomain;
 		valueDomain = aValueDomain;
 	}
@@ -159,10 +161,19 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 		code.addNoIndent(new CodeSnippet("if (#io#.isNextToken(\"{\")) {"));
 		code
 				.add(new CodeSnippet(
-						"#name# = #theGraph#.createMap(#keydom#.class, #valuedom#.class);"));
+						"#name# = #theGraph#.createMap();"));
 		code.add(new CodeSnippet("#io#.match(\"{\");",
-				"while (!#io#.isNextToken(\"}\")) {", "\t#keytype# #name#Key;",
-				"\t#valuetype# #name#Value;"));
+				"while (!#io#.isNextToken(\"}\")) {"));
+		
+		if(getKeyDomain().isComposite())
+			code.add(new CodeSnippet("\t#keytype# #name#Key = null;"));
+		else
+			code.add(new CodeSnippet("\t#keytype# #name#Key;"));
+		if(getValueDomain().isComposite())
+			code.add(new CodeSnippet("\t\t#valuetype# #name#Value = null;"));
+		else
+			code.add(new CodeSnippet("\t\t#valuetype# #name#Value;"));
+		
 		code.add(getKeyDomain().getReadMethod(schemaRootPackagePrefix,
 				variableName + "Key", graphIoVariableName), 1);
 		code.add(new CodeSnippet("\t#io#.match(\"-\");"));
@@ -170,9 +181,8 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 				variableName + "Value", graphIoVariableName), 1);
 		code.add(new CodeSnippet("\t#name#.put(#name#Key, #name#Value);", "}",
 				"#io#.match(\"}\");"));
-		code
-				.addNoIndent(new CodeSnippet(
-						"} else if (#io#.isNextToken(GraphIO.NULL_LITERAL) || #io#.isNextToken(GraphIO.OLD_NULL_LITERAL)) {"));
+		code.addNoIndent(new CodeSnippet(
+				"} else if (#io#.isNextToken(GraphIO.NULL_LITERAL)) {"));
 		code.add(new CodeSnippet("#io#.match();", "#name# = null;"));
 		code.addNoIndent(new CodeSnippet("}"));
 	}
@@ -244,7 +254,7 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 	@Override
 	public String getTransactionJavaAttributeImplementationTypeName(
 			String schemaRootPackagePrefix) {
-		return "de.uni_koblenz.jgralab.impl.trans.JGraLabMap<"
+		return "de.uni_koblenz.jgralab.impl.trans.JGraLabMapImpl<"
 				+ keyDomain
 						.getTransactionJavaClassName(schemaRootPackagePrefix)
 				+ ", "
@@ -255,7 +265,9 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 
 	@Override
 	public String getTransactionJavaClassName(String schemaRootPackagePrefix) {
-		return "de.uni_koblenz.jgralab.impl.trans.JGraLabMap";
+		//return "de.uni_koblenz.jgralab.impl.trans.JGraLabListImpl";
+		//return getTransactionJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
+		return getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
 	}
 
 	@Override

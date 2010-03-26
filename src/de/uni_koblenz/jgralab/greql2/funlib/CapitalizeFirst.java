@@ -10,6 +10,7 @@ import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
@@ -57,9 +58,9 @@ public class CapitalizeFirst extends Greql2Function {
 			return arguments[0];
 		}
 		if (str.length() == 1) {
-			return new JValue(str.toUpperCase());
+			return new JValueImpl(str.toUpperCase());
 		}
-		return new JValue(Character.toUpperCase(str.charAt(0))
+		return new JValueImpl(Character.toUpperCase(str.charAt(0))
 				+ str.substring(1));
 	}
 

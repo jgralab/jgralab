@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -24,25 +24,25 @@
 
 package de.uni_koblenz.jgralab.schema.impl;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
-import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
+import de.uni_koblenz.jgralab.schema.IncidenceClass;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
-import de.uni_koblenz.jgralab.schema.exception.InheritanceException;
+import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 public final class VertexClassImpl extends GraphElementClassImpl implements
 		VertexClass {
 
-	private final Set<DirectedEdgeClass> associatedEdgeClasses = new HashSet<DirectedEdgeClass>();
+	private Set<IncidenceClass> inIncidenceClasses = new HashSet<IncidenceClass>();
+
+	private Set<IncidenceClass> outIncidenceClasses = new HashSet<IncidenceClass>();
 
 	static VertexClass createDefaultVertexClass(Schema schema) {
 		assert schema.getDefaultGraphClass() != null : "DefaultGraphClass has not yet been created!";
@@ -76,282 +76,189 @@ public final class VertexClassImpl extends GraphElementClassImpl implements
 		return "vc_" + getQualifiedName().replace('.', '_');
 	}
 
+	public void addInIncidenceClass(IncidenceClass incClass) {
+		if (incClass.getVertexClass() != this) {
+			throwSchemaException();
+		}
+		checkDuplicateRolenames(incClass);
+		inIncidenceClasses.add(incClass);
+	}
+
+	public void addOutIncidenceClass(IncidenceClass incClass) {
+		if (incClass.getVertexClass() != this) {
+			throwSchemaException();
+		}
+		checkDuplicateRolenames(incClass);
+		outIncidenceClasses.add(incClass);
+	}
+
+	private void checkDuplicateRolenames(IncidenceClass incClass) {
+
+		String rolename = incClass.getOpposite().getRolename();
+
+		if (rolename.isEmpty()) {
+			return;
+		}
+
+		checkDuplicatedRolenameForACyclicIncidence(incClass);
+
+		checkDuplicatedRolenameForAllIncidences(incClass,
+				getAllInIncidenceClasses());
+		checkDuplicatedRolenameForAllIncidences(incClass,
+				getAllOutIncidenceClasses());
+	}
+
+	private void checkDuplicatedRolenameForACyclicIncidence(
+			IncidenceClass incClass) {
+
+		String rolename = incClass.getOpposite().getRolename();
+		VertexClass oppositeVertexClass = incClass.getOpposite()
+				.getVertexClass();
+
+		boolean equalRolenames = incClass.getRolename().equals(rolename);
+		boolean identicalClasses = this == oppositeVertexClass;
+
+		if (equalRolenames && identicalClasses) {
+			throwSchemaException(incClass);
+		}
+	}
+
+	private void checkDuplicatedRolenameForAllIncidences(
+			IncidenceClass incClass, Set<IncidenceClass> incidenceSet) {
+
+		String rolename = incClass.getOpposite().getRolename();
+
+		if (rolename.isEmpty()) {
+			return;
+		}
+
+		for (IncidenceClass incidence : incidenceSet) {
+			if (incidence == incClass) {
+				continue;
+			}
+			if (incidence.getOpposite().getRolename().equals(rolename)) {
+				throwSchemaExceptionRolenameUsedTwice(incidence);
+			}
+		}
+	}
+
+	private void throwSchemaExceptionRolenameUsedTwice(IncidenceClass incidence) {
+		throw new SchemaException("The rolename "
+				+ incidence.getOpposite().getRolename()
+				+ " is used twice at class " + getQualifiedName());
+	}
+
+	private void throwSchemaException(IncidenceClass incClass) {
+		throw new SchemaException("The rolename " + incClass.getRolename()
+				+ " may be not used at both ends of the reflexive edge class "
+				+ incClass.getEdgeClass().getQualifiedName());
+	}
+
+	private void throwSchemaException() {
+		throw new SchemaException(
+				"IncidenceClasses may be added only to vertices they are connected to");
+	}
+
 	@Override
 	public void addSuperClass(VertexClass superClass) {
+		checkDuplicateRolenames(superClass);
 		super.addSuperClass(superClass);
 	}
 
-	@Override
-	public void addEdgeClass(EdgeClass anEdgeClass) {
-		if (anEdgeClass.getTo() == this) {
-			DirectedEdgeClass dec = anEdgeClass.getInEdgeClass();
-			associatedEdgeClasses.add(dec);
+	private void checkDuplicateRolenames(VertexClass superClass) {
+
+		if (superClass == null) {
+			return;
 		}
-		if (anEdgeClass.getFrom() == this) {
-			DirectedEdgeClass dec = anEdgeClass.getOutEdgeClass();
-			associatedEdgeClasses.add(dec);
+		checkDuplicatedRolenamesAgainstAllIncidences(superClass
+				.getAllInIncidenceClasses());
+		checkDuplicatedRolenamesAgainstAllIncidences(superClass
+				.getAllOutIncidenceClasses());
+	}
+
+	public void checkDuplicatedRolenamesAgainstAllIncidences(
+			Set<IncidenceClass> incidences) {
+		for (IncidenceClass incidence : incidences) {
+			checkDuplicateRolenames(incidence);
 		}
 	}
 
-	@Override
-	public Set<EdgeClass> getOwnEdgeClasses() {
-		Set<EdgeClass> s = new HashSet<EdgeClass>();
-		for (DirectedEdgeClass dec : associatedEdgeClasses) {
-			s.add(dec.getEdgeClass());
-		}
-		return s;
-	}
+	/**
+	 * For a vertexclass A are all edgeclasses valid froms, which (1) run from A
+	 * to a B or (2) run from a superclass of A to a B and whose end b at B is
+	 * not redefined by A or a superclass of A
+	 * 
+	 */
 
-	@Override
-	public HashSet<EdgeClass> getEdgeClasses() {
-		HashSet<EdgeClass> allEdgeClasses = new HashSet<EdgeClass>();
-		allEdgeClasses.addAll(getOwnEdgeClasses());
-		for (AttributedElementClass sc : getAllSuperClasses()) {
-			allEdgeClasses.addAll(((VertexClass) sc).getOwnEdgeClasses());
+	public Set<IncidenceClass> getValidFromFarIncidenceClasses() {
+		Set<IncidenceClass> validFromInc = new HashSet<IncidenceClass>();
+		for (IncidenceClass ic : getAllOutIncidenceClasses()) {
+			IncidenceClass farInc = ic.getEdgeClass().getTo();
+			validFromInc.add(farInc);
 		}
-		HashSet<EdgeClass> edgeClassesWithSuperclasses = new HashSet<EdgeClass>();
-		edgeClassesWithSuperclasses.addAll(allEdgeClasses);
-		for (EdgeClass ec : allEdgeClasses) {
-			for (AttributedElementClass ac : ec.getAllSuperClasses()) {
-				edgeClassesWithSuperclasses.add((EdgeClass) ac);
-			}
-		}
-		return allEdgeClasses;
-	}
-
-	@Override
-	public Set<DirectedEdgeClass> getOwnDirectedEdgeClasses() {
-		return associatedEdgeClasses;
-	}
-
-	@Override
-	public Set<DirectedEdgeClass> getDirectedEdgeClasses() {
-		Set<DirectedEdgeClass> set = new HashSet<DirectedEdgeClass>();
-		for (AttributedElementClass aec : getDirectSuperClasses()) {
+		for (AttributedElementClass aec : getAllSuperClasses()) {
 			VertexClass vc = (VertexClass) aec;
-			set.addAll(vc.getDirectedEdgeClasses());
-		}
-		set.addAll(getOwnDirectedEdgeClasses());
-		return set;
-	}
-
-	protected Set<DirectedEdgeClass> getValidDirectedEdgeClasses() {
-		Set<DirectedEdgeClass> validClasses = new HashSet<DirectedEdgeClass>();
-		Map<String, RolenameEntry> rolenameMap = getRolenameMap();
-		for (DirectedEdgeClass ec : getDirectedEdgeClasses()) {
-			RolenameEntry entry = rolenameMap.get(ec.getThatRolename());
-			if ((entry == null) || (!entry.isRedefined())) {
-				validClasses.add(ec);
+			if (vc.isInternal()) {
+				continue;
+			}
+			for (IncidenceClass ic : vc.getAllOutIncidenceClasses()) {
+				IncidenceClass farInc = ic.getEdgeClass().getTo();
+				validFromInc.add(farInc);
 			}
 		}
-		return validClasses;
+		Set<IncidenceClass> temp = new HashSet<IncidenceClass>(validFromInc);
+		for (IncidenceClass ic : temp) {
+			validFromInc.removeAll(ic.getRedefinedIncidenceClasses());
+		}
+
+		return validFromInc;
+	}
+
+	public Set<IncidenceClass> getValidToFarIncidenceClasses() {
+		Set<IncidenceClass> validToInc = new HashSet<IncidenceClass>();
+		for (IncidenceClass ic : getAllInIncidenceClasses()) {
+			IncidenceClass farInc = ic.getEdgeClass().getFrom();
+			validToInc.add(farInc);
+		}
+		for (AttributedElementClass aec : getAllSuperClasses()) {
+			VertexClass vc = (VertexClass) aec;
+			if (vc.isInternal()) {
+				continue;
+			}
+			for (IncidenceClass ic : vc.getAllInIncidenceClasses()) {
+				IncidenceClass farInc = ic.getEdgeClass().getFrom();
+				validToInc.add(farInc);
+			}
+		}
+		Set<IncidenceClass> temp = new HashSet<IncidenceClass>(validToInc);
+		for (IncidenceClass ic : temp) {
+			validToInc.removeAll(ic.getRedefinedIncidenceClasses());
+		}
+
+		return validToInc;
 	}
 
 	@Override
 	public Set<EdgeClass> getValidFromEdgeClasses() {
 		Set<EdgeClass> validFrom = new HashSet<EdgeClass>();
-		for (DirectedEdgeClass dec : getValidDirectedEdgeClasses()) {
-			if ((!dec.getEdgeClass().isInternal())
-					&& (!dec.getEdgeClass().isAbstract())) {
-				if (dec.getDirection() == EdgeDirection.OUT) {
-					validFrom.add(dec.getEdgeClass());
-				}
+		for (IncidenceClass ic : getValidFromFarIncidenceClasses()) {
+			if (!ic.getEdgeClass().isInternal()) {
+				validFrom.add(ic.getEdgeClass());
 			}
 		}
+
 		return validFrom;
 	}
 
 	@Override
 	public Set<EdgeClass> getValidToEdgeClasses() {
 		Set<EdgeClass> validTo = new HashSet<EdgeClass>();
-		for (DirectedEdgeClass dec : getValidDirectedEdgeClasses()) {
-			if ((!dec.getEdgeClass().isInternal())
-					&& (!dec.getEdgeClass().isAbstract())) {
-				if (dec.getDirection() == EdgeDirection.IN) {
-					validTo.add(dec.getEdgeClass());
-				}
+		for (IncidenceClass ic : getValidToFarIncidenceClasses()) {
+			if (!ic.getEdgeClass().isInternal()) {
+				validTo.add(ic.getEdgeClass());
 			}
 		}
 		return validTo;
-	}
-
-	@Override
-	public Map<String, RolenameEntry> getRolenameMap() {
-		Map<String, RolenameEntry> allMap = new HashMap<String, RolenameEntry>();
-		Map<String, RolenameEntry> ownMap = new HashMap<String, RolenameEntry>();
-		Set<String> rolenamesThatMustBeRedefined = new HashSet<String>();
-		/*
-		 * holds the set of all rolenames that are redefined. every rolename may
-		 * be redefined only once
-		 */
-		Set<String> allRedefinedRolenames = new HashSet<String>();
-		/*
-		 * add rolenames of all superclasses - if a rolename occurs twice, test
-		 * if it originates from the same superclass, otherwise throw an
-		 * exception
-		 */
-		for (AttributedElementClass aec : getDirectSuperClasses()) {
-			VertexClass vc = (VertexClass) aec;
-			for (RolenameEntry entry : vc.getRolenameMap().values()) {
-				entry.setInherited(true);
-				if (allMap.containsKey(entry.getRoleNameAtFarEnd())) {
-					RolenameEntry foreign = allMap.get(entry
-							.getRoleNameAtFarEnd());
-					// the same class is specialized via two different direct
-					// superclasses
-					boolean sameEntry = true;
-					if (foreign.getVertexClassDefiningRolename() == entry
-							.getVertexClassDefiningRolename()) {
-						if (entry.getVertexEdgeEntryList().size() != foreign
-								.getVertexEdgeEntryList().size()) {
-							sameEntry = false;
-						} else {
-							for (VertexEdgeEntry ve : entry
-									.getVertexEdgeEntryList()) {
-								boolean foundThisEntry = false;
-								for (VertexEdgeEntry ve2 : foreign
-										.getVertexEdgeEntryList()) {
-									if ((ve.getDirection() == ve2
-											.getDirection())
-											&& (ve.getEdge() == ve2.getEdge())
-											&& (ve.getVertex() == ve2
-													.getVertex())) {
-										foundThisEntry = true;
-									}
-								}
-								if (!foundThisEntry) {
-									sameEntry = false;
-									break;
-								}
-							}
-						}
-					} else {
-						sameEntry = false;
-					}
-					if (sameEntry) {
-						continue;
-					}
-
-					// one of the classes is abstract
-					boolean foreignIsAbstract = false;
-					if (foreign.getEdgeClassToTraverse().getEdgeClass()
-							.isAbstract()) {
-						foreignIsAbstract = true;
-						for (VertexEdgeEntry ve : foreign
-								.getVertexEdgeEntryList()) {
-							foreignIsAbstract &= ve.getEdge().isAbstract();
-						}
-					}
-					boolean entryIsAbstract = false;
-					if (entry.getEdgeClassToTraverse().getEdgeClass()
-							.isAbstract()) {
-						entryIsAbstract = true;
-						for (VertexEdgeEntry ve : entry
-								.getVertexEdgeEntryList()) {
-							entryIsAbstract &= ve.getEdge().isAbstract();
-						}
-					}
-					if (foreignIsAbstract) {
-						if (!entryIsAbstract) {
-							// put the non-abstract class in the map
-							allMap.remove(foreign.getRoleNameAtFarEnd());
-							allMap.put(entry.getRoleNameAtFarEnd(), entry);
-						}
-						continue;
-					}
-
-					if (entryIsAbstract) {
-						continue;
-					}
-
-					rolenamesThatMustBeRedefined.add(entry
-							.getRoleNameAtFarEnd());
-				} else {
-					allMap.put(entry.getRoleNameAtFarEnd(), entry);
-				}
-			}
-		}
-
-		/*
-		 * for all connected edge classes - add the redefined far roles to the
-		 * set "allRedefinedRolenames" if a role is redefined twice, throw an
-		 * exception - add the new rolename to the list of own rolenames
-		 */
-		for (DirectedEdgeClass dec : getOwnDirectedEdgeClasses()) {
-			String roleName = dec.getThatRolename();
-			if (roleName == null || roleName.isEmpty() || roleName.equals("")) {
-				continue;
-			}
-			if (ownMap.containsKey(roleName)) {
-				throw new InheritanceException(
-						"A rolename may be used only once at the far association ends at one edge class. "
-								+ "The offending rolename is \""
-								+ roleName
-								+ "\".");
-			}
-			Set<String> redefinedRolenames = dec.getRedefinedThatRolenames();
-			for (String redefinedRole : redefinedRolenames) {
-				rolenamesThatMustBeRedefined.remove(redefinedRole);
-				if (redefinedRole.equals(roleName)) {
-					continue;
-				}
-				if (allRedefinedRolenames.contains((redefinedRole))) {
-					throw new InheritanceException("Rolename " + redefinedRole
-							+ " may be redefined only once at vertex "
-							+ getSimpleName() + ".");
-				}
-				allRedefinedRolenames.add(redefinedRole);
-			}
-			VertexClass vc = dec.getDirection() == EdgeDirection.IN ? dec
-					.getEdgeClass().getFrom() : dec.getEdgeClass().getTo();
-			RolenameEntry entry = new RolenameEntry(this, roleName, dec, vc);
-			ownMap.put(roleName, entry);
-		}
-
-		/*
-		 * check for all redefined rolenames if the redefinition is allowed
-		 */
-		for (String redefinedRole : allRedefinedRolenames) {
-			/* check if redefined name occurs at the same class as rolename */
-			if (ownMap.containsKey(redefinedRole)) {
-				throw new InheritanceException(
-						"Cannot redefine rolename "
-								+ redefinedRole
-								+ " for it is used as non-redefined rolename at the same vertex class");
-			}
-			/* check if rolename is not inherited from a superclass */
-			RolenameEntry entry = allMap.get(redefinedRole);
-			if (entry == null) {
-				throw new InheritanceException("Cannot redefine rolename "
-						+ redefinedRole
-						+ " that is not inherited from a superclass");
-			}
-			entry.setRedefined(true);
-		}
-
-		/*
-		 * put all new rolenames to the list of all rolenames
-		 */
-		for (RolenameEntry entry : ownMap.values()) {
-			if (allMap.containsKey(entry.getRoleNameAtFarEnd())) {
-				RolenameEntry inheritedEntry = allMap.get(entry
-						.getRoleNameAtFarEnd());
-				inheritedEntry.addVertexWithEdge(
-						entry.getVertexClassAtFarEnd(), entry
-								.getEdgeClassToTraverse());
-				inheritedEntry.setInherited(true);
-			} else {
-				allMap.put(entry.getRoleNameAtFarEnd(), entry);
-			}
-		}
-
-		for (String s : rolenamesThatMustBeRedefined) {
-			throw new InheritanceException("Multiple inherited rolename '" + s
-					+ "' must be redefined at vertexclass "
-					+ getQualifiedName());
-		}
-
-		return allMap;
 	}
 
 	@Override
@@ -359,4 +266,76 @@ public final class VertexClassImpl extends GraphElementClassImpl implements
 	public Class<? extends Vertex> getM1Class() {
 		return (Class<? extends Vertex>) super.getM1Class();
 	}
+
+	public Set<IncidenceClass> getOwnInIncidenceClasses() {
+		return inIncidenceClasses;
+	}
+
+	public Set<IncidenceClass> getOwnOutIncidenceClasses() {
+		return outIncidenceClasses;
+	}
+
+	@Override
+	public Set<IncidenceClass> getAllInIncidenceClasses() {
+		Set<IncidenceClass> incidenceClasses = new HashSet<IncidenceClass>();
+		incidenceClasses.addAll(inIncidenceClasses);
+		for (AttributedElementClass vc : getDirectSuperClasses()) {
+			incidenceClasses.addAll(((VertexClass) vc)
+					.getAllInIncidenceClasses());
+		}
+		return incidenceClasses;
+	}
+
+	@Override
+	public Set<IncidenceClass> getAllOutIncidenceClasses() {
+		Set<IncidenceClass> incidenceClasses = new HashSet<IncidenceClass>();
+		incidenceClasses.addAll(outIncidenceClasses);
+		for (AttributedElementClass vc : getDirectSuperClasses()) {
+			incidenceClasses.addAll(((VertexClass) vc)
+					.getAllOutIncidenceClasses());
+		}
+		return incidenceClasses;
+	}
+
+	public Set<IncidenceClass> getOwnAndInheritedFarIncidenceClasses() {
+		Set<IncidenceClass> result = new HashSet<IncidenceClass>();
+		for (IncidenceClass ic : getAllInIncidenceClasses()) {
+			result.add(ic.getEdgeClass().getFrom());
+			for (IncidenceClass sup : ic.getSubsettedIncidenceClasses()) {
+				result.add(sup.getEdgeClass().getFrom());
+			}
+		}
+		for (IncidenceClass ic : getAllOutIncidenceClasses()) {
+			result.add(ic.getEdgeClass().getTo());
+			for (IncidenceClass sup : ic.getSubsettedIncidenceClasses()) {
+				result.add(sup.getEdgeClass().getTo());
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public Set<EdgeClass> getConnectedEdgeClasses() {
+		Set<EdgeClass> result = new HashSet<EdgeClass>();
+		for (IncidenceClass ic : getAllInIncidenceClasses()) {
+			result.add(ic.getEdgeClass());
+		}
+		for (IncidenceClass ic : getAllOutIncidenceClasses()) {
+			result.add(ic.getEdgeClass());
+		}
+		return result;
+	}
+
+	@Override
+	public Set<EdgeClass> getOwnConnectedEdgeClasses() {
+		Set<EdgeClass> result = new HashSet<EdgeClass>();
+		for (IncidenceClass ic : getOwnInIncidenceClasses()) {
+			result.add(ic.getEdgeClass());
+		}
+		for (IncidenceClass ic : getOwnOutIncidenceClasses()) {
+			result.add(ic.getEdgeClass());
+		}
+		return result;
+	}
+
 }

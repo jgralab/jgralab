@@ -142,7 +142,7 @@
                        'words)
            1 font-lock-function-name-face)
     ;; Highlight strings
-    ,(list "\".*?\"" 0 font-lock-string-face t)
+    ,(list "[^\\]\\(\".*?[^\\]\"\\)" 1 font-lock-string-face t)
     ;; Highlight one-line comments
     ,(list "//.*$" 0 font-lock-comment-face t)))
 
@@ -401,10 +401,12 @@ objects."
   (cond
    ;; Complete vertex classes
    ((or (greql-vertex-set-expression-p)
+        (greql-vsubgraph-expression-p)
         (greql-start-or-goal-restriction-p nil))
     (greql-complete-vertexclass))
    ;; Complete edge classes
    ((or (greql-edge-set-expression-p)
+        (greql-esubgraph-expression-p)
         (greql-edge-restriction-p nil))
     (greql-complete-edgeclass))
    ;; Complete any classes
@@ -584,11 +586,20 @@ If a region is active, use only that as query."
 (defun greql-vertex-set-expression-p ()
   (looking-back "V{[[:word:]._,^ ]*"))
 
+(defun greql-vsubgraph-expression-p ()
+  (looking-back "vSubgraph{[[:word:]._,^ ]*"))
+
+(defun greql-esubgraph-expression-p ()
+  (looking-back "eSubgraph{[[:word:]._,^ ]*"))
+
 (defun greql-start-or-goal-restriction-p (after-at)
-  (looking-back (concat "[^-VE>]{[[:word:]._,^ ]*"
-                        (if after-at
-                            "@[[:word:]._,()^ ]*"
-                          ""))))
+  (and
+   (not (greql-vsubgraph-expression-p))
+   (not (greql-esubgraph-expression-p))
+   (looking-back (concat "[^-VE>]{[[:word:]._,^ ]*"
+                         (if after-at
+                             "@[[:word:]._,()^ ]*"
+                           "")))))
 
 (defun greql-edge-set-expression-p ()
   (looking-back "E{[[:word:]._,^ ]*"))
@@ -615,10 +626,12 @@ for some variable declared as
     (search-backward "." nil t 1)
     (let ((end (point))
           var)
-      (re-search-backward "[[:space:],]" nil t 1)
+      (re-search-backward "[[:space:],()@]" nil t 1)
       (setq var (buffer-substring-no-properties (+ 1 (point)) end))
       (re-search-backward
-       (concat var "[[:space:],]*[[:alnum:][:space:]]*:[[:space:]]*\\([VE]\\){\\(.*\\)}") nil t 1)
+       (concat "\\<"
+               var
+               "\\>[^:]*:[[:space:]]*\\([VE]\\){\\([^}]+\\)}") nil t 1)
       (when (and (match-beginning 1) (match-end 1))
         (let* ((mtype-match (buffer-substring-no-properties (match-beginning 1)
                                                             (match-end 1)))
@@ -629,7 +642,7 @@ for some variable declared as
                (types (replace-regexp-in-string
                        "[[:space:]]+" ""
                        (buffer-substring-no-properties (match-beginning 2)
-                                                                      (match-end 2)))))
+                                                       (match-end 2)))))
           (if (string= types "")
               (setq types nil)
             (setq types (split-string types ",")))

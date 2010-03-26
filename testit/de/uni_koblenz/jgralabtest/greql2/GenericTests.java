@@ -24,6 +24,7 @@
 
 package de.uni_koblenz.jgralabtest.greql2;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -31,16 +32,26 @@ import java.util.Map;
 import org.junit.Before;
 
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.greql2.SerializableGreql2;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
+import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.Optimizer;
 import de.uni_koblenz.jgralab.greql2.parser.ManualGreqlParser;
+import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalGraph;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalSchema;
 import de.uni_koblenz.jgralabtest.schemas.minimal.Node;
 
 public class GenericTests {
+
+	/**
+	 * Print the query syntaxgraphs (unoptimized, optimized with one specific
+	 * optimizer, and optimized by the default optimizer) to user.home.
+	 */
+	public static boolean DEBUG_SYNTAXGRAPHS = false;
 
 	protected Map<String, JValue> boundVariables;
 
@@ -67,8 +78,8 @@ public class GenericTests {
 	@Before
 	public void setUp() throws Exception {
 		boundVariables = new HashMap<String, JValue>();
-		boundVariables.put("nix", new JValue(133));
-		boundVariables.put("FOO", new JValue("Currywurst"));
+		boundVariables.put("nix", new JValueImpl(133));
+		boundVariables.put("FOO", new JValueImpl("Currywurst"));
 	}
 
 	protected Graph getTestGraph() throws Exception {
@@ -94,7 +105,9 @@ public class GenericTests {
 
 	protected Graph createTestGraph() throws Exception {
 		String query = "from i:c report i end where d:=\"nada\", c:=b, b:=a, a:=\"Mensaessen\"";
-		return ManualGreqlParser.parse(query);
+		Graph g = ManualGreqlParser.parse(query);
+		// Tg2Dot.printGraphAsDot(g, true, "/tmp/testgraph.dot");
+		return g;
 	}
 
 	protected Graph createCyclicTestGraph() throws Exception {
@@ -158,6 +171,26 @@ public class GenericTests {
 
 		// when optimizing turn on logging, too.
 		eval.startEvaluation(eval.isOptimize());
+
+		if (DEBUG_SYNTAXGRAPHS) {
+			String dotFileName = System.getProperty("user.home")
+					+ File.separator;
+			if (optimizer != null) {
+				System.out.println("Optimized Query:");
+				if (optimizer instanceof DefaultOptimizer) {
+					dotFileName += "default-optimized-query.dot";
+				} else {
+					dotFileName += "optimized-query.dot";
+				}
+			} else {
+				System.out.println("Unoptimized Query:");
+				dotFileName += "unoptimized-query.dot";
+			}
+			System.out.println(((SerializableGreql2) eval.getSyntaxGraph())
+					.serialize());
+			Tg2Dot.printGraphAsDot(eval.getSyntaxGraph(), true, dotFileName);
+		}
+
 		printTestFunctionFooter(functionName);
 
 		JValue result = eval.getEvaluationResult();

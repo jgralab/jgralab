@@ -66,35 +66,36 @@ public abstract class Greql2Function {
 	 *         <code>args</code>
 	 */
 	protected final int checkArguments(JValue[] args) {
-		int[] indexAndCosts = { -1, Integer.MAX_VALUE };
-		for (int i = 0; i < signatures.length; i++) {
+		int bestIndex = -1;
+		int bestIndexCosts = Integer.MAX_VALUE;
+
+		out: for (int i = 0; i < signatures.length; i++) {
 			if (signatures[i].length - 1 != args.length) {
 				// The current arglist has another length than the given one, so
 				// it cannot match.
 				continue;
 			}
 			int conversionCosts = 0;
-			for (int j = 0; j < args.length; j++) {
+			for (int j = 0; j < args.length;  j++) {
 				int thisArgsCosts = args[j].conversionCosts(signatures[i][j]);
 				if (thisArgsCosts == -1) {
 					// conversion is not possible
 					conversionCosts = Integer.MAX_VALUE;
-					break;
+					continue out;
 				}
 				conversionCosts += thisArgsCosts;
 			}
 			if (conversionCosts == 0) {
 				// this signature was a perfect match!
 				return i;
-			} else if (conversionCosts > 0
-					&& conversionCosts < indexAndCosts[1]) {
+			} else if (conversionCosts < bestIndexCosts) {
 				// this signature can at least be converted and is the best till
 				// now
-				indexAndCosts[0] = i;
-				indexAndCosts[1] = conversionCosts;
+				bestIndex = i;
+				bestIndexCosts = conversionCosts;
 			}
 		}
-		return indexAndCosts[0];
+		return bestIndex;
 	}
 
 	protected final void printArguments(JValue[] args) {
@@ -130,8 +131,9 @@ public abstract class Greql2Function {
 	 * @throws EvaluateException
 	 *             if something went wrong
 	 */
-	public abstract JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
-			JValue[] arguments) throws EvaluateException;
+	public abstract JValue evaluate(Graph graph,
+			BooleanGraphMarker subgraph, JValue[] arguments)
+			throws EvaluateException;
 
 	/**
 	 * Calculates the estimated cost for the evaluation of this greql function

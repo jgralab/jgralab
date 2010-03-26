@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -30,6 +30,7 @@ import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
@@ -60,11 +61,12 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  */
 public class Get extends Greql2Function {
 	{
-		JValueType[][] x = { { JValueType.MAP, JValueType.OBJECT,
-				JValueType.OBJECT } };
+		JValueType[][] x = {
+				{ JValueType.MAP, JValueType.OBJECT, JValueType.OBJECT },
+				{ JValueType.COLLECTION, JValueType.INT, JValueType.OBJECT } };
 		signatures = x;
 
-		description = "Returns a value associated with the given key of the given map.";
+		description = "Returns the value associated with KEY in MAP, or the element of INDEX in COLLECTION.";
 
 		Category[] c = { Category.COLLECTIONS_AND_MAPS };
 		categories = c;
@@ -81,10 +83,23 @@ public class Get extends Greql2Function {
 	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		if (checkArguments(arguments) < 0) {
+		switch (checkArguments(arguments)) {
+		case 0:
+			return arguments[0].toJValueMap().get(arguments[1]);
+		case 1:
+			int index = arguments[1].toInteger();
+			JValueCollection col = arguments[0].toCollection();
+			if (index >= col.size()) {
+				throw new EvaluateException(
+						"The given collection has fewer than " + (index + 1)
+								+ " elements.  There are exactly " + col.size()
+								+ ".");
+			}
+			return col.toJValueList().get(index);
+		default:
 			throw new WrongFunctionParameterException(this, arguments);
 		}
-		return arguments[0].toJValueMap().get(arguments[1]);
+
 	}
 
 	/*

@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -58,7 +58,7 @@ public class State {
 	 * the list of outTransitions
 	 */
 	public ArrayList<Transition> outTransitions;
-
+		
 	/**
 	 * constructs a new state without any transitions connected
 	 * 

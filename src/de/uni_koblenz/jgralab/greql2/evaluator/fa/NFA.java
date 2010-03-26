@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -48,6 +48,15 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
  */
 public class NFA extends FiniteAutomaton {
 
+	private DFA dfa = null;
+
+	public DFA getDFA() {
+		if (dfa == null) {
+			dfa = new DFA(this);
+		}
+		return dfa;
+	}
+
 	/**
 	 * Constructs a new NFA which is a copy of the given NFA. Depending on the
 	 * parameter <code>realcopy</code> the NFA gets copied deep (that means,
@@ -68,8 +77,9 @@ public class NFA extends FiniteAutomaton {
 		for (State currentState : nfaToCopy.stateList) {
 			State newState = new State();
 			newState.number = currentState.number;
-			if (nfaToCopy.finalStates.contains(currentState))
+			if (nfaToCopy.finalStates.contains(currentState)) {
 				finalStates.add(newState);
+			}
 			if (nfaToCopy.initialState == currentState) {
 				initialState = newState;
 			}
@@ -81,14 +91,15 @@ public class NFA extends FiniteAutomaton {
 		for (Transition currentTransition : nfaToCopy.transitionList) {
 			Transition newTransition = currentTransition.copy(false);
 			transitionList.add(newTransition);
-			State startState = oldStateToNewStateMap.get(currentTransition.getStartState().number);
-			State endState = oldStateToNewStateMap.get(currentTransition.getEndState().number);
+			State startState = oldStateToNewStateMap.get(currentTransition
+					.getStartState().number);
+			State endState = oldStateToNewStateMap
+					.get(currentTransition.endState.number);
 			newTransition.setStartState(startState);
 			newTransition.setEndState(endState);
 		}
 		updateStateAttributes();
-	} 
-
+	}
 
 	/**
 	 * creates a nfa for the given path description, calling the right
@@ -109,14 +120,13 @@ public class NFA extends FiniteAutomaton {
 			boolean optional) throws EvaluateException {
 		State newFinalState;
 		if (iteratedNFA.finalStates.size() > 1) {
-			// there are at least to final states, there should be only one, so
+			// there are at least two final states, there should be only one, so
 			// create a new one and epsilon-transitions
 			newFinalState = new State();
-			iteratedNFA.constructFinalStatesEpsilonTransitions(newFinalState,
-					true);
-			iteratedNFA.finalStates.add(newFinalState); // this is the only
-			// final
-			// state
+			iteratedNFA.constructFinalStatesEpsilonTransitions(newFinalState, true);
+			iteratedNFA.stateList.add(newFinalState);
+			// this is the only final state
+			iteratedNFA.finalStates.add(newFinalState);
 		} else {
 			newFinalState = iteratedNFA.finalStates.get(0);
 		}
@@ -126,11 +136,9 @@ public class NFA extends FiniteAutomaton {
 		if (optional) {
 			// this is a kleene-star iteration, so also 0 iterations are
 			// allowed, create a new epsilon-transition from start to end
-			Transition t2 = new EpsilonTransition(iteratedNFA.initialState,
-					newFinalState);
-			iteratedNFA.transitionList.add(t2);
+			iteratedNFA.initialState.isFinal = true;
+			iteratedNFA.finalStates.add(iteratedNFA.initialState);
 		}
-		// GreqlEvaluator.println("created IteratedPath NFA");
 		iteratedNFA.updateStateAttributes();
 		return iteratedNFA;
 	}
@@ -241,14 +249,15 @@ public class NFA extends FiniteAutomaton {
 	public static NFA createExponentiatedPathDescriptionNFA(
 			NFA exponentiatedNFA, int exponent) throws EvaluateException {
 		NFA nfaToCopy = new NFA(exponentiatedNFA);
-		
+
 		for (int i = 1; i < exponent; i++) {
 			NFA nextIterationNFA = new NFA(nfaToCopy);
 			exponentiatedNFA.constructFinalStatesEpsilonTransitions(
 					nextIterationNFA.initialState, true);
 			exponentiatedNFA.finalStates.addAll(nextIterationNFA.finalStates);
 			exponentiatedNFA.stateList.addAll(nextIterationNFA.stateList);
-			exponentiatedNFA.transitionList.addAll(nextIterationNFA.transitionList);
+			exponentiatedNFA.transitionList
+					.addAll(nextIterationNFA.transitionList);
 		}
 		exponentiatedNFA.updateStateAttributes();
 		return exponentiatedNFA;
@@ -283,13 +292,15 @@ public class NFA extends FiniteAutomaton {
 	public static NFA createEdgePathDescriptionNFA(
 			Transition.AllowedEdgeDirection dir,
 			JValueTypeCollection typeCollection, Set<String> roles,
-			VertexEvaluator edgeEval, VertexEvaluator predicateEvaluator, GraphMarker<VertexEvaluator> marker) {
+			VertexEvaluator edgeEval, VertexEvaluator predicateEvaluator,
+			GraphMarker<VertexEvaluator> marker) {
 		NFA nfa = new NFA();
 		nfa.transitionList.clear();
 		nfa.initialState.outTransitions.clear();
 		nfa.finalStates.get(0).inTransitions.clear();
 		SimpleTransition t = new EdgeTransition(nfa.initialState,
-				nfa.finalStates.get(0), dir, typeCollection, roles, edgeEval, predicateEvaluator, marker);
+				nfa.finalStates.get(0), dir, typeCollection, roles, edgeEval,
+				predicateEvaluator, marker);
 		nfa.transitionList.add(t);
 		nfa.updateStateAttributes();
 		return nfa;
@@ -301,13 +312,16 @@ public class NFA extends FiniteAutomaton {
 	 */
 	public static NFA createSimplePathDescriptionNFA(
 			Transition.AllowedEdgeDirection dir,
-			JValueTypeCollection typeCollection, Set<String> roles, VertexEvaluator predicateEvaluator, GraphMarker<VertexEvaluator> marker) {
+			JValueTypeCollection typeCollection, Set<String> roles,
+			VertexEvaluator predicateEvaluator,
+			GraphMarker<VertexEvaluator> marker) {
 		NFA nfa = new NFA();
 		nfa.transitionList.clear();
 		nfa.initialState.outTransitions.clear();
 		nfa.finalStates.get(0).inTransitions.clear();
 		SimpleTransition t = new SimpleTransition(nfa.initialState,
-				nfa.finalStates.get(0), dir, typeCollection, roles, predicateEvaluator, marker);
+				nfa.finalStates.get(0), dir, typeCollection, roles,
+				predicateEvaluator, marker);
 		nfa.transitionList.add(t);
 		nfa.updateStateAttributes();
 		return nfa;
@@ -319,13 +333,15 @@ public class NFA extends FiniteAutomaton {
 	 */
 	public static NFA createAggregationPathDescriptionNFA(
 			boolean aggregateFrom, JValueTypeCollection typeCollection,
-			Set<String> roles, VertexEvaluator predicateEvaluator, GraphMarker<VertexEvaluator> marker) {
+			Set<String> roles, VertexEvaluator predicateEvaluator,
+			GraphMarker<VertexEvaluator> marker) {
 		NFA nfa = new NFA();
 		nfa.transitionList.clear();
 		nfa.initialState.outTransitions.clear();
 		nfa.finalStates.get(0).inTransitions.clear();
 		AggregationTransition t = new AggregationTransition(nfa.initialState,
-				nfa.finalStates.get(0), aggregateFrom, typeCollection, roles, predicateEvaluator, marker);
+				nfa.finalStates.get(0), aggregateFrom, typeCollection, roles,
+				predicateEvaluator, marker);
 		nfa.transitionList.add(t);
 		nfa.updateStateAttributes();
 		return nfa;
@@ -362,11 +378,15 @@ public class NFA extends FiniteAutomaton {
 		State newEndState;
 		if (nfa.finalStates.size() == 1) {
 			newEndState = nfa.finalStates.get(0);
+			newEndState.isFinal = false;
 			nfa.finalStates.clear();
 		} else {
 			newEndState = new State();
 			nfa.constructFinalStatesEpsilonTransitions(newEndState, false);
 			nfa.stateList.add(newEndState);
+			for (State s : nfa.finalStates) {
+				s.isFinal = false;
+			}
 			nfa.finalStates.clear();
 		}
 		State restrictedFinalState = new State();
@@ -391,11 +411,15 @@ public class NFA extends FiniteAutomaton {
 		State newEndState;
 		if (nfa.finalStates.size() == 1) {
 			newEndState = nfa.finalStates.get(0);
+			newEndState.isFinal = false;
 			nfa.finalStates.clear();
 		} else {
 			newEndState = new State();
 			nfa.constructFinalStatesEpsilonTransitions(newEndState, false);
 			nfa.stateList.add(newEndState);
+			for (State s : nfa.finalStates) {
+				s.isFinal = false;
+			}
 			nfa.finalStates.clear();
 		}
 		State restrictedFinalState = new State();
@@ -459,8 +483,9 @@ public class NFA extends FiniteAutomaton {
 		while (iter.hasNext()) {
 			EpsilonTransition t = new EpsilonTransition(iter.next(), target);
 			transitionList.add(t);
-			if (removeFinalStates)
+			if (removeFinalStates) {
 				iter.remove();
+			}
 		}
 	}
 

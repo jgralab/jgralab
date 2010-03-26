@@ -1,0 +1,26 @@
+TGraph 2;
+Schema de.uni_koblenz.jgralabtest.schemas.commenttest.CommentTestSchema;
+Comment G "abc" "def";
+
+GraphClass G;
+
+Comment En "ghi";
+Comment Rd "jkl";
+
+EnumDomain En (A, B);
+
+RecordDomain Rd (i: List<Integer>, s: String);
+Comment Rd "mno";
+
+Comment p.V "$$$";
+
+Package p;
+
+Comment .Rd "blubber";
+
+VertexClass V;
+
+EdgeClass E from V (0,*) to V(0,*);
+Comment V "pqr" "stu";
+Comment E "vwx" "yz";
+

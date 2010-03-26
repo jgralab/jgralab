@@ -1,19 +1,18 @@
 package de.uni_koblenz.jgralab.impl.std;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.JGraLabList;
+import de.uni_koblenz.jgralab.JGraLabMap;
+import de.uni_koblenz.jgralab.JGraLabSet;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.impl.EdgeImpl;
+import de.uni_koblenz.jgralab.impl.EdgeBaseImpl;
 import de.uni_koblenz.jgralab.impl.FreeIndexList;
-import de.uni_koblenz.jgralab.impl.ReversedEdgeImpl;
-import de.uni_koblenz.jgralab.impl.VertexImpl;
+import de.uni_koblenz.jgralab.impl.ReversedEdgeBaseImpl;
+import de.uni_koblenz.jgralab.impl.VertexBaseImpl;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.trans.Savepoint;
 import de.uni_koblenz.jgralab.trans.Transaction;
@@ -24,16 +23,17 @@ import de.uni_koblenz.jgralab.trans.Transaction;
  * 
  * @author Jose Monte(monte@uni-koblenz.de)
  */
-public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
-	private VertexImpl[] vertex;
+public abstract class GraphImpl extends
+		de.uni_koblenz.jgralab.impl.GraphBaseImpl {
+	private VertexBaseImpl[] vertex;
 	private int vCount;
-	private EdgeImpl[] edge;
-	private ReversedEdgeImpl[] revEdge;
+	private EdgeBaseImpl[] edge;
+	private ReversedEdgeBaseImpl[] revEdge;
 	private int eCount;
-	private VertexImpl firstVertex;
-	private VertexImpl lastVertex;
-	private EdgeImpl firstEdge;
-	private EdgeImpl lastEdge;
+	private VertexBaseImpl firstVertex;
+	private VertexBaseImpl lastVertex;
+	private EdgeBaseImpl firstEdge;
+	private EdgeBaseImpl lastEdge;
 
 	/**
 	 * Holds the version of the vertex sequence. For every modification (e.g.
@@ -53,10 +53,10 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 	 * List of vertices to be deleted by a cascading delete caused by deletion
 	 * of a composition "parent".
 	 */
-	private List<VertexImpl> deleteVertexList;
+	private List<VertexBaseImpl> deleteVertexList;
 
 	@Override
-	protected VertexImpl[] getVertex() {
+	protected VertexBaseImpl[] getVertex() {
 		return vertex;
 	}
 
@@ -66,12 +66,12 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 	}
 
 	@Override
-	protected EdgeImpl[] getEdge() {
+	protected EdgeBaseImpl[] getEdge() {
 		return edge;
 	}
 
 	@Override
-	protected ReversedEdgeImpl[] getRevEdge() {
+	protected ReversedEdgeBaseImpl[] getRevEdge() {
 		return revEdge;
 	}
 
@@ -111,7 +111,7 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 	}
 
 	@Override
-	protected void setVertex(VertexImpl[] vertex) {
+	protected void setVertex(VertexBaseImpl[] vertex) {
 		this.vertex = vertex;
 	}
 
@@ -121,12 +121,12 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 	}
 
 	@Override
-	protected void setEdge(EdgeImpl[] edge) {
+	protected void setEdge(EdgeBaseImpl[] edge) {
 		this.edge = edge;
 	}
 
 	@Override
-	protected void setRevEdge(ReversedEdgeImpl[] revEdge) {
+	protected void setRevEdge(ReversedEdgeBaseImpl[] revEdge) {
 		this.revEdge = revEdge;
 	}
 
@@ -136,38 +136,33 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 	}
 
 	@Override
-	protected void setFirstVertex(VertexImpl firstVertex) {
+	protected void setFirstVertex(VertexBaseImpl firstVertex) {
 		this.firstVertex = firstVertex;
 	}
 
 	@Override
-	protected void setLastVertex(VertexImpl lastVertex) {
+	protected void setLastVertex(VertexBaseImpl lastVertex) {
 		this.lastVertex = lastVertex;
 	}
 
 	@Override
-	protected void setFirstEdgeInGraph(EdgeImpl firstEdge) {
+	protected void setFirstEdgeInGraph(EdgeBaseImpl firstEdge) {
 		this.firstEdge = firstEdge;
 	}
 
 	@Override
-	protected void setLastEdgeInGraph(EdgeImpl lastEdge) {
+	protected void setLastEdgeInGraph(EdgeBaseImpl lastEdge) {
 		this.lastEdge = lastEdge;
 	}
 
 	@Override
-	protected List<VertexImpl> getDeleteVertexList() {
+	protected List<VertexBaseImpl> getDeleteVertexList() {
 		return deleteVertexList;
 	}
 
 	@Override
-	protected void setDeleteVertexList(List<VertexImpl> deleteVertexList) {
+	protected void setDeleteVertexList(List<VertexBaseImpl> deleteVertexList) {
 		this.deleteVertexList = deleteVertexList;
-	}
-
-	@Override
-	public long getGraphVersion() {
-		return graphVersion;
 	}
 
 	@Override
@@ -178,18 +173,6 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 	@Override
 	public long getVertexListVersion() {
 		return vertexListVersion;
-	}
-
-	/**
-	 * Sets the version counter of this graph. Should only be called by GraphIO
-	 * immediately after loading.
-	 * 
-	 * @param graphVersion
-	 *            new version value
-	 */
-	@Override
-	public void setGraphVersion(long graphVersion) {
-		this.graphVersion = graphVersion;
 	}
 
 	@Override
@@ -209,11 +192,11 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 	 * @param max
 	 * @param max2
 	 */
-	public GraphImpl(String id, GraphClass cls, int max, int max2) {
+	protected GraphImpl(String id, GraphClass cls, int max, int max2) {
 		super(id, cls, max, max2);
 	}
 
-	public GraphImpl(String id, GraphClass cls) {
+	protected GraphImpl(String id, GraphClass cls) {
 		super(id, cls);
 	}
 
@@ -221,7 +204,6 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 	public void abort() {
 		throw new UnsupportedOperationException(
 				"Abort is not supported for this graph.");
-
 	}
 
 	@Override
@@ -309,7 +291,7 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 
 	@Override
 	protected void vertexAfterDeleted(Vertex vertexToBeDeleted) {
-		
+
 	}
 
 	@Override
@@ -324,62 +306,68 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 	}
 
 	@Override
-	public <T> List<T> createList(Class<T> cls) {
-		return new ArrayList<T>();
+	public <T> JGraLabList<T> createList() {
+		return new JGraLabListImpl<T>();
 	}
 
 	@Override
-	public <T> List<T> createList(Class<T> cls,
-			Collection<? extends T> collection) {
-		return new ArrayList<T>(collection);
+	public <T> JGraLabList<T> createList(Collection<? extends T> collection) {
+		return new JGraLabListImpl<T>(collection);
 	}
 
 	@Override
-	public <T> List<T> createList(Class<T> cls, int initialCapacity) {
-		return new ArrayList<T>(initialCapacity);
+	public <T> JGraLabList<T> createList(int initialCapacity) {
+		return new JGraLabListImpl<T>(initialCapacity);
 	}
 
 	@Override
-	public <T> Set<T> createSet(Class<T> cls) {
-		return new HashSet<T>();
+	public <T> JGraLabSet<T> createSet() {
+		return new JGraLabSetImpl<T>();
 	}
 
 	@Override
-	public <T> Set<T> createSet(Class<T> cls, Collection<? extends T> collection) {
-		return new HashSet<T>(collection);
+	public <T> JGraLabSet<T> createSet(Collection<? extends T> collection) {
+		return new JGraLabSetImpl<T>(collection);
 	}
 
 	@Override
-	public <T> Set<T> createSet(Class<T> cls, int initialCapacity) {
-		return new HashSet<T>(initialCapacity);
+	public <T> JGraLabSet<T> createSet(int initialCapacity) {
+		return new JGraLabSetImpl<T>(initialCapacity);
 	}
 
 	@Override
-	public <T> Set<T> createSet(Class<T> cls, int initialCapacity,
+	public <T> JGraLabSet<T> createSet(int initialCapacity, float loadFactor) {
+		return new JGraLabSetImpl<T>(initialCapacity, loadFactor);
+	}
+
+	@Override
+	public <K, V> JGraLabMap<K, V> createMap() {
+		return new JGraLabMapImpl<K, V>();
+	}
+
+	@Override
+	public <K, V> JGraLabMap<K, V> createMap(Map<? extends K, ? extends V> map) {
+		return new JGraLabMapImpl<K, V>(map);
+	}
+
+	@Override
+	public <K, V> JGraLabMap<K, V> createMap(int initialCapacity) {
+		return new JGraLabMapImpl<K, V>(initialCapacity);
+	}
+
+	@Override
+	public <K, V> JGraLabMap<K, V> createMap(int initialCapacity,
 			float loadFactor) {
-		return new HashSet<T>(initialCapacity, loadFactor);
+		return new JGraLabMapImpl<K, V>(initialCapacity, loadFactor);
 	}
 
 	@Override
-	public <K, V> Map<K, V> createMap(Class<K> key, Class<V> value) {
-		return new HashMap<K, V>();
+	protected void addVertex(Vertex newVertex) {
+		super.addVertex(newVertex);
 	}
 
 	@Override
-	public <K, V> Map<K, V> createMap(Class<K> key, Class<V> value,
-			Map<? extends K, ? extends V> map) {
-		return new HashMap<K, V>(map);
-	}
-
-	@Override
-	public <K, V> Map<K, V> createMap(Class<K> key, Class<V> value,
-			int initialCapacity) {
-		return new HashMap<K, V>(initialCapacity);
-	}
-
-	@Override
-	public <K, V> Map<K, V> createMap(Class<K> key, Class<V> value,
-			int initialCapacity, float loadFactor) {
-		return new HashMap<K, V>(initialCapacity, loadFactor);
+	protected void addEdge(Edge newEdge, Vertex alpha, Vertex omega) {
+		super.addEdge(newEdge, alpha, omega);
 	}
 }

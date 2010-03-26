@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -177,7 +177,6 @@ public final class PackageImpl extends NamedElementImpl implements Package {
 	 *            a VertexClass
 	 */
 	void addVertexClass(VertexClass vc) {
-		assert vc != null : "The given VertexClass is null.";
 		assert vc.getPackage() == this : "The vertex class '"
 				+ vc.getQualifiedName()
 				+ "' does not belong into the package '" + getQualifiedName()
@@ -252,7 +251,9 @@ public final class PackageImpl extends NamedElementImpl implements Package {
 	public boolean equals(Object o) {
 		if (o instanceof Package) {
 			Package other = (Package) o;
-			return qualifiedName.equals(other.getQualifiedName());
+			return qualifiedName.equals(other.getQualifiedName())
+					&& getSchema().getQualifiedName().equals(
+							other.getSchema().getQualifiedName());
 		}
 		return false;
 	}

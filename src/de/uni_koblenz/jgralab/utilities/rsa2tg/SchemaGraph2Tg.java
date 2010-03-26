@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -28,57 +28,60 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 
-import de.uni_koblenz.jgralab.AttributedElement;
-import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphIO;
-import de.uni_koblenz.jgralab.WorkInProgress;
 import de.uni_koblenz.jgralab.grumlschema.SchemaGraph;
-import de.uni_koblenz.jgralab.grumlschema.domains.CollectionDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.Domain;
 import de.uni_koblenz.jgralab.grumlschema.domains.EnumDomain;
-import de.uni_koblenz.jgralab.grumlschema.domains.HasBaseDomain;
-import de.uni_koblenz.jgralab.grumlschema.domains.HasKeyDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.HasRecordDomainComponent;
-import de.uni_koblenz.jgralab.grumlschema.domains.HasValueDomain;
-import de.uni_koblenz.jgralab.grumlschema.domains.ListDomain;
-import de.uni_koblenz.jgralab.grumlschema.domains.MapDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.RecordDomain;
-import de.uni_koblenz.jgralab.grumlschema.domains.SetDomain;
-import de.uni_koblenz.jgralab.grumlschema.structure.AggregationClass;
+import de.uni_koblenz.jgralab.grumlschema.structure.Annotates;
 import de.uni_koblenz.jgralab.grumlschema.structure.Attribute;
 import de.uni_koblenz.jgralab.grumlschema.structure.AttributedElementClass;
-import de.uni_koblenz.jgralab.grumlschema.structure.CompositionClass;
+import de.uni_koblenz.jgralab.grumlschema.structure.Comment;
 import de.uni_koblenz.jgralab.grumlschema.structure.Constraint;
 import de.uni_koblenz.jgralab.grumlschema.structure.ContainsDomain;
 import de.uni_koblenz.jgralab.grumlschema.structure.ContainsGraphElementClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.ContainsSubPackage;
 import de.uni_koblenz.jgralab.grumlschema.structure.EdgeClass;
-import de.uni_koblenz.jgralab.grumlschema.structure.From;
 import de.uni_koblenz.jgralab.grumlschema.structure.GraphClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.GraphElementClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.HasAttribute;
 import de.uni_koblenz.jgralab.grumlschema.structure.HasConstraint;
+import de.uni_koblenz.jgralab.grumlschema.structure.IncidenceClass;
+import de.uni_koblenz.jgralab.grumlschema.structure.NamedElement;
 import de.uni_koblenz.jgralab.grumlschema.structure.Package;
+import de.uni_koblenz.jgralab.grumlschema.structure.Redefines;
 import de.uni_koblenz.jgralab.grumlschema.structure.Schema;
 import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesEdgeClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesVertexClass;
-import de.uni_koblenz.jgralab.grumlschema.structure.To;
 import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
 
-@WorkInProgress(responsibleDevelopers = "mmce")
 public class SchemaGraph2Tg {
+
+	private boolean useShortNames = true;
+
+	/**
+	 * @return the useShortNames
+	 */
+	public boolean isUseShortNames() {
+		return useShortNames;
+	}
+
+	/**
+	 * @param useShortNames
+	 *            the useShortNames to set
+	 */
+	public void setUseShortNames(boolean useShortNames) {
+		this.useShortNames = useShortNames;
+	}
 
 	private final static String SPACE = " ";
 	private final static String EMPTY = "";
-	private final static String DEFAULT_SUBELEMENT = "\n\t";
 
 	private final static String STAR = "*";
-	private final static String POINT = ".";
+	private final static String DOT = ".";
 	private final static String COMMA = ",";
 	private final static String DELIMITER = ";";
 	private final static String COLON = ":";
@@ -91,20 +94,25 @@ public class SchemaGraph2Tg {
 
 	private final static String FROM = "from";
 	private final static String TO = "to";
-	private final static String AGGREGATE = "aggregate";
 	private final static String ROLE = "role";
 	private final static String REDEFINES = "redefines";
 
 	private final static String SCHEMA = "Schema";
 	private final static String PACKAGE = "Package";
+	private final static String COMMENT = "Comment";
 	private final static String ABSTRACT = "abstract";
 	private final static String VERTEX_CLASS = "VertexClass";
 	private final static String GRAPH_CLASS = "GraphClass";
 	private final static String RECORD_DOMAIN = "RecordDomain";
 	private final static String ENUM_DOMAIN = "EnumDomain";
 	private final static String EDGE_CLASS = "EdgeClass";
-	private final static String AGGREGATION_CLASS = "AggregationClass";
-	private final static String COMPOSITION_CLASS = "CompositionClass";
+	private final static String AGGREGATION = "aggregation";
+	private final static String AGG_SHARED = "shared";
+	private final static String AGG_COMPOSITE = "composite";
+	private final static String TGRAPH = "TGraph";
+	private final static String TGRAPH_VERSION = "2";
+	private final static String ASSIGN = "=";
+	private static final String NEWLINE = "\n";
 
 	/**
 	 * SchemaGraph which should be transformed to a TG file.
@@ -119,49 +127,12 @@ public class SchemaGraph2Tg {
 	/**
 	 * Stores the current used package name.
 	 */
-	private String packageName;
+	private String currentPackageName;
 
 	/**
 	 * PrintWriter object, which is used to write the TG file.
 	 */
 	private Writer stream;
-
-	/**
-	 * Flag which indicates which style the TG output should have.
-	 */
-	private final boolean hierarchical;
-
-	/**
-	 * Is used to control the style of output.
-	 */
-	private String SUBELEMENT;
-
-	/**
-	 * Constructs an object, which will print out the specified
-	 * {@link SchemaGraph} to a TG file with the given output filename. If the
-	 * boolean <code>hierarchical</code> flag will be on true to force to print
-	 * out a hierarchical schema. This means all qualified names will be simple
-	 * names.<br>
-	 * <br>
-	 * 
-	 * <strong>Note:</strong> run() have to be executed to get a TG file.
-	 * 
-	 * @param sg
-	 *            {@link SchemaGraph}, which will be written to a TG file.
-	 * @param outputFilename
-	 *            {@link String} of the Location of the TG file. Note: The file
-	 *            will be created or overwritten!
-	 * @param hierachie
-	 *            Determinants if the TG output will be hierarchical ordered and
-	 *            with simple names for all elements or not.
-	 */
-	public SchemaGraph2Tg(SchemaGraph sg, String outputFilename,
-			boolean hierachie) {
-		schemaGraph = sg;
-		this.outputFilename = outputFilename;
-		hierarchical = hierachie;
-		SUBELEMENT = DEFAULT_SUBELEMENT;
-	}
 
 	/**
 	 * Constructs an object, which will print out the specified
@@ -179,43 +150,17 @@ public class SchemaGraph2Tg {
 	 *            will be overwritten!
 	 */
 	public SchemaGraph2Tg(SchemaGraph sg, String outputFilename) {
-		this(sg, outputFilename, true);
-	}
-
-	/**
-	 * Gives the possibility to either format the output or not.
-	 * 
-	 * @param isFormatted
-	 *            <code>true</code> will format the output.
-	 */
-	public void setIsFormatted(boolean isFormatted) {
-		SUBELEMENT = isFormatted ? DEFAULT_SUBELEMENT : SPACE;
-	}
-
-	/**
-	 * Returns a boolean value indicating if the output is formated.
-	 * 
-	 * @return <code>true</code>, if output is formated else <code>false</code>.
-	 */
-	public boolean isFormatted() {
-		return SUBELEMENT == DEFAULT_SUBELEMENT;
+		schemaGraph = sg;
+		this.outputFilename = outputFilename;
 	}
 
 	/**
 	 * Prints the specified {@link SchemaGraph} to a location according to the
 	 * given outputFilename via a {@link PrintWriter}.<br>
-	 * <br>
-	 * Output is formated. For unformatted output
-	 * 
-	 * <pre>
-	 * setIsFormated(true);
-	 * </pre>
-	 * 
-	 * have to be executed!
 	 * 
 	 * @throws IOException
 	 */
-	public void run() throws IOException {
+	public void process() throws IOException {
 
 		assert outputFilename != null && !outputFilename.equals(EMPTY) : "No output filename specified!";
 		assert schemaGraph != null : "No SchemaGraph specified!";
@@ -227,13 +172,10 @@ public class SchemaGraph2Tg {
 		printTGSchema(schemaGraph);
 
 		// Write out, close and dispose the Printstream object.
-		stream.append('\n');
+		stream.append(NEWLINE);
 		stream.flush();
 		stream.close();
 		stream = null;
-
-		System.gc();
-		System.runFinalization();
 	}
 
 	public void setStream(StringWriter stream) {
@@ -251,1206 +193,326 @@ public class SchemaGraph2Tg {
 	 * corresponding to a prefix "print" and the name of the EBNF rule.<br>
 	 * <br>
 	 * 
-	 * All EBNF rules, used in this method, are enlisted below:
-	 * 
-	 * <pre>
-	 *   TGSchema ::= &quot;Schema&quot; SchemaName &quot;;&quot;
-	 * 		GraphClassDefinition
-	 * 		{
-	 * 		  (
-	 * 			PackageDeclaration
-	 * 			| DomainDefinition
-	 * 			| VertexClassDefinition
-	 * 			| EdgeClassDefinition
-	 * 			| AggregationClassDefinition
-	 * 			| CompositionClassDefinition
-	 * 		  ) &quot;;&quot;
-	 * 		}
-	 *   SchemaName ::= PackagePrefix SchemaClassName
-	 *   PackagePrefix ::= (PackageName &quot;.&quot; )+
-	 *   SchemaClassName ::= ClassNameString
-	 *   PackageName ::= PackageNameString
-	 * </pre>
-	 * 
 	 * @param schemaGraph
 	 *            {@link SchemaGraph}, which should be transformed to TG string.
 	 */
 	private void printTGSchema(SchemaGraph schemaGraph) {
+		// The version of the TG format
+		println(TGRAPH, SPACE, TGRAPH_VERSION, DELIMITER, NEWLINE);
 
+		// schema
 		Schema schema = schemaGraph.getFirstSchema();
-		print(SCHEMA, SPACE);
-		if (schema.get_packagePrefix() != null) {
-			print(schema.get_packagePrefix(), POINT);
-		}
-		println(schema.get_name(), DELIMITER);
+		assert schema != null;
+		println(SCHEMA, SPACE, schema.get_packagePrefix(), DOT, schema
+				.get_name(), DELIMITER, NEWLINE);
 
-		Edge edge;
+		Package defaultPackage = (Package) schema
+				.getFirstContainsDefaultPackage(EdgeDirection.OUT).getThat();
+		setCurrentPackageName(defaultPackage);
 
-		edge = schema.getFirstDefinesGraphClass(EdgeDirection.OUT);
-		assert edge != null : "No GraphClass defined!";
-		printGraphClassDefinition((GraphClass) edge.getOmega());
+		// graphclass
+		GraphClass gc = (GraphClass) schema.getFirstDefinesGraphClass(
+				EdgeDirection.OUT).getOmega();
+		printGraphClass(gc);
+		printComments(gc);
 
-		edge = schema.getFirstContainsDefaultPackage(EdgeDirection.OUT);
-		assert edge != null : "No Package defined!";
-		printPackageDeclaration((Package) edge.getOmega());
-
-		// If the print out should be hierarchical, no more printing beyond this
-		// point
-		if (hierarchical) {
-			return;
-		}
-
-		Domain domain = schemaGraph.getFirstDomain();
-		while (domain != null) {
-			printDomainDefinition(domain);
-			domain = domain.getNextDomain();
-		}
-
-		VertexClass vertex = schemaGraph.getFirstVertexClass();
-
-		while (vertex != null) {
-			printVertexClassDefinition(vertex, true);
-			vertex = vertex.getNextVertexClass();
-		}
-
-		// At this point it seems, that only EdgeClass objects are printed, but
-		// AggregationClass and CompositionClass are derived from EdgeClass.
-		// This means all the types will be printed by the method
-		// "printEdgeClassDefinition"
-		EdgeClass edgeClass = schemaGraph.getFirstEdgeClass();
-
-		while (edgeClass != null) {
-			printEdgeClassDefinition(edgeClass, true);
-			edgeClass = edgeClass.getNextEdgeClass();
-		}
+		printPackageWithElements((Package) schema
+				.getFirstContainsDefaultPackage(EdgeDirection.OUT).getThat());
 	}
 
-	/**
-	 * Transforms a {@link GraphClass} to a TG string, which is written to a
-	 * {@link PrintWriter} object stored in the member variable
-	 * <code>stream</code>. The transformation rules <code>Attributes</code> and
-	 * <code>Constraint</code> are encapsulated in methods corresponding to a
-	 * prefix "print" and the name of the EBNF rule.<br>
-	 * <br>
-	 * 
-	 * All EBNF rules, used in this method, are enlisted below:
-	 * 
-	 * <pre>
-	 *   GraphClassDefinition ::= &quot;GraphClass&quot; GraphClassName [Attributes] { Constraint }
-	 *   GraphClassName ::= ClassNameString
-	 * </pre>
-	 * 
-	 * @param graph
-	 *            {@link GraphClass} , which should be transformed to TG string.
-	 */
-	private void printGraphClassDefinition(
-			de.uni_koblenz.jgralab.grumlschema.structure.GraphClass graph) {
+	private void printPackageWithElements(Package gPackage) {
+		setCurrentPackageName(gPackage);
+		printComments(gPackage);
+		println(PACKAGE, SPACE, currentPackageName, DELIMITER);
 
-		assert graph != null : "Object of type GraphClass is null!";
-		print(GRAPH_CLASS, SPACE, graph.get_qualifiedName());
-
-		// Prints all EdgeDirection.OUT edges of type HasAttribute are
-		// interesting
-		printAttributes(graph.getFirstHasAttribute(EdgeDirection.OUT));
-
-		// Only EdgeDirection.OUT edges of type HasConstraint are interesting
-		printConstraints(graph.getFirstHasConstraint(EdgeDirection.OUT));
-		println(DELIMITER);
-	}
-
-	/**
-	 * Transforms a {@link Package} to a TG string, which is written to a
-	 * {@link PrintWriter} object stored in the member variable
-	 * <code>stream</code>.<br>
-	 * <br>
-	 * 
-	 * All EBNF rules, used in this method, are enlisted below:
-	 * 
-	 * <pre>
-	 *   PackageDeclaration ::= &quot;Package&quot; [ {PackageName &quot;.&quot;} PackageName ]
-	 *   PackageName ::= PackageNameString
-	 * </pre>
-	 * 
-	 * @param tgPackage
-	 *            {@link Package}, which should be transformed to TG string.
-	 */
-	private void printPackageDeclaration(Package tgPackage) {
-
-		if (tgPackage == null) {
-			return;
+		for (ContainsDomain cd : gPackage
+				.getContainsDomainIncidences(EdgeDirection.OUT)) {
+			printDomain((Domain) cd.getThat());
 		}
 
-		String packageName = tgPackage.get_qualifiedName();
-
-		if (hierarchical) {
-			this.packageName = packageName;
-			println(SPACE);
-		}
-
-		println(PACKAGE, SPACE, packageName, DELIMITER);
-
-		if (hierarchical) {
-			ContainsDomain domain = tgPackage
-					.getFirstContainsDomain(EdgeDirection.OUT);
-
-			if (domain != null) {
-				printDomainDefinition(domain);
-			}
-
-			// First only VertexClass should be printed!
-			GraphElementClass graphElement;
-			for (ContainsGraphElementClass containsGraphElement : tgPackage
-					.getContainsGraphElementClassIncidences(EdgeDirection.OUT)) {
-				graphElement = (GraphElementClass) containsGraphElement
-						.getOmega();
-				if (graphElement instanceof VertexClass) {
-					printVertexClassDefinition((VertexClass) graphElement, true);
-				}
-			}
-
-			// Now all sorts of EdgeClass objects are printed
-			for (ContainsGraphElementClass containsGraphElement : tgPackage
-					.getContainsGraphElementClassIncidences(EdgeDirection.OUT)) {
-				graphElement = (GraphElementClass) containsGraphElement
-						.getOmega();
-				if (graphElement instanceof EdgeClass) {
-					printEdgeClassDefinition((EdgeClass) graphElement, true);
-				}
+		for (ContainsGraphElementClass cgec : gPackage
+				.getContainsGraphElementClassIncidences(EdgeDirection.OUT)) {
+			GraphElementClass gec = (GraphElementClass) cgec.getThat();
+			if (gec instanceof EdgeClass) {
+				printEdgeClass((EdgeClass) gec);
+			} else {
+				printVertexClass((VertexClass) gec);
 			}
 		}
 
-		// All Domain, VertexClass and EdgeClass objects were printed. Now alle
-		// Sub packages needs to be printed.
-		ContainsSubPackage subPackage = tgPackage
-				.getFirstContainsSubPackage(EdgeDirection.OUT);
-
-		while (subPackage != null) {
-			printPackageDeclaration((Package) subPackage.getOmega());
-			subPackage = subPackage
-					.getNextContainsSubPackage(EdgeDirection.OUT);
+		for (ContainsSubPackage csp : gPackage
+				.getContainsSubPackageIncidences(EdgeDirection.OUT)) {
+			printPackageWithElements((Package) csp.getThat());
 		}
 	}
 
-	/**
-	 * Transforms a {@link VertexClass} to a TG string, which is written to a
-	 * {@link PrintWriter} object stored in the member variable
-	 * <code>stream</code>. The transformation rules <code>SuperClasses</code>,
-	 * <code>Attributes</code> and <code>Constraint</code> are encapsulated in
-	 * methods corresponding to a prefix "print" and the name of the EBNF rule.<br>
-	 * <br>
-	 * 
-	 * All EBNF rules, used in this method, are enlisted below:
-	 * 
-	 * <pre>
-	 *   VertexClassDefinition ::= [&quot;abstract&quot;] &quot;VertexClass&quot; VertexClassName
-	 *   	[SuperClasses] [Attributes] { Constraint }
-	 *   VertexClassName ::= QualifiedClassName
-	 *   QualifiedClassName :: = [ Qualifier ] ClassNameString
-	 *   Qualifier ::= &quot;.&quot; | { PackageName &quot;.&quot; }
-	 *   PackageName ::= PackageNameString
-	 * </pre>
-	 * 
-	 * @param vertexClass
-	 *            {@link VertexClass}, which should be transformed to TG string.
-	 * @param printConstraints
-	 *            Flag for printing the contained Constaints.
-	 */
-	public void printVertexClassDefinition(VertexClass vertexClass,
-			boolean printConstraints) {
-		if (vertexClass.is_abstract()) {
+	private void setCurrentPackageName(Package pkg) {
+		currentPackageName = pkg.get_qualifiedName();
+	}
+
+	private void printComments(NamedElement ne) {
+		for (Annotates ann : ne.getAnnotatesIncidences(EdgeDirection.IN)) {
+			Comment com = (Comment) ann.getThat();
+			println(COMMENT, SPACE, ne.get_qualifiedName(), SPACE, GraphIO
+					.toUtfString(com.get_text()), DELIMITER);
+		}
+	}
+
+	public void printVertexClass(VertexClass vc) {
+		printComments(vc);
+		if (vc.is_abstract()) {
 			print(ABSTRACT, SPACE);
 		}
+		print(VERTEX_CLASS, SPACE, shortName(vc.get_qualifiedName()));
 
-		print(VERTEX_CLASS, SPACE, getName(vertexClass));
-
-		printSuperClasses(vertexClass);
-
-		printAttributes(vertexClass.getFirstHasAttribute(EdgeDirection.OUT));
-
-		if (printConstraints) {
-			printConstraints(vertexClass
-					.getFirstHasConstraint(EdgeDirection.OUT));
+		// superclasses
+		if (vc.getFirstSpecializesVertexClass(EdgeDirection.OUT) != null) {
+			print(COLON, SPACE);
+			boolean first = true;
+			for (SpecializesVertexClass svc : vc
+					.getSpecializesVertexClassIncidences(EdgeDirection.OUT)) {
+				if (first) {
+					first = false;
+				} else {
+					print(COMMA, SPACE);
+				}
+				VertexClass superVC = (VertexClass) svc.getThat();
+				print(shortName(superVC.get_qualifiedName()));
+			}
 		}
 
+		// attributes
+		printAttributes(vc);
+
+		// constraints
+		printConstraints(vc);
 		println(DELIMITER);
 	}
 
-	/**
-	 * Transforms a {@link EdgeClass}, {@link AggregationClass} or
-	 * {@link CompositionClass} to a TG string, which is written to a
-	 * {@link PrintWriter} object stored in the member variable
-	 * <code>stream</code>. The transformation rules <code>SuperClasses</code>,
-	 * <code>Multiplicity</code>, <code>Role</code>, <code>Attributes</code> and
-	 * <code>Constraint</code> are encapsulated in methods corresponding to a
-	 * prefix "print" and the name of the EBNF rule.<br>
-	 * <br>
-	 * 
-	 * All EBNF rules, used in this method, are enlisted below:
-	 * 
-	 * <pre>
-	 *   EdgeClassDefinition ::= [&quot;abstract&quot;] &quot;EdgeClass&quot; EdgeClassName [SuperClasses]
-	 *     &quot;from&quot; VertexClassName Multiplicity [Role] &quot;to&quot; VertexClassName Multiplicity [Role]
-	 *     [Attributes] { Constraint }
-	 *   AggregationClassDefinition ::= [&quot;abstract&quot;] &quot;AggregationClass&quot; AggregationClassName [SuperClasses]
-	 *     &quot;from&quot; VertexClassName Multiplicity [Role] &quot;to&quot; VertexClassName Multiplicity [Role]
-	 *     [Attributes] &quot;aggregate&quot; ( &quot;from&quot; | &quot;to&quot; ) { Constraint }
-	 *   CompositionClassDefinition ::= [&quot;abstract&quot;] &quot;CompositionClass&quot; CompositionClassName [SuperClasses]
-	 *     &quot;from&quot; VertexClassName Multiplicity [Role] &quot;to&quot; VertexClassName Multiplicity [Role]
-	 *     [Attributes] &quot;aggregate&quot; ( &quot;from&quot; | &quot;to&quot; ) { Constraint }
-	 *   VertexClassName ::= QualifiedClassName
-	 *   EdgeClassName ::= QualifiedClassName
-	 *   AggregationClassName ::= QualifiedClassName
-	 *   CompositionClassName ::= QualifiedClassName
-	 * </pre>
-	 * 
-	 * <strong>Note:</strong> The EBNF rules EdgeClassDefinition,
-	 * AggregationClassDefinition and CompositionClassDefinition are much the
-	 * same. That is the reason, why they were merged.
-	 * 
-	 * @param edge
-	 *            {@link EdgeClass}, which will be transformed to a TG string.
-	 * @param printConstraints
-	 *            Flag for printing the contained Constraints.
-	 */
-	public void printEdgeClassDefinition(EdgeClass edge,
-			boolean printConstraints) {
-
-		assert edge != null : "There is no EdgeClass object! \"edge == null\"";
-
-		if (edge.is_abstract()) {
+	public void printEdgeClass(EdgeClass ec) {
+		printComments(ec);
+		if (ec.is_abstract()) {
 			print(ABSTRACT, SPACE);
 		}
+		print(EDGE_CLASS, SPACE, shortName(ec.get_qualifiedName()));
 
-		assert !edge.get_qualifiedName().equals(EMPTY) : "This EdgeClass object has not name!";
-
-		print(getEdgeClassIdentifier(edge), SPACE, getName(edge));
-		printSuperClasses(edge);
-
-		printFromEdge(edge.getFirstFrom(EdgeDirection.OUT));
-		printToEdge(edge.getFirstTo(EdgeDirection.OUT));
-
-		if (edge instanceof AggregationClass
-				|| edge instanceof CompositionClass) {
-			AggregationClass aggregation = (AggregationClass) edge;
-			print(SUBELEMENT, AGGREGATE, SPACE,
-					aggregation.is_aggregateFrom() ? FROM : TO);
+		// superclasses
+		if (ec.getFirstSpecializesEdgeClass(EdgeDirection.OUT) != null) {
+			print(COLON, SPACE);
+			boolean first = true;
+			for (SpecializesEdgeClass svc : ec
+					.getSpecializesEdgeClassIncidences(EdgeDirection.OUT)) {
+				if (first) {
+					first = false;
+				} else {
+					print(COMMA, SPACE);
+				}
+				EdgeClass superEC = (EdgeClass) svc.getThat();
+				print(shortName(superEC.get_qualifiedName()));
+			}
 		}
 
-		printAttributes(edge.getFirstHasAttribute(EdgeDirection.OUT));
+		// from/to
+		IncidenceClass fromIC = (IncidenceClass) ec.getFirstComesFrom(
+				EdgeDirection.OUT).getThat();
+		IncidenceClass toIC = (IncidenceClass) ec.getFirstGoesTo(
+				EdgeDirection.OUT).getThat();
+		VertexClass fromVC = (VertexClass) fromIC.getFirstEndsAt(
+				EdgeDirection.OUT).getThat();
+		VertexClass toVC = (VertexClass) toIC.getFirstEndsAt(EdgeDirection.OUT)
+				.getThat();
 
-		if (printConstraints) {
-			printConstraints(edge.getFirstHasConstraint(EdgeDirection.OUT));
-		}
+		print(SPACE, FROM, SPACE, shortName(fromVC.get_qualifiedName()));
+		printMultiplicitiesAndRoles(fromIC);
+		print(SPACE, TO, SPACE, shortName(toVC.get_qualifiedName()));
+		printMultiplicitiesAndRoles(toIC);
 
+		// attrs
+		printAttributes(ec);
+
+		// constraints
+		printConstraints(ec);
 		println(DELIMITER);
 	}
 
-	/**
-	 * Transforms a {@link From}object to a TG string, which is written to a
-	 * {@link PrintWriter} object stored in the member variable
-	 * <code>stream</code>. The transformation rules <code>Multiplicity</code>,
-	 * <code>Role</code>, are encapsulated in methods corresponding to a prefix
-	 * "print" and the name of the EBNF rule.
-	 * 
-	 * <pre>
-	 *     (&quot;from&quot; | &quot;to&quot;) VertexClassName Multiplicity [Role]
-	 * </pre>
-	 * 
-	 * This is a part of a EBNF rule which is not explicitly defined! The
-	 * original rule is written below. As you can see, the first time this
-	 * method is called "from" has to be chosen to get a valid EBNF syntax. To
-	 * achieve this, an instance of {@link From} have to be the parameter
-	 * <code>aggregation</code>.
-	 * 
-	 * <pre>
-	 *   EdgeClassDefinition ::= [&quot;abstract&quot;] &quot;EdgeClass&quot; EdgeClassName [SuperClasses]
-	 *     &quot;from&quot; VertexClassName Multiplicity [Role] &quot;to&quot; VertexClassName Multiplicity [Role]
-	 *     [Attributes] { Constraint }
-	 * </pre>
-	 * 
-	 * @param aggreation
-	 *            A {@link From} object, which will be transformed into a TG
-	 *            string.
-	 */
-	private void printFromEdge(From from) {
-
-		assert from != null : "Object of type Aggregation (To / From) is null!";
-		// Getting referenced VertexClass
-		VertexClass vertex = (VertexClass) from.getOmega();
-		assert vertex != null : "There is no VertexClass object! \"vertex == null\"";
-		assert !vertex.get_qualifiedName().equals(EMPTY) : "This VertexClass object has no name!";
-
-		printFromOrToEdge(true, vertex.get_qualifiedName(), from.get_min(),
-				from.get_max(), from.get_roleName(), from.get_redefinedRoles());
+	private void printAggregation(IncidenceClass inc) {
+		assert inc != null;
+		switch (inc.get_aggregation()) {
+		case NONE:
+			break;
+		case SHARED:
+			print(SPACE, AGGREGATION, SPACE, AGG_SHARED);
+			break;
+		case COMPOSITE:
+			print(SPACE, AGGREGATION, SPACE, AGG_COMPOSITE);
+			break;
+		}
 	}
 
-	/**
-	 * Transforms a {@link To} to a TG string, which is written to a
-	 * {@link PrintWriter} object stored in the member variable
-	 * <code>stream</code>. The transformation rules <code>Multiplicity</code>,
-	 * <code>Role</code>, are encapsulated in methods corresponding to a prefix
-	 * "print" and the name of the EBNF rule.
-	 * 
-	 * <pre>
-	 * &lt;code&gt;
-	 *     (&quot;from&quot; | &quot;to&quot;) VertexClassName Multiplicity [Role]
-	 * &lt;/code&gt;
-	 * </pre>
-	 * 
-	 * This is a part of a EBNF rule which is not explicitly defined! The
-	 * original rule is written below. As you can see, the first time this
-	 * method is called "from" has to be chosen to get a valid EBNF syntax. To
-	 * achieve this, an instance of {@link From} have to be the parameter
-	 * <code>aggregation</code>.
-	 * 
-	 * <pre>
-	 *   EdgeClassDefinition ::= [&quot;abstract&quot;] &quot;EdgeClass&quot; EdgeClassName [SuperClasses]
-	 *     &quot;from&quot; VertexClassName Multiplicity [Role] &quot;to&quot; VertexClassName Multiplicity [Role]
-	 *     [Attributes] { Constraint }
-	 * </pre>
-	 * 
-	 * @param aggreation
-	 *            A To object, which will be transformed into a TG string.
-	 */
-	private void printToEdge(To to) {
+	private String shortName(String qname) {
+		if (!useShortNames || isPredefinedDomainName(qname)) {
+			return qname;
+		}
 
-		assert to != null : "Object of type Aggregation (To / From) is null!";
-		assert to instanceof To || to instanceof From : "Object in variable aggregation have to be of type To or From";
-		// Getting referenced VertexClass
-		VertexClass vertex = (VertexClass) to.getOmega();
-		assert vertex != null : "There is no VertexClass object! \"vertex == null\"";
-		assert !vertex.get_qualifiedName().equals(EMPTY) : "This VertexClass object has no name!";
+		// To refer to elements in the default package while not being there, we
+		// need to add a DOT.
+		if (!qname.contains(".") && !currentPackageName.isEmpty()) {
+			return '.' + qname;
+		}
+		return qname.replaceFirst("^" + currentPackageName + "\\" + DOT, "");
 
-		printFromOrToEdge(false, vertex.get_qualifiedName(), to.get_min(), to
-				.get_max(), to.get_roleName(), to.get_redefinedRoles());
 	}
 
-	/**
-	 * Transforms a {@link To} to a TG string, which is written to a
-	 * {@link PrintWriter} object stored in the member variable
-	 * <code>stream</code>. The transformation rules <code>Multiplicity</code>,
-	 * <code>Role</code>, are encapsulated in methods corresponding to a prefix
-	 * "print" and the name of the EBNF rule.
-	 * 
-	 * <pre>
-	 * &lt;code&gt;
-	 *     (&quot;from&quot; | &quot;to&quot;) VertexClassName Multiplicity [Role]
-	 * &lt;/code&gt;
-	 * </pre>
-	 * 
-	 * This is a part of a EBNF rule which is not explicitly defined! The
-	 * original rule is written below. As you can see, the first time this
-	 * method is called "from" has to be chosen to get a valid EBNF syntax. To
-	 * achieve this, an instance of {@link From} have to be the parameter
-	 * <code>aggregation</code>.
-	 * 
-	 * <pre>
-	 *   EdgeClassDefinition ::= [&quot;abstract&quot;] &quot;EdgeClass&quot; EdgeClassName [SuperClasses]
-	 *     &quot;from&quot; VertexClassName Multiplicity [Role] &quot;to&quot; VertexClassName Multiplicity [Role]
-	 *     [Attributes] { Constraint }
-	 * </pre>
-	 * 
-	 * @param aggreation
-	 *            A To object, which will be transformed into a TG string.
-	 */
-	private void printFromOrToEdge(boolean from, String vertexName, int min,
-			int max, String roleName, Set<String> redefinedRoles) {
-
-		assert vertexName != null || roleName != null || redefinedRoles != null : "Object of type Aggregation (To / From) is null!";
-
-		print(SUBELEMENT, from ? FROM : TO, SPACE, getName(vertexName));
-
-		printMultiplicity(min, max);
-		printRole(roleName, redefinedRoles);
+	private boolean isPredefinedDomainName(String qname) {
+		return qname.equals("Integer") || qname.equals("String")
+				|| qname.equals("Long") || qname.equals("Double")
+				|| qname.startsWith("List<") || qname.startsWith("Set<")
+				|| qname.startsWith("Map<") || qname.equals("Boolean");
 	}
 
-	/**
-	 * Transforms a role {@link String} and a {@link Set} of redefined role in
-	 * {@link String} format to a TG string, which is written to a
-	 * {@link PrintWriter} object stored in the member variable
-	 * <code>stream</code>.<br>
-	 * <br>
-	 * 
-	 * All EBNF rule, used in this method, are enlisted below:
-	 * 
-	 * <pre>
-	 * &lt;code&gt;
-	 *   Role ::= &quot;role&quot; RoleName [ Redefinitions ]
-	 *   RoleName ::= IdentifierString
-	 *   Redefinitions ::= &quot;redefines&quot; RoleName { &quot;,&quot; RoleName }
-	 * &lt;/code&gt;
-	 * </pre>
-	 * 
-	 * @param role
-	 *            {@link String} object, which specifies the role name for.
-	 * @param redefinedRoles
-	 *            {@link Set} of {@link String} containing redefined roles.
-	 */
-	private void printRole(String role, Set<String> redefinedRoles) {
+	private void printMultiplicitiesAndRoles(IncidenceClass ic) {
+		String min = ic.get_min() == Integer.MAX_VALUE ? STAR : String
+				.valueOf(ic.get_min());
+		String max = ic.get_max() == Integer.MAX_VALUE ? STAR : String
+				.valueOf(ic.get_max());
+		print(SPACE, ROUND_BRACKET_OPENED, min, COMMA, max,
+				ROUND_BRACKET_CLOSED);
 
-		if (role == null || role.equals(EMPTY)) {
+		if (ic.get_roleName() != null && !ic.get_roleName().isEmpty()) {
+			print(SPACE, ROLE, SPACE, ic.get_roleName());
+		}
+
+		printAggregation(ic);
+
+		if (ic.getFirstRedefines(EdgeDirection.OUT) != null) {
+			print(SPACE, REDEFINES, SPACE);
+			boolean first = true;
+			for (Redefines r : ic.getRedefinesIncidences(EdgeDirection.OUT)) {
+				if (first) {
+					first = false;
+				} else {
+					print(COMMA, SPACE);
+				}
+				IncidenceClass redefined = (IncidenceClass) r.getThat();
+				print(redefined.get_roleName());
+			}
+		}
+	}
+
+	private void printDomain(Domain dom) {
+		if (dom instanceof RecordDomain) {
+			printRecordDomain((RecordDomain) dom);
+			return;
+		} else if (dom instanceof EnumDomain) {
+			printEnumDomain((EnumDomain) dom);
 			return;
 		}
-
-		print(SPACE, ROLE, SPACE, role);
-
-		if (redefinedRoles == null) {
-			return;
-		}
-
-		Iterator<String> it = redefinedRoles.iterator();
-		if (it.hasNext()) {
-			print(SPACE, REDEFINES, SPACE, it.next());
-		}
-		while (it.hasNext()) {
-			print(COMMA, SPACE, it.next());
-		}
 	}
 
-	/**
-	 * Transforms a two int values from and till to a TG Multiplicity string,
-	 * which is written to a {@link PrintWriter} object stored in the member
-	 * variable <code>stream</code>.<br>
-	 * <br>
-	 * 
-	 * The EBNF rule, used in this method, is enlisted below:
-	 * 
-	 * <pre>
-	 * &lt;code&gt;
-	 *   Multiplicity ::= &quot;(&quot; ( NaturalNumber | &quot;0&quot; ) &quot;,&quot; ( NaturalNumber | &quot;*&quot; ) &quot;)&quot;
-	 * &lt;/code&gt;
-	 * </pre>
-	 * 
-	 * @param to
-	 *            {@link To} edge, which will be transformed to TG string.
-	 */
-	private void printMultiplicity(int from, int till) {
-		assert from >= 0 && till >= 0 : "from / to must be a positive number plus null";
-
-		String stringFrom = from == Integer.MAX_VALUE ? STAR : Integer
-				.toString(from);
-		String stringTill = till == Integer.MAX_VALUE ? STAR : Integer
-				.toString(till);
-		print(SPACE, ROUND_BRACKET_OPENED, stringFrom, COMMA, SPACE,
-				stringTill, ROUND_BRACKET_CLOSED);
-	}
-
-	/**
-	 * Prints all {@link Domain} objects incident to all EdgeDirection.OUT
-	 * {@link ContainsDomain} edges of a Package. This method iterates over all
-	 * ContainsDomain edges and uses <code>printDomainDefinition(Domain)</Code>
-	 * to get a formated output.
-	 * 
-	 * @param containsDomain
-	 *            First {@link ContainsDomain} edge, which should be transformed
-	 *            to a TG String.
-	 */
-	private void printDomainDefinition(ContainsDomain containsDomain) {
-		while (containsDomain != null) {
-			printDomainDefinition((Domain) containsDomain.getOmega());
-			containsDomain = containsDomain
-					.getNextContainsDomain(EdgeDirection.OUT);
-		}
-	}
-
-	/**
-	 * Transforms a {@link Domain} to a TG string, which is written to a
-	 * {@link PrintWriter} object stored in the member variable
-	 * <code>stream</code>. The transformation rules
-	 * <code>RecordDefinition</code> and <code>EnumDefinition</code> are
-	 * encapsulated in methods corresponding to a prefix "print" and the name of
-	 * the EBNF rule.<br>
-	 * <br>
-	 * 
-	 * Only {@link RecordDomain} objects or {@link EnumDomain} objects are
-	 * transformed. All other {@link Domain} objects are predefined.<br>
-	 * <br>
-	 * 
-	 * The EBNF rule, used in this method, is enlisted below:
-	 * 
-	 * <pre>
-	 * &lt;code&gt;
-	 *   DomainDefinition ::= RecordDefinition | EnumDefinition
-	 * &lt;/code&gt;
-	 * </pre>
-	 * 
-	 * @param domain
-	 *            {@link Domain}, which should be transformed to TG string.
-	 */
-	private void printDomainDefinition(Domain domain) {
-
-		// As mentioned above, only instances of RecordDomain and EnumDomain
-		// need to be printed.
-
-		if (domain instanceof RecordDomain) {
-			printRecordDomain((RecordDomain) domain);
-		} else
-
-		if (domain instanceof EnumDomain) {
-			printEnumDomain((EnumDomain) domain);
-		}
-	}
-
-	/**
-	 * Transforms a {@link RecordDomain} to a TG string, which is written to a
-	 * {@link PrintWriter} object stored in the member variable
-	 * <code>stream</code>.<br>
-	 * <br>
-	 * 
-	 * All EBNF rules, used in this method, are enlisted below:
-	 * 
-	 * <pre>
-	 *   RecordDefinition ::= &quot;RecordDomain&quot; DomainName &quot;(&quot; RecordComponent { &quot;,&quot; RecordComponent } &quot;)&quot;
-	 *   DomainName ::= QualifiedClassName
-	 *   RecordComponent ::= IdentifierString &quot;:&quot; Domain
-	 *   QualifiedClassName :: = [ Qualifier ] ClassNameString
-	 *   Qualifier ::= &quot;.&quot; | { PackageName &quot;.&quot; }
-	 *   PackageName ::= PackageNameString
-	 * </pre>
-	 * 
-	 * @param recordDomain
-	 *            {@link RecordDomain}, which should be transformed to TG
-	 *            string.
-	 */
-	private void printRecordDomain(RecordDomain recordDomain) {
-		// Gets the first EdgeDirection.OUT HasRecordDomainComponent edge
-		HasRecordDomainComponent hasComponent = recordDomain
-				.getFirstHasRecordDomainComponent(EdgeDirection.OUT);
-
-		// A RecordDomain object must have at least one HasRecordDomainComponent
-		// edge.
-		assert hasComponent != null : "HasRecordDomainComponent is null of Domain "
-				+ recordDomain.get_qualifiedName();
-		// Gets the domain of the first record
-		Domain domain = (Domain) hasComponent.getOmega();
-
-		// Formated output of the EBNF rule "RecordDefinition" without the
-		// possible repetition.
-		print(RECORD_DOMAIN, SPACE, getName(recordDomain), SUBELEMENT,
-				ROUND_BRACKET_OPENED, hasComponent.get_name(), COLON, SPACE,
-				getName(domain));
-
-		// Next EdgeDirection.OUT edge
-		hasComponent = hasComponent
-				.getNextHasRecordDomainComponent(EdgeDirection.OUT);
-
-		// Loop over all remaining Components
-		while (hasComponent != null) {
-			domain = (Domain) hasComponent.getOmega();
-			// Formated output of the EBNF rule "RecordDefinition" with only the
-			// possible repetition.
-			print(COMMA, SPACE, hasComponent.get_name(), COLON, SPACE,
-					getName(domain));
-			// Next EdgeDirection.OUT edge
-			hasComponent = hasComponent
-					.getNextHasRecordDomainComponent(EdgeDirection.OUT);
-		}
-		// Closes expression
-		println(ROUND_BRACKET_CLOSED, DELIMITER);
-	}
-
-	/**
-	 * Transforms a {@link EnumDomain} to a TG string, which is written to a
-	 * {@link PrintWriter} object stored in the member variable
-	 * <code>stream</code>.<br>
-	 * <br>
-	 * 
-	 * All EBNF rules, used in this method, are enlisted below:
-	 * 
-	 * <pre>
-	 * &lt;code&gt;
-	 *   EnumDefinition ::= &quot;EnumDomain&quot; DomainName &quot;(&quot; EnumComponent { &quot;,&quot; EnumComponent } &quot;)&quot;
-	 *   EnumComponent ::= String
-	 *   DomainName ::= QualifiedClassName
-	 *   QualifiedClassName :: = [ Qualifier ] ClassNameString
-	 *   Qualifier ::= &quot;.&quot; | { PackageName &quot;.&quot; }
-	 *   PackageName ::= PackageNameString
-	 * &lt;/code&gt;
-	 * </pre>
-	 * 
-	 * @param domain
-	 *            {@link EnumDomain}, which should be transformed to TG string.
-	 */
-	private void printEnumDomain(EnumDomain domain) {
-
-		List<String> list = domain.get_enumConstants();
-		// The EnumConstants list cannot be null!
-		assert list != null : "Enum Constants list is a NullPointer!";
-
-		Iterator<String> it = list.iterator();
-		// There have to be at least one element in the list
-		assert it.hasNext() : "Enum Constants list is to small!";
-
-		// Formated output of the EBNF rule "EnumDefinition" without the
-		// repetition.
-		print(ENUM_DOMAIN, SPACE, getName(domain), SUBELEMENT,
-				ROUND_BRACKET_OPENED, it.next());
-
-		// Loop over all other constants
-		while (it.hasNext()) {
-			// Formated output of the EBNF rule "EnumDefinition" with only the
-			// repetition
-			print(COMMA, SPACE, it.next());
+	private void printEnumDomain(EnumDomain dom) {
+		printComments(dom);
+		print(ENUM_DOMAIN, SPACE, dom.get_qualifiedName(), SPACE,
+				ROUND_BRACKET_OPENED);
+		boolean first = true;
+		for (String constant : dom.get_enumConstants()) {
+			if (first) {
+				first = false;
+			} else {
+				print(COMMA, SPACE);
+			}
+			print(constant);
 		}
 		println(ROUND_BRACKET_CLOSED, DELIMITER);
 	}
 
-	/**
-	 * Transforms all superclass objects of a {@link VertexClass} to a TG
-	 * string, which is written to a {@link PrintWriter} object stored in the
-	 * member variable <code>stream</code>.<br>
-	 * <br>
-	 * 
-	 * Note: There are no loops for specialization allowed.<br>
-	 * <br>
-	 * 
-	 * All EBNF rules, used in this method, are enlisted below:
-	 * 
-	 * <pre>
-	 * &lt;code&gt;
-	 *   SuperClasses ::= &quot;:&quot; SuperClassName { &quot;,&quot; SuperClassName }
-	 *   SuperClassName ::= QualifiedClassName
-	 *   QualifiedClassName :: = [ Qualifier ] ClassNameString
-	 *   Qualifier ::= &quot;.&quot; | { PackageName &quot;.&quot; }
-	 *   PackageName ::= PackageNameString
-	 * &lt;/code&gt;
-	 * </pre>
-	 * 
-	 * @param vertex
-	 *            {@link VertexClass} of which all superclasses should be
-	 *            transformed to TG string.
-	 */
-	private void printSuperClasses(VertexClass vertex) {
-		// Get the first EdgeDirection.OUT edge "SpecializesVertexClass"
-		assert vertex != null : "Object of type VertexClass is null";
-		printSuperClasses(vertex
-				.getFirstSpecializesVertexClass(EdgeDirection.OUT));
-	}
-
-	/**
-	 * Transforms all superclass objects of a {@link EdgeClass} to a TG string,
-	 * which is written to a {@link PrintWriter} object stored in the member
-	 * variable <code>stream</code>.<br>
-	 * <br>
-	 * 
-	 * <strong>Note:</strong> There are no loops for specialization allowed.<br>
-	 * <br>
-	 * 
-	 * All EBNF rules, used in this method, are enlisted below:
-	 * 
-	 * <pre>
-	 * &lt;code&gt;
-	 *   SuperClasses ::= &quot;:&quot; SuperClassName { &quot;,&quot; SuperClassName }
-	 *   SuperClassName ::= QualifiedClassName
-	 *   QualifiedClassName :: = [ Qualifier ] ClassNameString
-	 *   Qualifier ::= &quot;.&quot; | { PackageName &quot;.&quot; }
-	 *   PackageName ::= PackageNameString
-	 * &lt;/code&gt;
-	 * </pre>
-	 * 
-	 * @param edge
-	 *            {@link EdgeClass} of which all superclasses should be
-	 *            transformed to TG string.
-	 */
-	private void printSuperClasses(EdgeClass edge) {
-		// Get the first EdgeDirection.OUT edge "SpecializesVertexClass"
-		assert edge != null : "Object of type EdgeClass is null";
-		printSuperClasses(edge.getFirstSpecializesEdgeClass(EdgeDirection.OUT));
-	}
-
-	/**
-	 * Transforms all superclasses of a {@link GraphElementClass} to a TG
-	 * string, which is written to a {@link PrintWriter} object stored in the
-	 * member variable <code>stream</code>.<br>
-	 * <br>
-	 * 
-	 * <strong>Note:</strong> There are no loops for specialization allowed.<br>
-	 * <br>
-	 * 
-	 * All EBNF rules, used in this method, are enlisted below:
-	 * 
-	 * <pre>
-	 * &lt;code&gt;
-	 *   SuperClasses ::= &quot;:&quot; SuperClassName { &quot;,&quot; SuperClassName }
-	 *   SuperClassName ::= QualifiedClassName
-	 *   QualifiedClassName :: = [ Qualifier ] ClassNameString
-	 *   Qualifier ::= &quot;.&quot; | { PackageName &quot;.&quot; }
-	 *   PackageName ::= PackageNameString
-	 * &lt;/code&gt;
-	 * </pre>
-	 * 
-	 * @param superClassEdge
-	 *            First {@link SpecializesEdgeClass} or
-	 *            {@link SpecializesVertexClass} edge, which should be
-	 *            transformed to TG string. All following edges will also be
-	 *            transformed.
-	 */
-	private void printSuperClasses(Edge superClassEdge) {
-
-		Class<? extends Edge> edgeClass = null;
-
-		GraphElementClass superClass;
-
-		if (superClassEdge != null) {
-			edgeClass = superClassEdge.getClass();
-			// Gets the referenced super class at the end of superClassEdge.
-			superClass = (GraphElementClass) superClassEdge.getOmega();
-			assert superClass != null : "Object of type GraphElementClass is null";
-			// Output conform to the first part of the EBNF rule "SuperClass"
-			// without a possible repetition.
-			print(COLON, SPACE, getName(superClass));
-
-			// Get the next EdgeDirection.OUT edge "SpecializesVertexClass"
-			superClassEdge = superClassEdge.getNextEdgeOfClass(edgeClass,
-					EdgeDirection.OUT);
+	private void printRecordDomain(RecordDomain dom) {
+		printComments(dom);
+		print(RECORD_DOMAIN, SPACE, dom.get_qualifiedName(), SPACE,
+				ROUND_BRACKET_OPENED);
+		boolean first = true;
+		for (HasRecordDomainComponent hc : dom
+				.getHasRecordDomainComponentIncidences(EdgeDirection.OUT)) {
+			if (first) {
+				first = false;
+			} else {
+				print(COMMA, SPACE);
+			}
+			Domain compDom = (Domain) hc.getThat();
+			print(hc.get_name(), COLON, SPACE, compDom.get_qualifiedName());
 		}
+		println(ROUND_BRACKET_CLOSED, DELIMITER);
+	}
 
-		while (superClassEdge != null) {
-			// Gets the referenced super class at the end of superClassEdge.
-			superClass = (GraphElementClass) superClassEdge.getOmega();
-			assert superClass != null : "Object of type GraphElementClass is null";
-			// Output conform to the second part of the EBNF rule "SuperClass"
-			// (the loop).
+	private void printGraphClass(GraphClass gc) {
+		print(GRAPH_CLASS, SPACE, gc.get_qualifiedName());
+		printAttributes(gc);
+		printConstraints(gc);
+		println(DELIMITER, NEWLINE);
+	}
 
-			print(COMMA, SPACE, getName(superClass));
-			// Get the next EdgeDirection.OUT edge "SpecializesVertexClass"
-			superClassEdge = superClassEdge.getNextEdgeOfClass(edgeClass,
-					EdgeDirection.OUT);
+	private void printConstraints(AttributedElementClass aec) {
+		for (HasConstraint hc : aec
+				.getHasConstraintIncidences(EdgeDirection.OUT)) {
+			Constraint constr = (Constraint) hc.getThat();
+			print(SPACE, SQUARE_BRACKET_OPENED);
+
+			print(GraphIO.toUtfString(constr.get_message()), SPACE);
+			print(GraphIO.toUtfString(constr.get_predicateQuery()));
+
+			String offElemQ = constr.get_offendingElementsQuery();
+			if (offElemQ != null) {
+				print(SPACE, GraphIO.toUtfString(offElemQ));
+			}
+
+			print(SQUARE_BRACKET_CLOSED);
 		}
 	}
 
-	/**
-	 * Transforms all {@link Attribute} objects of a {@link VertexClass} to a TG
-	 * string, which is written to a {@link PrintWriter} object stored in the
-	 * member variable <code>stream</code>. The transformation rule
-	 * <code>Domain</code> is encapsulated in methods corresponding to the name
-	 * of the EBNF rule.<br>
-	 * <br>
-	 * 
-	 * All EBNF rules, used in this method, are enlisted below:
-	 * 
-	 *<pre>
-	 * &lt;code&gt;
-	 *   Attributes ::= &quot;{&quot; Attribute { &quot;,&quot; Attribute } &quot;}&quot;
-	 *   Attribute ::= AttributeName &quot;:&quot; Domain
-	 *   AttributeName ::= IdentifierString
-	 * &lt;/code&gt;
-	 * </pre>
-	 * 
-	 * @param hasAttribute
-	 *            {@link HasAttribute}, which should be transformed to TG
-	 *            string.
-	 */
-	public void printAttributes(HasAttribute hasAttribute) {
-
-		Attribute attribute;
-
-		if (hasAttribute != null) {
-			// Gets the referenced Attribute at the end of this hasAttribute
-			// edge
-			attribute = (Attribute) hasAttribute.getOmega();
-			assert attribute != null : "Object of type Attribute is null";
-			print(SUBELEMENT, CURLY_BRACKET_OPENED, SPACE,
-					attribute.get_name(), COLON, SPACE);
-			// Prints the Domain
-			printDomain((Domain) attribute.getFirstHasDomain(EdgeDirection.OUT)
-					.getOmega());
-			// Gets the next edge to look at
-			hasAttribute = hasAttribute.getNextHasAttribute(EdgeDirection.OUT);
-		} else {
-			// This case is important, because at the end of this method is a
-			// print, which shouldn't be executed!
+	private void printAttributes(AttributedElementClass aec) {
+		if (aec.getFirstHasAttribute(EdgeDirection.OUT) == null) {
 			return;
 		}
 
-		while (hasAttribute != null) {
-			// Gets the referenced Attribute at the end of this hasAttribute
-			// edge
-			attribute = (Attribute) hasAttribute.getOmega();
-			assert attribute != null : "Object of type Attribute is null";
-			print(COMMA, SPACE, attribute.get_name(), COLON, SPACE);
-			// Prints the Domain
-			printDomain((Domain) attribute.getFirstHasDomain(EdgeDirection.OUT)
-					.getOmega());
-			// Gets the next edge to look at
-			hasAttribute = hasAttribute.getNextHasAttribute(EdgeDirection.OUT);
-		}
-		// Closes this expression with a "}" character
-		print(SPACE, CURLY_BRACKET_CLOSED);
-	}
-
-	/**
-	 * Transforms a {@link Domain} to a TG string, which is written to a
-	 * {@link PrintWriter} object stored in the member variable
-	 * <code>stream</code>.<br>
-	 * <br>
-	 * 
-	 * All EBNF rules, used in this method, are enlisted below:
-	 * 
-	 * <pre>
-	 *   Domain ::= DomainName | &quot;Boolean&quot; | &quot;Integer&quot; | &quot;Long&quot; | &quot;Double&quot; |
-	 *   	&quot;String&quot; | ( (&quot;List&quot; | &quot;Set&quot;) &quot;&lt;&quot; Domain &quot;&gt;&quot; ) | (&quot;Map&quot; &quot;&lt;&quot; Domain &quot;,&quot;
-	 *   	Domain &quot;&gt;&quot;)
-	 *   DomainName ::= QualifiedClassName
-	 * </pre>
-	 * 
-	 * @param domain
-	 *            {@link Domain}, which should be transformed to TG string.
-	 */
-	private void printDomain(Domain domain) {
-		assert domain != null : "Object of type Domain is null!";
-		print(getName(domain));
-	}
-
-	/**
-	 * Transforms all {@link Constraint} objects referenced by
-	 * {@link HasConstraint} edge to a TG string, which is written to a
-	 * {@link PrintWriter} object stored in the member variable
-	 * <code>stream</code>.<br>
-	 * <br>
-	 * 
-	 * All EBNF rules, used in this method, are enlisted below:
-	 * 
-	 * <pre>
-	 *   Constraint ::= &quot;[&quot; Message PredicateQuery [ OffendingElementsQuery ] &quot;]&quot;
-	 *   Message ::= String
-	 *   PredicateQuery ::= GReQLString
-	 *   OffendingElementsQuery ::= GReQLString
-	 * </pre>
-	 * 
-	 * @param constraint
-	 *            {@link Constraint}, which should be transformed to TG string.
-	 */
-	private void printConstraints(HasConstraint hasConstraint) {
-
-		while (hasConstraint != null) {
-			printConstraint((Constraint) hasConstraint.getOmega());
-			hasConstraint = hasConstraint
-					.getNextHasConstraint(EdgeDirection.OUT);
-		}
-	}
-
-	/**
-	 * Transforms a {@link Constraint} to a TG string, which is written to a
-	 * {@link PrintWriter} object stored in the member variable
-	 * <code>stream</code>.<br>
-	 * <br>
-	 * 
-	 * All EBNF rules, used in this method, are enlisted below: *
-	 * 
-	 * <pre>
-	 *   Constraint ::= &quot;[&quot; Message PredicateQuery [ OffendingElementsQuery ] &quot;]&quot;
-	 *   Message ::= String
-	 *   PredicateQuery ::= GReQLString
-	 *   OffendingElementsQuery ::= GReQLString
-	 * </pre>
-	 * 
-	 * @param constraint
-	 *            {@link Constraint}, which should be transformed to TG string.
-	 */
-	private void printConstraint(Constraint constraint) {
-
-		assert constraint.get_message() != null : "Message of a TG Constraint is null";
-		assert constraint.get_predicateQuery() != null : "PredicateQuery of a TG Constraint is null";
-
-		// GraphIO.toUtfString(String) transforms a given String to the
-		// appropriated format
-		print(SUBELEMENT, SQUARE_BRACKET_OPENED, GraphIO.toUtfString(constraint
-				.get_message()), SUBELEMENT, SPACE, GraphIO
-				.toUtfString(constraint.get_predicateQuery()), SUBELEMENT,
-				SPACE, GraphIO.toUtfString(constraint
-						.get_offendingElementsQuery()), SQUARE_BRACKET_CLOSED);
-	}
-
-	/**
-	 * Returns the correct class name for a specified {@link EdgeClass}.<br>
-	 * <br>
-	 * 
-	 * Possible return values are:<br>
-	 * <br>
-	 * 
-	 * "EdgeClass" for an EdgeClass or subclasses "AggregationClass" for an
-	 * AggregationClass or subclasses "CompositionClass" for an CompositionClass
-	 * or subclasses<br>
-	 * <br>
-	 * 
-	 * Subclasses means subclasses of the three possible types. Normally
-	 * {@link EdgeClass} is specialized by {@link AggregationClass} and
-	 * {@link AggregationClass} is specialized by {@link CompositionClass}. This
-	 * means the class name of the deepest class will be chosen as return value.
-	 * 
-	 * @param edge
-	 *            {@link EdgeClass}, of which the class name should be returned.
-	 * @return The correct class name of the specified {@link EdgeClass}.
-	 */
-	private String getEdgeClassIdentifier(EdgeClass edge) {
-
-		if (edge instanceof CompositionClass) {
-			return COMPOSITION_CLASS;
-		}
-
-		if (edge instanceof AggregationClass) {
-			return AGGREGATION_CLASS;
-		}
-
-		return EDGE_CLASS;
-	}
-
-	/**
-	 * Returns the qualified name of an {@link AttributedElementClass}, if the
-	 * member variable <code>hierarchical</code> is <code>false</code> and the
-	 * simple name if it's true.
-	 * 
-	 * @param element
-	 *            {@link AttributedElementClass} of which the name is retrieved.
-	 * @return The name of the specified {@link AttributedElementClass} object.
-	 */
-	private String getName(AttributedElementClass element) {
-		assert element != null : "Object of type AttributedElementClass is null!";
-		return getName(element.get_qualifiedName());
-	}
-
-	/**
-	 * Returns the qualified name of an {@link Domain}, if the member variable
-	 * <code>hierarchical</code> is <code>false</code> and the simple name if
-	 * it's true.
-	 * 
-	 * @param element
-	 *            {@link Domain} of which the name is retrieved.
-	 * @return The name of the specified {@link Domain} Domain object.
-	 */
-	private String getName(Domain element) {
-		assert element != null : "FIXME!" + " Object of type Domain is null!";
-
-		String qualifiedName = element.get_qualifiedName();
-
-		if (element instanceof RecordDomain || element instanceof EnumDomain) {
-			qualifiedName = getName(qualifiedName);
-		} else if (element instanceof CollectionDomain) {
-			qualifiedName = getName((CollectionDomain) element);
-		} else if (element instanceof MapDomain) {
-			qualifiedName = getName((MapDomain) element);
-		} else {
-			// Checks if there is a package name
-			// Because this case only basic domains can reach, there must not be
-			// a package name
-			int index = qualifiedName.lastIndexOf('.');
-
-			assert index == -1
-					|| qualifiedName.substring(0, index).length() == 0 : "FIXME! The basic domain '"
-					+ qualifiedName + "' is not in the default package.";
-			return qualifiedName;
-		}
-		return qualifiedName;
-	}
-
-	/**
-	 * Returns the qualified name of an {@link CollectionDomain}, if the member
-	 * variable <code>hierarchical</code> is <code>false</code> and the simple
-	 * name if it's true.
-	 * 
-	 * @param element
-	 *            {@link CollectionDomain} of which the name is retrieved.
-	 * @return The name of the specified {@link CollectionDomain}
-	 *         CollectionDomain object.
-	 */
-	private String getName(CollectionDomain element) {
-
-		assert element instanceof SetDomain || element instanceof ListDomain : "FIXME!"
-				+ " There might be a CollectionDomain not included of element is null.";
-
-		StringBuilder sb = new StringBuilder();
-
-		sb.append(element instanceof SetDomain ? "Set<" : "List<");
-
-		HasBaseDomain hasBaseDomain = element
-				.getFirstHasBaseDomain(EdgeDirection.OUT);
-		assert hasBaseDomain != null : "FIXME! There should be a BasicDomain!";
-		sb.append(getName((Domain) hasBaseDomain.getThat()));
-		assert hasBaseDomain.getNextHasBaseDomain(EdgeDirection.OUT) == null : "FIXME!"
-				+ " There should be only one BasicDomain!";
-
-		sb.append(">");
-		return sb.toString();
-	}
-
-	/**
-	 * Returns the qualified name of an {@link MapDomain}, if the member
-	 * variable <code>hierarchical</code> is <code>false</code> and the simple
-	 * name if it's true.
-	 * 
-	 * @param element
-	 *            {@link MapDomain} of which the name is retrieved.
-	 * @return The name of the specified {@link MapDomain} MapDomain object.
-	 */
-	private String getName(MapDomain element) {
-
-		StringBuilder sb = new StringBuilder();
-
-		sb.append("Map<");
-
-		HasKeyDomain hasKeyDomain = element
-				.getFirstHasKeyDomain(EdgeDirection.OUT);
-		assert hasKeyDomain != null : "FIXME! There should be a key domain!";
-
-		sb.append(getName((Domain) hasKeyDomain.getThat()));
-		assert hasKeyDomain.getNextHasKeyDomain(EdgeDirection.OUT) == null : "FIXME!"
-				+ " There should be only one key domain!";
-
-		sb.append(",");
-
-		HasValueDomain hasValueDomain = element
-				.getFirstHasValueDomain(EdgeDirection.OUT);
-		assert hasValueDomain != null : "FIXME! There should be a value domain!";
-		sb.append(getName((Domain) hasValueDomain.getThat()));
-		assert hasValueDomain.getNextHasValueDomain(EdgeDirection.OUT) == null : "FIXME!"
-				+ " There should be only one value domain!";
-
-		sb.append(">");
-		return sb.toString();
-	}
-
-	/**
-	 * Returns the qualified name of an {@link AttributedElement} or a
-	 * {@link Domain}, if the member variable <code>hierarchical</code> is
-	 * <code>false</code> and the simple name if it's true.
-	 * 
-	 * @param element
-	 *            QualifiedName of an {@link AttributedElement} or a
-	 *            {@link Domain} of which the name is retrieved.
-	 * @return The name of the specified QualifiedName of an
-	 *         {@link AttributedElement} or a {@link Domain}.
-	 */
-	private String getName(String name) {
-		assert name != null : "Object of type String is null!";
-		if (!hierarchical) {
-			return name;
-		}
-
-		String[] splittedName = getSplittedQualifiedName(name);
-
-		if (splittedName[0].equals(packageName)) {
-			return splittedName[1];
-		}
-
-		if (splittedName[0].length() == 0) {
-			return POINT + splittedName[1];
-		}
-
-		return name;
-	}
-
-	private String[] getSplittedQualifiedName(String qualifiedName) {
-		int index = qualifiedName.lastIndexOf('.');
-		String splittedName[] = new String[2];
-		splittedName[0] = index == -1 ? "" : qualifiedName.substring(0, index);
-		splittedName[1] = index == -1 ? qualifiedName : qualifiedName
-				.substring(index + 1);
-
-		return splittedName;
-	}
-
-	/**
-	 * Retrieves the simple name {@link String} of a qualified name
-	 * {@link String}.
-	 * 
-	 * @param qualifiedName
-	 *            Qualified name {@link String} of which the simple name String
-	 *            will be retrieved.
-	 * @return Simple name {@link String}.
-	 */
-	public static String qualifiedNameToSimpleName(String qualifiedName) {
-		assert qualifiedName != null : "Object of type String is null";
-		int p = qualifiedName.lastIndexOf(".");
-		if (qualifiedName.startsWith("List<")
-				|| qualifiedName.startsWith("Set<")
-				|| qualifiedName.startsWith("Map<") || p < 0) {
-			return qualifiedName;
-		} else {
-			return qualifiedName.substring(p + 1);
-		}
-	}
-
-	/**
-	 * Appends all given {@link String} object in order to the member variable
-	 * <code>stream</code>. This method reduces the overhead of appending
-	 * multiple {@link String} objects to the member variable
-	 * <code>stream</code>.<br>
-	 * <br>
-	 * 
-	 * Instead of writing
-	 * 
-	 * <pre>
-	 * stream.print(SCHEMA_ACCESS);
-	 * stream.print(SPACE);
-	 * stream.print(s.getPackageName());
-	 * stream.print(POINT);
-	 * stream.print(s.getSimpleName());
-	 * stream.print(DELIMITER);
-	 * </pre>
-	 * 
-	 * it is possible to simply write
-	 * 
-	 * <pre>
-	 * print(SCHEMA_ACCESS, SPACE, &quot;node&quot;, POINT, &quot;Nothing&quot;, DELIMITER);
-	 * </pre>
-	 * 
-	 * @param strings
-	 *            Variable parameter list with all {@link String} objects, which
-	 *            should be added to the member variable <code>stream</code>.
-	 */
-	private void print(String... strings) {
-		assert strings != null : "Variable parameter list is empty!";
-
-		for (String string : strings) {
-			try {
-				stream.write(string);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		print(SPACE, CURLY_BRACKET_OPENED);
+		boolean first = true;
+		for (HasAttribute ha : aec.getHasAttributeIncidences(EdgeDirection.OUT)) {
+			if (first) {
+				first = false;
+			} else {
+				print(COMMA, SPACE);
+			}
+			Attribute attr = (Attribute) ha.getThat();
+			Domain dom = (Domain) attr.getFirstHasDomain(EdgeDirection.OUT)
+					.getThat();
+			print(attr.get_name(), COLON, SPACE, shortName(dom
+					.get_qualifiedName()));
+			String defaultValue = attr.get_defaultValue();
+			if (defaultValue != null) {
+				print(SPACE, ASSIGN, SPACE, GraphIO.toUtfString(defaultValue));
 			}
 		}
+		print(CURLY_BRACKET_CLOSED);
 	}
 
-	/**
-	 * Appends all given {@link String} object in order to the member variable
-	 * <code>stream</code> and adds a new line. This method reduces the overhead
-	 * of appending multiple {@link String} objects to the member variable
-	 * <code>stream</code>.<br>
-	 * <br>
-	 * 
-	 * Instead of writing
-	 * 
-	 * <pre>
-	 * stream.print(SCHEMA_ACCESS);
-	 * stream.print(SPACE);
-	 * stream.print(s.getPackageName());
-	 * stream.print(POINT);
-	 * stream.print(s.getSimpleName());
-	 * stream.print(DELIMITER);
-	 * </pre>
-	 * 
-	 * it is possible to simply write
-	 * 
-	 * <pre>
-	 * print(SCHEMA_ACCESS, SPACE, &quot;node&quot;, POINT, &quot;Nothing&quot;, DELIMITER);
-	 * </pre>
-	 * 
-	 * @param strings
-	 *            Variable parameter list with all {@link String} objects, which
-	 *            should be added to the member variable <code>stream</code>.
-	 */
 	private void println(String... strings) {
-		assert strings != null : "Variable parameter list is empty!";
+		print(strings);
+		try {
+			stream.write(NEWLINE);
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
+	}
 
+	private void print(String... strings) {
 		try {
 			for (int i = 0; i < strings.length - 1; i++) {
 				stream.write(strings[i]);
 			}
 			stream.write(strings[strings.length - 1]);
-			stream.write("\n");
 		} catch (IOException ex) {
-			System.out.println(ex);
+			ex.printStackTrace();
+			throw new RuntimeException(ex);
 		}
 	}
 }

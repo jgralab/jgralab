@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -94,7 +94,7 @@ public class Union extends Greql2Function {
 				+ "In case of collections, both are converted to sets first.\n"
 				+ "In case of maps, the third parameter tells if the keys have to be\n"
 				+ "disjoint.  If not, the second map's entries override the first one's.\n"
-				+ "in case of a collection of collections, the union of\n"
+				+ "In case of a collection of collections, the union of\n"
 				+ "all member collections is returned.";
 
 		Category[] c = { Category.COLLECTIONS_AND_MAPS };

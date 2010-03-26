@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -38,7 +38,6 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.DFA;
-import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.State;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.Transition;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
@@ -56,7 +55,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>PATHSYSTEM pathSystem(v:VERTEX, dfa:DFA)</code></dd>
+ * <dd><code>PATHSYSTEM pathSystem(v:VERTEX, dfa:AUTOMATON)</code></dd>
  * <dd>&nbsp;</dd>
  * <dd>This function can be used with the (<code>:-)</code>)-Operator:
  * <code>v :-) rpe</code></dd>
@@ -85,8 +84,7 @@ public class PathSystem extends Greql2Function {
 
 	{
 		JValueType[][] x = {
-				{ JValueType.VERTEX, JValueType.DFA, JValueType.PATHSYSTEM },
-				{ JValueType.VERTEX, JValueType.NFA, JValueType.PATHSYSTEM } };
+				{ JValueType.VERTEX, JValueType.AUTOMATON, JValueType.PATHSYSTEM } };
 		signatures = x;
 
 		description = "Returns a pathsystem with root vertex, which is structured according to path description.";
@@ -209,20 +207,20 @@ public class PathSystem extends Greql2Function {
 					Transition currentTransition = transitionIter.next();
 					Vertex nextVertex = currentTransition.getNextVertex(
 							currentEntry.vertex, inc);
-					if (!isMarked(nextVertex, currentTransition.getEndState())) {
+					if (!isMarked(nextVertex, currentTransition.endState)) {
 						if (currentTransition.accepts(currentEntry.vertex, inc,
 								subgraph)) {
 							Edge traversedEdge = inc;
 							if (nextVertex == currentEntry.vertex) {
 								traversedEdge = null;
 							}
-							markVertex(nextVertex, currentTransition
-									.getEndState(), currentEntry.vertex,
+							markVertex(nextVertex, currentTransition.endState
+									, currentEntry.vertex,
 									traversedEdge, currentEntry.state,
 									currentEntry.distanceToRoot + 1);
 							PathSystemQueueEntry nextEntry = new PathSystemQueueEntry(
 									nextVertex,
-									currentTransition.getEndState(),
+									currentTransition.endState,
 									traversedEdge, currentEntry.state,
 									currentEntry.distanceToRoot + 1);
 							queue.add(nextEntry);
@@ -246,11 +244,7 @@ public class PathSystem extends Greql2Function {
 		DFA dfa = null;
 		switch (checkArguments(arguments)) {
 		case 0:
-			dfa = arguments[1].toDFA();
-			break;
-		case 1:
-			NFA nfa = arguments[1].toNFA();
-			dfa = new DFA(nfa);
+			dfa = arguments[1].toAutomaton().getDFA();
 			break;
 		default:
 			throw new WrongFunctionParameterException(this, arguments);

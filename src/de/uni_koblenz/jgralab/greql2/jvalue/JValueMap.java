@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -27,15 +27,16 @@ package de.uni_koblenz.jgralab.greql2.jvalue;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.Map.Entry;
 
 /**
  * @author Tassilo Horn <horn@uni-koblenz.de>
  * 
  */
-public class JValueMap extends JValue {
+public class JValueMap extends JValueImpl {
 
-	private HashMap<JValue, JValue> map;
+	private Map<JValue, JValue> map;
 
 	{
 		type = JValueType.MAP;
@@ -148,17 +149,17 @@ public class JValueMap extends JValue {
 	 * Adds the mapping k --&gt; v to the map. If k had a mapping with another
 	 * value before, then the old mapping is replaced.
 	 * 
-	 * @param k
+	 * @param jkey
 	 *            the key
-	 * @param v
+	 * @param jval
 	 *            the value mapped by k
 	 * @return the previous value associated with the given key <code>k</code>
 	 *         or <code>null</code> if there was no association for that key (or
 	 *         the key had the value <code>null</code> before).
 	 */
-	public JValue put(JValue k, JValue v) {
+	public JValue put(JValue jkey, JValue jval) {
 		storedHashCode = 0;
-		return map.put(k, v);
+		return map.put(jkey, jval);
 	}
 
 	@Override
@@ -301,6 +302,18 @@ public class JValueMap extends JValue {
 			}
 		}
 		return newMap;
+	}
+
+	/**
+	 * Sorts this map according the natural ordering of its keys.
+	 * 
+	 * This is done by replacing the underlying HashMap with a TreeMap.
+	 */
+	public void sort() {
+		if (map instanceof TreeMap<?, ?>) {
+			return;
+		}
+		map = new TreeMap<JValue, JValue>(map);
 	}
 
 	@Override

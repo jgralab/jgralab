@@ -56,47 +56,38 @@ public class Or extends BinaryOperator {
 		// evaluates to null...
 
 		if (lhs instanceof True) {
-			simplifiedOrOptimized = true;
 			return lhs;
 		}
 
 		if (rhs instanceof True) {
-			simplifiedOrOptimized = true;
 			return rhs;
 		}
 
 		if (lhs instanceof False) {
-			simplifiedOrOptimized = true;
 			return rhs;
 		}
 
 		if (rhs instanceof False) {
-			simplifiedOrOptimized = true;
 			return lhs;
 		}
 
 		if ((lhs instanceof Null) && isAndWithNullLeaf(rhs)) {
-			simplifiedOrOptimized = true;
 			return lhs;
 		}
 
 		if ((rhs instanceof Null) && isAndWithNullLeaf(lhs)) {
-			simplifiedOrOptimized = true;
 			return rhs;
 		}
 
 		if ((lhs instanceof Null) && isOrWithNullLeaf(rhs)) {
-			simplifiedOrOptimized = true;
 			return rhs;
 		}
 
 		if ((rhs instanceof Null) && isOrWithNullLeaf(lhs)) {
-			simplifiedOrOptimized = true;
 			return lhs;
 		}
 
 		if (lhs.equals(rhs)) {
-			simplifiedOrOptimized = true;
 			return lhs;
 		}
 

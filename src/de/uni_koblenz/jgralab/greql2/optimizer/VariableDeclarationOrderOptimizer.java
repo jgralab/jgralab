@@ -146,12 +146,15 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 		}
 		for (SimpleDeclaration sd : oldSDs) {
 			marker.removeMark(sd);
-			System.out.println("Unmarked " + sd);
 			sd.delete();
 		}
 
 		recreateVertexEvaluators(eval);
 		OptimizerUtility.createMissingSourcePositions(syntaxgraph);
+
+		// Tg2Dot.printGraphAsDot(syntaxgraph, true, "/home/horn/vdoo.dot");
+		// System.out.println("Afted VDOO:");
+		// System.out.println(((SerializableGreql2) syntaxgraph).serialize());
 
 		return varDeclOrderChanged;
 	}

@@ -83,17 +83,6 @@ public class WritingComponent {
 		changeIseq();
 		changeAttributes();
 		transaction.removeNonReferencedPersistentValues();
-		/*
-		 * } catch (Exception e) { // if for any reason an exception occurs
-		 * during writing-phase, then // all created new persistent versions
-		 * created until the occurrence // of the exception should be removed.
-		 * This should normally not // happen!!! e.printStackTrace(); if
-		 * (transaction.changedDuringCommit != null) { for
-		 * (VersionedDataObjectImpl<?> versionedDataObject :
-		 * transaction.changedDuringCommit) {
-		 * versionedDataObject.removeLastCreatedPersistentValue(); }
-		 * transaction.changedDuringCommit.clear(); } throw e; }
-		 */
 	}
 
 	/**
@@ -316,6 +305,7 @@ public class WritingComponent {
 				boolean pass = false;
 				switch (entry.getValue()) {
 				case ALPHAOMEGA: {
+					// intentional fall-through; denounced by FindBugs
 					pass = true;
 				}
 				case ALPHA: {
@@ -426,21 +416,15 @@ public class WritingComponent {
 			Set<Entry<AttributedElement, Set<VersionedDataObject<?>>>> elements = transaction.changedAttributes
 					.entrySet();
 			for (Entry<AttributedElement, Set<VersionedDataObject<?>>> entry : elements) {
-				// AttributedElement attributedElement = entry.getKey();
 				// TODO how can the unchecked usage of VersionedDataObject can
 				// be avoided (using <?> doesn't work)
 				Set<VersionedDataObject<?>> attributes = entry.getValue();
 				for (VersionedDataObject<?> attribute : attributes) {
 					// the temporary value of attribute for current transaction
 					Object tempValue = attribute.getTemporaryValue(transaction);
-					// create new persistent value
-					// if (((VersionedDataObjectImpl) attribute)
-					// .isLatestPersistentValueReferenced())
-					// attribute.setNewPersistentValue(tempValue, true);
-					// else
-					// attribute.setPersistentValue(tempValue);
 					((VersionedDataObjectImpl) attribute).setValidValue(
 							tempValue, graph.getCurrentTransaction(), true);
+					graph.setGraphVersion(graph.getGraphVersion() + 1);
 				}
 			}
 		}
@@ -455,6 +439,7 @@ public class WritingComponent {
 				Object tempValue = vdo.getTemporaryValue(transaction);
 				((VersionedDataObjectImpl) vdo).setValidValue(tempValue, graph
 						.getCurrentTransaction(), true);
+				graph.setGraphVersion(graph.getGraphVersion() + 1);
 			}
 		}
 	}

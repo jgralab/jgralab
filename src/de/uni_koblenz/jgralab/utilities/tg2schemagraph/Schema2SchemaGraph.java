@@ -3,7 +3,6 @@ package de.uni_koblenz.jgralab.utilities.tg2schemagraph;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -17,26 +16,34 @@ import de.uni_koblenz.jgralab.grumlschema.domains.HasRecordDomainComponent;
 import de.uni_koblenz.jgralab.grumlschema.domains.MapDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.RecordDomain;
 import de.uni_koblenz.jgralab.grumlschema.impl.std.SchemaGraphImpl;
-import de.uni_koblenz.jgralab.grumlschema.structure.AggregationClass;
+import de.uni_koblenz.jgralab.grumlschema.structure.AggregationKind;
+import de.uni_koblenz.jgralab.grumlschema.structure.Annotates;
 import de.uni_koblenz.jgralab.grumlschema.structure.Attribute;
 import de.uni_koblenz.jgralab.grumlschema.structure.AttributedElementClass;
+import de.uni_koblenz.jgralab.grumlschema.structure.ComesFrom;
+import de.uni_koblenz.jgralab.grumlschema.structure.Comment;
 import de.uni_koblenz.jgralab.grumlschema.structure.Constraint;
 import de.uni_koblenz.jgralab.grumlschema.structure.ContainsDefaultPackage;
 import de.uni_koblenz.jgralab.grumlschema.structure.ContainsDomain;
 import de.uni_koblenz.jgralab.grumlschema.structure.ContainsGraphElementClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.ContainsSubPackage;
 import de.uni_koblenz.jgralab.grumlschema.structure.EdgeClass;
-import de.uni_koblenz.jgralab.grumlschema.structure.From;
+import de.uni_koblenz.jgralab.grumlschema.structure.EndsAt;
+import de.uni_koblenz.jgralab.grumlschema.structure.GoesTo;
 import de.uni_koblenz.jgralab.grumlschema.structure.GraphClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.HasAttribute;
 import de.uni_koblenz.jgralab.grumlschema.structure.HasConstraint;
 import de.uni_koblenz.jgralab.grumlschema.structure.HasDomain;
+import de.uni_koblenz.jgralab.grumlschema.structure.IncidenceClass;
+import de.uni_koblenz.jgralab.grumlschema.structure.NamedElement;
 import de.uni_koblenz.jgralab.grumlschema.structure.Package;
+import de.uni_koblenz.jgralab.grumlschema.structure.Redefines;
 import de.uni_koblenz.jgralab.grumlschema.structure.Schema;
 import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesEdgeClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesVertexClass;
-import de.uni_koblenz.jgralab.grumlschema.structure.To;
+import de.uni_koblenz.jgralab.grumlschema.structure.Subsets;
 import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
+import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
 
 /**
  * Converts a Schema to a SchemaGraph. This class is mend to be a reusable
@@ -101,6 +108,12 @@ public class Schema2SchemaGraph {
 	private Map<de.uni_koblenz.jgralab.schema.EdgeClass, EdgeClass> edgeClassMap;
 
 	/**
+	 * Map to reference a IncidenceClass of a Schema to a IncidenceClass of a
+	 * SchemaGraph.
+	 */
+	private Map<de.uni_koblenz.jgralab.schema.IncidenceClass, IncidenceClass> incidenceClassMap;
+
+	/**
 	 * Map to reference a Domain of a Schema to a Domain of a SchemaGraph.
 	 */
 	private Map<de.uni_koblenz.jgralab.schema.Domain, Domain> domainMap;
@@ -127,6 +140,7 @@ public class Schema2SchemaGraph {
 		domainMap = new HashMap<de.uni_koblenz.jgralab.schema.Domain, Domain>();
 		vertexClassMap = new HashMap<de.uni_koblenz.jgralab.schema.VertexClass, VertexClass>();
 		edgeClassMap = new HashMap<de.uni_koblenz.jgralab.schema.EdgeClass, EdgeClass>();
+		incidenceClassMap = new HashMap<de.uni_koblenz.jgralab.schema.IncidenceClass, IncidenceClass>();
 
 		schemaGraph = new SchemaGraphImpl();
 	}
@@ -143,6 +157,7 @@ public class Schema2SchemaGraph {
 		domainMap = null;
 		vertexClassMap = null;
 		edgeClassMap = null;
+		incidenceClassMap = null;
 
 		defaultPackage = null;
 		gDefaultPackage = null;
@@ -208,8 +223,11 @@ public class Schema2SchemaGraph {
 		// Creates all Constraints
 		createConstraints();
 
-		// Creates all "From" and "To" Edges
-		createEdges();
+		// Creates all IncidenceClasses
+		createIncidences();
+
+		// Creates all Redefines and Subsetts
+		createRedefinesAndSubsetts();
 
 		// Stores the schemaGraph object, so that it will not be lost after
 		// calling the tearDown Method.
@@ -278,6 +296,43 @@ public class Schema2SchemaGraph {
 
 		// Links the new GraphClass to the new Schema.
 		schemaGraph.createDefinesGraphClass(gSchema, gGraphClass);
+
+		// create Comment
+		if (graphClass.getComments() != null) {
+			createComments(graphClass, gGraphClass);
+		}
+	}
+
+	/**
+	 * Creates for each comment of <code>namedElement</code> an
+	 * <code>Comment</code> object, which is connected to
+	 * <code>gNamedElement</code> via an ende of type <code>Annotates</code>.
+	 * 
+	 * @param namedElement
+	 *            the <code>NamedElement</code> object of the schema
+	 * @param gNamedElement
+	 *            the representation of <code>namedElement</code> in the
+	 *            schemaGraph
+	 */
+	private void createComments(
+			de.uni_koblenz.jgralab.schema.NamedElement namedElement,
+			NamedElement gNamedElement) {
+
+		assert (checkSchemaAndSchemaGraph());
+
+		Comment gComment;
+
+		for (String comment : namedElement.getComments()) {
+			gComment = schemaGraph.createComment();
+
+			assert (gComment != null) : "FIXEME! No Comment has been created!";
+
+			gComment.set_text(comment);
+
+			Annotates link = schemaGraph.createAnnotates(gComment,
+					gNamedElement);
+			assert (link != null) : "FIXME! No Annotates link has been created.";
+		}
 	}
 
 	/**
@@ -317,6 +372,11 @@ public class Schema2SchemaGraph {
 		ContainsDefaultPackage link = schemaGraph.createContainsDefaultPackage(
 				schemaGraph.getFirstSchema(), gDefaultPackage);
 		assert (link != null) : "FIXME! No ContainsDefaultPackage link has been created.";
+
+		// create Comment
+		if (defaultPackage.getComments() != null) {
+			createComments(defaultPackage, gDefaultPackage);
+		}
 	}
 
 	/**
@@ -355,6 +415,11 @@ public class Schema2SchemaGraph {
 			ContainsSubPackage link = schemaGraph.createContainsSubPackage(
 					gPackage, gSubPackage);
 			assert (link != null) : "FIXME! Link ContainsSubPackage has not been created!";
+
+			// create Comment
+			if (subPackage.getComments() != null) {
+				createComments(subPackage, gSubPackage);
+			}
 
 			// All subpackages of the new Package are created.
 			createSubPackages(subPackage, gSubPackage);
@@ -450,6 +515,11 @@ public class Schema2SchemaGraph {
 
 			// Domain is registered in the domain Map.
 			domainMap.put(domain, gDomain);
+
+			// create Comment
+			if (domain.getComments() != null) {
+				createComments(domain, gDomain);
+			}
 		}
 
 		assert (gDomain != null);
@@ -561,17 +631,15 @@ public class Schema2SchemaGraph {
 		domainMap.put(domain, gDomain);
 
 		// Loop over all Domain entries
-		for (Entry<String, de.uni_koblenz.jgralab.schema.Domain> entry : domain
-				.getComponents().entrySet()) {
-
+		for (RecordComponent recComp : domain.getComponents()) {
 			// Creates a new hasRecordDomainComponent-edge and sets its name
 			// afterwards.
 			HasRecordDomainComponent edge = schemaGraph
-					.createHasRecordDomainComponent(gDomain, queryGDomain(entry
-							.getValue()));
+					.createHasRecordDomainComponent(gDomain,
+							queryGDomain(recComp.getDomain()));
 			assert (edge != null) : "FIXME! No link HasRecordDomainComponent has been created!";
-			assert (entry.getKey() != null) : "FIXME! No name defined!";
-			edge.set_name(entry.getKey());
+			assert (recComp.getName() != null) : "FIXME! No name defined!";
+			edge.set_name(recComp.getName());
 		}
 
 		return gDomain;
@@ -632,6 +700,11 @@ public class Schema2SchemaGraph {
 			ContainsGraphElementClass link = schemaGraph
 					.createContainsGraphElementClass(gPackage, gVertexClass);
 			assert (link != null) : "FIXME! No link ContainsGraphElementClass has been created!";
+
+			// create Comment
+			if (vertexClass.getComments() != null) {
+				createComments(vertexClass, gVertexClass);
+			}
 		}
 	}
 
@@ -669,14 +742,14 @@ public class Schema2SchemaGraph {
 		for (de.uni_koblenz.jgralab.schema.EdgeClass edgeClass : xPackage
 				.getEdgeClasses().values()) {
 
-			assert ((edgeClass != null) && (edgeClass.getQualifiedName() != null)) : "FIXME! NO QualifiedName for this EdgeClass defined!";
+			assert ((edgeClass != null) && (edgeClass.getQualifiedName() != null)) : "FIXME! No QualifiedName for this EdgeClass defined!";
 
 			// Skips all internal present objects.
 			if (edgeClass.isInternal()) {
 				continue;
 			}
 
-			// Creates an EdgeClass, an AggregationClass or a CompositionClass.
+			// Creates an EdgeClass.
 			gEdgeClass = createEdgeClass(edgeClass);
 
 			// Registers the new and old objects in the appropriate Map
@@ -685,18 +758,23 @@ public class Schema2SchemaGraph {
 			// Links the new object with its Package
 			ContainsGraphElementClass link = schemaGraph
 					.createContainsGraphElementClass(gPackage, gEdgeClass);
+
 			assert (link != null) : "FIXME! No link ContainsGraphElementClass has been created!";
+
+			// create Comment
+			if (edgeClass.getComments() != null) {
+				createComments(edgeClass, gEdgeClass);
+			}
 		}
 	}
 
 	/**
-	 * Creates an EdgeClass, AggregationClass or and CompositionClass of an
-	 * existing object.
+	 * Creates an EdgeClass object.
 	 * 
 	 * @param edgeClass
 	 *            EdgeClass, of which a new corresponding object should be
 	 *            created.
-	 * @return New EdgeClass, AggregationClass or CompositionClass object.
+	 * @return new EdgeClass object.
 	 */
 	private EdgeClass createEdgeClass(
 			de.uni_koblenz.jgralab.schema.EdgeClass edgeClass) {
@@ -704,37 +782,7 @@ public class Schema2SchemaGraph {
 		assert (checkSchemaAndSchemaGraph());
 		assert ((edgeClass != null) && (edgeClass.getQualifiedName() != null)) : "FIXME! No QualifiedName for this EdgeClass defined!";
 
-		EdgeClass gEdgeClass = null;
-
-		// Checks whether the given object is an instance of an AggregationClass
-		// (CompositionClass) or not
-		if (edgeClass instanceof de.uni_koblenz.jgralab.schema.AggregationClass) {
-			AggregationClass gAggregationClass;
-			// Checking if the given object is an instance of an
-			// CompositionClass
-			// Checking of an CompositionClass instance instead wouldn't be
-			// wise!
-			if (edgeClass instanceof de.uni_koblenz.jgralab.schema.CompositionClass) {
-				gAggregationClass = schemaGraph.createCompositionClass();
-			} else {
-				gAggregationClass = schemaGraph.createAggregationClass();
-			}
-			assert (gAggregationClass != null) : "FIXME! No AggregationClass / CompositionClass has been created!";
-
-			// AggregationClass is the common parent / type and there are no
-			// additional attributes to set for a CompositionClass
-			de.uni_koblenz.jgralab.schema.AggregationClass aggregationClass = (de.uni_koblenz.jgralab.schema.AggregationClass) edgeClass;
-
-			gAggregationClass.set_aggregateFrom(aggregationClass
-					.isAggregateFrom());
-			gEdgeClass = gAggregationClass;
-
-		} else {
-
-			// An EdgeClass is created.
-			gEdgeClass = schemaGraph.createEdgeClass();
-
-		}
+		EdgeClass gEdgeClass = schemaGraph.createEdgeClass();
 		assert (gEdgeClass != null) : "FIXME! No EdgeClass has been created!";
 
 		// Sets all general attributes of an EdgeClass
@@ -829,10 +877,11 @@ public class Schema2SchemaGraph {
 
 			assert ((attribute != null) && (attribute.getName() != null)) : "FIXME! No name for this Attribute is defined!";
 
-			// An new Attribute is created and its name is set.
+			// An new Attribute is created and its name and defaultValue is set.
 			gAttribute = schemaGraph.createAttribute();
 			assert (gAttribute != null) : "FIXME! No Attribute has been created!";
 			gAttribute.set_name(attribute.getName());
+			gAttribute.set_defaultValue(attribute.getDefaultValueAsString());
 
 			// Corresponding new Domain for the new Attribute is queried.
 			assert (attribute.getDomain() != null) : "FIXME! No Domain has been defined!";
@@ -910,13 +959,13 @@ public class Schema2SchemaGraph {
 	/**
 	 * Creates all From and To edges of all EdgeClasses
 	 */
-	private void createEdges() {
+	private void createIncidences() {
 
 		// Loop over all EdgeClass objects
 		for (Entry<de.uni_koblenz.jgralab.schema.EdgeClass, EdgeClass> entry : edgeClassMap
 				.entrySet()) {
 			// Creates From and To edge
-			createEdges(entry.getKey(), entry.getValue());
+			createIncidences(entry.getKey(), entry.getValue());
 		}
 	}
 
@@ -928,54 +977,120 @@ public class Schema2SchemaGraph {
 	 * @param gEdgeClass
 	 *            EdgeClass, to which all edges are linked.
 	 */
-	private void createEdges(de.uni_koblenz.jgralab.schema.EdgeClass edgeClass,
+	private void createIncidences(
+			de.uni_koblenz.jgralab.schema.EdgeClass edgeClass,
 			EdgeClass gEdgeClass) {
+		assert (edgeClass != null) : "FIXME! EdgeClass is null!";
+		assert edgeClass.getFrom() != null : "FIXME! No from IncidenceClass defined!";
+
+		// Creates an from IncidenceClass
+		IncidenceClass gIncidenceClass = createIncidenceClass(edgeClass
+				.getFrom());
+
+		// Registers the new and old objects in the appropriate Map
+		incidenceClassMap.put(edgeClass.getFrom(), gIncidenceClass);
+		// Links the new object with its EdgeClass
+		ComesFrom from = schemaGraph.createComesFrom(gEdgeClass,
+				gIncidenceClass);
+
+		assert (from != null) : "FIXME! No link ComesFrom has been created!";
+
+		assert edgeClass.getTo() != null : "FIXME! No to IncidenceClass defined!";
+
+		// Creates an to IncidenceClass
+		gIncidenceClass = createIncidenceClass(edgeClass.getTo());
+
+		// Registers the new and old objects in the appropriate Map
+		incidenceClassMap.put(edgeClass.getTo(), gIncidenceClass);
+		// Links the new object with its to EdgeClass
+		GoesTo to = schemaGraph.createGoesTo(gEdgeClass, gIncidenceClass);
+
+		assert (to != null) : "FIXME! No link GoesTo has been created!";
 
 		assert (checkSchemaAndSchemaGraph());
-		assert (edgeClass != null) : "FIXME! EdgeClass is null!";
+	}
 
-		Set<String> redefinedRoles;
+	/**
+	 * Creates an IncidenceClass object
+	 * 
+	 * @param incidenceClass
+	 *            IncidenceClass, of which a new corresponding object should be
+	 *            created.
+	 * @return new IncidenceClass object
+	 */
+	private IncidenceClass createIncidenceClass(
+			de.uni_koblenz.jgralab.schema.IncidenceClass incidenceClass) {
 
-		// First the To edge
-		// Queries the VertexClass to which the To edge points.
-		VertexClass vertexClass = vertexClassMap.get(edgeClass.getTo());
-		// Creates the To edge
+		assert (checkSchemaAndSchemaGraph());
+		assert ((incidenceClass != null) && (incidenceClass
+				.getAggregationKind() != null)) : "FIXME! No AggregationKind for this IncidenceClass defined!";
+		assert ((incidenceClass != null) && (incidenceClass.getDirection() != null)) : "FIXME! No Direction for this IncidenceClass defined!";
+
+		IncidenceClass gIncidenceClass = schemaGraph.createIncidenceClass();
+		assert (gIncidenceClass != null) : "FIXME! No IncidenceClass has been created!";
+
+		// Sets all general attributes of an IncidenceClass
+		gIncidenceClass.set_aggregation(AggregationKind.valueOf(incidenceClass
+				.getAggregationKind().toString()));
+		gIncidenceClass.set_max(incidenceClass.getMax());
+		gIncidenceClass.set_min(incidenceClass.getMin());
+		gIncidenceClass.set_roleName(incidenceClass.getRolename());
+
+		// Links the new object with its VertexClass
+		VertexClass vertexClass = vertexClassMap.get(incidenceClass
+				.getVertexClass());
 		assert (vertexClass != null) : "The to vertex class '"
-				+ edgeClass.getTo().getQualifiedName()
+				+ incidenceClass.getVertexClass().getQualifiedName()
 				+ "' was not in vertexClassMap!";
-		To to = schemaGraph.createTo(gEdgeClass, vertexClass);
-		assert (to != null) : "FIXME! No To edge has been created.";
+		EndsAt endsAt = schemaGraph.createEndsAt(gIncidenceClass, vertexClass);
 
-		// Sets all general attributes
-		to.set_min(edgeClass.getToMin());
-		to.set_max(edgeClass.getToMax());
-		to.set_roleName(edgeClass.getToRolename());
+		assert (endsAt != null) : "FIXME! No link EndsAt has been created!";
 
-		redefinedRoles = edgeClass.getRedefinedToRoles();
-		if ((redefinedRoles != null) && (redefinedRoles.size() != 0)) {
-			// Clones the existing HashSet
-			to.set_redefinedRoles(new HashSet<String>(redefinedRoles));
+		return gIncidenceClass;
+	}
+
+	/**
+	 * Creates all Subsetts and Redefines links.
+	 */
+	private void createRedefinesAndSubsetts() {
+
+		for (Entry<de.uni_koblenz.jgralab.schema.IncidenceClass, IncidenceClass> entry : incidenceClassMap
+				.entrySet()) {
+
+			// Set all redefined Incidences
+			Set<de.uni_koblenz.jgralab.schema.IncidenceClass> redefinedIncidences = entry
+					.getKey().getOwnRedefinedIncidenceClasses();
+			if (redefinedIncidences != null) {
+				for (de.uni_koblenz.jgralab.schema.IncidenceClass redefinedIncidence : redefinedIncidences) {
+					assert redefinedIncidence != null : "FIXME! No redefined IncidenceClass defined!";
+					IncidenceClass gRedefinedIncidence = incidenceClassMap
+							.get(redefinedIncidence);
+					assert gRedefinedIncidence != null : "FIXME! No redefined IncidenceClass created yet!";
+					Redefines link = schemaGraph.createRedefines(entry
+							.getValue(), gRedefinedIncidence);
+					assert (link != null) : "FIXME! No link RedefinesIncidenceClass has been created!";
+				}
+			}
+
+			// Set all subsetted Incidences
+			Set<de.uni_koblenz.jgralab.schema.IncidenceClass> subsettedIncidences = entry
+					.getKey().getOwnSubsettedIncidenceClasses();
+			if (subsettedIncidences != null) {
+				for (de.uni_koblenz.jgralab.schema.IncidenceClass subsettedIncidence : subsettedIncidences) {
+					assert subsettedIncidence != null : "FIXME! No subsetted IncidenceClass defined!";
+					if (!subsettedIncidence.getEdgeClass().isInternal()) {
+						IncidenceClass gSubsettedIncidence = incidenceClassMap
+								.get(subsettedIncidence);
+						assert gSubsettedIncidence != null : "FIXME! No subsetted IncidenceClass created yet!";
+						Subsets link = schemaGraph.createSubsets(entry
+								.getValue(), gSubsettedIncidence);
+						assert (link != null) : "FIXME! No link SubsetsIncidenceClass has been created!";
+					}
+				}
+			}
+
 		}
 
-		// Then the From edge
-		// Queries the VertexClass to which the From edge points.
-		vertexClass = vertexClassMap.get(edgeClass.getFrom());
-		assert (vertexClass != null) : "The from vertex class '"
-				+ edgeClass.getFrom().getQualifiedName()
-				+ "' was not in vertexClassMap!";
-		// Creates the From edge
-		From from = schemaGraph.createFrom(gEdgeClass, vertexClass);
-		assert (from != null) : "FIXME! No From edge has been created.";
-		// Sets all general attributes
-		from.set_min(edgeClass.getFromMin());
-		from.set_max(edgeClass.getFromMax());
-		from.set_roleName(edgeClass.getFromRolename());
-
-		redefinedRoles = edgeClass.getRedefinedFromRoles();
-		if ((redefinedRoles != null) && (redefinedRoles.size() != 0)) {
-			// Clones the existing HashSet.
-			from.set_redefinedRoles(new HashSet<String>(redefinedRoles));
-		}
 	}
 
 	/**

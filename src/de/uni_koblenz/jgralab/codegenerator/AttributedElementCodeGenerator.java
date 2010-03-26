@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -32,7 +32,6 @@ import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
-import de.uni_koblenz.jgralab.schema.MapDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
 
 /**
@@ -91,6 +90,18 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		}
 	}
 
+	/**
+	 * Returns the absolute name of the given AttributdelementClass. The name is
+	 * composed of the package-prefix of the schema the class belongs to and the
+	 * qualified name of the class
+	 * 
+	 * @param aec
+	 * @return
+	 */
+	protected String absoluteName(AttributedElementClass aec) {
+		return schemaRootPackageName + "." + aec.getQualifiedName();
+	}
+
 	@Override
 	protected CodeBlock createBody() {
 		CodeList code = new CodeList();
@@ -144,8 +155,6 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 						|| !interfaceName.equals(aec.getQualifiedName())) {
 					if (interfaceName.equals("Vertex")
 							|| interfaceName.equals("Edge")
-							|| interfaceName.equals("Aggregation")
-							|| interfaceName.equals("Composition")
 							|| interfaceName.equals("Graph")) {
 						buf.append(delim);
 						buf.append("#jgPackage#." + interfaceName);
@@ -177,9 +186,12 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 
 	protected CodeBlock createConstructor() {
 		CodeList code = new CodeList();
-		code.addNoIndent(new CodeSnippet(true,
-				"public #simpleClassName#Impl(int id, #jgPackage#.Graph g) {",
-				"\tsuper(id, g);"));
+		code
+				.addNoIndent(new CodeSnippet(
+						true,
+						"public #simpleClassName#Impl(int id, #jgPackage#.Graph g) {",
+						"\tsuper(id, g);",
+						"\tinitializeAttributesWithDefaultValues();"));
 		code.add(createSpecialConstructorCode());
 		code.addNoIndent(new CodeSnippet("}"));
 		return code;
@@ -321,7 +333,6 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 			code.setVariable("ttype", attr.getDomain()
 					.getTransactionJavaAttributeImplementationTypeName(
 							schemaRootPackageName));
-			setGraphReferenceVariable(code);
 
 			code.add("public #type# #isOrGet#_#name#() {");
 			addCheckValidityCode(code);
@@ -329,7 +340,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 					.add(
 							"\tif (_#name# == null)",
 							"\t\treturn #initValue#;",
-							"\t#ttype# value = _#name#.getValidValue(#graphreference#getCurrentTransaction());");
+							"\t#ttype# value = _#name#.getValidValue(#theGraph#.getCurrentTransaction());");
 
 			if (attr.getDomain().isComposite()) {
 				code.add("\tif(_#name# != null && value != null)");
@@ -346,10 +357,6 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 				.add(
 						"\tif (!isValid())",
 						"\t\tthrow new #jgPackage#.GraphException(\"Cannot access attribute '#name#', because \" + this + \" isn't valid in current transaction.\");");
-	}
-
-	protected void setGraphReferenceVariable(CodeSnippet code) {
-		code.setVariable("graphreference", "graph.");
 	}
 
 	protected CodeBlock createSetter(Attribute attr) {
@@ -388,33 +395,24 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 			code.add("public void set_#name#(#type# _#name#) {");
 			addCheckValidityCode(code);
 
-			setGraphReferenceVariable(code);
-
 			if (domain.isComposite()) {
-				String genericType = "";
-				if (!(domain instanceof RecordDomain)) {
-					genericType = "<?>";
-				}
-				if (domain instanceof MapDomain) {
-					genericType = "<?,?>";
-				}
+				addImports("#jgTransPackage#.JGraLabTransactionCloneable");
 				addImports("#jgPackage#.GraphException");
 				code.setVariable("tclassname", attr.getDomain()
 						.getTransactionJavaClassName(schemaRootPackageName));
 				code
-						.add("\tif(_#name# != null && !(_#name# instanceof #tclassname#"
-								+ genericType + "))");
+						.add("\tif(_#name# != null && !(_#name# instanceof #jgTransPackage#.JGraLabTransactionCloneable))");
 				code
 						.add("\t\tthrow new GraphException(\"The given parameter of type #dname# doesn't support transactions.\");");
 				code
-						.add("\tif(_#name# != null && ((#jgTransPackage#.JGraLabCloneable)_#name#).getGraph() != graph)");
+						.add("\tif(_#name# != null && ((#jgTransPackage#.JGraLabTransactionCloneable)_#name#).getGraph() != #theGraph#)");
 				code
 						.add("\t\tthrow new GraphException(\"The given parameter of type #dname# belongs to another graph.\");");
 				code.setVariable("initLoading",
 						"new #vclass#(this, (#ttype#) _#name#, \"#name#\");");
 			}
 
-			code.add("\tif(#graphreference#isLoading())",
+			code.add("\tif(#theGraph#.isLoading())",
 					"\t\tthis._#name# = #initLoading#",
 					"\tif(this._#name# == null) {",
 					"\t\tthis._#name# = #init#",
@@ -423,13 +421,12 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 			if (domain.isComposite()) {
 				code.add("\tif(_#name# != null)");
 				code
-						.add("\t((JGraLabCloneable)_#name#).setName(this + \":#name#\");");
-				addImports("#jgTransPackage#.JGraLabCloneable");
+						.add("\t((JGraLabTransactionCloneable)_#name#).setName(this + \":#name#\");");
 			}
 
 			code
 					.add(
-							"\tthis._#name#.setValidValue((#ttype#) _#name#, #graphreference#getCurrentTransaction());",
+							"\tthis._#name#.setValidValue((#ttype#) _#name#, #theGraph#.getCurrentTransaction());",
 							"\tattributeChanged(this._#name#);",
 							"\tgraphModified();", "}");
 			break;

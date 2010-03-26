@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -119,8 +119,9 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 	}
 
 	@Override
-	public void addAttribute(String name, Domain domain) {
-		addAttribute(new AttributeImpl(name, domain, this));
+	public void addAttribute(String name, Domain domain,
+			String defaultValueAsString) {
+		addAttribute(new AttributeImpl(name, domain, this, defaultValueAsString));
 	}
 
 	@Override
@@ -141,26 +142,7 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 		directSuperClasses.remove(getSchema().getDefaultGraphClass());
 		directSuperClasses.remove(getSchema().getDefaultEdgeClass());
 		directSuperClasses.remove(getSchema().getDefaultVertexClass());
-		for (AttributedElementClass c : directSuperClasses) {
-			if ((c != getSchema().getDefaultAggregationClass())
-					&& (c
-							.isSubClassOf(getSchema()
-									.getDefaultAggregationClass()))) {
-				directSuperClasses.remove(getSchema()
-						.getDefaultAggregationClass());
-				break;
-			}
-		}
-		for (AttributedElementClass c : directSuperClasses) {
-			if ((c != getSchema().getDefaultCompositionClass())
-					&& (c
-							.isSubClassOf(getSchema()
-									.getDefaultCompositionClass()))) {
-				directSuperClasses.remove(getSchema()
-						.getDefaultCompositionClass());
-				break;
-			}
-		}
+
 		for (Attribute a : superClass.getAttributeList()) {
 			if (getOwnAttribute(a.getName()) != null) {
 				throw new InheritanceException("Cannot add "
@@ -412,11 +394,9 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 	@Override
 	public boolean isInternal() {
 		Schema s = getSchema();
-		return (this == s.getDefaultAggregationClass())
-				|| (this == s.getDefaultCompositionClass())
-				|| (this == s.getDefaultEdgeClass())
-				|| (this == s.getDefaultGraphClass())
-				|| (this == s.getDefaultVertexClass());
+		return ((this == s.getDefaultEdgeClass())
+				|| (this == s.getDefaultGraphClass()) || (this == s
+				.getDefaultVertexClass()));
 	}
 
 	@Override
@@ -427,9 +407,6 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 	@Override
 	public boolean isSuperClassOf(
 			AttributedElementClass anAttributedElementClass) {
-		// System.out.println(this.getName() + " is superclass of " +
-		// anAttributedElementClass.getName() + ": " +
-		// anAttributedElementClass.getAllSuperClasses().contains(this));
 		return anAttributedElementClass.getAllSuperClasses().contains(this);
 	}
 
@@ -480,4 +457,5 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 		}
 		return false;
 	}
+
 }

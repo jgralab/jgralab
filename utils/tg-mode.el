@@ -82,25 +82,25 @@
                         schema-alist))))
          ;; EdgeClasses
          ((looking-at (concat "^\\(?:abstract[[:space:]]+\\)?"
-                              "\\(\\(?:Edge\\|Aggregation\\|Composition\\)Class\\)[[:space:]]+"
+                              "EdgeClass[[:space:]]+"
                               "\\([[:alnum:]._]+\\)[[:space:]]*" ;; Name
                               "\\(?::\\([[:alnum:]._ ]+\\)\\)?[[:space:]]*" ;; Supertypes
-                              "\\<from\\>[[:space:]]+\\([[:alnum:]._]+\\)[[:space:]]+.*\\<to\\>[[:space:]]+\\([[:alnum:]._]+\\)[[:space:]]+.*" ;; from/to
+                              "\\<from\\>[[:space:]]+\\([[:alnum:]._]+\\)[[:space:]]+.*"
+                              "\\<to\\>[[:space:]]+\\([[:alnum:]._]+\\)[[:space:]]+.*" ;; from/to
                               "\\(?:{\\([^}]*\\)}\\)?" ;; Attributes
                               "\\(?:[[].*[]]\\)*[[:space:]]*;"  ;; Constraints
                               ))
-          (let ((qname (concat current-package (match-string-no-properties 2)))
-                (from (match-string-no-properties 4))
-                (to   (match-string-no-properties 5)))
+          (let ((qname (concat current-package (match-string-no-properties 1)))
+                (from (match-string-no-properties 3))
+                (to   (match-string-no-properties 4)))
             (save-match-data
               (setq from (if (string-match "\\." from) from (concat current-package from)))
               (setq to   (if (string-match "\\." to)   to   (concat current-package to))))
             (setq schema-alist
                   (cons (list :meta 'EdgeClass
                               :qname qname
-                              :super (tg--parse-superclasses (match-string-no-properties 3) current-package)
-                              :attr (tg--parse-attributes qname (match-string-no-properties 6))
-                              :edgetype (match-string-no-properties 1)
+                              :super (tg--parse-superclasses (match-string-no-properties 2) current-package)
+                              :attr (tg--parse-attributes qname (match-string-no-properties 5))
                               :from from
                               :to to)
                         schema-alist))))
@@ -179,7 +179,7 @@ attributes from some schema element.  Returns a list of common
 attributes, where common means, that only the attribute names
 have to equal, but not the domain or owner."
   (let (result)
-    (dolist (attr (reduce 'append lists))
+    (dolist (attr (reduce 'nconc lists))
       (let ((in-all (catch 'in-all
                       (dolist (type lists)
                         (when (not (tg--attribute-name-member-p attr type))
@@ -202,14 +202,14 @@ valid for all TYPES."
     (if only-in-all
         (tg--attribute-restriction all-attrs)
       (remove-duplicates
-       (reduce 'nconc all-attrs )))))
+       (reduce 'nconc all-attrs)))))
 
 (defun tg-all-attributes (elem)
   "Returns an alist of all attribute of the schema element
 ELEM (and its supertypes)."
   (sort
-   (remove-duplicates
-    (apply 'append (plist-get elem :attrs)
+   (delete-duplicates
+    (apply 'nconc (plist-get elem :attrs)
            (mapcar
             (lambda (supertype)
               (tg-all-attributes (tg-get-schema-element
@@ -225,12 +225,13 @@ ELEM (and its supertypes)."
   "Get the line/list of `tg-schema-alist' that corresponds to the
 meta type META and has the name NAME.  NAME may be qualified or
 unique."
-  (catch 'found
-    (let ((qname (tg-unique-name name 'qualified)))
-      (dolist (elem tg-schema-alist)
-        (when (and (eq meta (plist-get elem :meta))
-                   (string= qname (plist-get elem :qname)))
-          (throw 'found elem))))))
+  (copy-tree
+   (catch 'found
+     (let ((qname (tg-unique-name name 'qualified)))
+       (dolist (elem tg-schema-alist)
+         (when (and (eq meta (plist-get elem :meta))
+                    (string= qname (plist-get elem :qname)))
+           (throw 'found elem)))))))
 
 (defun tg-unique-name (name &optional type)
   "Given a qualified name, return the unique name and vice versa.
@@ -245,8 +246,8 @@ The optional TYPE specifies that the returned name has to be the
         name)
     ;; a unique name is given
     (if (and type (eq type 'qualified))
-          ;; we want the qualified name
-          (gethash name tg-unique-name-hashmap)
+        ;; we want the qualified name
+        (gethash name tg-unique-name-hashmap)
       name)))
 
 ;;** The Mode
@@ -255,10 +256,10 @@ The optional TYPE specifies that the returned name has to be the
   ;; Comments
   '(("//" . nil))
   ;; Keywords
-  '("AggregationClass" "Boolean" "CompositionClass" "Double" "EdgeClass"
-    "EnumDomain" "Graph" "GraphClass" "Integer" "List" "Package" "RecordDomain"
-    "Schema" "Set" "String" "VertexClass" "abstract" "aggregate" "from" "role"
-    "to" "Map")
+  '("Boolean" "Double" "EdgeClass" "EnumDomain" "Graph" "GraphClass" "Integer"
+    "List" "Package" "RecordDomain" "Schema" "Set" "String" "VertexClass"
+    "abstract" "aggregation" "from" "role" "to" "Map" "redefines" "none"
+    "shared" "composite" "TGraph" "Comment")
   ;; Additional expressions to highlight
   nil
   ;; Enable greql-mode for files matching this patterns
@@ -294,10 +295,16 @@ The optional TYPE specifies that the returned name has to be the
   (save-excursion
     (goto-char (point-min))
     (re-search-forward "^Graph[[:space:]]+")
-    (re-search-forward
-     (concat "^[[:digit:]]+ +[[:word:]._]+ +<\\(?:[-]?[[:digit:]]+[[:space:]]+\\)*"
-             (regexp-quote inc)
-             "[[:digit:]- ]*>") nil t 1)
+    (let (found)
+      (while (not found)
+        (re-search-forward
+         (concat "^[[:digit:]]+ +[[:word:]._]+ +<.*?"
+                 (regexp-quote inc)
+                 "[[:digit:]- ]*>") nil t 1)
+        (search-backward inc)
+        (forward-word 1)
+        (when (looking-back (concat "[^-]" (regexp-quote inc)))
+          (setq found t))))
     (search-backward inc)
     (point)))
 
@@ -324,7 +331,9 @@ prefix arg, jump to the target vertex."
       (let ((no (match-string-no-properties 1)))
         (goto-char (tg-vertex-by-incidence (if arg
                                                (concat "-" no)
-                                             no))))))))
+                                             no)))))))
+  ;; Push the mark, so that we can easily jump back again
+  (push-mark))
 
 (defparameter tg-mode-map
   (let ((m (make-sparse-keymap)))
@@ -397,9 +406,7 @@ prefix arg, jump to the target vertex."
                                      'tg-attribute-face
                                      'tg-type-face
                                      'tg-supertype-face)))
-    (concat (propertize (if (eq mtype 'EdgeClass)
-                            (plist-get elem :edgetype)
-                          (symbol-name mtype))
+    (concat (propertize (symbol-name mtype)
                         'face 'tg-metatype-face)
             " "
             (propertize (tg-unique-name name 'unique) 'face 'tg-type-face)

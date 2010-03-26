@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -24,7 +24,6 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
@@ -46,7 +45,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
  * @author ist@uni-koblenz.de
  * 
  */
-public class VariableDeclaration implements Comparable<VariableDeclaration> {
+public class VariableDeclaration {
 
 	/**
 	 * Holds the set of possible values the variable may have
@@ -60,18 +59,19 @@ public class VariableDeclaration implements Comparable<VariableDeclaration> {
 	 */
 	private VariableEvaluator variableEval;
 
+	/**
+	 * @return the variableEval
+	 */
+	VariableEvaluator getVariableEval() {
+		return variableEval;
+	}
+
 	private VertexEvaluator definitionSetEvaluator;
 
 	/**
 	 * Used for simple Iteration over the possible values
 	 */
 	private Iterator<JValue> iter = null;
-
-	/**
-	 * Holds all Vertices in the greql-syntaxgraph whose result depends on this
-	 * variable
-	 */
-	private ArrayList<VertexEvaluator> dependingExpressions;
 
 	/**
 	 * Creates a new VariableDeclaration for the given Variable and the given
@@ -95,7 +95,25 @@ public class VariableDeclaration implements Comparable<VariableDeclaration> {
 				.getMark(var);
 		this.definitionSetEvaluator = definitionSetEvaluator;
 		this.subgraph = subgraph;
-		dependingExpressions = new ArrayList<VertexEvaluator>();
+	}
+
+	/**
+	 * The current iteration number. counts from 1 to definitionSet.size().
+	 */
+	private int iterationNumber = 0;
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(((Variable) variableEval.getVertex()).get_name());
+		sb.append(" = ");
+		sb.append(getVariableValue());
+		sb.append(" [");
+		sb.append(iterationNumber);
+		sb.append('/');
+		sb.append(definitionSet.size());
+		sb.append("]");
+		return sb.toString();
 	}
 
 	/**
@@ -103,9 +121,12 @@ public class VariableDeclaration implements Comparable<VariableDeclaration> {
 	 * another value was found, false otherwise
 	 */
 	public boolean iterate() {
+		iterationNumber++;
 		if ((iter != null) && (iter.hasNext())) {
-			deleteDependingResults();
+			// JValue old = getVariableValue();
 			variableEval.setValue(iter.next());
+			// assert !getVariableValue().equals(old) :
+			// "Iterating over the same element twice!!!";
 			return true;
 		}
 		return false;
@@ -123,6 +144,8 @@ public class VariableDeclaration implements Comparable<VariableDeclaration> {
 	 * Resets the iterator to the first element
 	 */
 	protected void reset() {
+		iterationNumber = 0;
+		variableEval.setValue(null);
 		JValue tempAttribute = definitionSetEvaluator.getResult(subgraph);
 		if (tempAttribute.isCollection()) {
 			try {
@@ -142,20 +165,6 @@ public class VariableDeclaration implements Comparable<VariableDeclaration> {
 			definitionSet.add(tempAttribute);
 		}
 		iter = definitionSet.iterator();
-	}
-
-	/**
-	 * deletes all intermediate results that depend on this variable
-	 */
-	private void deleteDependingResults() {
-		for (VertexEvaluator eval : dependingExpressions) {
-			eval.clear();
-		}
-	}
-
-	public int compareTo(VariableDeclaration d) {
-		return variableEval.getVertex().getId()
-				- d.variableEval.getVertex().getId();
 	}
 
 	/**

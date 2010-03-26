@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -26,10 +26,10 @@ package de.uni_koblenz.jgralab.impl;
 
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.schema.EdgeClass;
 
 /**
  * This class provides an Iterable to iterate over edges in a graph. One may use
@@ -53,6 +53,8 @@ public class EdgeIterable<E extends Edge> implements Iterable<E> {
 
 		protected Graph graph = null;
 
+		protected Class<? extends Edge> ec;
+
 		/**
 		 * the version of the edge list of the graph at the beginning of the
 		 * iteration. This information is used to check if the edge list has
@@ -61,39 +63,32 @@ public class EdgeIterable<E extends Edge> implements Iterable<E> {
 		 */
 		protected long edgeListVersion;
 
-		EdgeIterator(Graph g) {
+		@SuppressWarnings("unchecked")
+		EdgeIterator(Graph g, Class<? extends Edge> ec) {
 			graph = g;
+			this.ec = ec;
 			edgeListVersion = g.getEdgeListVersion();
-			current = getFirst();
+			current = (E) (ec == null ? graph.getFirstEdgeInGraph() : graph
+					.getFirstEdgeOfClassInGraph(ec));
 		}
 
-		protected EdgeIterator() {
-		};
-
+		@SuppressWarnings("unchecked")
 		public E next() {
 			if (graph.isEdgeListModified(edgeListVersion)) {
 				throw new ConcurrentModificationException(
 						"The edge list of the graph has been modified - the iterator is not longer valid");
 			}
-			E e = current;
-			if (current != null) {
-				current = getNext();
+			if (current == null) {
+				throw new NoSuchElementException();
 			}
-			return e;
+			E result = current;
+			current = (E) (ec == null ? current.getNextEdgeInGraph() : current
+					.getNextEdgeOfClassInGraph(ec));
+			return result;
 		}
 
 		public boolean hasNext() {
 			return current != null;
-		}
-
-		@SuppressWarnings("unchecked")
-		protected E getNext() {
-			return (E) current.getNextEdgeInGraph();
-		}
-
-		@SuppressWarnings("unchecked")
-		protected E getFirst() {
-			return (E) graph.getFirstEdgeInGraph();
 		}
 
 		public void remove() {
@@ -103,75 +98,15 @@ public class EdgeIterable<E extends Edge> implements Iterable<E> {
 
 	}
 
-	class EdgeIteratorEdgeClassExplicit extends EdgeIterator {
-
-		boolean type;
-
-		EdgeClass ec;
-
-		public EdgeIteratorEdgeClassExplicit(Graph g, EdgeClass c, boolean type) {
-			graph = g;
-			edgeListVersion = g.getEdgeListVersion();
-			this.type = type;
-			ec = c;
-			current = getFirst();
-		}
-
-		@Override
-		@SuppressWarnings("unchecked")
-		protected E getNext() {
-			return (E) current.getNextEdgeOfClassInGraph(ec, type);
-		}
-
-		@Override
-		@SuppressWarnings("unchecked")
-		protected E getFirst() {
-			return (E) graph.getFirstEdgeOfClassInGraph(ec, type);
-		}
-
-	}
-
-	class EdgeIteratorClassExplicit extends EdgeIterator {
-
-		boolean type;
-
-		Class<? extends Edge> ec;
-
-		public EdgeIteratorClassExplicit(Graph g, Class<? extends Edge> c,
-				boolean type) {
-			graph = g;
-			edgeListVersion = g.getEdgeListVersion();
-			this.type = type;
-			ec = c;
-			current = getFirst();
-		}
-
-		@Override
-		@SuppressWarnings("unchecked")
-		protected E getNext() {
-			return (E) current.getNextEdgeOfClassInGraph(ec, type);
-		}
-
-		@Override
-		@SuppressWarnings("unchecked")
-		protected E getFirst() {
-			return (E) graph.getFirstEdgeOfClassInGraph(ec, type);
-		}
-
-	}
-
 	private EdgeIterator iter;
 
 	public EdgeIterable(Graph g) {
-		iter = new EdgeIterator(g);
+		this(g, null);
 	}
 
 	public EdgeIterable(Graph g, Class<? extends Edge> ec) {
-		iter = new EdgeIteratorClassExplicit(g, ec, false);
-	}
-
-	public EdgeIterable(Graph g, Class<? extends Edge> ec, boolean noSubclasses) {
-		iter = new EdgeIteratorClassExplicit(g, ec, noSubclasses);
+		assert g != null;
+		iter = new EdgeIterator(g, ec);
 	}
 
 	public Iterator<E> iterator() {

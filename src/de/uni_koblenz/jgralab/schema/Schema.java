@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -26,6 +26,7 @@ package de.uni_koblenz.jgralab.schema;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -37,6 +38,7 @@ import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.codegenerator.JavaSourceFromString;
+import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
 
 /**
  * The class Schema represents a grUML Schema (M2).
@@ -115,8 +117,9 @@ public interface Schema extends Comparable<Schema> {
 	 * code for the m1 classes. The class files are not written to disk, but
 	 * only held in memory.
 	 * 
-	 * @param config configures the CodeGenerator and which classes and 
-	 *               methods to be created
+	 * @param config
+	 *            configures the CodeGenerator and which classes and methods to
+	 *            be created
 	 */
 	public void compile(CodeGeneratorConfiguration config);
 
@@ -127,12 +130,13 @@ public interface Schema extends Comparable<Schema> {
 	 * 
 	 * @param jgralabClassPath
 	 *            the classpath to JGraLab
-	 * @param config configures the CodeGenerator and which classes and 
-	 *               methods to be created
+	 * @param config
+	 *            configures the CodeGenerator and which classes and methods to
+	 *            be created
 	 */
-	public void compile(String jgralabClassPath, CodeGeneratorConfiguration config);
-	
-	
+	public void compile(String jgralabClassPath,
+			CodeGeneratorConfiguration config);
+
 	/**
 	 * After creating the schema, this command serves to generate and compile
 	 * code for the m1 classes. The class files are not written to disk, but
@@ -142,7 +146,6 @@ public interface Schema extends Comparable<Schema> {
 	 *            the classpath to JGraLab
 	 */
 	public void compile(String jgralabClassPath);
-	
 
 	/**
 	 * Creates a new Attribute <code>name</code> with domain <code>dom</code>.
@@ -154,10 +157,13 @@ public interface Schema extends Comparable<Schema> {
 	 * @param aec
 	 *            the {@link AttributedElementClass} owning the
 	 *            {@link Attribute}
+	 * @param defaultValueAsString
+	 *            a String for the default value in TG value syntax, or null if
+	 *            no default value is to be set
 	 * @return the new Attribute
 	 */
 	public Attribute createAttribute(String name, Domain dom,
-			AttributedElementClass aec);
+			AttributedElementClass aec, String defaultValueAsString);
 
 	/**
 	 * Builds a new enumeration domain, multiple domains may exist in a schema.
@@ -226,11 +232,11 @@ public interface Schema extends Comparable<Schema> {
 	 * @param recordComponents
 	 *            a list of record domain components which state the individual
 	 *            components of the record, each consisting of a name and a
-	 *            domain
+	 *            domain, and possibly a default value
 	 * @return the new record domain
 	 */
 	public RecordDomain createRecordDomain(String qualifiedName,
-			Map<String, Domain> recordComponents);
+			Collection<RecordComponent> recordComponents);
 
 	/**
 	 * builds a new set domain, multiple domains may exist in a schema
@@ -261,18 +267,6 @@ public interface Schema extends Comparable<Schema> {
 	 * @return an topologically ordered list of all composite domains
 	 */
 	public List<CompositeDomain> getCompositeDomainsInTopologicalOrder();
-
-	/**
-	 * @return the default AggregationClass of the schema, that is the
-	 *         AggregationClass with the name "Aggregation"
-	 */
-	public AggregationClass getDefaultAggregationClass();
-
-	/**
-	 * @return the default CompositionClass of the schema, that is the
-	 *         CompositionClass with the name "Composition"
-	 */
-	public CompositionClass getDefaultCompositionClass();
 
 	/**
 	 * @return the default EdgeClass of the schema, that is the EdgeClass with
@@ -332,7 +326,8 @@ public interface Schema extends Comparable<Schema> {
 	 *            the name of the edge to create
 	 * @return the Method-Object that represents the method to create such edges
 	 */
-	public Method getEdgeCreateMethod(String edgeClassName, boolean transactionSupport);
+	public Method getEdgeCreateMethod(String edgeClassName,
+			boolean transactionSupport);
 
 	/**
 	 * Returns a list of all enum domains
@@ -414,7 +409,8 @@ public interface Schema extends Comparable<Schema> {
 	 * @return the Method-Object that represents the method to create such
 	 *         vertices
 	 */
-	public Method getVertexCreateMethod(String vertexClassQName, boolean transactionSupport);
+	public Method getVertexCreateMethod(String vertexClassQName,
+			boolean transactionSupport);
 
 	public boolean isSimpleNameUnique(String sn);
 
@@ -428,15 +424,25 @@ public interface Schema extends Comparable<Schema> {
 	public boolean isValidEnumConstant(String name);
 
 	/**
-	 * Checks if the given name is already known in this Schema. If this is the
-	 * case, it's not allowed to use it for any other element in this schema.
-	 * Even it'S not allowed to use a domain name also as name of a VertexClass.
+	 * Checks if the given <code>qualifiedName</code> is already known in this
+	 * Schema. If this is the case, it's not allowed to use it for any other
+	 * element in this schema. Even it'S not allowed to use a domain name also
+	 * as name of a VertexClass.
 	 * 
-	 * @param qn
+	 * @param qualifiedName
 	 *            the qualified name to check for
 	 * @return true if the name is already known, false otherwise
 	 */
-	public boolean knows(String qn);
+	public boolean knows(String qualifiedName);
+
+	/**
+	 * Returns the NamedElement with the given <code>qualifiedName</code>.
+	 * 
+	 * @param qualifiedName
+	 *            the qualified name of the desired element
+	 * @return the corresponding NamedElement, or null if no such element exists
+	 */
+	public NamedElement getNamedElement(String qualifiedName);
 
 	/**
 	 * Sets the schema to allow lowercase enum constants

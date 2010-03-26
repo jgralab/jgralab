@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -31,6 +31,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 import de.uni_koblenz.jgralab.greql2.schema.VertexSetExpression;
@@ -67,7 +68,7 @@ public class VertexSetExpressionEvaluator extends ElementSetExpressionEvaluator 
 		String indexKey = null;
 		if (GreqlEvaluator.VERTEX_INDEXING) {
 			indexKey = typeCollection.typeString() + subgraph;
-			resultSet = greqlEvaluator.getVertexIndex(datagraph, indexKey);
+			resultSet = GreqlEvaluator.getVertexIndex(datagraph, indexKey);
 		}
 		if (resultSet == null) {
 			long startTime = System.currentTimeMillis();
@@ -77,7 +78,7 @@ public class VertexSetExpressionEvaluator extends ElementSetExpressionEvaluator 
 				while (currentVertex != null) {
 					if (typeCollection.acceptsType(currentVertex
 							.getAttributedElementClass())) {
-						JValue j = new JValue(currentVertex);
+						JValueImpl j = new JValueImpl(currentVertex);
 						resultSet.add(j);
 					}
 					currentVertex = currentVertex.getNextVertex();
@@ -86,16 +87,18 @@ public class VertexSetExpressionEvaluator extends ElementSetExpressionEvaluator 
 				while (currentVertex != null) {
 					if (subgraph.isMarked(currentVertex)
 							&& typeCollection.acceptsType(currentVertex
-									.getAttributedElementClass()))
-						resultSet.add(new JValue(currentVertex));
+									.getAttributedElementClass())) {
+						resultSet.add(new JValueImpl(currentVertex));
+					}
 					currentVertex = currentVertex.getNextVertex();
 				}
 			}
 			if (GreqlEvaluator.VERTEX_INDEXING) {
 				if (System.currentTimeMillis() - startTime > greqlEvaluator
-						.getIndexTimeBarrier())
-					greqlEvaluator.addVertexIndex(datagraph, indexKey,
+						.getIndexTimeBarrier()) {
+					GreqlEvaluator.addVertexIndex(datagraph, indexKey,
 							resultSet);
+				}
 			}
 		}
 		return resultSet;

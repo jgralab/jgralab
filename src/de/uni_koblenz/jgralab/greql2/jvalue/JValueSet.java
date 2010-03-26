@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -25,6 +25,7 @@
 package de.uni_koblenz.jgralab.greql2.jvalue;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -73,6 +74,7 @@ public class JValueSet extends JValueCollection implements Cloneable {
 		itemHashSet = new HashSet<JValue>(collection.size(), 0.75f);
 		sortedMembers = new ArrayList<JValue>(collection.size());
 		addAll(collection);
+		assert itemHashSet.size() == sortedMembers.size() : "Set contains elements twice in sortedMemberArray";
 	}
 
 	/**
@@ -109,6 +111,7 @@ public class JValueSet extends JValueCollection implements Cloneable {
 	}
 
 	public int indexOf(JValue val) {
+		assert itemHashSet.size() == sortedMembers.size() : "Set contains elements twice in sortedMemberArray";
 		return sortedMembers.indexOf(val);
 	}
 
@@ -175,6 +178,7 @@ public class JValueSet extends JValueCollection implements Cloneable {
 	 */
 	@Override
 	public int size() {
+		assert itemHashSet.size() == sortedMembers.size() : "Set contains elements twice in sortedMemberArray";
 		return itemHashSet.size();
 	}
 
@@ -215,6 +219,7 @@ public class JValueSet extends JValueCollection implements Cloneable {
 		if (itemHashSet.add(element)) {
 			this.storedHashCode = 0;
 			sortedMembers.add(element);
+			assert itemHashSet.size() == sortedMembers.size() : "Set contains elements twice in sortedMemberArray";
 			return true;
 		} else {
 			return false;
@@ -234,6 +239,7 @@ public class JValueSet extends JValueCollection implements Cloneable {
 		if (itemHashSet.remove(element)) {
 			this.storedHashCode = 0;
 			sortedMembers.remove(element);
+			assert itemHashSet.size() == sortedMembers.size() : "Set contains elements twice in sortedMemberArray";
 			return true;
 		} else {
 			return false;
@@ -441,5 +447,10 @@ public class JValueSet extends JValueCollection implements Cloneable {
 			result.add(jv.toObject());
 		}
 		return result;
+	}
+
+	@Override
+	public void sort() {
+		Collections.sort(sortedMembers);
 	}
 }

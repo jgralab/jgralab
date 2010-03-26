@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -67,8 +67,9 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 	 * returns the nfa
 	 */
 	public NFA getNFA() throws EvaluateException {
-		if (createdNFA == null)
+		if (createdNFA == null) {
 			getResult(null);
+		}
 		return createdNFA;
 	}
 
@@ -83,14 +84,11 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 	public JValue getResult(BooleanGraphMarker subgraph)
 			throws EvaluateException {
 		if (createdNFA == null) {
-			// long ms = System.currentTimeMillis();
 			result = evaluate();
 			try {
-				createdNFA = result.toNFA();
+				createdNFA = (NFA) result.toAutomaton();
 				addGoalRestrictions();
 				addStartRestrictions();
-				// GreqlEvaluator.println("    Time for creating NFA: " +
-				// (System.currentTimeMillis() - ms));
 			} catch (JValueInvalidTypeException ex) {
 				throw new EvaluateException("Error creating a Path NFA", ex);
 			}
@@ -107,8 +105,9 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 		PathDescription pathDesc = (PathDescription) getVertex();
 		VertexEvaluator goalRestEval = null;
 		IsGoalRestrOf inc = pathDesc.getFirstIsGoalRestrOf(EdgeDirection.IN);
-		if (inc == null)
+		if (inc == null) {
 			return;
+		}
 		JValueTypeCollection typeCollection = new JValueTypeCollection();
 		while (inc != null) {
 			VertexEvaluator vertexEval = greqlEvaluator
@@ -128,9 +127,10 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 			inc = inc.getNextIsGoalRestrOf(EdgeDirection.IN);
 		}
 		NFA.addGoalTypeRestriction(getNFA(), typeCollection);
-		if (goalRestEval != null)
+		if (goalRestEval != null) {
 			NFA.addGoalBooleanRestriction(getNFA(), goalRestEval,
 					greqlEvaluator.getVertexEvaluatorGraphMarker());
+		}
 	}
 
 	/**
@@ -143,8 +143,9 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 		PathDescription pathDesc = (PathDescription) getVertex();
 		VertexEvaluator startRestEval = null;
 		IsStartRestrOf inc = pathDesc.getFirstIsStartRestrOf(EdgeDirection.IN);
-		if (inc == null)
+		if (inc == null) {
 			return;
+		}
 		JValueTypeCollection typeCollection = new JValueTypeCollection();
 		while (inc != null) {
 			VertexEvaluator vertexEval = greqlEvaluator
@@ -164,9 +165,10 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 			inc = inc.getNextIsStartRestrOf(EdgeDirection.IN);
 		}
 		NFA.addStartTypeRestriction(getNFA(), typeCollection);
-		if (startRestEval != null)
+		if (startRestEval != null) {
 			NFA.addStartBooleanRestriction(getNFA(), startRestEval,
 					greqlEvaluator.getVertexEvaluatorGraphMarker());
+		}
 	}
 
 }

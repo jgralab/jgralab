@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -39,6 +39,7 @@ import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.funlib.pathsearch.PathSearchQueueEntry;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
@@ -77,9 +78,7 @@ public class IsReachable extends Greql2Function {
 
 	{
 		JValueType[][] x = {
-				{ JValueType.VERTEX, JValueType.VERTEX, JValueType.DFA,
-						JValueType.BOOL },
-				{ JValueType.VERTEX, JValueType.VERTEX, JValueType.NFA,
+				{ JValueType.VERTEX, JValueType.VERTEX, JValueType.AUTOMATON,
 						JValueType.BOOL } };
 		signatures = x;
 
@@ -102,12 +101,8 @@ public class IsReachable extends Greql2Function {
 		}
 		Vertex startVertex = arguments[0].toVertex();
 		Vertex endVertex = arguments[1].toVertex();
-		DFA dfa = null;
-		if (arguments[2].isNFA()) {
-			dfa = new DFA(arguments[2].toNFA());
-		} else {
-			dfa = arguments[2].toDFA();
-		}
+		DFA dfa = arguments[2].toAutomaton().getDFA();
+
 		BooleanGraphMarker[] markers = new BooleanGraphMarker[dfa.stateList
 				.size()];
 		for (State s : dfa.stateList) {
@@ -121,19 +116,19 @@ public class IsReachable extends Greql2Function {
 		while (!queue.isEmpty()) {
 			currentEntry = queue.poll();
 			if (currentEntry.vertex == endVertex && currentEntry.state.isFinal) {
-				return new JValue(true, startVertex);
+				return new JValueImpl(true, startVertex);
 			}
 			Edge inc = currentEntry.vertex.getFirstEdge();
 			while (inc != null) {
 				for (Transition currentTransition : currentEntry.state.outTransitions) {
 					Vertex nextVertex = currentTransition.getNextVertex(
 							currentEntry.vertex, inc);
-					if (!markers[currentTransition.getEndState().number]
+					if (!markers[currentTransition.endState.number]
 							.isMarked(nextVertex)) {
 						if (currentTransition.accepts(currentEntry.vertex, inc,
 								subgraph)) {
 							PathSearchQueueEntry nextEntry = new PathSearchQueueEntry(
-									nextVertex, currentTransition.getEndState());
+									nextVertex, currentTransition.endState);
 							markers[nextEntry.state.number].mark(nextVertex);
 							queue.add(nextEntry);
 						}
@@ -142,7 +137,7 @@ public class IsReachable extends Greql2Function {
 				inc = inc.getNextEdge();
 			}
 		}
-		return new JValue(false, startVertex);
+		return new JValueImpl(false, startVertex);
 	}
 
 	@Override

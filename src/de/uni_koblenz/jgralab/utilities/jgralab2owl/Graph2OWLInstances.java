@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -25,19 +25,17 @@
 package de.uni_koblenz.jgralab.utilities.jgralab2owl;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import de.uni_koblenz.jgralab.Aggregation;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.schema.AggregationClass;
+import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Domain;
@@ -46,6 +44,7 @@ import de.uni_koblenz.jgralab.schema.ListDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.SetDomain;
+import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
 
 class Graph2OWLInstances {
 
@@ -557,20 +556,18 @@ class Graph2OWLInstances {
 
 		// create properties for role names
 		writeIndividualDatatypePropElement(edgeRolePropPrefix + "OutRole",
-				JGraLab2OWL.xsdNS + "string", ((EdgeClass) ec)
-						.getFromRolename());
+				JGraLab2OWL.xsdNS + "string", ((EdgeClass) ec).getFrom()
+						.getRolename());
 		writeIndividualDatatypePropElement(edgeRolePropPrefix + "InRole",
-				JGraLab2OWL.xsdNS + "string", ((EdgeClass) ec).getToRolename());
+				JGraLab2OWL.xsdNS + "string", ((EdgeClass) ec).getTo()
+						.getRolename());
 
 		// create properties for aggregate if e is an Aggregation or Composition
-		if (e instanceof Aggregation) {
-			if (((AggregationClass) ec).isAggregateFrom()) {
-				writeIndividualObjectPropEmptyElement("aggregate", "#"
-						+ fromElemId);
-			} else {
-				writeIndividualObjectPropEmptyElement("aggregate", "#"
-						+ toElemId);
-			}
+		if (e.getOmegaSemantics() != AggregationKind.NONE) {
+			writeIndividualObjectPropEmptyElement("aggregate", "#" + fromElemId);
+		}
+		if (e.getAlphaSemantics() != AggregationKind.NONE) {
+			writeIndividualObjectPropEmptyElement("aggregate", "#" + toElemId);
 		}
 
 		writer.writeEndElement();
@@ -900,33 +897,22 @@ class Graph2OWLInstances {
 		writer.writeStartElement(dom.getQualifiedName());
 
 		// for every component of the Record
-		for (Map.Entry<String, Domain> component : ((RecordDomain) dom)
-				.getComponents().entrySet()) {
+		for (RecordComponent component : ((RecordDomain) dom).getComponents()) {
 			Object componentValue = null;
 
 			// get the value of the record component
 			try {
-				componentValue = value.getClass().getField(component.getKey())
+				componentValue = value.getClass().getField(component.getName())
 						.get(value);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 
-			// if the component is of composite type
-			if (component.getValue().isComposite()) {
-				writeAttributeIndividualDatatypePropElement(HelperMethods
-						.firstToLowerCase(dom.getQualifiedName())
-						+ "Has"
-						+ HelperMethods.firstToUpperCase(component.getKey()),
-						componentValue, component.getValue());
-				// if the component is of basic type
-			} else {
-				writeAttributeIndividualDatatypePropElement(HelperMethods
-						.firstToLowerCase(dom.getQualifiedName())
-						+ "Has"
-						+ HelperMethods.firstToUpperCase(component.getKey()),
-						componentValue, component.getValue());
-			}
+			writeAttributeIndividualDatatypePropElement(HelperMethods
+					.firstToLowerCase(dom.getQualifiedName())
+					+ "Has"
+					+ HelperMethods.firstToUpperCase(component.getName()),
+					componentValue, component.getDomain());
 		}
 
 		writer.writeEndElement();

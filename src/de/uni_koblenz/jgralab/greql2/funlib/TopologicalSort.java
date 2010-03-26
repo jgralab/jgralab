@@ -16,6 +16,7 @@ import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
@@ -95,7 +96,7 @@ public class TopologicalSort extends Greql2Function {
 				marker.mark(v, inDegree);
 				if (inDegree == 0) {
 					queue.offer(v);
-					result.add(new JValue(v));
+					result.add(new JValueImpl(v));
 				}
 				vCount++;
 			}
@@ -112,7 +113,7 @@ public class TopologicalSort extends Greql2Function {
 					marker.mark(omega, decVal);
 					if (decVal == 0) {
 						queue.offer(omega);
-						result.add(new JValue(omega));
+						result.add(new JValueImpl(omega));
 					}
 				}
 			}
@@ -122,7 +123,7 @@ public class TopologicalSort extends Greql2Function {
 			return result;
 		}
 
-		return new JValue();
+		return new JValueImpl();
 	}
 
 	/*

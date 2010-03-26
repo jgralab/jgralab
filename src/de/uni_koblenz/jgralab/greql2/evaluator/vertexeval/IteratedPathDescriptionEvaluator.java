@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -31,8 +31,10 @@ import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.IteratedPathDescription;
+import de.uni_koblenz.jgralab.greql2.schema.IterationType;
 import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
 
 /**
@@ -78,8 +80,8 @@ public class IteratedPathDescriptionEvaluator extends PathDescriptionEvaluator {
 		PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) greqlEvaluator
 				.getVertexEvaluatorGraphMarker().getMark(p);
 		NFA createdNFA = NFA.createIteratedPathDescriptionNFA(
-				pathEval.getNFA(), vertex.get_times() == "star");
-		return new JValue(createdNFA);
+				pathEval.getNFA(), vertex.get_times() == IterationType.STAR);
+		return new JValueImpl(createdNFA);
 	}
 
 	@Override

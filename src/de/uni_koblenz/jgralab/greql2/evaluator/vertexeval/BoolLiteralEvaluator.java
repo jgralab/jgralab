@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -66,11 +66,11 @@ public class BoolLiteralEvaluator extends VertexEvaluator {
 	@Override
 	public JValue evaluate() throws EvaluateException {
 		if (vertex.get_boolValue() == TrivalentBoolean.TRUE) {
-			return new JValue(Boolean.TRUE);
+			return JValueBoolean.trueJValue;
 		} else if (vertex.get_boolValue() == TrivalentBoolean.FALSE) {
-			return new JValue(Boolean.FALSE);
+			return JValueBoolean.falseJValue;
 		} else {
-			return new JValue(JValueBoolean.NULL);
+			return JValueBoolean.nullJValue;
 		}
 	}
 

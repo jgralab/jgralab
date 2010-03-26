@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -33,6 +33,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.RestrictedExpression;
@@ -67,8 +68,9 @@ public class RestrictedExpressionEvaluator extends VertexEvaluator {
 				.getVertexEvaluatorGraphMarker();
 		Vertex v = graphMarker.getGraph().getFirstVertexOfClass(
 				ThisVertex.class);
-		if (v != null)
+		if (v != null) {
 			thisVertexEvaluator = (ThisVertexEvaluator) graphMarker.getMark(v);
+		}
 	}
 
 	@Override
@@ -89,13 +91,13 @@ public class RestrictedExpressionEvaluator extends VertexEvaluator {
 			}
 		}
 
-		JValue condition = (JValue) restrictionEval.getResult(subgraph);
+		JValue condition = restrictionEval.getResult(subgraph);
 		if (condition.isBoolean()) {
 			try {
-				if (condition.toBoolean() == Boolean.TRUE) {
+				if (condition.toBoolean().equals(Boolean.TRUE)) {
 					return restExprEval.getResult(subgraph);
 				} else {
-					return new JValue();
+					return new JValueImpl();
 				}
 			} catch (JValueInvalidTypeException exception) {
 				throw new EvaluateException(

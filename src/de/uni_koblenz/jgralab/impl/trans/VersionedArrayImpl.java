@@ -2,7 +2,7 @@ package de.uni_koblenz.jgralab.impl.trans;
 
 import java.lang.reflect.Method;
 
-import de.uni_koblenz.jgralab.AttributedElement; //import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.GraphException;
 
 /**

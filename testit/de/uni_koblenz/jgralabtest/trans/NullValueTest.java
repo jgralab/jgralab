@@ -1,6 +1,9 @@
 package de.uni_koblenz.jgralabtest.trans;
 
-import java.io.File;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -13,7 +16,6 @@ import java.util.TreeSet;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
@@ -51,21 +53,18 @@ public class NullValueTest {
 		node1.set_testString(null);
 		node1.set_testRecord(null);
 		node2 = graph.createNode();
-		Map<Integer, String> map = transactionSupport ? graph.createMap(
-				Integer.class, String.class) : new HashMap<Integer, String>();
+		Map<Integer, String> map = graph.createMap();
 		map.put(1, "Hugo");
 		map.put(100, "Volker");
 		map.put(30, null);
 		node2.set_nodeMap(map);
 		node2.set_testEnum(Hugo.A);
-		List<String> list = transactionSupport ? graph.createList(String.class)
-				: new LinkedList<String>();
+		List<String> list = graph.createList();
 		list.add("Hugo");
 		list.add("Lalala");
 		list.add(null);
 		node2.set_testList(list);
-		Set<Integer> set = transactionSupport ? graph.createSet(Integer.class)
-				: new HashSet<Integer>();
+		Set<Integer> set = graph.createSet();
 		set.add(1);
 		set.add(3);
 		set.add(8);

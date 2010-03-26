@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -35,6 +35,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 import de.uni_koblenz.jgralab.greql2.schema.ThisEdge;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
@@ -271,12 +272,12 @@ public class SimpleTransition extends Transition {
 		// checks if a boolean expression exists and if it evaluates to true
 		if (predicateEvaluator != null) {
 			if (thisEdgeEvaluator != null) {
-				thisEdgeEvaluator.setValue(new JValue(e));
+				thisEdgeEvaluator.setValue(new JValueImpl(e));
 			}
 			JValue res = predicateEvaluator.getResult(subgraph);
 			if (res.isBoolean()) {
 				try {
-					if (res.toBoolean() == Boolean.TRUE) {
+					if (res.toBoolean().equals(Boolean.TRUE)) {
 						return true;
 					}
 				} catch (JValueInvalidTypeException ex) {
@@ -295,6 +296,24 @@ public class SimpleTransition extends Transition {
 	@Override
 	public Vertex getNextVertex(Vertex v, Edge e) {
 		return e.getThat();
+	}
+
+	
+	@Override
+	public String prettyPrint() {
+		StringBuilder b = new StringBuilder();
+		String delim = "";
+		for (AttributedElementClass c : typeCollection.getAllowedTypes()) {
+			b.append(delim);
+			b.append(c.getSimpleName());
+			delim = ",";
+		}	
+		String symbol = "<->";
+		if (validDirection == AllowedEdgeDirection.IN)
+			symbol = "<--";
+		else if (validDirection == AllowedEdgeDirection.OUT)
+			symbol = "-->";
+		return symbol + "{" + b + "}";
 	}
 
 }

@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -26,11 +26,10 @@ package de.uni_koblenz.jgralab.utilities.tg2sidiff;
 
 import java.io.PrintStream;
 
-import de.uni_koblenz.jgralab.Aggregation;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.schema.AggregationClass;
+import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -149,13 +148,9 @@ public class Tg2SiDiff extends Tg2Whatever {
 		EdgeClass cls = (EdgeClass) e.getAttributedElementClass();
 		Vertex alpha = (reversedEdges ? e.getOmega() : e.getAlpha());
 		Vertex omega = (reversedEdges ? e.getAlpha() : e.getOmega());
-		boolean aggregateTo = false;
-		boolean aggregateFrom = false;
-		if (e instanceof Aggregation) {
-			AggregationClass ac = (AggregationClass) cls;
-			aggregateFrom = ac.isAggregateFrom() ^ reversedEdges;
-			aggregateTo = !aggregateFrom;
-		}
+		boolean aggregateTo = (e.getAlphaSemantics() != AggregationKind.NONE);
+		boolean aggregateFrom = (e.getOmegaSemantics() != AggregationKind.NONE);
+		
 
 		if (PRINT_EDGES_AS_NODES) {
 			out.print("<Node type=\"" + cls.getQualifiedName() + "\" id=\"edge"

@@ -9,27 +9,16 @@ import java.util.Collections;
 
 public class TGComparer {
 
-	public static boolean compareTGFiles(String filename1, String filename2,
-			Appendable errorStream) {
-
-		return (new TGComparer()).compare(filename1, filename2, errorStream);
-	}
-
 	public static boolean compareTGFiles(String filename1, String filename2) {
-		return compareTGFiles(filename1, filename2, null);
+
+		return (new TGComparer()).compare(filename1, filename2);
 	}
 
 	public TGComparer() {
 
 	}
 
-	public boolean compare(String filename1, String filename2,
-			Appendable errorStream) {
-
-		if (errorStream == null) {
-			errorStream = System.out;
-		}
-
+	public boolean compare(String filename1, String filename2) {
 		try {
 			ArrayList<String> tg1 = readIn(filename1);
 			ArrayList<String> tg2 = readIn(filename2);
@@ -194,12 +183,7 @@ public class TGComparer {
 		return stringList;
 	}
 
-	public boolean compare(String filename1, String filename2) {
-		return compare(filename1, filename2, null);
-	}
-
 	public static void main(String[] args) {
-
 		for (String filename : args) {
 			TGComparer comp = new TGComparer();
 

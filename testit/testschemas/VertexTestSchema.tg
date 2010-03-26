@@ -1,3 +1,4 @@
+TGraph 2;
 Schema de.uni_koblenz.jgralabtest.schemas.vertextest.VertexTestSchema;
 GraphClass VertexTestGraph;
 abstract VertexClass AbstractSuperNode {name : String};
@@ -5,8 +6,8 @@ VertexClass SuperNode {number : Integer};
 VertexClass SubNode : AbstractSuperNode;
 VertexClass DoubleSubNode : SubNode, SuperNode {nodeMap : Map<Integer, String>};
 EdgeClass Link from AbstractSuperNode (0,*) role source to SuperNode (0,*) role target {aString: String};
-AggregationClass LinkBack from SuperNode (0,*) role sourceb to AbstractSuperNode (0,*) role targetb aggregate from;
-CompositionClass SubLink: Link from DoubleSubNode (0,*) role sourcec to SuperNode (0,*) role targetc aggregate from {anInt: Integer};
+EdgeClass LinkBack from SuperNode (0,*) role sourceb to AbstractSuperNode (0,*) role targetb aggregation shared;
+EdgeClass SubLink: Link from DoubleSubNode (0,*) role sourcec to SuperNode (0,*) role targetc  aggregation composite{anInt: Integer};
 
 VertexClass A;
 VertexClass B;

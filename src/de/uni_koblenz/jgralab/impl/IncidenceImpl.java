@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -27,7 +27,6 @@ package de.uni_koblenz.jgralab.impl;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 
 /**
@@ -41,9 +40,9 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 		super(graph);
 	}
 
-	abstract protected void setIncidentVertex(VertexImpl v);
+	abstract protected void setIncidentVertex(VertexBaseImpl v);
 
-	abstract protected VertexImpl getIncidentVertex();
+	abstract protected VertexBaseImpl getIncidentVertex();
 
 	abstract protected void setNextIncidence(IncidenceImpl nextIncidence);
 
@@ -60,6 +59,7 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 	 */
 	@Override
 	public Edge getNextEdge() {
+		assert isValid();
 		return getNextIncidence();
 	}
 
@@ -70,6 +70,7 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 	 */
 	@Override
 	public Edge getPrevEdge() {
+		assert isValid();
 		return getPrevIncidence();
 	}
 
@@ -82,6 +83,7 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 	 */
 	@Override
 	public Edge getNextEdge(EdgeDirection orientation) {
+		assert isValid();
 		IncidenceImpl i = getNextIncidence();
 		switch (orientation) {
 		case IN:
@@ -108,6 +110,8 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 	 */
 	@Override
 	public Edge getNextEdgeOfClass(Class<? extends Edge> anEdgeClass) {
+		assert anEdgeClass != null;
+		assert isValid();
 		return getNextEdgeOfClass(anEdgeClass, EdgeDirection.INOUT, false);
 	}
 
@@ -120,6 +124,8 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 	@Override
 	public Edge getNextEdgeOfClass(Class<? extends Edge> anEdgeClass,
 			boolean noSubclasses) {
+		assert anEdgeClass != null;
+		assert isValid();
 		return getNextEdgeOfClass(anEdgeClass, EdgeDirection.INOUT,
 				noSubclasses);
 	}
@@ -133,6 +139,8 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 	@Override
 	public Edge getNextEdgeOfClass(Class<? extends Edge> anEdgeClass,
 			EdgeDirection orientation) {
+		assert anEdgeClass != null;
+		assert isValid();
 		return getNextEdgeOfClass(anEdgeClass, orientation, false);
 	}
 
@@ -145,6 +153,8 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 	@Override
 	public Edge getNextEdgeOfClass(Class<? extends Edge> anEdgeClass,
 			EdgeDirection orientation, boolean noSubclasses) {
+		assert anEdgeClass != null;
+		assert isValid();
 		Edge currentEdge = getNextEdge(orientation);
 		while (currentEdge != null) {
 			if (noSubclasses) {
@@ -170,6 +180,8 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 	 */
 	@Override
 	public Edge getNextEdgeOfClass(EdgeClass anEdgeClass) {
+		assert anEdgeClass != null;
+		assert isValid();
 		return getNextEdgeOfClass(anEdgeClass.getM1Class(),
 				EdgeDirection.INOUT, false);
 	}
@@ -183,6 +195,8 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 	 */
 	@Override
 	public Edge getNextEdgeOfClass(EdgeClass anEdgeClass, boolean noSubclasses) {
+		assert anEdgeClass != null;
+		assert isValid();
 		return getNextEdgeOfClass(anEdgeClass.getM1Class(),
 				EdgeDirection.INOUT, noSubclasses);
 	}
@@ -197,6 +211,8 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 	@Override
 	public Edge getNextEdgeOfClass(EdgeClass anEdgeClass,
 			EdgeDirection orientation) {
+		assert anEdgeClass != null;
+		assert isValid();
 		return getNextEdgeOfClass(anEdgeClass.getM1Class(), orientation, false);
 	}
 
@@ -210,6 +226,8 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 	@Override
 	public Edge getNextEdgeOfClass(EdgeClass anEdgeClass,
 			EdgeDirection orientation, boolean noSubclasses) {
+		assert anEdgeClass != null;
+		assert isValid();
 		return getNextEdgeOfClass(anEdgeClass.getM1Class(), orientation,
 				noSubclasses);
 	}
@@ -221,9 +239,12 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 	 */
 	@Override
 	public boolean isBefore(Edge e) {
-		if (getThis() != e.getThis()) {
-			throw new GraphException("this-vertex is not the same");
-		}
+		assert e != null;
+		assert isValid();
+		assert e.isValid();
+		assert getGraph() == e.getGraph();
+		assert getThis() == e.getThis();
+
 		if (e == this) {
 			return false;
 		}
@@ -241,9 +262,12 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 	 */
 	@Override
 	public boolean isAfter(Edge e) {
-		if (getThis() != e.getThis()) {
-			throw new GraphException("this-vertex is not the same");
-		}
+		assert e != null;
+		assert isValid();
+		assert e.isValid();
+		assert getGraph() == e.getGraph();
+		assert getThis() == e.getThis();
+
 		if (e == this) {
 			return false;
 		}
@@ -262,14 +286,18 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 	 */
 	@Override
 	public void putEdgeBefore(Edge e) {
-		VertexImpl v = (VertexImpl) getThis();
-		if (v != e.getThis()) {
-			throw new GraphException("this-vertex is not the same");
+		assert e != null;
+		assert isValid();
+		assert e.isValid();
+		assert getGraph() == e.getGraph();
+		assert getThis() == e.getThis();
+		VertexBaseImpl v = (VertexBaseImpl) getThis();
+		assert v.isValid();
+		assert e != this;
+
+		if (this != e) {
+			v.putIncidenceBefore((IncidenceImpl) e, this);
 		}
-		if (this == e) {
-			throw new GraphException("can't put edge before itself");
-		}
-		v.putIncidenceBefore((IncidenceImpl) e, this);
 	}
 
 	/*
@@ -280,13 +308,17 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 	 */
 	@Override
 	public void putEdgeAfter(Edge e) {
-		VertexImpl v = (VertexImpl) getThis();
-		if (v != e.getThis()) {
-			throw new GraphException("this-vertex is not the same");
+		assert e != null;
+		assert isValid();
+		assert e.isValid();
+		assert getGraph() == e.getGraph();
+		assert getThis() == e.getThis();
+		VertexBaseImpl v = (VertexBaseImpl) getThis();
+		assert v.isValid();
+		assert e != this;
+
+		if (this != e) {
+			v.putIncidenceAfter((IncidenceImpl) e, this);
 		}
-		if (this == e) {
-			throw new GraphException("can't put edge after itself");
-		}
-		v.putIncidenceAfter((IncidenceImpl) e, this);
 	}
 }

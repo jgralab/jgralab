@@ -20,10 +20,9 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.parser.ManualGreqlParser;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Schema;
 import de.uni_koblenz.jgralab.impl.FreeIndexList;
-import de.uni_koblenz.jgralab.impl.GraphImpl;
+import de.uni_koblenz.jgralab.impl.GraphBaseImpl;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
@@ -33,11 +32,9 @@ import de.uni_koblenz.jgralabtest.schemas.vertextest.C;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.C2;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.D;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.D2;
-import de.uni_koblenz.jgralabtest.schemas.vertextest.E;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.F;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.G;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.H;
-import de.uni_koblenz.jgralabtest.schemas.vertextest.I;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.J;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.K;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.VertexTestGraph;
@@ -409,7 +406,7 @@ public class LoadTest extends InstanceTest {
 	private FreeIndexList getFreeIndexListOfVertices(Graph graph,
 			boolean getVertexList) {
 		try {
-			Field f = GraphImpl.class
+			Field f = GraphBaseImpl.class
 					.getDeclaredField(getVertexList ? "freeVertexList"
 							: "freeEdgeList");
 			f.setAccessible(true);

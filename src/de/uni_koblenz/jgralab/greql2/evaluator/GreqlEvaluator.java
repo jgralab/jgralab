@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.lang.ref.SoftReference;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,6 +48,7 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.GraphIO.TGFilenameFilter;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
+import de.uni_koblenz.jgralab.greql2.SerializableGreql2;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.LogCostModel;
@@ -65,11 +67,13 @@ import de.uni_koblenz.jgralab.greql2.optimizer.Optimizer;
 import de.uni_koblenz.jgralab.greql2.parser.ManualGreqlParser;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
+import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
+import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
 
 /**
  * This is the core class of the GReQL-2 Evaluator. It takes a GReQL-2 Query as
@@ -125,6 +129,17 @@ public class GreqlEvaluator {
 	private static final long INDEX_TIME_BARRIER = 10;
 
 	/**
+	 * Print the current value of each variable in a declaration layer during
+	 * evaluation.
+	 */
+	public static boolean DEBUG_DECLARATION_ITERATIONS = false;
+
+	/**
+	 * Print the text representation of the optimized query after optimization.
+	 */
+	public static boolean DEBUG_OPTIMIZATION = false;
+
+	/**
 	 * toggles wether to use indexing for vertex sets or not
 	 */
 	public static final boolean VERTEX_INDEXING = true;
@@ -139,17 +154,16 @@ public class GreqlEvaluator {
 	public static final int VERTEX_INDEX_SIZE = 50;
 
 	/**
-	 * stores the already optimized syntaxgraphs
+	 * stores the already optimized syntaxgraphs (query strings are the keys,
+	 * here).
 	 */
-	protected static Map<String, List<SyntaxGraphEntry>> optimizedGraphs;
+	protected static Map<String, SoftReference<List<SyntaxGraphEntry>>> optimizedGraphs;
 
-	public static void resetOptimizedSyntaxGraphs() {
-		synchronized (GreqlEvaluator.class) {
-			if (optimizedGraphs == null) {
-				optimizedGraphs = new HashMap<String, List<SyntaxGraphEntry>>();
-			} else {
-				optimizedGraphs.clear();
-			}
+	public static synchronized void resetOptimizedSyntaxGraphs() {
+		if (optimizedGraphs == null) {
+			optimizedGraphs = new HashMap<String, SoftReference<List<SyntaxGraphEntry>>>();
+		} else {
+			optimizedGraphs.clear();
 		}
 	}
 
@@ -165,17 +179,15 @@ public class GreqlEvaluator {
 	protected static File evaluationLoggerDirectory = getTmpDirectory();
 
 	/**
-	 * stores the graph indizes
+	 * stores the graph indizes (maps graphId values to GraphIndizes)
 	 */
-	protected static Map<String, GraphIndex> graphIndizes;
+	protected static Map<String, SoftReference<GraphIndex>> graphIndizes;
 
-	public static void resetGraphIndizes() {
-		synchronized (GreqlEvaluator.class) {
-			if (graphIndizes == null) {
-				graphIndizes = new HashMap<String, GraphIndex>();
-			} else {
-				graphIndizes.clear();
-			}
+	public static synchronized void resetGraphIndizes() {
+		if (graphIndizes == null) {
+			graphIndizes = new HashMap<String, SoftReference<GraphIndex>>();
+		} else {
+			graphIndizes.clear();
 		}
 	}
 
@@ -188,7 +200,7 @@ public class GreqlEvaluator {
 	 * The map of SimpleName to Type of types that is known in the evaluator by
 	 * import statements in the greql query
 	 */
-	protected Map<String, AttributedElementClass> knownTypes = new HashMap<String, AttributedElementClass>(); // initial initialization (afuhr) // initialize empty map (afuhr)
+	protected Map<String, AttributedElementClass> knownTypes = new HashMap<String, AttributedElementClass>(); // initial
 
 	/**
 	 * returns the vertexEvalGraph marker that is used
@@ -219,12 +231,20 @@ public class GreqlEvaluator {
 	 * @return a JValueSet with the result of that queryPart or null if the
 	 *         query part is not yet indexed
 	 */
-	public synchronized JValueSet getVertexIndex(Graph graph, String queryPart) {
-		GraphIndex index = graphIndizes.get(graph.getId());
-		if (index != null) {
-			if (index.isValid(graph)) {
-				return index.getVertexSet(queryPart);
-			}
+	public static synchronized JValueSet getVertexIndex(Graph graph,
+			String queryPart) {
+		SoftReference<GraphIndex> ref = graphIndizes.get(graph.getId());
+		if (ref == null) {
+			return null;
+		}
+		GraphIndex index = ref.get();
+		if (index == null) {
+			graphIndizes.remove(ref);
+			return null;
+		}
+
+		if (index.isValid(graph)) {
+			return index.getVertexSet(queryPart);
 		}
 		return null;
 	}
@@ -233,12 +253,23 @@ public class GreqlEvaluator {
 	 * Adds the given vertex set as the result of the given queryPart to the
 	 * index of the given graph
 	 */
-	public synchronized void addVertexIndex(Graph graph, String queryPart,
-			JValueSet vertexSet) {
-		GraphIndex index = graphIndizes.get(graph.getId());
+	public static synchronized void addVertexIndex(Graph graph,
+			String queryPart, JValueSet vertexSet) {
+		SoftReference<GraphIndex> ref = graphIndizes.get(graph.getId());
+		GraphIndex index = null;
+
+		if (ref != null) {
+			index = ref.get();
+			if (index == null) {
+				// remove the old reference
+				graphIndizes.remove(ref);
+			}
+		}
+
 		if (index == null) {
 			index = new GraphIndex(graph);
-			graphIndizes.put(graph.getId(), index);
+			graphIndizes.put(graph.getId(),
+					new SoftReference<GraphIndex>(index));
 		}
 		index.addVertexSet(queryPart, vertexSet);
 	}
@@ -255,16 +286,26 @@ public class GreqlEvaluator {
 	 */
 	protected static synchronized void addOptimizedSyntaxGraph(
 			String queryString, SyntaxGraphEntry entry) {
-		List<SyntaxGraphEntry> entryList = optimizedGraphs.get(queryString);
+		SoftReference<List<SyntaxGraphEntry>> ref = optimizedGraphs
+				.get(queryString);
+		List<SyntaxGraphEntry> entryList = null;
+
+		if (ref != null) {
+			entryList = ref.get();
+			if (entryList == null) {
+				optimizedGraphs.remove(ref);
+			}
+		}
+
 		if (entryList == null) {
 			entryList = new ArrayList<SyntaxGraphEntry>();
 		}
 		if (!entryList.contains(entry)) {
 			entryList.add(entry);
 		}
-		if (!optimizedGraphs.containsKey(queryString)) {
-			optimizedGraphs.put(queryString, entryList);
-		}
+
+		optimizedGraphs.put(queryString,
+				new SoftReference<List<SyntaxGraphEntry>>(entryList));
 	}
 
 	/**
@@ -272,20 +313,32 @@ public class GreqlEvaluator {
 	 */
 	protected static synchronized SyntaxGraphEntry getOptimizedSyntaxGraph(
 			String queryString, Optimizer optimizer, CostModel costModel) {
-		List<SyntaxGraphEntry> entryList = optimizedGraphs.get(queryString);
-		if (entryList != null) {
-			for (SyntaxGraphEntry entry : entryList) {
-				if (entry.getCostModel().isEquivalent(costModel)) {
-					Optimizer opt = entry.getOptimizer();
-					if (((opt != null) && opt.isEquivalent(optimizer))
-							|| ((opt == null) && (optimizer == null))) {
-						if (entry.lock()) {
-							return entry;
-						}
+		SoftReference<List<SyntaxGraphEntry>> ref = optimizedGraphs
+				.get(queryString);
+		List<SyntaxGraphEntry> entryList = null;
+
+		if (ref != null) {
+			entryList = ref.get();
+			if (entryList == null) {
+				optimizedGraphs.remove(ref);
+			}
+		}
+		if (entryList == null) {
+			return null;
+		}
+
+		for (SyntaxGraphEntry entry : entryList) {
+			if (entry.getCostModel().isEquivalent(costModel)) {
+				Optimizer opt = entry.getOptimizer();
+				if (((opt != null) && opt.isEquivalent(optimizer))
+						|| ((opt == null) && (optimizer == null))) {
+					if (entry.lock()) {
+						return entry;
 					}
 				}
 			}
 		}
+
 		return null;
 	}
 
@@ -326,7 +379,12 @@ public class GreqlEvaluator {
 	 * optimizedSyntaxGraphDirectory.
 	 */
 	public static synchronized void saveOptimizedSyntaxGraphs() {
-		for (List<SyntaxGraphEntry> entryList : optimizedGraphs.values()) {
+		for (SoftReference<List<SyntaxGraphEntry>> ref : optimizedGraphs
+				.values()) {
+			List<SyntaxGraphEntry> entryList = ref.get();
+			if (entryList == null) {
+				continue;
+			}
 			for (SyntaxGraphEntry entry : entryList) {
 				try {
 					entry.saveToDirectory(optimizedSyntaxGraphsDirectory);
@@ -347,6 +405,10 @@ public class GreqlEvaluator {
 		reset();
 	}
 
+	public String getQuery() {
+		return queryString;
+	}
+
 	public void setQueryFile(File query) throws IOException {
 		BufferedReader reader = new BufferedReader(new FileReader(query));
 		String line = null;
@@ -356,9 +418,7 @@ public class GreqlEvaluator {
 			sb.append('\n');
 		}
 		reader.close();
-		queryString = sb.toString();
-		normalizeQueryString();
-		reset();
+		setQuery(sb.toString());
 	}
 
 	/**
@@ -403,7 +463,7 @@ public class GreqlEvaluator {
 	 * If set to <code>true</code>, then a stored optimized syntaxgraph will be
 	 * used if <code>optimize == true</code> and such a graph exists.
 	 */
-	private boolean useSavedOptimizedSyntaxGraph = false;
+	private boolean useSavedOptimizedSyntaxGraph = true;
 
 	/**
 	 * This attribute holds the datagraph
@@ -573,16 +633,16 @@ public class GreqlEvaluator {
 			try {
 				evaluationLogger = new Level2Logger(evaluationLoggerDirectory,
 						datagraph, evaluationLoggingType);
+				if (evaluationLogger.load()) {
+					logger.info("Successfully loaded logger file "
+							+ evaluationLogger.getLogfileName() + ".");
+				} else {
+					logger.info("Couldn't load logger file "
+							+ evaluationLogger.getLogfileName() + ".");
+				}
 			} catch (InterruptedException e) {
 				// TODO (heimdall) Auto-generated catch block
 				e.printStackTrace();
-			}
-			if (evaluationLogger.load()) {
-				logger.info("Successfully loaded logger file "
-						+ evaluationLogger.getLogfileName() + ".");
-			} else {
-				logger.info("Couldn't load logger file "
-						+ evaluationLogger.getLogfileName() + ".");
 			}
 		}
 	}
@@ -637,7 +697,6 @@ public class GreqlEvaluator {
 		}
 		this.queryString = query;
 		knownTypes = new HashMap<String, AttributedElementClass>();
-		normalizeQueryString();
 		this.variableMap = variables;
 		this.progressFunction = progressFunction;
 	}
@@ -661,7 +720,9 @@ public class GreqlEvaluator {
 					"de.uni_koblenz.jgralab.greqlminschema");
 			GraphClass gc = minimalSchema.createGraphClass("MinimalGraph");
 			VertexClass n = gc.createVertexClass("Node");
-			gc.createEdgeClass("Link", n, n);
+			gc.createEdgeClass("Link", n, 0, Integer.MAX_VALUE, "",
+					AggregationKind.NONE, n, 0, Integer.MAX_VALUE, "",
+					AggregationKind.NONE);
 			minimalSchema
 					.compile(CodeGeneratorConfiguration.WITHOUT_TRANSACTIONS);
 			Method graphCreateMethod = minimalSchema
@@ -714,10 +775,10 @@ public class GreqlEvaluator {
 		} else {
 			this.datagraph = datagraph;
 		}
-		
+
 		// Read query from file (afuhr)
 		this.setQueryFile(queryFile);
-		
+
 		this.variableMap = variables;
 		this.progressFunction = progressFunction;
 
@@ -759,24 +820,6 @@ public class GreqlEvaluator {
 		}
 		this.queryGraph = queryGraph;
 		this.variableMap = variables;
-	}
-
-	public void normalizeQueryString() {
-		if (queryString == null) {
-			return;
-		}
-		// Delete one-line-comments (//).
-		queryString = queryString.replaceAll("//.*", "");
-		// Replace newlines with space.
-		queryString = queryString.replaceAll("[\n]+", " ");
-		// Delete multi-line-comments (/* ... */).
-		queryString = queryString.replaceAll("/\\*.*?\\*/", " ");
-		// Replace any occurence of more than one whitespace with exactly one
-		// whitespace.
-		queryString = queryString.replaceAll("\\s{2,}", " ");
-		// Delete the space at the front and at the end of the query.
-		queryString = queryString.trim();
-		// System.out.println("Normalized Query = \"" + queryString + "\".");
 	}
 
 	/**
@@ -948,6 +991,33 @@ public class GreqlEvaluator {
 
 		if (optimize) {
 			createOptimizedSyntaxGraph();
+			if (DEBUG_OPTIMIZATION) {
+				System.out
+						.println("#########################################################");
+				System.out
+						.println("################### Optimized Query #####################");
+				System.out
+						.println("#########################################################");
+				if (queryGraph instanceof SerializableGreql2) {
+					System.out.println(((SerializableGreql2) queryGraph)
+							.serialize());
+				} else {
+					System.out.println("Couldn't serialize Greql2 graph...");
+				}
+				String name = "optimized-greql-query.";
+				try {
+					GraphIO.saveGraphToFile(name + "tg", queryGraph,
+							new ProgressFunctionImpl());
+					Tg2Dot.printGraphAsDot(queryGraph, true, name + "dot");
+				} catch (GraphIOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				System.out.println("Saved optimized query to " + name
+						+ "tg/dot.");
+				System.out
+						.println("#########################################################");
+			}
 		}
 
 		optimizationTime = System.currentTimeMillis() - optimizerStartTime;
