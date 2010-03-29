@@ -171,6 +171,16 @@
     <property name="clover.jar" value="${lib.dir}/clover/clover-2.6.0.jar"/>
     <property name="clover.dest" value="${project.dir}/build/clover-report"/>
     <taskdef resource="cloverlib.xml" classpath="${clover.jar}"/>
+
+    <clover-setup>
+      <!-- Don't check the coverage for the tests, but only for the
+	 sources. -->
+      <files>
+	<include name="${src.dir}/**/*.java"/>
+	<exclude name="${test.dir}/**/*.java"/>
+      </files>
+    </clover-setup>
+
     <clover-env/>
 
 
