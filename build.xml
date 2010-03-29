@@ -174,15 +174,18 @@
 
     <clover-setup>
       <!-- Don't check the coverage for the tests, but only for the
-	 sources. -->
+	   sources.
+
+	   This doesn't work so far.  The reason seems to be point 1
+	   described in
+	   http://confluence.atlassian.com/pages/viewpage.action?pageId=79986960
+	-->
       <files>
 	<include name="${src.dir}/**/*.java"/>
 	<exclude name="${test.dir}/**/*.java"/>
       </files>
     </clover-setup>
-
     <clover-env/>
-
 
     <target name="test" depends="cleanall,compile">
       <ant dir="${common.dir}" antfile="build.xml" target="test">
