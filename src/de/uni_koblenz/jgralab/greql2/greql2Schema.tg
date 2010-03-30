@@ -155,8 +155,8 @@ EdgeClass IsRecordExprOf: Greql2Aggregation from Expression (1,1) role recordExp
 EdgeClass IsRecordIdOf: Greql2Aggregation from RecordId (1,1) role recordId aggregation shared to RecordElement (1,*);
 EdgeClass IsRestrictedExprOf: Greql2Aggregation from Expression (1,1) role restrictedExpr aggregation shared to RestrictedExpression (0,*);
 EdgeClass IsRestrictionOf: Greql2Aggregation from Expression (1,1) role restriction aggregation shared to RestrictedExpression (0,*);
-EdgeClass IsRoleIdOf: Greql2Aggregation from RoleId (0,1) role roleId aggregation shared to EdgeRestriction (1,*);
-EdgeClass IsBooleanPredicateOfEdgeRestriction: Greql2Aggregation from Expression (0,*) role booleanPredicate aggregation shared to EdgeRestriction (0,1);
+EdgeClass IsRoleIdOf: Greql2Aggregation from RoleId (0,*) role roleId aggregation shared to EdgeRestriction (1,*);
+EdgeClass IsBooleanPredicateOfEdgeRestriction: Greql2Aggregation from Expression (0,1) role booleanPredicate aggregation shared to EdgeRestriction (0,1);
 EdgeClass IsRootOf: Greql2Aggregation from Expression (1,1) role root aggregation shared to PathSystemConstruction (0,*);
 EdgeClass IsRowHeaderExprOf: Greql2Aggregation from Expression (0,*) role rowHeaderExpr aggregation shared to TableComprehension (0,*);
 EdgeClass IsSequenceElementOf: IsPathDescriptionOf from PathDescription (2,*) role sequenceElement aggregation shared to SequentialPathDescription (0,*);
@@ -175,7 +175,7 @@ EdgeClass IsTransposedPathOf: IsPathDescriptionOf from PathDescription (1,1) rol
 EdgeClass IsTrueExprOf: Greql2Aggregation from Expression (1,1) role trueExpr aggregation shared to ConditionalExpression (0,*);
 EdgeClass IsTypeExprOfDeclaration: IsTypeExprOf from Expression (0,1) role typeExpr aggregation shared to SimpleDeclaration (0,*);
 EdgeClass IsTypeExprOfFunction: IsTypeExprOf from Expression (0,1) role typeExpr aggregation shared to FunctionApplication (0,*);
-EdgeClass IsTypeIdOf: Greql2Aggregation from TypeId (0,1) role typeId aggregation shared to EdgeRestriction (0,*);
+EdgeClass IsTypeIdOf: Greql2Aggregation from TypeId (0,*) role typeId aggregation shared to EdgeRestriction (0,*);
 EdgeClass IsTypeRestrOf: Greql2Aggregation from TypeId (0,*) role typeRestr aggregation shared to Expression (0,*);
 EdgeClass IsVarOf: Greql2Aggregation from Variable (1,1) role var aggregation shared to Definition (0,1);
 abstract EdgeClass Greql2Aggregation from Greql2Vertex (0,*) aggregation shared to Greql2Vertex (0,*) { sourcePositions: List<SourcePosition> } ;

@@ -57,6 +57,7 @@ import de.uni_koblenz.jgralab.greql2.schema.RealLiteral;
 import de.uni_koblenz.jgralab.greql2.schema.RecordConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.RecordElement;
 import de.uni_koblenz.jgralab.greql2.schema.RestrictedExpression;
+import de.uni_koblenz.jgralab.greql2.schema.RoleId;
 import de.uni_koblenz.jgralab.greql2.schema.SequentialPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.SetComprehension;
 import de.uni_koblenz.jgralab.greql2.schema.SetConstruction;
@@ -175,23 +176,21 @@ public class Greql2Serializer {
 	}
 
 	private void serializeEdgeRestriction(EdgeRestriction v) {
-		if (v.get_typeId() != null) {
-			serializeIdentifier(v.get_typeId());
+		String delim = "";
+		for (TypeId tid : v.get_typeId()) {
+			sb.append(delim);
+			serializeIdentifier(tid);
+			delim = ",";
 		}
-		if (v.get_roleId() != null) {
-			serializeIdentifier(v.get_roleId());
+		for (RoleId rid : v.get_roleId()) {
+			sb.append(delim);
+			delim = ",";
+			serializeIdentifier(rid);
 		}
-		if (v.getFirstIsBooleanPredicateOfEdgeRestriction(EdgeDirection.IN) != null) {
+		Expression predicate = v.get_booleanPredicate();
+		if (predicate != null) {
 			sb.append(" @ ");
-			boolean first = true;
-			for (Expression pred : v.get_booleanPredicate()) {
-				if (first) {
-					first = false;
-				} else {
-					sb.append(", ");
-				}
-				serializeExpression(pred, false);
-			}
+			serializeExpression(predicate, false);
 		}
 	}
 
