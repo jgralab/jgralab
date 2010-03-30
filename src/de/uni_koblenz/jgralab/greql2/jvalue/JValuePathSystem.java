@@ -539,33 +539,47 @@ public class JValuePathSystem extends JValueImpl {
 		if (vertex == null) {
 			return resultSet;
 		}
-		switch (direction) {
-		case IN:
-			for (Map.Entry<PathSystemKey, PathSystemEntry> entry : keyToEntryMap.entrySet()) {
-				if (entry.getKey().getVertex() == vertex) {
-					resultSet.add(new JValueImpl(entry.getValue()
-							.getParentEdge()));
+		for (Map.Entry<PathSystemKey, PathSystemEntry> entry : keyToEntryMap.entrySet()) {
+			if (entry.getKey().getVertex() == vertex) {
+				Edge edge = entry.getValue().getParentEdge();
+				if (edge == null)
+					continue;
+				switch (direction) {
+				case IN:
+					if (edge.isNormal())
+						resultSet.add(new JValueImpl(edge));
+					break;
+				case OUT:
+					if (!edge.isNormal())
+						resultSet.add(new JValueImpl(edge));
+					break;
+				case INOUT:
+					resultSet.add(new JValueImpl(edge));
+					break;
+				default:
+					throw new JValuePathException("Incomplete switch statement in JValuePathSystem");
 				}
 			}
-			break;
-		case OUT:
-			for (Map.Entry<PathSystemKey, PathSystemEntry> entry : keyToEntryMap.entrySet()) {
-				if (entry.getValue().getParentVertex() == vertex) {
-					resultSet.add(new JValueImpl(entry.getValue()
-							.getParentEdge()));
+			if (entry.getValue().getParentVertex() == vertex) {
+				Edge edge = entry.getValue().getParentEdge();
+				if (edge == null)
+					continue;
+				switch (direction) {
+				case IN:
+					if (!edge.isNormal())
+						resultSet.add(new JValueImpl(edge));
+					break;
+				case OUT:
+					if (edge.isNormal())
+						resultSet.add(new JValueImpl(edge));
+					break;
+				case INOUT:
+					resultSet.add(new JValueImpl(edge));
+					break;
+				default:
+					throw new JValuePathException("Incomplete switch statement in JValuePathSystem");
 				}
 			}
-			break;
-		case INOUT:
-			for (Map.Entry<PathSystemKey, PathSystemEntry> entry : keyToEntryMap.entrySet()) {
-				PathSystemEntry pe = entry.getValue();
-				if ((pe.getParentVertex() == vertex) || (entry.getKey().getVertex() == vertex)) {
-					resultSet.add(new JValueImpl(entry.getValue().getParentEdge()));			
-				}
-			}
-			break;
-		default:
-			throw new JValuePathException("Incomplete switch statement in JValuePathSystem");
 		}
 		return resultSet;
 	}

@@ -32,6 +32,7 @@ import static org.junit.Assert.fail;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map.Entry;
 
 import org.junit.Test;
@@ -46,6 +47,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueMap;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.greql2.parser.ManualGreqlParser;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
@@ -666,11 +668,19 @@ public class FunctionTest extends GenericTests {
 		for (int i = 0; i < 9; i++) {
 			links.add(minimalGraph.createLink(nodes.get(i), nodes.get(i + 1)));
 		}
-		boundVariables.put("rootNode", new JValueImpl(nodes.get(3)));
-
-		String queryString = "using rootNode: nodeTrace(extractPath(pathSystem(rootNode, -->+), 2)[0])";
-		JValue result = evalTestQuery("NodeTrace", queryString, minimalGraph);
-		assertEquals(2, result.toCollection().size());
+		JValuePath p = new JValuePath(nodes.get(0));
+		p.addEdge(links.get(0));
+		p.addEdge(links.get(1));
+		p.addEdge(links.get(2));
+		List<Vertex> estimatedList = new ArrayList<Vertex>();
+		estimatedList.add(nodes.get(0));
+		estimatedList.add(nodes.get(1));
+		estimatedList.add(nodes.get(2));
+		estimatedList.add(nodes.get(3));
+		assertEquals(4, p.nodeTrace().size());
+		for (int i=0; i<estimatedList.size(); i++) {
+			assertEquals(estimatedList.get(i), p.nodeTrace().get(i));
+		}
 	}
 
 	/*

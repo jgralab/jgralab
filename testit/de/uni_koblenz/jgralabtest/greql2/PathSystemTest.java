@@ -171,7 +171,7 @@ public class PathSystemTest extends GenericTests {
 			if (!p.isValidPath()) {
 				invalidPaths++;
 			} else {
-				assertEquals(3, p.pathLength());
+				assertEquals(2, p.pathLength());
 			}
 		}
 		assertEquals(1, invalidPaths);
@@ -269,7 +269,7 @@ public class PathSystemTest extends GenericTests {
 			if (v.toInteger() == 0) {
 				nullPath++;
 			} else {
-				assertEquals(3, (int) v.toInteger());
+				assertEquals(2, (int) v.toInteger());
 			}
 		}
 		assertEquals(1, nullPath);
@@ -297,6 +297,7 @@ public class PathSystemTest extends GenericTests {
 			if (v.toCollection().size() == 0) {
 				emptyTraces++;
 			} else {
+				System.out.println("Path: ");
 				assertEquals(3, v.toCollection().size());
 			}
 		}
@@ -331,7 +332,7 @@ public class PathSystemTest extends GenericTests {
 				trueCounts++;
 			}
 		}
-		assertEquals(16, trueCounts);
+		assertEquals(4, trueCounts);
 	}
 
 }
