@@ -90,14 +90,8 @@ public abstract class DegreeFunction extends Greql2Function {
 				return new JValueImpl(pathSystem.degree(vertex, typeCol));
 			}
 		}
-		switch (direction) {
-		case IN:
-			return new JValueImpl(path.degree(vertex, true));
-		case OUT:
-			return new JValueImpl(path.degree(vertex, false));
-		default:
-			return new JValueImpl(path.degree(vertex));
-		}
+		//path
+		return new JValueImpl(path.degree(vertex, direction));
 	}
 
 	/*
