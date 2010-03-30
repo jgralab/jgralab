@@ -98,14 +98,7 @@ public abstract class Incidences extends Greql2Function {
 		Vertex vertex = arguments[0].toVertex();
 
 		if (path != null) {
-			if (direction == EdgeDirection.INOUT) {
-				if (typeCol == null) {
-					return path.edgesConnected(vertex);
-				}
-			} else {
-				return path.edgesConnected(vertex,
-						direction == EdgeDirection.IN);
-			}
+				return path.edgesConnected(vertex, direction);
 		}
 		if (pathSystem != null) {
 			if (direction == EdgeDirection.INOUT) {
