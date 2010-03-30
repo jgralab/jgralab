@@ -33,6 +33,7 @@ import java.util.Queue;
 import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
@@ -441,33 +442,50 @@ public class JValuePathSystem extends JValueImpl {
 	 *         given vertex or -1 if the given vertex is not part of this
 	 *         pathsystem
 	 */
-	public int degree(Vertex vertex, boolean orientation,
+	public int degree(Vertex vertex, EdgeDirection direction,
 			JValueTypeCollection typeCol) {
 		clearPathSystem();
 		if (vertex == null) {
 			return -1;
 		}
 		int degree = 0;
-		Iterator<Map.Entry<PathSystemKey, PathSystemEntry>> iter = keyToEntryMap
-				.entrySet().iterator();
-		while (iter.hasNext()) {
-			Map.Entry<PathSystemKey, PathSystemEntry> entry = iter.next();
-			if (orientation) {
-				if ((entry.getValue().getParentVertex() == vertex)
-						&& ((typeCol == null) || (typeCol.acceptsType(vertex
-								.getAttributedElementClass())))) {
-					degree++;
-				}
-			} else {
+		switch (direction) {
+		case IN:
+			for (Map.Entry<PathSystemKey, PathSystemEntry> entry : keyToEntryMap.entrySet()) {
 				if ((entry.getKey().getVertex() == vertex)
-						&& ((typeCol == null) || (typeCol.acceptsType(vertex
-								.getAttributedElementClass())))) {
+						&& ((typeCol == null) || (typeCol.acceptsType(entry.getValue().getParentEdge().getAttributedElementClass())))) {
 					degree++;
 				}
 			}
+			break;
+		case OUT:
+			for (Map.Entry<PathSystemKey, PathSystemEntry> entry : keyToEntryMap.entrySet()) {
+				if ((entry.getValue().getParentVertex() == vertex)
+						&& ((typeCol == null) || (typeCol.acceptsType(entry.getValue().getParentEdge().getAttributedElementClass())))) {
+					degree++;
+				}
+			}
+			break;
+		case INOUT:
+			for (Map.Entry<PathSystemKey, PathSystemEntry> entry : keyToEntryMap.entrySet()) {
+				PathSystemEntry pe = entry.getValue();
+				if ((typeCol == null) || typeCol.acceptsType(pe.getParentEdge().getAttributedElementClass())) {
+					if (pe.getParentVertex() == vertex) {
+						degree++; 			
+					}
+					//cannot transform two if statements to one if with an or, because an edge may be a loop 
+					if (entry.getKey().getVertex() == vertex) { 		
+						degree++; 
+					}
+				}
+			}
+			break;
+		default:
+			throw new JValuePathException("Incomplete switch statement in JValuePathSystem");
 		}
 		return degree;
 	}
+
 
 	/**
 	 * Calculates the number of incomming and outgoing edges of the given vertex
@@ -487,15 +505,16 @@ public class JValuePathSystem extends JValueImpl {
 			return -1;
 		}
 		int degree = 0;
-		Iterator<Map.Entry<PathSystemKey, PathSystemEntry>> iter = keyToEntryMap
-				.entrySet().iterator();
-		while (iter.hasNext()) {
-			Map.Entry<PathSystemKey, PathSystemEntry> entry = iter.next();
-			if (((entry.getValue().getParentVertex() == vertex) || (entry
-					.getKey().getVertex() == vertex))
-					&& ((typeCol == null) || (typeCol.acceptsType(vertex
-							.getAttributedElementClass())))) {
-				degree++;
+		for (Map.Entry<PathSystemKey, PathSystemEntry> entry : keyToEntryMap.entrySet()) {
+			PathSystemEntry pe = entry.getValue();
+			if ((typeCol == null) || typeCol.acceptsType(pe.getParentEdge().getAttributedElementClass())) {
+				if (pe.getParentVertex() == vertex) {
+					degree++; 			
+				}
+				//cannot transform two if statements to one if with an or, because an edge may be a loop 
+				if (entry.getKey().getVertex() == vertex) { 		
+					degree++; 
+				}
 			}
 		}
 		return degree;
@@ -514,27 +533,39 @@ public class JValuePathSystem extends JValueImpl {
 	 *         vertex or an empty set, if the vertex is not part of this
 	 *         pathsystem
 	 */
-	public JValueSet edgesConnected(Vertex vertex, boolean orientation) {
+	public JValueSet edgesConnected(Vertex vertex, EdgeDirection direction) {
 		clearPathSystem();
 		JValueSet resultSet = new JValueSet();
 		if (vertex == null) {
 			return resultSet;
 		}
-		Iterator<Map.Entry<PathSystemKey, PathSystemEntry>> iter = keyToEntryMap
-				.entrySet().iterator();
-		while (iter.hasNext()) {
-			Map.Entry<PathSystemKey, PathSystemEntry> entry = iter.next();
-			if (orientation) {
-				if (entry.getValue().getParentVertex() == vertex) {
-					resultSet.add(new JValueImpl(entry.getValue()
-							.getParentEdge()));
-				}
-			} else {
+		switch (direction) {
+		case IN:
+			for (Map.Entry<PathSystemKey, PathSystemEntry> entry : keyToEntryMap.entrySet()) {
 				if (entry.getKey().getVertex() == vertex) {
 					resultSet.add(new JValueImpl(entry.getValue()
 							.getParentEdge()));
 				}
 			}
+			break;
+		case OUT:
+			for (Map.Entry<PathSystemKey, PathSystemEntry> entry : keyToEntryMap.entrySet()) {
+				if (entry.getValue().getParentVertex() == vertex) {
+					resultSet.add(new JValueImpl(entry.getValue()
+							.getParentEdge()));
+				}
+			}
+			break;
+		case INOUT:
+			for (Map.Entry<PathSystemKey, PathSystemEntry> entry : keyToEntryMap.entrySet()) {
+				PathSystemEntry pe = entry.getValue();
+				if ((pe.getParentVertex() == vertex) || (entry.getKey().getVertex() == vertex)) {
+					resultSet.add(new JValueImpl(entry.getValue().getParentEdge()));			
+				}
+			}
+			break;
+		default:
+			throw new JValuePathException("Incomplete switch statement in JValuePathSystem");
 		}
 		return resultSet;
 	}
