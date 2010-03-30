@@ -101,12 +101,7 @@ public abstract class Incidences extends Greql2Function {
 				return path.edgesConnected(vertex, direction);
 		}
 		if (pathSystem != null) {
-			if (direction == EdgeDirection.INOUT) {
-				return pathSystem.edgesConnected(vertex);
-			} else {
-				return pathSystem.edgesConnected(vertex,
-						direction == EdgeDirection.IN);
-			}
+			return pathSystem.edgesConnected(vertex, direction);
 		}
 		JValueSet resultSet = new JValueSet();
 		Edge inc = vertex.getFirstEdge(direction);
