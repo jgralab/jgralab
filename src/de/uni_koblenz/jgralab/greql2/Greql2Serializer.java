@@ -179,8 +179,19 @@ public class Greql2Serializer {
 			serializeIdentifier(v.get_typeId());
 		}
 		if (v.get_roleId() != null) {
-			sb.append('@');
 			serializeIdentifier(v.get_roleId());
+		}
+		if (v.getFirstIsBooleanPredicateOfEdgeRestriction(EdgeDirection.IN) != null) {
+			sb.append(" @ ");
+			boolean first = true;
+			for (Expression pred : v.get_booleanPredicate()) {
+				if (first) {
+					first = false;
+				} else {
+					sb.append(", ");
+				}
+				serializeExpression(pred, false);
+			}
 		}
 	}
 
