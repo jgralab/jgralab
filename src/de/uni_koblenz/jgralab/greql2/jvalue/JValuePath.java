@@ -240,6 +240,8 @@ public class JValuePath extends JValueImpl {
 	 */
 	public List<Vertex> nodeTrace() {
 		List<Vertex> vertices = new ArrayList<Vertex>();
+		if (startVertex == null)
+			return vertices;
 		vertices.add(startVertex);
 		for (Edge e : edges) {
 			vertices.add(e.getThat());
@@ -374,8 +376,9 @@ public class JValuePath extends JValueImpl {
 			break;
 		case OUT:
 			for (Edge e : edges) {
-				if (e.getAlpha() == vertex)
+				if (e.getAlpha() == vertex) {
 					returnSet.add(new JValueImpl(e));
+				}	
 			}
 			break;
 		case INOUT:
@@ -522,6 +525,8 @@ public class JValuePath extends JValueImpl {
 		if (i == edges.size())
 			return false;
 		for (int j = 0; j<edges.size(); j++) {
+			if (i+j >= path.edges.size())
+				return false;
 			if (edges.get(j) != path.edges.get(i+j))
 				return false;
 		}
