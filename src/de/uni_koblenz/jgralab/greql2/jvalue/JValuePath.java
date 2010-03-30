@@ -149,8 +149,7 @@ public class JValuePath extends JValueImpl {
 			if (startVertex != e.getThis()) {
 				throw new JValuePathException("The edge " + e + " cannot be added to the path " + this + " because it doesn't start at the paths current end vertex");
 			}
-		}
-		if (edges.get(edges.size()-1).getThat() != e.getThis()) {
+		} else if (edges.get(edges.size()-1).getThat() != e.getThis()) {
 			throw new JValuePathException("The edge " + e + " cannot be added to the path " + this + " because it doesn't start at the paths current end vertex");
 		}	
 		edges.add(e);
@@ -186,7 +185,7 @@ public class JValuePath extends JValueImpl {
 			return new JValuePath(startVertex);
 		}
 		JValuePath reversedPath = new JValuePath(edges.get(edges.size()-1).getThat());
-		for (int i=edges.size(); i>0; i++) {
+		for (int i=edges.size()-1; i>=0; i--) {
 			reversedPath.addEdge(edges.get(i).isNormal() ? edges.get(i).getReversedEdge() : edges.get(i).getNormalEdge() );
 		}
 		return reversedPath;
