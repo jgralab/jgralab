@@ -25,6 +25,10 @@
 package de.uni_koblenz.jgralab.utilities.tg2dot;
 
 import java.io.PrintStream;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
@@ -46,6 +50,7 @@ public class Tg2Dot extends Tg2Whatever {
 	private int fontsize = 14;
 	private boolean abbreviateEdgeAttributeNames = false;
 	private boolean printIncidenceNumbers = false;
+	private Set<Class<? extends AttributedElement>> reversedEdgeTypes = null;
 
 	public boolean isPrintIncidenceNumbers() {
 		return printIncidenceNumbers;
@@ -151,26 +156,51 @@ public class Tg2Dot extends Tg2Whatever {
 		return sb.toString();
 	}
 
-	@Override
-	protected void printEdge(PrintStream out, Edge e) {
-		Vertex alpha = (reversedEdges ? e.getOmega() : e.getAlpha());
-		Vertex omega = (reversedEdges ? e.getAlpha() : e.getOmega());
-		out.print("v" + alpha.getId() + " -> v" + omega.getId() + " [");
-		if (reversedEdges) {
-			out.print("dir=back ");
+	private Map<Class<? extends AttributedElement>, Boolean> revEdgeTypeCache = null;
+
+	private boolean printEdgeReversed(Edge e) {
+		if (reversedEdgeTypes == null) {
+			return reversedEdges;
 		}
 
-		EdgeClass cls = (EdgeClass) e.getAttributedElementClass();
+		Class<? extends AttributedElement> ec = e.getM1Class();
+		Boolean b = revEdgeTypeCache.get(ec);
+		if (b != null) {
+			return reversedEdges ^ b;
+		}
 
+		boolean rev = false;
+		if (reversedEdgeTypes.contains(ec)) {
+			rev = true;
+		} else {
+			for (Class<? extends AttributedElement> ecls : reversedEdgeTypes) {
+				if (ecls.isInstance(e)) {
+					rev = true;
+					break;
+				}
+			}
+		}
+		revEdgeTypeCache.put(ec, rev);
+		return reversedEdges ^ rev;
+	}
+
+	@Override
+	protected void printEdge(PrintStream out, Edge e) {
+		boolean reversed = printEdgeReversed(e);
+		Vertex alpha = (reversed ? e.getOmega() : e.getAlpha());
+		Vertex omega = (reversed ? e.getAlpha() : e.getOmega());
+		out.print("v" + alpha.getId() + " -> v" + omega.getId() + " [");
+
+		EdgeClass cls = (EdgeClass) e.getAttributedElementClass();
 		if (roleNames) {
 			String toRole = cls.getTo().getRolename();
 			if ((toRole != null) && (toRole.length() > 0)) {
-				out.print((reversedEdges ? "tail" : "head") + "label=\""
+				out.print((reversed ? "tail" : "head") + "label=\""
 						+ stringQuote(toRole) + "\" ");
 			}
 			String fromRole = cls.getFrom().getRolename();
 			if ((fromRole != null) && (fromRole.length() > 0)) {
-				out.print((reversedEdges ? "head" : "tail") + "label=\""
+				out.print((reversed ? "head" : "tail") + "label=\""
 						+ stringQuote(fromRole) + "\" ");
 			}
 		}
@@ -178,15 +208,39 @@ public class Tg2Dot extends Tg2Whatever {
 		out.print("dir=\"both\" ");
 		assert e.isNormal();
 		if (e.getThatSemantics() == AggregationKind.SHARED) {
-			out.print("arrowtail=\"odiamond\" ");
+			if (reversed) {
+				out.print("arrowhead=\"odiamond\" ");
+			} else {
+				out.print("arrowtail=\"odiamond\" ");
+			}
 		} else if (e.getThatSemantics() == AggregationKind.COMPOSITE) {
-			out.print("arrowtail=\"diamond\" ");
+			if (reversed) {
+				out.print("arrowhead=\"diamond\" ");
+			} else {
+				out.print("arrowtail=\"diamond\" ");
+			}
 		} else if (e.getThisSemantics() == AggregationKind.SHARED) {
-			out.print("arrowhead=\"odiamond\" ");
+			if (reversed) {
+				out.print("arrowtail=\"odiamond\" ");
+				out.print("arrowhead=\"normal\" ");
+			} else {
+				out.print("arrowhead=\"odiamond\" ");
+			}
 		} else if (e.getThisSemantics() == AggregationKind.COMPOSITE) {
-			out.print("arrowhead=\"diamond\" ");
+			if (reversed) {
+				out.print("arrowtail=\"diamond\" ");
+				out.print("arrowhead=\"normal\" ");
+			} else {
+				out.print("arrowhead=\"diamond\" ");
+			}
 		} else {
-			out.print("arrowtail=\"none\" ");
+			if (reversed) {
+				// with reverset edges, the arrow has to be on the tail-side
+				out.print("arrowhead=\"none\" ");
+				out.print("arrowtail=\"normal\" ");
+			} else {
+				out.print("arrowtail=\"none\" ");
+			}
 		}
 
 		out.print("label=\"e" + e.getId() + ": "
@@ -340,13 +394,21 @@ public class Tg2Dot extends Tg2Whatever {
 	}
 
 	public static void printGraphAsDot(Graph graph, boolean reversedEdges,
-			String outputFileName) {
+			String outputFileName,
+			Class<? extends AttributedElement>... reversedEdgeTypes) {
 		Tg2Dot t2d = new Tg2Dot();
 		t2d.setGraph(graph);
 		t2d.setReversedEdges(reversedEdges);
 		t2d.setPrintEdgeAttributes(true);
 		t2d.setRanksep(0.5);
 		t2d.setOutputFile(outputFileName);
+
+		HashSet<Class<? extends AttributedElement>> revEdgeTypes = new HashSet<Class<? extends AttributedElement>>();
+		for (Class<? extends AttributedElement> ec : reversedEdgeTypes) {
+			revEdgeTypes.add(ec);
+		}
+		t2d.setReversedEdgeTypes(revEdgeTypes);
+
 		t2d.printGraph();
 	}
 
@@ -360,5 +422,23 @@ public class Tg2Dot extends Tg2Whatever {
 		t2d.setRanksep(0.5);
 		t2d.setOutputFile(outputFileName);
 		t2d.printGraph();
+	}
+
+	/**
+	 * All edge instances of an edge type contained in the given set
+	 * <code>reversedEdgeTypes</code> (or subtypes) will be printed reversed.
+	 * This is especially useful when certain conceptual edges are modeled as
+	 * nodes, like: State <--{ComesFrom} Transition -->{GoesTo}. Here, reversing
+	 * the direction of either ComesFrom or GoesTo results in much nicer
+	 * layouts.
+	 * 
+	 * @param reversedEdgeTypes
+	 *            the set of edge types whose instances should be printed
+	 *            reversed
+	 */
+	public void setReversedEdgeTypes(
+			Set<Class<? extends AttributedElement>> reversedEdgeTypes) {
+		this.reversedEdgeTypes = reversedEdgeTypes;
+		this.revEdgeTypeCache = new HashMap<Class<? extends AttributedElement>, Boolean>();
 	}
 }
