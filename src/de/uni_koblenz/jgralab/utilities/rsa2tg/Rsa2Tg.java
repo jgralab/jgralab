@@ -102,6 +102,8 @@ import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
  * 
  */
 public class Rsa2Tg extends XmlProcessor {
+	private static final String XMI_XMI = "xmi:XMI";
+
 	private static final String UML_ATTRIBUTE_CLASSIFIER = "classifier";
 
 	private static final String UML_ATTRIBUTE_CLIENT = "client";
@@ -203,6 +205,10 @@ public class Rsa2Tg extends XmlProcessor {
 	private static final Object UML_LITERAL_STRING = "uml:LiteralString";
 
 	private static final Object UML_OPAQUE_EXPRESSION = "uml:OpaqueExpression";
+
+	private static final int DEFAULT_MIN_MULTIPLICITY = 1;
+
+	private static final int DEFAULT_MAX_MULTIPLICITY = 1;
 
 	/**
 	 * Contains XML element names in the format "name>xmiId"
@@ -398,6 +404,8 @@ public class Rsa2Tg extends XmlProcessor {
 	private GreqlEvaluator vertexClassAcyclicEvaluator;
 
 	private boolean inDefaultValue;
+
+	private int modelRootElementNestingDepth;
 
 	/**
 	 * Processes an XMI-file to a TG-file as schema or a schema in a grUML
@@ -596,7 +604,8 @@ public class Rsa2Tg extends XmlProcessor {
 	 */
 	public Rsa2Tg() {
 		// Sets all names of XML-elements, which should be ignored.
-		addIgnoredElements("profileApplication", "packageImport");
+		addIgnoredElements("profileApplication", "packageImport",
+				"Ecore:EReference");
 	}
 
 	/**
@@ -622,6 +631,7 @@ public class Rsa2Tg extends XmlProcessor {
 		constraints = new HashMap<String, List<String>>();
 		comments = new HashMap<String, List<String>>();
 		redefines = new GraphMarker<Set<String>>(sg);
+		modelRootElementNestingDepth = 1;
 	}
 
 	/**
@@ -632,11 +642,18 @@ public class Rsa2Tg extends XmlProcessor {
 	 */
 	@Override
 	protected void startElement(String name) throws XMLStreamException {
+		if (getNestingDepth() == 1) {
+			if (name.equals(XMI_XMI)) {
+				modelRootElementNestingDepth = 2;
+				return;
+			}
+		}
+
 		String xmiId = getAttribute(XMI_NAMESPACE_PREFIX, "id");
 		xmiIdStack.push(xmiId);
 
 		Vertex vertexId = null;
-		if (getNestingDepth() == 1) {
+		if (getNestingDepth() == modelRootElementNestingDepth) {
 			// In case of a root element
 			if (name.equals(UML_MODEL) || name.equals(UML_PACKAGE)) {
 				// Allowed elements
@@ -852,6 +869,10 @@ public class Rsa2Tg extends XmlProcessor {
 	@Override
 	protected void endElement(String name, StringBuilder content)
 			throws XMLStreamException {
+		if (getNestingDepth() < modelRootElementNestingDepth) {
+			return;
+		}
+
 		String xmiId = xmiIdStack.pop();
 
 		if (name.equals(UML_BODY)) {
@@ -895,9 +916,13 @@ public class Rsa2Tg extends XmlProcessor {
 			}
 		} else if (name.equals(UML_OWNEDATTRIBUTE)) {
 			currentRecordDomainComponent = null;
-			currentAssociationEnd = null;
+			if (currentAssociationEnd != null) {
+				checkMultiplicities(currentAssociationEnd);
+				currentAssociationEnd = null;
+			}
 			inOwnedAttribute = false;
 		} else if (name.equals(UML_OWNEDEND)) {
+			checkMultiplicities(currentAssociationEnd);
 			currentAssociationEnd = null;
 		} else if (name.equals(UML_OWNEDRULE)) {
 			inConstraint = false;
@@ -907,6 +932,24 @@ public class Rsa2Tg extends XmlProcessor {
 			annotatedElementId = null;
 		} else if (name.equals(UML_DEFAULT_VALUE)) {
 			inDefaultValue = false;
+		}
+	}
+
+	private void checkMultiplicities(IncidenceClass inc) {
+		int min = inc.get_min();
+		int max = inc.get_max();
+		assert min >= 0;
+		assert max > 0;
+		if (min == Integer.MAX_VALUE) {
+			throw new ProcessingException(getFileName(),
+					"Error in multiplicities: lower bound must not be *"
+							+ " at association end " + inc);
+		}
+		if (min > max) {
+			throw new ProcessingException(getFileName(),
+					"Error in multiplicities: lower bound (" + min
+							+ ") must be <= upper bound (" + max
+							+ ") at association end " + inc);
 		}
 	}
 
@@ -1376,8 +1419,8 @@ public class Rsa2Tg extends XmlProcessor {
 			vc.set_qualifiedName("preliminary for source end " + sourceEnd);
 			inc = sg.createIncidenceClass();
 			inc.set_aggregation(AggregationKind.NONE);
-			inc.set_min(0);
-			inc.set_max(Integer.MAX_VALUE);
+			inc.set_min(DEFAULT_MIN_MULTIPLICITY);
+			inc.set_max(DEFAULT_MAX_MULTIPLICITY);
 			sg.createComesFrom(ec, inc);
 			sg.createEndsAt(inc, vc);
 			idMap.put(sourceEnd, inc);
@@ -1411,8 +1454,8 @@ public class Rsa2Tg extends XmlProcessor {
 			vc.set_qualifiedName("preliminary for target end " + targetEnd);
 			inc = sg.createIncidenceClass();
 			inc.set_aggregation(AggregationKind.NONE);
-			inc.set_min(0);
-			inc.set_max(Integer.MAX_VALUE);
+			inc.set_min(DEFAULT_MIN_MULTIPLICITY);
+			inc.set_max(DEFAULT_MAX_MULTIPLICITY);
 			sg.createGoesTo(ec, inc);
 			sg.createEndsAt(inc, vc);
 			idMap.put(targetEnd, inc);
@@ -2194,14 +2237,7 @@ public class Rsa2Tg extends XmlProcessor {
 			}
 		} else {
 			assert currentAssociationEnd != null;
-			if (n < currentAssociationEnd.get_min()) {
-				throw new ProcessingException(getFileName(),
-						"Error in multiplicities: upper bound (" + n
-								+ ") must be >= lowerr bound ("
-								+ currentAssociationEnd.get_min()
-								+ ") at association end "
-								+ currentAssociationEnd);
-			}
+			assert n >= 1;
 			currentAssociationEnd.set_max(n);
 		}
 	}
@@ -2235,14 +2271,7 @@ public class Rsa2Tg extends XmlProcessor {
 			}
 		} else {
 			assert currentAssociationEnd != null;
-			if (n > currentAssociationEnd.get_max()) {
-				throw new ProcessingException(getFileName(),
-						"Error in multiplicities: lower bound (" + n
-								+ ") must be <= upper bound ("
-								+ currentAssociationEnd.get_max()
-								+ ") at association end "
-								+ currentAssociationEnd);
-			}
+			assert n >= 0;
 			currentAssociationEnd.set_min(n);
 		}
 	}
@@ -2624,8 +2653,8 @@ public class Rsa2Tg extends XmlProcessor {
 
 			assert vc != null && ec != null;
 			inc = sg.createIncidenceClass();
-			inc.set_min(0);
-			inc.set_max(Integer.MAX_VALUE);
+			inc.set_min(DEFAULT_MIN_MULTIPLICITY);
+			inc.set_max(DEFAULT_MAX_MULTIPLICITY);
 			sg.createComesFrom(ec, inc);
 			sg.createEndsAt(inc, vc);
 		} else {
