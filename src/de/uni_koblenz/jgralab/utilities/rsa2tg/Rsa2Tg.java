@@ -24,6 +24,8 @@
 
 package de.uni_koblenz.jgralab.utilities.rsa2tg;
 
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -102,113 +104,20 @@ import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
  * 
  */
 public class Rsa2Tg extends XmlProcessor {
-	private static final String XMI_XMI = "xmi:XMI";
 
-	private static final String UML_ATTRIBUTE_CLASSIFIER = "classifier";
+	private static final String OPTION_FILENAME_VALIDATION = "r";
 
-	private static final String UML_ATTRIBUTE_CLIENT = "client";
+	private static final String OPTION_FILENAME_SCHEMA_GRAPH = "s";
 
-	private static final String UML_ATTRIBUTE_SUPPLIER = "supplier";
+	private static final String OPTION_FILENAME_DOT = "e";
 
-	private static final String UML_ATTRIBUTE_ASSOCIATION = "association";
+	private static final String OPTION_FILENAME_SCHEMA = "o";
 
-	private static final String UML_ATTRIBUTE_ISDERIVED = "isDerived";
+	private static final String OPTION_USE_NAVIGABILITY = "n";
 
-	private static final String UML_UPPERVALUE = "upperValue";
+	private static final String OPTION_REMOVE_UNUSED_DOMAINS = "u";
 
-	private static final String UML_LOWERVALUE = "lowerValue";
-
-	private static final String UML_DETAILS = "details";
-
-	private static final String UML_GENERALIZATION = "generalization";
-
-	private static final String UML_EANNOTATIONS = "eAnnotations";
-
-	private static final String XMI_EXTENSION = "xmi:Extension";
-
-	private static final String UML_ENUMERATIONLITERAL = "uml:EnumerationLiteral";
-
-	private static final String UML_OWNEDCOMMENT = "ownedComment";
-
-	private static final String UML_ANNOTATED_ELEMENT = "annotatedElement";
-
-	private static final String UML_OWNEDLITERAL = "ownedLiteral";
-
-	private static final String UML_OWNEDATTRIBUTE = "ownedAttribute";
-
-	private static final String UML_PROPERTY = "uml:Property";
-
-	private static final String UML_OWNEDEND = "ownedEnd";
-
-	private static final String UML_LANGUAGE = "language";
-
-	private static final String UML_BODY = "body";
-
-	private static final String UML_SPECIFICATION = "specification";
-
-	private static final String UML_ATTRIBUTE_CONSTRAINEDELEMENT = "constrainedElement";
-
-	private static final String UML_OWNEDRULE = "ownedRule";
-
-	private static final String UML_REALIZATION = "uml:Realization";
-
-	private static final String UML_PRIMITIVE_TYPE = "uml:PrimitiveType";
-
-	private static final String UML_ENUMERATION = "uml:Enumeration";
-
-	private static final String UML_ASSOCIATION_CLASS = "uml:AssociationClass";
-
-	private static final String UML_ASSOCIATION = "uml:Association";
-
-	private static final String UML_CLASS = "uml:Class";
-
-	private static final String UML_PACKAGEDELEMENT = "packagedElement";
-
-	private static final String UML_ATTRIBUTE_TYPE = "type";
-
-	private static final String XMI_NAMESPACE_PREFIX = "xmi";
-
-	private static final String UML_ATTRIBUTE_NAME = "name";
-
-	private static final String UML_MODEL = "uml:Model";
-
-	private static final String UML_PACKAGE = "uml:Package";
-
-	private static final String UML_ATTRIBUTE_IS_ABSRACT = "isAbstract";
-
-	private static final String UML_TRUE = "true";
-
-	private static final String UML_MEMBER_END = "memberEnd";
-
-	private static final String UML_ATTRIBUTE_VALUE = "value";
-
-	private static final String UML_ATTRIBUTE_KEY = "key";
-
-	private static final String UML_ATTRIBUTE_GENERAL = "general";
-
-	private static final String UML_ATTRIBUTE_HREF = "href";
-
-	private static final String UML_ATTRIBUTE_AGGREGATION = "aggregation";
-
-	private static final String UML_SHARED = "shared";
-
-	private static final String UML_COMPOSITE = "composite";
-
-	private static final String UML_DEFAULT_VALUE = "defaultValue";
-
-	private static final String XMI_TYPE = "type";
-
-	private static final Object UML_LITERAL_INTEGER = "uml:LiteralInteger";
-
-	private static final Object UML_LITERAL_BOOLEAN = "uml:LiteralBoolean";
-
-	private static final Object UML_LITERAL_STRING = "uml:LiteralString";
-
-	private static final Object UML_OPAQUE_EXPRESSION = "uml:OpaqueExpression";
-
-	private static final int DEFAULT_MIN_MULTIPLICITY = 1;
-
-	private static final int DEFAULT_MAX_MULTIPLICITY = 1;
+	private static final String OPTION_USE_ROLE_NAME = "f";
 
 	/**
 	 * Contains XML element names in the format "name>xmiId"
@@ -431,21 +340,23 @@ public class Rsa2Tg extends XmlProcessor {
 
 		Rsa2Tg r = new Rsa2Tg();
 
-		r.setUseFromRole(cli.hasOption('f'));
-		r.setRemoveUnusedDomains(cli.hasOption('u'));
-		r.setUseNavigability(cli.hasOption('n'));
+		r.setUseFromRole(cli.hasOption(OPTION_USE_ROLE_NAME));
+		r.setRemoveUnusedDomains(cli.hasOption(OPTION_REMOVE_UNUSED_DOMAINS));
+		r.setUseNavigability(cli.hasOption(OPTION_USE_NAVIGABILITY));
 
 		// apply options
-		r.setFilenameSchema(cli.getOptionValue('o'));
-		r.setFilenameSchemaGraph(cli.getOptionValue('s'));
-		r.setFilenameDot(cli.getOptionValue('e'));
-		r.setFilenameValidation(cli.getOptionValue('r'));
+		r.setFilenameSchema(cli.getOptionValue(OPTION_FILENAME_SCHEMA));
+		r.setFilenameSchemaGraph(cli
+				.getOptionValue(OPTION_FILENAME_SCHEMA_GRAPH));
+		r.setFilenameDot(cli.getOptionValue(OPTION_FILENAME_DOT));
+		r.setFilenameValidation(cli.getOptionValue(OPTION_FILENAME_VALIDATION));
 
 		// If no output option is selected, Rsa2Tg will write at least the
 		// schema file.
-		boolean noOutputOptionSelected = !cli.hasOption('o')
-				&& !cli.hasOption('s') && !cli.hasOption('e')
-				&& !cli.hasOption('r');
+		boolean noOutputOptionSelected = !cli.hasOption(OPTION_FILENAME_SCHEMA)
+				&& !cli.hasOption(OPTION_FILENAME_SCHEMA_GRAPH)
+				&& !cli.hasOption(OPTION_FILENAME_DOT)
+				&& !cli.hasOption(OPTION_FILENAME_VALIDATION);
 		if (noOutputOptionSelected) {
 			System.out.println("No output option has been selected. "
 					+ "A TG-file for the Schema will be written.");
@@ -465,36 +376,6 @@ public class Rsa2Tg extends XmlProcessor {
 		}
 
 		System.out.println("Fini.");
-	}
-
-	/**
-	 * Creates a file path similar to the of <code>inputFile</code>, but with
-	 * the file extension '.rsa.tg'.
-	 * 
-	 * @param file
-	 *            Is a File object, which is path used to created the new Path.
-	 * @return New generated Path with the extension '.rsa.tg'.
-	 */
-	public static String createFilename(File file) {
-		StringBuilder filenameBuilder = new StringBuilder();
-
-		// The path of the input XMI-file is used.
-		filenameBuilder.append(file.getParent());
-		filenameBuilder.append(File.separatorChar);
-
-		String filename = file.getName();
-		int periodePosition = filename.lastIndexOf('.');
-		if (periodePosition != -1) {
-			filename = filename.substring(0, periodePosition);
-		}
-
-		// The simple name of the Schema will be the filename.
-		// filenameBuilder.append(r.getSchemaGraph().getFirstSchema()
-		// .get_name());
-		filenameBuilder.append(filename);
-		// The extension is ....
-		filenameBuilder.append(".rsa.tg");
-		return filenameBuilder.toString();
 	}
 
 	/**
@@ -526,7 +407,7 @@ public class Rsa2Tg extends XmlProcessor {
 
 		// Several Options are declared.
 		Option validate = new Option(
-				"r",
+				OPTION_FILENAME_VALIDATION,
 				"report",
 				true,
 				"(optional): writes a validation report to the given filename. "
@@ -536,7 +417,7 @@ public class Rsa2Tg extends XmlProcessor {
 		oh.addOption(validate);
 
 		Option export = new Option(
-				"e",
+				OPTION_FILENAME_DOT,
 				"export",
 				true,
 				"(optional): writes a GraphViz DOT file to the given filename. "
@@ -546,7 +427,7 @@ public class Rsa2Tg extends XmlProcessor {
 		oh.addOption(export);
 
 		Option schemaGraph = new Option(
-				"s",
+				OPTION_FILENAME_SCHEMA_GRAPH,
 				"schemaGraph",
 				true,
 				"(optional): writes a TG-file of the Schema as graph instance to the given filename. "
@@ -562,7 +443,7 @@ public class Rsa2Tg extends XmlProcessor {
 		oh.addOption(input);
 
 		Option output = new Option(
-				"o",
+				OPTION_FILENAME_SCHEMA,
 				"output",
 				true,
 				"(optional): writes a TG-file of the Schema to the given filename. "
@@ -572,7 +453,7 @@ public class Rsa2Tg extends XmlProcessor {
 		oh.addOption(output);
 
 		Option fromRole = new Option(
-				"f",
+				OPTION_USE_ROLE_NAME,
 				"useFromRole",
 				false,
 				"(optional): if this flag is set, the name of from roles will be used for creating undefined EdgeClass names.");
@@ -580,7 +461,7 @@ public class Rsa2Tg extends XmlProcessor {
 		oh.addOption(fromRole);
 
 		Option unusedDomains = new Option(
-				"u",
+				OPTION_REMOVE_UNUSED_DOMAINS,
 				"omitUnusedDomains",
 				false,
 				"(optional): if this flag is set, all unused domains will not be defined in the schema.");
@@ -588,7 +469,7 @@ public class Rsa2Tg extends XmlProcessor {
 		oh.addOption(unusedDomains);
 
 		Option navigability = new Option(
-				"n",
+				OPTION_USE_NAVIGABILITY,
 				"useNavigability",
 				false,
 				"(optional): if this flag is set, navigability information will be interpreted as reading direction.");
@@ -597,6 +478,36 @@ public class Rsa2Tg extends XmlProcessor {
 
 		// Parses the given command line parameters with all created Option.
 		return oh.parse(args);
+	}
+
+	/**
+	 * Creates a file path similar to the of <code>inputFile</code>, but with
+	 * the file extension '.rsa.tg'.
+	 * 
+	 * @param file
+	 *            Is a File object, which is path used to created the new Path.
+	 * @return New generated Path with the extension '.rsa.tg'.
+	 */
+	public static String createFilename(File file) {
+		StringBuilder filenameBuilder = new StringBuilder();
+
+		// The path of the input XMI-file is used.
+		filenameBuilder.append(file.getParent());
+		filenameBuilder.append(File.separatorChar);
+
+		String filename = file.getName();
+		int periodePosition = filename.lastIndexOf('.');
+		if (periodePosition != -1) {
+			filename = filename.substring(0, periodePosition);
+		}
+
+		// The simple name of the Schema will be the filename.
+		// filenameBuilder.append(r.getSchemaGraph().getFirstSchema()
+		// .get_name());
+		filenameBuilder.append(filename);
+		// The extension is ....
+		filenameBuilder.append(".rsa.tg");
+		return filenameBuilder.toString();
 	}
 
 	/**
@@ -656,174 +567,189 @@ public class Rsa2Tg extends XmlProcessor {
 		Vertex vertexId = null;
 		if (getNestingDepth() == modelRootElementNestingDepth) {
 			// In case of a root element
-			if (name.equals(UML_MODEL) || name.equals(UML_PACKAGE)) {
-				// Allowed elements
-
-				// Gets the Schema name, creates a Schema and processes it.
-				String nm = getAttribute(UML_ATTRIBUTE_NAME);
-
-				int p = nm.lastIndexOf('.');
-				schema = sg.createSchema();
-				vertexId = schema;
-
-				// In case nm (:= Schema-name) contains only a name and not a
-				// package prefix
-				if (p == -1) {
-					throw new ProcessingException(getParser(), getFileName(),
-							"A Schema must have a package prefix!\nProcessed qualified name: "
-									+ nm);
-				}
-
-				schema.set_packagePrefix(nm.substring(0, p));
-				schema.set_name(nm.substring(p + 1));
-
-				// Generates a GraphClass and links it with the created Schema
-				graphClass = sg.createGraphClass();
-				sg.createDefinesGraphClass(schema, graphClass);
-
-				// Creates a default Package, links it and pushes it to the
-				// packageStack.
-				Package defaultPackage = sg.createPackage();
-				defaultPackage.set_qualifiedName("");
-				sg.createContainsDefaultPackage(schema, defaultPackage);
-				packageStack.push(defaultPackage);
-			} else {
-				// Unexpected root element
-				throw new ProcessingException(getParser(), getFileName(),
-						"Root element must be " + UML_MODEL + " or "
-								+ UML_PACKAGE + ", buf was " + name);
-			}
+			vertexId = createDefaultElements(name);
 		} else {
-			// inside top level element
-
-			// Type is retrieved
-			String type = getAttribute(XMI_NAMESPACE_PREFIX, UML_ATTRIBUTE_TYPE);
-
-			// Package element, which
-			if (name.equals(UML_PACKAGEDELEMENT)) {
-				if (type.equals(UML_PACKAGE)) {
-					vertexId = handlePackage();
-				} else if (type.equals(UML_CLASS)) {
-					vertexId = handleClass(xmiId);
-				} else if (type.equals(UML_ASSOCIATION)
-						|| type.equals(UML_ASSOCIATION_CLASS)) {
-					vertexId = handleAssociation(xmiId);
-				} else if (type.equals(UML_ENUMERATION)) {
-					vertexId = handleEnumeration();
-				} else if (type.equals(UML_PRIMITIVE_TYPE)) {
-					vertexId = handlePrimitiveType(xmiId);
-				} else if (type.equals(UML_REALIZATION)) {
-					handleRealization();
-				} else {
-					throw new ProcessingException(getParser(), getFileName(),
-							createUnexpectedElementMessage(name, type));
-				}
-
-			} else if (name.equals(UML_OWNEDRULE)) {
-				// Owned rule
-				inConstraint = true;
-				constrainedElementId = getAttribute(UML_ATTRIBUTE_CONSTRAINEDELEMENT);
-				// If the ID is null, the constraint is attached to the
-				// GraphClass
-
-				if (constrainedElementId != null) {
-					// There can be more than one ID, separated by spaces ==>
-					// the constraint is attached to the GraphClass.
-					int p = constrainedElementId.indexOf(' ');
-					if (p >= 0) {
-						constrainedElementId = null;
-					}
-				}
-			} else if (name.equals(UML_BODY)) {
-				if (!inConstraint && !inComment && !inDefaultValue) {
-					// Throw an error for body elements, which aren't
-					// contained in a constraint or comment
-					throw new ProcessingException(getParser(), getFileName(),
-							createUnexpectedElementMessage(name, null));
-				}
-			} else if (name.equals(UML_SPECIFICATION)
-					|| name.equals(UML_LANGUAGE)) {
-				if (!inConstraint) {
-					// Throw an error for specification elements, which aren't
-					// contained in a constraint.
-					throw new ProcessingException(getParser(), getFileName(),
-							createUnexpectedElementMessage(name, null));
-				}
-			} else if (name.equals(UML_OWNEDEND)) {
-				// Owned end marks the end of the current class, which should be
-				// an edgeClasss.
-				if (type.equals(UML_PROPERTY)
-						&& currentClass instanceof EdgeClass) {
-					handleAssociationEnd(xmiId);
-				} else {
-					throw new ProcessingException(getParser(), getFileName(),
-							createUnexpectedElementMessage(name, type));
-				}
-
-			} else if (name.equals(UML_OWNEDATTRIBUTE)) {
-				inOwnedAttribute = true;
-				// Handles the attributes of the current element
-				if (type.equals(UML_PROPERTY)) {
-					handleOwnedAttribute(xmiId);
-				} else {
-					throw new ProcessingException(getParser(), getFileName(),
-							createUnexpectedElementMessage(name, type));
-				}
-
-			} else if (name.equals(UML_ATTRIBUTE_TYPE)) {
-				// Handles the type of the current attribute, which should be a
-				// primitive type.
-				if (!inDefaultValue) {
-					if (type.equals(UML_PRIMITIVE_TYPE)) {
-						handleNestedTypeElement(xmiId);
-					} else {
-						throw new ProcessingException(getParser(),
-								getFileName(), createUnexpectedElementMessage(
-										name, type));
-					}
-				}
-			} else if (name.equals(UML_OWNEDLITERAL)) {
-				// Handles the literal of the current enumeration.
-				if (type.equals(UML_ENUMERATIONLITERAL)) {
-					handleEnumerationLiteral();
-				} else {
-					throw new ProcessingException(getParser(), getFileName(),
-							createUnexpectedElementMessage(name, type));
-				}
-			} else if (name.equals(XMI_EXTENSION)) {
-				// ignore
-			} else if (name.equals(UML_EANNOTATIONS)) {
-				// ignore
-			} else if (name.equals(UML_GENERALIZATION)) {
-				handleGeneralization();
-			} else if (name.equals(UML_DETAILS)) {
-				handleStereotype();
-			} else if (name.equals(UML_LOWERVALUE)) {
-				handleLowerValue();
-			} else if (name.equals(UML_UPPERVALUE)) {
-				handleUpperValue();
-			} else if (name.equals(UML_OWNEDCOMMENT)) {
-				annotatedElementId = getAttribute(UML_ANNOTATED_ELEMENT);
-				inComment = true;
-			} else if (name.equals(UML_DEFAULT_VALUE)) {
-				String xmiType = getAttribute(XMI_NAMESPACE_PREFIX, XMI_TYPE);
-				if (isPrimitiveDefaultValue(xmiType)) {
-					handlePrimitiveDefaultValue(xmiId, xmiType);
-				} else {
-					assert xmiType.equals(UML_OPAQUE_EXPRESSION);
-				}
-				inDefaultValue = true;
-			} else {
-				// for unexpected XMI tags
-				throw new ProcessingException(getParser(), getFileName(),
-						createUnexpectedElementMessage(name, type));
-			}
+			vertexId = processXMIElements(name, xmiId);
 		}
 
 		// Links an existing XMI-id to a Vertex-id
 		if (xmiId != null && vertexId != null) {
 			idMap.put(xmiId, vertexId);
 		}
+	}
+
+	private Vertex createDefaultElements(String name) throws XMLStreamException {
+		if (name.equals(UML_MODEL) || name.equals(UML_PACKAGE)) {
+			setSchemaQualifiedName();
+			createGraphClass();
+			createDefaultPackage();
+		} else {
+			// Unexpected root element
+			throw new ProcessingException(getParser(), getFileName(),
+					"Root element must be " + UML_MODEL + " or " + UML_PACKAGE
+							+ ", buf was " + name);
+		}
+		return schema;
+	}
+
+	private void setSchemaQualifiedName() throws XMLStreamException {
+		// Gets the Schema name, creates a Schema and processes it.
+		String nm = getAttribute(UML_ATTRIBUTE_NAME);
+	
+		int p = nm.lastIndexOf('.');
+		schema = sg.createSchema();
+	
+		// In case nm (:= Schema-name) contains only a name and not a
+		// package prefix
+		if (p == -1) {
+			throw new ProcessingException(getParser(), getFileName(),
+					"A Schema must have a package prefix!\nProcessed qualified name: "
+							+ nm);
+		}
+	
+		schema.set_packagePrefix(nm.substring(0, p));
+		schema.set_name(nm.substring(p + 1));
+	}
+
+	private void createGraphClass() {
+		// Generates a GraphClass and links it with the created Schema
+		graphClass = sg.createGraphClass();
+		sg.createDefinesGraphClass(schema, graphClass);
+	}
+
+	private void createDefaultPackage() {
+		// Creates a default Package, links it and pushes it to the
+		// packageStack.
+		Package defaultPackage = sg.createPackage();
+		defaultPackage.set_qualifiedName("");
+		sg.createContainsDefaultPackage(schema, defaultPackage);
+		packageStack.push(defaultPackage);
+	}
+
+	private Vertex processXMIElements(String name, String xmiId)
+			throws XMLStreamException {
+		// inside top level element
+
+		// Type is retrieved
+		String type = getAttribute(XMI_NAMESPACE_PREFIX, UML_ATTRIBUTE_TYPE);
+		Vertex vertexId = null;
+		// Package element, which
+		if (name.equals(UML_PACKAGED_ELEMENT)) {
+			if (type.equals(UML_PACKAGE)) {
+				vertexId = handlePackage();
+			} else if (type.equals(UML_CLASS)) {
+				vertexId = handleClass(xmiId);
+			} else if (type.equals(UML_ASSOCIATION)
+					|| type.equals(UML_ASSOCIATION_CLASS)) {
+				vertexId = handleAssociation(xmiId);
+			} else if (type.equals(UML_ENUMERATION)) {
+				vertexId = handleEnumeration();
+			} else if (type.equals(UML_PRIMITIVE_TYPE)) {
+				vertexId = handlePrimitiveType(xmiId);
+			} else if (type.equals(UML_REALIZATION)) {
+				handleRealization();
+			} else {
+				throw new ProcessingException(getParser(), getFileName(),
+						createUnexpectedElementMessage(name, type));
+			}
+
+		} else if (name.equals(UML_OWNEDRULE)) {
+			// Owned rule
+			inConstraint = true;
+			constrainedElementId = getAttribute(UML_ATTRIBUTE_CONSTRAINED_ELEMENT);
+			// If the ID is null, the constraint is attached to the
+			// GraphClass
+
+			if (constrainedElementId != null) {
+				// There can be more than one ID, separated by spaces ==>
+				// the constraint is attached to the GraphClass.
+				int p = constrainedElementId.indexOf(' ');
+				if (p >= 0) {
+					constrainedElementId = null;
+				}
+			}
+		} else if (name.equals(UML_BODY)) {
+			if (!inConstraint && !inComment && !inDefaultValue) {
+				// Throw an error for body elements, which aren't
+				// contained in a constraint or comment
+				throw new ProcessingException(getParser(), getFileName(),
+						createUnexpectedElementMessage(name, null));
+			}
+		} else if (name.equals(UML_SPECIFICATION) || name.equals(UML_LANGUAGE)) {
+			if (!inConstraint) {
+				// Throw an error for specification elements, which aren't
+				// contained in a constraint.
+				throw new ProcessingException(getParser(), getFileName(),
+						createUnexpectedElementMessage(name, null));
+			}
+		} else if (name.equals(UML_OWNEDEND)) {
+			// Owned end marks the end of the current class, which should be
+			// an edgeClasss.
+			if (type.equals(UML_PROPERTY) && currentClass instanceof EdgeClass) {
+				handleAssociationEnd(xmiId);
+			} else {
+				throw new ProcessingException(getParser(), getFileName(),
+						createUnexpectedElementMessage(name, type));
+			}
+
+		} else if (name.equals(UML_OWNED_ATTRIBUTE)) {
+			inOwnedAttribute = true;
+			// Handles the attributes of the current element
+			if (type.equals(UML_PROPERTY)) {
+				handleOwnedAttribute(xmiId);
+			} else {
+				throw new ProcessingException(getParser(), getFileName(),
+						createUnexpectedElementMessage(name, type));
+			}
+
+		} else if (name.equals(UML_ATTRIBUTE_TYPE)) {
+			// Handles the type of the current attribute, which should be a
+			// primitive type.
+			if (!inDefaultValue) {
+				if (type.equals(UML_PRIMITIVE_TYPE)) {
+					handleNestedTypeElement(xmiId);
+				} else {
+					throw new ProcessingException(getParser(), getFileName(),
+							createUnexpectedElementMessage(name, type));
+				}
+			}
+		} else if (name.equals(UML_OWNED_LITERAL)) {
+			// Handles the literal of the current enumeration.
+			if (type.equals(UML_ENUMERATION_LITERAL)) {
+				handleEnumerationLiteral();
+			} else {
+				throw new ProcessingException(getParser(), getFileName(),
+						createUnexpectedElementMessage(name, type));
+			}
+		} else if (name.equals(XMI_EXTENSION)) {
+			// ignore
+		} else if (name.equals(UML_E_ANNOTATIONS)) {
+			// ignore
+		} else if (name.equals(UML_GENERALIZATION)) {
+			handleGeneralization();
+		} else if (name.equals(UML_DETAILS)) {
+			handleStereotype();
+		} else if (name.equals(UML_LOWER_VALUE)) {
+			handleLowerValue();
+		} else if (name.equals(UML_UPPER_VALUE)) {
+			handleUpperValue();
+		} else if (name.equals(UML_OWNED_COMMENT)) {
+			annotatedElementId = getAttribute(UML_ANNOTATED_ELEMENT);
+			inComment = true;
+		} else if (name.equals(UML_DEFAULT_VALUE)) {
+			String xmiType = getAttribute(XMI_NAMESPACE_PREFIX, XMI_TYPE);
+			if (isPrimitiveDefaultValue(xmiType)) {
+				handlePrimitiveDefaultValue(xmiId, xmiType);
+			} else {
+				assert xmiType.equals(UML_OPAQUE_EXPRESSION);
+			}
+			inDefaultValue = true;
+		} else {
+			// for unexpected XMI tags
+			throw new ProcessingException(getParser(), getFileName(),
+					createUnexpectedElementMessage(name, type));
+		}
+		return vertexId;
 	}
 
 	private boolean isPrimitiveDefaultValue(String xmiType) {
@@ -915,7 +841,7 @@ public class Rsa2Tg extends XmlProcessor {
 				throw new ProcessingException(getParser(), getFileName(),
 						"XMI file is malformed. There is probably one end element to much.");
 			}
-		} else if (name.equals(UML_OWNEDATTRIBUTE)) {
+		} else if (name.equals(UML_OWNED_ATTRIBUTE)) {
 			currentRecordDomainComponent = null;
 			if (currentAssociationEnd != null) {
 				checkMultiplicities(currentAssociationEnd);
@@ -928,7 +854,7 @@ public class Rsa2Tg extends XmlProcessor {
 		} else if (name.equals(UML_OWNEDRULE)) {
 			inConstraint = false;
 			constrainedElementId = null;
-		} else if (name.equals(UML_OWNEDCOMMENT)) {
+		} else if (name.equals(UML_OWNED_COMMENT)) {
 			inComment = false;
 			annotatedElementId = null;
 		} else if (name.equals(UML_DEFAULT_VALUE)) {
