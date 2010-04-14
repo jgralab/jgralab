@@ -1,4 +1,4 @@
-package de.uni_koblenz.jgralabtest.graphmarkertest;
+package de.uni_koblenz.jgralabtest.graphmarker;
 
 import java.util.Iterator;
 
