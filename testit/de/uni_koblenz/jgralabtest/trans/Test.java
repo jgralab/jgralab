@@ -3,8 +3,6 @@ package de.uni_koblenz.jgralabtest.trans;
 import de.uni_koblenz.jgralab.JGraLabSet;
 import de.uni_koblenz.jgralab.trans.InvalidSavepointException;
 import de.uni_koblenz.jgralab.trans.Savepoint;
-import de.uni_koblenz.jgralab.trans.Transaction;
-import de.uni_koblenz.jgralabtest.schemas.motorwaymap.City;
 import de.uni_koblenz.jgralabtest.schemas.motorwaymap.MotorwayMap;
 import de.uni_koblenz.jgralabtest.schemas.motorwaymap.MotorwayMapSchema;
 
@@ -15,9 +13,10 @@ public class Test {
 	 */
 	public static void main(String[] args) {
 		MotorwayMapSchema schema = MotorwayMapSchema.instance();
-		MotorwayMap motorwayMap = schema.createMotorwayMapWithTransactionSupport();
-		Transaction transaction = motorwayMap.newTransaction();
-		City c1 = motorwayMap.createCity();
+		MotorwayMap motorwayMap = schema
+				.createMotorwayMapWithTransactionSupport();
+		motorwayMap.newTransaction();
+		motorwayMap.createCity();
 		JGraLabSet<String> set = motorwayMap.createSet();
 		set.add("t1");
 		Savepoint sp = motorwayMap.defineSavepoint();
