@@ -642,11 +642,12 @@ public class Rsa2Tg extends XmlProcessor {
 	 */
 	@Override
 	protected void startElement(String name) throws XMLStreamException {
-		if (getNestingDepth() == 1) {
-			if (name.equals(XMI_XMI)) {
-				modelRootElementNestingDepth = 2;
-				return;
-			}
+
+		// TODO Comment the Meaning of this action. Does '1' or '2' have a
+		// meaning?
+		if (getNestingDepth() == 1 && name.equals(XMI_XMI)) {
+			modelRootElementNestingDepth = 2;
+			return;
 		}
 
 		String xmiId = getAttribute(XMI_NAMESPACE_PREFIX, "id");
