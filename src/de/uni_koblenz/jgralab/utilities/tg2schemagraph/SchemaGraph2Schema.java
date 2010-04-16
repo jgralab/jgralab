@@ -318,14 +318,12 @@ public class SchemaGraph2Schema {
 				.get_qualifiedName());
 
 		// Sets its attributes and constraints
-		graphClass.setAbstract(gGraphClass.is_abstract());
 		createAllAttributes(graphClass, gGraphClass);
 		createAllConstraints(graphClass, gGraphClass);
 
 		// Check
 		assert (graphClass.getQualifiedName().equals(gGraphClass
 				.get_qualifiedName())) : "FIXME! The attribute \"qualifiedName\" is different.";
-		assert (graphClass.isAbstract() == gGraphClass.is_abstract()) : "FIXME! The attribute \"abstract\" is different.";
 	}
 
 	/**

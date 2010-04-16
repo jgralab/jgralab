@@ -682,7 +682,11 @@ public class CompareSchemaWithSchemaGraph {
 
 		compareNamedElement(element, gElement);
 
-		compareIsAbstract(element, gElement);
+		if (element instanceof de.uni_koblenz.jgralab.schema.GraphElementClass) {
+			compareIsAbstract(
+					(de.uni_koblenz.jgralab.schema.GraphElementClass) element,
+					(GraphElementClass) gElement);
+		}
 
 		// Comparing all other Attributes, Constraints and Comments
 		compareAttributes(element, gElement);
@@ -691,8 +695,8 @@ public class CompareSchemaWithSchemaGraph {
 	}
 
 	private void compareIsAbstract(
-			de.uni_koblenz.jgralab.schema.AttributedElementClass element,
-			AttributedElementClass gElement) {
+			de.uni_koblenz.jgralab.schema.GraphElementClass element,
+			GraphElementClass gElement) {
 		// Comparing the attribute \"isAbstract\"
 		assertEquals("Attribute \"isAbstract\" is different.", element
 				.isAbstract(), gElement.is_abstract());
