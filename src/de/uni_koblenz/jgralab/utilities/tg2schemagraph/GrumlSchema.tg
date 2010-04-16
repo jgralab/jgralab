@@ -19,7 +19,7 @@ VertexClass VertexClass: GraphElementClass;
 VertexClass Schema {name: String, packagePrefix: String};
 VertexClass Package: NamedElement ["A Package must either be default or subpackage, but not both" "import structure.*; forall p: V{Package} @ (inDegree{ContainsDefaultPackage}(p) + inDegree{ContainsSubPackage}(p)) = 1" "import structure.*; from p: V{Package} with (inDegree{ContainsDefaultPackage}(p) + inDegree{ContainsSubPackage}(p)) <> 1 reportSet p end"];
 VertexClass EdgeClass: GraphElementClass ["An EdgeClass may have at most one shared/composite end." "import structure.*; forall ec : V{EdgeClass} @ theElement(ec <>--{ComesFrom}).aggregation = \"NONE\" or theElement(ec <>--{GoesTo}).aggregation = \"NONE\"" "import structure.*; from ec : V{EdgeClass} with theElement(ec <>--{ComesFrom}).aggregation <> \"NONE\" and theElement(ec <>--{GoesTo}).aggregation <> \"NONE\" reportSet ec end"];
-VertexClass GraphClass: AttributedElementClass ["The GraphClass may not be abstract." "forall gc: V{structure.GraphClass} @ not gc.abstract" "from gc: V{structure.GraphClass} with gc.abstract reportSet gc end"] ["There must be exactly one GraphClass." "count(V{structure.GraphClass}) = 1" "V{structure.GraphClass}"];
+VertexClass GraphClass: AttributedElementClass ["There must be exactly one GraphClass." "count(V{structure.GraphClass}) = 1" "V{structure.GraphClass}"];
 abstract VertexClass GraphElementClass: AttributedElementClass {abstract: Boolean};
 VertexClass Constraint {message: String, predicateQuery: String, offendingElementsQuery: String};
 abstract VertexClass AttributedElementClass: NamedElement;
