@@ -24,7 +24,60 @@
 
 package de.uni_koblenz.jgralab.utilities.rsa2tg;
 
-import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.*;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.DEFAULT_MAX_MULTIPLICITY;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.DEFAULT_MIN_MULTIPLICITY;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_ANNOTATED_ELEMENT;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_ASSOCIATION;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_ASSOCIATION_CLASS;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_ATTRIBUTE_AGGREGATION;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_ATTRIBUTE_ASSOCIATION;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_ATTRIBUTE_CLASSIFIER;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_ATTRIBUTE_CLIENT;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_ATTRIBUTE_CONSTRAINED_ELEMENT;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_ATTRIBUTE_GENERAL;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_ATTRIBUTE_HREF;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_ATTRIBUTE_ISDERIVED;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_ATTRIBUTE_IS_ABSRACT;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_ATTRIBUTE_KEY;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_ATTRIBUTE_NAME;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_ATTRIBUTE_SUPPLIER;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_ATTRIBUTE_TYPE;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_ATTRIBUTE_VALUE;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_BODY;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_CLASS;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_COMPOSITE;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_DEFAULT_VALUE;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_DETAILS;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_ENUMERATION;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_ENUMERATION_LITERAL;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_E_ANNOTATIONS;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_GENERALIZATION;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_LANGUAGE;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_LITERAL_BOOLEAN;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_LITERAL_INTEGER;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_LITERAL_STRING;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_LOWER_VALUE;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_MEMBER_END;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_MODEL;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_OPAQUE_EXPRESSION;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_OWNEDEND;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_OWNEDRULE;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_OWNED_ATTRIBUTE;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_OWNED_COMMENT;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_OWNED_LITERAL;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_PACKAGE;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_PACKAGED_ELEMENT;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_PRIMITIVE_TYPE;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_PROPERTY;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_REALIZATION;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_SHARED;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_SPECIFICATION;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_TRUE;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_UPPER_VALUE;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.XMI_EXTENSION;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.XMI_NAMESPACE_PREFIX;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.XMI_TYPE;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.XMI_XMI;
 
 import java.io.File;
 import java.io.IOException;
@@ -81,6 +134,7 @@ import de.uni_koblenz.jgralab.grumlschema.structure.ContainsGraphElementClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.EdgeClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.GoesTo;
 import de.uni_koblenz.jgralab.grumlschema.structure.GraphClass;
+import de.uni_koblenz.jgralab.grumlschema.structure.GraphElementClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.HasAttribute;
 import de.uni_koblenz.jgralab.grumlschema.structure.HasDomain;
 import de.uni_koblenz.jgralab.grumlschema.structure.IncidenceClass;
@@ -595,10 +649,10 @@ public class Rsa2Tg extends XmlProcessor {
 	private void setSchemaQualifiedName() throws XMLStreamException {
 		// Gets the Schema name, creates a Schema and processes it.
 		String nm = getAttribute(UML_ATTRIBUTE_NAME);
-	
+
 		int p = nm.lastIndexOf('.');
 		schema = sg.createSchema();
-	
+
 		// In case nm (:= Schema-name) contains only a name and not a
 		// package prefix
 		if (p == -1) {
@@ -606,7 +660,7 @@ public class Rsa2Tg extends XmlProcessor {
 					"A Schema must have a package prefix!\nProcessed qualified name: "
 							+ nm);
 		}
-	
+
 		schema.set_packagePrefix(nm.substring(0, p));
 		schema.set_name(nm.substring(p + 1));
 	}
@@ -2316,7 +2370,16 @@ public class Rsa2Tg extends XmlProcessor {
 			currentClass = null;
 			currentClassId = null;
 		} else if (key.equals("abstract")) {
-			currentClass.set_abstract(true);
+			if (currentClass instanceof GraphElementClass) {
+				GraphElementClass gec = (GraphElementClass) currentClass;
+				gec.set_abstract(true);
+			} else {
+				throw new ProcessingException(
+						getParser(),
+						getFileName(),
+						"The stereotype <<abstract>> can only be specified for vertex and edge classes, but not for class '"
+								+ currentClass.get_qualifiedName() + "'");
+			}
 		} else {
 			throw new ProcessingException(getParser(), getFileName(),
 					"Unexpected stereotype '<<" + key + ">>'.");

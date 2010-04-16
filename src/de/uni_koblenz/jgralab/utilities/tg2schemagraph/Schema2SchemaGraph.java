@@ -290,7 +290,6 @@ public class Schema2SchemaGraph {
 		attributedElementClassMap.put(graphClass, gGraphClass);
 
 		// Sets all general attributes of the GraphClass.
-		gGraphClass.set_abstract(graphClass.isAbstract());
 		assert (graphClass.getQualifiedName() != null) : "FIXME! GraphClass is broken. No QualifiedName is set.";
 		gGraphClass.set_qualifiedName(graphClass.getQualifiedName());
 
