@@ -75,8 +75,11 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 				.addNoIndent(new CodeSnippet(
 						true,
 						"public #simpleClassName#Impl(int id, #jgPackage#.Graph g, Vertex alpha, Vertex omega) {",
-						"\tsuper(id, g, alpha, omega);",
-						"\tinitializeAttributesWithDefaultValues();"));
+						"\tsuper(id, g, alpha, omega);"));
+		if (hasDefaultAttributeValues()) {
+			code.addNoIndent(new CodeSnippet(
+					"\tinitializeAttributesWithDefaultValues();"));
+		}
 		code.add(createSpecialConstructorCode());
 		code.addNoIndent(new CodeSnippet("}"));
 		return code;
