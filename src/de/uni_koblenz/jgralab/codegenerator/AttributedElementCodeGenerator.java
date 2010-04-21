@@ -186,15 +186,29 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 
 	protected CodeBlock createConstructor() {
 		CodeList code = new CodeList();
-		code
-				.addNoIndent(new CodeSnippet(
-						true,
-						"public #simpleClassName#Impl(int id, #jgPackage#.Graph g) {",
-						"\tsuper(id, g);",
-						"\tinitializeAttributesWithDefaultValues();"));
+		code.addNoIndent(new CodeSnippet(true,
+				"public #simpleClassName#Impl(int id, #jgPackage#.Graph g) {",
+				"\tsuper(id, g);"));
+		if (hasDefaultAttributeValues()) {
+			code.addNoIndent(new CodeSnippet(
+					"\tinitializeAttributesWithDefaultValues();"));
+		}
 		code.add(createSpecialConstructorCode());
 		code.addNoIndent(new CodeSnippet("}"));
 		return code;
+	}
+
+	/**
+	 * @return true if at least one own or inherited attribute has a default
+	 *         value.
+	 */
+	protected boolean hasDefaultAttributeValues() {
+		for (Attribute attr : aec.getAttributeList()) {
+			if (attr.getDefaultValueAsString() != null) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	protected CodeBlock createGetAttributedElementClassMethod() {
@@ -337,9 +351,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 			code.add("public #type# #isOrGet#_#name#() {");
 			addCheckValidityCode(code);
 			code
-					.add(
-							"\tif (_#name# == null)",
-							"\t\treturn #initValue#;",
+					.add("\tif (_#name# == null)", "\t\treturn #initValue#;",
 							"\t#ttype# value = _#name#.getValidValue(#theGraph#.getCurrentTransaction());");
 
 			if (attr.getDomain().isComposite()) {

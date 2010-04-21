@@ -100,6 +100,9 @@ public abstract class GraphElementImpl implements GraphElement {
 	@Override
 	public void initializeAttributesWithDefaultValues() {
 		for (Attribute attr : getAttributedElementClass().getAttributeList()) {
+			if (attr.getDefaultValueAsString() == null) {
+				continue;
+			}
 			try {
 				internalSetDefaultValue(attr);
 			} catch (GraphIOException e) {
