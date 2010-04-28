@@ -18,8 +18,14 @@ import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.grumlschema.SchemaGraph;
+import de.uni_koblenz.jgralab.grumlschema.structure.Annotates;
+import de.uni_koblenz.jgralab.grumlschema.structure.Attribute;
 import de.uni_koblenz.jgralab.grumlschema.structure.AttributedElementClass;
+import de.uni_koblenz.jgralab.grumlschema.structure.Comment;
+import de.uni_koblenz.jgralab.grumlschema.structure.Constraint;
 import de.uni_koblenz.jgralab.grumlschema.structure.GraphClass;
+import de.uni_koblenz.jgralab.grumlschema.structure.HasAttribute;
+import de.uni_koblenz.jgralab.grumlschema.structure.HasConstraint;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.utilities.tg2schemagraph.Schema2SchemaGraph;
 
@@ -44,7 +50,8 @@ public class TgSchema2XMI {
 		// System.out.println("SchemaGraph to XMI");
 		// System.out.println("==================");
 
-		new TgSchema2XMI("D:/test.xmi", "D:/graphen/Beispielgraph.tg");
+		new TgSchema2XMI("/windowsD/test.xmi",
+				"/windowsD/graphen/BeispielGraph.tg");
 
 		// // Retrieving all command line options
 		// CommandLine cli = processCommandLineOptions(args);
@@ -242,8 +249,38 @@ public class TgSchema2XMI {
 			writer.writeEndElement();
 		}
 
+		// create comment
+		for (Annotates annotates : aeclass.getAnnotatesIncidences()) {
+			createComment((Comment) annotates.getThat());
+		}
+
+		// create constraints
+		for (HasConstraint hasConstraint : aeclass.getHasConstraintIncidences()) {
+			createConstraint((Constraint) hasConstraint.getThat());
+		}
+
+		// create attributes
+		for (HasAttribute hasAttribute : aeclass.getHasAttributeIncidences()) {
+			createAttribute((Attribute) hasAttribute.getThat());
+		}
+
 		// close packagedElement
 		writer.writeEndElement();
+	}
+
+	private void createAttribute(Attribute that) {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void createConstraint(Constraint constraint) {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void createComment(Comment that) {
+		// TODO Auto-generated method stub
+
 	}
 
 }
