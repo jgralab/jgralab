@@ -216,8 +216,7 @@ public class TgSchema2XMI {
 		writer.writeStartElement("packagedElement");
 		writer.writeAttribute(XMI_NAMESPACE, "type", "uml:Class");
 		writer.writeAttribute(XMI_NAMESPACE, "id", aeclass.get_qualifiedName());
-		writer.writeAttribute(XMI_NAMESPACE, "name", aeclass
-				.get_qualifiedName());
+		writer.writeAttribute("name", aeclass.get_qualifiedName());
 
 		// create <<GraphClass>> for graph classes
 		if (aeclass instanceof GraphClass) {
@@ -241,7 +240,7 @@ public class TgSchema2XMI {
 			writer.writeAttribute(XMI_NAMESPACE, "id", aeclass
 					.get_qualifiedName()
 					+ "_details");
-			writer.writeAttribute("key", "GraphClass");
+			writer.writeAttribute("key", "graphclass");
 
 			// close eAnnotations
 			writer.writeEndElement();
@@ -278,7 +277,7 @@ public class TgSchema2XMI {
 		writer.writeEndElement();
 	}
 
-	private void createAttribute(XMLStreamWriter writer, Attribute that,
+	private void createAttribute(XMLStreamWriter writer, Attribute attribute,
 			String id) {
 		// TODO Auto-generated method stub
 
@@ -307,6 +306,7 @@ public class TgSchema2XMI {
 		writer.writeCharacters(constraint.get_message() + " "
 				+ constraint.get_predicateQuery() + " "
 				+ constraint.get_offendingElementsQuery());
+		// TODO check if quoted and seperation is correct
 
 		// end body
 		writer.writeEndDocument();
