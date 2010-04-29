@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.regex.Pattern;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -50,8 +51,7 @@ public class TgSchema2XMI {
 		// System.out.println("SchemaGraph to XMI");
 		// System.out.println("==================");
 
-		new TgSchema2XMI("/windowsD/test.xmi",
-				"/windowsD/graphen/BeispielGraph.tg");
+		// new TgSchema2XMI("D:/test.xmi", "D:/graphen/BeispielGraph.tg");
 
 		// // Retrieving all command line options
 		// CommandLine cli = processCommandLineOptions(args);
@@ -166,6 +166,7 @@ public class TgSchema2XMI {
 			SchemaGraph schemaGraph) throws XMLStreamException {
 		// start root element
 		writer.writeStartElement("xmi", "XMI", XMI_NAMESPACE);
+		writer.writeAttribute(XMI_NAMESPACE, "version", "2.1");
 		writer.setPrefix("xsi", XSI_NAMESPACE);
 		writer.setPrefix("Ecore", EECORE_NAMESPACE);
 		writer.setPrefix("ecore", ECORE_NAMESPACE);
@@ -222,7 +223,7 @@ public class TgSchema2XMI {
 		if (aeclass instanceof GraphClass) {
 			// start Extension
 			writer.writeStartElement(XMI_NAMESPACE, "Extension");
-			writer.writeAttribute("extender", EECORE_NAMESPACE);
+			writer.writeAttribute("extender", ECORE_NAMESPACE);
 
 			// start eAnnotations
 			writer.writeStartElement("eAnnotations");
@@ -240,7 +241,7 @@ public class TgSchema2XMI {
 			writer.writeAttribute(XMI_NAMESPACE, "id", aeclass
 					.get_qualifiedName()
 					+ "_details");
-			writer.writeAttribute("key", aeclass.get_qualifiedName());
+			writer.writeAttribute("key", "GraphClass");
 
 			// close eAnnotations
 			writer.writeEndElement();
@@ -250,37 +251,101 @@ public class TgSchema2XMI {
 		}
 
 		// create comment
+		int uniqueNumber = 0;
 		for (Annotates annotates : aeclass.getAnnotatesIncidences()) {
-			createComment((Comment) annotates.getThat());
+			createComment(writer, (Comment) annotates.getThat(), aeclass
+					.get_qualifiedName()
+					+ "_Comment" + uniqueNumber++, aeclass.get_qualifiedName());
 		}
 
 		// create constraints
+		uniqueNumber = 0;
 		for (HasConstraint hasConstraint : aeclass.getHasConstraintIncidences()) {
-			createConstraint((Constraint) hasConstraint.getThat());
+			createConstraint(writer, (Constraint) hasConstraint.getThat(),
+					aeclass.get_qualifiedName() + "_Constraint"
+							+ uniqueNumber++, aeclass.get_qualifiedName());
 		}
 
 		// create attributes
+		uniqueNumber = 0;
 		for (HasAttribute hasAttribute : aeclass.getHasAttributeIncidences()) {
-			createAttribute((Attribute) hasAttribute.getThat());
+			createAttribute(writer, (Attribute) hasAttribute.getThat(), aeclass
+					.get_qualifiedName()
+					+ "_" + ((Attribute) hasAttribute.getThat()).get_name());
 		}
 
 		// close packagedElement
 		writer.writeEndElement();
 	}
 
-	private void createAttribute(Attribute that) {
+	private void createAttribute(XMLStreamWriter writer, Attribute that,
+			String id) {
 		// TODO Auto-generated method stub
 
 	}
 
-	private void createConstraint(Constraint constraint) {
-		// TODO Auto-generated method stub
+	private void createConstraint(XMLStreamWriter writer,
+			Constraint constraint, String id, String constrainedElement)
+			throws XMLStreamException {
+		// start ownedRule
+		writer.writeStartElement("ownedRule");
+		writer.writeAttribute(XMI_NAMESPACE, "type", "uml:Constraint");
+		writer.writeAttribute(XMI_NAMESPACE, "id", id);
+		writer.writeAttribute("constainedElement", constrainedElement);
 
+		// start specification
+		writer.writeStartElement("specification");
+		writer.writeAttribute(XMI_NAMESPACE, "type", "uml:OpaqueExpression");
+		writer.writeAttribute(XMI_NAMESPACE, "id", id + "_specification");
+
+		// start and end language
+		writer.writeStartElement("language");
+		writer.writeEndElement();
+
+		// start body
+		writer.writeStartElement("body");
+		writer.writeCharacters(constraint.get_message() + " "
+				+ constraint.get_predicateQuery() + " "
+				+ constraint.get_offendingElementsQuery());
+
+		// end body
+		writer.writeEndDocument();
+
+		// end specification
+		writer.writeEndElement();
+
+		// end ownedRule
+		writer.writeEndElement();
 	}
 
-	private void createComment(Comment that) {
-		// TODO Auto-generated method stub
+	/**
+	 * @param writer
+	 * @param comment
+	 * @param id
+	 * @param annotatedElement
+	 * @throws XMLStreamException
+	 */
+	private void createComment(XMLStreamWriter writer, Comment comment,
+			String id, String annotatedElement) throws XMLStreamException {
+		// start ownedComment
+		writer.writeStartElement("ownedComment");
+		writer.writeAttribute(XMI_NAMESPACE, "type", "uml:Comment");
+		writer.writeAttribute(XMI_NAMESPACE, "id", id);
+		writer.writeAttribute("annotatedElement", annotatedElement);
 
+		// start body
+		writer.writeStartElement("body");
+
+		// write content
+		writer.writeCharacters("<p>\r\n\t"
+				+ comment.get_text().replaceAll(Pattern.quote("\n"),
+						"\r\n&</p>\r\n<p>\r\n\t") + "\r\n</p>");
+
+		// end body
+		writer.writeEndElement();
+
+		// end ownedComment
+		writer.writeEndElement();
 	}
 
 }
