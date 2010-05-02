@@ -27,13 +27,11 @@ package de.uni_koblenz.jgralab.schema.impl;
 import de.uni_koblenz.jgralab.codegenerator.CodeBlock;
 import de.uni_koblenz.jgralab.codegenerator.CodeGenerator;
 import de.uni_koblenz.jgralab.codegenerator.CodeSnippet;
-import de.uni_koblenz.jgralab.schema.IntegerDomain;
 import de.uni_koblenz.jgralab.schema.LongDomain;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.Schema;
 
-public final class LongDomainImpl extends BasicDomainImpl implements
-		IntegerDomain, LongDomain {
+public final class LongDomainImpl extends BasicDomainImpl implements LongDomain {
 
 	LongDomainImpl(Schema schema) {
 		super(LONGDOMAIN_NAME, schema.getDefaultPackage());
