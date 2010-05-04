@@ -14,15 +14,18 @@ import javax.swing.BorderFactory;
 import javax.swing.BoundedRangeModel;
 import javax.swing.DefaultBoundedRangeModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
+import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileFilter;
 
 import de.uni_koblenz.jgralab.Graph;
@@ -34,20 +37,23 @@ import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueHTMLOutputVisitor;
 
-@WorkInProgress(description = "insufficcient result presentation, simplistic GUI, no optimizer control, no load/save functionality, ...", responsibleDevelopers = "horn")
+@WorkInProgress(description = "insufficcient result presentation, simplistic hacked GUI, no load/save functionality, ...", responsibleDevelopers = "horn")
 public class GreqlGui extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	private Graph graph;
-
 	private JFileChooser fileChooser;
-
 	private JPanel queryPanel, resultPanel;
 	private JTextArea queryArea;
 	private JEditorPane resultPane;
-	private JButton fileSelectionButton, evalQueryButton;
+	private JButton fileSelectionButton;
+	private JButton evalQueryButton;
+	private JButton stopButton;
 	private JProgressBar progressBar;
 	private BoundedRangeModel brm;
+	private JLabel statusLabel;
+	private Evaluator evaluator;
+	private JCheckBox optimizeCheckBox;
 
 	class Worker extends Thread implements ProgressFunction {
 		BoundedRangeModel brm;
@@ -137,11 +143,28 @@ public class GreqlGui extends JFrame {
 									ex.getMessage(), ex.getClass()
 											.getSimpleName(),
 									JOptionPane.ERROR_MESSAGE);
-
+							statusLabel.setText("Couldn't load graph :-(");
+						} else {
+							statusLabel.setText("Graph '" + graph.getId()
+									+ "' loaded.");
 						}
 						fileSelectionButton.setEnabled(true);
 						evalQueryButton.setEnabled(graph != null);
+					}
+				});
+			} catch (InterruptedException e) {
+			} catch (InvocationTargetException e) {
+			}
+		}
 
+		@Override
+		public void init(long totalElements) {
+			super.init(totalElements);
+			try {
+				SwingUtilities.invokeAndWait(new Runnable() {
+					@Override
+					public void run() {
+						statusLabel.setText("Loading graph...");
 					}
 				});
 			} catch (InterruptedException e) {
@@ -162,7 +185,7 @@ public class GreqlGui extends JFrame {
 		public void run() {
 			final GreqlEvaluator eval = new GreqlEvaluator(query, graph, null,
 					this);
-			eval.setOptimize(true);
+			eval.setOptimize(optimizeCheckBox.isSelected());
 			try {
 				// if (eval.parseQuery()) {
 				// assert eval.getSyntaxGraph() != null;
@@ -181,6 +204,18 @@ public class GreqlGui extends JFrame {
 				SwingUtilities.invokeAndWait(new Runnable() {
 					@Override
 					public void run() {
+						stopButton.setEnabled(false);
+						if (ex != null) {
+							statusLabel.setText("Couldn't evaluate query :-(");
+						} else {
+							statusLabel
+									.setText("Evaluation finished, loading result - this may take a while...");
+						}
+					}
+				});
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
 						if (ex == null) {
 							JValue result = eval.getEvaluationResult();
 							File resultFile;
@@ -191,6 +226,7 @@ public class GreqlGui extends JFrame {
 										.getCanonicalPath(), graph);
 								resultPane.setPage(new URL("file", "localhost",
 										resultFile.getCanonicalPath()));
+								statusLabel.setText("Ready.");
 							} catch (IOException e) {
 							}
 						} else {
@@ -211,13 +247,27 @@ public class GreqlGui extends JFrame {
 			} catch (InvocationTargetException e) {
 			}
 		}
+
+		@Override
+		public void init(long totalElements) {
+			super.init(totalElements);
+			try {
+				SwingUtilities.invokeAndWait(new Runnable() {
+					@Override
+					public void run() {
+						statusLabel.setText("Evaluating query...");
+					}
+				});
+			} catch (InterruptedException e) {
+			} catch (InvocationTargetException e) {
+			}
+		}
 	}
 
 	public GreqlGui() {
 		super("GReQL GUI");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		getContentPane().setLayout(new BorderLayout());
 		queryArea = new JTextArea(15, 50);
 		queryArea.setEditable(true);
 		queryArea.setText("/*\n * Please enter your query here!\n */\n\n");
@@ -244,11 +294,9 @@ public class GreqlGui extends JFrame {
 
 		resultPanel = new JPanel();
 		resultPanel.setLayout(new BorderLayout(4, 4));
-		resultPanel.setBorder(BorderFactory.createEmptyBorder(0, 4, 16, 4));
-		resultPanel.add(progressBar, BorderLayout.NORTH);
+		resultPanel.setBorder(BorderFactory.createEmptyBorder(0, 4, 4, 4));
 		resultPanel.add(resultScrollPane, BorderLayout.CENTER);
-
-		getContentPane().add(resultPanel, BorderLayout.CENTER);
+		resultPanel.add(progressBar, BorderLayout.SOUTH);
 
 		fileChooser = new JFileChooser();
 		fileChooser.setAcceptAllFileFilterUsed(false);
@@ -277,34 +325,65 @@ public class GreqlGui extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int returnVal = fileChooser.showOpenDialog(fileSelectionButton);
-
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					fileSelectionButton.setEnabled(false);
 					evalQueryButton.setEnabled(false);
+					statusLabel.setText("Compling schema...");
 					new GraphLoader(brm, fileChooser.getSelectedFile()).start();
 				}
 			}
 		});
 
 		evalQueryButton = new JButton(new AbstractAction("Evaluate Query") {
-
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				fileSelectionButton.setEnabled(false);
 				evalQueryButton.setEnabled(false);
-				new Evaluator(brm, queryArea.getText()).start();
+				brm.setValue(brm.getMinimum());
+				evaluator = new Evaluator(brm, queryArea.getText());
+				evaluator.start();
+				stopButton.setEnabled(true);
 			}
 
 		});
 		evalQueryButton.setEnabled(false);
+
+		optimizeCheckBox = new JCheckBox("Enable optimizer");
+		optimizeCheckBox.setSelected(true);
+
+		stopButton = new JButton(new AbstractAction("Stop evaluation") {
+			private static final long serialVersionUID = 1L;
+
+			@SuppressWarnings("deprecation")
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				evaluator.stop(); // this brutal brake is intended!
+				stopButton.setEnabled(false);
+				fileSelectionButton.setEnabled(true);
+				evalQueryButton.setEnabled(true);
+				evaluator = null;
+				brm.setValue(brm.getMinimum());
+				statusLabel.setText("Query aborted.");
+			}
+
+		});
+		stopButton.setEnabled(false);
+
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.add(fileSelectionButton);
 		buttonPanel.add(evalQueryButton);
+		buttonPanel.add(optimizeCheckBox);
+		buttonPanel.add(stopButton);
 		queryPanel.add(buttonPanel, BorderLayout.SOUTH);
 
+		statusLabel = new JLabel("Welcome", JLabel.LEFT);
+		statusLabel.setBorder(new EmptyBorder(0, 4, 4, 4));
+		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(queryPanel, BorderLayout.NORTH);
+		getContentPane().add(resultPanel, BorderLayout.CENTER);
+		getContentPane().add(statusLabel, BorderLayout.SOUTH);
 		pack();
 		setVisible(true);
 	}
