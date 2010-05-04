@@ -205,44 +205,42 @@ public class GreqlGui extends JFrame {
 					@Override
 					public void run() {
 						stopButton.setEnabled(false);
+						evalQueryButton.setEnabled(true);
+						fileSelectionButton.setEnabled(true);
 						if (ex != null) {
+							brm.setValue(brm.getMinimum());
 							statusLabel.setText("Couldn't evaluate query :-(");
-						} else {
-							statusLabel
-									.setText("Evaluation finished, loading result - this may take a while...");
-						}
-					}
-				});
-				SwingUtilities.invokeLater(new Runnable() {
-					@Override
-					public void run() {
-						if (ex == null) {
-							JValue result = eval.getEvaluationResult();
-							File resultFile;
-							try {
-								resultFile = File.createTempFile(
-										"greqlQueryResult", ".html");
-								new JValueHTMLOutputVisitor(result, resultFile
-										.getCanonicalPath(), graph);
-								resultPane.setPage(new URL("file", "localhost",
-										resultFile.getCanonicalPath()));
-								statusLabel.setText("Ready.");
-							} catch (IOException e) {
-							}
-						} else {
 							String msg = ex.getMessage();
 							if (msg == null) {
 								msg = "An exception occured!";
 							}
-							JOptionPane.showMessageDialog(null, msg, ex
-									.getClass().getSimpleName(),
+							JOptionPane.showMessageDialog(GreqlGui.this, msg,
+									ex.getClass().getSimpleName(),
 									JOptionPane.ERROR_MESSAGE);
-
+						} else {
+							statusLabel
+									.setText("Evaluation finished, loading HTML result - this may take a while...");
 						}
-						fileSelectionButton.setEnabled(true);
-						evalQueryButton.setEnabled(true);
 					}
 				});
+				if (ex == null) {
+					SwingUtilities.invokeLater(new Runnable() {
+						@Override
+						public void run() {
+							JValue result = eval.getEvaluationResult();
+							try {
+								File resultFile = File.createTempFile(
+										"greqlQueryResult", ".html");
+								new JValueHTMLOutputVisitor(result, resultFile
+										.getCanonicalPath(), graph, false,
+										false);
+								resultPane.setPage(new URL("file", "localhost",
+										resultFile.getCanonicalPath()));
+							} catch (IOException e) {
+							}
+						}
+					});
+				}
 			} catch (InterruptedException e) {
 			} catch (InvocationTargetException e) {
 			}
