@@ -311,6 +311,7 @@ public class ManualGreqlLexer {
 			// skip single line comments
 			if ((position < query.length() - 2)
 					&& (query.substring(position, position + 2).equals("//"))) {
+				position++;
 				while ((position < query.length())
 						&& (query.charAt(position) != '\n')) {
 					position++;
@@ -319,9 +320,23 @@ public class ManualGreqlLexer {
 					position++;
 				}
 			}
+			//skip multiline comments 
+			if ((position < query.length() - 4)
+					&& (query.substring(position, position + 2).equals("/*"))) {
+				position++;
+				while ((position < query.length()-1)
+						&& (query.substring(position, position + 2).equals("*/"))) {
+					position++;
+				}
+				if ((position < query.length()) && (query.substring(position, position + 2).equals("*/"))) {
+					position+=2;
+				}
+			}
 		} while (
 				   ((position < query.length()) && (isWs(query.charAt(position)))) 
-			    || ((position < query.length() - 2) && (query.substring(position, position + 2).equals("//"))));
+			    || ((position < query.length() - 2) && (query.substring(position, position + 2).equals("//")))
+			    || ((position < query.length() - 4) && (query.substring(position, position + 2).equals("/*")))
+				);
 	}
 
 	public static List<Token> scan(String query) {
