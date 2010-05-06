@@ -214,13 +214,12 @@ public class TgSchema2XMI {
 		createTypes(writer);
 
 		// create profileApplication
-		// createProfileApplication(writer);
+		createProfileApplication(writer);
 
 		// end model
 		writer.writeEndElement();
 	}
 
-	@SuppressWarnings("unused")
 	private void createProfileApplication(XMLStreamWriter writer)
 			throws XMLStreamException {
 		// start profileApplication
@@ -229,8 +228,15 @@ public class TgSchema2XMI {
 		writer.writeAttribute(XMI_NAMESPACE, "id", "profileApplication"
 				+ System.currentTimeMillis());
 
-		// write content
+		// create content
 		createExtension(writer, null);
+
+		// create appliedProfile
+		writer.writeEmptyElement("appliedProfile");
+		writer.writeAttribute(XMI_NAMESPACE, "type", "uml:Profile");
+		writer
+				.writeAttribute("href",
+						"http://schema.omg.org/spec/UML/2.1.1/StandardProfileL2.xmi#_0");
 
 		// end profileApplication
 		writer.writeEndElement();
