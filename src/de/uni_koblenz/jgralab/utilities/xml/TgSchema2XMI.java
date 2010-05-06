@@ -208,14 +208,51 @@ public class TgSchema2XMI {
 				+ schema.get_name());
 
 		// convert graph class
-		GraphClass graphClass = schemaGraph.getFirstGraphClass();
-		createClass(writer, graphClass);
+		createClass(writer, schemaGraph.getFirstGraphClass());
 
-		// TODO Typen erstellen
+		// create Types
+		createTypes(writer);
 
-		// TODO profileApplication erstellen
+		// create profileApplication
+		// createProfileApplication(writer);
 
 		// end model
+		writer.writeEndElement();
+	}
+
+	@SuppressWarnings("unused")
+	private void createProfileApplication(XMLStreamWriter writer)
+			throws XMLStreamException {
+		// start profileApplication
+		writer.writeStartElement("profileApplication");
+		writer.writeAttribute(XMI_NAMESPACE, "type", "uml:ProfileApplication");
+		writer.writeAttribute(XMI_NAMESPACE, "id", "profileApplication"
+				+ System.currentTimeMillis());
+
+		// write content
+		createExtension(writer, null);
+
+		// end profileApplication
+		writer.writeEndElement();
+	}
+
+	private void createTypes(XMLStreamWriter writer) throws XMLStreamException {
+		// start packagedElement
+		writer.writeStartElement("packagedElement");
+		writer.writeAttribute(XMI_NAMESPACE, "type", "uml:Package");
+		writer.writeAttribute(XMI_NAMESPACE, "id", "PrimitiveTypes");
+		writer.writeAttribute("name", "PrimitiveTypes");
+
+		// create entries for domains, which are not defined
+		for (Domain domain : typesToBeDeclaredAtTheEnd) {
+			writer.writeEmptyElement("packagedElement");
+			writer.writeAttribute(XMI_NAMESPACE, "type", "uml:PrimitiveType");
+			writer.writeAttribute(XMI_NAMESPACE, "id", domain
+					.get_qualifiedName());
+			writer.writeAttribute("name", domain.get_qualifiedName());
+		}
+
+		// end packagedElement
 		writer.writeEndElement();
 	}
 
@@ -234,36 +271,10 @@ public class TgSchema2XMI {
 
 		// create <<graphclass>> for graph classes
 		if (aeclass instanceof GraphClass) {
-			// start Extension
-			writer.writeStartElement(XMI_NAMESPACE, "Extension");
-			writer.writeAttribute("extender", ECORE_NAMESPACE);
-
-			// start eAnnotations
-			writer.writeStartElement("eAnnotations");
-			writer.writeAttribute(XMI_NAMESPACE, "type", "ecore:EAnnotation");
-			writer.writeAttribute(XMI_NAMESPACE, "id", aeclass
-					.get_qualifiedName()
-					+ "_EAnnotation");
-			writer.writeAttribute("source",
-					"http://www.eclipse.org/uml2/2.0.0/UML");
-
-			// write details
-			writer.writeEmptyElement("details");
-			writer.writeAttribute(XMI_NAMESPACE, "type",
-					"ecore:EStringToStringMapEntry");
-			writer.writeAttribute(XMI_NAMESPACE, "id", aeclass
-					.get_qualifiedName()
-					+ "_details");
-			writer.writeAttribute("key", "graphclass");
-
-			// close eAnnotations
-			writer.writeEndElement();
-
-			// close Extension
-			writer.writeEndElement();
+			createExtension(writer, aeclass);
 		}
 
-		// create comment
+		// create comments
 		int uniqueNumber = 0;
 		for (Annotates annotates : aeclass.getAnnotatesIncidences()) {
 			createComment(writer, (Comment) annotates.getThat(), aeclass
@@ -291,6 +302,54 @@ public class TgSchema2XMI {
 		writer.writeEndElement();
 	}
 
+	/**
+	 * @param writer
+	 * @param aeclass
+	 *            if null references is created otherwise stereotype graphclass
+	 * @throws XMLStreamException
+	 */
+	private void createExtension(XMLStreamWriter writer,
+			AttributedElementClass aeclass) throws XMLStreamException {
+		// start Extension
+		writer.writeStartElement(XMI_NAMESPACE, "Extension");
+		writer.writeAttribute("extender", ECORE_NAMESPACE);
+
+		// start eAnnotations
+		writer.writeStartElement("eAnnotations");
+		writer.writeAttribute(XMI_NAMESPACE, "type", "ecore:EAnnotation");
+		writer.writeAttribute(XMI_NAMESPACE, "id", aeclass != null ? aeclass
+				.get_qualifiedName()
+				+ "_EAnnotation" : "EAnnotation" + System.currentTimeMillis());
+		writer
+				.writeAttribute("source",
+						"http://www.eclipse.org/uml2/2.0.0/UML");
+
+		if (aeclass != null) {
+			// write details
+			writer.writeEmptyElement("details");
+			writer.writeAttribute(XMI_NAMESPACE, "type",
+					"ecore:EStringToStringMapEntry");
+			writer.writeAttribute(XMI_NAMESPACE, "id", aeclass
+					.get_qualifiedName()
+					+ "_details");
+			writer.writeAttribute("key", "graphclass");
+		} else {
+			// write references
+			writer.writeEmptyElement("references");
+			writer.writeAttribute(XMI_NAMESPACE, "type", "ecore:EPackage");
+			writer
+					.writeAttribute(
+							"href",
+							"http://schema.omg.org/spec/UML/2.1.1/StandardProfileL2.xmi#_yzU58YinEdqtvbnfB2L_5w");
+		}
+
+		// close eAnnotations
+		writer.writeEndElement();
+
+		// close Extension
+		writer.writeEndElement();
+	}
+
 	private void createAttribute(XMLStreamWriter writer, Attribute attribute,
 			String id) throws XMLStreamException {
 		Domain domain = (Domain) attribute.getFirstHasDomain().getThat();
@@ -311,65 +370,76 @@ public class TgSchema2XMI {
 		// create default value
 		if (attribute.get_defaultValue() != null
 				&& !attribute.get_defaultValue().isEmpty()) {
-			// start defaultValue
-			if (domain instanceof LongDomain) {
-				writer.writeEmptyElement("defaultValue");
-			} else {
-				writer.writeStartElement("defaultValue");
-			}
-			if (domain instanceof BooleanDomain) {
-				writer.writeAttribute(XMI_NAMESPACE, "type",
-						"uml:LiteralBoolean");
-			} else if (domain instanceof IntegerDomain
-					|| domain instanceof LongDomain) {
-				writer.writeAttribute(XMI_NAMESPACE, "type",
-						"uml:LiteralInteger");
-			} else {
-				writer.writeAttribute(XMI_NAMESPACE, "type",
-						"uml:OpaqueExpression");
-			}
-			writer.writeAttribute(XMI_NAMESPACE, "id", id + "_defaultValue");
-			if (domain instanceof BooleanDomain
-					|| domain instanceof IntegerDomain
-					|| domain instanceof LongDomain) {
-				writer.writeAttribute("value", attribute.get_defaultValue());
-
-				// create type
-				if (domain instanceof BooleanDomain
-						|| domain instanceof IntegerDomain) {
-					createType(writer, domain);
-				} else {
-					// there must be created an entry for the long domain in
-					// the package primitiveTypes
-					typesToBeDeclaredAtTheEnd.add(domain);
-				}
-			} else {
-				if (domain instanceof StringDomain) {
-					// create type
-					createType(writer, domain);
-				} else {
-					// there must be created an entry for the current domain in
-					// the package primitiveTypes
-					typesToBeDeclaredAtTheEnd.add(domain);
-					writer.writeAttribute("type", domain.get_qualifiedName());
-				}
-				// TODO current Element
-
-				// start body
-				writer.writeStartElement("body");
-				writer.writeCharacters(attribute.get_defaultValue());
-				// end body
-				writer.writeEndElement();
-			}
-
-			if (!(domain instanceof LongDomain)) {
-				// end defaultValue
-				writer.writeEndElement();
-			}
+			createDefaultValue(writer, attribute, id, domain);
 		}
 
 		// end ownedAttribute
 		writer.writeEndElement();
+	}
+
+	/**
+	 * @param writer
+	 * @param attribute
+	 * @param id
+	 * @param domain
+	 * @throws XMLStreamException
+	 */
+	private void createDefaultValue(XMLStreamWriter writer,
+			Attribute attribute, String id, Domain domain)
+			throws XMLStreamException {
+		// start defaultValue
+		if (domain instanceof LongDomain) {
+			writer.writeEmptyElement("defaultValue");
+		} else {
+			writer.writeStartElement("defaultValue");
+		}
+		if (domain instanceof BooleanDomain) {
+			writer.writeAttribute(XMI_NAMESPACE, "type", "uml:LiteralBoolean");
+		} else if (domain instanceof IntegerDomain
+				|| domain instanceof LongDomain) {
+			writer.writeAttribute(XMI_NAMESPACE, "type", "uml:LiteralInteger");
+		} else {
+			writer
+					.writeAttribute(XMI_NAMESPACE, "type",
+							"uml:OpaqueExpression");
+		}
+		writer.writeAttribute(XMI_NAMESPACE, "id", id + "_defaultValue");
+		if (domain instanceof BooleanDomain || domain instanceof IntegerDomain
+				|| domain instanceof LongDomain) {
+			writer.writeAttribute("value", attribute.get_defaultValue());
+
+			// create type
+			if (domain instanceof BooleanDomain
+					|| domain instanceof IntegerDomain) {
+				createType(writer, domain);
+			} else {
+				// there must be created an entry for the long domain in
+				// the package primitiveTypes
+				typesToBeDeclaredAtTheEnd.add(domain);
+			}
+		} else {
+			if (domain instanceof StringDomain) {
+				// create type
+				createType(writer, domain);
+			} else {
+				// there must be created an entry for the current domain in
+				// the package primitiveTypes
+				typesToBeDeclaredAtTheEnd.add(domain);
+				writer.writeAttribute("type", domain.get_qualifiedName());
+			}
+			// TODO current Element
+
+			// start body
+			writer.writeStartElement("body");
+			writer.writeCharacters(attribute.get_defaultValue());
+			// end body
+			writer.writeEndElement();
+		}
+
+		if (!(domain instanceof LongDomain)) {
+			// end defaultValue
+			writer.writeEndElement();
+		}
 	}
 
 	/**
