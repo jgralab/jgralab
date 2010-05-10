@@ -254,7 +254,6 @@ public class JValueImpl implements JValue {
 		return storedHashCode;
 	}
 
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -263,7 +262,6 @@ public class JValueImpl implements JValue {
 	public boolean isInternal() {
 		return (type == JValueType.INTERNAL);
 	}
-
 
 	/*
 	 * (non-Javadoc)
@@ -1165,5 +1163,10 @@ public class JValueImpl implements JValue {
 			return (Number) value;
 		}
 		throw new JValueInvalidTypeException(JValueType.NUMBER, type);
+	}
+
+	@Override
+	public boolean isSlice() {
+		return false;
 	}
 }

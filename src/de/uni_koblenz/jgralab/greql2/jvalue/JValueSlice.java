@@ -44,6 +44,11 @@ import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 
 public class JValueSlice extends JValueImpl {
 
+	@Override
+	public boolean isSlice() {
+		return true;
+	}
+
 	private static Logger logger = Logger.getLogger(JValuePathSystem.class
 			.getName());
 
@@ -334,7 +339,8 @@ public class JValueSlice extends JValueImpl {
 			for (PathSystemEntry entry : mapEntry.getValue()) {
 				if ((!entry.isStateIsFinal())
 						&& (entry.getParentVertex() != null)) {
-					resultSet.add(new JValueImpl(mapEntry.getKey().getVertex()));
+					resultSet
+							.add(new JValueImpl(mapEntry.getKey().getVertex()));
 				}
 			}
 		}

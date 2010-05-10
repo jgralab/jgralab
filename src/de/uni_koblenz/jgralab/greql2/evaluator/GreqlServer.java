@@ -14,13 +14,20 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
+import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
+import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueMap;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueSlice;
 import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
+import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
 
 public class GreqlServer extends Thread {
 
@@ -31,6 +38,7 @@ public class GreqlServer extends Thread {
 	private BufferedReader in;
 	private PrintWriter out;
 	private GreqlEvaluator eval;
+	private String graphFile;
 	private static Map<String, Graph> dataGraphs = Collections
 			.synchronizedMap(new HashMap<String, Graph>());
 
@@ -73,20 +81,23 @@ public class GreqlServer extends Thread {
 			String line = null;
 			while (((line = in.readLine()) != null) && !isInterrupted()) {
 				if (line.startsWith("g:")) {
-					String newGraphFile = line.substring(2);
-					Graph g = dataGraphs.get(newGraphFile);
+					graphFile = line.substring(2);
+					Graph g = dataGraphs.get(graphFile);
 					if (g == null) {
-						println("Loading " + newGraphFile + ".",
-								PrintTarget.BOTH, true);
-						g = GraphIO.loadSchemaAndGraphFromFile(newGraphFile,
+						println("Loading " + graphFile + ".", PrintTarget.BOTH,
+								true);
+						g = GraphIO.loadSchemaAndGraphFromFile(graphFile,
 								CodeGeneratorConfiguration.MINIMAL,
 								new ProgressFunctionImpl());
-						dataGraphs.put(newGraphFile, g);
+						dataGraphs.put(graphFile, g);
 					}
 					eval.setDatagraph(g);
 				} else if (line.startsWith("q:")) {
-					String f = line.substring(2);
-					evalQuery(f);
+					evalQuery(line.substring(2));
+				} else if (line.startsWith("d:")) {
+					String queryFile = line.substring(2);
+					saveAsDot(evalQuery(queryFile), queryFile.replaceAll(
+							"\\.tg$", ".dot"));
 				} else {
 					println("Don't understand line '" + line + "'.",
 							PrintTarget.BOTH, true);
@@ -108,12 +119,69 @@ public class GreqlServer extends Thread {
 		}
 	}
 
-	private void evalQuery(String queryFile) throws IOException {
+	private void saveAsDot(JValue val, String dotFileName) {
+		Graph g = eval.getDatagraph();
+		BooleanGraphMarker marker = new BooleanGraphMarker(g);
+		markResultElements(val, marker);
+		for (Edge e : g.edges()) {
+			if (marker.isMarked(e.getAlpha()) && marker.isMarked(e.getOmega())) {
+				marker.mark(e);
+			}
+		}
+		Tg2Dot.printGraphAsDot(marker, false, dotFileName);
+	}
+
+	private void markResultElements(JValue val, BooleanGraphMarker marker) {
+		if (val.isCollection()) {
+			JValueCollection coll = val.toCollection();
+			for (JValue v : coll) {
+				markResultElements(v, marker);
+			}
+		} else if (val.isMap()) {
+			for (Entry<JValue, JValue> e : val.toJValueMap().entrySet()) {
+				markResultElements(e.getKey(), marker);
+				markResultElements(e.getValue(), marker);
+			}
+		} else if (val.isSlice()) {
+			JValueSlice slice = val.toSlice();
+			for (JValue v : slice.nodes()) {
+				marker.mark(v.toVertex());
+			}
+			for (JValue e : slice.edges()) {
+				marker.mark(e.toEdge());
+			}
+		} else if (val.isPathSystem()) {
+			JValuePathSystem pathSystem = val.toPathSystem();
+			for (JValue v : pathSystem.nodes()) {
+				marker.mark(v.toVertex());
+			}
+			for (JValue e : pathSystem.edges()) {
+				marker.mark(e.toEdge());
+			}
+		} else if (val.isPath()) {
+			JValuePath path = val.toPath();
+			for (Vertex v : path.nodeTrace()) {
+				marker.mark(v);
+			}
+			for (Edge e : path.edgeTrace()) {
+				marker.mark(e);
+			}
+		} else if (val.isAttributedElement()) {
+			marker.mark(val.toAttributedElement());
+		} else {
+			println("'" + val + "' is no AttributedElement, "
+					+ "so it won't be considered for DOT output.",
+					PrintTarget.BOTH, false);
+		}
+	}
+
+	private JValue evalQuery(String queryFile) throws IOException {
 		println("Evaling query file " + queryFile + ".", PrintTarget.BOTH, true);
 		eval.setQueryFile(new File(queryFile));
+		JValue result = null;
 		try {
 			eval.startEvaluation();
-			JValue result = eval.getEvaluationResult();
+			result = eval.getEvaluationResult();
 			println("<result not printed>", PrintTarget.SERVER, false);
 			out.println();
 			out.println("Evaluation Result:");
@@ -143,6 +211,7 @@ public class GreqlServer extends Thread {
 			e.printStackTrace();
 			e.printStackTrace(out);
 		}
+		return result;
 	}
 
 	/**
