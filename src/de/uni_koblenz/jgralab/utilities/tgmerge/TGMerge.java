@@ -60,20 +60,32 @@ public class TGMerge {
 	 *            the first one.
 	 */
 	public TGMerge(List<Graph> graphs) {
-		if (graphs.size() < 2) {
+		this(graphs.toArray(new Graph[graphs.size()]));
+	}
+
+	/**
+	 * @param graphs
+	 *            an array of graphs. The second to last graph will be merged
+	 *            into the first one.
+	 */
+	public TGMerge(Graph[] graphs) {
+		if (graphs.length < 2) {
 			throw new RuntimeException(
-					"Merging makes no sense with less than 2 additionalGraphs.");
+					"Merging makes no sense with less than 2 Graphs.");
 		}
 
-		Schema s = graphs.iterator().next().getSchema();
+		Schema s = graphs[0].getSchema();
 		for (Graph g : graphs) {
 			if (g.getSchema() != s) {
 				throw new RuntimeException(
 						"It's only possible to merge additionalGraphs conforming to one schema.");
 			}
 		}
-		this.targetGraph = graphs.remove(0);
-		this.additionalGraphs = graphs;
+		targetGraph = graphs[0];
+		additionalGraphs = new LinkedList<Graph>();
+		for (int i = 1; i < graphs.length; i++) {
+			additionalGraphs.add(graphs[i]);
+		}
 	}
 
 	/**

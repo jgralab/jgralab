@@ -1,6 +1,6 @@
 ;;; greql-mode.el --- Major mode for editing GReQL2 files with emacs
 
-;; Copyright (C) 2007, 2008, 2009 by Tassilo Horn
+;; Copyright (C) 2007, 2008, 2009, 2010 by Tassilo Horn
 
 ;; Author: Tassilo Horn <horn@uni-koblenz.de>
 
@@ -554,10 +554,13 @@ those attributes, which are valid for both Foo and Bar objects."
 (defvar greql-server-port 10101
   "The port where the GreqlServer listenes for connections.")
 
-(defun greql-execute ()
+(defun greql-execute (arg)
   "Execute the query in the current buffer on `greql-graph'.
-If a region is active, use only that as query."
-  (interactive)
+If a region is active, use only that as query.
+If a prefix arg is given, also generate a DOT file containing the
+elements calculated by the query plus all edges running between
+vertices in the query result."
+  (interactive "P")
   (let ((buffer (get-buffer-create greql-evaluation-buffer))
         (queryfile (if (use-region-p)
                        (let ((f (make-temp-file "greql-query"))
@@ -577,7 +580,7 @@ If a region is active, use only that as query."
                            :service greql-server-port
                            :sentinel 'greql-display-result)))
     (process-send-string greql-process (concat "g:" (expand-file-name greql-graph) "\n"))
-    (process-send-string greql-process (concat "q:" queryfile "\n"))
+    (process-send-string greql-process (concat (if arg "d:"  "q:") queryfile "\n"))
     (display-buffer buffer)))
 
 (defun greql-display-result (proc change)

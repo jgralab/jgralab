@@ -26,7 +26,6 @@ public interface JValue extends Comparable<JValue> {
 	 */
 	public abstract void accept(JValueVisitor v);
 
-
 	public abstract int compareTo(JValue o);
 
 	/**
@@ -81,6 +80,8 @@ public interface JValue extends Comparable<JValue> {
 	 */
 	public abstract JValuePathSystem toPathSystem()
 			throws JValueInvalidTypeException;
+
+	public abstract boolean isSlice();
 
 	public abstract JValueSlice toSlice() throws JValueInvalidTypeException;
 
@@ -250,8 +251,8 @@ public interface JValue extends Comparable<JValue> {
 	 * @throws JValueInvalidTypeException
 	 *             if this JValue does not encapsulate a NFA
 	 */
-	public abstract FiniteAutomaton toAutomaton() throws JValueInvalidTypeException;
-
+	public abstract FiniteAutomaton toAutomaton()
+			throws JValueInvalidTypeException;
 
 	/**
 	 * @return true if this JValue encapsulates a Object value, false otherwise
