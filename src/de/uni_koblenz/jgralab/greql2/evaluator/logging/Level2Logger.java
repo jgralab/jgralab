@@ -75,12 +75,6 @@ public class Level2Logger extends Level2LoggingBase implements EvaluationLogger 
 	}
 
 	/**
-	 * Indicates if this {@link Level2Logger} already has called its store()
-	 * method.
-	 */
-	private boolean hasStored = false;
-
-	/**
 	 * creates a new {@link Level2Logger}
 	 */
 	private Level2Logger() {
@@ -183,11 +177,6 @@ public class Level2Logger extends Level2LoggingBase implements EvaluationLogger 
 	 */
 	@Override
 	public boolean store() throws IOException {
-		if (hasStored) {
-			// This logger already has stored its values
-			return false;
-		}
-
 		if (!loggerDirectory.exists() && !loggerDirectory.mkdir()) {
 			throw new IOException("Couldn't create directory "
 					+ loggerDirectory + ".");
@@ -198,7 +187,6 @@ public class Level2Logger extends Level2LoggingBase implements EvaluationLogger 
 		if (result) {
 			// release the lock for the used logfile
 			logFileLockMap.get(getLogfileName()).release();
-			hasStored = true;
 		}
 
 		return result;

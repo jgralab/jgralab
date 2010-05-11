@@ -35,38 +35,6 @@ public class Level2LogReader extends Level2LoggingBase implements
 	}
 
 	/**
-	 * Creates a new {@link Level2LogReader}.
-	 * 
-	 * @param logDirectory
-	 *            the directory where the corresponding {@link Level2Logger}
-	 *            stored the logfiles
-	 * @param dataGraph
-	 *            a datagraph (used to get the {@link Schema} and the graphid)
-	 * @param loggingType
-	 *            determines the used logfile. See {@link LoggingType} for more
-	 *            informations. If this is parameter is
-	 *            {@link LoggingType#GENERIC}, then the parameter dataGraph may
-	 *            be null.
-	 */
-	public Level2LogReader(File logDirectory, Graph dataGraph,
-			LoggingType loggingType) {
-		this();
-		loggerDirectory = logDirectory;
-		if (dataGraph != null) {
-			schemaName = dataGraph.getSchema().getQualifiedName();
-			dataGraphId = dataGraph.getId();
-		}
-		this.loggingType = loggingType;
-		if (load()) {
-			logger.info("Level2LogReader successfully loaded "
-					+ getLogFile().getPath());
-		} else {
-			logger.warning("Level2LogReader couldn't load "
-					+ getLogFile().getPath());
-		}
-	}
-
-	/**
 	 * Creates a new {@link Level2LogReader} that uses the same values for
 	 * logDirectory, schemaName, graphId and loggingType as the given
 	 * {@link Level2Logger}.
@@ -125,17 +93,32 @@ public class Level2LogReader extends Level2LoggingBase implements
 	}
 
 	/**
-	 * A shorthand for
-	 * <code>new Level2LogReader(logDir, null, LoggingType.GENERIC);</code>
+	 * Creates a new Level2LogReader for evaluating a query on the given graph,
+	 * which uses the best possible logging type depending on the log files in
+	 * logDirectory.
 	 * 
 	 * @param logDirectory
 	 *            the directory where the corresponding {@link Level2Logger}
 	 *            stored the logfiles
 	 */
-	public Level2LogReader(File logDirectory) {
+	public Level2LogReader(File logDirectory, Graph g) {
 		this();
+
+		dataGraphId = g.getId();
+		schemaName = g.getSchema().getQualifiedName();
+
 		loggerDirectory = logDirectory;
-		this.loggingType = LoggingType.GENERIC;
+		File graphLogFile = new File(loggerDirectory + File.separator
+				+ schemaName + "-" + dataGraphId + ".log");
+		File schemaLogFile = new File(loggerDirectory + File.separator
+				+ schemaName + ".log");
+		if (graphLogFile.exists()) {
+			loggingType = LoggingType.GRAPH;
+		} else if (schemaLogFile.exists()) {
+			loggingType = LoggingType.SCHEMA;
+		} else {
+			loggingType = LoggingType.GENERIC;
+		}
 
 		if (load()) {
 			logger.info("Level2LogReader successfully loaded "

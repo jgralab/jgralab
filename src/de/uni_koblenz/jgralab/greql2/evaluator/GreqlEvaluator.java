@@ -984,7 +984,8 @@ public class GreqlEvaluator {
 			if (evaluationLogger == null) {
 				// Create only a generic log reader by default.
 				evaluationLoggerDirectory = getTmpDirectory();
-				logReader = new Level2LogReader(evaluationLoggerDirectory);
+				logReader = new Level2LogReader(evaluationLoggerDirectory,
+						datagraph);
 			} else {
 				logReader = new Level2LogReader((Level2Logger) evaluationLogger);
 			}
