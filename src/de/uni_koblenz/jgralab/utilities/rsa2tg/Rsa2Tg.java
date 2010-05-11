@@ -945,7 +945,7 @@ public class Rsa2Tg extends XmlProcessor {
 			line = line.replaceAll("\\s+", " ").trim();
 			if (line.length() > 0) {
 				if (text.length() > 0) {
-					text.append("\\n");
+					text.append("\n");
 				}
 				text.append(line);
 			}
@@ -2309,6 +2309,7 @@ public class Rsa2Tg extends XmlProcessor {
 				e = n;
 			}
 			aec.delete();
+			idMap.put(currentClassId, graphClass);
 			currentClass = graphClass;
 
 		} else if (key.equals("record")) {
