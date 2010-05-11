@@ -25,9 +25,7 @@
 package de.uni_koblenz.jgralabtest.greql2;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 import org.junit.Before;
 
@@ -53,8 +51,6 @@ public class GenericTests {
 	 */
 	public static boolean DEBUG_SYNTAXGRAPHS = false;
 
-	protected Map<String, JValue> boundVariables;
-
 	Graph graph = null;
 	Graph cyclicGraph = null;
 	Graph tree = null;
@@ -75,11 +71,21 @@ public class GenericTests {
 				.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
 	}
 
+	private static GreqlEvaluator eval = new GreqlEvaluator((String) null,
+			null, null);
+
 	@Before
 	public void setUp() throws Exception {
-		boundVariables = new HashMap<String, JValue>();
-		boundVariables.put("nix", new JValueImpl(133));
-		boundVariables.put("FOO", new JValueImpl("Currywurst"));
+		eval.setVariable("nix", new JValueImpl(133));
+		eval.setVariable("FOO", new JValueImpl("Currywurst"));
+	}
+
+	protected void setBoundVariable(String varName, JValue val) {
+		eval.setVariable(varName, val);
+	}
+
+	protected JValue getBoundVariable(String varName) {
+		return eval.getVariable(varName);
 	}
 
 	protected Graph getTestGraph() throws Exception {
@@ -158,8 +164,8 @@ public class GenericTests {
 	protected JValue evalTestQuery(String functionName, String query,
 			Optimizer optimizer, Graph datagraph) throws Exception {
 		printTestFunctionHeader(functionName);
-		GreqlEvaluator eval = new GreqlEvaluator(query, datagraph,
-				boundVariables);
+		eval.setQuery(query);
+		eval.setDatagraph(datagraph);
 		eval.setUseSavedOptimizedSyntaxGraph(false);
 
 		if (optimizer != null) {

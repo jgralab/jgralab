@@ -110,7 +110,7 @@ public class FunctionTest extends GenericTests {
 	public void testContainsKey1() throws Exception {
 		JValueMap map = new JValueMap();
 		map.put(new JValueImpl(1), new JValueImpl("a string"));
-		boundVariables.put("emap", map);
+		setBoundVariable("emap", map);
 		String queryString = "using emap: containsKey(emap, 1)";
 		JValue result = evalTestQuery("ContainsKey1", queryString);
 		assertTrue(result.toBoolean());
@@ -120,7 +120,7 @@ public class FunctionTest extends GenericTests {
 	public void testContainsKey2() throws Exception {
 		JValueMap map = new JValueMap();
 		map.put(new JValueImpl(1), new JValueImpl("a string"));
-		boundVariables.put("emap", map);
+		setBoundVariable("emap", map);
 		String queryString = "using emap: containsKey(emap, 2)";
 		JValue result = evalTestQuery("ContainsKey2", queryString);
 		assertFalse(result.toBoolean());
@@ -130,7 +130,7 @@ public class FunctionTest extends GenericTests {
 	public void testContainsValue1() throws Exception {
 		JValueMap map = new JValueMap();
 		map.put(new JValueImpl(1), new JValueImpl("a string"));
-		boundVariables.put("emap", map);
+		setBoundVariable("emap", map);
 		String queryString = "using emap: containsValue(emap, \"a string\")";
 		JValue result = evalTestQuery("ContainsValue1", queryString);
 		assertTrue(result.toBoolean());
@@ -140,7 +140,7 @@ public class FunctionTest extends GenericTests {
 	public void testContainsValue2() throws Exception {
 		JValueMap map = new JValueMap();
 		map.put(new JValueImpl(1), new JValueImpl("a string"));
-		boundVariables.put("emap", map);
+		setBoundVariable("emap", map);
 		String queryString = "using emap: containsValue(emap, 1)";
 		JValue result = evalTestQuery("ContainsValue2", queryString);
 		assertFalse(result.toBoolean());
@@ -150,7 +150,7 @@ public class FunctionTest extends GenericTests {
 	public void testContainsValue3() throws Exception {
 		JValueMap map = new JValueMap();
 		map.put(new JValueImpl(1), new JValueImpl("a string"));
-		boundVariables.put("emap", map);
+		setBoundVariable("emap", map);
 		String queryString = "using emap: containsValue(emap, \"string\")";
 		JValue result = evalTestQuery("ContainsValue3", queryString);
 		assertFalse(result.toBoolean());
@@ -841,8 +841,8 @@ public class FunctionTest extends GenericTests {
 		map2.put(new JValueImpl(5), new JValueImpl("C"));
 		map2.put(new JValueImpl(6), new JValueImpl("D"));
 
-		boundVariables.put("map1", map1);
-		boundVariables.put("map2", map2);
+		setBoundVariable("map1", map1);
+		setBoundVariable("map2", map2);
 
 		String queryString = "using map1, map2: union(map1, map2, true)";
 		JValue result = evalTestQuery("Union2", queryString);
@@ -867,8 +867,8 @@ public class FunctionTest extends GenericTests {
 		map2.put(new JValueImpl(3), new JValueImpl("C"));
 		map2.put(new JValueImpl(4), new JValueImpl("D"));
 
-		boundVariables.put("map1", map1);
-		boundVariables.put("map2", map2);
+		setBoundVariable("map1", map1);
+		setBoundVariable("map2", map2);
 
 		String queryString = "using map1, map2: union(map1, map2)";
 		try {
@@ -907,7 +907,7 @@ public class FunctionTest extends GenericTests {
 		cset.add(set3);
 		cset.add(set4);
 
-		boundVariables.put("cset", cset);
+		setBoundVariable("cset", cset);
 
 		String queryString = "using cset: union(cset)";
 		JValue result = evalTestQuery("Union4", queryString);
@@ -929,7 +929,7 @@ public class FunctionTest extends GenericTests {
 		set1.add(new JValueImpl(1));
 		set1.add(new JValueImpl(2));
 		set1.add(new JValueImpl(3));
-		boundVariables.put("cset", set1);
+		setBoundVariable("cset", set1);
 		String queryString = "using cset: isEmpty(cset)";
 		JValue result = evalTestQuery("IsEmpty1", queryString);
 		assertEquals(false, result.toBoolean());
@@ -938,7 +938,7 @@ public class FunctionTest extends GenericTests {
 	@Test
 	public void testIsEmpty2() throws Exception {
 		JValueSet set1 = new JValueSet();
-		boundVariables.put("cset", set1);
+		setBoundVariable("cset", set1);
 		String queryString = "using cset: isEmpty(cset)";
 		JValue result = evalTestQuery("IsEmpty2", queryString);
 		assertEquals(true, result.toBoolean());
@@ -947,7 +947,7 @@ public class FunctionTest extends GenericTests {
 	@Test
 	public void testIsEmpty3() throws Exception {
 		JValueMap map1 = new JValueMap();
-		boundVariables.put("cset", map1);
+		setBoundVariable("cset", map1);
 		String queryString = "using cset: isEmpty(cset)";
 		JValue result = evalTestQuery("IsEmpty3", queryString);
 		assertEquals(true, result.toBoolean());

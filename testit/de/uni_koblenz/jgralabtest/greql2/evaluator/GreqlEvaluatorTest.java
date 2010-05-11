@@ -133,8 +133,8 @@ public class GreqlEvaluatorTest extends GenericTests {
 		Vertex last = graph.getLastVertex().getPrevVertex().getPrevVertex();
 		JValueImpl firstV = new JValueImpl(first);
 		JValueImpl lastV = new JValueImpl(last);
-		boundVariables.put("firstV", firstV);
-		boundVariables.put("lastV", lastV);
+		setBoundVariable("firstV", firstV);
+		setBoundVariable("lastV", lastV);
 		String queryString = "using firstV, lastV: vertices{Definition}(firstV, lastV)";
 		JValue result = evalTestQuery("vertices", queryString);
 		JValueSet set = result.toJValueSet();
@@ -264,7 +264,7 @@ public class GreqlEvaluatorTest extends GenericTests {
 	@Test
 	public void testEvaluateBagComprehension() throws Exception {
 		ArrayList<JValueImpl> list = new ArrayList<JValueImpl>();
-		boundVariables.put("FOO", createBagWithMeat(list));
+		setBoundVariable("FOO", createBagWithMeat(list));
 		String queryString = "using FOO: from i: toSet(FOO) report i end";
 		JValue result = evalTestQuery("BagComprehension", queryString);
 		assertEquals(8, result.toCollection().size());
@@ -283,7 +283,7 @@ public class GreqlEvaluatorTest extends GenericTests {
 	 */
 	@Test
 	public void testUsing() throws Exception {
-		boundVariables.put("FOO", new JValueImpl("A String"));
+		setBoundVariable("FOO", new JValueImpl("A String"));
 		String queryString = "using FOO: FOO";
 		JValue result = evalTestQuery("Using", queryString);
 		assertEquals("A String", result.toString());
@@ -299,7 +299,7 @@ public class GreqlEvaluatorTest extends GenericTests {
 	 */
 	@Test
 	public void testUsingWithFunction() throws Exception {
-		boundVariables.put("FOO", new JValueImpl("A String"));
+		setBoundVariable("FOO", new JValueImpl("A String"));
 		String queryString = "using FOO: concat(FOO, \" Another String\")";
 		JValue result = evalTestQuery("UsingWithFunction", queryString);
 		assertEquals("A String Another String", result.toString());
@@ -1054,7 +1054,7 @@ public class GreqlEvaluatorTest extends GenericTests {
 		set.add(new JValueImpl(false));
 		set.add(new JValueImpl(true));
 		set.add(new JValueImpl(false));
-		boundVariables.put("FOO", set);
+		setBoundVariable("FOO", set);
 		String queryString = "using FOO: forall s: FOO @ s = false";
 		JValue result = evalTestQuery("QuantifiedExpression1", queryString);
 		assertFalse(result.toBoolean());
@@ -1074,7 +1074,7 @@ public class GreqlEvaluatorTest extends GenericTests {
 		set.add(new JValueImpl(false));
 		set.add(new JValueImpl(true));
 		set.add(new JValueImpl(false));
-		boundVariables.put("FOO", set);
+		setBoundVariable("FOO", set);
 		String queryString = "using FOO: exists s: FOO @ s = false";
 		JValue result = evalTestQuery("QuantifiedExpression2", queryString);
 		assertTrue(result.toBoolean());
@@ -1094,7 +1094,7 @@ public class GreqlEvaluatorTest extends GenericTests {
 		set.add(new JValueImpl(false));
 		set.add(new JValueImpl(true));
 		set.add(new JValueImpl(false));
-		boundVariables.put("FOO", set);
+		setBoundVariable("FOO", set);
 		String queryString = "using FOO: exists s: FOO @ s = false";
 		JValue result = evalTestQuery("QuantifiedExpression3", queryString);
 		assertTrue(result.toBoolean());
@@ -1115,7 +1115,7 @@ public class GreqlEvaluatorTest extends GenericTests {
 				.put(new JValueImpl(1), new JValueImpl(JValueBoolean
 						.getNullValue()));
 		map.put(new JValueImpl(2), new JValueImpl(true));
-		boundVariables.put("FOO", map);
+		setBoundVariable("FOO", map);
 		String queryString = "using FOO: exists! s:list(1,2) @ get(FOO, s)";
 		JValue result = evalTestQuery("QuantifiedExpression5", queryString);
 		System.out.println("Result is: " + result);
@@ -1134,7 +1134,7 @@ public class GreqlEvaluatorTest extends GenericTests {
 		map
 				.put(new JValueImpl(2), new JValueImpl(JValueBoolean
 						.getNullValue()));
-		boundVariables.put("FOO", map);
+		setBoundVariable("FOO", map);
 		String queryString = "using FOO: exists! s:list(1,2) @ get(FOO, s)";
 		JValue result = evalTestQuery("QuantifiedExpression6", queryString);
 		assertNull(result.toBoolean());
@@ -1152,7 +1152,7 @@ public class GreqlEvaluatorTest extends GenericTests {
 		map
 				.put(new JValueImpl(2), new JValueImpl(JValueBoolean
 						.getNullValue()));
-		boundVariables.put("FOO", map);
+		setBoundVariable("FOO", map);
 		String queryString = "using FOO: exists s:list(1,2) @ get(FOO, s)";
 		JValue result = evalTestQuery("QuantifiedExpression7", queryString);
 		assertNull(result.toBoolean());
@@ -1170,7 +1170,7 @@ public class GreqlEvaluatorTest extends GenericTests {
 		map
 				.put(new JValueImpl(2), new JValueImpl(JValueBoolean
 						.getNullValue()));
-		boundVariables.put("FOO", map);
+		setBoundVariable("FOO", map);
 		String queryString = "using FOO: forall s:list(1,2) @ get(FOO, s)";
 		JValue result = evalTestQuery("QuantifiedExpression8", queryString);
 		assertNull(result.toBoolean());
@@ -1188,7 +1188,7 @@ public class GreqlEvaluatorTest extends GenericTests {
 		map
 				.put(new JValueImpl(2), new JValueImpl(JValueBoolean
 						.getNullValue()));
-		boundVariables.put("FOO", map);
+		setBoundVariable("FOO", map);
 		String queryString = "using FOO: forall s:list(1,2) @ get(FOO, s)";
 		JValue result = evalTestQuery("QuantifiedExpression9", queryString);
 		assertNull(result.toBoolean());
@@ -1209,7 +1209,7 @@ public class GreqlEvaluatorTest extends GenericTests {
 		set.add(new JValueImpl(1));
 		set.add(new JValueImpl(3));
 		set.add(new JValueImpl(4));
-		boundVariables.put("FOO", set);
+		setBoundVariable("FOO", set);
 		String queryString = "using FOO: exists! s: FOO @ s = 3";
 		JValue result = evalTestQuery("QuantifiedExpression4", queryString);
 		assertTrue(result.toBoolean());
@@ -1277,7 +1277,7 @@ public class GreqlEvaluatorTest extends GenericTests {
 	@Test
 	public void testEvaluateSetComprehension() throws Exception {
 		ArrayList<JValueImpl> list = new ArrayList<JValueImpl>();
-		boundVariables.put("FOO", createBagWithMeat(list));
+		setBoundVariable("FOO", createBagWithMeat(list));
 		String queryString = "using FOO: from i: toSet(FOO) reportSet i end";
 		JValue result = evalTestQuery("SetComprehension", queryString);
 		assertEquals(8, result.toCollection().size());
@@ -1559,7 +1559,7 @@ public class GreqlEvaluatorTest extends GenericTests {
 		bag.add(new JValueImpl(3));
 		bag.add(new JValueImpl(4));
 		bag.add(new JValueImpl(5));
-		boundVariables.put("FOO", bag);
+		setBoundVariable("FOO", bag);
 		String queryString = "using FOO: from i:FOO, j:FOO reportTable i,j,i*j end";
 		JValue result = evalTestQuery("VarTableComprehension1", queryString);
 		assertEquals(3, result.toCollection().size());
@@ -1577,7 +1577,7 @@ public class GreqlEvaluatorTest extends GenericTests {
 		bag.add(new JValueImpl(3));
 		bag.add(new JValueImpl(4));
 		bag.add(new JValueImpl(5));
-		boundVariables.put("FOO", bag);
+		setBoundVariable("FOO", bag);
 		String queryString = "using FOO: from i:FOO, j:FOO reportTable i,j,i*j,\"MultiplicationMatrix\" end";
 		JValue result = evalTestQuery("VarTableComprehension2", queryString);
 		assertEquals(3, result.toCollection().size());
@@ -1725,10 +1725,9 @@ public class GreqlEvaluatorTest extends GenericTests {
 	 */
 	@Test
 	public void testMultipleEvaluationStarts() throws Exception {
-		String queryString = "using FOO: from i: V{Identifier} report i.name end";
+		String queryString = "from i: V{Identifier} report i.name end";
 		Graph datagraph = getTestGraph();
-		GreqlEvaluator eval = new GreqlEvaluator(queryString, datagraph,
-				boundVariables);
+		GreqlEvaluator eval = new GreqlEvaluator(queryString, datagraph, null);
 		eval.startEvaluation();
 		eval.startEvaluation();
 		eval.startEvaluation();
@@ -1771,8 +1770,8 @@ public class GreqlEvaluatorTest extends GenericTests {
 	public void testStore() throws Exception {
 		String queryString = "from v: V{Variable} report v.name end store as VariableNames";
 		evalTestQuery("Store", queryString);
-		JValueBag storedBag = boundVariables.get("VariableNames")
-				.toCollection().toJValueBag();
+		JValueBag storedBag = getBoundVariable("VariableNames").toCollection()
+				.toJValueBag();
 		assertEquals(5, storedBag.size());
 		assertTrue(storedBag.contains(new JValueImpl("a")));
 		assertTrue(storedBag.contains(new JValueImpl("b")));
