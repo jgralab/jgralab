@@ -61,8 +61,8 @@ public class ProgressTest extends GenericTests {
 		String queryString = "bag(tup(\"Nodes:\", count(from  v:V{} report v end)), tup(\"Edges:\", count(from  e:E{} report e end)))";
 		Graph datagraph = getTestGraph();
 
-		GreqlEvaluator eval = new GreqlEvaluator(queryString, datagraph,
-				boundVariables, new ProgressFunctionImpl());
+		GreqlEvaluator eval = new GreqlEvaluator(queryString, datagraph, null,
+				new ProgressFunctionImpl());
 		eval.startEvaluation();
 		System.out.println("Result of the evaluation was: "
 				+ eval.getEvaluationResult().toString());

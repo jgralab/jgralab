@@ -63,8 +63,7 @@ public class SpeedTest extends GenericTests {
 		Graph datagraph = getTestGraph();
 
 		System.out.println("Creating evaluator");
-		GreqlEvaluator eval = new GreqlEvaluator(queryString, datagraph,
-				boundVariables);
+		GreqlEvaluator eval = new GreqlEvaluator(queryString, datagraph, null);
 		System.out.println("Starting evaluation");
 		eval.startEvaluation();
 

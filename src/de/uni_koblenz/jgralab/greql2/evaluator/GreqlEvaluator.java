@@ -61,6 +61,7 @@ import de.uni_koblenz.jgralab.greql2.exception.CostModelException;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.Optimizer;
@@ -584,6 +585,13 @@ public class GreqlEvaluator {
 		return variableMap;
 	}
 
+	public JValue getVariable(String name) {
+		if ((variableMap != null) && variableMap.containsKey(name)) {
+			return variableMap.get(name);
+		}
+		return new JValueImpl();
+	}
+
 	public void setVariables(Map<String, JValue> varMap) {
 		variableMap = varMap;
 	}
@@ -770,11 +778,6 @@ public class GreqlEvaluator {
 	public GreqlEvaluator(File queryFile, Graph datagraph,
 			Map<String, JValue> variables, ProgressFunction progressFunction)
 			throws FileNotFoundException, IOException {
-		if (datagraph == null) {
-			this.datagraph = createMinimalGraph();
-		} else {
-			this.datagraph = datagraph;
-		}
 
 		// Read query from file (afuhr)
 		this.setQueryFile(queryFile);
@@ -953,6 +956,10 @@ public class GreqlEvaluator {
 		started = true;
 
 		long startTime = System.currentTimeMillis();
+
+		if (datagraph == null) {
+			this.datagraph = createMinimalGraph();
+		}
 
 		if (log) {
 			createEvaluationLogger();
