@@ -384,6 +384,8 @@ public class TgSchema2XMI {
 	}
 
 	/**
+	 * Creates the default values.
+	 * 
 	 * @param writer
 	 * @param attribute
 	 * @param id
