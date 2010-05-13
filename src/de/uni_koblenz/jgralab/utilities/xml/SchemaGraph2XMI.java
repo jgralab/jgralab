@@ -22,6 +22,7 @@ import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.grumlschema.SchemaGraph;
 import de.uni_koblenz.jgralab.grumlschema.domains.BooleanDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.Domain;
+import de.uni_koblenz.jgralab.grumlschema.domains.DoubleDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.IntegerDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.LongDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.StringDomain;
@@ -36,17 +37,7 @@ import de.uni_koblenz.jgralab.grumlschema.structure.HasConstraint;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.utilities.tg2schemagraph.Schema2SchemaGraph;
 
-public class TgSchema2XMI {
-
-	// namespaces
-	private final String XMI_NAMESPACE = "http://schema.omg.org/spec/XMI/2.1";
-	private final String XSI_NAMESPACE = "http://www.w3.org/2001/XMLSchema-instance";
-	private final String EECORE_NAMESPACE = "http://www.eclipse.org/uml2/schemas/Ecore/5";
-	private final String ECORE_NAMESPACE = "http://www.eclipse.org/emf/2002/Ecore";
-	private final String UML_NAMESPACE = "http://schema.omg.org/spec/UML/2.1.1";
-
-	// commen attributes
-	private final String SCHEMALOCATION = "http://www.eclipse.org/uml2/schemas/Ecore/5 pathmap://UML_PROFILES/Ecore.profile.uml#_z1OFcHjqEdy8S4Cr8Rc_NA http://schema.omg.org/spec/UML/2.1.1 http://www.eclipse.org/uml2/2.1.0/UML";
+public class SchemaGraph2XMI {
 
 	private final ArrayList<Domain> typesToBeDeclaredAtTheEnd = new ArrayList<Domain>();
 
@@ -79,7 +70,7 @@ public class TgSchema2XMI {
 	public static CommandLine processCommandLineOptions(String[] args) {
 
 		// Creates a OptionHandler.
-		String toolString = "java " + TgSchema2XMI.class.getName();
+		String toolString = "java " + SchemaGraph2XMI.class.getName();
 		String versionString = JGraLab.getInfo(false);
 
 		OptionHandler oh = new OptionHandler(toolString, versionString);
@@ -117,17 +108,17 @@ public class TgSchema2XMI {
 		return oh.parse(args);
 	}
 
-	public TgSchema2XMI(String xmiName, String schemaName)
+	public SchemaGraph2XMI(String schemaName, String xmiName)
 			throws GraphIOException {
-		new TgSchema2XMI(xmiName, GraphIO.loadSchemaFromFile(schemaName));
+		new SchemaGraph2XMI(GraphIO.loadSchemaFromFile(schemaName), xmiName);
 	}
 
-	public TgSchema2XMI(String xmiName, Schema schema) {
-		new TgSchema2XMI(xmiName, new Schema2SchemaGraph()
-				.convert2SchemaGraph(schema));
+	public SchemaGraph2XMI(Schema schema, String xmiName) {
+		new SchemaGraph2XMI(new Schema2SchemaGraph()
+				.convert2SchemaGraph(schema), xmiName);
 	}
 
-	public TgSchema2XMI(String xmiName, SchemaGraph schemaGraph) {
+	public SchemaGraph2XMI(SchemaGraph schemaGraph, String xmiName) {
 		try {
 			createXMI(xmiName, schemaGraph);
 		} catch (XMLStreamException e) {
@@ -152,7 +143,7 @@ public class TgSchema2XMI {
 		XMLStreamWriter writer = factory.createXMLStreamWriter(out);
 
 		// write the first line
-		writer.writeStartDocument("UTF-8", "1.0");
+		writer.writeStartDocument(XMIConstants.XML_ENCODING, XMIConstants.XML_VERSION);
 		createRootElement(writer, schemaGraph);
 		// write the end of the document
 		writer.writeEndDocument();
@@ -173,14 +164,18 @@ public class TgSchema2XMI {
 	private void createRootElement(XMLStreamWriter writer,
 			SchemaGraph schemaGraph) throws XMLStreamException {
 		// start root element
-		writer.writeStartElement("xmi", "XMI", XMI_NAMESPACE);
-		writer.writeAttribute(XMI_NAMESPACE, "version", "2.1");
-		writer.setPrefix("xsi", XSI_NAMESPACE);
-		writer.setPrefix("Ecore", EECORE_NAMESPACE);
-		writer.setPrefix("ecore", ECORE_NAMESPACE);
-		writer.setPrefix("uml", UML_NAMESPACE);
-		writer.setPrefix("ecore", ECORE_NAMESPACE);
-		writer.writeAttribute(XSI_NAMESPACE, "schemaLocation", SCHEMALOCATION);
+		writer.writeStartElement(XMIConstants.NAMESPACE_PREFIX_XMI,
+				XMIConstants.XMI_TAG_XMI, XMIConstants.NAMESPACE_XMI);
+		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
+				XMIConstants.XMI_ATTRIBUTE_VERSION, XMIConstants.XMI_ATTRIBUTE_VERSION_VALUE);
+		writer.setPrefix(XMIConstants.NAMESPACE_PREFIX_XSI, XMIConstants.NAMESPACE_XSI);
+		writer
+				.setPrefix(XMIConstants.NAMESPACE_PREFIX_EECORE,
+						XMIConstants.NAMESPACE_EECORE);
+		writer.setPrefix(XMIConstants.NAMESPACE_PREFIX_ECORE, XMIConstants.NAMESPACE_ECORE);
+		writer.setPrefix(XMIConstants.NAMESPACE_PREFIX_UML, XMIConstants.NAMESPACE_UML);
+		writer.writeAttribute(XMIConstants.NAMESPACE_XSI,
+				XMIConstants.XSI_ATTRIBUTE_SCHEMALOCATION, XMIConstants.SCHEMALOCATION);
 
 		// create model element
 		createModelElement(writer, schemaGraph);
@@ -201,10 +196,10 @@ public class TgSchema2XMI {
 				.getFirstSchema();
 
 		// start model
-		writer.writeStartElement(UML_NAMESPACE, "Model");
-		writer.writeAttribute(XMI_NAMESPACE, "id", schema.get_packagePrefix()
-				+ "." + schema.get_name());
-		writer.writeAttribute("name", schema.get_packagePrefix() + "."
+		writer.writeStartElement(XMIConstants.NAMESPACE_UML, XMIConstants.UML_TAG_MODEL);
+		writer.writeAttribute(XMIConstants.NAMESPACE_XMI, XMIConstants.XMI_ATTRIBUTE_ID,
+				schema.get_packagePrefix() + "." + schema.get_name());
+		writer.writeAttribute(XMIConstants.ATTRIBUTE_NAME, schema.get_packagePrefix() + "."
 				+ schema.get_name());
 
 		// convert graph class
@@ -223,20 +218,20 @@ public class TgSchema2XMI {
 	private void createProfileApplication(XMLStreamWriter writer)
 			throws XMLStreamException {
 		// start profileApplication
-		writer.writeStartElement("profileApplication");
-		writer.writeAttribute(XMI_NAMESPACE, "type", "uml:ProfileApplication");
-		writer.writeAttribute(XMI_NAMESPACE, "id", "profileApplication"
-				+ System.currentTimeMillis());
+		writer.writeStartElement(XMIConstants.TAG_PROFILEAPPLICATION);
+		writer.writeAttribute(XMIConstants.NAMESPACE_XMI, XMIConstants.XMI_ATTRIBUTE_TYPE,
+				XMIConstants.PROFILEAPPLICATION_TYPE_VALUE);
+		writer.writeAttribute(XMIConstants.NAMESPACE_XMI, XMIConstants.XMI_ATTRIBUTE_ID,
+				XMIConstants.TAG_PROFILEAPPLICATION + System.currentTimeMillis());
 
 		// create content
 		createExtension(writer, null);
 
 		// create appliedProfile
-		writer.writeEmptyElement("appliedProfile");
-		writer.writeAttribute(XMI_NAMESPACE, "type", "uml:Profile");
-		writer
-				.writeAttribute("href",
-						"http://schema.omg.org/spec/UML/2.1.1/StandardProfileL2.xmi#_0");
+		writer.writeEmptyElement(XMIConstants.TAG_APPLIEDPROFILE);
+		writer.writeAttribute(XMIConstants.NAMESPACE_XMI, XMIConstants.XMI_ATTRIBUTE_TYPE,
+				XMIConstants.APPLIEDPROFILE_TYPE_VALUE);
+		writer.writeAttribute(XMIConstants.ATTRIBUTE_HREF, XMIConstants.APPLIEDPROFILE_HREF_VALUE);
 
 		// end profileApplication
 		writer.writeEndElement();
@@ -244,18 +239,21 @@ public class TgSchema2XMI {
 
 	private void createTypes(XMLStreamWriter writer) throws XMLStreamException {
 		// start packagedElement
-		writer.writeStartElement("packagedElement");
-		writer.writeAttribute(XMI_NAMESPACE, "type", "uml:Package");
-		writer.writeAttribute(XMI_NAMESPACE, "id", "PrimitiveTypes");
-		writer.writeAttribute("name", "PrimitiveTypes");
+		writer.writeStartElement(XMIConstants.TAG_PACKAGEDELEMENT);
+		writer.writeAttribute(XMIConstants.NAMESPACE_XMI, XMIConstants.XMI_ATTRIBUTE_TYPE,
+				XMIConstants.PACKEGEDELEMENT_TYPE_VALUE_PACKAGE);
+		writer.writeAttribute(XMIConstants.NAMESPACE_XMI, XMIConstants.XMI_ATTRIBUTE_ID,
+				XMIConstants.PACKAGE_PRIMITIVETYPES_NAME);
+		writer.writeAttribute(XMIConstants.ATTRIBUTE_NAME, XMIConstants.PACKAGE_PRIMITIVETYPES_NAME);
 
 		// create entries for domains, which are not defined
 		for (Domain domain : typesToBeDeclaredAtTheEnd) {
-			writer.writeEmptyElement("packagedElement");
-			writer.writeAttribute(XMI_NAMESPACE, "type", "uml:PrimitiveType");
-			writer.writeAttribute(XMI_NAMESPACE, "id", domain
-					.get_qualifiedName());
-			writer.writeAttribute("name", domain.get_qualifiedName());
+			writer.writeEmptyElement(XMIConstants.TAG_PACKAGEDELEMENT);
+			writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
+					XMIConstants.XMI_ATTRIBUTE_TYPE, XMIConstants.TYPE_VALUE_PRIMITIVETYPE);
+			writer.writeAttribute(XMIConstants.NAMESPACE_XMI, XMIConstants.XMI_ATTRIBUTE_ID,
+					domain.get_qualifiedName());
+			writer.writeAttribute(XMIConstants.ATTRIBUTE_NAME, domain.get_qualifiedName());
 		}
 
 		// end packagedElement
@@ -270,10 +268,12 @@ public class TgSchema2XMI {
 	private void createClass(XMLStreamWriter writer,
 			AttributedElementClass aeclass) throws XMLStreamException {
 		// start packagedElement
-		writer.writeStartElement("packagedElement");
-		writer.writeAttribute(XMI_NAMESPACE, "type", "uml:Class");
-		writer.writeAttribute(XMI_NAMESPACE, "id", aeclass.get_qualifiedName());
-		writer.writeAttribute("name", aeclass.get_qualifiedName());
+		writer.writeStartElement(XMIConstants.TAG_PACKAGEDELEMENT);
+		writer.writeAttribute(XMIConstants.NAMESPACE_XMI, XMIConstants.XMI_ATTRIBUTE_TYPE,
+				XMIConstants.PACKAGEDELEMENT_TYPE_VALUE_CLASS);
+		writer.writeAttribute(XMIConstants.NAMESPACE_XMI, XMIConstants.XMI_ATTRIBUTE_ID,
+				aeclass.get_qualifiedName());
+		writer.writeAttribute(XMIConstants.ATTRIBUTE_NAME, aeclass.get_qualifiedName());
 
 		// create <<graphclass>> for graph classes
 		if (aeclass instanceof GraphClass) {
@@ -285,14 +285,15 @@ public class TgSchema2XMI {
 		for (Annotates annotates : aeclass.getAnnotatesIncidences()) {
 			createComment(writer, (Comment) annotates.getThat(), aeclass
 					.get_qualifiedName()
-					+ "_Comment" + uniqueNumber++, aeclass.get_qualifiedName());
+					+ "_" + XMIConstants.TAG_OWNEDCOMMENT + uniqueNumber++, aeclass
+					.get_qualifiedName());
 		}
 
 		// create constraints
 		uniqueNumber = 0;
 		for (HasConstraint hasConstraint : aeclass.getHasConstraintIncidences()) {
 			createConstraint(writer, (Constraint) hasConstraint.getThat(),
-					aeclass.get_qualifiedName() + "_Constraint"
+					aeclass.get_qualifiedName() + "_" + XMIConstants.TAG_OWNEDRULE
 							+ uniqueNumber++, aeclass.get_qualifiedName());
 		}
 
@@ -317,36 +318,35 @@ public class TgSchema2XMI {
 	private void createExtension(XMLStreamWriter writer,
 			AttributedElementClass aeclass) throws XMLStreamException {
 		// start Extension
-		writer.writeStartElement(XMI_NAMESPACE, "Extension");
-		writer.writeAttribute("extender", ECORE_NAMESPACE);
+		writer.writeStartElement(XMIConstants.NAMESPACE_XMI, XMIConstants.XMI_TAG_EXTENSION);
+		writer.writeAttribute(XMIConstants.ATTRIBUTE_EXTENDER, XMIConstants.NAMESPACE_ECORE);
 
 		// start eAnnotations
-		writer.writeStartElement("eAnnotations");
-		writer.writeAttribute(XMI_NAMESPACE, "type", "ecore:EAnnotation");
-		writer.writeAttribute(XMI_NAMESPACE, "id", aeclass != null ? aeclass
-				.get_qualifiedName()
-				+ "_EAnnotation" : "EAnnotation" + System.currentTimeMillis());
-		writer
-				.writeAttribute("source",
-						"http://www.eclipse.org/uml2/2.0.0/UML");
+		writer.writeStartElement(XMIConstants.TAG_EANNOTATIONS);
+		writer.writeAttribute(XMIConstants.NAMESPACE_XMI, XMIConstants.XMI_ATTRIBUTE_TYPE,
+				XMIConstants.EANNOTATIONS_TYPE_VALUE);
+		writer.writeAttribute(XMIConstants.NAMESPACE_XMI, XMIConstants.XMI_ATTRIBUTE_ID,
+				aeclass != null ? aeclass.get_qualifiedName() + "_"
+						+ XMIConstants.TAG_EANNOTATIONS : XMIConstants.TAG_EANNOTATIONS
+						+ System.currentTimeMillis());
+		writer.writeAttribute(XMIConstants.EANNOTATIONS_ATTRIBUTE_SOURCE,
+				XMIConstants.EANNOTATIONS_ATTRIBUTE_SOURCE_VALUE);
 
 		if (aeclass != null) {
 			// write details
-			writer.writeEmptyElement("details");
-			writer.writeAttribute(XMI_NAMESPACE, "type",
-					"ecore:EStringToStringMapEntry");
-			writer.writeAttribute(XMI_NAMESPACE, "id", aeclass
-					.get_qualifiedName()
-					+ "_details");
-			writer.writeAttribute("key", "graphclass");
+			writer.writeEmptyElement(XMIConstants.TAG_DETAILS);
+			writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
+					XMIConstants.XMI_ATTRIBUTE_TYPE, XMIConstants.DETAILS_ATTRIBUTE_TYPE_VALUE);
+			writer.writeAttribute(XMIConstants.NAMESPACE_XMI, XMIConstants.XMI_ATTRIBUTE_ID,
+					aeclass.get_qualifiedName() + "_" + XMIConstants.TAG_DETAILS);
+			writer.writeAttribute(XMIConstants.DETAILS_ATTRIBUTE_KEY,
+					XMIConstants.DETAILS_ATTRIBUTE_KEY_VALUE);
 		} else {
 			// write references
-			writer.writeEmptyElement("references");
-			writer.writeAttribute(XMI_NAMESPACE, "type", "ecore:EPackage");
-			writer
-					.writeAttribute(
-							"href",
-							"http://schema.omg.org/spec/UML/2.1.1/StandardProfileL2.xmi#_yzU58YinEdqtvbnfB2L_5w");
+			writer.writeEmptyElement(XMIConstants.TAG_REFERENCES);
+			writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
+					XMIConstants.XMI_ATTRIBUTE_TYPE, XMIConstants.REFERENCES_TYPE_VALUE);
+			writer.writeAttribute(XMIConstants.ATTRIBUTE_HREF, XMIConstants.REFERENCES_HREF_VALUE);
 		}
 
 		// close eAnnotations
@@ -361,11 +361,17 @@ public class TgSchema2XMI {
 		Domain domain = (Domain) attribute.getFirstHasDomain().getThat();
 
 		// start ownedAttribute
-		writer.writeStartElement("ownedAttribute");
-		writer.writeAttribute(XMI_NAMESPACE, "type", "uml:Property");
-		writer.writeAttribute(XMI_NAMESPACE, "id", id);
-		writer.writeAttribute("name", attribute.get_name());
-		writer.writeAttribute("visibility", "private");
+		writer.writeStartElement(XMIConstants.TAG_OWNEDATTRIBUTE);
+		writer.writeAttribute(XMIConstants.NAMESPACE_XMI, XMIConstants.XMI_ATTRIBUTE_TYPE,
+				XMIConstants.OWNEDATTRIBUTE_TYPE_VALUE);
+		writer.writeAttribute(XMIConstants.NAMESPACE_XMI, XMIConstants.XMI_ATTRIBUTE_ID, id);
+		writer.writeAttribute(XMIConstants.ATTRIBUTE_NAME, attribute.get_name());
+		writer.writeAttribute(XMIConstants.OWNEDATTRIBUTE_ATTRIBUTE_VISIBILITY,
+				XMIConstants.OWNEDATTRIBUTE_VISIBILITY_VALUE_PRIVATE);
+		if (domain instanceof DoubleDomain || domain instanceof LongDomain) {
+			writer.writeAttribute(XMIConstants.XMI_ATTRIBUTE_TYPE, domain
+					.get_qualifiedName());
+		}
 
 		// create type
 		if (domain instanceof BooleanDomain || domain instanceof IntegerDomain
@@ -397,24 +403,32 @@ public class TgSchema2XMI {
 			throws XMLStreamException {
 		// start defaultValue
 		if (domain instanceof LongDomain) {
-			writer.writeEmptyElement("defaultValue");
+			writer.writeEmptyElement(XMIConstants.TAG_DEFAULTVALUE);
 		} else {
-			writer.writeStartElement("defaultValue");
+			writer.writeStartElement(XMIConstants.TAG_DEFAULTVALUE);
 		}
 		if (domain instanceof BooleanDomain) {
-			writer.writeAttribute(XMI_NAMESPACE, "type", "uml:LiteralBoolean");
+			writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
+					XMIConstants.XMI_ATTRIBUTE_TYPE, XMIConstants.TYPE_VALUE_LITERALBOOLEAN);
 		} else if (domain instanceof IntegerDomain
 				|| domain instanceof LongDomain) {
-			writer.writeAttribute(XMI_NAMESPACE, "type", "uml:LiteralInteger");
+			writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
+					XMIConstants.XMI_ATTRIBUTE_TYPE, XMIConstants.TYPE_VALUE_LITERALINTEGER);
 		} else {
-			writer
-					.writeAttribute(XMI_NAMESPACE, "type",
-							"uml:OpaqueExpression");
+			writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
+					XMIConstants.XMI_ATTRIBUTE_TYPE, XMIConstants.TYPE_VALUE_OPAQUEEXPRESSION);
 		}
-		writer.writeAttribute(XMI_NAMESPACE, "id", id + "_defaultValue");
+		writer.writeAttribute(XMIConstants.NAMESPACE_XMI, XMIConstants.XMI_ATTRIBUTE_ID, id
+				+ "_defaultValue");
 		if (domain instanceof BooleanDomain || domain instanceof IntegerDomain
 				|| domain instanceof LongDomain) {
-			writer.writeAttribute("value", attribute.get_defaultValue());
+			if (domain instanceof BooleanDomain) {
+				writer.writeAttribute(XMIConstants.DEFAULTVALUE_ATTRIBUTE_VALUE, attribute
+						.get_defaultValue().equals("t") ? "true" : "false");
+			} else {
+				writer.writeAttribute(XMIConstants.DEFAULTVALUE_ATTRIBUTE_VALUE, attribute
+						.get_defaultValue());
+			}
 
 			// create type
 			if (domain instanceof BooleanDomain
@@ -433,12 +447,13 @@ public class TgSchema2XMI {
 				// there must be created an entry for the current domain in
 				// the package primitiveTypes
 				typesToBeDeclaredAtTheEnd.add(domain);
-				writer.writeAttribute("type", domain.get_qualifiedName());
+				writer.writeAttribute(XMIConstants.XMI_ATTRIBUTE_TYPE, domain
+						.get_qualifiedName());
 			}
 			// TODO current Element
 
 			// start body
-			writer.writeStartElement("body");
+			writer.writeStartElement(XMIConstants.TAG_BODY);
 			writer.writeCharacters(attribute.get_defaultValue());
 			// end body
 			writer.writeEndElement();
@@ -458,19 +473,19 @@ public class TgSchema2XMI {
 	private void createType(XMLStreamWriter writer, Domain domain)
 			throws XMLStreamException {
 		// create type
-		writer.writeEmptyElement("type");
+		writer.writeEmptyElement(XMIConstants.TAG_TYPE);
 		if (domain instanceof BooleanDomain) {
-			writer.writeAttribute(XMI_NAMESPACE, "type", "uml:PrimitiveType");
-			writer.writeAttribute("href",
-					"http://schema.omg.org/spec/UML/2.1.1/uml.xml#Boolean");
+			writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
+					XMIConstants.XMI_ATTRIBUTE_TYPE, XMIConstants.TYPE_VALUE_PRIMITIVETYPE);
+			writer.writeAttribute(XMIConstants.ATTRIBUTE_HREF, XMIConstants.TYPE_HREF_VALUE_BOOLEAN);
 		} else if (domain instanceof IntegerDomain) {
-			writer.writeAttribute(XMI_NAMESPACE, "type", "uml:PrimitiveType");
-			writer.writeAttribute("href",
-					"http://schema.omg.org/spec/UML/2.1.1/uml.xml#Integer");
+			writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
+					XMIConstants.XMI_ATTRIBUTE_TYPE, XMIConstants.TYPE_VALUE_PRIMITIVETYPE);
+			writer.writeAttribute(XMIConstants.ATTRIBUTE_HREF, XMIConstants.TYPE_HREF_VALUE_INTEGER);
 		} else if (domain instanceof StringDomain) {
-			writer.writeAttribute(XMI_NAMESPACE, "type", "uml:PrimitiveType");
-			writer.writeAttribute("href",
-					"http://schema.omg.org/spec/UML/2.1.1/uml.xml#String");
+			writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
+					XMIConstants.XMI_ATTRIBUTE_TYPE, XMIConstants.TYPE_VALUE_PRIMITIVETYPE);
+			writer.writeAttribute(XMIConstants.ATTRIBUTE_HREF, XMIConstants.TYPE_HREF_VALUE_STRING);
 		}
 	}
 
@@ -478,29 +493,32 @@ public class TgSchema2XMI {
 			Constraint constraint, String id, String constrainedElement)
 			throws XMLStreamException {
 		// start ownedRule
-		writer.writeStartElement("ownedRule");
-		writer.writeAttribute(XMI_NAMESPACE, "type", "uml:Constraint");
-		writer.writeAttribute(XMI_NAMESPACE, "id", id);
-		writer.writeAttribute("constainedElement", constrainedElement);
+		writer.writeStartElement(XMIConstants.TAG_OWNEDRULE);
+		writer.writeAttribute(XMIConstants.NAMESPACE_XMI, XMIConstants.XMI_ATTRIBUTE_TYPE,
+				XMIConstants.OWNEDRULE_TYPE_VALUE);
+		writer.writeAttribute(XMIConstants.NAMESPACE_XMI, XMIConstants.XMI_ATTRIBUTE_ID, id);
+		writer.writeAttribute(XMIConstants.OWNEDRULE_ATTRIBUTE_CONSTRAINEDELEMENT,
+				constrainedElement);
 
 		// start specification
-		writer.writeStartElement("specification");
-		writer.writeAttribute(XMI_NAMESPACE, "type", "uml:OpaqueExpression");
-		writer.writeAttribute(XMI_NAMESPACE, "id", id + "_specification");
+		writer.writeStartElement(XMIConstants.TAG_SPECIFICATION);
+		writer.writeAttribute(XMIConstants.NAMESPACE_XMI, XMIConstants.XMI_ATTRIBUTE_TYPE,
+				XMIConstants.TYPE_VALUE_OPAQUEEXPRESSION);
+		writer.writeAttribute(XMIConstants.NAMESPACE_XMI, XMIConstants.XMI_ATTRIBUTE_ID, id
+				+ "_" + XMIConstants.TAG_SPECIFICATION);
 
 		// start and end language
-		writer.writeStartElement("language");
+		writer.writeStartElement(XMIConstants.TAG_LANGUAGE);
 		writer.writeEndElement();
 
 		// start body
-		writer.writeStartElement("body");
-		writer.writeCharacters(constraint.get_message() + " "
-				+ constraint.get_predicateQuery() + " "
-				+ constraint.get_offendingElementsQuery());
-		// TODO check if quoted and seperation is correct
+		writer.writeStartElement(XMIConstants.TAG_BODY);
+		writer.writeCharacters("\"" + constraint.get_message() + "\" \""
+				+ constraint.get_predicateQuery() + "\" \""
+				+ constraint.get_offendingElementsQuery() + "\"");
 
 		// end body
-		writer.writeEndDocument();
+		writer.writeEndElement();
 
 		// end specification
 		writer.writeEndElement();
@@ -519,18 +537,20 @@ public class TgSchema2XMI {
 	private void createComment(XMLStreamWriter writer, Comment comment,
 			String id, String annotatedElement) throws XMLStreamException {
 		// start ownedComment
-		writer.writeStartElement("ownedComment");
-		writer.writeAttribute(XMI_NAMESPACE, "type", "uml:Comment");
-		writer.writeAttribute(XMI_NAMESPACE, "id", id);
-		writer.writeAttribute("annotatedElement", annotatedElement);
+		writer.writeStartElement(XMIConstants.TAG_OWNEDCOMMENT);
+		writer.writeAttribute(XMIConstants.NAMESPACE_XMI, XMIConstants.XMI_ATTRIBUTE_TYPE,
+				XMIConstants.OWNEDCOMMENT_TYPE_VALUE);
+		writer.writeAttribute(XMIConstants.NAMESPACE_XMI, XMIConstants.XMI_ATTRIBUTE_ID, id);
+		writer.writeAttribute(XMIConstants.OWNEDCOMMENT_ATTRIBUTE_ANNOTATEDELEMENT,
+				annotatedElement);
 
 		// start body
-		writer.writeStartElement("body");
+		writer.writeStartElement(XMIConstants.TAG_BODY);
 
 		// write content
-		writer.writeCharacters("<p>\r\n\t"
+		writer.writeCharacters(XMIConstants.COMMENT_START
 				+ comment.get_text().replaceAll(Pattern.quote("\n"),
-						"\r\n&</p>\r\n<p>\r\n\t") + "\r\n</p>");
+						XMIConstants.COMMENT_NEWLINE) + XMIConstants.COMMENT_END);
 
 		// end body
 		writer.writeEndElement();
