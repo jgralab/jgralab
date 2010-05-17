@@ -96,8 +96,7 @@ public class GreqlServer extends Thread {
 					evalQuery(line.substring(2));
 				} else if (line.startsWith("d:")) {
 					String queryFile = line.substring(2);
-					saveAsDot(evalQuery(queryFile), queryFile.replaceAll(
-							"\\.tg$", ".dot"));
+					saveAsDot(evalQuery(queryFile), queryFile + ".dot");
 				} else {
 					println("Don't understand line '" + line + "'.",
 							PrintTarget.BOTH, true);
@@ -219,8 +218,6 @@ public class GreqlServer extends Thread {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		// TODO Auto-generated method stub
-
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			@Override
 			public void run() {
