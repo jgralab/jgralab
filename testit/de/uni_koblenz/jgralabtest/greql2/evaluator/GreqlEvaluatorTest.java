@@ -30,6 +30,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -1972,5 +1973,64 @@ public class GreqlEvaluatorTest extends GenericTests {
 				+ "     reportSet a, b end";
 		assertEquals(evalTestQuery("VariableOrder2", query), evalTestQuery(
 				"VariableOrder2", query2));
+	}
+
+	/**
+	 * Checks if query parsing and optimization is skipped, when executing a
+	 * query multiple times with optimization turned on.
+	 * 
+	 * Also checks that parsing is done every time when optimization is off. In
+	 * that case, caches should be disabled.
+	 */
+	@Test
+	public void testParsingAndOptimizationSkipping() throws Exception {
+		String query1 = "from x, y, z : list(1..30)     "
+				+ "     with isPrime(x) and isPrime(z)"
+				+ "     reportSet from a, b : list(x..z)             "
+				+ "               with a + b = y                     "
+				+ "                    and isPrime(y)                "
+				+ "               report a, b, y, b end              "
+				+ "     end                                          ";
+		String query2 = "from a : list(1..10),                     "
+				+ "          b : list(1..20)                      "
+				+ "     with isPrime(a + 1) and isPrime(b)        "
+				+ "          and (exists! x : list(1..30), y : list(10..20), x+a<y+b @ isPrime(x+y)) "
+				+ "     reportSet a, b end";
+		GreqlEvaluator eval = new GreqlEvaluator((String) null, getTestGraph(),
+				null);
+
+		Field parseTime = eval.getClass().getDeclaredField("parseTime");
+		parseTime.setAccessible(true);
+		Field optimizationTime = eval.getClass().getDeclaredField(
+				"optimizationTime");
+		optimizationTime.setAccessible(true);
+
+		for (int i = 0; i < 6; i++) {
+			eval.setQuery((i % 2 == 0) ? query1 : query2);
+			eval.startEvaluation();
+			eval.getEvaluationResult();
+			// eval.printEvaluationTimes();
+			if (i < 2) {
+				// The first two times, both parsing and optimizing have to be
+				// done!
+				assertTrue(parseTime.getLong(eval) > 0);
+				assertTrue(optimizationTime.getLong(eval) > 0);
+			} else {
+				// From that on, there should be no parsing and optimizing
+				// anymore, cause the optimized graph is cached.
+				assertEquals(0, parseTime.getLong(eval));
+				assertEquals(0, optimizationTime.getLong(eval));
+			}
+		}
+
+		eval.setOptimize(false);
+		for (int i = 0; i < 6; i++) {
+			eval.setQuery((i % 2 == 0) ? query1 : query2);
+			eval.startEvaluation();
+			eval.getEvaluationResult();
+			// eval.printEvaluationTimes();
+			assertTrue(parseTime.getLong(eval) > 0);
+			assertEquals(0, optimizationTime.getLong(eval));
+		}
 	}
 }

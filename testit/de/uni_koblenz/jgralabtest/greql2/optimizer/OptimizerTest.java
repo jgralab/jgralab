@@ -584,4 +584,5 @@ public class OptimizerTest extends GenericTests {
 				+ "     end          ";
 		execTimedTest(query, "MergeSimpleDeclarationOptimizer4()", csoAndMsdo);
 	}
+
 }
