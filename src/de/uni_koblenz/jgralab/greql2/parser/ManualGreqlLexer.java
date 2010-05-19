@@ -53,6 +53,7 @@ public class ManualGreqlLexer {
 		fixedTokens.put(TokenTypes.WITH, "with");
 		fixedTokens.put(TokenTypes.QUESTION, "?");
 		fixedTokens.put(TokenTypes.EXCL, "!");
+		fixedTokens.put(TokenTypes.COND, "cond");
 		fixedTokens.put(TokenTypes.COLON, ":");
 		fixedTokens.put(TokenTypes.COMMA, ",");
 		fixedTokens.put(TokenTypes.DOT, ".");
@@ -320,7 +321,7 @@ public class ManualGreqlLexer {
 					position++;
 				}
 			}
-			//skip multiline comments 
+			//skip multiline comments
 			if ((position < query.length() - 4)
 					&& (query.substring(position, position + 2).equals("/*"))) {
 				position++;
@@ -333,7 +334,7 @@ public class ManualGreqlLexer {
 				}
 			}
 		} while (
-				   ((position < query.length()) && (isWs(query.charAt(position)))) 
+				   ((position < query.length()) && (isWs(query.charAt(position))))
 			    || ((position < query.length() - 2) && (query.substring(position, position + 2).equals("//")))
 			    || ((position < query.length() - 4) && (query.substring(position, position + 2).equals("/*")))
 				);

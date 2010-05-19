@@ -65,6 +65,8 @@ VertexClass ListRangeConstruction: ListConstruction;
 VertexClass Literal: Expression;
 VertexClass MapConstruction : ValueConstruction;
 VertexClass MapComprehension : Comprehension;
+VertexClass MultiConditionalExpression : Expression;
+VertexClass Case : Greql2Vertex;
 //VertexClass Nonterminal: Symbol;
 VertexClass NullLiteral: Literal;
 VertexClass OptionalPathDescription: PathDescription;
@@ -123,6 +125,9 @@ EdgeClass IsCompDeclOf: Greql2Aggregation from Declaration (1,1) role compDecl a
 // zero or one, cause MapComprehensions don't have a compResultDef but keyExpr, and valueExpr.
 EdgeClass IsCompResultDefOf: Greql2Aggregation from Expression (0,1) role compResultDef aggregation shared to Comprehension (0,*);
 EdgeClass IsConditionOf: Greql2Aggregation from Expression (1,1) role condition aggregation shared to ConditionalExpression (0,*);
+EdgeClass IsCaseOf : Greql2Aggregation from Case (1,*) role case aggregation composite to MultiConditionalExpression (1,1);
+EdgeClass IsCaseConditionOf : Greql2Aggregation from Expression (1,1) role condition aggregation shared to Case (0,*);
+EdgeClass IsCaseExpressionOf : Greql2Aggregation from Expression (1,1) role expression aggregation shared to Case (0,*);
 EdgeClass IsConstraintOf: Greql2Aggregation from Expression (0,*) role constraint aggregation shared to Declaration (0,*);
 EdgeClass IsDeclaredVarOf: Greql2Aggregation from Variable (1,*) role declaredVar aggregation shared to SimpleDeclaration (0,1);
 EdgeClass IsDefinitionOf: Greql2Aggregation from Definition (1,*) role definition aggregation shared to DefinitionExpression (1,*);
