@@ -45,21 +45,21 @@ public class Add extends ArithmeticFunction {
 	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		return evaluate(arguments, ArithmeticOperator.ADD);
+		return evaluate(arguments);
 	}
 
 	@Override
-	protected JValueImpl applyFunction(Integer leftHandSide, Integer rightHandSide) {
+	protected JValue applyFunction(Integer leftHandSide, Integer rightHandSide) {
 		return new JValueImpl(leftHandSide + rightHandSide);
 	}
 
 	@Override
-	protected JValueImpl applyFunction(Long leftHandSide, Long rightHandSide) {
+	protected JValue applyFunction(Long leftHandSide, Long rightHandSide) {
 		return new JValueImpl(leftHandSide + rightHandSide);
 	}
 
 	@Override
-	protected JValueImpl applyFunction(Double leftHandSide, Double rightHandSide) {
+	protected JValue applyFunction(Double leftHandSide, Double rightHandSide) {
 		return new JValueImpl(leftHandSide + rightHandSide);
 	}
 }
