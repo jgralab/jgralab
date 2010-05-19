@@ -810,6 +810,7 @@ public class GreqlEvaluator {
 	 * Parses the given query-string and creates the query-graph out of it
 	 */
 	protected boolean parseQuery(String query) throws EvaluateException {
+		long parseStartTime = System.currentTimeMillis();
 		ManualGreqlParser parser = new ManualGreqlParser(query);
 		try {
 			parser.parse();
@@ -819,6 +820,7 @@ public class GreqlEvaluator {
 					+ "\".", e);
 		}
 		queryGraph = parser.getGraph();
+		parseTime = System.currentTimeMillis() - parseStartTime;
 		return true;
 	}
 
@@ -863,6 +865,7 @@ public class GreqlEvaluator {
 	 */
 	protected void createOptimizedSyntaxGraph() throws EvaluateException,
 			OptimizerException {
+		long optimizerStartTime = System.currentTimeMillis();
 		if (optimizer == null) {
 			optimizer = new DefaultOptimizer();
 		}
@@ -880,10 +883,16 @@ public class GreqlEvaluator {
 		}
 
 		// No optimized graph for this query, optimizer and costmodel was found.
+		if (queryGraph == null) {
+			parseQuery(queryString);
+		}
+		createVertexEvaluators();
 		optimizer.optimize(this, queryGraph);
 		syntaxGraphEntry = new SyntaxGraphEntry(queryString, queryGraph,
 				optimizer, costModel, true);
 		addOptimizedSyntaxGraph(queryString, syntaxGraphEntry);
+		createVertexEvaluators();
+		optimizationTime = System.currentTimeMillis() - optimizerStartTime;
 	}
 
 	/**
@@ -914,6 +923,10 @@ public class GreqlEvaluator {
 			return (result != null);
 		}
 		started = true;
+		parseTime = 0;
+		optimizationTime = 0;
+		plainEvaluationTime = 0;
+		overallEvaluationTime = 0;
 
 		long startTime = System.currentTimeMillis();
 
@@ -924,18 +937,6 @@ public class GreqlEvaluator {
 		if (log) {
 			createEvaluationLogger();
 		}
-
-		long parseStartTime = System.currentTimeMillis();
-		if (queryString != null) {
-			parseQuery(queryString);
-		}
-		parseTime = System.currentTimeMillis() - parseStartTime;
-		if (queryGraph == null) {
-			throw new RuntimeException(
-					"Empty query graph supplied, no evaluation possible");
-		}
-
-		createVertexEvaluators();
 
 		// Initialize the CostModel if there's none
 		if (costModel == null) {
@@ -955,7 +956,6 @@ public class GreqlEvaluator {
 				e.printStackTrace();
 			}
 		}
-		long optimizerStartTime = System.currentTimeMillis();
 
 		if (optimize) {
 			createOptimizedSyntaxGraph();
@@ -978,7 +978,6 @@ public class GreqlEvaluator {
 							new ProgressFunctionImpl());
 					Tg2Dot.printGraphAsDot(queryGraph, true, name + "dot");
 				} catch (GraphIOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				System.out.println("Saved optimized query to " + name
@@ -986,9 +985,16 @@ public class GreqlEvaluator {
 				System.out
 						.println("#########################################################");
 			}
+
+		} else {
+			parseQuery(queryString);
+			createVertexEvaluators();
 		}
 
-		optimizationTime = System.currentTimeMillis() - optimizerStartTime;
+		if (queryGraph == null) {
+			throw new RuntimeException(
+					"Empty query graph supplied, no evaluation possible");
+		}
 
 		// Calculate the evaluation costs
 		VertexEvaluator greql2ExpEval = vertexEvalGraphMarker
