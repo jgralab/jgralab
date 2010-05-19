@@ -294,22 +294,25 @@ by normal completion."
                   ;; A package import
                   (let ((regex (regexp-quote (substring import 0 (- (length import) 1)))))
                     (setq lst
-                          (append lst
-                                  (remove nil
-                                          (mapcar
-                                           (lambda (elem)
-                                             (if (string-match regex (car elem))
-                                                 (list (replace-regexp-in-string regex "" (car elem))
-                                                       (cadr elem))
-                                               nil))
-                                           comp-lst)))))
+                          (append
+                           lst
+                           (remove
+                            nil
+                            (mapcar
+                             (lambda (elem)
+                               (if (string-match regex (car elem))
+                                   (list (replace-regexp-in-string regex "" (car elem))
+                                         (cadr elem))
+                                 nil))
+                             comp-lst)))))
                 ;; An element import
                 (let ((elem (catch 'elem (dolist (m comp-lst)
                                            (when (string= (car m) import)
                                              (throw 'elem m))))))
                   (when elem
                     (setq lst (cons
-                               (cons (replace-regexp-in-string "\\([[:word:]._]+\\.\\)\\([^.]+\\)" "\\2" import)
+                               (cons (replace-regexp-in-string
+                                      "\\([[:word:]._]+\\.\\)\\([^.]+\\)" "\\2" import)
                                      (cdr elem))
                                lst)))))))))
       lst)))
@@ -564,7 +567,8 @@ vertices in the query result."
   (let ((buffer (get-buffer-create greql-evaluation-buffer))
         (queryfile (if (use-region-p)
                        (let ((f (make-temp-file "greql-query"))
-                             (str (buffer-substring-no-properties (region-beginning) (region-end))))
+                             (str (buffer-substring-no-properties
+                                   (region-beginning) (region-end))))
                          (with-current-buffer (find-file-noselect f)
                            (insert str)
                            (save-buffer))
@@ -575,16 +579,39 @@ vertices in the query result."
     (when (or (not greql-process) (not (eq (process-status greql-process) 'open)))
       (setq greql-process (make-network-process
                            :name "GreqlEvalServer Connection"
-                           :buffer buffer
+                           ;; :buffer buffer
                            :host "localhost"
                            :service greql-server-port
-                           :sentinel 'greql-display-result)))
+                           :filter 'greql-filter-result)))
     (process-send-string greql-process (concat "g:" (expand-file-name greql-graph) "\n"))
     (process-send-string greql-process (concat (if arg "d:"  "q:") queryfile "\n"))
-    (display-buffer buffer)))
+    ;;(display-buffer buffer)
+    ))
 
-(defun greql-display-result (proc change)
-  (display-buffer (get-buffer-create greql-evaluation-buffer)))
+(defvar greql--error-overlay nil)
+(make-variable-buffer-local 'greql--error-overlay)
+
+(defun greql-filter-result (proc str)
+  (let ((buf (get-buffer-create greql-evaluation-buffer))
+        pos len)
+    (with-current-buffer buf
+      (goto-char (point-max))
+      (save-excursion (insert str))
+      (when (re-search-forward
+             "Exception:.* at position (\\([[:digit:]]+\\),[[:space:]]*\\([[:digit:]]+\\))"
+             nil t)
+        (setq pos (string-to-number (match-string 1))
+              len (string-to-number (match-string 2)))))
+    (display-buffer buf)
+    (message "(%s, %s)" pos len)
+    (if (and pos len)
+        (if (overlayp greql--error-overlay)
+            (move-overlay greql--error-overlay pos (+ pos len))
+          (setq greql--error-overlay (make-overlay pos (+ pos len) nil t))
+          (overlay-put greql--error-overlay 'face font-lock-warning-face))
+      (when greql--error-overlay
+        (delete-overlay greql--error-overlay))
+      (setq greql--error-overlay nil))))
 
 (defun greql-vertex-set-expression-p ()
   (looking-back "V{[[:word:]._,^ ]*"))
