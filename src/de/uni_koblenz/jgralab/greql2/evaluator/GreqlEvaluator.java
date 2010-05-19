@@ -436,18 +436,13 @@ public class GreqlEvaluator {
 	/**
 	 * This attribute holds the query-graph
 	 */
-	protected Greql2 queryGraph = null;
+	private Greql2 queryGraph = null;
 
 	/**
 	 * This attribute holds the entry of the optimizedSyntaxGraph map that is
 	 * currently used
 	 */
 	protected SyntaxGraphEntry syntaxGraphEntry = null;
-
-	/**
-	 * This attribute hold the schema of the GReQL-Syntaxgraph
-	 */
-	protected Schema greqlSchema = null;
 
 	/**
 	 * This is the optimizer who optimizes the greql2 syntaxgraph
@@ -805,27 +800,6 @@ public class GreqlEvaluator {
 	}
 
 	/**
-	 * Creates a new GreqlEvaluator for the given queryGraph and Datagraph
-	 * 
-	 * @param queryGraph
-	 *            the graph-representation of the query to evaluate
-	 * @param dataGraph
-	 *            the Datagraph on which the query gets evaluated
-	 * @param variables
-	 *            a Map<String, JValue> of bound variables,
-	 */
-	public GreqlEvaluator(Greql2 queryGraph, Graph dataGraph,
-			Map<String, JValue> variables) {
-		if (dataGraph == null) {
-			this.datagraph = createMinimalGraph();
-		} else {
-			this.datagraph = dataGraph;
-		}
-		this.queryGraph = queryGraph;
-		this.variableMap = variables;
-	}
-
-	/**
 	 * returns the datagraph
 	 */
 	public Graph getDatagraph() {
@@ -844,22 +818,8 @@ public class GreqlEvaluator {
 			throw new EvaluateException("Error parsing query \"" + queryString
 					+ "\".", e);
 		}
-		greqlSchema = parser.getSchema();
 		queryGraph = parser.getGraph();
 		return true;
-	}
-
-	/**
-	 * Force parsing the query so that the query graph can be gotten.
-	 * 
-	 * @return <code>true</code> if parsing was successful, <code>false</code>
-	 *         otherwise.
-	 * 
-	 * @throws EvaluateException
-	 *             if an error occurs while parsing.
-	 */
-	public boolean parseQuery() throws EvaluateException {
-		return parseQuery(queryString);
 	}
 
 	/**
