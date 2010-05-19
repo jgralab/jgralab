@@ -52,7 +52,6 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTable;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTuple;
 import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.VariableDeclarationOrderOptimizer;
-import de.uni_koblenz.jgralab.greql2.parser.ManualGreqlParser;
 import de.uni_koblenz.jgralab.greql2.schema.Definition;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.greql2.schema.impl.std.Greql2Impl;
@@ -1859,17 +1858,6 @@ public class GreqlEvaluatorTest extends GenericTests {
 		String queryString = "(3 + 4) * 7";
 		JValue result = evalTestQuery("QueryWithoutDatagraph", queryString,
 				(Graph) null);
-		assertEquals(49, result.toInteger().intValue());
-	}
-
-	@Test
-	public void testGraphExecution() throws Exception {
-		String queryString = "(3 + 4) * 7";
-		Greql2 graph = ManualGreqlParser.parse(queryString);
-		GreqlEvaluator eval = new GreqlEvaluator(graph, null,
-				new HashMap<String, JValue>());
-		eval.startEvaluation();
-		JValue result = eval.getEvaluationResult();
 		assertEquals(49, result.toInteger().intValue());
 	}
 

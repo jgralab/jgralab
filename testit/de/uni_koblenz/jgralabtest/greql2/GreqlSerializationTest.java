@@ -12,6 +12,7 @@ import de.uni_koblenz.jgralab.greql2.SerializableGreql2Impl;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.parser.ManualGreqlParser;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Schema;
 import de.uni_koblenz.jgralabtest.greql2.testfunctions.IsPrime;
@@ -30,12 +31,10 @@ public class GreqlSerializationTest {
 	}
 
 	private void check(String query) {
-		GreqlEvaluator e1 = new GreqlEvaluator(query, null, null);
-		e1.parseQuery();
-		e1.setDatagraph(e1.getSyntaxGraph());
-
-		GreqlEvaluator e2 = new GreqlEvaluator(((SerializableGreql2) e1
-				.getSyntaxGraph()).serialize(), e1.getSyntaxGraph(), null);
+		Greql2 queryGraph = ManualGreqlParser.parse(query);
+		GreqlEvaluator e1 = new GreqlEvaluator(query, queryGraph, null);
+		GreqlEvaluator e2 = new GreqlEvaluator(
+				((SerializableGreql2) queryGraph).serialize(), queryGraph, null);
 
 		e1.startEvaluation();
 		e2.startEvaluation();
