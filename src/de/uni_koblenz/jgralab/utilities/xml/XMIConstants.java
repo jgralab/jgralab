@@ -23,8 +23,12 @@ public class XMIConstants {
 	static final String NAMESPACE_PREFIX_EECORE = "Ecore";
 	static final String NAMESPACE_PREFIX_XSI = "xsi";
 
-	// elements defined by the uml namespace
-	static final String UML_TAG_MODEL = "Model";
+	// Package element
+	public static final String UML_TAG_PACKAGE = "Package";// TODO check old
+															// xmiconstants
+
+	// // elements defined by the uml namespace
+	// static final String UML_TAG_MODEL = "Model";
 
 	// elements defined by the xmi namespace
 	static final String XMI_ATTRIBUTE_ID = "id";
@@ -73,7 +77,6 @@ public class XMIConstants {
 			+ "/StandardProfileL2.xmi#_yzU58YinEdqtvbnfB2L_5w";
 	static final String REFERENCES_TYPE_VALUE = "ecore:EPackage";
 	static final String TAG_REFERENCES = "references";
-	static final String DETAILS_ATTRIBUTE_KEY_VALUE = "graphclass";
 	static final String DETAILS_ATTRIBUTE_KEY = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_ATTRIBUTE_KEY;
 	static final String DETAILS_ATTRIBUTE_TYPE_VALUE = "ecore:EStringToStringMapEntry";
 	static final String TAG_DETAILS = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_DETAILS;
@@ -88,6 +91,12 @@ public class XMIConstants {
 	static final String TYPE_VALUE_OPAQUEEXPRESSION = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_OPAQUE_EXPRESSION;
 	static final String TYPE_VALUE_LITERALINTEGER = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_LITERAL_INTEGER;
 	static final String TYPE_VALUE_LITERALBOOLEAN = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_LITERAL_BOOLEAN;
+
+	// enumeration specific constants
+	static final String PACKAGEDELEMENT_TYPE_VALUE_ENUMERATION = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_ENUMERATION;
+	static final String TAG_OWNEDLITERAL = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_OWNED_LITERAL;
+	static final String OWNEDLITERAL_TYPE_VALUE = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_ENUMERATION_LITERAL;
+	static final String OWNEDLITERAL_ATTRIBUTE_CLASSIFIER = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_ATTRIBUTE_CLASSIFIER;
 
 	// primitive types specific constants
 	static final String PACKAGE_PRIMITIVETYPES_NAME = "PrimitiveTypes";
@@ -106,4 +115,13 @@ public class XMIConstants {
 	static final String TAG_BODY = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_BODY;
 	static final String ATTRIBUTE_NAME = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_ATTRIBUTE_NAME;
 	static final String ATTRIBUTE_HREF = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_ATTRIBUTE_HREF;
+
+	// packageimport specific constants
+	static final String TAG_PACKAGEIMPORT = "packageImport";// TODO check old
+															// xmiconstants
+	static final String PACKAGEIMPORT_TYPE_VALUE = "uml:PackageImport";
+	static final String TAG_IMPORTEDPACKAGE = "importedPackage";
+	static final String IMPORTEDPACKAGE_TYPE_VALUE = "uml:Model";
+	static final String IMPORTEDPACKAGE_HREF_VALUE = NAMESPACE_UML
+			+ "/uml.xml#_0";
 }
