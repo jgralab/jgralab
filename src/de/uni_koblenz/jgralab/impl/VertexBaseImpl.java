@@ -1051,4 +1051,16 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex 
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Vertex#reachableVertices(java.lang.String,
+	 * java.lang.Class)
+	 */
+	@Override
+	public synchronized <T extends Vertex> Iterable<T> reachableVertices(
+			String pathDescription, Class<T> vertexType) {
+		return graph.reachableVertices(this, pathDescription, vertexType);
+	}
+
 }
