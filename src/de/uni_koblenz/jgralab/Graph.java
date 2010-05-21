@@ -25,6 +25,7 @@
 package de.uni_koblenz.jgralab;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -442,11 +443,11 @@ public interface Graph extends AttributedElement {
 	 * @param startVertex
 	 * @param pathDescription
 	 * @param vertexType
-	 * @return an Iterable of all vertices of type <code>vertexType</code>
-	 *         reachable from <code>startVertex</code> using the given
+	 * @return a List of all vertices of type <code>vertexType</code> reachable
+	 *         from <code>startVertex</code> using the given
 	 *         <code>pathDescription</code>
 	 */
-	public <T extends Vertex> Iterable<T> reachableVertices(Vertex startVertex,
+	public <T extends Vertex> List<T> reachableVertices(Vertex startVertex,
 			String pathDescription, Class<T> vertexType);
 
 	/**
