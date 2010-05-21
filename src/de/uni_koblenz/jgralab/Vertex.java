@@ -338,10 +338,10 @@ public interface Vertex extends GraphElement {
 	 *            <code>-->{EdgeType1}+ <>--{EdgeType2}</code>
 	 * @param vertexType
 	 *            the class of the vertices you can reach with that path
-	 * @return an {@link Iterable} of the reachable vertices
+	 * @return a List of the reachable vertices
 	 */
-	public <T extends Vertex> Iterable<T> reachableVertices(
-			String pathDescription, Class<T> vertexType);
+	public <T extends Vertex> List<T> reachableVertices(String pathDescription,
+			Class<T> vertexType);
 
 	/**
 	 * Using this method, one can simply iterate over all incident edges of this

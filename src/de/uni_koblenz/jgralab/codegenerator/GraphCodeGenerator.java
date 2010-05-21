@@ -69,6 +69,8 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 				addImports("#jgImplTransPackage#.#baseClassName#");
 			}
 			rootBlock.setVariable("baseClassName", "GraphImpl");
+
+			addImports("java.util.List");
 			addImports("de.uni_koblenz.jgralab.Vertex");
 			addImports("de.uni_koblenz.jgralab.greql2.jvalue.JValue");
 			addImports("de.uni_koblenz.jgralab.greql2.jvalue.JValueSet");
@@ -81,7 +83,7 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 							"\nprivate GreqlEvaluator greqlEvaluator = null;\n",
 							"@SuppressWarnings(\"unchecked\") ",
 							"@Override ",
-							"public synchronized <T extends Vertex> Iterable<T> reachableVertices(Vertex startVertex, String pathDescription, Class<T> vertexType) { ",
+							"public synchronized <T extends Vertex> List<T> reachableVertices(Vertex startVertex, String pathDescription, Class<T> vertexType) { ",
 							"\tif (greqlEvaluator == null) { ",
 							"\t\tgreqlEvaluator = new GreqlEvaluator((String) null, this, null); ",
 							"\t} ",
