@@ -330,6 +330,20 @@ public interface Vertex extends GraphElement {
 	public Iterable<Edge> incidences();
 
 	/**
+	 * Return an Iterable&lt;vertexType&gt; over all vertices reachable from
+	 * this vertex via the specified <code>pathDescription</code>.
+	 * 
+	 * @param pathDescription
+	 *            a GReQL path description like
+	 *            <code>-->{EdgeType1}+ <>--{EdgeType2}</code>
+	 * @param vertexType
+	 *            the class of the vertices you can reach with that path
+	 * @return an {@link Iterable} of the reachable vertices
+	 */
+	public <T extends Vertex> Iterable<T> reachableVertices(
+			String pathDescription, Class<T> vertexType);
+
+	/**
 	 * Using this method, one can simply iterate over all incident edges of this
 	 * vertex using the advanced for-loop
 	 * 
@@ -414,17 +428,15 @@ public interface Vertex extends GraphElement {
 	 *            the comparator that defines the order of the incidence list.
 	 */
 	public void sortIncidences(Comparator<Edge> comp);
-	
-	
+
 	public DirectedM1EdgeClass getEdgeForRolename(String rolename);
-	
-	
-	public List<? extends Vertex> adjacences(String role); 
-	
+
+	public List<? extends Vertex> adjacences(String role);
+
 	public Edge addAdjacence(String role, Vertex other);
-	
+
 	public List<Vertex> removeAdjacences(String role);
-	
+
 	public void removeAdjacence(String role, Vertex other);
 
 }

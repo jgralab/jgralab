@@ -69,7 +69,33 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 				addImports("#jgImplTransPackage#.#baseClassName#");
 			}
 			rootBlock.setVariable("baseClassName", "GraphImpl");
+			addImports("de.uni_koblenz.jgralab.Vertex");
+			addImports("de.uni_koblenz.jgralab.greql2.jvalue.JValue");
+			addImports("de.uni_koblenz.jgralab.greql2.jvalue.JValueSet");
+			addImports("de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl");
+			addImports("de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator");
+
+			// for Vertex.reachableVertices()
+			code
+					.add(new CodeSnippet(
+							"\nprivate GreqlEvaluator greqlEvaluator = null;\n",
+							"@SuppressWarnings(\"unchecked\") ",
+							"@Override ",
+							"public synchronized <T extends Vertex> Iterable<T> reachableVertices(Vertex startVertex, String pathDescription, Class<T> vertexType) { ",
+							"\tif (greqlEvaluator == null) { ",
+							"\t\tgreqlEvaluator = new GreqlEvaluator((String) null, this, null); ",
+							"\t} ",
+							"\tgreqlEvaluator.setVariable(\"v\", new JValueImpl(startVertex)); ",
+							"\tgreqlEvaluator.setQuery(\"using v: v \" + pathDescription); ",
+							"\tgreqlEvaluator.startEvaluation(); ",
+							"\tJValueSet rs = greqlEvaluator.getEvaluationResult().toJValueSet(); ",
+							"\tjava.util.List<T> lst = new java.util.LinkedList<T>(); ",
+							"\tfor (JValue jv : rs) { ",
+							"\t\tlst.add((T) jv.toVertex()); ", "\t\t}",
+							"\treturn lst; ", "}"));
+
 		}
+
 		code.add(createGraphElementClassMethods());
 		code.add(createEdgeIteratorMethods());
 		code.add(createVertexIteratorMethods());

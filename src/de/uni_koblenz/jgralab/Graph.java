@@ -439,6 +439,17 @@ public interface Graph extends AttributedElement {
 	public Iterable<Edge> edges(Class<? extends Edge> edgeClass);
 
 	/**
+	 * @param startVertex
+	 * @param pathDescription
+	 * @param vertexType
+	 * @return an Iterable of all vertices of type <code>vertexType</code>
+	 *         reachable from <code>startVertex</code> using the given
+	 *         <code>pathDescription</code>
+	 */
+	public <T extends Vertex> Iterable<T> reachableVertices(Vertex startVertex,
+			String pathDescription, Class<T> vertexType);
+
+	/**
 	 * Returns an Iterable which iterates over all vertices of this Graph in the
 	 * order determined by the vertex sequence.
 	 * 
