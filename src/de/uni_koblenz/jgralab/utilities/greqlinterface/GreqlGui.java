@@ -24,6 +24,7 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileFilter;
@@ -268,7 +269,7 @@ public class GreqlGui extends JFrame {
 
 		queryArea = new JTextArea(15, 50);
 		queryArea.setEditable(true);
-		queryArea.setText("/*\n * Please enter your query here!\n */\n\n");
+		queryArea.setText("// Please enter your query here!\n\n");
 		JScrollPane queryScrollPane = new JScrollPane(queryArea);
 
 		queryPanel = new JPanel();
@@ -376,7 +377,7 @@ public class GreqlGui extends JFrame {
 		buttonPanel.add(stopButton);
 		queryPanel.add(buttonPanel, BorderLayout.SOUTH);
 
-		statusLabel = new JLabel("Welcome", JLabel.LEFT);
+		statusLabel = new JLabel("Welcome", SwingConstants.LEFT);
 		statusLabel.setBorder(new EmptyBorder(0, 4, 4, 4));
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(queryPanel, BorderLayout.NORTH);
