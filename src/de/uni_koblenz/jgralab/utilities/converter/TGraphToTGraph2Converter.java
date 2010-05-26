@@ -47,13 +47,13 @@ public class TGraphToTGraph2Converter {
 
 	private static int VERSION = GraphIO.TGFILE_VERSION;
 	private static Pattern AGGREGATION_CLASS_DEFINITION = Pattern
-			.compile("(\\s*abstract\\s*)?(AggregationClass)(\\s*.*?)(\\s*:\\s*.*?)?(\\s+from\\s+.*?)(\\s+role\\s+.*?)?(\\s+to\\s+.*?)(\\s+role\\s+.*?)?(\\s+aggregate\\s+)((?:to)|(?:from))(\\s*.*)");
+	.compile("(\\s*abstract\\s*)?(AggregationClass)(\\s*.*?)(\\s*:\\s*.*?)?(\\s+from\\s+.*?)(\\s+role\\s+.*?)?(\\s+to\\s+.*?)(\\s+role\\s+.*?)?(\\s+aggregate\\s+)((?:to)|(?:from))(\\s*.*)");
 	private static Pattern COMPOSITION_CLASS_DEFINITION = Pattern
-			.compile("(\\s*abstract\\s*)?(\\s*CompositionClass)(\\s*.*?)(\\s*:\\s*.*?)?(\\s+from\\s+.*?)(\\s+role\\s+.*?)?(\\s+to\\s+.*?)(\\s+role\\s+.*?)?(\\s+aggregate\\s+)((?:to)|(?:from))(\\s*.*)");
+	.compile("(\\s*abstract\\s*)?(\\s*CompositionClass)(\\s*.*?)(\\s*:\\s*.*?)?(\\s+from\\s+.*?)(\\s+role\\s+.*?)?(\\s+to\\s+.*?)(\\s+role\\s+.*?)?(\\s+aggregate\\s+)((?:to)|(?:from))(\\s*.*)");
 	private static Pattern GRAPH_LINE = Pattern
-			.compile("(\\s*Graph\\s*)\"(.*)(?:_)(.*)\"(.*)");
+	.compile("(\\s*Graph\\s*)\"(.*)(?:_)(.*)\"(.*)");
 	private static Pattern GRAPH_LINE_NO_VERSION = Pattern
-			.compile("(\\s*Graph\\s*)(\".*\")(.*)");
+	.compile("(\\s*Graph\\s*)(\".*\")(.*)");
 	private static Pattern OLD_ROLE_NAME = Pattern.compile("(\\s*)role '(.*)");
 
 	/**
@@ -68,7 +68,7 @@ public class TGraphToTGraph2Converter {
 	 *             this should not happen
 	 */
 	public void convertTGStream(OutputStream out, InputStream in)
-			throws IOException {
+	throws IOException {
 		PrintWriter output = new PrintWriter(new BufferedWriter(
 				new OutputStreamWriter(out)), true);
 		BufferedReader input = new BufferedReader(new InputStreamReader(in));
@@ -145,7 +145,7 @@ public class TGraphToTGraph2Converter {
 			out.append(matcher.group(3));
 			return out.toString();
 		}
-		return currentLine;
+		return currentLine.replace(" \\null ", " n ");
 	}
 
 	private void createEdgeClassStatementForAggregationOrCompositionClass(
@@ -210,13 +210,13 @@ public class TGraphToTGraph2Converter {
 		OptionHandler oh = new OptionHandler(toolString, versionString);
 
 		Option input = new Option("i", "input", true,
-				"(optional): input TG file, if omitted, the tool reads from stdin");
+		"(optional): input TG file, if omitted, the tool reads from stdin");
 		input.setRequired(false);
 		input.setArgName("file");
 		oh.addOption(input);
 
 		Option output = new Option("o", "output", true,
-				"(optional): output TG file, if omitted, the tool writes to stdout");
+		"(optional): output TG file, if omitted, the tool writes to stdout");
 		output.setRequired(false);
 		output.setArgName("file");
 		oh.addOption(output);
