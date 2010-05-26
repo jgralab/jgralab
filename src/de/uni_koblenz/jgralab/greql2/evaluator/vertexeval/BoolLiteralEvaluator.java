@@ -32,7 +32,6 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
 import de.uni_koblenz.jgralab.greql2.schema.BoolLiteral;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
-import de.uni_koblenz.jgralab.greql2.schema.TrivalentBoolean;
 
 /**
  * Evaluates a boolean literal, that means, provides access to the literal value
@@ -65,12 +64,10 @@ public class BoolLiteralEvaluator extends VertexEvaluator {
 
 	@Override
 	public JValue evaluate() throws EvaluateException {
-		if (vertex.get_boolValue() == TrivalentBoolean.TRUE) {
+		if (vertex.is_boolValue()) {
 			return JValueBoolean.trueJValue;
-		} else if (vertex.get_boolValue() == TrivalentBoolean.FALSE) {
-			return JValueBoolean.falseJValue;
 		} else {
-			return JValueBoolean.nullJValue;
+			return JValueBoolean.falseJValue;
 		}
 	}
 
@@ -83,7 +80,7 @@ public class BoolLiteralEvaluator extends VertexEvaluator {
 	public double calculateEstimatedSelectivity(GraphSize graphSize) {
 		// true has selectivity 1, but false and null can never be true, so
 		// their selectivity is 0.
-		if (vertex.get_boolValue() == TrivalentBoolean.TRUE) {
+		if (vertex.is_boolValue()) {
 			return 1;
 		}
 		return 0;

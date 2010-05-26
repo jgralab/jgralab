@@ -6,7 +6,6 @@ package de.uni_koblenz.jgralab.greql2.optimizer.condexp;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.schema.BoolLiteral;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
-import de.uni_koblenz.jgralab.greql2.schema.TrivalentBoolean;
 
 /**
  * TODO: (heimdall) Comment class!
@@ -28,7 +27,7 @@ public class False extends Literal {
 	@Override
 	public Expression toExpression() {
 		BoolLiteral bool = greqlEvaluator.getSyntaxGraph().createBoolLiteral();
-		bool.set_boolValue(TrivalentBoolean.FALSE);
+		bool.set_boolValue(false);
 		return bool;
 	}
 

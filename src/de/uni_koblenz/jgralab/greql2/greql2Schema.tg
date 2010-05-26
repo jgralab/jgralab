@@ -26,7 +26,6 @@ TGraph 2;
 Schema de.uni_koblenz.jgralab.greql2.schema.Greql2Schema;
 GraphClass Greql2;
 
-EnumDomain TrivalentBoolean (TRUE, FALSE, NULL);
 EnumDomain IterationType (STAR, PLUS);
 EnumDomain QuantificationType (FORALL, EXISTS, EXISTSONE);
 RecordDomain SourcePosition (offset:Integer, length: Integer);
@@ -39,7 +38,7 @@ VertexClass AlternativePathDescription: PathDescription;
 VertexClass BackwardVertexSet: PathExpression;
 VertexClass BagComprehension: ComprehensionWithTableHeader;
 VertexClass BagConstruction: ValueConstruction;
-VertexClass BoolLiteral: Literal { boolValue: TrivalentBoolean };
+VertexClass BoolLiteral: Literal { boolValue: Boolean };
 //VertexClass CfGrammar: Expression;
 VertexClass ConditionalExpression: Expression;
 VertexClass Declaration: Greql2Vertex;

@@ -17,21 +17,20 @@ import de.uni_koblenz.jgralab.greql2.schema.Greql2;
  */
 public class ConditionalExpression extends Formula {
 	protected Expression condition;
-	protected Formula trueFormula, nullFormula, falseFormula;
+	protected Formula trueFormula, falseFormula;
 
 	public ConditionalExpression(GreqlEvaluator eval, Expression condition,
-			Formula trueExp, Formula falseExp, Formula nullExp) {
+			Formula trueExp, Formula falseExp) {
 		super(eval);
 		this.condition = condition;
 		trueFormula = trueExp;
 		falseFormula = falseExp;
-		nullFormula = nullExp;
 	}
 
 	@Override
 	public String toString() {
 		return "(v" + condition.getId() + ") ? " + trueFormula + " : "
-				+ falseFormula + " : " + nullFormula + ";";
+				+ falseFormula + ";";
 	}
 
 	@Override
@@ -42,7 +41,6 @@ public class ConditionalExpression extends Formula {
 		syntaxgraph.createIsConditionOf(condition, cond);
 		syntaxgraph.createIsTrueExprOf(trueFormula.toExpression(), cond);
 		syntaxgraph.createIsFalseExprOf(falseFormula.toExpression(), cond);
-		syntaxgraph.createIsNullExprOf(nullFormula.toExpression(), cond);
 		return cond;
 	}
 

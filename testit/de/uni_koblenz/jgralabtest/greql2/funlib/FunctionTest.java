@@ -43,7 +43,6 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueMap;
@@ -77,26 +76,7 @@ public class FunctionTest extends GenericTests {
 		assertEquals(4, result.toCollection().size());
 	}
 
-	@Test
-	public void testAnd2() throws Exception {
-		String queryString = "from x, y : list(true, null, false) report x and y end";
-		JValue result = evalTestQuery("And2", queryString);
-		JValueCollection r = result.toCollection();
-		assertEquals(9, r.size());
-		int f = 0, t = 0, n = 0;
-		for (JValue v : r) {
-			if (JValueBoolean.getNullValue() == v.toBoolean()) {
-				n++;
-			} else if (JValueBoolean.getTrueValue() == v.toBoolean()) {
-				t++;
-			} else if (JValueBoolean.getFalseValue() == v.toBoolean()) {
-				f++;
-			}
-		}
-		assertEquals(5, f);
-		assertEquals(3, n);
-		assertEquals(1, t);
-	}
+
 
 	@Test
 	public void testGetEdge() throws Exception {
@@ -630,6 +610,13 @@ public class FunctionTest extends GenericTests {
 		JValue result = evalTestQuery("Sub", queryString);
 		assertEquals(-4.5, result.toDouble(), 0.01);
 	}
+	
+	@Test
+	public void testSub5() throws Exception {
+		String queryString = "10 - 4 - 3 - 2";
+		JValue result = evalTestQuery("Sub5", queryString);
+		assertEquals(1, result.toInteger());
+	}
 
 	@Test
 	public void testMod() throws Exception {
@@ -637,6 +624,15 @@ public class FunctionTest extends GenericTests {
 		JValue result = evalTestQuery("Mod", queryString);
 		assertEquals(Integer.valueOf(1), result.toInteger());
 	}
+	
+	@Test
+	public void testMultiplicative() throws Exception {
+		String queryString = "100 / 10 / 5 * 2";
+		JValue result = evalTestQuery("Mod", queryString);
+		assertEquals(Double.valueOf(4), result.toDouble(), 0.01);
+	}
+	
+	
 
 	@Test
 	public void testNotEquals() throws Exception {

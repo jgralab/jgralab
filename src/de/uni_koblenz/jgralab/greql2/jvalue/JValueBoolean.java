@@ -61,11 +61,6 @@ public class JValueBoolean {
 
 	public static final JValue falseJValue = new JValueImpl(false);
 
-	public static final JValue nullJValue = new JValueImpl((Boolean) null);
-	
-	
-	public static final Boolean NULL = null;
-
 	/**
 	 * implements the boolean operation "AND" for the type TrivalentBoolean
 	 * 
@@ -80,21 +75,7 @@ public class JValueBoolean {
 		Boolean b1 = first.toBoolean();
 		Boolean b2 = second.toBoolean();
 
-		boolean isB1Null = b1 == null;
-		boolean isB2Null = b2 == null;
-
-		boolean bothNull = isB1Null && isB2Null;
-		boolean null_True = isB1Null && !isB2Null && b2.booleanValue();
-		boolean true_Null = isB2Null && !isB1Null && b1.booleanValue();
-
-		if (bothNull || null_True || true_Null) {
-			return nullJValue;
-		}
-
-		boolean value = !isB1Null && b1.booleanValue() && !isB2Null
-				&& b2.booleanValue();
-
-		if (value)
+		if (b1 && b2)
 			return trueJValue;
 		return falseJValue;
 	}
@@ -114,20 +95,7 @@ public class JValueBoolean {
 		Boolean b1 = first.toBoolean();
 		Boolean b2 = second.toBoolean();
 
-		boolean isB1Null = b1 == null;
-		boolean isB2Null = b2 == null;
-
-		boolean bothNull = isB1Null && isB2Null;
-		boolean null_False = isB1Null && !isB2Null && !b2.booleanValue();
-		boolean false_Null = isB2Null && !isB1Null && !b1.booleanValue();
-
-		if (bothNull || null_False || false_Null) {
-			return new JValueImpl(NULL);
-		}
-
-		boolean value = !isB1Null && b1.booleanValue() || !isB2Null
-				&& b2.booleanValue();
-		if (value)
+		if (b1 || b2)
 			return trueJValue;
 		return falseJValue;
 	}
@@ -142,12 +110,7 @@ public class JValueBoolean {
 	public static JValue not(JValue first) throws JValueInvalidTypeException {
 		Boolean firstBoolean = first.toBoolean();
 
-		if (first == null) {
-			return nullJValue;
-		}
-
-		boolean value = !firstBoolean.booleanValue();
-		if (value) {
+		if (!firstBoolean.booleanValue()) {
 			return trueJValue;
 		}
 		return falseJValue;
@@ -166,9 +129,6 @@ public class JValueBoolean {
 			throws JValueInvalidTypeException {
 		Boolean firstBoolean = first.toBoolean();
 		Boolean secondBoolean = second.toBoolean();
-		if (firstBoolean == null || secondBoolean == null) {
-			return nullJValue;
-		}
 
 		boolean value = !firstBoolean.equals(secondBoolean);
 		if (value)
@@ -182,10 +142,6 @@ public class JValueBoolean {
 
 	public static Boolean getFalseValue() {
 		return Boolean.FALSE;
-	}
-
-	public static Boolean getNullValue() {
-		return NULL;
 	}
 	
 	public static JValue getValue(boolean value) {

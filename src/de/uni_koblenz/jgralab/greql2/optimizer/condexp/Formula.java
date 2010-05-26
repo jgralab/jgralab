@@ -18,7 +18,6 @@ import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
 import de.uni_koblenz.jgralab.greql2.schema.IsArgumentOf;
-import de.uni_koblenz.jgralab.greql2.schema.TrivalentBoolean;
 
 /**
  * TODO: (heimdall) Comment class!
@@ -61,14 +60,11 @@ public abstract class Formula {
 		assert exp.isValid() : exp + " is not valid!";
 		if (exp instanceof BoolLiteral) {
 			BoolLiteral bool = (BoolLiteral) exp;
-			TrivalentBoolean value = bool.get_boolValue();
-			if (value == TrivalentBoolean.TRUE) {
+			if (bool.is_boolValue()) {
 				return new True(eval);
-			}
-			if (value == TrivalentBoolean.FALSE) {
+			} else {
 				return new False(eval);
 			}
-			return new Null(eval);
 		}
 
 		if (exp instanceof FunctionApplication) {

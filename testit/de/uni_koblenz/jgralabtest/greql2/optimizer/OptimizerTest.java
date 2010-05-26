@@ -432,7 +432,7 @@ public class OptimizerTest extends GenericTests {
 	@Test
 	public void testVariableDeclarationOrderOptimizer5() throws Exception {
 		String queryString = "from x:list(1..10), y:list(x..13), z:list(1..x) "
-				+ "           with x <> 0 and y <> 0 and z <> null "
+				+ "           with x <> 0 and y <> 0 and z <> 0 "
 				+ "           report isPrime(z), isPrime(z*z), isPrime(z+z*z-1) end";
 		execTimedTest(queryString, "VariableDeclarationOrderOptimizer5()", vdoo);
 	}
@@ -440,7 +440,7 @@ public class OptimizerTest extends GenericTests {
 	@Test
 	public void testVariableDeclarationOrderOptimizer6() throws Exception {
 		String queryString = "from x:list(1..10), y:list(x..13), z:list(1..x), a : set(1, 2, 3), b : z "
-				+ "           with x <> 0 and y <> 0 and z <> null and (b <> z)"
+				+ "           with x <> 0 and y <> 0 and z <> 0 and (b <> z)"
 				+ "           report isPrime(z), isPrime(z*z), isPrime(z+z*z-1), b end";
 		execTimedTest(queryString, "VariableDeclarationOrderOptimizer6()", vdoo);
 	}
@@ -464,7 +464,7 @@ public class OptimizerTest extends GenericTests {
 
 	@Test
 	public void testConditionalExpressionOptimizer0() throws Exception {
-		String query = "from u, v, w : set(true, false, null)     "
+		String query = "from u, v, w : set(true, false)     "
 				+ "     with (u or v) and w and true and ((u and false) or (w or true))          "
 				+ "     reportSet u, v, w end          ";
 		execTimedTest(query, "ConditionalExpressionOptimizer0()", ceoAndCso);
@@ -472,7 +472,7 @@ public class OptimizerTest extends GenericTests {
 
 	@Test
 	public void testConditionalExpressionOptimizer1() throws Exception {
-		String query = "from u, v, w, x, y, z : set(true, false, null)     "
+		String query = "from u, v, w, x, y, z : set(true, false)     "
 				+ "     with (u xor v) or (w and x and (y or z))       "
 				+ "     reportSet u, v, w, x, y, z end          ";
 		execTimedTest(query, "ConditionalExpressionOptimizer1()", ceoAndCso);
@@ -480,7 +480,7 @@ public class OptimizerTest extends GenericTests {
 
 	@Test
 	public void testConditionalExpressionOptimizer2() throws Exception {
-		String query = "from u, v, w, x, y, z : set(true, false, null)     "
+		String query = "from u, v, w, x, y, z : set(true, false)     "
 				+ "     with (u xor v) or (w and x and (y or z)) or (y and z) or (u and z)      "
 				+ "     reportSet u, v, w, x, y, z end          ";
 		execTimedTest(query, "ConditionalExpressionOptimizer2()", ceoAndCso);
@@ -488,7 +488,7 @@ public class OptimizerTest extends GenericTests {
 
 	@Test
 	public void testConditionalExpressionOptimizer3() throws Exception {
-		String query = "from u, v : set(true, false, null)     "
+		String query = "from u, v : set(true, false)     "
 				+ "     with u or v                             "
 				+ "     reportSet u, v end          ";
 		execTimedTest(query, "ConditionalExpressionOptimizer3()", ceoAndCso);
@@ -496,7 +496,7 @@ public class OptimizerTest extends GenericTests {
 
 	@Test
 	public void testConditionalExpressionOptimizer4() throws Exception {
-		String query = "from u, v, w, x, y, z : set(true, false, null)     "
+		String query = "from u, v, w, x, y, z : set(true, false)     "
 				+ "     with ((u xor v) or (w and x and (y or z)) or (y and z) or (u and z) and ((u and x) or (y and w) and (u or v)))     "
 				+ "          or ((u xor v) or (w and x and (y or z)) or (y and z) or (u and z) and ((u and x) or (y and w) and (u or v)))  "
 				+ "          and ((u xor v) or (w and x and (y or z)) or (y and z) or (u and z) and ((u and x) or (y and w) and (u or v))) "

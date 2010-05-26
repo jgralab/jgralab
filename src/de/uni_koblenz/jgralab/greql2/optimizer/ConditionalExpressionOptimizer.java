@@ -24,7 +24,6 @@ import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.IsConstraintOf;
 import de.uni_koblenz.jgralab.greql2.schema.Literal;
-import de.uni_koblenz.jgralab.greql2.schema.TrivalentBoolean;
 
 /**
  * TODO: (heimdall) Comment class!
@@ -102,7 +101,7 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 			Vertex alpha = ico.getAlpha();
 			if (alpha instanceof BoolLiteral) {
 				BoolLiteral bl = (BoolLiteral) alpha;
-				if (bl.get_boolValue() == TrivalentBoolean.TRUE) {
+				if (bl.is_boolValue()) {
 					verticesToDelete.add(bl);
 				}
 			}

@@ -67,10 +67,6 @@ public class Not extends Formula {
 			return new True(greqlEvaluator);
 		}
 
-		if (f instanceof Null) {
-			return f;
-		}
-
 		if (f instanceof Not) {
 			Not not = (Not) f;
 			return not.formula.simplify();

@@ -43,7 +43,6 @@ import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueBag;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueMap;
@@ -149,25 +148,7 @@ public class GreqlEvaluatorTest extends GenericTests {
 		assertNull(current.getNextDefinition());
 	}
 
-	@Test
-	public void testEvaluateNullLiteral2() throws Exception {
-		String queryString = "null";
-		JValue result = evalTestQuery("NullLiteral2", queryString);
-		// Now check if the optimized query produces the same result.
-		JValue resultWO = evalTestQuery("NullLiteral2 (wo)", queryString,
-				new DefaultOptimizer());
-		assertEquals(result, resultWO);
-	}
-
-	@Test
-	public void testEvaluateNullLiteral() throws Exception {
-		String queryString = "from a : set(true, null, false) with a reportSet a end";
-		JValue result = evalTestQuery("NullLiteral", queryString);
-		// Now check if the optimized query produces the same result.
-		JValue resultWO = evalTestQuery("NullLiteral (wo)", queryString,
-				new DefaultOptimizer());
-		assertEquals(result, resultWO);
-	}
+	
 
 	/*
 	 * Test method for
@@ -1103,99 +1084,6 @@ public class GreqlEvaluatorTest extends GenericTests {
 		assertEquals(result, resultWO);
 	}
 
-	/*
-	 * Test method for
-	 * 'greql2.evaluator.GreqlEvaluator.evaluateQuantifiedExpression(QuantifiedExpression,
-	 * Graph)'
-	 */
-	@Test
-	public void testEvaluateQuantifiedExpression5() throws Exception {
-		JValueMap map = new JValueMap();
-		map
-				.put(new JValueImpl(1), new JValueImpl(JValueBoolean
-						.getNullValue()));
-		map.put(new JValueImpl(2), new JValueImpl(true));
-		setBoundVariable("FOO", map);
-		String queryString = "using FOO: exists! s:list(1,2) @ get(FOO, s)";
-		JValue result = evalTestQuery("QuantifiedExpression5", queryString);
-		System.out.println("Result is: " + result);
-		assertNull(result.toBoolean());
-		JValue resultWO = evalTestQuery("QuantifiedExpression5 (wo)",
-				queryString, new DefaultOptimizer());
-		assertEquals(result, resultWO);
-	}
-
-	@Test
-	public void testEvaluateQuantifiedExpression6() throws Exception {
-		JValueMap map = new JValueMap();
-		map
-				.put(new JValueImpl(1), new JValueImpl(JValueBoolean
-						.getNullValue()));
-		map
-				.put(new JValueImpl(2), new JValueImpl(JValueBoolean
-						.getNullValue()));
-		setBoundVariable("FOO", map);
-		String queryString = "using FOO: exists! s:list(1,2) @ get(FOO, s)";
-		JValue result = evalTestQuery("QuantifiedExpression6", queryString);
-		assertNull(result.toBoolean());
-		JValue resultWO = evalTestQuery("QuantifiedExpression6 (wo)",
-				queryString, new DefaultOptimizer());
-		assertEquals(result, resultWO);
-	}
-
-	@Test
-	public void testEvaluateQuantifiedExpression7() throws Exception {
-		JValueMap map = new JValueMap();
-		map
-				.put(new JValueImpl(1), new JValueImpl(JValueBoolean
-						.getNullValue()));
-		map
-				.put(new JValueImpl(2), new JValueImpl(JValueBoolean
-						.getNullValue()));
-		setBoundVariable("FOO", map);
-		String queryString = "using FOO: exists s:list(1,2) @ get(FOO, s)";
-		JValue result = evalTestQuery("QuantifiedExpression7", queryString);
-		assertNull(result.toBoolean());
-		JValue resultWO = evalTestQuery("QuantifiedExpression7 (wo)",
-				queryString, new DefaultOptimizer());
-		assertEquals(result, resultWO);
-	}
-
-	@Test
-	public void testEvaluateQuantifiedExpression8() throws Exception {
-		JValueMap map = new JValueMap();
-		map
-				.put(new JValueImpl(1), new JValueImpl(JValueBoolean
-						.getNullValue()));
-		map
-				.put(new JValueImpl(2), new JValueImpl(JValueBoolean
-						.getNullValue()));
-		setBoundVariable("FOO", map);
-		String queryString = "using FOO: forall s:list(1,2) @ get(FOO, s)";
-		JValue result = evalTestQuery("QuantifiedExpression8", queryString);
-		assertNull(result.toBoolean());
-		JValue resultWO = evalTestQuery("QuantifiedExpression8 (wo)",
-				queryString, new DefaultOptimizer());
-		assertEquals(result, resultWO);
-	}
-
-	@Test
-	public void testEvaluateQuantifiedExpression9() throws Exception {
-		JValueMap map = new JValueMap();
-		map
-				.put(new JValueImpl(1), new JValueImpl(JValueBoolean
-						.getNullValue()));
-		map
-				.put(new JValueImpl(2), new JValueImpl(JValueBoolean
-						.getNullValue()));
-		setBoundVariable("FOO", map);
-		String queryString = "using FOO: forall s:list(1,2) @ get(FOO, s)";
-		JValue result = evalTestQuery("QuantifiedExpression9", queryString);
-		assertNull(result.toBoolean());
-		JValue resultWO = evalTestQuery("QuantifiedExpression9 (wo)",
-				queryString, new DefaultOptimizer());
-		assertEquals(result, resultWO);
-	}
 
 	/*
 	 * Test method for
@@ -1860,28 +1748,6 @@ public class GreqlEvaluatorTest extends GenericTests {
 		JValue result = evalTestQuery("QueryWithoutDatagraph", queryString,
 				(Graph) null);
 		assertEquals(49, result.toInteger().intValue());
-	}
-
-	@Test
-	public void testNullLiteral() throws Exception {
-		JValue result = evalTestQuery("NullLiteral1", "true and null");
-		assertEquals(null, result.toBoolean());
-		result = evalTestQuery("NullLiteral1", "true or null");
-		assertEquals(true, result.toBoolean());
-		result = evalTestQuery("NullLiteral1", "true xor null");
-		assertEquals(null, result.toBoolean());
-		result = evalTestQuery("NullLiteral1", "false and null");
-		assertEquals(false, result.toBoolean());
-		result = evalTestQuery("NullLiteral1", "false or null");
-		assertEquals(null, result.toBoolean());
-		result = evalTestQuery("NullLiteral1", "false xor null");
-		assertEquals(null, result.toBoolean());
-		result = evalTestQuery("NullLiteral1", "null and null");
-		assertEquals(null, result.toBoolean());
-		result = evalTestQuery("NullLiteral1", "null or null");
-		assertEquals(null, result.toBoolean());
-		result = evalTestQuery("NullLiteral1", "null xor null");
-		assertEquals(null, result.toBoolean());
 	}
 
 	@Test
