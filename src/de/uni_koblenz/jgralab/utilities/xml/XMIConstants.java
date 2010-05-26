@@ -23,9 +23,6 @@ public class XMIConstants {
 	static final String NAMESPACE_PREFIX_EECORE = "Ecore";
 	static final String NAMESPACE_PREFIX_XSI = "xsi";
 
-	// Package element
-	public static final String UML_TAG_PACKAGE = "Package";
-
 	// elements defined by the uml namespace
 	static final String UML_TAG_MODEL = "Model";
 
