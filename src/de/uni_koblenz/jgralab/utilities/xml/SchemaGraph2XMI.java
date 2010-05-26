@@ -52,7 +52,8 @@ import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.utilities.tg2schemagraph.Schema2SchemaGraph;
 
 public class SchemaGraph2XMI {
-
+	// TODO name ersetzen durch SimpleName an Stelle von QualifiedName
+	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	private final ArrayList<Domain> typesToBeDeclaredAtTheEnd = new ArrayList<Domain>();
 
 	/**
@@ -310,8 +311,8 @@ public class SchemaGraph2XMI {
 					XMIConstants.PACKAGEDELEMENT_TYPE_VALUE_PACKAGE);
 			writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
 					XMIConstants.XMI_ATTRIBUTE_ID, pack.get_qualifiedName());
-			writer.writeAttribute(XMIConstants.ATTRIBUTE_NAME, pack
-					.get_qualifiedName());
+			writer.writeAttribute(XMIConstants.ATTRIBUTE_NAME,
+					extractSimpleName(pack.get_qualifiedName()));
 		}
 
 		// create comments
@@ -385,8 +386,8 @@ public class SchemaGraph2XMI {
 				XMIConstants.PACKAGEDELEMENT_TYPE_VALUE_CLASS);
 		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
 				XMIConstants.XMI_ATTRIBUTE_ID, domain.get_qualifiedName());
-		writer.writeAttribute(XMIConstants.ATTRIBUTE_NAME, domain
-				.get_qualifiedName());
+		writer.writeAttribute(XMIConstants.ATTRIBUTE_NAME,
+				extractSimpleName(domain.get_qualifiedName()));
 
 		// create stereotype <<record>>
 		createExtension(writer, domain, "record");
@@ -415,8 +416,8 @@ public class SchemaGraph2XMI {
 				XMIConstants.PACKAGEDELEMENT_TYPE_VALUE_ENUMERATION);
 		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
 				XMIConstants.XMI_ATTRIBUTE_ID, domain.get_qualifiedName());
-		writer.writeAttribute(XMIConstants.ATTRIBUTE_NAME, domain
-				.get_qualifiedName());
+		writer.writeAttribute(XMIConstants.ATTRIBUTE_NAME,
+				extractSimpleName(domain.get_qualifiedName()));
 
 		// create comments
 		createComments(writer, domain);
@@ -490,8 +491,8 @@ public class SchemaGraph2XMI {
 					XMIConstants.XMI_ATTRIBUTE_ID, domain.get_qualifiedName()
 							.replaceAll("\\s", "").replaceAll("<", "_")
 							.replaceAll(">", "_"));
-			writer.writeAttribute(XMIConstants.ATTRIBUTE_NAME, domain
-					.get_qualifiedName());
+			writer.writeAttribute(XMIConstants.ATTRIBUTE_NAME,
+					extractSimpleName(domain.get_qualifiedName()));
 		}
 
 		// end packagedElement
@@ -528,8 +529,8 @@ public class SchemaGraph2XMI {
 				XMIConstants.PACKAGEDELEMENT_TYPE_VALUE_CLASS);
 		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
 				XMIConstants.XMI_ATTRIBUTE_ID, aeclass.get_qualifiedName());
-		writer.writeAttribute(XMIConstants.ATTRIBUTE_NAME, aeclass
-				.get_qualifiedName());
+		writer.writeAttribute(XMIConstants.ATTRIBUTE_NAME,
+				extractSimpleName(aeclass.get_qualifiedName()));
 		if (aeclass instanceof VertexClass
 				&& ((VertexClass) aeclass).is_abstract()) {
 			writer.writeAttribute(
@@ -924,6 +925,15 @@ public class SchemaGraph2XMI {
 
 		// end ownedComment
 		writer.writeEndElement();
+	}
+
+	private String extractSimpleName(String qualifiedName) {
+		int lastIndexOfDot = qualifiedName.lastIndexOf('.');
+		if (lastIndexOfDot >= 0) {
+			return qualifiedName.substring(lastIndexOfDot + 1);
+		} else {
+			return qualifiedName;
+		}
 	}
 
 }
