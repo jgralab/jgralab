@@ -178,10 +178,9 @@ public class SchemaGraph2XMI {
 	 */
 	private void createRootElement(XMLStreamWriter writer,
 			SchemaGraph schemaGraph) throws XMLStreamException {
-		de.uni_koblenz.jgralab.grumlschema.structure.Schema schema = schemaGraph
-				.getFirstSchema();
-		// TODO RSA zeigt UML Primitive Type nicht korrekt an!!!! alte Version
-		// löschen
+		// de.uni_koblenz.jgralab.grumlschema.structure.Schema schema =
+		// schemaGraph
+		// .getFirstSchema();
 		// start root element
 		writer.writeStartElement(XMIConstants.NAMESPACE_PREFIX_XMI,
 				XMIConstants.XMI_TAG_XMI, XMIConstants.NAMESPACE_XMI);
@@ -291,15 +290,32 @@ public class SchemaGraph2XMI {
 
 	private void createPackage(XMLStreamWriter writer, Package pack)
 			throws XMLStreamException {
+		boolean packageTagHasToBeClosed = false;
+
 		if (!pack.get_qualifiedName().equals(
 				de.uni_koblenz.jgralab.schema.Package.DEFAULTPACKAGE_NAME)) {
-			// TODO create start package and empty packages !!!
+			packageTagHasToBeClosed = pack.getFirstAnnotates() != null
+					|| pack.getFirstContainsDomain() != null
+					|| pack.getFirstContainsGraphElementClass() != null
+					|| pack.getFirstContainsSubPackage(EdgeDirection.OUT) != null;
+			if (packageTagHasToBeClosed) {
+				// start package
+				writer.writeStartElement(XMIConstants.TAG_PACKAGEDELEMENT);
+			} else {
+				// create empty package
+				writer.writeEmptyElement(XMIConstants.TAG_PACKAGEDELEMENT);
+			}
+			writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
+					XMIConstants.XMI_ATTRIBUTE_TYPE,
+					XMIConstants.PACKAGEDELEMENT_TYPE_VALUE_PACKAGE);
+			writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
+					XMIConstants.XMI_ATTRIBUTE_ID, pack.get_qualifiedName());
+			writer.writeAttribute(XMIConstants.ATTRIBUTE_NAME, pack
+					.get_qualifiedName());
 		}
 
 		// create comments
-		for (Annotates a : pack.getAnnotatesIncidences()) {
-			// TODO create comments
-		}
+		createComments(writer, pack);
 
 		// create domains
 		for (ContainsDomain cd : pack.getContainsDomainIncidences()) {
@@ -329,9 +345,7 @@ public class SchemaGraph2XMI {
 					createEnum(writer, (EnumDomain) domain);
 				} else if (domain instanceof RecordDomain) {
 					createRecordDomain(writer, (RecordDomain) domain);
-				}// TODO continue
-			} else {
-				// TODO BasicDomain with Comment
+				}
 			}
 		}
 
@@ -351,12 +365,13 @@ public class SchemaGraph2XMI {
 		// create subpackages
 		for (ContainsSubPackage csp : pack
 				.getContainsSubPackageIncidences(EdgeDirection.OUT)) {
-			// TODO create subpackages
+			// create subpackages
+			createPackage(writer, (Package) csp.getThat());
 		}
 
-		if (!pack.get_qualifiedName().equals(
-				de.uni_koblenz.jgralab.schema.Package.DEFAULTPACKAGE_NAME)) {
-			// TODO create end package
+		if (packageTagHasToBeClosed) {
+			// close packagedElement
+			writer.writeEndElement();
 		}
 
 	}
@@ -479,7 +494,7 @@ public class SchemaGraph2XMI {
 					.get_qualifiedName());
 		}
 
-		// end packagedElement e
+		// end packagedElement
 		writer.writeEndElement();
 	}
 
