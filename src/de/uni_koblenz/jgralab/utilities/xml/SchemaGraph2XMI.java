@@ -479,7 +479,7 @@ public class SchemaGraph2XMI {
 					.get_qualifiedName());
 		}
 
-		// end packagedElement
+		// end packagedElement e
 		writer.writeEndElement();
 	}
 
