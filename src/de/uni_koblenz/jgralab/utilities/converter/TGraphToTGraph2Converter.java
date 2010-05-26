@@ -2,6 +2,7 @@ package de.uni_koblenz.jgralab.utilities.converter;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -47,13 +48,13 @@ public class TGraphToTGraph2Converter {
 
 	private static int VERSION = GraphIO.TGFILE_VERSION;
 	private static Pattern AGGREGATION_CLASS_DEFINITION = Pattern
-	.compile("(\\s*abstract\\s*)?(AggregationClass)(\\s*.*?)(\\s*:\\s*.*?)?(\\s+from\\s+.*?)(\\s+role\\s+.*?)?(\\s+to\\s+.*?)(\\s+role\\s+.*?)?(\\s+aggregate\\s+)((?:to)|(?:from))(\\s*.*)");
+			.compile("(\\s*abstract\\s*)?(AggregationClass)(\\s*.*?)(\\s*:\\s*.*?)?(\\s+from\\s+.*?)(\\s+role\\s+.*?)?(\\s+to\\s+.*?)(\\s+role\\s+.*?)?(\\s+aggregate\\s+)((?:to)|(?:from))(\\s*.*)");
 	private static Pattern COMPOSITION_CLASS_DEFINITION = Pattern
-	.compile("(\\s*abstract\\s*)?(\\s*CompositionClass)(\\s*.*?)(\\s*:\\s*.*?)?(\\s+from\\s+.*?)(\\s+role\\s+.*?)?(\\s+to\\s+.*?)(\\s+role\\s+.*?)?(\\s+aggregate\\s+)((?:to)|(?:from))(\\s*.*)");
+			.compile("(\\s*abstract\\s*)?(\\s*CompositionClass)(\\s*.*?)(\\s*:\\s*.*?)?(\\s+from\\s+.*?)(\\s+role\\s+.*?)?(\\s+to\\s+.*?)(\\s+role\\s+.*?)?(\\s+aggregate\\s+)((?:to)|(?:from))(\\s*.*)");
 	private static Pattern GRAPH_LINE = Pattern
-	.compile("(\\s*Graph\\s*)\"(.*)(?:_)(.*)\"(.*)");
+			.compile("(\\s*Graph\\s*)\"(.*)(?:_)(.*)\"(.*)");
 	private static Pattern GRAPH_LINE_NO_VERSION = Pattern
-	.compile("(\\s*Graph\\s*)(\".*\")(.*)");
+			.compile("(\\s*Graph\\s*)(\".*\")(.*)");
 	private static Pattern OLD_ROLE_NAME = Pattern.compile("(\\s*)role '(.*)");
 
 	/**
@@ -68,7 +69,7 @@ public class TGraphToTGraph2Converter {
 	 *             this should not happen
 	 */
 	public void convertTGStream(OutputStream out, InputStream in)
-	throws IOException {
+			throws IOException {
 		PrintWriter output = new PrintWriter(new BufferedWriter(
 				new OutputStreamWriter(out)), true);
 		BufferedReader input = new BufferedReader(new InputStreamReader(in));
@@ -81,7 +82,7 @@ public class TGraphToTGraph2Converter {
 			currentLine = input.readLine();
 			if (currentLine != null) {
 				if (graphReached) {
-					output.println(currentLine);
+					output.println(currentLine.replace(" \\null ", " n "));
 					continue;
 				}
 				if (currentLine.trim().startsWith("//")) {
@@ -145,7 +146,7 @@ public class TGraphToTGraph2Converter {
 			out.append(matcher.group(3));
 			return out.toString();
 		}
-		return currentLine.replace(" \\null ", " n ");
+		return currentLine;
 	}
 
 	private void createEdgeClassStatementForAggregationOrCompositionClass(
@@ -210,13 +211,13 @@ public class TGraphToTGraph2Converter {
 		OptionHandler oh = new OptionHandler(toolString, versionString);
 
 		Option input = new Option("i", "input", true,
-		"(optional): input TG file, if omitted, the tool reads from stdin");
+				"(optional): input TG file, if omitted, the tool reads from stdin");
 		input.setRequired(false);
 		input.setArgName("file");
 		oh.addOption(input);
 
 		Option output = new Option("o", "output", true,
-		"(optional): output TG file, if omitted, the tool writes to stdout");
+				"(optional): output TG file, if omitted, the tool writes to stdout");
 		output.setRequired(false);
 		output.setArgName("file");
 		oh.addOption(output);
@@ -233,12 +234,39 @@ public class TGraphToTGraph2Converter {
 	public static void main(String[] args) {
 		CommandLine cmdl = processCommandLineOptions(args);
 		try {
-			InputStream in = cmdl.hasOption('i') ? new FileInputStream(cmdl
-					.getOptionValue('i')) : System.in;
-			OutputStream out = cmdl.hasOption('o') ? new FileOutputStream(cmdl
-					.getOptionValue('o')) : System.out;
+
+			String inputFilename = cmdl.hasOption('i') ? cmdl
+					.getOptionValue('i') : null;
+			String outputFilename = cmdl.hasOption('o') ? cmdl
+					.getOptionValue('o') : null;
+
+			String tempFilename = outputFilename != null ? outputFilename + "~"
+					+ Long.toString(System.currentTimeMillis()) : null;
+
+			File inputFile = inputFilename != null ? new File(inputFilename)
+					: null;
+			File tempFile = tempFilename != null ? new File(tempFilename)
+					: null;
+			File outputFile = outputFilename != null ? new File(outputFilename)
+					: null;
+
+			InputStream in = inputFile != null ? new FileInputStream(inputFile)
+					: System.in;
+
+			OutputStream out = tempFilename != null ? new FileOutputStream(
+					tempFile) : System.out;
+
 			TGraphToTGraph2Converter converter = new TGraphToTGraph2Converter();
 			converter.convertTGStream(out, in);
+
+			if (!tempFile.renameTo(outputFile)) {
+				System.err
+						.println("Warning: temporary file could not be moved to\n"
+								+ outputFile.getAbsolutePath()
+								+ "\nit can be found at\n"
+								+ tempFile.getAbsolutePath());
+			}
+
 			System.out.println("Fini.");
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
