@@ -848,43 +848,66 @@ public class ManualGreqlParser extends ManualParserHelper {
 		return expr;
 	}
 
+
 	private final Expression parseAdditiveExpression() {
-		FunctionConstruct construct = new FunctionConstruct();
-		construct.preArg1();
-		Expression expr = parseMultiplicativeExpression();
-		construct.preOp(expr);
-		if (tryMatch(TokenTypes.PLUS)) {
-			construct.postOp("add");
-			return construct.postArg2(parseAdditiveExpression());
-		} else if (tryMatch(TokenTypes.MINUS)) {
-			construct.postOp("sub");
-			return construct.postArg2(parseAdditiveExpression());
-		} else if (tryMatch(TokenTypes.PLUSPLUS)) {
-			construct.postOp("concat");
-			return construct.postArg2(parseAdditiveExpression());
-		}
+		FunctionConstruct construct = null;
+		String name = null;
+		Expression expr = null;
+		do {
+			if (construct == null) {
+				construct = new FunctionConstruct();
+				construct.preArg1();
+				expr = parseMultiplicativeExpression();
+			} else {
+				construct = new FunctionConstruct(construct);
+			}
+			name = null;
+			construct.preOp(expr);
+			if (tryMatch(TokenTypes.PLUS)) {
+				name = "add";
+			} else if (tryMatch(TokenTypes.MINUS)) {
+				name = "sub";
+			} else if (tryMatch(TokenTypes.PLUSPLUS)) {
+				name = "concat";
+			}
+			if (name != null) {
+				construct.postOp(name);
+				expr = construct.postArg2(parseMultiplicativeExpression());
+			}
+		} while (name != null);	
 		return expr;
 	}
 
+	
 	private final Expression parseMultiplicativeExpression() {
-		FunctionConstruct construct = new FunctionConstruct();
-		construct.preArg1();
-		Expression expr = parseUnaryExpression();
-		construct.preOp(expr);
+		FunctionConstruct construct = null;
 		String name = null;
-		if (tryMatch(TokenTypes.STAR)) {
-			name = "mul";
-		} else if (tryMatch(TokenTypes.MOD)) {
-			name = "mod";
-		} else if (tryMatch(TokenTypes.DIV)) {
-			name = "div";
-		}
-		if (name != null) {
-			construct.postOp(name);
-			return construct.postArg2(parseMultiplicativeExpression());
-		}
+		Expression expr = null;
+		do {
+			if (construct == null) {
+				construct = new FunctionConstruct();
+				construct.preArg1();
+				expr = parseUnaryExpression();
+			} else {
+				construct = new FunctionConstruct(construct);
+			}
+			name = null;
+			construct.preOp(expr);
+			if (tryMatch(TokenTypes.STAR)) {
+				name = "mul";
+			} else if (tryMatch(TokenTypes.MOD)) {
+				name = "mod";
+			} else if (tryMatch(TokenTypes.DIV)) {
+				name = "div";
+			}
+			if (name != null) {
+				construct.postOp(name);
+				expr = construct.postArg2(parseUnaryExpression());
+			}
+		} while (name != null);	
 		return expr;
 	}
+	
 
 	private final Expression parseUnaryExpression() {
 		FunctionConstruct construct = null;

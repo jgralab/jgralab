@@ -445,6 +445,14 @@ public abstract class ManualParserHelper {
 		int lengthArg2 = 0;
 		boolean binary = true;
 
+		public FunctionConstruct(FunctionConstruct leftPart) {
+			offsetArg1 = leftPart.offsetArg1;
+		}
+		
+		public FunctionConstruct() {
+		}
+		
+		
 		public boolean isValidFunction() {
 			return operatorName != null;
 		}
@@ -464,9 +472,6 @@ public abstract class ManualParserHelper {
 			lengthArg1 = getLength(offsetArg1);
 			offsetOperator = getCurrentOffset();
 		}
-
-		// TODO: Modify test so that thisVertex can be used only in Goal and
-		// StartRestrictions an thisEdge only in BooleanPredicates
 
 		public void postOp(String op) {
 			lengthOperator = getLength(offsetOperator);
