@@ -770,8 +770,7 @@ public class Greql2Serializer {
 
 	private void serializeLiteral(Literal exp) {
 		if (exp instanceof BoolLiteral) {
-			sb.append(((BoolLiteral) exp).get_boolValue().toString()
-					.toLowerCase());
+			sb.append(((BoolLiteral) exp).is_boolValue());
 		} else if (exp instanceof IntLiteral) {
 			sb.append(((IntLiteral) exp).get_intValue());
 		} else if (exp instanceof NullLiteral) {

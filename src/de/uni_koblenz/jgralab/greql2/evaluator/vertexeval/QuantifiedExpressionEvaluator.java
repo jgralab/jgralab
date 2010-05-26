@@ -106,7 +106,6 @@ public class QuantifiedExpressionEvaluator extends VertexEvaluator {
 
 		int noOfVariableCombinations = 0;
 		boolean foundTrue = false;
-		boolean foundNull = false;
 		declarationLayer.reset();
 		switch (quantificationType) {
 		case EXISTS:
@@ -115,32 +114,23 @@ public class QuantifiedExpressionEvaluator extends VertexEvaluator {
 				JValue tempResult = predicateEvaluator.getResult(subgraph);
 				if (tempResult.isBoolean()) {
 					try {
-						if (tempResult.toBoolean() == JValueBoolean
-								.getTrueValue()) {
+						if (tempResult.toBoolean() == JValueBoolean.getTrueValue()) {
 							return new JValueImpl(JValueBoolean.getTrueValue());
-						} else if (tempResult.toBoolean() == null) {
-							foundNull = true;
-						}
+						} 
 					} catch (JValueInvalidTypeException exception) {
 						throw new EvaluateException(
 								"Error evaluation Exists clause", exception);
 					}
 				}
 			}
-			if (foundNull) {
-				return new JValueImpl(JValueBoolean.getNullValue());
-			} else {
-				return new JValueImpl(JValueBoolean.getFalseValue());
-			}
+			return new JValueImpl(JValueBoolean.getFalseValue());
 		case EXISTSONE:
 			while (declarationLayer.iterate(subgraph)) {
 				noOfVariableCombinations++;
 				JValue tempResult = predicateEvaluator.getResult(subgraph);
 				if (tempResult.isBoolean()) {
 					try {
-						if (tempResult.toBoolean() == null) {
-							foundNull = true;
-						} else if (tempResult.toBoolean().equals(
+						if (tempResult.toBoolean().equals(
 								JValueBoolean.getTrueValue())) {
 							if (foundTrue == true) {
 								return new JValueImpl(JValueBoolean.getFalseValue());
@@ -154,9 +144,6 @@ public class QuantifiedExpressionEvaluator extends VertexEvaluator {
 					}
 				}
 			}
-			if (foundNull) {
-				return new JValueImpl(JValueBoolean.getNullValue());
-			}
 			if (foundTrue) {
 				return new JValueImpl(JValueBoolean.getTrueValue());
 			}
@@ -167,9 +154,6 @@ public class QuantifiedExpressionEvaluator extends VertexEvaluator {
 				JValue tempResult = predicateEvaluator.getResult(subgraph);
 				if (tempResult.isBoolean()) {
 					try {
-						if (tempResult.toBoolean() == null) {
-							return new JValueImpl(JValueBoolean.getNullValue());
-						}
 						if (tempResult.toBoolean().equals(
 								JValueBoolean.getFalseValue())) {
 							return new JValueImpl(JValueBoolean.getFalseValue());

@@ -2601,14 +2601,14 @@ public class ManualGreqlParser extends ManualParserHelper {
 				if (!inPredicateMode()) {
 					tl = graph.getFirstBoolLiteral();
 					while (tl != null) {
-						if (tl.get_boolValue() == TrivalentBoolean.TRUE) {
+						if (tl.is_boolValue() == true) {
 							break;
 						}
 						tl = tl.getNextBoolLiteral();
 					}
 					if (tl == null) {
 						tl = graph.createBoolLiteral();
-						tl.set_boolValue(TrivalentBoolean.TRUE);
+						tl.set_boolValue(true);
 					}
 				}
 				return tl;
@@ -2619,35 +2619,17 @@ public class ManualGreqlParser extends ManualParserHelper {
 				if (!inPredicateMode()) {
 					fl = graph.getFirstBoolLiteral();
 					while (fl != null) {
-						if (fl.get_boolValue() == TrivalentBoolean.FALSE) {
+						if (fl.is_boolValue() == false) {
 							break;
 						}
 						fl = fl.getNextBoolLiteral();
 					}
 					if (fl == null) {
 						fl = graph.createBoolLiteral();
-						fl.set_boolValue(TrivalentBoolean.FALSE);
+						fl.set_boolValue(false);
 					}
 				}
 				return fl;
-			}
-			case NULL_VALUE: {
-				match();
-				BoolLiteral nl = null;
-				if (!inPredicateMode()) {
-					nl = graph.getFirstBoolLiteral();
-					while (nl != null) {
-						if (nl.get_boolValue() == TrivalentBoolean.NULL) {
-							break;
-						}
-						nl = nl.getNextBoolLiteral();
-					}
-					if (nl == null) {
-						nl = graph.createBoolLiteral();
-						nl.set_boolValue(TrivalentBoolean.NULL);
-					}
-				}
-				return nl;
 			}
 			}
 		}

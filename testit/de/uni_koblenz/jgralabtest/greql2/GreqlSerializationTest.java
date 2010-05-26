@@ -87,9 +87,9 @@ public class GreqlSerializationTest {
 					+ "                   reportSet x * x + y - 1, x, y, a, b end, "
 					+ "                   a, b end",
 			"from x:list(1..10), y:list(x..13), z:list(1..x), a : set(1, 2, 3), b : z "
-					+ "           with x <> 0 and y <> 0 and z <> null and (b <> z)"
+					+ "           with x <> 0 and y <> 0 and z <> 0 and (b <> z)"
 					+ "           report isPrime(z), isPrime(z*z), isPrime(z+z*z-1), b end",
-			"from u, v, w, x, y, z : set(true, false, null)     "
+			"from u, v, w, x, y, z : set(true, false)     "
 					+ "     with ((u xor v) or (w and x and (y or z)) or (y and z) or (u and z) and ((u and x) or (y and w) and (u or v)))     "
 					+ "          or ((u xor v) or (w and x and (y or z)) or (y and z) or (u and z) and ((u and x) or (y and w) and (u or v)))  "
 					+ "          and ((u xor v) or (w and x and (y or z)) or (y and z) or (u and z) and ((u and x) or (y and w) and (u or v))) "

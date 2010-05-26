@@ -1908,4 +1908,5 @@ public abstract class GraphBaseImpl implements Graph {
 	protected boolean canAddGraphElement(int graphElementId) {
 		return graphElementId == 0;
 	}
+	
 }

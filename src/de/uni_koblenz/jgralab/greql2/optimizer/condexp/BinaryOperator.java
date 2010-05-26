@@ -38,19 +38,5 @@ public abstract class BinaryOperator extends Formula {
 		return startVal;
 	}
 
-	protected boolean isAndWithNullLeaf(Formula other) {
-		if (other instanceof And) {
-			BinaryOperator otherBO = (BinaryOperator) other;
-			return ((otherBO.leftHandSide instanceof Null) || (otherBO.rightHandSide instanceof Null));
-		}
-		return false;
-	}
-
-	protected boolean isOrWithNullLeaf(Formula other) {
-		if (other instanceof Or) {
-			BinaryOperator otherBO = (BinaryOperator) other;
-			return ((otherBO.leftHandSide instanceof Null) || (otherBO.rightHandSide instanceof Null));
-		}
-		return false;
-	}
+	
 }

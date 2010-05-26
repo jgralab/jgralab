@@ -27,7 +27,6 @@ import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.PathExistence;
 import de.uni_koblenz.jgralab.greql2.schema.PathExpression;
 import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
-import de.uni_koblenz.jgralab.greql2.schema.TrivalentBoolean;
 import de.uni_koblenz.jgralab.greql2.schema.TypeId;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
 import de.uni_koblenz.jgralab.greql2.schema.VertexSetExpression;
@@ -89,7 +88,7 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 
 		for (PathExistence pe : pes) {
 			BoolLiteral lit = syntaxgraph.createBoolLiteral();
-			lit.set_boolValue(TrivalentBoolean.TRUE);
+			lit.set_boolValue(true);
 			while (pe.getFirstEdge(EdgeDirection.OUT) != null) {
 				Edge e = pe.getFirstEdge(EdgeDirection.OUT);
 				e.setAlpha(lit);

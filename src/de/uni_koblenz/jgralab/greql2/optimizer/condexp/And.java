@@ -76,22 +76,6 @@ public class And extends BinaryOperator {
 			return lhs;
 		}
 
-		if ((lhs instanceof Null) && isOrWithNullLeaf(rhs)) {
-			return lhs;
-		}
-
-		if ((rhs instanceof Null) && isOrWithNullLeaf(lhs)) {
-			return rhs;
-		}
-
-		if ((lhs instanceof Null) && isAndWithNullLeaf(rhs)) {
-			return rhs;
-		}
-
-		if ((rhs instanceof Null) && isAndWithNullLeaf(lhs)) {
-			return lhs;
-		}
-
 		if (lhs.equals(rhs)) {
 			return lhs;
 		}

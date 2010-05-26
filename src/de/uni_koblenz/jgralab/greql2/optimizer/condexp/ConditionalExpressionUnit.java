@@ -20,7 +20,7 @@ public class ConditionalExpressionUnit {
 	private GreqlEvaluator greqlEvaluator;
 
 	private Expression condition;
-	private Formula trueFormula, falseFormula, nullFormula;
+	private Formula trueFormula, falseFormula;
 	private double influenceCostRatio = -1;
 
 	public ConditionalExpressionUnit(Expression exp, Formula origFormula) {
@@ -30,14 +30,12 @@ public class ConditionalExpressionUnit {
 				new True(greqlEvaluator)).simplify();
 		falseFormula = origFormula.calculateReplacementFormula(condition,
 				new False(greqlEvaluator)).simplify();
-		nullFormula = origFormula.calculateReplacementFormula(condition,
-				new Null(greqlEvaluator)).simplify();
 	}
 
 	private double calculateInfluenceCostRatio() {
 		Formula boolDiff = new Not(greqlEvaluator, new Equiv(greqlEvaluator,
-				trueFormula, new Not(greqlEvaluator, new Equiv(greqlEvaluator,
-						falseFormula, nullFormula))));
+				trueFormula, new Not(greqlEvaluator, 
+						falseFormula)));
 		boolDiff = boolDiff.simplify();
 
 		// selectivity of the boolean difference
@@ -58,7 +56,7 @@ public class ConditionalExpressionUnit {
 
 	ConditionalExpression toConditionalExpression() {
 		return new ConditionalExpression(greqlEvaluator, condition, trueFormula
-				.optimize(), falseFormula.optimize(), nullFormula.optimize());
+				.optimize(), falseFormula.optimize());
 	}
 
 	public double getInfluenceCostRatio() {

@@ -78,7 +78,6 @@ import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
 import de.uni_koblenz.jgralab.greql2.schema.SimplePathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.StringLiteral;
 import de.uni_koblenz.jgralab.greql2.schema.ThisVertex;
-import de.uni_koblenz.jgralab.greql2.schema.TrivalentBoolean;
 import de.uni_koblenz.jgralab.greql2.schema.TypeId;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
 import de.uni_koblenz.jgralab.greql2.schema.VertexSetExpression;
@@ -310,11 +309,11 @@ public class ParserTest {
 		Greql2 graph = parseQuery("true");
 		BoolLiteral lit = graph.getFirstBoolLiteral();
 		assertNotNull(lit);
-		assertEquals(TrivalentBoolean.TRUE, lit.get_boolValue());
+		assertTrue(lit.is_boolValue());
 		graph = parseQuery("false");
 		lit = graph.getFirstBoolLiteral();
 		assertNotNull(lit);
-		assertEquals(TrivalentBoolean.FALSE, lit.get_boolValue());
+		assertFalse(lit.is_boolValue());
 	}
 
 	@Test
@@ -816,11 +815,11 @@ public class ParserTest {
 		BoolLiteral trueExpression = (BoolLiteral) condExpr
 				.getFirstIsTrueExprOf().getAlpha();
 		assertNotNull(trueExpression);
-		assertEquals(TrivalentBoolean.TRUE, trueExpression.get_boolValue());
+		assertTrue(trueExpression.is_boolValue());
 		BoolLiteral falseExpression = (BoolLiteral) condExpr
 				.getFirstIsFalseExprOf().getAlpha();
 		assertNotNull(falseExpression);
-		assertEquals(TrivalentBoolean.FALSE, falseExpression.get_boolValue());
+		assertFalse(falseExpression.is_boolValue());
 		FunctionApplication nullExpression = (FunctionApplication) condExpr
 				.getFirstIsNullExprOf().getAlpha();
 		FunctionId nullId = (FunctionId) nullExpression
