@@ -24,11 +24,10 @@ public class XMIConstants {
 	static final String NAMESPACE_PREFIX_XSI = "xsi";
 
 	// Package element
-	public static final String UML_TAG_PACKAGE = "Package";// TODO check old
-															// xmiconstants
+	public static final String UML_TAG_PACKAGE = "Package";
 
-	// // elements defined by the uml namespace
-	// static final String UML_TAG_MODEL = "Model";
+	// elements defined by the uml namespace
+	static final String UML_TAG_MODEL = "Model";
 
 	// elements defined by the xmi namespace
 	static final String XMI_ATTRIBUTE_ID = "id";
@@ -55,8 +54,14 @@ public class XMIConstants {
 
 	// uml element specific constants
 	static final String PACKAGEDELEMENT_TYPE_VALUE_CLASS = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_CLASS;
-	static final String PACKEGEDELEMENT_TYPE_VALUE_PACKAGE = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_PACKAGE;
+	static final String PACKAGEDELEMENT_TYPE_VALUE_PACKAGE = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_PACKAGE;
 	static final String TAG_PACKAGEDELEMENT = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_PACKAGED_ELEMENT;
+	static final String PACKAGEDELEMENT_ATTRIBUTE_ISABSTRACT = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_ATTRIBUTE_IS_ABSRACT;
+
+	// generalization specific constants
+	static final String TAG_GENERALIZATION = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_GENERALIZATION;
+	static final String GENERALIZATION_TYPE_VALUE = "uml:Generalization";
+	static final String GENERALIZATION_ATTRIBUTE_GENERAL = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_ATTRIBUTE_GENERAL;
 
 	// attribute specific constants
 	static final String TYPE_HREF_VALUE_STRING = NAMESPACE_UML
@@ -115,13 +120,13 @@ public class XMIConstants {
 	static final String TAG_BODY = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_BODY;
 	static final String ATTRIBUTE_NAME = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_ATTRIBUTE_NAME;
 	static final String ATTRIBUTE_HREF = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_ATTRIBUTE_HREF;
+	static final String ATTRIBUTE_VALUE_TRUE = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_TRUE;
 
 	// packageimport specific constants
-	static final String TAG_PACKAGEIMPORT = "packageImport";// TODO check old
-															// xmiconstants
-	static final String PACKAGEIMPORT_TYPE_VALUE = "uml:PackageImport";
-	static final String TAG_IMPORTEDPACKAGE = "importedPackage";
-	static final String IMPORTEDPACKAGE_TYPE_VALUE = "uml:Model";
-	static final String IMPORTEDPACKAGE_HREF_VALUE = NAMESPACE_UML
-			+ "/uml.xml#_0";
+	// static final String TAG_PACKAGEIMPORT = "packageImport";
+	// static final String PACKAGEIMPORT_TYPE_VALUE = "uml:PackageImport";
+	// static final String TAG_IMPORTEDPACKAGE = "importedPackage";
+	// static final String IMPORTEDPACKAGE_TYPE_VALUE = "uml:Model";
+	// static final String IMPORTEDPACKAGE_HREF_VALUE = NAMESPACE_UML
+	// + "/uml.xml#_0";
 }
