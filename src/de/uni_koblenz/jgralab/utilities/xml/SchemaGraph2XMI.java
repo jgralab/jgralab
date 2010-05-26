@@ -46,6 +46,7 @@ import de.uni_koblenz.jgralab.grumlschema.structure.HasAttribute;
 import de.uni_koblenz.jgralab.grumlschema.structure.HasConstraint;
 import de.uni_koblenz.jgralab.grumlschema.structure.NamedElement;
 import de.uni_koblenz.jgralab.grumlschema.structure.Package;
+import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesVertexClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.utilities.tg2schemagraph.Schema2SchemaGraph;
@@ -182,10 +183,8 @@ public class SchemaGraph2XMI {
 		// TODO RSA zeigt UML Primitive Type nicht korrekt an!!!! alte Version
 		// löschen
 		// start root element
-		writer.writeStartElement(XMIConstants.NAMESPACE_PREFIX_UML,
-				XMIConstants.UML_TAG_PACKAGE, XMIConstants.NAMESPACE_UML);
-		writer.setPrefix(XMIConstants.NAMESPACE_PREFIX_XMI,
-				XMIConstants.NAMESPACE_XMI);
+		writer.writeStartElement(XMIConstants.NAMESPACE_PREFIX_XMI,
+				XMIConstants.XMI_TAG_XMI, XMIConstants.NAMESPACE_XMI);
 		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
 				XMIConstants.XMI_ATTRIBUTE_VERSION,
 				XMIConstants.XMI_ATTRIBUTE_VERSION_VALUE);
@@ -195,9 +194,78 @@ public class SchemaGraph2XMI {
 				XMIConstants.NAMESPACE_EECORE);
 		writer.setPrefix(XMIConstants.NAMESPACE_PREFIX_ECORE,
 				XMIConstants.NAMESPACE_ECORE);
+		writer.setPrefix(XMIConstants.NAMESPACE_PREFIX_UML,
+				XMIConstants.NAMESPACE_UML);
 		writer.writeAttribute(XMIConstants.NAMESPACE_XSI,
 				XMIConstants.XSI_ATTRIBUTE_SCHEMALOCATION,
 				XMIConstants.SCHEMALOCATION);
+		// writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
+		// XMIConstants.XMI_ATTRIBUTE_ID, schema.get_packagePrefix() + "."
+		// + schema.get_name());
+		// writer.writeAttribute(XMIConstants.ATTRIBUTE_NAME, schema
+		// .get_packagePrefix()
+		// + "." + schema.get_name());
+
+		// // create model element
+		createModelElement(writer, schemaGraph);
+
+		// create packageImport
+		// createPackageImport(writer);
+
+		// convert graph class
+		// createGraphAndVertexClass(writer, schemaGraph.getFirstGraphClass());
+
+		// convert graph
+		// createPackage(writer, (Package) schemaGraph.getFirstSchema()
+		// .getFirstContainsDefaultPackage().getThat());
+
+		// create Types
+		// createTypes(writer);
+
+		// create profileApplication
+		// createProfileApplication(writer);
+
+		// close root element
+		writer.writeEndElement();
+	}
+
+	// private void createPackageImport(XMLStreamWriter writer)
+	// throws XMLStreamException {
+	// // start packageImport
+	// writer.writeStartElement(XMIConstants.TAG_PACKAGEIMPORT);
+	// writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
+	// XMIConstants.XMI_ATTRIBUTE_TYPE,
+	// XMIConstants.PACKAGEIMPORT_TYPE_VALUE);
+	// writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
+	// XMIConstants.XMI_ATTRIBUTE_ID, "schema"
+	// + XMIConstants.TAG_PACKAGEIMPORT);
+	//
+	// // create importedPackage
+	// writer.writeEmptyElement(XMIConstants.TAG_IMPORTEDPACKAGE);
+	// writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
+	// XMIConstants.XMI_ATTRIBUTE_TYPE,
+	// XMIConstants.IMPORTEDPACKAGE_TYPE_VALUE);
+	// writer.writeAttribute(XMIConstants.ATTRIBUTE_HREF,
+	// XMIConstants.IMPORTEDPACKAGE_HREF_VALUE);
+	//
+	// // end packageImport
+	// writer.writeEndElement();
+	// }
+
+	/**
+	 * @param writer
+	 * @param modelName
+	 * @param schemaGraph
+	 * @throws XMLStreamException
+	 */
+	private void createModelElement(XMLStreamWriter writer,
+			SchemaGraph schemaGraph) throws XMLStreamException {
+		de.uni_koblenz.jgralab.grumlschema.structure.Schema schema = schemaGraph
+				.getFirstSchema();
+
+		// start model
+		writer.writeStartElement(XMIConstants.NAMESPACE_UML,
+				XMIConstants.UML_TAG_MODEL);
 		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
 				XMIConstants.XMI_ATTRIBUTE_ID, schema.get_packagePrefix() + "."
 						+ schema.get_name());
@@ -205,16 +273,9 @@ public class SchemaGraph2XMI {
 				.get_packagePrefix()
 				+ "." + schema.get_name());
 
-		// // create model element
-		// createModelElement(writer, schemaGraph);
-
-		// create packageImport
-		createPackageImport(writer);
-
 		// convert graph class
-		createGraphAndVertexClass(writer, schemaGraph.getFirstGraphClass());
+		createGraphClassAndVertexClass(writer, schemaGraph.getFirstGraphClass());
 
-		// convert graph
 		createPackage(writer, (Package) schemaGraph.getFirstSchema()
 				.getFirstContainsDefaultPackage().getThat());
 
@@ -224,75 +285,15 @@ public class SchemaGraph2XMI {
 		// create profileApplication
 		createProfileApplication(writer);
 
-		// close root element
+		// end model
 		writer.writeEndElement();
 	}
-
-	private void createPackageImport(XMLStreamWriter writer)
-			throws XMLStreamException {
-		// start packageImport
-		writer.writeStartElement(XMIConstants.TAG_PACKAGEIMPORT);
-		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-				XMIConstants.XMI_ATTRIBUTE_TYPE,
-				XMIConstants.PACKAGEIMPORT_TYPE_VALUE);
-		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-				XMIConstants.XMI_ATTRIBUTE_ID, "schema"
-						+ XMIConstants.TAG_PACKAGEIMPORT);
-
-		// create importedPackage
-		writer.writeEmptyElement(XMIConstants.TAG_IMPORTEDPACKAGE);
-		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-				XMIConstants.XMI_ATTRIBUTE_TYPE,
-				XMIConstants.IMPORTEDPACKAGE_TYPE_VALUE);
-		writer.writeAttribute(XMIConstants.ATTRIBUTE_HREF,
-				XMIConstants.IMPORTEDPACKAGE_HREF_VALUE);
-
-		// end packageImport
-		writer.writeEndElement();
-	}
-
-	// /**
-	// * @param writer
-	// * @param modelName
-	// * @param schemaGraph
-	// * @throws XMLStreamException
-	// */
-	// private void createModelElement(XMLStreamWriter writer,
-	// SchemaGraph schemaGraph) throws XMLStreamException {
-	// de.uni_koblenz.jgralab.grumlschema.structure.Schema schema = schemaGraph
-	// .getFirstSchema();
-	//
-	// // start model
-	// writer.writeStartElement(XMIConstants.NAMESPACE_UML,
-	// XMIConstants.UML_TAG_MODEL);
-	// writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-	// XMIConstants.XMI_ATTRIBUTE_ID, schema.get_packagePrefix() + "."
-	// + schema.get_name());
-	// writer.writeAttribute(XMIConstants.ATTRIBUTE_NAME, schema
-	// .get_packagePrefix()
-	// + "." + schema.get_name());
-	//
-	// // convert graph class
-	// createGraphAndVertexClass(writer, schemaGraph.getFirstGraphClass());
-	//
-	// createPackage(writer, (Package) schemaGraph.getFirstSchema()
-	// .getFirstContainsDefaultPackage().getThat());
-	//
-	// // create Types
-	// createTypes(writer);
-	//
-	// // create profileApplication
-	// createProfileApplication(writer);
-	//
-	// // end model
-	// writer.writeEndElement();
-	// }
 
 	private void createPackage(XMLStreamWriter writer, Package pack)
 			throws XMLStreamException {
 		if (!pack.get_qualifiedName().equals(
 				de.uni_koblenz.jgralab.schema.Package.DEFAULTPACKAGE_NAME)) {
-			// TODO create start package
+			// TODO create start package and empty packages !!!
 		}
 
 		// create comments
@@ -340,7 +341,7 @@ public class SchemaGraph2XMI {
 			GraphElementClass gec = (GraphElementClass) cgec.getThat();
 			if (gec instanceof VertexClass) {
 				// create VertexClass
-				createGraphAndVertexClass(writer, gec);
+				createGraphClassAndVertexClass(writer, gec);
 			} else {
 				// create EdgeClass
 				// TODO create edge
@@ -457,7 +458,7 @@ public class SchemaGraph2XMI {
 		writer.writeStartElement(XMIConstants.TAG_PACKAGEDELEMENT);
 		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
 				XMIConstants.XMI_ATTRIBUTE_TYPE,
-				XMIConstants.PACKEGEDELEMENT_TYPE_VALUE_PACKAGE);
+				XMIConstants.PACKAGEDELEMENT_TYPE_VALUE_PACKAGE);
 		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
 				XMIConstants.XMI_ATTRIBUTE_ID,
 				XMIConstants.PACKAGE_PRIMITIVETYPES_NAME);
@@ -487,7 +488,7 @@ public class SchemaGraph2XMI {
 	 * @param aeclass
 	 * @throws XMLStreamException
 	 */
-	private void createGraphAndVertexClass(XMLStreamWriter writer,
+	private void createGraphClassAndVertexClass(XMLStreamWriter writer,
 			AttributedElementClass aeclass) throws XMLStreamException {
 
 		assert aeclass instanceof GraphClass || aeclass instanceof VertexClass : "aeclass must be of type GraphClass or Vertex Class";
@@ -497,7 +498,9 @@ public class SchemaGraph2XMI {
 		boolean isEmptyVertexClass = (aeclass instanceof VertexClass)
 				&& aeclass.getFirstAnnotates() == null
 				&& aeclass.getFirstHasAttribute() == null
-				&& aeclass.getFirstHasConstraint() == null;
+				&& aeclass.getFirstHasConstraint() == null
+				&& ((VertexClass) aeclass)
+						.getFirstSpecializesVertexClass(EdgeDirection.OUT) == null;
 
 		// start packagedElement
 		if (isEmptyVertexClass) {
@@ -512,6 +515,12 @@ public class SchemaGraph2XMI {
 				XMIConstants.XMI_ATTRIBUTE_ID, aeclass.get_qualifiedName());
 		writer.writeAttribute(XMIConstants.ATTRIBUTE_NAME, aeclass
 				.get_qualifiedName());
+		if (aeclass instanceof VertexClass
+				&& ((VertexClass) aeclass).is_abstract()) {
+			writer.writeAttribute(
+					XMIConstants.PACKAGEDELEMENT_ATTRIBUTE_ISABSTRACT,
+					XMIConstants.ATTRIBUTE_VALUE_TRUE);
+		}
 
 		// create <<graphclass>> for graph classes
 		if (aeclass instanceof GraphClass) {
@@ -524,6 +533,16 @@ public class SchemaGraph2XMI {
 		// create constraints
 		createConstraints(writer, aeclass);
 
+		// create generalization
+		if (aeclass instanceof VertexClass) {
+			for (SpecializesVertexClass svc : ((VertexClass) aeclass)
+					.getSpecializesVertexClassIncidences(EdgeDirection.OUT)) {
+				createGeneralization(writer, "generalization_"
+						+ aeclass.get_qualifiedName(), ((VertexClass) svc
+						.getThat()).get_qualifiedName());
+			}
+		}
+
 		// create attributes
 		createAttributes(writer, aeclass);
 
@@ -531,6 +550,19 @@ public class SchemaGraph2XMI {
 		if (!isEmptyVertexClass) {
 			writer.writeEndElement();
 		}
+	}
+
+	private void createGeneralization(XMLStreamWriter writer, String id,
+			String idOfSpecializedClass) throws XMLStreamException {
+		// create generalization
+		writer.writeEmptyElement(XMIConstants.TAG_GENERALIZATION);
+		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
+				XMIConstants.XMI_ATTRIBUTE_TYPE,
+				XMIConstants.GENERALIZATION_TYPE_VALUE);
+		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
+				XMIConstants.XMI_ATTRIBUTE_ID, id);
+		writer.writeAttribute(XMIConstants.GENERALIZATION_ATTRIBUTE_GENERAL,
+				idOfSpecializedClass);
 	}
 
 	/**
