@@ -550,14 +550,6 @@ public class GreqlEvaluator {
 	protected long passedInterpretationSteps = 0;
 
 	/**
-	 * Gets the estimated number of interpretation steps the evaluation will
-	 * need
-	 */
-	public long getEstimatedInterpretationSteps() {
-		return estimatedInterpretationSteps;
-	}
-
-	/**
 	 * should be called by every vertex evaluator to indicate a progress. The
 	 * given value should be the ownEvaluationCosts of that VertexEvaluator.
 	 * Calls the progress()-Method of the progress function this evaluator uses
@@ -1000,10 +992,10 @@ public class GreqlEvaluator {
 		VertexEvaluator greql2ExpEval = vertexEvalGraphMarker
 				.getMark(queryGraph.getFirstGreql2Expression());
 
-		estimatedInterpretationSteps = greql2ExpEval
-				.getInitialSubtreeEvaluationCosts(new GraphSize(datagraph));
-
 		if (progressFunction != null) {
+			estimatedInterpretationSteps = greql2ExpEval
+					.getInitialSubtreeEvaluationCosts(new GraphSize(datagraph));
+
 			progressFunction.init(estimatedInterpretationSteps);
 		}
 
@@ -1101,13 +1093,22 @@ public class GreqlEvaluator {
 	}
 
 	public void printEvaluationTimes() {
-		logger.info("Overall evaluation took " + overallEvaluationTime / 1000d
-				+ " seconds.\n" + " --> parsing time         : " + parseTime
-				/ 1000d + "\n --> optimization time    : " + optimizationTime
-				/ 1000d + "\n --> plain evaluation time: "
-				+ plainEvaluationTime / 1000d
-				+ "\nEstimated evaluation costs: "
-				+ estimatedInterpretationSteps);
+		logger.info("Overall evaluation took "
+				+ overallEvaluationTime
+				/ 1000d
+				+ " seconds.\n"
+				+ " --> parsing time         : "
+				+ parseTime
+				/ 1000d
+				+ "\n --> optimization time    : "
+				+ optimizationTime
+				/ 1000d
+				+ "\n --> plain evaluation time: "
+				+ plainEvaluationTime
+				/ 1000d
+				+ "\n"
+				+ (progressFunction != null ? "Estimated evaluation costs: "
+						+ estimatedInterpretationSteps : ""));
 	}
 
 	public static File getOptimizedSyntaxGraphsDirectory() {
