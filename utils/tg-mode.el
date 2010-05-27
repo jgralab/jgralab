@@ -82,14 +82,14 @@
                         schema-alist))))
          ;; EdgeClasses
          ((looking-at (concat "^\\(?:abstract[[:space:]]+\\)?"
-                              "EdgeClass[[:space:]]+"
-                              "\\([[:alnum:]._]+\\)[[:space:]]*" ;; Name
-                              "\\(?::\\([[:alnum:]._ ]+\\)\\)?[[:space:]]*" ;; Supertypes
-                              "\\<from\\>[[:space:]]+\\([[:alnum:]._]+\\)[[:space:]]+.*"
-                              "\\<to\\>[[:space:]]+\\([[:alnum:]._]+\\)[[:space:]]+.*" ;; from/to
-                              "\\(?:{\\([^}]*\\)}\\)?" ;; Attributes
-                              "\\(?:[[].*[]]\\)*[[:space:]]*;"  ;; Constraints
-                              ))
+                            "EdgeClass[[:space:]]+"
+                            "\\([[:alnum:]._]+\\)[[:space:]]*"      ;; Name
+                            "\\(?::\\([[:alnum:]._ ]+\\)\\)?[[:space:]]*" ;; Supertypes
+                            "\\<from\\>[[:space:]]+\\([[:alnum:]._]+\\)[[:space:]]+.*?"
+                            "\\<to\\>[[:space:]]+\\([[:alnum:]._]+\\)[[:space:]]+.*?" ;; from/to
+                            "\\(?:{\\([^}]*\\)}\\)?"   ;; Attributes
+                            "\\(?:[[].*[]]\\)*[[:space:]]*;" ;; Constraints
+                            ))
           (let ((qname (concat current-package (match-string-no-properties 1)))
                 (from (match-string-no-properties 3))
                 (to   (match-string-no-properties 4)))
@@ -100,7 +100,7 @@
                   (cons (list :meta 'EdgeClass
                               :qname qname
                               :super (tg--parse-superclasses (match-string-no-properties 2) current-package)
-                              :attr (tg--parse-attributes qname (match-string-no-properties 5))
+                              :attrs (tg--parse-attributes qname (match-string-no-properties 5))
                               :from from
                               :to to)
                         schema-alist))))
