@@ -131,7 +131,9 @@ import de.uni_koblenz.jgralab.grumlschema.structure.ComesFrom;
 import de.uni_koblenz.jgralab.grumlschema.structure.Comment;
 import de.uni_koblenz.jgralab.grumlschema.structure.Constraint;
 import de.uni_koblenz.jgralab.grumlschema.structure.ContainsGraphElementClass;
+import de.uni_koblenz.jgralab.grumlschema.structure.ContainsSubPackage;
 import de.uni_koblenz.jgralab.grumlschema.structure.EdgeClass;
+import de.uni_koblenz.jgralab.grumlschema.structure.EndsAt;
 import de.uni_koblenz.jgralab.grumlschema.structure.GoesTo;
 import de.uni_koblenz.jgralab.grumlschema.structure.GraphClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.GraphElementClass;
@@ -170,6 +172,8 @@ public class Rsa2Tg extends XmlProcessor {
 	private static final String OPTION_USE_NAVIGABILITY = "n";
 
 	private static final String OPTION_REMOVE_UNUSED_DOMAINS = "u";
+
+	private static final String OPTION_KEEP_EMPTY_PACKAGES = "k";
 
 	private static final String OPTION_USE_ROLE_NAME = "f";
 
@@ -327,6 +331,12 @@ public class Rsa2Tg extends XmlProcessor {
 	private boolean removeUnusedDomains;
 
 	/**
+	 * After processing is complete, also keep {@link Package} vertices which
+	 * contain no {@link Domains} and no {@link GraphElementClass}es.
+	 */
+	private boolean keepEmptyPackages;
+
+	/**
 	 * When determining the edge direction, also take navigability of
 	 * associations into account (rather than the drawing direction only).
 	 */
@@ -370,6 +380,8 @@ public class Rsa2Tg extends XmlProcessor {
 
 	private int modelRootElementNestingDepth;
 
+	private Set<Package> ignoredPackages;
+
 	/**
 	 * Processes an XMI-file to a TG-file as schema or a schema in a grUML
 	 * graph. For all command line options see
@@ -396,6 +408,7 @@ public class Rsa2Tg extends XmlProcessor {
 
 		r.setUseFromRole(cli.hasOption(OPTION_USE_ROLE_NAME));
 		r.setRemoveUnusedDomains(cli.hasOption(OPTION_REMOVE_UNUSED_DOMAINS));
+		r.setKeepEmptyPackages(cli.hasOption(OPTION_KEEP_EMPTY_PACKAGES));
 		r.setUseNavigability(cli.hasOption(OPTION_USE_NAVIGABILITY));
 
 		// apply options
@@ -514,13 +527,17 @@ public class Rsa2Tg extends XmlProcessor {
 		fromRole.setRequired(false);
 		oh.addOption(fromRole);
 
-		Option unusedDomains = new Option(
-				OPTION_REMOVE_UNUSED_DOMAINS,
-				"omitUnusedDomains",
-				false,
-				"(optional): if this flag is set, all unused domains will not be defined in the schema.");
+		Option unusedDomains = new Option(OPTION_REMOVE_UNUSED_DOMAINS,
+				"removeUnusedDomains", false,
+				"(optional): if this flag is set, all unused domains be deleted.");
 		unusedDomains.setRequired(false);
 		oh.addOption(unusedDomains);
+
+		Option emptyPackages = new Option(OPTION_KEEP_EMPTY_PACKAGES,
+				"keepEmptyPackages", false,
+				"(optional): if this flag is set, empty packages will be retained.");
+		unusedDomains.setRequired(false);
+		oh.addOption(emptyPackages);
 
 		Option navigability = new Option(
 				OPTION_USE_NAVIGABILITY,
@@ -570,7 +587,7 @@ public class Rsa2Tg extends XmlProcessor {
 	public Rsa2Tg() {
 		// Sets all names of XML-elements, which should be ignored.
 		addIgnoredElements("profileApplication", "packageImport",
-				"Ecore:EReference");
+				"Ecore:EReference", "specification");
 	}
 
 	/**
@@ -596,6 +613,7 @@ public class Rsa2Tg extends XmlProcessor {
 		constraints = new HashMap<String, List<String>>();
 		comments = new HashMap<String, List<String>>();
 		redefines = new GraphMarker<Set<String>>(sg);
+		ignoredPackages = new HashSet<Package>();
 		modelRootElementNestingDepth = 1;
 	}
 
@@ -794,8 +812,20 @@ public class Rsa2Tg extends XmlProcessor {
 			String xmiType = getAttribute(XMI_NAMESPACE_PREFIX, XMI_TYPE);
 			if (isPrimitiveDefaultValue(xmiType)) {
 				handlePrimitiveDefaultValue(xmiId, xmiType);
-			} else {
-				assert xmiType.equals(UML_OPAQUE_EXPRESSION);
+			} else if (!xmiType.equals(UML_OPAQUE_EXPRESSION)) {
+				System.err.println("Warning: Unexpected default value type '"
+						+ xmiType + "' for attribute '"
+						+ currentAttribute.get_name() + "' of "
+						+ currentClass.getM1Class().getSimpleName() + " '"
+						+ currentClass.get_qualifiedName() + "' in file '"
+						+ getFileName() + "' at line "
+						+ getParser().getLocation().getLineNumber());
+				// throw new ProcessingException(getParser(), getFileName(),
+				// "Unexpected default value type " + xmiType
+				// + " for attribute '"
+				// + currentAttribute.get_name() + "' of "
+				// + currentClass.getM1Class().getSimpleName()
+				// + " '" + currentClass.get_qualifiedName() + "'");
 			}
 			inDefaultValue = true;
 		} else {
@@ -815,6 +845,17 @@ public class Rsa2Tg extends XmlProcessor {
 	private void handlePrimitiveDefaultValue(String xmiId, String xmiType)
 			throws XMLStreamException {
 		String value = getAttribute(UML_ATTRIBUTE_VALUE);
+		if (value == null) {
+			System.err
+					.println("Warning: Undefined default value for attribute '"
+							+ currentAttribute.get_name() + "' of "
+							+ currentClass.getM1Class().getSimpleName() + " '"
+							+ currentClass.get_qualifiedName() + "' in file '"
+							+ getFileName() + "' at line "
+							+ getParser().getLocation().getLineNumber());
+
+			return;
+		}
 		if (xmiType.equals(UML_LITERAL_BOOLEAN)) {
 			assert value.equals("true") || value.equals("false");
 			// true/false => t/f
@@ -881,8 +922,10 @@ public class Rsa2Tg extends XmlProcessor {
 			} else if (elem instanceof AttributedElementClass) {
 				currentClassId = null;
 				currentClass = null;
+				currentAttribute = null;
 			} else if (elem instanceof RecordDomain) {
 				currentRecordDomain = null;
+				currentAttribute = null;
 			} else if (elem instanceof Attribute) {
 				currentAttribute = null;
 			}
@@ -981,11 +1024,16 @@ public class Rsa2Tg extends XmlProcessor {
 							+ schema.get_name() + "'");
 		}
 
+		// Checks whether each enum domain as at least one literal
+		checkEnumDomains();
+
 		// Now the RSA XMI file has been processed, pending actions to link
 		// elements can be performed
 		linkGeneralizations();
 		linkRecordDomainComponents();
 		linkAttributeDomains();
+
+		removeIgnoredPackages();
 
 		if (isUseNavigability()) {
 			correctEdgeDirection();
@@ -1006,7 +1054,10 @@ public class Rsa2Tg extends XmlProcessor {
 			removeUnusedDomains();
 		}
 
-		removeEmptyPackages();
+		if (!isKeepEmptyPackages()) {
+			removeEmptyPackages();
+		}
+
 		// preliminaryVertices must be empty at this time of processing,
 		// otherwise there is an error...
 		if (!preliminaryVertices.isEmpty()) {
@@ -1032,6 +1083,121 @@ public class Rsa2Tg extends XmlProcessor {
 			} catch (GraphIOException e) {
 				throw new XMLStreamException(e);
 			}
+		}
+	}
+
+	/**
+	 * Removes all GraphElementClasses in ignored Packages from the schema
+	 * graph.
+	 */
+	private void removeIgnoredPackages() {
+		for (Package pkg : ignoredPackages) {
+			removePackage(pkg);
+		}
+	}
+
+	/**
+	 * Removes the GraphElementClasses in the Package <code>pkg</code> from the
+	 * schema graph, including subpackages.
+	 * 
+	 * @param pkg
+	 *            a Package
+	 */
+	private void removePackage(Package pkg) {
+		if (!pkg.isValid()) {
+			// possibly alread deleted
+			return;
+		}
+		// recursively descend into subpackages
+		for (ContainsSubPackage c = pkg
+				.getFirstContainsSubPackage(EdgeDirection.OUT); c != null; c = pkg
+				.getFirstContainsSubPackage(EdgeDirection.OUT)) {
+			removePackage((Package) c.getThat());
+		}
+		// remove all GraphElementClasses
+		for (ContainsGraphElementClass c = pkg
+				.getFirstContainsGraphElementClass(EdgeDirection.OUT); c != null; c = pkg
+				.getFirstContainsGraphElementClass(EdgeDirection.OUT)) {
+			GraphElementClass gec = (GraphElementClass) c.getThat();
+
+			if (gec instanceof EdgeClass) {
+				// in case of an EdgeClass, also remove IncidenceClasses
+				EdgeClass ec = (EdgeClass) gec;
+				ec.get_to().delete();
+				ec.get_from().delete();
+			} else if (gec instanceof VertexClass) {
+				// in case of an EdgeClass, also remove incident EdgeClasses
+				VertexClass vc = (VertexClass) gec;
+				for (EndsAt e = vc.getFirstEndsAt(EdgeDirection.IN); e != null; e = vc
+						.getFirstEndsAt(EdgeDirection.IN)) {
+					EdgeClass ec;
+					// the EdgeClass can be either outgoing (ComesFrom) or
+					// ingoing (GoesTo) to this VertexClass
+					ComesFrom cf = ((IncidenceClass) e.getThat())
+							.getFirstComesFrom();
+					if (cf == null) {
+						GoesTo gt = ((IncidenceClass) e.getThat())
+								.getFirstGoesTo();
+						ec = (EdgeClass) gt.getThat();
+					} else {
+						ec = (EdgeClass) cf.getThat();
+					}
+					// remove IncidenceClasses
+					ec.get_to().delete();
+					ec.get_from().delete();
+					// remove Attributes of EdgeClass
+					removeAttributes(ec);
+					ec.delete();
+				}
+			}
+			// remove Attributes of GraphElementClass
+			removeAttributes(gec);
+			gec.delete();
+		}
+		// remove the package itself if it's totally empty (degree is 1 since
+		// the ContainsSubpackage edge to the parent package still exists)
+		if (pkg.getDegree() == 1) {
+			pkg.delete();
+		}
+	}
+
+	/**
+	 * Removes all Attribute vertices of AttributedElementClass <code>aec</code>
+	 * from the schema graph
+	 * 
+	 * @param aec
+	 */
+	private void removeAttributes(AttributedElementClass aec) {
+		for (HasAttribute ha = aec.getFirstHasAttribute(EdgeDirection.OUT); ha != null; ha = aec
+				.getFirstHasAttribute(EdgeDirection.OUT)) {
+			ha.getThat().delete();
+		}
+	}
+
+	/**
+	 * Checks whether all Enumeration domains contain at least one literal.
+	 * 
+	 * @throws ProcessingException
+	 *             if any enumeration is empty
+	 */
+	private void checkEnumDomains() {
+		ArrayList<String> faultyDomains = new ArrayList<String>();
+		for (EnumDomain ed : sg.getEnumDomainVertices()) {
+			if (ed.get_enumConstants().size() < 1) {
+				faultyDomains.add(ed.get_qualifiedName());
+			}
+		}
+		if (faultyDomains.size() > 0) {
+			StringBuilder sb = new StringBuilder();
+			sb.append("The following enumeration domain").append(
+					faultyDomains.size() == 1 ? " has" : "s have").append(
+					" no literals");
+			String delim = ": ";
+			for (String name : faultyDomains) {
+				sb.append(delim).append(name);
+				delim = ", ";
+			}
+			throw new ProcessingException(getFileName(), sb.toString());
 		}
 	}
 
@@ -1863,8 +2029,17 @@ public class Rsa2Tg extends XmlProcessor {
 		for (Attribute att : sg.getAttributeVertices()) {
 			String domainId = attributeType.getMark(att);
 			if (domainId == null) {
-				assert att.getDegree(HasDomain.class, EdgeDirection.OUT) == 1 : att
-						.get_name();
+				assert att.getDegree(HasDomain.class, EdgeDirection.OUT) == 1 : "Attribute '"
+						+ att.get_name()
+						+ "' of "
+						+ att.getFirstHasAttribute().getThat().getM1Class()
+								.getSimpleName()
+						+ " '"
+						+ ((AttributedElementClass) att.getFirstHasAttribute()
+								.getThat()).get_qualifiedName()
+						+ "' has "
+						+ att.getDegree(HasDomain.class, EdgeDirection.OUT)
+						+ " domain(s)";
 				continue;
 			}
 			Domain dom = (Domain) idMap.get(domainId);
@@ -2275,13 +2450,22 @@ public class Rsa2Tg extends XmlProcessor {
 	private void handleStereotype() throws XMLStreamException {
 		String key = getAttribute(UML_ATTRIBUTE_KEY);
 
+		if (currentClass == null && currentClassId == null
+				&& currentAssociationEnd == null && currentAttribute == null
+				&& currentRecordDomain == null
+				&& currentRecordDomainComponent == null) {
+			if (key.equals("rsa2tg_ignore")) {
+				ignoredPackages.add(packageStack.peek());
+				return;
+			} else {
+				throw new ProcessingException(getParser(), getFileName(),
+						"Unexpected stereotype <<" + key + ">>");
+			}
+		}
+
 		if (currentClass == null) {
-			throw new ProcessingException(
-					getParser(),
-					getFileName(),
-					"A stereotype, like the current stereotype '<<"
-							+ key
-							+ ">>', is only valid for UML classes or UML associations.");
+			throw new ProcessingException(getParser(), getFileName(),
+					"Unexpected stereotype <<" + key + ">>");
 		}
 
 		if (key.equals("graphclass")) {
@@ -3013,6 +3197,14 @@ public class Rsa2Tg extends XmlProcessor {
 	 */
 	public void setFilenameValidation(String filenameValidation) {
 		this.filenameValidation = filenameValidation;
+	}
+
+	public boolean isKeepEmptyPackages() {
+		return keepEmptyPackages;
+	}
+
+	public void setKeepEmptyPackages(boolean removeEmptyPackages) {
+		this.keepEmptyPackages = removeEmptyPackages;
 	}
 
 }
