@@ -270,7 +270,7 @@ The optional TYPE specifies that the returned name has to be the
 ;;** Predicates
 
 (defun tg-incidence-list-p ()
-  (and (looking-back "<[[:digit:]- ]*")
+  (and (looking-back "<[[:digit:]- ]*?" (line-beginning-position))
        (looking-at "[[:digit:]- ]*>")))
 
 (defun tg-vertex-p ()
@@ -297,13 +297,11 @@ The optional TYPE specifies that the returned name has to be the
     (re-search-forward "^Graph[[:space:]]+")
     (let (found)
       (while (not found)
-        (re-search-forward
-         (concat "^[[:digit:]]+ +[[:word:]._]+ +<.*?"
-                 (regexp-quote inc)
-                 "[[:digit:]- ]*>") nil t 1)
-        (search-backward inc)
-        (forward-word 1)
-        (when (looking-back (concat "[^-]" (regexp-quote inc)))
+        (re-search-forward (concat "[< ]" inc "[ >]") nil t 1)
+        (backward-char 1)
+        (when (and (looking-back (concat ".*<.*" (regexp-quote inc))
+                                 (line-beginning-position))
+                   (looking-at (concat ".*?>")))
           (setq found t))))
     (search-backward inc)
     (point)))
