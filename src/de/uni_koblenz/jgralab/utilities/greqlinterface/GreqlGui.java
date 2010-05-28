@@ -3,8 +3,10 @@ package de.uni_koblenz.jgralab.utilities.greqlinterface;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.regex.Pattern;
@@ -23,6 +25,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -47,6 +50,8 @@ public class GreqlGui extends JFrame {
 	private JPanel queryPanel, resultPanel;
 	private JTextArea queryArea;
 	private JEditorPane resultPane;
+	private JTabbedPane tabPane;
+	private JTextArea consoleOutputArea;
 	private JButton fileSelectionButton;
 	private JButton evalQueryButton;
 	private JButton stopButton;
@@ -232,6 +237,7 @@ public class GreqlGui extends JFrame {
 										false);
 								resultPane.setPage(new URL("file", "localhost",
 										resultFile.getCanonicalPath()));
+								tabPane.setSelectedComponent(resultPanel);
 							} catch (IOException e) {
 							}
 						}
@@ -281,6 +287,15 @@ public class GreqlGui extends JFrame {
 		resultPane.setMinimumSize(new Dimension(200, 200));
 		resultPane.setPreferredSize(resultPane.getMinimumSize());
 		JScrollPane resultScrollPane = new JScrollPane(resultPane);
+		// System.setOut();
+
+		consoleOutputArea = new JTextArea();
+		consoleOutputArea.setEditable(false);
+		consoleOutputArea.setMinimumSize(new Dimension(200, 200));
+		consoleOutputArea.setPreferredSize(consoleOutputArea.getMinimumSize());
+		JScrollPane consoleScrollPane = new JScrollPane(consoleOutputArea);
+		System.setOut(new ConsoleOutputStream());
+		System.setErr(new ConsoleOutputStream());
 
 		brm = new DefaultBoundedRangeModel();
 		progressBar = new JProgressBar();
@@ -291,6 +306,10 @@ public class GreqlGui extends JFrame {
 		resultPanel.setBorder(BorderFactory.createEmptyBorder(0, 4, 4, 4));
 		resultPanel.add(resultScrollPane, BorderLayout.CENTER);
 		resultPanel.add(progressBar, BorderLayout.SOUTH);
+
+		tabPane = new JTabbedPane();
+		tabPane.addTab("Console", consoleScrollPane);
+		tabPane.addTab("Result", resultPanel);
 
 		fileChooser = new JFileChooser();
 		fileChooser.setAcceptAllFileFilterUsed(false);
@@ -380,10 +399,29 @@ public class GreqlGui extends JFrame {
 		statusLabel.setBorder(new EmptyBorder(0, 4, 4, 4));
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(queryPanel, BorderLayout.NORTH);
-		getContentPane().add(resultPanel, BorderLayout.CENTER);
+		getContentPane().add(tabPane, BorderLayout.CENTER);
 		getContentPane().add(statusLabel, BorderLayout.SOUTH);
 		pack();
 		setVisible(true);
+	}
+
+	private class ConsoleOutputStream extends PrintStream {
+
+		public ConsoleOutputStream() {
+			super(new ByteArrayOutputStream());
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.io.PrintStream#write(byte[], int, int)
+		 */
+		@Override
+		public void write(byte[] buf, int off, int len) {
+			String aString = new String(buf, off, len);
+			consoleOutputArea.append(aString);
+		}
+
 	}
 
 	public static void main(String[] args) {
