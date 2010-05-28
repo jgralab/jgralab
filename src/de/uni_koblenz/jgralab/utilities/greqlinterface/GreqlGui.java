@@ -47,7 +47,7 @@ public class GreqlGui extends JFrame {
 
 	private Graph graph;
 	private JFileChooser fileChooser;
-	private JPanel queryPanel, resultPanel;
+	private JPanel queryPanel;
 	private JTextArea queryArea;
 	private JEditorPane resultPane;
 	private JTabbedPane tabPane;
@@ -63,7 +63,7 @@ public class GreqlGui extends JFrame {
 
 	private JCheckBox debugOptimizationCheckBox;
 
-	private JPanel consolePanel;
+	private JScrollPane resultScrollPane;
 
 	class Worker extends Thread implements ProgressFunction {
 		BoundedRangeModel brm;
@@ -239,7 +239,7 @@ public class GreqlGui extends JFrame {
 										false);
 								resultPane.setPage(new URL("file", "localhost",
 										resultFile.getCanonicalPath()));
-								tabPane.setSelectedComponent(resultPanel);
+								tabPane.setSelectedComponent(resultScrollPane);
 							} catch (IOException e) {
 							}
 						}
@@ -288,17 +288,15 @@ public class GreqlGui extends JFrame {
 		resultPane.setEditable(false);
 		resultPane.setMinimumSize(new Dimension(200, 200));
 		resultPane.setPreferredSize(resultPane.getMinimumSize());
-		JScrollPane resultScrollPane = new JScrollPane(resultPane);
+		resultScrollPane = new JScrollPane(resultPane);
 
 		brm = new DefaultBoundedRangeModel();
 		progressBar = new JProgressBar();
 		progressBar.setModel(brm);
 
-		resultPanel = new JPanel();
-		resultPanel.setLayout(new BorderLayout(4, 4));
-		resultPanel.setBorder(BorderFactory.createEmptyBorder(0, 4, 4, 4));
-		resultPanel.add(resultScrollPane, BorderLayout.CENTER);
-		resultPanel.add(progressBar, BorderLayout.SOUTH);
+		// resultPanel = new JPanel();
+		// resultPanel.setBorder(BorderFactory.createEmptyBorder(0, 4, 4, 4));
+		// resultPanel.add(resultScrollPane);
 
 		consoleOutputArea = new JTextArea();
 		consoleOutputArea.setEditable(false);
@@ -307,14 +305,13 @@ public class GreqlGui extends JFrame {
 		JScrollPane consoleScrollPane = new JScrollPane(consoleOutputArea);
 		System.setOut(new ConsoleOutputStream());
 		System.setErr(new ConsoleOutputStream());
-		consolePanel = new JPanel();
-		consolePanel.setLayout(new BorderLayout(4, 4));
-		consolePanel.setBorder(BorderFactory.createEmptyBorder(0, 4, 4, 4));
-		consolePanel.add(consoleScrollPane, BorderLayout.CENTER);
+		// consolePanel = new JPanel();
+		// consolePanel.setBorder(BorderFactory.createEmptyBorder(0, 4, 4, 4));
+		// consolePanel.add(consoleScrollPane);
 
 		tabPane = new JTabbedPane();
-		tabPane.addTab("Console", consolePanel);
-		tabPane.addTab("Result", resultPanel);
+		tabPane.addTab("Console", consoleScrollPane);
+		tabPane.addTab("Result", resultScrollPane);
 
 		fileChooser = new JFileChooser();
 		fileChooser.setAcceptAllFileFilterUsed(false);
@@ -402,10 +399,16 @@ public class GreqlGui extends JFrame {
 
 		statusLabel = new JLabel("Welcome", SwingConstants.LEFT);
 		statusLabel.setBorder(new EmptyBorder(0, 4, 4, 4));
+
+		JPanel statusPanel = new JPanel();
+		statusPanel.setLayout(new BorderLayout());
+		statusPanel.add(progressBar, BorderLayout.NORTH);
+		statusPanel.add(statusLabel, BorderLayout.SOUTH);
+
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(queryPanel, BorderLayout.NORTH);
 		getContentPane().add(tabPane, BorderLayout.CENTER);
-		getContentPane().add(statusLabel, BorderLayout.SOUTH);
+		getContentPane().add(statusPanel, BorderLayout.SOUTH);
 		pack();
 		setVisible(true);
 	}
