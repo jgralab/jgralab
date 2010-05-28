@@ -56,6 +56,8 @@ public class GreqlGui extends JFrame {
 	private Evaluator evaluator;
 	private JCheckBox optimizeCheckBox;
 
+	private JCheckBox debugOptimizationCheckBox;
+
 	class Worker extends Thread implements ProgressFunction {
 		BoundedRangeModel brm;
 		private long totalElements;
@@ -187,16 +189,9 @@ public class GreqlGui extends JFrame {
 			final GreqlEvaluator eval = new GreqlEvaluator(query, graph, null,
 					this);
 			eval.setOptimize(optimizeCheckBox.isSelected());
+			GreqlEvaluator.DEBUG_OPTIMIZATION = debugOptimizationCheckBox
+					.isSelected();
 			try {
-				// if (eval.parseQuery()) {
-				// assert eval.getSyntaxGraph() != null;
-				// Tg2Dot t2d = new Tg2Dot();
-				// t2d.setGraph(eval.getSyntaxGraph());
-				// t2d.setPrintEdgeAttributes(true);
-				// t2d.setPrintReversedEdges(true);
-				// t2d.setOutputFile("query.greql.dot");
-				// t2d.printGraph();
-				// }
 				eval.startEvaluation();
 			} catch (Exception e1) {
 				ex = e1;
@@ -352,6 +347,9 @@ public class GreqlGui extends JFrame {
 		optimizeCheckBox = new JCheckBox("Enable optimizer");
 		optimizeCheckBox.setSelected(true);
 
+		debugOptimizationCheckBox = new JCheckBox("Debug optimization");
+		debugOptimizationCheckBox.setSelected(false);
+
 		stopButton = new JButton(new AbstractAction("Stop evaluation") {
 			private static final long serialVersionUID = 1L;
 
@@ -374,6 +372,7 @@ public class GreqlGui extends JFrame {
 		buttonPanel.add(fileSelectionButton);
 		buttonPanel.add(evalQueryButton);
 		buttonPanel.add(optimizeCheckBox);
+		buttonPanel.add(debugOptimizationCheckBox);
 		buttonPanel.add(stopButton);
 		queryPanel.add(buttonPanel, BorderLayout.SOUTH);
 
