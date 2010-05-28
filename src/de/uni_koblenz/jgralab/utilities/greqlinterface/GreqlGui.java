@@ -63,6 +63,8 @@ public class GreqlGui extends JFrame {
 
 	private JCheckBox debugOptimizationCheckBox;
 
+	private JPanel consolePanel;
+
 	class Worker extends Thread implements ProgressFunction {
 		BoundedRangeModel brm;
 		private long totalElements;
@@ -287,15 +289,6 @@ public class GreqlGui extends JFrame {
 		resultPane.setMinimumSize(new Dimension(200, 200));
 		resultPane.setPreferredSize(resultPane.getMinimumSize());
 		JScrollPane resultScrollPane = new JScrollPane(resultPane);
-		// System.setOut();
-
-		consoleOutputArea = new JTextArea();
-		consoleOutputArea.setEditable(false);
-		consoleOutputArea.setMinimumSize(new Dimension(200, 200));
-		consoleOutputArea.setPreferredSize(consoleOutputArea.getMinimumSize());
-		JScrollPane consoleScrollPane = new JScrollPane(consoleOutputArea);
-		System.setOut(new ConsoleOutputStream());
-		System.setErr(new ConsoleOutputStream());
 
 		brm = new DefaultBoundedRangeModel();
 		progressBar = new JProgressBar();
@@ -307,8 +300,20 @@ public class GreqlGui extends JFrame {
 		resultPanel.add(resultScrollPane, BorderLayout.CENTER);
 		resultPanel.add(progressBar, BorderLayout.SOUTH);
 
+		consoleOutputArea = new JTextArea();
+		consoleOutputArea.setEditable(false);
+		consoleOutputArea.setMinimumSize(new Dimension(200, 200));
+		consoleOutputArea.setPreferredSize(consoleOutputArea.getMinimumSize());
+		JScrollPane consoleScrollPane = new JScrollPane(consoleOutputArea);
+		System.setOut(new ConsoleOutputStream());
+		System.setErr(new ConsoleOutputStream());
+		consolePanel = new JPanel();
+		consolePanel.setLayout(new BorderLayout(4, 4));
+		consolePanel.setBorder(BorderFactory.createEmptyBorder(0, 4, 4, 4));
+		consolePanel.add(consoleScrollPane, BorderLayout.CENTER);
+
 		tabPane = new JTabbedPane();
-		tabPane.addTab("Console", consoleScrollPane);
+		tabPane.addTab("Console", consolePanel);
 		tabPane.addTab("Result", resultPanel);
 
 		fileChooser = new JFileChooser();
@@ -406,7 +411,6 @@ public class GreqlGui extends JFrame {
 	}
 
 	private class ConsoleOutputStream extends PrintStream {
-
 		public ConsoleOutputStream() {
 			super(new ByteArrayOutputStream());
 		}
