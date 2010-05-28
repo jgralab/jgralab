@@ -286,9 +286,8 @@ public class GreqlGui extends JFrame {
 						+ "Simply select a graph, type a query and press the evaluation button."
 						+ "</html>");
 		resultPane.setEditable(false);
-		resultPane.setMinimumSize(new Dimension(200, 200));
-		resultPane.setPreferredSize(resultPane.getMinimumSize());
 		resultScrollPane = new JScrollPane(resultPane);
+		resultScrollPane.setPreferredSize(new Dimension(200, 200));
 
 		brm = new DefaultBoundedRangeModel();
 		progressBar = new JProgressBar();
@@ -296,9 +295,9 @@ public class GreqlGui extends JFrame {
 
 		consoleOutputArea = new JTextArea();
 		consoleOutputArea.setEditable(false);
-		consoleOutputArea.setMinimumSize(new Dimension(200, 200));
-		consoleOutputArea.setPreferredSize(consoleOutputArea.getMinimumSize());
 		JScrollPane consoleScrollPane = new JScrollPane(consoleOutputArea);
+		consoleScrollPane.setPreferredSize(new Dimension(200, 200));
+
 		System.setOut(new ConsoleOutputStream());
 		System.setErr(new ConsoleOutputStream());
 
