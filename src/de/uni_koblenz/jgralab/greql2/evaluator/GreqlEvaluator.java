@@ -878,6 +878,27 @@ public class GreqlEvaluator {
 		if (queryGraph == null) {
 			parseQuery(queryString);
 		}
+
+		if (DEBUG_OPTIMIZATION) {
+			System.out
+					.println("#########################################################");
+			System.out
+					.println("################## Unoptimized Query ####################");
+			System.out
+					.println("#########################################################");
+			String name = "__greql-query.";
+			try {
+				GraphIO.saveGraphToFile(name + "tg", queryGraph,
+						new ProgressFunctionImpl());
+				Tg2Dot.printGraphAsDot(queryGraph, true, name + "dot");
+			} catch (GraphIOException e) {
+				e.printStackTrace();
+			}
+			System.out.println("Saved query graph to " + name + "tg/dot.");
+			System.out
+					.println("#########################################################");
+		}
+
 		createVertexEvaluators();
 		optimizer.optimize(this, queryGraph);
 		syntaxGraphEntry = new SyntaxGraphEntry(queryString, queryGraph,
@@ -963,7 +984,7 @@ public class GreqlEvaluator {
 				} else {
 					System.out.println("Couldn't serialize Greql2 graph...");
 				}
-				String name = "optimized-greql-query.";
+				String name = "__optimized-greql-query.";
 				try {
 					GraphIO.saveGraphToFile(name + "tg", queryGraph,
 							new ProgressFunctionImpl());
@@ -971,7 +992,7 @@ public class GreqlEvaluator {
 				} catch (GraphIOException e) {
 					e.printStackTrace();
 				}
-				System.out.println("Saved optimized query to " + name
+				System.out.println("Saved optimized query graph to " + name
 						+ "tg/dot.");
 				System.out
 						.println("#########################################################");
