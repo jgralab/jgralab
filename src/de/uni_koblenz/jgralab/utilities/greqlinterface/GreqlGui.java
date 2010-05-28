@@ -46,24 +46,22 @@ public class GreqlGui extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	private Graph graph;
-	private JFileChooser fileChooser;
-	private JPanel queryPanel;
-	private JTextArea queryArea;
-	private JEditorPane resultPane;
-	private JTabbedPane tabPane;
-	private JTextArea consoleOutputArea;
-	private JButton fileSelectionButton;
-	private JButton evalQueryButton;
-	private JButton stopButton;
-	private JProgressBar progressBar;
-	private BoundedRangeModel brm;
-	private JLabel statusLabel;
+	final private JFileChooser fileChooser;
+	final private JPanel queryPanel;
+	final private JTextArea queryArea;
+	final private JEditorPane resultPane;
+	final private JTabbedPane tabPane;
+	final private JTextArea consoleOutputArea;
+	final private JButton fileSelectionButton;
+	final private JButton evalQueryButton;
+	final private JButton stopButton;
+	final private JProgressBar progressBar;
+	final private BoundedRangeModel brm;
+	final private JLabel statusLabel;
 	private Evaluator evaluator;
-	private JCheckBox optimizeCheckBox;
-
-	private JCheckBox debugOptimizationCheckBox;
-
-	private JScrollPane resultScrollPane;
+	final private JCheckBox optimizeCheckBox;
+	final private JCheckBox debugOptimizationCheckBox;
+	final private JScrollPane resultScrollPane;
 
 	class Worker extends Thread implements ProgressFunction {
 		BoundedRangeModel brm;
@@ -401,6 +399,10 @@ public class GreqlGui extends JFrame {
 		getContentPane().add(queryPanel, BorderLayout.NORTH);
 		getContentPane().add(tabPane, BorderLayout.CENTER);
 		getContentPane().add(statusPanel, BorderLayout.SOUTH);
+		
+		// Don't allow shrinking so that buttons get invisible
+		this.setMinimumSize(new Dimension(
+				buttonPanel.getPreferredSize().width + 10, 450));
 		pack();
 		setVisible(true);
 	}
