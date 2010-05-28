@@ -31,13 +31,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
-import java.net.URL;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -53,6 +51,8 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.impl.GraphBaseImpl;
@@ -105,7 +105,7 @@ public class GraphIO {
 		 */
 		@Override
 		public boolean accept(File dir, String name) {
-			if (name.matches(".+\\.[Tt][Gg]$")) {
+			if (name.matches(".+\\.[Tt][Gg](\\.[Gg][Zz])?$")) {
 				return true;
 			}
 			return false;
@@ -213,34 +213,54 @@ public class GraphIO {
 		putBackChar = -1;
 	}
 
+	/**
+	 * Saves the specified <code>schema</code> to the file named
+	 * <code>filename</code>. When the <code>filename</code> ends with
+	 * <code>.gz</code>, output will be GZIP compressed, otherwise uncompressed
+	 * plain text.
+	 * 
+	 * @param filename
+	 *            the name of the file
+	 * @param schema
+	 *            a schema
+	 * @throws GraphIOException
+	 *             if an IOException occurs
+	 */
 	public static void saveSchemaToFile(String filename, Schema schema)
 			throws GraphIOException {
 		try {
-			GraphIO io = new GraphIO();
 			DataOutputStream out = new DataOutputStream(
 					new BufferedOutputStream(new FileOutputStream(new File(
 							filename))));
-			io.TGOut = out;
-			io.saveHeader();
-			io.saveSchema(schema);
-			out.flush();
+			saveSchemaToStream(out, schema);
 			out.close();
 		} catch (IOException e) {
-			throw new GraphIOException("exception while saving schema to '"
-					+ filename + "'", e);
+			throw new GraphIOException("exception while saving schema to "
+					+ filename, e);
 		}
 	}
 
+	/**
+	 * Saves the specified <code>schema</code> to the stream <code>out</code>.
+	 * The stream is <em>not</em> closed.
+	 * 
+	 * @param out
+	 *            a DataOutputStream
+	 * @param schema
+	 *            a schema
+	 * @throws GraphIOException
+	 *             if an IOException occurs
+	 */
 	public static void saveSchemaToStream(DataOutputStream out, Schema schema)
 			throws GraphIOException {
+		GraphIO io = new GraphIO();
+		io.TGOut = out;
 		try {
-			GraphIO io = new GraphIO();
-			io.TGOut = out;
 			io.saveHeader();
 			io.saveSchema(schema);
 			out.flush();
 		} catch (IOException e) {
-			throw new GraphIOException("exception while saving schema", e);
+			throw new GraphException("exception while saving schema", e);
 		}
 	}
 
@@ -461,22 +481,55 @@ public class GraphIO {
 		}
 	}
 
+	/**
+	 * Saves the specified <code>graph</code> to the file named
+	 * <code>filename</code>. When the <code>filename</code> ends with
+	 * <code>.gz</code>, output will be GZIP compressed, otherwise uncompressed
+	 * plain text. A {@link ProgressFunction} <code>pf</code> can be used to
+	 * monitor progress.
+	 * 
+	 * @param filename
+	 *            the name of the TG file to be written
+	 * @param graph
+	 *            a graph
+	 * @param pf
+	 *            a {@link ProgressFunction}, may be <code>null</code>
+	 * @throws GraphIOException
+	 *             if an IOException occurs
+	 */
 	public static void saveGraphToFile(String filename, Graph graph,
 			ProgressFunction pf) throws GraphIOException {
 		try {
-			GraphIO io = new GraphIO();
-			DataOutputStream out = new DataOutputStream(
-					new BufferedOutputStream(new FileOutputStream(filename)));
-			io.TGOut = out;
-			io.saveGraph(graph, pf);
-			out.flush();
+			DataOutputStream out;
+			if (filename.toLowerCase().endsWith(".gz")) {
+				out = new DataOutputStream(new GZIPOutputStream(
+						new FileOutputStream(filename), 65536));
+			} else {
+				out = new DataOutputStream(new BufferedOutputStream(
+						new FileOutputStream(filename), 65536));
+			}
+			saveGraphToStream(out, graph, pf);
 			out.close();
-		} catch (Exception e) {
-			throw new GraphIOException("exception while saving graph to '"
-					+ filename + "'", e);
+		} catch (IOException e) {
+			throw new GraphIOException("exception while saving graph to "
+					+ filename, e);
 		}
 	}
 
+	/**
+	 * Saves the specified <code>graph</code> to the stream <code>out</code>. A
+	 * {@link ProgressFunction} <code>pf</code> can be used to monitor progress.
+	 * The stream is <em>not</em> closed.
+	 * 
+	 * @param out
+	 *            a DataOutputStream
+	 * @param graph
+	 *            a graph
+	 * @param pf
+	 *            a {@link ProgressFunction}, may be <code>null</code>
+	 * @throws GraphIOException
+	 *             if an IOException occurs
+	 */
 	public static void saveGraphToStream(DataOutputStream out, Graph graph,
 			ProgressFunction pf) throws GraphIOException {
 		try {
@@ -484,7 +537,7 @@ public class GraphIO {
 			io.TGOut = out;
 			io.saveGraph(graph, pf);
 			out.flush();
-		} catch (Exception e) {
+		} catch (IOException e) {
 			throw new GraphIOException("exception while saving graph", e);
 		}
 	}
@@ -492,7 +545,6 @@ public class GraphIO {
 	private void saveGraph(Graph graph, ProgressFunction pf)
 			throws IOException, GraphIOException {
 		// Write the jgralab version and license in a comment
-
 		saveHeader();
 
 		schema = graph.getSchema();
@@ -731,29 +783,21 @@ public class GraphIO {
 	public static Schema loadSchemaFromFile(String filename)
 			throws GraphIOException {
 		try {
-			BufferedInputStream inputStream = new BufferedInputStream(
-					new FileInputStream(filename), 10000);
-			Schema loadedSchema = loadSchemaFromStream(inputStream);
-			inputStream.close();
-			return loadedSchema;
-		} catch (FileNotFoundException ex) {
-			throw new GraphIOException("Unable to load schema from file "
-					+ filename + ", the file cannot be found", ex);
+			InputStream in;
+			if (filename.toLowerCase().endsWith(".gz")) {
+				in = new GZIPInputStream(new FileInputStream(filename), 65536);
+			} else {
+				in = new BufferedInputStream(new FileInputStream(filename),
+						65536);
+			}
+			try {
+				return loadSchemaFromStream(in);
+			} finally {
+				in.close();
+			}
 		} catch (IOException ex) {
-			throw new GraphIOException("Error while reading from file "
-					+ filename + ".", ex);
-		}
-	}
-
-	public static Schema loadSchemaFromURL(String url) throws GraphIOException {
-		try {
-			InputStream openedStream = new URL(url).openStream();
-			Schema loadedSchema = loadSchemaFromStream(openedStream);
-			openedStream.close();
-			return loadedSchema;
-		} catch (IOException ex) {
-			throw new GraphIOException("Unable to load graph from url " + url
-					+ ", the resource cannot be found", ex);
+			throw new GraphIOException("exception while loadung schema from "
+					+ filename, ex);
 		}
 	}
 
@@ -764,13 +808,32 @@ public class GraphIO {
 			io.TGIn = in;
 			io.tgfile();
 			return io.schema;
-		} catch (GraphIOException e) {
-			throw e;
 		} catch (Exception e) {
 			throw new GraphIOException("exception while loading schema", e);
 		}
 	}
 
+	/**
+	 * Loads a graph without transaction support from the file
+	 * <code>filename</code>. When schema classes can not be found on the class
+	 * path, the schema is first loaded and compiled in memory using the code
+	 * generator configuration <code>config</code>. When the
+	 * <code>filename</code> ends with <code>.gz</code>, it is assumed that the
+	 * input is GZIP compressed, otherwise uncompressed plain text. A
+	 * {@link ProgressFunction} <code>pf</code> can be used to monitor progress.
+	 * 
+	 * @param filename
+	 *            the name of the TG file to be read
+	 * @param config
+	 *            the {@link CodeGeneratorConfiguration} to be used to generate
+	 *            and compile the schema classes
+	 * @param pf
+	 *            a {@link ProgressFunction}, may be <code>null</code>
+	 * @return the loaded graph
+	 * @throws GraphIOException
+	 *             if an IOException occurs or the compiled schema classes can
+	 *             not be loaded
+	 */
 	public static Graph loadSchemaAndGraphFromFile(String filename,
 			CodeGeneratorConfiguration config, ProgressFunction pf)
 			throws GraphIOException {
@@ -778,20 +841,33 @@ public class GraphIO {
 			logger.finer("Loading graph " + filename);
 			return loadGraphFromFile(filename, null, pf);
 		} catch (GraphIOException ex) {
-			logger.fine("Schema was unknown, so loading that first.");
-			Schema s = loadSchemaFromFile(filename);
-			s.compile(config);
-			return loadGraphFromFile(filename, s, pf);
+			if (ex.getCause() instanceof ClassNotFoundException) {
+				logger
+						.fine("Compiled schema classes were not found, so load and compile the schema first.");
+				Schema s = loadSchemaFromFile(filename);
+				s.compile(config);
+				return loadGraphFromFile(filename, s, pf);
+			} else {
+				throw ex;
+			}
 		}
 	}
 
 	/**
-	 * Loads a <code>Graph</code> from the given file with transaction support.
+	 * Loads a graph with transaction support from the file
+	 * <code>filename</code>. When the <code>filename</code> ends with
+	 * <code>.gz</code>, it is assumed that the input is GZIP compressed,
+	 * otherwise uncompressed plain text. A {@link ProgressFunction}
+	 * <code>pf</code> can be used to monitor progress.
 	 * 
 	 * @param filename
+	 *            the name of the TG file to be read
 	 * @param pf
-	 * @return
+	 *            a {@link ProgressFunction}, may be <code>null</code>
+	 * @return the loaded graph
 	 * @throws GraphIOException
+	 *             if an IOException occurs or the compiled schema classes can
+	 *             not be loaded
 	 */
 	public static Graph loadGraphFromFileWithTransactionSupport(
 			String filename, ProgressFunction pf) throws GraphIOException {
@@ -799,14 +875,23 @@ public class GraphIO {
 	}
 
 	/**
-	 * Loads a <code>Graph</code> from the given file with transaction support.
-	 * The corresponding schema is given as a parameter.
+	 * Loads a graph with transaction support from the file
+	 * <code>filename</code>. When the <code>filename</code> ends with
+	 * <code>.gz</code>, it is assumed that the input is GZIP compressed,
+	 * otherwise uncompressed plain text. A {@link ProgressFunction}
+	 * <code>pf</code> can be used to monitor progress.
 	 * 
 	 * @param filename
+	 *            the name of the TG file to be read
 	 * @param schema
+	 *            the schema (must be the same schema as in the TG file read by
+	 *            the InputStream), may be <code>null</code>
 	 * @param pf
-	 * @return
+	 *            a {@link ProgressFunction}, may be <code>null</code>
+	 * @return the loaded graph
 	 * @throws GraphIOException
+	 *             if an IOException occurs or the compiled schema classes can
+	 *             not be loaded
 	 */
 	public static Graph loadGraphFromFileWithTransactionSupport(
 			String filename, Schema schema, ProgressFunction pf)
@@ -815,75 +900,114 @@ public class GraphIO {
 	}
 
 	/**
-	 * New "intermediate"-method needed for transaction support.
+	 * Loads a graph without transaction support from the file
+	 * <code>filename</code>. When the <code>filename</code> ends with
+	 * <code>.gz</code>, it is assumed that the input is GZIP compressed,
+	 * otherwise uncompressed plain text. A {@link ProgressFunction}
+	 * <code>pf</code> can be used to monitor progress.
 	 * 
 	 * @param filename
+	 *            the name of the TG file to be read
 	 * @param pf
-	 * @return
+	 *            a {@link ProgressFunction}, may be <code>null</code>
+	 * @return the loaded graph
 	 * @throws GraphIOException
+	 *             if an IOException occurs or the compiled schema classes can
+	 *             not be loaded
 	 */
 	public static Graph loadGraphFromFile(String filename, ProgressFunction pf)
 			throws GraphIOException {
 		return loadGraphFromFile(filename, null, pf, false);
 	}
 
+	/**
+	 * Loads a graph without transaction support from the file
+	 * <code>filename</code>. When the <code>filename</code> ends with
+	 * <code>.gz</code>, it is assumed that the input is GZIP compressed,
+	 * otherwise uncompressed plain text. A {@link ProgressFunction}
+	 * <code>pf</code> can be used to monitor progress.
+	 * 
+	 * @param filename
+	 *            the name of the TG file to be read
+	 * @param schema
+	 *            the schema (must be the same schema as in the TG file read by
+	 *            the InputStream), may be <code>null</code>
+	 * @param pf
+	 *            a {@link ProgressFunction}, may be <code>null</code>
+	 * @return the loaded graph
+	 * @throws GraphIOException
+	 *             if an IOException occurs or the compiled schema classes can
+	 *             not be loaded
+	 */
 	public static Graph loadGraphFromFile(String filename, Schema schema,
 			ProgressFunction pf) throws GraphIOException {
 		return loadGraphFromFile(filename, schema, pf, false);
 	}
 
 	/**
+	 * Loads a graph from the file <code>filename</code>. When the
+	 * <code>filename</code> ends with <code>.gz</code>, it is assumed that the
+	 * input is GZIP compressed, otherwise uncompressed plain text. A
+	 * {@link ProgressFunction} <code>pf</code> can be used to monitor progress.
 	 * 
 	 * @param filename
+	 *            the name of the TG file to be read
 	 * @param schema
+	 *            the schema (must be the same schema as in the TG file read by
+	 *            the InputStream), may be <code>null</code>
 	 * @param pf
+	 *            a {@link ProgressFunction}, may be <code>null</code>
 	 * @param transactionSupport
-	 * @return
+	 *            when <code>true</code>, a graph instance with transaction
+	 *            support is created
+	 * @return the loaded graph
 	 * @throws GraphIOException
+	 *             if an IOException occurs or the compiled schema classes can
+	 *             not be loaded
 	 */
-	private static Graph loadGraphFromFile(String filename, Schema schema,
+	public static Graph loadGraphFromFile(String filename, Schema schema,
 			ProgressFunction pf, boolean transactionSupport)
 			throws GraphIOException {
 		try {
 			logger.finer("Loading graph " + filename);
-			BufferedInputStream inputStream = new BufferedInputStream(
-					new FileInputStream(filename), 65536);
-			Graph loadedGraph = loadGraphFromStream(inputStream, schema, pf,
-					transactionSupport);
-			inputStream.close();
-			return loadedGraph;
-
+			InputStream in;
+			if (filename.toLowerCase().endsWith(".gz")) {
+				in = new GZIPInputStream(new FileInputStream(filename), 65536);
+			} else {
+				in = new BufferedInputStream(new FileInputStream(filename),
+						65536);
+			}
+			try {
+				return loadGraphFromStream(in, schema, pf, transactionSupport);
+			} finally {
+				in.close();
+			}
 		} catch (IOException ex) {
-			throw new GraphIOException("Unable to load graph from file "
-					+ filename + ", the file cannot be found", ex);
+			throw new GraphIOException(
+					"exception while loading graph from file " + filename, ex);
 		}
 	}
 
-	public static Graph loadGraphFromURL(String url, ProgressFunction pf)
-			throws GraphIOException {
-		return loadGraphFromURL(url, null, pf);
-	}
-
-	public static Graph loadGraphFromURL(String url, Schema schema,
-			ProgressFunction pf) throws GraphIOException {
-		try {
-			InputStream openedStream = new URL(url).openStream();
-			Graph loadedGraph = loadGraphFromStream(openedStream, schema, pf,
-					false);
-			openedStream.close();
-			return loadedGraph;
-		} catch (IOException ex) {
-			throw new GraphIOException("Unable to load graph from url " + url
-					+ ", the resource cannot be found", ex);
-		}
-	}
-
-	public static Graph loadGraphFromStream(InputStream in,
-			ProgressFunction pf, boolean transactionSupport)
-			throws GraphIOException {
-		return loadGraphFromStream(in, null, pf, transactionSupport);
-	}
-
+	/**
+	 * Loads a graph from the stream <code>in</code>. A {@link ProgressFunction}
+	 * <code>pf</code> can be used to monitor progress. The stream is
+	 * <em>not</em> closed.
+	 * 
+	 * @param in
+	 *            an InputStream
+	 * @param schema
+	 *            the schema (must be the same schema as in the TG file read by
+	 *            the InputStream), may be <code>null</code>
+	 * @param pf
+	 *            a {@link ProgressFunction}, may be <code>null</code>
+	 * @param transactionSupport
+	 *            when <code>true</code>, a graph instance with transaction
+	 *            support is created
+	 * @return the loaded graph
+	 * @throws GraphIOException
+	 *             if an IOException occurs or the compiled schema classes can
+	 *             not be loaded
+	 */
 	public static Graph loadGraphFromStream(InputStream in, Schema schema,
 			ProgressFunction pf, boolean transactionSupport)
 			throws GraphIOException {
@@ -898,18 +1022,16 @@ public class GraphIO {
 			Method instanceMethod = schemaClass.getMethod("instance",
 					(Class<?>[]) null);
 			io.schema = (Schema) instanceMethod.invoke(null, new Object[0]);
-			// ((SchemaImpl) io.schema).setConfiguration(config);
-			GraphBaseImpl g = io.graph(pf, transactionSupport);
-			g.internalLoadingCompleted(io.firstIncidence, io.nextIncidence);
+			GraphBaseImpl loadedGraph = io.graph(pf, transactionSupport);
+			loadedGraph.internalLoadingCompleted(io.firstIncidence,
+					io.nextIncidence);
 			io.firstIncidence = null;
 			io.nextIncidence = null;
-			g.loadingCompleted();
-			return g;
-		} catch (GraphIOException e) {
-			throw e;
+			loadedGraph.loadingCompleted();
+			return loadedGraph;
 		} catch (ClassNotFoundException e) {
-			// the class was not found, so the schema.commit-method was not
-			// called yet, an exception will be thrown
+			// the schema class was not found, probably schema.commit-method was
+			// not called, or schema package was not included into classpath
 			throw new GraphIOException(
 					"Unable to load a graph which belongs to the schema because the Java-classes for this schema have not yet been created."
 							+ " Use Schema.commit(..) to create them!", e);
