@@ -38,7 +38,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public abstract class Greql2Function {
 
 	public enum Category {
-		LOGICS, COMPARISONS, ARITHMETICS, STRINGS, COLLECTIONS_AND_MAPS, PATHS_AND_PATHSYSTEMS_AND_SLICES, SCHEMA_ACCESS, GRAPH, UNDEFINED
+		DEBUGGING, LOGICS, COMPARISONS, ARITHMETICS, STRINGS, COLLECTIONS_AND_MAPS, PATHS_AND_PATHSYSTEMS_AND_SLICES, SCHEMA_ACCESS, GRAPH, UNDEFINED
 	};
 
 	/**
@@ -63,7 +63,7 @@ public abstract class Greql2Function {
 	 * @param args
 	 *            the actual parameters given to that function
 	 * @return the index in <code>signatures</code> that matches
-	 *         <code>args</code>
+	 *         <code>args</code>, or a negative value, if no signature matches.
 	 */
 	protected final int checkArguments(JValue[] args) {
 		int bestIndex = -1;
@@ -76,7 +76,7 @@ public abstract class Greql2Function {
 				continue;
 			}
 			int conversionCosts = 0;
-			for (int j = 0; j < args.length;  j++) {
+			for (int j = 0; j < args.length; j++) {
 				int thisArgsCosts = args[j].conversionCosts(signatures[i][j]);
 				if (thisArgsCosts == -1) {
 					// conversion is not possible
@@ -131,9 +131,8 @@ public abstract class Greql2Function {
 	 * @throws EvaluateException
 	 *             if something went wrong
 	 */
-	public abstract JValue evaluate(Graph graph,
-			BooleanGraphMarker subgraph, JValue[] arguments)
-			throws EvaluateException;
+	public abstract JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
+			JValue[] arguments) throws EvaluateException;
 
 	/**
 	 * Calculates the estimated cost for the evaluation of this greql function

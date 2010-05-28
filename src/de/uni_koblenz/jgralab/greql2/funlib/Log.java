@@ -19,7 +19,6 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public class Log extends Greql2Function {
 	{
 		JValueType[][] x = {
-
 				{ JValueType.STRING, JValueType.ATTRELEMCLASS,
 						JValueType.ATTRELEMCLASS },
 				{ JValueType.STRING, JValueType.BOOL, JValueType.BOOL },
@@ -39,7 +38,7 @@ public class Log extends Greql2Function {
 
 		description = "Prints arg1 = arg2.toString() on stdout and returns arg2 unchanged.";
 
-		Category[] c = { Category.UNDEFINED };
+		Category[] c = { Category.DEBUGGING };
 		categories = c;
 	}
 
