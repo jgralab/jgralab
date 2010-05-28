@@ -76,8 +76,6 @@ public class FunctionTest extends GenericTests {
 		assertEquals(4, result.toCollection().size());
 	}
 
-
-
 	@Test
 	public void testGetEdge() throws Exception {
 		String dataGraphQuery = "true"; // should contains only one edge
@@ -187,7 +185,7 @@ public class FunctionTest extends GenericTests {
 			assertEquals(1, (int) j.toInteger());
 		}
 	}
-	
+
 	@Test
 	public void testDegree5() throws Exception {
 		String queryString = "from x : V{BagComprehension} report edgesConnected(x) end";
@@ -610,12 +608,12 @@ public class FunctionTest extends GenericTests {
 		JValue result = evalTestQuery("Sub", queryString);
 		assertEquals(-4.5, result.toDouble(), 0.01);
 	}
-	
+
 	@Test
 	public void testSub5() throws Exception {
 		String queryString = "10 - 4 - 3 - 2";
 		JValue result = evalTestQuery("Sub5", queryString);
-		assertEquals(1, result.toInteger());
+		assertEquals(Integer.valueOf(1), result.toInteger());
 	}
 
 	@Test
@@ -624,15 +622,13 @@ public class FunctionTest extends GenericTests {
 		JValue result = evalTestQuery("Mod", queryString);
 		assertEquals(Integer.valueOf(1), result.toInteger());
 	}
-	
+
 	@Test
 	public void testMultiplicative() throws Exception {
 		String queryString = "100 / 10 / 5 * 2";
 		JValue result = evalTestQuery("Mod", queryString);
 		assertEquals(Double.valueOf(4), result.toDouble(), 0.01);
 	}
-	
-	
 
 	@Test
 	public void testNotEquals() throws Exception {
@@ -674,7 +670,7 @@ public class FunctionTest extends GenericTests {
 		estimatedList.add(nodes.get(2));
 		estimatedList.add(nodes.get(3));
 		assertEquals(4, p.nodeTrace().size());
-		for (int i=0; i<estimatedList.size(); i++) {
+		for (int i = 0; i < estimatedList.size(); i++) {
 			assertEquals(estimatedList.get(i), p.nodeTrace().get(i));
 		}
 	}
