@@ -294,10 +294,6 @@ public class GreqlGui extends JFrame {
 		progressBar = new JProgressBar();
 		progressBar.setModel(brm);
 
-		// resultPanel = new JPanel();
-		// resultPanel.setBorder(BorderFactory.createEmptyBorder(0, 4, 4, 4));
-		// resultPanel.add(resultScrollPane);
-
 		consoleOutputArea = new JTextArea();
 		consoleOutputArea.setEditable(false);
 		consoleOutputArea.setMinimumSize(new Dimension(200, 200));
@@ -305,9 +301,6 @@ public class GreqlGui extends JFrame {
 		JScrollPane consoleScrollPane = new JScrollPane(consoleOutputArea);
 		System.setOut(new ConsoleOutputStream());
 		System.setErr(new ConsoleOutputStream());
-		// consolePanel = new JPanel();
-		// consolePanel.setBorder(BorderFactory.createEmptyBorder(0, 4, 4, 4));
-		// consolePanel.add(consoleScrollPane);
 
 		tabPane = new JTabbedPane();
 		tabPane.addTab("Console", consoleScrollPane);
