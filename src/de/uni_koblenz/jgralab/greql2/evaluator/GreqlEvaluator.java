@@ -935,7 +935,6 @@ public class GreqlEvaluator {
 			// costModel = new DefaultCostModel(vertexEvalGraphMarker);
 			Level2LogReader logReader;
 			if (evaluationLogger == null) {
-				// Create only a generic log reader by default.
 				evaluationLoggerDirectory = getTmpDirectory();
 				logReader = new Level2LogReader(evaluationLoggerDirectory,
 						datagraph);

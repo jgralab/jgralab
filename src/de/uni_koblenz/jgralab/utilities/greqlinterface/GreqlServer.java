@@ -1,4 +1,4 @@
-package de.uni_koblenz.jgralab.greql2.evaluator;
+package de.uni_koblenz.jgralab.utilities.greqlinterface;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -20,6 +20,7 @@ import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueMap;
