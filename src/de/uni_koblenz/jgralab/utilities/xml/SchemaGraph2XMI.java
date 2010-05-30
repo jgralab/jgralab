@@ -40,6 +40,7 @@ import de.uni_koblenz.jgralab.grumlschema.structure.Constraint;
 import de.uni_koblenz.jgralab.grumlschema.structure.ContainsDomain;
 import de.uni_koblenz.jgralab.grumlschema.structure.ContainsGraphElementClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.ContainsSubPackage;
+import de.uni_koblenz.jgralab.grumlschema.structure.EdgeClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.GraphClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.GraphElementClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.HasAttribute;
@@ -359,7 +360,7 @@ public class SchemaGraph2XMI {
 				createGraphClassAndVertexClass(writer, gec);
 			} else {
 				// create EdgeClass
-				// TODO create edge
+				createEdgeClass(writer, (EdgeClass) gec);
 			}
 		}
 
@@ -374,6 +375,11 @@ public class SchemaGraph2XMI {
 			// close packagedElement
 			writer.writeEndElement();
 		}
+
+	}
+
+	private void createEdgeClass(XMLStreamWriter writer, EdgeClass gec) {
+		// TODO Auto-generated method stub
 
 	}
 

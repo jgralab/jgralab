@@ -126,4 +126,5 @@ public class XMIConstants {
 	// static final String IMPORTEDPACKAGE_TYPE_VALUE = "uml:Model";
 	// static final String IMPORTEDPACKAGE_HREF_VALUE = NAMESPACE_UML
 	// + "/uml.xml#_0";
+	//
 }
