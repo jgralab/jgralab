@@ -96,6 +96,8 @@ public class XMIConstants {
 
 	public static final String UML_DEFAULT_VALUE = "defaultValue";
 
+	public static final String UML_INSTANCE_VALUE = "uml:InstanceValue";
+
 	public static final String XMI_TYPE = "type";
 
 	public static final String UML_LITERAL_INTEGER = "uml:LiteralInteger";

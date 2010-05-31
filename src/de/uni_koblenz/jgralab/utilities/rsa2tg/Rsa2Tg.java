@@ -52,6 +52,7 @@ import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_ENUMERATI
 import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_ENUMERATION_LITERAL;
 import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_E_ANNOTATIONS;
 import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_GENERALIZATION;
+import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_INSTANCE_VALUE;
 import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_LANGUAGE;
 import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_LITERAL_BOOLEAN;
 import static de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_LITERAL_INTEGER;
@@ -131,7 +132,6 @@ import de.uni_koblenz.jgralab.grumlschema.structure.ComesFrom;
 import de.uni_koblenz.jgralab.grumlschema.structure.Comment;
 import de.uni_koblenz.jgralab.grumlschema.structure.Constraint;
 import de.uni_koblenz.jgralab.grumlschema.structure.ContainsGraphElementClass;
-import de.uni_koblenz.jgralab.grumlschema.structure.ContainsSubPackage;
 import de.uni_koblenz.jgralab.grumlschema.structure.EdgeClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.EndsAt;
 import de.uni_koblenz.jgralab.grumlschema.structure.GoesTo;
@@ -811,9 +811,10 @@ public class Rsa2Tg extends XmlProcessor {
 		} else if (name.equals(UML_DEFAULT_VALUE)) {
 			String xmiType = getAttribute(XMI_NAMESPACE_PREFIX, XMI_TYPE);
 			if (isPrimitiveDefaultValue(xmiType)) {
+				// boolean, integer, string, or enumeration value
 				handlePrimitiveDefaultValue(xmiId, xmiType);
 			} else if (!xmiType.equals(UML_OPAQUE_EXPRESSION)) {
-				System.err.println("Warning: Unexpected default value type '"
+				System.out.println("Warning: Unexpected default value type '"
 						+ xmiType + "' for attribute '"
 						+ currentAttribute.get_name() + "' of "
 						+ currentClass.getM1Class().getSimpleName() + " '"
@@ -839,31 +840,54 @@ public class Rsa2Tg extends XmlProcessor {
 	private boolean isPrimitiveDefaultValue(String xmiType) {
 		return xmiType.equals(UML_LITERAL_STRING)
 				|| xmiType.equals(UML_LITERAL_INTEGER)
-				|| xmiType.equals(UML_LITERAL_BOOLEAN);
+				|| xmiType.equals(UML_LITERAL_BOOLEAN)
+				|| xmiType.equals(UML_INSTANCE_VALUE);
 	}
 
 	private void handlePrimitiveDefaultValue(String xmiId, String xmiType)
 			throws XMLStreamException {
+		if (xmiType.equals(UML_INSTANCE_VALUE)) {
+			String value = getAttribute(UML_ATTRIBUTE_NAME);
+			handleDefaultValue(xmiId, value);
+			return;
+		}
+
 		String value = getAttribute(UML_ATTRIBUTE_VALUE);
+		if (xmiType.equals(UML_LITERAL_BOOLEAN)) {
+			if (value == null) {
+				value = "f"; // XML schema default
+			} else {
+				assert value.equals("true") || value.equals("false");
+				// true/false => t/f
+				value = value.substring(0, 1);
+			}
+			handleDefaultValue(xmiId, value);
+			return;
+		}
+
 		if (value == null) {
-			System.err
+			System.out
 					.println("Warning: Undefined default value for attribute '"
 							+ currentAttribute.get_name() + "' of "
 							+ currentClass.getM1Class().getSimpleName() + " '"
 							+ currentClass.get_qualifiedName() + "' in file '"
 							+ getFileName() + "' at line "
 							+ getParser().getLocation().getLineNumber());
-
 			return;
 		}
-		if (xmiType.equals(UML_LITERAL_BOOLEAN)) {
-			assert value.equals("true") || value.equals("false");
-			// true/false => t/f
-			value = value.substring(0, 1);
-		} else if (xmiType.equals(UML_LITERAL_STRING)) {
+
+		if (xmiType.equals(UML_LITERAL_STRING)) {
 			value = "\"" + value + "\"";
+			handleDefaultValue(xmiId, value);
+		} else {
+			System.out.println("Warning: Undefined default value type '"
+					+ xmiType + "' for attribute '"
+					+ currentAttribute.get_name() + "' of "
+					+ currentClass.getM1Class().getSimpleName() + " '"
+					+ currentClass.get_qualifiedName() + "' in file '"
+					+ getFileName() + "' at line "
+					+ getParser().getLocation().getLineNumber());
 		}
-		handleDefaultValue(xmiId, value);
 	}
 
 	private void handleDefaultValue(String xmiId, String value) {
@@ -1091,6 +1115,7 @@ public class Rsa2Tg extends XmlProcessor {
 	 * graph.
 	 */
 	private void removeIgnoredPackages() {
+		System.out.println("Removing ignored packages...");
 		for (Package pkg : ignoredPackages) {
 			removePackage(pkg);
 		}
@@ -1108,12 +1133,16 @@ public class Rsa2Tg extends XmlProcessor {
 			// possibly alread deleted
 			return;
 		}
+		System.out.println("\tremoving " + pkg.get_qualifiedName());
 		// recursively descend into subpackages
-		for (ContainsSubPackage c = pkg
-				.getFirstContainsSubPackage(EdgeDirection.OUT); c != null; c = pkg
-				.getFirstContainsSubPackage(EdgeDirection.OUT)) {
-			removePackage((Package) c.getThat());
+		List<Package> subPackages = new ArrayList<Package>();
+		for (Package sub : pkg.get_subpackage()) {
+			subPackages.add(sub);
 		}
+		for (Package sub : subPackages) {
+			removePackage(sub);
+		}
+
 		// remove all GraphElementClasses
 		for (ContainsGraphElementClass c = pkg
 				.getFirstContainsGraphElementClass(EdgeDirection.OUT); c != null; c = pkg
@@ -1181,6 +1210,7 @@ public class Rsa2Tg extends XmlProcessor {
 	 *             if any enumeration is empty
 	 */
 	private void checkEnumDomains() {
+		System.out.println("Checking enumeration domains...");
 		ArrayList<String> faultyDomains = new ArrayList<String>();
 		for (EnumDomain ed : sg.getEnumDomainVertices()) {
 			if (ed.get_enumConstants().size() < 1) {
@@ -1202,6 +1232,7 @@ public class Rsa2Tg extends XmlProcessor {
 	}
 
 	private void attachComments() {
+		System.out.println("Attaching comments to annotated elements...");
 		for (String id : comments.keySet()) {
 			NamedElement annotatedElement = null;
 			if (domainMap.containsKey(id)) {
@@ -1212,22 +1243,26 @@ public class Rsa2Tg extends XmlProcessor {
 			}
 			if (annotatedElement == null) {
 				System.out
-						.println("Couldn't find annotated element for XMI id "
-								+ id + " ==> attaching to GraphClass");
+						.println("Warning: Couldn't find annotated element for XMI id "
+								+ id
+								+ " ==> attaching to GraphClass (Comment starts with '"
+								+ comments.get(id).get(0) + "'");
 				annotatedElement = graphClass;
 			}
 			assert annotatedElement != null;
-			List<String> lines = comments.get(id);
-			for (String line : lines) {
-				Comment c = sg.createComment();
-				c.set_text(line);
-				sg.createAnnotates(c, annotatedElement);
+			if (annotatedElement.isValid()) {
+				List<String> lines = comments.get(id);
+				for (String line : lines) {
+					Comment c = sg.createComment();
+					c.set_text(line);
+					sg.createAnnotates(c, annotatedElement);
+				}
 			}
-
 		}
 	}
 
 	private void createSubsetsAndRedefinesRelations() {
+		System.out.println("Creating subsets and redefines relationships...");
 		// for each specialisation between edge classes, add a subsets edge
 		// between their incidence classes
 		SpecializesEdgeClass spec = sg.getFirstSpecializesEdgeClassInGraph();
@@ -1721,6 +1756,8 @@ public class Rsa2Tg extends XmlProcessor {
 	 * Handles a 'uml:EnumerationLiteral' by creating a corresponding
 	 * enumeration literal and adding it to its {@link EnumDomain}.
 	 * 
+	 * @param xmiId
+	 * 
 	 * @throws XMLStreamException
 	 */
 	private void handleEnumerationLiteral() throws XMLStreamException {
@@ -1749,6 +1786,12 @@ public class Rsa2Tg extends XmlProcessor {
 		}
 		EnumDomain ed = (EnumDomain) idMap.get(classifier);
 
+		if (!s.equals(s.toUpperCase())) {
+			System.out.println("Warning: Enumeration literal '" + s
+					+ "' in enumeration + '" + ed.get_qualifiedName()
+					+ "' should be all uppercase letters.");
+		}
+
 		ed.get_enumConstants().add(s);
 	}
 
@@ -1774,11 +1817,11 @@ public class Rsa2Tg extends XmlProcessor {
 	 * the navigability.
 	 */
 	private void correctEdgeDirection() {
-
 		if (!isUseNavigability()) {
 			return;
 		}
-
+		System.out
+				.println("Correcting edge directions according to navigability...");
 		for (EdgeClass e : sg.getEdgeClassVertices()) {
 			ComesFrom cf = e.getFirstComesFrom();
 			if (cf == null) {
@@ -1826,6 +1869,7 @@ public class Rsa2Tg extends XmlProcessor {
 	 * @throws XMLStreamException
 	 */
 	private void attachConstraints() throws XMLStreamException {
+		System.out.println("Attaching constraints...");
 		for (String constrainedElementId : constraints.keySet()) {
 			List<String> l = constraints.get(constrainedElementId);
 			if (l.size() == 0) {
@@ -1847,20 +1891,24 @@ public class Rsa2Tg extends XmlProcessor {
 								+ ae + " (XMI id " + constrainedElementId + ")");
 			}
 			if (ae instanceof AttributedElementClass) {
-				for (String text : l) {
-					addGreqlConstraint((AttributedElementClass) ae, text);
+				if (((AttributedElementClass) ae).isValid()) {
+					for (String text : l) {
+						addGreqlConstraint((AttributedElementClass) ae, text);
+					}
 				}
 			} else if (ae instanceof IncidenceClass) {
-				for (String text : l) {
-					if (!text.startsWith("redefines")) {
-						throw new ProcessingException(
-								getFileName(),
-								"Only 'redefines' constraints are allowed at association ends. Offending element: "
-										+ ae
-										+ " (XMI id "
-										+ constrainedElementId + ")");
+				if (((IncidenceClass) ae).isValid()) {
+					for (String text : l) {
+						if (!text.startsWith("redefines")) {
+							throw new ProcessingException(
+									getFileName(),
+									"Only 'redefines' constraints are allowed at association ends. Offending element: "
+											+ ae
+											+ " (XMI id "
+											+ constrainedElementId + ")");
+						}
+						addRedefinesConstraint((IncidenceClass) ae, text);
 					}
-					addRedefinesConstraint((IncidenceClass) ae, text);
 				}
 			} else {
 				throw new ProcessingException(getFileName(),
@@ -1875,6 +1923,7 @@ public class Rsa2Tg extends XmlProcessor {
 	 * an empty String or a String, which ends with a '.'.
 	 */
 	private void createEdgeClassNames() {
+		System.out.println("Creating missing edge class names...");
 		for (EdgeClass ec : sg.getEdgeClassVertices()) {
 			String name = ec.get_qualifiedName().trim();
 			if (!name.equals("") && !name.endsWith(".")) {
@@ -1953,9 +2002,7 @@ public class Rsa2Tg extends XmlProcessor {
 	 * {@link SchemaGraph}.
 	 */
 	private void removeUnusedDomains() {
-		if (!isRemoveUnusedDomains()) {
-			return;
-		}
+		System.out.println("Removing unused domains...");
 		Domain d = sg.getFirstDomain();
 		while (d != null) {
 			Domain n = d.getNextDomain();
@@ -2207,6 +2254,7 @@ public class Rsa2Tg extends XmlProcessor {
 	 */
 	private void removeEmptyPackages() {
 		// remove all empty packages except the default package
+		System.out.println("Removing empty packages...");
 		Package p = sg.getFirstPackage();
 		while (p != null) {
 			Package n = p.getNextPackage();
