@@ -115,10 +115,7 @@ public class TgSchema2Java {
 			CommandLine comLine = processCommandLineOptions(args);
 			assert comLine != null;
 			if (comLine.hasOption("p")) {
-				String commitPath = comLine.getOptionValue("p");
-				commitPath = commitPath.replace("/", File.separator);
-				commitPath = commitPath.replace("\\", File.separator);
-				t.setCommitPath(commitPath);
+				t.setCommitPath(comLine.getOptionValue("p"));
 			}
 			t.setCompile(comLine.hasOption("c"));
 			if (comLine.hasOption("j")) {
@@ -161,11 +158,11 @@ public class TgSchema2Java {
 		schema = GraphIO.loadSchemaFromFile(tgFilename);
 	}
 
-	private void setMethodsForSubclassesSupport(boolean enabled) {
+	public void setMethodsForSubclassesSupport(boolean enabled) {
 		config.setMethodsForSubclassesSupport(enabled);
 	}
 
-	private void setTypeSpecificMethodSupport(boolean enabled) {
+	public void setTypeSpecificMethodSupport(boolean enabled) {
 		config.setTypeSpecificMethodsSupport(enabled);
 	}
 
@@ -372,7 +369,7 @@ public class TgSchema2Java {
 	/**
 	 * Writes the .java-files.
 	 */
-	private void execute() {
+	public void execute() {
 		int input;
 
 		try {
@@ -505,6 +502,8 @@ public class TgSchema2Java {
 	}
 
 	public void setCommitPath(String commitPath) {
+		commitPath = commitPath.replace("/", File.separator);
+		commitPath = commitPath.replace("\\", File.separator);
 		this.commitPath = commitPath;
 	}
 
