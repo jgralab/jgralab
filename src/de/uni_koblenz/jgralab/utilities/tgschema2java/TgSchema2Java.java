@@ -102,7 +102,82 @@ public class TgSchema2Java {
 	/**
 	 * Configures which options the generated code should support
 	 */
-	private CodeGeneratorConfiguration config = new CodeGeneratorConfiguration();
+	private CodeGeneratorConfiguration config;
+
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		TgSchema2Java t = new TgSchema2Java();
+		String tgFilename = null;
+		try {
+			// processing command line arguments
+			CommandLine comLine = processCommandLineOptions(args);
+			assert comLine != null;
+			if (comLine.hasOption("p")) {
+				String commitPath = comLine.getOptionValue("p");
+				commitPath = commitPath.replace("/", File.separator);
+				commitPath = commitPath.replace("\\", File.separator);
+				t.setCommitPath(commitPath);
+			}
+			t.setCompile(comLine.hasOption("c"));
+			if (comLine.hasOption("j")) {
+				t.setCreateJar(true);
+				t.setJarFileName(comLine.getOptionValue("j"));
+			}
+			if (comLine.hasOption("so")) {
+				t.setStandardSupportOnly();
+			} else if (comLine.hasOption("to")) {
+				t.setTransactionSupportOnly();
+			}
+
+			if (comLine.hasOption('w')) {
+				t.setTypeSpecificMethodSupport(false);
+			} else {
+				t.setTypeSpecificMethodSupport(true);
+			}
+			if (comLine.hasOption('f')) {
+				t.setMethodsForSubclassesSupport(true);
+			} else {
+				t.setMethodsForSubclassesSupport(false);
+			}
+
+			// loading .tg-file and creating schema-object
+			tgFilename = comLine.getOptionValue("s");
+			t.loadSchema(tgFilename);
+		} catch (GraphIOException e) {
+			e.printStackTrace();
+			System.err.println("Couldn't read schema in file '" + tgFilename
+					+ "': " + e.getMessage());
+			System.exit(1);
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+		t.execute();
+	}
+
+	public void loadSchema(String tgFilename) throws GraphIOException {
+		schema = GraphIO.loadSchemaFromFile(tgFilename);
+	}
+
+	private void setMethodsForSubclassesSupport(boolean enabled) {
+		config.setMethodsForSubclassesSupport(enabled);
+	}
+
+	private void setTypeSpecificMethodSupport(boolean enabled) {
+		config.setTypeSpecificMethodsSupport(enabled);
+	}
+
+	public void setTransactionSupportOnly() {
+		config.setStandardSupport(false);
+		config.setTransactionSupport(true);
+	}
+
+	public void setStandardSupportOnly() {
+		config.setStandardSupport(true);
+		config.setTransactionSupport(false);
+	}
 
 	/**
 	 * Constructs an instance of TgSchema2Java with the given command line
@@ -113,26 +188,12 @@ public class TgSchema2Java {
 	 *            mandatory, for the commit-path and the implementation to be
 	 *            used there exist default values
 	 */
-	public TgSchema2Java(String[] args) {
+	public TgSchema2Java() {
+		config = new CodeGeneratorConfiguration();
 		commitPath = ".";
 		compile = false;
 		createJar = false;
 		overwrite = true;
-
-		try {
-			// processing command line arguments
-			processArguments(args);
-			// loading .tg-file and creating schema-object
-			schema = GraphIO.loadSchemaFromFile(tgFilename);
-		} catch (GraphIOException e) {
-			e.printStackTrace();
-			System.err.println("Couldn't read schema in file '" + tgFilename
-					+ "': " + e.getMessage());
-			System.exit(1);
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
 	}
 
 	private boolean deleteFolder(String path) {
@@ -273,48 +334,6 @@ public class TgSchema2Java {
 		return true;
 	}
 
-	/**
-	 * Processes the command line arguments and sets member variables
-	 * accordingly.
-	 * 
-	 * @param args
-	 *            the command line arguments
-	 * @throws Exception
-	 *             Throws Exception if mandatory option "-f" is not specified.
-	 */
-	private void processArguments(String[] args) throws Exception {
-		CommandLine comLine = processCommandLineOptions(args);
-		assert comLine != null;
-		tgFilename = comLine.getOptionValue("s");
-		if (comLine.hasOption("p")) {
-			commitPath = comLine.getOptionValue("p");
-			commitPath = commitPath.replace("/", File.separator);
-			commitPath = commitPath.replace("\\", File.separator);
-		}
-		compile = comLine.hasOption("c");
-		if (comLine.hasOption("j")) {
-			createJar = true;
-			jarFileName = comLine.getOptionValue("j");
-		}
-		if (comLine.hasOption("so")) {
-			config.setStandardSupport(true);
-			config.setTransactionSupport(false);
-		} else if (comLine.hasOption("to")) {
-			config.setStandardSupport(false);
-			config.setTransactionSupport(true);
-		}
-
-		if (comLine.hasOption('w')) {
-			config.setTypeSpecificMethodsSupport(false);
-		}
-		if (comLine.hasOption('f')) {
-			config.setMethodsForSubclassesSupport(true);
-		} else {
-			config.setMethodsForSubclassesSupport(false);
-		}
-
-	}
-
 	public void compile() throws Exception {
 		String packageFolder = schema.getPathName();
 		File folder = new File(commitPath + File.separator + packageFolder);
@@ -404,14 +423,6 @@ public class TgSchema2Java {
 		}
 	}
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		TgSchema2Java tgSchema2Java = new TgSchema2Java(args);
-		tgSchema2Java.execute();
-	}
-
 	private static CommandLine processCommandLineOptions(String[] args) {
 		String toolString = "java " + TgSchema2Java.class.getName();
 		String versionString = JGraLab.getInfo(false);
@@ -457,9 +468,9 @@ public class TgSchema2Java {
 				"(optional): Don't create typespecific methods in classes");
 		without_types.setRequired(false);
 		oh.addOption(without_types);
-		
+
 		Option subtype_flag = new Option("f", "subtype-flag", false,
-		"(optional): Create separate methods with subtype flag");
+				"(optional): Create separate methods with subtype flag");
 		subtype_flag.setRequired(false);
 		oh.addOption(subtype_flag);
 
@@ -479,5 +490,53 @@ public class TgSchema2Java {
 		public boolean accept(File file) {
 			return (file.isDirectory() || file.getName().endsWith(".java"));
 		}
+	}
+
+	public String getTgFilename() {
+		return tgFilename;
+	}
+
+	public void setTgFilename(String tgFilename) {
+		this.tgFilename = tgFilename;
+	}
+
+	public String getCommitPath() {
+		return commitPath;
+	}
+
+	public void setCommitPath(String commitPath) {
+		this.commitPath = commitPath;
+	}
+
+	public boolean isCompile() {
+		return compile;
+	}
+
+	public void setCompile(boolean compile) {
+		this.compile = compile;
+	}
+
+	public boolean isCreateJar() {
+		return createJar;
+	}
+
+	public void setCreateJar(boolean createJar) {
+		this.createJar = createJar;
+	}
+
+	public boolean isOverwrite() {
+		return overwrite;
+	}
+
+	public void setOverwrite(boolean overwrite) {
+		this.overwrite = overwrite;
+	}
+
+	public String getJarFileName() {
+		return jarFileName;
+	}
+
+	public void setJarFileName(String jarFileName) {
+		this.jarFileName = jarFileName;
 	}
 }
