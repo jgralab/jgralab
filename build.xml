@@ -205,7 +205,6 @@
         <!-- calls target compile in general ant file ${ant}/build.xml -->
         <ant dir="${common.dir}" antfile="build.xml" target="compile">
             <property name="src.dir" value="${src.dir}/de/uni_koblenz/${projectname}/utilities"/>
-            <property name="additional.pathelementlocation" value="${classes.dir}/de/uni_koblenz/jgralab/grumlschema/**"/>
             <!-- Those have been compiled before -->
             <property name="compileexcludes" value="common/** tgschema2java/** rsa2tg/** tg2dot/** tg2whatever/**"/>
         </ant>
