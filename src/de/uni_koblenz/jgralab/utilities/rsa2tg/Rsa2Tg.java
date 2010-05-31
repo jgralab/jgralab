@@ -1072,8 +1072,6 @@ public class Rsa2Tg extends XmlProcessor {
 
 		createEdgeClassNames();
 
-		attachComments();
-
 		if (isRemoveUnusedDomains()) {
 			removeUnusedDomains();
 		}
@@ -1081,6 +1079,8 @@ public class Rsa2Tg extends XmlProcessor {
 		if (!isKeepEmptyPackages()) {
 			removeEmptyPackages();
 		}
+
+		attachComments();
 
 		// preliminaryVertices must be empty at this time of processing,
 		// otherwise there is an error...
@@ -1875,9 +1875,14 @@ public class Rsa2Tg extends XmlProcessor {
 			if (l.size() == 0) {
 				continue;
 			}
-			AttributedElement ae = idMap.get(constrainedElementId);
+			Vertex ae = idMap.get(constrainedElementId);
 			if (ae == null) {
 				ae = graphClass;
+			}
+
+			if (!ae.isValid()) {
+				// vertex has been removed
+				continue;
 			}
 
 			// Constraint are attached to GraphClass, VertexClass, EdgeClass or
@@ -1890,6 +1895,7 @@ public class Rsa2Tg extends XmlProcessor {
 								+ "VertexClass, EdgeClass or association ends. Offending element is "
 								+ ae + " (XMI id " + constrainedElementId + ")");
 			}
+
 			if (ae instanceof AttributedElementClass) {
 				if (((AttributedElementClass) ae).isValid()) {
 					for (String text : l) {
