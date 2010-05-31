@@ -118,7 +118,8 @@ public class RolenameCodeGenerator {
 				code
 						.add(
 								"/**",
-								" * @return the vertex adjacent to this one with the rolename '#rolename#', or null if no such vertex exists",
+								" * @return the vertex to this one with the rolename '#rolename#' ",
+								" *         (connected with a <code>#edgeClassName#</code> edge), or null if no such vertex exists",
 								" */",
 								"public #vertexClassName# get_#rolename#();");
 			} else {
@@ -138,7 +139,8 @@ public class RolenameCodeGenerator {
 				code
 						.add(
 								"/**",
-								" * @return an Iterable of all vertices adjacent to this one with the rolename '#rolename#'.",
+								" * @return an Iterable of all vertices adjacent to this one with the rolename '#rolename#'",
+								" *         (connected with a <code>#edgeClassName#</code> edge).",
 								" */",
 								"public Iterable<? extends #vertexClassName#> get_#rolename#();");
 			} else {
