@@ -831,9 +831,9 @@ for some variable declared as
                    (save-excursion
                      (re-search-backward "[{ ,]" (line-beginning-position) t)
                      (when (looking-at "[{ ,]\\([[:alnum:]._]+\\)")
-                       (let ((ec (tg-get-schema-element 'VertexClass (match-string-no-properties 1))))
-                         (if ec
-                             (tg-eldoc-vertex-or-edge ec)
+                       (let ((vc (tg-get-schema-element 'VertexClass (match-string-no-properties 1))))
+                         (if vc
+                             (tg-eldoc-vertex-or-edge vc)
                            "Name is neither qualified nor unique."))))))
              ;; document edge classes
              ((and (or (greql-edge-set-expression-p)
@@ -841,9 +841,9 @@ for some variable declared as
                    (save-excursion
                      (re-search-backward "[{ ,]" (line-beginning-position) t)
                      (when (looking-at "[{ ,]\\([[:alnum:]._]+\\)")
-                       (let ((vc (tg-get-schema-element 'EdgeClass (match-string-no-properties 1))))
-                         (if vc
-                             (tg-eldoc-vertex-or-edge vc)
+                       (let ((ec (tg-get-schema-element 'EdgeClass (match-string-no-properties 1))))
+                         (if ec
+                             (tg-eldoc-vertex-or-edge ec)
                            "Name is neither qualified nor unique."))))))
              ;; nothing to be done...
              (t ""))))))
