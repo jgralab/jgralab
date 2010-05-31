@@ -208,16 +208,14 @@ valid for all TYPES."
   "Returns an alist of all attribute of the schema element
 ELEM (and its supertypes)."
   (sort
-   (delete-duplicates
+   (delete-dups
     (apply 'nconc (plist-get elem :attrs)
            (mapcar
             (lambda (supertype)
               (tg-all-attributes (tg-get-schema-element
                                   (plist-get elem :meta)
                                   supertype)))
-            (plist-get elem :super)))
-    :test (lambda (a1 a2)
-            (string= (plist-get a1 :name) (plist-get a2 :name))))
+            (plist-get elem :super))))
    (lambda (a1 a2)
      (string-lessp (plist-get a1 :name) (plist-get a2 :name)))))
 
@@ -457,6 +455,7 @@ types with FACE3."
            (concat ", " reststr)))))))
 
 (defun tg-documentation-function ()
+  ;;(message "Called!")
   (let ((thing (thing-at-point 'sexp)))
     (if (string= thing tg--last-thing)
         tg--last-doc
