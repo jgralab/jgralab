@@ -58,6 +58,8 @@ public class XMIConstants {
 	static final String PACKAGEDELEMENT_ATTRIBUTE_MEMBEREND = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_MEMBER_END;
 	static final String PACKAGEDELEMENT_ATTRIBUTE_TYPE = "type";
 	static final String PACKAGEDELEMENT_ATTRIBUTE_ASSOCIATION = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_ATTRIBUTE_ASSOCIATION;
+	static final String TAG_UPPERVALUE = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_UPPER_VALUE;
+	static final String TAG_LOWERVALUE = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_LOWER_VALUE;
 
 	// generalization specific constants
 	static final String TAG_GENERALIZATION = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_GENERALIZATION;
@@ -71,7 +73,6 @@ public class XMIConstants {
 			+ "/uml.xml#Integer";
 	static final String TYPE_HREF_VALUE_BOOLEAN = NAMESPACE_UML
 			+ "/uml.xml#Boolean";
-	static final String DEFAULTVALUE_ATTRIBUTE_VALUE = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_ATTRIBUTE_VALUE;
 	static final String TAG_DEFAULTVALUE = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_DEFAULT_VALUE;
 	static final String OWNEDATTRIBUTE_VISIBILITY_VALUE_PRIVATE = "private";
 	static final String OWNEDATTRIBUTE_ATTRIBUTE_VISIBILITY = "visibility";
@@ -99,6 +100,7 @@ public class XMIConstants {
 	static final String TYPE_VALUE_LITERALINTEGER = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_LITERAL_INTEGER;
 	static final String TYPE_VALUE_LITERALBOOLEAN = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_LITERAL_BOOLEAN;
 	static final String TYPE_VALUE_INSTANCEVALUE = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_INSTANCE_VALUE;
+	static final String TYPE_VALUE_LITERALUNLIMITEDNATURAL = "uml:LiteralUnlimitedNatural";
 
 	// enumeration specific constants
 	static final String PACKAGEDELEMENT_TYPE_VALUE_ENUMERATION = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_ENUMERATION;
@@ -123,6 +125,7 @@ public class XMIConstants {
 	static final String TAG_BODY = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_BODY;
 	static final String ATTRIBUTE_NAME = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_ATTRIBUTE_NAME;
 	static final String ATTRIBUTE_HREF = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_ATTRIBUTE_HREF;
+	static final String ATTRIBUTE_VALUE = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_ATTRIBUTE_VALUE;
 	static final String ATTRIBUTE_VALUE_TRUE = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_TRUE;
 
 	// packageimport specific constants
