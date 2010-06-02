@@ -863,6 +863,12 @@ public class Rsa2Tg extends XmlProcessor {
 			}
 			handleDefaultValue(xmiId, value);
 			return;
+		} else if (xmiType.equals(UML_LITERAL_INTEGER)) {
+			if (value == null) {
+				value = "0"; // XML schema default
+			}
+			handleDefaultValue(xmiId, value);
+			return;
 		}
 
 		if (value == null) {
