@@ -296,82 +296,110 @@ public class SchemaGraph2XMI {
 			throws XMLStreamException {
 		boolean packageTagHasToBeClosed = false;
 
-		if (!pack.get_qualifiedName().equals(
-				de.uni_koblenz.jgralab.schema.Package.DEFAULTPACKAGE_NAME)) {
-			packageTagHasToBeClosed = pack.getFirstAnnotates() != null
-					|| pack.getFirstContainsDomain() != null
-					|| pack.getFirstContainsGraphElementClass() != null
-					|| pack.getFirstContainsSubPackage(EdgeDirection.OUT) != null;
-			if (packageTagHasToBeClosed) {
-				// start package
-				writer.writeStartElement(XMIConstants.TAG_PACKAGEDELEMENT);
-			} else {
-				// create empty package
-				writer.writeEmptyElement(XMIConstants.TAG_PACKAGEDELEMENT);
+		if (!isPackageEmpty(pack)) {
+
+			if (!pack.get_qualifiedName().equals(
+					de.uni_koblenz.jgralab.schema.Package.DEFAULTPACKAGE_NAME)) {
+				packageTagHasToBeClosed = pack.getFirstAnnotates() != null
+						|| pack.getFirstContainsDomain() != null
+						|| pack.getFirstContainsGraphElementClass() != null
+						|| pack.getFirstContainsSubPackage(EdgeDirection.OUT) != null;
+				if (packageTagHasToBeClosed) {
+					// start package
+					writer.writeStartElement(XMIConstants.TAG_PACKAGEDELEMENT);
+				} else {
+					// create empty package
+					writer.writeEmptyElement(XMIConstants.TAG_PACKAGEDELEMENT);
+				}
+				writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
+						XMIConstants.XMI_ATTRIBUTE_TYPE,
+						XMIConstants.PACKAGEDELEMENT_TYPE_VALUE_PACKAGE);
+				writer
+						.writeAttribute(XMIConstants.NAMESPACE_XMI,
+								XMIConstants.XMI_ATTRIBUTE_ID, pack
+										.get_qualifiedName());
+				writer.writeAttribute(XMIConstants.ATTRIBUTE_NAME,
+						extractSimpleName(pack.get_qualifiedName()));
 			}
-			writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-					XMIConstants.XMI_ATTRIBUTE_TYPE,
-					XMIConstants.PACKAGEDELEMENT_TYPE_VALUE_PACKAGE);
-			writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-					XMIConstants.XMI_ATTRIBUTE_ID, pack.get_qualifiedName());
-			writer.writeAttribute(XMIConstants.ATTRIBUTE_NAME,
-					extractSimpleName(pack.get_qualifiedName()));
-		}
 
-		// create comments
-		createComments(writer, pack);
+			// create comments
+			createComments(writer, pack);
 
-		// create domains
-		for (ContainsDomain cd : pack.getContainsDomainIncidences()) {
-			Domain domain = (Domain) cd.getThat();
-			if (!domain
-					.get_qualifiedName()
-					.equals(
-							de.uni_koblenz.jgralab.schema.BooleanDomain.BOOLEANDOMAIN_NAME)
-					&& !domain
-							.get_qualifiedName()
-							.equals(
-									de.uni_koblenz.jgralab.schema.DoubleDomain.DOUBLEDOMAIN_NAME)
-					&& !domain
-							.get_qualifiedName()
-							.equals(
-									de.uni_koblenz.jgralab.schema.IntegerDomain.INTDOMAIN_NAME)
-					&& !domain
-							.get_qualifiedName()
-							.equals(
-									de.uni_koblenz.jgralab.schema.LongDomain.LONGDOMAIN_NAME)
-					&& !domain
-							.get_qualifiedName()
-							.equals(
-									de.uni_koblenz.jgralab.schema.StringDomain.STRINGDOMAIN_NAME)) {
-				// skip basic domains
-				if (domain instanceof EnumDomain) {
-					createEnum(writer, (EnumDomain) domain);
-				} else if (domain instanceof RecordDomain) {
-					createRecordDomain(writer, (RecordDomain) domain);
+			// create domains
+			for (ContainsDomain cd : pack.getContainsDomainIncidences()) {
+				Domain domain = (Domain) cd.getThat();
+				if (!domain
+						.get_qualifiedName()
+						.equals(
+								de.uni_koblenz.jgralab.schema.BooleanDomain.BOOLEANDOMAIN_NAME)
+						&& !domain
+								.get_qualifiedName()
+								.equals(
+										de.uni_koblenz.jgralab.schema.DoubleDomain.DOUBLEDOMAIN_NAME)
+						&& !domain
+								.get_qualifiedName()
+								.equals(
+										de.uni_koblenz.jgralab.schema.IntegerDomain.INTDOMAIN_NAME)
+						&& !domain
+								.get_qualifiedName()
+								.equals(
+										de.uni_koblenz.jgralab.schema.LongDomain.LONGDOMAIN_NAME)
+						&& !domain
+								.get_qualifiedName()
+								.equals(
+										de.uni_koblenz.jgralab.schema.StringDomain.STRINGDOMAIN_NAME)) {
+					// skip basic domains
+					if (domain instanceof EnumDomain) {
+						createEnum(writer, (EnumDomain) domain);
+					} else if (domain instanceof RecordDomain) {
+						createRecordDomain(writer, (RecordDomain) domain);
+					}
 				}
 			}
-		}
 
-		// create GraphElementClasses
-		for (ContainsGraphElementClass cgec : pack
-				.getContainsGraphElementClassIncidences()) {
-			GraphElementClass gec = (GraphElementClass) cgec.getThat();
-			createAttributedElementClass(writer, gec);
-		}
+			// create GraphElementClasses
+			for (ContainsGraphElementClass cgec : pack
+					.getContainsGraphElementClassIncidences()) {
+				GraphElementClass gec = (GraphElementClass) cgec.getThat();
+				createAttributedElementClass(writer, gec);
+			}
 
-		// create subpackages
-		for (ContainsSubPackage csp : pack
-				.getContainsSubPackageIncidences(EdgeDirection.OUT)) {
 			// create subpackages
-			createPackage(writer, (Package) csp.getThat());
-		}
+			for (ContainsSubPackage csp : pack
+					.getContainsSubPackageIncidences(EdgeDirection.OUT)) {
+				// create subpackages
+				createPackage(writer, (Package) csp.getThat());
+			}
 
-		if (packageTagHasToBeClosed) {
-			// close packagedElement
-			writer.writeEndElement();
+			if (packageTagHasToBeClosed) {
+				// close packagedElement
+				writer.writeEndElement();
+			}
 		}
+	}
 
+	/**
+	 * Returns true if the package <code>pack</code> does not contain a comment,
+	 * a domain, a GraphElementClass and no nonempty package.
+	 * 
+	 * @param pack
+	 * @return
+	 */
+	private boolean isPackageEmpty(Package pack) {
+		boolean isPackageEmpty = pack.getFirstAnnotates() == null
+				&& pack.getFirstContainsDomain() == null
+				&& pack.getFirstContainsGraphElementClass() == null;
+		if (!isPackageEmpty) {
+			return false;
+		} else {
+			for (ContainsSubPackage csp : pack
+					.getContainsSubPackageIncidences(EdgeDirection.OUT)) {
+				if (!isPackageEmpty((Package) csp.getThat())) {
+					return false;
+				}
+			}
+			return true;
+		}
 	}
 
 	private void createRecordDomain(XMLStreamWriter writer, RecordDomain domain)
@@ -513,7 +541,7 @@ public class SchemaGraph2XMI {
 				&& (((aeclass instanceof VertexClass)
 						&& ((VertexClass) aeclass)
 								.getFirstSpecializesVertexClass(EdgeDirection.OUT) == null && ((VertexClass) aeclass)
-						.getEndsAtIncidences(EdgeDirection.IN) == null) || ((aeclass instanceof EdgeClass) && ((EdgeClass) aeclass)
+						.getFirstEndsAt(EdgeDirection.IN) == null) || ((aeclass instanceof EdgeClass) && ((EdgeClass) aeclass)
 						.getFirstSpecializesEdgeClass(EdgeDirection.OUT) == null));
 
 		// start packagedElement
@@ -552,11 +580,18 @@ public class SchemaGraph2XMI {
 			// TODO check for EdgeClass
 			writer.writeAttribute(
 					XMIConstants.PACKAGEDELEMENT_ATTRIBUTE_MEMBEREND,
-					(((IncidenceClass) ec.getFirstComesFrom().getThat())
-							.getFirstEndsAt().getThat())
+					((VertexClass) (((IncidenceClass) ec.getFirstComesFrom()
+							.getThat()).getFirstEndsAt().getThat()))
+							.get_qualifiedName()
+							+ "_incidence_"
+							+ ec.get_qualifiedName()
 							+ " "
-							+ (((IncidenceClass) ec.getFirstGoesTo().getThat())
-									.getFirstEndsAt().getThat()));
+							+ ((VertexClass) ((IncidenceClass) ec
+									.getFirstGoesTo().getThat())
+									.getFirstEndsAt().getThat())
+									.get_qualifiedName()
+							+ "_incidence_"
+							+ ec.get_qualifiedName());
 		}
 
 		// create <<graphclass>> for graph classes
@@ -609,23 +644,37 @@ public class SchemaGraph2XMI {
 		}
 	}
 
+	/**
+	 * roleName, min, max must be taken from the other incidenceClass
+	 * 
+	 * @param writer
+	 * @param incidence
+	 * @param qualifiedNameOfVertexClass
+	 * @throws XMLStreamException
+	 */
 	private void createIncidence(XMLStreamWriter writer,
 			IncidenceClass incidence, String qualifiedNameOfVertexClass)
 			throws XMLStreamException {
+		// find incident EdgeClass and adjacent VertexClass
 		EdgeClass edgeClass = null;
 		VertexClass connectedVertexClass = null;
+		IncidenceClass otherIncidence = null;
 		if (incidence.getFirstComesFrom() != null) {
 			edgeClass = (EdgeClass) incidence.getFirstComesFrom().getThat();
-			connectedVertexClass = (VertexClass) ((IncidenceClass) edgeClass
-					.getFirstGoesTo().getThat()).getFirstEndsAt().getThat();
+			otherIncidence = (IncidenceClass) edgeClass.getFirstGoesTo()
+					.getThat();
+			connectedVertexClass = (VertexClass) otherIncidence
+					.getFirstEndsAt().getThat();
 		} else {
 			edgeClass = (EdgeClass) incidence.getFirstGoesTo().getThat();
-			connectedVertexClass = (VertexClass) ((IncidenceClass) edgeClass
-					.getFirstComesFrom().getThat()).getFirstEndsAt().getThat();
+			otherIncidence = (IncidenceClass) edgeClass.getFirstComesFrom()
+					.getThat();
+			connectedVertexClass = (VertexClass) otherIncidence
+					.getFirstEndsAt().getThat();
 		}
 
+		// start ownedattribute
 		writer.writeStartElement(XMIConstants.TAG_OWNEDATTRIBUTE);
-
 		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
 				XMIConstants.XMI_ATTRIBUTE_TYPE,
 				XMIConstants.OWNEDATTRIBUTE_TYPE_VALUE);
@@ -633,10 +682,10 @@ public class SchemaGraph2XMI {
 				XMIConstants.XMI_ATTRIBUTE_ID, qualifiedNameOfVertexClass
 						+ "_incidence_" + edgeClass.get_qualifiedName());
 		// TODO check how empty roleNames are represented in RSA
-		writer.writeAttribute(XMIConstants.ATTRIBUTE_NAME,
-				(incidence.get_roleName() != null && !incidence.get_roleName()
-						.isEmpty()) ? incidence.get_roleName()
-						: qualifiedNameOfVertexClass);
+		writer.writeAttribute(XMIConstants.ATTRIBUTE_NAME, (otherIncidence
+				.get_roleName() != null && !otherIncidence.get_roleName()
+				.isEmpty()) ? otherIncidence.get_roleName()
+				: qualifiedNameOfVertexClass);
 		writer.writeAttribute(XMIConstants.OWNEDATTRIBUTE_ATTRIBUTE_VISIBILITY,
 				XMIConstants.OWNEDATTRIBUTE_VISIBILITY_VALUE_PRIVATE);
 		writer.writeAttribute(XMIConstants.PACKAGEDELEMENT_ATTRIBUTE_TYPE,
@@ -645,7 +694,32 @@ public class SchemaGraph2XMI {
 				XMIConstants.PACKAGEDELEMENT_ATTRIBUTE_ASSOCIATION, edgeClass
 						.get_qualifiedName());
 
-		// TODO generate upperValue lowerValue
+		// create upperValue
+		writer.writeEmptyElement(XMIConstants.TAG_UPPERVALUE);
+		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
+				XMIConstants.XMI_ATTRIBUTE_TYPE,
+				XMIConstants.TYPE_VALUE_LITERALUNLIMITEDNATURAL);
+		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
+				XMIConstants.XMI_ATTRIBUTE_ID, qualifiedNameOfVertexClass
+						+ "_incidence_" + edgeClass.get_qualifiedName()
+						+ "_uppervalue");
+		writer.writeAttribute(XMIConstants.ATTRIBUTE_VALUE, Integer
+				.toString(otherIncidence.get_max()));
+
+		// create lowerValue
+		writer.writeEmptyElement(XMIConstants.TAG_LOWERVALUE);
+		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
+				XMIConstants.XMI_ATTRIBUTE_TYPE,
+				XMIConstants.TYPE_VALUE_LITERALINTEGER);
+		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
+				XMIConstants.XMI_ATTRIBUTE_ID, qualifiedNameOfVertexClass
+						+ "_incidence_" + edgeClass.get_qualifiedName()
+						+ "_lowervalue");
+		writer.writeAttribute(XMIConstants.ATTRIBUTE_VALUE, Integer
+				.toString(otherIncidence.get_min()));
+
+		// close ownedattribute
+		writer.writeEndElement();
 	}
 
 	private void createGeneralization(XMLStreamWriter writer, String id,
@@ -828,9 +902,8 @@ public class SchemaGraph2XMI {
 		if (domain instanceof BooleanDomain || domain instanceof IntegerDomain
 				|| domain instanceof LongDomain || domain instanceof EnumDomain) {
 			if (domain instanceof BooleanDomain) {
-				writer.writeAttribute(
-						XMIConstants.DEFAULTVALUE_ATTRIBUTE_VALUE, defaultValue
-								.equals("t") ? "true" : "false");
+				writer.writeAttribute(XMIConstants.ATTRIBUTE_VALUE,
+						defaultValue.equals("t") ? "true" : "false");
 			} else if (domain instanceof EnumDomain) {
 				writer
 						.writeAttribute(XMIConstants.ATTRIBUTE_NAME,
@@ -842,10 +915,8 @@ public class SchemaGraph2XMI {
 								.get_qualifiedName()
 								+ "_" + defaultValue);
 			} else {
-				writer
-						.writeAttribute(
-								XMIConstants.DEFAULTVALUE_ATTRIBUTE_VALUE,
-								defaultValue);
+				writer.writeAttribute(XMIConstants.ATTRIBUTE_VALUE,
+						defaultValue);
 			}
 
 			// create type
