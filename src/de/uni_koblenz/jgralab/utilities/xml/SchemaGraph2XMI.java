@@ -41,20 +41,22 @@ import de.uni_koblenz.jgralab.grumlschema.structure.ContainsDomain;
 import de.uni_koblenz.jgralab.grumlschema.structure.ContainsGraphElementClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.ContainsSubPackage;
 import de.uni_koblenz.jgralab.grumlschema.structure.EdgeClass;
+import de.uni_koblenz.jgralab.grumlschema.structure.EndsAt;
 import de.uni_koblenz.jgralab.grumlschema.structure.GraphClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.GraphElementClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.HasAttribute;
 import de.uni_koblenz.jgralab.grumlschema.structure.HasConstraint;
+import de.uni_koblenz.jgralab.grumlschema.structure.IncidenceClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.NamedElement;
 import de.uni_koblenz.jgralab.grumlschema.structure.Package;
+import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesEdgeClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesVertexClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.utilities.tg2schemagraph.Schema2SchemaGraph;
 
 public class SchemaGraph2XMI {
-	// TODO name ersetzen durch SimpleName an Stelle von QualifiedName
-	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 	private final ArrayList<Domain> typesToBeDeclaredAtTheEnd = new ArrayList<Domain>();
 
 	/**
@@ -275,7 +277,7 @@ public class SchemaGraph2XMI {
 				+ "." + schema.get_name());
 
 		// convert graph class
-		createGraphClassAndVertexClass(writer, schemaGraph.getFirstGraphClass());
+		createAttributedElementClass(writer, schemaGraph.getFirstGraphClass());
 
 		createPackage(writer, (Package) schemaGraph.getFirstSchema()
 				.getFirstContainsDefaultPackage().getThat());
@@ -355,13 +357,7 @@ public class SchemaGraph2XMI {
 		for (ContainsGraphElementClass cgec : pack
 				.getContainsGraphElementClassIncidences()) {
 			GraphElementClass gec = (GraphElementClass) cgec.getThat();
-			if (gec instanceof VertexClass) {
-				// create VertexClass
-				createGraphClassAndVertexClass(writer, gec);
-			} else {
-				// create EdgeClass
-				createEdgeClass(writer, (EdgeClass) gec);
-			}
+			createAttributedElementClass(writer, gec);
 		}
 
 		// create subpackages
@@ -375,11 +371,6 @@ public class SchemaGraph2XMI {
 			// close packagedElement
 			writer.writeEndElement();
 		}
-
-	}
-
-	private void createEdgeClass(XMLStreamWriter writer, EdgeClass gec) {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -510,38 +501,62 @@ public class SchemaGraph2XMI {
 	 * @param aeclass
 	 * @throws XMLStreamException
 	 */
-	private void createGraphClassAndVertexClass(XMLStreamWriter writer,
+	private void createAttributedElementClass(XMLStreamWriter writer,
 			AttributedElementClass aeclass) throws XMLStreamException {
+		// TODO check direction of EdgeClasses
 
-		assert aeclass instanceof GraphClass || aeclass instanceof VertexClass : "aeclass must be of type GraphClass or Vertex Class";
-
-		// if aeclass is a VertexClass without any attributes, comments and
-		// constraints then an empty tag is created
-		boolean isEmptyVertexClass = (aeclass instanceof VertexClass)
-				&& aeclass.getFirstAnnotates() == null
+		// if aeclass is a GraphElementClass without any attributes, comments
+		// and constraints then an empty tag is created
+		boolean isEmptyGraphElementClass = aeclass.getFirstAnnotates() == null
 				&& aeclass.getFirstHasAttribute() == null
 				&& aeclass.getFirstHasConstraint() == null
-				&& ((VertexClass) aeclass)
-						.getFirstSpecializesVertexClass(EdgeDirection.OUT) == null;
+				&& (((aeclass instanceof VertexClass)
+						&& ((VertexClass) aeclass)
+								.getFirstSpecializesVertexClass(EdgeDirection.OUT) == null && ((VertexClass) aeclass)
+						.getEndsAtIncidences(EdgeDirection.IN) == null) || ((aeclass instanceof EdgeClass) && ((EdgeClass) aeclass)
+						.getFirstSpecializesEdgeClass(EdgeDirection.OUT) == null));
 
 		// start packagedElement
-		if (isEmptyVertexClass) {
+		if (isEmptyGraphElementClass) {
 			writer.writeEmptyElement(XMIConstants.TAG_PACKAGEDELEMENT);
 		} else {
 			writer.writeStartElement(XMIConstants.TAG_PACKAGEDELEMENT);
 		}
-		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-				XMIConstants.XMI_ATTRIBUTE_TYPE,
-				XMIConstants.PACKAGEDELEMENT_TYPE_VALUE_CLASS);
+		// set type
+		if (aeclass instanceof EdgeClass) {
+			// TODO check for Aggregation and Composition and AssociationClass
+			writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
+					XMIConstants.XMI_ATTRIBUTE_TYPE,
+					XMIConstants.PACKAGEDELEMENT_TYPE_VALUE_ASSOCIATION);
+		} else {
+			writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
+					XMIConstants.XMI_ATTRIBUTE_TYPE,
+					XMIConstants.PACKAGEDELEMENT_TYPE_VALUE_CLASS);
+		}
 		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
 				XMIConstants.XMI_ATTRIBUTE_ID, aeclass.get_qualifiedName());
 		writer.writeAttribute(XMIConstants.ATTRIBUTE_NAME,
 				extractSimpleName(aeclass.get_qualifiedName()));
-		if (aeclass instanceof VertexClass
-				&& ((VertexClass) aeclass).is_abstract()) {
+
+		// set abstract TODO check for EdgeClass
+		if (aeclass instanceof GraphElementClass
+				&& ((GraphElementClass) aeclass).is_abstract()) {
 			writer.writeAttribute(
 					XMIConstants.PACKAGEDELEMENT_ATTRIBUTE_ISABSTRACT,
 					XMIConstants.ATTRIBUTE_VALUE_TRUE);
+		}
+
+		// set EdgeClass specific memberEnd
+		if (aeclass instanceof EdgeClass) {
+			EdgeClass ec = (EdgeClass) aeclass;
+			// TODO check for EdgeClass
+			writer.writeAttribute(
+					XMIConstants.PACKAGEDELEMENT_ATTRIBUTE_MEMBEREND,
+					(((IncidenceClass) ec.getFirstComesFrom().getThat())
+							.getFirstEndsAt().getThat())
+							+ " "
+							+ (((IncidenceClass) ec.getFirstGoesTo().getThat())
+									.getFirstEndsAt().getThat()));
 		}
 
 		// create <<graphclass>> for graph classes
@@ -549,13 +564,13 @@ public class SchemaGraph2XMI {
 			createExtension(writer, aeclass, "graphclass");
 		}
 
-		// create comments
+		// create comments TODO check for EdgeClass
 		createComments(writer, aeclass);
 
-		// create constraints
+		// create constraintsTODO check for EdgeClass
 		createConstraints(writer, aeclass);
 
-		// create generalization
+		// create generalization TODO check for EdgeClass
 		if (aeclass instanceof VertexClass) {
 			for (SpecializesVertexClass svc : ((VertexClass) aeclass)
 					.getSpecializesVertexClassIncidences(EdgeDirection.OUT)) {
@@ -563,15 +578,74 @@ public class SchemaGraph2XMI {
 						+ aeclass.get_qualifiedName(), ((VertexClass) svc
 						.getThat()).get_qualifiedName());
 			}
+		} else if (aeclass instanceof EdgeClass) {
+			for (SpecializesEdgeClass svc : ((EdgeClass) aeclass)
+					.getSpecializesEdgeClassIncidences(EdgeDirection.OUT)) {
+				createGeneralization(writer, "generalization_"
+						+ aeclass.get_qualifiedName(), ((EdgeClass) svc
+						.getThat()).get_qualifiedName());
+			}
 		}
 
-		// create attributes
+		// create attributes TODO check for EdgeClass
 		createAttributes(writer, aeclass);
 
+		// create incidences of EdgeClasses at VertexClass aeclass
+		if (aeclass instanceof VertexClass) {
+			createIncidences(writer, (VertexClass) aeclass);
+		}
+
 		// close packagedElement
-		if (!isEmptyVertexClass) {
+		if (!isEmptyGraphElementClass) {
 			writer.writeEndElement();
 		}
+	}
+
+	private void createIncidences(XMLStreamWriter writer,
+			VertexClass vertexClass) throws XMLStreamException {
+		for (EndsAt ea : vertexClass.getEndsAtIncidences()) {
+			createIncidence(writer, (IncidenceClass) ea.getThat(), vertexClass
+					.get_qualifiedName());
+		}
+	}
+
+	private void createIncidence(XMLStreamWriter writer,
+			IncidenceClass incidence, String qualifiedNameOfVertexClass)
+			throws XMLStreamException {
+		EdgeClass edgeClass = null;
+		VertexClass connectedVertexClass = null;
+		if (incidence.getFirstComesFrom() != null) {
+			edgeClass = (EdgeClass) incidence.getFirstComesFrom().getThat();
+			connectedVertexClass = (VertexClass) ((IncidenceClass) edgeClass
+					.getFirstGoesTo().getThat()).getFirstEndsAt().getThat();
+		} else {
+			edgeClass = (EdgeClass) incidence.getFirstGoesTo().getThat();
+			connectedVertexClass = (VertexClass) ((IncidenceClass) edgeClass
+					.getFirstComesFrom().getThat()).getFirstEndsAt().getThat();
+		}
+
+		writer.writeStartElement(XMIConstants.TAG_OWNEDATTRIBUTE);
+
+		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
+				XMIConstants.XMI_ATTRIBUTE_TYPE,
+				XMIConstants.OWNEDATTRIBUTE_TYPE_VALUE);
+		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
+				XMIConstants.XMI_ATTRIBUTE_ID, qualifiedNameOfVertexClass
+						+ "_incidence_" + edgeClass.get_qualifiedName());
+		// TODO check how empty roleNames are represented in RSA
+		writer.writeAttribute(XMIConstants.ATTRIBUTE_NAME,
+				(incidence.get_roleName() != null && !incidence.get_roleName()
+						.isEmpty()) ? incidence.get_roleName()
+						: qualifiedNameOfVertexClass);
+		writer.writeAttribute(XMIConstants.OWNEDATTRIBUTE_ATTRIBUTE_VISIBILITY,
+				XMIConstants.OWNEDATTRIBUTE_VISIBILITY_VALUE_PRIVATE);
+		writer.writeAttribute(XMIConstants.PACKAGEDELEMENT_ATTRIBUTE_TYPE,
+				connectedVertexClass.get_qualifiedName());
+		writer.writeAttribute(
+				XMIConstants.PACKAGEDELEMENT_ATTRIBUTE_ASSOCIATION, edgeClass
+						.get_qualifiedName());
+
+		// TODO generate upperValue lowerValue
 	}
 
 	private void createGeneralization(XMLStreamWriter writer, String id,
