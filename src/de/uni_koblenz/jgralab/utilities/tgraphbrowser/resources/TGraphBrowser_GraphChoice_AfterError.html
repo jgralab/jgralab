@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>TGraphBrowser</title>
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<style type="text/css">
+* {
+	margin: 0;
+	padding: 0;
+}
+
+/*Background*/
+body {
+	color: black;
+	background-color: white;
+	font-family: Helvetica, Arial, sans-serif;
+}
+
+/*Layout*/
+div#top {
+	position: absolute;
+	width: 100%;
+	height: 3em;
+	background-color: #84e33d;
+}
+
+div.bottom{
+	position: absolute;
+	top: 3em;
+	text-align: center;
+	width: 100%;
+}
+
+div#top h1 {
+	text-align: center;
+	margin-top: 2px;
+}
+
+a.delete {
+	color: red;
+	text-decoration: none;
+	font-weight: bold;
+}
+
+img.jGraLab{
+	position: absolute; 
+	left: 3px; 
+	top: 5px; 
+	height: 2.5em;
+}
+
+div#divserver ul{
+	list-style-type: none;
+}
+
+</style>
+<script type="text/javascript">
+	/* <![CDATA[ */
+
+	// xnl-http-request object
+	var http;
+
+	// timout for the AJAX-Request
+	var timeoutId;
+
+	/*
+	 * After the page is loaded currentRightDiv gets the divGraphChoice.
+	 */
+	function init(){
+		sendGetRequest("showGraphsOfServer?",true);
+		document.getElementById('divError').style.display = "block";
+		document.getElementById('h2ErrorMessage').innerHTML = 'ERROR: /*?*/';
+		document.getElementById('divNonError').style.display = "none";
+	}
+
+	/*
+	 * Sends an AJAX-GET-Request to the Webserver with the path args.
+	 * The response is evaluated in evaluateResponse.
+	 *
+	 * @param args the path of the GET-Request
+	 * @param timeout if true there is a timout after 60 sec.
+	 */
+	function sendGetRequest(args, timeout){
+		http=new XMLHttpRequest();
+		http.open("GET", args, true);
+		http.onreadystatechange = evaluateResponse;
+		http.send(null);
+		if(timeout){
+			id = window.setTimeout("cancel()", 60000);
+		}else{
+			id = null;
+		}
+	}
+
+	/*
+	 * Evaluates the response.
+	 */
+	function evaluateResponse() {
+		if (http.readyState == 4) {
+			if(id!=null){
+				// delete Timeout
+				window.clearTimeout(id);
+			}
+			// evaluate result
+			var response = eval("("+http.responseText+")");
+			response.method();
+		}	
+	}
+
+	/*
+	 * If the server didnt'a answer during 60 sec, the user
+	 * is asked if he wants to wait further 60 sec. If not
+	 * the connection is aborted.
+	 */
+	function cancel(){
+		if(window.confirm("The server didn't answer during 60 sec. Do you want to wait further 60 sec?")){
+			id = window.setTimeout("cancel()", 60000);
+		}else{
+			http.abort();
+			document.getElementById('divError').style.display = "block";
+			document.getElementById('h2ErrorMessage').innerHTML = 
+				'ERROR: The connection to the server was closed.';
+			document.getElementById('divNonError').style.display = "none";
+		}
+	}
+
+	/*
+	 * Restores the old div after an error occured.
+	 */
+	function returnFromError(){
+		document.getElementById("divError").style.display = "none";
+		document.getElementById("divNonError").style.display = "block";
+	}
+
+	/*
+	 * Asks if the user wants to delete the selected graph.
+	 * If he acknoledges it, the graph is deleted from the server.
+	 *
+	 * @param path the path of the graph
+	 */
+	function deleteGraph(path){
+		if(window.confirm("Do you really want to delete "+
+				path)){
+			sendGetRequest("deleteGraph?path="+path, false);
+		}
+	}
+
+	/*
+	 * Checks if an URI was typed in. If not
+	 * a message shows, that a URI must be typed in. 
+	 */
+	function sendURI(){
+		var uriElement = document.getElementById("submitURI");
+		if(uriElement.value!=null && uriElement.value!=""){
+			var shouldOverwrite = false;
+			if(fileAlreadyExists(uriElement.value)){
+				shouldOverwrite = confirm("This file already exists. Do you want to overwrite it?");
+			}
+			document.location = encodeURI("loadGraphFromURI?overwrite="+shouldOverwrite+"&path="+uriElement.value);
+			return true;
+		}else{
+			var error = document.getElementById("errorURI");
+			error.innerHTML = "This field must not be empty!";
+			return false;
+		}
+	}
+
+	/*
+	 * Checks if the file already exists. If it exists the user is asked,
+	 * if he wants to overwrite it.
+	 *
+	 * @param the filename
+	 */
+	function fileAlreadyExists(file){
+		var ul = document.getElementById("parentUl");
+		if(ul){
+			// get filename
+			var fileName = file.substr(Math.max(file.lastIndexOf("/"),file.lastIndexOf("\\"))+1);
+			// There exists files on the server
+			for(var i=0;i<ul.childNodes.length;i++){
+				if(ul.childNodes[i].firstChild.innerHTML==fileName){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/*
+	 * Checks if input.type="file" isn't empty.
+	 */
+	function checkSubmit(){
+		var input = document.getElementById("inputFileGraph");
+		var ret = input.value!="" || input.value!=null;
+		var shouldOverwrite = false;
+		if(fileAlreadyExists(input.value)){
+			shouldOverwrite = confirm("This file already exists. Do you want to overwrite it?");
+		}
+		document.getElementById("formFileUpload").action = "fileUpload?overwrite="+shouldOverwrite+"&path="+input.value;
+		if(!ret){
+			var error = document.getElementById("errorFileUpload");
+			error.innerHTML = "Choose a file!";
+		}
+		return ret;
+	}
+
+	/*
+	 * Inserts li into the ul parentUl. It is inserted at the lexicografically correct position.
+	 * The positions is found via a binary search. The bounds have to be checked
+	 * as well. "a" is put behind the last occurence of "a". 0<=left<=right<ul.chiledNodes.length
+	 *
+	 * @param li the li to be inserted
+	 * @param parentUl
+	 * @param left the lower bound of the searched interval
+	 * @param right the upper bound of the searched interval
+	 */
+	function insertSorted(li, parentUl, left, right){
+		if(parentUl.childNodes == null || (parentUl.childNodes != null && parentUl.childNodes.length == 0)){
+			// there are no lis in parentUl
+			parentUl.appendChild(li);
+		}else if(left > right){
+			// this case should never be reached
+			alert("unexpected error");
+		}else{
+			if(left == right){
+				if(compareStrings(li.childNodes[0].innerHTML,parentUl.childNodes[left].childNodes[0].innerHTML)<0){
+					// put li before parentUl.childNodes[left]
+					parentUl.insertBefore(li, parentUl.childNodes[left]);
+				}else{
+					// put li after parentUl.childNodes[left]
+					if(left == parentUl.childNodes.length-1){
+						// add li to the end
+						parentUl.appendChild(li);
+					}else{
+						parentUl.insertBefore(li, parentUl.childNodes[left+1]);
+					}
+				}
+			}else if(left == right-1){
+				// check left
+				if(compareStrings(li.childNodes[0].innerHTML,parentUl.childNodes[left].childNodes[0].innerHTML)<0){
+					// put li before parentUl.childNodes[left]
+					parentUl.insertBefore(li, parentUl.childNodes[left]);
+				}else{
+					// check right
+					insertSorted(li, parentUl, right, right);
+				}
+			}else{
+				// checkMiddle
+				var current = Math.floor((left+right)/2);
+				if(compareStrings(li.childNodes[0].innerHTML,parentUl.childNodes[current].childNodes[0].innerHTML)<0){
+					// li has to be put on the left part
+					insertSorted(li, parentUl, left, current-1);
+				}else{
+					// li has to be put on the right part
+					insertSorted(li, parentUl, current+1, right);
+				}	
+			}
+		}
+	}
+
+	/*
+	 * Compares strings lexicografically. It works case insensitive.
+	 * 
+	 * @param string1
+	 * @param string2
+	 * @return <0 iff string1 is before string2
+	 *          0 iff string1 == string2
+	 *         >0 iff string1 is after string2
+	 */
+	function compareStrings(string1, string2){
+		var s1 = string1.toLowerCase();
+		var s2 = string2.toLowerCase();
+		var i = 0;
+		while(true){
+			if(!s1.charCodeAt(i) && !s2.charCodeAt(i)){
+				// all chars and the length are equal
+				return 0;
+			}else if(!s1.charCodeAt(i)){
+				// string1 is shorter than string2 and string1 is a prefix of string2
+				return -1;
+			}else if(!s2.charCodeAt(i)){
+				// string2 is shorter than string1 and string2 is a prefix of string1
+				return 1;
+			}else if(s1.charCodeAt(i)!=s2.charCodeAt(i)){
+				// the string with the smaller char
+				return s1.charCodeAt(i)-s2.charCodeAt(i);
+			}else{
+				i++;
+			}
+		}
+	}
+	/* ]]> */
+</script>
+</head>
+<body onload="init();">
+
+<div id="top">
+	<h1 id="titel">TGraphBrowser</h1>
+	<img src="jgralab-logo.png" alt="JGraLab" class="jGraLab" />
+</div>
+
+<div id="divNonError" class="bottom">
+	<br style="line-height: 2em;" />
+	<h3>Upload a graph:</h3>
+	<br />
+	<form id="formFileUpload" action="" method="post" enctype="multipart/form-data" onsubmit="return checkSubmit();">
+		<p>
+			<input id="inputFileGraph" name="inputFileGraph" size="80" type="file" /><br />
+			<b id="errorFileUpload" style="color: red;"></b><br />
+			<input type="submit" />
+		</p>
+	</form>
+	<br style="line-height: 2em;" />
+	<h3>Load from URL:</h3>
+	<br />
+	<p>
+		<input id="submitURI" type="text" size="98" /><br />
+		<b id="errorURI" style="color: red;"></b><br />
+		<input type="button" value=" Submit " onclick="sendURI();" />
+	</p>
+	<hr style="margin-top: 1em;  margin-left: 10%; margin-right: 10%;" />
+	<div id="divserver">
+	</div>
+</div>
+
+<div id="divError" class="bottom" style="display: none;">
+	<br />
+	<h2 id="h2ErrorMessage" style="color: red;"></h2>
+	<br />
+	<a href="javascript:returnFromError();">Back</a>
+</div>
+</body>
+</html>
