@@ -73,6 +73,7 @@ public class XMIConstants {
 	static final String OWNEDATTRIBUTE_ATTRIBUTE_VISIBILITY = "visibility";
 	static final String OWNEDATTRIBUTE_TYPE_VALUE = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_PROPERTY;
 	static final String TAG_OWNEDATTRIBUTE = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_OWNED_ATTRIBUTE;
+	static final String DEFAULTVALUE_ATTRIBUTE_INSTANCE = "instance";
 
 	// extension specific constants
 	static final String REFERENCES_HREF_VALUE = NAMESPACE_UML
@@ -93,6 +94,7 @@ public class XMIConstants {
 	static final String TYPE_VALUE_OPAQUEEXPRESSION = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_OPAQUE_EXPRESSION;
 	static final String TYPE_VALUE_LITERALINTEGER = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_LITERAL_INTEGER;
 	static final String TYPE_VALUE_LITERALBOOLEAN = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_LITERAL_BOOLEAN;
+	static final String TYPE_VALUE_INSTANCEVALUE = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_INSTANCE_VALUE;
 
 	// enumeration specific constants
 	static final String PACKAGEDELEMENT_TYPE_VALUE_ENUMERATION = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_ENUMERATION;

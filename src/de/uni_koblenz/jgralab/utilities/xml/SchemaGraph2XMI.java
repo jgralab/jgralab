@@ -726,7 +726,7 @@ public class SchemaGraph2XMI {
 			String defaultValue, String id, Domain domain)
 			throws XMLStreamException {
 		// start defaultValue
-		if (domain instanceof LongDomain) {
+		if (domain instanceof LongDomain || domain instanceof EnumDomain) {
 			writer.writeEmptyElement(XMIConstants.TAG_DEFAULTVALUE);
 		} else {
 			writer.writeStartElement(XMIConstants.TAG_DEFAULTVALUE);
@@ -740,6 +740,10 @@ public class SchemaGraph2XMI {
 			writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
 					XMIConstants.XMI_ATTRIBUTE_TYPE,
 					XMIConstants.TYPE_VALUE_LITERALINTEGER);
+		} else if (domain instanceof EnumDomain) {
+			writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
+					XMIConstants.XMI_ATTRIBUTE_TYPE,
+					XMIConstants.TYPE_VALUE_INSTANCEVALUE);
 		} else {
 			writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
 					XMIConstants.XMI_ATTRIBUTE_TYPE,
@@ -748,11 +752,21 @@ public class SchemaGraph2XMI {
 		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
 				XMIConstants.XMI_ATTRIBUTE_ID, id + "_defaultValue");
 		if (domain instanceof BooleanDomain || domain instanceof IntegerDomain
-				|| domain instanceof LongDomain) {
+				|| domain instanceof LongDomain || domain instanceof EnumDomain) {
 			if (domain instanceof BooleanDomain) {
 				writer.writeAttribute(
 						XMIConstants.DEFAULTVALUE_ATTRIBUTE_VALUE, defaultValue
 								.equals("t") ? "true" : "false");
+			} else if (domain instanceof EnumDomain) {
+				writer
+						.writeAttribute(XMIConstants.ATTRIBUTE_NAME,
+								defaultValue);
+				writer.writeAttribute(XMIConstants.XMI_ATTRIBUTE_TYPE, domain
+						.get_qualifiedName());
+				writer.writeAttribute(
+						XMIConstants.DEFAULTVALUE_ATTRIBUTE_INSTANCE, domain
+								.get_qualifiedName()
+								+ "_" + defaultValue);
 			} else {
 				writer
 						.writeAttribute(
@@ -784,7 +798,7 @@ public class SchemaGraph2XMI {
 			writer.writeEndElement();
 		}
 
-		if (!(domain instanceof LongDomain)) {
+		if (!(domain instanceof LongDomain || domain instanceof EnumDomain)) {
 			// end defaultValue
 			writer.writeEndElement();
 		}
