@@ -247,6 +247,10 @@
 		<!-- add xmi2tgschema -->
 		<!-- TODO remove -->
 		<copy file="${src.dir}/de/uni_koblenz/jgralab/utilities/xmi2tgschema/XMI2TGSchema.xsl" todir="${classes.dir}/de/uni_koblenz/jgralab/utilities/xmi2tgschema" />
+        <mkdir dir="${classes.dir}/de/uni_koblenz/jgralab/utilities/tgraphbrowser/resources" />
+        <copy todir="${classes.dir}/de/uni_koblenz/jgralab/utilities/tgraphbrowser/resources">
+          <fileset dir="${src.dir}/de/uni_koblenz/jgralab/utilities/tgraphbrowser/resources"/>
+        </copy>
 		<!-- calls target jar in general ant file ${ant}/build.xml -->
 		<ant dir="${common.dir}" antfile="build.xml" target="jar" />
 	</target>
