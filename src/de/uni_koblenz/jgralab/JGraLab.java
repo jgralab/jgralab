@@ -42,7 +42,7 @@ public class JGraLab {
 	// look but don't touch, both values are updated automatically
 	private static final String revision = "$Revision$";
 
-	private static final String buildID = "68";
+	private static final String buildID = "69";
 	//
 	// to use this information inside the text place $rev for the revision
 	// information and $bid for the build id
