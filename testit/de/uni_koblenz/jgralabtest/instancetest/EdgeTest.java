@@ -48,8 +48,8 @@ public class EdgeTest extends InstanceTest {
 	private static final int RANDOM_GRAPH_COUNT = 10;
 	private static final int RANDOM_VERTEX_COUNT = 10;
 
-	public EdgeTest(boolean transactionsEnabled) {
-		super(transactionsEnabled);
+	public EdgeTest(ImplementationType implementationType) {
+		super(implementationType);
 	}
 
 	@Parameters
@@ -65,9 +65,18 @@ public class EdgeTest extends InstanceTest {
 	 */
 	@Before
 	public void setUp() {
-		g = transactionsEnabled ? VertexTestSchema.instance()
-				.createVertexTestGraphWithTransactionSupport()
-				: VertexTestSchema.instance().createVertexTestGraph();
+		switch (implementationType) {
+		case STANDARD:
+			g = VertexTestSchema.instance().createVertexTestGraph();
+			break;
+		case TRANSACTION:
+			g = VertexTestSchema.instance()
+					.createVertexTestGraphWithTransactionSupport();
+			break;
+		case SAVEMEM:
+			fail("Not implemented yet");
+		}
+
 		rand = new Random(System.currentTimeMillis());
 	}
 
@@ -221,9 +230,17 @@ public class EdgeTest extends InstanceTest {
 	@Test
 	public void getNextEdgeTestEdgeDirection2() throws Exception {
 		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
-			g = transactionsEnabled ? VertexTestSchema.instance()
-					.createVertexTestGraphWithTransactionSupport()
-					: VertexTestSchema.instance().createVertexTestGraph();
+			switch (implementationType) {
+			case STANDARD:
+				g = VertexTestSchema.instance().createVertexTestGraph();
+				break;
+			case TRANSACTION:
+				g = VertexTestSchema.instance()
+						.createVertexTestGraphWithTransactionSupport();
+				break;
+			case SAVEMEM:
+				fail("Not implemented yet");
+			}
 			createTransaction(g);
 			DoubleSubNode v0 = g.createDoubleSubNode();
 			DoubleSubNode v1 = g.createDoubleSubNode();
@@ -411,9 +428,17 @@ public class EdgeTest extends InstanceTest {
 	public void getNextEdgeOfClassTestEdgeClass2() throws CommitFailedException {
 		EdgeClass[] ecs = getEdgeClasses();
 		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
-			g = transactionsEnabled ? VertexTestSchema.instance()
-					.createVertexTestGraphWithTransactionSupport()
-					: VertexTestSchema.instance().createVertexTestGraph();
+			switch (implementationType) {
+			case STANDARD:
+				g = VertexTestSchema.instance().createVertexTestGraph();
+				break;
+			case TRANSACTION:
+				g = VertexTestSchema.instance()
+						.createVertexTestGraphWithTransactionSupport();
+				break;
+			case SAVEMEM:
+				fail("Not implemented yet");
+			}
 			createTransaction(g);
 			DoubleSubNode v0 = g.createDoubleSubNode();
 			DoubleSubNode v1 = g.createDoubleSubNode();
@@ -554,9 +579,17 @@ public class EdgeTest extends InstanceTest {
 	@Test
 	public void getNextEdgeOfClassTestClass2() throws CommitFailedException {
 		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
-			g = transactionsEnabled ? VertexTestSchema.instance()
-					.createVertexTestGraphWithTransactionSupport()
-					: VertexTestSchema.instance().createVertexTestGraph();
+			switch (implementationType) {
+			case STANDARD:
+				g = VertexTestSchema.instance().createVertexTestGraph();
+				break;
+			case TRANSACTION:
+				g = VertexTestSchema.instance()
+						.createVertexTestGraphWithTransactionSupport();
+				break;
+			case SAVEMEM:
+				fail("Not implemented yet");
+			}
 			createTransaction(g);
 			DoubleSubNode v0 = g.createDoubleSubNode();
 			DoubleSubNode v1 = g.createDoubleSubNode();
@@ -773,9 +806,17 @@ public class EdgeTest extends InstanceTest {
 			throws CommitFailedException {
 		EdgeClass[] ecs = getEdgeClasses();
 		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
-			g = transactionsEnabled ? VertexTestSchema.instance()
-					.createVertexTestGraphWithTransactionSupport()
-					: VertexTestSchema.instance().createVertexTestGraph();
+			switch (implementationType) {
+			case STANDARD:
+				g = VertexTestSchema.instance().createVertexTestGraph();
+				break;
+			case TRANSACTION:
+				g = VertexTestSchema.instance()
+						.createVertexTestGraphWithTransactionSupport();
+				break;
+			case SAVEMEM:
+				fail("Not implemented yet");
+			}
 			createTransaction(g);
 			DoubleSubNode v0 = g.createDoubleSubNode();
 			DoubleSubNode v1 = g.createDoubleSubNode();
@@ -1093,9 +1134,17 @@ public class EdgeTest extends InstanceTest {
 	public void getNextEdgeOfClassTestClassEdgeDirection2()
 			throws CommitFailedException {
 		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
-			g = transactionsEnabled ? VertexTestSchema.instance()
-					.createVertexTestGraphWithTransactionSupport()
-					: VertexTestSchema.instance().createVertexTestGraph();
+			switch (implementationType) {
+			case STANDARD:
+				g = VertexTestSchema.instance().createVertexTestGraph();
+				break;
+			case TRANSACTION:
+				g = VertexTestSchema.instance()
+						.createVertexTestGraphWithTransactionSupport();
+				break;
+			case SAVEMEM:
+				fail("Not implemented yet");
+			}
 			createTransaction(g);
 			DoubleSubNode v0 = g.createDoubleSubNode();
 			DoubleSubNode v1 = g.createDoubleSubNode();
@@ -1367,9 +1416,17 @@ public class EdgeTest extends InstanceTest {
 			throws CommitFailedException {
 		EdgeClass[] ecs = getEdgeClasses();
 		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
-			g = transactionsEnabled ? VertexTestSchema.instance()
-					.createVertexTestGraphWithTransactionSupport()
-					: VertexTestSchema.instance().createVertexTestGraph();
+			switch (implementationType) {
+			case STANDARD:
+				g = VertexTestSchema.instance().createVertexTestGraph();
+				break;
+			case TRANSACTION:
+				g = VertexTestSchema.instance()
+						.createVertexTestGraphWithTransactionSupport();
+				break;
+			case SAVEMEM:
+				fail("Not implemented yet");
+			}
 			createTransaction(g);
 			DoubleSubNode v0 = g.createDoubleSubNode();
 			DoubleSubNode v1 = g.createDoubleSubNode();
@@ -1581,9 +1638,17 @@ public class EdgeTest extends InstanceTest {
 	public void getNextEdgeOfClassTestClassBoolean2()
 			throws CommitFailedException {
 		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
-			g = transactionsEnabled ? VertexTestSchema.instance()
-					.createVertexTestGraphWithTransactionSupport()
-					: VertexTestSchema.instance().createVertexTestGraph();
+			switch (implementationType) {
+			case STANDARD:
+				g = VertexTestSchema.instance().createVertexTestGraph();
+				break;
+			case TRANSACTION:
+				g = VertexTestSchema.instance()
+						.createVertexTestGraphWithTransactionSupport();
+				break;
+			case SAVEMEM:
+				fail("Not implemented yet");
+			}
 			createTransaction(g);
 			DoubleSubNode v0 = g.createDoubleSubNode();
 			DoubleSubNode v1 = g.createDoubleSubNode();
@@ -1944,9 +2009,17 @@ public class EdgeTest extends InstanceTest {
 			throws CommitFailedException {
 		EdgeClass[] ecs = getEdgeClasses();
 		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
-			g = transactionsEnabled ? VertexTestSchema.instance()
-					.createVertexTestGraphWithTransactionSupport()
-					: VertexTestSchema.instance().createVertexTestGraph();
+			switch (implementationType) {
+			case STANDARD:
+				g = VertexTestSchema.instance().createVertexTestGraph();
+				break;
+			case TRANSACTION:
+				g = VertexTestSchema.instance()
+						.createVertexTestGraphWithTransactionSupport();
+				break;
+			case SAVEMEM:
+				fail("Not implemented yet");
+			}
 			createTransaction(g);
 			DoubleSubNode v0 = g.createDoubleSubNode();
 			DoubleSubNode v1 = g.createDoubleSubNode();
@@ -2462,9 +2535,17 @@ public class EdgeTest extends InstanceTest {
 	public void getNextEdgeOfClassTestClassEdgeDirectionBoolean2()
 			throws CommitFailedException {
 		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
-			g = transactionsEnabled ? VertexTestSchema.instance()
-					.createVertexTestGraphWithTransactionSupport()
-					: VertexTestSchema.instance().createVertexTestGraph();
+			switch (implementationType) {
+			case STANDARD:
+				g = VertexTestSchema.instance().createVertexTestGraph();
+				break;
+			case TRANSACTION:
+				g = VertexTestSchema.instance()
+						.createVertexTestGraphWithTransactionSupport();
+				break;
+			case SAVEMEM:
+				fail("Not implemented yet");
+			}
 			createTransaction(g);
 			DoubleSubNode v0 = g.createDoubleSubNode();
 			DoubleSubNode v1 = g.createDoubleSubNode();
@@ -4798,9 +4879,18 @@ public class EdgeTest extends InstanceTest {
 	}
 
 	private VertexTestGraph createAnotherGraph() {
-		VertexTestGraph anotherGraph = transactionsEnabled ? ((VertexTestSchema) g
-				.getSchema()).createVertexTestGraphWithTransactionSupport()
-				: ((VertexTestSchema) g.getSchema()).createVertexTestGraph();
+		VertexTestGraph anotherGraph = null;
+		switch (implementationType) {
+		case STANDARD:
+			anotherGraph = VertexTestSchema.instance().createVertexTestGraph();
+			break;
+		case TRANSACTION:
+			anotherGraph = VertexTestSchema.instance()
+					.createVertexTestGraphWithTransactionSupport();
+			break;
+		case SAVEMEM:
+			fail("Not implemented yet");
+		}
 		return anotherGraph;
 	}
 
@@ -5038,9 +5128,18 @@ public class EdgeTest extends InstanceTest {
 	}
 
 	private VertexTestGraph loadTestGraph() throws GraphIOException {
-		VertexTestGraph loadedgraph = transactionsEnabled ? (VertexTestGraph) GraphIO
-				.loadGraphFromFileWithTransactionSupport("test.tg", null)
-				: (VertexTestGraph) GraphIO.loadGraphFromFile("test.tg", null);
+		VertexTestGraph loadedgraph = null;
+		switch (implementationType) {
+		case STANDARD:
+			loadedgraph = (VertexTestGraph) GraphIO.loadGraphFromFile("test.tg", null);
+			break;
+		case TRANSACTION:
+			loadedgraph = (VertexTestGraph) GraphIO
+					.loadGraphFromFileWithTransactionSupport("test.tg", null);
+			break;
+		case SAVEMEM:
+			fail("Not implemented yet");
+		}
 		return loadedgraph;
 	}
 

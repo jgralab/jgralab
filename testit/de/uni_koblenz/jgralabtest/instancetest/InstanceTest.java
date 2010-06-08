@@ -14,8 +14,10 @@ public abstract class InstanceTest {
 
 	static {
 		parameters = new ArrayList<Object[]>();
-		parameters.add(new Object[] { Boolean.FALSE });
-		parameters.add(new Object[] { Boolean.TRUE });
+		parameters.add(new Object[] { ImplementationType.STANDARD });
+		parameters.add(new Object[] { ImplementationType.TRANSACTION });
+		// TODO uncomment when available
+		// parameters.add(new Object[] { ImplementationType.SAVEMEM});
 	}
 
 	public static Collection<Object[]> getParameters() {
@@ -25,10 +27,13 @@ public abstract class InstanceTest {
 	/**
 	 * Flag for indicating whether transactions are enabled or not.
 	 */
-	protected boolean transactionsEnabled;
+	// protected boolean transactionsEnabled;
+	protected ImplementationType implementationType;
 
-	protected InstanceTest(boolean transactionsEnabled) {
-		this.transactionsEnabled = transactionsEnabled;
+	protected InstanceTest(ImplementationType implementationType) {
+		this.implementationType = implementationType;
+		// this.transactionsEnabled = implementationType ==
+		// ImplementationType.TRANSACTION;
 	}
 
 	/**
@@ -38,7 +43,7 @@ public abstract class InstanceTest {
 	 * @param g
 	 */
 	protected void createReadOnlyTransaction(Graph g) {
-		if (transactionsEnabled) {
+		if (implementationType == ImplementationType.TRANSACTION) {
 			g.newReadOnlyTransaction();
 		}
 	}
@@ -50,7 +55,7 @@ public abstract class InstanceTest {
 	 * @param g
 	 */
 	protected void createTransaction(Graph g) {
-		if (transactionsEnabled) {
+		if (implementationType == ImplementationType.TRANSACTION) {
 			g.newTransaction();
 		}
 	}
@@ -63,7 +68,7 @@ public abstract class InstanceTest {
 	 *             if the commit yields an error
 	 */
 	protected void commit(Graph g) throws CommitFailedException {
-		if (transactionsEnabled) {
+		if (implementationType == ImplementationType.TRANSACTION) {
 			g.commit();
 		}
 	}
@@ -77,7 +82,7 @@ public abstract class InstanceTest {
 	 *            the name of the method that cannot be tested yet.
 	 */
 	protected void onlyTestWithoutTransactionSupport() {
-		if (transactionsEnabled) {
+		if (implementationType == ImplementationType.TRANSACTION) {
 			fail("Current test does not support transactions yet");
 		}
 	}

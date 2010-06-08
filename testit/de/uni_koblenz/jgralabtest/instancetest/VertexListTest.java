@@ -3,6 +3,7 @@ package de.uni_koblenz.jgralabtest.instancetest;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Collection;
 
@@ -19,8 +20,8 @@ import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalSchema;
 
 @RunWith(Parameterized.class)
 public class VertexListTest extends InstanceTest {
-	public VertexListTest(boolean transactionsEnabled) {
-		super(transactionsEnabled);
+	public VertexListTest(ImplementationType implementationType) {
+		super(implementationType);
 	}
 
 	@Parameters
@@ -35,9 +36,17 @@ public class VertexListTest extends InstanceTest {
 
 	@Before
 	public void setup() throws CommitFailedException {
-		g = transactionsEnabled ? MinimalSchema.instance()
-				.createMinimalGraphWithTransactionSupport(V, E) : MinimalSchema
-				.instance().createMinimalGraph(V, E);
+		switch (implementationType) {
+		case STANDARD:
+			g = MinimalSchema.instance().createMinimalGraph(V, E);
+			break;
+		case TRANSACTION:
+			g = MinimalSchema.instance()
+					.createMinimalGraphWithTransactionSupport(V, E);
+			break;
+		case SAVEMEM:
+			fail("Not implemented yet");
+		}
 		createTransaction(g);
 		for (int i = 0; i < N; ++i) {
 			g.createNode();
@@ -67,7 +76,7 @@ public class VertexListTest extends InstanceTest {
 		Vertex v5 = g.getVertex(5);
 		v5.putBefore(g.getVertex(6));
 		commit(g);
-		
+
 		createReadOnlyTransaction(g);
 		assertTrue(v5.isBefore(g.getVertex(6)));
 		assertEquals("v1 v2 v3 v4 v5 v6 v7 v8 v9 v10", getVSeq());
@@ -75,21 +84,21 @@ public class VertexListTest extends InstanceTest {
 		assertTrue(v5.isAfter(g.getVertex(4)));
 		assertFalse(v5.isBefore(g.getVertex(4)));
 		commit(g);
-		
+
 		createTransaction(g);
 		v5.putBefore(g.getVertex(4));
 		commit(g);
-		
+
 		createReadOnlyTransaction(g);
 		assertEquals("v1 v2 v3 v5 v4 v6 v7 v8 v9 v10", getVSeq());
 		assertFalse(v5.isAfter(g.getVertex(4)));
 		assertTrue(v5.isBefore(g.getVertex(4)));
 		commit(g);
-		
+
 		createTransaction(g);
 		v5.putBefore(g.getVertex(10));
 		commit(g);
-		
+
 		createReadOnlyTransaction(g);
 		assertEquals("v1 v2 v3 v4 v6 v7 v8 v9 v5 v10", getVSeq());
 		assertFalse(v5.isAfter(g.getVertex(10)));
@@ -98,11 +107,11 @@ public class VertexListTest extends InstanceTest {
 		assertFalse(v5.isBefore(g.getVertex(1)));
 		assertTrue(g.getVertex(1).isBefore(v5));
 		commit(g);
-		
+
 		createTransaction(g);
 		v5.putBefore(g.getVertex(1));
 		commit(g);
-		
+
 		createReadOnlyTransaction(g);
 		assertEquals("v5 v1 v2 v3 v4 v6 v7 v8 v9 v10", getVSeq());
 		assertTrue(v5.isBefore(g.getVertex(1)));
@@ -118,31 +127,31 @@ public class VertexListTest extends InstanceTest {
 
 		v5.putAfter(g.getVertex(4));
 		commit(g);
-		
+
 		createReadOnlyTransaction(g);
 		assertEquals("v1 v2 v3 v4 v5 v6 v7 v8 v9 v10", getVSeq());
 		commit(g);
-		
+
 		createTransaction(g);
 		v5.putAfter(g.getVertex(6));
 		commit(g);
-		
+
 		createReadOnlyTransaction(g);
 		assertEquals("v1 v2 v3 v4 v6 v5 v7 v8 v9 v10", getVSeq());
 		commit(g);
-		
+
 		createTransaction(g);
 		v5.putAfter(g.getVertex(10));
 		commit(g);
-		
+
 		createReadOnlyTransaction(g);
 		assertEquals("v1 v2 v3 v4 v6 v7 v8 v9 v10 v5", getVSeq());
 		commit(g);
-		
+
 		createTransaction(g);
 		v5.putAfter(g.getVertex(1));
 		commit(g);
-		
+
 		createReadOnlyTransaction(g);
 		assertEquals("v1 v5 v2 v3 v4 v6 v7 v8 v9 v10", getVSeq());
 		commit(g);
@@ -154,42 +163,42 @@ public class VertexListTest extends InstanceTest {
 		Vertex v = g.getVertex(5);
 		v.delete();
 		commit(g);
-		
+
 		createReadOnlyTransaction(g);
 		assertFalse(v.isValid());
 		assertEquals(null, g.getVertex(5));
 		assertEquals(9, g.getVCount());
 		assertEquals("v1 v2 v3 v4 v6 v7 v8 v9 v10", getVSeq());
 		commit(g);
-		
+
 		createTransaction(g);
 		v = g.getFirstVertex();
 		v.delete();
 		commit(g);
-		
+
 		createReadOnlyTransaction(g);
 		assertFalse(v.isValid());
 		assertEquals(null, g.getVertex(1));
 		assertEquals(8, g.getVCount());
 		assertEquals("v2 v3 v4 v6 v7 v8 v9 v10", getVSeq());
 		commit(g);
-		
+
 		createTransaction(g);
 		v = g.getVertex(10);
 		v.delete();
 		commit(g);
-		
+
 		createReadOnlyTransaction(g);
 		assertFalse(v.isValid());
 		assertEquals(null, g.getVertex(1));
 		assertEquals(7, g.getVCount());
 		assertEquals("v2 v3 v4 v6 v7 v8 v9", getVSeq());
 		commit(g);
-		
+
 		createTransaction(g);
 		g.createNode();
 		commit(g);
-		
+
 		createReadOnlyTransaction(g);
 		assertEquals("v2 v3 v4 v6 v7 v8 v9 v1", getVSeq());
 		commit(g);
@@ -197,23 +206,23 @@ public class VertexListTest extends InstanceTest {
 		createTransaction(g);
 		g.createNode();
 		commit(g);
-		
+
 		createReadOnlyTransaction(g);
 		assertEquals("v2 v3 v4 v6 v7 v8 v9 v1 v5", getVSeq());
 		commit(g);
-		
+
 		createTransaction(g);
 		g.createNode();
 		commit(g);
-		
+
 		createReadOnlyTransaction(g);
 		assertEquals("v2 v3 v4 v6 v7 v8 v9 v1 v5 v10", getVSeq());
 		commit(g);
-		
+
 		createTransaction(g);
 		g.createNode();
 		commit(g);
-		
+
 		createReadOnlyTransaction(g);
 		assertEquals("v2 v3 v4 v6 v7 v8 v9 v1 v5 v10 v11", getVSeq());
 		commit(g);

@@ -44,8 +44,8 @@ import de.uni_koblenz.jgralabtest.schemas.defaultvaluetestschema.TestVertex;
 @RunWith(Parameterized.class)
 public class DefaultValueTest extends InstanceTest {
 
-	public DefaultValueTest(boolean transactionsEnabled) {
-		super(transactionsEnabled);
+	public DefaultValueTest(ImplementationType implementationType) {
+		super(implementationType);
 	}
 
 	@Parameters
@@ -57,10 +57,18 @@ public class DefaultValueTest extends InstanceTest {
 
 	@Before
 	public void setUp() {
-		graph = transactionsEnabled ? DefaultValueTestSchema.instance()
-				.createDefaultValueTestGraphWithTransactionSupport()
-				: DefaultValueTestSchema.instance()
-						.createDefaultValueTestGraph();
+		switch (implementationType) {
+		case STANDARD:
+			graph = DefaultValueTestSchema.instance()
+					.createDefaultValueTestGraph();
+			break;
+		case TRANSACTION:
+			graph = DefaultValueTestSchema.instance()
+					.createDefaultValueTestGraphWithTransactionSupport();
+			break;
+		case SAVEMEM:
+			fail("Not implemented yet");
+		}
 	}
 
 	/**
@@ -179,10 +187,19 @@ public class DefaultValueTest extends InstanceTest {
 	 */
 	@Test
 	public void testGraphAttributesAreCloned() throws CommitFailedException {
-		DefaultValueTestGraph secondGraph = transactionsEnabled ? DefaultValueTestSchema
-				.instance().createDefaultValueTestGraphWithTransactionSupport()
-				: DefaultValueTestSchema.instance()
-						.createDefaultValueTestGraph();
+		DefaultValueTestGraph secondGraph = null;
+		switch (implementationType) {
+		case STANDARD:
+			secondGraph = DefaultValueTestSchema.instance()
+					.createDefaultValueTestGraph();
+			break;
+		case TRANSACTION:
+			secondGraph = DefaultValueTestSchema.instance()
+					.createDefaultValueTestGraphWithTransactionSupport();
+			break;
+		case SAVEMEM:
+			fail("Not implemented yet");
+		}
 		createReadOnlyTransaction(graph);
 		createReadOnlyTransaction(secondGraph);
 		checkNotEqual(secondGraph.get_listGraph(), graph.get_listGraph(),

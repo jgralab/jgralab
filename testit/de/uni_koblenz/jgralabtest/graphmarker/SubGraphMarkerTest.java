@@ -1,6 +1,7 @@
 package de.uni_koblenz.jgralabtest.graphmarker;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -18,6 +19,7 @@ import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
+import de.uni_koblenz.jgralabtest.instancetest.ImplementationType;
 import de.uni_koblenz.jgralabtest.instancetest.InstanceTest;
 import de.uni_koblenz.jgralabtest.schemas.minimal.Link;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalGraph;
@@ -42,15 +44,23 @@ public class SubGraphMarkerTest extends InstanceTest {
 	private BooleanGraphMarker oldMarker;
 	private SubGraphMarker newMarker;
 
-	public SubGraphMarkerTest(boolean transactionsEnabled) {
-		super(transactionsEnabled);
+	public SubGraphMarkerTest(ImplementationType implementationType) {
+		super(implementationType);
 	}
 
 	@Before
 	public void setUp() throws CommitFailedException {
-		g = transactionsEnabled ? MinimalSchema.instance()
-				.createMinimalGraphWithTransactionSupport(V, E) : MinimalSchema
-				.instance().createMinimalGraph(V, E);
+		switch (implementationType) {
+		case STANDARD:
+			g = MinimalSchema.instance().createMinimalGraph(V, E);
+			break;
+		case TRANSACTION:
+			g = MinimalSchema.instance()
+					.createMinimalGraphWithTransactionSupport(V, E);
+			break;
+		case SAVEMEM:
+			fail("Not implemented yet");
+		}
 		createTransaction(g);
 
 		Random rng = new Random(16L);

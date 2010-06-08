@@ -46,8 +46,8 @@ public class LoadTest extends InstanceTest {
 	private static final String TESTGRAPH_FILENAME = "testgraph.tg";
 	private static final String TESTGRAPH_PATH = "testit/testgraphs/";
 
-	public LoadTest(boolean transactionsEnabled) {
-		super(transactionsEnabled);
+	public LoadTest(ImplementationType implementationType) {
+		super(implementationType);
 	}
 
 	@Parameters
@@ -61,7 +61,7 @@ public class LoadTest extends InstanceTest {
 	// }
 
 	private Graph createTestGraph() throws Exception {
-		if (!transactionsEnabled) {
+		if (implementationType != ImplementationType.TRANSACTION) {
 			String query = "from i:c report i end where d:=\"drölfundfünfzig\", c:=b, b:=a, a:=\"Mensaessen\"";
 			return ManualGreqlParser.parse(query);
 		}
@@ -183,10 +183,19 @@ public class LoadTest extends InstanceTest {
 	}
 
 	private VertexTestGraph createVertexTestGraph(int vMax, int eMax) {
-		VertexTestGraph graph = transactionsEnabled ? VertexTestSchema
-				.instance().createVertexTestGraphWithTransactionSupport(vMax,
-						eMax) : VertexTestSchema.instance()
-				.createVertexTestGraph(vMax, eMax);
+		VertexTestGraph graph = null;
+		switch (implementationType) {
+		case STANDARD:
+			graph = VertexTestSchema.instance().createVertexTestGraph(vMax,
+					eMax);
+			break;
+		case TRANSACTION:
+			graph = VertexTestSchema.instance()
+					.createVertexTestGraphWithTransactionSupport(vMax, eMax);
+			break;
+		case SAVEMEM:
+			fail("Not implemented yet");
+		}
 		return graph;
 	}
 
@@ -259,10 +268,19 @@ public class LoadTest extends InstanceTest {
 			GraphIO.saveGraphToFile(TESTGRAPH_PATH + TESTGRAPH_FILENAME, g1,
 					null);
 			commit(g1);
-			g2 = !transactionsEnabled ? Greql2Schema.instance().loadGreql2(
-					TESTGRAPH_PATH + TESTGRAPH_FILENAME) : VertexTestSchema
-					.instance().loadVertexTestGraphWithTransactionSupport(
-							TESTGRAPH_PATH + TESTGRAPH_FILENAME);
+			switch (implementationType) {
+			case STANDARD:
+				g2 = Greql2Schema.instance().loadGreql2(
+						TESTGRAPH_PATH + TESTGRAPH_FILENAME);
+				break;
+			case TRANSACTION:
+				g2 = VertexTestSchema.instance()
+						.loadVertexTestGraphWithTransactionSupport(
+								TESTGRAPH_PATH + TESTGRAPH_FILENAME);
+				break;
+			case SAVEMEM:
+				fail("Not implemented yet");
+			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

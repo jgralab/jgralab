@@ -1,5 +1,6 @@
 package de.uni_koblenz.jgralabtest.instancetest;
 
+import static junit.framework.Assert.fail;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -27,8 +28,9 @@ public class GraphStructureChangedListenerTest extends InstanceTest {
 
 	private static final int LISTENERS = 10;
 
-	public GraphStructureChangedListenerTest(boolean transactionsEnabled) {
-		super(transactionsEnabled);
+	public GraphStructureChangedListenerTest(
+			ImplementationType implementationType) {
+		super(implementationType);
 	}
 
 	@Parameters
@@ -43,9 +45,17 @@ public class GraphStructureChangedListenerTest extends InstanceTest {
 
 	@Before
 	public void setup() throws CommitFailedException {
-		g = transactionsEnabled ? MinimalSchema.instance()
-				.createMinimalGraphWithTransactionSupport(V, E) : MinimalSchema
-				.instance().createMinimalGraph(V, E);
+		switch (implementationType) {
+		case STANDARD:
+			g = MinimalSchema.instance().createMinimalGraph(V, E);
+			break;
+		case TRANSACTION:
+			g = MinimalSchema.instance()
+					.createMinimalGraphWithTransactionSupport(V, E);
+			break;
+		case SAVEMEM:
+			fail("Not implemented yet");
+		}
 		trigger = false;
 	}
 

@@ -52,8 +52,8 @@ public class VertexTest extends InstanceTest {
 
 	private static final int ITERATIONS = 25;
 
-	public VertexTest(boolean transactionsEnabled) {
-		super(transactionsEnabled);
+	public VertexTest(ImplementationType implementationType) {
+		super(implementationType);
 	}
 
 	@Parameters
@@ -2323,9 +2323,19 @@ public class VertexTest extends InstanceTest {
 	}
 
 	private VertexTestGraph createNewGraph() {
-		return transactionsEnabled ? VertexTestSchema.instance()
-				.createVertexTestGraphWithTransactionSupport(100, 100)
-				: VertexTestSchema.instance().createVertexTestGraph(100, 100);
+		VertexTestGraph graph = null;
+		switch (implementationType) {
+		case STANDARD:
+			graph = VertexTestSchema.instance().createVertexTestGraph(100, 100);
+			break;
+		case TRANSACTION:
+			graph = VertexTestSchema.instance()
+					.createVertexTestGraphWithTransactionSupport(100, 100);
+			break;
+		case SAVEMEM:
+			fail("Not implemented yet");
+		}
+		return graph;
 	}
 
 	// tests of the method getNextVertex();
@@ -8841,10 +8851,19 @@ public class VertexTest extends InstanceTest {
 		assertEquals("n", parts[4]);
 		assertEquals("0", parts[5]);
 		// test of readAttributeValues
-		VertexTestGraph loadedgraph = transactionsEnabled ? VertexTestSchema
-				.instance()
-				.loadVertexTestGraphWithTransactionSupport("test.tg")
-				: VertexTestSchema.instance().loadVertexTestGraph("test.tg");
+		VertexTestGraph loadedgraph = null;
+		switch (implementationType) {
+		case STANDARD:
+			loadedgraph = VertexTestSchema.instance().loadVertexTestGraph(
+					"test.tg");
+			break;
+		case TRANSACTION:
+			loadedgraph = VertexTestSchema.instance()
+					.loadVertexTestGraphWithTransactionSupport("test.tg");
+			break;
+		case SAVEMEM:
+			fail("Not implemented yet");
+		}
 		createReadOnlyTransaction(loadedgraph);
 		DoubleSubNode loadedv0 = loadedgraph.getFirstDoubleSubNode();
 		assertEquals(v0.get_name(), loadedv0.get_name());
@@ -8909,10 +8928,19 @@ public class VertexTest extends InstanceTest {
 		}
 		assertEquals("17", parts[i + 4]);
 		// test of readAttributeValues
-		VertexTestGraph loadedgraph = transactionsEnabled ? VertexTestSchema
-				.instance()
-				.loadVertexTestGraphWithTransactionSupport("test.tg")
-				: VertexTestSchema.instance().loadVertexTestGraph("test.tg");
+		VertexTestGraph loadedgraph = null;
+		switch (implementationType) {
+		case STANDARD:
+			loadedgraph = VertexTestSchema.instance().loadVertexTestGraph(
+					"test.tg");
+			break;
+		case TRANSACTION:
+			loadedgraph = VertexTestSchema.instance()
+					.loadVertexTestGraphWithTransactionSupport("test.tg");
+			break;
+		case SAVEMEM:
+			fail("Not implemented yet");
+		}
 		createReadOnlyTransaction(loadedgraph);
 		DoubleSubNode loadedv0 = loadedgraph.getFirstDoubleSubNode();
 		assertEquals(v0.get_name(), loadedv0.get_name());
@@ -10148,7 +10176,8 @@ public class VertexTest extends InstanceTest {
 
 	// tests of the method getFirstLinkBack(EdgeDirection)
 	@Test
-	public void getFirstLinkBackEdgeDirectionTest0() throws CommitFailedException {
+	public void getFirstLinkBackEdgeDirectionTest0()
+			throws CommitFailedException {
 		createTransaction(g);
 		DoubleSubNode v0 = g.createDoubleSubNode();
 		DoubleSubNode v1 = g.createDoubleSubNode();
@@ -10189,7 +10218,8 @@ public class VertexTest extends InstanceTest {
 
 	// tests of the method getFirstSubLink(EdgeDirection)
 	@Test
-	public void getFirstSubLinkEdgeDirectionTest0() throws CommitFailedException {
+	public void getFirstSubLinkEdgeDirectionTest0()
+			throws CommitFailedException {
 		createTransaction(g);
 		DoubleSubNode v0 = g.createDoubleSubNode();
 		DoubleSubNode v1 = g.createDoubleSubNode();
@@ -10290,7 +10320,8 @@ public class VertexTest extends InstanceTest {
 
 	// tests of the method get#Edge#Incidences(EdgeDirection)
 	@Test
-	public void getLinkIncidencesTestEdgeDirection0() throws CommitFailedException {
+	public void getLinkIncidencesTestEdgeDirection0()
+			throws CommitFailedException {
 		createTransaction(g);
 		DoubleSubNode v0 = g.createDoubleSubNode();
 		DoubleSubNode v1 = g.createDoubleSubNode();
