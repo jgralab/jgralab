@@ -453,6 +453,8 @@ public class ManualGreqlParser extends ManualParserHelper {
 	}
 
 	private final void parseQuery() {
+		if (lookAhead(0) == TokenTypes.EOF)
+			return;
 		Greql2Expression rootExpr = graph.createGreql2Expression();
 		rootExpr.set_importedTypes(parseImports());
 		if (lookAhead(0) == TokenTypes.USING) {

@@ -346,6 +346,9 @@ public class ManualGreqlLexer {
 			Token nextToken = lexer.getNextToken();
 			list.add(nextToken);
 		}
+		if (list.isEmpty() || (list.get(list.size()-1).type != TokenTypes.EOF)) {
+			list.add(new SimpleToken(TokenTypes.EOF, lexer.position, 0));
+		}
 		return list;
 	}
 
