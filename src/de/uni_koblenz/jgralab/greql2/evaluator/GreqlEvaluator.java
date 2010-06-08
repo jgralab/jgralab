@@ -935,11 +935,19 @@ public class GreqlEvaluator {
 		if (started) {
 			return (result != null);
 		}
+		
+		if (queryGraph.getVCount() <= 1) {
+			//Graph contains only root vertex
+			result = new JValueImpl();
+			return true;
+		}
+		
 		started = true;
 		parseTime = 0;
 		optimizationTime = 0;
 		plainEvaluationTime = 0;
 		overallEvaluationTime = 0;
+		
 
 		long startTime = System.currentTimeMillis();
 
@@ -968,6 +976,7 @@ public class GreqlEvaluator {
 				e.printStackTrace();
 			}
 		}
+
 
 		if (optimize) {
 			createOptimizedSyntaxGraph();
