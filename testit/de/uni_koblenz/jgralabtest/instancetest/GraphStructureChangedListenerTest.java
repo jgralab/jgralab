@@ -59,7 +59,7 @@ public class GraphStructureChangedListenerTest extends InstanceTest {
 			public void vertexAdded(Vertex v) {
 				trigger = true;
 				assertTrue("The given vertex has not been added to the graph.",
-						v.isValid() && v.getGraph() == g);
+						v.isValid() && (v.getGraph() == g));
 			}
 		};
 
@@ -80,7 +80,7 @@ public class GraphStructureChangedListenerTest extends InstanceTest {
 			public void vertexDeleted(Vertex v) {
 				trigger = true;
 				assertTrue("The given vertex is not valid, but it should be.",
-						v.isValid() && v.getGraph() == g);
+						v.isValid() && (v.getGraph() == g));
 			}
 		};
 		g.addGraphStructureChangedListener(listener);
@@ -106,7 +106,7 @@ public class GraphStructureChangedListenerTest extends InstanceTest {
 				trigger = true;
 				assertTrue("The given edge has not been added to the graph", e
 						.isValid()
-						&& e.getGraph() == g);
+						&& (e.getGraph() == g));
 			}
 		};
 		g.addGraphStructureChangedListener(listener);
@@ -130,7 +130,7 @@ public class GraphStructureChangedListenerTest extends InstanceTest {
 				trigger = true;
 				assertTrue("The given edge is not valid, but it should be.", e
 						.isValid()
-						&& e.getGraph() == g);
+						&& (e.getGraph() == g));
 			}
 		};
 		g.addGraphStructureChangedListener(listener);
@@ -216,7 +216,8 @@ public class GraphStructureChangedListenerTest extends InstanceTest {
 			throws CommitFailedException {
 		GraphStructureChangedListener[] listeners = new GraphStructureChangedListener[LISTENERS];
 		for (int i = 0; i < listeners.length; i++) {
-			listeners[i] = new GraphStructureChangedAdapter();
+			listeners[i] = new GraphStructureChangedAdapter() {
+			};
 			g.addGraphStructureChangedListener(listeners[i]);
 		}
 

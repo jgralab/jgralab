@@ -7,7 +7,7 @@ package de.uni_koblenz.jgralab;
  * @author ist@uni-koblenz.de
  * 
  */
-public class GraphStructureChangedAdapter implements
+public abstract class GraphStructureChangedAdapter implements
 		GraphStructureChangedListener {
 
 	@Override
