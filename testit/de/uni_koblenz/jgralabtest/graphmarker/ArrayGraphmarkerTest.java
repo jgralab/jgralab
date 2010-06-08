@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -17,6 +18,7 @@ import org.junit.runners.Parameterized.Parameters;
 
 import de.uni_koblenz.jgralab.graphmarker.ArrayVertexMarker;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
+import de.uni_koblenz.jgralabtest.instancetest.ImplementationType;
 import de.uni_koblenz.jgralabtest.instancetest.InstanceTest;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalGraph;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalSchema;
@@ -25,8 +27,8 @@ import de.uni_koblenz.jgralabtest.schemas.minimal.Node;
 @RunWith(Parameterized.class)
 public class ArrayGraphmarkerTest extends InstanceTest {
 
-	public ArrayGraphmarkerTest(boolean transactionsEnabled) {
-		super(transactionsEnabled);
+	public ArrayGraphmarkerTest(ImplementationType implementationType) {
+		super(implementationType);
 	}
 
 	@Parameters
@@ -98,9 +100,17 @@ public class ArrayGraphmarkerTest extends InstanceTest {
 
 	@Before
 	public void setup() throws CommitFailedException {
-		g = transactionsEnabled ? MinimalSchema.instance()
-				.createMinimalGraphWithTransactionSupport(V, E) : MinimalSchema
-				.instance().createMinimalGraph(V, E);
+		switch (implementationType) {
+		case STANDARD:
+			g = MinimalSchema.instance().createMinimalGraph(V, E);
+			break;
+		case TRANSACTION:
+			g = MinimalSchema.instance()
+					.createMinimalGraphWithTransactionSupport(V, E);
+			break;
+		case SAVEMEM:
+			fail("Not implemented yet");
+		}
 		createTransaction(g);
 		v1 = g.createNode();
 		v2 = g.createNode();

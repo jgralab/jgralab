@@ -37,8 +37,8 @@ import de.uni_koblenz.jgralabtest.schemas.vertextest.VertexTestSchema;
 @RunWith(Parameterized.class)
 public class GraphTest extends InstanceTest {
 
-	public GraphTest(boolean transactionsEnabled) {
-		super(transactionsEnabled);
+	public GraphTest(ImplementationType implementationType) {
+		super(implementationType);
 	}
 
 	@Parameters
@@ -81,9 +81,19 @@ public class GraphTest extends InstanceTest {
 	 * @return
 	 */
 	private VertexTestGraph createNewGraph() {
-		return transactionsEnabled ? VertexTestSchema.instance()
-				.createVertexTestGraphWithTransactionSupport()
-				: VertexTestSchema.instance().createVertexTestGraph();
+		VertexTestGraph out = null;
+		switch (implementationType) {
+		case STANDARD:
+			out = VertexTestSchema.instance().createVertexTestGraph();
+			break;
+		case TRANSACTION:
+			out = VertexTestSchema.instance()
+					.createVertexTestGraphWithTransactionSupport();
+			break;
+		case SAVEMEM:
+			fail("Not implemented yet");
+		}
+		return out;
 	}
 
 	@After
@@ -5306,9 +5316,18 @@ public class GraphTest extends InstanceTest {
 	}
 
 	private MinimalGraph createMinimalGraph() {
-		MinimalGraph g3 = transactionsEnabled ? MinimalSchema.instance()
-				.createMinimalGraphWithTransactionSupport() : MinimalSchema
-				.instance().createMinimalGraph();
+		MinimalGraph g3 = null;
+		switch (implementationType) {
+		case STANDARD:
+			g3 = MinimalSchema.instance().createMinimalGraph();
+			break;
+		case TRANSACTION:
+			g3 = MinimalSchema.instance()
+					.createMinimalGraphWithTransactionSupport();
+			break;
+		case SAVEMEM:
+			fail("Not implemented yet");
+		}
 		return g3;
 	}
 
@@ -6208,7 +6227,7 @@ public class GraphTest extends InstanceTest {
 
 	@Test
 	public void testDefragment() {
-		if (transactionsEnabled) {
+		if (implementationType == ImplementationType.TRANSACTION) {
 			try {
 				g1.defragment();
 				fail("Defragmentation with transaction support should throw an UnsupportedOperationException.");

@@ -3,9 +3,9 @@ package de.uni_koblenz.jgralabtest.instancetest;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.fail;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,8 +40,8 @@ public class IncidenceListTest extends InstanceTest {
 	private static final int RANDOM_TEST_AMOUNT = 2;
 	private static final int NODE_COUNT = 10;
 
-	public IncidenceListTest(boolean transactionsEnabled) {
-		super(transactionsEnabled);
+	public IncidenceListTest(ImplementationType implementationType) {
+		super(implementationType);
 	}
 
 	@Parameters
@@ -60,9 +60,18 @@ public class IncidenceListTest extends InstanceTest {
 	@Before
 	public void setup() throws CommitFailedException {
 		rnd = new Random(System.currentTimeMillis());
-		g = transactionsEnabled ? MinimalSchema.instance()
-				.createMinimalGraphWithTransactionSupport(V, E) : MinimalSchema
-				.instance().createMinimalGraph(V, E);
+		switch (implementationType) {
+		case STANDARD:
+			g = MinimalSchema.instance().createMinimalGraph(V, E);
+			break;
+		case TRANSACTION:
+			g = MinimalSchema.instance()
+					.createMinimalGraphWithTransactionSupport(V, E);
+			break;
+		case SAVEMEM:
+			fail("Not implemented yet");
+		}
+		
 		nodes = new Node[N];
 
 		createTransaction(g);
@@ -382,10 +391,18 @@ public class IncidenceListTest extends InstanceTest {
 
 	@Test
 	public void testSortIncidences() throws CommitFailedException {
-
-		MinimalGraph g = transactionsEnabled ? MinimalSchema.instance()
-				.createMinimalGraphWithTransactionSupport(V, E) : MinimalSchema
-				.instance().createMinimalGraph(V, E);
+		MinimalGraph g = null;
+		switch (implementationType) {
+		case STANDARD:
+			g = MinimalSchema.instance().createMinimalGraph(V, E);
+			break;
+		case TRANSACTION:
+			g = MinimalSchema.instance()
+					.createMinimalGraphWithTransactionSupport(V, E);
+			break;
+		case SAVEMEM:
+			fail("Not implemented yet");
+		}
 
 		Node[] nodes = new Node[NODE_COUNT];
 
@@ -413,7 +430,7 @@ public class IncidenceListTest extends InstanceTest {
 			}
 		};
 
-		if (transactionsEnabled) {
+		if (implementationType == ImplementationType.TRANSACTION) {
 			try {
 				isolated.sortIncidences(comp);
 				fail();

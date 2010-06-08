@@ -3,6 +3,7 @@ package de.uni_koblenz.jgralabtest.instancetest;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.util.Collection;
@@ -44,8 +45,8 @@ import de.uni_koblenz.jgralabtest.schemas.vertextest.VertexTestSchema;
 @RunWith(Parameterized.class)
 public class RoleNameTest extends InstanceTest {
 
-	public RoleNameTest(boolean transactionsEnabled) {
-		super(transactionsEnabled);
+	public RoleNameTest(ImplementationType implementationType) {
+		super(implementationType);
 	}
 
 	@Parameters
@@ -61,9 +62,17 @@ public class RoleNameTest extends InstanceTest {
 	 */
 	@Before
 	public void setUp() {
-		graph = transactionsEnabled ? VertexTestSchema.instance()
-				.createVertexTestGraphWithTransactionSupport(100, 100)
-				: VertexTestSchema.instance().createVertexTestGraph(100, 100);
+		switch (implementationType) {
+		case STANDARD:
+			graph = VertexTestSchema.instance().createVertexTestGraph(100, 100);
+			break;
+		case TRANSACTION:
+			graph = VertexTestSchema.instance()
+					.createVertexTestGraphWithTransactionSupport(100, 100);
+			break;
+		case SAVEMEM:
+			fail("Not implemented yet");
+		}
 		rand = new Random(System.currentTimeMillis());
 	}
 

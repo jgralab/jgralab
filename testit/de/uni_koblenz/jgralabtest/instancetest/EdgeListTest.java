@@ -3,6 +3,7 @@ package de.uni_koblenz.jgralabtest.instancetest;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
 
 import java.util.Collection;
 
@@ -32,15 +33,24 @@ public class EdgeListTest extends InstanceTest {
 		return getParameters();
 	}
 
-	public EdgeListTest(Boolean transactionsEnabled) {
-		super(transactionsEnabled.booleanValue());
+	public EdgeListTest(ImplementationType implementationType) {
+		super(implementationType);
 	}
 
 	@Before
 	public void setup() throws CommitFailedException {
-		g = transactionsEnabled ? MinimalSchema.instance()
-				.createMinimalGraphWithTransactionSupport() : MinimalSchema
-				.instance().createMinimalGraph(V, E);
+		switch (implementationType) {
+		case STANDARD:
+			g = MinimalSchema.instance()
+					.createMinimalGraph(V,E);
+			break;
+		case TRANSACTION:
+			g = MinimalSchema.instance()
+					.createMinimalGraphWithTransactionSupport(V,E);
+			break;
+		case SAVEMEM:
+			fail("Not implemented yet");
+		}
 		createTransaction(g);
 		for (int i = 0; i < N; ++i) {
 			g.createNode();
