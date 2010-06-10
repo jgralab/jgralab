@@ -566,7 +566,7 @@ public class SchemaGraph2XMI {
 		writer.writeAttribute(XMIConstants.ATTRIBUTE_NAME,
 				extractSimpleName(aeclass.get_qualifiedName()));
 
-		// set abstract TODO check for EdgeClass
+		// set abstract
 		if (aeclass instanceof GraphElementClass
 				&& ((GraphElementClass) aeclass).is_abstract()) {
 			writer.writeAttribute(
@@ -577,7 +577,6 @@ public class SchemaGraph2XMI {
 		// set EdgeClass specific memberEnd
 		if (aeclass instanceof EdgeClass) {
 			EdgeClass ec = (EdgeClass) aeclass;
-			// TODO check for EdgeClass
 			writer.writeAttribute(
 					XMIConstants.PACKAGEDELEMENT_ATTRIBUTE_MEMBEREND,
 					((VertexClass) (((IncidenceClass) ec.getFirstComesFrom()
@@ -594,18 +593,21 @@ public class SchemaGraph2XMI {
 							+ ec.get_qualifiedName());
 		}
 
+		// TODO Ob bidirektional navigierbar, von alpha zu Omega oder von omega
+		// zu alpha navigierbar durch Opionen festlegen
+
 		// create <<graphclass>> for graph classes
 		if (aeclass instanceof GraphClass) {
 			createExtension(writer, aeclass, "graphclass");
 		}
 
-		// create comments TODO check for EdgeClass
+		// create comments
 		createComments(writer, aeclass);
 
-		// create constraintsTODO check for EdgeClass
+		// create constraints TODO check for EdgeClass
 		createConstraints(writer, aeclass);
 
-		// create generalization TODO check for EdgeClass
+		// create generalization
 		if (aeclass instanceof VertexClass) {
 			for (SpecializesVertexClass svc : ((VertexClass) aeclass)
 					.getSpecializesVertexClassIncidences(EdgeDirection.OUT)) {
@@ -673,6 +675,8 @@ public class SchemaGraph2XMI {
 					.getFirstEndsAt().getThat();
 		}
 
+		// TODO redefines and subsetts
+
 		// start ownedattribute
 		writer.writeStartElement(XMIConstants.TAG_OWNEDATTRIBUTE);
 		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
@@ -681,7 +685,6 @@ public class SchemaGraph2XMI {
 		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
 				XMIConstants.XMI_ATTRIBUTE_ID, qualifiedNameOfVertexClass
 						+ "_incidence_" + edgeClass.get_qualifiedName());
-		// TODO check how empty roleNames are represented in RSA
 		writer.writeAttribute(XMIConstants.ATTRIBUTE_NAME, (otherIncidence
 				.get_roleName() != null && !otherIncidence.get_roleName()
 				.isEmpty()) ? otherIncidence.get_roleName()
@@ -703,7 +706,8 @@ public class SchemaGraph2XMI {
 				XMIConstants.XMI_ATTRIBUTE_ID, qualifiedNameOfVertexClass
 						+ "_incidence_" + edgeClass.get_qualifiedName()
 						+ "_uppervalue");
-		writer.writeAttribute(XMIConstants.ATTRIBUTE_VALUE, Integer
+		writer.writeAttribute(XMIConstants.ATTRIBUTE_VALUE, otherIncidence
+				.get_max() == Integer.MAX_VALUE ? "*" : Integer
 				.toString(otherIncidence.get_max()));
 
 		// create lowerValue
@@ -715,7 +719,8 @@ public class SchemaGraph2XMI {
 				XMIConstants.XMI_ATTRIBUTE_ID, qualifiedNameOfVertexClass
 						+ "_incidence_" + edgeClass.get_qualifiedName()
 						+ "_lowervalue");
-		writer.writeAttribute(XMIConstants.ATTRIBUTE_VALUE, Integer
+		writer.writeAttribute(XMIConstants.ATTRIBUTE_VALUE, otherIncidence
+				.get_min() == Integer.MAX_VALUE ? "*" : Integer
 				.toString(otherIncidence.get_min()));
 
 		// close ownedattribute
