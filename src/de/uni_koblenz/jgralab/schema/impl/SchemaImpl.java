@@ -622,7 +622,7 @@ public class SchemaImpl implements Schema {
 	}
 
 	@Override
-	public GraphClass (String simpleName) {
+	public GraphClass createGraphClass(String simpleName) {
 		if (graphClass != null) {
 			throw new SchemaException(
 					"Only one GraphClass (except DefaultGraphClass) is allowed in a Schema! '"
