@@ -185,6 +185,9 @@ public class ManualGreqlLexer {
 						&& (!isSeparator(query.charAt(position)))) {
 					nextPossibleToken.append(query.charAt(position++));
 				}
+				if (query.length() <= position) {
+					return new SimpleToken(TokenTypes.EOF, start, 0);
+				}
 				String tokenText = nextPossibleToken.toString();
 				if (tokenText.equals("thisVertex")) {
 					recognizedToken = new ComplexToken(TokenTypes.THISVERTEX,
