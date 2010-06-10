@@ -622,7 +622,7 @@ public class SchemaImpl implements Schema {
 	}
 
 	@Override
-	public GraphClass createGraphClass(String simpleName) {
+	public GraphClass (String simpleName) {
 		if (graphClass != null) {
 			throw new SchemaException(
 					"Only one GraphClass (except DefaultGraphClass) is allowed in a Schema! '"
@@ -1180,7 +1180,7 @@ public class SchemaImpl implements Schema {
 
 	@Override
 	public boolean knows(String qn) {
-		return namedElements.containsKey(qn);
+		return (namedElements.containsKey(qn) || getQualifiedName().equals(qn));
 	}
 
 	@Override
