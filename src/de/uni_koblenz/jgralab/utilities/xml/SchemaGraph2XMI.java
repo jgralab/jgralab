@@ -532,7 +532,6 @@ public class SchemaGraph2XMI {
 	 */
 	private void createAttributedElementClass(XMLStreamWriter writer,
 			AttributedElementClass aeclass) throws XMLStreamException {
-		// TODO check direction of EdgeClasses
 
 		// if aeclass is a GraphElementClass without any attributes, comments
 		// and constraints then an empty tag is created
@@ -553,10 +552,17 @@ public class SchemaGraph2XMI {
 		}
 		// set type
 		if (aeclass instanceof EdgeClass) {
-			// TODO check for Aggregation and Composition and AssociationClass
-			writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-					XMIConstants.XMI_ATTRIBUTE_TYPE,
-					XMIConstants.PACKAGEDELEMENT_TYPE_VALUE_ASSOCIATION);
+			if (aeclass.getFirstHasAttribute() == null) {
+				writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
+						XMIConstants.XMI_ATTRIBUTE_TYPE,
+						XMIConstants.PACKAGEDELEMENT_TYPE_VALUE_ASSOCIATION);
+			} else {
+				writer
+						.writeAttribute(
+								XMIConstants.NAMESPACE_XMI,
+								XMIConstants.XMI_ATTRIBUTE_TYPE,
+								XMIConstants.PACKAGEDELEMENT_TYPE_VALUE_ASSOCIATIONCLASS);
+			}
 		} else {
 			writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
 					XMIConstants.XMI_ATTRIBUTE_TYPE,
@@ -631,6 +637,11 @@ public class SchemaGraph2XMI {
 		// create incidences of EdgeClasses at VertexClass aeclass
 		if (aeclass instanceof VertexClass) {
 			createIncidences(writer, (VertexClass) aeclass);
+		} else if (aeclass instanceof EdgeClass) {
+			EdgeClass edgeClass = (EdgeClass) aeclass;
+			if (edgeClass.getFirstHasAttribute() != null) {
+				createIncidences(writer, edgeClass);
+			}
 		}
 
 		// close packagedElement
@@ -639,11 +650,66 @@ public class SchemaGraph2XMI {
 		}
 	}
 
+	/**
+	 * Creates the IncidenceClasses for AssociationClasses ( = EdgeClass with
+	 * attributes)
+	 * 
+	 * @param writer
+	 * @param edgeClass
+	 * @throws XMLStreamException
+	 */
+	private void createIncidences(XMLStreamWriter writer, EdgeClass edgeClass)
+			throws XMLStreamException {
+		IncidenceClass alphaIncidence = (IncidenceClass) edgeClass
+				.getFirstComesFrom().getThat();
+		IncidenceClass omegaIncidence = (IncidenceClass) edgeClass
+				.getFirstGoesTo().getThat();
+		VertexClass alphaVertex = (VertexClass) alphaIncidence.getFirstEndsAt()
+				.getThat();
+		VertexClass omegaVertex = (VertexClass) omegaIncidence.getFirstEndsAt()
+				.getThat();
+		createIncidence(writer, alphaIncidence, edgeClass, omegaIncidence,
+				omegaVertex, alphaVertex.get_qualifiedName());
+		createIncidence(writer, omegaIncidence, edgeClass, alphaIncidence,
+				alphaVertex, omegaVertex.get_qualifiedName());
+	}
+
+	/**
+	 * Creates the IncidenceClasses for VertexClasses
+	 * 
+	 * @param writer
+	 * @param vertexClass
+	 * @throws XMLStreamException
+	 */
 	private void createIncidences(XMLStreamWriter writer,
 			VertexClass vertexClass) throws XMLStreamException {
 		for (EndsAt ea : vertexClass.getEndsAtIncidences()) {
-			createIncidence(writer, (IncidenceClass) ea.getThat(), vertexClass
-					.get_qualifiedName());
+			// find incident EdgeClass and adjacent VertexClass
+			IncidenceClass incidence = (IncidenceClass) ea.getThat();
+			EdgeClass edgeClass = null;
+			VertexClass connectedVertexClass = null;
+			IncidenceClass otherIncidence = null;
+			if (incidence.getFirstComesFrom() != null) {
+				edgeClass = (EdgeClass) incidence.getFirstComesFrom().getThat();
+				otherIncidence = (IncidenceClass) edgeClass.getFirstGoesTo()
+						.getThat();
+				connectedVertexClass = (VertexClass) otherIncidence
+						.getFirstEndsAt().getThat();
+			} else {
+				edgeClass = (EdgeClass) incidence.getFirstGoesTo().getThat();
+				otherIncidence = (IncidenceClass) edgeClass.getFirstComesFrom()
+						.getThat();
+				connectedVertexClass = (VertexClass) otherIncidence
+						.getFirstEndsAt().getThat();
+			}
+			// create incidence representation
+			if (edgeClass.getFirstHasAttribute() == null) {
+				// if an EdgeClass has attributes, an AssociationClass is
+				// created. Then the incidence information are created in the
+				// associationClass tag.
+				createIncidence(writer, incidence, edgeClass, otherIncidence,
+						connectedVertexClass, vertexClass.get_qualifiedName());
+			}
 		}
 	}
 
@@ -652,29 +718,16 @@ public class SchemaGraph2XMI {
 	 * 
 	 * @param writer
 	 * @param incidence
+	 * @param connectedVertexClass
+	 * @param otherIncidence
+	 * @param edgeClass
 	 * @param qualifiedNameOfVertexClass
 	 * @throws XMLStreamException
 	 */
 	private void createIncidence(XMLStreamWriter writer,
-			IncidenceClass incidence, String qualifiedNameOfVertexClass)
-			throws XMLStreamException {
-		// find incident EdgeClass and adjacent VertexClass
-		EdgeClass edgeClass = null;
-		VertexClass connectedVertexClass = null;
-		IncidenceClass otherIncidence = null;
-		if (incidence.getFirstComesFrom() != null) {
-			edgeClass = (EdgeClass) incidence.getFirstComesFrom().getThat();
-			otherIncidence = (IncidenceClass) edgeClass.getFirstGoesTo()
-					.getThat();
-			connectedVertexClass = (VertexClass) otherIncidence
-					.getFirstEndsAt().getThat();
-		} else {
-			edgeClass = (EdgeClass) incidence.getFirstGoesTo().getThat();
-			otherIncidence = (IncidenceClass) edgeClass.getFirstComesFrom()
-					.getThat();
-			connectedVertexClass = (VertexClass) otherIncidence
-					.getFirstEndsAt().getThat();
-		}
+			IncidenceClass incidence, EdgeClass edgeClass,
+			IncidenceClass otherIncidence, VertexClass connectedVertexClass,
+			String qualifiedNameOfVertexClass) throws XMLStreamException {
 
 		// TODO redefines and subsetts
 
@@ -686,14 +739,22 @@ public class SchemaGraph2XMI {
 		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
 				XMIConstants.XMI_ATTRIBUTE_ID, qualifiedNameOfVertexClass
 						+ "_incidence_" + edgeClass.get_qualifiedName());
-		writer.writeAttribute(XMIConstants.ATTRIBUTE_NAME, (otherIncidence
-				.get_roleName() != null && !otherIncidence.get_roleName()
-				.isEmpty()) ? otherIncidence.get_roleName()
-				: qualifiedNameOfVertexClass);
+		// set rolenames
+		if (otherIncidence.get_roleName() != null
+				&& !otherIncidence.get_roleName().isEmpty()) {
+			writer.writeAttribute(XMIConstants.ATTRIBUTE_NAME, otherIncidence
+					.get_roleName());
+		} else if (edgeClass.getFirstHasAttribute() == null) {
+			writer.writeAttribute(XMIConstants.ATTRIBUTE_NAME,
+					qualifiedNameOfVertexClass);
+		} else {
+			writer.writeAttribute(XMIConstants.ATTRIBUTE_NAME, "");
+		}
 		writer.writeAttribute(XMIConstants.OWNEDATTRIBUTE_ATTRIBUTE_VISIBILITY,
 				XMIConstants.OWNEDATTRIBUTE_VISIBILITY_VALUE_PRIVATE);
 		writer.writeAttribute(XMIConstants.PACKAGEDELEMENT_ATTRIBUTE_TYPE,
 				connectedVertexClass.get_qualifiedName());
+		// set composite or shared
 		if (otherIncidence.get_aggregation() == AggregationKind.SHARED) {
 			writer
 					.writeAttribute(
