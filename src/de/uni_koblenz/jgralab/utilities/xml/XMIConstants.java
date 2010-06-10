@@ -60,6 +60,9 @@ public class XMIConstants {
 	static final String PACKAGEDELEMENT_ATTRIBUTE_ASSOCIATION = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_ATTRIBUTE_ASSOCIATION;
 	static final String TAG_UPPERVALUE = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_UPPER_VALUE;
 	static final String TAG_LOWERVALUE = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_LOWER_VALUE;
+	static final String OWNEDATTRIBUTE_ATTRIBUTE_AGGREGATION = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_ATTRIBUTE_AGGREGATION;
+	static final String OWNEDATTRIBUTE_ATTRIBUTE_AGGREGATION_VALUE_SHARED = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_SHARED;
+	static final String OWNEDATTRIBUTE_ATTRIBUTE_AGGREGATION_VALUE_COMPOSITE = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_COMPOSITE;
 
 	// generalization specific constants
 	static final String TAG_GENERALIZATION = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_GENERALIZATION;

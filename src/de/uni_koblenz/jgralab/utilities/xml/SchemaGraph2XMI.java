@@ -32,6 +32,7 @@ import de.uni_koblenz.jgralab.grumlschema.domains.LongDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.MapDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.RecordDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.StringDomain;
+import de.uni_koblenz.jgralab.grumlschema.structure.AggregationKind;
 import de.uni_koblenz.jgralab.grumlschema.structure.Annotates;
 import de.uni_koblenz.jgralab.grumlschema.structure.Attribute;
 import de.uni_koblenz.jgralab.grumlschema.structure.AttributedElementClass;
@@ -693,6 +694,17 @@ public class SchemaGraph2XMI {
 				XMIConstants.OWNEDATTRIBUTE_VISIBILITY_VALUE_PRIVATE);
 		writer.writeAttribute(XMIConstants.PACKAGEDELEMENT_ATTRIBUTE_TYPE,
 				connectedVertexClass.get_qualifiedName());
+		if (otherIncidence.get_aggregation() == AggregationKind.SHARED) {
+			writer
+					.writeAttribute(
+							XMIConstants.OWNEDATTRIBUTE_ATTRIBUTE_AGGREGATION,
+							XMIConstants.OWNEDATTRIBUTE_ATTRIBUTE_AGGREGATION_VALUE_SHARED);
+		} else if (otherIncidence.get_aggregation() == AggregationKind.COMPOSITE) {
+			writer
+					.writeAttribute(
+							XMIConstants.OWNEDATTRIBUTE_ATTRIBUTE_AGGREGATION,
+							XMIConstants.OWNEDATTRIBUTE_ATTRIBUTE_AGGREGATION_VALUE_COMPOSITE);
+		}
 		writer.writeAttribute(
 				XMIConstants.PACKAGEDELEMENT_ATTRIBUTE_ASSOCIATION, edgeClass
 						.get_qualifiedName());
