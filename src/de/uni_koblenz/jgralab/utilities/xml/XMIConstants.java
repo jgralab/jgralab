@@ -53,6 +53,7 @@ public class XMIConstants {
 	static final String PACKAGEDELEMENT_TYPE_VALUE_CLASS = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_CLASS;
 	static final String PACKAGEDELEMENT_TYPE_VALUE_PACKAGE = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_PACKAGE;
 	static final String PACKAGEDELEMENT_TYPE_VALUE_ASSOCIATION = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_ASSOCIATION;
+	static final String PACKAGEDELEMENT_TYPE_VALUE_ASSOCIATIONCLASS = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_ASSOCIATION_CLASS;
 	static final String TAG_PACKAGEDELEMENT = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_PACKAGED_ELEMENT;
 	static final String PACKAGEDELEMENT_ATTRIBUTE_ISABSTRACT = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_ATTRIBUTE_IS_ABSRACT;
 	static final String PACKAGEDELEMENT_ATTRIBUTE_MEMBEREND = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_MEMBER_END;
