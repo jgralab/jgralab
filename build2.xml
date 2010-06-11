@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    - JGraLab - The Java graph laboratory
+    - (c) 2006-2010 Institute for Software Technology
+    -               University of Koblenz-Landau, Germany
+    -
+    -               ist@uni-koblenz.de
+    -
+    - Please report bugs to http://serres.uni-koblenz.de/bugzilla
+    -
+    - This program is free software,  you can redistribute it and/or
+    - modify it under the terms of the GNU General Public License
+    - as published by the Free Software Foundation,  either version 2
+    - of the License, or (at your option) any later version.
+    -
+    - This program is distributed in the hope that it will be useful,
+    - but WITHOUT ANY WARRANTY,  without even the implied warranty of
+    - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    - GNU General Public License for more details.
+    -
+    - You should have received a copy of the GNU General Public License
+    - along with this program,  if not, write to the Free Software
+    - Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+-->
+
+<project name="de.uni_koblenz.jgralab" basedir="." default="build">
+
+	<!-- override default properties -->
+	<property name="projectname" value="jgralab" />
+	<property name="main" value="JGraLab" />
+	<property name="documentexcludes" value="de.uni_koblenz.jgralab.greql2.evaluator.test.*" />
+	<property name="unjarexcludes" value="clover/**" />
+
+	<!-- classpath additions -->
+	<path id="classpathExtension">
+
+	</path>
+
+	<!-- import the common build file -->
+	<import file="../common/common.xml" />
+
+	<!-- set project specific properties -->
+	<!-- the directory location for the testschemas -->
+	<property name="testschemas.dir" value="${testcases.dir}/testschemas" />
+
+	<!-- compile src.dir and include statements for the targets 
+	     it is always "targetname.src" and "targetname.includes" -->
+	<property name="core.src" value="${src.dir}/de/uni_koblenz/jgralab" />
+	<property name="core.includes" value="*.java graphmarker/** schema/** codegenerator/** impl/** jniserver/** trans/**" />
+
+	<property name="tgtools.src" value="${src.dir}/de/uni_koblenz/jgralab/utilities" />
+	<property name="tgtools.includes" value="tgschema2java/** ant/TgSchema2JavaTask.java tg2dot/** tg2whatever/**" />
+
+	<property name="greql2.src" value="${src.dir}/de/uni_koblenz/jgralab/greql2" />
+
+	<property name="gruml.src" value="${src.dir}/de/uni_koblenz/jgralab/grumlschema/" />
+
+	<property name="graphvalidator.src" value="${src.dir}/de/uni_koblenz/jgralab" />
+	<property name="graphvalidator.includes" value="graphvalidator/**" />
+
+	<property name="rsa2tg.src" value="${src.dir}/de/uni_koblenz/jgralab/utilities" />
+	<property name="rsa2tg.includes" value="rsa2tg/** tg2schemagraph/** common/**" />
+
+	<property name="utilities.src" value="${src.dir}/de/uni_koblenz/jgralab/utilities" />
+	<property name="utilities.includes" value="ant/** common/** converter/** greqlinterface/** jgralab2owl/** schemacompare/** tg2gdl/** tg2gxl/** tg2sidiff/** tgmerge/** tgraphbrowser/** xmi2tgschema/** xml/**" />
+	
+	<!-- enable clover for the testcases -->
+	<property name="clover.jar" value="${lib.dir}/clover/clover-3.0.1.jar" />
+	<property name="clover.dest" value="${project.dir}/build/clover-report" />
+	<taskdef resource="cloverlib.xml" classpath="${clover.jar}" />
+	<clover-env />
+
+	<!-- The targets -->
+	<target name="build" depends="clean,compile,jar" />
+
+	<!-- compile -->
+	<target name="compile" depends="core,tgtools,greql2,graphvalidator,rsa2tg,utilities,generatetestschemas" />
+
+	<!-- jgralab -->
+	<!-- compiles jgralab basic sources -->
+	<target name="core" depends="createClassesDir">
+		<javac fork="true" srcdir="${core.src}" includes="${core.includes}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" target="${javac.targetVM}" />
+	</target>
+
+	<!-- tgtools (utils which are needed for schema creation (TgSchema2Java)
+	         and that don't depend on schemas themselves) -->
+	<target name="tgtools" depends="core">
+		<javac fork="true" srcdir="${tgtools.src}" includes="${tgtools.includes}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" target="${javac.targetVM}" />
+		<taskdef name="tgschema2java" classname="de.uni_koblenz.jgralab.utilities.ant.TgSchema2JavaTask" classpath="${classes.dir}" />
+	</target>
+
+	<!-- compiles greql2 sources -->
+	<target name="greql2" depends="tgtools">
+		<tgschema2java schema="${src.dir}/de/uni_koblenz/jgralab/greql2/greql2Schema.tg" path="${src.dir}" implementationMode="standard" />
+		<javac fork="true" srcdir="${greql2.src}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" target="${javac.targetVM}" />
+	</target>
+
+	<!-- graphvalidator -->
+	<target name="graphvalidator" depends="greql2">
+		<javac fork="true" srcdir="${graphvalidator.src}" includes="${graphvalidator.includes}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" target="${javac.targetVM}" />
+	</target>
+
+	<target name="rsa2tg" depends="gruml,graphvalidator">
+		<javac fork="true" srcdir="${rsa2tg.src}" includes="${rsa2tg.includes}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" target="${javac.targetVM}" />
+	</target>
+
+	<!-- compiles utility sources -->
+	<target name="utilities" depends="rsa2tg,gruml">
+		<javac fork="true" srcdir="${utilities.src}" includes="${utilities.includes}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" target="${javac.targetVM}" />
+	</target>
+
+	<!-- generates the gruml schema and compiles it -->
+	<target name="gruml" depends="tgtools,greql2">
+		<tgschema2java schema="${src.dir}/de/uni_koblenz/jgralab/utilities/tg2schemagraph/GrumlSchema.tg" path="${src.dir}" implementationMode="standard" />
+		<javac fork="true" srcdir="${gruml.src}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" target="${javac.targetVM}" />
+	</target>
+
+	<!-- generates the schemas required for test cases without compiling them -->
+	<target name="generatetestschemas" depends="tgtools">
+		<tgschema2java path="${testcases.dir}">
+			<fileset dir="${testschemas.dir}" includes="*.tg" />
+		</tgschema2java>
+	</target>
+
+	<!-- unjar -->
+	<!-- prepares additional common libraries to be added to the jar file -->
+	<target name="unjar" depends="de.uni_koblenz.common.unjar">
+		<unjar dest="${tmp.dir}">
+			<fileset dir="${comlib.dir}/apache/commons/cli/" includes="**/*.jar" />
+			<fileset dir="${comlib.dir}/jdom/" includes="**/*.jar" />
+		</unjar>
+		<copy todir="${tmp.dir}/META-INF/license">
+			<fileset dir="license" includes="jdom/** jgralab/**" />
+		</copy>
+	</target>
+
+	<!-- release -->
+	<!-- calls targets modify, clean, jar, test and document -->
+	<target name="release" depends="modify,cleanall,jar,sourcejar,document" />
+</project>
