@@ -18,7 +18,7 @@ import de.uni_koblenz.jgralab.schema.Schema;
  * This task deletes generated schema files according to a schema contained in a
  * tg file.
  * <ul>
- * <li><code>tgFilename</code> is the filename of the tg file, containing the
+ * <li><code>schemaFile</code> is the filename of the tg file, containing the
  * schema. If more than one schema should be deleted, a nested fileset can be
  * used instead. If this parameter is set and a nested fileset is present, both
  * will be taken.</li>
@@ -41,7 +41,7 @@ public class DeleteGeneratedSchemaTask extends Task {
 		tgFiles = new HashSet<String>();
 	}
 
-	public void setTgFilename(String filename) {
+	public void setSchemaFile(String filename) {
 		tgFiles.add(filename);
 	}
 
