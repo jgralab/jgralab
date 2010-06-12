@@ -1,7 +1,6 @@
 package de.uni_koblenz.jgralab.utilities.ant;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -19,12 +18,12 @@ import de.uni_koblenz.jgralab.utilities.tgschema2java.TgSchema2Java;
  * It has several parameters that can be set in ant. These parameters are
  * described here briefly.<br />
  * <ul>
- * <li><code>schema</code> corresponds to the cli option -s . The filename of
- * the tg file, containing the schema is set using this parameter. If more than
- * one schema should be generated, a nested fileset can be used instead. If this
- * parameter is set and a nested fileset is present, both will be taken.</li>
- * <li><code>path</code> the source location of Java's base package. The schema
- * will be generated into this path. If multiple schema files have to be
+ * <li><code>schemaFile</code> corresponds to the cli option -s . The filename
+ * of the tg file, containing the schema is set using this parameter. If more
+ * than one schema should be generated, a nested fileset can be used instead. If
+ * this parameter is set and a nested fileset is present, both will be taken.</li>
+ * <li><code>sourcePath</code> the source location of Java's base package. The
+ * schema will be generated into this path. If multiple schema files have to be
  * generated into different base package locations (e.g. "nomal" schemas to
  * "src" and test schemas to "testit"), the task must be called multiple times,
  * once for each base package location.</li>
@@ -54,11 +53,11 @@ public class TgSchema2JavaTask extends Task {
 		schemaLocation = new HashSet<String>();
 	}
 
-	public void setPath(String value) {
+	public void setSourcePath(String value) {
 		commitPath = value;
 	}
 
-	public void setSchema(String value) {
+	public void setSchemaFile(String value) {
 		schemaLocation.add(value);
 	}
 
@@ -85,7 +84,7 @@ public class TgSchema2JavaTask extends Task {
 	public void setImplementationMode(String value) {
 
 		String[] values = value.toLowerCase().split(",");
-		if(values.length > 0){
+		if (values.length > 0) {
 			executeObject.setTransactionSupport(false);
 			executeObject.setStandardSupport(false);
 			// TODO uncomment when implemented
@@ -121,6 +120,12 @@ public class TgSchema2JavaTask extends Task {
 
 	@Override
 	public void execute() {
+		if (schemaLocation == null) {
+			throw new BuildException("Schema file not set.");
+		}
+		if (commitPath == null) {
+			throw new BuildException("Source path not set.");
+		}
 		executeObject.setCommitPath(commitPath);
 		try {
 			for (String currentTG : schemaLocation) {
