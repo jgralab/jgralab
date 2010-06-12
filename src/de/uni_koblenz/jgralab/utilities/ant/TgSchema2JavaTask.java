@@ -1,6 +1,7 @@
 package de.uni_koblenz.jgralab.utilities.ant;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -84,6 +85,12 @@ public class TgSchema2JavaTask extends Task {
 	public void setImplementationMode(String value) {
 
 		String[] values = value.toLowerCase().split(",");
+		if(values.length > 0){
+			executeObject.setTransactionSupport(false);
+			executeObject.setStandardSupport(false);
+			// TODO uncomment when implemented
+			// executeObject.setSavememSupport(false);
+		}
 		for (String v : values) {
 			if (v.equals("transaction")) {
 				executeObject.setTransactionSupport(true);
