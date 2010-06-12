@@ -13,6 +13,33 @@ import org.apache.tools.ant.types.resources.FileResource;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.utilities.tgschema2java.TgSchema2Java;
 
+/**
+ * This class implements a call to TgSchema2Java as custom ant task.<br />
+ * It has several parameters that can be set in ant. These parameters are
+ * described here briefly.<br />
+ * <ul>
+ * <li><code>schema</code> corresponds to the cli option -s . The filename of
+ * the tg file, containing the schema is set using this parameter. If more than
+ * one schema should be generated, a nested fileset can be used instead. If this
+ * parameter is set and a nested fileset is present, both will be taken.</li>
+ * <li><code>path</code> the source location of Java's base package. The schema
+ * will be generated into this path. If multiple schema files have to be
+ * generated into different base package locations (e.g. "nomal" schemas to
+ * "src" and test schemas to "testit"), the task must be called multiple times,
+ * once for each base package location.</li>
+ * <li><code>implementationMode</code> takes a comma separated list of possible
+ * implementation modes. If unset, all implementations will be generated.
+ * Possible implementation modes are currently "standard", "transaction" and
+ * "savemem".</li>
+ * <li><code>subtypeFlag</code> corresponds to the cli option -f . If set,
+ * separate methods with subtype flag will be created.</li>
+ * <li><code>withoutTypes</code> corresponds to the cli option -w . If set, no
+ * type specific methods are created in the classes.</li>
+ *</ul>
+ * 
+ * @author ist@uni-koblenz.de
+ * 
+ */
 public class TgSchema2JavaTask extends Task {
 
 	private TgSchema2Java executeObject;
@@ -55,25 +82,30 @@ public class TgSchema2JavaTask extends Task {
 	}
 
 	public void setImplementationMode(String value) {
-		String v = value.toLowerCase();
-		if (v.equals("transaction")) {
-			executeObject.setTransactionSupportOnly();
-		} else if (v.equals("standard")) {
-			executeObject.setStandardSupportOnly();
-		} else if (!v.equals("all")) {
-			throw new BuildException(
-					"Invalid value for implementation mode: "
-							+ value
-							+ "\nOnly \"transaction\",\"standard\" and \"all\" are allowed.");
+
+		String[] values = value.toLowerCase().split(",");
+		for (String v : values) {
+			if (v.equals("transaction")) {
+				executeObject.setTransactionSupport(true);
+			} else if (v.equals("standard")) {
+				executeObject.setStandardSupport(true);
+			} else if (v.equals("savemem")) {
+				executeObject.setSavememSupport(true);
+			} else {
+				throw new BuildException(
+						"Invalid value for implementation mode: "
+								+ v
+								+ "\nOnly \"transaction\",\"standard\" and \"savemem\" are supported.");
+			}
 		}
 	}
-	
-	public void addConfiguredFileset(FileSet files){
+
+	public void addConfiguredFileset(FileSet files) {
 		@SuppressWarnings("unchecked")
 		Iterator fileIterator = files.iterator();
-		while(fileIterator.hasNext()){
+		while (fileIterator.hasNext()) {
 			Object current = fileIterator.next();
-			if(current instanceof FileResource){
+			if (current instanceof FileResource) {
 				File currentFile = ((FileResource) current).getFile();
 				schemaLocation.add(currentFile.getAbsolutePath());
 			}

@@ -175,6 +175,18 @@ public class TgSchema2Java {
 		config.setStandardSupport(true);
 		config.setTransactionSupport(false);
 	}
+	
+	public void setStandardSupport(boolean value){
+		config.setStandardSupport(value);
+	}
+	
+	public void setTransactionSupport(boolean value){
+		config.setTransactionSupport(value);
+	}
+	
+	public void setSavememSupport(boolean value){
+		System.err.println("Savemem support not implementet yet.");
+	}
 
 	/**
 	 * Constructs an instance of TgSchema2Java with the given command line
