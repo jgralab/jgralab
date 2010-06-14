@@ -129,7 +129,8 @@ public abstract class Tg2Whatever {
 	 */
 	public void setGraph(String fileName) throws GraphIOException {
 		graphFileName = fileName;
-		graph = GraphIO.loadSchemaAndGraphFromFile(graphFileName, CodeGeneratorConfiguration.WITHOUT_TRANSACTIONS,
+		graph = GraphIO.loadSchemaAndGraphFromFile(graphFileName,
+				CodeGeneratorConfiguration.WITHOUT_TRANSACTIONS,
 				new ProgressFunctionImpl());
 	}
 
@@ -186,72 +187,82 @@ public abstract class Tg2Whatever {
 	}
 
 	public void printGraph() {
-		if (graph == null) {
-			if (schema == null) {
-				if (schemaFileName != null) {
-					try {
-						System.out.println("Loaded schema");
-						schema = GraphIO.loadSchemaFromFile(schemaFileName);
-						System.out.println("Schema loaded");
-					} catch (GraphIOException ex) {
-						System.err.println("Schema in file '" + schemaFileName
-								+ "' could not be read.");
-						System.exit(1);
-					}
-				} else {
-					try {
-						System.out.println("Loading Schema from Graph");
-						schema = GraphIO.loadSchemaFromFile(graphFileName);
-						schema.compile(CodeGeneratorConfiguration.MINIMAL);
-						System.out.println("Schema loaded");
-					} catch (GraphIOException ex) {
-						System.err.println("Graph in file '" + graphFileName
-								+ "' could not be read.");
-						ex.printStackTrace();
-						System.exit(1);
-					}
-				}
-
-			}
-			try {
-				System.out.println("Loading graph from file " + graphFileName);
-				graph = GraphIO.loadGraphFromFile(graphFileName, schema,
-						new ProgressFunctionImpl());
-				System.out.println("Graph loaded");
-			} catch (GraphIOException ex) {
-				System.err.println("Graph in file '" + graphFileName
-						+ "' could not be read.");
-				ex.printStackTrace();
-				System.exit(1);
-			}
-		}
+		initializeGraphAndSchema();
 		try {
-			PrintStream out;
-			if (outputName.equals("")) {
-				out = System.out;
-			} else {
-				out = new PrintStream(new FileOutputStream(outputName));
-			}
+			PrintStream out = initializeOutputStream();
 			graphStart(out);
-			Vertex v = graph.getFirstVertex();
-			while (v != null) {
-				if ((marker == null) || (marker.isMarked(v))) {
-					printVertex(out, v);
-				}
-				v = v.getNextVertex();
-			}
-
-			Edge e = graph.getFirstEdgeInGraph();
-			while (e != null) {
-				if ((marker == null) || (marker.isMarked(e))) {
-					printEdge(out, e);
-				}
-				e = e.getNextEdgeInGraph();
-			}
+			printVertices(out);
+			printEdges(out);
 			graphEnd(out);
 		} catch (FileNotFoundException e) {
 			System.err.println("File '" + outputName
 					+ "' could not be created.");
+			System.exit(1);
+		}
+	}
+
+	private PrintStream initializeOutputStream() throws FileNotFoundException {
+		PrintStream out;
+		if (outputName.equals("")) {
+			out = System.out;
+		} else {
+			out = new PrintStream(new FileOutputStream(outputName));
+		}
+		return out;
+	}
+
+	private void printEdges(PrintStream out) {
+		for (Edge e : graph.edges()) {
+			if (marker == null || marker.isMarked(e)) {
+				printEdge(out, e);
+			}
+		}
+	}
+
+	private void printVertices(PrintStream out) {
+		for (Vertex v : graph.vertices()) {
+			if (marker == null || marker.isMarked(v)) {
+				printVertex(out, v);
+			}
+		}
+	}
+
+	private void loadGraph() {
+		try {
+			System.out.println("Loading graph from file " + graphFileName);
+			graph = GraphIO.loadGraphFromFile(graphFileName, schema,
+					new ProgressFunctionImpl());
+			System.out.println("Graph loaded");
+		} catch (GraphIOException ex) {
+			System.err.println("Graph in file '" + graphFileName
+					+ "' could not be read.");
+			ex.printStackTrace();
+			System.exit(1);
+		}
+	}
+
+	private void loadSchemaFromGraph() {
+		try {
+			System.out.println("Loading Schema from Graph");
+			schema = GraphIO.loadSchemaFromFile(graphFileName);
+			schema.compile(CodeGeneratorConfiguration.MINIMAL);
+			System.out.println("Schema loaded");
+		} catch (GraphIOException ex) {
+			System.err.println("Graph in file '" + graphFileName
+					+ "' could not be read.");
+			ex.printStackTrace();
+			System.exit(1);
+		}
+	}
+
+	private void loadSchema() {
+		try {
+			System.out.println("Loaded schema");
+			schema = GraphIO.loadSchemaFromFile(schemaFileName);
+			System.out.println("Schema loaded");
+		} catch (GraphIOException ex) {
+			System.err.println("Schema in file '" + schemaFileName
+					+ "' could not be read.");
 			System.exit(1);
 		}
 	}
@@ -308,105 +319,32 @@ public abstract class Tg2Whatever {
 		edgeAttributes = comLine.hasOption("e");
 		roleNames = comLine.hasOption("n");
 		shortenStrings = comLine.hasOption("s");
-
-		// LongOpt[] longOptions = new LongOpt[9];
-		//
-		// int c = 0;
-		// longOptions[c++] = new LongOpt("graph", LongOpt.REQUIRED_ARGUMENT,
-		// null, 'g');
-		// longOptions[c++] = new LongOpt("output", LongOpt.REQUIRED_ARGUMENT,
-		// null, 'o');
-		//
-		// longOptions[c++] = new LongOpt("alternative-schema",
-		// LongOpt.REQUIRED_ARGUMENT, null, 'a');
-		//
-		// longOptions[c++] = new LongOpt("domains", LongOpt.NO_ARGUMENT, null,
-		// 'd');
-		//
-		// longOptions[c++] = new LongOpt("edgeattr", LongOpt.NO_ARGUMENT, null,
-		// 'e');
-		//
-		// longOptions[c++] = new LongOpt("reversed", LongOpt.NO_ARGUMENT, null,
-		// 'r');
-		//
-		// longOptions[c++] = new LongOpt("rolenames", LongOpt.NO_ARGUMENT,
-		// null,
-		// 'n');
-		//
-		// longOptions[c++] = new LongOpt("shorten-strings",
-		// LongOpt.NO_ARGUMENT,
-		// null, 's');
-		//
-		// longOptions[c++] = new LongOpt("help", LongOpt.NO_ARGUMENT, null,
-		// 'h');
-		//
-		// Getopt g = new Getopt("Tg2Dot", args, "g:o:a:dernsh", longOptions);
-		// c = g.getopt();
-		// String graphName = null;
-		// String schemaName = null;
-		// while (c >= 0) {
-		// switch (c) {
-		// case 'g':
-		// try {
-		// graphName = g.getOptarg();
-		// setGraph(graphName);
-		// } catch (GraphIOException e) {
-		// System.err.println("Coundn't load graph in file '"
-		// + graphName + "': " + e.getMessage());
-		// if (e.getCause() != null) {
-		// e.getCause().printStackTrace();
-		// }
-		// System.exit(1);
-		// }
-		// break;
-		// case 'o':
-		// outputName = g.getOptarg();
-		// if (outputName == null) {
-		// usage(1);
-		// }
-		// break;
-		// case 'a':
-		// schemaName = g.getOptarg();
-		// setSchema(schemaName);
-		// break;
-		// case 'r':
-		// reversedEdges = true;
-		// break;
-		// case 'd':
-		// domainNames = true;
-		// break;
-		// case 'e':
-		// edgeAttributes = true;
-		// break;
-		// case 'n':
-		// roleNames = true;
-		// break;
-		// case 's':
-		// shortenStrings = true;
-		// break;
-		// case '?':
-		// case 'h':
-		// usage(0);
-		// break;
-		// default:
-		// throw new RuntimeException("FixMe (c='" + (char) c + "')");
-		// }
-		// c = g.getopt();
-		// }
-		// if (g.getOptind() < args.length) {
-		// System.err.println("Extra arguments!");
-		// usage(1);
-		// }
-		// if (g.getOptarg() == null) {
-		// System.out.println("Missing option");
-		// // usage(1);
-		// }
-		// if (outputName == null) {
-		// outputName = "";
-		// }
 	}
 
-	private CommandLine processCommandLineOptions(String[] args) {
+	protected void initializeGraphAndSchema() {
+		if (graph == null) {
+			if (schema == null) {
+				if (schemaFileName != null) {
+					loadSchema();
+				} else {
+					loadSchemaFromGraph();
+				}
+
+			}
+			loadGraph();
+		}
+	}
+
+	final protected CommandLine processCommandLineOptions(String[] args) {
+		OptionHandler oh = createOptionHandler();
+		return oh.parse(args);
+	}
+
+	protected OptionHandler createOptionHandler() {
+		return createDefaultOptionHandler();
+	}
+
+	final protected OptionHandler createDefaultOptionHandler() {
 		String toolString = "java " + this.getClass().getName();
 		String versionString = JGraLab.getInfo(false);
 		OptionHandler oh = new OptionHandler(toolString, versionString);
@@ -459,35 +397,6 @@ public abstract class Tg2Whatever {
 				"(optional): if set, strings are shortened");
 		shortenStrings.setRequired(false);
 		oh.addOption(shortenStrings);
-
-		return oh.parse(args);
+		return oh;
 	}
-
-	// protected void usage(int exitCode) {
-	// System.err.println("Usage: Tg2Dot -g graphFileName [options]");
-	// System.err
-	// .println("The schema classes of the graph must be reachable via CLASSPATH.");
-	// System.err.println("Options are:");
-	// System.err
-	// .println("-g graphFileName   (--graph)     the graph to be converted");
-	// System.err
-	// .println("-a schemaFileName   (--alternative-schema)    the schema that should be used instead of the one included in the graph file");
-	// System.err
-	// .println("-o outputFileName  (--output)    the output file name, or empty for stdout");
-	// System.err
-	// .println("-d                 (--domains)   if set, domain names of attributes will be printed");
-	// System.err
-	// .println("-e                 (--edgeattr)  if set, edge attributes will be printed");
-	// System.err
-	// .println("-n                 (--rolenames) if set, role names will be printed");
-	// System.err
-	// .println("-r                 (--reversed)  useful if edges run from child nodes to their parents");
-	// System.err
-	// .println("                                 results in a tree with root node at top");
-	// System.err
-	// .println("-h                 (--help)      prints usage information");
-	//
-	// System.exit(exitCode);
-	// }
-
 }
