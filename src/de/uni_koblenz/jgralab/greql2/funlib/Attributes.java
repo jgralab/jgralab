@@ -97,7 +97,7 @@ public class Attributes extends Greql2Function {
 		for (Attribute a : clazz.getAttributeList()) {
 			JValueTuple tup = new JValueTuple();
 			tup.add(new JValueImpl(a.getName()));
-			tup.add(new JValueImpl(a.getDomain().toString()));
+			tup.add(new JValueImpl(a.getDomain().getQualifiedName()));
 			set.add(tup);
 		}
 		return set;
