@@ -185,7 +185,7 @@ public class ManualGreqlLexer {
 						&& (!isSeparator(query.charAt(position)))) {
 					nextPossibleToken.append(query.charAt(position++));
 				}
-				if (query.length() <= position) {
+				if (query.length() < position) {
 					return new SimpleToken(TokenTypes.EOF, start, 0);
 				}
 				String tokenText = nextPossibleToken.toString();
