@@ -231,7 +231,7 @@ public class Tg2GXL extends Tg2Whatever {
 	protected int getEdgeIncidence(Edge e, Vertex v) {
 		int i = 0;
 		for (Edge e0 : v.incidences()) {
-			if ((e0 == e) && (e0.isNormal() == e.isNormal())) {
+			if (e0 == e && e0.isNormal() == e.isNormal()) {
 				return i;
 			}
 			i++;
@@ -420,10 +420,10 @@ public class Tg2GXL extends Tg2Whatever {
 		String attrValue = "null";
 
 		if (val != null) {
-			if ((val instanceof Double) || (val instanceof Float)) {
+			if (val instanceof Double || val instanceof Float) {
 				val = Double.parseDouble(val.toString());
 			}
-			if ((val instanceof Long) || (val instanceof Integer)) {
+			if (val instanceof Long || val instanceof Integer) {
 				val = Long.parseLong(val.toString());
 			}
 			attrValue = stringQuote(val.toString());
@@ -444,7 +444,7 @@ public class Tg2GXL extends Tg2Whatever {
 			out.println("" + attrValue);
 			out.println("</String>");
 		}
-		if ((dom instanceof IntegerDomain) || (dom instanceof LongDomain)) {
+		if (dom instanceof IntegerDomain || dom instanceof LongDomain) {
 			out.println("<Int>");
 			out.println("" + attrValue);
 			out.println("</Int>");
@@ -525,7 +525,7 @@ public class Tg2GXL extends Tg2Whatever {
 		}
 	}
 
-	private static CommandLine processCommandLineOptions(String[] args) {
+	protected static CommandLine processCommandlineOptions(String[] args) {
 		String toolString = "java " + Tg2GXL.class.getName();
 		String versionString = JGraLab.getInfo(false);
 		OptionHandler oh = new OptionHandler(toolString, versionString);
@@ -585,9 +585,9 @@ public class Tg2GXL extends Tg2Whatever {
 				sb.append("\\\\t");
 				break;
 			default:
-				if ((ch < ' ') || (ch > '\u007F')) {
+				if (ch < ' ' || ch > '\u007F') {
 					sb.append("\\\\u");
-					String code = ("000" + Integer.toHexString(ch));
+					String code = "000" + Integer.toHexString(ch);
 					sb.append(code.substring(code.length() - 4, code.length()));
 				} else {
 					sb.append(ch);
