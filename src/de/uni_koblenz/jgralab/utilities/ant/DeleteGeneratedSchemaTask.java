@@ -25,8 +25,8 @@ import de.uni_koblenz.jgralab.schema.Schema;
  * <li><code>sourcePath</code> the source location of Java's base package. The
  * generated schema will be deleted from this path. If multiple schemas have to
  * be deleted from different base package locations (e.g. "nomal" schemas from
- * "src" and test schemas from "testit"), the task must be called multiple times,
- * once for each base package location.</li>
+ * "src" and test schemas from "testit"), the task must be called multiple
+ * times, once for each base package location.</li>
  * </ul>
  * 
  * @author ist@uni-koblenz.de
@@ -61,19 +61,25 @@ public class DeleteGeneratedSchemaTask extends Task {
 		}
 	}
 
+	@Override
 	public void execute() {
 		try {
 			for (String currentTG : tgFiles) {
-				deleteGeneratedSchema(currentTG);
+				if (new File(currentTG).exists()) {
+					Schema schema = GraphIO.loadSchemaFromFile(currentTG);
+					deleteGeneratedSchema(sourcePath, schema);
+				} else {
+					System.err.println("Warning: could not delete generated schema files: \"" + currentTG + "\" could not be found.");
+				}
 			}
 		} catch (GraphIOException e) {
 			throw new BuildException(e);
 		}
 	}
 
-	private void deleteGeneratedSchema(String filename) throws GraphIOException {
-		Schema schema = GraphIO.loadSchemaFromFile(filename);
-		String toDelete = sourcePath + File.separator + schema.getPathName();
+	public static void deleteGeneratedSchema(String commitPath, Schema schema)
+			throws GraphIOException {
+		String toDelete = commitPath + File.separator + schema.getPathName();
 		File directory = new File(toDelete);
 		if (directory.exists()) {
 			assert (directory.isDirectory());
@@ -83,7 +89,7 @@ public class DeleteGeneratedSchemaTask extends Task {
 		}
 	}
 
-	private void deleteTree(File toDelete) {
+	public static void deleteTree(File toDelete) {
 		if (toDelete.isFile()) {
 			toDelete.delete();
 		} else {

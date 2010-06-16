@@ -175,16 +175,16 @@ public class TgSchema2Java {
 		config.setStandardSupport(true);
 		config.setTransactionSupport(false);
 	}
-	
-	public void setStandardSupport(boolean value){
+
+	public void setStandardSupport(boolean value) {
 		config.setStandardSupport(value);
 	}
-	
-	public void setTransactionSupport(boolean value){
+
+	public void setTransactionSupport(boolean value) {
 		config.setTransactionSupport(value);
 	}
-	
-	public void setSavememSupport(boolean value){
+
+	public void setSavememSupport(boolean value) {
 		System.err.println("Savemem support not implementet yet.");
 	}
 
@@ -549,5 +549,9 @@ public class TgSchema2Java {
 
 	public void setJarFileName(String jarFileName) {
 		this.jarFileName = jarFileName;
+	}
+
+	public Schema getSchema() {
+		return schema;
 	}
 }
