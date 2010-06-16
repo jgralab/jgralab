@@ -83,15 +83,13 @@
 	<!-- The targets -->
 	<target name="build" depends="clean,compile,jar" />
 
-	<target name="cleanall" depends="tgtools">
-		<delete dir="${doc.dir}" />
-		<delete dir="${testresults.dir}" />
-		<deletegeneratedschema schemaFile="${greql2.schemafile}" sourcePath="${src.dir}" />
-		<deletegeneratedschema schemaFile="${gruml.schemafile}" sourcePath="${src.dir}" />
-		<deletegeneratedschema sourcePath="${testcases.dir}">
-			<fileset dir="${testschemas.dir}" includes="*.tg" />
-		</deletegeneratedschema>
-		<antcall target="clean" />
+	<target name="clean">
+		<delete dir="${classes.dir}" />
+		<delete dir="${tmp.dir}" />
+		<delete dir="${testclasses.dir}" />
+		<delete dir="${src.dir}/de/uni_koblenz/jgralab/greql2/schema" />
+		<delete dir="${src.dir}/de/uni_koblenz/jgralab/grumlschema" />
+		<delete dir="${testcases.dir}/de/uni_koblenz/jgralabtest/schemas" />
 	</target>
 
 	<!-- compile -->

@@ -130,6 +130,8 @@ public class TgSchema2JavaTask extends Task {
 		try {
 			for (String currentTG : schemaLocation) {
 				executeObject.loadSchema(currentTG);
+				DeleteGeneratedSchemaTask.deleteGeneratedSchema(commitPath,
+						executeObject.getSchema());
 				executeObject.execute();
 			}
 		} catch (GraphIOException e) {
