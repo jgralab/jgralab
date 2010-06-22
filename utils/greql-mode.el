@@ -571,7 +571,8 @@ vertices in the query result."
                                    (region-beginning) (region-end))))
                          (with-current-buffer (find-file-noselect f)
                            (insert str)
-                           (save-buffer))
+                           (save-buffer)
+                           (kill-buffer))
                          f)
                      (save-buffer)
                      (expand-file-name (buffer-file-name)))))
@@ -584,9 +585,7 @@ vertices in the query result."
                            :service greql-server-port
                            :filter 'greql-filter-result)))
     (process-send-string greql-process (concat "g:" (expand-file-name greql-graph) "\n"))
-    (process-send-string greql-process (concat (if arg "d:"  "q:") queryfile "\n"))
-    ;;(display-buffer buffer)
-    ))
+    (process-send-string greql-process (concat (if arg "d:" "q:") queryfile "\n"))))
 
 (defvar greql--error-overlay nil)
 (make-variable-buffer-local 'greql--error-overlay)
