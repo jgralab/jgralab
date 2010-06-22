@@ -1,6 +1,5 @@
 package de.uni_koblenz.jgralab.utilities.xml;
 
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -54,12 +53,15 @@ import de.uni_koblenz.jgralab.grumlschema.structure.Redefines;
 import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesEdgeClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesVertexClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
-import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.utilities.tg2schemagraph.Schema2SchemaGraph;
 
 public class SchemaGraph2XMI {
 
 	private final ArrayList<Domain> typesToBeDeclaredAtTheEnd = new ArrayList<Domain>();
+
+	private boolean isBidirectional = false;
+
+	private boolean isReverted = false;
 
 	/**
 	 * @param args
@@ -67,15 +69,39 @@ public class SchemaGraph2XMI {
 	 */
 	public static void main(String[] args) throws GraphIOException {
 
-		// System.out.println("SchemaGraph to XMI");
-		// System.out.println("==================");
+		System.out.println("SchemaGraph to XMI");
+		System.out.println("==================");
 
-		// new TgSchema2XMI("D:/test.xmi", "D:/graphen/BeispielGraph.tg");
+		SchemaGraph2XMI s = new SchemaGraph2XMI();
 
-		// // Retrieving all command line options
-		// CommandLine cli = processCommandLineOptions(args);
-		//
-		// assert cli != null : "No CommandLine object has been generated!";
+		// Retrieving all command line options
+		CommandLine cli = processCommandLineOptions(args);
+
+		assert cli != null : "No CommandLine object has been generated!";
+
+		s.isBidirectional = cli.hasOption("b");
+		s.isReverted = cli.hasOption("r");
+
+		String outputName = cli.getOptionValue("o");
+		try {
+			if (cli.hasOption("ig")) {
+				s.process((SchemaGraph) GraphIO.loadGraphFromFile(cli
+						.getOptionValue("ig"), null), outputName);
+			} else {
+				s.process(new Schema2SchemaGraph().convert2SchemaGraph(GraphIO
+						.loadSchemaFromFile(cli.getOptionValue("i"))),
+						outputName);
+			}
+		} catch (Exception e) {
+			System.err.println("An Exception occured while processing "
+					+ (cli.hasOption("i") ? cli.getOptionValue("i") : cli
+							.getOptionValue("ig")) + ".");
+			System.err.println(e.getMessage());
+			e.printStackTrace();
+			e.printStackTrace();
+		}
+
+		System.out.println("Fini.");
 	}
 
 	/**
@@ -125,38 +151,28 @@ public class SchemaGraph2XMI {
 		input.setRequired(true);
 		oh.addOptionGroup(input);
 
+		Option bidirectional = new Option("b", "bidirectional", false,
+				"(optional): If set the EdgeClasses are created as bidirectional associations.");
+		bidirectional.setRequired(false);
+		oh.addOption(bidirectional);
+
+		Option revertedDirections = new Option("r", "revert", false,
+				"(optional): If set the EdgeClasses are created as navigable from To to From.");
+		revertedDirections.setRequired(false);
+		oh.addOption(revertedDirections);
+
 		return oh.parse(args);
 	}
 
-	public SchemaGraph2XMI(String schemaName, String xmiName)
-			throws GraphIOException {
-		new SchemaGraph2XMI(GraphIO.loadSchemaFromFile(schemaName), xmiName);
-	}
-
-	public SchemaGraph2XMI(Schema schema, String xmiName) {
-		new SchemaGraph2XMI(new Schema2SchemaGraph()
-				.convert2SchemaGraph(schema), xmiName);
-	}
-
-	public SchemaGraph2XMI(SchemaGraph schemaGraph, String xmiName) {
-		try {
-			createXMI(xmiName, schemaGraph);
-		} catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	public void process(SchemaGraph schemaGraph, String xmiName)
+			throws XMLStreamException, IOException {
+		createXMI(xmiName, schemaGraph);
 	}
 
 	private void createXMI(String xmiName, SchemaGraph schemaGraph)
 			throws XMLStreamException, IOException {
 		// create the XMLStreamWriter which creates the current xmi-file.
-		OutputStream out = /* System.out; */new FileOutputStream(xmiName);
+		OutputStream out = new FileOutputStream(xmiName);
 		XMLOutputFactory factory = XMLOutputFactory.newInstance();
 		factory.setProperty("javax.xml.stream.isRepairingNamespaces",
 				Boolean.TRUE);
@@ -184,9 +200,6 @@ public class SchemaGraph2XMI {
 	 */
 	private void createRootElement(XMLStreamWriter writer,
 			SchemaGraph schemaGraph) throws XMLStreamException {
-		// de.uni_koblenz.jgralab.grumlschema.structure.Schema schema =
-		// schemaGraph
-		// .getFirstSchema();
 		// start root element
 		writer.writeStartElement(XMIConstants.NAMESPACE_PREFIX_XMI,
 				XMIConstants.XMI_TAG_XMI, XMIConstants.NAMESPACE_XMI);
@@ -204,58 +217,13 @@ public class SchemaGraph2XMI {
 		writer.writeAttribute(XMIConstants.NAMESPACE_XSI,
 				XMIConstants.XSI_ATTRIBUTE_SCHEMALOCATION,
 				XMIConstants.SCHEMALOCATION);
-		// writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-		// XMIConstants.XMI_ATTRIBUTE_ID, schema.get_packagePrefix() + "."
-		// + schema.get_name());
-		// writer.writeAttribute(XMIConstants.ATTRIBUTE_NAME, schema
-		// .get_packagePrefix()
-		// + "." + schema.get_name());
 
-		// // create model element
+		// create model element
 		createModelElement(writer, schemaGraph);
-
-		// create packageImport
-		// createPackageImport(writer);
-
-		// convert graph class
-		// createGraphAndVertexClass(writer, schemaGraph.getFirstGraphClass());
-
-		// convert graph
-		// createPackage(writer, (Package) schemaGraph.getFirstSchema()
-		// .getFirstContainsDefaultPackage().getThat());
-
-		// create Types
-		// createTypes(writer);
-
-		// create profileApplication
-		// createProfileApplication(writer);
 
 		// close root element
 		writer.writeEndElement();
 	}
-
-	// private void createPackageImport(XMLStreamWriter writer)
-	// throws XMLStreamException {
-	// // start packageImport
-	// writer.writeStartElement(XMIConstants.TAG_PACKAGEIMPORT);
-	// writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-	// XMIConstants.XMI_ATTRIBUTE_TYPE,
-	// XMIConstants.PACKAGEIMPORT_TYPE_VALUE);
-	// writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-	// XMIConstants.XMI_ATTRIBUTE_ID, "schema"
-	// + XMIConstants.TAG_PACKAGEIMPORT);
-	//
-	// // create importedPackage
-	// writer.writeEmptyElement(XMIConstants.TAG_IMPORTEDPACKAGE);
-	// writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-	// XMIConstants.XMI_ATTRIBUTE_TYPE,
-	// XMIConstants.IMPORTEDPACKAGE_TYPE_VALUE);
-	// writer.writeAttribute(XMIConstants.ATTRIBUTE_HREF,
-	// XMIConstants.IMPORTEDPACKAGE_HREF_VALUE);
-	//
-	// // end packageImport
-	// writer.writeEndElement();
-	// }
 
 	/**
 	 * @param writer
@@ -690,13 +658,15 @@ public class SchemaGraph2XMI {
 			EdgeClass edgeClass = null;
 			VertexClass connectedVertexClass = null;
 			IncidenceClass otherIncidence = null;
-			if (incidence.getFirstComesFrom() != null) {
+			if (incidence.getFirstComesFrom() != null /* && isBidirectional */) {
+				// create alpha incidence//TODO
 				edgeClass = (EdgeClass) incidence.getFirstComesFrom().getThat();
 				otherIncidence = (IncidenceClass) edgeClass.getFirstGoesTo()
 						.getThat();
 				connectedVertexClass = (VertexClass) otherIncidence
 						.getFirstEndsAt().getThat();
 			} else {
+				// create omega incidence
 				edgeClass = (EdgeClass) incidence.getFirstGoesTo().getThat();
 				otherIncidence = (IncidenceClass) edgeClass.getFirstComesFrom()
 						.getThat();
@@ -733,7 +703,7 @@ public class SchemaGraph2XMI {
 		String incidenceId = qualifiedNameOfVertexClass + "_incidence_"
 				+ edgeClass.get_qualifiedName();
 
-		// TODO redefines
+		// redefines
 		int i = 0;
 		for (Redefines red : otherIncidence
 				.getRedefinesIncidences(EdgeDirection.OUT)) {
