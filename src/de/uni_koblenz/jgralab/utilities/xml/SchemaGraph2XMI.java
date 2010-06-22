@@ -50,6 +50,7 @@ import de.uni_koblenz.jgralab.grumlschema.structure.HasConstraint;
 import de.uni_koblenz.jgralab.grumlschema.structure.IncidenceClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.NamedElement;
 import de.uni_koblenz.jgralab.grumlschema.structure.Package;
+import de.uni_koblenz.jgralab.grumlschema.structure.Redefines;
 import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesEdgeClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesVertexClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
@@ -611,7 +612,7 @@ public class SchemaGraph2XMI {
 		// create comments
 		createComments(writer, aeclass);
 
-		// create constraints TODO check for EdgeClass
+		// create constraints
 		createConstraints(writer, aeclass);
 
 		// create generalization
@@ -631,7 +632,7 @@ public class SchemaGraph2XMI {
 			}
 		}
 
-		// create attributes TODO check for EdgeClass
+		// create attributes
 		createAttributes(writer, aeclass);
 
 		// create incidences of EdgeClasses at VertexClass aeclass
@@ -714,7 +715,7 @@ public class SchemaGraph2XMI {
 	}
 
 	/**
-	 * roleName, min, max must be taken from the other incidenceClass
+	 * roleName, redefines, min, max must be taken from the other incidenceClass
 	 * 
 	 * @param writer
 	 * @param incidence
@@ -729,7 +730,18 @@ public class SchemaGraph2XMI {
 			IncidenceClass otherIncidence, VertexClass connectedVertexClass,
 			String qualifiedNameOfVertexClass) throws XMLStreamException {
 
-		// TODO redefines and subsetts
+		String incidenceId = qualifiedNameOfVertexClass + "_incidence_"
+				+ edgeClass.get_qualifiedName();
+
+		// TODO redefines
+		int i = 0;
+		for (Redefines red : otherIncidence
+				.getRedefinesIncidences(EdgeDirection.OUT)) {
+			createConstraint(writer, "redefines "
+					+ ((IncidenceClass) red.getThat()).get_roleName(),
+					qualifiedNameOfVertexClass + "_redefines" + i + "_"
+							+ edgeClass.get_qualifiedName(), incidenceId);
+		}
 
 		// start ownedattribute
 		writer.writeStartElement(XMIConstants.TAG_OWNEDATTRIBUTE);
@@ -737,8 +749,7 @@ public class SchemaGraph2XMI {
 				XMIConstants.XMI_ATTRIBUTE_TYPE,
 				XMIConstants.OWNEDATTRIBUTE_TYPE_VALUE);
 		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-				XMIConstants.XMI_ATTRIBUTE_ID, qualifiedNameOfVertexClass
-						+ "_incidence_" + edgeClass.get_qualifiedName());
+				XMIConstants.XMI_ATTRIBUTE_ID, incidenceId);
 		// set rolenames
 		if (otherIncidence.get_roleName() != null
 				&& !otherIncidence.get_roleName().isEmpty()) {
@@ -776,9 +787,7 @@ public class SchemaGraph2XMI {
 				XMIConstants.XMI_ATTRIBUTE_TYPE,
 				XMIConstants.TYPE_VALUE_LITERALUNLIMITEDNATURAL);
 		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-				XMIConstants.XMI_ATTRIBUTE_ID, qualifiedNameOfVertexClass
-						+ "_incidence_" + edgeClass.get_qualifiedName()
-						+ "_uppervalue");
+				XMIConstants.XMI_ATTRIBUTE_ID, incidenceId + "_uppervalue");
 		writer.writeAttribute(XMIConstants.ATTRIBUTE_VALUE, otherIncidence
 				.get_max() == Integer.MAX_VALUE ? "*" : Integer
 				.toString(otherIncidence.get_max()));
@@ -789,9 +798,7 @@ public class SchemaGraph2XMI {
 				XMIConstants.XMI_ATTRIBUTE_TYPE,
 				XMIConstants.TYPE_VALUE_LITERALINTEGER);
 		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-				XMIConstants.XMI_ATTRIBUTE_ID, qualifiedNameOfVertexClass
-						+ "_incidence_" + edgeClass.get_qualifiedName()
-						+ "_lowervalue");
+				XMIConstants.XMI_ATTRIBUTE_ID, incidenceId + "_lowervalue");
 		writer.writeAttribute(XMIConstants.ATTRIBUTE_VALUE, otherIncidence
 				.get_min() == Integer.MAX_VALUE ? "*" : Integer
 				.toString(otherIncidence.get_min()));
@@ -1076,6 +1083,15 @@ public class SchemaGraph2XMI {
 	private void createConstraint(XMLStreamWriter writer,
 			Constraint constraint, String id, String constrainedElement)
 			throws XMLStreamException {
+		createConstraint(writer, "\"" + constraint.get_message() + "\" \""
+				+ constraint.get_predicateQuery() + "\" \""
+				+ constraint.get_offendingElementsQuery() + "\"", id,
+				constrainedElement);
+	}
+
+	private void createConstraint(XMLStreamWriter writer,
+			String constraintContent, String id, String constrainedElement)
+			throws XMLStreamException {
 		// start ownedRule
 		writer.writeStartElement(XMIConstants.TAG_OWNEDRULE);
 		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
@@ -1102,9 +1118,7 @@ public class SchemaGraph2XMI {
 
 		// start body
 		writer.writeStartElement(XMIConstants.TAG_BODY);
-		writer.writeCharacters("\"" + constraint.get_message() + "\" \""
-				+ constraint.get_predicateQuery() + "\" \""
-				+ constraint.get_offendingElementsQuery() + "\"");
+		writer.writeCharacters(constraintContent);
 
 		// end body
 		writer.writeEndElement();
