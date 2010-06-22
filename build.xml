@@ -81,7 +81,7 @@
 	<clover-env />
 
 	<!-- The targets -->
-	<target name="build" depends="clean,compile,jar" />
+	<target name="build" depends="clean,compile,jar"/>
 
 	<target name="clean">
 		<delete dir="${classes.dir}" />
