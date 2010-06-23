@@ -1,12 +1,14 @@
 package de.uni_koblenz.jgralab.utilities.ant;
 
 import java.io.FileNotFoundException;
+import java.util.logging.Level;
 
 import javax.xml.stream.XMLStreamException;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.utilities.rsa2tg.Rsa2Tg;
 
 /**
@@ -112,7 +114,9 @@ public class Rsa2TgTask extends Task {
 		executeObject.setFilenameDot(value);
 	}
 
+	@Override
 	public void execute() {
+		JGraLab.setLogLevel(Level.WARNING);
 		if (schemaFilename == null) {
 			throw new BuildException("No schema file given.");
 		}
