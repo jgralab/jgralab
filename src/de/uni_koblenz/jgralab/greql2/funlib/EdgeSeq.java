@@ -61,12 +61,12 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
  * </dd>
  * </dl>
  * 
- * @see Vertices
+ * @see VertexSeq
  * @author ist@uni-koblenz.de
  * 
  */
 
-public class Edges extends Greql2Function {
+public class EdgeSeq extends Greql2Function {
 	{
 		JValueType[][] x = {
 				{ JValueType.EDGE, JValueType.EDGE, JValueType.COLLECTION },

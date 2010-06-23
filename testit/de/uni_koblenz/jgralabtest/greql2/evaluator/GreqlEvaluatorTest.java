@@ -126,7 +126,7 @@ public class GreqlEvaluatorTest extends GenericTests {
 	}
 
 	@Test
-	public void testVertices() throws Exception {
+	public void testVertexSeq() throws Exception {
 		Graph graph = getTestGraph();
 		Vertex first = graph.getFirstVertex().getNextVertex();
 		Vertex last = graph.getLastVertex().getPrevVertex().getPrevVertex();
@@ -134,8 +134,8 @@ public class GreqlEvaluatorTest extends GenericTests {
 		JValueImpl lastV = new JValueImpl(last);
 		setBoundVariable("firstV", firstV);
 		setBoundVariable("lastV", lastV);
-		String queryString = "using firstV, lastV: vertices{Definition}(firstV, lastV)";
-		JValue result = evalTestQuery("vertices", queryString);
+		String queryString = "using firstV, lastV: vertexSeq{Definition}(firstV, lastV)";
+		JValue result = evalTestQuery("vertexSeq", queryString);
 		JValueSet set = result.toJValueSet();
 		if (!(first instanceof Definition)) {
 			first = first.getNextVertexOfClass(Definition.class);
