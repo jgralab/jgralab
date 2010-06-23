@@ -193,7 +193,8 @@ public class JValueSlice extends JValueImpl {
 	 */
 	public void addSlicingCriterionVertex(Vertex vertex, int stateNumber,
 			boolean finalState) {
-		System.out.println("Adding vertex " + vertex + " as slicing criterion");
+		// System.out.println("Adding vertex " + vertex +
+		// " as slicing criterion");
 		PathSystemKey key = new PathSystemKey(vertex, stateNumber);
 		PathSystemEntry entry = new PathSystemEntry(null, null, -1, 0,
 				finalState);

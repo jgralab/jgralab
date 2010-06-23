@@ -38,19 +38,23 @@ public class PathSystemKey {
 
 	private int hashValue = 0;
 
+	@Override
 	public int hashCode() {
-		System.out.println("Vertex: " + vertex);
-		if (hashValue == 0)
-			hashValue = this.getClass().hashCode() + vertex.getId() * 2373  + stateNumber;
+		if (hashValue == 0) {
+			hashValue = this.getClass().hashCode() + vertex.getId() * 2373
+					+ stateNumber;
+		}
 		return hashValue;
 	}
 
+	@Override
 	public boolean equals(Object o) {
 		if (o instanceof PathSystemKey) {
 			PathSystemKey foreignKey = (PathSystemKey) o;
 			if ((foreignKey.vertex == vertex)
-					&& (foreignKey.stateNumber == stateNumber))
+					&& (foreignKey.stateNumber == stateNumber)) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -69,6 +73,7 @@ public class PathSystemKey {
 	/**
 	 * returns the string representation of this key
 	 */
+	@Override
 	public String toString() {
 		return "(V: " + vertex.getId() + ", S: " + stateNumber + ")"
 				+ "HashValue: " + hashCode();
