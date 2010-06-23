@@ -990,25 +990,25 @@ public class JValueImpl implements JValue {
 	 * de.uni_koblenz.jgralab.greql2.jvalue.JValue#conversionCosts(de.uni_koblenz
 	 * .jgralab.greql2.jvalue.JValueType)
 	 */
-	public int conversionCosts(JValueType atype) {
-		if (this.type == atype) {
+	public int conversionCosts(JValueType targetType) {
+		if (this.type == targetType) {
 			return 0;
 		}
 		if (type == null) {
 			return 50;
 		}
-		if (atype == JValueType.STRING) {
+		if (targetType == JValueType.STRING) {
 			// String representation
 			return 100;
 		}
-		if (atype == JValueType.OBJECT) {
+		if (targetType == JValueType.OBJECT) {
 			return 100;
 		}
 		switch (this.type) {
 		case BOOL:
 			return -1;
 		case INT:
-			switch (atype) {
+			switch (targetType) {
 			case LONG:
 				return 1;
 			case NUMBER:
@@ -1019,7 +1019,7 @@ public class JValueImpl implements JValue {
 				return -1;
 			}
 		case LONG:
-			switch (atype) {
+			switch (targetType) {
 			case DOUBLE:
 				return 2;
 			case NUMBER:
@@ -1028,30 +1028,44 @@ public class JValueImpl implements JValue {
 				return -1;
 			}
 		case DOUBLE:
-			switch (atype) {
+			switch (targetType) {
 			case NUMBER:
 				return 0;
 			default:
 				return -1;
 			}
 		case VERTEX:
-			switch (atype) {
+			switch (targetType) {
 			case ATTRELEM:
 				return 0;
 			default:
 				return -1;
 			}
 		case EDGE:
-			switch (atype) {
+			switch (targetType) {
 			case ATTRELEM:
 				return 0;
 			default:
 				return -1;
 			}
 		case GRAPH:
-			switch (atype) {
+			switch (targetType) {
 			case ATTRELEM:
 				return 0;
+			default:
+				return -1;
+			}
+		case PATHSYSTEM:
+			switch (targetType) {
+			case COLLECTION:
+				return 10;
+			default:
+				return -1;
+			}
+		case SLICE:
+			switch (targetType) {
+			case COLLECTION:
+				return 10;
 			default:
 				return -1;
 			}

@@ -521,4 +521,27 @@ public class JValueSlice extends JValueImpl {
 		return returnString.toString();
 	}
 
+	/**
+	 * Converts this slice to a set containing all vertices and edges contained
+	 * in this slice.
+	 */
+	@Override
+	public JValueSet toJValueSet() throws JValueInvalidTypeException {
+		JValueSet edges = edges();
+		JValueSet nodes = nodes();
+		JValueSet edgesAndNodes = new JValueSet(edges.size() + nodes.size());
+		edgesAndNodes.addAll(edges);
+		edgesAndNodes.addAll(nodes);
+		return edgesAndNodes;
+	}
+
+	/**
+	 * Converts this slice to a set containing all vertices and edges contained
+	 * in this slice.
+	 */
+	@Override
+	public JValueSet toCollection() throws JValueInvalidTypeException {
+		return toJValueSet();
+	}
+
 }
