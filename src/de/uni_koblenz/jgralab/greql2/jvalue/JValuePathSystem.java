@@ -451,41 +451,51 @@ public class JValuePathSystem extends JValueImpl {
 		int degree = 0;
 		switch (direction) {
 		case IN:
-			for (Map.Entry<PathSystemKey, PathSystemEntry> entry : keyToEntryMap.entrySet()) {
+			for (Map.Entry<PathSystemKey, PathSystemEntry> entry : keyToEntryMap
+					.entrySet()) {
 				if ((entry.getKey().getVertex() == vertex)
-						&& ((typeCol == null) || (typeCol.acceptsType(entry.getValue().getParentEdge().getAttributedElementClass())))) {
+						&& ((typeCol == null) || (typeCol.acceptsType(entry
+								.getValue().getParentEdge()
+								.getAttributedElementClass())))) {
 					degree++;
 				}
 			}
 			break;
 		case OUT:
-			for (Map.Entry<PathSystemKey, PathSystemEntry> entry : keyToEntryMap.entrySet()) {
+			for (Map.Entry<PathSystemKey, PathSystemEntry> entry : keyToEntryMap
+					.entrySet()) {
 				if ((entry.getValue().getParentVertex() == vertex)
-						&& ((typeCol == null) || (typeCol.acceptsType(entry.getValue().getParentEdge().getAttributedElementClass())))) {
+						&& ((typeCol == null) || (typeCol.acceptsType(entry
+								.getValue().getParentEdge()
+								.getAttributedElementClass())))) {
 					degree++;
 				}
 			}
 			break;
 		case INOUT:
-			for (Map.Entry<PathSystemKey, PathSystemEntry> entry : keyToEntryMap.entrySet()) {
+			for (Map.Entry<PathSystemKey, PathSystemEntry> entry : keyToEntryMap
+					.entrySet()) {
 				PathSystemEntry pe = entry.getValue();
-				if ((typeCol == null) || typeCol.acceptsType(pe.getParentEdge().getAttributedElementClass())) {
+				if ((typeCol == null)
+						|| typeCol.acceptsType(pe.getParentEdge()
+								.getAttributedElementClass())) {
 					if (pe.getParentVertex() == vertex) {
-						degree++; 			
+						degree++;
 					}
-					//cannot transform two if statements to one if with an or, because an edge may be a loop 
-					if (entry.getKey().getVertex() == vertex) { 		
-						degree++; 
+					// cannot transform two if statements to one if with an or,
+					// because an edge may be a loop
+					if (entry.getKey().getVertex() == vertex) {
+						degree++;
 					}
 				}
 			}
 			break;
 		default:
-			throw new JValuePathException("Incomplete switch statement in JValuePathSystem");
+			throw new JValuePathException(
+					"Incomplete switch statement in JValuePathSystem");
 		}
 		return degree;
 	}
-
 
 	/**
 	 * Calculates the number of incomming and outgoing edges of the given vertex
@@ -505,15 +515,19 @@ public class JValuePathSystem extends JValueImpl {
 			return -1;
 		}
 		int degree = 0;
-		for (Map.Entry<PathSystemKey, PathSystemEntry> entry : keyToEntryMap.entrySet()) {
+		for (Map.Entry<PathSystemKey, PathSystemEntry> entry : keyToEntryMap
+				.entrySet()) {
 			PathSystemEntry pe = entry.getValue();
-			if ((typeCol == null) || typeCol.acceptsType(pe.getParentEdge().getAttributedElementClass())) {
+			if ((typeCol == null)
+					|| typeCol.acceptsType(pe.getParentEdge()
+							.getAttributedElementClass())) {
 				if (pe.getParentVertex() == vertex) {
-					degree++; 			
+					degree++;
 				}
-				//cannot transform two if statements to one if with an or, because an edge may be a loop 
-				if (entry.getKey().getVertex() == vertex) { 		
-					degree++; 
+				// cannot transform two if statements to one if with an or,
+				// because an edge may be a loop
+				if (entry.getKey().getVertex() == vertex) {
+					degree++;
 				}
 			}
 		}
@@ -539,45 +553,54 @@ public class JValuePathSystem extends JValueImpl {
 		if (vertex == null) {
 			return resultSet;
 		}
-		for (Map.Entry<PathSystemKey, PathSystemEntry> entry : keyToEntryMap.entrySet()) {
+		for (Map.Entry<PathSystemKey, PathSystemEntry> entry : keyToEntryMap
+				.entrySet()) {
 			if (entry.getKey().getVertex() == vertex) {
 				Edge edge = entry.getValue().getParentEdge();
-				if (edge == null)
+				if (edge == null) {
 					continue;
+				}
 				switch (direction) {
 				case IN:
-					if (edge.isNormal())
+					if (edge.isNormal()) {
 						resultSet.add(new JValueImpl(edge));
+					}
 					break;
 				case OUT:
-					if (!edge.isNormal())
+					if (!edge.isNormal()) {
 						resultSet.add(new JValueImpl(edge));
+					}
 					break;
 				case INOUT:
 					resultSet.add(new JValueImpl(edge));
 					break;
 				default:
-					throw new JValuePathException("Incomplete switch statement in JValuePathSystem");
+					throw new JValuePathException(
+							"Incomplete switch statement in JValuePathSystem");
 				}
 			}
 			if (entry.getValue().getParentVertex() == vertex) {
 				Edge edge = entry.getValue().getParentEdge();
-				if (edge == null)
+				if (edge == null) {
 					continue;
+				}
 				switch (direction) {
 				case IN:
-					if (!edge.isNormal())
+					if (!edge.isNormal()) {
 						resultSet.add(new JValueImpl(edge));
+					}
 					break;
 				case OUT:
-					if (edge.isNormal())
+					if (edge.isNormal()) {
 						resultSet.add(new JValueImpl(edge));
+					}
 					break;
 				case INOUT:
 					resultSet.add(new JValueImpl(edge));
 					break;
 				default:
-					throw new JValuePathException("Incomplete switch statement in JValuePathSystem");
+					throw new JValuePathException(
+							"Incomplete switch statement in JValuePathSystem");
 				}
 			}
 		}
@@ -1075,6 +1098,29 @@ public class JValuePathSystem extends JValueImpl {
 	public void accept(JValueVisitor v) {
 		clearPathSystem();
 		v.visitPathSystem(this);
+	}
+
+	/**
+	 * Converts this pathsystem to a set containing all vertices and edges
+	 * contained in this slice.
+	 */
+	@Override
+	public JValueSet toJValueSet() throws JValueInvalidTypeException {
+		JValueSet edges = edges();
+		JValueSet nodes = nodes();
+		JValueSet edgesAndNodes = new JValueSet(edges.size() + nodes.size());
+		edgesAndNodes.addAll(edges);
+		edgesAndNodes.addAll(nodes);
+		return edgesAndNodes;
+	}
+
+	/**
+	 * Converts this pathsystem to a set containing all vertices and edges
+	 * contained in this slice.
+	 */
+	@Override
+	public JValueSet toCollection() throws JValueInvalidTypeException {
+		return toJValueSet();
 	}
 
 }

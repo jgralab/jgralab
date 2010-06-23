@@ -148,8 +148,6 @@ public class GreqlEvaluatorTest extends GenericTests {
 		assertNull(current.getNextDefinition());
 	}
 
-	
-
 	/*
 	 * Test method for
 	 * 'greql2.evaluator.GreqlEvaluator.evaluateAlternativePathDescription(AlternativePathDescription,
@@ -1084,7 +1082,6 @@ public class GreqlEvaluatorTest extends GenericTests {
 		assertEquals(result, resultWO);
 	}
 
-
 	/*
 	 * Test method for
 	 * 'greql2.evaluator.GreqlEvaluator.evaluateQuantifiedExpression(QuantifiedExpression,
@@ -1898,5 +1895,19 @@ public class GreqlEvaluatorTest extends GenericTests {
 			assertTrue(parseTime.getLong(eval) > 0);
 			assertEquals(0, optimizationTime.getLong(eval));
 		}
+	}
+
+	@Test
+	public void testSliceCanConvertToSet() throws Exception {
+		evalTestQuery("testSliceCanConvertToSet",
+				"count(slice(getVertex(1), <--+))");
+		// no exception means success for this test.
+	}
+
+	@Test
+	public void testPathSystemCanConvertToSet() throws Exception {
+		evalTestQuery("testPathSystemCanConvertToSet",
+				"count(pathSystem(getVertex(1), <--+))");
+		// no exception means success for this test.
 	}
 }

@@ -364,17 +364,18 @@ public interface JValue extends Comparable<JValue> {
 	public abstract boolean canConvert(JValueType atype);
 
 	/**
-	 * @param atype
+	 * @param targetType
 	 *            a {@link JValueType}
 	 * @return -1 it the encapsulated value cannot be converted to
-	 *         <code>atype</code>, 0 if the value is-a <code>atype</code> and
-	 *         the conversion costs in all other cases.
+	 *         <code>targetType</code>, 0 if the value is-a
+	 *         <code>targetType</code> and the conversion costs in all other
+	 *         cases.
 	 * 
 	 *         Conversion to string and object are expensive, so that in GReQL
 	 *         functions the most special is used independently of the
 	 *         declaration order.
 	 */
-	public abstract int conversionCosts(JValueType atype);
+	public abstract int conversionCosts(JValueType targetType);
 
 	public abstract Number toNumber();
 
