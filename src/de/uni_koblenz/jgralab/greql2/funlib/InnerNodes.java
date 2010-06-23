@@ -90,8 +90,7 @@ public class InnerNodes extends Greql2Function {
 
 	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
-		// TODO Auto-generated method stub
-		return 0;
+		return 5;
 	}
 
 	@Override
