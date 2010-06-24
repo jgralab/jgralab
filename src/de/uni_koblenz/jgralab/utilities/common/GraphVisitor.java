@@ -24,33 +24,55 @@
 
 package de.uni_koblenz.jgralab.utilities.common;
 
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 
+/**
+ * An abstract visitor class visiting all (marked) vertices and edges.
+ */
 public abstract class GraphVisitor {
 	protected Graph graph;
+	protected BooleanGraphMarker marker;
 
 	public GraphVisitor(Graph graph) {
 		super();
 		this.graph = graph;
 	}
 
+	public GraphVisitor(BooleanGraphMarker marker) {
+		this(marker.getGraph());
+		this.marker = marker;
+	}
+
 	public void visitAll() throws Exception {
 		// visit the graph
 		preVisitor();
 
-		// visit all vertices
+		// visit all (marked) vertices
 		for (Vertex currentVertex : graph.vertices()) {
-			visitVertex(currentVertex);
+			if (isMarked(currentVertex)) {
+				visitVertex(currentVertex);
+			}
 		}
 
-		// visit all edges
+		// visit all (marked) edges
 		for (Edge currentEdge : graph.edges()) {
-			visitEdge(currentEdge);
+			if (isMarked(currentEdge)) {
+				visitEdge(currentEdge);
+			}
 		}
 
 		postVisitor();
+	}
+
+	private boolean isMarked(AttributedElement e) {
+		if (marker == null) {
+			return true;
+		}
+		return marker.isMarked(e);
 	}
 
 	protected abstract void preVisitor() throws Exception;
