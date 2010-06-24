@@ -1350,7 +1350,10 @@ public class StateRepository {
 	private void createOptionForGraphs(StringBuilder code, File graphFile,
 			File directory) {
 		for (File f : directory.listFiles()) {
-			if (f.exists() && f.isFile() && f.toString().endsWith(".tg")) {
+			if (f.exists()
+					&& f.isFile()
+					&& (f.toString().endsWith(".tg") || f.toString().endsWith(
+							".gz"))) {
 				// f is a graph file
 				code.append("childOpt = document.createElement(\"option\");\n");
 				code
@@ -1388,7 +1391,7 @@ public class StateRepository {
 
 	/**
 	 * Deletes the graph <code>path</code>, from the server. The graph must be
-	 * in the workspace and end with .tg.
+	 * in the workspace and end with .tg or .gz.
 	 * 
 	 * @param graph
 	 *            the path to the graph
@@ -1408,7 +1411,7 @@ public class StateRepository {
 			return returnError(graph + " is not in the workspace!"
 					+ workspace.toString().replace("\\", "/"));
 		}
-		if (!graph.endsWith(".tg")) {
+		if (!graph.endsWith(".tg") && !graph.endsWith(".gz")) {
 			// graph isn't a .tg-file
 			return returnError(graph + " is not a graph!");
 		}
@@ -1478,21 +1481,24 @@ public class StateRepository {
 	 * @return
 	 */
 	public StringBuilder loadGraphFromURI(Boolean overwrite, String uri) {
-		if (!uri.toLowerCase().endsWith(".tg")) {
+		if (!uri.toLowerCase().endsWith(".tg")
+				&& !uri.toLowerCase().endsWith(".gz")) {
 			// Checks if uri is a graph.
 			return returnError(uri + "isn't a graph.");
 		}
-		// get the filename of the graph without .tg
+		// get the filename of the graph without .tg or .gz
+		boolean isCompressed = uri.toLowerCase().endsWith(".gz");
 		String[] partsOfURI = uri.split("/");
 		String filename = partsOfURI[partsOfURI.length - 1];
 		filename = workspace.toString() + "/"
 				+ filename.substring(0, filename.length() - 3);
 		// find an unused name for the new graph
-		File graphFile = new File(filename + ".tg");
+		File graphFile = new File(filename + (isCompressed ? ".gz" : ".tg"));
 		if (!overwrite) {
 			int endNumber = 0;
 			while (graphFile.exists()) {
-				graphFile = new File(filename + (endNumber++) + ".tg");
+				graphFile = new File(filename + (endNumber++)
+						+ (isCompressed ? ".gz" : ".tg"));
 			}
 		}
 		boolean isSizeOk = true;
@@ -1580,7 +1586,8 @@ public class StateRepository {
 			if (f.exists()) {
 				if (f.isDirectory()) {
 					graphsExist |= createListOfGraphs(code, f);
-				} else if (f.toString().toLowerCase().endsWith(".tg")) {
+				} else if (f.toString().toLowerCase().endsWith(".tg")
+						|| f.toString().toLowerCase().endsWith(".gz")) {
 					graphsExist = true;
 					code.append("var li = document.createElement(\"li\");\n");
 					code.append("var a = document.createElement(\"a\");\n");
