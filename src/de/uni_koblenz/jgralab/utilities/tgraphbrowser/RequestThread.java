@@ -141,10 +141,11 @@ public class RequestThread extends Thread {
 					String filename = line.split("filename=")[1];
 					// cut off "
 					filename = filename.substring(1, filename.length() - 1);
-					if (!filename.toLowerCase().endsWith(".tg")) {
+					if (!filename.toLowerCase().endsWith(".tg")
+							&& !filename.toLowerCase().endsWith(".gz")) {
 						sendFile(out,
 								"TGraphBrowser_GraphChoice_AfterError.html",
-								"You can only upload .tg files!");
+								"You can only upload .tg or .gz files!");
 					} else if (!isSizeOk(contentLength)) {
 						sendFile(out,
 								"TGraphBrowser_GraphChoice_AfterError.html",
@@ -157,12 +158,15 @@ public class RequestThread extends Thread {
 						}
 						// create File which does not exist in the workspace
 						// yet
+						boolean isCompressed = filename.endsWith(".gz");
 						filename = workspace.toString() + "/"
 								+ filename.substring(0, filename.length() - 3);
-						File receivedFile = new File(filename + ".tg");
+						File receivedFile = new File(filename
+								+ (isCompressed ? ".gz" : ".tg"));
 						if (!shouldOverwrite) {
 							for (int i = 0; receivedFile.exists(); i++) {
-								receivedFile = new File(filename + i + ".tg");
+								receivedFile = new File(filename + i
+										+ (isCompressed ? ".gz" : ".tg"));
 							}
 						}
 						if (!receivedFile.createNewFile()) {
