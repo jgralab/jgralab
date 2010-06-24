@@ -54,6 +54,7 @@ import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.WorkInProgress;
+import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
 import de.uni_koblenz.jgralab.schema.Attribute;
@@ -98,6 +99,13 @@ public class Tg2xml extends GraphVisitor {
 		XMLOutputFactory factory = XMLOutputFactory.newInstance();
 		writer = new IndentingXMLStreamWriter(factory.createXMLStreamWriter(
 				outputStream, "UTF-8"));
+	}
+
+	public Tg2xml(BufferedOutputStream outputStream, BooleanGraphMarker marker,
+			String nameSpacePrefix, String schemaLocation) throws IOException,
+			XMLStreamException {
+		this(outputStream, marker.getGraph(), nameSpacePrefix, schemaLocation);
+		this.marker = marker;
 	}
 
 	@Override
