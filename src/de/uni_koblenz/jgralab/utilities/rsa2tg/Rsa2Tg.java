@@ -382,6 +382,8 @@ public class Rsa2Tg extends XmlProcessor {
 
 	private Set<Package> ignoredPackages;
 
+	private boolean inSpecification;
+
 	/**
 	 * Processes an XMI-file to a TG-file as schema or a schema in a grUML
 	 * graph. For all command line options see
@@ -587,7 +589,7 @@ public class Rsa2Tg extends XmlProcessor {
 	public Rsa2Tg() {
 		// Sets all names of XML-elements, which should be ignored.
 		addIgnoredElements("profileApplication", "packageImport",
-				"Ecore:EReference", "specification");
+				"Ecore:EReference");
 	}
 
 	/**
@@ -741,13 +743,17 @@ public class Rsa2Tg extends XmlProcessor {
 				}
 			}
 		} else if (name.equals(UML_BODY)) {
-			if (!inConstraint && !inComment && !inDefaultValue) {
+			if (!inConstraint && !inComment && !inDefaultValue
+					&& !inSpecification) {
 				// Throw an error for body elements, which aren't
 				// contained in a constraint or comment
 				throw new ProcessingException(getParser(), getFileName(),
 						createUnexpectedElementMessage(name, null));
 			}
-		} else if (name.equals(UML_SPECIFICATION) || name.equals(UML_LANGUAGE)) {
+		} else if (name.equals(UML_SPECIFICATION)) {
+			// Specification is ignored for most elements
+			inSpecification = true;
+		} else if (name.equals(UML_LANGUAGE)) {
 			if (!inConstraint) {
 				// Throw an error for specification elements, which aren't
 				// contained in a constraint.
@@ -986,6 +992,8 @@ public class Rsa2Tg extends XmlProcessor {
 			annotatedElementId = null;
 		} else if (name.equals(UML_DEFAULT_VALUE)) {
 			inDefaultValue = false;
+		} else if (name.equals(UML_SPECIFICATION)) {
+			inSpecification = false;
 		}
 	}
 
