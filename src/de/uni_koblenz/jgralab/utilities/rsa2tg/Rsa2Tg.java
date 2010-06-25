@@ -1295,7 +1295,7 @@ public class Rsa2Tg extends XmlProcessor {
 			createSubsetsForIncidences(subClass, superClass,
 					(IncidenceClass) subClass.getFirstGoesTo().getThat(),
 					(IncidenceClass) superClass.getFirstGoesTo().getThat());
-			spec = spec.getNextSpecializesEdgeClass();
+			spec = spec.getNextSpecializesEdgeClassInGraph();
 		}
 
 		// Generalisation hierarchy is complete, now process redefinitions.
