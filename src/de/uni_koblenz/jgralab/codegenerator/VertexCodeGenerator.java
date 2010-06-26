@@ -60,31 +60,36 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 	}
 
 	/**
-	 * creates the body of the classfile, that are methods and attributes
+	 * creates the body of the class file, that are methods and attributes
 	 */
 	@Override
 	protected CodeBlock createBody() {
 		CodeList code = (CodeList) super.createBody();
-		if (currentCycle.isStdOrTransImpl()) {
+		if (currentCycle.isStdOrSaveMemOrTransImpl()) {
 			if (currentCycle.isStdImpl()) {
 				addImports("#jgImplStdPackage#.#baseClassName#");
+			} else if (currentCycle.isSaveMemImpl()) {
+				addImports("#jgImplSaveMemPackage#.#baseClassName#");
 			} else {
 				addImports("#jgImplTransPackage#.#baseClassName#");
 			}
 			rootBlock.setVariable("baseClassName", "VertexImpl");
 			code.add(createValidEdgeSets((VertexClass) aec));
 		}
+		
 		if (config.hasTypeSpecificMethodsSupport()
 				&& !currentCycle.isClassOnly()) {
 			code.add(createNextVertexMethods());
 			code.add(createFirstEdgeMethods());
 			code.add(rolenameGenerator.createRolenameMethods(currentCycle
-					.isStdOrTransImpl()));
+					.isStdOrSaveMemOrTransImpl()));
 			code.add(createIncidenceIteratorMethods());
 		}
-		if (currentCycle.isStdOrTransImpl()) {
+		
+		if (currentCycle.isStdOrSaveMemOrTransImpl()) {
 			code.add(createGetEdgeForRolenameMethod());
 		}
+		
 		return code;
 	}
 
@@ -99,22 +104,25 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 		CodeList code = new CodeList();
 		VertexClass vc = (VertexClass) aec;
 		Set<EdgeClass> edgeClassSet = new HashSet<EdgeClass>();
-		if (currentCycle.isStdOrTransImpl()) {
+		if (currentCycle.isStdOrSaveMemOrTransImpl()) {
 			edgeClassSet.addAll(vc.getConnectedEdgeClasses());
 		}
 		if (currentCycle.isAbstract()) {
 			edgeClassSet.addAll(vc.getOwnConnectedEdgeClasses());
-			//if the current class is a direct subclass of vertex, all edges defined in the schema to start or end at a vertex
-			//need also to be considered in generation 
+			// if the current class is a direct subclass of vertex, all edges
+			// defined in the schema to start or end at a vertex
+			// need also to be considered in generation
 			if (vc.getAllSuperClasses().size() == 1) {
 				for (EdgeClass ec : vc.getConnectedEdgeClasses()) {
-					VertexClass dvc = vc.getGraphClass().getSchema().getDefaultVertexClass();
-					if ((ec.getTo().getVertexClass() == dvc) || (ec.getFrom().getVertexClass() == dvc))
+					VertexClass dvc = vc.getGraphClass().getSchema()
+							.getDefaultVertexClass();
+					if ((ec.getTo().getVertexClass() == dvc)
+							|| (ec.getFrom().getVertexClass() == dvc))
 						edgeClassSet.add(ec);
-				}				
+				}
 			}
 		}
-		
+
 		for (EdgeClass ec : edgeClassSet) {
 			if (ec.isInternal()) {
 				continue;
@@ -126,7 +134,9 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 
 				if (config.hasMethodsForSubclassesSupport()) {
 					if (!ec.isAbstract()) {
-						code.addNoIndent(createFirstEdgeMethod(ec, false,true));
+						code
+								.addNoIndent(createFirstEdgeMethod(ec, false,
+										true));
 						code.addNoIndent(createFirstEdgeMethod(ec, true, true));
 					}
 				}
@@ -162,20 +172,24 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 						+ (withOrientation && withTypeFlag ? ", " : "")
 						+ (withTypeFlag ? "noSubClasses" : ""));
 		if (currentCycle.isAbstract()) {
-			code.add("/**",
+			code
+					.add("/**",
 							" * @return the first edge of class #ecCamelName# at this vertex");
 
 			if (withOrientation) {
 				code.add(" * @param orientation the orientation of the edge");
 			}
 			if (withTypeFlag) {
-				code.add(" * @param noSubClasses if set to <code>true</code>, no subclasses of #ecName# are accepted");
+				code
+						.add(" * @param noSubClasses if set to <code>true</code>, no subclasses of #ecName# are accepted");
 			}
-			code.add(" */",
+			code
+					.add(" */",
 							"public #ecQualifiedName# getFirst#ecCamelName#(#formalParams#);");
 		}
-		if (currentCycle.isStdOrTransImpl()) {
-			code.add(
+		if (currentCycle.isStdOrSaveMemOrTransImpl()) {
+			code
+					.add(
 							"@Override",
 							"public #ecQualifiedName# getFirst#ecCamelName#(#formalParams#) {",
 							"\treturn (#ecQualifiedName#)getFirstEdgeOfClass(#ecQualifiedName#.class#actualParams#);",
@@ -233,20 +247,25 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 		code.setVariable("vcCamelName", camelCase(vc.getUniqueName()));
 		code.setVariable("formalParams", (withTypeFlag ? "boolean noSubClasses"
 				: ""));
-		code.setVariable("actualParams", (withTypeFlag ? ", noSubClasses"
+		code
+				.setVariable("actualParams", (withTypeFlag ? ", noSubClasses"
 						: ""));
 
 		if (currentCycle.isAbstract()) {
-			code.add("/**",
+			code
+					.add("/**",
 							" * @return the next #vcQualifiedName# vertex in the global vertex sequence");
 			if (withTypeFlag) {
-				code.add(" * @param noSubClasses if set to <code>true</code>, no subclasses of #vcName# are accepted");
+				code
+						.add(" * @param noSubClasses if set to <code>true</code>, no subclasses of #vcName# are accepted");
 			}
-			code.add(" */",
+			code
+					.add(" */",
 							"public #vcQualifiedName# getNext#vcCamelName#(#formalParams#);");
 		}
-		if (currentCycle.isStdOrTransImpl()) {
-			code.add(
+		if (currentCycle.isStdOrSaveMemOrTransImpl()) {
+			code
+					.add(
 							"@Override",
 							"public #vcQualifiedName# getNext#vcCamelName#(#formalParams#) {",
 							"\treturn (#vcQualifiedName#)getNextVertexOfClass(#vcQualifiedName#.class#actualParams#);",
@@ -268,25 +287,28 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 
 		CodeList code = new CodeList();
 
-//		if (!config.hasTypeSpecificMethodsSupport()
-//				|| currentCycle.isClassOnly()) {
-//			return code;
-//		}
+		// if (!config.hasTypeSpecificMethodsSupport()
+		// || currentCycle.isClassOnly()) {
+		// return code;
+		// }
 
 		Set<EdgeClass> edgeClassSet = new HashSet<EdgeClass>();
-		if (currentCycle.isStdOrTransImpl()) {
+		if (currentCycle.isStdOrSaveMemOrTransImpl()) {
 			edgeClassSet.addAll(vc.getConnectedEdgeClasses());
 		}
 		if (currentCycle.isAbstract()) {
 			edgeClassSet.addAll(vc.getOwnConnectedEdgeClasses());
-			//if the current class is a direct subclass of vertex, all edges defined in the schema to start or end at a vertex
-			//need also to be considered in generation 
+			// if the current class is a direct subclass of vertex, all edges
+			// defined in the schema to start or end at a vertex
+			// need also to be considered in generation
 			if (vc.getAllSuperClasses().size() == 1) {
 				for (EdgeClass ec : vc.getConnectedEdgeClasses()) {
-					VertexClass dvc = vc.getGraphClass().getSchema().getDefaultVertexClass();
-					if ((ec.getTo().getVertexClass() == dvc) || (ec.getFrom().getVertexClass() == dvc))
+					VertexClass dvc = vc.getGraphClass().getSchema()
+							.getDefaultVertexClass();
+					if ((ec.getTo().getVertexClass() == dvc)
+							|| (ec.getFrom().getVertexClass() == dvc))
 						edgeClassSet.add(ec);
-				}				
+				}
 			}
 		}
 
@@ -295,7 +317,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 				continue;
 			}
 
-			if (currentCycle.isStdOrTransImpl()) {
+			if (currentCycle.isStdOrSaveMemOrTransImpl()) {
 				addImports("#jgImplPackage#.IncidenceIterable");
 			}
 
@@ -311,14 +333,18 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 			// getFooIncidences()
 			if (currentCycle.isAbstract()) {
 				s.add("/**");
-				s.add(" * Returns an Iterable for all incidence edges of this vertex that are of type #edgeClassSimpleName# or subtypes.");
+				s
+						.add(" * Returns an Iterable for all incidence edges of this vertex that are of type #edgeClassSimpleName# or subtypes.");
 				s.add(" */");
-				s.add("public Iterable<#edgeClassQualifiedName#> get#edgeClassUniqueName#Incidences();");
+				s
+						.add("public Iterable<#edgeClassQualifiedName#> get#edgeClassUniqueName#Incidences();");
 			}
-			if (currentCycle.isStdOrTransImpl()) {
+			if (currentCycle.isStdOrSaveMemOrTransImpl()) {
 				s.add("@Override");
-				s.add("public Iterable<#edgeClassQualifiedName#> get#edgeClassUniqueName#Incidences() {");
-				s.add("\treturn new IncidenceIterable<#edgeClassQualifiedName#>(this, #edgeClassQualifiedName#.class);");
+				s
+						.add("public Iterable<#edgeClassQualifiedName#> get#edgeClassUniqueName#Incidences() {");
+				s
+						.add("\treturn new IncidenceIterable<#edgeClassQualifiedName#>(this, #edgeClassQualifiedName#.class);");
 				s.add("}");
 			}
 			s.add("");
@@ -326,15 +352,20 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 			if (config.hasMethodsForSubclassesSupport()) {
 				if (currentCycle.isAbstract()) {
 					s.add("/**");
-					s.add(" * Returns an Iterable for all incidence edges of this vertex that are of type #edgeClassSimpleName#.");
-					s.add(" * @param noSubClasses toggles wether subclasses of #edgeClassName# should be excluded");
+					s
+							.add(" * Returns an Iterable for all incidence edges of this vertex that are of type #edgeClassSimpleName#.");
+					s
+							.add(" * @param noSubClasses toggles wether subclasses of #edgeClassName# should be excluded");
 					s.add(" */");
-					s.add("public Iterable<#edgeClassQualifiedName#> get#edgeClassUniqueName#Incidences(boolean noSubClasses);");
+					s
+							.add("public Iterable<#edgeClassQualifiedName#> get#edgeClassUniqueName#Incidences(boolean noSubClasses);");
 				}
-				if (currentCycle.isStdOrTransImpl()) {
+				if (currentCycle.isStdOrSaveMemOrTransImpl()) {
 					s.add("@Override");
-					s.add("public Iterable<#edgeClassQualifiedName#> get#edgeClassUniqueName#Incidences(boolean noSubClasses) {");
-					s.add("\treturn new IncidenceIterable<#edgeClassQualifiedName#>(this, #edgeClassQualifiedName#.class, noSubClasses);");
+					s
+							.add("public Iterable<#edgeClassQualifiedName#> get#edgeClassUniqueName#Incidences(boolean noSubClasses) {");
+					s
+							.add("\treturn new IncidenceIterable<#edgeClassQualifiedName#>(this, #edgeClassQualifiedName#.class, noSubClasses);");
 					s.add("}\n");
 				}
 			}
@@ -342,13 +373,17 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 			if (config.hasMethodsForSubclassesSupport()) {
 				if (currentCycle.isAbstract()) {
 					s.add("/**");
-					s.add(" * Returns an Iterable for all incidence edges of this vertex that are of type #edgeClassSimpleName#.");
-					s.add(" * @param direction EdgeDirection.IN or EdgeDirection.OUT, only edges of this direction will be included in the Iterable");
-					s.add(" * @param noSubClasses toggles wether subclasses of #edgeClassName# should be excluded");
+					s
+							.add(" * Returns an Iterable for all incidence edges of this vertex that are of type #edgeClassSimpleName#.");
+					s
+							.add(" * @param direction EdgeDirection.IN or EdgeDirection.OUT, only edges of this direction will be included in the Iterable");
+					s
+							.add(" * @param noSubClasses toggles wether subclasses of #edgeClassName# should be excluded");
 					s.add(" */");
-					s.add("public Iterable<#edgeClassQualifiedName#> get#edgeClassUniqueName#Incidences(EdgeDirection direction, boolean noSubClasses);");
+					s
+							.add("public Iterable<#edgeClassQualifiedName#> get#edgeClassUniqueName#Incidences(EdgeDirection direction, boolean noSubClasses);");
 				}
-				if (currentCycle.isStdOrTransImpl()) {
+				if (currentCycle.isStdOrSaveMemOrTransImpl()) {
 					s.add("@Override");
 					s
 							.add("public Iterable<#edgeClassQualifiedName#> get#edgeClassUniqueName#Incidences(EdgeDirection direction, boolean noSubClasses) {");
@@ -369,7 +404,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 				s
 						.add("public Iterable<#edgeClassQualifiedName#> get#edgeClassUniqueName#Incidences(EdgeDirection direction);");
 			}
-			if (currentCycle.isStdOrTransImpl()) {
+			if (currentCycle.isStdOrSaveMemOrTransImpl()) {
 				s.add("@Override");
 				s
 						.add("public Iterable<#edgeClassQualifiedName#> get#edgeClassUniqueName#Incidences(EdgeDirection direction) {");

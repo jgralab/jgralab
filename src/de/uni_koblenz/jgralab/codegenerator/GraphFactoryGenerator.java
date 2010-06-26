@@ -37,7 +37,7 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
  */
 public class GraphFactoryGenerator extends CodeGenerator {
 
-	private Schema schema;
+	private final Schema schema;
 
 	public GraphFactoryGenerator(Schema schema, String schemaPackageName,
 			String implementationName, CodeGeneratorConfiguration config) {
@@ -102,6 +102,7 @@ public class GraphFactoryGenerator extends CodeGenerator {
 		if (graphClass.isAbstract()) {
 			return null;
 		}
+
 		CodeSnippet code = new CodeSnippet(true);
 		code.setVariable("graphName", schemaRootPackageName + "."
 				+ graphClass.getQualifiedName());
@@ -109,16 +110,25 @@ public class GraphFactoryGenerator extends CodeGenerator {
 				+ graphClass.getQualifiedName());
 		code.setVariable("graphTransactionImplName", schemaRootPackageName
 				+ ".impl.trans." + graphClass.getQualifiedName());
+		code.setVariable("graphSaveMemImplName", schemaRootPackageName
+				+ ".impl.savemem." + graphClass.getQualifiedName());
 
 		if (!graphClass.isAbstract()) {
 			code.add("/* code for graph #graphName# */");
-			if (config.hasStandardSupport())
+			if (config.hasStandardSupport()) {
 				code
 						.add("setGraphImplementationClass(#graphName#.class, #graphImplName#Impl.class);");
-			if (config.hasTransactionSupport())
+			}
+			if (config.hasTransactionSupport()) {
 				code
 						.add("setGraphTransactionImplementationClass(#graphName#.class, #graphTransactionImplName#Impl.class);");
+			}
+			if (config.hasSaveMemSupport()) {
+				code
+						.add("setGraphSaveMemImplementationClass(#graphName#.class, #graphSaveMemImplName#Impl.class);");
+			}
 		}
+
 		return code;
 	}
 
@@ -126,6 +136,7 @@ public class GraphFactoryGenerator extends CodeGenerator {
 		if (vertexClass.isAbstract()) {
 			return null;
 		}
+
 		CodeSnippet code = new CodeSnippet(true);
 		code.setVariable("vertexName", schemaRootPackageName + "."
 				+ vertexClass.getQualifiedName());
@@ -133,14 +144,24 @@ public class GraphFactoryGenerator extends CodeGenerator {
 				+ vertexClass.getQualifiedName());
 		code.setVariable("vertexTransactionImplName", schemaRootPackageName
 				+ ".impl.trans." + vertexClass.getQualifiedName());
+		code.setVariable("vertexSaveMemImplName", schemaRootPackageName
+				+ ".impl.savemem." + vertexClass.getQualifiedName());
+
 		if (!vertexClass.isAbstract()) {
-			if (config.hasStandardSupport())
+			if (config.hasStandardSupport()) {
 				code
 						.add("setVertexImplementationClass(#vertexName#.class, #vertexImplName#Impl.class);");
-			if (config.hasTransactionSupport())
+			}
+			if (config.hasTransactionSupport()) {
 				code
 						.add("setVertexTransactionImplementationClass(#vertexName#.class, #vertexTransactionImplName#Impl.class);");
+			}
+			if (config.hasSaveMemSupport()) {
+				code
+						.add("setVertexSaveMemImplementationClass(#vertexName#.class, #vertexSaveMemImplName#Impl.class);");
+			}
 		}
+
 		return code;
 	}
 
@@ -152,15 +173,24 @@ public class GraphFactoryGenerator extends CodeGenerator {
 				+ edgeClass.getQualifiedName());
 		code.setVariable("edgeTransactionImplName", schemaRootPackageName
 				+ ".impl.trans." + edgeClass.getQualifiedName());
+		code.setVariable("edgeSaveMemImplName", schemaRootPackageName
+				+ ".impl.savemem." + edgeClass.getQualifiedName());
 
 		if (!edgeClass.isAbstract()) {
-			if (config.hasStandardSupport())
+			if (config.hasStandardSupport()) {
 				code
 						.add("setEdgeImplementationClass(#edgeName#.class, #edgeImplName#Impl.class);");
-			if (config.hasTransactionSupport())
+			}
+			if (config.hasTransactionSupport()) {
 				code
 						.add("setEdgeTransactionImplementationClass(#edgeName#.class, #edgeTransactionImplName#Impl.class);");
+			}
+			if (config.hasSaveMemSupport()) {
+				code
+						.add("setEdgeSaveMemImplementationClass(#edgeName#.class, #edgeSaveMemImplName#Impl.class);");
+			}
 		}
+
 		return code;
 	}
 

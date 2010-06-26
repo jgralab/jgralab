@@ -35,6 +35,10 @@ package de.uni_koblenz.jgralab;
 
 public interface GraphFactory {
 
+	// -------------------------------------------------------------------------
+	// Methods for the STDIMPL option.
+	// -------------------------------------------------------------------------
+
 	/**
 	 * creates a Graph-object for the specified class. The returned object may
 	 * be an instance of a subclass of the specified graphClass.
@@ -59,7 +63,8 @@ public interface GraphFactory {
 	 * creates a Edge-object for the specified class. The returned object may be
 	 * an instance of a subclass of the specified edgeClass.
 	 */
-	public Edge createEdge(Class<? extends Edge> edgeClass, int id, Graph g, Vertex alpha, Vertex omega);
+	public Edge createEdge(Class<? extends Edge> edgeClass, int id, Graph g,
+			Vertex alpha, Vertex omega);
 
 	public void setGraphImplementationClass(
 			Class<? extends Graph> graphM1Class,
@@ -71,6 +76,10 @@ public interface GraphFactory {
 
 	public void setEdgeImplementationClass(Class<? extends Edge> edgeM1Class,
 			Class<? extends Edge> implementationClass);
+
+	// -------------------------------------------------------------------------
+	// Methods for the TRANSIMPL option.
+	// -------------------------------------------------------------------------
 
 	/**
 	 * creates a Graph-object for the specified class with transaction support.
@@ -102,7 +111,8 @@ public interface GraphFactory {
 	 * edgeClass.
 	 */
 	public Edge createEdgeWithTransactionSupport(
-			Class<? extends Edge> edgeClass, int id, Graph g, Vertex alpha, Vertex omega);
+			Class<? extends Edge> edgeClass, int id, Graph g, Vertex alpha,
+			Vertex omega);
 
 	/**
 	 * Assigns an implementation class with transaction support for a
@@ -134,6 +144,75 @@ public interface GraphFactory {
 	 * @param implementationClass
 	 */
 	public void setEdgeTransactionImplementationClass(
+			Class<? extends Edge> edgeM1Class,
+			Class<? extends Edge> implementationClass);
+
+	// -------------------------------------------------------------------------
+	// Methods for the SAVEMEMIMPL option.
+	// -------------------------------------------------------------------------
+
+	/**
+	 * creates a Graph-object for the specified class with savemem support. The
+	 * returned object may be an instance of a subclass of the specified
+	 * graphClass.
+	 */
+	public Graph createGraphWithSaveMemSupport(
+			Class<? extends Graph> graphClass, String id, int vMax, int eMax);
+
+	/**
+	 * creates a Graph-object for the specified class with savemem support. The
+	 * returned object may be an instance of a subclass of the specified
+	 * graphClass.
+	 */
+	public Graph createGraphWithSaveMemSupport(
+			Class<? extends Graph> graphClass, String id);
+
+	/**
+	 * creates a Vertex-object for the specified class with savemem support. The
+	 * returned object may be an instance of a subclass of the specified
+	 * vertexClass.
+	 */
+	public Vertex createVertexWithSaveMemSupport(
+			Class<? extends Vertex> vertexClass, int id, Graph g);
+
+	/**
+	 * creates a Edge-object for the specified class with savemem support. The
+	 * returned object may be an instance of a subclass of the specified
+	 * edgeClass.
+	 */
+	public Edge createEdgeWithSaveMemSupport(Class<? extends Edge> edgeClass,
+			int id, Graph g, Vertex alpha, Vertex omega);
+
+	/**
+	 * Assigns an implementation class with savemem support for a
+	 * <code>Graph</code>.
+	 * 
+	 * @param graphM1Class
+	 * @param implementationClass
+	 */
+	public void setGraphSaveMemImplementationClass(
+			Class<? extends Graph> graphM1Class,
+			Class<? extends Graph> implementationClass);
+
+	/**
+	 * Assigns an implementation class with savemem support for a
+	 * <code>Vertex</code>.
+	 * 
+	 * @param vertexM1Class
+	 * @param implementationClass
+	 */
+	public void setVertexSaveMemImplementationClass(
+			Class<? extends Vertex> vertexM1Class,
+			Class<? extends Vertex> implementationClass);
+
+	/**
+	 * Assigns an implementation class with savemem support for an
+	 * <code>Edge</code>.
+	 * 
+	 * @param edgeM1Class
+	 * @param implementationClass
+	 */
+	public void setEdgeSaveMemImplementationClass(
 			Class<? extends Edge> edgeM1Class,
 			Class<? extends Edge> implementationClass);
 }

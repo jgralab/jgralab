@@ -88,21 +88,26 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 	@Override
 	protected CodeBlock createBody() {
 		CodeList code = (CodeList) super.createBody();
-		if (currentCycle.isStdOrTransImpl()) {
+		if (currentCycle.isStdOrSaveMemOrTransImpl()) {
 			rootBlock.setVariable("baseClassName", "EdgeImpl");
 			if (currentCycle.isStdImpl()) {
 				addImports("#jgImplStdPackage#.#baseClassName#");
+			}
+			if (currentCycle.isSaveMemImpl()) {
+				addImports("#jgImplSaveMemPackage#.#baseClassName#");
 			}
 			if (currentCycle.isTransImpl()) {
 				addImports("#jgImplTransPackage#.#baseClassName#");
 			}
 		}
+
 		if (config.hasTypeSpecificMethodsSupport()
 				&& !currentCycle.isClassOnly()) {
 			code.add(createNextEdgeInGraphMethods());
 			code.add(createNextEdgeAtVertexMethods());
 		}
-		if (currentCycle.isStdOrTransImpl()) {
+
+		if (currentCycle.isStdOrSaveMemOrTransImpl()) {
 			code.add(createGetSemanticsMethod());
 			code.add(createGetAlphaSemanticsMethod());
 			code.add(createGetOmegaSemanticsMethod());
@@ -124,6 +129,9 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 		}
 		if (currentCycle.isTransImpl()) {
 			addImports("#schemaImplTransPackage#.Reversed#simpleClassName#Impl");
+		}
+		if (currentCycle.isSaveMemImpl()) {
+			addImports("#schemaImplSaveMemPackage#.Reversed#simpleClassName#Impl");
 		}
 		code.add("\treturn new Reversed#simpleClassName#Impl(this, graph);");
 		code.add("}");
@@ -180,7 +188,7 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 					.add(" */",
 							"public #ecQualifiedName# getNext#ecCamelName#InGraph(#formalParams#);");
 		}
-		if (currentCycle.isStdOrTransImpl()) {
+		if (currentCycle.isStdOrSaveMemOrTransImpl()) {
 			code
 					.add(
 							"public #ecQualifiedName# getNext#ecCamelName#InGraph(#formalParams#) {",
@@ -255,7 +263,7 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 					.add(" */",
 							"public #ecQualifiedName# getNext#ecCamelName#(#formalParams#);");
 		}
-		if (currentCycle.isStdOrTransImpl()) {
+		if (currentCycle.isStdOrSaveMemOrTransImpl()) {
 			code
 					.add(
 							"public #ecQualifiedName# getNext#ecCamelName#(#formalParams#) {",
@@ -271,12 +279,13 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 		CodeSnippet code = new CodeSnippet(true);
 		EdgeClass ec = (EdgeClass) aec;
 		String val = "NONE";
+
 		if ((ec.getTo().getAggregationKind() == AggregationKind.COMPOSITE)
 				|| (ec.getFrom().getAggregationKind() == AggregationKind.COMPOSITE)) {
-			val = "SHARED";
+			val = "COMPOSITE";
 		} else if ((ec.getTo().getAggregationKind() == AggregationKind.SHARED)
 				|| (ec.getFrom().getAggregationKind() == AggregationKind.SHARED)) {
-			val = "COMPOSITE";
+			val = "SHARED";
 		}
 		code.setVariable("semantics", val);
 		code

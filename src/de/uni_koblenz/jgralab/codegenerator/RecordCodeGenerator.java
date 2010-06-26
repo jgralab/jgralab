@@ -105,7 +105,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 	private CodeBlock createVariableParametersConstructor() {
 		CodeList code = new CodeList();
 
-		if (currentCycle.isStdOrTransImpl()) {
+		if (currentCycle.isStdOrSaveMemOrTransImpl()) {
 			CodeSnippet codeSnippet = new CodeSnippet(true);
 
 			if (hasCompositeRecordComponent()) {
@@ -191,7 +191,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 			code.add(new CodeSnippet("if(!(o instanceof #simpleClassName#))",
 					"\treturn false;"));
 		}
-		if (currentCycle.isStdImpl()) {
+		if (currentCycle.isStdImpl() || currentCycle.isSaveMemImpl()) {
 			code.add(new CodeSnippet(
 					"if(!(o instanceof #simpleImplClassName#))",
 					"\treturn false;"));
@@ -247,6 +247,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 				codeSnippet.setVariable("name", entry.getName());
 				break;
 			case STDIMPL:
+			case SAVEMEMIMPL:
 				codeSnippet = new CodeSnippet(true);
 				if (entry.getDomain().isComposite()) {
 					codeSnippet.add("\tif(!(_#name#.equals(record._#name#)))");
@@ -314,6 +315,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 					"public abstract class #simpleClassName# implements de.uni_koblenz.jgralab.JGraLabCloneable {");
 			break;
 		case STDIMPL:
+		case SAVEMEMIMPL:
 			addImports("#jgPackage#.Graph");
 			addImports("#schemaPackage#.#simpleClassName#");
 			code = new CodeSnippet(true,
@@ -358,6 +360,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 				getterCode.add("public abstract #type# #isOrGet#_#name#();");
 				break;
 			case STDIMPL:
+			case SAVEMEMIMPL:
 				getterCode.setVariable("ctype", rdc.getDomain()
 						.getJavaAttributeImplementationTypeName(
 								schemaRootPackageName));
@@ -404,6 +407,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 				setterCode.add("public abstract void #setter#;");
 				break;
 			case STDIMPL:
+			case SAVEMEMIMPL:
 				setterCode.setVariable("ctype", rdc.getDomain()
 						.getJavaAttributeImplementationTypeName(
 								schemaRootPackageName));
@@ -462,7 +466,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 
 	private CodeBlock createFieldConstructor() {
 		CodeList code = new CodeList();
-		if (currentCycle.isStdOrTransImpl()) {
+		if (currentCycle.isStdOrSaveMemOrTransImpl()) {
 			StringBuilder sb = new StringBuilder();
 			CodeSnippet header = null;
 			header = new CodeSnippet(true,
@@ -504,7 +508,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 
 	private CodeBlock createMapConstructor() {
 		CodeList code = new CodeList();
-		if (currentCycle.isStdOrTransImpl()) {
+		if (currentCycle.isStdOrSaveMemOrTransImpl()) {
 			// suppress "unchecked" warnings if this record domain contains a
 			// Collection domain (Set<E>, List<E>, Map<K, V>)
 			for (RecordComponent comp : recordDomain.getComponents()) {
@@ -550,7 +554,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 	private CodeBlock createReadComponentsMethod() {
 		CodeList code = new CodeList();
 		// abstract class (or better use interface?)
-		if (currentCycle.isStdOrTransImpl()) {
+		if (currentCycle.isStdOrSaveMemOrTransImpl()) {
 			addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException");
 			code
 					.addNoIndent(new CodeSnippet(
@@ -613,7 +617,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 
 	private CodeBlock createRecordComponents() {
 		CodeList code = new CodeList();
-		if (currentCycle.isStdOrTransImpl()) {
+		if (currentCycle.isStdOrSaveMemOrTransImpl()) {
 			for (RecordComponent rdc : recordDomain.getComponents()) {
 				Domain dom = rdc.getDomain();
 
@@ -704,7 +708,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 					: true, "@Override"));
 
 			code.addNoIndent(new CodeSnippet("public Object clone() {"));
-			if (currentCycle.isStdImpl()) {
+			if (currentCycle.isStdImpl() || currentCycle.isSaveMemImpl()) {
 				StringBuffer arguments = new StringBuffer("#theGraph#");
 				for (RecordComponent rdc : recordDomain.getComponents()) {
 					boolean hasToBeCloned = rdc.getDomain().isComposite()

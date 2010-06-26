@@ -38,10 +38,10 @@ import de.uni_koblenz.jgralab.trans.Transaction;
 /**
  * The interface Graph is the base of all JGraLab graphs. It provides access to
  * global graph properties and to the Vertex and Edge sequence. Creation and
- * removal of vertices and edges, as well as valitiy checks, are provided.
+ * removal of vertices and edges, as well as validity checks, are provided.
  * 
  * Additionally, convenient methods for traversal, either based on separate
- * calls (getFirst/getNext) or on Iterables, can be used to travers the graph.
+ * calls (getFirst/getNext) or on Iterables, can be used to traverse the graph.
  * 
  * @author ist@uni-koblenz.de
  */

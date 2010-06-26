@@ -48,17 +48,24 @@ public abstract class CodeGenerator {
 	 * 
 	 */
 	protected enum GenerationCycle {
-		ABSTRACT, STDIMPL, TRANSIMPL, CLASSONLY;
+		// FIXME The order here matters! CLASSONLY must be last!
+		ABSTRACT, STDIMPL, TRANSIMPL, SAVEMEMIMPL, CLASSONLY;
 
 		/**
 		 * 
 		 * @return
 		 */
 		protected boolean isStdImpl() {
-			if (this == STDIMPL) {
-				return true;
-			}
-			return false;
+			return this == STDIMPL;
+		}
+
+		/**
+		 * 
+		 * @return Returns true if support for memory saving impl classes is
+		 *         enabled, otherwise false.
+		 */
+		protected boolean isSaveMemImpl() {
+			return this == SAVEMEMIMPL;
 		}
 
 		/**
@@ -66,10 +73,7 @@ public abstract class CodeGenerator {
 		 * @return
 		 */
 		protected boolean isTransImpl() {
-			if (this == TRANSIMPL) {
-				return true;
-			}
-			return false;
+			return this == TRANSIMPL;
 		}
 
 		/**
@@ -77,10 +81,7 @@ public abstract class CodeGenerator {
 		 * @return
 		 */
 		protected boolean isAbstract() {
-			if (this == ABSTRACT) {
-				return true;
-			}
-			return false;
+			return this == ABSTRACT;
 		}
 
 		/**
@@ -88,25 +89,20 @@ public abstract class CodeGenerator {
 		 * @return
 		 */
 		protected boolean isClassOnly() {
-			if (this == CLASSONLY) {
-				return true;
-			}
-			return false;
+			return this == CLASSONLY;
 		}
 
 		/**
 		 * 
 		 * @return
 		 */
-		protected boolean isStdOrTransImpl() {
-			if ((this == STDIMPL) || (this == TRANSIMPL)) {
-				return true;
-			}
-			return false;
+		protected boolean isStdOrSaveMemOrTransImpl() {
+			return (this == STDIMPL) || (this == SAVEMEMIMPL)
+					|| (this == TRANSIMPL);
 		}
 	}
 
-	private GenerationCycle[] cycles;
+	private final GenerationCycle[] cycles;
 	private int cycleCount = 0;
 
 	private static Logger logger = Logger.getLogger(CodeGenerator.class
@@ -114,7 +110,7 @@ public abstract class CodeGenerator {
 
 	protected CodeList rootBlock;
 
-	private ImportCodeSnippet imports;
+	private final ImportCodeSnippet imports;
 
 	protected String schemaRootPackageName;
 
@@ -123,7 +119,7 @@ public abstract class CodeGenerator {
 	protected GenerationCycle currentCycle;
 
 	/**
-	 * Creates a CodeGenerator for a single class
+	 * Creates a {@link CodeGenerator} for a single class.
 	 * 
 	 * @param schemaRootPackageName
 	 *            the name of the root package of the schema, for instance
@@ -140,43 +136,55 @@ public abstract class CodeGenerator {
 	 *            the example
 	 *            "de.uni_koblenz.jgralab.greql2.impl.comprehension.Bagcomprehension"
 	 *            for the default implementation class
-	 * @param transactionSupport
-	 *            toggles, if code with transaction support should be generated
+	 * @param config
+	 *            The {@link CodeGeneratorConfiguration} to be used when
+	 *            generating code.
 	 */
 	public CodeGenerator(String schemaRootPackageName, String packageName,
 			CodeGeneratorConfiguration config) {
 		this.schemaRootPackageName = schemaRootPackageName;
 		this.config = config;
+
 		rootBlock = new CodeList(null);
 		rootBlock.setVariable("jgPackage", "de.uni_koblenz.jgralab");
 		rootBlock.setVariable("jgTransPackage", "de.uni_koblenz.jgralab.trans");
 		rootBlock.setVariable("jgImplPackage", "de.uni_koblenz.jgralab.impl");
 		rootBlock.setVariable("jgImplStdPackage",
 				"de.uni_koblenz.jgralab.impl.std");
+		rootBlock.setVariable("jgImplSaveMemPackage",
+				"de.uni_koblenz.jgralab.impl.savemem");
 		rootBlock.setVariable("jgImplTransPackage",
 				"de.uni_koblenz.jgralab.impl.trans");
 		rootBlock.setVariable("jgSchemaPackage",
 				"de.uni_koblenz.jgralab.schema");
 		rootBlock.setVariable("jgSchemaImplPackage",
 				"de.uni_koblenz.jgralab.schema.impl");
+
 		if ((packageName != null) && !packageName.equals("")) {
 			rootBlock.setVariable("schemaPackage", schemaRootPackageName + "."
 					+ packageName);
-			// schema implementation packages (standard and for transaction)
+			// schema implementation packages (standard, savemem and for
+			// transaction)
 			rootBlock.setVariable("schemaImplStdPackage", schemaRootPackageName
 					+ ".impl.std." + packageName);
+			rootBlock.setVariable("schemaImplSaveMemPackage",
+					schemaRootPackageName + ".impl.savemem." + packageName);
 			rootBlock.setVariable("schemaImplTransPackage",
 					schemaRootPackageName + ".impl.trans." + packageName);
 		} else {
 			rootBlock.setVariable("schemaPackage", schemaRootPackageName);
 			rootBlock.setVariable("schemaImplStdPackage", schemaRootPackageName
 					+ ".impl.std");
+			rootBlock.setVariable("schemaImplSaveMemPackage",
+					schemaRootPackageName + ".impl.savemem");
 			rootBlock.setVariable("schemaImplTransPackage",
 					schemaRootPackageName + ".impl.trans");
 		}
+
 		rootBlock.setVariable("isClassOnly", "false");
 		rootBlock.setVariable("isImplementationClassOnly", "false");
 		rootBlock.setVariable("isAbstractClass", "false");
+
 		imports = new ImportCodeSnippet();
 		cycles = GenerationCycle.values();
 	}
@@ -203,6 +211,7 @@ public abstract class CodeGenerator {
 	 *            the path where the java source code is to be
 	 * @param fileName
 	 *            the filename of the java source code including .java
+	 * @param aPackage
 	 * @throws GraphIOException
 	 */
 	public void writeCodeToFile(String pathPrefix, String fileName,
@@ -259,13 +268,19 @@ public abstract class CodeGenerator {
 				logger.finer("Writing file to: " + pathPrefix + "/"
 						+ schemaPackage);
 			}
-			if (currentCycle.isStdOrTransImpl()) {
+			if (currentCycle.isStdOrSaveMemOrTransImpl()) {
 				if (currentCycle.isStdImpl()) {
 					schemaImplPackage = rootBlock
 							.getVariable("schemaImplStdPackage");
 					logger
 							.finer(" - schemaImplStdPackage="
 									+ schemaImplPackage);
+				}
+				if (currentCycle.isSaveMemImpl()) {
+					schemaImplPackage = rootBlock
+							.getVariable("schemaImplSaveMemPackage");
+					logger.finer(" - schemaImplSaveMemPackage="
+							+ schemaImplPackage);
 				}
 				if (currentCycle.isTransImpl()) {
 					schemaImplPackage = rootBlock
@@ -312,6 +327,9 @@ public abstract class CodeGenerator {
 				break;
 			case STDIMPL:
 				code.add("package #schemaImplStdPackage#;");
+				break;
+			case SAVEMEMIMPL:
+				code.add("package #schemaImplSaveMemPackage#;");
 				break;
 			case TRANSIMPL:
 				code.add("package #schemaImplTransPackage#;");
@@ -364,7 +382,7 @@ public abstract class CodeGenerator {
 		currentCycle = getNextCycle();
 		while (currentCycle != null) {
 			createCode();
-			if (currentCycle.isStdOrTransImpl()) {
+			if (currentCycle.isStdOrSaveMemOrTransImpl()) {
 				javaSources.add(new JavaSourceFromString(implClassName,
 						rootBlock.getCode()));
 			} else {
@@ -378,8 +396,10 @@ public abstract class CodeGenerator {
 	}
 
 	/**
+	 * FIXME loop over cycles instead of counter variable and direct access.
+	 * This takes a certain order of ENUM values into account! See other fixme!
 	 * 
-	 * @return
+	 * @return The next matching {@link GenerationCycle}.
 	 */
 	private GenerationCycle getNextCycle() {
 		// end of generation cycle
@@ -388,33 +408,39 @@ public abstract class CodeGenerator {
 			return null;
 		}
 
-		GenerationCycle cycle = cycles[cycleCount];
+		GenerationCycle currentCycle = cycles[cycleCount];
+
 		// if no standard support is selected => next generation cycle
-		if (cycle.isStdImpl() && !config.hasStandardSupport()) {
-			cycleCount++;
-		}
-		// if no transaction support is selected => next generation cycle
-		if (cycle.isTransImpl() && !config.hasTransactionSupport()) {
+		if (currentCycle.isStdImpl() && !config.hasStandardSupport()) {
 			cycleCount++;
 		}
 
-		cycle = cycles[cycleCount];
+		// if no savemem support is selected => next generation cycle
+		if (currentCycle.isSaveMemImpl() && !config.hasSaveMemSupport()) {
+			cycleCount++;
+		}
+
+		// if no transaction support is selected => next generation cycle
+		if (currentCycle.isTransImpl() && !config.hasTransactionSupport()) {
+			cycleCount++;
+		}
+
+		currentCycle = cycles[cycleCount];
 
 		// abstract classes should only have generation cycle ABSTRACT
-		if (rootBlock.getVariable("isAbstractClass").equals("true")) {
-			if (!cycle.isAbstract()) {
-				cycleCount = 0;
-				return null;
-			}
+		if (rootBlock.getVariable("isAbstractClass").equals("true")
+				&& !currentCycle.isAbstract()) {
+			cycleCount = 0;
+			return null;
 		}
 
-		// if it is implementation class only no abstract classes and interfaces
+		// if it is an implementation class only no abstract classes and
+		// interfaces
 		// should be generated
-		if (rootBlock.getVariable("isImplementationClassOnly").equals("true")) {
-			if (cycle.isAbstract()) {
-				cycleCount++;
-				return getNextCycle();
-			}
+		if (rootBlock.getVariable("isImplementationClassOnly").equals("true")
+				&& currentCycle.isAbstract()) {
+			cycleCount++;
+			return getNextCycle();
 		}
 
 		// if class only (schema, factory, enum), then only generation cycle
@@ -425,13 +451,13 @@ public abstract class CodeGenerator {
 		}
 
 		// if not class only, then skip generation cycle CLASSONLY
-		if (rootBlock.getVariable("isClassOnly").equals("false")) {
-			if (cycle.isClassOnly()) {
-				cycleCount = 0;
-				return null;
-			}
+		if (rootBlock.getVariable("isClassOnly").equals("false")
+				&& currentCycle.isClassOnly()) {
+			cycleCount = 0;
+			return null;
 		}
+
 		cycleCount++;
-		return cycle;
+		return currentCycle;
 	}
 }
