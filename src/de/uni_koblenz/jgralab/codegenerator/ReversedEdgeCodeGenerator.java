@@ -59,30 +59,39 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 	@Override
 	protected CodeBlock createBody() {
 		CodeList code = (CodeList) super.createBody();
-		if (currentCycle.isStdOrTransImpl()) {
+		if (currentCycle.isStdOrSaveMemOrTransImpl()) {
 			rootBlock.setVariable("baseClassName", "ReversedEdgeImpl");
+
 			if (currentCycle.isStdImpl()) {
 				addImports("#jgImplStdPackage#.#baseClassName#");
+			} else if (currentCycle.isSaveMemImpl()) {
+				addImports("#jgImplSaveMemPackage#.#baseClassName#");
 			} else {
 				addImports("#jgImplTransPackage#.#baseClassName#");
 			}
+
 			if (config.hasTypeSpecificMethodsSupport()) {
 				code.add(createNextEdgeInGraphMethods());
 				code.add(createNextEdgeAtVertexMethods());
 			}
-		//	code.add(createValidRolesMethod());
+			// code.add(createValidRolesMethod());
 		}
 		return code;
 	}
 
 	@Override
 	protected CodeBlock createConstructor() {
+		// TODO Introduce constants for jgImplStdPackage etc. (refactor)
 		if (currentCycle.isStdImpl()) {
 			addImports("#jgImplStdPackage#.EdgeImpl", "#jgPackage#.Graph");
+		}
+		if (currentCycle.isSaveMemImpl()) {
+			addImports("#jgImplSaveMemPackage#.EdgeImpl", "#jgPackage#.Graph");
 		}
 		if (currentCycle.isTransImpl()) {
 			addImports("#jgImplTransPackage#.EdgeImpl", "#jgPackage#.Graph");
 		}
+
 		return new CodeSnippet(true, "#className#Impl(EdgeImpl e, Graph g) {",
 				"\tsuper(e, g);", "}");
 	}
@@ -96,7 +105,7 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 		code.setVariable("isOrGet", a.getDomain().getJavaClassName(
 				schemaRootPackageName).equals("Boolean") ? "is" : "get");
 
-		if (currentCycle.isStdOrTransImpl()) {
+		if (currentCycle.isStdOrSaveMemOrTransImpl()) {
 			code
 					.add(
 							"public #type# #isOrGet#_#name#() {",
@@ -116,7 +125,7 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 		code.setVariable("type", a.getDomain()
 				.getJavaAttributeImplementationTypeName(schemaRootPackageName));
 
-		if (currentCycle.isStdOrTransImpl()) {
+		if (currentCycle.isStdOrSaveMemOrTransImpl()) {
 			code
 					.add(
 							"public void set_#name#(#type# _#name#) {",
@@ -317,29 +326,29 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 		}
 		return null;
 	}
-	
-//	private CodeBlock createValidRolesMethod() {
-//		CodeList list = new CodeList();
-//		CodeSnippet code = new CodeSnippet(true);
-//		code.add("private static Set<String> validRoles;");
-//		list.add(code);
-//		
-//		code = new CodeSnippet(true);
-//		code.add("static {");
-//		code.add("validRoles = new HashSet<String>();");
-//		EdgeClass ec = (EdgeClass) aec;
-//		for (String s : ec.getTo().getAllRoles()) {
-//			code.add("validRoles.add(\"" + s + "\"");
-//		}
-//		code.add("}");
-//		list.add(code);
-//		code = new CodeSnippet(true);
-//		code.add("public boolean acceptsRolename(String rolename) {",
-//				 "\treturn validRoles.contains(rolename);",
-//				 "}");
-//		list.add(code);
-//
-//		return list;		
-//	}
+
+	// private CodeBlock createValidRolesMethod() {
+	// CodeList list = new CodeList();
+	// CodeSnippet code = new CodeSnippet(true);
+	// code.add("private static Set<String> validRoles;");
+	// list.add(code);
+	//		
+	// code = new CodeSnippet(true);
+	// code.add("static {");
+	// code.add("validRoles = new HashSet<String>();");
+	// EdgeClass ec = (EdgeClass) aec;
+	// for (String s : ec.getTo().getAllRoles()) {
+	// code.add("validRoles.add(\"" + s + "\"");
+	// }
+	// code.add("}");
+	// list.add(code);
+	// code = new CodeSnippet(true);
+	// code.add("public boolean acceptsRolename(String rolename) {",
+	// "\treturn validRoles.contains(rolename);",
+	// "}");
+	// list.add(code);
+	//
+	// return list;
+	// }
 
 }

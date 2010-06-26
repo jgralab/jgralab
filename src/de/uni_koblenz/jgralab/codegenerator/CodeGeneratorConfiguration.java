@@ -5,18 +5,21 @@ package de.uni_koblenz.jgralab.codegenerator;
  * all instances. It keeps and manages the following configuration entries:
  * 
  * - <code>standardSupport</code> toggles, if the classes for standard support
- * should be created, enabled by default
+ * should be created, enabled by default.<br><br>
  * 
  * - <code>transactionSupport</code> toggles, if the classes for transaction
- * support should be created, enabled by default
+ * support should be created, enabled by default.<br><br>
  * 
  * - <code>typespecificMethodsSupport</code> toggles, if the typespecific
- * methods such as "getNextXYVertex" should be created, enabled by default
+ * methods such as "getNextXYVertex" should be created, enabled by default.<br><br>
  * 
  * - <code>methodsForSubclasseSupport</code> toggles, if the methods with an
  * additional subtype-flag like "getNextXYVertex(boolean withSubclasses)" should
  * be created. Needs typeSpecifigMethodsSupport to be enabled. Disabled by
- * default.
+ * default.<br><br>
+ * 
+ * - <code>saveMemSupport</code> toggles, if the memory saving classes should be
+ * created, disabled by default.
  */
 public class CodeGeneratorConfiguration {
 
@@ -42,7 +45,7 @@ public class CodeGeneratorConfiguration {
 	private boolean transactionSupport = true;
 
 	/**
-	 * toggles, if the typespecific methods such as "getNextXYVertex" should be
+	 * toggles, if the type-specific methods such as "getNextXYVertex" should be
 	 * created
 	 */
 	private boolean typespecificMethodSupport = true;
@@ -53,6 +56,78 @@ public class CodeGeneratorConfiguration {
 	 * typespecifigMethodsSupport to be enabled.
 	 */
 	private boolean methodsForSubclassesSupport = false;
+
+	/**
+	 * toggles, if the memory saving std classes shall be used or not. If true,
+	 * singly linked lists will be used internally, instead of double linked
+	 * lists. Runtime will be possibly worse, though.
+	 */
+	private boolean saveMemSupport = false;
+
+	/**
+	 * This constructor creates a default configuration:<br>
+	 * <br>
+	 * this.standardSupport = true <br>
+	 * this.transactionSupport = true <br>
+	 * this.typespecificMethodSupport = true <br>
+	 * this.methodsForSubclassesSupport = false <br>
+	 * this.saveMemSupport = false <br>
+	 */
+	public CodeGeneratorConfiguration() {
+
+	}
+
+	/**
+	 * This constructor creates a new {@link CodeGeneratorConfiguration}
+	 * instance. It especially allows to specify nearly all parameters available
+	 * and makes use of the default memory setup, using doubly-linked lists.
+	 * 
+	 * @param standardSupport
+	 * @param transactionSupport
+	 * @param typespecificMethodSupport
+	 * @param methodsForSubclassesSupport
+	 */
+	public CodeGeneratorConfiguration(boolean standardSupport,
+			boolean transactionSupport, boolean typespecificMethodSupport,
+			boolean methodsForSubclassesSupport) {
+		this(standardSupport, transactionSupport, typespecificMethodSupport,
+				methodsForSubclassesSupport, false);
+	}
+
+	/**
+	 * This constructor creates a new {@link CodeGeneratorConfiguration}
+	 * instance. It especially allows to specify all parameters available.
+	 * 
+	 * @param standardSupport
+	 * @param transactionSupport
+	 * @param typespecificMethodSupport
+	 * @param methodsForSubclassesSupport
+	 * @param saveMemSupport
+	 *            Hint that the memory saving implementation shall be used.
+	 */
+	public CodeGeneratorConfiguration(boolean standardSupport,
+			boolean transactionSupport, boolean typespecificMethodSupport,
+			boolean methodsForSubclassesSupport, boolean saveMemSupport) {
+		this.standardSupport = standardSupport;
+		this.transactionSupport = transactionSupport;
+		this.typespecificMethodSupport = typespecificMethodSupport;
+		this.methodsForSubclassesSupport = methodsForSubclassesSupport;
+		this.saveMemSupport = saveMemSupport;
+	}
+
+	/**
+	 * This is a copy constructor.
+	 * 
+	 * @param other
+	 *            A valid instance of {@link CodeGeneratorConfiguration} to copy
+	 *            values from.
+	 */
+	public CodeGeneratorConfiguration(CodeGeneratorConfiguration other) {
+		this.standardSupport = other.standardSupport;
+		this.transactionSupport = other.transactionSupport;
+		this.typespecificMethodSupport = other.typespecificMethodSupport;
+		this.methodsForSubclassesSupport = other.methodsForSubclassesSupport;
+	}
 
 	public void setStandardSupport(boolean standardSupport) {
 		this.standardSupport = standardSupport;
@@ -87,31 +162,11 @@ public class CodeGeneratorConfiguration {
 		return methodsForSubclassesSupport;
 	}
 
-	/**
-	 * copy constructor
-	 * 
-	 * @param other
-	 */
-	public CodeGeneratorConfiguration(CodeGeneratorConfiguration other) {
-		this.standardSupport = other.standardSupport;
-		this.transactionSupport = other.transactionSupport;
-		this.typespecificMethodSupport = other.typespecificMethodSupport;
-		this.methodsForSubclassesSupport = other.methodsForSubclassesSupport;
+	public void setSaveMemSupport(boolean saveMemSupport) {
+		this.saveMemSupport = saveMemSupport;
 	}
 
-	/**
-	 * Default constructor, created a default configuration
-	 */
-	public CodeGeneratorConfiguration() {
-
-	}
-
-	public CodeGeneratorConfiguration(boolean standardSupport,
-			boolean transactionSupport, boolean typespecificMethodSupport,
-			boolean methodsForSubclassesSupport) {
-		this.standardSupport = standardSupport;
-		this.transactionSupport = transactionSupport;
-		this.typespecificMethodSupport = typespecificMethodSupport;
-		this.methodsForSubclassesSupport = methodsForSubclassesSupport;
+	public boolean hasSaveMemSupport() {
+		return this.saveMemSupport;
 	}
 }

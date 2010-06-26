@@ -105,7 +105,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	@Override
 	protected CodeBlock createBody() {
 		CodeList code = new CodeList();
-		if (currentCycle.isStdOrTransImpl()) {
+		if (currentCycle.isStdOrSaveMemOrTransImpl()) {
 			code.add(createFields(aec.getAttributeList()));
 			code.add(createConstructor());
 			code.add(createGetAttributedElementClassMethod());
@@ -134,24 +134,26 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	protected CodeBlock createHeader() {
 		CodeSnippet code = new CodeSnippet(true);
 
-		code.setVariable("classOrInterface",
-				currentCycle.isStdOrTransImpl() ? " class" : " interface");
-		code.setVariable("abstract", currentCycle.isStdOrTransImpl()
+		code.setVariable("classOrInterface", currentCycle
+				.isStdOrSaveMemOrTransImpl() ? " class" : " interface");
+		code.setVariable("abstract", currentCycle.isStdOrSaveMemOrTransImpl()
 				&& aec.isAbstract() ? " abstract" : "");
-		code.setVariable("impl", currentCycle.isStdOrTransImpl()
+		code.setVariable("impl", currentCycle.isStdOrSaveMemOrTransImpl()
 				&& !aec.isAbstract() ? "Impl" : "");
 		code
 				.add("public#abstract##classOrInterface# #simpleClassName##impl##extends##implements# {");
-		code.setVariable("extends",
-				currentCycle.isStdOrTransImpl() ? " extends #baseClassName#"
-						: "");
+		code
+				.setVariable(
+						"extends",
+						currentCycle.isStdOrSaveMemOrTransImpl() ? " extends #baseClassName#"
+								: "");
 
 		StringBuffer buf = new StringBuffer();
 		if (interfaces.size() > 0) {
-			String delim = currentCycle.isStdOrTransImpl() ? " implements "
+			String delim = currentCycle.isStdOrSaveMemOrTransImpl() ? " implements "
 					: " extends ";
 			for (String interfaceName : interfaces) {
-				if (currentCycle.isStdOrTransImpl()
+				if (currentCycle.isStdOrSaveMemOrTransImpl()
 						|| !interfaceName.equals(aec.getQualifiedName())) {
 					if (interfaceName.equals("Vertex")
 							|| interfaceName.equals("Edge")
@@ -339,6 +341,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 			code.add("public #type# #isOrGet#_#name#();");
 			break;
 		case STDIMPL:
+		case SAVEMEMIMPL:
 			code.add("public #type# #isOrGet#_#name#() {", "\treturn _#name#;",
 					"}");
 			break;
@@ -383,6 +386,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 			code.add("public void set_#name#(#type# _#name#);");
 			break;
 		case STDIMPL:
+		case SAVEMEMIMPL:
 			code.add("public void set_#name#(#type# _#name#) {",
 					"\tthis._#name# = _#name#;", "\tgraphModified();", "}");
 			break;
@@ -449,7 +453,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	protected CodeBlock createField(Attribute attr) {
 		CodeSnippet code = new CodeSnippet(true, "protected #type# _#name#;");
 		code.setVariable("name", attr.getName());
-		if (currentCycle.isStdImpl()) {
+		if (currentCycle.isStdImpl() || currentCycle.isSaveMemImpl()) {
 			code.setVariable("type", attr.getDomain()
 					.getJavaAttributeImplementationTypeName(
 							schemaRootPackageName));
@@ -491,7 +495,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 					a.addNoIndent(new CodeSnippet("\t#setterName#(tmpVar);",
 							"\treturn;", "}"));
 				}
-				if (currentCycle.isStdImpl()) {
+				if (currentCycle.isStdImpl() || currentCycle.isSaveMemImpl()) {
 					a.add(attribute.getDomain().getReadMethod(
 							schemaRootPackageName, "_" + attribute.getName(),
 							"io"));
@@ -537,7 +541,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 							schemaRootPackageName, "_" + attribute.getName(),
 							"io"));
 				}
-				if (currentCycle.isStdImpl()) {
+				if (currentCycle.isStdImpl() || currentCycle.isSaveMemImpl()) {
 					a.add(attribute.getDomain().getWriteMethod(
 							schemaRootPackageName, "_" + attribute.getName(),
 							"io"));
@@ -567,7 +571,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 				CodeSnippet snippet = new CodeSnippet();
 				snippet.setVariable("setterName", "set_" + attribute.getName());
 				snippet.setVariable("variableName", attribute.getName());
-				if (currentCycle.isStdImpl()) {
+				if (currentCycle.isStdImpl() || currentCycle.isSaveMemImpl()) {
 					code.add(attribute.getDomain().getReadMethod(
 							schemaRootPackageName, "_" + attribute.getName(),
 							"io"));
@@ -598,7 +602,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		if ((attrSet != null) && !attrSet.isEmpty()) {
 			code.add(new CodeSnippet("io.space();"));
 			for (Attribute attribute : attrSet) {
-				if (currentCycle.isStdImpl()) {
+				if (currentCycle.isStdImpl() || currentCycle.isSaveMemImpl()) {
 					code.add(attribute.getDomain().getWriteMethod(
 							schemaRootPackageName, "_" + attribute.getName(),
 							"io"));
