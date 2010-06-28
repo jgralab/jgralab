@@ -169,11 +169,13 @@ public class TgSchema2Java {
 	public void setTransactionSupportOnly() {
 		config.setStandardSupport(false);
 		config.setTransactionSupport(true);
+		config.setSaveMemSupport(false);
 	}
 
 	public void setStandardSupportOnly() {
 		config.setStandardSupport(true);
 		config.setTransactionSupport(false);
+		config.setSaveMemSupport(false);
 	}
 
 	public void setStandardSupport(boolean value) {
@@ -185,7 +187,7 @@ public class TgSchema2Java {
 	}
 
 	public void setSavememSupport(boolean value) {
-		System.err.println("Savemem support not implementet yet.");
+		config.setSaveMemSupport(value);
 	}
 
 	/**

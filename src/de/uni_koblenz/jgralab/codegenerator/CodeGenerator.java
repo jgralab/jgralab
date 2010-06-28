@@ -28,6 +28,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -50,6 +52,23 @@ public abstract class CodeGenerator {
 	protected enum GenerationCycle {
 		// FIXME The order here matters! CLASSONLY must be last!
 		ABSTRACT, STDIMPL, TRANSIMPL, SAVEMEMIMPL, CLASSONLY;
+
+		protected static List<GenerationCycle> filter(
+				CodeGeneratorConfiguration config) {
+			List<GenerationCycle> out = new ArrayList<GenerationCycle>();
+			out.add(ABSTRACT);
+			if (config.hasStandardSupport()) {
+				out.add(STDIMPL);
+			}
+			if (config.hasTransactionSupport()) {
+				out.add(TRANSIMPL);
+			}
+			if (config.hasSaveMemSupport()) {
+				out.add(SAVEMEMIMPL);
+			}
+			out.add(CLASSONLY);
+			return out;
+		}
 
 		/**
 		 * 
@@ -102,7 +121,8 @@ public abstract class CodeGenerator {
 		}
 	}
 
-	private final GenerationCycle[] cycles;
+	private final List<GenerationCycle> cycles;
+
 	private int cycleCount = 0;
 
 	private static Logger logger = Logger.getLogger(CodeGenerator.class
@@ -186,7 +206,7 @@ public abstract class CodeGenerator {
 		rootBlock.setVariable("isAbstractClass", "false");
 
 		imports = new ImportCodeSnippet();
-		cycles = GenerationCycle.values();
+		cycles = GenerationCycle.filter(config);
 	}
 
 	protected abstract CodeBlock createHeader();
@@ -403,29 +423,29 @@ public abstract class CodeGenerator {
 	 */
 	private GenerationCycle getNextCycle() {
 		// end of generation cycle
-		if (cycleCount >= cycles.length) {
+		if (cycleCount >= cycles.size()) {
 			// cycleCount = 0;
 			return null;
 		}
 
-		GenerationCycle currentCycle = cycles[cycleCount];
+		GenerationCycle currentCycle = cycles.get(cycleCount);
 
-		// if no standard support is selected => next generation cycle
-		if (currentCycle.isStdImpl() && !config.hasStandardSupport()) {
-			cycleCount++;
-		}
+		// // if no standard support is selected => next generation cycle
+		// if (currentCycle.isStdImpl() && !config.hasStandardSupport()) {
+		// cycleCount++;
+		// }
+		//
+		// // if no savemem support is selected => next generation cycle
+		// if (currentCycle.isSaveMemImpl() && !config.hasSaveMemSupport()) {
+		// cycleCount++;
+		// }
+		//
+		// // if no transaction support is selected => next generation cycle
+		// if (currentCycle.isTransImpl() && !config.hasTransactionSupport()) {
+		// cycleCount++;
+		// }
 
-		// if no savemem support is selected => next generation cycle
-		if (currentCycle.isSaveMemImpl() && !config.hasSaveMemSupport()) {
-			cycleCount++;
-		}
-
-		// if no transaction support is selected => next generation cycle
-		if (currentCycle.isTransImpl() && !config.hasTransactionSupport()) {
-			cycleCount++;
-		}
-
-		currentCycle = cycles[cycleCount];
+		// currentCycle = cycles[cycleCount];
 
 		// abstract classes should only have generation cycle ABSTRACT
 		if (rootBlock.getVariable("isAbstractClass").equals("true")
