@@ -222,6 +222,14 @@ public class TGraphToTGraph2Converter {
 		output.setArgName("file");
 		oh.addOption(output);
 
+		Option loadSchemaAfterConversion = new Option(
+				"l",
+				"load",
+				false,
+				"(optional): loads the schema after conversion and displays errors if it did't work");
+		loadSchemaAfterConversion.setRequired(false);
+		oh.addOption(loadSchemaAfterConversion);
+
 		return oh.parse(args);
 	}
 
@@ -239,6 +247,7 @@ public class TGraphToTGraph2Converter {
 					.getOptionValue('i') : null;
 			String outputFilename = cmdl.hasOption('o') ? cmdl
 					.getOptionValue('o') : null;
+			boolean loadSchema = outputFilename != null && cmdl.hasOption('l');
 
 			String tempFilename = outputFilename != null ? outputFilename + "~"
 					+ Long.toString(System.currentTimeMillis()) : null;
@@ -268,6 +277,9 @@ public class TGraphToTGraph2Converter {
 			}
 
 			System.out.println("Fini.");
+			if(loadSchema){
+				loadConvertedSchema(outputFilename);
+			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -275,4 +287,15 @@ public class TGraphToTGraph2Converter {
 		}
 
 	}
+
+	private static void loadConvertedSchema(String filename) {
+		try {
+			GraphIO.loadSchemaFromFile(filename);
+			System.out.println("Success");
+		} catch (Exception e) {
+			System.err.println("FAIL");
+			e.printStackTrace();
+		}
+	}
+
 }
