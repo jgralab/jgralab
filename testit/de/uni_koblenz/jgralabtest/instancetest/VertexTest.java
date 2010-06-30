@@ -2333,7 +2333,9 @@ public class VertexTest extends InstanceTest {
 					.createVertexTestGraphWithTransactionSupport(100, 100);
 			break;
 		case SAVEMEM:
-			fail("Not implemented yet");
+			graph = VertexTestSchema.instance()
+					.createVertexTestGraphWithSaveMemSupport(100, 100);
+			break;
 		}
 		return graph;
 	}
@@ -8862,7 +8864,9 @@ public class VertexTest extends InstanceTest {
 					.loadVertexTestGraphWithTransactionSupport("test.tg");
 			break;
 		case SAVEMEM:
-			fail("Not implemented yet");
+			loadedgraph = VertexTestSchema.instance()
+					.loadVertexTestGraphWithSaveMemSupport("test.tg");
+			break;
 		}
 		createReadOnlyTransaction(loadedgraph);
 		DoubleSubNode loadedv0 = loadedgraph.getFirstDoubleSubNode();
@@ -8939,7 +8943,9 @@ public class VertexTest extends InstanceTest {
 					.loadVertexTestGraphWithTransactionSupport("test.tg");
 			break;
 		case SAVEMEM:
-			fail("Not implemented yet");
+			loadedgraph = VertexTestSchema.instance()
+					.loadVertexTestGraphWithSaveMemSupport("test.tg");
+			break;
 		}
 		createReadOnlyTransaction(loadedgraph);
 		DoubleSubNode loadedv0 = loadedgraph.getFirstDoubleSubNode();

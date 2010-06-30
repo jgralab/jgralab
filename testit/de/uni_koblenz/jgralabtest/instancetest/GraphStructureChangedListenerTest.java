@@ -1,6 +1,5 @@
 package de.uni_koblenz.jgralabtest.instancetest;
 
-import static junit.framework.Assert.fail;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -54,7 +53,7 @@ public class GraphStructureChangedListenerTest extends InstanceTest {
 					.createMinimalGraphWithTransactionSupport(V, E);
 			break;
 		case SAVEMEM:
-			fail("Not implemented yet");
+			g = MinimalSchema.instance().createMinimalGraphWithSaveMemSupport();
 		}
 		trigger = false;
 	}

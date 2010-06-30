@@ -3,7 +3,6 @@ package de.uni_koblenz.jgralabtest.instancetest;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
-import static junit.framework.Assert.fail;
 
 import java.util.Collection;
 
@@ -49,7 +48,7 @@ public class EdgeListTest extends InstanceTest {
 					.createMinimalGraphWithTransactionSupport(V,E);
 			break;
 		case SAVEMEM:
-			fail("Not implemented yet");
+			g = MinimalSchema.instance().createMinimalGraphWithSaveMemSupport();
 		}
 		createTransaction(g);
 		for (int i = 0; i < N; ++i) {
