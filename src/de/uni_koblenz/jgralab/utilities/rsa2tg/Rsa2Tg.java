@@ -1077,12 +1077,12 @@ public class Rsa2Tg extends XmlProcessor {
 			correctEdgeDirection();
 		}
 
+		// the following depends on correct subsets relations between incidences
+		attachConstraints();
+
 		// the following depends on correct edge directions and edgeclass
 		// generalizations
 		createSubsetsAndRedefinesRelations();
-
-		// the following depends on correct subsets relations between incidences
-		attachConstraints();
 
 		createEdgeClassNames();
 
