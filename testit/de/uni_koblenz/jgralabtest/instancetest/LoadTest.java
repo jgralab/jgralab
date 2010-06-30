@@ -194,7 +194,7 @@ public class LoadTest extends InstanceTest {
 					.createVertexTestGraphWithTransactionSupport(vMax, eMax);
 			break;
 		case SAVEMEM:
-			fail("Not implemented yet");
+			graph = VertexTestSchema.instance().createVertexTestGraphWithSaveMemSupport(vMax, eMax);
 		}
 		return graph;
 	}
@@ -279,7 +279,9 @@ public class LoadTest extends InstanceTest {
 								TESTGRAPH_PATH + TESTGRAPH_FILENAME);
 				break;
 			case SAVEMEM:
-				fail("Not implemented yet");
+				g2 = VertexTestSchema.instance()
+				.loadVertexTestGraphWithSaveMemSupport(
+						TESTGRAPH_PATH + TESTGRAPH_FILENAME);
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();

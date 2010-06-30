@@ -69,9 +69,10 @@ public class IncidenceListTest extends InstanceTest {
 					.createMinimalGraphWithTransactionSupport(V, E);
 			break;
 		case SAVEMEM:
-			fail("Not implemented yet");
+			g = MinimalSchema.instance().createMinimalGraphWithSaveMemSupport(
+					V, E);
 		}
-		
+
 		nodes = new Node[N];
 
 		createTransaction(g);
@@ -401,7 +402,8 @@ public class IncidenceListTest extends InstanceTest {
 					.createMinimalGraphWithTransactionSupport(V, E);
 			break;
 		case SAVEMEM:
-			fail("Not implemented yet");
+			g = MinimalSchema.instance().createMinimalGraphWithSaveMemSupport(
+					V, E);
 		}
 
 		Node[] nodes = new Node[NODE_COUNT];

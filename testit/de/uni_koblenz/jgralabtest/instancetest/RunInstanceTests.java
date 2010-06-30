@@ -27,6 +27,8 @@ package de.uni_koblenz.jgralabtest.instancetest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
+import de.uni_koblenz.jgralabtest.graphmarker.RunGraphMarkerTests;
+
 /**
  * @author ist@uni-koblenz.de
  * 
@@ -35,7 +37,7 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses( { EdgeListTest.class, IncidenceListTest.class,
 		LoadTest.class, VertexListTest.class, VertexTest.class, EdgeTest.class,
 		RoleNameTest.class, GraphTest.class,
-		GraphStructureChangedListenerTest.class, DefaultValueTest.class })
+		GraphStructureChangedListenerTest.class, DefaultValueTest.class, RunGraphMarkerTests.class })
 public class RunInstanceTests {
 
 }

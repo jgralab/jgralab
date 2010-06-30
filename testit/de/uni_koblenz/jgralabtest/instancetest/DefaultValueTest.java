@@ -67,7 +67,9 @@ public class DefaultValueTest extends InstanceTest {
 					.createDefaultValueTestGraphWithTransactionSupport();
 			break;
 		case SAVEMEM:
-			fail("Not implemented yet");
+			graph = DefaultValueTestSchema.instance()
+					.createDefaultValueTestGraphWithSaveMemSupport();
+			break;
 		}
 	}
 
@@ -198,7 +200,8 @@ public class DefaultValueTest extends InstanceTest {
 					.createDefaultValueTestGraphWithTransactionSupport();
 			break;
 		case SAVEMEM:
-			fail("Not implemented yet");
+			secondGraph = DefaultValueTestSchema.instance()
+					.createDefaultValueTestGraphWithSaveMemSupport();
 		}
 		createReadOnlyTransaction(graph);
 		createReadOnlyTransaction(secondGraph);

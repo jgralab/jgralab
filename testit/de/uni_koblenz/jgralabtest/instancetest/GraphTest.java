@@ -91,7 +91,8 @@ public class GraphTest extends InstanceTest {
 					.createVertexTestGraphWithTransactionSupport();
 			break;
 		case SAVEMEM:
-			fail("Not implemented yet");
+			out = VertexTestSchema.instance()
+					.createVertexTestGraphWithSaveMemSupport();
 		}
 		return out;
 	}

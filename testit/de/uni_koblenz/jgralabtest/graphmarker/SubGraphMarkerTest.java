@@ -1,7 +1,6 @@
 package de.uni_koblenz.jgralabtest.graphmarker;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -59,7 +58,9 @@ public class SubGraphMarkerTest extends InstanceTest {
 					.createMinimalGraphWithTransactionSupport(V, E);
 			break;
 		case SAVEMEM:
-			fail("Not implemented yet");
+			g = MinimalSchema.instance().createMinimalGraphWithSaveMemSupport(
+					V, E);
+			break;
 		}
 		createTransaction(g);
 
@@ -117,15 +118,17 @@ public class SubGraphMarkerTest extends InstanceTest {
 
 	@Test
 	public void testGetMarkedElements() throws CommitFailedException {
-		createReadOnlyTransaction(g);
 		assertAllMarkedCorrectly();
+		createReadOnlyTransaction(g);
 		for (int i = 0; i < VERTEX_COUNT; i++) {
 			assertEquals(oldMarker.mark(nodes[i]), newMarker.mark(nodes[i]));
 		}
 		for (int i = 0; i < EDGE_COUNT; i++) {
 			assertEquals(oldMarker.mark(links[i]), newMarker.mark(links[i]));
 		}
+		commit(g);
 		assertAllMarkedCorrectly();
+		createReadOnlyTransaction(g);
 		for (int i = 0; i < VERTEX_COUNT; i++) {
 			assertEquals(oldMarker.removeMark(nodes[i]), newMarker
 					.removeMark(nodes[i]));
@@ -134,8 +137,8 @@ public class SubGraphMarkerTest extends InstanceTest {
 			assertEquals(oldMarker.removeMark(links[i]), newMarker
 					.removeMark(links[i]));
 		}
-		assertAllMarkedCorrectly();
 		commit(g);
+		assertAllMarkedCorrectly();
 	}
 
 }

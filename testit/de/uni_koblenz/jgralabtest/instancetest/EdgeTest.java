@@ -74,7 +74,8 @@ public class EdgeTest extends InstanceTest {
 					.createVertexTestGraphWithTransactionSupport();
 			break;
 		case SAVEMEM:
-			fail("Not implemented yet");
+			g = VertexTestSchema.instance()
+					.createVertexTestGraphWithSaveMemSupport();
 		}
 
 		rand = new Random(System.currentTimeMillis());
@@ -239,7 +240,8 @@ public class EdgeTest extends InstanceTest {
 						.createVertexTestGraphWithTransactionSupport();
 				break;
 			case SAVEMEM:
-				fail("Not implemented yet");
+				g = VertexTestSchema.instance()
+						.createVertexTestGraphWithSaveMemSupport();
 			}
 			createTransaction(g);
 			DoubleSubNode v0 = g.createDoubleSubNode();
@@ -437,7 +439,8 @@ public class EdgeTest extends InstanceTest {
 						.createVertexTestGraphWithTransactionSupport();
 				break;
 			case SAVEMEM:
-				fail("Not implemented yet");
+				g = VertexTestSchema.instance()
+						.createVertexTestGraphWithSaveMemSupport();
 			}
 			createTransaction(g);
 			DoubleSubNode v0 = g.createDoubleSubNode();
@@ -588,7 +591,8 @@ public class EdgeTest extends InstanceTest {
 						.createVertexTestGraphWithTransactionSupport();
 				break;
 			case SAVEMEM:
-				fail("Not implemented yet");
+				g = VertexTestSchema.instance()
+						.createVertexTestGraphWithSaveMemSupport();
 			}
 			createTransaction(g);
 			DoubleSubNode v0 = g.createDoubleSubNode();
@@ -815,7 +819,8 @@ public class EdgeTest extends InstanceTest {
 						.createVertexTestGraphWithTransactionSupport();
 				break;
 			case SAVEMEM:
-				fail("Not implemented yet");
+				g = VertexTestSchema.instance()
+						.createVertexTestGraphWithSaveMemSupport();
 			}
 			createTransaction(g);
 			DoubleSubNode v0 = g.createDoubleSubNode();
@@ -1143,7 +1148,8 @@ public class EdgeTest extends InstanceTest {
 						.createVertexTestGraphWithTransactionSupport();
 				break;
 			case SAVEMEM:
-				fail("Not implemented yet");
+				g = VertexTestSchema.instance()
+						.createVertexTestGraphWithSaveMemSupport();
 			}
 			createTransaction(g);
 			DoubleSubNode v0 = g.createDoubleSubNode();
@@ -1425,7 +1431,8 @@ public class EdgeTest extends InstanceTest {
 						.createVertexTestGraphWithTransactionSupport();
 				break;
 			case SAVEMEM:
-				fail("Not implemented yet");
+				g = VertexTestSchema.instance()
+						.createVertexTestGraphWithSaveMemSupport();
 			}
 			createTransaction(g);
 			DoubleSubNode v0 = g.createDoubleSubNode();
@@ -1647,7 +1654,8 @@ public class EdgeTest extends InstanceTest {
 						.createVertexTestGraphWithTransactionSupport();
 				break;
 			case SAVEMEM:
-				fail("Not implemented yet");
+				g = VertexTestSchema.instance()
+						.createVertexTestGraphWithSaveMemSupport();
 			}
 			createTransaction(g);
 			DoubleSubNode v0 = g.createDoubleSubNode();
@@ -2018,7 +2026,8 @@ public class EdgeTest extends InstanceTest {
 						.createVertexTestGraphWithTransactionSupport();
 				break;
 			case SAVEMEM:
-				fail("Not implemented yet");
+				g = VertexTestSchema.instance()
+						.createVertexTestGraphWithSaveMemSupport();
 			}
 			createTransaction(g);
 			DoubleSubNode v0 = g.createDoubleSubNode();
@@ -2544,7 +2553,8 @@ public class EdgeTest extends InstanceTest {
 						.createVertexTestGraphWithTransactionSupport();
 				break;
 			case SAVEMEM:
-				fail("Not implemented yet");
+				g = VertexTestSchema.instance()
+						.createVertexTestGraphWithSaveMemSupport();
 			}
 			createTransaction(g);
 			DoubleSubNode v0 = g.createDoubleSubNode();
@@ -4889,7 +4899,8 @@ public class EdgeTest extends InstanceTest {
 					.createVertexTestGraphWithTransactionSupport();
 			break;
 		case SAVEMEM:
-			fail("Not implemented yet");
+			anotherGraph = VertexTestSchema.instance()
+					.createVertexTestGraphWithSaveMemSupport();
 		}
 		return anotherGraph;
 	}
@@ -5131,7 +5142,8 @@ public class EdgeTest extends InstanceTest {
 		VertexTestGraph loadedgraph = null;
 		switch (implementationType) {
 		case STANDARD:
-			loadedgraph = (VertexTestGraph) GraphIO.loadGraphFromFile("test.tg", null);
+			loadedgraph = (VertexTestGraph) GraphIO.loadGraphFromFile(
+					"test.tg", null);
 			break;
 		case TRANSACTION:
 			loadedgraph = (VertexTestGraph) GraphIO
