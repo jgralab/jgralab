@@ -27,13 +27,6 @@ package de.uni_koblenz.jgralab.codegenerator;
  */
 public class CodeGeneratorConfiguration {
 
-	// TODO change constructor to not using this many boolean flags
-	// just use a parameterless constructior and methods
-	// like "withTransactionSupport()"
-	// expample: cgc = new
-	// CodeGeneratorConfiguration().withTransactionSupport().withoutStandardSupport();
-	// standard support is enabled by default.
-
 	public static final CodeGeneratorConfiguration WITHOUT_TRANSACTIONS = new CodeGeneratorConfiguration();
 
 	public static final CodeGeneratorConfiguration FULL = new CodeGeneratorConfiguration()
