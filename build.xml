@@ -137,7 +137,7 @@
 
 	<!-- generates the schemas required for test cases without compiling them -->
 	<target name="generatetestschemas" depends="tgtools">
-		<tgschema2java sourcePath="${testcases.dir}">
+		<tgschema2java sourcePath="${testcases.dir}" implementationMode="standard,transaction,savemem">
 			<fileset dir="${testschemas.dir}" includes="*.tg" />
 		</tgschema2java>
 	</target>
