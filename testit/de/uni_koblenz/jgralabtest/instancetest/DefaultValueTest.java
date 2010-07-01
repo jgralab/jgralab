@@ -631,9 +631,8 @@ public class DefaultValueTest extends InstanceTest {
 		edgeClass.addAttribute("recordEdge", recordDomain,
 				"(t 1.1 FIRST 1 [t f t] 1 {1 - t 2 - f 3 - t} {t f} \"test\")");
 
-		schema
-				.commit(new CodeGeneratorConfiguration(true, false, false,
-						false));
+		schema.commit(new CodeGeneratorConfiguration()
+				.withoutTypeSpecificMethodSupport());
 		GraphIO.saveSchemaToFile(
 				"./testit/testschemas/DefaultValueTestSchema.tg", schema);
 		GraphIO

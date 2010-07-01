@@ -287,19 +287,17 @@ public class SchemaImpl implements Schema {
 	}
 
 	private CodeGeneratorConfiguration createDefaultConfig() {
-		boolean stdSupport = false;
+		CodeGeneratorConfiguration out = new CodeGeneratorConfiguration();
 		if (java.lang.Package.getPackage(packagePrefix + ". "
-				+ IMPLSTDPACKAGENAME) != null) {
-			stdSupport = true;
+				+ IMPLSTDPACKAGENAME) == null) {
+			out.setStandardSupport(false);
 		}
-		boolean transSupport = false;
 		if (java.lang.Package.getPackage(packagePrefix + ". "
 				+ IMPLTRANSPACKAGENAME) != null) {
-			transSupport = true;
+			out.setTransactionSupport(true);
 		}
+		return out.withMethodsForSubclassesSupport();
 		// TODO: Monte, check for the other values :-)
-		return new CodeGeneratorConfiguration(stdSupport, transSupport, true,
-				true);
 	}
 
 	void addDomain(Domain dom) {

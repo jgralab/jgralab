@@ -1821,8 +1821,9 @@ public class StateRepository {
 					state.progress = 0;
 					state.graph = GraphIO.loadSchemaAndGraphFromFile(
 							state.graphFile.toString(),
-							new CodeGeneratorConfiguration(true, false, false,
-									false), new MyProgressFunction(state));
+							new CodeGeneratorConfiguration()
+									.withoutTypeSpecificMethodSupport(),
+							new MyProgressFunction(state));
 					assert state.graph != null : "The graph wasn't loaded correctly.";
 					state = null;
 				}
