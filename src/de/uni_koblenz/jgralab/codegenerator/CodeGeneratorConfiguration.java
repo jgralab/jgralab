@@ -23,6 +23,12 @@ package de.uni_koblenz.jgralab.codegenerator;
  */
 public class CodeGeneratorConfiguration {
 
+	// TODO change constructor to not using this many boolean flags
+	//      just use a parameterless constructior and methods
+	//      like "withTransactionSupport()"
+	//      expample: cgc = new CodeGeneratorConfiguration().withTransactionSupport().withoutStandardSupport();
+	//      standard support is enabled by default.
+	
 	public static final CodeGeneratorConfiguration WITHOUT_TRANSACTIONS = new CodeGeneratorConfiguration(
 			true, false, true, false);
 
@@ -42,8 +48,15 @@ public class CodeGeneratorConfiguration {
 	private boolean standardSupport = true;
 
 	/** toggles, if the classes for transaction support should be created */
-	private boolean transactionSupport = true;
+	private boolean transactionSupport = false;
 
+	/**
+	 * toggles, if the memory saving std classes shall be used or not. If true,
+	 * singly linked lists will be used internally, instead of double linked
+	 * lists. Runtime will be possibly worse, though.
+	 */
+	private boolean saveMemSupport = false;
+	
 	/**
 	 * toggles, if the type-specific methods such as "getNextXYVertex" should be
 	 * created
@@ -57,12 +70,6 @@ public class CodeGeneratorConfiguration {
 	 */
 	private boolean methodsForSubclassesSupport = false;
 
-	/**
-	 * toggles, if the memory saving std classes shall be used or not. If true,
-	 * singly linked lists will be used internally, instead of double linked
-	 * lists. Runtime will be possibly worse, though.
-	 */
-	private boolean saveMemSupport = false;
 
 	/**
 	 * This constructor creates a default configuration:<br>
