@@ -82,27 +82,10 @@ public class TgSchema2JavaTask extends Task {
 	}
 
 	public void setImplementationMode(String value) {
-
-		String[] values = value.toLowerCase().split(",");
-		if (values.length > 0) {
-			executeObject.setTransactionSupport(false);
-			executeObject.setStandardSupport(false);
-			// TODO uncomment when implemented
-			// executeObject.setSavememSupport(false);
-		}
-		for (String v : values) {
-			if (v.equals("transaction")) {
-				executeObject.setTransactionSupport(true);
-			} else if (v.equals("standard")) {
-				executeObject.setStandardSupport(true);
-			} else if (v.equals("savemem")) {
-				executeObject.setSavememSupport(true);
-			} else {
-				throw new BuildException(
-						"Invalid value for implementation mode: "
-								+ v
-								+ "\nOnly \"transaction\",\"standard\" and \"savemem\" are supported.");
-			}
+		try {
+			executeObject.setImplementationMode(value);
+		} catch (Exception e) {
+			throw new BuildException(e);
 		}
 	}
 

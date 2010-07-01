@@ -138,6 +138,11 @@ public class TgSchema2Java {
 			} else {
 				t.setMethodsForSubclassesSupport(false);
 			}
+			if (comLine.hasOption('i')) {
+				t.setImplementationMode(comLine.getOptionValue('i'));
+			} else {
+				t.setImplementationMode("standard");
+			}
 
 			// loading .tg-file and creating schema-object
 			tgFilename = comLine.getOptionValue("s");
@@ -166,13 +171,19 @@ public class TgSchema2Java {
 		config.setTypeSpecificMethodsSupport(enabled);
 	}
 
+	@Deprecated
 	public void setTransactionSupportOnly() {
+		System.err
+				.println("Warning: this call is deprecated, use option \"-i\" instead.");
 		config.setStandardSupport(false);
 		config.setTransactionSupport(true);
 		config.setSaveMemSupport(false);
 	}
 
+	@Deprecated
 	public void setStandardSupportOnly() {
+		System.err
+				.println("Warning: this call is deprecated, use option \"-i\" instead.");
 		config.setStandardSupport(true);
 		config.setTransactionSupport(false);
 		config.setSaveMemSupport(false);
@@ -494,6 +505,15 @@ public class TgSchema2Java {
 		path.setArgName("path");
 		oh.addOption(path);
 
+		Option implementation = new Option(
+				"i",
+				"implementationMode",
+				true,
+				"(optional): explicitly specify the implementation modes that should be generated. By default only the standard support will be activated.");
+		implementation.setRequired(false);
+		implementation.setArgName("list");
+		oh.addOption(implementation);
+
 		return oh.parse(args);
 	}
 
@@ -555,5 +575,34 @@ public class TgSchema2Java {
 
 	public Schema getSchema() {
 		return schema;
+	}
+
+	public void setImplementationMode(String value) {
+
+		String[] values = value.toLowerCase().split(",");
+		if (values.length > 0) {
+			// paranoid ;-) ensure nothing is activated to minimize surprises
+			setTransactionSupport(false);
+			setStandardSupport(false);
+			setSavememSupport(false);
+		} else {
+			throw new IllegalArgumentException(
+					"No implementation mode specified.");
+		}
+		for (String v : values) {
+			v = v.trim();
+			if (v.equals("transaction")) {
+				setTransactionSupport(true);
+			} else if (v.equals("standard")) {
+				setStandardSupport(true);
+			} else if (v.equals("savemem")) {
+				setSavememSupport(true);
+			} else {
+				throw new IllegalArgumentException(
+						"Illegal value for implementation mode: "
+								+ v
+								+ "\nOnly \"transaction\",\"standard\" and \"savemem\" are supported.");
+			}
+		}
 	}
 }
