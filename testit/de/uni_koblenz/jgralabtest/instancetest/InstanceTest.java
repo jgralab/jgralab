@@ -16,7 +16,7 @@ public abstract class InstanceTest {
 		parameters = new ArrayList<Object[]>();
 		parameters.add(new Object[] { ImplementationType.STANDARD });
 		parameters.add(new Object[] { ImplementationType.TRANSACTION });
-		parameters.add(new Object[] { ImplementationType.SAVEMEM});
+		// parameters.add(new Object[] { ImplementationType.SAVEMEM});
 	}
 
 	public static Collection<Object[]> getParameters() {
