@@ -18,12 +18,10 @@ import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql2.optimizer.condexp.Formula;
 import de.uni_koblenz.jgralab.greql2.schema.BoolLiteral;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
-import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.IsConstraintOf;
-import de.uni_koblenz.jgralab.greql2.schema.Literal;
 
 /**
  * TODO: (heimdall) Comment class!
@@ -81,6 +79,7 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 			LinkedList<VertexEdgeClassTuple> relinkables = rememberConnections(top);
 			Formula formula = Formula.createFormulaFromExpression(top, eval);
 			top.delete();
+			top = null;
 			Formula optimizedFormula = formula.simplify().optimize();
 			if (!formula.equals(optimizedFormula)) {
 				simplifiedOrOptimized = true;
@@ -124,6 +123,7 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 	private LinkedList<VertexEdgeClassTuple> rememberConnections(
 			FunctionApplication top) {
 		LinkedList<VertexEdgeClassTuple> list = new LinkedList<VertexEdgeClassTuple>();
+		assert top.isValid();
 		for (Edge e : top.incidences(EdgeDirection.OUT)) {
 			list.add(new VertexEdgeClassTuple((Greql2Vertex) e.getOmega(),
 					(Class<? extends Edge>) e.getM1Class()));
@@ -140,17 +140,7 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 				FunctionApplication f = (FunctionApplication) v;
 				if (OptimizerUtility.isAnd(f) || OptimizerUtility.isOr(f)
 						|| OptimizerUtility.isNot(f)) {
-					// The conditional expression evaluator optimizes till
-					// only expressions with at most one non-complex term stay,
-					// so return only FunApps which have 2 or more non-literals
-					// as args. Additionally, the non-constant terms have to be
-					// different, so that ((Null | v7) & ~v7) is not recognized.
-					HashSet<Vertex> nonConsts = new HashSet<Vertex>();
-					collectNonCostantTerms(f, nonConsts);
-					// System.out.println("nCT(" + f + ") = " + nonConsts);
-					if (nonConsts.size() >= 2) {
-						return f;
-					}
+					return f;
 				}
 			}
 			for (Edge e : v.incidences(EdgeDirection.IN)) {
@@ -160,24 +150,4 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 		return null;
 	}
 
-	private void collectNonCostantTerms(Vertex f, HashSet<Vertex> nonConsts) {
-		for (Edge e : f.incidences(EdgeDirection.IN)) {
-			Vertex v = e.getAlpha();
-			if (v instanceof FunctionApplication) {
-				FunctionApplication funApp = (FunctionApplication) v;
-				if (OptimizerUtility.isAnd(funApp)
-						|| OptimizerUtility.isOr(funApp)
-						|| OptimizerUtility.isNot(funApp)) {
-					collectNonCostantTerms(v, nonConsts);
-				} else {
-					nonConsts.add(v);
-				}
-			} else if ((v instanceof Literal) || (v instanceof FunctionId)) {
-				// Those are uninteresting vertices. Skip em!
-				continue;
-			} else {
-				nonConsts.add(v);
-			}
-		}
-	}
 }
