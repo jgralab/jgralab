@@ -843,6 +843,9 @@ public class Greql2Serializer {
 		} else if (id.equals("xor")) {
 			serializeFunctionApplicationInfix(exp, "xor");
 			return;
+		} else if (id.equals("concat")) {
+			serializeFunctionApplicationInfix(exp, "++");
+			return;
 		}
 
 		serializeIdentifier(fid);
