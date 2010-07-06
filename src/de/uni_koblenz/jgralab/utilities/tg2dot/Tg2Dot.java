@@ -404,8 +404,10 @@ public class Tg2Dot extends Tg2Whatever {
 		t2d.setOutputFile(outputFileName);
 
 		HashSet<Class<? extends AttributedElement>> revEdgeTypes = new HashSet<Class<? extends AttributedElement>>();
-		for (Class<? extends AttributedElement> ec : reversedEdgeTypes) {
-			revEdgeTypes.add(ec);
+		if (reversedEdgeTypes != null) {
+			for (Class<? extends AttributedElement> ec : reversedEdgeTypes) {
+				revEdgeTypes.add(ec);
+			}
 		}
 		t2d.setReversedEdgeTypes(revEdgeTypes);
 
