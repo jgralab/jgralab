@@ -419,6 +419,8 @@ public class GreqlEvaluator {
 			sb.append('\n');
 		}
 		reader.close();
+		System.out.println("Query read from file:");
+		System.out.println(sb.toString());
 		setQuery(sb.toString());
 	}
 
@@ -685,12 +687,17 @@ public class GreqlEvaluator {
 	 */
 	public GreqlEvaluator(String query, Graph datagraph,
 			Map<String, JValue> variables, ProgressFunction progressFunction) {
+		this(datagraph, variables, progressFunction);
+		setQuery(query);
+	}
+
+	private GreqlEvaluator(Graph datagraph, Map<String, JValue> variables,
+			ProgressFunction progressFunction) {
 		if (datagraph == null) {
 			this.datagraph = createMinimalGraph();
 		} else {
 			this.datagraph = datagraph;
 		}
-		this.queryString = query;
 		knownTypes = new HashMap<String, AttributedElementClass>();
 		this.variableMap = variables;
 		this.progressFunction = progressFunction;
@@ -765,13 +772,9 @@ public class GreqlEvaluator {
 	public GreqlEvaluator(File queryFile, Graph datagraph,
 			Map<String, JValue> variables, ProgressFunction progressFunction)
 			throws FileNotFoundException, IOException {
-
+		this(datagraph, variables, progressFunction);
 		// Read query from file (afuhr)
 		this.setQueryFile(queryFile);
-
-		this.variableMap = variables;
-		this.progressFunction = progressFunction;
-
 	}
 
 	/**
