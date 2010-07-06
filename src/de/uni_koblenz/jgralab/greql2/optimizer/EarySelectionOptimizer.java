@@ -21,7 +21,6 @@ import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
-import de.uni_koblenz.jgralab.greql2.schema.Comprehension;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
@@ -29,10 +28,11 @@ import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.greql2.schema.Identifier;
 import de.uni_koblenz.jgralab.greql2.schema.IsArgumentOf;
+import de.uni_koblenz.jgralab.greql2.schema.IsBoundVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsConstraintOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsDeclaredVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsSimpleDeclOf;
-import de.uni_koblenz.jgralab.greql2.schema.QuantifiedExpression;
+import de.uni_koblenz.jgralab.greql2.schema.IsVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.RecordConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.RecordElement;
 import de.uni_koblenz.jgralab.greql2.schema.RecordId;
@@ -245,25 +245,16 @@ public class EarySelectionOptimizer extends OptimizerBase {
 		}
 		logger.finer(sb.toString() + " with predicates " + predicates + ".");
 
-		// First we search the edges that are connected to each variable in
-		// the result definition or bound expression of the parent
-		// comprehension or quantified expression that have to be relinked
-		// to the record access funApp later.
-		HashMap<Variable, Set<Edge>> varEdgeMap = new HashMap<Variable, Set<Edge>>();
 		Declaration parentDeclOfOrigSD = (Declaration) origSD
-				.getFirstIsSimpleDeclOf().getOmega();
-		Expression parentComprOrQuantExpr = (Expression) parentDeclOfOrigSD
-				.getFirstEdge(EdgeDirection.OUT).getOmega();
-		Edge targetEdge = null;
-		if (parentComprOrQuantExpr instanceof Comprehension) {
-			targetEdge = ((Comprehension) parentComprOrQuantExpr)
-					.getFirstIsCompResultDefOf(EdgeDirection.IN);
-		} else {
-			targetEdge = ((QuantifiedExpression) parentComprOrQuantExpr)
-					.getFirstIsBoundExprOf(EdgeDirection.IN);
-		}
+				.getFirstIsSimpleDeclOf(EdgeDirection.OUT).getOmega();
+		assert parentDeclOfOrigSD.getDegree(EdgeDirection.OUT) == 1;
+
+		// First we search the edges that access the variables to be moved,
+		// which have to be relinked to the record access funApp later.
+		HashMap<Variable, Set<Edge>> varEdgeMap = new HashMap<Variable, Set<Edge>>();
+
 		for (Variable var : varsDeclaredByOrigSD) {
-			varEdgeMap.put(var, collectEdgesComingFrom(var, targetEdge));
+			varEdgeMap.put(var, collectVariableAccessEdges(var));
 		}
 
 		// this will be the result definition of the inner Comprehension
@@ -277,7 +268,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 			RecordElement recElem = syntaxgraph.createRecordElement();
 			syntaxgraph.createIsRecordElementOf(recElem, newOuterRecord);
 			RecordId recId = syntaxgraph.createRecordId();
-			recId.set_name(var.get_name());
+			recId.set_name("_" + var.get_name());
 			syntaxgraph.createIsRecordIdOf(recId, recElem);
 			syntaxgraph.createIsRecordExprOf(var, recElem);
 		}
@@ -313,17 +304,6 @@ public class EarySelectionOptimizer extends OptimizerBase {
 			removeExpressionFromOriginalConstraint(pred, parentDeclOfOrigSD);
 		}
 
-		// Collect the relinkable edges that are in the constraints of the
-		// parent outer declaration.
-		for (Variable var : varsDeclaredByOrigSD) {
-			IsConstraintOf inc = parentDeclOfOrigSD
-					.getFirstIsConstraintOf(EdgeDirection.IN);
-			while (inc != null) {
-				varEdgeMap.get(var).addAll(collectEdgesComingFrom(var, inc));
-				inc = inc.getNextIsConstraintOf(EdgeDirection.IN);
-			}
-		}
-
 		// at last set the edges that connected to the original variables at
 		// the outer scope to a record access function
 		for (Entry<Variable, Set<Edge>> e : varEdgeMap.entrySet()) {
@@ -333,13 +313,16 @@ public class EarySelectionOptimizer extends OptimizerBase {
 					"getValue", syntaxgraph);
 			syntaxgraph.createIsFunctionIdOf(funId, funApp);
 			Identifier identifier = syntaxgraph.createIdentifier();
-			identifier.set_name(e.getKey().get_name());
+			identifier.set_name("_" + e.getKey().get_name());
 			syntaxgraph.createIsArgumentOf(newOuterRecordVar, funApp);
 			syntaxgraph.createIsArgumentOf(identifier, funApp);
 			// now reset all old outgoing edges of the variable to the new
 			// funApp
 			for (Edge edge : e.getValue()) {
-				edge.setAlpha(funApp);
+				if (edge.isValid()) {
+					edge.setAlpha(funApp);
+					assert edge.getAlpha() == funApp;
+				}
 			}
 		}
 	}
@@ -440,27 +423,25 @@ public class EarySelectionOptimizer extends OptimizerBase {
 	}
 
 	/**
-	 * Collects the {@link Edge}s that start at <code>startVertex</code> and
-	 * have a forward directed path to <code>targetEdge</code>.
+	 * Collects all edges running out of the given Variable, which represent
+	 * accesses. Basically, those are all outgoing edges except IsDeclaredVarOf,
+	 * IsBoundVarOf and IsVarOf edges.
 	 * 
-	 * @param startVertex
-	 * @param targetEdge
-	 * @return a {@link List} of {@link Edge}s going out of
-	 *         <code>startVertex</code> that have a forward directed path to
-	 *         <code>targetEdge</code>
+	 * @param var
+	 *            a Variable
+	 * @return all edges running out of the given Variable representing variable
+	 *         accesses.
 	 */
-	private Set<Edge> collectEdgesComingFrom(Vertex startVertex, Edge targetEdge) {
+	private Set<Edge> collectVariableAccessEdges(Variable var) {
 		// GreqlEvaluator.println("collectEdgesComingFrom(" + startVertex + ", "
 		// + targetEdge + ")");
 		HashSet<Edge> edges = new HashSet<Edge>();
-		if (targetEdge.getAlpha() == startVertex) {
-			edges.add(targetEdge);
-			return edges;
-		}
-		Edge inc = targetEdge.getAlpha().getFirstEdge(EdgeDirection.IN);
-		while (inc != null) {
-			edges.addAll(collectEdgesComingFrom(startVertex, inc));
-			inc = inc.getNextEdge(EdgeDirection.IN);
+		for (Edge e : var.incidences(EdgeDirection.OUT)) {
+			if ((e instanceof IsDeclaredVarOf) || (e instanceof IsBoundVarOf)
+					|| (e instanceof IsVarOf)) {
+				continue;
+			}
+			edges.add(e);
 		}
 		return edges;
 	}
