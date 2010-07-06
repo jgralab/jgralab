@@ -362,7 +362,7 @@ public class GreqlEvaluator {
 							+ " is not accessible.  Does it really exist and are the permissions ok?");
 		}
 		for (File syntaxGraphFile : optimizedSyntaxGraphsDirectory
-				.listFiles(new TGFilenameFilter())) {
+				.listFiles(TGFilenameFilter.instance())) {
 			logger.info("Loading SyntaxGraphEntry \""
 					+ syntaxGraphFile.getPath() + "\".");
 			SyntaxGraphEntry entry;

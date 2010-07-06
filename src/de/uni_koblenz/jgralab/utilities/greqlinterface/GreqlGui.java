@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import java.util.regex.Pattern;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -30,12 +29,12 @@ import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
-import javax.swing.filechooser.FileFilter;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.WorkInProgress;
+import de.uni_koblenz.jgralab.GraphIO.TGFilenameFilter;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
@@ -305,24 +304,7 @@ public class GreqlGui extends JFrame {
 
 		fileChooser = new JFileChooser();
 		fileChooser.setAcceptAllFileFilterUsed(false);
-		fileChooser.setFileFilter(new FileFilter() {
-
-			@Override
-			public boolean accept(File f) {
-				if (f.isDirectory()
-						|| Pattern.compile("\\.[Tt][Gg]$").matcher(f.getName())
-								.find()) {
-					return true;
-				}
-				return false;
-			}
-
-			@Override
-			public String getDescription() {
-				return "TG Files";
-			}
-
-		});
+		fileChooser.setFileFilter(TGFilenameFilter.instance());
 
 		fileSelectionButton = new JButton(new AbstractAction("Select Graph") {
 			private static final long serialVersionUID = 1L;
@@ -399,7 +381,7 @@ public class GreqlGui extends JFrame {
 		getContentPane().add(queryPanel, BorderLayout.NORTH);
 		getContentPane().add(tabPane, BorderLayout.CENTER);
 		getContentPane().add(statusPanel, BorderLayout.SOUTH);
-		
+
 		// Don't allow shrinking so that buttons get invisible
 		this.setMinimumSize(new Dimension(
 				buttonPanel.getPreferredSize().width + 10, 450));
