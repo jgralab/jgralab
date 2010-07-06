@@ -78,8 +78,7 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 		while (top != null) {
 			LinkedList<VertexEdgeClassTuple> relinkables = rememberConnections(top);
 			Formula formula = Formula.createFormulaFromExpression(top, eval);
-			top.delete();
-			top = null;
+			// System.out.println("Formula = " + formula);
 			Formula optimizedFormula = formula.simplify().optimize();
 			if (!formula.equals(optimizedFormula)) {
 				simplifiedOrOptimized = true;
@@ -90,7 +89,10 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 				for (VertexEdgeClassTuple vect : relinkables) {
 					syntaxgraph.createEdge(vect.ec, newTop, vect.v);
 				}
+				top.delete();
 				top = findAndOrNotFunApp(syntaxgraph.getFirstGreql2Expression());
+			} else {
+				top = null;
 			}
 		}
 
