@@ -96,7 +96,20 @@ public class GraphIO {
 	 * 
 	 * @author ist@uni-koblenz.de
 	 */
-	public static class TGFilenameFilter implements FilenameFilter {
+	public static class TGFilenameFilter extends
+			javax.swing.filechooser.FileFilter implements FilenameFilter {
+
+		private static TGFilenameFilter instance;
+
+		private TGFilenameFilter() {
+		}
+
+		public static TGFilenameFilter instance() {
+			if (instance == null) {
+				instance = new TGFilenameFilter();
+			}
+			return instance;
+		}
 
 		/*
 		 * (non-Javadoc)
@@ -109,6 +122,21 @@ public class GraphIO {
 				return true;
 			}
 			return false;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.io.FileFilter#accept(java.io.File)
+		 */
+		@Override
+		public boolean accept(File f) {
+			return f.isDirectory() || accept(f, f.getName());
+		}
+
+		@Override
+		public String getDescription() {
+			return "TG Files";
 		}
 	}
 
