@@ -846,6 +846,9 @@ public class Greql2Serializer {
 		} else if (id.equals("concat")) {
 			serializeFunctionApplicationInfix(exp, "++");
 			return;
+		} else if (id.equals("getValue")) {
+			serializeFunctionApplicationInfix(exp, ".");
+			return;
 		}
 
 		serializeIdentifier(fid);
@@ -870,9 +873,13 @@ public class Greql2Serializer {
 			if (first) {
 				first = false;
 			} else {
-				sb.append(' ');
-				sb.append(operator);
-				sb.append(' ');
+				// The DOT operator (myElem.myAttr) shouldn't have spaces
+				// arround.
+				if (operator.equals(".")) {
+					sb.append(operator);
+				} else {
+					sb.append(' ').append(operator).append(' ');
+				}
 			}
 			serializeExpression(arg, false);
 		}
