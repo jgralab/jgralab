@@ -5150,7 +5150,8 @@ public class EdgeTest extends InstanceTest {
 					.loadGraphFromFileWithTransactionSupport("test.tg", null);
 			break;
 		case SAVEMEM:
-			fail("Not implemented yet");
+			loadedgraph = VertexTestSchema.instance()
+					.loadVertexTestGraphWithSaveMemSupport("test.tg");
 		}
 		return loadedgraph;
 	}

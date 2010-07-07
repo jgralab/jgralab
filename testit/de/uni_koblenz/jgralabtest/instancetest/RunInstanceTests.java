@@ -34,10 +34,11 @@ import de.uni_koblenz.jgralabtest.graphmarker.RunGraphMarkerTests;
  * 
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses( { EdgeListTest.class, IncidenceListTest.class,
-		LoadTest.class, VertexListTest.class, VertexTest.class, EdgeTest.class,
-		RoleNameTest.class, GraphTest.class,
-		GraphStructureChangedListenerTest.class, DefaultValueTest.class, RunGraphMarkerTests.class })
+@Suite.SuiteClasses( { ImplementationModeTest.class, EdgeListTest.class,
+		IncidenceListTest.class, LoadTest.class, VertexListTest.class,
+		VertexTest.class, EdgeTest.class, RoleNameTest.class, GraphTest.class,
+		GraphStructureChangedListenerTest.class, DefaultValueTest.class,
+		RunGraphMarkerTests.class })
 public class RunInstanceTests {
 
 }

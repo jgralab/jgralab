@@ -39,11 +39,15 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl 
 	@Override
 	public Edge getPrevEdgeInGraph() {
 		assert isValid();
+		return findPrevEdgeInGraph();
+	}
 
+	private Edge findPrevEdgeInGraph() {
 		Edge prevEdge = null;
 
 		for (Edge currEdge = getGraph().getFirstEdgeInGraph(); currEdge != null; currEdge = currEdge
 				.getNextEdgeInGraph()) {
+			System.out.println(currEdge);
 			if (currEdge == this) {
 				return prevEdge;
 			}
@@ -84,7 +88,10 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl 
 	@Override
 	protected IncidenceImpl getPrevIncidence() {
 		Edge prevEdge = null;
+		return findPrevIncidence(prevEdge);
+	}
 
+	private IncidenceImpl findPrevIncidence(Edge prevEdge) {
 		for (Edge currEdge = incidentVertex.getFirstEdge(); currEdge != null; currEdge = currEdge
 				.getNextEdge()) {
 			if (currEdge == this) {
@@ -103,8 +110,8 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl 
 
 	@Override
 	protected void setPrevEdgeInGraph(Edge prevEdge) {
-		throw new UnsupportedOperationException(
-				"Unsupported in savemem implementation.");
+		// throw new UnsupportedOperationException(
+		// "Unsupported in savemem implementation.");
 	}
 
 	@Override
@@ -119,8 +126,8 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl 
 
 	@Override
 	protected void setPrevIncidence(IncidenceImpl prevIncidence) {
-		throw new UnsupportedOperationException(
-				"Unsupported in savemem implementation.");
+		// throw new UnsupportedOperationException(
+		// "Unsupported in savemem implementation.");
 	}
 
 	@Override

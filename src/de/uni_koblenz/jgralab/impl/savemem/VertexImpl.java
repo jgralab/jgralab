@@ -86,8 +86,8 @@ public abstract class VertexImpl extends
 
 	@Override
 	protected void setPrevVertex(Vertex prevVertex) {
-		throw new UnsupportedOperationException(
-				"Unsupported in savemem implementation.");
+		// throw new UnsupportedOperationException(
+		// "Unsupported in savemem implementation.");
 	}
 
 	@Override
@@ -132,4 +132,12 @@ public abstract class VertexImpl extends
 
 		return null;
 	}
+
+	@Override
+	public boolean isBefore(Vertex v) {
+		// TODO Auto-generated method stub
+		return super.isBefore(v);
+	}
+	
+	
 }
