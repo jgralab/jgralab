@@ -77,7 +77,7 @@ public abstract class ReversedEdgeImpl extends
 
 	@Override
 	protected void setPrevIncidence(IncidenceImpl prevIncidence) {
-		throw new UnsupportedOperationException(
-				"Unsupported in savemem implementation.");
+		// throw new UnsupportedOperationException(
+		// "Unsupported in savemem implementation.");
 	}
 }

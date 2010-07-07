@@ -61,7 +61,7 @@ public class LoadTest extends InstanceTest {
 	// }
 
 	private Graph createTestGraph() throws Exception {
-		if (implementationType != ImplementationType.TRANSACTION) {
+		if (implementationType == ImplementationType.STANDARD) {
 			String query = "from i:c report i end where d:=\"drölfundfünfzig\", c:=b, b:=a, a:=\"Mensaessen\"";
 			return ManualGreqlParser.parse(query);
 		}

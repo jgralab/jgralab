@@ -41,12 +41,12 @@ public abstract class GraphImpl extends
 	 * A list of {@link Edge} instances, owned by this {@link Graph}.
 	 */
 	private EdgeBaseImpl[] edge;
-	
+
 	/**
 	 * A reversed list of {@link Edge} instances, owned by this {@link Graph}.
 	 */
 	private ReversedEdgeBaseImpl[] revEdge;
-	
+
 	/**
 	 * The amount of {@link Edge} instances, owned by this {@link Graph}.
 	 */
@@ -56,7 +56,7 @@ public abstract class GraphImpl extends
 	 * The first {@link Vertex} in this {@link Graph}.
 	 */
 	private VertexBaseImpl firstVertex;
-	
+
 	/**
 	 * The last {@link Vertex} in this {@link Graph}.
 	 */
@@ -66,7 +66,7 @@ public abstract class GraphImpl extends
 	 * The first {@link Edge} in this {@link Graph}.
 	 */
 	private EdgeBaseImpl firstEdge;
-	
+
 	/**
 	 * The last {@link Edge} in this {@link Graph}.
 	 */
@@ -347,8 +347,18 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
+	public final boolean hasStandardSupport() {
+		return false;
+	}
+
+	@Override
 	public final boolean hasTransactionSupport() {
 		return false;
+	}
+
+	@Override
+	public final boolean hasSavememSupport() {
+		return true;
 	}
 
 	@Override

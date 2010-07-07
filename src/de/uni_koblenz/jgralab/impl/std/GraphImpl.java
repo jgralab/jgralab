@@ -301,7 +301,17 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
+	public final boolean hasStandardSupport(){
+		return true;
+	}
+	
+	@Override
 	public final boolean hasTransactionSupport() {
+		return false;
+	}
+	
+	@Override
+	public final boolean hasSavememSupport(){
 		return false;
 	}
 
