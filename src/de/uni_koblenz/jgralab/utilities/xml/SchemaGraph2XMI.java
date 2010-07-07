@@ -253,7 +253,9 @@ public class SchemaGraph2XMI {
 				.getFirstContainsDefaultPackage().getThat());
 
 		// create Types
-		createTypes(writer);
+		if (!typesToBeDeclaredAtTheEnd.isEmpty()) {
+			createTypes(writer);
+		}
 
 		// create profileApplication
 		createProfileApplication(writer);
@@ -503,15 +505,17 @@ public class SchemaGraph2XMI {
 			AttributedElementClass aeclass) throws XMLStreamException {
 
 		// if aeclass is a GraphElementClass without any attributes, comments
-		// and constraints then an empty tag is created
+		// and constraints then an empty tag is created. Furthermore an
+		// EdgeClass could only be empty if the associations are created
+		// bidirectional.
 		boolean isEmptyGraphElementClass = aeclass.getFirstAnnotates() == null
 				&& aeclass.getFirstHasAttribute() == null
 				&& aeclass.getFirstHasConstraint() == null
 				&& (((aeclass instanceof VertexClass)
 						&& ((VertexClass) aeclass)
-								.getFirstSpecializesVertexClass(EdgeDirection.OUT) == null && ((VertexClass) aeclass)
-						.getFirstEndsAt(EdgeDirection.IN) == null) || ((aeclass instanceof EdgeClass) && ((EdgeClass) aeclass)
-						.getFirstSpecializesEdgeClass(EdgeDirection.OUT) == null));
+								.getFirstSpecializesVertexClass(EdgeDirection.OUT) == null && !hasChildIncidence((VertexClass) aeclass)) || ((aeclass instanceof EdgeClass) && ((EdgeClass) aeclass)
+						.getFirstSpecializesEdgeClass(EdgeDirection.OUT) == null)
+						&& isBidirectional);
 
 		// start packagedElement
 		if (isEmptyGraphElementClass) {
@@ -607,16 +611,67 @@ public class SchemaGraph2XMI {
 		if (aeclass instanceof VertexClass) {
 			createIncidences(writer, (VertexClass) aeclass);
 		} else if (aeclass instanceof EdgeClass) {
-			EdgeClass edgeClass = (EdgeClass) aeclass;
-			if (edgeClass.getFirstHasAttribute() != null) {
-				createIncidences(writer, edgeClass);
-			}
+			createIncidences(writer, (EdgeClass) aeclass);
 		}
 
 		// close packagedElement
 		if (!isEmptyGraphElementClass) {
 			writer.writeEndElement();
 		}
+	}
+
+	/**
+	 * Returns true, iff there has to be created an incidence-child in the xmi
+	 * for the current VertexClass.
+	 * 
+	 * @param aeclass
+	 * @return
+	 */
+	private boolean hasChildIncidence(VertexClass aeclass) {
+		if (aeclass.getFirstEndsAt() == null) {
+			// VertexClass has no incidences
+			return false;
+		}
+		for (EndsAt ea : aeclass.getEndsAtIncidences()) {
+			IncidenceClass ic = (IncidenceClass) ea.getThat();
+			if (hasToBeCreatedAtVertex(ic)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Returns true, iff the incidence has to be created at the VertexClass, to
+	 * which the IncidenceClass is connected via an EndsAt edge.
+	 * 
+	 * @param incidence
+	 * @return
+	 */
+	private boolean hasToBeCreatedAtVertex(IncidenceClass incidence) {
+		boolean isAlphaVertexClass = incidence.getFirstComesFrom() != null;
+		EdgeClass ec = (EdgeClass) (isAlphaVertexClass ? incidence
+				.getFirstComesFrom().getThat() : incidence.getFirstGoesTo()
+				.getThat());
+		if (isBidirectional) {
+			if (ec.getFirstHasAttribute() == null) {
+				// in the case of bidirectional edges only
+				// non-AssociationClasses have incidences at vertices (in
+				// the XMI). Incidences of bidirectional AssociationClasses are
+				// created at the AssociationClass
+				return true;
+			}
+		} else {
+			if (!isReverted && isAlphaVertexClass) {
+				// the edge has a navigable incidence (aeclass-->otherEnd)
+				return true;
+			} else if (isReverted && isAlphaVertexClass) {
+				// the edge has a navigable incidence (aeclass-->otherEnd)
+				// because the direction is reverted
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -637,10 +692,19 @@ public class SchemaGraph2XMI {
 				.getThat();
 		VertexClass omegaVertex = (VertexClass) omegaIncidence.getFirstEndsAt()
 				.getThat();
-		createIncidence(writer, alphaIncidence, edgeClass, omegaIncidence,
-				omegaVertex, alphaVertex.get_qualifiedName());
-		createIncidence(writer, omegaIncidence, edgeClass, alphaIncidence,
-				alphaVertex, omegaVertex.get_qualifiedName());
+		// create incidence which contains the information for the alpha
+		// vertex (=omegaIncidence)
+		if (!hasToBeCreatedAtVertex(alphaIncidence)) {
+			// TODO Prüfe Richtung!!!!
+			createIncidence(writer, omegaIncidence, edgeClass, alphaIncidence,
+					omegaVertex, alphaVertex.get_qualifiedName());
+		}
+		// create incidence which contains the information for the omega
+		// vertex (=alphaIncidence)
+		if (!hasToBeCreatedAtVertex(omegaIncidence)) {
+			createIncidence(writer, alphaIncidence, edgeClass, omegaIncidence,
+					alphaVertex, omegaVertex.get_qualifiedName());
+		}
 	}
 
 	/**
@@ -655,55 +719,51 @@ public class SchemaGraph2XMI {
 		for (EndsAt ea : vertexClass.getEndsAtIncidences()) {
 			// find incident EdgeClass and adjacent VertexClass
 			IncidenceClass incidence = (IncidenceClass) ea.getThat();
-			EdgeClass edgeClass = null;
-			VertexClass connectedVertexClass = null;
-			IncidenceClass otherIncidence = null;
-			if (incidence.getFirstComesFrom() != null /* && isBidirectional */) {
-				// create alpha incidence//TODO
-				edgeClass = (EdgeClass) incidence.getFirstComesFrom().getThat();
-				otherIncidence = (IncidenceClass) edgeClass.getFirstGoesTo()
-						.getThat();
-				connectedVertexClass = (VertexClass) otherIncidence
+			if (hasToBeCreatedAtVertex(incidence)) {
+				boolean isVertexClassAlphaVertex = incidence
+						.getFirstComesFrom() != null;
+				EdgeClass edgeClass = (EdgeClass) (isVertexClassAlphaVertex ? incidence
+						.getFirstComesFrom()
+						: incidence.getFirstGoesTo()).getThat();
+				IncidenceClass otherIncidence = (IncidenceClass) (isVertexClassAlphaVertex ? edgeClass
+						.getFirstGoesTo()
+						: edgeClass.getFirstComesFrom()).getThat();
+				VertexClass connectedVertexClass = (VertexClass) otherIncidence
 						.getFirstEndsAt().getThat();
-			} else {
-				// create omega incidence
-				edgeClass = (EdgeClass) incidence.getFirstGoesTo().getThat();
-				otherIncidence = (IncidenceClass) edgeClass.getFirstComesFrom()
-						.getThat();
-				connectedVertexClass = (VertexClass) otherIncidence
-						.getFirstEndsAt().getThat();
-			}
-			// create incidence representation
-			if (edgeClass.getFirstHasAttribute() == null) {
-				// if an EdgeClass has attributes, an AssociationClass is
-				// created. Then the incidence information are created in the
-				// associationClass tag.
-				createIncidence(writer, incidence, edgeClass, otherIncidence,
-						connectedVertexClass, vertexClass.get_qualifiedName());
+				// create incidence representation
+				if (edgeClass != null) {
+					createIncidence(writer, otherIncidence, edgeClass,
+							incidence, connectedVertexClass, vertexClass
+									.get_qualifiedName());// TODO Here I am
+				}
 			}
 		}
 	}
 
 	/**
-	 * roleName, redefines, min, max must be taken from the other incidenceClass
+	 * roleName, redefines, min, max must be taken from otherIncidence
 	 * 
 	 * @param writer
-	 * @param incidence
-	 * @param connectedVertexClass
 	 * @param otherIncidence
+	 *            the IncidenceClass which contains the information for the
+	 *            incidence corresponding to the VertexClass of
+	 *            <code>qualifiedNameOfVertexClass</code> in the xmi.
+	 * @param connectedVertexClass
+	 * @param incidence
 	 * @param edgeClass
 	 * @param qualifiedNameOfVertexClass
 	 * @throws XMLStreamException
 	 */
 	private void createIncidence(XMLStreamWriter writer,
-			IncidenceClass incidence, EdgeClass edgeClass,
-			IncidenceClass otherIncidence, VertexClass connectedVertexClass,
+			IncidenceClass otherIncidence, EdgeClass edgeClass,
+			IncidenceClass incidence, VertexClass connectedVertexClass,
 			String qualifiedNameOfVertexClass) throws XMLStreamException {
 
 		String incidenceId = qualifiedNameOfVertexClass + "_incidence_"
 				+ edgeClass.get_qualifiedName();
 
 		// redefines
+		// TODO check redefines
 		int i = 0;
 		for (Redefines red : otherIncidence
 				.getRedefinesIncidences(EdgeDirection.OUT)) {
@@ -758,9 +818,9 @@ public class SchemaGraph2XMI {
 				XMIConstants.TYPE_VALUE_LITERALUNLIMITEDNATURAL);
 		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
 				XMIConstants.XMI_ATTRIBUTE_ID, incidenceId + "_uppervalue");
-		writer.writeAttribute(XMIConstants.ATTRIBUTE_VALUE, otherIncidence
-				.get_max() == Integer.MAX_VALUE ? "*" : Integer
-				.toString(otherIncidence.get_max()));
+		writer.writeAttribute(XMIConstants.ATTRIBUTE_VALUE,
+				incidence.get_max() == Integer.MAX_VALUE ? "*" : Integer
+						.toString(otherIncidence.get_max()));
 
 		// create lowerValue
 		writer.writeEmptyElement(XMIConstants.TAG_LOWERVALUE);
@@ -769,9 +829,9 @@ public class SchemaGraph2XMI {
 				XMIConstants.TYPE_VALUE_LITERALINTEGER);
 		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
 				XMIConstants.XMI_ATTRIBUTE_ID, incidenceId + "_lowervalue");
-		writer.writeAttribute(XMIConstants.ATTRIBUTE_VALUE, otherIncidence
-				.get_min() == Integer.MAX_VALUE ? "*" : Integer
-				.toString(otherIncidence.get_min()));
+		writer.writeAttribute(XMIConstants.ATTRIBUTE_VALUE,
+				incidence.get_min() == Integer.MAX_VALUE ? "*" : Integer
+						.toString(otherIncidence.get_min()));
 
 		// close ownedattribute
 		writer.writeEndElement();
