@@ -366,7 +366,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 			Class<? extends Graph> implementationClass) {
 		if (isSuperclassOrEqual(originalClass, implementationClass)) {
 			try {
-				Class[] params = { String.class, int.class, int.class };
+				Class<?>[] params = { String.class, int.class, int.class };
 				graphSaveMemMap.put(originalClass, implementationClass
 						.getConstructor(params));
 			} catch (NoSuchMethodException ex) {
@@ -382,7 +382,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 			Class<? extends Vertex> implementationClass) {
 		if (isSuperclassOrEqual(originalClass, implementationClass)) {
 			try {
-				Class[] params = { int.class, Graph.class };
+				Class<?>[] params = { int.class, Graph.class };
 				vertexSaveMemMap.put(originalClass, implementationClass
 						.getConstructor(params));
 			} catch (NoSuchMethodException ex) {
@@ -398,7 +398,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 			Class<? extends Edge> implementationClass) {
 		if (isSuperclassOrEqual(originalClass, implementationClass)) {
 			try {
-				Class[] params = { int.class, Graph.class, Vertex.class,
+				Class<?>[] params = { int.class, Graph.class, Vertex.class,
 						Vertex.class };
 				edgeSaveMemMap.put(originalClass, implementationClass
 						.getConstructor(params));

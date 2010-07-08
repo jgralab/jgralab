@@ -186,8 +186,8 @@ public class SyntaxGraphEntry {
 	 *             contain a constructor with zero parameters.
 	 */
 	public SyntaxGraphEntry(File fileName) throws GraphIOException {
-		this.syntaxGraph = (Greql2) GraphIO.loadGraphFromFile(fileName
-				.getPath(), null);
+		this.syntaxGraph = (Greql2) GraphIO
+				.loadGraphFromFileWithStandardSupport(fileName.getPath(), null);
 		Greql2Expression g2e = syntaxGraph.getFirstGreql2Expression();
 		try {
 			this.queryText = (String) g2e.getAttribute("_queryText");

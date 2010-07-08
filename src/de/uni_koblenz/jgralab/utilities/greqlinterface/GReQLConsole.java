@@ -48,7 +48,7 @@ public class GReQLConsole {
 				Schema schema = GraphIO.loadSchemaFromFile(filename);
 				schema.compile(CodeGeneratorConfiguration.WITHOUT_TRANSACTIONS);
 			}
-			graph = GraphIO.loadGraphFromFile(filename,
+			graph = GraphIO.loadGraphFromFileWithStandardSupport(filename,
 					new ProgressFunctionImpl());
 		} catch (GraphIOException e) {
 			e.printStackTrace();

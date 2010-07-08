@@ -36,6 +36,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphIO;
+import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.WorkInProgress;
 import de.uni_koblenz.jgralab.schema.Attribute;
@@ -113,7 +114,8 @@ public class JniServer {
 			Schema schema = (Schema) (schemaClass.getMethod("instance",
 					(Class[]) null).invoke(null));
 
-			Method graphCreateMethod = schema.getGraphCreateMethod(false);
+			Method graphCreateMethod = schema
+					.getGraphCreateMethod(ImplementationType.STANDARD);
 
 			Graph g = (Graph) (graphCreateMethod.invoke(null, new Object[] {
 					null, vMax, eMax }));
@@ -133,7 +135,8 @@ public class JniServer {
 
 	public int loadGraph(String fileName) {
 		try {
-			Graph g = GraphIO.loadGraphFromFile(fileName, null);
+			Graph g = GraphIO.loadGraphFromFileWithStandardSupport(fileName,
+					null);
 			return addGraph(g);
 		} catch (Exception e) {
 			throw new GraphException("Exception while loading graph.", e);

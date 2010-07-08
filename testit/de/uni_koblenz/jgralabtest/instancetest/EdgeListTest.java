@@ -89,6 +89,10 @@ public class EdgeListTest extends InstanceTest {
 
 	@Test
 	public void putBeforeTest() throws Exception {
+		// TODO remove when problem is resolved
+		if(implementationType == ImplementationType.SAVEMEM){
+			fail("testcase creates an infinite loop.");
+		}
 		createReadOnlyTransaction(g);
 		Edge e5 = g.getEdge(5).getReversedEdge();
 		commit(g);
