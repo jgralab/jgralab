@@ -3,6 +3,7 @@ package de.uni_koblenz.jgralabtest.instancetest;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.util.Collection;
@@ -71,7 +72,12 @@ public class RoleNameTest extends InstanceTest {
 					.createVertexTestGraphWithTransactionSupport(100, 100);
 			break;
 		case SAVEMEM:
-			graph = VertexTestSchema.instance().createVertexTestGraphWithSaveMemSupport(100, 100);
+			graph = VertexTestSchema.instance()
+					.createVertexTestGraphWithSaveMemSupport(100, 100);
+			break;
+		default:
+			fail("Implementation " + implementationType
+					+ " not yet supported by this test.");
 		}
 		rand = new Random(System.currentTimeMillis());
 	}

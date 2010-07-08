@@ -3,9 +3,9 @@ package de.uni_koblenz.jgralabtest.instancetest;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
-import static junit.framework.Assert.fail;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -72,6 +72,10 @@ public class IncidenceListTest extends InstanceTest {
 		case SAVEMEM:
 			g = MinimalSchema.instance().createMinimalGraphWithSaveMemSupport(
 					V, E);
+			break;
+		default:
+			fail("Implementation " + implementationType
+					+ " not yet supported by this test.");
 		}
 
 		nodes = new Node[N];
@@ -405,6 +409,10 @@ public class IncidenceListTest extends InstanceTest {
 		case SAVEMEM:
 			g = MinimalSchema.instance().createMinimalGraphWithSaveMemSupport(
 					V, E);
+			break;
+		default:
+			fail("Implementation " + implementationType
+					+ " not yet supported by this test.");
 		}
 
 		Node[] nodes = new Node[NODE_COUNT];

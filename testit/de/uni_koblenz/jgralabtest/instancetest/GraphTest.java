@@ -94,6 +94,10 @@ public class GraphTest extends InstanceTest {
 		case SAVEMEM:
 			out = VertexTestSchema.instance()
 					.createVertexTestGraphWithSaveMemSupport();
+			break;
+		default:
+			fail("Implementation " + implementationType
+					+ " not yet supported by this test.");
 		}
 		return out;
 	}
@@ -5328,7 +5332,12 @@ public class GraphTest extends InstanceTest {
 					.createMinimalGraphWithTransactionSupport();
 			break;
 		case SAVEMEM:
-			fail("Not implemented yet");
+			g3 = MinimalSchema.instance()
+					.createMinimalGraphWithSaveMemSupport();
+			break;
+		default:
+			fail("Implementation " + implementationType
+					+ " not yet supported by this test.");
 		}
 		return g3;
 	}

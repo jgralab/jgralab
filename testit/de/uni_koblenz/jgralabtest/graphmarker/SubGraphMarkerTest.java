@@ -1,6 +1,7 @@
 package de.uni_koblenz.jgralabtest.graphmarker;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -61,6 +62,9 @@ public class SubGraphMarkerTest extends InstanceTest {
 			g = MinimalSchema.instance().createMinimalGraphWithSaveMemSupport(
 					V, E);
 			break;
+		default:
+			fail("Implementation " + implementationType
+					+ " not yet supported by this test.");
 		}
 		createTransaction(g);
 

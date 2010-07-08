@@ -2,6 +2,7 @@ package de.uni_koblenz.jgralabtest.instancetest;
 
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.util.Collection;
@@ -49,6 +50,10 @@ public class ImplementationModeTest extends InstanceTest {
 			break;
 		case SAVEMEM:
 			g = MinimalSchema.instance().createMinimalGraph(V, E);
+			break;
+		default:
+			fail("Implementation " + implementationType
+					+ " not yet supported by this test.");
 		}
 		createTransaction(g);
 		for (int i = 0; i < N; ++i) {
@@ -62,14 +67,15 @@ public class ImplementationModeTest extends InstanceTest {
 		MinimalSchema.instance().saveMinimalGraph(filename, g);
 		commit(g);
 	}
-	
+
 	@AfterClass
-	public static void cleanup(){
+	public static void cleanup() {
 		new File(filename).delete();
 	}
-	
+
 	@Test
-	public void testLoadGraphFromFile() throws GraphIOException, CommitFailedException{
+	public void testLoadGraphFromFile() throws GraphIOException,
+			CommitFailedException {
 		MinimalGraph g2;
 		switch (implementationType) {
 		case STANDARD:
@@ -79,7 +85,8 @@ public class ImplementationModeTest extends InstanceTest {
 			assertFalse(g2.hasSavememSupport());
 			break;
 		case TRANSACTION:
-			g2 = MinimalSchema.instance().loadMinimalGraphWithTransactionSupport(filename);
+			g2 = MinimalSchema.instance()
+					.loadMinimalGraphWithTransactionSupport(filename);
 			createReadOnlyTransaction(g2);
 			assertFalse(g2.hasStandardSupport());
 			assertTrue(g2.hasTransactionSupport());
@@ -87,12 +94,17 @@ public class ImplementationModeTest extends InstanceTest {
 			commit(g2);
 			break;
 		case SAVEMEM:
-			g2 = MinimalSchema.instance().loadMinimalGraphWithSaveMemSupport(filename);
+			g2 = MinimalSchema.instance().loadMinimalGraphWithSaveMemSupport(
+					filename);
 			assertFalse(g2.hasStandardSupport());
 			assertFalse(g2.hasTransactionSupport());
 			assertTrue(g2.hasSavememSupport());
+			break;
+		default:
+			fail("Implementation " + implementationType
+					+ " not yet supported by this test.");
 		}
-		
+
 	}
 
 }
