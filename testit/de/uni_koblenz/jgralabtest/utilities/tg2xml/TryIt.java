@@ -36,10 +36,11 @@ public class TryIt {
 			// Graph graph = createRandomGraph(false);
 			Schema schema = GraphIO.loadSchemaFromFile("GrumlSchema.gruml.tg");
 			System.out.println("Compiling schema");
-			schema.compile(CodeGeneratorConfiguration.FULL_WITHOUT_SUBCLASS_FLAGS);
+			schema
+					.compile(CodeGeneratorConfiguration.FULL_WITHOUT_SUBCLASS_FLAGS);
 			System.out.println("done");
-			Graph graph = GraphIO.loadGraphFromFile("GrumlSchema.gruml.tg",
-					new ProgressFunctionImpl());
+			Graph graph = GraphIO.loadGraphFromFileWithStandardSupport(
+					"GrumlSchema.gruml.tg", new ProgressFunctionImpl());
 			Tg2xml converter = new Tg2xml(new BufferedOutputStream(
 					new FileOutputStream(outName)), graph, "gruml",
 					"./gruml.xsd");

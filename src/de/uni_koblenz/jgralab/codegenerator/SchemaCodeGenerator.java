@@ -267,7 +267,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				" * @throws GraphIOException if the graph cannot be loaded",
 				" */",
 				"public #gcName# load#gcCamelName#(String filename, ProgressFunction pf) throws GraphIOException {",
-				((config.hasStandardSupport()) ? "\tGraph graph = GraphIO.loadGraphFromFile(filename, this, pf);\n"
+				((config.hasStandardSupport()) ? "\tGraph graph = GraphIO.loadGraphFromFileWithStandardSupport(filename, this, pf);\n"
 						+ "\tif (!(graph instanceof #gcName#)) {\n"
 						+ "\t\tthrow new GraphIOException(\"Graph in file '\" + filename + \"' is not an instance of GraphClass #gcName#\");\n"
 						+ "\t}" + "\treturn (#gcName#) graph;\n"
@@ -307,8 +307,8 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				" * @return the loaded #gcName#",
 				" * @throws GraphIOException if the graph cannot be loaded",
 				" */",
-				"public #gcName# load#gcCamelName#WithSaveMemSupport(String filename) throws GraphIOException {",
-				((config.hasSaveMemSupport()) ? "\treturn load#gcCamelName#(filename, null);"
+				"public #gcName# load#gcCamelName#WithSavememSupport(String filename) throws GraphIOException {",
+				((config.hasSaveMemSupport()) ? "\treturn load#gcCamelName#WithSavememSupport(filename, null);"
 						: "\tthrow new UnsupportedOperationException(\"No SaveMem support compiled.\");"),
 				"}",
 				"",
@@ -320,8 +320,8 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				" * @return the loaded #gcName#",
 				" * @throws GraphIOException if the graph cannot be loaded",
 				" */",
-				"public #gcName# load#gcCamelName#WithSaveMemSupport(String filename, ProgressFunction pf) throws GraphIOException {",
-				((config.hasSaveMemSupport()) ? "\tGraph graph = GraphIO.loadGraphFromFile(filename, pf);\n"
+				"public #gcName# load#gcCamelName#WithSavememSupport(String filename, ProgressFunction pf) throws GraphIOException {",
+				((config.hasSaveMemSupport()) ? "\tGraph graph = GraphIO.loadGraphFromFileWithSavememSupport(filename, pf);\n"
 						+ "\tif (!(graph instanceof #gcName#)) {\n"
 						+ "\t\tthrow new GraphIOException(\"Graph in file '\" + filename + \"' is not an instance of GraphClass #gcName#\");\n"
 						+ "\t}" + "\treturn (#gcName#) graph;"

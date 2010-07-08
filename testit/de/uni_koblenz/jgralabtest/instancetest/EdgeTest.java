@@ -5196,7 +5196,7 @@ public class EdgeTest extends InstanceTest {
 			break;
 		case SAVEMEM:
 			loadedgraph = VertexTestSchema.instance()
-					.loadVertexTestGraphWithSaveMemSupport("test.tg");
+					.loadVertexTestGraphWithSavememSupport("test.tg");
 			break;
 		default:
 			fail("Implementation " + implementationType

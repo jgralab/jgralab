@@ -145,6 +145,7 @@ public class SchemaImpl implements Schema {
 	 */
 	public static final String IMPLSTDPACKAGENAME = "impl.std";
 	public static final String IMPLTRANSPACKAGENAME = "impl.trans";
+	public static final String IMPLSAVEMEMPACKAGENAME = "impl.savemem";
 
 	static final Class<?>[] VERTEX_CLASS_CREATE_SIGNATURE = { int.class };
 
@@ -1052,9 +1053,9 @@ public class SchemaImpl implements Schema {
 		case TRANSACTION:
 			implClassName += IMPLTRANSPACKAGENAME;
 			break;
-		// case SAVEMEM:
-		// implClassName +=
-		// break;
+		case SAVEMEM:
+			implClassName += IMPLSAVEMEMPACKAGENAME;
+			break;
 		default:
 			throw new SchemaException("Implementation type "
 					+ implementationType + " not supported yet.");
