@@ -115,8 +115,9 @@ public class SchemaGraph2XMI {
 		String outputName = cli.getOptionValue("o");
 		try {
 			if (cli.hasOption("ig")) {
-				s.process((SchemaGraph) GraphIO.loadGraphFromFile(cli
-						.getOptionValue("ig"), null), outputName);
+				s.process((SchemaGraph) GraphIO
+						.loadGraphFromFileWithStandardSupport(cli
+								.getOptionValue("ig"), null), outputName);
 			} else {
 				s.process(new Schema2SchemaGraph().convert2SchemaGraph(GraphIO
 						.loadSchemaFromFile(cli.getOptionValue("i"))),

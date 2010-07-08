@@ -42,6 +42,7 @@ import java.util.logging.Logger;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.Vertex;
@@ -728,7 +729,7 @@ public class GreqlEvaluator {
 			minimalSchema
 					.compile(CodeGeneratorConfiguration.WITHOUT_TRANSACTIONS);
 			Method graphCreateMethod = minimalSchema
-					.getGraphCreateMethod(false);
+					.getGraphCreateMethod(ImplementationType.STANDARD);
 
 			try {
 				minimalGraph = (Graph) (graphCreateMethod.invoke(null,

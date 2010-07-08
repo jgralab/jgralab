@@ -230,8 +230,8 @@ public abstract class Tg2Whatever {
 	private void loadGraph() {
 		try {
 			System.out.println("Loading graph from file " + graphFileName);
-			graph = GraphIO.loadGraphFromFile(graphFileName, schema,
-					new ProgressFunctionImpl());
+			graph = GraphIO.loadGraphFromFileWithStandardSupport(graphFileName,
+					schema, new ProgressFunctionImpl());
 			System.out.println("Graph loaded");
 		} catch (GraphIOException ex) {
 			System.err.println("Graph in file '" + graphFileName

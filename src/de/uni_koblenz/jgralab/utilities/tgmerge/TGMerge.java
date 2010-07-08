@@ -99,9 +99,8 @@ public class TGMerge {
 
 		List<Graph> graphs = new LinkedList<Graph>();
 		for (String g : cmdl.getArgs()) {
-			graphs
-					.add(GraphIO.loadGraphFromFile(g,
-							new ProgressFunctionImpl()));
+			graphs.add(GraphIO.loadGraphFromFileWithStandardSupport(g,
+					new ProgressFunctionImpl()));
 		}
 
 		TGMerge tgmerge = new TGMerge(graphs);

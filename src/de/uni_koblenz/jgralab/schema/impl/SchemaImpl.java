@@ -50,6 +50,7 @@ import javax.tools.JavaFileObject.Kind;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphFactory;
 import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.M1ClassManager;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.codegenerator.ClassFileAbstraction;
@@ -876,11 +877,11 @@ public class SchemaImpl implements Schema {
 	}
 
 	private Method getCreateMethod(String className, String graphClassName,
-			Class<?>[] signature, boolean transactionSupport) {
+			Class<?>[] signature, ImplementationType implementationType) {
 		Class<? extends Graph> m1Class = null;
 		AttributedElementClass aec = null;
 		try {
-			m1Class = getGraphClassImpl(transactionSupport);
+			m1Class = getGraphClassImpl(implementationType);
 			if (className.equals(graphClassName)) {
 				return m1Class.getMethod("create", signature);
 			} else {
@@ -964,7 +965,7 @@ public class SchemaImpl implements Schema {
 
 	@Override
 	public Method getEdgeCreateMethod(String edgeClassName,
-			boolean transactionSupport) {
+			ImplementationType implementationType) {
 		// Edge class create method cannot be found directly by its signature
 		// because the vertex parameters are subclassed to match the to- and
 		// from-class. Those subclasses are unknown in this method. Therefore,
@@ -979,7 +980,7 @@ public class SchemaImpl implements Schema {
 		EdgeClass ec = (EdgeClass) aec;
 		String methodName = "create"
 				+ CodeGenerator.camelCase(ec.getUniqueName());
-		Class<?> m1Class = getGraphClassImpl(transactionSupport);
+		Class<?> m1Class = getGraphClassImpl(implementationType);
 		for (Method m : m1Class.getMethods()) {
 			if (m.getName().equals(methodName)
 					&& (m.getParameterTypes().length == 3)) {
@@ -1036,18 +1037,29 @@ public class SchemaImpl implements Schema {
 
 	/**
 	 * 
-	 * @param transactionSupport
+	 * @param implementationType
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	private Class<? extends Graph> getGraphClassImpl(boolean transactionSupport) {
+	private Class<? extends Graph> getGraphClassImpl(
+			ImplementationType implementationType) {
 		String implClassName = packagePrefix + ".";
 		// determine package
-		if (!transactionSupport) {
+		switch (implementationType) {
+		case STANDARD:
 			implClassName += IMPLSTDPACKAGENAME;
-		} else {
+			break;
+		case TRANSACTION:
 			implClassName += IMPLTRANSPACKAGENAME;
+			break;
+		// case SAVEMEM:
+		// implClassName +=
+		// break;
+		default:
+			throw new SchemaException("Implementation type "
+					+ implementationType + " not supported yet.");
 		}
+
 		implClassName = implClassName + "." + graphClass.getSimpleName()
 				+ "Impl";
 
@@ -1064,10 +1076,10 @@ public class SchemaImpl implements Schema {
 	}
 
 	@Override
-	public Method getGraphCreateMethod(boolean transactionSupport) {
+	public Method getGraphCreateMethod(ImplementationType implementationType) {
 		return getCreateMethod(graphClass.getSimpleName(), graphClass
 				.getSimpleName(), GRAPHCLASS_CREATE_SIGNATURE,
-				transactionSupport);
+				implementationType);
 	}
 
 	@Override
@@ -1149,9 +1161,9 @@ public class SchemaImpl implements Schema {
 
 	@Override
 	public Method getVertexCreateMethod(String vertexClassName,
-			boolean transactionSupport) {
+			ImplementationType implementationType) {
 		return getCreateMethod(vertexClassName, graphClass.getSimpleName(),
-				VERTEX_CLASS_CREATE_SIGNATURE, transactionSupport);
+				VERTEX_CLASS_CREATE_SIGNATURE, implementationType);
 	}
 
 	@Override

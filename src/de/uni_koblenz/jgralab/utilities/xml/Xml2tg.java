@@ -60,6 +60,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.Vertex;
@@ -311,12 +312,11 @@ public class Xml2tg {
 					try {
 						// System.out.println("Creating instance of "
 						// + graphClassName);
-						graph = (Graph) schema.getGraphCreateMethod(false)
-								.invoke(
-										null,
-										new Object[] { graphID,
-												MAX_VERTEX_COUNT,
-												MAX_EDGE_COUNT });
+						graph = (Graph) schema.getGraphCreateMethod(
+								ImplementationType.STANDARD).invoke(
+								null,
+								new Object[] { graphID, MAX_VERTEX_COUNT,
+										MAX_EDGE_COUNT });
 						// System.out.println("done.");
 					} catch (Exception e) {
 						throw new GraphIOException(

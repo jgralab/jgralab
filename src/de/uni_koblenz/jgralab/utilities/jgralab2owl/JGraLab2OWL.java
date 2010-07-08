@@ -286,8 +286,8 @@ public class JGraLab2OWL {
 		// String filename = args[0];
 		String filename = comLine.getOptionValue("g");
 		try {
-			Graph graph = GraphIO.loadGraphFromFile(
-					comLine.getOptionValue("g")/* args[0] */, null);
+			Graph graph = GraphIO.loadGraphFromFileWithStandardSupport(comLine
+					.getOptionValue("g")/* args[0] */, null);
 
 			saveGraphToOWLInstances(filename + ".owl", graph, false, true,
 					true, new ProgressFunctionImpl());

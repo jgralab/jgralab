@@ -5187,8 +5187,8 @@ public class EdgeTest extends InstanceTest {
 		VertexTestGraph loadedgraph = null;
 		switch (implementationType) {
 		case STANDARD:
-			loadedgraph = (VertexTestGraph) GraphIO.loadGraphFromFile(
-					"test.tg", null);
+			loadedgraph = (VertexTestGraph) GraphIO
+					.loadGraphFromFileWithStandardSupport("test.tg", null);
 			break;
 		case TRANSACTION:
 			loadedgraph = (VertexTestGraph) GraphIO
