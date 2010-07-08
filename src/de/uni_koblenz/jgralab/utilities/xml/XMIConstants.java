@@ -1,5 +1,13 @@
 package de.uni_koblenz.jgralab.utilities.xml;
 
+/**
+ * This class contains all constants used by {@link SchemaGraph2XMI}. If a
+ * constant was already defined in
+ * {@link de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants}, it is referred
+ * to it.
+ * 
+ * @author ist@uni-koblenz.de
+ */
 public class XMIConstants {
 
 	// xml-header information
