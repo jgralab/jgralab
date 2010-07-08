@@ -123,9 +123,9 @@ public class GraphFactoryGenerator extends CodeGenerator {
 				code
 						.add("setGraphTransactionImplementationClass(#graphName#.class, #graphTransactionImplName#Impl.class);");
 			}
-			if (config.hasSaveMemSupport()) {
+			if (config.hasSavememSupport()) {
 				code
-						.add("setGraphSaveMemImplementationClass(#graphName#.class, #graphSaveMemImplName#Impl.class);");
+						.add("setGraphSavememImplementationClass(#graphName#.class, #graphSaveMemImplName#Impl.class);");
 			}
 		}
 
@@ -156,9 +156,9 @@ public class GraphFactoryGenerator extends CodeGenerator {
 				code
 						.add("setVertexTransactionImplementationClass(#vertexName#.class, #vertexTransactionImplName#Impl.class);");
 			}
-			if (config.hasSaveMemSupport()) {
+			if (config.hasSavememSupport()) {
 				code
-						.add("setVertexSaveMemImplementationClass(#vertexName#.class, #vertexSaveMemImplName#Impl.class);");
+						.add("setVertexSavememImplementationClass(#vertexName#.class, #vertexSaveMemImplName#Impl.class);");
 			}
 		}
 
@@ -185,9 +185,9 @@ public class GraphFactoryGenerator extends CodeGenerator {
 				code
 						.add("setEdgeTransactionImplementationClass(#edgeName#.class, #edgeTransactionImplName#Impl.class);");
 			}
-			if (config.hasSaveMemSupport()) {
+			if (config.hasSavememSupport()) {
 				code
-						.add("setEdgeSaveMemImplementationClass(#edgeName#.class, #edgeSaveMemImplName#Impl.class);");
+						.add("setEdgeSavememImplementationClass(#edgeName#.class, #edgeSaveMemImplName#Impl.class);");
 			}
 		}
 

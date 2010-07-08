@@ -262,7 +262,7 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 			code.setVariable("createSuffix", "");
 		}
 		if (currentCycle.isSaveMemImpl()) {
-			code.setVariable("createSuffix", "WithSaveMemSupport");
+			code.setVariable("createSuffix", "WithSavememSupport");
 		}
 
 		code
@@ -415,7 +415,7 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 		} else if (currentCycle.isTransImpl()) {
 			code.setVariable("cycleSupportSuffix", "WithTransactionSupport");
 		} else if (currentCycle.isSaveMemImpl()) {
-			code.setVariable("cycleSupportSuffix", "WithSaveMemSupport");
+			code.setVariable("cycleSupportSuffix", "WithSavememSupport");
 		}
 
 		if (currentCycle.isAbstract()) {

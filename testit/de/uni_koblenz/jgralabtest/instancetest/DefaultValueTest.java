@@ -69,7 +69,7 @@ public class DefaultValueTest extends InstanceTest {
 			break;
 		case SAVEMEM:
 			graph = DefaultValueTestSchema.instance()
-					.createDefaultValueTestGraphWithSaveMemSupport();
+					.createDefaultValueTestGraphWithSavememSupport();
 			break;
 		default:
 			fail("Implementation " + implementationType
@@ -205,7 +205,7 @@ public class DefaultValueTest extends InstanceTest {
 			break;
 		case SAVEMEM:
 			secondGraph = DefaultValueTestSchema.instance()
-					.createDefaultValueTestGraphWithSaveMemSupport();
+					.createDefaultValueTestGraphWithSavememSupport();
 			break;
 		default:
 			fail("Implementation " + implementationType

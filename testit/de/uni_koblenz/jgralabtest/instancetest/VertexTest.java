@@ -2335,7 +2335,7 @@ public class VertexTest extends InstanceTest {
 			break;
 		case SAVEMEM:
 			graph = VertexTestSchema.instance()
-					.createVertexTestGraphWithSaveMemSupport(100, 100);
+					.createVertexTestGraphWithSavememSupport(100, 100);
 			break;
 		default:
 			fail("Implementation " + implementationType

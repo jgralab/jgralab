@@ -196,7 +196,7 @@ public class LoadTest extends InstanceTest {
 			break;
 		case SAVEMEM:
 			graph = VertexTestSchema.instance()
-					.createVertexTestGraphWithSaveMemSupport(vMax, eMax);
+					.createVertexTestGraphWithSavememSupport(vMax, eMax);
 			break;
 		default:
 			fail("Implementation " + implementationType

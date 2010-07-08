@@ -49,7 +49,7 @@ public class EdgeListTest extends InstanceTest {
 					.createMinimalGraphWithTransactionSupport(V, E);
 			break;
 		case SAVEMEM:
-			g = MinimalSchema.instance().createMinimalGraphWithSaveMemSupport();
+			g = MinimalSchema.instance().createMinimalGraphWithSavememSupport();
 			break;
 		default:
 			fail("Implementation " + implementationType
