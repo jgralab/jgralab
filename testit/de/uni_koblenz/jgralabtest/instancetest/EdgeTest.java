@@ -76,7 +76,7 @@ public class EdgeTest extends InstanceTest {
 			break;
 		case SAVEMEM:
 			g = VertexTestSchema.instance()
-					.createVertexTestGraphWithSaveMemSupport();
+					.createVertexTestGraphWithSavememSupport();
 			break;
 		default:
 			fail("Implementation " + implementationType
@@ -246,7 +246,7 @@ public class EdgeTest extends InstanceTest {
 				break;
 			case SAVEMEM:
 				g = VertexTestSchema.instance()
-						.createVertexTestGraphWithSaveMemSupport();
+						.createVertexTestGraphWithSavememSupport();
 				break;
 			default:
 				fail("Implementation " + implementationType
@@ -449,7 +449,7 @@ public class EdgeTest extends InstanceTest {
 				break;
 			case SAVEMEM:
 				g = VertexTestSchema.instance()
-						.createVertexTestGraphWithSaveMemSupport();
+						.createVertexTestGraphWithSavememSupport();
 				break;
 			default:
 				fail("Implementation " + implementationType
@@ -605,7 +605,7 @@ public class EdgeTest extends InstanceTest {
 				break;
 			case SAVEMEM:
 				g = VertexTestSchema.instance()
-						.createVertexTestGraphWithSaveMemSupport();
+						.createVertexTestGraphWithSavememSupport();
 				break;
 			default:
 				fail("Implementation " + implementationType
@@ -837,7 +837,7 @@ public class EdgeTest extends InstanceTest {
 				break;
 			case SAVEMEM:
 				g = VertexTestSchema.instance()
-						.createVertexTestGraphWithSaveMemSupport();
+						.createVertexTestGraphWithSavememSupport();
 				break;
 			default:
 				fail("Implementation " + implementationType
@@ -1170,7 +1170,7 @@ public class EdgeTest extends InstanceTest {
 				break;
 			case SAVEMEM:
 				g = VertexTestSchema.instance()
-						.createVertexTestGraphWithSaveMemSupport();
+						.createVertexTestGraphWithSavememSupport();
 				break;
 			default:
 				fail("Implementation " + implementationType
@@ -1457,7 +1457,7 @@ public class EdgeTest extends InstanceTest {
 				break;
 			case SAVEMEM:
 				g = VertexTestSchema.instance()
-						.createVertexTestGraphWithSaveMemSupport();
+						.createVertexTestGraphWithSavememSupport();
 				break;
 			default:
 				fail("Implementation " + implementationType
@@ -1684,7 +1684,7 @@ public class EdgeTest extends InstanceTest {
 				break;
 			case SAVEMEM:
 				g = VertexTestSchema.instance()
-						.createVertexTestGraphWithSaveMemSupport();
+						.createVertexTestGraphWithSavememSupport();
 				break;
 			default:
 				fail("Implementation " + implementationType
@@ -2060,7 +2060,7 @@ public class EdgeTest extends InstanceTest {
 				break;
 			case SAVEMEM:
 				g = VertexTestSchema.instance()
-						.createVertexTestGraphWithSaveMemSupport();
+						.createVertexTestGraphWithSavememSupport();
 				break;
 			default:
 				fail("Implementation " + implementationType
@@ -2591,7 +2591,7 @@ public class EdgeTest extends InstanceTest {
 				break;
 			case SAVEMEM:
 				g = VertexTestSchema.instance()
-						.createVertexTestGraphWithSaveMemSupport();
+						.createVertexTestGraphWithSavememSupport();
 				break;
 			default:
 				fail("Implementation " + implementationType
@@ -4941,7 +4941,7 @@ public class EdgeTest extends InstanceTest {
 			break;
 		case SAVEMEM:
 			anotherGraph = VertexTestSchema.instance()
-					.createVertexTestGraphWithSaveMemSupport();
+					.createVertexTestGraphWithSavememSupport();
 			break;
 		default:
 			fail("Implementation " + implementationType

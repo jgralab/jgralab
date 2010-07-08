@@ -93,7 +93,7 @@ public class GraphTest extends InstanceTest {
 			break;
 		case SAVEMEM:
 			out = VertexTestSchema.instance()
-					.createVertexTestGraphWithSaveMemSupport();
+					.createVertexTestGraphWithSavememSupport();
 			break;
 		default:
 			fail("Implementation " + implementationType
@@ -5333,7 +5333,7 @@ public class GraphTest extends InstanceTest {
 			break;
 		case SAVEMEM:
 			g3 = MinimalSchema.instance()
-					.createMinimalGraphWithSaveMemSupport();
+					.createMinimalGraphWithSavememSupport();
 			break;
 		default:
 			fail("Implementation " + implementationType

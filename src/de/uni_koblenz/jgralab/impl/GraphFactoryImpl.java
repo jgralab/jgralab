@@ -58,9 +58,9 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 	protected HashMap<Class<? extends Vertex>, Constructor<? extends Vertex>> vertexTransactionMap;
 
 	// Maps for savemem support.
-	protected HashMap<Class<? extends Graph>, Constructor<? extends Graph>> graphSaveMemMap;
-	protected HashMap<Class<? extends Edge>, Constructor<? extends Edge>> edgeSaveMemMap;
-	protected HashMap<Class<? extends Vertex>, Constructor<? extends Vertex>> vertexSaveMemMap;
+	protected HashMap<Class<? extends Graph>, Constructor<? extends Graph>> graphSavememMap;
+	protected HashMap<Class<? extends Edge>, Constructor<? extends Edge>> edgeSavememMap;
+	protected HashMap<Class<? extends Vertex>, Constructor<? extends Vertex>> vertexSavememMap;
 
 	/**
 	 * Default constructor. Initializes the internal {@link HashMap} attributes.
@@ -77,9 +77,9 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 		vertexTransactionMap = new HashMap<Class<? extends Vertex>, Constructor<? extends Vertex>>();
 
 		// Create maps for SAVEMEMIMPL.
-		graphSaveMemMap = new HashMap<Class<? extends Graph>, Constructor<? extends Graph>>();
-		edgeSaveMemMap = new HashMap<Class<? extends Edge>, Constructor<? extends Edge>>();
-		vertexSaveMemMap = new HashMap<Class<? extends Vertex>, Constructor<? extends Vertex>>();
+		graphSavememMap = new HashMap<Class<? extends Graph>, Constructor<? extends Graph>>();
+		edgeSavememMap = new HashMap<Class<? extends Edge>, Constructor<? extends Edge>>();
+		vertexSavememMap = new HashMap<Class<? extends Vertex>, Constructor<? extends Vertex>>();
 	}
 
 	// -------------------------------------------------------------------------
@@ -308,10 +308,10 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 	// FIXME This is currently a clone STDIMPL methods with changed maps.
 	// -------------------------------------------------------------------------
 
-	public Edge createEdgeWithSaveMemSupport(Class<? extends Edge> edgeClass,
+	public Edge createEdgeWithSavememSupport(Class<? extends Edge> edgeClass,
 			int id, Graph g, Vertex alpha, Vertex omega) {
 		try {
-			Edge e = edgeSaveMemMap.get(edgeClass).newInstance(id, g, alpha,
+			Edge e = edgeSavememMap.get(edgeClass).newInstance(id, g, alpha,
 					omega);
 			return e;
 		} catch (Exception ex) {
@@ -323,10 +323,10 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 		}
 	}
 
-	public Graph createGraphWithSaveMemSupport(
+	public Graph createGraphWithSavememSupport(
 			Class<? extends Graph> graphClass, String id, int vMax, int eMax) {
 		try {
-			Graph g = graphSaveMemMap.get(graphClass).newInstance(id, vMax,
+			Graph g = graphSavememMap.get(graphClass).newInstance(id, vMax,
 					eMax);
 			return g;
 		} catch (Exception ex) {
@@ -335,10 +335,10 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 		}
 	}
 
-	public Graph createGraphWithSaveMemSupport(
+	public Graph createGraphWithSavememSupport(
 			Class<? extends Graph> graphClass, String id) {
 		try {
-			Graph g = graphSaveMemMap.get(graphClass).newInstance(id, 1000,
+			Graph g = graphSavememMap.get(graphClass).newInstance(id, 1000,
 					1000);
 			return g;
 		} catch (Exception ex) {
@@ -347,10 +347,10 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 		}
 	}
 
-	public Vertex createVertexWithSaveMemSupport(
+	public Vertex createVertexWithSavememSupport(
 			Class<? extends Vertex> vertexClass, int id, Graph g) {
 		try {
-			Vertex v = vertexSaveMemMap.get(vertexClass).newInstance(id, g);
+			Vertex v = vertexSavememMap.get(vertexClass).newInstance(id, g);
 			return v;
 		} catch (Exception ex) {
 			if (ex.getCause() instanceof GraphException) {
@@ -361,13 +361,13 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 		}
 	}
 
-	public void setGraphSaveMemImplementationClass(
+	public void setGraphSavememImplementationClass(
 			Class<? extends Graph> originalClass,
 			Class<? extends Graph> implementationClass) {
 		if (isSuperclassOrEqual(originalClass, implementationClass)) {
 			try {
 				Class<?>[] params = { String.class, int.class, int.class };
-				graphSaveMemMap.put(originalClass, implementationClass
+				graphSavememMap.put(originalClass, implementationClass
 						.getConstructor(params));
 			} catch (NoSuchMethodException ex) {
 				throw new M1ClassAccessException(
@@ -377,13 +377,13 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 		}
 	}
 
-	public void setVertexSaveMemImplementationClass(
+	public void setVertexSavememImplementationClass(
 			Class<? extends Vertex> originalClass,
 			Class<? extends Vertex> implementationClass) {
 		if (isSuperclassOrEqual(originalClass, implementationClass)) {
 			try {
 				Class<?>[] params = { int.class, Graph.class };
-				vertexSaveMemMap.put(originalClass, implementationClass
+				vertexSavememMap.put(originalClass, implementationClass
 						.getConstructor(params));
 			} catch (NoSuchMethodException ex) {
 				throw new M1ClassAccessException(
@@ -393,14 +393,14 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 		}
 	}
 
-	public void setEdgeSaveMemImplementationClass(
+	public void setEdgeSavememImplementationClass(
 			Class<? extends Edge> originalClass,
 			Class<? extends Edge> implementationClass) {
 		if (isSuperclassOrEqual(originalClass, implementationClass)) {
 			try {
 				Class<?>[] params = { int.class, Graph.class, Vertex.class,
 						Vertex.class };
-				edgeSaveMemMap.put(originalClass, implementationClass
+				edgeSavememMap.put(originalClass, implementationClass
 						.getConstructor(params));
 			} catch (NoSuchMethodException ex) {
 				throw new M1ClassAccessException(

@@ -168,9 +168,9 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				" * @param vMax initial vertex count",
 				" * @param eMax initial edge count",
 				"*/",
-				"public #gcName# create#gcCamelName#WithSaveMemSupport(int vMax, int eMax) {",
-				((config.hasSaveMemSupport()) ? "\treturn (#gcCamelName#) graphFactory.createGraphWithSaveMemSupport(#gcCamelName#.class, null, vMax, eMax);"
-						: "\tthrow new UnsupportedOperationException(\"No SaveMem support compiled.\");"),
+				"public #gcName# create#gcCamelName#WithSavememSupport(int vMax, int eMax) {",
+				((config.hasSavememSupport()) ? "\treturn (#gcCamelName#) graphFactory.createGraphWithSavememSupport(#gcCamelName#.class, null, vMax, eMax);"
+						: "\tthrow new UnsupportedOperationException(\"No Savemem support compiled.\");"),
 				"}",
 				"",
 				"/**",
@@ -180,17 +180,17 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				" * @param vMax initial vertex count",
 				" * @param eMax initial edge count",
 				" */",
-				"public #gcName# create#gcCamelName#WithSaveMemSupport(String id, int vMax, int eMax) {",
-				((config.hasSaveMemSupport()) ? "\treturn (#gcCamelName#) graphFactory.createGraphWithSaveMemSupport(#gcCamelName#.class, id, vMax, eMax);"
-						: "\tthrow new UnsupportedOperationException(\"No SaveMem support compiled.\");"),
+				"public #gcName# create#gcCamelName#WithSavememSupport(String id, int vMax, int eMax) {",
+				((config.hasSavememSupport()) ? "\treturn (#gcCamelName#) graphFactory.createGraphWithSavememSupport(#gcCamelName#.class, id, vMax, eMax);"
+						: "\tthrow new UnsupportedOperationException(\"No Savemem support compiled.\");"),
 				"}",
 				"",
 				"/**",
 				" * Creates a new #gcName# graph.",
 				"*/",
-				"public #gcName# create#gcCamelName#WithSaveMemSupport() {",
-				((config.hasSaveMemSupport()) ? "\treturn (#gcCamelName#) graphFactory.createGraphWithSaveMemSupport(#gcCamelName#.class, null);"
-						: "\tthrow new UnsupportedOperationException(\"No SaveMem support compiled.\");"),
+				"public #gcName# create#gcCamelName#WithSavememSupport() {",
+				((config.hasSavememSupport()) ? "\treturn (#gcCamelName#) graphFactory.createGraphWithSavememSupport(#gcCamelName#.class, null);"
+						: "\tthrow new UnsupportedOperationException(\"No Savemem support compiled.\");"),
 				"}",
 				"",
 				"/**",
@@ -198,9 +198,9 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				" *",
 				" * @param id the id name of the new graph",
 				" */",
-				"public #gcName# create#gcCamelName#WithSaveMemSupport(String id) {",
-				((config.hasSaveMemSupport()) ? "\treturn (#gcCamelName#) graphFactory.createGraphWithSaveMemSupport(#gcCamelName#.class, id);"
-						: "\tthrow new UnsupportedOperationException(\"No SaveMem support compiled.\");"),
+				"public #gcName# create#gcCamelName#WithSavememSupport(String id) {",
+				((config.hasSavememSupport()) ? "\treturn (#gcCamelName#) graphFactory.createGraphWithSavememSupport(#gcCamelName#.class, id);"
+						: "\tthrow new UnsupportedOperationException(\"No Savemem support compiled.\");"),
 				"}",
 				"",
 				// ---- transaction support ----
@@ -308,8 +308,8 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				" * @throws GraphIOException if the graph cannot be loaded",
 				" */",
 				"public #gcName# load#gcCamelName#WithSavememSupport(String filename) throws GraphIOException {",
-				((config.hasSaveMemSupport()) ? "\treturn load#gcCamelName#WithSavememSupport(filename, null);"
-						: "\tthrow new UnsupportedOperationException(\"No SaveMem support compiled.\");"),
+				((config.hasSavememSupport()) ? "\treturn load#gcCamelName#WithSavememSupport(filename, null);"
+						: "\tthrow new UnsupportedOperationException(\"No Savemem support compiled.\");"),
 				"}",
 				"",
 				"/**",
@@ -321,11 +321,11 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				" * @throws GraphIOException if the graph cannot be loaded",
 				" */",
 				"public #gcName# load#gcCamelName#WithSavememSupport(String filename, ProgressFunction pf) throws GraphIOException {",
-				((config.hasSaveMemSupport()) ? "\tGraph graph = GraphIO.loadGraphFromFileWithSavememSupport(filename, pf);\n"
+				((config.hasSavememSupport()) ? "\tGraph graph = GraphIO.loadGraphFromFileWithSavememSupport(filename, pf);\n"
 						+ "\tif (!(graph instanceof #gcName#)) {\n"
 						+ "\t\tthrow new GraphIOException(\"Graph in file '\" + filename + \"' is not an instance of GraphClass #gcName#\");\n"
 						+ "\t}" + "\treturn (#gcName#) graph;"
-						: "\tthrow new UnsupportedOperationException(\"No SaveMem support compiled.\");"),
+						: "\tthrow new UnsupportedOperationException(\"No Savemem support compiled.\");"),
 				"}",
 				// ---- file handling methods with transaction support ----
 				"/**",

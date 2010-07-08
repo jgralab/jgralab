@@ -430,13 +430,13 @@ public abstract class GraphImpl extends
 	@Override
 	protected Edge internalCreateEdge(Class<? extends Edge> cls, Vertex alpha,
 			Vertex omega) {
-		return graphFactory.createEdgeWithSaveMemSupport(cls, 0, this, alpha,
+		return graphFactory.createEdgeWithSavememSupport(cls, 0, this, alpha,
 				omega);
 	}
 
 	@Override
 	protected Vertex internalCreateVertex(Class<? extends Vertex> cls) {
-		return graphFactory.createVertexWithSaveMemSupport(cls, 0, this);
+		return graphFactory.createVertexWithSavememSupport(cls, 0, this);
 	}
 
 }

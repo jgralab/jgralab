@@ -162,7 +162,7 @@ public class CodeGeneratorConfiguration {
 		this.saveMemSupport = saveMemSupport;
 	}
 
-	public boolean hasSaveMemSupport() {
+	public boolean hasSavememSupport() {
 		return this.saveMemSupport;
 	}
 }

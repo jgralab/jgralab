@@ -156,7 +156,7 @@ public interface GraphFactory {
 	 * returned object may be an instance of a subclass of the specified
 	 * graphClass.
 	 */
-	public Graph createGraphWithSaveMemSupport(
+	public Graph createGraphWithSavememSupport(
 			Class<? extends Graph> graphClass, String id, int vMax, int eMax);
 
 	/**
@@ -164,7 +164,7 @@ public interface GraphFactory {
 	 * returned object may be an instance of a subclass of the specified
 	 * graphClass.
 	 */
-	public Graph createGraphWithSaveMemSupport(
+	public Graph createGraphWithSavememSupport(
 			Class<? extends Graph> graphClass, String id);
 
 	/**
@@ -172,7 +172,7 @@ public interface GraphFactory {
 	 * returned object may be an instance of a subclass of the specified
 	 * vertexClass.
 	 */
-	public Vertex createVertexWithSaveMemSupport(
+	public Vertex createVertexWithSavememSupport(
 			Class<? extends Vertex> vertexClass, int id, Graph g);
 
 	/**
@@ -180,7 +180,7 @@ public interface GraphFactory {
 	 * returned object may be an instance of a subclass of the specified
 	 * edgeClass.
 	 */
-	public Edge createEdgeWithSaveMemSupport(Class<? extends Edge> edgeClass,
+	public Edge createEdgeWithSavememSupport(Class<? extends Edge> edgeClass,
 			int id, Graph g, Vertex alpha, Vertex omega);
 
 	/**
@@ -190,7 +190,7 @@ public interface GraphFactory {
 	 * @param graphM1Class
 	 * @param implementationClass
 	 */
-	public void setGraphSaveMemImplementationClass(
+	public void setGraphSavememImplementationClass(
 			Class<? extends Graph> graphM1Class,
 			Class<? extends Graph> implementationClass);
 
@@ -201,7 +201,7 @@ public interface GraphFactory {
 	 * @param vertexM1Class
 	 * @param implementationClass
 	 */
-	public void setVertexSaveMemImplementationClass(
+	public void setVertexSavememImplementationClass(
 			Class<? extends Vertex> vertexM1Class,
 			Class<? extends Vertex> implementationClass);
 
@@ -212,7 +212,7 @@ public interface GraphFactory {
 	 * @param edgeM1Class
 	 * @param implementationClass
 	 */
-	public void setEdgeSaveMemImplementationClass(
+	public void setEdgeSavememImplementationClass(
 			Class<? extends Edge> edgeM1Class,
 			Class<? extends Edge> implementationClass);
 }

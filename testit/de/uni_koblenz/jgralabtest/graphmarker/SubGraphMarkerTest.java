@@ -59,7 +59,7 @@ public class SubGraphMarkerTest extends InstanceTest {
 					.createMinimalGraphWithTransactionSupport(V, E);
 			break;
 		case SAVEMEM:
-			g = MinimalSchema.instance().createMinimalGraphWithSaveMemSupport(
+			g = MinimalSchema.instance().createMinimalGraphWithSavememSupport(
 					V, E);
 			break;
 		default:

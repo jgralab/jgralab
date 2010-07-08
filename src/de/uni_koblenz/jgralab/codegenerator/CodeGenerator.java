@@ -63,7 +63,7 @@ public abstract class CodeGenerator {
 			if (config.hasTransactionSupport()) {
 				out.add(TRANSIMPL);
 			}
-			if (config.hasSaveMemSupport()) {
+			if (config.hasSavememSupport()) {
 				out.add(SAVEMEMIMPL);
 			}
 			out.add(CLASSONLY);
