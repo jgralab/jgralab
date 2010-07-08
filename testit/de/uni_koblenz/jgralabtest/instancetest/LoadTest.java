@@ -286,7 +286,7 @@ public class LoadTest extends InstanceTest {
 				break;
 			case SAVEMEM:
 				g2 = VertexTestSchema.instance()
-						.loadVertexTestGraphWithSaveMemSupport(
+						.loadVertexTestGraphWithSavememSupport(
 								TESTGRAPH_PATH + TESTGRAPH_FILENAME);
 				break;
 			default:

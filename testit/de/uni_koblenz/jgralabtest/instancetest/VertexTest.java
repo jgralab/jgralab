@@ -8869,7 +8869,7 @@ public class VertexTest extends InstanceTest {
 			break;
 		case SAVEMEM:
 			loadedgraph = VertexTestSchema.instance()
-					.loadVertexTestGraphWithSaveMemSupport("test.tg");
+					.loadVertexTestGraphWithSavememSupport("test.tg");
 			break;
 		default:
 			fail("Implementation " + implementationType
@@ -8951,7 +8951,7 @@ public class VertexTest extends InstanceTest {
 			break;
 		case SAVEMEM:
 			loadedgraph = VertexTestSchema.instance()
-					.loadVertexTestGraphWithSaveMemSupport("test.tg");
+					.loadVertexTestGraphWithSavememSupport("test.tg");
 			break;
 		default:
 			fail("Implementation " + implementationType

@@ -94,7 +94,7 @@ public class ImplementationModeTest extends InstanceTest {
 			commit(g2);
 			break;
 		case SAVEMEM:
-			g2 = MinimalSchema.instance().loadMinimalGraphWithSaveMemSupport(
+			g2 = MinimalSchema.instance().loadMinimalGraphWithSavememSupport(
 					filename);
 			assertFalse(g2.hasStandardSupport());
 			assertFalse(g2.hasTransactionSupport());
