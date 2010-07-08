@@ -195,7 +195,12 @@ public class LoadTest extends InstanceTest {
 					.createVertexTestGraphWithTransactionSupport(vMax, eMax);
 			break;
 		case SAVEMEM:
-			graph = VertexTestSchema.instance().createVertexTestGraphWithSaveMemSupport(vMax, eMax);
+			graph = VertexTestSchema.instance()
+					.createVertexTestGraphWithSaveMemSupport(vMax, eMax);
+			break;
+		default:
+			fail("Implementation " + implementationType
+					+ " not yet supported by this test.");
 		}
 		return graph;
 	}
@@ -281,8 +286,12 @@ public class LoadTest extends InstanceTest {
 				break;
 			case SAVEMEM:
 				g2 = VertexTestSchema.instance()
-				.loadVertexTestGraphWithSaveMemSupport(
-						TESTGRAPH_PATH + TESTGRAPH_FILENAME);
+						.loadVertexTestGraphWithSaveMemSupport(
+								TESTGRAPH_PATH + TESTGRAPH_FILENAME);
+				break;
+			default:
+				fail("Implementation " + implementationType
+						+ " not yet supported by this test.");
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();

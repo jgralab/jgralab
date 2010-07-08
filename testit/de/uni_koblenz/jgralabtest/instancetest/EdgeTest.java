@@ -77,6 +77,10 @@ public class EdgeTest extends InstanceTest {
 		case SAVEMEM:
 			g = VertexTestSchema.instance()
 					.createVertexTestGraphWithSaveMemSupport();
+			break;
+		default:
+			fail("Implementation " + implementationType
+					+ " not yet supported by this test.");
 		}
 
 		rand = new Random(System.currentTimeMillis());
@@ -243,6 +247,10 @@ public class EdgeTest extends InstanceTest {
 			case SAVEMEM:
 				g = VertexTestSchema.instance()
 						.createVertexTestGraphWithSaveMemSupport();
+				break;
+			default:
+				fail("Implementation " + implementationType
+						+ " not yet supported by this test.");
 			}
 			createTransaction(g);
 			DoubleSubNode v0 = g.createDoubleSubNode();
@@ -442,6 +450,10 @@ public class EdgeTest extends InstanceTest {
 			case SAVEMEM:
 				g = VertexTestSchema.instance()
 						.createVertexTestGraphWithSaveMemSupport();
+				break;
+			default:
+				fail("Implementation " + implementationType
+						+ " not yet supported by this test.");
 			}
 			createTransaction(g);
 			DoubleSubNode v0 = g.createDoubleSubNode();
@@ -594,6 +606,10 @@ public class EdgeTest extends InstanceTest {
 			case SAVEMEM:
 				g = VertexTestSchema.instance()
 						.createVertexTestGraphWithSaveMemSupport();
+				break;
+			default:
+				fail("Implementation " + implementationType
+						+ " not yet supported by this test.");
 			}
 			createTransaction(g);
 			DoubleSubNode v0 = g.createDoubleSubNode();
@@ -822,6 +838,10 @@ public class EdgeTest extends InstanceTest {
 			case SAVEMEM:
 				g = VertexTestSchema.instance()
 						.createVertexTestGraphWithSaveMemSupport();
+				break;
+			default:
+				fail("Implementation " + implementationType
+						+ " not yet supported by this test.");
 			}
 			createTransaction(g);
 			DoubleSubNode v0 = g.createDoubleSubNode();
@@ -1151,6 +1171,10 @@ public class EdgeTest extends InstanceTest {
 			case SAVEMEM:
 				g = VertexTestSchema.instance()
 						.createVertexTestGraphWithSaveMemSupport();
+				break;
+			default:
+				fail("Implementation " + implementationType
+						+ " not yet supported by this test.");
 			}
 			createTransaction(g);
 			DoubleSubNode v0 = g.createDoubleSubNode();
@@ -1434,6 +1458,10 @@ public class EdgeTest extends InstanceTest {
 			case SAVEMEM:
 				g = VertexTestSchema.instance()
 						.createVertexTestGraphWithSaveMemSupport();
+				break;
+			default:
+				fail("Implementation " + implementationType
+						+ " not yet supported by this test.");
 			}
 			createTransaction(g);
 			DoubleSubNode v0 = g.createDoubleSubNode();
@@ -1657,6 +1685,10 @@ public class EdgeTest extends InstanceTest {
 			case SAVEMEM:
 				g = VertexTestSchema.instance()
 						.createVertexTestGraphWithSaveMemSupport();
+				break;
+			default:
+				fail("Implementation " + implementationType
+						+ " not yet supported by this test.");
 			}
 			createTransaction(g);
 			DoubleSubNode v0 = g.createDoubleSubNode();
@@ -2029,6 +2061,10 @@ public class EdgeTest extends InstanceTest {
 			case SAVEMEM:
 				g = VertexTestSchema.instance()
 						.createVertexTestGraphWithSaveMemSupport();
+				break;
+			default:
+				fail("Implementation " + implementationType
+						+ " not yet supported by this test.");
 			}
 			createTransaction(g);
 			DoubleSubNode v0 = g.createDoubleSubNode();
@@ -2556,6 +2592,10 @@ public class EdgeTest extends InstanceTest {
 			case SAVEMEM:
 				g = VertexTestSchema.instance()
 						.createVertexTestGraphWithSaveMemSupport();
+				break;
+			default:
+				fail("Implementation " + implementationType
+						+ " not yet supported by this test.");
 			}
 			createTransaction(g);
 			DoubleSubNode v0 = g.createDoubleSubNode();
@@ -4902,6 +4942,10 @@ public class EdgeTest extends InstanceTest {
 		case SAVEMEM:
 			anotherGraph = VertexTestSchema.instance()
 					.createVertexTestGraphWithSaveMemSupport();
+			break;
+		default:
+			fail("Implementation " + implementationType
+					+ " not yet supported by this test.");
 		}
 		return anotherGraph;
 	}
@@ -5153,6 +5197,10 @@ public class EdgeTest extends InstanceTest {
 		case SAVEMEM:
 			loadedgraph = VertexTestSchema.instance()
 					.loadVertexTestGraphWithSaveMemSupport("test.tg");
+			break;
+		default:
+			fail("Implementation " + implementationType
+					+ " not yet supported by this test.");
 		}
 		return loadedgraph;
 	}

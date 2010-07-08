@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -108,9 +109,12 @@ public class ArrayGraphmarkerTest extends InstanceTest {
 					.createMinimalGraphWithTransactionSupport(V, E);
 			break;
 		case SAVEMEM:
-			g = MinimalSchema.instance()
-					.createMinimalGraphWithSaveMemSupport(V, E);
+			g = MinimalSchema.instance().createMinimalGraphWithSaveMemSupport(
+					V, E);
 			break;
+		default:
+			fail("Implementation " + implementationType
+					+ " not yet supported by this test.");
 		}
 		createTransaction(g);
 		v1 = g.createNode();

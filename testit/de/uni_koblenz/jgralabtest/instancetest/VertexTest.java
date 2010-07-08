@@ -2337,6 +2337,9 @@ public class VertexTest extends InstanceTest {
 			graph = VertexTestSchema.instance()
 					.createVertexTestGraphWithSaveMemSupport(100, 100);
 			break;
+		default:
+			fail("Implementation " + implementationType
+					+ " not yet supported by this test.");
 		}
 		return graph;
 	}
@@ -8868,6 +8871,9 @@ public class VertexTest extends InstanceTest {
 			loadedgraph = VertexTestSchema.instance()
 					.loadVertexTestGraphWithSaveMemSupport("test.tg");
 			break;
+		default:
+			fail("Implementation " + implementationType
+					+ " not yet supported by this test.");
 		}
 		createReadOnlyTransaction(loadedgraph);
 		DoubleSubNode loadedv0 = loadedgraph.getFirstDoubleSubNode();
@@ -8947,6 +8953,9 @@ public class VertexTest extends InstanceTest {
 			loadedgraph = VertexTestSchema.instance()
 					.loadVertexTestGraphWithSaveMemSupport("test.tg");
 			break;
+		default:
+			fail("Implementation " + implementationType
+					+ " not yet supported by this test.");
 		}
 		createReadOnlyTransaction(loadedgraph);
 		DoubleSubNode loadedv0 = loadedgraph.getFirstDoubleSubNode();
