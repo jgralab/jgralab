@@ -145,12 +145,13 @@ public class ManualGreqlLexer {
 		}
 		// recognize strings and identifiers
 		if (recognizedTokenType == null) {
-			if (query.charAt(position) == '\"') { // String
+			char separator = query.charAt(position);
+			if ((separator == '\"') || (separator == '\'')) { // String
 				position++;
 				int start = position;
 				StringBuilder sb = new StringBuilder();
 				while ((position < query.length())
-						&& (query.charAt(position) != '\"')) {
+						&& (query.charAt(position) != separator)) {
 					if (query.charAt(position) == '\\') {
 						if (position == query.length()) {
 							throw new ParsingException(
@@ -159,7 +160,7 @@ public class ManualGreqlLexer {
 									query.substring(start, position), start,
 									position - start, query);
 						}
-						if ((query.charAt(position + 1) == '\"')
+						if ((query.charAt(position + 1) == separator)
 								|| (query.charAt(position + 1) == '\\')) {
 							position++;
 						}
@@ -168,7 +169,7 @@ public class ManualGreqlLexer {
 					position++;
 				}
 				if ((position >= query.length())
-						|| (query.charAt(position) != '\"')) {
+						|| (query.charAt(position) != separator)) {
 					throw new ParsingException("String started at position "
 							+ start + " but is not closed in query", sb
 							.toString(), start, position - start, query);
