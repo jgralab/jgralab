@@ -293,6 +293,7 @@ public class SchemaGraph2XMI {
 	 * {@link SchemaGraph2XMI#typesToBeDeclaredAtTheEnd} and</li>
 	 * <li>and the profile application</li>
 	 * </ul>
+	 * by calling the corresponding methods.
 	 * 
 	 * @param writer
 	 *            {@link XMLStreamWriter} of the current XMI file
