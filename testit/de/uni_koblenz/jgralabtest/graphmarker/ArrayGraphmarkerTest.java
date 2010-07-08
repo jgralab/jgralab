@@ -15,9 +15,9 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
+import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.graphmarker.ArrayVertexMarker;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
-import de.uni_koblenz.jgralabtest.instancetest.ImplementationType;
 import de.uni_koblenz.jgralabtest.instancetest.InstanceTest;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalGraph;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalSchema;
