@@ -47,7 +47,6 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl 
 
 		for (Edge currEdge = getGraph().getFirstEdgeInGraph(); currEdge != null; currEdge = currEdge
 				.getNextEdgeInGraph()) {
-			System.out.println(currEdge);
 			if (currEdge == this) {
 				return prevEdge;
 			}

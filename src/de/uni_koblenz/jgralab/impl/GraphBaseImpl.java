@@ -1135,6 +1135,19 @@ public abstract class GraphBaseImpl implements Graph {
 	 */
 	private final void removeEdgeFromESeq(EdgeBaseImpl e) {
 		assert e != null;
+		removeEdgeFromESeqWithoutDeletingIt(e);
+
+		// freeIndex(getFreeEdgeList(), e.getId());
+		freeEdgeIndex(e.getId());
+		getEdge()[e.getId()] = null;
+		getRevEdge()[e.getId()] = null;
+		e.setPrevEdgeInGraph(null);
+		e.setNextEdgeInGraph(null);
+		e.setId(0);
+		setECount(getECount() - 1);
+	}
+
+	private void removeEdgeFromESeqWithoutDeletingIt(EdgeBaseImpl e) {
 		if (e == getFirstEdgeInGraph()) {
 			// delete at head of edge list
 			setFirstEdgeInGraph((EdgeBaseImpl) e.getNextEdgeInGraph());
@@ -1158,15 +1171,6 @@ public abstract class GraphBaseImpl implements Graph {
 			((EdgeBaseImpl) e.getNextEdgeInGraph()).setPrevEdgeInGraph(e
 					.getPrevEdgeInGraph());
 		}
-
-		// freeIndex(getFreeEdgeList(), e.getId());
-		freeEdgeIndex(e.getId());
-		getEdge()[e.getId()] = null;
-		getRevEdge()[e.getId()] = null;
-		e.setPrevEdgeInGraph(null);
-		e.setNextEdgeInGraph(null);
-		e.setId(0);
-		setECount(getECount() - 1);
 	}
 
 	/*
@@ -1376,30 +1380,17 @@ public abstract class GraphBaseImpl implements Graph {
 
 		assert getFirstEdgeInGraph() != getLastEdgeInGraph();
 
-		// remove moved edge from eSeq
-		if (movedEdge == getFirstEdgeInGraph()) {
-			setFirstEdgeInGraph((EdgeBaseImpl) movedEdge.getNextEdgeInGraph());
-			((EdgeBaseImpl) movedEdge.getNextEdgeInGraph())
-					.setPrevEdgeInGraph(null);
-		} else if (movedEdge == getLastEdgeInGraph()) {
-			setLastEdgeInGraph((EdgeBaseImpl) movedEdge.getPrevEdgeInGraph());
-			((EdgeBaseImpl) movedEdge.getPrevEdgeInGraph())
-					.setNextEdgeInGraph(null);
-		} else {
-			((EdgeBaseImpl) movedEdge.getPrevEdgeInGraph())
-					.setNextEdgeInGraph(movedEdge.getNextEdgeInGraph());
-			((EdgeBaseImpl) movedEdge.getNextEdgeInGraph())
-					.setPrevEdgeInGraph(movedEdge.getPrevEdgeInGraph());
-		}
+		removeEdgeFromESeqWithoutDeletingIt(movedEdge);
 
 		// insert moved edge in eSeq immediately before target
 		if (targetEdge == getFirstEdgeInGraph()) {
 			setFirstEdgeInGraph(movedEdge);
 			movedEdge.setPrevEdgeInGraph(null);
 		} else {
-			((EdgeBaseImpl) targetEdge.getPrevEdgeInGraph())
-					.setNextEdgeInGraph(movedEdge);
-			movedEdge.setPrevEdgeInGraph(targetEdge.getPrevEdgeInGraph());
+			EdgeBaseImpl previousEdge = ((EdgeBaseImpl) targetEdge
+					.getPrevEdgeInGraph());
+			previousEdge.setNextEdgeInGraph(movedEdge);
+			movedEdge.setPrevEdgeInGraph(previousEdge);
 		}
 		movedEdge.setNextEdgeInGraph(targetEdge);
 		targetEdge.setPrevEdgeInGraph(movedEdge);
@@ -1449,9 +1440,10 @@ public abstract class GraphBaseImpl implements Graph {
 			setFirstVertex(movedVertex);
 			movedVertex.setPrevVertex(null);
 		} else {
-			((VertexBaseImpl) targetVertex.getPrevVertex())
-					.setNextVertex(movedVertex);
-			movedVertex.setPrevVertex(targetVertex.getPrevVertex());
+			VertexBaseImpl previousVertex = (VertexBaseImpl) targetVertex
+					.getPrevVertex();
+			previousVertex.setNextVertex(movedVertex);
+			movedVertex.setPrevVertex(previousVertex);
 		}
 		movedVertex.setNextVertex(targetVertex);
 		targetVertex.setPrevVertex(movedVertex);
@@ -1908,5 +1900,5 @@ public abstract class GraphBaseImpl implements Graph {
 	protected boolean canAddGraphElement(int graphElementId) {
 		return graphElementId == 0;
 	}
-	
+
 }

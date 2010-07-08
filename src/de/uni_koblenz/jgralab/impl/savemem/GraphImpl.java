@@ -426,4 +426,17 @@ public abstract class GraphImpl extends
 	protected void addEdge(Edge newEdge, Vertex alpha, Vertex omega) {
 		super.addEdge(newEdge, alpha, omega);
 	}
+
+	@Override
+	protected Edge internalCreateEdge(Class<? extends Edge> cls, Vertex alpha,
+			Vertex omega) {
+		return graphFactory.createEdgeWithSaveMemSupport(cls, 0, this, alpha,
+				omega);
+	}
+
+	@Override
+	protected Vertex internalCreateVertex(Class<? extends Vertex> cls) {
+		return graphFactory.createVertexWithSaveMemSupport(cls, 0, this);
+	}
+
 }

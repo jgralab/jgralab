@@ -190,9 +190,9 @@ public class IncidenceListTest extends InstanceTest {
 	@Test
 	public void putEdgeBeforeTest() throws Exception {
 		// TODO remove when problem is resolved
-		if(implementationType == ImplementationType.SAVEMEM){
-			fail("testcase creates an infinite loop.");
-		}
+		// if(implementationType == ImplementationType.SAVEMEM){
+		// fail("testcase creates an infinite loop.");
+		// }
 		createTransaction(g);
 		createRandomEdges();
 		commit(g);

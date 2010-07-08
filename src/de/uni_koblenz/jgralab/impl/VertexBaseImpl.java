@@ -526,8 +526,9 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex 
 			setFirstIncidence(moved);
 			moved.setPrevIncidence(null);
 		} else {
-			target.getPrevIncidence().setNextIncidence(moved);
-			moved.setPrevIncidence(target.getPrevIncidence());
+			IncidenceImpl previousIncidence = target.getPrevIncidence();
+			previousIncidence.setNextIncidence(moved);
+			moved.setPrevIncidence(previousIncidence);
 		}
 		moved.setNextIncidence(target);
 		target.setPrevIncidence(moved);
