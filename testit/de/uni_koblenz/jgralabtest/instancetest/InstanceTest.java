@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
 
 public abstract class InstanceTest {
@@ -16,7 +17,7 @@ public abstract class InstanceTest {
 		parameters = new ArrayList<Object[]>();
 		parameters.add(new Object[] { ImplementationType.STANDARD });
 		parameters.add(new Object[] { ImplementationType.TRANSACTION });
-		// parameters.add(new Object[] { ImplementationType.SAVEMEM});
+		parameters.add(new Object[] { ImplementationType.SAVEMEM});
 	}
 
 	public static Collection<Object[]> getParameters() {
