@@ -32,7 +32,7 @@ public class VertexPosition<T> {
 
 	public int length;
 
-	public VertexPosition(T vertex, int offset, int length) {
+	public VertexPosition(T vertex, int length, int offset) {
 		this.node = vertex;
 		this.offset = offset;
 		this.length = length;
