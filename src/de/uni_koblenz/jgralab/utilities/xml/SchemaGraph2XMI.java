@@ -573,9 +573,6 @@ public class SchemaGraph2XMI {
 							+ ec.get_qualifiedName());
 		}
 
-		// TODO Ob bidirektional navigierbar, von alpha zu Omega oder von omega
-		// zu alpha navigierbar durch Opionen festlegen
-
 		// create <<graphclass>> for graph classes
 		if (aeclass instanceof GraphClass) {
 			createExtension(writer, aeclass, "graphclass");
@@ -763,7 +760,6 @@ public class SchemaGraph2XMI {
 				+ edgeClass.get_qualifiedName();
 
 		// redefines
-		// TODO check redefines
 		int i = 0;
 		for (Redefines red : otherIncidence
 				.getRedefinesIncidences(EdgeDirection.OUT)) {
@@ -818,9 +814,9 @@ public class SchemaGraph2XMI {
 				XMIConstants.TYPE_VALUE_LITERALUNLIMITEDNATURAL);
 		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
 				XMIConstants.XMI_ATTRIBUTE_ID, incidenceId + "_uppervalue");
-		writer.writeAttribute(XMIConstants.ATTRIBUTE_VALUE,
-				incidence.get_max() == Integer.MAX_VALUE ? "*" : Integer
-						.toString(otherIncidence.get_max()));
+		writer.writeAttribute(XMIConstants.ATTRIBUTE_VALUE, otherIncidence
+				.get_max() == Integer.MAX_VALUE ? "*" : Integer
+				.toString(otherIncidence.get_max()));
 
 		// create lowerValue
 		writer.writeEmptyElement(XMIConstants.TAG_LOWERVALUE);
