@@ -55,7 +55,8 @@ public class GraphStructureChangedListenerTest extends InstanceTest {
 					.createMinimalGraphWithTransactionSupport(V, E);
 			break;
 		case SAVEMEM:
-			g = MinimalSchema.instance().createMinimalGraphWithSaveMemSupport();
+			g = MinimalSchema.instance().createMinimalGraphWithSaveMemSupport(
+					V, E);
 			break;
 		default:
 			fail("Implementation " + implementationType

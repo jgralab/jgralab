@@ -90,9 +90,9 @@ public class EdgeListTest extends InstanceTest {
 	@Test
 	public void putBeforeTest() throws Exception {
 		// TODO remove when problem is resolved
-		if(implementationType == ImplementationType.SAVEMEM){
-			fail("testcase creates an infinite loop.");
-		}
+		// if(implementationType == ImplementationType.SAVEMEM){
+		// fail("testcase creates an infinite loop.");
+		// }
 		createReadOnlyTransaction(g);
 		Edge e5 = g.getEdge(5).getReversedEdge();
 		commit(g);
@@ -120,6 +120,7 @@ public class EdgeListTest extends InstanceTest {
 
 		createTransaction(g);
 		e5.putBeforeInGraph(g.getEdge(10).getReversedEdge());
+		// e5.putBeforeInGraph(g.getEdge(10));
 		commit(g);
 
 		createReadOnlyTransaction(g);
@@ -140,6 +141,7 @@ public class EdgeListTest extends InstanceTest {
 		assertFalse(e5.isAfterInGraph(g.getEdge(1)));
 		assertTrue(g.getEdge(1).isAfterInGraph(e5));
 		commit(g);
+
 	}
 
 	@Test
