@@ -53,18 +53,48 @@ import de.uni_koblenz.jgralab.grumlschema.structure.Redefines;
 import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesEdgeClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesVertexClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
+import de.uni_koblenz.jgralab.utilities.rsa2tg.Rsa2Tg;
 import de.uni_koblenz.jgralab.utilities.tg2schemagraph.Schema2SchemaGraph;
 
+/**
+ * SchemaGraph2XMI is a utility that converts a SchemaGraph or a TG schema file
+ * into a XMI file which can be imported by IBM (tm) Rational Software Architect
+ * (tm). The converter the StAX writer to create the xmi. As intermediate
+ * format, a grUML schema graph is created from the TG schema file.
+ * 
+ * @author ist@uni-koblenz.de
+ * 
+ */
 public class SchemaGraph2XMI {
 
+	/**
+	 * This {@link ArrayList} stores all domains which have to have an entry in
+	 * the package PrimitiveTypes, because they are no default attribute types
+	 * of UML and have no explicitly defined UML element in the XMI. Those
+	 * domains are the LongDomain, the DoubleDomain, all CollectionDomains and
+	 * all MapDomains.
+	 */
 	private final ArrayList<Domain> typesToBeDeclaredAtTheEnd = new ArrayList<Domain>();
 
+	/**
+	 * If set to <code>true</code>, the EdgeClasses are created as associations
+	 * which are bidirectional navigable.
+	 */
 	private boolean isBidirectional = false;
 
+	/**
+	 * If set to <code>true</code>, the EdgeClasses are created as associations
+	 * which are navigable from TO to FROM.
+	 */
 	private boolean isReverted = false;
 
 	/**
+	 * Processes an TG-file as schema or a schema in a grUML graph to a XMI
+	 * file. For all command line options see
+	 * {@link Rsa2Tg#processCommandLineOptions(String[])}.
+	 * 
 	 * @param args
+	 *            {@link String} array of command line options.
 	 * @throws GraphIOException
 	 */
 	public static void main(String[] args) throws GraphIOException {
@@ -164,11 +194,35 @@ public class SchemaGraph2XMI {
 		return oh.parse(args);
 	}
 
+	/**
+	 * Converts the {@link SchemaGraph} to the XMI file <code>xmiName</code>.
+	 * 
+	 * @param schemaGraph
+	 *            {@link SchemaGraph} the schema graph to be converted.
+	 * @param xmiName
+	 *            {@link String} the path of the xmi file to be created.
+	 * @throws XMLStreamException
+	 * @throws IOException
+	 */
 	public void process(SchemaGraph schemaGraph, String xmiName)
 			throws XMLStreamException, IOException {
+		assert !(isBidirectional && isReverted) : "The associations can't be created bidirectional navigable and navigable from FROM to TO at the same time.";
 		createXMI(xmiName, schemaGraph);
 	}
 
+	/**
+	 * This method creates the XMI file. Created content is:<br/>
+	 * <code>&lt;?xml version="{@link XMIConstants#XML_VERSION}" encoding="{@link XMIConstants#XML_ENCODING}"?&gt;<br/>
+	 * &lt;!-- content created by {@link SchemaGraph2XMI#createRootElement(XMLStreamWriter, SchemaGraph)} --&gt;
+	 * </code>
+	 * 
+	 * @param xmiName
+	 *            {@link String} the path of the XMI file
+	 * @param schemaGraph
+	 *            {@link SchemaGraph} to be converted into an XMI
+	 * @throws XMLStreamException
+	 * @throws IOException
+	 */
 	private void createXMI(String xmiName, SchemaGraph schemaGraph)
 			throws XMLStreamException, IOException {
 		// create the XMLStreamWriter which creates the current xmi-file.
@@ -193,9 +247,14 @@ public class SchemaGraph2XMI {
 	}
 
 	/**
+	 * Creates the root <code>XMI</code> tag of the whole document. It calls
+	 * {@link SchemaGraph2XMI#createModelElement(XMLStreamWriter, SchemaGraph)}
+	 * to create its content.
 	 * 
 	 * @param writer
+	 *            {@link XMLStreamWriter} of the current XMI file
 	 * @param schemaGraph
+	 *            {@link SchemaGraph} to be converted into an XMI
 	 * @throws XMLStreamException
 	 */
 	private void createRootElement(XMLStreamWriter writer,
@@ -226,9 +285,19 @@ public class SchemaGraph2XMI {
 	}
 
 	/**
+	 * Creates the <code>Model</code> tag and its content consisting of
+	 * <ul>
+	 * <li>the {@link GraphClass},</li>
+	 * <li>the defaultPackage and its content,</li>
+	 * <li>the representation of the domains in
+	 * {@link SchemaGraph2XMI#typesToBeDeclaredAtTheEnd} and</li>
+	 * <li>and the profile application</li>
+	 * </ul>
+	 * 
 	 * @param writer
-	 * @param modelName
+	 *            {@link XMLStreamWriter} of the current XMI file
 	 * @param schemaGraph
+	 *            {@link SchemaGraph} to be converted into an XMI
 	 * @throws XMLStreamException
 	 */
 	private void createModelElement(XMLStreamWriter writer,
@@ -962,7 +1031,9 @@ public class SchemaGraph2XMI {
 			writer.writeEndElement();
 		}
 
-		// domain is a primitive type
+		// if domain is a LongDomain, a DoubleDomain, a CollectionDomain or a
+		// MapDomain there has to be created an entry in the package
+		// PrimitiveTypes
 		if (domain instanceof LongDomain || domain instanceof DoubleDomain
 				|| domain instanceof CollectionDomain
 				|| domain instanceof MapDomain) {
