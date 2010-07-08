@@ -647,22 +647,15 @@ public class SchemaGraph2XMI {
 	 */
 	private boolean hasToBeCreatedAtVertex(IncidenceClass incidence) {
 		boolean isAlphaVertexClass = incidence.getFirstComesFrom() != null;
-		EdgeClass ec = (EdgeClass) (isAlphaVertexClass ? incidence
-				.getFirstComesFrom().getThat() : incidence.getFirstGoesTo()
-				.getThat());
 		if (isBidirectional) {
-			if (ec.getFirstHasAttribute() == null) {
-				// in the case of bidirectional edges only
-				// non-AssociationClasses have incidences at vertices (in
-				// the XMI). Incidences of bidirectional AssociationClasses are
-				// created at the AssociationClass
-				return true;
-			}
+			// in the case of bidirectional edges, all incidences have to be
+			// created at the vertices
+			return true;
 		} else {
 			if (!isReverted && isAlphaVertexClass) {
 				// the edge has a navigable incidence (aeclass-->otherEnd)
 				return true;
-			} else if (isReverted && isAlphaVertexClass) {
+			} else if (isReverted && !isAlphaVertexClass) {
 				// the edge has a navigable incidence (aeclass-->otherEnd)
 				// because the direction is reverted
 				return true;
@@ -692,15 +685,14 @@ public class SchemaGraph2XMI {
 		// create incidence which contains the information for the alpha
 		// vertex (=omegaIncidence)
 		if (!hasToBeCreatedAtVertex(alphaIncidence)) {
-			// TODO Prüfe Richtung!!!!
 			createIncidence(writer, omegaIncidence, edgeClass, alphaIncidence,
-					omegaVertex, alphaVertex.get_qualifiedName());
+					omegaVertex, alphaVertex.get_qualifiedName(), true);
 		}
 		// create incidence which contains the information for the omega
 		// vertex (=alphaIncidence)
 		if (!hasToBeCreatedAtVertex(omegaIncidence)) {
 			createIncidence(writer, alphaIncidence, edgeClass, omegaIncidence,
-					alphaVertex, omegaVertex.get_qualifiedName());
+					alphaVertex, omegaVertex.get_qualifiedName(), true);
 		}
 	}
 
@@ -731,7 +723,7 @@ public class SchemaGraph2XMI {
 				if (edgeClass != null) {
 					createIncidence(writer, otherIncidence, edgeClass,
 							incidence, connectedVertexClass, vertexClass
-									.get_qualifiedName());// TODO Here I am
+									.get_qualifiedName(), false);
 				}
 			}
 		}
@@ -749,12 +741,17 @@ public class SchemaGraph2XMI {
 	 * @param incidence
 	 * @param edgeClass
 	 * @param qualifiedNameOfVertexClass
+	 * @param createOwnedEnd
+	 *            if set to true, the tag ownedEnd is used instead of
+	 *            ownedAttribute (ownedEnd has to be created, if you create an
+	 *            incidence at an Association.)
 	 * @throws XMLStreamException
 	 */
 	private void createIncidence(XMLStreamWriter writer,
 			IncidenceClass otherIncidence, EdgeClass edgeClass,
 			IncidenceClass incidence, VertexClass connectedVertexClass,
-			String qualifiedNameOfVertexClass) throws XMLStreamException {
+			String qualifiedNameOfVertexClass, boolean createOwnedEnd)
+			throws XMLStreamException {
 
 		String incidenceId = qualifiedNameOfVertexClass + "_incidence_"
 				+ edgeClass.get_qualifiedName();
@@ -770,7 +767,8 @@ public class SchemaGraph2XMI {
 		}
 
 		// start ownedattribute
-		writer.writeStartElement(XMIConstants.TAG_OWNEDATTRIBUTE);
+		writer.writeStartElement(createOwnedEnd ? XMIConstants.TAG_OWNEDEND
+				: XMIConstants.TAG_OWNEDATTRIBUTE);
 		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
 				XMIConstants.XMI_ATTRIBUTE_TYPE,
 				XMIConstants.OWNEDATTRIBUTE_TYPE_VALUE);
