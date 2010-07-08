@@ -64,6 +64,7 @@ public class XMIConstants {
 	static final String OWNEDATTRIBUTE_ATTRIBUTE_AGGREGATION = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_ATTRIBUTE_AGGREGATION;
 	static final String OWNEDATTRIBUTE_ATTRIBUTE_AGGREGATION_VALUE_SHARED = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_SHARED;
 	static final String OWNEDATTRIBUTE_ATTRIBUTE_AGGREGATION_VALUE_COMPOSITE = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_COMPOSITE;
+	static final String TAG_OWNEDEND = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_OWNEDEND;
 
 	// generalization specific constants
 	static final String TAG_GENERALIZATION = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_GENERALIZATION;
