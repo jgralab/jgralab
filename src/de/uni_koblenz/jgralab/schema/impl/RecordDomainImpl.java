@@ -210,10 +210,13 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 			String variableName, String graphIoVariableName) {
 		code.add("#init#");
 		code.add("if (" + graphIoVariableName + ".isNextToken(\"(\")) {");
-		/*code.add("\t" + "#name# = ((" + schemaPrefix + "."
-				+ parentPackage.getSchema().getGraphClass().getSimpleName()
-				+ ")" + "graph).create" + getSimpleName() + "(io);");*/
-		code.add("\t" + "#name# = #theGraph#.createRecord(" + getSimpleName() + "Impl.class, io);");
+		/*
+		 * code.add("\t" + "#name# = ((" + schemaPrefix + "." +
+		 * parentPackage.getSchema().getGraphClass().getSimpleName() + ")" +
+		 * "graph).create" + getSimpleName() + "(io);");
+		 */
+		code.add("\t" + "#name# = #theGraph#.createRecord(" + getSimpleName()
+				+ "Impl.class, io);");
 		code.add("} else if (" + graphIoVariableName
 				+ ".isNextToken(GraphIO.NULL_LITERAL)) {");
 		code.add("\t" + graphIoVariableName + ".match();");
@@ -288,6 +291,13 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 	public String getStandardJavaAttributeImplementationTypeName(
 			String schemaRootPackagePrefix) {
 		return schemaRootPackagePrefix + ".impl.std." + getQualifiedName()
+				+ "Impl";
+	}
+
+	@Override
+	public String getSavememJavaAttributeImplementationTypeName(
+			String schemaRootPackagePrefix) {
+		return schemaRootPackagePrefix + ".impl.savemem." + getQualifiedName()
 				+ "Impl";
 	}
 }
