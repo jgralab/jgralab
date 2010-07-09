@@ -824,7 +824,7 @@ public class GraphIO {
 				in.close();
 			}
 		} catch (IOException ex) {
-			throw new GraphIOException("exception while loadung schema from "
+			throw new GraphIOException("exception while loading schema from "
 					+ filename, ex);
 		}
 	}
