@@ -153,14 +153,17 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 				CodeSnippet cs = new CodeSnippet(true);
 				cs
 						.add("public #rcname# create#rname#(GraphIO io) throws GraphIOException {");
+
 				if (currentCycle.isTransImpl()) {
 					cs
 							.add("\tif(!isLoading() && getCurrentTransaction().isReadOnly())");
 					cs
 							.add("\t\tthrow new #jgPackage#.GraphException(\"Read-only transactions are not allowed to create instances of #rtype#.\");");
 					cs.add("\treturn createRecord(#rtranstype#.class, io);");
-				} else {
+				} else if (currentCycle.isStdImpl()) {
 					cs.add("\treturn createRecord(#rstdtype#.class, io);");
+				} else if (currentCycle.isSaveMemImpl()) {
+					cs.add("\treturn createRecord(#rsavememtype#.class, io);");
 				}
 				cs.add("}");
 				cs.add("");
@@ -174,8 +177,11 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 							.add("\t\tthrow new #jgPackage#.GraphException(\"Read-only transactions are not allowed to create instances of #rtype#.\");");
 					cs
 							.add("\treturn createRecord(#rtranstype#.class, fields);");
-				} else {
+				} else if (currentCycle.isStdImpl()) {
 					cs.add("\treturn createRecord(#rstdtype#.class, fields);");
+				} else if (currentCycle.isSaveMemImpl()) {
+					cs
+							.add("\treturn createRecord(#rsavememtype#.class, fields);");
 				}
 				cs.add("}");
 				cs.add("");
@@ -195,9 +201,12 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 							.add("\t\tthrow new #jgPackage#.GraphException(\"Read-only transactions are not allowed to create instances of #rtype#.\");");
 					cs
 							.add("\treturn createRecord(#rtranstype#.class, #parawotypes#);");
-				} else {
+				} else if (currentCycle.isStdImpl()) {
 					cs
 							.add("\treturn createRecord(#rstdtype#.class, #parawotypes#);");
+				} else if (currentCycle.isSaveMemImpl()) {
+					cs
+							.add("\treturn createRecord(#rsavememtype#.class, #parawotypes#);");
 				}
 				cs.add("}");
 				cs.add("");
@@ -220,6 +229,11 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 								"rstdtype",
 								rd
 										.getStandardJavaAttributeImplementationTypeName(schemaRootPackageName));
+				cs
+						.setVariable(
+								"rsavememtype",
+								rd
+										.getSavememJavaAttributeImplementationTypeName(schemaRootPackageName));
 				code.addNoIndent(cs);
 			}
 		}
