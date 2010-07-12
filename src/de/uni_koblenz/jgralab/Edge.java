@@ -54,22 +54,6 @@ public interface Edge extends GraphElement {
 
 	/**
 	 * @param anEdgeClass
-	 *            an edge class
-	 * @return the next edge of class <code>anEdgeClass</code> in iSeq of the
-	 *         current vertex
-	 */
-	public Edge getNextEdge(EdgeClass anEdgeClass);
-
-	/**
-	 * @param anEdgeClass
-	 *            an edge class
-	 * @return the next edge of class <code>anEdgeClass</code> in iSeq of the
-	 *         current vertex
-	 */
-	public Edge getNextEdge(Class<? extends Edge> anEdgeClass);
-
-	/**
-	 * @param anEdgeClass
 	 *            the edge class to search for
 	 * @return the next incidence in iSeq where the corresponding edge is of
 	 *         class anEdgeClass
@@ -336,35 +320,33 @@ public interface Edge extends GraphElement {
 	 * returns true if this edge is the "normal" edge, false otherwise
 	 */
 	public boolean isNormal();
-
+	
+	
 	/**
-	 * @return the semantics of this edge, e.g. AggregationKind.NONE, SHARED or
-	 *         COMPOSITE
+	 * @return the semantics of this edge, e.g. AggregationKind.NONE, SHARED or COMPOSITE
 	 */
 	public AggregationKind getSemantics();
-
+	
+	
 	/**
-	 * @return the semantics of the alpha end of this edge, e.g.
-	 *         AggregationKind.NONE, SHARED or COMPOSITE
+	 * @return the semantics of the alpha end of this edge, e.g. AggregationKind.NONE, SHARED or COMPOSITE
 	 */
 	public AggregationKind getAlphaSemantics();
-
+	
 	/**
-	 * @return the semantics of the omega end of this edge, e.g.
-	 *         AggregationKind.NONE, SHARED or COMPOSITE
+	 * @return the semantics of the omega end of this edge, e.g. AggregationKind.NONE, SHARED or COMPOSITE
 	 */
 	public AggregationKind getOmegaSemantics();
-
+	
 	/**
-	 * @return the semantics of the this end of this edge, e.g.
-	 *         AggregationKind.NONE, SHARED or COMPOSITE
+	 * @return the semantics of the this end of this edge, e.g. AggregationKind.NONE, SHARED or COMPOSITE
 	 */
 	public AggregationKind getThisSemantics();
-
+	
 	/**
-	 * @return the semantics of the that end of this edge, e.g.
-	 *         AggregationKind.NONE, SHARED or COMPOSITE
+	 * @return the semantics of the that end of this edge, e.g. AggregationKind.NONE, SHARED or COMPOSITE
 	 */
 	public AggregationKind getThatSemantics();
-
+	
+	
 }

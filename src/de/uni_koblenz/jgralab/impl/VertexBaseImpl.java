@@ -272,33 +272,6 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uni_koblenz.jgralab.Vertex#getFirstEdge(de.uni_koblenz.jgralab.schema
-	 * .EdgeClass)
-	 */
-	@Override
-	public Edge getFirstEdge(EdgeClass ec) {
-		return getFirstEdge(ec.getM1Class());
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.Vertex#getFirstEdge(java.lang.Class)
-	 */
-	@Override
-	public Edge getFirstEdge(Class<? extends Edge> anEdgeClass) {
-		IncidenceImpl e = null;
-		do {
-			e = getFirstIncidence();
-		} while ((e != null) && (e.getM1Class() != anEdgeClass)
-				&& !anEdgeClass.isInstance(e));
-		return e;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see de.uni_koblenz.jgralab.Vertex#getLastEdge()
 	 */
 	@Override
