@@ -168,10 +168,10 @@ public class TabularVisualizer {
 								: state.edgesOfTableView.length)
 								+ " of " + state.graph.getECount() + " edges")
 				.append(" visible.\";\n");
-		if (elementId.length() == 0
-				|| elementId.length() == 1
-				|| (isVertex && (state.verticesOfTableView == null || state.verticesOfTableView.length == 0))
-				|| (!isVertex && (state.edgesOfTableView == null || state.edgesOfTableView.length == 0))) {
+		if ((elementId.length() == 0)
+				|| (elementId.length() == 1)
+				|| (isVertex && ((state.verticesOfTableView == null) || (state.verticesOfTableView.length == 0)))
+				|| (!isVertex && ((state.edgesOfTableView == null) || (state.edgesOfTableView.length == 0)))) {
 			return;
 		}
 		// find position of element in the corresponding array
@@ -179,7 +179,7 @@ public class TabularVisualizer {
 		int positionOfElementInArray = findPositionInArray(
 				isVertex ? state.verticesOfTableView : state.edgesOfTableView,
 				idOfElement);
-		if (positionOfElementInArray < 0
+		if ((positionOfElementInArray < 0)
 				&& (isVertex ? state.selectedVertexClasses
 						: state.selectedEdgeClasses)
 						.get((isVertex ? state.graph.getVertex(idOfElement)
@@ -201,9 +201,9 @@ public class TabularVisualizer {
 				: positionOfElementInArray;
 		int numberOfPages = 1;
 		int numberOfPageWithElementOfId = 1;
-		if (numberPerPage > 0
-				&& (isVertex ? state.verticesOfTableView
-						: state.edgesOfTableView).length > numberPerPage) {
+		if ((numberPerPage > 0)
+				&& ((isVertex ? state.verticesOfTableView
+						: state.edgesOfTableView).length > numberPerPage)) {
 			// not all vertices could be displayed on one page
 			// compute how many pages we have
 			int totalNumberOfElements = (isVertex ? state.verticesOfTableView
@@ -303,9 +303,9 @@ public class TabularVisualizer {
 				.append(typeInfix).append(");\n");
 		// create elements
 		for (int currentElementIndex = (numberOfPageWithElementOfId - 1)
-				* (numberPerPage < 0 ? 0 : numberPerPage); currentElementIndex < graphElements.length
-				&& currentElementIndex < (numberPerPage < 0 ? graphElements.length
-						: numberOfPageWithElementOfId * numberPerPage); currentElementIndex++) {
+				* (numberPerPage < 0 ? 0 : numberPerPage); (currentElementIndex < graphElements.length)
+				&& (currentElementIndex < (numberPerPage < 0 ? graphElements.length
+						: numberOfPageWithElementOfId * numberPerPage)); currentElementIndex++) {
 			GraphElement currentElement = graphElements[currentElementIndex];
 			code.append("var currentTr = document.createElement(\"tr\");\n");
 			code.append("currentTr.id = \"tr").append(
@@ -424,8 +424,6 @@ public class TabularVisualizer {
 				e.printStackTrace();
 			} catch (GraphIOException e) {
 				e.printStackTrace();
-			} catch (NoSuchFieldException e) {
-				e.printStackTrace();
 			}
 			code.append(inToolTip ? ";" : ";\"));\n");
 			first = false;
@@ -463,10 +461,10 @@ public class TabularVisualizer {
 		for (Edge e : currentVertex.incidences()) {
 			if (selectedEdgeClasses.get(e.getAttributedElementClass())) {
 				// show all incidences whose type is selected
-				if (numberOfEdges > (displayedPage - 1)
-						* NUMBER_OF_INCIDENCES_PER_PAGE
-						&& numberOfEdges <= displayedPage
-								* NUMBER_OF_INCIDENCES_PER_PAGE) {
+				if ((numberOfEdges > (displayedPage - 1)
+						* NUMBER_OF_INCIDENCES_PER_PAGE)
+						&& (numberOfEdges <= displayedPage
+								* NUMBER_OF_INCIDENCES_PER_PAGE)) {
 					if (numberOfEdges > 1) {
 						// create <br />
 						code
@@ -804,7 +802,7 @@ public class TabularVisualizer {
 	 * @return
 	 */
 	private int findPositionInArray(GraphElement[] graphElements, int id) {
-		if (id < graphElements.length && id == graphElements[id - 1].getId()) {
+		if ((id < graphElements.length) && (id == graphElements[id - 1].getId())) {
 			// The element is found at the same position as the id-1
 			return id - 1;
 		}
@@ -821,7 +819,7 @@ public class TabularVisualizer {
 				left = middle + 1;
 			}
 		}
-		if (graphElements.length > 0 && graphElements[left].getId() == id) {
+		if ((graphElements.length > 0) && (graphElements[left].getId() == id)) {
 			return left;
 		} else {
 			return -left - 1;

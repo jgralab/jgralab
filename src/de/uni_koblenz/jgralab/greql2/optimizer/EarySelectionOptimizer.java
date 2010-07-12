@@ -758,12 +758,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 	private void copyAttributes(AttributedElement from, AttributedElement to) {
 		for (Attribute attr : from.getAttributedElementClass()
 				.getAttributeList()) {
-			try {
-				to.setAttribute(attr.getName(), from.getAttribute(attr
-						.getName()));
-			} catch (NoSuchFieldException e) {
-				e.printStackTrace();
-			}
+			to.setAttribute(attr.getName(), from.getAttribute(attr.getName()));
 		}
 	}
 }

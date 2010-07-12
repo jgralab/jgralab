@@ -164,7 +164,7 @@ public class AttributeImpl implements Attribute, Comparable<Attribute> {
 
 	@Override
 	public void setDefaultTransactionValue(AttributedElement element)
-			throws GraphIOException, NoSuchFieldException {
+			throws GraphIOException {
 		if (defaultValueAsString != null) {
 			if (!defaultTransactionValueComputed) {
 				element
@@ -182,7 +182,7 @@ public class AttributeImpl implements Attribute, Comparable<Attribute> {
 
 	@Override
 	public void setDefaultValue(AttributedElement element)
-			throws GraphIOException, NoSuchFieldException {
+			throws GraphIOException {
 		if (!defaultValueComputed) {
 			if (defaultValueAsString != null) {
 				element

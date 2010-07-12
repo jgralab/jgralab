@@ -86,20 +86,15 @@ public class Tg2Gdl extends Tg2Whatever {
 		}
 		boolean first = true;
 		for (Attribute attr : ae.getAttributedElementClass().getAttributeList()) {
-			try {
-				if (first) {
-					first = false;
-				} else {
-					out.print("\\n");
-				}
-				out.print(attr.getName()
-						+ " = "
-						+ stringQuote(String.valueOf(ae.getAttribute(attr
-								.getName()))));
-			} catch (NoSuchFieldException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			if (first) {
+				first = false;
+			} else {
+				out.print("\\n");
 			}
+			out.print(attr.getName()
+					+ " = "
+					+ stringQuote(String.valueOf(ae
+							.getAttribute(attr.getName()))));
 		}
 		out.print("\"");
 	}

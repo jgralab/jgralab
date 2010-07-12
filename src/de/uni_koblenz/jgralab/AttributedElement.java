@@ -51,20 +51,20 @@ public interface AttributedElement extends Comparable<AttributedElement> {
 	public GraphClass getGraphClass();
 
 	public void readAttributeValueFromString(String attributeName, String value)
-			throws GraphIOException, NoSuchFieldException;
+			throws GraphIOException, NoSuchAttributeException;
 
 	public String writeAttributeValueToString(String attributeName)
-			throws IOException, GraphIOException, NoSuchFieldException;
+			throws IOException, GraphIOException, NoSuchAttributeException;
 
 	public void writeAttributeValues(GraphIO io) throws IOException,
 			GraphIOException;
 
 	public void readAttributeValues(GraphIO io) throws GraphIOException;
 
-	public Object getAttribute(String name) throws NoSuchFieldException;
+	public Object getAttribute(String name) throws NoSuchAttributeException;
 
 	public void setAttribute(String name, Object data)
-			throws NoSuchFieldException;
+			throws NoSuchAttributeException;
 
 	/**
 	 * @return the schema this AttributedElement belongs to

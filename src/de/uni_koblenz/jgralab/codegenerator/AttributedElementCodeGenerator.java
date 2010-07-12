@@ -230,10 +230,9 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 
 	protected CodeBlock createGenericGetter(Set<Attribute> attrSet) {
 		CodeList code = new CodeList();
-		code
-				.addNoIndent(new CodeSnippet(
-						true,
-						"public Object getAttribute(String attributeName) throws NoSuchFieldException {"));
+		addImports("#jgPackage#.NoSuchAttributeException");
+		code.addNoIndent(new CodeSnippet(true,
+				"public Object getAttribute(String attributeName) {"));
 		for (Attribute attr : attrSet) {
 			CodeSnippet s = new CodeSnippet();
 			s.setVariable("name", attr.getName());
@@ -246,7 +245,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		}
 		code
 				.add(new CodeSnippet(
-						"throw new NoSuchFieldException(\"#qualifiedClassName# doesn't contain an attribute \" + attributeName);"));
+						"throw new NoSuchAttributeException(\"#qualifiedClassName# doesn't contain an attribute \" + attributeName);"));
 		code.addNoIndent(new CodeSnippet("}"));
 
 		return code;
@@ -254,6 +253,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 
 	protected CodeBlock createGenericSetter(Set<Attribute> attrSet) {
 		CodeList code = new CodeList();
+		addImports("#jgPackage#.NoSuchAttributeException");
 		CodeSnippet snip = new CodeSnippet(true);
 		boolean suppressWarningsNeeded = false;
 		for (Attribute attr : attrSet) {
@@ -267,7 +267,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 			snip.add("@SuppressWarnings(\"unchecked\")");
 		}
 		snip
-				.add("public void setAttribute(String attributeName, Object data) throws NoSuchFieldException {");
+				.add("public void setAttribute(String attributeName, Object data) {");
 		code.addNoIndent(snip);
 		for (Attribute attr : attrSet) {
 			CodeSnippet s = new CodeSnippet();
@@ -306,7 +306,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		}
 		code
 				.add(new CodeSnippet(
-						"throw new NoSuchFieldException(\"#qualifiedClassName# doesn't contain an attribute \" + attributeName);"));
+						"throw new NoSuchAttributeException(\"#qualifiedClassName# doesn't contain an attribute \" + attributeName);"));
 		code.addNoIndent(new CodeSnippet("}"));
 		return code;
 	}
@@ -468,12 +468,12 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	protected CodeBlock createReadAttributesFromStringMethod(
 			Set<Attribute> attrSet) {
 		CodeList code = new CodeList();
-
-		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException");
+		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException",
+				"#jgPackage#.NoSuchAttributeException");
 		code
 				.addNoIndent(new CodeSnippet(
 						true,
-						"public void readAttributeValueFromString(String attributeName, String value) throws GraphIOException, NoSuchFieldException {"));
+						"public void readAttributeValueFromString(String attributeName, String value) throws GraphIOException {"));
 
 		if (attrSet != null) {
 			for (Attribute attribute : attrSet) {
@@ -508,7 +508,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		}
 		code
 				.add(new CodeSnippet(
-						"throw new NoSuchFieldException(\"#qualifiedClassName# doesn't contain an attribute \" + attributeName);"));
+						"throw new NoSuchAttributeException(\"#qualifiedClassName# doesn't contain an attribute \" + attributeName);"));
 		code.addNoIndent(new CodeSnippet("}"));
 
 		return code;
@@ -522,11 +522,12 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	protected CodeBlock createWriteAttributeToStringMethod(
 			Set<Attribute> attrSet) {
 		CodeList code = new CodeList();
-		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException");
+		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException",
+				"#jgPackage#.NoSuchAttributeException");
 		code
 				.addNoIndent(new CodeSnippet(
 						true,
-						"public String writeAttributeValueToString(String attributeName) throws IOException, GraphIOException, NoSuchFieldException {"));
+						"public String writeAttributeValueToString(String attributeName) throws IOException, GraphIOException {"));
 		if (attrSet != null) {
 			for (Attribute attribute : attrSet) {
 				CodeList a = new CodeList();
@@ -553,7 +554,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		}
 		code
 				.add(new CodeSnippet(
-						"throw new NoSuchFieldException(\"#qualifiedClassName# doesn't contain an attribute \" + attributeName);"));
+						"throw new NoSuchAttributeException(\"#qualifiedClassName# doesn't contain an attribute \" + attributeName);"));
 		code.addNoIndent(new CodeSnippet("}"));
 		return code;
 	}

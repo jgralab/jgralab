@@ -28,6 +28,7 @@ import java.util.ArrayList;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.NoSuchAttributeException;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
@@ -101,7 +102,7 @@ public class GetValue extends Greql2Function {
 			try {
 				return JValueImpl.fromObject(attrElem.getAttribute(fieldName),
 						attrElem);
-			} catch (NoSuchFieldException e) {
+			} catch (NoSuchAttributeException e) {
 				e.printStackTrace();
 				throw new EvaluateException("GetValue failed!", e);
 			}

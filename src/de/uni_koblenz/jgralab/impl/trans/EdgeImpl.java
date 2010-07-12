@@ -472,7 +472,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 
 	@Override
 	protected void internalSetDefaultValue(Attribute attr)
-			throws GraphIOException, NoSuchFieldException {
+			throws GraphIOException {
 		attr.setDefaultTransactionValue(this);
 	}
 }

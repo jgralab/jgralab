@@ -182,41 +182,35 @@ public class Tg2GXL extends Tg2Whatever {
 	@Override
 	protected void printVertex(PrintStream out, Vertex v) {
 		AttributedElementClass elemClass = v.getAttributedElementClass();
+		if (printSchema && !(v instanceof Schema)) {
 
-		try {
-			if (printSchema && !(v instanceof Schema)) {
-
-				if (v instanceof de.uni_koblenz.jgralab.grumlschema.structure.AttributedElementClass) {
-					out.println("<node id=\"" + v.getAttribute("qualifiedName")
-							+ "\">");
-				} else {
-					out.println("<node id=\"v:" + v.getId() + "\">");
-				}
-				out.println("<type xlink:href=\"" + gxlMetaSchema + "#"
-						+ grUML2GXL.get(elemClass.getQualifiedName())
-						+ "\" xlink:type=\" simple\"/>");
-				// print attributes
-				if (elemClass.getAttributeCount() > 0) {
-					printAttributes(out, v);
-				}
-				out.println("</node>");
-			}
-
-			else if (!printSchema) {
+			if (v instanceof de.uni_koblenz.jgralab.grumlschema.structure.AttributedElementClass) {
+				out.println("<node id=\"" + v.getAttribute("qualifiedName")
+						+ "\">");
+			} else {
 				out.println("<node id=\"v:" + v.getId() + "\">");
-				out.println("<type xlink:href=\"" + schemaGraphOutputName + "#"
-						+ elemClass.getQualifiedName()
-						+ "\" xlink:type=\" simple\"/>");
-
-				// print attributes
-				if (elemClass.getAttributeCount() > 0) {
-					printAttributes(out, v);
-				}
-				out.println("</node>");
 			}
-		} catch (NoSuchFieldException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			out.println("<type xlink:href=\"" + gxlMetaSchema + "#"
+					+ grUML2GXL.get(elemClass.getQualifiedName())
+					+ "\" xlink:type=\" simple\"/>");
+			// print attributes
+			if (elemClass.getAttributeCount() > 0) {
+				printAttributes(out, v);
+			}
+			out.println("</node>");
+		}
+
+		else if (!printSchema) {
+			out.println("<node id=\"v:" + v.getId() + "\">");
+			out.println("<type xlink:href=\"" + schemaGraphOutputName + "#"
+					+ elemClass.getQualifiedName()
+					+ "\" xlink:type=\" simple\"/>");
+
+			// print attributes
+			if (elemClass.getAttributeCount() > 0) {
+				printAttributes(out, v);
+			}
+			out.println("</node>");
 		}
 	}
 
@@ -231,7 +225,7 @@ public class Tg2GXL extends Tg2Whatever {
 	protected int getEdgeIncidence(Edge e, Vertex v) {
 		int i = 0;
 		for (Edge e0 : v.incidences()) {
-			if (e0 == e && e0.isNormal() == e.isNormal()) {
+			if ((e0 == e) && (e0.isNormal() == e.isNormal())) {
 				return i;
 			}
 			i++;
@@ -330,16 +324,10 @@ public class Tg2GXL extends Tg2Whatever {
 			out.println("<attr name=\"" + attr.getName() + "\">");
 
 			Object val = null;
-			try {
-				val = elem.getAttribute(attr.getName());
-			} catch (NoSuchFieldException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			val = elem.getAttribute(attr.getName());
 			Domain dom = attr.getDomain();
 			printComposite(out, dom, val);
 			out.println("</attr>");
-
 		}
 	}
 
@@ -420,10 +408,10 @@ public class Tg2GXL extends Tg2Whatever {
 		String attrValue = "null";
 
 		if (val != null) {
-			if (val instanceof Double || val instanceof Float) {
+			if ((val instanceof Double) || (val instanceof Float)) {
 				val = Double.parseDouble(val.toString());
 			}
-			if (val instanceof Long || val instanceof Integer) {
+			if ((val instanceof Long) || (val instanceof Integer)) {
 				val = Long.parseLong(val.toString());
 			}
 			attrValue = stringQuote(val.toString());
@@ -444,7 +432,7 @@ public class Tg2GXL extends Tg2Whatever {
 			out.println("" + attrValue);
 			out.println("</String>");
 		}
-		if (dom instanceof IntegerDomain || dom instanceof LongDomain) {
+		if ((dom instanceof IntegerDomain) || (dom instanceof LongDomain)) {
 			out.println("<Int>");
 			out.println("" + attrValue);
 			out.println("</Int>");
@@ -585,7 +573,7 @@ public class Tg2GXL extends Tg2Whatever {
 				sb.append("\\\\t");
 				break;
 			default:
-				if (ch < ' ' || ch > '\u007F') {
+				if ((ch < ' ') || (ch > '\u007F')) {
 					sb.append("\\\\u");
 					String code = "000" + Integer.toHexString(ch);
 					sb.append(code.substring(code.length() - 4, code.length()));

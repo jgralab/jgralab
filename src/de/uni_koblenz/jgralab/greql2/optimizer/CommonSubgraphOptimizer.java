@@ -185,14 +185,12 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 				.getAttributeList()) {
 			buf.append(attr.getName());
 			buf.append("=");
-			try {
-				Object attrValue = vertex.getAttribute(attr.getName());
-				if (attrValue != null) {
-					buf.append(attrValue);
-				}
-			} catch (NoSuchFieldException e1) {
-				e1.printStackTrace();
+
+			Object attrValue = vertex.getAttribute(attr.getName());
+			if (attrValue != null) {
+				buf.append(attrValue);
 			}
+
 			buf.append(";");
 		}
 		buf.append(")");

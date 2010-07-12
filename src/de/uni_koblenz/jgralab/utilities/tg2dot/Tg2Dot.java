@@ -275,33 +275,28 @@ public class Tg2Dot extends Tg2Whatever {
 	private void printAttributes(PrintStream out, AttributedElement elem) {
 		AttributedElementClass cls = elem.getAttributedElementClass();
 		for (Attribute attr : cls.getAttributeList()) {
-			try {
-				if (abbreviateEdgeAttributeNames && (elem instanceof Edge)) {
-					// sourcePosition => sP
-					// fooBarBaz => fBB
-					out.print(attr.getName().charAt(0)
-							+ attr.getName().replaceAll("[a-z]+", ""));
-				} else {
-					out.print(attr.getName());
-				}
-				if (domainNames) {
-					out.print(": "
-							+ stringQuote(attr.getDomain().getQualifiedName()));
-				}
-				Object attribute = elem.getAttribute(attr.getName());
-				String attributeString = (attribute != null) ? attribute
-						.toString() : "null";
-				if (shortenStrings && (attributeString.length() > 17)) {
-					attributeString = attributeString.substring(0, 18) + "...";
-				}
-				if (attribute instanceof String) {
-					attributeString = '"' + attributeString + '"';
-				}
-				out.print(" = " + stringQuote(attributeString) + "\\l");
-			} catch (NoSuchFieldException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+			if (abbreviateEdgeAttributeNames && (elem instanceof Edge)) {
+				// sourcePosition => sP
+				// fooBarBaz => fBB
+				out.print(attr.getName().charAt(0)
+						+ attr.getName().replaceAll("[a-z]+", ""));
+			} else {
+				out.print(attr.getName());
 			}
+			if (domainNames) {
+				out.print(": "
+						+ stringQuote(attr.getDomain().getQualifiedName()));
+			}
+			Object attribute = elem.getAttribute(attr.getName());
+			String attributeString = (attribute != null) ? attribute.toString()
+					: "null";
+			if (shortenStrings && (attributeString.length() > 17)) {
+				attributeString = attributeString.substring(0, 18) + "...";
+			}
+			if (attribute instanceof String) {
+				attributeString = '"' + attributeString + '"';
+			}
+			out.print(" = " + stringQuote(attributeString) + "\\l");
 		}
 	}
 

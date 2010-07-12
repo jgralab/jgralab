@@ -79,13 +79,18 @@ public interface Attribute {
 	 * Set default value for attributed elements with transaction support.
 	 * 
 	 * @param element
-	 * @throws NoSuchFieldException 
-	 * @throws GraphIOException 
+	 * @throws GraphIOException
 	 */
-	public void setDefaultTransactionValue(AttributedElement element) throws GraphIOException, NoSuchFieldException;
-	
-	public void setDefaultValue(AttributedElement el) throws GraphIOException,
-			NoSuchFieldException;
+	public void setDefaultTransactionValue(AttributedElement element)
+			throws GraphIOException;
+
+	/**
+	 * Set default value for attributed elements without transaction support.
+	 * 
+	 * @param element
+	 * @throws GraphIOException
+	 */
+	public void setDefaultValue(AttributedElement el) throws GraphIOException;
 
 	/**
 	 * @return the owning AttributedElementClass
