@@ -505,30 +505,26 @@ public class TwoDVisualizer {
 			AttributedElementClass cls = elem.getAttributedElementClass();
 			StringBuilder value = new StringBuilder();
 			for (Attribute attr : cls.getAttributeList()) {
-				try {
-					String current = attr.getName();
-					Object attribute = elem.getAttribute(attr.getName());
-					String attributeString = (attribute != null) ? attribute
-							.toString() : "null";
-					if (attribute instanceof String) {
-						attributeString = '"' + attributeString + '"';
-					}
-					current += " = " + stringQuote(attributeString)
-							+ (showAttributes ? "\\l" : ";");
-					if (!showAttributes) {
-						if (value.length() + current.length() < 400) {
-							// if the title is too long dot produces nonsense
-							// and the svg contains forbidden chars
-							value.append(current);
-						} else {
-							value.append(" ...");
-							break;
-						}
-					} else {
+				String current = attr.getName();
+				Object attribute = elem.getAttribute(attr.getName());
+				String attributeString = (attribute != null) ? attribute
+						.toString() : "null";
+				if (attribute instanceof String) {
+					attributeString = '"' + attributeString + '"';
+				}
+				current += " = " + stringQuote(attributeString)
+						+ (showAttributes ? "\\l" : ";");
+				if (!showAttributes) {
+					if (value.length() + current.length() < 400) {
+						// if the title is too long dot produces nonsense
+						// and the svg contains forbidden chars
 						value.append(current);
+					} else {
+						value.append(" ...");
+						break;
 					}
-				} catch (NoSuchFieldException e1) {
-					exception = e1;
+				} else {
+					value.append(current);
 				}
 			}
 			out.print(value);

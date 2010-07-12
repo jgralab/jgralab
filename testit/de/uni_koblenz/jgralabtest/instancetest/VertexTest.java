@@ -19,8 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import junit.framework.Assert;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,6 +30,7 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
+import de.uni_koblenz.jgralab.NoSuchAttributeException;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
@@ -3678,7 +3677,7 @@ public class VertexTest extends InstanceTest {
 					if (firstInEdge[end] == null) {
 						firstInEdge[end] = e0.getReversedEdge();
 					}
-					if (firstInOutEdge[end] == null && start != end) {
+					if ((firstInOutEdge[end] == null) && (start != end)) {
 						firstInOutEdge[end] = e0.getReversedEdge();
 					}
 					break;
@@ -3694,7 +3693,7 @@ public class VertexTest extends InstanceTest {
 					if (firstInEdge[start] == null) {
 						firstInEdge[start] = e1.getReversedEdge();
 					}
-					if (firstInOutEdge[start] == null && start != end) {
+					if ((firstInOutEdge[start] == null) && (start != end)) {
 						firstInOutEdge[start] = e1.getReversedEdge();
 					}
 					break;
@@ -3710,7 +3709,7 @@ public class VertexTest extends InstanceTest {
 					if (firstInEdge[end] == null) {
 						firstInEdge[end] = e2.getReversedEdge();
 					}
-					if (firstInOutEdge[end] == null && 1 != end) {
+					if ((firstInOutEdge[end] == null) && (1 != end)) {
 						firstInOutEdge[end] = e2.getReversedEdge();
 					}
 					break;
@@ -8697,7 +8696,7 @@ public class VertexTest extends InstanceTest {
 		// of an element already created once, can modify the graph version more
 		// than by 1. This is why this test only works with comparison.
 		// REMARK: This test would work in the case of an unused graph.
-		Assert.assertTrue(graphversion < g.getGraphVersion());
+		assertTrue(graphversion < g.getGraphVersion());
 		commit(g);
 	}
 
@@ -8979,8 +8978,7 @@ public class VertexTest extends InstanceTest {
 	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getAttributeTest0() throws NoSuchFieldException,
-			CommitFailedException {
+	public void getAttributeTest0() throws CommitFailedException {
 		createTransaction(g);
 		DoubleSubNode v = g.createDoubleSubNode();
 		Map<Integer, String> map = g.createMap();
@@ -9001,9 +8999,8 @@ public class VertexTest extends InstanceTest {
 	 * 
 	 * @throws CommitFailedException
 	 */
-	@Test(expected = NoSuchFieldException.class)
-	public void getAttributeTest1() throws NoSuchFieldException,
-			CommitFailedException {
+	@Test(expected = NoSuchAttributeException.class)
+	public void getAttributeTest1() throws CommitFailedException {
 		createTransaction(g);
 		DoubleSubNode v = g.createDoubleSubNode();
 		commit(g);
@@ -9018,9 +9015,8 @@ public class VertexTest extends InstanceTest {
 	 * 
 	 * @throws CommitFailedException
 	 */
-	@Test(expected = NoSuchFieldException.class)
-	public void getAttributeTest2() throws NoSuchFieldException,
-			CommitFailedException {
+	@Test(expected = NoSuchAttributeException.class)
+	public void getAttributeTest2() throws CommitFailedException {
 		createTransaction(g);
 		DoubleSubNode v = g.createDoubleSubNode();
 		commit(g);
@@ -9038,8 +9034,7 @@ public class VertexTest extends InstanceTest {
 	 * @throws CommitFailedException
 	 */
 	@Test
-	public void setAttributeTest0() throws NoSuchFieldException,
-			CommitFailedException {
+	public void setAttributeTest0() throws CommitFailedException {
 		createTransaction(g);
 		DoubleSubNode v = g.createDoubleSubNode();
 		Map<Integer, String> map = g.createMap();
@@ -9060,8 +9055,7 @@ public class VertexTest extends InstanceTest {
 	 * @throws CommitFailedException
 	 */
 	@Test
-	public void setAttributeTest1() throws NoSuchFieldException,
-			CommitFailedException {
+	public void setAttributeTest1() throws CommitFailedException {
 		createTransaction(g);
 		DoubleSubNode v = g.createDoubleSubNode();
 		v.setAttribute("nodeMap", null);
@@ -9079,9 +9073,8 @@ public class VertexTest extends InstanceTest {
 	 * 
 	 * @throws CommitFailedException
 	 */
-	@Test(expected = NoSuchFieldException.class)
-	public void setAttributeTest2() throws NoSuchFieldException,
-			CommitFailedException {
+	@Test(expected = NoSuchAttributeException.class)
+	public void setAttributeTest2() throws CommitFailedException {
 		createTransaction(g);
 		DoubleSubNode v = g.createDoubleSubNode();
 		v.setAttribute("cd", "a");
@@ -9094,9 +9087,8 @@ public class VertexTest extends InstanceTest {
 	 * 
 	 * @throws CommitFailedException
 	 */
-	@Test(expected = NoSuchFieldException.class)
-	public void setAttributeTest3() throws NoSuchFieldException,
-			CommitFailedException {
+	@Test(expected = NoSuchAttributeException.class)
+	public void setAttributeTest3() throws CommitFailedException {
 		createTransaction(g);
 		DoubleSubNode v = g.createDoubleSubNode();
 		v.setAttribute("", "a");

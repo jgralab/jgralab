@@ -199,9 +199,6 @@ public abstract class GraphBaseImpl implements Graph {
 			} catch (GraphIOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} catch (NoSuchFieldException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
 		}
 	}
@@ -210,10 +207,9 @@ public abstract class GraphBaseImpl implements Graph {
 	 * 
 	 * @param attr
 	 * @throws GraphIOException
-	 * @throws NoSuchFieldException
 	 */
 	protected void internalSetDefaultValue(Attribute attr)
-			throws GraphIOException, NoSuchFieldException {
+			throws GraphIOException {
 		attr.setDefaultValue(this);
 	}
 

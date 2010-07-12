@@ -103,14 +103,10 @@ public class Describe extends Greql2Function {
 		JValueRecord attrRecord = new JValueRecord();
 		for (Attribute attr : attrElem.getAttributedElementClass()
 				.getAttributeList()) {
-			try {
-				attrRecord.add(attr.getName(), JValueImpl.fromObject(attrElem
-						.getAttribute(attr.getName())));
-			} catch (NoSuchFieldException e) {
-				e.printStackTrace();
-				throw new EvaluateException("Couldn't get value of attribute '"
-						+ attr.getName() + "'.", e);
-			}
+
+			attrRecord.add(attr.getName(), JValueImpl.fromObject(attrElem
+					.getAttribute(attr.getName())));
+
 		}
 		tuple.add(attrRecord);
 		return tuple;

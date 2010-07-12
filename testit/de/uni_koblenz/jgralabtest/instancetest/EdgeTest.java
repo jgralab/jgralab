@@ -27,6 +27,7 @@ import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
+import de.uni_koblenz.jgralab.NoSuchAttributeException;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
@@ -5272,8 +5273,7 @@ public class EdgeTest extends InstanceTest {
 	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getAttributeTest0() throws NoSuchFieldException,
-			CommitFailedException {
+	public void getAttributeTest0() throws CommitFailedException {
 		createTransaction(g);
 		DoubleSubNode v = g.createDoubleSubNode();
 		SubLink e = g.createSubLink(v, v);
@@ -5293,8 +5293,7 @@ public class EdgeTest extends InstanceTest {
 	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getAttributeTestR0() throws NoSuchFieldException,
-			CommitFailedException {
+	public void getAttributeTestR0() throws CommitFailedException {
 		SubLink e;
 		createTransaction(g);
 		DoubleSubNode v = g.createDoubleSubNode();
@@ -5315,9 +5314,8 @@ public class EdgeTest extends InstanceTest {
 	 * 
 	 * @throws CommitFailedException
 	 */
-	@Test(expected = NoSuchFieldException.class)
-	public void getAttributeTest1() throws NoSuchFieldException,
-			CommitFailedException {
+	@Test(expected = NoSuchAttributeException.class)
+	public void getAttributeTest1() throws CommitFailedException {
 		SubLink e;
 		createTransaction(g);
 		DoubleSubNode v = g.createDoubleSubNode();
@@ -5335,9 +5333,8 @@ public class EdgeTest extends InstanceTest {
 	 * 
 	 * @throws CommitFailedException
 	 */
-	@Test(expected = NoSuchFieldException.class)
-	public void getAttributeTest2() throws NoSuchFieldException,
-			CommitFailedException {
+	@Test(expected = NoSuchAttributeException.class)
+	public void getAttributeTest2() throws CommitFailedException {
 		SubLink e;
 		createTransaction(g);
 		DoubleSubNode v = g.createDoubleSubNode();
@@ -5358,8 +5355,7 @@ public class EdgeTest extends InstanceTest {
 	 * @throws CommitFailedException
 	 */
 	@Test
-	public void setAttributeTest0() throws NoSuchFieldException,
-			CommitFailedException {
+	public void setAttributeTest0() throws CommitFailedException {
 		SubLink e;
 		createTransaction(g);
 		DoubleSubNode v = g.createDoubleSubNode();
@@ -5380,8 +5376,7 @@ public class EdgeTest extends InstanceTest {
 	 * @throws CommitFailedException
 	 */
 	@Test
-	public void setAttributeTestR0() throws NoSuchFieldException,
-			CommitFailedException {
+	public void setAttributeTestR0() throws CommitFailedException {
 		SubLink e;
 		createTransaction(g);
 		DoubleSubNode v = g.createDoubleSubNode();
@@ -5402,8 +5397,7 @@ public class EdgeTest extends InstanceTest {
 	 * @throws CommitFailedException
 	 */
 	@Test
-	public void setAttributeTest1() throws NoSuchFieldException,
-			CommitFailedException {
+	public void setAttributeTest1() throws CommitFailedException {
 		SubLink e;
 		createTransaction(g);
 		DoubleSubNode v = g.createDoubleSubNode();
@@ -5422,9 +5416,8 @@ public class EdgeTest extends InstanceTest {
 	 * 
 	 * @throws CommitFailedException
 	 */
-	@Test(expected = NoSuchFieldException.class)
-	public void setAttributeTest2() throws NoSuchFieldException,
-			CommitFailedException {
+	@Test(expected = NoSuchAttributeException.class)
+	public void setAttributeTest2() throws CommitFailedException {
 		createTransaction(g);
 		DoubleSubNode v = g.createDoubleSubNode();
 		SubLink e = g.createSubLink(v, v);
@@ -5438,9 +5431,8 @@ public class EdgeTest extends InstanceTest {
 	 * 
 	 * @throws CommitFailedException
 	 */
-	@Test(expected = NoSuchFieldException.class)
-	public void setAttributeTest3() throws NoSuchFieldException,
-			CommitFailedException {
+	@Test(expected = NoSuchAttributeException.class)
+	public void setAttributeTest3() throws CommitFailedException {
 		createTransaction(g);
 		DoubleSubNode v = g.createDoubleSubNode();
 		SubLink e = g.createSubLink(v, v);

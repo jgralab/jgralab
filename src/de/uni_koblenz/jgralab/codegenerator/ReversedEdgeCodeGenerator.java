@@ -258,7 +258,7 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 		code
 				.addNoIndent(new CodeSnippet(
 						true,
-						"public void readAttributeValueFromString(String attributeName, String value) throws GraphIOException, NoSuchFieldException {"));
+						"public void readAttributeValueFromString(String attributeName, String value) throws GraphIOException {"));
 		code
 				.add(new CodeSnippet(
 						"throw new GraphIOException(\"Can not call readAttributeValuesFromString for reversed Edges.\");"));
@@ -274,7 +274,7 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 		code
 				.addNoIndent(new CodeSnippet(
 						true,
-						"public String writeAttributeValueToString(String _attributeName) throws IOException, GraphIOException, NoSuchFieldException {"));
+						"public String writeAttributeValueToString(String _attributeName) throws IOException, GraphIOException {"));
 		code
 				.add(new CodeSnippet(
 						"throw new GraphIOException(\"Can not call writeAttributeValueToString for reversed Edges.\");"));
@@ -332,7 +332,7 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 	// CodeSnippet code = new CodeSnippet(true);
 	// code.add("private static Set<String> validRoles;");
 	// list.add(code);
-	//		
+	//
 	// code = new CodeSnippet(true);
 	// code.add("static {");
 	// code.add("validRoles = new HashSet<String>();");

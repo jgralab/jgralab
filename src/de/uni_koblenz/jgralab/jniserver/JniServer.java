@@ -543,11 +543,7 @@ public class JniServer {
 
 	private void setAttribute(AttributedElement e, String attributeName,
 			Object value) {
-		try {
-			e.setAttribute(attributeName, value);
-		} catch (NoSuchFieldException ex) {
-			throw new GraphException(ex);
-		}
+		e.setAttribute(attributeName, value);
 	}
 
 	private String getEnumAttribute(AttributedElement e, String attributeName) {
@@ -567,11 +563,7 @@ public class JniServer {
 	}
 
 	private Object getAttribute(AttributedElement e, String attributeName) {
-		try {
-			return e.getAttribute(attributeName);
-		} catch (NoSuchFieldException ex) {
-			throw new GraphException(ex);
-		}
+		return e.getAttribute(attributeName);
 	}
 
 }

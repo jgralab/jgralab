@@ -43,6 +43,7 @@ public class Tg2SiDiff extends Tg2Whatever {
 	 * prints the graph to the output file − <Document> <Graph
 	 * name="Unnamed Project" root="id261">
 	 */
+	@Override
 	protected void graphStart(PrintStream out) {
 		out.println("<Document type=\"RSL\">");
 		out.println("<Graph name=\"" + graph.getId() + "\" root=\""
@@ -55,15 +56,18 @@ public class Tg2SiDiff extends Tg2Whatever {
 		while ((v != null) && (id == null)) {
 			if (((marker == null) || (marker.isMarked(v)))
 					&& (v.getAttributedElementClass().getQualifiedName()
-							.equals("SoftwareCase")))
+							.equals("SoftwareCase"))) {
 				id = Integer.toString(v.getId());
+			}
 			v = v.getNextVertex();
 		}
-		if (id == null)
+		if (id == null) {
 			id = "none";
+		}
 		return "vertex" + id;
 	}
 
+	@Override
 	public void graphEnd(PrintStream out) {
 		out.println("</Graph>");
 		out.print("</Document>");
@@ -77,6 +81,7 @@ public class Tg2SiDiff extends Tg2Whatever {
 	 * jgralab.utilities.tg2whatever.Tg2Whatever#printVertex(java.io.PrintStream
 	 * , jgralab.Vertex)
 	 */
+	@Override
 	protected void printVertex(PrintStream out, Vertex v) {
 		AttributedElementClass cls = v.getAttributedElementClass();
 		out.print("<Node type=\"" + cls.getQualifiedName() + "\" id=\"vertex"
@@ -87,6 +92,7 @@ public class Tg2SiDiff extends Tg2Whatever {
 		out.print("</Node>\n");
 	}
 
+	@Override
 	protected String stringQuote(String s) {
 		StringBuffer sb = new StringBuffer();
 		for (char ch : s.toCharArray()) {
@@ -122,7 +128,7 @@ public class Tg2SiDiff extends Tg2Whatever {
 				sb.append("\\\\t");
 				break;
 			default:
-				if (ch < ' ' || ch > '\u007F') {
+				if ((ch < ' ') || (ch > '\u007F')) {
 					sb.append("\\\\u");
 					String code = ("000" + Integer.toHexString(ch));
 					sb.append(code.substring(code.length() - 4, code.length()));
@@ -144,13 +150,13 @@ public class Tg2SiDiff extends Tg2Whatever {
 	 * value="...."/> </Node> <Edge type="fromContains" src="vertex2"
 	 * tar="edge2" nesting="true"/>
 	 */
+	@Override
 	protected void printEdge(PrintStream out, Edge e) {
 		EdgeClass cls = (EdgeClass) e.getAttributedElementClass();
 		Vertex alpha = (reversedEdges ? e.getOmega() : e.getAlpha());
 		Vertex omega = (reversedEdges ? e.getAlpha() : e.getOmega());
 		boolean aggregateTo = (e.getAlphaSemantics() != AggregationKind.NONE);
 		boolean aggregateFrom = (e.getOmegaSemantics() != AggregationKind.NONE);
-		
 
 		if (PRINT_EDGES_AS_NODES) {
 			out.print("<Node type=\"" + cls.getQualifiedName() + "\" id=\"edge"
@@ -181,17 +187,13 @@ public class Tg2SiDiff extends Tg2Whatever {
 	private void printAttributes(PrintStream out, AttributedElement elem) {
 		AttributedElementClass cls = elem.getAttributedElementClass();
 		for (Attribute attr : cls.getAttributeList()) {
-			try {
-				Object val = elem.getAttribute(attr.getName());
-				String attributeValue = "null";
-				if (val != null)
-					attributeValue = stringQuote(val.toString());
-				out.print("    <Attribute name=\"" + attr.getName()
-						+ "\" value=\"" + attributeValue + "\"/>\n");
-			} catch (NoSuchFieldException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+			Object val = elem.getAttribute(attr.getName());
+			String attributeValue = "null";
+			if (val != null) {
+				attributeValue = stringQuote(val.toString());
 			}
+			out.print("    <Attribute name=\"" + attr.getName() + "\" value=\""
+					+ attributeValue + "\"/>\n");
 		}
 	}
 

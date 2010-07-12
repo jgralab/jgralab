@@ -106,7 +106,7 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 	 * de.uni_koblenz.jgralab.AttributedElement#getAttribute(java.lang.String)
 	 */
 	@Override
-	public Object getAttribute(String name) throws NoSuchFieldException {
+	public Object getAttribute(String name) {
 		return normalEdge.getAttribute(name);
 	}
 
@@ -118,8 +118,7 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 	 * java.lang.Object)
 	 */
 	@Override
-	public void setAttribute(String name, Object data)
-			throws NoSuchFieldException {
+	public void setAttribute(String name, Object data) {
 		normalEdge.setAttribute(name, data);
 	}
 

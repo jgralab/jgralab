@@ -1455,17 +1455,17 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public final boolean hasStandardSupport(){
+	public final boolean hasStandardSupport() {
 		return false;
 	}
-	
+
 	@Override
 	public final boolean hasTransactionSupport() {
 		return true;
 	}
-	
+
 	@Override
-	public final boolean hasSavememSupport(){
+	public final boolean hasSavememSupport() {
 		return false;
 	}
 
@@ -1643,7 +1643,7 @@ public abstract class GraphImpl extends
 
 	@Override
 	protected void internalSetDefaultValue(Attribute attr)
-			throws GraphIOException, NoSuchFieldException {
+			throws GraphIOException {
 		attr.setDefaultTransactionValue(this);
 	}
 }

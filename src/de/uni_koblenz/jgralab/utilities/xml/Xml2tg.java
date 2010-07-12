@@ -472,9 +472,6 @@ public class Xml2tg {
 			} catch (GraphIOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} catch (NoSuchFieldException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
 		}
 	}

@@ -241,17 +241,12 @@ class Graph2OWLInstances {
 				.getQualifiedName(), gId);
 
 		// convert attributes of g
-		try {
-			for (Attribute attr : g.getAttributedElementClass()
-					.getAttributeList()) {
-				attrName = attr.getName();
+		for (Attribute attr : g.getAttributedElementClass().getAttributeList()) {
+			attrName = attr.getName();
 
-				if (g.getAttribute(attrName) != null) {
-					convertAttributeValue(g, attr, attrName);
-				}
+			if (g.getAttribute(attrName) != null) {
+				convertAttributeValue(g, attr, attrName);
 			}
-		} catch (NoSuchFieldException nsfe) {
-			nsfe.printStackTrace();
 		}
 
 		// append Individual for Graph g to element <rdf:RDF>
@@ -403,16 +398,12 @@ class Graph2OWLInstances {
 		writeIndividualStartElement(vc.getQualifiedName(), vElemId);
 
 		// convert Attributes of v
-		try {
-			for (Attribute attr : vc.getAttributeList()) {
-				attrName = attr.getName();
+		for (Attribute attr : vc.getAttributeList()) {
+			attrName = attr.getName();
 
-				if (v.getAttribute(attrName) != null) {
-					convertAttributeValue(v, attr, attrName);
-				}
+			if (v.getAttribute(attrName) != null) {
+				convertAttributeValue(v, attr, attrName);
 			}
-		} catch (NoSuchFieldException nsfe) {
-			nsfe.printStackTrace();
 		}
 
 		writeIndividualObjectPropEmptyElement(vertexIsInGraphPropName,
@@ -540,16 +531,12 @@ class Graph2OWLInstances {
 				+ toVertex.getId();
 
 		// convert attributes of e
-		try {
-			for (Attribute attr : ec.getAttributeList()) {
-				attrName = attr.getName();
+		for (Attribute attr : ec.getAttributeList()) {
+			attrName = attr.getName();
 
-				if (e.getAttribute(attrName) != null) {
-					convertAttributeValue(e, attr, attrName);
-				}
+			if (e.getAttribute(attrName) != null) {
+				convertAttributeValue(e, attr, attrName);
 			}
-		} catch (NoSuchFieldException nsfe) {
-			nsfe.printStackTrace();
 		}
 
 		writeIndividualObjectPropEmptyElement(edgeIsInGraphPropName, hashedGId);
@@ -586,8 +573,7 @@ class Graph2OWLInstances {
 	 * @param attr
 	 *            The {@code Attribute} which shall be converted.
 	 * 
-	 * @throws NoSuchFieldException
-	 *             , XMLStreamException
+	 * @throws XMLStreamException
 	 * 
 	 * @see #writeAttributeIndividualObjectPropElement(String name, Object
 	 *      value, Domain dom)
@@ -595,8 +581,7 @@ class Graph2OWLInstances {
 	 *      value, Domain dom)
 	 */
 	private void convertAttributeValue(AttributedElement ownerAe,
-			Attribute attr, String attrName) throws NoSuchFieldException,
-			XMLStreamException {
+			Attribute attr, String attrName) throws XMLStreamException {
 		String attrPropertyName;
 		Object value = ownerAe.getAttribute(attrName);
 
@@ -678,10 +663,10 @@ class Graph2OWLInstances {
 	 *                     &lt;listElementHasObject &lt;i&gt;...&lt;/i&gt;
 	 *                     &lt;hasNextListElement&gt;
 	 *                         &lt;i&gt;...&lt;/i&gt;
-	 *                     &lt;/hasNextListElement&gt; 
+	 *                     &lt;/hasNextListElement&gt;
 	 *             &lt;/hasNextListElement&gt;
 	 *         &lt;ListElement&gt;
-	 *          
+	 * 
 	 *     &lt;&lt;i&gt;propName&lt;/i&gt;&gt;
 	 * </pre>
 	 * 
@@ -696,7 +681,7 @@ class Graph2OWLInstances {
 	 *                     &lt;listElementHasDatatype &lt;i&gt;...&lt;/i&gt;
 	 *                     &lt;hasNextListElement&gt;
 	 *                         &lt;i&gt;...&lt;/i&gt;
-	 *                     &lt;/hasNextListElement&gt; 
+	 *                     &lt;/hasNextListElement&gt;
 	 *             &lt;/hasNextListElement&gt;
 	 *         &lt;/ListElement&gt;
 	 *     &lt;/&lt;i&gt;propName&lt;/i&gt;&gt;
@@ -776,7 +761,7 @@ class Graph2OWLInstances {
 	 *     &lt;&lt;i&gt;propName&lt;/i&gt;&gt;
 	 *         &lt;Set&gt;
 	 *             &lt;setHasObject &lt;i&gt;...&lt;/i&gt;
-	 *         &lt;/Set&gt;    
+	 *         &lt;/Set&gt;
 	 *     &lt;/&lt;i&gt;propName&lt;/i&gt;&gt;
 	 * </pre>
 	 * 
@@ -786,7 +771,7 @@ class Graph2OWLInstances {
 	 *     &lt;&lt;i&gt;propName&lt;/i&gt;&gt;
 	 *         &lt;Set&gt;
 	 *             &lt;setHasDatatype &lt;i&gt;...&lt;/i&gt;
-	 *         &lt;/Set&gt;    
+	 *         &lt;/Set&gt;
 	 *     &lt;/&lt;i&gt;propName&lt;/i&gt;&gt;
 	 * </pre>
 	 * 
@@ -852,7 +837,7 @@ class Graph2OWLInstances {
 	 *         &lt;&lt;i&gt;dom.getName()&lt;/i&gt;&gt;
 	 *             &lt;&lt;i&gt;dom.getName()&lt;/i&gt;Has&lt;i&gt;componentName1&lt;/i&gt; &lt;i&gt;...&lt;/i&gt;
 	 *             &lt;&lt;i&gt;dom.getName()&lt;/i&gt;Has&lt;i&gt;componentName2&lt;/i&gt; &lt;i&gt;...&lt;/i&gt;
-	 *         &lt;/&lt;i&gt;dom.getName()&lt;/i&gt;&gt;    
+	 *         &lt;/&lt;i&gt;dom.getName()&lt;/i&gt;&gt;
 	 *     &lt;/&lt;i&gt;propName&lt;/i&gt;&gt;
 	 * </pre>
 	 * 

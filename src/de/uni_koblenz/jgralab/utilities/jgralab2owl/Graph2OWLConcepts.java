@@ -243,17 +243,13 @@ class Graph2OWLConcepts {
 				g.getAttributedElementClass().getQualifiedName(), hashedGId);
 
 		// convert attributes of g
-		try {
-			for (Attribute attr : g.getAttributedElementClass()
-					.getAttributeList()) {
-				attrName = attr.getName();
 
-				if (g.getAttribute(attrName) != null) {
-					convertAttributeValue(g, attr, attrName);
-				}
+		for (Attribute attr : g.getAttributedElementClass().getAttributeList()) {
+			attrName = attr.getName();
+
+			if (g.getAttribute(attrName) != null) {
+				convertAttributeValue(g, attr, attrName);
 			}
-		} catch (NoSuchFieldException nsfe) {
-			nsfe.printStackTrace();
 		}
 
 		// append Individual for Graph g to element <rdf:RDF>
@@ -373,16 +369,13 @@ class Graph2OWLConcepts {
 		writeClassStartElement(vc.getQualifiedName(), "#" + vElemId);
 
 		// convert Attributes of v
-		try {
-			for (Attribute attr : vc.getAttributeList()) {
-				attrName = attr.getName();
 
-				if (v.getAttribute(attrName) != null) {
-					convertAttributeValue(v, attr, attrName);
-				}
+		for (Attribute attr : vc.getAttributeList()) {
+			attrName = attr.getName();
+
+			if (v.getAttribute(attrName) != null) {
+				convertAttributeValue(v, attr, attrName);
 			}
-		} catch (NoSuchFieldException nsfe) {
-			nsfe.printStackTrace();
 		}
 
 		writeIndividualObjectPropEmptyElement(vertexIsInGraphPropName,
@@ -508,16 +501,13 @@ class Graph2OWLConcepts {
 				+ "_" + toVertex.getGraph().getId() + "_" + toVertex.getId();
 
 		// convert attributes of e
-		try {
-			for (Attribute attr : ec.getAttributeList()) {
-				attrName = attr.getName();
 
-				if (e.getAttribute(attrName) != null) {
-					convertAttributeValue(e, attr, attrName);
-				}
+		for (Attribute attr : ec.getAttributeList()) {
+			attrName = attr.getName();
+
+			if (e.getAttribute(attrName) != null) {
+				convertAttributeValue(e, attr, attrName);
 			}
-		} catch (NoSuchFieldException nsfe) {
-			nsfe.printStackTrace();
 		}
 
 		writeIndividualObjectPropEmptyElement(edgeIsInGraphPropName, hashedGId);
@@ -533,9 +523,9 @@ class Graph2OWLConcepts {
 		// create properties for aggregate if e is an Aggregation or Composition
 		if (e.getOmegaSemantics() != AggregationKind.NONE) {
 			writeIndividualObjectPropEmptyElement("aggregate", "#" + fromElemId);
-		} 
+		}
 		if (e.getAlphaSemantics() != AggregationKind.NONE) {
-			writeIndividualObjectPropEmptyElement("aggregate", "#"	+ toElemId);
+			writeIndividualObjectPropEmptyElement("aggregate", "#" + toElemId);
 		}
 
 		writer.writeEndElement();
@@ -554,8 +544,7 @@ class Graph2OWLConcepts {
 	 * @param attr
 	 *            The {@code Attribute} which shall be converted.
 	 * 
-	 * @throws NoSuchFieldException
-	 *             , XMLStreamException
+	 * @throws XMLStreamException
 	 * 
 	 * @see #writeAttributeIndividualObjectPropertyElement(String name, Object
 	 *      value, Domain dom)
@@ -563,8 +552,7 @@ class Graph2OWLConcepts {
 	 *      value, Domain dom)
 	 */
 	private void convertAttributeValue(AttributedElement ownerAe,
-			Attribute attr, String attrName) throws NoSuchFieldException,
-			XMLStreamException {
+			Attribute attr, String attrName) throws XMLStreamException {
 		String attrPropertyName;
 		Object value = ownerAe.getAttribute(attrName);
 

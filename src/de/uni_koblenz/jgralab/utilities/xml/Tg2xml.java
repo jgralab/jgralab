@@ -190,9 +190,6 @@ public class Tg2xml extends GraphVisitor {
 			try {
 				writer.writeAttribute(currentName, element
 						.writeAttributeValueToString(currentName));
-
-			} catch (NoSuchFieldException e) {
-				e.printStackTrace();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

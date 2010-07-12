@@ -178,13 +178,8 @@ public class TGMerge {
 			AttributedElement newAttrElem) {
 		for (Attribute attr : oldAttrElem.getAttributedElementClass()
 				.getAttributeList()) {
-			try {
-				newAttrElem.setAttribute(attr.getName(), oldAttrElem
-						.getAttribute(attr.getName()));
-			} catch (NoSuchFieldException e) {
-				e.printStackTrace();
-				throw new RuntimeException(e);
-			}
+			newAttrElem.setAttribute(attr.getName(), oldAttrElem
+					.getAttribute(attr.getName()));
 		}
 	}
 

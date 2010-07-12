@@ -694,26 +694,21 @@ public class GraphTest extends InstanceTest {
 
 		// if attributes of vertices are changed this does not affect the
 		// vertexList
-		try {
-			createTransaction(g1);
-			v4.setAttribute("number", 5);
-			commit(g1);
+		createTransaction(g1);
+		v4.setAttribute("number", 5);
+		commit(g1);
 
-			createReadOnlyTransaction(g1);
-			assertFalse(g1.isVertexListModified(vListVersion1));
-			commit(g1);
+		createReadOnlyTransaction(g1);
+		assertFalse(g1.isVertexListModified(vListVersion1));
+		commit(g1);
 
-			createTransaction(g1);
-			v4.setAttribute("number", 42);
-			commit(g1);
+		createTransaction(g1);
+		v4.setAttribute("number", 42);
+		commit(g1);
 
-			createReadOnlyTransaction(g1);
-			assertFalse(g1.isVertexListModified(vListVersion1));
-			commit(g1);
-
-		} catch (NoSuchFieldException e) {
-			// :(
-		}
+		createReadOnlyTransaction(g1);
+		assertFalse(g1.isVertexListModified(vListVersion1));
+		commit(g1);
 		System.out.println("Done testing isVertexListModified.");
 	}
 
@@ -928,42 +923,37 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 
 		// changing attributes of vertices does not change the vertexListVersion
-		try {
-			createTransaction(g1);
-			v5.setAttribute("number", 17);
-			commit(g1);
+		createTransaction(g1);
+		v5.setAttribute("number", 17);
+		commit(g1);
 
-			createReadOnlyTransaction(g1);
-			assertEquals(vertexListVersion1, g1.getVertexListVersion());
-			commit(g1);
+		createReadOnlyTransaction(g1);
+		assertEquals(vertexListVersion1, g1.getVertexListVersion());
+		commit(g1);
 
-			createTransaction(g1);
-			v8.setAttribute("number", 42);
-			commit(g1);
+		createTransaction(g1);
+		v8.setAttribute("number", 42);
+		commit(g1);
 
-			createReadOnlyTransaction(g1);
-			assertEquals(vertexListVersion1, g1.getVertexListVersion());
-			commit(g1);
+		createReadOnlyTransaction(g1);
+		assertEquals(vertexListVersion1, g1.getVertexListVersion());
+		commit(g1);
 
-			createTransaction(g1);
-			v7.setAttribute("number", 2);
-			commit(g1);
+		createTransaction(g1);
+		v7.setAttribute("number", 2);
+		commit(g1);
 
-			createReadOnlyTransaction(g1);
-			assertEquals(vertexListVersion1, g1.getVertexListVersion());
-			commit(g1);
+		createReadOnlyTransaction(g1);
+		assertEquals(vertexListVersion1, g1.getVertexListVersion());
+		commit(g1);
 
-			createTransaction(g1);
-			v5.setAttribute("number", 15);
-			commit(g1);
+		createTransaction(g1);
+		v5.setAttribute("number", 15);
+		commit(g1);
 
-			createReadOnlyTransaction(g1);
-			assertEquals(vertexListVersion1, g1.getVertexListVersion());
-			commit(g1);
-		} catch (NoSuchFieldException e) {
-			// :(
-			e.printStackTrace();
-		}
+		createReadOnlyTransaction(g1);
+		assertEquals(vertexListVersion1, g1.getVertexListVersion());
+		commit(g1);
 
 		System.out.println("Done testing getVertexListVersion.");
 	}
@@ -1265,42 +1255,38 @@ public class GraphTest extends InstanceTest {
 		edgeListVersion2 = g2.getEdgeListVersion();
 		assertFalse(g2.isEdgeListModified(edgeListVersion2));
 		commit(g2);
-		try {
-			createTransaction(g2);
-			e8.setAttribute("anInt", 2);
-			commit(g2);
 
-			createReadOnlyTransaction(g2);
-			assertFalse(g2.isEdgeListModified(edgeListVersion2));
-			commit(g2);
+		createTransaction(g2);
+		e8.setAttribute("anInt", 2);
+		commit(g2);
 
-			createTransaction(g2);
-			e8.setAttribute("anInt", -41);
-			commit(g2);
+		createReadOnlyTransaction(g2);
+		assertFalse(g2.isEdgeListModified(edgeListVersion2));
+		commit(g2);
 
-			createReadOnlyTransaction(g2);
-			assertFalse(g2.isEdgeListModified(edgeListVersion2));
-			commit(g2);
+		createTransaction(g2);
+		e8.setAttribute("anInt", -41);
+		commit(g2);
 
-			createTransaction(g2);
-			e8.setAttribute("anInt", 1024);
-			commit(g2);
+		createReadOnlyTransaction(g2);
+		assertFalse(g2.isEdgeListModified(edgeListVersion2));
+		commit(g2);
 
-			createReadOnlyTransaction(g2);
-			assertFalse(g2.isEdgeListModified(edgeListVersion2));
-			commit(g2);
+		createTransaction(g2);
+		e8.setAttribute("anInt", 1024);
+		commit(g2);
 
-			createTransaction(g2);
-			e8.setAttribute("anInt", 15);
-			commit(g2);
+		createReadOnlyTransaction(g2);
+		assertFalse(g2.isEdgeListModified(edgeListVersion2));
+		commit(g2);
 
-			createReadOnlyTransaction(g2);
-			assertFalse(g2.isEdgeListModified(edgeListVersion2));
-			commit(g2);
-		} catch (NoSuchFieldException e) {
-			// :(
-			e.printStackTrace();
-		}
+		createTransaction(g2);
+		e8.setAttribute("anInt", 15);
+		commit(g2);
+
+		createReadOnlyTransaction(g2);
+		assertFalse(g2.isEdgeListModified(edgeListVersion2));
+		commit(g2);
 
 		System.out.println("Done testing isEdgeListModified.");
 	}

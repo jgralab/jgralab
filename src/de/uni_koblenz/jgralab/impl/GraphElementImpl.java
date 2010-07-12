@@ -108,9 +108,6 @@ public abstract class GraphElementImpl implements GraphElement {
 			} catch (GraphIOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} catch (NoSuchFieldException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
 		}
 	}
@@ -119,10 +116,9 @@ public abstract class GraphElementImpl implements GraphElement {
 	 * 
 	 * @param attr
 	 * @throws GraphIOException
-	 * @throws NoSuchFieldException
 	 */
 	protected void internalSetDefaultValue(Attribute attr)
-			throws GraphIOException, NoSuchFieldException {
+			throws GraphIOException {
 		attr.setDefaultValue(this);
 	}
 }

@@ -480,7 +480,7 @@ public abstract class VertexImpl extends
 
 	@Override
 	protected void internalSetDefaultValue(Attribute attr)
-			throws GraphIOException, NoSuchFieldException {
+			throws GraphIOException {
 		attr.setDefaultTransactionValue(this);
 	}
 }
