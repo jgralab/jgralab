@@ -204,6 +204,22 @@ public interface Vertex extends GraphElement {
 
 	/**
 	 * @param anEdgeClass
+	 *            an edge class
+	 * @return the first edge of class <code>anEdgeClass</code> incident at this
+	 *         vertex
+	 */
+	public Edge getFirstEdge(EdgeClass anEdgeClass);
+
+	/**
+	 * @param anEdgeClass
+	 *            an edge class
+	 * @return the first edge of class <code>anEdgeClass</code> incident at this
+	 *         vertex
+	 */
+	public Edge getFirstEdge(Class<? extends Edge> anEdgeClass);
+
+	/**
+	 * @param anEdgeClass
 	 *            the edge class to search for
 	 * @return the first incidence in iSeq where the corresponding edge is of
 	 *         class anEdgeClass
