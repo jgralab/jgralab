@@ -335,6 +335,28 @@ public class SchemaGraph2XMI {
 		writer.writeEndElement();
 	}
 
+	/**
+	 * This method creates the representation of:
+	 * <ul>
+	 * <li>the {@link Package} <code>pack</code>, if it is not the
+	 * defaultPackage,</li>
+	 * <li>{@link Comment}s which are attached to <code>pack</code>,</li>
+	 * <li>{@link EnumDomain}s,</li>
+	 * <li>{@link RecordDomain}s,</li>
+	 * <li>{@link GraphElementClass}es and</li>
+	 * <li>{@link Package}s</li>
+	 * </ul>
+	 * contained in <code>pack</code>. The creation of other {@link Domain}s
+	 * except {@link EnumDomain}s and {@link RecordDomain}s are explained at
+	 * {@link SchemaGraph2XMI#createAttribute(XMLStreamWriter, String, String, Domain, String)}
+	 * .
+	 * 
+	 * @param writer
+	 *            {@link XMLStreamWriter} of the current XMI file
+	 * @param pack
+	 *            {@link Package} the current {@link Package}
+	 * @throws XMLStreamException
+	 */
 	private void createPackage(XMLStreamWriter writer, Package pack)
 			throws XMLStreamException {
 		boolean packageTagHasToBeClosed = false;
@@ -343,6 +365,7 @@ public class SchemaGraph2XMI {
 
 			if (!pack.get_qualifiedName().equals(
 					de.uni_koblenz.jgralab.schema.Package.DEFAULTPACKAGE_NAME)) {
+				// for the default package there is not created a package tag
 				packageTagHasToBeClosed = pack.getFirstAnnotates() != null
 						|| pack.getFirstContainsDomain() != null
 						|| pack.getFirstContainsGraphElementClass() != null
@@ -422,11 +445,14 @@ public class SchemaGraph2XMI {
 	}
 
 	/**
-	 * Returns true if the package <code>pack</code> does not contain a comment,
-	 * a domain, a GraphElementClass and no nonempty package.
+	 * Returns <code>true</code> if the {@link Package} <code>pack</code> does
+	 * not contain a {@link Comment}, a {@link Domain}, a
+	 * {@link GraphElementClass} and no nonempty {@link Package}. Otherwise
+	 * <code>false</code> is returned.
 	 * 
 	 * @param pack
-	 * @return
+	 *            {@link Package} the current {@link Package}
+	 * @return boolean
 	 */
 	private boolean isPackageEmpty(Package pack) {
 		boolean isPackageEmpty = pack.getFirstAnnotates() == null
@@ -445,29 +471,45 @@ public class SchemaGraph2XMI {
 		}
 	}
 
-	private void createRecordDomain(XMLStreamWriter writer, RecordDomain domain)
-			throws XMLStreamException {
+	/**
+	 * Creates the representation of the {@link RecordDomain}
+	 * <code>recordDomain</code>. This representation consists of an UML class
+	 * with stereotype <code>&lt;&lt;record&gt;&gt;</code>. The components of
+	 * <code>recordDomain</code> are represented as attributes of the generated
+	 * UML class. Further more all {@link Comment}s attached to
+	 * <code>recordDomain</code> are created.
+	 * 
+	 * @param writer
+	 *            {@link XMLStreamWriter} of the current XMI file
+	 * @param recordDomain
+	 *            {@link RecordDomain} the current {@link RecordDomain}
+	 * @throws XMLStreamException
+	 */
+	private void createRecordDomain(XMLStreamWriter writer,
+			RecordDomain recordDomain) throws XMLStreamException {
 		// start packagedElement
 		writer.writeStartElement(XMIConstants.TAG_PACKAGEDELEMENT);
 		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
 				XMIConstants.XMI_ATTRIBUTE_TYPE,
 				XMIConstants.PACKAGEDELEMENT_TYPE_VALUE_CLASS);
-		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-				XMIConstants.XMI_ATTRIBUTE_ID, domain.get_qualifiedName());
+		writer
+				.writeAttribute(XMIConstants.NAMESPACE_XMI,
+						XMIConstants.XMI_ATTRIBUTE_ID, recordDomain
+								.get_qualifiedName());
 		writer.writeAttribute(XMIConstants.ATTRIBUTE_NAME,
-				extractSimpleName(domain.get_qualifiedName()));
+				extractSimpleName(recordDomain.get_qualifiedName()));
 
 		// create stereotype <<record>>
-		createExtension(writer, domain, "record");
+		createExtension(writer, recordDomain, "record");
 
 		// create comments
-		createComments(writer, domain);
+		createComments(writer, recordDomain);
 
 		// create attributes
-		for (HasRecordDomainComponent hrdc : domain
+		for (HasRecordDomainComponent hrdc : recordDomain
 				.getHasRecordDomainComponentIncidences(EdgeDirection.OUT)) {
 			createAttribute(writer, hrdc.get_name(), null, (Domain) hrdc
-					.getThat(), domain.get_qualifiedName() + "_"
+					.getThat(), recordDomain.get_qualifiedName() + "_"
 					+ hrdc.get_name());
 		}
 
@@ -475,7 +517,21 @@ public class SchemaGraph2XMI {
 		writer.writeEndElement();
 	}
 
-	private void createEnum(XMLStreamWriter writer, EnumDomain domain)
+	/**
+	 * Creates the representation of the {@link EnumDomain}
+	 * <code>EnumDomain</code>. This representation is a UML enumeration with
+	 * stereotype <code>&lt;&lt;record&gt;&gt;</code>. The constants of
+	 * <code>enumDomain</code> are represented as constants of the generated UML
+	 * enumeration. Further more all {@link Comment}s attached to
+	 * <code>enumDomain</code> are created.
+	 * 
+	 * @param writer
+	 *            {@link XMLStreamWriter} of the current XMI file
+	 * @param enumDomain
+	 *            {@link EnumDomain} the current {@link EnumDomain}
+	 * @throws XMLStreamException
+	 */
+	private void createEnum(XMLStreamWriter writer, EnumDomain enumDomain)
 			throws XMLStreamException {
 		// start packagedElement
 		writer.writeStartElement(XMIConstants.TAG_PACKAGEDELEMENT);
@@ -483,26 +539,27 @@ public class SchemaGraph2XMI {
 				XMIConstants.XMI_ATTRIBUTE_TYPE,
 				XMIConstants.PACKAGEDELEMENT_TYPE_VALUE_ENUMERATION);
 		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-				XMIConstants.XMI_ATTRIBUTE_ID, domain.get_qualifiedName());
+				XMIConstants.XMI_ATTRIBUTE_ID, enumDomain.get_qualifiedName());
 		writer.writeAttribute(XMIConstants.ATTRIBUTE_NAME,
-				extractSimpleName(domain.get_qualifiedName()));
+				extractSimpleName(enumDomain.get_qualifiedName()));
 
 		// create comments
-		createComments(writer, domain);
+		createComments(writer, enumDomain);
 
 		// create enumeration constants
-		for (String enumConst : domain.get_enumConstants()) {
+		for (String enumConst : enumDomain.get_enumConstants()) {
 			// create ownedLiteral
 			writer.writeEmptyElement(XMIConstants.TAG_OWNEDLITERAL);
 			writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
 					XMIConstants.XMI_ATTRIBUTE_TYPE,
 					XMIConstants.OWNEDLITERAL_TYPE_VALUE);
 			writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-					XMIConstants.XMI_ATTRIBUTE_ID, domain.get_qualifiedName()
+					XMIConstants.XMI_ATTRIBUTE_ID, enumDomain
+							.get_qualifiedName()
 							+ "_" + enumConst);
 			writer.writeAttribute(XMIConstants.ATTRIBUTE_NAME, enumConst);
 			writer.writeAttribute(
-					XMIConstants.OWNEDLITERAL_ATTRIBUTE_CLASSIFIER, domain
+					XMIConstants.OWNEDLITERAL_ATTRIBUTE_CLASSIFIER, enumDomain
 							.get_qualifiedName());
 		}
 
@@ -510,6 +567,13 @@ public class SchemaGraph2XMI {
 		writer.writeEndElement();
 	}
 
+	/**
+	 * Creates the profileApplication tag at the end of the model tag.
+	 * 
+	 * @param writer
+	 *            {@link XMLStreamWriter} of the current XMI file
+	 * @throws XMLStreamException
+	 */
 	private void createProfileApplication(XMLStreamWriter writer)
 			throws XMLStreamException {
 		// start profileApplication
@@ -537,6 +601,20 @@ public class SchemaGraph2XMI {
 		writer.writeEndElement();
 	}
 
+	/**
+	 * Defines all attributes of type {@link DoubleDomain}, {@link LongDomain},
+	 * {@link MapDomain} or {@link CollectionDomain} which are used in the
+	 * {@link SchemaGraph} i.e. contained in
+	 * {@link SchemaGraph2XMI#typesToBeDeclaredAtTheEnd}. These definitions are
+	 * created in a new UML package, called <code>PrimitiveTypes</code>. This is
+	 * necessary because those {@link Domain}s are not UML primitive types and
+	 * are not represented by an own <code>packagedElement</code> in the XMI
+	 * file.
+	 * 
+	 * @param writer
+	 *            {@link XMLStreamWriter} of the current XMI file
+	 * @throws XMLStreamException
+	 */
 	private void createTypes(XMLStreamWriter writer) throws XMLStreamException {
 		// start packagedElement
 		writer.writeStartElement(XMIConstants.TAG_PACKAGEDELEMENT);
@@ -568,8 +646,23 @@ public class SchemaGraph2XMI {
 	}
 
 	/**
+	 * Creates the representation of the {@link AttributedElementClass}
+	 * <code>aeclass</code>.<br />
+	 * A {@link GraphClass} is represented as a UML class with stereotype
+	 * <code>&lt;&lt;graphclass&gt;&gt;</code>.<br />
+	 * A {@link VertexClass} is represented as a UML class.<br />
+	 * An {@link EdgeClass} is represented as a UML association, if it has no
+	 * attributes and otherwise as a UML associationClass.<br />
+	 * Furthermore the attribute abstract is generated, if the
+	 * {@link VertexClass} or {@link EdgeClass} is abstract. {@link Comment}s,
+	 * {@link Constraint}s, generalization and {@link Attribute}s are
+	 * represented as well.
+	 * 
 	 * @param writer
+	 *            {@link XMLStreamWriter} of the current XMI file
 	 * @param aeclass
+	 *            {@link AttributedElementClass} the current
+	 *            {@link AttributedElementClass}
 	 * @throws XMLStreamException
 	 */
 	private void createAttributedElementClass(XMLStreamWriter writer,
@@ -618,7 +711,7 @@ public class SchemaGraph2XMI {
 				extractSimpleName(aeclass.get_qualifiedName()));
 
 		// set abstract
-		if (aeclass instanceof GraphElementClass
+		if (!(aeclass instanceof GraphElementClass)
 				&& ((GraphElementClass) aeclass).is_abstract()) {
 			writer.writeAttribute(
 					XMIConstants.PACKAGEDELEMENT_ATTRIBUTE_ISABSTRACT,
@@ -791,11 +884,9 @@ public class SchemaGraph2XMI {
 				VertexClass connectedVertexClass = (VertexClass) otherIncidence
 						.getFirstEndsAt().getThat();
 				// create incidence representation
-				if (edgeClass != null) {
-					createIncidence(writer, otherIncidence, edgeClass,
-							incidence, connectedVertexClass, vertexClass
-									.get_qualifiedName(), false);
-				}
+				createIncidence(writer, otherIncidence, edgeClass, incidence,
+						connectedVertexClass, vertexClass.get_qualifiedName(),
+						false);
 			}
 		}
 	}
