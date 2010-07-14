@@ -656,7 +656,8 @@ public class SchemaGraph2XMI {
 	 * Furthermore the attribute abstract is generated, if the
 	 * {@link VertexClass} or {@link EdgeClass} is abstract. {@link Comment}s,
 	 * {@link Constraint}s, generalization and {@link Attribute}s are
-	 * represented as well.
+	 * represented as well.<br />
+	 * 
 	 * 
 	 * @param writer
 	 *            {@link XMLStreamWriter} of the current XMI file
@@ -711,7 +712,7 @@ public class SchemaGraph2XMI {
 				extractSimpleName(aeclass.get_qualifiedName()));
 
 		// set abstract
-		if (!(aeclass instanceof GraphElementClass)
+		if (aeclass instanceof GraphElementClass
 				&& ((GraphElementClass) aeclass).is_abstract()) {
 			writer.writeAttribute(
 					XMIConstants.PACKAGEDELEMENT_ATTRIBUTE_ISABSTRACT,
