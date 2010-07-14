@@ -51,6 +51,7 @@ public class Tg2Dot extends Tg2Whatever {
 	private boolean abbreviateEdgeAttributeNames = false;
 	private boolean printIncidenceNumbers = false;
 	private Set<Class<? extends AttributedElement>> reversedEdgeTypes = null;
+	private Map<Class<? extends AttributedElement>, Boolean> revEdgeTypeCache = null;
 
 	public boolean isPrintIncidenceNumbers() {
 		return printIncidenceNumbers;
@@ -143,9 +144,9 @@ public class Tg2Dot extends Tg2Whatever {
 				sb.append("\\\\t");
 				break;
 			default:
-				if ((ch < ' ') || (ch > '\u007F')) {
+				if (ch < ' ' || ch > '\u007F') {
 					sb.append("\\\\u");
-					String code = ("000" + Integer.toHexString(ch));
+					String code = "000" + Integer.toHexString(ch);
 					sb.append(code.substring(code.length() - 4, code.length()));
 				} else {
 					sb.append(ch);
@@ -156,17 +157,15 @@ public class Tg2Dot extends Tg2Whatever {
 		return sb.toString();
 	}
 
-	private Map<Class<? extends AttributedElement>, Boolean> revEdgeTypeCache = null;
-
 	private boolean printEdgeReversed(Edge e) {
 		if (reversedEdgeTypes == null) {
 			return reversedEdges;
 		}
 
 		Class<? extends AttributedElement> ec = e.getM1Class();
-		Boolean b = revEdgeTypeCache.get(ec);
-		if (b != null) {
-			return reversedEdges ^ b;
+		Boolean reversed = revEdgeTypeCache.get(ec);
+		if (reversed != null) {
+			return reversedEdges ^ reversed;
 		}
 
 		boolean rev = false;
@@ -187,19 +186,19 @@ public class Tg2Dot extends Tg2Whatever {
 	@Override
 	protected void printEdge(PrintStream out, Edge e) {
 		boolean reversed = printEdgeReversed(e);
-		Vertex alpha = (reversed ? e.getOmega() : e.getAlpha());
-		Vertex omega = (reversed ? e.getAlpha() : e.getOmega());
+		Vertex alpha = reversed ? e.getOmega() : e.getAlpha();
+		Vertex omega = reversed ? e.getAlpha() : e.getOmega();
 		out.print("v" + alpha.getId() + " -> v" + omega.getId() + " [");
 
 		EdgeClass cls = (EdgeClass) e.getAttributedElementClass();
 		if (roleNames) {
 			String toRole = cls.getTo().getRolename();
-			if ((toRole != null) && (toRole.length() > 0)) {
+			if (toRole != null && toRole.length() > 0) {
 				out.print((reversed ? "tail" : "head") + "label=\""
 						+ stringQuote(toRole) + "\" ");
 			}
 			String fromRole = cls.getFrom().getRolename();
-			if ((fromRole != null) && (fromRole.length() > 0)) {
+			if (fromRole != null && fromRole.length() > 0) {
 				out.print((reversed ? "head" : "tail") + "label=\""
 						+ stringQuote(fromRole) + "\" ");
 			}
@@ -246,7 +245,7 @@ public class Tg2Dot extends Tg2Whatever {
 		out.print("label=\"e" + e.getId() + ": "
 				+ cls.getUniqueName().replace('$', '.'));
 
-		if (edgeAttributes && (cls.getAttributeCount() > 0)) {
+		if (edgeAttributes && cls.getAttributeCount() > 0) {
 			out.print("\\l");
 			printAttributes(out, e);
 		}
@@ -275,7 +274,7 @@ public class Tg2Dot extends Tg2Whatever {
 	private void printAttributes(PrintStream out, AttributedElement elem) {
 		AttributedElementClass cls = elem.getAttributedElementClass();
 		for (Attribute attr : cls.getAttributeList()) {
-			if (abbreviateEdgeAttributeNames && (elem instanceof Edge)) {
+			if (abbreviateEdgeAttributeNames && elem instanceof Edge) {
 				// sourcePosition => sP
 				// fooBarBaz => fBB
 				out.print(attr.getName().charAt(0)
@@ -288,9 +287,9 @@ public class Tg2Dot extends Tg2Whatever {
 						+ stringQuote(attr.getDomain().getQualifiedName()));
 			}
 			Object attribute = elem.getAttribute(attr.getName());
-			String attributeString = (attribute != null) ? attribute.toString()
+			String attributeString = attribute != null ? attribute.toString()
 					: "null";
-			if (shortenStrings && (attributeString.length() > 17)) {
+			if (shortenStrings && attributeString.length() > 17) {
 				attributeString = attributeString.substring(0, 18) + "...";
 			}
 			if (attribute instanceof String) {
@@ -385,7 +384,7 @@ public class Tg2Dot extends Tg2Whatever {
 	}
 
 	public void setAbbreviateAttributeNames(boolean abbreviateAttributeNames) {
-		this.abbreviateEdgeAttributeNames = abbreviateAttributeNames;
+		abbreviateEdgeAttributeNames = abbreviateAttributeNames;
 	}
 
 	public static void printGraphAsDot(Graph graph, boolean reversedEdges,
@@ -436,6 +435,6 @@ public class Tg2Dot extends Tg2Whatever {
 	public void setReversedEdgeTypes(
 			Set<Class<? extends AttributedElement>> reversedEdgeTypes) {
 		this.reversedEdgeTypes = reversedEdgeTypes;
-		this.revEdgeTypeCache = new HashMap<Class<? extends AttributedElement>, Boolean>();
+		revEdgeTypeCache = new HashMap<Class<? extends AttributedElement>, Boolean>();
 	}
 }
