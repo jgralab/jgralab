@@ -657,7 +657,10 @@ public class SchemaGraph2XMI {
 	 * {@link VertexClass} or {@link EdgeClass} is abstract. {@link Comment}s,
 	 * {@link Constraint}s, generalization and {@link Attribute}s are
 	 * represented as well.<br />
-	 * 
+	 * The {@link IncidenceClass} representations are created if needed. To get
+	 * more information if it is needed, have a look at
+	 * {@link SchemaGraph2XMI#createIncidences(XMLStreamWriter, EdgeClass)} and
+	 * {@link SchemaGraph2XMI#createIncidences(XMLStreamWriter, VertexClass)}.
 	 * 
 	 * @param writer
 	 *            {@link XMLStreamWriter} of the current XMI file
@@ -783,18 +786,20 @@ public class SchemaGraph2XMI {
 	}
 
 	/**
-	 * Returns true, iff there has to be created an incidence-child in the xmi
-	 * for the current VertexClass.
+	 * Returns <code>true</code>, iff there has to be created an incidence child
+	 * in the XMI file for <code>vertexClass</code>. Otherwise
+	 * <code>false</code> is returned.
 	 * 
-	 * @param aeclass
-	 * @return
+	 * @param vertexClass
+	 *            {@link VertexClass} to be checked
+	 * @return boolean
 	 */
-	private boolean hasChildIncidence(VertexClass aeclass) {
-		if (aeclass.getFirstEndsAt() == null) {
+	private boolean hasChildIncidence(VertexClass vertexClass) {
+		if (vertexClass.getFirstEndsAt() == null) {
 			// VertexClass has no incidences
 			return false;
 		}
-		for (EndsAt ea : aeclass.getEndsAtIncidences()) {
+		for (EndsAt ea : vertexClass.getEndsAtIncidences()) {
 			IncidenceClass ic = (IncidenceClass) ea.getThat();
 			if (hasToBeCreatedAtVertex(ic)) {
 				return true;
@@ -804,11 +809,23 @@ public class SchemaGraph2XMI {
 	}
 
 	/**
-	 * Returns true, iff the incidence has to be created at the VertexClass, to
-	 * which the IncidenceClass is connected via an EndsAt edge.
+	 * Returns <code>true</code>, iff the <code>incidence</code> has to be
+	 * created at the {@link VertexClass} VC, to which <code>incidence</code> is
+	 * connected via an {@link EndsAt} edge. This is the case if
+	 * <ul>
+	 * <li>{@link SchemaGraph2XMI#isBidirectional} is set to <code>true</code>,</li>
+	 * <li>{@link SchemaGraph2XMI#isReverted} is set to <code>false</code> and
+	 * VC is the alpha {@link VertexClass} of the {@link EdgeClass} to which
+	 * <code>incidence</code> belongs or</li>
+	 * <li>{@link SchemaGraph2XMI#isReverted} is set to <code>true</code> and VC
+	 * is the omega {@link VertexClass} of the {@link EdgeClass} to which
+	 * <code>incidence</code> belongs.</li>
+	 * </ul>
+	 * Otherwise <code>false</code> is returned.
 	 * 
 	 * @param incidence
-	 * @return
+	 *            {@link IncidenceClass} to be checked
+	 * @return boolean
 	 */
 	private boolean hasToBeCreatedAtVertex(IncidenceClass incidence) {
 		boolean isAlphaVertexClass = incidence.getFirstComesFrom() != null;
@@ -830,11 +847,17 @@ public class SchemaGraph2XMI {
 	}
 
 	/**
-	 * Creates the IncidenceClasses for AssociationClasses ( = EdgeClass with
-	 * attributes)
+	 * Creates the representation for the alpha and omega {@link IncidenceClass}
+	 * of <code>edgeClass</code> if it wasn't already created at the
+	 * corresponding {@link VertexClass} (e.g. if
+	 * {@link SchemaGraph2XMI#hasToBeCreatedAtVertex(IncidenceClass)} returns
+	 * <code>false</code>).
 	 * 
 	 * @param writer
+	 *            {@link XMLStreamWriter} of the current XMI file
 	 * @param edgeClass
+	 *            {@link EdgeClass} of which the {@link IncidenceClass}es have
+	 *            to be represented.
 	 * @throws XMLStreamException
 	 */
 	private void createIncidences(XMLStreamWriter writer, EdgeClass edgeClass)
@@ -862,10 +885,16 @@ public class SchemaGraph2XMI {
 	}
 
 	/**
-	 * Creates the IncidenceClasses for VertexClasses
+	 * Creates the representation of all {@link IncidenceClass}es which are
+	 * connected to <code>vertexClass</code> if
+	 * {@link SchemaGraph2XMI#hasToBeCreatedAtVertex(IncidenceClass)} returns
+	 * <code>true</code>.
 	 * 
 	 * @param writer
+	 *            {@link XMLStreamWriter} of the current XMI file
 	 * @param vertexClass
+	 *            {@link VertexClass} of which the connected
+	 *            {@link IncidenceClass}es are represented
 	 * @throws XMLStreamException
 	 */
 	private void createIncidences(XMLStreamWriter writer,
@@ -893,21 +922,33 @@ public class SchemaGraph2XMI {
 	}
 
 	/**
-	 * roleName, redefines, min, max must be taken from otherIncidence
+	 * Creates the representation of the {@link IncidenceClass} which contains
+	 * the information for the {@link VertexClass} which is specified by
+	 * <code>qualifiedNameOfVertexClass</code> e.g. <code>otherIncidence</code>.<br/>
+	 * The relevant information are: <ui> <li>TODO</li> </ui>
 	 * 
 	 * @param writer
+	 *            {@link XMLStreamWriter} of the current XMI file
 	 * @param otherIncidence
-	 *            the IncidenceClass which contains the information for the
-	 *            incidence corresponding to the VertexClass of
-	 *            <code>qualifiedNameOfVertexClass</code> in the xmi.
+	 *            {@link IncidenceClass} which contains the information for the
+	 *            incidence corresponding to the {@link VertexClass} of
+	 *            <code>qualifiedNameOfVertexClass</code> in the xmi file.
 	 * @param connectedVertexClass
+	 *            {@link VertexClass} at the other end of <code>edgeClass</code>
 	 * @param incidence
+	 *            {@link IncidenceClass} connected to the {@link VertexClass}
+	 *            specified by <code>qualifiedNameOfVertexClass</code>
 	 * @param edgeClass
+	 *            {@link EdgeClass} which connects the {@link VertexClass}
+	 *            specified by <code>qualifiedNameOfVertexClass</code> with
+	 *            <code>connectedVertexClass</code>
 	 * @param qualifiedNameOfVertexClass
+	 *            {@link String} the qualified name of the {@link VertexClass}
+	 *            to which <code>incidence</code> is connected to.
 	 * @param createOwnedEnd
-	 *            if set to true, the tag ownedEnd is used instead of
-	 *            ownedAttribute (ownedEnd has to be created, if you create an
-	 *            incidence at an Association.)
+	 *            boolean if set to <code>true</code>, the tag ownedEnd is used
+	 *            instead of ownedAttribute (ownedEnd has to be created, if you
+	 *            create an incidence at an association.)
 	 * @throws XMLStreamException
 	 */
 	private void createIncidence(XMLStreamWriter writer,
