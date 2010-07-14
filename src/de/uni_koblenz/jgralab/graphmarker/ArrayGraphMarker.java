@@ -3,16 +3,17 @@ package de.uni_koblenz.jgralab.graphmarker;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.algolib.functions.Function;
 
 /**
- * This class is the abstract superclass of generic graph markers.
+ * This class is the abstract superclass of generic array graph markers.
  * 
  * @author ist@uni-koblenz.de
  * 
  * @param <T>
  */
 public abstract class ArrayGraphMarker<T extends GraphElement, O> extends
-		AbstractGraphMarker<T> {
+		AbstractGraphMarker<T> implements Function<T, O> {
 
 	/**
 	 * The array of temporary attributes.
@@ -111,6 +112,21 @@ public abstract class ArrayGraphMarker<T extends GraphElement, O> extends
 
 	public int maxSize() {
 		return temporaryAttributes.length - 1;
+	}
+
+	@Override
+	public O get(T parameter) {
+		return getMark(parameter);
+	}
+
+	@Override
+	public boolean isDefined(T parameter) {
+		return isMarked(parameter);
+	}
+
+	@Override
+	public void set(T parameter, O value) {
+		mark(parameter, value);
 	}
 
 }
