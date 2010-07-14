@@ -337,14 +337,14 @@ public abstract class Tg2Whatever {
 
 	final protected CommandLine processCommandLineOptions(String[] args) {
 		OptionHandler oh = createOptionHandler();
+		addAdditionalOptions(oh);
 		return oh.parse(args);
 	}
 
-	protected OptionHandler createOptionHandler() {
-		return createDefaultOptionHandler();
+	protected void addAdditionalOptions(OptionHandler optionHandler) {
 	}
 
-	final protected OptionHandler createDefaultOptionHandler() {
+	final protected OptionHandler createOptionHandler() {
 		String toolString = "java " + this.getClass().getName();
 		String versionString = JGraLab.getInfo(false);
 		OptionHandler oh = new OptionHandler(toolString, versionString);
