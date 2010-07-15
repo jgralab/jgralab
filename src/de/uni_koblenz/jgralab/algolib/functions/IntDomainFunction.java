@@ -9,7 +9,7 @@ package de.uni_koblenz.jgralab.algolib.functions;
  * @param <RANGE>
  *            the range of the function.
  */
-public interface intDomainFunction<RANGE> {
+public interface IntDomainFunction<RANGE> {
 
 	public RANGE get(int parameter);
 
