@@ -289,8 +289,11 @@ public class Xml2tg {
 					// System.out.println(attributedElementClassName);
 					AttributedElementClass aec = schema
 							.getAttributedElementClass(attributedElementClassName);
+					if (aec == null) {
+						throw new RuntimeException("AttributedElementClass '"
+								+ attributedElementClassName + "' unknown.");
+					}
 					stack.push(new AttributedElementInfo(aec));
-
 				} else if (level == 1) {
 					// root element (graph)
 					String graphClassName = reader.getName().getLocalPart();
@@ -302,8 +305,13 @@ public class Xml2tg {
 												.getQualifiedName()
 										+ " but was " + graphClassName);
 					}
-					stack.push(new AttributedElementInfo(schema
-							.getAttributedElementClass(graphClassName)));
+					AttributedElementClass aec = schema
+							.getAttributedElementClass(graphClassName);
+					if (aec == null) {
+						throw new RuntimeException("GraphClass '"
+								+ graphClassName + "' unknown.");
+					}
+					stack.push(new AttributedElementInfo(aec));
 					if ((graph != null) && multiXml) {
 						break;
 					}
