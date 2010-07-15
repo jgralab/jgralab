@@ -34,8 +34,9 @@ public abstract class GraphAlgorithm {
 	public GraphAlgorithm(Graph graph) {
 		super();
 		this.graph = graph;
-		reset();
+		this.state = AlgorithmStates.INITIALIZED;
 		resetParameters();
+		reset();
 	}
 
 	public void reset() {
@@ -70,6 +71,7 @@ public abstract class GraphAlgorithm {
 	public void setGraph(Graph graph) {
 		if (getState() == AlgorithmStates.INITIALIZED) {
 			this.graph = graph;
+			reset();
 		} else {
 			throw new IllegalStateException(
 					"The graph may only be changed when in state "

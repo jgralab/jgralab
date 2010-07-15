@@ -16,6 +16,7 @@ public abstract class HybridGraphAlgorithm extends GraphAlgorithm {
 	public HybridGraphAlgorithm(Graph graph,
 			BooleanFunction<GraphElement> subgraph, boolean directed) {
 		super(graph, subgraph);
+		this.directed = directed;
 	}
 
 	@Override
