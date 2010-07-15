@@ -132,7 +132,7 @@ public class VariableDeclarationLayer {
 			firstIteration = false;
 		}
 		while (!constraintsFullfilled) {
-			if (!getNextCombination(subgraph, variableDeclarations.size() - 1)) {
+			if (!getNextCombination(subgraph, false)) {
 				if (logger != null) {
 					logger.logResultSize("Declaration", possibleCombinations);
 				}
@@ -178,7 +178,7 @@ public class VariableDeclarationLayer {
 	private boolean getFirstCombination(BooleanGraphMarker subgraph)
 			throws EvaluateException {
 		variableDeclarations.get(0).reset();
-		return getNextCombination(subgraph, 0);
+		return getNextCombination(subgraph, true);
 	}
 
 	/**
@@ -191,7 +191,10 @@ public class VariableDeclarationLayer {
 	
 	
 	private boolean getNextCombination(BooleanGraphMarker subgraphMarker,
-			int pointer) throws EvaluateException {
+			boolean firstCombination) throws EvaluateException {
+		
+		int pointer = firstCombination ? 0 : variableDeclarations.size() - 1;
+		
 		boolean iterate;
 		do {
 			iterate = false;
