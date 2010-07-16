@@ -8,6 +8,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 
 /**
  * This class serves as a special <code>BitSetGraphmarker</code>, although it
@@ -19,7 +20,8 @@ import de.uni_koblenz.jgralab.Vertex;
  * @author ist@uni-koblenz.de
  * 
  */
-public class SubGraphMarker extends AbstractGraphMarker<GraphElement> {
+public class SubGraphMarker extends AbstractGraphMarker<GraphElement> implements
+		BooleanFunction<GraphElement> {
 
 	// TODO maybe replace with BitSets
 
@@ -163,23 +165,26 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement> {
 
 	@Override
 	public Iterable<GraphElement> getMarkedElements() {
-		return new Iterable<GraphElement>(){
+		return new Iterable<GraphElement>() {
 
 			@Override
 			public Iterator<GraphElement> iterator() {
 				return new ArrayGraphMarkerIterator<GraphElement>(version) {
-					
+
 					Iterator<Vertex> vertexIterator;
 					Iterator<Edge> edgeIterator;
-					
+
 					{
-						vertexIterator = vertexGraphMarker.getMarkedElements().iterator();
-						edgeIterator = edgeGraphMarker.getMarkedElements().iterator();
+						vertexIterator = vertexGraphMarker.getMarkedElements()
+								.iterator();
+						edgeIterator = edgeGraphMarker.getMarkedElements()
+								.iterator();
 					}
-					
+
 					@Override
 					public boolean hasNext() {
-						return vertexIterator.hasNext() || edgeIterator.hasNext();
+						return vertexIterator.hasNext()
+								|| edgeIterator.hasNext();
 					}
 
 					@Override
@@ -189,21 +194,42 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement> {
 
 					@Override
 					public GraphElement next() {
-						if(version != SubGraphMarker.this.version){
-							throw new ConcurrentModificationException(MODIFIED_ERROR_MESSAGE);
+						if (version != SubGraphMarker.this.version) {
+							throw new ConcurrentModificationException(
+									MODIFIED_ERROR_MESSAGE);
 						}
-						if(vertexIterator.hasNext()){
+						if (vertexIterator.hasNext()) {
 							return vertexIterator.next();
 						}
-						if(edgeIterator.hasNext()){
+						if (edgeIterator.hasNext()) {
 							return edgeIterator.next();
 						}
-						throw new NoSuchElementException(NO_MORE_ELEMENTS_ERROR_MESSAGE);
+						throw new NoSuchElementException(
+								NO_MORE_ELEMENTS_ERROR_MESSAGE);
 					}
-					
+
 				};
 			}
-			
+
 		};
+	}
+
+	@Override
+	public boolean get(GraphElement parameter) {
+		return isMarked(parameter);
+	}
+
+	@Override
+	public boolean isDefined(GraphElement parameter) {
+		return true;
+	}
+
+	@Override
+	public void set(GraphElement parameter, boolean value) {
+		if (value) {
+			mark(parameter);
+		} else {
+			removeMark(parameter);
+		}
 	}
 }
