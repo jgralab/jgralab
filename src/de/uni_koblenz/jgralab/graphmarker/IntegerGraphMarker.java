@@ -3,9 +3,10 @@ package de.uni_koblenz.jgralab.graphmarker;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.algolib.functions.IntFunction;
 
 public abstract class IntegerGraphMarker<T extends GraphElement> extends
-		AbstractGraphMarker<T> {
+		AbstractGraphMarker<T> implements IntFunction<T> {
 
 	private static final int DEFAULT_UNMARKED_VALUE = Integer.MIN_VALUE;
 
@@ -129,6 +130,21 @@ public abstract class IntegerGraphMarker<T extends GraphElement> extends
 
 		}
 		this.unmarkedValue = newUnmarkedValue;
+	}
+
+	@Override
+	public int get(T parameter) {
+		return getMark(parameter);
+	}
+
+	@Override
+	public boolean isDefined(T parameter) {
+		return isMarked(parameter);
+	}
+
+	@Override
+	public void set(T parameter, int value) {
+		mark(parameter, value);
 	}
 
 }
