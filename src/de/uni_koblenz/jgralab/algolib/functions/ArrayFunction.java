@@ -1,9 +1,11 @@
 package de.uni_koblenz.jgralab.algolib.functions;
 
+import java.util.Arrays;
+
 public class ArrayFunction<RANGE> implements IntDomainFunction<RANGE> {
 
 	private RANGE[] values;
-	
+
 	public ArrayFunction(RANGE[] values) {
 		this.values = values;
 	}
@@ -22,6 +24,11 @@ public class ArrayFunction<RANGE> implements IntDomainFunction<RANGE> {
 	@Override
 	public void set(int parameter, RANGE value) {
 		values[parameter] = value;
+	}
+
+	@Override
+	public String toString() {
+		return Arrays.toString(values);
 	}
 
 }
