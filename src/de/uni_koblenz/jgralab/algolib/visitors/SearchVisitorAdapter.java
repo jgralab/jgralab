@@ -4,24 +4,24 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.SearchAlgorithm;
 
-public abstract class SearchVisitorAdapter extends SimpleVisitorAdapter implements
+public class SearchVisitorAdapter extends SimpleVisitorAdapter implements
 		SearchVisitor {
 
 	protected SearchAlgorithm searchAlgorithm;
-	
+
 	@Override
 	public void visitFrond(Edge e) {
-		
+
 	}
 
 	@Override
 	public void visitRoot(Vertex v) {
-		
+
 	}
 
 	@Override
 	public void visitTreeEdge(Edge e) {
-		
+
 	}
 
 	public SearchAlgorithm getSearchAlgorithm() {
@@ -31,5 +31,5 @@ public abstract class SearchVisitorAdapter extends SimpleVisitorAdapter implemen
 	public void setSearchAlgorithm(SearchAlgorithm searchAlgorithm) {
 		this.searchAlgorithm = searchAlgorithm;
 	}
-	
+
 }
