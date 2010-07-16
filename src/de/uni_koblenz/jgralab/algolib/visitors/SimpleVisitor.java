@@ -51,6 +51,8 @@ public interface SimpleVisitor {
 	 * 
 	 * @param alg
 	 *            the algorithm object that uses this visitor
+	 * @throws IllegalArgumentException
+	 *             if the given algorithm is incompatible with this visitor
 	 */
 	public void setAlgorithm(GraphAlgorithm alg);
 

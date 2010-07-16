@@ -1,0 +1,10 @@
+TGraph 2;
+
+Schema de.uni_koblenz.jgralabtest.schemas.algolib.simple.SimpleSchema;
+
+GraphClass SimpleGraph;
+
+Package ;
+VertexClass SimpleVertex;
+EdgeClass SimpleEdge from SimpleVertex (0,*) role alphaVertex to SimpleVertex (0,*) role omegaVertex;
+
