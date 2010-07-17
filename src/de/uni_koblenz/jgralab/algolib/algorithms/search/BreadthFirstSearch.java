@@ -4,7 +4,6 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmStates;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 import de.uni_koblenz.jgralab.algolib.problems.TraversalFromVertexSolver;
 import de.uni_koblenz.jgralab.algolib.visitors.SearchVisitor;
@@ -58,7 +57,7 @@ public class BreadthFirstSearch extends SearchAlgorithm implements
 		if (visitedVertices.get(root) || !subgraph.get(root)) {
 			return;
 		}
-		state = AlgorithmStates.RUNNING;
+		startRunning();
 		firstV--; // to make it work if the algorithm is resumed
 		vertexOrder[num] = root;
 		visitors.visitRoot(root);
@@ -92,7 +91,7 @@ public class BreadthFirstSearch extends SearchAlgorithm implements
 				}
 			}
 		}
-		state = num < graph.getVCount() + 1 ? AlgorithmStates.STOPPED
-				: AlgorithmStates.FINISHED;
+		done();
 	}
+
 }

@@ -30,7 +30,6 @@ public abstract class GraphAlgorithm {
 	protected Graph graph;
 	protected BooleanFunction<GraphElement> subgraph;
 	protected AlgorithmStates state;
-	protected boolean terminated;
 
 	public GraphAlgorithm(Graph graph) {
 		super();
@@ -42,7 +41,6 @@ public abstract class GraphAlgorithm {
 
 	public void reset() {
 		if (getState() != AlgorithmStates.RUNNING) {
-			this.terminated = false;
 			this.state = AlgorithmStates.INITIALIZED;
 		} else {
 			throw new IllegalStateException(
@@ -100,7 +98,7 @@ public abstract class GraphAlgorithm {
 
 	public void terminate() {
 		if (getState() == AlgorithmStates.RUNNING) {
-			terminated = true;
+			throw new AlgorithmTerminatedException("Terminated by algorithm.");
 		} else {
 			throw new IllegalStateException(
 					"The algorithm may only be terminated, when in state "
@@ -110,11 +108,19 @@ public abstract class GraphAlgorithm {
 
 	protected synchronized void cancelIfInterrupted() {
 		if (Thread.interrupted()) {
+			// ensures the termination of the algorithm
 			state = AlgorithmStates.CANCELED;
+			throw new AlgorithmTerminatedException("Thread interrupted.");
 		}
 	}
 
 	public abstract boolean isDirected();
 
 	public abstract void addSimpleVisitor(SimpleVisitor visitor);
+
+	protected void startRunning() {
+		state = AlgorithmStates.RUNNING;
+	}
+
+	protected abstract void done();
 }
