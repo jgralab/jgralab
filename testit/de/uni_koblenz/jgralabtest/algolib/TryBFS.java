@@ -1,5 +1,6 @@
 package de.uni_koblenz.jgralabtest.algolib;
 
+import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.BreadthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.ComputeLevelVisitor;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.ComputeNumberVisitor;
@@ -27,13 +28,16 @@ public class TryBFS {
 		graph.createSimpleEdge(v4, v5);
 		graph.createSimpleEdge(v5, v3);
 		BreadthFirstSearch bfs = new BreadthFirstSearch(graph);
-		DebugSearchVisitor visitor = new DebugSearchVisitor();
-		ComputeNumberVisitor visitor2 = new ComputeNumberVisitor();
-		ComputeLevelVisitor visitor3 = new ComputeLevelVisitor();
+		ComputeLevelVisitor levelVisitor = new ComputeLevelVisitor();
+		DebugSearchVisitor debugSearchVisitor = new DebugSearchVisitor(levelVisitor);
+		ComputeNumberVisitor numberVisitor = new ComputeNumberVisitor();
 		
-		bfs.addSearchVisitor(visitor);
-		bfs.addSearchVisitor(visitor2);
-		bfs.addSearchVisitor(visitor3);
+		
+		bfs.addSearchVisitor(debugSearchVisitor);
+		bfs.addSearchVisitor(numberVisitor);
+		bfs.addSearchVisitor(new PauseVisitor());
+		
+		bfs.setSearchDirection(EdgeDirection.IN);
 		
 		bfs.solveTraversalFromVertex(v1);
 		
@@ -41,9 +45,9 @@ public class TryBFS {
 		System.out.println();
 		System.out.println("edge order: \n" + bfs.getEdgeOrder());
 		System.out.println();
-		System.out.println("number: \n" + visitor2.getNumber());
+		System.out.println("number: \n" + numberVisitor.getNumber());
 		System.out.println();
-		System.out.println("level: \n" + visitor3.getLevel());
+		System.out.println("level: \n" + levelVisitor.getLevel());
 		System.out.println();
 		System.out.println(bfs.getState());
 		System.out.println("Fini");
