@@ -6,9 +6,9 @@ import de.uni_koblenz.jgralab.algolib.functions.IntFunction;
 import de.uni_koblenz.jgralab.graphmarker.IntegerVertexMarker;
 
 public class ComputeNumberVisitor extends SearchAlgorithmVisitor {
-	
+
 	protected IntFunction<Vertex> number;
-	
+
 	public IntFunction<Vertex> getIntermediateNumber() {
 		return number;
 	}
@@ -19,8 +19,8 @@ public class ComputeNumberVisitor extends SearchAlgorithmVisitor {
 			return number;
 		} else {
 			throw new IllegalStateException(
-					"Parameters may only be changed when in state "
-							+ AlgorithmStates.INITIALIZED);
+					"The result cannot be obtained while in this state: "
+							+ algorithm.getState());
 		}
 	}
 
@@ -33,5 +33,5 @@ public class ComputeNumberVisitor extends SearchAlgorithmVisitor {
 	public void reset() {
 		number = new IntegerVertexMarker(algorithm.getGraph());
 	}
-	
+
 }

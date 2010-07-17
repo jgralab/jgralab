@@ -31,4 +31,8 @@ public class ArrayFunction<RANGE> implements IntDomainFunction<RANGE> {
 		return Arrays.toString(values);
 	}
 
+	public RANGE[] getArray() {
+		return values;
+	}
+
 }
