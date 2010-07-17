@@ -39,8 +39,8 @@ public class DebugSearchVisitor extends DFSVisitorAdapter {
 	protected ComputeLevelVisitor clv;
 	protected IntFunction<Vertex> level;
 
-	public DebugSearchVisitor() {
-		clv = new ComputeLevelVisitor();
+	public DebugSearchVisitor(ComputeLevelVisitor clv) {
+		this.clv = clv;
 	}
 
 	private void printIndent(Vertex v) {

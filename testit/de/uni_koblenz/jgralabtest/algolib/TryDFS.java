@@ -27,13 +27,12 @@ public class TryDFS {
 		graph.createSimpleEdge(v4, v5);
 		graph.createSimpleEdge(v3, v5);
 		RecursiveDepthFirstSearch dfs = new RecursiveDepthFirstSearch(graph);
-		DebugSearchVisitor visitor = new DebugSearchVisitor();
-		ComputeNumberVisitor visitor2 = new ComputeNumberVisitor();
-		ComputeLevelVisitor visitor3 = new ComputeLevelVisitor();
+		ComputeLevelVisitor levelVisitor = new ComputeLevelVisitor();
+		DebugSearchVisitor debugSearchVisitor = new DebugSearchVisitor(levelVisitor);
+		ComputeNumberVisitor numberVisitor = new ComputeNumberVisitor();
 
-		dfs.addDFSVisitor(visitor);
-		dfs.addSearchVisitor(visitor2);
-		dfs.addSearchVisitor(visitor3);
+		dfs.addDFSVisitor(debugSearchVisitor);
+		dfs.addSearchVisitor(numberVisitor);
 
 		dfs.solveTraversalFromVertex(v1);
 
@@ -41,9 +40,9 @@ public class TryDFS {
 		System.out.println();
 		System.out.println("edge order: \n" + dfs.getEdgeOrder());
 		System.out.println();
-		System.out.println("number: \n" + visitor2.getNumber());
+		System.out.println("number: \n" + numberVisitor.getNumber());
 		System.out.println();
-		System.out.println("level: \n" + visitor3.getLevel());
+		System.out.println("level: \n" + levelVisitor.getLevel());
 		System.out.println();
 		System.out.println(dfs.getState());
 		System.out.println("Fini");
