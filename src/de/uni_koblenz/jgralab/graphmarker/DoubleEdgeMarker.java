@@ -41,6 +41,16 @@ public class DoubleEdgeMarker extends DoubleGraphMarker<Edge> {
 	public double mark(Edge edge, double value) {
 		return super.mark(edge.getNormalEdge(), value);
 	}
+	
+	@Override
+	public boolean isMarked(Edge edge){
+		return super.isMarked(edge.getNormalEdge());
+	}
+	
+	@Override
+	public double getMark(Edge edge){
+		return super.getMark(edge.getNormalEdge());
+	}
 
 	@Override
 	public Iterable<Edge> getMarkedElements() {
