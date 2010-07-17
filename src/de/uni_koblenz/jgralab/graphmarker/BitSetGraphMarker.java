@@ -106,9 +106,9 @@ public abstract class BitSetGraphMarker<T extends GraphElement> extends
 
 	@Override
 	public void set(T parameter, boolean value) {
-		if(value){
+		if (value) {
 			mark(parameter);
-		} else{
+		} else {
 			removeMark(parameter);
 		}
 	}

@@ -199,7 +199,5 @@ public abstract class MapGraphMarker<T extends AttributedElement, O> extends
 	public void set(T parameter, O value) {
 		mark(parameter, value);
 	}
-	
-	
 
 }

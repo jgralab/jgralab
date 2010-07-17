@@ -232,4 +232,5 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement> implements
 			removeMark(parameter);
 		}
 	}
+
 }
