@@ -28,6 +28,11 @@ public class BitSetEdgeMarker extends BitSetGraphMarker<Edge> {
 	public boolean mark(Edge edge) {
 		return super.mark(edge.getNormalEdge());
 	}
+	
+	@Override
+	public boolean isMarked(Edge edge){
+		return super.isMarked(edge.getNormalEdge());
+	}
 
 	@Override
 	public Iterable<Edge> getMarkedElements() {
