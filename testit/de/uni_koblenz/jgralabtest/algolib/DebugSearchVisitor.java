@@ -3,7 +3,7 @@ package de.uni_koblenz.jgralabtest.algolib;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.GraphAlgorithm;
-import de.uni_koblenz.jgralab.algolib.algorithms.search.ComputeLevelVisitor;
+import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.ComputeLevelVisitor;
 import de.uni_koblenz.jgralab.algolib.functions.IntFunction;
 import de.uni_koblenz.jgralab.algolib.visitors.DFSVisitorAdapter;
 

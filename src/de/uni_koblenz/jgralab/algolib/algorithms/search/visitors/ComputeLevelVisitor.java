@@ -1,4 +1,4 @@
-package de.uni_koblenz.jgralab.algolib.algorithms.search;
+package de.uni_koblenz.jgralab.algolib.algorithms.search.visitors;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
