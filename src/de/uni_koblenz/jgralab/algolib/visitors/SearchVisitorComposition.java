@@ -1,7 +1,7 @@
 package de.uni_koblenz.jgralab.algolib.visitors;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.LinkedList;
+import java.util.List;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
@@ -9,10 +9,10 @@ import de.uni_koblenz.jgralab.Vertex;
 public class SearchVisitorComposition extends SimpleVisitorComposition
 		implements SearchVisitor {
 
-	private Set<SearchVisitor> searchVisitors;
+	private List<SearchVisitor> searchVisitors;
 
 	public SearchVisitorComposition() {
-		searchVisitors = new HashSet<SearchVisitor>();
+		searchVisitors = new LinkedList<SearchVisitor>();
 	}
 	
 	public void addSearchVisitor(SearchVisitor newVisitor){
