@@ -4,6 +4,7 @@ import de.uni_koblenz.jgralab.algolib.algorithms.search.DepthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.RecursiveDepthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.ComputeLevelVisitor;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.ComputeNumberVisitor;
+import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.ComputeParentVisitor;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.ComputeRorderVisitor;
 import de.uni_koblenz.jgralabtest.schemas.algolib.simple.SimpleGraph;
 import de.uni_koblenz.jgralabtest.schemas.algolib.simple.SimpleSchema;
@@ -33,10 +34,12 @@ public class TryDFS {
 		DebugSearchVisitor debugSearchVisitor = new DebugSearchVisitor(levelVisitor);
 		ComputeNumberVisitor numberVisitor = new ComputeNumberVisitor();
 		ComputeRorderVisitor rorderVisitor = new ComputeRorderVisitor();
+		ComputeParentVisitor parentVisitor = new ComputeParentVisitor();
 
 		dfs.addDFSVisitor(debugSearchVisitor);
 		dfs.addSearchVisitor(numberVisitor);
 		dfs.addDFSVisitor(rorderVisitor);
+		dfs.addSearchVisitor(parentVisitor);
 
 		dfs.solveTraversalFromVertex(v1);
 
@@ -49,6 +52,8 @@ public class TryDFS {
 		System.out.println("number: \n" + numberVisitor.getNumber());
 		System.out.println();
 		System.out.println("level: \n" + levelVisitor.getLevel());
+		System.out.println();
+		System.out.println("parent: \n" + parentVisitor.getParent());
 		System.out.println();
 		System.out.println(dfs.getState());
 		System.out.println("Fini");
