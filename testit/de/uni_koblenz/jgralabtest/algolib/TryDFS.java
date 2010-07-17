@@ -2,6 +2,8 @@ package de.uni_koblenz.jgralabtest.algolib;
 
 import de.uni_koblenz.jgralab.algolib.algorithms.search.ComputeLevelVisitor;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.ComputeNumberVisitor;
+import de.uni_koblenz.jgralab.algolib.algorithms.search.ComputeRorderVisitor;
+import de.uni_koblenz.jgralab.algolib.algorithms.search.DepthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.RecursiveDepthFirstSearch;
 import de.uni_koblenz.jgralabtest.schemas.algolib.simple.SimpleGraph;
 import de.uni_koblenz.jgralabtest.schemas.algolib.simple.SimpleSchema;
@@ -26,17 +28,21 @@ public class TryDFS {
 		graph.createSimpleEdge(v3, v4);
 		graph.createSimpleEdge(v4, v5);
 		graph.createSimpleEdge(v3, v5);
-		RecursiveDepthFirstSearch dfs = new RecursiveDepthFirstSearch(graph);
+		DepthFirstSearch dfs = new RecursiveDepthFirstSearch(graph);
 		ComputeLevelVisitor levelVisitor = new ComputeLevelVisitor();
 		DebugSearchVisitor debugSearchVisitor = new DebugSearchVisitor(levelVisitor);
 		ComputeNumberVisitor numberVisitor = new ComputeNumberVisitor();
+		ComputeRorderVisitor rorderVisitor = new ComputeRorderVisitor();
 
 		dfs.addDFSVisitor(debugSearchVisitor);
 		dfs.addSearchVisitor(numberVisitor);
+		dfs.addDFSVisitor(rorderVisitor);
 
 		dfs.solveTraversalFromVertex(v1);
 
 		System.out.println("vertex order: \n" + dfs.getVertexOrder());
+		System.out.println();
+		System.out.println("rorder: \n" + rorderVisitor.getRorder());
 		System.out.println();
 		System.out.println("edge order: \n" + dfs.getEdgeOrder());
 		System.out.println();

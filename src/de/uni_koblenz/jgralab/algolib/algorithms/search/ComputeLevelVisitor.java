@@ -35,8 +35,8 @@ public class ComputeLevelVisitor extends SearchAlgorithmVisitor {
 			return level;
 		} else {
 			throw new IllegalStateException(
-					"Parameters may only be changed when in state "
-							+ AlgorithmStates.INITIALIZED);
+					"The result cannot be obtained while in this state: "
+							+ algorithm.getState());
 		}
 	}
 
