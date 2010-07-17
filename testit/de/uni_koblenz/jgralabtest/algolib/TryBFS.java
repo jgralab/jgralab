@@ -2,8 +2,8 @@ package de.uni_koblenz.jgralabtest.algolib;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.BreadthFirstSearch;
-import de.uni_koblenz.jgralab.algolib.algorithms.search.ComputeLevelVisitor;
-import de.uni_koblenz.jgralab.algolib.algorithms.search.ComputeNumberVisitor;
+import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.ComputeLevelVisitor;
+import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.ComputeNumberVisitor;
 import de.uni_koblenz.jgralabtest.schemas.algolib.simple.SimpleGraph;
 import de.uni_koblenz.jgralabtest.schemas.algolib.simple.SimpleSchema;
 import de.uni_koblenz.jgralabtest.schemas.algolib.simple.SimpleVertex;

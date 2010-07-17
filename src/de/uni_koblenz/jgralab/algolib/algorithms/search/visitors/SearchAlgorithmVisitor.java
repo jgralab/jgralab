@@ -1,6 +1,7 @@
-package de.uni_koblenz.jgralab.algolib.algorithms.search;
+package de.uni_koblenz.jgralab.algolib.algorithms.search.visitors;
 
 import de.uni_koblenz.jgralab.algolib.algorithms.GraphAlgorithm;
+import de.uni_koblenz.jgralab.algolib.algorithms.search.SearchAlgorithm;
 import de.uni_koblenz.jgralab.algolib.visitors.SearchVisitorAdapter;
 
 public class SearchAlgorithmVisitor extends SearchVisitorAdapter {
