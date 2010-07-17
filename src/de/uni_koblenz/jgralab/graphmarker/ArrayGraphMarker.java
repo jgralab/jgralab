@@ -1,5 +1,7 @@
 package de.uni_koblenz.jgralab.graphmarker;
 
+import java.util.Iterator;
+
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
@@ -127,6 +129,28 @@ public abstract class ArrayGraphMarker<T extends GraphElement, O> extends
 	@Override
 	public void set(T parameter, O value) {
 		mark(parameter, value);
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder out = new StringBuilder();
+		out.append("[");
+		Iterator<T> iter = getMarkedElements().iterator();
+		if (iter.hasNext()) {
+			T next = iter.next();
+			out.append(next);
+			out.append(" -> ");
+			out.append(get(next));
+			while (iter.hasNext()) {
+				out.append(",\n");
+				next = iter.next();
+				out.append(next);
+				out.append(" -> ");
+				out.append(get(next));
+			}
+		}
+		out.append("]");
+		return out.toString();
 	}
 
 }
