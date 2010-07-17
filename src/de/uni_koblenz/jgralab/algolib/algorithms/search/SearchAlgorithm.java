@@ -168,4 +168,12 @@ public abstract class SearchAlgorithm extends HybridGraphAlgorithm implements
 		return searchDirection;
 	}
 
+	@Override
+	protected void done() {
+		if (state != AlgorithmStates.CANCELED) {
+			state = num < graph.getVCount() + 1 ? AlgorithmStates.STOPPED
+					: AlgorithmStates.FINISHED;
+		}
+	}
+
 }
