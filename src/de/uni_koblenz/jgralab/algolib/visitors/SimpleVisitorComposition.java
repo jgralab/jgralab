@@ -1,7 +1,7 @@
 package de.uni_koblenz.jgralab.algolib.visitors;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.LinkedList;
+import java.util.List;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
@@ -9,10 +9,10 @@ import de.uni_koblenz.jgralab.Vertex;
 public class SimpleVisitorComposition extends SimpleVisitorAdapter implements
 		SimpleVisitor {
 
-	private Set<SimpleVisitor> simpleVisitors;
+	private List<SimpleVisitor> simpleVisitors;
 
 	public SimpleVisitorComposition() {
-		simpleVisitors = new HashSet<SimpleVisitor>();
+		simpleVisitors = new LinkedList<SimpleVisitor>();
 	}
 
 	public void addSimpleVisitor(SimpleVisitor newVisitor) {

@@ -1,17 +1,17 @@
 package de.uni_koblenz.jgralab.algolib.visitors;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.LinkedList;
+import java.util.List;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 
 public class DFSVisitorComposition extends SearchVisitorComposition implements
 		DFSVisitor {
-	private Set<DFSVisitor> dfsVisitors;
+	private List<DFSVisitor> dfsVisitors;
 
 	public DFSVisitorComposition() {
-		dfsVisitors = new HashSet<DFSVisitor>();
+		dfsVisitors = new LinkedList<DFSVisitor>();
 	}
 
 	public void addDFSVisitor(DFSVisitor newVisitor) {
