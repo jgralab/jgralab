@@ -149,6 +149,7 @@ public abstract class MapGraphMarker<T extends AttributedElement, O> extends
 	 * @return An {@link Iterable} of all {@link T}s in the {@link Graph} that
 	 *         are marked by this marker.
 	 */
+	@Override
 	public Iterable<T> getMarkedElements() {
 		return tempAttributeMap.keySet();
 	}

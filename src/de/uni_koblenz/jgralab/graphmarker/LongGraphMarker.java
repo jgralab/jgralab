@@ -12,7 +12,7 @@ public abstract class LongGraphMarker<T extends GraphElement> extends
 	protected long[] temporaryAttributes;
 	protected int marked;
 	protected long unmarkedValue;
-	protected long version; 
+	protected long version;
 
 	protected LongGraphMarker(Graph graph, int size) {
 		super(graph);
@@ -130,5 +130,5 @@ public abstract class LongGraphMarker<T extends GraphElement> extends
 		}
 		this.unmarkedValue = newUnmarkedValue;
 	}
-
+	
 }

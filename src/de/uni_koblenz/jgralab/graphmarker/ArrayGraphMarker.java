@@ -5,7 +5,7 @@ import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 
 /**
- * This class is the abstract superclass of generic graph markers.
+ * This class is the abstract superclass of generic array graph markers.
  * 
  * @author ist@uni-koblenz.de
  * 

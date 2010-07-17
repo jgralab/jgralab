@@ -114,6 +114,7 @@ public class BooleanGraphMarker extends AbstractGraphMarker<AttributedElement> {
 	 * 
 	 * @return the markedElements
 	 */
+	@Override
 	public Iterable<AttributedElement> getMarkedElements() {
 		return markedElements;
 	}
