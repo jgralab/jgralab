@@ -148,18 +148,18 @@ public abstract class IntegerGraphMarker<T extends GraphElement> extends
 	public void set(T parameter, int value) {
 		mark(parameter, value);
 	}
-	
+
 	@Override
-	public String toString(){
+	public String toString() {
 		StringBuilder out = new StringBuilder();
 		out.append("[");
 		Iterator<T> iter = getMarkedElements().iterator();
-		if(iter.hasNext()){
+		if (iter.hasNext()) {
 			T next = iter.next();
 			out.append(next);
 			out.append(" -> ");
 			out.append(get(next));
-			while(iter.hasNext()){
+			while (iter.hasNext()) {
 				out.append(",\n");
 				next = iter.next();
 				out.append(next);

@@ -8,8 +8,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 
-public class DoubleVertexMarker extends
-		DoubleGraphMarker<Vertex> {
+public class DoubleVertexMarker extends DoubleGraphMarker<Vertex> {
 
 	public DoubleVertexMarker(Graph graph) {
 		super(graph, graph.getMaxVCount() + 1);
@@ -54,25 +53,28 @@ public class DoubleVertexMarker extends
 					@Override
 					protected void moveIndex() {
 						int length = temporaryAttributes.length;
-						while (index < length && Double.isNaN(temporaryAttributes[index])) {
+						while (index < length
+								&& Double.isNaN(temporaryAttributes[index])) {
 							index++;
 						}
 					}
 
 					@Override
 					public Vertex next() {
-						if(!hasNext()){
-							throw new NoSuchElementException(NO_MORE_ELEMENTS_ERROR_MESSAGE);
+						if (!hasNext()) {
+							throw new NoSuchElementException(
+									NO_MORE_ELEMENTS_ERROR_MESSAGE);
 						}
-						if(version != DoubleVertexMarker.this.version){
-							throw new ConcurrentModificationException(MODIFIED_ERROR_MESSAGE);
+						if (version != DoubleVertexMarker.this.version) {
+							throw new ConcurrentModificationException(
+									MODIFIED_ERROR_MESSAGE);
 						}
 						Vertex next = graph.getVertex(index++);
 						moveIndex();
 						return next;
-					}		
+					}
 				};
-				
+
 			}
 
 		};

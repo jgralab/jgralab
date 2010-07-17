@@ -131,7 +131,7 @@ public abstract class LongGraphMarker<T extends GraphElement> extends
 		}
 		this.unmarkedValue = newUnmarkedValue;
 	}
-
+	
 	@Override
 	public long get(T parameter) {
 		return getMark(parameter);
