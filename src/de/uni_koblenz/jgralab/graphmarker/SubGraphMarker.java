@@ -163,23 +163,26 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement> {
 
 	@Override
 	public Iterable<GraphElement> getMarkedElements() {
-		return new Iterable<GraphElement>(){
+		return new Iterable<GraphElement>() {
 
 			@Override
 			public Iterator<GraphElement> iterator() {
 				return new ArrayGraphMarkerIterator<GraphElement>(version) {
-					
+
 					Iterator<Vertex> vertexIterator;
 					Iterator<Edge> edgeIterator;
-					
+
 					{
-						vertexIterator = vertexGraphMarker.getMarkedElements().iterator();
-						edgeIterator = edgeGraphMarker.getMarkedElements().iterator();
+						vertexIterator = vertexGraphMarker.getMarkedElements()
+								.iterator();
+						edgeIterator = edgeGraphMarker.getMarkedElements()
+								.iterator();
 					}
-					
+
 					@Override
 					public boolean hasNext() {
-						return vertexIterator.hasNext() || edgeIterator.hasNext();
+						return vertexIterator.hasNext()
+								|| edgeIterator.hasNext();
 					}
 
 					@Override
@@ -189,21 +192,24 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement> {
 
 					@Override
 					public GraphElement next() {
-						if(version != SubGraphMarker.this.version){
-							throw new ConcurrentModificationException(MODIFIED_ERROR_MESSAGE);
+						if (version != SubGraphMarker.this.version) {
+							throw new ConcurrentModificationException(
+									MODIFIED_ERROR_MESSAGE);
 						}
-						if(vertexIterator.hasNext()){
+						if (vertexIterator.hasNext()) {
 							return vertexIterator.next();
 						}
-						if(edgeIterator.hasNext()){
+						if (edgeIterator.hasNext()) {
 							return edgeIterator.next();
 						}
-						throw new NoSuchElementException(NO_MORE_ELEMENTS_ERROR_MESSAGE);
+						throw new NoSuchElementException(
+								NO_MORE_ELEMENTS_ERROR_MESSAGE);
 					}
-					
+
 				};
 			}
-			
+
 		};
 	}
+
 }
