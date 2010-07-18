@@ -193,9 +193,19 @@ public abstract class GraphAlgorithm {
 	/**
 	 * This method sets the state to <code>RUNNING</code>. It must be called by
 	 * the execute method when the actual algorithm starts running.
+	 * 
+	 * @throws IllegalStateException
+	 *             if this algorithm is not in state <code>INITIALIZED</code> or
+	 *             <code>STOPPED</code>.
 	 */
 	protected void startRunning() {
-		state = AlgorithmStates.RUNNING;
+		if (state == AlgorithmStates.INITIALIZED
+				|| state == AlgorithmStates.STOPPED) {
+			state = AlgorithmStates.RUNNING;
+		} else {
+			throw new IllegalStateException(
+					"The algorithm cannot be started, when in state " + state);
+		}
 	}
 
 	/**
