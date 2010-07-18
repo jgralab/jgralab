@@ -166,6 +166,7 @@ public abstract class GraphAlgorithm {
 	 */
 	public void terminate() {
 		if (getState() == AlgorithmStates.RUNNING) {
+			done();
 			throw new AlgorithmTerminatedException("Terminated by algorithm.");
 		} else {
 			throw new IllegalStateException(
