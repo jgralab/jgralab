@@ -18,6 +18,11 @@ import de.uni_koblenz.jgralab.graphmarker.BitSetVertexMarker;
 public abstract class SearchAlgorithm extends HybridGraphAlgorithm implements
 		TraversalFromVertexSolver {
 
+	/**
+	 * This is the default value for <code>navigable</code>. By default, all
+	 * edges that are reachable are also navigable. So this method always
+	 * returns true.
+	 */
 	public static final BooleanFunction<Edge> DEFAULT_NAVIGABLE = new BooleanFunction<Edge>() {
 
 		@Override
@@ -37,16 +42,52 @@ public abstract class SearchAlgorithm extends HybridGraphAlgorithm implements
 		}
 
 	};
+
+	/**
+	 * This is the default value for the parameter <code>searchDirection</code>.
+	 * By default the algorithm follows only outgoing edges, which also means
+	 * that the graph is interpreted as a directed graph.
+	 */
 	public static final EdgeDirection DEFAULT_SEARCH_DIRECTION = EdgeDirection.OUT;
 
+	/**
+	 * A function that tells if a reachable edge is also navigable.
+	 */
 	protected BooleanFunction<Edge> navigable;
+
+	/**
+	 * The search direction this search algorithm uses.
+	 */
 	protected EdgeDirection searchDirection;
 
+	/**
+	 * The intermediate result <code>vertexOrder</code>.
+	 */
 	protected Vertex[] vertexOrder;
+
+	/**
+	 * The intermediate result <code>edgeOrder</code>.
+	 */
 	protected Edge[] edgeOrder;
+
+	/**
+	 * A marker for visited vertices.
+	 */
 	protected BooleanFunction<Vertex> visitedVertices;
+
+	/**
+	 * A marker for visited edges.
+	 */
 	protected BooleanFunction<Edge> visitedEdges;
+
+	/**
+	 * A runtime variable needed to compute <code>vertexOrder</code>.
+	 */
 	protected int num;
+
+	/**
+	 * A runtime variable needed to compute <code>edgeOrder</code>.
+	 */
 	protected int eNum;
 
 	public SearchAlgorithm(Graph graph, BooleanFunction<GraphElement> subgraph,
@@ -78,28 +119,52 @@ public abstract class SearchAlgorithm extends HybridGraphAlgorithm implements
 		this.searchDirection = DEFAULT_SEARCH_DIRECTION;
 	}
 
+	/**
+	 * Adds a search visitor to this search algorithm.
+	 * 
+	 * @param visitor
+	 *            the <code>SearchVisitor</code> to add.
+	 */
 	public abstract void addSearchVisitor(SearchVisitor visitor);
 
+	/**
+	 * @return the algorithm result <code>visitedVertices</code>.
+	 */
 	public BooleanFunction<Vertex> getVisitedVertices() {
 		return visitedVertices;
 	}
 
+	/**
+	 * @return the algorithm result <code>visitedEdges</code>.
+	 */
 	public BooleanFunction<Edge> getVisitedEdges() {
 		return visitedEdges;
 	}
 
+	/**
+	 * @return the intermediate result <code>edgeOrder</code>.
+	 */
 	public Edge[] getIntermediateEdgeOrder() {
 		return edgeOrder;
 	}
 
+	/**
+	 * @return the intermediate result <code>vertexOrder</code>.
+	 */
 	public Vertex[] getIntermediateVertexOrder() {
 		return vertexOrder;
 	}
 
+	/**
+	 * @return the intermediate value of <code>num</code>.
+	 */
 	public int getIntermediateNum() {
 		return num;
 	}
 
+	/**
+	 * @return the intermediate value of <code>eNum</code>.
+	 */
 	public int getIntermediateENum() {
 		return eNum;
 	}
@@ -154,6 +219,13 @@ public abstract class SearchAlgorithm extends HybridGraphAlgorithm implements
 		return searchDirection != EdgeDirection.INOUT;
 	}
 
+	/**
+	 * Sets the search direction to the given value. If "INOUT" is given, the
+	 * algorithm interprets the graph as undirected graph.
+	 * 
+	 * @param searchDirection
+	 *            the search direction this search algorithm uses.
+	 */
 	public void setSearchDirection(EdgeDirection searchDirection) {
 		if (getState() == AlgorithmStates.INITIALIZED) {
 			this.searchDirection = searchDirection;
@@ -164,6 +236,9 @@ public abstract class SearchAlgorithm extends HybridGraphAlgorithm implements
 		}
 	}
 
+	/**
+	 * @return the current search direction of the algorithm.
+	 */
 	public EdgeDirection getSearchDirection() {
 		return searchDirection;
 	}
@@ -175,5 +250,4 @@ public abstract class SearchAlgorithm extends HybridGraphAlgorithm implements
 					: AlgorithmStates.FINISHED;
 		}
 	}
-
 }

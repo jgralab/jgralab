@@ -5,7 +5,7 @@ import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 
 public abstract class HybridGraphAlgorithm extends GraphAlgorithm {
-	
+
 	public HybridGraphAlgorithm(Graph graph) {
 		super(graph);
 	}
@@ -16,6 +16,12 @@ public abstract class HybridGraphAlgorithm extends GraphAlgorithm {
 		setDirected(directed);
 	}
 
+	/**
+	 * Sets the interpretation mode of the current graph.
+	 * 
+	 * @param directed
+	 *            if true, the current graph is interpreted as a directed graph.
+	 */
 	public abstract void setDirected(boolean directed);
 
 }
