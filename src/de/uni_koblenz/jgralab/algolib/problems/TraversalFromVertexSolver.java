@@ -7,7 +7,8 @@ import de.uni_koblenz.jgralab.algolib.functions.IntDomainFunction;
 public interface TraversalFromVertexSolver {
 	/**
 	 * Traverses the reachable subgraph from <code>root</code> and computes the
-	 * order the vertices and edges are visited.
+	 * order the vertices and edges are visited. The graph can be directed or
+	 * undirected.
 	 * 
 	 * @param root
 	 *            the vertex to start the traversal at
