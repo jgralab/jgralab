@@ -38,6 +38,11 @@ public abstract class GraphAlgorithm {
 		resetParameters();
 		reset();
 	}
+	
+	public GraphAlgorithm(Graph graph, BooleanFunction<GraphElement> subgraph) {
+		this(graph);
+		this.subgraph = subgraph;
+	}
 
 	public void reset() {
 		if (getState() != AlgorithmStates.RUNNING) {
@@ -56,11 +61,6 @@ public abstract class GraphAlgorithm {
 					"The parameters may only be reseted to their default values when in state "
 							+ AlgorithmStates.INITIALIZED);
 		}
-	}
-
-	public GraphAlgorithm(Graph graph, BooleanFunction<GraphElement> subgraph) {
-		this(graph);
-		this.subgraph = subgraph;
 	}
 
 	public Graph getGraph() {
@@ -108,7 +108,6 @@ public abstract class GraphAlgorithm {
 
 	protected synchronized void cancelIfInterrupted() {
 		if (Thread.interrupted()) {
-			// ensures the termination of the algorithm
 			state = AlgorithmStates.CANCELED;
 			throw new AlgorithmTerminatedException("Thread interrupted.");
 		}
