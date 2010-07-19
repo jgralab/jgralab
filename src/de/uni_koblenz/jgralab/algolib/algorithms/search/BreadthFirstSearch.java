@@ -26,6 +26,10 @@ public class BreadthFirstSearch extends SearchAlgorithm implements
 	}
 
 	protected int firstV;
+	
+	protected int getIntermediateFirstV(){
+		return firstV;
+	}
 
 	@Override
 	public void reset() {
@@ -93,5 +97,4 @@ public class BreadthFirstSearch extends SearchAlgorithm implements
 		}
 		done();
 	}
-
 }
