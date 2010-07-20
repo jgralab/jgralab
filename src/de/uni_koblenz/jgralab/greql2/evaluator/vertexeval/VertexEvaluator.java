@@ -263,7 +263,8 @@ public abstract class VertexEvaluator {
 				if (this instanceof SimpleDeclarationEvaluator) {
 					int size = 1;
 					for (JValue val : result.toJValueList()) {
-						VariableDeclaration d = (VariableDeclaration) val.toObject();
+						VariableDeclaration d = (VariableDeclaration) val
+								.toObject();
 						size *= d.getDefinitionCardinality();
 					}
 					evaluationLogger.logResultSize(getLoggingName(), size);
@@ -616,6 +617,7 @@ public abstract class VertexEvaluator {
 			Constructor constructor = evalClass.getConstructor(argsClass);
 			VertexEvaluator vertexEval = (VertexEvaluator) constructor
 					.newInstance(vertex, eval);
+			vertexEval.subgraph = eval.getSubgraphMarker();
 			return vertexEval;
 		} catch (ClassNotFoundException ex) {
 			throw new EvaluateException(className, ex);
