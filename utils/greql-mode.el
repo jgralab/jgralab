@@ -679,12 +679,39 @@ for some variable declared as
 
 ;;** Auto-Complete support
 
+;; copied from bbdb
+(defsubst greql-string-trim (string)
+  "Lose leading and trailing whitespace.  Also remove all
+properties from string."
+  (if (string-match "\\`[ \t\n]+" string)
+      (setq string (substring string (match-end 0))))
+  (if (string-match "[ \t\n]+\\'" string)
+      (setq string (substring string 0 (match-beginning 0))))
+  ;; This is not ideologically blasphemous.  It is a bad function to
+  ;; use on regions of a buffer, but since this is our string, we can
+  ;; do whatever we want with it. --Colin
+  (set-text-properties 0 (length string) nil string)
+  string)
+
 ;; TODO: Add a documentation function!
 (when (featurep 'auto-complete)
+  (defun greql-ac-documentation (symbol)
+    (cond
+     ((stringp symbol)
+      (greql-string-trim symbol))
+     ((and (listp symbol) (= (length symbol) 1))
+      (greql-ac-documentation (car symbol)))
+     ((and (listp symbol) (> (leyngth symbol) 1))
+      (greql-ac-documentation (cadr symbol)))
+     ((symbolp symbol)
+      (symbol-name symbol))
+     (t symbol)))
+
   (ac-define-source greql
     '((candidates . greql-completion-list-at-point)
+      (document   . greql-ac-documentation)
       (symbol     . "GReQL")
-      (requires . 0)))
+      (requires   . 1)))
 
   (add-to-list 'ac-modes 'greql-mode)
 
