@@ -617,7 +617,6 @@ public abstract class VertexEvaluator {
 			Constructor constructor = evalClass.getConstructor(argsClass);
 			VertexEvaluator vertexEval = (VertexEvaluator) constructor
 					.newInstance(vertex, eval);
-			vertexEval.subgraph = eval.getSubgraphMarker();
 			return vertexEval;
 		} catch (ClassNotFoundException ex) {
 			throw new EvaluateException(className, ex);
