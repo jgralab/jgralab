@@ -1054,7 +1054,7 @@ public class GreqlEvaluator {
 
 		long plainEvaluationStartTime = System.currentTimeMillis();
 		result = vertexEvalGraphMarker.getMark(
-				queryGraph.getFirstGreql2Expression()).getResult(null);
+				queryGraph.getFirstGreql2Expression()).getResult(subgraphMarker);
 
 		// last, remove all added tempAttributes, currently, this are only
 		// subgraphAttributes
