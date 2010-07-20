@@ -44,7 +44,7 @@
 	<target name="with.clover">
     	  <clover-setup/>
 	</target>
-o
+	
 	<target name="clover.html">
     	  <clover-html-report outdir="${project.dir}/build/clover-report"
                               title="JGraLab Clover Report"/>
