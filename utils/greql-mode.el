@@ -65,8 +65,7 @@
                (:meta keyword :name "map" :description "BagConstruction: map(<<KeyExp> -> <ValueExp>>+)")
                (:meta keyword :name "import" :description "ImportStatement: import <Type>|<Wildcart>")
                (:meta keyword :name "true" :description "Logically true")
-               (:meta keyword :name "false" :description "Logically false")
-               (:meta keyword :name "null" :description "Absence of a value"))))
+               (:meta keyword :name "false" :description "Logically false"))))
     (let ((rx (concat "\\<" (regexp-opt
                              (mapcar (lambda (e) (plist-get e :name))
                                      lst)
@@ -394,87 +393,57 @@ by normal completion."
        (t (message "That's the only possible completion.")))))
   (setq greql--last-completion-list completion-list))
 
-(defun greql-complete (arg)
-  "Complete word at point intelligently.
+(defun greql-completion-list-at-point (&optional arg)
+  "Return a list of possible completions at point.
 When ARG is given, complete more restrictive.  For example, if
 there's a variable that is bound to either a Foo or a Bar, then
 show only those attributes, which are valid for both Foo and Bar
-objects."
-  (interactive "P")
+elements."
   (cond
    ;; Complete vertex classes
    ((or (greql-vertex-set-expression-p)
         (greql-vsubgraph-expression-p)
         (greql-start-or-goal-restriction-p nil))
-    (greql-complete-vertexclass))
+    (nconc (greql-import-completion-list '(VertexClass))
+           (greql-completion-list '(VertexClass))))
    ;; Complete edge classes
    ((or (greql-edge-set-expression-p)
         (greql-esubgraph-expression-p)
         (greql-edge-restriction-p nil))
-    (greql-complete-edgeclass))
+    (nconc (greql-import-completion-list '(EdgeClass))
+           (greql-completion-list '(EdgeClass))))
    ;; Complete any classes
    ((greql-import-p)
-    (greql-complete-anyclass))
+    (nconc (greql-import-completion-list '(VertexClass EdgeClass))
+           (greql-completion-list '(VertexClass EdgeClass))))
    ;; complete attributes
    ((greql-variable-p)
-    (greql-complete-attributes arg))
+    (greql-attribute-completion-list
+     (tg-all-attributes-multi (car vartypes) (cadr vartypes) arg)))
    ;; complete keywords / functions
-   (t (greql-complete-keyword-or-function))))
+   (t
+    (flet ((format-entry (fun)
+                         (let* ((name (plist-get fun :name))
+                                (i (- 79 (length name))))
+                           (list name
+                                 (format (concat "% " (number-to-string i) "."
+                                                 (number-to-string (- i 2)) "s")
+                                         (plist-get fun :description))))))
+      (append
+       (mapcar 'format-entry
+               greql-keywords)
+       (mapcar 'format-entry
+               greql-functions))))))
 
-(defun greql-complete-attributes (arg)
-  "Complete attributes of the current variable.
-If a prefix ARG is given, complete only attributes that are
-applicable for all possible bound types.  For example, if there's
-a variable that is bound to either a Foo or a Bar, then show only
-those attributes, which are valid for both Foo and Bar objects."
+(defun greql-complete (arg)
+  "Complete word at point intelligently.
+When ARG is given, complete more restrictive.  For example, if
+there's a variable that is bound to either a Foo or a Bar, then
+show only those attributes, which are valid for both Foo and Bar
+elements."
   (interactive "P")
-  (let ((vartypes (greql-variable-types)))
-    (when vartypes
-      (let ((compl-list (greql-attribute-completion-list
-                         (tg-all-attributes-multi (car vartypes) (cadr vartypes) arg))))
-        (greql-complete-1 compl-list "[.]")))))
-
-(defun greql-complete-anyclass ()
-  "Complete vertex and edge classes."
-  (interactive)
-  (let ((types '(EdgeClass VertexClass)))
-    (greql-complete-1 (nconc (greql-import-completion-list types)
-                             (greql-completion-list types)))))
-
-(defun greql-complete-vertexclass ()
-  "Complete vertex classes."
-  (interactive)
-  (greql-complete-1 (nconc (greql-import-completion-list '(VertexClass))
-                           (greql-completion-list '(VertexClass)))))
-
-(defun greql-complete-edgeclass ()
-  "Complete edge classes."
-  (interactive)
-  (greql-complete-1 (nconc (greql-import-completion-list '(EdgeClass))
-                           (greql-completion-list '(EdgeClass)))))
-
-(defun greql-complete-domain ()
-  "Complete domains."
-  (interactive)
-  (let ((types '(EnumDomain RecordDomain ListDomain SetDomain BagDomain MapDomain)))
-    (greql-complete-1 (nconc (greql-import-completion-list types)
-                             (greql-completion-list types)))))
-
-(defun greql-complete-keyword-or-function ()
-  "Complete keywords and functions."
-  (interactive)
-  (flet ((format-entry (fun)
-                       (let* ((name (plist-get fun :name))
-                              (i (- 79 (length name))))
-                         (list name
-                               (format (concat "% " (number-to-string i) "."
-                                               (number-to-string (- i 2)) "s")
-                                       (plist-get fun :description))))))
-    (greql-complete-1 (append
-                       (mapcar 'format-entry
-                               greql-keywords)
-                       (mapcar 'format-entry
-                               greql-functions)))))
+  (greql-complete-1 (greql-completion-list-at-point arg)
+                    (when (greql-variable-p) "[.]")))
 
 (defparameter greql--indent-regexp
   "\\(?:\\<\\(?:exists!?\\|forall\\|from\\)\\>\\|(\\)")
@@ -707,6 +676,25 @@ for some variable declared as
        ("e="  "<->{$0}"                         "<->{...}")
        ("a+"  "<>--{$0}"                        "<>--{...}")
        ("a-"  "--<>{$0}"                        "--<>{...}"))))
+
+;;** Auto-Complete support
+
+;; TODO: Add a documentation function!
+(when (featurep 'auto-complete)
+  (ac-define-source greql
+    '((candidates . greql-completion-list-at-point)
+      (symbol     . "GReQL")
+      (requires . 0)))
+
+  (add-to-list 'ac-modes 'greql-mode)
+
+  (defun greql-activate-auto-complete ()
+    (add-to-list 'ac-sources 'ac-source-greql)
+    ;; Don't show completions for normal words and file names.
+    (setq ac-sources (delq 'ac-source-filename ac-sources))
+    (setq ac-sources (delq 'ac-source-words-in-same-mode-buffers ac-sources)))
+
+  (add-hook 'greql-mode-hook 'greql-activate-auto-complete))
 
 ;;** Eldoc & GReQL Doc
 
