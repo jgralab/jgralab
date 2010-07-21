@@ -1,4 +1,4 @@
-package de.uni_koblenz.jgralab.utilities.xml;
+package de.uni_koblenz.jgralab.utilities.rsa;
 
 /**
  * This class contains all constants used by {@link SchemaGraph2XMI}. If a
