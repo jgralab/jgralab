@@ -323,7 +323,7 @@ by normal completion."
       (dolist (elem tg-schema-alist)
         (when (or (null mtypes) (member (plist-get elem :meta) mtypes))
           (setq completions (cons (list (plist-get elem :qname)
-                                        (concat " (" (symbol-name (plist-get elem :meta)) ")"))
+                                        (tg-eldoc-vertex-or-edge elem))
                                   completions))))
       completions)))
 
@@ -693,7 +693,6 @@ properties from string."
   (set-text-properties 0 (length string) nil string)
   string)
 
-;; TODO: Add a documentation function!
 (when (featurep 'auto-complete)
   (defun greql-ac-documentation (symbol)
     (cond
