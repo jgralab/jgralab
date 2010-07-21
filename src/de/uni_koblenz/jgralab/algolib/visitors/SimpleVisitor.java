@@ -12,7 +12,7 @@ import de.uni_koblenz.jgralab.Vertex;
  * @author strauss@uni-koblenz.de
  * 
  */
-public interface SimpleVisitor extends BasicVisitor {
+public interface SimpleVisitor extends Visitor {
 
 	/**
 	 * Executes arbitrary code in the context of the given vertex <code>v</code>

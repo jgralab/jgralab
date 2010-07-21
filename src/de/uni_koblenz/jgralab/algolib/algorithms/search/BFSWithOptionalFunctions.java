@@ -5,29 +5,51 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
+import de.uni_koblenz.jgralab.algolib.functions.Function;
+import de.uni_koblenz.jgralab.algolib.functions.IntFunction;
 import de.uni_koblenz.jgralab.algolib.problems.TraversalFromVertexSolver;
 import de.uni_koblenz.jgralab.algolib.visitors.SearchVisitorComposition;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
+import de.uni_koblenz.jgralab.graphmarker.ArrayVertexMarker;
+import de.uni_koblenz.jgralab.graphmarker.IntegerVertexMarker;
 
-public class BreadthFirstSearch extends SearchAlgorithm implements
+public class BFSWithOptionalFunctions extends SearchAlgorithm implements
 		TraversalFromVertexSolver {
 
-	private SearchVisitorComposition visitors;
+	private SearchVisitorComposition visitors = new SearchVisitorComposition();
 
-	public BreadthFirstSearch(Graph graph,
+	public BFSWithOptionalFunctions(Graph graph,
 			BooleanFunction<GraphElement> subgraph, boolean directed,
 			BooleanFunction<Edge> navigable) {
 		super(graph, subgraph, directed, navigable);
 	}
 
-	public BreadthFirstSearch(Graph graph) {
+	public BFSWithOptionalFunctions(Graph graph) {
 		super(graph);
 	}
 
 	protected int firstV;
-	
-	protected int getIntermediateFirstV(){
+	protected IntFunction<Vertex> level;
+	protected IntFunction<Vertex> number;
+	protected Function<Vertex, Edge> parent;
+
+	protected int getIntermediateFirstV() {
 		return firstV;
+	}
+
+	public BFSWithOptionalFunctions withLevel() {
+		level = new IntegerVertexMarker(graph);
+		return this;
+	}
+
+	public BFSWithOptionalFunctions withNumber() {
+		number = new IntegerVertexMarker(graph);
+		return this;
+	}
+
+	public BFSWithOptionalFunctions withParent() {
+		parent = new ArrayVertexMarker<Edge>(graph);
+		return this;
 	}
 
 	@Override
@@ -57,7 +79,16 @@ public class BreadthFirstSearch extends SearchAlgorithm implements
 		startRunning();
 		firstV--; // to make it work if the algorithm is resumed
 		vertexOrder[num] = root;
+
+		if (level != null) {
+			level.set(root, 0);
+		}
 		visitors.visitRoot(root);
+
+		if (number != null) {
+			number.set(root, num);
+		}
+
 		visitors.visitVertex(root);
 		visitedVertices.set(root, true);
 		num++;
@@ -79,7 +110,17 @@ public class BreadthFirstSearch extends SearchAlgorithm implements
 							visitors.visitFrond(currentEdge);
 						} else {
 							vertexOrder[num] = nextVertex;
+							if (level != null) {
+								level.set(nextVertex,
+										level.get(currentVertex) + 1);
+							}
+							if (parent != null) {
+								parent.set(currentEdge.getThat(), currentEdge);
+							}
 							visitors.visitTreeEdge(currentEdge);
+							if (number != null) {
+								number.set(root, num);
+							}
 							visitors.visitVertex(nextVertex);
 							visitedVertices.set(nextVertex, true);
 							num++;
@@ -89,5 +130,29 @@ public class BreadthFirstSearch extends SearchAlgorithm implements
 			}
 		}
 		done();
+	}
+
+	public IntFunction<Vertex> getLevel() {
+		return level;
+	}
+
+	public void setLevel(IntFunction<Vertex> level) {
+		this.level = level;
+	}
+
+	public IntFunction<Vertex> getNumber() {
+		return number;
+	}
+
+	public void setNumber(IntFunction<Vertex> number) {
+		this.number = number;
+	}
+
+	public Function<Vertex, Edge> getParent() {
+		return parent;
+	}
+
+	public void setParent(Function<Vertex, Edge> parent) {
+		this.parent = parent;
 	}
 }

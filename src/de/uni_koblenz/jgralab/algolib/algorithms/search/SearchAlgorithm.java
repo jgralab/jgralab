@@ -11,7 +11,6 @@ import de.uni_koblenz.jgralab.algolib.functions.ArrayFunction;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 import de.uni_koblenz.jgralab.algolib.functions.IntDomainFunction;
 import de.uni_koblenz.jgralab.algolib.problems.TraversalFromVertexSolver;
-import de.uni_koblenz.jgralab.algolib.visitors.SearchVisitor;
 import de.uni_koblenz.jgralab.graphmarker.BitSetEdgeMarker;
 import de.uni_koblenz.jgralab.graphmarker.BitSetVertexMarker;
 
@@ -102,6 +101,7 @@ public abstract class SearchAlgorithm extends HybridGraphAlgorithm implements
 
 	@Override
 	public void reset() {
+		state = AlgorithmStates.INITIALIZED;
 		vertexOrder = new Vertex[graph.getVCount() + 1];
 		edgeOrder = new Edge[graph.getECount() + 1];
 		visitedVertices = new BitSetVertexMarker(graph);
@@ -118,14 +118,6 @@ public abstract class SearchAlgorithm extends HybridGraphAlgorithm implements
 		this.navigable = DEFAULT_NAVIGABLE;
 		this.searchDirection = DEFAULT_SEARCH_DIRECTION;
 	}
-
-	/**
-	 * Adds a search visitor to this search algorithm.
-	 * 
-	 * @param visitor
-	 *            the <code>SearchVisitor</code> to add.
-	 */
-	public abstract void addSearchVisitor(SearchVisitor visitor);
 
 	/**
 	 * @return the algorithm result <code>visitedVertices</code>.

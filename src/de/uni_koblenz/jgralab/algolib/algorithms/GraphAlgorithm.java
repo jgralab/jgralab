@@ -3,7 +3,7 @@ package de.uni_koblenz.jgralab.algolib.algorithms;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
-import de.uni_koblenz.jgralab.algolib.visitors.SimpleVisitor;
+import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
 
 public abstract class GraphAlgorithm {
 
@@ -226,11 +226,14 @@ public abstract class GraphAlgorithm {
 	public abstract boolean isDirected();
 
 	/**
-	 * Adds a <code>SimpleVisitor</code> to the current algorithm.
+	 * Adds a visitor to this algorithm.
 	 * 
 	 * @param visitor
-	 *            the visitor to add.
+	 *            the visitor to add to this algorithm
+	 * @throws IllegalArgumentException
+	 *             if the given <code>visitor</code> is incompatible with this
+	 *             algorithm.
 	 */
-	public abstract void addSimpleVisitor(SimpleVisitor visitor);
+	public abstract void addVisitor(Visitor visitor);
 
 }
