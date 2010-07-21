@@ -1,4 +1,4 @@
-package de.uni_koblenz.jgralab.utilities.rsa2tg;
+package de.uni_koblenz.jgralab.utilities.rsa;
 
 import java.io.PrintStream;
 import java.util.regex.Pattern;

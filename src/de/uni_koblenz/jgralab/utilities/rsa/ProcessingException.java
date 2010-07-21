@@ -22,7 +22,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package de.uni_koblenz.jgralab.utilities.rsa2tg;
+package de.uni_koblenz.jgralab.utilities.rsa;
 
 import javax.xml.stream.XMLStreamReader;
 
