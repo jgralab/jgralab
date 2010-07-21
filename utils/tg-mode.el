@@ -1,6 +1,6 @@
 ;;; tg-mode.el --- Major mode for editing TG files with emacs
 
-;; Copyright (C) 2007, 2008, 2009 by Tassilo Horn
+;; Copyright (C) 2007, 2008, 2009, 2010 by Tassilo Horn
 
 ;; Author: Tassilo Horn <horn@uni-koblenz.de>
 
@@ -25,9 +25,6 @@
 
 ;;; Version
 ;; $Revision$
-
-;;; Todos:
-;; - Show from/to when eldocing EdgeClasses.
 
 ;;* Code
 
@@ -70,8 +67,8 @@
                               "VertexClass[[:space:]]+"
                               "\\([[:alnum:]._]+\\)[[:space:]]*"
                               "\\(?::\\([^{[;]+\\)\\)?[[:space:]]*" ;; Superclasses
-                              "\\(?:{\\([^}]*\\)}\\)?"     ;; Attributes
-                              "\\(?:[[].*[]]\\)*[[:space:]]*;"      ;; Constraints
+                              "\\(?:{\\([^}]*\\)}\\)?[[:space:]]*"  ;; Attributes
+                              "\\(?:\\[.*\\]\\)?[[:space:]]*;"      ;; Constraints
                               ))
           (let ((qname (concat current-package (match-string-no-properties 1))))
             (setq schema-alist
@@ -87,8 +84,8 @@
                             "\\(?::\\([[:alnum:]._ ]+\\)\\)?[[:space:]]*" ;; Supertypes
                             "\\<from\\>[[:space:]]+\\([[:alnum:]._]+\\)[[:space:]]+.*?"
                             "\\<to\\>[[:space:]]+\\([[:alnum:]._]+\\)[[:space:]]+.*?" ;; from/to
-                            "\\(?:{\\([^}]*\\)}\\)?"   ;; Attributes
-                            "\\(?:[[].*[]]\\)*[[:space:]]*;" ;; Constraints
+                            "\\(?:{\\([^}]*\\)}\\)?[[:space:]]*" ;; Attributes
+                            "\\(?:\\[.*\\]\\)?[[:space:]]*;"     ;; Constraints
                             ))
           (let ((qname (concat current-package (match-string-no-properties 1)))
                 (from (match-string-no-properties 3))
@@ -204,20 +201,21 @@ valid for all TYPES."
       (remove-duplicates
        (reduce 'nconc all-attrs)))))
 
-(defun tg-all-attributes (elem)
+(defun tg-all-attributes (el)
   "Returns an alist of all attribute of the schema element
-ELEM (and its supertypes)."
-  (sort
-   (delete-dups
-    (apply 'nconc (plist-get elem :attrs)
-           (mapcar
-            (lambda (supertype)
-              (tg-all-attributes (tg-get-schema-element
-                                  (plist-get elem :meta)
-                                  supertype)))
-            (plist-get elem :super))))
-   (lambda (a1 a2)
-     (string-lessp (plist-get a1 :name) (plist-get a2 :name)))))
+EL (and its supertypes)."
+  (let ((elem (copy-tree el)))
+    (sort
+     (delete-dups
+      (apply 'nconc (plist-get elem :attrs)
+             (mapcar
+              (lambda (supertype)
+                (tg-all-attributes (tg-get-schema-element
+                                    (plist-get elem :meta)
+                                    supertype)))
+              (plist-get elem :super))))
+     (lambda (a1 a2)
+       (string-lessp (plist-get a1 :name) (plist-get a2 :name))))))
 
 (defun tg-get-schema-element (meta name)
   "Get the line/list of `tg-schema-alist' that corresponds to the
@@ -235,18 +233,21 @@ unique."
   "Given a qualified name, return the unique name and vice versa.
 The optional TYPE specifies that the returned name has to be the
 'unique or 'qualified name."
-  (if (string-match "\\." name)
-      ;; this is qualified
-      (if (and type (eq type 'unique))
-          ;; we want the unique name
+  (if (string= "." (substring-no-properties name 0 1))
+      ;; A name .Foo means Foo in default package.
+      (substring name 1 (length name))
+    (if (string-match "\\." name)
+        ;; this is qualified
+        (if (and type (eq type 'unique))
+            ;; we want the unique name
+            (gethash name tg-unique-name-hashmap)
+          ;; we want the qualified name
+          name)
+      ;; a unique name is given
+      (if (and type (eq type 'qualified))
+          ;; we want the qualified name
           (gethash name tg-unique-name-hashmap)
-        ;; we want the qualified name
-        name)
-    ;; a unique name is given
-    (if (and type (eq type 'qualified))
-        ;; we want the qualified name
-        (gethash name tg-unique-name-hashmap)
-      name)))
+        name))))
 
 ;;** The Mode
 
