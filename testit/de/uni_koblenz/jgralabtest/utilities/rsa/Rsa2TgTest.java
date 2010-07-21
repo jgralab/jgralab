@@ -1,4 +1,4 @@
-package de.uni_koblenz.jgralabtest.utilities.rsa2tg;
+package de.uni_koblenz.jgralabtest.utilities.rsa;
 
 import java.io.IOException;
 import java.util.logging.Level;
@@ -15,7 +15,7 @@ import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.schema.Schema;
-import de.uni_koblenz.jgralab.utilities.rsa2tg.Rsa2Tg;
+import de.uni_koblenz.jgralab.utilities.rsa.Rsa2Tg;
 import de.uni_koblenz.jgralabtest.utilities.tg2schemagraph.CompareSchemaWithSchemaGraph;
 
 public class Rsa2TgTest {
