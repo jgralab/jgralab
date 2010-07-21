@@ -12,39 +12,57 @@ public class SimpleVisitorComposition extends SimpleVisitorAdapter implements
 	private List<SimpleVisitor> simpleVisitors;
 
 	public SimpleVisitorComposition() {
-		simpleVisitors = new LinkedList<SimpleVisitor>();
+
+	}
+
+	private void createSimpleVisitorsLazily() {
+		if (simpleVisitors == null) {
+			simpleVisitors = new LinkedList<SimpleVisitor>();
+		}
 	}
 
 	public void addSimpleVisitor(SimpleVisitor newVisitor) {
+		createSimpleVisitorsLazily();
 		simpleVisitors.add(newVisitor);
 	}
 
 	public void removeSimpleVisitor(SimpleVisitor toRemove) {
-		simpleVisitors.remove(toRemove);
+		if (simpleVisitors != null) {
+			simpleVisitors.remove(toRemove);
+			if (simpleVisitors.size() == 0) {
+				clearSimpleVisitors();
+			}
+		}
 	}
 
 	public void clearSimpleVisitors() {
-		simpleVisitors.clear();
+		simpleVisitors = null;
 	}
 
 	@Override
 	public void visitEdge(Edge e) {
-		for (SimpleVisitor currentVisitor : simpleVisitors) {
-			currentVisitor.visitEdge(e);
+		if (simpleVisitors != null) {
+			for (SimpleVisitor currentVisitor : simpleVisitors) {
+				currentVisitor.visitEdge(e);
+			}
 		}
 	}
 
 	@Override
 	public void visitVertex(Vertex v) {
-		for (SimpleVisitor currentVisitor : simpleVisitors) {
-			currentVisitor.visitVertex(v);
+		if (simpleVisitors != null) {
+			for (SimpleVisitor currentVisitor : simpleVisitors) {
+				currentVisitor.visitVertex(v);
+			}
 		}
 	}
 
 	@Override
 	public void reset() {
-		for (SimpleVisitor currentVisitor : simpleVisitors) {
-			currentVisitor.reset();
+		if (simpleVisitors != null) {
+			for (SimpleVisitor currentVisitor : simpleVisitors) {
+				currentVisitor.reset();
+			}
 		}
 	}
 
