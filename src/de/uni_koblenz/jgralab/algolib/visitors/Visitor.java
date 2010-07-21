@@ -2,7 +2,7 @@ package de.uni_koblenz.jgralab.algolib.visitors;
 
 import de.uni_koblenz.jgralab.algolib.algorithms.GraphAlgorithm;
 
-public interface BasicVisitor {
+public interface Visitor {
 	
 	/**
 	 * If this visitor is used for computing results, this function resets this

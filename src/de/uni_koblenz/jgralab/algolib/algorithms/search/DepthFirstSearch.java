@@ -8,10 +8,8 @@ import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmStates;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.ComputeNumberVisitor;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 import de.uni_koblenz.jgralab.algolib.functions.IntFunction;
-import de.uni_koblenz.jgralab.algolib.visitors.DFSVisitor;
 import de.uni_koblenz.jgralab.algolib.visitors.DFSVisitorComposition;
-import de.uni_koblenz.jgralab.algolib.visitors.SearchVisitor;
-import de.uni_koblenz.jgralab.algolib.visitors.SimpleVisitor;
+import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
 import de.uni_koblenz.jgralab.graphmarker.IntegerVertexMarker;
 
 public abstract class DepthFirstSearch extends SearchAlgorithm {
@@ -47,25 +45,13 @@ public abstract class DepthFirstSearch extends SearchAlgorithm {
 		visitors = new DFSVisitorComposition();
 		cnv = new ComputeNumberVisitor();
 		cnv.setAlgorithm(this);
-		visitors.addSearchVisitor(cnv);
-	
+		visitors.addVisitor(cnv);
 	}
 
 	@Override
-	public void addSearchVisitor(SearchVisitor visitor) {
+	public void addVisitor(Visitor visitor) {
 		visitor.setAlgorithm(this);
-		visitors.addSearchVisitor(visitor);
-	}
-
-	@Override
-	public void addSimpleVisitor(SimpleVisitor visitor) {
-		visitor.setAlgorithm(this);
-		visitors.addSimpleVisitor(visitor);
-	}
-
-	public void addDFSVisitor(DFSVisitor visitor) {
-		visitor.setAlgorithm(this);
-		visitors.addDFSVisitor(visitor);
+		visitors.addVisitor(visitor);
 	}
 
 	public int getIntermediateRNum() {

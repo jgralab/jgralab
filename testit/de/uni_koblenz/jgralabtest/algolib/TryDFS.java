@@ -31,15 +31,16 @@ public class TryDFS {
 		graph.createSimpleEdge(v3, v5);
 		DepthFirstSearch dfs = new RecursiveDepthFirstSearch(graph);
 		ComputeLevelVisitor levelVisitor = new ComputeLevelVisitor();
-		DebugSearchVisitor debugSearchVisitor = new DebugSearchVisitor(levelVisitor);
+		DebugSearchVisitor debugSearchVisitor = new DebugSearchVisitor(
+				levelVisitor);
 		ComputeNumberVisitor numberVisitor = new ComputeNumberVisitor();
 		ComputeRorderVisitor rorderVisitor = new ComputeRorderVisitor();
 		ComputeParentVisitor parentVisitor = new ComputeParentVisitor();
 
-		dfs.addDFSVisitor(debugSearchVisitor);
-		dfs.addSearchVisitor(numberVisitor);
-		dfs.addDFSVisitor(rorderVisitor);
-		dfs.addSearchVisitor(parentVisitor);
+		dfs.addVisitor(debugSearchVisitor);
+		dfs.addVisitor(numberVisitor);
+		dfs.addVisitor(rorderVisitor);
+		dfs.addVisitor(parentVisitor);
 
 		dfs.solveTraversalFromVertex(v1);
 
