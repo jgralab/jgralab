@@ -36,6 +36,21 @@
 	<!-- import the common build file -->
 	<import file="../common/common.xml" />
 
+
+	<!-- enable clover for the testcases: run with "ant with.clover build test" -->
+	<property name="clover.jar" value="${lib.dir}/clover/clover-3.0.1.jar" />
+	<taskdef resource="cloverlib.xml" classpath="${clover.jar}" />
+
+	<target name="with.clover">
+    	  <clover-setup/>
+	</target>
+	
+	<target name="clover.html">
+    	  <clover-html-report outdir="${project.dir}/build/clover-report"
+                              title="JGraLab Clover Report"/>
+	</target>
+
+
 	<!-- classpath additions -->
 	<!-- here all needed common libs are included, except ist_utilities -->
 	<path id="classpathExtension">
@@ -43,6 +58,7 @@
 		<fileset dir="${comlib.dir}/apache/ant" includes="**/*.jar" />
 		<fileset dir="${comlib.dir}/jdom/" includes="**/*.jar" />
 		<fileset dir="${comlib.dir}/junit/" includes="**/*.jar" />
+		<pathelement path="${clover.jar}"/>
 	</path>
 
 	<!-- set project specific properties -->
@@ -53,7 +69,7 @@
 	<!-- the directory location for the testschemas -->
 	<property name="testschemas.dir" value="${testcases.dir}/testschemas" />
 
-	<!-- compile src.dir and include statements for the targets 
+	<!-- compile src.dir and include statements for the targets
 	     it is always "targetname.src" and "targetname.includes" -->
 	<property name="core.src" value="${src.dir}/de/uni_koblenz/jgralab" />
 	<property name="core.includes" value="*.java graphmarker/** schema/** codegenerator/** impl/** jniserver/** trans/** algolib/**"/>
@@ -73,12 +89,6 @@
 
 	<property name="utilities.src" value="${src.dir}/de/uni_koblenz/jgralab/utilities" />
 	<property name="utilities.includes" value="ant/** common/** converter/** greqlinterface/** jgralab2owl/** schemacompare/** tg2gdl/** tg2gxl/** tg2sidiff/** tgmerge/** tgraphbrowser/** xmi2tgschema/** xml/**" />
-
-	<!-- enable clover for the testcases -->
-	<property name="clover.jar" value="${lib.dir}/clover/clover-3.0.1.jar" />
-	<property name="clover.dest" value="${project.dir}/build/clover-report" />
-	<taskdef resource="cloverlib.xml" classpath="${clover.jar}" />
-	<clover-env />
 
 	<!-- The targets -->
 	<target name="build" depends="clean,compile,jar"/>
