@@ -263,7 +263,8 @@ public abstract class VertexEvaluator {
 				if (this instanceof SimpleDeclarationEvaluator) {
 					int size = 1;
 					for (JValue val : result.toJValueList()) {
-						VariableDeclaration d = (VariableDeclaration) val.toObject();
+						VariableDeclaration d = (VariableDeclaration) val
+								.toObject();
 						size *= d.getDefinitionCardinality();
 					}
 					evaluationLogger.logResultSize(getLoggingName(), size);

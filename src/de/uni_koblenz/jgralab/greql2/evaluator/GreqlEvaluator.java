@@ -48,6 +48,7 @@ import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.GraphIO.TGFilenameFilter;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
+import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.greql2.SerializableGreql2;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel;
@@ -197,6 +198,27 @@ public class GreqlEvaluator {
 	 * The GraphMarker that stores all vertex evaluators
 	 */
 	protected GraphMarker<VertexEvaluator> vertexEvalGraphMarker;
+
+	protected BooleanGraphMarker subgraphMarker;
+
+	/**
+	 * @return the subgraphMarker
+	 */
+	public BooleanGraphMarker getSubgraphMarker() {
+		return subgraphMarker;
+	}
+
+	/**
+	 * Sets the marker for evaluating only on marked elements. Also sets the
+	 * datagraph to the given marker's graph.
+	 * 
+	 * @param subgraphMarker
+	 *            the subgraphMarker to set
+	 */
+	public void setSubgraphMarker(BooleanGraphMarker subgraphMarker) {
+		this.subgraphMarker = subgraphMarker;
+		this.datagraph = subgraphMarker.getGraph();
+	}
 
 	/**
 	 * The map of SimpleName to Type of types that is known in the evaluator by
@@ -1032,7 +1054,7 @@ public class GreqlEvaluator {
 
 		long plainEvaluationStartTime = System.currentTimeMillis();
 		result = vertexEvalGraphMarker.getMark(
-				queryGraph.getFirstGreql2Expression()).getResult(null);
+				queryGraph.getFirstGreql2Expression()).getResult(subgraphMarker);
 
 		// last, remove all added tempAttributes, currently, this are only
 		// subgraphAttributes
