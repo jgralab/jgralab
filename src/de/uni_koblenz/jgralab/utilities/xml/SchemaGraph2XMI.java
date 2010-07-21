@@ -926,8 +926,11 @@ public class SchemaGraph2XMI {
 	 * the information for the {@link VertexClass} which is specified by
 	 * <code>qualifiedNameOfVertexClass</code> e.g. <code>otherIncidence</code>.<br/>
 	 * The relevant information are: <ui> <li>the rolename,</li> <li>the
-	 * redefines information,</li> <li>TODO check default rolename if it is
-	 * unique (contains edgeClass qualified name)</li> </ui>
+	 * redefines information,</li> <li>the min value,</li> <li>the max value and
+	 * </li> <li>composition or shared information.</li> </ui> The default
+	 * rolename for associations is
+	 * <code>qualifiedNameOfVertexClass_edgeClass.getQualifiedName()</code> and
+	 * <code>""</code> for associationClasses.
 	 * 
 	 * @param writer
 	 *            {@link XMLStreamWriter} of the current XMI file
@@ -1052,10 +1055,20 @@ public class SchemaGraph2XMI {
 	}
 
 	/**
+	 * This method creates an <code>extension</code> tag. It is used in profile
+	 * application and to create stereotypes of the form
+	 * <code>&lt;&lt;keyValue&gt;&gt;</code>. In the first case a
+	 * <code>references</code> child is created in the other a
+	 * <code>details</code> child. To create the first one <code>nelement</code>
+	 * has to be <code>null</code>.
+	 * 
 	 * @param writer
+	 *            {@link XMLStreamWriter} of the current XMI file
 	 * @param nelement
-	 *            if null references is created otherwise stereotype graphclass
-	 * @param string
+	 *            {@link NamedElement} if null <code>references</code> is
+	 *            created otherwise the stereotype <code>keyValue</code>.
+	 * @param keyValue
+	 *            {@link String} the stereotype to be created
 	 * @throws XMLStreamException
 	 */
 	private void createExtension(XMLStreamWriter writer, NamedElement nelement,
@@ -1108,8 +1121,14 @@ public class SchemaGraph2XMI {
 	}
 
 	/**
+	 * Creates the representation of all {@link Attribute}s of
+	 * <code>aeclass</code>.
+	 * 
 	 * @param writer
+	 *            {@link XMLStreamWriter} of the current XMI file
 	 * @param aeclass
+	 *            {@link AttributedElementClass} of which all {@link Attribute}s
+	 *            are created
 	 * @throws XMLStreamException
 	 */
 	private void createAttributes(XMLStreamWriter writer,
@@ -1123,6 +1142,28 @@ public class SchemaGraph2XMI {
 		}
 	}
 
+	/**
+	 * Creates the representation of an {@link Attribute}. The represented
+	 * information are the name, the default value and the type. <br/>
+	 * If the {@link Attribute} is of type LongDomain, a DoubleDomain, a
+	 * CollectionDomain or a MapDomain the type is stored in
+	 * {@link SchemaGraph2XMI#typesToBeDeclaredAtTheEnd} because there has to be
+	 * created a representation in the primitive types package.
+	 * 
+	 * @param writer
+	 *            {@link XMLStreamWriter} of the current XMI file
+	 * @param attributeName
+	 *            {@link String} the name of the current {@link Attribute}
+	 * @param defaultValue
+	 *            {@link String} the default value of the current
+	 *            {@link Attribute}
+	 * @param domain
+	 *            {@link Domain} of the current {@link Attribute}
+	 * @param id
+	 *            {@link String} the id of the tag which represents the current
+	 *            {@link Attribute}
+	 * @throws XMLStreamException
+	 */
 	private void createAttribute(XMLStreamWriter writer, String attributeName,
 			String defaultValue, Domain domain, String id)
 			throws XMLStreamException {
@@ -1183,9 +1224,14 @@ public class SchemaGraph2XMI {
 	 * Creates the default values.
 	 * 
 	 * @param writer
-	 * @param attribute
+	 *            {@link XMLStreamWriter} of the current XMI file
+	 * @param defaultValue
+	 *            {@link String} the default value of the current
+	 *            {@link Attribute}
 	 * @param id
+	 *            {@link String} the id of the current {@link Attribute}
 	 * @param domain
+	 *            {@link Domain} the type of the current {@link Attribute}
 	 * @throws XMLStreamException
 	 */
 	private void createDefaultValue(XMLStreamWriter writer,
@@ -1247,7 +1293,7 @@ public class SchemaGraph2XMI {
 				// create type
 				createType(writer, domain);
 			} else {
-				// there must be created an entry for the current domain in
+				// there has to be created an entry for the current domain in
 				// the package primitiveTypes
 				writer.writeAttribute(XMIConstants.XMI_ATTRIBUTE_TYPE, domain
 						.get_qualifiedName().replaceAll("\\s", "").replaceAll(
@@ -1268,8 +1314,12 @@ public class SchemaGraph2XMI {
 	}
 
 	/**
+	 * Creates the <code>type</code> tag used for attributes and default values.
+	 * 
 	 * @param writer
+	 *            {@link XMLStreamWriter} of the current XMI file
 	 * @param domain
+	 *            {@link Domain} the type of the current {@link Attribute}
 	 * @throws XMLStreamException
 	 */
 	private void createType(XMLStreamWriter writer, Domain domain)
