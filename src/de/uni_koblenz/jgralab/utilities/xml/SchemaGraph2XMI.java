@@ -213,7 +213,7 @@ public class SchemaGraph2XMI {
 
 	/**
 	 * This method creates the XMI file. Created content is:<br/>
-	 * <code>&lt;?xml version="{@link XMIConstants#XML_VERSION}" encoding="{@link XMIConstants#XML_ENCODING}"?&gt;<br/>
+	 * <code>&lt;?xml version="{@link XMIConstants4SchemaGraph2XMI#XML_VERSION}" encoding="{@link XMIConstants4SchemaGraph2XMI#XML_ENCODING}"?&gt;<br/>
 	 * &lt;!-- content created by {@link SchemaGraph2XMI#createRootElement(XMLStreamWriter, SchemaGraph)} --&gt;
 	 * </code>
 	 * 
@@ -234,8 +234,8 @@ public class SchemaGraph2XMI {
 		XMLStreamWriter writer = factory.createXMLStreamWriter(out);
 
 		// write the first line
-		writer.writeStartDocument(XMIConstants.XML_ENCODING,
-				XMIConstants.XML_VERSION);
+		writer.writeStartDocument(XMIConstants4SchemaGraph2XMI.XML_ENCODING,
+				XMIConstants4SchemaGraph2XMI.XML_VERSION);
 		createRootElement(writer, schemaGraph);
 		// write the end of the document
 		writer.writeEndDocument();
@@ -261,22 +261,22 @@ public class SchemaGraph2XMI {
 	private void createRootElement(XMLStreamWriter writer,
 			SchemaGraph schemaGraph) throws XMLStreamException {
 		// start root element
-		writer.writeStartElement(XMIConstants.NAMESPACE_PREFIX_XMI,
-				XMIConstants.XMI_TAG_XMI, XMIConstants.NAMESPACE_XMI);
-		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-				XMIConstants.XMI_ATTRIBUTE_VERSION,
-				XMIConstants.XMI_ATTRIBUTE_VERSION_VALUE);
-		writer.setPrefix(XMIConstants.NAMESPACE_PREFIX_XSI,
-				XMIConstants.NAMESPACE_XSI);
-		writer.setPrefix(XMIConstants.NAMESPACE_PREFIX_EECORE,
-				XMIConstants.NAMESPACE_EECORE);
-		writer.setPrefix(XMIConstants.NAMESPACE_PREFIX_ECORE,
-				XMIConstants.NAMESPACE_ECORE);
-		writer.setPrefix(XMIConstants.NAMESPACE_PREFIX_UML,
-				XMIConstants.NAMESPACE_UML);
-		writer.writeAttribute(XMIConstants.NAMESPACE_XSI,
-				XMIConstants.XSI_ATTRIBUTE_SCHEMALOCATION,
-				XMIConstants.SCHEMALOCATION);
+		writer.writeStartElement(XMIConstants4SchemaGraph2XMI.NAMESPACE_PREFIX_XMI,
+				XMIConstants4SchemaGraph2XMI.XMI_TAG_XMI, XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI);
+		writer.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
+				XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_VERSION,
+				XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_VERSION_VALUE);
+		writer.setPrefix(XMIConstants4SchemaGraph2XMI.NAMESPACE_PREFIX_XSI,
+				XMIConstants4SchemaGraph2XMI.NAMESPACE_XSI);
+		writer.setPrefix(XMIConstants4SchemaGraph2XMI.NAMESPACE_PREFIX_EECORE,
+				XMIConstants4SchemaGraph2XMI.NAMESPACE_EECORE);
+		writer.setPrefix(XMIConstants4SchemaGraph2XMI.NAMESPACE_PREFIX_ECORE,
+				XMIConstants4SchemaGraph2XMI.NAMESPACE_ECORE);
+		writer.setPrefix(XMIConstants4SchemaGraph2XMI.NAMESPACE_PREFIX_UML,
+				XMIConstants4SchemaGraph2XMI.NAMESPACE_UML);
+		writer.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XSI,
+				XMIConstants4SchemaGraph2XMI.XSI_ATTRIBUTE_SCHEMALOCATION,
+				XMIConstants4SchemaGraph2XMI.SCHEMALOCATION);
 
 		// create model element
 		createModelElement(writer, schemaGraph);
@@ -308,12 +308,12 @@ public class SchemaGraph2XMI {
 				.getFirstSchema();
 
 		// start model
-		writer.writeStartElement(XMIConstants.NAMESPACE_UML,
-				XMIConstants.UML_TAG_MODEL);
-		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-				XMIConstants.XMI_ATTRIBUTE_ID, schema.get_packagePrefix() + "."
+		writer.writeStartElement(XMIConstants4SchemaGraph2XMI.NAMESPACE_UML,
+				XMIConstants4SchemaGraph2XMI.UML_TAG_MODEL);
+		writer.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
+				XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_ID, schema.get_packagePrefix() + "."
 						+ schema.get_name());
-		writer.writeAttribute(XMIConstants.ATTRIBUTE_NAME, schema
+		writer.writeAttribute(XMIConstants4SchemaGraph2XMI.ATTRIBUTE_NAME, schema
 				.get_packagePrefix()
 				+ "." + schema.get_name());
 
@@ -372,19 +372,19 @@ public class SchemaGraph2XMI {
 						|| pack.getFirstContainsSubPackage(EdgeDirection.OUT) != null;
 				if (packageTagHasToBeClosed) {
 					// start package
-					writer.writeStartElement(XMIConstants.TAG_PACKAGEDELEMENT);
+					writer.writeStartElement(XMIConstants4SchemaGraph2XMI.TAG_PACKAGEDELEMENT);
 				} else {
 					// create empty package
-					writer.writeEmptyElement(XMIConstants.TAG_PACKAGEDELEMENT);
+					writer.writeEmptyElement(XMIConstants4SchemaGraph2XMI.TAG_PACKAGEDELEMENT);
 				}
-				writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-						XMIConstants.XMI_ATTRIBUTE_TYPE,
-						XMIConstants.PACKAGEDELEMENT_TYPE_VALUE_PACKAGE);
+				writer.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
+						XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_TYPE,
+						XMIConstants4SchemaGraph2XMI.PACKAGEDELEMENT_TYPE_VALUE_PACKAGE);
 				writer
-						.writeAttribute(XMIConstants.NAMESPACE_XMI,
-								XMIConstants.XMI_ATTRIBUTE_ID, pack
+						.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
+								XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_ID, pack
 										.get_qualifiedName());
-				writer.writeAttribute(XMIConstants.ATTRIBUTE_NAME,
+				writer.writeAttribute(XMIConstants4SchemaGraph2XMI.ATTRIBUTE_NAME,
 						extractSimpleName(pack.get_qualifiedName()));
 			}
 
@@ -488,15 +488,15 @@ public class SchemaGraph2XMI {
 	private void createRecordDomain(XMLStreamWriter writer,
 			RecordDomain recordDomain) throws XMLStreamException {
 		// start packagedElement
-		writer.writeStartElement(XMIConstants.TAG_PACKAGEDELEMENT);
-		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-				XMIConstants.XMI_ATTRIBUTE_TYPE,
-				XMIConstants.PACKAGEDELEMENT_TYPE_VALUE_CLASS);
+		writer.writeStartElement(XMIConstants4SchemaGraph2XMI.TAG_PACKAGEDELEMENT);
+		writer.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
+				XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_TYPE,
+				XMIConstants4SchemaGraph2XMI.PACKAGEDELEMENT_TYPE_VALUE_CLASS);
 		writer
-				.writeAttribute(XMIConstants.NAMESPACE_XMI,
-						XMIConstants.XMI_ATTRIBUTE_ID, recordDomain
+				.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
+						XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_ID, recordDomain
 								.get_qualifiedName());
-		writer.writeAttribute(XMIConstants.ATTRIBUTE_NAME,
+		writer.writeAttribute(XMIConstants4SchemaGraph2XMI.ATTRIBUTE_NAME,
 				extractSimpleName(recordDomain.get_qualifiedName()));
 
 		// create stereotype <<record>>
@@ -534,13 +534,13 @@ public class SchemaGraph2XMI {
 	private void createEnum(XMLStreamWriter writer, EnumDomain enumDomain)
 			throws XMLStreamException {
 		// start packagedElement
-		writer.writeStartElement(XMIConstants.TAG_PACKAGEDELEMENT);
-		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-				XMIConstants.XMI_ATTRIBUTE_TYPE,
-				XMIConstants.PACKAGEDELEMENT_TYPE_VALUE_ENUMERATION);
-		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-				XMIConstants.XMI_ATTRIBUTE_ID, enumDomain.get_qualifiedName());
-		writer.writeAttribute(XMIConstants.ATTRIBUTE_NAME,
+		writer.writeStartElement(XMIConstants4SchemaGraph2XMI.TAG_PACKAGEDELEMENT);
+		writer.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
+				XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_TYPE,
+				XMIConstants4SchemaGraph2XMI.PACKAGEDELEMENT_TYPE_VALUE_ENUMERATION);
+		writer.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
+				XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_ID, enumDomain.get_qualifiedName());
+		writer.writeAttribute(XMIConstants4SchemaGraph2XMI.ATTRIBUTE_NAME,
 				extractSimpleName(enumDomain.get_qualifiedName()));
 
 		// create comments
@@ -549,17 +549,17 @@ public class SchemaGraph2XMI {
 		// create enumeration constants
 		for (String enumConst : enumDomain.get_enumConstants()) {
 			// create ownedLiteral
-			writer.writeEmptyElement(XMIConstants.TAG_OWNEDLITERAL);
-			writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-					XMIConstants.XMI_ATTRIBUTE_TYPE,
-					XMIConstants.OWNEDLITERAL_TYPE_VALUE);
-			writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-					XMIConstants.XMI_ATTRIBUTE_ID, enumDomain
+			writer.writeEmptyElement(XMIConstants4SchemaGraph2XMI.TAG_OWNEDLITERAL);
+			writer.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
+					XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_TYPE,
+					XMIConstants4SchemaGraph2XMI.OWNEDLITERAL_TYPE_VALUE);
+			writer.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
+					XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_ID, enumDomain
 							.get_qualifiedName()
 							+ "_" + enumConst);
-			writer.writeAttribute(XMIConstants.ATTRIBUTE_NAME, enumConst);
+			writer.writeAttribute(XMIConstants4SchemaGraph2XMI.ATTRIBUTE_NAME, enumConst);
 			writer.writeAttribute(
-					XMIConstants.OWNEDLITERAL_ATTRIBUTE_CLASSIFIER, enumDomain
+					XMIConstants4SchemaGraph2XMI.OWNEDLITERAL_ATTRIBUTE_CLASSIFIER, enumDomain
 							.get_qualifiedName());
 		}
 
@@ -577,25 +577,25 @@ public class SchemaGraph2XMI {
 	private void createProfileApplication(XMLStreamWriter writer)
 			throws XMLStreamException {
 		// start profileApplication
-		writer.writeStartElement(XMIConstants.TAG_PROFILEAPPLICATION);
-		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-				XMIConstants.XMI_ATTRIBUTE_TYPE,
-				XMIConstants.PROFILEAPPLICATION_TYPE_VALUE);
-		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-				XMIConstants.XMI_ATTRIBUTE_ID,
-				XMIConstants.TAG_PROFILEAPPLICATION
+		writer.writeStartElement(XMIConstants4SchemaGraph2XMI.TAG_PROFILEAPPLICATION);
+		writer.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
+				XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_TYPE,
+				XMIConstants4SchemaGraph2XMI.PROFILEAPPLICATION_TYPE_VALUE);
+		writer.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
+				XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_ID,
+				XMIConstants4SchemaGraph2XMI.TAG_PROFILEAPPLICATION
 						+ System.currentTimeMillis());
 
 		// create content
 		createExtension(writer, null, null);
 
 		// create appliedProfile
-		writer.writeEmptyElement(XMIConstants.TAG_APPLIEDPROFILE);
-		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-				XMIConstants.XMI_ATTRIBUTE_TYPE,
-				XMIConstants.APPLIEDPROFILE_TYPE_VALUE);
-		writer.writeAttribute(XMIConstants.ATTRIBUTE_HREF,
-				XMIConstants.APPLIEDPROFILE_HREF_VALUE);
+		writer.writeEmptyElement(XMIConstants4SchemaGraph2XMI.TAG_APPLIEDPROFILE);
+		writer.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
+				XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_TYPE,
+				XMIConstants4SchemaGraph2XMI.APPLIEDPROFILE_TYPE_VALUE);
+		writer.writeAttribute(XMIConstants4SchemaGraph2XMI.ATTRIBUTE_HREF,
+				XMIConstants4SchemaGraph2XMI.APPLIEDPROFILE_HREF_VALUE);
 
 		// end profileApplication
 		writer.writeEndElement();
@@ -617,27 +617,27 @@ public class SchemaGraph2XMI {
 	 */
 	private void createTypes(XMLStreamWriter writer) throws XMLStreamException {
 		// start packagedElement
-		writer.writeStartElement(XMIConstants.TAG_PACKAGEDELEMENT);
-		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-				XMIConstants.XMI_ATTRIBUTE_TYPE,
-				XMIConstants.PACKAGEDELEMENT_TYPE_VALUE_PACKAGE);
-		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-				XMIConstants.XMI_ATTRIBUTE_ID,
-				XMIConstants.PACKAGE_PRIMITIVETYPES_NAME);
-		writer.writeAttribute(XMIConstants.ATTRIBUTE_NAME,
-				XMIConstants.PACKAGE_PRIMITIVETYPES_NAME);
+		writer.writeStartElement(XMIConstants4SchemaGraph2XMI.TAG_PACKAGEDELEMENT);
+		writer.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
+				XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_TYPE,
+				XMIConstants4SchemaGraph2XMI.PACKAGEDELEMENT_TYPE_VALUE_PACKAGE);
+		writer.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
+				XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_ID,
+				XMIConstants4SchemaGraph2XMI.PACKAGE_PRIMITIVETYPES_NAME);
+		writer.writeAttribute(XMIConstants4SchemaGraph2XMI.ATTRIBUTE_NAME,
+				XMIConstants4SchemaGraph2XMI.PACKAGE_PRIMITIVETYPES_NAME);
 
 		// create entries for domains, which are not defined
 		for (Domain domain : typesToBeDeclaredAtTheEnd) {
-			writer.writeEmptyElement(XMIConstants.TAG_PACKAGEDELEMENT);
-			writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-					XMIConstants.XMI_ATTRIBUTE_TYPE,
-					XMIConstants.TYPE_VALUE_PRIMITIVETYPE);
-			writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-					XMIConstants.XMI_ATTRIBUTE_ID, domain.get_qualifiedName()
+			writer.writeEmptyElement(XMIConstants4SchemaGraph2XMI.TAG_PACKAGEDELEMENT);
+			writer.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
+					XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_TYPE,
+					XMIConstants4SchemaGraph2XMI.TYPE_VALUE_PRIMITIVETYPE);
+			writer.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
+					XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_ID, domain.get_qualifiedName()
 							.replaceAll("\\s", "").replaceAll("<", "_")
 							.replaceAll(">", "_"));
-			writer.writeAttribute(XMIConstants.ATTRIBUTE_NAME,
+			writer.writeAttribute(XMIConstants4SchemaGraph2XMI.ATTRIBUTE_NAME,
 					extractSimpleName(domain.get_qualifiedName()));
 		}
 
@@ -687,46 +687,46 @@ public class SchemaGraph2XMI {
 
 		// start packagedElement
 		if (isEmptyGraphElementClass) {
-			writer.writeEmptyElement(XMIConstants.TAG_PACKAGEDELEMENT);
+			writer.writeEmptyElement(XMIConstants4SchemaGraph2XMI.TAG_PACKAGEDELEMENT);
 		} else {
-			writer.writeStartElement(XMIConstants.TAG_PACKAGEDELEMENT);
+			writer.writeStartElement(XMIConstants4SchemaGraph2XMI.TAG_PACKAGEDELEMENT);
 		}
 		// set type
 		if (aeclass instanceof EdgeClass) {
 			if (aeclass.getFirstHasAttribute() == null) {
-				writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-						XMIConstants.XMI_ATTRIBUTE_TYPE,
-						XMIConstants.PACKAGEDELEMENT_TYPE_VALUE_ASSOCIATION);
+				writer.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
+						XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_TYPE,
+						XMIConstants4SchemaGraph2XMI.PACKAGEDELEMENT_TYPE_VALUE_ASSOCIATION);
 			} else {
 				writer
 						.writeAttribute(
-								XMIConstants.NAMESPACE_XMI,
-								XMIConstants.XMI_ATTRIBUTE_TYPE,
-								XMIConstants.PACKAGEDELEMENT_TYPE_VALUE_ASSOCIATIONCLASS);
+								XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
+								XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_TYPE,
+								XMIConstants4SchemaGraph2XMI.PACKAGEDELEMENT_TYPE_VALUE_ASSOCIATIONCLASS);
 			}
 		} else {
-			writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-					XMIConstants.XMI_ATTRIBUTE_TYPE,
-					XMIConstants.PACKAGEDELEMENT_TYPE_VALUE_CLASS);
+			writer.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
+					XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_TYPE,
+					XMIConstants4SchemaGraph2XMI.PACKAGEDELEMENT_TYPE_VALUE_CLASS);
 		}
-		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-				XMIConstants.XMI_ATTRIBUTE_ID, aeclass.get_qualifiedName());
-		writer.writeAttribute(XMIConstants.ATTRIBUTE_NAME,
+		writer.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
+				XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_ID, aeclass.get_qualifiedName());
+		writer.writeAttribute(XMIConstants4SchemaGraph2XMI.ATTRIBUTE_NAME,
 				extractSimpleName(aeclass.get_qualifiedName()));
 
 		// set abstract
 		if (aeclass instanceof GraphElementClass
 				&& ((GraphElementClass) aeclass).is_abstract()) {
 			writer.writeAttribute(
-					XMIConstants.PACKAGEDELEMENT_ATTRIBUTE_ISABSTRACT,
-					XMIConstants.ATTRIBUTE_VALUE_TRUE);
+					XMIConstants4SchemaGraph2XMI.PACKAGEDELEMENT_ATTRIBUTE_ISABSTRACT,
+					XMIConstants4SchemaGraph2XMI.ATTRIBUTE_VALUE_TRUE);
 		}
 
 		// set EdgeClass specific memberEnd
 		if (aeclass instanceof EdgeClass) {
 			EdgeClass ec = (EdgeClass) aeclass;
 			writer.writeAttribute(
-					XMIConstants.PACKAGEDELEMENT_ATTRIBUTE_MEMBEREND,
+					XMIConstants4SchemaGraph2XMI.PACKAGEDELEMENT_ATTRIBUTE_MEMBEREND,
 					((VertexClass) (((IncidenceClass) ec.getFirstComesFrom()
 							.getThat()).getFirstEndsAt().getThat()))
 							.get_qualifiedName()
@@ -976,64 +976,64 @@ public class SchemaGraph2XMI {
 		}
 
 		// start ownedattribute
-		writer.writeStartElement(createOwnedEnd ? XMIConstants.TAG_OWNEDEND
-				: XMIConstants.TAG_OWNEDATTRIBUTE);
-		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-				XMIConstants.XMI_ATTRIBUTE_TYPE,
-				XMIConstants.OWNEDATTRIBUTE_TYPE_VALUE);
-		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-				XMIConstants.XMI_ATTRIBUTE_ID, incidenceId);
+		writer.writeStartElement(createOwnedEnd ? XMIConstants4SchemaGraph2XMI.TAG_OWNEDEND
+				: XMIConstants4SchemaGraph2XMI.TAG_OWNEDATTRIBUTE);
+		writer.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
+				XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_TYPE,
+				XMIConstants4SchemaGraph2XMI.OWNEDATTRIBUTE_TYPE_VALUE);
+		writer.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
+				XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_ID, incidenceId);
 		// set rolenames
 		if (otherIncidence.get_roleName() != null
 				&& !otherIncidence.get_roleName().isEmpty()) {
-			writer.writeAttribute(XMIConstants.ATTRIBUTE_NAME, otherIncidence
+			writer.writeAttribute(XMIConstants4SchemaGraph2XMI.ATTRIBUTE_NAME, otherIncidence
 					.get_roleName());
 		} else if (edgeClass.getFirstHasAttribute() == null) {
-			writer.writeAttribute(XMIConstants.ATTRIBUTE_NAME,
+			writer.writeAttribute(XMIConstants4SchemaGraph2XMI.ATTRIBUTE_NAME,
 					qualifiedNameOfVertexClass + "_"
 							+ edgeClass.get_qualifiedName());
 		} else {
-			writer.writeAttribute(XMIConstants.ATTRIBUTE_NAME, "");
+			writer.writeAttribute(XMIConstants4SchemaGraph2XMI.ATTRIBUTE_NAME, "");
 		}
-		writer.writeAttribute(XMIConstants.OWNEDATTRIBUTE_ATTRIBUTE_VISIBILITY,
-				XMIConstants.OWNEDATTRIBUTE_VISIBILITY_VALUE_PRIVATE);
-		writer.writeAttribute(XMIConstants.PACKAGEDELEMENT_ATTRIBUTE_TYPE,
+		writer.writeAttribute(XMIConstants4SchemaGraph2XMI.OWNEDATTRIBUTE_ATTRIBUTE_VISIBILITY,
+				XMIConstants4SchemaGraph2XMI.OWNEDATTRIBUTE_VISIBILITY_VALUE_PRIVATE);
+		writer.writeAttribute(XMIConstants4SchemaGraph2XMI.PACKAGEDELEMENT_ATTRIBUTE_TYPE,
 				connectedVertexClass.get_qualifiedName());
 		// set composite or shared
 		if (otherIncidence.get_aggregation() == AggregationKind.SHARED) {
 			writer
 					.writeAttribute(
-							XMIConstants.OWNEDATTRIBUTE_ATTRIBUTE_AGGREGATION,
-							XMIConstants.OWNEDATTRIBUTE_ATTRIBUTE_AGGREGATION_VALUE_SHARED);
+							XMIConstants4SchemaGraph2XMI.OWNEDATTRIBUTE_ATTRIBUTE_AGGREGATION,
+							XMIConstants4SchemaGraph2XMI.OWNEDATTRIBUTE_ATTRIBUTE_AGGREGATION_VALUE_SHARED);
 		} else if (otherIncidence.get_aggregation() == AggregationKind.COMPOSITE) {
 			writer
 					.writeAttribute(
-							XMIConstants.OWNEDATTRIBUTE_ATTRIBUTE_AGGREGATION,
-							XMIConstants.OWNEDATTRIBUTE_ATTRIBUTE_AGGREGATION_VALUE_COMPOSITE);
+							XMIConstants4SchemaGraph2XMI.OWNEDATTRIBUTE_ATTRIBUTE_AGGREGATION,
+							XMIConstants4SchemaGraph2XMI.OWNEDATTRIBUTE_ATTRIBUTE_AGGREGATION_VALUE_COMPOSITE);
 		}
 		writer.writeAttribute(
-				XMIConstants.PACKAGEDELEMENT_ATTRIBUTE_ASSOCIATION, edgeClass
+				XMIConstants4SchemaGraph2XMI.PACKAGEDELEMENT_ATTRIBUTE_ASSOCIATION, edgeClass
 						.get_qualifiedName());
 
 		// create upperValue
-		writer.writeEmptyElement(XMIConstants.TAG_UPPERVALUE);
-		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-				XMIConstants.XMI_ATTRIBUTE_TYPE,
-				XMIConstants.TYPE_VALUE_LITERALUNLIMITEDNATURAL);
-		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-				XMIConstants.XMI_ATTRIBUTE_ID, incidenceId + "_uppervalue");
-		writer.writeAttribute(XMIConstants.ATTRIBUTE_VALUE, otherIncidence
+		writer.writeEmptyElement(XMIConstants4SchemaGraph2XMI.TAG_UPPERVALUE);
+		writer.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
+				XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_TYPE,
+				XMIConstants4SchemaGraph2XMI.TYPE_VALUE_LITERALUNLIMITEDNATURAL);
+		writer.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
+				XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_ID, incidenceId + "_uppervalue");
+		writer.writeAttribute(XMIConstants4SchemaGraph2XMI.ATTRIBUTE_VALUE, otherIncidence
 				.get_max() == Integer.MAX_VALUE ? "*" : Integer
 				.toString(otherIncidence.get_max()));
 
 		// create lowerValue
-		writer.writeEmptyElement(XMIConstants.TAG_LOWERVALUE);
-		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-				XMIConstants.XMI_ATTRIBUTE_TYPE,
-				XMIConstants.TYPE_VALUE_LITERALINTEGER);
-		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-				XMIConstants.XMI_ATTRIBUTE_ID, incidenceId + "_lowervalue");
-		writer.writeAttribute(XMIConstants.ATTRIBUTE_VALUE,
+		writer.writeEmptyElement(XMIConstants4SchemaGraph2XMI.TAG_LOWERVALUE);
+		writer.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
+				XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_TYPE,
+				XMIConstants4SchemaGraph2XMI.TYPE_VALUE_LITERALINTEGER);
+		writer.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
+				XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_ID, incidenceId + "_lowervalue");
+		writer.writeAttribute(XMIConstants4SchemaGraph2XMI.ATTRIBUTE_VALUE,
 				incidence.get_min() == Integer.MAX_VALUE ? "*" : Integer
 						.toString(otherIncidence.get_min()));
 
@@ -1044,13 +1044,13 @@ public class SchemaGraph2XMI {
 	private void createGeneralization(XMLStreamWriter writer, String id,
 			String idOfSpecializedClass) throws XMLStreamException {
 		// create generalization
-		writer.writeEmptyElement(XMIConstants.TAG_GENERALIZATION);
-		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-				XMIConstants.XMI_ATTRIBUTE_TYPE,
-				XMIConstants.GENERALIZATION_TYPE_VALUE);
-		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-				XMIConstants.XMI_ATTRIBUTE_ID, id);
-		writer.writeAttribute(XMIConstants.GENERALIZATION_ATTRIBUTE_GENERAL,
+		writer.writeEmptyElement(XMIConstants4SchemaGraph2XMI.TAG_GENERALIZATION);
+		writer.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
+				XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_TYPE,
+				XMIConstants4SchemaGraph2XMI.GENERALIZATION_TYPE_VALUE);
+		writer.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
+				XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_ID, id);
+		writer.writeAttribute(XMIConstants4SchemaGraph2XMI.GENERALIZATION_ATTRIBUTE_GENERAL,
 				idOfSpecializedClass);
 	}
 
@@ -1074,43 +1074,43 @@ public class SchemaGraph2XMI {
 	private void createExtension(XMLStreamWriter writer, NamedElement nelement,
 			String keyValue) throws XMLStreamException {
 		// start Extension
-		writer.writeStartElement(XMIConstants.NAMESPACE_XMI,
-				XMIConstants.XMI_TAG_EXTENSION);
-		writer.writeAttribute(XMIConstants.ATTRIBUTE_EXTENDER,
-				XMIConstants.NAMESPACE_ECORE);
+		writer.writeStartElement(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
+				XMIConstants4SchemaGraph2XMI.XMI_TAG_EXTENSION);
+		writer.writeAttribute(XMIConstants4SchemaGraph2XMI.ATTRIBUTE_EXTENDER,
+				XMIConstants4SchemaGraph2XMI.NAMESPACE_ECORE);
 
 		// start eAnnotations
-		writer.writeStartElement(XMIConstants.TAG_EANNOTATIONS);
-		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-				XMIConstants.XMI_ATTRIBUTE_TYPE,
-				XMIConstants.EANNOTATIONS_TYPE_VALUE);
-		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-				XMIConstants.XMI_ATTRIBUTE_ID, nelement != null ? nelement
+		writer.writeStartElement(XMIConstants4SchemaGraph2XMI.TAG_EANNOTATIONS);
+		writer.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
+				XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_TYPE,
+				XMIConstants4SchemaGraph2XMI.EANNOTATIONS_TYPE_VALUE);
+		writer.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
+				XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_ID, nelement != null ? nelement
 						.get_qualifiedName()
-						+ "_" + XMIConstants.TAG_EANNOTATIONS
-						: XMIConstants.TAG_EANNOTATIONS
+						+ "_" + XMIConstants4SchemaGraph2XMI.TAG_EANNOTATIONS
+						: XMIConstants4SchemaGraph2XMI.TAG_EANNOTATIONS
 								+ System.currentTimeMillis());
-		writer.writeAttribute(XMIConstants.EANNOTATIONS_ATTRIBUTE_SOURCE,
-				XMIConstants.EANNOTATIONS_ATTRIBUTE_SOURCE_VALUE);
+		writer.writeAttribute(XMIConstants4SchemaGraph2XMI.EANNOTATIONS_ATTRIBUTE_SOURCE,
+				XMIConstants4SchemaGraph2XMI.EANNOTATIONS_ATTRIBUTE_SOURCE_VALUE);
 
 		if (nelement != null) {
 			// write details
-			writer.writeEmptyElement(XMIConstants.TAG_DETAILS);
-			writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-					XMIConstants.XMI_ATTRIBUTE_TYPE,
-					XMIConstants.DETAILS_ATTRIBUTE_TYPE_VALUE);
-			writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-					XMIConstants.XMI_ATTRIBUTE_ID, nelement.get_qualifiedName()
-							+ "_" + XMIConstants.TAG_DETAILS);
-			writer.writeAttribute(XMIConstants.DETAILS_ATTRIBUTE_KEY, keyValue);
+			writer.writeEmptyElement(XMIConstants4SchemaGraph2XMI.TAG_DETAILS);
+			writer.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
+					XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_TYPE,
+					XMIConstants4SchemaGraph2XMI.DETAILS_ATTRIBUTE_TYPE_VALUE);
+			writer.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
+					XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_ID, nelement.get_qualifiedName()
+							+ "_" + XMIConstants4SchemaGraph2XMI.TAG_DETAILS);
+			writer.writeAttribute(XMIConstants4SchemaGraph2XMI.DETAILS_ATTRIBUTE_KEY, keyValue);
 		} else {
 			// write references
-			writer.writeEmptyElement(XMIConstants.TAG_REFERENCES);
-			writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-					XMIConstants.XMI_ATTRIBUTE_TYPE,
-					XMIConstants.REFERENCES_TYPE_VALUE);
-			writer.writeAttribute(XMIConstants.ATTRIBUTE_HREF,
-					XMIConstants.REFERENCES_HREF_VALUE);
+			writer.writeEmptyElement(XMIConstants4SchemaGraph2XMI.TAG_REFERENCES);
+			writer.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
+					XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_TYPE,
+					XMIConstants4SchemaGraph2XMI.REFERENCES_TYPE_VALUE);
+			writer.writeAttribute(XMIConstants4SchemaGraph2XMI.ATTRIBUTE_HREF,
+					XMIConstants4SchemaGraph2XMI.REFERENCES_HREF_VALUE);
 		}
 
 		// close eAnnotations
@@ -1175,25 +1175,25 @@ public class SchemaGraph2XMI {
 		if (!hasDefaultValue
 				&& !(domain instanceof BooleanDomain
 						|| domain instanceof IntegerDomain || domain instanceof StringDomain)) {
-			writer.writeEmptyElement(XMIConstants.TAG_OWNEDATTRIBUTE);
+			writer.writeEmptyElement(XMIConstants4SchemaGraph2XMI.TAG_OWNEDATTRIBUTE);
 		} else {
-			writer.writeStartElement(XMIConstants.TAG_OWNEDATTRIBUTE);
+			writer.writeStartElement(XMIConstants4SchemaGraph2XMI.TAG_OWNEDATTRIBUTE);
 		}
-		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-				XMIConstants.XMI_ATTRIBUTE_TYPE,
-				XMIConstants.OWNEDATTRIBUTE_TYPE_VALUE);
-		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-				XMIConstants.XMI_ATTRIBUTE_ID, id);
-		writer.writeAttribute(XMIConstants.ATTRIBUTE_NAME, attributeName);
-		writer.writeAttribute(XMIConstants.OWNEDATTRIBUTE_ATTRIBUTE_VISIBILITY,
-				XMIConstants.OWNEDATTRIBUTE_VISIBILITY_VALUE_PRIVATE);
+		writer.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
+				XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_TYPE,
+				XMIConstants4SchemaGraph2XMI.OWNEDATTRIBUTE_TYPE_VALUE);
+		writer.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
+				XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_ID, id);
+		writer.writeAttribute(XMIConstants4SchemaGraph2XMI.ATTRIBUTE_NAME, attributeName);
+		writer.writeAttribute(XMIConstants4SchemaGraph2XMI.OWNEDATTRIBUTE_ATTRIBUTE_VISIBILITY,
+				XMIConstants4SchemaGraph2XMI.OWNEDATTRIBUTE_VISIBILITY_VALUE_PRIVATE);
 
 		// create type
 		if (domain instanceof BooleanDomain || domain instanceof IntegerDomain
 				|| domain instanceof StringDomain) {
 			createType(writer, domain);
 		} else {
-			writer.writeAttribute(XMIConstants.XMI_ATTRIBUTE_TYPE, domain
+			writer.writeAttribute(XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_TYPE, domain
 					.get_qualifiedName().replaceAll("\\s", "").replaceAll("<",
 							"_").replaceAll(">", "_"));
 		}
@@ -1239,47 +1239,47 @@ public class SchemaGraph2XMI {
 			throws XMLStreamException {
 		// start defaultValue
 		if (domain instanceof LongDomain || domain instanceof EnumDomain) {
-			writer.writeEmptyElement(XMIConstants.TAG_DEFAULTVALUE);
+			writer.writeEmptyElement(XMIConstants4SchemaGraph2XMI.TAG_DEFAULTVALUE);
 		} else {
-			writer.writeStartElement(XMIConstants.TAG_DEFAULTVALUE);
+			writer.writeStartElement(XMIConstants4SchemaGraph2XMI.TAG_DEFAULTVALUE);
 		}
 		if (domain instanceof BooleanDomain) {
-			writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-					XMIConstants.XMI_ATTRIBUTE_TYPE,
-					XMIConstants.TYPE_VALUE_LITERALBOOLEAN);
+			writer.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
+					XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_TYPE,
+					XMIConstants4SchemaGraph2XMI.TYPE_VALUE_LITERALBOOLEAN);
 		} else if (domain instanceof IntegerDomain
 				|| domain instanceof LongDomain) {
-			writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-					XMIConstants.XMI_ATTRIBUTE_TYPE,
-					XMIConstants.TYPE_VALUE_LITERALINTEGER);
+			writer.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
+					XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_TYPE,
+					XMIConstants4SchemaGraph2XMI.TYPE_VALUE_LITERALINTEGER);
 		} else if (domain instanceof EnumDomain) {
-			writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-					XMIConstants.XMI_ATTRIBUTE_TYPE,
-					XMIConstants.TYPE_VALUE_INSTANCEVALUE);
+			writer.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
+					XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_TYPE,
+					XMIConstants4SchemaGraph2XMI.TYPE_VALUE_INSTANCEVALUE);
 		} else {
-			writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-					XMIConstants.XMI_ATTRIBUTE_TYPE,
-					XMIConstants.TYPE_VALUE_OPAQUEEXPRESSION);
+			writer.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
+					XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_TYPE,
+					XMIConstants4SchemaGraph2XMI.TYPE_VALUE_OPAQUEEXPRESSION);
 		}
-		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-				XMIConstants.XMI_ATTRIBUTE_ID, id + "_defaultValue");
+		writer.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
+				XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_ID, id + "_defaultValue");
 		if (domain instanceof BooleanDomain || domain instanceof IntegerDomain
 				|| domain instanceof LongDomain || domain instanceof EnumDomain) {
 			if (domain instanceof BooleanDomain) {
-				writer.writeAttribute(XMIConstants.ATTRIBUTE_VALUE,
+				writer.writeAttribute(XMIConstants4SchemaGraph2XMI.ATTRIBUTE_VALUE,
 						defaultValue.equals("t") ? "true" : "false");
 			} else if (domain instanceof EnumDomain) {
 				writer
-						.writeAttribute(XMIConstants.ATTRIBUTE_NAME,
+						.writeAttribute(XMIConstants4SchemaGraph2XMI.ATTRIBUTE_NAME,
 								defaultValue);
-				writer.writeAttribute(XMIConstants.XMI_ATTRIBUTE_TYPE, domain
+				writer.writeAttribute(XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_TYPE, domain
 						.get_qualifiedName());
 				writer.writeAttribute(
-						XMIConstants.DEFAULTVALUE_ATTRIBUTE_INSTANCE, domain
+						XMIConstants4SchemaGraph2XMI.DEFAULTVALUE_ATTRIBUTE_INSTANCE, domain
 								.get_qualifiedName()
 								+ "_" + defaultValue);
 			} else {
-				writer.writeAttribute(XMIConstants.ATTRIBUTE_VALUE,
+				writer.writeAttribute(XMIConstants4SchemaGraph2XMI.ATTRIBUTE_VALUE,
 						defaultValue);
 			}
 
@@ -1295,13 +1295,13 @@ public class SchemaGraph2XMI {
 			} else {
 				// there has to be created an entry for the current domain in
 				// the package primitiveTypes
-				writer.writeAttribute(XMIConstants.XMI_ATTRIBUTE_TYPE, domain
+				writer.writeAttribute(XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_TYPE, domain
 						.get_qualifiedName().replaceAll("\\s", "").replaceAll(
 								"<", "_").replaceAll(">", "_"));
 			}
 
 			// start body
-			writer.writeStartElement(XMIConstants.TAG_BODY);
+			writer.writeStartElement(XMIConstants4SchemaGraph2XMI.TAG_BODY);
 			writer.writeCharacters(defaultValue);
 			// end body
 			writer.writeEndElement();
@@ -1325,25 +1325,25 @@ public class SchemaGraph2XMI {
 	private void createType(XMLStreamWriter writer, Domain domain)
 			throws XMLStreamException {
 		// create type
-		writer.writeEmptyElement(XMIConstants.TAG_TYPE);
+		writer.writeEmptyElement(XMIConstants4SchemaGraph2XMI.TAG_TYPE);
 		if (domain instanceof BooleanDomain) {
-			writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-					XMIConstants.XMI_ATTRIBUTE_TYPE,
-					XMIConstants.TYPE_VALUE_PRIMITIVETYPE);
-			writer.writeAttribute(XMIConstants.ATTRIBUTE_HREF,
-					XMIConstants.TYPE_HREF_VALUE_BOOLEAN);
+			writer.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
+					XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_TYPE,
+					XMIConstants4SchemaGraph2XMI.TYPE_VALUE_PRIMITIVETYPE);
+			writer.writeAttribute(XMIConstants4SchemaGraph2XMI.ATTRIBUTE_HREF,
+					XMIConstants4SchemaGraph2XMI.TYPE_HREF_VALUE_BOOLEAN);
 		} else if (domain instanceof IntegerDomain) {
-			writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-					XMIConstants.XMI_ATTRIBUTE_TYPE,
-					XMIConstants.TYPE_VALUE_PRIMITIVETYPE);
-			writer.writeAttribute(XMIConstants.ATTRIBUTE_HREF,
-					XMIConstants.TYPE_HREF_VALUE_INTEGER);
+			writer.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
+					XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_TYPE,
+					XMIConstants4SchemaGraph2XMI.TYPE_VALUE_PRIMITIVETYPE);
+			writer.writeAttribute(XMIConstants4SchemaGraph2XMI.ATTRIBUTE_HREF,
+					XMIConstants4SchemaGraph2XMI.TYPE_HREF_VALUE_INTEGER);
 		} else if (domain instanceof StringDomain) {
-			writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-					XMIConstants.XMI_ATTRIBUTE_TYPE,
-					XMIConstants.TYPE_VALUE_PRIMITIVETYPE);
-			writer.writeAttribute(XMIConstants.ATTRIBUTE_HREF,
-					XMIConstants.TYPE_HREF_VALUE_STRING);
+			writer.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
+					XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_TYPE,
+					XMIConstants4SchemaGraph2XMI.TYPE_VALUE_PRIMITIVETYPE);
+			writer.writeAttribute(XMIConstants4SchemaGraph2XMI.ATTRIBUTE_HREF,
+					XMIConstants4SchemaGraph2XMI.TYPE_HREF_VALUE_STRING);
 		}
 	}
 
@@ -1364,7 +1364,7 @@ public class SchemaGraph2XMI {
 		for (HasConstraint hasConstraint : aeclass.getHasConstraintIncidences()) {
 			createConstraint(writer, (Constraint) hasConstraint.getThat(),
 					aeclass.get_qualifiedName() + "_"
-							+ XMIConstants.TAG_OWNEDRULE + uniqueNumber++,
+							+ XMIConstants4SchemaGraph2XMI.TAG_OWNEDRULE + uniqueNumber++,
 					aeclass.get_qualifiedName());
 		}
 	}
@@ -1413,31 +1413,31 @@ public class SchemaGraph2XMI {
 			String constraintContent, String id, String constrainedElement)
 			throws XMLStreamException {
 		// start ownedRule
-		writer.writeStartElement(XMIConstants.TAG_OWNEDRULE);
-		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-				XMIConstants.XMI_ATTRIBUTE_TYPE,
-				XMIConstants.OWNEDRULE_TYPE_VALUE);
-		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-				XMIConstants.XMI_ATTRIBUTE_ID, id);
+		writer.writeStartElement(XMIConstants4SchemaGraph2XMI.TAG_OWNEDRULE);
+		writer.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
+				XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_TYPE,
+				XMIConstants4SchemaGraph2XMI.OWNEDRULE_TYPE_VALUE);
+		writer.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
+				XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_ID, id);
 		writer.writeAttribute(
-				XMIConstants.OWNEDRULE_ATTRIBUTE_CONSTRAINEDELEMENT,
+				XMIConstants4SchemaGraph2XMI.OWNEDRULE_ATTRIBUTE_CONSTRAINEDELEMENT,
 				constrainedElement);
 
 		// start specification
-		writer.writeStartElement(XMIConstants.TAG_SPECIFICATION);
-		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-				XMIConstants.XMI_ATTRIBUTE_TYPE,
-				XMIConstants.TYPE_VALUE_OPAQUEEXPRESSION);
-		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-				XMIConstants.XMI_ATTRIBUTE_ID, id + "_"
-						+ XMIConstants.TAG_SPECIFICATION);
+		writer.writeStartElement(XMIConstants4SchemaGraph2XMI.TAG_SPECIFICATION);
+		writer.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
+				XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_TYPE,
+				XMIConstants4SchemaGraph2XMI.TYPE_VALUE_OPAQUEEXPRESSION);
+		writer.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
+				XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_ID, id + "_"
+						+ XMIConstants4SchemaGraph2XMI.TAG_SPECIFICATION);
 
 		// start and end language
-		writer.writeStartElement(XMIConstants.TAG_LANGUAGE);
+		writer.writeStartElement(XMIConstants4SchemaGraph2XMI.TAG_LANGUAGE);
 		writer.writeEndElement();
 
 		// start body
-		writer.writeStartElement(XMIConstants.TAG_BODY);
+		writer.writeStartElement(XMIConstants4SchemaGraph2XMI.TAG_BODY);
 		writer.writeCharacters(constraintContent);
 
 		// end body
@@ -1467,7 +1467,7 @@ public class SchemaGraph2XMI {
 		for (Annotates annotates : nelement.getAnnotatesIncidences()) {
 			createComment(writer, (Comment) annotates.getThat(), nelement
 					.get_qualifiedName()
-					+ "_" + XMIConstants.TAG_OWNEDCOMMENT + uniqueNumber++,
+					+ "_" + XMIConstants4SchemaGraph2XMI.TAG_OWNEDCOMMENT + uniqueNumber++,
 					nelement.get_qualifiedName());
 		}
 	}
@@ -1490,24 +1490,24 @@ public class SchemaGraph2XMI {
 	private void createComment(XMLStreamWriter writer, Comment comment,
 			String id, String annotatedElement) throws XMLStreamException {
 		// start ownedComment
-		writer.writeStartElement(XMIConstants.TAG_OWNEDCOMMENT);
-		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-				XMIConstants.XMI_ATTRIBUTE_TYPE,
-				XMIConstants.OWNEDCOMMENT_TYPE_VALUE);
-		writer.writeAttribute(XMIConstants.NAMESPACE_XMI,
-				XMIConstants.XMI_ATTRIBUTE_ID, id);
+		writer.writeStartElement(XMIConstants4SchemaGraph2XMI.TAG_OWNEDCOMMENT);
+		writer.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
+				XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_TYPE,
+				XMIConstants4SchemaGraph2XMI.OWNEDCOMMENT_TYPE_VALUE);
+		writer.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
+				XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_ID, id);
 		writer.writeAttribute(
-				XMIConstants.OWNEDCOMMENT_ATTRIBUTE_ANNOTATEDELEMENT,
+				XMIConstants4SchemaGraph2XMI.OWNEDCOMMENT_ATTRIBUTE_ANNOTATEDELEMENT,
 				annotatedElement);
 
 		// start body
-		writer.writeStartElement(XMIConstants.TAG_BODY);
+		writer.writeStartElement(XMIConstants4SchemaGraph2XMI.TAG_BODY);
 
 		// write content
-		writer.writeCharacters(XMIConstants.COMMENT_START
+		writer.writeCharacters(XMIConstants4SchemaGraph2XMI.COMMENT_START
 				+ comment.get_text().replaceAll(Pattern.quote("\n"),
-						XMIConstants.COMMENT_NEWLINE)
-				+ XMIConstants.COMMENT_END);
+						XMIConstants4SchemaGraph2XMI.COMMENT_NEWLINE)
+				+ XMIConstants4SchemaGraph2XMI.COMMENT_END);
 
 		// end body
 		writer.writeEndElement();

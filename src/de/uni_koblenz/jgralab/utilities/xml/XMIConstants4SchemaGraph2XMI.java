@@ -8,7 +8,7 @@ package de.uni_koblenz.jgralab.utilities.xml;
  * 
  * @author ist@uni-koblenz.de
  */
-public class XMIConstants {
+public class XMIConstants4SchemaGraph2XMI {
 
 	// xml-header information
 	static final String XML_VERSION = "1.0";
