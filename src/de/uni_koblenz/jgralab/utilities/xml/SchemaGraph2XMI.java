@@ -925,7 +925,9 @@ public class SchemaGraph2XMI {
 	 * Creates the representation of the {@link IncidenceClass} which contains
 	 * the information for the {@link VertexClass} which is specified by
 	 * <code>qualifiedNameOfVertexClass</code> e.g. <code>otherIncidence</code>.<br/>
-	 * The relevant information are: <ui> <li>TODO</li> </ui>
+	 * The relevant information are: <ui> <li>the rolename,</li> <li>the
+	 * redefines information,</li> <li>TODO check default rolename if it is
+	 * unique (contains edgeClass qualified name)</li> </ui>
 	 * 
 	 * @param writer
 	 *            {@link XMLStreamWriter} of the current XMI file
@@ -985,7 +987,8 @@ public class SchemaGraph2XMI {
 					.get_roleName());
 		} else if (edgeClass.getFirstHasAttribute() == null) {
 			writer.writeAttribute(XMIConstants.ATTRIBUTE_NAME,
-					qualifiedNameOfVertexClass);
+					qualifiedNameOfVertexClass + "_"
+							+ edgeClass.get_qualifiedName());
 		} else {
 			writer.writeAttribute(XMIConstants.ATTRIBUTE_NAME, "");
 		}
