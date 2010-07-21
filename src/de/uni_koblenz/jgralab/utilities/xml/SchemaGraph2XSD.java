@@ -129,8 +129,8 @@ import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesVertexClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
 import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
 import de.uni_koblenz.jgralab.utilities.common.UtilityMethods;
-import de.uni_koblenz.jgralab.utilities.rsa2tg.SchemaFilter;
-import de.uni_koblenz.jgralab.utilities.rsa2tg.SchemaGraph2Tg;
+import de.uni_koblenz.jgralab.utilities.rsa.SchemaFilter;
+import de.uni_koblenz.jgralab.utilities.rsa.SchemaGraph2Tg;
 import de.uni_koblenz.jgralab.utilities.tg2schemagraph.Tg2SchemaGraph;
 
 /**

@@ -9,7 +9,7 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.utilities.rsa2tg.Rsa2Tg;
+import de.uni_koblenz.jgralab.utilities.rsa.Rsa2Tg;
 
 /**
  * This class implements a call to Rsa2Tg as custom ant task. <br />
