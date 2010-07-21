@@ -12,63 +12,87 @@ public class SearchVisitorComposition extends SimpleVisitorComposition
 	private List<SearchVisitor> searchVisitors;
 
 	public SearchVisitorComposition() {
-		searchVisitors = new LinkedList<SearchVisitor>();
+
 	}
-	
-	public void addSearchVisitor(SearchVisitor newVisitor){
+
+	private void createSearchVisitorsLazily() {
+		if (searchVisitors == null) {
+			searchVisitors = new LinkedList<SearchVisitor>();
+		}
+	}
+
+	public void addSearchVisitor(SearchVisitor newVisitor) {
+		createSearchVisitorsLazily();
 		searchVisitors.add(newVisitor);
 	}
-	
-	public void removeSearchVisitor(SearchVisitor toRemove){
-		searchVisitors.remove(toRemove);
+
+	public void removeSearchVisitor(SearchVisitor toRemove) {
+		if (searchVisitors != null) {
+			searchVisitors.remove(toRemove);
+			if (searchVisitors.size() == 0) {
+				clearSearchVisitors();
+			}
+		}
 	}
-	
-	public void clearSearchVisitors(){
-		searchVisitors.clear();
+
+	public void clearSearchVisitors() {
+		searchVisitors = null;
 	}
 
 	@Override
 	public void visitFrond(Edge e) {
-		for (SearchVisitor currentVisitor : searchVisitors) {
-			currentVisitor.visitFrond(e);
+		if (searchVisitors != null) {
+			for (SearchVisitor currentVisitor : searchVisitors) {
+				currentVisitor.visitFrond(e);
+			}
 		}
 	}
 
 	@Override
 	public void visitRoot(Vertex v) {
-		for (SearchVisitor currentVisitor : searchVisitors) {
-			currentVisitor.visitRoot(v);
+		if (searchVisitors != null) {
+			for (SearchVisitor currentVisitor : searchVisitors) {
+				currentVisitor.visitRoot(v);
+			}
 		}
 	}
 
 	@Override
 	public void visitTreeEdge(Edge e) {
-		for (SearchVisitor currentVisitor : searchVisitors) {
-			currentVisitor.visitTreeEdge(e);
+		if (searchVisitors != null) {
+			for (SearchVisitor currentVisitor : searchVisitors) {
+				currentVisitor.visitTreeEdge(e);
+			}
 		}
 	}
 
 	@Override
 	public void visitEdge(Edge e) {
 		super.visitEdge(e);
-		for (SearchVisitor currentVisitor : searchVisitors) {
-			currentVisitor.visitEdge(e);
+		if (searchVisitors != null) {
+			for (SearchVisitor currentVisitor : searchVisitors) {
+				currentVisitor.visitEdge(e);
+			}
 		}
 	}
 
 	@Override
 	public void visitVertex(Vertex v) {
 		super.visitVertex(v);
-		for (SearchVisitor currentVisitor : searchVisitors) {
-			currentVisitor.visitVertex(v);
+		if (searchVisitors != null) {
+			for (SearchVisitor currentVisitor : searchVisitors) {
+				currentVisitor.visitVertex(v);
+			}
 		}
 	}
 
 	@Override
 	public void reset() {
 		super.reset();
-		for (SearchVisitor currentVisitor : searchVisitors) {
-			currentVisitor.reset();
+		if (searchVisitors != null) {
+			for (SearchVisitor currentVisitor : searchVisitors) {
+				currentVisitor.reset();
+			}
 		}
 	}
 
