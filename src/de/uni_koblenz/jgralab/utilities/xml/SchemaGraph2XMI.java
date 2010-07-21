@@ -1348,8 +1348,14 @@ public class SchemaGraph2XMI {
 	}
 
 	/**
+	 * Creates the representation of all {@link Constraint}s attached to
+	 * <code>aeclass</code>.
+	 * 
 	 * @param writer
+	 *            {@link XMLStreamWriter} of the current XMI file
 	 * @param aeclass
+	 *            {@link AttributedElementClass} of which the {@link Constraint}
+	 *            s should be created
 	 * @throws XMLStreamException
 	 */
 	private void createConstraints(XMLStreamWriter writer,
@@ -1363,6 +1369,21 @@ public class SchemaGraph2XMI {
 		}
 	}
 
+	/**
+	 * Creates the representation of <code>constraint</code>.
+	 * 
+	 * @param writer
+	 *            {@link XMLStreamWriter} of the current XMI file
+	 * @param constraint
+	 *            {@link Constraint} to be represented
+	 * @param id
+	 *            {@link String} the id of the created <code>ownedRule</code>
+	 *            tag, which represents <code>constraint</code>
+	 * @param constrainedElement
+	 *            {@link String} qualified name of the
+	 *            {@link AttributedElementClass} which is constrained
+	 * @throws XMLStreamException
+	 */
 	private void createConstraint(XMLStreamWriter writer,
 			Constraint constraint, String id, String constrainedElement)
 			throws XMLStreamException {
@@ -1372,6 +1393,22 @@ public class SchemaGraph2XMI {
 				constrainedElement);
 	}
 
+	/**
+	 * Creates an constraint with the content <code>constraintContent</code>.
+	 * 
+	 * @param writer
+	 *            {@link XMLStreamWriter} of the current XMI file
+	 * @param constraintContent
+	 *            {@link String} the content of the constraint which will be
+	 *            created
+	 * @param id
+	 *            {@link String} the id of the created <code>ownedRule</code>
+	 *            tag, which represents <code>constraint</code>
+	 * @param constrainedElement
+	 *            {@link String} qualified name of the
+	 *            {@link AttributedElementClass} which is constrained
+	 * @throws XMLStreamException
+	 */
 	private void createConstraint(XMLStreamWriter writer,
 			String constraintContent, String id, String constrainedElement)
 			throws XMLStreamException {
@@ -1414,10 +1451,14 @@ public class SchemaGraph2XMI {
 	}
 
 	/**
+	 * Creates the representation of all {@link Comment}s attached to
+	 * <code>nelement</code>.
+	 * 
 	 * @param writer
+	 *            {@link XMLStreamWriter} of the current XMI file
 	 * @param nelement
-	 * @param uniqueNumber
-	 * @return
+	 *            {@link NamedElement} of which the {@link Comment}s should be
+	 *            created
 	 * @throws XMLStreamException
 	 */
 	private void createComments(XMLStreamWriter writer, NamedElement nelement)
@@ -1432,10 +1473,18 @@ public class SchemaGraph2XMI {
 	}
 
 	/**
+	 * Creates the representation of one comment.
+	 * 
 	 * @param writer
+	 *            {@link XMLStreamWriter} of the current XMI file
 	 * @param comment
+	 *            {@link Comment} which should be represented
 	 * @param id
+	 *            {@link String} the id of the created <code>ownedComment</code>
+	 *            tag, which represents <code>comment</code>
 	 * @param annotatedElement
+	 *            {@link String} qualified name of the {@link NamedElement}
+	 *            which is commented
 	 * @throws XMLStreamException
 	 */
 	private void createComment(XMLStreamWriter writer, Comment comment,
@@ -1467,6 +1516,14 @@ public class SchemaGraph2XMI {
 		writer.writeEndElement();
 	}
 
+	/**
+	 * Extracts the simple name out of <code>qualifiedName</code>.
+	 * 
+	 * @param qualifiedName
+	 *            {@link String} the qualified name of which the simple name
+	 *            should be extracted
+	 * @return {@link String} the extracted simple name
+	 */
 	private String extractSimpleName(String qualifiedName) {
 		int lastIndexOfDot = qualifiedName.lastIndexOf('.');
 		if (lastIndexOfDot >= 0) {

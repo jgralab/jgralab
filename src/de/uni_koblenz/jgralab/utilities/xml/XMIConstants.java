@@ -44,7 +44,7 @@ public class XMIConstants {
 
 	// comment specific constants
 	static final String COMMENT_END = "\r\n</p>";
-	static final String COMMENT_NEWLINE = "\r\n&</p>\r\n<p>\r\n\t";
+	static final String COMMENT_NEWLINE = "\r\n</p>\r\n<p>\r\n\t";
 	static final String COMMENT_START = "<p>\r\n\t";
 	static final String OWNEDCOMMENT_ATTRIBUTE_ANNOTATEDELEMENT = de.uni_koblenz.jgralab.utilities.rsa2tg.XMIConstants.UML_ANNOTATED_ELEMENT;
 	static final String OWNEDCOMMENT_TYPE_VALUE = "uml:Comment";
