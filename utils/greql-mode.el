@@ -274,7 +274,9 @@ queries are evaluated.  Set it with `greql-set-graph'.")
     (setq tg-schema-alist schema-alist)
     (setq tg-unique-name-hashmap unique-name-map))
   ;; Setup schema element font locking
-  (greql-set-fontlock-types-regex))
+  (greql-set-fontlock-types-regex)
+  ;; Clear the completions cache
+  (setq greql--completion-cache nil))
 
 (defun greql-import-completion-list (mtypes)
   "Return a completion list for imported elements.
@@ -316,15 +318,22 @@ by normal completion."
                                lst)))))))))
       lst)))
 
+(defvar greql--completion-cache (make-hash-table :test 'equal)
+  "Caches completions.  Keys are list of the form '(MTYPE...)")
+(make-variable-buffer-local 'greql--completion-cache)
+
 (defun greql-completion-list (mtypes)
   "Return a completion list of all MTYPES (:meta values)."
   (when tg-schema-alist
-    (let (completions)
-      (dolist (elem tg-schema-alist)
-        (when (or (null mtypes) (member (plist-get elem :meta) mtypes))
-          (setq completions (cons (list (plist-get elem :qname)
-                                        (tg-eldoc-vertex-or-edge elem))
-                                  completions))))
+    (let ((completions (gethash mtypes greql--completion-cache)))
+      (if completions
+          completions
+        (dolist (elem tg-schema-alist)
+          (when (or (null mtypes) (member (plist-get elem :meta) mtypes))
+            (setq completions (cons (list (plist-get elem :qname)
+                                          (concat "  " (tg-eldoc-vertex-or-edge elem)))
+                                    completions))))
+        (puthash mtypes completions greql--completion-cache))
       completions)))
 
 (defun greql-attribute-completion-list (al)
@@ -710,7 +719,8 @@ properties from string."
     '((candidates . greql-completion-list-at-point)
       (document   . greql-ac-documentation)
       (symbol     . "GReQL")
-      (requires   . 1)))
+      (requires   . 1)
+      (cache)))
 
   (add-to-list 'ac-modes 'greql-mode)
 
