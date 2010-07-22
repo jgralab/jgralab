@@ -84,8 +84,8 @@
 	<property name="graphvalidator.src" value="${src.dir}/de/uni_koblenz/jgralab" />
 	<property name="graphvalidator.includes" value="graphvalidator/**" />
 
-	<property name="rsa2tg.src" value="${src.dir}/de/uni_koblenz/jgralab/utilities" />
-	<property name="rsa2tg.includes" value="rsa2tg/** tg2schemagraph/** common/**" />
+	<property name="rsa.src" value="${src.dir}/de/uni_koblenz/jgralab/utilities" />
+	<property name="rsa.includes" value="rsa/** tg2schemagraph/** common/**" />
 
 	<property name="utilities.src" value="${src.dir}/de/uni_koblenz/jgralab/utilities" />
 	<property name="utilities.includes" value="ant/** common/** converter/** greqlinterface/** jgralab2owl/** schemacompare/** tg2gdl/** tg2gxl/** tg2sidiff/** tgmerge/** tgraphbrowser/** xmi2tgschema/** xml/**" />
@@ -103,7 +103,7 @@
 	</target>
 
 	<!-- compile -->
-	<target name="compile" depends="core,tgtools,greql2,graphvalidator,rsa2tg,utilities,generatetestschemas" />
+	<target name="compile" depends="core,tgtools,greql2,graphvalidator,rsa,utilities,generatetestschemas" />
 
 	<!-- jgralab -->
 	<!-- compiles jgralab basic sources -->
@@ -130,12 +130,12 @@
 		<javac fork="true" srcdir="${graphvalidator.src}" includes="${graphvalidator.includes}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" target="${javac.targetVM}" />
 	</target>
 
-	<target name="rsa2tg" depends="gruml,graphvalidator">
-		<javac fork="true" srcdir="${rsa2tg.src}" includes="${rsa2tg.includes}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" target="${javac.targetVM}" />
+	<target name="rsa" depends="gruml,graphvalidator">
+		<javac fork="true" srcdir="${rsa.src}" includes="${rsa.includes}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" target="${javac.targetVM}" />
 	</target>
 
 	<!-- compiles utility sources -->
-	<target name="utilities" depends="rsa2tg,gruml">
+	<target name="utilities" depends="rsa,gruml">
 		<javac fork="true" srcdir="${utilities.src}" includes="${utilities.includes}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" target="${javac.targetVM}" />
 	</target>
 
