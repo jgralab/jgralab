@@ -719,8 +719,7 @@ properties from string."
     '((candidates . greql-completion-list-at-point)
       (document   . greql-ac-documentation)
       (symbol     . "GReQL")
-      (requires   . 1)
-      (cache)))
+      (requires   . 1)))
 
   (add-to-list 'ac-modes 'greql-mode)
 
