@@ -1,0 +1,7 @@
+TGraph 2;
+
+Schema a.Test;
+
+GraphClass AGraphClass ["Nachricht" "-->{VertexClassB}" "off"];
+
+Package ;

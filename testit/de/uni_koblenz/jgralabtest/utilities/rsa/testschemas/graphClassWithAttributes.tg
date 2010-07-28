@@ -1,0 +1,9 @@
+TGraph 2;
+
+Schema a.Test;
+
+GraphClass AGraphClass {aBoolean: Boolean, aString: String, aInteger: Integer, aDouble: Double, aLong: Long, enum: Enumeration1, arecord: Record1, aList: List<Boolean>, aSet: Set<Double>, aMap: Map<String, Enumeration1>, aComplexList: List<Set<Boolean>>};
+
+Package ;
+EnumDomain Enumeration1 (FIRST, SECOND);
+RecordDomain Record1 (anAttribute: Boolean, anotherAttribute: Integer);

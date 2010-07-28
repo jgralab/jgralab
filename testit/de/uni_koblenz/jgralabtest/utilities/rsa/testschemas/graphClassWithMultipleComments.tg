@@ -1,0 +1,9 @@
+TGraph 2;
+
+Schema a.Test;
+
+GraphClass AGraphClass;
+
+Comment AGraphClass "First Comment";
+Comment AGraphClass "Second Comment";
+Package ;
