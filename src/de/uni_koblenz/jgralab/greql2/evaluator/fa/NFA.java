@@ -171,12 +171,15 @@ public class NFA extends FiniteAutomaton {
 	 */
 	public static NFA createAlternativePathDescriptionNFA(List<NFA> nfaList)
 			throws EvaluateException {
-		NFA resultNFA = nfaList.get(0);
+		NFA resultNFA = new NFA();
 		State finalState = new State();
+		State initialState = new State();
+		resultNFA.stateList.add(initialState);
 		resultNFA.stateList.add(finalState);
-		resultNFA.constructFinalStatesEpsilonTransitions(finalState, true);
+		resultNFA.initialState = initialState;
 		resultNFA.finalStates.add(finalState);
-		for (int i = 1; i < nfaList.size(); i++) {
+		//resultNFA.constructFinalStatesEpsilonTransitions(finalState, true);
+		for (int i = 0; i < nfaList.size(); i++) {
 			NFA nextNFA = nfaList.get(i);
 			Transition t = new EpsilonTransition(resultNFA.initialState,
 					nextNFA.initialState);
