@@ -1,0 +1,8 @@
+TGraph 2;
+
+Schema a.Test;
+
+GraphClass AGraphClass;
+
+Package ;
+EnumDomain Enumeration1 (FIRST, SECOND);

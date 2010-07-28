@@ -25,7 +25,17 @@ import de.uni_koblenz.jgralab.utilities.rsa.Rsa2Tg;
 import de.uni_koblenz.jgralab.utilities.rsa.SchemaGraph2XMI;
 
 public class SchemaGraph2XMITest {
-
+	/*
+	 * TODO VERTEXCLASS -attributes -inheritance -abstract -comment -multiple
+	 * comment -constraint -multiple constraint PACKAGES -depth 1 -depth 2 only
+	 * element in most depth package -depth 2 elements in each package
+	 * ASSOCIATION -abstract -inheritance -multiplicities -rolename -redefines
+	 * -aggregation -composition -comment -multiple comment -constraint
+	 * -multiple constraint ASSOCIATIONCLASS -abstract -inheritance
+	 * -multiplicities -rolename -redefines -aggregation -composition -comment
+	 * -multiple comment -constraint -multiple constraint INHERITANCE between
+	 * association and associationclass in both directions
+	 */
 	private static String folder = "testit/de/uni_koblenz/jgralabtest/utilities/rsa/testschemas/";
 
 	private Rsa2Tg r;

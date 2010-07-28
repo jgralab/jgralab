@@ -1,0 +1,9 @@
+TGraph 2;
+
+Schema a.Test;
+
+GraphClass AGraphClass;
+
+Package ;
+Comment Record1 "a comment";
+RecordDomain Record1 (anAttribute: Boolean, anotherAttribute: Integer);
