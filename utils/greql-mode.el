@@ -318,13 +318,15 @@ by normal completion."
                                lst)))))))))
       lst)))
 
-(defvar greql--completion-cache (make-hash-table :test 'equal)
+(defvar greql--completion-cache nil
   "Caches completions.  Keys are list of the form '(MTYPE...)")
 (make-variable-buffer-local 'greql--completion-cache)
 
 (defun greql-completion-list (mtypes)
   "Return a completion list of all MTYPES (:meta values)."
   (when tg-schema-alist
+    (unless greql--completion-cache
+      (setq greql--completion-cache (make-hash-table :test 'equal)))
     (let ((completions (gethash mtypes greql--completion-cache)))
       (if completions
           completions
