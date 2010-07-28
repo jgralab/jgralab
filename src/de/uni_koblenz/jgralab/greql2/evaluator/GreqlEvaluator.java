@@ -217,7 +217,9 @@ public class GreqlEvaluator {
 	 */
 	public void setSubgraphMarker(BooleanGraphMarker subgraphMarker) {
 		this.subgraphMarker = subgraphMarker;
-		this.datagraph = subgraphMarker.getGraph();
+		if (subgraphMarker != null) {
+			this.datagraph = subgraphMarker.getGraph();
+		}
 	}
 
 	/**
@@ -1054,7 +1056,8 @@ public class GreqlEvaluator {
 
 		long plainEvaluationStartTime = System.currentTimeMillis();
 		result = vertexEvalGraphMarker.getMark(
-				queryGraph.getFirstGreql2Expression()).getResult(subgraphMarker);
+				queryGraph.getFirstGreql2Expression())
+				.getResult(subgraphMarker);
 
 		// last, remove all added tempAttributes, currently, this are only
 		// subgraphAttributes
