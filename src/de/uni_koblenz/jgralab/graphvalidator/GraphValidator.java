@@ -37,11 +37,14 @@ import java.util.TreeSet;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphIO;
+import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.Greql2Exception;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
+import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Constraint;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -65,6 +68,18 @@ public class GraphValidator {
 	public GraphValidator(Graph graph) {
 		this.graph = graph;
 		this.eval = new GreqlEvaluator((String) null, graph, null);
+	}
+
+	// TODO: Add proper apache common CLI handling!
+	public static void main(String[] args) throws GraphIOException, IOException {
+		if (args.length != 1) {
+			System.err.println("Usage: java GraphValidator <graph.tg>");
+			System.exit(1);
+		}
+		Graph g = GraphIO.loadGraphFromFileWithStandardSupport(args[0],
+				new ProgressFunctionImpl());
+		GraphValidator v = new GraphValidator(g);
+		v.createValidationReport("__validation_report.html");
 	}
 
 	/**
