@@ -140,7 +140,8 @@ public class GreqlEvaluator {
 	/**
 	 * Print the text representation of the optimized query after optimization.
 	 */
-	public static boolean DEBUG_OPTIMIZATION = false;
+	public static boolean DEBUG_OPTIMIZATION = Boolean.parseBoolean(System
+			.getProperty("greqlDebugOptimization", "false"));
 
 	/**
 	 * toggles wether to use indexing for vertex sets or not
