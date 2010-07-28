@@ -330,8 +330,8 @@ public interface Vertex extends GraphElement {
 	public Iterable<Edge> incidences();
 
 	/**
-	 * Return an Iterable&lt;vertexType&gt; over all vertices reachable from
-	 * this vertex via the specified <code>pathDescription</code>.
+	 * Return an List&lt;vertexType&gt; over all vertices reachable from this
+	 * vertex via the specified <code>pathDescription</code>.
 	 * 
 	 * @param pathDescription
 	 *            a GReQL path description like
