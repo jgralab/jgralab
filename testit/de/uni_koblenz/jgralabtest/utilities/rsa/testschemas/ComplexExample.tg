@@ -1,0 +1,25 @@
+TGraph 2;
+
+Schema y.Sandkasten;
+
+GraphClass AGraphClass {aBoolean: Boolean = "t", aString: String = "\\\"hallo\\\"", aInteger: Integer = "1", aDouble: Double = "1.5", aLong: Long = "4", enum: Enumeration1 = "FIRST", arecord: Record1 = "(t 1)", aList: List<Boolean>, aSet: Set<Double>, aMap: Map<String, Enumeration1>, aComplexList: List<Set<Boolean>> = "[{t} {f} {t}]"} ["Nachricht" "-->{VertexClassB}" "off"];
+
+Comment AGraphClass "A Comment\n\u00e4\u00f6\u00fc\u00df";
+Package ;
+Comment Enumeration1 "a comment";
+EnumDomain Enumeration1 (FIRST, SECOND);
+Comment Record1 "another comment";
+RecordDomain Record1 (anAttribute: Boolean, anotherAttribute: Integer);
+VertexClass VertexClass1: VertexClass2;
+abstract VertexClass VertexClass2;
+Package package1;
+VertexClass VertexClassA;
+VertexClass VertexClassB;
+Comment package1.EdgClassE "Comment to the Edge";
+EdgeClass EdgClassE: EdgeClassSuper from VertexClassA (1,1) role roleNameVCA to VertexClassB (1,1) role roleNameVCB redefines vertexClassB ["Nachricht" "-->{VertexClassB}" "off"];
+abstract EdgeClass EdgeClassSuper from VertexClassA (0,*) role vertexClassA to VertexClassB (1,*) role vertexClassB;
+EdgeClass Aggregation from VertexClassB (1,1) role vertexClassB2 to VertexClassA (0,*) role vertexClassA2 aggregation shared;
+EdgeClass Composition from VertexClassB (0,*) role vertexclassb to VertexClassA (0,*) role vertexClassA3 aggregation composite;
+EdgeClass AssociationClass: EdgeClassSuper from VertexClassA (0,1) role roleA redefines vertexClassA to VertexClassB (1,1) role vertexclassbX {anInteger: Integer};
+EdgeClass Navigable from VertexClassA (1,1) role vertexClassA4 to VertexClassB (1,1) role vertexClassB3;
+
