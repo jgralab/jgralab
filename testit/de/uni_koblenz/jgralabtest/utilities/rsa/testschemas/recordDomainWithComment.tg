@@ -2,7 +2,7 @@ TGraph 2;
 
 Schema a.Test;
 
-GraphClass AGraphClass;
+GraphClass AGraphClass {aRecord: Record1};
 
 Package ;
 Comment Record1 "a comment";
