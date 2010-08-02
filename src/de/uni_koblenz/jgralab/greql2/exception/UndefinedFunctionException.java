@@ -41,13 +41,15 @@ public class UndefinedFunctionException extends QuerySourceException {
 	static final long serialVersionUID = -1234563;
 
 	public UndefinedFunctionException(FunctionApplication function,
-			List<SourcePosition> sourcePositions, Exception cause) {
-		super("Undefined Function ", function, sourcePositions, cause);
+			String functionName, List<SourcePosition> sourcePositions,
+			Exception cause) {
+		super("Undefined Function '" + functionName + "'", function,
+				sourcePositions, cause);
 	}
 
 	public UndefinedFunctionException(FunctionApplication function,
-			List<SourcePosition> sourcePositions) {
-		super("Undefined Function ", function, sourcePositions);
+			String functionName, List<SourcePosition> sourcePositions) {
+		this(function, functionName, sourcePositions, null);
 	}
 
 }
