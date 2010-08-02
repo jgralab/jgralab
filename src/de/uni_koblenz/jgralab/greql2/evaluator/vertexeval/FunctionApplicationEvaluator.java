@@ -117,7 +117,7 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 			greql2Function = Greql2FunctionLibrary.instance().getGreqlFunction(
 					functionName);
 			if (greql2Function == null) {
-				throw new UndefinedFunctionException(vertex,
+				throw new UndefinedFunctionException(vertex, functionName,
 						createPossibleSourcePositions());
 			}
 		}
@@ -210,7 +210,7 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 			result = greql2Function.evaluate(graph, subgraph, parameters);
 		} catch (EvaluateException ex) {
 			throw new QuerySourceException(ex.getMessage(), vertex,
-						createPossibleSourcePositions(), ex);
+					createPossibleSourcePositions(), ex);
 		}
 		return result;
 	}
