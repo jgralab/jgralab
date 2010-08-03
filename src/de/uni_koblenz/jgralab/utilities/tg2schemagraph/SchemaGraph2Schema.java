@@ -240,7 +240,7 @@ public class SchemaGraph2Schema {
 			de.uni_koblenz.jgralab.schema.IncidenceClass superIncidenceClass = incidenceMap
 					.get(sub.getThat());
 			assert (superIncidenceClass != null) : "FIXME! No redefined \"IncidenceClass\" created yet.";
-			if (superIncidenceClass.getRolename() != null
+			if ((superIncidenceClass.getRolename() != null)
 					&& !superIncidenceClass.getRolename().isEmpty()) {
 				from.addRedefinedRole(superIncidenceClass.getRolename());
 			}
@@ -259,7 +259,7 @@ public class SchemaGraph2Schema {
 			de.uni_koblenz.jgralab.schema.IncidenceClass superIncidenceClass = incidenceMap
 					.get(sub.getThat());
 			assert (superIncidenceClass != null) : "FIXME! No redefined \"IncidenceClass\" created yet.";
-			if (superIncidenceClass.getRolename() != null
+			if ((superIncidenceClass.getRolename() != null)
 					&& !superIncidenceClass.getRolename().isEmpty()) {
 				from.addRedefinedRole(superIncidenceClass.getRolename());
 			}
@@ -288,7 +288,7 @@ public class SchemaGraph2Schema {
 		// Gets all attributes of the Schema
 		String name = gSchema.get_name();
 		String packagePrefix = gSchema.get_packagePrefix();
-		assert (name != null && packagePrefix != null) : "One of attributes \"name\" or \"packagePrefix\" is null";
+		assert ((name != null) && (packagePrefix != null)) : "One of attributes \"name\" or \"packagePrefix\" is null";
 
 		// Creates a Schema with the given attributes
 		schema = new SchemaImpl(name, packagePrefix);
@@ -320,6 +320,9 @@ public class SchemaGraph2Schema {
 		// Sets its attributes and constraints
 		createAllAttributes(graphClass, gGraphClass);
 		createAllConstraints(graphClass, gGraphClass);
+		if (gGraphClass.getFirstAnnotates() != null) {
+			graphClass.addComment(createComments(gGraphClass));
+		}
 
 		// Check
 		assert (graphClass.getQualifiedName().equals(gGraphClass
@@ -373,7 +376,7 @@ public class SchemaGraph2Schema {
 		// Loop over all subpackages
 		for (ContainsSubPackage containsSubPackage : gPackage
 				.getContainsSubPackageIncidences(OUTGOING)) {
-			assert (containsSubPackage != null && containsSubPackage.getThat() instanceof Package) : "FIXME! That should be an instance of Package.";
+			assert ((containsSubPackage != null) && (containsSubPackage.getThat() instanceof Package)) : "FIXME! That should be an instance of Package.";
 
 			// Recursion
 			getAllGraphElementClassesAndDomains((Package) containsSubPackage
@@ -394,8 +397,8 @@ public class SchemaGraph2Schema {
 		for (ContainsGraphElementClass containsGraphElementClass : gPackage
 				.getContainsGraphElementClassIncidences(OUTGOING)) {
 
-			assert (containsGraphElementClass != null && containsGraphElementClass
-					.getThat() instanceof GraphElementClass) : "FIXME! That should be an instance of GraphElementClass";
+			assert ((containsGraphElementClass != null) && (containsGraphElementClass
+					.getThat() instanceof GraphElementClass)) : "FIXME! That should be an instance of GraphElementClass";
 
 			GraphElementClass gGraphElementClass = (GraphElementClass) containsGraphElementClass
 					.getThat();
@@ -405,9 +408,9 @@ public class SchemaGraph2Schema {
 
 			// find all EdgeClass objects which have no outgoing
 			// SpecializesEdgeClass
-			if (gGraphElementClass instanceof EdgeClass
-					&& ((EdgeClass) gGraphElementClass).getDegree(
-							SpecializesEdgeClass.class, EdgeDirection.OUT) == 0) {
+			if ((gGraphElementClass instanceof EdgeClass)
+					&& (((EdgeClass) gGraphElementClass).getDegree(
+							SpecializesEdgeClass.class, EdgeDirection.OUT) == 0)) {
 				gSuperEdgeClasses.add((EdgeClass) gGraphElementClass);
 			}
 		}
@@ -547,7 +550,7 @@ public class SchemaGraph2Schema {
 		// Loop over all existing record components
 		for (HasRecordDomainComponent hasRecordComponent : gDomain
 				.getHasRecordDomainComponentIncidences(OUTGOING)) {
-			assert (hasRecordComponent != null && hasRecordComponent.getThat() instanceof Domain) : "FIXME! That should be an instance of Domain.";
+			assert ((hasRecordComponent != null) && (hasRecordComponent.getThat() instanceof Domain)) : "FIXME! That should be an instance of Domain.";
 
 			recordComponents.add(new RecordComponent(hasRecordComponent
 					.get_name(), queryDomain((Domain) hasRecordComponent
@@ -666,14 +669,14 @@ public class SchemaGraph2Schema {
 			GoesTo to = gEdgeClass.getFirstGoesTo(OUTGOING);
 			ComesFrom from = gEdgeClass.getFirstComesFrom(OUTGOING);
 
-			assert (to != null && from != null) : "No \"To\" or \"From\" edge has been defined.";
+			assert ((to != null) && (from != null)) : "No \"To\" or \"From\" edge has been defined.";
 			// An EdgeClass is created
 			element = createEdgeClass(gElement, (IncidenceClass) to.getThat(),
 					(IncidenceClass) from.getThat());
 
 			// Only one To and one From edge should be defined.
-			assert (to.getNextGoesTo(OUTGOING) == null && from
-					.getNextComesFrom(OUTGOING) == null) : "There is more than one To or From edge defined.";
+			assert ((to.getNextGoesTo(OUTGOING) == null) && (from
+					.getNextComesFrom(OUTGOING) == null)) : "There is more than one To or From edge defined.";
 		}
 
 		assert (element != null) : "FIXME! No GraphElementClass has been created.";
@@ -687,6 +690,10 @@ public class SchemaGraph2Schema {
 		// Sets all Constraint objects
 		createAllConstraints(element, gElement);
 
+		// set comments
+		if (gElement.getFirstAnnotates() != null) {
+			element.addComment(createComments(gElement));
+		}
 		return element;
 	}
 
@@ -703,9 +710,9 @@ public class SchemaGraph2Schema {
 		de.uni_koblenz.jgralab.schema.AggregationKind aggrFrom, aggrTo;
 
 		assert (gElement != null) : "The given GraphElementClass of the SchemaGraph is null.";
-		assert (gTo != null && gFrom != null) : "One fo the edges To or From is null.";
-		assert gTo.getFirstEndsAt().getThat() != null
-				&& gFrom.getFirstEndsAt().getThat() != null : "One of the referenced objects is not an instance of the class VertexClass";
+		assert ((gTo != null) && (gFrom != null)) : "One fo the edges To or From is null.";
+		assert (gTo.getFirstEndsAt().getThat() != null)
+				&& (gFrom.getFirstEndsAt().getThat() != null) : "One of the referenced objects is not an instance of the class VertexClass";
 
 		// Gets all attributes of the To edge
 		to = queryVertexClass((VertexClass) gTo.getFirstEndsAt().getThat());
@@ -760,7 +767,7 @@ public class SchemaGraph2Schema {
 		// Loop over all HasConstraint edges
 		for (HasConstraint hasConstraint : gElement
 				.getHasConstraintIncidences(OUTGOING)) {
-			assert (hasConstraint != null && hasConstraint.getThat() instanceof Constraint) : "FIXME! That should be an instance of Constraint.";
+			assert ((hasConstraint != null) && (hasConstraint.getThat() instanceof Constraint)) : "FIXME! That should be an instance of Constraint.";
 
 			// Gets the Constraint
 			Constraint constraint = (Constraint) hasConstraint.getThat();
@@ -791,7 +798,7 @@ public class SchemaGraph2Schema {
 				.getHasAttributeIncidences(OUTGOING)) {
 
 			// Gets the Attribute
-			assert (hasAttribute != null && hasAttribute.getThat() instanceof Attribute) : "That should be an instance of Attribute.";
+			assert ((hasAttribute != null) && (hasAttribute.getThat() instanceof Attribute)) : "That should be an instance of Attribute.";
 			Attribute attribute = (Attribute) hasAttribute.getThat();
 			assert (attribute.get_name() != null) : "The name of the Attribute is null.";
 
@@ -864,8 +871,8 @@ public class SchemaGraph2Schema {
 				.getSpecializesEdgeClassIncidences(OUTGOING)) {
 
 			// Gets the superclass
-			assert (specializesEdgeClass != null && specializesEdgeClass
-					.getThat() instanceof EdgeClass) : "That should be an instance of EdgeClass.";
+			assert ((specializesEdgeClass != null) && (specializesEdgeClass
+					.getThat() instanceof EdgeClass)) : "That should be an instance of EdgeClass.";
 			EdgeClass gSuperClass = (EdgeClass) specializesEdgeClass.getThat();
 
 			// Gets the corresponding superclass
