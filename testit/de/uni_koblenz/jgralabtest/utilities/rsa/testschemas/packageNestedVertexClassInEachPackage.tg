@@ -1,0 +1,11 @@
+TGraph 2;
+
+Schema a.Test;
+
+GraphClass AGraphClass;
+
+Package ;
+Package package1;
+VertexClass VertexClassA;
+Package package1.package2;
+VertexClass VertexClassB;
