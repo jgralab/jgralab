@@ -230,18 +230,18 @@ public class Tg2Dot extends Tg2Whatever {
 		 */
 		else if (e.getAlphaSemantics() == AggregationKind.SHARED) {
 			if (reversed) {
-				out.print("arrowtail=\"odiamond\" ");
+				out.print("arrowtail=\"odiamondnormal\" ");
 				out.print("arrowhead=\"none\" ");
 			} else {
-				out.print("arrowhead=\"odiamond\" ");
+				out.print("arrowhead=\"odiamondnormal\" ");
 				out.print("arrowtail=\"none\" ");
 			}
 		} else if (e.getAlphaSemantics() == AggregationKind.COMPOSITE) {
 			if (reversed) {
-				out.print("arrowtail=\"diamond\" ");
+				out.print("arrowtail=\"diamondnormal\" ");
 				out.print("arrowhead=\"none\" ");
 			} else {
-				out.print("arrowhead=\"diamond\" ");
+				out.print("arrowhead=\"diamondnormal\" ");
 				out.print("arrowtail=\"none\" ");
 			}
 		}
