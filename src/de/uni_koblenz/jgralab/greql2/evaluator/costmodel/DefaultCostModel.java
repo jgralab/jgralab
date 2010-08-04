@@ -59,7 +59,6 @@ import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.PathExistenceEvaluator
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.QuantifiedExpressionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.RecordConstructionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.RecordElementEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.RestrictedExpressionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.SequentialPathDescriptionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.SetComprehensionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.SetConstructionEvaluator;
@@ -119,7 +118,6 @@ import de.uni_koblenz.jgralab.greql2.schema.PathExistence;
 import de.uni_koblenz.jgralab.greql2.schema.QuantifiedExpression;
 import de.uni_koblenz.jgralab.greql2.schema.RecordConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.RecordElement;
-import de.uni_koblenz.jgralab.greql2.schema.RestrictedExpression;
 import de.uni_koblenz.jgralab.greql2.schema.SequentialPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.SetComprehension;
 import de.uni_koblenz.jgralab.greql2.schema.SetConstruction;
@@ -170,8 +168,8 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 	}
 
 	@Override
-	public long calculateCardinalityBagComprehension(
-			ComprehensionEvaluator e, GraphSize graphSize) {
+	public long calculateCardinalityBagComprehension(ComprehensionEvaluator e,
+			GraphSize graphSize) {
 		BagComprehension bagComp = (BagComprehension) e.getVertex();
 		Declaration decl = (Declaration) bagComp.getFirstIsCompDeclOf()
 				.getAlpha();
@@ -364,7 +362,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 	@Override
 	public long calculateCardinalitySetComprehension(
 			SetComprehensionEvaluator e, GraphSize graphSize) {
-		SetComprehension setComp = (SetComprehension) e.getVertex();
+		SetComprehension setComp = e.getVertex();
 		Declaration decl = (Declaration) setComp.getFirstIsCompDeclOf()
 				.getAlpha();
 		DeclarationEvaluator declEval = (DeclarationEvaluator) greqlEvaluator
@@ -508,8 +506,8 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 	 * de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
-	public VertexCosts calculateCostsBagComprehension(
-			ComprehensionEvaluator e, GraphSize graphSize) {
+	public VertexCosts calculateCostsBagComprehension(ComprehensionEvaluator e,
+			GraphSize graphSize) {
 		BagComprehension bagComp = (BagComprehension) e.getVertex();
 		Declaration decl = (Declaration) bagComp.getFirstIsCompDeclOf()
 				.getAlpha();
@@ -917,8 +915,6 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 		return new VertexCosts(ownCosts, iteratedCosts, subtreeCosts);
 	}
 
-
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1120,39 +1116,6 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 		return new VertexCosts(ownCosts, iteratedCosts, subtreeCosts);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
-	 * calculateCostsRestrictedExpression
-	 * (de.uni_koblenz.jgralab.greql2.evaluator
-	 * .vertexeval.RestrictedExpressionEvaluator,
-	 * de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
-	 */
-	@Override
-	public VertexCosts calculateCostsRestrictedExpression(
-			RestrictedExpressionEvaluator e, GraphSize graphSize) {
-		RestrictedExpression resExp = (RestrictedExpression) e.getVertex();
-
-		VertexEvaluator restrictedExprEval = greqlEvaluator
-				.getVertexEvaluatorGraphMarker().getMark(
-						resExp.getFirstIsRestrictedExprOf().getAlpha());
-		long restrictedExprCosts = restrictedExprEval
-				.getCurrentSubtreeEvaluationCosts(graphSize);
-
-		VertexEvaluator restrictionEval = greqlEvaluator
-				.getVertexEvaluatorGraphMarker().getMark(
-						resExp.getFirstIsRestrictionOf().getAlpha());
-		long restrictionCosts = restrictionEval
-				.getCurrentSubtreeEvaluationCosts(graphSize);
-
-		long ownCosts = 5;
-		long iteratedCosts = ownCosts * e.getVariableCombinations(graphSize);
-		long subtreeCosts = iteratedCosts + restrictedExprCosts
-				+ restrictionCosts;
-		return new VertexCosts(ownCosts, iteratedCosts, subtreeCosts);
-	}
-
 	@Override
 	public VertexCosts calculateCostsSequentialPathDescription(
 			SequentialPathDescriptionEvaluator e, GraphSize graphSize) {
@@ -1185,7 +1148,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 	@Override
 	public VertexCosts calculateCostsSetComprehension(
 			SetComprehensionEvaluator e, GraphSize graphSize) {
-		SetComprehension setComp = (SetComprehension) e.getVertex();
+		SetComprehension setComp = e.getVertex();
 		Declaration decl = (Declaration) setComp.getFirstIsCompDeclOf()
 				.getAlpha();
 		DeclarationEvaluator declEval = (DeclarationEvaluator) greqlEvaluator
@@ -1448,7 +1411,6 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 				* vertexSubgraphExpressionCostsFactor;
 		return new VertexCosts(ownCosts, ownCosts, typeRestrCosts + ownCosts);
 	}
-
 
 	/*
 	 * (non-Javadoc)

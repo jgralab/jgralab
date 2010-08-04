@@ -453,8 +453,9 @@ public class ManualGreqlParser extends ManualParserHelper {
 	}
 
 	private final void parseQuery() {
-		if (lookAhead(0) == TokenTypes.EOF)
+		if (lookAhead(0) == TokenTypes.EOF) {
 			return;
+		}
 		Greql2Expression rootExpr = graph.createGreql2Expression();
 		rootExpr.set_importedTypes(parseImports());
 		if (lookAhead(0) == TokenTypes.USING) {
@@ -850,7 +851,6 @@ public class ManualGreqlParser extends ManualParserHelper {
 		return expr;
 	}
 
-
 	private final Expression parseAdditiveExpression() {
 		FunctionConstruct construct = null;
 		String name = null;
@@ -876,11 +876,10 @@ public class ManualGreqlParser extends ManualParserHelper {
 				construct.postOp(name);
 				expr = construct.postArg2(parseMultiplicativeExpression());
 			}
-		} while (name != null);	
+		} while (name != null);
 		return expr;
 	}
 
-	
 	private final Expression parseMultiplicativeExpression() {
 		FunctionConstruct construct = null;
 		String name = null;
@@ -906,10 +905,9 @@ public class ManualGreqlParser extends ManualParserHelper {
 				construct.postOp(name);
 				expr = construct.postArg2(parseUnaryExpression());
 			}
-		} while (name != null);	
+		} while (name != null);
 		return expr;
 	}
-	
 
 	private final Expression parseUnaryExpression() {
 		FunctionConstruct construct = null;
@@ -1144,7 +1142,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 		int lengthPart1 = getLength(offsetPart1);
 		predicateStart();
 		try {
-			parseValueAccess(); // parseRestrictedExpression();
+			parseValueAccess();
 			if (predicateHolds()) {
 				parseSequentialPathDescription();
 			}
@@ -1152,7 +1150,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 		}
 		if (predicateEnd()) {
 			int offsetExpr = getCurrentOffset();
-			Expression restrExpr = parseValueAccess(); // parseRestrictedExpression();
+			Expression restrExpr = parseValueAccess();
 			int lengthExpr = getLength(offsetExpr);
 			int offsetPart2 = getCurrentOffset();
 			PathDescription part2 = parseIntermediateVertexPathDescription();

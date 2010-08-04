@@ -76,7 +76,6 @@ VertexClass RealLiteral: Literal { realValue: Double };
 VertexClass RecordConstruction: ValueConstruction;
 VertexClass RecordElement: Greql2Vertex;
 VertexClass RecordId: Identifier;
-VertexClass RestrictedExpression: Expression;
 VertexClass TypeOrRoleId: Identifier;
 VertexClass RoleId: TypeOrRoleId;
 VertexClass SequentialPathDescription: PathDescription;
@@ -152,8 +151,6 @@ EdgeClass IsQueryExprOf: Greql2Aggregation from Expression (1,1) role queryExpr 
 EdgeClass IsRecordElementOf: Greql2Aggregation from RecordElement (1,*) role recordElement aggregation shared to RecordConstruction (1,*);
 EdgeClass IsRecordExprOf: Greql2Aggregation from Expression (1,1) role recordExpr aggregation shared to RecordElement (0,*);
 EdgeClass IsRecordIdOf: Greql2Aggregation from RecordId (1,1) role recordId aggregation shared to RecordElement (1,*);
-EdgeClass IsRestrictedExprOf: Greql2Aggregation from Expression (1,1) role restrictedExpr aggregation shared to RestrictedExpression (0,*);
-EdgeClass IsRestrictionOf: Greql2Aggregation from Expression (1,1) role restriction aggregation shared to RestrictedExpression (0,*);
 EdgeClass IsRoleIdOf: Greql2Aggregation from RoleId (0,*) role roleId aggregation shared to EdgeRestriction (1,*);
 EdgeClass IsBooleanPredicateOfEdgeRestriction: Greql2Aggregation from Expression (0,1) role booleanPredicate aggregation shared to EdgeRestriction (0,1);
 EdgeClass IsRootOf: Greql2Aggregation from Expression (1,1) role root aggregation shared to PathSystemConstruction (0,*);
