@@ -144,7 +144,7 @@ public class Tg2Dot extends Tg2Whatever {
 				sb.append("\\\\t");
 				break;
 			default:
-				if (ch < ' ' || ch > '\u007F') {
+				if ((ch < ' ') || (ch > '\u007F')) {
 					sb.append("\\\\u");
 					String code = "000" + Integer.toHexString(ch);
 					sb.append(code.substring(code.length() - 4, code.length()));
@@ -193,12 +193,12 @@ public class Tg2Dot extends Tg2Whatever {
 		EdgeClass cls = (EdgeClass) e.getAttributedElementClass();
 		if (roleNames) {
 			String toRole = cls.getTo().getRolename();
-			if (toRole != null && toRole.length() > 0) {
+			if ((toRole != null) && (toRole.length() > 0)) {
 				out.print((reversed ? "tail" : "head") + "label=\""
 						+ stringQuote(toRole) + "\" ");
 			}
 			String fromRole = cls.getFrom().getRolename();
-			if (fromRole != null && fromRole.length() > 0) {
+			if ((fromRole != null) && (fromRole.length() > 0)) {
 				out.print((reversed ? "head" : "tail") + "label=\""
 						+ stringQuote(fromRole) + "\" ");
 			}
@@ -206,37 +206,52 @@ public class Tg2Dot extends Tg2Whatever {
 
 		out.print("dir=\"both\" ");
 		assert e.isNormal();
-		if (e.getThatSemantics() == AggregationKind.SHARED) {
+		/*
+		 * The first 2 cases handle the case were the aggregation/composition
+		 * diamond is at the opposite side of the direction arrow.
+		 */
+		if (e.getOmegaSemantics() == AggregationKind.SHARED) {
 			if (reversed) {
 				out.print("arrowhead=\"odiamond\" ");
 			} else {
 				out.print("arrowtail=\"odiamond\" ");
 			}
-		} else if (e.getThatSemantics() == AggregationKind.COMPOSITE) {
+		} else if (e.getOmegaSemantics() == AggregationKind.COMPOSITE) {
 			if (reversed) {
 				out.print("arrowhead=\"diamond\" ");
 			} else {
 				out.print("arrowtail=\"diamond\" ");
 			}
-		} else if (e.getThisSemantics() == AggregationKind.SHARED) {
+		}
+		/*
+		 * The next 2 cases handle the case were the aggregation/composition
+		 * diamond is at the same side as the direction arrow. Here, we print
+		 * only the diamond.
+		 */
+		else if (e.getAlphaSemantics() == AggregationKind.SHARED) {
 			if (reversed) {
 				out.print("arrowtail=\"odiamond\" ");
-				out.print("arrowhead=\"normal\" ");
-			} else {
-				out.print("arrowhead=\"odiamond\" ");
-			}
-		} else if (e.getThisSemantics() == AggregationKind.COMPOSITE) {
-			if (reversed) {
-				out.print("arrowtail=\"diamond\" ");
-				out.print("arrowhead=\"normal\" ");
-			} else {
-				out.print("arrowhead=\"diamond\" ");
-			}
-		} else {
-			if (reversed) {
-				// with reverset edges, the arrow has to be on the tail-side
 				out.print("arrowhead=\"none\" ");
-				out.print("arrowtail=\"normal\" ");
+			} else {
+				out.print("arrowhead=\"odiamond\" ");
+				out.print("arrowtail=\"none\" ");
+			}
+		} else if (e.getAlphaSemantics() == AggregationKind.COMPOSITE) {
+			if (reversed) {
+				out.print("arrowtail=\"diamond\" ");
+				out.print("arrowhead=\"none\" ");
+			} else {
+				out.print("arrowhead=\"diamond\" ");
+				out.print("arrowtail=\"none\" ");
+			}
+		}
+		/*
+		 * Ok, this is the default case with no diamond. So simply deactivate
+		 * one arrow label and keep the implicit normal at the other side.
+		 */
+		else {
+			if (reversed) {
+				out.print("arrowhead=\"none\" ");
 			} else {
 				out.print("arrowtail=\"none\" ");
 			}
@@ -245,7 +260,7 @@ public class Tg2Dot extends Tg2Whatever {
 		out.print("label=\"e" + e.getId() + ": "
 				+ cls.getUniqueName().replace('$', '.'));
 
-		if (edgeAttributes && cls.getAttributeCount() > 0) {
+		if (edgeAttributes && (cls.getAttributeCount() > 0)) {
 			out.print("\\l");
 			printAttributes(out, e);
 		}
@@ -274,7 +289,7 @@ public class Tg2Dot extends Tg2Whatever {
 	private void printAttributes(PrintStream out, AttributedElement elem) {
 		AttributedElementClass cls = elem.getAttributedElementClass();
 		for (Attribute attr : cls.getAttributeList()) {
-			if (abbreviateEdgeAttributeNames && elem instanceof Edge) {
+			if (abbreviateEdgeAttributeNames && (elem instanceof Edge)) {
 				// sourcePosition => sP
 				// fooBarBaz => fBB
 				out.print(attr.getName().charAt(0)
@@ -289,7 +304,7 @@ public class Tg2Dot extends Tg2Whatever {
 			Object attribute = elem.getAttribute(attr.getName());
 			String attributeString = attribute != null ? attribute.toString()
 					: "null";
-			if (shortenStrings && attributeString.length() > 17) {
+			if (shortenStrings && (attributeString.length() > 17)) {
 				attributeString = attributeString.substring(0, 18) + "...";
 			}
 			if (attribute instanceof String) {
