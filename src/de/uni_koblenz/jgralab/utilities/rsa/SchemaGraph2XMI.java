@@ -1389,18 +1389,21 @@ public class SchemaGraph2XMI {
 		// create type
 		writer.writeEmptyElement(XMIConstants4SchemaGraph2XMI.TAG_TYPE);
 		if (domain instanceof BooleanDomain) {
+			// BooleanDomain
 			writer.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
 					XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_TYPE,
 					XMIConstants4SchemaGraph2XMI.TYPE_VALUE_PRIMITIVETYPE);
 			writer.writeAttribute(XMIConstants4SchemaGraph2XMI.ATTRIBUTE_HREF,
 					XMIConstants4SchemaGraph2XMI.TYPE_HREF_VALUE_BOOLEAN);
 		} else if (domain instanceof IntegerDomain) {
+			// IntegerDomain
 			writer.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
 					XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_TYPE,
 					XMIConstants4SchemaGraph2XMI.TYPE_VALUE_PRIMITIVETYPE);
 			writer.writeAttribute(XMIConstants4SchemaGraph2XMI.ATTRIBUTE_HREF,
 					XMIConstants4SchemaGraph2XMI.TYPE_HREF_VALUE_INTEGER);
-		} else if (domain instanceof StringDomain) {
+		} else {
+			// StringDomain
 			writer.writeAttribute(XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
 					XMIConstants4SchemaGraph2XMI.XMI_ATTRIBUTE_TYPE,
 					XMIConstants4SchemaGraph2XMI.TYPE_VALUE_PRIMITIVETYPE);
