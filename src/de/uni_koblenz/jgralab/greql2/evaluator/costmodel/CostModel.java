@@ -52,7 +52,6 @@ import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.PathExistenceEvaluator
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.QuantifiedExpressionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.RecordConstructionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.RecordElementEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.RestrictedExpressionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.SequentialPathDescriptionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.SetComprehensionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.SetConstructionEvaluator;
@@ -107,8 +106,8 @@ public interface CostModel {
 	public VertexCosts calculateCostsBackwardVertexSet(
 			BackwardVertexSetEvaluator e, GraphSize graphSize);
 
-	public VertexCosts calculateCostsBagComprehension(
-			ComprehensionEvaluator e, GraphSize graphSize);
+	public VertexCosts calculateCostsBagComprehension(ComprehensionEvaluator e,
+			GraphSize graphSize);
 
 	public VertexCosts calculateCostsBagConstruction(
 			BagConstructionEvaluator e, GraphSize graphSize);
@@ -152,7 +151,6 @@ public interface CostModel {
 	public VertexCosts calculateCostsIteratedPathDescription(
 			IteratedPathDescriptionEvaluator e, GraphSize graphSize);
 
-
 	public VertexCosts calculateCostsListConstruction(
 			ListConstructionEvaluator e, GraphSize graphSize);
 
@@ -173,9 +171,6 @@ public interface CostModel {
 
 	public VertexCosts calculateCostsRecordElement(RecordElementEvaluator e,
 			GraphSize graphSize);
-
-	public VertexCosts calculateCostsRestrictedExpression(
-			RestrictedExpressionEvaluator e, GraphSize graphSize);
 
 	public VertexCosts calculateCostsSequentialPathDescription(
 			SequentialPathDescriptionEvaluator e, GraphSize graphSize);
@@ -231,8 +226,8 @@ public interface CostModel {
 	public long calculateCardinalityBackwardVertexSet(
 			BackwardVertexSetEvaluator e, GraphSize graphSize);
 
-	public long calculateCardinalityBagComprehension(
-			ComprehensionEvaluator e, GraphSize graphSize);
+	public long calculateCardinalityBagComprehension(ComprehensionEvaluator e,
+			GraphSize graphSize);
 
 	public long calculateCardinalityBagConstruction(BagConstructionEvaluator e,
 			GraphSize graphSize);
