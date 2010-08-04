@@ -27,6 +27,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 import de.uni_koblenz.jgralabtest.utilities.rsa.Rsa2TgTest;
+import de.uni_koblenz.jgralabtest.utilities.rsa.SchemaGraph2XMITest;
 import de.uni_koblenz.jgralabtest.utilities.schemagraph2schema.SchemaGraph2SchemaTest;
 import de.uni_koblenz.jgralabtest.utilities.tg2schemagraph.TG2SchemaGraphTest;
 
@@ -36,8 +37,8 @@ import de.uni_koblenz.jgralabtest.utilities.tg2schemagraph.TG2SchemaGraphTest;
  * 
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses( { Rsa2TgTest.class, TG2SchemaGraphTest.class,
-		SchemaGraph2SchemaTest.class })
+@Suite.SuiteClasses( { Rsa2TgTest.class, SchemaGraph2XMITest.class,
+		TG2SchemaGraphTest.class, SchemaGraph2SchemaTest.class })
 public class RunUtilitiesTests {
 
 }
