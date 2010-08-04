@@ -25,16 +25,9 @@ import de.uni_koblenz.jgralab.utilities.rsa.Rsa2Tg;
 import de.uni_koblenz.jgralab.utilities.rsa.SchemaGraph2XMI;
 
 public class SchemaGraph2XMITest {
-	/*
-	 * TODO VERTEXCLASS -attributes -inheritance -abstract -comment -multiple
-	 * comment -constraint -multiple constraint PACKAGES -depth 1 -depth 2 only
-	 * element in most depth package -depth 2 elements in each package
-	 * ASSOCIATION -abstract -inheritance -multiplicities -rolename -redefines
-	 * -aggregation -composition -comment -multiple comment -constraint
-	 * -multiple constraint ASSOCIATIONCLASS -abstract -inheritance
-	 * -multiplicities -rolename -redefines -aggregation -composition -comment
-	 * -multiple comment -constraint -multiple constraint INHERITANCE between
-	 * association and associationclass in both directions
+
+	/**
+	 * Position of the test schemas.
 	 */
 	private static String folder = "testit/de/uni_koblenz/jgralabtest/utilities/rsa/testschemas/";
 
@@ -79,18 +72,39 @@ public class SchemaGraph2XMITest {
 		}
 	}
 
+	/**
+	 * In this test case all EdgeClasses are created navigable from FROM to TO.
+	 * 
+	 * @throws GraphIOException
+	 * @throws FileNotFoundException
+	 * @throws XMLStreamException
+	 */
 	@Test
 	public void testDefault() throws GraphIOException, FileNotFoundException,
 			XMLStreamException {
 		runTests(false, false);
 	}
 
+	/**
+	 * In this test case all EdgeClasses are created bidirectional navigable.
+	 * 
+	 * @throws GraphIOException
+	 * @throws FileNotFoundException
+	 * @throws XMLStreamException
+	 */
 	@Test
 	public void testBidirectional() throws GraphIOException,
 			FileNotFoundException, XMLStreamException {
 		runTests(true, false);
 	}
 
+	/**
+	 * In this test case all EdgeClasses are created navigable from TO to FROM.
+	 * 
+	 * @throws GraphIOException
+	 * @throws FileNotFoundException
+	 * @throws XMLStreamException
+	 */
 	@Test
 	public void testReverted() throws GraphIOException, FileNotFoundException,
 			XMLStreamException {
@@ -126,7 +140,6 @@ public class SchemaGraph2XMITest {
 						+ new File(file).getName();
 				r.setFilenameSchema(generatedTg);
 				r.process(generatedXMI);
-				System.out.println(generatedXMI);
 
 				// check generated tg
 				compareTgs(originalTg, generatedTg, createReverted);
@@ -134,6 +147,14 @@ public class SchemaGraph2XMITest {
 		}
 	}
 
+	/**
+	 * Compares all nonempty lines of originalTg and generatedTg. The order of
+	 * the lines is ignored. Attributes are sorted lexicographic.
+	 * 
+	 * @param originalTg
+	 * @param generatedTg
+	 * @param isReverted
+	 */
 	private void compareTgs(String originalTg, String generatedTg,
 			boolean isReverted) {
 		try {
@@ -198,6 +219,12 @@ public class SchemaGraph2XMITest {
 		}
 	}
 
+	/**
+	 * Changes direction of an EdgeClass.
+	 * 
+	 * @param line
+	 * @return
+	 */
 	private String changeDirection(String line) {
 		String from = " from ";
 		String to = " to ";
@@ -221,6 +248,12 @@ public class SchemaGraph2XMITest {
 		return startOfLine + from + toPart + to + fromPart + endOfLine;
 	}
 
+	/**
+	 * Sorts the attributes lexicographically.
+	 * 
+	 * @param line
+	 * @return
+	 */
 	private String sortAttributes(String line) {
 		StringBuffer startOfLine = new StringBuffer();
 		TreeSet<String> attributes = new TreeSet<String>();
@@ -308,6 +341,12 @@ public class SchemaGraph2XMITest {
 		return startOfLine.toString();
 	}
 
+	/**
+	 * Checks if <code>line</code> contains attributes.
+	 * 
+	 * @param line
+	 * @return
+	 */
 	private boolean containesAttributes(String line) {
 		return !line.startsWith("Comment")
 				&& line.contains("{")

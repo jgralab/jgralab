@@ -1,0 +1,8 @@
+TGraph 2;
+
+Schema a.Test;
+
+GraphClass AGraphClass;
+
+Package ;
+VertexClass VertexClassA ["First Constraint" "-->{VertexClassB}" "off"] ["Second Constraint" "-->{VertexClassB}" "off"];

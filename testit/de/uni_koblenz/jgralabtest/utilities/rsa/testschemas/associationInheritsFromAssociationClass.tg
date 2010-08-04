@@ -1,0 +1,11 @@
+TGraph 2;
+
+Schema a.Test;
+
+GraphClass AGraphClass;
+
+Package ;
+VertexClass VertexClassA;
+VertexClass VertexClassB;
+abstract EdgeClass EdgeClassA from VertexClassA (1,1) role roleAB to VertexClassB (0,1) role roleAA {aString: String};
+EdgeClass EdgeClassB: EdgeClassA from VertexClassA (1,1) role roleBB to VertexClassB (0,1) role roleBA;

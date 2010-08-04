@@ -1,0 +1,10 @@
+TGraph 2;
+
+Schema a.Test;
+
+GraphClass AGraphClass;
+
+Package ;
+Comment VertexClassA "First Comment";
+Comment VertexClassA "Second Comment";
+VertexClass VertexClassA;

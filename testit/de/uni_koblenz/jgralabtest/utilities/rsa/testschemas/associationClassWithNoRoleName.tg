@@ -1,0 +1,12 @@
+TGraph 2;
+
+Schema a.Test;
+
+GraphClass AGraphClass;
+
+Package ;
+EnumDomain Enumeration1 (FIRST, SECOND);
+RecordDomain Record1 (anAttribute: Boolean, anotherAttribute: Integer);
+VertexClass VertexClassA;
+VertexClass VertexClassB;
+EdgeClass EdgeClassA from VertexClassA (1,1) to VertexClassB (0,1) {aBoolean: Boolean = "t", aString: String = "\\\"hallo\\\"", aInteger: Integer = "1", aDouble: Double = "1.5", aLong: Long = "4", enum: Enumeration1 = "FIRST", arecord: Record1 = "(t 1)", aList: List<Boolean>, aSet: Set<Double>, aMap: Map<String, Enumeration1>, aComplexList: List<Set<Boolean>> = "[{t} {f} {t}]"};
