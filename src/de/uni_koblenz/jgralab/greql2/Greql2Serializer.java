@@ -56,7 +56,6 @@ import de.uni_koblenz.jgralab.greql2.schema.Quantifier;
 import de.uni_koblenz.jgralab.greql2.schema.RealLiteral;
 import de.uni_koblenz.jgralab.greql2.schema.RecordConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.RecordElement;
-import de.uni_koblenz.jgralab.greql2.schema.RestrictedExpression;
 import de.uni_koblenz.jgralab.greql2.schema.RoleId;
 import de.uni_koblenz.jgralab.greql2.schema.SequentialPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.SetComprehension;
@@ -268,8 +267,6 @@ public class Greql2Serializer {
 			serializeIdentifier((Identifier) exp);
 		} else if (exp instanceof QuantifiedExpression) {
 			serializeQuantifiedExpression((QuantifiedExpression) exp);
-		} else if (exp instanceof RestrictedExpression) {
-			serializeRestrictedExpression((RestrictedExpression) exp);
 		} else if (exp instanceof Comprehension) {
 			serializeComprehension((Comprehension) exp);
 		} else if (exp instanceof DefinitionExpression) {
@@ -749,13 +746,6 @@ public class Greql2Serializer {
 			serializeExpression(result, true);
 		}
 		sb.append("end");
-	}
-
-	private void serializeRestrictedExpression(RestrictedExpression exp) {
-		serializeExpression(exp.get_restrictedExpr(), false);
-		sb.append(" & {");
-		serializeExpression(exp.get_restriction(), false);
-		sb.append("}");
 	}
 
 	private void serializeQuantifiedExpression(QuantifiedExpression exp) {
