@@ -19,6 +19,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSlice;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
+import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -455,7 +456,39 @@ public class TwoDVisualizer {
 
 			EdgeClass cls = (EdgeClass) e.getAttributedElementClass();
 
-			out.print("label=\"e" + e.getId() + ": "
+			out.print("dir=\"both\" ");
+			/*
+			 * The first 2 cases handle the case were the
+			 * aggregation/composition diamond is at the opposite side of the
+			 * direction arrow.
+			 */
+			if (e.getOmegaSemantics() == AggregationKind.SHARED) {
+				out.print("arrowtail=\"odiamond\" ");
+			} else if (e.getOmegaSemantics() == AggregationKind.COMPOSITE) {
+				out.print("arrowtail=\"diamond\" ");
+			}
+			/*
+			 * The next 2 cases handle the case were the aggregation/composition
+			 * diamond is at the same side as the direction arrow. Here, we
+			 * print only the diamond.
+			 */
+			else if (e.getAlphaSemantics() == AggregationKind.SHARED) {
+				out.print("arrowhead=\"odiamondnormal\" ");
+				out.print("arrowtail=\"none\" ");
+			} else if (e.getAlphaSemantics() == AggregationKind.COMPOSITE) {
+				out.print("arrowhead=\"diamondnormal\" ");
+				out.print("arrowtail=\"none\" ");
+			}
+			/*
+			 * Ok, this is the default case with no diamond. So simply
+			 * deactivate one arrow label and keep the implicit normal at the
+			 * other side.
+			 */
+			else {
+				out.print("arrowtail=\"none\" ");
+			}
+
+			out.print(" label=\"e" + e.getId() + ": "
 					+ cls.getUniqueName().replace('$', '.') + "");
 
 			if (showAttributes && (cls.getAttributeCount() > 0)) {
