@@ -8,30 +8,6 @@ import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
 public abstract class GraphAlgorithm {
 
 	/**
-	 * This is the default value for <code>subgraph</code>. The default subgraph
-	 * is the whole graph. It returns <code>true</code> for all graph elements.
-	 */
-	public static final BooleanFunction<GraphElement> DEFAULT_SUBGRAPH = new BooleanFunction<GraphElement>() {
-
-		@Override
-		public boolean get(GraphElement parameter) {
-			return true;
-		}
-
-		@Override
-		public boolean isDefined(GraphElement parameter) {
-			return true;
-		}
-
-		@Override
-		public void set(GraphElement parameter, boolean value) {
-			throw new UnsupportedOperationException(
-					"This function is immutable.");
-		}
-
-	};
-
-	/**
 	 * The graph this graph algorithm works on.
 	 */
 	protected Graph graph;
@@ -102,7 +78,7 @@ public abstract class GraphAlgorithm {
 	 */
 	public void resetParameters() {
 		if (getState() == AlgorithmStates.INITIALIZED) {
-			this.subgraph = DEFAULT_SUBGRAPH;
+			this.subgraph = null;
 			disableOptionalResults();
 		} else {
 			throw new IllegalStateException(

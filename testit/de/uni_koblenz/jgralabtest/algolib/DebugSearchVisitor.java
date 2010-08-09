@@ -3,10 +3,13 @@ package de.uni_koblenz.jgralabtest.algolib;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.GraphAlgorithm;
-import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.DFSAlgorithmVisitor;
+import de.uni_koblenz.jgralab.algolib.algorithms.search.SearchAlgorithm;
+import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.SearchAlgorithmVisitor;
 import de.uni_koblenz.jgralab.algolib.functions.IntFunction;
+import de.uni_koblenz.jgralab.algolib.visitors.DFSVisitor;
 
-public class DebugSearchVisitor extends DFSAlgorithmVisitor {
+public class DebugSearchVisitor extends SearchAlgorithmVisitor implements
+		DFSVisitor {
 
 	public static String generateEdgeString(Edge e) {
 		if (e == null) {
@@ -111,7 +114,7 @@ public class DebugSearchVisitor extends DFSAlgorithmVisitor {
 
 	@Override
 	public void setAlgorithm(GraphAlgorithm alg) {
-		super.setAlgorithm(alg);
+		super.setAlgorithm(((SearchAlgorithm) alg).withLevel());
 		reset();
 	}
 

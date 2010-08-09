@@ -66,7 +66,8 @@ public class BreadthFirstSearch extends SearchAlgorithm implements
 
 	@Override
 	public BreadthFirstSearch execute(Vertex root) {
-		if (visitedVertices.get(root) || !subgraph.get(root)) {
+		if (subgraph != null && !subgraph.get(root)
+				|| visitedVertices.get(root)) {
 			return this;
 		}
 		startRunning();
@@ -82,18 +83,19 @@ public class BreadthFirstSearch extends SearchAlgorithm implements
 			number.set(root, num);
 		}
 		visitors.visitVertex(root);
-		
+
 		visitedVertices.set(root, true);
 		num++;
 		// main loop
 		while (firstV < num && vertexOrder[firstV] != null) {
 			Vertex currentVertex = vertexOrder[firstV++]; // pop
 			for (Edge currentEdge : currentVertex.incidences(searchDirection)) {
-				if (subgraph.get(currentEdge) && navigable.get(currentEdge)
+				if (subgraph == null || (subgraph.get(currentEdge))
+						&& (navigable == null || navigable.get(currentEdge))
 						&& !visitedEdges.get(currentEdge)) {
 					Vertex nextVertex = currentEdge.getThat();
 					// TODO is this check necessary?
-					if (subgraph.get(nextVertex)) {
+					if (subgraph == null || subgraph.get(nextVertex)) {
 						edgeOrder[eNum] = currentEdge;
 						visitors.visitEdge(currentEdge);
 						visitedEdges.set(currentEdge, true);
@@ -125,5 +127,5 @@ public class BreadthFirstSearch extends SearchAlgorithm implements
 		done();
 		return this;
 	}
-	
+
 }

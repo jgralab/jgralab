@@ -22,31 +22,6 @@ public abstract class SearchAlgorithm extends HybridGraphAlgorithm implements
 		TraversalFromVertexSolver {
 
 	/**
-	 * This is the default value for <code>navigable</code>. By default, all
-	 * edges that are reachable are also navigable. So this method always
-	 * returns true.
-	 */
-	public static final BooleanFunction<Edge> DEFAULT_NAVIGABLE = new BooleanFunction<Edge>() {
-
-		@Override
-		public boolean get(Edge parameter) {
-			return true;
-		}
-
-		@Override
-		public boolean isDefined(Edge parameter) {
-			return true;
-		}
-
-		@Override
-		public void set(Edge parameter, boolean value) {
-			throw new UnsupportedOperationException(
-					"This function is immutable.");
-		}
-
-	};
-
-	/**
 	 * This is the default value for the parameter <code>searchDirection</code>.
 	 * By default the algorithm follows only outgoing edges, which also means
 	 * that the graph is interpreted as a directed graph.
@@ -164,7 +139,7 @@ public abstract class SearchAlgorithm extends HybridGraphAlgorithm implements
 	@Override
 	public void resetParameters() {
 		super.resetParameters();
-		this.navigable = DEFAULT_NAVIGABLE;
+		this.navigable = null;
 		this.searchDirection = DEFAULT_SEARCH_DIRECTION;
 	}
 
