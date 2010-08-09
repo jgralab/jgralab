@@ -29,6 +29,7 @@ import java.util.HashMap;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
+import de.uni_koblenz.jgralab.algolib.functions.Function;
 import de.uni_koblenz.jgralab.impl.ReversedEdgeBaseImpl;
 
 /**
@@ -52,7 +53,7 @@ import de.uni_koblenz.jgralab.impl.ReversedEdgeBaseImpl;
  * 
  */
 public abstract class MapGraphMarker<T extends AttributedElement, O> extends
-		AbstractGraphMarker<T> {
+		AbstractGraphMarker<T> implements Function<T, O> {
 
 	/**
 	 * Stores the mapping between Graph, Edge or Vertex and the attribute
@@ -182,6 +183,21 @@ public abstract class MapGraphMarker<T extends AttributedElement, O> extends
 	@Override
 	public void maxVertexCountIncreased(int newValue) {
 		// do nothing
+	}
+
+	@Override
+	public O get(T parameter) {
+		return getMark(parameter);
+	}
+
+	@Override
+	public boolean isDefined(T parameter) {
+		return isMarked(parameter);
+	}
+
+	@Override
+	public void set(T parameter, O value) {
+		mark(parameter, value);
 	}
 
 }
