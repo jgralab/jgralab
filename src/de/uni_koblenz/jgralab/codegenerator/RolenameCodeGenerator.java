@@ -81,7 +81,7 @@ public class RolenameCodeGenerator {
 							" * deleting the <code>#edgeClassName#</code> edges of this vertex to ",
 							" * all other ones, but doesn't delete those vertices.",
 							" *",
-							" * @returns the adjacent vertices prior to removal of incidences",
+							" * @return the adjacent vertices prior to removal of incidences",
 							" */",
 							"public java.util.List<? extends #vertexClassName#> remove_#rolename#();");
 		} else {
