@@ -63,7 +63,18 @@ public class KahnKnuthAlgorithm extends GraphAlgorithm implements
 	@Override
 	public void disableOptionalResults() {
 		// TODO Auto-generated method stub
-		
+
+	}
+
+	@Override
+	public boolean isHybrid() {
+		return false;
+	}
+
+	@Override
+	public void setDirected(boolean directed) {
+		throw new UnsupportedOperationException(
+				"This algorithm only works for directed graphs.");
 	}
 
 }
