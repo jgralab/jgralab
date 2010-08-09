@@ -72,9 +72,9 @@ public class BFSWithOptionalFunctions extends SearchAlgorithm implements
 	}
 
 	@Override
-	public void solveTraversalFromVertex(Vertex root) {
+	public BFSWithOptionalFunctions execute(Vertex root) {
 		if (visitedVertices.get(root) || !subgraph.get(root)) {
-			return;
+			return this;
 		}
 		startRunning();
 		firstV--; // to make it work if the algorithm is resumed
@@ -130,6 +130,7 @@ public class BFSWithOptionalFunctions extends SearchAlgorithm implements
 			}
 		}
 		done();
+		return this;
 	}
 
 	public IntFunction<Vertex> getLevel() {

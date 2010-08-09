@@ -8,7 +8,7 @@ import de.uni_koblenz.jgralab.algolib.functions.IntDomainFunction;
 //can be defined for directed and undirected graphs
 public interface CompleteTraversalSolver {
 
-	public void solveCompleteTraversal();
+	public CompleteTraversalSolver execute();
 
 	public IntDomainFunction<Vertex> getVertexOrder();
 

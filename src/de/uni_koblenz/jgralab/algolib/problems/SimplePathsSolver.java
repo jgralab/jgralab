@@ -8,7 +8,7 @@ import de.uni_koblenz.jgralab.algolib.functions.Function;
 //can be defined for directed and undirected graphsf
 public interface SimplePathsSolver {
 
-	public void solveSimplePaths();
+	public SimplePathsSolver execute();
 
 	public Function<VertexPair, Edge> getSuccessorRelation();
 }

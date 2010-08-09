@@ -6,7 +6,7 @@ import de.uni_koblenz.jgralab.Vertex;
 //can be defined for directed and undirected graphs
 public interface ReachableSolver {
 
-	public void solveReachable(Vertex start, Vertex target);
+	public ReachableSolver execute(Vertex start, Vertex target);
 
 	public boolean isReachable();
 }

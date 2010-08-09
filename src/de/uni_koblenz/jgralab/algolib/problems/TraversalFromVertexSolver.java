@@ -13,7 +13,7 @@ public interface TraversalFromVertexSolver {
 	 * @param root
 	 *            the vertex to start the traversal at
 	 */
-	public void solveTraversalFromVertex(Vertex root);
+	public TraversalFromVertexSolver execute(Vertex root);
 
 	/**
 	 * <code>vertexOrder</code> represents the order the vertices have been

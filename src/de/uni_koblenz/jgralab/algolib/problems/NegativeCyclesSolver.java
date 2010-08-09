@@ -4,7 +4,7 @@ package de.uni_koblenz.jgralab.algolib.problems;
 //can be defined for directed and undirected graphs
 public interface NegativeCyclesSolver {
 
-	public void solveNegativeCycles();
+	public NegativeCyclesSolver execute();
 
 	public boolean hasNegativeCycles();
 }

@@ -20,9 +20,9 @@ public class RecursiveDepthFirstSearch extends DepthFirstSearch {
 	}
 
 	@Override
-	public void solveTraversalFromVertex(Vertex root) {
+	public RecursiveDepthFirstSearch execute(Vertex root) {
 		if (visitedVertices.get(root) || !subgraph.get(root)) {
-			return;
+			return this;
 		}
 		startRunning();
 		visitors.visitRoot(root);
@@ -32,6 +32,7 @@ public class RecursiveDepthFirstSearch extends DepthFirstSearch {
 			
 		}
 		done();
+		return this;
 	}
 
 	private void dfs(Vertex currentVertex) throws AlgorithmTerminatedException {
