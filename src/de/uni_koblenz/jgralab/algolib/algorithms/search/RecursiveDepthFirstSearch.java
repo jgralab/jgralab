@@ -25,19 +25,26 @@ public class RecursiveDepthFirstSearch extends DepthFirstSearch {
 			return this;
 		}
 		startRunning();
-		visitors.visitRoot(root);
-		try {
-			dfs(root);
-		} catch (AlgorithmTerminatedException e) {
-			
+
+		if (level != null) {
+			level.set(root, 0);
 		}
+		number.set(root, num);
+		visitors.visitRoot(root);
+
+		// do not handle the exception here
+		dfs(root);
+
 		done();
 		return this;
 	}
 
 	private void dfs(Vertex currentVertex) throws AlgorithmTerminatedException {
 		vertexOrder[num] = currentVertex;
+		
+		number.set(currentVertex, num);
 		visitors.visitVertex(currentVertex);
+		
 		visitedVertices.set(currentVertex, true);
 		num++;
 
@@ -51,6 +58,13 @@ public class RecursiveDepthFirstSearch extends DepthFirstSearch {
 					visitedEdges.set(currentEdge, true);
 					eNum++;
 					if (!visitedVertices.get(nextVertex)) {
+						if (level != null) {
+							level.set(nextVertex,
+									level.get(currentVertex) + 1);
+						}
+						if (parent != null) {
+							parent.set(currentEdge.getThat(), currentEdge);
+						}
 						visitors.visitTreeEdge(currentEdge);
 
 						// recursive call
@@ -72,6 +86,9 @@ public class RecursiveDepthFirstSearch extends DepthFirstSearch {
 			}
 		}
 		rnumber.set(currentVertex, rNum);
+		if(rorder != null){
+			rorder[rNum] = currentVertex;
+		}
 		visitors.leaveVertex(currentVertex);
 		rNum++;
 	}

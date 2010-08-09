@@ -2,12 +2,8 @@ package de.uni_koblenz.jgralabtest.algolib;
 
 import java.util.Arrays;
 
-import de.uni_koblenz.jgralab.algolib.algorithms.search.BFSWithOptionalFunctions;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.BreadthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.SearchAlgorithm;
-import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.ComputeLevelVisitor;
-import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.ComputeNumberVisitor;
-import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.ComputeParentVisitor;
 import de.uni_koblenz.jgralabtest.schemas.algolib.simple.SimpleGraph;
 import de.uni_koblenz.jgralabtest.schemas.algolib.simple.SimpleVertex;
 
@@ -46,13 +42,6 @@ public class TryBFS {
 
 		v1 = graph.getFirstSimpleVertex();
 
-		BreadthFirstSearch bfs = new BreadthFirstSearch(graph);
-		ComputeLevelVisitor levelVisitor = new ComputeLevelVisitor();
-		// DebugSearchVisitor debugSearchVisitor = new
-		// DebugSearchVisitor(levelVisitor);
-		ComputeNumberVisitor numberVisitor = new ComputeNumberVisitor();
-		ComputeParentVisitor parentVisitor = new ComputeParentVisitor();
-
 		// bfs.addSearchVisitor(debugSearchVisitor);
 		// bfs.addSearchVisitor(levelVisitor);
 		// bfs.addSearchVisitor(numberVisitor);
@@ -64,30 +53,17 @@ public class TryBFS {
 		int amount = 100;
 		
 		System.out.println();
-		System.out.println("Starting search with visitors for optional results:");
-		
-		System.out.println("No optional functions:");
-		makeRunAndPrint(bfs, amount);
-		
-		System.out.println("Compute number:");
-		bfs.addVisitor(numberVisitor);
-		makeRunAndPrint(bfs, amount);
-		
-		System.out.println("Compute number, level and parent:");
-		bfs.addVisitor(levelVisitor);
-		bfs.addVisitor(parentVisitor);
-		makeRunAndPrint(bfs, amount);
-		
-		System.out.println();
 		
 		System.out.println("Starting search without visitors for optional results:");
 		
 		System.out.println("No optional functions:");
-		BFSWithOptionalFunctions bfs2 = new BFSWithOptionalFunctions(graph);
+		BreadthFirstSearch bfs2 = new BreadthFirstSearch(graph);
+		bfs2.reset();
 		makeRunAndPrint(bfs2, amount);
 
 		System.out.println("Compute number:");
 		bfs2 = bfs2.withNumber();
+		bfs2.reset();
 		makeRunAndPrint(bfs2, amount);
 
 		System.out.println("Compute number, level and parent:");
@@ -129,9 +105,9 @@ public class TryBFS {
 			// printTime(results[i]);
 			sum += results[i];
 		}
-
+		
+		bfs.reset();
 		return Math.round(sum / (skipUntil - skip));
-
 	}
 
 	private static void printTime(long millis) {

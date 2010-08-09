@@ -9,10 +9,14 @@ import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmStates;
 import de.uni_koblenz.jgralab.algolib.algorithms.HybridGraphAlgorithm;
 import de.uni_koblenz.jgralab.algolib.functions.ArrayFunction;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
+import de.uni_koblenz.jgralab.algolib.functions.Function;
 import de.uni_koblenz.jgralab.algolib.functions.IntDomainFunction;
+import de.uni_koblenz.jgralab.algolib.functions.IntFunction;
 import de.uni_koblenz.jgralab.algolib.problems.TraversalFromVertexSolver;
+import de.uni_koblenz.jgralab.graphmarker.ArrayVertexMarker;
 import de.uni_koblenz.jgralab.graphmarker.BitSetEdgeMarker;
 import de.uni_koblenz.jgralab.graphmarker.BitSetVertexMarker;
+import de.uni_koblenz.jgralab.graphmarker.IntegerVertexMarker;
 
 public abstract class SearchAlgorithm extends HybridGraphAlgorithm implements
 		TraversalFromVertexSolver {
@@ -89,6 +93,12 @@ public abstract class SearchAlgorithm extends HybridGraphAlgorithm implements
 	 */
 	protected int eNum;
 
+	// optional functions
+
+	protected IntFunction<Vertex> level;
+	protected IntFunction<Vertex> number;
+	protected Function<Vertex, Edge> parent;
+
 	public SearchAlgorithm(Graph graph, BooleanFunction<GraphElement> subgraph,
 			boolean directed, BooleanFunction<Edge> navigable) {
 		super(graph, subgraph, directed);
@@ -99,9 +109,48 @@ public abstract class SearchAlgorithm extends HybridGraphAlgorithm implements
 		super(graph);
 	}
 
+	public SearchAlgorithm withLevel() {
+		checkStateForSettingParameters();
+		level = new IntegerVertexMarker(graph);
+		return this;
+	}
+
+	public SearchAlgorithm withNumber() {
+		checkStateForSettingParameters();
+		number = new IntegerVertexMarker(graph);
+		return this;
+	}
+
+	public SearchAlgorithm withParent() {
+		checkStateForSettingParameters();
+		parent = new ArrayVertexMarker<Edge>(graph);
+		return this;
+
+	}
+	
+	public IntFunction<Vertex> getInternalLevel(){
+		return level;
+	}
+	
+	public IntFunction<Vertex> getInternalNumber(){
+		return number;
+	}
+	
+	public Function<Vertex,Edge> getInternalParent(){
+		return parent;
+	}
+
+	@Override
+	public void disableOptionalResults() {
+		checkStateForSettingParameters();
+		level = null;
+		number = null;
+		parent = null;
+	}
+
 	@Override
 	public void reset() {
-		state = AlgorithmStates.INITIALIZED;
+		super.reset();
 		vertexOrder = new Vertex[graph.getVCount() + 1];
 		edgeOrder = new Edge[graph.getECount() + 1];
 		visitedVertices = new BitSetVertexMarker(graph);
@@ -163,26 +212,14 @@ public abstract class SearchAlgorithm extends HybridGraphAlgorithm implements
 
 	@Override
 	public IntDomainFunction<Edge> getEdgeOrder() {
-		if (state == AlgorithmStates.FINISHED
-				|| state == AlgorithmStates.STOPPED) {
-			return new ArrayFunction<Edge>(edgeOrder);
-		} else {
-			throw new IllegalStateException(
-					"The result cannot be obtained while in this state: "
-							+ state);
-		}
+		checkStateForResult();
+		return new ArrayFunction<Edge>(edgeOrder);
 	}
 
 	@Override
 	public IntDomainFunction<Vertex> getVertexOrder() {
-		if (state == AlgorithmStates.FINISHED
-				|| state == AlgorithmStates.STOPPED) {
-			return new ArrayFunction<Vertex>(vertexOrder);
-		} else {
-			throw new IllegalStateException(
-					"The result cannot be obtained while in this state: "
-							+ state);
-		}
+		checkStateForResult();
+		return new ArrayFunction<Vertex>(vertexOrder);
 	}
 
 	/**
@@ -192,14 +229,8 @@ public abstract class SearchAlgorithm extends HybridGraphAlgorithm implements
 	 */
 	@Override
 	public void setDirected(boolean directed) {
-		if (getState() == AlgorithmStates.INITIALIZED) {
-			searchDirection = directed ? EdgeDirection.OUT
-					: EdgeDirection.INOUT;
-		} else {
-			throw new IllegalStateException(
-					"Parameters may only be changed when in state "
-							+ AlgorithmStates.INITIALIZED);
-		}
+		checkStateForSettingParameters();
+		searchDirection = directed ? EdgeDirection.OUT : EdgeDirection.INOUT;
 	}
 
 	/**
@@ -219,13 +250,8 @@ public abstract class SearchAlgorithm extends HybridGraphAlgorithm implements
 	 *            the search direction this search algorithm uses.
 	 */
 	public void setSearchDirection(EdgeDirection searchDirection) {
-		if (getState() == AlgorithmStates.INITIALIZED) {
+			checkStateForSettingParameters();
 			this.searchDirection = searchDirection;
-		} else {
-			throw new IllegalStateException(
-					"Parameters may only be changed when in state "
-							+ AlgorithmStates.INITIALIZED);
-		}
 	}
 
 	/**
@@ -241,5 +267,20 @@ public abstract class SearchAlgorithm extends HybridGraphAlgorithm implements
 			state = num < graph.getVCount() + 1 ? AlgorithmStates.STOPPED
 					: AlgorithmStates.FINISHED;
 		}
+	}
+
+	public IntFunction<Vertex> getLevel() {
+		checkStateForResult();
+		return level;
+	}
+
+	public IntFunction<Vertex> getNumber() {
+		checkStateForResult();
+		return number;
+	}
+
+	public Function<Vertex, Edge> getParent() {
+		checkStateForResult();
+		return parent;
 	}
 }

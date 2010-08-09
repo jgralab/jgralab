@@ -3,11 +3,10 @@ package de.uni_koblenz.jgralabtest.algolib;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.GraphAlgorithm;
-import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.ComputeLevelVisitor;
+import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.DFSAlgorithmVisitor;
 import de.uni_koblenz.jgralab.algolib.functions.IntFunction;
-import de.uni_koblenz.jgralab.algolib.visitors.DFSVisitorAdapter;
 
-public class DebugSearchVisitor extends DFSVisitorAdapter {
+public class DebugSearchVisitor extends DFSAlgorithmVisitor {
 
 	public static String generateEdgeString(Edge e) {
 		if (e == null) {
@@ -36,12 +35,7 @@ public class DebugSearchVisitor extends DFSVisitorAdapter {
 		return out.toString();
 	}
 
-	protected ComputeLevelVisitor clv;
 	protected IntFunction<Vertex> level;
-
-	public DebugSearchVisitor(ComputeLevelVisitor clv) {
-		this.clv = clv;
-	}
 
 	private void printIndent(Vertex v) {
 		int amount = level.isDefined(v) ? level.get(v) : 0;
@@ -88,14 +82,12 @@ public class DebugSearchVisitor extends DFSVisitorAdapter {
 
 	@Override
 	public void visitRoot(Vertex v) {
-		clv.visitRoot(v);
 		printIndent(v);
 		System.out.println("Visiting root " + v);
 	}
 
 	@Override
 	public void visitTreeEdge(Edge e) {
-		clv.visitTreeEdge(e);
 		printIndent(e.getThis());
 		System.out.println("Visiting tree edge " + generateEdgeString(e));
 	}
@@ -114,13 +106,12 @@ public class DebugSearchVisitor extends DFSVisitorAdapter {
 
 	@Override
 	public void reset() {
-		clv.reset();
-		level = clv.getIntermediateLevel();
+		level = algorithm.getInternalLevel();
 	}
 
 	@Override
 	public void setAlgorithm(GraphAlgorithm alg) {
-		clv.setAlgorithm(alg);
+		super.setAlgorithm(alg);
 		reset();
 	}
 

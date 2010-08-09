@@ -60,4 +60,10 @@ public class KahnKnuthAlgorithm extends GraphAlgorithm implements
 		return null;
 	}
 
+	@Override
+	public void disableOptionalResults() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
