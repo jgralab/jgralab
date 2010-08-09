@@ -6,6 +6,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.functions.Function;
+import de.uni_koblenz.jgralab.algolib.functions.pairs.Pair;
 
 /**
  * This class is the abstract superclass of generic array graph markers.
@@ -151,6 +152,35 @@ public abstract class ArrayGraphMarker<T extends GraphElement, O> extends
 		}
 		out.append("]");
 		return out.toString();
+	}
+	
+	@Override
+	public Iterable<T> getDomainElements() {
+		return getMarkedElements();
+	}
+
+	@Override
+	public Iterator<Pair<T, O>> iterator() {
+		final Iterator<T> markedElements = getMarkedElements().iterator();
+		return new Iterator<Pair<T,O>>() {
+
+			@Override
+			public boolean hasNext() {
+				return markedElements.hasNext();
+			}
+
+			@Override
+			public Pair<T, O> next() {
+				T currentElement = markedElements.next();
+				return new Pair<T, O>(currentElement, get(currentElement));
+			}
+
+			@Override
+			public void remove() {
+				markedElements.remove();
+			}
+			
+		};
 	}
 
 }

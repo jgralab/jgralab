@@ -25,11 +25,13 @@
 package de.uni_koblenz.jgralab.graphmarker;
 
 import java.util.HashMap;
+import java.util.Iterator;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.algolib.functions.Function;
+import de.uni_koblenz.jgralab.algolib.functions.pairs.Pair;
 import de.uni_koblenz.jgralab.impl.ReversedEdgeBaseImpl;
 
 /**
@@ -199,5 +201,36 @@ public abstract class MapGraphMarker<T extends AttributedElement, O> extends
 	public void set(T parameter, O value) {
 		mark(parameter, value);
 	}
+
+	@Override
+	public Iterable<T> getDomainElements() {
+		return getMarkedElements();
+	}
+
+	@Override
+	public Iterator<Pair<T, O>> iterator() {
+		final Iterator<T> markedElements = getMarkedElements().iterator();
+		return new Iterator<Pair<T,O>>() {
+
+			@Override
+			public boolean hasNext() {
+				return markedElements.hasNext();
+			}
+
+			@Override
+			public Pair<T, O> next() {
+				T currentElement = markedElements.next();
+				return new Pair<T, O>(currentElement, get(currentElement));
+			}
+
+			@Override
+			public void remove() {
+				markedElements.remove();
+			}
+			
+		};
+	}
+	
+	
 
 }

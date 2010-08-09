@@ -1,5 +1,7 @@
 package de.uni_koblenz.jgralab.algolib.functions;
 
+import de.uni_koblenz.jgralab.algolib.functions.pairs.Pair;
+
 /**
  * Interface for creating function objects. This interface should only be used
  * if there are no primitive types involved. For primitive types, there are
@@ -7,10 +9,12 @@ package de.uni_koblenz.jgralab.algolib.functions;
  * 
  * @author strauss@uni-koblenz.de
  * 
- * @param <DOMAIN> the domain of the function
- * @param <RANGE> the range of the function
+ * @param <DOMAIN>
+ *            the domain of the function
+ * @param <RANGE>
+ *            the range of the function
  */
-public interface Function<DOMAIN, RANGE> {
+public interface Function<DOMAIN, RANGE> extends Iterable<Pair<DOMAIN, RANGE>> {
 
 	/**
 	 * Returns the function value for the given <code>parameter</code>. If this
@@ -51,4 +55,6 @@ public interface Function<DOMAIN, RANGE> {
 	 *         given <code>parameter</code>.
 	 */
 	public boolean isDefined(DOMAIN parameter);
+
+	public Iterable<DOMAIN> getDomainElements();
 }
