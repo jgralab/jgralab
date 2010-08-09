@@ -205,6 +205,25 @@ public abstract class GraphAlgorithm {
 	public abstract boolean isDirected();
 
 	/**
+	 * Sets the interpretation mode (directed or undirected) of the current
+	 * graph.
+	 * 
+	 * @param directed
+	 *            if true, the current graph is interpreted as a directed graph.
+	 * @throws UnsupportedOperationException
+	 *             if this algorithm only supports one interpretation mode
+	 */
+	public abstract void setDirected(boolean directed);
+
+	/**
+	 * Tells if this algorithm can work on both, directed and undirected graphs.
+	 * 
+	 * @return true if this algorithm can work on directed and undirected
+	 *         graphs.
+	 */
+	public abstract boolean isHybrid();
+
+	/**
 	 * Adds a visitor to this algorithm.
 	 * 
 	 * @param visitor

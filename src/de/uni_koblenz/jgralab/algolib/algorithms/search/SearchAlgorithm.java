@@ -6,7 +6,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmStates;
-import de.uni_koblenz.jgralab.algolib.algorithms.HybridGraphAlgorithm;
+import de.uni_koblenz.jgralab.algolib.algorithms.GraphAlgorithm;
 import de.uni_koblenz.jgralab.algolib.functions.ArrayFunction;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 import de.uni_koblenz.jgralab.algolib.functions.Function;
@@ -18,7 +18,7 @@ import de.uni_koblenz.jgralab.graphmarker.BitSetEdgeMarker;
 import de.uni_koblenz.jgralab.graphmarker.BitSetVertexMarker;
 import de.uni_koblenz.jgralab.graphmarker.IntegerVertexMarker;
 
-public abstract class SearchAlgorithm extends HybridGraphAlgorithm implements
+public abstract class SearchAlgorithm extends GraphAlgorithm implements
 		TraversalFromVertexSolver {
 
 	/**
@@ -76,7 +76,8 @@ public abstract class SearchAlgorithm extends HybridGraphAlgorithm implements
 
 	public SearchAlgorithm(Graph graph, BooleanFunction<GraphElement> subgraph,
 			boolean directed, BooleanFunction<Edge> navigable) {
-		super(graph, subgraph, directed);
+		super(graph, subgraph);
+		setDirected(directed);
 		this.navigable = navigable;
 	}
 
@@ -102,16 +103,16 @@ public abstract class SearchAlgorithm extends HybridGraphAlgorithm implements
 		return this;
 
 	}
-	
-	public IntFunction<Vertex> getInternalLevel(){
+
+	public IntFunction<Vertex> getInternalLevel() {
 		return level;
 	}
-	
-	public IntFunction<Vertex> getInternalNumber(){
+
+	public IntFunction<Vertex> getInternalNumber() {
 		return number;
 	}
-	
-	public Function<Vertex,Edge> getInternalParent(){
+
+	public Function<Vertex, Edge> getInternalParent() {
 		return parent;
 	}
 
@@ -208,6 +209,11 @@ public abstract class SearchAlgorithm extends HybridGraphAlgorithm implements
 		searchDirection = directed ? EdgeDirection.OUT : EdgeDirection.INOUT;
 	}
 
+	@Override
+	public boolean isHybrid() {
+		return true;
+	}
+
 	/**
 	 * Only returns <code>false</code> if <code>edgeDirection</code> is set to
 	 * "INOUT".
@@ -225,8 +231,8 @@ public abstract class SearchAlgorithm extends HybridGraphAlgorithm implements
 	 *            the search direction this search algorithm uses.
 	 */
 	public void setSearchDirection(EdgeDirection searchDirection) {
-			checkStateForSettingParameters();
-			this.searchDirection = searchDirection;
+		checkStateForSettingParameters();
+		this.searchDirection = searchDirection;
 	}
 
 	/**
