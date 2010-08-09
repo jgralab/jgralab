@@ -92,6 +92,8 @@ public abstract class GraphAlgorithm {
 		}
 	}
 
+	public abstract void disableOptionalResults();
+
 	/**
 	 * Assigns the default values to all parameters.
 	 * 
@@ -101,6 +103,7 @@ public abstract class GraphAlgorithm {
 	public void resetParameters() {
 		if (getState() == AlgorithmStates.INITIALIZED) {
 			this.subgraph = DEFAULT_SUBGRAPH;
+			disableOptionalResults();
 		} else {
 			throw new IllegalStateException(
 					"The parameters may only be reseted to their default values when in state "
@@ -235,5 +238,22 @@ public abstract class GraphAlgorithm {
 	 *             algorithm.
 	 */
 	public abstract void addVisitor(Visitor visitor);
+
+	public void checkStateForResult() {
+		if (state != AlgorithmStates.FINISHED
+				&& state != AlgorithmStates.STOPPED) {
+			throw new IllegalStateException(
+					"The result cannot be obtained while in this state: "
+							+ state);
+		}
+	}
+
+	public void checkStateForSettingParameters() {
+		if (getState() != AlgorithmStates.INITIALIZED) {
+			throw new IllegalStateException(
+					"Parameters may only be changed when in state "
+							+ AlgorithmStates.INITIALIZED);
+		}
+	}
 
 }

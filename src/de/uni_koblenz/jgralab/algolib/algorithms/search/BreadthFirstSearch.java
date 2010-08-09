@@ -12,7 +12,7 @@ import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
 public class BreadthFirstSearch extends SearchAlgorithm implements
 		TraversalFromVertexSolver {
 
-	private SearchVisitorComposition visitors;
+	private SearchVisitorComposition visitors = new SearchVisitorComposition();
 
 	public BreadthFirstSearch(Graph graph,
 			BooleanFunction<GraphElement> subgraph, boolean directed,
@@ -25,9 +25,24 @@ public class BreadthFirstSearch extends SearchAlgorithm implements
 	}
 
 	protected int firstV;
-	
-	protected int getIntermediateFirstV(){
+
+	protected int getIntermediateFirstV() {
 		return firstV;
+	}
+
+	@Override
+	public BreadthFirstSearch withLevel() {
+		return (BreadthFirstSearch) super.withLevel();
+	}
+
+	@Override
+	public BreadthFirstSearch withNumber() {
+		return (BreadthFirstSearch) super.withNumber();
+	}
+
+	@Override
+	public BreadthFirstSearch withParent() {
+		return (BreadthFirstSearch) super.withParent();
 	}
 
 	@Override
@@ -57,8 +72,17 @@ public class BreadthFirstSearch extends SearchAlgorithm implements
 		startRunning();
 		firstV--; // to make it work if the algorithm is resumed
 		vertexOrder[num] = root;
+
+		if (level != null) {
+			level.set(root, 0);
+		}
 		visitors.visitRoot(root);
+
+		if (number != null) {
+			number.set(root, num);
+		}
 		visitors.visitVertex(root);
+		
 		visitedVertices.set(root, true);
 		num++;
 		// main loop
@@ -79,7 +103,17 @@ public class BreadthFirstSearch extends SearchAlgorithm implements
 							visitors.visitFrond(currentEdge);
 						} else {
 							vertexOrder[num] = nextVertex;
+							if (level != null) {
+								level.set(nextVertex,
+										level.get(currentVertex) + 1);
+							}
+							if (parent != null) {
+								parent.set(currentEdge.getThat(), currentEdge);
+							}
 							visitors.visitTreeEdge(currentEdge);
+							if (number != null) {
+								number.set(nextVertex, num);
+							}
 							visitors.visitVertex(nextVertex);
 							visitedVertices.set(nextVertex, true);
 							num++;
@@ -91,4 +125,5 @@ public class BreadthFirstSearch extends SearchAlgorithm implements
 		done();
 		return this;
 	}
+	
 }
