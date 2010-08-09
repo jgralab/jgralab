@@ -3,9 +3,10 @@ package de.uni_koblenz.jgralab.graphmarker;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.algolib.functions.LongFunction;
 
 public abstract class LongGraphMarker<T extends GraphElement> extends
-		AbstractGraphMarker<T> {
+		AbstractGraphMarker<T> implements LongFunction<T> {
 
 	private static final long DEFAULT_UNMARKED_VALUE = Long.MIN_VALUE;
 
@@ -131,4 +132,19 @@ public abstract class LongGraphMarker<T extends GraphElement> extends
 		this.unmarkedValue = newUnmarkedValue;
 	}
 	
+	@Override
+	public long get(T parameter) {
+		return getMark(parameter);
+	}
+
+	@Override
+	public boolean isDefined(T parameter) {
+		return isMarked(parameter);
+	}
+
+	@Override
+	public void set(T parameter, long value) {
+		mark(parameter, value);
+	}
+
 }

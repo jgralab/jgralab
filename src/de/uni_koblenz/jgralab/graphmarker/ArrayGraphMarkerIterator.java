@@ -4,7 +4,8 @@ import java.util.Iterator;
 
 import de.uni_koblenz.jgralab.GraphElement;
 
-public abstract class ArrayGraphMarkerIterator<T extends GraphElement> implements Iterator<T> {
+public abstract class ArrayGraphMarkerIterator<T extends GraphElement>
+		implements Iterator<T> {
 	protected int index;
 	protected long version;
 	protected static String MODIFIED_ERROR_MESSAGE = "The graph marker was modified during current iteration.";
