@@ -116,7 +116,7 @@ public class TryBFS {
 			bfs.reset();
 			sw.reset();
 			sw.start();
-			bfs.solveTraversalFromVertex(v1);
+			bfs.execute(v1);
 			sw.stop();
 			results[i] = sw.getDuration();
 		}

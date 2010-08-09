@@ -8,7 +8,7 @@ import de.uni_koblenz.jgralab.algolib.functions.Function;
 //can be defined for directed and undirected graphs
 public interface WeightedShortestPathFromVertexToVertexSolver {
 
-	public void solveWeightedShortestPathFromVertexToVertex(Vertex start,
+	public WeightedShortestPathFromVertexToVertexSolver execute(Vertex start,
 			Vertex target);
 
 	public Function<Vertex, Edge> getParent();

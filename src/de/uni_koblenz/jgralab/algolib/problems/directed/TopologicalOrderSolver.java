@@ -6,7 +6,7 @@ import de.uni_koblenz.jgralab.algolib.functions.IntDomainFunction;
 //TODO write problem specification
 public interface TopologicalOrderSolver {
 	
-	public void solveTopologicalOrder();
+	public TopologicalOrderSolver execute();
 
 	public IntDomainFunction<Vertex> getTopologicalOrder();
 }

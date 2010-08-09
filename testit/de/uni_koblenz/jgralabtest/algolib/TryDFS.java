@@ -42,7 +42,7 @@ public class TryDFS {
 		dfs.addVisitor(rorderVisitor);
 		dfs.addVisitor(parentVisitor);
 
-		dfs.solveTraversalFromVertex(v1);
+		dfs.execute(v1);
 
 		System.out.println("vertex order: \n" + dfs.getVertexOrder());
 		System.out.println();

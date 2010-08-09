@@ -7,7 +7,7 @@ import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 //can be defined for directed and undirected graphs
 public interface ReachabilitySolver {
 
-	public void solveReachability();
+	public ReachabilitySolver execute();
 
 	public BooleanFunction<Vertex> getReachabilityRelation();
 }
