@@ -21,7 +21,8 @@ public class RecursiveDepthFirstSearch extends DepthFirstSearch {
 
 	@Override
 	public RecursiveDepthFirstSearch execute(Vertex root) {
-		if (visitedVertices.get(root) || !subgraph.get(root)) {
+		if (subgraph != null && !subgraph.get(root)
+				|| visitedVertices.get(root)) {
 			return this;
 		}
 		startRunning();
@@ -41,26 +42,26 @@ public class RecursiveDepthFirstSearch extends DepthFirstSearch {
 
 	private void dfs(Vertex currentVertex) throws AlgorithmTerminatedException {
 		vertexOrder[num] = currentVertex;
-		
+
 		number.set(currentVertex, num);
 		visitors.visitVertex(currentVertex);
-		
+
 		visitedVertices.set(currentVertex, true);
 		num++;
 
 		for (Edge currentEdge : currentVertex.incidences(searchDirection)) {
-			if (subgraph.get(currentEdge) && navigable.get(currentEdge)
+			if (subgraph == null || (subgraph.get(currentEdge))
+					&& (navigable == null || navigable.get(currentEdge))
 					&& !visitedEdges.get(currentEdge)) {
 				Vertex nextVertex = currentEdge.getThat();
-				if (subgraph.get(nextVertex)) {
+				if (subgraph == null || subgraph.get(nextVertex)) {
 					edgeOrder[eNum] = currentEdge;
 					visitors.visitEdge(currentEdge);
 					visitedEdges.set(currentEdge, true);
 					eNum++;
 					if (!visitedVertices.get(nextVertex)) {
 						if (level != null) {
-							level.set(nextVertex,
-									level.get(currentVertex) + 1);
+							level.set(nextVertex, level.get(currentVertex) + 1);
 						}
 						if (parent != null) {
 							parent.set(currentEdge.getThat(), currentEdge);
@@ -86,7 +87,7 @@ public class RecursiveDepthFirstSearch extends DepthFirstSearch {
 			}
 		}
 		rnumber.set(currentVertex, rNum);
-		if(rorder != null){
+		if (rorder != null) {
 			rorder[rNum] = currentVertex;
 		}
 		visitors.leaveVertex(currentVertex);
