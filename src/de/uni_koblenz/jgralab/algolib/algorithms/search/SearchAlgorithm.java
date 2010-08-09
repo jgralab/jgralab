@@ -160,28 +160,28 @@ public abstract class SearchAlgorithm extends HybridGraphAlgorithm implements
 	/**
 	 * @return the intermediate result <code>edgeOrder</code>.
 	 */
-	public Edge[] getIntermediateEdgeOrder() {
+	public Edge[] getInternalEdgeOrder() {
 		return edgeOrder;
 	}
 
 	/**
 	 * @return the intermediate result <code>vertexOrder</code>.
 	 */
-	public Vertex[] getIntermediateVertexOrder() {
+	public Vertex[] getInternalVertexOrder() {
 		return vertexOrder;
 	}
 
 	/**
 	 * @return the intermediate value of <code>num</code>.
 	 */
-	public int getIntermediateNum() {
+	public int getNum() {
 		return num;
 	}
 
 	/**
 	 * @return the intermediate value of <code>eNum</code>.
 	 */
-	public int getIntermediateENum() {
+	public int getENum() {
 		return eNum;
 	}
 

@@ -76,16 +76,12 @@ public abstract class DepthFirstSearch extends SearchAlgorithm {
 		return rorder;
 	}
 
-	public int getIntermediateRNum() {
+	public int getRNum() {
 		return rNum;
 	}
 
-	public IntFunction<Vertex> getIntermediateRnumber() {
+	public IntFunction<Vertex> getInternalRnumber() {
 		return rnumber;
-	}
-
-	public IntFunction<Vertex> getIntermediateNumber() {
-		return number;
 	}
 
 	public IntFunction<Vertex> getRnumber() {
