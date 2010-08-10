@@ -34,6 +34,7 @@ public abstract class DepthFirstSearch extends SearchAlgorithm {
 		super.reset();
 		visitors.reset();
 		rNum = 1;
+		rorder = rorder == null ? null : new Vertex[graph.getVCount() + 1];
 		rnumber = new IntegerVertexMarker(graph);
 		number = new IntegerVertexMarker(graph);
 	}
@@ -64,6 +65,14 @@ public abstract class DepthFirstSearch extends SearchAlgorithm {
 	public void resetParameters() {
 		super.resetParameters();
 		visitors = new DFSVisitorComposition();
+	}
+
+	@Override
+	public void disableOptionalResults() {
+		checkStateForSettingParameters();
+		level = null;
+		parent = null;
+		rorder = null;
 	}
 
 	@Override
