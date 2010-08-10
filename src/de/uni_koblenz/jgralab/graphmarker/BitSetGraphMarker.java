@@ -1,11 +1,13 @@
 package de.uni_koblenz.jgralab.graphmarker;
 
 import java.util.BitSet;
+import java.util.Iterator;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
+import de.uni_koblenz.jgralab.algolib.functions.pairs.BooleanPair;
 
 /**
  * This class can be used to "colorize" graphs, it supports only two "colors",
@@ -111,6 +113,35 @@ public abstract class BitSetGraphMarker<T extends GraphElement> extends
 		} else {
 			removeMark(parameter);
 		}
+	}
+
+	@Override
+	public Iterator<BooleanPair<T>> iterator() {
+		final Iterator<T> markedElements = getMarkedElements().iterator();
+		return new Iterator<BooleanPair<T>>() {
+
+			@Override
+			public boolean hasNext() {
+				return markedElements.hasNext();
+			}
+
+			@Override
+			public BooleanPair<T> next() {
+				T currentElement = markedElements.next();
+				return new BooleanPair<T>(currentElement, get(currentElement));
+			}
+
+			@Override
+			public void remove() {
+				markedElements.remove();
+			}
+
+		};
+	}
+
+	@Override
+	public Iterable<T> getDomainElements() {
+		return getMarkedElements();
 	}
 
 }

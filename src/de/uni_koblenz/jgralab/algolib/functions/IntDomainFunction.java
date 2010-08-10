@@ -16,4 +16,5 @@ public interface IntDomainFunction<RANGE> {
 	public void set(int parameter, RANGE value);
 
 	public boolean isDefined(int parameter);
+	
 }

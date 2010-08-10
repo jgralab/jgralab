@@ -6,6 +6,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.functions.IntFunction;
+import de.uni_koblenz.jgralab.algolib.functions.pairs.IntPair;
 
 public abstract class IntegerGraphMarker<T extends GraphElement> extends
 		AbstractGraphMarker<T> implements IntFunction<T> {
@@ -169,6 +170,34 @@ public abstract class IntegerGraphMarker<T extends GraphElement> extends
 		}
 		out.append("]");
 		return out.toString();
+	}
+
+	@Override
+	public Iterator<IntPair<T>> iterator() {
+		final Iterator<T> markedElements = getMarkedElements().iterator();
+		return new Iterator<IntPair<T>>() {
+
+			@Override
+			public boolean hasNext() {
+				return markedElements.hasNext();
+			}
+
+			@Override
+			public IntPair<T> next() {
+				T currentElement = markedElements.next();
+				return new IntPair<T>(currentElement, get(currentElement));
+			}
+
+			@Override
+			public void remove() {
+				markedElements.remove();
+			}
+		};
+	}
+
+	@Override
+	public Iterable<T> getDomainElements() {
+		return getMarkedElements();
 	}
 
 }
