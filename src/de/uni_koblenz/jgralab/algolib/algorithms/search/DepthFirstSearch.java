@@ -4,9 +4,9 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.algolib.functions.ArrayFunction;
+import de.uni_koblenz.jgralab.algolib.functions.ArrayPermutation;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
-import de.uni_koblenz.jgralab.algolib.functions.IntDomainFunction;
+import de.uni_koblenz.jgralab.algolib.functions.Permutation;
 import de.uni_koblenz.jgralab.algolib.functions.IntFunction;
 import de.uni_koblenz.jgralab.algolib.visitors.DFSVisitorComposition;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
@@ -89,9 +89,9 @@ public abstract class DepthFirstSearch extends SearchAlgorithm {
 		return rnumber;
 	}
 
-	public IntDomainFunction<Vertex> getRorder() {
+	public Permutation<Vertex> getRorder() {
 		checkStateForResult();
-		return rorder == null ? null : new ArrayFunction<Vertex>(rorder);
+		return rorder == null ? null : new ArrayPermutation<Vertex>(rorder);
 	}
 
 }
