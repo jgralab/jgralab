@@ -30,6 +30,16 @@ public class TryDFS {
 
 		dfs.execute(v1);
 
+		printResults(dfs);
+		
+		dfs.reset();
+		dfs.execute();
+		printResults(dfs);
+		
+		System.out.println("Fini");
+	}
+
+	private static void printResults(DepthFirstSearch dfs) {
 		System.out.println("vertex order: \n" + dfs.getVertexOrder());
 		System.out.println();
 		System.out.println("rorder: \n" + dfs.getRorder());
@@ -43,6 +53,5 @@ public class TryDFS {
 		System.out.println("parent: \n" + dfs.getParent());
 		System.out.println();
 		System.out.println(dfs.getState());
-		System.out.println("Fini");
 	}
 }
