@@ -1,10 +1,10 @@
-package de.uni_koblenz.jgralab.algolib.functions.pairs;
+package de.uni_koblenz.jgralab.algolib.functions.entries;
 
-public class BooleanPair<A> {
+public class BooleanFunctionEntry<A> {
 	private A first;
 	private boolean second;
 
-	public BooleanPair(A first, boolean second) {
+	public BooleanFunctionEntry(A first, boolean second) {
 		super();
 		this.first = first;
 		this.second = second;

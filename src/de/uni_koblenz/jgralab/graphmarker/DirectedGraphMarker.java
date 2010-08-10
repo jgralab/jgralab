@@ -7,7 +7,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.algolib.functions.pairs.Pair;
+import de.uni_koblenz.jgralab.algolib.functions.entries.FunctionEntry;
 
 /**
  * Marks directed graphs with arbitrary objects. In contrast to the marking
@@ -98,10 +98,10 @@ public class DirectedGraphMarker<O> extends
 	}
 
 	@Override
-	public Iterator<Pair<AttributedElement, O>> iterator() {
+	public Iterator<FunctionEntry<AttributedElement, O>> iterator() {
 		final Iterator<AttributedElement> markedElements = getMarkedElements()
 				.iterator();
-		return new Iterator<Pair<AttributedElement, O>>() {
+		return new Iterator<FunctionEntry<AttributedElement, O>>() {
 
 			@Override
 			public boolean hasNext() {
@@ -109,9 +109,9 @@ public class DirectedGraphMarker<O> extends
 			}
 
 			@Override
-			public Pair<AttributedElement, O> next() {
+			public FunctionEntry<AttributedElement, O> next() {
 				AttributedElement currentElement = markedElements.next();
-				return new Pair<AttributedElement, O>(currentElement,
+				return new FunctionEntry<AttributedElement, O>(currentElement,
 						get(currentElement));
 			}
 

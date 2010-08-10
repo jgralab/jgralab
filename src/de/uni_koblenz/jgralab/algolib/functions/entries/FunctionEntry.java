@@ -1,10 +1,10 @@
-package de.uni_koblenz.jgralab.algolib.functions.pairs;
+package de.uni_koblenz.jgralab.algolib.functions.entries;
 
-public class Pair<A, B> {
+public class FunctionEntry<A, B> {
 	private A first;
 	private B second;
 
-	public Pair(A first, B second) {
+	public FunctionEntry(A first, B second) {
 		super();
 		this.first = first;
 		this.second = second;

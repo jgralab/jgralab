@@ -3,7 +3,7 @@ package de.uni_koblenz.jgralab.algolib.functions;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import de.uni_koblenz.jgralab.algolib.functions.pairs.IntDomainPair;
+import de.uni_koblenz.jgralab.algolib.functions.entries.PermutationEntry;
 
 public class ArrayPermutation<RANGE> implements Permutation<RANGE> {
 
@@ -92,11 +92,11 @@ public class ArrayPermutation<RANGE> implements Permutation<RANGE> {
 	}
 
 	@Override
-	public Iterator<IntDomainPair<RANGE>> iterator() {
-		return new ArrayIterator<IntDomainPair<RANGE>>() {
+	public Iterator<PermutationEntry<RANGE>> iterator() {
+		return new ArrayIterator<PermutationEntry<RANGE>>() {
 			@Override
-			public IntDomainPair<RANGE> next() {
-				return new IntDomainPair<RANGE>(i, values[i++]);
+			public PermutationEntry<RANGE> next() {
+				return new PermutationEntry<RANGE>(i, values[i++]);
 			}
 		};
 	}

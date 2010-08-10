@@ -1,6 +1,6 @@
 package de.uni_koblenz.jgralab.algolib.functions;
 
-import de.uni_koblenz.jgralab.algolib.functions.pairs.IntPair;
+import de.uni_koblenz.jgralab.algolib.functions.entries.IntFunctionEntry;
 
 /**
  * Behaves the same way as <code>Function</code>, except that <code>RANGE</code>
@@ -10,7 +10,7 @@ import de.uni_koblenz.jgralab.algolib.functions.pairs.IntPair;
  * 
  * @param <DOMAIN>
  */
-public interface IntFunction<DOMAIN> extends Iterable<IntPair<DOMAIN>> {
+public interface IntFunction<DOMAIN> extends Iterable<IntFunctionEntry<DOMAIN>> {
 	public int get(DOMAIN parameter);
 
 	public void set(DOMAIN parameter, int value);

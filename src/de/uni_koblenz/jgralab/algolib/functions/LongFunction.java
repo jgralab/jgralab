@@ -1,6 +1,6 @@
 package de.uni_koblenz.jgralab.algolib.functions;
 
-import de.uni_koblenz.jgralab.algolib.functions.pairs.LongPair;
+import de.uni_koblenz.jgralab.algolib.functions.entries.LongFunctionEntry;
 
 /**
  * Behaves the same way as <code>Function</code>, except that <code>RANGE</code>
@@ -10,7 +10,7 @@ import de.uni_koblenz.jgralab.algolib.functions.pairs.LongPair;
  * 
  * @param <DOMAIN>
  */
-public interface LongFunction<DOMAIN> extends Iterable<LongPair<DOMAIN>> {
+public interface LongFunction<DOMAIN> extends Iterable<LongFunctionEntry<DOMAIN>> {
 	public long get(DOMAIN parameter);
 
 	public void set(DOMAIN parameter, long value);

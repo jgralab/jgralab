@@ -33,7 +33,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
-import de.uni_koblenz.jgralab.algolib.functions.pairs.BooleanPair;
+import de.uni_koblenz.jgralab.algolib.functions.entries.BooleanFunctionEntry;
 import de.uni_koblenz.jgralab.impl.ReversedEdgeBaseImpl;
 
 /**
@@ -202,10 +202,10 @@ public class BooleanGraphMarker extends AbstractGraphMarker<AttributedElement>
 	}
 
 	@Override
-	public Iterator<BooleanPair<AttributedElement>> iterator() {
+	public Iterator<BooleanFunctionEntry<AttributedElement>> iterator() {
 		final Iterator<AttributedElement> markedElements = getMarkedElements()
 				.iterator();
-		return new Iterator<BooleanPair<AttributedElement>>() {
+		return new Iterator<BooleanFunctionEntry<AttributedElement>>() {
 
 			@Override
 			public boolean hasNext() {
@@ -213,9 +213,9 @@ public class BooleanGraphMarker extends AbstractGraphMarker<AttributedElement>
 			}
 
 			@Override
-			public BooleanPair<AttributedElement> next() {
+			public BooleanFunctionEntry<AttributedElement> next() {
 				AttributedElement currentElement = markedElements.next();
-				return new BooleanPair<AttributedElement>(currentElement,
+				return new BooleanFunctionEntry<AttributedElement>(currentElement,
 						get(currentElement));
 			}
 

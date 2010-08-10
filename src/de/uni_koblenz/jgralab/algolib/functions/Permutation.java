@@ -1,6 +1,6 @@
 package de.uni_koblenz.jgralab.algolib.functions;
 
-import de.uni_koblenz.jgralab.algolib.functions.pairs.IntDomainPair;
+import de.uni_koblenz.jgralab.algolib.functions.entries.PermutationEntry;
 
 /**
  * Defines the interface for a permutation. The method names are in analogy to
@@ -15,7 +15,7 @@ import de.uni_koblenz.jgralab.algolib.functions.pairs.IntDomainPair;
  * @param <RANGE>
  *            the range of the function.
  */
-public interface Permutation<RANGE> extends Iterable<IntDomainPair<RANGE>> {
+public interface Permutation<RANGE> extends Iterable<PermutationEntry<RANGE>> {
 
 	public RANGE get(int index);
 

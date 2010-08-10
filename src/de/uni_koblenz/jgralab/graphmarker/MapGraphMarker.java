@@ -31,7 +31,7 @@ import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.algolib.functions.Function;
-import de.uni_koblenz.jgralab.algolib.functions.pairs.Pair;
+import de.uni_koblenz.jgralab.algolib.functions.entries.FunctionEntry;
 import de.uni_koblenz.jgralab.impl.ReversedEdgeBaseImpl;
 
 /**
@@ -208,9 +208,9 @@ public abstract class MapGraphMarker<T extends AttributedElement, O> extends
 	}
 
 	@Override
-	public Iterator<Pair<T, O>> iterator() {
+	public Iterator<FunctionEntry<T, O>> iterator() {
 		final Iterator<T> markedElements = getMarkedElements().iterator();
-		return new Iterator<Pair<T,O>>() {
+		return new Iterator<FunctionEntry<T,O>>() {
 
 			@Override
 			public boolean hasNext() {
@@ -218,9 +218,9 @@ public abstract class MapGraphMarker<T extends AttributedElement, O> extends
 			}
 
 			@Override
-			public Pair<T, O> next() {
+			public FunctionEntry<T, O> next() {
 				T currentElement = markedElements.next();
-				return new Pair<T, O>(currentElement, get(currentElement));
+				return new FunctionEntry<T, O>(currentElement, get(currentElement));
 			}
 
 			@Override
