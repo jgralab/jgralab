@@ -1,9 +1,12 @@
 package de.uni_koblenz.jgralab.graphmarker;
 
+import java.util.Iterator;
+
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.functions.LongFunction;
+import de.uni_koblenz.jgralab.algolib.functions.pairs.LongPair;
 
 public abstract class LongGraphMarker<T extends GraphElement> extends
 		AbstractGraphMarker<T> implements LongFunction<T> {
@@ -131,7 +134,7 @@ public abstract class LongGraphMarker<T extends GraphElement> extends
 		}
 		this.unmarkedValue = newUnmarkedValue;
 	}
-	
+
 	@Override
 	public long get(T parameter) {
 		return getMark(parameter);
@@ -145,6 +148,35 @@ public abstract class LongGraphMarker<T extends GraphElement> extends
 	@Override
 	public void set(T parameter, long value) {
 		mark(parameter, value);
+	}
+
+	@Override
+	public Iterable<T> getDomainElements() {
+		return getMarkedElements();
+	}
+
+	@Override
+	public Iterator<LongPair<T>> iterator() {
+		final Iterator<T> markedElements = getMarkedElements().iterator();
+		return new Iterator<LongPair<T>>() {
+
+			@Override
+			public boolean hasNext() {
+				return markedElements.hasNext();
+			}
+
+			@Override
+			public LongPair<T> next() {
+				T currentElement = markedElements.next();
+				return new LongPair<T>(currentElement, get(currentElement));
+			}
+
+			@Override
+			public void remove() {
+				// TODO Auto-generated method stub
+
+			}
+		};
 	}
 
 }

@@ -1,9 +1,12 @@
 package de.uni_koblenz.jgralab.graphmarker;
 
+import java.util.Iterator;
+
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.functions.DoubleFunction;
+import de.uni_koblenz.jgralab.algolib.functions.pairs.DoublePair;
 
 public abstract class DoubleGraphMarker<T extends GraphElement> extends
 		AbstractGraphMarker<T> implements DoubleFunction<T> {
@@ -122,6 +125,34 @@ public abstract class DoubleGraphMarker<T extends GraphElement> extends
 	@Override
 	public void set(T parameter, double value) {
 		mark(parameter, value);
+	}
+
+	@Override
+	public Iterable<T> getDomainElements() {
+		return getMarkedElements();
+	}
+
+	@Override
+	public Iterator<DoublePair<T>> iterator() {
+		final Iterator<T> markedElements = getMarkedElements().iterator();
+		return new Iterator<DoublePair<T>>() {
+
+			@Override
+			public boolean hasNext() {
+				return markedElements.hasNext();
+			}
+
+			@Override
+			public DoublePair<T> next() {
+				T currentElement = markedElements.next();
+				return new DoublePair<T>(currentElement, get(currentElement));
+			}
+
+			@Override
+			public void remove() {
+				markedElements.remove();
+			}
+		};
 	}
 
 }
