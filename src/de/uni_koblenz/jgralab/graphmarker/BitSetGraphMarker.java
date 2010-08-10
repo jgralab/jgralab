@@ -7,7 +7,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
-import de.uni_koblenz.jgralab.algolib.functions.pairs.BooleanPair;
+import de.uni_koblenz.jgralab.algolib.functions.entries.BooleanFunctionEntry;
 
 /**
  * This class can be used to "colorize" graphs, it supports only two "colors",
@@ -116,9 +116,9 @@ public abstract class BitSetGraphMarker<T extends GraphElement> extends
 	}
 
 	@Override
-	public Iterator<BooleanPair<T>> iterator() {
+	public Iterator<BooleanFunctionEntry<T>> iterator() {
 		final Iterator<T> markedElements = getMarkedElements().iterator();
-		return new Iterator<BooleanPair<T>>() {
+		return new Iterator<BooleanFunctionEntry<T>>() {
 
 			@Override
 			public boolean hasNext() {
@@ -126,9 +126,9 @@ public abstract class BitSetGraphMarker<T extends GraphElement> extends
 			}
 
 			@Override
-			public BooleanPair<T> next() {
+			public BooleanFunctionEntry<T> next() {
 				T currentElement = markedElements.next();
-				return new BooleanPair<T>(currentElement, get(currentElement));
+				return new BooleanFunctionEntry<T>(currentElement, get(currentElement));
 			}
 
 			@Override

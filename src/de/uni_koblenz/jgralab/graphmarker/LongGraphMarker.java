@@ -6,7 +6,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.functions.LongFunction;
-import de.uni_koblenz.jgralab.algolib.functions.pairs.LongPair;
+import de.uni_koblenz.jgralab.algolib.functions.entries.LongFunctionEntry;
 
 public abstract class LongGraphMarker<T extends GraphElement> extends
 		AbstractGraphMarker<T> implements LongFunction<T> {
@@ -156,9 +156,9 @@ public abstract class LongGraphMarker<T extends GraphElement> extends
 	}
 
 	@Override
-	public Iterator<LongPair<T>> iterator() {
+	public Iterator<LongFunctionEntry<T>> iterator() {
 		final Iterator<T> markedElements = getMarkedElements().iterator();
-		return new Iterator<LongPair<T>>() {
+		return new Iterator<LongFunctionEntry<T>>() {
 
 			@Override
 			public boolean hasNext() {
@@ -166,9 +166,9 @@ public abstract class LongGraphMarker<T extends GraphElement> extends
 			}
 
 			@Override
-			public LongPair<T> next() {
+			public LongFunctionEntry<T> next() {
 				T currentElement = markedElements.next();
-				return new LongPair<T>(currentElement, get(currentElement));
+				return new LongFunctionEntry<T>(currentElement, get(currentElement));
 			}
 
 			@Override

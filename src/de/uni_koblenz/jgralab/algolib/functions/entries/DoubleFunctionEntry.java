@@ -1,10 +1,10 @@
-package de.uni_koblenz.jgralab.algolib.functions.pairs;
+package de.uni_koblenz.jgralab.algolib.functions.entries;
 
-public class DoublePair<A> {
+public class DoubleFunctionEntry<A> {
 	private A first;
 	private double second;
 
-	public DoublePair(A first, double second) {
+	public DoubleFunctionEntry(A first, double second) {
 		super();
 		this.first = first;
 		this.second = second;

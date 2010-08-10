@@ -1,10 +1,10 @@
-package de.uni_koblenz.jgralab.algolib.functions.pairs;
+package de.uni_koblenz.jgralab.algolib.functions.entries;
 
-public class LongPair<A> {
+public class LongFunctionEntry<A> {
 	private A first;
 	private long second;
 
-	public LongPair(A first, long second) {
+	public LongFunctionEntry(A first, long second) {
 		super();
 		this.first = first;
 		this.second = second;

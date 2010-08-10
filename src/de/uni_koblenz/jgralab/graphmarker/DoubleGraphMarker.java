@@ -6,7 +6,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.functions.DoubleFunction;
-import de.uni_koblenz.jgralab.algolib.functions.pairs.DoublePair;
+import de.uni_koblenz.jgralab.algolib.functions.entries.DoubleFunctionEntry;
 
 public abstract class DoubleGraphMarker<T extends GraphElement> extends
 		AbstractGraphMarker<T> implements DoubleFunction<T> {
@@ -133,9 +133,9 @@ public abstract class DoubleGraphMarker<T extends GraphElement> extends
 	}
 
 	@Override
-	public Iterator<DoublePair<T>> iterator() {
+	public Iterator<DoubleFunctionEntry<T>> iterator() {
 		final Iterator<T> markedElements = getMarkedElements().iterator();
-		return new Iterator<DoublePair<T>>() {
+		return new Iterator<DoubleFunctionEntry<T>>() {
 
 			@Override
 			public boolean hasNext() {
@@ -143,9 +143,9 @@ public abstract class DoubleGraphMarker<T extends GraphElement> extends
 			}
 
 			@Override
-			public DoublePair<T> next() {
+			public DoubleFunctionEntry<T> next() {
 				T currentElement = markedElements.next();
-				return new DoublePair<T>(currentElement, get(currentElement));
+				return new DoubleFunctionEntry<T>(currentElement, get(currentElement));
 			}
 
 			@Override

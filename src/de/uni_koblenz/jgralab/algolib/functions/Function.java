@@ -1,6 +1,6 @@
 package de.uni_koblenz.jgralab.algolib.functions;
 
-import de.uni_koblenz.jgralab.algolib.functions.pairs.Pair;
+import de.uni_koblenz.jgralab.algolib.functions.entries.FunctionEntry;
 
 /**
  * Interface for creating function objects. This interface should only be used
@@ -14,7 +14,7 @@ import de.uni_koblenz.jgralab.algolib.functions.pairs.Pair;
  * @param <RANGE>
  *            the range of the function
  */
-public interface Function<DOMAIN, RANGE> extends Iterable<Pair<DOMAIN, RANGE>> {
+public interface Function<DOMAIN, RANGE> extends Iterable<FunctionEntry<DOMAIN, RANGE>> {
 
 	/**
 	 * Returns the function value for the given <code>parameter</code>. If this

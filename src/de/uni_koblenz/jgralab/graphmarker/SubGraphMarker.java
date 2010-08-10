@@ -9,7 +9,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
-import de.uni_koblenz.jgralab.algolib.functions.pairs.BooleanPair;
+import de.uni_koblenz.jgralab.algolib.functions.entries.BooleanFunctionEntry;
 
 /**
  * This class serves as a special <code>BitSetGraphmarker</code>, although it
@@ -235,10 +235,10 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement> implements
 	}
 
 	@Override
-	public Iterator<BooleanPair<GraphElement>> iterator() {
+	public Iterator<BooleanFunctionEntry<GraphElement>> iterator() {
 		final Iterator<GraphElement> markedElements = getMarkedElements()
 				.iterator();
-		return new Iterator<BooleanPair<GraphElement>>() {
+		return new Iterator<BooleanFunctionEntry<GraphElement>>() {
 
 			@Override
 			public boolean hasNext() {
@@ -246,9 +246,9 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement> implements
 			}
 
 			@Override
-			public BooleanPair<GraphElement> next() {
+			public BooleanFunctionEntry<GraphElement> next() {
 				GraphElement currentElement = markedElements.next();
-				return new BooleanPair<GraphElement>(currentElement,
+				return new BooleanFunctionEntry<GraphElement>(currentElement,
 						get(currentElement));
 			}
 
