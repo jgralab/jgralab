@@ -5,7 +5,7 @@ import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.GraphAlgorithm;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
-import de.uni_koblenz.jgralab.algolib.functions.IntDomainFunction;
+import de.uni_koblenz.jgralab.algolib.functions.Permutation;
 import de.uni_koblenz.jgralab.algolib.problems.directed.AcyclicitySolver;
 import de.uni_koblenz.jgralab.algolib.problems.directed.TopologicalOrderSolver;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
@@ -55,7 +55,7 @@ public class KahnKnuthAlgorithm extends GraphAlgorithm implements
 	}
 
 	@Override
-	public IntDomainFunction<Vertex> getTopologicalOrder() {
+	public Permutation<Vertex> getTopologicalOrder() {
 		// TODO Auto-generated method stub
 		return null;
 	}

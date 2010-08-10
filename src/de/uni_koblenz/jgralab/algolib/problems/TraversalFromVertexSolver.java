@@ -2,7 +2,7 @@ package de.uni_koblenz.jgralab.algolib.problems;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.algolib.functions.IntDomainFunction;
+import de.uni_koblenz.jgralab.algolib.functions.Permutation;
 
 public interface TraversalFromVertexSolver {
 	/**
@@ -21,12 +21,12 @@ public interface TraversalFromVertexSolver {
 	 * 
 	 * @return the result <code>vertexOrder</code>.
 	 */
-	public IntDomainFunction<Vertex> getVertexOrder();
+	public Permutation<Vertex> getVertexOrder();
 
 	/**
 	 * <code>edgeOrder</code> represents the order the edges have been visited.
 	 * 
 	 * @return the result <code>edgeOrder</code>.
 	 */
-	public IntDomainFunction<Edge> getEdgeOrder();
+	public Permutation<Edge> getEdgeOrder();
 }

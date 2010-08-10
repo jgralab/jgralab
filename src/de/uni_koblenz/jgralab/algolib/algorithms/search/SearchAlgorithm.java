@@ -7,10 +7,10 @@ import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmStates;
 import de.uni_koblenz.jgralab.algolib.algorithms.GraphAlgorithm;
-import de.uni_koblenz.jgralab.algolib.functions.ArrayFunction;
+import de.uni_koblenz.jgralab.algolib.functions.ArrayPermutation;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 import de.uni_koblenz.jgralab.algolib.functions.Function;
-import de.uni_koblenz.jgralab.algolib.functions.IntDomainFunction;
+import de.uni_koblenz.jgralab.algolib.functions.Permutation;
 import de.uni_koblenz.jgralab.algolib.functions.IntFunction;
 import de.uni_koblenz.jgralab.algolib.problems.TraversalFromVertexSolver;
 import de.uni_koblenz.jgralab.graphmarker.ArrayVertexMarker;
@@ -187,15 +187,15 @@ public abstract class SearchAlgorithm extends GraphAlgorithm implements
 	}
 
 	@Override
-	public IntDomainFunction<Edge> getEdgeOrder() {
+	public Permutation<Edge> getEdgeOrder() {
 		checkStateForResult();
-		return new ArrayFunction<Edge>(edgeOrder);
+		return new ArrayPermutation<Edge>(edgeOrder);
 	}
 
 	@Override
-	public IntDomainFunction<Vertex> getVertexOrder() {
+	public Permutation<Vertex> getVertexOrder() {
 		checkStateForResult();
-		return new ArrayFunction<Vertex>(vertexOrder);
+		return new ArrayPermutation<Vertex>(vertexOrder);
 	}
 
 	/**
