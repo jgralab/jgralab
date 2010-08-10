@@ -4,6 +4,7 @@ import java.util.Iterator;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.algolib.algorithms.search.IterativeDepthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.RecursiveDepthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.SearchAlgorithm;
 import de.uni_koblenz.jgralab.algolib.functions.Permutation;
@@ -55,7 +56,7 @@ public class CompareSearchAlgorithms {
 		RandomGraph.addWeakComponent(0, graph, 3, 0);
 		RecursiveDepthFirstSearch alg1 = new RecursiveDepthFirstSearch(graph);
 		// TODO replace with simulated implementation
-		RecursiveDepthFirstSearch alg2 = new RecursiveDepthFirstSearch(graph);
+		IterativeDepthFirstSearch alg2 = new IterativeDepthFirstSearch(graph);
 		CompareSearchAlgorithms comp = new CompareSearchAlgorithms(graph, alg1, alg2);
 		// TODO set to false if doing a bigger graph
 		System.out.println(comp.compare(true));
