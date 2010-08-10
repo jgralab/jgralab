@@ -132,6 +132,9 @@ public abstract class SearchAlgorithm extends GraphAlgorithm implements
 		edgeOrder = new Edge[graph.getECount() + 1];
 		visitedVertices = new BitSetVertexMarker(graph);
 		visitedEdges = new BitSetEdgeMarker(graph);
+		level = level == null ? null : new IntegerVertexMarker(graph);
+		number = number == null ? null : new IntegerVertexMarker(graph);
+		parent = parent == null ? null : new ArrayVertexMarker<Edge>(graph);
 
 		num = 1;
 		eNum = 1;
@@ -271,7 +274,7 @@ public abstract class SearchAlgorithm extends GraphAlgorithm implements
 		for (Vertex currentRoot : graph.vertices()) {
 			execute(currentRoot);
 		}
-		assert(state == AlgorithmStates.FINISHED);
+		assert (state == AlgorithmStates.FINISHED);
 		return this;
 	}
 }
