@@ -6,7 +6,7 @@ import de.uni_koblenz.jgralab.algolib.functions.Function;
 
 //TODO write problem specification
 //can be defined for directed and undirected graphs
-public interface WeightedShortestPathsSolver {
+public interface WeightedShortestPathsSolver extends ProblemSolver {
 
 	public WeightedShortestPathsSolver execute();
 

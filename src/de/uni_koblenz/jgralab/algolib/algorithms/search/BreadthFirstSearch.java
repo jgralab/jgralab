@@ -9,6 +9,13 @@ import de.uni_koblenz.jgralab.algolib.problems.TraversalFromVertexSolver;
 import de.uni_koblenz.jgralab.algolib.visitors.SearchVisitorComposition;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
 
+/**
+ * This class is the implementation of the breadth first search. This
+ * implementation uses the array that computes the vertex order as queue buffer.
+ * 
+ * @author strauss@uni-koblenz.de
+ * 
+ */
 public class BreadthFirstSearch extends SearchAlgorithm implements
 		TraversalFromVertexSolver {
 
@@ -24,11 +31,7 @@ public class BreadthFirstSearch extends SearchAlgorithm implements
 		super(graph);
 	}
 
-	protected int firstV;
-
-	protected int getIntermediateFirstV() {
-		return firstV;
-	}
+	private int firstV;
 
 	@Override
 	public BreadthFirstSearch withLevel() {

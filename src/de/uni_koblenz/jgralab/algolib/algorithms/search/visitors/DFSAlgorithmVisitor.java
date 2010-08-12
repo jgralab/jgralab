@@ -5,8 +5,19 @@ import de.uni_koblenz.jgralab.algolib.algorithms.search.DepthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.SearchAlgorithm;
 import de.uni_koblenz.jgralab.algolib.visitors.DFSVisitorAdapter;
 
+/**
+ * Handles the storage of the DFS algorithm object for all implementations of
+ * <code>DFSVisitor</code>. This class should be used as superclass instead of
+ * <code>DFSVisitorAdapter</code>.
+ * 
+ * @author strauss@uni-koblenz.de
+ * 
+ */
 public class DFSAlgorithmVisitor extends DFSVisitorAdapter {
 
+	/**
+	 * The DFS this visitor is used by.
+	 */
 	protected DepthFirstSearch algorithm;
 
 	@Override

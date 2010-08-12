@@ -6,7 +6,7 @@ import de.uni_koblenz.jgralab.algolib.functions.Function;
 
 //TODO write problem specification
 //can be defined for directed and undirected graphsf
-public interface SimplePathsSolver {
+public interface SimplePathsSolver extends ProblemSolver {
 
 	public SimplePathsSolver execute();
 

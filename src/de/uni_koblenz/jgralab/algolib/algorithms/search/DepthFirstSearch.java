@@ -12,11 +12,38 @@ import de.uni_koblenz.jgralab.algolib.visitors.DFSVisitorComposition;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
 import de.uni_koblenz.jgralab.graphmarker.IntegerVertexMarker;
 
+/**
+ * This is the abstract superclass for all algorithms implementing the depth
+ * first search. The optional function <code>number</code> is mandatory for DFS
+ * and cannot be switched off. It introduces a new algorithm result
+ * <code>rnumber</code> and a new optional result <code>rorder</code>. Both
+ * results describe the order the vertices are left after all incident edges
+ * have been completely traversed.
+ * 
+ * @author strauss@uni-koblenz.de
+ * 
+ */
 public abstract class DepthFirstSearch extends SearchAlgorithm {
 
+	/**
+	 * The visitor composition containing all visitors.
+	 */
 	protected DFSVisitorComposition visitors;
+
+	/**
+	 * This variable is needed for the computation of <code>rnumber</code> and
+	 * <code>rorder</code>.
+	 */
 	protected int rNum;
+
+	/**
+	 * The internal representation of the result <code>rnumber</code>.
+	 */
 	protected IntFunction<Vertex> rnumber;
+
+	/**
+	 * The internal representation of the optional result <code>rorder</code>.
+	 */
 	protected Vertex[] rorder;
 
 	public DepthFirstSearch(Graph graph,
@@ -81,6 +108,10 @@ public abstract class DepthFirstSearch extends SearchAlgorithm {
 		visitors.addVisitor(visitor);
 	}
 
+	/**
+	 * @return the internal representation of the optional result
+	 *         <code>rorder</code>.
+	 */
 	public Vertex[] getInternalRorder() {
 		return rorder;
 	}
@@ -89,15 +120,24 @@ public abstract class DepthFirstSearch extends SearchAlgorithm {
 		return rNum;
 	}
 
+	/**
+	 * @return the internal representation of the result <code>rnumber</code>.
+	 */
 	public IntFunction<Vertex> getInternalRnumber() {
 		return rnumber;
 	}
 
+	/**
+	 * @return the result <code>rnumber</code>.
+	 */
 	public IntFunction<Vertex> getRnumber() {
 		checkStateForResult();
 		return rnumber;
 	}
 
+	/**
+	 * @return the result <code>rorder</code>.
+	 */
 	public Permutation<Vertex> getRorder() {
 		checkStateForResult();
 		return rorder == null ? null : new ArrayPermutation<Vertex>(rorder);

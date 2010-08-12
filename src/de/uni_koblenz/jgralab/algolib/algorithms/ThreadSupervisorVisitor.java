@@ -58,7 +58,10 @@ public class ThreadSupervisorVisitor extends SimpleVisitorAdapter {
 	public ThreadSupervisorVisitor() {
 
 	}
-
+	
+	/**
+	 * The graph algorithm this visitor is used by.
+	 */
 	protected GraphAlgorithm alg;
 
 	@Override

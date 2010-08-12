@@ -5,7 +5,7 @@ import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 
 //TODO write problem specification
 //can be defined for directed and undirected graphs
-public interface ReachabilitySolver {
+public interface ReachabilitySolver extends ProblemSolver {
 
 	public ReachabilitySolver execute();
 

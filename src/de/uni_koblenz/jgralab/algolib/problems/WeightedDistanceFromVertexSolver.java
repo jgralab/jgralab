@@ -5,7 +5,7 @@ import de.uni_koblenz.jgralab.algolib.functions.DoubleFunction;
 
 //TODO write problem specification
 //can be defined for directed and undirected graphs
-public interface WeightedDistanceFromVertexSolver {
+public interface WeightedDistanceFromVertexSolver extends ProblemSolver {
 
 	public WeightedDistanceFromVertexSolver execute(Vertex start);
 
