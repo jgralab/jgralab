@@ -4,6 +4,14 @@ import de.uni_koblenz.jgralab.algolib.algorithms.GraphAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.SearchAlgorithm;
 import de.uni_koblenz.jgralab.algolib.visitors.SearchVisitorAdapter;
 
+/**
+ * Handles the storage of the search algorithm object that for all
+ * implementations of <code>SearchVisitor</code>. This class should be used as
+ * superclass instead of <code>SearchVisitorAdapter</code>
+ * 
+ * @author strauss@uni-koblenz.de
+ * 
+ */
 public class SearchAlgorithmVisitor extends SearchVisitorAdapter {
 
 	protected SearchAlgorithm algorithm;

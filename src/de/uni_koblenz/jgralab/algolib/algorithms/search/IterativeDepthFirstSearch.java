@@ -11,6 +11,19 @@ import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 import de.uni_koblenz.jgralab.algolib.problems.TraversalFromVertexSolver;
 import de.uni_koblenz.jgralab.graphmarker.ArrayVertexMarker;
 
+/**
+ * This is the iterative implementation of depth first search. It behaves the
+ * same way as the <code>RecursiveDepthFirstSearch</code> without depending on
+ * the call stack of the Java VM. This avoids the problem arising from the
+ * possible <code>StackOverflowError</code> that can occur using the
+ * <code>RecursiveDepthFirstSearch</code>. However, this implementation requires
+ * to make the optional result <code>parent</code> mandatory. This and the
+ * additional overhead for runtime variables makes this implementation using
+ * more memory than its recursive variant.
+ * 
+ * @author strauss@uni-koblenz.de
+ * 
+ */
 public class IterativeDepthFirstSearch extends DepthFirstSearch {
 
 	private ArrayVertexMarker<Iterator<Edge>> remainingIncidences;

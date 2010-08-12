@@ -7,6 +7,15 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 
+/**
+ * This is the normal recursive implementation of depth first search. For some
+ * big graphs this algorithm won't work and create a
+ * <code>StackOverflowError</code>. In this case better use the
+ * <code>IterativeDepthFirstSearch</code>.
+ * 
+ * @author strauss@uni-koblenz.de
+ * 
+ */
 public class RecursiveDepthFirstSearch extends DepthFirstSearch {
 
 	public RecursiveDepthFirstSearch(Graph graph,

@@ -5,7 +5,7 @@ import de.uni_koblenz.jgralab.algolib.functions.IntFunction;
 
 //TODO write problem specification
 //can be defined for directed and undirected graphs
-public interface DistanceFromVertexSolver {
+public interface DistanceFromVertexSolver extends ProblemSolver {
 
 	public DistanceFromVertexSolver execute(Vertex start);
 

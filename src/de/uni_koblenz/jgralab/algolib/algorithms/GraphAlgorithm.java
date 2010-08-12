@@ -3,9 +3,10 @@ package de.uni_koblenz.jgralab.algolib.algorithms;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
+import de.uni_koblenz.jgralab.algolib.problems.ProblemSolver;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
 
-public abstract class GraphAlgorithm {
+public abstract class GraphAlgorithm implements ProblemSolver {
 
 	/**
 	 * The graph this graph algorithm works on.
@@ -91,14 +92,7 @@ public abstract class GraphAlgorithm {
 		return graph;
 	}
 
-	/**
-	 * Assigns a new graph to this algorithm object.
-	 * 
-	 * @param graph
-	 *            the new graph this algorithm should work on.
-	 * @throws IllegalStateExcetpion
-	 *             if this algorithm is not in state <code>INITIALIZED</code>.
-	 */
+	@Override
 	public void setGraph(Graph graph) {
 		if (getState() == AlgorithmStates.INITIALIZED) {
 			this.graph = graph;
@@ -113,14 +107,7 @@ public abstract class GraphAlgorithm {
 		return subgraph;
 	}
 
-	/**
-	 * Assigns a new subgraph to this algorithm object.
-	 * 
-	 * @param subgraph
-	 *            the new subgraph this algorithm should work on.
-	 * @throws IllegalStateExcetpion
-	 *             if this algorithm is not in state <code>INITIALIZED</code>.
-	 */
+	@Override
 	public void setSubgraph(BooleanFunction<GraphElement> subgraph) {
 		if (getState() == AlgorithmStates.INITIALIZED) {
 			this.subgraph = subgraph;
@@ -234,6 +221,14 @@ public abstract class GraphAlgorithm {
 	 */
 	public abstract void addVisitor(Visitor visitor);
 
+	/**
+	 * Checks the state of this algorithm object and throws an exception if
+	 * results cannot be retrieved now.
+	 * 
+	 * @throws IllegalStateException
+	 *             if not in state <code>STOPPED</code> or <code>FINISHED</code>
+	 *             .
+	 */
 	public void checkStateForResult() {
 		if (state != AlgorithmStates.FINISHED
 				&& state != AlgorithmStates.STOPPED) {
@@ -243,6 +238,13 @@ public abstract class GraphAlgorithm {
 		}
 	}
 
+	/**
+	 * Checks the state of this algorithm object and throws an exception if
+	 * parameters cannot be changed now.
+	 * 
+	 * @throws IllegalStateException
+	 *             if not in state <code>INITIALIZED</code>.
+	 */
 	public void checkStateForSettingParameters() {
 		if (getState() != AlgorithmStates.INITIALIZED) {
 			throw new IllegalStateException(

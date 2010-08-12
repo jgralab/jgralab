@@ -19,6 +19,14 @@ import de.uni_koblenz.jgralab.graphmarker.BitSetEdgeMarker;
 import de.uni_koblenz.jgralab.graphmarker.BitSetVertexMarker;
 import de.uni_koblenz.jgralab.graphmarker.IntegerVertexMarker;
 
+/**
+ * This is the superclass of all search algorithms. It handles the storage of
+ * common attributes (e.g. searchDirection) and provides several common methods
+ * required by all search algorithms.
+ * 
+ * @author strauss@uni-koblenz.de
+ * 
+ */
 public abstract class SearchAlgorithm extends GraphAlgorithm implements
 		TraversalFromVertexSolver, CompleteTraversalSolver {
 
@@ -71,10 +79,34 @@ public abstract class SearchAlgorithm extends GraphAlgorithm implements
 
 	// optional functions
 
+	/**
+	 * The intermediate optional result <code>level</code>.
+	 */
 	protected IntFunction<Vertex> level;
+
+	/**
+	 * The intermediate optional result <code>number</code>.
+	 */
 	protected IntFunction<Vertex> number;
+
+	/**
+	 * The intermediate optional result <code>parent</code>.
+	 */
 	protected Function<Vertex, Edge> parent;
 
+	/**
+	 * Creates a new search algorithm.
+	 * 
+	 * @param graph
+	 *            the graph this search algorithm works on.
+	 * @param subgraph
+	 *            the subgraph function for this search algorithm.
+	 * @param directed
+	 *            the flag that tells whether this search algorithm should treat
+	 *            the graph as directed or undirected algorithm.
+	 * @param navigable
+	 *            the navigable function for this search algorithm.
+	 */
 	public SearchAlgorithm(Graph graph, BooleanFunction<GraphElement> subgraph,
 			boolean directed, BooleanFunction<Edge> navigable) {
 		super(graph, subgraph);
@@ -82,22 +114,49 @@ public abstract class SearchAlgorithm extends GraphAlgorithm implements
 		this.navigable = navigable;
 	}
 
+	/**
+	 * Creates a new search algorithm.
+	 * 
+	 * @param graph
+	 *            the graph this search algorithm works on.
+	 */
 	public SearchAlgorithm(Graph graph) {
 		super(graph);
 	}
 
+	/**
+	 * Activates the computation of the optional result <code>level</code>.
+	 * 
+	 * @return this <code>SearchAlgorithm</code>.
+	 * @throws IllegalStateException
+	 *             if not in state <code>INITIALIZED</code>.
+	 */
 	public SearchAlgorithm withLevel() {
 		checkStateForSettingParameters();
 		level = new IntegerVertexMarker(graph);
 		return this;
 	}
 
+	/**
+	 * Activates the computation of the optional result <code>number</code>.
+	 * 
+	 * @return this <code>SearchAlgorithm</code>.
+	 * @throws IllegalStateException
+	 *             if not in state <code>INITIALIZED</code>.
+	 */
 	public SearchAlgorithm withNumber() {
 		checkStateForSettingParameters();
 		number = new IntegerVertexMarker(graph);
 		return this;
 	}
 
+	/**
+	 * Activates the computation of the optional result <code>parent</code>.
+	 * 
+	 * @return this <code>SearchAlgorithm</code>.
+	 * @throws IllegalStateException
+	 *             if not in state <code>INITIALIZED</code>.
+	 */
 	public SearchAlgorithm withParent() {
 		checkStateForSettingParameters();
 		parent = new ArrayVertexMarker<Edge>(graph);
@@ -105,14 +164,26 @@ public abstract class SearchAlgorithm extends GraphAlgorithm implements
 
 	}
 
+	/**
+	 * @return the internal representation of the optional result
+	 *         <code>level</code>.
+	 */
 	public IntFunction<Vertex> getInternalLevel() {
 		return level;
 	}
 
+	/**
+	 * @return the internal representation of the optional result
+	 *         <code>number</code>.
+	 */
 	public IntFunction<Vertex> getInternalNumber() {
 		return number;
 	}
 
+	/**
+	 * @return the internal representation of the optional result
+	 *         <code>parent</code>.
+	 */
 	public Function<Vertex, Edge> getInternalParent() {
 		return parent;
 	}
@@ -163,14 +234,15 @@ public abstract class SearchAlgorithm extends GraphAlgorithm implements
 	}
 
 	/**
-	 * @return the intermediate result <code>edgeOrder</code>.
+	 * @return the internal representation of the result <code>edgeOrder</code>.
 	 */
 	public Edge[] getInternalEdgeOrder() {
 		return edgeOrder;
 	}
 
 	/**
-	 * @return the intermediate result <code>vertexOrder</code>.
+	 * @return the internal representation of the result
+	 *         <code>vertexOrder</code>.
 	 */
 	public Vertex[] getInternalVertexOrder() {
 		return vertexOrder;
@@ -254,16 +326,40 @@ public abstract class SearchAlgorithm extends GraphAlgorithm implements
 		}
 	}
 
+	/**
+	 * Retrieves the optional result <code>level</code>.
+	 * 
+	 * @return the optional result <code>level</code>.
+	 * @throws IllegalStateException
+	 *             if not in state <code>STOPPED</code> or <code>FINISHED</code>
+	 *             .
+	 */
 	public IntFunction<Vertex> getLevel() {
 		checkStateForResult();
 		return level;
 	}
 
+	/**
+	 * Retrieves the optional result <code>number</code>.
+	 * 
+	 * @return the optional result <code>number</code>.
+	 * @throws IllegalStateException
+	 *             if not in state <code>STOPPED</code> or <code>FINISHED</code>
+	 *             .
+	 */
 	public IntFunction<Vertex> getNumber() {
 		checkStateForResult();
 		return number;
 	}
 
+	/**
+	 * Retrieves the optional result <code>parent</code>.
+	 * 
+	 * @return the optional result <code>parent</code>.
+	 * @throws IllegalStateException
+	 *             if not in state <code>STOPPED</code> or <code>FINISHED</code>
+	 *             .
+	 */
 	public Function<Vertex, Edge> getParent() {
 		checkStateForResult();
 		return parent;
@@ -276,5 +372,20 @@ public abstract class SearchAlgorithm extends GraphAlgorithm implements
 		}
 		assert (state == AlgorithmStates.FINISHED);
 		return this;
+	}
+
+	public BooleanFunction<Edge> getNavigable() {
+		return navigable;
+	}
+
+	@Override
+	public void setNavigable(BooleanFunction<Edge> navigable) {
+		if (getState() == AlgorithmStates.INITIALIZED) {
+			this.navigable = navigable;
+		} else {
+			throw new IllegalStateException(
+					"The edge navigability may only be changed when in state "
+							+ AlgorithmStates.INITIALIZED);
+		}
 	}
 }

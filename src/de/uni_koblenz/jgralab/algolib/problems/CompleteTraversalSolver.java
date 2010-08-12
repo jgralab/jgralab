@@ -4,13 +4,39 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.functions.Permutation;
 
-//TODO write problem specification
-//can be defined for directed and undirected graphs
-public interface CompleteTraversalSolver {
+/**
+ * The problem <b>complete traversal</b> is defined for directed and undirected
+ * graphs. Their are no further input parameters. The results are a
+ * <i>permutation of vertices<\i> and a <i>permutation of edges</i> of the whole
+ * graph.
+ * 
+ * @author strauss@uni-koblenz.de
+ * 
+ */
+public interface CompleteTraversalSolver extends TraversalSolver {
 
+	/**
+	 * Solves the problem <b>complete traversal</b>.
+	 * 
+	 * @return this algorithm object
+	 */
 	public CompleteTraversalSolver execute();
 
+	/**
+	 * Retrieves the result <code>vertexOrder</code> as permutation of vertices.
+	 * 
+	 * @return the result <code>vertexOrder</code>.
+	 * @throws IllegalStateException
+	 *             if the result is requested without being available
+	 */
 	public Permutation<Vertex> getVertexOrder();
 
+	/**
+	 * Retrieves the result <code>edgeOrder</code> as permutation of edges.
+	 * 
+	 * @return the result <code>edgeOrder</code>.
+	 * @throws IllegalStateException
+	 *             if the result is requested without being available
+	 */
 	public Permutation<Edge> getEdgeOrder();
 }
