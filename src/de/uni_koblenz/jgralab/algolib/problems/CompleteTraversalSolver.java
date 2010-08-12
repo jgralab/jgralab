@@ -6,9 +6,8 @@ import de.uni_koblenz.jgralab.algolib.functions.Permutation;
 
 /**
  * The problem <b>complete traversal</b> is defined for directed and undirected
- * graphs. Their are no further input parameters. The results are a
- * <i>permutation of vertices<\i> and a <i>permutation of edges</i> of the whole
- * graph.
+ * graphs. There are no further parameters. The results are a <i>permutation of
+ * vertices<\i> and a <i>permutation of edges</i> of the whole graph.
  * 
  * @author strauss@uni-koblenz.de
  * 

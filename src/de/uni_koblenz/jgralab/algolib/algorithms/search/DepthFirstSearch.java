@@ -104,6 +104,7 @@ public abstract class DepthFirstSearch extends SearchAlgorithm {
 
 	@Override
 	public void addVisitor(Visitor visitor) {
+		checkStateForSettingParameters();
 		visitor.setAlgorithm(this);
 		visitors.addVisitor(visitor);
 	}
