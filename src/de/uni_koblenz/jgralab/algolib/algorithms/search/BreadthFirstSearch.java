@@ -63,6 +63,7 @@ public class BreadthFirstSearch extends SearchAlgorithm implements
 
 	@Override
 	public void addVisitor(Visitor visitor) {
+		checkStateForSettingParameters();
 		visitor.setAlgorithm(this);
 		visitors.addVisitor(visitor);
 	}
