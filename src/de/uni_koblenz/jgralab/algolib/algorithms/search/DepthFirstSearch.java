@@ -81,10 +81,32 @@ public abstract class DepthFirstSearch extends SearchAlgorithm {
 	public DepthFirstSearch withParent() {
 		return (DepthFirstSearch) super.withParent();
 	}
+	
+	@Override
+	public DepthFirstSearch withoutLevel() {
+		return (DepthFirstSearch) super.withoutLevel();
+	}
+
+	@Override
+	public DepthFirstSearch withoutNumber() {
+		throw new UnsupportedOperationException(
+		"The result \"number\" is mandatory for DFS and cannot be deactivated.");
+	}
+
+	@Override
+	public DepthFirstSearch withoutParent() {
+		return (DepthFirstSearch) super.withoutParent();
+	}
 
 	public DepthFirstSearch withRorder() {
 		checkStateForSettingParameters();
 		rorder = new Vertex[graph.getVCount() + 1];
+		return this;
+	}
+	
+	public DepthFirstSearch withoutRorder() {
+		checkStateForSettingParameters();
+		rorder = null;
 		return this;
 	}
 
@@ -107,6 +129,12 @@ public abstract class DepthFirstSearch extends SearchAlgorithm {
 		checkStateForSettingParameters();
 		visitor.setAlgorithm(this);
 		visitors.addVisitor(visitor);
+	}
+	
+	@Override
+	public void removeVisitor(Visitor visitor){
+		checkStateForSettingParameters();
+		visitors.removeVisitor(visitor);
 	}
 
 	/**

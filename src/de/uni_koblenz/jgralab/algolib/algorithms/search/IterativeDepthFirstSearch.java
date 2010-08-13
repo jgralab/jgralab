@@ -61,6 +61,12 @@ public class IterativeDepthFirstSearch extends DepthFirstSearch {
 	}
 
 	@Override
+	public DepthFirstSearch withoutParent() {
+		throw new UnsupportedOperationException(
+				"The result \"parent\" is mandatory for iterative DFS and cannot be deactivated.");
+	}
+
+	@Override
 	public TraversalFromVertexSolver execute(Vertex root) {
 		if (subgraph != null && !subgraph.get(root)
 				|| visitedVertices.get(root)) {

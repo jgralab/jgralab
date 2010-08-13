@@ -222,6 +222,14 @@ public abstract class GraphAlgorithm implements ProblemSolver {
 	public abstract void addVisitor(Visitor visitor);
 
 	/**
+	 * Removes a visitor from this algorithm.
+	 * 
+	 * @param visitor
+	 *            the visitor to be removed from this algorithm
+	 */
+	public abstract void removeVisitor(Visitor visitor);
+
+	/**
 	 * Checks the state of this algorithm object and throws an exception if
 	 * results cannot be retrieved now.
 	 * 
@@ -246,7 +254,7 @@ public abstract class GraphAlgorithm implements ProblemSolver {
 	 *             if not in state <code>INITIALIZED</code>.
 	 */
 	public void checkStateForSettingParameters() {
-		if (getState() != AlgorithmStates.INITIALIZED) {
+		if (getState() != AlgorithmStates.INITIALIZED || getState() != AlgorithmStates.FINISHED) {
 			throw new IllegalStateException(
 					"Parameters may only be changed when in state "
 							+ AlgorithmStates.INITIALIZED);

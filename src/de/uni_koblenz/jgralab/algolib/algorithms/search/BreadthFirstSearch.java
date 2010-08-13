@@ -49,6 +49,21 @@ public class BreadthFirstSearch extends SearchAlgorithm implements
 	}
 
 	@Override
+	public BreadthFirstSearch withoutLevel() {
+		return (BreadthFirstSearch) super.withoutLevel();
+	}
+
+	@Override
+	public BreadthFirstSearch withoutNumber() {
+		return (BreadthFirstSearch) super.withoutNumber();
+	}
+
+	@Override
+	public BreadthFirstSearch withoutParent() {
+		return (BreadthFirstSearch) super.withoutParent();
+	}
+
+	@Override
 	public void reset() {
 		super.reset();
 		firstV = 2;
@@ -66,6 +81,12 @@ public class BreadthFirstSearch extends SearchAlgorithm implements
 		checkStateForSettingParameters();
 		visitor.setAlgorithm(this);
 		visitors.addVisitor(visitor);
+	}
+
+	@Override
+	public void removeVisitor(Visitor visitor) {
+		checkStateForSettingParameters();
+		visitors.removeVisitor(visitor);
 	}
 
 	@Override
