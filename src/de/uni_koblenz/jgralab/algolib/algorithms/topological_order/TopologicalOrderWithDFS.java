@@ -142,7 +142,6 @@ public class TopologicalOrderWithDFS extends GraphAlgorithm implements
 		} catch (AlgorithmTerminatedException e) {
 		}
 		done();
-		dfs.withoutRorder();
 		dfs.removeVisitor(acyclicityVisitor);
 		dfs.setSearchDirection(originalDirection);
 		return this;

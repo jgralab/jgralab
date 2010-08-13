@@ -66,7 +66,7 @@ public class BreadthFirstSearch extends SearchAlgorithm implements
 	@Override
 	public void reset() {
 		super.reset();
-		firstV = 2;
+		firstV = 1;
 		visitors.reset();
 	}
 
@@ -96,7 +96,6 @@ public class BreadthFirstSearch extends SearchAlgorithm implements
 			return this;
 		}
 		startRunning();
-		firstV--; // to make it work if the algorithm is resumed
 		vertexOrder[num] = root;
 
 		if (level != null) {

@@ -254,7 +254,7 @@ public abstract class GraphAlgorithm implements ProblemSolver {
 	 *             if not in state <code>INITIALIZED</code>.
 	 */
 	public void checkStateForSettingParameters() {
-		if (getState() != AlgorithmStates.INITIALIZED || getState() != AlgorithmStates.FINISHED) {
+		if (getState() != AlgorithmStates.INITIALIZED && getState() != AlgorithmStates.FINISHED) {
 			throw new IllegalStateException(
 					"Parameters may only be changed when in state "
 							+ AlgorithmStates.INITIALIZED);
