@@ -1,0 +1,168 @@
+package de.uni_koblenz.jgralab.algolib.algorithms.strong_components;
+
+import java.util.Stack;
+
+import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphElement;
+import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmStates;
+import de.uni_koblenz.jgralab.algolib.algorithms.GraphAlgorithm;
+import de.uni_koblenz.jgralab.algolib.algorithms.search.DepthFirstSearch;
+import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.DFSAlgorithmVisitor;
+import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
+import de.uni_koblenz.jgralab.algolib.functions.Function;
+import de.uni_koblenz.jgralab.algolib.functions.IntFunction;
+import de.uni_koblenz.jgralab.algolib.problems.directed.StrongComponentsSolver;
+import de.uni_koblenz.jgralab.algolib.visitors.DFSVisitor;
+import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
+import de.uni_koblenz.jgralab.graphmarker.ArrayVertexMarker;
+import de.uni_koblenz.jgralab.graphmarker.IntegerVertexMarker;
+import static java.lang.Math.min;
+
+public class StrongComponentsWithDFS extends GraphAlgorithm implements
+		StrongComponentsSolver {
+
+	private DepthFirstSearch dfs;
+	private Stack<Vertex> vertexStack;
+	private IntFunction<Vertex> lowlink;
+	private Function<Vertex, Vertex> strongComponents;
+	private DFSVisitor lowlinkVisitor;
+
+	public StrongComponentsWithDFS(Graph graph, DepthFirstSearch dfs) {
+		this(graph, null, dfs);
+	}
+
+	public StrongComponentsWithDFS(Graph graph,
+			BooleanFunction<GraphElement> subgraph, DepthFirstSearch dfs) {
+		super(graph, subgraph);
+		this.dfs = dfs;
+	}
+
+	@Override
+	public void addVisitor(Visitor visitor) {
+		throw new UnsupportedOperationException(
+				"This algorithm does not support visitors.");
+	}
+
+	@Override
+	public void disableOptionalResults() {
+	}
+
+	@Override
+	protected void done() {
+		state = AlgorithmStates.FINISHED;
+	}
+
+	@Override
+	public boolean isDirected() {
+		return true;
+	}
+
+	@Override
+	public boolean isHybrid() {
+		return false;
+	}
+
+	@Override
+	public void removeVisitor(Visitor visitor) {
+		throw new UnsupportedOperationException(
+				"This algorithm does not support visitors.");
+	}
+
+	@Override
+	public void setDirected(boolean directed) {
+		throw new UnsupportedOperationException(
+				"This algorithm only works for directed graphs.");
+	}
+
+	@Override
+	public Function<Vertex, Vertex> getStrongComponents() {
+		checkStateForResult();
+		return strongComponents;
+	}
+
+	public IntFunction<Vertex> getLowlink() {
+		checkStateForResult();
+		return lowlink;
+	}
+
+	@Override
+	public void resetParameters() {
+		super.resetParameters();
+		vertexStack = new Stack<Vertex>();
+		lowlink = new IntegerVertexMarker(graph);
+		strongComponents = new ArrayVertexMarker<Vertex>(graph);
+		lowlinkVisitor = new DFSAlgorithmVisitor() {
+
+			IntFunction<Vertex> number;
+
+			@Override
+			public void setAlgorithm(GraphAlgorithm algorithm) {
+				super.setAlgorithm(algorithm);
+				number = this.algorithm.getInternalNumber();
+			}
+
+			@Override
+			public void visitVertex(Vertex v) {
+				vertexStack.push(v);
+				lowlink.set(v, number.get(v));
+			}
+
+			@Override
+			public void leaveTreeEdge(Edge e) {
+				Vertex v = e.getThis();
+				Vertex w = e.getThat();
+				lowlink.set(v, min(lowlink.get(v), lowlink.get(w)));
+			}
+
+			@Override
+			public void visitBackwardArc(Edge e) {
+				Vertex v = e.getThis();
+				Vertex w = e.getThat();
+				lowlink.set(v, min(lowlink.get(v), number.get(w)));
+			}
+
+			@Override
+			public void visitCrosslink(Edge e) {
+				Vertex v = e.getThis();
+				Vertex w = e.getThat();
+				if (vertexStack.contains(w)) {
+					lowlink.set(v, min(lowlink.get(v), number.get(w)));
+				}
+			}
+
+			@Override
+			public void leaveVertex(Vertex v) {
+				if (lowlink.get(v) == number.get(v)) {
+					Vertex x;
+					do {
+						x = vertexStack.pop();
+						strongComponents.set(x, v);
+						// TODO maybe add working point for custom visitor; what
+						// about strong edges?
+					} while (x != v);
+				}
+			}
+
+		};
+	}
+
+	@Override
+	public void reset() {
+		super.reset();
+		vertexStack.clear();
+	}
+
+	@Override
+	public StrongComponentsSolver execute() {
+		dfs.reset();
+		dfs.addVisitor(lowlinkVisitor);
+		startRunning();
+		dfs.execute();
+		done();
+		dfs.removeVisitor(lowlinkVisitor);
+		return this;
+	}
+
+}

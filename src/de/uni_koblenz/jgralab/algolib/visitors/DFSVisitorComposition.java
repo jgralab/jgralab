@@ -44,7 +44,7 @@ public class DFSVisitorComposition extends SearchVisitorComposition implements
 		if (visitors != null) {
 			for (Visitor currentVisitor : visitors) {
 				if (currentVisitor instanceof DFSVisitor) {
-					((DFSVisitor) currentVisitor).visitForwardArc(e);
+					((DFSVisitor) currentVisitor).visitCrosslink(e);
 				}
 			}
 		}
