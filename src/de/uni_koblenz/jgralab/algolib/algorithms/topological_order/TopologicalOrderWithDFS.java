@@ -20,7 +20,7 @@ import de.uni_koblenz.jgralab.algolib.visitors.DFSVisitorAdapter;
 import de.uni_koblenz.jgralab.algolib.visitors.SimpleVisitor;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
 
-public class DFSImplementation extends GraphAlgorithm implements
+public class TopologicalOrderWithDFS extends GraphAlgorithm implements
 		AcyclicitySolver, TopologicalOrderSolver {
 
 	private boolean acyclic;
@@ -28,13 +28,13 @@ public class DFSImplementation extends GraphAlgorithm implements
 	private DFSVisitor acyclicityVisitor;
 	private Map<Visitor, Visitor> visitors;
 
-	public DFSImplementation(Graph graph,
+	public TopologicalOrderWithDFS(Graph graph,
 			BooleanFunction<GraphElement> subgraph, DepthFirstSearch dfs) {
 		super(graph, subgraph);
 		this.dfs = dfs;
 	}
 
-	public DFSImplementation(Graph graph, DepthFirstSearch dfs) {
+	public TopologicalOrderWithDFS(Graph graph, DepthFirstSearch dfs) {
 		this(graph, null, dfs);
 	}
 
@@ -131,7 +131,7 @@ public class DFSImplementation extends GraphAlgorithm implements
 	}
 
 	@Override
-	public DFSImplementation execute() {
+	public TopologicalOrderWithDFS execute() {
 		dfs.reset();
 		EdgeDirection originalDirection = dfs.getSearchDirection();
 		dfs.setSearchDirection(EdgeDirection.IN);
