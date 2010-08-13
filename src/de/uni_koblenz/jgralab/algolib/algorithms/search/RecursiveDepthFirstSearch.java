@@ -85,8 +85,8 @@ public class RecursiveDepthFirstSearch extends DepthFirstSearch {
 						visitors.visitFrond(currentEdge);
 						if (!rnumber.isDefined(nextVertex)) {
 							visitors.visitBackwardArc(currentEdge);
-						} else if (number.get(nextVertex) > number
-								.get(currentVertex)) {
+						} else if (number.get(currentVertex) < number
+								.get(nextVertex)) {
 							visitors.visitForwardArc(currentEdge);
 						} else {
 							visitors.visitCrosslink(currentEdge);
