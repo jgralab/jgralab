@@ -1,4 +1,4 @@
-package de.uni_koblenz.jgralab.algolib.algorithms.acyclicity;
+package de.uni_koblenz.jgralab.algolib.algorithms.topological_order;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
