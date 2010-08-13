@@ -1,5 +1,7 @@
 package de.uni_koblenz.jgralab.algolib.algorithms.acyclicity;
 
+import java.util.Map;
+
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
@@ -9,14 +11,13 @@ import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmStates;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.GraphAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.DepthFirstSearch;
-import de.uni_koblenz.jgralab.algolib.algorithms.search.IterativeDepthFirstSearch;
-import de.uni_koblenz.jgralab.algolib.algorithms.search.RecursiveDepthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 import de.uni_koblenz.jgralab.algolib.functions.Permutation;
 import de.uni_koblenz.jgralab.algolib.problems.directed.AcyclicitySolver;
 import de.uni_koblenz.jgralab.algolib.problems.directed.TopologicalOrderSolver;
 import de.uni_koblenz.jgralab.algolib.visitors.DFSVisitor;
 import de.uni_koblenz.jgralab.algolib.visitors.DFSVisitorAdapter;
+import de.uni_koblenz.jgralab.algolib.visitors.SimpleVisitor;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
 
 public class DFSImplementation extends GraphAlgorithm implements
@@ -25,19 +26,49 @@ public class DFSImplementation extends GraphAlgorithm implements
 	private boolean acyclic;
 	private DepthFirstSearch dfs;
 	private DFSVisitor acyclicityVisitor;
+	private Map<Visitor, Visitor> visitors;
 
-	public DFSImplementation(Graph graph, BooleanFunction<GraphElement> subgraph) {
+	public DFSImplementation(Graph graph,
+			BooleanFunction<GraphElement> subgraph, DepthFirstSearch dfs) {
 		super(graph, subgraph);
+		this.dfs = dfs;
 	}
 
-	public DFSImplementation(Graph graph) {
-		super(graph);
+	public DFSImplementation(Graph graph, DepthFirstSearch dfs) {
+		this(graph, null, dfs);
 	}
 
 	@Override
 	public void addVisitor(Visitor visitor) {
-		throw new UnsupportedOperationException(
-				"This algorithm does not support visitors.");
+		checkStateForSettingParameters();
+		if (visitor instanceof SimpleVisitor) {
+			final SimpleVisitor actualVisitor = (SimpleVisitor) visitor;
+			DFSVisitorAdapter adapter = new DFSVisitorAdapter() {
+
+				@Override
+				public void leaveVertex(Vertex v) {
+					actualVisitor.visitVertex(v);
+				}
+
+				@Override
+				public void visitEdge(Edge e) {
+					actualVisitor.visitEdge(e);
+				}
+
+			};
+			visitors.put(visitor, adapter);
+			dfs.addVisitor(adapter);
+		} else {
+			throw new IllegalArgumentException(
+					"The given visitor is incompatible with this algorithm.");
+		}
+	}
+	
+	@Override
+	public void removeVisitor(Visitor visitor){
+		checkStateForSettingParameters();
+		Visitor toDelete = visitors.remove(visitor);
+		dfs.removeVisitor(toDelete);
 	}
 
 	@Override
@@ -90,34 +121,30 @@ public class DFSImplementation extends GraphAlgorithm implements
 			}
 
 		};
+		visitors = null;
 	}
 
 	@Override
 	public void reset() {
 		super.reset();
 		acyclic = true;
-		dfs = new RecursiveDepthFirstSearch(graph, subgraph, true, null)
-				.withRorder();
-		dfs.setSearchDirection(EdgeDirection.IN);
-		dfs.addVisitor(acyclicityVisitor);
 	}
 
 	@Override
 	public DFSImplementation execute() {
+		dfs.reset();
+		EdgeDirection originalDirection = dfs.getSearchDirection();
+		dfs.setSearchDirection(EdgeDirection.IN);
+		dfs.addVisitor(acyclicityVisitor);
 		startRunning();
 		try {
-			try {
-				dfs.execute();
-			} catch (StackOverflowError e) {
-				dfs = new IterativeDepthFirstSearch(graph, subgraph, true, null)
-						.withRorder();
-				dfs.setSearchDirection(EdgeDirection.IN);
-				dfs.addVisitor(acyclicityVisitor);
-				dfs.execute();
-			}
+			dfs.withRorder().execute();
 		} catch (AlgorithmTerminatedException e) {
 		}
 		done();
+		dfs.withoutRorder();
+		dfs.removeVisitor(acyclicityVisitor);
+		dfs.setSearchDirection(originalDirection);
 		return this;
 	}
 }

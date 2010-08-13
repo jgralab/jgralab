@@ -138,6 +138,19 @@ public abstract class SearchAlgorithm extends GraphAlgorithm implements
 	}
 
 	/**
+	 * Deactivaces the computation of the optional result <code>level</code>.
+	 * 
+	 * @return this <code>SearchAlgorithm</code>.
+	 * @throws IllegalStateException
+	 *             if not in state <code>INITIALIZED</code>.
+	 */
+	public SearchAlgorithm withoutLevel() {
+		checkStateForSettingParameters();
+		level = null;
+		return this;
+	}
+
+	/**
 	 * Activates the computation of the optional result <code>number</code>.
 	 * 
 	 * @return this <code>SearchAlgorithm</code>.
@@ -147,6 +160,19 @@ public abstract class SearchAlgorithm extends GraphAlgorithm implements
 	public SearchAlgorithm withNumber() {
 		checkStateForSettingParameters();
 		number = new IntegerVertexMarker(graph);
+		return this;
+	}
+
+	/**
+	 * Deactivates the computation of the optional result <code>number</code>.
+	 * 
+	 * @return this <code>SearchAlgorithm</code>.
+	 * @throws IllegalStateException
+	 *             if not in state <code>INITIALIZED</code>.
+	 */
+	public SearchAlgorithm withoutNumber() {
+		checkStateForSettingParameters();
+		number = null;
 		return this;
 	}
 
@@ -162,6 +188,19 @@ public abstract class SearchAlgorithm extends GraphAlgorithm implements
 		parent = new ArrayVertexMarker<Edge>(graph);
 		return this;
 
+	}
+
+	/**
+	 * Deactivates the computation of the optional result <code>parent</code>.
+	 * 
+	 * @return this <code>SearchAlgorithm</code>.
+	 * @throws IllegalStateException
+	 *             if not in state <code>INITIALIZED</code>.
+	 */
+	public SearchAlgorithm withoutParent() {
+		checkStateForSettingParameters();
+		parent = null;
+		return this;
 	}
 
 	/**

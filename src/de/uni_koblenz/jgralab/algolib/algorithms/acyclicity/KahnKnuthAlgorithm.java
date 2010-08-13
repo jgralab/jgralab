@@ -68,6 +68,12 @@ public class KahnKnuthAlgorithm extends GraphAlgorithm implements
 		visitor.setAlgorithm(this);
 		visitors.addVisitor(visitor);
 	}
+	
+	@Override
+	public void removeVisitor(Visitor visitor){
+		checkStateForSettingParameters();
+		visitors.removeVisitor(visitor);
+	}
 
 	@Override
 	public void reset() {
