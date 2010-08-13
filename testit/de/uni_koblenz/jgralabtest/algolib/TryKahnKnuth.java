@@ -2,7 +2,7 @@ package de.uni_koblenz.jgralabtest.algolib;
 
 import de.uni_koblenz.jgralab.algolib.algorithms.search.DepthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.RecursiveDepthFirstSearch;
-import de.uni_koblenz.jgralab.algolib.algorithms.topological_order.DFSImplementation;
+import de.uni_koblenz.jgralab.algolib.algorithms.topological_order.TopologicalOrderWithDFS;
 import de.uni_koblenz.jgralab.algolib.algorithms.topological_order.KahnKnuthAlgorithm;
 import de.uni_koblenz.jgralabtest.schemas.algolib.simple.SimpleGraph;
 import de.uni_koblenz.jgralabtest.schemas.algolib.simple.SimpleSchema;
@@ -31,7 +31,7 @@ public class TryKahnKnuth {
 
 		KahnKnuthAlgorithm solver = new KahnKnuthAlgorithm(graph);
 		DepthFirstSearch dfs = new RecursiveDepthFirstSearch(graph);
-		DFSImplementation solver2 = new DFSImplementation(graph, dfs);
+		TopologicalOrderWithDFS solver2 = new TopologicalOrderWithDFS(graph, dfs);
 		System.out.println("Kahn Knuth:");
 
 		solver.execute();
