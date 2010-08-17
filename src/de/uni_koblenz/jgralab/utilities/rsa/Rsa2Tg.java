@@ -694,8 +694,7 @@ public class Rsa2Tg extends XmlProcessor {
 	private void createDefaultPackage() {
 		// Creates a default Package, links it and pushes it to the
 		// packageStack.
-		Package defaultPackage = sg
-				.createPackage();
+		Package defaultPackage = sg.createPackage();
 		defaultPackage.set_qualifiedName("");
 		sg.createContainsDefaultPackage(schema, defaultPackage);
 		packageStack.push(defaultPackage);
@@ -1664,7 +1663,6 @@ public class Rsa2Tg extends XmlProcessor {
 	 * @throws XMLStreamException
 	 */
 	private Vertex handleEnumeration() throws XMLStreamException {
-
 		EnumDomain ed = sg.createEnumDomain();
 		Package p = packageStack.peek();
 		ed
@@ -1811,7 +1809,6 @@ public class Rsa2Tg extends XmlProcessor {
 	 *            Name of the Schema.
 	 */
 	private void writeSchema(String schemaName) {
-
 		try {
 			SchemaGraph2Tg sg2tg = new SchemaGraph2Tg(sg, schemaName);
 			sg2tg.process();
@@ -1972,9 +1969,9 @@ public class Rsa2Tg extends XmlProcessor {
 								+ "' defined.");
 			}
 
-			if ((to.get_aggregation() != AggregationKind.NONE)
-					|| (from.get_aggregation() != AggregationKind.NONE)) {
-				if (from.get_aggregation() != AggregationKind.NONE) {
+			if ((from.get_aggregation() != AggregationKind.NONE)
+					|| (to.get_aggregation() != AggregationKind.NONE)) {
+				if (to.get_aggregation() != AggregationKind.NONE) {
 					ecName = "Contains" + toRole;
 				} else {
 					ecName = "IsPartOf" + toRole;
