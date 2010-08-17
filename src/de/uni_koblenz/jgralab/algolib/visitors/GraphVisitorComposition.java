@@ -5,7 +5,7 @@ import de.uni_koblenz.jgralab.Vertex;
 
 public class GraphVisitorComposition extends VisitorComposition implements
 		GraphVisitor {
-
+	
 	@Override
 	public void visitEdge(Edge e) {
 		if (visitors != null) {
