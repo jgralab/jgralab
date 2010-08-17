@@ -94,6 +94,8 @@ import java.util.Stack;
 import java.util.TreeSet;
 import java.util.Map.Entry;
 import java.util.logging.Level;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -1930,6 +1932,12 @@ public class Rsa2Tg extends XmlProcessor {
 		}
 	}
 
+	// EdgeClasses with a simple name of the form $<numbers>$ will be
+	// renamed as if there was no name. That allows for "unnamed"
+	// association classes.
+	private final Pattern GENNAME_PATTERN = Pattern
+			.compile("(.*)\\$\\p{Digit}+\\$$");
+
 	/**
 	 * Creates {@link EdgeClass} names for all EdgeClass objects, which do have
 	 * an empty String or a String, which ends with a '.'.
@@ -1938,6 +1946,15 @@ public class Rsa2Tg extends XmlProcessor {
 		System.out.println("Creating missing edge class names...");
 		for (EdgeClass ec : sg.getEdgeClassVertices()) {
 			String name = ec.get_qualifiedName().trim();
+
+			// EdgeClasses with a simple name of the form $<numbers>$ will be
+			// renamed as if there was no name. That allows for "unnamed"
+			// association classes.
+			Matcher m = GENNAME_PATTERN.matcher(name);
+			if (m.matches()) {
+				name = m.group(1);
+			}
+
 			if (!name.equals("") && !name.endsWith(".")) {
 				continue;
 			}
