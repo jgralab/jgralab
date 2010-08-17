@@ -162,7 +162,7 @@ public class SchemaGraph2Tg {
 	 */
 	public void process() throws IOException {
 
-		assert outputFilename != null && !outputFilename.equals(EMPTY) : "No output filename specified!";
+		assert (outputFilename != null) && !outputFilename.equals(EMPTY) : "No output filename specified!";
 		assert schemaGraph != null : "No SchemaGraph specified!";
 		stream = new PrintWriter(outputFilename);
 
@@ -378,7 +378,7 @@ public class SchemaGraph2Tg {
 		print(SPACE, ROUND_BRACKET_OPENED, min, COMMA, max,
 				ROUND_BRACKET_CLOSED);
 
-		if (ic.get_roleName() != null && !ic.get_roleName().isEmpty()) {
+		if ((ic.get_roleName() != null) && !ic.get_roleName().isEmpty()) {
 			print(SPACE, ROLE, SPACE, ic.get_roleName());
 		}
 
@@ -411,7 +411,7 @@ public class SchemaGraph2Tg {
 
 	private void printEnumDomain(EnumDomain dom) {
 		printComments(dom);
-		print(ENUM_DOMAIN, SPACE, dom.get_qualifiedName(), SPACE,
+		print(ENUM_DOMAIN, SPACE, shortName(dom.get_qualifiedName()), SPACE,
 				ROUND_BRACKET_OPENED);
 		boolean first = true;
 		for (String constant : dom.get_enumConstants()) {
@@ -438,7 +438,8 @@ public class SchemaGraph2Tg {
 				print(COMMA, SPACE);
 			}
 			Domain compDom = (Domain) hc.getThat();
-			print(hc.get_name(), COLON, SPACE, compDom.get_qualifiedName());
+			print(hc.get_name(), COLON, SPACE, shortName(compDom
+					.get_qualifiedName()));
 		}
 		println(ROUND_BRACKET_CLOSED, DELIMITER);
 	}
