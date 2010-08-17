@@ -34,7 +34,7 @@ public class JGraLabSetImpl<E> extends HashSet<E> implements JGraLabSet<E> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Object clone() {
+	public JGraLabSetImpl<E> clone() {
 		JGraLabSetImpl<E> copy = new JGraLabSetImpl<E>();
 		for (E element : this) {
 			if (element instanceof JGraLabCloneable) {

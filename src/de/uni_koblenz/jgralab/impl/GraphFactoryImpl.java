@@ -31,6 +31,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphFactory;
+import de.uni_koblenz.jgralab.Record;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.exception.M1ClassAccessException;
 
@@ -51,16 +52,19 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 	protected HashMap<Class<? extends Graph>, Constructor<? extends Graph>> graphMap;
 	protected HashMap<Class<? extends Edge>, Constructor<? extends Edge>> edgeMap;
 	protected HashMap<Class<? extends Vertex>, Constructor<? extends Vertex>> vertexMap;
+	protected HashMap<Class<? extends Record>, Constructor<? extends Record>> recordMap;
 
 	// Maps for transaction support.
 	protected HashMap<Class<? extends Graph>, Constructor<? extends Graph>> graphTransactionMap;
 	protected HashMap<Class<? extends Edge>, Constructor<? extends Edge>> edgeTransactionMap;
 	protected HashMap<Class<? extends Vertex>, Constructor<? extends Vertex>> vertexTransactionMap;
+	protected HashMap<Class<? extends Record>, Constructor<? extends Record>> recordTransactionMap;
 
 	// Maps for savemem support.
 	protected HashMap<Class<? extends Graph>, Constructor<? extends Graph>> graphSavememMap;
 	protected HashMap<Class<? extends Edge>, Constructor<? extends Edge>> edgeSavememMap;
 	protected HashMap<Class<? extends Vertex>, Constructor<? extends Vertex>> vertexSavememMap;
+	protected HashMap<Class<? extends Record>, Constructor<? extends Record>> recordSavememMap;
 
 	/**
 	 * Default constructor. Initializes the internal {@link HashMap} attributes.
@@ -70,16 +74,19 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 		graphMap = new HashMap<Class<? extends Graph>, Constructor<? extends Graph>>();
 		edgeMap = new HashMap<Class<? extends Edge>, Constructor<? extends Edge>>();
 		vertexMap = new HashMap<Class<? extends Vertex>, Constructor<? extends Vertex>>();
+		recordMap = new HashMap<Class<? extends Record>, Constructor<? extends Record>>();
 
 		// Create maps for TRANSIMPL.
 		graphTransactionMap = new HashMap<Class<? extends Graph>, Constructor<? extends Graph>>();
 		edgeTransactionMap = new HashMap<Class<? extends Edge>, Constructor<? extends Edge>>();
 		vertexTransactionMap = new HashMap<Class<? extends Vertex>, Constructor<? extends Vertex>>();
+		recordTransactionMap = new HashMap<Class<? extends Record>, Constructor<? extends Record>>();
 
 		// Create maps for SAVEMEMIMPL.
 		graphSavememMap = new HashMap<Class<? extends Graph>, Constructor<? extends Graph>>();
 		edgeSavememMap = new HashMap<Class<? extends Edge>, Constructor<? extends Edge>>();
 		vertexSavememMap = new HashMap<Class<? extends Vertex>, Constructor<? extends Vertex>>();
+		recordSavememMap = new HashMap<Class<? extends Record>, Constructor<? extends Record>>();
 	}
 
 	// -------------------------------------------------------------------------
@@ -185,6 +192,37 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 			}
 		}
 	}
+	
+	public void setRecordImplementationClass(
+			Class<? extends Record> m1Class,
+			Class<? extends Record> implementationClass) {
+		if (isSuperclassOrEqual(m1Class, implementationClass)) {
+			try {
+				Class<?>[] params = {Graph.class};
+				recordMap.put(m1Class, implementationClass
+						.getConstructor(params));
+			} catch (NoSuchMethodException ex) {
+				throw new M1ClassAccessException(
+						"Unable to locate default constructor for record"
+								+ implementationClass, ex);
+			}
+		}
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	public <T extends Record> T createRecord(Class<T> recordDomain, Graph g) {
+		try {
+			T r = (T) recordMap.get(recordDomain).newInstance(g);
+			return r;
+		} catch (Exception ex) {
+			if (ex.getCause() instanceof GraphException) {
+				throw new GraphException(ex.getCause().getLocalizedMessage());
+			}
+			throw new M1ClassAccessException("Cannot create vertex of class "
+					+ recordDomain.getCanonicalName(), ex);
+		}
+	}
 
 	// -------------------------------------------------------------------------
 	// Methods for the TRANSIMPL option.
@@ -250,6 +288,22 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 					+ vertexClass.getCanonicalName(), ex);
 		}
 	}
+	
+
+	
+	@SuppressWarnings("unchecked")
+	public <T extends Record> T createRecordWithTransactionSupport(Class<T> recordDomain, Graph g) {
+		try {
+			T r = (T) recordTransactionMap.get(recordDomain).newInstance(g);
+			return r;
+		} catch (Exception ex) {
+			if (ex.getCause() instanceof GraphException) {
+				throw new GraphException(ex.getCause().getLocalizedMessage());
+			}
+			throw new M1ClassAccessException("Cannot create vertex of class "
+					+ recordDomain.getCanonicalName(), ex);
+		}
+	}
 
 	@SuppressWarnings("unchecked")
 	public void setGraphTransactionImplementationClass(
@@ -298,6 +352,22 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 			} catch (NoSuchMethodException ex) {
 				throw new M1ClassAccessException(
 						"Unable to locate transaction constructor for edgeclass"
+								+ implementationClass, ex);
+			}
+		}
+	}
+	
+	public void setRecordTransactionImplementationClass(
+			Class<? extends Record> m1Class,
+			Class<? extends Record> implementationClass) {
+		if (isSuperclassOrEqual(m1Class, implementationClass)) {
+			try {
+				Class<?>[] params = { int.class, Object[].class };
+				recordTransactionMap.put(m1Class, implementationClass
+						.getConstructor(params));
+			} catch (NoSuchMethodException ex) {
+				throw new M1ClassAccessException(
+						"Unable to locate default constructor for record"
 								+ implementationClass, ex);
 			}
 		}
@@ -360,6 +430,25 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 					+ vertexClass.getCanonicalName(), ex);
 		}
 	}
+	
+	
+	@SuppressWarnings("unchecked")
+	public <T extends Record> T createRecordWithSavememSupport(Class<T> recordDomain, Graph g) {
+		try {
+			T r = (T) recordSavememMap.get(recordDomain).newInstance(g);
+			return r;
+		} catch (Exception ex) {
+			if (ex.getCause() instanceof GraphException) {
+				throw new GraphException(ex.getCause().getLocalizedMessage());
+			}
+			throw new M1ClassAccessException("Cannot create vertex of class "
+					+ recordDomain.getCanonicalName(), ex);
+		}
+	}
+	
+	
+	
+	
 
 	public void setGraphSavememImplementationClass(
 			Class<? extends Graph> originalClass,
@@ -405,6 +494,23 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 			} catch (NoSuchMethodException ex) {
 				throw new M1ClassAccessException(
 						"Unable to locate default constructor for edgeclass"
+								+ implementationClass, ex);
+			}
+		}
+	}
+	
+	
+	public void setRecordSavememImplementationClass(
+			Class<? extends Record> m1Class,
+			Class<? extends Record> implementationClass) {
+		if (isSuperclassOrEqual(m1Class, implementationClass)) {
+			try {
+				Class<?>[] params = { int.class, Object[].class };
+				recordSavememMap.put(m1Class, implementationClass
+						.getConstructor(params));
+			} catch (NoSuchMethodException ex) {
+				throw new M1ClassAccessException(
+						"Unable to locate default constructor for record"
 								+ implementationClass, ex);
 			}
 		}
