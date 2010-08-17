@@ -120,14 +120,26 @@ public class StrongComponentsWithDFS extends GraphAlgorithm implements
 				vertexStack.push(v);
 				lowlink.set(v, number.get(v));
 			}
+			
+			public void maybeVisitReducedEdge(Edge e){
+				if(strongComponents.isDefined(e.getThat())){
+					visitors.visitReducedEdge(e);
+				}
+			}
 
 			@Override
 			public void leaveTreeEdge(Edge e) {
 				Vertex v = e.getThis();
 				Vertex w = e.getThat();
 				lowlink.set(v, min(lowlink.get(v), lowlink.get(w)));
+				maybeVisitReducedEdge(e);
 			}
 
+			@Override
+			public void visitForwardArc(Edge e){
+				maybeVisitReducedEdge(e);
+			}
+			
 			@Override
 			public void visitBackwardArc(Edge e) {
 				Vertex v = e.getThis();
@@ -142,6 +154,7 @@ public class StrongComponentsWithDFS extends GraphAlgorithm implements
 				if (vertexStack.contains(w)) {
 					lowlink.set(v, min(lowlink.get(v), number.get(w)));
 				}
+				maybeVisitReducedEdge(e);
 			}
 
 			@Override
