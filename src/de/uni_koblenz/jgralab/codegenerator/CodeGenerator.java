@@ -430,21 +430,6 @@ public abstract class CodeGenerator {
 
 		GenerationCycle currentCycle = cycles.get(cycleCount);
 
-		// // if no standard support is selected => next generation cycle
-		// if (currentCycle.isStdImpl() && !config.hasStandardSupport()) {
-		// cycleCount++;
-		// }
-		//
-		// // if no savemem support is selected => next generation cycle
-		// if (currentCycle.isSaveMemImpl() && !config.hasSaveMemSupport()) {
-		// cycleCount++;
-		// }
-		//
-		// // if no transaction support is selected => next generation cycle
-		// if (currentCycle.isTransImpl() && !config.hasTransactionSupport()) {
-		// cycleCount++;
-		// }
-
 		// currentCycle = cycles[cycleCount];
 
 		// abstract classes should only have generation cycle ABSTRACT

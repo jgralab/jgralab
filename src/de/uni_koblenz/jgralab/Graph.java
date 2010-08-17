@@ -731,7 +731,7 @@ public interface Graph extends AttributedElement {
 	 * @param io
 	 * @return
 	 */
-	public <T> T createRecord(Class<T> recordClass, GraphIO io);
+	public <T extends Record> T createRecord(Class<T> recordClass, GraphIO io);
 
 	/**
 	 * 
@@ -740,7 +740,7 @@ public interface Graph extends AttributedElement {
 	 * @param io
 	 * @return
 	 */
-	public <T> T createRecord(Class<T> recordClass, Map<String, Object> fields);
+	public <T extends Record> T createRecord(Class<T> recordClass, Map<String, Object> fields);
 
 	/**
 	 * 
@@ -749,7 +749,7 @@ public interface Graph extends AttributedElement {
 	 * @param io
 	 * @return
 	 */
-	public <T> T createRecord(Class<T> recordClass, Object... components);
+	public <T extends Record> T createRecord(Class<T> recordClass, Object... components);
 
 	/**
 	 * Registers the given <code>newListener</code> to the internal listener

@@ -406,7 +406,7 @@ public class JGraLabSetImpl<E> extends HashSet<E> implements
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Object clone() {
+	public JGraLabSetImpl<E> clone() {
 		JGraLabSetImpl<E> toBeCloned = null;
 		assert (versionedSet != null && graph != null);
 		toBeCloned = versionedSet.getValidValue(graph.getCurrentTransaction());
