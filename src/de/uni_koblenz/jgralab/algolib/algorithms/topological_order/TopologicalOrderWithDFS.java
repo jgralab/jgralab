@@ -1,7 +1,5 @@
 package de.uni_koblenz.jgralab.algolib.algorithms.topological_order;
 
-import java.util.Map;
-
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
@@ -13,11 +11,12 @@ import de.uni_koblenz.jgralab.algolib.algorithms.GraphAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.DepthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.DFSVisitor;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.DFSVisitorAdapter;
+import de.uni_koblenz.jgralab.algolib.algorithms.topological_order.visitors.TopologicalOrderVisitor;
+import de.uni_koblenz.jgralab.algolib.algorithms.topological_order.visitors.TopologicalOrderVisitorComposition;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 import de.uni_koblenz.jgralab.algolib.functions.Permutation;
 import de.uni_koblenz.jgralab.algolib.problems.directed.AcyclicitySolver;
 import de.uni_koblenz.jgralab.algolib.problems.directed.TopologicalOrderSolver;
-import de.uni_koblenz.jgralab.algolib.visitors.GraphVisitor;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
 
 public class TopologicalOrderWithDFS extends GraphAlgorithm implements
@@ -26,7 +25,7 @@ public class TopologicalOrderWithDFS extends GraphAlgorithm implements
 	private boolean acyclic;
 	private DepthFirstSearch dfs;
 	private DFSVisitor acyclicityVisitor;
-	private Map<Visitor, Visitor> visitors;
+	private TopologicalOrderVisitorComposition visitors;
 
 	public TopologicalOrderWithDFS(Graph graph,
 			BooleanFunction<GraphElement> subgraph, DepthFirstSearch dfs) {
@@ -41,34 +40,21 @@ public class TopologicalOrderWithDFS extends GraphAlgorithm implements
 	@Override
 	public void addVisitor(Visitor visitor) {
 		checkStateForSettingParameters();
-		if (visitor instanceof GraphVisitor) {
-			final GraphVisitor actualVisitor = (GraphVisitor) visitor;
-			DFSVisitorAdapter adapter = new DFSVisitorAdapter() {
-
-				@Override
-				public void leaveVertex(Vertex v) {
-					actualVisitor.visitVertex(v);
-				}
-
-				@Override
-				public void visitEdge(Edge e) {
-					actualVisitor.visitEdge(e);
-				}
-
-			};
-			visitors.put(visitor, adapter);
-			dfs.addVisitor(adapter);
+		if (visitor instanceof TopologicalOrderVisitor) {
+			visitors.addVisitor(visitor);
 		} else {
-			throw new IllegalArgumentException(
-					"The given visitor is incompatible with this algorithm.");
+			dfs.addVisitor(visitor);
 		}
 	}
-	
+
 	@Override
-	public void removeVisitor(Visitor visitor){
+	public void removeVisitor(Visitor visitor) {
 		checkStateForSettingParameters();
-		Visitor toDelete = visitors.remove(visitor);
-		dfs.removeVisitor(toDelete);
+		if (visitor instanceof TopologicalOrderVisitor) {
+			visitors.removeVisitor(visitor);
+		} else {
+			dfs.removeVisitor(visitor);
+		}
 	}
 
 	@Override
@@ -120,8 +106,13 @@ public class TopologicalOrderWithDFS extends GraphAlgorithm implements
 				throw new AlgorithmTerminatedException();
 			}
 
+			@Override
+			public void leaveVertex(Vertex v) {
+				visitors.visitVertexInTopologicalOrder(v);
+			}
+
 		};
-		visitors = null;
+		visitors = new TopologicalOrderVisitorComposition();
 	}
 
 	@Override

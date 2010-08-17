@@ -7,20 +7,20 @@ import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmStates;
 import de.uni_koblenz.jgralab.algolib.algorithms.GraphAlgorithm;
+import de.uni_koblenz.jgralab.algolib.algorithms.topological_order.visitors.TopologicalOrderVisitorComposition;
 import de.uni_koblenz.jgralab.algolib.functions.ArrayPermutation;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 import de.uni_koblenz.jgralab.algolib.functions.IntFunction;
 import de.uni_koblenz.jgralab.algolib.functions.Permutation;
 import de.uni_koblenz.jgralab.algolib.problems.directed.AcyclicitySolver;
 import de.uni_koblenz.jgralab.algolib.problems.directed.TopologicalOrderSolver;
-import de.uni_koblenz.jgralab.algolib.visitors.GraphVisitorComposition;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
 import de.uni_koblenz.jgralab.graphmarker.IntegerVertexMarker;
 
 public class KahnKnuthAlgorithm extends GraphAlgorithm implements
 		AcyclicitySolver, TopologicalOrderSolver {
 
-	private GraphVisitorComposition visitors;
+	private TopologicalOrderVisitorComposition visitors;
 	private int tnum;
 	private int firstV;
 	private Vertex[] torder;
@@ -89,7 +89,7 @@ public class KahnKnuthAlgorithm extends GraphAlgorithm implements
 	@Override
 	public void resetParameters() {
 		super.resetParameters();
-		visitors = new GraphVisitorComposition();
+		visitors = new TopologicalOrderVisitorComposition();
 		normal();
 	}
 
@@ -147,9 +147,8 @@ public class KahnKnuthAlgorithm extends GraphAlgorithm implements
 		
 		while (firstV < tnum) {
 			Vertex currentVertex = torder[firstV++];
-			visitors.visitVertex(currentVertex);
+			visitors.visitVertexInTopologicalOrder(currentVertex);
 			for (Edge currentEdge : currentVertex.incidences(searchDirection)) {
-				visitors.visitEdge(currentEdge);
 				Vertex nextVertex = currentEdge.getThat();
 				inDegree.set(nextVertex, inDegree.get(nextVertex) - 1);
 				if (inDegree.get(nextVertex) == 0) {
