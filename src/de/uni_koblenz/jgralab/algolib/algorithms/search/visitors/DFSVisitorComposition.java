@@ -1,7 +1,8 @@
-package de.uni_koblenz.jgralab.algolib.visitors;
+package de.uni_koblenz.jgralab.algolib.algorithms.search.visitors;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
 
 public class DFSVisitorComposition extends SearchVisitorComposition implements
 		DFSVisitor {

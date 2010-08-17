@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.algolib.visitors.DFSVisitorAdapter;
+import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.DFSVisitorAdapter;
 
 public class PauseVisitor extends DFSVisitorAdapter {
 

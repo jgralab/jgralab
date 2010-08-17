@@ -4,11 +4,11 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.GraphAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.SearchAlgorithm;
-import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.SearchAlgorithmVisitor;
+import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.DFSVisitor;
+import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.SearchVisitorAdapter;
 import de.uni_koblenz.jgralab.algolib.functions.IntFunction;
-import de.uni_koblenz.jgralab.algolib.visitors.DFSVisitor;
 
-public class DebugSearchVisitor extends SearchAlgorithmVisitor implements
+public class DebugSearchVisitor extends SearchVisitorAdapter implements
 		DFSVisitor {
 
 	public static String generateEdgeString(Edge e) {

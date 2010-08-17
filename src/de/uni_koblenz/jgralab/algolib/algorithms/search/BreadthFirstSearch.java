@@ -4,9 +4,9 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.SearchVisitorComposition;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 import de.uni_koblenz.jgralab.algolib.problems.TraversalFromVertexSolver;
-import de.uni_koblenz.jgralab.algolib.visitors.SearchVisitorComposition;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
 
 /**

@@ -1,7 +1,8 @@
-package de.uni_koblenz.jgralab.algolib.visitors;
+package de.uni_koblenz.jgralab.algolib.algorithms.search.visitors;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.algolib.visitors.GraphVisitor;
 
 /**
  * This visitor allows visiting vertices and edges during the run of an
@@ -10,7 +11,7 @@ import de.uni_koblenz.jgralab.Vertex;
  * @author strauss@uni-koblenz.de
  * 
  */
-public interface SearchVisitor extends SimpleVisitor {
+public interface SearchVisitor extends GraphVisitor {
 
 	/**
 	 * Visits one vertex that is the root of a search tree. Vertices should only

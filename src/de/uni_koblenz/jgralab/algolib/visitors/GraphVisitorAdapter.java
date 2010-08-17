@@ -4,7 +4,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.GraphAlgorithm;
 
-public class SimpleVisitorAdapter implements SimpleVisitor {
+public class GraphVisitorAdapter implements GraphVisitor {
 
 	@Override
 	public void visitEdge(Edge e) {

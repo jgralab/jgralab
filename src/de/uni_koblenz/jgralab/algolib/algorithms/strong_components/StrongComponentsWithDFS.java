@@ -9,12 +9,12 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmStates;
 import de.uni_koblenz.jgralab.algolib.algorithms.GraphAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.DepthFirstSearch;
-import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.DFSAlgorithmVisitor;
+import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.DFSVisitor;
+import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.DFSVisitorAdapter;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 import de.uni_koblenz.jgralab.algolib.functions.Function;
 import de.uni_koblenz.jgralab.algolib.functions.IntFunction;
 import de.uni_koblenz.jgralab.algolib.problems.directed.StrongComponentsSolver;
-import de.uni_koblenz.jgralab.algolib.visitors.DFSVisitor;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
 import de.uni_koblenz.jgralab.graphmarker.ArrayVertexMarker;
 import de.uni_koblenz.jgralab.graphmarker.IntegerVertexMarker;
@@ -93,7 +93,7 @@ public class StrongComponentsWithDFS extends GraphAlgorithm implements
 		vertexStack = new Stack<Vertex>();
 		lowlink = new IntegerVertexMarker(graph);
 		strongComponents = new ArrayVertexMarker<Vertex>(graph);
-		lowlinkVisitor = new DFSAlgorithmVisitor() {
+		lowlinkVisitor = new DFSVisitorAdapter() {
 
 			IntFunction<Vertex> number;
 

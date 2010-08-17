@@ -11,13 +11,13 @@ import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmStates;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.GraphAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.DepthFirstSearch;
+import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.DFSVisitor;
+import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.DFSVisitorAdapter;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 import de.uni_koblenz.jgralab.algolib.functions.Permutation;
 import de.uni_koblenz.jgralab.algolib.problems.directed.AcyclicitySolver;
 import de.uni_koblenz.jgralab.algolib.problems.directed.TopologicalOrderSolver;
-import de.uni_koblenz.jgralab.algolib.visitors.DFSVisitor;
-import de.uni_koblenz.jgralab.algolib.visitors.DFSVisitorAdapter;
-import de.uni_koblenz.jgralab.algolib.visitors.SimpleVisitor;
+import de.uni_koblenz.jgralab.algolib.visitors.GraphVisitor;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
 
 public class TopologicalOrderWithDFS extends GraphAlgorithm implements
@@ -41,8 +41,8 @@ public class TopologicalOrderWithDFS extends GraphAlgorithm implements
 	@Override
 	public void addVisitor(Visitor visitor) {
 		checkStateForSettingParameters();
-		if (visitor instanceof SimpleVisitor) {
-			final SimpleVisitor actualVisitor = (SimpleVisitor) visitor;
+		if (visitor instanceof GraphVisitor) {
+			final GraphVisitor actualVisitor = (GraphVisitor) visitor;
 			DFSVisitorAdapter adapter = new DFSVisitorAdapter() {
 
 				@Override

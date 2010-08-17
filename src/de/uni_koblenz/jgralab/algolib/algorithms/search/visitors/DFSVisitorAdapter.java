@@ -1,24 +1,52 @@
 package de.uni_koblenz.jgralab.algolib.algorithms.search.visitors;
 
+import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.GraphAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.DepthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.SearchAlgorithm;
-import de.uni_koblenz.jgralab.algolib.visitors.DFSVisitorAdapter;
 
 /**
- * Handles the storage of the DFS algorithm object for all implementations of
- * <code>DFSVisitor</code>. This class should be used as superclass instead of
- * <code>DFSVisitorAdapter</code>.
+ * It implements all methods from <code>DFSVisitor</code> as empty stubs. Beyond
+ * that, it also handles the storage of the DFS algorithm object implementing
+ * visitors are used by. All instances of <code>DFSVisitor</code> should use
+ * this class as superclass.
  * 
  * @author strauss@uni-koblenz.de
  * 
  */
-public class DFSAlgorithmVisitor extends DFSVisitorAdapter {
+public class DFSVisitorAdapter extends SearchVisitorAdapter implements
+		DFSVisitor {
 
 	/**
 	 * The DFS this visitor is used by.
 	 */
 	protected DepthFirstSearch algorithm;
+
+	@Override
+	public void leaveTreeEdge(Edge e) {
+
+	}
+
+	@Override
+	public void leaveVertex(Vertex v) {
+
+	}
+
+	@Override
+	public void visitBackwardArc(Edge e) {
+
+	}
+
+	@Override
+	public void visitCrosslink(Edge e) {
+
+	}
+
+	@Override
+	public void visitForwardArc(Edge e) {
+
+	}
 
 	@Override
 	public void setAlgorithm(GraphAlgorithm algorithm) {
@@ -37,4 +65,5 @@ public class DFSAlgorithmVisitor extends DFSVisitorAdapter {
 	public DepthFirstSearch getAlgorithm() {
 		return algorithm;
 	}
+
 }
