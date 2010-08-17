@@ -2,7 +2,7 @@ package de.uni_koblenz.jgralab.algolib.algorithms;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.algolib.visitors.SimpleVisitorAdapter;
+import de.uni_koblenz.jgralab.algolib.visitors.GraphVisitorAdapter;
 
 /**
  * This visitor checks, if the current thread has been interrupted and cancels
@@ -14,7 +14,7 @@ import de.uni_koblenz.jgralab.algolib.visitors.SimpleVisitorAdapter;
  * @author strauss@uni-koblenz.de
  * 
  */
-public class ThreadSupervisorVisitor extends SimpleVisitorAdapter {
+public class ThreadSupervisorVisitor extends GraphVisitorAdapter {
 
 	/**
 	 * Creates a <code>ThreadSupervisorVisitor</code> that only checks the state

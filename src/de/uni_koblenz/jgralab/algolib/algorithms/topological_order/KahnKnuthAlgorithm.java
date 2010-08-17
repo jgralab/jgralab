@@ -13,14 +13,14 @@ import de.uni_koblenz.jgralab.algolib.functions.IntFunction;
 import de.uni_koblenz.jgralab.algolib.functions.Permutation;
 import de.uni_koblenz.jgralab.algolib.problems.directed.AcyclicitySolver;
 import de.uni_koblenz.jgralab.algolib.problems.directed.TopologicalOrderSolver;
-import de.uni_koblenz.jgralab.algolib.visitors.SimpleVisitorComposition;
+import de.uni_koblenz.jgralab.algolib.visitors.GraphVisitorComposition;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
 import de.uni_koblenz.jgralab.graphmarker.IntegerVertexMarker;
 
 public class KahnKnuthAlgorithm extends GraphAlgorithm implements
 		AcyclicitySolver, TopologicalOrderSolver {
 
-	private SimpleVisitorComposition visitors;
+	private GraphVisitorComposition visitors;
 	private int tnum;
 	private int firstV;
 	private Vertex[] torder;
@@ -89,7 +89,7 @@ public class KahnKnuthAlgorithm extends GraphAlgorithm implements
 	@Override
 	public void resetParameters() {
 		super.resetParameters();
-		visitors = new SimpleVisitorComposition();
+		visitors = new GraphVisitorComposition();
 		normal();
 	}
 

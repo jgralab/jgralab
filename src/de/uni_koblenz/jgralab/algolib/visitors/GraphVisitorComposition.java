@@ -3,15 +3,15 @@ package de.uni_koblenz.jgralab.algolib.visitors;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 
-public class SimpleVisitorComposition extends VisitorComposition implements
-		SimpleVisitor {
+public class GraphVisitorComposition extends VisitorComposition implements
+		GraphVisitor {
 
 	@Override
 	public void visitEdge(Edge e) {
 		if (visitors != null) {
 			for (Visitor currentVisitor : visitors) {
-				if (currentVisitor instanceof SimpleVisitor) {
-					((SimpleVisitor) currentVisitor).visitEdge(e);
+				if (currentVisitor instanceof GraphVisitor) {
+					((GraphVisitor) currentVisitor).visitEdge(e);
 				}
 			}
 		}
@@ -21,8 +21,8 @@ public class SimpleVisitorComposition extends VisitorComposition implements
 	public void visitVertex(Vertex v) {
 		if (visitors != null) {
 			for (Visitor currentVisitor : visitors) {
-				if (currentVisitor instanceof SimpleVisitor) {
-					((SimpleVisitor) currentVisitor).visitVertex(v);
+				if (currentVisitor instanceof GraphVisitor) {
+					((GraphVisitor) currentVisitor).visitVertex(v);
 				}
 			}
 		}
