@@ -11,6 +11,8 @@ import de.uni_koblenz.jgralab.algolib.algorithms.GraphAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.DepthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.DFSVisitor;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.DFSVisitorAdapter;
+import de.uni_koblenz.jgralab.algolib.algorithms.strong_components.visitors.ReducedGraphVisitor;
+import de.uni_koblenz.jgralab.algolib.algorithms.strong_components.visitors.ReducedGraphVisitorComposition;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 import de.uni_koblenz.jgralab.algolib.functions.Function;
 import de.uni_koblenz.jgralab.algolib.functions.IntFunction;
@@ -28,6 +30,7 @@ public class StrongComponentsWithDFS extends GraphAlgorithm implements
 	private IntFunction<Vertex> lowlink;
 	private Function<Vertex, Vertex> strongComponents;
 	private DFSVisitor lowlinkVisitor;
+	private ReducedGraphVisitorComposition visitors;
 
 	public StrongComponentsWithDFS(Graph graph, DepthFirstSearch dfs) {
 		this(graph, null, dfs);
@@ -41,8 +44,12 @@ public class StrongComponentsWithDFS extends GraphAlgorithm implements
 
 	@Override
 	public void addVisitor(Visitor visitor) {
-		throw new UnsupportedOperationException(
-				"This algorithm does not support visitors.");
+		checkStateForSettingParameters();
+		if (visitor instanceof ReducedGraphVisitor) {
+			visitors.addVisitor(visitor);
+		} else {
+			dfs.addVisitor(visitor);
+		}
 	}
 
 	@Override
@@ -66,8 +73,12 @@ public class StrongComponentsWithDFS extends GraphAlgorithm implements
 
 	@Override
 	public void removeVisitor(Visitor visitor) {
-		throw new UnsupportedOperationException(
-				"This algorithm does not support visitors.");
+		checkStateForSettingParameters();
+		if (visitor instanceof ReducedGraphVisitor) {
+			visitors.removeVisitor(visitor);
+		} else {
+			dfs.removeVisitor(visitor);
+		}
 	}
 
 	@Override
@@ -93,6 +104,7 @@ public class StrongComponentsWithDFS extends GraphAlgorithm implements
 		vertexStack = new Stack<Vertex>();
 		lowlink = new IntegerVertexMarker(graph);
 		strongComponents = new ArrayVertexMarker<Vertex>(graph);
+		visitors = new ReducedGraphVisitorComposition();
 		lowlinkVisitor = new DFSVisitorAdapter() {
 
 			IntFunction<Vertex> number;
@@ -139,8 +151,9 @@ public class StrongComponentsWithDFS extends GraphAlgorithm implements
 					do {
 						x = vertexStack.pop();
 						strongComponents.set(x, v);
-						// TODO maybe add working point for custom visitor; what
-						// about strong edges?
+						// visit the representative vertex
+						// TODO visit reduced edges
+						visitors.visitRepresentativeVertex(v);
 					} while (x != v);
 				}
 			}

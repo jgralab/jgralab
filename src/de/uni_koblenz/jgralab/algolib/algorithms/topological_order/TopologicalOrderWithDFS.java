@@ -1,5 +1,6 @@
 package de.uni_koblenz.jgralab.algolib.algorithms.topological_order;
 
+import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
@@ -8,9 +9,9 @@ import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmStates;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.GraphAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.DepthFirstSearch;
+import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.DFSVisitorAdapter;
 import de.uni_koblenz.jgralab.algolib.algorithms.topological_order.visitors.TopologicalOrderVisitor;
 import de.uni_koblenz.jgralab.algolib.algorithms.topological_order.visitors.TopologicalOrderVisitorComposition;
-import de.uni_koblenz.jgralab.algolib.algorithms.topological_order.visitors.TopologicalOrderVisitorForDFS;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 import de.uni_koblenz.jgralab.algolib.functions.Permutation;
 import de.uni_koblenz.jgralab.algolib.problems.directed.AcyclicitySolver;
@@ -21,7 +22,8 @@ public class TopologicalOrderWithDFS extends GraphAlgorithm implements
 		AcyclicitySolver, TopologicalOrderSolver {
 
 	private DepthFirstSearch dfs;
-	private TopologicalOrderVisitorForDFS torderVisitorAdapter;
+	private boolean acyclic;
+	private DFSVisitorAdapter torderVisitorAdapter;
 	private TopologicalOrderVisitorComposition visitors;
 
 	public TopologicalOrderWithDFS(Graph graph,
@@ -83,7 +85,7 @@ public class TopologicalOrderWithDFS extends GraphAlgorithm implements
 	@Override
 	public boolean isAcyclic() {
 		checkStateForResult();
-		return torderVisitorAdapter.isAcyclic();
+		return acyclic;
 	}
 
 	@Override
@@ -96,7 +98,18 @@ public class TopologicalOrderWithDFS extends GraphAlgorithm implements
 	public void resetParameters() {
 		super.resetParameters();
 		visitors = new TopologicalOrderVisitorComposition();
-		torderVisitorAdapter = new TopologicalOrderVisitorForDFS(visitors);
+		torderVisitorAdapter = new DFSVisitorAdapter() {
+			@Override
+			public void visitBackwardArc(Edge e) {
+				acyclic = false;
+				throw new AlgorithmTerminatedException();
+			}
+
+			@Override
+			public void leaveVertex(Vertex v) {
+				visitors.visitVertexInTopologicalOrder(v);
+			}
+		};
 	}
 
 	@Override
