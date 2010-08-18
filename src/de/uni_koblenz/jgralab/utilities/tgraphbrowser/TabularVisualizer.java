@@ -174,7 +174,7 @@ public class TabularVisualizer {
 				|| (!isVertex && ((state.edgesOfTableView == null) || (state.edgesOfTableView.length == 0)))) {
 			return;
 		}
-		// find position of element in the corresponding array
+		// find position of element in the corresponding array TODO
 		int idOfElement = Integer.parseInt(elementId.substring(1));
 		int positionOfElementInArray = findPositionInArray(
 				isVertex ? state.verticesOfTableView : state.edgesOfTableView,
@@ -199,6 +199,7 @@ public class TabularVisualizer {
 		positionOfElementInArray = positionOfElementInArray < 0 ? (positionOfElementInArray + 1)
 				* -1
 				: positionOfElementInArray;
+
 		int numberOfPages = 1;
 		int numberOfPageWithElementOfId = 1;
 		if ((numberPerPage > 0)
@@ -802,7 +803,8 @@ public class TabularVisualizer {
 	 * @return
 	 */
 	private int findPositionInArray(GraphElement[] graphElements, int id) {
-		if ((id < graphElements.length) && (id == graphElements[id - 1].getId())) {
+		if ((id < graphElements.length)
+				&& (id == graphElements[id - 1].getId())) {
 			// The element is found at the same position as the id-1
 			return id - 1;
 		}
