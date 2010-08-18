@@ -192,22 +192,28 @@ public class RequestThread extends Thread {
 								new FileOutputStream(receivedFile));
 						byte[] content = new byte[contentLength < 4096 ? (int) (contentLength % 4096)
 								: 4096];
-						for (int i = 0; i < (contentLength / content.length) - 1; i++) {
-							in.read(content);
-							fileOutput.write(content);
-						}
-						if (contentLength > content.length) {
-							if (contentLength % content.length != 0) {
-								content = new byte[content.length
-										+ (int) (contentLength % content.length)];
-								in.read(content);
+						int numberOfBytesRead = 1;
+						long totalNumberOfBytesRead = 0;
+						while (totalNumberOfBytesRead < contentLength
+								- content.length) {
+							totalNumberOfBytesRead += numberOfBytesRead = in
+									.read(content);
+							if (numberOfBytesRead <= 0) {
+								break;
+							} else {
+								fileOutput.write(content, 0, numberOfBytesRead);
 							}
-						} else {
-							in.read(content);
+						}
+						if (numberOfBytesRead > 0) {
+							content = new byte[(int) (contentLength - totalNumberOfBytesRead)
+									% (content.length + 1)];
+							totalNumberOfBytesRead += numberOfBytesRead = in
+									.read(content);
 						}
 						// delete the end of the multipart part, which is
 						// not part of the file
-						int endOfFile = findEndOfFileInMultipart(content);
+						int endOfFile = findEndOfFileInMultipart(content,
+								numberOfBytesRead);
 						fileOutput.write(content, 0, endOfFile + 1);
 						fileOutput.flush();
 						fileOutput.close();
@@ -228,18 +234,13 @@ public class RequestThread extends Thread {
 					do {
 						line = readLine(in);
 					} while ((line != null) && !line.isEmpty());
-					// read Content
+					// read content
 					byte[] content = new byte[contentLength.intValue()];
-					/* int read = */in.read(content);
-					// if (read < contentLength) {
-					// TGraphBrowserServer.logger.warning("There were only "
-					// + read + " chars read instead of "
-					// + contentLength + " chars.");
-					// }
+					in.read(content);
 					String body = new String(content);
 					String[] bodyparts = Pattern.compile(
 							Matcher.quoteReplacement("\n")).split(body);
-					// read Content
+					// read content
 					String timestampString = bodyparts[0];
 					long timestamp = timestampString.equals("undefined") ? Long.MIN_VALUE
 							: Long.parseLong(timestampString);
@@ -310,7 +311,7 @@ public class RequestThread extends Thread {
 					}
 					String fileName = System.getProperty("java.io.tmpdir")
 							+ File.separator
-							+ "tGraphBrowser"
+							+ "tgraphbrowser"
 							+ File.separator
 							+ (path.charAt(0) == '_' ? path.substring(1) : path);
 					File svg = new File(fileName);
@@ -422,13 +423,14 @@ public class RequestThread extends Thread {
 	 * Returns the index of the last char, which belongs to the file.
 	 * 
 	 * @param content
+	 * @param numberOfBytesRead
 	 * @return
 	 */
-	private int findEndOfFileInMultipart(byte[] content) {
+	private int findEndOfFileInMultipart(byte[] content, int numberOfBytesRead) {
 		int numberOfCarriageReturn = 0;
 		int currentPos;
 		// find the last char which belongs to the file
-		for (currentPos = content.length - 1; currentPos > 0
+		for (currentPos = numberOfBytesRead - 1; currentPos > 0
 				&& numberOfCarriageReturn < 2; currentPos--) {
 			if (content[currentPos] == '\r'/* 13? */) {
 				numberOfCarriageReturn++;
