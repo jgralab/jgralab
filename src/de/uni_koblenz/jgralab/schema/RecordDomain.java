@@ -26,10 +26,6 @@ package de.uni_koblenz.jgralab.schema;
 
 import java.util.Collection;
 
-import de.uni_koblenz.jgralab.AttributedElement;
-import de.uni_koblenz.jgralab.M1ClassManager;
-import de.uni_koblenz.jgralab.schema.exception.M1ClassAccessException;
-
 /**
  * Represents a RecordDomain, instances may exist multiple times per schema.
  * 

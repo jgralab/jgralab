@@ -56,13 +56,13 @@ import de.uni_koblenz.jgralab.greql2.funlib.Greql2Function.Category;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
- * This class is the core of the function libary. It's implemented following the
+ * This class is the core of the function library. It's implemented following the
  * singleton-pattern. On load, a instance gets created and all functions in the
  * package are read. One can use the methods
  * <code>boolean isGreqlFunction(String name)</code> to ask the Library if a
- * string is a greql-function
+ * string is a GReQL-function
  * <code>JValue evaluateGreqlFunction(String name, JValue[] arguments)</code> to
- * evaluate the greql-function with the given name
+ * evaluate the GReQL-function with the given name
  * 
  */
 public class Greql2FunctionLibrary {
@@ -567,8 +567,17 @@ public class Greql2FunctionLibrary {
 		availableFunctions = new HashMap<String, Greql2Function>();
 		String thisClassName = this.getClass().getCanonicalName();
 		logger.finer("Functionlib name: " + thisClassName);
-		URL packageUrl = Greql2FunctionLibrary.class.getResource("/"
-				+ nondottedPackageName + "/Greql2FunctionLibrary.class");
+		URL packageUrl = null;
+		try {
+			packageUrl = Class.forName("de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary").getResource("/"
+					+ nondottedPackageName + "/Greql2FunctionLibrary.class");
+		} catch (ClassNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+//
+//		packageUrl = Greql2FunctionLibrary.class.getResource("/"
+//				+ nondottedPackageName + "/Greql2FunctionLibrary.class");
 
 		if (packageUrl != null) {
 			logger.finer("Found Greql2FunctionLibrary");
