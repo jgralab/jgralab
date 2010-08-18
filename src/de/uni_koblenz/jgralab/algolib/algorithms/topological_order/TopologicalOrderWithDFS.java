@@ -102,7 +102,7 @@ public class TopologicalOrderWithDFS extends GraphAlgorithm implements
 			@Override
 			public void visitBackwardArc(Edge e) {
 				acyclic = false;
-				throw new AlgorithmTerminatedException();
+				dfs.terminate();
 			}
 
 			@Override
