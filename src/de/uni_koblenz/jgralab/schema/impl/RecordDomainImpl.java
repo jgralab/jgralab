@@ -137,7 +137,7 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 		if (m1Class == null) {
 			String m1ClassName = getSchema().getPackagePrefix() + "." + getQualifiedName();
 			try {
-				m1Class = (Class<? extends Object>) Class.forName(
+				m1Class = Class.forName(
 						m1ClassName, true, M1ClassManager.instance(getSchema()
 								.getQualifiedName()));
 			} catch (ClassNotFoundException e) {
