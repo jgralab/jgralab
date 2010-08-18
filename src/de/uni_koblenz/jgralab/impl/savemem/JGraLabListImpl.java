@@ -34,7 +34,7 @@ public class JGraLabListImpl<E> extends ArrayList<E> implements
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Object clone() {
+	public JGraLabListImpl<E> clone() {
 		JGraLabListImpl<E> copy = new JGraLabListImpl<E>();
 		for (E element : this) {
 			if (element instanceof JGraLabCloneable) {

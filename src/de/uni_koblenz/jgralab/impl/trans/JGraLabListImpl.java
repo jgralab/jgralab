@@ -677,7 +677,7 @@ public class JGraLabListImpl<E> extends ArrayList<E> implements
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Object clone() {
+	public JGraLabListImpl<E> clone() {
 		JGraLabListImpl<E> toBeCloned = null;
 		assert (versionedList != null && graph != null);
 		toBeCloned = versionedList.getValidValue(graph.getCurrentTransaction());

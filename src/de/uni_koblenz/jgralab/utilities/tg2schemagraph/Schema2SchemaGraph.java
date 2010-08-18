@@ -224,7 +224,7 @@ public class Schema2SchemaGraph {
 		createConstraints();
 
 		// Creates all IncidenceClasses
-		createIncidences();
+		createIncidenceClasses();
 
 		// Creates all Redefines and Subsetts
 		createRedefinesAndSubsetts();
@@ -958,13 +958,13 @@ public class Schema2SchemaGraph {
 	/**
 	 * Creates all From and To edges of all EdgeClasses
 	 */
-	private void createIncidences() {
+	private void createIncidenceClasses() {
 
 		// Loop over all EdgeClass objects
 		for (Entry<de.uni_koblenz.jgralab.schema.EdgeClass, EdgeClass> entry : edgeClassMap
 				.entrySet()) {
 			// Creates From and To edge
-			createIncidences(entry.getKey(), entry.getValue());
+			createIncidenceClass(entry.getKey(), entry.getValue());
 		}
 	}
 
@@ -976,7 +976,7 @@ public class Schema2SchemaGraph {
 	 * @param gEdgeClass
 	 *            EdgeClass, to which all edges are linked.
 	 */
-	private void createIncidences(
+	private void createIncidenceClass(
 			de.uni_koblenz.jgralab.schema.EdgeClass edgeClass,
 			EdgeClass gEdgeClass) {
 		assert (edgeClass != null) : "FIXME! EdgeClass is null!";

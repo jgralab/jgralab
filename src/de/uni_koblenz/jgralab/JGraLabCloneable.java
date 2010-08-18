@@ -11,5 +11,5 @@ public interface JGraLabCloneable extends Cloneable {
 	 * 
 	 * @return a deep copy of the current object
 	 */
-	public Object clone();
+	public JGraLabCloneable clone();
 }

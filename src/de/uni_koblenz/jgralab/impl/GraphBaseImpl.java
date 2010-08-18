@@ -25,7 +25,6 @@
 package de.uni_koblenz.jgralab.impl;
 
 import java.lang.ref.WeakReference;
-import java.lang.reflect.Constructor;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -40,6 +39,7 @@ import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.GraphStructureChangedListener;
 import de.uni_koblenz.jgralab.RandomIdGenerator;
+import de.uni_koblenz.jgralab.Record;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.Attribute;
@@ -1658,14 +1658,11 @@ public abstract class GraphBaseImpl implements Graph {
 	 * @param io
 	 * @return
 	 */
-	public <T> T createRecord(Class<T> recordClass, GraphIO io) {
-		T record = null;
+	public <T extends Record> T createRecord(Class<T> recordClass, GraphIO io) {
+		T record = graphFactory.createRecord(recordClass, this);
 		try {
-			Constructor<T> cons = recordClass.getDeclaredConstructor(
-					Graph.class, GraphIO.class);
-			cons.setAccessible(true);
-			record = cons.newInstance(this, io);
-		} catch (Exception e) {
+			record.readComponentValues(io);
+		} catch (GraphIOException e) {
 			e.printStackTrace();
 		}
 		return record;
@@ -1678,16 +1675,9 @@ public abstract class GraphBaseImpl implements Graph {
 	 * @param io
 	 * @return
 	 */
-	public <T> T createRecord(Class<T> recordClass, Map<String, Object> fields) {
-		T record = null;
-		try {
-			Constructor<T> cons = recordClass.getDeclaredConstructor(
-					Graph.class, Map.class);
-			cons.setAccessible(true);
-			record = cons.newInstance(this, fields);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	public <T extends Record> T createRecord(Class<T> recordClass, Map<String, Object> fields) {
+		T record = graphFactory.createRecord(recordClass, this);
+		record.setComponentValues(fields);
 		return record;
 	}
 
@@ -1698,16 +1688,9 @@ public abstract class GraphBaseImpl implements Graph {
 	 * @param io
 	 * @return
 	 */
-	public <T> T createRecord(Class<T> recordClass, Object... components) {
-		T record = null;
-		try {
-			Constructor<T> cons = recordClass.getDeclaredConstructor(
-					Graph.class, Object[].class);
-			cons.setAccessible(true);
-			record = cons.newInstance(this, components);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	public <T extends Record> T createRecord(Class<T> recordClass, Object... components) {
+		T record = graphFactory.createRecord(recordClass, this);
+		record.setComponentValues(components);
 		return record;
 	}
 

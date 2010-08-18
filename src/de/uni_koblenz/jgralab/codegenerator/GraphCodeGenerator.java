@@ -125,12 +125,10 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 			}
 			for (RecordDomain rd : aec.getSchema().getRecordDomains()) {
 				CodeSnippet cs = new CodeSnippet(true);
-				cs
-						.add("public #rcname# create#rname#(GraphIO io) throws GraphIOException;");
+				cs.add("public #rcname# create#rname#(GraphIO io) throws GraphIOException;");
 				cs.add("");
 
-				cs
-						.add("public #rcname# create#rname#(Map<String, Object> fields);");
+				cs.add("public #rcname# create#rname#(Map<String, Object> fields);");
 				cs.add("");
 
 				cs.add("public #rcname# create#rname#(#parawtypes#);");
@@ -151,38 +149,34 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 			}
 			for (RecordDomain rd : aec.getSchema().getRecordDomains()) {
 				CodeSnippet cs = new CodeSnippet(true);
-				cs
-						.add("public #rcname# create#rname#(GraphIO io) throws GraphIOException {");
+				cs.add("public #rcname# create#rname#(GraphIO io) throws GraphIOException {");
 
 				if (currentCycle.isTransImpl()) {
-					cs
-							.add("\tif(!isLoading() && getCurrentTransaction().isReadOnly())");
-					cs
-							.add("\t\tthrow new #jgPackage#.GraphException(\"Read-only transactions are not allowed to create instances of #rtype#.\");");
-					cs.add("\treturn createRecord(#rtranstype#.class, io);");
+					cs.add("\tif(!isLoading() && getCurrentTransaction().isReadOnly())");
+					cs.add("\t\tthrow new #jgPackage#.GraphException(\"Read-only transactions are not allowed to create instances of #rtype#.\");");
+					cs.add("\t#rcname# record = graphFactory.createRecordWithTransactionSupport(#rcname#.class, this);");
 				} else if (currentCycle.isStdImpl()) {
-					cs.add("\treturn createRecord(#rstdtype#.class, io);");
+					cs.add("\t#rcname# record = graphFactory.createRecord(#rcname#.class, this);");
 				} else if (currentCycle.isSaveMemImpl()) {
-					cs.add("\treturn createRecord(#rsavememtype#.class, io);");
+					cs.add("\t#rcname# record = graphFactory.createRecordWithSavememSupport(#rcname#.class, this);");
 				}
+				cs.add("\trecord.readComponentValues(io);");
+				cs.add("\treturn record;");
 				cs.add("}");
 				cs.add("");
 
-				cs
-						.add("public #rcname# create#rname#(Map<String, Object> fields) {");
+				cs.add("public #rcname# create#rname#(Map<String, Object> fields) {");
 				if (currentCycle.isTransImpl()) {
-					cs
-							.add("\tif(!isLoading() && getCurrentTransaction().isReadOnly())");
-					cs
-							.add("\t\tthrow new #jgPackage#.GraphException(\"Read-only transactions are not allowed to create instances of #rtype#.\");");
-					cs
-							.add("\treturn createRecord(#rtranstype#.class, fields);");
+					cs.add("\tif(!isLoading() && getCurrentTransaction().isReadOnly())");
+					cs.add("\t\tthrow new #jgPackage#.GraphException(\"Read-only transactions are not allowed to create instances of #rtype#.\");");
+					cs.add("\t#rcname# record = graphFactory.createRecordWithTransactionSupport(#rcname#.class, this);");
 				} else if (currentCycle.isStdImpl()) {
-					cs.add("\treturn createRecord(#rstdtype#.class, fields);");
+					cs.add("\t#rcname# record = graphFactory.createRecord(#rcname#.class, this);");
 				} else if (currentCycle.isSaveMemImpl()) {
-					cs
-							.add("\treturn createRecord(#rsavememtype#.class, fields);");
+					cs.add("\t#rcname# record = graphFactory.createRecordWithSavememSupport(#rcname#.class, this);");
 				}
+				cs.add("\trecord.setComponentValues(fields);");
+				cs.add("\treturn record;");
 				cs.add("}");
 				cs.add("");
 
@@ -193,47 +187,32 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 
 				cs.add("");
 				cs.add("public #rcname# create#rname#(#parawtypes#) {");
-
 				if (currentCycle.isTransImpl()) {
-					cs
-							.add("\tif(!isLoading() && getCurrentTransaction().isReadOnly())");
-					cs
-							.add("\t\tthrow new #jgPackage#.GraphException(\"Read-only transactions are not allowed to create instances of #rtype#.\");");
-					cs
-							.add("\treturn createRecord(#rtranstype#.class, #parawotypes#);");
+					cs.add("\tif(!isLoading() && getCurrentTransaction().isReadOnly())");
+					cs.add("\t\tthrow new #jgPackage#.GraphException(\"Read-only transactions are not allowed to create instances of #rtype#.\");");
+					cs.add("\t#rcname# record = graphFactory.createRecordWithTransactionSupport(#rcname#.class, this);");
 				} else if (currentCycle.isStdImpl()) {
-					cs
-							.add("\treturn createRecord(#rstdtype#.class, #parawotypes#);");
+					cs.add("\t#rcname# record = graphFactory.createRecord(#rcname#.class, this);");
 				} else if (currentCycle.isSaveMemImpl()) {
-					cs
-							.add("\treturn createRecord(#rsavememtype#.class, #parawotypes#);");
+					cs.add("\t#rcname# record = graphFactory.createRecordWithSavememSupport(#rcname#.class, this);");
 				}
+				for (RecordComponent entry : rd.getComponents()) { 
+					cs.add("\trecord.set_" + entry.getName() + "(_" + entry.getName() + ");");
+				}
+				cs.add("\treturn record;");
 				cs.add("}");
 				cs.add("");
 
-				cs.setVariable("rcname", rd
-						.getJavaClassName(schemaRootPackageName));
+				cs.setVariable("rcname", rd.getJavaClassName(schemaRootPackageName));
 				cs.setVariable("rname", rd.getUniqueName());
-				cs
-						.setVariable(
-								"rtype",
-								rd
-										.getJavaAttributeImplementationTypeName(schemaRootPackageName));
-				cs
-						.setVariable(
-								"rtranstype",
-								rd
-										.getTransactionJavaAttributeImplementationTypeName(schemaRootPackageName));
-				cs
-						.setVariable(
-								"rstdtype",
-								rd
-										.getStandardJavaAttributeImplementationTypeName(schemaRootPackageName));
-				cs
-						.setVariable(
-								"rsavememtype",
-								rd
-										.getSavememJavaAttributeImplementationTypeName(schemaRootPackageName));
+				cs.setVariable("rtype",
+								rd.getJavaAttributeImplementationTypeName(schemaRootPackageName));
+				cs.setVariable("rtranstype",
+								rd.getTransactionJavaAttributeImplementationTypeName(schemaRootPackageName));
+				cs.setVariable("rstdtype",
+								rd.getStandardJavaAttributeImplementationTypeName(schemaRootPackageName));
+				cs.setVariable("rsavememtype",
+								rd.getSavememJavaAttributeImplementationTypeName(schemaRootPackageName));
 				code.addNoIndent(cs);
 			}
 		}

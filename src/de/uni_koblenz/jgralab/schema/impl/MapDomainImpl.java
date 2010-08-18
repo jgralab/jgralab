@@ -66,7 +66,7 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 	@Override
 	public String getJavaAttributeImplementationTypeName(
 			String schemaRootPackagePrefix) {
-		return "java.util." + MAPDOMAIN_NAME + "<"
+		return "java.util." + MAPDOMAIN_NAME +  "<"
 				+ keyDomain.getJavaClassName(schemaRootPackagePrefix) + ", "
 				+ valueDomain.getJavaClassName(schemaRootPackagePrefix) + ">";
 	}
