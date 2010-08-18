@@ -36,7 +36,7 @@ public class JGraLabMapImpl<K, V> extends HashMap<K, V> implements
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Object clone() {
+	public JGraLabMapImpl<K, V> clone() {
 		JGraLabMapImpl<K, V> copy = new JGraLabMapImpl<K, V>();
 		for (java.util.Map.Entry<K, V> entry : entrySet()) {
 			K keyClone = null;

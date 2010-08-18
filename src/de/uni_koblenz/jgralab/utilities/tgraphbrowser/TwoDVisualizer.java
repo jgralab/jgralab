@@ -82,7 +82,7 @@ public class TwoDVisualizer {
 		}
 		// create temp-folder
 		File tempFolder = new File(System.getProperty("java.io.tmpdir")
-				+ File.separator + "tGraphBrowser");
+				+ File.separator + "tgraphbrowser");
 		if (!tempFolder.exists()) {
 			if (!tempFolder.mkdir()) {
 				TGraphBrowserServer.logger.warning(tempFolder

@@ -16,12 +16,14 @@ $Id: ServerSideScriptEngine.java,v 1.4 2004/02/01 13:37:35 pjm2 Exp $
 
 package de.uni_koblenz.jgralab.utilities.tgraphbrowser;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -95,11 +97,14 @@ public class RequestThread extends Thread {
 		InputStream reader = null;
 		try {
 			_socket.setSoTimeout(30000);
-			BufferedReader in = new BufferedReader(new InputStreamReader(
-					_socket.getInputStream()));
+			InputStream inputStream = _socket.getInputStream();
+			DataInputStream in = new DataInputStream(new BufferedInputStream(
+					inputStream));
+			// BufferedReader in = new BufferedReader(new InputStreamReader(
+			// inputStream));
 			BufferedOutputStream out = new BufferedOutputStream(_socket
 					.getOutputStream());
-			String firstLine = in.readLine();
+			String firstLine = readLine(in);
 			String request = URLDecoder.decode(firstLine != null ? firstLine
 					: "", "UTF-8");
 			if ((request == null)
@@ -118,7 +123,7 @@ public class RequestThread extends Thread {
 				Long contentLength = null;
 				String contentType = null;
 				do {
-					line = in.readLine();
+					line = readLine(in);
 					if (line.startsWith("Content-Type")) {
 						contentType = line;
 					} else if (line.startsWith("Content-Length:")) {
@@ -136,8 +141,14 @@ public class RequestThread extends Thread {
 					String[] bounds = boundary.split("-");
 					boundary = bounds[bounds.length - 1];
 					do {
-						line = in.readLine();
-					} while (!line.contains("filename="));
+						line = readLine(in);
+					} while (!line.contains(boundary));
+					// +2 because \r\n is cut off
+					int sizeOfLinesAlreadyRead = line.length() + 2;
+					// read Content-Disposition
+					line = readLine(in);
+					// extract filename
+					sizeOfLinesAlreadyRead += line.length() + 2;
 					String filename = line.split("filename=")[1];
 					// cut off "
 					filename = filename.substring(1, filename.length() - 1);
@@ -153,10 +164,11 @@ public class RequestThread extends Thread {
 					} else {
 						// find beginning of file
 						// next in.readLine()is first line of file
-						while ((line != null) && !line.equals("")) {
-							line = in.readLine();
+						while ((line != null) && !line.isEmpty()) {
+							line = readLine(in);
+							sizeOfLinesAlreadyRead += line.length() + 2;
 						}
-						// create File which does not exist in the workspace
+						// create file which does not exist in the workspace
 						// yet
 						boolean isCompressed = filename.endsWith(".gz");
 						filename = workspace.toString() + "/"
@@ -174,24 +186,37 @@ public class RequestThread extends Thread {
 									.info(receivedFile.toString()
 											+ " overwrites an existing file or could not be created.");
 						}
-						FileWriter fw = new FileWriter(receivedFile);
-						line = in.readLine();
-						// nextLine is used because before the endline comes
-						// there is an empty line
-						String nextLine = in.readLine();
-						int i = 0;
-						while ((nextLine != null)
-								&& !nextLine.contains(boundary)) {
-							fw.write(line + "\n");
-							i++;
-							line = nextLine;
-							nextLine = in.readLine();
-							if (i == 1000) {
-								fw.flush();
+						contentLength -= sizeOfLinesAlreadyRead;
+						// read the multipart part of the http message
+						BufferedOutputStream fileOutput = new BufferedOutputStream(
+								new FileOutputStream(receivedFile));
+						byte[] content = new byte[contentLength < 4096 ? (int) (contentLength % 4096)
+								: 4096];
+						int numberOfBytesRead = 1;
+						long totalNumberOfBytesRead = 0;
+						while (totalNumberOfBytesRead < contentLength
+								- content.length) {
+							totalNumberOfBytesRead += numberOfBytesRead = in
+									.read(content);
+							if (numberOfBytesRead <= 0) {
+								break;
+							} else {
+								fileOutput.write(content, 0, numberOfBytesRead);
 							}
 						}
-						fw.flush();
-						fw.close();
+						if (numberOfBytesRead > 0) {
+							content = new byte[(int) (contentLength - totalNumberOfBytesRead)
+									% (content.length + 1)];
+							totalNumberOfBytesRead += numberOfBytesRead = in
+									.read(content);
+						}
+						// delete the end of the multipart part, which is
+						// not part of the file
+						int endOfFile = findEndOfFileInMultipart(content,
+								numberOfBytesRead);
+						fileOutput.write(content, 0, endOfFile + 1);
+						fileOutput.flush();
+						fileOutput.close();
 						// send the answer page
 						int sessionId = StateRepository
 								.createNewSession(receivedFile);
@@ -207,20 +232,15 @@ public class RequestThread extends Thread {
 					// no file upload
 					// skip rest of header
 					do {
-						line = in.readLine();
+						line = readLine(in);
 					} while ((line != null) && !line.isEmpty());
-					// read Content
-					char[] content = new char[contentLength.intValue()];
-					int read = in.read(content);
-					if (read < contentLength) {
-						TGraphBrowserServer.logger.warning("There were only "
-								+ read + " chars read instead of "
-								+ contentLength + " chars.");
-					}
+					// read content
+					byte[] content = new byte[contentLength.intValue()];
+					in.read(content);
 					String body = new String(content);
 					String[] bodyparts = Pattern.compile(
 							Matcher.quoteReplacement("\n")).split(body);
-					// read Content
+					// read content
 					String timestampString = bodyparts[0];
 					long timestamp = timestampString.equals("undefined") ? Long.MIN_VALUE
 							: Long.parseLong(timestampString);
@@ -291,7 +311,7 @@ public class RequestThread extends Thread {
 					}
 					String fileName = System.getProperty("java.io.tmpdir")
 							+ File.separator
-							+ "tGraphBrowser"
+							+ "tgraphbrowser"
 							+ File.separator
 							+ (path.charAt(0) == '_' ? path.substring(1) : path);
 					File svg = new File(fileName);
@@ -375,6 +395,48 @@ public class RequestThread extends Thread {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Reads a line from DataInputStream. \r\n or \n is skipped and the line is
+	 * trimmed.
+	 * 
+	 * @param input
+	 * @return
+	 * @throws IOException
+	 */
+	private String readLine(DataInputStream input) throws IOException {
+		StringBuffer line = new StringBuffer();
+		String currentByte;
+		do {
+			byte[] aByte = new byte[1];
+			input.read(aByte);
+			currentByte = new String(aByte, "UTF-8");
+			if (!currentByte.equals("\n") && !currentByte.equals("\r")) {
+				line.append(currentByte);
+			}
+		} while (!currentByte.equals("\n"));
+		return line.toString().trim();
+	}
+
+	/**
+	 * Returns the index of the last char, which belongs to the file.
+	 * 
+	 * @param content
+	 * @param numberOfBytesRead
+	 * @return
+	 */
+	private int findEndOfFileInMultipart(byte[] content, int numberOfBytesRead) {
+		int numberOfCarriageReturn = 0;
+		int currentPos;
+		// find the last char which belongs to the file
+		for (currentPos = numberOfBytesRead - 1; currentPos > 0
+				&& numberOfCarriageReturn < 2; currentPos--) {
+			if (content[currentPos] == '\r'/* 13? */) {
+				numberOfCarriageReturn++;
+			}
+		}
+		return currentPos;
 	}
 
 	/**

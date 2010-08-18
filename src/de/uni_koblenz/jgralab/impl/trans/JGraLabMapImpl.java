@@ -418,7 +418,7 @@ public class JGraLabMapImpl<K, V> extends HashMap<K, V> implements
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Object clone() {
+	public JGraLabMapImpl<K, V> clone() {
 		JGraLabMapImpl<K, V> toBeCloned = null;
 		assert ((versionedMap != null) && (graph != null));
 		toBeCloned = versionedMap.getValidValue(graph.getCurrentTransaction());

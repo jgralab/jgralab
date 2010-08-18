@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import de.uni_koblenz.jgralab.M1ClassManager;
 import de.uni_koblenz.jgralab.codegenerator.CodeBlock;
 import de.uni_koblenz.jgralab.codegenerator.CodeGenerator;
 import de.uni_koblenz.jgralab.codegenerator.CodeSnippet;
@@ -39,6 +40,7 @@ import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.exception.DuplicateRecordComponentException;
 import de.uni_koblenz.jgralab.schema.exception.InvalidNameException;
+import de.uni_koblenz.jgralab.schema.exception.M1ClassAccessException;
 import de.uni_koblenz.jgralab.schema.exception.NoSuchRecordComponentException;
 import de.uni_koblenz.jgralab.schema.exception.RecordCycleException;
 import de.uni_koblenz.jgralab.schema.exception.WrongSchemaException;
@@ -46,6 +48,12 @@ import de.uni_koblenz.jgralab.schema.exception.WrongSchemaException;
 public final class RecordDomainImpl extends CompositeDomainImpl implements
 		RecordDomain {
 
+	/**
+	 * The class object representing the generated interface for this
+	 * AttributedElementClass
+	 */
+	private Class<? extends Object> m1Class;
+	
 	/**
 	 * holds a list of the components of the record
 	 */
@@ -123,6 +131,22 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 	public String getJavaClassName(String schemaRootPackagePrefix) {
 		return getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
 		// return getJavaAttributeTypeName(schemaRootPackagePrefix);
+	}
+	
+	public Class<? extends Object> getM1Class() {
+		if (m1Class == null) {
+			String m1ClassName = getSchema().getPackagePrefix() + "." + getQualifiedName();
+			try {
+				m1Class = (Class<? extends Object>) Class.forName(
+						m1ClassName, true, M1ClassManager.instance(getSchema()
+								.getQualifiedName()));
+			} catch (ClassNotFoundException e) {
+				throw new M1ClassAccessException(
+						"Can't load M1 class for AttributedElementClass '"
+								+ getQualifiedName() + "'", e);
+			}
+		}
+		return m1Class;
 	}
 
 	@Override

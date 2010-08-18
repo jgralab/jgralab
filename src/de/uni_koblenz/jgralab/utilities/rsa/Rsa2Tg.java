@@ -94,6 +94,8 @@ import java.util.Stack;
 import java.util.TreeSet;
 import java.util.Map.Entry;
 import java.util.logging.Level;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -694,8 +696,7 @@ public class Rsa2Tg extends XmlProcessor {
 	private void createDefaultPackage() {
 		// Creates a default Package, links it and pushes it to the
 		// packageStack.
-		Package defaultPackage = sg
-				.createPackage();
+		Package defaultPackage = sg.createPackage();
 		defaultPackage.set_qualifiedName("");
 		sg.createContainsDefaultPackage(schema, defaultPackage);
 		packageStack.push(defaultPackage);
@@ -1664,7 +1665,6 @@ public class Rsa2Tg extends XmlProcessor {
 	 * @throws XMLStreamException
 	 */
 	private Vertex handleEnumeration() throws XMLStreamException {
-
 		EnumDomain ed = sg.createEnumDomain();
 		Package p = packageStack.peek();
 		ed
@@ -1811,7 +1811,6 @@ public class Rsa2Tg extends XmlProcessor {
 	 *            Name of the Schema.
 	 */
 	private void writeSchema(String schemaName) {
-
 		try {
 			SchemaGraph2Tg sg2tg = new SchemaGraph2Tg(sg, schemaName);
 			sg2tg.process();
@@ -1933,6 +1932,12 @@ public class Rsa2Tg extends XmlProcessor {
 		}
 	}
 
+	// EdgeClasses with a simple name of the form $<numbers>$ will be
+	// renamed as if there was no name. That allows for "unnamed"
+	// association classes.
+	private final Pattern GENNAME_PATTERN = Pattern
+			.compile("(.*)\\$\\p{Digit}+\\$$");
+
 	/**
 	 * Creates {@link EdgeClass} names for all EdgeClass objects, which do have
 	 * an empty String or a String, which ends with a '.'.
@@ -1941,6 +1946,15 @@ public class Rsa2Tg extends XmlProcessor {
 		System.out.println("Creating missing edge class names...");
 		for (EdgeClass ec : sg.getEdgeClassVertices()) {
 			String name = ec.get_qualifiedName().trim();
+
+			// EdgeClasses with a simple name of the form $<numbers>$ will be
+			// renamed as if there was no name. That allows for "unnamed"
+			// association classes.
+			Matcher m = GENNAME_PATTERN.matcher(name);
+			if (m.matches()) {
+				name = m.group(1);
+			}
+
 			if (!name.equals("") && !name.endsWith(".")) {
 				continue;
 			}
@@ -1972,9 +1986,9 @@ public class Rsa2Tg extends XmlProcessor {
 								+ "' defined.");
 			}
 
-			if ((to.get_aggregation() != AggregationKind.NONE)
-					|| (from.get_aggregation() != AggregationKind.NONE)) {
-				if (from.get_aggregation() != AggregationKind.NONE) {
+			if ((from.get_aggregation() != AggregationKind.NONE)
+					|| (to.get_aggregation() != AggregationKind.NONE)) {
+				if (to.get_aggregation() != AggregationKind.NONE) {
 					ecName = "Contains" + toRole;
 				} else {
 					ecName = "IsPartOf" + toRole;

@@ -55,12 +55,16 @@ public final class SetDomainImpl extends CollectionDomainImpl implements
 	@Override
 	public String getJavaAttributeImplementationTypeName(
 			String schemaRootPackagePrefix) {
-		return "java.util." + SETDOMAIN_NAME + "<"
-				+ baseDomain.getJavaClassName(schemaRootPackagePrefix) + ">";
+		return "java.util." +  SETDOMAIN_NAME +  "<"
+		+ baseDomain.getJavaClassName(schemaRootPackagePrefix) + ">";
+//		return "de.uni_koblenz.jgralab.impl.std.JGraLabSetImpl<"
+//				+ baseDomain.getJavaClassName(schemaRootPackagePrefix) + ">";
 	}
 
 	@Override
 	public String getJavaClassName(String schemaRootPackagePrefix) {
+		//return "de.uni_koblenz.jgralab.impl.std.JGraLabSetImpl<"
+		//+ baseDomain.getJavaClassName(schemaRootPackagePrefix) + ">";
 		return getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
 	}
 
