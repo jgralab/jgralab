@@ -1637,7 +1637,7 @@ public abstract class GraphImpl extends
 			throw new GraphException(
 					"The initialization for the default values of the graph failed.\n"
 							+ " Caused by: " + e.getClass() + " - "
-							+ e.getLocalizedMessage());
+							+ e.getLocalizedMessage(), e);
 		}
 	}
 
