@@ -100,7 +100,8 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 			return e;
 		} catch (Exception ex) {
 			if (ex.getCause() instanceof GraphException) {
-				throw new GraphException(ex.getCause().getLocalizedMessage());
+				throw new GraphException(ex.getCause().getLocalizedMessage(),
+						ex);
 			}
 			throw new M1ClassAccessException("Cannot create edge of class "
 					+ edgeClass.getCanonicalName(), ex);
@@ -135,7 +136,8 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 			return v;
 		} catch (Exception ex) {
 			if (ex.getCause() instanceof GraphException) {
-				throw new GraphException(ex.getCause().getLocalizedMessage());
+				throw new GraphException(ex.getCause().getLocalizedMessage(),
+						ex);
 			}
 			throw new M1ClassAccessException("Cannot create vertex of class "
 					+ vertexClass.getCanonicalName(), ex);
@@ -192,15 +194,16 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 			}
 		}
 	}
-	
-	public void setRecordImplementationClass(
-			Class<? extends Record> m1Class,
+
+	public void setRecordImplementationClass(Class<? extends Record> m1Class,
 			Class<? extends Record> implementationClass) {
 		if (isSuperclassOrEqual(m1Class, implementationClass)) {
 			try {
-				Class<?>[] params = {Graph.class};
-				recordMap.put(m1Class, implementationClass
-						.getConstructor(params));
+				Class<?>[] params = { Graph.class };
+				Constructor<? extends Record> c = implementationClass
+						.getConstructor(params);
+				assert c != null;
+				recordMap.put(m1Class, c);
 			} catch (NoSuchMethodException ex) {
 				throw new M1ClassAccessException(
 						"Unable to locate default constructor for record"
@@ -208,8 +211,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 			}
 		}
 	}
-	
-	
+
 	@SuppressWarnings("unchecked")
 	public <T extends Record> T createRecord(Class<T> recordDomain, Graph g) {
 		try {
@@ -217,7 +219,8 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 			return r;
 		} catch (Exception ex) {
 			if (ex.getCause() instanceof GraphException) {
-				throw new GraphException(ex.getCause().getLocalizedMessage());
+				throw new GraphException(ex.getCause().getLocalizedMessage(),
+						ex);
 			}
 			throw new M1ClassAccessException("Cannot create vertex of class "
 					+ recordDomain.getCanonicalName(), ex);
@@ -238,7 +241,8 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 			return e;
 		} catch (Exception ex) {
 			if (ex.getCause() instanceof GraphException) {
-				throw new GraphException(ex.getCause().getLocalizedMessage());
+				throw new GraphException(ex.getCause().getLocalizedMessage(),
+						ex);
 			}
 			throw new M1ClassAccessException("Cannot create edge of class "
 					+ edgeClass.getCanonicalName(), ex);
@@ -253,7 +257,8 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 			return g;
 		} catch (Exception ex) {
 			if (ex.getCause() instanceof GraphException) {
-				throw new GraphException(ex.getCause().getLocalizedMessage());
+				throw new GraphException(ex.getCause().getLocalizedMessage(),
+						ex);
 			}
 			throw new M1ClassAccessException("Cannot create graph of class "
 					+ graphClass.getCanonicalName(), ex);
@@ -268,7 +273,8 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 			return g;
 		} catch (Exception ex) {
 			if (ex.getCause() instanceof GraphException) {
-				throw new GraphException(ex.getCause().getLocalizedMessage());
+				throw new GraphException(ex.getCause().getLocalizedMessage(),
+						ex);
 			}
 			throw new M1ClassAccessException("Cannot create graph of class "
 					+ graphClass.getCanonicalName(), ex);
@@ -282,23 +288,24 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 			return v;
 		} catch (Exception ex) {
 			if (ex.getCause() instanceof GraphException) {
-				throw new GraphException(ex.getCause().getLocalizedMessage());
+				throw new GraphException(ex.getCause().getLocalizedMessage(),
+						ex);
 			}
 			throw new M1ClassAccessException("Cannot create vertex of class "
 					+ vertexClass.getCanonicalName(), ex);
 		}
 	}
-	
 
-	
 	@SuppressWarnings("unchecked")
-	public <T extends Record> T createRecordWithTransactionSupport(Class<T> recordDomain, Graph g) {
+	public <T extends Record> T createRecordWithTransactionSupport(
+			Class<T> recordDomain, Graph g) {
 		try {
 			T r = (T) recordTransactionMap.get(recordDomain).newInstance(g);
 			return r;
 		} catch (Exception ex) {
 			if (ex.getCause() instanceof GraphException) {
-				throw new GraphException(ex.getCause().getLocalizedMessage());
+				throw new GraphException(ex.getCause().getLocalizedMessage(),
+						ex);
 			}
 			throw new M1ClassAccessException("Cannot create vertex of class "
 					+ recordDomain.getCanonicalName(), ex);
@@ -356,15 +363,17 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 			}
 		}
 	}
-	
+
 	public void setRecordTransactionImplementationClass(
 			Class<? extends Record> m1Class,
 			Class<? extends Record> implementationClass) {
 		if (isSuperclassOrEqual(m1Class, implementationClass)) {
 			try {
-				Class<?>[] params = { int.class, Object[].class };
-				recordTransactionMap.put(m1Class, implementationClass
-						.getConstructor(params));
+				Class<?>[] params = { Graph.class };
+				Constructor<? extends Record> c = implementationClass
+						.getConstructor(params);
+				assert c != null;
+				recordTransactionMap.put(m1Class, c);
 			} catch (NoSuchMethodException ex) {
 				throw new M1ClassAccessException(
 						"Unable to locate default constructor for record"
@@ -386,7 +395,8 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 			return e;
 		} catch (Exception ex) {
 			if (ex.getCause() instanceof GraphException) {
-				throw new GraphException(ex.getCause().getLocalizedMessage());
+				throw new GraphException(ex.getCause().getLocalizedMessage(),
+						ex);
 			}
 			throw new M1ClassAccessException("Cannot create edge of class "
 					+ edgeClass.getCanonicalName(), ex);
@@ -424,31 +434,29 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 			return v;
 		} catch (Exception ex) {
 			if (ex.getCause() instanceof GraphException) {
-				throw new GraphException(ex.getCause().getLocalizedMessage());
+				throw new GraphException(ex.getCause().getLocalizedMessage(),
+						ex);
 			}
 			throw new M1ClassAccessException("Cannot create vertex of class "
 					+ vertexClass.getCanonicalName(), ex);
 		}
 	}
-	
-	
+
 	@SuppressWarnings("unchecked")
-	public <T extends Record> T createRecordWithSavememSupport(Class<T> recordDomain, Graph g) {
+	public <T extends Record> T createRecordWithSavememSupport(
+			Class<T> recordDomain, Graph g) {
 		try {
 			T r = (T) recordSavememMap.get(recordDomain).newInstance(g);
 			return r;
 		} catch (Exception ex) {
 			if (ex.getCause() instanceof GraphException) {
-				throw new GraphException(ex.getCause().getLocalizedMessage());
+				throw new GraphException(ex.getCause().getLocalizedMessage(),
+						ex);
 			}
 			throw new M1ClassAccessException("Cannot create vertex of class "
 					+ recordDomain.getCanonicalName(), ex);
 		}
 	}
-	
-	
-	
-	
 
 	public void setGraphSavememImplementationClass(
 			Class<? extends Graph> originalClass,
@@ -498,16 +506,17 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 			}
 		}
 	}
-	
-	
+
 	public void setRecordSavememImplementationClass(
 			Class<? extends Record> m1Class,
 			Class<? extends Record> implementationClass) {
 		if (isSuperclassOrEqual(m1Class, implementationClass)) {
 			try {
-				Class<?>[] params = { int.class, Object[].class };
-				recordSavememMap.put(m1Class, implementationClass
-						.getConstructor(params));
+				Class<?>[] params = { Graph.class };
+				Constructor<? extends Record> c = implementationClass
+						.getConstructor(params);
+				assert c != null;
+				recordSavememMap.put(m1Class, c);
 			} catch (NoSuchMethodException ex) {
 				throw new M1ClassAccessException(
 						"Unable to locate default constructor for record"
