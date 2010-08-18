@@ -176,15 +176,11 @@ public class TabularVisualizer {
 		}
 		// find position of element in the corresponding array TODO
 		int idOfElement = Integer.parseInt(elementId.substring(1));
-		int positionOfElementInArray = findPositionInArray(
-				isVertex ? state.verticesOfTableView : state.edgesOfTableView,
-				idOfElement);
-		if ((positionOfElementInArray < 0)
-				&& (isVertex ? state.selectedVertexClasses
-						: state.selectedEdgeClasses)
-						.get((isVertex ? state.graph.getVertex(idOfElement)
-								: state.graph.getEdge(idOfElement))
-								.getAttributedElementClass())) {
+		int positionOfElementInArray = -1;
+		if ((isVertex ? state.selectedVertexClasses : state.selectedEdgeClasses)
+				.get((isVertex ? state.graph.getVertex(idOfElement)
+						: state.graph.getEdge(idOfElement))
+						.getAttributedElementClass())) {
 			// try to find element if it's type wasn't deselected
 			for (int i = 0; i < (isVertex ? state.verticesOfTableView
 					: state.edgesOfTableView).length; i++) {
@@ -195,11 +191,11 @@ public class TabularVisualizer {
 				}
 			}
 		}
+		boolean elementWasNotFound = positionOfElementInArray < 0;
 		// the element wasn't found, the next element is shown
 		positionOfElementInArray = positionOfElementInArray < 0 ? (positionOfElementInArray + 1)
 				* -1
 				: positionOfElementInArray;
-
 		int numberOfPages = 1;
 		int numberOfPageWithElementOfId = 1;
 		if ((numberPerPage > 0)
@@ -246,6 +242,28 @@ public class TabularVisualizer {
 			// jump to current element
 			code.append("document.location.href = \"#").append(elementId)
 					.append("\";\n");
+		}
+		if (elementWasNotFound) {
+			// show message, that the graphelement could not be found.
+			code.append("if(").append(isVertex).append(
+					" && areVerticesShown()){\n");
+			code.append("alert(\"The ").append(isVertex ? "vertex " : "edge ")
+					.append(elementId).append(" could not be found");
+			if (!(isVertex ? state.selectedVertexClasses
+					: state.selectedEdgeClasses).get((isVertex ? state.graph
+					.getVertex(idOfElement) : state.graph.getEdge(idOfElement))
+					.getAttributedElementClass())) {
+				code.append(" because the type ")
+						.append(
+								(isVertex ? state.graph.getVertex(idOfElement)
+										: state.graph.getEdge(idOfElement))
+										.getAttributedElementClass()
+										.getQualifiedName()).append(
+								" is deselected");
+			}
+			code
+					.append(". \\nThat's why the first page of the current table is shown.\");\n");
+			code.append("}\n");
 		}
 	}
 
@@ -790,41 +808,5 @@ public class TabularVisualizer {
 				typeInfix).append("Table\";\n");
 		code.append("divText").append(typeInfix).append(".appendChild(div")
 				.append(typeInfix).append("Table);\n");
-	}
-
-	/**
-	 * Returns the position of the element with the id <code>id</code> in the
-	 * array <code>graphElements</code>. If the element couldn't be found the
-	 * position*-1 of the element with the next smaller id is returned. If it
-	 * was the first element -1 is returned.
-	 * 
-	 * @param graphElements
-	 * @param id
-	 * @return
-	 */
-	private int findPositionInArray(GraphElement[] graphElements, int id) {
-		if ((id < graphElements.length)
-				&& (id == graphElements[id - 1].getId())) {
-			// The element is found at the same position as the id-1
-			return id - 1;
-		}
-		int left = 0;
-		int right = graphElements.length - 1;
-		while (left < right) {
-			int middle = (right + left) >>> 1;
-			int idAtPosition = graphElements[middle].getId();
-			if (idAtPosition == id) {
-				return middle;
-			} else if (idAtPosition > id) {
-				right = middle;
-			} else {
-				left = middle + 1;
-			}
-		}
-		if ((graphElements.length > 0) && (graphElements[left].getId() == id)) {
-			return left;
-		} else {
-			return -left - 1;
-		}
 	}
 }
