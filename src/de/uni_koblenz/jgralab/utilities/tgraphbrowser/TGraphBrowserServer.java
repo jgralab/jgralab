@@ -91,7 +91,7 @@ public class TGraphBrowserServer extends Thread {
 		Formatter formatter = handler.getFormatter();
 		// create temp-folder
 		String path = System.getProperty("java.io.tmpdir") + File.separator
-				+ "tGraphBrowser";
+				+ "tgraphbrowser";
 		File tempFolder = new File(path);
 		if (!tempFolder.exists()) {
 			if (!tempFolder.mkdir()) {
@@ -205,8 +205,32 @@ public class TGraphBrowserServer extends Thread {
 		try {
 			starttime = System.currentTimeMillis();
 			String portnumber = comLine.getOptionValue("p");
+			String workspacePath;
+			if (comLine.hasOption("w")) {
+				workspacePath = comLine.getOptionValue("w");
+			} else {
+				File workspace = new File(System.getProperty("java.io.tmpdir")
+						+ File.separator + "tgraphbrowser");
+				if (!workspace.exists()) {
+					if (!workspace.mkdir()) {
+						logger.info("The temp folder "
+								+ workspace.getAbsolutePath()
+								+ " could not be created.");
+					}
+				}
+				workspace = new File(workspace.getAbsoluteFile()
+						+ File.separator + "workspace");
+				if (!workspace.exists()) {
+					if (!workspace.mkdir()) {
+						logger.info("The default workspace "
+								+ workspace.getAbsolutePath()
+								+ " could not be created.");
+					}
+				}
+				workspacePath = workspace.getAbsolutePath();
+			}
 			new TGraphBrowserServer(portnumber == null ? DEFAULT_PORT : Integer
-					.parseInt(portnumber), comLine.getOptionValue("w"), comLine
+					.parseInt(portnumber), workspacePath, comLine
 					.getOptionValue("m"), comLine.getOptionValue("s")).start();
 			if (comLine.getOptionValue("ic") != null) {
 				TabularVisualizer.NUMBER_OF_INCIDENCES_PER_PAGE = Math.max(
@@ -240,8 +264,8 @@ public class TGraphBrowserServer extends Thread {
 		OptionHandler oh = new OptionHandler(toolString, versionString);
 
 		Option output = new Option("w", "workspace", true,
-				"(required): the workspace");
-		output.setRequired(true);
+				"(optional): the workspace. Default is $temp$/tgraphbrowser/workspace");
+		output.setRequired(false);
 		output.setArgName("path");
 		oh.addOption(output);
 
