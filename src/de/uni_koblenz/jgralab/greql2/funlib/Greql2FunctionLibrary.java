@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Comparator;
 import java.util.Enumeration;
@@ -586,7 +587,16 @@ public class Greql2FunctionLibrary {
 
 	private void registerFunctionsInResourceBundle(URL res) {
 		// TODO: how do i load classes from
-		// bundleresource://355.fwk243323391/de/uni_koblenz/jgralab/greql2/funlib/
+		// 
+		try {
+			File dir = new File(res.toURI());
+			for (File f : dir.listFiles()) {
+				System.out.println(f);
+			}
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 }
