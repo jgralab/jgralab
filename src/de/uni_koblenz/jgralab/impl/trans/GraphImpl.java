@@ -14,11 +14,13 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.GraphException;
+import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.GraphStructureChangedListener;
 import de.uni_koblenz.jgralab.JGraLabList;
 import de.uni_koblenz.jgralab.JGraLabMap;
 import de.uni_koblenz.jgralab.JGraLabSet;
+import de.uni_koblenz.jgralab.Record;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.FreeIndexList;
 import de.uni_koblenz.jgralab.impl.IncidenceImpl;
@@ -1569,6 +1571,33 @@ public abstract class GraphImpl extends
 		return new JGraLabMapImpl<K, V>(this, initialCapacity, loadFactor);
 	}
 
+	
+	
+	@Override
+	public <T extends Record> T createRecord(Class<T> recordClass, GraphIO io) {
+		T record = graphFactory.createRecordWithTransactionSupport(recordClass, this);
+		try {
+			record.readComponentValues(io);
+		} catch (GraphIOException e) {
+			e.printStackTrace();
+		}
+		return record;
+	}
+
+	@Override
+	public <T extends Record> T createRecord(Class<T> recordClass, Map<String, Object> fields) {
+		T record = graphFactory.createRecordWithTransactionSupport(recordClass, this);
+		record.setComponentValues(fields);
+		return record;
+	}
+
+	@Override
+	public <T extends Record> T createRecord(Class<T> recordClass, Object... components) {
+		T record = graphFactory.createRecordWithTransactionSupport(recordClass, this);
+		record.setComponentValues(components);
+		return record;
+	}
+	
 	private boolean isWriting() {
 		return getCurrentTransaction().getState() == TransactionState.WRITING;
 	}
