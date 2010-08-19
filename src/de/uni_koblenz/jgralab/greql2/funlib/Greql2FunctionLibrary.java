@@ -28,7 +28,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Comparator;
 import java.util.Enumeration;
@@ -566,10 +565,7 @@ public class Greql2FunctionLibrary {
 					.getClassLoader().getResources(nondottedPackageName);
 			while (resources.hasMoreElements()) {
 				URL res = resources.nextElement();
-				System.out.println(res);
-				System.out.println("+ " + res.getProtocol());
 				String fileName = res.getFile();
-				System.out.println("- " + fileName);
 				if (fileName.contains(".jar!/")) {
 					registerFunctionsInJar(fileName.substring(fileName
 							.indexOf(':') + 1));
@@ -586,17 +582,7 @@ public class Greql2FunctionLibrary {
 	}
 
 	private void registerFunctionsInResourceBundle(URL res) {
-		// TODO: how do i load classes from
-		// 
-		try {
-			File dir = new File(res.toURI());
-			for (File f : dir.listFiles()) {
-				System.out.println(f);
-			}
-		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		// TODO: how do i load classes from a bundleresource:// URL???
 
 	}
 }
