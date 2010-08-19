@@ -239,7 +239,7 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 		 * parentPackage.getSchema().getGraphClass().getSimpleName() + ")" +
 		 * "graph).create" + getSimpleName() + "(io);");
 		 */
-		code.add("\t" + "#name# = #theGraph#.createRecord(" + getSimpleName()
+		code.add("\t" + "#name# = #theGraph#.createRecord(" + getSchema().getPackagePrefix() + "." + getQualifiedName()
 				+ ".class, io);");
 		code.add("} else if (" + graphIoVariableName
 				+ ".isNextToken(GraphIO.NULL_LITERAL)) {");
