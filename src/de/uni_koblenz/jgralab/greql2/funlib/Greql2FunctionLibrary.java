@@ -566,7 +566,9 @@ public class Greql2FunctionLibrary {
 			while (resources.hasMoreElements()) {
 				URL res = resources.nextElement();
 				System.out.println(res);
+				System.out.println(res.getProtocol());
 				String fileName = res.getFile();
+				System.out.println(fileName);
 				if (fileName.contains(".jar!/")) {
 					registerFunctionsInJar(fileName.substring(fileName
 							.indexOf(':') + 1));
