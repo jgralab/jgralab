@@ -230,6 +230,8 @@ public class RecordCodeGenerator extends CodeGenerator {
 	 */
 	private CodeBlock createEqualsMethod() {
 		CodeList code = new CodeList();
+		if (currentCycle.isAbstract())
+			return code;
 		code.addNoIndent(new CodeSnippet(true,
 				"public boolean equals(Object o) {"));
 		code.add(new CodeSnippet("if(o == null)", "\treturn false;"));
@@ -242,8 +244,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 			code.add(new CodeSnippet(
 					"if(!(o instanceof #simpleImplClassName#))",
 					"\treturn false;"));
-			code
-					.add(new CodeSnippet(
+			code.add(new CodeSnippet(
 							"#simpleImplClassName# record = (#simpleImplClassName#) o;"));
 		}
 
@@ -316,8 +317,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 	private CodeBlock createGetGraphMethod() {
 		CodeList code = new CodeList();
 		if (currentCycle.isTransImpl()) {
-			code
-					.addNoIndent(new CodeSnippet(true,
+			code.addNoIndent(new CodeSnippet(true,
 							"public Graph getGraph() {"));
 			code.add(new CodeSnippet("return #theGraph#;"));
 			code.addNoIndent(new CodeSnippet("}"));
