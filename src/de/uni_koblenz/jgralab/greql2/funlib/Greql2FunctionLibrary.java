@@ -566,12 +566,14 @@ public class Greql2FunctionLibrary {
 			while (resources.hasMoreElements()) {
 				URL res = resources.nextElement();
 				System.out.println(res);
-				System.out.println(res.getProtocol());
+				System.out.println("+ " + res.getProtocol());
 				String fileName = res.getFile();
-				System.out.println(fileName);
+				System.out.println("- " + fileName);
 				if (fileName.contains(".jar!/")) {
 					registerFunctionsInJar(fileName.substring(fileName
 							.indexOf(':') + 1));
+				} else if (res.getProtocol().equals("bundleresource")) {
+					registerFunctionsInResourceBundle(res);
 				} else {
 					registerFunctionsInDirectory(fileName);
 				}
@@ -580,5 +582,11 @@ public class Greql2FunctionLibrary {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+	}
+
+	private void registerFunctionsInResourceBundle(URL res) {
+		// TODO: how do i load classes from
+		// bundleresource://355.fwk243323391/de/uni_koblenz/jgralab/greql2/funlib/
+
 	}
 }
