@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry excluding="testdata/|testgraphs/|testschemas/" kind="src" path="testit"/>
-	<classpathentry exported="true" kind="lib" path="build/jar/jgralab.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="/common/lib/apache/commons/cli/commons-cli-1.2.jar"/>
