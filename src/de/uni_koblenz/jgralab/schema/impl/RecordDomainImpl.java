@@ -240,7 +240,7 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 		 * "graph).create" + getSimpleName() + "(io);");
 		 */
 		code.add("\t" + "#name# = #theGraph#.createRecord(" + getSimpleName()
-				+ "Impl.class, io);");
+				+ ".class, io);");
 		code.add("} else if (" + graphIoVariableName
 				+ ".isNextToken(GraphIO.NULL_LITERAL)) {");
 		code.add("\t" + graphIoVariableName + ".match();");
