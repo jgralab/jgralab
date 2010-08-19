@@ -21,6 +21,6 @@ public interface BinaryFunction<DOMAIN1, DOMAIN2, RANGE> {
 
 	public void set(DOMAIN1 parameter1, DOMAIN2 parameter2, RANGE value);
 
-	public void isDefined(DOMAIN1 parameter1, DOMAIN2 parameter2);
+	public boolean isDefined(DOMAIN1 parameter1, DOMAIN2 parameter2);
 
 }
