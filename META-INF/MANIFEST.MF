@@ -3,7 +3,8 @@ Bundle-ManifestVersion: 2
 Bundle-Name: jgralab
 Bundle-SymbolicName: jgralab;singleton:=true
 Bundle-Version: 4.0.0.dimetrodon
-Export-Package: de.uni_koblenz.ist.utilities.auto_build_id,
+Export-Package: .,
+ de.uni_koblenz.ist.utilities.auto_build_id,
  de.uni_koblenz.ist.utilities.csvreader,
  de.uni_koblenz.ist.utilities.option_handler,
  de.uni_koblenz.ist.utilities.xml,
