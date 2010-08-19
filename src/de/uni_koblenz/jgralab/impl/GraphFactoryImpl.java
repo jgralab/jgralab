@@ -200,10 +200,8 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 		if (isSuperclassOrEqual(m1Class, implementationClass)) {
 			try {
 				Class<?>[] params = { Graph.class };
-				Constructor<? extends Record> c = implementationClass
-						.getConstructor(params);
-				assert c != null;
-				recordMap.put(m1Class, c);
+				recordMap.put(m1Class, implementationClass
+						.getConstructor(params));
 			} catch (NoSuchMethodException ex) {
 				throw new M1ClassAccessException(
 						"Unable to locate default constructor for record"
@@ -370,10 +368,8 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 		if (isSuperclassOrEqual(m1Class, implementationClass)) {
 			try {
 				Class<?>[] params = { Graph.class };
-				Constructor<? extends Record> c = implementationClass
-						.getConstructor(params);
-				assert c != null;
-				recordTransactionMap.put(m1Class, c);
+				recordTransactionMap.put(m1Class, implementationClass
+						.getConstructor(params));
 			} catch (NoSuchMethodException ex) {
 				throw new M1ClassAccessException(
 						"Unable to locate default constructor for record"
@@ -513,10 +509,8 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 		if (isSuperclassOrEqual(m1Class, implementationClass)) {
 			try {
 				Class<?>[] params = { Graph.class };
-				Constructor<? extends Record> c = implementationClass
-						.getConstructor(params);
-				assert c != null;
-				recordSavememMap.put(m1Class, c);
+				recordSavememMap.put(m1Class, implementationClass
+						.getConstructor(params));
 			} catch (NoSuchMethodException ex) {
 				throw new M1ClassAccessException(
 						"Unable to locate default constructor for record"
