@@ -27,10 +27,8 @@ package de.uni_koblenz.jgralab.greql2.funlib;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Modifier;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -56,9 +54,9 @@ import de.uni_koblenz.jgralab.greql2.funlib.Greql2Function.Category;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
- * This class is the core of the function library. It's implemented following the
- * singleton-pattern. On load, a instance gets created and all functions in the
- * package are read. One can use the methods
+ * This class is the core of the function library. It's implemented following
+ * the singleton-pattern. On load, a instance gets created and all functions in
+ * the package are read. One can use the methods
  * <code>boolean isGreqlFunction(String name)</code> to ask the Library if a
  * string is a GReQL-function
  * <code>JValue evaluateGreqlFunction(String name, JValue[] arguments)</code> to
@@ -467,14 +465,18 @@ public class Greql2FunctionLibrary {
 			logger.finer("Try to register function: " + className);
 			Class<?> clazz = Class.forName(packageName + "." + className);
 			logger.finer("Found Class: " + (clazz != null));
+			String funName = toFunctionName(className);
+			if (availableFunctions.containsKey(funName)) {
+				logger.finer("Skipping doubled registration of " + funName);
+				return;
+			}
 			Class<?> iface = Class
 					.forName(packageName + "." + "Greql2Function");
 			if (iface.isAssignableFrom(clazz)
 					&& !(Modifier.isAbstract(clazz.getModifiers()) || Modifier
 							.isInterface(clazz.getModifiers()))) {
 				Object o = clazz.getConstructor().newInstance();
-				availableFunctions.put(toFunctionName(className),
-						(Greql2Function) o);
+				availableFunctions.put(funName, (Greql2Function) o);
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -504,10 +506,6 @@ public class Greql2FunctionLibrary {
 						.hasMoreElements();) {
 					JarEntry je = e.nextElement();
 					String entryName = je.getName();
-					if (entryName.contains("funlib")
-							&& !entryName.contains("funlib/pathsearch")) {
-						logger.finer("Reading entry " + entryName);
-					}
 					if (entryName.startsWith(nondottedPackageName)
 							&& entryName.endsWith(".class")
 							&& Character.isUpperCase(entryName
@@ -536,26 +534,23 @@ public class Greql2FunctionLibrary {
 	 * @param packagePath
 	 *            the path to the package this .class-file is located in
 	 */
-	private boolean registerFunctionsInDirectory(String packagePath) {
-		packagePath = packagePath.replaceAll("%20", " ");
-		logger.finer("Directory Path : " + packagePath);
-		String entries[] = new File(packagePath).list();
-		if (entries == null) {
-			return false;
+	private boolean registerFunctionsInDirectory(String fileName) {
+		logger.finer("Directory Path : " + fileName);
+		boolean foundAClass = false;
+		File dir = new File(fileName);
+		String[] files = dir.list();
+		if (files == null) {
+			return foundAClass;
 		}
-		int i = 0;
-		for (i = 0; i < entries.length; i++) {
-			if (entries[i].endsWith(".class")) {
-				String className = entries[i].substring(0,
-						entries[i].length() - 6);
-				registerPredefinedFunction(className);
+		for (String file : files) {
+			if (!file.endsWith(".class")) {
+				continue;
 			}
+			foundAClass = true;
+			file = file.substring(0, file.length() - 6);
+			registerPredefinedFunction(file);
 		}
-		if (i > 0) {
-			return true;
-		} else {
-			return false;
-		}
+		return foundAClass;
 	}
 
 	/**
@@ -565,44 +560,23 @@ public class Greql2FunctionLibrary {
 	private void registerAllFunctions() {
 		logger.finer("Registering all functions");
 		availableFunctions = new HashMap<String, Greql2Function>();
-		String thisClassName = this.getClass().getCanonicalName();
-		logger.finer("Functionlib name: " + thisClassName);
-		URL packageUrl = null;
 		try {
-			packageUrl = Class.forName("de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary").getResource("/"
-					+ nondottedPackageName + "/Greql2FunctionLibrary.class");
-		} catch (ClassNotFoundException e1) {
+			Enumeration<URL> resources = Greql2FunctionLibrary.class
+					.getClassLoader().getResources(nondottedPackageName);
+			while (resources.hasMoreElements()) {
+				URL res = resources.nextElement();
+				System.out.println(res);
+				String fileName = res.getFile();
+				if (fileName.contains(".jar!/")) {
+					registerFunctionsInJar(fileName.substring(fileName
+							.indexOf(':') + 1));
+				} else {
+					registerFunctionsInDirectory(fileName);
+				}
+			}
+		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
-		}
-//
-//		packageUrl = Greql2FunctionLibrary.class.getResource("/"
-//				+ nondottedPackageName + "/Greql2FunctionLibrary.class");
-
-		if (packageUrl != null) {
-			logger.finer("Found Greql2FunctionLibrary");
-			logger.finer("URL : " + packageUrl.getPath());
-
-			try {
-				String packagePath = URLDecoder.decode(packageUrl.getPath(),
-						"UTF-8");
-				packagePath = packagePath.substring(0, packagePath
-						.lastIndexOf("/"));
-
-				if (!packagePath.startsWith("/")) {
-					// stripp leading file://
-					packagePath = packagePath.substring(packagePath
-							.indexOf("/"));
-				}
-				if (registerFunctionsInJar(packagePath)) {
-					return;
-				}
-				if (registerFunctionsInDirectory(packagePath)) {
-					return;
-				}
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-			}
 		}
 	}
 }
