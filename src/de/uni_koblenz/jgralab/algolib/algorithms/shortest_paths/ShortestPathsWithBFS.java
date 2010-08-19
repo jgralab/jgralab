@@ -31,12 +31,12 @@ public class ShortestPathsWithBFS extends GraphAlgorithm implements
 
 	@Override
 	public void addVisitor(Visitor visitor) {
-		throw new UnsupportedOperationException(
-				"This algorithm does not support visitors.");
+		bfs.addVisitor(visitor);
 	}
 
 	@Override
 	public void disableOptionalResults() {
+		bfs.disableOptionalResults();
 	}
 
 	@Override
@@ -56,8 +56,7 @@ public class ShortestPathsWithBFS extends GraphAlgorithm implements
 
 	@Override
 	public void removeVisitor(Visitor visitor) {
-		throw new UnsupportedOperationException(
-				"This algorithm does not support visitors.");
+		bfs.removeVisitor(visitor);
 	}
 
 	@Override

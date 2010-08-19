@@ -56,6 +56,16 @@ public class KahnKnuthAlgorithm extends GraphAlgorithm implements
 		return this;
 	}
 
+	public KahnKnuthAlgorithm withTnumber() {
+		tnumber = new IntegerVertexMarker(graph);
+		return this;
+	}
+
+	public KahnKnuthAlgorithm withoutTnumber() {
+		tnumber = null;
+		return this;
+	}
+
 	@Override
 	public void disableOptionalResults() {
 		checkStateForSettingParameters();
@@ -68,9 +78,9 @@ public class KahnKnuthAlgorithm extends GraphAlgorithm implements
 		visitor.setAlgorithm(this);
 		visitors.addVisitor(visitor);
 	}
-	
+
 	@Override
-	public void removeVisitor(Visitor visitor){
+	public void removeVisitor(Visitor visitor) {
 		checkStateForSettingParameters();
 		visitors.removeVisitor(visitor);
 	}
@@ -144,7 +154,7 @@ public class KahnKnuthAlgorithm extends GraphAlgorithm implements
 				}
 			}
 		}
-		
+
 		while (firstV < tnum) {
 			Vertex currentVertex = torder[firstV++];
 			visitors.visitVertexInTopologicalOrder(currentVertex);
