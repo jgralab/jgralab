@@ -31,7 +31,7 @@ public class GraphIOTest {
 	@Test
 	public void testStringRead() throws Exception {
 		GraphIO io = GraphIO.createStringReader(
-				"this \"utf string\\nwith newline\" is f \\null a string",
+				"this \"utf string\\nwith newline\" is f n a string",
 				GrumlSchema.instance());
 		io.match("this");
 		String s = io.matchUtfString();
@@ -39,7 +39,7 @@ public class GraphIOTest {
 		io.match("is");
 		Assert.assertFalse(io.matchBoolean());
 		s = io.matchEnumConstant();
-		assertEquals("\\null", s);
+		assertEquals("n", s);
 		io.match("a");
 		io.match("string");
 	}
