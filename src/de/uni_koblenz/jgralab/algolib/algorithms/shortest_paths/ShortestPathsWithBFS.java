@@ -67,6 +67,9 @@ public class ShortestPathsWithBFS extends GraphAlgorithm implements
 	@Override
 	public ShortestPathsWithBFS execute(Vertex start) {
 		bfs.reset();
+		bfs.setGraph(graph);
+		bfs.setSubgraph(subgraph);
+		bfs.setNavigable(null);
 		startRunning();
 		bfs.withLevel().withParent().execute(start);
 		done();

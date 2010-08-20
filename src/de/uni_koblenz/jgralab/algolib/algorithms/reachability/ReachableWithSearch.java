@@ -93,6 +93,9 @@ public class ReachableWithSearch extends GraphAlgorithm implements
 	@Override
 	public ReachableSolver execute(Vertex start, Vertex target) {
 		search.reset();
+		search.setGraph(graph);
+		search.setSubgraph(subgraph);
+		search.setNavigable(null);
 		search.addVisitor(reachableVisitor);
 		startRunning();
 		this.target = target;
