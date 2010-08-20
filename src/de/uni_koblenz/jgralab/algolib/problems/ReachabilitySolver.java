@@ -25,5 +25,5 @@ public interface ReachabilitySolver extends ProblemSolver {
 	 * Retrieves the result <code>reachability relation</code>.
 	 * @return the result <code>reachability relation</code>
 	 */
-	public Relation<Vertex, Vertex> getReachabilityRelation();
+	public Relation<Vertex, Vertex> getReachable();
 }

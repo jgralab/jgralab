@@ -26,7 +26,7 @@ public class WarshallAlgorithm extends GraphAlgorithm implements
 
 	private TransitiveVisitorComposition visitors;
 	private EdgeDirection searchDirection;
-		private IntFunction<Vertex> indexMapping;
+	private IntFunction<Vertex> indexMapping;
 	private Permutation<Vertex> vertexOrder;
 	private int vertexCount;
 	private boolean reachable[][];
@@ -122,7 +122,7 @@ public class WarshallAlgorithm extends GraphAlgorithm implements
 				reachable[vId][wId] = true;
 				reachable[wId][vId] = true;
 				successor[vId][wId] = e;
-				successor[wId][wId] = e.getReversedEdge();
+				successor[wId][vId] = e.getReversedEdge();
 				break;
 			case IN:
 				reachable[wId][vId] = true;
@@ -150,7 +150,7 @@ public class WarshallAlgorithm extends GraphAlgorithm implements
 	}
 
 	@Override
-	public Relation<Vertex, Vertex> getReachabilityRelation() {
+	public Relation<Vertex, Vertex> getReachable() {
 		checkStateForResult();
 		return new ArrayRelation<Vertex>(reachable, indexMapping);
 	}
@@ -159,7 +159,7 @@ public class WarshallAlgorithm extends GraphAlgorithm implements
 	public BinaryFunction<Vertex, Vertex, Edge> getSuccessor() {
 		return new ArrayBinaryFunction<Vertex, Edge>(successor, indexMapping);
 	}
-	
+
 	public EdgeDirection getSearchDirection() {
 		checkStateForSettingParameters();
 		return searchDirection;
@@ -169,10 +169,21 @@ public class WarshallAlgorithm extends GraphAlgorithm implements
 		checkStateForSettingParameters();
 		this.searchDirection = searchDirection;
 	}
-	
-	public Permutation<Vertex> getVertexOrder(){
-		checkStateForResult();
+
+	public Permutation<Vertex> getVertexOrder() {
 		return vertexOrder;
+	}
+	
+	public IntFunction<Vertex> getIndexMapping(){
+		return indexMapping;
+	}
+	
+	public boolean[][] getInternalReachable(){
+		return reachable;
+	}
+	
+	public Edge[][] getInternalSuccessor(){
+		return successor;
 	}
 
 }
