@@ -576,13 +576,12 @@ public class Greql2FunctionLibrary {
 				}
 			}
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 	}
 
 	private void registerFunctionsInResourceBundle(URL res) {
 		// TODO: how do i load classes from a bundleresource:// URL???
-
+		// That seems not to be possible without using eclipse stuff...
 	}
 }
