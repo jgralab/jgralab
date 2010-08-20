@@ -111,6 +111,9 @@ public class WarshallAlgorithm extends GraphAlgorithm implements
 			reachable[vId][vId] = true;
 		}
 		for (Edge e : graph.edges()) {
+			if(subgraph != null && !subgraph.get(e)){
+				continue;
+			}
 			int vId = indexMapping.get(e.getAlpha());
 			int wId = indexMapping.get(e.getOmega());
 			switch (searchDirection) {

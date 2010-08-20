@@ -154,7 +154,7 @@ public class KahnKnuthAlgorithm extends GraphAlgorithm implements
 				}
 			}
 		}
-
+		// TODO concern subgraph
 		while (firstV < tnum) {
 			Vertex currentVertex = torder[firstV++];
 			visitors.visitVertexInTopologicalOrder(currentVertex);

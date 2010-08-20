@@ -120,6 +120,9 @@ public class TopologicalOrderWithDFS extends GraphAlgorithm implements
 	@Override
 	public TopologicalOrderWithDFS execute() {
 		dfs.reset();
+		dfs.setGraph(graph);
+		dfs.setSubgraph(subgraph);
+		dfs.setNavigable(null);
 		EdgeDirection originalDirection = dfs.getSearchDirection();
 		dfs.setSearchDirection(EdgeDirection.IN);
 		dfs.addVisitor(torderVisitorAdapter);

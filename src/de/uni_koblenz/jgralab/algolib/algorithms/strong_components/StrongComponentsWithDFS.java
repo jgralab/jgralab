@@ -183,6 +183,9 @@ public class StrongComponentsWithDFS extends GraphAlgorithm implements
 	@Override
 	public StrongComponentsSolver execute() {
 		dfs.reset();
+		dfs.setGraph(graph);
+		dfs.setSubgraph(subgraph);
+		dfs.setNavigable(null);
 		dfs.addVisitor(lowlinkVisitor);
 		startRunning();
 		dfs.execute();
