@@ -8,7 +8,7 @@ import de.uni_koblenz.jgralab.schema.CollectionDomain;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.exception.WrongSchemaException;
 
-public class CollectionDomainTest extends CompositeDomainTest {
+public abstract class CollectionDomainTest extends CompositeDomainTest {
 
 	protected Domain expectedBaseDomain;
 
