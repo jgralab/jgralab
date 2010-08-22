@@ -142,23 +142,27 @@ public class KahnKnuthAlgorithm extends GraphAlgorithm implements
 
 		// store actual in degree for all vertices
 		for (Vertex currentVertex : graph.vertices()) {
-			if (subgraph == null || subgraph.get(currentVertex)) {
-				int degree = currentVertex.getDegree(degreeDirection);
-				inDegree.set(currentVertex, degree);
-				if (degree == 0) {
-					torder[tnum] = currentVertex;
-					if (tnumber != null) {
-						tnumber.set(currentVertex, tnum);
-					}
-					tnum++;
-				}
+			if (subgraph != null && !subgraph.get(currentVertex)) {
+				continue;
 			}
+			int degree = currentVertex.getDegree(degreeDirection);
+			inDegree.set(currentVertex, degree);
+			if (degree == 0) {
+				torder[tnum] = currentVertex;
+				if (tnumber != null) {
+					tnumber.set(currentVertex, tnum);
+				}
+				tnum++;
+			}
+
 		}
-		// TODO concern subgraph
 		while (firstV < tnum) {
 			Vertex currentVertex = torder[firstV++];
 			visitors.visitVertexInTopologicalOrder(currentVertex);
 			for (Edge currentEdge : currentVertex.incidences(searchDirection)) {
+				if (subgraph != null && !subgraph.get(currentEdge)) {
+					continue;
+				}
 				Vertex nextVertex = currentEdge.getThat();
 				inDegree.set(nextVertex, inDegree.get(nextVertex) - 1);
 				if (inDegree.get(nextVertex) == 0) {

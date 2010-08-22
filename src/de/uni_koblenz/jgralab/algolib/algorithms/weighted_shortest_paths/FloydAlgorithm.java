@@ -1,4 +1,4 @@
-package de.uni_koblenz.jgralab.algolib.algorithms.reachability;
+package de.uni_koblenz.jgralab.algolib.algorithms.weighted_shortest_paths;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
@@ -10,33 +10,38 @@ import de.uni_koblenz.jgralab.algolib.algorithms.GraphAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.reachability.visitors.TransitiveVisitorComposition;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.BreadthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.SearchAlgorithm;
+import de.uni_koblenz.jgralab.algolib.functions.ArrayBinaryDoubleFunction;
 import de.uni_koblenz.jgralab.algolib.functions.ArrayBinaryFunction;
-import de.uni_koblenz.jgralab.algolib.functions.ArrayRelation;
+import de.uni_koblenz.jgralab.algolib.functions.BinaryDoubleFunction;
 import de.uni_koblenz.jgralab.algolib.functions.BinaryFunction;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
+import de.uni_koblenz.jgralab.algolib.functions.DoubleFunction;
 import de.uni_koblenz.jgralab.algolib.functions.IntFunction;
 import de.uni_koblenz.jgralab.algolib.functions.Permutation;
-import de.uni_koblenz.jgralab.algolib.functions.Relation;
-import de.uni_koblenz.jgralab.algolib.problems.ReachabilitySolver;
-import de.uni_koblenz.jgralab.algolib.problems.SimplePathsSolver;
+import de.uni_koblenz.jgralab.algolib.problems.NegativeCyclesSolver;
+import de.uni_koblenz.jgralab.algolib.problems.WeightedDistancesSolver;
+import de.uni_koblenz.jgralab.algolib.problems.WeightedShortestPathsSolver;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
 
-public class WarshallAlgorithm extends GraphAlgorithm implements
-		ReachabilitySolver, SimplePathsSolver {
+public class FloydAlgorithm extends GraphAlgorithm implements
+		WeightedDistancesSolver, WeightedShortestPathsSolver,
+		NegativeCyclesSolver {
 
 	private TransitiveVisitorComposition visitors;
 	private EdgeDirection searchDirection;
 	private IntFunction<Vertex> indexMapping;
 	private Permutation<Vertex> vertexOrder;
 	private int vertexCount;
-	private boolean reachable[][];
+	private double weightedDistance[][];
 	private Edge[][] successor;
+	private DoubleFunction<Edge> edgeWeight;
+	private boolean negativeCycles;
 
-	public WarshallAlgorithm(Graph graph) {
+	public FloydAlgorithm(Graph graph) {
 		super(graph);
 	}
 
-	public WarshallAlgorithm(Graph graph, BooleanFunction<GraphElement> subgraph) {
+	public FloydAlgorithm(Graph graph, BooleanFunction<GraphElement> subgraph) {
 		super(graph, subgraph);
 	}
 
@@ -78,17 +83,25 @@ public class WarshallAlgorithm extends GraphAlgorithm implements
 	}
 
 	@Override
+	public void setEdgeWeight(DoubleFunction<Edge> edgeWeight) {
+		this.edgeWeight = edgeWeight;
+	}
+
+	public DoubleFunction<Edge> getEdgeWeight() {
+		return edgeWeight;
+	}
+
+	@Override
 	public void reset() {
 		super.reset();
-		SearchAlgorithm search = new BreadthFirstSearch(graph, subgraph,
-				isDirected(), null).withNumber();
-		search.setSearchDirection(searchDirection);
+		negativeCycles = false;
+		SearchAlgorithm search = new BreadthFirstSearch(graph).withNumber();
 		search.execute();
 		indexMapping = search.getNumber();
 		vertexOrder = search.getVertexOrder();
 		vertexCount = graph.getVCount();
-		reachable = reachable == null ? new boolean[vertexCount + 1][vertexCount + 1]
-				: reachable;
+		weightedDistance = weightedDistance == null ? new double[vertexCount + 1][vertexCount + 1]
+				: weightedDistance;
 		successor = successor == null ? new Edge[vertexCount + 1][vertexCount + 1]
 				: successor;
 	}
@@ -101,16 +114,16 @@ public class WarshallAlgorithm extends GraphAlgorithm implements
 	}
 
 	@Override
-	public WarshallAlgorithm execute() {
+	public FloydAlgorithm execute() {
 		startRunning();
 
 		// clear and initialize arrays
 		for (int vId = 1; vId < vertexCount; vId++) {
 			for (int wId = 1; wId < vertexCount; wId++) {
-				reachable[vId][wId] = false;
+				weightedDistance[vId][wId] = Double.POSITIVE_INFINITY;
 				successor[vId][wId] = null;
 			}
-			reachable[vId][vId] = true;
+			weightedDistance[vId][vId] = 0;
 		}
 		for (Edge e : graph.edges()) {
 			if (subgraph != null && !subgraph.get(e)) {
@@ -120,17 +133,17 @@ public class WarshallAlgorithm extends GraphAlgorithm implements
 			int wId = indexMapping.get(e.getOmega());
 			switch (searchDirection) {
 			case OUT:
-				reachable[vId][wId] = true;
+				weightedDistance[vId][wId] = edgeWeight.get(e);
 				successor[vId][wId] = e;
 				break;
 			case INOUT:
-				reachable[vId][wId] = true;
-				reachable[wId][vId] = true;
+				weightedDistance[vId][wId] = edgeWeight.get(e);
+				weightedDistance[wId][vId] = edgeWeight.get(e);
 				successor[vId][wId] = e;
 				successor[wId][vId] = e.getReversedEdge();
 				break;
 			case IN:
-				reachable[wId][vId] = true;
+				weightedDistance[wId][vId] = edgeWeight.get(e);
 				successor[wId][vId] = e.getReversedEdge();
 			}
 		}
@@ -139,12 +152,17 @@ public class WarshallAlgorithm extends GraphAlgorithm implements
 		for (int vId = 1; vId <= vertexCount; vId++) {
 			for (int uId = 1; uId <= vertexCount; uId++) {
 				for (int wId = 1; wId <= vertexCount; wId++) {
-					if (reachable[uId][vId] && reachable[vId][wId]
-							&& !reachable[uId][wId]) {
-						reachable[uId][wId] = true;
+					double newDistance = weightedDistance[uId][vId]
+							+ weightedDistance[vId][wId];
+					if (weightedDistance[uId][wId] > newDistance) {
+						weightedDistance[uId][wId] = newDistance;
 						successor[uId][wId] = successor[uId][vId];
 						visitors.visitVertexTriple(vertexOrder.get(uId),
 								vertexOrder.get(vId), vertexOrder.get(wId));
+					}
+					if (uId == wId && weightedDistance[uId][wId] < 0) {
+						negativeCycles = true;
+						terminate();
 					}
 				}
 			}
@@ -155,13 +173,15 @@ public class WarshallAlgorithm extends GraphAlgorithm implements
 	}
 
 	@Override
-	public Relation<Vertex, Vertex> getReachable() {
+	public BinaryDoubleFunction<Vertex, Vertex> getWeightedDistance() {
 		checkStateForResult();
-		return new ArrayRelation<Vertex>(reachable, indexMapping);
+		return new ArrayBinaryDoubleFunction<Vertex>(weightedDistance,
+				indexMapping);
 	}
 
 	@Override
 	public BinaryFunction<Vertex, Vertex, Edge> getSuccessor() {
+		checkStateForResult();
 		return new ArrayBinaryFunction<Vertex, Edge>(successor, indexMapping);
 	}
 
@@ -183,12 +203,18 @@ public class WarshallAlgorithm extends GraphAlgorithm implements
 		return indexMapping;
 	}
 
-	public boolean[][] getInternalReachable() {
-		return reachable;
+	public double[][] getInternalWeightedDistance() {
+		return weightedDistance;
 	}
 
 	public Edge[][] getInternalSuccessor() {
 		return successor;
+	}
+
+	@Override
+	public boolean hasNegativeCycles() {
+		checkStateForResult();
+		return negativeCycles;
 	}
 
 }
