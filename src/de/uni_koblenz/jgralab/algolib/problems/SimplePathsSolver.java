@@ -28,6 +28,8 @@ public interface SimplePathsSolver extends ProblemSolver {
 	 * Retrieves the result <code>successor</code>.
 	 * 
 	 * @return the result <code>successor</code>.
+	 * @throws IllegalStateException
+	 *             if the result is requested without being available
 	 */
 	public BinaryFunction<Vertex, Vertex, Edge> getSuccessor();
 }

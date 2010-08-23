@@ -9,7 +9,7 @@ import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmStates;
 import de.uni_koblenz.jgralab.algolib.algorithms.GraphAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.reachability.visitors.TransitiveVisitorComposition;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.BreadthFirstSearch;
-import de.uni_koblenz.jgralab.algolib.algorithms.search.SearchAlgorithm;
+import de.uni_koblenz.jgralab.algolib.algorithms.search.CompleteSearchAlgorithm;
 import de.uni_koblenz.jgralab.algolib.functions.ArrayBinaryFunction;
 import de.uni_koblenz.jgralab.algolib.functions.ArrayRelation;
 import de.uni_koblenz.jgralab.algolib.functions.BinaryFunction;
@@ -80,8 +80,8 @@ public class WarshallAlgorithm extends GraphAlgorithm implements
 	@Override
 	public void reset() {
 		super.reset();
-		SearchAlgorithm search = new BreadthFirstSearch(graph, subgraph,
-				isDirected(), null).withNumber();
+		CompleteSearchAlgorithm search = new BreadthFirstSearch(graph,
+				subgraph, isDirected(), null).withNumber();
 		search.setSearchDirection(searchDirection);
 		search.execute();
 		indexMapping = search.getNumber();

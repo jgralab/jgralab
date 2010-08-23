@@ -10,9 +10,8 @@ import de.uni_koblenz.jgralab.algolib.algorithms.GraphAlgorithm;
 import de.uni_koblenz.jgralab.algolib.functions.ArrayPermutation;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 import de.uni_koblenz.jgralab.algolib.functions.Function;
-import de.uni_koblenz.jgralab.algolib.functions.Permutation;
 import de.uni_koblenz.jgralab.algolib.functions.IntFunction;
-import de.uni_koblenz.jgralab.algolib.problems.CompleteTraversalSolver;
+import de.uni_koblenz.jgralab.algolib.functions.Permutation;
 import de.uni_koblenz.jgralab.algolib.problems.TraversalFromVertexSolver;
 import de.uni_koblenz.jgralab.graphmarker.ArrayVertexMarker;
 import de.uni_koblenz.jgralab.graphmarker.BitSetEdgeMarker;
@@ -28,7 +27,7 @@ import de.uni_koblenz.jgralab.graphmarker.IntegerVertexMarker;
  * 
  */
 public abstract class SearchAlgorithm extends GraphAlgorithm implements
-		TraversalFromVertexSolver, CompleteTraversalSolver {
+		TraversalFromVertexSolver {
 
 	/**
 	 * This is the default value for the parameter <code>searchDirection</code>.
@@ -402,15 +401,6 @@ public abstract class SearchAlgorithm extends GraphAlgorithm implements
 	public Function<Vertex, Edge> getParent() {
 		checkStateForResult();
 		return parent;
-	}
-
-	@Override
-	public SearchAlgorithm execute() {
-		for (Vertex currentRoot : graph.vertices()) {
-			execute(currentRoot);
-		}
-		assert (state == AlgorithmStates.FINISHED);
-		return this;
 	}
 
 	public BooleanFunction<Edge> getNavigable() {

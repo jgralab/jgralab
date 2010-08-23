@@ -4,19 +4,19 @@ import java.util.Iterator;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.algolib.algorithms.search.CompleteSearchAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.IterativeDepthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.RecursiveDepthFirstSearch;
-import de.uni_koblenz.jgralab.algolib.algorithms.search.SearchAlgorithm;
 import de.uni_koblenz.jgralab.algolib.functions.Permutation;
 import de.uni_koblenz.jgralabtest.schemas.algolib.simple.SimpleGraph;
 
 public class CompareSearchAlgorithms {
 	protected Graph graph;
-	protected SearchAlgorithm alg1;
-	protected SearchAlgorithm alg2;
+	protected CompleteSearchAlgorithm alg1;
+	protected CompleteSearchAlgorithm alg2;
 
-	public CompareSearchAlgorithms(Graph graph, SearchAlgorithm alg1,
-			SearchAlgorithm alg2) {
+	public CompareSearchAlgorithms(Graph graph, CompleteSearchAlgorithm alg1,
+			CompleteSearchAlgorithm alg2) {
 		super();
 		this.graph = graph;
 		this.alg1 = alg1;

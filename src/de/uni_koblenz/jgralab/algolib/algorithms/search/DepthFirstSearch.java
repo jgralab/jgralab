@@ -23,7 +23,7 @@ import de.uni_koblenz.jgralab.graphmarker.IntegerVertexMarker;
  * @author strauss@uni-koblenz.de
  * 
  */
-public abstract class DepthFirstSearch extends SearchAlgorithm {
+public abstract class DepthFirstSearch extends CompleteSearchAlgorithm {
 
 	/**
 	 * The visitor composition containing all visitors.
