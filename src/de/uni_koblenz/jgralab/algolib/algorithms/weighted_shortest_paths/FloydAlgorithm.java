@@ -9,7 +9,7 @@ import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmStates;
 import de.uni_koblenz.jgralab.algolib.algorithms.GraphAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.reachability.visitors.TransitiveVisitorComposition;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.BreadthFirstSearch;
-import de.uni_koblenz.jgralab.algolib.algorithms.search.SearchAlgorithm;
+import de.uni_koblenz.jgralab.algolib.algorithms.search.CompleteSearchAlgorithm;
 import de.uni_koblenz.jgralab.algolib.functions.ArrayBinaryDoubleFunction;
 import de.uni_koblenz.jgralab.algolib.functions.ArrayBinaryFunction;
 import de.uni_koblenz.jgralab.algolib.functions.BinaryDoubleFunction;
@@ -95,7 +95,8 @@ public class FloydAlgorithm extends GraphAlgorithm implements
 	public void reset() {
 		super.reset();
 		negativeCycles = false;
-		SearchAlgorithm search = new BreadthFirstSearch(graph).withNumber();
+		CompleteSearchAlgorithm search = new BreadthFirstSearch(graph)
+				.withNumber();
 		search.execute();
 		indexMapping = search.getNumber();
 		vertexOrder = search.getVertexOrder();

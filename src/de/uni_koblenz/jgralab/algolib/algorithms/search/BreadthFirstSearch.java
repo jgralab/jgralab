@@ -16,7 +16,7 @@ import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
  * @author strauss@uni-koblenz.de
  * 
  */
-public class BreadthFirstSearch extends SearchAlgorithm implements
+public class BreadthFirstSearch extends CompleteSearchAlgorithm implements
 		TraversalFromVertexSolver {
 
 	private SearchVisitorComposition visitors = new SearchVisitorComposition();

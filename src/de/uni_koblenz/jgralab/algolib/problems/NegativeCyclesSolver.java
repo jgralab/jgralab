@@ -21,6 +21,8 @@ public interface NegativeCyclesSolver extends WeightedProblemSolver {
 	 * Retrieves the result <code>negativeCycles</code>.
 	 * 
 	 * @return the result <code>negativeCycles</code>.
+	 * @throws IllegalStateException
+	 *             if the result is requested without being available
 	 */
 	public boolean hasNegativeCycles();
 }

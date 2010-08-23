@@ -28,6 +28,8 @@ public interface WeightedDistancesSolver extends WeightedProblemSolver {
 	 * Retrieves the result <code>weightedDistance</code>.
 	 * 
 	 * @return the result <code>weightedDistance</code>.
+	 * @throws IllegalStateException
+	 *             if the result is requested without being available
 	 */
 	public BinaryDoubleFunction<Vertex, Vertex> getWeightedDistance();
 
