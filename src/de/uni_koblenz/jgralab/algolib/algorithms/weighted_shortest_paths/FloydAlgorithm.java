@@ -100,7 +100,7 @@ public class FloydAlgorithm extends GraphAlgorithm implements
 		search.execute();
 		indexMapping = search.getNumber();
 		vertexOrder = search.getVertexOrder();
-		vertexCount = graph.getVCount();
+		vertexCount = getVertexCount();
 		weightedDistance = weightedDistance == null ? new double[vertexCount + 1][vertexCount + 1]
 				: weightedDistance;
 		successor = successor == null ? new Edge[vertexCount + 1][vertexCount + 1]
@@ -119,8 +119,9 @@ public class FloydAlgorithm extends GraphAlgorithm implements
 		startRunning();
 
 		// clear and initialize arrays
-		for (int vId = 1; vId < vertexCount; vId++) {
-			for (int wId = 1; wId < vertexCount; wId++) {
+		int length = vertexCount + 1;
+		for (int vId = 1; vId < length; vId++) {
+			for (int wId = 1; wId < length; wId++) {
 				weightedDistance[vId][wId] = Double.POSITIVE_INFINITY;
 				successor[vId][wId] = null;
 			}
@@ -148,7 +149,7 @@ public class FloydAlgorithm extends GraphAlgorithm implements
 				successor[wId][vId] = e.getReversedEdge();
 			}
 		}
-
+		
 		// main loop
 		for (int vId = 1; vId <= vertexCount; vId++) {
 			for (int uId = 1; uId <= vertexCount; uId++) {

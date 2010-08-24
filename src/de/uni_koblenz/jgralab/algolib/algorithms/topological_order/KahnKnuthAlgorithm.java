@@ -90,7 +90,7 @@ public class KahnKnuthAlgorithm extends GraphAlgorithm implements
 		super.reset();
 		tnum = 1;
 		firstV = 1;
-		torder = new Vertex[graph.getVCount() + 1];
+		torder = new Vertex[getVertexCount() + 1];
 		inDegree = new IntegerVertexMarker(graph);
 		acyclic = true;
 		visitors.reset();
@@ -174,7 +174,7 @@ public class KahnKnuthAlgorithm extends GraphAlgorithm implements
 				}
 			}
 		}
-		if (tnum < graph.getVCount()) {
+		if (tnum < getVertexCount()) {
 			acyclic = false;
 		}
 		done();

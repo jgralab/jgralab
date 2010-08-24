@@ -1,0 +1,10 @@
+TGraph 2;
+
+Schema de.uni_koblenz.jgralabtest.schemas.algolib.weighted.WeightedSchema;
+
+GraphClass WeightedGraph;
+
+Package ;
+VertexClass Location { x: Double, y: Double, name: String };
+EdgeClass Way from Location (0,*) role alphaVertex to Location (0,*) role omegaVertex;
+
