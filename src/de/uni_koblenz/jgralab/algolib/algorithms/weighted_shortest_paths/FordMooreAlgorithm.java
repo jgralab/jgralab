@@ -13,6 +13,7 @@ import de.uni_koblenz.jgralab.algolib.algorithms.GraphAlgorithm;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 import de.uni_koblenz.jgralab.algolib.functions.DoubleFunction;
 import de.uni_koblenz.jgralab.algolib.functions.Function;
+import de.uni_koblenz.jgralab.algolib.functions.IntFunction;
 import de.uni_koblenz.jgralab.algolib.problems.TraversalSolver;
 import de.uni_koblenz.jgralab.algolib.problems.WeightedDistanceFromVertexToVertexSolver;
 import de.uni_koblenz.jgralab.algolib.problems.WeightedDistancesFromVertexSolver;
@@ -21,6 +22,7 @@ import de.uni_koblenz.jgralab.algolib.problems.WeightedShortestPathsFromVertexSo
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
 import de.uni_koblenz.jgralab.graphmarker.ArrayVertexMarker;
 import de.uni_koblenz.jgralab.graphmarker.DoubleVertexMarker;
+import de.uni_koblenz.jgralab.graphmarker.IntegerVertexMarker;
 
 public class FordMooreAlgorithm extends GraphAlgorithm implements
 		TraversalSolver, WeightedDistancesFromVertexSolver,
@@ -37,6 +39,9 @@ public class FordMooreAlgorithm extends GraphAlgorithm implements
 	private DoubleFunction<Vertex> weightedDistance;
 
 	private Queue<Vertex> vertexQueue;
+	private IntFunction<Vertex> pushCount;
+	private int maxPushCount;
+	private boolean negativeCycleDetected;
 
 	public FordMooreAlgorithm(Graph graph,
 			BooleanFunction<GraphElement> subgraph,
@@ -129,6 +134,9 @@ public class FordMooreAlgorithm extends GraphAlgorithm implements
 		vertexQueue = vertexQueue == null ? new LinkedList<Vertex>()
 				: vertexQueue;
 		vertexQueue.clear();
+		pushCount = new IntegerVertexMarker(graph);
+		maxPushCount = getVertexCount() - 1;
+		negativeCycleDetected = false;
 	}
 
 	@Override
@@ -144,8 +152,16 @@ public class FordMooreAlgorithm extends GraphAlgorithm implements
 		if (subgraph != null && !subgraph.get(start)) {
 			throw new IllegalArgumentException("Start vertex not in subgraph!");
 		}
+		startRunning();
+		for (Vertex currentVertex : graph.vertices()) {
+			if (subgraph == null || subgraph.get(currentVertex)) {
+				pushCount.set(currentVertex, 0);
+			}
+		}
 		weightedDistance.set(start, 0.0);
 		vertexQueue.add(start);
+		pushCount.set(start, pushCount.get(start) + 1);
+
 		while (!vertexQueue.isEmpty()) {
 			Vertex currentVertex = vertexQueue.poll();
 			assert (currentVertex != null);
@@ -163,10 +179,17 @@ public class FordMooreAlgorithm extends GraphAlgorithm implements
 						|| newDistance < weightedDistance.get(nextVertex)) {
 					parent.set(nextVertex, currentEdge);
 					weightedDistance.set(nextVertex, newDistance);
+					int newCount = pushCount.get(nextVertex) + 1;
+					if (newCount > maxPushCount) {
+						negativeCycleDetected = true;
+						terminate();
+					}
+					pushCount.set(nextVertex, newCount);
 					vertexQueue.add(nextVertex);
 				}
 			}
 		}
+		done();
 		return this;
 	}
 
@@ -196,6 +219,10 @@ public class FordMooreAlgorithm extends GraphAlgorithm implements
 	public Function<Vertex, Edge> getParent() {
 		checkStateForResult();
 		return parent;
+	}
+
+	public boolean hasNegativeCycleDetected() {
+		return negativeCycleDetected;
 	}
 
 }

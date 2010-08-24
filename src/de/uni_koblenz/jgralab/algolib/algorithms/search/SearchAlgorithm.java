@@ -237,8 +237,8 @@ public abstract class SearchAlgorithm extends GraphAlgorithm implements
 	@Override
 	public void reset() {
 		super.reset();
-		vertexOrder = new Vertex[graph.getVCount() + 1];
-		edgeOrder = new Edge[graph.getECount() + 1];
+		vertexOrder = new Vertex[getVertexCount() + 1];
+		edgeOrder = new Edge[getEdgeCount() + 1];
 		visitedVertices = new BitSetVertexMarker(graph);
 		visitedEdges = new BitSetEdgeMarker(graph);
 		level = level == null ? null : new IntegerVertexMarker(graph);
@@ -359,7 +359,7 @@ public abstract class SearchAlgorithm extends GraphAlgorithm implements
 	@Override
 	protected void done() {
 		if (state != AlgorithmStates.CANCELED) {
-			state = num < graph.getVCount() + 1 ? AlgorithmStates.STOPPED
+			state = num < getVertexCount() + 1 ? AlgorithmStates.STOPPED
 					: AlgorithmStates.FINISHED;
 		}
 	}

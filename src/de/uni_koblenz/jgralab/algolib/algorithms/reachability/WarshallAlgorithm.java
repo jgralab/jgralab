@@ -86,7 +86,7 @@ public class WarshallAlgorithm extends GraphAlgorithm implements
 		search.execute();
 		indexMapping = search.getNumber();
 		vertexOrder = search.getVertexOrder();
-		vertexCount = graph.getVCount();
+		vertexCount = getVertexCount();
 		reachable = reachable == null ? new boolean[vertexCount + 1][vertexCount + 1]
 				: reachable;
 		successor = successor == null ? new Edge[vertexCount + 1][vertexCount + 1]
@@ -105,8 +105,9 @@ public class WarshallAlgorithm extends GraphAlgorithm implements
 		startRunning();
 
 		// clear and initialize arrays
-		for (int vId = 1; vId < vertexCount; vId++) {
-			for (int wId = 1; wId < vertexCount; wId++) {
+		int length = vertexCount + 1;
+		for (int vId = 1; vId < length; vId++) {
+			for (int wId = 1; wId < length; wId++) {
 				reachable[vId][wId] = false;
 				successor[vId][wId] = null;
 			}

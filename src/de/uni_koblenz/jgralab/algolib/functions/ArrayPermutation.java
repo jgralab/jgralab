@@ -40,7 +40,7 @@ public class ArrayPermutation<RANGE> implements Permutation<RANGE> {
 		while (i < values.length && values[i] != null) {
 			i++;
 		}
-		length = i - 1;
+		length = i;
 
 	}
 

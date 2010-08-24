@@ -1,7 +1,9 @@
 package de.uni_koblenz.jgralab.algolib.algorithms;
 
+import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
+import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 import de.uni_koblenz.jgralab.algolib.problems.ProblemSolver;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
@@ -12,6 +14,10 @@ public abstract class GraphAlgorithm implements ProblemSolver {
 	 * The graph this graph algorithm works on.
 	 */
 	protected Graph graph;
+
+	private int vertexCount;
+
+	private int edgeCount;
 
 	/**
 	 * The subgraph this graph algorithm works on.
@@ -80,6 +86,8 @@ public abstract class GraphAlgorithm implements ProblemSolver {
 	public void resetParameters() {
 		if (getState() == AlgorithmStates.INITIALIZED) {
 			this.subgraph = null;
+			vertexCount = -1;
+			edgeCount = -1;
 			disableOptionalResults();
 		} else {
 			throw new IllegalStateException(
@@ -96,6 +104,8 @@ public abstract class GraphAlgorithm implements ProblemSolver {
 	public void setGraph(Graph graph) {
 		if (getState() == AlgorithmStates.INITIALIZED) {
 			this.graph = graph;
+			vertexCount = -1;
+			edgeCount = -1;
 		} else {
 			throw new IllegalStateException(
 					"The graph may only be changed when in state "
@@ -111,6 +121,8 @@ public abstract class GraphAlgorithm implements ProblemSolver {
 	public void setSubgraph(BooleanFunction<GraphElement> subgraph) {
 		if (getState() == AlgorithmStates.INITIALIZED) {
 			this.subgraph = subgraph;
+			vertexCount = -1;
+			edgeCount = -1;
 		} else {
 			throw new IllegalStateException(
 					"The subgraph may only be changed when in state "
@@ -259,6 +271,37 @@ public abstract class GraphAlgorithm implements ProblemSolver {
 			throw new IllegalStateException(
 					"Parameters may not be changed while in state " + state);
 		}
+	}
+
+	public int getVertexCount() {
+		if (vertexCount < 0) {
+			if (subgraph == null) {
+				vertexCount = graph.getVCount();
+			} else {
+				vertexCount = 0;
+				for (Vertex currentVertex : graph.vertices()) {
+					if (subgraph.get(currentVertex)) {
+						vertexCount++;
+					}
+				}
+			}
+		}
+		return vertexCount;
+	}
+
+	public int getEdgeCount() {
+		if (edgeCount < 0) {
+			if (subgraph == null) {
+				edgeCount = graph.getECount();
+			} else {
+				edgeCount = 0;
+				for (Edge currentEdge : graph.edges())
+					if (subgraph.get(currentEdge)) {
+						edgeCount++;
+					}
+			}
+		}
+		return edgeCount;
 	}
 
 }

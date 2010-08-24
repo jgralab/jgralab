@@ -61,7 +61,7 @@ public abstract class DepthFirstSearch extends CompleteSearchAlgorithm {
 		super.reset();
 		visitors.reset();
 		rNum = 1;
-		rorder = rorder == null ? null : new Vertex[graph.getVCount() + 1];
+		rorder = rorder == null ? null : new Vertex[getVertexCount() + 1];
 		rnumber = new IntegerVertexMarker(graph);
 		number = new IntegerVertexMarker(graph);
 	}
@@ -100,7 +100,7 @@ public abstract class DepthFirstSearch extends CompleteSearchAlgorithm {
 
 	public DepthFirstSearch withRorder() {
 		checkStateForSettingParameters();
-		rorder = new Vertex[graph.getVCount() + 1];
+		rorder = new Vertex[getVertexCount() + 1];
 		return this;
 	}
 	
