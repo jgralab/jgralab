@@ -128,6 +128,7 @@ public class BreadthFirstSearch extends CompleteSearchAlgorithm implements
 						if (visitedVertices.get(nextVertex)) {
 							visitors.visitFrond(currentEdge);
 						} else {
+							visitors.visitTreeEdge(currentEdge);
 							vertexOrder[num] = nextVertex;
 							if (level != null) {
 								level.set(nextVertex,
@@ -136,7 +137,6 @@ public class BreadthFirstSearch extends CompleteSearchAlgorithm implements
 							if (parent != null) {
 								parent.set(currentEdge.getThat(), currentEdge);
 							}
-							visitors.visitTreeEdge(currentEdge);
 							if (number != null) {
 								number.set(nextVertex, num);
 							}

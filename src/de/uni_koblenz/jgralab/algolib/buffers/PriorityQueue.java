@@ -1,6 +1,8 @@
 package de.uni_koblenz.jgralab.algolib.buffers;
 
 import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class PriorityQueue<T> {
 
@@ -10,15 +12,23 @@ public class PriorityQueue<T> {
 
 		public ValuePair(T element, double value) {
 			super();
+			set(element, value);
+		}
+
+		public ValuePair<T> set(T element, double value) {
 			this.element = element;
 			this.value = value;
+			return this;
 		}
+
 	}
 
-	private Buffer<ValuePair<T>> queue;
+	// private Buffer<ValuePair<T>> queue;
+	private Queue<ValuePair<T>> queue;
 	private Comparator<ValuePair<T>> comparator;
+	private Queue<ValuePair<T>> reusableElements;
 
-	public PriorityQueue(boolean useJavaPQueue) {
+	public PriorityQueue() {
 		comparator = new Comparator<ValuePair<T>>() {
 			@Override
 			public int compare(ValuePair<T> o1, ValuePair<T> o2) {
@@ -26,16 +36,16 @@ public class PriorityQueue<T> {
 			}
 		};
 
-		if (useJavaPQueue) {
-			queue = new PriorityQueueBuffer<ValuePair<T>>(comparator);
-		} else {
-			queue = new UnsortedPriorityQueueBuffer<ValuePair<T>>(31,
-					comparator);
-		}
+		queue = new java.util.PriorityQueue<ValuePair<T>>(31, comparator);
+
+		reusableElements = new LinkedList<ValuePair<T>>();
 	}
 
 	public T getNext() {
-		return queue.getNext().element;
+		ValuePair<T> next = queue.poll();
+		T element = next.element;
+		reusableElements.add(next);
+		return element;
 	}
 
 	public boolean isEmpty() {
@@ -43,7 +53,20 @@ public class PriorityQueue<T> {
 	}
 
 	public void put(T element, double value) {
-		queue.put(new ValuePair<T>(element, value));
+		ValuePair<T> newElement = reusableElements.isEmpty() ? new ValuePair<T>(
+				element, value)
+				: reusableElements.poll().set(element, value);
+		queue.add(newElement);
+	}
+
+	public int getMaxFilledCount() {
+		return reusableElements.size();
+	}
+
+	public PriorityQueue<T> clear() {
+		queue.clear();
+		reusableElements.clear();
+		return this;
 	}
 
 }
