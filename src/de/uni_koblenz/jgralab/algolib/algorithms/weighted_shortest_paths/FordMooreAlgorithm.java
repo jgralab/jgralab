@@ -195,6 +195,9 @@ public class FordMooreAlgorithm extends GraphAlgorithm implements
 
 	@Override
 	public FordMooreAlgorithm execute(Vertex start, Vertex target) {
+		if (subgraph != null && !subgraph.get(target)) {
+			throw new IllegalArgumentException("Target vertex not in subgraph!");
+		}
 		this.target = target;
 		return execute(start);
 	}
