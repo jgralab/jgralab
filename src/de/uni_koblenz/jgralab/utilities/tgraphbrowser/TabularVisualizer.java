@@ -174,7 +174,7 @@ public class TabularVisualizer {
 				|| (!isVertex && ((state.edgesOfTableView == null) || (state.edgesOfTableView.length == 0)))) {
 			return;
 		}
-		// find position of element in the corresponding array TODO
+		// find position of element in the corresponding array
 		int idOfElement = Integer.parseInt(elementId.substring(1));
 		int positionOfElementInArray = -1;
 		if ((isVertex ? state.selectedVertexClasses : state.selectedEdgeClasses)
@@ -243,10 +243,12 @@ public class TabularVisualizer {
 			code.append("document.location.href = \"#").append(elementId)
 					.append("\";\n");
 		}
+
 		if (elementWasNotFound) {
 			// show message, that the graphelement could not be found.
-			code.append("if(").append(isVertex).append(
-					" && areVerticesShown()){\n");
+			code.append("if((").append(isVertex).append(
+					" && areVerticesShown()) || (").append(!isVertex).append(
+					" && !areVerticesShown())){\n");
 			code.append("alert(\"The ").append(isVertex ? "vertex " : "edge ")
 					.append(elementId).append(" could not be found");
 			if (!(isVertex ? state.selectedVertexClasses

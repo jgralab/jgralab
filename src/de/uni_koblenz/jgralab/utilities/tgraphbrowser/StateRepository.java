@@ -643,6 +643,8 @@ public class StateRepository {
 			Integer indexOfNavigationHistory, Boolean isTableShown,
 			Boolean showAttributes, Integer numberPerPage, Integer pathLength) {
 		State state = getSession(id);
+
+		// extract the chosen element from the navigationHistory
 		JValue currentElement = state.navigationHistory
 				.get(indexOfNavigationHistory);
 		boolean createVerticesAndEdges = false;
@@ -660,7 +662,10 @@ public class StateRepository {
 			}
 			createVerticesAndEdges = true;
 		}
+
+		state.insertPosition = indexOfNavigationHistory + 1;
 		StringBuilder code = new StringBuilder("function(){\n");
+		// show selected element
 		if (isTableShown) {
 			boolean isVertex = currentElement.isVertex();
 			code.append("if(").append(isVertex ? "!" : "").append(
@@ -699,7 +704,6 @@ public class StateRepository {
 			new TwoDVisualizer().visualizeElements(code, state, id, workspace
 					.toString(), currentElement, showAttributes, pathLength);
 		}
-		state.insertPosition = indexOfNavigationHistory + 1;
 		addToBreadcrumbBar(code, state, null, false);
 		state.lastAccess = System.currentTimeMillis();
 		code.append("timestamp = ").append(state.lastAccess).append(";\n");
@@ -1082,7 +1086,7 @@ public class StateRepository {
 			}
 		}
 		code.append("document.getElementById(\"pBreadcrumbContent").append(
-				currentPage).append("\").style.display = \"inline\";");
+				currentPage).append("\").style.display = \"inline\";\n");
 		return code;
 	}
 
