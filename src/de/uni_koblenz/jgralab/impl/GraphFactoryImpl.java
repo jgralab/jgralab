@@ -226,36 +226,6 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 		}
 	}
 
-	public void setRecordImplementationClass(Class<? extends Record> m1Class,
-			Class<? extends Record> implementationClass) {
-		if (isSuperclassOrEqual(m1Class, implementationClass)) {
-			try {
-				Class<?>[] params = { Graph.class };
-				recordMap.put(m1Class, implementationClass
-						.getConstructor(params));
-			} catch (NoSuchMethodException ex) {
-				throw new M1ClassAccessException(
-						"Unable to locate default constructor for record"
-								+ implementationClass, ex);
-			}
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	public <T extends Record> T createRecord(Class<T> recordDomain, Graph g) {
-		try {
-			T r = (T) recordMap.get(recordDomain).newInstance(g);
-			return r;
-		} catch (Exception ex) {
-			if (ex.getCause() instanceof GraphException) {
-				throw new GraphException(ex.getCause().getLocalizedMessage(),
-						ex);
-			}
-			throw new M1ClassAccessException("Cannot create vertex of class "
-					+ recordDomain.getCanonicalName(), ex);
-		}
-	}
-
 	// -------------------------------------------------------------------------
 	// Methods for the TRANSIMPL option.
 	// -------------------------------------------------------------------------
@@ -322,22 +292,6 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 			}
 			throw new M1ClassAccessException("Cannot create vertex of class "
 					+ vertexClass.getCanonicalName(), ex);
-		}
-	}
-	
-
-	
-	@SuppressWarnings("unchecked")
-	public <T extends Record> T createRecordWithTransactionSupport(Class<T> recordDomain, Graph g) {
-		try {
-			T r = (T) recordTransactionMap.get(recordDomain).newInstance(g);
-			return r;
-		} catch (Exception ex) {
-			if (ex.getCause() instanceof GraphException) {
-				throw new GraphException(ex.getCause().getLocalizedMessage());
-			}
-			throw new M1ClassAccessException("Cannot create vertex of class "
-					+ recordDomain.getCanonicalName(), ex);
 		}
 	}
 
@@ -414,22 +368,6 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 			Class<? extends Record> implementationClass) {
 		if (isSuperclassOrEqual(m1Class, implementationClass)) {
 			try {
-				Class<?>[] params = { int.class, Object[].class };
-				recordTransactionMap.put(m1Class, implementationClass
-						.getConstructor(params));
-			} catch (NoSuchMethodException ex) {
-				throw new M1ClassAccessException(
-						"Unable to locate default constructor for record"
-								+ implementationClass, ex);
-			}
-		}
-	}
-
-	public void setRecordTransactionImplementationClass(
-			Class<? extends Record> m1Class,
-			Class<? extends Record> implementationClass) {
-		if (isSuperclassOrEqual(m1Class, implementationClass)) {
-			try {
 				Class<?>[] params = { Graph.class };
 				recordTransactionMap.put(m1Class, implementationClass
 						.getConstructor(params));
@@ -500,25 +438,6 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 					+ vertexClass.getCanonicalName(), ex);
 		}
 	}
-	
-	
-	@SuppressWarnings("unchecked")
-	public <T extends Record> T createRecordWithSavememSupport(Class<T> recordDomain, Graph g) {
-		try {
-			T r = (T) recordSavememMap.get(recordDomain).newInstance(g);
-			return r;
-		} catch (Exception ex) {
-			if (ex.getCause() instanceof GraphException) {
-				throw new GraphException(ex.getCause().getLocalizedMessage());
-			}
-			throw new M1ClassAccessException("Cannot create vertex of class "
-					+ recordDomain.getCanonicalName(), ex);
-		}
-	}
-	
-	
-	
-	
 
 	@SuppressWarnings("unchecked")
 	public <T extends Record> T createRecordWithSavememSupport(
@@ -580,23 +499,6 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 			} catch (NoSuchMethodException ex) {
 				throw new M1ClassAccessException(
 						"Unable to locate default constructor for edgeclass"
-								+ implementationClass, ex);
-			}
-		}
-	}
-	
-	
-	public void setRecordSavememImplementationClass(
-			Class<? extends Record> m1Class,
-			Class<? extends Record> implementationClass) {
-		if (isSuperclassOrEqual(m1Class, implementationClass)) {
-			try {
-				Class<?>[] params = { int.class, Object[].class };
-				recordSavememMap.put(m1Class, implementationClass
-						.getConstructor(params));
-			} catch (NoSuchMethodException ex) {
-				throw new M1ClassAccessException(
-						"Unable to locate default constructor for record"
 								+ implementationClass, ex);
 			}
 		}
