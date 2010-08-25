@@ -185,6 +185,7 @@ public class TwoDVisualizer {
 			width = lineparts[1];
 			height = lineparts[3];
 		}
+		assert svgFileName != null : "svg file name must not be null";
 		svgFileName = svgFileName.substring(svgFileName
 				.lastIndexOf(File.separator) + 1);
 		// svg in HTML-Seite einbinden

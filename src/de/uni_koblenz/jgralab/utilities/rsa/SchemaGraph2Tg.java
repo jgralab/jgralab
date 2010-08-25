@@ -382,8 +382,6 @@ public class SchemaGraph2Tg {
 			print(SPACE, ROLE, SPACE, ic.get_roleName());
 		}
 
-		printAggregation(ic);
-
 		if (ic.getFirstRedefines(EdgeDirection.OUT) != null) {
 			print(SPACE, REDEFINES, SPACE);
 			boolean first = true;
@@ -397,6 +395,8 @@ public class SchemaGraph2Tg {
 				print(redefined.get_roleName());
 			}
 		}
+
+		printAggregation(ic);
 	}
 
 	private void printDomain(Domain dom) {

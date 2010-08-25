@@ -6,9 +6,12 @@ import java.util.Map;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphIO;
+import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.JGraLabList;
 import de.uni_koblenz.jgralab.JGraLabMap;
 import de.uni_koblenz.jgralab.JGraLabSet;
+import de.uni_koblenz.jgralab.Record;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.EdgeBaseImpl;
 import de.uni_koblenz.jgralab.impl.FreeIndexList;
@@ -361,6 +364,31 @@ public abstract class GraphImpl extends
 		return true;
 	}
 
+	@Override
+	public <T extends Record> T createRecord(Class<T> recordClass, GraphIO io) {
+		T record = graphFactory.createRecordWithSavememSupport(recordClass, this);
+		try {
+			record.readComponentValues(io);
+		} catch (GraphIOException e) {
+			e.printStackTrace();
+		}
+		return record;
+	}
+
+	@Override
+	public <T extends Record> T createRecord(Class<T> recordClass, Map<String, Object> fields) {
+		T record = graphFactory.createRecordWithSavememSupport(recordClass, this);
+		record.setComponentValues(fields);
+		return record;
+	}
+
+	@Override
+	public <T extends Record> T createRecord(Class<T> recordClass, Object... components) {
+		T record = graphFactory.createRecordWithSavememSupport(recordClass, this);
+		record.setComponentValues(components);
+		return record;
+	}
+	
 	@Override
 	public <T> JGraLabList<T> createList() {
 		return new JGraLabListImpl<T>();

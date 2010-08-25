@@ -277,7 +277,7 @@ public class StateRepository {
 		}
 		if (notExistingElements.length() > 0) {
 			code.append("alert(\"");
-			code.append("Following elements does not exist:\\n").append(
+			code.append("Following elements do not exist:\\n").append(
 					notExistingElements);
 			code.append("\");\n");
 		}
@@ -1822,7 +1822,7 @@ public class StateRepository {
 					state.graph = GraphIO.loadSchemaAndGraphFromFile(
 							state.graphFile.toString(),
 							new CodeGeneratorConfiguration()
-									.withoutTypeSpecificMethodSupport(),
+									.withSaveMemSupport(),
 							new MyProgressFunction(state));
 					assert state.graph != null : "The graph wasn't loaded correctly.";
 					state = null;

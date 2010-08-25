@@ -236,7 +236,10 @@ public class RequestThread extends Thread {
 					} while ((line != null) && !line.isEmpty());
 					// read content
 					byte[] content = new byte[contentLength.intValue()];
-					in.read(content);
+					if (in.read(content) <= 0) {
+						TGraphBrowserServer.logger
+								.info("content could not be read");
+					}
 					String body = new String(content);
 					String[] bodyparts = Pattern.compile(
 							Matcher.quoteReplacement("\n")).split(body);
@@ -410,7 +413,10 @@ public class RequestThread extends Thread {
 		String currentByte;
 		do {
 			byte[] aByte = new byte[1];
-			input.read(aByte);
+			int numberOfBytesRead = input.read(aByte);
+			if (numberOfBytesRead <= 0) {
+				break;
+			}
 			currentByte = new String(aByte, "UTF-8");
 			if (!currentByte.equals("\n") && !currentByte.equals("\r")) {
 				line.append(currentByte);
