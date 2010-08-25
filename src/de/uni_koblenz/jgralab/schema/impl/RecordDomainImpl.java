@@ -137,7 +137,7 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 		if (m1Class == null) {
 			String m1ClassName = getSchema().getPackagePrefix() + "." + getQualifiedName();
 			try {
-				m1Class = (Class<? extends Object>) Class.forName(
+				m1Class = Class.forName(
 						m1ClassName, true, M1ClassManager.instance(getSchema()
 								.getQualifiedName()));
 			} catch (ClassNotFoundException e) {
@@ -239,8 +239,8 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 		 * parentPackage.getSchema().getGraphClass().getSimpleName() + ")" +
 		 * "graph).create" + getSimpleName() + "(io);");
 		 */
-		code.add("\t" + "#name# = #theGraph#.createRecord(" + getSimpleName()
-				+ "Impl.class, io);");
+		code.add("\t" + "#name# = #theGraph#.createRecord(" + getSchema().getPackagePrefix() + "." + getQualifiedName()
+				+ ".class, io);");
 		code.add("} else if (" + graphIoVariableName
 				+ ".isNextToken(GraphIO.NULL_LITERAL)) {");
 		code.add("\t" + graphIoVariableName + ".match();");

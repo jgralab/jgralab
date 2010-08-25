@@ -2,6 +2,7 @@
 //   Version : Carnotaurus
 //   Revision: 1506
 //   Build ID: 65
+TGraph 2;
 
 Schema de.uni_koblenz.jgralabtest.schemas.citymap.CityMapSchema;
 GraphClass CityMap;
@@ -13,7 +14,7 @@ EdgeClass Bridge: Street from Junction (1,6) to Junction (1,6) { height: Integer
 EdgeClass Street: Way from Junction (1,6) to Junction (1,6) { oneway: Boolean };
 abstract EdgeClass Way from Junction (1,6) role from to Junction (1,6) role to { length: Integer,  name: String };
 
-Graph "CityMapSample_33" CityMap (1000 1000 8 11);
+Graph "CityMapSample" 33 CityMap (1000 1000 8 11);
 Package ;
 1 Intersection <1 3> n f;
 2 Intersection <-1 2 -4> n f;

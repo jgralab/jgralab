@@ -24,10 +24,6 @@
 
 package de.uni_koblenz.jgralab.utilities.tg2whatever;
 
-//import gnu.getopt.Getopt;
-//import gnu.getopt.LongOpt;
-
-//import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
@@ -64,6 +60,8 @@ public abstract class Tg2Whatever {
 	protected boolean edgeAttributes = false;
 
 	protected boolean reversedEdges = false;
+
+	private int currentElementSequenceIndex = -1;
 
 	/**
 	 * @return the reversedEdges
@@ -212,7 +210,9 @@ public abstract class Tg2Whatever {
 	}
 
 	private void printEdges(PrintStream out) {
+		currentElementSequenceIndex = 0;
 		for (Edge e : graph.edges()) {
+			currentElementSequenceIndex++;
 			if (marker == null || marker.isMarked(e)) {
 				printEdge(out, e);
 			}
@@ -220,11 +220,17 @@ public abstract class Tg2Whatever {
 	}
 
 	private void printVertices(PrintStream out) {
+		currentElementSequenceIndex = 0;
 		for (Vertex v : graph.vertices()) {
+			currentElementSequenceIndex++;
 			if (marker == null || marker.isMarked(v)) {
 				printVertex(out, v);
 			}
 		}
+	}
+
+	public int getCurrentElementSequenceIndex() {
+		return currentElementSequenceIndex;
 	}
 
 	private void loadGraph() {
@@ -319,6 +325,11 @@ public abstract class Tg2Whatever {
 		edgeAttributes = comLine.hasOption("e");
 		roleNames = comLine.hasOption("n");
 		shortenStrings = comLine.hasOption("s");
+
+		getAdditionalOptions(comLine);
+	}
+
+	protected void getAdditionalOptions(CommandLine comLine) {
 	}
 
 	protected void initializeGraphAndSchema() {

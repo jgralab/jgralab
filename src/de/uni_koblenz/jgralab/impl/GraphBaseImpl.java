@@ -28,18 +28,15 @@ import java.lang.ref.WeakReference;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphFactory;
-import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.GraphStructureChangedListener;
 import de.uni_koblenz.jgralab.RandomIdGenerator;
-import de.uni_koblenz.jgralab.Record;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.Attribute;
@@ -1649,49 +1646,6 @@ public abstract class GraphBaseImpl implements Graph {
 	 */
 	protected void setFreeEdgeList(FreeIndexList freeEdgeList) {
 		this.freeEdgeList = freeEdgeList;
-	}
-
-	/**
-	 * 
-	 * @param <T>
-	 * @param recordClass
-	 * @param io
-	 * @return
-	 */
-	public <T extends Record> T createRecord(Class<T> recordClass, GraphIO io) {
-		T record = graphFactory.createRecord(recordClass, this);
-		try {
-			record.readComponentValues(io);
-		} catch (GraphIOException e) {
-			e.printStackTrace();
-		}
-		return record;
-	}
-
-	/**
-	 * 
-	 * @param <T>
-	 * @param recordClass
-	 * @param io
-	 * @return
-	 */
-	public <T extends Record> T createRecord(Class<T> recordClass, Map<String, Object> fields) {
-		T record = graphFactory.createRecord(recordClass, this);
-		record.setComponentValues(fields);
-		return record;
-	}
-
-	/**
-	 * 
-	 * @param <T>
-	 * @param recordClass
-	 * @param io
-	 * @return
-	 */
-	public <T extends Record> T createRecord(Class<T> recordClass, Object... components) {
-		T record = graphFactory.createRecord(recordClass, this);
-		record.setComponentValues(components);
-		return record;
 	}
 
 	/**

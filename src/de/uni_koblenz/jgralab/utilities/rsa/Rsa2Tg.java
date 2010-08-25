@@ -1932,11 +1932,14 @@ public class Rsa2Tg extends XmlProcessor {
 		}
 	}
 
-	// EdgeClasses with a simple name of the form $<numbers>$ will be
-	// renamed as if there was no name. That allows for "unnamed"
-	// association classes.
-	private final Pattern GENNAME_PATTERN = Pattern
-			.compile("(.*)\\$\\p{Digit}+\\$$");
+	/*
+	 * EdgeClasses with a simple name of the form $<numbers>$ will be renamed as
+	 * if there was no name. $<number>:<midName>$ will be renamed as if there
+	 * was no name, but the middle part is fixed to <midName> instead of using
+	 * Contains/IsPartOf/LinksTo. That allows for "unnamed" association classes.
+	 */
+	private static final Pattern GENNAME_PATTERN = Pattern
+			.compile("(.*)\\$\\p{Digit}+(:(\\w+))?\\$$");
 
 	/**
 	 * Creates {@link EdgeClass} names for all EdgeClass objects, which do have
@@ -1947,12 +1950,13 @@ public class Rsa2Tg extends XmlProcessor {
 		for (EdgeClass ec : sg.getEdgeClassVertices()) {
 			String name = ec.get_qualifiedName().trim();
 
-			// EdgeClasses with a simple name of the form $<numbers>$ will be
-			// renamed as if there was no name. That allows for "unnamed"
-			// association classes.
+			// invent an edgeclass name
+			String ecName = null;
+
 			Matcher m = GENNAME_PATTERN.matcher(name);
 			if (m.matches()) {
 				name = m.group(1);
+				ecName = m.group(m.groupCount());
 			}
 
 			if (!name.equals("") && !name.endsWith(".")) {
@@ -1963,8 +1967,6 @@ public class Rsa2Tg extends XmlProcessor {
 			IncidenceClass from = (IncidenceClass) ec.getFirstComesFrom()
 					.getThat();
 
-			// invent an edgeclass name
-			String ecName = null;
 			String toRole = to.get_roleName();
 			if ((toRole == null) || toRole.equals("")) {
 				toRole = ((VertexClass) to.getFirstEndsAt().getThat())
@@ -1986,15 +1988,19 @@ public class Rsa2Tg extends XmlProcessor {
 								+ "' defined.");
 			}
 
-			if ((from.get_aggregation() != AggregationKind.NONE)
-					|| (to.get_aggregation() != AggregationKind.NONE)) {
-				if (to.get_aggregation() != AggregationKind.NONE) {
-					ecName = "Contains" + toRole;
+			if (ecName == null) {
+				if ((from.get_aggregation() != AggregationKind.NONE)
+						|| (to.get_aggregation() != AggregationKind.NONE)) {
+					if (to.get_aggregation() != AggregationKind.NONE) {
+						ecName = "Contains" + toRole;
+					} else {
+						ecName = "IsPartOf" + toRole;
+					}
 				} else {
-					ecName = "IsPartOf" + toRole;
+					ecName = "LinksTo" + toRole;
 				}
 			} else {
-				ecName = "LinksTo" + toRole;
+				ecName += toRole;
 			}
 
 			if (isUseFromRole()) {
