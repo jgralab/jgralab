@@ -1822,7 +1822,7 @@ public class StateRepository {
 					state.graph = GraphIO.loadSchemaAndGraphFromFile(
 							state.graphFile.toString(),
 							new CodeGeneratorConfiguration()
-									.withoutTypeSpecificMethodSupport(),
+									.withSaveMemSupport(),
 							new MyProgressFunction(state));
 					assert state.graph != null : "The graph wasn't loaded correctly.";
 					state = null;
