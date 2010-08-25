@@ -16,15 +16,15 @@ import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
  * @author strauss@uni-koblenz.de
  * 
  */
-public class BreadthFirstSearch extends CompleteSearchAlgorithm implements
+public class BreadthFirstSearch extends SearchAlgorithm implements
 		TraversalFromVertexSolver {
 
 	private SearchVisitorComposition visitors = new SearchVisitorComposition();
 
 	public BreadthFirstSearch(Graph graph,
-			BooleanFunction<GraphElement> subgraph, boolean directed,
+			BooleanFunction<GraphElement> subgraph,
 			BooleanFunction<Edge> navigable) {
-		super(graph, subgraph, directed, navigable);
+		super(graph, subgraph, navigable);
 	}
 
 	public BreadthFirstSearch(Graph graph) {

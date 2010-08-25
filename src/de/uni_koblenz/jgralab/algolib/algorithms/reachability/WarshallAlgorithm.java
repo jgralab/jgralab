@@ -6,10 +6,10 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmStates;
-import de.uni_koblenz.jgralab.algolib.algorithms.GraphAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.reachability.visitors.TransitiveVisitorComposition;
+import de.uni_koblenz.jgralab.algolib.algorithms.search.AbstractTraversal;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.BreadthFirstSearch;
-import de.uni_koblenz.jgralab.algolib.algorithms.search.CompleteSearchAlgorithm;
+import de.uni_koblenz.jgralab.algolib.algorithms.search.SearchAlgorithm;
 import de.uni_koblenz.jgralab.algolib.functions.ArrayBinaryFunction;
 import de.uni_koblenz.jgralab.algolib.functions.ArrayRelation;
 import de.uni_koblenz.jgralab.algolib.functions.BinaryFunction;
@@ -21,11 +21,10 @@ import de.uni_koblenz.jgralab.algolib.problems.ReachabilitySolver;
 import de.uni_koblenz.jgralab.algolib.problems.SimplePathsSolver;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
 
-public class WarshallAlgorithm extends GraphAlgorithm implements
+public class WarshallAlgorithm extends AbstractTraversal implements
 		ReachabilitySolver, SimplePathsSolver {
 
 	private TransitiveVisitorComposition visitors;
-	private EdgeDirection searchDirection;
 	private IntFunction<Vertex> indexMapping;
 	private Permutation<Vertex> vertexOrder;
 	private int vertexCount;
@@ -33,11 +32,13 @@ public class WarshallAlgorithm extends GraphAlgorithm implements
 	private Edge[][] successor;
 
 	public WarshallAlgorithm(Graph graph) {
-		super(graph);
+		this(graph, null, null);
 	}
 
-	public WarshallAlgorithm(Graph graph, BooleanFunction<GraphElement> subgraph) {
-		super(graph, subgraph);
+	public WarshallAlgorithm(Graph graph,
+			BooleanFunction<GraphElement> subgraph,
+			BooleanFunction<Edge> navigable) {
+		super(graph, subgraph, navigable);
 	}
 
 	@Override
@@ -71,17 +72,12 @@ public class WarshallAlgorithm extends GraphAlgorithm implements
 		visitors.removeVisitor(visitor);
 	}
 
-	@Override
-	public void setDirected(boolean directed) {
-		checkStateForSettingParameters();
-		searchDirection = directed ? EdgeDirection.OUT : EdgeDirection.INOUT;
-	}
 
 	@Override
 	public void reset() {
 		super.reset();
-		CompleteSearchAlgorithm search = new BreadthFirstSearch(graph,
-				subgraph, isDirected(), null).withNumber();
+		SearchAlgorithm search = new BreadthFirstSearch(graph,
+				subgraph, null).withNumber();
 		search.setSearchDirection(searchDirection);
 		search.execute();
 		indexMapping = search.getNumber();
@@ -114,7 +110,8 @@ public class WarshallAlgorithm extends GraphAlgorithm implements
 			reachable[vId][vId] = true;
 		}
 		for (Edge e : graph.edges()) {
-			if (subgraph != null && !subgraph.get(e)) {
+			if (subgraph != null && !subgraph.get(e) || navigable != null
+					&& !navigable.get(e)) {
 				continue;
 			}
 			int vId = indexMapping.get(e.getAlpha());
@@ -164,16 +161,6 @@ public class WarshallAlgorithm extends GraphAlgorithm implements
 	@Override
 	public BinaryFunction<Vertex, Vertex, Edge> getSuccessor() {
 		return new ArrayBinaryFunction<Vertex, Edge>(successor, indexMapping);
-	}
-
-	public EdgeDirection getSearchDirection() {
-		checkStateForSettingParameters();
-		return searchDirection;
-	}
-
-	public void setSearchDirection(EdgeDirection searchDirection) {
-		checkStateForSettingParameters();
-		this.searchDirection = searchDirection;
 	}
 
 	public Permutation<Vertex> getVertexOrder() {

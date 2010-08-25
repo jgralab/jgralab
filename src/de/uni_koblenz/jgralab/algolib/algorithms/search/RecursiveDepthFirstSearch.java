@@ -19,13 +19,13 @@ import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 public class RecursiveDepthFirstSearch extends DepthFirstSearch {
 
 	public RecursiveDepthFirstSearch(Graph graph,
-			BooleanFunction<GraphElement> subgraph, boolean directed,
+			BooleanFunction<GraphElement> subgraph,
 			BooleanFunction<Edge> navigable) {
-		super(graph, subgraph, directed, navigable);
+		super(graph, subgraph, navigable);
 	}
 
 	public RecursiveDepthFirstSearch(Graph graph) {
-		super(graph);
+		this(graph, null, null);
 	}
 
 	@Override

@@ -12,6 +12,8 @@ import de.uni_koblenz.jgralabtest.schemas.algolib.simple.SimpleGraph;
 import de.uni_koblenz.jgralabtest.schemas.algolib.simple.SimpleSchema;
 import de.uni_koblenz.jgralabtest.schemas.algolib.simple.SimpleVertex;
 
+
+@SuppressWarnings("unused")
 public class TryWarshall {
 
 	/**

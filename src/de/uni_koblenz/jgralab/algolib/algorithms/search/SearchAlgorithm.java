@@ -6,12 +6,12 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmStates;
-import de.uni_koblenz.jgralab.algolib.algorithms.GraphAlgorithm;
 import de.uni_koblenz.jgralab.algolib.functions.ArrayPermutation;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 import de.uni_koblenz.jgralab.algolib.functions.Function;
 import de.uni_koblenz.jgralab.algolib.functions.IntFunction;
 import de.uni_koblenz.jgralab.algolib.functions.Permutation;
+import de.uni_koblenz.jgralab.algolib.problems.CompleteTraversalSolver;
 import de.uni_koblenz.jgralab.algolib.problems.TraversalFromVertexSolver;
 import de.uni_koblenz.jgralab.graphmarker.ArrayVertexMarker;
 import de.uni_koblenz.jgralab.graphmarker.BitSetEdgeMarker;
@@ -26,25 +26,8 @@ import de.uni_koblenz.jgralab.graphmarker.IntegerVertexMarker;
  * @author strauss@uni-koblenz.de
  * 
  */
-public abstract class SearchAlgorithm extends GraphAlgorithm implements
-		TraversalFromVertexSolver {
-
-	/**
-	 * This is the default value for the parameter <code>searchDirection</code>.
-	 * By default the algorithm follows only outgoing edges, which also means
-	 * that the graph is interpreted as a directed graph.
-	 */
-	public static final EdgeDirection DEFAULT_SEARCH_DIRECTION = EdgeDirection.OUT;
-
-	/**
-	 * A function that tells if a reachable edge is also navigable.
-	 */
-	protected BooleanFunction<Edge> navigable;
-
-	/**
-	 * The search direction this search algorithm uses.
-	 */
-	protected EdgeDirection searchDirection;
+public abstract class SearchAlgorithm extends AbstractTraversal implements
+		TraversalFromVertexSolver, CompleteTraversalSolver {
 
 	/**
 	 * The intermediate result <code>vertexOrder</code>.
@@ -107,10 +90,8 @@ public abstract class SearchAlgorithm extends GraphAlgorithm implements
 	 *            the navigable function for this search algorithm.
 	 */
 	public SearchAlgorithm(Graph graph, BooleanFunction<GraphElement> subgraph,
-			boolean directed, BooleanFunction<Edge> navigable) {
-		super(graph, subgraph);
-		setDirected(directed);
-		this.navigable = navigable;
+			BooleanFunction<Edge> navigable) {
+		super(graph, subgraph, navigable);
 	}
 
 	/**
@@ -120,7 +101,7 @@ public abstract class SearchAlgorithm extends GraphAlgorithm implements
 	 *            the graph this search algorithm works on.
 	 */
 	public SearchAlgorithm(Graph graph) {
-		super(graph);
+		this(graph, null, null);
 	}
 
 	/**
@@ -250,13 +231,6 @@ public abstract class SearchAlgorithm extends GraphAlgorithm implements
 		// reset visitors (in subclass)
 	}
 
-	@Override
-	public void resetParameters() {
-		super.resetParameters();
-		this.navigable = null;
-		this.searchDirection = DEFAULT_SEARCH_DIRECTION;
-	}
-
 	/**
 	 * @return the algorithm result <code>visitedVertices</code>.
 	 */
@@ -312,17 +286,6 @@ public abstract class SearchAlgorithm extends GraphAlgorithm implements
 		return new ArrayPermutation<Vertex>(vertexOrder);
 	}
 
-	/**
-	 * Sets the search direction to "OUT" if <code>directed == true</code> and
-	 * to "INOUT" otherwise. For searching backwards, use
-	 * <code>setSearchDirection</code>.
-	 */
-	@Override
-	public void setDirected(boolean directed) {
-		checkStateForSettingParameters();
-		searchDirection = directed ? EdgeDirection.OUT : EdgeDirection.INOUT;
-	}
-
 	@Override
 	public boolean isHybrid() {
 		return true;
@@ -335,25 +298,6 @@ public abstract class SearchAlgorithm extends GraphAlgorithm implements
 	@Override
 	public boolean isDirected() {
 		return searchDirection != EdgeDirection.INOUT;
-	}
-
-	/**
-	 * Sets the search direction to the given value. If "INOUT" is given, the
-	 * algorithm interprets the graph as undirected graph.
-	 * 
-	 * @param searchDirection
-	 *            the search direction this search algorithm uses.
-	 */
-	public void setSearchDirection(EdgeDirection searchDirection) {
-		checkStateForSettingParameters();
-		this.searchDirection = searchDirection;
-	}
-
-	/**
-	 * @return the current search direction of the algorithm.
-	 */
-	public EdgeDirection getSearchDirection() {
-		return searchDirection;
 	}
 
 	@Override
@@ -402,19 +346,13 @@ public abstract class SearchAlgorithm extends GraphAlgorithm implements
 		checkStateForResult();
 		return parent;
 	}
-
-	public BooleanFunction<Edge> getNavigable() {
-		return navigable;
-	}
-
+	
 	@Override
-	public void setNavigable(BooleanFunction<Edge> navigable) {
-		if (getState() == AlgorithmStates.INITIALIZED) {
-			this.navigable = navigable;
-		} else {
-			throw new IllegalStateException(
-					"The edge navigability may only be changed when in state "
-							+ AlgorithmStates.INITIALIZED);
+	public SearchAlgorithm execute() {
+		for (Vertex currentRoot : graph.vertices()) {
+			execute(currentRoot);
 		}
+		assert (state == AlgorithmStates.FINISHED);
+		return this;
 	}
 }

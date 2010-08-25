@@ -204,17 +204,6 @@ public abstract class GraphAlgorithm implements ProblemSolver {
 	public abstract boolean isDirected();
 
 	/**
-	 * Sets the interpretation mode (directed or undirected) of the current
-	 * graph.
-	 * 
-	 * @param directed
-	 *            if true, the current graph is interpreted as a directed graph.
-	 * @throws UnsupportedOperationException
-	 *             if this algorithm only supports one interpretation mode
-	 */
-	public abstract void setDirected(boolean directed);
-
-	/**
 	 * Tells if this algorithm can work on both, directed and undirected graphs.
 	 * 
 	 * @return true if this algorithm can work on directed and undirected
@@ -295,10 +284,11 @@ public abstract class GraphAlgorithm implements ProblemSolver {
 				edgeCount = graph.getECount();
 			} else {
 				edgeCount = 0;
-				for (Edge currentEdge : graph.edges())
+				for (Edge currentEdge : graph.edges()) {
 					if (subgraph.get(currentEdge)) {
 						edgeCount++;
 					}
+				}
 			}
 		}
 		return edgeCount;
