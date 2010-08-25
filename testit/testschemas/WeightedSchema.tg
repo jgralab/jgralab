@@ -6,5 +6,5 @@ GraphClass WeightedGraph;
 
 Package ;
 VertexClass Location { x: Double, y: Double, name: String };
-EdgeClass Way from Location (0,*) role alphaVertex to Location (0,*) role omegaVertex;
+EdgeClass Way from Location (0,*) role alphaVertex to Location (0,*) role omegaVertex { weight: Double };
 
