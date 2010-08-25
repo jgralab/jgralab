@@ -7,7 +7,7 @@ import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmStates;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
-import de.uni_koblenz.jgralab.algolib.algorithms.GraphAlgorithm;
+import de.uni_koblenz.jgralab.algolib.algorithms.search.AbstractTraversal;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.DepthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.DFSVisitorAdapter;
 import de.uni_koblenz.jgralab.algolib.algorithms.topological_order.visitors.TopologicalOrderVisitor;
@@ -18,7 +18,7 @@ import de.uni_koblenz.jgralab.algolib.problems.directed.AcyclicitySolver;
 import de.uni_koblenz.jgralab.algolib.problems.directed.TopologicalOrderSolver;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
 
-public class TopologicalOrderWithDFS extends GraphAlgorithm implements
+public class TopologicalOrderWithDFS extends AbstractTraversal implements
 		AcyclicitySolver, TopologicalOrderSolver {
 
 	private DepthFirstSearch dfs;
@@ -27,13 +27,14 @@ public class TopologicalOrderWithDFS extends GraphAlgorithm implements
 	private TopologicalOrderVisitorComposition visitors;
 
 	public TopologicalOrderWithDFS(Graph graph,
-			BooleanFunction<GraphElement> subgraph, DepthFirstSearch dfs) {
-		super(graph, subgraph);
+			BooleanFunction<GraphElement> subgraph, DepthFirstSearch dfs,
+			BooleanFunction<Edge> navigable) {
+		super(graph, subgraph, navigable);
 		this.dfs = dfs;
 	}
 
 	public TopologicalOrderWithDFS(Graph graph, DepthFirstSearch dfs) {
-		this(graph, null, dfs);
+		this(graph, null, dfs, null);
 	}
 
 	@Override
@@ -77,12 +78,6 @@ public class TopologicalOrderWithDFS extends GraphAlgorithm implements
 	}
 
 	@Override
-	public void setDirected(boolean directed) {
-		throw new UnsupportedOperationException(
-				"This algorithm only works for directed graphs.");
-	}
-
-	@Override
 	public boolean isAcyclic() {
 		checkStateForResult();
 		return acyclic;
@@ -122,9 +117,9 @@ public class TopologicalOrderWithDFS extends GraphAlgorithm implements
 		dfs.reset();
 		dfs.setGraph(graph);
 		dfs.setSubgraph(subgraph);
-		dfs.setNavigable(null);
-		EdgeDirection originalDirection = dfs.getSearchDirection();
-		dfs.setSearchDirection(EdgeDirection.IN);
+		dfs.setNavigable(navigable);
+		// always search in inverse order
+		dfs.setSearchDirection(searchDirection == EdgeDirection.IN ? EdgeDirection.OUT : EdgeDirection.IN);
 		dfs.addVisitor(torderVisitorAdapter);
 		startRunning();
 		try {
@@ -133,7 +128,6 @@ public class TopologicalOrderWithDFS extends GraphAlgorithm implements
 		}
 		done();
 		dfs.removeVisitor(torderVisitorAdapter);
-		dfs.setSearchDirection(originalDirection);
 		return this;
 	}
 }

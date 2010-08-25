@@ -6,10 +6,10 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmStates;
-import de.uni_koblenz.jgralab.algolib.algorithms.GraphAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.reachability.visitors.TransitiveVisitorComposition;
+import de.uni_koblenz.jgralab.algolib.algorithms.search.AbstractTraversal;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.BreadthFirstSearch;
-import de.uni_koblenz.jgralab.algolib.algorithms.search.CompleteSearchAlgorithm;
+import de.uni_koblenz.jgralab.algolib.algorithms.search.SearchAlgorithm;
 import de.uni_koblenz.jgralab.algolib.functions.ArrayBinaryDoubleFunction;
 import de.uni_koblenz.jgralab.algolib.functions.ArrayBinaryFunction;
 import de.uni_koblenz.jgralab.algolib.functions.BinaryDoubleFunction;
@@ -23,12 +23,11 @@ import de.uni_koblenz.jgralab.algolib.problems.WeightedDistancesSolver;
 import de.uni_koblenz.jgralab.algolib.problems.WeightedShortestPathsSolver;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
 
-public class FloydAlgorithm extends GraphAlgorithm implements
+public class FloydAlgorithm extends AbstractTraversal implements
 		WeightedDistancesSolver, WeightedShortestPathsSolver,
 		NegativeCyclesSolver {
 
 	private TransitiveVisitorComposition visitors;
-	private EdgeDirection searchDirection;
 	private IntFunction<Vertex> indexMapping;
 	private Permutation<Vertex> vertexOrder;
 	private int vertexCount;
@@ -38,11 +37,13 @@ public class FloydAlgorithm extends GraphAlgorithm implements
 	private boolean negativeCycles;
 
 	public FloydAlgorithm(Graph graph) {
-		super(graph);
+		this(graph, null, null, null);
 	}
 
-	public FloydAlgorithm(Graph graph, BooleanFunction<GraphElement> subgraph) {
-		super(graph, subgraph);
+	public FloydAlgorithm(Graph graph, BooleanFunction<GraphElement> subgraph,
+			BooleanFunction<Edge> navigable, DoubleFunction<Edge> edgeWeight) {
+		super(graph, subgraph, navigable);
+		this.edgeWeight = edgeWeight;
 	}
 
 	@Override
@@ -61,11 +62,6 @@ public class FloydAlgorithm extends GraphAlgorithm implements
 	}
 
 	@Override
-	public boolean isDirected() {
-		return searchDirection != EdgeDirection.INOUT;
-	}
-
-	@Override
 	public boolean isHybrid() {
 		return true;
 	}
@@ -77,13 +73,8 @@ public class FloydAlgorithm extends GraphAlgorithm implements
 	}
 
 	@Override
-	public void setDirected(boolean directed) {
-		checkStateForSettingParameters();
-		searchDirection = directed ? EdgeDirection.OUT : EdgeDirection.INOUT;
-	}
-
-	@Override
 	public void setEdgeWeight(DoubleFunction<Edge> edgeWeight) {
+		checkStateForSettingParameters();
 		this.edgeWeight = edgeWeight;
 	}
 
@@ -95,7 +86,7 @@ public class FloydAlgorithm extends GraphAlgorithm implements
 	public void reset() {
 		super.reset();
 		negativeCycles = false;
-		CompleteSearchAlgorithm search = new BreadthFirstSearch(graph)
+		SearchAlgorithm search = new BreadthFirstSearch(graph)
 				.withNumber();
 		search.execute();
 		indexMapping = search.getNumber();
@@ -128,7 +119,8 @@ public class FloydAlgorithm extends GraphAlgorithm implements
 			weightedDistance[vId][vId] = 0;
 		}
 		for (Edge e : graph.edges()) {
-			if (subgraph != null && !subgraph.get(e)) {
+			if (subgraph != null && !subgraph.get(e) || navigable != null
+					&& !navigable.get(e)) {
 				continue;
 			}
 			int vId = indexMapping.get(e.getAlpha());
@@ -149,7 +141,7 @@ public class FloydAlgorithm extends GraphAlgorithm implements
 				successor[wId][vId] = e.getReversedEdge();
 			}
 		}
-		
+
 		// main loop
 		for (int vId = 1; vId <= vertexCount; vId++) {
 			for (int uId = 1; uId <= vertexCount; uId++) {
@@ -185,16 +177,6 @@ public class FloydAlgorithm extends GraphAlgorithm implements
 	public BinaryFunction<Vertex, Vertex, Edge> getSuccessor() {
 		checkStateForResult();
 		return new ArrayBinaryFunction<Vertex, Edge>(successor, indexMapping);
-	}
-
-	public EdgeDirection getSearchDirection() {
-		checkStateForSettingParameters();
-		return searchDirection;
-	}
-
-	public void setSearchDirection(EdgeDirection searchDirection) {
-		checkStateForSettingParameters();
-		this.searchDirection = searchDirection;
 	}
 
 	public Permutation<Vertex> getVertexOrder() {

@@ -5,44 +5,48 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmStates;
-import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
-import de.uni_koblenz.jgralab.algolib.algorithms.search.SearchAlgorithm;
+import de.uni_koblenz.jgralab.algolib.algorithms.search.AbstractTraversal;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.SearchVisitorAdapter;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.SearchVisitorComposition;
 import de.uni_koblenz.jgralab.algolib.buffers.PriorityQueue;
 import de.uni_koblenz.jgralab.algolib.functions.BinaryDoubleFunction;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 import de.uni_koblenz.jgralab.algolib.functions.DoubleFunction;
+import de.uni_koblenz.jgralab.algolib.functions.Function;
 import de.uni_koblenz.jgralab.algolib.problems.WeightedDistanceFromVertexToVertexSolver;
 import de.uni_koblenz.jgralab.algolib.problems.WeightedShortestPathFromVertexToVertexSolver;
+import de.uni_koblenz.jgralab.algolib.visitors.GraphVisitorAdapter;
+import de.uni_koblenz.jgralab.algolib.visitors.GraphVisitorComposition;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
+import de.uni_koblenz.jgralab.graphmarker.BitSetVertexMarker;
 import de.uni_koblenz.jgralab.graphmarker.DoubleVertexMarker;
 
-public class AStarSearch extends SearchAlgorithm implements
+public class AStarSearch extends AbstractTraversal implements
 		WeightedDistanceFromVertexToVertexSolver,
 		WeightedShortestPathFromVertexToVertexSolver {
 
 	protected DoubleFunction<Vertex> weightedDistance;
+	protected BooleanFunction<Vertex> visitedVertices;
+	protected Function<Vertex, Edge> parent;
 
 	protected DoubleFunction<Edge> edgeWeight;
 	private BinaryDoubleFunction<Vertex, Vertex> heuristic;
 	protected Vertex target;
-	protected SearchVisitorAdapter targetVertexReachedVisitor;
+	protected GraphVisitorAdapter targetVertexReachedVisitor;
 
 	protected PriorityQueue<Vertex> vertexQueue;
-	protected SearchVisitorComposition visitors;
+	protected GraphVisitorComposition visitors;
 
 	public AStarSearch(Graph graph, BooleanFunction<GraphElement> subgraph,
-			boolean directed, BooleanFunction<Edge> navigable,
-			DoubleFunction<Edge> edgeWeight,
+			BooleanFunction<Edge> navigable, DoubleFunction<Edge> edgeWeight,
 			BinaryDoubleFunction<Vertex, Vertex> heuristic) {
-		super(graph, subgraph, directed, navigable);
+		super(graph, subgraph, navigable);
 		this.edgeWeight = edgeWeight;
 		this.heuristic = heuristic;
 	}
 
 	public AStarSearch(Graph graph) {
-		this(graph, null, true, null, null, null);
+		this(graph, null, null, null, null);
 	}
 
 	@Override
@@ -56,38 +60,14 @@ public class AStarSearch extends SearchAlgorithm implements
 		checkStateForSettingParameters();
 		visitors.removeVisitor(visitor);
 	}
-
+	
 	@Override
-	public AStarSearch withLevel() {
-		return (AStarSearch) super.withLevel();
+	public void disableOptionalResults() {
 	}
 
 	@Override
-	public AStarSearch withNumber() {
-		return (AStarSearch) super.withNumber();
-	}
-
-	@Override
-	public AStarSearch withParent() {
-		throw new UnsupportedOperationException(
-				"The result \"parent\" is mandatory for A* and doesn't need to be explicitly activated.");
-
-	}
-
-	@Override
-	public AStarSearch withoutLevel() {
-		return (AStarSearch) super.withoutLevel();
-	}
-
-	@Override
-	public AStarSearch withoutNumber() {
-		return (AStarSearch) super.withoutNumber();
-	}
-
-	@Override
-	public AStarSearch withoutParent() {
-		throw new UnsupportedOperationException(
-				"The result \"parent\" is mandatory for A* and cannot be deactivated.");
+	public boolean isHybrid() {
+		return true;
 	}
 
 	@Override
@@ -95,6 +75,7 @@ public class AStarSearch extends SearchAlgorithm implements
 		super.reset();
 		visitors.reset();
 		weightedDistance = new DoubleVertexMarker(graph);
+		visitedVertices = new BitSetVertexMarker(graph);
 		vertexQueue = vertexQueue == null ? new PriorityQueue<Vertex>()
 				: vertexQueue.clear();
 	}
@@ -133,42 +114,22 @@ public class AStarSearch extends SearchAlgorithm implements
 		}
 		this.target = target;
 		visitors.addVisitor(targetVertexReachedVisitor);
-		try {
-			execute(start);
-		} catch (AlgorithmTerminatedException e) {
-		}
-		visitors.removeVisitor(targetVertexReachedVisitor);
-		return this;
-	}
 
-	@Override
-	public AStarSearch execute(Vertex start) {
 		if (subgraph != null && !subgraph.get(start)) {
 			throw new IllegalArgumentException("Start vertex not in subgraph!");
 		}
 		startRunning();
 		weightedDistance.set(start, 0);
-		if (level != null) {
-			level.set(start, 0);
-		}
-		visitors.visitRoot(start);
 		vertexQueue.put(start, 0);
 
 		// main loop
 		while (!vertexQueue.isEmpty()) {
 			Vertex currentVertex = vertexQueue.getNext();
 			if (!visitedVertices.get(currentVertex)) {
-				vertexOrder[num] = currentVertex;
-				if (level != null) {
-					level.set(currentVertex, level.get(parent
-							.get(currentVertex).getThis()) + 1);
-				}
-				if (number != null) {
-					number.set(currentVertex, num);
-				}
+
 				visitors.visitVertex(currentVertex);
 				visitedVertices.set(currentVertex, true);
-				num++;
+
 				for (Edge currentEdge : currentVertex
 						.incidences(searchDirection)) {
 					if (subgraph != null && subgraph.get(currentEdge)
@@ -180,15 +141,8 @@ public class AStarSearch extends SearchAlgorithm implements
 					double newDistance = weightedDistance.get(currentVertex)
 							+ (edgeWeight == null ? 1.0 : edgeWeight
 									.get(currentEdge));
-					edgeOrder[eNum] = currentEdge;
+
 					visitors.visitEdge(currentEdge);
-					visitedEdges.set(currentEdge, true);
-					eNum++;
-					if (!visitedVertices.isDefined(nextVertex)) {
-						visitors.visitTreeEdge(currentEdge);
-					} else {
-						visitors.visitFrond(currentEdge);
-					}
 
 					if (!weightedDistance.isDefined(nextVertex)
 							|| weightedDistance.get(nextVertex) > newDistance) {
@@ -204,9 +158,11 @@ public class AStarSearch extends SearchAlgorithm implements
 		}
 
 		done();
+		visitors.removeVisitor(targetVertexReachedVisitor);
 		return this;
 	}
 
+	@Override
 	public void done() {
 		state = AlgorithmStates.FINISHED;
 	}
@@ -215,6 +171,12 @@ public class AStarSearch extends SearchAlgorithm implements
 	public double getSingleWeightedDistance() {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+
+	@Override
+	public Function<Vertex, Edge> getParent() {
+		checkStateForResult();
+		return parent;
 	}
 
 }

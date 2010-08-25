@@ -6,7 +6,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmStates;
-import de.uni_koblenz.jgralab.algolib.algorithms.GraphAlgorithm;
+import de.uni_koblenz.jgralab.algolib.algorithms.search.AbstractTraversal;
 import de.uni_koblenz.jgralab.algolib.algorithms.topological_order.visitors.TopologicalOrderVisitorComposition;
 import de.uni_koblenz.jgralab.algolib.functions.ArrayPermutation;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
@@ -17,7 +17,7 @@ import de.uni_koblenz.jgralab.algolib.problems.directed.TopologicalOrderSolver;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
 import de.uni_koblenz.jgralab.graphmarker.IntegerVertexMarker;
 
-public class KahnKnuthAlgorithm extends GraphAlgorithm implements
+public class KahnKnuthAlgorithm extends AbstractTraversal implements
 		AcyclicitySolver, TopologicalOrderSolver {
 
 	private TopologicalOrderVisitorComposition visitors;
@@ -27,41 +27,46 @@ public class KahnKnuthAlgorithm extends GraphAlgorithm implements
 	private IntFunction<Vertex> tnumber;
 	private IntFunction<Vertex> inDegree;
 	private boolean acyclic;
-	private EdgeDirection searchDirection;
 	private EdgeDirection degreeDirection;
 
 	public KahnKnuthAlgorithm(Graph graph,
-			BooleanFunction<GraphElement> subgraph) {
-		super(graph, subgraph);
+			BooleanFunction<GraphElement> subgraph,
+			BooleanFunction<Edge> navigable) {
+		super(graph, subgraph, navigable);
 	}
 
 	public KahnKnuthAlgorithm(Graph graph) {
-		super(graph);
+		this(graph, null, null);
 	}
 
 	public KahnKnuthAlgorithm withTNumber() {
+		checkStateForSettingParameters();
 		tnumber = new IntegerVertexMarker(graph);
 		return this;
 	}
 
+	@Override
 	public KahnKnuthAlgorithm normal() {
-		searchDirection = EdgeDirection.OUT;
+		super.normal();
 		degreeDirection = EdgeDirection.IN;
 		return this;
 	}
 
+	@Override
 	public KahnKnuthAlgorithm reversed() {
-		searchDirection = EdgeDirection.IN;
+		super.reversed();
 		degreeDirection = EdgeDirection.OUT;
 		return this;
 	}
 
 	public KahnKnuthAlgorithm withTnumber() {
+		checkStateForSettingParameters();
 		tnumber = new IntegerVertexMarker(graph);
 		return this;
 	}
 
 	public KahnKnuthAlgorithm withoutTnumber() {
+		checkStateForSettingParameters();
 		tnumber = null;
 		return this;
 	}
@@ -131,12 +136,6 @@ public class KahnKnuthAlgorithm extends GraphAlgorithm implements
 	}
 
 	@Override
-	public void setDirected(boolean directed) {
-		throw new UnsupportedOperationException(
-				"This algorithm only works for directed graphs.");
-	}
-
-	@Override
 	public KahnKnuthAlgorithm execute() {
 		startRunning();
 
@@ -145,7 +144,10 @@ public class KahnKnuthAlgorithm extends GraphAlgorithm implements
 			if (subgraph != null && !subgraph.get(currentVertex)) {
 				continue;
 			}
+			// TODO replace with proper degree computation with respect to the
+			// subgraph and the function navigable
 			int degree = currentVertex.getDegree(degreeDirection);
+
 			inDegree.set(currentVertex, degree);
 			if (degree == 0) {
 				torder[tnum] = currentVertex;

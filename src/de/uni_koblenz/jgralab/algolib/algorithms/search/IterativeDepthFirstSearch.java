@@ -32,7 +32,7 @@ public class IterativeDepthFirstSearch extends DepthFirstSearch {
 	public IterativeDepthFirstSearch(Graph graph,
 			BooleanFunction<GraphElement> subgraph, boolean directed,
 			BooleanFunction<Edge> navigable) {
-		super(graph, subgraph, directed, navigable);
+		super(graph, subgraph, navigable);
 	}
 
 	public IterativeDepthFirstSearch(Graph graph) {

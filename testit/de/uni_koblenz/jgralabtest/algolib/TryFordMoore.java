@@ -18,6 +18,7 @@ import de.uni_koblenz.jgralabtest.schemas.algolib.weighted.Way;
 import de.uni_koblenz.jgralabtest.schemas.algolib.weighted.WeightedGraph;
 import de.uni_koblenz.jgralabtest.schemas.algolib.weighted.WeightedSchema;
 
+@SuppressWarnings("unused")
 public class TryFordMoore {
 
 	private static Location[] v;
@@ -94,7 +95,6 @@ public class TryFordMoore {
 		}
 	}
 
-	@SuppressWarnings("unused")
 	private static void printResult2(Location target,
 			Function<Vertex, Edge> result, DoubleFunction<Vertex> distance) {
 		Stack<Vertex> stack = new Stack<Vertex>();

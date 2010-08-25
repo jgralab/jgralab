@@ -9,7 +9,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmStates;
-import de.uni_koblenz.jgralab.algolib.algorithms.GraphAlgorithm;
+import de.uni_koblenz.jgralab.algolib.algorithms.search.AbstractTraversal;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 import de.uni_koblenz.jgralab.algolib.functions.DoubleFunction;
 import de.uni_koblenz.jgralab.algolib.functions.Function;
@@ -24,7 +24,7 @@ import de.uni_koblenz.jgralab.graphmarker.ArrayVertexMarker;
 import de.uni_koblenz.jgralab.graphmarker.DoubleVertexMarker;
 import de.uni_koblenz.jgralab.graphmarker.IntegerVertexMarker;
 
-public class FordMooreAlgorithm extends GraphAlgorithm implements
+public class FordMooreAlgorithm extends AbstractTraversal implements
 		TraversalSolver, WeightedDistancesFromVertexSolver,
 		WeightedShortestPathsFromVertexSolver,
 		WeightedDistanceFromVertexToVertexSolver,
@@ -46,20 +46,12 @@ public class FordMooreAlgorithm extends GraphAlgorithm implements
 	public FordMooreAlgorithm(Graph graph,
 			BooleanFunction<GraphElement> subgraph,
 			BooleanFunction<Edge> navigable, DoubleFunction<Edge> weight) {
-		super(graph, subgraph);
-		this.navigable = navigable;
+		super(graph, subgraph,navigable);
 		this.edgeWeight = weight;
-		searchDirection = EdgeDirection.OUT;
 	}
 
 	public FordMooreAlgorithm(Graph graph) {
 		this(graph, null, null, null);
-	}
-
-	@Override
-	public void setNavigable(BooleanFunction<Edge> navigable) {
-		checkStateForSettingParameters();
-		this.navigable = navigable;
 	}
 
 	@Override
@@ -78,38 +70,8 @@ public class FordMooreAlgorithm extends GraphAlgorithm implements
 	}
 
 	@Override
-	public boolean isDirected() {
-		return searchDirection != EdgeDirection.INOUT;
-	}
-
-	@Override
 	public boolean isHybrid() {
 		return true;
-	}
-
-	@Override
-	public void setDirected(boolean directed) {
-		checkStateForSettingParameters();
-		searchDirection = directed ? EdgeDirection.OUT : EdgeDirection.INOUT;
-	}
-
-	/**
-	 * Sets the search direction to the given value. If "INOUT" is given, the
-	 * algorithm interprets the graph as undirected graph.
-	 * 
-	 * @param searchDirection
-	 *            the search direction this search algorithm uses.
-	 */
-	public void setSearchDirection(EdgeDirection searchDirection) {
-		checkStateForSettingParameters();
-		this.searchDirection = searchDirection;
-	}
-
-	/**
-	 * @return the current search direction of the algorithm.
-	 */
-	public EdgeDirection getSearchDirection() {
-		return searchDirection;
 	}
 
 	@Override
@@ -142,7 +104,6 @@ public class FordMooreAlgorithm extends GraphAlgorithm implements
 	@Override
 	public void resetParameters() {
 		super.resetParameters();
-		navigable = null;
 		edgeWeight = null;
 		searchDirection = EdgeDirection.OUT;
 	}

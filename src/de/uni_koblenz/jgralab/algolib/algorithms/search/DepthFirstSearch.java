@@ -23,7 +23,7 @@ import de.uni_koblenz.jgralab.graphmarker.IntegerVertexMarker;
  * @author strauss@uni-koblenz.de
  * 
  */
-public abstract class DepthFirstSearch extends CompleteSearchAlgorithm {
+public abstract class DepthFirstSearch extends SearchAlgorithm {
 
 	/**
 	 * The visitor composition containing all visitors.
@@ -47,13 +47,13 @@ public abstract class DepthFirstSearch extends CompleteSearchAlgorithm {
 	protected Vertex[] rorder;
 
 	public DepthFirstSearch(Graph graph,
-			BooleanFunction<GraphElement> subgraph, boolean directed,
+			BooleanFunction<GraphElement> subgraph,
 			BooleanFunction<Edge> navigable) {
-		super(graph, subgraph, directed, navigable);
+		super(graph, subgraph, navigable);
 	}
 
 	public DepthFirstSearch(Graph graph) {
-		super(graph);
+		this(graph, null, null);
 	}
 
 	@Override
@@ -81,7 +81,7 @@ public abstract class DepthFirstSearch extends CompleteSearchAlgorithm {
 	public DepthFirstSearch withParent() {
 		return (DepthFirstSearch) super.withParent();
 	}
-	
+
 	@Override
 	public DepthFirstSearch withoutLevel() {
 		return (DepthFirstSearch) super.withoutLevel();
@@ -90,7 +90,7 @@ public abstract class DepthFirstSearch extends CompleteSearchAlgorithm {
 	@Override
 	public DepthFirstSearch withoutNumber() {
 		throw new UnsupportedOperationException(
-		"The result \"number\" is mandatory for DFS and cannot be deactivated.");
+				"The result \"number\" is mandatory for DFS and cannot be deactivated.");
 	}
 
 	@Override
@@ -103,7 +103,7 @@ public abstract class DepthFirstSearch extends CompleteSearchAlgorithm {
 		rorder = new Vertex[getVertexCount() + 1];
 		return this;
 	}
-	
+
 	public DepthFirstSearch withoutRorder() {
 		checkStateForSettingParameters();
 		rorder = null;
@@ -130,9 +130,9 @@ public abstract class DepthFirstSearch extends CompleteSearchAlgorithm {
 		visitor.setAlgorithm(this);
 		visitors.addVisitor(visitor);
 	}
-	
+
 	@Override
-	public void removeVisitor(Visitor visitor){
+	public void removeVisitor(Visitor visitor) {
 		checkStateForSettingParameters();
 		visitors.removeVisitor(visitor);
 	}

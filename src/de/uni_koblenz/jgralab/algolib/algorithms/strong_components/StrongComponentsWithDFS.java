@@ -8,6 +8,7 @@ import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmStates;
 import de.uni_koblenz.jgralab.algolib.algorithms.GraphAlgorithm;
+import de.uni_koblenz.jgralab.algolib.algorithms.search.AbstractTraversal;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.DepthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.DFSVisitor;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.DFSVisitorAdapter;
@@ -22,7 +23,7 @@ import de.uni_koblenz.jgralab.graphmarker.ArrayVertexMarker;
 import de.uni_koblenz.jgralab.graphmarker.IntegerVertexMarker;
 import static java.lang.Math.min;
 
-public class StrongComponentsWithDFS extends GraphAlgorithm implements
+public class StrongComponentsWithDFS extends AbstractTraversal implements
 		StrongComponentsSolver {
 
 	private DepthFirstSearch dfs;
@@ -33,12 +34,13 @@ public class StrongComponentsWithDFS extends GraphAlgorithm implements
 	private ReducedGraphVisitorComposition visitors;
 
 	public StrongComponentsWithDFS(Graph graph, DepthFirstSearch dfs) {
-		this(graph, null, dfs);
+		this(graph, null, dfs, null);
 	}
 
 	public StrongComponentsWithDFS(Graph graph,
-			BooleanFunction<GraphElement> subgraph, DepthFirstSearch dfs) {
-		super(graph, subgraph);
+			BooleanFunction<GraphElement> subgraph, DepthFirstSearch dfs,
+			BooleanFunction<Edge> navigable) {
+		super(graph, subgraph, navigable);
 		this.dfs = dfs;
 	}
 
@@ -82,12 +84,6 @@ public class StrongComponentsWithDFS extends GraphAlgorithm implements
 	}
 
 	@Override
-	public void setDirected(boolean directed) {
-		throw new UnsupportedOperationException(
-				"This algorithm only works for directed graphs.");
-	}
-
-	@Override
 	public Function<Vertex, Vertex> getStrongComponents() {
 		checkStateForResult();
 		return strongComponents;
@@ -120,9 +116,9 @@ public class StrongComponentsWithDFS extends GraphAlgorithm implements
 				vertexStack.push(v);
 				lowlink.set(v, number.get(v));
 			}
-			
-			public void maybeVisitReducedEdge(Edge e){
-				if(strongComponents.isDefined(e.getThat())){
+
+			public void maybeVisitReducedEdge(Edge e) {
+				if (strongComponents.isDefined(e.getThat())) {
 					visitors.visitReducedEdge(e);
 				}
 			}
@@ -136,10 +132,10 @@ public class StrongComponentsWithDFS extends GraphAlgorithm implements
 			}
 
 			@Override
-			public void visitForwardArc(Edge e){
+			public void visitForwardArc(Edge e) {
 				maybeVisitReducedEdge(e);
 			}
-			
+
 			@Override
 			public void visitBackwardArc(Edge e) {
 				Vertex v = e.getThis();
@@ -185,7 +181,8 @@ public class StrongComponentsWithDFS extends GraphAlgorithm implements
 		dfs.reset();
 		dfs.setGraph(graph);
 		dfs.setSubgraph(subgraph);
-		dfs.setNavigable(null);
+		dfs.setNavigable(navigable);
+		dfs.setSearchDirection(searchDirection);
 		dfs.addVisitor(lowlinkVisitor);
 		startRunning();
 		dfs.execute();

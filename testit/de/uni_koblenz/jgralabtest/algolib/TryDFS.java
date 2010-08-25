@@ -52,6 +52,7 @@ public class TryDFS {
 		System.out.println("Fini");
 	}
 
+	@SuppressWarnings("unused")
 	private static void printResults(DepthFirstSearch dfs) {
 		System.out.println("vertex order: \n" + dfs.getVertexOrder());
 		System.out.println();
