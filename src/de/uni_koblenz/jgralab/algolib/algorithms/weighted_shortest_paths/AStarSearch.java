@@ -18,6 +18,7 @@ import de.uni_koblenz.jgralab.algolib.problems.WeightedShortestPathFromVertexToV
 import de.uni_koblenz.jgralab.algolib.visitors.GraphVisitorAdapter;
 import de.uni_koblenz.jgralab.algolib.visitors.GraphVisitorComposition;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
+import de.uni_koblenz.jgralab.graphmarker.ArrayVertexMarker;
 import de.uni_koblenz.jgralab.graphmarker.BitSetVertexMarker;
 import de.uni_koblenz.jgralab.graphmarker.DoubleVertexMarker;
 
@@ -60,7 +61,7 @@ public class AStarSearch extends AbstractTraversal implements
 		checkStateForSettingParameters();
 		visitors.removeVisitor(visitor);
 	}
-	
+
 	@Override
 	public void disableOptionalResults() {
 	}
@@ -76,6 +77,7 @@ public class AStarSearch extends AbstractTraversal implements
 		visitors.reset();
 		weightedDistance = new DoubleVertexMarker(graph);
 		visitedVertices = new BitSetVertexMarker(graph);
+		parent = new ArrayVertexMarker<Edge>(graph);
 		vertexQueue = vertexQueue == null ? new PriorityQueue<Vertex>()
 				: vertexQueue.clear();
 	}
@@ -115,6 +117,13 @@ public class AStarSearch extends AbstractTraversal implements
 		this.target = target;
 		visitors.addVisitor(targetVertexReachedVisitor);
 
+		internalExecute(start, target);
+
+		visitors.removeVisitor(targetVertexReachedVisitor);
+		return this;
+	}
+
+	protected void internalExecute(Vertex start, Vertex target) {
 		if (subgraph != null && !subgraph.get(start)) {
 			throw new IllegalArgumentException("Start vertex not in subgraph!");
 		}
@@ -150,7 +159,6 @@ public class AStarSearch extends AbstractTraversal implements
 						weightedDistance.set(nextVertex, newDistance);
 						vertexQueue.put(nextVertex, newDistance
 								+ (heuristic == null ? 0 : heuristic.get(
-								// TODO das gefällt mir nicht!!!
 										nextVertex, target)));
 					}
 				}
@@ -158,8 +166,6 @@ public class AStarSearch extends AbstractTraversal implements
 		}
 
 		done();
-		visitors.removeVisitor(targetVertexReachedVisitor);
-		return this;
 	}
 
 	@Override
@@ -169,8 +175,12 @@ public class AStarSearch extends AbstractTraversal implements
 
 	@Override
 	public double getSingleWeightedDistance() {
-		// TODO Auto-generated method stub
-		return 0;
+		checkStateForResult();
+		if (target != null) {
+			return weightedDistance.get(target);
+		}
+		throw new UnsupportedOperationException(
+				"No target vertex specified or wrong execute method used.");
 	}
 
 	@Override

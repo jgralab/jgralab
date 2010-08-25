@@ -31,8 +31,6 @@ public class FordMooreAlgorithm extends AbstractTraversal implements
 		WeightedShortestPathFromVertexToVertexSolver {
 
 	private DoubleFunction<Edge> edgeWeight;
-	private BooleanFunction<Edge> navigable;
-	private EdgeDirection searchDirection;
 	private Vertex target;
 
 	private Function<Vertex, Edge> parent;
