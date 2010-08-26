@@ -54,16 +54,37 @@ public abstract class AbstractTraversal extends GraphAlgorithm implements
 		this.searchDirection = searchDirection;
 	}
 
+	/**
+	 * If this method is called before executing the algorithm, the graph will
+	 * be traversed in normal order with respect to the edges's normal
+	 * direction.
+	 * 
+	 * @return this algorithm object.
+	 */
 	public AbstractTraversal normal() {
 		setSearchDirection(EdgeDirection.OUT);
 		return this;
 	}
 
+	/**
+	 * If this method is called before executing the algorithm, the graph will
+	 * be traversed in reversed order with respect to the edge's reversed
+	 * direction.
+	 * 
+	 * @return this algorithm object.
+	 */
 	public AbstractTraversal reversed() {
 		setSearchDirection(EdgeDirection.IN);
 		return this;
 	}
 
+	/**
+	 * If this method is called before executing the algorithm, the graph will
+	 * be treated as undirected graph and the edges will be followed either with
+	 * respect to their normal order or their reversed order.
+	 * 
+	 * @return this algorithm object.
+	 */
 	public AbstractTraversal undirected() {
 		setSearchDirection(EdgeDirection.INOUT);
 		return this;

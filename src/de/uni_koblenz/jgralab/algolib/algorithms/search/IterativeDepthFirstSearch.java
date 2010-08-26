@@ -56,12 +56,14 @@ public class IterativeDepthFirstSearch extends DepthFirstSearch {
 
 	@Override
 	public DepthFirstSearch withParent() {
+		checkStateForSettingParameters();
 		throw new UnsupportedOperationException(
 				"The result \"parent\" is mandatory for iterative DFS and doesn't need to be explicitly activated.");
 	}
 
 	@Override
 	public DepthFirstSearch withoutParent() {
+		checkStateForSettingParameters();
 		throw new UnsupportedOperationException(
 				"The result \"parent\" is mandatory for iterative DFS and cannot be deactivated.");
 	}
@@ -103,41 +105,41 @@ public class IterativeDepthFirstSearch extends DepthFirstSearch {
 					.getMark(currentVertex);
 			if (currentIncidences.hasNext()) {
 				Edge currentEdge = currentIncidences.next();
-				if (subgraph == null || (subgraph.get(currentEdge))
-						&& (navigable == null || navigable.get(currentEdge))
-						&& !visitedEdges.get(currentEdge)) {
-					Vertex nextVertex = currentEdge.getThat();
-					// visit current edge
-					edgeOrder[eNum] = currentEdge;
-					visitors.visitEdge(currentEdge);
-					visitedEdges.set(currentEdge, true);
-					eNum++;
+				if (visitedEdges.get(currentEdge) || subgraph != null
+						&& !subgraph.get(currentEdge) || navigable != null
+						&& !navigable.get(currentEdge)) {
+					incompleteVertices.push(currentVertex);
+					continue;
+				}
+				Vertex nextVertex = currentEdge.getThat();
+				assert (subgraph == null || subgraph.get(nextVertex));
+				// visit current edge
+				edgeOrder[eNum] = currentEdge;
+				visitors.visitEdge(currentEdge);
+				visitedEdges.set(currentEdge, true);
+				eNum++;
 
-					if (visitedVertices.get(nextVertex)) {
-						visitors.visitFrond(currentEdge);
-						if (!rnumber.isDefined(nextVertex)) {
-							visitors.visitBackwardArc(currentEdge);
-						} else if (number.get(nextVertex) > number
-								.get(currentVertex)) {
-							visitors.visitForwardArc(currentEdge);
-						} else {
-							visitors.visitCrosslink(currentEdge);
-						}
-						incompleteVertices.push(currentVertex);
+				if (visitedVertices.get(nextVertex)) {
+					visitors.visitFrond(currentEdge);
+					if (!rnumber.isDefined(nextVertex)) {
+						visitors.visitBackwardArc(currentEdge);
+					} else if (number.get(nextVertex) > number
+							.get(currentVertex)) {
+						visitors.visitForwardArc(currentEdge);
 					} else {
-						if (level != null) {
-							level.set(nextVertex, level.get(currentVertex) + 1);
-						}
-
-						parent.set(currentEdge.getThat(), currentEdge);
-
-						visitors.visitTreeEdge(currentEdge);
-						incompleteVertices.push(currentVertex);
-						incompleteVertices.push(nextVertex);
+						visitors.visitCrosslink(currentEdge);
+					}
+					incompleteVertices.push(currentVertex);
+				} else {
+					if (level != null) {
+						level.set(nextVertex, level.get(currentVertex) + 1);
 					}
 
-				} else {
+					parent.set(currentEdge.getThat(), currentEdge);
+
+					visitors.visitTreeEdge(currentEdge);
 					incompleteVertices.push(currentVertex);
+					incompleteVertices.push(nextVertex);
 				}
 			} else {
 				rnumber.set(currentVertex, rNum);

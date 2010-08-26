@@ -68,45 +68,83 @@ public abstract class DepthFirstSearch extends SearchAlgorithm {
 
 	@Override
 	public DepthFirstSearch withLevel() {
-		return (DepthFirstSearch) super.withLevel();
+		super.withLevel();
+		return this;
 	}
 
 	@Override
 	public DepthFirstSearch withNumber() {
+		checkStateForSettingParameters();
 		throw new UnsupportedOperationException(
 				"The result \"number\" is mandatory for DFS and doesn't need to be explicitly activated.");
 	}
 
 	@Override
 	public DepthFirstSearch withParent() {
-		return (DepthFirstSearch) super.withParent();
+		super.withParent();
+		return this;
 	}
 
-	@Override
-	public DepthFirstSearch withoutLevel() {
-		return (DepthFirstSearch) super.withoutLevel();
-	}
-
-	@Override
-	public DepthFirstSearch withoutNumber() {
-		throw new UnsupportedOperationException(
-				"The result \"number\" is mandatory for DFS and cannot be deactivated.");
-	}
-
-	@Override
-	public DepthFirstSearch withoutParent() {
-		return (DepthFirstSearch) super.withoutParent();
-	}
-
+	/**
+	 * Activates the computation of the optional result <code>rorder</code>.
+	 * 
+	 * @return this <code>DepthFirstSearch</code>.
+	 * @throws IllegalStateException
+	 *             if not in state <code>INITIALIZED</code>.
+	 */
 	public DepthFirstSearch withRorder() {
 		checkStateForSettingParameters();
 		rorder = new Vertex[getVertexCount() + 1];
 		return this;
 	}
 
+	@Override
+	public DepthFirstSearch withoutLevel() {
+		super.withoutLevel();
+		return this;
+	}
+
+	@Override
+	public DepthFirstSearch withoutNumber() {
+		checkStateForSettingParameters();
+		throw new UnsupportedOperationException(
+				"The result \"number\" is mandatory for DFS and cannot be deactivated.");
+	}
+
+	@Override
+	public DepthFirstSearch withoutParent() {
+		super.withoutParent();
+		return this;
+	}
+
+	/**
+	 * Deactivates the computation of the optional result <code>rorder</code>.
+	 * 
+	 * @return this <code>DepthFirstSearch</code>.
+	 * @throws IllegalStateException
+	 *             if not in state <code>INITIALIZED</code>.
+	 */
 	public DepthFirstSearch withoutRorder() {
 		checkStateForSettingParameters();
 		rorder = null;
+		return this;
+	}
+
+	@Override
+	public DepthFirstSearch normal() {
+		super.normal();
+		return this;
+	}
+
+	@Override
+	public DepthFirstSearch reversed() {
+		super.reversed();
+		return this;
+	}
+
+	@Override
+	public DepthFirstSearch undirected() {
+		super.undirected();
 		return this;
 	}
 
@@ -126,14 +164,14 @@ public abstract class DepthFirstSearch extends SearchAlgorithm {
 
 	@Override
 	public void addVisitor(Visitor visitor) {
-		checkStateForSettingParameters();
+		checkStateForSettingVisitors();
 		visitor.setAlgorithm(this);
 		visitors.addVisitor(visitor);
 	}
 
 	@Override
 	public void removeVisitor(Visitor visitor) {
-		checkStateForSettingParameters();
+		checkStateForSettingVisitors();
 		visitors.removeVisitor(visitor);
 	}
 
