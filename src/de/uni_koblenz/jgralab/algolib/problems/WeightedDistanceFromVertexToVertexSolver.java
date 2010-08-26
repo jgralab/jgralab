@@ -33,5 +33,6 @@ public interface WeightedDistanceFromVertexToVertexSolver extends
 	 * Retrieves the result <code>singleWeightedDistance</code>.
 	 * @return the result <code>singleWeightedDistance</code>.
 	 */
-	public double getSingleWeightedDistance();
+	// TODO improve name
+	public double getWeightedDistanceToTarget();
 }

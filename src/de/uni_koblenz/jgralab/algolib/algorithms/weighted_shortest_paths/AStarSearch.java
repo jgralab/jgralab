@@ -141,8 +141,8 @@ public class AStarSearch extends AbstractTraversal implements
 
 				for (Edge currentEdge : currentVertex
 						.incidences(searchDirection)) {
-					if (subgraph != null && subgraph.get(currentEdge)
-							|| navigable != null && navigable.get(currentEdge)) {
+					if (subgraph != null && !subgraph.get(currentEdge)
+							|| navigable != null && !navigable.get(currentEdge)) {
 						continue;
 					}
 					Vertex nextVertex = currentEdge.getThat();
@@ -153,6 +153,7 @@ public class AStarSearch extends AbstractTraversal implements
 
 					visitors.visitEdge(currentEdge);
 
+					// TODO use positive infinity instead of NaN
 					if (!weightedDistance.isDefined(nextVertex)
 							|| weightedDistance.get(nextVertex) > newDistance) {
 						parent.set(nextVertex, currentEdge);
@@ -174,7 +175,7 @@ public class AStarSearch extends AbstractTraversal implements
 	}
 
 	@Override
-	public double getSingleWeightedDistance() {
+	public double getWeightedDistanceToTarget() {
 		checkStateForResult();
 		if (target != null) {
 			return weightedDistance.get(target);
