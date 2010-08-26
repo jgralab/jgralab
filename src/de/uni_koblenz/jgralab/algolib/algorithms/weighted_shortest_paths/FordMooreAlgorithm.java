@@ -168,7 +168,7 @@ public class FordMooreAlgorithm extends AbstractTraversal implements
 	}
 
 	@Override
-	public double getSingleWeightedDistance() {
+	public double getWeightedDistanceToTarget() {
 		checkStateForResult();
 		if (target != null) {
 			return weightedDistance.get(target);

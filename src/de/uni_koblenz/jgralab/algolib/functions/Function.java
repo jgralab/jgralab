@@ -14,6 +14,7 @@ import de.uni_koblenz.jgralab.algolib.functions.entries.FunctionEntry;
  * @param <RANGE>
  *            the range of the function
  */
+// TODO ask Jürgen for parameter names
 public interface Function<DOMAIN, RANGE> extends Iterable<FunctionEntry<DOMAIN, RANGE>> {
 
 	/**

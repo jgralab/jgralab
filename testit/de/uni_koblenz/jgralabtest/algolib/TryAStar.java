@@ -113,7 +113,7 @@ public class TryAStar {
 		}
 		sw.stop();
 		System.out.println(sw.getDurationString());
-		System.out.println(astar.getSingleWeightedDistance());
+		System.out.println(astar.getWeightedDistanceToTarget());
 
 		System.out.println();
 		System.out.println("Dijkstra");
@@ -137,7 +137,7 @@ public class TryAStar {
 		fm.execute(start, target);
 		sw.stop();
 		System.out.println(sw.getDurationString());
-		System.out.println(fm.getSingleWeightedDistance());
+		System.out.println(fm.getWeightedDistanceToTarget());
 
 	}
 
