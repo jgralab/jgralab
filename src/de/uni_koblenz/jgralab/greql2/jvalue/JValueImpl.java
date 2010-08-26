@@ -137,7 +137,7 @@ public class JValueImpl implements JValue {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public int compareTo(JValue o) {
 		if (o.getType() == null) {
@@ -168,7 +168,7 @@ public class JValueImpl implements JValue {
 			return Integer.valueOf(toEdge().getId()).compareTo(
 					Integer.valueOf(o.toEdge().getId()));
 		case ENUMVALUE:
-			return toEnum().compareTo(o.toEnum());
+			return ((Enum) toEnum()).compareTo(o.toEnum());
 		case INT:
 			return toInteger().compareTo(o.toInteger());
 		case LONG:
@@ -613,8 +613,7 @@ public class JValueImpl implements JValue {
 	/**
 	 * creates a new JValue which encapsulates the given String
 	 */
-	@SuppressWarnings("unchecked")
-	public JValueImpl(Enum e) {
+	public JValueImpl(Enum<?> e) {
 		this.type = JValueType.ENUMVALUE;
 		this.value = e;
 		browsingInfo = null;
@@ -623,8 +622,7 @@ public class JValueImpl implements JValue {
 	/**
 	 * creates a new JValue which encapsulates the given String
 	 */
-	@SuppressWarnings("unchecked")
-	public JValueImpl(Enum e, AttributedElement browsingInfo) {
+	public JValueImpl(Enum<?> e, AttributedElement browsingInfo) {
 		this(e);
 		this.browsingInfo = browsingInfo;
 	}
@@ -643,10 +641,9 @@ public class JValueImpl implements JValue {
 	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#toEnum()
 	 */
-	@SuppressWarnings("unchecked")
-	public Enum toEnum() {
+	public Enum<?> toEnum() {
 		if (isEnum()) {
-			return (Enum) value;
+			return (Enum<?>) value;
 		}
 		throw new JValueInvalidTypeException(JValueType.VERTEX, type);
 	}
@@ -1084,17 +1081,16 @@ public class JValueImpl implements JValue {
 	 *            the object to encapsulte
 	 * @return the encapsulated object
 	 */
-	@SuppressWarnings("unchecked")
 	public static JValueImpl fromObject(Object o) {
 		if (o == null) {
 			return new JValueImpl();
 		}
-		Class objectsClass = o.getClass();
+		Class<?> objectsClass = o.getClass();
 		if (objectsClass == String.class) {
 			return new JValueImpl((String) o);
 		}
 		if (o instanceof Enum) {
-			return new JValueImpl((Enum) o);
+			return new JValueImpl((Enum<?>) o);
 		}
 		if (objectsClass == Integer.class) {
 			return new JValueImpl((Integer) o);
@@ -1125,25 +1121,25 @@ public class JValueImpl implements JValue {
 		}
 		if (o instanceof Set) {
 			JValueSet retVal = new JValueSet();
-			for (Object member : ((Set) o)) {
+			for (Object member : ((Set<?>) o)) {
 				retVal.add(JValueImpl.fromObject(member));
 			}
 			return retVal;
 		}
 		if (o instanceof List) {
 			JValueList retVal = new JValueList();
-			for (Object member : ((List) o)) {
+			for (Object member : ((List<?>) o)) {
 				retVal.add(JValueImpl.fromObject(member));
 			}
 			return retVal;
 		}
 		if (o instanceof Map) {
 			JValueMap retVal = new JValueMap();
-			Map<? extends Object, ? extends Object> m = (Map) o;
+			Map<? extends Object, ? extends Object> m = (Map<?, ?>) o;
 			for (Map.Entry<? extends Object, ? extends Object> entry : m
 					.entrySet()) {
-				retVal.put(JValueImpl.fromObject(entry.getKey()), JValueImpl
-						.fromObject(entry.getValue()));
+				retVal.put(JValueImpl.fromObject(entry.getKey()),
+						JValueImpl.fromObject(entry.getValue()));
 			}
 			return retVal;
 		}

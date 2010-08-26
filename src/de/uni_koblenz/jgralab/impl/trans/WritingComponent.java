@@ -1,8 +1,8 @@
 package de.uni_koblenz.jgralab.impl.trans;
 
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.GraphException;
@@ -60,8 +60,8 @@ public class WritingComponent {
 		// if at least one edge is to be added or deleted...
 		if (((transaction.addedEdges != null && transaction.addedEdges.size() > 0) || (transaction.deletedEdges != null && transaction.deletedEdges
 				.size() > 0))
-				// looking for graph.edge is sufficient, because edge and
-				// revEdge are one unit..
+		// looking for graph.edge is sufficient, because edge and
+		// revEdge are one unit..
 				&& graph.edge.isLatestPersistentValueReferenced()) {
 			// important to synchronize here!!!
 			graph.edgeSync.readLock().lock();
@@ -105,8 +105,9 @@ public class WritingComponent {
 				}
 			}
 			transaction.deletedVerticesWhileWriting = null;
-			if (transaction.deletedVertices.size() > 0)
+			if (transaction.deletedVertices.size() > 0) {
 				transaction.changedDuringCommit.add(graph.vertex);
+			}
 		}
 		// graph.vertexSync.writeLock().unlock();
 	}
@@ -126,11 +127,13 @@ public class WritingComponent {
 				// only delete if still present in graph; could be that
 				// <code>edge</code> has already been deleted within
 				// deleteVertices()
-				if (edge.isValid())
+				if (edge.isValid()) {
 					edge.delete();
+				}
 			}
-			if (transaction.deletedEdges.size() > 0)
+			if (transaction.deletedEdges.size() > 0) {
 				transaction.changedDuringCommit.add(graph.edge);
+			}
 		}
 		// graph.edgeSync.writeLock().unlock();
 	}
@@ -150,8 +153,9 @@ public class WritingComponent {
 				// add current vertex to graph
 				graph.addVertex(vertex);
 			}
-			if (transaction.addedVertices.size() > 0)
+			if (transaction.addedVertices.size() > 0) {
 				transaction.changedDuringCommit.add(graph.vertex);
+			}
 		}
 		// graph.vertexSync.writeLock().unlock();
 	}
@@ -176,8 +180,9 @@ public class WritingComponent {
 						.getTemporaryValue(transaction);
 				graph.addEdge(edge, tempAlpha, tempOmega);
 			}
-			if (transaction.addedEdges.size() > 0)
+			if (transaction.addedEdges.size() > 0) {
 				transaction.changedDuringCommit.add(graph.edge);
+			}
 		}
 		// graph.edgeSync.writeLock().unlock();
 	}
@@ -208,10 +213,11 @@ public class WritingComponent {
 							// current transaction
 							VertexImpl tempPrevVertex = vertex.prevVertex
 									.getTemporaryValue(transaction);
-							if (movedVertex)
+							if (movedVertex) {
 								vertex.putAfter(tempPrevVertex);
-							else
+							} else {
 								tempPrevVertex.putBefore(vertex);
+							}
 							break;
 						}
 						case NEXT: {
@@ -219,10 +225,11 @@ public class WritingComponent {
 							// current transaction
 							VertexImpl tempNextVertex = vertex.nextVertex
 									.getTemporaryValue(transaction);
-							if (movedVertex)
+							if (movedVertex) {
 								vertex.putBefore(tempNextVertex);
-							else
+							} else {
 								tempNextVertex.putAfter(vertex);
+							}
 							break;
 						}
 						default: {
@@ -262,10 +269,11 @@ public class WritingComponent {
 						// transaction
 						EdgeImpl tempPrevEdge = edge.prevEdge
 								.getTemporaryValue(transaction);
-						if (movedEdge)
+						if (movedEdge) {
 							edge.putAfterInGraph(tempPrevEdge);
-						else
+						} else {
 							tempPrevEdge.putBeforeInGraph(edge);
+						}
 						break;
 					}
 					case NEXT: {
@@ -273,10 +281,11 @@ public class WritingComponent {
 						// transaction
 						EdgeImpl tempNextEdge = edge.nextEdge
 								.getTemporaryValue(transaction);
-						if (movedEdge)
+						if (movedEdge) {
 							edge.putBeforeInGraph(tempNextEdge);
-						else
+						} else {
 							tempNextEdge.putAfterInGraph(edge);
+						}
 						break;
 					}
 					default: {
@@ -313,8 +322,9 @@ public class WritingComponent {
 					Vertex tempAlpha = edge.incidentVertex
 							.getTemporaryValue(transaction);
 					edge.setAlpha(tempAlpha);
-					if (!pass)
+					if (!pass) {
 						break;
+					}
 				}
 				case OMEGA: {
 					// temporary omega of edge for current transaction
@@ -379,19 +389,21 @@ public class WritingComponent {
 						case PREV: {
 							IncidenceImpl tempPrevIncidence = prevIncidence
 									.getTemporaryValue(transaction);
-							if (movedIncidence)
+							if (movedIncidence) {
 								incidence.putEdgeAfter(tempPrevIncidence);
-							else
+							} else {
 								tempPrevIncidence.putEdgeBefore(incidence);
+							}
 							break;
 						}
 						case NEXT: {
 							IncidenceImpl tempNextIncidence = nextIncidence
 									.getTemporaryValue(transaction);
-							if (movedIncidence)
+							if (movedIncidence) {
 								incidence.putEdgeBefore(tempNextIncidence);
-							else
+							} else {
 								tempNextIncidence.putEdgeAfter(incidence);
+							}
 							break;
 						}
 						default: {
@@ -410,7 +422,7 @@ public class WritingComponent {
 	 * 
 	 * @throws Exception
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void changeAttributes() throws Exception {
 		if (transaction.changedAttributes != null) {
 			Set<Entry<AttributedElement, Set<VersionedDataObject<?>>>> elements = transaction.changedAttributes
@@ -437,8 +449,8 @@ public class WritingComponent {
 					.contains(vdo))) && (vdo.isCloneable() || vdo
 					.isPartOfRecord()))) {
 				Object tempValue = vdo.getTemporaryValue(transaction);
-				((VersionedDataObjectImpl) vdo).setValidValue(tempValue, graph
-						.getCurrentTransaction(), true);
+				((VersionedDataObjectImpl) vdo).setValidValue(tempValue,
+						graph.getCurrentTransaction(), true);
 				graph.setGraphVersion(graph.getGraphVersion() + 1);
 			}
 		}

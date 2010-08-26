@@ -245,15 +245,15 @@ public abstract class VertexEvaluator {
 					// The typeId restricts vertex classes
 					for (VertexClass vc : greqlEvaluator.getDatagraph()
 							.getSchema().getVertexClassesInTopologicalOrder()) {
-						evaluationLogger.logSelectivity(getLoggingName(), col
-								.acceptsType(vc));
+						evaluationLogger.logSelectivity(getLoggingName(),
+								col.acceptsType(vc));
 					}
 				} else {
 					// The typeId restricts edge classes
 					for (EdgeClass ec : greqlEvaluator.getDatagraph()
 							.getSchema().getEdgeClassesInTopologicalOrder()) {
-						evaluationLogger.logSelectivity(getLoggingName(), col
-								.acceptsType(ec));
+						evaluationLogger.logSelectivity(getLoggingName(),
+								col.acceptsType(ec));
 					}
 				}
 			}
@@ -572,8 +572,7 @@ public abstract class VertexEvaluator {
 						.get_offset())
 						&& (availablePosition.get_offset()
 								+ availablePosition.get_length() >= currentPosition
-								.get_offset()
-								+ currentPosition.get_length())) {
+								.get_offset() + currentPosition.get_length())) {
 					accepted = true;
 					break;
 				}
@@ -591,10 +590,9 @@ public abstract class VertexEvaluator {
 	/**
 	 * creates a vertex evaluator for the given vertex
 	 */
-	@SuppressWarnings("unchecked")
 	public static VertexEvaluator createVertexEvaluator(Vertex vertex,
 			GreqlEvaluator eval) throws EvaluateException {
-		Class vertexClass = vertex.getClass();
+		Class<?> vertexClass = vertex.getClass();
 		String fullClassName = vertexClass.getName();
 		// remove the "Impl" ...
 		fullClassName = fullClassName.substring(0, fullClassName.length() - 4);
@@ -611,10 +609,10 @@ public abstract class VertexEvaluator {
 		evalName = VertexEvaluator.class.getPackage().getName() + "."
 				+ evalName;
 		try {
-			Class argsClass[] = new Class[] { Class.forName(fullClassName),
+			Class<?> argsClass[] = new Class[] { Class.forName(fullClassName),
 					GreqlEvaluator.class };
-			Class evalClass = Class.forName(evalName);
-			Constructor constructor = evalClass.getConstructor(argsClass);
+			Class<?> evalClass = Class.forName(evalName);
+			Constructor<?> constructor = evalClass.getConstructor(argsClass);
 			VertexEvaluator vertexEval = (VertexEvaluator) constructor
 					.newInstance(vertex, eval);
 			return vertexEval;

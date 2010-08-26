@@ -74,19 +74,12 @@ public class Rsa2TgTest {
 
 			// Compares the SchemaGraph with the created Schema
 			System.out.print("Testing ...");
-			new CompareSchemaWithSchemaGraph().compare(schema, r
-					.getSchemaGraph());
+			new CompareSchemaWithSchemaGraph().compare(schema,
+					r.getSchemaGraph());
 			System.out.println("\t\t\t\t\t\t\tdone");
 		} finally {
 			System.out.println("\n");
 		}
-	}
-
-	@Test
-	public void testTest() throws GraphIOException, IOException, SAXException,
-			ParserConfigurationException, XMLStreamException {
-		testASchema("test.xmi");
-
 	}
 
 	@Test
