@@ -4,10 +4,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.Map.Entry;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
@@ -962,7 +962,7 @@ public abstract class VersionedDataObjectImpl<E> implements
 					synchronized (trans.temporaryVersionMap) {
 						SortedMap<Long, Object> temporaryValues = trans.temporaryVersionMap
 								.get(this);
-						SortedMap<Long, Object> copyTemporaryValues = new TreeMap(
+						SortedMap<Long, Object> copyTemporaryValues = new TreeMap<Long, Object>(
 								temporaryValues);
 						// expand all temporary values if available
 						if (trans.isValid() && copyTemporaryValues != null) {
@@ -984,7 +984,7 @@ public abstract class VersionedDataObjectImpl<E> implements
 				TransactionImpl trans = (TransactionImpl) transaction;
 				if (trans.temporaryValueMap != null) {
 					synchronized (trans.temporaryValueMap) {
-						Map<VersionedDataObject<?>, Object> copyTemporaryValueMap = new HashMap(
+						Map<VersionedDataObject<?>, Object> copyTemporaryValueMap = new HashMap<VersionedDataObject<?>, Object>(
 								trans.temporaryValueMap);
 						if (trans.isValid()
 								&& copyTemporaryValueMap.containsKey(this)) {

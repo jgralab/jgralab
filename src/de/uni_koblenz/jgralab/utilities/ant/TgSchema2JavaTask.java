@@ -35,7 +35,7 @@ import de.uni_koblenz.jgralab.utilities.tgschema2java.TgSchema2Java;
  * separate methods with subtype flag will be created.</li>
  * <li><code>withoutTypes</code> corresponds to the cli option -w . If set, no
  * type specific methods are created in the classes.</li>
- *</ul>
+ * </ul>
  * 
  * @author ist@uni-koblenz.de
  * 
@@ -90,8 +90,7 @@ public class TgSchema2JavaTask extends Task {
 	}
 
 	public void addConfiguredFileset(FileSet files) {
-		@SuppressWarnings("unchecked")
-		Iterator fileIterator = files.iterator();
+		Iterator<?> fileIterator = files.iterator();
 		while (fileIterator.hasNext()) {
 			Object current = fileIterator.next();
 			if (current instanceof FileResource) {
