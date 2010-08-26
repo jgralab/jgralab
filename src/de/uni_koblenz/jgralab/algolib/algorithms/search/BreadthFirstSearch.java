@@ -19,7 +19,8 @@ import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
 public class BreadthFirstSearch extends SearchAlgorithm implements
 		TraversalFromVertexSolver {
 
-	private SearchVisitorComposition visitors = new SearchVisitorComposition();
+	private SearchVisitorComposition visitors;
+	private int firstV;
 
 	public BreadthFirstSearch(Graph graph,
 			BooleanFunction<GraphElement> subgraph,
@@ -31,36 +32,58 @@ public class BreadthFirstSearch extends SearchAlgorithm implements
 		super(graph);
 	}
 
-	private int firstV;
-
 	@Override
 	public BreadthFirstSearch withLevel() {
-		return (BreadthFirstSearch) super.withLevel();
+		super.withLevel();
+		return this;
 	}
 
 	@Override
 	public BreadthFirstSearch withNumber() {
-		return (BreadthFirstSearch) super.withNumber();
+		super.withNumber();
+		return this;
 	}
 
 	@Override
 	public BreadthFirstSearch withParent() {
-		return (BreadthFirstSearch) super.withParent();
+		super.withParent();
+		return this;
 	}
 
 	@Override
 	public BreadthFirstSearch withoutLevel() {
-		return (BreadthFirstSearch) super.withoutLevel();
+		super.withoutLevel();
+		return this;
 	}
 
 	@Override
 	public BreadthFirstSearch withoutNumber() {
-		return (BreadthFirstSearch) super.withoutNumber();
+		super.withoutNumber();
+		return this;
 	}
 
 	@Override
 	public BreadthFirstSearch withoutParent() {
-		return (BreadthFirstSearch) super.withoutParent();
+		super.withoutParent();
+		return this;
+	}
+
+	@Override
+	public BreadthFirstSearch normal() {
+		super.normal();
+		return this;
+	}
+
+	@Override
+	public BreadthFirstSearch reversed() {
+		super.reversed();
+		return this;
+	}
+
+	@Override
+	public BreadthFirstSearch undirected() {
+		super.undirected();
+		return this;
 	}
 
 	@Override
@@ -78,14 +101,14 @@ public class BreadthFirstSearch extends SearchAlgorithm implements
 
 	@Override
 	public void addVisitor(Visitor visitor) {
-		checkStateForSettingParameters();
+		checkStateForSettingVisitors();
 		visitor.setAlgorithm(this);
 		visitors.addVisitor(visitor);
 	}
 
 	@Override
 	public void removeVisitor(Visitor visitor) {
-		checkStateForSettingParameters();
+		checkStateForSettingVisitors();
 		visitors.removeVisitor(visitor);
 	}
 
@@ -114,42 +137,41 @@ public class BreadthFirstSearch extends SearchAlgorithm implements
 		while (firstV < num && vertexOrder[firstV] != null) {
 			Vertex currentVertex = vertexOrder[firstV++]; // pop
 			for (Edge currentEdge : currentVertex.incidences(searchDirection)) {
-				if (subgraph == null || (subgraph.get(currentEdge))
-						&& (navigable == null || navigable.get(currentEdge))
-						&& !visitedEdges.get(currentEdge)) {
-					Vertex nextVertex = currentEdge.getThat();
-					// TODO is this check necessary?
-					if (subgraph == null || subgraph.get(nextVertex)) {
-						edgeOrder[eNum] = currentEdge;
-						visitors.visitEdge(currentEdge);
-						visitedEdges.set(currentEdge, true);
-						eNum++;
+				if (visitedEdges.get(currentEdge) || subgraph != null
+						&& !subgraph.get(currentEdge) || navigable != null
+						&& !navigable.get(currentEdge)) {
+					continue;
+				}
+				Vertex nextVertex = currentEdge.getThat();
+				assert (subgraph == null || subgraph.get(nextVertex));
 
-						if (visitedVertices.get(nextVertex)) {
-							visitors.visitFrond(currentEdge);
-						} else {
-							visitors.visitTreeEdge(currentEdge);
-							vertexOrder[num] = nextVertex;
-							if (level != null) {
-								level.set(nextVertex,
-										level.get(currentVertex) + 1);
-							}
-							if (parent != null) {
-								parent.set(currentEdge.getThat(), currentEdge);
-							}
-							if (number != null) {
-								number.set(nextVertex, num);
-							}
-							visitors.visitVertex(nextVertex);
-							visitedVertices.set(nextVertex, true);
-							num++;
-						}
+				edgeOrder[eNum] = currentEdge;
+				visitors.visitEdge(currentEdge);
+				visitedEdges.set(currentEdge, true);
+				eNum++;
+
+				if (visitedVertices.get(nextVertex)) {
+					visitors.visitFrond(currentEdge);
+				} else {
+					visitors.visitTreeEdge(currentEdge);
+					vertexOrder[num] = nextVertex;
+					if (level != null) {
+						level.set(nextVertex, level.get(currentVertex) + 1);
 					}
+					if (parent != null) {
+						parent.set(currentEdge.getThat(), currentEdge);
+					}
+					if (number != null) {
+						number.set(nextVertex, num);
+					}
+					visitors.visitVertex(nextVertex);
+					visitedVertices.set(nextVertex, true);
+					num++;
+
 				}
 			}
 		}
 		done();
 		return this;
 	}
-
 }

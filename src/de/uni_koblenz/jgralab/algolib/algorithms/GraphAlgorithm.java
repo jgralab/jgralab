@@ -255,6 +255,20 @@ public abstract class GraphAlgorithm implements ProblemSolver {
 	 *             if not in state <code>INITIALIZED</code>.
 	 */
 	public void checkStateForSettingParameters() {
+		if (getState() != AlgorithmStates.INITIALIZED) {
+			throw new IllegalStateException(
+					"Parameters may not be changed while in state " + state);
+		}
+	}
+
+	/**
+	 * Checks the state of this algorithm object and throws an exception if
+	 * visitors cannot be modified now.
+	 * 
+	 * @throws IllegalStateException
+	 *             if in state <code>RUNNING</code> or <code>CANCELED</code>.
+	 */
+	public void checkStateForSettingVisitors() {
 		if (getState() == AlgorithmStates.RUNNING
 				|| getState() == AlgorithmStates.CANCELED) {
 			throw new IllegalStateException(

@@ -59,39 +59,38 @@ public class RecursiveDepthFirstSearch extends DepthFirstSearch {
 		num++;
 
 		for (Edge currentEdge : currentVertex.incidences(searchDirection)) {
-			if (subgraph == null || (subgraph.get(currentEdge))
-					&& (navigable == null || navigable.get(currentEdge))
-					&& !visitedEdges.get(currentEdge)) {
-				Vertex nextVertex = currentEdge.getThat();
-				if (subgraph == null || subgraph.get(nextVertex)) {
-					edgeOrder[eNum] = currentEdge;
-					visitors.visitEdge(currentEdge);
-					visitedEdges.set(currentEdge, true);
-					eNum++;
-					if (!visitedVertices.get(nextVertex)) {
-						if (level != null) {
-							level.set(nextVertex, level.get(currentVertex) + 1);
-						}
-						if (parent != null) {
-							parent.set(currentEdge.getThat(), currentEdge);
-						}
-						visitors.visitTreeEdge(currentEdge);
+			if (visitedEdges.get(currentEdge) || subgraph != null
+					&& !subgraph.get(currentEdge) || navigable != null
+					&& !navigable.get(currentEdge)) {
+				continue;
+			}
+			Vertex nextVertex = currentEdge.getThat();
+			assert (subgraph == null || subgraph.get(nextVertex));
+			edgeOrder[eNum] = currentEdge;
+			visitors.visitEdge(currentEdge);
+			visitedEdges.set(currentEdge, true);
+			eNum++;
+			if (!visitedVertices.get(nextVertex)) {
+				if (level != null) {
+					level.set(nextVertex, level.get(currentVertex) + 1);
+				}
+				if (parent != null) {
+					parent.set(currentEdge.getThat(), currentEdge);
+				}
+				visitors.visitTreeEdge(currentEdge);
 
-						// recursive call
-						dfs(nextVertex);
+				// recursive call
+				dfs(nextVertex);
 
-						visitors.leaveTreeEdge(currentEdge);
-					} else {
-						visitors.visitFrond(currentEdge);
-						if (!rnumber.isDefined(nextVertex)) {
-							visitors.visitBackwardArc(currentEdge);
-						} else if (number.get(currentVertex) < number
-								.get(nextVertex)) {
-							visitors.visitForwardArc(currentEdge);
-						} else {
-							visitors.visitCrosslink(currentEdge);
-						}
-					}
+				visitors.leaveTreeEdge(currentEdge);
+			} else {
+				visitors.visitFrond(currentEdge);
+				if (!rnumber.isDefined(nextVertex)) {
+					visitors.visitBackwardArc(currentEdge);
+				} else if (number.get(currentVertex) < number.get(nextVertex)) {
+					visitors.visitForwardArc(currentEdge);
+				} else {
+					visitors.visitCrosslink(currentEdge);
 				}
 			}
 		}
