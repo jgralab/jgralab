@@ -142,7 +142,12 @@ public class IncidenceClassImpl implements IncidenceClass {
 		for (IncidenceClass ic : getSubsettedIncidenceClasses()) {
 			if (ic.getRolename().equals(rolename)) {
 				// found a base incidence class whose rolename matches
-				// now check if this rolename is redefined by another EdgeClass
+
+				// TODO This check does not cover all illegal cases
+				// TODO Daniel's job: give a specification of illegal
+				// redefinitions
+
+				// Check if this rolename is redefined by another EdgeClass
 				// originating from the same VertexClass
 				for (EdgeClass ec : getOpposite().getVertexClass()
 						.getOwnConnectedEdgeClasses()) {
