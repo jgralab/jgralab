@@ -45,11 +45,9 @@ import de.uni_koblenz.jgralab.greql2.schema.MapComprehension;
 import de.uni_koblenz.jgralab.greql2.schema.MapConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.NullLiteral;
 import de.uni_koblenz.jgralab.greql2.schema.OptionalPathDescription;
-import de.uni_koblenz.jgralab.greql2.schema.PathConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.PathExistence;
 import de.uni_koblenz.jgralab.greql2.schema.PathExpression;
-import de.uni_koblenz.jgralab.greql2.schema.PathSystemConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.PrimaryPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.QuantifiedExpression;
 import de.uni_koblenz.jgralab.greql2.schema.Quantifier;
@@ -297,10 +295,6 @@ public class Greql2Serializer {
 			serializeListConstruction((ListConstruction) exp);
 		} else if (exp instanceof MapConstruction) {
 			serializeMapConstruction((MapConstruction) exp);
-		} else if (exp instanceof PathConstruction) {
-			serializePathConstruction((PathConstruction) exp);
-		} else if (exp instanceof PathSystemConstruction) {
-			serializePathSystemConstruction((PathSystemConstruction) exp);
 		} else if (exp instanceof RecordConstruction) {
 			serializeRecordConstruction((RecordConstruction) exp);
 		} else if (exp instanceof SetConstruction) {
@@ -359,37 +353,6 @@ public class Greql2Serializer {
 		sb.append(')');
 	}
 
-	private void serializePathSystemConstruction(PathSystemConstruction exp) {
-		sb.append("pathsystem(");
-		serializeExpression(exp.get_root(), true);
-		sb.append(", ");
-		boolean first = true;
-		for (EdgeVertexList evl : exp.get_edgeVertexList()) {
-			if (first) {
-				first = false;
-			} else {
-				sb.append(", ");
-			}
-			sb.append('(');
-			serializeEdgeVertexList(evl);
-			sb.append(')');
-		}
-		sb.append(')');
-	}
-
-	private void serializePathConstruction(PathConstruction exp) {
-		sb.append("path(");
-		boolean first = true;
-		for (Expression e : exp.get_part()) {
-			if (first) {
-				first = false;
-			} else {
-				sb.append(", ");
-			}
-			serializeExpression(e, false);
-		}
-		sb.append(')');
-	}
 
 	private void serializeMapConstruction(MapConstruction exp) {
 		sb.append("map(");

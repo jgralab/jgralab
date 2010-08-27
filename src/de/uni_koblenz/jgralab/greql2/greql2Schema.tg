@@ -67,9 +67,7 @@ VertexClass MapComprehension : Comprehension;
 //VertexClass Nonterminal: Symbol;
 VertexClass NullLiteral: Literal;
 VertexClass OptionalPathDescription: PathDescription;
-VertexClass PathConstruction: ValueConstruction;
 VertexClass PathExistence: PathExpression;
-VertexClass PathSystemConstruction: ValueConstruction;
 VertexClass QuantifiedExpression: Expression;
 VertexClass Quantifier: Greql2Vertex { type: QuantificationType };
 VertexClass RealLiteral: Literal { realValue: Double };
@@ -128,7 +126,6 @@ EdgeClass IsDirectionOf: Greql2Aggregation from Direction (1,1) role direction a
 EdgeClass IsEdgeExprOf: Greql2Aggregation from Expression (1,1) role edgeExpr aggregation shared to EdgePathDescription (0,*);
 EdgeClass IsEdgeOrVertexExprOf: Greql2Aggregation from Expression (2,*) role edgeOrVertexExpr aggregation shared to EdgeVertexList (0,*);
 EdgeClass IsEdgeRestrOf: Greql2Aggregation from EdgeRestriction (0,*) role edgeRestr aggregation shared to PrimaryPathDescription (0,*);
-EdgeClass IsEdgeVertexListOf: Greql2Aggregation from EdgeVertexList (0,*) role edgeVertexList aggregation shared to PathSystemConstruction (0,*);
 EdgeClass IsElementOf: Greql2Aggregation from EdgeVertexList (0,*) role element aggregation shared to EdgeVertexList (0,*);
 EdgeClass IsExponentOf: Greql2Aggregation from IntLiteral (1,1) role exponent aggregation shared to ExponentiatedPathDescription (0,*);
 EdgeClass IsExponentiatedPathOf: IsPathDescriptionOf from PathDescription (1,1) role exponentiatedPath aggregation shared to ExponentiatedPathDescription (0,*);
@@ -153,7 +150,6 @@ EdgeClass IsRecordExprOf: Greql2Aggregation from Expression (1,1) role recordExp
 EdgeClass IsRecordIdOf: Greql2Aggregation from RecordId (1,1) role recordId aggregation shared to RecordElement (1,*);
 EdgeClass IsRoleIdOf: Greql2Aggregation from RoleId (0,*) role roleId aggregation shared to EdgeRestriction (1,*);
 EdgeClass IsBooleanPredicateOfEdgeRestriction: Greql2Aggregation from Expression (0,1) role booleanPredicate aggregation shared to EdgeRestriction (0,1);
-EdgeClass IsRootOf: Greql2Aggregation from Expression (1,1) role root aggregation shared to PathSystemConstruction (0,*);
 EdgeClass IsRowHeaderExprOf: Greql2Aggregation from Expression (0,*) role rowHeaderExpr aggregation shared to TableComprehension (0,*);
 EdgeClass IsSequenceElementOf: IsPathDescriptionOf from PathDescription (2,*) role sequenceElement aggregation shared to SequentialPathDescription (0,*);
 EdgeClass IsSimpleDeclOf: Greql2Aggregation from SimpleDeclaration (1,*) role simpleDecl aggregation shared to Declaration (1,1);

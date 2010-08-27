@@ -37,7 +37,6 @@ import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.BagConstructionEvaluat
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ComprehensionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ConditionalExpressionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.DeclarationEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.DefinitionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.EdgePathDescriptionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.EdgeRestrictionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.EdgeSetExpressionEvaluator;
@@ -79,7 +78,6 @@ import de.uni_koblenz.jgralab.greql2.schema.BagComprehension;
 import de.uni_koblenz.jgralab.greql2.schema.BagConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.ConditionalExpression;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
-import de.uni_koblenz.jgralab.greql2.schema.Definition;
 import de.uni_koblenz.jgralab.greql2.schema.EdgePathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.EdgeRestriction;
 import de.uni_koblenz.jgralab.greql2.schema.EdgeSetExpression;
@@ -642,26 +640,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 		return new VertexCosts(ownCosts, iteratedCosts, subtreeCosts);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
-	 * calculateCostsDefinition
-	 * (de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.DefinitionEvaluator,
-	 * de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
-	 */
-	@Override
-	public VertexCosts calculateCostsDefinition(DefinitionEvaluator e,
-			GraphSize graphSize) {
-		Definition def = (Definition) e.getVertex();
-		VertexEvaluator expEval = greqlEvaluator
-				.getVertexEvaluatorGraphMarker().getMark(
-						def.getFirstIsExprOf().getAlpha());
-		// + 1 for the Variable
-		long subtreeCosts = expEval.getCurrentSubtreeEvaluationCosts(graphSize) + 1;
-		long ownCosts = 2;
-		return new VertexCosts(ownCosts, ownCosts, ownCosts + subtreeCosts);
-	}
+
 
 	@Override
 	public VertexCosts calculateCostsEdgePathDescription(

@@ -94,6 +94,21 @@ public class PathSystemTest extends GenericTests {
 		}
 		assertEquals(1, falseFound);
 	}
+	
+	@Test
+	public void testPathSystemConstruction2() throws Exception {
+		String queryString = "from v: V{WhereExpression}, w:V{Variable}  report contains(v  :-) <--{IsDefinitionOf} <--{IsVarOf}, w) end";
+		JValue result = evalTestQuery("PathSystemConstruction", queryString);
+		JValueBag bag = result.toCollection().toJValueBag();
+		assertEquals(5, bag.size());
+		int falseFound = 0;
+		for (JValue v : bag) {
+			if (v.toBoolean() == false) {
+				falseFound++;
+			}
+		}
+		assertEquals(1, falseFound);
+	}
 
 	@Test
 	public void testPathSystemDistance() throws Exception {
