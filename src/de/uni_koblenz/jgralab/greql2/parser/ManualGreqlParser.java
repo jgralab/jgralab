@@ -167,7 +167,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 	public static Greql2 parse(String query) {
 		ManualGreqlParser parser = new ManualGreqlParser(query);
 		parser.parse();
-		return parser.graph;
+		return parser.getGraph();
 	}
 
 	private final ValueConstruction createPartsOfValueConstruction(
@@ -329,8 +329,6 @@ public class ManualGreqlParser extends ManualParserHelper {
 		case BAG:
 		case IMPORT:
 		case IN:
-		case PATH:
-		case PATHSYSTEM:
 		case SET:
 		case LIST:
 		case REC:
@@ -1614,10 +1612,6 @@ public class ManualGreqlParser extends ManualParserHelper {
 				} else {
 					return null;
 				}
-			case PATH:
-				return parsePathConstruction();
-			case PATHSYSTEM:
-				return parsePathsystemConstruction();
 			case TUP:
 				match();
 				match(TokenTypes.LPAREN);
@@ -1772,47 +1766,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 		return null;
 	}
 
-	private final PathConstruction parsePathConstruction() {
-		match(TokenTypes.PATH);
-		match(TokenTypes.LPAREN);
-		List<VertexPosition<Expression>> expressions = parseExpressionList();
-		match(TokenTypes.RPAREN);
-		if (!inPredicateMode()) {
-			return (PathConstruction) createPartsOfValueConstruction(
-					expressions, graph.createPathConstruction());
-		} else {
-			return null;
-		}
-	}
-
-	private final PathSystemConstruction parsePathsystemConstruction() {
-		match(TokenTypes.PATHSYSTEM);
-		match(TokenTypes.LPAREN);
-		PathSystemConstruction pathsystemConstr = null;
-		int offsetExpr = getCurrentOffset();
-		Expression expr = parseExpression();
-		int lengthExpr = getLength(offsetExpr);
-		if (!inPredicateMode()) {
-			pathsystemConstr = graph.createPathSystemConstruction();
-			IsRootOf rootOf = graph.createIsRootOf(expr, pathsystemConstr);
-			rootOf.set_sourcePositions(createSourcePositionList(lengthExpr,
-					offsetExpr));
-		}
-		while (tryMatch(TokenTypes.COMMA)) {
-			int offsetEVList = getCurrentOffset();
-			EdgeVertexList evList = parseEdgeVertexList();
-			int lengthEVList = getLength(offsetEVList);
-			if (!inPredicateMode()) {
-				IsEdgeVertexListOf exprOf = graph.createIsEdgeVertexListOf(
-						evList, pathsystemConstr);
-				exprOf.set_sourcePositions(createSourcePositionList(
-						lengthEVList, offsetEVList));
-			}
-		}
-		match(TokenTypes.RPAREN);
-		return pathsystemConstr;
-	}
-
+	
 	private final Declaration parseQuantifiedDeclaration() {
 		List<VertexPosition<SimpleDeclaration>> declarations = parseDeclarationList();
 		Declaration declaration = null;
@@ -2025,40 +1979,6 @@ public class ManualGreqlParser extends ManualParserHelper {
 		return list;
 	}
 
-	private final EdgeVertexList parseEdgeVertexList() {
-		match(TokenTypes.LPAREN);
-		int offsetE = getCurrentOffset();
-		Expression edgeExpr = parseExpression();
-		int lengthE = getLength(offsetE);
-		match(TokenTypes.COMMA);
-		int offsetV = getCurrentOffset();
-		Expression vertexExpr = parseExpression();
-		int lengthV = getLength(offsetV);
-		EdgeVertexList eVList = null;
-		if (!inPredicateMode()) {
-			eVList = graph.createEdgeVertexList();
-			IsEdgeOrVertexExprOf eExprOf = graph.createIsEdgeOrVertexExprOf(
-					edgeExpr, eVList);
-			eExprOf.set_sourcePositions(createSourcePositionList(lengthE,
-					offsetE));
-			IsEdgeOrVertexExprOf vExprOf = graph.createIsEdgeOrVertexExprOf(
-					vertexExpr, eVList);
-			vExprOf.set_sourcePositions(createSourcePositionList(lengthV,
-					offsetV));
-		}
-		while (tryMatch(TokenTypes.COMMA)) {
-			int offsetEVList = getCurrentOffset();
-			EdgeVertexList eVList2 = parseEdgeVertexList();
-			int lengthEVList = getLength(offsetEVList);
-			if (!inPredicateMode()) {
-				IsElementOf exprOf = graph.createIsElementOf(eVList2, eVList);
-				exprOf.set_sourcePositions(createSourcePositionList(
-						lengthEVList, offsetEVList));
-			}
-		}
-		match(TokenTypes.RPAREN);
-		return eVList;
-	}
 
 	@SuppressWarnings("unchecked")
 	private final EdgeRestriction parseEdgeRestriction() {

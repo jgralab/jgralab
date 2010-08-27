@@ -121,13 +121,16 @@ public abstract class ManualParserHelper {
 		if (graph == null) {
 			return null;
 		}
+		cleanGraph();
+		return graph;
+	}
+	
+	
+	private void cleanGraph() {
 		if (!graphCleaned) {
 			Set<Vertex> reachableVertices = new HashSet<Vertex>();
 			Queue<Vertex> queue = new LinkedList<Vertex>();
 			Greql2Expression root = graph.getFirstGreql2Expression();
-			if (root == null) {
-				return null;
-			}
 			queue.add(root);
 			while (!queue.isEmpty()) {
 				Vertex current = queue.poll();
@@ -154,10 +157,9 @@ public abstract class ManualParserHelper {
 				}
 			}
 			replaceDefinitionExpressions();
+			eliminateUnusedNodes();
 		}
-		return graph;
 	}
-	
 	
 	private void replaceDefinitionExpressions()	throws DuplicateVariableException, UndefinedVariableException {
 		List<DefinitionExpression> list = new ArrayList<DefinitionExpression>();
@@ -202,7 +204,15 @@ public abstract class ManualParserHelper {
 	}	
 		
 		
-		
+	protected void eliminateUnusedNodes() {
+		List<Vertex> deleteList = new ArrayList<Vertex>();
+		for (Vertex v : graph.vertices()) {
+			if (v.getFirstEdge() == null)
+				deleteList.add(v);
+		}
+		for (Vertex v : deleteList)
+			v.delete();
+	}
 
 
 	/**
@@ -636,3 +646,4 @@ public abstract class ManualParserHelper {
 	}
 
 }
+
