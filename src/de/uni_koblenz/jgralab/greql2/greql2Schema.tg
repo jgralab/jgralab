@@ -76,7 +76,7 @@ VertexClass RealLiteral: Literal { realValue: Double };
 VertexClass RecordConstruction: ValueConstruction;
 VertexClass RecordElement: Greql2Vertex;
 VertexClass RecordId: Identifier;
-VertexClass TypeOrRoleId: Identifier;
+abstract VertexClass TypeOrRoleId: Identifier;
 VertexClass RoleId: TypeOrRoleId;
 VertexClass SequentialPathDescription: PathDescription;
 VertexClass SetComprehension: Comprehension;
