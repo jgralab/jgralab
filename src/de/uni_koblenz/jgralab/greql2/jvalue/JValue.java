@@ -202,8 +202,7 @@ public interface JValue extends Comparable<JValue> {
 	 * @return the encapsulated Enum
 	 * 
 	 */
-	@SuppressWarnings("unchecked")
-	public abstract Enum toEnum();
+	public abstract Enum<?> toEnum();
 
 	/**
 	 * @return true if this JValue encapsulates a Vertex value, false otherwise

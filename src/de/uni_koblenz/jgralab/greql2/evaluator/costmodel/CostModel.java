@@ -32,7 +32,6 @@ import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.BagConstructionEvaluat
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ComprehensionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ConditionalExpressionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.DeclarationEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.DefinitionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.EdgePathDescriptionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.EdgeRestrictionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.EdgeSetExpressionEvaluator;
@@ -116,9 +115,6 @@ public interface CostModel {
 			ConditionalExpressionEvaluator e, GraphSize graphSize);
 
 	public VertexCosts calculateCostsDeclaration(DeclarationEvaluator e,
-			GraphSize graphSize);
-
-	public VertexCosts calculateCostsDefinition(DefinitionEvaluator e,
 			GraphSize graphSize);
 
 	public VertexCosts calculateCostsEdgePathDescription(

@@ -35,8 +35,6 @@ public class ManualGreqlLexer {
 		fixedTokens.put(TokenTypes.IN, "in");
 		fixedTokens.put(TokenTypes.LET, "let");
 		fixedTokens.put(TokenTypes.LIST, "list");
-		fixedTokens.put(TokenTypes.PATH, "pathconstruction");
-		fixedTokens.put(TokenTypes.PATHSYSTEM, "pathsystemconstruction");
 		fixedTokens.put(TokenTypes.REC, "rec");
 		fixedTokens.put(TokenTypes.REPORT, "report");
 		fixedTokens.put(TokenTypes.REPORTSET, "reportSet");

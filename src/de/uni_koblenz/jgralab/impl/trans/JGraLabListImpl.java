@@ -139,8 +139,8 @@ public class JGraLabListImpl<E> extends ArrayList<E> implements
 			throw new GraphException("Versioning is not working for this list.");
 		}
 		isValidElementCheck(element);
-		JGraLabListImpl<E> validValue = versionedList.getValidValueBeforeValueChange(graph
-				.getCurrentTransaction());
+		JGraLabListImpl<E> validValue = versionedList
+				.getValidValueBeforeValueChange(graph.getCurrentTransaction());
 		return validValue.internalAdd(element);
 	}
 
@@ -159,8 +159,8 @@ public class JGraLabListImpl<E> extends ArrayList<E> implements
 			throw new GraphException("Versioning is not working for this list.");
 		}
 		isValidElementCheck(element);
-		JGraLabListImpl<E> validValue = versionedList.getValidValueBeforeValueChange(graph
-				.getCurrentTransaction());
+		JGraLabListImpl<E> validValue = versionedList
+				.getValidValueBeforeValueChange(graph.getCurrentTransaction());
 		validValue.internalAdd(index, element);
 	}
 
@@ -182,8 +182,8 @@ public class JGraLabListImpl<E> extends ArrayList<E> implements
 		while (iter.hasNext()) {
 			isValidElementCheck(iter.next());
 		}
-		JGraLabListImpl<E> validValue = versionedList.getValidValueBeforeValueChange(graph
-				.getCurrentTransaction());
+		JGraLabListImpl<E> validValue = versionedList
+				.getValidValueBeforeValueChange(graph.getCurrentTransaction());
 		return validValue.internalAddAll(c);
 	}
 
@@ -205,8 +205,8 @@ public class JGraLabListImpl<E> extends ArrayList<E> implements
 		while (iter.hasNext()) {
 			isValidElementCheck(iter.next());
 		}
-		JGraLabListImpl<E> validValue = versionedList.getValidValueBeforeValueChange(graph
-				.getCurrentTransaction());
+		JGraLabListImpl<E> validValue = versionedList
+				.getValidValueBeforeValueChange(graph.getCurrentTransaction());
 		return validValue.internalAddAll(index, c);
 	}
 
@@ -225,8 +225,8 @@ public class JGraLabListImpl<E> extends ArrayList<E> implements
 		if (versionedList == null) {
 			throw new GraphException("Versioning is not working for this list.");
 		}
-		JGraLabListImpl<E> validValue = versionedList.getValidValueBeforeValueChange(graph
-				.getCurrentTransaction());
+		JGraLabListImpl<E> validValue = versionedList
+				.getValidValueBeforeValueChange(graph.getCurrentTransaction());
 		validValue.internalClear();
 	}
 
@@ -315,7 +315,7 @@ public class JGraLabListImpl<E> extends ArrayList<E> implements
 			}
 		} else {
 			// if not invoke the "normal" methods.
-			List list = (List) o;
+			List<?> list = (List<?>) o;
 			if (internalSize() != list.size()) {
 				return false;
 			}
@@ -471,8 +471,8 @@ public class JGraLabListImpl<E> extends ArrayList<E> implements
 		if (versionedList == null) {
 			throw new GraphException("Versioning is not working for this list.");
 		}
-		JGraLabListImpl<E> validValue = versionedList.getValidValueBeforeValueChange(graph
-				.getCurrentTransaction());
+		JGraLabListImpl<E> validValue = versionedList
+				.getValidValueBeforeValueChange(graph.getCurrentTransaction());
 		return validValue.internalRemove(index);
 	}
 
@@ -490,8 +490,8 @@ public class JGraLabListImpl<E> extends ArrayList<E> implements
 		if (versionedList == null) {
 			throw new GraphException("Versioning is not working for this list.");
 		}
-		JGraLabListImpl<E> validValue = versionedList.getValidValueBeforeValueChange(graph
-				.getCurrentTransaction());
+		JGraLabListImpl<E> validValue = versionedList
+				.getValidValueBeforeValueChange(graph.getCurrentTransaction());
 		return validValue.internalRemove(o);
 	}
 
@@ -509,8 +509,8 @@ public class JGraLabListImpl<E> extends ArrayList<E> implements
 		if (versionedList == null) {
 			throw new GraphException("Versioning is not working for this list.");
 		}
-		JGraLabListImpl<E> validValue = versionedList.getValidValueBeforeValueChange(graph
-				.getCurrentTransaction());
+		JGraLabListImpl<E> validValue = versionedList
+				.getValidValueBeforeValueChange(graph.getCurrentTransaction());
 		return validValue.internalRemoveAll(c);
 	}
 
@@ -528,8 +528,8 @@ public class JGraLabListImpl<E> extends ArrayList<E> implements
 		if (versionedList == null) {
 			throw new GraphException("Versioning is not working for this list.");
 		}
-		JGraLabListImpl<E> validValue = versionedList.getValidValueBeforeValueChange(graph
-				.getCurrentTransaction());
+		JGraLabListImpl<E> validValue = versionedList
+				.getValidValueBeforeValueChange(graph.getCurrentTransaction());
 		validValue.internalRemoveRange(fromIndex, toIndex);
 	}
 
@@ -548,8 +548,8 @@ public class JGraLabListImpl<E> extends ArrayList<E> implements
 		if (versionedList == null) {
 			throw new GraphException("Versioning is not working for this list.");
 		}
-		JGraLabListImpl<E> validValue = versionedList.getValidValueBeforeValueChange(graph
-				.getCurrentTransaction());
+		JGraLabListImpl<E> validValue = versionedList
+				.getValidValueBeforeValueChange(graph.getCurrentTransaction());
 		return validValue.internalRetainAll(c);
 	}
 
@@ -567,8 +567,8 @@ public class JGraLabListImpl<E> extends ArrayList<E> implements
 		if (versionedList == null) {
 			throw new GraphException("Versioning is not working for this list.");
 		}
-		JGraLabListImpl<E> validValue = versionedList.getValidValueBeforeValueChange(graph
-				.getCurrentTransaction());
+		JGraLabListImpl<E> validValue = versionedList
+				.getValidValueBeforeValueChange(graph.getCurrentTransaction());
 		return validValue.internalSet(index, element);
 	}
 

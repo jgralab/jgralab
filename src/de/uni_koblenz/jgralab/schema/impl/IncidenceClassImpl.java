@@ -138,8 +138,34 @@ public class IncidenceClassImpl implements IncidenceClass {
 
 	public void addRedefinedRole(String rolename) {
 		boolean foundRole = false;
+
 		for (IncidenceClass ic : getSubsettedIncidenceClasses()) {
 			if (ic.getRolename().equals(rolename)) {
+				// found a base incidence class whose rolename matches
+
+				// TODO This check does not cover all illegal cases
+				// TODO Daniel's job: give a specification of illegal
+				// redefinitions
+
+				// Check if this rolename is redefined by another EdgeClass
+				// originating from the same VertexClass
+				for (EdgeClass ec : getOpposite().getVertexClass()
+						.getOwnConnectedEdgeClasses()) {
+					if (ec == edgeClass) {
+						// skip the EdgeClass of this IncidenceClass
+						continue;
+					}
+					// determine proper end
+					IncidenceClass other = direction == IncidenceDirection.IN ? ec
+							.getTo() : ec.getFrom();
+					if (other.getRedefinedIncidenceClasses().contains(ic)) {
+						throw new SchemaException("The role '" + rolename
+								+ "' of EdgeClass '"
+								+ edgeClass.getQualifiedName()
+								+ "' is already redefined in EdgeClass '"
+								+ ec.getQualifiedName() + "'");
+					}
+				}
 				redefinedIncidenceClasses.add(ic);
 				foundRole = true;
 				break;
