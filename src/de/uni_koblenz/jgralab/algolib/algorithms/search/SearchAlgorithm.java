@@ -1,7 +1,6 @@
 package de.uni_koblenz.jgralab.algolib.algorithms.search;
 
 import de.uni_koblenz.jgralab.Edge;
-import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
@@ -290,15 +289,6 @@ public abstract class SearchAlgorithm extends AbstractTraversal implements
 	@Override
 	public boolean isHybrid() {
 		return true;
-	}
-
-	/**
-	 * Only returns <code>false</code> if <code>edgeDirection</code> is set to
-	 * "INOUT".
-	 */
-	@Override
-	public boolean isDirected() {
-		return searchDirection != EdgeDirection.INOUT;
 	}
 
 	@Override

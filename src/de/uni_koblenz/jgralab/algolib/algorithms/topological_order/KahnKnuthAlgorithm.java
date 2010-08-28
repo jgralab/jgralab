@@ -79,14 +79,14 @@ public class KahnKnuthAlgorithm extends AbstractTraversal implements
 
 	@Override
 	public void addVisitor(Visitor visitor) {
-		checkStateForSettingParameters();
+		checkStateForSettingVisitors();
 		visitor.setAlgorithm(this);
 		visitors.addVisitor(visitor);
 	}
 
 	@Override
 	public void removeVisitor(Visitor visitor) {
-		checkStateForSettingParameters();
+		checkStateForSettingVisitors();
 		visitors.removeVisitor(visitor);
 	}
 
@@ -117,6 +117,11 @@ public class KahnKnuthAlgorithm extends AbstractTraversal implements
 	public boolean isDirected() {
 		return true;
 	}
+	
+	@Override
+	public boolean isHybrid() {
+		return false;
+	}
 
 	@Override
 	public boolean isAcyclic() {
@@ -129,10 +134,34 @@ public class KahnKnuthAlgorithm extends AbstractTraversal implements
 		checkStateForResult();
 		return new ArrayPermutation<Vertex>(torder);
 	}
-
-	@Override
-	public boolean isHybrid() {
-		return false;
+	
+	public IntFunction<Vertex> getTNumber(){
+		checkStateForResult();
+		return tnumber;
+	}
+	
+	public Vertex[] getInternalTopologicalOrder(){
+		return torder;
+	}
+	
+	public IntFunction<Vertex> getInternalTNumber(){
+		return tnumber;
+	}
+	
+	public boolean getInternalAcyclic(){
+		return acyclic;
+	}
+	
+	public int getFirstV(){
+		return firstV;
+	}
+	
+	public int getTNum(){
+		return tnum;
+	}
+	
+	public IntFunction<Vertex> getInDegree(){
+		return inDegree;
 	}
 
 	@Override

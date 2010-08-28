@@ -24,6 +24,24 @@ public class DijkstraAlgorithm extends AStarSearch implements
 	}
 
 	@Override
+	public DijkstraAlgorithm normal() {
+		super.normal();
+		return this;
+	}
+
+	@Override
+	public DijkstraAlgorithm reversed() {
+		super.reversed();
+		return this;
+	}
+
+	@Override
+	public AStarSearch undirected() {
+		super.undirected();
+		return this;
+	}
+
+	@Override
 	public DijkstraAlgorithm execute(Vertex start) {
 		internalExecute(start, null);
 		return this;
@@ -32,7 +50,11 @@ public class DijkstraAlgorithm extends AStarSearch implements
 	@Override
 	public DoubleFunction<Vertex> getWeightedDistance() {
 		checkStateForResult();
-		return weightedDistance;
+		return super.getWeightedDistance();
+	}
+	
+	public DoubleFunction<Vertex> getInternalWeightedDistance(){
+		return super.getWeightedDistance();
 	}
 
 }

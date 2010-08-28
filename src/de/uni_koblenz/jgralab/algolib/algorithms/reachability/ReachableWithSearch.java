@@ -35,13 +35,14 @@ public class ReachableWithSearch extends AbstractTraversal implements
 
 	@Override
 	public void addVisitor(Visitor visitor) {
-		checkStateForSettingParameters();
+		checkStateForSettingVisitors();
+		// the algorithm is implicitly set to the search algorithm
 		search.addVisitor(visitor);
 	}
 
 	@Override
 	public void removeVisitor(Visitor visitor) {
-		checkStateForSettingParameters();
+		checkStateForSettingVisitors();
 		search.removeVisitor(visitor);
 	}
 
@@ -53,6 +54,24 @@ public class ReachableWithSearch extends AbstractTraversal implements
 	@Override
 	protected void done() {
 		state = AlgorithmStates.FINISHED;
+	}
+
+	@Override
+	public ReachableWithSearch normal() {
+		search.normal();
+		return this;
+	}
+
+	@Override
+	public ReachableWithSearch reversed() {
+		search.reversed();
+		return this;
+	}
+
+	@Override
+	public ReachableWithSearch undirected() {
+		search.undirected();
+		return this;
 	}
 
 	@Override
@@ -110,6 +129,10 @@ public class ReachableWithSearch extends AbstractTraversal implements
 	@Override
 	public boolean isReachable() {
 		checkStateForResult();
+		return reachable;
+	}
+
+	public boolean getInternalReachable() {
 		return reachable;
 	}
 

@@ -52,18 +52,37 @@ public class AStarSearch extends AbstractTraversal implements
 
 	@Override
 	public void addVisitor(Visitor visitor) {
-		checkStateForSettingParameters();
+		checkStateForSettingVisitors();
+		visitor.setAlgorithm(this);
 		visitors.addVisitor(visitor);
 	}
 
 	@Override
 	public void removeVisitor(Visitor visitor) {
-		checkStateForSettingParameters();
+		checkStateForSettingVisitors();
 		visitors.removeVisitor(visitor);
 	}
 
 	@Override
 	public void disableOptionalResults() {
+	}
+
+	@Override
+	public AStarSearch normal() {
+		super.normal();
+		return this;
+	}
+
+	@Override
+	public AStarSearch reversed() {
+		super.reversed();
+		return this;
+	}
+
+	@Override
+	public AStarSearch undirected() {
+		super.undirected();
+		return this;
 	}
 
 	@Override
@@ -190,4 +209,19 @@ public class AStarSearch extends AbstractTraversal implements
 		return parent;
 	}
 
+	public Function<Vertex, Edge> getInternalParent() {
+		return parent;
+	}
+
+	public PriorityQueue<Vertex> getVertexQueue() {
+		return vertexQueue;
+	}
+
+	public BooleanFunction<Vertex> visitedVertices() {
+		return visitedVertices;
+	}
+
+	public DoubleFunction<Vertex> getWeightedDistance() {
+		return weightedDistance;
+	}
 }

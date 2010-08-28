@@ -39,17 +39,19 @@ public class TopologicalOrderWithDFS extends AbstractTraversal implements
 
 	@Override
 	public void addVisitor(Visitor visitor) {
-		checkStateForSettingParameters();
+		checkStateForSettingVisitors();
 		if (visitor instanceof TopologicalOrderVisitor) {
+			visitor.setAlgorithm(this);
 			visitors.addVisitor(visitor);
 		} else {
+			// the algorithm is set implicitly to the dfs
 			dfs.addVisitor(visitor);
 		}
 	}
 
 	@Override
 	public void removeVisitor(Visitor visitor) {
-		checkStateForSettingParameters();
+		checkStateForSettingVisitors();
 		if (visitor instanceof TopologicalOrderVisitor) {
 			visitors.removeVisitor(visitor);
 		} else {
@@ -68,8 +70,17 @@ public class TopologicalOrderWithDFS extends AbstractTraversal implements
 	}
 
 	@Override
-	public boolean isDirected() {
-		return true;
+	public AbstractTraversal normal() {
+		super.normal();
+		dfs.reversed();
+		return this;
+	}
+
+	@Override
+	public AbstractTraversal reversed() {
+		super.reversed();
+		dfs.normal();
+		return this;
 	}
 
 	@Override
@@ -105,6 +116,8 @@ public class TopologicalOrderWithDFS extends AbstractTraversal implements
 				visitors.visitVertexInTopologicalOrder(v);
 			}
 		};
+		assert (DEFAULT_SEARCH_DIRECTION == EdgeDirection.OUT);
+		dfs.reversed();
 	}
 
 	@Override
@@ -118,8 +131,6 @@ public class TopologicalOrderWithDFS extends AbstractTraversal implements
 		dfs.setGraph(graph);
 		dfs.setSubgraph(subgraph);
 		dfs.setNavigable(navigable);
-		// always search in inverse order
-		dfs.setSearchDirection(searchDirection == EdgeDirection.IN ? EdgeDirection.OUT : EdgeDirection.IN);
 		dfs.addVisitor(torderVisitorAdapter);
 		startRunning();
 		try {
