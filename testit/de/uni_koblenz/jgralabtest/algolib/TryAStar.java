@@ -37,6 +37,8 @@ public class TryAStar {
 		if (new File(filename).exists()) {
 			graph = WeightedSchema.instance().loadWeightedGraph(filename,
 					new ProgressFunctionImpl());
+			System.out.println("Loaded graph with " + graph.getVCount()
+					+ " vertices and " + graph.getECount() + " edges.");
 		} else {
 			sw.start();
 			graph = createPlanarRandomGraph(VERTEXCOUNT, EDGESPERVERTEX);
@@ -102,43 +104,53 @@ public class TryAStar {
 		selectVertices(graph);
 
 		System.out.println("AStar");
-		AStarSearch astar = new AStarSearch(graph, null, null, edgeWeight,
-				heuristic);
-		astar.undirected();
-		sw.reset();
-		sw.start();
-		try {
-			astar.execute(start, target);
-		} catch (AlgorithmTerminatedException e) {
+		for (int i = 0; i < 10; i++) {
+			AStarSearch astar = new AStarSearch(graph, null, null, edgeWeight,
+					heuristic);
+			astar.undirected();
+			sw.reset();
+			sw.start();
+			try {
+				astar.execute(start, target);
+			} catch (AlgorithmTerminatedException e) {
+			}
+			sw.stop();
+			System.out.println(sw.getDurationString());
+			System.out.println(astar.getWeightedDistanceToTarget());
+			System.out.println("Max elements in queue: "
+					+ astar.getVertexQueue().getAddedCount());
 		}
-		sw.stop();
-		System.out.println(sw.getDurationString());
-		System.out.println(astar.getWeightedDistanceToTarget());
 
 		System.out.println();
-		System.out.println("Dijkstra");
-		DijkstraAlgorithm dijkstra = new DijkstraAlgorithm(graph, null, null,
-				edgeWeight);
-		dijkstra.undirected();
-		sw.reset();
-		sw.start();
-		dijkstra.execute(start);
-		sw.stop();
-		System.out.println(sw.getDurationString());
-		System.out.println(dijkstra.getWeightedDistance().get(target));
+		for (int i = 0; i < 10; i++) {
+			System.out.println("Dijkstra");
+			DijkstraAlgorithm dijkstra = new DijkstraAlgorithm(graph, null,
+					null, edgeWeight);
+			dijkstra.undirected();
+			sw.reset();
+			sw.start();
+			dijkstra.execute(start);
+			sw.stop();
+			System.out.println(sw.getDurationString());
+			System.out.println(dijkstra.getWeightedDistance().get(target));
+			System.out.println("Max elements in queue: "
+					+ dijkstra.getVertexQueue().getAddedCount());
+		}
+
+		// System.out.println();
+		// System.out.println("Ford-Moore");
+		// FordMooreAlgorithm fm = new FordMooreAlgorithm(graph, null, null,
+		// edgeWeight);
+		// fm.undirected();
+		// sw.reset();
+		// sw.start();
+		// fm.execute(start, target);
+		// sw.stop();
+		// System.out.println(sw.getDurationString());
+		// System.out.println(fm.getWeightedDistanceToTarget());
 
 		System.out.println();
-		System.out.println("Ford-Moore");
-		FordMooreAlgorithm fm = new FordMooreAlgorithm(graph, null, null,
-				edgeWeight);
-		fm.undirected();
-		sw.reset();
-		sw.start();
-		fm.execute(start, target);
-		sw.stop();
-		System.out.println(sw.getDurationString());
-		System.out.println(fm.getWeightedDistanceToTarget());
-
+		System.out.println("Fini.");
 	}
 
 	private static void selectVertices(WeightedGraph graph) {
@@ -158,6 +170,8 @@ public class TryAStar {
 				target = (Location) current;
 			}
 		}
+		// target = (Location) graph
+		// .getVertex(new Random().nextInt(VERTEXCOUNT) + 1);
 	}
 
 	private static void cacheDistances(WeightedGraph graph, Location target) {
