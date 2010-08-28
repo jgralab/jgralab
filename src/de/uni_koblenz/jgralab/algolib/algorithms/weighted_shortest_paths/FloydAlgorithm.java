@@ -48,7 +48,8 @@ public class FloydAlgorithm extends AbstractTraversal implements
 
 	@Override
 	public void addVisitor(Visitor visitor) {
-		checkStateForSettingParameters();
+		checkStateForSettingVisitors();
+		visitor.setAlgorithm(this);
 		visitors.addVisitor(visitor);
 	}
 
@@ -62,13 +63,31 @@ public class FloydAlgorithm extends AbstractTraversal implements
 	}
 
 	@Override
+	public FloydAlgorithm normal() {
+		super.normal();
+		return this;
+	}
+
+	@Override
+	public FloydAlgorithm reversed() {
+		super.reversed();
+		return this;
+	}
+
+	@Override
+	public FloydAlgorithm undirected() {
+		super.undirected();
+		return this;
+	}
+
+	@Override
 	public boolean isHybrid() {
 		return true;
 	}
 
 	@Override
 	public void removeVisitor(Visitor visitor) {
-		checkStateForSettingParameters();
+		checkStateForSettingVisitors();
 		visitors.removeVisitor(visitor);
 	}
 
@@ -86,8 +105,7 @@ public class FloydAlgorithm extends AbstractTraversal implements
 	public void reset() {
 		super.reset();
 		negativeCycles = false;
-		SearchAlgorithm search = new BreadthFirstSearch(graph)
-				.withNumber();
+		SearchAlgorithm search = new BreadthFirstSearch(graph).withNumber();
 		search.execute();
 		indexMapping = search.getNumber();
 		vertexOrder = search.getVertexOrder();
@@ -201,4 +219,7 @@ public class FloydAlgorithm extends AbstractTraversal implements
 		return negativeCycles;
 	}
 
+	public boolean getInternalNegativeCycles() {
+		return negativeCycles;
+	}
 }

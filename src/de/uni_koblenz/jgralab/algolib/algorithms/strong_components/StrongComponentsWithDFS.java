@@ -46,10 +46,12 @@ public class StrongComponentsWithDFS extends AbstractTraversal implements
 
 	@Override
 	public void addVisitor(Visitor visitor) {
-		checkStateForSettingParameters();
+		checkStateForSettingVisitors();
 		if (visitor instanceof ReducedGraphVisitor) {
+			visitor.setAlgorithm(this);
 			visitors.addVisitor(visitor);
 		} else {
+			// the algorithm is set implicitly to the dfs
 			dfs.addVisitor(visitor);
 		}
 	}
@@ -64,6 +66,20 @@ public class StrongComponentsWithDFS extends AbstractTraversal implements
 	}
 
 	@Override
+	public StrongComponentsWithDFS normal() {
+		super.normal();
+		dfs.normal();
+		return this;
+	}
+
+	@Override
+	public AbstractTraversal reversed() {
+		super.reversed();
+		dfs.reversed();
+		return this;
+	}
+
+	@Override
 	public boolean isDirected() {
 		return true;
 	}
@@ -75,7 +91,7 @@ public class StrongComponentsWithDFS extends AbstractTraversal implements
 
 	@Override
 	public void removeVisitor(Visitor visitor) {
-		checkStateForSettingParameters();
+		checkStateForSettingVisitors();
 		if (visitor instanceof ReducedGraphVisitor) {
 			visitors.removeVisitor(visitor);
 		} else {
@@ -189,6 +205,18 @@ public class StrongComponentsWithDFS extends AbstractTraversal implements
 		done();
 		dfs.removeVisitor(lowlinkVisitor);
 		return this;
+	}
+	
+	public IntFunction<Vertex> getInternalLowlink(){
+		return lowlink;
+	}
+	
+	public Function<Vertex,Vertex> getInternalStrongComponents(){
+		return strongComponents;
+	}
+	
+	public Stack<Vertex> getVertexStack(){
+		return vertexStack;
 	}
 
 }

@@ -174,4 +174,8 @@ public class BreadthFirstSearch extends SearchAlgorithm implements
 		done();
 		return this;
 	}
+	
+	public int getFirstV(){
+		return firstV;
+	}
 }

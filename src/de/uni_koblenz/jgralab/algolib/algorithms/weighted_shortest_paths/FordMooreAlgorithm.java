@@ -44,7 +44,7 @@ public class FordMooreAlgorithm extends AbstractTraversal implements
 	public FordMooreAlgorithm(Graph graph,
 			BooleanFunction<GraphElement> subgraph,
 			BooleanFunction<Edge> navigable, DoubleFunction<Edge> weight) {
-		super(graph, subgraph,navigable);
+		super(graph, subgraph, navigable);
 		this.edgeWeight = weight;
 	}
 
@@ -68,20 +68,38 @@ public class FordMooreAlgorithm extends AbstractTraversal implements
 	}
 
 	@Override
+	public FordMooreAlgorithm normal() {
+		super.normal();
+		return this;
+	}
+
+	@Override
+	public FordMooreAlgorithm reversed() {
+		super.reversed();
+		return this;
+	}
+
+	@Override
+	public FordMooreAlgorithm undirected() {
+		super.undirected();
+		return this;
+	}
+
+	@Override
 	public boolean isHybrid() {
 		return true;
 	}
 
 	@Override
 	public void addVisitor(Visitor visitor) {
-		checkStateForSettingParameters();
+		checkStateForSettingVisitors();
 		throw new UnsupportedOperationException(
 				"This algorithm currently doesn't support visitors!");
 	}
 
 	@Override
 	public void removeVisitor(Visitor visitor) {
-		checkStateForSettingParameters();
+		checkStateForSettingVisitors();
 		throw new UnsupportedOperationException(
 				"This algorithm currently doesn't support visitors!");
 	}
@@ -167,6 +185,10 @@ public class FordMooreAlgorithm extends AbstractTraversal implements
 		return weightedDistance;
 	}
 
+	public DoubleFunction<Vertex> getInternalWeightedDistance() {
+		return weightedDistance;
+	}
+
 	@Override
 	public double getWeightedDistanceToTarget() {
 		checkStateForResult();
@@ -183,8 +205,24 @@ public class FordMooreAlgorithm extends AbstractTraversal implements
 		return parent;
 	}
 
+	public Function<Vertex, Edge> getInternalParent() {
+		return parent;
+	}
+
 	public boolean hasNegativeCycleDetected() {
 		return negativeCycleDetected;
+	}
+
+	public int getMaxPushCount() {
+		return maxPushCount;
+	}
+
+	public Queue<Vertex> getVertexQueue() {
+		return vertexQueue;
+	}
+
+	public IntFunction<Vertex> getPushCount() {
+		return pushCount;
 	}
 
 }

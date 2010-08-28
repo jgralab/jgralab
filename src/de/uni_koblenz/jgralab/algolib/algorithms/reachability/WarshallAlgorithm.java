@@ -43,7 +43,8 @@ public class WarshallAlgorithm extends AbstractTraversal implements
 
 	@Override
 	public void addVisitor(Visitor visitor) {
-		checkStateForSettingParameters();
+		checkStateForSettingVisitors();
+		visitor.setAlgorithm(this);
 		visitors.addVisitor(visitor);
 	}
 
@@ -57,8 +58,21 @@ public class WarshallAlgorithm extends AbstractTraversal implements
 	}
 
 	@Override
-	public boolean isDirected() {
-		return searchDirection != EdgeDirection.INOUT;
+	public WarshallAlgorithm normal() {
+		super.normal();
+		return this;
+	}
+
+	@Override
+	public WarshallAlgorithm reversed() {
+		super.reversed();
+		return this;
+	}
+	
+	@Override
+	public WarshallAlgorithm undirected() {
+		super.undirected();
+		return this;
 	}
 
 	@Override
@@ -68,7 +82,7 @@ public class WarshallAlgorithm extends AbstractTraversal implements
 
 	@Override
 	public void removeVisitor(Visitor visitor) {
-		checkStateForSettingParameters();
+		checkStateForSettingVisitors();
 		visitors.removeVisitor(visitor);
 	}
 

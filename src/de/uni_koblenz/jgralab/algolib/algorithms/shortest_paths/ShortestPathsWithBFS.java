@@ -32,17 +32,38 @@ public class ShortestPathsWithBFS extends AbstractTraversal implements
 
 	@Override
 	public void addVisitor(Visitor visitor) {
+		checkStateForSettingVisitors();
+		// the algorithm is set implicitly to the bfs
 		bfs.addVisitor(visitor);
 	}
 
 	@Override
 	public void disableOptionalResults() {
+		checkStateForSettingParameters();
 		bfs.disableOptionalResults();
 	}
 
 	@Override
 	protected void done() {
 		state = AlgorithmStates.FINISHED;
+	}
+	
+	@Override
+	public ShortestPathsWithBFS normal() {
+		bfs.normal();
+		return this;
+	}
+
+	@Override
+	public ShortestPathsWithBFS reversed() {
+		bfs.reversed();
+		return this;
+	}
+
+	@Override
+	public ShortestPathsWithBFS undirected() {
+		bfs.undirected();
+		return this;
 	}
 
 	@Override
@@ -57,6 +78,7 @@ public class ShortestPathsWithBFS extends AbstractTraversal implements
 
 	@Override
 	public void removeVisitor(Visitor visitor) {
+		checkStateForSettingVisitors();
 		bfs.removeVisitor(visitor);
 	}
 
