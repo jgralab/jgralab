@@ -203,12 +203,12 @@ public class JValueXMLLoader extends XmlProcessor {
 			val = new JValueBag();
 			// ---------------------------------------------------------------
 		} else if (elem.equals(JValueXMLConstants.BOOLEAN)) {
-			val = new JValueImpl(Boolean
-					.valueOf(getAttribute(JValueXMLConstants.ATTR_VALUE)));
+			val = new JValueImpl(
+					Boolean.valueOf(getAttribute(JValueXMLConstants.ATTR_VALUE)));
 			// ---------------------------------------------------------------
 		} else if (elem.equals(JValueXMLConstants.DOUBLE)) {
-			val = new JValueImpl(Double
-					.valueOf(getAttribute(JValueXMLConstants.ATTR_VALUE)));
+			val = new JValueImpl(
+					Double.valueOf(getAttribute(JValueXMLConstants.ATTR_VALUE)));
 			// ---------------------------------------------------------------
 		} else if (elem.equals(JValueXMLConstants.EDGE)) {
 			int id = Integer.valueOf(getAttribute(JValueXMLConstants.ATTR_ID));
@@ -240,15 +240,15 @@ public class JValueXMLLoader extends XmlProcessor {
 			val = new JValueImpl(g);
 			// ---------------------------------------------------------------
 		} else if (elem.equals(JValueXMLConstants.INTEGER)) {
-			val = new JValueImpl(Integer
-					.valueOf(getAttribute(JValueXMLConstants.ATTR_VALUE)));
+			val = new JValueImpl(
+					Integer.valueOf(getAttribute(JValueXMLConstants.ATTR_VALUE)));
 			// ---------------------------------------------------------------
 		} else if (elem.equals(JValueXMLConstants.LIST)) {
 			val = new JValueList();
 			// ---------------------------------------------------------------
 		} else if (elem.equals(JValueXMLConstants.LONG)) {
-			val = new JValueImpl(Long
-					.valueOf(getAttribute(JValueXMLConstants.ATTR_VALUE)));
+			val = new JValueImpl(
+					Long.valueOf(getAttribute(JValueXMLConstants.ATTR_VALUE)));
 			// ---------------------------------------------------------------
 		} else if (elem.equals(JValueXMLConstants.MAP)) {
 			val = new JValueMap();
@@ -316,8 +316,8 @@ public class JValueXMLLoader extends XmlProcessor {
 	private JValueImpl createEnum(String litName, String enumTypeName) {
 		JValueImpl val = null;
 		try {
-			Class<? extends Enum> e = (Class<? extends Enum>) Class
-					.forName(enumTypeName);
+			@SuppressWarnings("rawtypes")
+			Class e = Class.forName(enumTypeName);
 			val = new JValueImpl(Enum.valueOf(e, litName));
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();

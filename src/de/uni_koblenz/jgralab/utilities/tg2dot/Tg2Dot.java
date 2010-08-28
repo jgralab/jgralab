@@ -27,6 +27,7 @@ package de.uni_koblenz.jgralab.utilities.tg2dot;
 import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -403,8 +404,13 @@ public class Tg2Dot extends Tg2Whatever {
 	}
 
 	public static void printGraphAsDot(Graph graph, boolean reversedEdges,
+			String outputFileName) {
+		printGraphAsDot(graph, reversedEdges, outputFileName, null);
+	}
+
+	public static void printGraphAsDot(Graph graph, boolean reversedEdges,
 			String outputFileName,
-			Class<? extends AttributedElement>... reversedEdgeTypes) {
+			List<Class<? extends AttributedElement>> reversedEdgeTypes) {
 		Tg2Dot t2d = new Tg2Dot();
 		t2d.setGraph(graph);
 		t2d.setReversedEdges(reversedEdges);

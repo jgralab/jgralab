@@ -66,20 +66,13 @@ public class SchemaGraph2SchemaTest {
 
 			// Compares the SchemaGraph with the created Schema
 			System.out.print("Testing ...");
-			new CompareSchemaWithSchemaGraph().compare(schema, r
-					.getSchemaGraph());
+			new CompareSchemaWithSchemaGraph().compare(schema,
+					r.getSchemaGraph());
 			System.out.println("\t\t\t\t\tdone");
 
 		} finally {
 			System.out.println("\n");
 		}
-	}
-
-	@Test
-	public void testTest() throws GraphIOException, IOException, SAXException,
-			ParserConfigurationException, XMLStreamException {
-		test(folder + "test.xmi");
-
 	}
 
 	@Test

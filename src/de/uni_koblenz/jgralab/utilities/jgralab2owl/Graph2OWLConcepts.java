@@ -44,9 +44,9 @@ import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.ListDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
+import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.SetDomain;
-import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
 
 class Graph2OWLConcepts {
 
@@ -259,7 +259,8 @@ class Graph2OWLConcepts {
 		for (Vertex v : g.vertices()) {
 			vElemId = HelperMethods.firstToLowerCase(v
 					.getAttributedElementClass().getQualifiedName())
-					+ "_" + gId + "_" + v.getId();
+					+ "_"
+					+ gId + "_" + v.getId();
 			writeIndividualObjectPropEmptyElement(graphContainsVertexPropName,
 					"#" + vElemId);
 		}
@@ -280,7 +281,8 @@ class Graph2OWLConcepts {
 		for (Vertex v : g.vertices()) {
 			vElemId = HelperMethods.firstToLowerCase(v
 					.getAttributedElementClass().getQualifiedName())
-					+ "_" + gId + "_" + v.getId();
+					+ "_"
+					+ gId + "_" + v.getId();
 
 			convertVertex(hashedGId, v, vElemId, pf);
 		}
@@ -434,9 +436,9 @@ class Graph2OWLConcepts {
 	 * representing the edge's {@code AttributedElementClass}. {@code eElemId}
 	 * specifies the individual's id. The individual contains properties
 	 * relating it to its attributes, its containing graph, the role names on
-	 * its "from" and "to" sides and, if {@code e} constitutes an {@code
-	 * Aggregation} or {@code Composition}, to the {@code Vertex} forming the
-	 * aggregate.<br>
+	 * its "from" and "to" sides and, if {@code e} constitutes an
+	 * {@code Aggregation} or {@code Composition}, to the {@code Vertex} forming
+	 * the aggregate.<br>
 	 * <br>
 	 * XML code written if: <br>
 	 * 
@@ -492,13 +494,12 @@ class Graph2OWLConcepts {
 		String fromElemId = HelperMethods.firstToLowerCase(fromVertex
 				.getAttributedElementClass().getQualifiedName())
 				+ "_"
-				+ fromVertex.getGraph().getId()
-				+ "_"
-				+ +fromVertex.getId();
+				+ fromVertex.getGraph().getId() + "_" + +fromVertex.getId();
 
 		String toElemId = HelperMethods.firstToLowerCase(toVertex
 				.getAttributedElementClass().getQualifiedName())
-				+ "_" + toVertex.getGraph().getId() + "_" + toVertex.getId();
+				+ "_"
+				+ toVertex.getGraph().getId() + "_" + toVertex.getId();
 
 		// convert attributes of e
 
@@ -567,7 +568,8 @@ class Graph2OWLConcepts {
 		} else {
 			attrPropertyName = HelperMethods.firstToLowerCase(owningAec
 					.getQualifiedName())
-					+ "Has" + HelperMethods.firstToUpperCase(attrName);
+					+ "Has"
+					+ HelperMethods.firstToUpperCase(attrName);
 		}
 
 		Domain dom = attr.getDomain();
@@ -679,7 +681,6 @@ class Graph2OWLConcepts {
 	 * @see #writeAttributeIndividualDatatypePropElement(String propertyName,
 	 *      Object value, Domain dom)
 	 */
-	@SuppressWarnings("unchecked")
 	private void writeListIndividualObjectPropElement(String propName,
 			Object value, Domain dom) throws XMLStreamException {
 		Object componentValue;
@@ -690,8 +691,8 @@ class Graph2OWLConcepts {
 		writer.writeStartElement(propName);
 
 		// for each value inside the list
-		for (int i = 0; i < ((List) value).size(); i++) {
-			componentValue = ((List) value).get(i);
+		for (int i = 0; i < ((List<?>) value).size(); i++) {
+			componentValue = ((List<?>) value).get(i);
 
 			// create an individual of owl-class "ListElement" and append it as
 			// child of
@@ -710,12 +711,12 @@ class Graph2OWLConcepts {
 
 			// if i is not the index of the last ListElement, create property
 			// "hasNextListElement"
-			if (i < ((List) value).size() - 1) {
+			if (i < ((List<?>) value).size() - 1) {
 				writer.writeStartElement("hasNextListElement");
 			}
 		}
 
-		for (int i = 0; i < ((List) value).size() - 1; i++) {
+		for (int i = 0; i < ((List<?>) value).size() - 1; i++) {
 			writer.writeEndElement();
 		}
 
@@ -767,7 +768,6 @@ class Graph2OWLConcepts {
 	 * @see #writeAttributeIndividualDatatypePropertyElement(String
 	 *      propertyName, Object value, Domain dom)
 	 */
-	@SuppressWarnings("unchecked")
 	private void writeSetIndividualObjectPropElement(String propName,
 			Object value, Domain dom) throws XMLStreamException {
 		// get the base domain of the Set
@@ -779,14 +779,14 @@ class Graph2OWLConcepts {
 		// if the base domain is a composite domain
 		if (baseDomain.isComposite()) {
 			// for each value inside the Set
-			for (Object componentValue : (Set) value) {
+			for (Object componentValue : (Set<?>) value) {
 				writeAttributeIndividualObjectPropElement("setHasObject",
 						componentValue, baseDomain);
 			}
 			// if the base domain is a basic domain
 		} else {
 			// for each value inside the Set
-			for (Object componentValue : (Set) value) {
+			for (Object componentValue : (Set<?>) value) {
 				writeAttributeIndividualDatatypePropElement("setHasDatatype",
 						componentValue, baseDomain);
 			}
@@ -865,20 +865,22 @@ class Graph2OWLConcepts {
 
 			// if the component is of composite type
 			if (component.getDomain().isComposite()
-					&& !component.getDomain().getTGTypeName(null).equals(
-							"Object")) {
-				writeAttributeIndividualObjectPropElement(HelperMethods
-						.firstToLowerCase(dom.getQualifiedName())
-						+ "Has"
-						+ HelperMethods.firstToUpperCase(component.getName()),
-						componentValue, component.getDomain());
+					&& !component.getDomain().getTGTypeName(null)
+							.equals("Object")) {
+				writeAttributeIndividualObjectPropElement(
+						HelperMethods.firstToLowerCase(dom.getQualifiedName())
+								+ "Has"
+								+ HelperMethods.firstToUpperCase(component
+										.getName()), componentValue,
+						component.getDomain());
 				// if the component is of basic type
 			} else {
-				writeAttributeIndividualDatatypePropElement(HelperMethods
-						.firstToLowerCase(dom.getQualifiedName())
-						+ "Has"
-						+ HelperMethods.firstToUpperCase(component.getName()),
-						componentValue, component.getDomain());
+				writeAttributeIndividualDatatypePropElement(
+						HelperMethods.firstToLowerCase(dom.getQualifiedName())
+								+ "Has"
+								+ HelperMethods.firstToUpperCase(component
+										.getName()), componentValue,
+						component.getDomain());
 			}
 		}
 
@@ -908,7 +910,7 @@ class Graph2OWLConcepts {
 	 *            be converted.
 	 * @throws XMLStreamException
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	private void writeAttributeIndividualDatatypePropElement(String propName,
 			Object value, Domain dom) throws XMLStreamException {
 		if (dom.toString().contains("Enum")) {
@@ -923,13 +925,11 @@ class Graph2OWLConcepts {
 						JGraLab2OWL.xsdNS + "string");
 				writer.writeCharacters((String) value);
 			} else {
-				writer
-						.writeAttribute(
-								JGraLab2OWL.rdfNS,
-								"datatype",
-								JGraLab2OWL.xsdNS
-										+ dom
-												.getJavaAttributeImplementationTypeName(""));
+				writer.writeAttribute(
+						JGraLab2OWL.rdfNS,
+						"datatype",
+						JGraLab2OWL.xsdNS
+								+ dom.getJavaAttributeImplementationTypeName(""));
 				writer.writeCharacters(value.toString());
 			}
 

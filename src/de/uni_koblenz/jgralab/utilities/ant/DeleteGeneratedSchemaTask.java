@@ -50,8 +50,7 @@ public class DeleteGeneratedSchemaTask extends Task {
 	}
 
 	public void addConfiguredFileset(FileSet files) {
-		@SuppressWarnings("unchecked")
-		Iterator fileIterator = files.iterator();
+		Iterator<?> fileIterator = files.iterator();
 		while (fileIterator.hasNext()) {
 			Object current = fileIterator.next();
 			if (current instanceof FileResource) {
@@ -69,7 +68,9 @@ public class DeleteGeneratedSchemaTask extends Task {
 					Schema schema = GraphIO.loadSchemaFromFile(currentTG);
 					deleteGeneratedSchema(sourcePath, schema);
 				} else {
-					System.err.println("Warning: could not delete generated schema files: \"" + currentTG + "\" could not be found.");
+					System.err
+							.println("Warning: could not delete generated schema files: \""
+									+ currentTG + "\" could not be found.");
 				}
 			}
 		} catch (GraphIOException e) {
