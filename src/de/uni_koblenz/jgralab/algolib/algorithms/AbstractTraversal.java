@@ -1,11 +1,9 @@
-package de.uni_koblenz.jgralab.algolib.algorithms.search;
+package de.uni_koblenz.jgralab.algolib.algorithms;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
-import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmStates;
-import de.uni_koblenz.jgralab.algolib.algorithms.GraphAlgorithm;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 import de.uni_koblenz.jgralab.algolib.problems.TraversalSolver;
 
