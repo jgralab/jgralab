@@ -48,6 +48,7 @@ VertexClass EdgePathDescription: PrimaryPathDescription;
 VertexClass EdgeRestriction: Greql2Vertex;
 VertexClass EdgeSetExpression: ElementSetExpression;
 VertexClass EdgeSubgraphExpression: SubgraphExpression;
+VertexClass EdgeVertexList: Greql2Vertex;
 VertexClass ExponentiatedPathDescription: PathDescription;
 VertexClass ForwardVertexSet: PathExpression;
 VertexClass FunctionApplication: Expression;
@@ -123,7 +124,9 @@ EdgeClass IsDeclaredVarOf: Greql2Aggregation from Variable (1,*) role declaredVa
 EdgeClass IsDefinitionOf: Greql2Aggregation from Definition (1,*) role definition aggregation shared to DefinitionExpression (1,*);
 EdgeClass IsDirectionOf: Greql2Aggregation from Direction (1,1) role direction aggregation shared to PrimaryPathDescription (1,*);
 EdgeClass IsEdgeExprOf: Greql2Aggregation from Expression (1,1) role edgeExpr aggregation shared to EdgePathDescription (0,*);
+EdgeClass IsEdgeOrVertexExprOf: Greql2Aggregation from Expression (2,*) role edgeOrVertexExpr aggregation shared to EdgeVertexList (0,*);
 EdgeClass IsEdgeRestrOf: Greql2Aggregation from EdgeRestriction (0,*) role edgeRestr aggregation shared to PrimaryPathDescription (0,*);
+EdgeClass IsElementOf: Greql2Aggregation from EdgeVertexList (0,*) role element aggregation shared to EdgeVertexList (0,*);
 EdgeClass IsExponentOf: Greql2Aggregation from IntLiteral (1,1) role exponent aggregation shared to ExponentiatedPathDescription (0,*);
 EdgeClass IsExponentiatedPathOf: IsPathDescriptionOf from PathDescription (1,1) role exponentiatedPath aggregation shared to ExponentiatedPathDescription (0,*);
 EdgeClass IsExprOf:Greql2Aggregation from Expression (1,1) role expr aggregation shared to Definition (0,*);
