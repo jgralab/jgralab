@@ -693,6 +693,7 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex 
 	 */
 	@Override
 	public String toString() {
+		assert isValid();
 		return "v" + id + ": " + getAttributedElementClass().getQualifiedName();
 	}
 
