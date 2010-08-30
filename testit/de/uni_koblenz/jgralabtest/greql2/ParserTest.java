@@ -765,9 +765,11 @@ public class ParserTest {
 
 	@Test
 	public void testLetExpression2() throws Exception {
-		Greql2 graph = parseQuery("let x:= list (5..13) in count(x)", "/Users/dbildh/greql.tg");
+		Greql2 graph = parseQuery("let x:= list (5..13) in count(x)",
+				"/Users/dbildh/greql.tg");
+		assertNotNull(graph);
 	}
-	
+
 	@Test
 	public void testFRQuery() throws Exception {
 		Greql2 graph = parseQuery("from v:V report v end");

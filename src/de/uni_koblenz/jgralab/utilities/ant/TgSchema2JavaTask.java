@@ -117,6 +117,7 @@ public class TgSchema2JavaTask extends Task {
 				executeObject.execute();
 			}
 		} catch (GraphIOException e) {
+			e.printStackTrace();
 			throw new BuildException(e);
 		}
 	}
