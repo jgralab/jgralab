@@ -23,7 +23,6 @@ import de.uni_koblenz.jgralab.greql2.schema.EdgePathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.EdgeRestriction;
 import de.uni_koblenz.jgralab.greql2.schema.EdgeSetExpression;
 import de.uni_koblenz.jgralab.greql2.schema.EdgeSubgraphExpression;
-import de.uni_koblenz.jgralab.greql2.schema.EdgeVertexList;
 import de.uni_koblenz.jgralab.greql2.schema.ElementSetExpression;
 import de.uni_koblenz.jgralab.greql2.schema.ExponentiatedPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
@@ -102,8 +101,6 @@ public class Greql2Serializer {
 			serializeDirection((Direction) v);
 		} else if (v instanceof EdgeRestriction) {
 			serializeEdgeRestriction((EdgeRestriction) v);
-		} else if (v instanceof EdgeVertexList) {
-			serializeEdgeVertexList((EdgeVertexList) v);
 		} else if (v instanceof Greql2Expression) {
 			serializeGreql2Expression((Greql2Expression) v);
 		} else if (v instanceof Quantifier) {
@@ -157,18 +154,6 @@ public class Greql2Serializer {
 			throw new RuntimeException(
 					"No case statemant to handle QuantificationType: "
 							+ v.get_type());
-		}
-	}
-
-	private void serializeEdgeVertexList(EdgeVertexList v) {
-		boolean first = true;
-		for (Expression e : v.get_edgeOrVertexExpr()) {
-			if (first) {
-				first = false;
-			} else {
-				sb.append(", ");
-			}
-			serializeExpression(e, false);
 		}
 	}
 
