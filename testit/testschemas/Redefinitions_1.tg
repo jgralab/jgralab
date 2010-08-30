@@ -1,0 +1,14 @@
+TGraph 2;
+Schema de.uni_koblenz.jgralabtest.schemas.redefinitions_1.TestSchema;
+GraphClass TestGraph;
+VertexClass A;
+VertexClass B: A;
+VertexClass C: A;
+
+VertexClass W;
+VertexClass X: W;
+VertexClass Y: W;
+
+EdgeClass AW from A (0,*) role a to W (0,*) role w;
+EdgeClass BX: AW from B (0,*) role b redefines a to X (0,*) role x redefines w;
+EdgeClass CY: AW from C (0,*) role c redefines a to Y (0,*) role y redefines w;
