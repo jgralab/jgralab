@@ -11,19 +11,24 @@ import de.uni_koblenz.jgralab.algolib.functions.entries.DoubleFunctionEntry;
 public abstract class DoubleGraphMarker<T extends GraphElement> extends
 		AbstractGraphMarker<T> implements DoubleFunction<T> {
 
+	private static double DEFAULT_UNMARKED_VALUE = Double.NaN;
+
 	protected double[] temporaryAttributes;
 	protected int marked;
 	protected long version;
+	protected double unmarkedValue;
 
 	protected DoubleGraphMarker(Graph graph, int size) {
 		super(graph);
 		temporaryAttributes = createNewArray(size);
+		unmarkedValue = DEFAULT_UNMARKED_VALUE;
+		marked = 0;
 	}
 
 	private double[] createNewArray(int size) {
 		double[] newArray = new double[size];
 		for (int i = 0; i < size; i++) {
-			newArray[i] = Double.NaN;
+			newArray[i] = unmarkedValue;
 		}
 		return newArray;
 	}
@@ -46,7 +51,9 @@ public abstract class DoubleGraphMarker<T extends GraphElement> extends
 		assert (graphElement.getGraph() == graph);
 		assert (graphElement.getId() <= (graphElement instanceof Vertex ? graph
 				.getMaxVCount() : graph.getMaxECount()));
-		return !Double.isNaN(temporaryAttributes[graphElement.getId()]);
+		return Double.isNaN(unmarkedValue) ? !Double
+				.isNaN(temporaryAttributes[graphElement.getId()])
+				: temporaryAttributes[graphElement.getId()] != unmarkedValue;
 	}
 
 	/**
@@ -83,7 +90,8 @@ public abstract class DoubleGraphMarker<T extends GraphElement> extends
 		assert (graphElement.getGraph() == graph);
 		assert (graphElement.getId() <= (graphElement instanceof Vertex ? graph
 				.getMaxVCount() : graph.getMaxECount()));
-		if (Double.isNaN(temporaryAttributes[graphElement.getId()])) {
+		// if (Double.isNaN(temporaryAttributes[graphElement.getId()])) {
+		if (!isMarked(graphElement)) {
 			return false;
 		}
 		temporaryAttributes[graphElement.getId()] = Double.NaN;
@@ -110,6 +118,36 @@ public abstract class DoubleGraphMarker<T extends GraphElement> extends
 		// newTemporaryAttributes[i] = temporaryAttributes[i];
 		// }
 		temporaryAttributes = newTemporaryAttributes;
+	}
+
+	public double getUnmarkedValue() {
+		return unmarkedValue;
+	}
+
+	public void setUnmarkedValue(double newUnmarkedValue) {
+
+		if (Double.isNaN(newUnmarkedValue) && Double.isNaN(unmarkedValue)
+				|| newUnmarkedValue == unmarkedValue) {
+			return;
+		}
+
+		for (int i = 0; i < temporaryAttributes.length; i++) {
+			// keep track of implicitly unmarked values
+			if (Double.isNaN(newUnmarkedValue)
+					&& Double.isNaN(temporaryAttributes[i])
+					|| temporaryAttributes[i] == newUnmarkedValue) {
+				marked -= 1;
+			}
+			// set all unmarked elements to new value
+			if (Double.isNaN(unmarkedValue)
+					&& Double.isNaN(temporaryAttributes[i])
+					|| temporaryAttributes[i] == unmarkedValue) {
+				temporaryAttributes[i] = newUnmarkedValue;
+			}
+
+		}
+		this.unmarkedValue = newUnmarkedValue;
+
 	}
 
 	@Override
@@ -145,7 +183,8 @@ public abstract class DoubleGraphMarker<T extends GraphElement> extends
 			@Override
 			public DoubleFunctionEntry<T> next() {
 				T currentElement = markedElements.next();
-				return new DoubleFunctionEntry<T>(currentElement, get(currentElement));
+				return new DoubleFunctionEntry<T>(currentElement,
+						get(currentElement));
 			}
 
 			@Override

@@ -22,6 +22,7 @@ public abstract class LongGraphMarker<T extends GraphElement> extends
 		super(graph);
 		unmarkedValue = DEFAULT_UNMARKED_VALUE;
 		temporaryAttributes = createNewArray(size);
+		marked = 0;
 	}
 
 	private long[] createNewArray(int size) {
@@ -121,18 +122,20 @@ public abstract class LongGraphMarker<T extends GraphElement> extends
 	}
 
 	public void setUnmarkedValue(long newUnmarkedValue) {
-		for (int i = 0; i < temporaryAttributes.length; i++) {
-			// keep track of implicitly unmarked values
-			if (temporaryAttributes[i] == newUnmarkedValue) {
-				marked -= 1;
-			}
-			// set all unmarked elements to new value
-			if (temporaryAttributes[i] == this.unmarkedValue) {
-				temporaryAttributes[i] = newUnmarkedValue;
-			}
+		if (newUnmarkedValue != this.unmarkedValue) {
+			for (int i = 0; i < temporaryAttributes.length; i++) {
+				// keep track of implicitly unmarked values
+				if (temporaryAttributes[i] == newUnmarkedValue) {
+					marked -= 1;
+				}
+				// set all unmarked elements to new value
+				if (temporaryAttributes[i] == this.unmarkedValue) {
+					temporaryAttributes[i] = newUnmarkedValue;
+				}
 
+			}
+			this.unmarkedValue = newUnmarkedValue;
 		}
-		this.unmarkedValue = newUnmarkedValue;
 	}
 
 	@Override
@@ -168,7 +171,8 @@ public abstract class LongGraphMarker<T extends GraphElement> extends
 			@Override
 			public LongFunctionEntry<T> next() {
 				T currentElement = markedElements.next();
-				return new LongFunctionEntry<T>(currentElement, get(currentElement));
+				return new LongFunctionEntry<T>(currentElement,
+						get(currentElement));
 			}
 
 			@Override
