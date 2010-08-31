@@ -12,6 +12,7 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.weighted_shortest_paths.AStarSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.weighted_shortest_paths.DijkstraAlgorithm;
+import de.uni_koblenz.jgralab.algolib.algorithms.weighted_shortest_paths.FordMooreAlgorithm;
 import de.uni_koblenz.jgralab.algolib.functions.BinaryDoubleFunction;
 import de.uni_koblenz.jgralab.algolib.functions.DoubleFunction;
 import de.uni_koblenz.jgralab.algolib.functions.entries.DoubleFunctionEntry;
@@ -141,17 +142,17 @@ public class TryAStar {
 					+ dijkstra.getVertexQueue().getAddedCount());
 		}
 
-		// System.out.println();
-		// System.out.println("Ford-Moore");
-		// FordMooreAlgorithm fm = new FordMooreAlgorithm(graph, null, null,
-		// edgeWeight);
-		// fm.undirected();
-		// sw.reset();
-		// sw.start();
-		// fm.execute(start, target);
-		// sw.stop();
-		// System.out.println(sw.getDurationString());
-		// System.out.println(fm.getWeightedDistanceToTarget());
+		System.out.println();
+		System.out.println("Ford-Moore");
+		FordMooreAlgorithm fm = new FordMooreAlgorithm(graph, null, null,
+				edgeWeight);
+		fm.undirected();
+		sw.reset();
+		sw.start();
+		fm.execute(start, target);
+		sw.stop();
+		System.out.println(sw.getDurationString());
+		System.out.println(fm.getWeightedDistanceToTarget());
 
 		System.out.println();
 		System.out.println("Fini.");

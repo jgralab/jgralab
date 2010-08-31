@@ -13,7 +13,7 @@ public class Stopwatch {
 		if (state != 0) {
 			throw new IllegalStateException();
 		}
-		starttime = System.currentTimeMillis();
+		starttime = System.nanoTime();
 		state = 1;
 	}
 
@@ -21,11 +21,18 @@ public class Stopwatch {
 		if (state != 1) {
 			throw new IllegalStateException();
 		}
-		endtime = System.currentTimeMillis();
+		endtime = System.nanoTime();
 		state = 2;
 	}
 
 	public long getDuration() {
+		if (state != 2) {
+			throw new IllegalStateException();
+		}
+		return (endtime - starttime) / 1000000;
+	}
+	
+	public long getNanoDuration() {
 		if (state != 2) {
 			throw new IllegalStateException();
 		}
