@@ -864,7 +864,7 @@ public class TransactionImplTest {
 			ex3.delete();
 			assertTrue(!readWriteTransaction2.changedAttributes
 					.containsKey(ex1));
-			// FinBugs can be ignored in the following lines
+			// FindBugs can be ignored in the following lines
 			assertTrue(!(readWriteTransaction2.changedEseqEdges
 					.containsKey(ex1))
 					&& !(readWriteTransaction2.changedEseqEdges

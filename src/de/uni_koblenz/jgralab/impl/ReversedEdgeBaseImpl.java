@@ -384,6 +384,7 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 	 */
 	@Override
 	public String toString() {
+		assert isValid();
 		return "-e" + normalEdge.getId() + ": "
 				+ getAttributedElementClass().getQualifiedName();
 	}

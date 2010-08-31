@@ -2,6 +2,7 @@ package de.uni_koblenz.jgralab.impl.trans;
 
 import java.util.Map;
 
+import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.impl.EdgeBaseImpl;
@@ -37,6 +38,16 @@ public abstract class ReversedEdgeImpl extends
 	 */
 	protected ReversedEdgeImpl(EdgeBaseImpl normalEdge, Graph graph) {
 		super(normalEdge, graph);
+	}
+	
+	@Override
+	public Edge getNextEdge() {
+		return getNextIncidence();
+	}
+	
+	@Override
+	public Edge getPrevEdge() {
+		return getPrevIncidence();
 	}
 
 	// --- getter ---//
@@ -171,5 +182,11 @@ public abstract class ReversedEdgeImpl extends
 	@Override
 	public VersionedReferenceImpl<IncidenceImpl> getVersionedPrevIncidence() {
 		return this.prevIncidence;
+	}
+	
+	@Override
+	public String toString() {
+		return "-e" + normalEdge.getId() + ": "
+				+ getAttributedElementClass().getQualifiedName();
 	}
 }
