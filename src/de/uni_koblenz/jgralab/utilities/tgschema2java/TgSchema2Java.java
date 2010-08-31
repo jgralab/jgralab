@@ -24,9 +24,6 @@
 
 package de.uni_koblenz.jgralab.utilities.tgschema2java;
 
-//import gnu.getopt.Getopt;
-//import gnu.getopt.LongOpt;
-
 import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
@@ -373,8 +370,7 @@ public class TgSchema2Java {
 			options.add(classpath);
 		}
 		System.out.print("Starting compilation....");
-		compiler
-				.getTask(null, fileManager, null, null, null, compilationUnits1)
+		compiler.getTask(null, fileManager, null, null, null, compilationUnits1)
 				.call();
 		System.out.println("finished");
 	}
