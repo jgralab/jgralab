@@ -175,62 +175,7 @@ public class TryAStar {
 				target = (Location) current;
 			}
 		}
-		// target = (Location) graph
-		// .getVertex(new Random().nextInt(VERTEXCOUNT) + 1);
 	}
-
-	// private static void cacheDistances(WeightedGraph graph, Location target)
-	// {
-	// int size = graph.getVCount() + 1;
-	// if (distances == null || distances.length != size) {
-	// distances = new double[size];
-	// }
-	//
-	// for (Vertex current : graph.vertices()) {
-	// distances[current.getId()] = euclideanDistance(target.get_x(),
-	// target.get_y(), ((Location) current).get_x(),
-	// ((Location) current).get_y());
-	// }
-	// }
-
-	// private static Location[] getNearestNeighbors(WeightedGraph in,
-	// Location from, int count) {
-	// assert (count < in.getVCount());
-	// // cacheDistances(in, from);
-	// // init array
-	// Location[] out = new Location[count];
-	// double[] minimalDistances = new double[count];
-	// for (int i = 0; i < count; i++) {
-	// minimalDistances[i] = Double.POSITIVE_INFINITY;
-	// }
-	// for (Vertex current : in.vertices()) {
-	// Location currentLocation = (Location) current;
-	// double currentDistance = euclideanDistance(currentLocation.get_x(),
-	// currentLocation.get_y(), from.get_x(), from.get_y());
-	// // insert to array
-	// if (current != from) {
-	// for (int i = 0; i < out.length; i++) {
-	// if (out[i] == null) {
-	// out[i] = currentLocation;
-	// minimalDistances[i] = currentDistance;
-	// continue;
-	// }
-	// if (currentDistance < minimalDistances[i]) {
-	// // shift right
-	// for (int j = out.length - 1; j > i; j--) {
-	// minimalDistances[j] = minimalDistances[j - 1];
-	// out[j] = out[j - 1];
-	// }
-	// // write value
-	// minimalDistances[i] = currentDistance;
-	// out[i] = currentLocation;
-	// break;
-	// }
-	// }
-	// }
-	// }
-	// return out;
-	// }
 
 	private static WeightedGraph createPlanarRandomGraph(int vertexCount,
 			int edgesPerVertex) {
@@ -298,34 +243,6 @@ public class TryAStar {
 		return graph;
 	}
 
-	// @SuppressWarnings("unused")
-	// private static WeightedGraph createRandomGraph(int vertexCount,
-	// int edgesPerVertex) {
-	// Random rng = new Random();
-	// WeightedGraph graph = WeightedSchema.instance().createWeightedGraph();
-	// int chunkSize = vertexCount / 100;
-	//
-	// Location[] vertices = createRandomVertices(vertexCount, rng, graph,
-	// chunkSize);
-	//
-	// System.out.println("Creating eges...");
-	// for (int i = 0; i < vertexCount; i++) {
-	// printPoint(chunkSize, i);
-	// Location alpha = vertices[i];
-	// for (int j = 0; j < edgesPerVertex; j++) {
-	// int omegaIndex = i;
-	// while (omegaIndex == i) {
-	// omegaIndex = rng.nextInt(vertexCount);
-	// }
-	// Location omega = vertices[omegaIndex];
-	// createEdgePair(rng, graph, alpha, omega);
-	// }
-	// }
-	// System.out.println();
-	// System.out.println("Graph created.");
-	// return graph;
-	// }
-
 	private static void createRandomVertices(int vertexCount, Random rng,
 			WeightedGraph graph, int chunkSize) {
 		// Location[] vertices = new Location[vertexCount];
@@ -358,8 +275,6 @@ public class TryAStar {
 		if (create) {
 			Way link = graph.createWay(alpha, omega);
 			link.set_weight(weight);
-			// link = graph.createWay(omega, alpha);
-			// link.set_weight(weight);
 		}
 	}
 

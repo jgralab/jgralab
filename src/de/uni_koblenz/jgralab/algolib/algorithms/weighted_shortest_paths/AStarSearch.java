@@ -95,6 +95,9 @@ public class AStarSearch extends AbstractTraversal implements
 		super.reset();
 		visitors.reset();
 		weightedDistance = new DoubleVertexMarker(graph);
+		for (Vertex v : graph.vertices()) {
+			weightedDistance.set(v, Double.POSITIVE_INFINITY);
+		}
 		visitedVertices = new BitSetVertexMarker(graph);
 		parent = new ArrayVertexMarker<Edge>(graph);
 		vertexQueue = vertexQueue == null ? new PriorityQueue<Vertex>()
@@ -172,9 +175,7 @@ public class AStarSearch extends AbstractTraversal implements
 
 					visitors.visitEdge(currentEdge);
 
-					// TODO use positive infinity instead of NaN
-					if (!weightedDistance.isDefined(nextVertex)
-							|| weightedDistance.get(nextVertex) > newDistance) {
+					if (weightedDistance.get(nextVertex) > newDistance) {
 						parent.set(nextVertex, currentEdge);
 						weightedDistance.set(nextVertex, newDistance);
 						vertexQueue.put(nextVertex, newDistance

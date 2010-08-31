@@ -109,6 +109,9 @@ public class FordMooreAlgorithm extends AbstractTraversal implements
 		super.reset();
 		parent = new ArrayVertexMarker<Edge>(graph);
 		weightedDistance = new DoubleVertexMarker(graph);
+		for (Vertex v : graph.vertices()) {
+			weightedDistance.set(v, Double.POSITIVE_INFINITY);
+		}
 		vertexQueue = vertexQueue == null ? new LinkedList<Vertex>()
 				: vertexQueue;
 		vertexQueue.clear();
@@ -152,8 +155,7 @@ public class FordMooreAlgorithm extends AbstractTraversal implements
 				double newDistance = weightedDistance.get(currentVertex)
 						+ (edgeWeight == null ? 1.0 : edgeWeight
 								.get(currentEdge));
-				if (!weightedDistance.isDefined(nextVertex)
-						|| newDistance < weightedDistance.get(nextVertex)) {
+				if (newDistance < weightedDistance.get(nextVertex)) {
 					parent.set(nextVertex, currentEdge);
 					weightedDistance.set(nextVertex, newDistance);
 					int newCount = pushCount.get(nextVertex) + 1;
