@@ -168,6 +168,7 @@ public class TGraphBrowserServer extends Thread {
 	public void run() {
 		System.out.println(this.getClass().getSimpleName()
 				+ " is running on port " + _serverSocket.getLocalPort());
+		System.out.println("The current workspace is: " + workspace);
 		System.out.println("Press CTRL + C to quit.");
 		while (_running) {
 			try {

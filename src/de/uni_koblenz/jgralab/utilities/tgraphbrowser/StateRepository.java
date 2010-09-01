@@ -14,6 +14,7 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 import java.util.regex.Matcher;
@@ -73,6 +74,8 @@ public class StateRepository {
 		}
 	}
 
+	public static ConcurrentHashMap<String, GraphWrapper> usedGraphs = new ConcurrentHashMap<String, GraphWrapper>();
+
 	/**
 	 * the workspace
 	 */
@@ -106,7 +109,7 @@ public class StateRepository {
 		StringBuilder code = new StringBuilder("function(){\n");
 		// evaluate the query
 		try {
-			JValue result = evaluateGReQL(query, state.graph, null);
+			JValue result = evaluateGReQL(query, state.getGraph(), null);
 			boolean elementsAreDisplayed = false;
 			if (result.canConvert(JValueType.COLLECTION)) {
 				JValueSet elements = result.toJValueSet();
@@ -214,8 +217,8 @@ public class StateRepository {
 		StringBuilder notExistingElements = new StringBuilder();
 		for (String s : content.split(",")) {
 			if (s.startsWith("v")) {
-				Vertex element = state.graph.getVertex(Integer.parseInt(s
-						.substring(1)));
+				Vertex element = state.getGraph().getVertex(
+						Integer.parseInt(s.substring(1)));
 				if (element != null) {
 					elements.add(new JValueImpl(element));
 				} else {
@@ -225,8 +228,8 @@ public class StateRepository {
 									+ s);
 				}
 			} else {
-				Edge element = state.graph.getEdge(Integer.parseInt(s
-						.substring(1)));
+				Edge element = state.getGraph().getEdge(
+						Integer.parseInt(s.substring(1)));
 				if (element != null) {
 					elements.add(new JValueImpl(element));
 				} else {
@@ -385,11 +388,11 @@ public class StateRepository {
 		int currentElementId = Integer.parseInt(elementId.substring(1));
 		JValue currentElement = null;
 		if (elementId.charAt(0) == 'v') {
-			currentElement = new JValueImpl(state.graph
-					.getVertex(currentElementId));
+			currentElement = new JValueImpl(state.getGraph().getVertex(
+					currentElementId));
 		} else {
-			currentElement = new JValueImpl(state.graph
-					.getEdge(currentElementId));
+			currentElement = new JValueImpl(state.getGraph().getEdge(
+					currentElementId));
 		}
 		StringBuilder code = new StringBuilder("function(){\n");
 		new TwoDVisualizer().visualizeElements(code, state, sessionId,
@@ -442,7 +445,7 @@ public class StateRepository {
 					}
 				}
 				if (latestEdge == null) {
-					latestEdge = state.graph.getFirstEdgeInGraph();
+					latestEdge = state.getGraph().getFirstEdgeInGraph();
 				}
 				tv.visualizeElements(code, state, 20, false, "e"
 						+ (latestEdge != null ? latestEdge.getId() : ""),
@@ -685,10 +688,12 @@ public class StateRepository {
 								numberPerPage,
 								showAttributes,
 								!isVertex ? "v"
-										+ state.graph.getFirstVertex().getId()
+										+ state.getGraph().getFirstVertex()
+												.getId()
 										: "e"
-												+ (state.graph
-														.getFirstEdgeInGraph() != null ? state.graph
+												+ (state.getGraph()
+														.getFirstEdgeInGraph() != null ? state
+														.getGraph()
 														.getFirstEdgeInGraph()
 														.getId()
 														: ""), true,
@@ -726,7 +731,7 @@ public class StateRepository {
 			String vertexTdId) {
 		State state = getSession(id);
 		StringBuilder code = new StringBuilder("function (){\n");
-		new TabularVisualizer().createIncidentEdges(code, state.graph
+		new TabularVisualizer().createIncidentEdges(code, state.getGraph()
 				.getVertex(Integer.parseInt(vertexTdId.split("v")[1])),
 				state.selectedEdgeClasses, state.selectedVertexClasses,
 				displayedPage, vertexTdId);
@@ -805,22 +810,23 @@ public class StateRepository {
 							numberPerPage,
 							showAttributes,
 							elementId.charAt(0) == 'e' ? "v"
-									+ state.graph.getFirstVertex().getId()
+									+ state.getGraph().getFirstVertex().getId()
 									: "e"
-											+ (state.graph
-													.getFirstEdgeInGraph() != null ? state.graph
+											+ (state.getGraph()
+													.getFirstEdgeInGraph() != null ? state
+													.getGraph()
 													.getFirstEdgeInGraph()
 													.getId()
 													: ""), true,
 							isAJValueSetShown);
 		}
 		if (elementId.startsWith("v")) {
-			Vertex current = state.graph.getVertex(Integer.parseInt(elementId
-					.substring(1)));
+			Vertex current = state.getGraph().getVertex(
+					Integer.parseInt(elementId.substring(1)));
 			addToBreadcrumbBar(code, state, new JValueImpl(current), true);
 		} else {
-			Edge current = state.graph.getEdge(Integer.parseInt(elementId
-					.substring(1)));
+			Edge current = state.getGraph().getEdge(
+					Integer.parseInt(elementId.substring(1)));
 			addToBreadcrumbBar(code, state, new JValueImpl(current), true);
 		}
 		code.append("changeBackgroundColor(\"").append(elementId)
@@ -883,7 +889,8 @@ public class StateRepository {
 				.append("document.getElementById(\"aChangeView\").style.visibility = \"visible\";\n");
 		code
 				.append("document.getElementById(\"rightOption\").style.visibility = \"visible\";\n");
-		if ((dot == null) || dot.isEmpty() || (state.graph.getVCount() == 0)) {
+		if ((dot == null) || dot.isEmpty()
+				|| (state.getGraph().getVCount() == 0)) {
 			code
 					.append("document.getElementById(\"aChangeView\").style.visibility = \"hidden\";\n");
 		}
@@ -896,7 +903,7 @@ public class StateRepository {
 		// ## initialize FilterWindow
 		new SchemaVisualizer().createSchemaRepresentation(code, state);
 		// ## initialize breadcrumb bar
-		Vertex firstVertex = state.graph.getFirstVertex();
+		Vertex firstVertex = state.getGraph().getFirstVertex();
 		if (firstVertex != null) {
 			addToBreadcrumbBar(code, state, new JValueImpl(firstVertex), true);
 		}
@@ -910,8 +917,8 @@ public class StateRepository {
 				firstVertex != null ? firstVertex.getId() : "")
 				.append("\");\n");
 		tv.visualizeElements(code, state, 20, false, "e"
-				+ (state.graph.getFirstEdgeInGraph() != null ? state.graph
-						.getFirstEdgeInGraph().getId() : ""), false,
+				+ (state.getGraph().getFirstEdgeInGraph() != null ? state
+						.getGraph().getFirstEdgeInGraph().getId() : ""), false,
 				state.currentExplicitlyDefinedSet == null);
 		code.append("timestamp = ").append(state.lastAccess).append(";\n");
 		code.append("resize();\n");
@@ -941,12 +948,12 @@ public class StateRepository {
 		JValue element = null;
 		StringBuilder code = new StringBuilder("function() {\n");
 		if (elementId.startsWith("v")) {
-			element = new JValueImpl(state.graph.getVertex(Integer
-					.parseInt(elementId.substring(1))));
+			element = new JValueImpl(state.getGraph().getVertex(
+					Integer.parseInt(elementId.substring(1))));
 			addToBreadcrumbBar(code, state, element, isNewElement);
 		} else if (elementId.startsWith("e")) {
-			element = new JValueImpl(state.graph.getEdge(Integer
-					.parseInt(elementId.substring(1))));
+			element = new JValueImpl(state.getGraph().getEdge(
+					Integer.parseInt(elementId.substring(1))));
 			addToBreadcrumbBar(code, state, element, isNewElement);
 		} else {
 			// go back to the element which has the index elementId in the
@@ -1166,9 +1173,10 @@ public class StateRepository {
 		code.append("var childOpt;\n");
 		code.append("var optValue;\n");
 		code.append("var optText;\n");
-		createOptionForGraphs(code, state.graphFile, workspace);
+		createOptionForGraphs(code, workspace);
 		code.append("findPositionOf(\"").append(
-				state.graphFile.toString().replace("\\", "/")).append("\");\n");
+				state.graphIdentifier.toString().replace("\\", "/")).append(
+				"\");\n");
 		// set the shown one as selected
 		code
 				.append("document.getElementById(\"selectGraph\").selectedIndex = selectedGraphIndex;\n");
@@ -1291,50 +1299,57 @@ public class StateRepository {
 	 */
 	public StringBuilder checkLoading(Integer id) {
 		State state = sessions.get(id);
+		GraphWrapper currentGraphWrapper = state.getGraphWrapper();
 		StringBuilder code = new StringBuilder("function(){\n");
-		try {
-			if (state.workingCallable.isDone()) {
-				state.workingCallable.get();
-				if (state.excOfWorkingCallable != null) {
-					// an exception occured while loading the graph
-					Exception e = state.excOfWorkingCallable;
-					state.excOfWorkingCallable = null;
+		if (currentGraphWrapper.workingCallable == null) {
+			// the current graph was already loaded in another session
+			return initializeGraphView(id);
+		} else {
+			try {
+				if (currentGraphWrapper.workingCallable.isDone()) {
+					currentGraphWrapper.workingCallable.get();
+					if (currentGraphWrapper.excOfWorkingCallable != null) {
+						// an exception occured while loading the graph
+						Exception e = currentGraphWrapper.excOfWorkingCallable;
+						code
+								.append(
+										"document.getElementById(\"loadError\").innerHTML += \"ERROR:<br />")
+								.append(e.toString()).append("\";\n");
+					} else if (currentGraphWrapper.graph == null) {
+						code
+								.append("document.getElementById(\"loadError\").innerHTML += \"ERROR:<br />The graph couldn't be loaded!<br />Probably an OutOfMemoryError occured.\";\n");
+					} else {
+						// the graph was loaded
+						currentGraphWrapper.workingCallable = null;
+						return initializeGraphView(id);
+					}
+				} else if (currentGraphWrapper.workingCallable.isCancelled()) {
+					code
+							.append("document.getElementById(\"loadError\").innerHTML += \"ERROR:<br />The loading of the graph was canceled!\";\n");
+				} else {
+					// the graph was not loaded completely
 					code
 							.append(
-									"document.getElementById(\"loadError\").innerHTML += \"ERROR:<br />")
-							.append(e.toString()).append("\";\n");
-				} else if (state.graph == null) {
+									"document.getElementById(\"loadBarForeground\").style.width = \"")
+							.append(currentGraphWrapper.progress).append(
+									"px\";\n");
 					code
-							.append("document.getElementById(\"loadError\").innerHTML += \"ERROR:<br />The graph couldn't be loaded!<br />Probably an OutOfMemoryError occured.\";\n");
-				} else {
-					// the graph was loaded
-					state.workingCallable = null;
-					return initializeGraphView(id);
+							.append(
+									"document.getElementById(\"loadBarNumber\").innerHTML = \"")
+							.append(currentGraphWrapper.progress / 4).append(
+									" %\";\n");
+					code
+							.append("loadId = window.setTimeout(\"checkLoad()\", 1000);\n");
+					state.lastAccess = System.currentTimeMillis();
+					code.append("timestamp = ").append(state.lastAccess)
+							.append(";\n");
 				}
-			} else if (state.workingCallable.isCancelled()) {
-				code
-						.append("document.getElementById(\"loadError\").innerHTML += \"ERROR:<br />The loading of the graph was canceled!\";\n");
-			} else {
-				// the graph was not loaded completely
+			} catch (Exception e) {
 				code
 						.append(
-								"document.getElementById(\"loadBarForeground\").style.width = \"")
-						.append(state.progress).append("px\";\n");
-				code
-						.append(
-								"document.getElementById(\"loadBarNumber\").innerHTML = \"")
-						.append(state.progress / 4).append(" %\";\n");
-				code
-						.append("loadId = window.setTimeout(\"checkLoad()\", 1000);\n");
-				state.lastAccess = System.currentTimeMillis();
-				code.append("timestamp = ").append(state.lastAccess).append(
-						";\n");
+								"document.getElementById(\"loadError\").innerHTML += \"ERROR:<br />")
+						.append(e.toString()).append("\";\n");
 			}
-		} catch (Exception e) {
-			code
-					.append(
-							"document.getElementById(\"loadError\").innerHTML += \"ERROR:<br />")
-					.append(e.toString()).append("\";\n");
 		}
 		return code.append("}");
 	}
@@ -1345,14 +1360,11 @@ public class StateRepository {
 	 * 
 	 * @param code
 	 * 
-	 * @param graphFile
-	 *            the selected graph
 	 * @param directory
 	 *            the directory to look for graphs
 	 * @return
 	 */
-	private void createOptionForGraphs(StringBuilder code, File graphFile,
-			File directory) {
+	private void createOptionForGraphs(StringBuilder code, File directory) {
 		for (File f : directory.listFiles()) {
 			if (f.exists()
 					&& f.isFile()
@@ -1373,7 +1385,7 @@ public class StateRepository {
 						.append("insertSortedIntoOption(childOpt,1,optgroup.childNodes.length-1);\n");
 			} else if (f.exists() && f.isDirectory()) {
 				// search the folder
-				createOptionForGraphs(code, graphFile, f);
+				createOptionForGraphs(code, f);
 			}
 		}
 	}
@@ -1473,8 +1485,7 @@ public class StateRepository {
 	 * @return
 	 */
 	public StringBuilder loadGraphFromServer(String path) {
-		return new StringBuilder(Integer.toString(createNewSession(new File(
-				path))));
+		return new StringBuilder(Integer.toString(createNewSession(path)));
 	}
 
 	/**
@@ -1549,7 +1560,7 @@ public class StateRepository {
 			return returnError(e.toString());
 		}
 		return new StringBuilder(!isSizeOk ? "-1" : Integer
-				.toString(createNewSession(graphFile)));
+				.toString(createNewSession(graphFile.getAbsolutePath())));
 	}
 
 	/**
@@ -1642,7 +1653,7 @@ public class StateRepository {
 	 *            the graph
 	 * @return the id of the new State
 	 */
-	public static int createNewSession(File graph) {
+	public static int createNewSession(String graph) {
 		State ret = new State(graph);
 		synchronized (sessions) {
 			while (sessions.size() < nextSessionId) {
@@ -1702,11 +1713,12 @@ public class StateRepository {
 		// the last time this session was accessed
 		public long lastAccess;
 
-		// the graph of the current session
-		public Graph graph;
+		// if set to false the user is asked if he wants to reload the current
+		// graph because its tg-file has changed
+		public boolean ignoreNewGraphVersions;
 
 		// the .tg-file of the graph
-		public File graphFile;
+		public String graphIdentifier;
 
 		// selected or deselected vertexClasses
 		public HashMap<VertexClass, Boolean> selectedVertexClasses;
@@ -1730,14 +1742,6 @@ public class StateRepository {
 		// the set of elements explicitly defined and currently shown
 		public JValueSet currentExplicitlyDefinedSet;
 
-		// saves a still working thread, if necessary
-		public FutureTask<?> workingCallable;
-
-		// an exception which occurred in the workingThread
-		public Exception excOfWorkingCallable;
-
-		public int progress;
-
 		/**
 		 * Creates a new State instance. All AttributedElementClasses are set to
 		 * selected. The current system time is set to lastAccess.
@@ -1745,15 +1749,43 @@ public class StateRepository {
 		 * @param graphFile
 		 *            the graph
 		 */
-		public State(File graphFile) {
+		public State(String graphFile) {
 			lastAccess = System.currentTimeMillis();
-			this.graphFile = graphFile;
+			graphIdentifier = graphFile + "_"
+					+ new File(graphFile).lastModified();
 			navigationHistory = new ArrayList<JValue>();
 			selectedVertexClasses = new HashMap<VertexClass, Boolean>();
 			selectedEdgeClasses = new HashMap<EdgeClass, Boolean>();
-			workingCallable = (FutureTask<?>) Executors.newCachedThreadPool()
-					.submit(new LoadGraphCallable(this));
 			insertPosition = 0;
+			setGraph(graphFile);
+		}
+
+		/**
+		 * @return {@link Graph} the graph used by this state
+		 */
+		public Graph getGraph() {
+			return usedGraphs.get(graphIdentifier).graph;
+		}
+
+		/**
+		 * @return {@link GraphWrapper} used by this state
+		 */
+		public GraphWrapper getGraphWrapper() {
+			return usedGraphs.get(graphIdentifier);
+		}
+
+		/**
+		 * If the current graph not already exists it is loaded. Otherwise the
+		 * already existing graph is used and its
+		 * {@link GraphWrapper#numberOfUsers} is incremented.
+		 */
+		public void setGraph(String graphFile) {
+			if (!usedGraphs.containsKey(graphIdentifier)) {
+				usedGraphs.put(graphIdentifier, new GraphWrapper(
+						graphIdentifier, graphFile));
+			} else {
+				usedGraphs.get(graphIdentifier).numberOfUsers++;
+			}
 		}
 
 		/**
@@ -1763,23 +1795,16 @@ public class StateRepository {
 		 */
 		public synchronized void deleteUnsynchronized() {
 			int id = sessions.indexOf(this);
-			if ((workingCallable != null) && !workingCallable.isDone()
-					&& !workingCallable.isCancelled()) {
-				// stop running thread
-				workingCallable.cancel(true);
-			}
 			// the state is removed before the id is freed, because this
 			// avoids sideeffects
 			sessions.set(id, null);
-			graph = null;
-			graphFile = null;
+			getGraphWrapper().delete();
+			graphIdentifier = null;
 			edgesOfTableView = null;
 			verticesOfTableView = null;
-			excOfWorkingCallable = null;
 			navigationHistory = null;
 			selectedEdgeClasses = null;
 			selectedVertexClasses = null;
-			workingCallable = null;
 			// delete
 			TGraphBrowserServer.logger.info("Session " + id + " deleted");
 		}
@@ -1796,45 +1821,100 @@ public class StateRepository {
 	}
 
 	/**
+	 * Wraps the graph and all information about the loading of the graph.
+	 */
+	public static class GraphWrapper {
+
+		// the current graph
+		public Graph graph;
+
+		// The tg-file of the current graph
+		public String graphPath;
+
+		// the number of states, which uses this graph
+		public int numberOfUsers = 1;
+
+		// saves a still working thread, if necessary
+		public FutureTask<?> workingCallable;
+
+		// an exception which occurred in the workingThread
+		public Exception excOfWorkingCallable;
+
+		// the identifier of the current Graph
+		public String graphIdentifier;
+
+		public int progress;
+
+		public GraphWrapper(String graphIdentifier, String graphPath) {
+			super();
+			this.graphIdentifier = graphIdentifier;
+			this.graphPath = graphPath;
+			workingCallable = (FutureTask<?>) Executors.newCachedThreadPool()
+					.submit(new LoadGraphCallable(this));
+		}
+
+		/**
+		 * Reduces {@link GraphWrapper#workingCallable} by 1. If it becomes 0 a
+		 * possible working {@link Callable} is canceled and all references are
+		 * set to null. And the current {@link GraphWrapper} is removed from
+		 * {@link StateRepository#usedGraphs}.
+		 */
+		public synchronized void delete() {
+			numberOfUsers--;
+			if (numberOfUsers == 0) {
+				if ((workingCallable != null) && !workingCallable.isDone()
+						&& !workingCallable.isCancelled()) {
+					// stop running thread
+					workingCallable.cancel(true);
+				}
+				graph = null;
+				workingCallable = null;
+				excOfWorkingCallable = null;
+				usedGraphs.remove(graphIdentifier);
+			}
+		}
+	}
+
+	/**
 	 * This Callable loads the graph. If an exception occurs it is saved in
 	 * state.excOfWorkingThread. It saves all vertex- and edgeClasses in
 	 * state.selectedClasses and marks them as selected.
 	 */
 	public static class LoadGraphCallable implements Callable<Void> {
 
-		// the state
-		private State state;
+		// the current graph
+		private GraphWrapper currentGraph;
 
 		/**
 		 * Creates a new Collable which loads the graph.
 		 * 
-		 * @param graphFile
+		 * @param graphIdentifier
 		 *            the .tg-file of the graph
 		 * @param state2
 		 *            the corresponsing state
 		 */
-		public LoadGraphCallable(State state) {
+		public LoadGraphCallable(GraphWrapper graphWrapper) {
 			super();
-			this.state = state;
+			currentGraph = graphWrapper;
 		}
 
 		@Override
 		public Void call() throws Exception {
 			try {
 				synchronized (GraphIO.class) {
-					state.progress = 0;
-					state.graph = GraphIO.loadSchemaAndGraphFromFile(
-							state.graphFile.toString(),
+					currentGraph.progress = 0;
+					currentGraph.graph = GraphIO.loadSchemaAndGraphFromFile(
+							currentGraph.graphPath,
 							new CodeGeneratorConfiguration()
 									.withSaveMemSupport(),
-							new MyProgressFunction(state));
-					assert state.graph != null : "The graph wasn't loaded correctly.";
-					state = null;
+							new MyProgressFunction(currentGraph));
+					assert currentGraph.graph != null : "The graph wasn't loaded correctly.";
+					currentGraph = null;
 				}
 			} catch (Exception e) {
-				state.excOfWorkingCallable = e;
+				currentGraph.excOfWorkingCallable = e;
 				e.printStackTrace();
-				state = null;
+				currentGraph = null;
 			}
 			return null;
 		}
@@ -1844,21 +1924,21 @@ public class StateRepository {
 			private long totalElements;
 			private static final long length = 400;
 			private int currentChar;
-			private State state;
+			private GraphWrapper currentGraph;
 
-			public MyProgressFunction(State state) {
-				this.state = state;
+			public MyProgressFunction(GraphWrapper currentGraph) {
+				this.currentGraph = currentGraph;
 			}
 
 			@Override
 			public void finished() {
 				try {
 					for (long i = currentChar; i < length; i++) {
-						state.progress++;
+						currentGraph.progress++;
 					}
-					state = null;
+					currentGraph = null;
 				} catch (Exception e) {
-					state.excOfWorkingCallable = e;
+					currentGraph.excOfWorkingCallable = e;
 					e.printStackTrace();
 				}
 			}
@@ -1868,7 +1948,7 @@ public class StateRepository {
 				try {
 					return length > totalElements ? 1 : totalElements / length;
 				} catch (Exception e) {
-					state.excOfWorkingCallable = e;
+					currentGraph.excOfWorkingCallable = e;
 					e.printStackTrace();
 				}
 				return 0;
@@ -1884,11 +1964,11 @@ public class StateRepository {
 			public void progress(long processedElements) {
 				try {
 					if (currentChar < length) {
-						state.progress++;
+						currentGraph.progress++;
 						currentChar++;
 					}
 				} catch (Exception e) {
-					state.excOfWorkingCallable = e;
+					currentGraph.excOfWorkingCallable = e;
 					e.printStackTrace();
 				}
 			}

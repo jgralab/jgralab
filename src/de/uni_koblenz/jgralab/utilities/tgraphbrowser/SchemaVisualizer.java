@@ -45,15 +45,17 @@ public class SchemaVisualizer {
 	 * @param state
 	 */
 	private void createPackageRepresentation(StringBuilder code, State state) {
-		Package defaultPackage = state.graph.getSchema().getDefaultPackage();
+		Package defaultPackage = state.getGraph().getSchema()
+				.getDefaultPackage();
 		code
 				.append("var divPackage = document.getElementById(\"divPackage\");\n");
 		code.append("var ulRootPackage = document.createElement(\"ul\");\n");
 		code.append("ulRootPackage.id = \"ulRootPackage\";\n");
 		code.append("divPackage.appendChild(ulRootPackage);\n");
 		createEntriesForPackage(code, "ulRootPackage", defaultPackage, true,
-				state.graph.getSchema().getVertexClassesInTopologicalOrder(),
-				state.graph.getSchema().getEdgeClassesInTopologicalOrder());
+				state.getGraph().getSchema()
+						.getVertexClassesInTopologicalOrder(), state.getGraph()
+						.getSchema().getEdgeClassesInTopologicalOrder());
 	}
 
 	/**
@@ -223,12 +225,13 @@ public class SchemaVisualizer {
 	private void createAttributedElementClassRepresentation(StringBuilder code,
 			State state, boolean createForVertex) {
 		assert state != null : "state is null";
-		assert state.graph != null : "graph is null";
-		assert state.graph.getSchema() != null : "schema is null";
+		assert state.getGraph() != null : "graph is null";
+		assert state.getGraph().getSchema() != null : "schema is null";
 		// list of the AttributedElementClasses in topological order
-		List<? extends GraphElementClass> classes = createForVertex ? state.graph
-				.getSchema().getVertexClassesInTopologicalOrder()
-				: state.graph.getSchema().getEdgeClassesInTopologicalOrder();
+		List<? extends GraphElementClass> classes = createForVertex ? state
+				.getGraph().getSchema().getVertexClassesInTopologicalOrder()
+				: state.getGraph().getSchema()
+						.getEdgeClassesInTopologicalOrder();
 		String var = createForVertex ? "Vertex" : "Edge";
 		createRootUl(code, var);
 		// unsetAEClasses saves the classes which have more than one superclass
@@ -312,9 +315,9 @@ public class SchemaVisualizer {
 					AttributedElementClass cls = unsetSuperClasses.get(z)
 							.next();
 					String supCls = replaceDollar(cls.getUniqueName());
-					if (state.graph.getSchema().getAttributedElementClass(
+					if (state.getGraph().getSchema().getAttributedElementClass(
 							"Aggregation") != cls
-							&& state.graph.getSchema()
+							&& state.getGraph().getSchema()
 									.getAttributedElementClass("Composition") != cls) {
 						aeclass.getM1Class();
 						// copy aeEntry.getKey() and all subclasses to new

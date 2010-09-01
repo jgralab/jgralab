@@ -65,16 +65,16 @@ public class TwoDVisualizer {
 		// calculate environment
 		JValueSet elementsToDisplay = new JValueSet();
 		if (currentElement.isVertex()) {
-			JValue slice = computeElements(currentElement, pathLength,
-					state.graph);
+			JValue slice = computeElements(currentElement, pathLength, state
+					.getGraph());
 			calculateElementsInSet(code, state, elementsToDisplay, slice);
 		} else if (currentElement.isEdge()) {
 			Edge current = currentElement.toEdge();
 			JValue slice = computeElements(new JValueImpl(current.getAlpha()),
-					pathLength, state.graph);
+					pathLength, state.getGraph());
 			calculateElementsInSet(code, state, elementsToDisplay, slice);
 			slice = computeElements(new JValueImpl(current.getOmega()),
-					pathLength, state.graph);
+					pathLength, state.getGraph());
 			calculateElementsInSet(code, state, elementsToDisplay, slice);
 		} else {
 			calculateElementsInSet(code, state, elementsToDisplay,
