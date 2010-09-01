@@ -6,6 +6,7 @@ import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AbstractTraversal;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmStates;
+import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.BreadthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 import de.uni_koblenz.jgralab.algolib.functions.Function;
@@ -45,9 +46,12 @@ public class ShortestPathsWithBFS extends AbstractTraversal implements
 
 	@Override
 	protected void done() {
-		state = AlgorithmStates.FINISHED;
+		state = bfs.getState();
+		if (state == AlgorithmStates.STOPPED) {
+			state = AlgorithmStates.FINISHED;
+		}
 	}
-	
+
 	@Override
 	public ShortestPathsWithBFS normal() {
 		bfs.normal();
@@ -90,7 +94,10 @@ public class ShortestPathsWithBFS extends AbstractTraversal implements
 		bfs.setNavigable(navigable);
 		bfs.setSearchDirection(searchDirection);
 		startRunning();
-		bfs.withLevel().withParent().execute(start);
+		try {
+			bfs.withLevel().withParent().execute(start);
+		} catch (AlgorithmTerminatedException e) {
+		}
 		done();
 		return this;
 	}

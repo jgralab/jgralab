@@ -8,6 +8,7 @@ import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AbstractTraversal;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmStates;
+import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.GraphAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.DepthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.DFSVisitor;
@@ -62,7 +63,7 @@ public class StrongComponentsWithDFS extends AbstractTraversal implements
 
 	@Override
 	protected void done() {
-		state = AlgorithmStates.FINISHED;
+		state = dfs.getState();
 	}
 
 	@Override
@@ -200,22 +201,25 @@ public class StrongComponentsWithDFS extends AbstractTraversal implements
 		dfs.setNavigable(navigable);
 		dfs.setSearchDirection(searchDirection);
 		dfs.addVisitor(lowlinkVisitor);
-		startRunning();
+		try {
+			startRunning();
+		} catch (AlgorithmTerminatedException e) {
+		}
 		dfs.execute();
 		done();
 		dfs.removeVisitor(lowlinkVisitor);
 		return this;
 	}
-	
-	public IntFunction<Vertex> getInternalLowlink(){
+
+	public IntFunction<Vertex> getInternalLowlink() {
 		return lowlink;
 	}
-	
-	public Function<Vertex,Vertex> getInternalStrongComponents(){
+
+	public Function<Vertex, Vertex> getInternalStrongComponents() {
 		return strongComponents;
 	}
-	
-	public Stack<Vertex> getVertexStack(){
+
+	public Stack<Vertex> getVertexStack() {
 		return vertexStack;
 	}
 
