@@ -66,7 +66,7 @@ public class TopologicalOrderWithDFS extends AbstractTraversal implements
 
 	@Override
 	protected void done() {
-		state = AlgorithmStates.FINISHED;
+		state = dfs.getState();
 	}
 
 	@Override

@@ -53,7 +53,10 @@ public class ReachableWithSearch extends AbstractTraversal implements
 
 	@Override
 	protected void done() {
-		state = AlgorithmStates.FINISHED;
+		state = search.getState();
+		if (state == AlgorithmStates.STOPPED) {
+			state = AlgorithmStates.FINISHED;
+		}
 	}
 
 	@Override
@@ -107,7 +110,7 @@ public class ReachableWithSearch extends AbstractTraversal implements
 	}
 
 	@Override
-	public ReachableSolver execute(Vertex start, Vertex target) {
+	public ReachableWithSearch execute(Vertex start, Vertex target) {
 		search.reset();
 		search.setGraph(graph);
 		search.setSubgraph(subgraph);
@@ -119,7 +122,6 @@ public class ReachableWithSearch extends AbstractTraversal implements
 		try {
 			search.execute(start);
 		} catch (AlgorithmTerminatedException e) {
-			System.out.println("early termination");
 		}
 		done();
 		search.removeVisitor(reachableVisitor);
