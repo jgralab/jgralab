@@ -1,5 +1,7 @@
 package de.uni_koblenz.jgralab.algolib.algorithms.strong_components;
 
+import static java.lang.Math.min;
+
 import java.util.Stack;
 
 import de.uni_koblenz.jgralab.Edge;
@@ -7,7 +9,6 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AbstractTraversal;
-import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmStates;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.GraphAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.DepthFirstSearch;
@@ -22,7 +23,6 @@ import de.uni_koblenz.jgralab.algolib.problems.directed.StrongComponentsSolver;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
 import de.uni_koblenz.jgralab.graphmarker.ArrayVertexMarker;
 import de.uni_koblenz.jgralab.graphmarker.IntegerVertexMarker;
-import static java.lang.Math.min;
 
 public class StrongComponentsWithDFS extends AbstractTraversal implements
 		StrongComponentsSolver {
