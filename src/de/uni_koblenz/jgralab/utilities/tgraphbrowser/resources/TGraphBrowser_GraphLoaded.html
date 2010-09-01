@@ -522,10 +522,8 @@ div#div2DGraph{
 	 * @param method the method name of Java
 	 * @param the correct formatted params (each in an extra line)
 	 * @param timeout if true there is a timout after 60 sec.
-	 * @param indexInQueue the index of the current thread.
-	 *						This parmeter is only set by this method itself.
 	 */
-	function sendPostRequest(method, params, timeout, indexInQueue){
+	function sendPostRequest(method, params, timeout){
 		if(id==null){
 			http=new XMLHttpRequest();
 			http.open("POST", " ", true);
