@@ -91,7 +91,7 @@
 	<property name="utilities.includes" value="ant/** common/** converter/** greqlinterface/** jgralab2owl/** schemacompare/** tg2gdl/** tg2gxl/** tg2sidiff/** tgmerge/** tgraphbrowser/** xmi2tgschema/** xml/**" />
 
 	<!-- The targets -->
-	<target name="build" depends="clean,compile,jar"/>
+	<target name="build" depends="ist_utilities,clean,compile,jar"/>
 
 	<target name="clean">
 		<delete dir="${classes.dir}" />
