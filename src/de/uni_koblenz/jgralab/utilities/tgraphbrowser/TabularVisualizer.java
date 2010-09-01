@@ -77,7 +77,7 @@ public class TabularVisualizer {
 		}
 		query.append("} ");
 		JValueList temp = StateRepository.evaluateGReQL(query.toString(),
-				state.graph, null).toJValueList();
+				state.getGraph(), null).toJValueList();
 		state.verticesOfTableView = new Vertex[temp.size()];
 		int i = 0;
 		for (JValue jv : temp) {
@@ -95,8 +95,8 @@ public class TabularVisualizer {
 			first = false;
 		}
 		query.append("}");
-		temp = StateRepository.evaluateGReQL(query.toString(), state.graph,
-				null).toJValueList();
+		temp = StateRepository.evaluateGReQL(query.toString(),
+				state.getGraph(), null).toJValueList();
 		state.edgesOfTableView = new Edge[temp.size()];
 		i = 0;
 		for (JValue jv : temp) {
@@ -140,7 +140,8 @@ public class TabularVisualizer {
 				elementId.charAt(0) == 'v' ? "Vertex" : "Edge").append(
 				"\");\nparent.innerHTML = \"\";\n");
 		// check if there are elements
-		if ((isVertex ? state.graph.getVCount() : state.graph.getECount()) == 0) {
+		if ((isVertex ? state.getGraph().getVCount() : state.getGraph()
+				.getECount()) == 0) {
 			code.append("var divText = document.getElementById(\"divText")
 					.append(isVertex ? "Vertex" : "Edge").append("\");\n");
 			code.append("var h1=document.createElement(\"h1\");\n");
@@ -163,11 +164,12 @@ public class TabularVisualizer {
 				"\").innerHTML = \"").append(
 				isVertex ? (state.verticesOfTableView == null ? 0
 						: state.verticesOfTableView.length)
-						+ " of " + state.graph.getVCount() + " vertices"
+						+ " of " + state.getGraph().getVCount() + " vertices"
 						: (state.edgesOfTableView == null ? 0
 								: state.edgesOfTableView.length)
-								+ " of " + state.graph.getECount() + " edges")
-				.append(" visible.\";\n");
+								+ " of "
+								+ state.getGraph().getECount()
+								+ " edges").append(" visible.\";\n");
 		if ((elementId.length() == 0)
 				|| (elementId.length() == 1)
 				|| (isVertex && ((state.verticesOfTableView == null) || (state.verticesOfTableView.length == 0)))
@@ -178,8 +180,8 @@ public class TabularVisualizer {
 		int idOfElement = Integer.parseInt(elementId.substring(1));
 		int positionOfElementInArray = -1;
 		if ((isVertex ? state.selectedVertexClasses : state.selectedEdgeClasses)
-				.get((isVertex ? state.graph.getVertex(idOfElement)
-						: state.graph.getEdge(idOfElement))
+				.get((isVertex ? state.getGraph().getVertex(idOfElement)
+						: state.getGraph().getEdge(idOfElement))
 						.getAttributedElementClass())) {
 			// try to find element if it's type wasn't deselected
 			for (int i = 0; i < (isVertex ? state.verticesOfTableView
@@ -252,13 +254,14 @@ public class TabularVisualizer {
 			code.append("alert(\"The ").append(isVertex ? "vertex " : "edge ")
 					.append(elementId).append(" could not be found");
 			if (!(isVertex ? state.selectedVertexClasses
-					: state.selectedEdgeClasses).get((isVertex ? state.graph
-					.getVertex(idOfElement) : state.graph.getEdge(idOfElement))
-					.getAttributedElementClass())) {
+					: state.selectedEdgeClasses).get((isVertex ? state
+					.getGraph().getVertex(idOfElement) : state.getGraph()
+					.getEdge(idOfElement)).getAttributedElementClass())) {
 				code.append(" because the type ")
 						.append(
-								(isVertex ? state.graph.getVertex(idOfElement)
-										: state.graph.getEdge(idOfElement))
+								(isVertex ? state.getGraph().getVertex(
+										idOfElement) : state.getGraph()
+										.getEdge(idOfElement))
 										.getAttributedElementClass()
 										.getQualifiedName()).append(
 								" is deselected");

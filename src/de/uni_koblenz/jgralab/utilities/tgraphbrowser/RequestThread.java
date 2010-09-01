@@ -85,8 +85,8 @@ public class RequestThread extends Thread {
 	private static void sendError(BufferedOutputStream out, int code,
 			String message) throws IOException {
 		message = message + "<hr>" + TGraphBrowserServer.VERSION;
-		sendHeader(out, code, "text/html", message.length(),
-				System.currentTimeMillis());
+		sendHeader(out, code, "text/html", message.length(), System
+				.currentTimeMillis());
 		out.write(message.getBytes());
 		out.flush();
 		out.close();
@@ -101,8 +101,8 @@ public class RequestThread extends Thread {
 					inputStream));
 			// BufferedReader in = new BufferedReader(new InputStreamReader(
 			// inputStream));
-			BufferedOutputStream out = new BufferedOutputStream(
-					_socket.getOutputStream());
+			BufferedOutputStream out = new BufferedOutputStream(_socket
+					.getOutputStream());
 			String firstLine = readLine(in);
 			String request = URLDecoder.decode(firstLine != null ? firstLine
 					: "", "UTF-8");
@@ -218,7 +218,8 @@ public class RequestThread extends Thread {
 						fileOutput.close();
 						// send the answer page
 						int sessionId = StateRepository
-								.createNewSession(receivedFile);
+								.createNewSession(receivedFile
+										.getAbsolutePath());
 						sendFile(
 								out,
 								"TGraphBrowser_GraphLoaded.html",
@@ -275,8 +276,8 @@ public class RequestThread extends Thread {
 						/*
 						 * Invoke called method.
 						 */
-						StringBuilder erg = callMethod(out, methodname,
-								args.toArray(new String[0]));
+						StringBuilder erg = callMethod(out, methodname, args
+								.toArray(new String[0]));
 						if (erg != null) {
 							sendMessage(out, erg);
 						}
@@ -329,7 +330,8 @@ public class RequestThread extends Thread {
 						if (!svgToDelete.contains(path)) {
 							if (!svg.delete()) {
 								TGraphBrowserServer.logger.warning(svg
-										.toString() + " could not be deleted.");
+										.toString()
+										+ " could not be deleted.");
 							}
 						}
 					} else {
@@ -373,8 +375,10 @@ public class RequestThread extends Thread {
 									"= "
 											+ erg
 											+ ";\n\t\t timestamp = "
-											+ StateRepository.getSession(Integer
-													.parseInt(erg.toString())).lastAccess);
+											+ StateRepository
+													.getSession(Integer
+															.parseInt(erg
+																	.toString())).lastAccess);
 						}
 					} else {
 						sendMessage(out, erg);
