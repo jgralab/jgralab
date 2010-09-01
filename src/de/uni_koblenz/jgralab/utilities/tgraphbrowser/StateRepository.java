@@ -105,75 +105,82 @@ public class StateRepository {
 	public StringBuilder computeGReQLQuery(Integer sessionId,
 			Boolean isTableViewShown, Boolean showAttributes,
 			Integer numberPerPage, Integer pathLength, String query) {
-		State state = getSession(sessionId);
 		StringBuilder code = new StringBuilder("function(){\n");
-		// evaluate the query
-		try {
-			JValue result = evaluateGReQL(query, state.getGraph(), null);
-			boolean elementsAreDisplayed = false;
-			if (result.canConvert(JValueType.COLLECTION)) {
-				JValueSet elements = result.toJValueSet();
-				boolean containsOnlyVerticesOrEdges = true;
-				for (JValue v : elements) {
-					if (!v.isVertex() && !v.isEdge()) {
-						containsOnlyVerticesOrEdges = false;
+		State state = getSession(sessionId, code, "computeGReQLQuery",
+				isTableViewShown.toString(), showAttributes.toString(),
+				numberPerPage.toString(), pathLength.toString(), query);
+		if (state != null) {
+			// evaluate the query
+			try {
+				JValue result = evaluateGReQL(query, state.getGraph(), null);
+				boolean elementsAreDisplayed = false;
+				if (result.canConvert(JValueType.COLLECTION)) {
+					JValueSet elements = result.toJValueSet();
+					boolean containsOnlyVerticesOrEdges = true;
+					for (JValue v : elements) {
+						if (!v.isVertex() && !v.isEdge()) {
+							containsOnlyVerticesOrEdges = false;
+						}
 					}
-				}
-				if (containsOnlyVerticesOrEdges) {
+					if (containsOnlyVerticesOrEdges) {
+						displayJValueSet(sessionId, isTableViewShown,
+								showAttributes, numberPerPage, pathLength,
+								state, elements, code);
+						elementsAreDisplayed = true;
+					} else if (elements.isEmpty()) {
+						code
+								.append("var h3error = document.getElementById(\"h3GReQLError\");\n");
+						code
+								.append("h3error.innerHTML = \"The query has an empty set as result.\";\n");
+					} else {
+						code
+								.append("var h3error = document.getElementById(\"h3GReQLError\");\n");
+						code
+								.append("h3error.innerHTML = \"Only VERTEX, EDGE or COLLECTION of vertices or edges is supported.\";\n");
+					}
+				} else if (result.isVertex()) {
+					JValueSet elements = new JValueSet();
+					elements.add(result);
 					displayJValueSet(sessionId, isTableViewShown,
 							showAttributes, numberPerPage, pathLength, state,
 							elements, code);
 					elementsAreDisplayed = true;
-				} else if (elements.isEmpty()) {
-					code
-							.append("var h3error = document.getElementById(\"h3GReQLError\");\n");
-					code
-							.append("h3error.innerHTML = \"The query has an empty set as result.\";\n");
+				} else if (result.isEdge()) {
+					JValueSet elements = new JValueSet();
+					elements.add(result);
+					displayJValueSet(sessionId, isTableViewShown,
+							showAttributes, numberPerPage, pathLength, state,
+							elements, code);
+					elementsAreDisplayed = true;
 				} else {
 					code
 							.append("var h3error = document.getElementById(\"h3GReQLError\");\n");
 					code
-							.append("h3error.innerHTML = \"Only VERTEX, EDGE or COLLECTION of vertices or edges is supported.\";\n");
+							.append(
+									"h3error.innerHTML = \"The result is of type ")
+							.append(result.getType())
+							.append(
+									".<br />Only VERTEX, EDGE or a COLLECTION of vertices or edges are supported.\";\n");
 				}
-			} else if (result.isVertex()) {
-				JValueSet elements = new JValueSet();
-				elements.add(result);
-				displayJValueSet(sessionId, isTableViewShown, showAttributes,
-						numberPerPage, pathLength, state, elements, code);
-				elementsAreDisplayed = true;
-			} else if (result.isEdge()) {
-				JValueSet elements = new JValueSet();
-				elements.add(result);
-				displayJValueSet(sessionId, isTableViewShown, showAttributes,
-						numberPerPage, pathLength, state, elements, code);
-				elementsAreDisplayed = true;
-			} else {
+				if (elementsAreDisplayed) {
+					code.append("cancelGReQL();");
+				}
+			} catch (EvaluateException e) {
 				code
 						.append("var h3error = document.getElementById(\"h3GReQLError\");\n");
-				code
-						.append("h3error.innerHTML = \"The result is of type ")
-						.append(result.getType())
-						.append(
-								".<br />Only VERTEX, EDGE or a COLLECTION of vertices or edges are supported.\";\n");
+				String errorMessage = e.getCause() != null ? e.getMessage()
+						+ "\n" + e.getCause().getMessage() : e.getMessage();
+				errorMessage = errorMessage.replaceAll("\"", "'");
+				errorMessage = errorMessage.replaceAll("<", "&lt;");
+				errorMessage = errorMessage.replaceAll(">", "&gt;");
+				errorMessage = errorMessage.replaceAll("\n", "<br />");
+				errorMessage = errorMessage.replaceAll("\r", "");
+				code.append("h3error.innerHTML = \"").append("<br />").append(
+						errorMessage).append("\";\n");
 			}
-			if (elementsAreDisplayed) {
-				code.append("cancelGReQL();");
-			}
-		} catch (EvaluateException e) {
-			code
-					.append("var h3error = document.getElementById(\"h3GReQLError\");\n");
-			String errorMessage = e.getCause() != null ? e.getMessage() + "\n"
-					+ e.getCause().getMessage() : e.getMessage();
-			errorMessage = errorMessage.replaceAll("\"", "'");
-			errorMessage = errorMessage.replaceAll("<", "&lt;");
-			errorMessage = errorMessage.replaceAll(">", "&gt;");
-			errorMessage = errorMessage.replaceAll("\n", "<br />");
-			errorMessage = errorMessage.replaceAll("\r", "");
-			code.append("h3error.innerHTML = \"").append("<br />").append(
-					errorMessage).append("\";\n");
+			state.lastAccess = System.currentTimeMillis();
+			code.append("timestamp = ").append(state.lastAccess).append(";\n");
 		}
-		state.lastAccess = System.currentTimeMillis();
-		code.append("timestamp = ").append(state.lastAccess).append(";\n");
 		return code.append("}");
 	}
 
@@ -191,8 +198,6 @@ public class StateRepository {
 		GreqlEvaluator eval = new GreqlEvaluator(query, graph, boundVars);
 		eval.startEvaluation();
 		JValue result = eval.getEvaluationResult();
-		// GreqlEvaluator.resetOptimizedSyntaxGraphs();
-		// GreqlEvaluator.resetGraphIndizes();
 		return result;
 	}
 
@@ -211,81 +216,84 @@ public class StateRepository {
 	public StringBuilder showTypedElements(Integer sessionId,
 			Boolean isTableViewShown, Boolean showAttributes,
 			Integer numberPerPage, Integer pathLength, String content) {
-		State state = getSession(sessionId);
-		// find all elements
-		JValueSet elements = new JValueSet();
-		StringBuilder notExistingElements = new StringBuilder();
-		for (String s : content.split(",")) {
-			if (s.startsWith("v")) {
-				Vertex element = state.getGraph().getVertex(
-						Integer.parseInt(s.substring(1)));
-				if (element != null) {
-					elements.add(new JValueImpl(element));
-				} else {
-					notExistingElements
-							.append((notExistingElements.length() == 0 ? ""
-									: ", ")
-									+ s);
-				}
-			} else {
-				Edge element = state.getGraph().getEdge(
-						Integer.parseInt(s.substring(1)));
-				if (element != null) {
-					elements.add(new JValueImpl(element));
-				} else {
-					notExistingElements
-							.append((notExistingElements.length() == 0 ? ""
-									: ", ")
-									+ s);
-				}
-			}
-		}
-		// display the elements
 		StringBuilder code = new StringBuilder("function(){\n");
-		if (!elements.isEmpty()) {
-			if (elements.size() > 1) {
-				// there are several elements to show
-				displayJValueSet(sessionId, isTableViewShown, showAttributes,
-						numberPerPage, pathLength, state, elements, code);
-			} else {
-				// there is only one entry to show
-				JValue element = null;
-				for (JValue v : elements) {
-					element = v;
-				}
-				addToBreadcrumbBar(code, state, element, true);
-				if (isTableViewShown) {
-					GraphElement ge = null;
-					if (element.isVertex()) {
-						ge = element.toVertex();
+		State state = getSession(sessionId, code, "showTypedElements",
+				isTableViewShown.toString(), showAttributes.toString(),
+				numberPerPage.toString(), pathLength.toString(), content);
+		if (state != null) {
+			// find all elements
+			JValueSet elements = new JValueSet();
+			StringBuilder notExistingElements = new StringBuilder();
+			for (String s : content.split(",")) {
+				if (s.startsWith("v")) {
+					Vertex element = state.getGraph().getVertex(
+							Integer.parseInt(s.substring(1)));
+					if (element != null) {
+						elements.add(new JValueImpl(element));
 					} else {
-						ge = element.toEdge();
+						notExistingElements.append((notExistingElements
+								.length() == 0 ? "" : ", ")
+								+ s);
 					}
-					code.append("if((areVerticesShown()&&").append(
-							element.isEdge()).append(
-							")||(!areVerticesShown()&&").append(
-							element.isVertex()).append(")){\n");
-					code.append("switchTable();\n");
-					code.append("}\n");
-					new TabularVisualizer().visualizeElements(code, state,
-							numberPerPage, showAttributes,
-							(element.isVertex() ? "v" : "e") + ge.getId(),
-							true, true);
 				} else {
-					new TwoDVisualizer().visualizeElements(code, state,
-							sessionId, workspace.toString(), element,
-							showAttributes, pathLength);
+					Edge element = state.getGraph().getEdge(
+							Integer.parseInt(s.substring(1)));
+					if (element != null) {
+						elements.add(new JValueImpl(element));
+					} else {
+						notExistingElements.append((notExistingElements
+								.length() == 0 ? "" : ", ")
+								+ s);
+					}
 				}
 			}
+			// display the elements
+			if (!elements.isEmpty()) {
+				if (elements.size() > 1) {
+					// there are several elements to show
+					displayJValueSet(sessionId, isTableViewShown,
+							showAttributes, numberPerPage, pathLength, state,
+							elements, code);
+				} else {
+					// there is only one entry to show
+					JValue element = null;
+					for (JValue v : elements) {
+						element = v;
+					}
+					addToBreadcrumbBar(code, state, element, true);
+					if (isTableViewShown) {
+						GraphElement ge = null;
+						if (element.isVertex()) {
+							ge = element.toVertex();
+						} else {
+							ge = element.toEdge();
+						}
+						code.append("if((areVerticesShown()&&").append(
+								element.isEdge()).append(
+								")||(!areVerticesShown()&&").append(
+								element.isVertex()).append(")){\n");
+						code.append("switchTable();\n");
+						code.append("}\n");
+						new TabularVisualizer().visualizeElements(code, state,
+								numberPerPage, showAttributes, (element
+										.isVertex() ? "v" : "e")
+										+ ge.getId(), true, true);
+					} else {
+						new TwoDVisualizer().visualizeElements(code, state,
+								sessionId, workspace.toString(), element,
+								showAttributes, pathLength);
+					}
+				}
+			}
+			if (notExistingElements.length() > 0) {
+				code.append("alert(\"");
+				code.append("Following elements do not exist:\\n").append(
+						notExistingElements);
+				code.append("\");\n");
+			}
+			state.lastAccess = System.currentTimeMillis();
+			code.append("timestamp = ").append(state.lastAccess).append(";\n");
 		}
-		if (notExistingElements.length() > 0) {
-			code.append("alert(\"");
-			code.append("Following elements do not exist:\\n").append(
-					notExistingElements);
-			code.append("\");\n");
-		}
-		state.lastAccess = System.currentTimeMillis();
-		code.append("timestamp = ").append(state.lastAccess).append(";\n");
 		return code.append("}");
 	}
 
@@ -357,14 +365,17 @@ public class StateRepository {
 	 */
 	public StringBuilder refresh2D(Integer sessionId, Integer pathLength,
 			Boolean showAttributes, Integer currentIndex) {
-		State state = getSession(sessionId);
 		StringBuilder code = new StringBuilder("function(){\n");
-		TwoDVisualizer tv = new TwoDVisualizer();
-		tv.visualizeElements(code, state, sessionId, workspace.toString(),
-				state.navigationHistory.get(currentIndex), showAttributes,
-				pathLength);
-		state.lastAccess = System.currentTimeMillis();
-		code.append("timestamp = ").append(state.lastAccess).append(";\n");
+		State state = getSession(sessionId, code, "refresh2D", pathLength
+				.toString(), showAttributes.toString(), currentIndex.toString());
+		if (state != null) {
+			TwoDVisualizer tv = new TwoDVisualizer();
+			tv.visualizeElements(code, state, sessionId, workspace.toString(),
+					state.navigationHistory.get(currentIndex), showAttributes,
+					pathLength);
+			state.lastAccess = System.currentTimeMillis();
+			code.append("timestamp = ").append(state.lastAccess).append(";\n");
+		}
 		return code.append("}");
 	}
 
@@ -384,23 +395,26 @@ public class StateRepository {
 	 */
 	public StringBuilder showElementsAs2D(Integer sessionId,
 			Integer pathLength, Boolean showAttributes, String elementId) {
-		State state = getSession(sessionId);
-		int currentElementId = Integer.parseInt(elementId.substring(1));
-		JValue currentElement = null;
-		if (elementId.charAt(0) == 'v') {
-			currentElement = new JValueImpl(state.getGraph().getVertex(
-					currentElementId));
-		} else {
-			currentElement = new JValueImpl(state.getGraph().getEdge(
-					currentElementId));
-		}
 		StringBuilder code = new StringBuilder("function(){\n");
-		new TwoDVisualizer().visualizeElements(code, state, sessionId,
-				workspace.toString(), currentElement, showAttributes,
-				pathLength);
-		addToBreadcrumbBar(code, state, currentElement, true);
-		state.lastAccess = System.currentTimeMillis();
-		code.append("timestamp = ").append(state.lastAccess).append(";\n");
+		State state = getSession(sessionId, code, "showElementsAs2D",
+				pathLength.toString(), showAttributes.toString(), elementId);
+		if (state != null) {
+			int currentElementId = Integer.parseInt(elementId.substring(1));
+			JValue currentElement = null;
+			if (elementId.charAt(0) == 'v') {
+				currentElement = new JValueImpl(state.getGraph().getVertex(
+						currentElementId));
+			} else {
+				currentElement = new JValueImpl(state.getGraph().getEdge(
+						currentElementId));
+			}
+			new TwoDVisualizer().visualizeElements(code, state, sessionId,
+					workspace.toString(), currentElement, showAttributes,
+					pathLength);
+			addToBreadcrumbBar(code, state, currentElement, true);
+			state.lastAccess = System.currentTimeMillis();
+			code.append("timestamp = ").append(state.lastAccess).append(";\n");
+		}
 		return code.append("}");
 	}
 
@@ -422,110 +436,117 @@ public class StateRepository {
 	public StringBuilder changeView(Integer sessionId,
 			Boolean isTableViewShown, Boolean showAttributes,
 			Integer numberPerPage, Integer pathLength, Integer currentIndex) {
-		State state = getSession(sessionId);
 		StringBuilder code = new StringBuilder("function(){\n");
-		if (isTableViewShown) {
-			code
-					.append("document.getElementById(\"h3HowManyElements\").style.display = \"none\";\n");
-			TabularVisualizer tv = new TabularVisualizer();
-			if (state.navigationHistory.get(currentIndex).isVertex()) {
-				tv.calculateVertexListAndEdgeList(state);
-				showCorrectTable(code, state.navigationHistory
-						.get(currentIndex));
-				Vertex current = state.navigationHistory.get(currentIndex)
-						.toVertex();
-				tv.visualizeElements(code, state, numberPerPage,
-						showAttributes, "v" + current.getId(), true, true);
-				// find latest edge
-				Edge latestEdge = null;
-				for (int i = state.navigationHistory.size() - 1; i >= 0; i--) {
-					if (state.navigationHistory.get(i).isEdge()) {
-						latestEdge = state.navigationHistory.get(i).toEdge();
-						break;
+		State state = getSession(sessionId, code, "changeView",
+				isTableViewShown.toString(), showAttributes.toString(),
+				numberPerPage.toString(), pathLength.toString(), currentIndex
+						.toString());
+		if (state != null) {
+			if (isTableViewShown) {
+				code
+						.append("document.getElementById(\"h3HowManyElements\").style.display = \"none\";\n");
+				TabularVisualizer tv = new TabularVisualizer();
+				if (state.navigationHistory.get(currentIndex).isVertex()) {
+					tv.calculateVertexListAndEdgeList(state);
+					showCorrectTable(code, state.navigationHistory
+							.get(currentIndex));
+					Vertex current = state.navigationHistory.get(currentIndex)
+							.toVertex();
+					tv.visualizeElements(code, state, numberPerPage,
+							showAttributes, "v" + current.getId(), true, true);
+					// find latest edge
+					Edge latestEdge = null;
+					for (int i = state.navigationHistory.size() - 1; i >= 0; i--) {
+						if (state.navigationHistory.get(i).isEdge()) {
+							latestEdge = state.navigationHistory.get(i)
+									.toEdge();
+							break;
+						}
+					}
+					if (latestEdge == null) {
+						latestEdge = state.getGraph().getFirstEdgeInGraph();
+					}
+					tv.visualizeElements(code, state, 20, false, "e"
+							+ (latestEdge != null ? latestEdge.getId() : ""),
+							false, true);
+					code
+							.append("document.getElementById(\"h3HowManyVertices\").style.display = \"block\";\n");
+					code
+							.append("document.getElementById(\"h3HowManyEdges\").style.display = \"none\";\n");
+				} else if (state.navigationHistory.get(currentIndex).isEdge()) {
+					tv.calculateVertexListAndEdgeList(state);
+					showCorrectTable(code, state.navigationHistory
+							.get(currentIndex));
+					Edge current = state.navigationHistory.get(currentIndex)
+							.toEdge();
+					tv.visualizeElements(code, state, numberPerPage,
+							showAttributes, "e" + current.getId(), true, true);
+					// find latest vertex
+					Vertex latestVertex = null;
+					for (int i = state.navigationHistory.size() - 1; i >= 0; i--) {
+						if (state.navigationHistory.get(i).isVertex()) {
+							latestVertex = state.navigationHistory.get(i)
+									.toVertex();
+							break;
+						}
+					}
+					tv.visualizeElements(code, state, 20, false,
+							"v"
+									+ (latestVertex != null ? latestVertex
+											.getId() : ""), false, true);
+					code
+							.append("document.getElementById(\"h3HowManyEdges\").style.display = \"block\";\n");
+					code
+							.append("document.getElementById(\"h3HowManyVertices\").style.display = \"none\";\n");
+				} else {
+					JValueSet elements = state.navigationHistory.get(
+							currentIndex).toJValueSet();
+					state.currentExplicitlyDefinedSet = elements;
+					tv.calculateVertexListAndEdgeList(state, elements);
+					tv
+							.visualizeElements(
+									code,
+									state,
+									numberPerPage,
+									showAttributes,
+									"v"
+											+ (state.verticesOfTableView != null ? state.verticesOfTableView[0]
+													.getId()
+													: ""), false, false);
+					tv
+							.visualizeElements(
+									code,
+									state,
+									numberPerPage,
+									showAttributes,
+									"e"
+											+ ((state.edgesOfTableView != null)
+													&& (state.edgesOfTableView.length > 0) ? state.edgesOfTableView[0]
+													.getId()
+													: ""), false, false);
+					if (state.verticesOfTableView != null) {
+						showCorrectTable(code, new JValueImpl(
+								state.verticesOfTableView[0]));
+					} else if (state.edgesOfTableView != null) {
+						showCorrectTable(code, new JValueImpl(
+								state.edgesOfTableView[0]));
 					}
 				}
-				if (latestEdge == null) {
-					latestEdge = state.getGraph().getFirstEdgeInGraph();
-				}
-				tv.visualizeElements(code, state, 20, false, "e"
-						+ (latestEdge != null ? latestEdge.getId() : ""),
-						false, true);
+			} else {
 				code
-						.append("document.getElementById(\"h3HowManyVertices\").style.display = \"block\";\n");
-				code
-						.append("document.getElementById(\"h3HowManyEdges\").style.display = \"none\";\n");
-			} else if (state.navigationHistory.get(currentIndex).isEdge()) {
-				tv.calculateVertexListAndEdgeList(state);
-				showCorrectTable(code, state.navigationHistory
-						.get(currentIndex));
-				Edge current = state.navigationHistory.get(currentIndex)
-						.toEdge();
-				tv.visualizeElements(code, state, numberPerPage,
-						showAttributes, "e" + current.getId(), true, true);
-				// find latest vertex
-				Vertex latestVertex = null;
-				for (int i = state.navigationHistory.size() - 1; i >= 0; i--) {
-					if (state.navigationHistory.get(i).isVertex()) {
-						latestVertex = state.navigationHistory.get(i)
-								.toVertex();
-						break;
-					}
-				}
-				tv.visualizeElements(code, state, 20, false, "v"
-						+ (latestVertex != null ? latestVertex.getId() : ""),
-						false, true);
-				code
-						.append("document.getElementById(\"h3HowManyEdges\").style.display = \"block\";\n");
+						.append("document.getElementById(\"h3HowManyElements\").style.display = \"block\";\n");
 				code
 						.append("document.getElementById(\"h3HowManyVertices\").style.display = \"none\";\n");
-			} else {
-				JValueSet elements = state.navigationHistory.get(currentIndex)
-						.toJValueSet();
-				state.currentExplicitlyDefinedSet = elements;
-				tv.calculateVertexListAndEdgeList(state, elements);
-				tv
-						.visualizeElements(
-								code,
-								state,
-								numberPerPage,
-								showAttributes,
-								"v"
-										+ (state.verticesOfTableView != null ? state.verticesOfTableView[0]
-												.getId()
-												: ""), false, false);
-				tv
-						.visualizeElements(
-								code,
-								state,
-								numberPerPage,
-								showAttributes,
-								"e"
-										+ ((state.edgesOfTableView != null)
-												&& (state.edgesOfTableView.length > 0) ? state.edgesOfTableView[0]
-												.getId()
-												: ""), false, false);
-				if (state.verticesOfTableView != null) {
-					showCorrectTable(code, new JValueImpl(
-							state.verticesOfTableView[0]));
-				} else if (state.edgesOfTableView != null) {
-					showCorrectTable(code, new JValueImpl(
-							state.edgesOfTableView[0]));
-				}
+				code
+						.append("document.getElementById(\"h3HowManyEdges\").style.display = \"none\";\n");
+				TwoDVisualizer tv = new TwoDVisualizer();
+				tv.visualizeElements(code, state, sessionId, workspace
+						.toString(), state.navigationHistory.get(currentIndex),
+						showAttributes, pathLength);
 			}
-		} else {
-			code
-					.append("document.getElementById(\"h3HowManyElements\").style.display = \"block\";\n");
-			code
-					.append("document.getElementById(\"h3HowManyVertices\").style.display = \"none\";\n");
-			code
-					.append("document.getElementById(\"h3HowManyEdges\").style.display = \"none\";\n");
-			TwoDVisualizer tv = new TwoDVisualizer();
-			tv.visualizeElements(code, state, sessionId, workspace.toString(),
-					state.navigationHistory.get(currentIndex), showAttributes,
-					pathLength);
+			state.lastAccess = System.currentTimeMillis();
+			code.append("timestamp = ").append(state.lastAccess).append(";\n");
 		}
-		state.lastAccess = System.currentTimeMillis();
-		code.append("timestamp = ").append(state.lastAccess).append(";\n");
 		return code.append("}");
 	}
 
@@ -578,49 +599,56 @@ public class StateRepository {
 			String deselectedEdgeTypes, Boolean showAttributes,
 			Integer numberPerPage, Integer pathLength, String currentVertex,
 			String currentEdge, Integer currentIndex) {
-		State state = getSession(id);
-		for (VertexClass type : state.selectedVertexClasses.keySet()) {
-			state.selectedVertexClasses.put(type, !deselectedVertexTypes
-					.contains("#" + type.getQualifiedName() + "#"));
-		}
-		for (EdgeClass type : state.selectedEdgeClasses.keySet()) {
-			state.selectedEdgeClasses.put(type, !deselectedEdgeTypes
-					.contains("#" + type.getQualifiedName() + "#"));
-		}
-		String curVertex = currentVertex;
-		String curEdge = currentEdge;
-		if (state.currentExplicitlyDefinedSet != null) {
-			new TabularVisualizer().calculateVertexListAndEdgeList(state,
-					state.currentExplicitlyDefinedSet);
-			curVertex = "v"
-					+ (state.verticesOfTableView != null ? state.verticesOfTableView[0]
-							.getId()
-							: "");
-			curEdge = "e"
-					+ (state.edgesOfTableView != null ? state.edgesOfTableView[0]
-							.getId()
-							: "");
-		} else {
-			new TabularVisualizer().calculateVertexListAndEdgeList(state);
-		}
 		StringBuilder code = new StringBuilder("function(){\n");
-		if (!state.navigationHistory.isEmpty()) {
-			if (isTableViewShown) {
-				new TabularVisualizer().visualizeElements(code, state,
-						numberPerPage, showAttributes, curVertex, false,
-						state.currentExplicitlyDefinedSet == null);
-				// refresh the hidden table
-				new TabularVisualizer().visualizeElements(code, state,
-						numberPerPage, showAttributes, curEdge, false,
-						state.currentExplicitlyDefinedSet == null);
-			} else {
-				new TwoDVisualizer().visualizeElements(code, state, id,
-						workspace.toString(), state.navigationHistory
-								.get(currentIndex), showAttributes, pathLength);
+		State state = getSession(id, code, "refreshViewAfterTypeSubmit",
+				isTableViewShown.toString(), deselectedVertexTypes,
+				deselectedEdgeTypes, showAttributes.toString(), numberPerPage
+						.toString(), pathLength.toString(), currentVertex,
+				currentEdge, currentIndex.toString());
+		if (state != null) {
+			for (VertexClass type : state.selectedVertexClasses.keySet()) {
+				state.selectedVertexClasses.put(type, !deselectedVertexTypes
+						.contains("#" + type.getQualifiedName() + "#"));
 			}
+			for (EdgeClass type : state.selectedEdgeClasses.keySet()) {
+				state.selectedEdgeClasses.put(type, !deselectedEdgeTypes
+						.contains("#" + type.getQualifiedName() + "#"));
+			}
+			String curVertex = currentVertex;
+			String curEdge = currentEdge;
+			if (state.currentExplicitlyDefinedSet != null) {
+				new TabularVisualizer().calculateVertexListAndEdgeList(state,
+						state.currentExplicitlyDefinedSet);
+				curVertex = "v"
+						+ (state.verticesOfTableView != null ? state.verticesOfTableView[0]
+								.getId()
+								: "");
+				curEdge = "e"
+						+ (state.edgesOfTableView != null ? state.edgesOfTableView[0]
+								.getId()
+								: "");
+			} else {
+				new TabularVisualizer().calculateVertexListAndEdgeList(state);
+			}
+			if (!state.navigationHistory.isEmpty()) {
+				if (isTableViewShown) {
+					new TabularVisualizer().visualizeElements(code, state,
+							numberPerPage, showAttributes, curVertex, false,
+							state.currentExplicitlyDefinedSet == null);
+					// refresh the hidden table
+					new TabularVisualizer().visualizeElements(code, state,
+							numberPerPage, showAttributes, curEdge, false,
+							state.currentExplicitlyDefinedSet == null);
+				} else {
+					new TwoDVisualizer().visualizeElements(code, state, id,
+							workspace.toString(), state.navigationHistory
+									.get(currentIndex), showAttributes,
+							pathLength);
+				}
+			}
+			state.lastAccess = System.currentTimeMillis();
+			code.append("timestamp = ").append(state.lastAccess).append(";\n");
 		}
-		state.lastAccess = System.currentTimeMillis();
-		code.append("timestamp = ").append(state.lastAccess).append(";\n");
 		return code.append("}");
 	}
 
@@ -645,73 +673,81 @@ public class StateRepository {
 	public StringBuilder goBackToElement(Integer id,
 			Integer indexOfNavigationHistory, Boolean isTableShown,
 			Boolean showAttributes, Integer numberPerPage, Integer pathLength) {
-		State state = getSession(id);
-
-		// extract the chosen element from the navigationHistory
-		JValue currentElement = state.navigationHistory
-				.get(indexOfNavigationHistory);
-		boolean createVerticesAndEdges = false;
-		if (state.currentExplicitlyDefinedSet != null) {
-			new TabularVisualizer().calculateVertexListAndEdgeList(state);
-			state.currentExplicitlyDefinedSet = null;
-			createVerticesAndEdges = true;
-		}
-		if (currentElement.canConvert(JValueType.COLLECTION)) {
-			state.currentExplicitlyDefinedSet = currentElement.toJValueSet();
-			new TabularVisualizer().calculateVertexListAndEdgeList(state,
-					state.currentExplicitlyDefinedSet);
-			if (isTableShown) {
-				currentElement = currentElement.toJValueList().get(0);
-			}
-			createVerticesAndEdges = true;
-		}
-
-		state.insertPosition = indexOfNavigationHistory + 1;
 		StringBuilder code = new StringBuilder("function(){\n");
-		// show selected element
-		if (isTableShown) {
-			boolean isVertex = currentElement.isVertex();
-			code.append("if(").append(isVertex ? "!" : "").append(
-					"areVerticesShown()){\n");
-			code.append("switchTable();\n");
-			code.append("}\n");
-			new TabularVisualizer().visualizeElements(code, state,
-					numberPerPage, showAttributes, isVertex ? "v"
-							+ currentElement.toVertex().getId() : "e"
-							+ currentElement.toEdge().getId(), true,
-					state.currentExplicitlyDefinedSet == null);
-			if (createVerticesAndEdges) {
-				new TabularVisualizer()
-						.visualizeElements(
-								code,
-								state,
-								numberPerPage,
-								showAttributes,
-								!isVertex ? "v"
-										+ state.getGraph().getFirstVertex()
-												.getId()
-										: "e"
-												+ (state.getGraph()
-														.getFirstEdgeInGraph() != null ? state
-														.getGraph()
-														.getFirstEdgeInGraph()
-														.getId()
-														: ""), true,
-								state.currentExplicitlyDefinedSet == null);
+		State state = getSession(id, code, "goBackToElement",
+				indexOfNavigationHistory.toString(), isTableShown.toString(),
+				showAttributes.toString(), numberPerPage.toString(), pathLength
+						.toString());
+		if (state != null) {
+
+			// extract the chosen element from the navigationHistory
+			JValue currentElement = state.navigationHistory
+					.get(indexOfNavigationHistory);
+			boolean createVerticesAndEdges = false;
+			if (state.currentExplicitlyDefinedSet != null) {
+				new TabularVisualizer().calculateVertexListAndEdgeList(state);
+				state.currentExplicitlyDefinedSet = null;
+				createVerticesAndEdges = true;
 			}
-			if (!currentElement.isEdge() && !currentElement.isVertex()) {
-				code.append("changeBackgroundColor(\"").append(
-						isVertex ? "v" + currentElement.toVertex().getId()
-								: "e" + currentElement.toEdge().getId())
-						.append("\");");
+			if (currentElement.canConvert(JValueType.COLLECTION)) {
+				state.currentExplicitlyDefinedSet = currentElement
+						.toJValueSet();
+				new TabularVisualizer().calculateVertexListAndEdgeList(state,
+						state.currentExplicitlyDefinedSet);
+				if (isTableShown) {
+					currentElement = currentElement.toJValueList().get(0);
+				}
+				createVerticesAndEdges = true;
 			}
-		} else {
-			new TwoDVisualizer().visualizeElements(code, state, id, workspace
-					.toString(), currentElement, showAttributes, pathLength);
+
+			state.insertPosition = indexOfNavigationHistory + 1;
+			// show selected element
+			if (isTableShown) {
+				boolean isVertex = currentElement.isVertex();
+				code.append("if(").append(isVertex ? "!" : "").append(
+						"areVerticesShown()){\n");
+				code.append("switchTable();\n");
+				code.append("}\n");
+				new TabularVisualizer().visualizeElements(code, state,
+						numberPerPage, showAttributes, isVertex ? "v"
+								+ currentElement.toVertex().getId() : "e"
+								+ currentElement.toEdge().getId(), true,
+						state.currentExplicitlyDefinedSet == null);
+				if (createVerticesAndEdges) {
+					new TabularVisualizer()
+							.visualizeElements(
+									code,
+									state,
+									numberPerPage,
+									showAttributes,
+									!isVertex ? "v"
+											+ state.getGraph().getFirstVertex()
+													.getId()
+											: "e"
+													+ (state
+															.getGraph()
+															.getFirstEdgeInGraph() != null ? state
+															.getGraph()
+															.getFirstEdgeInGraph()
+															.getId()
+															: ""), true,
+									state.currentExplicitlyDefinedSet == null);
+				}
+				if (!currentElement.isEdge() && !currentElement.isVertex()) {
+					code.append("changeBackgroundColor(\"").append(
+							isVertex ? "v" + currentElement.toVertex().getId()
+									: "e" + currentElement.toEdge().getId())
+							.append("\");");
+				}
+			} else {
+				new TwoDVisualizer().visualizeElements(code, state, id,
+						workspace.toString(), currentElement, showAttributes,
+						pathLength);
+			}
+			addToBreadcrumbBar(code, state, null, false);
+			state.lastAccess = System.currentTimeMillis();
+			code.append("timestamp = ").append(state.lastAccess).append(";\n");
 		}
-		addToBreadcrumbBar(code, state, null, false);
-		state.lastAccess = System.currentTimeMillis();
-		code.append("timestamp = ").append(state.lastAccess).append(";\n");
 		return code.append("}");
 	}
 
@@ -729,14 +765,17 @@ public class StateRepository {
 	 */
 	public StringBuilder showIncidencesPage(Integer id, Integer displayedPage,
 			String vertexTdId) {
-		State state = getSession(id);
 		StringBuilder code = new StringBuilder("function (){\n");
-		new TabularVisualizer().createIncidentEdges(code, state.getGraph()
-				.getVertex(Integer.parseInt(vertexTdId.split("v")[1])),
-				state.selectedEdgeClasses, state.selectedVertexClasses,
-				displayedPage, vertexTdId);
-		state.lastAccess = System.currentTimeMillis();
-		code.append("timestamp = ").append(state.lastAccess).append(";\n");
+		State state = getSession(id, code, "showIncidencesPage", displayedPage
+				.toString(), vertexTdId);
+		if (state != null) {
+			new TabularVisualizer().createIncidentEdges(code, state.getGraph()
+					.getVertex(Integer.parseInt(vertexTdId.split("v")[1])),
+					state.selectedEdgeClasses, state.selectedVertexClasses,
+					displayedPage, vertexTdId);
+			state.lastAccess = System.currentTimeMillis();
+			code.append("timestamp = ").append(state.lastAccess).append(";\n");
+		}
 		return code.append("}");
 	}
 
@@ -760,16 +799,20 @@ public class StateRepository {
 	 */
 	public StringBuilder showPageInTable(Integer id, Integer numberPerPage,
 			Boolean showAttributes, Integer pageNumber, Boolean showVertices) {
-		State state = getSession(id);
-		String elementId = (showVertices ? "v" : "e")
-				+ (showVertices ? state.verticesOfTableView
-						: state.edgesOfTableView)[(numberPerPage == -1 ? 0
-						: (pageNumber - 1) * numberPerPage)].getId();
 		StringBuilder code = new StringBuilder("function (){\n");
-		new TabularVisualizer().visualizeElements(code, state, numberPerPage,
-				showAttributes, elementId, false,
-				state.currentExplicitlyDefinedSet == null);
-		code.append("timestamp = ").append(state.lastAccess).append(";\n");
+		State state = getSession(id, code, "showPageInTable", numberPerPage
+				.toString(), showAttributes.toString(), pageNumber.toString(),
+				showVertices.toString());
+		if (state != null) {
+			String elementId = (showVertices ? "v" : "e")
+					+ (showVertices ? state.verticesOfTableView
+							: state.edgesOfTableView)[(numberPerPage == -1 ? 0
+							: (pageNumber - 1) * numberPerPage)].getId();
+			new TabularVisualizer().visualizeElements(code, state,
+					numberPerPage, showAttributes, elementId, false,
+					state.currentExplicitlyDefinedSet == null);
+			code.append("timestamp = ").append(state.lastAccess).append(";\n");
+		}
 		return code.append("}");
 	}
 
@@ -791,47 +834,52 @@ public class StateRepository {
 	 */
 	public StringBuilder showElementsAsTable(Integer id, Integer numberPerPage,
 			Boolean showAttributes, String elementId) {
-		State state = getSession(id);
-		boolean createVerticesAndEdges = false;
-		boolean isAJValueSetShown = state.currentExplicitlyDefinedSet == null;
-		if (!isAJValueSetShown) {
-			new TabularVisualizer().calculateVertexListAndEdgeList(state);
-			state.currentExplicitlyDefinedSet = null;
-			createVerticesAndEdges = true;
-		}
 		StringBuilder code = new StringBuilder("function(){\n");
-		new TabularVisualizer().visualizeElements(code, state, numberPerPage,
-				showAttributes, elementId, true, isAJValueSetShown);
-		if (createVerticesAndEdges) {
-			new TabularVisualizer()
-					.visualizeElements(
-							code,
-							state,
-							numberPerPage,
-							showAttributes,
-							elementId.charAt(0) == 'e' ? "v"
-									+ state.getGraph().getFirstVertex().getId()
-									: "e"
-											+ (state.getGraph()
-													.getFirstEdgeInGraph() != null ? state
-													.getGraph()
-													.getFirstEdgeInGraph()
-													.getId()
-													: ""), true,
-							isAJValueSetShown);
+		State state = getSession(id, code, "showElementsAsTable", numberPerPage
+				.toString(), showAttributes.toString(), elementId);
+		if (state != null) {
+			boolean createVerticesAndEdges = false;
+			boolean isAJValueSetShown = state.currentExplicitlyDefinedSet == null;
+			if (!isAJValueSetShown) {
+				new TabularVisualizer().calculateVertexListAndEdgeList(state);
+				state.currentExplicitlyDefinedSet = null;
+				createVerticesAndEdges = true;
+			}
+			new TabularVisualizer().visualizeElements(code, state,
+					numberPerPage, showAttributes, elementId, true,
+					isAJValueSetShown);
+			if (createVerticesAndEdges) {
+				new TabularVisualizer()
+						.visualizeElements(
+								code,
+								state,
+								numberPerPage,
+								showAttributes,
+								elementId.charAt(0) == 'e' ? "v"
+										+ state.getGraph().getFirstVertex()
+												.getId()
+										: "e"
+												+ (state.getGraph()
+														.getFirstEdgeInGraph() != null ? state
+														.getGraph()
+														.getFirstEdgeInGraph()
+														.getId()
+														: ""), true,
+								isAJValueSetShown);
+			}
+			if (elementId.startsWith("v")) {
+				Vertex current = state.getGraph().getVertex(
+						Integer.parseInt(elementId.substring(1)));
+				addToBreadcrumbBar(code, state, new JValueImpl(current), true);
+			} else {
+				Edge current = state.getGraph().getEdge(
+						Integer.parseInt(elementId.substring(1)));
+				addToBreadcrumbBar(code, state, new JValueImpl(current), true);
+			}
+			code.append("changeBackgroundColor(\"").append(elementId).append(
+					"\");");
+			code.append("timestamp = ").append(state.lastAccess).append(";\n");
 		}
-		if (elementId.startsWith("v")) {
-			Vertex current = state.getGraph().getVertex(
-					Integer.parseInt(elementId.substring(1)));
-			addToBreadcrumbBar(code, state, new JValueImpl(current), true);
-		} else {
-			Edge current = state.getGraph().getEdge(
-					Integer.parseInt(elementId.substring(1)));
-			addToBreadcrumbBar(code, state, new JValueImpl(current), true);
-		}
-		code.append("changeBackgroundColor(\"").append(elementId)
-				.append("\");");
-		code.append("timestamp = ").append(state.lastAccess).append(";\n");
 		return code.append("}");
 	}
 
@@ -854,14 +902,18 @@ public class StateRepository {
 	 */
 	public StringBuilder refreshTable(Integer id, Integer numberPerPage,
 			Boolean showAttributes, String currentEdge, String currentVertex) {
-		State state = getSession(id);
 		StringBuilder code = new StringBuilder("function(){\n");
-		new TabularVisualizer().visualizeElements(code, state, numberPerPage,
-				showAttributes, currentEdge, false,
-				state.currentExplicitlyDefinedSet == null);
-		new TabularVisualizer().visualizeElements(code, state, numberPerPage,
-				showAttributes, currentVertex, false,
-				state.currentExplicitlyDefinedSet == null);
+		State state = getSession(id, code, "refreshTable", numberPerPage
+				.toString(), showAttributes.toString(), currentEdge,
+				currentVertex);
+		if (state != null) {
+			new TabularVisualizer().visualizeElements(code, state,
+					numberPerPage, showAttributes, currentEdge, false,
+					state.currentExplicitlyDefinedSet == null);
+			new TabularVisualizer().visualizeElements(code, state,
+					numberPerPage, showAttributes, currentVertex, false,
+					state.currentExplicitlyDefinedSet == null);
+		}
 		return code.append("}");
 	}
 
@@ -873,56 +925,59 @@ public class StateRepository {
 	 * @return
 	 */
 	public StringBuilder initializeGraphView(Integer id) {
-		State state = getSession(id);
 		StringBuilder code = new StringBuilder("function(){\n");
-		// ## hide divLoadBar
-		code
-				.append("document.getElementById(\"divLoadBar\").style.display = \"none\";\n");
-		// ## show top
-		code
-				.append("document.getElementById(\"checkShowAttributes\").style.visibility = \"visible\";\n");
-		code
-				.append("document.getElementById(\"pAttributes\").style.visibility = \"visible\";\n");
-		code
-				.append("document.getElementById(\"divTextVis\").style.visibility = \"visible\";\n");
-		code
-				.append("document.getElementById(\"aChangeView\").style.visibility = \"visible\";\n");
-		code
-				.append("document.getElementById(\"rightOption\").style.visibility = \"visible\";\n");
-		if ((dot == null) || dot.isEmpty()
-				|| (state.getGraph().getVCount() == 0)) {
+		State state = getSession(id, code, "initializeGraphView");
+		if (state != null) {
+			// ## hide divLoadBar
 			code
-					.append("document.getElementById(\"aChangeView\").style.visibility = \"hidden\";\n");
+					.append("document.getElementById(\"divLoadBar\").style.display = \"none\";\n");
+			// ## show top
+			code
+					.append("document.getElementById(\"checkShowAttributes\").style.visibility = \"visible\";\n");
+			code
+					.append("document.getElementById(\"pAttributes\").style.visibility = \"visible\";\n");
+			code
+					.append("document.getElementById(\"divTextVis\").style.visibility = \"visible\";\n");
+			code
+					.append("document.getElementById(\"aChangeView\").style.visibility = \"visible\";\n");
+			code
+					.append("document.getElementById(\"rightOption\").style.visibility = \"visible\";\n");
+			if ((dot == null) || dot.isEmpty()
+					|| (state.getGraph().getVCount() == 0)) {
+				code
+						.append("document.getElementById(\"aChangeView\").style.visibility = \"hidden\";\n");
+			}
+			// ## hide divLoadBar
+			code
+					.append("document.getElementById(\"divRight\").style.display = \"block\";\n");
+			// ## hide divLoadBar
+			code
+					.append("document.getElementById(\"divFilterWindow\").style.display = \"block\";\n");
+			// ## initialize FilterWindow
+			new SchemaVisualizer().createSchemaRepresentation(code, state);
+			// ## initialize breadcrumb bar
+			Vertex firstVertex = state.getGraph().getFirstVertex();
+			if (firstVertex != null) {
+				addToBreadcrumbBar(code, state, new JValueImpl(firstVertex),
+						true);
+			}
+			// ## initialize textual view
+			TabularVisualizer tv = new TabularVisualizer();
+			tv.calculateVertexListAndEdgeList(state);
+			tv.visualizeElements(code, state, 20, false, "v"
+					+ (firstVertex != null ? firstVertex.getId() : ""), false,
+					state.currentExplicitlyDefinedSet == null);
+			code.append("changeBackgroundColor(\"v").append(
+					firstVertex != null ? firstVertex.getId() : "").append(
+					"\");\n");
+			tv.visualizeElements(code, state, 20, false, "e"
+					+ (state.getGraph().getFirstEdgeInGraph() != null ? state
+							.getGraph().getFirstEdgeInGraph().getId() : ""),
+					false, state.currentExplicitlyDefinedSet == null);
+			code.append("timestamp = ").append(state.lastAccess).append(";\n");
+			code.append("resize();\n");
+			code.append("resize();\n");// fixes the correct size in FF
 		}
-		// ## hide divLoadBar
-		code
-				.append("document.getElementById(\"divRight\").style.display = \"block\";\n");
-		// ## hide divLoadBar
-		code
-				.append("document.getElementById(\"divFilterWindow\").style.display = \"block\";\n");
-		// ## initialize FilterWindow
-		new SchemaVisualizer().createSchemaRepresentation(code, state);
-		// ## initialize breadcrumb bar
-		Vertex firstVertex = state.getGraph().getFirstVertex();
-		if (firstVertex != null) {
-			addToBreadcrumbBar(code, state, new JValueImpl(firstVertex), true);
-		}
-		// ## initialize textual view
-		TabularVisualizer tv = new TabularVisualizer();
-		tv.calculateVertexListAndEdgeList(state);
-		tv.visualizeElements(code, state, 20, false, "v"
-				+ (firstVertex != null ? firstVertex.getId() : ""), false,
-				state.currentExplicitlyDefinedSet == null);
-		code.append("changeBackgroundColor(\"v").append(
-				firstVertex != null ? firstVertex.getId() : "")
-				.append("\");\n");
-		tv.visualizeElements(code, state, 20, false, "e"
-				+ (state.getGraph().getFirstEdgeInGraph() != null ? state
-						.getGraph().getFirstEdgeInGraph().getId() : ""), false,
-				state.currentExplicitlyDefinedSet == null);
-		code.append("timestamp = ").append(state.lastAccess).append(";\n");
-		code.append("resize();\n");
-		code.append("resize();\n");// fixes the correct size in FF
 		return code.append("}");
 	}
 
@@ -1706,6 +1761,55 @@ public class StateRepository {
 	}
 
 	/**
+	 * This method works like {@link StateRepository#getSession(int)}, if the tg
+	 * file of the used graph was not modified since the last call of this
+	 * method. Otherwise null is returned and the JavaScript code which asks, if
+	 * the modified graph should be loaded, is appended to <code>code</code>.
+	 * 
+	 * @param sessionId
+	 * @param code
+	 * @param calledMethod
+	 *            the name of the method which calls this method.
+	 * @param currentParameters
+	 *            the current parameters of the calling method
+	 * @return
+	 */
+	public static State getSession(int sessionId, StringBuilder code,
+			String calledMethod, String... currentParameters) {
+		State state = getSession(sessionId);
+		GraphWrapper gw = state.getGraphWrapper();
+		File currentTgFile = new File(gw.graphPath);
+		if (currentTgFile.exists()
+				&& currentTgFile.lastModified() > gw.lastModified) {
+			// the current tg-file was modified. Ask if it should be reloaded.
+			code
+					.append(
+							"var reload = confirm(\"The tg-file of the currently loaded graph has changed.\n")
+					.append("Do you want to load the modified graph?\");\n");
+			code.append("if(reload){\n");
+			code.append("sendPostRequest(\"reloadGraph\");\n");// TODO create
+			// method reloadGraph(Integer)
+			code.append("else{\n");
+			code.append("sendPostRequest(\"keepOldGraph\",\"").append(
+					calledMethod).append("\"");
+			for (int i = 0; i < currentParameters.length; i++) {
+				if (i == 0) {
+					code.append(",\"");
+				} else {
+					code.append("\\n");// TODO possible \\\\n
+				}
+				code.append(currentParameters[i]);
+			}
+			code.append("\");\n");// TODO create
+			// method keepOldGraph(Integer)
+			code.append("}\n");
+			return null;
+		} else {
+			return state;
+		}
+	}
+
+	/**
 	 * This class represents the state of a session.
 	 */
 	static class State {
@@ -1757,7 +1861,7 @@ public class StateRepository {
 			selectedVertexClasses = new HashMap<VertexClass, Boolean>();
 			selectedEdgeClasses = new HashMap<EdgeClass, Boolean>();
 			insertPosition = 0;
-			setGraph(graphFile);
+			setGraph(graphFile, new File(graphFile).lastModified());
 		}
 
 		/**
@@ -1778,11 +1882,14 @@ public class StateRepository {
 		 * If the current graph not already exists it is loaded. Otherwise the
 		 * already existing graph is used and its
 		 * {@link GraphWrapper#numberOfUsers} is incremented.
+		 * 
+		 * @param {@link String} the path of the graph of this session
+		 * @param long the time the tg-file of the current graph was modified
 		 */
-		public void setGraph(String graphFile) {
+		public void setGraph(String graphFile, long lastModified) {
 			if (!usedGraphs.containsKey(graphIdentifier)) {
 				usedGraphs.put(graphIdentifier, new GraphWrapper(
-						graphIdentifier, graphFile));
+						graphIdentifier, graphFile, lastModified));
 			} else {
 				usedGraphs.get(graphIdentifier).numberOfUsers++;
 			}
@@ -1828,8 +1935,11 @@ public class StateRepository {
 		// the current graph
 		public Graph graph;
 
-		// The tg-file of the current graph
+		// the tg-file of the current graph
 		public String graphPath;
+
+		// the time the tg-File of the current graph was modified
+		public long lastModified;
 
 		// the number of states, which uses this graph
 		public int numberOfUsers = 1;
@@ -1845,10 +1955,12 @@ public class StateRepository {
 
 		public int progress;
 
-		public GraphWrapper(String graphIdentifier, String graphPath) {
+		public GraphWrapper(String graphIdentifier, String graphPath,
+				long lastModified) {
 			super();
 			this.graphIdentifier = graphIdentifier;
 			this.graphPath = graphPath;
+			this.lastModified = lastModified;
 			workingCallable = (FutureTask<?>) Executors.newCachedThreadPool()
 					.submit(new LoadGraphCallable(this));
 		}
