@@ -146,6 +146,7 @@ public class FordMooreAlgorithm extends AbstractTraversal implements
 			Vertex currentVertex = vertexQueue.poll();
 			assert (currentVertex != null);
 			for (Edge currentEdge : currentVertex.incidences(searchDirection)) {
+				cancelIfInterrupted();
 				if (subgraph != null && !subgraph.get(currentEdge)
 						|| navigable != null && !navigable.get(currentEdge)) {
 					continue;

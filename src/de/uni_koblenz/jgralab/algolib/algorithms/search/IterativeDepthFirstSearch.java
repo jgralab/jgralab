@@ -104,6 +104,7 @@ public class IterativeDepthFirstSearch extends DepthFirstSearch {
 			Iterator<Edge> currentIncidences = remainingIncidences
 					.getMark(currentVertex);
 			if (currentIncidences.hasNext()) {
+				cancelIfInterrupted();
 				Edge currentEdge = currentIncidences.next();
 				if (visitedEdges.get(currentEdge) || subgraph != null
 						&& !subgraph.get(currentEdge) || navigable != null

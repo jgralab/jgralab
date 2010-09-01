@@ -153,6 +153,7 @@ public class WarshallAlgorithm extends AbstractTraversal implements
 				for (int wId = 1; wId <= vertexCount; wId++) {
 					if (reachable[uId][vId] && reachable[vId][wId]
 							&& !reachable[uId][wId]) {
+						cancelIfInterrupted();
 						reachable[uId][wId] = true;
 						successor[uId][wId] = successor[uId][vId];
 						visitors.visitVertexTriple(vertexOrder.get(uId),

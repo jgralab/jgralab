@@ -18,6 +18,11 @@ public interface ReachabilitySolver extends ProblemSolver {
 	 * Solves the problem <b>reachability</b>.
 	 * 
 	 * @return this algorithm object.
+	 * @throws AlgorithmTerminatedException
+	 *             if this algorithm terminated before the actual execution is
+	 *             completed. This can happen from inside (early termination) or
+	 *             from outside (Thread interruption). The algorithm state
+	 *             changes accordingly.
 	 */
 	public ReachabilitySolver execute();
 

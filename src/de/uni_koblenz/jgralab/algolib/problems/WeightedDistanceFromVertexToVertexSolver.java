@@ -25,6 +25,11 @@ public interface WeightedDistanceFromVertexToVertexSolver extends
 	 * @param target
 	 *            the target vertex.
 	 * @return this algorithm object.
+	 * @throws AlgorithmTerminatedException
+	 *             if this algorithm terminated before the actual execution is
+	 *             completed. This can happen from inside (early termination) or
+	 *             from outside (Thread interruption). The algorithm state
+	 *             changes accordingly.
 	 */
 	public WeightedDistanceFromVertexToVertexSolver execute(Vertex start,
 			Vertex target);

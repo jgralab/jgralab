@@ -79,6 +79,8 @@ public class RecursiveDepthFirstSearch extends DepthFirstSearch {
 				}
 				visitors.visitTreeEdge(currentEdge);
 
+				cancelIfInterrupted();
+
 				// recursive call
 				dfs(nextVertex);
 

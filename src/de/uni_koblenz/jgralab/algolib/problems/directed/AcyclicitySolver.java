@@ -1,5 +1,6 @@
 package de.uni_koblenz.jgralab.algolib.problems.directed;
 
+import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.problems.ProblemSolver;
 
 /**
@@ -16,6 +17,11 @@ public interface AcyclicitySolver extends ProblemSolver {
 	 * Solves the problem <b>acyclicity</b>.
 	 * 
 	 * @return this algorithm object.
+	 * @throws AlgorithmTerminatedException
+	 *             if this algorithm terminated before the actual execution is
+	 *             completed. This can happen from inside (early termination) or
+	 *             from outside (Thread interruption). The algorithm state
+	 *             changes accordingly.
 	 */
 	public AcyclicitySolver execute();
 

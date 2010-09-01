@@ -165,6 +165,7 @@ public abstract class GraphAlgorithm implements ProblemSolver {
 	protected synchronized void cancelIfInterrupted() {
 		if (Thread.interrupted()) {
 			state = AlgorithmStates.CANCELED;
+			Thread.currentThread().interrupt();
 			throw new AlgorithmTerminatedException("Thread interrupted.");
 		}
 	}

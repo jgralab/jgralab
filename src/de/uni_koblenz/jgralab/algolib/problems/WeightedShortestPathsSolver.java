@@ -2,6 +2,7 @@ package de.uni_koblenz.jgralab.algolib.problems;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.functions.BinaryFunction;
 
 /**
@@ -21,6 +22,11 @@ public interface WeightedShortestPathsSolver extends ProblemSolver {
 	 * Solves the problem <b>weighted shortest paths</b>.
 	 * 
 	 * @return this algorithm object.
+	 * @throws AlgorithmTerminatedException
+	 *             if this algorithm terminated before the actual execution is
+	 *             completed. This can happen from inside (early termination) or
+	 *             from outside (Thread interruption). The algorithm state
+	 *             changes accordingly.
 	 */
 	public WeightedShortestPathsSolver execute();
 
