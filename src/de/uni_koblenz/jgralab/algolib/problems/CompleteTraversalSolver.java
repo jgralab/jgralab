@@ -18,6 +18,11 @@ public interface CompleteTraversalSolver extends TraversalSolver {
 	 * Solves the problem <b>complete traversal</b>.
 	 * 
 	 * @return this algorithm object
+	 * @throws AlgorithmTerminatedException
+	 *             if this algorithm terminated before the actual execution is
+	 *             completed. This can happen from inside (early termination) or
+	 *             from outside (Thread interruption). The algorithm state
+	 *             changes accordingly.
 	 */
 	public CompleteTraversalSolver execute();
 

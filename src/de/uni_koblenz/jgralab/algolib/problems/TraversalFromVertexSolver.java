@@ -20,6 +20,11 @@ public interface TraversalFromVertexSolver extends TraversalSolver {
 	 * @param root
 	 *            the vertex to start the traversal at
 	 * @return this algorithm object
+	 * @throws AlgorithmTerminatedException
+	 *             if this algorithm terminated before the actual execution is
+	 *             completed. This can happen from inside (early termination) or
+	 *             from outside (Thread interruption). The algorithm state
+	 *             changes accordingly.
 	 */
 	public TraversalFromVertexSolver execute(Vertex root);
 

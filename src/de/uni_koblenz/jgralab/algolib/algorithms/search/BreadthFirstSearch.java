@@ -137,6 +137,7 @@ public class BreadthFirstSearch extends SearchAlgorithm implements
 		while (firstV < num && vertexOrder[firstV] != null) {
 			Vertex currentVertex = vertexOrder[firstV++]; // pop
 			for (Edge currentEdge : currentVertex.incidences(searchDirection)) {
+				cancelIfInterrupted();
 				if (visitedEdges.get(currentEdge) || subgraph != null
 						&& !subgraph.get(currentEdge) || navigable != null
 						&& !navigable.get(currentEdge)) {

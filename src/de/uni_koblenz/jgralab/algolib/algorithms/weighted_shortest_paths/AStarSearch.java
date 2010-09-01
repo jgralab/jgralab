@@ -163,6 +163,7 @@ public class AStarSearch extends AbstractTraversal implements
 
 				for (Edge currentEdge : currentVertex
 						.incidences(searchDirection)) {
+					cancelIfInterrupted();
 					if (subgraph != null && !subgraph.get(currentEdge)
 							|| navigable != null && !navigable.get(currentEdge)) {
 						continue;

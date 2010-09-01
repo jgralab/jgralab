@@ -167,6 +167,7 @@ public class FloydAlgorithm extends AbstractTraversal implements
 					double newDistance = weightedDistance[uId][vId]
 							+ weightedDistance[vId][wId];
 					if (weightedDistance[uId][wId] > newDistance) {
+						cancelIfInterrupted();
 						weightedDistance[uId][wId] = newDistance;
 						successor[uId][wId] = successor[uId][vId];
 						visitors.visitVertexTriple(vertexOrder.get(uId),
