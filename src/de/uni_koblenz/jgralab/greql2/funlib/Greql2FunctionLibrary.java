@@ -29,6 +29,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -565,7 +566,8 @@ public class Greql2FunctionLibrary {
 					.getClassLoader().getResources(nondottedPackageName);
 			while (resources.hasMoreElements()) {
 				URL res = resources.nextElement();
-				String fileName = res.getFile();
+				// unescape URL
+				String fileName = URLDecoder.decode(res.getFile(), "UTF-8");
 				if (fileName.contains(".jar!/")) {
 					registerFunctionsInJar(fileName.substring(fileName
 							.indexOf(':') + 1));
