@@ -417,11 +417,10 @@ public class SchemaCodeGenerator extends CodeGenerator {
 
 	private CodeBlock createPackageComments() {
 		CodeList code = new CodeList();
-		code.addNoIndent(new CodeSnippet(true, "// add comments to packages",
-				"{"));
 		Package pkg = schema.getDefaultPackage();
 		Stack<Package> s = new Stack<Package>();
 		s.push(pkg);
+		boolean hasComment = false;
 		while (!s.isEmpty()) {
 			pkg = s.pop();
 			for (Package sub : pkg.getSubPackages().values()) {
@@ -430,6 +429,10 @@ public class SchemaCodeGenerator extends CodeGenerator {
 			List<String> comments = pkg.getComments();
 			if (comments.isEmpty()) {
 				continue;
+			}
+			if (!hasComment) {
+				code.addNoIndent(new CodeSnippet(true, "{"));
+				hasComment = true;
 			}
 			if (comments.size() == 1) {
 				code.add(new CodeSnippet("getPackage(\""
@@ -446,7 +449,9 @@ public class SchemaCodeGenerator extends CodeGenerator {
 
 			}
 		}
-		code.addNoIndent(new CodeSnippet(false, "}"));
+		if (hasComment) {
+			code.addNoIndent(new CodeSnippet(false, "}"));
+		}
 		return code;
 	}
 
