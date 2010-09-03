@@ -30,7 +30,7 @@ import java.util.BitSet;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
+import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.DFA;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.State;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.Transition;
@@ -77,7 +77,7 @@ public class ReachableVertices extends Greql2Function {
 	{
 		JValueType[][] x = {
 				{ JValueType.VERTEX, JValueType.AUTOMATON, JValueType.COLLECTION },
-				{ JValueType.VERTEX, JValueType.AUTOMATON, JValueType.SUBGRAPH,
+				{ JValueType.VERTEX, JValueType.AUTOMATON, JValueType.MARKER,
 						JValueType.COLLECTION }};
 		signatures = x;
 
@@ -89,7 +89,7 @@ public class ReachableVertices extends Greql2Function {
 	}
 	
 	@Override
-	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
+	public JValue evaluate(Graph graph, AbstractGraphMarker<?> subgraph,
 			JValue[] arguments) throws EvaluateException {
 		DFA dfa = null;
 		switch (checkArguments(arguments)) {
@@ -106,7 +106,8 @@ public class ReachableVertices extends Greql2Function {
 	}
 	
 	
-	public static final JValueImpl search(Vertex startVertex, DFA dfa, BooleanGraphMarker subgraph) {
+	@SuppressWarnings("unchecked")
+	public static final JValueImpl search(Vertex startVertex, DFA dfa, AbstractGraphMarker subgraph) {
 		JValueSet resultSet = new JValueSet();
 				
 		BitSet[] markedElements = new BitSet[dfa.stateList.size()];

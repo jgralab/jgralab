@@ -26,7 +26,7 @@ package de.uni_koblenz.jgralab.greql2.evaluator;
 
 import java.util.List;
 
-import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
+import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.logging.EvaluationLogger;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.DeclarationEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
@@ -105,7 +105,7 @@ public class VariableDeclarationLayer {
 	 * 
 	 * @return true if another possible combination was found, false otherwise
 	 */
-	public boolean iterate(BooleanGraphMarker subgraph)
+	public boolean iterate(AbstractGraphMarker<?> subgraph)
 			throws EvaluateException {
 		StringBuilder sb = null;
 		if (GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS) {
@@ -175,7 +175,7 @@ public class VariableDeclarationLayer {
 	 * @return true if a first combination exists, false otherwise
 	 * @throws EvaluateException
 	 */
-	private boolean getFirstCombination(BooleanGraphMarker subgraph)
+	private boolean getFirstCombination(AbstractGraphMarker<?> subgraph)
 			throws EvaluateException {
 		variableDeclarations.get(0).reset();
 		return getNextCombination(subgraph, true);
@@ -184,13 +184,13 @@ public class VariableDeclarationLayer {
 	/**
 	 * Gets the next possible variable combination
 	 * 
-	 * @param subgraphMarker
+	 * @param subgraph
 	 * @return true if a next combination exists, false otherwise
 	 * @throws EvaluateException
 	 */
 	
 	
-	private boolean getNextCombination(BooleanGraphMarker subgraphMarker,
+	private boolean getNextCombination(AbstractGraphMarker<?> subgraph,
 			boolean firstCombination) throws EvaluateException {
 		
 		int pointer = firstCombination ? 0 : variableDeclarations.size() - 1;
@@ -223,18 +223,18 @@ public class VariableDeclarationLayer {
 	/**
 	 * Checks if the current variable combination fullfills the constraints.
 	 * 
-	 * @param subgraphMarker
+	 * @param subgraph
 	 * @return true if the combination fullfills the constraint, false otherwise
 	 * @throws EvaluateException
 	 */
-	private boolean fullfillsConstraints(BooleanGraphMarker subgraphMarker)
+	private boolean fullfillsConstraints(AbstractGraphMarker<?> subgraph)
 			throws EvaluateException {
 		if ((constraintList == null) || (constraintList.isEmpty())) {
 			return true;
 		}
 		for (int i = 0; i < constraintList.size(); i++) {
 			VertexEvaluator currentEval = constraintList.get(i);
-			JValue tempResult = currentEval.getResult(subgraphMarker);
+			JValue tempResult = currentEval.getResult(subgraph);
 			try {
 				if (tempResult.isBoolean()) {
 					if (tempResult.toBoolean() != Boolean.TRUE) {

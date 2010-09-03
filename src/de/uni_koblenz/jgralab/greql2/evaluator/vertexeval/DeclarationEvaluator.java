@@ -30,7 +30,7 @@ import java.util.List;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
+import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclaration;
 import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclarationLayer;
@@ -84,7 +84,7 @@ public class DeclarationEvaluator extends VertexEvaluator {
 
 	@Override
 	public JValue evaluate() throws EvaluateException {
-		BooleanGraphMarker newSubgraph = null;
+		AbstractGraphMarker<?> newSubgraph = null;
 		Edge edge = vertex.getFirstIsSubgraphOf();
 		if (edge != null) {
 			SubgraphExpression subgraphExp = (SubgraphExpression) edge
@@ -93,9 +93,9 @@ public class DeclarationEvaluator extends VertexEvaluator {
 				VertexEvaluator subgraphEval = greqlEvaluator
 						.getVertexEvaluatorGraphMarker().getMark(subgraphExp);
 				JValue tempAttribute = subgraphEval.getResult(subgraph);
-				if (tempAttribute.isSubgraphTempAttribute()) {
+				if (tempAttribute.isGraphMarker()) {
 					try {
-						newSubgraph = tempAttribute.toSubgraphTempAttribute();
+						newSubgraph = tempAttribute.toGraphMarker();
 					} catch (JValueInvalidTypeException exception) {
 						throw new EvaluateException(
 								"Error evaluating a Declaration : "

@@ -28,6 +28,7 @@ import java.util.ArrayList;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
+import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
@@ -79,7 +80,7 @@ public class Contains extends Greql2Function {
 				{ JValueType.PATHSYSTEM, JValueType.ATTRELEM, JValueType.BOOL },
 				{ JValueType.SLICE, JValueType.ATTRELEM, JValueType.BOOL },
 				{ JValueType.PATHSYSTEM, JValueType.PATH, JValueType.BOOL },
-				{ JValueType.SUBGRAPH, JValueType.ATTRELEM, JValueType.BOOL } };
+				{ JValueType.MARKER, JValueType.ATTRELEM, JValueType.BOOL } };
 		signatures = x;
 
 		description = "Returns true iff the given structure contains the given element.";
@@ -92,7 +93,7 @@ public class Contains extends Greql2Function {
 	public static int count = 0;
 
 	@Override
-	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
+	public JValue evaluate(Graph graph, AbstractGraphMarker<?> subgraph,
 			JValue[] arguments) throws EvaluateException {
 		count++;
 		switch (checkArguments(arguments)) {

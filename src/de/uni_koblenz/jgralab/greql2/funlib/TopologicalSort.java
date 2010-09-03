@@ -11,7 +11,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
+import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
@@ -49,7 +49,7 @@ public class TopologicalSort extends Greql2Function {
 
 	{
 		JValueType[][] x = { { JValueType.COLLECTION },
-				{ JValueType.SUBGRAPH, JValueType.COLLECTION } };
+				{ JValueType.MARKER, JValueType.COLLECTION } };
 		signatures = x;
 
 		description = "Returns a list of vertices in topological ordering.\n"
@@ -67,14 +67,15 @@ public class TopologicalSort extends Greql2Function {
 	 * .jgralab.Graph, de.uni_koblenz.jgralab.BooleanGraphMarker,
 	 * de.uni_koblenz.jgralab.greql2.jvalue.JValue[])
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
+	public JValue evaluate(Graph graph, AbstractGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		switch (checkArguments(arguments)) {
 		case 0:
 			break;
 		case 1:
-			subgraph = arguments[0].toSubgraphTempAttribute();
+			subgraph = arguments[0].toGraphMarker();
 			break;
 		default:
 			throw new WrongFunctionParameterException(this, arguments);

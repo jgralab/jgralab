@@ -26,30 +26,37 @@ package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
 
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
+import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
- * Converts a collection or even a single element into a JValueSet
+ * Checks if a given vertex or edge is marked by a graph marker
  * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>SET toSet(c:COLLECTION or ELEMENT)</code></dd>
+ * <dd><code>OBJECT getValue(elem:ATTRELEM, name:String)</code></dd>
+ * <dd><code>OBJECT getValue(elem:RECORD, name:String)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
+ * <dd>This function can be used with the (.)-Operator: <code>elem.name</code></dd>
+ * <dd>&nbsp;</dd>
  * <dl>
  * <dt></dt>
  * <dd>
  * <dl>
  * <dt><b>Parameters:</b></dt>
- * <dd><code>c</code> - collection or element to convert to a set</dd>
+ * <dd><code>elem</code> - the attributed element to get the value for</dd>
+ * <dd><code>name</code> - the name of the attribute to be returned</dd>
  * <dt><b>Returns:</b></dt>
- * <dd>a set containing all elements of c or the single given element</dd>
+ * <dd>the value of the attribute with the given name</dd>
+ * <dd><code>Null</code> if one of the parameters is <code>Null</code></dd>
  * </dl>
  * </dd>
  * </dl>
@@ -57,33 +64,33 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * @author ist@uni-koblenz.de
  * 
  */
-
-public class ToSet extends Greql2Function {
+public class IsMarked extends Greql2Function {
 	{
-		JValueType[][] x = { { JValueType.COLLECTION, JValueType.COLLECTION },
-				{ JValueType.OBJECT, JValueType.COLLECTION } };
+		JValueType[][] x = {
+				{ JValueType.ATTRELEM, JValueType.MARKER, JValueType.BOOL }};
 		signatures = x;
 
-		description = "Converts the given collection or object to a set.\n"
-				+ "In case of an object, a set with only this object is returned.";
+		description = "Checks if the given element is marked in the given graph marker";
 
-		Category[] c = { Category.COLLECTIONS_AND_MAPS };
+		Category[] c = { Category.GRAPH };
 		categories = c;
 	}
 
 	@Override
-	public JValue evaluate(Graph graph, AbstractGraphMarker<?> subgraph,
-			JValue[] arguments) throws EvaluateException {
+	public JValue evaluate(Graph graph, AbstractGraphMarker<?> subgraph, JValue[] arguments) throws EvaluateException {
+		AttributedElement attrElem = null;
+		GraphMarker<?> marker = null;
+
 		switch (checkArguments(arguments)) {
 		case 0:
-			return arguments[0].toCollection().toJValueSet();
-		case 1:
-			JValueSet set = new JValueSet();
-			set.add(arguments[0]);
-			return set;
+			attrElem = arguments[0].toAttributedElement();
+			marker = (GraphMarker<?>) arguments[1].toGraphMarker();
+			break;
 		default:
 			throw new WrongFunctionParameterException(this, arguments);
 		}
+
+		return new JValueImpl(marker.isMarked(attrElem));
 	}
 
 	@Override

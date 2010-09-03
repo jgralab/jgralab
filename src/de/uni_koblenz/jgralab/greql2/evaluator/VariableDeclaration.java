@@ -26,7 +26,7 @@ package de.uni_koblenz.jgralab.greql2.evaluator;
 
 import java.util.Iterator;
 
-import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
+import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VariableEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
@@ -52,7 +52,8 @@ public class VariableDeclaration {
 	 */
 	private JValueCollection definitionSet;
 
-	private BooleanGraphMarker subgraph;
+	
+	private AbstractGraphMarker<?> subgraph;
 
 	/**
 	 * Holds the variable-vertex of this declaration.
@@ -89,12 +90,12 @@ public class VariableDeclaration {
 	 */
 	public VariableDeclaration(Variable var,
 			VertexEvaluator definitionSetEvaluator,
-			BooleanGraphMarker subgraph, SimpleDeclaration decl,
+			AbstractGraphMarker<?> subgraph2, SimpleDeclaration decl,
 			GreqlEvaluator eval) {
 		variableEval = (VariableEvaluator) eval.getVertexEvaluatorGraphMarker()
 				.getMark(var);
 		this.definitionSetEvaluator = definitionSetEvaluator;
-		this.subgraph = subgraph;
+		this.subgraph = subgraph2;
 	}
 
 	/**

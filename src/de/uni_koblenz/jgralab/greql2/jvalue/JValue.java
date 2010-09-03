@@ -4,7 +4,7 @@ import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
+import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.FiniteAutomaton;
 import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
@@ -344,16 +344,16 @@ public interface JValue extends Comparable<JValue> {
 			throws JValueInvalidTypeException;
 
 	/**
-	 * @return true if this JValue encapsulates a boolean value, false otherwise
+	 * @return true if this JValue encapsulates a graph marker, false otherwise
 	 */
-	public abstract boolean isSubgraphTempAttribute();
+	public abstract boolean isGraphMarker();
 
 	/**
-	 * @return the encapsulated boolean value
+	 * @return the encapsulated graph marker
 	 * @throws JValueInvalidTypeException
 	 *             if this JValue does not encapsulate a boolean value
 	 */
-	public abstract BooleanGraphMarker toSubgraphTempAttribute()
+	public abstract AbstractGraphMarker<?> toGraphMarker()
 			throws JValueInvalidTypeException;
 
 	/**

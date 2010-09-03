@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
+import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
@@ -75,7 +75,8 @@ public abstract class Incidences extends Greql2Function {
 		return 1;
 	}
 
-	protected JValueImpl evaluate(BooleanGraphMarker subgraph, JValue[] arguments,
+	@SuppressWarnings("unchecked")
+	protected JValueImpl evaluate(AbstractGraphMarker subgraph, JValue[] arguments,
 			EdgeDirection direction) throws EvaluateException {
 		JValuePath path = null;
 		JValuePathSystem pathSystem = null;

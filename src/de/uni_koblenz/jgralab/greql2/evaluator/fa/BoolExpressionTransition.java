@@ -26,7 +26,7 @@ package de.uni_koblenz.jgralab.greql2.evaluator.fa;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
+import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.greql2.Greql2Serializer;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ThisVertexEvaluator;
@@ -137,7 +137,7 @@ public class BoolExpressionTransition extends Transition {
 	 * greql2.evaluator.SubgraphTempAttribute)
 	 */
 	@Override
-	public boolean accepts(Vertex v, Edge e, BooleanGraphMarker subgraph)
+	public boolean accepts(Vertex v, Edge e, AbstractGraphMarker<?> subgraph)
 			throws EvaluateException {
 		if (thisVertexEvaluator != null) {
 			thisVertexEvaluator.setValue(new JValueImpl(v));

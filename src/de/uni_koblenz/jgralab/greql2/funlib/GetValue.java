@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.NoSuchAttributeException;
+import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
@@ -76,7 +77,7 @@ public class GetValue extends Greql2Function {
 				{ JValueType.ATTRELEM, JValueType.MARKER, JValueType.OBJECT }};
 		signatures = x;
 
-		description = "Returns the value of the given AttrElem's or Record's attribute or component.\n"
+		description = "Returns the value of the given AttrElem's or Record's (temporary) attribute or component.\n"
 				+ "Alternative usage: element.attribute.";
 
 		Category[] c = { Category.GRAPH };
@@ -84,7 +85,7 @@ public class GetValue extends Greql2Function {
 	}
 
 	@Override
-	public JValue evaluate(Graph graph, JValue[] arguments) throws EvaluateException {
+	public JValue evaluate(Graph graph, AbstractGraphMarker<?> subgraph, JValue[] arguments) throws EvaluateException {
 		AttributedElement attrElem = null;
 		JValueRecord record = null;
 		GraphMarker<?> marker = null;

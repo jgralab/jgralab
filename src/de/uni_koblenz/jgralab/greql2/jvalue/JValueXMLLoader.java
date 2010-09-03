@@ -316,7 +316,7 @@ public class JValueXMLLoader extends XmlProcessor {
 	private JValueImpl createEnum(String litName, String enumTypeName) {
 		JValueImpl val = null;
 		try {
-			@SuppressWarnings("rawtypes")
+	//		@SuppressWarnings("rawtypes")
 			Class e = Class.forName(enumTypeName);
 			val = new JValueImpl(Enum.valueOf(e, litName));
 		} catch (ClassNotFoundException e) {
