@@ -1,5 +1,5 @@
 TGraph 2;
-Schema de.uni_koblenz.jgralabtest.schemas.commenttest.CommentTestSchema;
+Schema de.uni_koblenz.jgralabtest.schemas.commenttest1.CommentTestSchema;
 Comment G "abc" "def";
 
 GraphClass G;

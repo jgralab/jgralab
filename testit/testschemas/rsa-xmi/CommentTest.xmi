@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<uml:Model xmi:version="2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://schema.omg.org/spec/UML/2.1.1" xsi:schemaLocation="http://schema.omg.org/spec/UML/2.1.1 http://www.eclipse.org/uml2/2.1.0/UML" xmi:id="_6nLSArc0Ed-tnLUkmr5DPg" name="de.uni_koblenz.jgralabtest.schemas.commenttest.CommentTestSchema">
+  <packageImport xmi:type="uml:PackageImport" xmi:id="_6nLSA7c0Ed-tnLUkmr5DPg">
+    <importedPackage xmi:type="uml:Model" href="http://schema.omg.org/spec/UML/2.1.1/uml.xml#_0"/>
+  </packageImport>
+  <packagedElement xmi:type="uml:Package" xmi:id="_6nLSBLc0Ed-tnLUkmr5DPg" name="pa">
+    <ownedComment xmi:type="uml:Comment" xmi:id="_6nLSBbc0Ed-tnLUkmr5DPg" annotatedElement="_6nLSBLc0Ed-tnLUkmr5DPg">
+      <body>&lt;p>&#xD;
+    A comment for package 'pa'&#xD;
+&lt;/p></body>
+    </ownedComment>
+    <packagedElement xmi:type="uml:Class" xmi:id="_6nLSBrc0Ed-tnLUkmr5DPg" name="V">
+      <ownedComment xmi:type="uml:Comment" xmi:id="_6nLSB7c0Ed-tnLUkmr5DPg" annotatedElement="_6nLSBrc0Ed-tnLUkmr5DPg">
+        <body>VertexClass comment</body>
+      </ownedComment>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Package" xmi:id="_6nLSCLc0Ed-tnLUkmr5DPg" name="pc">
+      <ownedComment xmi:type="uml:Comment" xmi:id="_6nLSCbc0Ed-tnLUkmr5DPg" annotatedElement="_6nLSCLc0Ed-tnLUkmr5DPg">
+        <body>&lt;p>&#xD;
+    A comment for package 'pc'&#xD;
+&lt;/p></body>
+      </ownedComment>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Package" xmi:id="_6nLSCrc0Ed-tnLUkmr5DPg" name="pb"/>
+    <packagedElement xmi:type="uml:Association" xmi:id="_6nLSC7c0Ed-tnLUkmr5DPg" name="E" memberEnd="_6nLSDbc0Ed-tnLUkmr5DPg _6nLSELc0Ed-tnLUkmr5DPg">
+      <ownedComment xmi:type="uml:Comment" xmi:id="_6nLSDLc0Ed-tnLUkmr5DPg" annotatedElement="_6nLSC7c0Ed-tnLUkmr5DPg">
+        <body>&lt;p>&#xD;
+    EdgeClass comment&#xD;
+&lt;/p></body>
+      </ownedComment>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_6nLSDbc0Ed-tnLUkmr5DPg" name="" visibility="private" type="_6nLSBrc0Ed-tnLUkmr5DPg" association="_6nLSC7c0Ed-tnLUkmr5DPg">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_6nLSDrc0Ed-tnLUkmr5DPg" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_6nLSD7c0Ed-tnLUkmr5DPg"/>
+      </ownedEnd>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_6nLSELc0Ed-tnLUkmr5DPg" name="" visibility="private" type="_6nLSBrc0Ed-tnLUkmr5DPg" association="_6nLSC7c0Ed-tnLUkmr5DPg">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_6nLSEbc0Ed-tnLUkmr5DPg" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_6nLSErc0Ed-tnLUkmr5DPg"/>
+      </ownedEnd>
+    </packagedElement>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_6nLSE7c0Ed-tnLUkmr5DPg" name="CommentTestGraph">
+    <xmi:Extension extender="http://www.eclipse.org/emf/2002/Ecore">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_6nLSFLc0Ed-tnLUkmr5DPg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_6nLSFbc0Ed-tnLUkmr5DPg" key="graphclass"/>
+      </eAnnotations>
+    </xmi:Extension>
+    <ownedComment xmi:type="uml:Comment" xmi:id="_6nLSFrc0Ed-tnLUkmr5DPg" annotatedElement="_6nLSE7c0Ed-tnLUkmr5DPg">
+      <body>Comment for graphclass</body>
+    </ownedComment>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Enumeration" xmi:id="_6nLSF7c0Ed-tnLUkmr5DPg" name="En">
+    <ownedComment xmi:type="uml:Comment" xmi:id="_6nLSGLc0Ed-tnLUkmr5DPg" annotatedElement="_6nLSF7c0Ed-tnLUkmr5DPg">
+      <body>A simple&amp;nbsp;enumeration</body>
+    </ownedComment>
+    <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_6nLSGbc0Ed-tnLUkmr5DPg" name="A" classifier="_6nLSF7c0Ed-tnLUkmr5DPg"/>
+    <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_6nLSGrc0Ed-tnLUkmr5DPg" name="B" classifier="_6nLSF7c0Ed-tnLUkmr5DPg"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_6nLSG7c0Ed-tnLUkmr5DPg" name="Rd">
+    <xmi:Extension extender="http://www.eclipse.org/emf/2002/Ecore">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_6nLSHLc0Ed-tnLUkmr5DPg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_6nLSHbc0Ed-tnLUkmr5DPg" key="record"/>
+      </eAnnotations>
+    </xmi:Extension>
+    <ownedComment xmi:type="uml:Comment" xmi:id="_6nLSHrc0Ed-tnLUkmr5DPg" annotatedElement="_6nLSG7c0Ed-tnLUkmr5DPg">
+      <body>&lt;p>&#xD;
+    A comment for Rd&#xD;
+&lt;/p></body>
+    </ownedComment>
+    <ownedComment xmi:type="uml:Comment" xmi:id="_6nLSH7c0Ed-tnLUkmr5DPg" annotatedElement="_6nLSG7c0Ed-tnLUkmr5DPg">
+      <body>A second comment for Rd</body>
+    </ownedComment>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_6nLSILc0Ed-tnLUkmr5DPg" name="x" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="http://schema.omg.org/spec/UML/2.1.1/uml.xml#Integer"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_6nLSIbc0Ed-tnLUkmr5DPg" name="y" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="http://schema.omg.org/spec/UML/2.1.1/uml.xml#Integer"/>
+    </ownedAttribute>
+  </packagedElement>
+  <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_6nLSIrc0Ed-tnLUkmr5DPg">
+    <xmi:Extension extender="http://www.eclipse.org/emf/2002/Ecore">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_6nLSI7c0Ed-tnLUkmr5DPg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+        <references xmi:type="ecore:EPackage" href="http://schema.omg.org/spec/UML/2.1.1/StandardProfileL2.xmi#_yzU58YinEdqtvbnfB2L_5w"/>
+      </eAnnotations>
+    </xmi:Extension>
+    <appliedProfile xmi:type="uml:Profile" href="http://schema.omg.org/spec/UML/2.1.1/StandardProfileL2.xmi#_0"/>
+  </profileApplication>
+</uml:Model>
