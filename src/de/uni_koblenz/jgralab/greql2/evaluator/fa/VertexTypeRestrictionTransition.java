@@ -26,7 +26,7 @@ package de.uni_koblenz.jgralab.greql2.evaluator.fa;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
+import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
@@ -121,7 +121,7 @@ public class VertexTypeRestrictionTransition extends Transition {
 	 *            the SubgraphTempAttribute which should be accepted
 	 * @return true if the transition can fire with e, false otherwise
 	 */
-	public boolean accepts(Vertex v, Edge e, BooleanGraphMarker subgraph)
+	public boolean accepts(Vertex v, Edge e, AbstractGraphMarker<?> subgraph)
 			throws EvaluateException {
 		// it is not neccessary to check if the vertex belongs to a special
 		// subgraph, because if it does not, this method will not be called and

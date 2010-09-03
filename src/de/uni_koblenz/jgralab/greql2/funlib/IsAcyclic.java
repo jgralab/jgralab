@@ -27,7 +27,7 @@ package de.uni_koblenz.jgralab.greql2.funlib;
 import java.util.ArrayList;
 
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
+import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
@@ -62,7 +62,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public class IsAcyclic extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.BOOL },
-				{ JValueType.SUBGRAPH, JValueType.BOOL } };
+				{ JValueType.MARKER, JValueType.BOOL } };
 		signatures = x;
 
 		description = "Returns true iff the current graph or the given subgraph is cycle-free.\n"
@@ -73,13 +73,13 @@ public class IsAcyclic extends Greql2Function {
 	}
 
 	@Override
-	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
+	public JValue evaluate(Graph graph, AbstractGraphMarker<?> subgraph,
 			JValue[] arguments) throws EvaluateException {
 		switch (checkArguments(arguments)) {
 		case 0:
 			break;
 		case 1:
-			subgraph = arguments[0].toSubgraphTempAttribute();
+			subgraph = arguments[0].toGraphMarker();
 			break;
 		default:
 			throw new WrongFunctionParameterException(this, arguments);

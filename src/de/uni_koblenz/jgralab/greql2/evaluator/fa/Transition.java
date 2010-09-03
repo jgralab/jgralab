@@ -26,7 +26,7 @@ package de.uni_koblenz.jgralab.greql2.evaluator.fa;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
+import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 
 /**
@@ -166,7 +166,7 @@ public abstract class Transition {
 	 * and Edge and if both are part of the given subgraph
 	 */
 	public abstract boolean accepts(Vertex v, Edge e,
-			BooleanGraphMarker subgraph) throws EvaluateException;
+			AbstractGraphMarker<?> subgraph) throws EvaluateException;
 
 	/**
 	 * returns the vertex of the datagraph which can be visited after this

@@ -28,7 +28,7 @@ import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
+import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 
 /**
@@ -88,7 +88,7 @@ public class EpsilonTransition extends Transition {
 	 * be eliminated before the pathsearch strarts
 	 */
 	@Override
-	public boolean accepts(Vertex v, Edge e, BooleanGraphMarker subgraph)
+	public boolean accepts(Vertex v, Edge e, AbstractGraphMarker<?> subgraph)
 			throws EvaluateException {
 		logger.info("Id of this epsilon transition is: " + this);
 		// GreqlEvaluator.println("In Number of this transition is : " +

@@ -32,6 +32,7 @@ import java.util.Queue;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.DFA;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.State;
@@ -87,7 +88,7 @@ public class Matches extends Greql2Function {
 	}
 
 	@Override
-	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
+	public JValue evaluate(Graph graph, AbstractGraphMarker<?> subgraph,
 			JValue[] arguments) throws EvaluateException {
 		DFA dfa = null;
 		switch (checkArguments(arguments)) {

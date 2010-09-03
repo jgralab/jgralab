@@ -34,7 +34,7 @@ import java.util.Set;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
+import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.DFA;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.State;
@@ -188,7 +188,7 @@ public class Slice extends Greql2Function {
 	 *             thrown
 	 */
 	private List<Vertex> markVerticesOfSlice(Set<Vertex> sliCritVertices,
-			DFA dfa, BooleanGraphMarker subgraph) throws EvaluateException {
+			DFA dfa, AbstractGraphMarker<?> subgraph) throws EvaluateException {
 		// GreqlEvaluator.errprintln("Start marking vertices of slice");
 		ArrayList<Vertex> finalVertices = new ArrayList<Vertex>();
 		Queue<PathSystemQueueEntry> queue = new LinkedList<PathSystemQueueEntry>();
@@ -256,7 +256,7 @@ public class Slice extends Greql2Function {
 	 * creates the slice
 	 */
 	@Override
-	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
+	public JValue evaluate(Graph graph, AbstractGraphMarker<?> subgraph,
 			JValue[] arguments) throws EvaluateException {
 		Set<Vertex> sliCritVertices = new HashSet<Vertex>();
 		this.graph = graph;

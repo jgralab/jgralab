@@ -32,6 +32,7 @@ import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.FiniteAutomaton;
 import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
@@ -125,7 +126,7 @@ public class JValueImpl implements JValue {
 		case GRAPH:
 			v.visitGraph(this);
 			return;
-		case SUBGRAPH:
+		case MARKER:
 			v.visitSubgraph(this);
 			return;
 		case VERTEX:
@@ -137,7 +138,7 @@ public class JValueImpl implements JValue {
 		}
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "unchecked"})
 	@Override
 	public int compareTo(JValue o) {
 		if (o.getType() == null) {
@@ -931,8 +932,8 @@ public class JValueImpl implements JValue {
 	/**
 	 * constructs a new invalid JValue. Is only called in subclasses
 	 */
-	public JValueImpl(BooleanGraphMarker t) {
-		type = JValueType.SUBGRAPH;
+	public JValueImpl(AbstractGraphMarker<?> t) {
+		type = JValueType.MARKER;
 		value = t;
 		browsingInfo = null;
 	}
@@ -940,7 +941,7 @@ public class JValueImpl implements JValue {
 	/**
 	 * constructs a new invalid JValue. Is only called in subclasses
 	 */
-	public JValueImpl(BooleanGraphMarker t, AttributedElement browsingInfo) {
+	public JValueImpl(AbstractGraphMarker<?> t, AttributedElement browsingInfo) {
 		this(t);
 		this.browsingInfo = browsingInfo;
 	}
@@ -951,8 +952,8 @@ public class JValueImpl implements JValue {
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.jvalue.JValue#isSubgraphTempAttribute()
 	 */
-	public boolean isSubgraphTempAttribute() {
-		return (type == JValueType.SUBGRAPH);
+	public boolean isGraphMarker() {
+		return (type == JValueType.MARKER);
 	}
 
 	/*
@@ -961,12 +962,12 @@ public class JValueImpl implements JValue {
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.jvalue.JValue#toSubgraphTempAttribute()
 	 */
-	public BooleanGraphMarker toSubgraphTempAttribute()
+	public AbstractGraphMarker<?> toGraphMarker()
 			throws JValueInvalidTypeException {
-		if (isSubgraphTempAttribute()) {
-			return (BooleanGraphMarker) value;
+		if (isGraphMarker()) {
+			return (AbstractGraphMarker<?>) value;
 		}
-		throw new JValueInvalidTypeException(JValueType.SUBGRAPH, type);
+		throw new JValueInvalidTypeException(JValueType.MARKER, type);
 	}
 
 	/*

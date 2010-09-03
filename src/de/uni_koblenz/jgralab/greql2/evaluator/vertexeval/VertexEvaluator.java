@@ -36,7 +36,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
+import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclaration;
@@ -151,7 +151,8 @@ public abstract class VertexEvaluator {
 	 * The subgraph which was uses for the last evaluation and should be used
 	 * for the next evaluation
 	 */
-	protected BooleanGraphMarker subgraph = null;
+	@SuppressWarnings("unchecked")
+	protected AbstractGraphMarker subgraph = null;
 
 	/**
 	 * The set of variables this vertex depends on
@@ -200,21 +201,21 @@ public abstract class VertexEvaluator {
 	/**
 	 * Gets the result of the evaluation of this vertex on the given subgraph
 	 * 
-	 * @param subgraphMarker
+	 * @param newSubgraph
 	 *            the subgraph to evaluate the vertex on or null if it should be
 	 *            evaluated on the whole datagraph
 	 * @return the evaluation result
 	 */
-	public JValue getResult(BooleanGraphMarker subgraphMarker)
+	public JValue getResult(AbstractGraphMarker<?> newSubgraph)
 			throws EvaluateException {
-		if ((result != null) && (this.subgraph == subgraphMarker)) {
+		if ((result != null) && (this.subgraph == newSubgraph)) {
 			return result;
 		}
 
 		// currentIndentation++;
 		// printIndentation();
 		// GreqlEvaluator.println("Evaluating : " + this);
-		this.subgraph = subgraphMarker;
+		this.subgraph = newSubgraph;
 		try {
 			result = evaluate();
 			// System.out.println("VertexEvaluator.getResult() " + result

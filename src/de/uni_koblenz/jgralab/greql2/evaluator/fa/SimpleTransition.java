@@ -28,7 +28,7 @@ import java.util.Set;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
+import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ThisEdgeEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
@@ -233,8 +233,9 @@ public class SimpleTransition extends Transition {
 	 * @see greql2.evaluator.fa.Transition#accepts(jgralab.Vertex, jgralab.Edge,
 	 * greql2.evaluator.SubgraphTempAttribute)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	public boolean accepts(Vertex v, Edge e, BooleanGraphMarker subgraph)
+	public boolean accepts(Vertex v, Edge e, AbstractGraphMarker subgraph)
 			throws EvaluateException {
 		if (e == null) {
 			return false;
