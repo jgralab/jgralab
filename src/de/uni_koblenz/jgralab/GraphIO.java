@@ -45,11 +45,11 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.Map.Entry;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -69,9 +69,9 @@ import de.uni_koblenz.jgralab.schema.MapDomain;
 import de.uni_koblenz.jgralab.schema.NamedElement;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
+import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
-import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 import de.uni_koblenz.jgralab.schema.impl.BasicDomainImpl;
 import de.uni_koblenz.jgralab.schema.impl.ConstraintImpl;
@@ -395,8 +395,8 @@ public class GraphIO {
 				// from (min,max) rolename
 				write(" from");
 				space();
-				writeIdentifier(ec.getFrom().getVertexClass().getQualifiedName(
-						pkg));
+				writeIdentifier(ec.getFrom().getVertexClass()
+						.getQualifiedName(pkg));
 				write(" (");
 				write(ec.getFrom().getMin() + ",");
 				if (ec.getFrom().getMax() == Integer.MAX_VALUE) {
@@ -434,8 +434,8 @@ public class GraphIO {
 				// to (min,max) rolename
 				write(" to");
 				space();
-				writeIdentifier(ec.getTo().getVertexClass().getQualifiedName(
-						pkg));
+				writeIdentifier(ec.getTo().getVertexClass()
+						.getQualifiedName(pkg));
 				write(" (");
 				write(ec.getTo().getMin() + ",");
 				if (ec.getTo().getMax() == Integer.MAX_VALUE) {
@@ -475,6 +475,9 @@ public class GraphIO {
 				write(";\n");
 				writeComments(ec, ec.getSimpleName());
 			}
+
+			// write package comments
+			writeComments(pkg, pkg.getQualifiedName());
 		}
 	}
 
@@ -870,8 +873,7 @@ public class GraphIO {
 			return loadGraphFromFileWithStandardSupport(filename, null, pf);
 		} catch (GraphIOException ex) {
 			if (ex.getCause() instanceof ClassNotFoundException) {
-				logger
-						.fine("Compiled schema classes were not found, so load and compile the schema first.");
+				logger.fine("Compiled schema classes were not found, so load and compile the schema first.");
 				Schema s = loadSchemaFromFile(filename);
 				s.compile(config);
 				return loadGraphFromFileWithStandardSupport(filename, s, pf);
@@ -1249,15 +1251,10 @@ public class GraphIO {
 						+ "' not found in schema " + schema.getQualifiedName());
 			}
 			NamedElement el = schema.getNamedElement(e.getKey());
-			if (el instanceof Package) {
-				throw new GraphIOException(
-						"Packages can not have a comment. Offending package is '"
-								+ e.getKey() + "'");
-			}
 			if ((el instanceof Domain)
 					&& !((el instanceof EnumDomain) || (el instanceof RecordDomain))) {
 				throw new GraphIOException(
-						"Default domains can not have a comment. Offending domain is '"
+						"Default domains can not have comments. Offending domain is '"
 								+ e.getKey() + "'");
 			}
 			for (String comment : e.getValue()) {
@@ -1776,11 +1773,11 @@ public class GraphIO {
 
 	private EdgeClass createEdgeClass(GraphElementClassData ecd, GraphClass gc)
 			throws GraphIOException, SchemaException {
-		EdgeClass ec = gc.createEdgeClass(ecd.getQualifiedName(), gc
-				.getVertexClass(ecd.fromVertexClassName),
+		EdgeClass ec = gc.createEdgeClass(ecd.getQualifiedName(),
+				gc.getVertexClass(ecd.fromVertexClassName),
 				ecd.fromMultiplicity[0], ecd.fromMultiplicity[1],
-				ecd.fromRoleName, ecd.fromAggregation, gc
-						.getVertexClass(ecd.toVertexClassName),
+				ecd.fromRoleName, ecd.fromAggregation,
+				gc.getVertexClass(ecd.toVertexClassName),
 				ecd.toMultiplicity[0], ecd.toMultiplicity[1], ecd.toRoleName,
 				ecd.toAggregation);
 

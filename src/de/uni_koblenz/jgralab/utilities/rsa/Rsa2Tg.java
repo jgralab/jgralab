@@ -88,11 +88,11 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
-import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -1093,11 +1093,11 @@ public class Rsa2Tg extends XmlProcessor {
 			removeUnusedDomains();
 		}
 
+		attachComments();
+
 		if (!isKeepEmptyPackages()) {
 			removeEmptyPackages();
 		}
-
-		attachComments();
 
 		// preliminaryVertices must be empty at this time of processing,
 		// otherwise there is an error...
@@ -1232,9 +1232,9 @@ public class Rsa2Tg extends XmlProcessor {
 		}
 		if (faultyDomains.size() > 0) {
 			StringBuilder sb = new StringBuilder();
-			sb.append("The following enumeration domain").append(
-					faultyDomains.size() == 1 ? " has" : "s have").append(
-					" no literals");
+			sb.append("The following enumeration domain")
+					.append(faultyDomains.size() == 1 ? " has" : "s have")
+					.append(" no literals");
 			String delim = ": ";
 			for (String name : faultyDomains) {
 				sb.append(delim).append(name);
@@ -1503,8 +1503,7 @@ public class Rsa2Tg extends XmlProcessor {
 	private Vertex handlePackage() throws XMLStreamException {
 
 		Package pkg = sg.createPackage();
-		pkg
-				.set_qualifiedName(getQualifiedName(getAttribute(UML_ATTRIBUTE_NAME)));
+		pkg.set_qualifiedName(getQualifiedName(getAttribute(UML_ATTRIBUTE_NAME)));
 		sg.createContainsSubPackage(packageStack.peek(), pkg);
 		packageStack.push(pkg);
 		return pkg;
@@ -1542,8 +1541,7 @@ public class Rsa2Tg extends XmlProcessor {
 		currentClass = vc;
 		String abs = getAttribute(UML_ATTRIBUTE_IS_ABSRACT);
 		vc.set_abstract((abs != null) && abs.equals(UML_TRUE));
-		vc
-				.set_qualifiedName(getQualifiedName(getAttribute(UML_ATTRIBUTE_NAME)));
+		vc.set_qualifiedName(getQualifiedName(getAttribute(UML_ATTRIBUTE_NAME)));
 		sg.createContainsGraphElementClass(packageStack.peek(), vc);
 
 		// System.out.println("currentClass = " + currentClass + " "
@@ -1667,8 +1665,7 @@ public class Rsa2Tg extends XmlProcessor {
 	private Vertex handleEnumeration() throws XMLStreamException {
 		EnumDomain ed = sg.createEnumDomain();
 		Package p = packageStack.peek();
-		ed
-				.set_qualifiedName(getQualifiedName(getAttribute(UML_ATTRIBUTE_NAME)));
+		ed.set_qualifiedName(getQualifiedName(getAttribute(UML_ATTRIBUTE_NAME)));
 		sg.createContainsDomain(p, ed);
 		ed.set_enumConstants(new ArrayList<String>());
 		Domain dom = domainMap.get(ed.get_qualifiedName());
@@ -2293,9 +2290,23 @@ public class Rsa2Tg extends XmlProcessor {
 		Package p = sg.getFirstPackage();
 		while (p != null) {
 			Package n = p.getNextPackage();
-			if ((p.getDegree() == 1) && (p.get_qualifiedName().length() > 0)) {
-				// System.out.println("...remove empty package '"
-				// + p.getQualifiedName() + "'");
+			int commentCount = p.getDegree(Annotates.class);
+			if ((p.getDegree() - commentCount == 1)
+					&& (p.get_qualifiedName().length() > 0)) {
+				System.out
+						.println("\t- empty package '"
+								+ p.get_qualifiedName()
+								+ "' removed"
+								+ (commentCount > 0 ? commentCount == 1 ? " including 1 comment"
+										: " including " + commentCount
+												+ " comments"
+										: ""));
+				if (commentCount > 0) {
+					for (Annotates a = p.getFirstAnnotates(); a != null; a = p
+							.getFirstAnnotates()) {
+						a.getThat().delete();
+					}
+				}
 				p.delete();
 				// start over to capture packages that become empty after
 				// deletion of p
