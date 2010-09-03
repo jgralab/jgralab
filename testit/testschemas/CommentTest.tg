@@ -1,0 +1,24 @@
+TGraph 2;
+
+Schema de.uni_koblenz.jgralabtest.schemas.commenttest.CommentTestSchema;
+
+GraphClass CommentTestGraph;
+
+Comment CommentTestGraph "Comment for graphclass";
+Package ;
+Comment En "A simple enumeration";
+EnumDomain En (A, B);
+Comment Rd "A comment for Rd";
+Comment Rd "A second comment for Rd";
+RecordDomain Rd (x: Integer, y: Integer);
+Comment pa "A comment for package 'pa'";
+Package pa;
+Comment pa.V "VertexClass comment";
+VertexClass V;
+Comment pa.E "EdgeClass comment";
+EdgeClass E from V (0,*) to V (0,*);
+Comment pa.pc "A comment for package 'pc'";
+Comment pa.pc "2nd comment for pc";
+Package pa.pc;
+VertexClass W;
+
