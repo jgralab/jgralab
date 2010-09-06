@@ -137,7 +137,7 @@ public class JValueImpl implements JValue {
 		}
 	}
 
-	@SuppressWarnings({ "unchecked"})
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public int compareTo(JValue o) {
 		if (o.getType() == null) {

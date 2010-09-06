@@ -89,8 +89,9 @@ public class Children extends Greql2Function {
 	}
 
 	@Override
-	public JValue evaluate(Graph graph, AbstractGraphMarker<AttributedElement> subgraph,
-			JValue[] arguments) throws EvaluateException {
+	public JValue evaluate(Graph graph,
+			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
+			throws EvaluateException {
 		Vertex vertex = null;
 		JValuePathSystem pathSystem = null;
 
@@ -112,7 +113,7 @@ public class Children extends Greql2Function {
 			JValueSet resultSet = new JValueSet();
 			while (inc != null) {
 				other = inc.getThat();
-				if (subgraph == null || subgraph.isMarked(other)) {
+				if ((subgraph == null) || subgraph.isMarked(other)) {
 					resultSet.add(new JValueImpl(other));
 				}
 				inc = inc.getNextEdge(EdgeDirection.OUT);

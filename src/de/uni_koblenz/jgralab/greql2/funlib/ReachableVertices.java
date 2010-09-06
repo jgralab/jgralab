@@ -77,9 +77,10 @@ public class ReachableVertices extends Greql2Function {
 
 	{
 		JValueType[][] x = {
-				{ JValueType.VERTEX, JValueType.AUTOMATON, JValueType.COLLECTION },
+				{ JValueType.VERTEX, JValueType.AUTOMATON,
+						JValueType.COLLECTION },
 				{ JValueType.VERTEX, JValueType.AUTOMATON, JValueType.MARKER,
-						JValueType.COLLECTION }};
+						JValueType.COLLECTION } };
 		signatures = x;
 
 		description = "Returns all vertices that are reachable from vertex with a path description.";
@@ -88,10 +89,11 @@ public class ReachableVertices extends Greql2Function {
 				Category.PATHS_AND_PATHSYSTEMS_AND_SLICES };
 		categories = c;
 	}
-	
+
 	@Override
-	public JValue evaluate(Graph graph, AbstractGraphMarker<AttributedElement> subgraph,
-			JValue[] arguments) throws EvaluateException {
+	public JValue evaluate(Graph graph,
+			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
+			throws EvaluateException {
 		DFA dfa = null;
 		switch (checkArguments(arguments)) {
 		case 0:
@@ -105,14 +107,13 @@ public class ReachableVertices extends Greql2Function {
 
 		return search(startVertex, dfa, subgraph);
 	}
-	
-	
-	@SuppressWarnings("unchecked")
-	public static final JValueImpl search(Vertex startVertex, DFA dfa, AbstractGraphMarker subgraph) {
+
+	public static final JValueImpl search(Vertex startVertex, DFA dfa,
+			AbstractGraphMarker<AttributedElement> subgraph) {
 		JValueSet resultSet = new JValueSet();
-				
+
 		BitSet[] markedElements = new BitSet[dfa.stateList.size()];
-		
+
 		for (State s : dfa.stateList) {
 			markedElements[s.number] = new BitSet();
 		}
@@ -132,12 +133,14 @@ public class ReachableVertices extends Greql2Function {
 			Edge inc = vertex.getFirstEdge();
 			while (inc != null) {
 				int size = state.outTransitions.size();
-				for (int i=0; i<size; i++) {
+				for (int i = 0; i < size; i++) {
 					currentTransition = state.outTransitions.get(i);
 					nextVertex = currentTransition.getNextVertex(vertex, inc);
-					if (!markedElements[currentTransition.endState.number].get(nextVertex.getId())) {
+					if (!markedElements[currentTransition.endState.number]
+							.get(nextVertex.getId())) {
 						if (currentTransition.accepts(vertex, inc, subgraph)) {
-							markedElements[currentTransition.endState.number].set(nextVertex.getId());
+							markedElements[currentTransition.endState.number]
+									.set(nextVertex.getId());
 							queue.put(nextVertex, currentTransition.endState);
 						}
 					}
@@ -146,9 +149,11 @@ public class ReachableVertices extends Greql2Function {
 			}
 			if (PRINT_STOP_VERTICES) {
 				if (state.isFinal) {
-					System.out.println("Vertex " + vertex + " is reachable by path");
+					System.out.println("Vertex " + vertex
+							+ " is reachable by path");
 				} else {
-					System.out.println("Vertex " + vertex + " is not reachable by path");
+					System.out.println("Vertex " + vertex
+							+ " is not reachable by path");
 					System.out.println("    Edges at vertex");
 					for (Edge e : vertex.incidences()) {
 						System.out.println("        "
