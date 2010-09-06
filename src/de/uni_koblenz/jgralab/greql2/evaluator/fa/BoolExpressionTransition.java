@@ -136,8 +136,9 @@ public class BoolExpressionTransition extends Transition {
 	 * @see greql2.evaluator.fa.Transition#accepts(jgralab.Vertex, jgralab.Edge,
 	 * greql2.evaluator.SubgraphTempAttribute)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	public boolean accepts(Vertex v, Edge e, AbstractGraphMarker<?> subgraph)
+	public boolean accepts(Vertex v, Edge e, AbstractGraphMarker subgraph)
 			throws EvaluateException {
 		if (thisVertexEvaluator != null) {
 			thisVertexEvaluator.setValue(new JValueImpl(v));

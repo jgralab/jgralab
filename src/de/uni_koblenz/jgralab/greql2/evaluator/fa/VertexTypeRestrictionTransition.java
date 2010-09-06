@@ -121,7 +121,8 @@ public class VertexTypeRestrictionTransition extends Transition {
 	 *            the SubgraphTempAttribute which should be accepted
 	 * @return true if the transition can fire with e, false otherwise
 	 */
-	public boolean accepts(Vertex v, Edge e, AbstractGraphMarker<?> subgraph)
+	@SuppressWarnings("unchecked")
+	public boolean accepts(Vertex v, Edge e, AbstractGraphMarker subgraph)
 			throws EvaluateException {
 		// it is not neccessary to check if the vertex belongs to a special
 		// subgraph, because if it does not, this method will not be called and
