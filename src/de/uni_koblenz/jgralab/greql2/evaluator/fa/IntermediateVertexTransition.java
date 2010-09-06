@@ -118,8 +118,9 @@ public class IntermediateVertexTransition extends Transition {
 	 * @see greql2.evaluator.fa.Transition#accepts(jgralab.Vertex, jgralab.Edge,
 	 * greql2.evaluator.SubgraphTempAttribute)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	public boolean accepts(Vertex v, Edge e, AbstractGraphMarker<?> subgraph)
+	public boolean accepts(Vertex v, Edge e, AbstractGraphMarker subgraph)
 			throws EvaluateException {
 		// checks if a intermediateVertexExpression exists and if the end-vertex
 		// of e is part of the result of this expression
