@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
@@ -176,7 +177,7 @@ public class PathSystem extends Greql2Function {
 	 *             thrown
 	 */
 	private List<Vertex> markVerticesOfPathSystem(Vertex startVertex, DFA dfa,
-			AbstractGraphMarker<?> subgraph) throws EvaluateException {
+			AbstractGraphMarker<AttributedElement> subgraph) throws EvaluateException {
 		// GreqlEvaluator.errprintln("Start marking vertices of path system");
 		ArrayList<Vertex> finalVertices = new ArrayList<Vertex>();
 		Queue<PathSystemQueueEntry> queue = new LinkedList<PathSystemQueueEntry>();
@@ -239,7 +240,7 @@ public class PathSystem extends Greql2Function {
 	 * creates the pathsystem
 	 */
 	@Override
-	public JValue evaluate(Graph graph, AbstractGraphMarker<?> subgraph,
+	public JValue evaluate(Graph graph, AbstractGraphMarker<AttributedElement> subgraph,
 			JValue[] arguments) throws EvaluateException {
 		DFA dfa = null;
 		switch (checkArguments(arguments)) {

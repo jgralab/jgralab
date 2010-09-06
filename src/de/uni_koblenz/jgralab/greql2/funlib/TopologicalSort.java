@@ -7,6 +7,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Queue;
 
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
@@ -67,9 +68,8 @@ public class TopologicalSort extends Greql2Function {
 	 * .jgralab.Graph, de.uni_koblenz.jgralab.BooleanGraphMarker,
 	 * de.uni_koblenz.jgralab.greql2.jvalue.JValue[])
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
-	public JValue evaluate(Graph graph, AbstractGraphMarker subgraph,
+	public JValue evaluate(Graph graph, AbstractGraphMarker<AttributedElement> subgraph,
 			JValue[] arguments) throws EvaluateException {
 		switch (checkArguments(arguments)) {
 		case 0:

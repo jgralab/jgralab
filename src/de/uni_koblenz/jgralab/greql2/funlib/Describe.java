@@ -73,7 +73,7 @@ public class Describe extends Greql2Function {
 	 * de.uni_koblenz.jgralab.greql2.jvalue.JValue[])
 	 */
 	@Override
-	public JValue evaluate(Graph graph, AbstractGraphMarker<?> subgraph,
+	public JValue evaluate(Graph graph, AbstractGraphMarker<AttributedElement> subgraph,
 			JValue[] arguments) throws EvaluateException {
 		AttributedElement attrElem = null;
 		switch (checkArguments(arguments)) {

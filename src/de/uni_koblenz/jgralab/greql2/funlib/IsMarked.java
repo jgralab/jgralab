@@ -77,7 +77,7 @@ public class IsMarked extends Greql2Function {
 	}
 
 	@Override
-	public JValue evaluate(Graph graph, AbstractGraphMarker<?> subgraph, JValue[] arguments) throws EvaluateException {
+	public JValue evaluate(Graph graph, AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments) throws EvaluateException {
 		AttributedElement attrElem = null;
 		GraphMarker<?> marker = null;
 

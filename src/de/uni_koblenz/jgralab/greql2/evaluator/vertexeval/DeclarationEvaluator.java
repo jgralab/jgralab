@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
@@ -84,7 +85,7 @@ public class DeclarationEvaluator extends VertexEvaluator {
 
 	@Override
 	public JValue evaluate() throws EvaluateException {
-		AbstractGraphMarker<?> newSubgraph = null;
+		AbstractGraphMarker<AttributedElement> newSubgraph = null;
 		Edge edge = vertex.getFirstIsSubgraphOf();
 		if (edge != null) {
 			SubgraphExpression subgraphExp = (SubgraphExpression) edge

@@ -5,6 +5,7 @@ package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
 
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
@@ -131,7 +132,7 @@ public abstract class Greql2Function {
 	 * @throws EvaluateException
 	 *             if something went wrong
 	 */
-	public abstract JValue evaluate(Graph graph, AbstractGraphMarker<?> subgraph,
+	public abstract JValue evaluate(Graph graph, AbstractGraphMarker<AttributedElement> subgraph,
 			JValue[] arguments) throws EvaluateException;
 
 	/**

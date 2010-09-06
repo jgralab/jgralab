@@ -353,7 +353,7 @@ public interface JValue extends Comparable<JValue> {
 	 * @throws JValueInvalidTypeException
 	 *             if this JValue does not encapsulate a boolean value
 	 */
-	public abstract AbstractGraphMarker<?> toGraphMarker()
+	public abstract AbstractGraphMarker<AttributedElement> toGraphMarker()
 			throws JValueInvalidTypeException;
 
 	/**

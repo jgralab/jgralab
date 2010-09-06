@@ -24,6 +24,7 @@
 
 package de.uni_koblenz.jgralab.greql2.funlib;
 
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
@@ -75,7 +76,7 @@ public class InDegree extends DegreeFunction {
 	}
 
 	@Override
-	public JValue evaluate(Graph graph, AbstractGraphMarker<?> subgraph,
+	public JValue evaluate(Graph graph, AbstractGraphMarker<AttributedElement> subgraph,
 			JValue[] arguments) throws EvaluateException {
 		return evaluate(subgraph, arguments, EdgeDirection.IN);
 	}

@@ -422,7 +422,7 @@ public class WritingComponent {
 	 * 
 	 * @throws Exception
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "unchecked"})
 	private void changeAttributes() throws Exception {
 		if (transaction.changedAttributes != null) {
 			Set<Entry<AttributedElement, Set<VersionedDataObject<?>>>> elements = transaction.changedAttributes

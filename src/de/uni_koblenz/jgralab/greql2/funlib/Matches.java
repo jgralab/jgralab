@@ -29,6 +29,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
@@ -88,7 +89,7 @@ public class Matches extends Greql2Function {
 	}
 
 	@Override
-	public JValue evaluate(Graph graph, AbstractGraphMarker<?> subgraph,
+	public JValue evaluate(Graph graph, AbstractGraphMarker<AttributedElement> subgraph,
 			JValue[] arguments) throws EvaluateException {
 		DFA dfa = null;
 		switch (checkArguments(arguments)) {

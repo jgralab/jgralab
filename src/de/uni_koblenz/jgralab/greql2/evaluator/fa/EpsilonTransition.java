@@ -26,6 +26,7 @@ package de.uni_koblenz.jgralab.greql2.evaluator.fa;
 
 import java.util.logging.Logger;
 
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
@@ -87,9 +88,8 @@ public class EpsilonTransition extends Transition {
 	 * This method should not be called because all epsilon-transitions should
 	 * be eliminated before the pathsearch strarts
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
-	public boolean accepts(Vertex v, Edge e, AbstractGraphMarker subgraph)
+	public boolean accepts(Vertex v, Edge e, AbstractGraphMarker<AttributedElement> subgraph)
 			throws EvaluateException {
 		logger.info("Id of this epsilon transition is: " + this);
 		// GreqlEvaluator.println("In Number of this transition is : " +

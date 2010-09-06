@@ -24,6 +24,7 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
@@ -81,7 +82,7 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 	 * @return the result as jvalue
 	 */
 	@Override
-	public JValue getResult(AbstractGraphMarker<?> subgraph)
+	public JValue getResult(AbstractGraphMarker<AttributedElement> subgraph)
 			throws EvaluateException {
 		if (createdNFA == null) {
 			result = evaluate();
