@@ -33,7 +33,6 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
-import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.FiniteAutomaton;
 import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
@@ -962,10 +961,11 @@ public class JValueImpl implements JValue {
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.jvalue.JValue#toSubgraphTempAttribute()
 	 */
-	public AbstractGraphMarker<?> toGraphMarker()
+	@SuppressWarnings("unchecked")
+	public AbstractGraphMarker<AttributedElement> toGraphMarker()
 			throws JValueInvalidTypeException {
 		if (isGraphMarker()) {
-			return (AbstractGraphMarker<?>) value;
+			return (AbstractGraphMarker<AttributedElement>) value;
 		}
 		throw new JValueInvalidTypeException(JValueType.MARKER, type);
 	}

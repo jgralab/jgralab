@@ -24,6 +24,7 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator.fa;
 
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
@@ -165,9 +166,8 @@ public abstract class Transition {
 	 * returns true if this transition accepts the given combination of Vertex
 	 * and Edge and if both are part of the given subgraph
 	 */
-	@SuppressWarnings("unchecked")
 	public abstract boolean accepts(Vertex v, Edge e,
-			AbstractGraphMarker subgraph) throws EvaluateException;
+			AbstractGraphMarker<AttributedElement> subgraph) throws EvaluateException;
 
 	/**
 	 * returns the vertex of the datagraph which can be visited after this

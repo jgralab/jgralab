@@ -58,7 +58,6 @@ public class EdgeSetExpressionEvaluator extends ElementSetExpressionEvaluator {
 		super(vertex, eval);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public JValue evaluate() throws EvaluateException {
 		Graph datagraph = getDatagraph();

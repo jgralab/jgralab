@@ -32,6 +32,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
@@ -151,8 +152,7 @@ public abstract class VertexEvaluator {
 	 * The subgraph which was uses for the last evaluation and should be used
 	 * for the next evaluation
 	 */
-	@SuppressWarnings("unchecked")
-	protected AbstractGraphMarker subgraph = null;
+	protected AbstractGraphMarker<AttributedElement> subgraph = null;
 
 	/**
 	 * The set of variables this vertex depends on
@@ -206,7 +206,7 @@ public abstract class VertexEvaluator {
 	 *            evaluated on the whole datagraph
 	 * @return the evaluation result
 	 */
-	public JValue getResult(AbstractGraphMarker<?> newSubgraph)
+	public JValue getResult(AbstractGraphMarker<AttributedElement> newSubgraph)
 			throws EvaluateException {
 		if ((result != null) && (this.subgraph == newSubgraph)) {
 			return result;

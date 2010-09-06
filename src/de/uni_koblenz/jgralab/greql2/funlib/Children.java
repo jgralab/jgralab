@@ -26,6 +26,7 @@ package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
 
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
@@ -87,9 +88,8 @@ public class Children extends Greql2Function {
 		categories = c;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public JValue evaluate(Graph graph, AbstractGraphMarker subgraph,
+	public JValue evaluate(Graph graph, AbstractGraphMarker<AttributedElement> subgraph,
 			JValue[] arguments) throws EvaluateException {
 		Vertex vertex = null;
 		JValuePathSystem pathSystem = null;

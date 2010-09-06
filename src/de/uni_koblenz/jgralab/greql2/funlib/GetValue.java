@@ -85,7 +85,7 @@ public class GetValue extends Greql2Function {
 	}
 
 	@Override
-	public JValue evaluate(Graph graph, AbstractGraphMarker<?> subgraph, JValue[] arguments) throws EvaluateException {
+	public JValue evaluate(Graph graph, AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments) throws EvaluateException {
 		AttributedElement attrElem = null;
 		JValueRecord record = null;
 		GraphMarker<?> marker = null;

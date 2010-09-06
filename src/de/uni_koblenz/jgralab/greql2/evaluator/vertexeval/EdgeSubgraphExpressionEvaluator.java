@@ -50,7 +50,6 @@ public class EdgeSubgraphExpressionEvaluator extends
 		super(vertex, eval);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public JValue evaluate() throws EvaluateException {
 		BooleanGraphMarker subgraphAttr = new BooleanGraphMarker(getDatagraph());

@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
@@ -125,7 +126,7 @@ public class VariableEvaluator extends VertexEvaluator {
 	}
 
 	@Override
-	public JValue getResult(AbstractGraphMarker<?> subgraphMarker)
+	public JValue getResult(AbstractGraphMarker<AttributedElement> subgraphMarker)
 			throws EvaluateException {
 		return variableValue;
 	}

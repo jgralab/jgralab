@@ -26,6 +26,7 @@ package de.uni_koblenz.jgralab.greql2.evaluator;
 
 import java.util.List;
 
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.logging.EvaluationLogger;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.DeclarationEvaluator;
@@ -105,7 +106,7 @@ public class VariableDeclarationLayer {
 	 * 
 	 * @return true if another possible combination was found, false otherwise
 	 */
-	public boolean iterate(AbstractGraphMarker<?> subgraph)
+	public boolean iterate(AbstractGraphMarker<AttributedElement> subgraph)
 			throws EvaluateException {
 		StringBuilder sb = null;
 		if (GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS) {
@@ -227,7 +228,7 @@ public class VariableDeclarationLayer {
 	 * @return true if the combination fullfills the constraint, false otherwise
 	 * @throws EvaluateException
 	 */
-	private boolean fullfillsConstraints(AbstractGraphMarker<?> subgraph)
+	private boolean fullfillsConstraints(AbstractGraphMarker<AttributedElement> subgraph)
 			throws EvaluateException {
 		if ((constraintList == null) || (constraintList.isEmpty())) {
 			return true;
