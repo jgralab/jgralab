@@ -5,6 +5,7 @@ package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
 
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
@@ -26,8 +27,7 @@ public abstract class DegreeFunction extends Greql2Function {
 	{
 		JValueType[][] x = {
 				{ JValueType.VERTEX, JValueType.INT },
-				{ JValueType.VERTEX, JValueType.TYPECOLLECTION,
-						JValueType.INT },
+				{ JValueType.VERTEX, JValueType.TYPECOLLECTION, JValueType.INT },
 				{ JValueType.VERTEX, JValueType.PATH, JValueType.INT },
 				{ JValueType.VERTEX, JValueType.PATHSYSTEM, JValueType.INT },
 				{ JValueType.VERTEX, JValueType.PATHSYSTEM,
@@ -38,9 +38,9 @@ public abstract class DegreeFunction extends Greql2Function {
 		categories = c;
 	}
 
-	@SuppressWarnings("unchecked")
-	public JValueImpl evaluate(AbstractGraphMarker subgraph, JValue[] arguments,
-			EdgeDirection direction) throws EvaluateException {
+	public JValueImpl evaluate(AbstractGraphMarker<AttributedElement> subgraph,
+			JValue[] arguments, EdgeDirection direction)
+			throws EvaluateException {
 		JValueTypeCollection typeCol = null;
 		JValuePathSystem pathSystem = null;
 		JValuePath path = null;
@@ -84,7 +84,7 @@ public abstract class DegreeFunction extends Greql2Function {
 		if (pathSystem != null) {
 			return new JValueImpl(pathSystem.degree(vertex, direction, typeCol));
 		}
-		//path
+		// path
 		return new JValueImpl(path.degree(vertex, direction));
 	}
 

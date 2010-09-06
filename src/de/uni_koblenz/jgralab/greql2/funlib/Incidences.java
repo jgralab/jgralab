@@ -5,6 +5,7 @@ package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
 
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
@@ -37,7 +38,8 @@ public abstract class Incidences extends Greql2Function {
 						JValueType.COLLECTION }, };
 		signatures = x;
 
-		Category[] c = { Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES };
+		Category[] c = { Category.GRAPH,
+				Category.PATHS_AND_PATHSYSTEMS_AND_SLICES };
 		categories = c;
 	}
 
@@ -75,9 +77,10 @@ public abstract class Incidences extends Greql2Function {
 		return 1;
 	}
 
-	@SuppressWarnings("unchecked")
-	protected JValueImpl evaluate(AbstractGraphMarker subgraph, JValue[] arguments,
-			EdgeDirection direction) throws EvaluateException {
+	protected JValueImpl evaluate(
+			AbstractGraphMarker<AttributedElement> subgraph,
+			JValue[] arguments, EdgeDirection direction)
+			throws EvaluateException {
 		JValuePath path = null;
 		JValuePathSystem pathSystem = null;
 		JValueTypeCollection typeCol = null;
@@ -99,7 +102,7 @@ public abstract class Incidences extends Greql2Function {
 		Vertex vertex = arguments[0].toVertex();
 
 		if (path != null) {
-				return path.edgesConnected(vertex, direction);
+			return path.edgesConnected(vertex, direction);
 		}
 		if (pathSystem != null) {
 			return pathSystem.edgesConnected(vertex, direction);
