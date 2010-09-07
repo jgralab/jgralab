@@ -32,10 +32,11 @@
 	<property name="documentexcludes" value="de.uni_koblenz.jgralab.greql2.schema.*,de.uni_koblenz.jgralab.grumlschema.*" />
 	<property name="unjarexcludes" value="clover/**" />
 	<property name="test.suite" value="de.uni_koblenz.jgralabtest.RunTests" />
-
+	
 	<!-- import the common build file -->
 	<import file="../common/common.xml" />
 
+	<property name="license.file" value="../jgralab/license/header/gpl-2.0-header.txt" />
 
 	<!-- enable clover for the testcases: run with "ant with.clover build test" -->
 	<property name="clover.jar" value="${lib.dir}/clover/clover-3.0.1.jar" />
