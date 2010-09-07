@@ -191,12 +191,13 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 			}
 		}
 	}
-
-	public void setRecordImplementationClass(Class<? extends Record> m1Class,
+	
+	public void setRecordImplementationClass(
+			Class<? extends Record> m1Class,
 			Class<? extends Record> implementationClass) {
 		if (isSuperclassOrEqual(m1Class, implementationClass)) {
 			try {
-				Class<?>[] params = { Graph.class };
+				Class<?>[] params = {Graph.class};
 				recordMap.put(m1Class,
 						implementationClass.getConstructor(params));
 			} catch (NoSuchMethodException ex) {
@@ -206,7 +207,8 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 			}
 		}
 	}
-
+	
+	
 	@SuppressWarnings("unchecked")
 	public <T extends Record> T createRecord(Class<T> recordDomain, Graph g) {
 		try {
@@ -214,8 +216,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 			return r;
 		} catch (Exception ex) {
 			if (ex.getCause() instanceof GraphException) {
-				throw new GraphException(ex.getCause().getLocalizedMessage(),
-						ex);
+				throw new GraphException(ex.getCause().getLocalizedMessage());
 			}
 			throw new M1ClassAccessException("Cannot create vertex of class "
 					+ recordDomain.getCanonicalName(), ex);
@@ -355,7 +356,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 			}
 		}
 	}
-
+	
 	public void setRecordTransactionImplementationClass(
 			Class<? extends Record> m1Class,
 			Class<? extends Record> implementationClass) {

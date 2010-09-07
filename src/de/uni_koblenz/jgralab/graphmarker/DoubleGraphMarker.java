@@ -1,11 +1,15 @@
 package de.uni_koblenz.jgralab.graphmarker;
 
+import java.util.Iterator;
+
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.algolib.functions.DoubleFunction;
+import de.uni_koblenz.jgralab.algolib.functions.entries.DoubleFunctionEntry;
 
 public abstract class DoubleGraphMarker<T extends GraphElement> extends
-		AbstractGraphMarker<T> {
+		AbstractGraphMarker<T> implements DoubleFunction<T> {
 
 	protected double[] temporaryAttributes;
 	protected int marked;
@@ -14,6 +18,7 @@ public abstract class DoubleGraphMarker<T extends GraphElement> extends
 	protected DoubleGraphMarker(Graph graph, int size) {
 		super(graph);
 		temporaryAttributes = createNewArray(size);
+		marked = 0;
 	}
 
 	private double[] createNewArray(int size) {
@@ -106,6 +111,49 @@ public abstract class DoubleGraphMarker<T extends GraphElement> extends
 		// newTemporaryAttributes[i] = temporaryAttributes[i];
 		// }
 		temporaryAttributes = newTemporaryAttributes;
+	}
+
+	@Override
+	public double get(T parameter) {
+		return getMark(parameter);
+	}
+
+	@Override
+	public boolean isDefined(T parameter) {
+		return isMarked(parameter);
+	}
+
+	@Override
+	public void set(T parameter, double value) {
+		mark(parameter, value);
+	}
+
+	@Override
+	public Iterable<T> getDomainElements() {
+		return getMarkedElements();
+	}
+
+	@Override
+	public Iterator<DoubleFunctionEntry<T>> iterator() {
+		final Iterator<T> markedElements = getMarkedElements().iterator();
+		return new Iterator<DoubleFunctionEntry<T>>() {
+
+			@Override
+			public boolean hasNext() {
+				return markedElements.hasNext();
+			}
+
+			@Override
+			public DoubleFunctionEntry<T> next() {
+				T currentElement = markedElements.next();
+				return new DoubleFunctionEntry<T>(currentElement, get(currentElement));
+			}
+
+			@Override
+			public void remove() {
+				markedElements.remove();
+			}
+		};
 	}
 
 }

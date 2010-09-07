@@ -7,7 +7,7 @@ import de.uni_koblenz.jgralab.GraphStructureChangedAdapter;
 import de.uni_koblenz.jgralab.Vertex;
 
 public abstract class AbstractGraphMarker<T extends AttributedElement> extends
-GraphStructureChangedAdapter {
+		GraphStructureChangedAdapter {
 	protected final Graph graph;
 
 	protected AbstractGraphMarker(Graph graph) {

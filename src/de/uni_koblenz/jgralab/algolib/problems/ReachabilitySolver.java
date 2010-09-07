@@ -1,0 +1,36 @@
+package de.uni_koblenz.jgralab.algolib.problems;
+
+import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.algolib.functions.Relation;
+
+/**
+ * The problem <b>reachability</b> can be defined for directed and undirected
+ * graphs. There are no further parameters. The result is the <i>reachability
+ * relation</i> that tells for every vertex pair if the second vertex is
+ * reachable from the first vertex.
+ * 
+ * @author strauss@uni-koblenz.de
+ * 
+ */
+public interface ReachabilitySolver extends ProblemSolver {
+
+	/**
+	 * Solves the problem <b>reachability</b>.
+	 * 
+	 * @return this algorithm object.
+	 * @throws AlgorithmTerminatedException
+	 *             if this algorithm terminated before the actual execution is
+	 *             completed. This can happen from inside (early termination) or
+	 *             from outside (Thread interruption). The algorithm state
+	 *             changes accordingly.
+	 */
+	public ReachabilitySolver execute();
+
+	/**
+	 * Retrieves the result <code>reachability relation</code>.
+	 * @return the result <code>reachability relation</code>
+	 * @throws IllegalStateException
+	 *             if the result is requested without being available
+	 */
+	public Relation<Vertex, Vertex> getReachable();
+}

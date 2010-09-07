@@ -8,8 +8,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 
-public class IntegerVertexMarker extends
-		IntegerGraphMarker<Vertex> {
+public class IntegerVertexMarker extends IntegerGraphMarker<Vertex> {
 
 	public IntegerVertexMarker(Graph graph) {
 		super(graph, graph.getMaxVCount() + 1);
@@ -54,25 +53,28 @@ public class IntegerVertexMarker extends
 					@Override
 					protected void moveIndex() {
 						int length = temporaryAttributes.length;
-						while (index < length && temporaryAttributes[index] == unmarkedValue) {
+						while (index < length
+								&& temporaryAttributes[index] == unmarkedValue) {
 							index++;
 						}
 					}
 
 					@Override
 					public Vertex next() {
-						if(!hasNext()){
-							throw new NoSuchElementException(NO_MORE_ELEMENTS_ERROR_MESSAGE);
+						if (!hasNext()) {
+							throw new NoSuchElementException(
+									NO_MORE_ELEMENTS_ERROR_MESSAGE);
 						}
-						if(version != IntegerVertexMarker.this.version){
-							throw new ConcurrentModificationException(MODIFIED_ERROR_MESSAGE);
+						if (version != IntegerVertexMarker.this.version) {
+							throw new ConcurrentModificationException(
+									MODIFIED_ERROR_MESSAGE);
 						}
 						Vertex next = graph.getVertex(index++);
 						moveIndex();
 						return next;
-					}		
+					}
 				};
-				
+
 			}
 
 		};
