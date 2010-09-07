@@ -1,8 +1,8 @@
 package de.uni_koblenz.jgralab.impl.trans;
 
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.GraphException;
@@ -422,7 +422,7 @@ public class WritingComponent {
 	 * 
 	 * @throws Exception
 	 */
-	@SuppressWarnings({ "unchecked"})
+	@SuppressWarnings({ "unchecked" })
 	private void changeAttributes() throws Exception {
 		if (transaction.changedAttributes != null) {
 			Set<Entry<AttributedElement, Set<VersionedDataObject<?>>>> elements = transaction.changedAttributes
@@ -434,8 +434,9 @@ public class WritingComponent {
 				for (VersionedDataObject<?> attribute : attributes) {
 					// the temporary value of attribute for current transaction
 					Object tempValue = attribute.getTemporaryValue(transaction);
-					((VersionedDataObjectImpl) attribute).setValidValue(
-							tempValue, graph.getCurrentTransaction(), true);
+					((VersionedDataObjectImpl<Object>) attribute)
+							.setValidValue(tempValue,
+									graph.getCurrentTransaction(), true);
 					graph.setGraphVersion(graph.getGraphVersion() + 1);
 				}
 			}
@@ -449,8 +450,8 @@ public class WritingComponent {
 					.contains(vdo))) && (vdo.isCloneable() || vdo
 					.isPartOfRecord()))) {
 				Object tempValue = vdo.getTemporaryValue(transaction);
-				((VersionedDataObjectImpl) vdo).setValidValue(tempValue,
-						graph.getCurrentTransaction(), true);
+				((VersionedDataObjectImpl<Object>) vdo).setValidValue(
+						tempValue, graph.getCurrentTransaction(), true);
 				graph.setGraphVersion(graph.getGraphVersion() + 1);
 			}
 		}
