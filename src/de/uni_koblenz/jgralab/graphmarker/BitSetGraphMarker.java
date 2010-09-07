@@ -1,10 +1,13 @@
 package de.uni_koblenz.jgralab.graphmarker;
 
 import java.util.BitSet;
+import java.util.Iterator;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
+import de.uni_koblenz.jgralab.algolib.functions.entries.BooleanFunctionEntry;
 
 /**
  * This class can be used to "colorize" graphs, it supports only two "colors",
@@ -17,7 +20,7 @@ import de.uni_koblenz.jgralab.Vertex;
  *            <code>BitSetGraphMarker</code>
  */
 public abstract class BitSetGraphMarker<T extends GraphElement> extends
-		AbstractGraphMarker<T> {
+		AbstractGraphMarker<T> implements BooleanFunction<T> {
 	protected final BitSet marks;
 	protected long version;
 
@@ -92,4 +95,53 @@ public abstract class BitSetGraphMarker<T extends GraphElement> extends
 	public void maxVertexCountIncreased(int newValue) {
 		// do nothing
 	}
+
+	@Override
+	public boolean get(T parameter) {
+		return isMarked(parameter);
+	}
+
+	@Override
+	public boolean isDefined(T parameter) {
+		return true;
+	}
+
+	@Override
+	public void set(T parameter, boolean value) {
+		if (value) {
+			mark(parameter);
+		} else {
+			removeMark(parameter);
+		}
+	}
+
+	@Override
+	public Iterator<BooleanFunctionEntry<T>> iterator() {
+		final Iterator<T> markedElements = getMarkedElements().iterator();
+		return new Iterator<BooleanFunctionEntry<T>>() {
+
+			@Override
+			public boolean hasNext() {
+				return markedElements.hasNext();
+			}
+
+			@Override
+			public BooleanFunctionEntry<T> next() {
+				T currentElement = markedElements.next();
+				return new BooleanFunctionEntry<T>(currentElement, get(currentElement));
+			}
+
+			@Override
+			public void remove() {
+				markedElements.remove();
+			}
+
+		};
+	}
+
+	@Override
+	public Iterable<T> getDomainElements() {
+		return getMarkedElements();
+	}
+
 }

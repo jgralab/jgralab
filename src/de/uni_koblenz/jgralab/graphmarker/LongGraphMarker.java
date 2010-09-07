@@ -1,11 +1,15 @@
 package de.uni_koblenz.jgralab.graphmarker;
 
+import java.util.Iterator;
+
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.algolib.functions.LongFunction;
+import de.uni_koblenz.jgralab.algolib.functions.entries.LongFunctionEntry;
 
 public abstract class LongGraphMarker<T extends GraphElement> extends
-		AbstractGraphMarker<T> {
+		AbstractGraphMarker<T> implements LongFunction<T> {
 
 	private static final long DEFAULT_UNMARKED_VALUE = Long.MIN_VALUE;
 
@@ -18,6 +22,7 @@ public abstract class LongGraphMarker<T extends GraphElement> extends
 		super(graph);
 		unmarkedValue = DEFAULT_UNMARKED_VALUE;
 		temporaryAttributes = createNewArray(size);
+		marked = 0;
 	}
 
 	private long[] createNewArray(int size) {
@@ -117,18 +122,65 @@ public abstract class LongGraphMarker<T extends GraphElement> extends
 	}
 
 	public void setUnmarkedValue(long newUnmarkedValue) {
-		for (int i = 0; i < temporaryAttributes.length; i++) {
-			// keep track of implicitly unmarked values
-			if (temporaryAttributes[i] == newUnmarkedValue) {
-				marked -= 1;
+		if (newUnmarkedValue != this.unmarkedValue) {
+			for (int i = 0; i < temporaryAttributes.length; i++) {
+				// keep track of implicitly unmarked values
+				if (temporaryAttributes[i] == newUnmarkedValue) {
+					marked -= 1;
+				}
+				// set all unmarked elements to new value
+				if (temporaryAttributes[i] == this.unmarkedValue) {
+					temporaryAttributes[i] = newUnmarkedValue;
+				}
+
 			}
-			// set all unmarked elements to new value
-			if (temporaryAttributes[i] == this.unmarkedValue) {
-				temporaryAttributes[i] = newUnmarkedValue;
+			this.unmarkedValue = newUnmarkedValue;
+		}
+	}
+
+	@Override
+	public long get(T parameter) {
+		return getMark(parameter);
+	}
+
+	@Override
+	public boolean isDefined(T parameter) {
+		return isMarked(parameter);
+	}
+
+	@Override
+	public void set(T parameter, long value) {
+		mark(parameter, value);
+	}
+
+	@Override
+	public Iterable<T> getDomainElements() {
+		return getMarkedElements();
+	}
+
+	@Override
+	public Iterator<LongFunctionEntry<T>> iterator() {
+		final Iterator<T> markedElements = getMarkedElements().iterator();
+		return new Iterator<LongFunctionEntry<T>>() {
+
+			@Override
+			public boolean hasNext() {
+				return markedElements.hasNext();
 			}
 
-		}
-		this.unmarkedValue = newUnmarkedValue;
+			@Override
+			public LongFunctionEntry<T> next() {
+				T currentElement = markedElements.next();
+				return new LongFunctionEntry<T>(currentElement,
+						get(currentElement));
+			}
+
+			@Override
+			public void remove() {
+				// TODO Auto-generated method stub
+
+			}
+		};
 	}
-	
+
 }
