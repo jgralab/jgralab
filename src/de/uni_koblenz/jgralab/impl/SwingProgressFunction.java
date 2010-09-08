@@ -117,7 +117,7 @@ public class SwingProgressFunction implements ProgressFunction, ActionListener {
 		});
 	}
 
-	class TimeTextUpdater implements Runnable {
+	Runnable timeTextUpdater = new Runnable() {
 		public void run() {
 			lbl.setText(totalElements + " elements, "
 					+ ((System.currentTimeMillis() - startTime) / 100) / 10.0
@@ -125,10 +125,8 @@ public class SwingProgressFunction implements ProgressFunction, ActionListener {
 		}
 	};
 
-	TimeTextUpdater tm = new TimeTextUpdater();
-
 	private void setTimeText() {
-		invoke(tm);
+		invoke(timeTextUpdater);
 	}
 
 	private void invoke(Runnable r) {
@@ -143,7 +141,7 @@ public class SwingProgressFunction implements ProgressFunction, ActionListener {
 		}
 	}
 
-	class ProgressUpdater implements Runnable {
+	Runnable progressUpdater = new Runnable() {
 		@Override
 		public void run() {
 			if (brm.getValue() < brm.getMaximum()) {
@@ -151,9 +149,7 @@ public class SwingProgressFunction implements ProgressFunction, ActionListener {
 				setTimeText();
 			}
 		}
-	}
-
-	ProgressUpdater pu = new ProgressUpdater();
+	};
 
 	/*
 	 * (non-Javadoc)
@@ -162,7 +158,7 @@ public class SwingProgressFunction implements ProgressFunction, ActionListener {
 	 */
 	@Override
 	public void progress(long processedElements) {
-		invoke(pu);
+		invoke(progressUpdater);
 	}
 
 	/*
