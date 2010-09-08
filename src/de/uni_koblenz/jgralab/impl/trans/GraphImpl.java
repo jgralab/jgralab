@@ -1659,7 +1659,7 @@ public abstract class GraphImpl extends
 	@Override
 	public void addGraphStructureChangedListener(
 			GraphStructureChangedListener newListener) {
-		synchronized (graphStructureChangedListeners) {
+		synchronized (graphStructureChangedListenersWithAutoRemoval) {
 			super.addGraphStructureChangedListener(newListener);
 		}
 	}
@@ -1667,14 +1667,14 @@ public abstract class GraphImpl extends
 	@Override
 	public void removeGraphStructureChangedListener(
 			GraphStructureChangedListener listener) {
-		synchronized (graphStructureChangedListeners) {
+		synchronized (graphStructureChangedListenersWithAutoRemoval) {
 			super.removeGraphStructureChangedListener(listener);
 		}
 	}
 
 	@Override
 	public void removeAllGraphStructureChangedListeners() {
-		synchronized (graphStructureChangedListeners) {
+		synchronized (graphStructureChangedListenersWithAutoRemoval) {
 			super.removeAllGraphStructureChangedListeners();
 		}
 	}

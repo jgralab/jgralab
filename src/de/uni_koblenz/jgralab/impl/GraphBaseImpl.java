@@ -36,6 +36,7 @@ import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphFactory;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.GraphStructureChangedListener;
+import de.uni_koblenz.jgralab.GraphStructureChangedListenerWithAutoRemove;
 import de.uni_koblenz.jgralab.RandomIdGenerator;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
@@ -1652,45 +1653,67 @@ public abstract class GraphBaseImpl implements Graph {
 	 * A list of all registered <code>GraphStructureChangedListener</code> as
 	 * <i>WeakReference</i>s.
 	 */
-	protected List<WeakReference<GraphStructureChangedListener>> graphStructureChangedListeners;
+	protected List<WeakReference<GraphStructureChangedListener>> graphStructureChangedListenersWithAutoRemoval;
+	protected List<GraphStructureChangedListener> graphStructureChangedListeners;
 	{
-		graphStructureChangedListeners = new LinkedList<WeakReference<GraphStructureChangedListener>>();
+		graphStructureChangedListenersWithAutoRemoval = new LinkedList<WeakReference<GraphStructureChangedListener>>();
+		graphStructureChangedListeners = new LinkedList<GraphStructureChangedListener>();
 	}
 
 	@Override
 	public void addGraphStructureChangedListener(
 			GraphStructureChangedListener newListener) {
 		assert newListener != null;
-		graphStructureChangedListeners
-				.add(new WeakReference<GraphStructureChangedListener>(
-						newListener));
+		if (newListener instanceof GraphStructureChangedListenerWithAutoRemove) {
+			graphStructureChangedListenersWithAutoRemoval
+					.add(new WeakReference<GraphStructureChangedListener>(
+							newListener));
+		} else {
+			graphStructureChangedListeners.add(newListener);
+		}
 	}
 
 	@Override
 	public void removeGraphStructureChangedListener(
 			GraphStructureChangedListener listener) {
 		assert listener != null;
-		Iterator<WeakReference<GraphStructureChangedListener>> iterator = getListenerListIterator();
-		while (iterator.hasNext()) {
-			GraphStructureChangedListener currentListener = iterator.next()
-					.get();
-			if ((currentListener == null) || (currentListener == listener)) {
-				iterator.remove();
+		if (listener instanceof GraphStructureChangedListenerWithAutoRemove) {
+			Iterator<WeakReference<GraphStructureChangedListener>> iterator = getListenerListIteratorForAutoRemove();
+			while (iterator.hasNext()) {
+				GraphStructureChangedListener currentListener = iterator.next()
+						.get();
+				if ((currentListener == null) || (currentListener == listener)) {
+					iterator.remove();
+				}
+			}
+		} else {
+			Iterator<GraphStructureChangedListener> iterator = getListenerListIterator();
+			while (iterator.hasNext()) {
+				GraphStructureChangedListener currentListener = iterator.next();
+				if (currentListener == listener) {
+					iterator.remove();
+				}
 			}
 		}
 	}
 
 	@Override
 	public void removeAllGraphStructureChangedListeners() {
+		graphStructureChangedListenersWithAutoRemoval.clear();
 		graphStructureChangedListeners.clear();
 	}
 
 	@Override
 	public int getGraphStructureChangedListenerCount() {
-		return graphStructureChangedListeners.size();
+		return graphStructureChangedListenersWithAutoRemoval.size()
+				+ graphStructureChangedListeners.size();
 	}
 
-	private Iterator<WeakReference<GraphStructureChangedListener>> getListenerListIterator() {
+	private Iterator<WeakReference<GraphStructureChangedListener>> getListenerListIteratorForAutoRemove() {
+		return graphStructureChangedListenersWithAutoRemoval.iterator();
+	}
+
+	private Iterator<GraphStructureChangedListener> getListenerListIterator() {
 		return graphStructureChangedListeners.iterator();
 	}
 
@@ -1705,7 +1728,7 @@ public abstract class GraphBaseImpl implements Graph {
 	 */
 	protected void notifyVertexDeleted(Vertex v) {
 		assert (v != null) && v.isValid() && containsVertex(v);
-		Iterator<WeakReference<GraphStructureChangedListener>> iterator = getListenerListIterator();
+		Iterator<WeakReference<GraphStructureChangedListener>> iterator = getListenerListIteratorForAutoRemove();
 		while (iterator.hasNext()) {
 			GraphStructureChangedListener currentListener = iterator.next()
 					.get();
@@ -1714,6 +1737,9 @@ public abstract class GraphBaseImpl implements Graph {
 			} else {
 				currentListener.vertexDeleted(v);
 			}
+		}
+		for(GraphStructureChangedListener currentListener : graphStructureChangedListeners){
+			currentListener.vertexDeleted(v);
 		}
 	}
 
@@ -1728,7 +1754,7 @@ public abstract class GraphBaseImpl implements Graph {
 	 */
 	protected void notifyVertexAdded(Vertex v) {
 		assert (v != null) && v.isValid() && containsVertex(v);
-		Iterator<WeakReference<GraphStructureChangedListener>> iterator = getListenerListIterator();
+		Iterator<WeakReference<GraphStructureChangedListener>> iterator = getListenerListIteratorForAutoRemove();
 		while (iterator.hasNext()) {
 			GraphStructureChangedListener currentListener = iterator.next()
 					.get();
@@ -1737,6 +1763,9 @@ public abstract class GraphBaseImpl implements Graph {
 			} else {
 				currentListener.vertexAdded(v);
 			}
+		}
+		for(GraphStructureChangedListener currentListener : graphStructureChangedListeners){
+			currentListener.vertexAdded(v);
 		}
 	}
 
@@ -1751,7 +1780,7 @@ public abstract class GraphBaseImpl implements Graph {
 	 */
 	protected void notifyEdgeDeleted(Edge e) {
 		assert (e != null) && e.isValid() && e.isNormal() && containsEdge(e);
-		Iterator<WeakReference<GraphStructureChangedListener>> iterator = getListenerListIterator();
+		Iterator<WeakReference<GraphStructureChangedListener>> iterator = getListenerListIteratorForAutoRemove();
 		while (iterator.hasNext()) {
 			GraphStructureChangedListener currentListener = iterator.next()
 					.get();
@@ -1760,6 +1789,9 @@ public abstract class GraphBaseImpl implements Graph {
 			} else {
 				currentListener.edgeDeleted(e);
 			}
+		}
+		for(GraphStructureChangedListener currentListener : graphStructureChangedListeners){
+			currentListener.edgeDeleted(e);
 		}
 	}
 
@@ -1774,7 +1806,7 @@ public abstract class GraphBaseImpl implements Graph {
 	 */
 	protected void notifyEdgeAdded(Edge e) {
 		assert (e != null) && e.isValid() && e.isNormal() && containsEdge(e);
-		Iterator<WeakReference<GraphStructureChangedListener>> iterator = getListenerListIterator();
+		Iterator<WeakReference<GraphStructureChangedListener>> iterator = getListenerListIteratorForAutoRemove();
 		while (iterator.hasNext()) {
 			GraphStructureChangedListener currentListener = iterator.next()
 					.get();
@@ -1783,6 +1815,9 @@ public abstract class GraphBaseImpl implements Graph {
 			} else {
 				currentListener.edgeAdded(e);
 			}
+		}
+		for(GraphStructureChangedListener currentListener : graphStructureChangedListeners){
+			currentListener.edgeAdded(e);
 		}
 	}
 
@@ -1796,7 +1831,7 @@ public abstract class GraphBaseImpl implements Graph {
 	 *            the new maximum vertex count.
 	 */
 	protected void notifyMaxVertexCountIncreased(int newValue) {
-		Iterator<WeakReference<GraphStructureChangedListener>> iterator = getListenerListIterator();
+		Iterator<WeakReference<GraphStructureChangedListener>> iterator = getListenerListIteratorForAutoRemove();
 		while (iterator.hasNext()) {
 			GraphStructureChangedListener currentListener = iterator.next()
 					.get();
@@ -1805,6 +1840,9 @@ public abstract class GraphBaseImpl implements Graph {
 			} else {
 				currentListener.maxVertexCountIncreased(newValue);
 			}
+		}
+		for(GraphStructureChangedListener currentListener : graphStructureChangedListeners){
+			currentListener.maxVertexCountIncreased(newValue);
 		}
 	}
 
@@ -1818,7 +1856,7 @@ public abstract class GraphBaseImpl implements Graph {
 	 *            the new maximum edge count.
 	 */
 	protected void notifyMaxEdgeCountIncreased(int newValue) {
-		Iterator<WeakReference<GraphStructureChangedListener>> iterator = getListenerListIterator();
+		Iterator<WeakReference<GraphStructureChangedListener>> iterator = getListenerListIteratorForAutoRemove();
 		while (iterator.hasNext()) {
 			GraphStructureChangedListener currentListener = iterator.next()
 					.get();
@@ -1827,6 +1865,9 @@ public abstract class GraphBaseImpl implements Graph {
 			} else {
 				currentListener.maxEdgeCountIncreased(newValue);
 			}
+		}
+		for(GraphStructureChangedListener currentListener : graphStructureChangedListeners){
+			currentListener.maxEdgeCountIncreased(newValue);
 		}
 	}
 
