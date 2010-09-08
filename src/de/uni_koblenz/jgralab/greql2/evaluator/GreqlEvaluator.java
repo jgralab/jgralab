@@ -41,17 +41,18 @@ import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
+import de.uni_koblenz.jgralab.GraphIO.TGFilenameFilter;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.GraphIO.TGFilenameFilter;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.greql2.SerializableGreql2;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel;
+import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.DefaultCostModel;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.LogCostModel;
 import de.uni_koblenz.jgralab.greql2.evaluator.logging.EvaluationLogger;
@@ -945,22 +946,25 @@ public class GreqlEvaluator {
 	 */
 	public boolean startEvaluation() throws EvaluateException,
 			OptimizerException {
-		return startEvaluation(false);
+		return startEvaluation(false, true);
 	}
 
 	/**
 	 * Starts the evaluation. If the query is a store-query, modifies the bound
 	 * variables
 	 * 
-	 * @param log
-	 *            if set to true, the evaluation will be logged. If no logger
-	 *            was set before, the Level2Logger is used
+	 * @param writeLogs
+	 *            if set to true, the evaluation measures will be written to
+	 *            logfiles.
+	 * @param readLogs
+	 *            if set true, existing log files will be read to give better
+	 *            cost estimations.
 	 * @return true on success, false otherwise
 	 * @throws EvaluateException
 	 *             if something gets wrong during evaluation
 	 */
-	public boolean startEvaluation(boolean log) throws EvaluateException,
-			OptimizerException {
+	public boolean startEvaluation(boolean writeLogs, boolean readLogs)
+			throws EvaluateException, OptimizerException {
 		if (started) {
 			return (result != null);
 		}
@@ -977,25 +981,29 @@ public class GreqlEvaluator {
 			this.datagraph = createMinimalGraph();
 		}
 
-		if (log) {
+		if (writeLogs) {
 			createEvaluationLogger();
 		}
 
 		// Initialize the CostModel if there's none
 		if (costModel == null) {
-			// costModel = new DefaultCostModel(vertexEvalGraphMarker);
-			Level2LogReader logReader;
-			if (evaluationLogger == null) {
-				evaluationLoggerDirectory = getTmpDirectory();
-				logReader = new Level2LogReader(evaluationLoggerDirectory,
-						datagraph);
+			if (readLogs) {
+				Level2LogReader logReader;
+				if (evaluationLogger == null) {
+					evaluationLoggerDirectory = getTmpDirectory();
+					logReader = new Level2LogReader(evaluationLoggerDirectory,
+							datagraph);
+				} else {
+					logReader = new Level2LogReader(
+							(Level2Logger) evaluationLogger);
+				}
+				try {
+					costModel = new LogCostModel(logReader, 0.7f, this);
+				} catch (CostModelException e) {
+					e.printStackTrace();
+				}
 			} else {
-				logReader = new Level2LogReader((Level2Logger) evaluationLogger);
-			}
-			try {
-				costModel = new LogCostModel(logReader, 0.7f, this);
-			} catch (CostModelException e) {
-				e.printStackTrace();
+				costModel = new DefaultCostModel(this);
 			}
 		}
 
