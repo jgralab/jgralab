@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.BoundedRangeModel;
 import javax.swing.DefaultBoundedRangeModel;
@@ -11,6 +12,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 import de.uni_koblenz.jgralab.ProgressFunction;
@@ -29,6 +31,7 @@ public class SwingProgressFunction implements ProgressFunction, ActionListener {
 	private String title;
 	private String label;
 	private long totalElements;
+	private long updateInterval;
 	private BoundedRangeModel brm;
 	private JLabel lbl;
 	private long startTime;
@@ -54,10 +57,14 @@ public class SwingProgressFunction implements ProgressFunction, ActionListener {
 	 */
 	@Override
 	public void finished() {
-		brm.setValue(brm.getMaximum());
-		setTimeText();
-		timer = new Timer(5000, this);
-		timer.start();
+		invoke(new Runnable() {
+			public void run() {
+				brm.setValue(brm.getMaximum());
+				setTimeText();
+				timer = new Timer(1000, SwingProgressFunction.this);
+				timer.start();
+			};
+		});
 	}
 
 	/*
@@ -67,8 +74,7 @@ public class SwingProgressFunction implements ProgressFunction, ActionListener {
 	 */
 	@Override
 	public long getUpdateInterval() {
-		return brm.getMaximum() > totalElements ? 1 : totalElements
-				/ brm.getMaximum();
+		return updateInterval;
 	}
 
 	/*
@@ -77,37 +83,77 @@ public class SwingProgressFunction implements ProgressFunction, ActionListener {
 	 * @see de.uni_koblenz.jgralab.ProgressFunction#init(long)
 	 */
 	@Override
-	public void init(long totalElements) {
-		this.totalElements = totalElements;
-		wnd = new JFrame(title);
-		wnd.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		wnd.setResizable(false);
-		wnd.setLayout(new BorderLayout());
-		wnd.setMinimumSize(new Dimension(200, 100));
+	public void init(final long totalElements) {
+		invoke(new Runnable() {
 
-		pb = new JProgressBar();
-		brm = new DefaultBoundedRangeModel();
-		pb.setModel(brm);
-		lbl = new JLabel("####### elements, ##.###s", JLabel.CENTER);
+			@Override
+			public void run() {
+				SwingProgressFunction.this.totalElements = totalElements;
 
-		wnd.getContentPane().add(new JLabel(label, JLabel.CENTER),
-				BorderLayout.NORTH);
-		wnd.getContentPane().add(pb, BorderLayout.CENTER);
-		wnd.getContentPane().add(lbl, BorderLayout.SOUTH);
-		wnd.getContentPane().add(new JPanel(), BorderLayout.WEST);
-		wnd.getContentPane().add(new JPanel(), BorderLayout.EAST);
-		startTime = System.currentTimeMillis();
-		wnd.pack();
-		setTimeText();
-		wnd.setVisible(true);
+				wnd = new JFrame(title);
+				wnd.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+				wnd.setResizable(false);
+				wnd.setLayout(new BorderLayout());
+				wnd.setMinimumSize(new Dimension(200, 100));
+
+				pb = new JProgressBar();
+				brm = new DefaultBoundedRangeModel();
+				pb.setModel(brm);
+				updateInterval = brm.getMaximum() > totalElements ? 1
+						: totalElements / brm.getMaximum();
+				lbl = new JLabel("####### elements, ###.#s", JLabel.CENTER);
+
+				wnd.getContentPane().add(new JLabel(label, JLabel.CENTER),
+						BorderLayout.NORTH);
+				wnd.getContentPane().add(pb, BorderLayout.CENTER);
+				wnd.getContentPane().add(lbl, BorderLayout.SOUTH);
+				wnd.getContentPane().add(new JPanel(), BorderLayout.WEST);
+				wnd.getContentPane().add(new JPanel(), BorderLayout.EAST);
+				startTime = System.currentTimeMillis();
+				wnd.pack();
+				setTimeText();
+				wnd.setVisible(true);
+			}
+		});
 	}
+
+	class TimeTextUpdater implements Runnable {
+		public void run() {
+			lbl.setText(totalElements + " elements, "
+					+ ((System.currentTimeMillis() - startTime) / 100) / 10.0
+					+ "s");
+		}
+	};
+
+	TimeTextUpdater tm = new TimeTextUpdater();
 
 	private void setTimeText() {
-		lbl
-				.setText(totalElements + " elements, "
-						+ ((System.currentTimeMillis() - startTime) / 100)
-						/ 10.0 + "s");
+		invoke(tm);
 	}
+
+	private void invoke(Runnable r) {
+		if (SwingUtilities.isEventDispatchThread()) {
+			r.run();
+		} else {
+			try {
+				SwingUtilities.invokeAndWait(r);
+			} catch (InterruptedException e) {
+			} catch (InvocationTargetException e) {
+			}
+		}
+	}
+
+	class ProgressUpdater implements Runnable {
+		@Override
+		public void run() {
+			if (brm.getValue() < brm.getMaximum()) {
+				brm.setValue(brm.getValue() + 1);
+				setTimeText();
+			}
+		}
+	}
+
+	ProgressUpdater pu = new ProgressUpdater();
 
 	/*
 	 * (non-Javadoc)
@@ -116,10 +162,7 @@ public class SwingProgressFunction implements ProgressFunction, ActionListener {
 	 */
 	@Override
 	public void progress(long processedElements) {
-		if (brm.getValue() < brm.getMaximum()) {
-			brm.setValue(brm.getValue() + 1);
-			setTimeText();
-		}
+		invoke(pu);
 	}
 
 	/*
