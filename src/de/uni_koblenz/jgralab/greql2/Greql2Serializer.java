@@ -28,7 +28,6 @@ package de.uni_koblenz.jgralab.greql2;
 
 import java.util.Iterator;
 
-import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.exception.Greql2Exception;
 import de.uni_koblenz.jgralab.greql2.schema.AggregationPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.AlternativePathDescription;
@@ -853,10 +852,6 @@ public class Greql2Serializer {
 		serializeExpression(expression.get_trueExpr(), true);
 		sb.append(": ");
 		serializeExpression(expression.get_falseExpr(), true);
-		if (expression.getFirstIsNullExprOf(EdgeDirection.IN) != null) {
-			sb.append(": ");
-			serializeExpression(expression.get_nullExpr(), false);
-		}
 	}
 
 	private void serializeVariable(Variable v) {

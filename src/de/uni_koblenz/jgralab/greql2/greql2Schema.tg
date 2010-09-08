@@ -135,7 +135,6 @@ EdgeClass IsIdOf: Greql2Aggregation from Identifier (0,1) role identifier aggreg
 EdgeClass IsIntermediateVertexOf: Greql2Aggregation from Expression (1,1) role intermediateVertex aggregation shared to IntermediateVertexPathDescription (0,*);
 EdgeClass IsIteratedPathOf: IsPathDescriptionOf from PathDescription (1,1) role iteratedPath aggregation shared to IteratedPathDescription (0,*);
 EdgeClass IsLastValueOf: Greql2Aggregation from Expression (1,1) role lastValue aggregation shared to ListRangeConstruction (0,*);
-EdgeClass IsNullExprOf: Greql2Aggregation from Expression (1,1) role nullExpr aggregation shared to ConditionalExpression (0,*);
 EdgeClass IsOptionalPathOf: IsPathDescriptionOf from PathDescription (1,1) role optionalPath aggregation shared to OptionalPathDescription (0,*);
 EdgeClass IsPartOf: Greql2Aggregation from Expression (0,*) role part aggregation shared to ValueConstruction (0,*);
 EdgeClass IsPathOf: Greql2Aggregation from Expression (1,1) role path aggregation shared to PathExpression (0,*);

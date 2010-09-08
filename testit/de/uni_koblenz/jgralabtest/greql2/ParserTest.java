@@ -826,7 +826,7 @@ public class ParserTest {
 
 	@Test
 	public void testConditionalExpression() throws Exception {
-		Greql2 graph = parseQuery("1=2 ? true : false : 3=4");
+		Greql2 graph = parseQuery("1=2 ? true : false");
 		ConditionalExpression condExpr = graph.getFirstConditionalExpression();
 		assertNotNull(condExpr);
 		FunctionApplication condition = (FunctionApplication) condExpr
@@ -850,17 +850,11 @@ public class ParserTest {
 				.getFirstIsFalseExprOf().getAlpha();
 		assertNotNull(falseExpression);
 		assertFalse(falseExpression.is_boolValue());
-		FunctionApplication nullExpression = (FunctionApplication) condExpr
-				.getFirstIsNullExprOf().getAlpha();
-		FunctionId nullId = (FunctionId) nullExpression
-				.getFirstIsFunctionIdOf().getAlpha();
-		assertNotNull(nullId);
-		assertEquals("equals", nullId.get_name());
 	}
 
 	@Test
 	public void testConditionalExpression2() throws Exception {
-		Greql2 graph = parseQuery("1=1?1:2:3");
+		Greql2 graph = parseQuery("1=1?1:2");
 		Greql2Expression root = graph.getFirstGreql2Expression();
 		assertNotNull(root);
 		IsQueryExprOf queryEdge = root.getFirstIsQueryExprOf(EdgeDirection.IN);
@@ -887,9 +881,6 @@ public class ParserTest {
 		IntLiteral falseExpression = (IntLiteral) condExpr
 				.getFirstIsFalseExprOf().getAlpha();
 		assertEquals(2, falseExpression.get_intValue());
-		IntLiteral nullExpression = (IntLiteral) condExpr
-				.getFirstIsNullExprOf().getAlpha();
-		assertEquals(3, nullExpression.get_intValue());
 	}
 
 	@Test

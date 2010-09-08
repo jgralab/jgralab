@@ -81,25 +81,14 @@ public class ConditionalExpressionEvaluator extends VertexEvaluator {
 				.getVertexEvaluatorGraphMarker().getMark(condition);
 		JValue conditionResult = conditionEvaluator.getResult(subgraph);
 		Expression expressionToEvaluate = null;
-		if (conditionResult.isBoolean()) {
-			Boolean value = conditionResult.toBoolean();
-			if (value == null) {
-				if (vertex.getFirstIsNullExprOf(EdgeDirection.IN) != null) {
-					expressionToEvaluate = (Expression) vertex
-							.getFirstIsNullExprOf(EdgeDirection.IN).getAlpha();
-				}
-			} else if (value.booleanValue()) {
-				expressionToEvaluate = (Expression) vertex
-						.getFirstIsTrueExprOf(EdgeDirection.IN).getAlpha();
-			} else {
-				expressionToEvaluate = (Expression) vertex
-						.getFirstIsFalseExprOf(EdgeDirection.IN).getAlpha();
-			}
+
+		Boolean value = conditionResult.toBoolean();
+		if (value.booleanValue()) {
+			expressionToEvaluate = (Expression) vertex.getFirstIsTrueExprOf(
+					EdgeDirection.IN).getAlpha();
 		} else {
-			if (vertex.getFirstIsNullExprOf(EdgeDirection.IN) != null) {
-				expressionToEvaluate = (Expression) vertex
-						.getFirstIsNullExprOf(EdgeDirection.IN).getAlpha();
-			}
+			expressionToEvaluate = (Expression) vertex.getFirstIsFalseExprOf(
+					EdgeDirection.IN).getAlpha();
 		}
 
 		if (expressionToEvaluate != null) {
