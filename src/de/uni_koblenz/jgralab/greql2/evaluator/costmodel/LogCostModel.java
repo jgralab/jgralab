@@ -167,9 +167,9 @@ public class LogCostModel extends DefaultCostModel {
 	@Override
 	public long calculateCardinalityBackwardVertexSet(
 			BackwardVertexSetEvaluator e, GraphSize graphSize) {
-		return getMeanCardinality(logReader
-				.getAvgResultSize(e.getLoggingName()), super
-				.calculateCardinalityBackwardVertexSet(e, graphSize));
+		return getMeanCardinality(
+				logReader.getAvgResultSize(e.getLoggingName()),
+				super.calculateCardinalityBackwardVertexSet(e, graphSize));
 	}
 
 	/*
@@ -182,11 +182,11 @@ public class LogCostModel extends DefaultCostModel {
 	 * de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
-	public long calculateCardinalityBagComprehension(
-			ComprehensionEvaluator e, GraphSize graphSize) {
-		return getMeanCardinality(logReader
-				.getAvgResultSize(e.getLoggingName()), super
-				.calculateCardinalityBagComprehension(e, graphSize));
+	public long calculateCardinalityBagComprehension(ComprehensionEvaluator e,
+			GraphSize graphSize) {
+		return getMeanCardinality(
+				logReader.getAvgResultSize(e.getLoggingName()),
+				super.calculateCardinalityBagComprehension(e, graphSize));
 	}
 
 	/*
@@ -201,9 +201,9 @@ public class LogCostModel extends DefaultCostModel {
 	@Override
 	public long calculateCardinalityBagConstruction(BagConstructionEvaluator e,
 			GraphSize graphSize) {
-		return getMeanCardinality(logReader
-				.getAvgResultSize(e.getLoggingName()), super
-				.calculateCardinalityBagConstruction(e, graphSize));
+		return getMeanCardinality(
+				logReader.getAvgResultSize(e.getLoggingName()),
+				super.calculateCardinalityBagConstruction(e, graphSize));
 	}
 
 	/*
@@ -218,9 +218,9 @@ public class LogCostModel extends DefaultCostModel {
 	@Override
 	public long calculateCardinalityConditionalExpression(
 			ConditionalExpressionEvaluator e, GraphSize graphSize) {
-		return getMeanCardinality(logReader
-				.getAvgResultSize(e.getLoggingName()), super
-				.calculateCardinalityConditionalExpression(e, graphSize));
+		return getMeanCardinality(
+				logReader.getAvgResultSize(e.getLoggingName()),
+				super.calculateCardinalityConditionalExpression(e, graphSize));
 	}
 
 	/*
@@ -255,9 +255,9 @@ public class LogCostModel extends DefaultCostModel {
 	@Override
 	public long calculateCardinalityEdgeSetExpression(
 			EdgeSetExpressionEvaluator e, GraphSize graphSize) {
-		return getMeanCardinality(logReader
-				.getAvgResultSize(e.getLoggingName()), super
-				.calculateCardinalityEdgeSetExpression(e, graphSize));
+		return getMeanCardinality(
+				logReader.getAvgResultSize(e.getLoggingName()),
+				super.calculateCardinalityEdgeSetExpression(e, graphSize));
 	}
 
 	/*
@@ -272,9 +272,9 @@ public class LogCostModel extends DefaultCostModel {
 	@Override
 	public long calculateCardinalityEdgeSubgraphExpression(
 			EdgeSubgraphExpressionEvaluator e, GraphSize graphSize) {
-		return getMeanCardinality(logReader
-				.getAvgResultSize(e.getLoggingName()), super
-				.calculateCardinalityEdgeSubgraphExpression(e, graphSize));
+		return getMeanCardinality(
+				logReader.getAvgResultSize(e.getLoggingName()),
+				super.calculateCardinalityEdgeSubgraphExpression(e, graphSize));
 	}
 
 	/*
@@ -289,9 +289,9 @@ public class LogCostModel extends DefaultCostModel {
 	@Override
 	public long calculateCardinalityForwardVertexSet(
 			ForwardVertexSetEvaluator e, GraphSize graphSize) {
-		return getMeanCardinality(logReader
-				.getAvgResultSize(e.getLoggingName()), super
-				.calculateCardinalityForwardVertexSet(e, graphSize));
+		return getMeanCardinality(
+				logReader.getAvgResultSize(e.getLoggingName()),
+				super.calculateCardinalityForwardVertexSet(e, graphSize));
 	}
 
 	/*
@@ -306,9 +306,9 @@ public class LogCostModel extends DefaultCostModel {
 	@Override
 	public long calculateCardinalityFunctionApplication(
 			FunctionApplicationEvaluator e, GraphSize graphSize) {
-		return getMeanCardinality(logReader
-				.getAvgResultSize(e.getLoggingName()), super
-				.calculateCardinalityFunctionApplication(e, graphSize));
+		return getMeanCardinality(
+				logReader.getAvgResultSize(e.getLoggingName()),
+				super.calculateCardinalityFunctionApplication(e, graphSize));
 	}
 
 	/*
@@ -323,9 +323,9 @@ public class LogCostModel extends DefaultCostModel {
 	@Override
 	public long calculateCardinalityListConstruction(
 			ListConstructionEvaluator e, GraphSize graphSize) {
-		return getMeanCardinality(logReader
-				.getAvgResultSize(e.getLoggingName()), super
-				.calculateCardinalityListConstruction(e, graphSize));
+		return getMeanCardinality(
+				logReader.getAvgResultSize(e.getLoggingName()),
+				super.calculateCardinalityListConstruction(e, graphSize));
 	}
 
 	/*
@@ -340,9 +340,9 @@ public class LogCostModel extends DefaultCostModel {
 	@Override
 	public long calculateCardinalityListRangeConstruction(
 			ListRangeConstructionEvaluator e, GraphSize graphSize) {
-		return getMeanCardinality(logReader
-				.getAvgResultSize(e.getLoggingName()), super
-				.calculateCardinalityListRangeConstruction(e, graphSize));
+		return getMeanCardinality(
+				logReader.getAvgResultSize(e.getLoggingName()),
+				super.calculateCardinalityListRangeConstruction(e, graphSize));
 	}
 
 	/*
@@ -357,9 +357,9 @@ public class LogCostModel extends DefaultCostModel {
 	@Override
 	public long calculateCardinalityRecordConstruction(
 			RecordConstructionEvaluator e, GraphSize graphSize) {
-		return getMeanCardinality(logReader
-				.getAvgResultSize(e.getLoggingName()), super
-				.calculateCardinalityRecordConstruction(e, graphSize));
+		return getMeanCardinality(
+				logReader.getAvgResultSize(e.getLoggingName()),
+				super.calculateCardinalityRecordConstruction(e, graphSize));
 	}
 
 	/*
@@ -374,9 +374,9 @@ public class LogCostModel extends DefaultCostModel {
 	@Override
 	public long calculateCardinalitySetComprehension(
 			SetComprehensionEvaluator e, GraphSize graphSize) {
-		return getMeanCardinality(logReader
-				.getAvgResultSize(e.getLoggingName()), super
-				.calculateCardinalitySetComprehension(e, graphSize));
+		return getMeanCardinality(
+				logReader.getAvgResultSize(e.getLoggingName()),
+				super.calculateCardinalitySetComprehension(e, graphSize));
 	}
 
 	/*
@@ -391,9 +391,9 @@ public class LogCostModel extends DefaultCostModel {
 	@Override
 	public long calculateCardinalitySetConstruction(SetConstructionEvaluator e,
 			GraphSize graphSize) {
-		return getMeanCardinality(logReader
-				.getAvgResultSize(e.getLoggingName()), super
-				.calculateCardinalitySetConstruction(e, graphSize));
+		return getMeanCardinality(
+				logReader.getAvgResultSize(e.getLoggingName()),
+				super.calculateCardinalitySetConstruction(e, graphSize));
 	}
 
 	/*
@@ -428,9 +428,9 @@ public class LogCostModel extends DefaultCostModel {
 	@Override
 	public long calculateCardinalityTableComprehension(
 			TableComprehensionEvaluator e, GraphSize graphSize) {
-		return getMeanCardinality(logReader
-				.getAvgResultSize(e.getLoggingName()), super
-				.calculateCardinalityTableComprehension(e, graphSize));
+		return getMeanCardinality(
+				logReader.getAvgResultSize(e.getLoggingName()),
+				super.calculateCardinalityTableComprehension(e, graphSize));
 	}
 
 	/*
@@ -445,9 +445,9 @@ public class LogCostModel extends DefaultCostModel {
 	@Override
 	public long calculateCardinalityTupleConstruction(
 			TupleConstructionEvaluator e, GraphSize graphSize) {
-		return getMeanCardinality(logReader
-				.getAvgResultSize(e.getLoggingName()), super
-				.calculateCardinalityTupleConstruction(e, graphSize));
+		return getMeanCardinality(
+				logReader.getAvgResultSize(e.getLoggingName()),
+				super.calculateCardinalityTupleConstruction(e, graphSize));
 	}
 
 	/*
@@ -462,9 +462,9 @@ public class LogCostModel extends DefaultCostModel {
 	@Override
 	public long calculateCardinalityVertexSetExpression(
 			VertexSetExpressionEvaluator e, GraphSize graphSize) {
-		return getMeanCardinality(logReader
-				.getAvgResultSize(e.getLoggingName()), super
-				.calculateCardinalityVertexSetExpression(e, graphSize));
+		return getMeanCardinality(
+				logReader.getAvgResultSize(e.getLoggingName()),
+				super.calculateCardinalityVertexSetExpression(e, graphSize));
 	}
 
 	/*
@@ -479,9 +479,9 @@ public class LogCostModel extends DefaultCostModel {
 	@Override
 	public long calculateCardinalityVertexSubgraphExpression(
 			VertexSubgraphExpressionEvaluator e, GraphSize graphSize) {
-		return getMeanCardinality(logReader
-				.getAvgResultSize(e.getLoggingName()), super
-				.calculateCardinalityVertexSubgraphExpression(e, graphSize));
+		return getMeanCardinality(
+				logReader.getAvgResultSize(e.getLoggingName()),
+				super.calculateCardinalityVertexSubgraphExpression(e, graphSize));
 	}
 
 	/**
@@ -619,21 +619,11 @@ public class LogCostModel extends DefaultCostModel {
 		long falseCosts = vertexEval
 				.getCurrentSubtreeEvaluationCosts(graphSize);
 
-		long nullCosts = 0;
-		if (vertex.getFirstIsNullExprOf() != null) {
-			expressionToEvaluate = (Expression) vertex.getFirstIsNullExprOf()
-					.getAlpha();
-			vertexEval = greqlEvaluator.getVertexEvaluatorGraphMarker()
-					.getMark(expressionToEvaluate);
-			nullCosts = vertexEval.getCurrentSubtreeEvaluationCosts(graphSize);
-		}
-
 		// We say the costs are the average of all costs weighted by the
 		// probability for each case. The probability of the true-case is given
-		// by conditionSelectivity. We say the two other cases are equally
-		// distributed: (1 - conditionSelectivity) / 2
+		// by conditionSelectivity.
 		long avgCosts = Math.round((trueCosts * conditionSelectivity)
-				+ (falseCosts + nullCosts) / 2d * (1 - conditionSelectivity));
+				+ falseCosts * (1 - conditionSelectivity));
 
 		long ownCosts = 4;
 		long iteratedCosts = ownCosts * e.getVariableCombinations(graphSize);

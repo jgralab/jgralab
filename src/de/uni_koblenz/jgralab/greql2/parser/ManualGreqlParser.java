@@ -759,13 +759,6 @@ public class ManualGreqlParser extends ManualParserHelper {
 			int offsetFalseExpr = getCurrentOffset();
 			Expression falseExpr = parseConditionalExpression();
 			int lengthFalseExpr = getLength(offsetFalseExpr);
-			Expression nullExpr = null;
-			int offsetNullExpr = 0, lengthNullExpr = 0;
-			if (tryMatch(TokenTypes.COLON)) {
-				offsetNullExpr = getCurrentOffset();
-				nullExpr = parseConditionalExpression();
-				lengthNullExpr = getLength(offsetNullExpr);
-			}
 			if (!inPredicateMode()) {
 				ConditionalExpression condExpr = graph
 						.createConditionalExpression();
@@ -784,13 +777,6 @@ public class ManualGreqlParser extends ManualParserHelper {
 						falseExpr, condExpr);
 				falseExprOf.set_sourcePositions(createSourcePositionList(
 						lengthFalseExpr, offsetFalseExpr));
-				if (nullExpr != null) {
-					// add null-expression
-					IsNullExprOf nullExprOf = graph.createIsNullExprOf(
-							nullExpr, condExpr);
-					nullExprOf.set_sourcePositions(createSourcePositionList(
-							lengthNullExpr, offsetNullExpr));
-				}
 				result = condExpr;
 			}
 		}

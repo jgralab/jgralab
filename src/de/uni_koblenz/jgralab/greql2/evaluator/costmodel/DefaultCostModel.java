@@ -95,7 +95,6 @@ import de.uni_koblenz.jgralab.greql2.schema.IsConstraintOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsDeclaredVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsFalseExprOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsKeyExprOfConstruction;
-import de.uni_koblenz.jgralab.greql2.schema.IsNullExprOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsPartOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsRecordElementOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsRecordExprOf;
@@ -209,20 +208,9 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 							falseInc.getAlpha());
 			falseCard = falseEval.getEstimatedCardinality(graphSize);
 		}
-		IsNullExprOf nullInc = condExp.getFirstIsNullExprOf();
-		long nullCard = 0;
-		if (falseInc != null) {
-			VertexEvaluator nullEval = greqlEvaluator
-					.getVertexEvaluatorGraphMarker()
-					.getMark(nullInc.getAlpha());
-			nullCard = nullEval.getEstimatedCardinality(graphSize);
-		}
 		long maxCard = trueCard;
 		if (falseCard > maxCard) {
 			maxCard = falseCard;
-		}
-		if (nullCard > maxCard) {
-			maxCard = nullCard;
 		}
 		return maxCard;
 	}
@@ -579,17 +567,9 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 				expressionToEvaluate);
 		long falseCosts = vertexEval
 				.getCurrentSubtreeEvaluationCosts(graphSize);
-		expressionToEvaluate = (Expression) vertex.getFirstIsNullExprOf()
-				.getAlpha();
-		vertexEval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(
-				expressionToEvaluate);
-		long nullCosts = vertexEval.getCurrentSubtreeEvaluationCosts(graphSize);
 		long maxCosts = trueCosts;
 		if (falseCosts > trueCosts) {
 			maxCosts = falseCosts;
-		}
-		if (nullCosts > maxCosts) {
-			maxCosts = nullCosts;
 		}
 		long ownCosts = 4;
 		long iteratedCosts = ownCosts * e.getVariableCombinations(graphSize);
