@@ -1724,6 +1724,39 @@ public class StateRepository {
 	}
 
 	/**
+	 * Reloads the current graph of this session.
+	 * 
+	 * @param {@link Integer} sessionId
+	 * @return {@link StringBuilder} the code to reinitialize the browser
+	 */
+	public StringBuilder reloadGraph(Integer sessionId) {
+		State currentState = getSession(sessionId);
+		GraphWrapper currentGraph = currentState.getGraphWrapper();
+		String graphFile = currentGraph.graphPath;
+		currentGraph.delete();
+		currentState.initializeState(graphFile);
+		return initializeBrowser(sessionId);
+	}
+
+	/**
+	 * {@link State#ignoreNewGraphVersions} is set to true. That means it is not
+	 * checked if the tg file has changed. Further more the browser is told to
+	 * send the request, which lead to the question if the newer version should
+	 * be loaded, again.
+	 * 
+	 * @param sessionId
+	 * @param oldMethodCall
+	 * @return
+	 */
+	public StringBuilder keepOldGraph(Integer sessionId, String oldMethodCall) {
+		State currentState = getSession(sessionId);
+		currentState.ignoreNewGraphVersions = true;
+		StringBuilder code = new StringBuilder("function() {");
+		code.append(oldMethodCall).append("\n}");
+		return code;
+	}
+
+	/**
 	 * Creates and returns a the id of the new State. It gets the first unused
 	 * sessionId.
 	 * 
@@ -1802,29 +1835,28 @@ public class StateRepository {
 		State state = getSession(sessionId);
 		GraphWrapper gw = state.getGraphWrapper();
 		File currentTgFile = new File(gw.graphPath);
-		if (currentTgFile.exists()
+		if (!state.ignoreNewGraphVersions && currentTgFile.exists()
 				&& currentTgFile.lastModified() > gw.lastModified) {
 			// the current tg-file was modified. Ask if it should be reloaded.
 			code
 					.append(
-							"var reload = confirm(\"The tg-file of the currently loaded graph has changed.\n")
+							"var reload = confirm(\"The tg-file of the currently loaded graph has changed.\\n")
 					.append("Do you want to load the modified graph?\");\n");
 			code.append("if(reload){\n");
-			code.append("sendPostRequest(\"reloadGraph\");\n");// TODO create
-			// method reloadGraph(Integer)
-			code.append("else{\n");
-			code.append("sendPostRequest(\"keepOldGraph\",\"").append(
-					calledMethod).append("\"");
+			code.append("sendPostRequest(\"reloadGraph\");\n");
+			code.append("}else{\n");
+			code.append(
+					"sendPostRequest(\"keepOldGraph\",\"sendPostRequest(\\\"")
+					.append(calledMethod).append("\\\"");
 			for (int i = 0; i < currentParameters.length; i++) {
 				if (i == 0) {
-					code.append(",\"");
+					code.append(",\\\"");
 				} else {
-					code.append("\\n");// TODO possible \\\\n
+					code.append("\\\\n");
 				}
 				code.append(currentParameters[i]);
 			}
-			code.append("\");\n");// TODO create
-			// method keepOldGraph(Integer)
+			code.append("\\\",true);\");\n");
 			code.append("}\n");
 			return null;
 		} else {
@@ -1877,9 +1909,17 @@ public class StateRepository {
 		 *            the graph
 		 */
 		public State(String graphFile) {
+			initializeState(graphFile);
+		}
+
+		/**
+		 * Sets the attributes of this state to the default values.
+		 * 
+		 * @param graphFile
+		 */
+		public void initializeState(String graphFile) {
 			lastAccess = System.currentTimeMillis();
-			graphIdentifier = graphFile + "_"
-					+ new File(graphFile).lastModified();
+			setGraphIdentifier(graphFile, new File(graphFile).lastModified());
 			navigationHistory = new ArrayList<JValue>();
 			selectedVertexClasses = new HashMap<VertexClass, Boolean>();
 			selectedEdgeClasses = new HashMap<EdgeClass, Boolean>();
@@ -1910,12 +1950,24 @@ public class StateRepository {
 		 * @param long the time the tg-file of the current graph was modified
 		 */
 		public void setGraph(String graphFile, long lastModified) {
+			setGraphIdentifier(graphFile, lastModified);
 			if (!usedGraphs.containsKey(graphIdentifier)) {
 				usedGraphs.put(graphIdentifier, new GraphWrapper(
 						graphIdentifier, graphFile, lastModified));
 			} else {
 				usedGraphs.get(graphIdentifier).numberOfUsers++;
 			}
+		}
+
+		/**
+		 * Sets {@link State#graphIdentifier} to
+		 * <code>graphFile_lastModified</code>.
+		 * 
+		 * @param graphFile
+		 * @param lastModified
+		 */
+		private void setGraphIdentifier(String graphFile, long lastModified) {
+			graphIdentifier = graphFile + "_" + lastModified;
 		}
 
 		/**
