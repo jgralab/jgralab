@@ -845,13 +845,13 @@ public class GraphIO {
 	}
 
 	/**
-	 * Loads a graph without transaction support from the file
-	 * <code>filename</code>. When schema classes can not be found on the class
-	 * path, the schema is first loaded and compiled in memory using the code
-	 * generator configuration <code>config</code>. When the
-	 * <code>filename</code> ends with <code>.gz</code>, it is assumed that the
-	 * input is GZIP compressed, otherwise uncompressed plain text. A
-	 * {@link ProgressFunction} <code>pf</code> can be used to monitor progress.
+	 * Loads a graph with standard support from the file <code>filename</code>.
+	 * When schema classes can not be found on the class path, the schema is
+	 * first loaded and compiled in memory using the code generator
+	 * configuration <code>config</code>. When the <code>filename</code> ends
+	 * with <code>.gz</code>, it is assumed that the input is GZIP compressed,
+	 * otherwise uncompressed plain text. A {@link ProgressFunction}
+	 * <code>pf</code> can be used to monitor progress.
 	 * 
 	 * @param filename
 	 *            the name of the TG file to be read
