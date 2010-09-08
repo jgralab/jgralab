@@ -1288,7 +1288,7 @@ public class StateRepository {
 				.append("document.getElementById(\"selectElementsPerPage\").selectedIndex = 1;\n");
 		// set textPathLength to 2
 		code
-				.append("document.getElementById(\"textPathLength\").value = \"2\";\n");
+				.append("document.getElementById(\"textPathLength\").value = \"1\";\n");
 		// ## set FilterWindow
 		code
 				.append("document.getElementById(\"h3HowManyVertices\").innerHTML = \"\";\n");
