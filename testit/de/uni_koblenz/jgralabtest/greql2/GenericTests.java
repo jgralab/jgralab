@@ -176,7 +176,7 @@ public class GenericTests {
 		}
 
 		// when optimizing turn on logging, too.
-		eval.startEvaluation(eval.isOptimize());
+		eval.startEvaluation(eval.isOptimize(), true);
 
 		if (DEBUG_SYNTAXGRAPHS) {
 			String dotFileName = System.getProperty("user.home")
