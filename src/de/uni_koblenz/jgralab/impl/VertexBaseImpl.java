@@ -1090,10 +1090,6 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex 
 							Vertex r = e.getThat();
 							if (returnType.isInstance(r)) {
 								result.add((T) r);
-							} else {
-								throw new ClassCastException("Cannot cast " + r
-										+ " to "
-										+ returnType.getCanonicalName());
 							}
 						} else {
 							q.add(e.getThat());
