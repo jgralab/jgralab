@@ -939,7 +939,7 @@ public class GreqlEvaluator {
 	}
 
 	/**
-	 * same as startEvaluation(false), provides for convenience
+	 * same as startEvaluation(false, true), provides for convenience
 	 * 
 	 * @return true if the evaluation succeeds, false otherwise
 	 * @throws EvaluateException
