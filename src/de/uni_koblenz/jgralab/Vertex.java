@@ -26,6 +26,7 @@ package de.uni_koblenz.jgralab;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
@@ -343,6 +344,19 @@ public interface Vertex extends GraphElement {
 	 */
 	public <T extends Vertex> List<T> reachableVertices(String pathDescription,
 			Class<T> vertexType);
+
+	/**
+	 * @param <T>
+	 * @param returnType
+	 *            the class of the vertices you can reach with that path (acts
+	 *            as implicit GoalRestriction)
+	 * @param pathElements
+	 *            an array of {@link PathElement}s
+	 * @return a Set of vertices reachable by traversing the path given by
+	 *         pathElements
+	 */
+	public <T extends Vertex> Set<T> reachableVertices(Class<T> returnType,
+			PathElement... pathElements);
 
 	/**
 	 * Using this method, one can simply iterate over all incident edges of this
