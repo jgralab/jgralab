@@ -147,8 +147,7 @@ public class ProgressFunctionImpl implements ProgressFunction {
 		for (long i = currentChar; i < length; i++) {
 			printStream.print("#");
 		}
-		printStream.println("]");
-		printStream.println("elapsed time: "
-				+ ((stopTime - startTime) / 1000.0) + "s");
+		printStream.println("] time: " + ((stopTime - startTime) / 1000.0)
+				+ "s");
 	}
 }
