@@ -28,7 +28,7 @@ import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
+import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralabtest.schemas.motorwaymap.City;
 import de.uni_koblenz.jgralabtest.schemas.motorwaymap.Motorway;
@@ -53,7 +53,7 @@ public class BenchmarkTests {
 	 * 
 	 */
 	private BenchmarkTests() {
-		progressFunction = new ProgressFunctionImpl();
+		progressFunction = new ConsoleProgressFunction();
 	}
 
 	/**
@@ -132,7 +132,7 @@ public class BenchmarkTests {
 				@Override
 				public void run() {
 					motorwayMap.newTransaction();
-					ProgressFunction p = new ProgressFunctionImpl();
+					ProgressFunction p = new ConsoleProgressFunction();
 					p.init(1234);
 					internaladdGraphElements();
 					try {
@@ -179,10 +179,10 @@ public class BenchmarkTests {
 		if (transactionSupport) {
 			motorwayMap = MotorwayMapSchema.instance()
 					.loadMotorwayMapWithTransactionSupport(FILENAME,
-							new ProgressFunctionImpl());
+							new ConsoleProgressFunction());
 		} else {
 			motorwayMap = MotorwayMapSchema.instance().loadMotorwayMap(
-					FILENAME, new ProgressFunctionImpl());
+					FILENAME, new ConsoleProgressFunction());
 		}
 		printMemoryUsage("loadGraph");
 	}
@@ -192,7 +192,7 @@ public class BenchmarkTests {
 			motorwayMap.newReadOnlyTransaction();
 		}
 		GraphIO.saveGraphToFile(FILENAME, motorwayMap,
-				new ProgressFunctionImpl());
+				new ConsoleProgressFunction());
 	}
 
 	private void iterateVertices() throws GraphIOException,

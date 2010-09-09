@@ -42,7 +42,7 @@ import org.junit.Test;
 
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
-import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
+import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralabtest.schemas.record.BooleanType;
 import de.uni_koblenz.jgralabtest.schemas.record.Hugo;
@@ -167,7 +167,7 @@ public class NullValueTest {
 		try {
 			GraphIO
 					.saveGraphToFile(filename, graph,
-							new ProgressFunctionImpl());
+							new ConsoleProgressFunction());
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail(e.getMessage());
@@ -179,11 +179,11 @@ public class NullValueTest {
 	public void readTest() throws CommitFailedException, GraphIOException {
 		graph = RecordTestSchema.instance().createRecordTestGraph();
 		createTestGraph(false);
-		GraphIO.saveGraphToFile(filename, graph, new ProgressFunctionImpl());
+		GraphIO.saveGraphToFile(filename, graph, new ConsoleProgressFunction());
 		try {
 			graph = (RecordTestGraph) GraphIO
 					.loadGraphFromFileWithTransactionSupport(filename,
-							new ProgressFunctionImpl());
+							new ConsoleProgressFunction());
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail(e.getMessage());

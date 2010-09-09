@@ -40,7 +40,7 @@ import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
+import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.Schema;
 
@@ -100,14 +100,14 @@ public class TGMerge {
 		List<Graph> graphs = new LinkedList<Graph>();
 		for (String g : cmdl.getArgs()) {
 			graphs.add(GraphIO.loadGraphFromFileWithStandardSupport(g,
-					new ProgressFunctionImpl()));
+					new ConsoleProgressFunction()));
 		}
 
 		TGMerge tgmerge = new TGMerge(graphs);
 		Graph merged = tgmerge.merge();
 
 		GraphIO.saveGraphToFile(outputFilename, merged,
-				new ProgressFunctionImpl());
+				new ConsoleProgressFunction());
 	}
 
 	public Graph merge() {

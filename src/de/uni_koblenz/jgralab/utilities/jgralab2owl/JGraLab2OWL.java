@@ -42,7 +42,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.ProgressFunction;
-import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
+import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.schema.Schema;
 
 public class JGraLab2OWL {
@@ -290,7 +290,7 @@ public class JGraLab2OWL {
 					.getOptionValue("g")/* args[0] */, null);
 
 			saveGraphToOWLInstances(filename + ".owl", graph, false, true,
-					true, new ProgressFunctionImpl());
+					true, new ConsoleProgressFunction());
 		} catch (Exception ex) {
 			System.out.println("Sorry, something went wrong");
 			ex.printStackTrace();

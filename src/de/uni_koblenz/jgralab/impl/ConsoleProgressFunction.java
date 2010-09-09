@@ -34,7 +34,7 @@ import de.uni_koblenz.jgralab.ProgressFunction;
  * 
  * @author ist@uni-koblenz.de
  */
-public class ProgressFunctionImpl implements ProgressFunction {
+public class ConsoleProgressFunction implements ProgressFunction {
 	private static final int DEFAULTLENGTH = 60;
 
 	private long totalElements;
@@ -46,7 +46,7 @@ public class ProgressFunctionImpl implements ProgressFunction {
 	/**
 	 * Creates a ProgressFunction with default length writing to System.out.
 	 */
-	public ProgressFunctionImpl() {
+	public ConsoleProgressFunction() {
 		this(System.out, DEFAULTLENGTH);
 	}
 
@@ -57,7 +57,7 @@ public class ProgressFunctionImpl implements ProgressFunction {
 	 * @param length
 	 *            number of characters
 	 */
-	public ProgressFunctionImpl(int length) {
+	public ConsoleProgressFunction(int length) {
 		this(System.out, length);
 	}
 
@@ -68,7 +68,7 @@ public class ProgressFunctionImpl implements ProgressFunction {
 	 * @param printStream
 	 *            a PrintStream where the progress bar is printed
 	 */
-	public ProgressFunctionImpl(PrintStream printStream) {
+	public ConsoleProgressFunction(PrintStream printStream) {
 		this(printStream, DEFAULTLENGTH);
 	}
 
@@ -92,7 +92,7 @@ public class ProgressFunctionImpl implements ProgressFunction {
 	 *            number of characters
 	 * 
 	 */
-	public ProgressFunctionImpl(PrintStream printStream, int length) {
+	public ConsoleProgressFunction(PrintStream printStream, int length) {
 		this.printStream = printStream;
 		this.length = length;
 	}

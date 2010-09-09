@@ -27,7 +27,7 @@ import java.util.HashMap;
 
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
-import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
+import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralabtest.schemas.record.Node;
 import de.uni_koblenz.jgralabtest.schemas.record.RecordTestGraph;
 import de.uni_koblenz.jgralabtest.schemas.record.RecordTestSchema;
@@ -50,13 +50,13 @@ public class TryRecordLoading {
 		// save graph to file
 		String filename = "./testit/testgraphs/record.tg";
 
-		GraphIO.saveGraphToFile(filename, graph, new ProgressFunctionImpl());
+		GraphIO.saveGraphToFile(filename, graph, new ConsoleProgressFunction());
 
 		// load graph with transaction support
 
 		RecordTestSchema.instance()
 				.loadRecordTestGraphWithTransactionSupport(filename,
-						new ProgressFunctionImpl());
+						new ConsoleProgressFunction());
 
 		System.out.println("Success!");
 

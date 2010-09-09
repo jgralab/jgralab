@@ -44,7 +44,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.Greql2Exception;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
-import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
+import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Constraint;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -77,7 +77,7 @@ public class GraphValidator {
 			System.exit(1);
 		}
 		Graph g = GraphIO.loadGraphFromFileWithStandardSupport(args[0],
-				new ProgressFunctionImpl());
+				new ConsoleProgressFunction());
 		GraphValidator v = new GraphValidator(g);
 		v.createValidationReport("__validation_report.html");
 	}

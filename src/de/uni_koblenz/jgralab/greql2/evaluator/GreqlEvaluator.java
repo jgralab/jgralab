@@ -70,7 +70,7 @@ import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.Optimizer;
 import de.uni_koblenz.jgralab.greql2.parser.ManualGreqlParser;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
-import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
+import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
@@ -104,7 +104,7 @@ public class GreqlEvaluator {
 		if (args.length == 2) {
 			datagraph = GraphIO.loadSchemaAndGraphFromFile(args[1],
 					CodeGeneratorConfiguration.WITHOUT_TRANSACTIONS,
-					new ProgressFunctionImpl());
+					new ConsoleProgressFunction());
 		}
 
 		GreqlEvaluator eval = new GreqlEvaluator(query, datagraph, null);
@@ -919,7 +919,7 @@ public class GreqlEvaluator {
 			String name = "__greql-query.";
 			try {
 				GraphIO.saveGraphToFile(name + "tg", queryGraph,
-						new ProgressFunctionImpl());
+						new ConsoleProgressFunction());
 				Tg2Dot.printGraphAsDot(queryGraph, true, name + "dot");
 			} catch (GraphIOException e) {
 				e.printStackTrace();
@@ -1025,7 +1025,7 @@ public class GreqlEvaluator {
 				String name = "__optimized-greql-query.";
 				try {
 					GraphIO.saveGraphToFile(name + "tg", queryGraph,
-							new ProgressFunctionImpl());
+							new ConsoleProgressFunction());
 					Tg2Dot.printGraphAsDot(queryGraph, true, name + "dot");
 				} catch (GraphIOException e) {
 					e.printStackTrace();

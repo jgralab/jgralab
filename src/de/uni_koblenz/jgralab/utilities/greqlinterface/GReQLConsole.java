@@ -49,7 +49,7 @@ import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueHTMLOutputVisitor;
-import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
+import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.schema.Schema;
 
 @WorkInProgress(responsibleDevelopers = "dbildh")
@@ -72,7 +72,7 @@ public class GReQLConsole {
 				schema.compile(CodeGeneratorConfiguration.WITHOUT_TRANSACTIONS);
 			}
 			graph = GraphIO.loadGraphFromFileWithStandardSupport(filename,
-					new ProgressFunctionImpl());
+					new ConsoleProgressFunction());
 		} catch (GraphIOException e) {
 			e.printStackTrace();
 		}
@@ -133,7 +133,7 @@ public class GReQLConsole {
 				System.out.println("Evaluating query: ");
 				System.out.println(query);
 				GreqlEvaluator eval = new GreqlEvaluator(query, graph,
-						boundVariables, new ProgressFunctionImpl());
+						boundVariables, new ConsoleProgressFunction());
 				// eval.setOptimize(false);
 				eval.setEvaluationLogger(null);
 				eval.startEvaluation();
