@@ -226,6 +226,10 @@ public class GraphIO {
 	private Object[] edgeDescTempObject = { 0, 0, 0 };
 	private ByteArrayOutputStream BAOut;
 
+	// stringPool allows re-use string values, saves memory if
+	// multiple identical strings are used as attribute values
+	private HashMap<String, String> stringPool;
+
 	private GraphIO() {
 		domains = new TreeMap<String, Domain>();
 		GECsearch = new HashMap<GraphElementClass, GraphClass>();
@@ -238,6 +242,7 @@ public class GraphIO {
 		vertexClassBuffer = new TreeMap<String, List<GraphElementClassData>>();
 		edgeClassBuffer = new TreeMap<String, List<GraphElementClassData>>();
 		commentData = new HashMap<String, List<String>>();
+		stringPool = new HashMap<String, String>();
 		putBackChar = -1;
 	}
 
@@ -2361,6 +2366,12 @@ public class GraphIO {
 		if (isUtfString) {
 			String result = lookAhead;
 			match();
+			String s = stringPool.get(result);
+			if (s == null) {
+				stringPool.put(result, result);
+			} else {
+				result = s;
+			}
 			return result;
 		}
 		throw new GraphIOException("expected a string constant but found '"
