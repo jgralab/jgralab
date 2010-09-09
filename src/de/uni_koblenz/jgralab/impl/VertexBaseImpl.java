@@ -26,13 +26,18 @@ package de.uni_koblenz.jgralab.impl;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Queue;
+import java.util.Set;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.PathElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
@@ -1063,6 +1068,42 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex 
 	public synchronized <T extends Vertex> List<T> reachableVertices(
 			String pathDescription, Class<T> vertexType) {
 		return graph.reachableVertices(this, pathDescription, vertexType);
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T extends Vertex> Set<T> reachableVertices(Class<T> returnType,
+			PathElement... pathElements) {
+		Set<T> result = new LinkedHashSet<T>();
+		Queue<Vertex> q = new LinkedList<Vertex>();
+		q.add(this);
+
+		for (int i = 0; i < pathElements.length; i++) {
+			PathElement t = pathElements[i];
+			// the null marks the end of the iteration with PathElement t
+			q.add(null);
+			Vertex vx = q.poll();
+			while (vx != null) {
+				for (Edge e : vx.incidences(t.edgeClass, t.edgeDirection)) {
+					if (!t.strictType
+							|| (t.strictType && (t.edgeClass == e.getM1Class()))) {
+						if (i == pathElements.length - 1) {
+							Vertex r = e.getThat();
+							if (returnType.isInstance(r)) {
+								result.add((T) r);
+							} else {
+								throw new ClassCastException("Cannot cast " + r
+										+ " to "
+										+ returnType.getCanonicalName());
+							}
+						} else {
+							q.add(e.getThat());
+						}
+					}
+				}
+				vx = q.poll();
+			}
+		}
+		return result;
 	}
 
 }
