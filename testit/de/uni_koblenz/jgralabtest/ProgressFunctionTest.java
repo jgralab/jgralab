@@ -24,12 +24,12 @@
 
 package de.uni_koblenz.jgralabtest;
 
-import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
+import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 
 public class ProgressFunctionTest {
 
 	public static void main(String[] args) {
-		ProgressFunctionImpl pf = new ProgressFunctionImpl(80);
+		ConsoleProgressFunction pf = new ConsoleProgressFunction(80);
 		final long size = 2000000000;
 		pf.init(size);
 		long i = 0, count = 0;

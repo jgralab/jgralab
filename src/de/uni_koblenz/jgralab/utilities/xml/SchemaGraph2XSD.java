@@ -127,7 +127,7 @@ import de.uni_koblenz.jgralab.grumlschema.structure.Schema;
 import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesEdgeClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesVertexClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
-import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
+import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.utilities.common.UtilityMethods;
 import de.uni_koblenz.jgralab.utilities.rsa.SchemaFilter;
 import de.uni_koblenz.jgralab.utilities.rsa.SchemaGraph2Tg;
@@ -314,7 +314,7 @@ public class SchemaGraph2XSD {
 		// tg-file.
 		System.out.println("Loading Schema from file '" + inputFile + "'.");
 		SchemaGraph sg = comLine.hasOption('g') ? GrumlSchema.instance()
-				.loadSchemaGraph(inputFile, new ProgressFunctionImpl())
+				.loadSchemaGraph(inputFile, new ConsoleProgressFunction())
 				: new Tg2SchemaGraph().process(inputFile);
 
 		// SchemaGraph2XSD is instantiated for conversion.

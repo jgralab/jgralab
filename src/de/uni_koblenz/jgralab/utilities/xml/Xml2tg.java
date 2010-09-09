@@ -66,7 +66,7 @@ import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.WorkInProgress;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
-import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
+import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
@@ -370,13 +370,13 @@ public class Xml2tg {
 
 	public void saveGraph() throws GraphIOException {
 		System.out.println("Saving graph to " + tgOutput);
-		GraphIO.saveGraphToFile(tgOutput, graph, new ProgressFunctionImpl());
+		GraphIO.saveGraphToFile(tgOutput, graph, new ConsoleProgressFunction());
 	}
 
 	private void sortIncidenceLists() {
 
 		System.out.println("Sorting incidence lists.");
-		ProgressFunction progress = new ProgressFunctionImpl();
+		ProgressFunction progress = new ConsoleProgressFunction();
 
 		progress.init(graph.getVCount());
 		long processed = 0L;

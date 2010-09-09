@@ -32,7 +32,7 @@ import javax.xml.stream.XMLStreamException;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
-import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
+import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.utilities.xml.Tg2xml;
 
@@ -63,7 +63,7 @@ public class TryIt {
 					.compile(CodeGeneratorConfiguration.FULL_WITHOUT_SUBCLASS_FLAGS);
 			System.out.println("done");
 			Graph graph = GraphIO.loadGraphFromFileWithStandardSupport(
-					"GrumlSchema.gruml.tg", new ProgressFunctionImpl());
+					"GrumlSchema.gruml.tg", new ConsoleProgressFunction());
 			Tg2xml converter = new Tg2xml(new BufferedOutputStream(
 					new FileOutputStream(outName)), graph, "gruml",
 					"./gruml.xsd");

@@ -40,7 +40,7 @@ import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
-import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
+import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.schema.Schema;
 
 public abstract class Tg2Whatever {
@@ -129,7 +129,7 @@ public abstract class Tg2Whatever {
 		graphFileName = fileName;
 		graph = GraphIO.loadSchemaAndGraphFromFile(graphFileName,
 				CodeGeneratorConfiguration.WITHOUT_TRANSACTIONS,
-				new ProgressFunctionImpl());
+				new ConsoleProgressFunction());
 	}
 
 	/**
@@ -237,7 +237,7 @@ public abstract class Tg2Whatever {
 		try {
 			System.out.println("Loading graph from file " + graphFileName);
 			graph = GraphIO.loadGraphFromFileWithStandardSupport(graphFileName,
-					schema, new ProgressFunctionImpl());
+					schema, new ConsoleProgressFunction());
 			System.out.println("Graph loaded");
 		} catch (GraphIOException ex) {
 			System.err.println("Graph in file '" + graphFileName

@@ -26,7 +26,7 @@ package de.uni_koblenz.jgralabtest;
 
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
-import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
+import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralabtest.schemas.citymap.Bridge;
 import de.uni_koblenz.jgralabtest.schemas.citymap.CarPark;
 import de.uni_koblenz.jgralabtest.schemas.citymap.CityMap;
@@ -96,7 +96,7 @@ public class TestGraphGenerator {
 
 		System.out.println("Storing graph to file 'citymapgraph.tg'");
 		GraphIO.saveGraphToFile("citymapgraph.tg", g1,
-				new ProgressFunctionImpl());
+				new ConsoleProgressFunction());
 	}
 
 }
