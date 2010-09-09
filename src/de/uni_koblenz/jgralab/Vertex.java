@@ -337,7 +337,8 @@ public interface Vertex extends GraphElement {
 	 *            a GReQL path description like
 	 *            <code>-->{EdgeType1}+ <>--{EdgeType2}</code>
 	 * @param vertexType
-	 *            the class of the vertices you can reach with that path
+	 *            the class of the vertices you can reach with that path (acts
+	 *            as implicit GoalRestriction)
 	 * @return a List of the reachable vertices
 	 */
 	public <T extends Vertex> List<T> reachableVertices(String pathDescription,

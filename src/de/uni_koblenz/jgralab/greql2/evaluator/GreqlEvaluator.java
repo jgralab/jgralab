@@ -998,7 +998,7 @@ public class GreqlEvaluator {
 							(Level2Logger) evaluationLogger);
 				}
 				try {
-					costModel = new LogCostModel(logReader, 0.7f, this);
+					costModel = new LogCostModel(logReader, 0.8f, this);
 				} catch (CostModelException e) {
 					e.printStackTrace();
 				}
