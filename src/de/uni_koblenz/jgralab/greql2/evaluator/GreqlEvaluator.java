@@ -1154,6 +1154,13 @@ public class GreqlEvaluator {
 	public long getParseTime() {
 		return parseTime;
 	}
+	
+	/**
+	 * @return the time needed for plain evaluation.
+	 */
+	public long getPlainEvaluationTime() {
+		return plainEvaluationTime;
+	}
 
 	public void printEvaluationTimes() {
 		logger.info("Overall evaluation took "
