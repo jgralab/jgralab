@@ -440,9 +440,15 @@ public interface Graph extends AttributedElement {
 	public Iterable<Edge> edges(Class<? extends Edge> edgeClass);
 
 	/**
+	 * Returns the list of reachable vertices.
+	 * 
 	 * @param startVertex
+	 *            a start vertex
 	 * @param pathDescription
+	 *            a GReQL path description
 	 * @param vertexType
+	 *            the type of the reachable vertices (acts as implicit
+	 *            GoalRestriction)
 	 * @return a List of all vertices of type <code>vertexType</code> reachable
 	 *         from <code>startVertex</code> using the given
 	 *         <code>pathDescription</code>
@@ -588,7 +594,7 @@ public interface Graph extends AttributedElement {
 	 * @return true if this graph instance supports savemem.
 	 */
 	public boolean hasSavememSupport();
-	
+
 	/**
 	 * 
 	 * @param <T>
@@ -740,7 +746,8 @@ public interface Graph extends AttributedElement {
 	 * @param io
 	 * @return
 	 */
-	public <T extends Record> T createRecord(Class<T> recordClass, Map<String, Object> fields);
+	public <T extends Record> T createRecord(Class<T> recordClass,
+			Map<String, Object> fields);
 
 	/**
 	 * 
@@ -749,7 +756,8 @@ public interface Graph extends AttributedElement {
 	 * @param io
 	 * @return
 	 */
-	public <T extends Record> T createRecord(Class<T> recordClass, Object... components);
+	public <T extends Record> T createRecord(Class<T> recordClass,
+			Object... components);
 
 	/**
 	 * Registers the given <code>newListener</code> to the internal listener
