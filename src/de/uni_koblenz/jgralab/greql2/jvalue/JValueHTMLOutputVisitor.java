@@ -334,7 +334,7 @@ public class JValueHTMLOutputVisitor extends JValueDefaultVisitor {
 		try {
 			outputWriter = new BufferedWriter(new FileWriter(filePath));
 		} catch (IOException e) {
-			throw new JValueVisitorException("Can't create output file", null,
+			throw new JValueVisitorException("Can't create HTML output", null,
 					e);
 		}
 		storeln("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">");

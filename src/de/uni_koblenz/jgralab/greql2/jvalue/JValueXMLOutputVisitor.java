@@ -38,17 +38,25 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.greql2.exception.JValueVisitorException;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
 public class JValueXMLOutputVisitor extends JValueDefaultVisitor {
 
 	private IndentingXMLStreamWriter writer = null;
 
-	public JValueXMLOutputVisitor(JValue val, String fileName)
-			throws FileNotFoundException, XMLStreamException,
-			FactoryConfigurationError {
-		writer = new IndentingXMLStreamWriter(XMLOutputFactory.newInstance()
-				.createXMLStreamWriter(new FileOutputStream(fileName), "UTF-8"));
+	public JValueXMLOutputVisitor(JValue val, String fileName) {
+		try {
+			writer = new IndentingXMLStreamWriter(XMLOutputFactory
+					.newInstance().createXMLStreamWriter(
+							new FileOutputStream(fileName), "UTF-8"));
+		} catch (FileNotFoundException e) {
+			throw new JValueVisitorException("Can't create XML output", null, e);
+		} catch (XMLStreamException e) {
+			throw new JValueVisitorException("Can't create XML output", null, e);
+		} catch (FactoryConfigurationError e) {
+			throw new JValueVisitorException("Can't create XML output", null, e);
+		}
 
 		head();
 		val.accept(this);
@@ -87,8 +95,8 @@ public class JValueXMLOutputVisitor extends JValueDefaultVisitor {
 		AttributedElementClass aec = a.toAttributedElementClass();
 		try {
 			writer.writeStartElement(JValueXMLConstants.ATTRIBUTEDELEMENTCLASS);
-			writer.writeAttribute(JValueXMLConstants.ATTR_NAME, aec
-					.getQualifiedName());
+			writer.writeAttribute(JValueXMLConstants.ATTR_NAME,
+					aec.getQualifiedName());
 			writer.writeAttribute(JValueXMLConstants.ATTR_SCHEMA, aec
 					.getSchema().getQualifiedName());
 			writeBrowsingInfo(a.getBrowsingInfo());
@@ -106,13 +114,12 @@ public class JValueXMLOutputVisitor extends JValueDefaultVisitor {
 		writer.writeStartElement(JValueXMLConstants.BROWSINGINFO);
 		if (bi instanceof GraphElement) {
 			GraphElement ge = (GraphElement) bi;
-			writer
-					.writeEmptyElement(ge instanceof Edge ? JValueXMLConstants.EDGE
-							: JValueXMLConstants.VERTEX);
-			writer.writeAttribute(JValueXMLConstants.ATTR_ID, String.valueOf(ge
-					.getId()));
-			writer.writeAttribute(JValueXMLConstants.ATTR_GRAPH_ID, String
-					.valueOf(ge.getGraph().getId()));
+			writer.writeEmptyElement(ge instanceof Edge ? JValueXMLConstants.EDGE
+					: JValueXMLConstants.VERTEX);
+			writer.writeAttribute(JValueXMLConstants.ATTR_ID,
+					String.valueOf(ge.getId()));
+			writer.writeAttribute(JValueXMLConstants.ATTR_GRAPH_ID,
+					String.valueOf(ge.getGraph().getId()));
 		} else {
 			writer.writeEmptyElement(JValueXMLConstants.GRAPH);
 			writer.writeAttribute(JValueXMLConstants.ATTR_GRAPH_ID,
@@ -193,10 +200,10 @@ public class JValueXMLOutputVisitor extends JValueDefaultVisitor {
 		Edge edge = e.toEdge();
 		try {
 			writer.writeStartElement(JValueXMLConstants.EDGE);
-			writer.writeAttribute(JValueXMLConstants.ATTR_ID, String
-					.valueOf(edge.getId()));
-			writer.writeAttribute(JValueXMLConstants.ATTR_GRAPH_ID, String
-					.valueOf(edge.getGraph().getId()));
+			writer.writeAttribute(JValueXMLConstants.ATTR_ID,
+					String.valueOf(edge.getId()));
+			writer.writeAttribute(JValueXMLConstants.ATTR_GRAPH_ID,
+					String.valueOf(edge.getGraph().getId()));
 			writeBrowsingInfo(e.getBrowsingInfo());
 			writer.writeEndElement();
 		} catch (XMLStreamException ex) {
@@ -238,8 +245,8 @@ public class JValueXMLOutputVisitor extends JValueDefaultVisitor {
 		Graph graph = g.toGraph();
 		try {
 			writer.writeStartElement(JValueXMLConstants.GRAPH);
-			writer.writeAttribute(JValueXMLConstants.ATTR_GRAPH_ID, graph
-					.getId());
+			writer.writeAttribute(JValueXMLConstants.ATTR_GRAPH_ID,
+					graph.getId());
 			writeBrowsingInfo(g.getBrowsingInfo());
 			writer.writeEndElement();
 		} catch (XMLStreamException ex) {
@@ -427,10 +434,10 @@ public class JValueXMLOutputVisitor extends JValueDefaultVisitor {
 		Vertex vertex = v.toVertex();
 		try {
 			writer.writeStartElement(JValueXMLConstants.VERTEX);
-			writer.writeAttribute(JValueXMLConstants.ATTR_ID, String
-					.valueOf(vertex.getId()));
-			writer.writeAttribute(JValueXMLConstants.ATTR_GRAPH_ID, String
-					.valueOf(vertex.getGraph().getId()));
+			writer.writeAttribute(JValueXMLConstants.ATTR_ID,
+					String.valueOf(vertex.getId()));
+			writer.writeAttribute(JValueXMLConstants.ATTR_GRAPH_ID,
+					String.valueOf(vertex.getGraph().getId()));
 			writeBrowsingInfo(v.getBrowsingInfo());
 			writer.writeEndElement();
 		} catch (XMLStreamException ex) {
