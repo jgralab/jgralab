@@ -35,6 +35,7 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.FiniteAutomaton;
 import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
+import de.uni_koblenz.jgralab.greql2.exception.JValueVisitorException;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
 public class JValueImpl implements JValue {
@@ -1179,5 +1180,15 @@ public class JValueImpl implements JValue {
 	@Override
 	public boolean isSlice() {
 		return false;
+	}
+
+	@Override
+	public void storeAsHTML(String filename) throws JValueVisitorException {
+		new JValueHTMLOutputVisitor(this, filename);
+	}
+
+	@Override
+	public void storeAsXML(String filename) throws JValueVisitorException {
+		new JValueXMLOutputVisitor(this, filename);
 	}
 }

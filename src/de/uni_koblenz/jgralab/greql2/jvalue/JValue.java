@@ -30,6 +30,7 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.FiniteAutomaton;
 import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
+import de.uni_koblenz.jgralab.greql2.exception.JValueVisitorException;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
 public interface JValue extends Comparable<JValue> {
@@ -37,30 +38,30 @@ public interface JValue extends Comparable<JValue> {
 	/**
 	 * @return the browsing info or null if none exists
 	 */
-	public abstract AttributedElement getBrowsingInfo();
+	public AttributedElement getBrowsingInfo();
 
 	/**
 	 * sets the browsing info of this jvalue
 	 */
-	public abstract void setBrowsingInfo(AttributedElement bInfo);
+	public void setBrowsingInfo(AttributedElement bInfo);
 
 	/**
 	 * accepts the given visitor to visit this jvalue
 	 */
-	public abstract void accept(JValueVisitor v);
+	public void accept(JValueVisitor v);
 
-	public abstract int compareTo(JValue o);
+	public int compareTo(JValue o);
 
 	/**
 	 * returns the type of this JValue
 	 */
-	public abstract JValueType getType();
+	public JValueType getType();
 
 	/**
 	 * returns true if this JValue is valid, that means, that its type is not
 	 * null.
 	 */
-	public abstract boolean isValid();
+	public boolean isValid();
 
 	/**
 	 * calculates the hash-code of this jvalue. This is needed because the
@@ -68,17 +69,17 @@ public interface JValue extends Comparable<JValue> {
 	 * should allow only one JValue which contains a "7". All subtypes of
 	 * JValue, which don't set the "value" field, must overwrite this method
 	 */
-	public abstract int hashCode();
+	public int hashCode();
 
 	/**
 	 * returns true if this JValue is internal
 	 */
-	public abstract boolean isInternal();
+	public boolean isInternal();
 
 	/**
 	 * returns true if this JValue is a Path
 	 */
-	public abstract boolean isPath();
+	public boolean isPath();
 
 	/**
 	 * returns a JValuePath-Reference to this JValue object if it is a
@@ -87,12 +88,12 @@ public interface JValue extends Comparable<JValue> {
 	 * @throws JValueInvalidTypeException
 	 *             if this JValue object is not a JValuePath
 	 */
-	public abstract JValuePath toPath() throws JValueInvalidTypeException;
+	public JValuePath toPath() throws JValueInvalidTypeException;
 
 	/**
 	 * returns true if this JValue is a PathSystem
 	 */
-	public abstract boolean isPathSystem();
+	public boolean isPathSystem();
 
 	/**
 	 * returns a JValuePathSystem-Reference to this JValue object if it is a
@@ -101,109 +102,108 @@ public interface JValue extends Comparable<JValue> {
 	 * @throws JValueInvalidTypeException
 	 *             if this JValue object is not a JValuePathSystem
 	 */
-	public abstract JValuePathSystem toPathSystem()
-			throws JValueInvalidTypeException;
+	public JValuePathSystem toPathSystem() throws JValueInvalidTypeException;
 
-	public abstract boolean isSlice();
+	public boolean isSlice();
 
-	public abstract JValueSlice toSlice() throws JValueInvalidTypeException;
+	public JValueSlice toSlice() throws JValueInvalidTypeException;
 
 	/**
 	 * @return true if this JValue encapsulates a {@link AttributedElementClass}
 	 *         , false otherwise
 	 */
-	public abstract boolean isAttributedElementClass();
+	public boolean isAttributedElementClass();
 
 	/**
 	 * @return the encapsulated AttributedElementClass
 	 * @throws JValueInvalidTypeException
 	 *             if this JValue does not encapsulate a GraphElementClass
 	 */
-	public abstract AttributedElementClass toAttributedElementClass()
+	public AttributedElementClass toAttributedElementClass()
 			throws JValueInvalidTypeException;
 
 	/**
 	 * @return true if this JValue encapsulates a GraphElementClass, false
 	 *         otherwise
 	 */
-	public abstract boolean isJValueTypeCollection();
+	public boolean isJValueTypeCollection();
 
 	/**
 	 * @return the encapsulated AttributedElementClass
 	 * @throws JValueInvalidTypeException
 	 *             if this JValue does not encapsulate a GraphElementClass
 	 */
-	public abstract JValueTypeCollection toJValueTypeCollection()
+	public JValueTypeCollection toJValueTypeCollection()
 			throws JValueInvalidTypeException;
 
 	/**
 	 * @return true if this JValue encapsulates a graphlement value, that is
 	 *         either a vertex, an edge, or a graph, false otherwise
 	 */
-	public abstract boolean isAttributedElement();
+	public boolean isAttributedElement();
 
 	/**
 	 * @return the encapsulated AttributedElement
 	 * @throws JValueInvalidTypeException
 	 *             if this JValue does not encapsulate a AttributedElement
 	 */
-	public abstract AttributedElement toAttributedElement()
+	public AttributedElement toAttributedElement()
 			throws JValueInvalidTypeException;
 
 	/**
 	 * @return true if this JValue encapsulates a boolean value, false otherwise
 	 */
-	public abstract boolean isBoolean();
+	public boolean isBoolean();
 
 	/**
 	 * @return the encapsulated boolean value
 	 * @throws JValueInvalidTypeException
 	 *             if this JValue does not encapsulate a boolean value
 	 */
-	public abstract Boolean toBoolean() throws JValueInvalidTypeException;
+	public Boolean toBoolean() throws JValueInvalidTypeException;
 
 	/**
 	 * @return true if this JValue encapsulates a integer value, false otherwise
 	 */
-	public abstract boolean isInteger();
+	public boolean isInteger();
 
-	public abstract boolean isNumber();
+	public boolean isNumber();
 
 	/**
 	 * @return the encapsulated integer value
 	 * @throws JValueInvalidTypeException
 	 *             if this JValue does not encapsulate an integer value
 	 */
-	public abstract Integer toInteger() throws JValueInvalidTypeException;
+	public Integer toInteger() throws JValueInvalidTypeException;
 
 	/**
 	 * @return true if this JValue encapsulates a long value, false otherwise
 	 */
-	public abstract boolean isLong();
+	public boolean isLong();
 
 	/**
 	 * @return the encapsulated long value
 	 * @throws JValueInvalidTypeException
 	 *             if this JValue does not encapsulate a long value
 	 */
-	public abstract Long toLong() throws JValueInvalidTypeException;
+	public Long toLong() throws JValueInvalidTypeException;
 
 	/**
 	 * @return true if this JValue encapsulates a Double value, false otherwise
 	 */
-	public abstract boolean isDouble();
+	public boolean isDouble();
 
 	/**
 	 * @return the encapsulated Double value
 	 * @throws JValueInvalidTypeException
 	 *             if this JValue does not encapsulate a T value
 	 */
-	public abstract Double toDouble() throws JValueInvalidTypeException;
+	public Double toDouble() throws JValueInvalidTypeException;
 
 	/**
 	 * @return true if this JValue encapsulates a String value, false otherwise
 	 */
-	public abstract boolean isString();
+	public boolean isString();
 
 	/**
 	 * Returns the encapsulated Stringvalue or transforms the encapsulted value
@@ -213,90 +213,89 @@ public interface JValue extends Comparable<JValue> {
 	 *         encapsulated vale if it's not a string
 	 * 
 	 */
-	public abstract String toString();
+	public String toString();
 
 	/**
 	 * @return true if this JValue encapsulates a String value, false otherwise
 	 */
-	public abstract boolean isEnum();
+	public boolean isEnum();
 
 	/**
 	 * 
 	 * @return the encapsulated Enum
 	 * 
 	 */
-	public abstract Enum<?> toEnum();
+	public Enum<?> toEnum();
 
 	/**
 	 * @return true if this JValue encapsulates a Vertex value, false otherwise
 	 */
-	public abstract boolean isVertex();
+	public boolean isVertex();
 
 	/**
 	 * @return the encapsulated Vertex value
 	 * @throws JValueInvalidTypeException
 	 *             if this JValue does not encapsulate a T value
 	 */
-	public abstract Vertex toVertex() throws JValueInvalidTypeException;
+	public Vertex toVertex() throws JValueInvalidTypeException;
 
 	/**
 	 * @return true if this JValue encapsulates a Edge value, false otherwise
 	 */
-	public abstract boolean isEdge();
+	public boolean isEdge();
 
 	/**
 	 * @return the encapsulated Vertex value
 	 * @throws JValueInvalidTypeException
 	 *             if this JValue does not encapsulate a T value
 	 */
-	public abstract Edge toEdge() throws JValueInvalidTypeException;
+	public Edge toEdge() throws JValueInvalidTypeException;
 
 	/**
 	 * @return true if this JValue encapsulates a Graph value, false otherwise
 	 */
-	public abstract boolean isGraph();
+	public boolean isGraph();
 
 	/**
 	 * @return the encapsulated Vertex value
 	 * @throws JValueInvalidTypeException
 	 *             if this JValue does not encapsulate a T value
 	 */
-	public abstract Graph toGraph() throws JValueInvalidTypeException;
+	public Graph toGraph() throws JValueInvalidTypeException;
 
 	/**
 	 * return true if this JValue is a NFA, false Otherwise
 	 */
-	public abstract boolean isAutomaton();
+	public boolean isAutomaton();
 
 	/**
 	 * @return the encapsulated NFA value
 	 * @throws JValueInvalidTypeException
 	 *             if this JValue does not encapsulate a NFA
 	 */
-	public abstract FiniteAutomaton toAutomaton()
-			throws JValueInvalidTypeException;
+	public FiniteAutomaton toAutomaton() throws JValueInvalidTypeException;
 
 	/**
 	 * @return true if this JValue encapsulates a Object value, false otherwise
 	 */
-	public abstract boolean isObject();
+	public boolean isObject();
 
 	/**
 	 * @return the encapsulated Object value
 	 */
-	public abstract Object toObject();
+	public Object toObject();
 
 	/**
 	 * 
 	 * @return true if this JValue is a Collection, false otherwise
 	 */
-	public abstract boolean isCollection();
+	public boolean isCollection();
 
 	/**
 	 * 
 	 * @return true if this JValue is a Map, false otherwise
 	 */
-	public abstract boolean isMap();
+	public boolean isMap();
 
 	/**
 	 * returns a JValueCollection-Reference of this JValue
@@ -304,8 +303,7 @@ public interface JValue extends Comparable<JValue> {
 	 * @throws JValueInvalidTypeException
 	 *             if the JValue cannot be converted to a collection
 	 */
-	public abstract JValueCollection toCollection()
-			throws JValueInvalidTypeException;
+	public JValueCollection toCollection() throws JValueInvalidTypeException;
 
 	/**
 	 * returns a JValueSet-Reference of this JValue
@@ -313,7 +311,7 @@ public interface JValue extends Comparable<JValue> {
 	 * @throws ValueInvalidTypeException
 	 *             if the JValue cannot be converted to a set
 	 */
-	public abstract JValueSet toJValueSet() throws JValueInvalidTypeException;
+	public JValueSet toJValueSet() throws JValueInvalidTypeException;
 
 	/**
 	 * returns a JValueBag-Reference of this JValue
@@ -321,7 +319,7 @@ public interface JValue extends Comparable<JValue> {
 	 * @throws ValueInvalidTypeException
 	 *             if the JValue cannot be converted to a bag
 	 */
-	public abstract JValueBag toJValueBag() throws JValueInvalidTypeException;
+	public JValueBag toJValueBag() throws JValueInvalidTypeException;
 
 	/**
 	 * returns a JValueTable-Reference of this JValue
@@ -329,8 +327,7 @@ public interface JValue extends Comparable<JValue> {
 	 * @throws ValueInvalidTypeException
 	 *             if the JValue cannot be converted to a table
 	 */
-	public abstract JValueTable toJValueTable()
-			throws JValueInvalidTypeException;
+	public JValueTable toJValueTable() throws JValueInvalidTypeException;
 
 	/**
 	 * returns a JValueList-Reference of this JValue
@@ -338,7 +335,7 @@ public interface JValue extends Comparable<JValue> {
 	 * @throws ValueInvalidTypeException
 	 *             if the JValue cannot be converted to a list
 	 */
-	public abstract JValueList toJValueList() throws JValueInvalidTypeException;
+	public JValueList toJValueList() throws JValueInvalidTypeException;
 
 	/**
 	 * returns a JValueMap-Reference of this JValue
@@ -346,7 +343,7 @@ public interface JValue extends Comparable<JValue> {
 	 * @throws ValueInvalidTypeException
 	 *             if the JValue cannot be converted to a map
 	 */
-	public abstract JValueMap toJValueMap() throws JValueInvalidTypeException;
+	public JValueMap toJValueMap() throws JValueInvalidTypeException;
 
 	/**
 	 * returns a JValueTuple-Reference of this JValue
@@ -354,8 +351,7 @@ public interface JValue extends Comparable<JValue> {
 	 * @throws ValueInvalidTypeException
 	 *             if the JValue cannot be converted to a tuple
 	 */
-	public abstract JValueTuple toJValueTuple()
-			throws JValueInvalidTypeException;
+	public JValueTuple toJValueTuple() throws JValueInvalidTypeException;
 
 	/**
 	 * returns a JValueRecord-Reference of this JValue
@@ -363,27 +359,26 @@ public interface JValue extends Comparable<JValue> {
 	 * @throws ValueInvalidTypeException
 	 *             if the JValue cannot be converted to a record
 	 */
-	public abstract JValueRecord toJValueRecord()
-			throws JValueInvalidTypeException;
+	public JValueRecord toJValueRecord() throws JValueInvalidTypeException;
 
 	/**
 	 * @return true if this JValue encapsulates a graph marker, false otherwise
 	 */
-	public abstract boolean isGraphMarker();
+	public boolean isGraphMarker();
 
 	/**
 	 * @return the encapsulated graph marker
 	 * @throws JValueInvalidTypeException
 	 *             if this JValue does not encapsulate a boolean value
 	 */
-	public abstract AbstractGraphMarker<AttributedElement> toGraphMarker()
+	public AbstractGraphMarker<AttributedElement> toGraphMarker()
 			throws JValueInvalidTypeException;
 
 	/**
 	 * @return true, if the encapsulated JValue can be converted to the given
 	 *         type, false otherwise
 	 */
-	public abstract boolean canConvert(JValueType atype);
+	public boolean canConvert(JValueType atype);
 
 	/**
 	 * @param targetType
@@ -397,8 +392,33 @@ public interface JValue extends Comparable<JValue> {
 	 *         functions the most special is used independently of the
 	 *         declaration order.
 	 */
-	public abstract int conversionCosts(JValueType targetType);
+	public int conversionCosts(JValueType targetType);
 
-	public abstract Number toNumber();
+	/**
+	 * returns a Number representing this JValue
+	 * 
+	 * @throws ValueInvalidTypeException
+	 *             if the JValue cannot be converted into a Number
+	 */
+	public Number toNumber() throws JValueInvalidTypeException;
 
+	/**
+	 * Stores this JValue as HTML file.
+	 * 
+	 * @param filename
+	 *            the name of the file
+	 * @throws JValueVisitorException
+	 *             if something goes wrong, e.g. the file can not be created
+	 */
+	public void storeAsHTML(String filename) throws JValueVisitorException;
+
+	/**
+	 * Stores this JValue as XML file.
+	 * 
+	 * @param filename
+	 *            the name of the file
+	 * @throws JValueVisitorException
+	 *             if something goes wrong, e.g. the file can not be created
+	 */
+	public void storeAsXML(String filename) throws JValueVisitorException;
 }
