@@ -1184,7 +1184,7 @@ public class JValueImpl implements JValue {
 
 	@Override
 	public void storeAsHTML(String filename) throws JValueVisitorException {
-		new JValueHTMLOutputVisitor(this, filename);
+		new JValueHTMLOutputVisitor(this, filename, null, false, false);
 	}
 
 	@Override

@@ -24,6 +24,7 @@
 
 package de.uni_koblenz.jgralab.greql2.jvalue;
 
+import java.io.BufferedOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.Map.Entry;
@@ -49,7 +50,8 @@ public class JValueXMLOutputVisitor extends JValueDefaultVisitor {
 		try {
 			writer = new IndentingXMLStreamWriter(XMLOutputFactory
 					.newInstance().createXMLStreamWriter(
-							new FileOutputStream(fileName), "UTF-8"));
+							new BufferedOutputStream(new FileOutputStream(
+									fileName))), "UTF-8");
 		} catch (FileNotFoundException e) {
 			throw new JValueVisitorException("Can't create XML output", null, e);
 		} catch (XMLStreamException e) {
