@@ -2,21 +2,21 @@
  * JGraLab - The Java graph laboratory
  * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
- * 
+ *
  *               ist@uni-koblenz.de
- * 
+ *
  * Please report bugs to http://serres.uni-koblenz.de/bugzilla
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -41,12 +41,12 @@ import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
-import de.uni_koblenz.jgralab.GraphIO.TGFilenameFilter;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.GraphIO.TGFilenameFilter;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
@@ -84,9 +84,9 @@ import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
  * String or Graph and a JGraLab-Datagraph and evaluates the Query on this
  * graph. The result is a JValue-object, it can be accessed using the method
  * <code>JValue getEvaluationResult()</code>.
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class GreqlEvaluator {
 
@@ -213,7 +213,7 @@ public class GreqlEvaluator {
 	/**
 	 * Sets the marker for evaluating only on marked elements. Also sets the
 	 * datagraph to the given marker's graph.
-	 * 
+	 *
 	 * @param subgraphMarker
 	 *            the subgraphMarker to set
 	 */
@@ -251,7 +251,7 @@ public class GreqlEvaluator {
 
 	/**
 	 * Gets a vertex index for a part of a query
-	 * 
+	 *
 	 * @param graph
 	 *            the graph to get an index for
 	 * @param queryPart
@@ -373,7 +373,7 @@ public class GreqlEvaluator {
 	/**
 	 * Load all optimized {@link SyntaxGraphEntry}s in
 	 * optimizedSyntaxGraphsDirectory.
-	 * 
+	 *
 	 * @throws GraphIOException
 	 *             if the optimizedGraphsDirectory is not accessible.
 	 * @see #setOptimizedSyntaxGraphsDirectory(File)
@@ -701,7 +701,7 @@ public class GreqlEvaluator {
 
 	/**
 	 * Creates a new GreqlEvaluator for the given Query and Datagraph
-	 * 
+	 *
 	 * @param query
 	 *            the string-representation of the query to evaluate
 	 * @param datagraph
@@ -769,7 +769,7 @@ public class GreqlEvaluator {
 
 	/**
 	 * Creates a new GreqlEvaluator for the given Query and Datagraph
-	 * 
+	 *
 	 * @param query
 	 *            the string-representation of the query to evaluate
 	 * @param datagraph
@@ -785,7 +785,7 @@ public class GreqlEvaluator {
 	/**
 	 * Creates an new GreqlEvaluator for the query in the given file and the
 	 * given datagraph
-	 * 
+	 *
 	 * @param queryFile
 	 *            the name of the file whehre the query to evaluate is stored in
 	 * @param datagraph
@@ -807,7 +807,7 @@ public class GreqlEvaluator {
 	/**
 	 * Creates an new GreqlEvaluator for the query in the given file and the
 	 * given datagraph
-	 * 
+	 *
 	 * @param queryFile
 	 *            the name of the file whehre the query to evaluate is stored in
 	 * @param datagraph
@@ -865,7 +865,7 @@ public class GreqlEvaluator {
 	/**
 	 * clears the tempresults that are stored in the VertexEvaluators-Objects at
 	 * the syntaxgraph nodes
-	 * 
+	 *
 	 * @param optimizer
 	 */
 	private void resetVertexEvaluators() {
@@ -940,7 +940,7 @@ public class GreqlEvaluator {
 
 	/**
 	 * same as startEvaluation(false, true), provides for convenience
-	 * 
+	 *
 	 * @return true if the evaluation succeeds, false otherwise
 	 * @throws EvaluateException
 	 */
@@ -952,7 +952,7 @@ public class GreqlEvaluator {
 	/**
 	 * Starts the evaluation. If the query is a store-query, modifies the bound
 	 * variables
-	 * 
+	 *
 	 * @param writeLogs
 	 *            if set to true, the evaluation measures will be written to
 	 *            logfiles.
@@ -1103,7 +1103,7 @@ public class GreqlEvaluator {
 
 	/**
 	 * Sets the optimizer to optimize the syntaxgraph this evaluator evaluates
-	 * 
+	 *
 	 * @param optimizer
 	 *            the optimizer to use
 	 */
@@ -1154,7 +1154,7 @@ public class GreqlEvaluator {
 	public long getParseTime() {
 		return parseTime;
 	}
-	
+
 	/**
 	 * @return the time needed for plain evaluation.
 	 */
@@ -1213,6 +1213,8 @@ public class GreqlEvaluator {
 
 	public void setEvaluationLoggingType(LoggingType loggerLoggingType) {
 		this.evaluationLoggingType = loggerLoggingType;
+		evaluationLogger = null;
+		costModel = null;
 	}
 
 	public boolean isUseSavedOptimizedSyntaxGraph() {
