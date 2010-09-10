@@ -75,7 +75,7 @@ public class ArrayEdgeMarker<O> extends ArrayGraphMarker<Edge, O> {
 		return super.getMark(edge.getNormalEdge());
 	}
 
-	//	@Override
+	// @Override
 	@Override
 	public Iterable<Edge> getMarkedElements() {
 		return new Iterable<Edge>() {
@@ -92,25 +92,28 @@ public class ArrayEdgeMarker<O> extends ArrayGraphMarker<Edge, O> {
 					@Override
 					protected void moveIndex() {
 						int length = temporaryAttributes.length;
-						while (index < length && temporaryAttributes[index] == null) {
+						while (index < length
+								&& temporaryAttributes[index] == null) {
 							index++;
 						}
 					}
 
 					@Override
 					public Edge next() {
-						if(!hasNext()){
-							throw new NoSuchElementException(NO_MORE_ELEMENTS_ERROR_MESSAGE);
+						if (!hasNext()) {
+							throw new NoSuchElementException(
+									NO_MORE_ELEMENTS_ERROR_MESSAGE);
 						}
-						if(version != ArrayEdgeMarker.this.version){
-							throw new ConcurrentModificationException(MODIFIED_ERROR_MESSAGE);
+						if (version != ArrayEdgeMarker.this.version) {
+							throw new ConcurrentModificationException(
+									MODIFIED_ERROR_MESSAGE);
 						}
 						Edge next = graph.getEdge(index++);
 						moveIndex();
 						return next;
-					}		
+					}
 				};
-				
+
 			}
 
 		};

@@ -76,25 +76,28 @@ public class LongVertexMarker extends LongGraphMarker<Vertex> {
 					@Override
 					protected void moveIndex() {
 						int length = temporaryAttributes.length;
-						while (index < length && temporaryAttributes[index] == unmarkedValue) {
+						while (index < length
+								&& temporaryAttributes[index] == unmarkedValue) {
 							index++;
 						}
 					}
 
 					@Override
 					public Vertex next() {
-						if(!hasNext()){
-							throw new NoSuchElementException(NO_MORE_ELEMENTS_ERROR_MESSAGE);
+						if (!hasNext()) {
+							throw new NoSuchElementException(
+									NO_MORE_ELEMENTS_ERROR_MESSAGE);
 						}
-						if(version != LongVertexMarker.this.version){
-							throw new ConcurrentModificationException(MODIFIED_ERROR_MESSAGE);
+						if (version != LongVertexMarker.this.version) {
+							throw new ConcurrentModificationException(
+									MODIFIED_ERROR_MESSAGE);
 						}
 						Vertex next = graph.getVertex(index++);
 						moveIndex();
 						return next;
-					}		
+					}
 				};
-				
+
 			}
 
 		};
