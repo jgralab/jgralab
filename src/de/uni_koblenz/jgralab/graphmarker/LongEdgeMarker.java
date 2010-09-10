@@ -91,25 +91,28 @@ public class LongEdgeMarker extends LongGraphMarker<Edge> {
 					@Override
 					protected void moveIndex() {
 						int length = temporaryAttributes.length;
-						while (index < length && temporaryAttributes[index] == unmarkedValue) {
+						while (index < length
+								&& temporaryAttributes[index] == unmarkedValue) {
 							index++;
 						}
 					}
 
 					@Override
 					public Edge next() {
-						if(!hasNext()){
-							throw new NoSuchElementException(NO_MORE_ELEMENTS_ERROR_MESSAGE);
+						if (!hasNext()) {
+							throw new NoSuchElementException(
+									NO_MORE_ELEMENTS_ERROR_MESSAGE);
 						}
-						if(version != LongEdgeMarker.this.version){
-							throw new ConcurrentModificationException(MODIFIED_ERROR_MESSAGE);
+						if (version != LongEdgeMarker.this.version) {
+							throw new ConcurrentModificationException(
+									MODIFIED_ERROR_MESSAGE);
 						}
 						Edge next = graph.getEdge(index++);
 						moveIndex();
 						return next;
-					}		
+					}
 				};
-				
+
 			}
 
 		};

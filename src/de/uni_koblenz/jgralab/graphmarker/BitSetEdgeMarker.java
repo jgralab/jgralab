@@ -51,11 +51,6 @@ public class BitSetEdgeMarker extends BitSetGraphMarker<Edge> {
 	public boolean mark(Edge edge) {
 		return super.mark(edge.getNormalEdge());
 	}
-	
-	@Override
-	public boolean isMarked(Edge edge){
-		return super.isMarked(edge.getNormalEdge());
-	}
 
 	@Override
 	public Iterable<Edge> getMarkedElements() {
@@ -80,18 +75,20 @@ public class BitSetEdgeMarker extends BitSetGraphMarker<Edge> {
 
 					@Override
 					public Edge next() {
-						if(!hasNext()){
-							throw new NoSuchElementException(NO_MORE_ELEMENTS_ERROR_MESSAGE);
+						if (!hasNext()) {
+							throw new NoSuchElementException(
+									NO_MORE_ELEMENTS_ERROR_MESSAGE);
 						}
-						if(version != BitSetEdgeMarker.this.version){
-							throw new ConcurrentModificationException(MODIFIED_ERROR_MESSAGE);
+						if (version != BitSetEdgeMarker.this.version) {
+							throw new ConcurrentModificationException(
+									MODIFIED_ERROR_MESSAGE);
 						}
 						Edge next = graph.getEdge(index++);
 						moveIndex();
 						return next;
-					}		
+					}
 				};
-				
+
 			}
 
 		};
