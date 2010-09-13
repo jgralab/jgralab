@@ -20,6 +20,14 @@ import de.uni_koblenz.jgralab.algolib.visitors.GraphVisitorAdapter;
  * 
  */
 public class CompareWithAlternativeVisitorCompositions {
+	private static final int GRAPH_VISITOR_COUNT = 0;
+	private static final int SEARCH_VISITOR_COUNT = 2;
+	private static final int DFS_VISITOR_COUNT = 0;
+	private static final int ITERATIONS = 10000000;
+	private static final int RUNS = 100;
+	private static final int IGNORE = 10; // number of best and worst times to
+
+	// ignore
 
 	private static class GraphVisitorExample extends GraphVisitorAdapter {
 		protected int j;
@@ -108,23 +116,23 @@ public class CompareWithAlternativeVisitorCompositions {
 
 	}
 
-	private static final int VISITOR_COUNT_PER_TYPE = 10;
-	private static final int ITERATIONS = 1000000;
-
 	public static void main(String[] args) {
 		Stopwatch sw = new Stopwatch();
 
-		GraphVisitor[] graphVisitors = new GraphVisitor[VISITOR_COUNT_PER_TYPE];
-		SearchVisitor[] searchVisitors = new SearchVisitor[VISITOR_COUNT_PER_TYPE];
-		DFSVisitor[] dfsVisitors = new DFSVisitor[VISITOR_COUNT_PER_TYPE];
+		GraphVisitor[] graphVisitors = new GraphVisitor[GRAPH_VISITOR_COUNT];
+		SearchVisitor[] searchVisitors = new SearchVisitor[SEARCH_VISITOR_COUNT];
+		DFSVisitor[] dfsVisitors = new DFSVisitor[DFS_VISITOR_COUNT];
 
-		for (int i = 0; i < VISITOR_COUNT_PER_TYPE; i++) {
+		for (int i = 0; i < GRAPH_VISITOR_COUNT; i++) {
 			graphVisitors[i] = new GraphVisitorExample(i);
+		}
 
+		for (int i = 0; i < SEARCH_VISITOR_COUNT; i++) {
 			searchVisitors[i] = new SearchVisitorExample(i);
+		}
 
+		for (int i = 0; i < DFS_VISITOR_COUNT; i++) {
 			dfsVisitors[i] = new DFSVisitorExample(i);
-
 		}
 
 		DFSVisitorComposition comp = new DFSVisitorComposition();
@@ -143,41 +151,68 @@ public class CompareWithAlternativeVisitorCompositions {
 			acomp.addVisitor(currentVisitor);
 		}
 
+		long[] average = new long[RUNS];
+
 		System.out.println("Current implementation:");
-		sw.reset();
-		sw.start();
-		for (int i = 0; i < ITERATIONS; i++) {
-			comp.visitVertex(null);
-			comp.visitEdge(null);
-			comp.visitRoot(null);
-			comp.visitTreeEdge(null);
-			comp.visitFrond(null);
-			comp.leaveVertex(null);
-			comp.leaveTreeEdge(null);
-			comp.visitForwardArc(null);
-			comp.visitBackwardArc(null);
-			comp.visitCrosslink(null);
+		for (int k = 0; k < RUNS; k++) {
+			sw.reset();
+			sw.start();
+			for (int i = 0; i < ITERATIONS; i++) {
+				comp.visitVertex(null);
+				comp.visitEdge(null);
+				comp.visitRoot(null);
+				comp.visitTreeEdge(null);
+				comp.visitFrond(null);
+				comp.leaveVertex(null);
+				comp.leaveTreeEdge(null);
+				comp.visitForwardArc(null);
+				comp.visitBackwardArc(null);
+				comp.visitCrosslink(null);
+			}
+			sw.stop();
+			System.out.print(".");
+			System.out.flush();
+			// System.out.println(sw.getDurationString());
+			average[k] = sw.getNanoDuration();
 		}
-		sw.stop();
-		System.out.println(sw.getDurationString());
+		System.out.println();
+		printResult(average);
+		System.out.println();
 
 		System.out.println("Alternative implementation:");
-		sw.reset();
-		sw.start();
-		for (int i = 0; i < ITERATIONS; i++) {
-			acomp.visitVertex(null);
-			acomp.visitEdge(null);
-			acomp.visitRoot(null);
-			acomp.visitTreeEdge(null);
-			acomp.visitFrond(null);
-			acomp.leaveVertex(null);
-			acomp.leaveTreeEdge(null);
-			acomp.visitForwardArc(null);
-			acomp.visitBackwardArc(null);
-			acomp.visitCrosslink(null);
+		for (int k = 0; k < RUNS; k++) {
+			sw.reset();
+			sw.start();
+			for (int i = 0; i < ITERATIONS; i++) {
+				acomp.visitVertex(null);
+				acomp.visitEdge(null);
+				acomp.visitRoot(null);
+				acomp.visitTreeEdge(null);
+				acomp.visitFrond(null);
+				acomp.leaveVertex(null);
+				acomp.leaveTreeEdge(null);
+				acomp.visitForwardArc(null);
+				acomp.visitBackwardArc(null);
+				acomp.visitCrosslink(null);
+			}
+			sw.stop();
+			System.out.print(".");
+			System.out.flush();
+			// System.out.println(sw.getDurationString());
+			average[k] = sw.getNanoDuration();
 		}
-		sw.stop();
-		System.out.println(sw.getDurationString());
+		System.out.println();
+		printResult(average);
+		System.out.println("Fini.");
+	}
 
+	private static void printResult(long[] average) {
+		long sum = 0;
+		for (int i = 0 + IGNORE; i < average.length - IGNORE; i++) {
+			sum += average[i];
+		}
+		System.out.println("Average: "
+				+ (sum / ((RUNS - 2 * IGNORE) * 1000.0 * 1000.0 * 1000.0))
+				+ " sec");
 	}
 }
