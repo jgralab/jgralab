@@ -430,6 +430,7 @@ elements."
    ;; complete attributes
    ((greql-variable-p)
     (greql-attribute-completion-list
+     ;; FIXME: vartypes is not defined!
      (tg-all-attributes-multi (car vartypes) (cadr vartypes) arg)))
    ;; complete keywords / functions
    (t
@@ -621,7 +622,7 @@ vertices in the query result."
              ""))))
 
 (defun greql-variable-p ()
-  (looking-back "[^{][[:word:]]+[.][[:word:]]*"))
+  (not (looking-back "{[[:word:]._]+?")))
 
 (defun greql-import-p ()
   (looking-back "import[[:space:]]+[[:word:]._]*"))
