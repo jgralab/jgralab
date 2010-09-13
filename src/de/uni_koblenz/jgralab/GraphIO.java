@@ -679,6 +679,7 @@ public class GraphIO {
 		Vertex nextV = graph.getFirstVertex();
 		while (nextV != null) {
 			if ((subGraph != null) && !subGraph.isMarked(nextV)) {
+				nextV = nextV.getNextVertex();
 				continue;
 			}
 			vId = nextV.getId();
@@ -700,6 +701,7 @@ public class GraphIO {
 			noSpace();
 			while (nextI != null) {
 				if ((subGraph != null) && !subGraph.isMarked(nextI)) {
+					nextI = nextI.getNextEdge();
 					continue;
 				}
 				writeLong(nextI.getId());
@@ -726,6 +728,7 @@ public class GraphIO {
 		Edge nextE = graph.getFirstEdgeInGraph();
 		while (nextE != null) {
 			if ((subGraph != null) && !subGraph.isMarked(nextE)) {
+				nextE = nextE.getNextEdgeInGraph();
 				continue;
 			}
 			eId = nextE.getId();
