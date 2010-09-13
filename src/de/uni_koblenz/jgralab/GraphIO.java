@@ -55,6 +55,7 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
+import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.impl.GraphBaseImpl;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.Attribute;
@@ -553,6 +554,44 @@ public class GraphIO {
 	}
 
 	/**
+	 * Saves the marked <code>subGraph</code> of the specified
+	 * <code>graph</code> to the file named <code>filename</code>. A
+	 * {@link ProgressFunction} <code>pf</code> can be used to monitor progress.
+	 * The stream is <em>not</em> closed. This method does <i>not</i> check if
+	 * the subgraph marker is complete.
+	 * 
+	 * @param out
+	 *            a DataOutputStream
+	 * @param graph
+	 *            a graph
+	 * @param subGraph
+	 *            a BooleanGraphMarker denoting the subgraph to be saved
+	 * @param pf
+	 *            a {@link ProgressFunction}, may be <code>null</code>
+	 * @throws GraphIOException
+	 *             if an IOException occurs
+	 */
+	public static void saveGraphToFile(String filename, Graph graph,
+			BooleanGraphMarker subGraph, ProgressFunction pf)
+			throws GraphIOException {
+		try {
+			DataOutputStream out;
+			if (filename.toLowerCase().endsWith(".gz")) {
+				out = new DataOutputStream(new GZIPOutputStream(
+						new FileOutputStream(filename), 65536));
+			} else {
+				out = new DataOutputStream(new BufferedOutputStream(
+						new FileOutputStream(filename), 65536));
+			}
+			saveGraphToStream(out, graph, subGraph, pf);
+			out.close();
+		} catch (IOException e) {
+			throw new GraphIOException("exception while saving graph to "
+					+ filename, e);
+		}
+	}
+
+	/**
 	 * Saves the specified <code>graph</code> to the stream <code>out</code>. A
 	 * {@link ProgressFunction} <code>pf</code> can be used to monitor progress.
 	 * The stream is <em>not</em> closed.
@@ -571,15 +610,46 @@ public class GraphIO {
 		try {
 			GraphIO io = new GraphIO();
 			io.TGOut = out;
-			io.saveGraph(graph, pf);
+			io.saveGraph(graph, pf, null);
 			out.flush();
 		} catch (IOException e) {
 			throw new GraphIOException("exception while saving graph", e);
 		}
 	}
 
-	private void saveGraph(Graph graph, ProgressFunction pf)
-			throws IOException, GraphIOException {
+	/**
+	 * Saves the marked <code>subGraph</code> of the specified
+	 * <code>graph</code> to the stream <code>out</code>. A
+	 * {@link ProgressFunction} <code>pf</code> can be used to monitor progress.
+	 * The stream is <em>not</em> closed. This method does <i>not</i> check if
+	 * the subgraph marker is complete.
+	 * 
+	 * @param out
+	 *            a DataOutputStream
+	 * @param graph
+	 *            a graph
+	 * @param subGraph
+	 *            a BooleanGraphMarker denoting the subgraph to be saved
+	 * @param pf
+	 *            a {@link ProgressFunction}, may be <code>null</code>
+	 * @throws GraphIOException
+	 *             if an IOException occurs
+	 */
+	public static void saveGraphToStream(DataOutputStream out, Graph graph,
+			BooleanGraphMarker subGraph, ProgressFunction pf)
+			throws GraphIOException {
+		try {
+			GraphIO io = new GraphIO();
+			io.TGOut = out;
+			io.saveGraph(graph, pf, subGraph);
+			out.flush();
+		} catch (IOException e) {
+			throw new GraphIOException("exception while saving graph", e);
+		}
+	}
+
+	private void saveGraph(Graph graph, ProgressFunction pf,
+			BooleanGraphMarker subGraph) throws IOException, GraphIOException {
 		// Write the jgralab version and license in a comment
 		saveHeader();
 
@@ -592,7 +662,11 @@ public class GraphIO {
 		// progress bar for graph
 		long graphElements = 0, currentCount = 0, interval = 1;
 		if (pf != null) {
-			pf.init(graph.getVCount() + graph.getECount());
+			if (subGraph != null) {
+				pf.init(subGraph.size());
+			} else {
+				pf.init(graph.getVCount() + graph.getECount());
+			}
 			interval = pf.getUpdateInterval();
 		}
 
@@ -610,6 +684,9 @@ public class GraphIO {
 		// write vertices
 		Vertex nextV = graph.getFirstVertex();
 		while (nextV != null) {
+			if (subGraph != null && !subGraph.isMarked(nextV)) {
+				continue;
+			}
 			vId = nextV.getId();
 			AttributedElementClass aec = nextV.getAttributedElementClass();
 			Package currentPackage = aec.getPackage();
@@ -628,6 +705,9 @@ public class GraphIO {
 			write(" <");
 			noSpace();
 			while (nextI != null) {
+				if (subGraph != null && !subGraph.isMarked(nextI)) {
+					continue;
+				}
 				writeLong(nextI.getId());
 				nextI = nextI.getNextEdge();
 			}
@@ -651,6 +731,9 @@ public class GraphIO {
 		// write edges
 		Edge nextE = graph.getFirstEdgeInGraph();
 		while (nextE != null) {
+			if (subGraph != null && !subGraph.isMarked(nextE)) {
+				continue;
+			}
 			eId = nextE.getId();
 			AttributedElementClass aec = nextE.getAttributedElementClass();
 			Package currentPackage = aec.getPackage();
