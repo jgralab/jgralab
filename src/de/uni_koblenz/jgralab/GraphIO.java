@@ -668,8 +668,23 @@ public class GraphIO {
 		write("Graph " + toUtfString(graph.getId()) + " "
 				+ graph.getGraphVersion());
 		writeIdentifier(graph.getAttributedElementClass().getQualifiedName());
+		int vCount = graph.getVCount();
+		int eCount = graph.getECount();
+		// with a GraphMarker, v/eCount have to be restricted to the marked
+		// elements.
+		if (subGraph != null) {
+			vCount = 0;
+			eCount = 0;
+			for (AttributedElement ae : subGraph.getMarkedElements()) {
+				if (ae instanceof Vertex) {
+					vCount++;
+				} else if (ae instanceof Edge) {
+					eCount++;
+				}
+			}
+		}
 		write(" (" + graph.getMaxVCount() + " " + graph.getMaxECount() + " "
-				+ graph.getVCount() + " " + graph.getECount() + ")");
+				+ vCount + " " + eCount + ")");
 		space();
 		graph.writeAttributeValues(this);
 		write(";\n");
