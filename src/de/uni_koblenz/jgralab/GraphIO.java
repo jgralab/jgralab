@@ -568,7 +568,7 @@ public class GraphIO {
 	 * @throws GraphIOException
 	 *             if an IOException occurs
 	 */
-	public static void saveGraphToFile(String filename, Graph graph,
+	public static void saveGraphToFile(String filename,
 			BooleanGraphMarker subGraph, ProgressFunction pf)
 			throws GraphIOException {
 		try {
@@ -678,7 +678,7 @@ public class GraphIO {
 		// write vertices
 		Vertex nextV = graph.getFirstVertex();
 		while (nextV != null) {
-			if (subGraph != null && !subGraph.isMarked(nextV)) {
+			if ((subGraph != null) && !subGraph.isMarked(nextV)) {
 				continue;
 			}
 			vId = nextV.getId();
@@ -699,7 +699,7 @@ public class GraphIO {
 			write(" <");
 			noSpace();
 			while (nextI != null) {
-				if (subGraph != null && !subGraph.isMarked(nextI)) {
+				if ((subGraph != null) && !subGraph.isMarked(nextI)) {
 					continue;
 				}
 				writeLong(nextI.getId());
@@ -725,7 +725,7 @@ public class GraphIO {
 		// write edges
 		Edge nextE = graph.getFirstEdgeInGraph();
 		while (nextE != null) {
-			if (subGraph != null && !subGraph.isMarked(nextE)) {
+			if ((subGraph != null) && !subGraph.isMarked(nextE)) {
 				continue;
 			}
 			eId = nextE.getId();
@@ -1096,7 +1096,7 @@ public class GraphIO {
 	 *             if an IOException occurs or the compiled schema classes can
 	 *             not be loaded
 	 */
-	public static Graph loadGrapfFromFileWithSavememSupport(String filename,
+	public static Graph loadGraphFromFileWithSavememSupport(String filename,
 			Schema schema, ProgressFunction pf) throws GraphIOException {
 		return loadGraphFromFile(filename, schema, pf,
 				ImplementationType.SAVEMEM);
