@@ -91,6 +91,8 @@ public class GraphIO {
 	public static String NULL_LITERAL = "n";
 	public static String TRUE_LITERAL = "t";
 	public static String FALSE_LITERAL = "f";
+	public static String TGRAPH_FILE_EXTENSION = ".tg";
+	public static String TGRAPH_COMPRESSED_FILE_EXTENSION = ".tg.gz";
 
 	/**
 	 * A {@link FilenameFilter} that accepts TG files.
