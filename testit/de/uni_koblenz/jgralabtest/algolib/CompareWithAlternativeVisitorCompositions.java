@@ -20,14 +20,21 @@ import de.uni_koblenz.jgralab.algolib.visitors.GraphVisitorAdapter;
  * 
  */
 public class CompareWithAlternativeVisitorCompositions {
-	private static final int GRAPH_VISITOR_COUNT = 0;
-	private static final int SEARCH_VISITOR_COUNT = 2;
-	private static final int DFS_VISITOR_COUNT = 0;
-	private static final int ITERATIONS = 10000000;
-	private static final int RUNS = 100;
-	private static final int IGNORE = 10; // number of best and worst times to
 
-	// ignore
+	private static final int RUNS = 100;
+	/**
+	 * number of best and worst times to ignore
+	 */
+	private static final int IGNORE = 10;
+
+	private static final int GRAPH_VISITOR_COUNT = 2;
+	private static final int SEARCH_VISITOR_COUNT = 0;
+	private static final int DFS_VISITOR_COUNT = 1;
+	private static final int VERTEX_COUNT = 1000000;
+	private static final int FROND_COUNT = 500000;
+	private static final int KAPPA = 5;
+	private static final int TREE_EDGE_COUNT = VERTEX_COUNT - KAPPA;
+	private static final int EDGE_COUNT = TREE_EDGE_COUNT + FROND_COUNT;
 
 	private static class GraphVisitorExample extends GraphVisitorAdapter {
 		protected int j;
@@ -155,24 +162,7 @@ public class CompareWithAlternativeVisitorCompositions {
 
 		System.out.println("Current implementation:");
 		for (int k = 0; k < RUNS; k++) {
-			sw.reset();
-			sw.start();
-			for (int i = 0; i < ITERATIONS; i++) {
-				comp.visitVertex(null);
-				comp.visitEdge(null);
-				comp.visitRoot(null);
-				comp.visitTreeEdge(null);
-				comp.visitFrond(null);
-				comp.leaveVertex(null);
-				comp.leaveTreeEdge(null);
-				comp.visitForwardArc(null);
-				comp.visitBackwardArc(null);
-				comp.visitCrosslink(null);
-			}
-			sw.stop();
-			System.out.print(".");
-			System.out.flush();
-			// System.out.println(sw.getDurationString());
+			oneRun(sw, comp);
 			average[k] = sw.getNanoDuration();
 		}
 		System.out.println();
@@ -181,29 +171,48 @@ public class CompareWithAlternativeVisitorCompositions {
 
 		System.out.println("Alternative implementation:");
 		for (int k = 0; k < RUNS; k++) {
-			sw.reset();
-			sw.start();
-			for (int i = 0; i < ITERATIONS; i++) {
-				acomp.visitVertex(null);
-				acomp.visitEdge(null);
-				acomp.visitRoot(null);
-				acomp.visitTreeEdge(null);
-				acomp.visitFrond(null);
-				acomp.leaveVertex(null);
-				acomp.leaveTreeEdge(null);
-				acomp.visitForwardArc(null);
-				acomp.visitBackwardArc(null);
-				acomp.visitCrosslink(null);
-			}
-			sw.stop();
-			System.out.print(".");
-			System.out.flush();
-			// System.out.println(sw.getDurationString());
+			oneRun(sw, acomp);
 			average[k] = sw.getNanoDuration();
 		}
 		System.out.println();
 		printResult(average);
 		System.out.println("Fini.");
+	}
+
+	private static void oneRun(Stopwatch sw, DFSVisitor comp) {
+		sw.reset();
+		sw.start();
+		for (int i = 0; i < KAPPA; i++) {
+			comp.visitRoot(null);
+		}
+		for (int i = 0; i < VERTEX_COUNT; i++) {
+			comp.visitVertex(null);
+			comp.leaveVertex(null);
+		}
+		for (int i = 0; i < EDGE_COUNT; i++) {
+			comp.visitEdge(null);
+		}
+		for (int i = 0; i < TREE_EDGE_COUNT; i++) {
+			comp.visitTreeEdge(null);
+			comp.leaveTreeEdge(null);
+		}
+		for (int i = 0, frondType = 0; i < FROND_COUNT; i++, frondType = (frondType + 1) % 3) {
+			comp.visitFrond(null);
+			switch (frondType) {
+			case 0:
+				comp.visitForwardArc(null);
+				break;
+			case 1:
+				comp.visitBackwardArc(null);
+				break;
+			case 2:
+				comp.visitCrosslink(null);
+				break;
+			}
+		}
+		sw.stop();
+		System.out.print(".");
+		System.out.flush();
 	}
 
 	private static void printResult(long[] average) {
