@@ -622,7 +622,9 @@ vertices in the query result."
              ""))))
 
 (defun greql-variable-p ()
-  (not (looking-back "{[[:word:]._]+?")))
+  (and (looking-back "[[:word:]_]\\.[[:word:]_]*?")
+       (not looking-back "import .*")
+       (not (looking-back "{[[:word:]_]*?"))))
 
 (defun greql-import-p ()
   (looking-back "import[[:space:]]+[[:word:]._]*"))
