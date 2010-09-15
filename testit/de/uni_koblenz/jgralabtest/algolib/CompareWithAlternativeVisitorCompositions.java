@@ -30,8 +30,8 @@ public class CompareWithAlternativeVisitorCompositions {
 	private static final int GRAPH_VISITOR_COUNT = 2;
 	private static final int SEARCH_VISITOR_COUNT = 0;
 	private static final int DFS_VISITOR_COUNT = 1;
-	private static final int VERTEX_COUNT = 1000000;
-	private static final int FROND_COUNT = 500000;
+	private static final int VERTEX_COUNT = 100000;
+	private static final int FROND_COUNT = 50000;
 	private static final int KAPPA = 5;
 	private static final int TREE_EDGE_COUNT = VERTEX_COUNT - KAPPA;
 	private static final int EDGE_COUNT = TREE_EDGE_COUNT + FROND_COUNT;
@@ -124,6 +124,21 @@ public class CompareWithAlternativeVisitorCompositions {
 	}
 
 	public static void main(String[] args) {
+		System.out.println("Simulating complete DFS with the following attributes:");
+		System.out.println();
+		System.out.println("Runs     : " + RUNS);
+		System.out.println("Ignoring : " + IGNORE * 2);
+		System.out.println();
+		System.out.println("GraphVisitors  : " + GRAPH_VISITOR_COUNT);
+		System.out.println("SearchVisitors : " + SEARCH_VISITOR_COUNT);
+		System.out.println("DFS Visitors   : " + DFS_VISITOR_COUNT);
+		System.out.println();
+		System.out.println("Vertices : " + VERTEX_COUNT);
+		System.out.println("Edges    : " + EDGE_COUNT);
+		System.out.println("\u03f0        : " + KAPPA);
+		System.out.println();
+		System.out.println("Each dot represents a run.");
+		System.out.println();
 		Stopwatch sw = new Stopwatch();
 
 		GraphVisitor[] graphVisitors = new GraphVisitor[GRAPH_VISITOR_COUNT];
@@ -176,6 +191,7 @@ public class CompareWithAlternativeVisitorCompositions {
 		}
 		System.out.println();
 		printResult(average);
+		System.out.println();
 		System.out.println("Fini.");
 	}
 
