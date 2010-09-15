@@ -24,11 +24,11 @@
 package de.uni_koblenz.jgralab.impl;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.InvocationTargetException;
 
+import javax.swing.BorderFactory;
 import javax.swing.BoundedRangeModel;
 import javax.swing.DefaultBoundedRangeModel;
 import javax.swing.JFrame;
@@ -116,22 +116,27 @@ public class SwingProgressFunction implements ProgressFunction, ActionListener {
 				wnd = new JFrame(title);
 				wnd.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 				wnd.setResizable(false);
-				wnd.setLayout(new BorderLayout());
-				wnd.setMinimumSize(new Dimension(200, 100));
+				// wnd.setLayout(new BorderLayout());
+				// wnd.setMinimumSize(new Dimension(200, 100));
 
 				pb = new JProgressBar();
 				brm = new DefaultBoundedRangeModel();
 				pb.setModel(brm);
 				updateInterval = brm.getMaximum() > totalElements ? 1
 						: totalElements / brm.getMaximum();
+
+				JPanel pnl = new JPanel();
+				pnl.setLayout(new BorderLayout(8, 8));
+				pnl.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
+				wnd.getContentPane().add(pnl);
+
 				lbl = new JLabel("####### elements, ###.#s", JLabel.CENTER);
 
-				wnd.getContentPane().add(new JLabel(label, JLabel.CENTER),
-						BorderLayout.NORTH);
-				wnd.getContentPane().add(pb, BorderLayout.CENTER);
-				wnd.getContentPane().add(lbl, BorderLayout.SOUTH);
-				wnd.getContentPane().add(new JPanel(), BorderLayout.WEST);
-				wnd.getContentPane().add(new JPanel(), BorderLayout.EAST);
+				pnl.add(new JLabel(label, JLabel.CENTER), BorderLayout.NORTH);
+				pnl.add(pb, BorderLayout.CENTER);
+				pnl.add(lbl, BorderLayout.SOUTH);
+				pnl.add(new JPanel(), BorderLayout.WEST);
+				pnl.add(new JPanel(), BorderLayout.EAST);
 				startTime = System.currentTimeMillis();
 				wnd.pack();
 				setTimeText();

@@ -211,14 +211,15 @@ public class GreqlServer extends Thread {
 			out.println("==================");
 			if (result.isCollection()) {
 				JValueCollection coll = result.toCollection();
-				println("Result contains " + coll.size() + " elements.\n",
+				println("Result collection (" + coll.getClass().getSimpleName()
+						+ ") contains " + coll.size() + " elements.\n",
 						PrintTarget.CLIENT, true);
 				for (JValue jv : coll) {
 					println(jv.toString(), PrintTarget.CLIENT, false);
 				}
 			} else if (result.isMap()) {
 				JValueMap map = result.toJValueMap();
-				println("Result contains " + map.size() + " map entries.\n",
+				println("Result map contains " + map.size() + " map entries.\n",
 						PrintTarget.CLIENT, true);
 				for (Entry<JValue, JValue> e : map.entrySet()) {
 					println(e.getKey() + " --> " + e.getValue(),
