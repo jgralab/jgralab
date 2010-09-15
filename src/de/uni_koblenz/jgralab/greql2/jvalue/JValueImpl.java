@@ -1189,6 +1189,12 @@ public class JValueImpl implements JValue {
 
 	@Override
 	public void storeAsXML(String filename) throws JValueVisitorException {
-		new JValueXMLOutputVisitor(this, filename);
+		new JValueXMLOutputVisitor(this, filename, null);
+	}
+
+	@Override
+	public void storeAsXML(String filename, Graph graph)
+			throws JValueVisitorException {
+		new JValueXMLOutputVisitor(this, filename, graph);
 	}
 }

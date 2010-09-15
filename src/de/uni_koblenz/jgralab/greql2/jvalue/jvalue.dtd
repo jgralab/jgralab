@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- TODO this DTD is far from complete... not (yet) suitable for validation... --> 
+<!DOCTYPE jvalue [
+<!ELEMENT jvalue (integer|long|double|string|boolean|enum|list|bag|set|tuple|graph|attributedelementClass)>
+<!ATTLIST jvalue graphId CDATA #IMPLIED>
+<!ATTLIST browsingInfo >
+<!ELEMENT integer EMPTY>
+<!ATTLIST integer value CDATA #REQUIRED vertexLink CDATA #IMPLIED edgeLink CDATA #IMPLIED graphLink CDATA #IMPLIED>
+<!ELEMENT long EMPTY>
+<!ATTLIST long value CDATA #REQUIRED vertexLink CDATA #IMPLIED edgeLink CDATA #IMPLIED graphLink CDATA #IMPLIED>
+<!ELEMENT double EMPTY>
+<!ATTLIST double value CDATA #REQUIRED vertexLink CDATA #IMPLIED edgeLink CDATA #IMPLIED graphLink CDATA #IMPLIED>
+<!ELEMENT string EMPTY>
+<!ATTLIST string value CDATA #REQUIRED vertexLink CDATA #IMPLIED edgeLink CDATA #IMPLIED graphLink CDATA #IMPLIED>
+<!ELEMENT boolean EMPTY>
+<!ATTLIST boolean value CDATA #REQUIRED vertexLink CDATA #IMPLIED edgeLink CDATA #IMPLIED graphLink CDATA #IMPLIED>
+<!ELEMENT enum EMPTY>
+<!ATTLIST enum value CDATA #REQUIRED type CDATA #REQUIRED vertexLink CDATA #IMPLIED edgeLink CDATA #IMPLIED graphLink CDATA #IMPLIED>
+]>
+<invalid/>

@@ -42,16 +42,23 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.exception.JValueVisitorException;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
-public class JValueXMLOutputVisitor extends JValueDefaultVisitor {
+public class JValueXMLOutputVisitor extends JValueDefaultVisitor implements
+		JValueXMLConstants {
 
 	private IndentingXMLStreamWriter writer = null;
+	private Graph graph;
 
 	public JValueXMLOutputVisitor(JValue val, String fileName) {
+		this(val, fileName, null);
+	}
+
+	public JValueXMLOutputVisitor(JValue val, String fileName, Graph g) {
+		graph = g;
 		try {
 			writer = new IndentingXMLStreamWriter(XMLOutputFactory
 					.newInstance().createXMLStreamWriter(
 							new BufferedOutputStream(new FileOutputStream(
-									fileName))), "UTF-8");
+									fileName))));
 		} catch (FileNotFoundException e) {
 			throw new JValueVisitorException("Can't create XML output", null, e);
 		} catch (XMLStreamException e) {
@@ -69,6 +76,19 @@ public class JValueXMLOutputVisitor extends JValueDefaultVisitor {
 	public void head() {
 		try {
 			writer.writeStartDocument("UTF-8", "1.0");
+			// writer.writeDTD("<!DOCTYPE jvalue [\n"
+			// +
+			// "<!ENTITY % value \"integer|long|double|string|boolean|list|bag|set|tuple\">\n"
+			// + "<!ENTITY % bi \"(browsingInfo?)\">\n"
+			// + "<!ELEMENT jvalue (value)>\n" + "<!ATTLIST jvalue\n"
+			// + "graphId CDATA #IMPLIED\n" + ">\n"
+			// + "<!ELEMENT integer %bi;>\n" + "<!ATTLIST integer\n"
+			// + "value PCDATA #REQUIRED\n" + ">\n" + "]>");
+
+			writer.writeStartElement(JVALUE);
+			if (graph != null) {
+				writer.writeAttribute(ATTR_GRAPH_ID, graph.getId());
+			}
 		} catch (XMLStreamException e) {
 			e.printStackTrace();
 		}
@@ -77,6 +97,7 @@ public class JValueXMLOutputVisitor extends JValueDefaultVisitor {
 	@Override
 	public void foot() {
 		try {
+			writer.writeEndElement();
 			writer.writeEndDocument();
 			writer.writeCharacters("\n");
 			writer.flush();
@@ -96,39 +117,32 @@ public class JValueXMLOutputVisitor extends JValueDefaultVisitor {
 	public void visitAttributedElementClass(JValue a) {
 		AttributedElementClass aec = a.toAttributedElementClass();
 		try {
-			writer.writeStartElement(JValueXMLConstants.ATTRIBUTEDELEMENTCLASS);
-			writer.writeAttribute(JValueXMLConstants.ATTR_NAME,
-					aec.getQualifiedName());
-			writer.writeAttribute(JValueXMLConstants.ATTR_SCHEMA, aec
-					.getSchema().getQualifiedName());
-			writeBrowsingInfo(a.getBrowsingInfo());
-			writer.writeEndElement();
+			writer.writeEmptyElement(ATTRIBUTEDELEMENTCLASS);
+			writer.writeAttribute(ATTR_NAME, aec.getQualifiedName());
+			writer.writeAttribute(ATTR_SCHEMA, aec.getSchema()
+					.getQualifiedName());
+			writeBrowsingInfo(a);
 		} catch (XMLStreamException e) {
 			e.printStackTrace();
 		}
 	}
 
-	private void writeBrowsingInfo(AttributedElement bi)
-			throws XMLStreamException {
+	private void writeBrowsingInfo(JValue v) throws XMLStreamException {
+		AttributedElement bi = v.getBrowsingInfo();
 		if (bi == null) {
 			return;
 		}
-		writer.writeStartElement(JValueXMLConstants.BROWSINGINFO);
 		if (bi instanceof GraphElement) {
 			GraphElement ge = (GraphElement) bi;
-			writer.writeEmptyElement(ge instanceof Edge ? JValueXMLConstants.EDGE
-					: JValueXMLConstants.VERTEX);
-			writer.writeAttribute(JValueXMLConstants.ATTR_ID,
-					String.valueOf(ge.getId()));
-			writer.writeAttribute(JValueXMLConstants.ATTR_GRAPH_ID,
-					String.valueOf(ge.getGraph().getId()));
+			writer.writeAttribute(ge instanceof Edge ? ATTR_EDGE_LINK
+					: ATTR_VERTEX_LINK, Integer.toString(ge.getId()));
+			if (ge.getGraph() != graph) {
+				writer.writeAttribute(ATTR_GRAPH_LINK,
+						String.valueOf(ge.getGraph().getId()));
+			}
 		} else {
-			writer.writeEmptyElement(JValueXMLConstants.GRAPH);
-			writer.writeAttribute(JValueXMLConstants.ATTR_GRAPH_ID,
-					((Graph) bi).getId());
+			writer.writeAttribute(ATTR_GRAPH_LINK, ((Graph) bi).getId());
 		}
-
-		writer.writeEndElement();
 	}
 
 	/*
@@ -141,8 +155,8 @@ public class JValueXMLOutputVisitor extends JValueDefaultVisitor {
 	@Override
 	public void visitBag(JValueBag b) {
 		try {
-			writer.writeStartElement(JValueXMLConstants.BAG);
-			writeBrowsingInfo(b.getBrowsingInfo());
+			writer.writeStartElement(BAG);
+			writeBrowsingInfo(b);
 			super.visitBag(b);
 			writer.writeEndElement();
 		} catch (XMLStreamException e) {
@@ -160,11 +174,9 @@ public class JValueXMLOutputVisitor extends JValueDefaultVisitor {
 	@Override
 	public void visitBoolean(JValue b) {
 		try {
-			writer.writeStartElement(JValueXMLConstants.BOOLEAN);
-			writer.writeAttribute(JValueXMLConstants.ATTR_VALUE, b.toBoolean()
-					.toString());
-			writeBrowsingInfo(b.getBrowsingInfo());
-			writer.writeEndElement();
+			writer.writeEmptyElement(BOOLEAN);
+			writer.writeAttribute(ATTR_VALUE, b.toBoolean().toString());
+			writeBrowsingInfo(b);
 		} catch (XMLStreamException e) {
 			e.printStackTrace();
 		}
@@ -180,11 +192,9 @@ public class JValueXMLOutputVisitor extends JValueDefaultVisitor {
 	@Override
 	public void visitDouble(JValue n) {
 		try {
-			writer.writeStartElement(JValueXMLConstants.DOUBLE);
-			writer.writeAttribute(JValueXMLConstants.ATTR_VALUE, n.toDouble()
-					.toString());
-			writeBrowsingInfo(n.getBrowsingInfo());
-			writer.writeEndElement();
+			writer.writeEmptyElement(DOUBLE);
+			writer.writeAttribute(ATTR_VALUE, n.toDouble().toString());
+			writeBrowsingInfo(n);
 		} catch (XMLStreamException e) {
 			e.printStackTrace();
 		}
@@ -201,13 +211,15 @@ public class JValueXMLOutputVisitor extends JValueDefaultVisitor {
 	public void visitEdge(JValue e) {
 		Edge edge = e.toEdge();
 		try {
-			writer.writeStartElement(JValueXMLConstants.EDGE);
-			writer.writeAttribute(JValueXMLConstants.ATTR_ID,
-					String.valueOf(edge.getId()));
-			writer.writeAttribute(JValueXMLConstants.ATTR_GRAPH_ID,
-					String.valueOf(edge.getGraph().getId()));
-			writeBrowsingInfo(e.getBrowsingInfo());
-			writer.writeEndElement();
+			writer.writeEmptyElement(EDGE);
+			writer.writeAttribute(ATTR_ID, Integer.toString(edge.getId()));
+			if (edge.getGraph() != graph) {
+				writer.writeAttribute(ATTR_GRAPH_ID,
+						String.valueOf(edge.getGraph().getId()));
+			}
+			if (edge != e.getBrowsingInfo()) {
+				writeBrowsingInfo(e);
+			}
 		} catch (XMLStreamException ex) {
 			ex.printStackTrace();
 		}
@@ -224,12 +236,11 @@ public class JValueXMLOutputVisitor extends JValueDefaultVisitor {
 	public void visitEnumValue(JValue e) {
 		Enum<?> val = e.toEnum();
 		try {
-			writer.writeStartElement(JValueXMLConstants.ENUMVALUE);
-			writer.writeAttribute(JValueXMLConstants.ATTR_VALUE, val.name());
-			writer.writeAttribute(JValueXMLConstants.ATTR_TYPE, val
-					.getDeclaringClass().getCanonicalName());
-			writeBrowsingInfo(e.getBrowsingInfo());
-			writer.writeEndElement();
+			writer.writeEmptyElement(ENUM);
+			writer.writeAttribute(ATTR_VALUE, val.name());
+			writer.writeAttribute(ATTR_TYPE, val.getDeclaringClass()
+					.getCanonicalName());
+			writeBrowsingInfo(e);
 		} catch (XMLStreamException ex) {
 			ex.printStackTrace();
 		}
@@ -246,11 +257,11 @@ public class JValueXMLOutputVisitor extends JValueDefaultVisitor {
 	public void visitGraph(JValue g) {
 		Graph graph = g.toGraph();
 		try {
-			writer.writeStartElement(JValueXMLConstants.GRAPH);
-			writer.writeAttribute(JValueXMLConstants.ATTR_GRAPH_ID,
-					graph.getId());
-			writeBrowsingInfo(g.getBrowsingInfo());
-			writer.writeEndElement();
+			writer.writeEmptyElement(GRAPH);
+			writer.writeAttribute(ATTR_GRAPH_ID, graph.getId());
+			if (graph != g.getBrowsingInfo()) {
+				writeBrowsingInfo(g);
+			}
 		} catch (XMLStreamException ex) {
 			ex.printStackTrace();
 		}
@@ -266,11 +277,9 @@ public class JValueXMLOutputVisitor extends JValueDefaultVisitor {
 	@Override
 	public void visitInt(JValue n) {
 		try {
-			writer.writeStartElement(JValueXMLConstants.INTEGER);
-			writer.writeAttribute(JValueXMLConstants.ATTR_VALUE, n.toInteger()
-					.toString());
-			writeBrowsingInfo(n.getBrowsingInfo());
-			writer.writeEndElement();
+			writer.writeEmptyElement(INTEGER);
+			writer.writeAttribute(ATTR_VALUE, n.toInteger().toString());
+			writeBrowsingInfo(n);
 		} catch (XMLStreamException e) {
 			e.printStackTrace();
 		}
@@ -286,8 +295,8 @@ public class JValueXMLOutputVisitor extends JValueDefaultVisitor {
 	@Override
 	public void visitList(JValueList l) {
 		try {
-			writer.writeStartElement(JValueXMLConstants.LIST);
-			writeBrowsingInfo(l.getBrowsingInfo());
+			writer.writeStartElement(LIST);
+			writeBrowsingInfo(l);
 			super.visitList(l);
 			writer.writeEndElement();
 		} catch (XMLStreamException e) {
@@ -305,11 +314,9 @@ public class JValueXMLOutputVisitor extends JValueDefaultVisitor {
 	@Override
 	public void visitLong(JValue l) {
 		try {
-			writer.writeStartElement(JValueXMLConstants.LONG);
-			writer.writeAttribute(JValueXMLConstants.ATTR_VALUE, l.toLong()
-					.toString());
-			writeBrowsingInfo(l.getBrowsingInfo());
-			writer.writeEndElement();
+			writer.writeEmptyElement(LONG);
+			writer.writeAttribute(ATTR_VALUE, l.toLong().toString());
+			writeBrowsingInfo(l);
 		} catch (XMLStreamException e) {
 			e.printStackTrace();
 		}
@@ -325,16 +332,14 @@ public class JValueXMLOutputVisitor extends JValueDefaultVisitor {
 	@Override
 	public void visitMap(JValueMap m) {
 		try {
-			writer.writeStartElement(JValueXMLConstants.MAP);
-			writeBrowsingInfo(m.getBrowsingInfo());
-
+			writer.writeStartElement(MAP);
+			writeBrowsingInfo(m);
 			for (Entry<JValue, JValue> e : m.entrySet()) {
-				writer.writeStartElement(JValueXMLConstants.MAP_ENTRY);
+				writer.writeStartElement(MAP_ENTRY);
 				e.getKey().accept(this);
 				e.getValue().accept(this);
 				writer.writeEndElement();
 			}
-
 			writer.writeEndElement();
 		} catch (XMLStreamException e) {
 			e.printStackTrace();
@@ -351,12 +356,12 @@ public class JValueXMLOutputVisitor extends JValueDefaultVisitor {
 	@Override
 	public void visitRecord(JValueRecord r) {
 		try {
-			writer.writeStartElement(JValueXMLConstants.RECORD);
-			writeBrowsingInfo(r.getBrowsingInfo());
+			writer.writeStartElement(RECORD);
+			writeBrowsingInfo(r);
 
 			for (String component : r.keySet()) {
-				writer.writeStartElement(JValueXMLConstants.RECORD_COMPONENT);
-				writer.writeAttribute(JValueXMLConstants.ATTR_NAME, component);
+				writer.writeStartElement(RECORD_COMPONENT);
+				writer.writeAttribute(ATTR_NAME, component);
 				r.get(component).accept(this);
 				writer.writeEndElement();
 			}
@@ -377,8 +382,8 @@ public class JValueXMLOutputVisitor extends JValueDefaultVisitor {
 	@Override
 	public void visitSet(JValueSet s) {
 		try {
-			writer.writeStartElement(JValueXMLConstants.SET);
-			writeBrowsingInfo(s.getBrowsingInfo());
+			writer.writeStartElement(SET);
+			writeBrowsingInfo(s);
 			super.visitSet(s);
 			writer.writeEndElement();
 		} catch (XMLStreamException e) {
@@ -396,10 +401,9 @@ public class JValueXMLOutputVisitor extends JValueDefaultVisitor {
 	@Override
 	public void visitString(JValue s) {
 		try {
-			writer.writeStartElement(JValueXMLConstants.STRING);
-			writer.writeAttribute(JValueXMLConstants.ATTR_VALUE, s.toString());
-			writeBrowsingInfo(s.getBrowsingInfo());
-			writer.writeEndElement();
+			writer.writeEmptyElement(STRING);
+			writer.writeAttribute(ATTR_VALUE, s.toString());
+			writeBrowsingInfo(s);
 		} catch (XMLStreamException e) {
 			e.printStackTrace();
 		}
@@ -415,8 +419,8 @@ public class JValueXMLOutputVisitor extends JValueDefaultVisitor {
 	@Override
 	public void visitTuple(JValueTuple t) {
 		try {
-			writer.writeStartElement(JValueXMLConstants.TUPLE);
-			writeBrowsingInfo(t.getBrowsingInfo());
+			writer.writeStartElement(TUPLE);
+			writeBrowsingInfo(t);
 			super.visitTuple(t);
 			writer.writeEndElement();
 		} catch (XMLStreamException e) {
@@ -435,13 +439,15 @@ public class JValueXMLOutputVisitor extends JValueDefaultVisitor {
 	public void visitVertex(JValue v) {
 		Vertex vertex = v.toVertex();
 		try {
-			writer.writeStartElement(JValueXMLConstants.VERTEX);
-			writer.writeAttribute(JValueXMLConstants.ATTR_ID,
-					String.valueOf(vertex.getId()));
-			writer.writeAttribute(JValueXMLConstants.ATTR_GRAPH_ID,
-					String.valueOf(vertex.getGraph().getId()));
-			writeBrowsingInfo(v.getBrowsingInfo());
-			writer.writeEndElement();
+			writer.writeEmptyElement(VERTEX);
+			writer.writeAttribute(ATTR_ID, String.valueOf(vertex.getId()));
+			if (vertex.getGraph() != graph) {
+				writer.writeAttribute(ATTR_GRAPH_ID,
+						String.valueOf(vertex.getGraph().getId()));
+			}
+			if (vertex != v.getBrowsingInfo()) {
+				writeBrowsingInfo(v);
+			}
 		} catch (XMLStreamException ex) {
 			ex.printStackTrace();
 		}
@@ -450,8 +456,8 @@ public class JValueXMLOutputVisitor extends JValueDefaultVisitor {
 	@Override
 	public void visitTable(JValueTable t) {
 		try {
-			writer.writeStartElement(JValueXMLConstants.TABLE);
-			writeBrowsingInfo(t.getBrowsingInfo());
+			writer.writeStartElement(TABLE);
+			writeBrowsingInfo(t);
 			super.visitTable(t);
 			writer.writeEndElement();
 		} catch (XMLStreamException ex) {

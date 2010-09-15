@@ -40,7 +40,7 @@ public class StoreJValueTest extends GenericTests {
 		String queryString = "bag(tup(\"Nodes:\", count(from v:V{} report v end)), tup(\"Edges:\", count(from e:E{} report e end)))";
 		JValue result = evalTestQuery("StoreJValue1", queryString);
 		JValueXMLOutputVisitor outputVisitor = new JValueXMLOutputVisitor(
-				result, "testit/testdata/storejvaluetest1.xml");
+				result, "testit/testdata/storejvaluetest1.xml", getTestGraph());
 		outputVisitor.toString();
 		JValueXMLLoader loader = new JValueXMLLoader(getTestGraph());
 		JValue loadedValue = loader
@@ -50,11 +50,24 @@ public class StoreJValueTest extends GenericTests {
 	}
 
 	@Test
+	public void testStoreJValue2a() throws Exception {
+		String queryString = "V{}";
+		JValue result = evalTestQuery("StoreJValue2a", queryString);
+		new JValueXMLOutputVisitor(result,
+				"testit/testdata/storejvaluetest2a.xml", getTestGraph());
+		JValueXMLLoader loader = new JValueXMLLoader(getTestGraph());
+		JValue loadedValue = loader
+				.load("testit/testdata/storejvaluetest2a.xml");
+		assertNotNull(loadedValue);
+		assertEquals(result, loadedValue);
+	}
+
+	@Test
 	public void testStoreJValue2() throws Exception {
 		String queryString = "from v:V{} report v as \"Nodes\" end";
 		JValue result = evalTestQuery("StoreJValue2", queryString);
 		new JValueXMLOutputVisitor(result,
-				"testit/testdata/storejvaluetest2.xml");
+				"testit/testdata/storejvaluetest2.xml", getTestGraph());
 		JValueXMLLoader loader = new JValueXMLLoader(getTestGraph());
 		JValue loadedValue = loader
 				.load("testit/testdata/storejvaluetest2.xml");
@@ -64,10 +77,10 @@ public class StoreJValueTest extends GenericTests {
 
 	@Test
 	public void testStoreJValue3() throws Exception {
-		String queryString = "from x,y:list(1..100) reportTable \"X\", \"Y\", x*y end";
+		String queryString = "from x,y:list(1..100) reportTable x, y, x*y end";
 		JValue result = evalTestQuery("StoreJValue3", queryString);
 		new JValueXMLOutputVisitor(result,
-				"testit/testdata/storejvaluetest3.xml");
+				"testit/testdata/storejvaluetest3.xml", getTestGraph());
 		JValueXMLLoader loader = new JValueXMLLoader(getTestGraph());
 		JValue loadedValue = loader
 				.load("testit/testdata/storejvaluetest3.xml");
