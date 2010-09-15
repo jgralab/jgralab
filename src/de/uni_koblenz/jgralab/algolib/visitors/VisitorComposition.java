@@ -23,55 +23,52 @@
  */
 package de.uni_koblenz.jgralab.algolib.visitors;
 
-import java.util.Collection;
-import java.util.LinkedHashSet;
+import java.util.ArrayList;
+import java.util.List;
 
 import de.uni_koblenz.jgralab.algolib.algorithms.GraphAlgorithm;
 
-public abstract class VisitorComposition implements
-		Visitor {
+public abstract class VisitorComposition implements Visitor {
 
-	private Collection<Visitor> visitors;
+	private List<Visitor> visitors;
+
+	{
+		createVisitorsLazily();
+	}
 
 	protected void createVisitorsLazily() {
 		if (visitors == null) {
-			visitors = new LinkedHashSet<Visitor>();
+			visitors = new ArrayList<Visitor>();
 		}
 	}
 
 	public void addVisitor(Visitor visitor) {
-		createVisitorsLazily();
-		visitors.add(visitor);
-	}
-
-	public void removeVisitor(Visitor visitor) {
-		if (visitors != null) {
-			visitors.remove(visitor);
-			if (visitors.size() == 0) {
-				visitors = null;
-			}
+		if (!visitors.contains(visitor)) {
+			visitors.add(visitor);
 		}
 	}
 
+	public void removeVisitor(Visitor visitor) {
+		visitors.remove(visitor);
+	}
+
 	public void clearVisitors() {
-		visitors = null;
+		visitors.clear();
 	}
 
 	@Override
 	public void reset() {
-		if (visitors != null) {
-			for (Visitor visitor : visitors) {
-				visitor.reset();
-			}
+		int n = visitors.size();
+		for (int i = 0; i < n; i++) {
+			visitors.get(i).reset();
 		}
 	}
 
 	@Override
 	public void setAlgorithm(GraphAlgorithm alg) {
-		if (visitors != null) {
-			for (Visitor visitor : visitors) {
-				visitor.setAlgorithm(alg);
-			}
+		int n = visitors.size();
+		for (int i = 0; i < n; i++) {
+			visitors.get(i).setAlgorithm(alg);
 		}
 	}
 }

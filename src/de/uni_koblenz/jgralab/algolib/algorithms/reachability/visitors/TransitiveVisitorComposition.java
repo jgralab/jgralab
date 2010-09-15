@@ -23,8 +23,8 @@
  */
 package de.uni_koblenz.jgralab.algolib.algorithms.reachability.visitors;
 
-import java.util.Collection;
-import java.util.LinkedHashSet;
+import java.util.ArrayList;
+import java.util.List;
 
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
@@ -33,13 +33,13 @@ import de.uni_koblenz.jgralab.algolib.visitors.VisitorComposition;
 public class TransitiveVisitorComposition extends VisitorComposition implements
 		TransitiveVisitor {
 
-	private Collection<TransitiveVisitor> visitors;
+	private List<TransitiveVisitor> visitors;
 
 	@Override
 	protected void createVisitorsLazily() {
 		super.createVisitorsLazily();
 		if (visitors == null) {
-			visitors = new LinkedHashSet<TransitiveVisitor>();
+			visitors = new ArrayList<TransitiveVisitor>();
 		}
 	}
 
@@ -57,28 +57,22 @@ public class TransitiveVisitorComposition extends VisitorComposition implements
 	@Override
 	public void removeVisitor(Visitor visitor) {
 		super.removeVisitor(visitor);
-		if (visitors != null) {
-			if (visitor instanceof TransitiveVisitor) {
-				visitors.remove(visitor);
-				if (visitors.size() == 0) {
-					visitors = null;
-				}
-			}
+		if (visitor instanceof TransitiveVisitor) {
+			visitors.remove(visitor);
 		}
 	}
 
 	@Override
 	public void clearVisitors() {
 		super.clearVisitors();
-		visitors = null;
+		visitors.clear();
 	}
 
 	@Override
 	public void visitVertexTriple(Vertex u, Vertex v, Vertex w) {
-		if (visitors != null) {
-			for (TransitiveVisitor currentVisitor : visitors) {
-				currentVisitor.visitVertexTriple(u, v, w);
-			}
+		int n = visitors.size();
+		for (int i = 0; i < n; i++) {
+			visitors.get(i).visitVertexTriple(u, v, w);
 		}
 	}
 
