@@ -64,34 +64,48 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public class Max extends Greql2Function {
 
 	{
-		JValueType[][] x = { { JValueType.COLLECTION, JValueType.DOUBLE } };
+		JValueType[][] x = { { JValueType.COLLECTION, JValueType.NUMBER } };
 		signatures = x;
 
-		description = "Return the maximum of the given collection of numbers.";
+		description = "Return the maximum of the given collection of numbers.\n"
+				+ "If the collection contains only integers, the result is an int or a long.";
 
 		Category[] c = { Category.COLLECTIONS_AND_MAPS };
 		categories = c;
 	}
 
 	@Override
-	public JValue evaluate(Graph graph, AbstractGraphMarker<AttributedElement> subgraph,
-			JValue[] arguments) throws EvaluateException {
+	public JValue evaluate(Graph graph,
+			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
+			throws EvaluateException {
 		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, arguments);
 		}
 
 		JValueCollection col = arguments[0].toCollection();
-		Double max = null;
+		boolean doubleFound = false;
+		double max = Double.NEGATIVE_INFINITY;
 		for (JValue curVal : col) {
 			if (curVal.isNumber()) {
-				if (max == null || curVal.toNumber().doubleValue() > max) {
+				if (curVal.isDouble()) {
+					doubleFound = true;
+				}
+				if (curVal.toNumber().doubleValue() > max) {
 					max = curVal.toNumber().doubleValue();
 				}
 			} else {
 				throw new WrongFunctionParameterException(this, arguments);
 			}
 		}
-		return new JValueImpl(max);
+		if (doubleFound) {
+			return new JValueImpl(max);
+		} else {
+			if ((max > Integer.MIN_VALUE) && (max < Integer.MAX_VALUE)) {
+				return new JValueImpl((int) max);
+			} else {
+				return new JValueImpl((long) max);
+			}
+		}
 	}
 
 	@Override
