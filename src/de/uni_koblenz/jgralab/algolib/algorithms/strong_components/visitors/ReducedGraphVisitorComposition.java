@@ -23,8 +23,8 @@
  */
 package de.uni_koblenz.jgralab.algolib.algorithms.strong_components.visitors;
 
-import java.util.Collection;
-import java.util.LinkedHashSet;
+import java.util.ArrayList;
+import java.util.List;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
@@ -34,13 +34,13 @@ import de.uni_koblenz.jgralab.algolib.visitors.VisitorComposition;
 public class ReducedGraphVisitorComposition extends VisitorComposition
 		implements ReducedGraphVisitor {
 
-	private Collection<ReducedGraphVisitor> visitors;
+	private List<ReducedGraphVisitor> visitors;
 
 	@Override
 	protected void createVisitorsLazily() {
 		super.createVisitorsLazily();
 		if (visitors == null) {
-			visitors = new LinkedHashSet<ReducedGraphVisitor>();
+			visitors = new ArrayList<ReducedGraphVisitor>();
 		}
 	}
 
@@ -55,42 +55,34 @@ public class ReducedGraphVisitorComposition extends VisitorComposition
 							+ ReducedGraphVisitor.class.getSimpleName() + ".");
 		}
 	}
-	
+
 	@Override
 	public void removeVisitor(Visitor visitor) {
 		super.removeVisitor(visitor);
-		if (visitors != null) {
-			if (visitor instanceof ReducedGraphVisitor) {
-				visitors.remove(visitor);
-				if (visitors.size() == 0) {
-					visitors = null;
-				}
-			}
+		if (visitor instanceof ReducedGraphVisitor) {
+			visitors.remove(visitor);
 		}
 	}
-	
+
 	@Override
 	public void clearVisitors() {
 		super.clearVisitors();
-		visitors = null;
+		visitors.clear();
 	}
 
 	@Override
 	public void visitReducedEdge(Edge e) {
-		if (visitors != null) {
-			for (Visitor currentVisitor : visitors) {
-				((ReducedGraphVisitor) currentVisitor).visitReducedEdge(e);
-			}
+		int n = visitors.size();
+		for (int i = 0; i < n; i++) {
+			visitors.get(i).visitReducedEdge(e);
 		}
 	}
 
 	@Override
 	public void visitRepresentativeVertex(Vertex v) {
-		if (visitors != null) {
-			for (Visitor currentVisitor : visitors) {
-				((ReducedGraphVisitor) currentVisitor)
-						.visitRepresentativeVertex(v);
-			}
+		int n = visitors.size();
+		for (int i = 0; i < n; i++) {
+			visitors.get(i).visitRepresentativeVertex(v);
 		}
 	}
 }

@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.AlternativeDFSVisitorComposition;
+import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.DFSVisitorComposition;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.DFSVisitorComposition;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.DFSVisitor;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.SearchVisitor;
@@ -29,11 +29,11 @@ public class CompareWithAlternativeVisitorCompositions {
 	 */
 	private static final int IGNORE = 25;
 
-	private static final int GRAPH_VISITOR_COUNT = 3;
-	private static final int SEARCH_VISITOR_COUNT = 3;
-	private static final int DFS_VISITOR_COUNT = 3;
-	private static final int VERTEX_COUNT = 100000;
-	private static final int FROND_COUNT = 50000;
+	private static final int GRAPH_VISITOR_COUNT = 0;
+	private static final int SEARCH_VISITOR_COUNT = 0;
+	private static final int DFS_VISITOR_COUNT = 0;
+	private static final int VERTEX_COUNT = 200000;
+	private static final int FROND_COUNT = 100005;
 	private static final int KAPPA = 5;
 	private static final int TREE_EDGE_COUNT = VERTEX_COUNT - KAPPA;
 	private static final int EDGE_COUNT = TREE_EDGE_COUNT + FROND_COUNT;
@@ -162,7 +162,7 @@ public class CompareWithAlternativeVisitorCompositions {
 
 		DFSVisitorComposition comp = new DFSVisitorComposition();
 		// TODO change alternative implementation class name
-		AlternativeDFSVisitorComposition acomp = new AlternativeDFSVisitorComposition();
+		DFSVisitorComposition acomp = new DFSVisitorComposition();
 
 		for (GraphVisitor currentVisitor : graphVisitors) {
 			comp.addVisitor(currentVisitor);
@@ -179,15 +179,6 @@ public class CompareWithAlternativeVisitorCompositions {
 
 		long[] average = new long[RUNS];
 
-		System.out.println("Current implementation:");
-		for (int k = 0; k < RUNS; k++) {
-			oneRun(sw, comp);
-			average[k] = sw.getNanoDuration();
-		}
-		System.out.println();
-		printResult(average);
-		System.out.println();
-
 		System.out.println("Alternative implementation:");
 		for (int k = 0; k < RUNS; k++) {
 			oneRun(sw, acomp);
@@ -196,6 +187,16 @@ public class CompareWithAlternativeVisitorCompositions {
 		System.out.println();
 		printResult(average);
 		System.out.println();
+		
+		System.out.println("Current implementation:");
+		for (int k = 0; k < RUNS; k++) {
+			oneRun(sw, comp);
+			average[k] = sw.getNanoDuration();
+		}
+		System.out.println();
+		printResult(average);
+		System.out.println();
+		
 		System.out.println("Fini.");
 	}
 

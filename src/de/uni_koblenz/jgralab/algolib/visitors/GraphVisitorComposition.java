@@ -23,8 +23,8 @@
  */
 package de.uni_koblenz.jgralab.algolib.visitors;
 
-import java.util.Collection;
-import java.util.LinkedHashSet;
+import java.util.ArrayList;
+import java.util.List;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
@@ -32,13 +32,13 @@ import de.uni_koblenz.jgralab.Vertex;
 public class GraphVisitorComposition extends
 		VisitorComposition implements GraphVisitor {
 
-	private Collection<GraphVisitor> visitors;
+	private List<GraphVisitor> visitors;
 
 	@Override
 	protected void createVisitorsLazily() {
 		super.createVisitorsLazily();
 		if (visitors == null) {
-			visitors = new LinkedHashSet<GraphVisitor>();
+			visitors = new ArrayList<GraphVisitor>();
 		}
 	}
 
@@ -46,44 +46,39 @@ public class GraphVisitorComposition extends
 	public void addVisitor(Visitor visitor) {
 		super.addVisitor(visitor);
 		if (visitor instanceof GraphVisitor) {
-			visitors.add((GraphVisitor) visitor);
+			if (!visitors.contains(visitor)) {
+				visitors.add((GraphVisitor) visitor);
+			}
 		}
 	}
 
 	@Override
 	public void removeVisitor(Visitor visitor) {
 		super.removeVisitor(visitor);
-		if (visitors != null) {
-			if (visitor instanceof GraphVisitor) {
-				visitors.remove(visitor);
-				if (visitors.size() == 0) {
-					visitors = null;
-				}
-			}
+		if (visitor instanceof GraphVisitor) {
+			visitors.remove(visitor);
 		}
 	}
-	
+
 	@Override
-	public void clearVisitors(){
+	public void clearVisitors() {
 		super.clearVisitors();
-		visitors = null;
+		visitors.clear();
 	}
 
 	@Override
 	public void visitEdge(Edge e) {
-		if (visitors != null) {
-			for (GraphVisitor currentVisitor : visitors) {
-				currentVisitor.visitEdge(e);
-			}
+		int n = visitors.size();
+		for (int i = 0; i < n; i++) {
+			visitors.get(i).visitEdge(e);
 		}
 	}
 
 	@Override
 	public void visitVertex(Vertex v) {
-		if (visitors != null) {
-			for (GraphVisitor currentVisitor : visitors) {
-				currentVisitor.visitVertex(v);
-			}
+		int n = visitors.size();
+		for (int i = 0; i < n; i++) {
+			visitors.get(i).visitVertex(v);
 		}
 	}
 }

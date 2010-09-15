@@ -23,7 +23,8 @@
  */
 package de.uni_koblenz.jgralab.algolib.algorithms.topological_order.visitors;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
 
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
@@ -32,7 +33,15 @@ import de.uni_koblenz.jgralab.algolib.visitors.VisitorComposition;
 public class TopologicalOrderVisitorComposition extends VisitorComposition
 		implements TopologicalOrderVisitor {
 
-	private Collection<TopologicalOrderVisitor> visitors;
+	private List<TopologicalOrderVisitor> visitors;
+
+	@Override
+	protected void createVisitorsLazily() {
+		super.createVisitorsLazily();
+		if (visitors == null) {
+			visitors = new ArrayList<TopologicalOrderVisitor>();
+		}
+	}
 	
 	@Override
 	public void addVisitor(Visitor visitor) {
@@ -48,12 +57,24 @@ public class TopologicalOrderVisitorComposition extends VisitorComposition
 	}
 
 	@Override
+	public void removeVisitor(Visitor visitor) {
+		super.removeVisitor(visitor);
+		if (visitor instanceof TopologicalOrderVisitor) {
+			visitors.remove(visitor);
+		}
+	}
+
+	@Override
+	public void clearVisitors() {
+		super.clearVisitors();
+		visitors.clear();
+	}
+
+	@Override
 	public void visitVertexInTopologicalOrder(Vertex v) {
-		if (visitors != null) {
-			for (Visitor currentVisitor : visitors) {
-				((TopologicalOrderVisitor) currentVisitor)
-						.visitVertexInTopologicalOrder(v);
-			}
+		int n = visitors.size();
+		for (int i = 0; i < n; i++) {
+			visitors.get(i).visitVertexInTopologicalOrder(v);
 		}
 	}
 
