@@ -55,6 +55,7 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
+import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.impl.GraphBaseImpl;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.Attribute;
@@ -90,6 +91,8 @@ public class GraphIO {
 	public static String NULL_LITERAL = "n";
 	public static String TRUE_LITERAL = "t";
 	public static String FALSE_LITERAL = "f";
+	public static String TGRAPH_FILE_EXTENSION = ".tg";
+	public static String TGRAPH_COMPRESSED_FILE_EXTENSION = ".tg.gz";
 
 	/**
 	 * A {@link FilenameFilter} that accepts TG files.
@@ -553,6 +556,41 @@ public class GraphIO {
 	}
 
 	/**
+	 * Saves the marked <code>subGraph</code> to the file named
+	 * <code>filename</code>. A {@link ProgressFunction} <code>pf</code> can be
+	 * used to monitor progress. The stream is <em>not</em> closed. This method
+	 * does <i>not</i> check if the subgraph marker is complete.
+	 * 
+	 * @param out
+	 *            a DataOutputStream
+	 * @param subGraph
+	 *            a BooleanGraphMarker denoting the subgraph to be saved
+	 * @param pf
+	 *            a {@link ProgressFunction}, may be <code>null</code>
+	 * @throws GraphIOException
+	 *             if an IOException occurs
+	 */
+	public static void saveGraphToFile(String filename,
+			BooleanGraphMarker subGraph, ProgressFunction pf)
+			throws GraphIOException {
+		try {
+			DataOutputStream out;
+			if (filename.toLowerCase().endsWith(".gz")) {
+				out = new DataOutputStream(new GZIPOutputStream(
+						new FileOutputStream(filename), 65536));
+			} else {
+				out = new DataOutputStream(new BufferedOutputStream(
+						new FileOutputStream(filename), 65536));
+			}
+			saveGraphToStream(out, subGraph, pf);
+			out.close();
+		} catch (IOException e) {
+			throw new GraphIOException("exception while saving graph to "
+					+ filename, e);
+		}
+	}
+
+	/**
 	 * Saves the specified <code>graph</code> to the stream <code>out</code>. A
 	 * {@link ProgressFunction} <code>pf</code> can be used to monitor progress.
 	 * The stream is <em>not</em> closed.
@@ -571,15 +609,43 @@ public class GraphIO {
 		try {
 			GraphIO io = new GraphIO();
 			io.TGOut = out;
-			io.saveGraph(graph, pf);
+			io.saveGraph(graph, pf, null);
 			out.flush();
 		} catch (IOException e) {
 			throw new GraphIOException("exception while saving graph", e);
 		}
 	}
 
-	private void saveGraph(Graph graph, ProgressFunction pf)
-			throws IOException, GraphIOException {
+	/**
+	 * Saves the marked <code>subGraph</code> to the stream <code>out</code>. A
+	 * {@link ProgressFunction} <code>pf</code> can be used to monitor progress.
+	 * The stream is <em>not</em> closed. This method does <i>not</i> check if
+	 * the subgraph marker is complete.
+	 * 
+	 * @param out
+	 *            a DataOutputStream
+	 * @param subGraph
+	 *            a BooleanGraphMarker denoting the subgraph to be saved
+	 * @param pf
+	 *            a {@link ProgressFunction}, may be <code>null</code>
+	 * @throws GraphIOException
+	 *             if an IOException occurs
+	 */
+	public static void saveGraphToStream(DataOutputStream out,
+			BooleanGraphMarker subGraph, ProgressFunction pf)
+			throws GraphIOException {
+		try {
+			GraphIO io = new GraphIO();
+			io.TGOut = out;
+			io.saveGraph(subGraph.getGraph(), pf, subGraph);
+			out.flush();
+		} catch (IOException e) {
+			throw new GraphIOException("exception while saving graph", e);
+		}
+	}
+
+	private void saveGraph(Graph graph, ProgressFunction pf,
+			BooleanGraphMarker subGraph) throws IOException, GraphIOException {
 		// Write the jgralab version and license in a comment
 		saveHeader();
 
@@ -592,7 +658,11 @@ public class GraphIO {
 		// progress bar for graph
 		long graphElements = 0, currentCount = 0, interval = 1;
 		if (pf != null) {
-			pf.init(graph.getVCount() + graph.getECount());
+			if (subGraph != null) {
+				pf.init(subGraph.size());
+			} else {
+				pf.init(graph.getVCount() + graph.getECount());
+			}
 			interval = pf.getUpdateInterval();
 		}
 
@@ -600,8 +670,23 @@ public class GraphIO {
 		write("Graph " + toUtfString(graph.getId()) + " "
 				+ graph.getGraphVersion());
 		writeIdentifier(graph.getAttributedElementClass().getQualifiedName());
+		int vCount = graph.getVCount();
+		int eCount = graph.getECount();
+		// with a GraphMarker, v/eCount have to be restricted to the marked
+		// elements.
+		if (subGraph != null) {
+			vCount = 0;
+			eCount = 0;
+			for (AttributedElement ae : subGraph.getMarkedElements()) {
+				if (ae instanceof Vertex) {
+					vCount++;
+				} else if (ae instanceof Edge) {
+					eCount++;
+				}
+			}
+		}
 		write(" (" + graph.getMaxVCount() + " " + graph.getMaxECount() + " "
-				+ graph.getVCount() + " " + graph.getECount() + ")");
+				+ vCount + " " + eCount + ")");
 		space();
 		graph.writeAttributeValues(this);
 		write(";\n");
@@ -610,6 +695,10 @@ public class GraphIO {
 		// write vertices
 		Vertex nextV = graph.getFirstVertex();
 		while (nextV != null) {
+			if ((subGraph != null) && !subGraph.isMarked(nextV)) {
+				nextV = nextV.getNextVertex();
+				continue;
+			}
 			vId = nextV.getId();
 			AttributedElementClass aec = nextV.getAttributedElementClass();
 			Package currentPackage = aec.getPackage();
@@ -628,6 +717,10 @@ public class GraphIO {
 			write(" <");
 			noSpace();
 			while (nextI != null) {
+				if ((subGraph != null) && !subGraph.isMarked(nextI)) {
+					nextI = nextI.getNextEdge();
+					continue;
+				}
 				writeLong(nextI.getId());
 				nextI = nextI.getNextEdge();
 			}
@@ -651,6 +744,10 @@ public class GraphIO {
 		// write edges
 		Edge nextE = graph.getFirstEdgeInGraph();
 		while (nextE != null) {
+			if ((subGraph != null) && !subGraph.isMarked(nextE)) {
+				nextE = nextE.getNextEdgeInGraph();
+				continue;
+			}
 			eId = nextE.getId();
 			AttributedElementClass aec = nextE.getAttributedElementClass();
 			Package currentPackage = aec.getPackage();
@@ -1019,7 +1116,7 @@ public class GraphIO {
 	 *             if an IOException occurs or the compiled schema classes can
 	 *             not be loaded
 	 */
-	public static Graph loadGrapfFromFileWithSavememSupport(String filename,
+	public static Graph loadGraphFromFileWithSavememSupport(String filename,
 			Schema schema, ProgressFunction pf) throws GraphIOException {
 		return loadGraphFromFile(filename, schema, pf,
 				ImplementationType.SAVEMEM);

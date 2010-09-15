@@ -94,7 +94,7 @@ public class BagComprehensionEvaluator extends ComprehensionEvaluator {
 			for (VertexEvaluator headerEvaluator : headerEvaluators) {
 				headerTuple.add(headerEvaluator.getResult(subgraph));
 			}	
-			return new JValueTable(headerTuple);
+			return new JValueTable(headerTuple, false);
 		}	
 		return new JValueBag();
 	}

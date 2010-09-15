@@ -64,34 +64,45 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public class Min extends Greql2Function {
 
 	{
-		JValueType[][] x = { { JValueType.COLLECTION, JValueType.DOUBLE } };
+		JValueType[][] x = { { JValueType.COLLECTION, JValueType.NUMBER } };
 		signatures = x;
 
-		description = "Returns the minimum of the given collection of numbers.";
+		description = "Returns the minimum of the given collection of numbers.\n"
+				+ "If the collection contains only integers, the result is an int or a long.";
 
 		Category[] c = { Category.COLLECTIONS_AND_MAPS };
 		categories = c;
 	}
 
 	@Override
-	public JValue evaluate(Graph graph, AbstractGraphMarker<AttributedElement> subgraph,
-			JValue[] arguments) throws EvaluateException {
+	public JValue evaluate(Graph graph,
+			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
+			throws EvaluateException {
 		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, arguments);
 		}
 
 		JValueCollection col = arguments[0].toCollection();
-		Double min = null;
+		boolean doubleFound = false;
+		double min = Double.POSITIVE_INFINITY;
 		for (JValue curVal : col) {
 			if (curVal.isNumber()) {
-				if (min == null || curVal.toNumber().doubleValue() < min) {
+				if (curVal.toNumber().doubleValue() < min) {
 					min = curVal.toNumber().doubleValue();
 				}
 			} else {
 				throw new WrongFunctionParameterException(this, arguments);
 			}
 		}
-		return new JValueImpl(min);
+		if (doubleFound) {
+			return new JValueImpl(min);
+		} else {
+			if ((min > Integer.MIN_VALUE) && (min < Integer.MAX_VALUE)) {
+				return new JValueImpl((int) min);
+			} else {
+				return new JValueImpl((long) min);
+			}
+		}
 	}
 
 	@Override
