@@ -23,6 +23,8 @@
  */
 package de.uni_koblenz.jgralab.algolib.algorithms.topological_order.visitors;
 
+import java.util.Collection;
+
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
 import de.uni_koblenz.jgralab.algolib.visitors.VisitorComposition;
@@ -30,10 +32,13 @@ import de.uni_koblenz.jgralab.algolib.visitors.VisitorComposition;
 public class TopologicalOrderVisitorComposition extends VisitorComposition
 		implements TopologicalOrderVisitor {
 
+	private Collection<TopologicalOrderVisitor> visitors;
+	
 	@Override
 	public void addVisitor(Visitor visitor) {
 		if (visitor instanceof TopologicalOrderVisitor) {
 			super.addVisitor(visitor);
+			visitors.add((TopologicalOrderVisitor) visitor);
 		} else {
 			throw new IllegalArgumentException(
 					"This visitor composition is only compatible with implementations of "

@@ -23,21 +23,59 @@
  */
 package de.uni_koblenz.jgralab.algolib.algorithms.search.visitors;
 
+import java.util.Collection;
+import java.util.LinkedHashSet;
+
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.visitors.GraphVisitorComposition;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
 
-public class SearchVisitorComposition extends GraphVisitorComposition
-		implements SearchVisitor {
+public class SearchVisitorComposition extends
+		GraphVisitorComposition implements SearchVisitor {
 
+	private Collection<SearchVisitor> visitors;
+
+	@Override
+	protected void createVisitorsLazily() {
+		super.createVisitorsLazily();
+		if (visitors == null) {
+			visitors = new LinkedHashSet<SearchVisitor>();
+		}
+	}
+
+	@Override
+	public void addVisitor(Visitor visitor) {
+		super.addVisitor(visitor);
+		if (visitor instanceof SearchVisitor) {
+			visitors.add((SearchVisitor) visitor);
+		}
+	}
+
+	@Override
+	public void removeVisitor(Visitor visitor) {
+		super.removeVisitor(visitor);
+		if (visitors != null) {
+			if (visitor instanceof SearchVisitor) {
+				visitors.remove(visitor);
+				if (visitors.size() == 0) {
+					visitors = null;
+				}
+			}
+		}
+	}
+	
+	@Override
+	public void clearVisitors(){
+		super.clearVisitors();
+		visitors = null;
+	}
+	
 	@Override
 	public void visitFrond(Edge e) {
 		if (visitors != null) {
-			for (Visitor currentVisitor : visitors) {
-				if (currentVisitor instanceof SearchVisitor) {
-					((SearchVisitor) currentVisitor).visitFrond(e);
-				}
+			for (SearchVisitor currentVisitor : visitors) {
+				currentVisitor.visitFrond(e);
 			}
 		}
 	}
@@ -45,10 +83,8 @@ public class SearchVisitorComposition extends GraphVisitorComposition
 	@Override
 	public void visitRoot(Vertex v) {
 		if (visitors != null) {
-			for (Visitor currentVisitor : visitors) {
-				if (currentVisitor instanceof SearchVisitor) {
-					((SearchVisitor) currentVisitor).visitRoot(v);
-				}
+			for (SearchVisitor currentVisitor : visitors) {
+				currentVisitor.visitRoot(v);
 			}
 		}
 	}
@@ -56,10 +92,8 @@ public class SearchVisitorComposition extends GraphVisitorComposition
 	@Override
 	public void visitTreeEdge(Edge e) {
 		if (visitors != null) {
-			for (Visitor currentVisitor : visitors) {
-				if (currentVisitor instanceof SearchVisitor) {
-					((SearchVisitor) currentVisitor).visitTreeEdge(e);
-				}
+			for (SearchVisitor currentVisitor : visitors) {
+				currentVisitor.visitTreeEdge(e);
 			}
 		}
 	}
