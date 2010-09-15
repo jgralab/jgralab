@@ -23,6 +23,9 @@
  */
 package de.uni_koblenz.jgralab.algolib.algorithms.strong_components.visitors;
 
+import java.util.Collection;
+import java.util.LinkedHashSet;
+
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
@@ -31,15 +34,45 @@ import de.uni_koblenz.jgralab.algolib.visitors.VisitorComposition;
 public class ReducedGraphVisitorComposition extends VisitorComposition
 		implements ReducedGraphVisitor {
 
+	private Collection<ReducedGraphVisitor> visitors;
+
+	@Override
+	protected void createVisitorsLazily() {
+		super.createVisitorsLazily();
+		if (visitors == null) {
+			visitors = new LinkedHashSet<ReducedGraphVisitor>();
+		}
+	}
+
 	@Override
 	public void addVisitor(Visitor visitor) {
 		if (visitor instanceof ReducedGraphVisitor) {
 			super.addVisitor(visitor);
+			visitors.add((ReducedGraphVisitor) visitor);
 		} else {
 			throw new IllegalArgumentException(
 					"This visitor composition is only compatible with implementations of "
 							+ ReducedGraphVisitor.class.getSimpleName() + ".");
 		}
+	}
+	
+	@Override
+	public void removeVisitor(Visitor visitor) {
+		super.removeVisitor(visitor);
+		if (visitors != null) {
+			if (visitor instanceof ReducedGraphVisitor) {
+				visitors.remove(visitor);
+				if (visitors.size() == 0) {
+					visitors = null;
+				}
+			}
+		}
+	}
+	
+	@Override
+	public void clearVisitors() {
+		super.clearVisitors();
+		visitors = null;
 	}
 
 	@Override

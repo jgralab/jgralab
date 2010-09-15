@@ -23,19 +23,57 @@
  */
 package de.uni_koblenz.jgralab.algolib.visitors;
 
+import java.util.Collection;
+import java.util.LinkedHashSet;
+
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 
-public class GraphVisitorComposition extends VisitorComposition implements
-		GraphVisitor {
+public class GraphVisitorComposition extends
+		VisitorComposition implements GraphVisitor {
+
+	private Collection<GraphVisitor> visitors;
+
+	@Override
+	protected void createVisitorsLazily() {
+		super.createVisitorsLazily();
+		if (visitors == null) {
+			visitors = new LinkedHashSet<GraphVisitor>();
+		}
+	}
+
+	@Override
+	public void addVisitor(Visitor visitor) {
+		super.addVisitor(visitor);
+		if (visitor instanceof GraphVisitor) {
+			visitors.add((GraphVisitor) visitor);
+		}
+	}
+
+	@Override
+	public void removeVisitor(Visitor visitor) {
+		super.removeVisitor(visitor);
+		if (visitors != null) {
+			if (visitor instanceof GraphVisitor) {
+				visitors.remove(visitor);
+				if (visitors.size() == 0) {
+					visitors = null;
+				}
+			}
+		}
+	}
 	
+	@Override
+	public void clearVisitors(){
+		super.clearVisitors();
+		visitors = null;
+	}
+
 	@Override
 	public void visitEdge(Edge e) {
 		if (visitors != null) {
-			for (Visitor currentVisitor : visitors) {
-				if (currentVisitor instanceof GraphVisitor) {
-					((GraphVisitor) currentVisitor).visitEdge(e);
-				}
+			for (GraphVisitor currentVisitor : visitors) {
+				currentVisitor.visitEdge(e);
 			}
 		}
 	}
@@ -43,12 +81,9 @@ public class GraphVisitorComposition extends VisitorComposition implements
 	@Override
 	public void visitVertex(Vertex v) {
 		if (visitors != null) {
-			for (Visitor currentVisitor : visitors) {
-				if (currentVisitor instanceof GraphVisitor) {
-					((GraphVisitor) currentVisitor).visitVertex(v);
-				}
+			for (GraphVisitor currentVisitor : visitors) {
+				currentVisitor.visitVertex(v);
 			}
 		}
 	}
-
 }

@@ -23,17 +23,17 @@
  */
 package de.uni_koblenz.jgralab.algolib.visitors;
 
+import java.util.Collection;
 import java.util.LinkedHashSet;
-import java.util.Set;
 
 import de.uni_koblenz.jgralab.algolib.algorithms.GraphAlgorithm;
 
 public abstract class VisitorComposition implements
 		Visitor {
 
-	protected Set<Visitor> visitors;
+	private Collection<Visitor> visitors;
 
-	private void createVisitorsLazily() {
+	protected void createVisitorsLazily() {
 		if (visitors == null) {
 			visitors = new LinkedHashSet<Visitor>();
 		}
@@ -48,7 +48,7 @@ public abstract class VisitorComposition implements
 		if (visitors != null) {
 			visitors.remove(visitor);
 			if (visitors.size() == 0) {
-				clearVisitors();
+				visitors = null;
 			}
 		}
 	}

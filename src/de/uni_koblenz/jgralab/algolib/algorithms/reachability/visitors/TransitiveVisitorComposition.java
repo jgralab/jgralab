@@ -23,6 +23,9 @@
  */
 package de.uni_koblenz.jgralab.algolib.algorithms.reachability.visitors;
 
+import java.util.Collection;
+import java.util.LinkedHashSet;
+
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
 import de.uni_koblenz.jgralab.algolib.visitors.VisitorComposition;
@@ -30,13 +33,13 @@ import de.uni_koblenz.jgralab.algolib.visitors.VisitorComposition;
 public class TransitiveVisitorComposition extends VisitorComposition implements
 		TransitiveVisitor {
 
+	private Collection<TransitiveVisitor> visitors;
+
 	@Override
-	public void visitVertexTriple(Vertex u, Vertex v, Vertex w) {
-		if (visitors != null) {
-			for (Visitor currentVisitor : visitors) {
-				((TransitiveVisitor) currentVisitor)
-						.visitVertexTriple(u, v, w);
-			}
+	protected void createVisitorsLazily() {
+		super.createVisitorsLazily();
+		if (visitors == null) {
+			visitors = new LinkedHashSet<TransitiveVisitor>();
 		}
 	}
 
@@ -44,9 +47,38 @@ public class TransitiveVisitorComposition extends VisitorComposition implements
 	public void addVisitor(Visitor visitor) {
 		if (visitor instanceof TransitiveVisitor) {
 			super.addVisitor(visitor);
+			visitors.add((TransitiveVisitor) visitor);
 		} else {
 			throw new IllegalArgumentException(
 					"The given visitor is incompatiple with this visitor composition.");
+		}
+	}
+
+	@Override
+	public void removeVisitor(Visitor visitor) {
+		super.removeVisitor(visitor);
+		if (visitors != null) {
+			if (visitor instanceof TransitiveVisitor) {
+				visitors.remove(visitor);
+				if (visitors.size() == 0) {
+					visitors = null;
+				}
+			}
+		}
+	}
+
+	@Override
+	public void clearVisitors() {
+		super.clearVisitors();
+		visitors = null;
+	}
+
+	@Override
+	public void visitVertexTriple(Vertex u, Vertex v, Vertex w) {
+		if (visitors != null) {
+			for (TransitiveVisitor currentVisitor : visitors) {
+				currentVisitor.visitVertexTriple(u, v, w);
+			}
 		}
 	}
 

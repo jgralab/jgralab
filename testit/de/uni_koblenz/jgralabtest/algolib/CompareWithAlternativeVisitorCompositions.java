@@ -2,9 +2,8 @@ package de.uni_koblenz.jgralabtest.algolib;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.AlternativeDFSVisitorComposition;
-import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.DFSVisitor;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.DFSVisitorComposition;
+import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.DFSVisitor;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.SearchVisitor;
 import de.uni_koblenz.jgralab.algolib.visitors.GraphVisitor;
 import de.uni_koblenz.jgralab.algolib.visitors.GraphVisitorAdapter;
@@ -27,9 +26,9 @@ public class CompareWithAlternativeVisitorCompositions {
 	 */
 	private static final int IGNORE = 10;
 
-	private static final int GRAPH_VISITOR_COUNT = 2;
+	private static final int GRAPH_VISITOR_COUNT = 4;
 	private static final int SEARCH_VISITOR_COUNT = 0;
-	private static final int DFS_VISITOR_COUNT = 1;
+	private static final int DFS_VISITOR_COUNT = 0;
 	private static final int VERTEX_COUNT = 100000;
 	private static final int FROND_COUNT = 50000;
 	private static final int KAPPA = 5;
@@ -124,7 +123,8 @@ public class CompareWithAlternativeVisitorCompositions {
 	}
 
 	public static void main(String[] args) {
-		System.out.println("Simulating complete DFS with the following attributes:");
+		System.out
+				.println("Simulating complete DFS with the following attributes:");
 		System.out.println();
 		System.out.println("Runs     : " + RUNS);
 		System.out.println("Ignoring : " + IGNORE * 2);
@@ -158,7 +158,8 @@ public class CompareWithAlternativeVisitorCompositions {
 		}
 
 		DFSVisitorComposition comp = new DFSVisitorComposition();
-		AlternativeDFSVisitorComposition acomp = new AlternativeDFSVisitorComposition();
+		// TODO change alternative implementation class name
+		DFSVisitorComposition acomp = new DFSVisitorComposition();
 
 		for (GraphVisitor currentVisitor : graphVisitors) {
 			comp.addVisitor(currentVisitor);
@@ -184,15 +185,15 @@ public class CompareWithAlternativeVisitorCompositions {
 		printResult(average);
 		System.out.println();
 
-		System.out.println("Alternative implementation:");
-		for (int k = 0; k < RUNS; k++) {
-			oneRun(sw, acomp);
-			average[k] = sw.getNanoDuration();
-		}
-		System.out.println();
-		printResult(average);
-		System.out.println();
-		System.out.println("Fini.");
+		// System.out.println("Alternative implementation:");
+		// for (int k = 0; k < RUNS; k++) {
+		// oneRun(sw, acomp);
+		// average[k] = sw.getNanoDuration();
+		// }
+		// System.out.println();
+		// printResult(average);
+		// System.out.println();
+		// System.out.println("Fini.");
 	}
 
 	private static void oneRun(Stopwatch sw, DFSVisitor comp) {

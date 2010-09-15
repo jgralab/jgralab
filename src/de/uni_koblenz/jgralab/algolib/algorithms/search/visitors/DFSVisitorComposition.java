@@ -23,20 +23,58 @@
  */
 package de.uni_koblenz.jgralab.algolib.algorithms.search.visitors;
 
+import java.util.Collection;
+import java.util.LinkedHashSet;
+
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
 
-public class DFSVisitorComposition extends SearchVisitorComposition implements
-		DFSVisitor {
+public class DFSVisitorComposition extends
+		SearchVisitorComposition implements DFSVisitor {
 
+	private Collection<DFSVisitor> visitors;
+
+	@Override
+	protected void createVisitorsLazily() {
+		super.createVisitorsLazily();
+		if (visitors == null) {
+			visitors = new LinkedHashSet<DFSVisitor>();
+		}
+	}
+
+	@Override
+	public void addVisitor(Visitor visitor) {
+		super.addVisitor(visitor);
+		if (visitor instanceof DFSVisitor) {
+			visitors.add((DFSVisitor) visitor);
+		}
+	}
+
+	@Override
+	public void removeVisitor(Visitor visitor) {
+		super.removeVisitor(visitor);
+		if (visitors != null) {
+			if (visitor instanceof DFSVisitor) {
+				visitors.remove(visitor);
+				if (visitors.size() == 0) {
+					visitors = null;
+				}
+			}
+		}
+	}
+	
+	@Override
+	public void clearVisitors(){
+		super.clearVisitors();
+		visitors = null;
+	}
+	
 	@Override
 	public void leaveTreeEdge(Edge e) {
 		if (visitors != null) {
-			for (Visitor currentVisitor : visitors) {
-				if (currentVisitor instanceof DFSVisitor) {
-					((DFSVisitor) currentVisitor).leaveTreeEdge(e);
-				}
+			for (DFSVisitor currentVisitor : visitors) {
+				currentVisitor.leaveTreeEdge(e);
 			}
 		}
 	}
@@ -44,10 +82,8 @@ public class DFSVisitorComposition extends SearchVisitorComposition implements
 	@Override
 	public void leaveVertex(Vertex v) {
 		if (visitors != null) {
-			for (Visitor currentVisitor : visitors) {
-				if (currentVisitor instanceof DFSVisitor) {
-					((DFSVisitor) currentVisitor).leaveVertex(v);
-				}
+			for (DFSVisitor currentVisitor : visitors) {
+				currentVisitor.leaveVertex(v);
 			}
 		}
 	}
@@ -55,10 +91,8 @@ public class DFSVisitorComposition extends SearchVisitorComposition implements
 	@Override
 	public void visitBackwardArc(Edge e) {
 		if (visitors != null) {
-			for (Visitor currentVisitor : visitors) {
-				if (currentVisitor instanceof DFSVisitor) {
-					((DFSVisitor) currentVisitor).visitBackwardArc(e);
-				}
+			for (DFSVisitor currentVisitor : visitors) {
+				currentVisitor.visitBackwardArc(e);
 			}
 		}
 	}
@@ -66,10 +100,8 @@ public class DFSVisitorComposition extends SearchVisitorComposition implements
 	@Override
 	public void visitCrosslink(Edge e) {
 		if (visitors != null) {
-			for (Visitor currentVisitor : visitors) {
-				if (currentVisitor instanceof DFSVisitor) {
-					((DFSVisitor) currentVisitor).visitCrosslink(e);
-				}
+			for (DFSVisitor currentVisitor : visitors) {
+				currentVisitor.visitCrosslink(e);
 			}
 		}
 	}
@@ -77,10 +109,8 @@ public class DFSVisitorComposition extends SearchVisitorComposition implements
 	@Override
 	public void visitForwardArc(Edge e) {
 		if (visitors != null) {
-			for (Visitor currentVisitor : visitors) {
-				if (currentVisitor instanceof DFSVisitor) {
-					((DFSVisitor) currentVisitor).visitForwardArc(e);
-				}
+			for (DFSVisitor currentVisitor : visitors) {
+				currentVisitor.visitForwardArc(e);
 			}
 		}
 	}
