@@ -11,6 +11,3 @@ abstract EdgeClass Way from Junction (1,6) role from to Junction (1,6) role to {
 EdgeClass Street: Way from Junction (1,6) to Junction (1,6) { oneway: Boolean };
 EdgeClass Bridge: Street from Junction (1,6) to Junction (1,6) { height: Integer };
 EdgeClass Footpath: Way from Junction (1,6) to Junction (1,6);
-
-
-
