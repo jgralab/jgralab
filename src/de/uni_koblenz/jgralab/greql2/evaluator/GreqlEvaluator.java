@@ -92,7 +92,7 @@ public class GreqlEvaluator {
 
 	public static void main(String[] args) throws FileNotFoundException,
 			IOException, GraphIOException {
-		if ((args.length < 1) || (args.length > 2)) {
+		if (args.length < 1 || args.length > 2) {
 			System.err
 					.println("Usage: java GreqlEvaluator <query> [<graphfile>]");
 			System.exit(1);
@@ -220,7 +220,7 @@ public class GreqlEvaluator {
 	public void setSubgraphMarker(BooleanGraphMarker subgraphMarker) {
 		this.subgraphMarker = subgraphMarker;
 		if (subgraphMarker != null) {
-			this.datagraph = subgraphMarker.getGraph();
+			datagraph = subgraphMarker.getGraph();
 		}
 	}
 
@@ -358,8 +358,8 @@ public class GreqlEvaluator {
 		for (SyntaxGraphEntry entry : entryList) {
 			if (entry.getCostModel().isEquivalent(costModel)) {
 				Optimizer opt = entry.getOptimizer();
-				if (((opt != null) && opt.isEquivalent(optimizer))
-						|| ((opt == null) && (optimizer == null))) {
+				if (opt != null && opt.isEquivalent(optimizer) || opt == null
+						&& optimizer == null) {
 					if (entry.lock()) {
 						return entry;
 					}
@@ -602,7 +602,7 @@ public class GreqlEvaluator {
 	}
 
 	public JValue getVariable(String name) {
-		if ((variableMap != null) && variableMap.containsKey(name)) {
+		if (variableMap != null && variableMap.containsKey(name)) {
 			return variableMap.get(name);
 		}
 		return new JValueImpl();
@@ -675,7 +675,7 @@ public class GreqlEvaluator {
 	 * sets the logger which is used to log the evlauation
 	 */
 	public void setEvaluationLogger(EvaluationLogger logger) {
-		this.evaluationLogger = logger;
+		evaluationLogger = logger;
 	}
 
 	/**
@@ -726,7 +726,7 @@ public class GreqlEvaluator {
 			this.datagraph = datagraph;
 		}
 		knownTypes = new HashMap<String, AttributedElementClass>();
-		this.variableMap = variables;
+		variableMap = variables;
 		this.progressFunction = progressFunction;
 	}
 
@@ -758,8 +758,8 @@ public class GreqlEvaluator {
 					.getGraphCreateMethod(ImplementationType.STANDARD);
 
 			try {
-				minimalGraph = (Graph) (graphCreateMethod.invoke(null,
-						new Object[] { "test", 1, 1 }));
+				minimalGraph = (Graph) graphCreateMethod.invoke(null,
+						new Object[] { "test", 1, 1 });
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -801,7 +801,7 @@ public class GreqlEvaluator {
 			throws FileNotFoundException, IOException {
 		this(datagraph, variables, progressFunction);
 		// Read query from file (afuhr)
-		this.setQueryFile(queryFile);
+		setQueryFile(queryFile);
 	}
 
 	/**
@@ -966,7 +966,7 @@ public class GreqlEvaluator {
 	public boolean startEvaluation(boolean writeLogs, boolean readLogs)
 			throws EvaluateException, OptimizerException {
 		if (started) {
-			return (result != null);
+			return result != null;
 		}
 
 		started = true;
@@ -978,7 +978,7 @@ public class GreqlEvaluator {
 		long startTime = System.currentTimeMillis();
 
 		if (datagraph == null) {
-			this.datagraph = createMinimalGraph();
+			datagraph = createMinimalGraph();
 		}
 
 		if (writeLogs) {
@@ -1212,7 +1212,7 @@ public class GreqlEvaluator {
 	}
 
 	public void setEvaluationLoggingType(LoggingType loggerLoggingType) {
-		this.evaluationLoggingType = loggerLoggingType;
+		evaluationLoggingType = loggerLoggingType;
 		evaluationLogger = null;
 		costModel = null;
 	}
