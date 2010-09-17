@@ -273,17 +273,45 @@ public abstract class Tg2Whatever {
 		}
 	}
 
+	/**
+	 * Is called, when graph processing is started.
+	 * 
+	 * @param out
+	 *            PrintStream as output stream.
+	 */
 	protected abstract void graphStart(PrintStream out);
 
+	/**
+	 * Is called, when graph processing ends.
+	 * 
+	 * @param out
+	 *            PrintStream as output stream.
+	 */
 	protected abstract void graphEnd(PrintStream out);
 
+	/**
+	 * Prints a Vertex to the provided output stream.
+	 * 
+	 * @param out
+	 *            PrintStream as output stream.
+	 * @param v
+	 *            Vertex, which should be printed.
+	 */
 	protected abstract void printVertex(PrintStream out, Vertex v);
 
+	/**
+	 * Prints a Edge to the provided output stream.
+	 * 
+	 * @param out
+	 *            PrintStream as output stream.
+	 * @param e
+	 *            Edge, which should be printed.
+	 */
 	protected abstract void printEdge(PrintStream out, Edge e);
 
 	/**
-	 * replaces characters in the given string by the escape sequences that are
-	 * appropriate for the specific output format
+	 * Replaces characters in the given string by the escape sequences that are
+	 * appropriate for the specific output format.
 	 * 
 	 * @param s
 	 * @return
@@ -329,6 +357,13 @@ public abstract class Tg2Whatever {
 		getAdditionalOptions(comLine);
 	}
 
+	/**
+	 * This methods is a hook to get additional CommandLine options, which are
+	 * not implemented in {@link Tg2Whatever}.
+	 * 
+	 * @param comLine
+	 *            CommandLine object.
+	 */
 	protected void getAdditionalOptions(CommandLine comLine) {
 	}
 
@@ -352,6 +387,13 @@ public abstract class Tg2Whatever {
 		return oh.parse(args);
 	}
 
+	/**
+	 * This method is a hook to provide the possibility to add additional
+	 * options to the OptionHandler for derived classes.
+	 * 
+	 * @param optionHandler
+	 *            OptionHandler object.
+	 */
 	protected void addAdditionalOptions(OptionHandler optionHandler) {
 	}
 
