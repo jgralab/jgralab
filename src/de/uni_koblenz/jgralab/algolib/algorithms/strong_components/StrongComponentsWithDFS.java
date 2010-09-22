@@ -200,10 +200,8 @@ public class StrongComponentsWithDFS extends AbstractTraversal implements
 					do {
 						x = vertexStack.pop();
 						strongComponents.set(x, v);
-						// visit the representative vertex
-						// TODO visit reduced edges
-						visitors.visitRepresentativeVertex(v);
 					} while (x != v);
+					visitors.visitRepresentativeVertex(v);
 				}
 			}
 
