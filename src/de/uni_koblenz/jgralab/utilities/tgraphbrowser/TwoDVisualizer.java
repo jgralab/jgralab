@@ -23,6 +23,7 @@
  */
 package de.uni_koblenz.jgralab.utilities.tgraphbrowser;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -479,8 +480,8 @@ public class TwoDVisualizer {
 		@Override
 		public void printGraph() {
 			try {
-				PrintStream out = new PrintStream(new FileOutputStream(
-						outputName));
+				PrintStream out = new PrintStream(new BufferedOutputStream(
+						new FileOutputStream(outputName)));
 				graphStart(out);
 				for (JValue v : elements) {
 					if (v.isVertex()) {
