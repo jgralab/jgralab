@@ -30,7 +30,7 @@ import de.uni_koblenz.jgralab.algolib.problems.directed.StrongComponentsSolver;
 
 public class ReducedGraphVisitorAdapter implements ReducedGraphVisitor {
 
-	private StrongComponentsSolver algorithm;
+	protected StrongComponentsSolver algorithm;
 
 	@Override
 	public void reset() {
@@ -39,13 +39,13 @@ public class ReducedGraphVisitorAdapter implements ReducedGraphVisitor {
 
 	@Override
 	public void setAlgorithm(GraphAlgorithm alg) {
-		if (algorithm instanceof StrongComponentsSolver) {
-			this.algorithm = (StrongComponentsSolver) algorithm;
+		if (alg instanceof StrongComponentsSolver) {
+			this.algorithm = (StrongComponentsSolver) alg;
 			reset();
 		} else {
 			throw new IllegalArgumentException(
 					"This visitor is not compatible with "
-							+ algorithm.getClass().getSimpleName()
+							+ alg.getClass().getSimpleName()
 							+ " It only works with instances of "
 							+ StrongComponentsSolver.class.getSimpleName());
 		}
