@@ -118,7 +118,6 @@ public class TwoDVisualizer {
 		}
 		tempFolder.deleteOnExit();
 		// create .dot-file
-		System.out.println("Create .dot-file");
 		String dotFileName = null;
 		try {
 			dotFileName = tempFolder.getCanonicalPath() + File.separator
@@ -130,7 +129,6 @@ public class TwoDVisualizer {
 				showAttributes, currentElement, state.selectedEdgeClasses,
 				state.selectedVertexClasses);
 		mtd.printGraph();
-		System.out.println(".dot-file finished");
 		if (mtd.exception != null) {
 			code
 					.append("document.getElementById('divError').style.display = \"block\";\n");
@@ -167,17 +165,15 @@ public class TwoDVisualizer {
 				}
 				ExecutingDot dotThread = new ExecutingDot(execStr,
 						currentThread);
-				System.out.println("start dot");
 				dotThread.start();
 				try {
 					synchronized (currentThread) {
 						currentThread.wait(SECONDS_TO_WAIT_FOR_DOT * 1000);
 					}
 					dotThread.svgCreationProcess.destroy();
-					System.out.println("dot is destroyed");
 				} catch (InterruptedException e) {
 					e.printStackTrace();
-				}// TODO
+				}
 				if (dotThread.exitCode != -1) {
 					if (dotThread.exitCode != 0) {
 						if (dotThread.exception != null) {
