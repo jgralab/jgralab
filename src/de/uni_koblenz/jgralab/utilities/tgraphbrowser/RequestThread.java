@@ -67,7 +67,7 @@ public class RequestThread extends Thread {
 		} else {
 			workspace = new File(path);
 		}
-		rep = new StateRepository(workspace);
+		rep = new StateRepository(workspace, this);
 	}
 
 	private static void sendHeader(BufferedOutputStream out, int code,

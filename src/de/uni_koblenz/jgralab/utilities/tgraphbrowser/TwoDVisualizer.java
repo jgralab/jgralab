@@ -52,6 +52,8 @@ import de.uni_koblenz.jgralab.utilities.tgraphbrowser.StateRepository.State;
 
 public class TwoDVisualizer {
 
+	public static int SECONDS_TO_WAIT_FOR_DOT = 60;
+
 	/**
 	 * Creates the 2D-representation of <code>currentElement</code> and its
 	 * environment, if their type is chosen to be shown. An element belongs to
@@ -76,7 +78,8 @@ public class TwoDVisualizer {
 	 */
 	public void visualizeElements(StringBuilder code, State state,
 			Integer sessionId, String workspace, JValue currentElement,
-			Boolean showAttributes, Integer pathLength) {
+			Boolean showAttributes, Integer pathLength,
+			RequestThread currentThread) {
 		// set currentVertex or currentEdge to the current element
 		if (currentElement.isVertex()) {
 			code.append("current").append("Vertex = \"").append(
@@ -114,8 +117,7 @@ public class TwoDVisualizer {
 		}
 		tempFolder.deleteOnExit();
 		// create .dot-file
-		// String dotFileName = workspace + "/" + sessionId +
-		// "GraphSnippet.dot";
+		System.out.println("Create .dot-file");
 		String dotFileName = null;
 		try {
 			dotFileName = tempFolder.getCanonicalPath() + File.separator
@@ -127,6 +129,7 @@ public class TwoDVisualizer {
 				showAttributes, currentElement, state.selectedEdgeClasses,
 				state.selectedVertexClasses);
 		mtd.printGraph();
+		System.out.println(".dot-file finished");
 		if (mtd.exception != null) {
 			code
 					.append("document.getElementById('divError').style.display = \"block\";\n");
@@ -161,9 +164,41 @@ public class TwoDVisualizer {
 					execStr = StateRepository.dot + " -Tsvg -o " + svgFileName
 							+ " " + dotFileName;
 				}
-				int exitCode = Runtime.getRuntime().exec(execStr).waitFor();
-				if (exitCode != 0) {
-					System.err.println("dot exited with code " + exitCode);
+				ExecutingDot dotThread = new ExecutingDot(execStr,
+						currentThread);
+				System.out.println("start dot");
+				dotThread.start();
+				try {
+					synchronized (currentThread) {
+						currentThread.wait(SECONDS_TO_WAIT_FOR_DOT * 1000);
+					}
+					dotThread.svgCreationProcess.destroy();
+					System.out.println("dot is destroyed");
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}// TODO
+				if (dotThread.exitCode != -1) {
+					if (dotThread.exitCode != 0) {
+						if (dotThread.exception != null) {
+							throw dotThread.exception;
+						}
+					}
+				} else {
+					// execution of dot is terminated because it took too long
+					code
+							.append("document.getElementById('divError').style.display = \"block\";\n");
+					code
+							.append(
+									"document.getElementById('h2ErrorMessage').innerHTML = \"ERROR: ")
+							.append("Creation of file ")
+							.append(svgFileName)
+							.append(
+									" was terminated because it took more than ")
+							.append(SECONDS_TO_WAIT_FOR_DOT).append(
+									" seconds.\";\n");
+					code
+							.append("document.getElementById('divNonError').style.display = \"none\";\n");
+					return;
 				}
 			}
 		} catch (IOException e) {
@@ -178,8 +213,6 @@ public class TwoDVisualizer {
 			code
 					.append("document.getElementById('divNonError').style.display = \"none\";\n");
 			return;
-		} catch (InterruptedException e) {
-			e.printStackTrace();
 		}
 		if (!new File(dotFileName).delete()) {
 			TGraphBrowserServer.logger.warning(dotFileName
@@ -325,6 +358,47 @@ public class TwoDVisualizer {
 		query.append(")");
 		return StateRepository
 				.evaluateGReQL(query.toString(), graph, boundVars);
+	}
+
+	/**
+	 * This thread executes dot to create the svg file.
+	 */
+	private static final class ExecutingDot extends Thread {
+
+		public Process svgCreationProcess;
+
+		private final String execStr;
+
+		// -1 is the default value to show, that dot is not finished
+		public int exitCode = -1;
+
+		public IOException exception;
+
+		private final RequestThread sleepingRequestThread;
+
+		public ExecutingDot(String command, RequestThread currentThread) {
+			execStr = command;
+			sleepingRequestThread = currentThread;
+		}
+
+		@Override
+		public void run() {
+			super.run();
+			try {
+				svgCreationProcess = Runtime.getRuntime().exec(execStr);
+				exitCode = svgCreationProcess.waitFor();
+				synchronized (sleepingRequestThread) {
+					if (sleepingRequestThread.getState() == Thread.State.TIMED_WAITING) {
+						sleepingRequestThread.notify();
+					}
+				}
+			} catch (IOException e) {
+				exception = e;
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	/**
