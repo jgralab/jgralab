@@ -84,9 +84,9 @@ import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
  * String or Graph and a JGraLab-Datagraph and evaluates the Query on this
  * graph. The result is a JValue-object, it can be accessed using the method
  * <code>JValue getEvaluationResult()</code>.
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class GreqlEvaluator {
 
@@ -213,7 +213,7 @@ public class GreqlEvaluator {
 	/**
 	 * Sets the marker for evaluating only on marked elements. Also sets the
 	 * datagraph to the given marker's graph.
-	 *
+	 * 
 	 * @param subgraphMarker
 	 *            the subgraphMarker to set
 	 */
@@ -251,7 +251,7 @@ public class GreqlEvaluator {
 
 	/**
 	 * Gets a vertex index for a part of a query
-	 *
+	 * 
 	 * @param graph
 	 *            the graph to get an index for
 	 * @param queryPart
@@ -373,7 +373,7 @@ public class GreqlEvaluator {
 	/**
 	 * Load all optimized {@link SyntaxGraphEntry}s in
 	 * optimizedSyntaxGraphsDirectory.
-	 *
+	 * 
 	 * @throws GraphIOException
 	 *             if the optimizedGraphsDirectory is not accessible.
 	 * @see #setOptimizedSyntaxGraphsDirectory(File)
@@ -438,17 +438,29 @@ public class GreqlEvaluator {
 	}
 
 	public void setQueryFile(File query) throws IOException {
-		BufferedReader reader = new BufferedReader(new FileReader(query));
-		String line = null;
-		StringBuffer sb = new StringBuffer();
-		while ((line = reader.readLine()) != null) {
-			sb.append(line);
-			sb.append('\n');
+		BufferedReader reader = null;
+		try {
+			reader = new BufferedReader(new FileReader(query));
+
+			String line = null;
+			StringBuffer sb = new StringBuffer();
+			while ((line = reader.readLine()) != null) {
+				sb.append(line);
+				sb.append('\n');
+			}
+
+			System.out.println("Query read from file:");
+			System.out.println(sb.toString());
+			setQuery(sb.toString());
+
+		} finally {
+			try {
+				reader.close();
+			} catch (IOException ex) {
+				throw new RuntimeException(
+						"An exception occurred while closing the stream.", ex);
+			}
 		}
-		reader.close();
-		System.out.println("Query read from file:");
-		System.out.println(sb.toString());
-		setQuery(sb.toString());
 	}
 
 	/**
@@ -701,7 +713,7 @@ public class GreqlEvaluator {
 
 	/**
 	 * Creates a new GreqlEvaluator for the given Query and Datagraph
-	 *
+	 * 
 	 * @param query
 	 *            the string-representation of the query to evaluate
 	 * @param datagraph
@@ -769,7 +781,7 @@ public class GreqlEvaluator {
 
 	/**
 	 * Creates a new GreqlEvaluator for the given Query and Datagraph
-	 *
+	 * 
 	 * @param query
 	 *            the string-representation of the query to evaluate
 	 * @param datagraph
@@ -785,7 +797,7 @@ public class GreqlEvaluator {
 	/**
 	 * Creates an new GreqlEvaluator for the query in the given file and the
 	 * given datagraph
-	 *
+	 * 
 	 * @param queryFile
 	 *            the name of the file whehre the query to evaluate is stored in
 	 * @param datagraph
@@ -807,7 +819,7 @@ public class GreqlEvaluator {
 	/**
 	 * Creates an new GreqlEvaluator for the query in the given file and the
 	 * given datagraph
-	 *
+	 * 
 	 * @param queryFile
 	 *            the name of the file whehre the query to evaluate is stored in
 	 * @param datagraph
@@ -865,7 +877,7 @@ public class GreqlEvaluator {
 	/**
 	 * clears the tempresults that are stored in the VertexEvaluators-Objects at
 	 * the syntaxgraph nodes
-	 *
+	 * 
 	 * @param optimizer
 	 */
 	private void resetVertexEvaluators() {
@@ -940,7 +952,7 @@ public class GreqlEvaluator {
 
 	/**
 	 * same as startEvaluation(false, true), provides for convenience
-	 *
+	 * 
 	 * @return true if the evaluation succeeds, false otherwise
 	 * @throws EvaluateException
 	 */
@@ -952,7 +964,7 @@ public class GreqlEvaluator {
 	/**
 	 * Starts the evaluation. If the query is a store-query, modifies the bound
 	 * variables
-	 *
+	 * 
 	 * @param writeLogs
 	 *            if set to true, the evaluation measures will be written to
 	 *            logfiles.
@@ -1103,7 +1115,7 @@ public class GreqlEvaluator {
 
 	/**
 	 * Sets the optimizer to optimize the syntaxgraph this evaluator evaluates
-	 *
+	 * 
 	 * @param optimizer
 	 *            the optimizer to use
 	 */
