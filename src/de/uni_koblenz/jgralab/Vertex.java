@@ -28,6 +28,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
+import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.impl.DirectedM1EdgeClass;
@@ -202,6 +203,38 @@ public interface Vertex extends GraphElement {
 	 * @return the first incidence of vertex with direction IN or OUT
 	 */
 	public Edge getFirstEdge(EdgeDirection orientation);
+
+	/**
+	 * Get the first incident edge which as one of the aggregation semantics
+	 * given by <code>kind</code> at either this vertex (thisIncidence == true)
+	 * or that vertex (thisIncidence == false). If no <code>kind</code> is
+	 * given, it simply returns the first incident edge.<br/>
+	 * <br/>
+	 * For example, this returns the first edge to a parent vertex in the
+	 * containment hierarchy.
+	 * 
+	 * <pre>
+	 * v.getFirstEdge(true, AggregationKind.SHARED, AggregationKind.COMPOSITE)
+	 * </pre>
+	 * 
+	 * And this returns the first edge to a child vertex in the containment
+	 * hierarchy.
+	 * 
+	 * <pre>
+	 * v.getFirstEdge(false, AggregationKind.SHARED, AggregationKind.COMPOSITE)
+	 * </pre>
+	 * 
+	 * @see Edge#getNextEdge(boolean, AggregationKind...)
+	 * 
+	 * @param thisIncidence
+	 *            if true, <code>kinds</code> has to match the incidence at this
+	 *            vertex, else it has to match the opposite incidence
+	 * 
+	 * @return the first incident edge where the incidence at this vertex
+	 *         (thisIncidence == true) or that vertex (thisIncidence == false)
+	 *         has one of the aggregation semantics given by <code>kind</code>.
+	 */
+	public Edge getFirstEdge(boolean thisIncidence, AggregationKind... kinds);
 
 	/**
 	 * @param anEdgeClass

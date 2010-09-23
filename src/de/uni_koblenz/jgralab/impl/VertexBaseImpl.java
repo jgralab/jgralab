@@ -39,6 +39,7 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.PathElement;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.impl.DirectedM1EdgeClass;
@@ -315,6 +316,25 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex 
 		default:
 			throw new RuntimeException("FIXME!");
 		}
+	}
+
+	@Override
+	public Edge getFirstEdge(boolean thisIncidence, AggregationKind... kinds) {
+		assert isValid();
+		IncidenceImpl i = getFirstIncidence();
+		if (kinds.length == 0) {
+			return i;
+		}
+		while (i != null) {
+			for (AggregationKind element : kinds) {
+				if ((thisIncidence ? i.getThisSemantics() : i
+						.getThatSemantics()) == element) {
+					return i;
+				}
+			}
+			i = i.getNextIncidence();
+		}
+		return null;
 	}
 
 	/*
