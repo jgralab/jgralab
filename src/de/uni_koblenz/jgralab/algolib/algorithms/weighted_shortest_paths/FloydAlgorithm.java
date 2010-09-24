@@ -166,20 +166,27 @@ public class FloydAlgorithm extends AbstractTraversal implements
 			}
 			int vId = indexMapping.get(e.getAlpha());
 			int wId = indexMapping.get(e.getOmega());
+			double newDistance = edgeWeight.get(e);
 			switch (searchDirection) {
 			case OUT:
-				weightedDistance[vId][wId] = edgeWeight.get(e);
-				successor[vId][wId] = e;
+				if (weightedDistance[vId][wId] > newDistance) {
+					weightedDistance[vId][wId] = newDistance;
+					successor[vId][wId] = e;
+				}
 				break;
 			case INOUT:
-				weightedDistance[vId][wId] = edgeWeight.get(e);
-				weightedDistance[wId][vId] = edgeWeight.get(e);
-				successor[vId][wId] = e;
-				successor[wId][vId] = e.getReversedEdge();
+				if (weightedDistance[vId][wId] > newDistance) {
+					weightedDistance[vId][wId] = newDistance;
+					weightedDistance[wId][vId] = newDistance;
+					successor[vId][wId] = e;
+					successor[wId][vId] = e.getReversedEdge();
+				}
 				break;
 			case IN:
-				weightedDistance[wId][vId] = edgeWeight.get(e);
-				successor[wId][vId] = e.getReversedEdge();
+				if (weightedDistance[wId][wId] > newDistance) {
+					weightedDistance[wId][vId] = newDistance;
+					successor[wId][vId] = e.getReversedEdge();
+				}
 			}
 		}
 
