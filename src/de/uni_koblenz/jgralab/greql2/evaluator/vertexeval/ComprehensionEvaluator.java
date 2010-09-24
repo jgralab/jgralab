@@ -63,7 +63,8 @@ public abstract class ComprehensionEvaluator extends VertexEvaluator {
 					EdgeDirection.IN).getAlpha();
 			DeclarationEvaluator declEval = (DeclarationEvaluator) greqlEvaluator
 					.getVertexEvaluatorGraphMarker().getMark(d);
-			varDeclLayer = (VariableDeclarationLayer) declEval.getResult(subgraph).toObject();
+			varDeclLayer = (VariableDeclarationLayer) declEval.getResult(
+					subgraph).toObject();
 		}
 		return varDeclLayer;
 	}

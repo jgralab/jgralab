@@ -57,8 +57,7 @@ public class ConditionalExpressionUnit {
 
 	private double calculateInfluenceCostRatio() {
 		Formula boolDiff = new Not(greqlEvaluator, new Equiv(greqlEvaluator,
-				trueFormula, new Not(greqlEvaluator, 
-						falseFormula)));
+				trueFormula, new Not(greqlEvaluator, falseFormula)));
 		boolDiff = boolDiff.simplify();
 
 		// selectivity of the boolean difference

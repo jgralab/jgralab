@@ -65,11 +65,10 @@ public class SetComprehensionEvaluator extends ComprehensionEvaluator {
 		super(eval);
 		this.vertex = vertex;
 	}
-	
+
 	protected JValueCollection getResultDatastructure() {
 		return new JValueSet();
 	}
-	
 
 	@Override
 	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {

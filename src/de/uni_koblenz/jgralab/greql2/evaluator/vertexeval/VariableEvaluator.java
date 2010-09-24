@@ -126,7 +126,8 @@ public class VariableEvaluator extends VertexEvaluator {
 	}
 
 	@Override
-	public JValue getResult(AbstractGraphMarker<AttributedElement> subgraphMarker)
+	public JValue getResult(
+			AbstractGraphMarker<AttributedElement> subgraphMarker)
 			throws EvaluateException {
 		return variableValue;
 	}

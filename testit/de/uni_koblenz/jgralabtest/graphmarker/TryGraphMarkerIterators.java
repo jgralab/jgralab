@@ -103,9 +103,9 @@ public class TryGraphMarkerIterators {
 		unmark(nodes, links, 0);
 
 		applyIterators("first unmarked");
-		
-		unmark(nodes,links,9);
-		
+
+		unmark(nodes, links, 9);
+
 		applyIterators("last unmarked");
 
 		unmark(nodes, links, 3);

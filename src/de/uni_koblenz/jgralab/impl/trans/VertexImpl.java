@@ -506,7 +506,7 @@ public abstract class VertexImpl extends
 			throws GraphIOException {
 		attr.setDefaultTransactionValue(this);
 	}
-	
+
 	@Override
 	public String toString() {
 		return "v " + getId() + ": "

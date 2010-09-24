@@ -123,7 +123,8 @@ public class NFA extends FiniteAutomaton {
 			// there are at least two final states, there should be only one, so
 			// create a new one and epsilon-transitions
 			newFinalState = new State();
-			iteratedNFA.constructFinalStatesEpsilonTransitions(newFinalState, true);
+			iteratedNFA.constructFinalStatesEpsilonTransitions(newFinalState,
+					true);
 			iteratedNFA.stateList.add(newFinalState);
 			// this is the only final state
 			iteratedNFA.finalStates.add(newFinalState);
@@ -178,7 +179,7 @@ public class NFA extends FiniteAutomaton {
 		resultNFA.stateList.add(finalState);
 		resultNFA.initialState = initialState;
 		resultNFA.finalStates.add(finalState);
-		//resultNFA.constructFinalStatesEpsilonTransitions(finalState, true);
+		// resultNFA.constructFinalStatesEpsilonTransitions(finalState, true);
 		for (int i = 0; i < nfaList.size(); i++) {
 			NFA nextNFA = nfaList.get(i);
 			Transition t = new EpsilonTransition(resultNFA.initialState,

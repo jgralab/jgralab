@@ -83,8 +83,9 @@ public class EdgeSeq extends Greql2Function {
 	}
 
 	@Override
-	public JValue evaluate(Graph graph, AbstractGraphMarker<AttributedElement> subgraph,
-			JValue[] arguments) throws EvaluateException {
+	public JValue evaluate(Graph graph,
+			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
+			throws EvaluateException {
 		JValueSet edges = new JValueSet();
 		Edge start = arguments[0].toEdge();
 		Edge end = arguments[1].toEdge();

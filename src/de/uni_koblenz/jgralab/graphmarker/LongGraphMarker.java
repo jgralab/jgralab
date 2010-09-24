@@ -153,5 +153,5 @@ public abstract class LongGraphMarker<T extends GraphElement> extends
 		}
 		this.unmarkedValue = newUnmarkedValue;
 	}
-	
+
 }

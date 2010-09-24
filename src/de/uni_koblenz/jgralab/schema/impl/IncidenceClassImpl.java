@@ -180,7 +180,8 @@ public class IncidenceClassImpl implements IncidenceClass {
 					}
 					// determine proper end
 					IncidenceClass other = direction == IncidenceDirection.IN ? ec
-							.getTo() : ec.getFrom();
+							.getTo()
+							: ec.getFrom();
 					if (other.getRedefinedIncidenceClasses().contains(ic)) {
 						throw new SchemaException("The role '" + rolename
 								+ "' of EdgeClass '"

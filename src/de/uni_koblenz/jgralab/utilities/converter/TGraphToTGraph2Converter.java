@@ -300,7 +300,7 @@ public class TGraphToTGraph2Converter {
 			}
 
 			System.out.println("Fini.");
-			if(loadSchema){
+			if (loadSchema) {
 				loadConvertedSchema(outputFilename);
 			}
 		} catch (FileNotFoundException e) {

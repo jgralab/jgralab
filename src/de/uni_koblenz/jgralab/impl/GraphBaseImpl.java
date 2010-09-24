@@ -1898,7 +1898,8 @@ public abstract class GraphBaseImpl implements Graph {
 		}
 		int n = graphStructureChangedListeners.size();
 		for (int i = 0; i < n; i++) {
-			graphStructureChangedListeners.get(i).maxEdgeCountIncreased(newValue);
+			graphStructureChangedListeners.get(i).maxEdgeCountIncreased(
+					newValue);
 		}
 	}
 

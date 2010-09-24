@@ -51,15 +51,15 @@ public class DFA extends FiniteAutomaton {
 	public DFA getDFA() {
 		return this;
 	}
-	
-	//public static int count = 0;
-	
+
+	// public static int count = 0;
+
 	/**
 	 * creates a new DFA from the given NFA. Removes all epsilon transitions and
 	 * uses Myhill-Construction to create the DFA out of the NFA.
 	 */
 	public DFA(NFA nfa) throws EvaluateException {
-		//count++;
+		// count++;
 		finalStates = new ArrayList<State>();
 		transitionList = new ArrayList<Transition>();
 		stateList = new ArrayList<State>();
@@ -68,23 +68,22 @@ public class DFA extends FiniteAutomaton {
 		removeDuplicateTransitions();
 		// now set the state numbers and also the final-attribute of the states
 		updateStateAttributes();
-		//printAscii2();
+		// printAscii2();
 	}
-	
-	
+
 	private void removeDuplicateTransitions() {
 		Set<Transition> duplicateTransitions = new HashSet<Transition>();
 		for (State s : this.stateList) {
-			for (int i=0; i<s.outTransitions.size()-1; i++) {
+			for (int i = 0; i < s.outTransitions.size() - 1; i++) {
 				Transition t1 = s.outTransitions.get(i);
-				for (int j=i+1; j<s.outTransitions.size(); j++) {
+				for (int j = i + 1; j < s.outTransitions.size(); j++) {
 					Transition t2 = s.outTransitions.get(j);
-					if ( (t1.endState == t2.endState) &&
-						 (t1.startState == t2.startState) &&
-						 (t1.equalSymbol(t2)))
+					if ((t1.endState == t2.endState)
+							&& (t1.startState == t2.startState)
+							&& (t1.equalSymbol(t2)))
 						duplicateTransitions.add(t2);
 				}
-				
+
 			}
 		}
 		for (Transition t : duplicateTransitions) {
@@ -103,8 +102,9 @@ public class DFA extends FiniteAutomaton {
 		State X = epsilonTransition.startState;
 		State Y = epsilonTransition.endState;
 		if (X != Y) {
-			//if there are no more other incomming transitions at the end state, 
-			//both state could be unified
+			// if there are no more other incomming transitions at the end
+			// state,
+			// both state could be unified
 			if ((Y.inTransitions.size() == 1) && (nfa.initialState != Y)) {
 				Iterator<Transition> iter = Y.outTransitions.iterator();
 				while (iter.hasNext()) {
@@ -115,18 +115,19 @@ public class DFA extends FiniteAutomaton {
 				}
 				nfa.stateList.remove(Y);
 				nfa.finalStates.remove(Y);
-			} else {			
+			} else {
 				// copies all transitions Y->Z and generates transitions
-				//X->Z out of them
+				// X->Z out of them
 				for (Transition currentTransition : Y.outTransitions) {
 					if (!(currentTransition.isEpsilon() && currentTransition.endState == X)) {
-						Transition newTransition = currentTransition.copy(false);
+						Transition newTransition = currentTransition
+								.copy(false);
 						nfa.transitionList.add(newTransition);
 						newTransition.setStartState(X);
 						newTransition.setEndState(newTransition.endState);
-					} 				
+					}
 				}
-			}	
+			}
 		}
 		nfa.transitionList.remove(epsilonTransition);
 		epsilonTransition.delete();
@@ -135,7 +136,7 @@ public class DFA extends FiniteAutomaton {
 			if (!X.isFinal) {
 				X.isFinal = true;
 				nfa.finalStates.add(X);
-			}	
+			}
 		}
 	}
 
@@ -185,15 +186,15 @@ public class DFA extends FiniteAutomaton {
 							.get(k);
 					if (firstTransition.equalSymbol(secondTransition)) {
 						// check if this two transitions end in the same state
-						if (firstTransition.endState != secondTransition.
-								endState) {
+						if (firstTransition.endState != secondTransition.endState) {
 							// this two transitions accept the same symbol, but
 							// have different end states,
 							// so add the end state of the second one to the
 							// list
 							// of represented states of the first's end state
-							transitionList.addAll(newDFAState
-									.addRepresentedState(secondTransition.endState));
+							transitionList
+									.addAll(newDFAState
+											.addRepresentedState(secondTransition.endState));
 						}
 						// delete the second transition
 						secondTransition.delete();
@@ -229,7 +230,7 @@ public class DFA extends FiniteAutomaton {
 					if (newDFAState.containsFinalStateOfNFA(nfa)) {
 						newDFAState.isFinal = true;
 						finalStates.add(newDFAState);
-					}	
+					}
 				}
 			}
 			i++;

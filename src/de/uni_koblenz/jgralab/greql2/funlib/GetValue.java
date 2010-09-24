@@ -40,9 +40,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Returns the given attribute or element value for a vertex, an edge or a
- * record. The attribute is called by its name. Furthermore, values assigned
- * to an graph element by a graph marker can be accessed by providing the graph marker
- * as second parameter to the function instead of the attribute name.
+ * record. The attribute is called by its name. Furthermore, values assigned to
+ * an graph element by a graph marker can be accessed by providing the graph
+ * marker as second parameter to the function instead of the attribute name.
  * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
@@ -74,7 +74,7 @@ public class GetValue extends Greql2Function {
 		JValueType[][] x = {
 				{ JValueType.ATTRELEM, JValueType.STRING, JValueType.OBJECT },
 				{ JValueType.RECORD, JValueType.STRING, JValueType.OBJECT },
-				{ JValueType.ATTRELEM, JValueType.MARKER, JValueType.OBJECT }};
+				{ JValueType.ATTRELEM, JValueType.MARKER, JValueType.OBJECT } };
 		signatures = x;
 
 		description = "Returns the value of the given AttrElem's or Record's (temporary) attribute or component.\n"
@@ -85,7 +85,9 @@ public class GetValue extends Greql2Function {
 	}
 
 	@Override
-	public JValue evaluate(Graph graph, AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments) throws EvaluateException {
+	public JValue evaluate(Graph graph,
+			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
+			throws EvaluateException {
 		AttributedElement attrElem = null;
 		JValueRecord record = null;
 		GraphMarker<?> marker = null;
@@ -108,16 +110,16 @@ public class GetValue extends Greql2Function {
 
 		if (attrElem != null) {
 			if (marker != null) {
-				return JValueImpl.fromObject(marker.getMark(attrElem),
-						attrElem);
+				return JValueImpl
+						.fromObject(marker.getMark(attrElem), attrElem);
 			} else {
-			try {
-				return JValueImpl.fromObject(attrElem.getAttribute(fieldName),
-						attrElem);
-			} catch (NoSuchAttributeException e) {
-				e.printStackTrace();
-				throw new EvaluateException("GetValue failed!", e);
-			}
+				try {
+					return JValueImpl.fromObject(attrElem
+							.getAttribute(fieldName), attrElem);
+				} catch (NoSuchAttributeException e) {
+					e.printStackTrace();
+					throw new EvaluateException("GetValue failed!", e);
+				}
 			}
 		}
 		return record.get(fieldName);

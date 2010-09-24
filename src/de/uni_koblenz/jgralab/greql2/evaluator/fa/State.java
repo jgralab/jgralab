@@ -58,7 +58,7 @@ public class State {
 	 * the list of outTransitions
 	 */
 	public ArrayList<Transition> outTransitions;
-		
+
 	/**
 	 * constructs a new state without any transitions connected
 	 * 

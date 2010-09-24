@@ -53,7 +53,6 @@ public class VariableDeclaration {
 	 */
 	private JValueCollection definitionSet;
 
-	
 	private AbstractGraphMarker<AttributedElement> subgraph;
 
 	/**
@@ -91,8 +90,8 @@ public class VariableDeclaration {
 	 */
 	public VariableDeclaration(Variable var,
 			VertexEvaluator definitionSetEvaluator,
-			AbstractGraphMarker<AttributedElement> subgraph2, SimpleDeclaration decl,
-			GreqlEvaluator eval) {
+			AbstractGraphMarker<AttributedElement> subgraph2,
+			SimpleDeclaration decl, GreqlEvaluator eval) {
 		variableEval = (VariableEvaluator) eval.getVertexEvaluatorGraphMarker()
 				.getMark(var);
 		this.definitionSetEvaluator = definitionSetEvaluator;

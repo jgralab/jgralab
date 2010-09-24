@@ -91,8 +91,9 @@ public class IsA extends Greql2Function {
 	}
 
 	@Override
-	public JValue evaluate(Graph graph, AbstractGraphMarker<AttributedElement> subgraph,
-			JValue[] arguments) throws EvaluateException {
+	public JValue evaluate(Graph graph,
+			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
+			throws EvaluateException {
 		String s1 = null, s2 = null;
 		AttributedElementClass aec1 = null, aec2 = null;
 		switch (checkArguments(arguments)) {

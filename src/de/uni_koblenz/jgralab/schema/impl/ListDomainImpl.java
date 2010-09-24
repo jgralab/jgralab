@@ -85,8 +85,9 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 
 	@Override
 	public String getTransactionJavaClassName(String schemaRootPackagePrefix) {
-		//return "de.uni_koblenz.jgralab.impl.trans.JGraLabListImpl";
-		//return getTransactionJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
+		// return "de.uni_koblenz.jgralab.impl.trans.JGraLabListImpl";
+		// return
+		// getTransactionJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
 		return getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
 	}
 
@@ -178,7 +179,7 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 		element = element.replace('(', '_');
 		element = element.replace(')', '_');
 		code.setVariable("element", element);
-	
+
 		code.addNoIndent(new CodeSnippet("if (#name# != null) {"));
 		code.add(new CodeSnippet("#io#.writeSpace();", "#io#.write(\"[\");",
 				"#io#.noSpace();", "for (#basetype# #element# : #name#) {"));

@@ -78,8 +78,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public class Matches extends Greql2Function {
 
 	{
-		JValueType[][] x = {
-				{ JValueType.PATH, JValueType.AUTOMATON, JValueType.BOOL }};
+		JValueType[][] x = { { JValueType.PATH, JValueType.AUTOMATON,
+				JValueType.BOOL } };
 		signatures = x;
 
 		description = "Returns true iff the given path description matches the given path.";
@@ -89,8 +89,9 @@ public class Matches extends Greql2Function {
 	}
 
 	@Override
-	public JValue evaluate(Graph graph, AbstractGraphMarker<AttributedElement> subgraph,
-			JValue[] arguments) throws EvaluateException {
+	public JValue evaluate(Graph graph,
+			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
+			throws EvaluateException {
 		DFA dfa = null;
 		switch (checkArguments(arguments)) {
 		case 0:
@@ -126,8 +127,8 @@ public class Matches extends Greql2Function {
 						markers[currentTransition.endState.number]
 								.mark(nextVertex);
 						PathSystemQueueEntry nextEntry = new PathSystemQueueEntry(
-								nextVertex, currentTransition.endState,
-								edge, currentEntry.state,
+								nextVertex, currentTransition.endState, edge,
+								currentEntry.state,
 								currentEntry.distanceToRoot + 1);
 						queue.add(nextEntry);
 					}

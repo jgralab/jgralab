@@ -163,12 +163,14 @@ public class SwingProgressFunction implements ProgressFunction, ActionListener {
 
 	Runnable timeTextUpdater = new Runnable() {
 		public void run() {
-			lbl.setText(elementFormatter.format(totalElements)
-					+ " "
-					+ itemName
-					+ ", "
-					+ timeFormatter.format((System.currentTimeMillis() - startTime) / 1000.0)
-					+ "s");
+			lbl
+					.setText(elementFormatter.format(totalElements)
+							+ " "
+							+ itemName
+							+ ", "
+							+ timeFormatter
+									.format((System.currentTimeMillis() - startTime) / 1000.0)
+							+ "s");
 		}
 	};
 

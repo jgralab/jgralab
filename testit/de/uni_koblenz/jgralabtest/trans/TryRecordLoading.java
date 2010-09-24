@@ -54,9 +54,8 @@ public class TryRecordLoading {
 
 		// load graph with transaction support
 
-		RecordTestSchema.instance()
-				.loadRecordTestGraphWithTransactionSupport(filename,
-						new ConsoleProgressFunction());
+		RecordTestSchema.instance().loadRecordTestGraphWithTransactionSupport(
+				filename, new ConsoleProgressFunction());
 
 		System.out.println("Success!");
 

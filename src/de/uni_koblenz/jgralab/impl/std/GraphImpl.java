@@ -327,17 +327,17 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public final boolean hasStandardSupport(){
+	public final boolean hasStandardSupport() {
 		return true;
 	}
-	
+
 	@Override
 	public final boolean hasTransactionSupport() {
 		return false;
 	}
-	
+
 	@Override
-	public final boolean hasSavememSupport(){
+	public final boolean hasSavememSupport() {
 		return false;
 	}
 
@@ -396,7 +396,7 @@ public abstract class GraphImpl extends
 			float loadFactor) {
 		return new JGraLabMapImpl<K, V>(initialCapacity, loadFactor);
 	}
-	
+
 	@Override
 	public <T extends Record> T createRecord(Class<T> recordClass, GraphIO io) {
 		T record = graphFactory.createRecord(recordClass, this);
@@ -409,14 +409,16 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public <T extends Record> T createRecord(Class<T> recordClass, Map<String, Object> fields) {
+	public <T extends Record> T createRecord(Class<T> recordClass,
+			Map<String, Object> fields) {
 		T record = graphFactory.createRecord(recordClass, this);
 		record.setComponentValues(fields);
 		return record;
 	}
 
 	@Override
-	public <T extends Record> T createRecord(Class<T> recordClass, Object... components) {
+	public <T extends Record> T createRecord(Class<T> recordClass,
+			Object... components) {
 		T record = graphFactory.createRecord(recordClass, this);
 		record.setComponentValues(components);
 		return record;

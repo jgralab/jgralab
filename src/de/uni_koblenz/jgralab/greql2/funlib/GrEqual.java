@@ -80,8 +80,9 @@ public class GrEqual extends CompareFunction {
 	}
 
 	@Override
-	public JValue evaluate(Graph graph, AbstractGraphMarker<AttributedElement> subgraph,
-			JValue[] arguments) throws EvaluateException {
+	public JValue evaluate(Graph graph,
+			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
+			throws EvaluateException {
 		return evaluate(arguments, CompareOperator.GR_EQUAL);
 	}
 
