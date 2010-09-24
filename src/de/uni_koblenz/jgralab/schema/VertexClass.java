@@ -46,34 +46,34 @@ public interface VertexClass extends GraphElementClass {
 	 * 
 	 */
 	public void addSuperClass(VertexClass superClass);
-	
-	//public Set<IncidenceClass> getOwnInIncidenceClasses();
-	
-	//public Set<IncidenceClass> getOwnOutIncidenceClasses();
-	
+
+	// public Set<IncidenceClass> getOwnInIncidenceClasses();
+
+	// public Set<IncidenceClass> getOwnOutIncidenceClasses();
+
 	public Set<IncidenceClass> getAllInIncidenceClasses();
-	
+
 	public Set<IncidenceClass> getAllOutIncidenceClasses();
-	
+
 	public Set<IncidenceClass> getValidFromFarIncidenceClasses();
-	
+
 	public Set<IncidenceClass> getValidToFarIncidenceClasses();
-	
-	//public Set<IncidenceClass> getOwnAndInheritedFarIncidenceClasses();
-	
+
+	// public Set<IncidenceClass> getOwnAndInheritedFarIncidenceClasses();
+
 	public void addInIncidenceClass(IncidenceClass ic);
-	
+
 	public void addOutIncidenceClass(IncidenceClass ic);
 
 	@Override
 	public Class<? extends Vertex> getM1Class();
 
 	public Set<EdgeClass> getValidToEdgeClasses();
-	
+
 	public Set<EdgeClass> getValidFromEdgeClasses();
-	
+
 	public Set<EdgeClass> getConnectedEdgeClasses();
-	
+
 	public Set<EdgeClass> getOwnConnectedEdgeClasses();
 
 }

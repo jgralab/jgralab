@@ -90,37 +90,42 @@ public class Contains extends Greql2Function {
 				Category.PATHS_AND_PATHSYSTEMS_AND_SLICES };
 		categories = c;
 	}
-	
+
 	public static int count = 0;
 
 	@Override
-	public JValue evaluate(Graph graph, AbstractGraphMarker<AttributedElement> subgraph,
-			JValue[] arguments) throws EvaluateException {
+	public JValue evaluate(Graph graph,
+			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
+			throws EvaluateException {
 		count++;
 		switch (checkArguments(arguments)) {
 		case 0:
 			JValueCollection col = arguments[0].toCollection();
-			JValue val =  JValueBoolean.getValue(col.contains(arguments[1]));
+			JValue val = JValueBoolean.getValue(col.contains(arguments[1]));
 			return val;
 		case 1:
 			JValuePath path = arguments[0].toPath();
-			return JValueBoolean.getValue(path.contains((GraphElement) arguments[1]
-					.toAttributedElement()));
+			return JValueBoolean
+					.getValue(path.contains((GraphElement) arguments[1]
+							.toAttributedElement()));
 		case 2:
 			JValuePathSystem pathsys = arguments[0].toPathSystem();
-			return JValueBoolean.getValue(pathsys.contains((GraphElement) arguments[1]
-					.toAttributedElement()));
+			return JValueBoolean
+					.getValue(pathsys.contains((GraphElement) arguments[1]
+							.toAttributedElement()));
 		case 3:
 			JValueSlice slice = arguments[0].toSlice();
-			return JValueBoolean.getValue(slice.contains((GraphElement) arguments[1]
-					.toAttributedElement()));
+			return JValueBoolean
+					.getValue(slice.contains((GraphElement) arguments[1]
+							.toAttributedElement()));
 		case 4:
 			JValuePathSystem pathsys2 = arguments[0].toPathSystem();
 			JValuePath path2 = arguments[1].toPath();
 			return JValueBoolean.getValue(pathsys2.containsPath(path2));
 		case 5:
 			BooleanGraphMarker m = (BooleanGraphMarker) arguments[0].toObject();
-			return JValueBoolean.getValue(m.isMarked(arguments[1].toAttributedElement()));
+			return JValueBoolean.getValue(m.isMarked(arguments[1]
+					.toAttributedElement()));
 		default:
 			throw new WrongFunctionParameterException(this, arguments);
 		}

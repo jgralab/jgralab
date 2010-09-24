@@ -64,14 +64,14 @@ public class DoubleEdgeMarker extends DoubleGraphMarker<Edge> {
 	public double mark(Edge edge, double value) {
 		return super.mark(edge.getNormalEdge(), value);
 	}
-	
+
 	@Override
-	public boolean isMarked(Edge edge){
+	public boolean isMarked(Edge edge) {
 		return super.isMarked(edge.getNormalEdge());
 	}
-	
+
 	@Override
-	public double getMark(Edge edge){
+	public double getMark(Edge edge) {
 		return super.getMark(edge.getNormalEdge());
 	}
 
@@ -91,25 +91,28 @@ public class DoubleEdgeMarker extends DoubleGraphMarker<Edge> {
 					@Override
 					protected void moveIndex() {
 						int length = temporaryAttributes.length;
-						while (index < length && Double.isNaN(temporaryAttributes[index])) {
+						while (index < length
+								&& Double.isNaN(temporaryAttributes[index])) {
 							index++;
 						}
 					}
 
 					@Override
 					public Edge next() {
-						if(!hasNext()){
-							throw new NoSuchElementException(NO_MORE_ELEMENTS_ERROR_MESSAGE);
+						if (!hasNext()) {
+							throw new NoSuchElementException(
+									NO_MORE_ELEMENTS_ERROR_MESSAGE);
 						}
-						if(version != DoubleEdgeMarker.this.version){
-							throw new ConcurrentModificationException(MODIFIED_ERROR_MESSAGE);
+						if (version != DoubleEdgeMarker.this.version) {
+							throw new ConcurrentModificationException(
+									MODIFIED_ERROR_MESSAGE);
 						}
 						Edge next = graph.getEdge(index++);
 						moveIndex();
 						return next;
-					}		
+					}
 				};
-				
+
 			}
 
 		};

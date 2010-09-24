@@ -85,8 +85,9 @@ public class VertexSeq extends Greql2Function {
 	}
 
 	@Override
-	public JValue evaluate(Graph graph, AbstractGraphMarker<AttributedElement> subgraph,
-			JValue[] arguments) throws EvaluateException {
+	public JValue evaluate(Graph graph,
+			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
+			throws EvaluateException {
 		JValueSet vertices = new JValueSet();
 		Vertex start = arguments[0].toVertex();
 		Vertex end = arguments[1].toVertex();

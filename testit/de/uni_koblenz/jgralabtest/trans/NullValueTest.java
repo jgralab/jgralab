@@ -165,9 +165,8 @@ public class NullValueTest {
 	public void writeTest() throws CommitFailedException, GraphIOException {
 		graph.newReadOnlyTransaction();
 		try {
-			GraphIO
-					.saveGraphToFile(filename, graph,
-							new ConsoleProgressFunction());
+			GraphIO.saveGraphToFile(filename, graph,
+					new ConsoleProgressFunction());
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail(e.getMessage());

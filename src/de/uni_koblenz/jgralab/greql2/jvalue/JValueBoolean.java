@@ -143,13 +143,12 @@ public class JValueBoolean {
 	public static Boolean getFalseValue() {
 		return Boolean.FALSE;
 	}
-	
+
 	public static JValue getValue(boolean value) {
 		if (value) {
 			return trueJValue;
-		}	
+		}
 		return falseJValue;
 	}
-	
 
 }

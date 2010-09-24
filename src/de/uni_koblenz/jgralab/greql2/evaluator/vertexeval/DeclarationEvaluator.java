@@ -63,7 +63,6 @@ public class DeclarationEvaluator extends VertexEvaluator {
 	 */
 	private Declaration vertex;
 
-
 	/**
 	 * returns the vertex this VertexEvaluator evaluates
 	 */
@@ -120,18 +119,19 @@ public class DeclarationEvaluator extends VertexEvaluator {
 		}
 		/* create list of VariableDeclaration objects */
 		List<VariableDeclaration> varDeclList = new ArrayList<VariableDeclaration>();
-		for (IsSimpleDeclOf inc : vertex.getIsSimpleDeclOfIncidences(EdgeDirection.IN)) {
+		for (IsSimpleDeclOf inc : vertex
+				.getIsSimpleDeclOfIncidences(EdgeDirection.IN)) {
 			SimpleDeclaration simpleDecl = (SimpleDeclaration) inc.getAlpha();
 			SimpleDeclarationEvaluator simpleDeclEval = (SimpleDeclarationEvaluator) greqlEvaluator
 					.getVertexEvaluatorGraphMarker().getMark(simpleDecl);
 			JValue simpleResult = simpleDeclEval.getResult(newSubgraph);
 			JValueCollection resultCollection = simpleResult.toCollection();
 			for (JValue v : resultCollection) {
-				varDeclList.add((VariableDeclaration)v.toObject());
+				varDeclList.add((VariableDeclaration) v.toObject());
 			}
 		}
 		VariableDeclarationLayer declarationLayer = new VariableDeclarationLayer(
-		vertex, varDeclList, constraintList, evaluationLogger);
+				vertex, varDeclList, constraintList, evaluationLogger);
 		return new JValueImpl(declarationLayer);
 	}
 

@@ -36,9 +36,10 @@ public class TryNullValueForMapDomain {
 	/**
 	 * @param args
 	 * @throws GraphIOException
-	 * @throws CommitFailedException 
+	 * @throws CommitFailedException
 	 */
-	public static void main(String[] args) throws GraphIOException, CommitFailedException {
+	public static void main(String[] args) throws GraphIOException,
+			CommitFailedException {
 		// create graph without transaction support
 		RecordTestGraph graph = RecordTestSchema.instance()
 				.createRecordTestGraphWithTransactionSupport();
@@ -46,7 +47,7 @@ public class TryNullValueForMapDomain {
 		Node node = graph.createNode();
 		node.set_nodeMap(null);
 		graph.createLink(node, node);
-		
+
 		Map<Integer, String> theMap;
 		try {
 			theMap = node.get_nodeMap();
@@ -56,13 +57,12 @@ public class TryNullValueForMapDomain {
 			e.printStackTrace();
 		}
 		graph.commit();
-		
+
 		graph.newReadOnlyTransaction();
 		theMap = node.get_nodeMap();
 		System.out.println(theMap);
 		graph.commit();
-		
-		
+
 		System.out.println("Success!");
 
 	}

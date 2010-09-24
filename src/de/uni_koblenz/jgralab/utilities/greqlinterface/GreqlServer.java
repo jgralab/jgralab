@@ -219,7 +219,8 @@ public class GreqlServer extends Thread {
 				}
 			} else if (result.isMap()) {
 				JValueMap map = result.toJValueMap();
-				println("Result map contains " + map.size() + " map entries.\n",
+				println(
+						"Result map contains " + map.size() + " map entries.\n",
 						PrintTarget.CLIENT, true);
 				for (Entry<JValue, JValue> e : map.entrySet()) {
 					println(e.getKey() + " --> " + e.getValue(),

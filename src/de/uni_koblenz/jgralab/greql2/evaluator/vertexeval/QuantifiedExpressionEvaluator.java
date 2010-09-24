@@ -51,13 +51,13 @@ import de.uni_koblenz.jgralab.greql2.schema.Quantifier;
 public class QuantifiedExpressionEvaluator extends VertexEvaluator {
 
 	private QuantifiedExpression vertex;
-	
+
 	private VariableDeclarationLayer declarationLayer = null;
-	
+
 	private QuantificationType quantificationType = null;
-	
+
 	private boolean initialized = false;
-	
+
 	private VertexEvaluator predicateEvaluator = null;
 
 	/**
@@ -79,19 +79,21 @@ public class QuantifiedExpressionEvaluator extends VertexEvaluator {
 		super(eval);
 		this.vertex = vertex;
 	}
-	
-	
+
 	private void initialize() {
-		Declaration d = (Declaration) vertex.getFirstIsQuantifiedDeclOf(EdgeDirection.IN).getAlpha();
-		DeclarationEvaluator declEval = (DeclarationEvaluator) greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(d);
-		declarationLayer = (VariableDeclarationLayer) declEval.getResult(subgraph).toObject();
+		Declaration d = (Declaration) vertex.getFirstIsQuantifiedDeclOf(
+				EdgeDirection.IN).getAlpha();
+		DeclarationEvaluator declEval = (DeclarationEvaluator) greqlEvaluator
+				.getVertexEvaluatorGraphMarker().getMark(d);
+		declarationLayer = (VariableDeclarationLayer) declEval.getResult(
+				subgraph).toObject();
 		Quantifier quantifier = (Quantifier) vertex.getFirstIsQuantifierOf(
 				EdgeDirection.IN).getAlpha();
 		quantificationType = quantifier.get_type();
 		Expression b = (Expression) vertex.getFirstIsBoundExprOf(
 				EdgeDirection.IN).getAlpha();
-		predicateEvaluator = greqlEvaluator
-				.getVertexEvaluatorGraphMarker().getMark(b);		
+		predicateEvaluator = greqlEvaluator.getVertexEvaluatorGraphMarker()
+				.getMark(b);
 		initialized = true;
 	}
 
@@ -114,9 +116,10 @@ public class QuantifiedExpressionEvaluator extends VertexEvaluator {
 				JValue tempResult = predicateEvaluator.getResult(subgraph);
 				if (tempResult.isBoolean()) {
 					try {
-						if (tempResult.toBoolean() == JValueBoolean.getTrueValue()) {
+						if (tempResult.toBoolean() == JValueBoolean
+								.getTrueValue()) {
 							return new JValueImpl(JValueBoolean.getTrueValue());
-						} 
+						}
 					} catch (JValueInvalidTypeException exception) {
 						throw new EvaluateException(
 								"Error evaluation Exists clause", exception);
@@ -133,7 +136,8 @@ public class QuantifiedExpressionEvaluator extends VertexEvaluator {
 						if (tempResult.toBoolean().equals(
 								JValueBoolean.getTrueValue())) {
 							if (foundTrue == true) {
-								return new JValueImpl(JValueBoolean.getFalseValue());
+								return new JValueImpl(JValueBoolean
+										.getFalseValue());
 							} else {
 								foundTrue = true;
 							}
@@ -148,7 +152,7 @@ public class QuantifiedExpressionEvaluator extends VertexEvaluator {
 				return new JValueImpl(JValueBoolean.getTrueValue());
 			}
 			return new JValueImpl(JValueBoolean.getFalseValue());
-		case FORALL:	
+		case FORALL:
 			while (declarationLayer.iterate(subgraph)) {
 				noOfVariableCombinations++;
 				JValue tempResult = predicateEvaluator.getResult(subgraph);

@@ -24,8 +24,6 @@
 
 package de.uni_koblenz.jgralab.utilities.common;
 
-
-
 public class UtilityMethods {
 
 	/**

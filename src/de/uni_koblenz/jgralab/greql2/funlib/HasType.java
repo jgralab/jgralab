@@ -45,8 +45,7 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>BOOL hasType(ae:ATTRELEM, type:STRING)</code></dd>
  * <dd>
- * <code>BOOL hasType(ae:ATTRELEM, aec:ATTRELEMCLASS)</code>
- * </dd>
+ * <code>BOOL hasType(ae:ATTRELEM, aec:ATTRELEMCLASS)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>
@@ -73,10 +72,9 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 public class HasType extends Greql2Function {
 	{
 		JValueType[][] x = {
-				{ JValueType.ATTRELEM, JValueType.STRING,
+				{ JValueType.ATTRELEM, JValueType.STRING, JValueType.BOOL },
+				{ JValueType.ATTRELEM, JValueType.ATTRELEMCLASS,
 						JValueType.BOOL },
-				{ JValueType.ATTRELEM,
-						JValueType.ATTRELEMCLASS, JValueType.BOOL },
 				{ JValueType.ATTRELEM, JValueType.TYPECOLLECTION,
 						JValueType.BOOL } };
 		signatures = x;
@@ -90,8 +88,9 @@ public class HasType extends Greql2Function {
 	}
 
 	@Override
-	public JValue evaluate(Graph graph, AbstractGraphMarker<AttributedElement> subgraph,
-			JValue[] arguments) throws EvaluateException {
+	public JValue evaluate(Graph graph,
+			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
+			throws EvaluateException {
 		String typeName = null;
 		AttributedElementClass aeClass = null;
 		JValueTypeCollection typeCollection = null;

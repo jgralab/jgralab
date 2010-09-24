@@ -84,8 +84,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public class PathSystem extends Greql2Function {
 
 	{
-		JValueType[][] x = {
-				{ JValueType.VERTEX, JValueType.AUTOMATON, JValueType.PATHSYSTEM } };
+		JValueType[][] x = { { JValueType.VERTEX, JValueType.AUTOMATON,
+				JValueType.PATHSYSTEM } };
 		signatures = x;
 
 		description = "Returns a pathsystem with root vertex, which is structured according to path description.";
@@ -177,7 +177,8 @@ public class PathSystem extends Greql2Function {
 	 *             thrown
 	 */
 	private List<Vertex> markVerticesOfPathSystem(Vertex startVertex, DFA dfa,
-			AbstractGraphMarker<AttributedElement> subgraph) throws EvaluateException {
+			AbstractGraphMarker<AttributedElement> subgraph)
+			throws EvaluateException {
 		// GreqlEvaluator.errprintln("Start marking vertices of path system");
 		ArrayList<Vertex> finalVertices = new ArrayList<Vertex>();
 		Queue<PathSystemQueueEntry> queue = new LinkedList<PathSystemQueueEntry>();
@@ -215,13 +216,12 @@ public class PathSystem extends Greql2Function {
 							if (nextVertex == currentEntry.vertex) {
 								traversedEdge = null;
 							}
-							markVertex(nextVertex, currentTransition.endState
-									, currentEntry.vertex,
-									traversedEdge, currentEntry.state,
+							markVertex(nextVertex, currentTransition.endState,
+									currentEntry.vertex, traversedEdge,
+									currentEntry.state,
 									currentEntry.distanceToRoot + 1);
 							PathSystemQueueEntry nextEntry = new PathSystemQueueEntry(
-									nextVertex,
-									currentTransition.endState,
+									nextVertex, currentTransition.endState,
 									traversedEdge, currentEntry.state,
 									currentEntry.distanceToRoot + 1);
 							queue.add(nextEntry);
@@ -240,8 +240,9 @@ public class PathSystem extends Greql2Function {
 	 * creates the pathsystem
 	 */
 	@Override
-	public JValue evaluate(Graph graph, AbstractGraphMarker<AttributedElement> subgraph,
-			JValue[] arguments) throws EvaluateException {
+	public JValue evaluate(Graph graph,
+			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
+			throws EvaluateException {
 		DFA dfa = null;
 		switch (checkArguments(arguments)) {
 		case 0:

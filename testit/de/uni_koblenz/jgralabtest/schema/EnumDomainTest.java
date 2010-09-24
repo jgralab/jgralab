@@ -143,20 +143,19 @@ public class EnumDomainTest extends BasicDomainTest {
 		// add constant that already exists
 		domain3.addConst("Sebastian");
 	}
-	
+
 	@Test(expected = InvalidNameException.class)
 	public void testAddConst4() {
 		// add constant that already exists
 		domain3.addConst("-a");
 	}
-	
+
 	@Test(expected = InvalidNameException.class)
 	public void testAddConst5() {
 		// add constant that already exists
 		domain3.addConst("abc%");
 	}
 
-	
 	@Test
 	public void testGetConsts() {
 		// get constants of an EnumDomain which doesn't contain any

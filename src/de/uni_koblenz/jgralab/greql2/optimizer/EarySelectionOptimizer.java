@@ -480,12 +480,10 @@ public class EarySelectionOptimizer extends OptimizerBase {
 		FunctionId funId = OptimizerUtility.findOrCreateFunctionId("and",
 				syntaxgraph);
 		syntaxgraph.createIsFunctionIdOf(funId, funApp);
-		syntaxgraph.createIsArgumentOf(
-				(Expression) copySubgraph(predicates.get(0), syntaxgraph,
-						varsToBeCopied, copiedVars), funApp);
-		syntaxgraph.createIsArgumentOf(
-				createConjunction(predicates.subList(1, predicates.size()),
-						varsToBeCopied, copiedVars), funApp);
+		syntaxgraph.createIsArgumentOf((Expression) copySubgraph(predicates
+				.get(0), syntaxgraph, varsToBeCopied, copiedVars), funApp);
+		syntaxgraph.createIsArgumentOf(createConjunction(predicates.subList(1,
+				predicates.size()), varsToBeCopied, copiedVars), funApp);
 		return funApp;
 	}
 

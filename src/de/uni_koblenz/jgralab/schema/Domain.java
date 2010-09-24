@@ -74,7 +74,7 @@ public interface Domain extends NamedElement, Comparable<Domain> {
 	 * @return true if this domain is a composite domain
 	 */
 	public boolean isComposite();
-	
+
 	/**
 	 * example: Integer for integer List<Boolean> for a list with basedomain
 	 * boolean
@@ -83,7 +83,7 @@ public interface Domain extends NamedElement, Comparable<Domain> {
 	 */
 	public String getTransactionJavaAttributeImplementationTypeName(
 			String schemaRootPackagePrefix);
-	
+
 	/**
 	 * example: Integer for integer
 	 * 
@@ -91,7 +91,7 @@ public interface Domain extends NamedElement, Comparable<Domain> {
 	 *         int, boolean, double
 	 */
 	public String getTransactionJavaClassName(String schemaRootPackagePrefix);
-	
+
 	/**
 	 * @return a code fragment to read a value of this domain from the GraphIO
 	 *         object named graphIoVariablename into the variableName for

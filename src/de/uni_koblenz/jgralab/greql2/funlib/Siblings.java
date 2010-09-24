@@ -84,13 +84,15 @@ public class Siblings extends Greql2Function {
 				+ "returned.  Two or more vertices are siblings, if they have at least one\n"
 				+ "same parent.";
 
-		Category[] c = { Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES };
+		Category[] c = { Category.GRAPH,
+				Category.PATHS_AND_PATHSYSTEMS_AND_SLICES };
 		categories = c;
 	}
 
 	@Override
-	public JValue evaluate(Graph graph, AbstractGraphMarker<AttributedElement> subgraph,
-			JValue[] arguments) throws EvaluateException {
+	public JValue evaluate(Graph graph,
+			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
+			throws EvaluateException {
 		JValuePathSystem pathSystem = null;
 		switch (checkArguments(arguments)) {
 		case 0:

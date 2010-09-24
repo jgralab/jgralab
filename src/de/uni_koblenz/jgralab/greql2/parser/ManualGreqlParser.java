@@ -1775,7 +1775,6 @@ public class ManualGreqlParser extends ManualParserHelper {
 		return null;
 	}
 
-	
 	private final Declaration parseQuantifiedDeclaration() {
 		List<VertexPosition<SimpleDeclaration>> declarations = parseDeclarationList();
 		Declaration declaration = null;
@@ -1987,7 +1986,6 @@ public class ManualGreqlParser extends ManualParserHelper {
 		} while (tryMatch(TokenTypes.COMMA));
 		return list;
 	}
-
 
 	@SuppressWarnings("unchecked")
 	private final EdgeRestriction parseEdgeRestriction() {

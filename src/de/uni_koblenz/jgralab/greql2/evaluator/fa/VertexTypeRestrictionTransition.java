@@ -123,7 +123,8 @@ public class VertexTypeRestrictionTransition extends Transition {
 	 * @return true if the transition can fire with e, false otherwise
 	 */
 	@Override
-	public boolean accepts(Vertex v, Edge e, AbstractGraphMarker<AttributedElement> subgraph)
+	public boolean accepts(Vertex v, Edge e,
+			AbstractGraphMarker<AttributedElement> subgraph)
 			throws EvaluateException {
 		// it is not neccessary to check if the vertex belongs to a special
 		// subgraph, because if it does not, this method will not be called and
@@ -144,7 +145,7 @@ public class VertexTypeRestrictionTransition extends Transition {
 	public Vertex getNextVertex(Vertex v, Edge e) {
 		return v;
 	}
-	
+
 	@Override
 	public String prettyPrint() {
 		StringBuilder b = new StringBuilder();
@@ -153,7 +154,7 @@ public class VertexTypeRestrictionTransition extends Transition {
 			b.append(delim);
 			b.append(c.getSimpleName());
 			delim = ",";
-		}	
+		}
 		return "&{" + b + "}";
 	}
 

@@ -24,7 +24,6 @@
 
 package de.uni_koblenz.jgralab.greql2.exception;
 
-
 /**
  * Should be thrown everytime there is an error in the evaluator that is not
  * covered by any other Exception

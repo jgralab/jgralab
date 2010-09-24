@@ -47,11 +47,10 @@ public interface EdgeClass extends GraphElementClass {
 	 */
 	public void addSuperClass(EdgeClass superClass);
 
-		
 	public IncidenceClass getFrom();
-	
+
 	public IncidenceClass getTo();
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 

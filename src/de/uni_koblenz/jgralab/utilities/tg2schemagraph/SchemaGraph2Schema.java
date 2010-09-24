@@ -399,7 +399,8 @@ public class SchemaGraph2Schema {
 		// Loop over all subpackages
 		for (ContainsSubPackage containsSubPackage : gPackage
 				.getContainsSubPackageIncidences(OUTGOING)) {
-			assert ((containsSubPackage != null) && (containsSubPackage.getThat() instanceof Package)) : "FIXME! That should be an instance of Package.";
+			assert ((containsSubPackage != null) && (containsSubPackage
+					.getThat() instanceof Package)) : "FIXME! That should be an instance of Package.";
 
 			// Recursion
 			getAllGraphElementClassesAndDomains((Package) containsSubPackage
@@ -573,7 +574,8 @@ public class SchemaGraph2Schema {
 		// Loop over all existing record components
 		for (HasRecordDomainComponent hasRecordComponent : gDomain
 				.getHasRecordDomainComponentIncidences(OUTGOING)) {
-			assert ((hasRecordComponent != null) && (hasRecordComponent.getThat() instanceof Domain)) : "FIXME! That should be an instance of Domain.";
+			assert ((hasRecordComponent != null) && (hasRecordComponent
+					.getThat() instanceof Domain)) : "FIXME! That should be an instance of Domain.";
 
 			recordComponents.add(new RecordComponent(hasRecordComponent
 					.get_name(), queryDomain((Domain) hasRecordComponent

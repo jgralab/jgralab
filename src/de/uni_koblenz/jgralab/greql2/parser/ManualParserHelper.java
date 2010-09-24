@@ -147,8 +147,7 @@ public abstract class ManualParserHelper {
 		cleanGraph();
 		return graph;
 	}
-	
-	
+
 	private void cleanGraph() {
 		if (!graphCleaned) {
 			Set<Vertex> reachableVertices = new HashSet<Vertex>();
@@ -183,27 +182,33 @@ public abstract class ManualParserHelper {
 			eliminateUnusedNodes();
 		}
 	}
-	
-	private void replaceDefinitionExpressions()	throws DuplicateVariableException, UndefinedVariableException {
+
+	private void replaceDefinitionExpressions()
+			throws DuplicateVariableException, UndefinedVariableException {
 		List<DefinitionExpression> list = new ArrayList<DefinitionExpression>();
 		for (DefinitionExpression exp : graph.getDefinitionExpressionVertices())
 			list.add(exp);
-		
+
 		/* iterate over all definitionsexpressions in the graph */
 		for (DefinitionExpression exp : list) {
 			List<Definition> defList = new ArrayList<Definition>();
-			for (IsDefinitionOf isDefOf : exp.getIsDefinitionOfIncidences(EdgeDirection.IN)) {
+			for (IsDefinitionOf isDefOf : exp
+					.getIsDefinitionOfIncidences(EdgeDirection.IN)) {
 				Definition definition = (Definition) isDefOf.getAlpha();
 				defList.add(definition);
 			}
-			/* if the current DefinitionExpression is a whereExpression, revert the list of definitions */
+			/*
+			 * if the current DefinitionExpression is a whereExpression, revert
+			 * the list of definitions
+			 */
 			if (exp instanceof WhereExpression) {
 				Collections.reverse(defList);
 			}
-		
-		    /* iterate over all definitions at the current definition expression */		
+
+			/* iterate over all definitions at the current definition expression */
 			for (Definition definition : defList) {
-				IsExprOf isExprOf = definition.getFirstIsExprOf(EdgeDirection.IN);
+				IsExprOf isExprOf = definition
+						.getFirstIsExprOf(EdgeDirection.IN);
 				IsVarOf isVarOf = definition.getFirstIsVarOf(EdgeDirection.IN);
 				Expression expr = (Expression) isExprOf.getAlpha();
 				Variable variable = (Variable) isVarOf.getAlpha();
@@ -216,7 +221,8 @@ public abstract class ManualParserHelper {
 				}
 				variable.delete();
 			}
-			Expression boundExpr = (Expression) exp.getFirstIsBoundExprOf(EdgeDirection.IN).getAlpha();
+			Expression boundExpr = (Expression) exp.getFirstIsBoundExprOf(
+					EdgeDirection.IN).getAlpha();
 			Edge e = exp.getFirstEdge(EdgeDirection.OUT);
 			while (e != null) {
 				e.setAlpha(boundExpr);
@@ -224,9 +230,8 @@ public abstract class ManualParserHelper {
 			}
 			exp.delete();
 		}
-	}	
-		
-		
+	}
+
 	protected void eliminateUnusedNodes() {
 		List<Vertex> deleteList = new ArrayList<Vertex>();
 		for (Vertex v : graph.vertices()) {
@@ -237,7 +242,6 @@ public abstract class ManualParserHelper {
 			v.delete();
 	}
 
-
 	/**
 	 * merges variable-vertices in the subgraph with the root-vertex
 	 * <code>v</code>
@@ -245,18 +249,22 @@ public abstract class ManualParserHelper {
 	 * @param v
 	 *            root of the subgraph
 	 * @param separateScope
-	 *            if true, this block may define a separate scope, should be true in most cases
-	 *            but false for where and let expression calling this method, e.g. in "from x:A with p report x end where p := x > 7" 
-	 *            the where and the from clause have the same scope             
+	 *            if true, this block may define a separate scope, should be
+	 *            true in most cases but false for where and let expression
+	 *            calling this method, e.g. in
+	 *            "from x:A with p report x end where p := x > 7" the where and
+	 *            the from clause have the same scope
 	 */
-	private void mergeVariables(Vertex v, boolean separateScope) throws DuplicateVariableException,
-			UndefinedVariableException {
+	private void mergeVariables(Vertex v, boolean separateScope)
+			throws DuplicateVariableException, UndefinedVariableException {
 		if (v instanceof DefinitionExpression) {
-			mergeVariablesInDefinitionExpression((DefinitionExpression) v, separateScope);
+			mergeVariablesInDefinitionExpression((DefinitionExpression) v,
+					separateScope);
 		} else if (v instanceof Comprehension) {
 			mergeVariablesInComprehension((Comprehension) v, separateScope);
 		} else if (v instanceof QuantifiedExpression) {
-			mergeVariablesInQuantifiedExpression((QuantifiedExpression) v, separateScope);
+			mergeVariablesInQuantifiedExpression((QuantifiedExpression) v,
+					separateScope);
 		} else if (v instanceof Greql2Expression) {
 			mergeVariablesInGreql2Expression((Greql2Expression) v);
 		} else if (v instanceof ThisLiteral) {
@@ -319,8 +327,9 @@ public abstract class ManualParserHelper {
 	 * @param v
 	 *            contains a let- or where-expression.
 	 */
-	private void mergeVariablesInDefinitionExpression(DefinitionExpression v, boolean separateScope)
-			throws DuplicateVariableException, UndefinedVariableException {
+	private void mergeVariablesInDefinitionExpression(DefinitionExpression v,
+			boolean separateScope) throws DuplicateVariableException,
+			UndefinedVariableException {
 		if (separateScope)
 			afterParsingvariableSymbolTable.blockBegin();
 		for (IsDefinitionOf currentEdge : v
@@ -332,7 +341,7 @@ public abstract class ManualParserHelper {
 					variable);
 		}
 		Edge isBoundExprOf = v
-		.getFirstIsBoundExprOfDefinition(EdgeDirection.IN);
+				.getFirstIsBoundExprOfDefinition(EdgeDirection.IN);
 		mergeVariables(isBoundExprOf.getAlpha(), false);
 		for (IsDefinitionOf currentEdge : v
 				.getIsDefinitionOfIncidences(EdgeDirection.IN)) {
@@ -395,8 +404,9 @@ public abstract class ManualParserHelper {
 	 * @param v
 	 *            contains a quantified expression
 	 */
-	private void mergeVariablesInQuantifiedExpression(QuantifiedExpression v, boolean separateScope)
-			throws DuplicateVariableException, UndefinedVariableException {
+	private void mergeVariablesInQuantifiedExpression(QuantifiedExpression v,
+			boolean separateScope) throws DuplicateVariableException,
+			UndefinedVariableException {
 		if (separateScope)
 			afterParsingvariableSymbolTable.blockBegin();
 		IsQuantifiedDeclOf isQuantifiedDeclOf = v
@@ -409,9 +419,6 @@ public abstract class ManualParserHelper {
 			afterParsingvariableSymbolTable.blockEnd();
 	}
 
-	
-	
-	
 	/**
 	 * Inserts declared variable-vertices into the variables symbol table and
 	 * merges variables within the comprehension result and tableheaders
@@ -419,8 +426,9 @@ public abstract class ManualParserHelper {
 	 * @param v
 	 *            contains a set- or a bag-comprehension
 	 */
-	private void mergeVariablesInComprehension(Comprehension v, boolean separateScope)
-			throws DuplicateVariableException, UndefinedVariableException {
+	private void mergeVariablesInComprehension(Comprehension v,
+			boolean separateScope) throws DuplicateVariableException,
+			UndefinedVariableException {
 		if (separateScope)
 			afterParsingvariableSymbolTable.blockBegin();
 		Edge IsCompDeclOf = v.getFirstIsCompDeclOf(EdgeDirection.IN);
@@ -481,11 +489,10 @@ public abstract class ManualParserHelper {
 		public FunctionConstruct(FunctionConstruct leftPart) {
 			offsetArg1 = leftPart.offsetArg1;
 		}
-		
+
 		public FunctionConstruct() {
 		}
-		
-		
+
 		public boolean isValidFunction() {
 			return operatorName != null;
 		}
@@ -669,4 +676,3 @@ public abstract class ManualParserHelper {
 	}
 
 }
-

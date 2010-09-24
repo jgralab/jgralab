@@ -120,7 +120,8 @@ public class IntermediateVertexTransition extends Transition {
 	 * greql2.evaluator.SubgraphTempAttribute)
 	 */
 	@Override
-	public boolean accepts(Vertex v, Edge e, AbstractGraphMarker<AttributedElement> subgraph)
+	public boolean accepts(Vertex v, Edge e,
+			AbstractGraphMarker<AttributedElement> subgraph)
 			throws EvaluateException {
 		// checks if a intermediateVertexExpression exists and if the end-vertex
 		// of e is part of the result of this expression

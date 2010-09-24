@@ -64,11 +64,11 @@ public class AggregationPathDescriptionEvaluator extends
 			typeCollection.addTypes(edgeRestEval.getTypeCollection());
 			predicateEvaluator = edgeRestEval.getPredicateEvaluator();
 		}
-			
+
 		createdNFA = NFA.createAggregationPathDescriptionNFA(
 				((AggregationPathDescription) vertex).is_outAggregation(),
-				typeCollection, getEdgeRoles(edgeRestEval), predicateEvaluator, greqlEvaluator
-				.getVertexEvaluatorGraphMarker() );
+				typeCollection, getEdgeRoles(edgeRestEval), predicateEvaluator,
+				greqlEvaluator.getVertexEvaluatorGraphMarker());
 		return new JValueImpl(createdNFA);
 	}
 

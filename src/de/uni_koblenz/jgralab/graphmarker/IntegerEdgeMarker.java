@@ -64,14 +64,14 @@ public class IntegerEdgeMarker extends IntegerGraphMarker<Edge> {
 	public int mark(Edge edge, int value) {
 		return super.mark(edge.getNormalEdge(), value);
 	}
-	
+
 	@Override
-	public boolean isMarked(Edge edge){
+	public boolean isMarked(Edge edge) {
 		return super.isMarked(edge.getNormalEdge());
 	}
-	
+
 	@Override
-	public int getMark(Edge edge){
+	public int getMark(Edge edge) {
 		return super.getMark(edge.getNormalEdge());
 	}
 
@@ -91,25 +91,28 @@ public class IntegerEdgeMarker extends IntegerGraphMarker<Edge> {
 					@Override
 					protected void moveIndex() {
 						int length = temporaryAttributes.length;
-						while (index < length && temporaryAttributes[index] == unmarkedValue) {
+						while (index < length
+								&& temporaryAttributes[index] == unmarkedValue) {
 							index++;
 						}
 					}
 
 					@Override
 					public Edge next() {
-						if(!hasNext()){
-							throw new NoSuchElementException(NO_MORE_ELEMENTS_ERROR_MESSAGE);
+						if (!hasNext()) {
+							throw new NoSuchElementException(
+									NO_MORE_ELEMENTS_ERROR_MESSAGE);
 						}
-						if(version != IntegerEdgeMarker.this.version){
-							throw new ConcurrentModificationException(MODIFIED_ERROR_MESSAGE);
+						if (version != IntegerEdgeMarker.this.version) {
+							throw new ConcurrentModificationException(
+									MODIFIED_ERROR_MESSAGE);
 						}
 						Edge next = graph.getEdge(index++);
 						moveIndex();
 						return next;
-					}		
+					}
 				};
-				
+
 			}
 
 		};

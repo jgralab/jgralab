@@ -153,20 +153,22 @@ public class GraphFactoryGenerator extends CodeGenerator {
 
 		if (!vertexClass.isAbstract()) {
 			if (config.hasStandardSupport()) {
-				code.add("setVertexImplementationClass(#vertexName#.class, #vertexImplName#Impl.class);");
+				code
+						.add("setVertexImplementationClass(#vertexName#.class, #vertexImplName#Impl.class);");
 			}
 			if (config.hasTransactionSupport()) {
-				code.add("setVertexTransactionImplementationClass(#vertexName#.class, #vertexTransactionImplName#Impl.class);");
+				code
+						.add("setVertexTransactionImplementationClass(#vertexName#.class, #vertexTransactionImplName#Impl.class);");
 			}
 			if (config.hasSavememSupport()) {
-				code.add("setVertexSavememImplementationClass(#vertexName#.class, #vertexSaveMemImplName#Impl.class);");
+				code
+						.add("setVertexSavememImplementationClass(#vertexName#.class, #vertexSaveMemImplName#Impl.class);");
 			}
 		}
 
 		return code;
 	}
 
-	
 	protected CodeBlock createFillTableForRecord(RecordDomain recordDomain) {
 
 		CodeSnippet code = new CodeSnippet(true);
@@ -180,19 +182,21 @@ public class GraphFactoryGenerator extends CodeGenerator {
 				+ ".impl.savemem." + recordDomain.getQualifiedName());
 
 		if (config.hasStandardSupport()) {
-			code.add("setRecordImplementationClass(#recordName#.class, #recordImplName#Impl.class);");
+			code
+					.add("setRecordImplementationClass(#recordName#.class, #recordImplName#Impl.class);");
 		}
 		if (config.hasTransactionSupport()) {
-			code.add("setRecordTransactionImplementationClass(#recordName#.class, #recordTransactionImplName#Impl.class);");
+			code
+					.add("setRecordTransactionImplementationClass(#recordName#.class, #recordTransactionImplName#Impl.class);");
 		}
 		if (config.hasSavememSupport()) {
-			code.add("setRecordSavememImplementationClass(#recordName#.class, #recordSaveMemImplName#Impl.class);");
+			code
+					.add("setRecordSavememImplementationClass(#recordName#.class, #recordSaveMemImplName#Impl.class);");
 		}
 
 		return code;
 	}
 
-	
 	protected CodeBlock createFillTableForEdge(EdgeClass edgeClass) {
 		CodeSnippet code = new CodeSnippet(true);
 		code.setVariable("edgeName", schemaRootPackageName + "."

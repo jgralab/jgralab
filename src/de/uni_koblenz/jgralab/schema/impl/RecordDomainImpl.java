@@ -53,7 +53,7 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 	 * AttributedElementClass
 	 */
 	private Class<? extends Object> m1Class;
-	
+
 	/**
 	 * holds a list of the components of the record
 	 */
@@ -132,14 +132,14 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 		return getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
 		// return getJavaAttributeTypeName(schemaRootPackagePrefix);
 	}
-	
+
 	public Class<? extends Object> getM1Class() {
 		if (m1Class == null) {
-			String m1ClassName = getSchema().getPackagePrefix() + "." + getQualifiedName();
+			String m1ClassName = getSchema().getPackagePrefix() + "."
+					+ getQualifiedName();
 			try {
-				m1Class = Class.forName(
-						m1ClassName, true, M1ClassManager.instance(getSchema()
-								.getQualifiedName()));
+				m1Class = Class.forName(m1ClassName, true, M1ClassManager
+						.instance(getSchema().getQualifiedName()));
 			} catch (ClassNotFoundException e) {
 				throw new M1ClassAccessException(
 						"Can't load M1 class for AttributedElementClass '"
@@ -239,7 +239,8 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 		 * parentPackage.getSchema().getGraphClass().getSimpleName() + ")" +
 		 * "graph).create" + getSimpleName() + "(io);");
 		 */
-		code.add("\t" + "#name# = #theGraph#.createRecord(" + getSchema().getPackagePrefix() + "." + getQualifiedName()
+		code.add("\t" + "#name# = #theGraph#.createRecord("
+				+ getSchema().getPackagePrefix() + "." + getQualifiedName()
 				+ ".class, io);");
 		code.add("} else if (" + graphIoVariableName
 				+ ".isNextToken(GraphIO.NULL_LITERAL)) {");

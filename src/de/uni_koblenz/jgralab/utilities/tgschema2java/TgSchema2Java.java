@@ -370,7 +370,8 @@ public class TgSchema2Java {
 			options.add(classpath);
 		}
 		System.out.print("Starting compilation....");
-		compiler.getTask(null, fileManager, null, null, null, compilationUnits1)
+		compiler
+				.getTask(null, fileManager, null, null, null, compilationUnits1)
 				.call();
 		System.out.println("finished");
 	}

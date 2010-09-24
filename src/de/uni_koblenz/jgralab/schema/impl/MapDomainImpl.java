@@ -89,7 +89,7 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 	@Override
 	public String getJavaAttributeImplementationTypeName(
 			String schemaRootPackagePrefix) {
-		return "java.util." + MAPDOMAIN_NAME +  "<"
+		return "java.util." + MAPDOMAIN_NAME + "<"
 				+ keyDomain.getJavaClassName(schemaRootPackagePrefix) + ", "
 				+ valueDomain.getJavaClassName(schemaRootPackagePrefix) + ">";
 	}
@@ -182,21 +182,19 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 
 		code.addNoIndent(new CodeSnippet("#init#"));
 		code.addNoIndent(new CodeSnippet("if (#io#.isNextToken(\"{\")) {"));
-		code
-				.add(new CodeSnippet(
-						"#name# = #theGraph#.createMap();"));
+		code.add(new CodeSnippet("#name# = #theGraph#.createMap();"));
 		code.add(new CodeSnippet("#io#.match(\"{\");",
 				"while (!#io#.isNextToken(\"}\")) {"));
-		
-		if(getKeyDomain().isComposite())
+
+		if (getKeyDomain().isComposite())
 			code.add(new CodeSnippet("\t#keytype# #name#Key = null;"));
 		else
 			code.add(new CodeSnippet("\t#keytype# #name#Key;"));
-		if(getValueDomain().isComposite())
+		if (getValueDomain().isComposite())
 			code.add(new CodeSnippet("\t\t#valuetype# #name#Value = null;"));
 		else
 			code.add(new CodeSnippet("\t\t#valuetype# #name#Value;"));
-		
+
 		code.add(getKeyDomain().getReadMethod(schemaRootPackagePrefix,
 				variableName + "Key", graphIoVariableName), 1);
 		code.add(new CodeSnippet("\t#io#.match(\"-\");"));
@@ -288,8 +286,9 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 
 	@Override
 	public String getTransactionJavaClassName(String schemaRootPackagePrefix) {
-		//return "de.uni_koblenz.jgralab.impl.trans.JGraLabListImpl";
-		//return getTransactionJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
+		// return "de.uni_koblenz.jgralab.impl.trans.JGraLabListImpl";
+		// return
+		// getTransactionJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
 		return getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
 	}
 

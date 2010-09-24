@@ -100,8 +100,8 @@ public class Greql2ExpressionEvaluator extends VertexEvaluator {
 			Schema graphSchema = graph.getSchema();
 			for (String importedType : vertex.get_importedTypes()) {
 				if (importedType.endsWith(".*")) {
-					String packageName = importedType.substring(0,
-							importedType.length() - 2);
+					String packageName = importedType.substring(0, importedType
+							.length() - 2);
 					Package p = graphSchema.getPackage(packageName);
 					if (p == null) {
 						throw new UnknownTypeException(packageName,

@@ -360,7 +360,6 @@ public class Greql2Serializer {
 		sb.append(')');
 	}
 
-
 	private void serializeMapConstruction(MapConstruction exp) {
 		sb.append("map(");
 		Iterator<? extends Expression> vals = exp.get_valueExpr().iterator();

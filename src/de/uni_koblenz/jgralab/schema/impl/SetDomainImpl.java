@@ -55,16 +55,16 @@ public final class SetDomainImpl extends CollectionDomainImpl implements
 	@Override
 	public String getJavaAttributeImplementationTypeName(
 			String schemaRootPackagePrefix) {
-		return "java.util." +  SETDOMAIN_NAME +  "<"
-		+ baseDomain.getJavaClassName(schemaRootPackagePrefix) + ">";
-//		return "de.uni_koblenz.jgralab.impl.std.JGraLabSetImpl<"
-//				+ baseDomain.getJavaClassName(schemaRootPackagePrefix) + ">";
+		return "java.util." + SETDOMAIN_NAME + "<"
+				+ baseDomain.getJavaClassName(schemaRootPackagePrefix) + ">";
+		// return "de.uni_koblenz.jgralab.impl.std.JGraLabSetImpl<"
+		// + baseDomain.getJavaClassName(schemaRootPackagePrefix) + ">";
 	}
 
 	@Override
 	public String getJavaClassName(String schemaRootPackagePrefix) {
-		//return "de.uni_koblenz.jgralab.impl.std.JGraLabSetImpl<"
-		//+ baseDomain.getJavaClassName(schemaRootPackagePrefix) + ">";
+		// return "de.uni_koblenz.jgralab.impl.std.JGraLabSetImpl<"
+		// + baseDomain.getJavaClassName(schemaRootPackagePrefix) + ">";
 		return getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
 	}
 
@@ -114,11 +114,12 @@ public final class SetDomainImpl extends CollectionDomainImpl implements
 
 		code.addNoIndent(new CodeSnippet("#init#"));
 		code.addNoIndent(new CodeSnippet("if (#io#.isNextToken(\"{\")) {"));
-		code.add(new CodeSnippet(
-				"java.util.Set<#basedom#> #tmpname# = #theGraph#.createSet();"));
+		code
+				.add(new CodeSnippet(
+						"java.util.Set<#basedom#> #tmpname# = #theGraph#.createSet();"));
 		code.add(new CodeSnippet("#io#.match(\"{\");",
 				"while (!#io#.isNextToken(\"}\")) {"));
-		if(getBaseDomain().isComposite())
+		if (getBaseDomain().isComposite())
 			code.add(new CodeSnippet("\t#basetype# $#name#Element = null;"));
 		else
 			code.add(new CodeSnippet("\t#basetype# $#name#Element;"));
@@ -126,8 +127,7 @@ public final class SetDomainImpl extends CollectionDomainImpl implements
 				"$" + variableName + "Element", graphIoVariableName), 1);
 		code.add(new CodeSnippet("\t#tmpname#.add($#name#Element);", "}",
 				"#io#.match(\"}\");", "#io#.space();"));
-		code
-		.add(new CodeSnippet(
+		code.add(new CodeSnippet(
 				"#name# = #theGraph#.createSet(#tmpname#.size());"));
 		code.add(new CodeSnippet("#name#.addAll(#tmpname#);"));
 		code.addNoIndent(new CodeSnippet(
@@ -145,7 +145,7 @@ public final class SetDomainImpl extends CollectionDomainImpl implements
 				getBaseDomain().getJavaAttributeImplementationTypeName(
 						schemaRootPackagePrefix));
 		code.setVariable("io", graphIoVariableName);
-		
+
 		String element = variableName + "Element";
 		element = element.replace('(', '_');
 		element = element.replace(')', '_');
@@ -195,8 +195,9 @@ public final class SetDomainImpl extends CollectionDomainImpl implements
 
 	@Override
 	public String getTransactionJavaClassName(String schemaRootPackagePrefix) {
-		//return "de.uni_koblenz.jgralab.impl.trans.JGraLabSetImpl";
-		//return getTransactionJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
+		// return "de.uni_koblenz.jgralab.impl.trans.JGraLabSetImpl";
+		// return
+		// getTransactionJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
 		return getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
 	}
 

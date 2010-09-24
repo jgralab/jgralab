@@ -78,12 +78,12 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 		createReversedEdge();
 		((GraphImpl) graph).addEdge(this, alpha, omega);
 	}
-	
+
 	@Override
 	public Edge getNextEdge() {
 		return getNextIncidence();
 	}
-	
+
 	@Override
 	public Edge getPrevEdge() {
 		return getPrevIncidence();

@@ -72,8 +72,9 @@ public class Sort extends Greql2Function {
 	}
 
 	@Override
-	public JValue evaluate(Graph graph, AbstractGraphMarker<AttributedElement> subgraph,
-			JValue[] arguments) throws EvaluateException {
+	public JValue evaluate(Graph graph,
+			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
+			throws EvaluateException {
 		switch (checkArguments(arguments)) {
 		case 0:
 			JValueCollection col = arguments[0].toCollection();

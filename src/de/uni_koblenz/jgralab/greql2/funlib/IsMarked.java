@@ -66,8 +66,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  */
 public class IsMarked extends Greql2Function {
 	{
-		JValueType[][] x = {
-				{ JValueType.ATTRELEM, JValueType.MARKER, JValueType.BOOL }};
+		JValueType[][] x = { { JValueType.ATTRELEM, JValueType.MARKER,
+				JValueType.BOOL } };
 		signatures = x;
 
 		description = "Checks if the given element is marked in the given graph marker";
@@ -77,7 +77,9 @@ public class IsMarked extends Greql2Function {
 	}
 
 	@Override
-	public JValue evaluate(Graph graph, AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments) throws EvaluateException {
+	public JValue evaluate(Graph graph,
+			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
+			throws EvaluateException {
 		AttributedElement attrElem = null;
 		GraphMarker<?> marker = null;
 

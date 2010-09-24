@@ -82,8 +82,9 @@ public class Equals extends Greql2Function {
 	 * Checks if the two function parameters are semantically identical.
 	 */
 	@Override
-	public JValue evaluate(Graph graph, AbstractGraphMarker<AttributedElement> subgraph,
-			JValue[] arguments) throws EvaluateException {
+	public JValue evaluate(Graph graph,
+			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
+			throws EvaluateException {
 		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, arguments);
 		}

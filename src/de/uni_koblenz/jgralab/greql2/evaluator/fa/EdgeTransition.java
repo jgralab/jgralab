@@ -152,9 +152,11 @@ public class EdgeTransition extends SimpleTransition {
 	 *            be accepted
 	 */
 	public EdgeTransition(State start, State end, AllowedEdgeDirection dir,
-			JValueTypeCollection typeCollection, Set<String> roles, VertexEvaluator edgeEval,
-			VertexEvaluator predicateEval, GraphMarker<VertexEvaluator> graphMarker) {
-		super(start, end, dir, typeCollection, roles, predicateEval, graphMarker);
+			JValueTypeCollection typeCollection, Set<String> roles,
+			VertexEvaluator edgeEval, VertexEvaluator predicateEval,
+			GraphMarker<VertexEvaluator> graphMarker) {
+		super(start, end, dir, typeCollection, roles, predicateEval,
+				graphMarker);
 		allowedEdgeEvaluator = edgeEval;
 	}
 
@@ -165,7 +167,8 @@ public class EdgeTransition extends SimpleTransition {
 	 * greql2.evaluator.SubgraphTempAttribute)
 	 */
 	@Override
-	public boolean accepts(Vertex v, Edge e, AbstractGraphMarker<AttributedElement> subgraph)
+	public boolean accepts(Vertex v, Edge e,
+			AbstractGraphMarker<AttributedElement> subgraph)
 			throws EvaluateException {
 		if (!super.accepts(v, e, subgraph)) {
 			return false;

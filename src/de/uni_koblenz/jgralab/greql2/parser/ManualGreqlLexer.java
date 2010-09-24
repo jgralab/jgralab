@@ -139,8 +139,8 @@ public class ManualGreqlLexer {
 				|| (c == '[') || (c == ']') || (c == ',') || (c == ' ')
 				|| (c == '\n') || (c == '\t') || (c == '.') || (c == '-')
 				|| (c == '+') || (c == '*') || (c == '/') || (c == '%')
-				|| (c == '=') || (c == '?') || (c == '^')
-				|| (c == '|') || (c == '!') || (c == '@');
+				|| (c == '=') || (c == '?') || (c == '^') || (c == '|')
+				|| (c == '!') || (c == '@');
 	}
 
 	public Token getNextToken() {
@@ -341,27 +341,31 @@ public class ManualGreqlLexer {
 						&& (query.charAt(position) != '\n')) {
 					position++;
 				}
-				if ((position < query.length()) && (query.charAt(position) == '\n')) {
+				if ((position < query.length())
+						&& (query.charAt(position) == '\n')) {
 					position++;
 				}
 			}
-			//skip multiline comments 
+			// skip multiline comments
 			if ((position < query.length() - 4)
 					&& (query.substring(position, position + 2).equals("/*"))) {
 				position++;
-				while ((position < query.length()-1)
-						&& (query.substring(position, position + 2).equals("*/"))) {
+				while ((position < query.length() - 1)
+						&& (query.substring(position, position + 2)
+								.equals("*/"))) {
 					position++;
 				}
-				if ((position < query.length()) && (query.substring(position, position + 2).equals("*/"))) {
-					position+=2;
+				if ((position < query.length())
+						&& (query.substring(position, position + 2)
+								.equals("*/"))) {
+					position += 2;
 				}
 			}
-		} while (
-				   ((position < query.length()) && (isWs(query.charAt(position)))) 
-			    || ((position < query.length() - 2) && (query.substring(position, position + 2).equals("//")))
-			    || ((position < query.length() - 4) && (query.substring(position, position + 2).equals("/*")))
-				);
+		} while (((position < query.length()) && (isWs(query.charAt(position))))
+				|| ((position < query.length() - 2) && (query.substring(
+						position, position + 2).equals("//")))
+				|| ((position < query.length() - 4) && (query.substring(
+						position, position + 2).equals("/*"))));
 	}
 
 	public static List<Token> scan(String query) {
@@ -371,7 +375,8 @@ public class ManualGreqlLexer {
 			Token nextToken = lexer.getNextToken();
 			list.add(nextToken);
 		}
-		if (list.isEmpty() || (list.get(list.size()-1).type != TokenTypes.EOF)) {
+		if (list.isEmpty()
+				|| (list.get(list.size() - 1).type != TokenTypes.EOF)) {
 			list.add(new SimpleToken(TokenTypes.EOF, lexer.position, 0));
 		}
 		return list;

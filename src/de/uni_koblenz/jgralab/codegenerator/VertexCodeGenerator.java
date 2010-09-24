@@ -76,7 +76,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 			rootBlock.setVariable("baseClassName", "VertexImpl");
 			code.add(createValidEdgeSets((VertexClass) aec));
 		}
-		
+
 		if (config.hasTypeSpecificMethodsSupport()
 				&& !currentCycle.isClassOnly()) {
 			code.add(createNextVertexMethods());
@@ -85,11 +85,11 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 					.isStdOrSaveMemOrTransImpl()));
 			code.add(createIncidenceIteratorMethods());
 		}
-		
+
 		if (currentCycle.isStdOrSaveMemOrTransImpl()) {
 			code.add(createGetEdgeForRolenameMethod());
 		}
-		
+
 		return code;
 	}
 

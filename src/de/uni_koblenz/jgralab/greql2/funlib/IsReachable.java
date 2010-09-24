@@ -79,9 +79,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public class IsReachable extends Greql2Function {
 
 	{
-		JValueType[][] x = {
-				{ JValueType.VERTEX, JValueType.VERTEX, JValueType.AUTOMATON,
-						JValueType.BOOL } };
+		JValueType[][] x = { { JValueType.VERTEX, JValueType.VERTEX,
+				JValueType.AUTOMATON, JValueType.BOOL } };
 		signatures = x;
 
 		description = "Returns true iff there is a path from the first to the second vertex.\n"
@@ -95,8 +94,9 @@ public class IsReachable extends Greql2Function {
 	}
 
 	@Override
-	public JValue evaluate(Graph graph, AbstractGraphMarker<AttributedElement> subgraph,
-			JValue[] arguments) throws EvaluateException {
+	public JValue evaluate(Graph graph,
+			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
+			throws EvaluateException {
 
 		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, arguments);
