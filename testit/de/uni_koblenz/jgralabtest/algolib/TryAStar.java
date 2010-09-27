@@ -163,10 +163,14 @@ public class TryAStar {
 			dijkstra.undirected();
 			sw.reset();
 			sw.start();
-			dijkstra.execute(start);
+			try {
+				dijkstra.execute(start, target);
+			} catch (AlgorithmTerminatedException e) {
+			}
 			sw.stop();
 			System.out.println(sw.getDurationString());
-			System.out.println(dijkstra.getWeightedDistance().get(target));
+			// System.out.println(dijkstra.getWeightedDistance().get(target));
+			System.out.println(dijkstra.getWeightedDistanceToTarget());
 			System.out.println("Max elements in queue: "
 					+ dijkstra.getVertexQueue().getAddedCount());
 		}
