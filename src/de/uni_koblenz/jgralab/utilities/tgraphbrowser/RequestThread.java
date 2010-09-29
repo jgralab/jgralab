@@ -335,8 +335,6 @@ public class RequestThread extends Thread {
 					// send svgFile
 					if (svg.exists()) {
 						sendSVG(out, fileName);
-						// TODO
-						// sendFile(out, fileName);
 						if (!svgToDelete.contains(path)) {
 							if (!svg.delete()) {
 								TGraphBrowserServer.logger.warning(svg

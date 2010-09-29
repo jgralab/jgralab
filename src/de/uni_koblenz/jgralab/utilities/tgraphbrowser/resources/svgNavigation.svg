@@ -4,7 +4,7 @@
 <svg width="790" height="530" version="1.1" 
 	xmlns="http://www.w3.org/2000/svg" 
 	xmlns:xlink="http://www.w3.org/1999/xlink" 
-	xmlns:gupro="http://www.gupro.de/svg" onload="init(evt)">
+	xmlns:jgralab="http://userpages.uni-koblenz.de/~ist/JGraLab" onload="init(evt)">
   <defs>
     <script type='text/ecmascript'><![CDATA[
       var svgdoc, navdoc;
@@ -81,10 +81,10 @@
             navdoc.removeChild(hlPath);
             hlPathIsSet = false;
           }
-          hlRect.setAttribute('x', parseInt(graphElement.getAttribute('gupro:x')) - 5);
-          hlRect.setAttribute('y', parseInt(graphElement.getAttribute('gupro:y')) - 5);
-          hlRect.setAttribute('width', parseInt(graphElement.getAttribute('gupro:width')) + 10);
-          hlRect.setAttribute('height', parseInt(graphElement.getAttribute('gupro:height')) + 10);
+          hlRect.setAttribute('x', parseInt(graphElement.getAttribute('jgralab:x')) - 5);
+          hlRect.setAttribute('y', parseInt(graphElement.getAttribute('jgralab:y')) - 5);
+          hlRect.setAttribute('width', parseInt(graphElement.getAttribute('jgralab:width')) + 10);
+          hlRect.setAttribute('height', parseInt(graphElement.getAttribute('jgralab:height')) + 10);
           navdoc.appendChild(hlRect);
           hlRectIsSet = true;
         }
@@ -99,11 +99,11 @@
           hlPathIsSet = true;
           var label = svgdoc.getElementById('Label' + graphElement.getAttribute('id'));
           if (label != null) {
-            //debug.setData(label.getAttribute('gupro:width'));
-            hlRect.setAttribute('x', parseInt(label.getAttribute('gupro:x')) - 5);
-            hlRect.setAttribute('y', parseInt(label.getAttribute('gupro:y')) - 5);
-            hlRect.setAttribute('width', parseInt(label.getAttribute('gupro:width')) + 10);
-            hlRect.setAttribute('height', parseInt(label.getAttribute('gupro:height')) + 10);
+            //debug.setData(label.getAttribute('jgralab:width'));
+            hlRect.setAttribute('x', parseInt(label.getAttribute('jgralab:x')) - 5);
+            hlRect.setAttribute('y', parseInt(label.getAttribute('jgralab:y')) - 5);
+            hlRect.setAttribute('width', parseInt(label.getAttribute('jgralab:width')) + 10);
+            hlRect.setAttribute('height', parseInt(label.getAttribute('jgralab:height')) + 10);
             navdoc.appendChild(hlRect);
             hlRectIsSet = true;
           }
@@ -140,16 +140,6 @@
           updateViewBox(bbX, bbY, bbW, bbH);
           //debug.setData('ZGraph!');
         }
-        else if (evt.target.parentNode.getAttribute('id') == 'ZElement') {
-          if (selection != 0 && isVertex(selection)) {
-            //debug.setData('zv');
-            showVertex(selection);
-          }
-          else if (selection != 0 && isEdge(selection)) {
-            //debug.setData('ze');
-            showEdge(selection);
-          }
-        }
       }
       
       
@@ -173,69 +163,6 @@
       function Point(x, y)  {
         this.x = x;
         this.y = y;
-      }
-      
-      
-      // set viewBox attribute to show given vertex
-      function showVertex(vertex) {
-        var w = parseInt(vertex.getAttribute('gupro:width'));
-        var h = parseInt(vertex.getAttribute('gupro:height'));
-        var x = parseInt(vertex.getAttribute('gupro:x')) - (1.5*w);
-        var y = parseInt(vertex.getAttribute('gupro:y')) - (1.5*h);
-        updateViewBox(x, y, w*4, h*4);
-      }
-      
-      
-      // set viewBox attribute to show given edge
-      function showEdge(edge) {
-        var v1 = svgdoc.getElementById(edge.getAttribute('gupro:alpha'));
-        var v2 = svgdoc.getElementById(edge.getAttribute('gupro:omega'));
-        var ul1 = 
-          new Point(
-            parseInt(v1.getAttribute('gupro:x')), 
-            parseInt(v1.getAttribute('gupro:y')));
-        var lr1 = 
-          new Point(
-            parseInt(v1.getAttribute('gupro:x')) + 
-              parseInt(v1.getAttribute('gupro:width')), 
-            parseInt(v1.getAttribute('gupro:y')) + 
-              parseInt(v1.getAttribute('gupro:height')));
-        var ul2 = 
-          new Point(
-            parseInt(v2.getAttribute('gupro:x')), 
-            parseInt(v2.getAttribute('gupro:y')));
-        var lr2 = 
-          new Point(
-            parseInt(v2.getAttribute('gupro:x')) + 
-              parseInt(v1.getAttribute('gupro:width')), 
-            parseInt(v2.getAttribute('gupro:y')) + 
-              parseInt(v1.getAttribute('gupro:height')));
-        
-        var minX = ( ul1.x < ul2.x) ? ul1.x : ul2.x;
-        var minY = ( ul1.y < ul2.y) ? ul1.y : ul2.y;
-        var maxX = ( lr1.x > lr2.x) ? lr1.x : lr2.x;
-        var maxY = ( lr1.y > lr2.y) ? lr1.y : lr2.y;
-        
-        // check for label on edge
-        var label = svgdoc.getElementById('Label' + edge.getAttribute('id'));
-        if (label != null) {
-          var labelUL =
-            new Point(
-              parseInt(label.getAttribute('gupro:x')),
-              parseInt(label.getAttribute('gupro:y')));
-          var labelLR =
-            new Point(
-              parseInt(label.getAttribute('gupro:x')) + 
-                parseInt(label.getAttribute('gupro:width')),
-              parseInt(label.getAttribute('gupro:y')) + 
-                parseInt(label.getAttribute('gupro:height')));        
-          minX = ( minX < labelUL.x) ? minX : labelUL.x;
-          minY = ( minY < labelUL.y) ? minY : labelUL.y;
-          maxX = ( maxX > labelLR.x) ? maxX : labelLR.x;
-          maxY = ( maxY > labelLR.y) ? maxY : labelLR.y;
-        }
-        updateViewBox(minX - 10, minY - 10, maxX-minX+20, maxY-minY+20); 
-        //debug.setData(minX + ' ' + minY);
       }
       
       
@@ -287,10 +214,6 @@
     <g id='ZGraph' onclick='zoom(evt)'> 
       <rect x='-40' y='42' width='80' height='14' fill='lightgrey' stroke='black'/> 
       <text y='54' text-anchor='middle'>Graph</text> 
-    </g> 
-    <g id='ZElement' onclick='zoom(evt)'> 
-      <rect x='-40' y='60' width='80' height='14' fill='lightgrey' stroke='black'/> 
-      <text y='72' text-anchor='middle'>Element</text> 
     </g>
   </g>
   <rect x="24" y="24" width="640" height="480" style="fill:none;stroke:rgb(0,0,0);" />
