@@ -638,7 +638,13 @@ div#div2DGraph{
 			edgeDiv.style.height = (height - intendTop - textGraphHeight) + "px";
 			edgeDiv.style.width = (width - intendLeft) + "px";
 		}
-		document.getElementById("div2DGraph").style.height = (height - intendTop - document.getElementById("divBreadcrumbBar").offsetHeight) + "px";
+		var div2dHeight = (height - intendTop - document.getElementById("divBreadcrumbBar").offsetHeight);
+		document.getElementById("div2DGraph").style.height = div2dHeight + "px";
+		var embed2dGraph=document.getElementById("embed2DGraph");
+		if(embed2dGraph!=null){
+			embed2dGraph.style.height = div2dHeight - 10 + "px";
+			embed2dGraph.style.width = (width - intendLeft) - 10 + "px";
+		}
 	}
 	 
 	/*

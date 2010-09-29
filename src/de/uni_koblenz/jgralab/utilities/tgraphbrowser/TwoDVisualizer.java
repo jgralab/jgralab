@@ -253,13 +253,14 @@ public class TwoDVisualizer {
 		code.append("object.id = \"embed2DGraph\";\n");
 		code.append("object.src = \"_").append(svgFileName).append("\";\n");
 		code.append("object.type = \"image/svg+xml\";\n");
-		code.append("object.width = \"").append(width).append("\";\n");// TODO
+		code.append("object.width = \"").append(width).append("\";\n");
 		code.append("object.height = \"").append(height).append("\";\n");
 		code.append("div2D.appendChild(object);\n");
 		code.append("@else @*/\n");
 		// code executed in other browsers
 		code.append("var div2D = document.getElementById(\"div2DGraph\");\n");
 		code.append("var object = document.createElement(\"object\");\n");
+		code.append("object.id = \"embed2DGraph\";\n");
 		code.append("object.data = \"").append(svgFileName).append("\";\n");
 		code.append("object.type = \"image/svg+xml\";\n");
 		code.append("object.width = \"").append(width).append("\";\n");
@@ -268,7 +269,6 @@ public class TwoDVisualizer {
 		code.append("object.onload = function(){\n");
 		code.append("var svgDoc = object.getSVGDocument();\n");
 		code.append("var svgRootElement = svgDoc.rootElement;\n");
-		// code.append("svgRootElement.currentScale = 0.8;");
 		code.append("};\n");
 		code.append("/*@end\n");
 		code.append("@*/\n");
