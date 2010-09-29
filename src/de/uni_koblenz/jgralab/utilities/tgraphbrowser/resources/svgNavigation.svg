@@ -22,19 +22,11 @@
       
       var debug = 0;
       
-      var hlRect = 0;
-      var hlRectIsSet = false;
-      var hlPath = 0;
-      var hlPathIsSet = false;
-      
-      var selection = 0;
-      
       
       function init(evt) {
         svgdoc = evt.target.ownerDocument;
       
         navdoc = svgdoc.getElementById('nav');
-        navdoc.addEventListener('click', selectGraphelement, false);
       
         //debug = evt.getTarget().getOwnerDocument().getElementById('debug').getFirstChild();
       
@@ -44,73 +36,6 @@
         bbY = parseInt(vbData[1]);
         bbW = parseInt(vbData[2]);
         bbH = parseInt(vbData[3]);
-      
-        // hlRect is set to selected vertices
-        hlRect = svgdoc.createElement('rect');
-        hlRect.setAttribute('fill','none'); 
-        hlRect.setAttribute('stroke','#FF0000');
-        //hlRect.setAttribute('stroke-dasharray' , '2,2');
-        
-        // hlPath is set to selected edges
-        hlPath = svgdoc.createElement('path');
-        hlPath.setAttribute('stroke', '#FF0000'); 
-        hlPath.setAttribute('stroke-width', '1'); 
-        hlPath.setAttribute('fill', 'none'); 
-        hlPath.setAttribute('stroke-dasharray', '2,2');
-      }
-      
-      
-      function isVertex(graphElement) {
-        if (graphElement.getAttribute('id').indexOf('v') == 0)
-          return true;
-        else
-          return false;
-      }
-      function isEdge(graphElement) {
-        if (graphElement.getAttribute('id').indexOf('e') == 0)
-          return true;
-        else
-          return false;
-      }
-      
-      
-      function highlight(graphElement) {
-        if (isVertex(graphElement)) {
-          //debug.setData('vertex');
-          if (hlPathIsSet) {
-            navdoc.removeChild(hlPath);
-            hlPathIsSet = false;
-          }
-          hlRect.setAttribute('x', parseInt(graphElement.getAttribute('jgralab:x')) - 5);
-          hlRect.setAttribute('y', parseInt(graphElement.getAttribute('jgralab:y')) - 5);
-          hlRect.setAttribute('width', parseInt(graphElement.getAttribute('jgralab:width')) + 10);
-          hlRect.setAttribute('height', parseInt(graphElement.getAttribute('jgralab:height')) + 10);
-          navdoc.appendChild(hlRect);
-          hlRectIsSet = true;
-        }
-        else if (isEdge(graphElement)) {
-          if (hlRectIsSet) { // && hlRect != 0) {
-            navdoc.removeChild(hlRect);
-            hlRectIsSet = false;
-          }
-          var path = svgdoc.getElementById(graphElement.getAttribute('id') + 'Path');
-          hlPath.setAttribute('d', path.getAttribute('d'));
-          navdoc.appendChild(hlPath);
-          hlPathIsSet = true;
-          var label = svgdoc.getElementById('Label' + graphElement.getAttribute('id'));
-          if (label != null) {
-            //debug.setData(label.getAttribute('jgralab:width'));
-            hlRect.setAttribute('x', parseInt(label.getAttribute('jgralab:x')) - 5);
-            hlRect.setAttribute('y', parseInt(label.getAttribute('jgralab:y')) - 5);
-            hlRect.setAttribute('width', parseInt(label.getAttribute('jgralab:width')) + 10);
-            hlRect.setAttribute('height', parseInt(label.getAttribute('jgralab:height')) + 10);
-            navdoc.appendChild(hlRect);
-            hlRectIsSet = true;
-          }
-          else {
-            //debug.setData('edge has no label');
-          }
-        }
       }
       
       
@@ -128,41 +53,9 @@
           updateViewBox(vbX, vbY, vbW, vbH);
         }
         else if (evt.target.parentNode.getAttribute('id') == 'ZGraph') {
-          selection = 0;
-          if (hlRectIsSet) {
-            navdoc.removeChild(hlRect);
-            hlRectIsSet = false;
-          }
-          if (hlPathIsSet) {
-            navdoc.removeChild(hlPath);
-            hlPathIsSet = false;
-          }
           updateViewBox(bbX, bbY, bbW, bbH);
           //debug.setData('ZGraph!');
         }
-      }
-      
-      
-      
-      function selectGraphelement(evt) {
-        // get selected graphelement from evt; store it as selection
-        if (evt.target.parentNode.getAttribute('id').indexOf('e') == 0) {
-          selection = evt.target.parentNode;
-        }
-        else if (evt.target.parentNode.getAttribute('id').indexOf('v') == 0) {
-          selection = evt.target.parentNode;
-        }
-        else {
-          selection = evt.target.parentNode.parentNode();
-        }  
-        highlight(selection);  
-      }
-      
-      
-      // object type Point
-      function Point(x, y)  {
-        this.x = x;
-        this.y = y;
       }
       
       
