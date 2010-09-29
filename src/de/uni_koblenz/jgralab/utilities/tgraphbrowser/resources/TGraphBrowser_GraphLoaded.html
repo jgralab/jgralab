@@ -604,8 +604,8 @@ div#div2DGraph{
 	 * Resizes the elements to the size of the window.
 	 */
 	function resize(){
-		var width = document.documentElement.clientWidth;
-		var height = document.documentElement.clientHeight;
+		var width = document.documentElement.clientWidth-1;
+		var height = document.documentElement.clientHeight-1;
 		if (width<1100){
 			width = 1100;
 		}
