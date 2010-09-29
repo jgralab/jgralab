@@ -24,12 +24,13 @@
 package de.uni_koblenz.jgralab.utilities.tgraphbrowser;
 
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.LineNumberReader;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.HashMap;
 
@@ -219,12 +220,14 @@ public class TwoDVisualizer {
 		String line = "";
 		try {
 			FileReader in = new FileReader(svgFileName);
-			// FileReader in = new FileReader(workspace + "/" + svgFileName);
-			LineNumberReader lnr = new LineNumberReader(in);
+			// LineNumberReader lnr = new LineNumberReader(in);
+			BufferedReader br = new BufferedReader(new InputStreamReader(
+					getClass().getResourceAsStream(
+							RequestThread.SVG_WITH_ZOOM_AND_MOVE_SUPPORT)));
 			do {
-				line = lnr.readLine();
+				line = br.readLine();
 			} while ((line != null) && !line.startsWith("<svg"));
-			lnr.close();
+			br.close();
 			in.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -250,7 +253,7 @@ public class TwoDVisualizer {
 		code.append("object.id = \"embed2DGraph\";\n");
 		code.append("object.src = \"_").append(svgFileName).append("\";\n");
 		code.append("object.type = \"image/svg+xml\";\n");
-		code.append("object.width = \"").append(width).append("\";\n");
+		code.append("object.width = \"").append(width).append("\";\n");// TODO
 		code.append("object.height = \"").append(height).append("\";\n");
 		code.append("div2D.appendChild(object);\n");
 		code.append("@else @*/\n");
@@ -265,7 +268,7 @@ public class TwoDVisualizer {
 		code.append("object.onload = function(){\n");
 		code.append("var svgDoc = object.getSVGDocument();\n");
 		code.append("var svgRootElement = svgDoc.rootElement;\n");
-		code.append("svgRootElement.currentScale = 0.8;");
+		// code.append("svgRootElement.currentScale = 0.8;");
 		code.append("};\n");
 		code.append("/*@end\n");
 		code.append("@*/\n");

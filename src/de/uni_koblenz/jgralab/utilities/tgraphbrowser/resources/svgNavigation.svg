@@ -1,0 +1,300 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
+	"http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg width="790" height="530" version="1.1" 
+	xmlns="http://www.w3.org/2000/svg" 
+	xmlns:xlink="http://www.w3.org/1999/xlink" 
+	xmlns:gupro="http://www.gupro.de/svg" onload="init(evt)">
+  <defs>
+    <script type='text/ecmascript'><![CDATA[
+      var svgdoc, navdoc;
+      
+      var vbX = -10;
+      var vbY = -10;
+      var vbW = 768;
+      var vbH = 168;
+      
+      // bb* contains original viewBox
+      var bbX = -10;
+      var bbY = -10;
+      var bbW = 768;
+      var bbH = 168;
+      
+      var debug = 0;
+      
+      var hlRect = 0;
+      var hlRectIsSet = false;
+      var hlPath = 0;
+      var hlPathIsSet = false;
+      
+      var selection = 0;
+      
+      
+      function init(evt) {
+        svgdoc = evt.target.ownerDocument;
+      
+        navdoc = svgdoc.getElementById('nav');
+        navdoc.addEventListener('click', selectGraphelement, false);
+      
+        //debug = evt.getTarget().getOwnerDocument().getElementById('debug').getFirstChild();
+      
+        // read viewbox coords from navdoc; set to local variables
+        var vbData = navdoc.getAttribute('viewBox').split(' ');
+        bbX = parseInt(vbData[0]);
+        bbY = parseInt(vbData[1]);
+        bbW = parseInt(vbData[2]);
+        bbH = parseInt(vbData[3]);
+      
+        // hlRect is set to selected vertices
+        hlRect = svgdoc.createElement('rect');
+        hlRect.setAttribute('fill','none'); 
+        hlRect.setAttribute('stroke','#FF0000');
+        //hlRect.setAttribute('stroke-dasharray' , '2,2');
+        
+        // hlPath is set to selected edges
+        hlPath = svgdoc.createElement('path');
+        hlPath.setAttribute('stroke', '#FF0000'); 
+        hlPath.setAttribute('stroke-width', '1'); 
+        hlPath.setAttribute('fill', 'none'); 
+        hlPath.setAttribute('stroke-dasharray', '2,2');
+      }
+      
+      
+      function isVertex(graphElement) {
+        if (graphElement.getAttribute('id').indexOf('v') == 0)
+          return true;
+        else
+          return false;
+      }
+      function isEdge(graphElement) {
+        if (graphElement.getAttribute('id').indexOf('e') == 0)
+          return true;
+        else
+          return false;
+      }
+      
+      
+      function highlight(graphElement) {
+        if (isVertex(graphElement)) {
+          //debug.setData('vertex');
+          if (hlPathIsSet) {
+            navdoc.removeChild(hlPath);
+            hlPathIsSet = false;
+          }
+          hlRect.setAttribute('x', parseInt(graphElement.getAttribute('gupro:x')) - 5);
+          hlRect.setAttribute('y', parseInt(graphElement.getAttribute('gupro:y')) - 5);
+          hlRect.setAttribute('width', parseInt(graphElement.getAttribute('gupro:width')) + 10);
+          hlRect.setAttribute('height', parseInt(graphElement.getAttribute('gupro:height')) + 10);
+          navdoc.appendChild(hlRect);
+          hlRectIsSet = true;
+        }
+        else if (isEdge(graphElement)) {
+          if (hlRectIsSet) { // && hlRect != 0) {
+            navdoc.removeChild(hlRect);
+            hlRectIsSet = false;
+          }
+          var path = svgdoc.getElementById(graphElement.getAttribute('id') + 'Path');
+          hlPath.setAttribute('d', path.getAttribute('d'));
+          navdoc.appendChild(hlPath);
+          hlPathIsSet = true;
+          var label = svgdoc.getElementById('Label' + graphElement.getAttribute('id'));
+          if (label != null) {
+            //debug.setData(label.getAttribute('gupro:width'));
+            hlRect.setAttribute('x', parseInt(label.getAttribute('gupro:x')) - 5);
+            hlRect.setAttribute('y', parseInt(label.getAttribute('gupro:y')) - 5);
+            hlRect.setAttribute('width', parseInt(label.getAttribute('gupro:width')) + 10);
+            hlRect.setAttribute('height', parseInt(label.getAttribute('gupro:height')) + 10);
+            navdoc.appendChild(hlRect);
+            hlRectIsSet = true;
+          }
+          else {
+            //debug.setData('edge has no label');
+          }
+        }
+      }
+      
+      
+      function zoom(evt) {
+        if (evt.target.parentNode.getAttribute('id') == 'ZIn') {
+          //debug.setData('ZIn!');
+          vbW *= 0.95;
+          vbH *= 0.95;
+          updateViewBox(vbX, vbY, vbW, vbH);
+        }
+        else if (evt.target.parentNode.getAttribute('id') == 'ZOut') {
+          //debug.setData('ZOut!');
+          vbW *= 1.05;
+          vbH *= 1.05;
+          updateViewBox(vbX, vbY, vbW, vbH);
+        }
+        else if (evt.target.parentNode.getAttribute('id') == 'ZGraph') {
+          selection = 0;
+          if (hlRectIsSet) {
+            navdoc.removeChild(hlRect);
+            hlRectIsSet = false;
+          }
+          if (hlPathIsSet) {
+            navdoc.removeChild(hlPath);
+            hlPathIsSet = false;
+          }
+          updateViewBox(bbX, bbY, bbW, bbH);
+          //debug.setData('ZGraph!');
+        }
+        else if (evt.target.parentNode.getAttribute('id') == 'ZElement') {
+          if (selection != 0 && isVertex(selection)) {
+            //debug.setData('zv');
+            showVertex(selection);
+          }
+          else if (selection != 0 && isEdge(selection)) {
+            //debug.setData('ze');
+            showEdge(selection);
+          }
+        }
+      }
+      
+      
+      
+      function selectGraphelement(evt) {
+        // get selected graphelement from evt; store it as selection
+        if (evt.target.parentNode.getAttribute('id').indexOf('e') == 0) {
+          selection = evt.target.parentNode;
+        }
+        else if (evt.target.parentNode.getAttribute('id').indexOf('v') == 0) {
+          selection = evt.target.parentNode;
+        }
+        else {
+          selection = evt.target.parentNode.parentNode();
+        }  
+        highlight(selection);  
+      }
+      
+      
+      // object type Point
+      function Point(x, y)  {
+        this.x = x;
+        this.y = y;
+      }
+      
+      
+      // set viewBox attribute to show given vertex
+      function showVertex(vertex) {
+        var w = parseInt(vertex.getAttribute('gupro:width'));
+        var h = parseInt(vertex.getAttribute('gupro:height'));
+        var x = parseInt(vertex.getAttribute('gupro:x')) - (1.5*w);
+        var y = parseInt(vertex.getAttribute('gupro:y')) - (1.5*h);
+        updateViewBox(x, y, w*4, h*4);
+      }
+      
+      
+      // set viewBox attribute to show given edge
+      function showEdge(edge) {
+        var v1 = svgdoc.getElementById(edge.getAttribute('gupro:alpha'));
+        var v2 = svgdoc.getElementById(edge.getAttribute('gupro:omega'));
+        var ul1 = 
+          new Point(
+            parseInt(v1.getAttribute('gupro:x')), 
+            parseInt(v1.getAttribute('gupro:y')));
+        var lr1 = 
+          new Point(
+            parseInt(v1.getAttribute('gupro:x')) + 
+              parseInt(v1.getAttribute('gupro:width')), 
+            parseInt(v1.getAttribute('gupro:y')) + 
+              parseInt(v1.getAttribute('gupro:height')));
+        var ul2 = 
+          new Point(
+            parseInt(v2.getAttribute('gupro:x')), 
+            parseInt(v2.getAttribute('gupro:y')));
+        var lr2 = 
+          new Point(
+            parseInt(v2.getAttribute('gupro:x')) + 
+              parseInt(v1.getAttribute('gupro:width')), 
+            parseInt(v2.getAttribute('gupro:y')) + 
+              parseInt(v1.getAttribute('gupro:height')));
+        
+        var minX = ( ul1.x < ul2.x) ? ul1.x : ul2.x;
+        var minY = ( ul1.y < ul2.y) ? ul1.y : ul2.y;
+        var maxX = ( lr1.x > lr2.x) ? lr1.x : lr2.x;
+        var maxY = ( lr1.y > lr2.y) ? lr1.y : lr2.y;
+        
+        // check for label on edge
+        var label = svgdoc.getElementById('Label' + edge.getAttribute('id'));
+        if (label != null) {
+          var labelUL =
+            new Point(
+              parseInt(label.getAttribute('gupro:x')),
+              parseInt(label.getAttribute('gupro:y')));
+          var labelLR =
+            new Point(
+              parseInt(label.getAttribute('gupro:x')) + 
+                parseInt(label.getAttribute('gupro:width')),
+              parseInt(label.getAttribute('gupro:y')) + 
+                parseInt(label.getAttribute('gupro:height')));        
+          minX = ( minX < labelUL.x) ? minX : labelUL.x;
+          minY = ( minY < labelUL.y) ? minY : labelUL.y;
+          maxX = ( maxX > labelLR.x) ? maxX : labelLR.x;
+          maxY = ( maxY > labelLR.y) ? maxY : labelLR.y;
+        }
+        updateViewBox(minX - 10, minY - 10, maxX-minX+20, maxY-minY+20); 
+        //debug.setData(minX + ' ' + minY);
+      }
+      
+      
+      function updateViewBox(x, y, w, h) {
+        vbX = x;
+        vbY = y;
+        vbW = w;
+        vbH = h;
+        navdoc.setAttribute('viewBox', x + ' ' + y + ' ' + w + ' ' + h);
+        //debug.setData(navdoc.getAttribute('viewBox'));
+      }
+      
+      
+      function goLeft(evt) {
+        vbX -= 50;
+        navdoc.setAttribute('viewBox', vbX + ' ' + vbY + ' ' + vbW + ' ' + vbH);
+      }
+      function goRight(evt) {
+        vbX += 50;
+        navdoc.setAttribute('viewBox', vbX + ' ' + vbY + ' ' + vbW + ' ' + vbH);
+      }
+      function goUp(evt) {
+        vbY -= 50;
+        navdoc.setAttribute('viewBox', vbX + ' ' + vbY + ' ' + vbW + ' ' + vbH);
+      }
+      function goDown(evt) {
+        vbY += 50;
+        navdoc.setAttribute('viewBox', vbX + ' ' + vbY + ' ' + vbW + ' ' + vbH);
+      }
+
+    ]]></script>
+  </defs>
+  <g transform="translate(730, 175)" stroke='black' fill='lightgrey'>
+    <path d="M -35   0 l +15 -15 l   0 +30 z" id="left" onclick='goLeft(evt)'/>
+    <path d="M  35   0 l -15 -15 l   0 +30 z" id="right" onclick='goRight(evt)'/>
+    <path d="M   0 -35 l +15 +15 l -30   0 z" id="up" onclick='goUp(evt)'/>
+    <path d="M   0  35 l +15 -15 l -30   0 z" id="down" onclick='goDown(evt)'/>
+  </g>
+  <g id="ZoomControl" transform="translate(730, 30)" style="font:12 Arial" >
+    <text text-anchor='middle'>Zoom:</text> 
+    <g id='ZIn' onclick='zoom(evt)'> 
+      <rect x='-40' y='6' width='80' height='14' fill='lightgrey' stroke='black'/> 
+      <text y='18' text-anchor='middle'>in</text> 
+    </g> 
+    <g id='ZOut' onclick='zoom(evt)'> 
+      <rect x='-40' y='24' width='80' height='14' fill='lightgrey' stroke='black'/> 
+      <text y='36' text-anchor='middle'>out</text> 
+    </g> 
+    <g id='ZGraph' onclick='zoom(evt)'> 
+      <rect x='-40' y='42' width='80' height='14' fill='lightgrey' stroke='black'/> 
+      <text y='54' text-anchor='middle'>Graph</text> 
+    </g> 
+    <g id='ZElement' onclick='zoom(evt)'> 
+      <rect x='-40' y='60' width='80' height='14' fill='lightgrey' stroke='black'/> 
+      <text y='72' text-anchor='middle'>Element</text> 
+    </g>
+  </g>
+  <rect x="24" y="24" width="640" height="480" style="fill:none;stroke:rgb(0,0,0);" />
+  <svg id="nav" width="640" height="480" version="1.1" viewBox="-10 -10 1458 1581" xmlns="http://www.w3.org/2000/svg" x="25" y="25">
+   <!--  -->
+  </svg>
+</svg>
