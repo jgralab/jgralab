@@ -430,8 +430,8 @@ elements."
    ;; complete attributes
    ((greql-variable-p)
     (greql-attribute-completion-list
-     ;; FIXME: vartypes is not defined!
-     (tg-all-attributes-multi (car vartypes) (cadr vartypes) arg)))
+     (let ((vartypes (greql-variable-types-at-point)))
+       (tg-all-attributes-multi (car vartypes) (cadr vartypes) arg))))
    ;; complete keywords / functions
    (t
     (flet ((format-entry (fun)
@@ -623,17 +623,19 @@ vertices in the query result."
 
 (defun greql-variable-p ()
   (and (looking-back "[[:word:]_]\\.[[:word:]_]*?")
-       (not looking-back "import .*")
+       (not (looking-back "import .*"))
        (not (looking-back "{[[:word:]_]*?"))))
 
 (defun greql-import-p ()
   (looking-back "import[[:space:]]+[[:word:]._]*"))
 
-(defun greql-variable-types ()
+(defun greql-variable-types-at-point ()
   "Return something like (VertexClass (\"Type1\" \"Type2\")),
 for some variable declared as
 
-  x : V{Type1, Type2}"
+  x : V{Type1, Type2}
+
+for the variable at point."
   (save-excursion
     (search-backward "." nil t 1)
     (let ((end (point))
@@ -643,7 +645,7 @@ for some variable declared as
       (re-search-backward
        (concat "\\<"
                var
-               "\\>[^:]*:[[:space:]]*\\([VE]\\){\\([^}]+\\)}") nil t 1)
+               "\\>[^:{}]*:[[:space:]]*\\([VE]\\){\\([^}]+\\)}") nil t 1)
       (when (and (match-beginning 1) (match-end 1))
         (let* ((mtype-match (buffer-substring-no-properties (match-beginning 1)
                                                             (match-end 1)))
