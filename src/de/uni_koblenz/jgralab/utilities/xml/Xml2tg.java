@@ -159,7 +159,7 @@ public class Xml2tg {
 		String schemaName = cmdl.getOptionValue('s').trim();
 		String outputFilename = cmdl.getOptionValue('o').trim();
 
-		if ((cmdl.getArgList().size() > 1) && !cmdl.hasOption('m')) {
+		if (cmdl.getArgList().size() > 1 && !cmdl.hasOption('m')) {
 			System.err
 					.println("When multiple XML files are given, the -m option has to be specified.");
 			optionHandler.printHelpAndExit(1);
@@ -173,7 +173,7 @@ public class Xml2tg {
 		int i = 0;
 		String[] files = cmdl.getArgs();
 		for (String inputXML : files) {
-			System.out.println("Importing " + inputXML + " (" + (++i) + "/"
+			System.out.println("Importing " + inputXML + " (" + ++i + "/"
 					+ files.length + ")");
 			if (xml2tg == null) {
 				xml2tg = new Xml2tg(inputXML, outputFilename, schema);
@@ -270,95 +270,105 @@ public class Xml2tg {
 		if (!assumeVerticesBeforeEdges) {
 			edgesToCreate = new LinkedList<AttributedElementInfo>();
 		}
-		while (reader.hasNext()) {
-			int nextEvent = reader.next();
-			switch (nextEvent) {
-			case START_DOCUMENT:
-				System.out.println("Starting Document");
-				break;
-			case START_ELEMENT:
-				level += 1;
-				if (++elementCount % 1000 == 0) {
-					System.out.print(".");
-					System.out.flush();
-				}
-				if (level == 2) {
-					// graph element
-					String attributedElementClassName = reader.getName()
-							.getLocalPart();
-					// System.out.println(attributedElementClassName);
-					AttributedElementClass aec = schema
-							.getAttributedElementClass(attributedElementClassName);
-					if (aec == null) {
-						throw new RuntimeException("AttributedElementClass '"
-								+ attributedElementClassName + "' unknown.");
+		try {
+			while (reader.hasNext()) {
+				int nextEvent = reader.next();
+				switch (nextEvent) {
+				case START_DOCUMENT:
+					System.out.println("Starting Document");
+					break;
+				case START_ELEMENT:
+					level += 1;
+					if (++elementCount % 1000 == 0) {
+						System.out.print(".");
+						System.out.flush();
 					}
-					stack.push(new AttributedElementInfo(aec));
-				} else if (level == 1) {
-					// root element (graph)
-					String graphClassName = reader.getName().getLocalPart();
-					if (!schema.getGraphClass().getQualifiedName().equals(
-							graphClassName)) {
-						throw new SchemaException(
-								"Name mismatch for GraphClass: should be "
-										+ schema.getGraphClass()
-												.getQualifiedName()
-										+ " but was " + graphClassName);
-					}
-					AttributedElementClass aec = schema
-							.getAttributedElementClass(graphClassName);
-					if (aec == null) {
-						throw new RuntimeException("GraphClass '"
-								+ graphClassName + "' unknown.");
-					}
-					stack.push(new AttributedElementInfo(aec));
-					if ((graph != null) && multiXml) {
-						break;
-					}
-					String graphID = stack.peek().getAttributes().get(
-							GRUML_ATTRIBUTE_ID);
-					try {
-						// System.out.println("Creating instance of "
-						// + graphClassName);
-						graph = (Graph) schema.getGraphCreateMethod(
-								ImplementationType.STANDARD).invoke(
-								null,
-								new Object[] { graphID, MAX_VERTEX_COUNT,
-										MAX_EDGE_COUNT });
-						// System.out.println("done.");
-					} catch (Exception e) {
-						throw new GraphIOException(
-								"Unable to create instance of "
-										+ graphClassName, e);
-					}
-					// inicialize markers
-					incidencePositionMarker = new GraphMarker<IncidencePositionMark>(
-							graph);
+					if (level == 2) {
+						// graph element
+						String attributedElementClassName = reader.getName()
+								.getLocalPart();
+						// System.out.println(attributedElementClassName);
+						AttributedElementClass aec = schema
+								.getAttributedElementClass(attributedElementClassName);
+						if (aec == null) {
+							throw new RuntimeException(
+									"AttributedElementClass '"
+											+ attributedElementClassName
+											+ "' unknown.");
+						}
+						stack.push(new AttributedElementInfo(aec));
+					} else if (level == 1) {
+						// root element (graph)
+						String graphClassName = reader.getName().getLocalPart();
+						if (!schema.getGraphClass().getQualifiedName()
+								.equals(graphClassName)) {
+							throw new SchemaException(
+									"Name mismatch for GraphClass: should be "
+											+ schema.getGraphClass()
+													.getQualifiedName()
+											+ " but was " + graphClassName);
+						}
+						AttributedElementClass aec = schema
+								.getAttributedElementClass(graphClassName);
+						if (aec == null) {
+							throw new RuntimeException("GraphClass '"
+									+ graphClassName + "' unknown.");
+						}
+						stack.push(new AttributedElementInfo(aec));
+						if (graph != null && multiXml) {
+							break;
+						}
+						String graphID = stack.peek().getAttributes()
+								.get(GRUML_ATTRIBUTE_ID);
+						try {
+							// System.out.println("Creating instance of "
+							// + graphClassName);
+							graph = (Graph) schema.getGraphCreateMethod(
+									ImplementationType.STANDARD).invoke(
+									null,
+									new Object[] { graphID, MAX_VERTEX_COUNT,
+											MAX_EDGE_COUNT });
+							// System.out.println("done.");
+						} catch (Exception e) {
+							throw new GraphIOException(
+									"Unable to create instance of "
+											+ graphClassName, e);
+						}
+						// inicialize markers
+						incidencePositionMarker = new GraphMarker<IncidencePositionMark>(
+								graph);
 
-				}
-				break;
-			case END_ELEMENT:
-				AttributedElementInfo current = stack.pop();
-				if (current.getAttributedElementClass() instanceof VertexClass) {
-					createVertex(current);
-				} else if (current.getAttributedElementClass() instanceof EdgeClass) {
-					if (assumeVerticesBeforeEdges) {
-						createEdge(current);
-					} else {
-						edgesToCreate.add(current);
 					}
-				} else if (current.getAttributedElementClass() instanceof GraphClass) {
-					setGraphAttributes(current);
+					break;
+				case END_ELEMENT:
+					AttributedElementInfo current = stack.pop();
+					if (current.getAttributedElementClass() instanceof VertexClass) {
+						createVertex(current);
+					} else if (current.getAttributedElementClass() instanceof EdgeClass) {
+						if (assumeVerticesBeforeEdges) {
+							createEdge(current);
+						} else {
+							edgesToCreate.add(current);
+						}
+					} else if (current.getAttributedElementClass() instanceof GraphClass) {
+						setGraphAttributes(current);
+					}
+					level -= 1;
+				default:
 				}
-				level -= 1;
-			default:
+			}
+
+			System.out.println();
+
+			assert level == 0;
+		} finally {
+			try {
+				reader.close();
+			} catch (XMLStreamException ex) {
+				throw new RuntimeException(
+						"An exception occured while closing the stream.", ex);
 			}
 		}
-
-		System.out.println();
-
-		assert (level == 0);
-		reader.close();
 		if (!assumeVerticesBeforeEdges) {
 			// create all edges
 			while (!edgesToCreate.isEmpty()) {

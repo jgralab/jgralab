@@ -32,6 +32,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.io.Reader;
 import java.util.HashMap;
 
 import de.uni_koblenz.jgralab.AttributedElement;
@@ -84,17 +85,17 @@ public class TwoDVisualizer {
 			RequestThread currentThread) {
 		// set currentVertex or currentEdge to the current element
 		if (currentElement.isVertex()) {
-			code.append("current").append("Vertex = \"").append(
-					currentElement.toVertex().getId()).append("\";\n");
+			code.append("current").append("Vertex = \"")
+					.append(currentElement.toVertex().getId()).append("\";\n");
 		} else if (currentElement.isEdge()) {
-			code.append("current").append("Edge = \"").append(
-					currentElement.toEdge().getId()).append("\";\n");
+			code.append("current").append("Edge = \"")
+					.append(currentElement.toEdge().getId()).append("\";\n");
 		}
 		// calculate environment
 		JValueSet elementsToDisplay = new JValueSet();
 		if (currentElement.isVertex()) {
-			JValue slice = computeElements(currentElement, pathLength, state
-					.getGraph());
+			JValue slice = computeElements(currentElement, pathLength,
+					state.getGraph());
 			calculateElementsInSet(code, state, elementsToDisplay, slice);
 		} else if (currentElement.isEdge()) {
 			Edge current = currentElement.toEdge();
@@ -131,15 +132,12 @@ public class TwoDVisualizer {
 				state.selectedVertexClasses);
 		mtd.printGraph();
 		if (mtd.exception != null) {
-			code
-					.append("document.getElementById('divError').style.display = \"block\";\n");
-			code
-					.append(
-							"document.getElementById('h2ErrorMessage').innerHTML = \"ERROR: ")
+			code.append("document.getElementById('divError').style.display = \"block\";\n");
+			code.append(
+					"document.getElementById('h2ErrorMessage').innerHTML = \"ERROR: ")
 					.append("Could not create file ").append(dotFileName)
 					.append("\";\n");
-			code
-					.append("document.getElementById('divNonError').style.display = \"none\";\n");
+			code.append("document.getElementById('divNonError').style.display = \"none\";\n");
 			return;
 		}
 		// create .svg-file
@@ -183,33 +181,26 @@ public class TwoDVisualizer {
 					}
 				} else {
 					// execution of dot is terminated because it took too long
-					code
-							.append("document.getElementById('divError').style.display = \"block\";\n");
-					code
-							.append(
-									"document.getElementById('h2ErrorMessage').innerHTML = \"ERROR: ")
+					code.append("document.getElementById('divError').style.display = \"block\";\n");
+					code.append(
+							"document.getElementById('h2ErrorMessage').innerHTML = \"ERROR: ")
 							.append("Creation of file ")
 							.append(svgFileName)
-							.append(
-									" was terminated because it took more than ")
-							.append(SECONDS_TO_WAIT_FOR_DOT).append(
-									" seconds.\";\n");
-					code
-							.append("document.getElementById('divNonError').style.display = \"none\";\n");
+							.append(" was terminated because it took more than ")
+							.append(SECONDS_TO_WAIT_FOR_DOT)
+							.append(" seconds.\";\n");
+					code.append("document.getElementById('divNonError').style.display = \"none\";\n");
 					return;
 				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			code
-					.append("document.getElementById('divError').style.display = \"block\";\n");
-			code
-					.append(
-							"document.getElementById('h2ErrorMessage').innerHTML = \"ERROR: ")
+			code.append("document.getElementById('divError').style.display = \"block\";\n");
+			code.append(
+					"document.getElementById('h2ErrorMessage').innerHTML = \"ERROR: ")
 					.append("Could not create file ").append(svgFileName)
 					.append("\";\n");
-			code
-					.append("document.getElementById('divNonError').style.display = \"none\";\n");
+			code.append("document.getElementById('divNonError').style.display = \"none\";\n");
 			return;
 		}
 		if (!new File(dotFileName).delete()) {
@@ -218,25 +209,34 @@ public class TwoDVisualizer {
 		}
 		// determine the size of the svg-graphic
 		String line = "";
+
+		FileReader in = null;
+		BufferedReader br = null;
 		try {
-			FileReader in = new FileReader(svgFileName);
+			in = new FileReader(svgFileName);
 			// LineNumberReader lnr = new LineNumberReader(in);
-			BufferedReader br = new BufferedReader(new InputStreamReader(
-					getClass().getResourceAsStream(
+			br = new BufferedReader(new InputStreamReader(getClass()
+					.getResourceAsStream(
 							RequestThread.SVG_WITH_ZOOM_AND_MOVE_SUPPORT)));
 			do {
 				line = br.readLine();
-			} while ((line != null) && !line.startsWith("<svg"));
+			} while (line != null && !line.startsWith("<svg"));
 			br.close();
 			in.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+			try {
+				close(br);
+			} finally {
+				close(in);
+			}
 		}
 		String width = "200pt";
 		String height = "200pt";
-		if ((line != null) && !line.isEmpty()) {
+		if (line != null && !line.isEmpty()) {
 			String[] lineparts = line.split("\"");
 			width = lineparts[1];
 			height = lineparts[3];
@@ -272,6 +272,16 @@ public class TwoDVisualizer {
 		code.append("};\n");
 		code.append("/*@end\n");
 		code.append("@*/\n");
+	}
+
+	private void close(Reader lnr) {
+		try {
+			if (lnr != null) {
+				lnr.close();
+			}
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	/**
@@ -327,9 +337,8 @@ public class TwoDVisualizer {
 		code.append("var div2D = document.getElementById(\"div2DGraph\");\n");
 		code.append("div2D.innerHTML = \"\";\n");
 		// print number of elements
-		code
-				.append(
-						"document.getElementById(\"h3HowManyElements\").innerHTML = \"")
+		code.append(
+				"document.getElementById(\"h3HowManyElements\").innerHTML = \"")
 				.append(selectedElements).append(" of ").append(totalElements)
 				.append(" elements selected.\";\n");
 	}
@@ -455,8 +464,8 @@ public class TwoDVisualizer {
 				Boolean showAttributes, JValue currentElement,
 				HashMap<EdgeClass, Boolean> selectedEdgeClasses2,
 				HashMap<VertexClass, Boolean> selectedVertexClasses2) {
-			this.selectedEdgeClasses = selectedEdgeClasses2;
-			this.selectedVertexClasses = selectedVertexClasses2;
+			selectedEdgeClasses = selectedEdgeClasses2;
+			selectedVertexClasses = selectedVertexClasses2;
 			this.elements = elements;
 			outputName = outputFileName;
 			this.showAttributes = showAttributes;
@@ -478,8 +487,9 @@ public class TwoDVisualizer {
 		 */
 		@Override
 		public void printGraph() {
+			PrintStream out = null;
 			try {
-				PrintStream out = new PrintStream(new BufferedOutputStream(
+				out = new PrintStream(new BufferedOutputStream(
 						new FileOutputStream(outputName)));
 				graphStart(out);
 				for (JValue v : elements) {
@@ -491,10 +501,13 @@ public class TwoDVisualizer {
 				}
 				graphEnd(out);
 				out.flush();
-				out.close();
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 				exception = e;
+			} finally {
+				if (out != null) {
+					out.close();
+				}
 			}
 		}
 
@@ -589,7 +602,7 @@ public class TwoDVisualizer {
 			out.print(" label=\"e" + e.getId() + ": "
 					+ cls.getUniqueName().replace('$', '.') + "");
 
-			if (showAttributes && (cls.getAttributeCount() > 0)) {
+			if (showAttributes && cls.getAttributeCount() > 0) {
 				out.print("\\l");
 				printAttributes(out, e);
 			}
@@ -602,13 +615,9 @@ public class TwoDVisualizer {
 			out.print(" \"");
 
 			if (isPrintIncidenceNumbers()) {
-				out
-						.print(" taillabel=\"" + getIncidenceNumber(e, alpha)
-								+ "\"");
-				out
-						.print(" headlabel=\""
-								+ getIncidenceNumber(e.getReversedEdge(), omega)
-								+ "\"");
+				out.print(" taillabel=\"" + getIncidenceNumber(e, alpha) + "\"");
+				out.print(" headlabel=\""
+						+ getIncidenceNumber(e.getReversedEdge(), omega) + "\"");
 			}
 
 			out.print(" href=\"javascript:top.showElement('e" + e.getId()
@@ -638,7 +647,7 @@ public class TwoDVisualizer {
 			for (Attribute attr : cls.getAttributeList()) {
 				String current = attr.getName();
 				Object attribute = elem.getAttribute(attr.getName());
-				String attributeString = (attribute != null) ? attribute
+				String attributeString = attribute != null ? attribute
 						.toString() : "null";
 				if (attribute instanceof String) {
 					attributeString = '"' + attributeString + '"';
@@ -673,7 +682,7 @@ public class TwoDVisualizer {
 			AttributedElementClass cls = v.getAttributedElementClass();
 			out.print("v" + v.getId() + " [label=\"{{v" + v.getId() + "|"
 					+ cls.getUniqueName().replace('$', '.') + "}");
-			if (showAttributes && (cls.getAttributeCount() > 0)) {
+			if (showAttributes && cls.getAttributeCount() > 0) {
 				out.print("|");
 				printAttributes(out, v);
 			}
