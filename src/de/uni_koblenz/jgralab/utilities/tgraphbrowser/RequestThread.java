@@ -86,7 +86,7 @@ public class RequestThread extends Thread {
 				+ contentType
 				+ "\r\n"
 				+ "Expires: Thu, 01 Dec 1994 16:00:00 GMT\r\n"
-				+ ((contentLength != -1) ? "Content-Length: " + contentLength
+				+ (contentLength != -1 ? "Content-Length: " + contentLength
 						+ "\r\n" : "") + "Last-modified: "
 				+ new Date(lastModified).toString() + "\r\n" + "\r\n")
 				.getBytes());
@@ -94,16 +94,20 @@ public class RequestThread extends Thread {
 
 	private static void sendError(BufferedOutputStream out, int code,
 			String message) throws IOException {
-		message = message + "<hr>" + TGraphBrowserServer.VERSION;
-		sendHeader(out, code, "text/html", message.length(), System
-				.currentTimeMillis());
-		out.write(message.getBytes());
-		out.flush();
-		out.close();
+		try {
+			message = message + "<hr>" + TGraphBrowserServer.VERSION;
+			sendHeader(out, code, "text/html", message.length(),
+					System.currentTimeMillis());
+			out.write(message.getBytes());
+			out.flush();
+		} finally {
+			out.close();
+		}
 	}
 
 	@Override
 	public void run() {
+		// FIXME This is a monster method and maintainable! Split it.
 		try {
 			_socket.setSoTimeout(30000);
 			InputStream inputStream = _socket.getInputStream();
@@ -111,14 +115,14 @@ public class RequestThread extends Thread {
 					inputStream));
 			// BufferedReader in = new BufferedReader(new InputStreamReader(
 			// inputStream));
-			BufferedOutputStream out = new BufferedOutputStream(_socket
-					.getOutputStream());
+			BufferedOutputStream out = new BufferedOutputStream(
+					_socket.getOutputStream());
 			String firstLine = readLine(in);
 			String request = URLDecoder.decode(firstLine != null ? firstLine
 					: "", "UTF-8");
-			if ((request == null)
-					|| (!request.startsWith("GET ") && !request
-							.startsWith("POST "))
+			if (request == null
+					|| !request.startsWith("GET ")
+					&& !request.startsWith("POST ")
 					|| !(request.endsWith(" HTTP/1.0") || request
 							.endsWith("HTTP/1.1"))) {
 				// Invalid request type (no "GET")
@@ -173,7 +177,7 @@ public class RequestThread extends Thread {
 					} else {
 						// find beginning of file
 						// next in.readLine()is first line of file
-						while ((line != null) && !line.isEmpty()) {
+						while (line != null && !line.isEmpty()) {
 							line = readLine(in);
 							sizeOfLinesAlreadyRead += line.length() + 2;
 						}
@@ -243,7 +247,7 @@ public class RequestThread extends Thread {
 					// skip rest of header
 					do {
 						line = readLine(in);
-					} while ((line != null) && !line.isEmpty());
+					} while (line != null && !line.isEmpty());
 					// read content
 					byte[] content = new byte[contentLength.intValue()];
 					if (in.read(content) <= 0) {
@@ -286,8 +290,8 @@ public class RequestThread extends Thread {
 						/*
 						 * Invoke called method.
 						 */
-						StringBuilder erg = callMethod(out, methodname, args
-								.toArray(new String[0]));
+						StringBuilder erg = callMethod(out, methodname,
+								args.toArray(new String[0]));
 						if (erg != null) {
 							sendMessage(out, erg);
 						}
@@ -330,7 +334,7 @@ public class RequestThread extends Thread {
 					File svg = new File(fileName);
 					long sleepTime = System.currentTimeMillis() + 10000;
 					while (!svg.exists()
-							&& (System.currentTimeMillis() <= sleepTime)) {
+							&& System.currentTimeMillis() <= sleepTime) {
 					}
 					// send svgFile
 					if (svg.exists()) {
@@ -338,8 +342,7 @@ public class RequestThread extends Thread {
 						if (!svgToDelete.contains(path)) {
 							if (!svg.delete()) {
 								TGraphBrowserServer.logger.warning(svg
-										.toString()
-										+ " could not be deleted.");
+										.toString() + " could not be deleted.");
 							}
 						}
 					} else {
@@ -383,10 +386,8 @@ public class RequestThread extends Thread {
 									"= "
 											+ erg
 											+ ";\n\t\t timestamp = "
-											+ StateRepository
-													.getSession(Integer
-															.parseInt(erg
-																	.toString())).lastAccess);
+											+ StateRepository.getSession(Integer
+													.parseInt(erg.toString())).lastAccess);
 						}
 					} else {
 						sendMessage(out, erg);
@@ -480,7 +481,7 @@ public class RequestThread extends Thread {
 		}
 		// create logging entry
 		StringBuilder argsString = new StringBuilder();
-		for (int i = 0; (currentParams != null) && (i < currentParams.length); i++) {
+		for (int i = 0; currentParams != null && i < currentParams.length; i++) {
 			argsString.append((i == 0 ? "" : ", ")
 					+ (currentParams[i] instanceof String ? "\"" : "")
 					+ currentParams[i]
@@ -534,21 +535,26 @@ public class RequestThread extends Thread {
 	 */
 	private void sendFile(BufferedOutputStream out, String file)
 			throws IOException, FileNotFoundException {
-		if (_socket.isConnected()) {
-			sendHeader(out, 200, file.endsWith(".svg") ? "image/svg+xml"
-					: (file.endsWith(".png") ? "image/png" : "text/html"), -1,
-					System.currentTimeMillis());
-			InputStream reader = null;
-			if (new File(file).isAbsolute()) {
-				reader = new FileInputStream(file);
-			} else {
-				reader = getClass().getResourceAsStream("resources/" + file);
+		InputStream reader = null;
+		try {
+			if (_socket.isConnected()) {
+				sendHeader(out, 200, file.endsWith(".svg") ? "image/svg+xml"
+						: file.endsWith(".png") ? "image/png" : "text/html",
+						-1, System.currentTimeMillis());
+
+				if (new File(file).isAbsolute()) {
+					reader = new FileInputStream(file);
+				} else {
+					reader = getClass()
+							.getResourceAsStream("resources/" + file);
+				}
+				byte[] buffer = new byte[4096];
+				int bytesRead;
+				while ((bytesRead = reader.read(buffer)) != -1) {
+					out.write(buffer, 0, bytesRead);
+				}
 			}
-			byte[] buffer = new byte[4096];
-			int bytesRead;
-			while ((bytesRead = reader.read(buffer)) != -1) {
-				out.write(buffer, 0, bytesRead);
-			}
+		} finally {
 			reader.close();
 		}
 	}
@@ -567,33 +573,38 @@ public class RequestThread extends Thread {
 	 */
 	private void sendFile(BufferedOutputStream out, String file,
 			String replaceText) throws IOException {
+
 		if (_socket.isConnected()) {
 			sendHeader(out, 200, "text/html", -1, System.currentTimeMillis());
-			BufferedReader br = new BufferedReader(new InputStreamReader(
-					getClass().getResourceAsStream("resources/" + file)));
-			boolean isReplaced = false;
-			String line;
-			for (line = br.readLine(); line != null; line = br.readLine()) {
-				if (!isReplaced && line.contains("/*?*/")) {
-					line = line.replace("/*?*/", replaceText);
-					isReplaced = true;
+			BufferedReader br = null;
+			try {
+				br = new BufferedReader(new InputStreamReader(getClass()
+						.getResourceAsStream("resources/" + file)));
+				boolean isReplaced = false;
+				String line;
+				for (line = br.readLine(); line != null; line = br.readLine()) {
+					if (!isReplaced && line.contains("/*?*/")) {
+						line = line.replace("/*?*/", replaceText);
+						isReplaced = true;
+					}
+					if (!isReplaced) {
+						out.write((line + "\n").getBytes());
+					} else {
+						out.write((line + "\n").getBytes());
+						// String was replaced. Now the data can be send faster.
+						break;
+					}
 				}
-				if (!isReplaced) {
-					out.write((line + "\n").getBytes());
-				} else {
-					out.write((line + "\n").getBytes());
-					// String was replaced. Now the data can be send faster.
-					break;
+				if (line != null) {
+					char[] buffer = new char[4096];
+					int bytesRead;
+					while ((bytesRead = br.read(buffer)) != -1) {
+						out.write(new String(buffer).getBytes(), 0, bytesRead);
+					}
 				}
+			} finally {
+				br.close();
 			}
-			if (line != null) {
-				char[] buffer = new char[4096];
-				int bytesRead;
-				while ((bytesRead = br.read(buffer)) != -1) {
-					out.write(new String(buffer).getBytes(), 0, bytesRead);
-				}
-			}
-			br.close();
 		}
 	}
 
