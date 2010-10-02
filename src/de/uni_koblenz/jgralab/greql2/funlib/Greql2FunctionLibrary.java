@@ -180,33 +180,53 @@ public class Greql2FunctionLibrary {
 		} else if (cmd.hasOption('g')) {
 			output = generateGreqlReferenceCard();
 		}
-		if (output != null) {
-			if (cmd.hasOption('o')) {
-				try {
-					FileWriter file = new FileWriter(new File(cmd
-							.getOptionValue('o')));
-					file.append(output);
-					file.flush();
-					file.close();
-					System.out.println("Fini.");
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
 
-			} else {
-				System.out.println(output);
-			}
+		if (output == null) {
+			// FIXME please thrown an exception
+			System.out.println("Don't know what to do!");
+		}
+
+		if (cmd.hasOption('o')) {
+			saveDocumentation(cmd.getOptionValue('o'), output);
 
 		} else {
-			System.out.println("Don't know what to do!");
+			System.out.println(output);
 		}
 
 	}
 
+	/**
+	 * Saves a given string into into a file specified as string.
+	 * 
+	 * @param filename
+	 *            Filename of the output file, specified as string.
+	 * @param output
+	 *            String to write to a file.
+	 */
+	private static void saveDocumentation(String filename, String output) {
+		FileWriter file = null;
+		try {
+			file = new FileWriter(new File(filename));
+			file.append(output);
+			file.flush();
+			System.out.println("Fini.");
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				file.close();
+
+			} catch (IOException ex) {
+				throw new RuntimeException(
+						"An exception occurred while closing the stream.", ex);
+			}
+		}
+	}
+
 	private static String describeAllFunction() {
 		StringBuilder sb = new StringBuilder();
-		for (String fun : new TreeSet<String>(instance().availableFunctions
-				.keySet())) {
+		for (String fun : new TreeSet<String>(
+				instance().availableFunctions.keySet())) {
 			sb.append(describeFunction(fun, false));
 			sb.append("\u000C\n");
 		}
@@ -216,8 +236,8 @@ public class Greql2FunctionLibrary {
 	private static String listFunctions() {
 		StringBuilder sb = new StringBuilder();
 		boolean first = true;
-		for (String function : new TreeSet<String>(Greql2FunctionLibrary
-				.instance().availableFunctions.keySet())) {
+		for (String function : new TreeSet<String>(
+				Greql2FunctionLibrary.instance().availableFunctions.keySet())) {
 			if (!first) {
 				sb.append('\n');
 			}
@@ -305,7 +325,9 @@ public class Greql2FunctionLibrary {
 								@Override
 								public int compare(Greql2Function o1,
 										Greql2Function o2) {
-									return o1.getClass().getSimpleName()
+									return o1
+											.getClass()
+											.getSimpleName()
 											.compareTo(
 													o2.getClass()
 															.getSimpleName());
@@ -322,23 +344,20 @@ public class Greql2FunctionLibrary {
 		// sb.append("\\section{Functions}\n\n");
 		for (Entry<Category, SortedSet<Greql2Function>> e : map.entrySet()) {
 			sb.append("\\subsection{");
-			String subSect = e.getKey().toString().toLowerCase().replace("_",
-					" ");
+			String subSect = e.getKey().toString().toLowerCase()
+					.replace("_", " ");
 			sb.append(subSect.substring(0, 1).toUpperCase()
 					+ subSect.substring(1));
 			sb.append("}\n\n");
 
-			sb
-					.append("\\begin{longtable}{|p{0.09\\textwidth}|p{0.56\\textwidth}|p{0.25\\textwidth}|}\n");
+			sb.append("\\begin{longtable}{|p{0.09\\textwidth}|p{0.56\\textwidth}|p{0.25\\textwidth}|}\n");
 
 			sb.append("\\hline\n");
-			sb
-					.append("\\textbf{Name} & \\textbf{Description} & \\textbf{Signatures} \\\\ \n");
+			sb.append("\\textbf{Name} & \\textbf{Description} & \\textbf{Signatures} \\\\ \n");
 			sb.append("\\hline\n");
 			sb.append("\\endfirsthead\n");
 			sb.append("\\hline\n");
-			sb
-					.append("\\textbf{Name} & \\textbf{Description} & \\textbf{Signatures} \\\\ \n");
+			sb.append("\\textbf{Name} & \\textbf{Description} & \\textbf{Signatures} \\\\ \n");
 			sb.append("\\hline\n");
 			sb.append("\\endhead\n\n");
 			for (Greql2Function fun : e.getValue()) {
@@ -433,7 +452,7 @@ public class Greql2FunctionLibrary {
 		// same name and different class may not. Implementation have to be the
 		// same.
 		if (isGreqlFunction(funName)
-				&& (availableFunctions.get(funName).getClass() != functionClass)) {
+				&& availableFunctions.get(funName).getClass() != functionClass) {
 			System.out.println(availableFunctions.get(funName) + " != "
 					+ functionClass);
 			System.exit(1);
@@ -512,11 +531,12 @@ public class Greql2FunctionLibrary {
 							&& Character.isUpperCase(entryName
 									.charAt(nondottedPackageName.length() + 1))) {
 						registerPredefinedFunction(entryName.substring(
-								nondottedPackageName.length() + 1, entryName
-										.length() - 6));
+								nondottedPackageName.length() + 1,
+								entryName.length() - 6));
 						logger.finer("Registering function: "
-								+ entryName.substring(nondottedPackageName
-										.length() + 1, entryName.length() - 6));
+								+ entryName.substring(
+										nondottedPackageName.length() + 1,
+										entryName.length() - 6));
 					}
 				}
 			} catch (Exception e) {
