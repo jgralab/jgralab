@@ -101,9 +101,15 @@ public class JValueXMLOutputVisitor extends JValueDefaultVisitor implements
 			writer.writeEndDocument();
 			writer.writeCharacters("\n");
 			writer.flush();
-			writer.close();
 		} catch (XMLStreamException e) {
 			e.printStackTrace();
+		} finally {
+			try {
+				writer.close();
+			} catch (XMLStreamException ex) {
+				throw new RuntimeException(
+						"An exception occured while closing the stream", ex);
+			}
 		}
 	}
 
