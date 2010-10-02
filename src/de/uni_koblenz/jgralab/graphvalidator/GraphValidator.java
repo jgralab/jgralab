@@ -67,7 +67,7 @@ public class GraphValidator {
 	 */
 	public GraphValidator(Graph graph) {
 		this.graph = graph;
-		this.eval = new GreqlEvaluator((String) null, graph, null);
+		eval = new GreqlEvaluator((String) null, graph, null);
 	}
 
 	// TODO: Add proper apache common CLI handling!
@@ -102,15 +102,14 @@ public class GraphValidator {
 		Set<AttributedElement> badOutgoing = new HashSet<AttributedElement>();
 		for (Vertex v : graph.vertices(ec.getFrom().getVertexClass())) {
 			int degree = v.getDegree(ec, EdgeDirection.OUT);
-			if ((degree < toMin) || (degree > toMax)) {
+			if (degree < toMin || degree > toMax) {
 				badOutgoing.add(v);
 			}
 		}
 		if (!badOutgoing.isEmpty()) {
 			brokenConstraints.add(new MultiplicityConstraintViolation(ec,
 					"Invalid number of outgoing edges, allowed are (" + toMin
-							+ ","
-							+ ((toMax == Integer.MAX_VALUE) ? "*" : toMax)
+							+ "," + (toMax == Integer.MAX_VALUE ? "*" : toMax)
 							+ ").", badOutgoing));
 		}
 
@@ -119,7 +118,7 @@ public class GraphValidator {
 		Set<AttributedElement> badIncoming = new HashSet<AttributedElement>();
 		for (Vertex v : graph.vertices(ec.getTo().getVertexClass())) {
 			int degree = v.getDegree(ec, EdgeDirection.IN);
-			if ((degree < fromMin) || (degree > fromMax)) {
+			if (degree < fromMin || degree > fromMax) {
 				badIncoming.add(v);
 			}
 		}
@@ -127,7 +126,7 @@ public class GraphValidator {
 			brokenConstraints.add(new MultiplicityConstraintViolation(ec,
 					"Invalid number of incoming edges, allowed are (" + fromMin
 							+ ","
-							+ ((fromMax == Integer.MAX_VALUE) ? "*" : fromMax)
+							+ (fromMax == Integer.MAX_VALUE ? "*" : fromMax)
 							+ ").", badIncoming));
 		}
 
@@ -207,8 +206,8 @@ public class GraphValidator {
 	}
 
 	private Set<AttributedElement> jvalueSet2Set(JValueSet resultSet) {
-		Set<AttributedElement> set = new HashSet<AttributedElement>(resultSet
-				.size());
+		Set<AttributedElement> set = new HashSet<AttributedElement>(
+				resultSet.size());
 		for (JValue jv : resultSet) {
 			set.add(jv.toAttributedElement());
 		}
@@ -231,103 +230,112 @@ public class GraphValidator {
 			throws IOException {
 		SortedSet<ConstraintViolation> brokenConstraints = validate();
 
-		BufferedWriter bw = new BufferedWriter(new FileWriter(
-				new File(fileName)));
-		// The header
-		bw.append("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\"\n"
-				+ "\"http://www.w3.org/TR/html4/strict.dtd\">\n" + "<html>");
-		bw.append("<head>");
+		BufferedWriter bw = null;
+		try {
+			bw = new BufferedWriter(new FileWriter(new File(fileName)));
+			// The header
+			bw.append("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\"\n"
+					+ "\"http://www.w3.org/TR/html4/strict.dtd\">\n" + "<html>");
+			bw.append("<head>");
 
-		bw.append("<style type=\"text/css\">");
-		bw.append("th {");
-		bw.append("	font: bold 11px sans-serif;");
-		bw.append("	color: MidnightBlue;");
-		bw.append("	border-right: 1px solid #C1DAD7;");
-		bw.append("	border-bottom: 1px solid #C1DAD7;");
-		bw.append("	border-top: 1px solid #C1DAD7;");
-		bw.append("	letter-spacing: 2px;");
-		bw.append("	text-align: left;");
-		bw.append(" padding: 6px 6px 6px 12px;");
-		bw.append("	background: #CAE8EA;");
-		bw.append("}");
-		bw.append("td {");
-		bw.append(" border-right: 1px solid #C1DAD7;");
-		bw.append("	border-bottom: 1px solid #C1DAD7;");
-		bw.append("	background: #fff;");
-		bw.append("	padding: 6px 6px 6px 12px;");
-		bw.append("	color: DimGrey;");
-		bw.append("}");
-		bw.append("td.other {");
-		bw.append(" border-right: 1px solid #C1DAD7;");
-		bw.append("	border-bottom: 1px solid #C1DAD7;");
-		bw.append("	background: AliceBlue;");
-		bw.append("	padding: 6px 6px 6px 12px;");
-		bw.append("	color: DimGrey;");
-		bw.append("}");
-		bw.append("</style>");
+			bw.append("<style type=\"text/css\">");
+			bw.append("th {");
+			bw.append("	font: bold 11px sans-serif;");
+			bw.append("	color: MidnightBlue;");
+			bw.append("	border-right: 1px solid #C1DAD7;");
+			bw.append("	border-bottom: 1px solid #C1DAD7;");
+			bw.append("	border-top: 1px solid #C1DAD7;");
+			bw.append("	letter-spacing: 2px;");
+			bw.append("	text-align: left;");
+			bw.append(" padding: 6px 6px 6px 12px;");
+			bw.append("	background: #CAE8EA;");
+			bw.append("}");
+			bw.append("td {");
+			bw.append(" border-right: 1px solid #C1DAD7;");
+			bw.append("	border-bottom: 1px solid #C1DAD7;");
+			bw.append("	background: #fff;");
+			bw.append("	padding: 6px 6px 6px 12px;");
+			bw.append("	color: DimGrey;");
+			bw.append("}");
+			bw.append("td.other {");
+			bw.append(" border-right: 1px solid #C1DAD7;");
+			bw.append("	border-bottom: 1px solid #C1DAD7;");
+			bw.append("	background: AliceBlue;");
+			bw.append("	padding: 6px 6px 6px 12px;");
+			bw.append("	color: DimGrey;");
+			bw.append("}");
+			bw.append("</style>");
 
-		bw.append("<title>");
-		bw.append("Validation Report for the "
-				+ graph.getM1Class().getSimpleName() + " with id "
-				+ graph.getId() + ".");
-		bw.append("</title>");
-		bw.append("</head>");
+			bw.append("<title>");
+			bw.append("Validation Report for the "
+					+ graph.getM1Class().getSimpleName() + " with id "
+					+ graph.getId() + ".");
+			bw.append("</title>");
+			bw.append("</head>");
 
-		// The body
-		bw.append("<body>");
+			// The body
+			bw.append("<body>");
 
-		if (brokenConstraints.size() == 0) {
-			bw.append("<p><b>The graph is valid!</b></p>");
-		} else {
-			bw.append("<p><b>The " + graph.getM1Class().getSimpleName()
-					+ " violates " + brokenConstraints.size()
-					+ " constraints.</b></p>");
-			// Here goes the table
-			bw.append("<table border=\"1\">");
-			bw.append("<tr>");
-			bw.append("<th>#</th>");
-			bw.append("<th>ConstraintType</th>");
-			bw.append("<th>AttributedElementClass</th>");
-			bw.append("<th>Message</th>");
-			bw.append("<th>Broken Elements</th>");
-			bw.append("</tr>");
-			int no = 1;
-			String cssClass = "";
-			for (ConstraintViolation ci : brokenConstraints) {
-				if (no % 2 == 0) {
-					cssClass = "other";
-				} else {
-					cssClass = "";
-				}
+			if (brokenConstraints.size() == 0) {
+				bw.append("<p><b>The graph is valid!</b></p>");
+			} else {
+				bw.append("<p><b>The " + graph.getM1Class().getSimpleName()
+						+ " violates " + brokenConstraints.size()
+						+ " constraints.</b></p>");
+				// Here goes the table
+				bw.append("<table border=\"1\">");
 				bw.append("<tr>");
-				bw.append("<td class=\"" + cssClass + "\">");
-				bw.append(Integer.valueOf(no++).toString());
-				bw.append("</td>");
-				bw.append("<td class=\"" + cssClass + "\">");
-				bw.append(ci.getClass().getSimpleName());
-				bw.append("</td>");
-				bw.append("<td class=\"" + cssClass + "\">");
-				bw.append(ci.getAttributedElementClass().getQualifiedName());
-				bw.append("</td>");
-				bw.append("<td class=\"" + cssClass + "\">");
-				bw.append(ci.getMessage());
-				bw.append("</td>");
-				bw.append("<td class=\"" + cssClass + "\">");
-				if (ci.getOffendingElements() != null) {
-					for (AttributedElement ae : ci.getOffendingElements()) {
-						bw.append(ae.toString());
-						bw.append("<br/>");
-					}
-				}
-				bw.append("</td>");
+				bw.append("<th>#</th>");
+				bw.append("<th>ConstraintType</th>");
+				bw.append("<th>AttributedElementClass</th>");
+				bw.append("<th>Message</th>");
+				bw.append("<th>Broken Elements</th>");
 				bw.append("</tr>");
+				int no = 1;
+				String cssClass = "";
+				for (ConstraintViolation ci : brokenConstraints) {
+					if (no % 2 == 0) {
+						cssClass = "other";
+					} else {
+						cssClass = "";
+					}
+					bw.append("<tr>");
+					bw.append("<td class=\"" + cssClass + "\">");
+					bw.append(Integer.valueOf(no++).toString());
+					bw.append("</td>");
+					bw.append("<td class=\"" + cssClass + "\">");
+					bw.append(ci.getClass().getSimpleName());
+					bw.append("</td>");
+					bw.append("<td class=\"" + cssClass + "\">");
+					bw.append(ci.getAttributedElementClass().getQualifiedName());
+					bw.append("</td>");
+					bw.append("<td class=\"" + cssClass + "\">");
+					bw.append(ci.getMessage());
+					bw.append("</td>");
+					bw.append("<td class=\"" + cssClass + "\">");
+					if (ci.getOffendingElements() != null) {
+						for (AttributedElement ae : ci.getOffendingElements()) {
+							bw.append(ae.toString());
+							bw.append("<br/>");
+						}
+					}
+					bw.append("</td>");
+					bw.append("</tr>");
+				}
+				bw.append("</table>");
 			}
-			bw.append("</table>");
+
+			bw.append("</body></html>");
+			bw.flush();
+		} finally {
+			try {
+				bw.close();
+			} catch (IOException ex) {
+				throw new RuntimeException(
+						"An Exception occurred while closing the stream.", ex);
+			}
 		}
 
-		bw.append("</body></html>");
-		bw.flush();
-		bw.close();
 		return brokenConstraints;
 	}
 }
