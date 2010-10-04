@@ -1,4 +1,4 @@
-;;; greql-mode.el --- Major mode for editing GReQL2 files with emacs
+;;; greql-mode.el --- Major mode for editing GReQL2 and GReTL files with emacs
 
 ;; Copyright (C) 2007, 2008, 2009, 2010 by Tassilo Horn
 
@@ -20,7 +20,8 @@
 
 ;;; Commentary:
 
-;; Major mode for editing GReQL2 files with Emacs and executing queries.
+;; Major mode for editing GReQL2 files with Emacs and executing queries.  Also
+;; some stuff for editing GReTL transformations.
 
 ;;; Version:
 ;; $Revision$
@@ -129,7 +130,7 @@
 (defparameter greql-functions (greql-functions)
   "GReQL functions that should be completed and highlighted.")
 
-(dolist (ext '("\\.greqlquery$" "\\.grq$" "\\.greql$"))
+(dolist (ext '("\\.greqlquery$" "\\.grq$" "\\.greql$" "\\.gretl$"))
   (add-to-list 'auto-mode-alist (cons ext 'greql-mode)))
 
 (defparameter greql-fontlock-keywords-1
@@ -876,6 +877,23 @@ properties from string."
                            "Name is neither qualified nor unique."))))))
              ;; nothing to be done...
              (t ""))))))
+
+;;** GReTL Minor Mode
+
+(define-minor-mode gretl-minor-mode
+  "Add some more features to GReQL mode to make it more usable
+for editing GReTL transformations."
+  ;; The initial value.
+  :init-value nil
+  ;; The indicator for the mode line.
+  :lighter " GReTL"
+  (let ((regex "\\\_<\\(==>\\|[;]\\|transformation\\)\\_>"))
+    (if gretl-minor-mode
+	(progn
+	  (message "Enabling GReTL support...")
+	  (hi-lock-face-buffer regex 'bold))
+      (message "Disabling GReTL support...")
+      (hi-lock-unface-buffer regex))))
 
 (provide 'greql-mode)
 
