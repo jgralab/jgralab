@@ -28,7 +28,7 @@ import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 
 /**
- * This is the super interface for all problem solvers. The common attribute for
+ * This is the super interface for all problem solvers. The common parameter for
  * all problems is a <i>graph</i>. Depending on the problem, the graph can be
  * directed or undirected. Some problems are defined for both, directed and
  * undirected graphs. The graph can be restricted to a <i>subgraph</i> by a
