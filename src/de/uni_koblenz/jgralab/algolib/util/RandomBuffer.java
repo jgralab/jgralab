@@ -21,37 +21,30 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package de.uni_koblenz.jgralab.algolib.buffers;
+package de.uni_koblenz.jgralab.algolib.util;
 
-import java.util.LinkedList;
 import java.util.NoSuchElementException;
-import java.util.Queue;
+import java.util.Random;
 
-public class QueueBuffer<T> implements Buffer<T> {
+public class RandomBuffer<T> extends DynamicArrayBuffer<T> {
 
-	private Queue<T> queue;
+	private Random rng;
 
-	public QueueBuffer() {
-		queue = new LinkedList<T>();
+	public RandomBuffer(int initialSize) {
+		super(initialSize);
+		rng = new Random();
 	}
 
-	@Override
 	public T getNext() {
-		T out = queue.poll();
-		if (out != null) {
-			return out;
+		if (filled == 0) {
+			throw new NoSuchElementException("Buffer is empty");
 		}
-		throw new NoSuchElementException("The queue was empty.");
-	}
-
-	@Override
-	public boolean isEmpty() {
-		return queue.isEmpty();
-	}
-
-	@Override
-	public void put(T element) {
-		queue.add(element);
+		int position = rng.nextInt(filled);
+		@SuppressWarnings("unchecked")
+		T out = (T) data[position];
+		data[position] = data[--filled];
+		data[filled] = null;
+		return out;
 	}
 
 }

@@ -21,61 +21,37 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package de.uni_koblenz.jgralab.algolib.buffers;
+package de.uni_koblenz.jgralab.algolib.util;
 
-public abstract class DynamicArrayBuffer<T> implements Buffer<T> {
+import java.util.LinkedList;
+import java.util.NoSuchElementException;
+import java.util.Queue;
 
-	private static final long MAX = Integer.MAX_VALUE;
-	private static final long MIN = 1000000l;
+public class QueueBuffer<T> implements Buffer<T> {
 
-	protected Object[] data;
-	protected int initialSize;
-	protected int filled;
+	private Queue<T> queue;
 
-	public DynamicArrayBuffer(int initialSize) {
-		super();
-		this.initialSize = initialSize;
-		data = new Object[initialSize];
-		filled = 0;
+	public QueueBuffer() {
+		queue = new LinkedList<T>();
 	}
 
-	private void expand() {
-		// System.out.println("Expanding");
-		Object[] newData = new Object[expandSize(data.length)];
-		System.arraycopy(data, 0, newData, 0, data.length);
-		// for (int i = 0; i < data.length; i++) {
-		// newData[i] = data[i];
-		// }
-		data = newData;
-	}
-
-	private int expandSize(int oldSize) {
-		long length = oldSize;
-		if (length < MIN) {
-			length *= 2;
-		} else if (length < 3 * MIN) {
-			length *= 1.5;
-		} else if (length < 6 * MIN) {
-			length *= 1.25;
+	@Override
+	public T getNext() {
+		T out = queue.poll();
+		if (out != null) {
+			return out;
 		}
-
-		if (length >= MAX) {
-			return Integer.MAX_VALUE;
-		}
-		return (int) length;
+		throw new NoSuchElementException("The queue was empty.");
 	}
 
 	@Override
 	public boolean isEmpty() {
-		return filled == 0;
+		return queue.isEmpty();
 	}
 
 	@Override
 	public void put(T element) {
-		if (filled == data.length) {
-			expand();
-		}
-		data[filled++] = element;
+		queue.add(element);
 	}
 
 }

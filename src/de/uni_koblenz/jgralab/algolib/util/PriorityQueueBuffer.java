@@ -21,30 +21,37 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package de.uni_koblenz.jgralab.algolib.buffers;
+package de.uni_koblenz.jgralab.algolib.util;
 
+import java.util.Comparator;
 import java.util.NoSuchElementException;
-import java.util.Random;
+import java.util.PriorityQueue;
 
-public class RandomBuffer<T> extends DynamicArrayBuffer<T> {
+public class PriorityQueueBuffer<T> implements Buffer<T> {
 
-	private Random rng;
+	private PriorityQueue<T> queue;
 
-	public RandomBuffer(int initialSize) {
-		super(initialSize);
-		rng = new Random();
+	public PriorityQueueBuffer(Comparator<T> comparator) {
+		queue = new PriorityQueue<T>(31, comparator);
 	}
 
+	@Override
 	public T getNext() {
-		if (filled == 0) {
-			throw new NoSuchElementException("Buffer is empty");
+		T out = queue.poll();
+		if (out != null) {
+			return out;
 		}
-		int position = rng.nextInt(filled);
-		@SuppressWarnings("unchecked")
-		T out = (T) data[position];
-		data[position] = data[--filled];
-		data[filled] = null;
-		return out;
+		throw new NoSuchElementException("The queue was empty.");
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return queue.isEmpty();
+	}
+
+	@Override
+	public void put(T element) {
+		queue.add(element);
 	}
 
 }
