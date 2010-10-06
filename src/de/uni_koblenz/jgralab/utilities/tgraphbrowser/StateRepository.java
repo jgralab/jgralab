@@ -575,6 +575,8 @@ public class StateRepository {
 			state.lastAccess = System.currentTimeMillis();
 			code.append("timestamp = ").append(state.lastAccess).append(";\n");
 		}
+		code.append("resize();\n");
+		code.append("resize();\n");
 		return code.append("}");
 	}
 

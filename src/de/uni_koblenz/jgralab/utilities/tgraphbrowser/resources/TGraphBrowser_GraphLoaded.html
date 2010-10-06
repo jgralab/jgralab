@@ -642,8 +642,23 @@ div#div2DGraph{
 		document.getElementById("div2DGraph").style.height = div2dHeight + "px";
 		var embed2dGraph=document.getElementById("embed2DGraph");
 		if(embed2dGraph!=null){
-			embed2dGraph.style.height = div2dHeight - 10 + "px";
-			embed2dGraph.style.width = (width - intendLeft) - 10 + "px";
+			var embedHeight = div2dHeight - 3;
+			var embedWidth = (width - intendLeft) - 3;
+			embed2dGraph.style.height = embedHeight + "px";
+			embed2dGraph.style.width = embedWidth + "px";
+			if(embed2dGraph.getSVGDocument()){
+				var svgdoc = embed2dGraph.getSVGDocument();
+				svgdoc.width = embedWidth;
+				svgdoc.height = embedHeight;
+				//svgdoc.setAttribute("width",embedWidth);
+				//svgdoc.setAttribute("height",embedHeight);
+				var navdoc = svgdoc.getElementById("nav");
+		        navdoc.setAttribute("height",embedHeight - navdoc.getAttribute("y") - 2);
+		        navdoc.setAttribute("width",embedWidth - navdoc.getAttribute("x") - 2);
+		        var rect = svgdoc.getElementById("rect");
+		        rect.setAttribute("height",embedHeight - rect.getAttribute("y"));
+		        rect.setAttribute("width",embedWidth - rect.getAttribute("x"));
+			}
 		}
 	}
 	 
