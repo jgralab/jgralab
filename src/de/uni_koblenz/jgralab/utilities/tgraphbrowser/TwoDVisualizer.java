@@ -24,15 +24,11 @@
 package de.uni_koblenz.jgralab.utilities.tgraphbrowser;
 
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintStream;
-import java.io.Reader;
 import java.util.HashMap;
 
 import de.uni_koblenz.jgralab.AttributedElement;
@@ -217,40 +213,6 @@ public class TwoDVisualizer {
 			TGraphBrowserServer.logger.warning(dotFileName
 					+ " could not be deleted");
 		}
-		// determine the size of the svg-graphic
-		String line = "";
-
-		FileReader in = null;
-		BufferedReader br = null;
-		try {
-			in = new FileReader(svgFileName);
-			// LineNumberReader lnr = new LineNumberReader(in);
-			br = new BufferedReader(new InputStreamReader(getClass()
-					.getResourceAsStream(
-							RequestThread.SVG_WITH_ZOOM_AND_MOVE_SUPPORT)));
-			do {
-				line = br.readLine();
-			} while (line != null && !line.startsWith("<svg"));
-			br.close();
-			in.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				close(br);
-			} finally {
-				close(in);
-			}
-		}
-		String width = "200pt";
-		String height = "200pt";
-		if (line != null && !line.isEmpty()) {
-			String[] lineparts = line.split("\"");
-			width = lineparts[1];
-			height = lineparts[3];
-		}
 		assert svgFileName != null : "svg file name must not be null";
 		svgFileName = svgFileName.substring(svgFileName
 				.lastIndexOf(File.separator) + 1);
@@ -263,8 +225,6 @@ public class TwoDVisualizer {
 		code.append("object.id = \"embed2DGraph\";\n");
 		code.append("object.src = \"_").append(svgFileName).append("\";\n");
 		code.append("object.type = \"image/svg+xml\";\n");
-		// code.append("object.width = \"").append(width).append("\";\n");
-		// code.append("object.height = \"").append(height).append("\";\n");
 		code.append("div2D.appendChild(object);\n");
 		code.append("@else @*/\n");
 		// code executed in other browsers
@@ -273,26 +233,12 @@ public class TwoDVisualizer {
 		code.append("object.id = \"embed2DGraph\";\n");
 		code.append("object.data = \"").append(svgFileName).append("\";\n");
 		code.append("object.type = \"image/svg+xml\";\n");
-		// code.append("object.width = \"").append(width).append("\";\n");
-		// code.append("object.height = \"").append(height).append("\";\n");
 		code.append("div2D.appendChild(object);\n");
 		code.append("/*@end\n");
 		code.append("@*/\n");
 		code.append("object.onload = function(){\n");
-		// code.append("var svgDoc = object.getSVGDocument();\n");
-		// code.append("var svgRootElement = svgDoc.rootElement;\n");
 		code.append("resize();\n");
 		code.append("};\n");
-	}
-
-	private void close(Reader lnr) {
-		try {
-			if (lnr != null) {
-				lnr.close();
-			}
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		}
 	}
 
 	/**
