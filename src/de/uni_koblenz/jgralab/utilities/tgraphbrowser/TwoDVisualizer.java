@@ -85,17 +85,17 @@ public class TwoDVisualizer {
 			RequestThread currentThread) {
 		// set currentVertex or currentEdge to the current element
 		if (currentElement.isVertex()) {
-			code.append("current").append("Vertex = \"")
-					.append(currentElement.toVertex().getId()).append("\";\n");
+			code.append("current").append("Vertex = \"").append(
+					currentElement.toVertex().getId()).append("\";\n");
 		} else if (currentElement.isEdge()) {
-			code.append("current").append("Edge = \"")
-					.append(currentElement.toEdge().getId()).append("\";\n");
+			code.append("current").append("Edge = \"").append(
+					currentElement.toEdge().getId()).append("\";\n");
 		}
 		// calculate environment
 		JValueSet elementsToDisplay = new JValueSet();
 		if (currentElement.isVertex()) {
-			JValue slice = computeElements(currentElement, pathLength,
-					state.getGraph());
+			JValue slice = computeElements(currentElement, pathLength, state
+					.getGraph());
 			calculateElementsInSet(code, state, elementsToDisplay, slice);
 		} else if (currentElement.isEdge()) {
 			Edge current = currentElement.toEdge();
@@ -132,12 +132,15 @@ public class TwoDVisualizer {
 				state.selectedVertexClasses);
 		mtd.printGraph();
 		if (mtd.exception != null) {
-			code.append("document.getElementById('divError').style.display = \"block\";\n");
-			code.append(
-					"document.getElementById('h2ErrorMessage').innerHTML = \"ERROR: ")
+			code
+					.append("document.getElementById('divError').style.display = \"block\";\n");
+			code
+					.append(
+							"document.getElementById('h2ErrorMessage').innerHTML = \"ERROR: ")
 					.append("Could not create file ").append(dotFileName)
 					.append("\";\n");
-			code.append("document.getElementById('divNonError').style.display = \"none\";\n");
+			code
+					.append("document.getElementById('divNonError').style.display = \"none\";\n");
 			return;
 		}
 		// create .svg-file
@@ -181,26 +184,33 @@ public class TwoDVisualizer {
 					}
 				} else {
 					// execution of dot is terminated because it took too long
-					code.append("document.getElementById('divError').style.display = \"block\";\n");
-					code.append(
-							"document.getElementById('h2ErrorMessage').innerHTML = \"ERROR: ")
+					code
+							.append("document.getElementById('divError').style.display = \"block\";\n");
+					code
+							.append(
+									"document.getElementById('h2ErrorMessage').innerHTML = \"ERROR: ")
 							.append("Creation of file ")
 							.append(svgFileName)
-							.append(" was terminated because it took more than ")
-							.append(SECONDS_TO_WAIT_FOR_DOT)
-							.append(" seconds.\";\n");
-					code.append("document.getElementById('divNonError').style.display = \"none\";\n");
+							.append(
+									" was terminated because it took more than ")
+							.append(SECONDS_TO_WAIT_FOR_DOT).append(
+									" seconds.\";\n");
+					code
+							.append("document.getElementById('divNonError').style.display = \"none\";\n");
 					return;
 				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			code.append("document.getElementById('divError').style.display = \"block\";\n");
-			code.append(
-					"document.getElementById('h2ErrorMessage').innerHTML = \"ERROR: ")
+			code
+					.append("document.getElementById('divError').style.display = \"block\";\n");
+			code
+					.append(
+							"document.getElementById('h2ErrorMessage').innerHTML = \"ERROR: ")
 					.append("Could not create file ").append(svgFileName)
 					.append("\";\n");
-			code.append("document.getElementById('divNonError').style.display = \"none\";\n");
+			code
+					.append("document.getElementById('divNonError').style.display = \"none\";\n");
 			return;
 		}
 		if (!new File(dotFileName).delete()) {
@@ -253,8 +263,8 @@ public class TwoDVisualizer {
 		code.append("object.id = \"embed2DGraph\";\n");
 		code.append("object.src = \"_").append(svgFileName).append("\";\n");
 		code.append("object.type = \"image/svg+xml\";\n");
-		code.append("object.width = \"").append(width).append("\";\n");
-		code.append("object.height = \"").append(height).append("\";\n");
+		// code.append("object.width = \"").append(width).append("\";\n");
+		// code.append("object.height = \"").append(height).append("\";\n");
 		code.append("div2D.appendChild(object);\n");
 		code.append("@else @*/\n");
 		// code executed in other browsers
@@ -263,15 +273,16 @@ public class TwoDVisualizer {
 		code.append("object.id = \"embed2DGraph\";\n");
 		code.append("object.data = \"").append(svgFileName).append("\";\n");
 		code.append("object.type = \"image/svg+xml\";\n");
-		code.append("object.width = \"").append(width).append("\";\n");
-		code.append("object.height = \"").append(height).append("\";\n");
+		// code.append("object.width = \"").append(width).append("\";\n");
+		// code.append("object.height = \"").append(height).append("\";\n");
 		code.append("div2D.appendChild(object);\n");
-		code.append("object.onload = function(){\n");
-		code.append("var svgDoc = object.getSVGDocument();\n");
-		code.append("var svgRootElement = svgDoc.rootElement;\n");
-		code.append("};\n");
 		code.append("/*@end\n");
 		code.append("@*/\n");
+		code.append("object.onload = function(){\n");
+		// code.append("var svgDoc = object.getSVGDocument();\n");
+		// code.append("var svgRootElement = svgDoc.rootElement;\n");
+		code.append("resize();\n");
+		code.append("};\n");
 	}
 
 	private void close(Reader lnr) {
@@ -337,8 +348,9 @@ public class TwoDVisualizer {
 		code.append("var div2D = document.getElementById(\"div2DGraph\");\n");
 		code.append("div2D.innerHTML = \"\";\n");
 		// print number of elements
-		code.append(
-				"document.getElementById(\"h3HowManyElements\").innerHTML = \"")
+		code
+				.append(
+						"document.getElementById(\"h3HowManyElements\").innerHTML = \"")
 				.append(selectedElements).append(" of ").append(totalElements)
 				.append(" elements selected.\";\n");
 	}
@@ -615,9 +627,13 @@ public class TwoDVisualizer {
 			out.print(" \"");
 
 			if (isPrintIncidenceNumbers()) {
-				out.print(" taillabel=\"" + getIncidenceNumber(e, alpha) + "\"");
-				out.print(" headlabel=\""
-						+ getIncidenceNumber(e.getReversedEdge(), omega) + "\"");
+				out
+						.print(" taillabel=\"" + getIncidenceNumber(e, alpha)
+								+ "\"");
+				out
+						.print(" headlabel=\""
+								+ getIncidenceNumber(e.getReversedEdge(), omega)
+								+ "\"");
 			}
 
 			out.print(" href=\"javascript:top.showElement('e" + e.getId()
