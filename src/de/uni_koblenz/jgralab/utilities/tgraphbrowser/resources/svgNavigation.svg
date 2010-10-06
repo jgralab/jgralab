@@ -37,6 +37,7 @@
         bbY = parseInt(vbData[1]);
         bbW = parseInt(vbData[2]);
         bbH = parseInt(vbData[3]);
+        top.resize();
       }
       
       
