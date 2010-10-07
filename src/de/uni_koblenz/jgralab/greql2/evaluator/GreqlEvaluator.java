@@ -862,6 +862,10 @@ public class GreqlEvaluator {
 	 * Creates the VertexEvaluator-Object at the vertices in the syntaxgraph
 	 */
 	public void createVertexEvaluators() throws EvaluateException {
+		if (vertexEvalGraphMarker != null) {
+			queryGraph
+					.removeGraphStructureChangedListener(vertexEvalGraphMarker);
+		}
 		vertexEvalGraphMarker = new GraphMarker<VertexEvaluator>(queryGraph);
 		Vertex currentVertex = queryGraph.getFirstVertex();
 		while (currentVertex != null) {
