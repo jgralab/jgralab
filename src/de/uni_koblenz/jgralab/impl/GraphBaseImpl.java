@@ -1694,9 +1694,6 @@ public abstract class GraphBaseImpl implements Graph {
 					iterator.remove();
 				}
 			}
-			if (graphStructureChangedListenersWithAutoRemoval.isEmpty()) {
-				graphStructureChangedListenersWithAutoRemoval = null;
-			}
 		} else {
 			Iterator<GraphStructureChangedListener> iterator = getListenerListIterator();
 			while (iterator.hasNext()) {
@@ -1705,6 +1702,12 @@ public abstract class GraphBaseImpl implements Graph {
 					iterator.remove();
 				}
 			}
+		}
+	}
+
+	private void setAutoListenerListToNullIfEmpty() {
+		if (graphStructureChangedListenersWithAutoRemoval.isEmpty()) {
+			graphStructureChangedListenersWithAutoRemoval = null;
 		}
 	}
 
@@ -1751,6 +1754,7 @@ public abstract class GraphBaseImpl implements Graph {
 					currentListener.vertexDeleted(v);
 				}
 			}
+			setAutoListenerListToNullIfEmpty();
 		}
 		int n = graphStructureChangedListeners.size();
 		for (int i = 0; i < n; i++) {
@@ -1780,6 +1784,7 @@ public abstract class GraphBaseImpl implements Graph {
 					currentListener.vertexAdded(v);
 				}
 			}
+			setAutoListenerListToNullIfEmpty();
 		}
 		int n = graphStructureChangedListeners.size();
 		for (int i = 0; i < n; i++) {
@@ -1809,6 +1814,7 @@ public abstract class GraphBaseImpl implements Graph {
 					currentListener.edgeDeleted(e);
 				}
 			}
+			setAutoListenerListToNullIfEmpty();
 		}
 		int n = graphStructureChangedListeners.size();
 		for (int i = 0; i < n; i++) {
@@ -1838,6 +1844,7 @@ public abstract class GraphBaseImpl implements Graph {
 					currentListener.edgeAdded(e);
 				}
 			}
+			setAutoListenerListToNullIfEmpty();
 		}
 		int n = graphStructureChangedListeners.size();
 		for (int i = 0; i < n; i++) {
@@ -1866,6 +1873,7 @@ public abstract class GraphBaseImpl implements Graph {
 					currentListener.maxVertexCountIncreased(newValue);
 				}
 			}
+			setAutoListenerListToNullIfEmpty();
 		}
 		int n = graphStructureChangedListeners.size();
 		for (int i = 0; i < n; i++) {
@@ -1895,6 +1903,7 @@ public abstract class GraphBaseImpl implements Graph {
 					currentListener.maxEdgeCountIncreased(newValue);
 				}
 			}
+			setAutoListenerListToNullIfEmpty();
 		}
 		int n = graphStructureChangedListeners.size();
 		for (int i = 0; i < n; i++) {
