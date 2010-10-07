@@ -1663,7 +1663,7 @@ public abstract class GraphBaseImpl implements Graph {
 
 	private void lazyCreateGraphStructureChangedListenersWithAutoRemoval() {
 		if (graphStructureChangedListenersWithAutoRemoval == null) {
-			graphStructureChangedListenersWithAutoRemoval = new ArrayList<WeakReference<GraphStructureChangedListener>>();
+			graphStructureChangedListenersWithAutoRemoval = new LinkedList<WeakReference<GraphStructureChangedListener>>();
 		}
 	}
 
