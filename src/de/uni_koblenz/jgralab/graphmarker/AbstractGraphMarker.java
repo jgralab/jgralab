@@ -84,13 +84,6 @@ public abstract class AbstractGraphMarker<T extends AttributedElement> extends
 	public abstract Iterable<T> getMarkedElements();
 
 	@Override
-	protected void finalize() throws Throwable {
-		super.finalize();
-		// TODO maybe remove
-		graph.removeGraphStructureChangedListener(this);
-	}
-
-	@Override
 	public abstract void edgeDeleted(Edge e);
 
 	@Override
