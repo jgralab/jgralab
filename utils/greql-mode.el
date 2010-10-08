@@ -143,6 +143,7 @@
            1 font-lock-function-name-face)
     ;; Highlight strings
     ,(list "[^\\]\\(\".*?[^\\]\"\\)" 1 font-lock-string-face t)
+    ,(list "[^\\]\\('.*?[^\\]'\\)"   1 font-lock-string-face t)
     ;; Highlight one-line comments
     ,(list "//.*$" 0 font-lock-comment-face t)))
 
@@ -205,6 +206,8 @@ columns.")
   "Name of the GReQL evaluation buffer.")
 (make-variable-buffer-local 'greql-evaluation-buffer)
 
+(declare-function 'gretl-minor-mode (buffer-file-name))
+
 (define-derived-mode greql-mode text-mode "GReQL"
   "A major mode for GReQL2."
   ;; Comments
@@ -227,6 +230,13 @@ columns.")
        'greql-documentation-function)
 
   (setq greql-evaluation-buffer (concat "*GReQL Evaluation: " (buffer-name) "*"))
+
+  ;; If this is a GReTL mode buffer, enable gretl-minor-mode, too.
+  (when (string-match "\\.gretl$"
+		      (or (buffer-file-name) (buffer-name)))
+    (add-hook 'greql-mode-hook
+	      (lambda ()
+		(gretl-minor-mode 1))))
 
   (progn
     (define-key greql-mode-map (kbd "M-TAB")   'greql-complete)
@@ -887,13 +897,15 @@ for editing GReTL transformations."
   :init-value nil
   ;; The indicator for the mode line.
   :lighter " GReTL"
-  (let ((regex "\\\_<\\(==>\\|[;]\\|transformation\\)\\_>"))
+  (let ((regex "\\(==>\\|=:\\|\\<transformation\\>\\)"))
     (if gretl-minor-mode
 	(progn
 	  (message "Enabling GReTL support...")
-	  (hi-lock-face-buffer regex 'bold))
+	  (hi-lock-face-buffer regex 'bold)
+	  (hi-lock-face-buffer ";" 'hi-blue))
       (message "Disabling GReTL support...")
-      (hi-lock-unface-buffer regex))))
+      (hi-lock-unface-buffer regex)
+      (hi-lock-unface-buffer ";"))))
 
 (provide 'greql-mode)
 
