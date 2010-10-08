@@ -897,15 +897,13 @@ for editing GReTL transformations."
   :init-value nil
   ;; The indicator for the mode line.
   :lighter " GReTL"
-  (let ((regex "\\(==>\\|=:\\|\\<transformation\\>\\)"))
+  (let ((regex "\\(==>\\|=:\\|&\\|;\\|\\<transformation\\>\\)"))
     (if gretl-minor-mode
 	(progn
 	  (message "Enabling GReTL support...")
-	  (hi-lock-face-buffer regex 'bold)
-	  (hi-lock-face-buffer ";" 'hi-blue))
+	  (hi-lock-face-buffer regex 'bold))
       (message "Disabling GReTL support...")
-      (hi-lock-unface-buffer regex)
-      (hi-lock-unface-buffer ";"))))
+      (hi-lock-unface-buffer regex))))
 
 (provide 'greql-mode)
 
