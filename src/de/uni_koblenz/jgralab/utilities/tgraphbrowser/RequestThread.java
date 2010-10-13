@@ -675,13 +675,12 @@ public class RequestThread extends Thread {
 		String line;
 		// skip everything until the first <g
 		// and read out the value of viewBox
-		do {
-			line = br.readLine();
+		while ((line = br.readLine()) != null && !line.startsWith("<g ")) {
 			if (line.contains("viewBox=\"")) {
 				String subline = line.split(Pattern.quote("viewBox=\""))[1];
 				viewBoxDimension = subline.substring(0, subline.indexOf("\""));
 			}
-		} while (line != null && !line.startsWith("<g "));
+		}
 		if (line != null) {
 			out.append(line + "\n");
 		}
