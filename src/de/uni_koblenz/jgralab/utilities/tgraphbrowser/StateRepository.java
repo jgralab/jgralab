@@ -1260,7 +1260,7 @@ public class StateRepository {
 		code.append("var optText;\n");
 		createOptionForGraphs(code, workspace);
 		code.append("findPositionOf(\"").append(
-				state.graphIdentifier.toString().replace("\\", "/")).append(
+				state.getGraphWrapper().graphPath.replace("\\", "/")).append(
 				"\");\n");
 		// set the shown one as selected
 		code
