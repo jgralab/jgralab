@@ -646,8 +646,11 @@ div#div2DGraph{
 			var embedWidth = (width - intendLeft) - 4;
 			embed2dGraph.style.height = embedHeight + "px";
 			embed2dGraph.style.width = embedWidth + "px";
-			if(embed2dGraph.getSVGDocument()){
-				var svgdoc = embed2dGraph.getSVGDocument();
+			var svgdoc = embed2dGraph.getSVGDocument();
+			if(!svgdoc){
+				svgdoc = embed2dGraph.contentDocument;
+			}
+			if(svgdoc){
 				var navdoc = svgdoc.getElementById("nav");
 		        navdoc.setAttributeNS(null,"height",embedHeight - navdoc.getAttribute("y") - 2);
 		        navdoc.setAttributeNS(null,"width",embedWidth - navdoc.getAttribute("x") - 2);
