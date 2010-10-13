@@ -648,16 +648,12 @@ div#div2DGraph{
 			embed2dGraph.style.width = embedWidth + "px";
 			if(embed2dGraph.getSVGDocument()){
 				var svgdoc = embed2dGraph.getSVGDocument();
-				svgdoc.width = embedWidth;
-				svgdoc.height = embedHeight;
-				//svgdoc.setAttribute("width",embedWidth);
-				//svgdoc.setAttribute("height",embedHeight);
 				var navdoc = svgdoc.getElementById("nav");
-		        navdoc.setAttribute("height",embedHeight - navdoc.getAttribute("y") - 2);
-		        navdoc.setAttribute("width",embedWidth - navdoc.getAttribute("x") - 2);
+		        navdoc.setAttributeNS(null,"height",embedHeight - navdoc.getAttribute("y") - 2);
+		        navdoc.setAttributeNS(null,"width",embedWidth - navdoc.getAttribute("x") - 2);
 		        var rect = svgdoc.getElementById("rect");
-		        rect.setAttribute("height",embedHeight - rect.getAttribute("y"));
-		        rect.setAttribute("width",embedWidth - rect.getAttribute("x"));
+		        rect.setAttributeNS(null,"height",embedHeight - rect.getAttribute("y"));
+		        rect.setAttributeNS(null,"width",embedWidth - rect.getAttribute("x"));
 			}
 		}
 	}

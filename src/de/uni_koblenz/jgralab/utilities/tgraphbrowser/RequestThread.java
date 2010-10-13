@@ -96,8 +96,8 @@ public class RequestThread extends Thread {
 			String message) throws IOException {
 		try {
 			message = message + "<hr>" + TGraphBrowserServer.VERSION;
-			sendHeader(out, code, "text/html", message.length(),
-					System.currentTimeMillis());
+			sendHeader(out, code, "text/html", message.length(), System
+					.currentTimeMillis());
 			out.write(message.getBytes());
 			out.flush();
 		} finally {
@@ -115,8 +115,8 @@ public class RequestThread extends Thread {
 					inputStream));
 			// BufferedReader in = new BufferedReader(new InputStreamReader(
 			// inputStream));
-			BufferedOutputStream out = new BufferedOutputStream(
-					_socket.getOutputStream());
+			BufferedOutputStream out = new BufferedOutputStream(_socket
+					.getOutputStream());
 			String firstLine = readLine(in);
 			String request = URLDecoder.decode(firstLine != null ? firstLine
 					: "", "UTF-8");
@@ -290,8 +290,8 @@ public class RequestThread extends Thread {
 						/*
 						 * Invoke called method.
 						 */
-						StringBuilder erg = callMethod(out, methodname,
-								args.toArray(new String[0]));
+						StringBuilder erg = callMethod(out, methodname, args
+								.toArray(new String[0]));
 						if (erg != null) {
 							sendMessage(out, erg);
 						}
@@ -342,7 +342,8 @@ public class RequestThread extends Thread {
 						if (!svgToDelete.contains(path)) {
 							if (!svg.delete()) {
 								TGraphBrowserServer.logger.warning(svg
-										.toString() + " could not be deleted.");
+										.toString()
+										+ " could not be deleted.");
 							}
 						}
 					} else {
@@ -386,8 +387,10 @@ public class RequestThread extends Thread {
 									"= "
 											+ erg
 											+ ";\n\t\t timestamp = "
-											+ StateRepository.getSession(Integer
-													.parseInt(erg.toString())).lastAccess);
+											+ StateRepository
+													.getSession(Integer
+															.parseInt(erg
+																	.toString())).lastAccess);
 						}
 					} else {
 						sendMessage(out, erg);
@@ -620,15 +623,21 @@ public class RequestThread extends Thread {
 	private void sendSVG(BufferedOutputStream out, String fileName)
 			throws IOException {
 		if (_socket.isConnected()) {
+			StringBuffer contentOfCreatedSVG = getContentOfCreatedSVG(fileName);
+
 			BufferedReader br = new BufferedReader(new InputStreamReader(
 					getClass().getResourceAsStream(
 							SVG_WITH_ZOOM_AND_MOVE_SUPPORT)));
 			boolean isReplaced = false;
 			String line;
 			// send everything until <!-- -->
+			// replace ?viewBox? by the viewBox value of the generated svg
 			for (line = br.readLine(); line != null; line = br.readLine()) {
+				if (line.contains("?viewBox?")) {
+					line = line.replace("?viewBox?", viewBoxDimension);
+				}
 				if (!isReplaced && line.contains("<!--  -->")) {
-					sendContentOfCreatedSVG(out, fileName);
+					out.write(contentOfCreatedSVG.toString().getBytes());
 					isReplaced = true;
 					break;
 				}
@@ -646,6 +655,9 @@ public class RequestThread extends Thread {
 		}
 	}
 
+	// saves the viewBox content of the generated svg
+	private String viewBoxDimension = "";
+
 	/**
 	 * Reads the content of the svg-tag of the generated svg file
 	 * <code>fileName</code>.
@@ -653,30 +665,35 @@ public class RequestThread extends Thread {
 	 * @param out
 	 * @param fileName
 	 *            the name of the generated svg file
+	 * @return {@link StringBuffer} the read svg file
 	 * @throws IOException
 	 */
-	private void sendContentOfCreatedSVG(BufferedOutputStream out,
-			String fileName) throws IOException {
-		if (_socket.isConnected()) {
-			sendHeader(out, 200, "text/html", -1, System.currentTimeMillis());
-			BufferedReader br = new BufferedReader(new FileReader(fileName));
-			String line;
-			// skip everything until the first <g
-			do {
-				line = br.readLine();
-			} while (line != null && !line.startsWith("<g "));
-			if (line != null) {
-				out.write((line + "\n").getBytes());
+	private StringBuffer getContentOfCreatedSVG(String fileName)
+			throws IOException {
+		StringBuffer out = new StringBuffer();
+		BufferedReader br = new BufferedReader(new FileReader(fileName));
+		String line;
+		// skip everything until the first <g
+		// and read out the value of viewBox
+		do {
+			line = br.readLine();
+			if (line.contains("viewBox=\"")) {
+				String subline = line.split(Pattern.quote("viewBox=\""))[1];
+				viewBoxDimension = subline.substring(0, subline.indexOf("\""));
 			}
-			// send content until </svg>
-			while (line != null && !line.startsWith("</svg>")) {
-				line = br.readLine();
-				if (line != null && !line.startsWith("</svg>")) {
-					out.write((line + "\n").getBytes());
-				}
-			}
-			br.close();
+		} while (line != null && !line.startsWith("<g "));
+		if (line != null) {
+			out.append(line + "\n");
 		}
+		// send content until </svg>
+		while (line != null && !line.startsWith("</svg>")) {
+			line = br.readLine();
+			if (line != null && !line.startsWith("</svg>")) {
+				out.append(line + "\n");
+			}
+		}
+		br.close();
+		return out;
 	}
 
 	/**

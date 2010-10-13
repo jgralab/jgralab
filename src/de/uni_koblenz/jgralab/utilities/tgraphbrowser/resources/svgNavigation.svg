@@ -12,19 +12,20 @@
       
       var vbX = 0;
       var vbY = 0;
-      var vbW = 768;
-      var vbH = 168;
+      var vbW = 0;
+      var vbH = 0;
       
       // bb* contains original viewBox
       var bbX = 0;
       var bbY = 0;
-      var bbW = 768;
-      var bbH = 168;
+      var bbW = 0;
+      var bbH = 0;
       
       var debug = 0;
       
       
       function init(evt) {
+        top.resize();
         svgdoc = evt.target.ownerDocument;
       
         navdoc = svgdoc.getElementById('nav');
@@ -32,29 +33,30 @@
         //debug = evt.getTarget().getOwnerDocument().getElementById('debug').getFirstChild();
       
         // read viewbox coords from navdoc; set to local variables
-        var vbData = navdoc.getAttribute('viewBox').split(' ');
+        var vbData = navdoc.getAttributeNS(null, 'viewBox').split(' ');
         bbX = parseInt(vbData[0]);
         bbY = parseInt(vbData[1]);
         bbW = parseInt(vbData[2]);
         bbH = parseInt(vbData[3]);
-        top.resize();
+        
+        updateViewBox(bbX, bbY, bbW, bbH);
       }
       
       
       function zoom(evt) {
-        if (evt.target.parentNode.getAttribute('id') == 'ZIn') {
+        if (evt.target.parentNode.getAttributeNS(null, 'id') == 'ZIn') {
           //debug.setData('ZIn!');
           vbW *= 0.95;
           vbH *= 0.95;
           updateViewBox(vbX, vbY, vbW, vbH);
         }
-        else if (evt.target.parentNode.getAttribute('id') == 'ZOut') {
+        else if (evt.target.parentNode.getAttributeNS(null, 'id') == 'ZOut') {
           //debug.setData('ZOut!');
           vbW *= 1.05;
           vbH *= 1.05;
           updateViewBox(vbX, vbY, vbW, vbH);
         }
-        else if (evt.target.parentNode.getAttribute('id') == 'ZGraph') {
+        else if (evt.target.parentNode.getAttributeNS(null, 'id') == 'ZGraph') {
           updateViewBox(bbX, bbY, bbW, bbH);
           //debug.setData('ZGraph!');
         }
@@ -66,26 +68,26 @@
         vbY = y;
         vbW = w;
         vbH = h;
-        navdoc.setAttribute('viewBox', x + ' ' + y + ' ' + w + ' ' + h);
+        navdoc.setAttributeNS(null, 'viewBox', x + ' ' + y + ' ' + w + ' ' + h);
         //debug.setData(navdoc.getAttribute('viewBox'));
       }
       
       
       function goLeft(evt) {
         vbX -= 50;
-        navdoc.setAttribute('viewBox', vbX + ' ' + vbY + ' ' + vbW + ' ' + vbH);
+        navdoc.setAttributeNS(null, 'viewBox', vbX + ' ' + vbY + ' ' + vbW + ' ' + vbH);
       }
       function goRight(evt) {
         vbX += 50;
-        navdoc.setAttribute('viewBox', vbX + ' ' + vbY + ' ' + vbW + ' ' + vbH);
+        navdoc.setAttributeNS(null, 'viewBox', vbX + ' ' + vbY + ' ' + vbW + ' ' + vbH);
       }
       function goUp(evt) {
         vbY -= 50;
-        navdoc.setAttribute('viewBox', vbX + ' ' + vbY + ' ' + vbW + ' ' + vbH);
+        navdoc.setAttributeNS(null, 'viewBox', vbX + ' ' + vbY + ' ' + vbW + ' ' + vbH);
       }
       function goDown(evt) {
         vbY += 50;
-        navdoc.setAttribute('viewBox', vbX + ' ' + vbY + ' ' + vbW + ' ' + vbH);
+        navdoc.setAttributeNS(null, 'viewBox', vbX + ' ' + vbY + ' ' + vbW + ' ' + vbH);
       }
 
     ]]></script>
@@ -112,7 +114,7 @@
     </g>
   </g>
   <rect id="rect" x="90" y="1" width="640" height="480" style="fill:white;stroke:rgb(0,0,0);" />
-  <svg id="nav" width="638" height="478" version="1.1" viewBox="0 0 1458 1581" xmlns="http://www.w3.org/2000/svg" x="91" y="2">
+  <svg id="nav" width="638" height="478" version="1.1" viewBox="?viewBox?" xmlns="http://www.w3.org/2000/svg" x="91" y="2">
    <!--  -->
   </svg>
 </svg>
