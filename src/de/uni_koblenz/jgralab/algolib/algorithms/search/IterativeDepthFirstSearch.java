@@ -110,7 +110,8 @@ public class IterativeDepthFirstSearch extends DepthFirstSearch {
 
 		while (!incompleteVertices.isEmpty()) {
 			// get next vertex from stack and visit it if it is the first time
-			Vertex currentVertex = incompleteVertices.pop();
+			// Vertex currentVertex = incompleteVertices.pop();
+			Vertex currentVertex = incompleteVertices.peek();
 
 			if (!visitedVertices.get(currentVertex)) {
 				vertexOrder[num] = currentVertex;
@@ -132,7 +133,7 @@ public class IterativeDepthFirstSearch extends DepthFirstSearch {
 				if (visitedEdges.get(currentEdge) || subgraph != null
 						&& !subgraph.get(currentEdge) || navigable != null
 						&& !navigable.get(currentEdge)) {
-					incompleteVertices.push(currentVertex);
+					// incompleteVertices.push(currentVertex);
 					continue;
 				}
 				Vertex nextVertex = currentEdge.getThat();
@@ -153,7 +154,7 @@ public class IterativeDepthFirstSearch extends DepthFirstSearch {
 					} else {
 						visitors.visitCrosslink(currentEdge);
 					}
-					incompleteVertices.push(currentVertex);
+					// incompleteVertices.push(currentVertex);
 				} else {
 					if (level != null) {
 						level.set(nextVertex, level.get(currentVertex) + 1);
@@ -162,10 +163,11 @@ public class IterativeDepthFirstSearch extends DepthFirstSearch {
 					parent.set(currentEdge.getThat(), currentEdge);
 
 					visitors.visitTreeEdge(currentEdge);
-					incompleteVertices.push(currentVertex);
+					// incompleteVertices.push(currentVertex);
 					incompleteVertices.push(nextVertex);
 				}
 			} else {
+				incompleteVertices.pop(); // remove vertex from stack
 				rnumber.set(currentVertex, rNum);
 				if (rorder != null) {
 					rorder[rNum] = currentVertex;

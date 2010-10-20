@@ -61,6 +61,7 @@ public class TryDFS {
 			// printResults(dfs);
 		} catch (StackOverflowError e) {
 			System.err.println("Fail!");
+			// e.printStackTrace();
 		}
 
 		dfs = new IterativeDepthFirstSearch(graph);
