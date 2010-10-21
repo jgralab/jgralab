@@ -42,7 +42,7 @@ import de.uni_koblenz.jgralab.greql2.optimizer.OptimizerBase;
 import de.uni_koblenz.jgralab.greql2.optimizer.PathExistenceOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.PathExistenceToDirectedPathExpressionOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.VariableDeclarationOrderOptimizer;
-import de.uni_koblenz.jgralab.greql2.parser.ManualGreqlParser;
+import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralabtest.greql2.GenericTests;
 import de.uni_koblenz.jgralabtest.greql2.testfunctions.IsPrime;
@@ -332,7 +332,7 @@ public class OptimizerTest extends GenericTests {
 				+ "                   with isPrime(x * x + y - 1)              "
 				+ "                   reportSet x * x + y - 1, x, y, a, b end, "
 				+ "                   a, b end";
-		Graph g = ManualGreqlParser.parse(query);
+		Graph g = GreqlParser.parse(query);
 		// parser.saveGraph("createdTestGraph.tg");
 		return g;
 	}

@@ -68,7 +68,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.Optimizer;
-import de.uni_koblenz.jgralab.greql2.parser.ManualGreqlParser;
+import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
@@ -845,7 +845,7 @@ public class GreqlEvaluator {
 	 */
 	protected boolean parseQuery(String query) throws EvaluateException {
 		long parseStartTime = System.currentTimeMillis();
-		ManualGreqlParser parser = new ManualGreqlParser(query);
+		GreqlParser parser = new GreqlParser(query);
 		try {
 			parser.parse();
 		} catch (Exception e) {

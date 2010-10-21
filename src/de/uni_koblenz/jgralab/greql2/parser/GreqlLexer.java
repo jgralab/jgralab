@@ -31,7 +31,7 @@ import java.util.Map.Entry;
 
 import de.uni_koblenz.jgralab.greql2.exception.ParsingException;
 
-public class ManualGreqlLexer {
+public class GreqlLexer {
 
 	protected static Map<TokenTypes, String> fixedTokens;
 
@@ -121,7 +121,7 @@ public class ManualGreqlLexer {
 
 	protected int position = 0;
 
-	public ManualGreqlLexer(String source) {
+	public GreqlLexer(String source) {
 		this.query = source;
 		if (query == null) {
 			throw new NullPointerException(
@@ -370,7 +370,7 @@ public class ManualGreqlLexer {
 
 	public static List<Token> scan(String query) {
 		List<Token> list = new ArrayList<Token>();
-		ManualGreqlLexer lexer = new ManualGreqlLexer(query);
+		GreqlLexer lexer = new GreqlLexer(query);
 		while (lexer.hasNextToken()) {
 			Token nextToken = lexer.getNextToken();
 			list.add(nextToken);

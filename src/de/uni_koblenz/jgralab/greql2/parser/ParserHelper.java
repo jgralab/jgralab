@@ -85,7 +85,7 @@ import de.uni_koblenz.jgralab.greql2.schema.ThisVertex;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
 import de.uni_koblenz.jgralab.greql2.schema.WhereExpression;
 
-public abstract class ManualParserHelper {
+public abstract class ParserHelper {
 
 	protected String query = null;
 

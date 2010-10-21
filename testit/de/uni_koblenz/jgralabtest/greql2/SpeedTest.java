@@ -28,7 +28,7 @@ import org.junit.Test;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.parser.ManualGreqlParser;
+import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
 
 public class SpeedTest extends GenericTests {
 
@@ -49,7 +49,7 @@ public class SpeedTest extends GenericTests {
 		}
 		String query = queryString.toString();
 		System.out.println("QueryString is : " + query);
-		Graph g = ManualGreqlParser.parse(query);
+		Graph g = GreqlParser.parse(query);
 		printTestFunctionFooter("GenerateTestGraph");
 		return g;
 	}
