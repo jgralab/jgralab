@@ -39,7 +39,7 @@ import de.uni_koblenz.jgralab.greql2.exception.ParsingException;
 import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
 import de.uni_koblenz.jgralab.greql2.schema.*;
 
-public class ManualGreqlParser extends ManualParserHelper {
+public class GreqlParser extends ParserHelper {
 
 	static {
 		Greql2Schema.instance().getGraphFactory().setGraphImplementationClass(
@@ -135,14 +135,14 @@ public class ManualGreqlParser extends ManualParserHelper {
 		return (pos < 0) && inPredicateMode();
 	}
 
-	public ManualGreqlParser(String source) {
+	public GreqlParser(String source) {
 		query = source;
 		parsingStack = new Stack<Integer>();
 		predicateStack = new Stack<Boolean>();
 		funlib = Greql2FunctionLibrary.instance();
 		schema = Greql2Schema.instance();
 		graph = schema.createGreql2();
-		tokens = ManualGreqlLexer.scan(source);
+		tokens = GreqlLexer.scan(source);
 		afterParsingvariableSymbolTable = new SymbolTable();
 		duringParsingvariableSymbolTable = new EasySymbolTable();
 		duringParsingvariableSymbolTable.blockBegin();
@@ -188,7 +188,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 	}
 
 	public static Greql2 parse(String query) {
-		ManualGreqlParser parser = new ManualGreqlParser(query);
+		GreqlParser parser = new GreqlParser(query);
 		parser.parse();
 		return parser.getGraph();
 	}
