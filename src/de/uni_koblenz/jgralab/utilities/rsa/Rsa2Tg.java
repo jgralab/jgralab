@@ -1232,9 +1232,9 @@ public class Rsa2Tg extends XmlProcessor {
 		}
 		if (faultyDomains.size() > 0) {
 			StringBuilder sb = new StringBuilder();
-			sb.append("The following enumeration domain").append(
-					faultyDomains.size() == 1 ? " has" : "s have").append(
-					" no literals");
+			sb.append("The following enumeration domain")
+					.append(faultyDomains.size() == 1 ? " has" : "s have")
+					.append(" no literals");
 			String delim = ": ";
 			for (String name : faultyDomains) {
 				sb.append(delim).append(name);
@@ -1503,8 +1503,7 @@ public class Rsa2Tg extends XmlProcessor {
 	private Vertex handlePackage() throws XMLStreamException {
 
 		Package pkg = sg.createPackage();
-		pkg
-				.set_qualifiedName(getQualifiedName(getAttribute(UML_ATTRIBUTE_NAME)));
+		pkg.set_qualifiedName(getQualifiedName(getAttribute(UML_ATTRIBUTE_NAME)));
 		sg.createContainsSubPackage(packageStack.peek(), pkg);
 		packageStack.push(pkg);
 		return pkg;
@@ -1542,8 +1541,7 @@ public class Rsa2Tg extends XmlProcessor {
 		currentClass = vc;
 		String abs = getAttribute(UML_ATTRIBUTE_IS_ABSRACT);
 		vc.set_abstract((abs != null) && abs.equals(UML_TRUE));
-		vc
-				.set_qualifiedName(getQualifiedName(getAttribute(UML_ATTRIBUTE_NAME)));
+		vc.set_qualifiedName(getQualifiedName(getAttribute(UML_ATTRIBUTE_NAME)));
 		sg.createContainsGraphElementClass(packageStack.peek(), vc);
 
 		// System.out.println("currentClass = " + currentClass + " "
@@ -1667,8 +1665,7 @@ public class Rsa2Tg extends XmlProcessor {
 	private Vertex handleEnumeration() throws XMLStreamException {
 		EnumDomain ed = sg.createEnumDomain();
 		Package p = packageStack.peek();
-		ed
-				.set_qualifiedName(getQualifiedName(getAttribute(UML_ATTRIBUTE_NAME)));
+		ed.set_qualifiedName(getQualifiedName(getAttribute(UML_ATTRIBUTE_NAME)));
 		sg.createContainsDomain(p, ed);
 		ed.set_enumConstants(new ArrayList<String>());
 		Domain dom = domainMap.get(ed.get_qualifiedName());
@@ -2339,6 +2336,12 @@ public class Rsa2Tg extends XmlProcessor {
 				constraints.put(constrainedElementId, l);
 			}
 			l.add(text);
+		} else if (text.startsWith("subsets")) {
+			System.err.println("warning: subsets constraint at element "
+					+ constrainedElementId + " ignored.");
+		} else if (text.startsWith("union")) {
+			System.err.println("warning: union constraint at element "
+					+ constrainedElementId + " ignored.");
 		} else {
 			throw new ProcessingException(getFileName(), getParser()
 					.getLocation().getLineNumber(),
