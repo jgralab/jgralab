@@ -2338,16 +2338,16 @@ public class Rsa2Tg extends XmlProcessor {
 			l.add(text);
 		} else if (text.startsWith("subsets")) {
 			System.err
-					.println("warning: subsets constraint at element "
+					.println("warning: {subsets ...} constraint at element "
 							+ constrainedElementId
 							+ " ignored (don't forget to model generalizations between associations)");
 		} else if (text.startsWith("union")) {
 			System.err
-					.println("warning: union constraint at element "
+					.println("warning: {union} constraint at element "
 							+ constrainedElementId
 							+ " ignored (don't forget to add an <<abstract>> stereotype to the association)");
 		} else if (text.startsWith("ordered")) {
-			System.err.println("warning: ordered constraint at element "
+			System.err.println("warning: {ordered} constraint at element "
 					+ constrainedElementId
 					+ " ignored (TGraphs are ordered by default)");
 		} else {
