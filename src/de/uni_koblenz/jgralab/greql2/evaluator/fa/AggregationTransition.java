@@ -211,7 +211,8 @@ public class AggregationTransition extends Transition {
 	 * greql2.evaluator.SubgraphTempAttribute)
 	 */
 	@Override
-	public boolean accepts(Vertex v, Edge e, AbstractGraphMarker<AttributedElement> subgraph)
+	public boolean accepts(Vertex v, Edge e,
+			AbstractGraphMarker<AttributedElement> subgraph)
 			throws EvaluateException {
 		if (e == null) {
 			return false;
@@ -282,12 +283,12 @@ public class AggregationTransition extends Transition {
 			b.append(delim);
 			b.append(c.getSimpleName());
 			delim = ",";
-		}	
+		}
 		String symbol = "--<>";
 		if (aggregateFrom)
 			symbol = "<>--";
 
 		return symbol + "{" + b + "}";
 	}
-	
+
 }

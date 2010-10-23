@@ -161,6 +161,5 @@ public abstract class VertexImpl extends
 		// TODO Auto-generated method stub
 		return super.isBefore(v);
 	}
-	
-	
+
 }

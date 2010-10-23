@@ -89,7 +89,8 @@ public class SimpleDeclarationEvaluator extends VertexEvaluator {
 					typeExpression);
 		}
 		JValueList varDeclList = new JValueList();
-		IsDeclaredVarOf varInc = vertex.getFirstIsDeclaredVarOf(EdgeDirection.IN);
+		IsDeclaredVarOf varInc = vertex
+				.getFirstIsDeclaredVarOf(EdgeDirection.IN);
 		while (varInc != null) {
 			VariableDeclaration varDecl = new VariableDeclaration(
 					(Variable) varInc.getAlpha(), exprEval, subgraph, vertex,

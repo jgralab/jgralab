@@ -73,28 +73,33 @@ public class SchemaJarGenerator {
 	 */
 	public SchemaJarGenerator(String pathToFiles, String packageName,
 			String jarFileName, boolean compress) {
-		this.path = pathToFiles;
+		path = pathToFiles;
 		this.packageName = packageName;
 		this.jarFileName = jarFileName;
-		if (compress)
-			this.storeMethod = ZipEntry.STORED;
-		else
-			this.storeMethod = ZipEntry.DEFLATED;
+		if (compress) {
+			storeMethod = ZipEntry.STORED;
+		} else {
+			storeMethod = ZipEntry.DEFLATED;
+		}
 	}
 
 	public void createJar() throws Exception {
-		System.out.println("Jar file name is: " + jarFileName);
-		ZipOutputStream zipStream = new ZipOutputStream(new FileOutputStream(
-				path + "/" + jarFileName));
-		zipStream.setMethod(storeMethod);
-		String ifacePackageDir = packageName.replaceAll("\\.", "/");
-		File interfaceDir = new File(path + "/" + ifacePackageDir);
-		putDirInJar(zipStream, interfaceDir.getAbsolutePath(), ifacePackageDir
-				+ "/");
-		putDirInJar(zipStream, interfaceDir.getAbsolutePath() + "/impl",
-				ifacePackageDir + "/impl/");
-		zipStream.closeEntry();
-		zipStream.close();
+		ZipOutputStream zipStream = null;
+		try {
+			System.out.println("Jar file name is: " + jarFileName);
+			zipStream = new ZipOutputStream(new FileOutputStream(path + "/"
+					+ jarFileName));
+			zipStream.setMethod(storeMethod);
+			String ifacePackageDir = packageName.replaceAll("\\.", "/");
+			File interfaceDir = new File(path + "/" + ifacePackageDir);
+			putDirInJar(zipStream, interfaceDir.getAbsolutePath(),
+					ifacePackageDir + "/");
+			putDirInJar(zipStream, interfaceDir.getAbsolutePath() + "/impl",
+					ifacePackageDir + "/impl/");
+			zipStream.closeEntry();
+		} finally {
+			zipStream.close();
+		}
 	}
 
 	private void putDirInJar(ZipOutputStream zipStream, String dirPath,
@@ -104,8 +109,9 @@ public class SchemaJarGenerator {
 		File[] interfaces = new File(dirPath).listFiles();
 		for (File currentInterface : interfaces) {
 			// don't write hidden files like they are created from svn
-			if (currentInterface.getName().startsWith("."))
+			if (currentInterface.getName().startsWith(".")) {
 				continue;
+			}
 			// don't write directories
 			if (currentInterface.isDirectory()) {
 
@@ -113,13 +119,17 @@ public class SchemaJarGenerator {
 				ZipEntry entry = new ZipEntry(pathInJar + "/"
 						+ currentInterface.getName());
 				zipStream.putNextEntry(entry);
-				FileInputStream in = new FileInputStream(currentInterface);
-				int len = 0;
-				byte[] buf = new byte[4096];
-				while ((len = in.read(buf)) > 0) {
-					zipStream.write(buf, 0, len);
+				FileInputStream in = null;
+				try {
+					in = new FileInputStream(currentInterface);
+					int len = 0;
+					byte[] buf = new byte[4096];
+					while ((len = in.read(buf)) > 0) {
+						zipStream.write(buf, 0, len);
+					}
+				} finally {
+					in.close();
 				}
-				in.close();
 			}
 		}
 		zipStream.closeEntry();

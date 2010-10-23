@@ -90,26 +90,32 @@ public class GReQLConsole {
 	 */
 	private List<String> loadQueries(File queryFile) throws IOException {
 		List<String> queries = new ArrayList<String>();
-		BufferedReader reader = new BufferedReader(new FileReader(queryFile));
-		String line = null;
 		StringBuilder builder = new StringBuilder();
-		while ((line = reader.readLine()) != null) {
-			String trimmedLine = line.trim();
-			if (trimmedLine.startsWith("//")) {
-				continue;
-			}
-			if (trimmedLine.length() == 0) {
-				// found end of a query
-				if (builder.length() != 0) {
-					String query = builder.toString();
-					builder = new StringBuilder();
-					queries.add(query);
+		BufferedReader reader = null;
+		try {
+			reader = new BufferedReader(new FileReader(queryFile));
+			String line = null;
+			while ((line = reader.readLine()) != null) {
+				String trimmedLine = line.trim();
+				if (trimmedLine.startsWith("//")) {
+					continue;
 				}
-			} else {
-				builder.append(line + " \n");
+				if (trimmedLine.length() == 0) {
+					// found end of a query
+					if (builder.length() != 0) {
+						String query = builder.toString();
+						builder = new StringBuilder();
+						queries.add(query);
+					}
+				} else {
+					builder.append(line + " \n");
+				}
+			}
+		} finally {
+			if (reader != null) {
+				reader.close();
 			}
 		}
-		reader.close();
 		if (builder.length() != 0) {
 			String query = builder.toString();
 			queries.add(query);

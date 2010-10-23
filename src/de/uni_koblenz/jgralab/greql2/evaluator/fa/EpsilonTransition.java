@@ -89,7 +89,8 @@ public class EpsilonTransition extends Transition {
 	 * be eliminated before the pathsearch strarts
 	 */
 	@Override
-	public boolean accepts(Vertex v, Edge e, AbstractGraphMarker<AttributedElement> subgraph)
+	public boolean accepts(Vertex v, Edge e,
+			AbstractGraphMarker<AttributedElement> subgraph)
 			throws EvaluateException {
 		logger.info("Id of this epsilon transition is: " + this);
 		// GreqlEvaluator.println("In Number of this transition is : " +

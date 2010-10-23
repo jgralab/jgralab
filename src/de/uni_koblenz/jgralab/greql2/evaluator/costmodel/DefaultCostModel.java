@@ -620,8 +620,6 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 		return new VertexCosts(ownCosts, iteratedCosts, subtreeCosts);
 	}
 
-
-
 	@Override
 	public VertexCosts calculateCostsEdgePathDescription(
 			EdgePathDescriptionEvaluator e, GraphSize graphSize) {

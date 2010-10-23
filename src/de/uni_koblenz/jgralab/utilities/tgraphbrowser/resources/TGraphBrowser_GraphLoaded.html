@@ -604,8 +604,8 @@ div#div2DGraph{
 	 * Resizes the elements to the size of the window.
 	 */
 	function resize(){
-		var width = document.documentElement.clientWidth;
-		var height = document.documentElement.clientHeight;
+		var width = document.documentElement.clientWidth-1;
+		var height = document.documentElement.clientHeight-1;
 		if (width<1100){
 			width = 1100;
 		}
@@ -638,7 +638,27 @@ div#div2DGraph{
 			edgeDiv.style.height = (height - intendTop - textGraphHeight) + "px";
 			edgeDiv.style.width = (width - intendLeft) + "px";
 		}
-		document.getElementById("div2DGraph").style.height = (height - intendTop - document.getElementById("divBreadcrumbBar").offsetHeight) + "px";
+		var div2dHeight = (height - intendTop - document.getElementById("divBreadcrumbBar").offsetHeight);
+		document.getElementById("div2DGraph").style.height = div2dHeight + "px";
+		var embed2dGraph=document.getElementById("embed2DGraph");
+		if(embed2dGraph!=null){
+			var embedHeight = div2dHeight - 4;
+			var embedWidth = (width - intendLeft) - 4;
+			embed2dGraph.style.height = embedHeight + "px";
+			embed2dGraph.style.width = embedWidth + "px";
+			var svgdoc = embed2dGraph.getSVGDocument();
+			if(!svgdoc){
+				svgdoc = embed2dGraph.contentDocument;
+			}
+			if(svgdoc){
+				var navdoc = svgdoc.getElementById("nav");
+		        navdoc.setAttributeNS(null,"height",embedHeight - navdoc.getAttribute("y") - 2);
+		        navdoc.setAttributeNS(null,"width",embedWidth - navdoc.getAttribute("x") - 2);
+		        var rect = svgdoc.getElementById("rect");
+		        rect.setAttributeNS(null,"height",embedHeight - rect.getAttribute("y"));
+		        rect.setAttributeNS(null,"width",embedWidth - rect.getAttribute("x"));
+			}
+		}
 	}
 	 
 	/*

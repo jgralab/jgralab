@@ -42,7 +42,7 @@ public abstract class Token {
 	}
 
 	public String getValue() {
-		return ManualGreqlLexer.getTokenString(type);
+		return GreqlLexer.getTokenString(type);
 	}
 
 	public int getOffset() {

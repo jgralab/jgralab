@@ -60,11 +60,13 @@ public class Concat extends Greql2Function {
 	}
 
 	@Override
-	public JValue evaluate(Graph graph, AbstractGraphMarker<AttributedElement> subgraph,
-			JValue[] arguments) throws EvaluateException {
+	public JValue evaluate(Graph graph,
+			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
+			throws EvaluateException {
 		switch (checkArguments(arguments)) {
 		case 0:
-			return new JValueImpl(arguments[0].toString() + arguments[1].toString());
+			return new JValueImpl(arguments[0].toString()
+					+ arguments[1].toString());
 		case 1:
 			JValueCollection c1 = arguments[0].toCollection();
 			JValueCollection c2 = arguments[1].toCollection();

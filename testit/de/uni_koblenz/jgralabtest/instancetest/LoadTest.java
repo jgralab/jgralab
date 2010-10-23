@@ -43,7 +43,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql2.parser.ManualGreqlParser;
+import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Schema;
 import de.uni_koblenz.jgralab.impl.FreeIndexList;
 import de.uni_koblenz.jgralab.impl.GraphBaseImpl;
@@ -87,7 +87,7 @@ public class LoadTest extends InstanceTest {
 	private Graph createTestGraph() throws Exception {
 		if (implementationType == ImplementationType.STANDARD) {
 			String query = "from i:c report i end where d:=\"drölfundfünfzig\", c:=b, b:=a, a:=\"Mensaessen\"";
-			return ManualGreqlParser.parse(query);
+			return GreqlParser.parse(query);
 		}
 		int vertexClasses = 6;
 		int edgeClasses = 7;

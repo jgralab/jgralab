@@ -71,18 +71,21 @@ public class BagComprehensionEvaluator extends ComprehensionEvaluator {
 		super(eval);
 		this.vertex = vertex;
 	}
-	
+
 	private Boolean createHeader = null;
-	
+
 	private List<VertexEvaluator> headerEvaluators = null;
-		
+
 	protected JValueCollection getResultDatastructure() {
 		if (createHeader == null) {
 			if (vertex.getFirstIsTableHeaderOf(EdgeDirection.IN) != null) {
 				headerEvaluators = new ArrayList<VertexEvaluator>();
-				createHeader = true;	
-				for (IsTableHeaderOf tableInc : vertex.getIsTableHeaderOfIncidences(EdgeDirection.IN)) {
-					VertexEvaluator headerEval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(tableInc.getAlpha());
+				createHeader = true;
+				for (IsTableHeaderOf tableInc : vertex
+						.getIsTableHeaderOfIncidences(EdgeDirection.IN)) {
+					VertexEvaluator headerEval = greqlEvaluator
+							.getVertexEvaluatorGraphMarker().getMark(
+									tableInc.getAlpha());
 					headerEvaluators.add(headerEval);
 				}
 			} else {
@@ -93,12 +96,11 @@ public class BagComprehensionEvaluator extends ComprehensionEvaluator {
 			JValueTuple headerTuple = new JValueTuple();
 			for (VertexEvaluator headerEvaluator : headerEvaluators) {
 				headerTuple.add(headerEvaluator.getResult(subgraph));
-			}	
+			}
 			return new JValueTable(headerTuple, false);
-		}	
+		}
 		return new JValueBag();
 	}
-	
 
 	@Override
 	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {

@@ -120,7 +120,7 @@ public class JValueRecord extends JValueCollection implements
 	}
 
 	@Override
-	public Object toObject() {
+	public Map<String, Object> toObject() {
 		Map<String, Object> result = new HashMap<String, Object>(dataMap.size());
 		for (Entry<String, JValue> e : dataMap.entrySet()) {
 			result.put(e.getKey(), e.getValue().toObject());

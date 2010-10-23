@@ -156,8 +156,8 @@ public abstract class Greql2Function {
 	 *             if something went wrong
 	 */
 	public abstract JValue evaluate(Graph graph,
-			AbstractGraphMarker<AttributedElement> subgraph,
-			JValue[] arguments) throws EvaluateException;
+			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
+			throws EvaluateException;
 
 	/**
 	 * Calculates the estimated cost for the evaluation of this greql function

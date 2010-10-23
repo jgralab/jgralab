@@ -138,7 +138,8 @@ public class BoolExpressionTransition extends Transition {
 	 * greql2.evaluator.SubgraphTempAttribute)
 	 */
 	@Override
-	public boolean accepts(Vertex v, Edge e, AbstractGraphMarker<AttributedElement> subgraph)
+	public boolean accepts(Vertex v, Edge e,
+			AbstractGraphMarker<AttributedElement> subgraph)
 			throws EvaluateException {
 		if (thisVertexEvaluator != null) {
 			thisVertexEvaluator.setValue(new JValueImpl(v));

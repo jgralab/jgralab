@@ -64,14 +64,14 @@ public class LongEdgeMarker extends LongGraphMarker<Edge> {
 	public long mark(Edge edge, long value) {
 		return super.mark(edge.getNormalEdge(), value);
 	}
-	
+
 	@Override
-	public boolean isMarked(Edge edge){
+	public boolean isMarked(Edge edge) {
 		return super.isMarked(edge.getNormalEdge());
 	}
-	
+
 	@Override
-	public long getMark(Edge edge){
+	public long getMark(Edge edge) {
 		return super.getMark(edge.getNormalEdge());
 	}
 

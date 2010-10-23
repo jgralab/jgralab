@@ -218,13 +218,23 @@ public class Level2Logger extends Level2LoggingBase implements EvaluationLogger 
 			selectivityElement.addContent(entry.toJDOMEntry());
 		}
 		rootElement.addContent(selectivityElement);
-		Document doc = new Document(rootElement);
-		XMLOutputter out = new XMLOutputter(Format.getPrettyFormat());
-		FileWriter fw = new FileWriter(file);
-		BufferedWriter bw = new BufferedWriter(fw);
-		out.output(doc, bw);
-		bw.flush();
-		bw.close();
+
+		BufferedWriter bw = null;
+		try {
+			Document doc = new Document(rootElement);
+			XMLOutputter out = new XMLOutputter(Format.getPrettyFormat());
+			FileWriter fw = new FileWriter(file);
+			bw = new BufferedWriter(fw);
+			out.output(doc, bw);
+			bw.flush();
+		} finally {
+			try {
+				bw.close();
+			} catch (IOException ex) {
+				throw new RuntimeException(
+						"An exception occurred while closing the stream.", ex);
+			}
+		}
 		return true;
 	}
 

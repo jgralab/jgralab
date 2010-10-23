@@ -32,6 +32,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -51,6 +52,7 @@ import java.util.regex.Pattern;
  */
 public class RequestThread extends Thread {
 
+	static final String SVG_WITH_ZOOM_AND_MOVE_SUPPORT = "resources/svgNavigation.svg";
 	private static File workspace;
 	private final StateRepository rep;
 	public static Long MAXIMUM_FILE_SIZE;
@@ -67,7 +69,7 @@ public class RequestThread extends Thread {
 		} else {
 			workspace = new File(path);
 		}
-		rep = new StateRepository(workspace);
+		rep = new StateRepository(workspace, this);
 	}
 
 	private static void sendHeader(BufferedOutputStream out, int code,
@@ -84,7 +86,7 @@ public class RequestThread extends Thread {
 				+ contentType
 				+ "\r\n"
 				+ "Expires: Thu, 01 Dec 1994 16:00:00 GMT\r\n"
-				+ ((contentLength != -1) ? "Content-Length: " + contentLength
+				+ (contentLength != -1 ? "Content-Length: " + contentLength
 						+ "\r\n" : "") + "Last-modified: "
 				+ new Date(lastModified).toString() + "\r\n" + "\r\n")
 				.getBytes());
@@ -92,16 +94,20 @@ public class RequestThread extends Thread {
 
 	private static void sendError(BufferedOutputStream out, int code,
 			String message) throws IOException {
-		message = message + "<hr>" + TGraphBrowserServer.VERSION;
-		sendHeader(out, code, "text/html", message.length(), System
-				.currentTimeMillis());
-		out.write(message.getBytes());
-		out.flush();
-		out.close();
+		try {
+			message = message + "<hr>" + TGraphBrowserServer.VERSION;
+			sendHeader(out, code, "text/html", message.length(), System
+					.currentTimeMillis());
+			out.write(message.getBytes());
+			out.flush();
+		} finally {
+			out.close();
+		}
 	}
 
 	@Override
 	public void run() {
+		// FIXME This is a monster method and maintainable! Split it.
 		try {
 			_socket.setSoTimeout(30000);
 			InputStream inputStream = _socket.getInputStream();
@@ -114,9 +120,9 @@ public class RequestThread extends Thread {
 			String firstLine = readLine(in);
 			String request = URLDecoder.decode(firstLine != null ? firstLine
 					: "", "UTF-8");
-			if ((request == null)
-					|| (!request.startsWith("GET ") && !request
-							.startsWith("POST "))
+			if (request == null
+					|| !request.startsWith("GET ")
+					&& !request.startsWith("POST ")
 					|| !(request.endsWith(" HTTP/1.0") || request
 							.endsWith("HTTP/1.1"))) {
 				// Invalid request type (no "GET")
@@ -171,7 +177,7 @@ public class RequestThread extends Thread {
 					} else {
 						// find beginning of file
 						// next in.readLine()is first line of file
-						while ((line != null) && !line.isEmpty()) {
+						while (line != null && !line.isEmpty()) {
 							line = readLine(in);
 							sizeOfLinesAlreadyRead += line.length() + 2;
 						}
@@ -241,7 +247,7 @@ public class RequestThread extends Thread {
 					// skip rest of header
 					do {
 						line = readLine(in);
-					} while ((line != null) && !line.isEmpty());
+					} while (line != null && !line.isEmpty());
 					// read content
 					byte[] content = new byte[contentLength.intValue()];
 					if (in.read(content) <= 0) {
@@ -326,15 +332,13 @@ public class RequestThread extends Thread {
 							+ File.separator
 							+ (path.charAt(0) == '_' ? path.substring(1) : path);
 					File svg = new File(fileName);
-					// System.out.println("path = " + path);
-					// System.out.println("svg = " + svg.getCanonicalPath());
 					long sleepTime = System.currentTimeMillis() + 10000;
 					while (!svg.exists()
-							&& (System.currentTimeMillis() <= sleepTime)) {
+							&& System.currentTimeMillis() <= sleepTime) {
 					}
 					// send svgFile
 					if (svg.exists()) {
-						sendFile(out, fileName);
+						sendSVG(out, fileName);
 						if (!svgToDelete.contains(path)) {
 							if (!svg.delete()) {
 								TGraphBrowserServer.logger.warning(svg
@@ -480,7 +484,7 @@ public class RequestThread extends Thread {
 		}
 		// create logging entry
 		StringBuilder argsString = new StringBuilder();
-		for (int i = 0; (currentParams != null) && (i < currentParams.length); i++) {
+		for (int i = 0; currentParams != null && i < currentParams.length; i++) {
 			argsString.append((i == 0 ? "" : ", ")
 					+ (currentParams[i] instanceof String ? "\"" : "")
 					+ currentParams[i]
@@ -534,21 +538,26 @@ public class RequestThread extends Thread {
 	 */
 	private void sendFile(BufferedOutputStream out, String file)
 			throws IOException, FileNotFoundException {
-		if (_socket.isConnected()) {
-			sendHeader(out, 200, file.endsWith(".svg") ? "image/svg+xml"
-					: (file.endsWith(".png") ? "image/png" : "text/html"), -1,
-					System.currentTimeMillis());
-			InputStream reader = null;
-			if (new File(file).isAbsolute()) {
-				reader = new FileInputStream(file);
-			} else {
-				reader = getClass().getResourceAsStream("resources/" + file);
+		InputStream reader = null;
+		try {
+			if (_socket.isConnected()) {
+				sendHeader(out, 200, file.endsWith(".svg") ? "image/svg+xml"
+						: file.endsWith(".png") ? "image/png" : "text/html",
+						-1, System.currentTimeMillis());
+
+				if (new File(file).isAbsolute()) {
+					reader = new FileInputStream(file);
+				} else {
+					reader = getClass()
+							.getResourceAsStream("resources/" + file);
+				}
+				byte[] buffer = new byte[4096];
+				int bytesRead;
+				while ((bytesRead = reader.read(buffer)) != -1) {
+					out.write(buffer, 0, bytesRead);
+				}
 			}
-			byte[] buffer = new byte[4096];
-			int bytesRead;
-			while ((bytesRead = reader.read(buffer)) != -1) {
-				out.write(buffer, 0, bytesRead);
-			}
+		} finally {
 			reader.close();
 		}
 	}
@@ -559,7 +568,7 @@ public class RequestThread extends Thread {
 	 * 
 	 * @param out
 	 *            the BufferedOutputStream to the client.
-	 * @param string
+	 * @param file
 	 *            the file which should be sent.
 	 * @param replaceText
 	 *            the sessionId
@@ -567,25 +576,74 @@ public class RequestThread extends Thread {
 	 */
 	private void sendFile(BufferedOutputStream out, String file,
 			String replaceText) throws IOException {
+
 		if (_socket.isConnected()) {
 			sendHeader(out, 200, "text/html", -1, System.currentTimeMillis());
+			BufferedReader br = null;
+			try {
+				br = new BufferedReader(new InputStreamReader(getClass()
+						.getResourceAsStream("resources/" + file)));
+				boolean isReplaced = false;
+				String line;
+				for (line = br.readLine(); line != null; line = br.readLine()) {
+					if (!isReplaced && line.contains("/*?*/")) {
+						line = line.replace("/*?*/", replaceText);
+						isReplaced = true;
+					}
+					if (!isReplaced) {
+						out.write((line + "\n").getBytes());
+					} else {
+						out.write((line + "\n").getBytes());
+						// String was replaced. Now the data can be send faster.
+						break;
+					}
+				}
+				if (line != null) {
+					char[] buffer = new char[4096];
+					int bytesRead;
+					while ((bytesRead = br.read(buffer)) != -1) {
+						out.write(new String(buffer).getBytes(), 0, bytesRead);
+					}
+				}
+			} finally {
+				br.close();
+			}
+		}
+	}
+
+	/**
+	 * Sends the resources/svgNavigation.svg and includes the generated svg
+	 * <code>fileName</code> into it.
+	 * 
+	 * @param out
+	 * @param fileName
+	 *            the name of the generated svg
+	 * @throws IOException
+	 */
+	private void sendSVG(BufferedOutputStream out, String fileName)
+			throws IOException {
+		if (_socket.isConnected()) {
+			StringBuffer contentOfCreatedSVG = getContentOfCreatedSVG(fileName);
+
 			BufferedReader br = new BufferedReader(new InputStreamReader(
-					getClass().getResourceAsStream("resources/" + file)));
+					getClass().getResourceAsStream(
+							SVG_WITH_ZOOM_AND_MOVE_SUPPORT)));
 			boolean isReplaced = false;
 			String line;
+			// send everything until <!-- -->
+			// replace ?viewBox? by the viewBox value of the generated svg
 			for (line = br.readLine(); line != null; line = br.readLine()) {
-				if (!isReplaced && line.contains("/*?*/")) {
-					line = line.replace("/*?*/", replaceText);
-					isReplaced = true;
+				if (line.contains("?viewBox?")) {
+					line = line.replace("?viewBox?", viewBoxDimension);
 				}
-				if (!isReplaced) {
-					out.write((line + "\n").getBytes());
-				} else {
-					out.write((line + "\n").getBytes());
-					// String was replaced. Now the data can be send faster.
+				if (!isReplaced && line.contains("<!--  -->")) {
+					out.write(contentOfCreatedSVG.toString().getBytes());
+					isReplaced = true;
 					break;
 				}
+				out.write((line + "\n").getBytes());
 			}
+			// send rest of file
 			if (line != null) {
 				char[] buffer = new char[4096];
 				int bytesRead;
@@ -595,6 +653,46 @@ public class RequestThread extends Thread {
 			}
 			br.close();
 		}
+	}
+
+	// saves the viewBox content of the generated svg
+	private String viewBoxDimension = "";
+
+	/**
+	 * Reads the content of the svg-tag of the generated svg file
+	 * <code>fileName</code>.
+	 * 
+	 * @param out
+	 * @param fileName
+	 *            the name of the generated svg file
+	 * @return {@link StringBuffer} the read svg file
+	 * @throws IOException
+	 */
+	private StringBuffer getContentOfCreatedSVG(String fileName)
+			throws IOException {
+		StringBuffer out = new StringBuffer();
+		BufferedReader br = new BufferedReader(new FileReader(fileName));
+		String line;
+		// skip everything until the first <g
+		// and read out the value of viewBox
+		while ((line = br.readLine()) != null && !line.startsWith("<g ")) {
+			if (line.contains("viewBox=\"")) {
+				String subline = line.split(Pattern.quote("viewBox=\""))[1];
+				viewBoxDimension = subline.substring(0, subline.indexOf("\""));
+			}
+		}
+		if (line != null) {
+			out.append(line + "\n");
+		}
+		// send content until </svg>
+		while (line != null && !line.startsWith("</svg>")) {
+			line = br.readLine();
+			if (line != null && !line.startsWith("</svg>")) {
+				out.append(line + "\n");
+			}
+		}
+		br.close();
+		return out;
 	}
 
 	/**

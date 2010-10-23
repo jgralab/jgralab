@@ -76,12 +76,12 @@ public interface GraphFactory {
 
 	public void setEdgeImplementationClass(Class<? extends Edge> edgeM1Class,
 			Class<? extends Edge> implementationClass);
-	
+
 	/**
 	 * Creates an record of class <code>recordDomain</code> in the graph g
 	 */
 	public <T extends Record> T createRecord(Class<T> recordDomain, Graph g);
-	
+
 	/**
 	 * Assigns an implementation class with transaction support for a
 	 * <code>Record</code>.
@@ -89,7 +89,8 @@ public interface GraphFactory {
 	 * @param record
 	 * @param implementationClass
 	 */
-	public void setRecordImplementationClass(Class<? extends Record> record, Class<? extends Record> implementationClass);
+	public void setRecordImplementationClass(Class<? extends Record> record,
+			Class<? extends Record> implementationClass);
 
 	// -------------------------------------------------------------------------
 	// Methods for the TRANSIMPL option.
@@ -160,12 +161,14 @@ public interface GraphFactory {
 	public void setEdgeTransactionImplementationClass(
 			Class<? extends Edge> edgeM1Class,
 			Class<? extends Edge> implementationClass);
-	
+
 	/**
-	 * Creates an record with transaction support of class <code>recordDomain</code> in the graph g
+	 * Creates an record with transaction support of class
+	 * <code>recordDomain</code> in the graph g
 	 */
-	public <T extends Record> T createRecordWithTransactionSupport(Class<T> recordDomain, Graph g);
-	
+	public <T extends Record> T createRecordWithTransactionSupport(
+			Class<T> recordDomain, Graph g);
+
 	/**
 	 * Assigns an implementation class with transaction support for a
 	 * <code>Record</code>.
@@ -173,7 +176,9 @@ public interface GraphFactory {
 	 * @param record
 	 * @param implementationClass
 	 */
-	public void setRecordTransactionImplementationClass(Class<? extends Record> record, Class<? extends Record> implementationClass);
+	public void setRecordTransactionImplementationClass(
+			Class<? extends Record> record,
+			Class<? extends Record> implementationClass);
 
 	// -------------------------------------------------------------------------
 	// Methods for the SAVEMEMIMPL option.
@@ -243,7 +248,7 @@ public interface GraphFactory {
 	public void setEdgeSavememImplementationClass(
 			Class<? extends Edge> edgeM1Class,
 			Class<? extends Edge> implementationClass);
-	
+
 	/**
 	 * Assigns an implementation class with savemem support for a
 	 * <code>Record</code>.
@@ -251,11 +256,15 @@ public interface GraphFactory {
 	 * @param record
 	 * @param implementationClass
 	 */
-	public void setRecordSavememImplementationClass(Class<? extends Record> record, Class<? extends Record> implementationClass);
-	
+	public void setRecordSavememImplementationClass(
+			Class<? extends Record> record,
+			Class<? extends Record> implementationClass);
+
 	/**
-	 * Creates an record with savemem support of class <code>recordDomain</code> in the graph g
+	 * Creates an record with savemem support of class <code>recordDomain</code>
+	 * in the graph g
 	 */
-	public <T extends Record> T createRecordWithSavememSupport(Class<T> recordDomain, Graph g);
-	
+	public <T extends Record> T createRecordWithSavememSupport(
+			Class<T> recordDomain, Graph g);
+
 }

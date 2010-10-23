@@ -94,7 +94,7 @@ public class PathSystemTest extends GenericTests {
 		}
 		assertEquals(1, falseFound);
 	}
-	
+
 	@Test
 	public void testPathSystemConstruction2() throws Exception {
 		String queryString = "from v: V{WhereExpression}, w:V{Variable}  report contains(v  :-) <--{IsDefinitionOf} <--{IsVarOf}, w) end";

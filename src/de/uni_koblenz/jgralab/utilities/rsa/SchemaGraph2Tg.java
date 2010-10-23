@@ -162,20 +162,23 @@ public class SchemaGraph2Tg {
 	 */
 	public void process() throws IOException {
 
-		assert (outputFilename != null) && !outputFilename.equals(EMPTY) : "No output filename specified!";
-		assert schemaGraph != null : "No SchemaGraph specified!";
-		stream = new PrintWriter(outputFilename);
+		try {
+			assert outputFilename != null && !outputFilename.equals(EMPTY) : "No output filename specified!";
+			assert schemaGraph != null : "No SchemaGraph specified!";
+			stream = new PrintWriter(outputFilename);
 
-		// This line is for debugging and developing purposes only.
-		// stream = new PrintWriter(System.out);
+			// This line is for debugging and developing purposes only.
+			// stream = new PrintWriter(System.out);
 
-		printTGSchema(schemaGraph);
+			printTGSchema(schemaGraph);
 
-		// Write out, close and dispose the Printstream object.
-		stream.append(NEWLINE);
-		stream.flush();
-		stream.close();
-		stream = null;
+			// Write out, close and dispose the Printstream object.
+			stream.append(NEWLINE);
+			stream.flush();
+		} finally {
+			stream.close();
+			stream = null;
+		}
 	}
 
 	public void setStream(StringWriter stream) {
@@ -203,8 +206,8 @@ public class SchemaGraph2Tg {
 		// schema
 		Schema schema = schemaGraph.getFirstSchema();
 		assert schema != null;
-		println(SCHEMA, SPACE, schema.get_packagePrefix(), DOT, schema
-				.get_name(), DELIMITER, NEWLINE);
+		println(SCHEMA, SPACE, schema.get_packagePrefix(), DOT,
+				schema.get_name(), DELIMITER, NEWLINE);
 
 		Package defaultPackage = (Package) schema
 				.getFirstContainsDefaultPackage(EdgeDirection.OUT).getThat();
@@ -253,8 +256,8 @@ public class SchemaGraph2Tg {
 	private void printComments(NamedElement ne) {
 		for (Annotates ann : ne.getAnnotatesIncidences(EdgeDirection.IN)) {
 			Comment com = (Comment) ann.getThat();
-			println(COMMENT, SPACE, ne.get_qualifiedName(), SPACE, GraphIO
-					.toUtfString(com.get_text()), DELIMITER);
+			println(COMMENT, SPACE, ne.get_qualifiedName(), SPACE,
+					GraphIO.toUtfString(com.get_text()), DELIMITER);
 		}
 	}
 
@@ -378,7 +381,7 @@ public class SchemaGraph2Tg {
 		print(SPACE, ROUND_BRACKET_OPENED, min, COMMA, max,
 				ROUND_BRACKET_CLOSED);
 
-		if ((ic.get_roleName() != null) && !ic.get_roleName().isEmpty()) {
+		if (ic.get_roleName() != null && !ic.get_roleName().isEmpty()) {
 			print(SPACE, ROLE, SPACE, ic.get_roleName());
 		}
 
@@ -438,8 +441,8 @@ public class SchemaGraph2Tg {
 				print(COMMA, SPACE);
 			}
 			Domain compDom = (Domain) hc.getThat();
-			print(hc.get_name(), COLON, SPACE, shortName(compDom
-					.get_qualifiedName()));
+			print(hc.get_name(), COLON, SPACE,
+					shortName(compDom.get_qualifiedName()));
 		}
 		println(ROUND_BRACKET_CLOSED, DELIMITER);
 	}
@@ -485,8 +488,8 @@ public class SchemaGraph2Tg {
 			Attribute attr = (Attribute) ha.getThat();
 			Domain dom = (Domain) attr.getFirstHasDomain(EdgeDirection.OUT)
 					.getThat();
-			print(attr.get_name(), COLON, SPACE, shortName(dom
-					.get_qualifiedName()));
+			print(attr.get_name(), COLON, SPACE,
+					shortName(dom.get_qualifiedName()));
 			String defaultValue = attr.get_defaultValue();
 			if (defaultValue != null) {
 				print(SPACE, ASSIGN, SPACE, GraphIO.toUtfString(defaultValue));

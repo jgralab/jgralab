@@ -31,8 +31,8 @@ public class CommentTest {
 	public static void main(String[] args) {
 		System.out.println("Writing schema file CommentTestOutput.tg...");
 		try {
-			GraphIO.saveSchemaToFile("CommentTestOutput.tg",
-					CommentTestSchema.instance());
+			GraphIO.saveSchemaToFile("CommentTestOutput.tg", CommentTestSchema
+					.instance());
 		} catch (GraphIOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

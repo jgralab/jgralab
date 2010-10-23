@@ -23,7 +23,6 @@
  */
 package de.uni_koblenz.jgralabtest.trans;
 
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -66,8 +65,7 @@ public class Test {
 		System.out.println(_testList.equals(compareList));
 
 		MotorwayMapSchema schema = MotorwayMapSchema.instance();
-		motorwayMap = schema
-				.createMotorwayMapWithTransactionSupport();
+		motorwayMap = schema.createMotorwayMapWithTransactionSupport();
 		motorwayMap.newTransaction();
 		motorwayMap.createCity();
 		JGraLabSet<String> set = motorwayMap.createSet();

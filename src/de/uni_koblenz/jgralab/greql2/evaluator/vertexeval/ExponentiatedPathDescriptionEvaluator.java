@@ -96,8 +96,8 @@ public class ExponentiatedPathDescriptionEvaluator extends
 			throw new EvaluateException(
 					"Exponent of ExponentiatedPathDescription is not convertable to integer value");
 		}
-		return new JValueImpl(NFA.createExponentiatedPathDescriptionNFA(pathEval
-				.getNFA(), exponent));
+		return new JValueImpl(NFA.createExponentiatedPathDescriptionNFA(
+				pathEval.getNFA(), exponent));
 	}
 
 	@Override

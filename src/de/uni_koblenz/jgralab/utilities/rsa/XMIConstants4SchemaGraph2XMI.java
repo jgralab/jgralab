@@ -26,8 +26,8 @@ package de.uni_koblenz.jgralab.utilities.rsa;
 /**
  * This class contains all constants used by {@link SchemaGraph2XMI}. If a
  * constant was already defined in
- * {@link de.uni_koblenz.jgralab.utilities.rsa.XMIConstants}, it is referred
- * to it.
+ * {@link de.uni_koblenz.jgralab.utilities.rsa.XMIConstants}, it is referred to
+ * it.
  * 
  * @author ist@uni-koblenz.de
  */

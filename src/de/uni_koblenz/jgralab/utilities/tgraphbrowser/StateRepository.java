@@ -104,14 +104,18 @@ public class StateRepository {
 	 */
 	private final File workspace;
 
+	private final RequestThread currentThread;
+
 	/**
 	 * Creates a new StateRepository. It initializes sessions and freeSessionId
 	 * it it isn't done yet.
 	 * 
 	 * @param path
+	 * @param requestThread
 	 */
-	public StateRepository(File path) {
+	public StateRepository(File path, RequestThread requestThread) {
 		workspace = path;
+		currentThread = requestThread;
 	}
 
 	/**
@@ -304,7 +308,7 @@ public class StateRepository {
 					} else {
 						new TwoDVisualizer().visualizeElements(code, state,
 								sessionId, workspace.toString(), element,
-								showAttributes, pathLength);
+								showAttributes, pathLength, currentThread);
 					}
 				}
 			}
@@ -371,7 +375,8 @@ public class StateRepository {
 			}
 		} else {
 			new TwoDVisualizer().visualizeElements(code, state, sessionId,
-					workspace.toString(), elements, showAttributes, pathLength);
+					workspace.toString(), elements, showAttributes, pathLength,
+					currentThread);
 		}
 	}
 
@@ -395,7 +400,7 @@ public class StateRepository {
 			TwoDVisualizer tv = new TwoDVisualizer();
 			tv.visualizeElements(code, state, sessionId, workspace.toString(),
 					state.navigationHistory.get(currentIndex), showAttributes,
-					pathLength);
+					pathLength, currentThread);
 			state.lastAccess = System.currentTimeMillis();
 			code.append("timestamp = ").append(state.lastAccess).append(";\n");
 		}
@@ -433,7 +438,7 @@ public class StateRepository {
 			}
 			new TwoDVisualizer().visualizeElements(code, state, sessionId,
 					workspace.toString(), currentElement, showAttributes,
-					pathLength);
+					pathLength, currentThread);
 			addToBreadcrumbBar(code, state, currentElement, true);
 			state.lastAccess = System.currentTimeMillis();
 			code.append("timestamp = ").append(state.lastAccess).append(";\n");
@@ -565,11 +570,13 @@ public class StateRepository {
 				TwoDVisualizer tv = new TwoDVisualizer();
 				tv.visualizeElements(code, state, sessionId, workspace
 						.toString(), state.navigationHistory.get(currentIndex),
-						showAttributes, pathLength);
+						showAttributes, pathLength, currentThread);
 			}
 			state.lastAccess = System.currentTimeMillis();
 			code.append("timestamp = ").append(state.lastAccess).append(";\n");
 		}
+		code.append("resize();\n");
+		code.append("resize();\n");
 		return code.append("}");
 	}
 
@@ -666,7 +673,7 @@ public class StateRepository {
 					new TwoDVisualizer().visualizeElements(code, state, id,
 							workspace.toString(), state.navigationHistory
 									.get(currentIndex), showAttributes,
-							pathLength);
+							pathLength, currentThread);
 				}
 			}
 			state.lastAccess = System.currentTimeMillis();
@@ -765,7 +772,7 @@ public class StateRepository {
 			} else {
 				new TwoDVisualizer().visualizeElements(code, state, id,
 						workspace.toString(), currentElement, showAttributes,
-						pathLength);
+						pathLength, currentThread);
 			}
 			addToBreadcrumbBar(code, state, null, false);
 			state.lastAccess = System.currentTimeMillis();
@@ -1253,7 +1260,7 @@ public class StateRepository {
 		code.append("var optText;\n");
 		createOptionForGraphs(code, workspace);
 		code.append("findPositionOf(\"").append(
-				state.graphIdentifier.toString().replace("\\", "/")).append(
+				state.getGraphWrapper().graphPath.replace("\\", "/")).append(
 				"\");\n");
 		// set the shown one as selected
 		code

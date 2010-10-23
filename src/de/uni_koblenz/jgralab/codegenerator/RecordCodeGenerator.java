@@ -68,10 +68,10 @@ public class RecordCodeGenerator extends CodeGenerator {
 		code.add(createGenericGetter());
 		code.add(createVariableParametersSetter());
 		code.add(createMapSetter());
-	//	code.add(createVariableParametersConstructor());
+		// code.add(createVariableParametersConstructor());
 		code.add(createDefaultConstructor());
 		code.add(createFieldConstructor());
-	//	code.add(createMapConstructor());
+		// code.add(createMapConstructor());
 		code.add(createToStringMethod());
 		code.add(createReadComponentsMethod());
 		code.add(createWriteComponentsMethod());
@@ -107,13 +107,13 @@ public class RecordCodeGenerator extends CodeGenerator {
 		return code;
 	}
 
-	
 	private CodeBlock createFieldConstructor() {
 		CodeList code = new CodeList();
 		if (currentCycle.isStdOrSaveMemOrTransImpl()) {
 			StringBuilder sb = new StringBuilder();
 			CodeSnippet header = null;
-			header = new CodeSnippet(true, "protected #simpleImplClassName#(Graph g, #fields#) {");
+			header = new CodeSnippet(true,
+					"protected #simpleImplClassName#(Graph g, #fields#) {");
 
 			code.addNoIndent(header);
 			if (currentCycle.isTransImpl()) {
@@ -126,7 +126,9 @@ public class RecordCodeGenerator extends CodeGenerator {
 			for (RecordComponent rdc : recordDomain.getComponents()) {
 				sb.append(delim);
 				delim = ", ";
-				sb.append(rdc.getDomain().getJavaAttributeImplementationTypeName(schemaRootPackageName));
+				sb.append(rdc.getDomain()
+						.getJavaAttributeImplementationTypeName(
+								schemaRootPackageName));
 				sb.append(" _");
 				sb.append(rdc.getName());
 
@@ -146,10 +148,9 @@ public class RecordCodeGenerator extends CodeGenerator {
 		}
 		return code;
 	}
-	
-	
+
 	/**
-	 *
+	 * 
 	 * 
 	 * @param createClass
 	 * @return
@@ -197,7 +198,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 
 		return code;
 	}
-	
+
 	/**
 	 * 
 	 * @param createClass
@@ -244,7 +245,8 @@ public class RecordCodeGenerator extends CodeGenerator {
 			code.add(new CodeSnippet(
 					"if(!(o instanceof #simpleImplClassName#))",
 					"\treturn false;"));
-			code.add(new CodeSnippet(
+			code
+					.add(new CodeSnippet(
 							"#simpleImplClassName# record = (#simpleImplClassName#) o;"));
 		}
 
@@ -317,7 +319,8 @@ public class RecordCodeGenerator extends CodeGenerator {
 	private CodeBlock createGetGraphMethod() {
 		CodeList code = new CodeList();
 		if (currentCycle.isTransImpl()) {
-			code.addNoIndent(new CodeSnippet(true,
+			code
+					.addNoIndent(new CodeSnippet(true,
 							"public Graph getGraph() {"));
 			code.add(new CodeSnippet("return #theGraph#;"));
 			code.addNoIndent(new CodeSnippet("}"));
@@ -355,7 +358,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 	@Override
 	protected CodeBlock createHeader() {
 		CodeSnippet code = null;
-		if (currentCycle.isStdOrSaveMemOrTransImpl()){
+		if (currentCycle.isStdOrSaveMemOrTransImpl()) {
 			addImports("de.uni_koblenz.jgralab.NoSuchAttributeException");
 		}
 		switch (currentCycle) {
@@ -371,7 +374,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 			code = new CodeSnippet(true,
 					"public class #simpleImplClassName# extends #simpleClassName# {");
 			// only needed in std/savemem when composite domains are used.
-			if (hasCompositeRecordComponent()){
+			if (hasCompositeRecordComponent()) {
 				code.add("\tprivate Graph #theGraph#;");
 			}
 			break;
@@ -515,7 +518,6 @@ public class RecordCodeGenerator extends CodeGenerator {
 		return code;
 	}
 
-	
 	private CodeBlock createMapSetter() {
 		CodeList code = new CodeList();
 		if (currentCycle.isStdOrSaveMemOrTransImpl()) {
@@ -530,9 +532,9 @@ public class RecordCodeGenerator extends CodeGenerator {
 				}
 			}
 
-			code.addNoIndent(new CodeSnippet(false,"@Override"));
-			code.addNoIndent(new CodeSnippet(
-							false,
+			code.addNoIndent(new CodeSnippet(false, "@Override"));
+			code
+					.addNoIndent(new CodeSnippet(false,
 							"public void setComponentValues(java.util.Map<String, Object> fields) {"));
 
 			for (RecordComponent rdc : recordDomain.getComponents()) {
@@ -569,24 +571,18 @@ public class RecordCodeGenerator extends CodeGenerator {
 				}
 			}
 
-			code.addNoIndent(new CodeSnippet(false,"@Override"));
-			code.addNoIndent(new CodeSnippet(
-							false,
-							"public void setComponent(String name, Object value) {"));
+			code.addNoIndent(new CodeSnippet(false, "@Override"));
+			code.addNoIndent(new CodeSnippet(false,
+					"public void setComponent(String name, Object value) {"));
 
 			for (RecordComponent rdc : recordDomain.getComponents()) {
 				CodeBlock assign = null;
 				if (currentCycle.isTransImpl()) {
-					assign = new CodeSnippet(
-							"if (name.equals(\"#name#\")) {",
-							"\tset_#name#((#cname#)value);",
-							"\treturn;",
-							"}");
+					assign = new CodeSnippet("if (name.equals(\"#name#\")) {",
+							"\tset_#name#((#cname#)value);", "\treturn;", "}");
 				} else {
-					assign = new CodeSnippet(
-							"if (name.equals(\"#name#\")) {",
-							"\tthis._#name# = (#cname#)value;",
-							"\treturn;",
+					assign = new CodeSnippet("if (name.equals(\"#name#\")) {",
+							"\tthis._#name# = (#cname#)value;", "\treturn;",
 							"}");
 				}
 
@@ -595,60 +591,57 @@ public class RecordCodeGenerator extends CodeGenerator {
 						schemaRootPackageName));
 				code.add(assign);
 			}
-			code.add(new CodeSnippet(
-					"throw new NoSuchAttributeException(\"#rcname# doesn't contain an attribute \" + name);"));
+			code
+					.add(new CodeSnippet(
+							"throw new NoSuchAttributeException(\"#rcname# doesn't contain an attribute \" + name);"));
 			code.addNoIndent(new CodeSnippet("}"));
 			code.setVariable("rcname", recordDomain.getQualifiedName());
 		}
 		return code;
 	}
-	
-	
+
 	private CodeBlock createGenericGetter() {
 		CodeList code = new CodeList();
 		if (currentCycle.isStdOrSaveMemOrTransImpl()) {
-			code.addNoIndent(new CodeSnippet(false,"@Override"));
-			code.addNoIndent(new CodeSnippet(
-							false,
-							"public Object getComponent(String name) {"));
+			code.addNoIndent(new CodeSnippet(false, "@Override"));
+			code.addNoIndent(new CodeSnippet(false,
+					"public Object getComponent(String name) {"));
 
 			for (RecordComponent rdc : recordDomain.getComponents()) {
 				CodeBlock assign = null;
 				if (currentCycle.isTransImpl()) {
-					assign = new CodeSnippet(
-							"if (name.equals(\"#name#\")) {",
-							"\treturn #isOrGet#_#name#();",
-							"}");
+					assign = new CodeSnippet("if (name.equals(\"#name#\")) {",
+							"\treturn #isOrGet#_#name#();", "}");
 				} else {
-					assign = new CodeSnippet(
-							"if (name.equals(\"#name#\")) {",
-							"\treturn this._#name#;",
-							"}");
+					assign = new CodeSnippet("if (name.equals(\"#name#\")) {",
+							"\treturn this._#name#;", "}");
 				}
 
 				assign.setVariable("name", rdc.getName());
 				assign.setVariable("cname", rdc.getDomain().getJavaClassName(
 						schemaRootPackageName));
-				assign.setVariable("isOrGet", rdc.getDomain() == rdc.getDomain().getSchema().getBooleanDomain() ? "is" : "get");
+				assign.setVariable("isOrGet", rdc.getDomain() == rdc
+						.getDomain().getSchema().getBooleanDomain() ? "is"
+						: "get");
 				code.add(assign);
 			}
-			code.add(new CodeSnippet(
-					"throw new NoSuchAttributeException(\"#rcname# doesn't contain an attribute \" + name);"));
+			code
+					.add(new CodeSnippet(
+							"throw new NoSuchAttributeException(\"#rcname# doesn't contain an attribute \" + name);"));
 			code.addNoIndent(new CodeSnippet("}"));
 			code.setVariable("rcname", recordDomain.getQualifiedName());
 		}
 		return code;
 	}
-	
-	
+
 	private CodeBlock createReadComponentsMethod() {
 		CodeList code = new CodeList();
 		// abstract class (or better use interface?)
 		if (currentCycle.isStdOrSaveMemOrTransImpl()) {
 			addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException");
 			code.addNoIndent(new CodeSnippet("@Override"));
-			code.addNoIndent(new CodeSnippet(
-							true,
+			code
+					.addNoIndent(new CodeSnippet(true,
 							"public void readComponentValues(GraphIO io) throws GraphIOException {"));
 
 			code.add(new CodeSnippet("io.match(\"(\");"));
@@ -674,7 +667,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 		}
 		return code;
 	}
-	
+
 	private CodeBlock createWriteComponentsMethod() {
 		CodeList code = new CodeList();
 		if (currentCycle.isAbstract()) {
@@ -714,9 +707,11 @@ public class RecordCodeGenerator extends CodeGenerator {
 					s.setVariable("type", dom
 							.getVersionedClass(schemaRootPackageName));
 				} else {
-					s.setVariable(
+					s
+							.setVariable(
 									"type",
-									dom.getJavaAttributeImplementationTypeName(schemaRootPackageName));
+									dom
+											.getJavaAttributeImplementationTypeName(schemaRootPackageName));
 				}
 				code.addNoIndent(s);
 			}
@@ -766,10 +761,12 @@ public class RecordCodeGenerator extends CodeGenerator {
 	private CodeBlock createCloneMethod() {
 		CodeList code = new CodeList();
 		if (currentCycle.isAbstract()) {
-		    code.addNoIndent(new CodeSnippet("public abstract #simpleClassName# clone();"));
+			code.addNoIndent(new CodeSnippet(
+					"public abstract #simpleClassName# clone();"));
 		} else {
 			code.addNoIndent(new CodeSnippet(true, "@Override"));
-			code.addNoIndent(new CodeSnippet("public #simpleImplClassName# clone() {"));
+			code.addNoIndent(new CodeSnippet(
+					"public #simpleImplClassName# clone() {"));
 			if (currentCycle.isStdImpl() || currentCycle.isSaveMemImpl()) {
 				StringBuffer arguments = new StringBuffer("#theGraph#");
 				for (RecordComponent rdc : recordDomain.getComponents()) {

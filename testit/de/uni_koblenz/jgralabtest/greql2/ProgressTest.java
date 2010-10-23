@@ -28,7 +28,7 @@ import org.junit.Test;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.parser.ManualGreqlParser;
+import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 
 public class ProgressTest extends GenericTests {
@@ -48,7 +48,7 @@ public class ProgressTest extends GenericTests {
 			queryString.append(part2);
 		}
 		System.out.println("QueryString is : " + queryString);
-		Graph g = ManualGreqlParser.parse(queryString.toString());
+		Graph g = GreqlParser.parse(queryString.toString());
 		printTestFunctionFooter("GenerateTestGraph");
 		return g;
 	}

@@ -27,6 +27,7 @@ package de.uni_koblenz.jgralab.impl;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 
 /**
@@ -87,12 +88,12 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 		IncidenceImpl i = getNextIncidence();
 		switch (orientation) {
 		case IN:
-			while (i != null && i.isNormal()) {
+			while ((i != null) && i.isNormal()) {
 				i = i.getNextIncidence();
 			}
 			return i;
 		case OUT:
-			while (i != null && !i.isNormal()) {
+			while ((i != null) && !i.isNormal()) {
 				i = i.getNextIncidence();
 			}
 			return i;
@@ -101,6 +102,31 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 		default:
 			throw new RuntimeException("FIXME!");
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Edge#getNextEdge(boolean,
+	 * de.uni_koblenz.jgralab.schema.AggregationKind[])
+	 */
+	@Override
+	public Edge getNextEdge(boolean thisIncidence, AggregationKind... kinds) {
+		assert isValid();
+		IncidenceImpl i = getNextIncidence();
+		if (kinds.length == 0) {
+			return i;
+		}
+		while (i != null) {
+			for (AggregationKind element : kinds) {
+				if ((thisIncidence ? i.getThisSemantics() : i
+						.getThatSemantics()) == element) {
+					return i;
+				}
+			}
+			i = i.getNextIncidence();
+		}
+		return null;
 	}
 
 	/*
@@ -249,7 +275,7 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 			return false;
 		}
 		IncidenceImpl i = getNextIncidence();
-		while (i != null && i != e) {
+		while ((i != null) && (i != e)) {
 			i = i.getNextIncidence();
 		}
 		return i != null;
@@ -272,7 +298,7 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 			return false;
 		}
 		IncidenceImpl i = getPrevIncidence();
-		while (i != null && i != e) {
+		while ((i != null) && (i != e)) {
 			i = i.getPrevIncidence();
 		}
 		return i != null;

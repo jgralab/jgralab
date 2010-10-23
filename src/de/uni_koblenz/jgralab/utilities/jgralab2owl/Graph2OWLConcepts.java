@@ -259,8 +259,7 @@ class Graph2OWLConcepts {
 		for (Vertex v : g.vertices()) {
 			vElemId = HelperMethods.firstToLowerCase(v
 					.getAttributedElementClass().getQualifiedName())
-					+ "_"
-					+ gId + "_" + v.getId();
+					+ "_" + gId + "_" + v.getId();
 			writeIndividualObjectPropEmptyElement(graphContainsVertexPropName,
 					"#" + vElemId);
 		}
@@ -281,8 +280,7 @@ class Graph2OWLConcepts {
 		for (Vertex v : g.vertices()) {
 			vElemId = HelperMethods.firstToLowerCase(v
 					.getAttributedElementClass().getQualifiedName())
-					+ "_"
-					+ gId + "_" + v.getId();
+					+ "_" + gId + "_" + v.getId();
 
 			convertVertex(hashedGId, v, vElemId, pf);
 		}
@@ -436,9 +434,9 @@ class Graph2OWLConcepts {
 	 * representing the edge's {@code AttributedElementClass}. {@code eElemId}
 	 * specifies the individual's id. The individual contains properties
 	 * relating it to its attributes, its containing graph, the role names on
-	 * its "from" and "to" sides and, if {@code e} constitutes an
-	 * {@code Aggregation} or {@code Composition}, to the {@code Vertex} forming
-	 * the aggregate.<br>
+	 * its "from" and "to" sides and, if {@code e} constitutes an {@code
+	 * Aggregation} or {@code Composition}, to the {@code Vertex} forming the
+	 * aggregate.<br>
 	 * <br>
 	 * XML code written if: <br>
 	 * 
@@ -494,12 +492,13 @@ class Graph2OWLConcepts {
 		String fromElemId = HelperMethods.firstToLowerCase(fromVertex
 				.getAttributedElementClass().getQualifiedName())
 				+ "_"
-				+ fromVertex.getGraph().getId() + "_" + +fromVertex.getId();
+				+ fromVertex.getGraph().getId()
+				+ "_"
+				+ +fromVertex.getId();
 
 		String toElemId = HelperMethods.firstToLowerCase(toVertex
 				.getAttributedElementClass().getQualifiedName())
-				+ "_"
-				+ toVertex.getGraph().getId() + "_" + toVertex.getId();
+				+ "_" + toVertex.getGraph().getId() + "_" + toVertex.getId();
 
 		// convert attributes of e
 
@@ -568,8 +567,7 @@ class Graph2OWLConcepts {
 		} else {
 			attrPropertyName = HelperMethods.firstToLowerCase(owningAec
 					.getQualifiedName())
-					+ "Has"
-					+ HelperMethods.firstToUpperCase(attrName);
+					+ "Has" + HelperMethods.firstToUpperCase(attrName);
 		}
 
 		Domain dom = attr.getDomain();
@@ -865,22 +863,20 @@ class Graph2OWLConcepts {
 
 			// if the component is of composite type
 			if (component.getDomain().isComposite()
-					&& !component.getDomain().getTGTypeName(null)
-							.equals("Object")) {
-				writeAttributeIndividualObjectPropElement(
-						HelperMethods.firstToLowerCase(dom.getQualifiedName())
-								+ "Has"
-								+ HelperMethods.firstToUpperCase(component
-										.getName()), componentValue,
-						component.getDomain());
+					&& !component.getDomain().getTGTypeName(null).equals(
+							"Object")) {
+				writeAttributeIndividualObjectPropElement(HelperMethods
+						.firstToLowerCase(dom.getQualifiedName())
+						+ "Has"
+						+ HelperMethods.firstToUpperCase(component.getName()),
+						componentValue, component.getDomain());
 				// if the component is of basic type
 			} else {
-				writeAttributeIndividualDatatypePropElement(
-						HelperMethods.firstToLowerCase(dom.getQualifiedName())
-								+ "Has"
-								+ HelperMethods.firstToUpperCase(component
-										.getName()), componentValue,
-						component.getDomain());
+				writeAttributeIndividualDatatypePropElement(HelperMethods
+						.firstToLowerCase(dom.getQualifiedName())
+						+ "Has"
+						+ HelperMethods.firstToUpperCase(component.getName()),
+						componentValue, component.getDomain());
 			}
 		}
 
@@ -925,11 +921,13 @@ class Graph2OWLConcepts {
 						JGraLab2OWL.xsdNS + "string");
 				writer.writeCharacters((String) value);
 			} else {
-				writer.writeAttribute(
-						JGraLab2OWL.rdfNS,
-						"datatype",
-						JGraLab2OWL.xsdNS
-								+ dom.getJavaAttributeImplementationTypeName(""));
+				writer
+						.writeAttribute(
+								JGraLab2OWL.rdfNS,
+								"datatype",
+								JGraLab2OWL.xsdNS
+										+ dom
+												.getJavaAttributeImplementationTypeName(""));
 				writer.writeCharacters(value.toString());
 			}
 

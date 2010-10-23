@@ -27,7 +27,6 @@ package de.uni_koblenz.jgralab.greql2.jvalue;
 import java.util.Iterator;
 import java.util.logging.Logger;
 
-
 /**
  * A JValueTable is the Java "replacement" for CvTable (but in fact it has not
  * much common with it) It's based on bag of Tuples with an additional header

@@ -77,8 +77,9 @@ public class EdgesConnected extends Incidences {
 	}
 
 	@Override
-	public JValue evaluate(Graph graph, AbstractGraphMarker<AttributedElement> subgraph,
-			JValue[] arguments) throws EvaluateException {
+	public JValue evaluate(Graph graph,
+			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
+			throws EvaluateException {
 		return evaluate(subgraph, arguments, EdgeDirection.INOUT);
 	}
 

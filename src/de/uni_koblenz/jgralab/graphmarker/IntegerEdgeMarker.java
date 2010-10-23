@@ -64,14 +64,14 @@ public class IntegerEdgeMarker extends IntegerGraphMarker<Edge> {
 	public int mark(Edge edge, int value) {
 		return super.mark(edge.getNormalEdge(), value);
 	}
-	
+
 	@Override
-	public boolean isMarked(Edge edge){
+	public boolean isMarked(Edge edge) {
 		return super.isMarked(edge.getNormalEdge());
 	}
-	
+
 	@Override
-	public int getMark(Edge edge){
+	public int getMark(Edge edge) {
 		return super.getMark(edge.getNormalEdge());
 	}
 

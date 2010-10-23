@@ -35,12 +35,12 @@ import de.uni_koblenz.jgralab.JGraLabCloneable;
  * @author Jose Monte(monte@uni-koblenz)
  */
 public interface JGraLabTransactionCloneable extends JGraLabCloneable {
-	
+
 	/**
 	 * 
 	 * @return a reference to the graph the object belongs to
 	 */
 	public Graph getGraph();
-	
+
 	public void setName(String name);
 }

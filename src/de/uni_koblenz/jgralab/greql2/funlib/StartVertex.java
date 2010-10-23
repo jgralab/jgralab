@@ -70,13 +70,15 @@ public class StartVertex extends Greql2Function {
 
 		description = "Returns the start vertex of the given edge or path.";
 
-		Category[] c = { Category.PATHS_AND_PATHSYSTEMS_AND_SLICES, Category.GRAPH };
+		Category[] c = { Category.PATHS_AND_PATHSYSTEMS_AND_SLICES,
+				Category.GRAPH };
 		categories = c;
 	}
 
 	@Override
-	public JValue evaluate(Graph graph, AbstractGraphMarker<AttributedElement> subgraph,
-			JValue[] arguments) throws EvaluateException {
+	public JValue evaluate(Graph graph,
+			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
+			throws EvaluateException {
 		switch (checkArguments(arguments)) {
 		case 0:
 			return new JValueImpl(arguments[0].toPath().getStartVertex());

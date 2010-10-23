@@ -159,6 +159,7 @@ public interface Transaction {
 	 * @throws InvalidSavepointException
 	 *             if <code>savepoint</code>.{@link Savepoint#getTransaction()
 	 *             getTransaction() != <code>this</code>
+
 	 */
 	public void restoreSavepoint(Savepoint savepoint)
 			throws InvalidSavepointException;

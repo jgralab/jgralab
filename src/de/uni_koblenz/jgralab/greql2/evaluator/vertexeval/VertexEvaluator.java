@@ -246,15 +246,15 @@ public abstract class VertexEvaluator {
 					// The typeId restricts vertex classes
 					for (VertexClass vc : greqlEvaluator.getDatagraph()
 							.getSchema().getVertexClassesInTopologicalOrder()) {
-						evaluationLogger.logSelectivity(getLoggingName(),
-								col.acceptsType(vc));
+						evaluationLogger.logSelectivity(getLoggingName(), col
+								.acceptsType(vc));
 					}
 				} else {
 					// The typeId restricts edge classes
 					for (EdgeClass ec : greqlEvaluator.getDatagraph()
 							.getSchema().getEdgeClassesInTopologicalOrder()) {
-						evaluationLogger.logSelectivity(getLoggingName(),
-								col.acceptsType(ec));
+						evaluationLogger.logSelectivity(getLoggingName(), col
+								.acceptsType(ec));
 					}
 				}
 			}
@@ -573,7 +573,8 @@ public abstract class VertexEvaluator {
 						.get_offset())
 						&& (availablePosition.get_offset()
 								+ availablePosition.get_length() >= currentPosition
-								.get_offset() + currentPosition.get_length())) {
+								.get_offset()
+								+ currentPosition.get_length())) {
 					accepted = true;
 					break;
 				}

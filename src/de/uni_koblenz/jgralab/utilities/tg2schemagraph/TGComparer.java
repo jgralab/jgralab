@@ -34,7 +34,7 @@ public class TGComparer {
 
 	public static boolean compareTGFiles(String filename1, String filename2) {
 
-		return (new TGComparer()).compare(filename1, filename2);
+		return new TGComparer().compare(filename1, filename2);
 	}
 
 	public TGComparer() {
@@ -91,7 +91,7 @@ public class TGComparer {
 		String left, right;
 
 		int i;
-		for (i = 0; (i < linesLeft.size()) && (i < linesRight.size()); i++) {
+		for (i = 0; i < linesLeft.size() && i < linesRight.size(); i++) {
 			left = linesLeft.get(i);
 			right = linesRight.get(i);
 
@@ -100,7 +100,7 @@ public class TGComparer {
 
 			boolean equal = leftSplit.length == rightSplit.length;
 
-			int min = (leftSplit.length < rightSplit.length) ? leftSplit.length
+			int min = leftSplit.length < rightSplit.length ? leftSplit.length
 					: rightSplit.length;
 			for (int j = 0; j < min; j++) {
 				String leftTemp = leftSplit[j];
@@ -196,13 +196,21 @@ public class TGComparer {
 	}
 
 	private ArrayList<String> readIn(String filename) throws IOException {
-		BufferedReader br = new BufferedReader(new FileReader(filename));
-		ArrayList<String> stringList = new ArrayList<String>();
+		BufferedReader br = null;
+		ArrayList<String> stringList = null;
+		try {
+			br = new BufferedReader(new FileReader(filename));
 
-		while (br.ready()) {
-			stringList.add(br.readLine());
+			stringList = new ArrayList<String>();
+
+			while (br.ready()) {
+				stringList.add(br.readLine());
+			}
+		} finally {
+			if (br != null) {
+				br.close();
+			}
 		}
-		br.close();
 		return stringList;
 	}
 
