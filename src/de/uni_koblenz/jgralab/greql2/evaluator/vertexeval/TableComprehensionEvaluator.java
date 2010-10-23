@@ -62,40 +62,39 @@ public class TableComprehensionEvaluator extends VertexEvaluator {
 	 * The TableComprehension-Vertex this evaluator evaluates
 	 */
 	private TableComprehension vertex;
-	
+
 	private VariableDeclarationLayer declarationLayer;
-	
+
 	private VertexEvaluator columnHeaderEval = null;
-	
+
 	private VertexEvaluator rowHeaderEval = null;
-	
+
 	private VertexEvaluator resultDefEval = null;
-	
+
 	private boolean initialized = false;
-	
+
 	private void initialize() {
 		Declaration d = (Declaration) vertex.getFirstIsCompDeclOf(
 				EdgeDirection.IN).getAlpha();
 		DeclarationEvaluator declEval = (DeclarationEvaluator) greqlEvaluator
 				.getVertexEvaluatorGraphMarker().getMark(d);
-		declarationLayer = (VariableDeclarationLayer) declEval.getResult(subgraph).toObject();
+		declarationLayer = (VariableDeclarationLayer) declEval.getResult(
+				subgraph).toObject();
 
 		Expression columnHeader = (Expression) vertex
 				.getFirstIsColumnHeaderExprOf(EdgeDirection.IN).getAlpha();
-		columnHeaderEval = greqlEvaluator
-				.getVertexEvaluatorGraphMarker().getMark(columnHeader);
+		columnHeaderEval = greqlEvaluator.getVertexEvaluatorGraphMarker()
+				.getMark(columnHeader);
 		Expression rowHeader = (Expression) vertex.getFirstIsRowHeaderExprOf(
 				EdgeDirection.IN).getAlpha();
-		rowHeaderEval = greqlEvaluator
-				.getVertexEvaluatorGraphMarker().getMark(rowHeader);
+		rowHeaderEval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(
+				rowHeader);
 		Expression resultDef = (Expression) vertex.getFirstIsCompResultDefOf(
 				EdgeDirection.IN).getAlpha();
-		resultDefEval = greqlEvaluator
-				.getVertexEvaluatorGraphMarker().getMark(resultDef);
+		resultDefEval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(
+				resultDef);
 		initialized = true;
 	}
-	
-	
 
 	/**
 	 * returns the vertex this VertexEvaluator evaluates

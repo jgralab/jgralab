@@ -40,7 +40,6 @@ public abstract class VertexImpl extends
 	private IncidenceImpl firstIncidence;
 	private IncidenceImpl lastIncidence;
 
-	
 	/**
 	 * holds the version of the vertex structure, for every modification of the
 	 * structure (e.g. adding or deleting an incident edge or changing the

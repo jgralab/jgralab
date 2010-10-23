@@ -69,8 +69,9 @@ public class Nequals extends CompareFunction {
 	 * checks if the two function parameters are semanticly identical
 	 */
 	@Override
-	public JValue evaluate(Graph graph, AbstractGraphMarker<AttributedElement> subgraph,
-			JValue[] arguments) throws EvaluateException {
+	public JValue evaluate(Graph graph,
+			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
+			throws EvaluateException {
 		return evaluate(arguments, CompareOperator.NOT_EQUAL);
 	}
 

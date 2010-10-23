@@ -138,7 +138,7 @@ public class JValueImpl implements JValue {
 		}
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings( { "rawtypes", "unchecked" })
 	@Override
 	public int compareTo(JValue o) {
 		if (o.getType() == null) {
@@ -1140,8 +1140,8 @@ public class JValueImpl implements JValue {
 			Map<? extends Object, ? extends Object> m = (Map<?, ?>) o;
 			for (Map.Entry<? extends Object, ? extends Object> entry : m
 					.entrySet()) {
-				retVal.put(JValueImpl.fromObject(entry.getKey()),
-						JValueImpl.fromObject(entry.getValue()));
+				retVal.put(JValueImpl.fromObject(entry.getKey()), JValueImpl
+						.fromObject(entry.getValue()));
 			}
 			return retVal;
 		}
@@ -1189,6 +1189,12 @@ public class JValueImpl implements JValue {
 
 	@Override
 	public void storeAsXML(String filename) throws JValueVisitorException {
-		new JValueXMLOutputVisitor(this, filename);
+		new JValueXMLOutputVisitor(this, filename, null);
+	}
+
+	@Override
+	public void storeAsXML(String filename, Graph graph)
+			throws JValueVisitorException {
+		new JValueXMLOutputVisitor(this, filename, graph);
 	}
 }

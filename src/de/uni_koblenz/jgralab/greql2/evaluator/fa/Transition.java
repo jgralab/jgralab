@@ -113,7 +113,7 @@ public abstract class Transition {
 	 * returns a string which describes the edge
 	 */
 	public abstract String edgeString();
-	
+
 	/** a pretty-printed string for this tranistion */
 	public abstract String prettyPrint();
 
@@ -167,7 +167,8 @@ public abstract class Transition {
 	 * and Edge and if both are part of the given subgraph
 	 */
 	public abstract boolean accepts(Vertex v, Edge e,
-			AbstractGraphMarker<AttributedElement> subgraph) throws EvaluateException;
+			AbstractGraphMarker<AttributedElement> subgraph)
+			throws EvaluateException;
 
 	/**
 	 * returns the vertex of the datagraph which can be visited after this

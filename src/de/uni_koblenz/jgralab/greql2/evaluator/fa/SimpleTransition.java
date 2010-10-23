@@ -235,7 +235,8 @@ public class SimpleTransition extends Transition {
 	 * greql2.evaluator.SubgraphTempAttribute)
 	 */
 	@Override
-	public boolean accepts(Vertex v, Edge e, AbstractGraphMarker<AttributedElement> subgraph)
+	public boolean accepts(Vertex v, Edge e,
+			AbstractGraphMarker<AttributedElement> subgraph)
 			throws EvaluateException {
 		if (e == null) {
 			return false;
@@ -299,7 +300,6 @@ public class SimpleTransition extends Transition {
 		return e.getThat();
 	}
 
-	
 	@Override
 	public String prettyPrint() {
 		StringBuilder b = new StringBuilder();
@@ -308,7 +308,7 @@ public class SimpleTransition extends Transition {
 			b.append(delim);
 			b.append(c.getSimpleName());
 			delim = ",";
-		}	
+		}
 		String symbol = "<->";
 		if (validDirection == AllowedEdgeDirection.IN)
 			symbol = "<--";

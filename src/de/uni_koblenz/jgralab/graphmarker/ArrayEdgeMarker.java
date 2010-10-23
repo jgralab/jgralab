@@ -64,14 +64,14 @@ public class ArrayEdgeMarker<O> extends ArrayGraphMarker<Edge, O> {
 	public O mark(Edge edge, O value) {
 		return super.mark(edge.getNormalEdge(), value);
 	}
-	
+
 	@Override
-	public boolean isMarked(Edge edge){
+	public boolean isMarked(Edge edge) {
 		return super.isMarked(edge.getNormalEdge());
 	}
-	
+
 	@Override
-	public O getMark(Edge edge){
+	public O getMark(Edge edge) {
 		return super.getMark(edge.getNormalEdge());
 	}
 

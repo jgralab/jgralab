@@ -103,7 +103,7 @@ public class GreqlServer extends Thread {
 	public void run() {
 		try {
 			String line = null;
-			while (((line = in.readLine()) != null) && !isInterrupted()) {
+			while ((line = in.readLine()) != null && !isInterrupted()) {
 				if (line.startsWith("g:")) {
 					graphFile = line.substring(2);
 					Graph g = dataGraphs.get(graphFile);
@@ -129,6 +129,8 @@ public class GreqlServer extends Thread {
 				out.flush();
 			}
 			println("GreqlServer says goodbye!", PrintTarget.BOTH, true);
+			// FIXME these close statements should also be in the finally block.
+			// It must be guaranteed, that they will be called.
 			in.close();
 			socket.close();
 		} catch (Exception e) {
@@ -219,7 +221,8 @@ public class GreqlServer extends Thread {
 				}
 			} else if (result.isMap()) {
 				JValueMap map = result.toJValueMap();
-				println("Result map contains " + map.size() + " map entries.\n",
+				println(
+						"Result map contains " + map.size() + " map entries.\n",
 						PrintTarget.CLIENT, true);
 				for (Entry<JValue, JValue> e : map.entrySet()) {
 					println(e.getKey() + " --> " + e.getValue(),

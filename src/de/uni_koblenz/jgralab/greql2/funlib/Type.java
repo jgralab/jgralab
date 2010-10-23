@@ -74,8 +74,9 @@ public class Type extends Greql2Function {
 	}
 
 	@Override
-	public JValue evaluate(Graph graph, AbstractGraphMarker<AttributedElement> subgraph,
-			JValue[] arguments) throws EvaluateException {
+	public JValue evaluate(Graph graph,
+			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
+			throws EvaluateException {
 		switch (checkArguments(arguments)) {
 		case 0:
 			return new JValueImpl(arguments[0].toAttributedElement()

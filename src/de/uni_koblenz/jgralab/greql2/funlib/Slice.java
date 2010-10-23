@@ -189,7 +189,8 @@ public class Slice extends Greql2Function {
 	 *             thrown
 	 */
 	private List<Vertex> markVerticesOfSlice(Set<Vertex> sliCritVertices,
-			DFA dfa, AbstractGraphMarker<AttributedElement> subgraph) throws EvaluateException {
+			DFA dfa, AbstractGraphMarker<AttributedElement> subgraph)
+			throws EvaluateException {
 		// GreqlEvaluator.errprintln("Start marking vertices of slice");
 		ArrayList<Vertex> finalVertices = new ArrayList<Vertex>();
 		Queue<PathSystemQueueEntry> queue = new LinkedList<PathSystemQueueEntry>();
@@ -234,12 +235,10 @@ public class Slice extends Greql2Function {
 						 * the queue for further processing - the parent edge
 						 * doesn't matter but only the state
 						 */
-						if (!isMarked(nextVertex, currentTransition
-								.endState)) {
+						if (!isMarked(nextVertex, currentTransition.endState)) {
 							queue.add(new PathSystemQueueEntry(nextVertex,
-									currentTransition.endState,
-									traversedEdge, currentEntry.state,
-									distanceToRoot));
+									currentTransition.endState, traversedEdge,
+									currentEntry.state, distanceToRoot));
 						}
 						/* mark the vertex with all reachability information */
 						markVertex(nextVertex, currentTransition.endState,
@@ -257,8 +256,9 @@ public class Slice extends Greql2Function {
 	 * creates the slice
 	 */
 	@Override
-	public JValue evaluate(Graph graph, AbstractGraphMarker<AttributedElement> subgraph,
-			JValue[] arguments) throws EvaluateException {
+	public JValue evaluate(Graph graph,
+			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
+			throws EvaluateException {
 		Set<Vertex> sliCritVertices = new HashSet<Vertex>();
 		this.graph = graph;
 		DFA dfa;

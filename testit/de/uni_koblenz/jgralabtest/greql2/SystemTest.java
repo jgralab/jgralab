@@ -30,7 +30,7 @@ import org.junit.Test;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.parser.ManualGreqlParser;
+import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
 
 public class SystemTest extends GenericTests {
 
@@ -48,7 +48,7 @@ public class SystemTest extends GenericTests {
 		for (int i = 0; i < count; i++) {
 			queryString.append(part2);
 		}
-		return ManualGreqlParser.parse(queryString.toString());
+		return GreqlParser.parse(queryString.toString());
 	}
 
 	@Test

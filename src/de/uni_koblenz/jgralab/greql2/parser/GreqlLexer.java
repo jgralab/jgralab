@@ -31,7 +31,7 @@ import java.util.Map.Entry;
 
 import de.uni_koblenz.jgralab.greql2.exception.ParsingException;
 
-public class ManualGreqlLexer {
+public class GreqlLexer {
 
 	protected static Map<TokenTypes, String> fixedTokens;
 
@@ -121,7 +121,7 @@ public class ManualGreqlLexer {
 
 	protected int position = 0;
 
-	public ManualGreqlLexer(String source) {
+	public GreqlLexer(String source) {
 		this.query = source;
 		if (query == null) {
 			throw new NullPointerException(
@@ -139,8 +139,8 @@ public class ManualGreqlLexer {
 				|| (c == '[') || (c == ']') || (c == ',') || (c == ' ')
 				|| (c == '\n') || (c == '\t') || (c == '.') || (c == '-')
 				|| (c == '+') || (c == '*') || (c == '/') || (c == '%')
-				|| (c == '=') || (c == '?') || (c == '^')
-				|| (c == '|') || (c == '!') || (c == '@');
+				|| (c == '=') || (c == '?') || (c == '^') || (c == '|')
+				|| (c == '!') || (c == '@');
 	}
 
 	public Token getNextToken() {
@@ -192,8 +192,8 @@ public class ManualGreqlLexer {
 				if ((position >= query.length())
 						|| (query.charAt(position) != separator)) {
 					throw new ParsingException("String started at position "
-							+ start + " but is not closed in query", sb
-							.toString(), start, position - start, query);
+							+ start + " but is not closed in query",
+							sb.toString(), start, position - start, query);
 				}
 				recognizedTokenType = TokenTypes.STRING;
 				recognizedToken = new ComplexToken(recognizedTokenType, start,
@@ -201,7 +201,7 @@ public class ManualGreqlLexer {
 				position++;
 			} else {
 				// identifier and literals
-				StringBuffer nextPossibleToken = new StringBuffer();
+				StringBuilder nextPossibleToken = new StringBuilder();
 				int start = position;
 				while ((query.length() > position)
 						&& (!isSeparator(query.charAt(position)))) {
@@ -279,8 +279,8 @@ public class ManualGreqlLexer {
 			case 'h':
 				type = TokenTypes.HEXLITERAL;
 				try {
-					value = Integer.parseInt(text.substring(0,
-							text.length() - 1), 16);
+					value = Integer.parseInt(
+							text.substring(0, text.length() - 1), 16);
 				} catch (NumberFormatException ex) {
 					throw new ParsingException("Not a valid hex number", text,
 							start, end - start, query);
@@ -294,8 +294,8 @@ public class ManualGreqlLexer {
 				try {
 					String tokenString = text.substring(0, text.length() - 1);
 					System.out.println("TokenString: " + tokenString);
-					return new RealToken(type, start, end - start, Double
-							.parseDouble(tokenString));
+					return new RealToken(type, start, end - start,
+							Double.parseDouble(tokenString));
 				} catch (NumberFormatException ex) {
 					throw new ParsingException("Not a valid float number",
 							text, start, end - start, query);
@@ -341,37 +341,42 @@ public class ManualGreqlLexer {
 						&& (query.charAt(position) != '\n')) {
 					position++;
 				}
-				if ((position < query.length()) && (query.charAt(position) == '\n')) {
+				if ((position < query.length())
+						&& (query.charAt(position) == '\n')) {
 					position++;
 				}
 			}
-			//skip multiline comments 
+			// skip multiline comments
 			if ((position < query.length() - 4)
 					&& (query.substring(position, position + 2).equals("/*"))) {
 				position++;
-				while ((position < query.length()-1)
-						&& (query.substring(position, position + 2).equals("*/"))) {
+				while ((position < query.length() - 1)
+						&& (query.substring(position, position + 2)
+								.equals("*/"))) {
 					position++;
 				}
-				if ((position < query.length()) && (query.substring(position, position + 2).equals("*/"))) {
-					position+=2;
+				if ((position < query.length())
+						&& (query.substring(position, position + 2)
+								.equals("*/"))) {
+					position += 2;
 				}
 			}
-		} while (
-				   ((position < query.length()) && (isWs(query.charAt(position)))) 
-			    || ((position < query.length() - 2) && (query.substring(position, position + 2).equals("//")))
-			    || ((position < query.length() - 4) && (query.substring(position, position + 2).equals("/*")))
-				);
+		} while (((position < query.length()) && (isWs(query.charAt(position))))
+				|| ((position < query.length() - 2) && (query.substring(
+						position, position + 2).equals("//")))
+				|| ((position < query.length() - 4) && (query.substring(
+						position, position + 2).equals("/*"))));
 	}
 
 	public static List<Token> scan(String query) {
 		List<Token> list = new ArrayList<Token>();
-		ManualGreqlLexer lexer = new ManualGreqlLexer(query);
+		GreqlLexer lexer = new GreqlLexer(query);
 		while (lexer.hasNextToken()) {
 			Token nextToken = lexer.getNextToken();
 			list.add(nextToken);
 		}
-		if (list.isEmpty() || (list.get(list.size()-1).type != TokenTypes.EOF)) {
+		if (list.isEmpty()
+				|| (list.get(list.size() - 1).type != TokenTypes.EOF)) {
 			list.add(new SimpleToken(TokenTypes.EOF, lexer.position, 0));
 		}
 		return list;

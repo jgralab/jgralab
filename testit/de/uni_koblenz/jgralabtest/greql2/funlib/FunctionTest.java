@@ -48,7 +48,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueMap;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
-import de.uni_koblenz.jgralab.greql2.parser.ManualGreqlParser;
+import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralabtest.greql2.GenericTests;
 import de.uni_koblenz.jgralabtest.schemas.minimal.Link;
@@ -79,7 +79,7 @@ public class FunctionTest extends GenericTests {
 	@Test
 	public void testGetEdge() throws Exception {
 		String dataGraphQuery = "true"; // should contains only one edge
-		Greql2 dataGraph = ManualGreqlParser.parse(dataGraphQuery);
+		Greql2 dataGraph = GreqlParser.parse(dataGraphQuery);
 		JValue result = evalTestQuery("getEdge", "getEdge(1)", dataGraph);
 		assertEquals(dataGraph.getFirstEdgeInGraph(), result.toEdge());
 	}

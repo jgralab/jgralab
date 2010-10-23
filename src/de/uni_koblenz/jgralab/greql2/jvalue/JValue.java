@@ -421,4 +421,16 @@ public interface JValue extends Comparable<JValue> {
 	 *             if something goes wrong, e.g. the file can not be created
 	 */
 	public void storeAsXML(String filename) throws JValueVisitorException;
+
+	/**
+	 * Stores this JValue as XML file.
+	 * 
+	 * @param filename
+	 *            the name of the file
+	 * @param graph
+	 *            the graph corresponding to this JValue
+	 * @throws JValueVisitorException
+	 *             if something goes wrong, e.g. the file can not be created
+	 */
+	void storeAsXML(String filename, Graph graph) throws JValueVisitorException;
 }

@@ -96,7 +96,7 @@ public class GraphStructureChangedListenerTest extends InstanceTest {
 					.isValid()
 					&& (e.getGraph() == g));
 		}
-		
+
 		@Override
 		public void edgeDeleted(Edge e) {
 			trigger();
@@ -104,7 +104,7 @@ public class GraphStructureChangedListenerTest extends InstanceTest {
 					.isValid()
 					&& (e.getGraph() == g));
 		}
-		
+
 		@Override
 		public void maxVertexCountIncreased(int newValue) {
 			trigger();
@@ -112,7 +112,7 @@ public class GraphStructureChangedListenerTest extends InstanceTest {
 					"The vertex count of the graph does not match the new vertex count",
 					newValue == g.getMaxVCount());
 		}
-		
+
 		@Override
 		public void maxEdgeCountIncreased(int newValue) {
 			trigger();
@@ -180,10 +180,10 @@ public class GraphStructureChangedListenerTest extends InstanceTest {
 	public void testVertexDeleted() throws CommitFailedException {
 		GraphStructureChangedListener listener1 = new TestListenerWithAutoRemove();
 		GraphStructureChangedListener listener2 = new TestListener();
-		
+
 		assertFalse("The trigger has not been resetted", trigger1);
 		assertFalse("The trigger has not been resetted", trigger2);
-		
+
 		createTransaction(g);
 		Node n = g.createNode();
 		commit(g);
@@ -205,12 +205,12 @@ public class GraphStructureChangedListenerTest extends InstanceTest {
 	public void testEdgeAdded() throws CommitFailedException {
 		GraphStructureChangedListener listener1 = new TestListenerWithAutoRemove();
 		GraphStructureChangedListener listener2 = new TestListener();
-		
+
 		createTransaction(g);
 		Node n1 = g.createNode();
 		Node n2 = g.createNode();
 		commit(g);
-		
+
 		g.addGraphStructureChangedListener(listener1);
 		g.addGraphStructureChangedListener(listener2);
 
@@ -229,19 +229,19 @@ public class GraphStructureChangedListenerTest extends InstanceTest {
 	public void testEdgeDeleted() throws CommitFailedException {
 		GraphStructureChangedListener listener1 = new TestListenerWithAutoRemove();
 		GraphStructureChangedListener listener2 = new TestListener();
-		
+
 		assertFalse("The trigger has not been resetted", trigger1);
 		assertFalse("The trigger has not been resetted", trigger2);
-		
+
 		createTransaction(g);
 		Node n1 = g.createNode();
 		Node n2 = g.createNode();
 		Link l1 = g.createLink(n1, n2);
 		commit(g);
-	
+
 		g.addGraphStructureChangedListener(listener1);
 		g.addGraphStructureChangedListener(listener2);
-			
+
 		createTransaction(g);
 		g.deleteEdge(l1);
 		commit(g);
@@ -254,17 +254,16 @@ public class GraphStructureChangedListenerTest extends InstanceTest {
 	public void testMaxVertexCountIncreased() throws CommitFailedException {
 		GraphStructureChangedListener listener1 = new TestListenerWithAutoRemove();
 		GraphStructureChangedListener listener2 = new TestListener();
-		
+
 		createTransaction(g);
 		for (int i = 0; i < V; i++) {
 			g.createNode();
 		}
 		commit(g);
-		
+
 		g.addGraphStructureChangedListener(listener1);
 		g.addGraphStructureChangedListener(listener2);
 
-		
 		assertFalse("The trigger has not been resetted", trigger1);
 		assertFalse("The trigger has not been resetted", trigger2);
 
@@ -281,7 +280,7 @@ public class GraphStructureChangedListenerTest extends InstanceTest {
 	public void testMaxEdgeCountIncreased() throws CommitFailedException {
 		GraphStructureChangedListener listener1 = new TestListenerWithAutoRemove();
 		GraphStructureChangedListener listener2 = new TestListener();
-		
+
 		createTransaction(g);
 		Node n1 = g.createNode();
 		Node n2 = g.createNode();
@@ -289,10 +288,10 @@ public class GraphStructureChangedListenerTest extends InstanceTest {
 			g.createLink(n1, n2);
 		}
 		commit(g);
-		
+
 		g.addGraphStructureChangedListener(listener1);
 		g.addGraphStructureChangedListener(listener2);
-		
+
 		assertFalse("The trigger has not been resetted", trigger1);
 
 		createTransaction(g);

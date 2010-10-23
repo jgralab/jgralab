@@ -40,7 +40,7 @@ import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.greql2.exception.ParsingException;
 import de.uni_koblenz.jgralab.greql2.exception.UndefinedVariableException;
 import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
-import de.uni_koblenz.jgralab.greql2.parser.ManualGreqlParser;
+import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
 import de.uni_koblenz.jgralab.greql2.schema.AggregationPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.AlternativePathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.BagComprehension;
@@ -136,7 +136,7 @@ public class ParserTest {
 
 	private Greql2 parseQuery(String query, String file)
 			throws ParsingException {
-		Greql2 graph = ManualGreqlParser.parse(query);
+		Greql2 graph = GreqlParser.parse(query);
 		if (file != null) {
 			try {
 				GraphIO.saveGraphToFile(file, graph, null);
@@ -1287,7 +1287,7 @@ public class ParserTest {
 	@Test
 	public void testGetKnownVariables() {
 		String query = "//test \n \n from var:V{} \n with \n var ";
-		ManualGreqlParser parser = new ManualGreqlParser(query);
+		GreqlParser parser = new GreqlParser(query);
 		try {
 			parser.parse();
 		} catch (ParsingException ex) {

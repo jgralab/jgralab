@@ -189,30 +189,29 @@ public class VariableDeclarationLayer {
 	 * @return true if a next combination exists, false otherwise
 	 * @throws EvaluateException
 	 */
-	
-	
+
 	private boolean getNextCombination(AbstractGraphMarker<?> subgraph,
 			boolean firstCombination) throws EvaluateException {
-		
+
 		int pointer = firstCombination ? 0 : variableDeclarations.size() - 1;
-		
+
 		boolean iterate;
 		do {
 			iterate = false;
-			VariableDeclaration currDecl = null; //pointer = 0
+			VariableDeclaration currDecl = null; // pointer = 0
 			do {
 				if (pointer < 0) {
 					return false;
 				}
-				currDecl = variableDeclarations.get(pointer--); //pointer = -1 
+				currDecl = variableDeclarations.get(pointer--); // pointer = -1
 			} while (!currDecl.iterate());
-			pointer += 2; //pointer = 3
+			pointer += 2; // pointer = 3
 			int size = variableDeclarations.size();
 			while (pointer < size) {
-				currDecl = variableDeclarations.get(pointer++); 
+				currDecl = variableDeclarations.get(pointer++);
 				currDecl.reset();
 				if (!currDecl.iterate()) {
-					pointer-= 2;
+					pointer -= 2;
 					iterate = true;
 					break;
 				}
@@ -228,7 +227,8 @@ public class VariableDeclarationLayer {
 	 * @return true if the combination fullfills the constraint, false otherwise
 	 * @throws EvaluateException
 	 */
-	private boolean fullfillsConstraints(AbstractGraphMarker<AttributedElement> subgraph)
+	private boolean fullfillsConstraints(
+			AbstractGraphMarker<AttributedElement> subgraph)
 			throws EvaluateException {
 		if ((constraintList == null) || (constraintList.isEmpty())) {
 			return true;

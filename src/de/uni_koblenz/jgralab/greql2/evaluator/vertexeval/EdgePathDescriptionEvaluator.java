@@ -70,7 +70,9 @@ public class EdgePathDescriptionEvaluator extends
 			predicateEvaluator = edgeRestEval.getPredicateEvaluator();
 		}
 		createdNFA = NFA.createEdgePathDescriptionNFA(getEdgeDirection(vertex),
-				typeCollection, getEdgeRoles(edgeRestEval), edgeEval, predicateEvaluator, greqlEvaluator.getVertexEvaluatorGraphMarker());
+				typeCollection, getEdgeRoles(edgeRestEval), edgeEval,
+				predicateEvaluator, greqlEvaluator
+						.getVertexEvaluatorGraphMarker());
 		return new JValueImpl(createdNFA);
 	}
 

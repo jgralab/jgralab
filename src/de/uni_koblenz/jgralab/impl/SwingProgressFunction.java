@@ -27,6 +27,8 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.InvocationTargetException;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoundedRangeModel;
@@ -53,12 +55,15 @@ public class SwingProgressFunction implements ProgressFunction, ActionListener {
 	private JProgressBar pb;
 	private String title;
 	private String label;
+	private String itemName;
 	private long totalElements;
 	private long updateInterval;
 	private BoundedRangeModel brm;
 	private JLabel lbl;
 	private long startTime;
 	private Timer timer;
+	private NumberFormat elementFormatter;
+	private NumberFormat timeFormatter;
 
 	/**
 	 * Creates a ProgressFunction to display progress in a Swing GUI.
@@ -69,8 +74,13 @@ public class SwingProgressFunction implements ProgressFunction, ActionListener {
 	 *            text to be displayed above the progress bar
 	 */
 	public SwingProgressFunction(String title, String label) {
+		this(title, label, "elements");
+	}
+
+	public SwingProgressFunction(String title, String label, String itemName) {
 		this.title = title;
 		this.label = label;
+		this.itemName = itemName;
 	}
 
 	/*
@@ -112,6 +122,11 @@ public class SwingProgressFunction implements ProgressFunction, ActionListener {
 			@Override
 			public void run() {
 				SwingProgressFunction.this.totalElements = totalElements;
+				elementFormatter = NumberFormat
+						.getInstance(Locale.getDefault());
+				timeFormatter = NumberFormat.getInstance(Locale.getDefault());
+				timeFormatter.setMinimumFractionDigits(1);
+				timeFormatter.setMaximumFractionDigits(1);
 
 				wnd = new JFrame(title);
 				wnd.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -130,7 +145,8 @@ public class SwingProgressFunction implements ProgressFunction, ActionListener {
 				pnl.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
 				wnd.getContentPane().add(pnl);
 
-				lbl = new JLabel("####### elements, ###.#s", JLabel.CENTER);
+				lbl = new JLabel("#,###,### " + itemName + ", ###.#s",
+						JLabel.CENTER);
 
 				pnl.add(new JLabel(label, JLabel.CENTER), BorderLayout.NORTH);
 				pnl.add(pb, BorderLayout.CENTER);
@@ -147,9 +163,14 @@ public class SwingProgressFunction implements ProgressFunction, ActionListener {
 
 	Runnable timeTextUpdater = new Runnable() {
 		public void run() {
-			lbl.setText(totalElements + " elements, "
-					+ ((System.currentTimeMillis() - startTime) / 100) / 10.0
-					+ "s");
+			lbl
+					.setText(elementFormatter.format(totalElements)
+							+ " "
+							+ itemName
+							+ ", "
+							+ timeFormatter
+									.format((System.currentTimeMillis() - startTime) / 1000.0)
+							+ "s");
 		}
 	};
 

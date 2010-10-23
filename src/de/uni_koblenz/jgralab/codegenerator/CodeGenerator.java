@@ -116,8 +116,7 @@ public abstract class CodeGenerator {
 		 * @return
 		 */
 		protected boolean isStdOrSaveMemOrTransImpl() {
-			return (this == STDIMPL) || (this == SAVEMEMIMPL)
-					|| (this == TRANSIMPL);
+			return this == STDIMPL || this == SAVEMEMIMPL || this == TRANSIMPL;
 		}
 	}
 
@@ -180,7 +179,7 @@ public abstract class CodeGenerator {
 		rootBlock.setVariable("jgSchemaImplPackage",
 				"de.uni_koblenz.jgralab.schema.impl");
 
-		if ((packageName != null) && !packageName.equals("")) {
+		if (packageName != null && !packageName.equals("")) {
 			rootBlock.setVariable("schemaPackage", schemaRootPackageName + "."
 					+ packageName);
 			// schema implementation packages (standard, savemem and for
@@ -253,15 +252,23 @@ public abstract class CodeGenerator {
 		}
 
 		File outputFile = null;
+		BufferedWriter bw = null;
 		try {
 			outputFile = new File(dir.getAbsolutePath() + File.separator
 					+ fileName);
-			BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile));
+			bw = new BufferedWriter(new FileWriter(outputFile));
 			bw.write(rootBlock.getCode());
 			bw.close();
 		} catch (IOException e) {
 			throw new GraphIOException("Unable to create file "
 					+ outputFile.getAbsolutePath(), e);
+		} finally {
+			try {
+				bw.close();
+			} catch (IOException ex) {
+				throw new GraphIOException(
+						"Exception occurred while closing the stream.", ex);
+			}
 		}
 	}
 
@@ -282,9 +289,7 @@ public abstract class CodeGenerator {
 		while (currentCycle != null) {
 			createCode();
 			if (currentCycle.isAbstract()) {
-				logger
-						.finer("Creating interface for class: "
-								+ simpleClassName);
+				logger.finer("Creating interface for class: " + simpleClassName);
 				logger.finer("Writing file to: " + pathPrefix + "/"
 						+ schemaPackage);
 			}
@@ -292,9 +297,7 @@ public abstract class CodeGenerator {
 				if (currentCycle.isStdImpl()) {
 					schemaImplPackage = rootBlock
 							.getVariable("schemaImplStdPackage");
-					logger
-							.finer(" - schemaImplStdPackage="
-									+ schemaImplPackage);
+					logger.finer(" - schemaImplStdPackage=" + schemaImplPackage);
 				}
 				if (currentCycle.isSaveMemImpl()) {
 					schemaImplPackage = rootBlock

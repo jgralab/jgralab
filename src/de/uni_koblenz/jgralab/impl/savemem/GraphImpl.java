@@ -389,7 +389,8 @@ public abstract class GraphImpl extends
 
 	@Override
 	public <T extends Record> T createRecord(Class<T> recordClass, GraphIO io) {
-		T record = graphFactory.createRecordWithSavememSupport(recordClass, this);
+		T record = graphFactory.createRecordWithSavememSupport(recordClass,
+				this);
 		try {
 			record.readComponentValues(io);
 		} catch (GraphIOException e) {
@@ -399,19 +400,23 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public <T extends Record> T createRecord(Class<T> recordClass, Map<String, Object> fields) {
-		T record = graphFactory.createRecordWithSavememSupport(recordClass, this);
+	public <T extends Record> T createRecord(Class<T> recordClass,
+			Map<String, Object> fields) {
+		T record = graphFactory.createRecordWithSavememSupport(recordClass,
+				this);
 		record.setComponentValues(fields);
 		return record;
 	}
 
 	@Override
-	public <T extends Record> T createRecord(Class<T> recordClass, Object... components) {
-		T record = graphFactory.createRecordWithSavememSupport(recordClass, this);
+	public <T extends Record> T createRecord(Class<T> recordClass,
+			Object... components) {
+		T record = graphFactory.createRecordWithSavememSupport(recordClass,
+				this);
 		record.setComponentValues(components);
 		return record;
 	}
-	
+
 	@Override
 	public <T> JGraLabList<T> createList() {
 		return new JGraLabListImpl<T>();

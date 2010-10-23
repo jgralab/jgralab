@@ -1594,11 +1594,10 @@ public abstract class GraphImpl extends
 		return new JGraLabMapImpl<K, V>(this, initialCapacity, loadFactor);
 	}
 
-	
-	
 	@Override
 	public <T extends Record> T createRecord(Class<T> recordClass, GraphIO io) {
-		T record = graphFactory.createRecordWithTransactionSupport(recordClass, this);
+		T record = graphFactory.createRecordWithTransactionSupport(recordClass,
+				this);
 		try {
 			record.readComponentValues(io);
 		} catch (GraphIOException e) {
@@ -1608,19 +1607,23 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public <T extends Record> T createRecord(Class<T> recordClass, Map<String, Object> fields) {
-		T record = graphFactory.createRecordWithTransactionSupport(recordClass, this);
+	public <T extends Record> T createRecord(Class<T> recordClass,
+			Map<String, Object> fields) {
+		T record = graphFactory.createRecordWithTransactionSupport(recordClass,
+				this);
 		record.setComponentValues(fields);
 		return record;
 	}
 
 	@Override
-	public <T extends Record> T createRecord(Class<T> recordClass, Object... components) {
-		T record = graphFactory.createRecordWithTransactionSupport(recordClass, this);
+	public <T extends Record> T createRecord(Class<T> recordClass,
+			Object... components) {
+		T record = graphFactory.createRecordWithTransactionSupport(recordClass,
+				this);
 		record.setComponentValues(components);
 		return record;
 	}
-	
+
 	private boolean isWriting() {
 		return getCurrentTransaction().getState() == TransactionState.WRITING;
 	}

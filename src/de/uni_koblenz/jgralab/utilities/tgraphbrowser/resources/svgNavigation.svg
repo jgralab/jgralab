@@ -1,0 +1,120 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
+	"http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<!-- <svg width="790" height="530" version="1.1" --> 
+<svg width="100%" height="100%" version="1.1" 
+	xmlns="http://www.w3.org/2000/svg" 
+	xmlns:xlink="http://www.w3.org/1999/xlink" 
+	xmlns:jgralab="http://userpages.uni-koblenz.de/~ist/JGraLab" onload="init(evt)">
+  <defs>
+    <script type='text/ecmascript'><![CDATA[
+      var svgdoc, navdoc;
+      
+      var vbX = 0;
+      var vbY = 0;
+      var vbW = 0;
+      var vbH = 0;
+      
+      // bb* contains original viewBox
+      var bbX = 0;
+      var bbY = 0;
+      var bbW = 0;
+      var bbH = 0;
+      
+      var debug = 0;
+      
+      
+      function init(evt) {
+        top.resize();
+        svgdoc = evt.target.ownerDocument;
+      
+        navdoc = svgdoc.getElementById('nav');
+      
+        //debug = evt.getTarget().getOwnerDocument().getElementById('debug').getFirstChild();
+      
+        // read viewbox coords from navdoc; set to local variables
+        var vbData = navdoc.getAttributeNS(null, 'viewBox').split(' ');
+        bbX = parseInt(vbData[0]);
+        bbY = parseInt(vbData[1]);
+        bbW = parseInt(vbData[2]);
+        bbH = parseInt(vbData[3]);
+        
+        updateViewBox(bbX, bbY, bbW, bbH);
+      }
+      
+      
+      function zoom(evt) {
+        if (evt.target.parentNode.getAttributeNS(null, 'id') == 'ZIn') {
+          //debug.setData('ZIn!');
+          vbW *= 0.95;
+          vbH *= 0.95;
+          updateViewBox(vbX, vbY, vbW, vbH);
+        }
+        else if (evt.target.parentNode.getAttributeNS(null, 'id') == 'ZOut') {
+          //debug.setData('ZOut!');
+          vbW *= 1.05;
+          vbH *= 1.05;
+          updateViewBox(vbX, vbY, vbW, vbH);
+        }
+        else if (evt.target.parentNode.getAttributeNS(null, 'id') == 'ZGraph') {
+          updateViewBox(bbX, bbY, bbW, bbH);
+          //debug.setData('ZGraph!');
+        }
+      }
+      
+      
+      function updateViewBox(x, y, w, h) {
+        vbX = x;
+        vbY = y;
+        vbW = w;
+        vbH = h;
+        navdoc.setAttributeNS(null, 'viewBox', x + ' ' + y + ' ' + w + ' ' + h);
+        //debug.setData(navdoc.getAttribute('viewBox'));
+      }
+      
+      
+      function goLeft(evt) {
+        vbX -= 50;
+        navdoc.setAttributeNS(null, 'viewBox', vbX + ' ' + vbY + ' ' + vbW + ' ' + vbH);
+      }
+      function goRight(evt) {
+        vbX += 50;
+        navdoc.setAttributeNS(null, 'viewBox', vbX + ' ' + vbY + ' ' + vbW + ' ' + vbH);
+      }
+      function goUp(evt) {
+        vbY -= 50;
+        navdoc.setAttributeNS(null, 'viewBox', vbX + ' ' + vbY + ' ' + vbW + ' ' + vbH);
+      }
+      function goDown(evt) {
+        vbY += 50;
+        navdoc.setAttributeNS(null, 'viewBox', vbX + ' ' + vbY + ' ' + vbW + ' ' + vbH);
+      }
+
+    ]]></script>
+  </defs>
+  <g transform="translate(43, 150)" stroke='black' fill='lightgrey'>
+    <path d="M -35   0 l +15 -15 l   0 +30 z" id="left" onclick='goLeft(evt)'/>
+    <path d="M  35   0 l -15 -15 l   0 +30 z" id="right" onclick='goRight(evt)'/>
+    <path d="M   0 -35 l +15 +15 l -30   0 z" id="up" onclick='goUp(evt)'/>
+    <path d="M   0  35 l +15 -15 l -30   0 z" id="down" onclick='goDown(evt)'/>
+  </g>
+  <g id="ZoomControl" transform="translate(45, 20)" >
+    <text text-anchor='middle'>Zoom:</text> 
+    <g id='ZIn' onclick='zoom(evt)'> 
+      <rect x='-40' y='6' width='80' height='20' fill='lightgrey' stroke='black'/> 
+      <text y='21' text-anchor='middle'>in</text> 
+    </g> 
+    <g id='ZOut' onclick='zoom(evt)'> 
+      <rect x='-40' y='28' width='80' height='20' fill='lightgrey' stroke='black'/> 
+      <text y='43' text-anchor='middle'>out</text> 
+    </g> 
+    <g id='ZGraph' onclick='zoom(evt)'> 
+      <rect x='-40' y='50' width='80' height='20' fill='lightgrey' stroke='black'/> 
+      <text y='65' text-anchor='middle'>Graph</text> 
+    </g>
+  </g>
+  <rect id="rect" x="90" y="1" width="640" height="480" style="fill:white;stroke:rgb(0,0,0);" />
+  <svg id="nav" width="638" height="478" version="1.1" viewBox="?viewBox?" xmlns="http://www.w3.org/2000/svg" x="91" y="2">
+   <!--  -->
+  </svg>
+</svg>

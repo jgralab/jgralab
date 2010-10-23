@@ -1,4 +1,4 @@
-;;; greql-mode.el --- Major mode for editing GReQL2 files with emacs
+;;; greql-mode.el --- Major mode for editing GReQL2 and GReTL files with emacs
 
 ;; Copyright (C) 2007, 2008, 2009, 2010 by Tassilo Horn
 
@@ -20,7 +20,8 @@
 
 ;;; Commentary:
 
-;; Major mode for editing GReQL2 files with Emacs and executing queries.
+;; Major mode for editing GReQL2 files with Emacs and executing queries.  Also
+;; some stuff for editing GReTL transformations.
 
 ;;; Version:
 ;; $Revision$
@@ -129,7 +130,7 @@
 (defparameter greql-functions (greql-functions)
   "GReQL functions that should be completed and highlighted.")
 
-(dolist (ext '("\\.greqlquery$" "\\.grq$" "\\.greql$"))
+(dolist (ext '("\\.greqlquery$" "\\.grq$" "\\.greql$" "\\.gretl$"))
   (add-to-list 'auto-mode-alist (cons ext 'greql-mode)))
 
 (defparameter greql-fontlock-keywords-1
@@ -142,6 +143,7 @@
            1 font-lock-function-name-face)
     ;; Highlight strings
     ,(list "[^\\]\\(\".*?[^\\]\"\\)" 1 font-lock-string-face t)
+    ,(list "[^\\]\\('.*?[^\\]'\\)"   1 font-lock-string-face t)
     ;; Highlight one-line comments
     ,(list "//.*$" 0 font-lock-comment-face t)))
 
@@ -204,6 +206,8 @@ columns.")
   "Name of the GReQL evaluation buffer.")
 (make-variable-buffer-local 'greql-evaluation-buffer)
 
+(declare-function 'gretl-minor-mode (buffer-file-name))
+
 (define-derived-mode greql-mode text-mode "GReQL"
   "A major mode for GReQL2."
   ;; Comments
@@ -226,6 +230,13 @@ columns.")
        'greql-documentation-function)
 
   (setq greql-evaluation-buffer (concat "*GReQL Evaluation: " (buffer-name) "*"))
+
+  ;; If this is a GReTL mode buffer, enable gretl-minor-mode, too.
+  (when (string-match "\\.gretl$"
+		      (or (buffer-file-name) (buffer-name)))
+    (add-hook 'greql-mode-hook
+	      (lambda ()
+		(gretl-minor-mode 1))))
 
   (progn
     (define-key greql-mode-map (kbd "M-TAB")   'greql-complete)
@@ -430,8 +441,8 @@ elements."
    ;; complete attributes
    ((greql-variable-p)
     (greql-attribute-completion-list
-     ;; FIXME: vartypes is not defined!
-     (tg-all-attributes-multi (car vartypes) (cadr vartypes) arg)))
+     (let ((vartypes (greql-variable-types-at-point)))
+       (tg-all-attributes-multi (car vartypes) (cadr vartypes) arg))))
    ;; complete keywords / functions
    (t
     (flet ((format-entry (fun)
@@ -623,17 +634,19 @@ vertices in the query result."
 
 (defun greql-variable-p ()
   (and (looking-back "[[:word:]_]\\.[[:word:]_]*?")
-       (not looking-back "import .*")
-       (not (looking-back "{[[:word:]_]*?"))))
+       (not (looking-back "import .*"))
+       (not (looking-back "{[[:word:]_.]*?"))))
 
 (defun greql-import-p ()
   (looking-back "import[[:space:]]+[[:word:]._]*"))
 
-(defun greql-variable-types ()
+(defun greql-variable-types-at-point ()
   "Return something like (VertexClass (\"Type1\" \"Type2\")),
 for some variable declared as
 
-  x : V{Type1, Type2}"
+  x : V{Type1, Type2}
+
+for the variable at point."
   (save-excursion
     (search-backward "." nil t 1)
     (let ((end (point))
@@ -643,7 +656,7 @@ for some variable declared as
       (re-search-backward
        (concat "\\<"
                var
-               "\\>[^:]*:[[:space:]]*\\([VE]\\){\\([^}]+\\)}") nil t 1)
+               "\\>[^:{}]*:[[:space:]]*\\([VE]\\){\\([^}]+\\)}") nil t 1)
       (when (and (match-beginning 1) (match-end 1))
         (let* ((mtype-match (buffer-substring-no-properties (match-beginning 1)
                                                             (match-end 1)))
@@ -874,6 +887,25 @@ properties from string."
                            "Name is neither qualified nor unique."))))))
              ;; nothing to be done...
              (t ""))))))
+
+;;** GReTL Minor Mode
+
+(define-minor-mode gretl-minor-mode
+  "Add some more features to GReQL mode to make it more usable
+for editing GReTL transformations."
+  ;; The initial value.
+  :init-value nil
+  ;; The indicator for the mode line.
+  :lighter " GReTL"
+  (let ((regex (rx (or (and (or "==>" "=:" "&") (+ space) (+ word))
+		       (and bow "transformation" eow)
+		       ";"))))
+    (if gretl-minor-mode
+	(progn
+	  (message "Enabling GReTL support...")
+	  (hi-lock-face-buffer regex 'bold))
+      (message "Disabling GReTL support...")
+      (hi-lock-unface-buffer regex))))
 
 (provide 'greql-mode)
 

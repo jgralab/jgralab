@@ -83,13 +83,14 @@ public class ContainsValue extends Greql2Function {
 	 * de.uni_koblenz.jgralab.greql2.jvalue.JValue[])
 	 */
 	@Override
-	public JValue evaluate(Graph graph, AbstractGraphMarker<AttributedElement> subgraph,
-			JValue[] arguments) throws EvaluateException {
+	public JValue evaluate(Graph graph,
+			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
+			throws EvaluateException {
 		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, arguments);
 		}
-		return JValueBoolean.getValue(arguments[0].toJValueMap()
-				.containsValue(arguments[1]));
+		return JValueBoolean.getValue(arguments[0].toJValueMap().containsValue(
+				arguments[1]));
 	}
 
 	/*

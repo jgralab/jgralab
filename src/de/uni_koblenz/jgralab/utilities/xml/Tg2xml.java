@@ -33,6 +33,7 @@ import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_ID_PREFIX_
 import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_ID_PREFIX_VERTEX;
 
 import java.io.BufferedOutputStream;
+import java.io.Closeable;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -91,10 +92,10 @@ public class Tg2xml extends GraphVisitor {
 			throw new RuntimeException(
 					"The namespace prefixes xml and xsi must not be used!");
 		}
-		this.prefix = nameSpacePrefix;
+		prefix = nameSpacePrefix;
 		this.schemaLocation = schemaLocation;
 
-		this.namespaceURI = UtilityMethods.generateURI(qualifiedName);
+		namespaceURI = UtilityMethods.generateURI(qualifiedName);
 		this.outputStream = outputStream;
 		XMLOutputFactory factory = XMLOutputFactory.newInstance();
 		writer = new IndentingXMLStreamWriter(factory.createXMLStreamWriter(
@@ -134,8 +135,8 @@ public class Tg2xml extends GraphVisitor {
 		// write vertex
 		writer.writeEmptyElement(v.getAttributedElementClass()
 				.getQualifiedName());
-		writer.writeAttribute(GRUML_ATTRIBUTE_ID, GRUML_ID_PREFIX_VERTEX
-				+ v.getId());
+		writer.writeAttribute(GRUML_ATTRIBUTE_ID,
+				GRUML_ID_PREFIX_VERTEX + v.getId());
 		writeAttributes(v);
 		// iterate over incidences and mark these edges
 		int i = 1;
@@ -162,23 +163,43 @@ public class Tg2xml extends GraphVisitor {
 				.getQualifiedName());
 		writer.writeAttribute(GRUML_ATTRIBUTE_FROM, GRUML_ID_PREFIX_VERTEX
 				+ e.getAlpha().getId());
-		writer.writeAttribute(GRUML_ATTRIBUTE_FSEQ, Integer
-				.toString(currentMark.fseq));
+		writer.writeAttribute(GRUML_ATTRIBUTE_FSEQ,
+				Integer.toString(currentMark.fseq));
 		writer.writeAttribute(GRUML_ATTRIBUTE_TO, GRUML_ID_PREFIX_VERTEX
 				+ e.getOmega().getId());
-		writer.writeAttribute(GRUML_ATTRIBUTE_TSEQ, Integer
-				.toString(currentMark.tseq));
+		writer.writeAttribute(GRUML_ATTRIBUTE_TSEQ,
+				Integer.toString(currentMark.tseq));
 		writeAttributes(e);
 	}
 
 	@Override
 	protected void postVisitor() throws XMLStreamException, IOException {
-		writer.writeEndDocument();
-		writer.writeCharacters("\n");
-		writer.flush();
-		writer.close();
-		outputStream.flush();
-		outputStream.close();
+		try {
+			writer.writeEndDocument();
+			writer.writeCharacters("\n");
+			writer.flush();
+			writer.close();
+			outputStream.flush();
+			outputStream.close();
+		} finally {
+			try {
+				writer.close();
+			} catch (XMLStreamException ex) {
+				throw new RuntimeException(
+						"An error occurred while closing the stream.", ex);
+			} finally {
+				close(outputStream);
+			}
+		}
+	}
+
+	private void close(Closeable stream) {
+		try {
+			stream.close();
+		} catch (IOException ex) {
+			throw new RuntimeException(
+					"An exception occurred while closing the stream.", ex);
+		}
 	}
 
 	private void writeAttributes(AttributedElement element)
@@ -188,8 +209,8 @@ public class Tg2xml extends GraphVisitor {
 				.getAttributeList()) {
 			String currentName = currentAttribute.getName();
 			try {
-				writer.writeAttribute(currentName, element
-						.writeAttributeValueToString(currentName));
+				writer.writeAttribute(currentName,
+						element.writeAttributeValueToString(currentName));
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

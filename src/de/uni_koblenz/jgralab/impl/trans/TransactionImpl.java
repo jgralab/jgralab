@@ -283,7 +283,7 @@ public class TransactionImpl implements Transaction {
 			transactionManager.botWritingSync.writeLock().unlock();
 			transactionManager.commitValidatingSync.writeLock().unlock();
 			transactionManager.commitSync.writeLock().unlock();
-		// case Read-Only-Transaction
+			// case Read-Only-Transaction
 		} else {
 			state = TransactionState.COMMITTED;
 			transactionManager.removeTransactionForThread(Thread

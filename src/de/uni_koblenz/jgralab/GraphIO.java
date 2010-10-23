@@ -28,6 +28,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -84,6 +85,7 @@ import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
  * @author ist@uni-koblenz.de
  */
 public class GraphIO {
+	private static final int BUFFER_SIZE = 65536;
 	/**
 	 * TG File Version this GraphIO recognizes.
 	 */
@@ -237,7 +239,7 @@ public class GraphIO {
 		domains = new TreeMap<String, Domain>();
 		GECsearch = new HashMap<GraphElementClass, GraphClass>();
 		createMethods = new HashMap<String, Method>();
-		buffer = new byte[65536];
+		buffer = new byte[BUFFER_SIZE];
 		bufferPos = 0;
 		enumDomainBuffer = new HashSet<EnumDomainData>();
 		recordDomainBuffer = new ArrayList<RecordDomainData>();
@@ -264,15 +266,16 @@ public class GraphIO {
 	 */
 	public static void saveSchemaToFile(String filename, Schema schema)
 			throws GraphIOException {
+		DataOutputStream out = null;
 		try {
-			DataOutputStream out = new DataOutputStream(
-					new BufferedOutputStream(new FileOutputStream(new File(
-							filename))));
+			out = new DataOutputStream(new BufferedOutputStream(
+					new FileOutputStream(new File(filename))));
 			saveSchemaToStream(out, schema);
-			out.close();
-		} catch (IOException e) {
-			throw new GraphIOException("exception while saving schema to "
-					+ filename, e);
+		} catch (IOException ex) {
+			throw new GraphIOException("Exception while saving schema to "
+					+ filename, ex);
+		} finally {
+			close(out);
 		}
 	}
 
@@ -354,7 +357,7 @@ public class GraphIO {
 					RecordDomain rd = (RecordDomain) dom;
 					write("RecordDomain");
 					space();
-					writeIdentifier((rd).getSimpleName());
+					writeIdentifier(rd.getSimpleName());
 					String delim = " ( ";
 					for (RecordComponent rdc : rd.getComponents()) {
 						write(delim);
@@ -403,8 +406,8 @@ public class GraphIO {
 				// from (min,max) rolename
 				write(" from");
 				space();
-				writeIdentifier(ec.getFrom().getVertexClass()
-						.getQualifiedName(pkg));
+				writeIdentifier(ec.getFrom().getVertexClass().getQualifiedName(
+						pkg));
 				write(" (");
 				write(ec.getFrom().getMin() + ",");
 				if (ec.getFrom().getMax() == Integer.MAX_VALUE) {
@@ -442,8 +445,8 @@ public class GraphIO {
 				// to (min,max) rolename
 				write(" to");
 				space();
-				writeIdentifier(ec.getTo().getVertexClass()
-						.getQualifiedName(pkg));
+				writeIdentifier(ec.getTo().getVertexClass().getQualifiedName(
+						pkg));
 				write(" (");
 				write(ec.getTo().getMin() + ",");
 				if (ec.getTo().getMax() == Integer.MAX_VALUE) {
@@ -538,20 +541,21 @@ public class GraphIO {
 	 */
 	public static void saveGraphToFile(String filename, Graph graph,
 			ProgressFunction pf) throws GraphIOException {
+		DataOutputStream out = null;
 		try {
-			DataOutputStream out;
 			if (filename.toLowerCase().endsWith(".gz")) {
 				out = new DataOutputStream(new GZIPOutputStream(
-						new FileOutputStream(filename), 65536));
+						new FileOutputStream(filename), BUFFER_SIZE));
 			} else {
 				out = new DataOutputStream(new BufferedOutputStream(
-						new FileOutputStream(filename), 65536));
+						new FileOutputStream(filename), BUFFER_SIZE));
 			}
 			saveGraphToStream(out, graph, pf);
-			out.close();
-		} catch (IOException e) {
-			throw new GraphIOException("exception while saving graph to "
-					+ filename, e);
+		} catch (IOException ex) {
+			throw new GraphIOException("Exception while saving graph to "
+					+ filename, ex);
+		} finally {
+			close(out);
 		}
 	}
 
@@ -573,20 +577,21 @@ public class GraphIO {
 	public static void saveGraphToFile(String filename,
 			BooleanGraphMarker subGraph, ProgressFunction pf)
 			throws GraphIOException {
+		DataOutputStream out = null;
 		try {
-			DataOutputStream out;
 			if (filename.toLowerCase().endsWith(".gz")) {
 				out = new DataOutputStream(new GZIPOutputStream(
-						new FileOutputStream(filename), 65536));
+						new FileOutputStream(filename), BUFFER_SIZE));
 			} else {
 				out = new DataOutputStream(new BufferedOutputStream(
-						new FileOutputStream(filename), 65536));
+						new FileOutputStream(filename), BUFFER_SIZE));
 			}
 			saveGraphToStream(out, subGraph, pf);
-			out.close();
 		} catch (IOException e) {
 			throw new GraphIOException("exception while saving graph to "
 					+ filename, e);
+		} finally {
+			close(out);
 		}
 	}
 
@@ -695,7 +700,7 @@ public class GraphIO {
 		// write vertices
 		Vertex nextV = graph.getFirstVertex();
 		while (nextV != null) {
-			if ((subGraph != null) && !subGraph.isMarked(nextV)) {
+			if (subGraph != null && !subGraph.isMarked(nextV)) {
 				nextV = nextV.getNextVertex();
 				continue;
 			}
@@ -717,7 +722,7 @@ public class GraphIO {
 			write(" <");
 			noSpace();
 			while (nextI != null) {
-				if ((subGraph != null) && !subGraph.isMarked(nextI)) {
+				if (subGraph != null && !subGraph.isMarked(nextI)) {
 					nextI = nextI.getNextEdge();
 					continue;
 				}
@@ -744,7 +749,7 @@ public class GraphIO {
 		// write edges
 		Edge nextE = graph.getFirstEdgeInGraph();
 		while (nextE != null) {
-			if ((subGraph != null) && !subGraph.isMarked(nextE)) {
+			if (subGraph != null && !subGraph.isMarked(nextE)) {
 				nextE = nextE.getNextEdgeInGraph();
 				continue;
 			}
@@ -815,8 +820,8 @@ public class GraphIO {
 			write(": ");
 			String domain = a.getDomain().getTGTypeName(pkg);
 			write(domain);
-			if ((a.getDefaultValueAsString() != null)
-					&& (!a.getDefaultValueAsString().equals("n"))) {
+			if (a.getDefaultValueAsString() != null
+					&& !a.getDefaultValueAsString().equals("n")) {
 				write(" = ");
 				writeUtfString(a.getDefaultValueAsString());
 			}
@@ -905,32 +910,36 @@ public class GraphIO {
 		if (BAOut == null) {
 			throw new GraphIOException("GraphIO did not write to a String");
 		}
+		// FIXME There should be a try-catch for every close operation
 		TGOut.flush();
 		BAOut.flush();
 		String result = BAOut.toString("US-ASCII");
-		TGOut.close();
-		BAOut.close();
+		try {
+			close(TGOut);
+		} finally {
+			close(BAOut);
+		}
 		return result;
 	}
 
 	public static Schema loadSchemaFromFile(String filename)
 			throws GraphIOException {
+		InputStream in = null;
 		try {
-			InputStream in;
 			if (filename.toLowerCase().endsWith(".gz")) {
-				in = new GZIPInputStream(new FileInputStream(filename), 65536);
+				in = new GZIPInputStream(new FileInputStream(filename),
+						BUFFER_SIZE);
 			} else {
 				in = new BufferedInputStream(new FileInputStream(filename),
-						65536);
+						BUFFER_SIZE);
 			}
-			try {
-				return loadSchemaFromStream(in);
-			} finally {
-				in.close();
-			}
+			return loadSchemaFromStream(in);
+
 		} catch (IOException ex) {
 			throw new GraphIOException("exception while loading schema from "
 					+ filename, ex);
+		} finally {
+			close(in);
 		}
 	}
 
@@ -975,7 +984,8 @@ public class GraphIO {
 			return loadGraphFromFileWithStandardSupport(filename, null, pf);
 		} catch (GraphIOException ex) {
 			if (ex.getCause() instanceof ClassNotFoundException) {
-				logger.fine("Compiled schema classes were not found, so load and compile the schema first.");
+				logger
+						.fine("Compiled schema classes were not found, so load and compile the schema first.");
 				Schema s = loadSchemaFromFile(filename);
 				s.compile(config);
 				return loadGraphFromFileWithStandardSupport(filename, s, pf);
@@ -1175,23 +1185,40 @@ public class GraphIO {
 	public static Graph loadGraphFromFile(String filename, Schema schema,
 			ProgressFunction pf, ImplementationType implementationType)
 			throws GraphIOException {
+
+		InputStream inputStream = null;
+		FileInputStream fileStream = null;
 		try {
 			logger.finer("Loading graph " + filename);
-			InputStream in;
+
+			fileStream = new FileInputStream(filename);
+
 			if (filename.toLowerCase().endsWith(".gz")) {
-				in = new GZIPInputStream(new FileInputStream(filename), 65536);
+				inputStream = new GZIPInputStream(fileStream, BUFFER_SIZE);
 			} else {
-				in = new BufferedInputStream(new FileInputStream(filename),
-						65536);
+				inputStream = new BufferedInputStream(fileStream, BUFFER_SIZE);
 			}
-			try {
-				return loadGraphFromStream(in, schema, pf, implementationType);
-			} finally {
-				in.close();
-			}
+
+			return loadGraphFromStream(inputStream, schema, pf,
+					implementationType);
+
 		} catch (IOException ex) {
 			throw new GraphIOException(
 					"exception while loading graph from file " + filename, ex);
+		} finally {
+			if (inputStream != null) {
+				close(inputStream);
+			}
+			close(fileStream);
+		}
+	}
+
+	private static void close(Closeable stream) throws GraphIOException {
+		try {
+			stream.close();
+		} catch (IOException ex) {
+			throw new GraphIOException("Exception while closing the stream.",
+					ex);
 		}
 	}
 
@@ -1302,7 +1329,7 @@ public class GraphIO {
 			if (schema.getQualifiedName().equals(qn[0] + "." + qn[1])) {
 				// yes, everything is fine :-)
 				// skip schema part
-				while ((lookAhead.length() > 0) && !lookAhead.equals("Graph")) {
+				while (lookAhead.length() > 0 && !lookAhead.equals("Graph")) {
 					match();
 				}
 				return;
@@ -1353,8 +1380,8 @@ public class GraphIO {
 						+ "' not found in schema " + schema.getQualifiedName());
 			}
 			NamedElement el = schema.getNamedElement(e.getKey());
-			if ((el instanceof Domain)
-					&& !((el instanceof EnumDomain) || (el instanceof RecordDomain))) {
+			if (el instanceof Domain
+					&& !(el instanceof EnumDomain || el instanceof RecordDomain)) {
 				throw new GraphIOException(
 						"Default domains can not have comments. Offending domain is '"
 								+ e.getKey() + "'");
@@ -1875,11 +1902,11 @@ public class GraphIO {
 
 	private EdgeClass createEdgeClass(GraphElementClassData ecd, GraphClass gc)
 			throws GraphIOException, SchemaException {
-		EdgeClass ec = gc.createEdgeClass(ecd.getQualifiedName(),
-				gc.getVertexClass(ecd.fromVertexClassName),
+		EdgeClass ec = gc.createEdgeClass(ecd.getQualifiedName(), gc
+				.getVertexClass(ecd.fromVertexClassName),
 				ecd.fromMultiplicity[0], ecd.fromMultiplicity[1],
-				ecd.fromRoleName, ecd.fromAggregation,
-				gc.getVertexClass(ecd.toVertexClassName),
+				ecd.fromRoleName, ecd.fromAggregation, gc
+						.getVertexClass(ecd.toVertexClassName),
 				ecd.toMultiplicity[0], ecd.toMultiplicity[1], ecd.toRoleName,
 				ecd.toAggregation);
 
@@ -1990,18 +2017,18 @@ public class GraphIO {
 	}
 
 	private static boolean isValidPackageName(String s) {
-		if ((s == null) || (s.length() == 0)) {
+		if (s == null || s.length() == 0) {
 			return false;
 		}
 		char[] chars = s.toCharArray();
 		if (!Character.isLetter(chars[0]) || !Character.isLowerCase(chars[0])
-				|| (chars[0] > 127)) {
+				|| chars[0] > 127) {
 			return false;
 		}
 		for (int i = 1; i < chars.length; i++) {
 			if (!(Character.isLowerCase(chars[i])
-					|| Character.isDigit(chars[i]) || (chars[i] == '_'))
-					|| (chars[i] > 127)) {
+					|| Character.isDigit(chars[i]) || chars[i] == '_')
+					|| chars[i] > 127) {
 				return false;
 			}
 		}
@@ -2080,8 +2107,8 @@ public class GraphIO {
 				}
 				if (aec instanceof VertexClass) {
 					for (String superClassName : vData.directSuperClasses) {
-						superClass = (VertexClass) (GECsearch.get(aec)
-								.getGraphElementClass(superClassName));
+						superClass = (VertexClass) GECsearch.get(aec)
+								.getGraphElementClass(superClassName);
 						if (superClass == null) {
 							throw new GraphIOException(
 									"undefined VertexClass '" + superClassName
@@ -2114,10 +2141,10 @@ public class GraphIO {
 							+ eData.getQualifiedName() + "', but it's a "
 							+ aec.getM1Class().getSimpleName());
 				}
-				EdgeClass ec = ((EdgeClass) aec);
+				EdgeClass ec = (EdgeClass) aec;
 				for (String superClassName : eData.directSuperClasses) {
-					superClass = (EdgeClass) (GECsearch.get(aec)
-							.getGraphElementClass(superClassName));
+					superClass = (EdgeClass) GECsearch.get(aec)
+							.getGraphElementClass(superClassName);
 					if (superClass == null) {
 						throw new GraphIOException("undefined EdgeClass '"
 								+ superClassName + "'");
@@ -2151,7 +2178,7 @@ public class GraphIO {
 					do {
 						out.append((char) la);
 						la = read();
-					} while (!isWs(la) && !isSeparator(la) && (la != -1));
+					} while (!isWs(la) && !isSeparator(la) && la != -1);
 				}
 			}
 		} catch (IOException e) {
@@ -2189,8 +2216,8 @@ public class GraphIO {
 			GraphIOException {
 		int startLine = line;
 		la = read();
-		LOOP: while ((la != -1) && (la != '"')) {
-			if ((la < 32) || (la > 127)) {
+		LOOP: while (la != -1 && la != '"') {
+			if (la < 32 || la > 127) {
 				throw new GraphIOException("invalid character '" + (char) la
 						+ "' in string in line " + line);
 			}
@@ -2260,13 +2287,13 @@ public class GraphIO {
 	}
 
 	private final static boolean isWs(int c) {
-		return (c == ' ') || (c == '\n') || (c == '\t') || (c == '\r');
+		return c == ' ' || c == '\n' || c == '\t' || c == '\r';
 	}
 
 	private final static boolean isSeparator(int c) {
-		return (c == ';') || (c == '<') || (c == '>') || (c == '(')
-				|| (c == ')') || (c == '{') || (c == '}') || (c == ':')
-				|| (c == '[') || (c == ']') || (c == ',') || (c == '=');
+		return c == ';' || c == '<' || c == '>' || c == '(' || c == ')'
+				|| c == '{' || c == '}' || c == ':' || c == '[' || c == ']'
+				|| c == ',' || c == '=';
 	}
 
 	private final void skipWs() throws GraphIOException {
@@ -2282,9 +2309,9 @@ public class GraphIO {
 			// skip single line comments
 			if (la == '/') {
 				la = read();
-				if ((la >= 0) && (la == '/')) {
+				if (la >= 0 && la == '/') {
 					// single line comment, skip to the end of the current line
-					while ((la >= 0) && (la != '\n')) {
+					while (la >= 0 && la != '\n') {
 						la = read();
 					}
 				} else {
@@ -2355,8 +2382,8 @@ public class GraphIO {
 			throws GraphIOException {
 		String s = lookAhead;
 		boolean ok = isValidIdentifier(s)
-				&& ((isUpperCase && Character.isUpperCase(s.charAt(0))) || (!isUpperCase && Character
-						.isLowerCase(s.charAt(0))));
+				&& (isUpperCase && Character.isUpperCase(s.charAt(0)) || !isUpperCase
+						&& Character.isLowerCase(s.charAt(0)));
 
 		if (!ok) {
 			throw new GraphIOException("invalid simple name '" + lookAhead
@@ -2377,24 +2404,24 @@ public class GraphIO {
 	public final String[] matchQualifiedName(boolean isUpperCase)
 			throws GraphIOException {
 
-		String c = (lookAhead.indexOf('.') >= 0) ? lookAhead : toQNameString(
+		String c = lookAhead.indexOf('.') >= 0 ? lookAhead : toQNameString(
 				currentPackageName, lookAhead);
 		String[] result = SchemaImpl.splitQualifiedName(c);
 
 		boolean ok = true;
 		if (result[0].length() > 0) {
 			String[] parts = result[0].split("\\.");
-			ok = ((parts.length == 1) && (parts[0].length() == 0))
+			ok = parts.length == 1 && parts[0].length() == 0
 					|| isValidPackageName(parts[0]);
-			for (int i = 1; (i < parts.length) && ok; i++) {
+			for (int i = 1; i < parts.length && ok; i++) {
 				ok = ok && isValidPackageName(parts[i]);
 			}
 		}
 
 		ok = ok
 				&& isValidIdentifier(result[1])
-				&& ((isUpperCase && Character.isUpperCase(result[1].charAt(0))) || (!isUpperCase && Character
-						.isLowerCase(result[1].charAt(0))));
+				&& (isUpperCase && Character.isUpperCase(result[1].charAt(0)) || !isUpperCase
+						&& Character.isLowerCase(result[1].charAt(0)));
 
 		if (!ok) {
 			throw new GraphIOException("invalid qualified name '" + lookAhead
@@ -2405,16 +2432,16 @@ public class GraphIO {
 	}
 
 	public final String[] matchQualifiedName() throws GraphIOException {
-		String c = (lookAhead.indexOf('.') >= 0) ? lookAhead : toQNameString(
+		String c = lookAhead.indexOf('.') >= 0 ? lookAhead : toQNameString(
 				currentPackageName, lookAhead);
 		String[] result = SchemaImpl.splitQualifiedName(c);
 
 		boolean ok = true;
 		if (result[0].length() > 0) {
 			String[] parts = result[0].split("\\.");
-			ok = ((parts.length == 1) && (parts[0].length() == 0))
+			ok = parts.length == 1 && parts[0].length() == 0
 					|| isValidPackageName(parts[0]);
-			for (int i = 1; (i < parts.length) && ok; i++) {
+			for (int i = 1; i < parts.length && ok; i++) {
 				ok = ok && isValidPackageName(parts[i]);
 			}
 		}
@@ -2449,14 +2476,14 @@ public class GraphIO {
 	 *         name and simple name.
 	 */
 	private final String toQNameString(String pn, String sn) {
-		if ((pn == null) || pn.isEmpty()) {
+		if (pn == null || pn.isEmpty()) {
 			return sn;
 		}
 		return pn + "." + sn;
 	}
 
 	public final String matchUtfString() throws GraphIOException {
-		if (!isUtfString && (lookAhead.equals(NULL_LITERAL))) {
+		if (!isUtfString && lookAhead.equals(NULL_LITERAL)) {
 			match();
 			return null;
 		}
@@ -2736,7 +2763,7 @@ public class GraphIO {
 				out.append("\\t");
 				break;
 			default:
-				if ((c >= 32) && (c <= 127)) {
+				if (c >= 32 && c <= 127) {
 					out.append(c);
 				} else {
 					out.append("\\u");
@@ -2761,16 +2788,16 @@ public class GraphIO {
 	}
 
 	private static boolean isValidIdentifier(String s) {
-		if ((s == null) || (s.length() == 0)) {
+		if (s == null || s.length() == 0) {
 			return false;
 		}
 		char[] chars = s.toCharArray();
-		if (!Character.isLetter(chars[0]) || (chars[0] > 127)) {
+		if (!Character.isLetter(chars[0]) || chars[0] > 127) {
 			return false;
 		}
 		for (int i = 1; i < chars.length; i++) {
-			if (!(Character.isLetter(chars[i]) || Character.isDigit(chars[i]) || (chars[i] == '_'))
-					|| (chars[i] > 127)) {
+			if (!(Character.isLetter(chars[i]) || Character.isDigit(chars[i]) || chars[i] == '_')
+					|| chars[i] > 127) {
 				return false;
 			}
 		}

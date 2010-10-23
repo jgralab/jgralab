@@ -69,7 +69,7 @@ public class SchemaFilter {
 			// accept everything by default
 			Pattern matchesAll = Pattern.compile(".*");
 
-			if ((patterns.length <= 0) || patterns[0].trim().startsWith("-")) {
+			if (patterns.length <= 0 || patterns[0].trim().startsWith("-")) {
 				includeOrExcludeAllGraphElements(true, matchesAll);
 			}
 
@@ -381,8 +381,8 @@ public class SchemaFilter {
 		}
 		for (SpecializesVertexClass current : currentVertexClass
 				.getSpecializesVertexClassIncidences(EdgeDirection.IN)) {
-			if (!isVertexClassExcluded(processed, (VertexClass) current
-					.getThat())) {
+			if (!isVertexClassExcluded(processed,
+					(VertexClass) current.getThat())) {
 				// at least one subclass is not excluded
 				return false;
 			}
@@ -435,7 +435,7 @@ public class SchemaFilter {
 			PrintStream debugOutput, boolean autoExclude) {
 		super();
 		this.patterns = patterns;
-		this.debugOutputStream = debugOutput;
+		debugOutputStream = debugOutput;
 		this.schemaGraph = schemaGraph;
 		this.autoExclude = autoExclude;
 	}

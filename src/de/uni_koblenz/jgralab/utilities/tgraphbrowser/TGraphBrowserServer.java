@@ -256,6 +256,10 @@ public class TGraphBrowserServer extends Thread {
 			new DeleteUnusedStates(timeout == null ? 600 : Integer
 					.parseInt(timeout), checkIntervall == null ? 60 : Integer
 					.parseInt(checkIntervall)).start();
+			if (comLine.hasOption("td")) {
+				TwoDVisualizer.SECONDS_TO_WAIT_FOR_DOT = Integer
+						.parseInt(comLine.getOptionValue("td"));
+			}
 		} catch (IOException e) {
 			System.out.println(e);
 		}
@@ -295,6 +299,13 @@ public class TGraphBrowserServer extends Thread {
 		checkInterval.setRequired(false);
 		checkInterval.setArgName("sec");
 		oh.addOption(checkInterval);
+
+		Option timeToCreateDot = new Option("td", "time_for_dot", true,
+				"(optional): the interval in sec after which the execution of dot is aborted."
+						+ " Default value is 60 sec.");
+		timeToCreateDot.setRequired(false);
+		timeToCreateDot.setArgName("sec");
+		oh.addOption(timeToCreateDot);
 
 		Option port = new Option("p", "port", true,
 				"(optional): the port of the server. Default is port 8080.");

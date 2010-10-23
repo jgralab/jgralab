@@ -777,28 +777,28 @@ public class TransactionImplTest {
 	public void testSetAttribute() throws ClassNotFoundException {
 		testAddVertex();
 		CityImpl c1Impl = (CityImpl) c1;
-		
+
 		c1Impl.set_name("test");
-		
+
 		c1Impl.set_testEnum(TestEnum.Test1);
-		
+
 		List<TestRecord> list1 = motorwayMap.createList();
 		c1Impl.set_testList(list1);
-		
+
 		Map<String, String> map1 = motorwayMap.createMap();
 		c1Impl.set_testMap(map1);
-		
+
 		Set<String> set1 = motorwayMap.createSet();
 		c1Impl.set_testSet(set1);
-		
+
 		List<String> list2 = motorwayMap.createList();
 		Set<String> set2 = motorwayMap.createSet();
 		c1Impl.set_testRecord(motorwayMap.createTestRecord("test", list2, set2,
 				2, 2D, 2L, false));
-		
+
 		Map<AttributedElement, Set<VersionedDataObject<?>>> changedAttributesMap = new HashMap<AttributedElement, Set<VersionedDataObject<?>>>();
 		changedAttributesMap.put(c1, c1Impl.attributes());
-		
+
 		assertEquals(readWriteTransaction1.changedAttributes,
 				changedAttributesMap);
 	}

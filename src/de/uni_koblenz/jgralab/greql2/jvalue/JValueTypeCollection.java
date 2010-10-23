@@ -57,11 +57,10 @@ public class JValueTypeCollection extends JValueImpl {
 		return new HashSet<AttributedElementClass>(allowedTypes);
 	}
 
-	
 	public JValueTypeCollection toObject() {
 		return this;
 	}
-	
+
 	/**
 	 * returns the list of forbidden types. Creates a copy of that list so the
 	 * internal list is not affected by changes of the returned list

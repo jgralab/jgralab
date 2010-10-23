@@ -62,12 +62,12 @@ public abstract class ReversedEdgeImpl extends
 	protected ReversedEdgeImpl(EdgeBaseImpl normalEdge, Graph graph) {
 		super(normalEdge, graph);
 	}
-	
+
 	@Override
 	public Edge getNextEdge() {
 		return getNextIncidence();
 	}
-	
+
 	@Override
 	public Edge getPrevEdge() {
 		return getPrevIncidence();
@@ -109,8 +109,8 @@ public abstract class ReversedEdgeImpl extends
 	@Override
 	protected void setIncidentVertex(VertexBaseImpl v) {
 		if (graph.isLoading()) {
-			incidentVertex = new VersionedReferenceImpl<VertexBaseImpl>(normalEdge,
-					v);
+			incidentVertex = new VersionedReferenceImpl<VertexBaseImpl>(
+					normalEdge, v);
 		} else {
 			// initialize here
 			if (incidentVertex == null) {
@@ -206,7 +206,7 @@ public abstract class ReversedEdgeImpl extends
 	public VersionedReferenceImpl<IncidenceImpl> getVersionedPrevIncidence() {
 		return this.prevIncidence;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "-e" + normalEdge.getId() + ": "

@@ -61,5 +61,4 @@ public abstract class BinaryOperator extends Formula {
 		return startVal;
 	}
 
-	
 }

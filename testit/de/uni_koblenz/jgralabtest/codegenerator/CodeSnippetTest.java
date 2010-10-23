@@ -88,7 +88,7 @@ public class CodeSnippetTest {
 		CodeSnippet cs1 = new CodeSnippet(cl, "Mango", "Avocado");
 		assertEquals("Mango\nAvocado\n", cs1.getCode());
 		assertEquals("\tMango\n\tAvocado\n", cl.getCode());// to make sure the
-															// given
+		// given
 		// CodeList was changed accordingly
 		CodeSnippet cs2 = new CodeSnippet("Ananas");
 		cl.add(cs2);

@@ -188,8 +188,8 @@ public class JGraLabSetImpl<E> extends HashSet<E> implements
 			throw new GraphException("Versioning is not working for this set.");
 		}
 		isValidElementCheck(element);
-		JGraLabSetImpl<E> validValue = versionedSet.getValidValueBeforeValueChange(graph
-				.getCurrentTransaction());
+		JGraLabSetImpl<E> validValue = versionedSet
+				.getValidValueBeforeValueChange(graph.getCurrentTransaction());
 		return validValue.internalAdd(element);
 	}
 
@@ -211,8 +211,8 @@ public class JGraLabSetImpl<E> extends HashSet<E> implements
 		while (iter.hasNext()) {
 			isValidElementCheck(iter.next());
 		}
-		JGraLabSetImpl<E> validValue = versionedSet.getValidValueBeforeValueChange(graph
-				.getCurrentTransaction());
+		JGraLabSetImpl<E> validValue = versionedSet
+				.getValidValueBeforeValueChange(graph.getCurrentTransaction());
 		return validValue.internalAddAll(c);
 	}
 
@@ -230,8 +230,8 @@ public class JGraLabSetImpl<E> extends HashSet<E> implements
 		if (versionedSet == null) {
 			throw new GraphException("Versioning is not working for this set.");
 		}
-		JGraLabSetImpl<E> validValue = versionedSet.getValidValueBeforeValueChange(graph
-				.getCurrentTransaction());
+		JGraLabSetImpl<E> validValue = versionedSet
+				.getValidValueBeforeValueChange(graph.getCurrentTransaction());
 		validValue.internalClear();
 	}
 
@@ -321,8 +321,8 @@ public class JGraLabSetImpl<E> extends HashSet<E> implements
 		if (versionedSet == null) {
 			throw new GraphException("Versioning is not working for this set.");
 		}
-		JGraLabSetImpl<E> validValue = versionedSet.getValidValueBeforeValueChange(graph
-				.getCurrentTransaction());
+		JGraLabSetImpl<E> validValue = versionedSet
+				.getValidValueBeforeValueChange(graph.getCurrentTransaction());
 		return validValue.internalRemove(o);
 	}
 
@@ -340,8 +340,8 @@ public class JGraLabSetImpl<E> extends HashSet<E> implements
 		if (versionedSet == null) {
 			throw new GraphException("Versioning is not working for this set.");
 		}
-		JGraLabSetImpl<E> validValue = versionedSet.getValidValueBeforeValueChange(graph
-				.getCurrentTransaction());
+		JGraLabSetImpl<E> validValue = versionedSet
+				.getValidValueBeforeValueChange(graph.getCurrentTransaction());
 		return validValue.internalRemoveAll(c);
 	}
 
@@ -359,8 +359,8 @@ public class JGraLabSetImpl<E> extends HashSet<E> implements
 		if (versionedSet == null) {
 			throw new GraphException("Versioning is not working for this set.");
 		}
-		JGraLabSetImpl<E> validValue = versionedSet.getValidValueBeforeValueChange(graph
-				.getCurrentTransaction());
+		JGraLabSetImpl<E> validValue = versionedSet
+				.getValidValueBeforeValueChange(graph.getCurrentTransaction());
 		return validValue.internalRetainAll(c);
 	}
 

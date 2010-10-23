@@ -144,7 +144,7 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator {
 		IsBooleanPredicateOfEdgeRestriction predInc = vertex
 				.getFirstIsBooleanPredicateOfEdgeRestriction(EdgeDirection.IN);
 		if (predInc != null) {
-			System.out.println("Found a BooleanPredicateOfEdge");
+//			System.out.println("Found a BooleanPredicateOfEdge");
 			predicateEvaluator = greqlEvaluator.getVertexEvaluatorGraphMarker()
 					.getMark(predInc.getAlpha());
 		}

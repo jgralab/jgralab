@@ -63,22 +63,24 @@ public class BackwardVertexSetEvaluator extends PathSearchEvaluator {
 		super(eval);
 		this.vertex = vertex;
 	}
-	
+
 	private boolean initialized = false;
-	
+
 	private VertexEvaluator targetEval = null;
 
 	private final void initialize() {
-		PathDescription p = (PathDescription) vertex.getFirstIsPathOf(EdgeDirection.IN).getAlpha();
+		PathDescription p = (PathDescription) vertex.getFirstIsPathOf(
+				EdgeDirection.IN).getAlpha();
 		PathDescriptionEvaluator pathDescEval = (PathDescriptionEvaluator) greqlEvaluator
 				.getVertexEvaluatorGraphMarker().getMark(p);
-		
-		Expression targetExpression = (Expression) vertex.getFirstIsTargetExprOf(
-				EdgeDirection.IN).getAlpha();
-		targetEval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(targetExpression);
+
+		Expression targetExpression = (Expression) vertex
+				.getFirstIsTargetExprOf(EdgeDirection.IN).getAlpha();
+		targetEval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(
+				targetExpression);
 		NFA revertedNFA = NFA.revertNFA(pathDescEval.getNFA());
 		searchAutomaton = new DFA(revertedNFA);
-			
+
 		// We log the number of states as the result size of the underlying
 		// PathDescription.
 		if (evaluationLogger != null) {
@@ -87,7 +89,6 @@ public class BackwardVertexSetEvaluator extends PathSearchEvaluator {
 		}
 		initialized = true;
 	}
-	
 
 	@Override
 	public JValue evaluate() throws EvaluateException {
@@ -102,7 +103,8 @@ public class BackwardVertexSetEvaluator extends PathSearchEvaluator {
 					"Error evaluation BackwardVertexSet, TargetExpression doesn't evaluate to a vertex",
 					exception);
 		}
-		return ReachableVertices.search(targetVertex, searchAutomaton, subgraph);
+		return ReachableVertices
+				.search(targetVertex, searchAutomaton, subgraph);
 	}
 
 	@Override

@@ -85,18 +85,21 @@ public class JGraLab2OWL {
 	 */
 	public static void saveSchemaToOWL(String filename, Schema schema,
 			boolean edgeClasses2Properties, boolean appendSuffix2EdgeClassName) {
+		JGraLab2OWL j2o = null;
 		try {
-			JGraLab2OWL j2o = new JGraLab2OWL(filename, schema);
+			j2o = new JGraLab2OWL(filename, schema);
 
 			j2o.createOntologyHeader(schema);
 
 			Schema2OWL s2o = new Schema2OWL(j2o.writer, edgeClasses2Properties,
 					appendSuffix2EdgeClassName);
 			s2o.saveSchema(schema);
-
-			j2o.finalizeDocument();
 		} catch (XMLStreamException e) {
 			e.printStackTrace();
+		} finally {
+			if (j2o != null) {
+				j2o.finalizeDocument();
+			}
 		}
 	}
 
@@ -128,9 +131,10 @@ public class JGraLab2OWL {
 	public static void saveGraphToOWLInstances(String filename, Graph graph,
 			boolean edgeClasses2Properties, boolean appendSuffix2EdgeClassName,
 			boolean convertSchema, ProgressFunction pf) throws IOException {
+		JGraLab2OWL j2o = null;
 		try {
 			Schema schema = graph.getSchema();
-			JGraLab2OWL j2o = new JGraLab2OWL(filename, schema);
+			j2o = new JGraLab2OWL(filename, schema);
 
 			j2o.createOntologyHeader(schema);
 
@@ -143,10 +147,12 @@ public class JGraLab2OWL {
 			Graph2OWLInstances g2oi = new Graph2OWLInstances(j2o.writer,
 					edgeClasses2Properties, appendSuffix2EdgeClassName, pf);
 			g2oi.saveGraph(graph, pf);
-
-			j2o.finalizeDocument();
 		} catch (XMLStreamException e) {
 			e.printStackTrace();
+		} finally {
+			if (j2o != null) {
+				j2o.finalizeDocument();
+			}
 		}
 	}
 
@@ -182,8 +188,9 @@ public class JGraLab2OWL {
 			Graph[] graphs, boolean edgeClasses2Properties,
 			boolean appendSuffix2EdgeClassName, boolean convertSchema,
 			ProgressFunction pf) throws IOException {
+		JGraLab2OWL j2o = null;
 		try {
-			JGraLab2OWL j2o = new JGraLab2OWL(filename, schema);
+			j2o = new JGraLab2OWL(filename, schema);
 
 			// We assume all graphs have the same schema!
 			j2o.createOntologyHeader(schema);
@@ -202,10 +209,12 @@ public class JGraLab2OWL {
 				g2oc.saveGraph(graph, pf);
 			}
 
-			j2o.finalizeDocument();
 		} catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} finally {
+			if (j2o != null) {
+				j2o.finalizeDocument();
+			}
 		}
 	}
 
@@ -246,8 +255,9 @@ public class JGraLab2OWL {
 			Graph instanceGraph, boolean edgeClasses2Properties,
 			boolean appendSuffix2EdgeClassName, boolean convertSchema,
 			ProgressFunction pf) throws IOException {
+		JGraLab2OWL j2o = null;
 		try {
-			JGraLab2OWL j2o = new JGraLab2OWL(filename, schema);
+			j2o = new JGraLab2OWL(filename, schema);
 
 			// We assume all graphs have the same schema!
 			j2o.createOntologyHeader(conceptGraphs[0].getSchema());
@@ -269,10 +279,12 @@ public class JGraLab2OWL {
 					edgeClasses2Properties, appendSuffix2EdgeClassName, pf);
 			g2oi.saveGraph(instanceGraph, pf);
 
-			j2o.finalizeDocument();
 		} catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} finally {
+			if (j2o != null) {
+				j2o.finalizeDocument();
+			}
 		}
 	}
 
@@ -286,8 +298,8 @@ public class JGraLab2OWL {
 		// String filename = args[0];
 		String filename = comLine.getOptionValue("g");
 		try {
-			Graph graph = GraphIO.loadGraphFromFileWithStandardSupport(comLine
-					.getOptionValue("g")/* args[0] */, null);
+			Graph graph = GraphIO.loadGraphFromFileWithStandardSupport(
+					comLine.getOptionValue("g")/* args[0] */, null);
 
 			saveGraphToOWLInstances(filename + ".owl", graph, false, true,
 					true, new ConsoleProgressFunction());
@@ -340,9 +352,10 @@ public class JGraLab2OWL {
 	/**
 	 * Creates the header of the OWL-file, i.e. the element {@code <rdf:RDF>},
 	 * together with namespace definitions as its attributes, and its first
-	 * child element {@code <owl:Ontology>} with a subelement {@code
-	 * <rdfs:label>}. {@code <rdfs:label>} contains a text node representing the
-	 * name of the ontology, which is equal to the schema's name.<br>
+	 * child element {@code <owl:Ontology>} with a subelement
+	 * {@code <rdfs:label>}. {@code <rdfs:label>} contains a text node
+	 * representing the name of the ontology, which is equal to the schema's
+	 * name.<br>
 	 * <br> {@code <rdf:RDF>} is the only child of the root node. Its children are
 	 * the {@code <owl:Ontology>} element and further elements which build the
 	 * ontology.<br>
@@ -394,16 +407,24 @@ public class JGraLab2OWL {
 	 * 
 	 * @throws XMLStreamException
 	 */
-	private void finalizeDocument() throws XMLStreamException {
-		writer.writeEndDocument();
-
-		writer.flush();
-		writer.close();
-
+	private void finalizeDocument() {
 		try {
-			outputStream.close();
-		} catch (IOException e) {
-			e.printStackTrace();
+			writer.writeEndDocument();
+			writer.flush();
+		} catch (XMLStreamException ex) {
+
+		} finally {
+			try {
+				writer.close();
+			} catch (XMLStreamException ex) {
+				ex.printStackTrace();
+			} finally {
+				try {
+					outputStream.close();
+				} catch (IOException ex) {
+					ex.printStackTrace();
+				}
+			}
 		}
 	}
 }

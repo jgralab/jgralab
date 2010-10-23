@@ -68,7 +68,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.Optimizer;
-import de.uni_koblenz.jgralab.greql2.parser.ManualGreqlParser;
+import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
@@ -84,15 +84,15 @@ import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
  * String or Graph and a JGraLab-Datagraph and evaluates the Query on this
  * graph. The result is a JValue-object, it can be accessed using the method
  * <code>JValue getEvaluationResult()</code>.
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class GreqlEvaluator {
 
 	public static void main(String[] args) throws FileNotFoundException,
 			IOException, GraphIOException {
-		if ((args.length < 1) || (args.length > 2)) {
+		if (args.length < 1 || args.length > 2) {
 			System.err
 					.println("Usage: java GreqlEvaluator <query> [<graphfile>]");
 			System.exit(1);
@@ -213,14 +213,14 @@ public class GreqlEvaluator {
 	/**
 	 * Sets the marker for evaluating only on marked elements. Also sets the
 	 * datagraph to the given marker's graph.
-	 *
+	 * 
 	 * @param subgraphMarker
 	 *            the subgraphMarker to set
 	 */
 	public void setSubgraphMarker(BooleanGraphMarker subgraphMarker) {
 		this.subgraphMarker = subgraphMarker;
 		if (subgraphMarker != null) {
-			this.datagraph = subgraphMarker.getGraph();
+			datagraph = subgraphMarker.getGraph();
 		}
 	}
 
@@ -251,7 +251,7 @@ public class GreqlEvaluator {
 
 	/**
 	 * Gets a vertex index for a part of a query
-	 *
+	 * 
 	 * @param graph
 	 *            the graph to get an index for
 	 * @param queryPart
@@ -358,8 +358,8 @@ public class GreqlEvaluator {
 		for (SyntaxGraphEntry entry : entryList) {
 			if (entry.getCostModel().isEquivalent(costModel)) {
 				Optimizer opt = entry.getOptimizer();
-				if (((opt != null) && opt.isEquivalent(optimizer))
-						|| ((opt == null) && (optimizer == null))) {
+				if (opt != null && opt.isEquivalent(optimizer) || opt == null
+						&& optimizer == null) {
 					if (entry.lock()) {
 						return entry;
 					}
@@ -373,7 +373,7 @@ public class GreqlEvaluator {
 	/**
 	 * Load all optimized {@link SyntaxGraphEntry}s in
 	 * optimizedSyntaxGraphsDirectory.
-	 *
+	 * 
 	 * @throws GraphIOException
 	 *             if the optimizedGraphsDirectory is not accessible.
 	 * @see #setOptimizedSyntaxGraphsDirectory(File)
@@ -438,17 +438,29 @@ public class GreqlEvaluator {
 	}
 
 	public void setQueryFile(File query) throws IOException {
-		BufferedReader reader = new BufferedReader(new FileReader(query));
-		String line = null;
-		StringBuffer sb = new StringBuffer();
-		while ((line = reader.readLine()) != null) {
-			sb.append(line);
-			sb.append('\n');
+		BufferedReader reader = null;
+		try {
+			reader = new BufferedReader(new FileReader(query));
+
+			String line = null;
+			StringBuffer sb = new StringBuffer();
+			while ((line = reader.readLine()) != null) {
+				sb.append(line);
+				sb.append('\n');
+			}
+
+			System.out.println("Query read from file:");
+			System.out.println(sb.toString());
+			setQuery(sb.toString());
+
+		} finally {
+			try {
+				reader.close();
+			} catch (IOException ex) {
+				throw new RuntimeException(
+						"An exception occurred while closing the stream.", ex);
+			}
 		}
-		reader.close();
-		System.out.println("Query read from file:");
-		System.out.println(sb.toString());
-		setQuery(sb.toString());
 	}
 
 	/**
@@ -602,7 +614,7 @@ public class GreqlEvaluator {
 	}
 
 	public JValue getVariable(String name) {
-		if ((variableMap != null) && variableMap.containsKey(name)) {
+		if (variableMap != null && variableMap.containsKey(name)) {
 			return variableMap.get(name);
 		}
 		return new JValueImpl();
@@ -675,7 +687,7 @@ public class GreqlEvaluator {
 	 * sets the logger which is used to log the evlauation
 	 */
 	public void setEvaluationLogger(EvaluationLogger logger) {
-		this.evaluationLogger = logger;
+		evaluationLogger = logger;
 	}
 
 	/**
@@ -701,7 +713,7 @@ public class GreqlEvaluator {
 
 	/**
 	 * Creates a new GreqlEvaluator for the given Query and Datagraph
-	 *
+	 * 
 	 * @param query
 	 *            the string-representation of the query to evaluate
 	 * @param datagraph
@@ -726,7 +738,7 @@ public class GreqlEvaluator {
 			this.datagraph = datagraph;
 		}
 		knownTypes = new HashMap<String, AttributedElementClass>();
-		this.variableMap = variables;
+		variableMap = variables;
 		this.progressFunction = progressFunction;
 	}
 
@@ -758,8 +770,8 @@ public class GreqlEvaluator {
 					.getGraphCreateMethod(ImplementationType.STANDARD);
 
 			try {
-				minimalGraph = (Graph) (graphCreateMethod.invoke(null,
-						new Object[] { "test", 1, 1 }));
+				minimalGraph = (Graph) graphCreateMethod.invoke(null,
+						new Object[] { "test", 1, 1 });
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -769,7 +781,7 @@ public class GreqlEvaluator {
 
 	/**
 	 * Creates a new GreqlEvaluator for the given Query and Datagraph
-	 *
+	 * 
 	 * @param query
 	 *            the string-representation of the query to evaluate
 	 * @param datagraph
@@ -785,7 +797,7 @@ public class GreqlEvaluator {
 	/**
 	 * Creates an new GreqlEvaluator for the query in the given file and the
 	 * given datagraph
-	 *
+	 * 
 	 * @param queryFile
 	 *            the name of the file whehre the query to evaluate is stored in
 	 * @param datagraph
@@ -801,13 +813,13 @@ public class GreqlEvaluator {
 			throws FileNotFoundException, IOException {
 		this(datagraph, variables, progressFunction);
 		// Read query from file (afuhr)
-		this.setQueryFile(queryFile);
+		setQueryFile(queryFile);
 	}
 
 	/**
 	 * Creates an new GreqlEvaluator for the query in the given file and the
 	 * given datagraph
-	 *
+	 * 
 	 * @param queryFile
 	 *            the name of the file whehre the query to evaluate is stored in
 	 * @param datagraph
@@ -833,7 +845,7 @@ public class GreqlEvaluator {
 	 */
 	protected boolean parseQuery(String query) throws EvaluateException {
 		long parseStartTime = System.currentTimeMillis();
-		ManualGreqlParser parser = new ManualGreqlParser(query);
+		GreqlParser parser = new GreqlParser(query);
 		try {
 			parser.parse();
 		} catch (Exception e) {
@@ -850,6 +862,10 @@ public class GreqlEvaluator {
 	 * Creates the VertexEvaluator-Object at the vertices in the syntaxgraph
 	 */
 	public void createVertexEvaluators() throws EvaluateException {
+		if (vertexEvalGraphMarker != null) {
+			queryGraph
+					.removeGraphStructureChangedListener(vertexEvalGraphMarker);
+		}
 		vertexEvalGraphMarker = new GraphMarker<VertexEvaluator>(queryGraph);
 		Vertex currentVertex = queryGraph.getFirstVertex();
 		while (currentVertex != null) {
@@ -865,7 +881,7 @@ public class GreqlEvaluator {
 	/**
 	 * clears the tempresults that are stored in the VertexEvaluators-Objects at
 	 * the syntaxgraph nodes
-	 *
+	 * 
 	 * @param optimizer
 	 */
 	private void resetVertexEvaluators() {
@@ -940,7 +956,7 @@ public class GreqlEvaluator {
 
 	/**
 	 * same as startEvaluation(false, true), provides for convenience
-	 *
+	 * 
 	 * @return true if the evaluation succeeds, false otherwise
 	 * @throws EvaluateException
 	 */
@@ -952,7 +968,7 @@ public class GreqlEvaluator {
 	/**
 	 * Starts the evaluation. If the query is a store-query, modifies the bound
 	 * variables
-	 *
+	 * 
 	 * @param writeLogs
 	 *            if set to true, the evaluation measures will be written to
 	 *            logfiles.
@@ -966,7 +982,7 @@ public class GreqlEvaluator {
 	public boolean startEvaluation(boolean writeLogs, boolean readLogs)
 			throws EvaluateException, OptimizerException {
 		if (started) {
-			return (result != null);
+			return result != null;
 		}
 
 		started = true;
@@ -978,7 +994,7 @@ public class GreqlEvaluator {
 		long startTime = System.currentTimeMillis();
 
 		if (datagraph == null) {
-			this.datagraph = createMinimalGraph();
+			datagraph = createMinimalGraph();
 		}
 
 		if (writeLogs) {
@@ -1103,7 +1119,7 @@ public class GreqlEvaluator {
 
 	/**
 	 * Sets the optimizer to optimize the syntaxgraph this evaluator evaluates
-	 *
+	 * 
 	 * @param optimizer
 	 *            the optimizer to use
 	 */
@@ -1212,7 +1228,7 @@ public class GreqlEvaluator {
 	}
 
 	public void setEvaluationLoggingType(LoggingType loggerLoggingType) {
-		this.evaluationLoggingType = loggerLoggingType;
+		evaluationLoggingType = loggerLoggingType;
 		evaluationLogger = null;
 		costModel = null;
 	}

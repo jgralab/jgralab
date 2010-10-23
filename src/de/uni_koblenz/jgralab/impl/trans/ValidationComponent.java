@@ -802,11 +802,11 @@ public class ValidationComponent {
 										/*
 										 * if (nextIncidence
 										 * .getLatestPersistentValue()
-										 * instanceof EdgeImpl) { EdgeImpl edge =
-										 * (EdgeImpl) nextIncidence
+										 * instanceof EdgeImpl) { EdgeImpl edge
+										 * = (EdgeImpl) nextIncidence
 										 * .getLatestPersistentValue();
-										 * niPrevIncidence = edge.prevIncidence; }
-										 * if (nextIncidence
+										 * niPrevIncidence = edge.prevIncidence;
+										 * } if (nextIncidence
 										 * .getLatestPersistentValue()
 										 * instanceof ReversedEdgeImpl) {
 										 * ReversedEdgeImpl revEdge =
@@ -900,11 +900,11 @@ public class ValidationComponent {
 										/*
 										 * if (prevIncidence
 										 * .getLatestPersistentValue()
-										 * instanceof EdgeImpl) { EdgeImpl edge =
-										 * (EdgeImpl) prevIncidence
+										 * instanceof EdgeImpl) { EdgeImpl edge
+										 * = (EdgeImpl) prevIncidence
 										 * .getLatestPersistentValue();
-										 * piNextIncidence = edge.nextIncidence; }
-										 * if (prevIncidence
+										 * piNextIncidence = edge.nextIncidence;
+										 * } if (prevIncidence
 										 * .getLatestPersistentValue()
 										 * instanceof ReversedEdgeImpl) {
 										 * ReversedEdgeImpl revEdge =

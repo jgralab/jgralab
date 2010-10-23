@@ -90,5 +90,4 @@ public class ThisVertexEvaluator extends VariableEvaluator {
 		return dependingEvaluators;
 	}
 
-
 }

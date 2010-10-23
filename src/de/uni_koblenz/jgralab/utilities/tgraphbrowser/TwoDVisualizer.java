@@ -23,12 +23,11 @@
  */
 package de.uni_koblenz.jgralab.utilities.tgraphbrowser;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.LineNumberReader;
 import java.io.PrintStream;
 import java.util.HashMap;
 
@@ -51,6 +50,8 @@ import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
 import de.uni_koblenz.jgralab.utilities.tgraphbrowser.StateRepository.State;
 
 public class TwoDVisualizer {
+
+	public static int SECONDS_TO_WAIT_FOR_DOT = 60;
 
 	/**
 	 * Creates the 2D-representation of <code>currentElement</code> and its
@@ -76,7 +77,8 @@ public class TwoDVisualizer {
 	 */
 	public void visualizeElements(StringBuilder code, State state,
 			Integer sessionId, String workspace, JValue currentElement,
-			Boolean showAttributes, Integer pathLength) {
+			Boolean showAttributes, Integer pathLength,
+			RequestThread currentThread) {
 		// set currentVertex or currentEdge to the current element
 		if (currentElement.isVertex()) {
 			code.append("current").append("Vertex = \"").append(
@@ -114,8 +116,6 @@ public class TwoDVisualizer {
 		}
 		tempFolder.deleteOnExit();
 		// create .dot-file
-		// String dotFileName = workspace + "/" + sessionId +
-		// "GraphSnippet.dot";
 		String dotFileName = null;
 		try {
 			dotFileName = tempFolder.getCanonicalPath() + File.separator
@@ -161,9 +161,39 @@ public class TwoDVisualizer {
 					execStr = StateRepository.dot + " -Tsvg -o " + svgFileName
 							+ " " + dotFileName;
 				}
-				int exitCode = Runtime.getRuntime().exec(execStr).waitFor();
-				if (exitCode != 0) {
-					System.err.println("dot exited with code " + exitCode);
+				ExecutingDot dotThread = new ExecutingDot(execStr,
+						currentThread);
+				dotThread.start();
+				try {
+					synchronized (currentThread) {
+						currentThread.wait(SECONDS_TO_WAIT_FOR_DOT * 1000);
+					}
+					dotThread.svgCreationProcess.destroy();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				if (dotThread.exitCode != -1) {
+					if (dotThread.exitCode != 0) {
+						if (dotThread.exception != null) {
+							throw dotThread.exception;
+						}
+					}
+				} else {
+					// execution of dot is terminated because it took too long
+					code
+							.append("document.getElementById('divError').style.display = \"block\";\n");
+					code
+							.append(
+									"document.getElementById('h2ErrorMessage').innerHTML = \"ERROR: ")
+							.append("Creation of file ")
+							.append(svgFileName)
+							.append(
+									" was terminated because it took more than ")
+							.append(SECONDS_TO_WAIT_FOR_DOT).append(
+									" seconds.\";\n");
+					code
+							.append("document.getElementById('divNonError').style.display = \"none\";\n");
+					return;
 				}
 			}
 		} catch (IOException e) {
@@ -178,35 +208,10 @@ public class TwoDVisualizer {
 			code
 					.append("document.getElementById('divNonError').style.display = \"none\";\n");
 			return;
-		} catch (InterruptedException e) {
-			e.printStackTrace();
 		}
 		if (!new File(dotFileName).delete()) {
 			TGraphBrowserServer.logger.warning(dotFileName
 					+ " could not be deleted");
-		}
-		// determine the size of the svg-graphic
-		String line = "";
-		try {
-			FileReader in = new FileReader(svgFileName);
-			// FileReader in = new FileReader(workspace + "/" + svgFileName);
-			LineNumberReader lnr = new LineNumberReader(in);
-			do {
-				line = lnr.readLine();
-			} while ((line != null) && !line.startsWith("<svg"));
-			lnr.close();
-			in.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		String width = "200pt";
-		String height = "200pt";
-		if ((line != null) && !line.isEmpty()) {
-			String[] lineparts = line.split("\"");
-			width = lineparts[1];
-			height = lineparts[3];
 		}
 		assert svgFileName != null : "svg file name must not be null";
 		svgFileName = svgFileName.substring(svgFileName
@@ -220,25 +225,20 @@ public class TwoDVisualizer {
 		code.append("object.id = \"embed2DGraph\";\n");
 		code.append("object.src = \"_").append(svgFileName).append("\";\n");
 		code.append("object.type = \"image/svg+xml\";\n");
-		code.append("object.width = \"").append(width).append("\";\n");
-		code.append("object.height = \"").append(height).append("\";\n");
 		code.append("div2D.appendChild(object);\n");
 		code.append("@else @*/\n");
 		// code executed in other browsers
 		code.append("var div2D = document.getElementById(\"div2DGraph\");\n");
 		code.append("var object = document.createElement(\"object\");\n");
+		code.append("object.id = \"embed2DGraph\";\n");
 		code.append("object.data = \"").append(svgFileName).append("\";\n");
 		code.append("object.type = \"image/svg+xml\";\n");
-		code.append("object.width = \"").append(width).append("\";\n");
-		code.append("object.height = \"").append(height).append("\";\n");
 		code.append("div2D.appendChild(object);\n");
-		code.append("object.onload = function(){\n");
-		code.append("var svgDoc = object.getSVGDocument();\n");
-		code.append("var svgRootElement = svgDoc.rootElement;\n");
-		code.append("svgRootElement.currentScale = 0.8;");
-		code.append("};\n");
 		code.append("/*@end\n");
 		code.append("@*/\n");
+		code.append("object.onload = function(){\n");
+		code.append("resize();\n");
+		code.append("};\n");
 	}
 
 	/**
@@ -328,6 +328,47 @@ public class TwoDVisualizer {
 	}
 
 	/**
+	 * This thread executes dot to create the svg file.
+	 */
+	private static final class ExecutingDot extends Thread {
+
+		public Process svgCreationProcess;
+
+		private final String execStr;
+
+		// -1 is the default value to show, that dot is not finished
+		public int exitCode = -1;
+
+		public IOException exception;
+
+		private final RequestThread sleepingRequestThread;
+
+		public ExecutingDot(String command, RequestThread currentThread) {
+			execStr = command;
+			sleepingRequestThread = currentThread;
+		}
+
+		@Override
+		public void run() {
+			super.run();
+			try {
+				svgCreationProcess = Runtime.getRuntime().exec(execStr);
+				exitCode = svgCreationProcess.waitFor();
+				synchronized (sleepingRequestThread) {
+					if (sleepingRequestThread.getState() == Thread.State.TIMED_WAITING) {
+						sleepingRequestThread.notify();
+					}
+				}
+			} catch (IOException e) {
+				exception = e;
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/**
 	 * Creates the specific representation for the elements.
 	 */
 	private static class MyTg2Dot extends Tg2Dot {
@@ -381,8 +422,8 @@ public class TwoDVisualizer {
 				Boolean showAttributes, JValue currentElement,
 				HashMap<EdgeClass, Boolean> selectedEdgeClasses2,
 				HashMap<VertexClass, Boolean> selectedVertexClasses2) {
-			this.selectedEdgeClasses = selectedEdgeClasses2;
-			this.selectedVertexClasses = selectedVertexClasses2;
+			selectedEdgeClasses = selectedEdgeClasses2;
+			selectedVertexClasses = selectedVertexClasses2;
 			this.elements = elements;
 			outputName = outputFileName;
 			this.showAttributes = showAttributes;
@@ -404,9 +445,10 @@ public class TwoDVisualizer {
 		 */
 		@Override
 		public void printGraph() {
+			PrintStream out = null;
 			try {
-				PrintStream out = new PrintStream(new FileOutputStream(
-						outputName));
+				out = new PrintStream(new BufferedOutputStream(
+						new FileOutputStream(outputName)));
 				graphStart(out);
 				for (JValue v : elements) {
 					if (v.isVertex()) {
@@ -417,10 +459,13 @@ public class TwoDVisualizer {
 				}
 				graphEnd(out);
 				out.flush();
-				out.close();
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 				exception = e;
+			} finally {
+				if (out != null) {
+					out.close();
+				}
 			}
 		}
 
@@ -515,7 +560,7 @@ public class TwoDVisualizer {
 			out.print(" label=\"e" + e.getId() + ": "
 					+ cls.getUniqueName().replace('$', '.') + "");
 
-			if (showAttributes && (cls.getAttributeCount() > 0)) {
+			if (showAttributes && cls.getAttributeCount() > 0) {
 				out.print("\\l");
 				printAttributes(out, e);
 			}
@@ -564,7 +609,7 @@ public class TwoDVisualizer {
 			for (Attribute attr : cls.getAttributeList()) {
 				String current = attr.getName();
 				Object attribute = elem.getAttribute(attr.getName());
-				String attributeString = (attribute != null) ? attribute
+				String attributeString = attribute != null ? attribute
 						.toString() : "null";
 				if (attribute instanceof String) {
 					attributeString = '"' + attributeString + '"';
@@ -599,7 +644,7 @@ public class TwoDVisualizer {
 			AttributedElementClass cls = v.getAttributedElementClass();
 			out.print("v" + v.getId() + " [label=\"{{v" + v.getId() + "|"
 					+ cls.getUniqueName().replace('$', '.') + "}");
-			if (showAttributes && (cls.getAttributeCount() > 0)) {
+			if (showAttributes && cls.getAttributeCount() > 0) {
 				out.print("|");
 				printAttributes(out, v);
 			}

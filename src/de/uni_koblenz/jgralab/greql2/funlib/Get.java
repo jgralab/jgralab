@@ -82,8 +82,9 @@ public class Get extends Greql2Function {
 	 * de.uni_koblenz.jgralab.greql2.jvalue.JValue[])
 	 */
 	@Override
-	public JValue evaluate(Graph graph, AbstractGraphMarker<AttributedElement> subgraph,
-			JValue[] arguments) throws EvaluateException {
+	public JValue evaluate(Graph graph,
+			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
+			throws EvaluateException {
 		switch (checkArguments(arguments)) {
 		case 0:
 			return arguments[0].toJValueMap().get(arguments[1]);

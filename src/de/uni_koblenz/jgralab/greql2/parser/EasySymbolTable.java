@@ -55,7 +55,7 @@ public class EasySymbolTable {
 			throws DuplicateVariableException {
 		if (list.getFirst().get(ident) == null) {
 			list.getFirst().put(ident, v);
-		} 
+		}
 	}
 
 	public Vertex lookup(String ident) {

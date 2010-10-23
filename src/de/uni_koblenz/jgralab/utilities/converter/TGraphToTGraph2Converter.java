@@ -93,43 +93,63 @@ public class TGraphToTGraph2Converter {
 	 */
 	public void convertTGStream(OutputStream out, InputStream in)
 			throws IOException {
-		PrintWriter output = new PrintWriter(new BufferedWriter(
-				new OutputStreamWriter(out)), true);
-		BufferedReader input = new BufferedReader(new InputStreamReader(in));
-		output.print("TGraph ");
-		output.print(VERSION);
-		output.println(";");
-		String currentLine = "";
-		boolean graphReached = false;
-		while (currentLine != null) {
-			currentLine = input.readLine();
-			if (currentLine != null) {
-				if (graphReached) {
-					output.println(currentLine.replace(" \\null ", " n "));
-					continue;
-				}
-				if (currentLine.trim().startsWith("//")) {
-					output.println(currentLine);
-					continue;
-				}
-				if (!currentLine.trim().endsWith(";")) {
-					StringBuilder newCurrentLine = new StringBuilder(
-							currentLine);
-					currentLine = input.readLine();
-					if (currentLine != null) {
-						newCurrentLine.append('\n');
-						newCurrentLine.append(currentLine);
+		PrintWriter output = null;
+		BufferedReader input = null;
+		// FIXME the streams input and output will never be close!
+		try {
+			output = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
+					out)), true);
+			input = new BufferedReader(new InputStreamReader(in));
+			output.print("TGraph ");
+			output.print(VERSION);
+			output.println(";");
+			String currentLine = "";
+			boolean graphReached = false;
+			while (currentLine != null) {
+				currentLine = input.readLine();
+				if (currentLine != null) {
+					if (graphReached) {
+						output.println(currentLine.replace(" \\null ", " n "));
+						continue;
 					}
-					currentLine = newCurrentLine.toString();
+					if (currentLine.trim().startsWith("//")) {
+						output.println(currentLine);
+						continue;
+					}
+					if (!currentLine.trim().endsWith(";")) {
+						StringBuilder newCurrentLine = new StringBuilder(
+								currentLine);
+						currentLine = input.readLine();
+						if (currentLine != null) {
+							newCurrentLine.append('\n');
+							newCurrentLine.append(currentLine);
+						}
+						currentLine = newCurrentLine.toString();
+					}
+					output.println(processLine(currentLine));
+					if (currentLine.trim().startsWith("Graph ")) {
+						graphReached = true;
+					}
 				}
-				output.println(processLine(currentLine));
-				if (currentLine.trim().startsWith("Graph ")) {
-					graphReached = true;
+			}
+			out.flush();
+		} finally {
+			try {
+				if (input != null) {
+					input.close();
+				}
+			} finally {
+				try {
+					if (output != null) {
+						output.close();
+					}
+				} finally {
+					if (out != null) {
+						out.close();
+					}
 				}
 			}
 		}
-		out.flush();
-		out.close();
 	}
 
 	private String processLine(String currentLine) {
@@ -300,7 +320,7 @@ public class TGraphToTGraph2Converter {
 			}
 
 			System.out.println("Fini.");
-			if(loadSchema){
+			if (loadSchema) {
 				loadConvertedSchema(outputFilename);
 			}
 		} catch (FileNotFoundException e) {

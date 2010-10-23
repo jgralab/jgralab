@@ -218,7 +218,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 			if (ex.getCause() instanceof GraphException) {
 				throw new GraphException(ex.getCause().getLocalizedMessage());
 			}
-			throw new M1ClassAccessException("Cannot create vertex of class "
+			throw new M1ClassAccessException("Cannot create record of class "
 					+ recordDomain.getCanonicalName(), ex);
 		}
 	}

@@ -65,7 +65,8 @@ public class SimplePathDescriptionEvaluator extends
 		}
 		createdNFA = NFA.createSimplePathDescriptionNFA(
 				getEdgeDirection(vertex), typeCollection,
-				getEdgeRoles(edgeRestEval), predicateEvaluator, greqlEvaluator.getVertexEvaluatorGraphMarker());
+				getEdgeRoles(edgeRestEval), predicateEvaluator, greqlEvaluator
+						.getVertexEvaluatorGraphMarker());
 		return new JValueImpl(createdNFA);
 	}
 
