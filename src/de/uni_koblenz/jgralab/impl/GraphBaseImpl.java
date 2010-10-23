@@ -1719,7 +1719,8 @@ public abstract class GraphBaseImpl implements Graph {
 
 	@Override
 	public int getGraphStructureChangedListenerCount() {
-		return graphStructureChangedListenersWithAutoRemoval == null ? 0
+		return graphStructureChangedListenersWithAutoRemoval == null ? graphStructureChangedListeners
+				.size()
 				: graphStructureChangedListenersWithAutoRemoval.size()
 						+ graphStructureChangedListeners.size();
 	}
