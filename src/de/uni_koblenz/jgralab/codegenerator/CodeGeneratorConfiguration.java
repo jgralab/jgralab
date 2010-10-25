@@ -50,6 +50,10 @@ package de.uni_koblenz.jgralab.codegenerator;
  */
 public class CodeGeneratorConfiguration {
 
+	/**
+	 * This is the default case, if neither Transactions nor a database backend or a memory saving implementation
+	 * is needed: TODO: Rename 
+	 */
 	public static final CodeGeneratorConfiguration WITHOUT_TRANSACTIONS = new CodeGeneratorConfiguration();
 
 	public static final CodeGeneratorConfiguration FULL = new CodeGeneratorConfiguration()
