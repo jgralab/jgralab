@@ -110,6 +110,9 @@ public class GenericTests {
 	}
 
 	protected Graph createTestGraph() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions! Add some better test graph here and adapt all
+		// queries...
 		String query = "from i:c report i end where d:=\"nada\", c:=b, b:=a, a:=\"Mensaessen\"";
 		Graph g = GreqlParser.parse(query);
 		// Tg2Dot.printGraphAsDot(g, true, "/tmp/testgraph.dot");
