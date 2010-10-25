@@ -87,6 +87,8 @@ public class SystemTest extends GenericTests {
 
 	@Test
 	public void testVariableAsVariableDefinition() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
 		String queryString = "from x:V{Variable}, y:V{Variable} with x -->{IsVarOf} <--{IsExprOf} y report x.name as \"DefinedVariable\", y.name as \"Definition\" end";
 		JValue result = evalTestQuery("VariableAsVariableDefinition",
 				queryString);
@@ -95,6 +97,8 @@ public class SystemTest extends GenericTests {
 
 	@Test
 	public void testIdentifierWithUsage() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
 		String queryString = "from x:V{Identifier} report x.name as \"Identifier\", outDegree{IsArgumentOf}(x) as \"UsageCount\", edgesFrom(x) as \"Usages\" end";
 		JValue result = evalTestQuery("IdentifierWithUsage", queryString);
 		assertEquals(21, result.toCollection().size());
