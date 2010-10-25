@@ -156,6 +156,8 @@ public class ParserTest {
 
 	@Test
 	public void testWhereWithSameScope() throws ParsingException {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
 		Greql2 graph = parseQuery("from a,b:V with connected report a,b end where connected := a-->b");
 		Variable a = null;
 		Variable b = null;
@@ -777,6 +779,8 @@ public class ParserTest {
 
 	@Test
 	public void testLetExpression() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
 		Greql2 graph = parseQuery("let a:=7 in from b:list(1..a) report b end");
 		Variable var = graph.getFirstVariable();
 		assertNotNull(var);
@@ -788,6 +792,8 @@ public class ParserTest {
 
 	@Test
 	public void testLetExpression2() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
 		Greql2 graph = parseQuery("let x:= list (5..13) in count(x)",
 				"/Users/dbildh/greql.tg");
 		assertNotNull(graph);

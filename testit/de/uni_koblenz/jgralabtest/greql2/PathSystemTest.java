@@ -53,6 +53,8 @@ public class PathSystemTest extends GenericTests {
 	 */
 	@Test
 	public void testPathSystemConstruction() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
 		String queryString = "from w: V{WhereExpression} report w  :-) <--{IsDefinitionOf} <--{IsVarOf} end";
 		JValue result = evalTestQuery("PathSystemConstruction", queryString);
 		JValueBag bag = result.toCollection().toJValueBag();
@@ -71,6 +73,8 @@ public class PathSystemTest extends GenericTests {
 	 */
 	@Test
 	public void testPathSystemWeight() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
 		String queryString = "from w: V{WhereExpression} report weight( w  :-) <--{IsDefinitionOf} <--{IsVarOf}) end";
 		JValue result = evalTestQuery("PathSystemConstruction", queryString);
 		JValueBag bag = result.toCollection().toJValueBag();
@@ -82,6 +86,8 @@ public class PathSystemTest extends GenericTests {
 
 	@Test
 	public void testPathSystemContains() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
 		String queryString = "from v: V{WhereExpression}, w:V{Variable}  report contains(v  :-) <--{IsDefinitionOf} <--{IsVarOf}, w) end";
 		JValue result = evalTestQuery("PathSystemConstruction", queryString);
 		JValueBag bag = result.toCollection().toJValueBag();
@@ -97,6 +103,8 @@ public class PathSystemTest extends GenericTests {
 
 	@Test
 	public void testPathSystemConstruction2() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
 		String queryString = "from v: V{WhereExpression}, w:V{Variable}  report contains(v  :-) <--{IsDefinitionOf} <--{IsVarOf}, w) end";
 		JValue result = evalTestQuery("PathSystemConstruction", queryString);
 		JValueBag bag = result.toCollection().toJValueBag();
@@ -112,6 +120,8 @@ public class PathSystemTest extends GenericTests {
 
 	@Test
 	public void testPathSystemDistance() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
 		String queryString = "from v: V{WhereExpression}, w:V{Variable}  report distance( v  :-) <--{IsDefinitionOf} <--{IsVarOf}, w) end";
 		JValue result = evalTestQuery("PathSystemConstruction", queryString);
 		JValueBag bag = result.toCollection().toJValueBag();
@@ -131,6 +141,8 @@ public class PathSystemTest extends GenericTests {
 
 	@Test
 	public void testPathSystemEdgesConnected() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
 		String queryString = "from v: V{WhereExpression}, w:V{Variable}  report edgesConnected(w, v  :-) <--{IsDefinitionOf} <--{IsVarOf}) end";
 		JValue result = evalTestQuery("PathSystemConstruction", queryString);
 		JValueBag bag = result.toCollection().toJValueBag();
@@ -148,6 +160,8 @@ public class PathSystemTest extends GenericTests {
 
 	@Test
 	public void testPathSystemEdgesFrom() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
 		String queryString = "from v: V{WhereExpression}, w:V{Variable}  report edgesFrom(w, v  :-) <--{IsDefinitionOf} <--{IsVarOf}) end";
 		JValue result = evalTestQuery("PathSystemEdgesFrom", queryString);
 		JValueBag bag = result.toCollection().toJValueBag();
@@ -165,6 +179,8 @@ public class PathSystemTest extends GenericTests {
 
 	@Test
 	public void testPathSystemEdgesTo() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
 		String queryString = "from v: V{WhereExpression}, w:V{Variable}  report edgesTo(v, v  :-) <--{IsDefinitionOf} <--{IsVarOf}) end";
 		JValue result = evalTestQuery("PathSystemEdgesTo", queryString);
 		JValueBag bag = result.toCollection().toJValueBag();
@@ -176,6 +192,8 @@ public class PathSystemTest extends GenericTests {
 
 	@Test
 	public void testExtractPath() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
 		String queryString = "from v: V{WhereExpression}, w:V{Variable}  report extractPath(v  :-) <--{IsDefinitionOf} <--{IsVarOf}, w) end";
 		JValue result = evalTestQuery("ExtractPath", queryString);
 		JValueBag bag = result.toCollection().toJValueBag();
@@ -194,6 +212,8 @@ public class PathSystemTest extends GenericTests {
 
 	@Test
 	public void testInnerNodes() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
 		String queryString = "from v: V{WhereExpression}, w:V{Variable}  report innerNodes(v  :-) <--{IsDefinitionOf} <--{IsVarOf}) end";
 		JValue result = evalTestQuery("InnerNodes", queryString);
 		JValueBag bag = result.toCollection().toJValueBag();
@@ -205,6 +225,8 @@ public class PathSystemTest extends GenericTests {
 
 	@Test
 	public void testLeaves() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
 		String queryString = "from v: V{WhereExpression}, w:V{Variable}  report leaves(v  :-) <--{IsDefinitionOf} <--{IsVarOf}) end";
 		JValue result = evalTestQuery("Leaves", queryString);
 		JValueBag bag = result.toCollection().toJValueBag();
@@ -216,6 +238,8 @@ public class PathSystemTest extends GenericTests {
 
 	@Test
 	public void testMinPathLength() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
 		String queryString = "from v: V{WhereExpression}, w:V{Variable}  report minPathLength( v  :-) <--{IsDefinitionOf} <--{IsVarOf}) end";
 		JValue result = evalTestQuery("MinPathLength", queryString);
 		JValueBag bag = result.toCollection().toJValueBag();
@@ -227,6 +251,8 @@ public class PathSystemTest extends GenericTests {
 
 	@Test
 	public void testMaxPathLength() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
 		String queryString = "from v: V{WhereExpression}, w:V{Variable}  report maxPathLength( v  :-) <--{IsDefinitionOf} <--{IsVarOf}) end";
 		JValue result = evalTestQuery("MaxPathLength", queryString);
 		JValueBag bag = result.toCollection().toJValueBag();
@@ -238,6 +264,8 @@ public class PathSystemTest extends GenericTests {
 
 	@Test
 	public void testParent() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
 		String queryString = "from v: V{WhereExpression}, w:V{Variable}  report parent( v  :-) <--{IsDefinitionOf} <--{IsVarOf}, w) end";
 		JValue result = evalTestQuery("Parent", queryString);
 		JValueBag bag = result.toCollection().toJValueBag();
@@ -253,6 +281,8 @@ public class PathSystemTest extends GenericTests {
 
 	@Test
 	public void testSiblings() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
 		String queryString = "from v: V{WhereExpression}, w:V{Definition}  report siblings(w,  v  :-) <--{IsDefinitionOf} <--{IsVarOf}) end";
 		JValue result = evalTestQuery("Siblings", queryString);
 		JValueBag bag = result.toCollection().toJValueBag();
@@ -264,6 +294,8 @@ public class PathSystemTest extends GenericTests {
 
 	@Test
 	public void testTypes() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
 		String queryString = "from v: V{WhereExpression} report types(v  :-) <--{IsDefinitionOf} <--{IsVarOf}) end";
 		JValue result = evalTestQuery("TypeSet", queryString);
 		JValueBag bag = result.toCollection().toJValueBag();
@@ -275,6 +307,8 @@ public class PathSystemTest extends GenericTests {
 
 	@Test
 	public void testPathLength() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
 		String queryString = "from v: V{WhereExpression}, w: V{Variable} report pathLength(extractPath(v  :-) <--{IsDefinitionOf} <--{IsVarOf}, w)) end";
 		JValue result = evalTestQuery("PathLength", queryString);
 		JValueBag bag = result.toCollection().toJValueBag();
@@ -292,6 +326,8 @@ public class PathSystemTest extends GenericTests {
 
 	@Test
 	public void testIsCycle() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
 		String queryString = "from v: V{WhereExpression}, w: V{Variable} report isCycle(extractPath(v  :-) <--{IsDefinitionOf} <--{IsVarOf}, w)) end";
 		JValue result = evalTestQuery("PathLength", queryString);
 		JValueBag bag = result.toCollection().toJValueBag();
@@ -303,6 +339,8 @@ public class PathSystemTest extends GenericTests {
 
 	@Test
 	public void testNodeTrace() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
 		String queryString = "from v: V{WhereExpression}, w: V{Variable} report nodeTrace(extractPath(v  :-) <--{IsDefinitionOf} <--{IsVarOf}, w)) end";
 		JValue result = evalTestQuery("PathLength", queryString);
 		JValueBag bag = result.toCollection().toJValueBag();
@@ -321,6 +359,8 @@ public class PathSystemTest extends GenericTests {
 
 	@Test
 	public void testEdgeTrace() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
 		String queryString = "from v: V{WhereExpression}, w: V{Variable} report edgeTrace(extractPath(v  :-) <--{IsDefinitionOf} <--{IsVarOf}, w)) end";
 		JValue result = evalTestQuery("PathLength", queryString);
 		JValueBag bag = result.toCollection().toJValueBag();
@@ -337,6 +377,8 @@ public class PathSystemTest extends GenericTests {
 
 	@Test
 	public void testIsSubpath() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
 		String queryString = "from v: V{WhereExpression}, w: V{Variable}, d: V{Definition} report isSubPathOf( extractPath(v  :-) <--{IsDefinitionOf}, d), extractPath(v  :-) <--{IsDefinitionOf} <--{IsVarOf}, w)) end";
 		JValue result = evalTestQuery("PathLength", queryString);
 		JValueBag bag = result.toCollection().toJValueBag();

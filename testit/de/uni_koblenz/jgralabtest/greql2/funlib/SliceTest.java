@@ -36,6 +36,8 @@ public class SliceTest extends GenericTests {
 
 	@Test
 	public void testSliceCreation() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
 		String queryString = "from w: V{WhereExpression} report slice(w, <--) end";
 		JValue result = evalTestQuery("SliceCreation", queryString);
 		JValueBag bag = result.toCollection().toJValueBag();
@@ -44,8 +46,9 @@ public class SliceTest extends GenericTests {
 			JValueSlice c = (JValueSlice) v;
 			System.out.println("Result Slice is: ");
 			System.out.println("  Number of nodes: " + c.nodes().size());
-			for (Object n : c.nodes())
+			for (Object n : c.nodes()) {
 				System.out.println("    Node: " + n);
+			}
 		}
 	}
 

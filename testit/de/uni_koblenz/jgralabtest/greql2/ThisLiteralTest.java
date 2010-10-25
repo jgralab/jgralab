@@ -45,6 +45,8 @@ public class ThisLiteralTest extends GenericTests {
 
 	@Test
 	public void testThisVertex2() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
 		String queryString = "from v,w:V{WhereExpression}, g:V{Greql2Expression} with v {@thisVertex=v}& --> &{@thisVertex=g} <-- w report v end";
 		JValue result = evalTestQuery("ThisVertex2", queryString);
 		JValue resultOpt = evalTestQuery("ThisVertex2 (wo)", queryString,
@@ -65,6 +67,8 @@ public class ThisLiteralTest extends GenericTests {
 
 	@Test
 	public void testThisEdge1() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
 		String queryString = "from v:V{Definition}, w:V{WhereExpression}  with v -->{@id(thisEdge)=15}  w report v,w end";
 		JValue result = evalTestQuery("ThisEdge1", queryString);
 		JValue resultOpt = evalTestQuery("ThisEdge1 (wo)", queryString,
