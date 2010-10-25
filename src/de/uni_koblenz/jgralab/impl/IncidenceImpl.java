@@ -338,7 +338,8 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 		assert isValid();
 		assert e.isValid();
 		assert getGraph() == e.getGraph();
-		assert getThis() == e.getThis();
+		assert getThis() == e.getThis() : "this-vertices don't match: "
+				+ getThis() + " != " + e.getThis();
 		VertexBaseImpl v = (VertexBaseImpl) getThis();
 		assert v.isValid();
 		assert e != this;
