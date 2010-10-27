@@ -180,13 +180,16 @@ public class TwoDVisualizer {
 					}
 				} else {
 					// execution of dot is terminated because it took too long
+					code.append("changeView();\n");
 					code
 							.append("document.getElementById('divError').style.display = \"block\";\n");
 					code
 							.append(
 									"document.getElementById('h2ErrorMessage').innerHTML = \"ERROR: ")
 							.append("Creation of file ")
-							.append(svgFileName)
+							.append(
+									svgFileName.contains("\\") ? svgFileName
+											.replace("\\", "/") : svgFileName)
 							.append(
 									" was terminated because it took more than ")
 							.append(SECONDS_TO_WAIT_FOR_DOT).append(
