@@ -1603,7 +1603,7 @@ div#div2DGraph{
 	<a id="aChangeView" class="option" href="javascript:changeView();">&nbsp;Show graphical view&nbsp;</a>
 	&nbsp;
 	<div id="rightOption" class="option">
-		<input type="text" name="textElem" id="textElem" value="v1" size="6" onchange="selectElements(this);" />
+		<input type="text" name="textElem" id="textElem" value="v1" size="6" onchange="selectElements(this);"  onkeyup="if((event.which?event.which:event.keyCode)==13){selectElements(this);}"/>
 		<a id="aGReQL" href="javascript:callGReQLWindow('aGReQL');">&nbsp;Select by GReQL&nbsp;</a>
 	</div>
 </div>
