@@ -473,7 +473,6 @@ public class RequestThread extends Thread {
 		int numberOfBytesRead = 1;
 		long totalNumberOfBytesRead = 0;
 		while (totalNumberOfBytesRead < contentLength - content.length) {
-			System.out.println(totalNumberOfBytesRead + "<" + contentLength);// TODO
 			totalNumberOfBytesRead += numberOfBytesRead = in.read(content);
 			if (numberOfBytesRead <= 0) {
 				break;
