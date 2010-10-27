@@ -205,11 +205,26 @@ public class RequestThread extends Thread {
 				sendFile(out, "TGraphBrowser_GraphChoice_AfterError.html",
 						"The tg.-file is too big!");
 			} else {
-				sendFile(out, "TGraphBrowser_GraphLoaded.html", "= "
-						+ erg
-						+ ";\n\t\t timestamp = "
-						+ StateRepository.getSession(Integer.parseInt(erg
-								.toString())).lastAccess);
+				try {
+					sendFile(out, "TGraphBrowser_GraphLoaded.html", "= "
+							+ erg
+							+ ";\n\t\t timestamp = "
+							+ StateRepository.getSession(Integer.parseInt(erg
+									.toString())).lastAccess);
+				} catch (NumberFormatException e) {
+					// Extract the error message
+					String ergText = erg.toString();
+					String[] partOfErg = ergText
+							.split(Pattern.quote("ERROR: "));
+					if (partOfErg.length > 0) {
+						partOfErg = partOfErg[1].split(Pattern.quote("\""));
+						ergText = partOfErg[0];
+					}
+
+					// there was an exception while loading the graph
+					sendFile(out, "TGraphBrowser_GraphChoice_AfterError.html",
+							ergText);
+				}
 			}
 		} else {
 			sendMessage(out, erg);
