@@ -28,7 +28,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Hashtable;
 import java.util.logging.FileHandler;
 import java.util.logging.Formatter;
 import java.util.logging.Handler;
@@ -135,21 +134,8 @@ public class TGraphBrowserServer extends Thread {
 	public static long starttime;
 
 	public static final String VERSION = "SimpleWebServer  http://www.jibble.org/";
-	public static final Hashtable<String, String> MIME_TYPES = new Hashtable<String, String>();
 
 	private static final int DEFAULT_PORT = 8080;
-
-	static {
-		String image = "image/";
-		MIME_TYPES.put(".gif", image + "gif");
-		MIME_TYPES.put(".jpg", image + "jpeg");
-		MIME_TYPES.put(".jpeg", image + "jpeg");
-		MIME_TYPES.put(".png", image + "png");
-		String text = "text/";
-		MIME_TYPES.put(".html", text + "html");
-		MIME_TYPES.put(".htm", text + "html");
-		MIME_TYPES.put(".txt", text + "plain");
-	}
 
 	private String workspace;
 	private final ServerSocket _serverSocket;
@@ -189,18 +175,6 @@ public class TGraphBrowserServer extends Thread {
 				this.interrupt();
 			}
 		}
-	}
-
-	// Work out the filename extension. If there isn't one, we keep
-	// it as the empty string ("").
-	public static String getExtension(java.io.File file) {
-		String extension = "";
-		String filename = file.getName();
-		int dotPos = filename.lastIndexOf(".");
-		if (dotPos >= 0) {
-			extension = filename.substring(dotPos);
-		}
-		return extension.toLowerCase();
 	}
 
 	/**
