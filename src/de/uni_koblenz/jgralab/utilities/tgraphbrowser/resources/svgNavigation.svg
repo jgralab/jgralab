@@ -46,14 +46,14 @@
       function zoom(evt) {
         if (evt.target.parentNode.getAttributeNS(null, 'id') == 'ZIn') {
           //debug.setData('ZIn!');
-          vbW *= 0.95;
-          vbH *= 0.95;
+          vbW *= 0.7;
+          vbH *= 0.7;
           updateViewBox(vbX, vbY, vbW, vbH);
         }
         else if (evt.target.parentNode.getAttributeNS(null, 'id') == 'ZOut') {
           //debug.setData('ZOut!');
-          vbW *= 1.05;
-          vbH *= 1.05;
+          vbW *= 1.3;
+          vbH *= 1.3;
           updateViewBox(vbX, vbY, vbW, vbH);
         }
         else if (evt.target.parentNode.getAttributeNS(null, 'id') == 'ZGraph') {
