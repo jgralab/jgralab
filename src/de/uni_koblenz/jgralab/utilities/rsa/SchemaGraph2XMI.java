@@ -23,9 +23,11 @@
  */
 package de.uni_koblenz.jgralab.utilities.rsa;
 
+import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
@@ -248,11 +250,12 @@ public class SchemaGraph2XMI {
 	 */
 	private void createXMI(String xmiName, SchemaGraph schemaGraph)
 			throws XMLStreamException, IOException {
-		OutputStream out = null;
+		Writer out = null;
 		XMLStreamWriter writer = null;
 		try {
 			// create the XMLStreamWriter which creates the current xmi-file.
-			out = new FileOutputStream(xmiName);
+			out = new BufferedWriter(new OutputStreamWriter(
+					new FileOutputStream(xmiName), "UTF-8"));
 			XMLOutputFactory factory = XMLOutputFactory.newInstance();
 			factory.setProperty("javax.xml.stream.isRepairingNamespaces",
 					Boolean.TRUE);
