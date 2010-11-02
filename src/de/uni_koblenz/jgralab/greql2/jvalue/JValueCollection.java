@@ -190,6 +190,14 @@ abstract public class JValueCollection extends JValueImpl implements
 				return val;
 			}
 		}
+
+		// pairwise comparison of elements failed, so sort the shorter before
+		// the longer collection.
+		int diff = size() - other.size();
+		if (diff != 0) {
+			return diff;
+		}
+
 		return 0;
 	}
 
