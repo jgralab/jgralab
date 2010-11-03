@@ -38,7 +38,7 @@ import de.uni_koblenz.jgralab.algolib.functions.Function;
  * @author strauss@uni-koblenz.de
  * 
  */
-public interface WeightedShortestPathsFromVertexSolver extends ProblemSolver {
+public interface WeightedShortestPathsFromVertexSolver extends WeightedProblemSolver {
 
 	/**
 	 * Solves the problem <b>weighted shortest paths from vertex</b>.
