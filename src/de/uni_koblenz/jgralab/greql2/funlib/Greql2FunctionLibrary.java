@@ -562,7 +562,7 @@ public class Greql2FunctionLibrary {
 	 * @param packagePath
 	 *            the path to the package this .class-file is located in
 	 */
-	private boolean registerFunctionsInDirectory(String fileName) {
+	public boolean registerFunctionsInDirectory(String fileName) {
 		logger.finer("Directory Path : " + fileName);
 		boolean foundAClass = false;
 		File dir = new File(fileName);
