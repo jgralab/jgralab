@@ -50,14 +50,11 @@
       
       
       function zoom(evt) {
-    	  alert(evt);
         if (evt.target.parentNode.getAttributeNS(null, 'id') == 'ZIn') {
-        	alert("zoomIn");
           //debug.setData('ZIn!');
           zoomIn();
         }
         else if (evt.target.parentNode.getAttributeNS(null, 'id') == 'ZOut') {
-        	alert("zoomOut");
           //debug.setData('ZOut!');
           zoomOut();
         }
