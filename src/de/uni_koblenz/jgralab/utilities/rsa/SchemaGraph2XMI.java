@@ -35,6 +35,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.HashMap;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 
@@ -51,6 +52,9 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.JGraLab;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.grumlschema.SchemaGraph;
 import de.uni_koblenz.jgralab.grumlschema.domains.BooleanDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.CollectionDomain;
@@ -118,6 +122,11 @@ public class SchemaGraph2XMI {
 	 * which are navigable from TO to FROM.
 	 */
 	private boolean isReverted = false;
+
+	/**
+	 * Stores the current {@link SchemaGraph} which is converted to a XMI.
+	 */
+	private SchemaGraph schemaGraph;
 
 	/**
 	 * Processes an TG-file as schema or a schema in a grUML graph to a XMI
@@ -257,6 +266,7 @@ public class SchemaGraph2XMI {
 	 */
 	private void createXMI(String xmiName, SchemaGraph schemaGraph)
 			throws XMLStreamException, IOException {
+		this.schemaGraph = schemaGraph;
 		Writer out = null;
 		XMLStreamWriter writer = null;
 		try {
@@ -1071,10 +1081,11 @@ public class SchemaGraph2XMI {
 					otherIncidence.get_roleName());
 		} else if (isRoleNameNecessary(edgeClass, connectedVertexClass
 				.get_qualifiedName())) {
+			String newRoleName = createNewUniqueRoleName(connectedVertexClass);
 			writer.writeAttribute(XMIConstants4SchemaGraph2XMI.ATTRIBUTE_NAME,
-					(connectedVertexClass.get_qualifiedName() + "_" + edgeClass
-							.get_qualifiedName()).replaceAll(
-							Pattern.quote("."), "_"));
+					newRoleName);
+			// to find already used rolenames set the newly created rolename
+			otherIncidence.set_roleName(newRoleName);
 		}
 		writer
 				.writeAttribute(
@@ -1128,6 +1139,43 @@ public class SchemaGraph2XMI {
 
 		// close ownedattribute
 		writer.writeEndElement();
+	}
+
+	/**
+	 * Find a new rolename which lets the new {@link Schema} still be
+	 * consistent.
+	 * 
+	 * @param connectedVertexClass
+	 *            {@link VertexClass} for which the new rolename should be
+	 *            created
+	 * @return String the new rolename
+	 */
+	private String createNewUniqueRoleName(VertexClass connectedVertexClass) {
+		String baseRolename = connectedVertexClass.get_qualifiedName()
+				.replaceAll(Pattern.quote("."), "_");
+		// ensure that the rolename starts with an lower case letter
+		if (Character.isUpperCase(baseRolename.charAt(0))) {
+			baseRolename = Character.toLowerCase(baseRolename.charAt(0))
+					+ baseRolename.substring(1);
+		}
+
+		// find a unique rolename
+		HashMap<String, JValue> boundVars = new HashMap<String, JValue>();
+		boundVars.put("start", new JValueImpl(connectedVertexClass));
+		int counter = 0;
+		JValue result;
+		do {
+			counter++;
+			GreqlEvaluator eval = new GreqlEvaluator(
+					"using start:"
+							+ "exists ic:start<->{structure.SpecializesVertexClass}*<->{structure.EndsAt}<->{structure.ComesFrom,structure.GoesTo}^2@ic.roleName=\""
+							+ baseRolename + (counter == 1 ? "" : counter)
+							+ "\"", schemaGraph, boundVars);
+			eval.startEvaluation();
+			result = eval.getEvaluationResult();
+		} while (result.isBoolean() ? result.toBoolean() : false);
+
+		return baseRolename + (counter == 1 ? "" : counter);
 	}
 
 	/**
