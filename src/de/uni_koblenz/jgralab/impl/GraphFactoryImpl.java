@@ -462,6 +462,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public <T extends Record> T createRecordWithTransactionSupport(
 			Class<T> recordDomain, Graph g) {
 		try {
