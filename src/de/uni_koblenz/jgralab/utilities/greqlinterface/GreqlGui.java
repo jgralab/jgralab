@@ -166,7 +166,7 @@ public class GreqlGui extends JFrame {
 			try {
 				graph = GraphIO.loadSchemaAndGraphFromFile(file
 						.getCanonicalPath(),
-						CodeGeneratorConfiguration.WITHOUT_TRANSACTIONS, this);
+						CodeGeneratorConfiguration.WITH_TRANSACTION_SUPPORT, this);
 			} catch (Exception e1) {
 				graph = null;
 				ex = e1;
