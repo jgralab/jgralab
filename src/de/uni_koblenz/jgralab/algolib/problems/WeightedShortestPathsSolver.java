@@ -39,7 +39,7 @@ import de.uni_koblenz.jgralab.algolib.functions.BinaryFunction;
  * @author strauss@uni-koblenz.de
  * 
  */
-public interface WeightedShortestPathsSolver extends ProblemSolver {
+public interface WeightedShortestPathsSolver extends WeightedProblemSolver {
 
 	/**
 	 * Solves the problem <b>weighted shortest paths</b>.

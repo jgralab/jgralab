@@ -38,7 +38,7 @@ import de.uni_koblenz.jgralab.algolib.functions.DoubleFunction;
  * @author strauss@uni-koblenz.de
  * 
  */
-public interface WeightedDistancesFromVertexSolver extends ProblemSolver {
+public interface WeightedDistancesFromVertexSolver extends WeightedProblemSolver {
 
 	/**
 	 * Solves the problem <b>weighted distance from vertex</b>.

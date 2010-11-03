@@ -41,7 +41,7 @@ import de.uni_koblenz.jgralab.algolib.functions.Function;
  * 
  */
 public interface WeightedShortestPathFromVertexToVertexSolver extends
-		ProblemSolver {
+		WeightedProblemSolver {
 
 	/**
 	 * Solves the problem <b>weighted shortest path from vertex to vertex</b>.
