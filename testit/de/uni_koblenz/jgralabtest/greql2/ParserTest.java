@@ -1322,7 +1322,7 @@ public class ParserTest {
 				"de.uni_koblenz.jgralab.sampleschema");
 		GraphClass gc = s.createGraphClass("SampleGraph");
 		gc.createVertexClass("map.SampleVertex");
-		s.commit(CodeGeneratorConfiguration.WITHOUT_TRANSACTIONS);
+		s.commit(CodeGeneratorConfiguration.WITH_TRANSACTION_SUPPORT);
 		String query = "import map.SampleVertex;  true ";
 		parseQuery(query);
 	}

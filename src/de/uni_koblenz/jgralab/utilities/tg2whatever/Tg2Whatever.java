@@ -135,7 +135,7 @@ public abstract class Tg2Whatever {
 	public void setGraph(String fileName) throws GraphIOException {
 		graphFileName = fileName;
 		graph = GraphIO.loadSchemaAndGraphFromFile(graphFileName,
-				CodeGeneratorConfiguration.WITHOUT_TRANSACTIONS,
+				CodeGeneratorConfiguration.WITH_TRANSACTION_SUPPORT,
 				new ConsoleProgressFunction());
 	}
 

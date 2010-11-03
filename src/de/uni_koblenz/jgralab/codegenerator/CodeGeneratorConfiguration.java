@@ -57,7 +57,10 @@ package de.uni_koblenz.jgralab.codegenerator;
  */
 public class CodeGeneratorConfiguration {
 
-	public static final CodeGeneratorConfiguration WITHOUT_TRANSACTIONS = new CodeGeneratorConfiguration()
+	public static final CodeGeneratorConfiguration WITH_TRANSACTION_SUPPORT = new CodeGeneratorConfiguration()
+			.withTransactionSupport();
+
+	public static final CodeGeneratorConfiguration WITH_DATABASE_SUPPORT = new CodeGeneratorConfiguration()
 			.withDatabaseSupport();
 
 	public static final CodeGeneratorConfiguration FULL = new CodeGeneratorConfiguration()
@@ -82,7 +85,7 @@ public class CodeGeneratorConfiguration {
 	private boolean transactionSupport = false;
 
 	/** toggles, if classes for database support should be created */
-	private boolean databaseSupport = true;
+	private boolean databaseSupport = false;
 
 	/**
 	 * toggles, if the memory saving std classes shall be used or not. If true,

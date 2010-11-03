@@ -40,12 +40,12 @@ import java.net.URLDecoder;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.Map.Entry;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
@@ -232,8 +232,8 @@ public class Greql2FunctionLibrary {
 
 	private static String describeAllFunction() {
 		StringBuilder sb = new StringBuilder();
-		for (String fun : new TreeSet<String>(instance().availableFunctions
-				.keySet())) {
+		for (String fun : new TreeSet<String>(
+				instance().availableFunctions.keySet())) {
 			sb.append(describeFunction(fun, false));
 			sb.append("\u000C\n");
 		}
@@ -243,8 +243,8 @@ public class Greql2FunctionLibrary {
 	private static String listFunctions() {
 		StringBuilder sb = new StringBuilder();
 		boolean first = true;
-		for (String function : new TreeSet<String>(Greql2FunctionLibrary
-				.instance().availableFunctions.keySet())) {
+		for (String function : new TreeSet<String>(
+				Greql2FunctionLibrary.instance().availableFunctions.keySet())) {
 			if (!first) {
 				sb.append('\n');
 			}
@@ -332,7 +332,9 @@ public class Greql2FunctionLibrary {
 								@Override
 								public int compare(Greql2Function o1,
 										Greql2Function o2) {
-									return o1.getClass().getSimpleName()
+									return o1
+											.getClass()
+											.getSimpleName()
 											.compareTo(
 													o2.getClass()
 															.getSimpleName());
@@ -349,23 +351,20 @@ public class Greql2FunctionLibrary {
 		// sb.append("\\section{Functions}\n\n");
 		for (Entry<Category, SortedSet<Greql2Function>> e : map.entrySet()) {
 			sb.append("\\subsection{");
-			String subSect = e.getKey().toString().toLowerCase().replace("_",
-					" ");
+			String subSect = e.getKey().toString().toLowerCase()
+					.replace("_", " ");
 			sb.append(subSect.substring(0, 1).toUpperCase()
 					+ subSect.substring(1));
 			sb.append("}\n\n");
 
-			sb
-					.append("\\begin{longtable}{|p{0.09\\textwidth}|p{0.56\\textwidth}|p{0.25\\textwidth}|}\n");
+			sb.append("\\begin{longtable}{|p{0.09\\textwidth}|p{0.56\\textwidth}|p{0.25\\textwidth}|}\n");
 
 			sb.append("\\hline\n");
-			sb
-					.append("\\textbf{Name} & \\textbf{Description} & \\textbf{Signatures} \\\\ \n");
+			sb.append("\\textbf{Name} & \\textbf{Description} & \\textbf{Signatures} \\\\ \n");
 			sb.append("\\hline\n");
 			sb.append("\\endfirsthead\n");
 			sb.append("\\hline\n");
-			sb
-					.append("\\textbf{Name} & \\textbf{Description} & \\textbf{Signatures} \\\\ \n");
+			sb.append("\\textbf{Name} & \\textbf{Description} & \\textbf{Signatures} \\\\ \n");
 			sb.append("\\hline\n");
 			sb.append("\\endhead\n\n");
 			for (Greql2Function fun : e.getValue()) {
@@ -460,7 +459,7 @@ public class Greql2FunctionLibrary {
 		// same name and different class may not. Implementation have to be the
 		// same.
 		if (isGreqlFunction(funName)
-				&& availableFunctions.get(funName).getClass() != functionClass) {
+				&& (availableFunctions.get(funName).getClass() != functionClass)) {
 			System.out.println(availableFunctions.get(funName) + " != "
 					+ functionClass);
 			System.exit(1);
@@ -539,11 +538,12 @@ public class Greql2FunctionLibrary {
 							&& Character.isUpperCase(entryName
 									.charAt(nondottedPackageName.length() + 1))) {
 						registerPredefinedFunction(entryName.substring(
-								nondottedPackageName.length() + 1, entryName
-										.length() - 6));
+								nondottedPackageName.length() + 1,
+								entryName.length() - 6));
 						logger.finer("Registering function: "
-								+ entryName.substring(nondottedPackageName
-										.length() + 1, entryName.length() - 6));
+								+ entryName.substring(
+										nondottedPackageName.length() + 1,
+										entryName.length() - 6));
 					}
 				}
 			} catch (Exception e) {
@@ -609,8 +609,41 @@ public class Greql2FunctionLibrary {
 		}
 	}
 
+	/**
+	 * Simple interface for loading GReQL functions from Eclipse resource
+	 * bundles. There's a class in the jgralab4eclipse project that implements
+	 * that interface. The field eclipseFunctionLoader is then set to an
+	 * instance of that.
+	 */
+	public interface EclipseGreqlFunctionLoader {
+		public void registerFunctionsInResourceBundle(URL res);
+	}
+
+	private EclipseGreqlFunctionLoader eclipseFunctionLoader = null;
+
+	/**
+	 * @return the eclipseFunctionLoader
+	 */
+	public EclipseGreqlFunctionLoader getEclipseFunctionLoader() {
+		return eclipseFunctionLoader;
+	}
+
+	/**
+	 * @param eclipseFunctionLoader
+	 *            the eclipseFunctionLoader to set
+	 */
+	public void setEclipseFunctionLoader(
+			EclipseGreqlFunctionLoader eclipseFunctionLoader) {
+		this.eclipseFunctionLoader = eclipseFunctionLoader;
+	}
+
 	private void registerFunctionsInResourceBundle(URL res) {
-		// TODO: how do i load classes from a bundleresource:// URL???
-		// That seems not to be possible without using eclipse stuff...
+		if (eclipseFunctionLoader != null) {
+			eclipseFunctionLoader.registerFunctionsInResourceBundle(res);
+		} else {
+			throw new RuntimeException(
+					"There's no EclipseGreqlFunctionLoader set, so functions "
+							+ "cannot be loaded from resource bundles.");
+		}
 	}
 }

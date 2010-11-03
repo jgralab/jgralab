@@ -48,12 +48,12 @@ import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
+import de.uni_koblenz.jgralab.GraphIO.TGFilenameFilter;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.GraphIO.TGFilenameFilter;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
@@ -99,7 +99,7 @@ public class GreqlEvaluator {
 
 	public static void main(String[] args) throws FileNotFoundException,
 			IOException, GraphIOException {
-		if (args.length < 1 || args.length > 2) {
+		if ((args.length < 1) || (args.length > 2)) {
 			System.err
 					.println("Usage: java GreqlEvaluator <query> [<graphfile>]");
 			System.exit(1);
@@ -110,7 +110,7 @@ public class GreqlEvaluator {
 		Graph datagraph = null;
 		if (args.length == 2) {
 			datagraph = GraphIO.loadSchemaAndGraphFromFile(args[1],
-					CodeGeneratorConfiguration.WITHOUT_TRANSACTIONS,
+					CodeGeneratorConfiguration.WITH_TRANSACTION_SUPPORT,
 					new ConsoleProgressFunction());
 		}
 
@@ -365,8 +365,8 @@ public class GreqlEvaluator {
 		for (SyntaxGraphEntry entry : entryList) {
 			if (entry.getCostModel().isEquivalent(costModel)) {
 				Optimizer opt = entry.getOptimizer();
-				if (opt != null && opt.isEquivalent(optimizer) || opt == null
-						&& optimizer == null) {
+				if (((opt != null) && opt.isEquivalent(optimizer)) || ((opt == null)
+						&& (optimizer == null))) {
 					if (entry.lock()) {
 						return entry;
 					}
@@ -621,7 +621,7 @@ public class GreqlEvaluator {
 	}
 
 	public JValue getVariable(String name) {
-		if (variableMap != null && variableMap.containsKey(name)) {
+		if ((variableMap != null) && variableMap.containsKey(name)) {
 			return variableMap.get(name);
 		}
 		return new JValueImpl();
@@ -772,7 +772,7 @@ public class GreqlEvaluator {
 					AggregationKind.NONE, n, 0, Integer.MAX_VALUE, "",
 					AggregationKind.NONE);
 			minimalSchema
-					.compile(CodeGeneratorConfiguration.WITHOUT_TRANSACTIONS);
+					.compile(CodeGeneratorConfiguration.MINIMAL);
 			Method graphCreateMethod = minimalSchema
 					.getGraphCreateMethod(ImplementationType.STANDARD);
 
