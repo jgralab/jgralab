@@ -12,6 +12,7 @@ Comment Record1 "another comment";
 RecordDomain Record1 (anAttribute: Boolean, anotherAttribute: Integer);
 VertexClass VertexClass1: VertexClass2;
 abstract VertexClass VertexClass2;
+VertexClass VertexClass3 {secondDouble: Double};
 Package package1;
 VertexClass VertexClassA;
 VertexClass VertexClassB;
