@@ -66,6 +66,7 @@ public class SetComprehensionEvaluator extends ComprehensionEvaluator {
 		this.vertex = vertex;
 	}
 
+	@Override
 	protected JValueCollection getResultDatastructure() {
 		return new JValueSet();
 	}

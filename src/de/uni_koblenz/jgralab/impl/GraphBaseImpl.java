@@ -311,17 +311,21 @@ public abstract class GraphBaseImpl implements Graph {
 		if (isLoading()) {
 			if (eId > 0) {
 				// the given edge already has an id, try to use it
-				if (containsEdgeId(eId))
+				if (containsEdgeId(eId)) {
 					throw new GraphException("edge with id " + e.getId()
 							+ " already exists");
-				if (eId > eMax)
+				}
+				if (eId > eMax) {
 					throw new GraphException("edge id " + e.getId()
 							+ " is bigger than eSize");
-			} else
+				}
+			} else {
 				throw new GraphException("can not load an edge with id <= 0");
+			}
 		} else {
-			if (!canAddGraphElement(eId))
+			if (!canAddGraphElement(eId)) {
 				throw new GraphException("can not add an edge with id != 0");
+			}
 			eId = allocateEdgeIndex(eId);
 			assert eId != 0;
 			e.setId(eId);
@@ -359,17 +363,21 @@ public abstract class GraphBaseImpl implements Graph {
 		if (isLoading()) {
 			if (vId > 0) {
 				// the given vertex already has an id, try to use it
-				if (containsVertexId(vId))
+				if (containsVertexId(vId)) {
 					throw new GraphException("vertex with id " + vId
 							+ " already exists");
-				if (vId > vMax)
+				}
+				if (vId > vMax) {
 					throw new GraphException("vertex id " + vId
 							+ " is bigger than vSize");
-			} else
+				}
+			} else {
 				throw new GraphException("can not load a vertex with id <= 0");
+			}
 		} else {
-			if (!canAddGraphElement(vId))
+			if (!canAddGraphElement(vId)) {
 				throw new GraphException("can not add a vertex with vId " + vId);
+			}
 			vId = allocateVertexIndex(vId);
 			assert vId != 0;
 			v.setId(vId);
@@ -497,8 +505,9 @@ public abstract class GraphBaseImpl implements Graph {
 	 * @return true if this graph contains an edge with id eId
 	 */
 	private final boolean containsEdgeId(int eId) {
-		if (eId < 0)
+		if (eId < 0) {
 			eId = -eId;
+		}
 		return (eId > 0) && (eId <= eMax) && (getEdge()[eId] != null)
 				&& (getRevEdge()[eId] != null);
 	}
@@ -540,11 +549,12 @@ public abstract class GraphBaseImpl implements Graph {
 		try {
 			return (T) internalCreateEdge(cls, alpha, omega);
 		} catch (Exception exception) {
-			if (exception instanceof GraphException)
+			if (exception instanceof GraphException) {
 				throw (GraphException) exception;
-			else
+			} else {
 				throw new GraphException("Error creating edge of class "
 						+ cls.getName(), exception);
+			}
 		}
 	}
 
@@ -563,8 +573,9 @@ public abstract class GraphBaseImpl implements Graph {
 		try {
 			return (T) internalCreateVertex(cls);
 		} catch (Exception ex) {
-			if (ex instanceof GraphException)
+			if (ex instanceof GraphException) {
 				throw (GraphException) ex;
+			}
 			throw new GraphException("Error creating vertex of class "
 					+ cls.getName(), ex);
 		}
@@ -667,25 +678,29 @@ public abstract class GraphBaseImpl implements Graph {
 	 *            the new size of the edge array
 	 */
 	protected void expandEdgeArray(int newSize) {
-		if (newSize <= eMax)
+		if (newSize <= eMax) {
 			throw new GraphException("newSize must be > eSize: eSize=" + eMax
 					+ ", newSize=" + newSize);
+		}
 
 		EdgeBaseImpl[] e = new EdgeBaseImpl[newSize + 1];
-		if (getEdge() != null)
+		if (getEdge() != null) {
 			System.arraycopy(getEdge(), 0, e, 0, getEdge().length);
+		}
 		setEdge(e);
 
 		ReversedEdgeBaseImpl[] r = new ReversedEdgeBaseImpl[newSize + 1];
 
-		if (getRevEdge() != null)
+		if (getRevEdge() != null) {
 			System.arraycopy(getRevEdge(), 0, r, 0, getRevEdge().length);
+		}
 
 		setRevEdge(r);
-		if (getFreeEdgeList() == null)
+		if (getFreeEdgeList() == null) {
 			setFreeEdgeList(new FreeIndexList(newSize));
-		else
+		} else {
 			getFreeEdgeList().expandBy(newSize - eMax);
+		}
 
 		eMax = newSize;
 		notifyMaxEdgeCountIncreased(newSize);
@@ -698,17 +713,20 @@ public abstract class GraphBaseImpl implements Graph {
 	 *            the new size of the vertex array
 	 */
 	protected void expandVertexArray(int newSize) {
-		if (newSize <= vMax)
+		if (newSize <= vMax) {
 			throw new GraphException("newSize must > vSize: vSize=" + vMax
 					+ ", newSize=" + newSize);
+		}
 		VertexBaseImpl[] expandedArray = new VertexBaseImpl[newSize + 1];
-		if (getVertex() != null)
+		if (getVertex() != null) {
 			System.arraycopy(getVertex(), 0, expandedArray, 0,
 					getVertex().length);
-		if (getFreeVertexList() == null)
+		}
+		if (getFreeVertexList() == null) {
 			setFreeVertexList(new FreeIndexList(newSize));
-		else
+		} else {
 			getFreeVertexList().expandBy(newSize - vMax);
+		}
 		setVertex(expandedArray);
 		vMax = newSize;
 		notifyMaxVertexCountIncreased(newSize);

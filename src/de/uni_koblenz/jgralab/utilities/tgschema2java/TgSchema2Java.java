@@ -197,7 +197,7 @@ public class TgSchema2Java {
 	public void setSavememSupport(boolean value) {
 		config.setSaveMemSupport(value);
 	}
-	
+
 	public void setDatabaseSupport(boolean value) {
 		config.setDatabaseSupport(value);
 	}
@@ -599,10 +599,9 @@ public class TgSchema2Java {
 				setStandardSupport(true);
 			} else if (v.equals("savemem")) {
 				setSavememSupport(true);
-			} else if (v.equals("database")){
+			} else if (v.equals("database")) {
 				setDatabaseSupport(true);
-			}
-			else {
+			} else {
 				throw new IllegalArgumentException(
 						"Illegal value for implementation mode: "
 								+ v

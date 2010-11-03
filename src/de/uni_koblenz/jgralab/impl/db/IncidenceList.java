@@ -1,3 +1,26 @@
+/*
+ * JGraLab - The Java graph laboratory
+ * (c) 2006-2010 Institute for Software Technology
+ *               University of Koblenz-Landau, Germany
+ * 
+ *               ist@uni-koblenz.de
+ * 
+ * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
 package de.uni_koblenz.jgralab.impl.db;
 
 import java.util.Set;
@@ -44,8 +67,9 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 
 		@Override
 		protected void updateCachedElement(Integer eId, long sequenceNumber) {
-			if (graph.isEdgeCached(eId))
+			if (graph.isEdgeCached(eId)) {
 				updateCachedIncidentEdge(eId, sequenceNumber);
+			}
 		}
 
 		private void updateCachedIncidentEdge(int eId, long sequenceNumber) {
@@ -91,10 +115,11 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 	 */
 	@Override
 	public DatabasePersistableEdge getFirst() {
-		if (!this.isEmpty())
+		if (!this.isEmpty()) {
 			return this.getFirstIncidence();
-		else
+		} else {
 			return null;
+		}
 	}
 
 	/**
@@ -120,10 +145,11 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 	 */
 	@Override
 	public DatabasePersistableEdge getLast() {
-		if (!this.isEmpty())
+		if (!this.isEmpty()) {
 			return this.getLastIncidence();
-		else
+		} else {
 			return null;
+		}
 	}
 
 	private DatabasePersistableEdge getLastIncidence() {
@@ -145,10 +171,11 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 	@Override
 	public DatabasePersistableEdge getPrev(DatabasePersistableEdge edge) {
 		assert this.contains(edge);
-		if (!this.isFirst(edge))
+		if (!this.isFirst(edge)) {
 			return getPrevOrientedEdge(edge);
-		else
+		} else {
 			return null;
+		}
 	}
 
 	/**
@@ -163,21 +190,23 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 	public boolean contains(DatabasePersistableEdge edge) {
 		Integer eId = this.incidenceMap
 				.get(edge.getSequenceNumberInLambdaSeq());
-		if (eId != null)
+		if (eId != null) {
 			return eId == edge.getId()
 					&& // Math.abs(eId) == edge.getId() &&
 					this.owningVertex.getId() == edge.getIncidentVId()
 					&& this.owningVertex.getGraph() == edge.getGraph();
-		else
+		} else {
 			return false;
+		}
 	}
 
 	private boolean isFirst(DatabasePersistableEdge edge) {
 		assert this.contains(edge);
-		if (!this.isEmpty())
+		if (!this.isEmpty()) {
 			return this.equalsFirstIncidence(edge);
-		else
+		} else {
 			return false;
+		}
 	}
 
 	private boolean equalsFirstIncidence(DatabasePersistableEdge edge) {
@@ -208,18 +237,20 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 	@Override
 	public DatabasePersistableEdge getNext(DatabasePersistableEdge edge) {
 		assert this.contains(edge);
-		if (!this.isLast(edge))
+		if (!this.isLast(edge)) {
 			return getNextOriented(edge);
-		else
+		} else {
 			return null;
+		}
 	}
 
 	private boolean isLast(DatabasePersistableEdge edge) {
 		assert this.contains(edge);
-		if (!this.isEmpty())
+		if (!this.isEmpty()) {
 			return this.equalsLastIncidence(edge);
-		else
+		} else {
 			return false;
+		}
 	}
 
 	private boolean equalsLastIncidence(DatabasePersistableEdge edge) {
@@ -245,8 +276,9 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 	 */
 	@Override
 	public void prepend(DatabasePersistableEdge edge) {
-		if (!this.isFirst(edge))
+		if (!this.isFirst(edge)) {
 			this.prependByMoveOrInsert(edge);
+		}
 	}
 
 	private void prependByMoveOrInsert(DatabasePersistableEdge edge) {
@@ -256,10 +288,11 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 	}
 
 	private void moveOrInsert(DatabasePersistableEdge edge, long sequenceNumber) {
-		if (this.contains(edge))
+		if (this.contains(edge)) {
 			this.moveTo(edge, sequenceNumber);
-		else
+		} else {
 			this.insertAt(edge, sequenceNumber);
+		}
 	}
 
 	private void moveTo(DatabasePersistableEdge edge, long sequenceNumber) {
@@ -283,8 +316,9 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 	 */
 	@Override
 	public void append(DatabasePersistableEdge edge) {
-		if (!this.isLast(edge))
+		if (!this.isLast(edge)) {
 			this.appendByMoveOrInsert(edge);
+		}
 	}
 
 	private void appendByMoveOrInsert(DatabasePersistableEdge edge) {
@@ -312,8 +346,9 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 		assert haveSameIncidentVertex(targetEdge, movedEdge);
 		assert targetEdge != movedEdge;
 		if (targetEdge != movedEdge
-				&& !this.isPrevNeighbour(targetEdge, movedEdge))
+				&& !this.isPrevNeighbour(targetEdge, movedEdge)) {
 			this.moveIncidenceBefore(movedEdge, targetEdge);
+		}
 	}
 
 	/**
@@ -338,11 +373,12 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 	}
 
 	private int getPrevEdgeId(DatabasePersistableEdge edge) {
-		if (!this.isFirst(edge) && this.contains(edge))
+		if (!this.isFirst(edge) && this.contains(edge)) {
 			return this.incidenceMap.lowerEntry(
 					edge.getSequenceNumberInLambdaSeq()).getValue();
-		else
+		} else {
 			return 0;
+		}
 	}
 
 	/**
@@ -394,11 +430,12 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 
 	private int getNextEdgeId(DatabasePersistableEdge edge)
 			throws GraphException {
-		if (!this.isLast(edge) && this.contains(edge))
+		if (!this.isLast(edge) && this.contains(edge)) {
 			return this.incidenceMap.higherEntry(
 					edge.getSequenceNumberInLambdaSeq()).getValue();
-		else
+		} else {
 			return 0;
+		}
 	}
 
 	private void moveIncidenceBehind(DatabasePersistableEdge movedEdge,
@@ -422,13 +459,14 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 	@Override
 	public void remove(DatabasePersistableEdge edge) {
 		assert this.contains(edge);
-		if (this.incidenceMap.containsKey(edge.getSequenceNumberInLambdaSeq()))
+		if (this.incidenceMap.containsKey(edge.getSequenceNumberInLambdaSeq())) {
 			this.incidenceMap.remove(edge.getSequenceNumberInLambdaSeq());
-		/*
-		 * As it is not known here if incidence will be completely deleted or
-		 * just updated as edge points to new alpha or omega, sequence number is
-		 * not changed and thus not updated to database.
-		 */
+			/*
+			 * As it is not known here if incidence will be completely deleted
+			 * or just updated as edge points to new alpha or omega, sequence
+			 * number is not changed and thus not updated to database.
+			 */
+		}
 	}
 
 	/**
@@ -481,6 +519,7 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 
 	/**
 	 * Gets iterable ids of incident edges.
+	 * 
 	 * @return
 	 */
 	protected Iterable<Integer> eIds() {
@@ -489,25 +528,31 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 
 	/**
 	 * Counts outgoing incidences.
+	 * 
 	 * @return Amount of outgoing incidences.
 	 */
 	protected int countOutgoing() {
 		int count = 0;
-		for (int eId : this.incidenceMap.values())
-			if (eId > 0)
+		for (int eId : this.incidenceMap.values()) {
+			if (eId > 0) {
 				count++;
+			}
+		}
 		return count;
 	}
 
 	/**
 	 * Counts incoming incidences.
+	 * 
 	 * @return Amount of incoming incidences.
 	 */
 	protected int countIncoming() {
 		int count = 0;
-		for (int eId : this.incidenceMap.values())
-			if (eId < 0)
+		for (int eId : this.incidenceMap.values()) {
+			if (eId < 0) {
 				count++;
+			}
+		}
 		return count;
 	}
 }

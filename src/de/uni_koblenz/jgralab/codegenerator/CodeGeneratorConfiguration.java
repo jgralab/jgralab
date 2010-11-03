@@ -50,21 +50,23 @@ package de.uni_koblenz.jgralab.codegenerator;
  */
 public class CodeGeneratorConfiguration {
 
-	public static final CodeGeneratorConfiguration WITHOUT_TRANSACTIONS = new CodeGeneratorConfiguration().withDatabaseSupport();
+	public static final CodeGeneratorConfiguration WITHOUT_TRANSACTIONS = new CodeGeneratorConfiguration()
+			.withDatabaseSupport();
 
 	public static final CodeGeneratorConfiguration FULL = new CodeGeneratorConfiguration()
 			.withTransactionSupport().withMethodsForSubclassesSupport()
 			.withSaveMemSupport().withDatabaseSupport();
 
 	public static final CodeGeneratorConfiguration FULL_WITHOUT_SUBCLASS_FLAGS = new CodeGeneratorConfiguration()
-			.withTransactionSupport().withSaveMemSupport().withDatabaseSupport();
+			.withTransactionSupport().withSaveMemSupport()
+			.withDatabaseSupport();
 
 	public static final CodeGeneratorConfiguration WITHOUT_TYPESPECIFIC_METHODS = new CodeGeneratorConfiguration()
-			.withTransactionSupport().withoutTypeSpecificMethodSupport().withDatabaseSupport();
+			.withTransactionSupport().withoutTypeSpecificMethodSupport()
+			.withDatabaseSupport();
 
 	public static final CodeGeneratorConfiguration MINIMAL = new CodeGeneratorConfiguration()
 			.withoutTypeSpecificMethodSupport();
-
 
 	/** toggles, if the classes for standard support should be created */
 	private boolean standardSupport = true;
@@ -122,7 +124,7 @@ public class CodeGeneratorConfiguration {
 		transactionSupport = true;
 		return this;
 	}
-	
+
 	public CodeGeneratorConfiguration withDatabaseSupport() {
 		databaseSupport = true;
 		return this;

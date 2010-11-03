@@ -87,14 +87,17 @@ public class EdgeTransition extends SimpleTransition {
 			return false;
 		}
 		if (validEdgeRoles != null) {
-			if (et.validEdgeRoles == null)
+			if (et.validEdgeRoles == null) {
 				return false;
-			if (!validEdgeRoles.equals(et.validEdgeRoles))
+			}
+			if (!validEdgeRoles.equals(et.validEdgeRoles)) {
 				return false;
+			}
 		}
 		if (validEdgeRoles == null) {
-			if (et.validEdgeRoles != null)
+			if (et.validEdgeRoles != null) {
 				return false;
+			}
 		}
 		if (allowedEdgeEvaluator != et.allowedEdgeEvaluator) {
 			return false;
@@ -103,13 +106,16 @@ public class EdgeTransition extends SimpleTransition {
 			return false;
 		}
 		if (predicateEvaluator != null) {
-			if (et.predicateEvaluator == null)
+			if (et.predicateEvaluator == null) {
 				return false;
-			if (!predicateEvaluator.equals(et.predicateEvaluator))
+			}
+			if (!predicateEvaluator.equals(et.predicateEvaluator)) {
 				return false;
+			}
 		} else {
-			if (et.predicateEvaluator != null)
+			if (et.predicateEvaluator != null) {
 				return false;
+			}
 		}
 		return true;
 	}

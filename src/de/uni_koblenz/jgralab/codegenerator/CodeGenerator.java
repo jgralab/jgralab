@@ -2,21 +2,21 @@
  * JGraLab - The Java graph laboratory
  * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
- *
+ * 
  *               ist@uni-koblenz.de
- *
+ * 
  * Please report bugs to http://serres.uni-koblenz.de/bugzilla
- *
+ * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -53,7 +53,6 @@ public abstract class CodeGenerator {
 		// FIXME The order here matters! CLASSONLY must be last!
 		ABSTRACT, STDIMPL, DBIMPL, TRANSIMPL, SAVEMEMIMPL, CLASSONLY;
 
-	
 		protected static List<GenerationCycle> filter(
 				CodeGeneratorConfiguration config) {
 			List<GenerationCycle> out = new ArrayList<GenerationCycle>();
@@ -67,12 +66,13 @@ public abstract class CodeGenerator {
 			if (config.hasSavememSupport()) {
 				out.add(SAVEMEMIMPL);
 			}
-			if(config.hasDatabaseSupport()){
+			if (config.hasDatabaseSupport()) {
 				out.add(DBIMPL);
 			}
 			out.add(CLASSONLY);
 			return out;
 		}
+
 		/**
 		 * 
 		 * @return
@@ -89,10 +89,11 @@ public abstract class CodeGenerator {
 		protected boolean isSaveMemImpl() {
 			return this == SAVEMEMIMPL;
 		}
+
 		/**
 		 * 
-		 * @return Returns true if support for database impl classes is
-		 *         enabled, otherwise false.
+		 * @return Returns true if support for database impl classes is enabled,
+		 *         otherwise false.
 		 */
 		protected boolean isDbImpl() {
 			return this == DBIMPL;
@@ -331,9 +332,10 @@ public abstract class CodeGenerator {
 				}
 				writeCodeToFile(pathPrefix, simpleImplClassName + ".java",
 						schemaImplPackage);
-			} else
+			} else {
 				writeCodeToFile(pathPrefix, simpleClassName + ".java",
 						schemaPackage);
+			}
 			currentCycle = getNextCycle();
 		}
 	}
@@ -358,9 +360,9 @@ public abstract class CodeGenerator {
 	protected CodeBlock createPackageDeclaration() {
 		CodeSnippet code = new CodeSnippet(true);
 
-		if (rootBlock.getVariable("isClassOnly").equals("true"))
+		if (rootBlock.getVariable("isClassOnly").equals("true")) {
 			code.add("package #schemaPackage#;");
-		else {
+		} else {
 			switch (currentCycle) {
 			case ABSTRACT:
 				code.add("package #schemaPackage#;");
@@ -393,10 +395,12 @@ public abstract class CodeGenerator {
 	 * Transforms the given String into a CamelCase String
 	 */
 	public static String camelCase(String aString) {
-		if (aString.length() < 1)
+		if (aString.length() < 1) {
 			return aString;
-		if (aString.length() < 2)
+		}
+		if (aString.length() < 2) {
 			return aString.toUpperCase();
+		}
 		return aString.substring(0, 1).toUpperCase() + aString.substring(1);
 	}
 
@@ -423,12 +427,13 @@ public abstract class CodeGenerator {
 		currentCycle = getNextCycle();
 		while (currentCycle != null) {
 			createCode();
-			if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl())
+			if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()) {
 				javaSources.add(new JavaSourceFromString(implClassName,
 						rootBlock.getCode()));
-			else
+			} else {
 				javaSources.add(new JavaSourceFromString(className, rootBlock
 						.getCode()));
+			}
 			currentCycle = getNextCycle();
 		}
 		return javaSources;

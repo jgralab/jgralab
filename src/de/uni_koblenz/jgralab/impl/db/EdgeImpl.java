@@ -1,3 +1,26 @@
+/*
+ * JGraLab - The Java graph laboratory
+ * (c) 2006-2010 Institute for Software Technology
+ *               University of Koblenz-Landau, Germany
+ * 
+ *               ist@uni-koblenz.de
+ * 
+ * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
 package de.uni_koblenz.jgralab.impl.db;
 
 import de.uni_koblenz.jgralab.Edge;
@@ -97,20 +120,23 @@ public abstract class EdgeImpl extends EdgeBaseImpl implements
 
 	@Override
 	public void setIncidentVId(int incidentVId) {
-		if (this.alphaVId != incidentVId)
+		if (this.alphaVId != incidentVId) {
 			this.updateIncidentVId(incidentVId);
+		}
 	}
 
 	@Override
 	public void setSequenceNumberInLambdaSeq(long sequenceNumber) {
-		if (this.sequenceNumberInLambdaSeq != sequenceNumber)
+		if (this.sequenceNumberInLambdaSeq != sequenceNumber) {
 			this.updateSequenceNumberInLambdaSeq(sequenceNumber);
+		}
 	}
 
 	@Override
 	public void setSequenceNumberInESeq(long sequenceNumberInESeq) {
-		if (this.sequenceNumberInESeq != sequenceNumberInESeq)
+		if (this.sequenceNumberInESeq != sequenceNumberInESeq) {
 			this.updateSequenceNumberInEseq(sequenceNumberInESeq);
+		}
 	}
 
 	/**
@@ -121,8 +147,9 @@ public abstract class EdgeImpl extends EdgeBaseImpl implements
 	 */
 	private void updateIncidentVId(int incidentVId) {
 		this.alphaVId = incidentVId;
-		if (this.isPersistent() && this.isInitialized() && incidentVId > 0)
+		if (this.isPersistent() && this.isInitialized() && incidentVId > 0) {
 			; // TODO check
+		}
 		this.getGraphImpl().writeIncidentVIdBack(this);
 	}
 
@@ -135,8 +162,9 @@ public abstract class EdgeImpl extends EdgeBaseImpl implements
 	 */
 	private void updateSequenceNumberInLambdaSeq(long sequenceNumber) {
 		this.sequenceNumberInLambdaSeq = sequenceNumber;
-		if (this.isPersistent() && this.isInitialized())
+		if (this.isPersistent() && this.isInitialized()) {
 			this.getGraphImpl().writeSequenceNumberInLambdaSeqBack(this);
+		}
 	}
 
 	/**
@@ -147,8 +175,9 @@ public abstract class EdgeImpl extends EdgeBaseImpl implements
 	 */
 	private void updateSequenceNumberInEseq(long sequenceNumberInESeq) {
 		this.sequenceNumberInESeq = sequenceNumberInESeq;
-		if (this.isPersistent() && this.isInitialized())
+		if (this.isPersistent() && this.isInitialized()) {
 			this.getGraphImpl().writeSequenceNumberInESeqBack(this);
+		}
 	}
 
 	@Override
@@ -174,20 +203,23 @@ public abstract class EdgeImpl extends EdgeBaseImpl implements
 	@Override
 	public boolean isBefore(Edge e) {
 		this.assertPreCondition(e);
-		if (!this.equals(e))
-			return this.sequenceNumberInLambdaSeq < ((DatabasePersistableEdge) e).getSequenceNumberInLambdaSeq();
-		else
+		if (!this.equals(e)) {
+			return this.sequenceNumberInLambdaSeq < ((DatabasePersistableEdge) e)
+					.getSequenceNumberInLambdaSeq();
+		} else {
 			return false;
+		}
 	}
 
 	@Override
 	public boolean isAfter(Edge e) {
 		this.assertPreCondition(e);
-		if (!this.equals(e))
+		if (!this.equals(e)) {
 			return this.sequenceNumberInLambdaSeq > ((DatabasePersistableEdge) e)
 					.getSequenceNumberInLambdaSeq();
-		else
+		} else {
 			return false;
+		}
 	}
 
 	@Override
@@ -197,8 +229,9 @@ public abstract class EdgeImpl extends EdgeBaseImpl implements
 			e = e.getNormalEdge();
 			return this.sequenceNumberInESeq < ((DatabasePersistableEdge) e)
 					.getSequenceNumberInESeq();
-		} else
+		} else {
 			return false;
+		}
 	}
 
 	@Override
@@ -208,8 +241,9 @@ public abstract class EdgeImpl extends EdgeBaseImpl implements
 			e = e.getNormalEdge();
 			return this.sequenceNumberInESeq > ((DatabasePersistableEdge) e)
 					.getSequenceNumberInESeq();
-		} else
+		} else {
 			return false;
+		}
 	}
 
 	private void assertPreCondition(Edge e) {
@@ -344,8 +378,9 @@ public abstract class EdgeImpl extends EdgeBaseImpl implements
 	@Override
 	protected void setId(int id) {
 		assert id > 0;
-		if (super.getId() != id)
+		if (super.getId() != id) {
 			this.updateId(id);
+		}
 	}
 
 	/**
@@ -355,17 +390,19 @@ public abstract class EdgeImpl extends EdgeBaseImpl implements
 	 *            Id of edge.
 	 */
 	private void updateId(int newEId) {
-		if (this.isPersistent() && this.isInitialized())
+		if (this.isPersistent() && this.isInitialized()) {
 			this.getGraphImpl().writeBackEdgeId(this, newEId);
+		}
 		this.id = newEId;
 	}
 
 	@Override
 	protected VertexBaseImpl getIncidentVertex() {
-		if (this.alphaVId > 0)
+		if (this.alphaVId > 0) {
 			return (VertexBaseImpl) this.graph.getVertex(this.alphaVId);
-		else
+		} else {
 			return null;
+		}
 	}
 
 	/**
@@ -377,17 +414,19 @@ public abstract class EdgeImpl extends EdgeBaseImpl implements
 	 */
 	protected void attributeChanged(String attributeName) {
 		if (this.isPersistent() && this.isInitialized()) {
-			this.getGraphImpl().updateEdgeAttributeValueInDatabase(this, attributeName);
+			this.getGraphImpl().updateEdgeAttributeValueInDatabase(this,
+					attributeName);
 			this.getGraphImpl().internalGraphModified();
 		}
 	}
 
 	@Override
 	public boolean isValid() {
-		if (this.graph != null)
+		if (this.graph != null) {
 			return this.graph.containsEdge(this);
-		else
+		} else {
 			return false;
+		}
 	}
 
 	@Override

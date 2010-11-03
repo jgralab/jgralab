@@ -824,8 +824,9 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex 
 		assert i != null;
 		assert i.getIncidentVertex() != this;
 		i.setIncidentVertex(this);
-		if (getFirstIncidence() == null)
+		if (getFirstIncidence() == null) {
 			setFirstIncidence(i);
+		}
 		if (getLastIncidence() != null) {
 			getLastIncidence().setNextIncidence(i);
 			i.setPrevIncidence(getLastIncidence());

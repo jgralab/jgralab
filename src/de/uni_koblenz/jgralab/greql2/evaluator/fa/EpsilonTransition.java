@@ -74,8 +74,9 @@ public class EpsilonTransition extends Transition {
 
 	@Override
 	public boolean equalSymbol(Transition t) {
-		if (t instanceof EpsilonTransition)
+		if (t instanceof EpsilonTransition) {
 			return true;
+		}
 		return false;
 	}
 
@@ -107,10 +108,11 @@ public class EpsilonTransition extends Transition {
 	 */
 	@Override
 	public Vertex getNextVertex(Vertex v, Edge e) {
-		if (e.getAlpha() == v)
+		if (e.getAlpha() == v) {
 			return e.getOmega();
-		else
+		} else {
 			return e.getAlpha();
+		}
 	}
 
 	/**

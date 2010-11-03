@@ -66,14 +66,15 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 	protected CodeBlock createBody() {
 		CodeList code = (CodeList) super.createBody();
 		if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()) {
-			if (currentCycle.isStdImpl())
+			if (currentCycle.isStdImpl()) {
 				addImports("#jgImplStdPackage#.#baseClassName#");
-			else if (currentCycle.isSaveMemImpl())
+			} else if (currentCycle.isSaveMemImpl()) {
 				addImports("#jgImplSaveMemPackage#.#baseClassName#");
-			else if (currentCycle.isTransImpl())
+			} else if (currentCycle.isTransImpl()) {
 				addImports("#jgImplTransPackage#.#baseClassName#");
-			else if (currentCycle.isDbImpl())
+			} else if (currentCycle.isDbImpl()) {
 				addImports("#jgImplDbPackage#.#baseClassName#");
+			}
 
 			rootBlock.setVariable("baseClassName", "VertexImpl");
 			code.add(createValidEdgeSets((VertexClass) aec));
@@ -87,9 +88,10 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 					.isStdOrSaveMemOrDbImplOrTransImpl()));
 			code.add(createIncidenceIteratorMethods());
 		}
-		if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl())
+		if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()) {
 			code.add(createGetEdgeForRolenameMethod());
-		
+		}
+
 		return code;
 	}
 
@@ -104,8 +106,9 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 		CodeList code = new CodeList();
 		VertexClass vc = (VertexClass) aec;
 		Set<EdgeClass> edgeClassSet = new HashSet<EdgeClass>();
-		if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl())
+		if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()) {
 			edgeClassSet.addAll(vc.getConnectedEdgeClasses());
+		}
 		if (currentCycle.isAbstract()) {
 			edgeClassSet.addAll(vc.getOwnConnectedEdgeClasses());
 			// if the current class is a direct subclass of vertex, all edges
@@ -116,15 +119,17 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 					VertexClass dvc = vc.getGraphClass().getSchema()
 							.getDefaultVertexClass();
 					if ((ec.getTo().getVertexClass() == dvc)
-							|| (ec.getFrom().getVertexClass() == dvc))
+							|| (ec.getFrom().getVertexClass() == dvc)) {
 						edgeClassSet.add(ec);
+					}
 				}
 			}
 		}
 
 		for (EdgeClass ec : edgeClassSet) {
-			if (ec.isInternal())
+			if (ec.isInternal()) {
 				continue;
+			}
 			addImports("#jgPackage#.EdgeDirection");
 			if (config.hasTypeSpecificMethodsSupport()) {
 				code.addNoIndent(createFirstEdgeMethod(ec, false, false));
@@ -173,11 +178,13 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 			code
 					.add("/**",
 							" * @return the first edge of class #ecCamelName# at this vertex");
-			if (withOrientation)
+			if (withOrientation) {
 				code.add(" * @param orientation the orientation of the edge");
-			if (withTypeFlag)
+			}
+			if (withTypeFlag) {
 				code
 						.add(" * @param noSubClasses if set to <code>true</code>, no subclasses of #ecName# are accepted");
+			}
 			code
 					.add(" */",
 							"public #ecQualifiedName# getFirst#ecCamelName#(#formalParams#);");
@@ -209,8 +216,9 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 
 		if (config.hasTypeSpecificMethodsSupport()) {
 			for (AttributedElementClass ec : superClasses) {
-				if (ec.isInternal())
+				if (ec.isInternal()) {
 					continue;
+				}
 				VertexClass vc = (VertexClass) ec;
 				code.addNoIndent(createNextVertexMethod(vc, false));
 				if (config.hasMethodsForSubclassesSupport()) {
@@ -279,8 +287,9 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 		VertexClass vc = (VertexClass) aec;
 		CodeList code = new CodeList();
 		Set<EdgeClass> edgeClassSet = new HashSet<EdgeClass>();
-		if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl())
+		if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()) {
 			edgeClassSet.addAll(vc.getConnectedEdgeClasses());
+		}
 		if (currentCycle.isAbstract()) {
 			edgeClassSet.addAll(vc.getOwnConnectedEdgeClasses());
 			// if the current class is a direct subclass of vertex, all edges
@@ -291,18 +300,21 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 					VertexClass dvc = vc.getGraphClass().getSchema()
 							.getDefaultVertexClass();
 					if ((ec.getTo().getVertexClass() == dvc)
-							|| (ec.getFrom().getVertexClass() == dvc))
+							|| (ec.getFrom().getVertexClass() == dvc)) {
 						edgeClassSet.add(ec);
+					}
 				}
 			}
 		}
 
 		for (EdgeClass ec : edgeClassSet) {
-			if (ec.isInternal())
+			if (ec.isInternal()) {
 				continue;
+			}
 
-			if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl())
+			if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()) {
 				addImports("#jgImplPackage#.IncidenceIterable");
+			}
 
 			CodeSnippet s = new CodeSnippet(true);
 			code.addNoIndent(s);

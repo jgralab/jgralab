@@ -46,8 +46,9 @@ public class EasySymbolTable {
 	}
 
 	public void blockEnd() {
-		if (!list.isEmpty())
+		if (!list.isEmpty()) {
 			list.removeFirst();
+		}
 
 	}
 
@@ -60,8 +61,9 @@ public class EasySymbolTable {
 
 	public Vertex lookup(String ident) {
 		for (HashMap<String, Vertex> keyMap : list) {
-			if (keyMap.containsKey(ident))
+			if (keyMap.containsKey(ident)) {
 				return keyMap.get(ident);
+			}
 		}
 		return null;
 	}

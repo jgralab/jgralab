@@ -512,7 +512,7 @@ public class ValidationComponent {
 		// check only, if Eseq has changed since BOT of transaction
 		if (graph.edgeListVersion != null) {
 			if (graph.edgeListVersion.getLatestPersistentVersion() > transaction.persistentVersionAtBot) {
-				if (transaction.changedEseqEdges != null)
+				if (transaction.changedEseqEdges != null) {
 					// for every edge whose previous and/or next vertex has been
 					// explicitly changed...
 					for (EdgeImpl edge : transaction.changedEseqEdges.keySet()) {
@@ -681,6 +681,7 @@ public class ValidationComponent {
 							}
 						}
 					}
+				}
 			}
 		}
 		return false;
@@ -712,8 +713,9 @@ public class ValidationComponent {
 				if ((transaction.addedVertices == null || !transaction.addedVertices
 						.contains(vertex))
 						&& vertex.incidenceListVersion
-								.getLatestPersistentVersion() <= transaction.persistentVersionAtBot)
+								.getLatestPersistentVersion() <= transaction.persistentVersionAtBot) {
 					continue;
+				}
 				Map<IncidenceImpl, Map<ListPosition, Boolean>> incidences = vertexMap
 						.getValue();
 				if (incidences != null) {
@@ -1086,8 +1088,9 @@ public class ValidationComponent {
 					// if vertex has been added within current transaction...
 					if (transaction.addedVertices != null
 							&& transaction.addedVertices
-									.contains(attributedElement))
+									.contains(attributedElement)) {
 						continue;
+					}
 					// does vertex still exists?
 					if (!vertex.isValid()) {
 						conflictReason = "Can't commit change for attributes of vertex "
@@ -1107,8 +1110,9 @@ public class ValidationComponent {
 					// if edge has been added within current transaction...
 					if (transaction.addedEdges != null
 							&& transaction.addedEdges
-									.contains(attributedElement))
+									.contains(attributedElement)) {
 						continue;
+					}
 					// does edge still exists?
 					if (!edge.getNormalEdge().isValid()) {
 						conflictReason = "Can't commit change for attributes of edge "
@@ -1163,14 +1167,17 @@ public class ValidationComponent {
 		if (attribute.getLatestPersistentVersion() > transaction.persistentVersionAtBot) {
 			Object temporaryValue = attribute.getTemporaryValue(transaction);
 			if (temporaryValue == null
-					&& attribute.getLatestPersistentValue() == null)
+					&& attribute.getLatestPersistentValue() == null) {
 				return false;
+			}
 			if (temporaryValue == null
-					&& attribute.getLatestPersistentValue() != null)
+					&& attribute.getLatestPersistentValue() != null) {
 				return true;
+			}
 			if (!attribute.getTemporaryValue(transaction).equals(
-					attribute.getLatestPersistentValue()))
+					attribute.getLatestPersistentValue())) {
 				return true;
+			}
 		}
 		return false;
 	}

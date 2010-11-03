@@ -186,8 +186,9 @@ public abstract class ParserHelper {
 	private void replaceDefinitionExpressions()
 			throws DuplicateVariableException, UndefinedVariableException {
 		List<DefinitionExpression> list = new ArrayList<DefinitionExpression>();
-		for (DefinitionExpression exp : graph.getDefinitionExpressionVertices())
+		for (DefinitionExpression exp : graph.getDefinitionExpressionVertices()) {
 			list.add(exp);
+		}
 
 		/* iterate over all definitionsexpressions in the graph */
 		for (DefinitionExpression exp : list) {
@@ -235,11 +236,13 @@ public abstract class ParserHelper {
 	protected void eliminateUnusedNodes() {
 		List<Vertex> deleteList = new ArrayList<Vertex>();
 		for (Vertex v : graph.vertices()) {
-			if (v.getFirstEdge() == null)
+			if (v.getFirstEdge() == null) {
 				deleteList.add(v);
+			}
 		}
-		for (Vertex v : deleteList)
+		for (Vertex v : deleteList) {
 			v.delete();
+		}
 	}
 
 	/**
@@ -330,8 +333,9 @@ public abstract class ParserHelper {
 	private void mergeVariablesInDefinitionExpression(DefinitionExpression v,
 			boolean separateScope) throws DuplicateVariableException,
 			UndefinedVariableException {
-		if (separateScope)
+		if (separateScope) {
 			afterParsingvariableSymbolTable.blockBegin();
+		}
 		for (IsDefinitionOf currentEdge : v
 				.getIsDefinitionOfIncidences(EdgeDirection.IN)) {
 			Definition definition = (Definition) currentEdge.getAlpha();
@@ -350,8 +354,9 @@ public abstract class ParserHelper {
 					EdgeDirection.IN).getAlpha();
 			mergeVariables(expr, true);
 		}
-		if (separateScope)
+		if (separateScope) {
 			afterParsingvariableSymbolTable.blockEnd();
+		}
 	}
 
 	/**
@@ -407,16 +412,18 @@ public abstract class ParserHelper {
 	private void mergeVariablesInQuantifiedExpression(QuantifiedExpression v,
 			boolean separateScope) throws DuplicateVariableException,
 			UndefinedVariableException {
-		if (separateScope)
+		if (separateScope) {
 			afterParsingvariableSymbolTable.blockBegin();
+		}
 		IsQuantifiedDeclOf isQuantifiedDeclOf = v
 				.getFirstIsQuantifiedDeclOf(EdgeDirection.IN);
 		mergeVariablesInDeclaration((Declaration) isQuantifiedDeclOf.getAlpha());
 		IsBoundExprOfQuantifier isBoundExprOfQuantifier = v
 				.getFirstIsBoundExprOfQuantifier(EdgeDirection.IN);
 		mergeVariables(isBoundExprOfQuantifier.getAlpha(), true);
-		if (separateScope)
+		if (separateScope) {
 			afterParsingvariableSymbolTable.blockEnd();
+		}
 	}
 
 	/**
@@ -429,8 +436,9 @@ public abstract class ParserHelper {
 	private void mergeVariablesInComprehension(Comprehension v,
 			boolean separateScope) throws DuplicateVariableException,
 			UndefinedVariableException {
-		if (separateScope)
+		if (separateScope) {
 			afterParsingvariableSymbolTable.blockBegin();
+		}
 		Edge IsCompDeclOf = v.getFirstIsCompDeclOf(EdgeDirection.IN);
 		mergeVariablesInDeclaration((Declaration) IsCompDeclOf.getAlpha());
 		Edge isCompResultDefOf = v.getFirstIsCompResultDefOf(EdgeDirection.IN);
@@ -469,8 +477,9 @@ public abstract class ParserHelper {
 					.getFirstIsValueExprOfComprehension();
 			mergeVariables(valueEdge.getAlpha(), true);
 		}
-		if (separateScope)
+		if (separateScope) {
 			afterParsingvariableSymbolTable.blockEnd();
+		}
 	}
 
 	class FunctionConstruct {

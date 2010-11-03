@@ -176,12 +176,13 @@ public class RecordCodeGenerator extends CodeGenerator {
 
 				CodeSnippet assign = null;
 
-				if (currentCycle.isTransImpl())
+				if (currentCycle.isTransImpl()) {
 					assign = new CodeSnippet(
 							"\tset_#name#((#type#) components[#index#]);");
-				else
+				} else {
 					assign = new CodeSnippet(
 							"\tthis._#name# = (#type#) components[#index#];");
+				}
 
 				assign.setVariable("name", rdc.getName());
 				assign.setVariable("type", rdc.getDomain().getJavaClassName(
@@ -227,8 +228,9 @@ public class RecordCodeGenerator extends CodeGenerator {
 	 */
 	private CodeBlock createEqualsMethod() {
 		CodeList code = new CodeList();
-		if (currentCycle.isAbstract())
+		if (currentCycle.isAbstract()) {
 			return code;
+		}
 		code.addNoIndent(new CodeSnippet(true,
 				"public boolean equals(Object o) {"));
 		code.add(new CodeSnippet("if(o == null)", "\treturn false;"));
@@ -286,10 +288,11 @@ public class RecordCodeGenerator extends CodeGenerator {
 							.getJavaAttributeImplementationTypeName(
 									schemaRootPackageName));
 				}
-				if (entry.getDomain() instanceof BooleanDomain)
+				if (entry.getDomain() instanceof BooleanDomain) {
 					codeSnippet.setVariable("isOrGet", "is");
-				else
+				} else {
 					codeSnippet.setVariable("isOrGet", "get");
+				}
 				codeSnippet.setVariable("name", entry.getName());
 				break;
 			case STDIMPL:
@@ -425,8 +428,9 @@ public class RecordCodeGenerator extends CodeGenerator {
 				getterCode.add("public #type# #isOrGet#_#name#() {");
 				getterCode
 						.add("\t#ctype# value = _#name#.getValidValue(#theGraph#.getCurrentTransaction());");
-				if (rdc.getDomain().isComposite())
+				if (rdc.getDomain().isComposite()) {
 					getterCode.add("\tvalue.setName(name + \"_#name#\");");
+				}
 				getterCode.add("\treturn value;");
 				getterCode.add("}");
 			}
@@ -534,12 +538,13 @@ public class RecordCodeGenerator extends CodeGenerator {
 
 			for (RecordComponent rdc : recordDomain.getComponents()) {
 				CodeBlock assign = null;
-				if (currentCycle.isTransImpl())
+				if (currentCycle.isTransImpl()) {
 					assign = new CodeSnippet(
 							"set_#name#((#cname#)fields.get(\"#name#\"));");
-				else
+				} else {
 					assign = new CodeSnippet(
 							"this._#name# = (#cname#)fields.get(\"#name#\");");
+				}
 
 				assign.setVariable("name", rdc.getName());
 				assign.setVariable("cname", rdc.getDomain().getJavaClassName(
@@ -603,12 +608,13 @@ public class RecordCodeGenerator extends CodeGenerator {
 
 			for (RecordComponent rdc : recordDomain.getComponents()) {
 				CodeBlock assign = null;
-				if (currentCycle.isTransImpl())
+				if (currentCycle.isTransImpl()) {
 					assign = new CodeSnippet("if (name.equals(\"#name#\")) {",
 							"\treturn #isOrGet#_#name#();", "}");
-				else
+				} else {
 					assign = new CodeSnippet("if (name.equals(\"#name#\")) {",
 							"\treturn this._#name#;", "}");
+				}
 
 				assign.setVariable("name", rdc.getName());
 				assign.setVariable("cname", rdc.getDomain().getJavaClassName(
@@ -693,10 +699,10 @@ public class RecordCodeGenerator extends CodeGenerator {
 						"private #type# _#field#;");
 				s.setVariable("field", rdc.getName());
 
-				if (currentCycle.isTransImpl())
+				if (currentCycle.isTransImpl()) {
 					s.setVariable("type", dom
 							.getVersionedClass(schemaRootPackageName));
-				else {
+				} else {
 					s
 							.setVariable(
 									"type",
@@ -769,8 +775,9 @@ public class RecordCodeGenerator extends CodeGenerator {
 										+ rdc.getName()
 										+ "==null?null:((de.uni_koblenz.jgralab.JGraLabCloneable)_"
 										+ rdc.getName() + ").clone()");
-					} else
+					} else {
 						arguments.append("_" + rdc.getName());
+					}
 				}
 				code.add(new CodeSnippet("return new #simpleImplClassName#("
 						+ arguments + ");"));
@@ -795,9 +802,10 @@ public class RecordCodeGenerator extends CodeGenerator {
 	 */
 	private String getSetVersionedComponentsOutput() {
 		StringBuilder versionedComponents = new StringBuilder();
-		for (RecordComponent rdc : recordDomain.getComponents())
+		for (RecordComponent rdc : recordDomain.getComponents()) {
 			versionedComponents.append("record._" + rdc.getName() + " = _"
 					+ rdc.getName() + ";\n\t\t");
+		}
 		return versionedComponents.toString();
 	}
 

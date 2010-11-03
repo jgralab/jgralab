@@ -1,3 +1,26 @@
+/*
+ * JGraLab - The Java graph laboratory
+ * (c) 2006-2010 Institute for Software Technology
+ *               University of Koblenz-Landau, Germany
+ * 
+ *               ist@uni-koblenz.de
+ * 
+ * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
 package de.uni_koblenz.jgralab.impl.db;
 
 import de.uni_koblenz.jgralab.Graph;
@@ -43,10 +66,11 @@ public abstract class ReversedEdgeImpl extends ReversedEdgeBaseImpl implements
 
 	@Override
 	protected VertexBaseImpl getIncidentVertex() {
-		if (this.omegaVId > 0)
+		if (this.omegaVId > 0) {
 			return (VertexBaseImpl) this.graph.getVertex(this.omegaVId);
-		else
+		} else {
 			return null;
+		}
 	}
 
 	private GraphImpl getGraphImpl() {
@@ -107,14 +131,16 @@ public abstract class ReversedEdgeImpl extends ReversedEdgeBaseImpl implements
 
 	@Override
 	public void setIncidentVId(int incidentVId) {
-		if (this.omegaVId != incidentVId)
+		if (this.omegaVId != incidentVId) {
 			this.updateIncidentVId(incidentVId);
+		}
 	}
 
 	@Override
 	public void setSequenceNumberInLambdaSeq(long sequenceNumber) {
-		if (this.sequenceNumberInLambdaSeq != sequenceNumber)
+		if (this.sequenceNumberInLambdaSeq != sequenceNumber) {
 			this.updateSequenceNumberInLambdaSeq(sequenceNumber);
+		}
 	}
 
 	@Override
@@ -130,8 +156,9 @@ public abstract class ReversedEdgeImpl extends ReversedEdgeBaseImpl implements
 	 */
 	private void updateSequenceNumberInLambdaSeq(long sequenceNumber) {
 		this.sequenceNumberInLambdaSeq = sequenceNumber;
-		if (this.isPersistent() && this.isInitialized())
+		if (this.isPersistent() && this.isInitialized()) {
 			this.getGraphImpl().writeSequenceNumberInLambdaSeqBack(this);
+		}
 	}
 
 	/**
@@ -143,8 +170,9 @@ public abstract class ReversedEdgeImpl extends ReversedEdgeBaseImpl implements
 	private void updateIncidentVId(int vId) {
 		this.omegaVId = vId;
 		// this.getGraph();
-		if (this.isPersistent() && this.isInitialized() && vId > 0)
+		if (this.isPersistent() && this.isInitialized() && vId > 0) {
 			;
+		}
 		this.getGraphImpl().writeIncidentVIdBack(this);
 	}
 
@@ -157,12 +185,12 @@ public abstract class ReversedEdgeImpl extends ReversedEdgeBaseImpl implements
 	public boolean isInitialized() {
 		return this.normalEdge.isInitialized();
 	}
-	
+
 	@Override
 	public void setInitialized(boolean initialized) {
 		this.normalEdge.setInitialized(initialized);
 	}
-	
+
 	@Override
 	public void setPersistent(boolean persistent) {
 		this.normalEdge.setPersistent(persistent);

@@ -80,7 +80,7 @@ public class GraphTest extends InstanceTest {
 
 	@Before
 	public void setUp() throws CommitFailedException {
-		if (implementationType == ImplementationType.DATABASE){
+		if (implementationType == ImplementationType.DATABASE) {
 			super.connectToDatabase();
 			super.loadVertexTestSchemaIntoGraphDatabase();
 		}
@@ -106,7 +106,7 @@ public class GraphTest extends InstanceTest {
 	}
 
 	private ArrayList<String> graphIdsInUse = new ArrayList<String>();
-	
+
 	/**
 	 * 
 	 * @return
@@ -127,7 +127,7 @@ public class GraphTest extends InstanceTest {
 			break;
 		case DATABASE:
 			out = this.createVertexTestGraphWithDatabaseSupport();
-			break;			
+			break;
 		default:
 			fail("Implementation " + implementationType
 					+ " not yet supported by this test.");
@@ -138,21 +138,24 @@ public class GraphTest extends InstanceTest {
 
 	private VertexTestGraph createVertexTestGraphWithDatabaseSupport() {
 		String id = RandomIdGenerator.generateId();
-		while (this.graphIdsInUse.contains(id))
+		while (this.graphIdsInUse.contains(id)) {
 			id = RandomIdGenerator.generateId();
+		}
 		this.graphIdsInUse.add(id);
 		return this.createVertexTestGraphWithDatabaseSupport(id, 1000, 1000);
 	}
 
 	@After
 	public void tearDown() {
-		if (implementationType == ImplementationType.DATABASE)
+		if (implementationType == ImplementationType.DATABASE) {
 			this.cleanAnCloseGraphDatabase();
+		}
 	}
 
 	private void cleanAnCloseGraphDatabase() {
-		for (String id : this.graphIdsInUse)
+		for (String id : this.graphIdsInUse) {
 			this.cleanDatabaseOfTestGraph(id);
+		}
 		this.graphIdsInUse.clear();
 		// super.cleanDatabaseOfTestSchema(VertexTestSchema.instance());
 		super.closeGraphdatabase();
@@ -5368,7 +5371,7 @@ public class GraphTest extends InstanceTest {
 		case DATABASE:
 			g3 = this.createMinimalGraphWithDatabaseSupport("GraphTest");
 			this.graphIdsInUse.add(g3.getId());
-			break;			
+			break;
 		default:
 			fail("Implementation " + implementationType
 					+ " not yet supported by this test.");
@@ -6402,4 +6405,3 @@ public class GraphTest extends InstanceTest {
 	}
 
 }
-

@@ -75,8 +75,9 @@ public class JValueBoolean {
 		Boolean b1 = first.toBoolean();
 		Boolean b2 = second.toBoolean();
 
-		if (b1 && b2)
+		if (b1 && b2) {
 			return trueJValue;
+		}
 		return falseJValue;
 	}
 
@@ -95,8 +96,9 @@ public class JValueBoolean {
 		Boolean b1 = first.toBoolean();
 		Boolean b2 = second.toBoolean();
 
-		if (b1 || b2)
+		if (b1 || b2) {
 			return trueJValue;
+		}
 		return falseJValue;
 	}
 
@@ -131,8 +133,9 @@ public class JValueBoolean {
 		Boolean secondBoolean = second.toBoolean();
 
 		boolean value = !firstBoolean.equals(secondBoolean);
-		if (value)
+		if (value) {
 			return trueJValue;
+		}
 		return falseJValue;
 	}
 

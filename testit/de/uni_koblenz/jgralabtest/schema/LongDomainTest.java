@@ -27,6 +27,7 @@ import org.junit.Before;
 
 public class LongDomainTest extends NativeDomainTest {
 
+	@Override
 	@Before
 	public void init() {
 		super.init();

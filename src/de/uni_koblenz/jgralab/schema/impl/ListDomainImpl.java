@@ -147,10 +147,11 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 						"java.util.LinkedList<#basedom#> #tmpname# = new java.util.LinkedList<#basedom#>();",
 						"#io#.match(\"[\");",
 						"while (!#io#.isNextToken(\"]\")) {"));
-		if (getBaseDomain().isComposite())
+		if (getBaseDomain().isComposite()) {
 			code.add(new CodeSnippet("\t#basetype# $#name#Element = null;"));
-		else
+		} else {
 			code.add(new CodeSnippet("\t#basetype# $#name#Element;"));
+		}
 		code.add(getBaseDomain().getReadMethod(schemaPrefix,
 				"$" + variableName + "Element", graphIoVariableName), 1);
 		code.add(new CodeSnippet("\t#tmpname#.add($#name#Element);", "}",

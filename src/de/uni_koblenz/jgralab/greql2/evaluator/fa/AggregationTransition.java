@@ -285,8 +285,9 @@ public class AggregationTransition extends Transition {
 			delim = ",";
 		}
 		String symbol = "--<>";
-		if (aggregateFrom)
+		if (aggregateFrom) {
 			symbol = "<>--";
+		}
 
 		return symbol + "{" + b + "}";
 	}

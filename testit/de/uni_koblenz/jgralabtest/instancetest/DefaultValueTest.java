@@ -84,13 +84,15 @@ public class DefaultValueTest extends InstanceTest {
 	private DefaultValueTestGraph createDefaultValueTestGraphWithDatabaseSupport() {
 		super.connectToDatabase();
 		this.loadDefaultValueTestSchemaIntoGraphDatabase();
-		return this.createDefaultValueTestGraphWithDatabaseSupport("DefaultValueTest");
+		return this
+				.createDefaultValueTestGraphWithDatabaseSupport("DefaultValueTest");
 	}
 
 	private void loadDefaultValueTestSchemaIntoGraphDatabase() {
 		try {
-			if (!graphDatabase.contains(DefaultValueTestSchema.instance()))
+			if (!graphDatabase.contains(DefaultValueTestSchema.instance())) {
 				loadTestSchemaIntoGraphDatabase("testit/testschemas/DefaultValueTestSchema.tg");
+			}
 		} catch (GraphDatabaseException e) {
 			e.printStackTrace();
 		}
@@ -107,8 +109,6 @@ public class DefaultValueTest extends InstanceTest {
 			return null;
 		}
 	}
-
-
 
 	@Before
 	public void setUp() {
@@ -133,14 +133,14 @@ public class DefaultValueTest extends InstanceTest {
 					+ " not yet supported by this test.");
 		}
 	}
-	
 
 	@After
 	public void tearDown() {
-		if (implementationType == ImplementationType.DATABASE)
+		if (implementationType == ImplementationType.DATABASE) {
 			this.cleanAndCloseDatabase();
+		}
 	}
-	
+
 	private void cleanAndCloseDatabase() {
 		this.cleanDatabaseOfTestGraph(graph);
 		this.cleanDatabaseOfTestGraph("secondGraph");
@@ -280,7 +280,8 @@ public class DefaultValueTest extends InstanceTest {
 					.createDefaultValueTestGraphWithSavememSupport();
 			break;
 		case DATABASE:
-			secondGraph = this.createDefaultValueTestGraphWithDatabaseSupport("secondGraph");
+			secondGraph = this
+					.createDefaultValueTestGraphWithDatabaseSupport("secondGraph");
 			break;
 		default:
 			fail("Implementation " + implementationType

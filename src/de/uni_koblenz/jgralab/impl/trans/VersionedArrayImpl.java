@@ -86,8 +86,9 @@ public class VersionedArrayImpl<E> extends VersionedDataObjectImpl<E> {
 	@SuppressWarnings("unchecked")
 	@Override
 	public E copyOf(E dataObject) {
-		if (dataObject == null)
+		if (dataObject == null) {
 			return null;
+		}
 		try {
 			// superclass of every Array is Object.
 			Method cloneMethod = dataObject.getClass().getSuperclass()

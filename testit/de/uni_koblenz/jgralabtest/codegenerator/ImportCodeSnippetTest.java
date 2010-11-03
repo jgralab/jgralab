@@ -91,6 +91,7 @@ public class ImportCodeSnippetTest extends CodeSnippetTest {
 		assertEquals("\tCanavan\n", ics.getParent().getCode());
 	}
 
+	@Override
 	@Test
 	public void testAdd() {
 		// normal cases
@@ -124,6 +125,7 @@ public class ImportCodeSnippetTest extends CodeSnippetTest {
 		assertEquals("\nimport .;\n", ics.getCode());
 	}
 
+	@Override
 	@Test
 	public void testGetCode() {
 		ImportCodeSnippet ics = new ImportCodeSnippet();
@@ -171,6 +173,7 @@ public class ImportCodeSnippetTest extends CodeSnippetTest {
 		assertEquals("", ics.getCode(-45));
 	}
 
+	@Override
 	@Test
 	// tests the inherited getCode()-method
 	public void testGetCode2() {
@@ -208,6 +211,7 @@ public class ImportCodeSnippetTest extends CodeSnippetTest {
 				ics.getCode());
 	}
 
+	@Override
 	@Test
 	public void testClear() {
 		// normal cases
@@ -247,6 +251,7 @@ public class ImportCodeSnippetTest extends CodeSnippetTest {
 		}
 	}
 
+	@Override
 	@Test
 	public void testSize() {
 		// normal cases
@@ -343,6 +348,7 @@ public class ImportCodeSnippetTest extends CodeSnippetTest {
 		assertEquals("f", ics.getVariable("6"));
 	}
 
+	@Override
 	@Test
 	public void testSetVariable() {
 		// border cases
@@ -379,6 +385,7 @@ public class ImportCodeSnippetTest extends CodeSnippetTest {
 		assertEquals("wochenende", ics.getVariable("6"));
 	}
 
+	@Override
 	@Test
 	public void testGetParent() {
 		ImportCodeSnippet ics = new ImportCodeSnippet();

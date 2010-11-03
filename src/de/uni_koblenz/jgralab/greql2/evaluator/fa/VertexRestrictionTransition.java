@@ -42,12 +42,15 @@ public class VertexRestrictionTransition extends Transition {
 	 * returns true if this transition and the given transition t accept the
 	 * same edges
 	 */
+	@Override
 	public boolean equalSymbol(Transition t) {
-		if (!(t instanceof VertexRestrictionTransition))
+		if (!(t instanceof VertexRestrictionTransition)) {
 			return false;
+		}
 		VertexRestrictionTransition vt = (VertexRestrictionTransition) t;
-		if (!typeCollection.equals(vt.typeCollection))
+		if (!typeCollection.equals(vt.typeCollection)) {
 			return false;
+		}
 		return true;
 	}
 
@@ -84,6 +87,7 @@ public class VertexRestrictionTransition extends Transition {
 	/**
 	 * returns a copy of this transition
 	 */
+	@Override
 	public Transition copy(boolean addToStates) {
 		return new VertexRestrictionTransition(this, addToStates);
 	}
@@ -92,6 +96,7 @@ public class VertexRestrictionTransition extends Transition {
 	 * reverses this transition, that means, the former end state gets the new
 	 * start state and vice versa,
 	 */
+	@Override
 	public void reverse() {
 		State s = startState;
 		startState = endState;
@@ -103,6 +108,7 @@ public class VertexRestrictionTransition extends Transition {
 	 * 
 	 * @return true if this transition is an epsilon-transition, false otherwise
 	 */
+	@Override
 	public boolean isEpsilon() {
 		return false;
 	}
@@ -110,6 +116,7 @@ public class VertexRestrictionTransition extends Transition {
 	/**
 	 * returns a string which describes the edge
 	 */
+	@Override
 	public String edgeString() {
 		String desc = "VertexRestrictinTransition";
 		return desc;
@@ -127,6 +134,7 @@ public class VertexRestrictionTransition extends Transition {
 	 *            the SubgraphTempAttribute which should be accepted
 	 * @return true if the transition can fire with e, false otherwise
 	 */
+	@Override
 	public boolean accepts(Vertex v, Edge e,
 			AbstractGraphMarker<AttributedElement> subgraph) {
 		// it is not neccessary to check if the vertex belongs to a special
@@ -136,8 +144,9 @@ public class VertexRestrictionTransition extends Transition {
 		// checks if a startVertexTypeRestriction is set and if v has the right
 		// type
 		AttributedElementClass vertexClass = v.getAttributedElementClass();
-		if (!typeCollection.acceptsType(vertexClass))
+		if (!typeCollection.acceptsType(vertexClass)) {
 			return false;
+		}
 		return true;
 	}
 

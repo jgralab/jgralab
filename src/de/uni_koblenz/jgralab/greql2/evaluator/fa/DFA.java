@@ -48,6 +48,7 @@ import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
  */
 public class DFA extends FiniteAutomaton {
 
+	@Override
 	public DFA getDFA() {
 		return this;
 	}
@@ -80,8 +81,9 @@ public class DFA extends FiniteAutomaton {
 					Transition t2 = s.outTransitions.get(j);
 					if ((t1.endState == t2.endState)
 							&& (t1.startState == t2.startState)
-							&& (t1.equalSymbol(t2)))
+							&& (t1.equalSymbol(t2))) {
 						duplicateTransitions.add(t2);
+					}
 				}
 
 			}

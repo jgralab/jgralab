@@ -85,8 +85,9 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		rootBlock.setVariable("isAbstractClass", aec.isAbstract() ? "true"
 				: "false");
 		for (AttributedElementClass superClass : attributedElementClass
-				.getDirectSuperClasses())
+				.getDirectSuperClasses()) {
 			interfaces.add(superClass.getQualifiedName());
+		}
 	}
 
 	/**
@@ -123,8 +124,9 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 					.add(createGetVersionedAttributesMethod(aec
 							.getAttributeList()));
 		}
-		if (currentCycle.isAbstract())
+		if (currentCycle.isAbstract()) {
 			code.add(createGettersAndSetters(aec.getOwnAttributeList()));
+		}
 		return code;
 	}
 
@@ -191,9 +193,10 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		code.addNoIndent(new CodeSnippet(true,
 				"public #simpleClassName#Impl(int id, #jgPackage#.Graph g) {",
 				"\tsuper(id, g);"));
-		if (hasDefaultAttributeValues())
+		if (hasDefaultAttributeValues()) {
 			code.addNoIndent(new CodeSnippet(
 					"\tinitializeAttributesWithDefaultValues();"));
+		}
 
 		code.add(createSpecialConstructorCode());
 		code.addNoIndent(new CodeSnippet("}"));
@@ -206,8 +209,9 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	 */
 	protected boolean hasDefaultAttributeValues() {
 		for (Attribute attr : aec.getAttributeList()) {
-			if (attr.getDefaultValueAsString() != null)
+			if (attr.getDefaultValueAsString() != null) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -262,8 +266,9 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 				break;
 			}
 		}
-		if (suppressWarningsNeeded)
+		if (suppressWarningsNeeded) {
 			snip.add("@SuppressWarnings(\"unchecked\")");
+		}
 		snip
 				.add("public void setAttribute(String attributeName, Object data) {");
 		code.addNoIndent(snip);
@@ -280,8 +285,9 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 						.getJavaClassName(schemaRootPackageName));
 			}
 			boolean isEnumDomain = false;
-			if (attr.getDomain() instanceof EnumDomain)
+			if (attr.getDomain() instanceof EnumDomain) {
 				isEnumDomain = true;
+			}
 
 			if (isEnumDomain) {
 				s.add("if (attributeName.equals(\"#name#\")) {");
@@ -471,9 +477,10 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 					.getJavaAttributeImplementationTypeName(
 							schemaRootPackageName));
 		}
-		if (currentCycle.isTransImpl())
+		if (currentCycle.isTransImpl()) {
 			code.setVariable("type", attr.getDomain().getVersionedClass(
 					schemaRootPackageName));
+		}
 		return code;
 	}
 

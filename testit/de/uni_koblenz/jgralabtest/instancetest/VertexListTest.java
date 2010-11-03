@@ -37,7 +37,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import de.uni_koblenz.jgralab.ImplementationType;
-import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalGraph;
@@ -94,8 +93,9 @@ public class VertexListTest extends InstanceTest {
 
 	@After
 	public void tearDown() {
-		if (implementationType == ImplementationType.DATABASE)
+		if (implementationType == ImplementationType.DATABASE) {
 			this.cleanAndCloseGraphDatabase();
+		}
 	}
 
 	private void cleanAndCloseGraphDatabase() {

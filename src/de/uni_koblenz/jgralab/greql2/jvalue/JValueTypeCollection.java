@@ -57,6 +57,7 @@ public class JValueTypeCollection extends JValueImpl {
 		return new HashSet<AttributedElementClass>(allowedTypes);
 	}
 
+	@Override
 	public JValueTypeCollection toObject() {
 		return this;
 	}

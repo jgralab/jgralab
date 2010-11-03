@@ -1,3 +1,26 @@
+/*
+ * JGraLab - The Java graph laboratory
+ * (c) 2006-2010 Institute for Software Technology
+ *               University of Koblenz-Landau, Germany
+ * 
+ *               ist@uni-koblenz.de
+ * 
+ * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
 package de.uni_koblenz.jgralab.impl.db;
 
 import java.util.TreeMap;
@@ -107,31 +130,36 @@ public abstract class GraphElementList<T> {
 	 */
 	abstract void clear();
 
-	protected long getRegularSequenceNumberBeforeFirstElementOf(TreeMap<Long, ?> map) {
+	protected long getRegularSequenceNumberBeforeFirstElementOf(
+			TreeMap<Long, ?> map) {
 		assert !minBorderOfNumberSpaceReached(map);
-		if (!map.isEmpty())
+		if (!map.isEmpty()) {
 			return map.firstKey() - SequenceNumber.REGULAR_DISTANCE;
-		else
+		} else {
 			return SequenceNumber.DEFAULT_START_SEQUENCE_NUMBER;
+		}
 	}
 
 	protected void assureThatElementCanBePrepended(TreeMap<Long, ?> map) {
-		if (!this.isEmpty() && minBorderOfNumberSpaceReached(map))
+		if (!this.isEmpty() && minBorderOfNumberSpaceReached(map)) {
 			this.reorganize();
+		}
 	}
 
 	protected long getRegularSequenceNumberBehindLastElementOf(
 			TreeMap<Long, ?> map) {
 		assert !maxBorderOfNumberSpaceReached(map);
-		if (!map.isEmpty())
+		if (!map.isEmpty()) {
 			return map.lastKey() + SequenceNumber.REGULAR_DISTANCE;
-		else
+		} else {
 			return SequenceNumber.DEFAULT_START_SEQUENCE_NUMBER;
+		}
 	}
 
 	protected void assureThatElementCanBeAppended(TreeMap<Long, ?> map) {
-		if (!this.isEmpty() && maxBorderOfNumberSpaceReached(map))
+		if (!this.isEmpty() && maxBorderOfNumberSpaceReached(map)) {
 			this.reorganize();
+		}
 	}
 
 	protected static boolean minBorderOfNumberSpaceReached(TreeMap<Long, ?> map) {
@@ -142,44 +170,51 @@ public abstract class GraphElementList<T> {
 		return map.lastKey() > SequenceNumber.MAX_BORDER_OF_NUMBER_SPACE;
 	}
 
-	protected long getPrevFreeSequenceNumber(TreeMap<Long, ?> map,	long sequenceNumber) {
-		if (map.firstKey() == sequenceNumber)
+	protected long getPrevFreeSequenceNumber(TreeMap<Long, ?> map,
+			long sequenceNumber) {
+		if (map.firstKey() == sequenceNumber) {
 			return sequenceNumber - SequenceNumber.REGULAR_DISTANCE;
-		// lowerKey can return null if sequenceNumber is already lowest one == first element
+		}
+		// lowerKey can return null if sequenceNumber is already lowest one ==
+		// first element
 		long prevTakenSequenceNumber = map.lowerKey(sequenceNumber);
 		long distance = sequenceNumber - prevTakenSequenceNumber;
 		assert distance > 0;
-		if (distance > 3)
+		if (distance > 3) {
 			return prevTakenSequenceNumber + distance / 2;
-		else if (distance > 1)
+		} else if (distance > 1) {
 			return prevTakenSequenceNumber + 1;
-		else if (distance == 1) {
+		} else if (distance == 1) {
 			this.reorganize();
 			return this.getPrevFreeSequenceNumber(map, sequenceNumber);
-		} else if (distance == 0)
+		} else if (distance == 0) {
 			throw new GraphException("Two elements have same sequence number.");
-		else
+		} else {
 			throw new GraphException(
 					"Distance of two elements cannot be negative.");
+		}
 	}
 
-	protected long getNextFreeSequenceNumber(TreeMap<Long, ?> map, long sequenceNumber) {
-		if (map.lastKey() == sequenceNumber)
+	protected long getNextFreeSequenceNumber(TreeMap<Long, ?> map,
+			long sequenceNumber) {
+		if (map.lastKey() == sequenceNumber) {
 			return sequenceNumber + SequenceNumber.REGULAR_DISTANCE;
+		}
 		long nextTakenSequenceNumber = map.higherKey(sequenceNumber);
 		long distance = nextTakenSequenceNumber - sequenceNumber;
 		assert distance > 0;
-		if (distance > 3)
+		if (distance > 3) {
 			return nextTakenSequenceNumber - distance / 2;
-		else if (distance > 1)
+		} else if (distance > 1) {
 			return nextTakenSequenceNumber - 1;
-		else if (distance == 1) {
+		} else if (distance == 1) {
 			this.reorganize();
 			return this.getNextFreeSequenceNumber(map, sequenceNumber);
-		} else if (distance == 0)
+		} else if (distance == 0) {
 			throw new GraphException("Two elements have same sequence number.");
-		else
+		} else {
 			throw new GraphException(
 					"Distance of two elements cannot be negative.");
+		}
 	}
 }
