@@ -2,18 +2,10 @@ Steps needed to build JGraLab:
 
 1. Unzip the zip-file to any directory.
 
-2. Download jdom, and copy the nessesary jar-files to
-   these locations:
-
-    - jdom to common/lib/jdom
-   
-   jdom can be downloaded from:
-        http://www.jdom.org/
-   
-3. If not present, download and install apache ant:
+2. If not present, download and install apache ant:
         http://ant.apache.org/
 
-4. Open up a console and navigate to the directory you unzipped the files.
+3. Open up a console and navigate to the directory you unzipped the files.
    Then type the following commands:
 
      cd jgralab
@@ -24,5 +16,5 @@ Steps needed to build JGraLab:
 
      ant -Ddebug=true
 
-5. The jar-file of jgralab is located at jgralab/build/jar.
+4. The jar-file of jgralab is located at jgralab/build/jar.
    It includes all necessary jar-files.
