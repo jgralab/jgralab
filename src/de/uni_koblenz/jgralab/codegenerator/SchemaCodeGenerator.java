@@ -121,12 +121,8 @@ public class SchemaCodeGenerator extends CodeGenerator {
 	private CodeBlock createGraphFactoryMethod() {
 		addImports("#jgPackage#.Graph", "#jgPackage#.ProgressFunction",
 				"#jgPackage#.GraphIO", "#jgPackage#.GraphIOException",
-				"de.uni_koblenz.jgralab.GraphException",
 				"#jgImplDbPackage#.GraphDatabase",
-				"#jgImplDbPackage#.GraphDatabaseException",
-				"#jgImplDbPackage#.GraphImpl"
-
-		);
+				"#jgImplDbPackage#.GraphDatabaseException");
 		CodeSnippet code = new CodeSnippet(
 				true,
 				"/**",
@@ -392,46 +388,44 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		code.setVariable("gcCamelName", camelCase(schema.getGraphClass()
 				.getQualifiedName()));
 		code.setVariable("gcImplName", schema.getGraphClass()
-				.getQualifiedName()
-				+ "Impl");
+				.getQualifiedName() + "Impl");
 		return code;
 	}
 
 	private CodeBlock createConstructor() {
 		CodeList code = new CodeList();
-		code
-				.addNoIndent(new CodeSnippet(
-						true,
-						"/**",
-						" * the weak reference to the singleton instance",
-						" */",
-						"static WeakReference<#simpleClassName#> theInstance = new WeakReference<#simpleClassName#>(null);",
-						"",
-						"/**",
-						" * @return the singleton instance of #simpleClassName#",
-						" */",
-						"public static #simpleClassName# instance() {",
-						"\t#simpleClassName# s = theInstance.get();",
-						"\tif (s != null) {",
-						"\t\treturn s;",
-						"\t}",
-						"\tsynchronized (#simpleClassName#.class) {",
-						"\t\ts = theInstance.get();",
-						"\t\tif (s != null) {",
-						"\t\t\treturn s;",
-						"\t\t}",
-						"\t\ts = new #simpleClassName#();",
-						"\t\ttheInstance = new WeakReference<#simpleClassName#>(s);",
-						"\t}",
-						"\treturn s;",
-						"}",
-						"",
-						"/**",
-						" * Creates a #simpleClassName# and builds its schema classes.",
-						" * This constructor is private. Use the <code>instance()</code> method",
-						" * to acess the schema.", " */",
-						"private #simpleClassName#() {",
-						"\tsuper(\"#simpleClassName#\", \"#schemaPackage#\");"));
+		code.addNoIndent(new CodeSnippet(
+				true,
+				"/**",
+				" * the weak reference to the singleton instance",
+				" */",
+				"static WeakReference<#simpleClassName#> theInstance = new WeakReference<#simpleClassName#>(null);",
+				"",
+				"/**",
+				" * @return the singleton instance of #simpleClassName#",
+				" */",
+				"public static #simpleClassName# instance() {",
+				"\t#simpleClassName# s = theInstance.get();",
+				"\tif (s != null) {",
+				"\t\treturn s;",
+				"\t}",
+				"\tsynchronized (#simpleClassName#.class) {",
+				"\t\ts = theInstance.get();",
+				"\t\tif (s != null) {",
+				"\t\t\treturn s;",
+				"\t\t}",
+				"\t\ts = new #simpleClassName#();",
+				"\t\ttheInstance = new WeakReference<#simpleClassName#>(s);",
+				"\t}",
+				"\treturn s;",
+				"}",
+				"",
+				"/**",
+				" * Creates a #simpleClassName# and builds its schema classes.",
+				" * This constructor is private. Use the <code>instance()</code> method",
+				" * to acess the schema.", " */",
+				"private #simpleClassName#() {",
+				"\tsuper(\"#simpleClassName#\", \"#schemaPackage#\");"));
 
 		code.add(createEnumDomains());
 		code.add(createCompositeDomains());
@@ -493,12 +487,11 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		code.setVariable("aecVariable", "gc");
 		code.setVariable("schemaVariable", gc.getVariableName());
 		code.setVariable("gcAbstract", gc.isAbstract() ? "true" : "false");
-		code
-				.addNoIndent(new CodeSnippet(
-						true,
-						"{",
-						"\tGraphClass #gcVariable# = #schemaVariable# = createGraphClass(\"#gcName#\");",
-						"\t#gcVariable#.setAbstract(#gcAbstract#);"));
+		code.addNoIndent(new CodeSnippet(
+				true,
+				"{",
+				"\tGraphClass #gcVariable# = #schemaVariable# = createGraphClass(\"#gcName#\");",
+				"\t#gcVariable#.setAbstract(#gcAbstract#);"));
 		for (AttributedElementClass superClass : gc.getDirectSuperClasses()) {
 			if (superClass.isInternal()) {
 				continue;
@@ -574,24 +567,23 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		code.setVariable("toClass", ec.getTo().getVertexClass()
 				.getVariableName());
 		code.setVariable("toRole", ec.getTo().getRolename());
-		code.setVariable("toAggregation", AggregationKind.class
-				.getCanonicalName()
-				+ "." + ec.getTo().getAggregationKind().toString());
-		code.setVariable("fromAggregation", AggregationKind.class
-				.getCanonicalName()
-				+ "." + ec.getFrom().getAggregationKind().toString());
+		code.setVariable("toAggregation",
+				AggregationKind.class.getCanonicalName() + "."
+						+ ec.getTo().getAggregationKind().toString());
+		code.setVariable("fromAggregation",
+				AggregationKind.class.getCanonicalName() + "."
+						+ ec.getFrom().getAggregationKind().toString());
 		code.setVariable("fromPart", "#fromClass#, " + ec.getFrom().getMin()
 				+ ", " + ec.getFrom().getMax() + ", \"#fromRole#\""
 				+ ", #fromAggregation#");
 		code.setVariable("toPart", "#toClass#, " + ec.getTo().getMin() + ", "
 				+ ec.getTo().getMax() + ", \"#toRole#\"" + ", #toAggregation#");
-		code
-				.addNoIndent(new CodeSnippet(
-						true,
-						"{",
-						"\t#ecType# #ecVariable# = #schemaVariable# = #gcVariable#.create#ecType#(\"#ecName#\",",
-						"\t\t#fromPart#,", "\t\t#toPart#);",
-						"\t#ecVariable#.setAbstract(#ecAbstract#);"));
+		code.addNoIndent(new CodeSnippet(
+				true,
+				"{",
+				"\t#ecType# #ecVariable# = #schemaVariable# = #gcVariable#.create#ecType#(\"#ecName#\",",
+				"\t\t#fromPart#,", "\t\t#toPart#);",
+				"\t#ecVariable#.setAbstract(#ecAbstract#);"));
 
 		for (AttributedElementClass superClass : ec.getDirectSuperClasses()) {
 			if (superClass.isInternal()) {
@@ -631,8 +623,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				CodeSnippet s = new CodeSnippet();
 				s.setVariable("schemaVariable", vc.getVariableName());
 				s.add("@SuppressWarnings(\"unused\")");
-				s
-						.add("VertexClass #schemaVariable# = getDefaultVertexClass();");
+				s.add("VertexClass #schemaVariable# = getDefaultVertexClass();");
 				code.addNoIndent(s);
 			} else if (vc.getGraphClass() == gc) {
 				code.addNoIndent(createVertexClass(vc));
@@ -648,12 +639,11 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		code.setVariable("aecVariable", "vc");
 		code.setVariable("schemaVariable", vc.getVariableName());
 		code.setVariable("vcAbstract", vc.isAbstract() ? "true" : "false");
-		code
-				.addNoIndent(new CodeSnippet(
-						true,
-						"{",
-						"\tVertexClass #vcVariable# = #schemaVariable# = #gcVariable#.createVertexClass(\"#vcName#\");",
-						"\t#vcVariable#.setAbstract(#vcAbstract#);"));
+		code.addNoIndent(new CodeSnippet(
+				true,
+				"{",
+				"\tVertexClass #vcVariable# = #schemaVariable# = #gcVariable#.createVertexClass(\"#vcName#\");",
+				"\t#vcVariable#.setAbstract(#vcAbstract#);"));
 		for (AttributedElementClass superClass : vc.getDirectSuperClasses()) {
 			if (superClass.isInternal()) {
 				continue;
@@ -682,9 +672,11 @@ public class SchemaCodeGenerator extends CodeGenerator {
 			if (attr.getDefaultValueAsString() == null) {
 				s.setVariable("defaultValue", "null");
 			} else {
-				s.setVariable("defaultValue", "\""
-						+ attr.getDefaultValueAsString().replaceAll("([\\\"])",
-								"\\\\$1") + "\"");
+				s.setVariable(
+						"defaultValue",
+						"\""
+								+ attr.getDefaultValueAsString().replaceAll(
+										"([\\\"])", "\\\\$1") + "\"");
 			}
 			code.addNoIndent(s);
 		}
@@ -742,8 +734,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 			if (dom instanceof ListDomain) {
 				s.setVariable("componentDomainName", ((ListDomain) dom)
 						.getBaseDomain().getQualifiedName());
-				s
-						.add("createListDomain(getDomain(\"#componentDomainName#\"));");
+				s.add("createListDomain(getDomain(\"#componentDomainName#\"));");
 			} else if (dom instanceof SetDomain) {
 				s.setVariable("componentDomainName", ((SetDomain) dom)
 						.getBaseDomain().getQualifiedName());
@@ -754,13 +745,11 @@ public class SchemaCodeGenerator extends CodeGenerator {
 						.getQualifiedName());
 				s.setVariable("valueDomainName", mapDom.getValueDomain()
 						.getQualifiedName());
-				s
-						.add("createMapDomain(getDomain(\"#keyDomainName#\"), getDomain(\"#valueDomainName#\"));");
+				s.add("createMapDomain(getDomain(\"#keyDomainName#\"), getDomain(\"#valueDomainName#\"));");
 			} else if (dom instanceof RecordDomain) {
 				addImports("#jgSchemaPackage#.RecordDomain");
-				s
-						.add("{",
-								"\tRecordDomain dom = createRecordDomain(\"#domName#\");");
+				s.add("{",
+						"\tRecordDomain dom = createRecordDomain(\"#domName#\");");
 				RecordDomain rd = (RecordDomain) dom;
 				for (RecordComponent c : rd.getComponents()) {
 					s.add("\tdom.addComponent(\"" + c.getName()
