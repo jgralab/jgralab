@@ -38,6 +38,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -72,6 +73,8 @@ public class EdgeTest extends InstanceTest {
 	private static final int RANDOM_EDGE_COUNT = 30;
 	private static final int RANDOM_GRAPH_COUNT = 10;
 	private static final int RANDOM_VERTEX_COUNT = 10;
+	
+	private final String ID = "EdgeTest";
 
 	public EdgeTest(ImplementationType implementationType) {
 		super(implementationType);
@@ -102,6 +105,9 @@ public class EdgeTest extends InstanceTest {
 			g = VertexTestSchema.instance()
 					.createVertexTestGraphWithSavememSupport();
 			break;
+		case DATABASE:
+			g = this.createVertexTestGraphWithDatabaseSupport();
+			break;			
 		default:
 			fail("Implementation " + implementationType
 					+ " not yet supported by this test.");
@@ -109,6 +115,28 @@ public class EdgeTest extends InstanceTest {
 
 		rand = new Random(System.currentTimeMillis());
 	}
+	
+	private VertexTestGraph createVertexTestGraphWithDatabaseSupport() {
+		super.connectToDatabase();
+		super.loadVertexTestSchemaIntoGraphDatabase();
+		return super.createVertexTestGraphWithDatabaseSupport(ID);
+	}
+
+	@After
+	public void tearDown() {
+		if (implementationType == ImplementationType.DATABASE)
+			this.cleanAndCloseGraphDatabase();
+	}
+
+	private void cleanAndCloseGraphDatabase() {
+		this.cleanDatabaseOfTestGraph(ID);
+		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++)
+			this.cleanDatabaseOfTestGraph(ID + i);
+		this.cleanDatabaseOfTestGraph("anotherGraph");
+		// this.cleanDatabaseOfTestSchema(VertexTestSchema.instance());
+		super.closeGraphdatabase();
+	}
+	
 
 	/*
 	 * Test of the Interface Edge
@@ -272,6 +300,9 @@ public class EdgeTest extends InstanceTest {
 				g = VertexTestSchema.instance()
 						.createVertexTestGraphWithSavememSupport();
 				break;
+			case DATABASE:
+				g = this.createVertexTestGraphWithDatabaseSupport(ID+i);
+				break;				
 			default:
 				fail("Implementation " + implementationType
 						+ " not yet supported by this test.");
@@ -475,6 +506,9 @@ public class EdgeTest extends InstanceTest {
 				g = VertexTestSchema.instance()
 						.createVertexTestGraphWithSavememSupport();
 				break;
+			case DATABASE:
+				g = this.createVertexTestGraphWithDatabaseSupport(ID+i);
+				break;				
 			default:
 				fail("Implementation " + implementationType
 						+ " not yet supported by this test.");
@@ -631,6 +665,9 @@ public class EdgeTest extends InstanceTest {
 				g = VertexTestSchema.instance()
 						.createVertexTestGraphWithSavememSupport();
 				break;
+			case DATABASE:
+				g = this.createVertexTestGraphWithDatabaseSupport(ID+i);
+				break;				
 			default:
 				fail("Implementation " + implementationType
 						+ " not yet supported by this test.");
@@ -863,6 +900,9 @@ public class EdgeTest extends InstanceTest {
 				g = VertexTestSchema.instance()
 						.createVertexTestGraphWithSavememSupport();
 				break;
+			case DATABASE:
+				g = this.createVertexTestGraphWithDatabaseSupport(ID+i);
+				break;				
 			default:
 				fail("Implementation " + implementationType
 						+ " not yet supported by this test.");
@@ -1196,6 +1236,9 @@ public class EdgeTest extends InstanceTest {
 				g = VertexTestSchema.instance()
 						.createVertexTestGraphWithSavememSupport();
 				break;
+			case DATABASE:
+				g = this.createVertexTestGraphWithDatabaseSupport(ID+i);
+				break;				
 			default:
 				fail("Implementation " + implementationType
 						+ " not yet supported by this test.");
@@ -1483,6 +1526,9 @@ public class EdgeTest extends InstanceTest {
 				g = VertexTestSchema.instance()
 						.createVertexTestGraphWithSavememSupport();
 				break;
+			case DATABASE:
+				g = this.createVertexTestGraphWithDatabaseSupport(ID+i);
+				break;				
 			default:
 				fail("Implementation " + implementationType
 						+ " not yet supported by this test.");
@@ -1710,6 +1756,9 @@ public class EdgeTest extends InstanceTest {
 				g = VertexTestSchema.instance()
 						.createVertexTestGraphWithSavememSupport();
 				break;
+			case DATABASE:
+				g = this.createVertexTestGraphWithDatabaseSupport(ID+i);
+				break;				
 			default:
 				fail("Implementation " + implementationType
 						+ " not yet supported by this test.");
@@ -2086,6 +2135,9 @@ public class EdgeTest extends InstanceTest {
 				g = VertexTestSchema.instance()
 						.createVertexTestGraphWithSavememSupport();
 				break;
+			case DATABASE:
+				g = this.createVertexTestGraphWithDatabaseSupport(ID+i);
+				break;				
 			default:
 				fail("Implementation " + implementationType
 						+ " not yet supported by this test.");
@@ -2617,6 +2669,9 @@ public class EdgeTest extends InstanceTest {
 				g = VertexTestSchema.instance()
 						.createVertexTestGraphWithSavememSupport();
 				break;
+			case DATABASE:
+				g = this.createVertexTestGraphWithDatabaseSupport(ID+i);
+				break;				
 			default:
 				fail("Implementation " + implementationType
 						+ " not yet supported by this test.");
@@ -4967,6 +5022,9 @@ public class EdgeTest extends InstanceTest {
 			anotherGraph = VertexTestSchema.instance()
 					.createVertexTestGraphWithSavememSupport();
 			break;
+		case DATABASE:
+			anotherGraph = this.createVertexTestGraphWithDatabaseSupport("anotherGraph");
+			break;
 		default:
 			fail("Implementation " + implementationType
 					+ " not yet supported by this test.");
@@ -5210,6 +5268,7 @@ public class EdgeTest extends InstanceTest {
 	private VertexTestGraph loadTestGraph() throws GraphIOException {
 		VertexTestGraph loadedgraph = null;
 		switch (implementationType) {
+		case DATABASE:
 		case STANDARD:
 			loadedgraph = (VertexTestGraph) GraphIO
 					.loadGraphFromFileWithStandardSupport("test.tg", null);
@@ -5891,3 +5950,4 @@ public class EdgeTest extends InstanceTest {
 		commit(g);
 	}
 }
+

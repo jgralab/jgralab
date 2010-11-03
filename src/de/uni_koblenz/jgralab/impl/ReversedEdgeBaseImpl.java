@@ -38,6 +38,7 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
  */
 public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 		Edge {
+
 	protected final EdgeBaseImpl normalEdge;
 
 	/**

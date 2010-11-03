@@ -8,5 +8,8 @@
 	<classpathentry kind="lib" path="/common/lib/jdom/jdom.jar"/>
 	<classpathentry kind="lib" path="/common/lib/apache/ant/ant.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/common"/>
+	<classpathentry kind="lib" path="lib/jdbc/postgresql-8.4-701.jdbc4.jar"/>
+	<classpathentry kind="lib" path="lib/jdbc/derbyclient.jar"/>
+	<classpathentry kind="lib" path="lib/jdbc/mysql-connector-java-5.0.8-bin.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

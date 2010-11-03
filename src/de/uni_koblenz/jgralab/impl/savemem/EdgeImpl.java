@@ -91,6 +91,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl 
 	 *            The starting {@link Vertex} node.
 	 * @param omega
 	 *            The ending {@link Vertex} node.
+	 * @throws Exception
 	 */
 	protected EdgeImpl(int anId, Graph graph, Vertex alpha, Vertex omega) {
 		super(anId, graph);

@@ -1,3 +1,4 @@
+
 /*
  * JGraLab - The Java graph laboratory
  * (c) 2006-2010 Institute for Software Technology
@@ -33,6 +34,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
@@ -42,6 +44,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -54,6 +57,7 @@ import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.NoSuchAttributeException;
+import de.uni_koblenz.jgralab.RandomIdGenerator;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
@@ -92,8 +96,29 @@ public class VertexTest extends InstanceTest {
 	 */
 	@Before
 	public void setUp() {
+		if (implementationType == ImplementationType.DATABASE) {
+			super.connectToDatabase();
+			super.loadVertexTestSchemaIntoGraphDatabase();
+		}
 		g = createNewGraph();
 		rand = new Random(System.currentTimeMillis());
+	}
+	
+	@After
+	public void tearDown() {
+		if (implementationType == ImplementationType.DATABASE)
+			this.cleanAndCloseGraphDatabase();
+	}
+
+	private void cleanAndCloseGraphDatabase() {
+		super.cleanDatabaseOfTestGraph("VertexTest");
+		super.cleanDatabaseOfTestGraph("anotherGraph");
+		for (int i = 0; i < ITERATIONS; i++)
+			super.cleanDatabaseOfTestGraph("VertexTest" + i);
+		for(String id : graphIdsInUse)
+			super.cleanDatabaseOfTestGraph(id);
+		// this.cleanDatabaseOfTestSchema(g.getSchema());		
+		super.closeGraphdatabase();
 	}
 
 	/*
@@ -2359,13 +2384,26 @@ public class VertexTest extends InstanceTest {
 			graph = VertexTestSchema.instance()
 					.createVertexTestGraphWithSavememSupport(100, 100);
 			break;
+		case DATABASE:
+			graph = this.createVertexTestGraphWithDatabaseSupport();
+			break;			
 		default:
 			fail("Implementation " + implementationType
 					+ " not yet supported by this test.");
 		}
 		return graph;
 	}
+	
+	private ArrayList<String> graphIdsInUse = new ArrayList<String>();
 
+	private VertexTestGraph createVertexTestGraphWithDatabaseSupport(){
+		String id = RandomIdGenerator.generateId();
+		while( graphIdsInUse.contains(id))
+			id = RandomIdGenerator.generateId();
+		graphIdsInUse.add(id);
+		VertexTestGraph graph = this.createVertexTestGraphWithDatabaseSupport(id, 100, 100);
+		return graph;
+	}
 	// tests of the method getNextVertex();
 	// (tested in LoadTest, too)
 
@@ -8881,6 +8919,7 @@ public class VertexTest extends InstanceTest {
 		// test of readAttributeValues
 		VertexTestGraph loadedgraph = null;
 		switch (implementationType) {
+		case DATABASE:
 		case STANDARD:
 			loadedgraph = VertexTestSchema.instance().loadVertexTestGraph(
 					"test.tg");
@@ -8963,6 +9002,7 @@ public class VertexTest extends InstanceTest {
 		// test of readAttributeValues
 		VertexTestGraph loadedgraph = null;
 		switch (implementationType) {
+		case DATABASE:
 		case STANDARD:
 			loadedgraph = VertexTestSchema.instance().loadVertexTestGraph(
 					"test.tg");
@@ -10397,3 +10437,4 @@ public class VertexTest extends InstanceTest {
 	}
 
 }
+

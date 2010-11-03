@@ -309,8 +309,8 @@ public interface AttributedElementClass extends NamedElement,
 	 * <ul>
 	 * <li><code>attrs != null</code></li>
 	 * <li><code>attrs.size() >= 0</code></li>
-	 * <li><code>attrs</code> contains every of <code>attrElement´s</code>direct
-	 * and inherited attributes
+	 * <li><code>attrs</code> contains every of <code>attrElement´s</code>
+	 * direct and inherited attributes
 	 * <li>the attributes in <code>attrs</code> are sorted lexicographically by
 	 * their qualified name</li>
 	 * </ul>

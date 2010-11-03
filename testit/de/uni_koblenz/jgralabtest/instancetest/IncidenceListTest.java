@@ -39,6 +39,7 @@ import java.util.Random;
 
 import junit.framework.Assert;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -92,6 +93,9 @@ public class IncidenceListTest extends InstanceTest {
 			g = MinimalSchema.instance()
 					.createMinimalGraphWithTransactionSupport(V, E);
 			break;
+		case DATABASE:
+			g = this.createMinimalGraphWithDatabaseSupport();
+			break;
 		case SAVEMEM:
 			g = MinimalSchema.instance().createMinimalGraphWithSavememSupport(
 					V, E);
@@ -108,6 +112,26 @@ public class IncidenceListTest extends InstanceTest {
 			nodes[i] = g.createNode();
 		}
 		commit(g);
+	}
+
+	private MinimalGraph createMinimalGraphWithDatabaseSupport() {
+		super.connectToDatabase();
+		super.loadMinimalSchemaIntoGraphDatabase();
+		return super.createMinimalGraphWithDatabaseSupport("IncidenceListTest",
+				V, E);
+	}
+
+	@After
+	public void tearDown() {
+		if (implementationType == ImplementationType.DATABASE)
+			this.cleanAndCloseDatabase();
+	}
+
+	private void cleanAndCloseDatabase() {
+		super.cleanDatabaseOfTestGraph(g);
+		super.cleanDatabaseOfTestGraph("IncidenceListTest.testSortIncidences");
+		// super.cleanDatabaseOfTestSchema(MinimalSchema.instance());
+		super.closeGraphdatabase();
 	}
 
 	@Test
@@ -368,11 +392,10 @@ public class IncidenceListTest extends InstanceTest {
 			// TODO why not use internal degree method?
 			int inDegree = 0, outDegree = 0;
 			for (Edge e : incidenceList) {
-				if (e.isNormal()) {
+				if (e.isNormal())
 					outDegree++;
-				} else {
+				else
 					inDegree++;
-				}
 			}
 
 			while (!incidenceList.isEmpty()) {
@@ -432,6 +455,10 @@ public class IncidenceListTest extends InstanceTest {
 			g = MinimalSchema.instance()
 					.createMinimalGraphWithTransactionSupport(V, E);
 			break;
+		case DATABASE:
+			g = this.createMinimalGraphWithDatabaseSupport(
+					"IncidenceListTest.testSortIncidences", V, E);
+			break;
 		case SAVEMEM:
 			g = MinimalSchema.instance().createMinimalGraphWithSavememSupport(
 					V, E);
@@ -468,6 +495,13 @@ public class IncidenceListTest extends InstanceTest {
 		};
 
 		if (implementationType == ImplementationType.TRANSACTION) {
+			try {
+				isolated.sortIncidences(comp);
+				fail();
+			} catch (UnsupportedOperationException e) {
+				// as expected
+			}
+		} else if (implementationType == ImplementationType.DATABASE) {
 			try {
 				isolated.sortIncidences(comp);
 				fail();

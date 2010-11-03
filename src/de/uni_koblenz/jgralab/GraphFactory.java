@@ -24,20 +24,18 @@
 
 package de.uni_koblenz.jgralab;
 
+import de.uni_koblenz.jgralab.impl.db.GraphDatabase;
+
 /**
- * This interface provides the method signature for a graph factory. A graph
- * factory creates instances of graphs, edges and vertices. By changing the
- * factory it is possible to extend the Graph, Vertex, or Edge classes that are
- * used in a graph.
+ * Creates instances of graphs, edges and vertices. By changing factory it is
+ * possible to extend Graph, Vertex, and Edge classes used in a graph.
  * 
  * @author ist@uni-koblenz.de
  */
-
 public interface GraphFactory {
 
-	// -------------------------------------------------------------------------
-	// Methods for the STDIMPL option.
-	// -------------------------------------------------------------------------
+	// --- Methods for option STDIMPL
+	// ---------------------------------------------------
 
 	/**
 	 * creates a Graph-object for the specified class. The returned object may
@@ -93,8 +91,109 @@ public interface GraphFactory {
 			Class<? extends Record> implementationClass);
 
 	// -------------------------------------------------------------------------
-	// Methods for the TRANSIMPL option.
+	// Methods for the DATABASE option.
 	// -------------------------------------------------------------------------
+
+	/**
+	 * Creates a graph with database support.
+	 * 
+	 * @param graphClass
+	 *            The graph class.
+	 * @param graphDatabase
+	 *            Database graph should be contained in.
+	 * @param id
+	 *            Id of graph.
+	 */
+	public Graph createGraphWithDatabaseSupport(
+			Class<? extends Graph> graphClass, GraphDatabase graphDatabase,
+			String id);
+
+	/**
+	 * Creates a graph with database support.
+	 * 
+	 * @param graphClass
+	 *            The graph class.
+	 * @param graphDatabase
+	 *            Database graph should be contained in.
+	 * @param id
+	 *            Id of graph.
+	 * @param vMax
+	 *            Maximum initial count of vertices that can be held in graph.
+	 * @param eMax
+	 *            Maximum initial count of edges that can be held in graph.
+	 */
+	public Graph createGraphWithDatabaseSupport(
+			Class<? extends Graph> graphClass, GraphDatabase graphDatabase,
+			String id, int vMax, int eMax);
+
+	/**
+	 * Creates a vertex instance of a specified class with database support.
+	 * Returned object may be an instance of a subclass of specified vertex
+	 * class.
+	 * 
+	 * @param vertexClass
+	 *            Class of vertex to instance.
+	 * @param id
+	 *            Identifier of vertex.
+	 * @param graph
+	 *            Graph which should contain created vertex.
+	 */
+	public Vertex createVertexWithDatabaseSupport(
+			Class<? extends Vertex> vertexClass, int id, Graph graph);
+
+	/**
+	 * Creates an edge instance of specified class with database support.
+	 * Returned object may be an instance of a subclass of specified edge class.
+	 * 
+	 * @param edgeClass
+	 *            Class of edge to instance.
+	 * @param id
+	 *            Identifier of edge.
+	 * @param graph
+	 *            Graph which should contain created edge.
+	 * @param alpha
+	 *            Start vertex of edge.
+	 * @param omega
+	 *            End vertex of edge.
+	 */
+	public Edge createEdgeWithDatabaseSupport(Class<? extends Edge> edgeClass,
+			int id, Graph graph, Vertex alpha, Vertex omega);
+
+	/**
+	 * Assigns an implementation class with database support for a
+	 * <code>Graph</code>.
+	 * 
+	 * @param edgeM1Class
+	 * @param implementationClass
+	 */
+	public void setGraphDatabaseImplementationClass(
+			Class<? extends Graph> graphM1Class,
+			Class<? extends Graph> implementationClass);
+
+	/**
+	 * Assigns an implementation class with database support for a
+	 * <code>Vertex</code>.
+	 * 
+	 * @param edgeM1Class
+	 * @param implementationClass
+	 */
+	public void setVertexDatabaseImplementationClass(
+			Class<? extends Vertex> vertexM1Class,
+			Class<? extends Vertex> implementationClass);
+
+	/**
+	 * Assigns an implementation class with database support for an
+	 * <code>Edge</code>.
+	 * 
+	 * @param edgeM1Class
+	 * @param implementationClass
+	 */
+	public void setEdgeDatabaseImplementationClass(
+			Class<? extends Edge> edgeM1Class,
+			Class<? extends Edge> implementationClass);
+
+	// --- Methods for option TRANSIMPL
+	// ------------------------------------------------
 
 	/**
 	 * creates a Graph-object for the specified class with transaction support.
@@ -168,6 +267,13 @@ public interface GraphFactory {
 	 */
 	public <T extends Record> T createRecordWithTransactionSupport(
 			Class<T> recordDomain, Graph g);
+	
+	/**
+	 * Creates an record with database support of class
+	 * <code>recordDomain</code> in the graph g
+	 */
+	public <T extends Record> T createRecordWithDatabaseSupport(
+			Class<T> recordDomain, Graph g);	
 
 	/**
 	 * Assigns an implementation class with transaction support for a

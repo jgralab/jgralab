@@ -820,13 +820,12 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex 
 
 	abstract public Vertex getPrevVertex();
 
-	protected void appendIncidenceToLambaSeq(IncidenceImpl i) {
+	protected void appendIncidenceToLambdaSeq(IncidenceImpl i) {
 		assert i != null;
 		assert i.getIncidentVertex() != this;
 		i.setIncidentVertex(this);
-		if (getFirstIncidence() == null) {
+		if (getFirstIncidence() == null)
 			setFirstIncidence(i);
-		}
 		if (getLastIncidence() != null) {
 			getLastIncidence().setNextIncidence(i);
 			i.setPrevIncidence(getLastIncidence());
@@ -834,7 +833,7 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex 
 		setLastIncidence(i);
 	}
 
-	protected void removeIncidenceFromLambaSeq(IncidenceImpl i) {
+	protected void removeIncidenceFromLambdaSeq(IncidenceImpl i) {
 		assert i != null;
 		assert i.getIncidentVertex() == this;
 		if (i == getFirstIncidence()) {

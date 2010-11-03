@@ -30,6 +30,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -42,6 +43,7 @@ import org.junit.runners.Parameterized.Parameters;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.ImplementationType;
+import de.uni_koblenz.jgralab.RandomIdGenerator;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
@@ -78,7 +80,10 @@ public class GraphTest extends InstanceTest {
 
 	@Before
 	public void setUp() throws CommitFailedException {
-
+		if (implementationType == ImplementationType.DATABASE){
+			super.connectToDatabase();
+			super.loadVertexTestSchemaIntoGraphDatabase();
+		}
 		g1 = createNewGraph();
 		g2 = createNewGraph();
 		createTransaction(g1);
@@ -100,6 +105,8 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 	}
 
+	private ArrayList<String> graphIdsInUse = new ArrayList<String>();
+	
 	/**
 	 * 
 	 * @return
@@ -118,23 +125,37 @@ public class GraphTest extends InstanceTest {
 			out = VertexTestSchema.instance()
 					.createVertexTestGraphWithSavememSupport();
 			break;
+		case DATABASE:
+			out = this.createVertexTestGraphWithDatabaseSupport();
+			break;			
 		default:
 			fail("Implementation " + implementationType
 					+ " not yet supported by this test.");
 		}
+		graphIdsInUse.add(out.getId());
 		return out;
+	}
+
+	private VertexTestGraph createVertexTestGraphWithDatabaseSupport() {
+		String id = RandomIdGenerator.generateId();
+		while (this.graphIdsInUse.contains(id))
+			id = RandomIdGenerator.generateId();
+		this.graphIdsInUse.add(id);
+		return this.createVertexTestGraphWithDatabaseSupport(id, 1000, 1000);
 	}
 
 	@After
 	public void tearDown() {
-		// try {
-		// graph.commit();
-		// graph2.commit();
-		// } catch (CommitFailedException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
+		if (implementationType == ImplementationType.DATABASE)
+			this.cleanAnCloseGraphDatabase();
+	}
 
+	private void cleanAnCloseGraphDatabase() {
+		for (String id : this.graphIdsInUse)
+			this.cleanDatabaseOfTestGraph(id);
+		this.graphIdsInUse.clear();
+		// super.cleanDatabaseOfTestSchema(VertexTestSchema.instance());
+		super.closeGraphdatabase();
 	}
 
 	public void getVertexClassesOfG1() {
@@ -5344,6 +5365,10 @@ public class GraphTest extends InstanceTest {
 			g3 = MinimalSchema.instance()
 					.createMinimalGraphWithSavememSupport();
 			break;
+		case DATABASE:
+			g3 = this.createMinimalGraphWithDatabaseSupport("GraphTest");
+			this.graphIdsInUse.add(g3.getId());
+			break;			
 		default:
 			fail("Implementation " + implementationType
 					+ " not yet supported by this test.");
@@ -6254,6 +6279,13 @@ public class GraphTest extends InstanceTest {
 			} catch (UnsupportedOperationException e) {
 				// as expected
 			}
+		} else if (implementationType == ImplementationType.DATABASE) {
+			try {
+				g1.defragment();
+				fail("Defragmentation with database support should throw an UnsupportedOperationException.");
+			} catch (UnsupportedOperationException e) {
+				// as expected
+			}
 		} else {
 			/*
 			 * Testen der defragment()-Methode: Ein Vorher-Nachher Abbild von
@@ -6370,3 +6402,4 @@ public class GraphTest extends InstanceTest {
 	}
 
 }
+

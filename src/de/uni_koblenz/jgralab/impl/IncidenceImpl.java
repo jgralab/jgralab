@@ -41,17 +41,17 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 		super(graph);
 	}
 
-	abstract protected void setIncidentVertex(VertexBaseImpl v);
+	protected abstract void setIncidentVertex(VertexBaseImpl v);
 
-	abstract protected VertexBaseImpl getIncidentVertex();
+	protected abstract VertexBaseImpl getIncidentVertex();
 
-	abstract protected void setNextIncidence(IncidenceImpl nextIncidence);
+	protected abstract void setNextIncidence(IncidenceImpl nextIncidence);
 
-	abstract protected IncidenceImpl getNextIncidence();
+	protected abstract IncidenceImpl getNextIncidence();
 
-	abstract protected void setPrevIncidence(IncidenceImpl prevIncidence);
+	protected abstract void setPrevIncidence(IncidenceImpl prevIncidence);
 
-	abstract protected IncidenceImpl getPrevIncidence();
+	protected abstract IncidenceImpl getPrevIncidence();
 
 	/*
 	 * (non-Javadoc)

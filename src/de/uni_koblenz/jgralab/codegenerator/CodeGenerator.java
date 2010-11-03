@@ -2,21 +2,21 @@
  * JGraLab - The Java graph laboratory
  * (c) 2006-2010 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
- * 
+ *
  *               ist@uni-koblenz.de
- * 
+ *
  * Please report bugs to http://serres.uni-koblenz.de/bugzilla
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -51,8 +51,9 @@ public abstract class CodeGenerator {
 	 */
 	protected enum GenerationCycle {
 		// FIXME The order here matters! CLASSONLY must be last!
-		ABSTRACT, STDIMPL, TRANSIMPL, SAVEMEMIMPL, CLASSONLY;
+		ABSTRACT, STDIMPL, DBIMPL, TRANSIMPL, SAVEMEMIMPL, CLASSONLY;
 
+	
 		protected static List<GenerationCycle> filter(
 				CodeGeneratorConfiguration config) {
 			List<GenerationCycle> out = new ArrayList<GenerationCycle>();
@@ -66,10 +67,12 @@ public abstract class CodeGenerator {
 			if (config.hasSavememSupport()) {
 				out.add(SAVEMEMIMPL);
 			}
+			if(config.hasDatabaseSupport()){
+				out.add(DBIMPL);
+			}
 			out.add(CLASSONLY);
 			return out;
 		}
-
 		/**
 		 * 
 		 * @return
@@ -85,6 +88,14 @@ public abstract class CodeGenerator {
 		 */
 		protected boolean isSaveMemImpl() {
 			return this == SAVEMEMIMPL;
+		}
+		/**
+		 * 
+		 * @return Returns true if support for database impl classes is
+		 *         enabled, otherwise false.
+		 */
+		protected boolean isDbImpl() {
+			return this == DBIMPL;
 		}
 
 		/**
@@ -115,8 +126,9 @@ public abstract class CodeGenerator {
 		 * 
 		 * @return
 		 */
-		protected boolean isStdOrSaveMemOrTransImpl() {
-			return this == STDIMPL || this == SAVEMEMIMPL || this == TRANSIMPL;
+		protected boolean isStdOrSaveMemOrDbImplOrTransImpl() {
+			return (this == STDIMPL) || (this == SAVEMEMIMPL)
+					|| (this == TRANSIMPL) || (this == DBIMPL);
 		}
 	}
 
@@ -174,12 +186,14 @@ public abstract class CodeGenerator {
 				"de.uni_koblenz.jgralab.impl.savemem");
 		rootBlock.setVariable("jgImplTransPackage",
 				"de.uni_koblenz.jgralab.impl.trans");
+		rootBlock.setVariable("jgImplDbPackage",
+				"de.uni_koblenz.jgralab.impl.db");
 		rootBlock.setVariable("jgSchemaPackage",
 				"de.uni_koblenz.jgralab.schema");
 		rootBlock.setVariable("jgSchemaImplPackage",
 				"de.uni_koblenz.jgralab.schema.impl");
 
-		if (packageName != null && !packageName.equals("")) {
+		if ((packageName != null) && !packageName.equals("")) {
 			rootBlock.setVariable("schemaPackage", schemaRootPackageName + "."
 					+ packageName);
 			// schema implementation packages (standard, savemem and for
@@ -190,6 +204,8 @@ public abstract class CodeGenerator {
 					schemaRootPackageName + ".impl.savemem." + packageName);
 			rootBlock.setVariable("schemaImplTransPackage",
 					schemaRootPackageName + ".impl.trans." + packageName);
+			rootBlock.setVariable("schemaImplDbPackage", schemaRootPackageName
+					+ ".impl.db." + packageName);
 		} else {
 			rootBlock.setVariable("schemaPackage", schemaRootPackageName);
 			rootBlock.setVariable("schemaImplStdPackage", schemaRootPackageName
@@ -198,8 +214,9 @@ public abstract class CodeGenerator {
 					schemaRootPackageName + ".impl.savemem");
 			rootBlock.setVariable("schemaImplTransPackage",
 					schemaRootPackageName + ".impl.trans");
+			rootBlock.setVariable("schemaImplDbPackage", schemaRootPackageName
+					+ ".impl.db");
 		}
-
 		rootBlock.setVariable("isClassOnly", "false");
 		rootBlock.setVariable("isImplementationClassOnly", "false");
 		rootBlock.setVariable("isAbstractClass", "false");
@@ -252,23 +269,15 @@ public abstract class CodeGenerator {
 		}
 
 		File outputFile = null;
-		BufferedWriter bw = null;
 		try {
 			outputFile = new File(dir.getAbsolutePath() + File.separator
 					+ fileName);
-			bw = new BufferedWriter(new FileWriter(outputFile));
+			BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile));
 			bw.write(rootBlock.getCode());
 			bw.close();
 		} catch (IOException e) {
 			throw new GraphIOException("Unable to create file "
 					+ outputFile.getAbsolutePath(), e);
-		} finally {
-			try {
-				bw.close();
-			} catch (IOException ex) {
-				throw new GraphIOException(
-						"Exception occurred while closing the stream.", ex);
-			}
 		}
 	}
 
@@ -289,15 +298,19 @@ public abstract class CodeGenerator {
 		while (currentCycle != null) {
 			createCode();
 			if (currentCycle.isAbstract()) {
-				logger.finer("Creating interface for class: " + simpleClassName);
+				logger
+						.finer("Creating interface for class: "
+								+ simpleClassName);
 				logger.finer("Writing file to: " + pathPrefix + "/"
 						+ schemaPackage);
 			}
-			if (currentCycle.isStdOrSaveMemOrTransImpl()) {
+			if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()) {
 				if (currentCycle.isStdImpl()) {
 					schemaImplPackage = rootBlock
 							.getVariable("schemaImplStdPackage");
-					logger.finer(" - schemaImplStdPackage=" + schemaImplPackage);
+					logger
+							.finer(" - schemaImplStdPackage="
+									+ schemaImplPackage);
 				}
 				if (currentCycle.isSaveMemImpl()) {
 					schemaImplPackage = rootBlock
@@ -311,12 +324,16 @@ public abstract class CodeGenerator {
 					logger.finer(" - schemaImplTransPackage="
 							+ schemaImplPackage);
 				}
+				if (currentCycle.isDbImpl()) {
+					schemaImplPackage = rootBlock
+							.getVariable("schemaImplDbPackage");
+					logger.finer(" - schemaImplDbPackage=" + schemaImplPackage);
+				}
 				writeCodeToFile(pathPrefix, simpleImplClassName + ".java",
 						schemaImplPackage);
-			} else {
+			} else
 				writeCodeToFile(pathPrefix, simpleClassName + ".java",
 						schemaPackage);
-			}
 			currentCycle = getNextCycle();
 		}
 	}
@@ -341,9 +358,9 @@ public abstract class CodeGenerator {
 	protected CodeBlock createPackageDeclaration() {
 		CodeSnippet code = new CodeSnippet(true);
 
-		if (rootBlock.getVariable("isClassOnly").equals("true")) {
+		if (rootBlock.getVariable("isClassOnly").equals("true"))
 			code.add("package #schemaPackage#;");
-		} else {
+		else {
 			switch (currentCycle) {
 			case ABSTRACT:
 				code.add("package #schemaPackage#;");
@@ -356,6 +373,9 @@ public abstract class CodeGenerator {
 				break;
 			case TRANSIMPL:
 				code.add("package #schemaImplTransPackage#;");
+				break;
+			case DBIMPL:
+				code.add("package #schemaImplDbPackage#;");
 				break;
 			case CLASSONLY:
 				code.add("package #schemaPackage#;");
@@ -373,12 +393,10 @@ public abstract class CodeGenerator {
 	 * Transforms the given String into a CamelCase String
 	 */
 	public static String camelCase(String aString) {
-		if (aString.length() < 1) {
+		if (aString.length() < 1)
 			return aString;
-		}
-		if (aString.length() < 2) {
+		if (aString.length() < 2)
 			return aString.toUpperCase();
-		}
 		return aString.substring(0, 1).toUpperCase() + aString.substring(1);
 	}
 
@@ -405,16 +423,14 @@ public abstract class CodeGenerator {
 		currentCycle = getNextCycle();
 		while (currentCycle != null) {
 			createCode();
-			if (currentCycle.isStdOrSaveMemOrTransImpl()) {
+			if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl())
 				javaSources.add(new JavaSourceFromString(implClassName,
 						rootBlock.getCode()));
-			} else {
+			else
 				javaSources.add(new JavaSourceFromString(className, rootBlock
 						.getCode()));
-			}
 			currentCycle = getNextCycle();
 		}
-
 		return javaSources;
 	}
 

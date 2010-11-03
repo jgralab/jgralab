@@ -29,8 +29,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.ImplementationType;
+import de.uni_koblenz.jgralab.impl.db.DatabasePersistableGraph;
+import de.uni_koblenz.jgralab.impl.db.GraphDatabase;
+import de.uni_koblenz.jgralab.impl.db.GraphDatabaseException;
+import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
+import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalGraph;
+import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalSchema;
+import de.uni_koblenz.jgralabtest.schemas.vertextest.VertexTestGraph;
+import de.uni_koblenz.jgralabtest.schemas.vertextest.VertexTestSchema;
 
 public abstract class InstanceTest {
 
@@ -38,16 +47,144 @@ public abstract class InstanceTest {
 
 	static {
 		parameters = new ArrayList<Object[]>();
-		for (ImplementationType current : ImplementationType.values()) {
-			parameters.add(new Object[] { current });
-		}
-		// parameters.add(new Object[] { ImplementationType.STANDARD });
-		// parameters.add(new Object[] { ImplementationType.TRANSACTION });
-		// parameters.add(new Object[] { ImplementationType.SAVEMEM});
+		// for (ImplementationType current : ImplementationType.values()) {
+		// parameters.add(new Object[] { current });
+		// }
+		parameters.add(new Object[] { ImplementationType.STANDARD });
+		parameters.add(new Object[] { ImplementationType.TRANSACTION });
+		parameters.add(new Object[] { ImplementationType.SAVEMEM });
 	}
 
 	public static Collection<Object[]> getParameters() {
 		return parameters;
+	}
+
+	// protected String url = "postgresql://localhost:5432/graphdatabase";
+	protected String url = "mysql://localhost:3306/graphdatabase5";
+	// protected String userName = "postgres";
+	protected String userName = "root";
+	protected String password = "energizer";
+	protected GraphDatabase graphDatabase;
+
+	protected void connectToDatabase() {
+		try {
+			graphDatabase = GraphDatabase.openGraphDatabase(url, userName,
+					password);
+		} catch (GraphDatabaseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	protected void closeGraphdatabase() {
+		try {
+			this.graphDatabase.close();
+		} catch (GraphDatabaseException e) {
+			e.printStackTrace();
+		}
+	}
+
+	protected void loadVertexTestSchemaIntoGraphDatabase() {
+		try {
+			if (!this.graphDatabase.contains(VertexTestSchema.instance()))
+				this
+						.loadTestSchemaIntoGraphDatabase("testit/testschemas/VertexTestSchema.tg");
+		} catch (GraphDatabaseException e) {
+			e.printStackTrace();
+		}
+	}
+
+	protected void loadMinimalSchemaIntoGraphDatabase() {
+		try {
+			if (!this.graphDatabase.contains(MinimalSchema.instance()))
+				GraphIO.loadSchemaIntoGraphDatabase(
+						"testit/testschemas/MinimalSchema.tg",
+						this.graphDatabase);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	protected void loadTestSchemaIntoGraphDatabase(String file) {
+		try {
+			GraphIO.loadSchemaIntoGraphDatabase(file, graphDatabase);
+		} catch (Exception e) {
+			fail("Could not load " + file + " into graph database.");
+		}
+	}
+
+	protected MinimalGraph createMinimalGraphWithDatabaseSupport(String id) {
+		return this.createMinimalGraphWithDatabaseSupport(id, 1000, 1000);
+	}
+
+	protected MinimalGraph createMinimalGraphWithDatabaseSupport(String id,
+			int vMax, int eMax) {
+		try {
+			return MinimalSchema.instance()
+					.createMinimalGraphWithDatabaseSupport(id, vMax, eMax,
+							this.graphDatabase);
+		} catch (Exception exception) {
+			exception.printStackTrace();
+			fail("Could not create test graph.");
+			return null;
+		}
+	}
+
+	protected VertexTestGraph createVertexTestGraphWithDatabaseSupport(String id) {
+		return this.createVertexTestGraphWithDatabaseSupport(id, 1000, 1000);
+	}
+
+	protected VertexTestGraph createVertexTestGraphWithDatabaseSupport(
+			String id, int vMax, int eMax) {
+		try {
+			return VertexTestSchema.instance()
+					.createVertexTestGraphWithDatabaseSupport(id, vMax, eMax,
+							this.graphDatabase);
+		} catch (Exception exception) {
+			exception.printStackTrace();
+			fail("Could not create test graph");
+			return null;
+		}
+	}
+
+	protected VertexTestGraph loadVertexTestGraphWithDatabaseSupport(String id) {
+		try {
+			return (VertexTestGraph) GraphIO.loadGraphFromDatabase(id,
+					graphDatabase);
+		} catch (Exception exception) {
+			exception.printStackTrace();
+			fail("Could not load graph from database.");
+		}
+		return null;
+	}
+
+	protected void cleanDatabaseOfTestGraph(String id) {
+		try {
+			if (graphDatabase.containsGraph(id))
+				graphDatabase.deleteGraph(id);
+		} catch (GraphDatabaseException exception) {
+			fail("Could not delete test graph from database.");
+		}
+	}
+
+	protected void cleanDatabaseOfTestGraph(Graph testGraph) {
+		try {
+			if (graphDatabase.containsGraph(testGraph.getId()))
+				graphDatabase.delete((DatabasePersistableGraph) testGraph);
+		} catch (GraphDatabaseException exception) {
+			fail("Could not delete test graph from database.");
+		}
+	}
+
+	protected void cleanDatabaseOfTestSchema(Schema schema) {
+		try {
+			if (graphDatabase.containsSchema(schema.getPackagePrefix(), schema
+					.getName()))
+				graphDatabase.deleteSchema(schema.getPackagePrefix(), schema
+						.getName());
+		} catch (GraphDatabaseException exception) {
+			fail("Could not delete test schema from database.");
+		}
 	}
 
 	/**
