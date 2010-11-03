@@ -90,9 +90,9 @@ public class SchemaGraph2XMITest {
 
 	@AfterClass
 	public static void tearDown() {
-		// if (!temp.delete()) {
-		// System.out.println(temp + " could not be deleted.");
-		// }
+		if (!temp.delete()) {
+			System.out.println(temp + " could not be deleted.");
+		}
 	}
 
 	/**
