@@ -31,7 +31,7 @@
         navdoc = svgdoc.getElementById('nav');
         
         // initialize wheel support
-        if (navdoc.addEventListener){
+        if (document.addEventListener){
         	navdoc.addEventListener("DOMMouseScroll", zoomWithScroll, false);
         }
         navdoc.onmousewheel = document.onmousewheel = zoomWithScroll;
