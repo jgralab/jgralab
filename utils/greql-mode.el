@@ -93,7 +93,7 @@
   "/home/horn/uni/repos/jgralab/build/jar/jgralab.jar")
 
 (defun greql-functions ()
-  "Returns a list of all available GReQL function lists."
+  "Return a list of all available GReQL function lists."
   (with-temp-buffer
     (call-process "java" nil
                   (current-buffer)
@@ -199,8 +199,7 @@
          t)))
 
 (defvar greql-tab-width 2
-  "Distance between tab stops (for display of tab characters), in
-columns.")
+  "Distance between tab stops (for display of tabs), in columns.")
 
 (defvar greql-evaluation-buffer nil
   "Name of the GReQL evaluation buffer.")
@@ -267,8 +266,8 @@ columns.")
                   :help "Set the graph/schema for the current query"))))
 
 (defvar greql-graph nil
-  "The graph which is used to extract schema information on which
-queries are evaluated.  Set it with `greql-set-graph'.")
+  "The graph used for querying and schema extraction.
+Set it with `greql-set-graph'.")
 (make-variable-buffer-local 'greql-graph)
 
 (defun greql-set-graph (graph)
@@ -290,7 +289,7 @@ queries are evaluated.  Set it with `greql-set-graph'.")
   (setq greql--completion-cache nil))
 
 (defun greql-import-completion-list (mtypes)
-  "Return a completion list for imported elements.
+  "Return a completion list for imported MTYPE elements.
 If the package foo is imported, then the element \"Bar\" will be
 in the result, supplementing its qualified name foo.Bar gathered
 by normal completion."
@@ -350,8 +349,8 @@ by normal completion."
       completions)))
 
 (defun greql-attribute-completion-list (al)
-  "Formats the attribute list retrieved by
-`tg-all-attributes-multi' for completion."
+  "Format the attribute list AL for completion.
+AL is in the return format of `tg-all-attributes-multi'."
   (when al
     (let ((cl (mapcar
                (lambda (plst)
@@ -552,7 +551,7 @@ elements."
 (defun greql-execute (arg)
   "Execute the query in the current buffer on `greql-graph'.
 If a region is active, use only that as query.
-If a prefix arg is given, also generate a DOT file containing the
+If a prefix ARG is given, also generate a DOT file containing the
 elements calculated by the query plus all edges running between
 vertices in the query result."
   (interactive "P")
@@ -641,12 +640,11 @@ vertices in the query result."
   (looking-back "import[[:space:]]+[[:word:]._]*"))
 
 (defun greql-variable-types-at-point ()
-  "Return something like (VertexClass (\"Type1\" \"Type2\")),
+  "Return the possible types the variable at point might have.
+For example, that could be something like
+  (VertexClass (\"Type1\" \"Type2\")),
 for some variable declared as
-
-  x : V{Type1, Type2}
-
-for the variable at point."
+  x : V{Type1, Type2}."
   (save-excursion
     (search-backward "." nil t 1)
     (let ((end (point))
@@ -674,7 +672,7 @@ for the variable at point."
           (list mtype types))))))
 
 (defun greql-kill-region-as-java-string (beg end)
-  "Puts the marked region as java string on the kill-ring."
+  "Put the marked region (BEG and END) as java string on the `kill-ring'."
   (interactive "r")
   (let ((text (buffer-substring-no-properties beg end)))
     (with-temp-buffer
@@ -694,22 +692,22 @@ for the variable at point."
      'greql-mode
      '(("fr"  "from $1\nreport$0\nend"          "from ... report ... end")
        ("fwr" "from $1\nwith $2\nreport$0\nend" "from ... with ... report ... end")
-       ("ex"  "exists$1 @ $0"                   "exists ... @ ...")
+       ("ex"  "exists $1 @ $0"                  "exists ... @ ...")
        ("fa"  "forall $1 @ $0"                  "forall ... @ ...")
-       ("vs"  "V{$0}"                           "V{...}")
-       ("es"  "E{$0}"                           "E{...}")
-       ("e+"  "-->{$0}"                         "-->{...}")
-       ("e-"  "<--{$0}"                         "<--{...}")
-       ("e="  "<->{$0}"                         "<->{...}")
-       ("a+"  "<>--{$0}"                        "<>--{...}")
-       ("a-"  "--<>{$0}"                        "--<>{...}"))))
+       ("vs"  "V{$1}$0"                         "V{...}")
+       ("es"  "E{$1}$0"                         "E{...}")
+       ("e+"  "-->{$1}$0"                       "-->{...}")
+       ("e-"  "<--{$1}$0"                       "<--{...}")
+       ("e="  "<->{$1}$0"                       "<->{...}")
+       ("a+"  "<>--{$1}$0"                      "<>--{...}")
+       ("a-"  "--<>{$1}$0"                      "--<>{...}"))))
 
 ;;** Auto-Complete support
 
 ;; copied from bbdb
 (defsubst greql-string-trim (string)
-  "Lose leading and trailing whitespace.  Also remove all
-properties from string."
+  "Remove leading and trailing whitespace from STRING.
+Also remove all properties from string."
   (if (string-match "\\`[ \t\n]+" string)
       (setq string (substring string (match-end 0))))
   (if (string-match "[ \t\n]+\\'" string)
@@ -745,7 +743,10 @@ properties from string."
     (add-to-list 'ac-sources 'ac-source-greql)
     ;; Don't show completions for normal words and file names.
     (setq ac-sources (delq 'ac-source-filename ac-sources))
-    (setq ac-sources (delq 'ac-source-words-in-same-mode-buffers ac-sources)))
+    (setq ac-sources (delq 'ac-source-words-in-same-mode-buffers ac-sources))
+    ;; Assure the yasnippets are also listed when available
+    (when (featurep 'yasnippet)
+      (add-to-list 'ac-sources 'ac-source-yasnippet)))
 
   (add-hook 'greql-mode-hook 'greql-activate-auto-complete))
 
