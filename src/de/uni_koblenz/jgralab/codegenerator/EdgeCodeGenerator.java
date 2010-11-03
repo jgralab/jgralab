@@ -76,9 +76,10 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 						true,
 						"public #simpleClassName#Impl(int id, #jgPackage#.Graph g, Vertex alpha, Vertex omega) {",
 						"\tsuper(id, g, alpha, omega);"));
-		if (hasDefaultAttributeValues())
+		if (hasDefaultAttributeValues()) {
 			code.addNoIndent(new CodeSnippet(
 					"\tinitializeAttributesWithDefaultValues();"));
+		}
 		code.add(createSpecialConstructorCode());
 		code.addNoIndent(new CodeSnippet("}"));
 		return code;
@@ -89,14 +90,18 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 		CodeList code = (CodeList) super.createBody();
 		if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()) {
 			rootBlock.setVariable("baseClassName", "EdgeImpl");
-			if (currentCycle.isStdImpl())
+			if (currentCycle.isStdImpl()) {
 				addImports("#jgImplStdPackage#.#baseClassName#");
-			if (currentCycle.isSaveMemImpl())
+			}
+			if (currentCycle.isSaveMemImpl()) {
 				addImports("#jgImplSaveMemPackage#.#baseClassName#");
-			if (currentCycle.isTransImpl())
+			}
+			if (currentCycle.isTransImpl()) {
 				addImports("#jgImplTransPackage#.#baseClassName#");
-			if (currentCycle.isDbImpl())
+			}
+			if (currentCycle.isDbImpl()) {
 				addImports("#jgImplDbPackage#.#baseClassName#");
+			}
 		}
 		if (config.hasTypeSpecificMethodsSupport()
 				&& !currentCycle.isClassOnly()) {
@@ -120,14 +125,18 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 	private CodeBlock createReversedEdgeMethod() {
 		CodeSnippet code = new CodeSnippet(true,
 				"protected #jgImplPackage#.ReversedEdgeBaseImpl createReversedEdge() {");
-		if (currentCycle.isStdImpl())
+		if (currentCycle.isStdImpl()) {
 			addImports("#schemaImplStdPackage#.Reversed#simpleClassName#Impl");
-		if (currentCycle.isTransImpl())
+		}
+		if (currentCycle.isTransImpl()) {
 			addImports("#schemaImplTransPackage#.Reversed#simpleClassName#Impl");
-		if (currentCycle.isSaveMemImpl())
+		}
+		if (currentCycle.isSaveMemImpl()) {
 			addImports("#schemaImplSaveMemPackage#.Reversed#simpleClassName#Impl");
-		if (currentCycle.isDbImpl())
+		}
+		if (currentCycle.isDbImpl()) {
 			addImports("#schemaImplDbPackage#.Reversed#simpleClassName#Impl");
+		}
 		code.add("\treturn new Reversed#simpleClassName#Impl(this, graph);");
 		code.add("}");
 		return code;
@@ -141,15 +150,18 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 
 		if (config.hasTypeSpecificMethodsSupport()) {
 			for (AttributedElementClass ec : superClasses) {
-				if (ec.isInternal())
+				if (ec.isInternal()) {
 					continue;
+				}
 				EdgeClass ecl = (EdgeClass) ec;
 				code.addNoIndent(createNextEdgeInGraphMethod(ecl, false));
-				if (config.hasMethodsForSubclassesSupport())
-					if (!ecl.isAbstract())
+				if (config.hasMethodsForSubclassesSupport()) {
+					if (!ecl.isAbstract()) {
 						code
 								.addNoIndent(createNextEdgeInGraphMethod(ecl,
 										true));
+					}
+				}
 			}
 		}
 		return code;
@@ -198,8 +210,9 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 
 		if (config.hasTypeSpecificMethodsSupport()) {
 			for (AttributedElementClass ec : superClasses) {
-				if (ec.isInternal())
+				if (ec.isInternal()) {
 					continue;
+				}
 				addImports("#jgPackage#.EdgeDirection");
 				EdgeClass ecl = (EdgeClass) ec;
 				code

@@ -32,10 +32,12 @@ public class RealToken extends Token {
 		this.value = value;
 	}
 
+	@Override
 	public boolean isComplex() {
 		return true;
 	}
 
+	@Override
 	public String getValue() {
 		return value.toString();
 	}

@@ -206,8 +206,8 @@ public class GraphValidator {
 	}
 
 	private Set<AttributedElement> jvalueSet2Set(JValueSet resultSet) {
-		Set<AttributedElement> set = new HashSet<AttributedElement>(
-				resultSet.size());
+		Set<AttributedElement> set = new HashSet<AttributedElement>(resultSet
+				.size());
 		for (JValue jv : resultSet) {
 			set.add(jv.toAttributedElement());
 		}
@@ -234,8 +234,10 @@ public class GraphValidator {
 		try {
 			bw = new BufferedWriter(new FileWriter(new File(fileName)));
 			// The header
-			bw.append("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\"\n"
-					+ "\"http://www.w3.org/TR/html4/strict.dtd\">\n" + "<html>");
+			bw
+					.append("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\"\n"
+							+ "\"http://www.w3.org/TR/html4/strict.dtd\">\n"
+							+ "<html>");
 			bw.append("<head>");
 
 			bw.append("<style type=\"text/css\">");
@@ -307,7 +309,9 @@ public class GraphValidator {
 					bw.append(ci.getClass().getSimpleName());
 					bw.append("</td>");
 					bw.append("<td class=\"" + cssClass + "\">");
-					bw.append(ci.getAttributedElementClass().getQualifiedName());
+					bw
+							.append(ci.getAttributedElementClass()
+									.getQualifiedName());
 					bw.append("</td>");
 					bw.append("<td class=\"" + cssClass + "\">");
 					bw.append(ci.getMessage());

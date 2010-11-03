@@ -298,8 +298,8 @@ public class JGraLab2OWL {
 		// String filename = args[0];
 		String filename = comLine.getOptionValue("g");
 		try {
-			Graph graph = GraphIO.loadGraphFromFileWithStandardSupport(
-					comLine.getOptionValue("g")/* args[0] */, null);
+			Graph graph = GraphIO.loadGraphFromFileWithStandardSupport(comLine
+					.getOptionValue("g")/* args[0] */, null);
 
 			saveGraphToOWLInstances(filename + ".owl", graph, false, true,
 					true, new ConsoleProgressFunction());
@@ -352,10 +352,9 @@ public class JGraLab2OWL {
 	/**
 	 * Creates the header of the OWL-file, i.e. the element {@code <rdf:RDF>},
 	 * together with namespace definitions as its attributes, and its first
-	 * child element {@code <owl:Ontology>} with a subelement
-	 * {@code <rdfs:label>}. {@code <rdfs:label>} contains a text node
-	 * representing the name of the ontology, which is equal to the schema's
-	 * name.<br>
+	 * child element {@code <owl:Ontology>} with a subelement {@code
+	 * <rdfs:label>}. {@code <rdfs:label>} contains a text node representing the
+	 * name of the ontology, which is equal to the schema's name.<br>
 	 * <br> {@code <rdf:RDF>} is the only child of the root node. Its children are
 	 * the {@code <owl:Ontology>} element and further elements which build the
 	 * ontology.<br>

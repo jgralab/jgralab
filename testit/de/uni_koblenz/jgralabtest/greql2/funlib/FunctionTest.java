@@ -359,8 +359,8 @@ public class FunctionTest extends GenericTests {
 		String queryString = "let x := rec ( menue1:\"bratwurst\", menue2:\"currywurst\", menue3:\"steak\", menue4:\"kaenguruhfleisch\", menue5:\"spiessbraten\") in from i:V{Identifier} report x.menue4 end";
 		JValue result = evalTestQuery("RecordAccess", queryString);
 		assertEquals(1, result.toCollection().toJValueSet().size());
-		assertTrue(result.toCollection().toJValueSet()
-				.contains(new JValueImpl("kaenguruhfleisch")));
+		assertTrue(result.toCollection().toJValueSet().contains(
+				new JValueImpl("kaenguruhfleisch")));
 	}
 
 	@Test

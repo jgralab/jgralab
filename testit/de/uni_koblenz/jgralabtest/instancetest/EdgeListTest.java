@@ -83,11 +83,13 @@ public class EdgeListTest extends InstanceTest {
 					+ " not yet supported by this test.");
 		}
 		createTransaction(g);
-		for (int i = 0; i < N; ++i)
+		for (int i = 0; i < N; ++i) {
 			g.createNode();
-		for (int i = 0; i < N; ++i)
+		}
+		for (int i = 0; i < N; ++i) {
 			g.createLink((Node) g.getVertex(i + 1), (Node) g.getVertex((i + 1)
 					% N + 1));
+		}
 		commit(g);
 	}
 
@@ -120,8 +122,9 @@ public class EdgeListTest extends InstanceTest {
 
 	private String getESeq() {
 		StringBuilder sb = new StringBuilder();
-		for (Edge e : g.edges())
+		for (Edge e : g.edges()) {
 			sb.append('e').append(e.getId()).append(' ');
+		}
 		return sb.toString().trim();
 	}
 

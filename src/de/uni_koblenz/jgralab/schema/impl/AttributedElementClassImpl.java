@@ -208,8 +208,8 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 	 * name</li>
 	 * <li><code>comp == 0</code>, if both element´s qualified names are equal</li>
 	 * <li><code>comp > 0</code>, if this element´s qualified name is
-	 * lexicographically greater than the <code>other</code> element´s
-	 * qualified name</li>
+	 * lexicographically greater than the <code>other</code> element´s qualified
+	 * name</li>
 	 * </ul>
 	 * </p>
 	 * 

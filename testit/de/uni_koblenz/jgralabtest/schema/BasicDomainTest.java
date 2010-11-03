@@ -25,6 +25,7 @@ package de.uni_koblenz.jgralabtest.schema;
 
 public abstract class BasicDomainTest extends DomainTest {
 
+	@Override
 	public void init() {
 		super.init();
 		isComposite = false;

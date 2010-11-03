@@ -310,10 +310,11 @@ public class SimpleTransition extends Transition {
 			delim = ",";
 		}
 		String symbol = "<->";
-		if (validDirection == AllowedEdgeDirection.IN)
+		if (validDirection == AllowedEdgeDirection.IN) {
 			symbol = "<--";
-		else if (validDirection == AllowedEdgeDirection.OUT)
+		} else if (validDirection == AllowedEdgeDirection.OUT) {
 			symbol = "-->";
+		}
 		return symbol + "{" + b + "}";
 	}
 

@@ -62,14 +62,16 @@ public class PathSystemEntry {
 	/**
 	 * returns the string representation of this entry
 	 */
+	@Override
 	public String toString() {
-		if (getParentVertex() != null)
+		if (getParentVertex() != null) {
 			return "(V: " + getParentVertex().getId() + ", S: "
 					+ getParentStateNumber() + ", E: "
 					+ getParentEdge().getId() + " ,D: " + getDistanceToRoot()
 					+ ")";
-		else
+		} else {
 			return "(RootVertex Distance: " + getDistanceToRoot() + ")";
+		}
 
 	}
 

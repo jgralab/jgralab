@@ -59,8 +59,9 @@ public class VertexSubgraphExpressionEvaluator extends
 			if ((subgraph == null) || (subgraph.isMarked(currentVertex))) {
 				AttributedElementClass vertexClass = currentVertex
 						.getAttributedElementClass();
-				if (typeCollection.acceptsType(vertexClass))
+				if (typeCollection.acceptsType(vertexClass)) {
 					subgraphAttr.mark(currentVertex);
+				}
 			}
 			currentVertex = currentVertex.getNextVertex();
 		}
@@ -68,8 +69,9 @@ public class VertexSubgraphExpressionEvaluator extends
 		Edge currentEdge = getDatagraph().getFirstEdgeInGraph();
 		while (currentEdge != null) {
 			if (subgraphAttr.isMarked(currentEdge.getAlpha())
-					&& subgraphAttr.isMarked(currentEdge.getOmega()))
+					&& subgraphAttr.isMarked(currentEdge.getOmega())) {
 				subgraphAttr.mark(currentEdge);
+			}
 			currentEdge = currentEdge.getNextEdgeInGraph();
 		}
 		return new JValueImpl(subgraphAttr);

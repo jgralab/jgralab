@@ -32,6 +32,7 @@ import de.uni_koblenz.jgralab.schema.Domain;
 
 public class SetDomainTest extends CollectionDomainTest {
 
+	@Override
 	@Before
 	public void init() {
 		super.init();

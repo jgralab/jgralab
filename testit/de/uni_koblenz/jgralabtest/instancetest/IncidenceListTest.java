@@ -123,8 +123,9 @@ public class IncidenceListTest extends InstanceTest {
 
 	@After
 	public void tearDown() {
-		if (implementationType == ImplementationType.DATABASE)
+		if (implementationType == ImplementationType.DATABASE) {
 			this.cleanAndCloseDatabase();
+		}
 	}
 
 	private void cleanAndCloseDatabase() {
@@ -392,10 +393,11 @@ public class IncidenceListTest extends InstanceTest {
 			// TODO why not use internal degree method?
 			int inDegree = 0, outDegree = 0;
 			for (Edge e : incidenceList) {
-				if (e.isNormal())
+				if (e.isNormal()) {
 					outDegree++;
-				else
+				} else {
 					inDegree++;
+				}
 			}
 
 			while (!incidenceList.isEmpty()) {

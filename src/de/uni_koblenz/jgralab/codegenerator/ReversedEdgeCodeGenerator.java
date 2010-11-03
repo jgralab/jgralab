@@ -62,14 +62,15 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 		if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()) {
 			rootBlock.setVariable("baseClassName", "ReversedEdgeImpl");
 
-			if (currentCycle.isStdImpl())
+			if (currentCycle.isStdImpl()) {
 				addImports("#jgImplStdPackage#.#baseClassName#");
-			else if (currentCycle.isSaveMemImpl())
+			} else if (currentCycle.isSaveMemImpl()) {
 				addImports("#jgImplSaveMemPackage#.#baseClassName#");
-			else if (currentCycle.isTransImpl())
+			} else if (currentCycle.isTransImpl()) {
 				addImports("#jgImplTransPackage#.#baseClassName#");
-			else if (currentCycle.isDbImpl())
+			} else if (currentCycle.isDbImpl()) {
 				addImports("#jgImplDbPackage#.#baseClassName#");
+			}
 
 			if (config.hasTypeSpecificMethodsSupport()) {
 				code.add(createNextEdgeInGraphMethods());
@@ -83,14 +84,18 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 	@Override
 	protected CodeBlock createConstructor() {
 		// TODO Introduce constants for jgImplStdPackage etc. (refactor)
-		if (currentCycle.isStdImpl())
+		if (currentCycle.isStdImpl()) {
 			addImports("#jgImplStdPackage#.EdgeImpl", "#jgPackage#.Graph");
-		if (currentCycle.isSaveMemImpl())
+		}
+		if (currentCycle.isSaveMemImpl()) {
 			addImports("#jgImplSaveMemPackage#.EdgeImpl", "#jgPackage#.Graph");
-		if (currentCycle.isTransImpl())
+		}
+		if (currentCycle.isTransImpl()) {
 			addImports("#jgImplTransPackage#.EdgeImpl", "#jgPackage#.Graph");
-		if (currentCycle.isDbImpl())
+		}
+		if (currentCycle.isDbImpl()) {
 			addImports("#jgImplDbPackage#.EdgeImpl", "#jgPackage#.Graph");
+		}
 
 		return new CodeSnippet(true, "#className#Impl(EdgeImpl e, Graph g) {",
 				"\tsuper(e, g);", "}");
@@ -112,8 +117,9 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 							"\treturn ((#normalQualifiedClassName#)normalEdge).#isOrGet#_#name#();",
 							"}");
 		}
-		if (currentCycle.isAbstract())
+		if (currentCycle.isAbstract()) {
 			code.add("public #type# #isOrGet#_#name#();");
+		}
 		return code;
 	}
 
@@ -131,8 +137,9 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 							"\t((#normalQualifiedClassName#)normalEdge).set_#name#(_#name#);",
 							"}");
 		}
-		if (currentCycle.isAbstract())
+		if (currentCycle.isAbstract()) {
 			code.add("public void set_#name#(#type# _#name#);");
+		}
 		return code;
 	}
 

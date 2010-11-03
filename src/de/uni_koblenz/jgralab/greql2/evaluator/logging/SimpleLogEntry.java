@@ -91,6 +91,7 @@ public class SimpleLogEntry extends LogEntry {
 	 * 
 	 * @return the data stored in this logentry as JDom Element
 	 */
+	@Override
 	public Element toJDOMEntry() {
 		Element logEntryElem = new Element("SimpleLogEntry");
 		Element nameElem = new Element("name");

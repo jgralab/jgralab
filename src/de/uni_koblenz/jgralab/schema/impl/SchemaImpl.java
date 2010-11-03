@@ -239,11 +239,13 @@ public class SchemaImpl implements Schema {
 	 */
 	public SchemaImpl(String name, String packagePrefix) {
 
-		if (!SCHEMA_NAME_PATTERN.matcher(name).matches())
+		if (!SCHEMA_NAME_PATTERN.matcher(name).matches()) {
 			this.throwInvalidSchemaNameException();
+		}
 
-		if (!PACKAGE_PREFIX_PATTERN.matcher(packagePrefix).matches())
+		if (!PACKAGE_PREFIX_PATTERN.matcher(packagePrefix).matches()) {
 			this.throwInvalidPackagePrefixNameException();
+		}
 
 		this.name = name;
 		this.packagePrefix = packagePrefix;
@@ -299,15 +301,18 @@ public class SchemaImpl implements Schema {
 		CodeGeneratorConfiguration out = new CodeGeneratorConfiguration();
 		// TODO Add SAVEMEM.
 		if (java.lang.Package.getPackage(packagePrefix + ". "
-				+ IMPLSTDPACKAGENAME) == null)
+				+ IMPLSTDPACKAGENAME) == null) {
 			out.setStandardSupport(false);
+		}
 		if (java.lang.Package.getPackage(packagePrefix + ". "
-				+ IMPLTRANSPACKAGENAME) != null)
+				+ IMPLTRANSPACKAGENAME) != null) {
 			out.setTransactionSupport(true);
+		}
 		if (java.lang.Package.getPackage(packagePrefix + ". "
-				+ IMPLDATABASEPACKAGENAME) != null)
+				+ IMPLDATABASEPACKAGENAME) != null) {
 			out.setDatabaseSupport(true);
-		
+		}
+
 		return out.withMethodsForSubclassesSupport();
 		// TODO: Monte, check for the other values :-)
 	}
@@ -337,9 +342,9 @@ public class SchemaImpl implements Schema {
 				.get(namedElement.getSimpleName());
 		// add element to map
 		if ((elementsWithSameSimpleName != null)
-				&& !elementsWithSameSimpleName.isEmpty())
+				&& !elementsWithSameSimpleName.isEmpty()) {
 			elementsWithSameSimpleName.add(namedElement);
-		else {
+		} else {
 			elementsWithSameSimpleName = new TreeSet<NamedElement>();
 			elementsWithSameSimpleName.add(namedElement);
 			namedElementsBySimpleName.put(namedElement.getSimpleName(),
@@ -347,8 +352,9 @@ public class SchemaImpl implements Schema {
 		}
 		// uniquify if needed
 		if (elementsWithSameSimpleName.size() >= 2) {
-			for (NamedElement other : elementsWithSameSimpleName)
+			for (NamedElement other : elementsWithSameSimpleName) {
 				((NamedElementImpl) other).changeUniqueName();
+			}
 		}
 	}
 
@@ -423,9 +429,10 @@ public class SchemaImpl implements Schema {
 
 		// generate graph classes
 
-		if (graphClass.getQualifiedName().equals("Graph"))
+		if (graphClass.getQualifiedName().equals("Graph")) {
 			throw new SchemaException(
 					"The defined GraphClass must not be named Graph!");
+		}
 
 		javaSources.addAll(createClasses(config));
 		return javaSources;
@@ -529,8 +536,9 @@ public class SchemaImpl implements Schema {
 		}
 
 		// ********************* build code **********************
-		if (!pathPrefix.endsWith(File.separator))
+		if (!pathPrefix.endsWith(File.separator)) {
 			pathPrefix += File.separator;
+		}
 
 		// generate schema class
 		CodeGenerator schemaCodeGenerator = new SchemaCodeGenerator(this,
@@ -543,16 +551,18 @@ public class SchemaImpl implements Schema {
 		factoryCodeGenerator.createFiles(pathPrefix);
 
 		// generate graph class
-		if (graphClass.getQualifiedName().equals("Graph"))
+		if (graphClass.getQualifiedName().equals("Graph")) {
 			throw new SchemaException(
 					"The defined GraphClass must not be named Graph!");
+		}
 
 		createFiles(config, pathPrefix, progressFunction, schemaElements,
 				currentCount, interval);
 
 		// finish progress bar
-		if (progressFunction != null)
+		if (progressFunction != null) {
 			progressFunction.finished();
+		}
 	}
 
 	@Override
@@ -727,8 +737,9 @@ public class SchemaImpl implements Schema {
 	 *         existing package with this qualified name.
 	 */
 	Package createPackageWithParents(String qn) {
-		if (packages.containsKey(qn))
+		if (packages.containsKey(qn)) {
 			return packages.get(qn);
+		}
 
 		String[] components = splitQualifiedName(qn);
 		String parent = components[0];
@@ -835,12 +846,13 @@ public class SchemaImpl implements Schema {
 
 	@Override
 	public AttributedElementClass getAttributedElementClass(String qualifiedName) {
-		if (graphClass == null)
+		if (graphClass == null) {
 			return null;
-		else if (graphClass.getQualifiedName().equals(qualifiedName))
+		} else if (graphClass.getQualifiedName().equals(qualifiedName)) {
 			return graphClass;
-		else
+		} else {
 			return graphClass.getGraphElementClass(qualifiedName);
+		}
 	}
 
 	@Override
@@ -1168,17 +1180,23 @@ public class SchemaImpl implements Schema {
 
 	@Override
 	public boolean isValidEnumConstant(String name) {
-		if (name.isEmpty())
+		if (name.isEmpty()) {
 			return false;
-		if (!allowLowercaseEnumConstants && !name.equals(name.toUpperCase()))
+		}
+		if (!allowLowercaseEnumConstants && !name.equals(name.toUpperCase())) {
 			return false;
-		if (RESERVED_JAVA_WORDS.contains(name))
+		}
+		if (RESERVED_JAVA_WORDS.contains(name)) {
 			return false;
-		if (!Character.isJavaIdentifierStart(name.charAt(0)))
+		}
+		if (!Character.isJavaIdentifierStart(name.charAt(0))) {
 			return false;
-		for (char c : name.toCharArray())
-			if (!Character.isJavaIdentifierPart(c))
+		}
+		for (char c : name.toCharArray()) {
+			if (!Character.isJavaIdentifierPart(c)) {
 				return false;
+			}
+		}
 
 		return true;
 	}
@@ -1205,9 +1223,10 @@ public class SchemaImpl implements Schema {
 	}
 
 	void setGraphClass(GraphClass gc) {
-		if (graphClass != null)
+		if (graphClass != null) {
 			throw new SchemaException("There already is a GraphClass named: "
 					+ graphClass.getQualifiedName() + "in the Schema!");
+		}
 		graphClass = gc;
 	}
 

@@ -54,6 +54,7 @@ public class BagComprehensionEvaluator extends ComprehensionEvaluator {
 	/**
 	 * returns the vertex this VertexEvaluator evaluates
 	 */
+	@Override
 	public BagComprehension getVertex() {
 		return vertex;
 	}
@@ -76,6 +77,7 @@ public class BagComprehensionEvaluator extends ComprehensionEvaluator {
 
 	private List<VertexEvaluator> headerEvaluators = null;
 
+	@Override
 	protected JValueCollection getResultDatastructure() {
 		if (createHeader == null) {
 			if (vertex.getFirstIsTableHeaderOf(EdgeDirection.IN) != null) {

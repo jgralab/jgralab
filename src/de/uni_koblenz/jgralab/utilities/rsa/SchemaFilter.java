@@ -381,8 +381,8 @@ public class SchemaFilter {
 		}
 		for (SpecializesVertexClass current : currentVertexClass
 				.getSpecializesVertexClassIncidences(EdgeDirection.IN)) {
-			if (!isVertexClassExcluded(processed,
-					(VertexClass) current.getThat())) {
+			if (!isVertexClassExcluded(processed, (VertexClass) current
+					.getThat())) {
 				// at least one subclass is not excluded
 				return false;
 			}

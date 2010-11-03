@@ -65,8 +65,9 @@ public class AttributedElementIterable<A extends AttributedElement> implements
 		this.delegateIterable = iterable;
 		this.graph = graph;
 		transaction = graph.getCurrentTransaction();
-		if (transaction == null)
+		if (transaction == null) {
 			throw new GraphException("Current transaction is null.");
+		}
 	}
 
 	@Override
@@ -104,30 +105,33 @@ public class AttributedElementIterable<A extends AttributedElement> implements
 		@Override
 		public boolean hasNext() {
 			Transaction currentTransaction = graph.getCurrentTransaction();
-			if (currentTransaction != transaction)
+			if (currentTransaction != transaction) {
 				throw new GraphException(
 						"VertexIterable isn't valid within current transaction "
 								+ currentTransaction + ".");
+			}
 			return delegateIterator.hasNext();
 		}
 
 		@Override
 		public A next() {
 			Transaction currentTransaction = graph.getCurrentTransaction();
-			if (currentTransaction != transaction)
+			if (currentTransaction != transaction) {
 				throw new GraphException(
 						"VertexIterable isn't valid within current transaction "
 								+ currentTransaction + ".");
+			}
 			return delegateIterator.next();
 		}
 
 		@Override
 		public void remove() {
 			Transaction currentTransaction = graph.getCurrentTransaction();
-			if (currentTransaction != transaction)
+			if (currentTransaction != transaction) {
 				throw new GraphException(
 						"VertexIterable isn't valid within current transaction "
 								+ currentTransaction + ".");
+			}
 			delegateIterator.remove();
 		}
 	}

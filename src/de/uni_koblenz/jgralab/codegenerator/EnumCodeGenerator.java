@@ -79,8 +79,9 @@ public class EnumCodeGenerator extends CodeGenerator {
 
 	@Override
 	protected CodeBlock createHeader() {
-		if (currentCycle.isClassOnly())
+		if (currentCycle.isClassOnly()) {
 			return new CodeSnippet(true, "public enum #simpleClassName# {");
+		}
 		return new CodeSnippet();
 	}
 }

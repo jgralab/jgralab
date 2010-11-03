@@ -37,7 +37,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
- * Returns a DFA which recognizes he given ath expression and can be used in several other functions such as pathSystem, isReachable etc., 
+ * Returns a DFA which recognizes he given ath expression and can be used in
+ * several other functions such as pathSystem, isReachable etc.,
  * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
@@ -65,8 +66,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public class PathExpr extends Greql2Function {
 
 	{
-		JValueType[][] x = { { JValueType.AUTOMATON,
-				JValueType.AUTOMATON } };
+		JValueType[][] x = { { JValueType.AUTOMATON, JValueType.AUTOMATON } };
 		signatures = x;
 
 		description = "Returns a  afa which accepts the given path description.";
@@ -90,9 +90,8 @@ public class PathExpr extends Greql2Function {
 		default:
 			throw new WrongFunctionParameterException(this, arguments);
 		}
-        return new JValueImpl(dfa);
+		return new JValueImpl(dfa);
 	}
-
 
 	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {

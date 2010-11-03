@@ -86,10 +86,12 @@ public class GraphFactoryGenerator extends CodeGenerator {
 
 		GraphClass graphClass = schema.getGraphClass();
 		code.add(createFillTableForGraph(graphClass));
-		for (VertexClass vertexClass : graphClass.getVertexClasses())
+		for (VertexClass vertexClass : graphClass.getVertexClasses()) {
 			code.add(createFillTableForVertex(vertexClass));
-		for (EdgeClass edgeClass : graphClass.getEdgeClasses())
+		}
+		for (EdgeClass edgeClass : graphClass.getEdgeClasses()) {
 			code.add(createFillTableForEdge(edgeClass));
+		}
 		for (RecordDomain recordDomain : schema.getRecordDomains()) {
 			code.add(createFillTableForRecord(recordDomain));
 		}
@@ -101,8 +103,9 @@ public class GraphFactoryGenerator extends CodeGenerator {
 	}
 
 	protected CodeBlock createFillTableForGraph(GraphClass graphClass) {
-		if (graphClass.isAbstract())
+		if (graphClass.isAbstract()) {
 			return null;
+		}
 
 		CodeSnippet code = new CodeSnippet(true);
 		code.setVariable("graphName", schemaRootPackageName + "."
@@ -118,21 +121,30 @@ public class GraphFactoryGenerator extends CodeGenerator {
 
 		if (!graphClass.isAbstract()) {
 			code.add("/* code for graph #graphName# */");
-			if (config.hasStandardSupport())
-				code.add("setGraphImplementationClass(#graphName#.class, #graphImplName#Impl.class);");
-			if (config.hasTransactionSupport())
-				code.add("setGraphTransactionImplementationClass(#graphName#.class, #graphTransactionImplName#Impl.class);");
-			if (config.hasDatabaseSupport())
-				code.add("setGraphDatabaseImplementationClass(#graphName#.class, #graphDatabaseImplName#Impl.class);");
-			if (config.hasSavememSupport())
-				code.add("setGraphSavememImplementationClass(#graphName#.class, #graphSaveMemImplName#Impl.class);");
+			if (config.hasStandardSupport()) {
+				code
+						.add("setGraphImplementationClass(#graphName#.class, #graphImplName#Impl.class);");
+			}
+			if (config.hasTransactionSupport()) {
+				code
+						.add("setGraphTransactionImplementationClass(#graphName#.class, #graphTransactionImplName#Impl.class);");
+			}
+			if (config.hasDatabaseSupport()) {
+				code
+						.add("setGraphDatabaseImplementationClass(#graphName#.class, #graphDatabaseImplName#Impl.class);");
+			}
+			if (config.hasSavememSupport()) {
+				code
+						.add("setGraphSavememImplementationClass(#graphName#.class, #graphSaveMemImplName#Impl.class);");
+			}
 		}
 		return code;
 	}
 
 	protected CodeBlock createFillTableForVertex(VertexClass vertexClass) {
-		if (vertexClass.isAbstract())
+		if (vertexClass.isAbstract()) {
 			return null;
+		}
 
 		CodeSnippet code = new CodeSnippet(true);
 		code.setVariable("vertexName", schemaRootPackageName + "."
@@ -147,14 +159,22 @@ public class GraphFactoryGenerator extends CodeGenerator {
 				+ ".impl.savemem." + vertexClass.getQualifiedName());
 
 		if (!vertexClass.isAbstract()) {
-			if (config.hasStandardSupport())
-				code.add("setVertexImplementationClass(#vertexName#.class, #vertexImplName#Impl.class);");
-			if (config.hasTransactionSupport())
-				code.add("setVertexTransactionImplementationClass(#vertexName#.class, #vertexTransactionImplName#Impl.class);");
-			if (config.hasDatabaseSupport())
-				code.add("setVertexDatabaseImplementationClass(#vertexName#.class, #vertexDatabaseImplName#Impl.class);");
-			if (config.hasSavememSupport())
-				code.add("setVertexSavememImplementationClass(#vertexName#.class, #vertexSaveMemImplName#Impl.class);");
+			if (config.hasStandardSupport()) {
+				code
+						.add("setVertexImplementationClass(#vertexName#.class, #vertexImplName#Impl.class);");
+			}
+			if (config.hasTransactionSupport()) {
+				code
+						.add("setVertexTransactionImplementationClass(#vertexName#.class, #vertexTransactionImplName#Impl.class);");
+			}
+			if (config.hasDatabaseSupport()) {
+				code
+						.add("setVertexDatabaseImplementationClass(#vertexName#.class, #vertexDatabaseImplName#Impl.class);");
+			}
+			if (config.hasSavememSupport()) {
+				code
+						.add("setVertexSavememImplementationClass(#vertexName#.class, #vertexSaveMemImplName#Impl.class);");
+			}
 		}
 		return code;
 	}
@@ -172,13 +192,16 @@ public class GraphFactoryGenerator extends CodeGenerator {
 				+ ".impl.savemem." + recordDomain.getQualifiedName());
 
 		if (config.hasStandardSupport()) {
-			code.add("setRecordImplementationClass(#recordName#.class, #recordImplName#Impl.class);");
+			code
+					.add("setRecordImplementationClass(#recordName#.class, #recordImplName#Impl.class);");
 		}
 		if (config.hasTransactionSupport()) {
-			code.add("setRecordTransactionImplementationClass(#recordName#.class, #recordTransactionImplName#Impl.class);");
+			code
+					.add("setRecordTransactionImplementationClass(#recordName#.class, #recordTransactionImplName#Impl.class);");
 		}
 		if (config.hasSavememSupport()) {
-			code.add("setRecordSavememImplementationClass(#recordName#.class, #recordSaveMemImplName#Impl.class);");
+			code
+					.add("setRecordSavememImplementationClass(#recordName#.class, #recordSaveMemImplName#Impl.class);");
 		}
 		return code;
 	}
@@ -197,14 +220,22 @@ public class GraphFactoryGenerator extends CodeGenerator {
 				+ ".impl.savemem." + edgeClass.getQualifiedName());
 
 		if (!edgeClass.isAbstract()) {
-			if (config.hasStandardSupport())
-				code.add("setEdgeImplementationClass(#edgeName#.class, #edgeImplName#Impl.class);");
-			if (config.hasTransactionSupport())
-				code.add("setEdgeTransactionImplementationClass(#edgeName#.class, #edgeTransactionImplName#Impl.class);");
-			if (config.hasDatabaseSupport())
-				code.add("setEdgeDatabaseImplementationClass(#edgeName#.class, #edgeDatabaseImplName#Impl.class);");
-			if (config.hasSavememSupport())
-				code.add("setEdgeSavememImplementationClass(#edgeName#.class, #edgeSaveMemImplName#Impl.class);");
+			if (config.hasStandardSupport()) {
+				code
+						.add("setEdgeImplementationClass(#edgeName#.class, #edgeImplName#Impl.class);");
+			}
+			if (config.hasTransactionSupport()) {
+				code
+						.add("setEdgeTransactionImplementationClass(#edgeName#.class, #edgeTransactionImplName#Impl.class);");
+			}
+			if (config.hasDatabaseSupport()) {
+				code
+						.add("setEdgeDatabaseImplementationClass(#edgeName#.class, #edgeDatabaseImplName#Impl.class);");
+			}
+			if (config.hasSavememSupport()) {
+				code
+						.add("setEdgeSavememImplementationClass(#edgeName#.class, #edgeSaveMemImplName#Impl.class);");
+			}
 		}
 		return code;
 	}

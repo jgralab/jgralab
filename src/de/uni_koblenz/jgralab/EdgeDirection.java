@@ -45,13 +45,14 @@ public enum EdgeDirection {
 	 *             When no edge direction could be matched from string.
 	 */
 	public static EdgeDirection parse(String direction) throws Exception {
-		if (direction.equals("OUT"))
+		if (direction.equals("OUT")) {
 			return EdgeDirection.OUT;
-		else if (direction.equals("IN"))
+		} else if (direction.equals("IN")) {
 			return EdgeDirection.IN;
-		else if (direction.equals("INOUT"))
+		} else if (direction.equals("INOUT")) {
 			return EdgeDirection.INOUT;
-		else
+		} else {
 			throw new Exception("Could not determine direction from string.");
+		}
 	}
 }

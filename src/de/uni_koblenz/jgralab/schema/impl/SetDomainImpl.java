@@ -119,10 +119,11 @@ public final class SetDomainImpl extends CollectionDomainImpl implements
 						"java.util.Set<#basedom#> #tmpname# = #theGraph#.createSet();"));
 		code.add(new CodeSnippet("#io#.match(\"{\");",
 				"while (!#io#.isNextToken(\"}\")) {"));
-		if (getBaseDomain().isComposite())
+		if (getBaseDomain().isComposite()) {
 			code.add(new CodeSnippet("\t#basetype# $#name#Element = null;"));
-		else
+		} else {
 			code.add(new CodeSnippet("\t#basetype# $#name#Element;"));
+		}
 		code.add(getBaseDomain().getReadMethod(schemaRootPackagePrefix,
 				"$" + variableName + "Element", graphIoVariableName), 1);
 		code.add(new CodeSnippet("\t#tmpname#.add($#name#Element);", "}",

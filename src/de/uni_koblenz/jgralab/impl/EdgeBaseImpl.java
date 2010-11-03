@@ -65,10 +65,11 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 		assert e.isValid();
 		assert getGraph() == e.getGraph();
 
-		if (e == this.getReversedEdge())
+		if (e == this.getReversedEdge()) {
 			return -1;
-		else
+		} else {
 			return Math.abs(getId()) - Math.abs(e.getId());
+		}
 	}
 
 	/*
@@ -163,10 +164,12 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 		Edge currentEdge = getNextEdgeInGraph();
 		while (currentEdge != null) {
 			if (noSubclasses) {
-				if (anEdgeClass == currentEdge.getM1Class())
+				if (anEdgeClass == currentEdge.getM1Class()) {
 					return currentEdge;
-			} else if (anEdgeClass.isInstance(currentEdge))
+				}
+			} else if (anEdgeClass.isInstance(currentEdge)) {
 				return currentEdge;
+			}
 			currentEdge = currentEdge.getNextEdgeInGraph();
 		}
 		return null;
@@ -262,11 +265,13 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 		assert e.isValid();
 		assert getGraph() == e.getGraph();
 		e = e.getNormalEdge();
-		if (e == this)
+		if (e == this) {
 			return false;
+		}
 		Edge p = getPrevEdgeInGraph();
-		while ((p != null) && (p != e))
+		while ((p != null) && (p != e)) {
 			p = p.getPrevEdgeInGraph();
+		}
 		return p != null;
 	}
 
@@ -284,11 +289,13 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 		assert getGraph() == e.getGraph();
 
 		e = e.getNormalEdge();
-		if (e == this)
+		if (e == this) {
 			return false;
+		}
 		Edge n = getNextEdgeInGraph();
-		while ((n != null) && (n != e))
+		while ((n != null) && (n != e)) {
 			n = n.getNextEdgeInGraph();
+		}
 		return n != null;
 	}
 
@@ -351,8 +358,9 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 		assert getGraph() == alpha.getGraph();
 
 		VertexBaseImpl oldAlpha = getIncidentVertex();
-		if (alpha == oldAlpha)
+		if (alpha == oldAlpha) {
 			return; // nothing to change
+		}
 
 		if (!alpha.isValidAlpha(this)) {
 			throw new GraphException("Edges of class "
@@ -383,8 +391,9 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 		assert getGraph() == omega.getGraph();
 
 		VertexBaseImpl oldOmgea = reversedEdge.getIncidentVertex();
-		if (omega == oldOmgea)
+		if (omega == oldOmgea) {
 			return; // nothing to change
+		}
 
 		if (!omega.isValidOmega(this)) {
 			throw new GraphException("Edges of class "
@@ -400,9 +409,9 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 		newOmega.appendIncidenceToLambdaSeq(reversedEdge);
 		newOmega.incidenceListModified();
 		reversedEdge.setIncidentVertex(newOmega); // TODO Check if this is
-													// really needed as
-													// appenIncidenceToLambdaSeq
-													// called it before.
+		// really needed as
+		// appenIncidenceToLambdaSeq
+		// called it before.
 	}
 
 	/*

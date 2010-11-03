@@ -101,14 +101,14 @@ public class RoleNameTest extends InstanceTest {
 			break;
 		case DATABASE:
 			graph = this.createVertexTestGraphWithDatabaseSupport();
-			break;			
+			break;
 		default:
 			fail("Implementation " + implementationType
 					+ " not yet supported by this test.");
 		}
 		rand = new Random(System.currentTimeMillis());
 	}
-	
+
 	private VertexTestGraph createVertexTestGraphWithDatabaseSupport() {
 		super.connectToDatabase();
 		super.loadVertexTestSchemaIntoGraphDatabase();
@@ -118,8 +118,9 @@ public class RoleNameTest extends InstanceTest {
 
 	@After
 	public void tearDown() {
-		if (implementationType == ImplementationType.DATABASE)
+		if (implementationType == ImplementationType.DATABASE) {
 			this.cleanAndCloseGraphDatabase();
+		}
 	}
 
 	private void cleanAndCloseGraphDatabase() {

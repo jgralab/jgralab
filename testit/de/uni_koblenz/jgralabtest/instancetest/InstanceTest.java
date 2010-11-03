@@ -86,9 +86,10 @@ public abstract class InstanceTest {
 
 	protected void loadVertexTestSchemaIntoGraphDatabase() {
 		try {
-			if (!this.graphDatabase.contains(VertexTestSchema.instance()))
+			if (!this.graphDatabase.contains(VertexTestSchema.instance())) {
 				this
 						.loadTestSchemaIntoGraphDatabase("testit/testschemas/VertexTestSchema.tg");
+			}
 		} catch (GraphDatabaseException e) {
 			e.printStackTrace();
 		}
@@ -96,10 +97,11 @@ public abstract class InstanceTest {
 
 	protected void loadMinimalSchemaIntoGraphDatabase() {
 		try {
-			if (!this.graphDatabase.contains(MinimalSchema.instance()))
+			if (!this.graphDatabase.contains(MinimalSchema.instance())) {
 				GraphIO.loadSchemaIntoGraphDatabase(
 						"testit/testschemas/MinimalSchema.tg",
 						this.graphDatabase);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -160,8 +162,9 @@ public abstract class InstanceTest {
 
 	protected void cleanDatabaseOfTestGraph(String id) {
 		try {
-			if (graphDatabase.containsGraph(id))
+			if (graphDatabase.containsGraph(id)) {
 				graphDatabase.deleteGraph(id);
+			}
 		} catch (GraphDatabaseException exception) {
 			fail("Could not delete test graph from database.");
 		}
@@ -169,8 +172,9 @@ public abstract class InstanceTest {
 
 	protected void cleanDatabaseOfTestGraph(Graph testGraph) {
 		try {
-			if (graphDatabase.containsGraph(testGraph.getId()))
+			if (graphDatabase.containsGraph(testGraph.getId())) {
 				graphDatabase.delete((DatabasePersistableGraph) testGraph);
+			}
 		} catch (GraphDatabaseException exception) {
 			fail("Could not delete test graph from database.");
 		}
@@ -179,9 +183,10 @@ public abstract class InstanceTest {
 	protected void cleanDatabaseOfTestSchema(Schema schema) {
 		try {
 			if (graphDatabase.containsSchema(schema.getPackagePrefix(), schema
-					.getName()))
+					.getName())) {
 				graphDatabase.deleteSchema(schema.getPackagePrefix(), schema
 						.getName());
+			}
 		} catch (GraphDatabaseException exception) {
 			fail("Could not delete test schema from database.");
 		}

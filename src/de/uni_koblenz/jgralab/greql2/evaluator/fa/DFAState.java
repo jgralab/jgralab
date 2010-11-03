@@ -72,8 +72,9 @@ public class DFAState extends State {
 	 *         represents the given state
 	 */
 	public ArrayList<Transition> addRepresentedState(State s) {
-		if (neaStates.contains(s))
+		if (neaStates.contains(s)) {
 			return new ArrayList<Transition>();
+		}
 		neaStates.add(s);
 		ArrayList<Transition> oldTransList = new ArrayList<Transition>();
 		ArrayList<Transition> newTransList = new ArrayList<Transition>();
@@ -92,12 +93,14 @@ public class DFAState extends State {
 	 * states
 	 */
 	public boolean representSameNFAStates(DFAState s) {
-		if (neaStates.size() != s.neaStates.size())
+		if (neaStates.size() != s.neaStates.size()) {
 			return false;
+		}
 		Iterator<State> iter = s.neaStates.iterator();
 		while (iter.hasNext()) {
-			if (!neaStates.contains(iter.next()))
+			if (!neaStates.contains(iter.next())) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -108,8 +111,9 @@ public class DFAState extends State {
 	public boolean containsFinalStateOfNFA(NFA nfa) {
 		Iterator<State> stateIter = neaStates.iterator();
 		while (stateIter.hasNext()) {
-			if (nfa.finalStates.contains(stateIter.next()))
+			if (nfa.finalStates.contains(stateIter.next())) {
 				return true;
+			}
 		}
 		return false;
 	}

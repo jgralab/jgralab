@@ -113,6 +113,7 @@ public class ArrayLogEntry extends LogEntry {
 	 * &lt;sum0&gt; X0 &lt;/sum01&gt; &lt;sum1&gt; X1 &lt;/sum1&gt; &lt;sum2&gt;
 	 * X2 &lt;/sum2&gt; &lt;sum3&gt; X3 &lt;/sum3&gt; &lt;/ArrayLogEntry&gt;
 	 */
+	@Override
 	public Element toJDOMEntry() {
 		Element logEntryElem = new Element("ArrayLogEntry");
 		Element nameElem = new Element("name");

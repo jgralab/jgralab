@@ -50,6 +50,7 @@ public class NFA extends FiniteAutomaton {
 
 	private DFA dfa = null;
 
+	@Override
 	public DFA getDFA() {
 		if (dfa == null) {
 			dfa = new DFA(this);

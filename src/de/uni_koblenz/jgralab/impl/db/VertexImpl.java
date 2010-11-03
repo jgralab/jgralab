@@ -1,3 +1,26 @@
+/*
+ * JGraLab - The Java graph laboratory
+ * (c) 2006-2010 Institute for Software Technology
+ *               University of Koblenz-Landau, Germany
+ * 
+ *               ist@uni-koblenz.de
+ * 
+ * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
 package de.uni_koblenz.jgralab.impl.db;
 
 import java.util.Comparator;
@@ -71,6 +94,7 @@ public abstract class VertexImpl extends VertexBaseImpl implements
 	 * 
 	 * @return Version of incidence list.
 	 */
+	@Override
 	public long getIncidenceListVersion() {
 		return this.incidenceList.getVersion();
 	}
@@ -97,6 +121,7 @@ public abstract class VertexImpl extends VertexBaseImpl implements
 	 * @param incidenceListVersion
 	 *            Version of incidence list.
 	 */
+	@Override
 	public void setIncidenceListVersion(long incidenceListVersion) {
 		this.incidenceList.setVersion(incidenceListVersion);
 	}
@@ -109,8 +134,9 @@ public abstract class VertexImpl extends VertexBaseImpl implements
 	 *            Number of vertex mapping it's sequence in VSeq.
 	 */
 	public void setSequenceNumberInVSeq(long sequenceNumber) {
-		if (this.sequenceNumberInVSeq != sequenceNumber)
+		if (this.sequenceNumberInVSeq != sequenceNumber) {
 			this.updateSequenceNumber(sequenceNumber);
+		}
 	}
 
 	/**
@@ -121,8 +147,9 @@ public abstract class VertexImpl extends VertexBaseImpl implements
 	 */
 	private void updateSequenceNumber(long sequenceNumber) {
 		this.sequenceNumberInVSeq = sequenceNumber;
-		if (this.isPersistent() && this.isInitialized())
+		if (this.isPersistent() && this.isInitialized()) {
 			this.graph.updateSequenceNumberInDatabase(this);
+		}
 	}
 
 	/**
@@ -220,6 +247,7 @@ public abstract class VertexImpl extends VertexBaseImpl implements
 	/**
 	 * Gets previous incidence from incidence list of this vertex of given
 	 * incidence.
+	 * 
 	 * @param edge
 	 * @return Previous incidence.
 	 */
@@ -230,6 +258,7 @@ public abstract class VertexImpl extends VertexBaseImpl implements
 	/**
 	 * Gets next incidence from incidence list of this vertex of given
 	 * incidence.
+	 * 
 	 * @param edge
 	 * @return Next incidence.
 	 */
@@ -280,10 +309,11 @@ public abstract class VertexImpl extends VertexBaseImpl implements
 		assert incidence != null;
 		// TOOD only cast to DatabasePersitableIncidence and call
 		// setIncidentVId()
-		if (incidence.isNormal())
+		if (incidence.isNormal()) {
 			((EdgeImpl) incidence).setIncidentVertex(this);
-		else
+		} else {
 			((ReversedEdgeImpl) incidence).setIncidentVertex(this);
+		}
 		this.incidenceList.append((DatabasePersistableEdge) incidence);
 	}
 
@@ -296,15 +326,17 @@ public abstract class VertexImpl extends VertexBaseImpl implements
 	@Override
 	protected void setId(int id) {
 		assert id > 0;
-		if (this.id != id)
+		if (this.id != id) {
 			this.updateId(id);
+		}
 	}
 
 	private void updateId(int id) {
 		int oldId = this.id;
 		this.id = id;
-		if (this.isPersistent() && this.isInitialized())
+		if (this.isPersistent() && this.isInitialized()) {
 			this.graph.updateVertexIdInDatabase(oldId, this);
+		}
 	}
 
 	/**
@@ -338,21 +370,23 @@ public abstract class VertexImpl extends VertexBaseImpl implements
 	@Override
 	public boolean isBefore(Vertex vertex) {
 		this.assertPreCondition(vertex);
-		if (!this.equals(vertex))
+		if (!this.equals(vertex)) {
 			return this.sequenceNumberInVSeq < ((VertexImpl) vertex)
 					.getSequenceNumberInVSeq();
-		else
+		} else {
 			return false;
+		}
 	}
 
 	@Override
 	public boolean isAfter(Vertex vertex) {
 		this.assertPreCondition(vertex);
-		if (!this.equals(vertex))
+		if (!this.equals(vertex)) {
 			return this.sequenceNumberInVSeq > ((VertexImpl) vertex)
 					.getSequenceNumberInVSeq();
-		else
+		} else {
 			return false;
+		}
 	}
 
 	private void assertPreCondition(Vertex vertex) {
@@ -380,10 +414,11 @@ public abstract class VertexImpl extends VertexBaseImpl implements
 
 	@Override
 	public boolean isValid() {
-		if (this.graph != null)
+		if (this.graph != null) {
 			return this.graph.containsVertex(this);
-		else
+		} else {
 			return false;
+		}
 	}
 
 	@Override
@@ -394,14 +429,14 @@ public abstract class VertexImpl extends VertexBaseImpl implements
 
 	private void assertPrecondition(IncidenceImpl target, IncidenceImpl moved) {
 		assert (target != null) && (moved != null); // both incidences are
-													// really given
+		// really given
 		assert target.isValid() && moved.isValid(); // both incidence are valid
 		assert target.getGraph() == moved.getGraph(); // both incidences belong
-														// to same graph
+		// to same graph
 		assert target.getGraph() == this.graph; // vertex and incidences belong
-												// to same graph
+		// to same graph
 		assert target.getThis() == moved.getThis(); // both incidences end at
-													// same vertex
+		// same vertex
 		assert target != moved;
 	}
 
@@ -451,25 +486,28 @@ public abstract class VertexImpl extends VertexBaseImpl implements
 
 	@Override
 	public int getDegree(EdgeDirection direction) {
-		if (direction == EdgeDirection.OUT)
+		if (direction == EdgeDirection.OUT) {
 			return this.incidenceList.countOutgoing();
-		else if (direction == EdgeDirection.IN)
+		} else if (direction == EdgeDirection.IN) {
 			return this.incidenceList.countIncoming();
-		else
+		} else {
 			return this.incidenceList.size();
+		}
 	}
 
 	/**
 	 * Deletes incident edges in memory.
 	 */
 	protected void deleteIncidencesInMemory() {
-		for (int eId : this.incidenceList.eIds())
+		for (int eId : this.incidenceList.eIds()) {
 			this.getAndDeleteCachedEdge(eId);
+		}
 	}
 
 	private void getAndDeleteCachedEdge(int eId) {
-		if (this.graph.isEdgeCached(eId))
+		if (this.graph.isEdgeCached(eId)) {
 			this.getAndMarkEdgeAsDeleted(eId);
+		}
 	}
 
 	private void getAndMarkEdgeAsDeleted(int eId) {

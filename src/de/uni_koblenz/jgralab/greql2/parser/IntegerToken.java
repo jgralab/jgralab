@@ -36,10 +36,12 @@ public class IntegerToken extends Token {
 		this.decValue = decValue;
 	}
 
+	@Override
 	public boolean isComplex() {
 		return true;
 	}
 
+	@Override
 	public String getValue() {
 		return value.toString();
 	}

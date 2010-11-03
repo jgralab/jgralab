@@ -38,8 +38,6 @@ import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringBufferInputStream;
-import java.io.StringReader;
 import java.lang.reflect.Method;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
@@ -933,34 +931,44 @@ public class GraphIO {
 		return result;
 	}
 
-	public static Schema loadSchemaFromFile(String filename)throws GraphIOException {
+	public static Schema loadSchemaFromFile(String filename)
+			throws GraphIOException {
 		InputStream in = null;
 		try {
 			if (filename.toLowerCase().endsWith(".gz")) {
-				in = new GZIPInputStream(new FileInputStream(filename),	BUFFER_SIZE);
+				in = new GZIPInputStream(new FileInputStream(filename),
+						BUFFER_SIZE);
 			} else {
-				in = new BufferedInputStream(new FileInputStream(filename),	BUFFER_SIZE);
+				in = new BufferedInputStream(new FileInputStream(filename),
+						BUFFER_SIZE);
 			}
 			return loadSchemaFromStream(in);
 
 		} catch (IOException ex) {
-			throw new GraphIOException("exception while loading schema from " + filename, ex);
+			throw new GraphIOException("exception while loading schema from "
+					+ filename, ex);
 		} finally {
 			close(in);
 		}
 	}
-	
-	public static Schema loadSchemaFromDatabase(GraphDatabase graphDatabase, String packagePrefix, String schemaName) throws GraphIOException{
-		String definition = graphDatabase.getSchemaDefinition(packagePrefix, schemaName);
+
+	public static Schema loadSchemaFromDatabase(GraphDatabase graphDatabase,
+			String packagePrefix, String schemaName) throws GraphIOException {
+		String definition = graphDatabase.getSchemaDefinition(packagePrefix,
+				schemaName);
 		InputStream input = new ByteArrayInputStream(definition.getBytes());
 		return loadSchemaFromStream(input);
 	}
-	
-	public static Schema loadAndCommitSchemaFromDatabase(GraphDatabase graphDatabase, String packagePrefix, String schemaName) throws GraphIOException{
-		Schema schema = loadSchemaFromDatabase(graphDatabase, packagePrefix, schemaName);
-		schema.commit("test", new CodeGeneratorConfiguration().withDatabaseSupport());
+
+	public static Schema loadAndCommitSchemaFromDatabase(
+			GraphDatabase graphDatabase, String packagePrefix, String schemaName)
+			throws GraphIOException {
+		Schema schema = loadSchemaFromDatabase(graphDatabase, packagePrefix,
+				schemaName);
+		schema.commit("test", new CodeGeneratorConfiguration()
+				.withDatabaseSupport());
 		return schema;
-	}	
+	}
 
 	public static Schema loadSchemaFromStream(InputStream in)
 			throws GraphIOException {

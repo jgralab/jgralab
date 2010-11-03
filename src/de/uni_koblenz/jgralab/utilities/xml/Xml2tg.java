@@ -300,8 +300,8 @@ public class Xml2tg {
 					} else if (level == 1) {
 						// root element (graph)
 						String graphClassName = reader.getName().getLocalPart();
-						if (!schema.getGraphClass().getQualifiedName()
-								.equals(graphClassName)) {
+						if (!schema.getGraphClass().getQualifiedName().equals(
+								graphClassName)) {
 							throw new SchemaException(
 									"Name mismatch for GraphClass: should be "
 											+ schema.getGraphClass()
@@ -318,8 +318,8 @@ public class Xml2tg {
 						if (graph != null && multiXml) {
 							break;
 						}
-						String graphID = stack.peek().getAttributes()
-								.get(GRUML_ATTRIBUTE_ID);
+						String graphID = stack.peek().getAttributes().get(
+								GRUML_ATTRIBUTE_ID);
 						try {
 							// System.out.println("Creating instance of "
 							// + graphClassName);

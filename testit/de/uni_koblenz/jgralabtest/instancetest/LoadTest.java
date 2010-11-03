@@ -410,32 +410,36 @@ public class LoadTest extends InstanceTest {
 		Vertex v1 = g1.getFirstVertex();
 		Vertex v2 = g2.getFirstVertex();
 		while (v1 != null) {
-			if (v2 == null)
+			if (v2 == null) {
 				fail();
+			}
 			assertEquals(v1.getId(), v2.getId());
 			assertEquals(v1.getAttributedElementClass().getQualifiedName(), v2
 					.getAttributedElementClass().getQualifiedName());
 			v1 = v1.getNextVertex();
 			v2 = v2.getNextVertex();
 		}
-		if (v2 != null)
+		if (v2 != null) {
 			fail();
+		}
 	}
 
 	private void checkEqualEdgeList(Graph g1, Graph g2) {
 		Edge v1 = g1.getFirstEdgeInGraph();
 		Edge v2 = g2.getFirstEdgeInGraph();
 		while (v1 != null) {
-			if (v2 == null)
+			if (v2 == null) {
 				fail();
+			}
 			assertEquals(v1.getId(), v2.getId());
 			assertEquals(v1.getAttributedElementClass().getQualifiedName(), v2
 					.getAttributedElementClass().getQualifiedName());
 			v1 = v1.getNextEdgeInGraph();
 			v2 = v2.getNextEdgeInGraph();
 		}
-		if (v2 != null)
+		if (v2 != null) {
 			fail();
+		}
 	}
 
 	private void fillVertexList(Graph g1, Graph g2) {

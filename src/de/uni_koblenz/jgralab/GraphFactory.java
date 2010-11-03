@@ -267,13 +267,13 @@ public interface GraphFactory {
 	 */
 	public <T extends Record> T createRecordWithTransactionSupport(
 			Class<T> recordDomain, Graph g);
-	
+
 	/**
 	 * Creates an record with database support of class
 	 * <code>recordDomain</code> in the graph g
 	 */
 	public <T extends Record> T createRecordWithDatabaseSupport(
-			Class<T> recordDomain, Graph g);	
+			Class<T> recordDomain, Graph g);
 
 	/**
 	 * Assigns an implementation class with transaction support for a

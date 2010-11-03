@@ -341,42 +341,24 @@ public class GreqlEvaluatorTest extends GenericTests {
 		String queryString = "bag ( 1 , 2 , 3 , 7 , 34, 456, 7, 5, 455, 456, 457, 1, 2, 3, 3, 3, 3 )";
 		JValue result = evalTestQuery("BagConstruction", queryString);
 		assertEquals(17, result.toCollection().size());
-		assertEquals(
-				2,
-				result.toCollection().toJValueBag()
-						.getQuantity(new JValueImpl(1)));
-		assertEquals(
-				2,
-				result.toCollection().toJValueBag()
-						.getQuantity(new JValueImpl(2)));
-		assertEquals(
-				5,
-				result.toCollection().toJValueBag()
-						.getQuantity(new JValueImpl(3)));
-		assertEquals(
-				1,
-				result.toCollection().toJValueBag()
-						.getQuantity(new JValueImpl(5)));
-		assertEquals(
-				2,
-				result.toCollection().toJValueBag()
-						.getQuantity(new JValueImpl(7)));
-		assertEquals(
-				1,
-				result.toCollection().toJValueBag()
-						.getQuantity(new JValueImpl(34)));
-		assertEquals(
-				1,
-				result.toCollection().toJValueBag()
-						.getQuantity(new JValueImpl(455)));
-		assertEquals(
-				2,
-				result.toCollection().toJValueBag()
-						.getQuantity(new JValueImpl(456)));
-		assertEquals(
-				1,
-				result.toCollection().toJValueBag()
-						.getQuantity(new JValueImpl(457)));
+		assertEquals(2, result.toCollection().toJValueBag().getQuantity(
+				new JValueImpl(1)));
+		assertEquals(2, result.toCollection().toJValueBag().getQuantity(
+				new JValueImpl(2)));
+		assertEquals(5, result.toCollection().toJValueBag().getQuantity(
+				new JValueImpl(3)));
+		assertEquals(1, result.toCollection().toJValueBag().getQuantity(
+				new JValueImpl(5)));
+		assertEquals(2, result.toCollection().toJValueBag().getQuantity(
+				new JValueImpl(7)));
+		assertEquals(1, result.toCollection().toJValueBag().getQuantity(
+				new JValueImpl(34)));
+		assertEquals(1, result.toCollection().toJValueBag().getQuantity(
+				new JValueImpl(455)));
+		assertEquals(2, result.toCollection().toJValueBag().getQuantity(
+				new JValueImpl(456)));
+		assertEquals(1, result.toCollection().toJValueBag().getQuantity(
+				new JValueImpl(457)));
 
 		JValue resultWO = evalTestQuery("BagConstruction (wo)", queryString,
 				new DefaultOptimizer());
@@ -1508,10 +1490,8 @@ public class GreqlEvaluatorTest extends GenericTests {
 		String queryString = "let x := tup ( \"bratwurst\", \"currywurst\", \"steak\", \"kaenguruhfleisch\", \"spiessbraten\") in from i:V{Identifier} report x[3] end";
 		JValue result = evalTestQuery("TupleAccess", queryString);
 		assertEquals(5, result.toCollection().size());
-		assertEquals(
-				5,
-				result.toCollection().toJValueBag()
-						.getQuantity(new JValueImpl("kaenguruhfleisch")));
+		assertEquals(5, result.toCollection().toJValueBag().getQuantity(
+				new JValueImpl("kaenguruhfleisch")));
 		JValue resultWO = evalTestQuery("TupleAccess (wo)", queryString,
 				new DefaultOptimizer());
 		assertEquals(result, resultWO);
@@ -1937,8 +1917,8 @@ public class GreqlEvaluatorTest extends GenericTests {
 				+ "     with isPrime(a + 1) and isPrime(b)        "
 				+ "          and (exists! y : list(10..20), x : list(1..30), x+a<y+b @ isPrime(x+y)) "
 				+ "     reportSet a, b end";
-		assertEquals(evalTestQuery("VariableOrder1", query),
-				evalTestQuery("VariableOrder1", query2));
+		assertEquals(evalTestQuery("VariableOrder1", query), evalTestQuery(
+				"VariableOrder1", query2));
 	}
 
 	@Test
@@ -1956,8 +1936,8 @@ public class GreqlEvaluatorTest extends GenericTests {
 				+ "     with isPrime(a + 1) and isPrime(b)        "
 				+ "          and (exists! x : list(1..30), y : list(10..20), x+a<y+b @ isPrime(x+y)) "
 				+ "     reportSet a, b end";
-		assertEquals(evalTestQuery("VariableOrder2", query),
-				evalTestQuery("VariableOrder2", query2));
+		assertEquals(evalTestQuery("VariableOrder2", query), evalTestQuery(
+				"VariableOrder2", query2));
 	}
 
 	/**

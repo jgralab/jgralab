@@ -46,6 +46,7 @@ public abstract class ElementSetExpressionEvaluator extends
 	/**
 	 * returns the vertex this VertexEvaluator evaluates
 	 */
+	@Override
 	public Greql2Vertex getVertex() {
 		return vertex;
 	}

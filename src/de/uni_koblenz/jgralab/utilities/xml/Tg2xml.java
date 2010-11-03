@@ -135,8 +135,8 @@ public class Tg2xml extends GraphVisitor {
 		// write vertex
 		writer.writeEmptyElement(v.getAttributedElementClass()
 				.getQualifiedName());
-		writer.writeAttribute(GRUML_ATTRIBUTE_ID,
-				GRUML_ID_PREFIX_VERTEX + v.getId());
+		writer.writeAttribute(GRUML_ATTRIBUTE_ID, GRUML_ID_PREFIX_VERTEX
+				+ v.getId());
 		writeAttributes(v);
 		// iterate over incidences and mark these edges
 		int i = 1;
@@ -163,12 +163,12 @@ public class Tg2xml extends GraphVisitor {
 				.getQualifiedName());
 		writer.writeAttribute(GRUML_ATTRIBUTE_FROM, GRUML_ID_PREFIX_VERTEX
 				+ e.getAlpha().getId());
-		writer.writeAttribute(GRUML_ATTRIBUTE_FSEQ,
-				Integer.toString(currentMark.fseq));
+		writer.writeAttribute(GRUML_ATTRIBUTE_FSEQ, Integer
+				.toString(currentMark.fseq));
 		writer.writeAttribute(GRUML_ATTRIBUTE_TO, GRUML_ID_PREFIX_VERTEX
 				+ e.getOmega().getId());
-		writer.writeAttribute(GRUML_ATTRIBUTE_TSEQ,
-				Integer.toString(currentMark.tseq));
+		writer.writeAttribute(GRUML_ATTRIBUTE_TSEQ, Integer
+				.toString(currentMark.tseq));
 		writeAttributes(e);
 	}
 
@@ -209,8 +209,8 @@ public class Tg2xml extends GraphVisitor {
 				.getAttributeList()) {
 			String currentName = currentAttribute.getName();
 			try {
-				writer.writeAttribute(currentName,
-						element.writeAttributeValueToString(currentName));
+				writer.writeAttribute(currentName, element
+						.writeAttributeValueToString(currentName));
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

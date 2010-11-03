@@ -1,3 +1,26 @@
+/*
+ * JGraLab - The Java graph laboratory
+ * (c) 2006-2010 Institute for Software Technology
+ *               University of Koblenz-Landau, Germany
+ * 
+ *               ist@uni-koblenz.de
+ * 
+ * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
 package de.uni_koblenz.jgralab.impl.db;
 
 import java.lang.ref.ReferenceQueue;
@@ -45,14 +68,16 @@ public class GraphCache {
 
 	/**
 	 * Adds a vertex to cache.
-	 * @param vertex Vertex to add.
+	 * 
+	 * @param vertex
+	 *            Vertex to add.
 	 */
 	public void addVertex(DatabasePersistableVertex vertex) {
 		checkThreshold();
 		Hashtable<Integer, SoftReference<DatabasePersistableVertex>> vertices;
-		if (this.verticesOfGraphs.containsKey(vertex.getGraph()))
+		if (this.verticesOfGraphs.containsKey(vertex.getGraph())) {
 			vertices = this.verticesOfGraphs.get(vertex.getGraph());
-		else {
+		} else {
 			vertices = new Hashtable<Integer, SoftReference<DatabasePersistableVertex>>();
 			this.verticesOfGraphs.put(vertex.getGraph(), vertices);
 		}
@@ -62,10 +87,14 @@ public class GraphCache {
 	}
 
 	/**
-	 * Checks if cache contains vertex with given id of given a given graph. 
-	 * @param graph Graph the vertex belongs to.
-	 * @param vId Id of vertex.
-	 * @return true if cache contains vertex with given id of given a given graph, otherwise false.
+	 * Checks if cache contains vertex with given id of given a given graph.
+	 * 
+	 * @param graph
+	 *            Graph the vertex belongs to.
+	 * @param vId
+	 *            Id of vertex.
+	 * @return true if cache contains vertex with given id of given a given
+	 *         graph, otherwise false.
 	 */
 	public boolean containsVertex(Graph graph, int vId) {
 		checkThreshold();
@@ -73,15 +102,19 @@ public class GraphCache {
 			Hashtable<Integer, SoftReference<DatabasePersistableVertex>> vertices = this.verticesOfGraphs
 					.get(graph);
 			return vertices.containsKey(vId) && vertices.get(vId).get() != null;
-		} else
+		} else {
 			return false;
+		}
 	}
 
 	/**
 	 * Gets a vertex with given id of given graph from cache.
-	 * @param graph Graph the vertex belongs to.
-	 * @param vId Id of vertex.
-	 * @return A vertex or null if cache does not contain requested vertex. 
+	 * 
+	 * @param graph
+	 *            Graph the vertex belongs to.
+	 * @param vId
+	 *            Id of vertex.
+	 * @return A vertex or null if cache does not contain requested vertex.
 	 */
 	public DatabasePersistableVertex getVertex(Graph graph, int vId) {
 		checkThreshold();
@@ -89,8 +122,9 @@ public class GraphCache {
 			Hashtable<Integer, SoftReference<DatabasePersistableVertex>> vertices = this.verticesOfGraphs
 					.get(graph);
 			return vertices.get(vId).get();
-		} else
+		} else {
 			return null;
+		}
 	}
 
 	/**
@@ -110,14 +144,16 @@ public class GraphCache {
 
 	/**
 	 * Adds an edge to cache.
-	 * @param edge Edge to add.
+	 * 
+	 * @param edge
+	 *            Edge to add.
 	 */
 	public void addEdge(DatabasePersistableEdge edge) {
 		checkThreshold();
 		Hashtable<Integer, SoftReference<DatabasePersistableEdge>> edges;
-		if (this.edgesOfGraphs.containsKey(edge.getGraph()))
+		if (this.edgesOfGraphs.containsKey(edge.getGraph())) {
 			edges = this.edgesOfGraphs.get(edge.getGraph());
-		else {
+		} else {
 			edges = new Hashtable<Integer, SoftReference<DatabasePersistableEdge>>();
 			this.edgesOfGraphs.put(edge.getGraph(), edges);
 		}
@@ -126,10 +162,14 @@ public class GraphCache {
 	}
 
 	/**
-	 * Checks if cache contains edge with given id of given a given graph. 
-	 * @param graph Graph the edge belongs to.
-	 * @param eId Id of edge.
-	 * @return true if cache contains edge with given id of given a given graph, otherwise false.
+	 * Checks if cache contains edge with given id of given a given graph.
+	 * 
+	 * @param graph
+	 *            Graph the edge belongs to.
+	 * @param eId
+	 *            Id of edge.
+	 * @return true if cache contains edge with given id of given a given graph,
+	 *         otherwise false.
 	 */
 	public boolean containsEdge(Graph graph, int eId) {
 		checkThreshold();
@@ -138,15 +178,19 @@ public class GraphCache {
 					.get(graph);
 			return edges.containsKey(Math.abs(eId))
 					&& edges.get(Math.abs(eId)).get() != null;
-		} else
+		} else {
 			return false;
+		}
 	}
 
 	/**
 	 * Gets an edge with given id of given graph from cache.
-	 * @param graph Graph the edge belongs to.
-	 * @param eId Id of edge.
-	 * @return A edge or null if cache does not contain requested edge. 
+	 * 
+	 * @param graph
+	 *            Graph the edge belongs to.
+	 * @param eId
+	 *            Id of edge.
+	 * @return A edge or null if cache does not contain requested edge.
 	 */
 	public DatabasePersistableEdge getEdge(Graph graph, int eId) {
 		checkThreshold();
@@ -154,8 +198,9 @@ public class GraphCache {
 			Hashtable<Integer, SoftReference<DatabasePersistableEdge>> edges = this.edgesOfGraphs
 					.get(graph);
 			return edges.get(eId).get();
-		} else
+		} else {
 			return null;
+		}
 	}
 
 	/**
@@ -186,9 +231,11 @@ public class GraphCache {
 	 * Clears reference queue from dead WeakReferences by polling it.
 	 */
 	private void clearReferenceQueues() {
-		while (this.vertexReferenceQueue.poll() != null)
+		while (this.vertexReferenceQueue.poll() != null) {
 			;
-		while (this.edgeReferenceQueue.poll() != null)
+		}
+		while (this.edgeReferenceQueue.poll() != null) {
 			;
+		}
 	}
 }

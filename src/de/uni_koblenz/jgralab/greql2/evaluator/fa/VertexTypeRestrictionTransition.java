@@ -51,12 +51,15 @@ public class VertexTypeRestrictionTransition extends Transition {
 	 * returns true if this transition and the given transition t accept the
 	 * same edges
 	 */
+	@Override
 	public boolean equalSymbol(Transition t) {
-		if (!(t instanceof VertexTypeRestrictionTransition))
+		if (!(t instanceof VertexTypeRestrictionTransition)) {
 			return false;
+		}
 		VertexTypeRestrictionTransition vt = (VertexTypeRestrictionTransition) t;
-		if (!typeCollection.equals(vt.typeCollection))
+		if (!typeCollection.equals(vt.typeCollection)) {
 			return false;
+		}
 		return true;
 	}
 
@@ -89,6 +92,7 @@ public class VertexTypeRestrictionTransition extends Transition {
 	/**
 	 * returns a copy of this transition
 	 */
+	@Override
 	public Transition copy(boolean addToStates) {
 		return new VertexTypeRestrictionTransition(this, addToStates);
 	}
@@ -98,6 +102,7 @@ public class VertexTypeRestrictionTransition extends Transition {
 	 * 
 	 * @return true if this transition is an epsilon-transition, false otherwise
 	 */
+	@Override
 	public boolean isEpsilon() {
 		return false;
 	}
@@ -105,6 +110,7 @@ public class VertexTypeRestrictionTransition extends Transition {
 	/**
 	 * returns a string which describes the edge
 	 */
+	@Override
 	public String edgeString() {
 		String desc = "VertexRestrictinTransition";
 		return desc;
@@ -133,8 +139,9 @@ public class VertexTypeRestrictionTransition extends Transition {
 		// checks if a startVertexTypeRestriction is set and if v has the right
 		// type
 		AttributedElementClass vertexClass = v.getAttributedElementClass();
-		if (!typeCollection.acceptsType(vertexClass))
+		if (!typeCollection.acceptsType(vertexClass)) {
 			return false;
+		}
 		return true;
 	}
 
@@ -142,6 +149,7 @@ public class VertexTypeRestrictionTransition extends Transition {
 	 * returns the vertex of the datagraph which can be visited after this
 	 * transition has fired. This is the vertex itself
 	 */
+	@Override
 	public Vertex getNextVertex(Vertex v, Edge e) {
 		return v;
 	}

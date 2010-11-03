@@ -1,3 +1,26 @@
+/*
+ * JGraLab - The Java graph laboratory
+ * (c) 2006-2010 Institute for Software Technology
+ *               University of Koblenz-Landau, Germany
+ * 
+ *               ist@uni-koblenz.de
+ * 
+ * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
 package de.uni_koblenz.jgralab.impl.db;
 
 import java.util.TreeMap;
@@ -44,8 +67,9 @@ public class EdgeList extends GraphElementList<DatabasePersistableEdge> {
 
 		@Override
 		protected void updateCachedElement(Integer id, long sequenceNumber) {
-			if (graph.isEdgeCached(id))
+			if (graph.isEdgeCached(id)) {
 				updateCachedEdge(id, sequenceNumber);
+			}
 		}
 
 		private void updateCachedEdge(Integer eId, long sequenceNumber) {
@@ -88,11 +112,12 @@ public class EdgeList extends GraphElementList<DatabasePersistableEdge> {
 	 */
 	@Override
 	public DatabasePersistableEdge getFirst() {
-		if (!this.isEmpty())
+		if (!this.isEmpty()) {
 			return (DatabasePersistableEdge) this.owningGraph.getEdge(this
 					.getFirstEdgeId());
-		else
+		} else {
 			return null;
+		}
 	}
 
 	private int getFirstEdgeId() {
@@ -117,11 +142,12 @@ public class EdgeList extends GraphElementList<DatabasePersistableEdge> {
 	 */
 	@Override
 	public DatabasePersistableEdge getLast() {
-		if (!this.isEmpty())
+		if (!this.isEmpty()) {
 			return (DatabasePersistableEdge) this.owningGraph.getEdge(this
 					.getLastEdgeId());
-		else
+		} else {
 			return null;
+		}
 	}
 
 	private int getLastEdgeId() {
@@ -145,8 +171,9 @@ public class EdgeList extends GraphElementList<DatabasePersistableEdge> {
 		if (!this.isFirst(edge)) {
 			int prevEId = this.getPrevEdgeId(edge);
 			return (DatabasePersistableEdge) this.owningGraph.getEdge(prevEId);
-		} else
+		} else {
 			return null;
+		}
 	}
 
 	/**
@@ -159,17 +186,19 @@ public class EdgeList extends GraphElementList<DatabasePersistableEdge> {
 	@Override
 	public boolean contains(DatabasePersistableEdge edge) {
 		Integer eId = this.edgeIdMap.get(edge.getSequenceNumberInESeq());
-		if (eId != null)
+		if (eId != null) {
 			return eId == Math.abs(edge.getId());
-		else
+		} else {
 			return false;
+		}
 	}
 
 	private boolean isFirst(DatabasePersistableEdge edge) {
-		if (!this.isEmpty())
+		if (!this.isEmpty()) {
 			return this.equalsFirst(edge);
-		else
+		} else {
 			return false;
+		}
 	}
 
 	private boolean equalsFirst(DatabasePersistableEdge edge) {
@@ -199,15 +228,17 @@ public class EdgeList extends GraphElementList<DatabasePersistableEdge> {
 		if (!this.isLast(edge)) {
 			int nextEId = this.getNextEdgeId(edge);
 			return (DatabasePersistableEdge) this.owningGraph.getEdge(nextEId);
-		} else
+		} else {
 			return null;
+		}
 	}
 
 	private boolean isLast(DatabasePersistableEdge edge) {
-		if (!this.isEmpty())
+		if (!this.isEmpty()) {
 			return this.equalsLast(edge);
-		else
+		} else {
 			return false;
+		}
 	}
 
 	private boolean equalsLast(DatabasePersistableEdge edge) {
@@ -229,8 +260,9 @@ public class EdgeList extends GraphElementList<DatabasePersistableEdge> {
 	 */
 	@Override
 	public void prepend(DatabasePersistableEdge edge) {
-		if (!this.isFirst(edge))
+		if (!this.isFirst(edge)) {
 			this.prependByMoveOrInsert(edge);
+		}
 	}
 
 	private void prependByMoveOrInsert(DatabasePersistableEdge edge) {
@@ -241,10 +273,11 @@ public class EdgeList extends GraphElementList<DatabasePersistableEdge> {
 	}
 
 	private void moveOrInsert(DatabasePersistableEdge edge, long sequenceNumber) {
-		if (this.contains(edge))
+		if (this.contains(edge)) {
 			this.moveTo(edge, sequenceNumber);
-		else
+		} else {
 			this.insertAt(edge, sequenceNumber);
+		}
 	}
 
 	private void moveTo(DatabasePersistableEdge edge, long sequenceNumber) {
@@ -268,10 +301,12 @@ public class EdgeList extends GraphElementList<DatabasePersistableEdge> {
 	 */
 	@Override
 	public void append(DatabasePersistableEdge edge) {
-		if (!edge.isNormal())
+		if (!edge.isNormal()) {
 			edge = (DatabasePersistableEdge) edge.getNormalEdge();
-		if (!this.isLast(edge))
+		}
+		if (!this.isLast(edge)) {
 			this.appendByMoveOrInsert(edge);
+		}
 	}
 
 	private void appendByMoveOrInsert(DatabasePersistableEdge edge) {
@@ -299,8 +334,9 @@ public class EdgeList extends GraphElementList<DatabasePersistableEdge> {
 			DatabasePersistableEdge movedEdge) {
 		assert this.areBothInSameEdgeList(targetEdge, movedEdge);
 		if (targetEdge != movedEdge
-				&& !this.isPrevNeighbour(targetEdge, movedEdge))
+				&& !this.isPrevNeighbour(targetEdge, movedEdge)) {
 			this.moveEdgeBefore(movedEdge, targetEdge);
+		}
 	}
 
 	private boolean areBothInSameEdgeList(DatabasePersistableEdge targetEdge,
@@ -310,10 +346,11 @@ public class EdgeList extends GraphElementList<DatabasePersistableEdge> {
 
 	private boolean isPrevNeighbour(DatabasePersistableEdge edge,
 			DatabasePersistableEdge allegedNeighbourEdge) {
-		if (!this.isFirst(edge))
+		if (!this.isFirst(edge)) {
 			return this.getPrevEdgeId(edge) == allegedNeighbourEdge.getId();
-		else
+		} else {
 			return false;
+		}
 	}
 
 	private void moveEdgeBefore(DatabasePersistableEdge movedEdge,
@@ -348,16 +385,18 @@ public class EdgeList extends GraphElementList<DatabasePersistableEdge> {
 		assert this.areBothInSameEdgeList(targetEdge, movedEdge);
 		assert targetEdge != movedEdge;
 		if (targetEdge != movedEdge
-				&& !this.isNextNeighbour(targetEdge, movedEdge))
+				&& !this.isNextNeighbour(targetEdge, movedEdge)) {
 			this.moveEdgeBehind(movedEdge, targetEdge);
+		}
 	}
 
 	private boolean isNextNeighbour(DatabasePersistableEdge edge,
 			DatabasePersistableEdge allegedNeighbourEdge) {
-		if (!this.isLast(edge))
+		if (!this.isLast(edge)) {
 			return this.getNextEdgeId(edge) == allegedNeighbourEdge.getId();
-		else
+		} else {
 			return false;
+		}
 	}
 
 	private void moveEdgeBehind(DatabasePersistableEdge movedEdge,
@@ -403,7 +442,8 @@ public class EdgeList extends GraphElementList<DatabasePersistableEdge> {
 
 	private void reorganizeInMemory() {
 		try {
-			EdgeListReorganizer reorganizer = new EdgeListReorganizer(this.owningGraph);
+			EdgeListReorganizer reorganizer = new EdgeListReorganizer(
+					this.owningGraph);
 			this.edgeIdMap = reorganizer.getReorganisedMap(this.edgeIdMap);
 		} catch (Exception exception) {
 			exception.printStackTrace();
@@ -417,7 +457,9 @@ public class EdgeList extends GraphElementList<DatabasePersistableEdge> {
 
 	/**
 	 * Checks if an edge with given id is part of ESeq.
-	 * @param eId Id of edge
+	 * 
+	 * @param eId
+	 *            Id of edge
 	 * @return true if an edge with given id is part of ESeq, otherwise false.
 	 */
 	protected boolean containsEdge(int eId) {

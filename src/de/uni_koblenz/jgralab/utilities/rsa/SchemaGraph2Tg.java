@@ -206,8 +206,8 @@ public class SchemaGraph2Tg {
 		// schema
 		Schema schema = schemaGraph.getFirstSchema();
 		assert schema != null;
-		println(SCHEMA, SPACE, schema.get_packagePrefix(), DOT,
-				schema.get_name(), DELIMITER, NEWLINE);
+		println(SCHEMA, SPACE, schema.get_packagePrefix(), DOT, schema
+				.get_name(), DELIMITER, NEWLINE);
 
 		Package defaultPackage = (Package) schema
 				.getFirstContainsDefaultPackage(EdgeDirection.OUT).getThat();
@@ -256,8 +256,8 @@ public class SchemaGraph2Tg {
 	private void printComments(NamedElement ne) {
 		for (Annotates ann : ne.getAnnotatesIncidences(EdgeDirection.IN)) {
 			Comment com = (Comment) ann.getThat();
-			println(COMMENT, SPACE, ne.get_qualifiedName(), SPACE,
-					GraphIO.toUtfString(com.get_text()), DELIMITER);
+			println(COMMENT, SPACE, ne.get_qualifiedName(), SPACE, GraphIO
+					.toUtfString(com.get_text()), DELIMITER);
 		}
 	}
 
@@ -441,8 +441,8 @@ public class SchemaGraph2Tg {
 				print(COMMA, SPACE);
 			}
 			Domain compDom = (Domain) hc.getThat();
-			print(hc.get_name(), COLON, SPACE,
-					shortName(compDom.get_qualifiedName()));
+			print(hc.get_name(), COLON, SPACE, shortName(compDom
+					.get_qualifiedName()));
 		}
 		println(ROUND_BRACKET_CLOSED, DELIMITER);
 	}
@@ -488,8 +488,8 @@ public class SchemaGraph2Tg {
 			Attribute attr = (Attribute) ha.getThat();
 			Domain dom = (Domain) attr.getFirstHasDomain(EdgeDirection.OUT)
 					.getThat();
-			print(attr.get_name(), COLON, SPACE,
-					shortName(dom.get_qualifiedName()));
+			print(attr.get_name(), COLON, SPACE, shortName(dom
+					.get_qualifiedName()));
 			String defaultValue = attr.get_defaultValue();
 			if (defaultValue != null) {
 				print(SPACE, ASSIGN, SPACE, GraphIO.toUtfString(defaultValue));

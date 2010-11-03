@@ -1,4 +1,3 @@
-
 /*
  * JGraLab - The Java graph laboratory
  * (c) 2006-2010 Institute for Software Technology
@@ -22,6 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 package de.uni_koblenz.jgralabtest.instancetest;
 
 import static org.junit.Assert.assertEquals;
@@ -103,21 +103,24 @@ public class VertexTest extends InstanceTest {
 		g = createNewGraph();
 		rand = new Random(System.currentTimeMillis());
 	}
-	
+
 	@After
 	public void tearDown() {
-		if (implementationType == ImplementationType.DATABASE)
+		if (implementationType == ImplementationType.DATABASE) {
 			this.cleanAndCloseGraphDatabase();
+		}
 	}
 
 	private void cleanAndCloseGraphDatabase() {
 		super.cleanDatabaseOfTestGraph("VertexTest");
 		super.cleanDatabaseOfTestGraph("anotherGraph");
-		for (int i = 0; i < ITERATIONS; i++)
+		for (int i = 0; i < ITERATIONS; i++) {
 			super.cleanDatabaseOfTestGraph("VertexTest" + i);
-		for(String id : graphIdsInUse)
+		}
+		for (String id : graphIdsInUse) {
 			super.cleanDatabaseOfTestGraph(id);
-		// this.cleanDatabaseOfTestSchema(g.getSchema());		
+		}
+		// this.cleanDatabaseOfTestSchema(g.getSchema());
 		super.closeGraphdatabase();
 	}
 
@@ -2386,24 +2389,27 @@ public class VertexTest extends InstanceTest {
 			break;
 		case DATABASE:
 			graph = this.createVertexTestGraphWithDatabaseSupport();
-			break;			
+			break;
 		default:
 			fail("Implementation " + implementationType
 					+ " not yet supported by this test.");
 		}
 		return graph;
 	}
-	
+
 	private ArrayList<String> graphIdsInUse = new ArrayList<String>();
 
-	private VertexTestGraph createVertexTestGraphWithDatabaseSupport(){
+	private VertexTestGraph createVertexTestGraphWithDatabaseSupport() {
 		String id = RandomIdGenerator.generateId();
-		while( graphIdsInUse.contains(id))
+		while (graphIdsInUse.contains(id)) {
 			id = RandomIdGenerator.generateId();
+		}
 		graphIdsInUse.add(id);
-		VertexTestGraph graph = this.createVertexTestGraphWithDatabaseSupport(id, 100, 100);
+		VertexTestGraph graph = this.createVertexTestGraphWithDatabaseSupport(
+				id, 100, 100);
 		return graph;
 	}
+
 	// tests of the method getNextVertex();
 	// (tested in LoadTest, too)
 
@@ -10437,4 +10443,3 @@ public class VertexTest extends InstanceTest {
 	}
 
 }
-

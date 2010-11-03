@@ -186,14 +186,16 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 		code.add(new CodeSnippet("#io#.match(\"{\");",
 				"while (!#io#.isNextToken(\"}\")) {"));
 
-		if (getKeyDomain().isComposite())
+		if (getKeyDomain().isComposite()) {
 			code.add(new CodeSnippet("\t#keytype# #name#Key = null;"));
-		else
+		} else {
 			code.add(new CodeSnippet("\t#keytype# #name#Key;"));
-		if (getValueDomain().isComposite())
+		}
+		if (getValueDomain().isComposite()) {
 			code.add(new CodeSnippet("\t\t#valuetype# #name#Value = null;"));
-		else
+		} else {
 			code.add(new CodeSnippet("\t\t#valuetype# #name#Value;"));
+		}
 
 		code.add(getKeyDomain().getReadMethod(schemaRootPackagePrefix,
 				variableName + "Key", graphIoVariableName), 1);

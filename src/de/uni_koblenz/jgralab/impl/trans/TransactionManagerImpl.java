@@ -152,8 +152,9 @@ public class TransactionManagerImpl implements TransactionManager {
 				if (indexOf > 0) {
 					TransactionImpl prevTransaction = (TransactionImpl) transactionList
 							.get(indexOf - 1);
-					if (prevTransaction.persistentVersionAtBot > transaction.persistentVersionAtBot)
+					if (prevTransaction.persistentVersionAtBot > transaction.persistentVersionAtBot) {
 						throw new GraphException("This should not happen!");
+					}
 				}
 				setTransactionForThread(transaction, Thread.currentThread());
 				return transaction;
@@ -163,8 +164,9 @@ public class TransactionManagerImpl implements TransactionManager {
 
 	@Override
 	public synchronized Transaction getTransactionForThread(Thread thread) {
-		if (thread == null)
+		if (thread == null) {
 			return null;
+		}
 		return threadTransactionMap.get(thread);
 	}
 
@@ -184,9 +186,10 @@ public class TransactionManagerImpl implements TransactionManager {
 	public synchronized void setTransactionForThread(Transaction transaction,
 			Thread thread) {
 		if (transaction != null && thread != null) {
-			if (transaction.getGraph() != graph)
+			if (transaction.getGraph() != graph) {
 				throw new GraphException(
 						"The given transaction is not valid for the current graph.");
+			}
 			synchronized (transaction) {
 				TransactionImpl oldTransaction = (TransactionImpl) threadTransactionMap
 						.get(thread);
@@ -199,8 +202,9 @@ public class TransactionManagerImpl implements TransactionManager {
 				threadTransactionMap.put(thread, (TransactionImpl) transaction);
 				TransactionImpl trans = (TransactionImpl) transaction;
 				Thread oldThread = trans.getThread();
-				if (oldThread != thread)
+				if (oldThread != thread) {
 					removeTransactionForThread(oldThread);
+				}
 				trans.setThread(thread);
 			}
 		}
