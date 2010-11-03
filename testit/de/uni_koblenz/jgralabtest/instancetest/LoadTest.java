@@ -32,6 +32,8 @@ import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Random;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -79,6 +81,24 @@ public class LoadTest extends InstanceTest {
 		return getParameters();
 	}
 
+	@Before
+	public void setUp() {
+		if (implementationType == ImplementationType.DATABASE) {
+			super.connectToDatabase();
+			super.loadVertexTestSchemaIntoGraphDatabase();
+		}
+	}
+
+	@After
+	public void tearDown() {
+		if (implementationType == ImplementationType.DATABASE) {
+			super.cleanDatabaseOfTestGraph("VertexTest");
+			super.cleanDatabaseOfTestGraph("LoadTest");
+			// super.cleanDatabaseOfTestSchema(VertexTestSchema.instance());
+			super.closeGraphdatabase();
+		}
+	}
+
 	// public static void main(String[] args) {
 	// LoadTest t = new LoadTest();
 	// t.testFreeElementList();
@@ -96,7 +116,6 @@ public class LoadTest extends InstanceTest {
 
 		VertexTestGraph g = createVertexTestGraph(vertexClasses
 				* vertexCountPerClass, edgeClasses * edgeCountPerClass);
-
 		createTransaction(g);
 
 		A[] as = new A[vertexCountPerClass];
@@ -217,6 +236,10 @@ public class LoadTest extends InstanceTest {
 			graph = VertexTestSchema.instance()
 					.createVertexTestGraphWithTransactionSupport(vMax, eMax);
 			break;
+		case DATABASE:
+			graph = super.createVertexTestGraphWithDatabaseSupport("LoadTest",
+					vMax, eMax);
+			break;
 		case SAVEMEM:
 			graph = VertexTestSchema.instance()
 					.createVertexTestGraphWithSavememSupport(vMax, eMax);
@@ -307,6 +330,10 @@ public class LoadTest extends InstanceTest {
 						.loadVertexTestGraphWithTransactionSupport(
 								TESTGRAPH_PATH + TESTGRAPH_FILENAME);
 				break;
+			case DATABASE:
+				g2 = GraphIO.loadGraphFromFile(TESTGRAPH_PATH
+						+ TESTGRAPH_FILENAME, null);
+				break;
 			case SAVEMEM:
 				g2 = VertexTestSchema.instance()
 						.loadVertexTestGraphWithSavememSupport(
@@ -383,36 +410,32 @@ public class LoadTest extends InstanceTest {
 		Vertex v1 = g1.getFirstVertex();
 		Vertex v2 = g2.getFirstVertex();
 		while (v1 != null) {
-			if (v2 == null) {
+			if (v2 == null)
 				fail();
-			}
 			assertEquals(v1.getId(), v2.getId());
 			assertEquals(v1.getAttributedElementClass().getQualifiedName(), v2
 					.getAttributedElementClass().getQualifiedName());
 			v1 = v1.getNextVertex();
 			v2 = v2.getNextVertex();
 		}
-		if (v2 != null) {
+		if (v2 != null)
 			fail();
-		}
 	}
 
 	private void checkEqualEdgeList(Graph g1, Graph g2) {
 		Edge v1 = g1.getFirstEdgeInGraph();
 		Edge v2 = g2.getFirstEdgeInGraph();
 		while (v1 != null) {
-			if (v2 == null) {
+			if (v2 == null)
 				fail();
-			}
 			assertEquals(v1.getId(), v2.getId());
 			assertEquals(v1.getAttributedElementClass().getQualifiedName(), v2
 					.getAttributedElementClass().getQualifiedName());
 			v1 = v1.getNextEdgeInGraph();
 			v2 = v2.getNextEdgeInGraph();
 		}
-		if (v2 != null) {
+		if (v2 != null)
 			fail();
-		}
 	}
 
 	private void fillVertexList(Graph g1, Graph g2) {

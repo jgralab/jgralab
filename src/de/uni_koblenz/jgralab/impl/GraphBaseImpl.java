@@ -122,6 +122,12 @@ public abstract class GraphBaseImpl implements Graph {
 	 */
 	abstract protected void setLastVertex(VertexBaseImpl lastVertex);
 
+	/**
+	 * Sets version of VSeq if it is different than previous version.
+	 * 
+	 * @param vertexListVersion
+	 *            Version of VSeq.
+	 */
 	abstract protected void setVertexListVersion(long vertexListVersion);
 
 	/**
@@ -173,6 +179,12 @@ public abstract class GraphBaseImpl implements Graph {
 	 */
 	abstract protected void setLastEdgeInGraph(EdgeBaseImpl lastEdge);
 
+	/**
+	 * Sets version of ESeq.
+	 * 
+	 * @param edgeListVersion
+	 *            Version to set.
+	 */
 	abstract protected void setEdgeListVersion(long edgeListVersion);
 
 	/**
@@ -250,20 +262,22 @@ public abstract class GraphBaseImpl implements Graph {
 	}
 
 	/**
-	 * adds the given edge object to this graph. if the edges id is 0, a valid
-	 * id is set, otherwise the edges current id is used if possible. Should
-	 * only be used by m1-Graphs derived from Graph. To create a new Edge as
-	 * user, use the appropriate methods from the derived Graphs like
+	 * Adds an edge to this graph. If the edges id is 0, a valid id is set,
+	 * otherwise the edges current id is used if possible. Should only be used
+	 * by m1-Graphs derived from Graph. To create a new Edge as user, use the
+	 * appropriate methods from the derived Graphs like
 	 * <code>createStreet(...)</code>
 	 * 
 	 * @param newEdge
-	 *            the edge to add
+	 *            Edge to add
 	 * @param alpha
-	 *            the vertex the new edge should start at
+	 *            Vertex new edge should start at.
 	 * @param omega
-	 *            the vertex the new edge should end at
+	 *            Vertex new edge should end at.
 	 * @throws GraphException
-	 *             if a edge with the same id already exists
+	 *             vertices do not suit the edge, an edge with same id already
+	 *             exists in graph, id of edge greater than possible count of
+	 *             edges in graph
 	 */
 	protected void addEdge(Edge newEdge, Vertex alpha, Vertex omega) {
 		assert newEdge != null;
@@ -297,30 +311,24 @@ public abstract class GraphBaseImpl implements Graph {
 		if (isLoading()) {
 			if (eId > 0) {
 				// the given edge already has an id, try to use it
-				if (containsEdgeId(eId)) {
+				if (containsEdgeId(eId))
 					throw new GraphException("edge with id " + e.getId()
 							+ " already exists");
-				}
-
-				if (eId > eMax) {
+				if (eId > eMax)
 					throw new GraphException("edge id " + e.getId()
 							+ " is bigger than eSize");
-				}
-			} else {
+			} else
 				throw new GraphException("can not load an edge with id <= 0");
-			}
 		} else {
-			if (!canAddGraphElement(eId)) {
+			if (!canAddGraphElement(eId))
 				throw new GraphException("can not add an edge with id != 0");
-			}
 			eId = allocateEdgeIndex(eId);
 			assert eId != 0;
 			e.setId(eId);
-			a.appendIncidenceToLambaSeq(e);
-			o.appendIncidenceToLambaSeq(e.reversedEdge);
+			a.appendIncidenceToLambdaSeq(e);
+			o.appendIncidenceToLambdaSeq(e.reversedEdge);
 		}
 		appendEdgeToESeq(e);
-
 		if (!isLoading()) {
 			a.incidenceListModified();
 			o.incidenceListModified();
@@ -334,10 +342,10 @@ public abstract class GraphBaseImpl implements Graph {
 	}
 
 	/*
-	 * adds the given vertex object to this graph. if the vertex' id is 0, a
-	 * valid id is set, otherwise the vertex' current id is used if possible.
-	 * Should only be used by m1-Graphs derived from Graph. To create a new
-	 * Vertex as user, use the appropriate methods from the derived Graphs like
+	 * Adds a vertex to this graph. If the vertex' id is 0, a valid id is set,
+	 * otherwise the vertex' current id is used if possible. Should only be used
+	 * by m1-Graphs derived from Graph. To create a new Vertex as user, use the
+	 * appropriate methods from the derived Graphs like
 	 * <code>createStreet(...)</code>
 	 * 
 	 * @param newVertex the Vertex to add
@@ -351,21 +359,17 @@ public abstract class GraphBaseImpl implements Graph {
 		if (isLoading()) {
 			if (vId > 0) {
 				// the given vertex already has an id, try to use it
-				if (containsVertexId(vId)) {
+				if (containsVertexId(vId))
 					throw new GraphException("vertex with id " + vId
 							+ " already exists");
-				}
-				if (vId > vMax) {
+				if (vId > vMax)
 					throw new GraphException("vertex id " + vId
 							+ " is bigger than vSize");
-				}
-			} else {
+			} else
 				throw new GraphException("can not load a vertex with id <= 0");
-			}
 		} else {
-			if (!canAddGraphElement(vId)) {
+			if (!canAddGraphElement(vId))
 				throw new GraphException("can not add a vertex with vId " + vId);
-			}
 			vId = allocateVertexIndex(vId);
 			assert vId != 0;
 			v.setId(vId);
@@ -476,7 +480,7 @@ public abstract class GraphBaseImpl implements Graph {
 	 * de.uni_koblenz.jgralab.Graph#containsEdge(de.uni_koblenz.jgralab.Edge)
 	 */
 	@Override
-	public final boolean containsEdge(Edge e) {
+	public boolean containsEdge(Edge e) {
 		return (e != null)
 				&& (e.getGraph() == this)
 				&& containsEdgeId(((EdgeBaseImpl) e.getNormalEdge()).id)
@@ -493,9 +497,8 @@ public abstract class GraphBaseImpl implements Graph {
 	 * @return true if this graph contains an edge with id eId
 	 */
 	private final boolean containsEdgeId(int eId) {
-		if (eId < 0) {
+		if (eId < 0)
 			eId = -eId;
-		}
 		return (eId > 0) && (eId <= eMax) && (getEdge()[eId] != null)
 				&& (getRevEdge()[eId] != null);
 	}
@@ -507,7 +510,7 @@ public abstract class GraphBaseImpl implements Graph {
 	 * de.uni_koblenz.jgralab.Graph#containsVertex(de.uni_koblenz.jgralab.Vertex
 	 */
 	@Override
-	public final boolean containsVertex(Vertex v) {
+	public boolean containsVertex(Vertex v) {
 		VertexBaseImpl[] vertex = getVertex();
 		return (v != null) && (v.getGraph() == this)
 				&& containsVertexId(((VertexBaseImpl) v).id)
@@ -535,14 +538,13 @@ public abstract class GraphBaseImpl implements Graph {
 	public <T extends Edge> T createEdge(Class<T> cls, Vertex alpha,
 			Vertex omega) {
 		try {
-			Edge e = internalCreateEdge(cls, alpha, omega);
-			return (T) e;
-		} catch (Exception ex) {
-			if (ex instanceof GraphException) {
-				throw (GraphException) ex;
-			}
-			throw new GraphException("Error creating edge of class "
-					+ cls.getName(), ex);
+			return (T) internalCreateEdge(cls, alpha, omega);
+		} catch (Exception exception) {
+			if (exception instanceof GraphException)
+				throw (GraphException) exception;
+			else
+				throw new GraphException("Error creating edge of class "
+						+ cls.getName(), exception);
 		}
 	}
 
@@ -559,12 +561,10 @@ public abstract class GraphBaseImpl implements Graph {
 	@Override
 	public <T extends Vertex> T createVertex(Class<T> cls) {
 		try {
-			Vertex v = internalCreateVertex(cls);
-			return (T) v;
+			return (T) internalCreateVertex(cls);
 		} catch (Exception ex) {
-			if (ex instanceof GraphException) {
+			if (ex instanceof GraphException)
 				throw (GraphException) ex;
-			}
 			throw new GraphException("Error creating vertex of class "
 					+ cls.getName(), ex);
 		}
@@ -667,29 +667,26 @@ public abstract class GraphBaseImpl implements Graph {
 	 *            the new size of the edge array
 	 */
 	protected void expandEdgeArray(int newSize) {
-		if (newSize <= eMax) {
+		if (newSize <= eMax)
 			throw new GraphException("newSize must be > eSize: eSize=" + eMax
 					+ ", newSize=" + newSize);
-		}
 
 		EdgeBaseImpl[] e = new EdgeBaseImpl[newSize + 1];
-		if (getEdge() != null) {
+		if (getEdge() != null)
 			System.arraycopy(getEdge(), 0, e, 0, getEdge().length);
-		}
 		setEdge(e);
 
 		ReversedEdgeBaseImpl[] r = new ReversedEdgeBaseImpl[newSize + 1];
 
-		if (getRevEdge() != null) {
+		if (getRevEdge() != null)
 			System.arraycopy(getRevEdge(), 0, r, 0, getRevEdge().length);
-		}
 
 		setRevEdge(r);
-		if (getFreeEdgeList() == null) {
+		if (getFreeEdgeList() == null)
 			setFreeEdgeList(new FreeIndexList(newSize));
-		} else {
+		else
 			getFreeEdgeList().expandBy(newSize - eMax);
-		}
+
 		eMax = newSize;
 		notifyMaxEdgeCountIncreased(newSize);
 	}
@@ -701,21 +698,17 @@ public abstract class GraphBaseImpl implements Graph {
 	 *            the new size of the vertex array
 	 */
 	protected void expandVertexArray(int newSize) {
-		if (newSize <= vMax) {
+		if (newSize <= vMax)
 			throw new GraphException("newSize must > vSize: vSize=" + vMax
 					+ ", newSize=" + newSize);
-		}
 		VertexBaseImpl[] expandedArray = new VertexBaseImpl[newSize + 1];
-		if (getVertex() != null) {
+		if (getVertex() != null)
 			System.arraycopy(getVertex(), 0, expandedArray, 0,
 					getVertex().length);
-		}
-
-		if (getFreeVertexList() == null) {
+		if (getFreeVertexList() == null)
 			setFreeVertexList(new FreeIndexList(newSize));
-		} else {
+		else
 			getFreeVertexList().expandBy(newSize - vMax);
-		}
 		setVertex(expandedArray);
 		vMax = newSize;
 		notifyMaxVertexCountIncreased(newSize);
@@ -1028,11 +1021,11 @@ public abstract class GraphBaseImpl implements Graph {
 		internalEdgeDeleted(e);
 
 		VertexBaseImpl alpha = e.getIncidentVertex();
-		alpha.removeIncidenceFromLambaSeq(e);
+		alpha.removeIncidenceFromLambdaSeq(e);
 		alpha.incidenceListModified();
 
 		VertexBaseImpl omega = e.reversedEdge.getIncidentVertex();
-		omega.removeIncidenceFromLambaSeq(e.reversedEdge);
+		omega.removeIncidenceFromLambdaSeq(e.reversedEdge);
 		omega.incidenceListModified();
 
 		removeEdgeFromESeq(e);
@@ -1067,7 +1060,6 @@ public abstract class GraphBaseImpl implements Graph {
 						getDeleteVertexList().add(other);
 					}
 				}
-
 				deleteEdge(e);
 				e = v.getFirstEdge();
 			}
@@ -1088,7 +1080,7 @@ public abstract class GraphBaseImpl implements Graph {
 	 * @param v
 	 *            a vertex
 	 */
-	private final void removeVertexFromVSeq(VertexBaseImpl v) {
+	protected void removeVertexFromVSeq(VertexBaseImpl v) {
 		assert v != null;
 		if (v == getFirstVertex()) {
 			// delete at head of vertex list
@@ -1128,7 +1120,7 @@ public abstract class GraphBaseImpl implements Graph {
 	 * @param e
 	 *            an edge
 	 */
-	private final void removeEdgeFromESeq(EdgeBaseImpl e) {
+	protected void removeEdgeFromESeq(EdgeBaseImpl e) {
 		assert e != null;
 		removeEdgeFromESeqWithoutDeletingIt(e);
 
@@ -1234,7 +1226,7 @@ public abstract class GraphBaseImpl implements Graph {
 			if (v != null) {
 				int eId = firstIncidence[vId];
 				while (eId != 0) {
-					v.appendIncidenceToLambaSeq(eId < 0 ? getRevEdge()[-eId]
+					v.appendIncidenceToLambdaSeq(eId < 0 ? getRevEdge()[-eId]
 							: getEdge()[eId]);
 					eId = nextIncidence[eMax + eId];
 				}
@@ -1446,8 +1438,8 @@ public abstract class GraphBaseImpl implements Graph {
 	}
 
 	/**
-	 * Sets the version counter of this graph. Should only be called by GraphIO
-	 * immediately after loading.
+	 * Sets the version counter of this graph. Should only be called immediately
+	 * after loading.
 	 * 
 	 * @param graphVersion
 	 *            new version value

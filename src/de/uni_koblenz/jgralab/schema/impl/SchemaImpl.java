@@ -101,6 +101,7 @@ public class SchemaImpl implements Schema {
 	 */
 	private class ClassFileManager extends
 			ForwardingJavaFileManager<JavaFileManager> {
+
 		public ClassFileManager(JavaFileManager fm) {
 			super(fm);
 		}
@@ -139,12 +140,11 @@ public class SchemaImpl implements Schema {
 	/**
 	 * This is the name of the package into which the implementation classes for
 	 * this schema are generated. The impl package is child of the package for
-	 * the Schema.
-	 * 
-	 * std => standard trans => transaction support
+	 * Schema.
 	 */
 	public static final String IMPLSTDPACKAGENAME = "impl.std";
 	public static final String IMPLTRANSPACKAGENAME = "impl.trans";
+	public static final String IMPLDATABASEPACKAGENAME = "impl.db";
 	public static final String IMPLSAVEMEMPACKAGENAME = "impl.savemem";
 
 	static final Class<?>[] VERTEX_CLASS_CREATE_SIGNATURE = { int.class };
@@ -230,36 +230,20 @@ public class SchemaImpl implements Schema {
 			.compile("^\\p{Lower}\\w*(\\.\\p{Lower}\\w*)*$");
 
 	/**
-	 * Creates a new schema object.
+	 * Creates a new <code>Schema</code>.
 	 * 
 	 * @param name
-	 *            The name of the schema
+	 *            Name of schema.
 	 * @param packagePrefix
-	 *            the package prefix of the schema
+	 *            Package prefix of schema.
 	 */
 	public SchemaImpl(String name, String packagePrefix) {
-		if (!SCHEMA_NAME_PATTERN.matcher(name).matches()) {
-			throw new InvalidNameException(
-					"Invalid schema name '"
-							+ name
-							+ "'.\n"
-							+ "The name must not be empty.\n"
-							+ "The name must start with a capital letter.\n"
-							+ "Any following character must be alphanumeric and/or a '_' character.\n"
-							+ "The name must end with an alphanumeric character.");
 
-		}
-		if (!PACKAGE_PREFIX_PATTERN.matcher(packagePrefix).matches()) {
-			throw new InvalidNameException(
-					"Invalid schema package prefix '"
-							+ packagePrefix
-							+ "'.\n"
-							+ "The packagePrefix must not be empty.\n"
-							+ "The package prefix must start with a small letter.\n"
-							+ "The first character after each '.' must be a small letter.\n"
-							+ "Following characters may be alphanumeric and/or '_' characters.\n"
-							+ "The last character before a '.' and the end of the line must be an alphanumeric character.");
-		}
+		if (!SCHEMA_NAME_PATTERN.matcher(name).matches())
+			this.throwInvalidSchemaNameException();
+
+		if (!PACKAGE_PREFIX_PATTERN.matcher(packagePrefix).matches())
+			this.throwInvalidPackagePrefixNameException();
 
 		this.name = name;
 		this.packagePrefix = packagePrefix;
@@ -278,26 +262,52 @@ public class SchemaImpl implements Schema {
 
 		/*
 		 * Needs to be created before any GraphElementClass element can be
-		 * created
+		 * created.
 		 */
 		defaultGraphClass = GraphClassImpl.createDefaultGraphClass(this);
 
-		// Creation of the default GraphElementClasses
+		// Creation of default GraphElementClasses
 		defaultVertexClass = VertexClassImpl.createDefaultVertexClass(this);
 		defaultEdgeClass = EdgeClassImpl.createDefaultEdgeClass(this);
 		config = createDefaultConfig();
 	}
 
+	private void throwInvalidSchemaNameException() {
+		throw new InvalidNameException(
+				"Invalid schema name '"
+						+ name
+						+ "'.\n"
+						+ "The name must not be empty.\n"
+						+ "The name must start with a capital letter.\n"
+						+ "Any following character must be alphanumeric and/or a '_' character.\n"
+						+ "The name must end with an alphanumeric character.");
+	}
+
+	private void throwInvalidPackagePrefixNameException() {
+		throw new InvalidNameException(
+				"Invalid schema package prefix '"
+						+ packagePrefix
+						+ "'.\n"
+						+ "The packagePrefix must not be empty.\n"
+						+ "The package prefix must start with a small letter.\n"
+						+ "The first character after each '.' must be a small letter.\n"
+						+ "Following characters may be alphanumeric and/or '_' characters.\n"
+						+ "The last character before a '.' and the end of the line must be an alphanumeric character.");
+	}
+
 	private CodeGeneratorConfiguration createDefaultConfig() {
 		CodeGeneratorConfiguration out = new CodeGeneratorConfiguration();
+		// TODO Add SAVEMEM.
 		if (java.lang.Package.getPackage(packagePrefix + ". "
-				+ IMPLSTDPACKAGENAME) == null) {
+				+ IMPLSTDPACKAGENAME) == null)
 			out.setStandardSupport(false);
-		}
 		if (java.lang.Package.getPackage(packagePrefix + ". "
-				+ IMPLTRANSPACKAGENAME) != null) {
+				+ IMPLTRANSPACKAGENAME) != null)
 			out.setTransactionSupport(true);
-		}
+		if (java.lang.Package.getPackage(packagePrefix + ". "
+				+ IMPLDATABASEPACKAGENAME) != null)
+			out.setDatabaseSupport(true);
+		
 		return out.withMethodsForSubclassesSupport();
 		// TODO: Monte, check for the other values :-)
 	}
@@ -305,7 +315,6 @@ public class SchemaImpl implements Schema {
 	void addDomain(Domain dom) {
 		assert !domains.containsKey(dom.getQualifiedName()) : "There already is a Domain with the qualified name: "
 				+ dom.getQualifiedName() + " in the Schema!";
-
 		domains.put(dom.getQualifiedName(), dom);
 	}
 
@@ -322,28 +331,24 @@ public class SchemaImpl implements Schema {
 
 		namedElements.put(namedElement.getQualifiedName(), namedElement);
 
-		/*
-		 * Check if any element´s unique name needs adaptation after the add of
-		 * the new named element.
-		 */
+		// Check if any element's unique name needs adaptation after addition of
+		// the new named element.
 		Set<NamedElement> elementsWithSameSimpleName = namedElementsBySimpleName
 				.get(namedElement.getSimpleName());
-		// add the element to the map
+		// add element to map
 		if ((elementsWithSameSimpleName != null)
-				&& !elementsWithSameSimpleName.isEmpty()) {
+				&& !elementsWithSameSimpleName.isEmpty())
 			elementsWithSameSimpleName.add(namedElement);
-		} else {
+		else {
 			elementsWithSameSimpleName = new TreeSet<NamedElement>();
 			elementsWithSameSimpleName.add(namedElement);
 			namedElementsBySimpleName.put(namedElement.getSimpleName(),
 					elementsWithSameSimpleName);
 		}
-
 		// uniquify if needed
 		if (elementsWithSameSimpleName.size() >= 2) {
-			for (NamedElement other : elementsWithSameSimpleName) {
+			for (NamedElement other : elementsWithSameSimpleName)
 				((NamedElementImpl) other).changeUniqueName();
-			}
 		}
 	}
 
@@ -418,13 +423,11 @@ public class SchemaImpl implements Schema {
 
 		// generate graph classes
 
-		if (graphClass.getQualifiedName().equals("Graph")) {
+		if (graphClass.getQualifiedName().equals("Graph"))
 			throw new SchemaException(
 					"The defined GraphClass must not be named Graph!");
-		}
 
 		javaSources.addAll(createClasses(config));
-
 		return javaSources;
 	}
 
@@ -507,7 +510,7 @@ public class SchemaImpl implements Schema {
 	@Override
 	public void commit(String pathPrefix, CodeGeneratorConfiguration config)
 			throws GraphIOException {
-		commit(pathPrefix, config, null);
+		this.commit(pathPrefix, config, null);
 	}
 
 	@Override
@@ -526,9 +529,8 @@ public class SchemaImpl implements Schema {
 		}
 
 		// ********************* build code **********************
-		if (!pathPrefix.endsWith(File.separator)) {
+		if (!pathPrefix.endsWith(File.separator))
 			pathPrefix += File.separator;
-		}
 
 		// generate schema class
 		CodeGenerator schemaCodeGenerator = new SchemaCodeGenerator(this,
@@ -541,18 +543,16 @@ public class SchemaImpl implements Schema {
 		factoryCodeGenerator.createFiles(pathPrefix);
 
 		// generate graph class
-		if (graphClass.getQualifiedName().equals("Graph")) {
+		if (graphClass.getQualifiedName().equals("Graph"))
 			throw new SchemaException(
 					"The defined GraphClass must not be named Graph!");
-		}
 
 		createFiles(config, pathPrefix, progressFunction, schemaElements,
 				currentCount, interval);
 
 		// finish progress bar
-		if (progressFunction != null) {
+		if (progressFunction != null)
 			progressFunction.finished();
-		}
 	}
 
 	@Override
@@ -718,7 +718,7 @@ public class SchemaImpl implements Schema {
 	}
 
 	/**
-	 * Creates a {@link Package} with the given qualified name, or returns the
+	 * Creates a {@link Package} with given qualified name, or returns an
 	 * existing package with this qualified name.
 	 * 
 	 * @param qn
@@ -727,9 +727,8 @@ public class SchemaImpl implements Schema {
 	 *         existing package with this qualified name.
 	 */
 	Package createPackageWithParents(String qn) {
-		if (packages.containsKey(qn)) {
+		if (packages.containsKey(qn))
 			return packages.get(qn);
-		}
 
 		String[] components = splitQualifiedName(qn);
 		String parent = components[0];
@@ -836,13 +835,12 @@ public class SchemaImpl implements Schema {
 
 	@Override
 	public AttributedElementClass getAttributedElementClass(String qualifiedName) {
-		if (graphClass == null) {
+		if (graphClass == null)
 			return null;
-		} else if (graphClass.getQualifiedName().equals(qualifiedName)) {
+		else if (graphClass.getQualifiedName().equals(qualifiedName))
 			return graphClass;
-		} else {
+		else
 			return graphClass.getGraphElementClass(qualifiedName);
-		}
 	}
 
 	@Override
@@ -1056,11 +1054,12 @@ public class SchemaImpl implements Schema {
 		case SAVEMEM:
 			implClassName += IMPLSAVEMEMPACKAGENAME;
 			break;
+		case DATABASE:
+			implClassName += IMPLDATABASEPACKAGENAME;
 		default:
 			throw new SchemaException("Implementation type "
 					+ implementationType + " not supported yet.");
 		}
-
 		implClassName = implClassName + "." + graphClass.getSimpleName()
 				+ "Impl";
 
@@ -1169,23 +1168,18 @@ public class SchemaImpl implements Schema {
 
 	@Override
 	public boolean isValidEnumConstant(String name) {
-		if (name.isEmpty()) {
+		if (name.isEmpty())
 			return false;
-		}
-		if (!allowLowercaseEnumConstants && !name.equals(name.toUpperCase())) {
+		if (!allowLowercaseEnumConstants && !name.equals(name.toUpperCase()))
 			return false;
-		}
-		if (RESERVED_JAVA_WORDS.contains(name)) {
+		if (RESERVED_JAVA_WORDS.contains(name))
 			return false;
-		}
-		if (!Character.isJavaIdentifierStart(name.charAt(0))) {
+		if (!Character.isJavaIdentifierStart(name.charAt(0)))
 			return false;
-		}
-		for (char c : name.toCharArray()) {
-			if (!Character.isJavaIdentifierPart(c)) {
+		for (char c : name.toCharArray())
+			if (!Character.isJavaIdentifierPart(c))
 				return false;
-			}
-		}
+
 		return true;
 	}
 
@@ -1211,10 +1205,9 @@ public class SchemaImpl implements Schema {
 	}
 
 	void setGraphClass(GraphClass gc) {
-		if (graphClass != null) {
+		if (graphClass != null)
 			throw new SchemaException("There already is a GraphClass named: "
 					+ graphClass.getQualifiedName() + "in the Schema!");
-		}
 		graphClass = gc;
 	}
 
@@ -1227,7 +1220,6 @@ public class SchemaImpl implements Schema {
 	public String toString() {
 		return "GraphClass of schema '" + qualifiedName + "':\n\n\n"
 				+ graphClass.toString();
-
 	}
 
 	@Override
@@ -1243,7 +1235,7 @@ public class SchemaImpl implements Schema {
 	/**
 	 * Set flag that transaction support should be used or not.
 	 * 
-	 * @param transactionSupport
+	 * @param config
 	 */
 	public void setConfiguration(CodeGeneratorConfiguration config) {
 		this.config = config;

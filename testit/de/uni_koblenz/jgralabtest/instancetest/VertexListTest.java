@@ -25,17 +25,18 @@ package de.uni_koblenz.jgralabtest.instancetest;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.assertTrue; //import static junit.framework.Assert.fail;
 import static org.junit.Assert.fail;
 
 import java.util.Collection;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-
+import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
@@ -68,6 +69,9 @@ public class VertexListTest extends InstanceTest {
 			g = MinimalSchema.instance()
 					.createMinimalGraphWithTransactionSupport(V, E);
 			break;
+		case DATABASE:
+			g = this.createMinimalGraphInDatabase();
+			break;
 		case SAVEMEM:
 			g = MinimalSchema.instance().createMinimalGraph(V, E);
 			break;
@@ -80,6 +84,24 @@ public class VertexListTest extends InstanceTest {
 			g.createNode();
 		}
 		commit(g);
+	}
+
+	private MinimalGraph createMinimalGraphInDatabase() {
+		super.connectToDatabase();
+		super.loadMinimalSchemaIntoGraphDatabase();
+		return super.createMinimalGraphWithDatabaseSupport("VertexListTest");
+	}
+
+	@After
+	public void tearDown() {
+		if (implementationType == ImplementationType.DATABASE)
+			this.cleanAndCloseGraphDatabase();
+	}
+
+	private void cleanAndCloseGraphDatabase() {
+		super.cleanDatabaseOfTestGraph(g);
+		// super.cleanDatabaseOfTestSchema(MinimalSchema.instance());
+		super.closeGraphdatabase();
 	}
 
 	@Test

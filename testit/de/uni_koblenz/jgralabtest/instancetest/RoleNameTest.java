@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Random;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -98,11 +99,33 @@ public class RoleNameTest extends InstanceTest {
 			graph = VertexTestSchema.instance()
 					.createVertexTestGraphWithSavememSupport(100, 100);
 			break;
+		case DATABASE:
+			graph = this.createVertexTestGraphWithDatabaseSupport();
+			break;			
 		default:
 			fail("Implementation " + implementationType
 					+ " not yet supported by this test.");
 		}
 		rand = new Random(System.currentTimeMillis());
+	}
+	
+	private VertexTestGraph createVertexTestGraphWithDatabaseSupport() {
+		super.connectToDatabase();
+		super.loadVertexTestSchemaIntoGraphDatabase();
+		return this.createVertexTestGraphWithDatabaseSupport("RoleNameTest",
+				100, 100);
+	}
+
+	@After
+	public void tearDown() {
+		if (implementationType == ImplementationType.DATABASE)
+			this.cleanAndCloseGraphDatabase();
+	}
+
+	private void cleanAndCloseGraphDatabase() {
+		super.cleanDatabaseOfTestGraph("RoleNameTest");
+		// super.cleanDatabaseOfTestSchema(VertexTestSchema.instance());
+		super.closeGraphdatabase();
 	}
 
 	/**

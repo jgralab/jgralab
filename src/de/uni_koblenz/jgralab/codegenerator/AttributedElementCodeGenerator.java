@@ -85,9 +85,8 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		rootBlock.setVariable("isAbstractClass", aec.isAbstract() ? "true"
 				: "false");
 		for (AttributedElementClass superClass : attributedElementClass
-				.getDirectSuperClasses()) {
+				.getDirectSuperClasses())
 			interfaces.add(superClass.getQualifiedName());
-		}
 	}
 
 	/**
@@ -105,7 +104,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	@Override
 	protected CodeBlock createBody() {
 		CodeList code = new CodeList();
-		if (currentCycle.isStdOrSaveMemOrTransImpl()) {
+		if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()) {
 			code.add(createFields(aec.getAttributeList()));
 			code.add(createConstructor());
 			code.add(createGetAttributedElementClassMethod());
@@ -124,9 +123,8 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 					.add(createGetVersionedAttributesMethod(aec
 							.getAttributeList()));
 		}
-		if (currentCycle.isAbstract()) {
+		if (currentCycle.isAbstract())
 			code.add(createGettersAndSetters(aec.getOwnAttributeList()));
-		}
 		return code;
 	}
 
@@ -135,25 +133,27 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		CodeSnippet code = new CodeSnippet(true);
 
 		code.setVariable("classOrInterface", currentCycle
-				.isStdOrSaveMemOrTransImpl() ? " class" : " interface");
-		code.setVariable("abstract", currentCycle.isStdOrSaveMemOrTransImpl()
+				.isStdOrSaveMemOrDbImplOrTransImpl() ? " class" : " interface");
+		code.setVariable("abstract", currentCycle
+				.isStdOrSaveMemOrDbImplOrTransImpl()
 				&& aec.isAbstract() ? " abstract" : "");
-		code.setVariable("impl", currentCycle.isStdOrSaveMemOrTransImpl()
+		code.setVariable("impl", currentCycle
+				.isStdOrSaveMemOrDbImplOrTransImpl()
 				&& !aec.isAbstract() ? "Impl" : "");
 		code
 				.add("public#abstract##classOrInterface# #simpleClassName##impl##extends##implements# {");
 		code
 				.setVariable(
 						"extends",
-						currentCycle.isStdOrSaveMemOrTransImpl() ? " extends #baseClassName#"
+						currentCycle.isStdOrSaveMemOrDbImplOrTransImpl() ? " extends #baseClassName#"
 								: "");
 
 		StringBuffer buf = new StringBuffer();
 		if (interfaces.size() > 0) {
-			String delim = currentCycle.isStdOrSaveMemOrTransImpl() ? " implements "
+			String delim = currentCycle.isStdOrSaveMemOrDbImplOrTransImpl() ? " implements "
 					: " extends ";
 			for (String interfaceName : interfaces) {
-				if (currentCycle.isStdOrSaveMemOrTransImpl()
+				if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()
 						|| !interfaceName.equals(aec.getQualifiedName())) {
 					if (interfaceName.equals("Vertex")
 							|| interfaceName.equals("Edge")
@@ -191,10 +191,10 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		code.addNoIndent(new CodeSnippet(true,
 				"public #simpleClassName#Impl(int id, #jgPackage#.Graph g) {",
 				"\tsuper(id, g);"));
-		if (hasDefaultAttributeValues()) {
+		if (hasDefaultAttributeValues())
 			code.addNoIndent(new CodeSnippet(
 					"\tinitializeAttributesWithDefaultValues();"));
-		}
+
 		code.add(createSpecialConstructorCode());
 		code.addNoIndent(new CodeSnippet("}"));
 		return code;
@@ -206,9 +206,8 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	 */
 	protected boolean hasDefaultAttributeValues() {
 		for (Attribute attr : aec.getAttributeList()) {
-			if (attr.getDefaultValueAsString() != null) {
+			if (attr.getDefaultValueAsString() != null)
 				return true;
-			}
 		}
 		return false;
 	}
@@ -263,9 +262,8 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 				break;
 			}
 		}
-		if (suppressWarningsNeeded) {
+		if (suppressWarningsNeeded)
 			snip.add("@SuppressWarnings(\"unchecked\")");
-		}
 		snip
 				.add("public void setAttribute(String attributeName, Object data) {");
 		code.addNoIndent(snip);
@@ -282,9 +280,8 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 						.getJavaClassName(schemaRootPackageName));
 			}
 			boolean isEnumDomain = false;
-			if (attr.getDomain() instanceof EnumDomain) {
+			if (attr.getDomain() instanceof EnumDomain)
 				isEnumDomain = true;
-			}
 
 			if (isEnumDomain) {
 				s.add("if (attributeName.equals(\"#name#\")) {");
@@ -293,12 +290,18 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 						.add("\t\tset_#name#(#attributeClassName#.valueOfPermitNull((String) data));");
 				s.add("\t} else {");
 				s.add("\t\tset_#name#((#attributeClassName#) data);");
+
+				// if(currentCycle.isDbImpl())
+				// s.add("\tsuper.setAttribute(attributeName, data);");
 				s.add("\t}");
 				s.add("\treturn;");
 				s.add("}");
 			} else {
 				s.add("if (attributeName.equals(\"#name#\")) {");
 				s.add("\tset_#name#((#attributeClassName#) data);");
+
+				// if(currentCycle.isDbImpl())
+				// s.add("\tsuper.setAttribute(attributeName, data);");
 				s.add("\treturn;");
 				s.add("}");
 			}
@@ -341,6 +344,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 			code.add("public #type# #isOrGet#_#name#();");
 			break;
 		case STDIMPL:
+		case DBIMPL:
 		case SAVEMEMIMPL:
 			code.add("public #type# #isOrGet#_#name#() {", "\treturn _#name#;",
 					"}");
@@ -386,9 +390,18 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 			code.add("public void set_#name#(#type# _#name#);");
 			break;
 		case STDIMPL:
+
 		case SAVEMEMIMPL:
 			code.add("public void set_#name#(#type# _#name#) {",
 					"\tthis._#name# = _#name#;", "\tgraphModified();", "}");
+			break;
+		case DBIMPL:
+			code.add("public void set_#name#(#type# _#name#) {");
+			code.add("\tthis._#name# = _#name#;");
+			// code.add("\tif(this.isInitialized())");
+			// code.add("\t\tgraphModified();");
+			code.add("\tattributeChanged(\"#name#\");");
+			code.add("}");
 			break;
 		case TRANSIMPL:
 			Domain domain = attr.getDomain();
@@ -439,7 +452,6 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 				code
 						.add("\t((JGraLabTransactionCloneable)_#name#).setName(this + \":#name#\");");
 			}
-
 			code
 					.add(
 							"\tthis._#name#.setValidValue((#ttype#) _#name#, #theGraph#.getCurrentTransaction());",
@@ -453,15 +465,15 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	protected CodeBlock createField(Attribute attr) {
 		CodeSnippet code = new CodeSnippet(true, "protected #type# _#name#;");
 		code.setVariable("name", attr.getName());
-		if (currentCycle.isStdImpl() || currentCycle.isSaveMemImpl()) {
+		if (currentCycle.isStdImpl() || currentCycle.isSaveMemImpl()
+				|| currentCycle.isDbImpl()) {
 			code.setVariable("type", attr.getDomain()
 					.getJavaAttributeImplementationTypeName(
 							schemaRootPackageName));
 		}
-		if (currentCycle.isTransImpl()) {
+		if (currentCycle.isTransImpl())
 			code.setVariable("type", attr.getDomain().getVersionedClass(
 					schemaRootPackageName));
-		}
 		return code;
 	}
 
@@ -495,7 +507,8 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 					a.addNoIndent(new CodeSnippet("\t#setterName#(tmpVar);",
 							"\treturn;", "}"));
 				}
-				if (currentCycle.isStdImpl() || currentCycle.isSaveMemImpl()) {
+				if (currentCycle.isStdImpl() || currentCycle.isSaveMemImpl()
+						|| currentCycle.isDbImpl()) {
 					a.add(attribute.getDomain().getReadMethod(
 							schemaRootPackageName, "_" + attribute.getName(),
 							"io"));
@@ -510,7 +523,6 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 				.add(new CodeSnippet(
 						"throw new NoSuchAttributeException(\"#qualifiedClassName# doesn't contain an attribute \" + attributeName);"));
 		code.addNoIndent(new CodeSnippet("}"));
-
 		return code;
 	}
 
@@ -542,7 +554,8 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 							schemaRootPackageName, "_" + attribute.getName(),
 							"io"));
 				}
-				if (currentCycle.isStdImpl() || currentCycle.isSaveMemImpl()) {
+				if (currentCycle.isStdImpl() || currentCycle.isSaveMemImpl()
+						|| currentCycle.isDbImpl()) {
 					a.add(attribute.getDomain().getWriteMethod(
 							schemaRootPackageName, "_" + attribute.getName(),
 							"io"));
@@ -572,7 +585,8 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 				CodeSnippet snippet = new CodeSnippet();
 				snippet.setVariable("setterName", "set_" + attribute.getName());
 				snippet.setVariable("variableName", attribute.getName());
-				if (currentCycle.isStdImpl() || currentCycle.isSaveMemImpl()) {
+				if (currentCycle.isStdImpl() || currentCycle.isSaveMemImpl()
+						|| currentCycle.isDbImpl()) {
 					code.add(attribute.getDomain().getReadMethod(
 							schemaRootPackageName, "_" + attribute.getName(),
 							"io"));
@@ -603,7 +617,8 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		if ((attrSet != null) && !attrSet.isEmpty()) {
 			code.add(new CodeSnippet("io.space();"));
 			for (Attribute attribute : attrSet) {
-				if (currentCycle.isStdImpl() || currentCycle.isSaveMemImpl()) {
+				if (currentCycle.isStdImpl() || currentCycle.isSaveMemImpl()
+						|| currentCycle.isDbImpl()) {
 					code.add(attribute.getDomain().getWriteMethod(
 							schemaRootPackageName, "_" + attribute.getName(),
 							"io"));
@@ -648,5 +663,4 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		}
 		return code;
 	}
-
 }

@@ -30,6 +30,7 @@ import static org.junit.Assert.fail;
 
 import java.util.Collection;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -71,6 +72,9 @@ public class EdgeListTest extends InstanceTest {
 			g = MinimalSchema.instance()
 					.createMinimalGraphWithTransactionSupport(V, E);
 			break;
+		case DATABASE:
+			g = this.createMinimalGraphWithDatabaseSupport();
+			break;
 		case SAVEMEM:
 			g = MinimalSchema.instance().createMinimalGraphWithSavememSupport();
 			break;
@@ -79,14 +83,26 @@ public class EdgeListTest extends InstanceTest {
 					+ " not yet supported by this test.");
 		}
 		createTransaction(g);
-		for (int i = 0; i < N; ++i) {
+		for (int i = 0; i < N; ++i)
 			g.createNode();
-		}
-		for (int i = 0; i < N; ++i) {
+		for (int i = 0; i < N; ++i)
 			g.createLink((Node) g.getVertex(i + 1), (Node) g.getVertex((i + 1)
 					% N + 1));
-		}
 		commit(g);
+	}
+
+	private MinimalGraph createMinimalGraphWithDatabaseSupport() {
+		super.connectToDatabase();
+		super.loadMinimalSchemaIntoGraphDatabase();
+		return this.createMinimalGraphWithDatabaseSupport("EdgeListTest", V, E);
+	}
+
+	@After
+	public void tearDown() {
+		if (implementationType == ImplementationType.DATABASE) {
+			super.cleanDatabaseOfTestGraph(g);
+			// super.cleanDatabaseOfTestSchema(MinimalSchema.instance());
+		}
 	}
 
 	@Test
@@ -104,9 +120,8 @@ public class EdgeListTest extends InstanceTest {
 
 	private String getESeq() {
 		StringBuilder sb = new StringBuilder();
-		for (Edge e : g.edges()) {
+		for (Edge e : g.edges())
 			sb.append('e').append(e.getId()).append(' ');
-		}
 		return sb.toString().trim();
 	}
 

@@ -26,6 +26,7 @@ package de.uni_koblenz.jgralab;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
@@ -33,12 +34,16 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringBufferInputStream;
+import java.io.StringReader;
 import java.lang.reflect.Method;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -78,6 +83,8 @@ import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 import de.uni_koblenz.jgralab.schema.impl.BasicDomainImpl;
 import de.uni_koblenz.jgralab.schema.impl.ConstraintImpl;
 import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
+
+import de.uni_koblenz.jgralab.impl.db.*;
 
 /**
  * class for loading and storing schema and graphs in tg format
@@ -698,6 +705,7 @@ public class GraphIO {
 
 		Package oldPackage = null;
 		// write vertices
+		// System.out.println("Writing vertices");
 		Vertex nextV = graph.getFirstVertex();
 		while (nextV != null) {
 			if (subGraph != null && !subGraph.isMarked(nextV)) {
@@ -721,6 +729,7 @@ public class GraphIO {
 			Edge nextI = nextV.getFirstEdge();
 			write(" <");
 			noSpace();
+			// System.out.print("  Writing incidences of vertex.");
 			while (nextI != null) {
 				if (subGraph != null && !subGraph.isMarked(nextI)) {
 					nextI = nextI.getNextEdge();
@@ -746,6 +755,7 @@ public class GraphIO {
 			}
 		}
 
+		// System.out.println("Writing edges");
 		// write edges
 		Edge nextE = graph.getFirstEdgeInGraph();
 		while (nextE != null) {
@@ -910,6 +920,7 @@ public class GraphIO {
 		if (BAOut == null) {
 			throw new GraphIOException("GraphIO did not write to a String");
 		}
+
 		// FIXME There should be a try-catch for every close operation
 		TGOut.flush();
 		BAOut.flush();
@@ -922,26 +933,34 @@ public class GraphIO {
 		return result;
 	}
 
-	public static Schema loadSchemaFromFile(String filename)
-			throws GraphIOException {
+	public static Schema loadSchemaFromFile(String filename)throws GraphIOException {
 		InputStream in = null;
 		try {
 			if (filename.toLowerCase().endsWith(".gz")) {
-				in = new GZIPInputStream(new FileInputStream(filename),
-						BUFFER_SIZE);
+				in = new GZIPInputStream(new FileInputStream(filename),	BUFFER_SIZE);
 			} else {
-				in = new BufferedInputStream(new FileInputStream(filename),
-						BUFFER_SIZE);
+				in = new BufferedInputStream(new FileInputStream(filename),	BUFFER_SIZE);
 			}
 			return loadSchemaFromStream(in);
 
 		} catch (IOException ex) {
-			throw new GraphIOException("exception while loading schema from "
-					+ filename, ex);
+			throw new GraphIOException("exception while loading schema from " + filename, ex);
 		} finally {
 			close(in);
 		}
 	}
+	
+	public static Schema loadSchemaFromDatabase(GraphDatabase graphDatabase, String packagePrefix, String schemaName) throws GraphIOException{
+		String definition = graphDatabase.getSchemaDefinition(packagePrefix, schemaName);
+		InputStream input = new ByteArrayInputStream(definition.getBytes());
+		return loadSchemaFromStream(input);
+	}
+	
+	public static Schema loadAndCommitSchemaFromDatabase(GraphDatabase graphDatabase, String packagePrefix, String schemaName) throws GraphIOException{
+		Schema schema = loadSchemaFromDatabase(graphDatabase, packagePrefix, schemaName);
+		schema.commit("test", new CodeGeneratorConfiguration().withDatabaseSupport());
+		return schema;
+	}	
 
 	public static Schema loadSchemaFromStream(InputStream in)
 			throws GraphIOException {
@@ -1204,7 +1223,7 @@ public class GraphIO {
 
 		} catch (IOException ex) {
 			throw new GraphIOException(
-					"exception while loading graph from file " + filename, ex);
+					"Exception while loading graph from file " + filename, ex);
 		} finally {
 			if (inputStream != null) {
 				close(inputStream);
@@ -1270,7 +1289,7 @@ public class GraphIO {
 					"Unable to load a graph which belongs to the schema because the Java-classes for this schema have not yet been created."
 							+ " Use Schema.commit(..) to create them!", e);
 		} catch (Exception e) {
-			throw new GraphIOException("exception while loading graph", e);
+			throw new GraphIOException("Exception while loading graph.", e);
 		}
 	}
 
@@ -2476,7 +2495,7 @@ public class GraphIO {
 	 *         name and simple name.
 	 */
 	private final String toQNameString(String pn, String sn) {
-		if (pn == null || pn.isEmpty()) {
+		if ((pn == null) || pn.isEmpty()) {
 			return sn;
 		}
 		return pn + "." + sn;
@@ -2698,8 +2717,9 @@ public class GraphIO {
 		int vId = matchInteger();
 		if (vId <= 0) {
 			throw new GraphIOException("Invalid vertex id " + vId + ".");
+		} else {
+			return vId;
 		}
-		return vId;
 	}
 
 	private void parseIncidentEdges(Vertex v) throws GraphIOException {
@@ -3128,5 +3148,36 @@ public class GraphIO {
 		List<AttributeData> attributes = new ArrayList<AttributeData>();
 
 		Set<Constraint> constraints = new HashSet<Constraint>(1);
+	}
+
+	public static Graph loadGraphFromDatabase(String id,
+			GraphDatabase graphDatabase) throws GraphDatabaseException {
+		if (graphDatabase != null) {
+			return graphDatabase.getGraph(id);
+		} else {
+			throw new GraphDatabaseException("No graph database given.");
+		}
+	}
+
+	public static void loadSchemaIntoGraphDatabase(String filePath,
+			GraphDatabase graphDatabase) throws IOException, GraphIOException,
+			SQLException {
+		String schemaDefinition = readFileAsString(filePath);
+		Schema schema = loadSchemaFromFile(filePath);
+		graphDatabase.insertSchema(schema, schemaDefinition);
+	}
+
+	private static String readFileAsString(String filePath) throws IOException {
+		StringBuffer fileData = new StringBuffer(1024);
+		BufferedReader reader = new BufferedReader(new FileReader(filePath));
+		char[] buf = new char[1024];
+		int numRead = 0;
+		while ((numRead = reader.read(buf)) != -1) {
+			String readData = String.valueOf(buf, 0, numRead);
+			fileData.append(readData);
+			buf = new char[1024];
+		}
+		reader.close();
+		return fileData.toString();
 	}
 }

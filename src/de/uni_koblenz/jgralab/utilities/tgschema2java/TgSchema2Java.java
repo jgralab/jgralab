@@ -197,6 +197,10 @@ public class TgSchema2Java {
 	public void setSavememSupport(boolean value) {
 		config.setSaveMemSupport(value);
 	}
+	
+	public void setDatabaseSupport(boolean value) {
+		config.setDatabaseSupport(value);
+	}
 
 	/**
 	 * Constructs an instance of TgSchema2Java with the given command line
@@ -582,6 +586,7 @@ public class TgSchema2Java {
 			setTransactionSupport(false);
 			setStandardSupport(false);
 			setSavememSupport(false);
+			setDatabaseSupport(false);
 		} else {
 			throw new IllegalArgumentException(
 					"No implementation mode specified.");
@@ -594,7 +599,10 @@ public class TgSchema2Java {
 				setStandardSupport(true);
 			} else if (v.equals("savemem")) {
 				setSavememSupport(true);
-			} else {
+			} else if (v.equals("database")){
+				setDatabaseSupport(true);
+			}
+			else {
 				throw new IllegalArgumentException(
 						"Illegal value for implementation mode: "
 								+ v

@@ -50,30 +50,30 @@ package de.uni_koblenz.jgralab.codegenerator;
  */
 public class CodeGeneratorConfiguration {
 
-	/**
-	 * This is the default case, if neither Transactions nor a database backend or a memory saving implementation
-	 * is needed: TODO: Rename 
-	 */
-	public static final CodeGeneratorConfiguration WITHOUT_TRANSACTIONS = new CodeGeneratorConfiguration();
+	public static final CodeGeneratorConfiguration WITHOUT_TRANSACTIONS = new CodeGeneratorConfiguration().withDatabaseSupport();
 
 	public static final CodeGeneratorConfiguration FULL = new CodeGeneratorConfiguration()
 			.withTransactionSupport().withMethodsForSubclassesSupport()
-			.withSaveMemSupport();
+			.withSaveMemSupport().withDatabaseSupport();
 
 	public static final CodeGeneratorConfiguration FULL_WITHOUT_SUBCLASS_FLAGS = new CodeGeneratorConfiguration()
-			.withTransactionSupport().withSaveMemSupport();
+			.withTransactionSupport().withSaveMemSupport().withDatabaseSupport();
 
 	public static final CodeGeneratorConfiguration WITHOUT_TYPESPECIFIC_METHODS = new CodeGeneratorConfiguration()
-			.withTransactionSupport().withoutTypeSpecificMethodSupport();
+			.withTransactionSupport().withoutTypeSpecificMethodSupport().withDatabaseSupport();
 
 	public static final CodeGeneratorConfiguration MINIMAL = new CodeGeneratorConfiguration()
 			.withoutTypeSpecificMethodSupport();
+
 
 	/** toggles, if the classes for standard support should be created */
 	private boolean standardSupport = true;
 
 	/** toggles, if the classes for transaction support should be created */
 	private boolean transactionSupport = false;
+
+	/** toggles, if classes for database support should be created */
+	private boolean databaseSupport = true;
 
 	/**
 	 * toggles, if the memory saving std classes shall be used or not. If true,
@@ -110,6 +110,7 @@ public class CodeGeneratorConfiguration {
 		saveMemSupport = false;
 		typespecificMethodSupport = true;
 		methodsForSubclassesSupport = false;
+		databaseSupport = false;
 	}
 
 	public CodeGeneratorConfiguration withoutStandardSupport() {
@@ -119,6 +120,11 @@ public class CodeGeneratorConfiguration {
 
 	public CodeGeneratorConfiguration withTransactionSupport() {
 		transactionSupport = true;
+		return this;
+	}
+	
+	public CodeGeneratorConfiguration withDatabaseSupport() {
+		databaseSupport = true;
 		return this;
 	}
 
@@ -149,6 +155,7 @@ public class CodeGeneratorConfiguration {
 		this.transactionSupport = other.transactionSupport;
 		this.typespecificMethodSupport = other.typespecificMethodSupport;
 		this.saveMemSupport = other.saveMemSupport;
+		this.databaseSupport = other.databaseSupport;
 		this.methodsForSubclassesSupport = other.methodsForSubclassesSupport;
 	}
 
@@ -166,6 +173,14 @@ public class CodeGeneratorConfiguration {
 
 	public boolean hasTransactionSupport() {
 		return transactionSupport;
+	}
+
+	public void setDatabaseSupport(boolean databaseSupport) {
+		this.databaseSupport = databaseSupport;
+	}
+
+	public boolean hasDatabaseSupport() {
+		return this.databaseSupport;
 	}
 
 	public void setTypeSpecificMethodsSupport(boolean typespecificMethodSupport) {

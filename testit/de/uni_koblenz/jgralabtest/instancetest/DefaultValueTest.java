@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,6 +46,7 @@ import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
+import de.uni_koblenz.jgralab.impl.db.GraphDatabaseException;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
@@ -79,6 +81,35 @@ public class DefaultValueTest extends InstanceTest {
 
 	private DefaultValueTestGraph graph;
 
+	private DefaultValueTestGraph createDefaultValueTestGraphWithDatabaseSupport() {
+		super.connectToDatabase();
+		this.loadDefaultValueTestSchemaIntoGraphDatabase();
+		return this.createDefaultValueTestGraphWithDatabaseSupport("DefaultValueTest");
+	}
+
+	private void loadDefaultValueTestSchemaIntoGraphDatabase() {
+		try {
+			if (!graphDatabase.contains(DefaultValueTestSchema.instance()))
+				loadTestSchemaIntoGraphDatabase("testit/testschemas/DefaultValueTestSchema.tg");
+		} catch (GraphDatabaseException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private DefaultValueTestGraph createDefaultValueTestGraphWithDatabaseSupport(
+			String id) {
+		try {
+			return DefaultValueTestSchema.instance()
+					.createDefaultValueTestGraphWithDatabaseSupport(id,
+							graphDatabase);
+		} catch (Exception exception) {
+			fail("Could not create test graph");
+			return null;
+		}
+	}
+
+
+
 	@Before
 	public void setUp() {
 		switch (implementationType) {
@@ -94,10 +125,28 @@ public class DefaultValueTest extends InstanceTest {
 			graph = DefaultValueTestSchema.instance()
 					.createDefaultValueTestGraphWithSavememSupport();
 			break;
+		case DATABASE:
+			graph = createDefaultValueTestGraphWithDatabaseSupport();
+			break;
 		default:
 			fail("Implementation " + implementationType
 					+ " not yet supported by this test.");
 		}
+	}
+	
+
+	@After
+	public void tearDown() {
+		if (implementationType == ImplementationType.DATABASE)
+			this.cleanAndCloseDatabase();
+	}
+	
+	private void cleanAndCloseDatabase() {
+		this.cleanDatabaseOfTestGraph(graph);
+		this.cleanDatabaseOfTestGraph("secondGraph");
+		// TODO
+		// this.cleanDatabaseOfTestSchema(DefaultValueTestSchema.instance());
+		super.closeGraphdatabase();
 	}
 
 	/**
@@ -229,6 +278,9 @@ public class DefaultValueTest extends InstanceTest {
 		case SAVEMEM:
 			secondGraph = DefaultValueTestSchema.instance()
 					.createDefaultValueTestGraphWithSavememSupport();
+			break;
+		case DATABASE:
+			secondGraph = this.createDefaultValueTestGraphWithDatabaseSupport("secondGraph");
 			break;
 		default:
 			fail("Implementation " + implementationType

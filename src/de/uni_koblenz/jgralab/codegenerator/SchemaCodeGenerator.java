@@ -120,7 +120,13 @@ public class SchemaCodeGenerator extends CodeGenerator {
 
 	private CodeBlock createGraphFactoryMethod() {
 		addImports("#jgPackage#.Graph", "#jgPackage#.ProgressFunction",
-				"#jgPackage#.GraphIO", "#jgPackage#.GraphIOException");
+				"#jgPackage#.GraphIO", "#jgPackage#.GraphIOException",
+				"de.uni_koblenz.jgralab.GraphException",
+				"#jgImplDbPackage#.GraphDatabase",
+				"#jgImplDbPackage#.GraphDatabaseException",
+				"#jgImplDbPackage#.GraphImpl"
+
+		);
 		CodeSnippet code = new CodeSnippet(
 				true,
 				"/**",
@@ -207,6 +213,29 @@ public class SchemaCodeGenerator extends CodeGenerator {
 						: "\tthrow new UnsupportedOperationException(\"No Savemem support compiled.\");"),
 				"}",
 				"",
+				// ---- database support -------
+				"/**",
+				" * Creates a new #gcName# graph in a database with given <code>id</code>.",
+				" *",
+				" * @param id Identifier of new graph",
+				" * @param graphDatabase Database which should contain graph",
+				" */",
+				"public #gcName# create#gcCamelName#WithDatabaseSupport(String id, GraphDatabase graphDatabase) throws GraphDatabaseException{",
+				((config.hasDatabaseSupport()) ? "\tGraph graph = graphFactory.createGraphWithDatabaseSupport(#gcCamelName#.class, graphDatabase, id );\n\t\tif(!graphDatabase.containsGraph(id)){\n\t\t\tgraphDatabase.insert((GraphImpl)graph);\n\t\t\treturn (#gcCamelName#)graph;\n\t\t}\n\t\telse\n\t\t\tthrow new GraphException(\"Graph with identifier \" + id + \" already exists in database.\");"
+						: "\tthrow new UnsupportedOperationException(\"No database support compiled.\");"),
+				"}",
+				"/**",
+				" * Creates a new #gcName# graph in a database with given <code>id</code>.",
+				" *",
+				" * @param id Identifier of new graph",
+				" * @param vMax Maximum initial count of vertices that can be held in graph.",
+				" * @param eMax Maximum initial count of edges that can be held in graph.",
+				" * @param graphDatabase Database which should contain graph",
+				" */",
+				"public #gcName# create#gcCamelName#WithDatabaseSupport(String id, int vMax, int eMax, GraphDatabase graphDatabase) throws GraphDatabaseException{",
+				((config.hasDatabaseSupport()) ? "\tGraph graph = graphFactory.createGraphWithDatabaseSupport(#gcCamelName#.class, graphDatabase, id, vMax, eMax );\n\t\tif(!graphDatabase.containsGraph(id)){\n\t\t\tgraphDatabase.insert((GraphImpl)graph);\n\t\t\treturn (#gcCamelName#)graph;\n\t\t}\n\t\telse\n\t\t\tthrow new GraphException(\"Graph with identifier \" + id + \" already exists in database.\");"
+						: "\tthrow new UnsupportedOperationException(\"No database support compiled.\");"),
+				"}",
 				// ---- transaction support ----
 				"/**",
 				" * Creates a new #gcName# graph with transaction support with initial vertex and edge counts <code>vMax</code>, <code>eMax</code>.",
@@ -365,7 +394,6 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		code.setVariable("gcImplName", schema.getGraphClass()
 				.getQualifiedName()
 				+ "Impl");
-
 		return code;
 	}
 
@@ -413,7 +441,6 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		code.add(new CodeSnippet(true,
 				"graphFactory = new #simpleClassName#Factory();"));
 		code.addNoIndent(new CodeSnippet(true, "}"));
-
 		return code;
 	}
 
@@ -672,7 +699,6 @@ public class SchemaCodeGenerator extends CodeGenerator {
 			constraintSnippet
 					.add("#aecVariable#.addConstraint("
 							+ "new ConstraintImpl(#message#, #predicate#, #offendingElements#));");
-
 			constraintSnippet.setVariable("message", "\""
 					+ stringQuote(constraint.getMessage()) + "\"");
 			constraintSnippet.setVariable("predicate", "\""
@@ -744,8 +770,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				code.add(createComments("dom", rd));
 				code.addNoIndent(new CodeSnippet("}"));
 			} else {
-				// never reachable
-				throw new RuntimeException("FIXME!");
+				throw new RuntimeException("FIXME!"); // never reachable
 			}
 		}
 		return code;

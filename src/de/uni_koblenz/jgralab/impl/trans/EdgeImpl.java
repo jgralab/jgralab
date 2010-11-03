@@ -72,6 +72,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 	 *            the id of the <code>Edge</code>
 	 * @param graph
 	 *            the corresponding <code>Graph</code>
+	 * @throws Exception
 	 */
 	protected EdgeImpl(int anId, Graph graph, Vertex alpha, Vertex omega) {
 		super(anId, graph);
