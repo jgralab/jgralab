@@ -1062,13 +1062,12 @@ public class SchemaGraph2XMI {
 				&& !otherIncidence.get_roleName().isEmpty()) {
 			writer.writeAttribute(XMIConstants4SchemaGraph2XMI.ATTRIBUTE_NAME,
 					otherIncidence.get_roleName());
-		} else if (edgeClass.getFirstHasAttribute() == null) {
+		} else if (isRoleNameNecessary(edgeClass, connectedVertexClass
+				.get_qualifiedName())) {
 			writer.writeAttribute(XMIConstants4SchemaGraph2XMI.ATTRIBUTE_NAME,
-					qualifiedNameOfVertexClass + "_"
-							+ edgeClass.get_qualifiedName());
-		} else {
-			writer.writeAttribute(XMIConstants4SchemaGraph2XMI.ATTRIBUTE_NAME,
-					"");
+					(connectedVertexClass.get_qualifiedName() + "_" + edgeClass
+							.get_qualifiedName()).replaceAll(
+							Pattern.quote("."), "_"));
 		}
 		writer
 				.writeAttribute(
@@ -1122,6 +1121,35 @@ public class SchemaGraph2XMI {
 
 		// close ownedattribute
 		writer.writeEndElement();
+	}
+
+	/**
+	 * Checks if the there have to be a rolename. If the {@link EdgeClass}
+	 * <code>edgeClass</code> is bidirectional navigable both rolenames have to
+	 * exist. If it is only navigable in one direction the navigable
+	 * {@link IncidenceClass} has to have an existing rolename. The other not.
+	 * 
+	 * @param edgeClass
+	 *            {@link EdgeClass}
+	 * @param qualifiedName
+	 *            {@link String} the qualified name of the {@link VertexClass}
+	 *            for which the existing of a rolename should be checked
+	 * @return boolean
+	 */
+	private boolean isRoleNameNecessary(EdgeClass edgeClass,
+			String qualifiedName) {
+		if (isBidirectional) {
+			// the association is bidirectional navigable
+			return true;
+		} else if (((VertexClass) ((IncidenceClass) edgeClass.getFirstGoesTo()
+				.getThat()).getFirstEndsAt().getThat()).get_qualifiedName()
+				.equals(qualifiedName)) {
+			// if it is not reverted
+			// the omega IncidenceClass of the EdgeClass must have a rolename
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	private void createGeneralization(XMLStreamWriter writer, String id,
