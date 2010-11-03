@@ -76,10 +76,6 @@ public class Greql2FunctionLibrary {
 	private static Logger logger = Logger.getLogger(Greql2FunctionLibrary.class
 			.getName());
 
-	static {
-		logger.setLevel(Level.OFF);
-	}
-
 	/**
 	 * this is the package name as greql2.evaluator.funlib
 	 */
@@ -104,23 +100,26 @@ public class Greql2FunctionLibrary {
 	 * constructs a new instance as soon as the Library gets loaded
 	 */
 	static {
+		logger.setLevel(Level.OFF);
 		packageName = Greql2FunctionLibrary.class.getPackage().getName();
 		nondottedPackageName = packageName.replace(".", "/");
-		thisInstance = new Greql2FunctionLibrary();
 	}
 
 	/**
 	 * creates a new GreqlFunctionLibrary
 	 */
-	public Greql2FunctionLibrary() throws RuntimeException {
+	private Greql2FunctionLibrary() {
 		availableFunctions = new HashMap<String, Greql2Function>();
-		registerAllFunctions();
 	}
 
 	/**
 	 * @return The one and only instance of GreqlFunctionLibrary
 	 */
 	public static Greql2FunctionLibrary instance() {
+		if (thisInstance == null) {
+			thisInstance = new Greql2FunctionLibrary();
+			thisInstance.registerAllFunctions();
+		}
 		return thisInstance;
 	}
 
@@ -619,23 +618,7 @@ public class Greql2FunctionLibrary {
 		public void registerFunctionsInResourceBundle(URL res);
 	}
 
-	private EclipseGreqlFunctionLoader eclipseFunctionLoader = null;
-
-	/**
-	 * @return the eclipseFunctionLoader
-	 */
-	public EclipseGreqlFunctionLoader getEclipseFunctionLoader() {
-		return eclipseFunctionLoader;
-	}
-
-	/**
-	 * @param eclipseFunctionLoader
-	 *            the eclipseFunctionLoader to set
-	 */
-	public void setEclipseFunctionLoader(
-			EclipseGreqlFunctionLoader eclipseFunctionLoader) {
-		this.eclipseFunctionLoader = eclipseFunctionLoader;
-	}
+	public static EclipseGreqlFunctionLoader eclipseFunctionLoader = null;
 
 	private void registerFunctionsInResourceBundle(URL res) {
 		if (eclipseFunctionLoader != null) {
