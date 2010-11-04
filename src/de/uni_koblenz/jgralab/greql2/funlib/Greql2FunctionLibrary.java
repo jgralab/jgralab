@@ -608,21 +608,9 @@ public class Greql2FunctionLibrary {
 		}
 	}
 
-	/**
-	 * Simple interface for loading GReQL functions from Eclipse resource
-	 * bundles. There's a class in the jgralab4eclipse project that implements
-	 * that interface. The field eclipseFunctionLoader is then set to an
-	 * instance of that.
-	 */
-	public interface EclipseGreqlFunctionLoader {
-		public void registerFunctionsInResourceBundle(URL res);
-	}
-
-	public static EclipseGreqlFunctionLoader eclipseFunctionLoader = null;
-
 	private void registerFunctionsInResourceBundle(URL res) {
-		if (eclipseFunctionLoader != null) {
-			eclipseFunctionLoader.registerFunctionsInResourceBundle(res);
+		if (JGraLab.eclipseAdapter != null) {
+			JGraLab.eclipseAdapter.registerFunctionsInResourceBundle(res);
 		} else {
 			throw new RuntimeException(
 					"There's no EclipseGreqlFunctionLoader set, so functions "
