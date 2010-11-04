@@ -9,7 +9,16 @@ import java.net.URL;
  * that.
  */
 public interface EclipseAdapter {
+	/**
+	 * Load all GReQL functions in the given resource bundle url.
+	 * 
+	 * @param res
+	 *            the eclipse resoure bundle url
+	 */
 	public void registerFunctionsInResourceBundle(URL res);
 
-	public String getJGraLabClasspath();
+	/**
+	 * @return the path to jgralab.jar in the eclipse metadata workspace dir.
+	 */
+	public String getJGraLabJarPath();
 }
