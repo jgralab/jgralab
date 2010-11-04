@@ -45,6 +45,11 @@ import java.util.logging.Logger;
  * @author ist@uni-koblenz.de
  */
 public class JGraLab {
+	/**
+	 * Used by the jgralab4eclipse plugin to manage class loading (GReQL
+	 * functions and compiled schema classes) inside eclipse.
+	 */
+	public static EclipseAdapter eclipseAdapter;
 
 	// look but don't touch, both values are updated automatically
 	private static final String revision = "$Revision$";
@@ -116,10 +121,11 @@ public class JGraLab {
 					@Override
 					public String format(LogRecord record) {
 						StringBuilder sb = new StringBuilder();
-						sb.append(record.getLevel()).append(" ").append(
-								record.getSourceClassName()).append(".")
-								.append(record.getSourceMethodName()).append(
-										": ").append(record.getMessage())
+						sb.append(record.getLevel()).append(" ")
+								.append(record.getSourceClassName())
+								.append(".")
+								.append(record.getSourceMethodName())
+								.append(": ").append(record.getMessage())
 								.append('\n');
 						return sb.toString();
 					}
