@@ -197,11 +197,6 @@ public final class PackageImpl extends NamedElementImpl implements Package {
 	}
 
 	@Override
-	public int compareTo(Package other) {
-		return this.qualifiedName.compareTo(other.getQualifiedName());
-	}
-
-	@Override
 	public boolean containsNamedElement(String sn) {
 		return domains.containsKey(sn)
 				|| edgeClasses.containsKey(sn)

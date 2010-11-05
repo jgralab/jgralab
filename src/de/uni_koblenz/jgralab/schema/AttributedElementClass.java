@@ -44,9 +44,10 @@ import de.uni_koblenz.jgralab.schema.exception.M1ClassAccessException;
  * /<code>CompositionClass</code>.
  * 
  * <p>
- * <b>Note:</b> in the following, <code>attrElement</code>, and <code>attrElement'</code>
- * , will represent the states of the given <code>AttributedElementClass</code>
- * before, respectively after, any operation.
+ * <b>Note:</b> in the following, <code>attrElement</code>, and
+ * <code>attrElement'</code> , will represent the states of the given
+ * <code>AttributedElementClass</code> before, respectively after, any
+ * operation.
  * </p>
  * 
  * <p>
@@ -57,8 +58,7 @@ import de.uni_koblenz.jgralab.schema.exception.M1ClassAccessException;
  * 
  * @author ist@uni-koblenz.de
  */
-public interface AttributedElementClass extends NamedElement,
-		Comparable<AttributedElementClass> {
+public interface AttributedElementClass extends NamedElement {
 
 	/**
 	 * Adds a new attribute <code>anAttribute</code> to this element.
@@ -75,8 +75,9 @@ public interface AttributedElementClass extends NamedElement,
 	 * 
 	 * <p>
 	 * <b>Postconditions:</b> In addition to the direct and inherited
-	 * attributes(s) of <code>attrElement</code>, <code>attrElement'</code> holds a new
-	 * attribute with the specified <code>name</code> and <code>domain</code>.
+	 * attributes(s) of <code>attrElement</code>, <code>attrElement'</code>
+	 * holds a new attribute with the specified <code>name</code> and
+	 * <code>domain</code>.
 	 * </p>
 	 * 
 	 * @param anAttribute
@@ -106,8 +107,9 @@ public interface AttributedElementClass extends NamedElement,
 	 * 
 	 * <p>
 	 * <b>Postconditions:</b> In addition to the direct and inherited
-	 * attributes(s) of <code>attrElement</code>, <code>attrElement'</code> holds a new
-	 * attribute with the specified <code>name</code> and <code>domain</code>.
+	 * attributes(s) of <code>attrElement</code>, <code>attrElement'</code>
+	 * holds a new attribute with the specified <code>name</code> and
+	 * <code>domain</code>.
 	 * </p>
 	 * 
 	 * @param name
@@ -147,11 +149,13 @@ public interface AttributedElementClass extends NamedElement,
 	 * <b>Postconditions:</b>
 	 * <ul>
 	 * <li><code>attrElement'.getConstraints().size >= 0</code></li>
-	 * <li><code>attrElement'.getConstraints().size() == attrElement.getConstraints().size() + 1</code>, if for each constraint <code>c</code> of
-	 * <code>attrElement</code> the following condition holds:
-	 * <code>!constr.equals(c)</code></li>
-	 * <li><code>attrElement'.getConstraints()</code> does not contain any inherited constraints from
-	 * possible superclasses of <code>attrElement</code></li>
+	 * <li>
+	 * <code>attrElement'.getConstraints().size() == attrElement.getConstraints().size() + 1</code>
+	 * , if for each constraint <code>c</code> of <code>attrElement</code> the
+	 * following condition holds: <code>!constr.equals(c)</code></li>
+	 * <li><code>attrElement'.getConstraints()</code> does not contain any
+	 * inherited constraints from possible superclasses of
+	 * <code>attrElement</code></li>
 	 * </ul>
 	 * </p>
 	 * </p>
@@ -878,8 +882,8 @@ public interface AttributedElementClass extends NamedElement,
 	 * </p>
 	 * 
 	 * <p>
-	 * <b>Postconditions:</b> <code>attrElement'</code> is abstract and no new instances
-	 * can be created
+	 * <b>Postconditions:</b> <code>attrElement'</code> is abstract and no new
+	 * instances can be created
 	 * </p>
 	 * 
 	 * @param isAbstract

@@ -48,11 +48,6 @@ public abstract class DomainImpl extends NamedElementImpl implements Domain {
 	}
 
 	@Override
-	public int compareTo(Domain other) {
-		return this.qualifiedName.compareTo(other.getQualifiedName());
-	}
-
-	@Override
 	public String toString() {
 		return "domain " + qualifiedName;
 	}

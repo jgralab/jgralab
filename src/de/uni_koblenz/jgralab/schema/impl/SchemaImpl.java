@@ -38,6 +38,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -51,8 +52,8 @@ import javax.tools.ForwardingJavaFileManager;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileManager;
 import javax.tools.JavaFileObject;
-import javax.tools.ToolProvider;
 import javax.tools.JavaFileObject.Kind;
+import javax.tools.ToolProvider;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphFactory;
@@ -88,11 +89,11 @@ import de.uni_koblenz.jgralab.schema.MapDomain;
 import de.uni_koblenz.jgralab.schema.NamedElement;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
+import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.SetDomain;
 import de.uni_koblenz.jgralab.schema.StringDomain;
 import de.uni_koblenz.jgralab.schema.VertexClass;
-import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
 import de.uni_koblenz.jgralab.schema.exception.InvalidNameException;
 import de.uni_koblenz.jgralab.schema.exception.M1ClassAccessException;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
@@ -347,6 +348,7 @@ public class SchemaImpl implements Schema {
 		// the new named element.
 		Set<NamedElement> elementsWithSameSimpleName = namedElementsBySimpleName
 				.get(namedElement.getSimpleName());
+
 		// add element to map
 		if ((elementsWithSameSimpleName != null)
 				&& !elementsWithSameSimpleName.isEmpty()) {
@@ -357,9 +359,22 @@ public class SchemaImpl implements Schema {
 			namedElementsBySimpleName.put(namedElement.getSimpleName(),
 					elementsWithSameSimpleName);
 		}
-		// uniquify if needed
-		if (elementsWithSameSimpleName.size() >= 2) {
-			for (NamedElement other : elementsWithSameSimpleName) {
+		if (elementsWithSameSimpleName.size() < 2) {
+			return;
+		}
+
+		// Uniquify simple names, if needed:
+		// We don't have to worry about domains and packages, cause for those no
+		// create<SimpleName> or getFirst/Next<SimpleName> methods have to be
+		// created.
+		List<AttributedElementClass> aecsWithSameSimpleName = new LinkedList<AttributedElementClass>();
+		for (NamedElement ne : elementsWithSameSimpleName) {
+			if (ne instanceof AttributedElementClass) {
+				aecsWithSameSimpleName.add((AttributedElementClass) ne);
+			}
+		}
+		if (aecsWithSameSimpleName.size() >= 2) {
+			for (AttributedElementClass other : aecsWithSameSimpleName) {
 				((NamedElementImpl) other).changeUniqueName();
 			}
 		}
@@ -911,9 +926,11 @@ public class SchemaImpl implements Schema {
 								+ " does not exist in schema");
 					}
 				}
-				return m1Class.getMethod("create"
-						+ CodeGenerator.camelCase(aec.getUniqueName()),
-						signature);
+				return m1Class
+						.getMethod(
+								"create"
+										+ CodeGenerator.camelCase(aec
+												.getUniqueName()), signature);
 			}
 		} catch (SecurityException e) {
 			throw new M1ClassAccessException(
@@ -1096,8 +1113,8 @@ public class SchemaImpl implements Schema {
 
 	@Override
 	public Method getGraphCreateMethod(ImplementationType implementationType) {
-		return getCreateMethod(graphClass.getSimpleName(), graphClass
-				.getSimpleName(), GRAPHCLASS_CREATE_SIGNATURE,
+		return getCreateMethod(graphClass.getSimpleName(),
+				graphClass.getSimpleName(), GRAPHCLASS_CREATE_SIGNATURE,
 				implementationType);
 	}
 
