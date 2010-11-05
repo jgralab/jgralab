@@ -138,7 +138,8 @@ public class IncidenceListTest extends InstanceTest {
 	private void cleanAndCloseDatabase() {
 		super.cleanDatabaseOfTestGraph(g);
 		super.cleanDatabaseOfTestGraph("IncidenceListTest.testSortIncidences");
-		// super.cleanDatabaseOfTestSchema(MinimalSchema.instance());
+		// TODO, this does not seem to work
+		super.cleanDatabaseOfTestSchema(MinimalSchema.instance());
 		super.closeGraphdatabase();
 	}
 
