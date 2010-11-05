@@ -60,17 +60,23 @@ public abstract class InstanceTest {
 		parameters.add(new Object[] { ImplementationType.STANDARD });
 		parameters.add(new Object[] { ImplementationType.TRANSACTION });
 		parameters.add(new Object[] { ImplementationType.SAVEMEM });
+		// uncomment the following line for not testing db support
+		// parameters.add(new Object[] { ImplementationType.DATABASE });
 	}
 
 	public static Collection<Object[]> getParameters() {
 		return parameters;
 	}
 
-	// protected String url = "postgresql://localhost:5432/graphdatabase";
-	protected String url = "mysql://localhost:3306/graphdatabase5";
+	// db: jgralabtest
+	// user: jgralabtest
+	// pw: secret
+
+	protected String url = "postgresql://helena.uni-koblenz.de:5432/jgralabtest";
+	// protected String url = "mysql://localhost:3306/graphdatabase5";
 	// protected String userName = "postgres";
-	protected String userName = "root";
-	protected String password = "energizer";
+	protected String userName = "jgralabtest";
+	protected String password = "secret";
 	protected GraphDatabase graphDatabase;
 
 	protected void connectToDatabase() {
@@ -118,6 +124,7 @@ public abstract class InstanceTest {
 		try {
 			GraphIO.loadSchemaIntoGraphDatabase(file, graphDatabase);
 		} catch (Exception e) {
+			e.printStackTrace();
 			fail("Could not load " + file + " into graph database.");
 		}
 	}
@@ -163,6 +170,7 @@ public abstract class InstanceTest {
 		} catch (Exception exception) {
 			exception.printStackTrace();
 			fail("Could not load graph from database.");
+			exception.printStackTrace();
 		}
 		return null;
 	}
@@ -173,6 +181,7 @@ public abstract class InstanceTest {
 				graphDatabase.deleteGraph(id);
 			}
 		} catch (GraphDatabaseException exception) {
+			exception.printStackTrace();
 			fail("Could not delete test graph from database.");
 		}
 	}
@@ -183,6 +192,7 @@ public abstract class InstanceTest {
 				graphDatabase.delete((DatabasePersistableGraph) testGraph);
 			}
 		} catch (GraphDatabaseException exception) {
+			exception.printStackTrace();
 			fail("Could not delete test graph from database.");
 		}
 	}
@@ -195,6 +205,7 @@ public abstract class InstanceTest {
 						.getName());
 			}
 		} catch (GraphDatabaseException exception) {
+			exception.printStackTrace();
 			fail("Could not delete test schema from database.");
 		}
 	}
