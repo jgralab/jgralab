@@ -393,6 +393,11 @@ public abstract class NamedElementImpl implements NamedElement {
 	}
 
 	@Override
+	public int compareTo(NamedElement other) {
+		return this.qualifiedName.compareTo(other.getQualifiedName());
+	}
+
+	@Override
 	public final String getFileName() {
 		return qualifiedName.replace('.', File.separatorChar);
 	}

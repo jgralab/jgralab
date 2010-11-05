@@ -38,9 +38,9 @@ import java.util.List;
  * name and package of a schema element.
  * 
  * <p>
- * <b>Note:</b> in the following, <code>namedElement</code>, and <code>namedElement'</code>
- * , will represent the states of the given <code>NamedElement</code> before,
- * respectively after, any operation.
+ * <b>Note:</b> in the following, <code>namedElement</code>, and
+ * <code>namedElement'</code> , will represent the states of the given
+ * <code>NamedElement</code> before, respectively after, any operation.
  * </p>
  * 
  * <p>
@@ -51,7 +51,7 @@ import java.util.List;
  * 
  * @author ist@uni-koblenz.de
  */
-public interface NamedElement {
+public interface NamedElement extends Comparable<NamedElement> {
 
 	/**
 	 * Returns the full path to this named element. The filename (simpleName) is

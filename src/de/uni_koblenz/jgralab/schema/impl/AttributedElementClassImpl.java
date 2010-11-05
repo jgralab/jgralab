@@ -192,42 +192,6 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 		return output.toString();
 	}
 
-	/**
-	 * Compares this element to another attributed element.
-	 * <p>
-	 * This is done by comparing the elements´ qualified names
-	 * lexicographically.
-	 * </p>
-	 * 
-	 * <p>
-	 * <b>Pattern:</b> <code>comp = attrElement.compareTo(other);</code>
-	 * </p>
-	 * 
-	 * <p>
-	 * <b>Preconditions:</b> none
-	 * </p>
-	 * 
-	 * <p>
-	 * <b>Postconditions:</b>
-	 * <ul>
-	 * <li><code>comp < 0</code>, if this element´s qualified name is
-	 * lexicographically less than the <code>other</code> element´s qualified
-	 * name</li>
-	 * <li><code>comp == 0</code>, if both element´s qualified names are equal</li>
-	 * <li><code>comp > 0</code>, if this element´s qualified name is
-	 * lexicographically greater than the <code>other</code> element´s qualified
-	 * name</li>
-	 * </ul>
-	 * </p>
-	 * 
-	 * @return the result of the lexicographical comparison
-	 * 
-	 */
-	@Override
-	public int compareTo(AttributedElementClass other) {
-		return this.qualifiedName.compareTo(other.getQualifiedName());
-	}
-
 	@Override
 	public boolean containsAttribute(String name) {
 		return (getAttribute(name) != null);
@@ -309,9 +273,9 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 			String m1ClassName = getSchema().getPackagePrefix() + "."
 					+ getQualifiedName();
 			try {
-				m1Class = (Class<? extends AttributedElement>) Class.forName(
-						m1ClassName, true, M1ClassManager.instance(getSchema()
-								.getQualifiedName()));
+				m1Class = (Class<? extends AttributedElement>) Class
+						.forName(m1ClassName, true, M1ClassManager
+								.instance(getSchema().getQualifiedName()));
 			} catch (ClassNotFoundException e) {
 				throw new M1ClassAccessException(
 						"Can't load M1 class for AttributedElementClass '"

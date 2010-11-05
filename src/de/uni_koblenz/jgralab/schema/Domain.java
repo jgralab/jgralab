@@ -38,7 +38,7 @@ import de.uni_koblenz.jgralab.codegenerator.CodeBlock;
  * 
  * @author ist@uni-koblenz.de
  */
-public interface Domain extends NamedElement, Comparable<Domain> {
+public interface Domain extends NamedElement {
 
 	/**
 	 * example: int for integer List<Boolean> for a list with basedomain boolean
