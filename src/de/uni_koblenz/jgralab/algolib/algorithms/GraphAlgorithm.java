@@ -82,6 +82,66 @@ public abstract class GraphAlgorithm implements ProblemSolver {
 		this.subgraph = subgraph;
 	}
 
+	public synchronized AlgorithmStates getState() {
+		return state;
+	}
+
+	@Override
+	public void setGraph(Graph graph) {
+		checkStateForSettingParameters();
+		this.graph = graph;
+		vertexCount = -1;
+		edgeCount = -1;
+	}
+
+	@Override
+	public void setSubgraph(BooleanFunction<GraphElement> subgraph) {
+		checkStateForSettingParameters();
+		this.subgraph = subgraph;
+		vertexCount = -1;
+		edgeCount = -1;
+	}
+
+	public Graph getGraph() {
+		return graph;
+	}
+
+	public BooleanFunction<GraphElement> getSubgraph() {
+		return subgraph;
+	}
+
+	public int getVertexCount() {
+		if (vertexCount < 0) {
+			if (subgraph == null) {
+				vertexCount = graph.getVCount();
+			} else {
+				vertexCount = 0;
+				for (Vertex currentVertex : graph.vertices()) {
+					if (subgraph.get(currentVertex)) {
+						vertexCount++;
+					}
+				}
+			}
+		}
+		return vertexCount;
+	}
+
+	public int getEdgeCount() {
+		if (edgeCount < 0) {
+			if (subgraph == null) {
+				edgeCount = graph.getECount();
+			} else {
+				edgeCount = 0;
+				for (Edge currentEdge : graph.edges()) {
+					if (subgraph.get(currentEdge)) {
+						edgeCount++;
+					}
+				}
+			}
+		}
+		return edgeCount;
+	}
+
 	/**
 	 * Reinitializes all runtime variables and sets the algorithm state to
 	 * <code>INITIALIZED</code>.
@@ -98,8 +158,6 @@ public abstract class GraphAlgorithm implements ProblemSolver {
 		}
 	}
 
-	public abstract void disableOptionalResults();
-
 	/**
 	 * Assigns the default values to all parameters.
 	 * 
@@ -107,55 +165,60 @@ public abstract class GraphAlgorithm implements ProblemSolver {
 	 *             if this algorithm is not in state <code>INITIALIZED</code>.
 	 */
 	public void resetParameters() {
-		if (getState() == AlgorithmStates.INITIALIZED) {
-			this.subgraph = null;
-			vertexCount = -1;
-			edgeCount = -1;
-			disableOptionalResults();
-		} else {
+		checkStateForSettingParameters();
+		this.subgraph = null;
+		vertexCount = -1;
+		edgeCount = -1;
+		disableOptionalResults();
+	}
+
+	/**
+	 * Checks the state of this algorithm object and throws an exception if
+	 * results cannot be retrieved now.
+	 * 
+	 * @throws IllegalStateException
+	 *             if not in state <code>STOPPED</code> or <code>FINISHED</code>
+	 *             .
+	 */
+	public void checkStateForResult() {
+		if (state != AlgorithmStates.FINISHED
+				&& state != AlgorithmStates.STOPPED) {
 			throw new IllegalStateException(
-					"The parameters may only be reseted to their default values when in state "
-							+ AlgorithmStates.INITIALIZED);
+					"The result cannot be obtained while in this state: "
+							+ state);
 		}
 	}
 
-	public Graph getGraph() {
-		return graph;
-	}
-
-	@Override
-	public void setGraph(Graph graph) {
-		if (getState() == AlgorithmStates.INITIALIZED) {
-			this.graph = graph;
-			vertexCount = -1;
-			edgeCount = -1;
-		} else {
+	/**
+	 * Checks the state of this algorithm object and throws an exception if
+	 * parameters cannot be changed now.
+	 * 
+	 * @throws IllegalStateException
+	 *             if not in state <code>INITIALIZED</code>.
+	 */
+	public void checkStateForSettingParameters() {
+		if (getState() != AlgorithmStates.INITIALIZED) {
 			throw new IllegalStateException(
-					"The graph may only be changed when in state "
-							+ AlgorithmStates.INITIALIZED);
+					"Parameters may not be changed while in state " + state);
 		}
 	}
 
-	public BooleanFunction<GraphElement> getSubgraph() {
-		return subgraph;
-	}
-
-	@Override
-	public void setSubgraph(BooleanFunction<GraphElement> subgraph) {
-		if (getState() == AlgorithmStates.INITIALIZED) {
-			this.subgraph = subgraph;
-			vertexCount = -1;
-			edgeCount = -1;
-		} else {
+	/**
+	 * Checks the state of this algorithm object and throws an exception if
+	 * visitors cannot be modified now.
+	 * 
+	 * @throws IllegalStateException
+	 *             if in state <code>RUNNING</code> or <code>CANCELED</code>.
+	 */
+	public void checkStateForSettingVisitors() {
+		if (getState() == AlgorithmStates.RUNNING
+				|| getState() == AlgorithmStates.CANCELED) {
 			throw new IllegalStateException(
-					"The subgraph may only be changed when in state "
-							+ AlgorithmStates.INITIALIZED);
+					"Parameters may not be changed while in state " + state);
 		}
 	}
 
-	public synchronized AlgorithmStates getState() {
-		return state;
-	}
+	public abstract void disableOptionalResults();
 
 	/**
 	 * Terminates the algorithm from inside by throwing an exception.
@@ -253,83 +316,5 @@ public abstract class GraphAlgorithm implements ProblemSolver {
 	 *            the visitor to be removed from this algorithm
 	 */
 	public abstract void removeVisitor(Visitor visitor);
-
-	/**
-	 * Checks the state of this algorithm object and throws an exception if
-	 * results cannot be retrieved now.
-	 * 
-	 * @throws IllegalStateException
-	 *             if not in state <code>STOPPED</code> or <code>FINISHED</code>
-	 *             .
-	 */
-	public void checkStateForResult() {
-		if (state != AlgorithmStates.FINISHED
-				&& state != AlgorithmStates.STOPPED) {
-			throw new IllegalStateException(
-					"The result cannot be obtained while in this state: "
-							+ state);
-		}
-	}
-
-	/**
-	 * Checks the state of this algorithm object and throws an exception if
-	 * parameters cannot be changed now.
-	 * 
-	 * @throws IllegalStateException
-	 *             if not in state <code>INITIALIZED</code>.
-	 */
-	public void checkStateForSettingParameters() {
-		if (getState() != AlgorithmStates.INITIALIZED) {
-			throw new IllegalStateException(
-					"Parameters may not be changed while in state " + state);
-		}
-	}
-
-	/**
-	 * Checks the state of this algorithm object and throws an exception if
-	 * visitors cannot be modified now.
-	 * 
-	 * @throws IllegalStateException
-	 *             if in state <code>RUNNING</code> or <code>CANCELED</code>.
-	 */
-	public void checkStateForSettingVisitors() {
-		if (getState() == AlgorithmStates.RUNNING
-				|| getState() == AlgorithmStates.CANCELED) {
-			throw new IllegalStateException(
-					"Parameters may not be changed while in state " + state);
-		}
-	}
-
-	public int getVertexCount() {
-		if (vertexCount < 0) {
-			if (subgraph == null) {
-				vertexCount = graph.getVCount();
-			} else {
-				vertexCount = 0;
-				for (Vertex currentVertex : graph.vertices()) {
-					if (subgraph.get(currentVertex)) {
-						vertexCount++;
-					}
-				}
-			}
-		}
-		return vertexCount;
-	}
-
-	public int getEdgeCount() {
-		if (edgeCount < 0) {
-			if (subgraph == null) {
-				edgeCount = graph.getECount();
-			} else {
-				edgeCount = 0;
-				for (Edge currentEdge : graph.edges()) {
-					if (subgraph.get(currentEdge)) {
-						edgeCount++;
-					}
-				}
-			}
-		}
-		return edgeCount;
-	}
 
 }
