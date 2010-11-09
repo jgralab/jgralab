@@ -110,7 +110,7 @@ public class GreqlEvaluator {
 		Graph datagraph = null;
 		if (args.length == 2) {
 			datagraph = GraphIO.loadSchemaAndGraphFromFile(args[1],
-					CodeGeneratorConfiguration.WITH_TRANSACTION_SUPPORT,
+					CodeGeneratorConfiguration.MINIMAL,
 					new ConsoleProgressFunction());
 		}
 
@@ -365,8 +365,8 @@ public class GreqlEvaluator {
 		for (SyntaxGraphEntry entry : entryList) {
 			if (entry.getCostModel().isEquivalent(costModel)) {
 				Optimizer opt = entry.getOptimizer();
-				if (((opt != null) && opt.isEquivalent(optimizer)) || ((opt == null)
-						&& (optimizer == null))) {
+				if (((opt != null) && opt.isEquivalent(optimizer))
+						|| ((opt == null) && (optimizer == null))) {
 					if (entry.lock()) {
 						return entry;
 					}
@@ -771,8 +771,7 @@ public class GreqlEvaluator {
 			gc.createEdgeClass("Link", n, 0, Integer.MAX_VALUE, "",
 					AggregationKind.NONE, n, 0, Integer.MAX_VALUE, "",
 					AggregationKind.NONE);
-			minimalSchema
-					.compile(CodeGeneratorConfiguration.MINIMAL);
+			minimalSchema.compile(CodeGeneratorConfiguration.MINIMAL);
 			Method graphCreateMethod = minimalSchema
 					.getGraphCreateMethod(ImplementationType.STANDARD);
 

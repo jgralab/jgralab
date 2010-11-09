@@ -62,9 +62,9 @@ import javax.swing.border.EmptyBorder;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
+import de.uni_koblenz.jgralab.GraphIO.TGFilenameFilter;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.WorkInProgress;
-import de.uni_koblenz.jgralab.GraphIO.TGFilenameFilter;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
@@ -164,9 +164,9 @@ public class GreqlGui extends JFrame {
 		@Override
 		public void run() {
 			try {
-				graph = GraphIO.loadSchemaAndGraphFromFile(file
-						.getCanonicalPath(),
-						CodeGeneratorConfiguration.WITH_TRANSACTION_SUPPORT, this);
+				graph = GraphIO.loadSchemaAndGraphFromFile(
+						file.getCanonicalPath(),
+						CodeGeneratorConfiguration.MINIMAL, this);
 			} catch (Exception e1) {
 				graph = null;
 				ex = e1;
