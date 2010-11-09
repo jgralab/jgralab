@@ -430,7 +430,7 @@ public abstract class VertexEvaluator {
 	public void calculateNeededAndDefinedVariables() {
 		neededVariables = new HashSet<Variable>();
 		definedVariables = new HashSet<Variable>();
-		Edge inc = getVertex().getFirstEdge(EdgeDirection.IN);
+		Edge inc = getVertex().getFirstIncidence(EdgeDirection.IN);
 		while (inc != null) {
 			VertexEvaluator veval = greqlEvaluator
 					.getVertexEvaluatorGraphMarker().getMark(inc.getAlpha());
@@ -438,7 +438,7 @@ public abstract class VertexEvaluator {
 				neededVariables.addAll(veval.getNeededVariables());
 				definedVariables.addAll(veval.getDefinedVariables());
 			}
-			inc = inc.getNextEdge(EdgeDirection.IN);
+			inc = inc.getNextIncidence(EdgeDirection.IN);
 		}
 		HashSet<Variable> bothVariables = new HashSet<Variable>();
 		bothVariables.addAll(neededVariables);
@@ -530,7 +530,7 @@ public abstract class VertexEvaluator {
 	 * creates a list of possible source positions for the current vertex
 	 */
 	public List<SourcePosition> createPossibleSourcePositions() {
-		Greql2Aggregation inc = (Greql2Aggregation) getVertex().getFirstEdge(
+		Greql2Aggregation inc = (Greql2Aggregation) getVertex().getFirstIncidence(
 				EdgeDirection.OUT);
 		List<SourcePosition> possibleSourcePositions = new ArrayList<SourcePosition>();
 		while (inc != null) {
@@ -557,7 +557,7 @@ public abstract class VertexEvaluator {
 	 * vertex
 	 */
 	private void removeInvalidSourcePosition(QuerySourceException ex) {
-		Greql2Aggregation inc = (Greql2Aggregation) getVertex().getFirstEdge(
+		Greql2Aggregation inc = (Greql2Aggregation) getVertex().getFirstIncidence(
 				EdgeDirection.OUT);
 		List<SourcePosition> possibleSourcePositions = new ArrayList<SourcePosition>();
 		while (inc != null) {

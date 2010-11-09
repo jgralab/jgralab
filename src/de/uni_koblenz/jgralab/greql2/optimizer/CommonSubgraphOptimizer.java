@@ -262,8 +262,8 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 			// Merge the sourcePositions of the incoming edges
 			mergeSourcePositionsBelow(lowerVertex, higherVertex);
 			// Now set the alphas of the outgoing edges
-			while (higherVertex.getFirstEdge(EdgeDirection.OUT) != null) {
-				higherVertex.getFirstEdge(EdgeDirection.OUT).setAlpha(
+			while (higherVertex.getFirstIncidence(EdgeDirection.OUT) != null) {
+				higherVertex.getFirstIncidence(EdgeDirection.OUT).setAlpha(
 						lowerVertex);
 			}
 			higherVertex.delete();
@@ -284,9 +284,9 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 	private void mergeSourcePositionsBelow(Greql2Vertex lowerVertex,
 			Greql2Vertex higherVertex) {
 		Greql2Aggregation gal = lowerVertex
-				.getFirstGreql2Aggregation(EdgeDirection.IN);
+				.getFirstGreql2AggregationIncidence(EdgeDirection.IN);
 		Greql2Aggregation gah = higherVertex
-				.getFirstGreql2Aggregation(EdgeDirection.IN);
+				.getFirstGreql2AggregationIncidence(EdgeDirection.IN);
 		while ((gal != null) && (gah != null)) {
 			OptimizerUtility.mergeSourcePositions(gah, gal);
 			mergeSourcePositionsBelow((Greql2Vertex) gal.getAlpha(),

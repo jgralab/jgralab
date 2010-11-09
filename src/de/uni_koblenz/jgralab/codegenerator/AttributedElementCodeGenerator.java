@@ -586,13 +586,12 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		return code;
 	}
 
-	protected CodeBlock createReadAttributesMethod(Set<Attribute> attrSet) {
+	protected CodeBlock createReadAttributesMethod(SortedSet<Attribute> attrSet) {
 		CodeList code = new CodeList();
 
 		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException");
 
-		code
-				.addNoIndent(new CodeSnippet(true,
+		code.addNoIndent(new CodeSnippet(true,
 						"public void readAttributeValues(GraphIO io) throws GraphIOException {"));
 		if (attrSet != null) {
 			for (Attribute attribute : attrSet) {

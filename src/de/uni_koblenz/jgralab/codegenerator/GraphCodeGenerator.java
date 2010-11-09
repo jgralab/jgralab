@@ -139,12 +139,10 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 			}
 			for (RecordDomain rd : aec.getSchema().getRecordDomains()) {
 				CodeSnippet cs = new CodeSnippet(true);
-				cs
-						.add("public #rcname# create#rname#(GraphIO io) throws GraphIOException;");
+				cs.add("public #rcname# create#rname#(GraphIO io) throws GraphIOException;");
 				cs.add("");
 
-				cs
-						.add("public #rcname# create#rname#(Map<String, Object> fields);");
+				cs.add("public #rcname# create#rname#(Map<String, Object> fields);");
 				cs.add("");
 
 				cs.add("public #rcname# create#rname#(#parawtypes#);");
@@ -169,12 +167,9 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 						.add("public #rcname# create#rname#(GraphIO io) throws GraphIOException {");
 
 				if (currentCycle.isTransImpl()) {
-					cs
-							.add("\tif(!isLoading() && getCurrentTransaction().isReadOnly())");
-					cs
-							.add("\t\tthrow new #jgPackage#.GraphException(\"Read-only transactions are not allowed to create instances of #rtype#.\");");
-					cs
-							.add("\t#rcname# record = graphFactory.createRecordWithTransactionSupport(#rcname#.class, this);");
+					cs.add("\tif(!isLoading() && getCurrentTransaction().isReadOnly())");
+					cs.add("\t\tthrow new #jgPackage#.GraphException(\"Read-only transactions are not allowed to create instances of #rtype#.\");");
+					cs.add("\t#rcname# record = graphFactory.createRecordWithTransactionSupport(#rcname#.class, this);");
 				} else if (currentCycle.isStdImpl()) {
 					cs
 							.add("\t#rcname# record = graphFactory.createRecord(#rcname#.class, this);");
@@ -463,21 +458,18 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 			}
 			code
 					.add(" */",
-							"public #ecJavaClassName# getFirst#ecCamelName##inGraph#(#formalParams#);");
+							"public #ecJavaClassName# getFirst#ecCamelName#(#formalParams#);");
 		}
 		if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()) {
 			code
 					.add(
-							"public #ecJavaClassName# getFirst#ecCamelName##inGraph#(#formalParams#) {",
-							"\treturn (#ecJavaClassName#)getFirst#ecType#OfClass#inGraph#(#schemaName#.instance().#ecSchemaVariableName##actualParams#);",
+							"public #ecJavaClassName# getFirst#ecCamelName#(#formalParams#) {",
+							"\treturn (#ecJavaClassName#)getFirst#ecType#(#schemaName#.instance().#ecSchemaVariableName##actualParams#);",
 							"}");
 		}
-		code.setVariable("inGraph", (gec instanceof VertexClass ? ""
-				: "InGraph"));
 		code.setVariable("formalParams", (withTypeFlag ? "boolean noSubClasses"
 				: ""));
-		code
-				.setVariable("actualParams", (withTypeFlag ? ", noSubClasses"
+		code.setVariable("actualParams", (withTypeFlag ? ", noSubClasses"
 						: ""));
 
 		return code;

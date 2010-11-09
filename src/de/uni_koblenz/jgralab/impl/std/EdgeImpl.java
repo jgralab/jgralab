@@ -55,13 +55,13 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl 
 	private IncidenceImpl prevIncidence;
 
 	@Override
-	public Edge getNextEdgeInGraph() {
+	public Edge getNextEdge() {
 		assert isValid();
 		return this.nextEdge;
 	}
 
 	@Override
-	public Edge getPrevEdgeInGraph() {
+	public Edge getPrevEdge() {
 		assert isValid();
 		return this.prevEdge;
 	}
@@ -72,12 +72,12 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl 
 	}
 
 	@Override
-	protected IncidenceImpl getNextIncidence() {
+	protected IncidenceImpl getNextIncidenceInternal() {
 		return nextIncidence;
 	}
 
 	@Override
-	protected IncidenceImpl getPrevIncidence() {
+	protected IncidenceImpl getPrevIncidenceInternal() {
 		return prevIncidence;
 	}
 
@@ -97,12 +97,12 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl 
 	}
 
 	@Override
-	protected void setNextIncidence(IncidenceImpl nextIncidence) {
+	protected void setNextIncidenceInternal(IncidenceImpl nextIncidence) {
 		this.nextIncidence = nextIncidence;
 	}
 
 	@Override
-	protected void setPrevIncidence(IncidenceImpl prevIncidence) {
+	protected void setPrevIncidenceInternal(IncidenceImpl prevIncidence) {
 		this.prevIncidence = prevIncidence;
 	}
 

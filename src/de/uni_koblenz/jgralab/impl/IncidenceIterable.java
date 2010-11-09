@@ -122,8 +122,8 @@ public class IncidenceIterable<E extends Edge> implements Iterable<E> {
 			this.ec = ec;
 			this.dir = dir;
 			incidenceListVersion = vertex.getIncidenceListVersion();
-			current = (E) ((ec == null) ? vertex.getFirstEdge(dir) : vertex
-					.getFirstEdgeOfClass(ec, dir));
+			current = (E) ((ec == null) ? vertex.getFirstIncidence(dir) : vertex
+					.getFirstIncidence(ec, dir));
 		}
 
 		@SuppressWarnings("unchecked")
@@ -136,8 +136,8 @@ public class IncidenceIterable<E extends Edge> implements Iterable<E> {
 				throw new NoSuchElementException();
 			}
 			E result = current;
-			current = (E) ((ec == null) ? current.getNextEdge(dir) : current
-					.getNextEdgeOfClass(ec, dir));
+			current = (E) ((ec == null) ? current.getNextIncidence(dir) : current
+					.getNextIncidence(ec, dir));
 			return result;
 		}
 

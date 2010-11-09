@@ -239,7 +239,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public Edge getFirstEdgeInGraph() {
+	public Edge getFirstEdge() {
 		if (firstEdge == null) {
 			return null;
 		}
@@ -255,7 +255,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public Edge getLastEdgeInGraph() {
+	public Edge getLastEdge() {
 		if (lastEdge == null) {
 			return null;
 		}
@@ -1029,14 +1029,14 @@ public abstract class GraphImpl extends
 			}
 			if (transaction.changedEseqEdges != null) {
 				transaction.changedEseqEdges.remove(edgeToBeDeleted);
-				Edge prevEdge = edgeToBeDeleted.getPrevEdge();
+				Edge prevEdge = edgeToBeDeleted.getPrevIncidence();
 				if (transaction.changedEseqEdges.containsKey(prevEdge)) {
 					if (transaction.changedEseqEdges.get(prevEdge).containsKey(
 							ListPosition.NEXT)) {
 						transaction.changedEseqEdges.remove(prevEdge);
 					}
 				}
-				Edge nextEdge = edgeToBeDeleted.getNextEdge();
+				Edge nextEdge = edgeToBeDeleted.getNextIncidence();
 				// check if current (temporary) nextEdge has been changed
 				// explicitly
 				if (transaction.changedEseqEdges.containsKey(nextEdge)) {

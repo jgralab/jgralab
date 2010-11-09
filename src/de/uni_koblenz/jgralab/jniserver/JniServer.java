@@ -388,7 +388,7 @@ public class JniServer {
 	public int getFirstVertex(int graphId, String vertexClassName) {
 		Graph g = graphs.get(graphId);
 		Vertex v = (vertexClassName != null) ? g
-				.getFirstVertexOfClass((VertexClass) g.getSchema()
+				.getFirstVertex((VertexClass) g.getSchema()
 						.getAttributedElementClass(vertexClassName)) : g
 				.getFirstVertex();
 		return (v == null) ? 0 : v.getId();
@@ -397,7 +397,7 @@ public class JniServer {
 	public int getNextVertex(int graphId, int vertexId, String vertexClassName) {
 		Graph g = graphs.get(graphId);
 		Vertex v = (vertexClassName != null) ? g.getVertex(vertexId)
-				.getNextVertexOfClass(
+				.getNextVertex(
 						((VertexClass) g.getSchema().getAttributedElementClass(
 								vertexClassName))) : g.getVertex(vertexId)
 				.getNextVertex();
@@ -407,39 +407,39 @@ public class JniServer {
 	public int getFirstEdgeInGraph(int graphId, String edgeClassName) {
 		Graph g = graphs.get(graphId);
 		Edge e = (edgeClassName != null) ? g
-				.getFirstEdgeOfClassInGraph((EdgeClass) g.getSchema()
+				.getFirstEdge((EdgeClass) g.getSchema()
 						.getAttributedElementClass(edgeClassName)) : g
-				.getFirstEdgeInGraph();
+				.getFirstEdge();
 		return (e == null) ? 0 : e.getId();
 	}
 
 	public int getNextEdgeInGraph(int graphId, int edgeId, String edgeClassName) {
 		Graph g = graphs.get(graphId);
 		Edge e = (edgeClassName != null) ? g.getEdge(edgeId)
-				.getNextEdgeOfClassInGraph(
+				.getNextEdge(
 						((EdgeClass) g.getSchema().getAttributedElementClass(
 								edgeClassName))) : g.getEdge(edgeId)
-				.getNextEdgeInGraph();
+				.getNextEdge();
 		return (e == null) ? 0 : e.getId();
 	}
 
 	public int getFirstEdge(int graphId, int vertexId, String edgeClassName) {
 		Graph g = graphs.get(graphId);
 		Edge e = (edgeClassName != null) ? g.getVertex(vertexId)
-				.getFirstEdgeOfClass(
+				.getFirstIncidence(
 						(EdgeClass) g.getSchema().getAttributedElementClass(
 								edgeClassName)) : g.getVertex(vertexId)
-				.getFirstEdge();
+				.getFirstIncidence();
 		return (e == null) ? 0 : e.getId();
 	}
 
 	public int getNextEdge(int graphId, int edgeId, String edgeClassName) {
 		Graph g = graphs.get(graphId);
 		Edge e = (edgeClassName != null) ? g.getEdge(edgeId)
-				.getNextEdgeOfClass(
+				.getNextIncidence(
 						((EdgeClass) g.getSchema().getAttributedElementClass(
 								edgeClassName))) : g.getEdge(edgeId)
-				.getNextEdge();
+				.getNextIncidence();
 		return (e == null) ? 0 : e.getId();
 	}
 

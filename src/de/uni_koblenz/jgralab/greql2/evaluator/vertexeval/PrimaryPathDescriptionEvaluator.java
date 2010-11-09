@@ -72,7 +72,7 @@ public abstract class PrimaryPathDescriptionEvaluator extends
 	protected Transition.AllowedEdgeDirection getEdgeDirection(
 			PrimaryPathDescription vertex) {
 		Transition.AllowedEdgeDirection validDirection = Transition.AllowedEdgeDirection.ANY;
-		Edge dirEdge = vertex.getFirstIsDirectionOf(EdgeDirection.IN);
+		Edge dirEdge = vertex.getFirstIsDirectionOfIncidence(EdgeDirection.IN);
 		if (dirEdge != null) {
 			Direction dirVertex = (Direction) dirEdge.getAlpha();
 			if (dirVertex.get_dirValue() == "in") {

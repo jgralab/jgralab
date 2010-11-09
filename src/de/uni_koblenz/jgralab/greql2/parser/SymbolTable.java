@@ -52,18 +52,18 @@ public class SymbolTable extends EasySymbolTable {
 		} else {
 			Vertex var = list.getFirst().get(ident);
 			int offset = -1;
-			if (var.getFirstEdge(EdgeDirection.OUT) instanceof IsDeclaredVarOf) {
-				offset = ((IsDeclaredVarOf) var.getFirstEdge(EdgeDirection.OUT))
+			if (var.getFirstIncidence(EdgeDirection.OUT) instanceof IsDeclaredVarOf) {
+				offset = ((IsDeclaredVarOf) var.getFirstIncidence(EdgeDirection.OUT))
 						.get_sourcePositions().get(0).get_offset();
-			} else if (var.getFirstEdge(EdgeDirection.OUT) instanceof IsBoundVarOf) {
-				offset = ((IsBoundVarOf) var.getFirstEdge(EdgeDirection.OUT))
+			} else if (var.getFirstIncidence(EdgeDirection.OUT) instanceof IsBoundVarOf) {
+				offset = ((IsBoundVarOf) var.getFirstIncidence(EdgeDirection.OUT))
 						.get_sourcePositions().get(0).get_offset();
-			} else if (var.getFirstEdge(EdgeDirection.OUT) instanceof IsVarOf) {
-				offset = ((IsVarOf) var.getFirstEdge(EdgeDirection.OUT))
+			} else if (var.getFirstIncidence(EdgeDirection.OUT) instanceof IsVarOf) {
+				offset = ((IsVarOf) var.getFirstIncidence(EdgeDirection.OUT))
 						.get_sourcePositions().get(0).get_offset();
 			}
 			throw new DuplicateVariableException((Variable) var,
-					((Greql2Aggregation) v.getFirstEdge(EdgeDirection.IN))
+					((Greql2Aggregation) v.getFirstIncidence(EdgeDirection.IN))
 					// .get_sourcePositions(), new SourcePosition(offset,
 							// ident.length()));
 							// .get_sourcePositions(), new SourcePositionImpl(v

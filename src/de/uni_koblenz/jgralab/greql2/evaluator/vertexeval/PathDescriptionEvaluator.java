@@ -112,7 +112,7 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 	protected void addGoalRestrictions() throws EvaluateException {
 		PathDescription pathDesc = (PathDescription) getVertex();
 		VertexEvaluator goalRestEval = null;
-		IsGoalRestrOf inc = pathDesc.getFirstIsGoalRestrOf(EdgeDirection.IN);
+		IsGoalRestrOf inc = pathDesc.getFirstIsGoalRestrOfIncidence(EdgeDirection.IN);
 		if (inc == null) {
 			return;
 		}
@@ -150,7 +150,7 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 	protected void addStartRestrictions() throws EvaluateException {
 		PathDescription pathDesc = (PathDescription) getVertex();
 		VertexEvaluator startRestEval = null;
-		IsStartRestrOf inc = pathDesc.getFirstIsStartRestrOf(EdgeDirection.IN);
+		IsStartRestrOf inc = pathDesc.getFirstIsStartRestrOfIncidence(EdgeDirection.IN);
 		if (inc == null) {
 			return;
 		}

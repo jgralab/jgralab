@@ -32,12 +32,16 @@
 package de.uni_koblenz.jgralabtest;
 
 import static junit.framework.Assert.assertEquals;
+
+import java.io.File;
+
 import junit.framework.Assert;
 
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.grumlschema.GrumlSchema;
 import de.uni_koblenz.jgralab.schema.Schema;
 
@@ -75,6 +79,19 @@ public class GraphIOTest {
 
 		GraphIO.saveSchemaToFile("GraphIOTestOutput.tg", ioTest);
 		System.out.println("Fini.");
+	}
+	
+	@Test
+	public void testLoadCityMap() {
+		try {
+			File dir = new File(".");
+			dir.getAbsolutePath();
+			System.out.println(dir.getAbsolutePath());
+			GraphIO.loadSchemaAndGraphFromFile(dir.getAbsolutePath() + "/testit/testgraphs/citymapgraph.tg", CodeGeneratorConfiguration.MINIMAL, null);
+		} catch (GraphIOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

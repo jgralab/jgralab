@@ -73,12 +73,12 @@ abstract public class ValueConstructionEvaluator extends VertexEvaluator {
 			throws EvaluateException {
 		if (partEvaluators == null) {
 			int partCount = 0;
-			IsPartOf inc = vertex.getFirstIsPartOf(EdgeDirection.IN);
+			IsPartOf inc = vertex.getFirstIsPartOfIncidence(EdgeDirection.IN);
 			while (inc != null) {
 				partCount++;
 				inc = inc.getNextIsPartOf(EdgeDirection.IN);
 			}
-			inc = vertex.getFirstIsPartOf(EdgeDirection.IN);
+			inc = vertex.getFirstIsPartOfIncidence(EdgeDirection.IN);
 			partEvaluators = new ArrayList<VertexEvaluator>(partCount);
 			while (inc != null) {
 				Expression currentExpression = (Expression) inc.getAlpha();

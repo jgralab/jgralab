@@ -300,9 +300,9 @@ public class WritingComponent {
 						EdgeImpl tempPrevEdge = edge.prevEdge
 								.getTemporaryValue(transaction);
 						if (movedEdge) {
-							edge.putAfterInGraph(tempPrevEdge);
+							edge.putAfterEdge(tempPrevEdge);
 						} else {
-							tempPrevEdge.putBeforeInGraph(edge);
+							tempPrevEdge.putBeforeEdge(edge);
 						}
 						break;
 					}
@@ -312,9 +312,9 @@ public class WritingComponent {
 						EdgeImpl tempNextEdge = edge.nextEdge
 								.getTemporaryValue(transaction);
 						if (movedEdge) {
-							edge.putBeforeInGraph(tempNextEdge);
+							edge.putBeforeEdge(tempNextEdge);
 						} else {
-							tempNextEdge.putAfterInGraph(edge);
+							tempNextEdge.putAfterEdge(edge);
 						}
 						break;
 					}
@@ -420,9 +420,9 @@ public class WritingComponent {
 							IncidenceImpl tempPrevIncidence = prevIncidence
 									.getTemporaryValue(transaction);
 							if (movedIncidence) {
-								incidence.putEdgeAfter(tempPrevIncidence);
+								incidence.putIncidenceAfter(tempPrevIncidence);
 							} else {
-								tempPrevIncidence.putEdgeBefore(incidence);
+								tempPrevIncidence.putIncidenceBefore(incidence);
 							}
 							break;
 						}
@@ -430,9 +430,9 @@ public class WritingComponent {
 							IncidenceImpl tempNextIncidence = nextIncidence
 									.getTemporaryValue(transaction);
 							if (movedIncidence) {
-								incidence.putEdgeBefore(tempNextIncidence);
+								incidence.putIncidenceBefore(tempNextIncidence);
 							} else {
-								tempNextIncidence.putEdgeAfter(incidence);
+								tempNextIncidence.putIncidenceAfter(incidence);
 							}
 							break;
 						}

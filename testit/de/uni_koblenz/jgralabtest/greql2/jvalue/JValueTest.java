@@ -114,8 +114,8 @@ public class JValueTest {
 
 	@Test
 	public void equalsLinks() {
-		JValue e1 = new JValueImpl(graph.getFirstLinkInGraph());
-		JValue e2 = new JValueImpl(graph.getFirstLinkInGraph());
+		JValue e1 = new JValueImpl(graph.getFirstLink());
+		JValue e2 = new JValueImpl(graph.getFirstLink());
 		assertTrue(e1.equals(e2));
 		assertFalse(e1 == e2);
 		assertTrue(e1.hashCode() == e2.hashCode());
@@ -131,8 +131,8 @@ public class JValueTest {
 
 	@Test
 	public void notEqualsLinks() {
-		JValue e1 = new JValueImpl(graph.getFirstLinkInGraph());
-		JValue e2 = new JValueImpl(e1.toEdge().getNextEdge());
+		JValue e1 = new JValueImpl(graph.getFirstLink());
+		JValue e2 = new JValueImpl(e1.toEdge().getNextIncidence());
 		assertFalse(e1.equals(e2));
 		assertFalse(e1 == e2);
 	}

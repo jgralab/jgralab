@@ -138,13 +138,13 @@ public abstract class Incidences extends Greql2Function {
 			return pathSystem.edgesConnected(vertex, direction);
 		}
 		JValueSet resultSet = new JValueSet();
-		Edge inc = vertex.getFirstEdge(direction);
+		Edge inc = vertex.getFirstIncidence(direction);
 		if (typeCol == null) {
 			while (inc != null) {
 				if ((subgraph == null) || (subgraph.isMarked(inc))) {
 					resultSet.add(new JValueImpl(inc));
 				}
-				inc = inc.getNextEdge(direction);
+				inc = inc.getNextIncidence(direction);
 			}
 		} else {
 			while (inc != null) {
@@ -153,7 +153,7 @@ public abstract class Incidences extends Greql2Function {
 						resultSet.add(new JValueImpl(inc));
 					}
 				}
-				inc = inc.getNextEdge(direction);
+				inc = inc.getNextIncidence(direction);
 			}
 		}
 		return resultSet;

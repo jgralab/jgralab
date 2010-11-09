@@ -1158,7 +1158,7 @@ public class SchemaGraph2XSD {
 	 */
 	private void writeAttribute(Attribute attribute) throws XMLStreamException {
 		String name = attribute.get_name();
-		Domain type = (Domain) attribute.getFirstHasDomain(EdgeDirection.OUT)
+		Domain type = (Domain) attribute.getFirstHasDomainIncidence(EdgeDirection.OUT)
 				.getOmega();
 		writeXSDAttribute(name, getXSDType(type), XSD_REQUIRED);
 	}
@@ -1297,7 +1297,7 @@ public class SchemaGraph2XSD {
 				 */
 				stringWriter.append(a.get_name());
 				stringWriter.append(" : ");
-				stringWriter.append(((Domain) a.getFirstHasDomain().getOmega())
+				stringWriter.append(((Domain) a.getFirstHasDomainIncidence().getOmega())
 						.get_qualifiedName());
 				stringWriter.append(" (from ");
 				stringWriter.append(e.getValue().get_qualifiedName());

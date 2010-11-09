@@ -146,8 +146,8 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 	 * @see de.uni_koblenz.jgralab.Edge#getNextEdgeInGraph()
 	 */
 	@Override
-	public Edge getNextEdgeInGraph() {
-		return normalEdge.getNextEdgeInGraph();
+	public Edge getNextEdge() {
+		return normalEdge.getNextEdge();
 	}
 
 	/*
@@ -156,8 +156,8 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 	 * @see de.uni_koblenz.jgralab.Edge#getPrevEdgeInGraph()
 	 */
 	@Override
-	public Edge getPrevEdgeInGraph() {
-		return normalEdge.getPrevEdgeInGraph();
+	public Edge getPrevEdge() {
+		return normalEdge.getPrevEdge();
 	}
 
 	/*
@@ -168,8 +168,8 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 	 * jgralab.schema.EdgeClass)
 	 */
 	@Override
-	public Edge getNextEdgeOfClassInGraph(EdgeClass anEdgeClass) {
-		return normalEdge.getNextEdgeOfClassInGraph(anEdgeClass);
+	public Edge getNextEdge(EdgeClass anEdgeClass) {
+		return normalEdge.getNextEdge(anEdgeClass);
 	}
 
 	/*
@@ -179,8 +179,8 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 	 * de.uni_koblenz.jgralab.Edge#getNextEdgeOfClassInGraph(java.lang.Class)
 	 */
 	@Override
-	public Edge getNextEdgeOfClassInGraph(Class<? extends Edge> anEdgeClass) {
-		return normalEdge.getNextEdgeOfClassInGraph(anEdgeClass);
+	public Edge getNextEdge(Class<? extends Edge> anEdgeClass) {
+		return normalEdge.getNextEdge(anEdgeClass);
 	}
 
 	/*
@@ -191,9 +191,9 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 	 * boolean)
 	 */
 	@Override
-	public Edge getNextEdgeOfClassInGraph(Class<? extends Edge> anEdgeClass,
+	public Edge getNextEdge(Class<? extends Edge> anEdgeClass,
 			boolean noSubclasses) {
-		return normalEdge.getNextEdgeOfClassInGraph(anEdgeClass, noSubclasses);
+		return normalEdge.getNextEdge(anEdgeClass, noSubclasses);
 	}
 
 	/*
@@ -204,9 +204,9 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 	 * jgralab.schema.EdgeClass, boolean)
 	 */
 	@Override
-	public Edge getNextEdgeOfClassInGraph(EdgeClass anEdgeClass,
+	public Edge getNextEdge(EdgeClass anEdgeClass,
 			boolean noSubclasses) {
-		return normalEdge.getNextEdgeOfClassInGraph(anEdgeClass, noSubclasses);
+		return normalEdge.getNextEdge(anEdgeClass, noSubclasses);
 	}
 
 	/*
@@ -298,8 +298,8 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 	 * de.uni_koblenz.jgralab.Edge#isAfterInGraph(de.uni_koblenz.jgralab.Edge)
 	 */
 	@Override
-	public boolean isAfterInGraph(Edge e) {
-		return normalEdge.isAfterInGraph(e);
+	public boolean isAfterEdge(Edge e) {
+		return normalEdge.isAfterEdge(e);
 	}
 
 	/*
@@ -309,8 +309,8 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 	 * de.uni_koblenz.jgralab.Edge#isBeforeInGraph(de.uni_koblenz.jgralab.Edge)
 	 */
 	@Override
-	public boolean isBeforeInGraph(Edge e) {
-		return normalEdge.isBeforeInGraph(e);
+	public boolean isBeforeEdge(Edge e) {
+		return normalEdge.isBeforeEdge(e);
 	}
 
 	/*
@@ -330,8 +330,8 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 	 * de.uni_koblenz.jgralab.Edge#putAfterInGraph(de.uni_koblenz.jgralab.Edge)
 	 */
 	@Override
-	public void putAfterInGraph(Edge e) {
-		normalEdge.putAfterInGraph(e);
+	public void putAfterEdge(Edge e) {
+		normalEdge.putAfterEdge(e);
 	}
 
 	/*
@@ -341,8 +341,8 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 	 * de.uni_koblenz.jgralab.Edge#putBeforeInGraph(de.uni_koblenz.jgralab.Edge)
 	 */
 	@Override
-	public void putBeforeInGraph(Edge e) {
-		normalEdge.putBeforeInGraph(e);
+	public void putBeforeEdge(Edge e) {
+		normalEdge.putBeforeEdge(e);
 	}
 
 	/*

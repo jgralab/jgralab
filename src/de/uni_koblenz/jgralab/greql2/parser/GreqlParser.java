@@ -1438,7 +1438,7 @@ public class GreqlParser extends ParserHelper {
 		}
 		if (!inPredicateMode()) {
 			PrimaryPathDescription result = graph.createSimplePathDescription();
-			dir = (Direction) graph.getFirstVertexOfClass(Direction.class);
+			dir = (Direction) graph.getFirstVertex(Direction.class);
 			while (dir != null) {
 				if (!dir.get_dirValue().equals(direction)) {
 					dir = dir.getNextDirection();
@@ -1524,7 +1524,7 @@ public class GreqlParser extends ParserHelper {
 			} else if (!edgeStart && edgeEnd) {
 				direction = "out";
 			}
-			dir = (Direction) graph.getFirstVertexOfClass(Direction.class);
+			dir = (Direction) graph.getFirstVertex(Direction.class);
 			while (dir != null) {
 				if (!dir.get_dirValue().equals(direction)) {
 					dir = dir.getNextDirection();
@@ -2100,8 +2100,8 @@ public class GreqlParser extends ParserHelper {
 			}
 		} while (tryMatch(TokenTypes.COMMA));
 		if (!inPredicateMode() && (tupConstr.getDegree(EdgeDirection.IN) == 1)) {
-			Vertex v = tupConstr.getFirstEdge(EdgeDirection.IN).getAlpha();
-			Edge e2 = tupConstr.getFirstEdge(EdgeDirection.OUT);
+			Vertex v = tupConstr.getFirstIncidence(EdgeDirection.IN).getAlpha();
+			Edge e2 = tupConstr.getFirstIncidence(EdgeDirection.OUT);
 			e2.setAlpha(v);
 			tupConstr.delete();
 		}

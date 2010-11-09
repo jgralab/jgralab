@@ -53,12 +53,12 @@ public abstract class ReversedEdgeImpl extends
 	}
 
 	@Override
-	protected IncidenceImpl getNextIncidence() {
+	protected IncidenceImpl getNextIncidenceInternal() {
 		return nextIncidence;
 	}
 
 	@Override
-	protected IncidenceImpl getPrevIncidence() {
+	protected IncidenceImpl getPrevIncidenceInternal() {
 		return prevIncidence;
 	}
 
@@ -68,12 +68,12 @@ public abstract class ReversedEdgeImpl extends
 	}
 
 	@Override
-	protected void setNextIncidence(IncidenceImpl nextIncidence) {
+	protected void setNextIncidenceInternal(IncidenceImpl nextIncidence) {
 		this.nextIncidence = nextIncidence;
 	}
 
 	@Override
-	protected void setPrevIncidence(IncidenceImpl prevIncidence) {
+	protected void setPrevIncidenceInternal(IncidenceImpl prevIncidence) {
 		this.prevIncidence = prevIncidence;
 	}
 

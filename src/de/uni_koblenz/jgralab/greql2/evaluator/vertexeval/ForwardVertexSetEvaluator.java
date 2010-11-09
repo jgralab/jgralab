@@ -75,12 +75,12 @@ public class ForwardVertexSetEvaluator extends PathSearchEvaluator {
 	private VertexEvaluator startEval = null;
 
 	private final void initialize() {
-		PathDescription p = (PathDescription) vertex.getFirstIsPathOf(
+		PathDescription p = (PathDescription) vertex.getFirstIsPathOfIncidence(
 				EdgeDirection.IN).getAlpha();
 		PathDescriptionEvaluator pathDescEval = (PathDescriptionEvaluator) greqlEvaluator
 				.getVertexEvaluatorGraphMarker().getMark(p);
 
-		Expression startExpression = (Expression) vertex.getFirstIsStartExprOf(
+		Expression startExpression = (Expression) vertex.getFirstIsStartExprOfIncidence(
 				EdgeDirection.IN).getAlpha();
 		startEval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(
 				startExpression);

@@ -84,9 +84,9 @@ public class ListRangeConstructionEvaluator extends VertexEvaluator {
 
 	private void getEvals() {
 		Expression firstElementExpression = (Expression) vertex
-				.getFirstIsFirstValueOf(EdgeDirection.IN).getAlpha();
+				.getFirstIsFirstValueOfIncidence(EdgeDirection.IN).getAlpha();
 		Expression lastElementExpression = (Expression) vertex
-				.getFirstIsLastValueOf(EdgeDirection.IN).getAlpha();
+				.getFirstIsLastValueOfIncidence(EdgeDirection.IN).getAlpha();
 		firstElementEvaluator = greqlEvaluator.getVertexEvaluatorGraphMarker()
 				.getMark(firstElementExpression);
 		lastElementEvaluator = greqlEvaluator.getVertexEvaluatorGraphMarker()

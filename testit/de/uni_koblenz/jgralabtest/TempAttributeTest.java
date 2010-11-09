@@ -72,8 +72,8 @@ public class TempAttributeTest extends TestCase {
 
 		System.out
 				.println("Setting and getting temporary attribute belonging to an edge");
-		marker.mark(graph.getFirstEdgeInGraph(), "successful");
-		assertEquals("successful", marker.getMark(graph.getFirstEdgeInGraph()));
+		marker.mark(graph.getFirstEdge(), "successful");
+		assertEquals("successful", marker.getMark(graph.getFirstEdge()));
 	}
 
 	public void testGenericForEachIncidence() {

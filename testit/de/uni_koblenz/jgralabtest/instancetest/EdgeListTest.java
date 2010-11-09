@@ -146,48 +146,48 @@ public class EdgeListTest extends InstanceTest {
 		commit(g);
 
 		createTransaction(g);
-		e5.putBeforeInGraph(g.getEdge(6));
+		e5.putBeforeEdge(g.getEdge(6));
 		commit(g);
 
 		createReadOnlyTransaction(g);
-		assertTrue(e5.isBeforeInGraph(g.getEdge(6)));
+		assertTrue(e5.isBeforeEdge(g.getEdge(6)));
 		assertEquals("e1 e2 e3 e4 e5 e6 e7 e8 e9 e10", getESeq());
-		assertTrue(e5.isAfterInGraph(g.getEdge(4)));
-		assertFalse(e5.isBeforeInGraph(g.getEdge(4)));
+		assertTrue(e5.isAfterEdge(g.getEdge(4)));
+		assertFalse(e5.isBeforeEdge(g.getEdge(4)));
 		commit(g);
 
 		createTransaction(g);
-		e5.putBeforeInGraph(g.getEdge(4));
+		e5.putBeforeEdge(g.getEdge(4));
 		commit(g);
 
 		createReadOnlyTransaction(g);
 		assertEquals("e1 e2 e3 e5 e4 e6 e7 e8 e9 e10", getESeq());
-		assertFalse(e5.isAfterInGraph(g.getEdge(4)));
-		assertTrue(e5.isBeforeInGraph(g.getEdge(4)));
+		assertFalse(e5.isAfterEdge(g.getEdge(4)));
+		assertTrue(e5.isBeforeEdge(g.getEdge(4)));
 		commit(g);
 
 		createTransaction(g);
-		e5.putBeforeInGraph(g.getEdge(10).getReversedEdge());
+		e5.putBeforeEdge(g.getEdge(10).getReversedEdge());
 		// e5.putBeforeInGraph(g.getEdge(10));
 		commit(g);
 
 		createReadOnlyTransaction(g);
 		assertEquals("e1 e2 e3 e4 e6 e7 e8 e9 e5 e10", getESeq());
-		assertFalse(e5.isAfterInGraph(g.getEdge(10)));
-		assertTrue(e5.isBeforeInGraph(g.getEdge(10)));
-		assertFalse(e5.isBeforeInGraph(g.getEdge(1)));
-		assertTrue(g.getEdge(1).isBeforeInGraph(e5));
+		assertFalse(e5.isAfterEdge(g.getEdge(10)));
+		assertTrue(e5.isBeforeEdge(g.getEdge(10)));
+		assertFalse(e5.isBeforeEdge(g.getEdge(1)));
+		assertTrue(g.getEdge(1).isBeforeEdge(e5));
 		commit(g);
 
 		createTransaction(g);
-		e5.putBeforeInGraph(g.getEdge(1));
+		e5.putBeforeEdge(g.getEdge(1));
 		commit(g);
 
 		createReadOnlyTransaction(g);
 		assertEquals("e5 e1 e2 e3 e4 e6 e7 e8 e9 e10", getESeq());
-		assertTrue(e5.isBeforeInGraph(g.getEdge(1)));
-		assertFalse(e5.isAfterInGraph(g.getEdge(1)));
-		assertTrue(g.getEdge(1).isAfterInGraph(e5));
+		assertTrue(e5.isBeforeEdge(g.getEdge(1)));
+		assertFalse(e5.isAfterEdge(g.getEdge(1)));
+		assertTrue(g.getEdge(1).isAfterEdge(e5));
 		commit(g);
 
 	}
@@ -199,7 +199,7 @@ public class EdgeListTest extends InstanceTest {
 		commit(g);
 
 		createTransaction(g);
-		e5.putAfterInGraph(g.getEdge(4));
+		e5.putAfterEdge(g.getEdge(4));
 		commit(g);
 
 		createReadOnlyTransaction(g);
@@ -207,7 +207,7 @@ public class EdgeListTest extends InstanceTest {
 		commit(g);
 
 		createTransaction(g);
-		e5.putAfterInGraph(g.getEdge(6).getReversedEdge());
+		e5.putAfterEdge(g.getEdge(6).getReversedEdge());
 		commit(g);
 
 		createReadOnlyTransaction(g);
@@ -215,7 +215,7 @@ public class EdgeListTest extends InstanceTest {
 		commit(g);
 
 		createTransaction(g);
-		e5.putAfterInGraph(g.getEdge(10));
+		e5.putAfterEdge(g.getEdge(10));
 		commit(g);
 
 		createReadOnlyTransaction(g);
@@ -223,7 +223,7 @@ public class EdgeListTest extends InstanceTest {
 		commit(g);
 
 		createTransaction(g);
-		e5.putAfterInGraph(g.getEdge(1));
+		e5.putAfterEdge(g.getEdge(1));
 		commit(g);
 
 		createReadOnlyTransaction(g);
@@ -255,7 +255,7 @@ public class EdgeListTest extends InstanceTest {
 		commit(g);
 
 		createReadOnlyTransaction(g);
-		e = g.getFirstEdgeInGraph().getReversedEdge();
+		e = g.getFirstEdge().getReversedEdge();
 		commit(g);
 
 		createTransaction(g);

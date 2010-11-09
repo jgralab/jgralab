@@ -183,12 +183,12 @@ public abstract class VertexImpl extends VertexBaseImpl implements
 	}
 
 	@Override
-	protected IncidenceImpl getFirstIncidence() {
+	protected IncidenceImpl getFirstIncidenceInternal() {
 		return (IncidenceImpl) this.incidenceList.getFirst();
 	}
 
 	@Override
-	protected IncidenceImpl getLastIncidence() {
+	protected IncidenceImpl getLastIncidenceInternal() {
 		return (IncidenceImpl) this.incidenceList.getLast();
 	}
 
@@ -452,7 +452,7 @@ public abstract class VertexImpl extends VertexBaseImpl implements
 		this.assertPrecondition(target, moved);
 		DatabasePersistableEdge targetEdge = (DatabasePersistableEdge) target;
 		DatabasePersistableEdge movedEdge = (DatabasePersistableEdge) moved;
-		if (target != moved && moved.getNextEdge() != target) {
+		if (target != moved && moved.getNextIncidence() != target) {
 			this.incidenceList.putBefore(targetEdge, movedEdge);
 			this.incidenceListModified();
 		}
@@ -463,7 +463,7 @@ public abstract class VertexImpl extends VertexBaseImpl implements
 		this.assertPrecondition(target, moved);
 		DatabasePersistableEdge targetEdge = (DatabasePersistableEdge) target;
 		DatabasePersistableEdge movedEdge = (DatabasePersistableEdge) moved;
-		if (target != moved && target.getNextEdge() != moved) {
+		if (target != moved && target.getNextIncidence() != moved) {
 			this.incidenceList.putAfter(targetEdge, movedEdge);
 			this.incidenceListModified();
 		}

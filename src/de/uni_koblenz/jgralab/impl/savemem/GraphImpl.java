@@ -185,12 +185,12 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public Edge getFirstEdgeInGraph() {
+	public Edge getFirstEdge() {
 		return firstEdge;
 	}
 
 	@Override
-	public Edge getLastEdgeInGraph() {
+	public Edge getLastEdge() {
 		return lastEdge;
 	}
 

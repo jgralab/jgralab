@@ -134,7 +134,7 @@ public class Greql2ExpressionEvaluator extends VertexEvaluator {
 				}
 			}
 		}
-		IsBoundVarOf inc = vertex.getFirstIsBoundVarOf(EdgeDirection.IN);
+		IsBoundVarOf inc = vertex.getFirstIsBoundVarOfIncidence(EdgeDirection.IN);
 		while (inc != null) {
 			Variable currentBoundVariable = (Variable) inc.getAlpha();
 			JValue variableValue = boundVariables.get(currentBoundVariable
@@ -149,14 +149,14 @@ public class Greql2ExpressionEvaluator extends VertexEvaluator {
 			variableEval.setValue(variableValue);
 			inc = inc.getNextIsBoundVarOf(EdgeDirection.IN);
 		}
-		Expression boundExpression = (Expression) vertex.getFirstIsQueryExprOf(
+		Expression boundExpression = (Expression) vertex.getFirstIsQueryExprOfIncidence(
 				EdgeDirection.IN).getAlpha();
 		VertexEvaluator eval = greqlEvaluator.getVertexEvaluatorGraphMarker()
 				.getMark(boundExpression);
 		JValue result = eval.getResult(subgraph);
 		// if the query contains a "store as " - clause, there is a
 		// "isIdOfInc"-Incidence connected with the Greql2Expression
-		IsIdOf storeInc = vertex.getFirstIsIdOf(EdgeDirection.IN);
+		IsIdOf storeInc = vertex.getFirstIsIdOfIncidence(EdgeDirection.IN);
 		if (storeInc != null) {
 			VertexEvaluator storeEval = greqlEvaluator
 					.getVertexEvaluatorGraphMarker().getMark(

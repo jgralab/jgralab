@@ -281,7 +281,7 @@ public class SavepointImplTest {
 			assertTrue(ex2.isValid());
 			assertTrue(ex3.isValid());
 
-			ex3.putEdgeAfter(ex1);
+			ex3.putIncidenceAfter(ex1);
 			City c2 = motorwayMap.createCity();
 			Savepoint sp2 = readWriteTransaction1.defineSavepoint();
 			assertTrue(c1.isValid());
@@ -290,8 +290,8 @@ public class SavepointImplTest {
 			assertTrue(ex1.isValid());
 			assertTrue(ex2.isValid());
 			assertTrue(ex3.isValid());
-			assertEquals(ex1.getNextEdge(), ex3);
-			assertEquals(ex3.getPrevEdge(), ex1);
+			assertEquals(ex1.getNextIncidence(), ex3);
+			assertEquals(ex3.getPrevIncidence(), ex1);
 
 			City c3 = motorwayMap.createCity();
 			Savepoint sp3 = readWriteTransaction1.defineSavepoint();
@@ -302,8 +302,8 @@ public class SavepointImplTest {
 			assertTrue(ex1.isValid());
 			assertTrue(ex2.isValid());
 			assertTrue(ex3.isValid());
-			assertEquals(ex1.getNextEdge(), ex3);
-			assertEquals(ex3.getPrevEdge(), ex1);
+			assertEquals(ex1.getNextIncidence(), ex3);
+			assertEquals(ex3.getPrevIncidence(), ex1);
 
 			readWriteTransaction1.restoreSavepoint(sp1);
 			City c4 = motorwayMap.createCity();
@@ -318,8 +318,8 @@ public class SavepointImplTest {
 			assertTrue(sp1.isValid());
 			assertTrue(!sp2.isValid());
 			assertTrue(sp3.isValid());
-			assertEquals(ex1.getNextEdge(), ex2);
-			assertEquals(ex2.getNextEdge(), ex3);
+			assertEquals(ex1.getNextIncidence(), ex2);
+			assertEquals(ex2.getNextIncidence(), ex3);
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail();

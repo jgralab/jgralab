@@ -184,7 +184,7 @@ public class AggregationTransition extends Transition {
 		this.validEdgeRoles = roles;
 		this.typeCollection = typeCollection;
 		this.predicateEvaluator = predicateEvaluator;
-		Vertex v = graphMarker.getGraph().getFirstVertexOfClass(ThisEdge.class);
+		Vertex v = graphMarker.getGraph().getFirstVertex(ThisEdge.class);
 		if (v != null) {
 			thisEdgeEvaluator = (ThisEdgeEvaluator) graphMarker.getMark(v);
 		}

@@ -139,9 +139,9 @@ public class TGMerge {
 				public int compare(Edge e1, Edge e2) {
 					Edge old1 = new2OldEdges.get(e1);
 					Edge old2 = new2OldEdges.get(e2);
-					if (old1.isBefore(old2)) {
+					if (old1.isBeforeIncidence(old2)) {
 						return -1;
-					} else if (old2.isBefore(old1)) {
+					} else if (old2.isBeforeIncidence(old1)) {
 						return 1;
 					}
 					throw new RuntimeException(

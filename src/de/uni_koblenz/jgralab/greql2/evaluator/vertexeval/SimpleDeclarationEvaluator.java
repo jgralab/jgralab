@@ -85,7 +85,7 @@ public class SimpleDeclarationEvaluator extends VertexEvaluator {
 	 */
 	@Override
 	public JValue evaluate() throws EvaluateException {
-		IsTypeExprOf inc = vertex.getFirstIsTypeExprOf(EdgeDirection.IN);
+		IsTypeExprOf inc = vertex.getFirstIsTypeExprOfIncidence(EdgeDirection.IN);
 		Expression typeExpression = (Expression) inc.getAlpha();
 		VertexEvaluator exprEval = greqlEvaluator
 				.getVertexEvaluatorGraphMarker().getMark(typeExpression);
@@ -97,7 +97,7 @@ public class SimpleDeclarationEvaluator extends VertexEvaluator {
 		}
 		JValueList varDeclList = new JValueList();
 		IsDeclaredVarOf varInc = vertex
-				.getFirstIsDeclaredVarOf(EdgeDirection.IN);
+				.getFirstIsDeclaredVarOfIncidence(EdgeDirection.IN);
 		while (varInc != null) {
 			VariableDeclaration varDecl = new VariableDeclaration(
 					(Variable) varInc.getAlpha(), exprEval, subgraph, vertex,
@@ -119,12 +119,12 @@ public class SimpleDeclarationEvaluator extends VertexEvaluator {
 		neededVariables = new HashSet<Variable>();
 		definedVariables = new HashSet<Variable>();
 		IsDeclaredVarOf varInc = vertex
-				.getFirstIsDeclaredVarOf(EdgeDirection.IN);
+				.getFirstIsDeclaredVarOfIncidence(EdgeDirection.IN);
 		while (varInc != null) {
 			definedVariables.add((Variable) varInc.getAlpha());
 			varInc = varInc.getNextIsDeclaredVarOf(EdgeDirection.IN);
 		}
-		IsTypeExprOf typeInc = vertex.getFirstIsTypeExprOf(EdgeDirection.IN);
+		IsTypeExprOf typeInc = vertex.getFirstIsTypeExprOfIncidence(EdgeDirection.IN);
 		if (typeInc != null) {
 			VertexEvaluator veval = greqlEvaluator
 					.getVertexEvaluatorGraphMarker()

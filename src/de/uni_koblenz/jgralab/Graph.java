@@ -206,7 +206,7 @@ public interface Graph extends AttributedElement {
 	 * @return the first Vertex, or null if this graph contains no vertices of
 	 *         the specified <code>vertexClass</code>.
 	 */
-	public Vertex getFirstVertexOfClass(VertexClass vertexClass);
+	public Vertex getFirstVertex(VertexClass vertexClass);
 
 	/**
 	 * Returns the first Vertex of the specified <code>vertexClass</code>,
@@ -223,8 +223,7 @@ public interface Graph extends AttributedElement {
 	 * @return the first Vertex, or null if this graph contains no vertices of
 	 *         the specified <code>vertexClass</code>.
 	 */
-	public Vertex getFirstVertexOfClass(VertexClass vertexClass,
-			boolean noSubclasses);
+	public Vertex getFirstVertex(VertexClass vertexClass,boolean noSubclasses);
 
 	/**
 	 * Returns the first Vertex of the specified <code>vertexClass</code>
@@ -236,7 +235,7 @@ public interface Graph extends AttributedElement {
 	 * @return the first Vertex, or null if this graph contains no vertices of
 	 *         the specified <code>vertexClass</code>.
 	 */
-	public Vertex getFirstVertexOfClass(Class<? extends Vertex> vertexClass);
+	public Vertex getFirstVertex(Class<? extends Vertex> vertexClass);
 
 	/**
 	 * Returns the first Vertex of the specified <code>vertexClass</code>,
@@ -253,7 +252,7 @@ public interface Graph extends AttributedElement {
 	 * @return the first Vertex, or null if this graph contains no vertices of
 	 *         the specified <code>vertexClass</code>.
 	 */
-	public Vertex getFirstVertexOfClass(Class<? extends Vertex> vertexClass,
+	public Vertex getFirstVertex(Class<? extends Vertex> vertexClass,
 			boolean noSubclasses);
 
 	/**
@@ -261,14 +260,14 @@ public interface Graph extends AttributedElement {
 	 * 
 	 * @return the first Edge, or null if this graph contains no edges.
 	 */
-	public Edge getFirstEdgeInGraph();
+	public Edge getFirstEdge();
 
 	/**
 	 * Returns the last Edge in the edge sequence of this Graph.
 	 * 
 	 * @return the last Edge, or null if this graph contains no edges.
 	 */
-	public Edge getLastEdgeInGraph();
+	public Edge getLastEdge();
 
 	/**
 	 * Returns the first Edge of the specified <code>edgeClass</code> (including
@@ -280,7 +279,7 @@ public interface Graph extends AttributedElement {
 	 * @return the first Edge, or null if this graph contains no edges of the
 	 *         specified <code>edgeClass</code>.
 	 */
-	public Edge getFirstEdgeOfClassInGraph(EdgeClass edgeClass);
+	public Edge getFirstEdge(EdgeClass edgeClass);
 
 	/**
 	 * Returns the first Edge of the specified <code>edgeClass</code>, including
@@ -297,7 +296,7 @@ public interface Graph extends AttributedElement {
 	 * @return the first Edge, or null if this graph contains no edges of the
 	 *         specified <code>edgeClass</code>.
 	 */
-	public Edge getFirstEdgeOfClassInGraph(EdgeClass edgeClass,
+	public Edge getFirstEdge(EdgeClass edgeClass,
 			boolean noSubclasses);
 
 	/**
@@ -310,7 +309,7 @@ public interface Graph extends AttributedElement {
 	 * @return the first Edge, or null if this graph contains no edges of the
 	 *         specified <code>edgeClass</code>.
 	 */
-	public Edge getFirstEdgeOfClassInGraph(Class<? extends Edge> edgeClass);
+	public Edge getFirstEdge(Class<? extends Edge> edgeClass);
 
 	/**
 	 * Returns the first Edge of the specified <code>edgeClass</code>, including
@@ -327,7 +326,7 @@ public interface Graph extends AttributedElement {
 	 * @return the first Edge, or null if this graph contains no edges of the
 	 *         specified <code>edgeClass</code>.
 	 */
-	public Edge getFirstEdgeOfClassInGraph(Class<? extends Edge> edgeClass,
+	public Edge getFirstEdge(Class<? extends Edge> edgeClass,
 			boolean noSubclasses);
 
 	/**

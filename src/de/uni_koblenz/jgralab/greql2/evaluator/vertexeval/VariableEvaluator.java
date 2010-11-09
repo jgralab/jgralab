@@ -167,28 +167,28 @@ public class VariableEvaluator extends VertexEvaluator {
 		List<VertexEvaluator> dependingEvaluators = new ArrayList<VertexEvaluator>();
 		List<Vertex> forbiddenVertices = new ArrayList<Vertex>();
 		SimpleDeclaration simpleDecl = null;
-		if (vertex.getFirstIsDeclaredVarOf(EdgeDirection.OUT) != null) {
-			simpleDecl = (SimpleDeclaration) vertex.getFirstIsDeclaredVarOf(
+		if (vertex.getFirstIsDeclaredVarOfIncidence(EdgeDirection.OUT) != null) {
+			simpleDecl = (SimpleDeclaration) vertex.getFirstIsDeclaredVarOfIncidence(
 					EdgeDirection.OUT).getThat();
 		}
 		if (simpleDecl != null) {
 			forbiddenVertices.add(simpleDecl);
 			Declaration declaringVertex = (Declaration) simpleDecl
-					.getFirstIsSimpleDeclOf().getThat();
-			if (declaringVertex.getFirstIsCompDeclOf(EdgeDirection.OUT) != null) {
-				forbiddenVertices.add(declaringVertex.getFirstIsCompDeclOf(
+					.getFirstIsSimpleDeclOfIncidence().getThat();
+			if (declaringVertex.getFirstIsCompDeclOfIncidence(EdgeDirection.OUT) != null) {
+				forbiddenVertices.add(declaringVertex.getFirstIsCompDeclOfIncidence(
 						EdgeDirection.OUT).getThat());
 			} else {
 				forbiddenVertices.add(declaringVertex
-						.getFirstIsQuantifiedDeclOf(EdgeDirection.OUT)
+						.getFirstIsQuantifiedDeclOfIncidence(EdgeDirection.OUT)
 						.getThat());
 			}
 		} else {
-			if (vertex.getFirstIsVarOf(EdgeDirection.OUT) != null) {
+			if (vertex.getFirstIsVarOfIncidence(EdgeDirection.OUT) != null) {
 				Definition definingVertex = (Definition) vertex
-						.getFirstIsVarOf(EdgeDirection.OUT).getThat();
+						.getFirstIsVarOfIncidence(EdgeDirection.OUT).getThat();
 				forbiddenVertices.add(definingVertex);
-				forbiddenVertices.add(definingVertex.getFirstIsDefinitionOf(
+				forbiddenVertices.add(definingVertex.getFirstIsDefinitionOfIncidence(
 						EdgeDirection.OUT).getThat());
 			} else {
 				// thisvertex, thisedge
@@ -209,7 +209,7 @@ public class VariableEvaluator extends VertexEvaluator {
 				dependingEvaluators.add(eval);
 			}
 			Greql2Aggregation currentEdge = currentVertex
-					.getFirstGreql2Aggregation(EdgeDirection.OUT);
+					.getFirstGreql2AggregationIncidence(EdgeDirection.OUT);
 			while (currentEdge != null) {
 				Greql2Vertex nextVertex = (Greql2Vertex) currentEdge.getThat();
 				if (!forbiddenVertices.contains(nextVertex)) {

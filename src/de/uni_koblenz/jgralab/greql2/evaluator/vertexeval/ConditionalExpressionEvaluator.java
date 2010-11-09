@@ -82,7 +82,7 @@ public class ConditionalExpressionEvaluator extends VertexEvaluator {
 	 */
 	@Override
 	public JValue evaluate() throws EvaluateException {
-		Expression condition = (Expression) vertex.getFirstIsConditionOf(
+		Expression condition = (Expression) vertex.getFirstIsConditionOfIncidence(
 				EdgeDirection.IN).getAlpha();
 		VertexEvaluator conditionEvaluator = greqlEvaluator
 				.getVertexEvaluatorGraphMarker().getMark(condition);
@@ -91,10 +91,10 @@ public class ConditionalExpressionEvaluator extends VertexEvaluator {
 
 		Boolean value = conditionResult.toBoolean();
 		if (value.booleanValue()) {
-			expressionToEvaluate = (Expression) vertex.getFirstIsTrueExprOf(
+			expressionToEvaluate = (Expression) vertex.getFirstIsTrueExprOfIncidence(
 					EdgeDirection.IN).getAlpha();
 		} else {
-			expressionToEvaluate = (Expression) vertex.getFirstIsFalseExprOf(
+			expressionToEvaluate = (Expression) vertex.getFirstIsFalseExprOfIncidence(
 					EdgeDirection.IN).getAlpha();
 		}
 

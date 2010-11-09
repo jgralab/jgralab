@@ -84,12 +84,12 @@ public class ExponentiatedPathDescriptionEvaluator extends
 	@Override
 	public JValue evaluate() throws EvaluateException {
 		PathDescription p = (PathDescription) vertex
-				.getFirstIsExponentiatedPathOf().getAlpha();
+				.getFirstIsExponentiatedPathOfIncidence().getAlpha();
 		PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) greqlEvaluator
 				.getVertexEvaluatorGraphMarker().getMark(p);
 		VertexEvaluator exponentEvaluator = greqlEvaluator
 				.getVertexEvaluatorGraphMarker().getMark(
-						vertex.getFirstIsExponentOf(EdgeDirection.IN)
+						vertex.getFirstIsExponentOfIncidence(EdgeDirection.IN)
 								.getAlpha());
 		JValue exponentValue = exponentEvaluator.getResult(subgraph);
 		int exponent = 0;

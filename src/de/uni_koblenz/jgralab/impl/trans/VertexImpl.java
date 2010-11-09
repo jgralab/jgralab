@@ -105,7 +105,7 @@ public abstract class VertexImpl extends
 	}
 
 	@Override
-	protected IncidenceImpl getFirstIncidence() {
+	protected IncidenceImpl getFirstIncidenceInternal() {
 		if (firstIncidence == null) {
 			return null;
 		}
@@ -115,7 +115,7 @@ public abstract class VertexImpl extends
 	}
 
 	@Override
-	protected IncidenceImpl getLastIncidence() {
+	protected IncidenceImpl getLastIncidenceInternal() {
 		if (lastIncidence == null) {
 			return null;
 		}

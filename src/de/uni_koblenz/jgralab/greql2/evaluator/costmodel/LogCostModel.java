@@ -513,7 +513,7 @@ public class LogCostModel extends DefaultCostModel {
 		PathDescription p = (PathDescription) e.getVertex();
 
 		IsPathDescriptionOf inc = p
-				.getFirstIsPathDescriptionOf(EdgeDirection.IN);
+				.getFirstIsPathDescriptionOfIncidence(EdgeDirection.IN);
 
 		long subtreeCosts = 0;
 		while (inc != null) {
@@ -559,12 +559,12 @@ public class LogCostModel extends DefaultCostModel {
 			BackwardVertexSetEvaluator e, GraphSize graphSize) {
 		BackwardVertexSet vertex = (BackwardVertexSet) e.getVertex();
 		Expression targetExpression = (Expression) vertex
-				.getFirstIsTargetExprOf().getAlpha();
+				.getFirstIsTargetExprOfIncidence().getAlpha();
 		VertexEvaluator vertexEval = greqlEvaluator
 				.getVertexEvaluatorGraphMarker().getMark(targetExpression);
 		long targetCosts = vertexEval
 				.getCurrentSubtreeEvaluationCosts(graphSize);
-		PathDescription p = (PathDescription) vertex.getFirstIsPathOf()
+		PathDescription p = (PathDescription) vertex.getFirstIsPathOfIncidence()
 				.getAlpha();
 		PathDescriptionEvaluator pathDescEval = (PathDescriptionEvaluator) greqlEvaluator
 				.getVertexEvaluatorGraphMarker().getMark(p);
@@ -599,7 +599,7 @@ public class LogCostModel extends DefaultCostModel {
 			ConditionalExpressionEvaluator e, GraphSize graphSize) {
 		ConditionalExpression vertex = (ConditionalExpression) e.getVertex();
 
-		Expression condition = (Expression) vertex.getFirstIsConditionOf()
+		Expression condition = (Expression) vertex.getFirstIsConditionOfIncidence()
 				.getAlpha();
 		VertexEvaluator conditionEvaluator = greqlEvaluator
 				.getVertexEvaluatorGraphMarker().getMark(condition);
@@ -613,13 +613,13 @@ public class LogCostModel extends DefaultCostModel {
 		}
 
 		Expression expressionToEvaluate;
-		expressionToEvaluate = (Expression) vertex.getFirstIsTrueExprOf()
+		expressionToEvaluate = (Expression) vertex.getFirstIsTrueExprOfIncidence()
 				.getAlpha();
 		VertexEvaluator vertexEval = greqlEvaluator
 				.getVertexEvaluatorGraphMarker().getMark(expressionToEvaluate);
 		long trueCosts = vertexEval.getCurrentSubtreeEvaluationCosts(graphSize);
 
-		expressionToEvaluate = (Expression) vertex.getFirstIsFalseExprOf()
+		expressionToEvaluate = (Expression) vertex.getFirstIsFalseExprOfIncidence()
 				.getAlpha();
 		vertexEval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(
 				expressionToEvaluate);
@@ -682,12 +682,12 @@ public class LogCostModel extends DefaultCostModel {
 			ForwardVertexSetEvaluator e, GraphSize graphSize) {
 		ForwardVertexSet vertex = (ForwardVertexSet) e.getVertex();
 		Expression startExpression = (Expression) vertex
-				.getFirstIsStartExprOf().getAlpha();
+				.getFirstIsStartExprOfIncidence().getAlpha();
 		VertexEvaluator vertexEval = greqlEvaluator
 				.getVertexEvaluatorGraphMarker().getMark(startExpression);
 		long startCosts = vertexEval
 				.getCurrentSubtreeEvaluationCosts(graphSize);
-		PathDescription p = (PathDescription) vertex.getFirstIsPathOf()
+		PathDescription p = (PathDescription) vertex.getFirstIsPathOfIncidence()
 				.getAlpha();
 		PathDescriptionEvaluator pathDescEval = (PathDescriptionEvaluator) greqlEvaluator
 				.getVertexEvaluatorGraphMarker().getMark(p);
@@ -754,10 +754,10 @@ public class LogCostModel extends DefaultCostModel {
 
 		VertexEvaluator startExpEval = greqlEvaluator
 				.getVertexEvaluatorGraphMarker().getMark(
-						exp.getFirstIsFirstValueOf().getAlpha());
+						exp.getFirstIsFirstValueOfIncidence().getAlpha());
 		VertexEvaluator targetExpEval = greqlEvaluator
 				.getVertexEvaluatorGraphMarker().getMark(
-						exp.getFirstIsLastValueOf().getAlpha());
+						exp.getFirstIsLastValueOfIncidence().getAlpha());
 
 		long startCosts = startExpEval
 				.getCurrentSubtreeEvaluationCosts(graphSize);
@@ -819,20 +819,20 @@ public class LogCostModel extends DefaultCostModel {
 			GraphSize graphSize) {
 		PathExistence existence = (PathExistence) e.getVertex();
 		Expression startExpression = (Expression) existence
-				.getFirstIsStartExprOf().getAlpha();
+				.getFirstIsStartExprOfIncidence().getAlpha();
 		VertexEvaluator vertexEval = greqlEvaluator
 				.getVertexEvaluatorGraphMarker().getMark(startExpression);
 		long startCosts = vertexEval
 				.getCurrentSubtreeEvaluationCosts(graphSize);
 
 		Expression targetExpression = (Expression) existence
-				.getFirstIsTargetExprOf().getAlpha();
+				.getFirstIsTargetExprOfIncidence().getAlpha();
 		vertexEval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(
 				targetExpression);
 		long targetCosts = vertexEval
 				.getCurrentSubtreeEvaluationCosts(graphSize);
 
-		PathDescription p = (PathDescription) existence.getFirstIsPathOf()
+		PathDescription p = (PathDescription) existence.getFirstIsPathOfIncidence()
 				.getAlpha();
 		PathDescriptionEvaluator pathDescEval = (PathDescriptionEvaluator) greqlEvaluator
 				.getVertexEvaluatorGraphMarker().getMark(p);

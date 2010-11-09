@@ -195,7 +195,7 @@ public class CompareSchemaWithSchemaGraph {
 	private GraphClass retrieveAndCheckGraphClass(Schema gSchema) {
 		// Get the 'only' defined GraphClass in the SchemaGraph
 		DefinesGraphClass definesGraphClass = gSchema
-				.getFirstDefinesGraphClass(OUTGOING);
+				.getFirstDefinesGraphClassIncidence(OUTGOING);
 
 		// There should be one GraphClass
 		assertTrue("There is no GraphClass or DefinesGraphClass edge defined.",
@@ -236,7 +236,7 @@ public class CompareSchemaWithSchemaGraph {
 		Vertex vertex;
 		// Gets the only defined DefaultPackage in the SchemaGraph
 		ContainsDefaultPackage containsDefaultPackage = gSchema
-				.getFirstContainsDefaultPackage(OUTGOING);
+				.getFirstContainsDefaultPackageIncidence(OUTGOING);
 		// There should be one DefaultPackage
 		assertFalse("There is no DefaultPackage defined.",
 				containsDefaultPackage == null);
@@ -310,7 +310,7 @@ public class CompareSchemaWithSchemaGraph {
 	private List<String> retrieveComments(NamedElement gElement) {
 		List<String> gComments = new ArrayList<String>();
 
-		Annotates annotates = gElement.getFirstAnnotates();
+		Annotates annotates = gElement.getFirstAnnotatesIncidence();
 
 		while (annotates != null) {
 
@@ -610,7 +610,7 @@ public class CompareSchemaWithSchemaGraph {
 			de.uni_koblenz.jgralab.schema.MapDomain domain, MapDomain gDomain) {
 
 		// KEY DOMAIN
-		HasKeyDomain hasKeyDomain = gDomain.getFirstHasKeyDomain(OUTGOING);
+		HasKeyDomain hasKeyDomain = gDomain.getFirstHasKeyDomainIncidence(OUTGOING);
 		assertTrue("There is no key Domain defined.", hasKeyDomain != null);
 		Vertex vertex = hasKeyDomain.getThat();
 		assertTrue("That should be an instance of Domain.",
@@ -627,7 +627,7 @@ public class CompareSchemaWithSchemaGraph {
 
 		// VALUE DOMAIN
 		HasValueDomain hasValueDomain = gDomain
-				.getFirstHasValueDomain(OUTGOING);
+				.getFirstHasValueDomainIncidence(OUTGOING);
 		assertTrue("There is no value Domain defined.", hasValueDomain != null);
 		vertex = hasValueDomain.getThat();
 		assertTrue("That should be an instance of Domain.",
@@ -657,7 +657,7 @@ public class CompareSchemaWithSchemaGraph {
 			CollectionDomain gDomain) {
 
 		// BASE DOMAIN
-		HasBaseDomain hasBaseDomain = gDomain.getFirstHasBaseDomain(OUTGOING);
+		HasBaseDomain hasBaseDomain = gDomain.getFirstHasBaseDomainIncidence(OUTGOING);
 		assertTrue("There should be a base Domain.", hasBaseDomain != null);
 		Vertex vertex = hasBaseDomain.getThat();
 		assertTrue("That should be an instance of Domain.",
@@ -814,12 +814,12 @@ public class CompareSchemaWithSchemaGraph {
 				superClasses.isEmpty());
 
 		// "To" and "From" edges are compared
-		ComesFrom comesFrom = gEdgeClass.getFirstComesFrom();
+		ComesFrom comesFrom = gEdgeClass.getFirstComesFromIncidence();
 		compareIncidenceClass(edgeClass.getFrom(), (IncidenceClass) comesFrom
 				.getThat(), IncidenceDirection.OUT);
 		// TODO TEST ob es weitere Kanten gibt, die es nicht geben sollte!
 
-		GoesTo goesTo = gEdgeClass.getFirstGoesTo();
+		GoesTo goesTo = gEdgeClass.getFirstGoesToIncidence();
 		compareIncidenceClass(edgeClass.getTo(), (IncidenceClass) goesTo
 				.getThat(), IncidenceDirection.IN);
 		// TODO TEST ob es weitere Kanten gibt, die es nicht geben sollte!
@@ -887,7 +887,7 @@ public class CompareSchemaWithSchemaGraph {
 	private void compareVertexClassesOfIncidenceClasses(
 			de.uni_koblenz.jgralab.schema.IncidenceClass incidence,
 			IncidenceClass gIncidence) {
-		EndsAt edgeToVertexClass = gIncidence.getFirstEndsAt();
+		EndsAt edgeToVertexClass = gIncidence.getFirstEndsAtIncidence();
 		assertTrue("That should be an instance of \"VertexClass\".",
 				edgeToVertexClass.getThat() instanceof VertexClass);
 
@@ -1010,9 +1010,9 @@ public class CompareSchemaWithSchemaGraph {
 			Set<String> gSubsettedIncidenceClasses, Subsets subsets) {
 		IncidenceClass subsettedIncidenceClass = (IncidenceClass) subsets
 				.getThat();
-		Edge edgeToEdgeClass = subsettedIncidenceClass.getFirstGoesTo();
+		Edge edgeToEdgeClass = subsettedIncidenceClass.getFirstGoesToIncidence();
 		if (edgeToEdgeClass == null) {
-			edgeToEdgeClass = subsettedIncidenceClass.getFirstComesFrom();
+			edgeToEdgeClass = subsettedIncidenceClass.getFirstComesFromIncidence();
 		}
 		assertFalse(
 				"There is no edge defined to connected this IncidenceClass to its EdgeClass.",
@@ -1060,7 +1060,7 @@ public class CompareSchemaWithSchemaGraph {
 					attributes.containsKey(gAttribute.get_name()));
 
 			// Get the Domain
-			HasDomain hasDomain = gAttribute.getFirstHasDomain(OUTGOING);
+			HasDomain hasDomain = gAttribute.getFirstHasDomainIncidence(OUTGOING);
 			assertTrue("There is no Domain defined.", hasDomain != null);
 			Vertex vertex = hasDomain.getThat();
 			assertTrue("Omega should be an instance of Domain.",

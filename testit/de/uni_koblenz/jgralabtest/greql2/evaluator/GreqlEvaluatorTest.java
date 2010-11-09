@@ -147,7 +147,7 @@ public class GreqlEvaluatorTest extends GenericTests {
 		JValue result = evalTestQuery("vertexSeq", queryString);
 		JValueSet set = result.toJValueSet();
 		if (!(first instanceof Definition)) {
-			first = first.getNextVertexOfClass(Definition.class);
+			first = first.getNextVertex(Definition.class);
 		}
 		Definition current = (Definition) first;
 		for (JValue cv : set) {
@@ -978,7 +978,7 @@ public class GreqlEvaluatorTest extends GenericTests {
 		assertEquals(4, result.toCollection().size());
 		JValueSet set = result.toCollection().toJValueSet();
 		for (Definition def : ((Greql2) getTestGraph()).getDefinitionVertices()) {
-			assertNotNull(def.getFirstIsDefinitionOf());
+			assertNotNull(def.getFirstIsDefinitionOfIncidence());
 			assertTrue(set.contains(new JValueImpl(def)));
 		}
 		JValue resultWO = evalTestQuery("DependentDeclarations3 (wo)",

@@ -99,7 +99,7 @@ public class TransformXorFunctionApplicationOptimizer extends OptimizerBase {
 		for (FunctionApplication xor : xors) {
 			somethingWasTransformed = true;
 			// Figure out the two arguments of the Xor
-			IsArgumentOf isArgOf = xor.getFirstIsArgumentOf(EdgeDirection.IN);
+			IsArgumentOf isArgOf = xor.getFirstIsArgumentOfIncidence(EdgeDirection.IN);
 			Expression arg1 = (Expression) isArgOf.getAlpha();
 			isArgOf = isArgOf.getNextIsArgumentOf(EdgeDirection.IN);
 			Expression arg2 = (Expression) isArgOf.getAlpha();
@@ -146,10 +146,10 @@ public class TransformXorFunctionApplicationOptimizer extends OptimizerBase {
 
 			// relink all edges that started in the Xor vertex
 			ArrayList<Edge> edgesToBeRelinked = new ArrayList<Edge>();
-			Edge e = xor.getFirstEdge(EdgeDirection.OUT);
+			Edge e = xor.getFirstIncidence(EdgeDirection.OUT);
 			while (e != null) {
 				edgesToBeRelinked.add(e);
-				e = e.getNextEdge(EdgeDirection.OUT);
+				e = e.getNextIncidence(EdgeDirection.OUT);
 			}
 			for (Edge edge : edgesToBeRelinked) {
 				edge.setAlpha(or);

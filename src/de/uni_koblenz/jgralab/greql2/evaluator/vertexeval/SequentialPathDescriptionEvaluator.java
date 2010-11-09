@@ -78,7 +78,7 @@ public class SequentialPathDescriptionEvaluator extends
 	@Override
 	public JValue evaluate() throws EvaluateException {
 		IsSequenceElementOf inc = vertex
-				.getFirstIsSequenceElementOf(EdgeDirection.IN);
+				.getFirstIsSequenceElementOfIncidence(EdgeDirection.IN);
 		ArrayList<NFA> nfaList = new ArrayList<NFA>();
 		while (inc != null) {
 			PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) greqlEvaluator

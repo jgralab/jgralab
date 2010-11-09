@@ -85,15 +85,15 @@ public class FirstEdge extends Greql2Function {
 			throws EvaluateException {
 		switch (checkArguments(arguments)) {
 		case 0:
-			return new JValueImpl(graph.getFirstEdgeInGraph());
+			return new JValueImpl(graph.getFirstEdge());
 		case 1:
-			Edge current = graph.getFirstEdgeInGraph();
+			Edge current = graph.getFirstEdge();
 			JValueTypeCollection tc = arguments[2].toJValueTypeCollection();
 			while (current != null) {
 				if (tc.acceptsType(current.getAttributedElementClass())) {
 					return new JValueImpl(current);
 				}
-				current = current.getNextEdgeInGraph();
+				current = current.getNextEdge();
 			}
 			return new JValueImpl((Edge) null);
 		default:

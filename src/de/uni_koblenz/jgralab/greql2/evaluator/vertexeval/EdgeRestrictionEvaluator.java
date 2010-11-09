@@ -122,7 +122,7 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator {
 	public JValue evaluate() throws EvaluateException {
 		if (typeCollection == null) {
 			typeCollection = new JValueTypeCollection();
-			IsTypeIdOf typeInc = vertex.getFirstIsTypeIdOf(EdgeDirection.IN);
+			IsTypeIdOf typeInc = vertex.getFirstIsTypeIdOfIncidence(EdgeDirection.IN);
 			while (typeInc != null) {
 				TypeIdEvaluator typeEval = (TypeIdEvaluator) greqlEvaluator
 						.getVertexEvaluatorGraphMarker().getMark(
@@ -141,7 +141,7 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator {
 			}
 		}
 
-		if (vertex.getFirstIsRoleIdOf() != null) {
+		if (vertex.getFirstIsRoleIdOfIncidence() != null) {
 			validRoles = new HashSet<String>();
 			for (IsRoleIdOf e : vertex.getIsRoleIdOfIncidences()) {
 				RoleId role = (RoleId) e.getAlpha();
@@ -149,7 +149,7 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator {
 			}
 		}
 		IsBooleanPredicateOfEdgeRestriction predInc = vertex
-				.getFirstIsBooleanPredicateOfEdgeRestriction(EdgeDirection.IN);
+				.getFirstIsBooleanPredicateOfEdgeRestrictionIncidence(EdgeDirection.IN);
 		if (predInc != null) {
 			// System.out.println("Found a BooleanPredicateOfEdge");
 			predicateEvaluator = greqlEvaluator.getVertexEvaluatorGraphMarker()

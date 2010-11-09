@@ -100,12 +100,12 @@ public abstract class VertexImpl extends
 	}
 
 	@Override
-	protected IncidenceImpl getFirstIncidence() {
+	protected IncidenceImpl getFirstIncidenceInternal() {
 		return firstIncidence;
 	}
 
 	@Override
-	protected IncidenceImpl getLastIncidence() {
+	protected IncidenceImpl getLastIncidenceInternal() {
 		return lastIncidence;
 	}
 

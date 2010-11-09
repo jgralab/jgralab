@@ -245,8 +245,8 @@ public class SchemaGraph2Schema {
 		IncidenceClass gFrom, gTo;
 		de.uni_koblenz.jgralab.schema.impl.IncidenceClassImpl from, to;
 
-		gFrom = (IncidenceClass) gEdgeClass.getFirstComesFrom().getThat();
-		gTo = (IncidenceClass) gEdgeClass.getFirstGoesTo().getThat();
+		gFrom = (IncidenceClass) gEdgeClass.getFirstComesFromIncidence().getThat();
+		gTo = (IncidenceClass) gEdgeClass.getFirstGoesToIncidence().getThat();
 
 		assert (gFrom != null) : "FIXME! No from \"IncidenceClass\" defined.";
 		assert (gTo != null) : "FIXME! No to \"IncidenceClass\" defined.";
@@ -337,7 +337,7 @@ public class SchemaGraph2Schema {
 
 		// Gets the GraphClass
 		DefinesGraphClass definesGraphClass = gSchema
-				.getFirstDefinesGraphClass(OUTGOING);
+				.getFirstDefinesGraphClassIncidence(OUTGOING);
 		assert (definesGraphClass != null) : "FIXME! No \"DefinesGraphClass\" edge defined.";
 		assert (definesGraphClass.getThat() instanceof GraphClass) : "FIXME! That is not an instance of \"GraphClass\"";
 		GraphClass gGraphClass = (GraphClass) definesGraphClass.getThat();
@@ -350,7 +350,7 @@ public class SchemaGraph2Schema {
 		// Sets its attributes and constraints
 		createAllAttributes(graphClass, gGraphClass);
 		createAllConstraints(graphClass, gGraphClass);
-		if (gGraphClass.getFirstAnnotates() != null) {
+		if (gGraphClass.getFirstAnnotatesIncidence() != null) {
 			graphClass.addComment(createComments(gGraphClass));
 		}
 
@@ -371,7 +371,7 @@ public class SchemaGraph2Schema {
 
 		// Gets the DefaultPackage
 		ContainsDefaultPackage containsDefaultPackage = gSchema
-				.getFirstContainsDefaultPackage(OUTGOING);
+				.getFirstContainsDefaultPackageIncidence(OUTGOING);
 		assert (containsDefaultPackage != null) : "No \"ContainsDefaultPackage\" edge defined.";
 		assert (containsDefaultPackage.getThat() instanceof Package) : "FIXME! That should be an instance of \"Package\".";
 		Package defaultPackage = (Package) containsDefaultPackage.getThat();
@@ -515,7 +515,7 @@ public class SchemaGraph2Schema {
 				domain = createDomain((RecordDomain) gDomain);
 			}
 			// set comments
-			if (gDomain.getFirstAnnotates() != null) {
+			if (gDomain.getFirstAnnotatesIncidence() != null) {
 				domain.addComment(createComments(gDomain));
 			}
 		}
@@ -609,7 +609,7 @@ public class SchemaGraph2Schema {
 		assert (gDomain != null) : "FIXME! The given Domain shouldn't be null.";
 
 		// Gets the BaseDomain
-		HasBaseDomain hasBaseDomain = gDomain.getFirstHasBaseDomain(OUTGOING);
+		HasBaseDomain hasBaseDomain = gDomain.getFirstHasBaseDomainIncidence(OUTGOING);
 		assert (hasBaseDomain != null) : "FIXME! No \"HasBaseDomain\" has been defined.";
 		assert (hasBaseDomain.getThat() instanceof Domain) : "FIXME! That should be an instance of Domain.";
 		Domain base = (Domain) hasBaseDomain.getThat();
@@ -634,7 +634,7 @@ public class SchemaGraph2Schema {
 		Domain key, value;
 
 		// Gets the KeyDomain
-		HasKeyDomain hasKeyDomain = gDomain.getFirstHasKeyDomain(OUTGOING);
+		HasKeyDomain hasKeyDomain = gDomain.getFirstHasKeyDomainIncidence(OUTGOING);
 		assert (hasKeyDomain != null) : "No \"HasKeyDomain\" has been defined.";
 		assert (hasKeyDomain.getThat() instanceof Domain) : "That should be an instance of Domain.";
 		key = (Domain) hasKeyDomain.getThat();
@@ -642,7 +642,7 @@ public class SchemaGraph2Schema {
 
 		// Gets the ValueDomain
 		HasValueDomain hasValueDomain = gDomain
-				.getFirstHasValueDomain(OUTGOING);
+				.getFirstHasValueDomainIncidence(OUTGOING);
 		assert (hasValueDomain != null) : "No \"HasValueDomain\" has been defined.";
 		assert (hasValueDomain.getThat() instanceof Domain) : "That should be an instance of Domain.";
 		value = (Domain) hasValueDomain.getThat();
@@ -698,8 +698,8 @@ public class SchemaGraph2Schema {
 			EdgeClass gEdgeClass = (EdgeClass) gElement;
 
 			// To and From edges are retrieved
-			GoesTo to = gEdgeClass.getFirstGoesTo(OUTGOING);
-			ComesFrom from = gEdgeClass.getFirstComesFrom(OUTGOING);
+			GoesTo to = gEdgeClass.getFirstGoesToIncidence(OUTGOING);
+			ComesFrom from = gEdgeClass.getFirstComesFromIncidence(OUTGOING);
 
 			assert ((to != null) && (from != null)) : "No \"To\" or \"From\" edge has been defined.";
 			// An EdgeClass is created
@@ -723,7 +723,7 @@ public class SchemaGraph2Schema {
 		createAllConstraints(element, gElement);
 
 		// set comments
-		if (gElement.getFirstAnnotates() != null) {
+		if (gElement.getFirstAnnotatesIncidence() != null) {
 			element.addComment(createComments(gElement));
 		}
 		return element;
@@ -743,11 +743,11 @@ public class SchemaGraph2Schema {
 
 		assert (gElement != null) : "The given GraphElementClass of the SchemaGraph is null.";
 		assert ((gTo != null) && (gFrom != null)) : "One fo the edges To or From is null.";
-		assert (gTo.getFirstEndsAt().getThat() != null)
-				&& (gFrom.getFirstEndsAt().getThat() != null) : "One of the referenced objects is not an instance of the class VertexClass";
+		assert (gTo.getFirstEndsAtIncidence().getThat() != null)
+				&& (gFrom.getFirstEndsAtIncidence().getThat() != null) : "One of the referenced objects is not an instance of the class VertexClass";
 
 		// Gets all attributes of the To edge
-		to = queryVertexClass((VertexClass) gTo.getFirstEndsAt().getThat());
+		to = queryVertexClass((VertexClass) gTo.getFirstEndsAtIncidence().getThat());
 		toMin = gTo.get_min();
 		toMax = gTo.get_max();
 		toRoleName = gTo.get_roleName();
@@ -755,7 +755,7 @@ public class SchemaGraph2Schema {
 				.get_aggregation().toString());
 
 		// Gets all attributes of the From edge
-		from = queryVertexClass((VertexClass) gFrom.getFirstEndsAt().getThat());
+		from = queryVertexClass((VertexClass) gFrom.getFirstEndsAtIncidence().getThat());
 		fromMin = gFrom.get_min();
 		fromMax = gFrom.get_max();
 		fromRoleName = gFrom.get_roleName();
@@ -835,7 +835,7 @@ public class SchemaGraph2Schema {
 			assert (attribute.get_name() != null) : "The name of the Attribute is null.";
 
 			// Gets the Domain
-			HasDomain hasDomain = attribute.getFirstHasDomain(OUTGOING);
+			HasDomain hasDomain = attribute.getFirstHasDomainIncidence(OUTGOING);
 			assert (hasDomain != null) : "No \"HasDomain\" edge has been defined.";
 			assert (hasDomain.getThat() instanceof Domain) : "That should be an instance of Domain.";
 			// Creates and adds an Attribute

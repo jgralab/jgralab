@@ -90,7 +90,7 @@ public class FunctionTest extends GenericTests {
 		String dataGraphQuery = "true"; // should contains only one edge
 		Greql2 dataGraph = GreqlParser.parse(dataGraphQuery);
 		JValue result = evalTestQuery("getEdge", "getEdge(1)", dataGraph);
-		assertEquals(dataGraph.getFirstEdgeInGraph(), result.toEdge());
+		assertEquals(dataGraph.getFirstEdge(), result.toEdge());
 	}
 
 	@Test

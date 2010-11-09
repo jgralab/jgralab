@@ -208,7 +208,7 @@ public abstract class EdgeImpl extends EdgeBaseImpl implements
 	}
 
 	@Override
-	public boolean isBefore(Edge e) {
+	public boolean isBeforeIncidence(Edge e) {
 		this.assertPreCondition(e);
 		if (!this.equals(e)) {
 			return this.sequenceNumberInLambdaSeq < ((DatabasePersistableEdge) e)
@@ -219,7 +219,7 @@ public abstract class EdgeImpl extends EdgeBaseImpl implements
 	}
 
 	@Override
-	public boolean isAfter(Edge e) {
+	public boolean isAfterIncidence(Edge e) {
 		this.assertPreCondition(e);
 		if (!this.equals(e)) {
 			return this.sequenceNumberInLambdaSeq > ((DatabasePersistableEdge) e)
@@ -230,7 +230,7 @@ public abstract class EdgeImpl extends EdgeBaseImpl implements
 	}
 
 	@Override
-	public boolean isBeforeInGraph(Edge e) {
+	public boolean isBeforeEdge(Edge e) {
 		this.assertGraphPreCondition(e);
 		if (this != e.getNormalEdge()) {
 			e = e.getNormalEdge();
@@ -242,7 +242,7 @@ public abstract class EdgeImpl extends EdgeBaseImpl implements
 	}
 
 	@Override
-	public boolean isAfterInGraph(Edge e) {
+	public boolean isAfterEdge(Edge e) {
 		this.assertGraphPreCondition(e);
 		if (this != e.getNormalEdge()) {
 			e = e.getNormalEdge();
@@ -266,35 +266,35 @@ public abstract class EdgeImpl extends EdgeBaseImpl implements
 	}
 
 	@Override
-	public Edge getPrevEdgeInGraph() {
+	public Edge getPrevEdge() {
 		return this.getGraphImpl().getPrevEdge(this);
 	}
 
 	@Override
-	public Edge getNextEdgeInGraph() {
+	public Edge getNextEdge() {
 		return this.getGraphImpl().getNextEdge(this);
 	}
 
 	@Override
-	protected IncidenceImpl getPrevIncidence() {
+	protected IncidenceImpl getPrevIncidenceInternal() {
 		VertexImpl vertex = (VertexImpl) this.getIncidentVertex();
 		return (IncidenceImpl) vertex.getPrevIncidence(this);
 	}
 
 	@Override
-	protected IncidenceImpl getNextIncidence() {
+	protected IncidenceImpl getNextIncidenceInternal() {
 		VertexImpl vertex = (VertexImpl) this.getIncidentVertex();
 		return (IncidenceImpl) vertex.getNextIncidence(this);
 	}
 
 	@Override
 	protected void setPrevEdgeInGraph(Edge prevEdge) {
-		prevEdge.putBeforeInGraph(this);
+		prevEdge.putBeforeEdge(this);
 	}
 
 	@Override
 	protected void setNextEdgeInGraph(Edge nextEdge) {
-		nextEdge.putAfterInGraph(this);
+		nextEdge.putAfterEdge(this);
 	}
 
 	@Override
@@ -305,8 +305,8 @@ public abstract class EdgeImpl extends EdgeBaseImpl implements
 	}
 
 	@Override
-	protected void setNextIncidence(IncidenceImpl nextIncidence) {
-		nextIncidence.putEdgeAfter(this);
+	protected void setNextIncidenceInternal(IncidenceImpl nextIncidence) {
+		nextIncidence.putIncidenceAfter(this);
 	}
 
 	private boolean isNotTheSameEdgeAs(Edge e) {
@@ -318,27 +318,27 @@ public abstract class EdgeImpl extends EdgeBaseImpl implements
 	}
 
 	@Override
-	public void putEdgeBefore(Edge e) {
+	public void putIncidenceBefore(Edge e) {
 		assert e != null;
 		assert this.isPartOfSameGraphAs(e);
 		assert getThis() == e.getThis();
 		VertexImpl v = (VertexImpl) this.getThis();
 		assert v.isValid();
-		if (this != e && this.getNextEdge() != e) {
+		if (this != e && this.getNextIncidence() != e) {
 			v.putIncidenceBefore((IncidenceImpl) e, this);
 			v.incidenceListModified();
 		}
 	}
 
 	@Override
-	public void putEdgeAfter(Edge e) {
+	public void putIncidenceAfter(Edge e) {
 		assert e != null;
 		assert this.isPartOfSameGraphAs(e);
 		assert getThis() == e.getThis();
 		VertexImpl v = (VertexImpl) this.getThis();
 		assert v.isValid();
 		// if (this.isNotTheSameEdgeAs(e)){
-		if (this != e && this != e.getNextEdge()) {
+		if (this != e && this != e.getNextIncidence()) {
 			System.out.println("putEdgeAfter calls v.putIncidenceAfter");
 			v.putIncidenceAfter((IncidenceImpl) e, this);
 			v.incidenceListModified();
@@ -346,12 +346,12 @@ public abstract class EdgeImpl extends EdgeBaseImpl implements
 	}
 
 	@Override
-	public void putAfterInGraph(Edge e) {
+	public void putAfterEdge(Edge e) {
 		assert e != null;
 		assert this.isPartOfSameGraphAs(e);
 		assert this.isNotTheSameEdgeAs(e);
 		assert e != reversedEdge;
-		if (this != e && this != e.getNextEdgeInGraph()) {
+		if (this != e && this != e.getNextEdge()) {
 			this.getGraphImpl().putEdgeAfterInGraph(
 					(EdgeBaseImpl) e.getNormalEdge(), this);
 			this.getGraphImpl().edgeListModified();
@@ -359,12 +359,12 @@ public abstract class EdgeImpl extends EdgeBaseImpl implements
 	}
 
 	@Override
-	public void putBeforeInGraph(Edge e) {
+	public void putBeforeEdge(Edge e) {
 		assert e != null;
 		assert this.isPartOfSameGraphAs(e);
 		assert this != e;
 		assert e != reversedEdge;
-		if (this != e && this.getNextEdgeInGraph() != e) {
+		if (this != e && this.getNextEdge() != e) {
 			this.getGraphImpl().putEdgeBeforeInGraph(
 					(EdgeBaseImpl) e.getNormalEdge(), this);
 			this.getGraphImpl().edgeListModified();
@@ -372,8 +372,8 @@ public abstract class EdgeImpl extends EdgeBaseImpl implements
 	}
 
 	@Override
-	protected void setPrevIncidence(IncidenceImpl prevIncidence) {
-		prevIncidence.putEdgeBefore(this);
+	protected void setPrevIncidenceInternal(IncidenceImpl prevIncidence) {
+		prevIncidence.putIncidenceBefore(this);
 	}
 
 	/**

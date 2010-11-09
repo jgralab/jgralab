@@ -121,7 +121,7 @@ public class BoolExpressionTransition extends Transition {
 			VertexEvaluator boolEval, GraphMarker<VertexEvaluator> graphMarker) {
 		super(start, end);
 		boolExpressionEvaluator = boolEval;
-		Vertex v = graphMarker.getGraph().getFirstVertexOfClass(
+		Vertex v = graphMarker.getGraph().getFirstVertex(
 				ThisVertex.class);
 		if (v != null) {
 			thisVertexEvaluator = (ThisVertexEvaluator) graphMarker.getMark(v);

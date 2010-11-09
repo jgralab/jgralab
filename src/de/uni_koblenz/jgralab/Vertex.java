@@ -165,14 +165,14 @@ public interface Vertex extends GraphElement {
 	 *            the class of the next vertex
 	 * @return the next vertex in vSeq of class aVertexClass or its superclasses
 	 */
-	public Vertex getNextVertexOfClass(VertexClass aVertexClass);
+	public Vertex getNextVertex(VertexClass aVertexClass);
 
 	/**
 	 * @param aM1VertexClass
 	 *            the class of the next vertex
 	 * @return the next vertex in vSeq of class aVertexClass or its superclasses
 	 */
-	public Vertex getNextVertexOfClass(Class<? extends Vertex> aM1VertexClass);
+	public Vertex getNextVertex(Class<? extends Vertex> aM1VertexClass);
 
 	/**
 	 * @param aVertexClass
@@ -181,7 +181,7 @@ public interface Vertex extends GraphElement {
 	 *            if true, no subclasses are returned
 	 * @return the next vertex in vSeq of explicit class aVertexClass
 	 */
-	public Vertex getNextVertexOfClass(VertexClass aVertexClass,
+	public Vertex getNextVertex(VertexClass aVertexClass,
 			boolean noSubclasses);
 
 	/**
@@ -191,25 +191,25 @@ public interface Vertex extends GraphElement {
 	 *            if true, no subclasses are returned
 	 * @return the next vertex in vSeq of explicit class aVertexClass
 	 */
-	public Vertex getNextVertexOfClass(Class<? extends Vertex> aM1VertexClass,
+	public Vertex getNextVertex(Class<? extends Vertex> aM1VertexClass,
 			boolean noSubclasses);
 
 	/**
 	 * @return first incident edge of this vertex
 	 */
-	public Edge getFirstEdge();
+	public Edge getFirstIncidence();
 
 	/**
 	 * @return last incident edge of this vertex
 	 */
-	public Edge getLastEdge();
+	public Edge getLastIncidence();
 
 	/**
 	 * @param orientation
 	 *            of connected incidences,
 	 * @return the first incidence of vertex with direction IN or OUT
 	 */
-	public Edge getFirstEdge(EdgeDirection orientation);
+	public Edge getFirstIncidence(EdgeDirection orientation);
 
 	/**
 	 * Get the first incident edge which as one of the aggregation semantics
@@ -221,17 +221,17 @@ public interface Vertex extends GraphElement {
 	 * containment hierarchy.
 	 * 
 	 * <pre>
-	 * v.getFirstEdge(true, AggregationKind.SHARED, AggregationKind.COMPOSITE)
+	 * v.getFirstIncidence(true, AggregationKind.SHARED, AggregationKind.COMPOSITE)
 	 * </pre>
 	 * 
 	 * And this returns the first edge to a child vertex in the containment
 	 * hierarchy.
 	 * 
 	 * <pre>
-	 * v.getFirstEdge(false, AggregationKind.SHARED, AggregationKind.COMPOSITE)
+	 * v.getFirstIncidence(false, AggregationKind.SHARED, AggregationKind.COMPOSITE)
 	 * </pre>
 	 * 
-	 * @see Edge#getNextEdge(boolean, AggregationKind...)
+	 * @see Edge#getNextIncidence(boolean, AggregationKind...)
 	 * 
 	 * @param thisIncidence
 	 *            if true, <code>kinds</code> has to match the incidence at this
@@ -241,7 +241,7 @@ public interface Vertex extends GraphElement {
 	 *         (thisIncidence == true) or that vertex (thisIncidence == false)
 	 *         has one of the aggregation semantics given by <code>kind</code>.
 	 */
-	public Edge getFirstEdge(boolean thisIncidence, AggregationKind... kinds);
+	public Edge getFirstIncidence(boolean thisIncidence, AggregationKind... kinds);
 
 	/**
 	 * @param anEdgeClass
@@ -249,7 +249,7 @@ public interface Vertex extends GraphElement {
 	 * @return the first incidence in iSeq where the corresponding edge is of
 	 *         class anEdgeClass
 	 */
-	public Edge getFirstEdgeOfClass(EdgeClass anEdgeClass);
+	public Edge getFirstIncidence(EdgeClass anEdgeClass);
 
 	/**
 	 * @param anEdgeClass
@@ -257,7 +257,7 @@ public interface Vertex extends GraphElement {
 	 * @return the first incidence in iSeq where the corresponding edge is of
 	 *         class anEdgeClass
 	 */
-	public Edge getFirstEdgeOfClass(Class<? extends Edge> anEdgeClass);
+	public Edge getFirstIncidence(Class<? extends Edge> anEdgeClass);
 
 	/**
 	 * @param anEdgeClass
@@ -267,7 +267,7 @@ public interface Vertex extends GraphElement {
 	 * @return the first incidence in iSeq where the corresponding edge is of
 	 *         class anEdgeClass
 	 */
-	public Edge getFirstEdgeOfClass(EdgeClass anEdgeClass,
+	public Edge getFirstIncidence(EdgeClass anEdgeClass,
 			EdgeDirection orientation);
 
 	/**
@@ -278,7 +278,7 @@ public interface Vertex extends GraphElement {
 	 * @return the first incidence in iSeq where the corresponding edge is of
 	 *         class anEdgeClass
 	 */
-	public Edge getFirstEdgeOfClass(Class<? extends Edge> anEdgeClass,
+	public Edge getFirstIncidence(Class<? extends Edge> anEdgeClass,
 			EdgeDirection orientation);
 
 	/**
@@ -289,7 +289,7 @@ public interface Vertex extends GraphElement {
 	 * @return the first incidence in iSeq where the corresponding edge is of
 	 *         explicit class anEdgeClass
 	 */
-	public Edge getFirstEdgeOfClass(EdgeClass anEdgeClass, boolean noSubclasses);
+	public Edge getFirstIncidence(EdgeClass anEdgeClass, boolean noSubclasses);
 
 	/**
 	 * @param anEdgeClass
@@ -299,7 +299,7 @@ public interface Vertex extends GraphElement {
 	 * @return the first incidence in iSeq where the corresponding edge is of
 	 *         explicit class anEdgeClass
 	 */
-	public Edge getFirstEdgeOfClass(Class<? extends Edge> anEdgeClass,
+	public Edge getFirstIncidence(Class<? extends Edge> anEdgeClass,
 			boolean noSubclasses);
 
 	/**
@@ -313,7 +313,7 @@ public interface Vertex extends GraphElement {
 	 * @return the first incidence in iSeq where the corresponding edge is of
 	 *         explicit class anEdgeClass
 	 */
-	public Edge getFirstEdgeOfClass(EdgeClass anEdgeClass,
+	public Edge getFirstIncidence(EdgeClass anEdgeClass,
 			EdgeDirection orientation, boolean noSubclasses);
 
 	/**
@@ -327,7 +327,7 @@ public interface Vertex extends GraphElement {
 	 * @return the first incidence in iSeq where the corresponding edge is of
 	 *         explicit class anEdgeClass
 	 */
-	public Edge getFirstEdgeOfClass(Class<? extends Edge> anEdgeClass,
+	public Edge getFirstIncidence(Class<? extends Edge> anEdgeClass,
 			EdgeDirection orientation, boolean noSubclasses);
 
 	/**

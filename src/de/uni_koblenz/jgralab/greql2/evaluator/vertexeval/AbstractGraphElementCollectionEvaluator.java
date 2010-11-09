@@ -62,7 +62,7 @@ public abstract class AbstractGraphElementCollectionEvaluator extends
 		if (typeCollection == null) {
 			typeCollection = new JValueTypeCollection();
 			IsTypeRestrOf inc = ((Expression) getVertex())
-					.getFirstIsTypeRestrOf(EdgeDirection.IN);
+					.getFirstIsTypeRestrOfIncidence(EdgeDirection.IN);
 			while (inc != null) {
 				if (inc.getAlpha() instanceof TypeId) {
 					TypeIdEvaluator typeEval = (TypeIdEvaluator) greqlEvaluator

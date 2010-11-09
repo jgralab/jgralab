@@ -76,11 +76,11 @@ public class PathExistenceEvaluator extends PathSearchEvaluator {
 
 	@Override
 	public JValue evaluate() throws EvaluateException {
-		PathDescription p = (PathDescription) vertex.getFirstIsPathOf(
+		PathDescription p = (PathDescription) vertex.getFirstIsPathOfIncidence(
 				EdgeDirection.IN).getAlpha();
 		PathDescriptionEvaluator pathDescEval = (PathDescriptionEvaluator) greqlEvaluator
 				.getVertexEvaluatorGraphMarker().getMark(p);
-		Expression startExpression = (Expression) vertex.getFirstIsStartExprOf(
+		Expression startExpression = (Expression) vertex.getFirstIsStartExprOfIncidence(
 				EdgeDirection.IN).getAlpha();
 		VertexEvaluator startEval = greqlEvaluator
 				.getVertexEvaluatorGraphMarker().getMark(startExpression);
@@ -104,7 +104,7 @@ public class PathExistenceEvaluator extends PathSearchEvaluator {
 			return new JValueImpl();
 		}
 		Expression targetExpression = (Expression) vertex
-				.getFirstIsTargetExprOf(EdgeDirection.IN).getAlpha();
+				.getFirstIsTargetExprOfIncidence(EdgeDirection.IN).getAlpha();
 		VertexEvaluator targetEval = greqlEvaluator
 				.getVertexEvaluatorGraphMarker().getMark(targetExpression);
 		Vertex targetVertex = null;

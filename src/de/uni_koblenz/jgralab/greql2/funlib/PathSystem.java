@@ -205,7 +205,7 @@ public class PathSystem extends Greql2Function {
 			if (currentEntry.state.isFinal) {
 				finalVertices.add(currentEntry.vertex);
 			}
-			Edge inc = currentEntry.vertex.getFirstEdge();
+			Edge inc = currentEntry.vertex.getFirstIncidence();
 			while (inc != null) {
 				count++;
 
@@ -235,7 +235,7 @@ public class PathSystem extends Greql2Function {
 						}
 					}
 				}
-				inc = inc.getNextEdge();
+				inc = inc.getNextIncidence();
 			}
 			currentEntry = queue.poll();
 		}

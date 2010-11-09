@@ -79,7 +79,7 @@ public class RecordConstructionEvaluator extends VertexEvaluator {
 	public JValue evaluate() throws EvaluateException {
 		JValueRecord resultRecord = new JValueRecord();
 		IsRecordElementOf inc = vertex
-				.getFirstIsRecordElementOf(EdgeDirection.IN);
+				.getFirstIsRecordElementOfIncidence(EdgeDirection.IN);
 		while (inc != null) {
 			RecordElement currentElement = (RecordElement) inc.getAlpha();
 			RecordElementEvaluator vertexEval = (RecordElementEvaluator) greqlEvaluator

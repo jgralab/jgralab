@@ -100,7 +100,7 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 	@Override
 	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
 			throws OptimizerException {
-		if (syntaxgraph.getFirstVertexOfClass(PathExistence.class) == null) {
+		if (syntaxgraph.getFirstVertex(PathExistence.class) == null) {
 			return false;
 		}
 
@@ -121,8 +121,8 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 		for (PathExistence pe : pes) {
 			BoolLiteral lit = syntaxgraph.createBoolLiteral();
 			lit.set_boolValue(true);
-			while (pe.getFirstEdge(EdgeDirection.OUT) != null) {
-				Edge e = pe.getFirstEdge(EdgeDirection.OUT);
+			while (pe.getFirstIncidence(EdgeDirection.OUT) != null) {
+				Edge e = pe.getFirstIncidence(EdgeDirection.OUT);
 				e.setAlpha(lit);
 				assert e.getAlpha() == lit;
 			}
@@ -177,9 +177,9 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 		}
 
 		SimpleDeclaration startSD = (SimpleDeclaration) start
-				.getFirstIsDeclaredVarOf().getOmega();
+				.getFirstIsDeclaredVarOfIncidence().getOmega();
 		SimpleDeclaration targetSD = (SimpleDeclaration) target
-				.getFirstIsDeclaredVarOf().getOmega();
+				.getFirstIsDeclaredVarOfIncidence().getOmega();
 
 		assert startSD != null;
 		assert targetSD != null;
@@ -227,7 +227,7 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 		// The path expression must be in a constraint and it must be in a
 		// top-level conjunction.
 		if (!isConstraintAndTopLevelConjunction(pe, (Declaration) sd
-				.getFirstIsSimpleDeclOf().getOmega())) {
+				.getFirstIsSimpleDeclOfIncidence().getOmega())) {
 			logger
 					.finer(pe
 							+ " cannot be optimized, cause it's not in an constraint conjunction...");
@@ -264,7 +264,7 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 		// difference between the old type expression and a new forward/backward
 		// vertex set.
 
-		sd.getFirstIsTypeExprOfDeclaration(EdgeDirection.IN).delete();
+		sd.getFirstIsTypeExprOfDeclarationIncidence(EdgeDirection.IN).delete();
 		Greql2 g = (Greql2) typeExp.getGraph();
 		FunctionApplication diff = g.createFunctionApplication();
 		g.createIsFunctionIdOf(OptimizerUtility.findOrCreateFunctionId(
@@ -361,7 +361,7 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 		if (vse.getDegree(EdgeDirection.OUT) < 2) {
 			vse.delete();
 		} else {
-			sd.getFirstIsTypeExprOfDeclaration().delete();
+			sd.getFirstIsTypeExprOfDeclarationIncidence().delete();
 		}
 		g.createIsTypeExprOfDeclaration(newPE, sd);
 		logger.finer("Created " + newPE + " as optimization...");
