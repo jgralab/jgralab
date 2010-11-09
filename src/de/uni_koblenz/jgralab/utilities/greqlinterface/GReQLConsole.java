@@ -76,7 +76,7 @@ public class GReQLConsole {
 			if (loadSchema) {
 				System.out.println("Loading schema from file");
 				Schema schema = GraphIO.loadSchemaFromFile(filename);
-				schema.compile(CodeGeneratorConfiguration.WITH_TRANSACTION_SUPPORT);
+				schema.compile(CodeGeneratorConfiguration.MINIMAL);
 			}
 			graph = GraphIO.loadGraphFromFileWithStandardSupport(filename,
 					new ConsoleProgressFunction());

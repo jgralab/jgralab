@@ -135,7 +135,7 @@ public abstract class Tg2Whatever {
 	public void setGraph(String fileName) throws GraphIOException {
 		graphFileName = fileName;
 		graph = GraphIO.loadSchemaAndGraphFromFile(graphFileName,
-				CodeGeneratorConfiguration.WITH_TRANSACTION_SUPPORT,
+				CodeGeneratorConfiguration.MINIMAL,
 				new ConsoleProgressFunction());
 	}
 
@@ -220,7 +220,7 @@ public abstract class Tg2Whatever {
 		currentElementSequenceIndex = 0;
 		for (Edge e : graph.edges()) {
 			currentElementSequenceIndex++;
-			if (marker == null || marker.isMarked(e)) {
+			if ((marker == null) || marker.isMarked(e)) {
 				printEdge(out, e);
 			}
 		}
@@ -230,7 +230,7 @@ public abstract class Tg2Whatever {
 		currentElementSequenceIndex = 0;
 		for (Vertex v : graph.vertices()) {
 			currentElementSequenceIndex++;
-			if (marker == null || marker.isMarked(v)) {
+			if ((marker == null) || marker.isMarked(v)) {
 				printVertex(out, v);
 			}
 		}
