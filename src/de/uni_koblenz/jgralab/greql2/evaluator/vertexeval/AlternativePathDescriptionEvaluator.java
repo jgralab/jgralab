@@ -91,7 +91,7 @@ public class AlternativePathDescriptionEvaluator extends
 	@Override
 	public JValue evaluate() throws EvaluateException {
 		IsAlternativePathOf inc = vertex
-				.getFirstIsAlternativePathOf(EdgeDirection.IN);
+				.getFirstIsAlternativePathOfIncidence(EdgeDirection.IN);
 		ArrayList<NFA> nfaList = new ArrayList<NFA>();
 		while (inc != null) {
 			PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) greqlEvaluator

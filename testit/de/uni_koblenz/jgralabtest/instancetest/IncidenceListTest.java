@@ -149,7 +149,7 @@ public class IncidenceListTest extends InstanceTest {
 		createReadOnlyTransaction(g);
 		for (int i = 0; i < N; ++i) {
 			assertEquals(0, nodes[i].getDegree());
-			Assert.assertNull(nodes[i].getFirstEdge());
+			Assert.assertNull(nodes[i].getFirstIncidence());
 		}
 		commit(g);
 
@@ -158,10 +158,10 @@ public class IncidenceListTest extends InstanceTest {
 		commit(g);
 
 		createReadOnlyTransaction(g);
-		assertEquals(e1, nodes[0].getFirstEdge());
-		assertEquals(e1, nodes[0].getLastEdge());
-		assertEquals(e1.getReversedEdge(), nodes[1].getFirstEdge());
-		assertEquals(e1.getReversedEdge(), nodes[1].getFirstEdge());
+		assertEquals(e1, nodes[0].getFirstIncidence());
+		assertEquals(e1, nodes[0].getLastIncidence());
+		assertEquals(e1.getReversedEdge(), nodes[1].getFirstIncidence());
+		assertEquals(e1.getReversedEdge(), nodes[1].getFirstIncidence());
 		assertEquals(1, nodes[0].getDegree());
 		assertEquals(1, nodes[0].getDegree(EdgeDirection.INOUT));
 		assertEquals(1, nodes[0].getDegree(EdgeDirection.OUT));
@@ -180,10 +180,10 @@ public class IncidenceListTest extends InstanceTest {
 		commit(g);
 
 		createReadOnlyTransaction(g);
-		assertEquals(e1, nodes[0].getFirstEdge());
-		assertEquals(e2.getReversedEdge(), nodes[0].getLastEdge());
-		assertEquals(e1.getReversedEdge(), nodes[1].getFirstEdge());
-		assertEquals(e1.getReversedEdge(), nodes[1].getFirstEdge());
+		assertEquals(e1, nodes[0].getFirstIncidence());
+		assertEquals(e2.getReversedEdge(), nodes[0].getLastIncidence());
+		assertEquals(e1.getReversedEdge(), nodes[1].getFirstIncidence());
+		assertEquals(e1.getReversedEdge(), nodes[1].getFirstIncidence());
 		assertEquals(3, nodes[0].getDegree());
 		assertEquals(3, nodes[0].getDegree(EdgeDirection.INOUT));
 		assertEquals(2, nodes[0].getDegree(EdgeDirection.OUT));
@@ -197,8 +197,8 @@ public class IncidenceListTest extends InstanceTest {
 		commit(g);
 
 		createReadOnlyTransaction(g);
-		assertEquals(e3, nodes[2].getFirstEdge());
-		assertEquals(e3.getReversedEdge(), nodes[0].getLastEdge());
+		assertEquals(e3, nodes[2].getFirstIncidence());
+		assertEquals(e3.getReversedEdge(), nodes[0].getLastIncidence());
 		assertEquals(4, nodes[0].getDegree());
 		assertEquals(4, nodes[0].getDegree(EdgeDirection.INOUT));
 		assertEquals(2, nodes[0].getDegree(EdgeDirection.OUT));
@@ -217,9 +217,9 @@ public class IncidenceListTest extends InstanceTest {
 		commit(g);
 
 		createReadOnlyTransaction(g);
-		assertEquals(e4.getReversedEdge(), nodes[N - 1].getFirstEdge());
-		assertEquals(e4.getReversedEdge(), nodes[N - 1].getLastEdge());
-		assertEquals(e4, nodes[0].getLastEdge());
+		assertEquals(e4.getReversedEdge(), nodes[N - 1].getFirstIncidence());
+		assertEquals(e4.getReversedEdge(), nodes[N - 1].getLastIncidence());
+		assertEquals(e4, nodes[0].getLastIncidence());
 		assertEquals(5, nodes[0].getDegree());
 		assertEquals(5, nodes[0].getDegree(EdgeDirection.INOUT));
 		assertEquals(3, nodes[0].getDegree(EdgeDirection.OUT));
@@ -278,7 +278,7 @@ public class IncidenceListTest extends InstanceTest {
 				// System.out.print(getISeq(v) + " " + ea.getId() + "
 				// before " + eb.getId());
 				createTransaction(g);
-				ea.putEdgeBefore(eb);
+				ea.putIncidenceBefore(eb);
 				commit(g);
 				// System.out.println(" => " + getISeq(v));
 				// System.out.println(il);
@@ -327,7 +327,7 @@ public class IncidenceListTest extends InstanceTest {
 				// after "
 				// + eb.getId());
 				createTransaction(g);
-				ea.putEdgeAfter(eb);
+				ea.putIncidenceAfter(eb);
 				commit(g);
 				// System.out.println(" => " + getISeq(v));
 				// System.out.println(il);
@@ -360,22 +360,22 @@ public class IncidenceListTest extends InstanceTest {
 
 		// check forward pointers
 		{
-			Edge e = v.getFirstEdge();
+			Edge e = v.getFirstIncidence();
 			for (int i = 0; i < expectedIincidences.size(); ++i) {
 				assertNotNull(e);
 				assertEquals(expectedIincidences.get(i), e);
-				e = e.getNextEdge();
+				e = e.getNextIncidence();
 			}
 			assertNull(e);
 		}
 
 		// check backward pointers
 		{
-			Edge e = v.getLastEdge();
+			Edge e = v.getLastIncidence();
 			for (int i = expectedIincidences.size() - 1; i >= 0; --i) {
 				assertNotNull(e);
 				assertEquals(expectedIincidences.get(i), e);
-				e = e.getPrevEdge();
+				e = e.getPrevIncidence();
 			}
 			assertNull(e);
 		}

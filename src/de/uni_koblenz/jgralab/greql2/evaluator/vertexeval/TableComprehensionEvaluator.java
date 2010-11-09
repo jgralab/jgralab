@@ -81,7 +81,7 @@ public class TableComprehensionEvaluator extends VertexEvaluator {
 	private boolean initialized = false;
 
 	private void initialize() {
-		Declaration d = (Declaration) vertex.getFirstIsCompDeclOf(
+		Declaration d = (Declaration) vertex.getFirstIsCompDeclOfIncidence(
 				EdgeDirection.IN).getAlpha();
 		DeclarationEvaluator declEval = (DeclarationEvaluator) greqlEvaluator
 				.getVertexEvaluatorGraphMarker().getMark(d);
@@ -89,14 +89,14 @@ public class TableComprehensionEvaluator extends VertexEvaluator {
 				subgraph).toObject();
 
 		Expression columnHeader = (Expression) vertex
-				.getFirstIsColumnHeaderExprOf(EdgeDirection.IN).getAlpha();
+				.getFirstIsColumnHeaderExprOfIncidence(EdgeDirection.IN).getAlpha();
 		columnHeaderEval = greqlEvaluator.getVertexEvaluatorGraphMarker()
 				.getMark(columnHeader);
-		Expression rowHeader = (Expression) vertex.getFirstIsRowHeaderExprOf(
+		Expression rowHeader = (Expression) vertex.getFirstIsRowHeaderExprOfIncidence(
 				EdgeDirection.IN).getAlpha();
 		rowHeaderEval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(
 				rowHeader);
-		Expression resultDef = (Expression) vertex.getFirstIsCompResultDefOf(
+		Expression resultDef = (Expression) vertex.getFirstIsCompResultDefOfIncidence(
 				EdgeDirection.IN).getAlpha();
 		resultDefEval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(
 				resultDef);
@@ -160,7 +160,7 @@ public class TableComprehensionEvaluator extends VertexEvaluator {
 		}
 		Iterator<JValue> colIter = completeColumnHeaderTreeSet.iterator();
 		IsTableHeaderOf tHeader = vertex
-				.getFirstIsTableHeaderOf(EdgeDirection.IN);
+				.getFirstIsTableHeaderOfIncidence(EdgeDirection.IN);
 		if (tHeader != null) {
 			VertexEvaluator theval = greqlEvaluator
 					.getVertexEvaluatorGraphMarker()

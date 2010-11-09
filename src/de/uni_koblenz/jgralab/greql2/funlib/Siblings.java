@@ -117,19 +117,19 @@ public class Siblings extends Greql2Function {
 			return pathSystem.siblings(vertex);
 		}
 
-		Edge inc1 = vertex.getFirstEdge();
+		Edge inc1 = vertex.getFirstIncidence();
 		JValueSet returnSet = new JValueSet();
 		while (inc1 != null) {
 			Vertex father = inc1.getThat();
-			Edge inc2 = father.getFirstEdge();
+			Edge inc2 = father.getFirstIncidence();
 			while (inc2 != null) {
 				Vertex anotherVertex = inc2.getThat();
 				if (anotherVertex != vertex) {
 					returnSet.add(new JValueImpl(anotherVertex, vertex));
 				}
-				inc2 = inc2.getNextEdge();
+				inc2 = inc2.getNextIncidence();
 			}
-			inc1 = inc1.getNextEdge();
+			inc1 = inc1.getNextIncidence();
 		}
 		return returnSet;
 	}

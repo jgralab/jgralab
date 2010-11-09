@@ -115,7 +115,7 @@ public class Children extends Greql2Function {
 		if (pathSystem != null) {
 			return pathSystem.children(vertex);
 		} else {
-			Edge inc = vertex.getFirstEdge(EdgeDirection.IN);
+			Edge inc = vertex.getFirstIncidence(EdgeDirection.IN);
 			Vertex other = null;
 			JValueSet resultSet = new JValueSet();
 			while (inc != null) {
@@ -123,7 +123,7 @@ public class Children extends Greql2Function {
 				if ((subgraph == null) || subgraph.isMarked(other)) {
 					resultSet.add(new JValueImpl(other));
 				}
-				inc = inc.getNextEdge(EdgeDirection.OUT);
+				inc = inc.getNextIncidence(EdgeDirection.OUT);
 			}
 			return resultSet;
 		}

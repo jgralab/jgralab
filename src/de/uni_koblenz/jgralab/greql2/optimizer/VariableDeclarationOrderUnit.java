@@ -88,9 +88,9 @@ public class VariableDeclarationOrderUnit implements
 		this.vertexEvalMarker = marker;
 		this.graphSize = graphSize;
 		this.simpleDeclarationOfVariable = (SimpleDeclaration) this.variable
-				.getFirstIsDeclaredVarOf(EdgeDirection.OUT).getOmega();
+				.getFirstIsDeclaredVarOfIncidence(EdgeDirection.OUT).getOmega();
 		this.typeExpressionOfVariable = (Expression) this.simpleDeclarationOfVariable
-				.getFirstIsTypeExprOf(EdgeDirection.IN).getAlpha();
+				.getFirstIsTypeExprOfIncidence(EdgeDirection.IN).getAlpha();
 
 		// Collect all vertices that depend on the variable and thus need to be
 		// recalculated when it changes its value.

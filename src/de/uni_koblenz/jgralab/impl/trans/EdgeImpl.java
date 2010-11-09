@@ -88,13 +88,13 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 	}
 
 	@Override
-	public Edge getNextEdge() {
-		return getNextIncidence();
+	public Edge getNextIncidence() {
+		return getNextIncidenceInternal();
 	}
 
 	@Override
-	public Edge getPrevEdge() {
-		return getPrevIncidence();
+	public Edge getPrevIncidence() {
+		return getPrevIncidenceInternal();
 	}
 
 	// --- getter ---//
@@ -117,7 +117,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 	}
 
 	@Override
-	public Edge getNextEdgeInGraph() {
+	public Edge getNextEdge() {
 		if (nextEdge == null) {
 			return null;
 		}
@@ -127,7 +127,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 	}
 
 	@Override
-	public Edge getPrevEdgeInGraph() {
+	public Edge getPrevEdge() {
 		if (prevEdge == null) {
 			return null;
 		}
@@ -147,7 +147,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 	}
 
 	@Override
-	protected IncidenceImpl getNextIncidence() {
+	protected IncidenceImpl getNextIncidenceInternal() {
 		if (nextIncidence == null) {
 			return null;
 		}
@@ -157,7 +157,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 	}
 
 	@Override
-	protected IncidenceImpl getPrevIncidence() {
+	protected IncidenceImpl getPrevIncidenceInternal() {
 		if (prevIncidence == null) {
 			return null;
 		}
@@ -266,7 +266,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 	}
 
 	@Override
-	protected void setNextIncidence(IncidenceImpl nextIncidence) {
+	protected void setNextIncidenceInternal(IncidenceImpl nextIncidence) {
 		// graph loading -> new initialization...
 		if (graph.isLoading()) {
 			this.nextIncidence = new VersionedReferenceImpl<IncidenceImpl>(
@@ -304,7 +304,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 	}
 
 	@Override
-	protected void setPrevIncidence(IncidenceImpl prevIncidence) {
+	protected void setPrevIncidenceInternal(IncidenceImpl prevIncidence) {
 		// graph loading -> new initialization...
 		if (graph.isLoading()) {
 			this.prevIncidence = new VersionedReferenceImpl<IncidenceImpl>(

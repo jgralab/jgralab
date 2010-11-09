@@ -96,7 +96,7 @@ public class VertexIterable<V extends Vertex> implements Iterable<V> {
 			this.vc = vc;
 			vertexListVersion = g.getVertexListVersion();
 			current = (V) (vc == null ? graph.getFirstVertex() : graph
-					.getFirstVertexOfClass(vc));
+					.getFirstVertex(vc));
 		}
 
 		/**
@@ -114,7 +114,7 @@ public class VertexIterable<V extends Vertex> implements Iterable<V> {
 			}
 			V result = current;
 			current = (V) (vc == null ? current.getNextVertex() : current
-					.getNextVertexOfClass(vc));
+					.getNextVertex(vc));
 			return result;
 		}
 

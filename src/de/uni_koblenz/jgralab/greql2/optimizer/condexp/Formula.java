@@ -101,7 +101,7 @@ public abstract class Formula {
 			FunctionApplication funApp = (FunctionApplication) exp;
 			if (OptimizerUtility.isAnd(funApp)) {
 				IsArgumentOf inc = funApp
-						.getFirstIsArgumentOf(EdgeDirection.IN);
+						.getFirstIsArgumentOfIncidence(EdgeDirection.IN);
 				Expression leftArg = (Expression) inc.getAlpha();
 				Expression rightArg = (Expression) inc.getNextIsArgumentOf(
 						EdgeDirection.IN).getAlpha();
@@ -111,7 +111,7 @@ public abstract class Formula {
 			}
 			if (OptimizerUtility.isOr(funApp)) {
 				IsArgumentOf inc = funApp
-						.getFirstIsArgumentOf(EdgeDirection.IN);
+						.getFirstIsArgumentOfIncidence(EdgeDirection.IN);
 				Expression leftArg = (Expression) inc.getAlpha();
 				Expression rightArg = (Expression) inc.getNextIsArgumentOf(
 						EdgeDirection.IN).getAlpha();
@@ -121,7 +121,7 @@ public abstract class Formula {
 			}
 			if (OptimizerUtility.isNot(funApp)) {
 				IsArgumentOf inc = funApp
-						.getFirstIsArgumentOf(EdgeDirection.IN);
+						.getFirstIsArgumentOfIncidence(EdgeDirection.IN);
 				Expression arg = (Expression) inc.getAlpha();
 				return new Not(eval, createFormulaFromExpressionInternal(eval,
 						arg));
@@ -195,7 +195,7 @@ public abstract class Formula {
 	private boolean isFunApp(Vertex exp, String functionName) {
 		if (exp instanceof FunctionApplication) {
 			FunctionApplication funApp = (FunctionApplication) exp;
-			return ((FunctionId) funApp.getFirstIsFunctionIdOf().getAlpha())
+			return ((FunctionId) funApp.getFirstIsFunctionIdOfIncidence().getAlpha())
 					.get_name().equals(functionName);
 		}
 		return false;

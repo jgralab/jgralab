@@ -81,7 +81,7 @@ public class OptionalPathDescriptionEvaluator extends PathDescriptionEvaluator {
 
 	@Override
 	public JValue evaluate() throws EvaluateException {
-		PathDescription p = (PathDescription) vertex.getFirstIsOptionalPathOf(
+		PathDescription p = (PathDescription) vertex.getFirstIsOptionalPathOfIncidence(
 				EdgeDirection.IN).getAlpha();
 		PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) greqlEvaluator
 				.getVertexEvaluatorGraphMarker().getMark(p);

@@ -98,7 +98,7 @@ public abstract class DegreeFunction extends Greql2Function {
 			if (typeCol == null) {
 				return new JValueImpl(vertex.getDegree(direction));
 			} else {
-				Edge inc = vertex.getFirstEdge(direction);
+				Edge inc = vertex.getFirstIncidence(direction);
 				int count = 0;
 				while (inc != null) {
 					if (((subgraph == null) || subgraph.isMarked(inc))
@@ -106,7 +106,7 @@ public abstract class DegreeFunction extends Greql2Function {
 									.getAttributedElementClass())) {
 						count++;
 					}
-					inc = inc.getNextEdge(direction);
+					inc = inc.getNextIncidence(direction);
 				}
 				return new JValueImpl(count);
 			}

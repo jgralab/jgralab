@@ -432,8 +432,8 @@ public class LoadTest extends InstanceTest {
 	}
 
 	private void checkEqualEdgeList(Graph g1, Graph g2) {
-		Edge v1 = g1.getFirstEdgeInGraph();
-		Edge v2 = g2.getFirstEdgeInGraph();
+		Edge v1 = g1.getFirstEdge();
+		Edge v2 = g2.getFirstEdge();
 		while (v1 != null) {
 			if (v2 == null) {
 				fail();
@@ -441,8 +441,8 @@ public class LoadTest extends InstanceTest {
 			assertEquals(v1.getId(), v2.getId());
 			assertEquals(v1.getAttributedElementClass().getQualifiedName(), v2
 					.getAttributedElementClass().getQualifiedName());
-			v1 = v1.getNextEdgeInGraph();
-			v2 = v2.getNextEdgeInGraph();
+			v1 = v1.getNextEdge();
+			v2 = v2.getNextEdge();
 		}
 		if (v2 != null) {
 			fail();

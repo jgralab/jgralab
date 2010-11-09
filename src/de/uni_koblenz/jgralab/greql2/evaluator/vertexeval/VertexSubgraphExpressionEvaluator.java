@@ -73,13 +73,13 @@ public class VertexSubgraphExpressionEvaluator extends
 			currentVertex = currentVertex.getNextVertex();
 		}
 		// add all edges
-		Edge currentEdge = getDatagraph().getFirstEdgeInGraph();
+		Edge currentEdge = getDatagraph().getFirstEdge();
 		while (currentEdge != null) {
 			if (subgraphAttr.isMarked(currentEdge.getAlpha())
 					&& subgraphAttr.isMarked(currentEdge.getOmega())) {
 				subgraphAttr.mark(currentEdge);
 			}
-			currentEdge = currentEdge.getNextEdgeInGraph();
+			currentEdge = currentEdge.getNextEdge();
 		}
 		return new JValueImpl(subgraphAttr);
 	}

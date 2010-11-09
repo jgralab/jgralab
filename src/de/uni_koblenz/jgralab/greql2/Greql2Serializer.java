@@ -119,7 +119,7 @@ public class Greql2Serializer {
 	private void serializeGreql2Vertex(Greql2Vertex v, boolean addSpace) {
 		if (v instanceof Declaration) {
 			Declaration d = (Declaration) v;
-			if (d.getFirstIsQuantifiedDeclOf() != null) {
+			if (d.getFirstIsQuantifiedDeclOfIncidence() != null) {
 				serializeDeclaration((Declaration) v, false);
 			} else {
 				serializeDeclaration((Declaration) v, true);

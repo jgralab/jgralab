@@ -60,7 +60,7 @@ public class EdgeSubgraphExpressionEvaluator extends
 	@Override
 	public JValue evaluate() throws EvaluateException {
 		BooleanGraphMarker subgraphAttr = new BooleanGraphMarker(getDatagraph());
-		Edge currentEdge = getDatagraph().getFirstEdgeInGraph();
+		Edge currentEdge = getDatagraph().getFirstEdge();
 		JValueTypeCollection typeCollection = getTypeCollection();
 		while (currentEdge != null) {
 			if ((subgraph == null) || (subgraph.isMarked(currentEdge))) {
@@ -70,13 +70,13 @@ public class EdgeSubgraphExpressionEvaluator extends
 					subgraphAttr.mark(currentEdge);
 				}
 			}
-			currentEdge = currentEdge.getNextEdgeInGraph();
+			currentEdge = currentEdge.getNextEdge();
 		}
 		// add all vertices
 		Vertex currentVertex = getDatagraph().getFirstVertex();
 		while (currentVertex != null) {
 			// System.out.println("Current vertex is: " + currentVertex);
-			Edge inc = currentVertex.getFirstEdge();
+			Edge inc = currentVertex.getFirstIncidence();
 			while (inc != null) {
 				// System.out.println("Edge is: " + inc);
 				if (subgraphAttr.isMarked(inc)) {
@@ -84,7 +84,7 @@ public class EdgeSubgraphExpressionEvaluator extends
 					// System.out.println("Marking vertex: " + currentVertex);
 					break;
 				}
-				inc = inc.getNextEdge();
+				inc = inc.getNextIncidence();
 			}
 			currentVertex = currentVertex.getNextVertex();
 		}

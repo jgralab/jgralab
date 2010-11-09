@@ -70,7 +70,7 @@ public class EdgeSetExpressionEvaluator extends ElementSetExpressionEvaluator {
 		Graph datagraph = getDatagraph();
 		// create the resulting set
 		JValueSet resultSet = new JValueSet();
-		Edge currentEdge = datagraph.getFirstEdgeInGraph();
+		Edge currentEdge = datagraph.getFirstEdge();
 		JValueTypeCollection typeCollection = getTypeCollection();
 		while (currentEdge != null) {
 			if ((subgraph == null) || (subgraph.isMarked(currentEdge))) {
@@ -80,7 +80,7 @@ public class EdgeSetExpressionEvaluator extends ElementSetExpressionEvaluator {
 					resultSet.add(new JValueImpl(currentEdge));
 				}
 			}
-			currentEdge = currentEdge.getNextEdgeInGraph();
+			currentEdge = currentEdge.getNextEdge();
 		}
 		return resultSet;
 	}

@@ -76,16 +76,16 @@ public abstract class ReversedEdgeImpl extends
 	}
 
 	@Override
-	protected IncidenceImpl getNextIncidence() {
+	protected IncidenceImpl getNextIncidenceInternal() {
 		return nextIncidence;
 	}
 
 	@Override
-	protected IncidenceImpl getPrevIncidence() {
+	protected IncidenceImpl getPrevIncidenceInternal() {
 		Edge prevEdge = null;
 
-		for (Edge currEdge = incidentVertex.getFirstEdge(); currEdge != null; currEdge = currEdge
-				.getNextEdge()) {
+		for (Edge currEdge = incidentVertex.getFirstIncidence(); currEdge != null; currEdge = currEdge
+				.getNextIncidence()) {
 			if (currEdge == this) {
 				return (IncidenceImpl) prevEdge;
 			}
@@ -101,12 +101,12 @@ public abstract class ReversedEdgeImpl extends
 	}
 
 	@Override
-	protected void setNextIncidence(IncidenceImpl nextIncidence) {
+	protected void setNextIncidenceInternal(IncidenceImpl nextIncidence) {
 		this.nextIncidence = nextIncidence;
 	}
 
 	@Override
-	protected void setPrevIncidence(IncidenceImpl prevIncidence) {
+	protected void setPrevIncidenceInternal(IncidenceImpl prevIncidence) {
 		// throw new UnsupportedOperationException(
 		// "Unsupported in savemem implementation.");
 	}

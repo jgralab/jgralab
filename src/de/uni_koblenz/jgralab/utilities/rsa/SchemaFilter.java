@@ -254,7 +254,7 @@ public class SchemaFilter {
 				for (HasAttribute currentAttributeLink : currentAttributedElementClass
 						.getHasAttributeIncidences()) {
 					Domain currentDomain = (Domain) ((Attribute) currentAttributeLink
-							.getThat()).getFirstHasDomain().getThat();
+							.getThat()).getFirstHasDomainIncidence().getThat();
 					includeDomain(currentDomain);
 				}
 			}
@@ -286,8 +286,8 @@ public class SchemaFilter {
 	 *            the MapDomain to include.
 	 */
 	private void includeDomain(MapDomain md) {
-		includeDomain((Domain) md.getFirstHasKeyDomain().getThat());
-		includeDomain((Domain) md.getFirstHasValueDomain().getThat());
+		includeDomain((Domain) md.getFirstHasKeyDomainIncidence().getThat());
+		includeDomain((Domain) md.getFirstHasValueDomainIncidence().getThat());
 	}
 
 	/**
@@ -297,7 +297,7 @@ public class SchemaFilter {
 	 *            the CollectionDomain to include.
 	 */
 	private void includeDomain(CollectionDomain cd) {
-		includeDomain((Domain) cd.getFirstHasBaseDomain().getThat());
+		includeDomain((Domain) cd.getFirstHasBaseDomainIncidence().getThat());
 	}
 
 	/**
@@ -334,12 +334,12 @@ public class SchemaFilter {
 			if (includes.isMarked(currentEdgeClass)) {
 				// only look at included EdgeClasses
 				IncidenceClass fromIC = (IncidenceClass) currentEdgeClass
-						.getFirstComesFrom().getOmega();
-				VertexClass fromVC = (VertexClass) fromIC.getFirstEndsAt()
+						.getFirstComesFromIncidence().getOmega();
+				VertexClass fromVC = (VertexClass) fromIC.getFirstEndsAtIncidence()
 						.getOmega();
 				IncidenceClass toIC = (IncidenceClass) currentEdgeClass
-						.getFirstGoesTo().getOmega();
-				VertexClass toVC = (VertexClass) toIC.getFirstEndsAt()
+						.getFirstGoesToIncidence().getOmega();
+				VertexClass toVC = (VertexClass) toIC.getFirstEndsAtIncidence()
 						.getOmega();
 				if (!includes.isMarked(fromVC) || !includes.isMarked(toVC)) {
 					// exclude all EdgeClasses whose to or from VertexClasses

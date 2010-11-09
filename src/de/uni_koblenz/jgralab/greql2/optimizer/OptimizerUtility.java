@@ -99,7 +99,7 @@ public class OptimizerUtility {
 	 *         {@link FunctionApplication} of {@link And}.
 	 */
 	public static boolean isAnd(FunctionApplication funApp) {
-		return ((FunctionId) funApp.getFirstIsFunctionIdOf().getAlpha())
+		return ((FunctionId) funApp.getFirstIsFunctionIdOfIncidence().getAlpha())
 				.get_name().equals("and");
 	}
 
@@ -112,7 +112,7 @@ public class OptimizerUtility {
 	 *         {@link FunctionApplication} of {@link And}.
 	 */
 	public static boolean isOr(FunctionApplication funApp) {
-		return ((FunctionId) funApp.getFirstIsFunctionIdOf().getAlpha())
+		return ((FunctionId) funApp.getFirstIsFunctionIdOfIncidence().getAlpha())
 				.get_name().equals("or");
 	}
 
@@ -125,7 +125,7 @@ public class OptimizerUtility {
 	 *         {@link FunctionApplication} of {@link And}.
 	 */
 	public static boolean isXor(FunctionApplication funApp) {
-		return ((FunctionId) funApp.getFirstIsFunctionIdOf().getAlpha())
+		return ((FunctionId) funApp.getFirstIsFunctionIdOfIncidence().getAlpha())
 				.get_name().equals("xor");
 	}
 
@@ -138,7 +138,7 @@ public class OptimizerUtility {
 	 *         {@link FunctionApplication} of {@link And}.
 	 */
 	public static boolean isNot(FunctionApplication funApp) {
-		return ((FunctionId) funApp.getFirstIsFunctionIdOf().getAlpha())
+		return ((FunctionId) funApp.getFirstIsFunctionIdOfIncidence().getAlpha())
 				.get_name().equals("not");
 	}
 
@@ -256,7 +256,7 @@ public class OptimizerUtility {
 		// GreqlEvaluator.println("collectVariablesBelow(" + vertex + ")");
 		if ((vertex instanceof Variable) && !(vertex instanceof ThisLiteral)) {
 			Variable v = (Variable) vertex;
-			if (v.getFirstIsBoundVarOf(EdgeDirection.OUT) == null) {
+			if (v.getFirstIsBoundVarOfIncidence(EdgeDirection.OUT) == null) {
 				// it's no externally bound variable, but a variable declared in
 				// that query...
 				vars.add(v);
@@ -299,7 +299,7 @@ public class OptimizerUtility {
 		for (Edge inc : vertex.incidences(EdgeDirection.IN)) {
 			nextOrphans.add(inc.getAlpha());
 		}
-		if ((vertex.getFirstEdge(EdgeDirection.OUT) == null)
+		if ((vertex.getFirstIncidence(EdgeDirection.OUT) == null)
 				&& !verticesToOmit.contains(vertex)) {
 			// vertex is orphaned
 			alreadyDeletedVertices.add(vertex);

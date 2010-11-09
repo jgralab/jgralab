@@ -102,7 +102,7 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 	@Override
 	public String getLoggingName() {
 		if (functionName == null) {
-			FunctionId id = (FunctionId) vertex.getFirstIsFunctionIdOf(
+			FunctionId id = (FunctionId) vertex.getFirstIsFunctionIdOfIncidence(
 					EdgeDirection.IN).getAlpha();
 			functionName = id.get_name();
 		}
@@ -117,7 +117,7 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 	public final Greql2Function getGreql2Function() {
 		if (greql2Function == null) {
 			if (functionName == null) {
-				FunctionId id = (FunctionId) vertex.getFirstIsFunctionIdOf(
+				FunctionId id = (FunctionId) vertex.getFirstIsFunctionIdOfIncidence(
 						EdgeDirection.IN).getAlpha();
 				functionName = id.get_name();
 			}
@@ -149,7 +149,7 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 	 */
 	private ArrayList<VertexEvaluator> createVertexEvaluatorList() {
 		ArrayList<VertexEvaluator> vertexEvalList = new ArrayList<VertexEvaluator>();
-		IsArgumentOf inc = vertex.getFirstIsArgumentOf(EdgeDirection.IN);
+		IsArgumentOf inc = vertex.getFirstIsArgumentOfIncidence(EdgeDirection.IN);
 		while (inc != null) {
 			Expression currentParameterExpr = (Expression) inc.getAlpha();
 			// maybe the vertex has no evaluator
@@ -167,7 +167,7 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 	 */
 	private JValueTypeCollection createTypeArgument() throws EvaluateException {
 		TypeId typeId;
-		IsTypeExprOf typeEdge = vertex.getFirstIsTypeExprOf(EdgeDirection.IN);
+		IsTypeExprOf typeEdge = vertex.getFirstIsTypeExprOfIncidence(EdgeDirection.IN);
 		JValueTypeCollection typeCollection = null;
 		if (typeEdge != null) {
 			typeCollection = new JValueTypeCollection();

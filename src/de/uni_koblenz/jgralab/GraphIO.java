@@ -731,17 +731,17 @@ public class GraphIO {
 			space();
 			writeIdentifier(aec.getSimpleName());
 			// write incident edges
-			Edge nextI = nextV.getFirstEdge();
+			Edge nextI = nextV.getFirstIncidence();
 			write(" <");
 			noSpace();
 			// System.out.print("  Writing incidences of vertex.");
 			while (nextI != null) {
 				if (subGraph != null && !subGraph.isMarked(nextI)) {
-					nextI = nextI.getNextEdge();
+					nextI = nextI.getNextIncidence();
 					continue;
 				}
 				writeLong(nextI.getId());
-				nextI = nextI.getNextEdge();
+				nextI = nextI.getNextIncidence();
 			}
 			write(">");
 			space();
@@ -762,10 +762,10 @@ public class GraphIO {
 
 		// System.out.println("Writing edges");
 		// write edges
-		Edge nextE = graph.getFirstEdgeInGraph();
+		Edge nextE = graph.getFirstEdge();
 		while (nextE != null) {
 			if (subGraph != null && !subGraph.isMarked(nextE)) {
-				nextE = nextE.getNextEdgeInGraph();
+				nextE = nextE.getNextEdge();
 				continue;
 			}
 			eId = nextE.getId();
@@ -784,7 +784,7 @@ public class GraphIO {
 			space();
 			nextE.writeAttributeValues(this);
 			write(";\n");
-			nextE = nextE.getNextEdgeInGraph();
+			nextE = nextE.getNextEdge();
 
 			// update progress bar
 			if (pf != null) {

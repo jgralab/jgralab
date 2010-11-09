@@ -376,7 +376,7 @@ public class SchemaGraph2XMI {
 		createAttributedElementClass(writer, schemaGraph.getFirstGraphClass());
 
 		createPackage(writer, (Package) schemaGraph.getFirstSchema()
-				.getFirstContainsDefaultPackage().getThat());
+				.getFirstContainsDefaultPackageIncidence().getThat());
 
 		// create Types
 		if (!typesToBeDeclaredAtTheEnd.isEmpty()) {
@@ -421,10 +421,10 @@ public class SchemaGraph2XMI {
 			if (!pack.get_qualifiedName().equals(
 					de.uni_koblenz.jgralab.schema.Package.DEFAULTPACKAGE_NAME)) {
 				// for the default package there is not created a package tag
-				packageTagHasToBeClosed = pack.getFirstAnnotates() != null
-						|| pack.getFirstContainsDomain() != null
-						|| pack.getFirstContainsGraphElementClass() != null
-						|| pack.getFirstContainsSubPackage(EdgeDirection.OUT) != null;
+				packageTagHasToBeClosed = pack.getFirstAnnotatesIncidence() != null
+						|| pack.getFirstContainsDomainIncidence() != null
+						|| pack.getFirstContainsGraphElementClassIncidence() != null
+						|| pack.getFirstContainsSubPackageIncidence(EdgeDirection.OUT) != null;
 				if (packageTagHasToBeClosed) {
 					// start package
 					writer
@@ -515,9 +515,9 @@ public class SchemaGraph2XMI {
 	 * @return boolean
 	 */
 	private boolean isPackageEmpty(Package pack) {
-		boolean isPackageEmpty = pack.getFirstAnnotates() == null
-				&& pack.getFirstContainsDomain() == null
-				&& pack.getFirstContainsGraphElementClass() == null;
+		boolean isPackageEmpty = pack.getFirstAnnotatesIncidence() == null
+				&& pack.getFirstContainsDomainIncidence() == null
+				&& pack.getFirstContainsGraphElementClassIncidence() == null;
 		if (!isPackageEmpty) {
 			return false;
 		} else {
@@ -749,17 +749,17 @@ public class SchemaGraph2XMI {
 		// and constraints then an empty tag is created. Furthermore an
 		// EdgeClass could only be empty if the associations are created
 		// bidirectional.
-		boolean isEmptyGraphElementClass = aeclass.getFirstAnnotates() == null
-				&& aeclass.getFirstHasAttribute() == null
-				&& aeclass.getFirstHasConstraint() == null
+		boolean isEmptyGraphElementClass = aeclass.getFirstAnnotatesIncidence() == null
+				&& aeclass.getFirstHasAttributeIncidence() == null
+				&& aeclass.getFirstHasConstraintIncidence() == null
 				&& (aeclass instanceof GraphElementClass && !((GraphElementClass) aeclass)
 						.is_abstract())
 				&& (aeclass instanceof VertexClass
 						&& ((VertexClass) aeclass)
-								.getFirstSpecializesVertexClass(EdgeDirection.OUT) == null
+								.getFirstSpecializesVertexClassIncidence(EdgeDirection.OUT) == null
 						&& !hasChildIncidence((VertexClass) aeclass) || aeclass instanceof EdgeClass
 						&& ((EdgeClass) aeclass)
-								.getFirstSpecializesEdgeClass(EdgeDirection.OUT) == null
+								.getFirstSpecializesEdgeClassIncidence(EdgeDirection.OUT) == null
 						&& isBidirectional);
 
 		// start packagedElement
@@ -772,7 +772,7 @@ public class SchemaGraph2XMI {
 		}
 		// set type
 		if (aeclass instanceof EdgeClass) {
-			if (aeclass.getFirstHasAttribute() == null) {
+			if (aeclass.getFirstHasAttributeIncidence() == null) {
 				writer
 						.writeAttribute(
 								XMIConstants4SchemaGraph2XMI.NAMESPACE_XMI,
@@ -805,15 +805,15 @@ public class SchemaGraph2XMI {
 					.writeAttribute(
 							XMIConstants4SchemaGraph2XMI.PACKAGEDELEMENT_ATTRIBUTE_MEMBEREND,
 							((VertexClass) ((IncidenceClass) ec
-									.getFirstComesFrom().getThat())
-									.getFirstEndsAt().getThat())
+									.getFirstComesFromIncidence().getThat())
+									.getFirstEndsAtIncidence().getThat())
 									.get_qualifiedName()
 									+ "_incidence_"
 									+ ec.get_qualifiedName()
 									+ "_from "
 									+ ((VertexClass) ((IncidenceClass) ec
-											.getFirstGoesTo().getThat())
-											.getFirstEndsAt().getThat())
+											.getFirstGoesToIncidence().getThat())
+											.getFirstEndsAtIncidence().getThat())
 											.get_qualifiedName()
 									+ "_incidence_"
 									+ ec.get_qualifiedName()
@@ -884,7 +884,7 @@ public class SchemaGraph2XMI {
 	 * @return boolean
 	 */
 	private boolean hasChildIncidence(VertexClass vertexClass) {
-		if (vertexClass.getFirstEndsAt() == null) {
+		if (vertexClass.getFirstEndsAtIncidence() == null) {
 			// VertexClass has no incidences
 			return false;
 		}
@@ -917,7 +917,7 @@ public class SchemaGraph2XMI {
 	 * @return boolean
 	 */
 	private boolean hasToBeCreatedAtVertex(IncidenceClass incidence) {
-		boolean isAlphaVertexClass = incidence.getFirstComesFrom() != null;
+		boolean isAlphaVertexClass = incidence.getFirstComesFromIncidence() != null;
 		if (isBidirectional) {
 			// in the case of bidirectional edges, all incidences have to be
 			// created at the vertices
@@ -952,12 +952,12 @@ public class SchemaGraph2XMI {
 	private void createIncidences(XMLStreamWriter writer, EdgeClass edgeClass)
 			throws XMLStreamException {
 		IncidenceClass alphaIncidence = (IncidenceClass) edgeClass
-				.getFirstComesFrom().getThat();
+				.getFirstComesFromIncidence().getThat();
 		IncidenceClass omegaIncidence = (IncidenceClass) edgeClass
-				.getFirstGoesTo().getThat();
-		VertexClass alphaVertex = (VertexClass) alphaIncidence.getFirstEndsAt()
+				.getFirstGoesToIncidence().getThat();
+		VertexClass alphaVertex = (VertexClass) alphaIncidence.getFirstEndsAtIncidence()
 				.getThat();
-		VertexClass omegaVertex = (VertexClass) omegaIncidence.getFirstEndsAt()
+		VertexClass omegaVertex = (VertexClass) omegaIncidence.getFirstEndsAtIncidence()
 				.getThat();
 		// create incidence which contains the information for the alpha
 		// vertex (=omegaIncidence)
@@ -993,15 +993,15 @@ public class SchemaGraph2XMI {
 			IncidenceClass incidence = (IncidenceClass) ea.getThat();
 			if (hasToBeCreatedAtVertex(incidence)) {
 				boolean isVertexClassAlphaVertex = incidence
-						.getFirstComesFrom() != null;
+						.getFirstComesFromIncidence() != null;
 				EdgeClass edgeClass = (EdgeClass) (isVertexClassAlphaVertex ? incidence
-						.getFirstComesFrom()
-						: incidence.getFirstGoesTo()).getThat();
+						.getFirstComesFromIncidence()
+						: incidence.getFirstGoesToIncidence()).getThat();
 				IncidenceClass otherIncidence = (IncidenceClass) (isVertexClassAlphaVertex ? edgeClass
-						.getFirstGoesTo()
-						: edgeClass.getFirstComesFrom()).getThat();
+						.getFirstGoesToIncidence()
+						: edgeClass.getFirstComesFromIncidence()).getThat();
 				VertexClass connectedVertexClass = (VertexClass) otherIncidence
-						.getFirstEndsAt().getThat();
+						.getFirstEndsAtIncidence().getThat();
 				// create incidence representation
 				createIncidence(writer, otherIncidence, edgeClass, incidence,
 						connectedVertexClass, vertexClass.get_qualifiedName(),
@@ -1053,7 +1053,7 @@ public class SchemaGraph2XMI {
 
 		String incidenceId = qualifiedNameOfVertexClass + "_incidence_"
 				+ edgeClass.get_qualifiedName()
-				+ (incidence.getFirstComesFrom() != null ? "_from" : "_to");
+				+ (incidence.getFirstComesFromIncidence() != null ? "_from" : "_to");
 
 		// redefines
 		int i = 0;
@@ -1196,8 +1196,8 @@ public class SchemaGraph2XMI {
 		if (isBidirectional) {
 			// the association is bidirectional navigable
 			return true;
-		} else if (((VertexClass) ((IncidenceClass) edgeClass.getFirstGoesTo()
-				.getThat()).getFirstEndsAt().getThat()).get_qualifiedName()
+		} else if (((VertexClass) ((IncidenceClass) edgeClass.getFirstGoesToIncidence()
+				.getThat()).getFirstEndsAtIncidence().getThat()).get_qualifiedName()
 				.equals(qualifiedName)) {
 			// if it is not reverted
 			// the omega IncidenceClass of the EdgeClass must have a rolename
@@ -1310,7 +1310,7 @@ public class SchemaGraph2XMI {
 		for (HasAttribute hasAttribute : aeclass.getHasAttributeIncidences()) {
 			Attribute attribute = (Attribute) hasAttribute.getThat();
 			createAttribute(writer, attribute.get_name(), attribute
-					.get_defaultValue(), (Domain) attribute.getFirstHasDomain()
+					.get_defaultValue(), (Domain) attribute.getFirstHasDomainIncidence()
 					.getThat(), aeclass.get_qualifiedName() + "_"
 					+ ((Attribute) hasAttribute.getThat()).get_name());
 		}

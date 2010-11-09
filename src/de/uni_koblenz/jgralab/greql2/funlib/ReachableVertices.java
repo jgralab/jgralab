@@ -137,7 +137,7 @@ public class ReachableVertices extends Greql2Function {
 			if (state.isFinal) {
 				resultSet.add(new JValueImpl(vertex, vertex));
 			}
-			Edge inc = vertex.getFirstEdge();
+			Edge inc = vertex.getFirstIncidence();
 			while (inc != null) {
 				int size = state.outTransitions.size();
 				for (int i = 0; i < size; i++) {
@@ -152,7 +152,7 @@ public class ReachableVertices extends Greql2Function {
 						}
 					}
 				}
-				inc = inc.getNextEdge();
+				inc = inc.getNextIncidence();
 			}
 			if (PRINT_STOP_VERTICES) {
 				if (state.isFinal) {

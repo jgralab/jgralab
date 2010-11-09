@@ -82,7 +82,7 @@ public class IteratedPathDescriptionEvaluator extends PathDescriptionEvaluator {
 
 	@Override
 	public JValue evaluate() throws EvaluateException {
-		PathDescription p = (PathDescription) vertex.getFirstIsIteratedPathOf(
+		PathDescription p = (PathDescription) vertex.getFirstIsIteratedPathOfIncidence(
 				EdgeDirection.IN).getAlpha();
 		PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) greqlEvaluator
 				.getVertexEvaluatorGraphMarker().getMark(p);

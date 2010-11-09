@@ -62,7 +62,7 @@ public class EdgeImplTest extends ImplTest {
 
 	@Test
 	public void deletingOneEdgeDecrementsIncidenceCountOfAlphaByOne() {
-		E edge = this.vertexTestGraph.getFirstEInGraph();
+		E edge = this.vertexTestGraph.getFirstE();
 		A alpha = (A) edge.getAlpha();
 		int degreeBefore = alpha.getDegree();
 		edge.delete();
@@ -72,7 +72,7 @@ public class EdgeImplTest extends ImplTest {
 
 	@Test
 	public void deletingOneEdgeDecrementsIncidenceCountOfOmegaByOne() {
-		E edge = this.vertexTestGraph.getFirstEInGraph();
+		E edge = this.vertexTestGraph.getFirstE();
 		B omega = (B) edge.getOmega();
 		int degreeBefore = omega.getDegree();
 		edge.delete();
@@ -82,7 +82,7 @@ public class EdgeImplTest extends ImplTest {
 
 	@Test
 	public void deletingOneEdgeDecrementsEdgeCountByOne() {
-		E edge = this.vertexTestGraph.getFirstEInGraph();
+		E edge = this.vertexTestGraph.getFirstE();
 		int eCountBefore = this.vertexTestGraph.getECount();
 		edge.delete();
 		int eCountAfter = this.vertexTestGraph.getECount();
@@ -107,7 +107,7 @@ public class EdgeImplTest extends ImplTest {
 
 		for (int i = 0; i < N; i++) {
 			int degreeBefore = aVertex.getDegree();
-			E edge = (E) aVertex.getFirstEdge();
+			E edge = (E) aVertex.getFirstIncidence();
 			edge.delete();
 			int degreeAfter = aVertex.getDegree();
 			assertEquals(degreeBefore - 1, degreeAfter);

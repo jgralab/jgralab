@@ -98,7 +98,7 @@ public class PathExistenceOptimizer extends OptimizerBase {
 	@Override
 	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
 			throws OptimizerException {
-		if (syntaxgraph.getFirstVertexOfClass(PathExistence.class) == null) {
+		if (syntaxgraph.getFirstVertex(PathExistence.class) == null) {
 			return false;
 		}
 
@@ -155,9 +155,9 @@ public class PathExistenceOptimizer extends OptimizerBase {
 	 *            a {@link PathExistence} vertex
 	 */
 	private void maybeTransformPathExistence(PathExistence pe) {
-		Expression startExp = (Expression) pe.getFirstIsStartExprOf(
+		Expression startExp = (Expression) pe.getFirstIsStartExprOfIncidence(
 				EdgeDirection.IN).getAlpha();
-		Expression targetExp = (Expression) pe.getFirstIsTargetExprOf(
+		Expression targetExp = (Expression) pe.getFirstIsTargetExprOfIncidence(
 				EdgeDirection.IN).getAlpha();
 
 		Comparator<Variable> comparator = new Comparator<Variable>() {
@@ -230,11 +230,11 @@ public class PathExistenceOptimizer extends OptimizerBase {
 
 		anOptimizationWasDone = true;
 
-		Edge inc = pe.getFirstEdge(EdgeDirection.OUT);
+		Edge inc = pe.getFirstIncidence(EdgeDirection.OUT);
 		Set<Edge> edgesToRelink = new HashSet<Edge>();
 		while (inc != null) {
 			edgesToRelink.add(inc);
-			inc = inc.getNextEdge(EdgeDirection.OUT);
+			inc = inc.getNextIncidence(EdgeDirection.OUT);
 		}
 		FunctionApplication contains = syntaxgraph.createFunctionApplication();
 		FunctionId containsId = OptimizerUtility.findOrCreateFunctionId(
@@ -248,7 +248,7 @@ public class PathExistenceOptimizer extends OptimizerBase {
 			vertexSet = syntaxgraph.createBackwardVertexSet();
 			syntaxgraph.createIsTargetExprOf(startOrTargetExp, vertexSet);
 		}
-		syntaxgraph.createIsPathOf((Expression) pe.getFirstIsPathOf(
+		syntaxgraph.createIsPathOf((Expression) pe.getFirstIsPathOfIncidence(
 				EdgeDirection.IN).getAlpha(), vertexSet);
 
 		syntaxgraph.createIsArgumentOf(vertexSet, contains);

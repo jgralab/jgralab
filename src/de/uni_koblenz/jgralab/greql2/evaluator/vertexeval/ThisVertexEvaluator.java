@@ -84,7 +84,7 @@ public class ThisVertexEvaluator extends VariableEvaluator {
 				dependingEvaluators.add(eval);
 			}
 			Greql2Aggregation currentEdge = currentVertex
-					.getFirstGreql2Aggregation(EdgeDirection.OUT);
+					.getFirstGreql2AggregationIncidence(EdgeDirection.OUT);
 			while (currentEdge != null) {
 				Greql2Vertex nextVertex = (Greql2Vertex) currentEdge.getThat();
 				if (!(nextVertex instanceof PathDescription)) {

@@ -113,13 +113,13 @@ public class MergeSimpleDeclarationsOptimizer extends OptimizerBase {
 		Declaration decl = syntaxgraph.getFirstDeclaration();
 		while (decl != null) {
 			IsSimpleDeclOf isSimpleDeclOf = decl
-					.getFirstIsSimpleDeclOf(EdgeDirection.IN);
+					.getFirstIsSimpleDeclOfIncidence(EdgeDirection.IN);
 			while (isSimpleDeclOf != null) {
 				SimpleDeclaration sDecl = (SimpleDeclaration) isSimpleDeclOf
 						.getAlpha();
 				String key = decl.getId()
 						+ "-"
-						+ sDecl.getFirstIsTypeExprOf(EdgeDirection.IN)
+						+ sDecl.getFirstIsTypeExprOfIncidence(EdgeDirection.IN)
 								.getAlpha().getId();
 				if (mergableSDMap.containsKey(key)) {
 					// We've found another SimpleDeclaration with the same type
@@ -151,32 +151,32 @@ public class MergeSimpleDeclarationsOptimizer extends OptimizerBase {
 		for (Entry<String, ArrayList<SimpleDeclaration>> e : mergableSDMap
 				.entrySet()) {
 			SimpleDeclaration survivor = e.getValue().get(0);
-			Declaration decl = (Declaration) survivor.getFirstIsSimpleDeclOf()
+			Declaration decl = (Declaration) survivor.getFirstIsSimpleDeclOfIncidence()
 					.getOmega();
 			IsSimpleDeclOf isSDOfSurvivor = survivor
-					.getFirstIsSimpleDeclOf(EdgeDirection.OUT);
+					.getFirstIsSimpleDeclOfIncidence(EdgeDirection.OUT);
 			IsTypeExprOfDeclaration isTEODSurvivor = survivor
-					.getFirstIsTypeExprOfDeclaration(EdgeDirection.IN);
+					.getFirstIsTypeExprOfDeclarationIncidence(EdgeDirection.IN);
 
 			for (SimpleDeclaration s : e.getValue()) {
 
 				IsSimpleDeclOf isSDOfS = s
-						.getFirstIsSimpleDeclOf(EdgeDirection.OUT);
+						.getFirstIsSimpleDeclOfIncidence(EdgeDirection.OUT);
 
 				if (isNextInIncidenceList(decl, isSDOfSurvivor, isSDOfS)) {
 					logger.finer(optimizerHeaderString()
 							+ "Merging all variables of " + s + " into "
 							+ survivor + ".");
 
-					while (s.getFirstIsDeclaredVarOf() != null) {
-						s.getFirstIsDeclaredVarOf().setOmega(survivor);
+					while (s.getFirstIsDeclaredVarOfIncidence() != null) {
+						s.getFirstIsDeclaredVarOfIncidence().setOmega(survivor);
 					}
 
 					// merge the sourcePositions
 					OptimizerUtility.mergeSourcePositions(isSDOfS,
 							isSDOfSurvivor);
 					IsTypeExprOfDeclaration isTEODS = s
-							.getFirstIsTypeExprOfDeclaration(EdgeDirection.IN);
+							.getFirstIsTypeExprOfDeclarationIncidence(EdgeDirection.IN);
 					OptimizerUtility.mergeSourcePositions(isTEODS,
 							isTEODSurvivor);
 
@@ -203,7 +203,7 @@ public class MergeSimpleDeclarationsOptimizer extends OptimizerBase {
 	 */
 	private boolean isNextInIncidenceList(Declaration decl,
 			IsSimpleDeclOf isSDOfSurvivor, IsSimpleDeclOf isSDOfS) {
-		IsSimpleDeclOf edge = decl.getFirstIsSimpleDeclOf();
+		IsSimpleDeclOf edge = decl.getFirstIsSimpleDeclOfIncidence();
 		while (edge != null) {
 			if (edge.getNormalEdge() != isSDOfSurvivor) {
 				edge = edge.getNextIsSimpleDeclOf();

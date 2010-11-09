@@ -60,14 +60,14 @@ public class EdgePathDescriptionEvaluator extends
 
 	@Override
 	public JValue evaluate() throws EvaluateException {
-		Edge evalEdge = vertex.getFirstIsEdgeExprOf();
+		Edge evalEdge = vertex.getFirstIsEdgeExprOfIncidence();
 		VertexEvaluator edgeEval = null;
 		if (evalEdge != null) {
 			edgeEval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(
 					evalEdge.getAlpha());
 		}
 		JValueTypeCollection typeCollection = new JValueTypeCollection();
-		IsTypeRestrOf inc = vertex.getFirstIsTypeRestrOf(EdgeDirection.IN);
+		IsTypeRestrOf inc = vertex.getFirstIsTypeRestrOfIncidence(EdgeDirection.IN);
 		EdgeRestrictionEvaluator edgeRestEval = null;
 		VertexEvaluator predicateEvaluator = null;
 		if (inc != null) {

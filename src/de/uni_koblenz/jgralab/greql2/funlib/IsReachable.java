@@ -127,7 +127,7 @@ public class IsReachable extends Greql2Function {
 			if (currentEntry.vertex == endVertex && currentEntry.state.isFinal) {
 				return new JValueImpl(true, startVertex);
 			}
-			Edge inc = currentEntry.vertex.getFirstEdge();
+			Edge inc = currentEntry.vertex.getFirstIncidence();
 			while (inc != null) {
 				for (Transition currentTransition : currentEntry.state.outTransitions) {
 					Vertex nextVertex = currentTransition.getNextVertex(
@@ -143,7 +143,7 @@ public class IsReachable extends Greql2Function {
 						}
 					}
 				}
-				inc = inc.getNextEdge();
+				inc = inc.getNextIncidence();
 			}
 		}
 		return new JValueImpl(false, startVertex);

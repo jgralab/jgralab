@@ -115,16 +115,16 @@ public class UndoTest {
 		node1 = graph.createNode();
 		node2 = graph.createNode();
 
-		assertNull(graph.getFirstLinkInGraph());
+		assertNull(graph.getFirstLink());
 		sp = graph.defineSavepoint();
-		assertNull(graph.getFirstLinkInGraph());
+		assertNull(graph.getFirstLink());
 
 		Link link = graph.createLink(node1, node2);
 
-		assertTrue(graph.getFirstLinkInGraph() != null);
-		assertTrue(graph.getFirstLinkInGraph() == link);
+		assertTrue(graph.getFirstLink() != null);
+		assertTrue(graph.getFirstLink() == link);
 		trans.restoreSavepoint(sp);
-		assertNull(graph.getFirstLinkInGraph());
+		assertNull(graph.getFirstLink());
 		graph.commit();
 
 	}

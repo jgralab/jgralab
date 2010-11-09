@@ -217,17 +217,17 @@ public class SchemaGraph2Tg {
 				schema.get_name(), DELIMITER, NEWLINE);
 
 		Package defaultPackage = (Package) schema
-				.getFirstContainsDefaultPackage(EdgeDirection.OUT).getThat();
+				.getFirstContainsDefaultPackageIncidence(EdgeDirection.OUT).getThat();
 		setCurrentPackageName(defaultPackage);
 
 		// graphclass
-		GraphClass gc = (GraphClass) schema.getFirstDefinesGraphClass(
+		GraphClass gc = (GraphClass) schema.getFirstDefinesGraphClassIncidence(
 				EdgeDirection.OUT).getOmega();
 		printGraphClass(gc);
 		printComments(gc);
 
 		printPackageWithElements((Package) schema
-				.getFirstContainsDefaultPackage(EdgeDirection.OUT).getThat());
+				.getFirstContainsDefaultPackageIncidence(EdgeDirection.OUT).getThat());
 	}
 
 	private void printPackageWithElements(Package gPackage) {
@@ -276,7 +276,7 @@ public class SchemaGraph2Tg {
 		print(VERTEX_CLASS, SPACE, shortName(vc.get_qualifiedName()));
 
 		// superclasses
-		if (vc.getFirstSpecializesVertexClass(EdgeDirection.OUT) != null) {
+		if (vc.getFirstSpecializesVertexClassIncidence(EdgeDirection.OUT) != null) {
 			print(COLON, SPACE);
 			boolean first = true;
 			for (SpecializesVertexClass svc : vc
@@ -307,7 +307,7 @@ public class SchemaGraph2Tg {
 		print(EDGE_CLASS, SPACE, shortName(ec.get_qualifiedName()));
 
 		// superclasses
-		if (ec.getFirstSpecializesEdgeClass(EdgeDirection.OUT) != null) {
+		if (ec.getFirstSpecializesEdgeClassIncidence(EdgeDirection.OUT) != null) {
 			print(COLON, SPACE);
 			boolean first = true;
 			for (SpecializesEdgeClass svc : ec
@@ -323,13 +323,13 @@ public class SchemaGraph2Tg {
 		}
 
 		// from/to
-		IncidenceClass fromIC = (IncidenceClass) ec.getFirstComesFrom(
+		IncidenceClass fromIC = (IncidenceClass) ec.getFirstComesFromIncidence(
 				EdgeDirection.OUT).getThat();
-		IncidenceClass toIC = (IncidenceClass) ec.getFirstGoesTo(
+		IncidenceClass toIC = (IncidenceClass) ec.getFirstGoesToIncidence(
 				EdgeDirection.OUT).getThat();
-		VertexClass fromVC = (VertexClass) fromIC.getFirstEndsAt(
+		VertexClass fromVC = (VertexClass) fromIC.getFirstEndsAtIncidence(
 				EdgeDirection.OUT).getThat();
-		VertexClass toVC = (VertexClass) toIC.getFirstEndsAt(EdgeDirection.OUT)
+		VertexClass toVC = (VertexClass) toIC.getFirstEndsAtIncidence(EdgeDirection.OUT)
 				.getThat();
 
 		print(SPACE, FROM, SPACE, shortName(fromVC.get_qualifiedName()));
@@ -398,7 +398,7 @@ public class SchemaGraph2Tg {
 			print(SPACE, ROLE, SPACE, ic.get_roleName());
 		}
 
-		if (ic.getFirstRedefines(EdgeDirection.OUT) != null) {
+		if (ic.getFirstRedefinesIncidence(EdgeDirection.OUT) != null) {
 			print(SPACE, REDEFINES, SPACE);
 			boolean first = true;
 			for (Redefines r : ic.getRedefinesIncidences(EdgeDirection.OUT)) {
@@ -486,7 +486,7 @@ public class SchemaGraph2Tg {
 	}
 
 	private void printAttributes(AttributedElementClass aec) {
-		if (aec.getFirstHasAttribute(EdgeDirection.OUT) == null) {
+		if (aec.getFirstHasAttributeIncidence(EdgeDirection.OUT) == null) {
 			return;
 		}
 
@@ -499,7 +499,7 @@ public class SchemaGraph2Tg {
 				print(COMMA, SPACE);
 			}
 			Attribute attr = (Attribute) ha.getThat();
-			Domain dom = (Domain) attr.getFirstHasDomain(EdgeDirection.OUT)
+			Domain dom = (Domain) attr.getFirstHasDomainIncidence(EdgeDirection.OUT)
 					.getThat();
 			print(attr.get_name(), COLON, SPACE,
 					shortName(dom.get_qualifiedName()));

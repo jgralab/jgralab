@@ -92,7 +92,7 @@ public class DeclarationEvaluator extends VertexEvaluator {
 	@Override
 	public JValue evaluate() throws EvaluateException {
 		AbstractGraphMarker<AttributedElement> newSubgraph = null;
-		Edge edge = vertex.getFirstIsSubgraphOf();
+		Edge edge = vertex.getFirstIsSubgraphOfIncidence();
 		if (edge != null) {
 			SubgraphExpression subgraphExp = (SubgraphExpression) edge
 					.getAlpha();

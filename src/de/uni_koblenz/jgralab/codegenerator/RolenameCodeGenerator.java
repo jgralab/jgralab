@@ -81,9 +81,9 @@ public class RolenameCodeGenerator {
 							"@Override",
 							"public boolean remove_#rolename#(#definingVertexClassName# vertex) {",
 							"\tboolean elementRemoved = false;",
-							"\t#edgeClassName# edge = (#edgeClassName#) getFirstEdgeOfClass(#edgeClassName#.class, #dir#);",
+							"\t#edgeClassName# edge = (#edgeClassName#) getFirstIncidence(#edgeClassName#.class, #dir#);",
 							"\twhile (edge != null) {",
-							"\t\t#edgeClassName# next = (#edgeClassName#) edge.getNextEdgeOfClass(#edgeClassName#.class, #dir#);",
+							"\t\t#edgeClassName# next = (#edgeClassName#) edge.getNextIncidence(#edgeClassName#.class, #dir#);",
 							"\t\tif (edge.getThat().equals(vertex)) {"
 									+ "\t\t\tedge.delete();",
 							"\t\t\telementRemoved = true;", "\t\t}",
@@ -120,9 +120,9 @@ public class RolenameCodeGenerator {
 							"@Override",
 							"public java.util.List<? extends #vertexClassName#> remove_#rolename#() {",
 							"\tjava.util.List<#vertexClassName#> adjacences = new java.util.ArrayList<#vertexClassName#>();",
-							"\t#edgeClassName# edge = (#edgeClassName#) getFirstEdgeOfClass(#edgeClassName#.class, #dir#);",
+							"\t#edgeClassName# edge = (#edgeClassName#) getFirstIncidence(#edgeClassName#.class, #dir#);",
 							"\twhile (edge != null) {",
-							"\t\t#edgeClassName# next = (#edgeClassName#) edge.getNextEdgeOfClass(#edgeClassName#.class, #dir#);",
+							"\t\t#edgeClassName# next = (#edgeClassName#) edge.getNextIncidence(#edgeClassName#.class, #dir#);",
 							"\t\tadjacences.add((#vertexClassName#) edge.getThat());",
 							"\t\tedge.delete();", "\t\tedge = next;", "\t}",
 							"\treturn adjacences;", "}");
@@ -157,7 +157,7 @@ public class RolenameCodeGenerator {
 						.add(
 								"@Override",
 								"public #vertexClassName# get_#rolename#() {",
-								"\t#edgeClassName# edge = (#edgeClassName#) getFirstEdgeOfClass(#edgeClassName#.class, #dir#);",
+								"\t#edgeClassName# edge = (#edgeClassName#) getFirstIncidence(#edgeClassName#.class, #dir#);",
 								"\tif (edge != null) {",
 								"\t\treturn (#vertexClassName#) edge.getThat();",
 								"\t}", "\treturn null;", "}");

@@ -87,7 +87,7 @@ public class BagComprehensionEvaluator extends ComprehensionEvaluator {
 	@Override
 	protected JValueCollection getResultDatastructure() {
 		if (createHeader == null) {
-			if (vertex.getFirstIsTableHeaderOf(EdgeDirection.IN) != null) {
+			if (vertex.getFirstIsTableHeaderOfIncidence(EdgeDirection.IN) != null) {
 				headerEvaluators = new ArrayList<VertexEvaluator>();
 				createHeader = true;
 				for (IsTableHeaderOf tableInc : vertex

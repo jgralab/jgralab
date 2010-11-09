@@ -75,8 +75,8 @@ public class EdgeIterable<E extends Edge> implements Iterable<E> {
 			graph = g;
 			this.ec = ec;
 			edgeListVersion = g.getEdgeListVersion();
-			current = (E) (ec == null ? graph.getFirstEdgeInGraph() : graph
-					.getFirstEdgeOfClassInGraph(ec));
+			current = (E) (ec == null ? graph.getFirstEdge() : graph
+					.getFirstEdge(ec));
 		}
 
 		@SuppressWarnings("unchecked")
@@ -89,8 +89,8 @@ public class EdgeIterable<E extends Edge> implements Iterable<E> {
 				throw new NoSuchElementException();
 			}
 			E result = current;
-			current = (E) (ec == null ? current.getNextEdgeInGraph() : current
-					.getNextEdgeOfClassInGraph(ec));
+			current = (E) (ec == null ? current.getNextEdge() : current
+					.getNextEdge(ec));
 			return result;
 		}
 

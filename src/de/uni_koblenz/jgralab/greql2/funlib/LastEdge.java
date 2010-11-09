@@ -85,15 +85,15 @@ public class LastEdge extends Greql2Function {
 			throws EvaluateException {
 		switch (checkArguments(arguments)) {
 		case 0:
-			return new JValueImpl(graph.getLastEdgeInGraph());
+			return new JValueImpl(graph.getLastEdge());
 		case 1:
-			Edge current = graph.getLastEdgeInGraph();
+			Edge current = graph.getLastEdge();
 			JValueTypeCollection tc = arguments[2].toJValueTypeCollection();
 			while (current != null) {
 				if (tc.acceptsType(current.getAttributedElementClass())) {
 					return new JValueImpl(current);
 				}
-				current = current.getPrevEdgeInGraph();
+				current = current.getPrevEdge();
 			}
 			return new JValueImpl((Edge) null);
 		default:

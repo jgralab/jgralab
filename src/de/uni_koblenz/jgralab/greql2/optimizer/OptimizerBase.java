@@ -93,15 +93,15 @@ public abstract class OptimizerBase implements Optimizer {
 		assert from.isValid() && to.isValid() : "Relinking invalid vertices!";
 
 		// System.out.println("    relink: " + from + " --> " + to);
-		Edge e = from.getFirstEdge(EdgeDirection.IN);
+		Edge e = from.getFirstIncidence(EdgeDirection.IN);
 		while (e != null) {
-			Edge newE = e.getNextEdge(EdgeDirection.IN);
+			Edge newE = e.getNextIncidence(EdgeDirection.IN);
 			e.setOmega(to);
 			e = newE;
 		}
-		e = from.getFirstEdge(EdgeDirection.OUT);
+		e = from.getFirstIncidence(EdgeDirection.OUT);
 		while (e != null) {
-			Edge newE = e.getNextEdge(EdgeDirection.OUT);
+			Edge newE = e.getNextIncidence(EdgeDirection.OUT);
 			e.setAlpha(to);
 			e = newE;
 		}
@@ -133,12 +133,12 @@ public abstract class OptimizerBase implements Optimizer {
 			return false;
 		}
 		SimpleDeclaration sd1 = (SimpleDeclaration) var1
-				.getFirstIsDeclaredVarOf(EdgeDirection.OUT).getOmega();
-		Declaration decl1 = (Declaration) sd1.getFirstIsSimpleDeclOf(
+				.getFirstIsDeclaredVarOfIncidence(EdgeDirection.OUT).getOmega();
+		Declaration decl1 = (Declaration) sd1.getFirstIsSimpleDeclOfIncidence(
 				EdgeDirection.OUT).getOmega();
 		SimpleDeclaration sd2 = (SimpleDeclaration) var2
-				.getFirstIsDeclaredVarOf(EdgeDirection.OUT).getOmega();
-		Declaration decl2 = (Declaration) sd2.getFirstIsSimpleDeclOf(
+				.getFirstIsDeclaredVarOfIncidence(EdgeDirection.OUT).getOmega();
+		Declaration decl2 = (Declaration) sd2.getFirstIsSimpleDeclOfIncidence(
 				EdgeDirection.OUT).getOmega();
 
 		if (decl1 == decl2) {
@@ -146,7 +146,7 @@ public abstract class OptimizerBase implements Optimizer {
 				// var1 and var2 are declared in the same SimpleDeclaration,
 				// so the order of the IsDeclaredVarOf edges matters.
 				IsDeclaredVarOf inc = sd1
-						.getFirstIsDeclaredVarOf(EdgeDirection.IN);
+						.getFirstIsDeclaredVarOfIncidence(EdgeDirection.IN);
 				while (inc != null) {
 					if (inc.getAlpha() == var1) {
 						return true;
@@ -161,7 +161,7 @@ public abstract class OptimizerBase implements Optimizer {
 				// different SimpleDeclarations, so the order of the
 				// SimpleDeclarations matters.
 				IsSimpleDeclOf inc = decl1
-						.getFirstIsSimpleDeclOf(EdgeDirection.IN);
+						.getFirstIsSimpleDeclOfIncidence(EdgeDirection.IN);
 				while (inc != null) {
 					if (inc.getAlpha() == sd1) {
 						return true;
@@ -175,9 +175,9 @@ public abstract class OptimizerBase implements Optimizer {
 		} else {
 			// start and target are declared in different Declarations, so we
 			// have to check if start was declared in the outer Declaration.
-			Vertex declParent1 = decl1.getFirstEdge(EdgeDirection.OUT)
+			Vertex declParent1 = decl1.getFirstIncidence(EdgeDirection.OUT)
 					.getOmega();
-			Vertex declParent2 = decl2.getFirstEdge(EdgeDirection.OUT)
+			Vertex declParent2 = decl2.getFirstIncidence(EdgeDirection.OUT)
 					.getOmega();
 			if (OptimizerUtility.isAbove(declParent1, declParent2)) {
 				return true;
@@ -202,13 +202,13 @@ public abstract class OptimizerBase implements Optimizer {
 			return (Declaration) vertex;
 		}
 		Declaration result = null;
-		Edge inc = vertex.getFirstEdge(EdgeDirection.OUT);
+		Edge inc = vertex.getFirstIncidence(EdgeDirection.OUT);
 		while (inc != null) {
 			result = findNearestDeclarationAbove(inc.getOmega());
 			if (result != null) {
 				return result;
 			}
-			inc = inc.getNextEdge(EdgeDirection.OUT);
+			inc = inc.getNextIncidence(EdgeDirection.OUT);
 		}
 		return null;
 	}
@@ -236,19 +236,19 @@ public abstract class OptimizerBase implements Optimizer {
 			// there's nothing to split out anymore
 			return sd;
 		}
-		Declaration parentDecl = (Declaration) sd.getFirstIsSimpleDeclOf(
+		Declaration parentDecl = (Declaration) sd.getFirstIsSimpleDeclOfIncidence(
 				EdgeDirection.OUT).getOmega();
-		IsSimpleDeclOf oldEdge = sd.getFirstIsSimpleDeclOf();
+		IsSimpleDeclOf oldEdge = sd.getFirstIsSimpleDeclOfIncidence();
 		SimpleDeclaration newSD = syntaxgraph.createSimpleDeclaration();
 		IsSimpleDeclOf newEdge = syntaxgraph.createIsSimpleDeclOf(newSD,
 				parentDecl);
 		syntaxgraph.createIsTypeExprOfDeclaration((Expression) sd
-				.getFirstIsTypeExprOfDeclaration(EdgeDirection.IN).getAlpha(),
+				.getFirstIsTypeExprOfDeclarationIncidence(EdgeDirection.IN).getAlpha(),
 				newSD);
-		newEdge.getReversedEdge().putEdgeAfter(oldEdge.getReversedEdge());
+		newEdge.getReversedEdge().putIncidenceAfter(oldEdge.getReversedEdge());
 
 		for (Variable var : varsToBeSplit) {
-			IsDeclaredVarOf inc = sd.getFirstIsDeclaredVarOf(EdgeDirection.IN);
+			IsDeclaredVarOf inc = sd.getFirstIsDeclaredVarOfIncidence(EdgeDirection.IN);
 			HashSet<IsDeclaredVarOf> relinkIncs = new HashSet<IsDeclaredVarOf>();
 			while (inc != null) {
 				if (inc.getAlpha() == var) {

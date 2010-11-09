@@ -71,13 +71,13 @@ public abstract class ReversedEdgeImpl extends
 	}
 
 	@Override
-	public Edge getNextEdge() {
-		return getNextIncidence();
+	public Edge getNextIncidence() {
+		return getNextIncidenceInternal();
 	}
 
 	@Override
-	public Edge getPrevEdge() {
-		return getPrevIncidence();
+	public Edge getPrevIncidence() {
+		return getPrevIncidenceInternal();
 	}
 
 	// --- getter ---//
@@ -93,7 +93,7 @@ public abstract class ReversedEdgeImpl extends
 	}
 
 	@Override
-	protected IncidenceImpl getNextIncidence() {
+	protected IncidenceImpl getNextIncidenceInternal() {
 		if (nextIncidence == null) {
 			return null;
 		}
@@ -103,7 +103,7 @@ public abstract class ReversedEdgeImpl extends
 	}
 
 	@Override
-	protected IncidenceImpl getPrevIncidence() {
+	protected IncidenceImpl getPrevIncidenceInternal() {
 		if (prevIncidence == null) {
 			return null;
 		}
@@ -129,7 +129,7 @@ public abstract class ReversedEdgeImpl extends
 	}
 
 	@Override
-	protected void setNextIncidence(IncidenceImpl nextIncidence) {
+	protected void setNextIncidenceInternal(IncidenceImpl nextIncidence) {
 		if (graph.isLoading()) {
 			this.nextIncidence = new VersionedReferenceImpl<IncidenceImpl>(
 					normalEdge, nextIncidence);
@@ -167,7 +167,7 @@ public abstract class ReversedEdgeImpl extends
 	}
 
 	@Override
-	protected void setPrevIncidence(IncidenceImpl prevIncidence) {
+	protected void setPrevIncidenceInternal(IncidenceImpl prevIncidence) {
 		if (graph.isLoading()) {
 			this.prevIncidence = new VersionedReferenceImpl<IncidenceImpl>(
 					normalEdge, prevIncidence);

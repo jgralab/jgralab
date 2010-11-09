@@ -61,13 +61,13 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl 
 	private IncidenceImpl nextIncidence;
 
 	@Override
-	public Edge getNextEdgeInGraph() {
+	public Edge getNextEdge() {
 		assert isValid();
 		return this.nextEdge;
 	}
 
 	@Override
-	public Edge getPrevEdgeInGraph() {
+	public Edge getPrevEdge() {
 		assert isValid();
 		return findPrevEdgeInGraph();
 	}
@@ -75,8 +75,8 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl 
 	private Edge findPrevEdgeInGraph() {
 		Edge prevEdge = null;
 
-		for (Edge currEdge = getGraph().getFirstEdgeInGraph(); currEdge != null; currEdge = currEdge
-				.getNextEdgeInGraph()) {
+		for (Edge currEdge = getGraph().getFirstEdge(); currEdge != null; currEdge = currEdge
+				.getNextEdge()) {
 			if (currEdge == this) {
 				return prevEdge;
 			}
@@ -111,19 +111,19 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl 
 	}
 
 	@Override
-	protected IncidenceImpl getNextIncidence() {
+	protected IncidenceImpl getNextIncidenceInternal() {
 		return nextIncidence;
 	}
 
 	@Override
-	protected IncidenceImpl getPrevIncidence() {
+	protected IncidenceImpl getPrevIncidenceInternal() {
 		Edge prevEdge = null;
 		return findPrevIncidence(prevEdge);
 	}
 
 	private IncidenceImpl findPrevIncidence(Edge prevEdge) {
-		for (Edge currEdge = incidentVertex.getFirstEdge(); currEdge != null; currEdge = currEdge
-				.getNextEdge()) {
+		for (Edge currEdge = incidentVertex.getFirstIncidence(); currEdge != null; currEdge = currEdge
+				.getNextIncidence()) {
 			if (currEdge == this) {
 				return (IncidenceImpl) prevEdge;
 			}
@@ -150,12 +150,12 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl 
 	}
 
 	@Override
-	protected void setNextIncidence(IncidenceImpl nextIncidence) {
+	protected void setNextIncidenceInternal(IncidenceImpl nextIncidence) {
 		this.nextIncidence = nextIncidence;
 	}
 
 	@Override
-	protected void setPrevIncidence(IncidenceImpl prevIncidence) {
+	protected void setPrevIncidenceInternal(IncidenceImpl prevIncidence) {
 		// throw new UnsupportedOperationException(
 		// "Unsupported in savemem implementation.");
 	}

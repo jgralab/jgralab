@@ -204,7 +204,7 @@ public class SimpleTransition extends Transition {
 		validEdgeRoles = roles;
 		this.typeCollection = typeCollection;
 		this.predicateEvaluator = predicateEvaluator;
-		Vertex v = graphMarker.getGraph().getFirstVertexOfClass(ThisEdge.class);
+		Vertex v = graphMarker.getGraph().getFirstVertex(ThisEdge.class);
 		if (v != null) {
 			thisEdgeEvaluator = (ThisEdgeEvaluator) graphMarker.getMark(v);
 		}

@@ -476,7 +476,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	}
 
 	@Override
-	public Edge getFirstEdgeInGraph() {
+	public Edge getFirstEdge() {
 		return this.eSeq.getFirst();
 	}
 
@@ -486,7 +486,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	}
 
 	@Override
-	public Edge getLastEdgeInGraph() {
+	public Edge getLastEdge() {
 		return this.eSeq.getLast();
 	}
 
@@ -1154,7 +1154,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	public void reorganizeIncidenceListInDatabaseOf(
 			DatabasePersistableVertex vertex) {
 		try {
-			Edge firstIncidence = vertex.getFirstEdge();
+			Edge firstIncidence = vertex.getFirstIncidence();
 			long start = ((DatabasePersistableIncidence) firstIncidence)
 					.getSequenceNumberInLambdaSeq();
 			this.containingDatabase.reorganizeIncidenceList(vertex, start);

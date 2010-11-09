@@ -85,13 +85,13 @@ public abstract class ReversedEdgeImpl extends ReversedEdgeBaseImpl implements
 	}
 
 	@Override
-	protected IncidenceImpl getPrevIncidence() {
+	protected IncidenceImpl getPrevIncidenceInternal() {
 		VertexImpl vertex = (VertexImpl) this.getIncidentVertex();
 		return (IncidenceImpl) vertex.getPrevIncidence(this);
 	}
 
 	@Override
-	protected IncidenceImpl getNextIncidence() {
+	protected IncidenceImpl getNextIncidenceInternal() {
 		VertexImpl vertex = (VertexImpl) this.getIncidentVertex();
 		return (IncidenceImpl) vertex.getNextIncidence(this);
 	}
@@ -102,13 +102,13 @@ public abstract class ReversedEdgeImpl extends ReversedEdgeBaseImpl implements
 	}
 
 	@Override
-	protected void setNextIncidence(IncidenceImpl nextIncidence) {
-		nextIncidence.putEdgeAfter(this);
+	protected void setNextIncidenceInternal(IncidenceImpl nextIncidence) {
+		nextIncidence.putIncidenceAfter(this);
 	}
 
 	@Override
-	protected void setPrevIncidence(IncidenceImpl prevIncidence) {
-		prevIncidence.putEdgeBefore(this);
+	protected void setPrevIncidenceInternal(IncidenceImpl prevIncidence) {
+		prevIncidence.putIncidenceBefore(this);
 	}
 
 	@Override

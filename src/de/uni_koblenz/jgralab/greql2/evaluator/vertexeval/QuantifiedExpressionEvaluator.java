@@ -88,16 +88,16 @@ public class QuantifiedExpressionEvaluator extends VertexEvaluator {
 	}
 
 	private void initialize() {
-		Declaration d = (Declaration) vertex.getFirstIsQuantifiedDeclOf(
+		Declaration d = (Declaration) vertex.getFirstIsQuantifiedDeclOfIncidence(
 				EdgeDirection.IN).getAlpha();
 		DeclarationEvaluator declEval = (DeclarationEvaluator) greqlEvaluator
 				.getVertexEvaluatorGraphMarker().getMark(d);
 		declarationLayer = (VariableDeclarationLayer) declEval.getResult(
 				subgraph).toObject();
-		Quantifier quantifier = (Quantifier) vertex.getFirstIsQuantifierOf(
+		Quantifier quantifier = (Quantifier) vertex.getFirstIsQuantifierOfIncidence(
 				EdgeDirection.IN).getAlpha();
 		quantificationType = quantifier.get_type();
-		Expression b = (Expression) vertex.getFirstIsBoundExprOf(
+		Expression b = (Expression) vertex.getFirstIsBoundExprOfIncidence(
 				EdgeDirection.IN).getAlpha();
 		predicateEvaluator = greqlEvaluator.getVertexEvaluatorGraphMarker()
 				.getMark(b);

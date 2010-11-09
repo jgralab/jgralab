@@ -194,14 +194,14 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 			}
 			code
 					.add(" */",
-							"public #ecQualifiedName# getFirst#ecCamelName#(#formalParams#);");
+							"public #ecQualifiedName# getFirst#ecCamelName#Incidence(#formalParams#);");
 		}
 		if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()) {
 			code
 					.add(
 							"@Override",
-							"public #ecQualifiedName# getFirst#ecCamelName#(#formalParams#) {",
-							"\treturn (#ecQualifiedName#)getFirstEdgeOfClass(#ecQualifiedName#.class#actualParams#);",
+							"public #ecQualifiedName# getFirst#ecCamelName#Incidence(#formalParams#) {",
+							"\treturn (#ecQualifiedName#)getFirstIncidence(#ecQualifiedName#.class#actualParams#);",
 							"}");
 		}
 		return code;
@@ -276,7 +276,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 					.add(
 							"@Override",
 							"public #vcQualifiedName# getNext#vcCamelName#(#formalParams#) {",
-							"\treturn (#vcQualifiedName#)getNextVertexOfClass(#vcQualifiedName#.class#actualParams#);",
+							"\treturn (#vcQualifiedName#)getNextVertex(#vcQualifiedName#.class#actualParams#);",
 							"}");
 		}
 		return code;

@@ -256,7 +256,7 @@ public class AttributedElementIterableTest {
 			Iterable<Edge> incidences = v1.incidences();
 			assertTrue(incidences instanceof AttributedElementIterable<?>);
 			for (Edge edge : incidences) {
-				v1.getLastEdge().delete();
+				v1.getLastIncidence().delete();
 				edge.getId();
 			}
 			fail();

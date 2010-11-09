@@ -1529,17 +1529,17 @@ public class ConflictDetectionTest {
 			motorwayMap.setCurrentTransaction(readWriteTransaction1);
 			Edge e2 = motorwayMap.getEdge(2);
 			Edge e4 = motorwayMap.getEdge(4);
-			e4.putAfterInGraph(e2);
-			assertTrue(e4.isAfterInGraph(e2));
-			assertEquals(e4.getPrevEdgeInGraph(), e2);
-			assertEquals(e2.getNextEdgeInGraph(), e4);
+			e4.putAfterEdge(e2);
+			assertTrue(e4.isAfterEdge(e2));
+			assertEquals(e4.getPrevEdge(), e2);
+			assertEquals(e2.getNextEdge(), e4);
 
 			motorwayMap.setCurrentTransaction(readWriteTransaction2);
 			Edge e1 = motorwayMap.getEdge(1);
-			e4.putAfterInGraph(e1);
-			assertTrue(e4.isAfterInGraph(e1));
-			assertEquals(e4.getPrevEdgeInGraph(), e1);
-			assertEquals(e1.getNextEdgeInGraph(), e4);
+			e4.putAfterEdge(e1);
+			assertTrue(e4.isAfterEdge(e1));
+			assertEquals(e4.getPrevEdge(), e1);
+			assertEquals(e1.getNextEdge(), e4);
 
 			motorwayMap.setCurrentTransaction(readWriteTransaction1);
 			readWriteTransaction1.commit();
@@ -1586,10 +1586,10 @@ public class ConflictDetectionTest {
 			@Override
 			public void run() {
 				motorwayMap.setCurrentTransaction(readWriteTransaction1);
-				e4.putAfterInGraph(e2);
-				assertTrue(e4.isAfterInGraph(e2));
-				assertEquals(e4.getPrevEdgeInGraph(), e2);
-				assertEquals(e2.getNextEdgeInGraph(), e4);
+				e4.putAfterEdge(e2);
+				assertTrue(e4.isAfterEdge(e2));
+				assertEquals(e4.getPrevEdge(), e2);
+				assertEquals(e2.getNextEdge(), e4);
 				try {
 					long sleepTime = 0;
 					if (lastToCommit == motorwayMap.getCurrentTransaction()) {
@@ -1611,10 +1611,10 @@ public class ConflictDetectionTest {
 			@Override
 			public void run() {
 				motorwayMap.setCurrentTransaction(readWriteTransaction2);
-				e4.putAfterInGraph(e1);
-				assertTrue(e4.isAfterInGraph(e1));
-				assertEquals(e4.getPrevEdgeInGraph(), e1);
-				assertEquals(e1.getNextEdgeInGraph(), e4);
+				e4.putAfterEdge(e1);
+				assertTrue(e4.isAfterEdge(e1));
+				assertEquals(e4.getPrevEdge(), e1);
+				assertEquals(e1.getNextEdge(), e4);
 				try {
 					long sleepTime = 0;
 					if (lastToCommit == motorwayMap.getCurrentTransaction()) {
@@ -1658,17 +1658,17 @@ public class ConflictDetectionTest {
 			motorwayMap.setCurrentTransaction(readWriteTransaction1);
 			Edge e2 = motorwayMap.getEdge(2);
 			Edge e4 = motorwayMap.getEdge(4);
-			e4.putAfterInGraph(e2);
-			assertTrue(e4.isAfterInGraph(e2));
-			assertEquals(e4.getPrevEdgeInGraph(), e2);
-			assertEquals(e2.getNextEdgeInGraph(), e4);
+			e4.putAfterEdge(e2);
+			assertTrue(e4.isAfterEdge(e2));
+			assertEquals(e4.getPrevEdge(), e2);
+			assertEquals(e2.getNextEdge(), e4);
 
 			motorwayMap.setCurrentTransaction(readWriteTransaction2);
 			Edge e5 = motorwayMap.getEdge(5);
-			e2.putAfterInGraph(e5);
-			assertTrue(e2.isAfterInGraph(e5));
-			assertEquals(e2.getPrevEdgeInGraph(), e5);
-			assertEquals(e5.getNextEdgeInGraph(), e2);
+			e2.putAfterEdge(e5);
+			assertTrue(e2.isAfterEdge(e5));
+			assertEquals(e2.getPrevEdge(), e5);
+			assertEquals(e5.getNextEdge(), e2);
 
 			motorwayMap.setCurrentTransaction(readWriteTransaction1);
 			readWriteTransaction1.commit();
@@ -1695,10 +1695,10 @@ public class ConflictDetectionTest {
 			motorwayMap.setCurrentTransaction(readWriteTransaction1);
 			Edge e2 = motorwayMap.getEdge(2);
 			Edge e4 = motorwayMap.getEdge(4);
-			e4.putAfterInGraph(e2);
-			assertTrue(e4.isAfterInGraph(e2));
-			assertEquals(e4.getPrevEdgeInGraph(), e2);
-			assertEquals(e2.getNextEdgeInGraph(), e4);
+			e4.putAfterEdge(e2);
+			assertTrue(e4.isAfterEdge(e2));
+			assertEquals(e4.getPrevEdge(), e2);
+			assertEquals(e2.getNextEdge(), e4);
 
 			motorwayMap.setCurrentTransaction(readWriteTransaction2);
 			motorwayMap.deleteEdge(e4);
@@ -1743,10 +1743,10 @@ public class ConflictDetectionTest {
 			assertFalse(e4.isValid());
 
 			motorwayMap.setCurrentTransaction(readWriteTransaction1);
-			e4.putAfterInGraph(e2);
-			assertTrue(e4.isAfterInGraph(e2));
-			assertEquals(e4.getPrevEdgeInGraph(), e2);
-			assertEquals(e2.getNextEdgeInGraph(), e4);
+			e4.putAfterEdge(e2);
+			assertTrue(e4.isAfterEdge(e2));
+			assertEquals(e4.getPrevEdge(), e2);
+			assertEquals(e2.getNextEdge(), e4);
 
 			motorwayMap.setCurrentTransaction(readWriteTransaction2);
 			readWriteTransaction2.commit();
@@ -1781,10 +1781,10 @@ public class ConflictDetectionTest {
 			@Override
 			public void run() {
 				motorwayMap.setCurrentTransaction(readWriteTransaction1);
-				e4.putAfterInGraph(e2);
-				assertTrue(e4.isAfterInGraph(e2));
-				assertEquals(e4.getPrevEdgeInGraph(), e2);
-				assertEquals(e2.getNextEdgeInGraph(), e4);
+				e4.putAfterEdge(e2);
+				assertTrue(e4.isAfterEdge(e2));
+				assertEquals(e4.getPrevEdge(), e2);
+				assertEquals(e2.getNextEdge(), e4);
 				try {
 					long sleepTime = 0;
 					if (lastToCommit == motorwayMap.getCurrentTransaction()) {
@@ -1853,45 +1853,45 @@ public class ConflictDetectionTest {
 			Edge e5 = motorwayMap.getEdge(5);
 			Edge e6 = motorwayMap.getEdge(6);
 			// Eseq at beginning <e1, e2, e3, e4, e5, e6,...>
-			assertEquals(motorwayMap.getFirstEdgeInGraph(), e1);
-			assertEquals(e1.getPrevEdgeInGraph(), null);
-			assertEquals(e1.getNextEdgeInGraph(), e2);
-			assertEquals(e2.getPrevEdgeInGraph(), e1);
-			assertEquals(e2.getNextEdgeInGraph(), e3);
-			assertEquals(e3.getPrevEdgeInGraph(), e2);
-			assertEquals(e3.getNextEdgeInGraph(), e4);
-			assertEquals(e4.getPrevEdgeInGraph(), e3);
-			assertEquals(e4.getNextEdgeInGraph(), e5);
-			assertEquals(e5.getPrevEdgeInGraph(), e4);
-			assertEquals(e5.getNextEdgeInGraph(), e6);
+			assertEquals(motorwayMap.getFirstEdge(), e1);
+			assertEquals(e1.getPrevEdge(), null);
+			assertEquals(e1.getNextEdge(), e2);
+			assertEquals(e2.getPrevEdge(), e1);
+			assertEquals(e2.getNextEdge(), e3);
+			assertEquals(e3.getPrevEdge(), e2);
+			assertEquals(e3.getNextEdge(), e4);
+			assertEquals(e4.getPrevEdge(), e3);
+			assertEquals(e4.getNextEdge(), e5);
+			assertEquals(e5.getPrevEdge(), e4);
+			assertEquals(e5.getNextEdge(), e6);
 
-			e4.putAfterInGraph(e1);
+			e4.putAfterEdge(e1);
 			// <e1, e4, e2, e3, e5, e6,...>
-			assertEquals(motorwayMap.getFirstEdgeInGraph(), e1);
-			assertEquals(e1.getPrevEdgeInGraph(), null);
-			assertEquals(e1.getNextEdgeInGraph(), e4);
-			assertEquals(e4.getPrevEdgeInGraph(), e1);
-			assertEquals(e4.getNextEdgeInGraph(), e2);
-			assertEquals(e2.getPrevEdgeInGraph(), e4);
-			assertEquals(e2.getNextEdgeInGraph(), e3);
-			assertEquals(e3.getPrevEdgeInGraph(), e2);
-			assertEquals(e3.getNextEdgeInGraph(), e5);
-			assertEquals(e5.getPrevEdgeInGraph(), e3);
-			assertEquals(e5.getNextEdgeInGraph(), e6);
+			assertEquals(motorwayMap.getFirstEdge(), e1);
+			assertEquals(e1.getPrevEdge(), null);
+			assertEquals(e1.getNextEdge(), e4);
+			assertEquals(e4.getPrevEdge(), e1);
+			assertEquals(e4.getNextEdge(), e2);
+			assertEquals(e2.getPrevEdge(), e4);
+			assertEquals(e2.getNextEdge(), e3);
+			assertEquals(e3.getPrevEdge(), e2);
+			assertEquals(e3.getNextEdge(), e5);
+			assertEquals(e5.getPrevEdge(), e3);
+			assertEquals(e5.getNextEdge(), e6);
 
 			motorwayMap.setCurrentTransaction(readWriteTransaction2);
 			e3.delete();
 			assertFalse(e3.isValid());
 			// <e1, e2, e4, e5, e6,...>
-			assertEquals(motorwayMap.getFirstEdgeInGraph(), e1);
-			assertEquals(e1.getPrevEdgeInGraph(), null);
-			assertEquals(e1.getNextEdgeInGraph(), e2);
-			assertEquals(e2.getPrevEdgeInGraph(), e1);
-			assertEquals(e2.getNextEdgeInGraph(), e4);
-			assertEquals(e4.getPrevEdgeInGraph(), e2);
-			assertEquals(e4.getNextEdgeInGraph(), e5);
-			assertEquals(e5.getPrevEdgeInGraph(), e4);
-			assertEquals(e5.getNextEdgeInGraph(), e6);
+			assertEquals(motorwayMap.getFirstEdge(), e1);
+			assertEquals(e1.getPrevEdge(), null);
+			assertEquals(e1.getNextEdge(), e2);
+			assertEquals(e2.getPrevEdge(), e1);
+			assertEquals(e2.getNextEdge(), e4);
+			assertEquals(e4.getPrevEdge(), e2);
+			assertEquals(e4.getNextEdge(), e5);
+			assertEquals(e5.getPrevEdge(), e4);
+			assertEquals(e5.getNextEdge(), e6);
 
 			motorwayMap.setCurrentTransaction(readWriteTransaction1);
 			readWriteTransaction1.commit();
@@ -1901,15 +1901,15 @@ public class ConflictDetectionTest {
 
 			readOnlyTransaction = motorwayMap.newReadOnlyTransaction();
 			// <e1, e4, e2, e5, e6,...>
-			assertEquals(motorwayMap.getFirstEdgeInGraph(), e1);
-			assertEquals(e1.getPrevEdgeInGraph(), null);
-			assertEquals(e1.getNextEdgeInGraph(), e4);
-			assertEquals(e4.getPrevEdgeInGraph(), e1);
-			assertEquals(e4.getNextEdgeInGraph(), e2);
-			assertEquals(e2.getPrevEdgeInGraph(), e4);
-			assertEquals(e2.getNextEdgeInGraph(), e5);
-			assertEquals(e5.getPrevEdgeInGraph(), e2);
-			assertEquals(e5.getNextEdgeInGraph(), e6);
+			assertEquals(motorwayMap.getFirstEdge(), e1);
+			assertEquals(e1.getPrevEdge(), null);
+			assertEquals(e1.getNextEdge(), e4);
+			assertEquals(e4.getPrevEdge(), e1);
+			assertEquals(e4.getNextEdge(), e2);
+			assertEquals(e2.getPrevEdge(), e4);
+			assertEquals(e2.getNextEdge(), e5);
+			assertEquals(e5.getPrevEdge(), e2);
+			assertEquals(e5.getNextEdge(), e6);
 			assertFalse(e3.isValid());
 		} catch (CommitFailedException e) {
 			e.printStackTrace();
@@ -1958,31 +1958,31 @@ public class ConflictDetectionTest {
 				Edge e5 = motorwayMap.getEdge(5);
 				Edge e6 = motorwayMap.getEdge(6);
 				// Eseq at beginning <e1, e2, e3, e4, e5, e6,...>
-				assertEquals(motorwayMap.getFirstEdgeInGraph(), e1);
-				assertEquals(e1.getPrevEdgeInGraph(), null);
-				assertEquals(e1.getNextEdgeInGraph(), e2);
-				assertEquals(e2.getPrevEdgeInGraph(), e1);
-				assertEquals(e2.getNextEdgeInGraph(), e3);
-				assertEquals(e3.getPrevEdgeInGraph(), e2);
-				assertEquals(e3.getNextEdgeInGraph(), e4);
-				assertEquals(e4.getPrevEdgeInGraph(), e3);
-				assertEquals(e4.getNextEdgeInGraph(), e5);
-				assertEquals(e5.getPrevEdgeInGraph(), e4);
-				assertEquals(e5.getNextEdgeInGraph(), e6);
+				assertEquals(motorwayMap.getFirstEdge(), e1);
+				assertEquals(e1.getPrevEdge(), null);
+				assertEquals(e1.getNextEdge(), e2);
+				assertEquals(e2.getPrevEdge(), e1);
+				assertEquals(e2.getNextEdge(), e3);
+				assertEquals(e3.getPrevEdge(), e2);
+				assertEquals(e3.getNextEdge(), e4);
+				assertEquals(e4.getPrevEdge(), e3);
+				assertEquals(e4.getNextEdge(), e5);
+				assertEquals(e5.getPrevEdge(), e4);
+				assertEquals(e5.getNextEdge(), e6);
 
-				e4.putAfterInGraph(e1);
+				e4.putAfterEdge(e1);
 				// <e1, e4, e2, e3, e5, e6,...>
-				assertEquals(motorwayMap.getFirstEdgeInGraph(), e1);
-				assertEquals(e1.getPrevEdgeInGraph(), null);
-				assertEquals(e1.getNextEdgeInGraph(), e4);
-				assertEquals(e4.getPrevEdgeInGraph(), e1);
-				assertEquals(e4.getNextEdgeInGraph(), e2);
-				assertEquals(e2.getPrevEdgeInGraph(), e4);
-				assertEquals(e2.getNextEdgeInGraph(), e3);
-				assertEquals(e3.getPrevEdgeInGraph(), e2);
-				assertEquals(e3.getNextEdgeInGraph(), e5);
-				assertEquals(e5.getPrevEdgeInGraph(), e3);
-				assertEquals(e5.getNextEdgeInGraph(), e6);
+				assertEquals(motorwayMap.getFirstEdge(), e1);
+				assertEquals(e1.getPrevEdge(), null);
+				assertEquals(e1.getNextEdge(), e4);
+				assertEquals(e4.getPrevEdge(), e1);
+				assertEquals(e4.getNextEdge(), e2);
+				assertEquals(e2.getPrevEdge(), e4);
+				assertEquals(e2.getNextEdge(), e3);
+				assertEquals(e3.getPrevEdge(), e2);
+				assertEquals(e3.getNextEdge(), e5);
+				assertEquals(e5.getPrevEdge(), e3);
+				assertEquals(e5.getNextEdge(), e6);
 				try {
 					long sleepTime = 0;
 					if (lastToCommit == motorwayMap.getCurrentTransaction()) {
@@ -2006,15 +2006,15 @@ public class ConflictDetectionTest {
 				e3.delete();
 				assertFalse(e3.isValid());
 				// <e1, e2, e4, e5, e6,...>
-				assertEquals(motorwayMap.getFirstEdgeInGraph(), e1);
-				assertEquals(e1.getPrevEdgeInGraph(), null);
-				assertEquals(e1.getNextEdgeInGraph(), e2);
-				assertEquals(e2.getPrevEdgeInGraph(), e1);
-				assertEquals(e2.getNextEdgeInGraph(), e4);
-				assertEquals(e4.getPrevEdgeInGraph(), e2);
-				assertEquals(e4.getNextEdgeInGraph(), e5);
-				assertEquals(e5.getPrevEdgeInGraph(), e4);
-				assertEquals(e5.getNextEdgeInGraph(), e6);
+				assertEquals(motorwayMap.getFirstEdge(), e1);
+				assertEquals(e1.getPrevEdge(), null);
+				assertEquals(e1.getNextEdge(), e2);
+				assertEquals(e2.getPrevEdge(), e1);
+				assertEquals(e2.getNextEdge(), e4);
+				assertEquals(e4.getPrevEdge(), e2);
+				assertEquals(e4.getNextEdge(), e5);
+				assertEquals(e5.getPrevEdge(), e4);
+				assertEquals(e5.getNextEdge(), e6);
 				try {
 					long sleepTime = 0;
 					if (lastToCommit == motorwayMap.getCurrentTransaction()) {
@@ -2037,15 +2037,15 @@ public class ConflictDetectionTest {
 		assertTrue(lastTransactionCommitted == lastToCommit);
 		readOnlyTransaction = motorwayMap.newReadOnlyTransaction();
 		// <e1, e4, e2, e5, e6,...>
-		assertEquals(motorwayMap.getFirstEdgeInGraph(), e1);
-		assertEquals(e1.getPrevEdgeInGraph(), null);
-		assertEquals(e1.getNextEdgeInGraph(), e4);
-		assertEquals(e4.getPrevEdgeInGraph(), e1);
-		assertEquals(e4.getNextEdgeInGraph(), e2);
-		assertEquals(e2.getPrevEdgeInGraph(), e4);
-		assertEquals(e2.getNextEdgeInGraph(), e5);
-		assertEquals(e5.getPrevEdgeInGraph(), e2);
-		assertEquals(e5.getNextEdgeInGraph(), e6);
+		assertEquals(motorwayMap.getFirstEdge(), e1);
+		assertEquals(e1.getPrevEdge(), null);
+		assertEquals(e1.getNextEdge(), e4);
+		assertEquals(e4.getPrevEdge(), e1);
+		assertEquals(e4.getNextEdge(), e2);
+		assertEquals(e2.getPrevEdge(), e4);
+		assertEquals(e2.getNextEdge(), e5);
+		assertEquals(e5.getPrevEdge(), e2);
+		assertEquals(e5.getNextEdge(), e6);
 		assertFalse(e3.isValid());
 	}
 
@@ -2066,92 +2066,92 @@ public class ConflictDetectionTest {
 			Edge e5 = motorwayMap.getEdge(5);
 			Edge e6 = motorwayMap.getEdge(6);
 			// Eseq at beginning <e1, e2, e3, e4, e5, e6,...>
-			assertEquals(motorwayMap.getFirstEdgeInGraph(), e1);
-			assertEquals(e1.getPrevEdgeInGraph(), null);
-			assertEquals(e1.getNextEdgeInGraph(), e2);
-			assertEquals(e2.getPrevEdgeInGraph(), e1);
-			assertEquals(e2.getNextEdgeInGraph(), e3);
-			assertEquals(e3.getPrevEdgeInGraph(), e2);
-			assertEquals(e3.getNextEdgeInGraph(), e4);
-			assertEquals(e4.getPrevEdgeInGraph(), e3);
-			assertEquals(e4.getNextEdgeInGraph(), e5);
-			assertEquals(e5.getPrevEdgeInGraph(), e4);
-			assertEquals(e5.getNextEdgeInGraph(), e6);
+			assertEquals(motorwayMap.getFirstEdge(), e1);
+			assertEquals(e1.getPrevEdge(), null);
+			assertEquals(e1.getNextEdge(), e2);
+			assertEquals(e2.getPrevEdge(), e1);
+			assertEquals(e2.getNextEdge(), e3);
+			assertEquals(e3.getPrevEdge(), e2);
+			assertEquals(e3.getNextEdge(), e4);
+			assertEquals(e4.getPrevEdge(), e3);
+			assertEquals(e4.getNextEdge(), e5);
+			assertEquals(e5.getPrevEdge(), e4);
+			assertEquals(e5.getNextEdge(), e6);
 
-			e4.putAfterInGraph(e2);
+			e4.putAfterEdge(e2);
 			// Vseq temporary <e1, e2, e4, e3, e5, e6,...>
-			assertEquals(motorwayMap.getFirstEdgeInGraph(), e1);
-			assertEquals(e1.getPrevEdgeInGraph(), null);
-			assertEquals(e1.getNextEdgeInGraph(), e2);
-			assertEquals(e2.getPrevEdgeInGraph(), e1);
-			assertEquals(e2.getNextEdgeInGraph(), e4);
-			assertEquals(e4.getPrevEdgeInGraph(), e2);
-			assertEquals(e4.getNextEdgeInGraph(), e3);
-			assertEquals(e3.getPrevEdgeInGraph(), e4);
-			assertEquals(e3.getNextEdgeInGraph(), e5);
-			assertEquals(e5.getPrevEdgeInGraph(), e3);
-			assertEquals(e5.getNextEdgeInGraph(), e6);
+			assertEquals(motorwayMap.getFirstEdge(), e1);
+			assertEquals(e1.getPrevEdge(), null);
+			assertEquals(e1.getNextEdge(), e2);
+			assertEquals(e2.getPrevEdge(), e1);
+			assertEquals(e2.getNextEdge(), e4);
+			assertEquals(e4.getPrevEdge(), e2);
+			assertEquals(e4.getNextEdge(), e3);
+			assertEquals(e3.getPrevEdge(), e4);
+			assertEquals(e3.getNextEdge(), e5);
+			assertEquals(e5.getPrevEdge(), e3);
+			assertEquals(e5.getNextEdge(), e6);
 
 			motorwayMap.setCurrentTransaction(readWriteTransaction2);
 			// Eseq at beginning
-			assertEquals(motorwayMap.getFirstEdgeInGraph(), e1);
-			assertEquals(e1.getPrevEdgeInGraph(), null);
-			assertEquals(e1.getNextEdgeInGraph(), e2);
-			assertEquals(e2.getPrevEdgeInGraph(), e1);
-			assertEquals(e2.getNextEdgeInGraph(), e3);
-			assertEquals(e3.getPrevEdgeInGraph(), e2);
-			assertEquals(e3.getNextEdgeInGraph(), e4);
-			assertEquals(e4.getPrevEdgeInGraph(), e3);
-			assertEquals(e4.getNextEdgeInGraph(), e5);
-			assertEquals(e5.getPrevEdgeInGraph(), e4);
-			assertEquals(e5.getNextEdgeInGraph(), e6);
-			e1.putAfterInGraph(e3);
+			assertEquals(motorwayMap.getFirstEdge(), e1);
+			assertEquals(e1.getPrevEdge(), null);
+			assertEquals(e1.getNextEdge(), e2);
+			assertEquals(e2.getPrevEdge(), e1);
+			assertEquals(e2.getNextEdge(), e3);
+			assertEquals(e3.getPrevEdge(), e2);
+			assertEquals(e3.getNextEdge(), e4);
+			assertEquals(e4.getPrevEdge(), e3);
+			assertEquals(e4.getNextEdge(), e5);
+			assertEquals(e5.getPrevEdge(), e4);
+			assertEquals(e5.getNextEdge(), e6);
+			e1.putAfterEdge(e3);
 			// <e2, e3, e1, e4, e5, e6,...>
-			assertEquals(motorwayMap.getFirstEdgeInGraph(), e2);
-			assertEquals(e2.getPrevEdgeInGraph(), null);
-			assertEquals(e2.getNextEdgeInGraph(), e3);
-			assertEquals(e3.getPrevEdgeInGraph(), e2);
-			assertEquals(e3.getNextEdgeInGraph(), e1);
-			assertEquals(e1.getPrevEdgeInGraph(), e3);
-			assertEquals(e1.getNextEdgeInGraph(), e4);
-			assertEquals(e4.getPrevEdgeInGraph(), e1);
-			assertEquals(e4.getNextEdgeInGraph(), e5);
-			assertEquals(e5.getPrevEdgeInGraph(), e4);
-			assertEquals(e5.getNextEdgeInGraph(), e6);
+			assertEquals(motorwayMap.getFirstEdge(), e2);
+			assertEquals(e2.getPrevEdge(), null);
+			assertEquals(e2.getNextEdge(), e3);
+			assertEquals(e3.getPrevEdge(), e2);
+			assertEquals(e3.getNextEdge(), e1);
+			assertEquals(e1.getPrevEdge(), e3);
+			assertEquals(e1.getNextEdge(), e4);
+			assertEquals(e4.getPrevEdge(), e1);
+			assertEquals(e4.getNextEdge(), e5);
+			assertEquals(e5.getPrevEdge(), e4);
+			assertEquals(e5.getNextEdge(), e6);
 
 			motorwayMap.setCurrentTransaction(readWriteTransaction1);
 			readWriteTransaction1.commit();
 
 			readOnlyTransaction = motorwayMap.newReadOnlyTransaction();
 			// Eseq at BOT <e1, e2, e4, e3, e5, e6,...>
-			assertEquals(motorwayMap.getFirstEdgeInGraph(), e1);
-			assertEquals(e1.getPrevEdgeInGraph(), null);
-			assertEquals(e1.getNextEdgeInGraph(), e2);
-			assertEquals(e2.getPrevEdgeInGraph(), e1);
-			assertEquals(e2.getNextEdgeInGraph(), e4);
-			assertEquals(e4.getPrevEdgeInGraph(), e2);
-			assertEquals(e4.getNextEdgeInGraph(), e3);
-			assertEquals(e3.getPrevEdgeInGraph(), e4);
-			assertEquals(e3.getNextEdgeInGraph(), e5);
-			assertEquals(e5.getPrevEdgeInGraph(), e3);
-			assertEquals(e5.getNextEdgeInGraph(), e6);
+			assertEquals(motorwayMap.getFirstEdge(), e1);
+			assertEquals(e1.getPrevEdge(), null);
+			assertEquals(e1.getNextEdge(), e2);
+			assertEquals(e2.getPrevEdge(), e1);
+			assertEquals(e2.getNextEdge(), e4);
+			assertEquals(e4.getPrevEdge(), e2);
+			assertEquals(e4.getNextEdge(), e3);
+			assertEquals(e3.getPrevEdge(), e4);
+			assertEquals(e3.getNextEdge(), e5);
+			assertEquals(e5.getPrevEdge(), e3);
+			assertEquals(e5.getNextEdge(), e6);
 
 			motorwayMap.setCurrentTransaction(readWriteTransaction2);
 			readWriteTransaction2.commit();
 
 			readOnlyTransaction = motorwayMap.newReadOnlyTransaction();
 			// <e2, e4, e3, e1, e5, e6,...>
-			assertEquals(motorwayMap.getFirstEdgeInGraph(), e2);
-			assertEquals(e2.getPrevEdgeInGraph(), null);
-			assertEquals(e2.getNextEdgeInGraph(), e4);
-			assertEquals(e4.getPrevEdgeInGraph(), e2);
-			assertEquals(e4.getNextEdgeInGraph(), e3);
-			assertEquals(e3.getPrevEdgeInGraph(), e4);
-			assertEquals(e3.getNextEdgeInGraph(), e1);
-			assertEquals(e1.getPrevEdgeInGraph(), e3);
-			assertEquals(e1.getNextEdgeInGraph(), e5);
-			assertEquals(e5.getPrevEdgeInGraph(), e1);
-			assertEquals(e5.getNextEdgeInGraph(), e6);
+			assertEquals(motorwayMap.getFirstEdge(), e2);
+			assertEquals(e2.getPrevEdge(), null);
+			assertEquals(e2.getNextEdge(), e4);
+			assertEquals(e4.getPrevEdge(), e2);
+			assertEquals(e4.getNextEdge(), e3);
+			assertEquals(e3.getPrevEdge(), e4);
+			assertEquals(e3.getNextEdge(), e1);
+			assertEquals(e1.getPrevEdge(), e3);
+			assertEquals(e1.getNextEdge(), e5);
+			assertEquals(e5.getPrevEdge(), e1);
+			assertEquals(e5.getNextEdge(), e6);
 		} catch (CommitFailedException e) {
 			e.printStackTrace();
 			fail();
@@ -2199,31 +2199,31 @@ public class ConflictDetectionTest {
 				Edge e5 = motorwayMap.getEdge(5);
 				Edge e6 = motorwayMap.getEdge(6);
 				// Eseq at beginning <e1, e2, e3, e4, e5, e6,...>
-				assertEquals(motorwayMap.getFirstEdgeInGraph(), e1);
-				assertEquals(e1.getPrevEdgeInGraph(), null);
-				assertEquals(e1.getNextEdgeInGraph(), e2);
-				assertEquals(e2.getPrevEdgeInGraph(), e1);
-				assertEquals(e2.getNextEdgeInGraph(), e3);
-				assertEquals(e3.getPrevEdgeInGraph(), e2);
-				assertEquals(e3.getNextEdgeInGraph(), e4);
-				assertEquals(e4.getPrevEdgeInGraph(), e3);
-				assertEquals(e4.getNextEdgeInGraph(), e5);
-				assertEquals(e5.getPrevEdgeInGraph(), e4);
-				assertEquals(e5.getNextEdgeInGraph(), e6);
+				assertEquals(motorwayMap.getFirstEdge(), e1);
+				assertEquals(e1.getPrevEdge(), null);
+				assertEquals(e1.getNextEdge(), e2);
+				assertEquals(e2.getPrevEdge(), e1);
+				assertEquals(e2.getNextEdge(), e3);
+				assertEquals(e3.getPrevEdge(), e2);
+				assertEquals(e3.getNextEdge(), e4);
+				assertEquals(e4.getPrevEdge(), e3);
+				assertEquals(e4.getNextEdge(), e5);
+				assertEquals(e5.getPrevEdge(), e4);
+				assertEquals(e5.getNextEdge(), e6);
 
-				e4.putAfterInGraph(e2);
+				e4.putAfterEdge(e2);
 				// Vseq temporary <e1, e2, e4, e3, e5, e6,...>
-				assertEquals(motorwayMap.getFirstEdgeInGraph(), e1);
-				assertEquals(e1.getPrevEdgeInGraph(), null);
-				assertEquals(e1.getNextEdgeInGraph(), e2);
-				assertEquals(e2.getPrevEdgeInGraph(), e1);
-				assertEquals(e2.getNextEdgeInGraph(), e4);
-				assertEquals(e4.getPrevEdgeInGraph(), e2);
-				assertEquals(e4.getNextEdgeInGraph(), e3);
-				assertEquals(e3.getPrevEdgeInGraph(), e4);
-				assertEquals(e3.getNextEdgeInGraph(), e5);
-				assertEquals(e5.getPrevEdgeInGraph(), e3);
-				assertEquals(e5.getNextEdgeInGraph(), e6);
+				assertEquals(motorwayMap.getFirstEdge(), e1);
+				assertEquals(e1.getPrevEdge(), null);
+				assertEquals(e1.getNextEdge(), e2);
+				assertEquals(e2.getPrevEdge(), e1);
+				assertEquals(e2.getNextEdge(), e4);
+				assertEquals(e4.getPrevEdge(), e2);
+				assertEquals(e4.getNextEdge(), e3);
+				assertEquals(e3.getPrevEdge(), e4);
+				assertEquals(e3.getNextEdge(), e5);
+				assertEquals(e5.getPrevEdge(), e3);
+				assertEquals(e5.getNextEdge(), e6);
 				try {
 					long sleepTime = 0;
 					if (lastToCommit == motorwayMap.getCurrentTransaction()) {
@@ -2245,30 +2245,30 @@ public class ConflictDetectionTest {
 			public void run() {
 				motorwayMap.setCurrentTransaction(readWriteTransaction2);
 				// Eseq at beginning
-				assertEquals(motorwayMap.getFirstEdgeInGraph(), e1);
-				assertEquals(e1.getPrevEdgeInGraph(), null);
-				assertEquals(e1.getNextEdgeInGraph(), e2);
-				assertEquals(e2.getPrevEdgeInGraph(), e1);
-				assertEquals(e2.getNextEdgeInGraph(), e3);
-				assertEquals(e3.getPrevEdgeInGraph(), e2);
-				assertEquals(e3.getNextEdgeInGraph(), e4);
-				assertEquals(e4.getPrevEdgeInGraph(), e3);
-				assertEquals(e4.getNextEdgeInGraph(), e5);
-				assertEquals(e5.getPrevEdgeInGraph(), e4);
-				assertEquals(e5.getNextEdgeInGraph(), e6);
-				e1.putAfterInGraph(e3);
+				assertEquals(motorwayMap.getFirstEdge(), e1);
+				assertEquals(e1.getPrevEdge(), null);
+				assertEquals(e1.getNextEdge(), e2);
+				assertEquals(e2.getPrevEdge(), e1);
+				assertEquals(e2.getNextEdge(), e3);
+				assertEquals(e3.getPrevEdge(), e2);
+				assertEquals(e3.getNextEdge(), e4);
+				assertEquals(e4.getPrevEdge(), e3);
+				assertEquals(e4.getNextEdge(), e5);
+				assertEquals(e5.getPrevEdge(), e4);
+				assertEquals(e5.getNextEdge(), e6);
+				e1.putAfterEdge(e3);
 				// <e2, e3, e1, e4, e5, e6,...>
-				assertEquals(motorwayMap.getFirstEdgeInGraph(), e2);
-				assertEquals(e2.getPrevEdgeInGraph(), null);
-				assertEquals(e2.getNextEdgeInGraph(), e3);
-				assertEquals(e3.getPrevEdgeInGraph(), e2);
-				assertEquals(e3.getNextEdgeInGraph(), e1);
-				assertEquals(e1.getPrevEdgeInGraph(), e3);
-				assertEquals(e1.getNextEdgeInGraph(), e4);
-				assertEquals(e4.getPrevEdgeInGraph(), e1);
-				assertEquals(e4.getNextEdgeInGraph(), e5);
-				assertEquals(e5.getPrevEdgeInGraph(), e4);
-				assertEquals(e5.getNextEdgeInGraph(), e6);
+				assertEquals(motorwayMap.getFirstEdge(), e2);
+				assertEquals(e2.getPrevEdge(), null);
+				assertEquals(e2.getNextEdge(), e3);
+				assertEquals(e3.getPrevEdge(), e2);
+				assertEquals(e3.getNextEdge(), e1);
+				assertEquals(e1.getPrevEdge(), e3);
+				assertEquals(e1.getNextEdge(), e4);
+				assertEquals(e4.getPrevEdge(), e1);
+				assertEquals(e4.getNextEdge(), e5);
+				assertEquals(e5.getPrevEdge(), e4);
+				assertEquals(e5.getNextEdge(), e6);
 				try {
 					long sleepTime = 0;
 					if (lastToCommit == motorwayMap.getCurrentTransaction()) {
@@ -2291,17 +2291,17 @@ public class ConflictDetectionTest {
 		assert (lastTransactionCommitted == lastToCommit);
 		readOnlyTransaction = motorwayMap.newReadOnlyTransaction();
 		// <e2, e4, e3, e1, e5, e6,...>
-		assertEquals(motorwayMap.getFirstEdgeInGraph(), e2);
-		assertEquals(e2.getPrevEdgeInGraph(), null);
-		assertEquals(e2.getNextEdgeInGraph(), e4);
-		assertEquals(e4.getPrevEdgeInGraph(), e2);
-		assertEquals(e4.getNextEdgeInGraph(), e3);
-		assertEquals(e3.getPrevEdgeInGraph(), e4);
-		assertEquals(e3.getNextEdgeInGraph(), e1);
-		assertEquals(e1.getPrevEdgeInGraph(), e3);
-		assertEquals(e1.getNextEdgeInGraph(), e5);
-		assertEquals(e5.getPrevEdgeInGraph(), e1);
-		assertEquals(e5.getNextEdgeInGraph(), e6);
+		assertEquals(motorwayMap.getFirstEdge(), e2);
+		assertEquals(e2.getPrevEdge(), null);
+		assertEquals(e2.getNextEdge(), e4);
+		assertEquals(e4.getPrevEdge(), e2);
+		assertEquals(e4.getNextEdge(), e3);
+		assertEquals(e3.getPrevEdge(), e4);
+		assertEquals(e3.getNextEdge(), e1);
+		assertEquals(e1.getPrevEdge(), e3);
+		assertEquals(e1.getNextEdge(), e5);
+		assertEquals(e5.getPrevEdge(), e1);
+		assertEquals(e5.getNextEdge(), e6);
 	}
 
 	/**
@@ -2316,17 +2316,17 @@ public class ConflictDetectionTest {
 			motorwayMap.setCurrentTransaction(readWriteTransaction1);
 			Edge e2 = motorwayMap.getEdge(2);
 			Edge e4 = motorwayMap.getEdge(4);
-			e4.putEdgeAfter(e2);
-			assertTrue(e4.isAfter(e2));
-			assertEquals(e4.getPrevEdge(), e2);
-			assertEquals(e2.getNextEdge(), e4);
+			e4.putIncidenceAfter(e2);
+			assertTrue(e4.isAfterIncidence(e2));
+			assertEquals(e4.getPrevIncidence(), e2);
+			assertEquals(e2.getNextIncidence(), e4);
 
 			motorwayMap.setCurrentTransaction(readWriteTransaction2);
 			Edge e1 = motorwayMap.getEdge(1);
-			e4.putEdgeAfter(e1);
-			assertTrue(e4.isAfter(e1));
-			assertEquals(e4.getPrevEdge(), e1);
-			assertEquals(e1.getNextEdge(), e4);
+			e4.putIncidenceAfter(e1);
+			assertTrue(e4.isAfterIncidence(e1));
+			assertEquals(e4.getPrevIncidence(), e1);
+			assertEquals(e1.getNextIncidence(), e4);
 
 			motorwayMap.setCurrentTransaction(readWriteTransaction1);
 			readWriteTransaction1.commit();
@@ -2372,10 +2372,10 @@ public class ConflictDetectionTest {
 			@Override
 			public void run() {
 				motorwayMap.setCurrentTransaction(readWriteTransaction1);
-				e4.putEdgeAfter(e2);
-				assertTrue(e4.isAfter(e2));
-				assertEquals(e4.getPrevEdge(), e2);
-				assertEquals(e2.getNextEdge(), e4);
+				e4.putIncidenceAfter(e2);
+				assertTrue(e4.isAfterIncidence(e2));
+				assertEquals(e4.getPrevIncidence(), e2);
+				assertEquals(e2.getNextIncidence(), e4);
 				try {
 					long sleepTime = 0;
 					if (lastToCommit == motorwayMap.getCurrentTransaction()) {
@@ -2398,10 +2398,10 @@ public class ConflictDetectionTest {
 			public void run() {
 				motorwayMap.setCurrentTransaction(readWriteTransaction2);
 				Edge e1 = motorwayMap.getEdge(1);
-				e4.putEdgeAfter(e1);
-				assertTrue(e4.isAfter(e1));
-				assertEquals(e4.getPrevEdge(), e1);
-				assertEquals(e1.getNextEdge(), e4);
+				e4.putIncidenceAfter(e1);
+				assertTrue(e4.isAfterIncidence(e1));
+				assertEquals(e4.getPrevIncidence(), e1);
+				assertEquals(e1.getNextIncidence(), e4);
 
 				try {
 					long sleepTime = 0;
@@ -2446,17 +2446,17 @@ public class ConflictDetectionTest {
 			motorwayMap.setCurrentTransaction(readWriteTransaction1);
 			Edge e2 = motorwayMap.getEdge(2);
 			Edge e4 = motorwayMap.getEdge(4);
-			e4.putEdgeAfter(e2);
-			assertTrue(e4.isAfter(e2));
-			assertEquals(e4.getPrevEdge(), e2);
-			assertEquals(e2.getNextEdge(), e4);
+			e4.putIncidenceAfter(e2);
+			assertTrue(e4.isAfterIncidence(e2));
+			assertEquals(e4.getPrevIncidence(), e2);
+			assertEquals(e2.getNextIncidence(), e4);
 
 			motorwayMap.setCurrentTransaction(readWriteTransaction2);
 			Edge e5 = motorwayMap.getEdge(5);
-			e2.putEdgeAfter(e5);
-			assertTrue(e2.isAfter(e5));
-			assertEquals(e2.getPrevEdge(), e5);
-			assertEquals(e5.getNextEdge(), e2);
+			e2.putIncidenceAfter(e5);
+			assertTrue(e2.isAfterIncidence(e5));
+			assertEquals(e2.getPrevIncidence(), e5);
+			assertEquals(e5.getNextIncidence(), e2);
 
 			motorwayMap.setCurrentTransaction(readWriteTransaction1);
 			readWriteTransaction1.commit();
@@ -2485,10 +2485,10 @@ public class ConflictDetectionTest {
 			Vertex incidentVertex = e2.getAlpha();
 
 			motorwayMap.setCurrentTransaction(readWriteTransaction1);
-			e4.putEdgeAfter(e2);
-			assertTrue(e4.isAfter(e2));
-			assertEquals(e4.getPrevEdge(), e2);
-			assertEquals(e2.getNextEdge(), e4);
+			e4.putIncidenceAfter(e2);
+			assertTrue(e4.isAfterIncidence(e2));
+			assertEquals(e4.getPrevIncidence(), e2);
+			assertEquals(e2.getNextIncidence(), e4);
 
 			motorwayMap.setCurrentTransaction(readWriteTransaction2);
 			incidentVertex.delete();
@@ -2535,10 +2535,10 @@ public class ConflictDetectionTest {
 			assertFalse(e4.isValid());
 
 			motorwayMap.setCurrentTransaction(readWriteTransaction2);
-			e4.putEdgeAfter(e2);
-			assertTrue(e4.isAfter(e2));
-			assertEquals(e4.getPrevEdge(), e2);
-			assertEquals(e2.getNextEdge(), e4);
+			e4.putIncidenceAfter(e2);
+			assertTrue(e4.isAfterIncidence(e2));
+			assertEquals(e4.getPrevIncidence(), e2);
+			assertEquals(e2.getNextIncidence(), e4);
 
 			motorwayMap.setCurrentTransaction(readWriteTransaction1);
 			readWriteTransaction1.commit();
@@ -2598,10 +2598,10 @@ public class ConflictDetectionTest {
 			@Override
 			public void run() {
 				motorwayMap.setCurrentTransaction(readWriteTransaction2);
-				e4.putEdgeAfter(e2);
-				assertTrue(e4.isAfter(e2));
-				assertEquals(e4.getPrevEdge(), e2);
-				assertEquals(e2.getNextEdge(), e4);
+				e4.putIncidenceAfter(e2);
+				assertTrue(e4.isAfterIncidence(e2));
+				assertEquals(e4.getPrevIncidence(), e2);
+				assertEquals(e2.getNextIncidence(), e4);
 				try {
 					long sleepTime = 0;
 					if (lastToCommit == motorwayMap.getCurrentTransaction()) {
@@ -2641,10 +2641,10 @@ public class ConflictDetectionTest {
 			motorwayMap.setCurrentTransaction(readWriteTransaction1);
 			Edge e2 = motorwayMap.getEdge(2);
 			Edge e4 = motorwayMap.getEdge(4);
-			e4.putEdgeAfter(e2);
-			assertTrue(e4.isAfter(e2));
-			assertEquals(e4.getPrevEdge(), e2);
-			assertEquals(e2.getNextEdge(), e4);
+			e4.putIncidenceAfter(e2);
+			assertTrue(e4.isAfterIncidence(e2));
+			assertEquals(e4.getPrevIncidence(), e2);
+			assertEquals(e2.getNextIncidence(), e4);
 
 			motorwayMap.setCurrentTransaction(readWriteTransaction2);
 			motorwayMap.deleteEdge(e4);
@@ -2689,10 +2689,10 @@ public class ConflictDetectionTest {
 			assertFalse(e4.isValid());
 
 			motorwayMap.setCurrentTransaction(readWriteTransaction2);
-			e4.putEdgeAfter(e2);
-			assertTrue(e4.isAfter(e2));
-			assertEquals(e4.getPrevEdge(), e2);
-			assertEquals(e2.getNextEdge(), e4);
+			e4.putIncidenceAfter(e2);
+			assertTrue(e4.isAfterIncidence(e2));
+			assertEquals(e4.getPrevIncidence(), e2);
+			assertEquals(e2.getNextIncidence(), e4);
 
 			motorwayMap.setCurrentTransaction(readWriteTransaction1);
 			readWriteTransaction1.commit();
@@ -2727,10 +2727,10 @@ public class ConflictDetectionTest {
 			@Override
 			public void run() {
 				motorwayMap.setCurrentTransaction(readWriteTransaction1);
-				e4.putEdgeAfter(e2);
-				assertTrue(e4.isAfter(e2));
-				assertEquals(e4.getPrevEdge(), e2);
-				assertEquals(e2.getNextEdge(), e4);
+				e4.putIncidenceAfter(e2);
+				assertTrue(e4.isAfterIncidence(e2));
+				assertEquals(e4.getPrevIncidence(), e2);
+				assertEquals(e2.getNextIncidence(), e4);
 				try {
 					long sleepTime = 0;
 					if (lastToCommit == motorwayMap.getCurrentTransaction()) {
@@ -2798,45 +2798,45 @@ public class ConflictDetectionTest {
 			Edge e6 = motorwayMap.getEdge(6);
 			Vertex incidentVertex = e1.getAlpha();
 			// Iseq(v1) at beginning <+e1, +e2, +e3, +e4, +e5, +e6,...>
-			assertEquals(incidentVertex.getFirstEdge(), e1);
-			assertEquals(e1.getPrevEdge(), null);
-			assertEquals(e1.getNextEdge(), e2);
-			assertEquals(e2.getPrevEdge(), e1);
-			assertEquals(e2.getNextEdge(), e3);
-			assertEquals(e3.getPrevEdge(), e2);
-			assertEquals(e3.getNextEdge(), e4);
-			assertEquals(e4.getPrevEdge(), e3);
-			assertEquals(e4.getNextEdge(), e5);
-			assertEquals(e5.getPrevEdge(), e4);
-			assertEquals(e5.getNextEdge(), e6);
+			assertEquals(incidentVertex.getFirstIncidence(), e1);
+			assertEquals(e1.getPrevIncidence(), null);
+			assertEquals(e1.getNextIncidence(), e2);
+			assertEquals(e2.getPrevIncidence(), e1);
+			assertEquals(e2.getNextIncidence(), e3);
+			assertEquals(e3.getPrevIncidence(), e2);
+			assertEquals(e3.getNextIncidence(), e4);
+			assertEquals(e4.getPrevIncidence(), e3);
+			assertEquals(e4.getNextIncidence(), e5);
+			assertEquals(e5.getPrevIncidence(), e4);
+			assertEquals(e5.getNextIncidence(), e6);
 
-			e4.putEdgeAfter(e1);
+			e4.putIncidenceAfter(e1);
 			// <+e1, +e4, +e2, +e3, +e5, +e6,...>
-			assertEquals(incidentVertex.getFirstEdge(), e1);
-			assertEquals(e1.getPrevEdge(), null);
-			assertEquals(e1.getNextEdge(), e4);
-			assertEquals(e4.getPrevEdge(), e1);
-			assertEquals(e4.getNextEdge(), e2);
-			assertEquals(e2.getPrevEdge(), e4);
-			assertEquals(e2.getNextEdge(), e3);
-			assertEquals(e3.getPrevEdge(), e2);
-			assertEquals(e3.getNextEdge(), e5);
-			assertEquals(e5.getPrevEdge(), e3);
-			assertEquals(e5.getNextEdge(), e6);
+			assertEquals(incidentVertex.getFirstIncidence(), e1);
+			assertEquals(e1.getPrevIncidence(), null);
+			assertEquals(e1.getNextIncidence(), e4);
+			assertEquals(e4.getPrevIncidence(), e1);
+			assertEquals(e4.getNextIncidence(), e2);
+			assertEquals(e2.getPrevIncidence(), e4);
+			assertEquals(e2.getNextIncidence(), e3);
+			assertEquals(e3.getPrevIncidence(), e2);
+			assertEquals(e3.getNextIncidence(), e5);
+			assertEquals(e5.getPrevIncidence(), e3);
+			assertEquals(e5.getNextIncidence(), e6);
 
 			motorwayMap.setCurrentTransaction(readWriteTransaction2);
 			e3.delete();
 			assertFalse(e3.isValid());
 			// <+e1, +e2, +e4, +e5, +e6,...>
-			assertEquals(incidentVertex.getFirstEdge(), e1);
-			assertEquals(e1.getPrevEdge(), null);
-			assertEquals(e1.getNextEdge(), e2);
-			assertEquals(e2.getPrevEdge(), e1);
-			assertEquals(e2.getNextEdge(), e4);
-			assertEquals(e4.getPrevEdge(), e2);
-			assertEquals(e4.getNextEdge(), e5);
-			assertEquals(e5.getPrevEdge(), e4);
-			assertEquals(e5.getNextEdge(), e6);
+			assertEquals(incidentVertex.getFirstIncidence(), e1);
+			assertEquals(e1.getPrevIncidence(), null);
+			assertEquals(e1.getNextIncidence(), e2);
+			assertEquals(e2.getPrevIncidence(), e1);
+			assertEquals(e2.getNextIncidence(), e4);
+			assertEquals(e4.getPrevIncidence(), e2);
+			assertEquals(e4.getNextIncidence(), e5);
+			assertEquals(e5.getPrevIncidence(), e4);
+			assertEquals(e5.getNextIncidence(), e6);
 
 			motorwayMap.setCurrentTransaction(readWriteTransaction1);
 			readWriteTransaction1.commit();
@@ -2846,15 +2846,15 @@ public class ConflictDetectionTest {
 
 			readOnlyTransaction = motorwayMap.newReadOnlyTransaction();
 			// <+e1, +e4, +e2, +e5, +e6,...>
-			assertEquals(incidentVertex.getFirstEdge(), e1);
-			assertEquals(e1.getPrevEdge(), null);
-			assertEquals(e1.getNextEdge(), e4);
-			assertEquals(e4.getPrevEdge(), e1);
-			assertEquals(e4.getNextEdge(), e2);
-			assertEquals(e2.getPrevEdge(), e4);
-			assertEquals(e2.getNextEdge(), e5);
-			assertEquals(e5.getPrevEdge(), e2);
-			assertEquals(e5.getNextEdge(), e6);
+			assertEquals(incidentVertex.getFirstIncidence(), e1);
+			assertEquals(e1.getPrevIncidence(), null);
+			assertEquals(e1.getNextIncidence(), e4);
+			assertEquals(e4.getPrevIncidence(), e1);
+			assertEquals(e4.getNextIncidence(), e2);
+			assertEquals(e2.getPrevIncidence(), e4);
+			assertEquals(e2.getNextIncidence(), e5);
+			assertEquals(e5.getPrevIncidence(), e2);
+			assertEquals(e5.getNextIncidence(), e6);
 			assertFalse(e3.isValid());
 		} catch (CommitFailedException e) {
 			e.printStackTrace();
@@ -2896,31 +2896,31 @@ public class ConflictDetectionTest {
 			public void run() {
 				motorwayMap.setCurrentTransaction(readWriteTransaction1);
 				// Iseq(v1) at beginning <+e1, +e2, +e3, +e4, +e5, +e6,...>
-				assertEquals(incidentVertex.getFirstEdge(), e1);
-				assertEquals(e1.getPrevEdge(), null);
-				assertEquals(e1.getNextEdge(), e2);
-				assertEquals(e2.getPrevEdge(), e1);
-				assertEquals(e2.getNextEdge(), e3);
-				assertEquals(e3.getPrevEdge(), e2);
-				assertEquals(e3.getNextEdge(), e4);
-				assertEquals(e4.getPrevEdge(), e3);
-				assertEquals(e4.getNextEdge(), e5);
-				assertEquals(e5.getPrevEdge(), e4);
-				assertEquals(e5.getNextEdge(), e6);
+				assertEquals(incidentVertex.getFirstIncidence(), e1);
+				assertEquals(e1.getPrevIncidence(), null);
+				assertEquals(e1.getNextIncidence(), e2);
+				assertEquals(e2.getPrevIncidence(), e1);
+				assertEquals(e2.getNextIncidence(), e3);
+				assertEquals(e3.getPrevIncidence(), e2);
+				assertEquals(e3.getNextIncidence(), e4);
+				assertEquals(e4.getPrevIncidence(), e3);
+				assertEquals(e4.getNextIncidence(), e5);
+				assertEquals(e5.getPrevIncidence(), e4);
+				assertEquals(e5.getNextIncidence(), e6);
 
-				e4.putEdgeAfter(e1);
+				e4.putIncidenceAfter(e1);
 				// <+e1, +e4, +e2, +e3, +e5, +e6,...>
-				assertEquals(incidentVertex.getFirstEdge(), e1);
-				assertEquals(e1.getPrevEdge(), null);
-				assertEquals(e1.getNextEdge(), e4);
-				assertEquals(e4.getPrevEdge(), e1);
-				assertEquals(e4.getNextEdge(), e2);
-				assertEquals(e2.getPrevEdge(), e4);
-				assertEquals(e2.getNextEdge(), e3);
-				assertEquals(e3.getPrevEdge(), e2);
-				assertEquals(e3.getNextEdge(), e5);
-				assertEquals(e5.getPrevEdge(), e3);
-				assertEquals(e5.getNextEdge(), e6);
+				assertEquals(incidentVertex.getFirstIncidence(), e1);
+				assertEquals(e1.getPrevIncidence(), null);
+				assertEquals(e1.getNextIncidence(), e4);
+				assertEquals(e4.getPrevIncidence(), e1);
+				assertEquals(e4.getNextIncidence(), e2);
+				assertEquals(e2.getPrevIncidence(), e4);
+				assertEquals(e2.getNextIncidence(), e3);
+				assertEquals(e3.getPrevIncidence(), e2);
+				assertEquals(e3.getNextIncidence(), e5);
+				assertEquals(e5.getPrevIncidence(), e3);
+				assertEquals(e5.getNextIncidence(), e6);
 
 				try {
 					long sleepTime = 0;
@@ -2945,15 +2945,15 @@ public class ConflictDetectionTest {
 				e3.delete();
 				assertFalse(e3.isValid());
 				// <+e1, +e2, +e4, +e5, +e6,...>
-				assertEquals(incidentVertex.getFirstEdge(), e1);
-				assertEquals(e1.getPrevEdge(), null);
-				assertEquals(e1.getNextEdge(), e2);
-				assertEquals(e2.getPrevEdge(), e1);
-				assertEquals(e2.getNextEdge(), e4);
-				assertEquals(e4.getPrevEdge(), e2);
-				assertEquals(e4.getNextEdge(), e5);
-				assertEquals(e5.getPrevEdge(), e4);
-				assertEquals(e5.getNextEdge(), e6);
+				assertEquals(incidentVertex.getFirstIncidence(), e1);
+				assertEquals(e1.getPrevIncidence(), null);
+				assertEquals(e1.getNextIncidence(), e2);
+				assertEquals(e2.getPrevIncidence(), e1);
+				assertEquals(e2.getNextIncidence(), e4);
+				assertEquals(e4.getPrevIncidence(), e2);
+				assertEquals(e4.getNextIncidence(), e5);
+				assertEquals(e5.getPrevIncidence(), e4);
+				assertEquals(e5.getNextIncidence(), e6);
 				try {
 					long sleepTime = 0;
 					if (lastToCommit == motorwayMap.getCurrentTransaction()) {
@@ -2976,15 +2976,15 @@ public class ConflictDetectionTest {
 		assertTrue(lastTransactionCommitted == lastToCommit);
 		readOnlyTransaction = motorwayMap.newReadOnlyTransaction();
 		// <+e1, +e4, +e2, +e5, +e6,...>
-		assertEquals(incidentVertex.getFirstEdge(), e1);
-		assertEquals(e1.getPrevEdge(), null);
-		assertEquals(e1.getNextEdge(), e4);
-		assertEquals(e4.getPrevEdge(), e1);
-		assertEquals(e4.getNextEdge(), e2);
-		assertEquals(e2.getPrevEdge(), e4);
-		assertEquals(e2.getNextEdge(), e5);
-		assertEquals(e5.getPrevEdge(), e2);
-		assertEquals(e5.getNextEdge(), e6);
+		assertEquals(incidentVertex.getFirstIncidence(), e1);
+		assertEquals(e1.getPrevIncidence(), null);
+		assertEquals(e1.getNextIncidence(), e4);
+		assertEquals(e4.getPrevIncidence(), e1);
+		assertEquals(e4.getNextIncidence(), e2);
+		assertEquals(e2.getPrevIncidence(), e4);
+		assertEquals(e2.getNextIncidence(), e5);
+		assertEquals(e5.getPrevIncidence(), e2);
+		assertEquals(e5.getNextIncidence(), e6);
 		assertFalse(e3.isValid());
 	}
 
@@ -3006,92 +3006,92 @@ public class ConflictDetectionTest {
 			Edge e6 = motorwayMap.getEdge(6);
 			Vertex incidentVertex = e1.getAlpha();
 			// Iseq(v1) at beginning <+e1, +e2, +e3, +e4, +e5, +e6,...>
-			assertEquals(incidentVertex.getFirstEdge(), e1);
-			assertEquals(e1.getPrevEdge(), null);
-			assertEquals(e1.getNextEdge(), e2);
-			assertEquals(e2.getPrevEdge(), e1);
-			assertEquals(e2.getNextEdge(), e3);
-			assertEquals(e3.getPrevEdge(), e2);
-			assertEquals(e3.getNextEdge(), e4);
-			assertEquals(e4.getPrevEdge(), e3);
-			assertEquals(e4.getNextEdge(), e5);
-			assertEquals(e5.getPrevEdge(), e4);
-			assertEquals(e5.getNextEdge(), e6);
+			assertEquals(incidentVertex.getFirstIncidence(), e1);
+			assertEquals(e1.getPrevIncidence(), null);
+			assertEquals(e1.getNextIncidence(), e2);
+			assertEquals(e2.getPrevIncidence(), e1);
+			assertEquals(e2.getNextIncidence(), e3);
+			assertEquals(e3.getPrevIncidence(), e2);
+			assertEquals(e3.getNextIncidence(), e4);
+			assertEquals(e4.getPrevIncidence(), e3);
+			assertEquals(e4.getNextIncidence(), e5);
+			assertEquals(e5.getPrevIncidence(), e4);
+			assertEquals(e5.getNextIncidence(), e6);
 
-			e4.putEdgeAfter(e2);
+			e4.putIncidenceAfter(e2);
 			// Iseq(v1) temporary <+e1, +e2, +e3, +e4, +e5, +e6,...>
-			assertEquals(incidentVertex.getFirstEdge(), e1);
-			assertEquals(e1.getPrevEdge(), null);
-			assertEquals(e1.getNextEdge(), e2);
-			assertEquals(e2.getPrevEdge(), e1);
-			assertEquals(e2.getNextEdge(), e4);
-			assertEquals(e4.getPrevEdge(), e2);
-			assertEquals(e4.getNextEdge(), e3);
-			assertEquals(e3.getPrevEdge(), e4);
-			assertEquals(e3.getNextEdge(), e5);
-			assertEquals(e5.getPrevEdge(), e3);
-			assertEquals(e5.getNextEdge(), e6);
+			assertEquals(incidentVertex.getFirstIncidence(), e1);
+			assertEquals(e1.getPrevIncidence(), null);
+			assertEquals(e1.getNextIncidence(), e2);
+			assertEquals(e2.getPrevIncidence(), e1);
+			assertEquals(e2.getNextIncidence(), e4);
+			assertEquals(e4.getPrevIncidence(), e2);
+			assertEquals(e4.getNextIncidence(), e3);
+			assertEquals(e3.getPrevIncidence(), e4);
+			assertEquals(e3.getNextIncidence(), e5);
+			assertEquals(e5.getPrevIncidence(), e3);
+			assertEquals(e5.getNextIncidence(), e6);
 
 			motorwayMap.setCurrentTransaction(readWriteTransaction2);
 			// Iseq(v1) at beginning
-			assertEquals(incidentVertex.getFirstEdge(), e1);
-			assertEquals(e1.getPrevEdge(), null);
-			assertEquals(e1.getNextEdge(), e2);
-			assertEquals(e2.getPrevEdge(), e1);
-			assertEquals(e2.getNextEdge(), e3);
-			assertEquals(e3.getPrevEdge(), e2);
-			assertEquals(e3.getNextEdge(), e4);
-			assertEquals(e4.getPrevEdge(), e3);
-			assertEquals(e4.getNextEdge(), e5);
-			assertEquals(e5.getPrevEdge(), e4);
-			assertEquals(e5.getNextEdge(), e6);
-			e1.putEdgeAfter(e3);
+			assertEquals(incidentVertex.getFirstIncidence(), e1);
+			assertEquals(e1.getPrevIncidence(), null);
+			assertEquals(e1.getNextIncidence(), e2);
+			assertEquals(e2.getPrevIncidence(), e1);
+			assertEquals(e2.getNextIncidence(), e3);
+			assertEquals(e3.getPrevIncidence(), e2);
+			assertEquals(e3.getNextIncidence(), e4);
+			assertEquals(e4.getPrevIncidence(), e3);
+			assertEquals(e4.getNextIncidence(), e5);
+			assertEquals(e5.getPrevIncidence(), e4);
+			assertEquals(e5.getNextIncidence(), e6);
+			e1.putIncidenceAfter(e3);
 			// <+e2, +e3, +e1, +e4, +e5, +e6,...>
-			assertEquals(incidentVertex.getFirstEdge(), e2);
-			assertEquals(e2.getPrevEdge(), null);
-			assertEquals(e2.getNextEdge(), e3);
-			assertEquals(e3.getPrevEdge(), e2);
-			assertEquals(e3.getNextEdge(), e1);
-			assertEquals(e1.getPrevEdge(), e3);
-			assertEquals(e1.getNextEdge(), e4);
-			assertEquals(e4.getPrevEdge(), e1);
-			assertEquals(e4.getNextEdge(), e5);
-			assertEquals(e5.getPrevEdge(), e4);
-			assertEquals(e5.getNextEdge(), e6);
+			assertEquals(incidentVertex.getFirstIncidence(), e2);
+			assertEquals(e2.getPrevIncidence(), null);
+			assertEquals(e2.getNextIncidence(), e3);
+			assertEquals(e3.getPrevIncidence(), e2);
+			assertEquals(e3.getNextIncidence(), e1);
+			assertEquals(e1.getPrevIncidence(), e3);
+			assertEquals(e1.getNextIncidence(), e4);
+			assertEquals(e4.getPrevIncidence(), e1);
+			assertEquals(e4.getNextIncidence(), e5);
+			assertEquals(e5.getPrevIncidence(), e4);
+			assertEquals(e5.getNextIncidence(), e6);
 
 			motorwayMap.setCurrentTransaction(readWriteTransaction1);
 			readWriteTransaction1.commit();
 
 			readOnlyTransaction = motorwayMap.newReadOnlyTransaction();
 			// Iseq(v1) at BOT <+e1, +e2, +e4, +e3, +e5, +e6,...>
-			assertEquals(incidentVertex.getFirstEdge(), e1);
-			assertEquals(e1.getPrevEdge(), null);
-			assertEquals(e1.getNextEdge(), e2);
-			assertEquals(e2.getPrevEdge(), e1);
-			assertEquals(e2.getNextEdge(), e4);
-			assertEquals(e4.getPrevEdge(), e2);
-			assertEquals(e4.getNextEdge(), e3);
-			assertEquals(e3.getPrevEdge(), e4);
-			assertEquals(e3.getNextEdge(), e5);
-			assertEquals(e5.getPrevEdge(), e3);
-			assertEquals(e5.getNextEdge(), e6);
+			assertEquals(incidentVertex.getFirstIncidence(), e1);
+			assertEquals(e1.getPrevIncidence(), null);
+			assertEquals(e1.getNextIncidence(), e2);
+			assertEquals(e2.getPrevIncidence(), e1);
+			assertEquals(e2.getNextIncidence(), e4);
+			assertEquals(e4.getPrevIncidence(), e2);
+			assertEquals(e4.getNextIncidence(), e3);
+			assertEquals(e3.getPrevIncidence(), e4);
+			assertEquals(e3.getNextIncidence(), e5);
+			assertEquals(e5.getPrevIncidence(), e3);
+			assertEquals(e5.getNextIncidence(), e6);
 
 			motorwayMap.setCurrentTransaction(readWriteTransaction2);
 			readWriteTransaction2.commit();
 
 			readOnlyTransaction = motorwayMap.newReadOnlyTransaction();
 			// <+e2, +e4, +e3, +e1, +e5, +e6,...>
-			assertEquals(incidentVertex.getFirstEdge(), e2);
-			assertEquals(e2.getPrevEdge(), null);
-			assertEquals(e2.getNextEdge(), e4);
-			assertEquals(e4.getPrevEdge(), e2);
-			assertEquals(e4.getNextEdge(), e3);
-			assertEquals(e3.getPrevEdge(), e4);
-			assertEquals(e3.getNextEdge(), e1);
-			assertEquals(e1.getPrevEdge(), e3);
-			assertEquals(e1.getNextEdge(), e5);
-			assertEquals(e5.getPrevEdge(), e1);
-			assertEquals(e5.getNextEdge(), e6);
+			assertEquals(incidentVertex.getFirstIncidence(), e2);
+			assertEquals(e2.getPrevIncidence(), null);
+			assertEquals(e2.getNextIncidence(), e4);
+			assertEquals(e4.getPrevIncidence(), e2);
+			assertEquals(e4.getNextIncidence(), e3);
+			assertEquals(e3.getPrevIncidence(), e4);
+			assertEquals(e3.getNextIncidence(), e1);
+			assertEquals(e1.getPrevIncidence(), e3);
+			assertEquals(e1.getNextIncidence(), e5);
+			assertEquals(e5.getPrevIncidence(), e1);
+			assertEquals(e5.getNextIncidence(), e6);
 		} catch (CommitFailedException e) {
 			e.printStackTrace();
 			fail();
@@ -3134,31 +3134,31 @@ public class ConflictDetectionTest {
 			public void run() {
 				motorwayMap.setCurrentTransaction(readWriteTransaction1);
 				// Iseq(v1) at beginning <+e1, +e2, +e3, +e4, +e5, +e6,...>
-				assertEquals(incidentVertex.getFirstEdge(), e1);
-				assertEquals(e1.getPrevEdge(), null);
-				assertEquals(e1.getNextEdge(), e2);
-				assertEquals(e2.getPrevEdge(), e1);
-				assertEquals(e2.getNextEdge(), e3);
-				assertEquals(e3.getPrevEdge(), e2);
-				assertEquals(e3.getNextEdge(), e4);
-				assertEquals(e4.getPrevEdge(), e3);
-				assertEquals(e4.getNextEdge(), e5);
-				assertEquals(e5.getPrevEdge(), e4);
-				assertEquals(e5.getNextEdge(), e6);
+				assertEquals(incidentVertex.getFirstIncidence(), e1);
+				assertEquals(e1.getPrevIncidence(), null);
+				assertEquals(e1.getNextIncidence(), e2);
+				assertEquals(e2.getPrevIncidence(), e1);
+				assertEquals(e2.getNextIncidence(), e3);
+				assertEquals(e3.getPrevIncidence(), e2);
+				assertEquals(e3.getNextIncidence(), e4);
+				assertEquals(e4.getPrevIncidence(), e3);
+				assertEquals(e4.getNextIncidence(), e5);
+				assertEquals(e5.getPrevIncidence(), e4);
+				assertEquals(e5.getNextIncidence(), e6);
 
-				e4.putEdgeAfter(e2);
+				e4.putIncidenceAfter(e2);
 				// Iseq(v1) temporary <+e1, +e2, +e3, +e4, +e5, +e6,...>
-				assertEquals(incidentVertex.getFirstEdge(), e1);
-				assertEquals(e1.getPrevEdge(), null);
-				assertEquals(e1.getNextEdge(), e2);
-				assertEquals(e2.getPrevEdge(), e1);
-				assertEquals(e2.getNextEdge(), e4);
-				assertEquals(e4.getPrevEdge(), e2);
-				assertEquals(e4.getNextEdge(), e3);
-				assertEquals(e3.getPrevEdge(), e4);
-				assertEquals(e3.getNextEdge(), e5);
-				assertEquals(e5.getPrevEdge(), e3);
-				assertEquals(e5.getNextEdge(), e6);
+				assertEquals(incidentVertex.getFirstIncidence(), e1);
+				assertEquals(e1.getPrevIncidence(), null);
+				assertEquals(e1.getNextIncidence(), e2);
+				assertEquals(e2.getPrevIncidence(), e1);
+				assertEquals(e2.getNextIncidence(), e4);
+				assertEquals(e4.getPrevIncidence(), e2);
+				assertEquals(e4.getNextIncidence(), e3);
+				assertEquals(e3.getPrevIncidence(), e4);
+				assertEquals(e3.getNextIncidence(), e5);
+				assertEquals(e5.getPrevIncidence(), e3);
+				assertEquals(e5.getNextIncidence(), e6);
 
 				try {
 					long sleepTime = 0;
@@ -3181,30 +3181,30 @@ public class ConflictDetectionTest {
 			public void run() {
 				motorwayMap.setCurrentTransaction(readWriteTransaction2);
 				// Iseq(v1) at beginning
-				assertEquals(incidentVertex.getFirstEdge(), e1);
-				assertEquals(e1.getPrevEdge(), null);
-				assertEquals(e1.getNextEdge(), e2);
-				assertEquals(e2.getPrevEdge(), e1);
-				assertEquals(e2.getNextEdge(), e3);
-				assertEquals(e3.getPrevEdge(), e2);
-				assertEquals(e3.getNextEdge(), e4);
-				assertEquals(e4.getPrevEdge(), e3);
-				assertEquals(e4.getNextEdge(), e5);
-				assertEquals(e5.getPrevEdge(), e4);
-				assertEquals(e5.getNextEdge(), e6);
-				e1.putEdgeAfter(e3);
+				assertEquals(incidentVertex.getFirstIncidence(), e1);
+				assertEquals(e1.getPrevIncidence(), null);
+				assertEquals(e1.getNextIncidence(), e2);
+				assertEquals(e2.getPrevIncidence(), e1);
+				assertEquals(e2.getNextIncidence(), e3);
+				assertEquals(e3.getPrevIncidence(), e2);
+				assertEquals(e3.getNextIncidence(), e4);
+				assertEquals(e4.getPrevIncidence(), e3);
+				assertEquals(e4.getNextIncidence(), e5);
+				assertEquals(e5.getPrevIncidence(), e4);
+				assertEquals(e5.getNextIncidence(), e6);
+				e1.putIncidenceAfter(e3);
 				// <+e2, +e3, +e1, +e4, +e5, +e6,...>
-				assertEquals(incidentVertex.getFirstEdge(), e2);
-				assertEquals(e2.getPrevEdge(), null);
-				assertEquals(e2.getNextEdge(), e3);
-				assertEquals(e3.getPrevEdge(), e2);
-				assertEquals(e3.getNextEdge(), e1);
-				assertEquals(e1.getPrevEdge(), e3);
-				assertEquals(e1.getNextEdge(), e4);
-				assertEquals(e4.getPrevEdge(), e1);
-				assertEquals(e4.getNextEdge(), e5);
-				assertEquals(e5.getPrevEdge(), e4);
-				assertEquals(e5.getNextEdge(), e6);
+				assertEquals(incidentVertex.getFirstIncidence(), e2);
+				assertEquals(e2.getPrevIncidence(), null);
+				assertEquals(e2.getNextIncidence(), e3);
+				assertEquals(e3.getPrevIncidence(), e2);
+				assertEquals(e3.getNextIncidence(), e1);
+				assertEquals(e1.getPrevIncidence(), e3);
+				assertEquals(e1.getNextIncidence(), e4);
+				assertEquals(e4.getPrevIncidence(), e1);
+				assertEquals(e4.getNextIncidence(), e5);
+				assertEquals(e5.getPrevIncidence(), e4);
+				assertEquals(e5.getNextIncidence(), e6);
 				try {
 					long sleepTime = 0;
 					if (lastToCommit == motorwayMap.getCurrentTransaction()) {
@@ -3227,17 +3227,17 @@ public class ConflictDetectionTest {
 		assertTrue(lastTransactionCommitted == lastToCommit);
 		readOnlyTransaction = motorwayMap.newReadOnlyTransaction();
 		// <+e2, +e4, +e3, +e1, +e5, +e6,...>
-		assertEquals(incidentVertex.getFirstEdge(), e2);
-		assertEquals(e2.getPrevEdge(), null);
-		assertEquals(e2.getNextEdge(), e4);
-		assertEquals(e4.getPrevEdge(), e2);
-		assertEquals(e4.getNextEdge(), e3);
-		assertEquals(e3.getPrevEdge(), e4);
-		assertEquals(e3.getNextEdge(), e1);
-		assertEquals(e1.getPrevEdge(), e3);
-		assertEquals(e1.getNextEdge(), e5);
-		assertEquals(e5.getPrevEdge(), e1);
-		assertEquals(e5.getNextEdge(), e6);
+		assertEquals(incidentVertex.getFirstIncidence(), e2);
+		assertEquals(e2.getPrevIncidence(), null);
+		assertEquals(e2.getNextIncidence(), e4);
+		assertEquals(e4.getPrevIncidence(), e2);
+		assertEquals(e4.getNextIncidence(), e3);
+		assertEquals(e3.getPrevIncidence(), e4);
+		assertEquals(e3.getNextIncidence(), e1);
+		assertEquals(e1.getPrevIncidence(), e3);
+		assertEquals(e1.getNextIncidence(), e5);
+		assertEquals(e5.getPrevIncidence(), e1);
+		assertEquals(e5.getNextIncidence(), e6);
 	}
 
 	/**

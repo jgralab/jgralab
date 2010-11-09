@@ -104,7 +104,7 @@ public class EdgeSeq extends Greql2Function {
 				if (current == end) {
 					return edges;
 				}
-				current = current.getNextEdge();
+				current = current.getNextIncidence();
 			}
 			return edges;
 		case 1:
@@ -116,7 +116,7 @@ public class EdgeSeq extends Greql2Function {
 				if (current == end) {
 					return edges;
 				}
-				current = current.getNextEdge();
+				current = current.getNextIncidence();
 			}
 			return edges;
 		default:

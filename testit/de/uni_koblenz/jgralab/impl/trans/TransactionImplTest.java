@@ -493,7 +493,7 @@ public class TransactionImplTest {
 	@Test
 	public void testPutEdgeAfterInGraph() {
 		testAddEdge();
-		ex1.putAfterInGraph(ex2);
+		ex1.putAfterEdge(ex2);
 
 		Map<Edge, Map<ListPosition, Boolean>> changedEseqEdgesMap = new HashMap<Edge, Map<ListPosition, Boolean>>();
 		Map<ListPosition, Boolean> changedPosition1 = new HashMap<ListPosition, Boolean>();
@@ -517,7 +517,7 @@ public class TransactionImplTest {
 			motorwayMap.commit();
 			readOnlyTransaction = (TransactionImpl) motorwayMap
 					.newReadOnlyTransaction();
-			ex1.putAfterInGraph(ex2);
+			ex1.putAfterEdge(ex2);
 			fail();
 		} catch (GraphException ge) {
 			System.out.println("\n- testPutEdgeAfterInGraphReadOnly -");
@@ -539,7 +539,7 @@ public class TransactionImplTest {
 	@Test
 	public void testPutEdgeBeforeInGraph() {
 		testAddEdge();
-		ex2.putBeforeInGraph(ex1);
+		ex2.putBeforeEdge(ex1);
 
 		Map<Edge, Map<ListPosition, Boolean>> changedEseqEdgesMap = new HashMap<Edge, Map<ListPosition, Boolean>>();
 		Map<ListPosition, Boolean> changedPosition1 = new HashMap<ListPosition, Boolean>();
@@ -564,7 +564,7 @@ public class TransactionImplTest {
 			motorwayMap.commit();
 			readOnlyTransaction = (TransactionImpl) motorwayMap
 					.newReadOnlyTransaction();
-			ex2.putBeforeInGraph(ex1);
+			ex2.putBeforeEdge(ex1);
 			fail();
 		} catch (GraphException ge) {
 			System.out.println("\n- testPutEdgeBeforeInGraphReadOnly -");
@@ -585,7 +585,7 @@ public class TransactionImplTest {
 	@Test
 	public void testPutEdgeAfter() {
 		testAddEdge();
-		ex1.putEdgeAfter(ex2);
+		ex1.putIncidenceAfter(ex2);
 
 		Vertex alpha = ex1.getAlpha();
 		Map<Vertex, Map<Edge, Map<ListPosition, Boolean>>> vertexChangedIncidencesMap = new HashMap<Vertex, Map<Edge, Map<ListPosition, Boolean>>>();
@@ -613,7 +613,7 @@ public class TransactionImplTest {
 			motorwayMap.commit();
 			readOnlyTransaction = (TransactionImpl) motorwayMap
 					.newReadOnlyTransaction();
-			ex1.putEdgeAfter(ex2);
+			ex1.putIncidenceAfter(ex2);
 			fail();
 		} catch (GraphException ge) {
 			System.out.println("\n- testPutEdgeAfterReadOnly -");
@@ -635,7 +635,7 @@ public class TransactionImplTest {
 	@Test
 	public void testPutEdgeBefore() {
 		testAddEdge();
-		ex2.putEdgeBefore(ex1);
+		ex2.putIncidenceBefore(ex1);
 		Vertex alpha = ex1.getAlpha();
 
 		Map<Vertex, Map<Edge, Map<ListPosition, Boolean>>> vertexChangedIncidencesMap = new HashMap<Vertex, Map<Edge, Map<ListPosition, Boolean>>>();
@@ -663,7 +663,7 @@ public class TransactionImplTest {
 			motorwayMap.commit();
 			readOnlyTransaction = (TransactionImpl) motorwayMap
 					.newReadOnlyTransaction();
-			ex2.putEdgeBefore(ex1);
+			ex2.putIncidenceBefore(ex1);
 			fail();
 		} catch (GraphException ge) {
 			System.out.println("\n- testPutEdgeBeforeReadOnly -");
@@ -854,7 +854,7 @@ public class TransactionImplTest {
 					.containsKey(c1)
 					&& readWriteTransaction2.changedVseqVertices
 							.containsKey(c3));
-			ex1.putEdgeAfter(ex3);
+			ex1.putIncidenceAfter(ex3);
 			assertTrue(readWriteTransaction2.changedIncidences.containsKey(c1));
 			c1.delete();
 			assertTrue(!readWriteTransaction2.changedAttributes.containsKey(c1));
@@ -882,10 +882,10 @@ public class TransactionImplTest {
 					.newTransaction();
 			ex1.set_number(2);
 			assertTrue(readWriteTransaction2.changedAttributes.containsKey(ex1));
-			ex1.putAfterInGraph(ex3);
+			ex1.putAfterEdge(ex3);
 			assertTrue(readWriteTransaction2.changedEseqEdges.containsKey(ex1)
 					&& readWriteTransaction2.changedEseqEdges.containsKey(ex3));
-			ex1.putEdgeAfter(ex3);
+			ex1.putIncidenceAfter(ex3);
 			assertTrue(readWriteTransaction2.changedIncidences.get(c1)
 					.containsKey(ex1)
 					&& readWriteTransaction2.changedIncidences.get(c1)

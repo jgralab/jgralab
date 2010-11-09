@@ -62,7 +62,7 @@ public class AggregationPathDescriptionEvaluator extends
 	@Override
 	public JValue evaluate() throws EvaluateException {
 		JValueTypeCollection typeCollection = new JValueTypeCollection();
-		IsEdgeRestrOf inc = vertex.getFirstIsEdgeRestrOf(EdgeDirection.IN);
+		IsEdgeRestrOf inc = vertex.getFirstIsEdgeRestrOfIncidence(EdgeDirection.IN);
 		EdgeRestrictionEvaluator edgeRestEval = null;
 		VertexEvaluator predicateEvaluator = null;
 		if (inc != null) {

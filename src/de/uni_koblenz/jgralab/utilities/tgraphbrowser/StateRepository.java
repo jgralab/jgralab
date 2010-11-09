@@ -499,7 +499,7 @@ public class StateRepository {
 						}
 					}
 					if (latestEdge == null) {
-						latestEdge = state.getGraph().getFirstEdgeInGraph();
+						latestEdge = state.getGraph().getFirstEdge();
 					}
 					tv.visualizeElements(code, state, 20, false, "e"
 							+ (latestEdge != null ? latestEdge.getId() : ""),
@@ -763,9 +763,9 @@ public class StateRepository {
 											: "e"
 													+ (state
 															.getGraph()
-															.getFirstEdgeInGraph() != null ? state
+															.getFirstEdge() != null ? state
 															.getGraph()
-															.getFirstEdgeInGraph()
+															.getFirstEdge()
 															.getId()
 															: ""), true,
 									state.currentExplicitlyDefinedSet == null);
@@ -897,9 +897,9 @@ public class StateRepository {
 												.getId()
 										: "e"
 												+ (state.getGraph()
-														.getFirstEdgeInGraph() != null ? state
+														.getFirstEdge() != null ? state
 														.getGraph()
-														.getFirstEdgeInGraph()
+														.getFirstEdge()
 														.getId()
 														: ""), true,
 								isAJValueSetShown);
@@ -1008,8 +1008,8 @@ public class StateRepository {
 					firstVertex != null ? firstVertex.getId() : "").append(
 					"\");\n");
 			tv.visualizeElements(code, state, 20, false, "e"
-					+ (state.getGraph().getFirstEdgeInGraph() != null ? state
-							.getGraph().getFirstEdgeInGraph().getId() : ""),
+					+ (state.getGraph().getFirstEdge() != null ? state
+							.getGraph().getFirstEdge().getId() : ""),
 					false, state.currentExplicitlyDefinedSet == null);
 			code.append("timestamp = ").append(state.lastAccess).append(";\n");
 			code.append("resize();\n");
