@@ -85,7 +85,7 @@ public class GetValue extends Greql2Function {
 		signatures = x;
 
 		description = "Returns the value of the given AttrElem's or Record's (temporary) attribute or component.\n"
-				+ "Alternative usage: element.attribute.";
+				+ "Alternative usage: elem.attr or elem.recordAttr.recComponent.";
 
 		Category[] c = { Category.GRAPH };
 		categories = c;
@@ -121,8 +121,8 @@ public class GetValue extends Greql2Function {
 						.fromObject(marker.getMark(attrElem), attrElem);
 			} else {
 				try {
-					return JValueImpl.fromObject(attrElem
-							.getAttribute(fieldName), attrElem);
+					return JValueImpl.fromObject(
+							attrElem.getAttribute(fieldName), attrElem);
 				} catch (NoSuchAttributeException e) {
 					e.printStackTrace();
 					throw new EvaluateException("GetValue failed!", e);

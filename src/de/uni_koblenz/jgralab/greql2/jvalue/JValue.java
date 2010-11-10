@@ -79,11 +79,6 @@ public interface JValue extends Comparable<JValue> {
 	public int hashCode();
 
 	/**
-	 * returns true if this JValue is internal
-	 */
-	public boolean isInternal();
-
-	/**
 	 * returns true if this JValue is a Path
 	 */
 	public boolean isPath();
