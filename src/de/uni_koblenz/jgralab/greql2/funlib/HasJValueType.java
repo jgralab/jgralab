@@ -47,10 +47,21 @@ public class HasJValueType extends Greql2Function {
 				JValueType.BOOL } };
 		signatures = x;
 
+		StringBuilder sb = new StringBuilder();
+		boolean first = true;
+		for (JValueType jvt : JValueType.values()) {
+			if (first) {
+				first = false;
+			} else {
+				sb.append(", ");
+			}
+			sb.append(jvt);
+		}
 		description = "Checks if the given value has (or can convert to) the given JValueType.\n"
-				+ "The JValueType is given as string.";
+				+ "The JValueType is given as string. Allowed values: "
+				+ sb.toString();
 
-		Category[] c = { Category.UNDEFINED };
+		Category[] c = { Category.REFLECTION };
 		categories = c;
 	}
 

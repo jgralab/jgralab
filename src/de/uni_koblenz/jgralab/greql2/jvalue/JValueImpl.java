@@ -122,8 +122,6 @@ public class JValueImpl implements JValue {
 		case ATTRELEMCLASS:
 			v.visitAttributedElementClass(this);
 			return;
-		case INTERNAL:
-			return;
 		case AUTOMATON:
 			v.visitDFA(this);
 			return;
@@ -145,7 +143,7 @@ public class JValueImpl implements JValue {
 		}
 	}
 
-	@SuppressWarnings( { "rawtypes", "unchecked" })
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public int compareTo(JValue o) {
 		if (o.getType() == null) {
@@ -260,15 +258,6 @@ public class JValueImpl implements JValue {
 					+ (value == null ? 0 : value.hashCode());
 		}
 		return storedHashCode;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#isVariableDeclaration()
-	 */
-	public boolean isInternal() {
-		return (type == JValueType.INTERNAL);
 	}
 
 	/*
@@ -1147,8 +1136,8 @@ public class JValueImpl implements JValue {
 			Map<? extends Object, ? extends Object> m = (Map<?, ?>) o;
 			for (Map.Entry<? extends Object, ? extends Object> entry : m
 					.entrySet()) {
-				retVal.put(JValueImpl.fromObject(entry.getKey()), JValueImpl
-						.fromObject(entry.getValue()));
+				retVal.put(JValueImpl.fromObject(entry.getKey()),
+						JValueImpl.fromObject(entry.getValue()));
 			}
 			return retVal;
 		}

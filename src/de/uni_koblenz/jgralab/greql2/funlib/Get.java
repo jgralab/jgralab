@@ -74,7 +74,8 @@ public class Get extends Greql2Function {
 				{ JValueType.COLLECTION, JValueType.INT, JValueType.OBJECT } };
 		signatures = x;
 
-		description = "Returns the value associated with KEY in MAP, or the element of INDEX in COLLECTION.";
+		description = "Returns the value associated with KEY in MAP, or the element of INDEX in COLLECTION.\n"
+				+ "Shorthand notation: myMap[KEY] or myCollection[INDEX]";
 
 		Category[] c = { Category.COLLECTIONS_AND_MAPS };
 		categories = c;
