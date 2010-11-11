@@ -118,7 +118,7 @@ public class IterativeDepthFirstSearch extends DepthFirstSearch {
 
 				number.set(currentVertex, num);
 				remainingIncidences.mark(currentVertex, currentVertex
-						.incidences(searchDirection).iterator());
+						.incidences(traversalDirection).iterator());
 				visitors.visitVertex(currentVertex);
 
 				visitedVertices.set(currentVertex, true);

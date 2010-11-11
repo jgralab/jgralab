@@ -138,7 +138,7 @@ public class ReachableWithSearch extends AbstractTraversal implements
 		search.setGraph(graph);
 		search.setSubgraph(subgraph);
 		search.setNavigable(navigable);
-		search.setSearchDirection(searchDirection);
+		search.setTraversalDirection(traversalDirection);
 		search.addVisitor(reachableVisitor);
 		startRunning();
 		this.target = target;

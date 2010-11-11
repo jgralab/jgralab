@@ -213,7 +213,7 @@ public class KahnKnuthAlgorithm extends AbstractTraversal implements
 		while (firstV < tnum) {
 			Vertex currentVertex = torder[firstV++];
 			visitors.visitVertexInTopologicalOrder(currentVertex);
-			for (Edge currentEdge : currentVertex.incidences(searchDirection)) {
+			for (Edge currentEdge : currentVertex.incidences(traversalDirection)) {
 				cancelIfInterrupted();
 				if (subgraph != null && !subgraph.get(currentEdge)) {
 					continue;

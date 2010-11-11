@@ -115,7 +115,7 @@ public class WarshallAlgorithm extends AbstractTraversal implements
 		super.reset();
 		SearchAlgorithm search = new BreadthFirstSearch(graph,
 				subgraph, null).withNumber();
-		search.setSearchDirection(searchDirection);
+		search.setTraversalDirection(traversalDirection);
 		search.execute();
 		indexMapping = search.getNumber();
 		vertexOrder = search.getVertexOrder();
@@ -129,7 +129,7 @@ public class WarshallAlgorithm extends AbstractTraversal implements
 	@Override
 	public void resetParameters() {
 		super.resetParameters();
-		searchDirection = EdgeDirection.OUT;
+		traversalDirection = EdgeDirection.OUT;
 		visitors = new TransitiveVisitorComposition();
 	}
 
@@ -153,7 +153,7 @@ public class WarshallAlgorithm extends AbstractTraversal implements
 			}
 			int vId = indexMapping.get(e.getAlpha());
 			int wId = indexMapping.get(e.getOmega());
-			switch (searchDirection) {
+			switch (traversalDirection) {
 			case OUT:
 				reachable[vId][wId] = true;
 				successor[vId][wId] = e;

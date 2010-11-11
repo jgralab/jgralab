@@ -76,7 +76,7 @@ public class TryWarshall {
 
 		};
 		// w.addVisitor(visitor);
-		w.setSearchDirection(EdgeDirection.INOUT);
+		w.setTraversalDirection(EdgeDirection.INOUT);
 		w.execute();
 		// System.out.println(w.getVertexOrder());
 		// System.out.println(w.getReachabilityRelation());

@@ -38,7 +38,7 @@ public abstract class AbstractTraversal extends GraphAlgorithm implements
 	 * By default the algorithm follows only outgoing edges, which also means
 	 * that the graph is interpreted as a directed graph.
 	 */
-	public static final EdgeDirection DEFAULT_SEARCH_DIRECTION = EdgeDirection.OUT;
+	public static final EdgeDirection DEFAULT_TRAVERSAL_DIRECTION = EdgeDirection.OUT;
 	/**
 	 * A function that tells if a reachable edge is also navigable.
 	 */
@@ -46,7 +46,7 @@ public abstract class AbstractTraversal extends GraphAlgorithm implements
 	/**
 	 * The search direction this search algorithm uses.
 	 */
-	protected EdgeDirection searchDirection;
+	protected EdgeDirection traversalDirection;
 
 	public AbstractTraversal(Graph graph) {
 		this(graph, null, null);
@@ -57,78 +57,7 @@ public abstract class AbstractTraversal extends GraphAlgorithm implements
 			BooleanFunction<Edge> navigable) {
 		super(graph, subgraph);
 	}
-
-	/**
-	 * Sets the search direction to the given value. If "INOUT" is given, the
-	 * algorithm interprets the graph as undirected graph.
-	 * 
-	 * @param searchDirection
-	 *            the search direction this search algorithm uses.
-	 */
-	public void setSearchDirection(EdgeDirection searchDirection) {
-		checkStateForSettingParameters();
-		if (searchDirection == EdgeDirection.INOUT && !isHybrid()) {
-			throw new UnsupportedOperationException(
-					"This algorithm does not support undirected graphs.");
-
-		}
-		this.searchDirection = searchDirection;
-	}
-
-	/**
-	 * If this method is called before executing the algorithm, the graph will
-	 * be traversed in normal order with respect to the edges's normal
-	 * direction.
-	 * 
-	 * @return this algorithm object.
-	 */
-	public AbstractTraversal normal() {
-		setSearchDirection(EdgeDirection.OUT);
-		return this;
-	}
-
-	/**
-	 * If this method is called before executing the algorithm, the graph will
-	 * be traversed in reversed order with respect to the edge's reversed
-	 * direction.
-	 * 
-	 * @return this algorithm object.
-	 */
-	public AbstractTraversal reversed() {
-		setSearchDirection(EdgeDirection.IN);
-		return this;
-	}
-
-	/**
-	 * If this method is called before executing the algorithm, the graph will
-	 * be treated as undirected graph and the edges will be followed either with
-	 * respect to their normal order or their reversed order.
-	 * 
-	 * @return this algorithm object.
-	 */
-	public AbstractTraversal undirected() {
-		setSearchDirection(EdgeDirection.INOUT);
-		return this;
-	}
-
-	@Override
-	public void resetParameters() {
-		super.resetParameters();
-		this.navigable = null;
-		this.searchDirection = DEFAULT_SEARCH_DIRECTION;
-	}
-
-	/**
-	 * @return the current search direction of the algorithm.
-	 */
-	public EdgeDirection getSearchDirection() {
-		return searchDirection;
-	}
-
-	public BooleanFunction<Edge> getNavigable() {
-		return navigable;
-	}
-
+	
 	@Override
 	public void setNavigable(BooleanFunction<Edge> navigable) {
 		if (getState() == AlgorithmStates.INITIALIZED) {
@@ -140,9 +69,80 @@ public abstract class AbstractTraversal extends GraphAlgorithm implements
 		}
 	}
 
+	/**
+	 * Sets the search direction to the given value. If "INOUT" is given, the
+	 * algorithm interprets the graph as undirected graph.
+	 * 
+	 * @param traversalDirection
+	 *            the search direction this search algorithm uses.
+	 */
+	public void setTraversalDirection(EdgeDirection traversalDirection) {
+		checkStateForSettingParameters();
+		if (traversalDirection == EdgeDirection.INOUT && !isHybrid()) {
+			throw new UnsupportedOperationException(
+					"This algorithm does not support undirected graphs.");
+
+		}
+		this.traversalDirection = traversalDirection;
+	}
+	
+	/**
+	 * @return the current search direction of the algorithm.
+	 */
+	public EdgeDirection getTraversalDirection() {
+		return traversalDirection;
+	}
+
+	public BooleanFunction<Edge> getNavigable() {
+		return navigable;
+	}
+	
+	@Override
+	public void resetParameters() {
+		super.resetParameters();
+		this.navigable = null;
+		this.traversalDirection = DEFAULT_TRAVERSAL_DIRECTION;
+	}
+
+	/**
+	 * If this method is called before executing the algorithm, the graph will
+	 * be traversed in normal order with respect to the edges's normal
+	 * direction.
+	 * 
+	 * @return this algorithm object.
+	 */
+	public AbstractTraversal normal() {
+		setTraversalDirection(EdgeDirection.OUT);
+		return this;
+	}
+
+	/**
+	 * If this method is called before executing the algorithm, the graph will
+	 * be traversed in reversed order with respect to the edge's reversed
+	 * direction.
+	 * 
+	 * @return this algorithm object.
+	 */
+	public AbstractTraversal reversed() {
+		setTraversalDirection(EdgeDirection.IN);
+		return this;
+	}
+
+	/**
+	 * If this method is called before executing the algorithm, the graph will
+	 * be treated as undirected graph and the edges will be followed either with
+	 * respect to their normal order or their reversed order.
+	 * 
+	 * @return this algorithm object.
+	 */
+	public AbstractTraversal undirected() {
+		setTraversalDirection(EdgeDirection.INOUT);
+		return this;
+	}
+
 	@Override
 	public boolean isDirected() {
-		return searchDirection != EdgeDirection.INOUT;
+		return traversalDirection != EdgeDirection.INOUT;
 	}
 
 }
