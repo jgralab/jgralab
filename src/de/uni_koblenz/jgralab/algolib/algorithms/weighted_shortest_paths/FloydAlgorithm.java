@@ -142,7 +142,7 @@ public class FloydAlgorithm extends AbstractTraversal implements
 	@Override
 	public void resetParameters() {
 		super.resetParameters();
-		searchDirection = EdgeDirection.OUT;
+		traversalDirection = EdgeDirection.OUT;
 		visitors = new TransitiveVisitorComposition();
 	}
 
@@ -167,7 +167,7 @@ public class FloydAlgorithm extends AbstractTraversal implements
 			int vId = indexMapping.get(e.getAlpha());
 			int wId = indexMapping.get(e.getOmega());
 			double newDistance = edgeWeight.get(e);
-			switch (searchDirection) {
+			switch (traversalDirection) {
 			case OUT:
 				if (weightedDistance[vId][wId] > newDistance) {
 					weightedDistance[vId][wId] = newDistance;

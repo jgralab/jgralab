@@ -81,7 +81,7 @@ public class RecursiveDepthFirstSearch extends DepthFirstSearch {
 		visitedVertices.set(currentVertex, true);
 		num++;
 
-		for (Edge currentEdge : currentVertex.incidences(searchDirection)) {
+		for (Edge currentEdge : currentVertex.incidences(traversalDirection)) {
 			if (visitedEdges.get(currentEdge) || subgraph != null
 					&& !subgraph.get(currentEdge) || navigable != null
 					&& !navigable.get(currentEdge)) {

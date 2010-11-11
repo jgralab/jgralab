@@ -51,7 +51,7 @@ public class TryBFS2 {
 		graph.createSimpleEdge(vertices[2], vertices[8]);
 
 		BreadthFirstSearch bfs = new BreadthFirstSearch(graph);
-		bfs.setSearchDirection(EdgeDirection.IN);
+		bfs.setTraversalDirection(EdgeDirection.IN);
 		bfs.addVisitor(new DebugSearchVisitor());
 		bfs.execute();
 		

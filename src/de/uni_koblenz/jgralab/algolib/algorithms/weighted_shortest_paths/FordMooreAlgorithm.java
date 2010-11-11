@@ -147,7 +147,7 @@ public class FordMooreAlgorithm extends AbstractTraversal implements
 	public void resetParameters() {
 		super.resetParameters();
 		edgeWeight = null;
-		searchDirection = EdgeDirection.OUT;
+		traversalDirection = EdgeDirection.OUT;
 	}
 
 	@Override
@@ -168,7 +168,7 @@ public class FordMooreAlgorithm extends AbstractTraversal implements
 		while (!vertexQueue.isEmpty()) {
 			Vertex currentVertex = vertexQueue.poll();
 			assert (currentVertex != null);
-			for (Edge currentEdge : currentVertex.incidences(searchDirection)) {
+			for (Edge currentEdge : currentVertex.incidences(traversalDirection)) {
 				cancelIfInterrupted();
 				if (subgraph != null && !subgraph.get(currentEdge)
 						|| navigable != null && !navigable.get(currentEdge)) {

@@ -138,7 +138,7 @@ public class TopologicalOrderWithDFS extends AbstractTraversal implements
 				visitors.visitVertexInTopologicalOrder(v);
 			}
 		};
-		assert (DEFAULT_SEARCH_DIRECTION == EdgeDirection.OUT);
+		assert (DEFAULT_TRAVERSAL_DIRECTION == EdgeDirection.OUT);
 		dfs.reversed();
 	}
 

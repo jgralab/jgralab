@@ -115,7 +115,7 @@ public class ShortestPathsWithBFS extends AbstractTraversal implements
 		bfs.setGraph(graph);
 		bfs.setSubgraph(subgraph);
 		bfs.setNavigable(navigable);
-		bfs.setSearchDirection(searchDirection);
+		bfs.setTraversalDirection(traversalDirection);
 		startRunning();
 		try {
 			bfs.withLevel().withParent().execute(start);

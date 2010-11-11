@@ -52,7 +52,7 @@ public class TryShortestPaths {
 		graph.createSimpleEdge(vertices[2], vertices[8]);
 		
 		BreadthFirstSearch bfs = new BreadthFirstSearch(graph);
-		bfs.setSearchDirection(EdgeDirection.IN);
+		bfs.setTraversalDirection(EdgeDirection.IN);
 		ShortestPathsWithBFS solver = new ShortestPathsWithBFS(graph, bfs);
 		
 		solver.execute(vertices[8]);

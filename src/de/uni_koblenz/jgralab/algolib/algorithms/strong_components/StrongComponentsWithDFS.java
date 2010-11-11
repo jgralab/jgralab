@@ -220,7 +220,7 @@ public class StrongComponentsWithDFS extends AbstractTraversal implements
 		dfs.setGraph(graph);
 		dfs.setSubgraph(subgraph);
 		dfs.setNavigable(navigable);
-		dfs.setSearchDirection(searchDirection);
+		dfs.setTraversalDirection(traversalDirection);
 		dfs.addVisitor(lowlinkVisitor);
 		try {
 			startRunning();
