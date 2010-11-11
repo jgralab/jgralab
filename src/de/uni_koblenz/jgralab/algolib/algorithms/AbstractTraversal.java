@@ -56,6 +56,7 @@ public abstract class AbstractTraversal extends GraphAlgorithm implements
 			BooleanFunction<GraphElement> subgraph,
 			BooleanFunction<Edge> navigable) {
 		super(graph, subgraph);
+		this.navigable = navigable;
 	}
 	
 	@Override
