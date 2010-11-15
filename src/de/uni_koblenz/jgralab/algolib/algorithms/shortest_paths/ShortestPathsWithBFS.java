@@ -53,6 +53,18 @@ public class ShortestPathsWithBFS extends AbstractTraversal implements
 		super(graph, subgraph, navigable);
 		this.bfs = bfs;
 	}
+	
+	@Override
+	public void reset(){
+		super.reset();
+		bfs.reset();
+	}
+	
+	@Override
+	public void resetParameters(){
+		super.resetParameters();
+		bfs.resetParameters();
+	}
 
 	@Override
 	public void addVisitor(Visitor visitor) {
@@ -69,10 +81,8 @@ public class ShortestPathsWithBFS extends AbstractTraversal implements
 
 	@Override
 	protected void done() {
-		state = bfs.getState();
-		if (state == AlgorithmStates.STOPPED) {
-			state = AlgorithmStates.FINISHED;
-		}
+		state = bfs.getState() == AlgorithmStates.STOPPED ? AlgorithmStates.FINISHED
+				: bfs.getState();
 	}
 
 	@Override
