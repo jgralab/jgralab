@@ -53,18 +53,6 @@ public class ShortestPathsWithBFS extends AbstractTraversal implements
 		super(graph, subgraph, navigable);
 		this.bfs = bfs;
 	}
-	
-	@Override
-	public void reset(){
-		super.reset();
-		bfs.reset();
-	}
-	
-	@Override
-	public void resetParameters(){
-		super.resetParameters();
-		bfs.resetParameters();
-	}
 
 	@Override
 	public void addVisitor(Visitor visitor) {
