@@ -126,5 +126,11 @@ public class RecursiveDepthFirstSearch extends DepthFirstSearch {
 		visitors.leaveVertex(currentVertex);
 		rNum++;
 	}
+	
+	@Override
+	public RecursiveDepthFirstSearch execute(){
+		super.execute();
+		return this;
+	}
 
 }

@@ -31,7 +31,6 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
-import de.uni_koblenz.jgralab.algolib.problems.TraversalFromVertexSolver;
 import de.uni_koblenz.jgralab.graphmarker.ArrayVertexMarker;
 
 /**
@@ -92,7 +91,7 @@ public class IterativeDepthFirstSearch extends DepthFirstSearch {
 	}
 
 	@Override
-	public TraversalFromVertexSolver execute(Vertex root) {
+	public IterativeDepthFirstSearch execute(Vertex root) {
 		if (subgraph != null && !subgraph.get(root)
 				|| visitedVertices.get(root)) {
 			return this;
@@ -187,4 +186,9 @@ public class IterativeDepthFirstSearch extends DepthFirstSearch {
 		return this;
 	}
 
+	@Override
+	public IterativeDepthFirstSearch execute(){
+		super.execute();
+		return this;
+	}
 }
