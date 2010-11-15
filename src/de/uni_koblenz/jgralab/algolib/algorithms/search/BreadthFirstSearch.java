@@ -54,6 +54,7 @@ public class BreadthFirstSearch extends SearchAlgorithm implements
 	public BreadthFirstSearch(Graph graph) {
 		super(graph);
 	}
+	
 
 	@Override
 	public BreadthFirstSearch withLevel() {
@@ -122,6 +123,10 @@ public class BreadthFirstSearch extends SearchAlgorithm implements
 		visitors = new SearchVisitorComposition();
 	}
 
+	public int getFirstV(){
+		return firstV;
+	}
+	
 	@Override
 	public void addVisitor(Visitor visitor) {
 		checkStateForSettingVisitors();
@@ -199,7 +204,9 @@ public class BreadthFirstSearch extends SearchAlgorithm implements
 		return this;
 	}
 	
-	public int getFirstV(){
-		return firstV;
+	@Override
+	public BreadthFirstSearch execute(){
+		super.execute();
+		return this;
 	}
 }

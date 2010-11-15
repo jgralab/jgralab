@@ -58,16 +58,11 @@ public abstract class AbstractTraversal extends GraphAlgorithm implements
 		super(graph, subgraph);
 		this.navigable = navigable;
 	}
-	
+
 	@Override
 	public void setNavigable(BooleanFunction<Edge> navigable) {
-		if (getState() == AlgorithmStates.INITIALIZED) {
-			this.navigable = navigable;
-		} else {
-			throw new IllegalStateException(
-					"The edge navigability may only be changed when in state "
-							+ AlgorithmStates.INITIALIZED);
-		}
+		checkStateForSettingParameters();
+		this.navigable = navigable;
 	}
 
 	/**
@@ -79,6 +74,7 @@ public abstract class AbstractTraversal extends GraphAlgorithm implements
 	 */
 	public void setTraversalDirection(EdgeDirection traversalDirection) {
 		checkStateForSettingParameters();
+		// TODO: think about this, what if the traversal is undirected only?
 		if (traversalDirection == EdgeDirection.INOUT && !isHybrid()) {
 			throw new UnsupportedOperationException(
 					"This algorithm does not support undirected graphs.");
@@ -86,7 +82,7 @@ public abstract class AbstractTraversal extends GraphAlgorithm implements
 		}
 		this.traversalDirection = traversalDirection;
 	}
-	
+
 	/**
 	 * @return the current search direction of the algorithm.
 	 */
@@ -97,7 +93,7 @@ public abstract class AbstractTraversal extends GraphAlgorithm implements
 	public BooleanFunction<Edge> getNavigable() {
 		return navigable;
 	}
-	
+
 	@Override
 	public void resetParameters() {
 		super.resetParameters();

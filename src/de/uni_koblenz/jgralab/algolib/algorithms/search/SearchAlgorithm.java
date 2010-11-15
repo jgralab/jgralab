@@ -206,6 +206,72 @@ public abstract class SearchAlgorithm extends AbstractTraversal implements
 		return this;
 	}
 
+	@Override
+	public void disableOptionalResults() {
+		checkStateForSettingParameters();
+		level = null;
+		number = null;
+		parent = null;
+	}
+
+	@Override
+	public void reset() {
+		super.reset();
+		vertexOrder = new Vertex[getVertexCount() + 1];
+		edgeOrder = new Edge[getEdgeCount() + 1];
+		visitedVertices = new BitSetVertexMarker(graph);
+		visitedEdges = new BitSetEdgeMarker(graph);
+		level = level == null ? null : new IntegerVertexMarker(graph);
+		number = number == null ? null : new IntegerVertexMarker(graph);
+		parent = parent == null ? null : new ArrayVertexMarker<Edge>(graph);
+		num = 1;
+		eNum = 1;
+		// reset visitors (in subclass)
+	}
+
+	/**
+	 * @return the internal representation of the result
+	 *         <code>vertexOrder</code>.
+	 */
+	public Vertex[] getInternalVertexOrder() {
+		return vertexOrder;
+	}
+
+	/**
+	 * @return the internal representation of the result <code>edgeOrder</code>.
+	 */
+	public Edge[] getInternalEdgeOrder() {
+		return edgeOrder;
+	}
+
+	/**
+	 * @return the algorithm result <code>visitedVertices</code>.
+	 */
+	public BooleanFunction<Vertex> getVisitedVertices() {
+		return visitedVertices;
+	}
+
+	/**
+	 * @return the algorithm result <code>visitedEdges</code>.
+	 */
+	public BooleanFunction<Edge> getVisitedEdges() {
+		return visitedEdges;
+	}
+
+	/**
+	 * @return the intermediate value of <code>num</code>.
+	 */
+	public int getNum() {
+		return num;
+	}
+
+	/**
+	 * @return the intermediate value of <code>eNum</code>.
+	 */
+	public int getENum() {
+		return eNum;
+	}
+
 	/**
 	 * @return the internal representation of the optional result
 	 *         <code>level</code>.
@@ -231,76 +297,31 @@ public abstract class SearchAlgorithm extends AbstractTraversal implements
 	}
 
 	@Override
-	public void disableOptionalResults() {
-		checkStateForSettingParameters();
-		level = null;
-		number = null;
-		parent = null;
+	public boolean isHybrid() {
+		return true;
 	}
 
 	@Override
-	public void reset() {
-		super.reset();
-		vertexOrder = new Vertex[getVertexCount() + 1];
-		edgeOrder = new Edge[getEdgeCount() + 1];
-		visitedVertices = new BitSetVertexMarker(graph);
-		visitedEdges = new BitSetEdgeMarker(graph);
-		level = level == null ? null : new IntegerVertexMarker(graph);
-		number = number == null ? null : new IntegerVertexMarker(graph);
-		parent = parent == null ? null : new ArrayVertexMarker<Edge>(graph);
-
-		num = 1;
-		eNum = 1;
-		// reset visitors (in subclass)
-	}
-
-	/**
-	 * @return the algorithm result <code>visitedVertices</code>.
-	 */
-	public BooleanFunction<Vertex> getVisitedVertices() {
-		return visitedVertices;
-	}
-
-	/**
-	 * @return the algorithm result <code>visitedEdges</code>.
-	 */
-	public BooleanFunction<Edge> getVisitedEdges() {
-		return visitedEdges;
-	}
-
-	/**
-	 * @return the internal representation of the result <code>edgeOrder</code>.
-	 */
-	public Edge[] getInternalEdgeOrder() {
-		return edgeOrder;
-	}
-
-	/**
-	 * @return the internal representation of the result
-	 *         <code>vertexOrder</code>.
-	 */
-	public Vertex[] getInternalVertexOrder() {
-		return vertexOrder;
-	}
-
-	/**
-	 * @return the intermediate value of <code>num</code>.
-	 */
-	public int getNum() {
-		return num;
-	}
-
-	/**
-	 * @return the intermediate value of <code>eNum</code>.
-	 */
-	public int getENum() {
-		return eNum;
+	public abstract SearchAlgorithm execute(Vertex root);
+	
+	@Override
+	public SearchAlgorithm execute() {
+		for (Vertex currentRoot : graph.vertices()) {
+			execute(currentRoot);
+			if (state == AlgorithmStates.FINISHED) {
+				break;
+			}
+		}
+		assert (state == AlgorithmStates.FINISHED);
+		return this;
 	}
 
 	@Override
-	public Permutation<Edge> getEdgeOrder() {
-		checkStateForResult();
-		return new ArrayPermutation<Edge>(edgeOrder);
+	protected void done() {
+		if (state != AlgorithmStates.CANCELED) {
+			state = num < getVertexCount() + 1 ? AlgorithmStates.STOPPED
+					: AlgorithmStates.FINISHED;
+		}
 	}
 
 	@Override
@@ -310,16 +331,9 @@ public abstract class SearchAlgorithm extends AbstractTraversal implements
 	}
 
 	@Override
-	public boolean isHybrid() {
-		return true;
-	}
-
-	@Override
-	protected void done() {
-		if (state != AlgorithmStates.CANCELED) {
-			state = num < getVertexCount() + 1 ? AlgorithmStates.STOPPED
-					: AlgorithmStates.FINISHED;
-		}
+	public Permutation<Edge> getEdgeOrder() {
+		checkStateForResult();
+		return new ArrayPermutation<Edge>(edgeOrder);
 	}
 
 	/**
@@ -359,14 +373,5 @@ public abstract class SearchAlgorithm extends AbstractTraversal implements
 	public Function<Vertex, Edge> getParent() {
 		checkStateForResult();
 		return parent;
-	}
-	
-	@Override
-	public SearchAlgorithm execute() {
-		for (Vertex currentRoot : graph.vertices()) {
-			execute(currentRoot);
-		}
-		assert (state == AlgorithmStates.FINISHED);
-		return this;
 	}
 }
