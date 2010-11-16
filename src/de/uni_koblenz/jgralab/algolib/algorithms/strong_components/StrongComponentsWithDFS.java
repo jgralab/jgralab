@@ -92,14 +92,12 @@ public class StrongComponentsWithDFS extends AbstractTraversal implements
 	@Override
 	public StrongComponentsWithDFS normal() {
 		super.normal();
-		dfs.normal();
 		return this;
 	}
 
 	@Override
 	public AbstractTraversal reversed() {
 		super.reversed();
-		dfs.reversed();
 		return this;
 	}
 
