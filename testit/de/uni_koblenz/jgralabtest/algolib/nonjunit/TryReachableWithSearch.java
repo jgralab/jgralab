@@ -21,41 +21,47 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package de.uni_koblenz.jgralabtest.algolib;
+package de.uni_koblenz.jgralabtest.algolib.nonjunit;
 
-import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.algolib.algorithms.reachability.ReachableWithSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.BreadthFirstSearch;
-import de.uni_koblenz.jgralab.algolib.algorithms.shortest_paths.ShortestPathsWithBFS;
+import de.uni_koblenz.jgralab.algolib.algorithms.search.SearchAlgorithm;
 import de.uni_koblenz.jgralabtest.schemas.algolib.simple.SimpleGraph;
 import de.uni_koblenz.jgralabtest.schemas.algolib.simple.SimpleSchema;
 import de.uni_koblenz.jgralabtest.schemas.algolib.simple.SimpleVertex;
 
-public class TryShortestPaths {
+public class TryReachableWithSearch {
+
+	/**
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		SimpleGraph graph = SimpleSchema.instance().createSimpleGraph();
-		int vertexCount = 9;
-		SimpleVertex[] vertices = new SimpleVertex[vertexCount];
-		for (int i = 1; i < vertexCount; i++) {
-			vertices[i] = graph.createSimpleVertex();
-		}
+		SimpleVertex v1 = graph.createSimpleVertex();
+		SimpleVertex v2 = graph.createSimpleVertex();
+		SimpleVertex v3 = graph.createSimpleVertex();
+		SimpleVertex v4 = graph.createSimpleVertex();
+		SimpleVertex v5 = graph.createSimpleVertex();
+		SimpleVertex v6 = graph.createSimpleVertex();
+		graph.createSimpleEdge(v1, v2);
+		graph.createSimpleEdge(v1, v4);
+		graph.createSimpleEdge(v2, v1);
+		graph.createSimpleEdge(v1, v3);
+		// graph.createSimpleEdge(v1, v5);
+		graph.createSimpleEdge(v3, v2);
+		graph.createSimpleEdge(v2, v4);
+		graph.createSimpleEdge(v3, v4);
+		graph.createSimpleEdge(v4, v5);
+		graph.createSimpleEdge(v5, v3);
 		
-		graph.createSimpleEdge(vertices[5], vertices[1]);
-		graph.createSimpleEdge(vertices[3], vertices[1]);
-		graph.createSimpleEdge(vertices[3], vertices[2]);
-		graph.createSimpleEdge(vertices[4], vertices[2]);
-		graph.createSimpleEdge(vertices[5], vertices[3]);
-		graph.createSimpleEdge(vertices[4], vertices[3]);
-		graph.createSimpleEdge(vertices[7], vertices[4]);
-		graph.createSimpleEdge(vertices[6], vertices[5]);
-		graph.createSimpleEdge(vertices[7], vertices[6]);
-		graph.createSimpleEdge(vertices[1], vertices[8]);
-		graph.createSimpleEdge(vertices[2], vertices[8]);
-		
-		BreadthFirstSearch bfs = new BreadthFirstSearch(graph);
-		ShortestPathsWithBFS solver = new ShortestPathsWithBFS(graph, bfs).reversed();
-		
-		solver.execute(vertices[8]);
-		System.out.println(solver.getDistance());
-		System.out.println(solver.getParent());
+		SearchAlgorithm search = new BreadthFirstSearch(graph);
+		search.addVisitor(new DebugSearchVisitor());
+		ReachableWithSearch solver = new ReachableWithSearch(graph,search);
+		solver.execute(v1,v4);
+		System.out.println(solver.isReachable());
+		solver.reset();
+		solver.execute(v2, v6);
+		System.out.println(solver.isReachable());
 	}
+
 }

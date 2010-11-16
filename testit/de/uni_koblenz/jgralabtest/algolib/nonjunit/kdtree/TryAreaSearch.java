@@ -21,52 +21,31 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package de.uni_koblenz.jgralabtest.algolib;
+package de.uni_koblenz.jgralabtest.algolib.nonjunit.kdtree;
 
-public class Stopwatch {
-	private long starttime;
-	private long endtime;
-	private int state;
+import java.util.LinkedList;
+import java.util.List;
 
-	public Stopwatch() {
-		state = 0;
+public class TryAreaSearch {
+	private static LinkedList<Point2> createSmallList() {
+		LinkedList<Point2> list = new LinkedList<Point2>();
+		Point2 e = new Point2(1, 1);
+		list.add(e);
+		list.add(new Point2(3, 3.5));
+		list.add(new Point2(4.5, 4));
+		list.add(new Point2(4, 2));
+		list.add(new Point2(2, 1.5));
+		list.add(new Point2(6, 5));
+		list.add(new Point2(1, 3));
+		list.add(new Point2(5, 0.5));
+		return list;
 	}
 
-	public void start() {
-		if (state != 0) {
-			throw new IllegalStateException();
-		}
-		starttime = System.nanoTime();
-		state = 1;
-	}
-
-	public void stop() {
-		if (state != 1) {
-			throw new IllegalStateException();
-		}
-		endtime = System.nanoTime();
-		state = 2;
-	}
-
-	public long getDuration() {
-		if (state != 2) {
-			throw new IllegalStateException();
-		}
-		return (endtime - starttime) / 1000000;
-	}
-	
-	public long getNanoDuration() {
-		if (state != 2) {
-			throw new IllegalStateException();
-		}
-		return endtime - starttime;
-	}
-
-	public void reset() {
-		starttime = endtime = state = 0;
-	}
-
-	public String getDurationString() {
-		return "Duration: " + getDuration() / 1000.0 + " sec";
+	public static void main(String[] args) {
+		LinkedList<Point2> list = createSmallList();
+		KDTree<Point2> tree = new KDTree<Point2>(list, 1);
+		// System.out.println(tree);
+		List<Point2> area = tree.getArea(new Point2(3, 3.5), 2);
+		System.out.println(area);
 	}
 }
