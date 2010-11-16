@@ -52,9 +52,9 @@ public class StrongComponentsWithDFS extends AbstractTraversal implements
 
 	private DepthFirstSearch dfs;
 	private Stack<Vertex> vertexStack;
+	private DFSVisitor lowlinkVisitor;
 	private IntFunction<Vertex> lowlink;
 	private Function<Vertex, Vertex> strongComponents;
-	private DFSVisitor lowlinkVisitor;
 	private ReducedGraphVisitorComposition visitors;
 
 	public StrongComponentsWithDFS(Graph graph, DepthFirstSearch dfs) {
@@ -143,7 +143,7 @@ public class StrongComponentsWithDFS extends AbstractTraversal implements
 		visitors = new ReducedGraphVisitorComposition();
 		lowlinkVisitor = new DFSVisitorAdapter() {
 
-			IntFunction<Vertex> number;
+			private IntFunction<Vertex> number;
 
 			@Override
 			public void setAlgorithm(GraphAlgorithm algorithm) {
@@ -204,7 +204,6 @@ public class StrongComponentsWithDFS extends AbstractTraversal implements
 					visitors.visitRepresentativeVertex(v);
 				}
 			}
-
 		};
 	}
 

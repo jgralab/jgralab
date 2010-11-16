@@ -26,6 +26,7 @@ package de.uni_koblenz.jgralabtest.algolib;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.DepthFirstSearch;
+import de.uni_koblenz.jgralab.algolib.algorithms.search.IterativeDepthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.RecursiveDepthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.strong_components.StrongComponentsWithDFS;
 import de.uni_koblenz.jgralab.algolib.algorithms.strong_components.visitors.ReducedGraphVisitorAdapter;
@@ -53,7 +54,7 @@ public class TryStrongComponents {
 		graph.createSimpleEdge(vertices[6], vertices[5]);
 		graph.createSimpleEdge(vertices[1], vertices[6]);
 
-		DepthFirstSearch dfs = new RecursiveDepthFirstSearch(graph);
+		DepthFirstSearch dfs = new IterativeDepthFirstSearch(graph);
 		dfs.addVisitor(new DebugSearchVisitor());
 		StrongComponentsWithDFS solver = new StrongComponentsWithDFS(graph, dfs);
 		solver.addVisitor(new ReducedGraphVisitorAdapter(){

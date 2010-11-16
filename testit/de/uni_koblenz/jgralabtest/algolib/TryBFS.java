@@ -25,6 +25,7 @@ package de.uni_koblenz.jgralabtest.algolib;
 
 import java.util.Arrays;
 
+import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.BreadthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.SearchAlgorithm;
 import de.uni_koblenz.jgralabtest.schemas.algolib.simple.SimpleGraph;
@@ -81,6 +82,7 @@ public class TryBFS {
 
 		System.out.println("No optional functions:");
 		BreadthFirstSearch bfs2 = new BreadthFirstSearch(graph);
+		bfs2.setTraversalDirection(EdgeDirection.IN);
 		bfs2.addVisitor(new DebugSearchVisitor());
 
 		// bfs2.reset();
