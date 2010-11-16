@@ -1,4 +1,4 @@
-package de.uni_koblenz.jgralabtest.algolib;
+package de.uni_koblenz.jgralabtest.algolib.nonjunit;
 
 import java.util.Arrays;
 

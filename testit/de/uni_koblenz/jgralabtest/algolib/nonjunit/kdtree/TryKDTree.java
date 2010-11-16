@@ -21,13 +21,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package de.uni_koblenz.jgralabtest.algolib.kdtree;
+package de.uni_koblenz.jgralabtest.algolib.nonjunit.kdtree;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-import de.uni_koblenz.jgralabtest.algolib.Stopwatch;
+import de.uni_koblenz.jgralabtest.algolib.nonjunit.Stopwatch;
 
 public class TryKDTree {
 	public static void main(String[] args) {

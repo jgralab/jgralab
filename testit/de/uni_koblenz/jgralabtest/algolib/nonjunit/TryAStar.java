@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package de.uni_koblenz.jgralabtest.algolib;
+package de.uni_koblenz.jgralabtest.algolib.nonjunit;
 
 import java.io.File;
 import java.util.LinkedList;
@@ -40,8 +40,8 @@ import de.uni_koblenz.jgralab.algolib.functions.DoubleFunction;
 import de.uni_koblenz.jgralab.algolib.functions.adapters.MethodCallToBinaryDoubleFunctionAdapter;
 import de.uni_koblenz.jgralab.algolib.functions.adapters.MethodCallToDoubleFunctionAdapter;
 import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
-import de.uni_koblenz.jgralabtest.algolib.kdtree.KDTree;
-import de.uni_koblenz.jgralabtest.algolib.kdtree.Point;
+import de.uni_koblenz.jgralabtest.algolib.nonjunit.kdtree.KDTree;
+import de.uni_koblenz.jgralabtest.algolib.nonjunit.kdtree.Point;
 import de.uni_koblenz.jgralabtest.schemas.algolib.weighted.Location;
 import de.uni_koblenz.jgralabtest.schemas.algolib.weighted.Way;
 import de.uni_koblenz.jgralabtest.schemas.algolib.weighted.WeightedGraph;

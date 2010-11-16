@@ -21,15 +21,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package de.uni_koblenz.jgralabtest.algolib;
+package de.uni_koblenz.jgralabtest.algolib.nonjunit;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.BreadthFirstSearch;
+import de.uni_koblenz.jgralab.algolib.algorithms.shortest_paths.ShortestPathsWithBFS;
 import de.uni_koblenz.jgralabtest.schemas.algolib.simple.SimpleGraph;
 import de.uni_koblenz.jgralabtest.schemas.algolib.simple.SimpleSchema;
 import de.uni_koblenz.jgralabtest.schemas.algolib.simple.SimpleVertex;
 
-public class TryBFS2 {
+public class TryShortestPaths {
 	public static void main(String[] args) {
 		SimpleGraph graph = SimpleSchema.instance().createSimpleGraph();
 		int vertexCount = 9;
@@ -37,7 +38,7 @@ public class TryBFS2 {
 		for (int i = 1; i < vertexCount; i++) {
 			vertices[i] = graph.createSimpleVertex();
 		}
-
+		
 		graph.createSimpleEdge(vertices[5], vertices[1]);
 		graph.createSimpleEdge(vertices[3], vertices[1]);
 		graph.createSimpleEdge(vertices[3], vertices[2]);
@@ -49,13 +50,12 @@ public class TryBFS2 {
 		graph.createSimpleEdge(vertices[7], vertices[6]);
 		graph.createSimpleEdge(vertices[1], vertices[8]);
 		graph.createSimpleEdge(vertices[2], vertices[8]);
-
+		
 		BreadthFirstSearch bfs = new BreadthFirstSearch(graph);
-		bfs.setTraversalDirection(EdgeDirection.IN);
-		bfs.addVisitor(new DebugSearchVisitor());
-		bfs.execute();
+		ShortestPathsWithBFS solver = new ShortestPathsWithBFS(graph, bfs).reversed();
 		
-		System.out.println(bfs.getVertexOrder());
-		
+		solver.execute(vertices[8]);
+		System.out.println(solver.getDistance());
+		System.out.println(solver.getParent());
 	}
 }
