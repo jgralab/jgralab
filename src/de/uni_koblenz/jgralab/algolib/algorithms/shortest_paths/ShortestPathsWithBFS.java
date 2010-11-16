@@ -62,49 +62,36 @@ public class ShortestPathsWithBFS extends AbstractTraversal implements
 	}
 
 	@Override
-	public void disableOptionalResults() {
-		checkStateForSettingParameters();
-		bfs.disableOptionalResults();
-	}
-
-	@Override
-	protected void done() {
-		state = bfs.getState() == AlgorithmStates.STOPPED ? AlgorithmStates.FINISHED
-				: bfs.getState();
+	public void removeVisitor(Visitor visitor) {
+		checkStateForSettingVisitors();
+		bfs.removeVisitor(visitor);
 	}
 
 	@Override
 	public ShortestPathsWithBFS normal() {
-		bfs.normal();
+		super.normal();
 		return this;
 	}
 
 	@Override
 	public ShortestPathsWithBFS reversed() {
-		bfs.reversed();
+		super.reversed();
 		return this;
 	}
 
 	@Override
 	public ShortestPathsWithBFS undirected() {
-		bfs.undirected();
+		super.undirected();
 		return this;
 	}
 
 	@Override
-	public boolean isDirected() {
-		return bfs.isDirected();
-	}
-
-	@Override
 	public boolean isHybrid() {
-		return bfs.isHybrid();
+		return true;
 	}
-
+	
 	@Override
-	public void removeVisitor(Visitor visitor) {
-		checkStateForSettingVisitors();
-		bfs.removeVisitor(visitor);
+	public void disableOptionalResults() {
 	}
 
 	@Override
@@ -121,6 +108,12 @@ public class ShortestPathsWithBFS extends AbstractTraversal implements
 		}
 		done();
 		return this;
+	}
+	
+	@Override
+	protected void done() {
+		state = bfs.getState() == AlgorithmStates.STOPPED ? AlgorithmStates.FINISHED
+				: bfs.getState();
 	}
 
 	@Override

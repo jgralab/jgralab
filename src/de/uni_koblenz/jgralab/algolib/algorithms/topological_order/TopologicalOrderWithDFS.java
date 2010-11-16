@@ -44,8 +44,8 @@ public class TopologicalOrderWithDFS extends AbstractTraversal implements
 		AcyclicitySolver, TopologicalOrderSolver {
 
 	private DepthFirstSearch dfs;
-	private boolean acyclic;
 	private DFSVisitorAdapter torderVisitorAdapter;
+	private boolean acyclic;
 	private TopologicalOrderVisitorComposition visitors;
 
 	public TopologicalOrderWithDFS(Graph graph,
@@ -83,12 +83,6 @@ public class TopologicalOrderWithDFS extends AbstractTraversal implements
 
 	@Override
 	public void disableOptionalResults() {
-
-	}
-
-	@Override
-	protected void done() {
-		state = dfs.getState();
 	}
 
 	@Override
@@ -111,18 +105,6 @@ public class TopologicalOrderWithDFS extends AbstractTraversal implements
 	}
 
 	@Override
-	public boolean isAcyclic() {
-		checkStateForResult();
-		return acyclic;
-	}
-
-	@Override
-	public Permutation<Vertex> getTopologicalOrder() {
-		checkStateForResult();
-		return dfs.getRorder();
-	}
-
-	@Override
 	public void resetParameters() {
 		super.resetParameters();
 		visitors = new TopologicalOrderVisitorComposition();
@@ -138,13 +120,14 @@ public class TopologicalOrderWithDFS extends AbstractTraversal implements
 				visitors.visitVertexInTopologicalOrder(v);
 			}
 		};
-		assert (DEFAULT_TRAVERSAL_DIRECTION == EdgeDirection.OUT);
+		this.normal();
 		dfs.reversed();
 	}
 
 	@Override
 	public void reset() {
 		super.reset();
+		acyclic = true;
 	}
 
 	@Override
@@ -162,5 +145,22 @@ public class TopologicalOrderWithDFS extends AbstractTraversal implements
 		done();
 		dfs.removeVisitor(torderVisitorAdapter);
 		return this;
+	}
+
+	@Override
+	protected void done() {
+		state = dfs.getState();
+	}
+
+	@Override
+	public Permutation<Vertex> getTopologicalOrder() {
+		checkStateForResult();
+		return dfs.getRorder();
+	}
+
+	@Override
+	public boolean isAcyclic() {
+		checkStateForResult();
+		return acyclic;
 	}
 }
