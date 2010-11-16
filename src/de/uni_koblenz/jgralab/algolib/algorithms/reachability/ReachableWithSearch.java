@@ -68,35 +68,32 @@ public class ReachableWithSearch extends AbstractTraversal implements
 		checkStateForSettingVisitors();
 		search.removeVisitor(visitor);
 	}
-
+	
 	@Override
 	public void disableOptionalResults() {
-		search.disableOptionalResults();
 	}
 
 	@Override
 	protected void done() {
-		state = search.getState();
-		if (state == AlgorithmStates.STOPPED) {
-			state = AlgorithmStates.FINISHED;
-		}
+		state = search.getState() == AlgorithmStates.STOPPED ? AlgorithmStates.FINISHED
+				: search.getState();
 	}
 
 	@Override
 	public ReachableWithSearch normal() {
-		search.normal();
+		super.normal();
 		return this;
 	}
 
 	@Override
 	public ReachableWithSearch reversed() {
-		search.reversed();
+		super.reversed();
 		return this;
 	}
 
 	@Override
 	public ReachableWithSearch undirected() {
-		search.undirected();
+		super.undirected();
 		return this;
 	}
 
@@ -107,7 +104,7 @@ public class ReachableWithSearch extends AbstractTraversal implements
 
 	@Override
 	public boolean isHybrid() {
-		return search.isHybrid();
+		return true;
 	}
 
 	@Override
