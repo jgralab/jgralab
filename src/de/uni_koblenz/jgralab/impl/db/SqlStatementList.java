@@ -1,33 +1,3 @@
-/*
- * JGraLab - The Java Graph Laboratory
- * 
- * Copyright (C) 2006-2010 Institute for Software Technology
- *                         University of Koblenz-Landau, Germany
- *                         ist@uni-koblenz.de
- * 
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the
- * Free Software Foundation; either version 3 of the License, or (at your
- * option) any later version.
- * 
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
- * Additional permission under GNU GPL version 3 section 7
- * 
- * If you modify this Program, or any covered work, by linking or combining
- * it with Eclipse (or a modified version of that program or an Eclipse
- * plugin), containing parts covered by the terms of the Eclipse Public
- * License (EPL), the licensors of this Program grant you additional
- * permission to convey the resulting work.  Corresponding Source for a
- * non-source form of such a combination shall include the source code for
- * the parts of JGraLab used as well as that of the covered work.
- */
 package de.uni_koblenz.jgralab.impl.db;
 
 import java.sql.CallableStatement;
@@ -64,148 +34,99 @@ public abstract class SqlStatementList {
 	 * @throws GraphDatabaseException
 	 *             No connection given.
 	 */
-	protected SqlStatementList(GraphDatabase graphDatabase)
-			throws GraphDatabaseException {
+	protected SqlStatementList(GraphDatabase graphDatabase)	throws GraphDatabaseException {
 		if (graphDatabase != null) {
 			this.graphDatabase = graphDatabase;
 			this.initializeWith(graphDatabase.getConnection());
-		} else {
+		} else
 			throw new GraphDatabaseException("No graph database given.");
-		}
 	}
 
-	private void initializeWith(Connection connection)
-			throws GraphDatabaseException {
-		if (connection != null) {
+	private void initializeWith(Connection connection) throws GraphDatabaseException {
+		if (connection != null)
 			this.connection = connection;
-		} else {
+		else
 			throw new GraphDatabaseException("No connection to database.");
-		}
 
 	}
 
-	protected PreparedStatement getPreparedStatement(String sqlStatement)
-			throws SQLException {
-		if (this.preparedStatements.containsKey(sqlStatement)) {
+	protected PreparedStatement getPreparedStatement(String sqlStatement) throws SQLException {
+		if (this.preparedStatements.containsKey(sqlStatement))
 			return this.preparedStatements.get(sqlStatement);
-		} else {
+		else
 			return prepareAndCacheStatement(sqlStatement);
-		}
 	}
 
-	protected PreparedStatement prepareAndCacheStatement(String sqlStatement)
-			throws SQLException {
-		PreparedStatement preparedStatement = this.connection
-				.prepareStatement(sqlStatement);
+	protected PreparedStatement prepareAndCacheStatement(String sqlStatement) throws SQLException {
+		PreparedStatement preparedStatement = this.connection.prepareStatement(sqlStatement);
 		this.preparedStatements.put(sqlStatement, preparedStatement);
 		return preparedStatement;
 	}
 
 	// to populate db with tables
-	public abstract PreparedStatement createGraphSchemaTable()
-			throws SQLException;
-
-	public abstract PreparedStatement createTypeTable() throws SQLException;
-
-	public abstract PreparedStatement createGraphTable() throws SQLException;
-
-	public abstract PreparedStatement addForeignKeyConstraintsOnGraphTable()
-			throws SQLException;
-
-	public abstract PreparedStatement dropForeignKeyConstraintsOnGraphTable()
-			throws SQLException;
-
+	public abstract PreparedStatement createGraphSchemaTableWithConstraints() throws SQLException;
+	public abstract PreparedStatement createTypeTableWithConstraints() throws SQLException;
+	public abstract PreparedStatement createGraphTableWithConstraints() throws SQLException;
+	//public abstract PreparedStatement addForeignKeyConstraintsOnGraphTable() throws SQLException;
+	//public abstract PreparedStatement dropForeignKeyConstraintsOnGraphTable() throws SQLException;
+	
 	public abstract PreparedStatement createVertexTable() throws SQLException;
-
-	public abstract PreparedStatement addPrimaryKeyConstraintOnVertexTable()
-			throws SQLException;
-
-	public abstract PreparedStatement dropPrimaryKeyConstraintFromVertexTable()
-			throws SQLException;
-
-	public abstract PreparedStatement addForeignKeyConstraintsOnVertexTable()
-			throws SQLException;
-
-	public abstract PreparedStatement dropForeignKeyConstraintFromVertexTable()
-			throws SQLException;
-
+	public abstract PreparedStatement addPrimaryKeyConstraintOnVertexTable() throws SQLException;
+	public abstract PreparedStatement dropPrimaryKeyConstraintFromVertexTable() throws SQLException;
+	public abstract PreparedStatement addForeignKeyConstraintOnGraphColumnOfVertexTable() throws SQLException;
+	public abstract PreparedStatement addForeignKeyConstraintOnTypeColumnOfVertexTable() throws SQLException;
+	public abstract PreparedStatement dropForeignKeyConstraintFromGraphColumnOfVertexTable() throws SQLException;
+	public abstract PreparedStatement dropForeignKeyConstraintFromTypeColumnOfVertexTable() throws SQLException;
+	
 	public abstract PreparedStatement createEdgeTable() throws SQLException;
+	public abstract PreparedStatement addPrimaryKeyConstraintOnEdgeTable() throws SQLException;
+	public abstract PreparedStatement dropPrimaryKeyConstraintFromEdgeTable() throws SQLException;
+	public abstract PreparedStatement addForeignKeyConstraintOnGraphColumnOfEdgeTable() throws SQLException;
+	public abstract PreparedStatement addForeignKeyConstraintOnTypeColumnOfEdgeTable() throws SQLException;
+	public abstract PreparedStatement dropForeignKeyConstraintFromGraphColumnOfEdgeTable() throws SQLException;
+	public abstract PreparedStatement dropForeignKeyConstraintFromTypeColumnOfEdgeTable() throws SQLException;
+	
+	public abstract PreparedStatement createIncidenceTable() throws SQLException;
+	public abstract PreparedStatement addPrimaryKeyConstraintOnIncidenceTable() throws SQLException;
+	public abstract PreparedStatement dropPrimaryKeyConstraintFromIncidenceTable() throws SQLException;
+	
+	// TODO split
+	public abstract PreparedStatement addForeignKeyConstraintsOnIncidenceTable() throws SQLException;
 
-	public abstract PreparedStatement addPrimaryKeyConstraintOnEdgeTable()
-			throws SQLException;
+	// TODO split
+	public abstract PreparedStatement dropForeignKeyConstraintsFromIncidenceTable() throws SQLException;
+	
+	public abstract PreparedStatement createAttributeTableWithConstraints() throws SQLException;
+	
+	public abstract PreparedStatement createGraphAttributeValueTableWithConstraints() throws SQLException;
+	public abstract PreparedStatement addClusteredIndexOnGraphAttributeValues()throws SQLException;
 
-	public abstract PreparedStatement dropPrimaryKeyConstraintFromEdgeTable()
-			throws SQLException;
-
-	public abstract PreparedStatement addForeignKeyConstraintsOnEdgeTable()
-			throws SQLException;
-
-	public abstract PreparedStatement dropForeignKeyConstraintFromEdgeTable()
-			throws SQLException;
-
-	public abstract PreparedStatement createIncidenceTable()
-			throws SQLException;
-
-	public abstract PreparedStatement addPrimaryKeyConstraintOnIncidenceTable()
-			throws SQLException;
-
-	public abstract PreparedStatement dropPrimaryKeyConstraintFromIncidenceTable()
-			throws SQLException;
-
-	public abstract PreparedStatement addForeignKeyConstraintsOnIncidenceTable()
-			throws SQLException;
-
-	public abstract PreparedStatement dropForeignKeyConstraintsFromIncidenceTable()
-			throws SQLException;
-
-	public abstract PreparedStatement createAttributeTable()
-			throws SQLException;
-
-	public abstract PreparedStatement createGraphAttributeValueTable()
-			throws SQLException;
-
-	public abstract PreparedStatement addClusteredIndexOnGraphAttributeValues()
-			throws SQLException;
-
-	public abstract PreparedStatement createVertexAttributeValueTable()
-			throws SQLException;
-
-	public abstract PreparedStatement addPrimaryKeyConstraintOnVertexAttributeValueTable()
-			throws SQLException;
-
-	public abstract PreparedStatement dropPrimaryKeyConstraintFromVertexAttributeValueTable()
-			throws SQLException;
-
-	public abstract PreparedStatement addForeignKeyConstraintsOnVertexAttributeValueTable()
-			throws SQLException;
-
-	public abstract PreparedStatement dropForeignKeyConstraintsFromVertexAttributeValueTable()
-			throws SQLException;
-
-	public abstract PreparedStatement addClusteredIndexOnVertexAttributeValues()
-			throws SQLException;
-
-	public abstract PreparedStatement createEdgeAttributeValueTable()
-			throws SQLException;
-
-	public abstract PreparedStatement addPrimaryKeyConstraintOnEdgeAttributeValueTable()
-			throws SQLException;
-
-	public abstract PreparedStatement dropPrimaryKeyConstraintFromEdgeAttributeValueTable()
-			throws SQLException;
-
-	public abstract PreparedStatement addForeignKeyConstraintsOnEdgeAttributeValueTable()
-			throws SQLException;
-
-	public abstract PreparedStatement dropForeignKeyConstraintsFromEdgeAttributeValueTable()
-			throws SQLException;
-
-	public abstract PreparedStatement addClusteredIndexOnEdgeAttributeValues()
-			throws SQLException;
-
+	// VertexAttributeValue
+	public abstract PreparedStatement createVertexAttributeValueTable() throws SQLException;
+	public abstract PreparedStatement addPrimaryKeyConstraintOnVertexAttributeValueTable() throws SQLException;
+	public abstract PreparedStatement dropPrimaryKeyConstraintFromVertexAttributeValueTable() throws SQLException;
+	public abstract PreparedStatement addForeignKeyConstraintOnGraphColumnOfVertexAttributeValueTable() throws SQLException;
+	public abstract PreparedStatement addForeignKeyConstraintOnVertexColumnOfVertexAttributeValueTable() throws SQLException;
+	public abstract PreparedStatement addForeignKeyConstraintOnAttributeColumnOfVertexAttributeValueTable()	throws SQLException;
+	public abstract PreparedStatement dropForeignKeyConstraintFromGraphColumnOfVertexAttributeValueTable() throws SQLException;
+	public abstract PreparedStatement dropForeignKeyConstraintFromVertexColumnOfVertexAttributeValueTable() throws SQLException;
+	public abstract PreparedStatement dropForeignKeyConstraintFromAttributeColumnOfVertexAttributeValueTable() throws SQLException;
+	public abstract PreparedStatement addClusteredIndexOnVertexAttributeValues()throws SQLException;
+	
+	public abstract PreparedStatement createEdgeAttributeValueTable() throws SQLException;
+	public abstract PreparedStatement addPrimaryKeyConstraintOnEdgeAttributeValueTable() throws SQLException;
+	public abstract PreparedStatement dropPrimaryKeyConstraintFromEdgeAttributeValueTable() throws SQLException;
+	public abstract PreparedStatement addForeignKeyConstraintOnGraphColumnOfEdgeAttributeValueTable() throws SQLException;
+	public abstract PreparedStatement addForeignKeyConstraintOnEdgeColumnOfEdgeAttributeValueTable() throws SQLException;
+	public abstract PreparedStatement addForeignKeyConstraintOnAttributeColumnOfEdgeAttributeValueTable() throws SQLException;
+	public abstract PreparedStatement dropForeignKeyConstraintFromGraphColumnOfEdgeAttributeValueTable() throws SQLException;
+	public abstract PreparedStatement dropForeignKeyConstraintFromEdgeColumnOfEdgeAttributeValueTable() throws SQLException;
+	public abstract PreparedStatement dropForeignKeyConstraintFromAttributeColumnOfEdgeAttributeValueTable() throws SQLException;
+	public abstract PreparedStatement addClusteredIndexOnEdgeAttributeValues() throws SQLException;
+	
+	
 	// to insert schema information
-	public abstract PreparedStatement insertSchema(Schema schema,
-			String serializedDefinition) throws SQLException;
+	public abstract PreparedStatement insertSchema(Schema schema, String serializedDefinition) throws SQLException;
 
 	public abstract PreparedStatement insertType(String qualifiedName,
 			int schemaId) throws SQLException;
@@ -256,9 +177,8 @@ public abstract class SqlStatementList {
 
 	public abstract PreparedStatement selectSchemaNameForGraph(String uid)
 			throws SQLException;
-
-	public abstract PreparedStatement selectSchemaDefinition(
-			String packagePrefix, String schemaName) throws SQLException;
+	
+	public abstract PreparedStatement selectSchemaDefinition(String packagePrefix, String schemaName) throws SQLException;
 
 	public abstract PreparedStatement selectSchemaDefinitionForGraph(String uid)
 			throws SQLException;
@@ -414,28 +334,22 @@ public abstract class SqlStatementList {
 			throws SQLException;
 
 	// to increase performance
-	public abstract PreparedStatement addClusteredIndexOnLambdaSeq()
-			throws SQLException;
+	public abstract PreparedStatement addClusteredIndexOnLambdaSeq() throws SQLException;
+	public abstract PreparedStatement dropClusteredIndexOnLambdaSeq() throws SQLException;
 
-	public abstract PreparedStatement dropClusteredIndicesOnAttributeValues()
-			throws SQLException;
+	public abstract PreparedStatement dropClusteredIndicesOnAttributeValues() throws SQLException;
 
-	public abstract PreparedStatement clusterIncidences() throws SQLException;
+	public abstract PreparedStatement clusterIncidenceTable() throws SQLException;
 
 	public abstract PreparedStatement clusterAttributeValues()
 			throws SQLException;
 
 	public abstract PreparedStatement deleteSchema(String prefix, String name)
 			throws SQLException;
-
-	public abstract CallableStatement createReorganizeVertexListCall(int gId,
-			long start) throws SQLException;
-
-	public abstract CallableStatement createReorganizeEdgeListCall(int gId,
-			long start) throws SQLException;
-
-	public abstract CallableStatement createReorganizeIncidenceListCall(
-			int vId, int gId, long start) throws SQLException;
-
+	
+	public abstract CallableStatement createReorganizeVertexListCall(int gId, long start) throws SQLException;
+	public abstract CallableStatement createReorganizeEdgeListCall(int gId, long start) throws SQLException;
+	public abstract CallableStatement createReorganizeIncidenceListCall(int vId, int gId, long start) throws SQLException;
+	
 	public abstract PreparedStatement selectIdOfGraphs() throws SQLException;
 }

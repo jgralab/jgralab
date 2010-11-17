@@ -1,33 +1,3 @@
-/*
- * JGraLab - The Java Graph Laboratory
- * 
- * Copyright (C) 2006-2010 Institute for Software Technology
- *                         University of Koblenz-Landau, Germany
- *                         ist@uni-koblenz.de
- * 
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the
- * Free Software Foundation; either version 3 of the License, or (at your
- * option) any later version.
- * 
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
- * Additional permission under GNU GPL version 3 section 7
- * 
- * If you modify this Program, or any covered work, by linking or combining
- * it with Eclipse (or a modified version of that program or an Eclipse
- * plugin), containing parts covered by the terms of the Eclipse Public
- * License (EPL), the licensors of this Program grant you additional
- * permission to convey the resulting work.  Corresponding Source for a
- * non-source form of such a combination shall include the source code for
- * the parts of JGraLab used as well as that of the covered work.
- */
 package de.uni_koblenz.jgralab.impl.db;
 
 import java.sql.CallableStatement;
@@ -44,14 +14,13 @@ import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.Schema;
 
 /**
- * Factory that creates PostgreSql specific prepared statements.
- * 
+ * Factory that creates PostgreSql specific prepared statements. 
+ *
  * @author ultbreit@uni-koblenz.de
  */
 public class PostgreSqlStatementList extends SqlStatementList {
 
-	public PostgreSqlStatementList(GraphDatabase graphDatabase)
-			throws GraphDatabaseException {
+	public PostgreSqlStatementList(GraphDatabase graphDatabase)	throws GraphDatabaseException {
 		super(graphDatabase);
 	}
 
@@ -62,8 +31,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 			+ "name TEXT,"
 			+ "\"serializedDefinition\" TEXT" + ");";
 
-	@Override
-	public PreparedStatement createGraphSchemaTable() throws SQLException {
+	public PreparedStatement createGraphSchemaTableWithConstraints() throws SQLException {
 		return this.connection.prepareStatement(CREATE_GRAPH_SCHEMA_TABLE);
 	}
 
@@ -73,8 +41,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 			+ "\"qualifiedName\" TEXT,"
 			+ "\"schemaId\" INT4 REFERENCES \"GraphSchema\"" + ");";
 
-	@Override
-	public PreparedStatement createTypeTable() throws SQLException {
+	public PreparedStatement createTypeTableWithConstraints() throws SQLException {
 		return this.connection.prepareStatement(CREATE_TYPE_TABLE);
 	}
 
@@ -84,218 +51,214 @@ public class PostgreSqlStatementList extends SqlStatementList {
 			+ "uid TEXT,"
 			+ "version INT8,"
 			+ "\"vSeqVersion\" INT8,"
-			+ "\"eSeqVersion\" INT8," + "\"typeId\" INT4" + ");";
+			+ "\"eSeqVersion\" INT8," + "\"typeId\" INT4 REFERENCE \"Type\"(\"typeId\")" + ");";
 
 	@Override
-	public PreparedStatement createGraphTable() throws SQLException {
+	public PreparedStatement createGraphTableWithConstraints() throws SQLException {
 		return this.connection.prepareStatement(CREATE_GRAPH_TABLE);
 	}
 
-	private final String ADD_FOREIGN_KEY_CONSTRAINTS_ON_GRAPH_TABLE = "ALTER TABLE \"Graph\" ADD CONSTRAINT \"typeIdIsForeignKey\" FOREIGN KEY (\"typeId\") REFERENCES \"Type\" (\"typeId\")";
+	private final String CREATE_VERTEX_TABLE = 
+		"CREATE TABLE \"Vertex\"(" +
+			"\"vId\" INT4," + 
+			"\"gId\" INT4," + 
+			"\"typeId\" INT4,"
+			+ "\"lambdaSeqVersion\" INT8," + 
+			"\"sequenceNumber\" INT8" + ");";
 
-	@Override
-	public PreparedStatement addForeignKeyConstraintsOnGraphTable()
-			throws SQLException {
-		return this.connection
-				.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINTS_ON_GRAPH_TABLE);
-	}
-
-	private final String DROP_FOREIGN_KEY_CONSTRAINTS_FROM_GRAPH_TABLE = "ALTER TABLE \"Graph\" DROP CONSTRAINT \"typeIdIsForeignKey\";";
-
-	@Override
-	public PreparedStatement dropForeignKeyConstraintsOnGraphTable()
-			throws SQLException {
-		return this.connection
-				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINTS_FROM_GRAPH_TABLE);
-	}
-
-	private final String CREATE_VERTEX_TABLE = "CREATE TABLE \"Vertex\"("
-			+ "\"vId\" INT4," + "\"gId\" INT4," + "\"typeId\" INT4,"
-			+ "\"lambdaSeqVersion\" INT8," + "\"sequenceNumber\" INT8" + ");";
-
-	@Override
 	public PreparedStatement createVertexTable() throws SQLException {
 		return this.connection.prepareStatement(CREATE_VERTEX_TABLE);
 	}
 
-	private final String ADD_PRIMARY_KEY_CONSTRAINT_ON_VERTEX_TABLE = "ALTER TABLE \"Vertex\" ADD CONSTRAINT \"vertexPrimaryKey\" PRIMARY KEY ( \"vId\", \"gId\" );";
+	private final String ADD_PRIMARY_KEY_CONSTRAINT_ON_VERTEX_TABLE = 
+		"ALTER TABLE \"Vertex\" ADD CONSTRAINT \"vertexPrimaryKey\" PRIMARY KEY ( \"vId\", \"gId\" );";
 
-	@Override
-	public PreparedStatement addPrimaryKeyConstraintOnVertexTable()
-			throws SQLException {
-		return this.connection
-				.prepareStatement(ADD_PRIMARY_KEY_CONSTRAINT_ON_VERTEX_TABLE);
+	public PreparedStatement addPrimaryKeyConstraintOnVertexTable()	throws SQLException {
+		return this.connection.prepareStatement(ADD_PRIMARY_KEY_CONSTRAINT_ON_VERTEX_TABLE);
 	}
 
 	private final String DROP_PRIMARY_KEY_CONSTRAINT_FROM_VERTEX_TABLE = "ALTER TABLE \"Vertex\" DROP CONSTRAINT \"vertexPrimaryKey\";";
 
-	@Override
-	public PreparedStatement dropPrimaryKeyConstraintFromVertexTable()
-			throws SQLException {
-		return this.connection
-				.prepareStatement(DROP_PRIMARY_KEY_CONSTRAINT_FROM_VERTEX_TABLE);
+	public PreparedStatement dropPrimaryKeyConstraintFromVertexTable() throws SQLException {
+		return this.connection.prepareStatement(DROP_PRIMARY_KEY_CONSTRAINT_FROM_VERTEX_TABLE);
 	}
 
-	private final String ADD_FOREIGN_KEY_CONSTRAINTS_ON_VERTEX_TABLE = "ALTER TABLE \"Vertex\" ADD CONSTRAINT \"gIdIsForeignKey\" FOREIGN KEY (\"gId\") REFERENCES \"Graph\" (\"gId\");"
-			+ "ALTER TABLE \"Vertex\" ADD CONSTRAINT \"typeIdIsForeignKey\" FOREIGN KEY (\"typeId\") REFERENCES \"Type\" (\"typeId\");";
+	private final String ADD_FOREIGN_KEY_CONSTRAINTS_ON_GRAPH_OF_VERTEX = 
+		"ALTER TABLE \"Vertex\" ADD CONSTRAINT \"gIdIsForeignKey\" FOREIGN KEY (\"gId\") REFERENCES \"Graph\" (\"gId\");";
 
-	@Override
-	public PreparedStatement addForeignKeyConstraintsOnVertexTable()
-			throws SQLException {
-		return this.connection
-				.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINTS_ON_VERTEX_TABLE);
+	public PreparedStatement addForeignKeyConstraintOnGraphColumnOfVertexTable() throws SQLException {
+		return this.connection.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINTS_ON_GRAPH_OF_VERTEX);
 	}
-
-	private final String DROP_FOREIGN_KEY_CONSTRAINTS_FROM_VERTEX_TABLE = "ALTER TABLE \"Vertex\" DROP CONSTRAINT \"gIdIsForeignKey\";"
-			+ "ALTER TABLE \"Vertex\" DROP CONSTRAINT \"typeIdIsForeignKey\";";
-
-	@Override
-	public PreparedStatement dropForeignKeyConstraintFromVertexTable()
-			throws SQLException {
-		return this.connection
-				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINTS_FROM_VERTEX_TABLE);
+	
+	private final String ADD_FOREIGN_KEY_CONTRAINT_ON_VERTEX_TYPE =
+		"ALTER TABLE \"Vertex\" ADD CONSTRAINT \"typeIdIsForeignKey\" FOREIGN KEY (\"typeId\") REFERENCES \"Type\" (\"typeId\");";
+	
+	public PreparedStatement addForeignKeyConstraintOnTypeColumnOfVertexTable() throws SQLException {
+		return this.connection.prepareStatement(ADD_FOREIGN_KEY_CONTRAINT_ON_VERTEX_TYPE);
 	}
+	
+	private final String DROP_FOREIGN_KEY_CONSTRAINTS_FROM_GRAPH_OF_VERTEX = 
+		"ALTER TABLE \"Vertex\" DROP CONSTRAINT \"gIdIsForeignKey\";";
 
-	private final String CREATE_EDGE_TABLE = "CREATE TABLE \"Edge\"("
-			+ "\"eId\" INT4," + "\"gId\" INT4," + "\"typeId\" INT4,"
-			+ "\"sequenceNumber\" INT8" + ");";
+	public PreparedStatement dropForeignKeyConstraintFromGraphColumnOfVertexTable()	throws SQLException {
+		return this.connection.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINTS_FROM_GRAPH_OF_VERTEX);
+	}
+	
+	private final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_TYPE_COLUMN_OF_VERTEX_TABLE = 
+		"ALTER TABLE \"Vertex\" DROP CONSTRAINT \"typeIdIsForeignKey\";";	
 
-	@Override
+	public PreparedStatement dropForeignKeyConstraintFromTypeColumnOfVertexTable() throws SQLException {
+		return this.connection.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_TYPE_COLUMN_OF_VERTEX_TABLE);
+	}	
+	
+	private final String CREATE_EDGE_TABLE = 
+		"CREATE TABLE \"Edge\"(" +
+			"\"eId\" INT4," + 
+			"\"gId\" INT4," + 
+			"\"typeId\" INT4," +
+			"\"sequenceNumber\" INT8" + 
+		");";
+
 	public PreparedStatement createEdgeTable() throws SQLException {
 		return this.connection.prepareStatement(CREATE_EDGE_TABLE);
 	}
 
-	private final String ADD_PRIMARY_KEY_CONSTRAINT_ON_EDGE_TABLE = "ALTER TABLE \"Edge\" ADD CONSTRAINT \"edgePrimaryKey\" PRIMARY KEY ( \"eId\", \"gId\" );";
+	private final String ADD_PRIMARY_KEY_CONSTRAINT_ON_EDGE_TABLE = 
+		"ALTER TABLE \"Edge\" ADD CONSTRAINT \"edgePrimaryKey\" PRIMARY KEY ( \"eId\", \"gId\" );";
 
-	@Override
-	public PreparedStatement addPrimaryKeyConstraintOnEdgeTable()
-			throws SQLException {
-		return this.connection
-				.prepareStatement(ADD_PRIMARY_KEY_CONSTRAINT_ON_EDGE_TABLE);
+	public PreparedStatement addPrimaryKeyConstraintOnEdgeTable() throws SQLException {
+		return this.connection.prepareStatement(ADD_PRIMARY_KEY_CONSTRAINT_ON_EDGE_TABLE);
 	}
 
-	private final String DROP_PRIMARY_KEY_CONSTRAINT_FROM_EDGE_TABLE = "ALTER TABLE \"Edge\" DROP CONSTRAINT \"edgePrimaryKey\";";
+	private final String DROP_PRIMARY_KEY_CONSTRAINT_FROM_EDGE_TABLE = 
+		"ALTER TABLE \"Edge\" DROP CONSTRAINT \"edgePrimaryKey\";";
 
-	@Override
-	public PreparedStatement dropPrimaryKeyConstraintFromEdgeTable()
-			throws SQLException {
-		return this.connection
-				.prepareStatement(DROP_PRIMARY_KEY_CONSTRAINT_FROM_EDGE_TABLE);
+	public PreparedStatement dropPrimaryKeyConstraintFromEdgeTable() throws SQLException {
+		return this.connection.prepareStatement(DROP_PRIMARY_KEY_CONSTRAINT_FROM_EDGE_TABLE);
 	}
 
-	private final String ADD_FOREIGN_KEY_CONSTRAINTS_ON_EDGE_TABLE = "ALTER TABLE \"Edge\" ADD CONSTRAINT \"gIdIsForeignKey\" FOREIGN KEY (\"gId\") REFERENCES \"Graph\" (\"gId\");"
-			+ "ALTER TABLE \"Edge\" ADD CONSTRAINT \"typeIdIsForeignKey\" FOREIGN KEY (\"typeId\") REFERENCES \"Type\" (\"typeId\");";
+	private final String ADD_FOREIGN_KEY_CONSTRAINT_ON_GRAPH_OF_EDGE = 
+		"ALTER TABLE \"Edge\" ADD CONSTRAINT \"gIdIsForeignKey\" FOREIGN KEY (\"gId\") REFERENCES \"Graph\" (\"gId\");";
 
-	@Override
-	public PreparedStatement addForeignKeyConstraintsOnEdgeTable()
-			throws SQLException {
-		return this.connection
-				.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINTS_ON_EDGE_TABLE);
+	public PreparedStatement addForeignKeyConstraintOnGraphColumnOfEdgeTable() throws SQLException {
+		return this.connection.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_GRAPH_OF_EDGE);
 	}
 
-	private final String DROP_FOREIGN_KEY_CONSTRAINTS_FROM_EDGE_TABLE = "ALTER TABLE \"Edge\" DROP CONSTRAINT \"gIdIsForeignKey\";"
-			+ "ALTER TABLE \"Edge\" DROP CONSTRAINT \"typeIdIsForeignKey\";";
+	private final String ADD_FOREIGN_KEY_CONSTRAINT_ON_EDGE_TYPE = 
+		"ALTER TABLE \"Edge\" ADD CONSTRAINT \"typeIdIsForeignKey\" FOREIGN KEY (\"typeId\") REFERENCES \"Type\" (\"typeId\");";
+	
+	public PreparedStatement addForeignKeyConstraintOnTypeColumnOfEdgeTable() throws SQLException {
+		return this.connection.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_EDGE_TYPE);
+	}	
+	
+	private final String DROP_FOREIGN_KEY_CONSTRAINTS_FROM_GRAPH_OF_EDGE = 
+		"ALTER TABLE \"Edge\" DROP CONSTRAINT \"gIdIsForeignKey\";";
 
-	@Override
-	public PreparedStatement dropForeignKeyConstraintFromEdgeTable()
-			throws SQLException {
-		return this.connection
-				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINTS_FROM_EDGE_TABLE);
+	public PreparedStatement dropForeignKeyConstraintFromGraphColumnOfEdgeTable() throws SQLException {
+		return this.connection.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINTS_FROM_GRAPH_OF_EDGE);
 	}
+	
+	private final String DROP_FOREIGN_KEY_CONSTRAINTS_FROM_EDGE_TYPE = 
+		"ALTER TABLE \"Edge\" DROP CONSTRAINT \"typeIdIsForeignKey\";";
 
-	private final String CREATE_INCIDENCE_TABLE = "CREATE TYPE \"DIRECTION\" AS ENUM( 'OUT', 'IN' );"
-			+ "CREATE TABLE \"Incidence\"("
-			+ "\"eId\" INT4,"
-			+ "\"vId\" INT4,"
-			+ "\"gId\" INT4,"
-			+ "direction \"DIRECTION\","
-			+ "\"sequenceNumber\" INT8" + ");";
+	public PreparedStatement dropForeignKeyConstraintFromTypeColumnOfEdgeTable() throws SQLException {
+		return this.connection.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINTS_FROM_EDGE_TYPE);
+	}
+	
+	private final String CREATE_INCIDENCE_TABLE = 
+		"CREATE TYPE \"DIRECTION\" AS ENUM( 'OUT', 'IN' );" +
+		"CREATE TABLE \"Incidence\"(" +
+			"\"eId\" INT4," +
+			"\"vId\" INT4," +
+			"\"gId\" INT4," +
+			"direction \"DIRECTION\"," +
+			"\"sequenceNumber\" INT8" + 
+		");";
 
-	@Override
 	public PreparedStatement createIncidenceTable() throws SQLException {
 		return this.connection.prepareStatement(CREATE_INCIDENCE_TABLE);
 	}
 
-	private final String ADD_PRIMARY_KEY_CONSTRAINT_ON_INCIDENCE_TABLE = "ALTER TABLE \"Incidence\" ADD CONSTRAINT \"incidencePrimaryKey\" PRIMARY KEY ( \"eId\", \"gId\", direction );";
+	private final String ADD_PRIMARY_KEY_CONSTRAINT_ON_INCIDENCE_TABLE = 
+		"ALTER TABLE \"Incidence\" ADD CONSTRAINT \"incidencePrimaryKey\" PRIMARY KEY ( \"eId\", \"gId\", direction );";
 
-	@Override
-	public PreparedStatement addPrimaryKeyConstraintOnIncidenceTable()
-			throws SQLException {
-		return this.connection
-				.prepareStatement(ADD_PRIMARY_KEY_CONSTRAINT_ON_INCIDENCE_TABLE);
+	public PreparedStatement addPrimaryKeyConstraintOnIncidenceTable() throws SQLException {
+		return this.connection.prepareStatement(ADD_PRIMARY_KEY_CONSTRAINT_ON_INCIDENCE_TABLE);
 	}
 
-	private final String DROP_PRIMARY_KEY_CONSTRAINT_FROM_INCIDENCE_TABLE = "ALTER TABLE \"Incidence\" DROP CONSTRAINT \"incidencePrimaryKey\";";
+	private final String DROP_PRIMARY_KEY_CONSTRAINT_FROM_INCIDENCE_TABLE = 
+		"ALTER TABLE \"Incidence\" DROP CONSTRAINT \"incidencePrimaryKey\";";
 
-	@Override
-	public PreparedStatement dropPrimaryKeyConstraintFromIncidenceTable()
-			throws SQLException {
-		return this.connection
-				.prepareStatement(DROP_PRIMARY_KEY_CONSTRAINT_FROM_INCIDENCE_TABLE);
+	public PreparedStatement dropPrimaryKeyConstraintFromIncidenceTable() throws SQLException {
+		return this.connection.prepareStatement(DROP_PRIMARY_KEY_CONSTRAINT_FROM_INCIDENCE_TABLE);
 	}
 
-	private final String ADD_FOREIGN_KEY_CONSTRAINTS_ON_INCIDENCE_TABLE = "ALTER TABLE \"Incidence\" ADD CONSTRAINT \"gIdIsForeignKey\" FOREIGN KEY (\"gId\") REFERENCES \"Graph\" (\"gId\");"
+	private final String ADD_FOREIGN_KEY_CONSTRAINTS_ON_INCIDENCE_TABLE = 
+		"ALTER TABLE \"Incidence\" ADD CONSTRAINT \"gIdIsForeignKey\" FOREIGN KEY (\"gId\") REFERENCES \"Graph\" (\"gId\");"
 			+ "ALTER TABLE \"Incidence\" ADD CONSTRAINT \"eIdIsForeignKey\" FOREIGN KEY (\"eId\", \"gId\") REFERENCES \"Edge\" (\"eId\", \"gId\");"
 			+ "ALTER TABLE \"Incidence\" ADD CONSTRAINT \"vIdIsForeignKey\" FOREIGN KEY (\"vId\", \"gId\") REFERENCES \"Vertex\" (\"vId\", \"gId\");";
 
-	@Override
-	public PreparedStatement addForeignKeyConstraintsOnIncidenceTable()
-			throws SQLException {
-		return this.connection
-				.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINTS_ON_INCIDENCE_TABLE);
+	// TODO has to be split into separate methods as MySql and Derby do not support compound statements
+	public PreparedStatement addForeignKeyConstraintsOnIncidenceTable()	throws SQLException {
+		return this.connection.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINTS_ON_INCIDENCE_TABLE);
 	}
 
 	private final String DROP_FOREIGN_KEY_CONSTRAINTS_FROM_INCIDENCE_TABLE = "ALTER TABLE \"Incidence\" DROP CONSTRAINT \"gIdIsForeignKey\";"
 			+ "ALTER TABLE \"Incidence\" DROP CONSTRAINT \"eIdIsForeignKey\";"
 			+ "ALTER TABLE \"Incidence\" DROP CONSTRAINT \"vIdIsForeignKey\";";
 
-	@Override
-	public PreparedStatement dropForeignKeyConstraintsFromIncidenceTable()
-			throws SQLException {
-		return this.connection
-				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINTS_FROM_INCIDENCE_TABLE);
+	public PreparedStatement dropForeignKeyConstraintsFromIncidenceTable()throws SQLException {
+		return this.connection.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINTS_FROM_INCIDENCE_TABLE);
 	}
-
-	private String CREATE_CLUSTERED_INDEX_ON_LAMBDA_SEQ = "CREATE INDEX \"lambdaSeqIndex\" ON \"Incidence\"( \"vId\", \"gId\", \"sequenceNumber\" ASC ) WITH (FILLFACTOR=80);"
+	
+	private String CREATE_CLUSTERED_INDEX_ON_LAMBDA_SEQ = 
+		"CREATE INDEX \"lambdaSeqIndex\" ON \"Incidence\"( \"vId\", \"gId\", \"sequenceNumber\" ASC ) WITH (FILLFACTOR=80);"
 			+ "ALTER TABLE \"Incidence\" CLUSTER ON \"lambdaSeqIndex\";"
 			+ "ANALYZE \"Incidence\";";
 
 	@Override
-	public PreparedStatement addClusteredIndexOnLambdaSeq() throws SQLException {
+	public PreparedStatement addClusteredIndexOnLambdaSeq()	throws SQLException {
 		return this.getPreparedStatement(CREATE_CLUSTERED_INDEX_ON_LAMBDA_SEQ);
+	}
+	
+	private String DROP_CLUSTERED_INDEX_ON_LAMBDA_SEQ =
+		"DROP INDEX IF EXISTS \"lambdaSeqIndex\";";
+	
+	@Override
+	public PreparedStatement dropClusteredIndexOnLambdaSeq() throws SQLException{
+		return this.getPreparedStatement(DROP_CLUSTERED_INDEX_ON_LAMBDA_SEQ);
 	}
 
 	private final String CLUSTER_INCIDENCES = "CLUSTER \"Incidence\";";
 
 	@Override
-	public PreparedStatement clusterIncidences() throws SQLException {
+	public PreparedStatement clusterIncidenceTable() throws SQLException {
 		return this.getPreparedStatement(CLUSTER_INCIDENCES);
 	}
 
-	private final String CREATE_ATTRIBUTE_TABLE = "CREATE SEQUENCE \"attributeIdSequence\";"
+	private final String CREATE_ATTRIBUTE_TABLE = 
+		"CREATE SEQUENCE \"attributeIdSequence\";"
 			+ "CREATE TABLE \"Attribute\"("
 			+ "\"attributeId\" INT4 PRIMARY KEY DEFAULT NEXTVAL('\"attributeIdSequence\"'),"
 			+ "name TEXT,"
 			+ "\"schemaId\" INT4 REFERENCES \"GraphSchema\""
 			+ ");";
 
-	@Override
-	public PreparedStatement createAttributeTable() throws SQLException {
+	public PreparedStatement createAttributeTableWithConstraints() throws SQLException {
 		return this.connection.prepareStatement(CREATE_ATTRIBUTE_TABLE);
 	}
 
-	private final String CREATE_GRAPH_ATTRIBUTE_VALUE_TABLE = "CREATE TABLE \"GraphAttributeValue\"("
-			+ "\"gId\" INT4,"
-			+ "\"attributeId\" INT4,"
-			+ "\"value\" TEXT,"
-			+ "CONSTRAINT \"gaPrimaryKey\" PRIMARY KEY ( \"gId\", \"attributeId\" )"
-			+ ");";
+	private final String CREATE_GRAPH_ATTRIBUTE_VALUE_TABLE = 
+		"CREATE TABLE \"GraphAttributeValue\"("	+
+			"\"gId\" INT4,"	+
+			"\"attributeId\" INT4,"	+
+			"\"value\" TEXT," +
+			"CONSTRAINT \"gaPrimaryKey\" PRIMARY KEY ( \"gId\", \"attributeId\" )" +
+			");";
+	// TODO Add fk constraints
 
-	@Override
-	public PreparedStatement createGraphAttributeValueTable()
-			throws SQLException {
-		return this.connection
-				.prepareStatement(CREATE_GRAPH_ATTRIBUTE_VALUE_TABLE);
+	public PreparedStatement createGraphAttributeValueTableWithConstraints() throws SQLException {
+		return this.connection.prepareStatement(CREATE_GRAPH_ATTRIBUTE_VALUE_TABLE);
 	}
 
 	private final String CREATE_VERTEX_ATTRIBUTE_VALUE_TABLE = "CREATE TABLE \"VertexAttributeValue\"("
@@ -304,148 +267,194 @@ public class PostgreSqlStatementList extends SqlStatementList {
 			+ "\"attributeId\" INT4,"
 			+ "\"value\" TEXT" + ");";
 
-	@Override
-	public PreparedStatement createVertexAttributeValueTable()
-			throws SQLException {
-		return this.connection
-				.prepareStatement(CREATE_VERTEX_ATTRIBUTE_VALUE_TABLE);
+	public PreparedStatement createVertexAttributeValueTable() throws SQLException {
+		return this.connection.prepareStatement(CREATE_VERTEX_ATTRIBUTE_VALUE_TABLE);
 	}
 
-	private final String ADD_PRIMARY_KEY_CONSTRAINT_ON_VERTEX_ATTRIBUTE_VALUE_TABLE = "ALTER TABLE \"VertexAttributeValue\" ADD CONSTRAINT \"vertexAttributeValuePrimaryKey\" PRIMARY KEY ( \"vId\", \"gId\", \"attributeId\" );";
+	private final String ADD_PRIMARY_KEY_CONSTRAINT_ON_VERTEX_ATTRIBUTE_VALUE_TABLE =
+		"ALTER TABLE \"VertexAttributeValue\" ADD CONSTRAINT \"vertexAttributeValuePrimaryKey\" PRIMARY KEY ( \"vId\", \"gId\", \"attributeId\" );";
 
-	@Override
-	public PreparedStatement addPrimaryKeyConstraintOnVertexAttributeValueTable()
-			throws SQLException {
-		return this.connection
-				.prepareStatement(ADD_PRIMARY_KEY_CONSTRAINT_ON_VERTEX_ATTRIBUTE_VALUE_TABLE);
+	public PreparedStatement addPrimaryKeyConstraintOnVertexAttributeValueTable()throws SQLException {
+		return this.connection.prepareStatement(ADD_PRIMARY_KEY_CONSTRAINT_ON_VERTEX_ATTRIBUTE_VALUE_TABLE);
 	}
 
-	private final String DROP_PRIMARY_KEY_CONSTRAINT_FROM_VERTEX_ATTRIBUTE_VALUE_TABLE = "ALTER TABLE \"VertexAttributeValue\" DROP CONSTRAINT \"vertexAttributeValuePrimaryKey\";";
+	private final String DROP_PRIMARY_KEY_CONSTRAINT_FROM_VERTEX_ATTRIBUTE_VALUE_TABLE = 
+		"ALTER TABLE \"VertexAttributeValue\" DROP CONSTRAINT \"vertexAttributeValuePrimaryKey\";";
 
-	@Override
-	public PreparedStatement dropPrimaryKeyConstraintFromVertexAttributeValueTable()
-			throws SQLException {
-		return this.connection
-				.prepareStatement(DROP_PRIMARY_KEY_CONSTRAINT_FROM_VERTEX_ATTRIBUTE_VALUE_TABLE);
+	public PreparedStatement dropPrimaryKeyConstraintFromVertexAttributeValueTable() throws SQLException {
+		return this.connection.prepareStatement(DROP_PRIMARY_KEY_CONSTRAINT_FROM_VERTEX_ATTRIBUTE_VALUE_TABLE);
 	}
 
-	private final String ADD_FOREIGN_KEY_CONSTRAINT_ON_VERTEX_ATTRIBUTE_VALUE_TABLE = "ALTER TABLE \"VertexAttributeValue\" ADD CONSTRAINT \"gIdIsForeignKey\" FOREIGN KEY (\"gId\") REFERENCES \"Graph\" (\"gId\");"
+	private final String ADD_FOREIGN_KEY_CONSTRAINT_ON_VERTEX_ATTRIBUTE_VALUE_TABLE = 
+		"ALTER TABLE \"VertexAttributeValue\" ADD CONSTRAINT \"gIdIsForeignKey\" FOREIGN KEY (\"gId\") REFERENCES \"Graph\" (\"gId\");"
 			+ "ALTER TABLE \"VertexAttributeValue\" ADD CONSTRAINT \"vIdIsForeignKey\" FOREIGN KEY (\"vId\", \"gId\") REFERENCES \"Vertex\" (\"vId\", \"gId\");"
 			+ "ALTER TABLE \"VertexAttributeValue\" ADD CONSTRAINT \"attributeIdIsForeignKey\" FOREIGN KEY (\"attributeId\" ) REFERENCES \"Attribute\" (\"attributeId\");";
 
-	@Override
-	public PreparedStatement addForeignKeyConstraintsOnVertexAttributeValueTable()
-			throws SQLException {
-		return this.connection
-				.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_VERTEX_ATTRIBUTE_VALUE_TABLE);
+	public PreparedStatement addForeignKeyConstraintsOnVertexAttributeValueTable() throws SQLException {
+		return this.connection.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_VERTEX_ATTRIBUTE_VALUE_TABLE);
 	}
-
-	private final String DROP_FOREIGN_KEY_CONSTRAINTS_FROM_VERTEX_ATTRIBUTE_VALUE_TABLE = "ALTER TABLE \"VertexAttributeValue\" DROP CONSTRAINT \"gIdIsForeignKey\";"
-			+ "ALTER TABLE \"VertexAttributeValue\" DROP CONSTRAINT \"vIdIsForeignKey\";"
-			+ "ALTER TABLE \"VertexAttributeValue\" DROP CONSTRAINT \"attributeIdIsForeignKey\";";
-
+	
+	private final String ADD_FOREIGN_KEY_CONSTRAINT_ON_GRAPH_OF_VERTEX_ATTRIBUTE_VALUE = 
+		"ALTER TABLE \"VertexAttributeValue\" ADD CONSTRAINT \"gIdIsForeignKey\" FOREIGN KEY (\"gId\") REFERENCES \"Graph\" (\"gId\");";
+	
 	@Override
-	public PreparedStatement dropForeignKeyConstraintsFromVertexAttributeValueTable()
-			throws SQLException {
-		return this.connection
-				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINTS_FROM_VERTEX_ATTRIBUTE_VALUE_TABLE);
+	public PreparedStatement addForeignKeyConstraintOnGraphColumnOfVertexAttributeValueTable() throws SQLException {
+		return this.connection.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_GRAPH_OF_VERTEX_ATTRIBUTE_VALUE);
 	}
-
-	private final String CREATE_EDGE_ATTRIBUTE_VALUE_TABLE = "CREATE TABLE \"EdgeAttributeValue\"("
-			+ "\"eId\" INT4,"
-			+ "\"gId\" INT4,"
-			+ "\"attributeId\" INT4,"
-			+ "\"value\" TEXT" + ");";
-
+	
+	private final String ADD_FOREIGN_KEY_CONSTRAINT_ON_VERTEX_OF_ATTRIBUTE_VALUE = 
+		"ALTER TABLE \"VertexAttributeValue\" ADD CONSTRAINT \"vIdIsForeignKey\" FOREIGN KEY (\"vId\", \"gId\") REFERENCES \"Vertex\" (\"vId\", \"gId\");";
+	
 	@Override
-	public PreparedStatement createEdgeAttributeValueTable()
-			throws SQLException {
-		return this.connection
-				.prepareStatement(CREATE_EDGE_ATTRIBUTE_VALUE_TABLE);
+	public PreparedStatement addForeignKeyConstraintOnVertexColumnOfVertexAttributeValueTable() throws SQLException {
+		return this.connection.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_VERTEX_OF_ATTRIBUTE_VALUE);
 	}
-
-	private final String ADD_PRIMARY_KEY_CONSTRAINT_ON_EDGE_ATTRIBUTE_VALUE_TABLE = "ALTER TABLE \"EdgeAttributeValue\" ADD CONSTRAINT \"edgeAttributeValuePrimaryKey\" PRIMARY KEY ( \"eId\", \"gId\", \"attributeId\" );";
+	
+	private final String ADD_FOREIGN_KEY_CONSTRAINT_ON_ATTRIBUTE_OF_VERTEX_ATTRIBUTE_VALUE = 
+		"ALTER TABLE \"VertexAttributeValue\" ADD CONSTRAINT \"attributeIdIsForeignKey\" FOREIGN KEY (\"attributeId\" ) REFERENCES \"Attribute\" (\"attributeId\");";
 
 	@Override
-	public PreparedStatement addPrimaryKeyConstraintOnEdgeAttributeValueTable()
-			throws SQLException {
-		return this.connection
-				.prepareStatement(ADD_PRIMARY_KEY_CONSTRAINT_ON_EDGE_ATTRIBUTE_VALUE_TABLE);
-	}
-
-	private final String DROP_PRIMARY_KEY_CONSTRAINT_FROM_EDGE_ATTRIBUTE_VALUE_TABLE = "ALTER TABLE \"EdgeAttributeValue\" DROP CONSTRAINT \"edgeAttributeValuePrimaryKey\";";
-
-	@Override
-	public PreparedStatement dropPrimaryKeyConstraintFromEdgeAttributeValueTable()
-			throws SQLException {
-		return this.connection
-				.prepareStatement(DROP_PRIMARY_KEY_CONSTRAINT_FROM_EDGE_ATTRIBUTE_VALUE_TABLE);
-	}
-
-	private final String ADD_FOREIGN_KEY_CONSTRAINT_ON_EDGE_ATTRIBUTE_VALUE_TABLE = "ALTER TABLE \"EdgeAttributeValue\" ADD CONSTRAINT \"gIdIsForeignKey\" FOREIGN KEY (\"gId\") REFERENCES \"Graph\" (\"gId\");"
-			+ "ALTER TABLE \"EdgeAttributeValue\" ADD CONSTRAINT \"eIdIsForeignKey\" FOREIGN KEY (\"eId\", \"gId\") REFERENCES \"Edge\" (\"eId\", \"gId\");"
-			+ "ALTER TABLE \"EdgeAttributeValue\" ADD CONSTRAINT \"attributeIdIsForeignKey\" FOREIGN KEY (\"attributeId\" ) REFERENCES \"Attribute\" (\"attributeId\");";
+	public PreparedStatement addForeignKeyConstraintOnAttributeColumnOfVertexAttributeValueTable() throws SQLException {
+		return this.connection.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_ATTRIBUTE_OF_VERTEX_ATTRIBUTE_VALUE);
+	}	
+	
+	private final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_VERTEX_ATTRIBUTE_VALUE =
+		"ALTER TABLE \"VertexAttributeValue\" DROP CONSTRAINT \"gIdIsForeignKey\";";
 
 	@Override
-	public PreparedStatement addForeignKeyConstraintsOnEdgeAttributeValueTable()
-			throws SQLException {
-		return this.connection
-				.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_EDGE_ATTRIBUTE_VALUE_TABLE);
+	public PreparedStatement dropForeignKeyConstraintFromGraphColumnOfVertexAttributeValueTable() throws SQLException {
+		return this.connection.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_VERTEX_ATTRIBUTE_VALUE);
 	}
-
-	private final String DROP_FOREIGN_KEY_CONSTRAINTS_FROM_EDGE_ATTRIBUTE_VALUE_TABLE = "ALTER TABLE \"EdgeAttributeValue\" DROP CONSTRAINT \"gIdIsForeignKey\";"
-			+ "ALTER TABLE \"EdgeAttributeValue\" DROP CONSTRAINT \"eIdIsForeignKey\";"
-			+ "ALTER TABLE \"EdgeAttributeValue\" DROP CONSTRAINT \"attributeIdIsForeignKey\";";
+	
+	private final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_VERTEX_OF_ATTRIBUTE_VALUE =
+		"ALTER TABLE \"VertexAttributeValue\" DROP CONSTRAINT \"vIdIsForeignKey\";";
 
 	@Override
-	public PreparedStatement dropForeignKeyConstraintsFromEdgeAttributeValueTable()
-			throws SQLException {
-		return this.connection
-				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINTS_FROM_EDGE_ATTRIBUTE_VALUE_TABLE);
+	public PreparedStatement dropForeignKeyConstraintFromVertexColumnOfVertexAttributeValueTable() throws SQLException {
+		return this.connection.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_VERTEX_OF_ATTRIBUTE_VALUE);
 	}
-
-	private final String ADD_CLUSTERED_INDEX_ON_EDGE_ATTRIBUTE_VALUES = "CREATE INDEX \"edgeAttributeValueIndex\" ON \"EdgeAttributeValue\"( \"eId\" ASC, \"gId\" ASC, \"attributeId\" ) WITH (FILLFACTOR=80);"
-			+ "ALTER TABLE \"EdgeAttributeValue\" CLUSTER ON \"edgeAttributeValueIndex\";"
-			+ "ANALYZE \"EdgeAttributeValue\";";
+	
+	private final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_ATTRIBUTE_OF_VERTEX_ATTRIBUTE_VALUE =
+		"ALTER TABLE \"VertexAttributeValue\" DROP CONSTRAINT \"attributeIdIsForeignKey\";";	
 
 	@Override
-	public PreparedStatement addClusteredIndexOnEdgeAttributeValues()
-			throws SQLException {
-		return this
-				.getPreparedStatement(ADD_CLUSTERED_INDEX_ON_EDGE_ATTRIBUTE_VALUES);
-	}
+	public PreparedStatement dropForeignKeyConstraintFromAttributeColumnOfVertexAttributeValueTable() throws SQLException {
+		return this.connection.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_ATTRIBUTE_OF_VERTEX_ATTRIBUTE_VALUE);
+	}	
 
-	private final String ADD_CLUSTERED_INDEX_ON_VERTEX_ATTRIBUTE_VALUES = "CREATE INDEX \"vertexAttributeValueIndex\" ON \"VertexAttributeValue\"( \"vId\" ASC, \"gId\" ASC, \"attributeId\" ) WITH (FILLFACTOR=80);"
-			+ "ALTER TABLE \"VertexAttributeValue\" CLUSTER ON \"vertexAttributeValueIndex\";"
-			+ "ANALYZE \"VertexAttributeValue\";";
+	private final String CREATE_EDGE_ATTRIBUTE_VALUE_TABLE = 
+		"CREATE TABLE \"EdgeAttributeValue\"("	+ 
+		"\"eId\" INT4,"	+
+		"\"gId\" INT4,"	+
+		"\"attributeId\" INT4," + 
+		"\"value\" TEXT"	+
+		");";
+
+	public PreparedStatement createEdgeAttributeValueTable() throws SQLException {
+		return this.connection.prepareStatement(CREATE_EDGE_ATTRIBUTE_VALUE_TABLE);
+	}
+	
+	private final String ADD_PRIMARY_KEY_CONSTRAINT_ON_EDGE_ATTRIBUTE_VALUE_TABLE =
+		"ALTER TABLE \"EdgeAttributeValue\" ADD CONSTRAINT \"edgeAttributeValuePrimaryKey\" PRIMARY KEY ( \"eId\", \"gId\", \"attributeId\" );";	
+	
+	public PreparedStatement addPrimaryKeyConstraintOnEdgeAttributeValueTable() throws SQLException {
+		return this.connection.prepareStatement(ADD_PRIMARY_KEY_CONSTRAINT_ON_EDGE_ATTRIBUTE_VALUE_TABLE);
+	}
+	
+	private final String DROP_PRIMARY_KEY_CONSTRAINT_FROM_EDGE_ATTRIBUTE_VALUE_TABLE = 
+		"ALTER TABLE \"EdgeAttributeValue\" DROP CONSTRAINT \"edgeAttributeValuePrimaryKey\";";	
 
 	@Override
-	public PreparedStatement addClusteredIndexOnVertexAttributeValues()
-			throws SQLException {
-		return this
-				.getPreparedStatement(ADD_CLUSTERED_INDEX_ON_VERTEX_ATTRIBUTE_VALUES);
+	public PreparedStatement dropPrimaryKeyConstraintFromEdgeAttributeValueTable() throws SQLException {
+		return this.connection.prepareStatement(DROP_PRIMARY_KEY_CONSTRAINT_FROM_EDGE_ATTRIBUTE_VALUE_TABLE);
 	}
-
-	private final String ADD_CLUSTERED_INDEX_ON_GRAPH_ATTRIBUTE_VALUES = "CREATE INDEX \"graphAttributeValueIndex\" ON \"GraphAttributeValue\"( \"gId\" ASC, \"attributeId\" ) WITH (FILLFACTOR=80);"
-			+ "ALTER TABLE \"GraphAttributeValue\" CLUSTER ON \"graphAttributeValueIndex\";"
-			+ "ANALYZE \"GraphAttributeValue\";";
+	
+	private final String ADD_FOREIGN_KEY_CONSTRAINT_ON_GRAPH_OF_EDGE_ATTRIBUTE_VALUE = 
+		"ALTER TABLE \"EdgeAttributeValue\" ADD CONSTRAINT \"gIdIsForeignKey\" FOREIGN KEY (\"gId\") REFERENCES \"Graph\" (\"gId\");";
 
 	@Override
-	public PreparedStatement addClusteredIndexOnGraphAttributeValues()
-			throws SQLException {
-		return this
-				.getPreparedStatement(ADD_CLUSTERED_INDEX_ON_GRAPH_ATTRIBUTE_VALUES);
+	public PreparedStatement addForeignKeyConstraintOnGraphColumnOfEdgeAttributeValueTable() throws SQLException {
+		return this.connection.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_GRAPH_OF_EDGE_ATTRIBUTE_VALUE);
 	}
 
-	private final String DROP_CLUSTERED_INDICES_FROM_ATTRIBUTE_VALUES = "DROP INDEX IF EXISTS \"edgeAttributeValueIndex\";"
+	private final String ADD_FOREIGN_KEY_CONSTRAINT_ON_EDGE_OF_ATTRIBUTE_VALUE = 
+		"ALTER TABLE \"EdgeAttributeValue\" ADD CONSTRAINT \"eIdIsForeignKey\" FOREIGN KEY (\"eId\", \"gId\") REFERENCES \"Edge\" (\"eId\", \"gId\");";
+
+	@Override
+	public PreparedStatement addForeignKeyConstraintOnEdgeColumnOfEdgeAttributeValueTable() throws SQLException {
+		return this.connection.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_EDGE_OF_ATTRIBUTE_VALUE);
+	}
+	
+	private final String ADD_FOREIGN_KEY_CONSTRAINT_ON_EDGE_ATTRIBUTE = 
+		"ALTER TABLE \"EdgeAttributeValue\" ADD CONSTRAINT \"attributeIdIsForeignKey\" FOREIGN KEY (\"attributeId\" ) REFERENCES \"Attribute\" (\"attributeId\");";
+	
+	@Override
+	public PreparedStatement addForeignKeyConstraintOnAttributeColumnOfEdgeAttributeValueTable() throws SQLException {
+		return this.connection.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_EDGE_ATTRIBUTE);
+	}	
+
+	private final String DROP_FOREIGN_KEY_CONSTRAINTS_FROM_GRAPH_OF_EDGE_ATTRIBUTE =
+		"ALTER TABLE \"EdgeAttributeValue\" DROP CONSTRAINT \"gIdIsForeignKey\";";
+	
+	@Override
+	public PreparedStatement dropForeignKeyConstraintFromGraphColumnOfEdgeAttributeValueTable() throws SQLException {
+		return this.connection.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINTS_FROM_GRAPH_OF_EDGE_ATTRIBUTE);
+	}
+	
+	private final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_EDGE_OF_ATTRIBUTE_VALUE =
+		"ALTER TABLE \"EdgeAttributeValue\" DROP CONSTRAINT \"eIdIsForeignKey\";";
+	
+	@Override
+	public PreparedStatement dropForeignKeyConstraintFromEdgeColumnOfEdgeAttributeValueTable()	throws SQLException {
+		return this.connection.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_EDGE_OF_ATTRIBUTE_VALUE);
+	}
+	
+	private final String DROP_FOREIGN_KEY_CONSTRAINTS_FROM_EDGE_ATTRIBUTE =
+		"ALTER TABLE \"EdgeAttributeValue\" DROP CONSTRAINT \"attributeIdIsForeignKey\";";	
+	
+	@Override
+	public PreparedStatement dropForeignKeyConstraintFromAttributeColumnOfEdgeAttributeValueTable() throws SQLException {
+		return this.connection.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINTS_FROM_EDGE_ATTRIBUTE);
+	}	
+
+	private final String ADD_CLUSTERED_INDEX_ON_EDGE_ATTRIBUTE_VALUES = 
+		"CREATE INDEX \"edgeAttributeValueIndex\" ON \"EdgeAttributeValue\"( \"eId\" ASC, \"gId\" ASC, \"attributeId\" ) WITH (FILLFACTOR=80);" +
+		"ALTER TABLE \"EdgeAttributeValue\" CLUSTER ON \"edgeAttributeValueIndex\";" +
+		"ANALYZE \"EdgeAttributeValue\";";
+	
+	@Override
+	public PreparedStatement addClusteredIndexOnEdgeAttributeValues()throws SQLException {
+		return this.getPreparedStatement(ADD_CLUSTERED_INDEX_ON_EDGE_ATTRIBUTE_VALUES);
+	}
+	
+	private final String ADD_CLUSTERED_INDEX_ON_VERTEX_ATTRIBUTE_VALUES =
+		"CREATE INDEX \"vertexAttributeValueIndex\" ON \"VertexAttributeValue\"( \"vId\" ASC, \"gId\" ASC, \"attributeId\" ) WITH (FILLFACTOR=80);" +
+		"ALTER TABLE \"VertexAttributeValue\" CLUSTER ON \"vertexAttributeValueIndex\";" +
+		"ANALYZE \"VertexAttributeValue\";";
+	
+	@Override
+	public PreparedStatement addClusteredIndexOnVertexAttributeValues()throws SQLException {
+		return this.getPreparedStatement(ADD_CLUSTERED_INDEX_ON_VERTEX_ATTRIBUTE_VALUES);
+	}	
+	
+	private final String ADD_CLUSTERED_INDEX_ON_GRAPH_ATTRIBUTE_VALUES =		
+		"CREATE INDEX \"graphAttributeValueIndex\" ON \"GraphAttributeValue\"( \"gId\" ASC, \"attributeId\" ) WITH (FILLFACTOR=80);" +
+		"ALTER TABLE \"GraphAttributeValue\" CLUSTER ON \"graphAttributeValueIndex\";" +
+		"ANALYZE \"GraphAttributeValue\";";
+
+	@Override
+	public PreparedStatement addClusteredIndexOnGraphAttributeValues()throws SQLException {
+		return this.getPreparedStatement(ADD_CLUSTERED_INDEX_ON_GRAPH_ATTRIBUTE_VALUES);
+	}
+
+	private final String DROP_CLUSTERED_INDICES_FROM_ATTRIBUTE_VALUES = 
+			"DROP INDEX IF EXISTS \"edgeAttributeValueIndex\";"
 			+ "DROP INDEX IF EXISTS \"vertexAttributeValueIndex\";"
 			+ "DROP INDEX IF EXISTS \"graphAttributeValueIndex\";";
 
 	@Override
-	public PreparedStatement dropClusteredIndicesOnAttributeValues()
-			throws SQLException {
-		return this
-				.getPreparedStatement(DROP_CLUSTERED_INDICES_FROM_ATTRIBUTE_VALUES);
+	public PreparedStatement dropClusteredIndicesOnAttributeValues() throws SQLException {
+		return this.getPreparedStatement(DROP_CLUSTERED_INDICES_FROM_ATTRIBUTE_VALUES);
 	}
 
 	private final String CLUSTER_ATTRIBUTE_VALUES = "CLUSTER \"GraphAttributeValue\";"
@@ -458,56 +467,73 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	}
 
 	/*
-	 * public void applyGenericDatabaseSchema() throws SQLException {
-	 * this.connection.setAutoCommit(false);
-	 * 
-	 * PreparedStatement statement = this.createGraphSchemaTable();
-	 * statement.execute();
-	 * 
-	 * statement = this.createTypeTable(); statement.execute();
-	 * 
-	 * statement = this.createGraphTable(); statement.execute(); statement =
-	 * this.addForeignKeyConstraintsOnGraphTable(); statement.execute();
-	 * 
-	 * statement = this.createVertexTable(); statement.execute(); statement =
-	 * this.addPrimaryKeyConstraintOnVertexTable(); statement.execute();
-	 * statement = this.addForeignKeyConstraintsOnVertexTable();
-	 * statement.execute();
-	 * 
-	 * statement = this.createEdgeTable(); statement.execute(); statement =
-	 * this.addPrimaryKeyConstraintOnEdgeTable(); statement.execute(); statement
-	 * = this.addForeignKeyConstraintsOnEdgeTable(); statement.execute();
-	 * 
-	 * statement = this.createIncidenceTable(); statement.execute(); statement =
-	 * this.addPrimaryKeyConstraintOnIncidenceTable(); statement.execute();
-	 * statement = this.addForeignKeyConstraintsOnIncidenceTable();
-	 * statement.execute(); statement = this.createClusteredIndexOnLambdaSeq();
-	 * statement.execute();
-	 * 
-	 * statement = this.createAttributeTable(); statement.execute();
-	 * 
-	 * statement = this.createGraphAttributeValueTable(); statement.execute();
-	 * 
-	 * statement = this.createVertexAttributeValueTable(); statement.execute();
-	 * statement = this.addPrimaryKeyConstraintOnVertexAttributeValueTable();
-	 * statement.execute(); statement =
-	 * this.addForeignKeyConstraintsOnVertexAttributeValueTable();
-	 * 
-	 * statement = this.createEdgeAttributeValueTable(); statement.execute();
-	 * 
-	 * statement = this.addClusteredIndexOnGraphAttributeValues();
-	 * statement.execute();
-	 * 
-	 * statement = this.addClusteredIndexOnVertexAttributeValues();
-	 * statement.execute();
-	 * 
-	 * statement = this.addClusteredIndexOnEdgeAttributeValues();
-	 * statement.execute();
-	 * 
-	 * this.createStoredProcedures();
-	 * 
-	 * this.connection.commit(); this.connection.setAutoCommit(true); }
-	 */
+	public void applyGenericDatabaseSchema() throws SQLException {
+		this.connection.setAutoCommit(false);
+
+		PreparedStatement statement = this.createGraphSchemaTable();
+		statement.execute();
+
+		statement = this.createTypeTable();
+		statement.execute();
+
+		statement = this.createGraphTable();
+		statement.execute();
+		statement = this.addForeignKeyConstraintsOnGraphTable();
+		statement.execute();
+
+		statement = this.createVertexTable();
+		statement.execute();
+		statement = this.addPrimaryKeyConstraintOnVertexTable();
+		statement.execute();
+		statement = this.addForeignKeyConstraintsOnVertexTable();
+		statement.execute();
+
+		statement = this.createEdgeTable();
+		statement.execute();
+		statement = this.addPrimaryKeyConstraintOnEdgeTable();
+		statement.execute();
+		statement = this.addForeignKeyConstraintsOnEdgeTable();
+		statement.execute();
+
+		statement = this.createIncidenceTable();
+		statement.execute();
+		statement = this.addPrimaryKeyConstraintOnIncidenceTable();
+		statement.execute();
+		statement = this.addForeignKeyConstraintsOnIncidenceTable();
+		statement.execute();
+		statement = this.createClusteredIndexOnLambdaSeq();
+		statement.execute();
+
+		statement = this.createAttributeTable();
+		statement.execute();
+
+		statement = this.createGraphAttributeValueTable();
+		statement.execute();
+
+		statement = this.createVertexAttributeValueTable();
+		statement.execute();
+		statement = this.addPrimaryKeyConstraintOnVertexAttributeValueTable();
+		statement.execute();
+		statement = this.addForeignKeyConstraintsOnVertexAttributeValueTable();
+
+		statement = this.createEdgeAttributeValueTable();
+		statement.execute();
+
+		statement = this.addClusteredIndexOnGraphAttributeValues();
+		statement.execute();
+
+		statement = this.addClusteredIndexOnVertexAttributeValues();
+		statement.execute();
+
+		statement = this.addClusteredIndexOnEdgeAttributeValues();
+		statement.execute();
+
+		this.createStoredProcedures();
+
+		this.connection.commit();
+		this.connection.setAutoCommit(true);
+	}
+	*/
 
 	private String INSERT_SCHEMA = "INSERT INTO \"GraphSchema\" ( \"packagePrefix\", name, \"serializedDefinition\" ) VALUES ( ?, ?, ? )";
 
@@ -640,19 +666,17 @@ public class PostgreSqlStatementList extends SqlStatementList {
 		String sqlStatement = INSERT_VERTEX;
 		int attributeCount = vertex.getAttributedElementClass()
 				.getAttributeList().size();
-		for (int i = 0; i < attributeCount; i++) {
+		for (int i = 0; i < attributeCount; i++)
 			sqlStatement += INSERT_VERTEX_ATTRIBUTE_VALUE;
-		}
 		return sqlStatement;
 	}
 
-	private String INSERT_VERTEX_ATTRIBUTE_VALUE = "INSERT INTO \"VertexAttributeValue\" ( \"vId\", \"gId\", \"attributeId\", value ) VALUES ( ?, ?, ?, ? );";
+	private String INSERT_VERTEX_ATTRIBUTE_VALUE = 
+		"INSERT INTO \"VertexAttributeValue\" ( \"vId\", \"gId\", \"attributeId\", value ) VALUES ( ?, ?, ?, ? );";
 
 	@Override
-	public PreparedStatement insertVertexAttributeValue(int vId, int gId,
-			int attributeId, String value) throws SQLException {
-		PreparedStatement statement = this
-				.getPreparedStatement(INSERT_VERTEX_ATTRIBUTE_VALUE);
+	public PreparedStatement insertVertexAttributeValue(int vId, int gId, int attributeId, String value) throws SQLException {
+		PreparedStatement statement = this.getPreparedStatement(INSERT_VERTEX_ATTRIBUTE_VALUE);
 		statement.setInt(1, vId);
 		statement.setInt(2, gId);
 		statement.setInt(3, attributeId);
@@ -662,7 +686,8 @@ public class PostgreSqlStatementList extends SqlStatementList {
 
 	// --- to insert an edge -------------------------------------------
 
-	private String INSERT_EDGE = "INSERT INTO \"Edge\" ( \"eId\", \"gId\", \"typeId\", \"sequenceNumber\" ) VALUES ( ?, ?, ?, ? );";
+	private String INSERT_EDGE = 
+		"INSERT INTO \"Edge\" ( \"eId\", \"gId\", \"typeId\", \"sequenceNumber\" ) VALUES ( ?, ?, ?, ? );";
 
 	@Override
 	public PreparedStatement insertEdge(int eId, int gId, int typeId,
@@ -752,15 +777,15 @@ public class PostgreSqlStatementList extends SqlStatementList {
 		sqlStatement += INSERT_INCIDENCE;
 		int attributeCount = edge.getAttributedElementClass()
 				.getAttributeList().size();
-		for (int i = 0; i < attributeCount; i++) {
+		for (int i = 0; i < attributeCount; i++)
 			sqlStatement += INSERT_EDGE_ATTRIBUTE_VALUE;
-		}
 		sqlStatement += UPDATE_INCIDENCE_LIST_VERSION;
 		sqlStatement += UPDATE_INCIDENCE_LIST_VERSION;
 		return sqlStatement;
 	}
 
-	private String INSERT_INCIDENCE = "INSERT INTO \"Incidence\" ( \"eId\", \"gId\", \"vId\", direction, \"sequenceNumber\" ) VALUES ( ?, ?, ?, ?::\"DIRECTION\", ? );";
+	private String INSERT_INCIDENCE = 
+		"INSERT INTO \"Incidence\" ( \"eId\", \"gId\", \"vId\", direction, \"sequenceNumber\" ) VALUES ( ?, ?, ?, ?::\"DIRECTION\", ? );";
 
 	@Override
 	public PreparedStatement insertIncidence(int eId, int vId, int gId,
@@ -770,19 +795,19 @@ public class PostgreSqlStatementList extends SqlStatementList {
 		statement.setInt(1, Math.abs(eId));
 		statement.setInt(2, gId);
 		statement.setInt(3, vId);
-		if (eId > 0) {
+		if (eId > 0)
 			statement.setString(4, EdgeDirection.OUT.name());
-		} else if (eId < 0) {
+		else if (eId < 0)
 			statement.setString(4, EdgeDirection.IN.name());
-		} else {
+		else
 			throw new GraphException(
 					"Cannot insert an incidence into database with incident edge id = 0.");
-		}
 		statement.setLong(5, sequenceNumberInLambdaSeq);
 		return statement;
 	}
 
-	private String INSERT_EDGE_ATTRIBUTE_VALUE = "INSERT INTO \"EdgeAttributeValue\" ( \"eId\", \"gId\", \"attributeId\", value ) VALUES ( ?, ?, ?, ? );";
+	private String INSERT_EDGE_ATTRIBUTE_VALUE = 
+		"INSERT INTO \"EdgeAttributeValue\" ( \"eId\", \"gId\", \"attributeId\", value ) VALUES ( ?, ?, ?, ? );";
 
 	@Override
 	public PreparedStatement insertEdgeAttributeValue(int eId, int gId,
@@ -1349,11 +1374,10 @@ public class PostgreSqlStatementList extends SqlStatementList {
 		statement.setInt(1, vId);
 		statement.setInt(2, Math.abs(eId));
 		statement.setInt(3, gId);
-		if (eId > 0) {
+		if (eId > 0)
 			statement.setString(4, EdgeDirection.OUT.name());
-		} else if (eId < 0) {
+		else if (eId < 0)
 			statement.setString(4, EdgeDirection.IN.name());
-		}
 		return statement;
 	}
 
@@ -1433,40 +1457,36 @@ public class PostgreSqlStatementList extends SqlStatementList {
 			+ "EXECUTE 'INSERT INTO \"Vertex\" ( \"vId\", \"gId\", \"typeId\", \"lambdaSeqVersion\", \"sequenceNumber\" ) VALUES ($1, $2, $3, 0, $4)' USING \"vertexId\", \"graphId\", \"typeId\", \"sequenceNumber\";\n"
 			+ "RETURN 1;\n" + "END;\n" + "$$ LANGUAGE plpgsql;";
 
-	@Override
 	public PreparedStatement createStoredProcedureToInsertVertex()
 			throws SQLException {
 		return this.getPreparedStatement(STORED_PROCEDURE_INSERT_VERTEX);
 	}
 
-	private String DELETE_SCHEMA = "DELETE FROM \"GraphSchema\" WHERE \"packagePrefix\" = ? AND name = ?";
+	private String DELETE_SCHEMA = 
+		"DELETE FROM \"GraphSchema\" WHERE \"packagePrefix\" = ? AND name = ?";
 
 	@Override
-	public PreparedStatement deleteSchema(String prefix, String name)
-			throws SQLException {
+	public PreparedStatement deleteSchema(String prefix, String name) throws SQLException {
 		PreparedStatement statement = this.getPreparedStatement(DELETE_SCHEMA);
 		statement.setString(1, prefix);
 		statement.setString(2, name);
 		return statement;
 	}
-
-	private String SELECT_SCHEMA_DEFINITION = "SELECT \"serializedDefinition\" FROM \"GraphSchema\" WHERE \"packagePrefix\" = ? AND name = ?;";
-
+	
+	private String SELECT_SCHEMA_DEFINITION = 
+		"SELECT \"serializedDefinition\" FROM \"GraphSchema\" WHERE \"packagePrefix\" = ? AND name = ?;";
+	
 	@Override
-	public PreparedStatement selectSchemaDefinition(String packagePrefix,
-			String schemaName) throws SQLException {
-		PreparedStatement statement = this.connection
-				.prepareStatement(SELECT_SCHEMA_DEFINITION);
+	public PreparedStatement selectSchemaDefinition(String packagePrefix, String schemaName) throws SQLException{
+		PreparedStatement statement = this.connection.prepareStatement(SELECT_SCHEMA_DEFINITION);
 		statement.setString(1, packagePrefix);
 		statement.setString(2, schemaName);
 		return statement;
 	}
 
 	@Override
-	public CallableStatement createReorganizeVertexListCall(int gId, long start)
-			throws SQLException {
-		CallableStatement statement = this.connection
-				.prepareCall("{ ? = call \"reorganizeVertexListOf\"(?, ?) }");
+	public CallableStatement createReorganizeVertexListCall(int gId, long start) throws SQLException {
+		CallableStatement statement = this.connection.prepareCall("{ ? = call \"reorganizeVertexListOf\"(?, ?) }");
 		statement.registerOutParameter(1, Types.INTEGER);
 		statement.setInt(2, gId);
 		statement.setLong(3, start);
@@ -1474,10 +1494,8 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	}
 
 	@Override
-	public CallableStatement createReorganizeEdgeListCall(int gId, long start)
-			throws SQLException {
-		CallableStatement statement = this.connection
-				.prepareCall("{ ? = call \"reorganizeEdgeListOf\"(?, ?) }");
+	public CallableStatement createReorganizeEdgeListCall(int gId, long start) throws SQLException {
+		CallableStatement statement = this.connection.prepareCall("{ ? = call \"reorganizeEdgeListOf\"(?, ?) }");
 		statement.registerOutParameter(1, Types.INTEGER);
 		statement.setInt(2, gId);
 		statement.setLong(3, start);
@@ -1485,10 +1503,8 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	}
 
 	@Override
-	public CallableStatement createReorganizeIncidenceListCall(int vId,
-			int gId, long start) throws SQLException {
-		CallableStatement statement = this.connection
-				.prepareCall("{ ? = call \"reorganizeIncidenceListOf\"(?, ?) }");
+	public CallableStatement createReorganizeIncidenceListCall(int vId,	int gId, long start) throws SQLException {
+		CallableStatement statement = this.connection.prepareCall("{ ? = call \"reorganizeIncidenceListOf\"(?, ?) }");
 		statement.registerOutParameter(1, Types.INTEGER);
 		statement.setInt(2, vId);
 		statement.setInt(3, gId);
