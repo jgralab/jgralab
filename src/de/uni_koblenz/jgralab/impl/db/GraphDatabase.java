@@ -1316,19 +1316,17 @@ public abstract class GraphDatabase {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Schema createSchema(String packagePrefix, String name)
-			throws GraphIOException {
+	private Schema createSchema(String packagePrefix, String name)	throws GraphIOException {
 		try {
-			Class<Schema> schemaClass = (Class<Schema>) Class
-					.forName(packagePrefix + "." + name);
-			// @SuppressWarnings("rawtypes")
+			Class<Schema> schemaClass = (Class<Schema>) Class.forName(packagePrefix + "." + name);
+			@SuppressWarnings("rawtypes")
 			Class[] params = {};
 			Method instanceMethod = schemaClass.getMethod("instance", params);
 			Object[] args = {};
 			return (Schema) instanceMethod.invoke(this, args);
-		} catch (Exception exception) {
-			throw new GraphIOException("Could not create schema "
-					+ packagePrefix + "." + name, exception);
+		}
+		catch (Exception exception) {
+			throw new GraphIOException("Could not create schema " + packagePrefix + "." + name, exception);
 		}
 	}
 
@@ -1824,7 +1822,11 @@ public abstract class GraphDatabase {
 		statement.execute();
 		statement = this.sqlStatementList.addForeignKeyConstraintOnTypeColumnOfEdgeTable();
 		statement.execute();
-		statement = this.sqlStatementList.addForeignKeyConstraintsOnIncidenceTable(); // TODO split
+		statement = this.sqlStatementList.addForeignKeyConstraintOnGraphColumnOfIncidenceTable();
+		statement.execute();
+		statement = this.sqlStatementList.addForeignKeyConstraintOnEdgeColumnOfIncidenceTable();
+		statement.execute();
+		statement = this.sqlStatementList.addForeignKeyConstraintOnVertexColumnOfIncidenceTable();
 		statement.execute();
 		statement = this.sqlStatementList.addForeignKeyConstraintOnGraphColumnOfVertexAttributeValueTable();
 		statement.execute();
@@ -1841,14 +1843,8 @@ public abstract class GraphDatabase {
 	}
 	
 	protected void addIndices() throws SQLException{
-		PreparedStatement statement = this.sqlStatementList.addClusteredIndexOnLambdaSeq();
+		PreparedStatement statement = this.sqlStatementList.addIndexOnLambdaSeq();
 		statement.execute();
-		statement = this.sqlStatementList.addClusteredIndexOnGraphAttributeValues();
-		statement.execute();
-		statement = this.sqlStatementList.addClusteredIndexOnVertexAttributeValues();
-		statement.execute();
-		statement = this.sqlStatementList.addClusteredIndexOnEdgeAttributeValues();
-		statement.execute();				
 	}
 	
 	public void optimizeForGraphTraversal() throws GraphDatabaseException{
@@ -2029,9 +2025,9 @@ public abstract class GraphDatabase {
 	}
 	
 	protected void dropIndices() throws SQLException {
-		PreparedStatement statement = this.sqlStatementList.dropClusteredIndicesOnAttributeValues(); // TODO split into three
-		statement.execute();
-		statement = this.sqlStatementList.dropClusteredIndexOnLambdaSeq(); // TODO find better name as it's an index on table Incidence, modeling LambdaSeq
+		//PreparedStatement statement = this.sqlStatementList.dropClusteredIndicesOnAttributeValues(); // TODO split into three
+		//statement.execute();
+		PreparedStatement statement = this.sqlStatementList.dropIndexOnLambdaSeq(); // TODO find better name as it's an index on table Incidence, modeling LambdaSeq
 		statement.execute();
 	}
 
@@ -2044,8 +2040,12 @@ public abstract class GraphDatabase {
 		statement.execute();
 		statement = this.sqlStatementList.dropForeignKeyConstraintFromTypeColumnOfEdgeTable();
 		statement.execute();
-		statement = this.sqlStatementList.dropForeignKeyConstraintsFromIncidenceTable();
+		statement = this.sqlStatementList.dropForeignKeyConstraintFromEdgeColumnOfIncidenceTable();
 		statement.execute();
+		statement = this.sqlStatementList.dropForeignKeyConstraintFromGraphColumnOfIncidenceTable();
+		statement.execute();
+		statement = this.sqlStatementList.dropForeignKeyConstraintFromVertexColumnOfIncidenceTable();
+		statement.execute();		
 		statement = this.sqlStatementList.dropForeignKeyConstraintFromGraphColumnOfVertexAttributeValueTable();
 		statement.execute();
 		statement = this.sqlStatementList.dropForeignKeyConstraintFromVertexColumnOfVertexAttributeValueTable();
