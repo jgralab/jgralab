@@ -52,9 +52,7 @@ public class PostgreSqlDb extends GraphDatabase{
 	}
 	
 	private void cluster() throws SQLException {
-		PreparedStatement statement = this.sqlStatementList.clusterIncidenceTable();
-		statement.execute();
-		statement = this.sqlStatementList.clusterAttributeValues();
+		PreparedStatement statement = ((PostgreSqlStatementList)this.sqlStatementList).clusterIncidenceTable();
 		statement.execute();
 	}
 	
