@@ -24,6 +24,7 @@
 package de.uni_koblenz.jgralab.algolib.problems;
 
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 
 /**
  * The problem <b>weighted distance from vertex to vertex</b> can be defined for
@@ -55,7 +56,7 @@ public interface WeightedDistanceFromVertexToVertexSolver extends
 	 *             changes accordingly.
 	 */
 	public WeightedDistanceFromVertexToVertexSolver execute(Vertex start,
-			Vertex target);
+			Vertex target) throws AlgorithmTerminatedException;
 
 	/**
 	 * Retrieves the result <code>singleWeightedDistance</code>.

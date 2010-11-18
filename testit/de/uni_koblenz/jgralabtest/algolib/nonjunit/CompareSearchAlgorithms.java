@@ -27,6 +27,7 @@ import java.util.Iterator;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.IterativeDepthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.RecursiveDepthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.SearchAlgorithm;
@@ -46,7 +47,8 @@ public class CompareSearchAlgorithms {
 		this.alg2 = alg2;
 	}
 
-	public boolean compare(boolean printVertexOrder) {
+	public boolean compare(boolean printVertexOrder)
+			throws AlgorithmTerminatedException {
 		alg1.disableOptionalResults();
 		alg2.disableOptionalResults();
 		alg1.setGraph(graph);
@@ -72,15 +74,16 @@ public class CompareSearchAlgorithms {
 		}
 		return out;
 	}
-	
-	public static void main(String[] args) {
+
+	public static void main(String[] args) throws AlgorithmTerminatedException {
 		SimpleGraph graph = RandomGraph.createEmptyGraph();
 		RandomGraph.addWeakComponent(0, graph, 10, 10);
 		RandomGraph.addWeakComponent(0, graph, 3, 0);
 		RecursiveDepthFirstSearch alg1 = new RecursiveDepthFirstSearch(graph);
 		// TODO replace with simulated implementation
 		IterativeDepthFirstSearch alg2 = new IterativeDepthFirstSearch(graph);
-		CompareSearchAlgorithms comp = new CompareSearchAlgorithms(graph, alg1, alg2);
+		CompareSearchAlgorithms comp = new CompareSearchAlgorithms(graph, alg1,
+				alg2);
 		// TODO set to false if doing a bigger graph
 		System.out.println(comp.compare(true));
 	}

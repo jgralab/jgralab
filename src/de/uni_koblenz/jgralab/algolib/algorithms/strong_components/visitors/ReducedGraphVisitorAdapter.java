@@ -26,7 +26,7 @@ package de.uni_koblenz.jgralab.algolib.algorithms.strong_components.visitors;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.GraphAlgorithm;
-import de.uni_koblenz.jgralab.algolib.problems.directed.StrongComponentsSolver;
+import de.uni_koblenz.jgralab.algolib.problems.StrongComponentsSolver;
 
 public class ReducedGraphVisitorAdapter implements ReducedGraphVisitor {
 

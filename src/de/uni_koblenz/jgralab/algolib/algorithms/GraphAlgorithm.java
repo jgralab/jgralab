@@ -228,7 +228,7 @@ public abstract class GraphAlgorithm implements ProblemSolver {
 	 * @throws IllegalStateException
 	 *             if this algorithm is not in state <code>RUNNING</code>.
 	 */
-	public void terminate() {
+	public void terminate() throws AlgorithmTerminatedException {
 		if (getState() == AlgorithmStates.RUNNING) {
 			done();
 			throw new AlgorithmTerminatedException("Terminated by algorithm.");
@@ -248,7 +248,8 @@ public abstract class GraphAlgorithm implements ProblemSolver {
 	 * @throws AlgorithmTerminatedException
 	 *             if the current thread was interrupted
 	 */
-	protected synchronized void cancelIfInterrupted() {
+	protected synchronized void cancelIfInterrupted()
+			throws AlgorithmTerminatedException {
 		if (Thread.interrupted()) {
 			state = AlgorithmStates.CANCELED;
 			Thread.currentThread().interrupt();

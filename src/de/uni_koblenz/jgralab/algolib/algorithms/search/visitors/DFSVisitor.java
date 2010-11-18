@@ -25,6 +25,7 @@ package de.uni_koblenz.jgralab.algolib.algorithms.search.visitors;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 
 public interface DFSVisitor extends SearchVisitor {
 
@@ -35,7 +36,7 @@ public interface DFSVisitor extends SearchVisitor {
 	 * @param v
 	 *            the vertex that is currently visited
 	 */
-	public void leaveVertex(Vertex v);
+	public void leaveVertex(Vertex v) throws AlgorithmTerminatedException;
 
 	/**
 	 * This method visits a tree edge when the algorithm "leaves" it. (After the
@@ -44,7 +45,7 @@ public interface DFSVisitor extends SearchVisitor {
 	 * @param e
 	 *            the tree edge that is currently visited
 	 */
-	public void leaveTreeEdge(Edge e);
+	public void leaveTreeEdge(Edge e) throws AlgorithmTerminatedException;
 
 	/**
 	 * This method visits an edge if it has been classified as forward arc.
@@ -52,7 +53,7 @@ public interface DFSVisitor extends SearchVisitor {
 	 * @param e
 	 *            the forward arc that is currently visited
 	 */
-	public void visitForwardArc(Edge e);
+	public void visitForwardArc(Edge e) throws AlgorithmTerminatedException;
 
 	/**
 	 * This method visits an edge if it has been classified as backward arc.
@@ -60,7 +61,7 @@ public interface DFSVisitor extends SearchVisitor {
 	 * @param e
 	 *            the backward arc that is currently visited
 	 */
-	public void visitBackwardArc(Edge e);
+	public void visitBackwardArc(Edge e) throws AlgorithmTerminatedException;
 
 	/**
 	 * This method visits an edge if it has been classified as crosslink.
@@ -68,5 +69,5 @@ public interface DFSVisitor extends SearchVisitor {
 	 * @param e
 	 *            the crosslink that is currently visited
 	 */
-	public void visitCrosslink(Edge e);
+	public void visitCrosslink(Edge e) throws AlgorithmTerminatedException;
 }

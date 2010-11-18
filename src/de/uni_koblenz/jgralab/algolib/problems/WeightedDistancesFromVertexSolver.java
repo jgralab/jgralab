@@ -24,6 +24,7 @@
 package de.uni_koblenz.jgralab.algolib.problems;
 
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.functions.DoubleFunction;
 
 /**
@@ -52,7 +53,7 @@ public interface WeightedDistancesFromVertexSolver extends WeightedProblemSolver
 	 *             from outside (Thread interruption). The algorithm state
 	 *             changes accordingly.
 	 */
-	public WeightedDistancesFromVertexSolver execute(Vertex start);
+	public WeightedDistancesFromVertexSolver execute(Vertex start) throws AlgorithmTerminatedException;
 
 	/**
 	 * Retrieves the result <code>weightedDistance</code>.

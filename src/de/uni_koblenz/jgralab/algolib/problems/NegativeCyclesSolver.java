@@ -23,6 +23,8 @@
  */
 package de.uni_koblenz.jgralab.algolib.problems;
 
+import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
+
 /**
  * The problem <b>negative cycles</b> can be defined for directed and undirected
  * graphs. There are no further parameters. The result is a boolean value
@@ -43,7 +45,7 @@ public interface NegativeCyclesSolver extends WeightedProblemSolver {
 	 *             from outside (Thread interruption). The algorithm state
 	 *             changes accordingly.
 	 */
-	public NegativeCyclesSolver execute();
+	public NegativeCyclesSolver execute() throws AlgorithmTerminatedException;
 
 	/**
 	 * Retrieves the result <code>negativeCycles</code>.

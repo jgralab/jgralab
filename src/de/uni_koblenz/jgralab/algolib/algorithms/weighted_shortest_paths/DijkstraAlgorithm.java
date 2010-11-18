@@ -27,6 +27,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 import de.uni_koblenz.jgralab.algolib.functions.DoubleFunction;
 import de.uni_koblenz.jgralab.algolib.problems.WeightedDistancesFromVertexSolver;
@@ -65,7 +66,7 @@ public class DijkstraAlgorithm extends AStarSearch implements
 	}
 
 	@Override
-	public DijkstraAlgorithm execute(Vertex start) {
+	public DijkstraAlgorithm execute(Vertex start) throws AlgorithmTerminatedException {
 		internalExecute(start, null);
 		return this;
 	}

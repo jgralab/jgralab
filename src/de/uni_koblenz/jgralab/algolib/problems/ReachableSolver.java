@@ -24,6 +24,7 @@
 package de.uni_koblenz.jgralab.algolib.problems;
 
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 
 /**
  * The problem <b>reachable</b> is defined for directed and undirected graphs.
@@ -50,7 +51,7 @@ public interface ReachableSolver extends ProblemSolver {
 	 *             from outside (Thread interruption). The algorithm state
 	 *             changes accordingly.
 	 */
-	public ReachableSolver execute(Vertex start, Vertex target);
+	public ReachableSolver execute(Vertex start, Vertex target) throws AlgorithmTerminatedException;
 
 	/**
 	 * Retrieves the result <code>reachable</code>.

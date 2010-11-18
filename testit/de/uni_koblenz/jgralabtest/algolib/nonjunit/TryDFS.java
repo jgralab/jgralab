@@ -23,13 +23,14 @@
  */
 package de.uni_koblenz.jgralabtest.algolib.nonjunit;
 
+import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.DepthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.IterativeDepthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.RecursiveDepthFirstSearch;
 import de.uni_koblenz.jgralabtest.schemas.algolib.simple.SimpleGraph;
 
 public class TryDFS {
-	public static void main(String[] args) {
+	public static void main(String[] args) throws AlgorithmTerminatedException {
 		// SimpleGraph graph = SimpleSchema.instance().createSimpleGraph();
 		// SimpleVertex v1 = graph.createSimpleVertex();
 		// SimpleVertex v2 = graph.createSimpleVertex();

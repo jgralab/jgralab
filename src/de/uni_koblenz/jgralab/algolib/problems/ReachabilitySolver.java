@@ -24,6 +24,7 @@
 package de.uni_koblenz.jgralab.algolib.problems;
 
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.functions.Relation;
 
 /**
@@ -47,7 +48,7 @@ public interface ReachabilitySolver extends ProblemSolver {
 	 *             from outside (Thread interruption). The algorithm state
 	 *             changes accordingly.
 	 */
-	public ReachabilitySolver execute();
+	public ReachabilitySolver execute() throws AlgorithmTerminatedException;
 
 	/**
 	 * Retrieves the result <code>reachability relation</code>.

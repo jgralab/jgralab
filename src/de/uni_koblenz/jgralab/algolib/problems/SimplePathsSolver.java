@@ -25,6 +25,7 @@ package de.uni_koblenz.jgralab.algolib.problems;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.functions.BinaryFunction;
 
 /**
@@ -50,7 +51,7 @@ public interface SimplePathsSolver extends ProblemSolver {
 	 *             from outside (Thread interruption). The algorithm state
 	 *             changes accordingly.
 	 */
-	public SimplePathsSolver execute();
+	public SimplePathsSolver execute() throws AlgorithmTerminatedException;
 
 	/**
 	 * Retrieves the result <code>successor</code>.

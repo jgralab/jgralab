@@ -26,6 +26,7 @@ package de.uni_koblenz.jgralabtest.algolib.nonjunit;
 import java.util.Arrays;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.BreadthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.SearchAlgorithm;
 import de.uni_koblenz.jgralabtest.schemas.algolib.simple.SimpleGraph;
@@ -58,7 +59,7 @@ public class TryBFS {
 	private static Stopwatch sw;
 	private static SimpleVertex v1;
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws AlgorithmTerminatedException {
 		sw = new Stopwatch();
 
 		SimpleGraph graph = getSmallGraph();
@@ -100,14 +101,14 @@ public class TryBFS {
 		System.out.println("Fini");
 	}
 
-	private static void makeRunAndPrint(SearchAlgorithm bfs, int amount) {
+	private static void makeRunAndPrint(SearchAlgorithm bfs, int amount) throws AlgorithmTerminatedException {
 		long average;
 		average = makeRun(bfs, amount);
 		System.out.print("Average time: ");
 		printTime(average);
 	}
 
-	private static long makeRun(SearchAlgorithm bfs, int amount) {
+	private static long makeRun(SearchAlgorithm bfs, int amount) throws AlgorithmTerminatedException {
 
 		int skip = Math.round(amount * 0.1f);
 		int skipUntil = amount - skip;

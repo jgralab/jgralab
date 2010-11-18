@@ -21,11 +21,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package de.uni_koblenz.jgralab.algolib.problems.directed;
+package de.uni_koblenz.jgralab.algolib.problems;
 
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.functions.Permutation;
-import de.uni_koblenz.jgralab.algolib.problems.ProblemSolver;
 
 /**
  * The problem <b>topological order</b> is defined for directed graphs only.
@@ -48,7 +48,7 @@ public interface TopologicalOrderSolver extends ProblemSolver {
 	 *             from outside (Thread interruption). The algorithm state
 	 *             changes accordingly.
 	 */
-	public TopologicalOrderSolver execute();
+	public TopologicalOrderSolver execute() throws AlgorithmTerminatedException;
 
 	/**
 	 * Retrieves the result <i>topologicalOrder</i>.

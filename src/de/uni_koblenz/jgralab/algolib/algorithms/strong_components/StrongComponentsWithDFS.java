@@ -42,7 +42,7 @@ import de.uni_koblenz.jgralab.algolib.algorithms.strong_components.visitors.Redu
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 import de.uni_koblenz.jgralab.algolib.functions.Function;
 import de.uni_koblenz.jgralab.algolib.functions.IntFunction;
-import de.uni_koblenz.jgralab.algolib.problems.directed.StrongComponentsSolver;
+import de.uni_koblenz.jgralab.algolib.problems.StrongComponentsSolver;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
 import de.uni_koblenz.jgralab.graphmarker.ArrayVertexMarker;
 import de.uni_koblenz.jgralab.graphmarker.IntegerVertexMarker;
@@ -212,7 +212,7 @@ public class StrongComponentsWithDFS extends AbstractTraversal implements
 	}
 
 	@Override
-	public StrongComponentsSolver execute() {
+	public StrongComponentsSolver execute() throws AlgorithmTerminatedException {
 		dfs.reset();
 		dfs.setGraph(graph);
 		dfs.setSubgraph(subgraph);
@@ -221,9 +221,9 @@ public class StrongComponentsWithDFS extends AbstractTraversal implements
 		dfs.addVisitor(lowlinkVisitor);
 		try {
 			startRunning();
+			dfs.execute();
 		} catch (AlgorithmTerminatedException e) {
 		}
-		dfs.execute();
 		done();
 		dfs.removeVisitor(lowlinkVisitor);
 		return this;

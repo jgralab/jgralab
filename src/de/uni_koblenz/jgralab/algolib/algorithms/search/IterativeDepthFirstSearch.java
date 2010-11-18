@@ -30,6 +30,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 import de.uni_koblenz.jgralab.graphmarker.ArrayVertexMarker;
 
@@ -91,7 +92,8 @@ public class IterativeDepthFirstSearch extends DepthFirstSearch {
 	}
 
 	@Override
-	public IterativeDepthFirstSearch execute(Vertex root) {
+	public IterativeDepthFirstSearch execute(Vertex root)
+			throws AlgorithmTerminatedException {
 		if (subgraph != null && !subgraph.get(root)
 				|| visitedVertices.get(root)) {
 			return this;
@@ -187,7 +189,8 @@ public class IterativeDepthFirstSearch extends DepthFirstSearch {
 	}
 
 	@Override
-	public IterativeDepthFirstSearch execute(){
+	public IterativeDepthFirstSearch execute()
+			throws AlgorithmTerminatedException {
 		super.execute();
 		return this;
 	}

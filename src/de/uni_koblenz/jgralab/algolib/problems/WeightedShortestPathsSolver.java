@@ -51,7 +51,7 @@ public interface WeightedShortestPathsSolver extends WeightedProblemSolver {
 	 *             from outside (Thread interruption). The algorithm state
 	 *             changes accordingly.
 	 */
-	public WeightedShortestPathsSolver execute();
+	public WeightedShortestPathsSolver execute() throws AlgorithmTerminatedException;
 
 	/**
 	 * Retrieves the result <code>successor</code>.

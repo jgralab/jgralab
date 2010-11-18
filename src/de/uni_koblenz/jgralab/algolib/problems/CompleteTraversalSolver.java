@@ -25,6 +25,7 @@ package de.uni_koblenz.jgralab.algolib.problems;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.functions.Permutation;
 
 /**
@@ -47,7 +48,7 @@ public interface CompleteTraversalSolver extends TraversalSolver {
 	 *             from outside (Thread interruption). The algorithm state
 	 *             changes accordingly.
 	 */
-	public CompleteTraversalSolver execute();
+	public CompleteTraversalSolver execute() throws AlgorithmTerminatedException;
 
 	/**
 	 * Retrieves the result <code>vertexOrder</code> as permutation of vertices.

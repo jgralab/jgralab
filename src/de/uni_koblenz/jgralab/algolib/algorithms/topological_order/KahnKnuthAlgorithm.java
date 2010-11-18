@@ -30,13 +30,14 @@ import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AbstractTraversal;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmStates;
+import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.topological_order.visitors.TopologicalOrderVisitorComposition;
 import de.uni_koblenz.jgralab.algolib.functions.ArrayPermutation;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 import de.uni_koblenz.jgralab.algolib.functions.IntFunction;
 import de.uni_koblenz.jgralab.algolib.functions.Permutation;
-import de.uni_koblenz.jgralab.algolib.problems.directed.AcyclicitySolver;
-import de.uni_koblenz.jgralab.algolib.problems.directed.TopologicalOrderSolver;
+import de.uni_koblenz.jgralab.algolib.problems.AcyclicitySolver;
+import de.uni_koblenz.jgralab.algolib.problems.TopologicalOrderSolver;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
 import de.uni_koblenz.jgralab.graphmarker.IntegerVertexMarker;
 
@@ -140,7 +141,7 @@ public class KahnKnuthAlgorithm extends AbstractTraversal implements
 	public boolean isDirected() {
 		return true;
 	}
-	
+
 	@Override
 	public boolean isHybrid() {
 		return false;
@@ -157,38 +158,38 @@ public class KahnKnuthAlgorithm extends AbstractTraversal implements
 		checkStateForResult();
 		return new ArrayPermutation<Vertex>(torder);
 	}
-	
-	public IntFunction<Vertex> getTNumber(){
+
+	public IntFunction<Vertex> getTNumber() {
 		checkStateForResult();
 		return tnumber;
 	}
-	
-	public Vertex[] getInternalTopologicalOrder(){
+
+	public Vertex[] getInternalTopologicalOrder() {
 		return torder;
 	}
-	
-	public IntFunction<Vertex> getInternalTNumber(){
+
+	public IntFunction<Vertex> getInternalTNumber() {
 		return tnumber;
 	}
-	
-	public boolean getInternalAcyclic(){
+
+	public boolean getInternalAcyclic() {
 		return acyclic;
 	}
-	
-	public int getFirstV(){
+
+	public int getFirstV() {
 		return firstV;
 	}
-	
-	public int getTNum(){
+
+	public int getTNum() {
 		return tnum;
 	}
-	
-	public IntFunction<Vertex> getInDegree(){
+
+	public IntFunction<Vertex> getInDegree() {
 		return inDegree;
 	}
 
 	@Override
-	public KahnKnuthAlgorithm execute() {
+	public KahnKnuthAlgorithm execute() throws AlgorithmTerminatedException {
 		startRunning();
 
 		// store actual in degree for all vertices
@@ -213,7 +214,8 @@ public class KahnKnuthAlgorithm extends AbstractTraversal implements
 		while (firstV < tnum) {
 			Vertex currentVertex = torder[firstV++];
 			visitors.visitVertexInTopologicalOrder(currentVertex);
-			for (Edge currentEdge : currentVertex.incidences(traversalDirection)) {
+			for (Edge currentEdge : currentVertex
+					.incidences(traversalDirection)) {
 				cancelIfInterrupted();
 				if (subgraph != null && !subgraph.get(currentEdge)) {
 					continue;

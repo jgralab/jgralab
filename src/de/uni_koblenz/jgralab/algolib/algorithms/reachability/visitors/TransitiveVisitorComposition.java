@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
 import de.uni_koblenz.jgralab.algolib.visitors.VisitorComposition;
 
@@ -69,7 +70,8 @@ public class TransitiveVisitorComposition extends VisitorComposition implements
 	}
 
 	@Override
-	public void visitVertexTriple(Vertex u, Vertex v, Vertex w) {
+	public void visitVertexTriple(Vertex u, Vertex v, Vertex w)
+			throws AlgorithmTerminatedException {
 		int n = visitors.size();
 		for (int i = 0; i < n; i++) {
 			visitors.get(i).visitVertexTriple(u, v, w);

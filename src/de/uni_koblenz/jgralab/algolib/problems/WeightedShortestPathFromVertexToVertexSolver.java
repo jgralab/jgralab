@@ -25,6 +25,7 @@ package de.uni_koblenz.jgralab.algolib.problems;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.functions.Function;
 
 /**
@@ -58,7 +59,7 @@ public interface WeightedShortestPathFromVertexToVertexSolver extends
 	 *             changes accordingly.
 	 */
 	public WeightedShortestPathFromVertexToVertexSolver execute(Vertex start,
-			Vertex target);
+			Vertex target)  throws AlgorithmTerminatedException;
 
 	/**
 	 * Retrieves the result <i>parent</i>.
