@@ -49,8 +49,8 @@ import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.NamedElement;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
-import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
+import de.uni_koblenz.jgralab.schema.Schema;
 
 @WorkInProgress(responsibleDevelopers = "horn")
 public class SchemaCompare {
@@ -129,8 +129,8 @@ public class SchemaCompare {
 			boolean foundMatch = false;
 			for (RecordComponent fc : f.getComponents()) {
 				if (dc.getName().equals(fc.getName())
-						&& dc.getDomain().getQualifiedName().equals(
-								fc.getDomain().getQualifiedName())) {
+						&& dc.getDomain().getQualifiedName()
+								.equals(fc.getDomain().getQualifiedName())) {
 					foundMatch = true;
 					break;
 				}
@@ -166,9 +166,9 @@ public class SchemaCompare {
 
 		if (!new HashSet<String>(d.getConsts()).equals(new HashSet<String>(f
 				.getConsts()))) {
-			reportDiff("EnumDomain " + d.getQualifiedName() + ": "
-					+ d.getConsts(), "EnumDomain " + f.getQualifiedName()
-					+ ": " + f.getConsts());
+			reportDiff(
+					"EnumDomain " + d.getQualifiedName() + ": " + d.getConsts(),
+					"EnumDomain " + f.getQualifiedName() + ": " + f.getConsts());
 		}
 
 		marked.add(d);
@@ -202,8 +202,8 @@ public class SchemaCompare {
 			if (gec.isInternal()) {
 				continue;
 			}
-			compareGraphElementClass(gec, h.getGraphElementClass(gec
-					.getQualifiedName()));
+			compareGraphElementClass(gec,
+					h.getGraphElementClass(gec.getQualifiedName()));
 		}
 
 		marked.add(g);
@@ -223,6 +223,8 @@ public class SchemaCompare {
 
 		compareHierarchy(g, h);
 
+		compareAbstractness(g, h);
+
 		for (Attribute a : g.getOwnAttributeList()) {
 			compareAttribute(g, a, h, h.getAttribute(a.getName()));
 		}
@@ -231,12 +233,20 @@ public class SchemaCompare {
 		marked.add(h);
 	}
 
+	private void compareAbstractness(GraphElementClass g, GraphElementClass h) {
+		if (g.isAbstract() ^ h.isAbstract()) {
+			reportDiff(g.getQualifiedName()
+					+ (g.isAbstract() ? " is" : " is not") + " abstract",
+					h.getQualifiedName() + (h.isAbstract() ? " is" : " is not")
+							+ " abstract");
+		}
+	}
+
 	private void compareAttribute(GraphElementClass g, Attribute a,
 			GraphElementClass h, Attribute b) {
 		if (b == null) {
-			reportDiff(g.getQualifiedName() + "." + a.getName(), h
-					.getQualifiedName()
-					+ " doesn't have such an Atrribute");
+			reportDiff(g.getQualifiedName() + "." + a.getName(),
+					h.getQualifiedName() + " doesn't have such an Atrribute");
 			return;
 		}
 
@@ -244,8 +254,8 @@ public class SchemaCompare {
 			return;
 		}
 
-		if (!a.getDomain().getQualifiedName().equals(
-				b.getDomain().getQualifiedName())) {
+		if (!a.getDomain().getQualifiedName()
+				.equals(b.getDomain().getQualifiedName())) {
 			reportDiff(g.getQualifiedName() + "." + a.getName() + " : "
 					+ a.getDomain().getQualifiedName(), h.getQualifiedName()
 					+ "." + b.getName() + " : "
@@ -261,18 +271,16 @@ public class SchemaCompare {
 		Set<String> gsup = getQNameSet(g.getDirectSuperClasses());
 		Set<String> hsup = getQNameSet(h.getDirectSuperClasses());
 		if (!gsup.equals(hsup)) {
-			reportDiff(g.getQualifiedName() + " superclasses: " + gsup, h
-					.getQualifiedName()
-					+ " superclasses: " + hsup);
+			reportDiff(g.getQualifiedName() + " superclasses: " + gsup,
+					h.getQualifiedName() + " superclasses: " + hsup);
 		}
 
 		// subclassses
 		Set<String> gsub = getQNameSet(g.getAllSubClasses());
 		Set<String> hsub = getQNameSet(h.getAllSubClasses());
 		if (!gsub.equals(hsub)) {
-			reportDiff(g.getQualifiedName() + " subclasses: " + gsub, h
-					.getQualifiedName()
-					+ " subclasses: " + hsub);
+			reportDiff(g.getQualifiedName() + " subclasses: " + gsub,
+					h.getQualifiedName() + " subclasses: " + hsub);
 		}
 	}
 
