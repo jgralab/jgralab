@@ -30,6 +30,7 @@ import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AbstractTraversal;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmStates;
+import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.reachability.visitors.TransitiveVisitorComposition;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.BreadthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.SearchAlgorithm;
@@ -91,7 +92,7 @@ public class WarshallAlgorithm extends AbstractTraversal implements
 		super.reversed();
 		return this;
 	}
-	
+
 	@Override
 	public WarshallAlgorithm undirected() {
 		super.undirected();
@@ -109,14 +110,17 @@ public class WarshallAlgorithm extends AbstractTraversal implements
 		visitors.removeVisitor(visitor);
 	}
 
-
 	@Override
 	public void reset() {
 		super.reset();
-		SearchAlgorithm search = new BreadthFirstSearch(graph,
-				subgraph, null).withNumber();
+		SearchAlgorithm search = new BreadthFirstSearch(graph, subgraph, null)
+				.withNumber();
 		search.setTraversalDirection(traversalDirection);
-		search.execute();
+		try {
+			search.execute();
+		} catch (AlgorithmTerminatedException e) {
+		}
+		assert search.getState() == AlgorithmStates.FINISHED;
 		indexMapping = search.getNumber();
 		vertexOrder = search.getVertexOrder();
 		vertexCount = getVertexCount();
@@ -134,7 +138,7 @@ public class WarshallAlgorithm extends AbstractTraversal implements
 	}
 
 	@Override
-	public WarshallAlgorithm execute() {
+	public WarshallAlgorithm execute() throws AlgorithmTerminatedException {
 		startRunning();
 
 		// clear and initialize arrays

@@ -25,6 +25,7 @@ package de.uni_koblenz.jgralab.algolib.algorithms.search.visitors;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.GraphAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.DepthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.SearchAlgorithm;
@@ -47,27 +48,27 @@ public class DFSVisitorAdapter extends SearchVisitorAdapter implements
 	protected DepthFirstSearch algorithm;
 
 	@Override
-	public void leaveTreeEdge(Edge e) {
+	public void leaveTreeEdge(Edge e) throws AlgorithmTerminatedException {
 
 	}
 
 	@Override
-	public void leaveVertex(Vertex v) {
+	public void leaveVertex(Vertex v) throws AlgorithmTerminatedException {
 
 	}
 
 	@Override
-	public void visitBackwardArc(Edge e) {
+	public void visitBackwardArc(Edge e) throws AlgorithmTerminatedException {
 
 	}
 
 	@Override
-	public void visitCrosslink(Edge e) {
+	public void visitCrosslink(Edge e) throws AlgorithmTerminatedException {
 
 	}
 
 	@Override
-	public void visitForwardArc(Edge e) {
+	public void visitForwardArc(Edge e) throws AlgorithmTerminatedException {
 
 	}
 
@@ -85,6 +86,7 @@ public class DFSVisitorAdapter extends SearchVisitorAdapter implements
 		}
 	}
 
+	@Override
 	public DepthFirstSearch getAlgorithm() {
 		return algorithm;
 	}

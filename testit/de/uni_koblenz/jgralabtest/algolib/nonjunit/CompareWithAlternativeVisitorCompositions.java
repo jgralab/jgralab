@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.DFSVisitorComposition;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.DFSVisitorComposition;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.DFSVisitor;
@@ -125,7 +126,7 @@ public class CompareWithAlternativeVisitorCompositions {
 
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws AlgorithmTerminatedException {
 		System.out
 				.println("Simulating complete DFS with the following attributes:");
 		System.out.println();
@@ -200,7 +201,7 @@ public class CompareWithAlternativeVisitorCompositions {
 		System.out.println("Fini.");
 	}
 
-	private static void oneRun(Stopwatch sw, DFSVisitor comp) {
+	private static void oneRun(Stopwatch sw, DFSVisitor comp) throws AlgorithmTerminatedException {
 		sw.reset();
 		sw.start();
 		for (int i = 0; i < KAPPA; i++) {

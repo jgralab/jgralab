@@ -25,7 +25,7 @@ package de.uni_koblenz.jgralab.algolib.algorithms.topological_order.visitors;
 
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.GraphAlgorithm;
-import de.uni_koblenz.jgralab.algolib.problems.directed.TopologicalOrderSolver;
+import de.uni_koblenz.jgralab.algolib.problems.TopologicalOrderSolver;
 
 public class TopologicalOrderVisitorAdapter implements TopologicalOrderVisitor {
 

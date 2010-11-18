@@ -25,6 +25,7 @@ package de.uni_koblenz.jgralab.algolib.problems;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.functions.Function;
 
 /**
@@ -51,7 +52,7 @@ public interface ShortestPathsFromVertexSolver extends ProblemSolver {
 	 *             from outside (Thread interruption). The algorithm state
 	 *             changes accordingly.
 	 */
-	public ShortestPathsFromVertexSolver execute(Vertex start);
+	public ShortestPathsFromVertexSolver execute(Vertex start) throws AlgorithmTerminatedException;
 
 	/**
 	 * Retrieves the result <code>parent</code> as function.

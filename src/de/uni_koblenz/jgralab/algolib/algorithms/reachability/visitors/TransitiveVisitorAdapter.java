@@ -24,12 +24,14 @@
 package de.uni_koblenz.jgralab.algolib.algorithms.reachability.visitors;
 
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.GraphAlgorithm;
 
 public class TransitiveVisitorAdapter implements TransitiveVisitor {
 
 	@Override
-	public void visitVertexTriple(Vertex u, Vertex v, Vertex w) {
+	public void visitVertexTriple(Vertex u, Vertex v, Vertex w)
+			throws AlgorithmTerminatedException {
 	}
 
 	@Override

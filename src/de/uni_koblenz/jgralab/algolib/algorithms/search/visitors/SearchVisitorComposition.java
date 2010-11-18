@@ -28,11 +28,12 @@ import java.util.List;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.visitors.GraphVisitorComposition;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
 
-public class SearchVisitorComposition extends
-		GraphVisitorComposition implements SearchVisitor {
+public class SearchVisitorComposition extends GraphVisitorComposition implements
+		SearchVisitor {
 
 	private List<SearchVisitor> visitors;
 
@@ -69,7 +70,7 @@ public class SearchVisitorComposition extends
 	}
 
 	@Override
-	public void visitFrond(Edge e) {
+	public void visitFrond(Edge e) throws AlgorithmTerminatedException {
 		int n = visitors.size();
 		for (int i = 0; i < n; i++) {
 			visitors.get(i).visitFrond(e);
@@ -77,7 +78,7 @@ public class SearchVisitorComposition extends
 	}
 
 	@Override
-	public void visitRoot(Vertex v) {
+	public void visitRoot(Vertex v) throws AlgorithmTerminatedException {
 		int n = visitors.size();
 		for (int i = 0; i < n; i++) {
 			visitors.get(i).visitRoot(v);
@@ -85,7 +86,7 @@ public class SearchVisitorComposition extends
 	}
 
 	@Override
-	public void visitTreeEdge(Edge e) {
+	public void visitTreeEdge(Edge e) throws AlgorithmTerminatedException {
 		int n = visitors.size();
 		for (int i = 0; i < n; i++) {
 			visitors.get(i).visitTreeEdge(e);

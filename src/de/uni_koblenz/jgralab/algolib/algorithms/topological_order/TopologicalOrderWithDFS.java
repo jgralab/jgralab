@@ -35,8 +35,8 @@ import de.uni_koblenz.jgralab.algolib.algorithms.topological_order.visitors.Topo
 import de.uni_koblenz.jgralab.algolib.algorithms.topological_order.visitors.TopologicalOrderVisitorComposition;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 import de.uni_koblenz.jgralab.algolib.functions.Permutation;
-import de.uni_koblenz.jgralab.algolib.problems.directed.AcyclicitySolver;
-import de.uni_koblenz.jgralab.algolib.problems.directed.TopologicalOrderSolver;
+import de.uni_koblenz.jgralab.algolib.problems.AcyclicitySolver;
+import de.uni_koblenz.jgralab.algolib.problems.TopologicalOrderSolver;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
 
 public class TopologicalOrderWithDFS extends AbstractTraversal implements
@@ -109,13 +109,13 @@ public class TopologicalOrderWithDFS extends AbstractTraversal implements
 		visitors = new TopologicalOrderVisitorComposition();
 		torderVisitorAdapter = new DFSVisitorAdapter() {
 			@Override
-			public void visitBackwardArc(Edge e) {
+			public void visitBackwardArc(Edge e) throws AlgorithmTerminatedException {
 				acyclic = false;
 				dfs.terminate();
 			}
 
 			@Override
-			public void leaveVertex(Vertex v) {
+			public void leaveVertex(Vertex v) throws AlgorithmTerminatedException {
 				visitors.visitVertexInTopologicalOrder(v);
 			}
 		};

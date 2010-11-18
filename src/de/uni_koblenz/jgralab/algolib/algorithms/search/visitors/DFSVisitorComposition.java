@@ -28,10 +28,11 @@ import java.util.List;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
 
-public class DFSVisitorComposition extends
-		SearchVisitorComposition implements DFSVisitor {
+public class DFSVisitorComposition extends SearchVisitorComposition implements
+		DFSVisitor {
 
 	private List<DFSVisitor> visitors;
 
@@ -68,7 +69,7 @@ public class DFSVisitorComposition extends
 	}
 
 	@Override
-	public void leaveTreeEdge(Edge e) {
+	public void leaveTreeEdge(Edge e) throws AlgorithmTerminatedException {
 		int n = visitors.size();
 		for (int i = 0; i < n; i++) {
 			visitors.get(i).leaveTreeEdge(e);
@@ -76,7 +77,7 @@ public class DFSVisitorComposition extends
 	}
 
 	@Override
-	public void leaveVertex(Vertex v) {
+	public void leaveVertex(Vertex v) throws AlgorithmTerminatedException {
 		int n = visitors.size();
 		for (int i = 0; i < n; i++) {
 			visitors.get(i).leaveVertex(v);
@@ -84,7 +85,7 @@ public class DFSVisitorComposition extends
 	}
 
 	@Override
-	public void visitBackwardArc(Edge e) {
+	public void visitBackwardArc(Edge e) throws AlgorithmTerminatedException {
 		int n = visitors.size();
 		for (int i = 0; i < n; i++) {
 			visitors.get(i).visitBackwardArc(e);
@@ -92,7 +93,7 @@ public class DFSVisitorComposition extends
 	}
 
 	@Override
-	public void visitCrosslink(Edge e) {
+	public void visitCrosslink(Edge e) throws AlgorithmTerminatedException {
 		int n = visitors.size();
 		for (int i = 0; i < n; i++) {
 			visitors.get(i).visitCrosslink(e);
@@ -100,7 +101,7 @@ public class DFSVisitorComposition extends
 	}
 
 	@Override
-	public void visitForwardArc(Edge e) {
+	public void visitForwardArc(Edge e) throws AlgorithmTerminatedException {
 		int n = visitors.size();
 		for (int i = 0; i < n; i++) {
 			visitors.get(i).visitForwardArc(e);

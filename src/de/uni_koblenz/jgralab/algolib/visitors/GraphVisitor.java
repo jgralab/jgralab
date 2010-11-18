@@ -25,6 +25,7 @@ package de.uni_koblenz.jgralab.algolib.visitors;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 
 /**
  * This visitor allows visiting vertices and edges without distinguishing
@@ -44,7 +45,7 @@ public interface GraphVisitor extends Visitor {
 	 * @param v
 	 *            the vertex that is currently visited
 	 */
-	public void visitVertex(Vertex v);
+	public void visitVertex(Vertex v) throws AlgorithmTerminatedException;
 
 	/**
 	 * Executes arbitrary code in the context of the given edge <code>e</code>.
@@ -52,6 +53,6 @@ public interface GraphVisitor extends Visitor {
 	 * @param e
 	 *            the edge that is currently visited
 	 */
-	public void visitEdge(Edge e);
+	public void visitEdge(Edge e) throws AlgorithmTerminatedException;
 
 }

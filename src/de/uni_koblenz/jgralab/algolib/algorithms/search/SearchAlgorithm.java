@@ -29,6 +29,7 @@ import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AbstractTraversal;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmStates;
+import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.functions.ArrayPermutation;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 import de.uni_koblenz.jgralab.algolib.functions.Function;
@@ -302,10 +303,11 @@ public abstract class SearchAlgorithm extends AbstractTraversal implements
 	}
 
 	@Override
-	public abstract SearchAlgorithm execute(Vertex root);
-	
+	public abstract SearchAlgorithm execute(Vertex root)
+			throws AlgorithmTerminatedException;
+
 	@Override
-	public SearchAlgorithm execute() {
+	public SearchAlgorithm execute() throws AlgorithmTerminatedException {
 		for (Vertex currentRoot : graph.vertices()) {
 			execute(currentRoot);
 			if (state == AlgorithmStates.FINISHED) {

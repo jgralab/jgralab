@@ -33,6 +33,7 @@ import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AbstractTraversal;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmStates;
+import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 import de.uni_koblenz.jgralab.algolib.functions.DoubleFunction;
 import de.uni_koblenz.jgralab.algolib.functions.Function;
@@ -151,7 +152,7 @@ public class FordMooreAlgorithm extends AbstractTraversal implements
 	}
 
 	@Override
-	public FordMooreAlgorithm execute(Vertex start) {
+	public FordMooreAlgorithm execute(Vertex start) throws AlgorithmTerminatedException {
 		if (subgraph != null && !subgraph.get(start)) {
 			throw new IllegalArgumentException("Start vertex not in subgraph!");
 		}
@@ -197,7 +198,7 @@ public class FordMooreAlgorithm extends AbstractTraversal implements
 	}
 
 	@Override
-	public FordMooreAlgorithm execute(Vertex start, Vertex target) {
+	public FordMooreAlgorithm execute(Vertex start, Vertex target) throws AlgorithmTerminatedException {
 		if (subgraph != null && !subgraph.get(target)) {
 			throw new IllegalArgumentException("Target vertex not in subgraph!");
 		}

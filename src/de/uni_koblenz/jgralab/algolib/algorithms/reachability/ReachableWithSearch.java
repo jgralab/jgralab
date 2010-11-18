@@ -68,7 +68,7 @@ public class ReachableWithSearch extends AbstractTraversal implements
 		checkStateForSettingVisitors();
 		search.removeVisitor(visitor);
 	}
-	
+
 	@Override
 	public void disableOptionalResults() {
 	}
@@ -119,7 +119,8 @@ public class ReachableWithSearch extends AbstractTraversal implements
 		reachableVisitor = new SearchVisitorAdapter() {
 
 			@Override
-			public void visitVertex(Vertex v) {
+			public void visitVertex(Vertex v)
+					throws AlgorithmTerminatedException {
 				if (v == target) {
 					reachable = true;
 					search.terminate();
@@ -130,7 +131,8 @@ public class ReachableWithSearch extends AbstractTraversal implements
 	}
 
 	@Override
-	public ReachableWithSearch execute(Vertex start, Vertex target) {
+	public ReachableWithSearch execute(Vertex start, Vertex target)
+			throws AlgorithmTerminatedException {
 		search.reset();
 		search.setGraph(graph);
 		search.setSubgraph(subgraph);

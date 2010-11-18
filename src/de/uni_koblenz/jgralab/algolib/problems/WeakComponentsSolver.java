@@ -21,14 +21,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package de.uni_koblenz.jgralab.algolib.problems.undirected;
+package de.uni_koblenz.jgralab.algolib.problems;
 
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.functions.Function;
 
 
 public interface WeakComponentsSolver {
-	public WeakComponentsSolver execute();
+	public WeakComponentsSolver execute() throws AlgorithmTerminatedException;
 
 	public Function<Vertex, Vertex> getWeakComponents();
 }

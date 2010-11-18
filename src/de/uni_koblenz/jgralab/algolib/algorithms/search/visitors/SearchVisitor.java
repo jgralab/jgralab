@@ -25,6 +25,7 @@ package de.uni_koblenz.jgralab.algolib.algorithms.search.visitors;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.visitors.GraphVisitor;
 
 /**
@@ -44,7 +45,7 @@ public interface SearchVisitor extends GraphVisitor {
 	 * @param v
 	 *            the root vertex of a search tree, which is currently visited
 	 */
-	public void visitRoot(Vertex v);
+	public void visitRoot(Vertex v) throws AlgorithmTerminatedException;
 
 	/**
 	 * Visits a tree edge in the search tree. An edge is either a tree edge or a
@@ -54,7 +55,7 @@ public interface SearchVisitor extends GraphVisitor {
 	 * @param e
 	 *            the tree edge that is currently visited
 	 */
-	public void visitTreeEdge(Edge e);
+	public void visitTreeEdge(Edge e) throws AlgorithmTerminatedException;
 
 	/**
 	 * Visits a frond in the search tree. An edge is either a frond or a tree
@@ -65,6 +66,6 @@ public interface SearchVisitor extends GraphVisitor {
 	 * @param e
 	 *            the frond that is currently visited
 	 */
-	public void visitFrond(Edge e);
+	public void visitFrond(Edge e) throws AlgorithmTerminatedException;
 
 }

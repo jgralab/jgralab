@@ -23,7 +23,7 @@
  */
 package de.uni_koblenz.jgralab.algolib.algorithms;
 
-public class AlgorithmTerminatedException extends RuntimeException {
+public class AlgorithmTerminatedException extends Exception {
 
 	/**
 	 * This exception signals the early termination of an algorithm. It is

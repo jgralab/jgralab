@@ -25,15 +25,16 @@ package de.uni_koblenz.jgralab.algolib.algorithms.search.visitors;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.GraphAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.SearchAlgorithm;
 import de.uni_koblenz.jgralab.algolib.visitors.GraphVisitorAdapter;
 
 /**
- * It implements all methods from <code>SearchVisitor</code> as empty stubs. Beyond
- * that, it also handles the storage of the search algorithm object implementing
- * visitors are used by. All instances of <code>SearchVisitor</code> should use
- * this class as superclass.
+ * It implements all methods from <code>SearchVisitor</code> as empty stubs.
+ * Beyond that, it also handles the storage of the search algorithm object
+ * implementing visitors are used by. All instances of
+ * <code>SearchVisitor</code> should use this class as superclass.
  * 
  * @author strauss@uni-koblenz.de
  * 
@@ -42,20 +43,20 @@ public class SearchVisitorAdapter extends GraphVisitorAdapter implements
 		SearchVisitor {
 
 	@Override
-	public void visitFrond(Edge e) {
+	public void visitFrond(Edge e) throws AlgorithmTerminatedException {
 
 	}
 
 	@Override
-	public void visitRoot(Vertex v) {
+	public void visitRoot(Vertex v) throws AlgorithmTerminatedException {
 
 	}
 
 	@Override
-	public void visitTreeEdge(Edge e) {
+	public void visitTreeEdge(Edge e) throws AlgorithmTerminatedException {
 
 	}
-	
+
 	protected SearchAlgorithm algorithm;
 
 	@Override
@@ -75,6 +76,5 @@ public class SearchVisitorAdapter extends GraphVisitorAdapter implements
 	public SearchAlgorithm getAlgorithm() {
 		return algorithm;
 	}
-
 
 }

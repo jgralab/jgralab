@@ -25,28 +25,29 @@ package de.uni_koblenz.jgralab.algolib.visitors;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.GraphAlgorithm;
 
 public class GraphVisitorAdapter implements GraphVisitor {
 
 	@Override
-	public void visitEdge(Edge e) {
-		
+	public void visitEdge(Edge e) throws AlgorithmTerminatedException {
+
 	}
 
 	@Override
-	public void visitVertex(Vertex v) {
-		
+	public void visitVertex(Vertex v) throws AlgorithmTerminatedException {
+
 	}
 
 	@Override
 	public void reset() {
-		
+
 	}
 
 	@Override
 	public void setAlgorithm(GraphAlgorithm alg) {
-		
+
 	}
 
 }

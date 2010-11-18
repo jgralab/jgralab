@@ -24,6 +24,7 @@
 package de.uni_koblenz.jgralab.algolib.problems;
 
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.functions.IntFunction;
 
 /**
@@ -50,7 +51,7 @@ public interface DistanceFromVertexSolver extends ProblemSolver {
 	 *             from outside (Thread interruption). The algorithm state
 	 *             changes accordingly.
 	 */
-	public DistanceFromVertexSolver execute(Vertex start);
+	public DistanceFromVertexSolver execute(Vertex start) throws AlgorithmTerminatedException;
 
 	/**
 	 * Retrieves the result <code>distance</code> as function.

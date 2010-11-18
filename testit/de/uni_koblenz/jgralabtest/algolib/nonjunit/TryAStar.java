@@ -84,7 +84,7 @@ public class TryAStar {
 	private static Location target;
 	private static KDTree<LocationPoint> kdtree;
 
-	public static void main(String[] args) throws GraphIOException {
+	public static void main(String[] args) throws GraphIOException, AlgorithmTerminatedException {
 		Stopwatch sw = new Stopwatch();
 		if (new File(filename).exists()) {
 			graph = WeightedSchema.instance().loadWeightedGraph(filename,

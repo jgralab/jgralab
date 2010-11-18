@@ -52,7 +52,8 @@ public class RecursiveDepthFirstSearch extends DepthFirstSearch {
 	}
 
 	@Override
-	public RecursiveDepthFirstSearch execute(Vertex root) {
+	public RecursiveDepthFirstSearch execute(Vertex root)
+			throws AlgorithmTerminatedException {
 		if (subgraph != null && !subgraph.get(root)
 				|| visitedVertices.get(root)) {
 			return this;
@@ -126,9 +127,10 @@ public class RecursiveDepthFirstSearch extends DepthFirstSearch {
 		visitors.leaveVertex(currentVertex);
 		rNum++;
 	}
-	
+
 	@Override
-	public RecursiveDepthFirstSearch execute(){
+	public RecursiveDepthFirstSearch execute()
+			throws AlgorithmTerminatedException {
 		super.execute();
 		return this;
 	}

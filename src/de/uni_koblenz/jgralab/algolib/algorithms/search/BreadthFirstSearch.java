@@ -27,6 +27,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.SearchVisitorComposition;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 import de.uni_koblenz.jgralab.algolib.problems.TraversalFromVertexSolver;
@@ -54,7 +55,6 @@ public class BreadthFirstSearch extends SearchAlgorithm implements
 	public BreadthFirstSearch(Graph graph) {
 		super(graph);
 	}
-	
 
 	@Override
 	public BreadthFirstSearch withLevel() {
@@ -123,10 +123,10 @@ public class BreadthFirstSearch extends SearchAlgorithm implements
 		visitors = new SearchVisitorComposition();
 	}
 
-	public int getFirstV(){
+	public int getFirstV() {
 		return firstV;
 	}
-	
+
 	@Override
 	public void addVisitor(Visitor visitor) {
 		checkStateForSettingVisitors();
@@ -141,7 +141,8 @@ public class BreadthFirstSearch extends SearchAlgorithm implements
 	}
 
 	@Override
-	public BreadthFirstSearch execute(Vertex root) {
+	public BreadthFirstSearch execute(Vertex root)
+			throws AlgorithmTerminatedException {
 		if (subgraph != null && !subgraph.get(root)
 				|| visitedVertices.get(root)) {
 			return this;
@@ -164,7 +165,8 @@ public class BreadthFirstSearch extends SearchAlgorithm implements
 		// main loop
 		while (firstV < num && vertexOrder[firstV] != null) {
 			Vertex currentVertex = vertexOrder[firstV++]; // pop
-			for (Edge currentEdge : currentVertex.incidences(traversalDirection)) {
+			for (Edge currentEdge : currentVertex
+					.incidences(traversalDirection)) {
 				cancelIfInterrupted();
 				if (visitedEdges.get(currentEdge) || subgraph != null
 						&& !subgraph.get(currentEdge) || navigable != null
@@ -203,9 +205,9 @@ public class BreadthFirstSearch extends SearchAlgorithm implements
 		done();
 		return this;
 	}
-	
+
 	@Override
-	public BreadthFirstSearch execute(){
+	public BreadthFirstSearch execute() throws AlgorithmTerminatedException {
 		super.execute();
 		return this;
 	}

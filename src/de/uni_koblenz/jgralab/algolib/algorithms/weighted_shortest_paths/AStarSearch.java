@@ -29,6 +29,7 @@ import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AbstractTraversal;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmStates;
+import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.SearchVisitorAdapter;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.SearchVisitorComposition;
 import de.uni_koblenz.jgralab.algolib.functions.BinaryDoubleFunction;
@@ -134,7 +135,7 @@ public class AStarSearch extends AbstractTraversal implements
 		targetVertexReachedVisitor = new SearchVisitorAdapter() {
 
 			@Override
-			public void visitVertex(Vertex v) {
+			public void visitVertex(Vertex v) throws AlgorithmTerminatedException {
 				if (target == v) {
 					terminate();
 				}
@@ -155,7 +156,7 @@ public class AStarSearch extends AbstractTraversal implements
 	}
 
 	@Override
-	public AStarSearch execute(Vertex start, Vertex target) {
+	public AStarSearch execute(Vertex start, Vertex target) throws AlgorithmTerminatedException {
 		if (subgraph != null && !subgraph.get(target)) {
 			throw new IllegalArgumentException("Target vertex not in subgraph!");
 		}
@@ -168,7 +169,7 @@ public class AStarSearch extends AbstractTraversal implements
 		return this;
 	}
 
-	protected void internalExecute(Vertex start, Vertex target) {
+	protected void internalExecute(Vertex start, Vertex target) throws AlgorithmTerminatedException {
 		if (subgraph != null && !subgraph.get(start)) {
 			throw new IllegalArgumentException("Start vertex not in subgraph!");
 		}
