@@ -30,6 +30,8 @@
       
         navdoc = svgdoc.getElementById('nav');
         
+        var rect = svgdoc.getElementById('rect');
+        
         // initialize wheel support
         if (document.addEventListener){
         	navdoc.addEventListener("DOMMouseScroll", zoomWithScroll, false);
@@ -40,10 +42,20 @@
       
         // read viewbox coords from navdoc; set to local variables
         var vbData = navdoc.getAttributeNS(null, 'viewBox').split(' ');
-        bbX = parseInt(vbData[0]);
-        bbY = parseInt(vbData[1]);
-        bbW = parseInt(vbData[2]);
-        bbH = parseInt(vbData[3]);
+        bbX = parseFloat(vbData[0]);
+        bbY = parseFloat(vbData[1]);
+        bbW = parseFloat(vbData[2]);
+        if(bbW > 1000){
+        	var rectWidth = rect.getAttributeNS(null,"width");
+        	bbX = bbW/2 - rectWidth/2;
+        	bbW = 1000;
+        }
+        bbH = parseFloat(vbData[3]);
+        if(bbH > 1000){
+        	var rectHeight= rect.getAttributeNS(null,"height");
+        	bbY = bbH/2 - rectHeight/2;
+        	bbH = 1000;
+        }
         
         updateViewBox(bbX, bbY, bbW, bbH);
       }
