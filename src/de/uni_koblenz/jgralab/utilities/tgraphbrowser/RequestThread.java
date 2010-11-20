@@ -59,8 +59,6 @@ import java.util.regex.Pattern;
  */
 public class RequestThread extends Thread {
 
-	private static final int MINIMUM_HEIGHT_OF_GRAPH_IN_GRAPHICAL_VIEW = 500;
-	private static final int MINIMUM_WIDTH_OF_GRAPH_IN_GRAPHICAL_VIEW = 1000;
 	static final String SVG_WITH_ZOOM_AND_MOVE_SUPPORT = "resources/svgNavigation.svg";
 	private static File workspace;
 	private final StateRepository rep;
@@ -134,8 +132,7 @@ public class RequestThread extends Thread {
 					|| !(request.endsWith(" HTTP/1.0") || request
 							.endsWith("HTTP/1.1"))) {
 				// Invalid request type (no "GET")
-				sendError(out, MINIMUM_HEIGHT_OF_GRAPH_IN_GRAPHICAL_VIEW,
-						"Invalid Method.");
+				sendError(out, 500, "Invalid Method.");
 				return;
 			}
 			if (request.startsWith("POST ")) {
@@ -348,8 +345,8 @@ public class RequestThread extends Thread {
 			sendErrorMessage(out, "This session was deleted"
 					+ " because there wasn't any communication "
 					+ "with the server in the last "
-					+ TGraphBrowserServer.DeleteUnusedStates.timeout
-					/ MINIMUM_WIDTH_OF_GRAPH_IN_GRAPHICAL_VIEW + "sec.");
+					+ TGraphBrowserServer.DeleteUnusedStates.timeout / 1000
+					+ "sec.");
 		} else if (timestamp < TGraphBrowserServer.starttime) {
 			// the state wasn't from this instance of the server
 			sendErrorMessage(out, "This server was restarted."
@@ -791,21 +788,6 @@ public class RequestThread extends Thread {
 			if (line.contains("viewBox=\"")) {
 				String subline = line.split(Pattern.quote("viewBox=\""))[1];
 				viewBoxDimension = subline.substring(0, subline.indexOf("\""));
-				// enable minimum size of graph view
-				String[] dimension = viewBoxDimension.split("\\s");
-				double width, height;
-				width = Double.parseDouble(dimension[2]);
-				height = Double.parseDouble(dimension[3]);
-				if (width > MINIMUM_WIDTH_OF_GRAPH_IN_GRAPHICAL_VIEW) {
-					dimension[2] = String
-							.valueOf(MINIMUM_WIDTH_OF_GRAPH_IN_GRAPHICAL_VIEW);
-				}
-				if (height > MINIMUM_HEIGHT_OF_GRAPH_IN_GRAPHICAL_VIEW) {
-					dimension[3] = String
-							.valueOf(MINIMUM_HEIGHT_OF_GRAPH_IN_GRAPHICAL_VIEW);
-				}
-				viewBoxDimension = dimension[0] + " " + dimension[1] + " "
-						+ dimension[2] + " " + dimension[3];
 			}
 		}
 		if (line != null) {
