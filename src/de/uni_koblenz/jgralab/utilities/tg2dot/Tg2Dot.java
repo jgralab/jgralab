@@ -58,8 +58,8 @@ public class Tg2Dot extends Tg2Whatever {
 	private int fontsize = 14;
 	private boolean abbreviateEdgeAttributeNames = false;
 	private boolean printIncidenceNumbers = false;
-	private Set<Class<? extends AttributedElement>> reversedEdgeTypes = null;
-	private Map<Class<? extends AttributedElement>, Boolean> revEdgeTypeCache = null;
+	private Set<Class<? extends Edge>> reversedEdgeTypes = null;
+	private Map<Class<? extends Edge>, Boolean> revEdgeTypeCache = null;
 
 	public boolean isPrintIncidenceNumbers() {
 		return printIncidenceNumbers;
@@ -170,7 +170,8 @@ public class Tg2Dot extends Tg2Whatever {
 			return reversedEdges;
 		}
 
-		Class<? extends AttributedElement> ec = e.getM1Class();
+		@SuppressWarnings("unchecked")
+		Class<? extends Edge> ec = (Class<? extends Edge>) e.getM1Class();
 		Boolean reversed = revEdgeTypeCache.get(ec);
 		if (reversed != null) {
 			return reversedEdges ^ reversed;
@@ -180,7 +181,7 @@ public class Tg2Dot extends Tg2Whatever {
 		if (reversedEdgeTypes.contains(ec)) {
 			rev = true;
 		} else {
-			for (Class<? extends AttributedElement> ecls : reversedEdgeTypes) {
+			for (Class<? extends Edge> ecls : reversedEdgeTypes) {
 				if (ecls.isInstance(e)) {
 					rev = true;
 					break;
@@ -412,12 +413,11 @@ public class Tg2Dot extends Tg2Whatever {
 
 	public static void printGraphAsDot(Graph graph, boolean reversedEdges,
 			String outputFileName) {
-		printGraphAsDot(graph, reversedEdges, outputFileName, null);
+		printGraphAsDot(graph, reversedEdges, outputFileName);
 	}
 
 	public static void printGraphAsDot(Graph graph, boolean reversedEdges,
-			String outputFileName,
-			List<Class<? extends AttributedElement>> reversedEdgeTypes) {
+			String outputFileName, List<Class<? extends Edge>> reversedEdgeTypes) {
 		Tg2Dot t2d = new Tg2Dot();
 		t2d.setGraph(graph);
 		t2d.setReversedEdges(reversedEdges);
@@ -425,9 +425,9 @@ public class Tg2Dot extends Tg2Whatever {
 		t2d.setRanksep(0.5);
 		t2d.setOutputFile(outputFileName);
 
-		HashSet<Class<? extends AttributedElement>> revEdgeTypes = new HashSet<Class<? extends AttributedElement>>();
+		HashSet<Class<? extends Edge>> revEdgeTypes = new HashSet<Class<? extends Edge>>();
 		if (reversedEdgeTypes != null) {
-			for (Class<? extends AttributedElement> ec : reversedEdgeTypes) {
+			for (Class<? extends Edge> ec : reversedEdgeTypes) {
 				revEdgeTypes.add(ec);
 			}
 		}
@@ -461,8 +461,8 @@ public class Tg2Dot extends Tg2Whatever {
 	 *            reversed
 	 */
 	public void setReversedEdgeTypes(
-			Set<Class<? extends AttributedElement>> reversedEdgeTypes) {
+			Set<Class<? extends Edge>> reversedEdgeTypes) {
 		this.reversedEdgeTypes = reversedEdgeTypes;
-		revEdgeTypeCache = new HashMap<Class<? extends AttributedElement>, Boolean>();
+		revEdgeTypeCache = new HashMap<Class<? extends Edge>, Boolean>();
 	}
 }
