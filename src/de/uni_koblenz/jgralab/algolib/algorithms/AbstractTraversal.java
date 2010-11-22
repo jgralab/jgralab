@@ -74,11 +74,15 @@ public abstract class AbstractTraversal extends GraphAlgorithm implements
 	 */
 	public void setTraversalDirection(EdgeDirection traversalDirection) {
 		checkStateForSettingParameters();
-		// TODO: think about this, what if the traversal is undirected only?
-		if (traversalDirection == EdgeDirection.INOUT && !isHybrid()) {
-			throw new UnsupportedOperationException(
-					"This algorithm does not support undirected graphs.");
-
+		if (!isHybrid()) {
+			if (isDirected() && traversalDirection == EdgeDirection.INOUT) {
+				throw new UnsupportedOperationException(
+						"This algorithm does not support undirected graphs.");
+			} else if (!isDirected()
+					&& traversalDirection != EdgeDirection.INOUT) {
+				throw new UnsupportedOperationException(
+						"This algorithm does not support directed graphs.");
+			}
 		}
 		this.traversalDirection = traversalDirection;
 	}
