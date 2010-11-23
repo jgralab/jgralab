@@ -230,7 +230,7 @@ public abstract class SqlStatementList {
 
 	// to increase performance
 	public abstract PreparedStatement addIndexOnLambdaSeq() throws SQLException;
-	public abstract PreparedStatement dropIndexOnLambdaSeq() throws SQLException;
+	public abstract PreparedStatement dropIndexOnLambdaSeq() throws SQLException;  // TODO find better name as it's an index on table Incidence, modeling LambdaSeq
 	
 	//public abstract PreparedStatement clusterIncidenceTable() throws SQLException; // TODO Must be PostgreSql specific.
 	//public abstract PreparedStatement dropClusteredIndicesOnAttributeValues() throws SQLException;
