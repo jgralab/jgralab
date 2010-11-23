@@ -22,7 +22,7 @@ public class DerbyDb extends GraphDatabase {
 	@Override
 	protected void applyVendorSpecificDbSchema() throws GraphDatabaseException, SQLException{
 		this.addPrimaryKeyConstraints();
-		this.addForeignKeyConstraints();
+		//this.addForeignKeyConstraints();
 		this.addIndices();
 		//this.addStoredProcedures();		
 	}
@@ -36,10 +36,8 @@ public class DerbyDb extends GraphDatabase {
 	}
 
 	@Override
-	protected void changeFromGraphCreationToGraphTraversal() {
-		// TODO evaluate what has to be done
-		// add more PKs
-		// add FKs
+	protected void changeFromGraphCreationToGraphTraversal() throws SQLException {
+		super.addForeignKeyConstraints();
 	}
 
 	@Override
@@ -52,13 +50,13 @@ public class DerbyDb extends GraphDatabase {
 	@Override
 	protected void changeFromGraphCreationToBulkImport() throws SQLException {
 		this.dropIndices();
-		this.dropForeignKeyConstraints();
+		//this.dropForeignKeyConstraints();
 		this.dropPrimaryKeyConstraints();
 	}
 	
 	@Override
 	protected void changeFromGraphTraversalToGraphCreation() throws SQLException{
-		//TODO drop FKs
+		this.dropForeignKeyConstraints();
 	}
 	
 	@Override

@@ -1319,7 +1319,6 @@ public abstract class GraphDatabase {
 	private Schema createSchema(String packagePrefix, String name)	throws GraphIOException {
 		try {
 			Class<Schema> schemaClass = (Class<Schema>) Class.forName(packagePrefix + "." + name);
-			@SuppressWarnings("rawtypes")
 			Class[] params = {};
 			Method instanceMethod = schemaClass.getMethod("instance", params);
 			Object[] args = {};
@@ -1959,7 +1958,7 @@ public abstract class GraphDatabase {
 	public void applyDbSchema() throws GraphDatabaseException{
 		try {
 			this.applyDbSchemaInTransaction();
-			this.mode = OptimizationMode.GRAPH_TRAVERSAL;
+			this.mode = OptimizationMode.GRAPH_CREATION;
 		}
 		catch (SQLException exception) {
 			exception.printStackTrace();
@@ -2025,9 +2024,7 @@ public abstract class GraphDatabase {
 	}
 	
 	protected void dropIndices() throws SQLException {
-		//PreparedStatement statement = this.sqlStatementList.dropClusteredIndicesOnAttributeValues(); // TODO split into three
-		//statement.execute();
-		PreparedStatement statement = this.sqlStatementList.dropIndexOnLambdaSeq(); // TODO find better name as it's an index on table Incidence, modeling LambdaSeq
+		PreparedStatement statement = this.sqlStatementList.dropIndexOnLambdaSeq();
 		statement.execute();
 	}
 

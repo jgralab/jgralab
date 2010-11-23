@@ -21,10 +21,10 @@ public class MySqlDb extends GraphDatabase {
 	
 	@Override
 	protected void applyVendorSpecificDbSchema() throws GraphDatabaseException, SQLException{
-		this.addPrimaryKeyConstraints();
-		this.addForeignKeyConstraints();
-		this.addIndices();
-		//this.addStoredProcedures();		
+		super.addPrimaryKeyConstraints();
+		//super.addForeignKeyConstraints();
+		super.addIndices();
+		//super.addStoredProcedures();		
 	}
 	
 	@Override
@@ -36,29 +36,27 @@ public class MySqlDb extends GraphDatabase {
 	}
 
 	@Override
-	protected void changeFromGraphCreationToGraphTraversal() {
-		// TODO evaluate what has to be done
-		// add more PKs
-		// add FKs
+	protected void changeFromGraphCreationToGraphTraversal() throws SQLException {
+		super.addForeignKeyConstraints();
 	}
 
 	@Override
 	protected void changeFromGraphTraversalToBulkImport() throws SQLException {
-		this.dropIndices();
-		this.dropForeignKeyConstraints();
-		this.dropPrimaryKeyConstraints();
+		super.dropIndices();
+		super.dropForeignKeyConstraints();
+		super.dropPrimaryKeyConstraints();
 	}	
 
 	@Override
 	protected void changeFromGraphCreationToBulkImport() throws SQLException {
-		this.dropIndices();
-		this.dropForeignKeyConstraints();
-		this.dropPrimaryKeyConstraints();
+		super.dropIndices();
+		//this.dropForeignKeyConstraints();
+		super.dropPrimaryKeyConstraints();
 	}
 	
 	@Override
 	protected void changeFromGraphTraversalToGraphCreation() throws SQLException{
-		//TODO drop FKs
+		super.dropForeignKeyConstraints();
 	}
 	
 	@Override

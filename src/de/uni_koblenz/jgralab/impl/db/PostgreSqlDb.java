@@ -31,7 +31,7 @@ public class PostgreSqlDb extends GraphDatabase{
 	@Override
 	protected void applyVendorSpecificDbSchema() throws GraphDatabaseException, SQLException{
 		this.addPrimaryKeyConstraints();
-		this.addForeignKeyConstraints();
+		//this.addForeignKeyConstraints();
 		this.addIndices();
 		this.addStoredProcedures();
 	}
