@@ -766,21 +766,22 @@ public interface Graph extends AttributedElement {
 			Object... components);
 
 	/**
-	 * Sorts the vertex list according to the given comparator in ascending
+	 * Sorts the vertex sequence according to the given comparator in ascending
 	 * order.
 	 * 
 	 * @param comp
 	 *            the comparator defining the desired vertex order.
 	 */
-	public void sortVertexList(Comparator<Vertex> comp);
+	public void sortVertices(Comparator<Vertex> comp);
 
 	/**
-	 * Sorts the edge list according to the given comparator in ascending order.
+	 * Sorts the edge sequence according to the given comparator in ascending
+	 * order.
 	 * 
 	 * @param comp
 	 *            the comparator defining the desired edge order.
 	 */
-	public void sortEdgeList(Comparator<Edge> comp);
+	public void sortEdges(Comparator<Edge> comp);
 
 	/**
 	 * Registers the given <code>newListener</code> to the internal listener

@@ -1666,7 +1666,7 @@ public abstract class GraphBaseImpl implements Graph {
 	}
 
 	// sort vertices
-	public void sortVertexList(Comparator<Vertex> comp) {
+	public void sortVertices(Comparator<Vertex> comp) {
 
 		if (getFirstVertex() == null) {
 			// no sorting required for empty vertex lists
@@ -1803,7 +1803,7 @@ public abstract class GraphBaseImpl implements Graph {
 
 	// sort edges
 
-	public void sortEdgeList(Comparator<Edge> comp) {
+	public void sortEdges(Comparator<Edge> comp) {
 
 		if (getFirstEdge() == null) {
 			// no sorting required for empty edge lists

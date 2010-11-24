@@ -378,7 +378,7 @@ public class EdgeListTest extends InstanceTest {
 
 		};
 
-		g.sortEdgeList(comp);
+		g.sortEdges(comp);
 
 		i = EDGE_COUNT;
 		for (Edge currentEdge : g.edges()) {
@@ -394,7 +394,7 @@ public class EdgeListTest extends InstanceTest {
 
 		};
 
-		g.sortEdgeList(comp);
+		g.sortEdges(comp);
 
 		i = 1;
 		for (Edge currentEdge : g.edges()) {

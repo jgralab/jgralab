@@ -341,7 +341,7 @@ public class VertexListTest extends InstanceTest {
 
 		};
 
-		g.sortVertexList(comp);
+		g.sortVertices(comp);
 
 		i = VERTEX_COUNT;
 		for (Vertex currentNode : g.vertices()) {
@@ -357,7 +357,7 @@ public class VertexListTest extends InstanceTest {
 
 		};
 
-		g.sortVertexList(comp);
+		g.sortVertices(comp);
 
 		i = 1;
 		for (Vertex currentNode : g.vertices()) {
