@@ -316,6 +316,7 @@ public class LoadTest extends InstanceTest {
 	// checkEqualEdgeList(g1, g2);
 	// commit(g2);
 	// }
+	@SuppressWarnings("deprecation")
 	@Test
 	public void testFreeElementList() throws CommitFailedException {
 		Graph g1 = null;
