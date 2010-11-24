@@ -124,11 +124,12 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	protected GraphImpl(String id, int vMax, int eMax, GraphClass graphClass,
 			GraphDatabase graphDatabase) {
 		this(id, graphClass, vMax, eMax);
-		if (graphDatabase != null)
+		if (graphDatabase != null) {
 			this.containingDatabase = graphDatabase;
-		else
+		} else {
 			throw new GraphException(
 					"Cannot create a graph with database support with no database given.");
+		}
 	}
 
 	/**
@@ -182,8 +183,9 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 
 	@Override
 	public void setGraphVersion(long graphVersion) {
-		if (super.getGraphVersion() != graphVersion)
+		if (super.getGraphVersion() != graphVersion) {
 			this.updateGraphVersionInMemory(graphVersion);
+		}
 	}
 
 	private void updateGraphVersionInMemory(long graphVersion) {
@@ -204,19 +206,21 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 
 	@Override
 	protected void addVertex(Vertex newVertex) {
-		if (newVertex.getId() == 0)
+		if (newVertex.getId() == 0) {
 			this.addFreshlyCreatedVertex(newVertex);
-		else
+		} else {
 			this.testValidityOfLoadedVertex(newVertex);
+		}
 	}
 
 	private void testValidityOfLoadedVertex(Vertex vertex) {
 		int vId = vertex.getId();
-		if (vId <= 0)
+		if (vId <= 0) {
 			throw new GraphException("Cannot load a vertex with id <= 0.");
 		// else if (vId > vMax)
 		// throw new GraphException("Vertex id " + vId +
 		// " is bigger than vSize.");
+		}
 	}
 
 	private void addFreshlyCreatedVertex(Vertex vertex) {
@@ -285,33 +289,37 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	}
 
 	private void testEdgeSuitingVertices(Edge edge, Vertex alpha, Vertex omega) {
-		if (!alpha.isValidAlpha(edge))
+		if (!alpha.isValidAlpha(edge)) {
 			throw new GraphException("Edges of class "
 					+ edge.getAttributedElementClass().getQualifiedName()
 					+ " may not start at vertices of class "
 					+ alpha.getAttributedElementClass().getQualifiedName());
-		if (!omega.isValidOmega(edge))
+		}
+		if (!omega.isValidOmega(edge)) {
 			throw new GraphException("Edges of class "
 					+ edge.getAttributedElementClass().getQualifiedName()
 					+ " may not end at vertices of class "
 					+ omega.getAttributedElementClass().getQualifiedName());
+		}
 	}
 
 	private void proceedWithAdditionOf(Edge edge, Vertex alpha, Vertex omega) {
 		assert edge.getId() >= 0;
-		if (edge.getId() == 0)
+		if (edge.getId() == 0) {
 			this.addFreshlyCreatedEdge(edge, alpha, omega);
-		else
+		} else {
 			this.testValidityOfLoadedEdge(edge);
+		}
 	}
 
 	private void testValidityOfLoadedEdge(Edge edge) {
 		int eId = edge.getId();
-		if (eId <= 0)
+		if (eId <= 0) {
 			throw new GraphException("Cannot load an edge with id <= 0");
-		else if (eId > eMax)
+		} else if (eId > eMax) {
 			throw new GraphException("Edge's id " + eId
 					+ " is bigger than maximum capacity of edges allowed.");
+		}
 	}
 
 	private void addFreshlyCreatedEdge(Edge edge, Vertex alpha, Vertex omega) {
@@ -377,7 +385,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 
 	@Override
 	protected Vertex internalCreateVertex(Class<? extends Vertex> cls) {
-		Vertex vertex = (DatabasePersistableVertex) graphFactory
+		Vertex vertex = graphFactory
 				.createVertexWithDatabaseSupport(cls, 0, this);
 		vertex.initializeAttributesWithDefaultValues();
 		this.graphCache.addVertex((DatabasePersistableVertex) vertex);
@@ -450,14 +458,16 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 
 	@Override
 	public void setVCount(int count) {
-		if (count > super.vMax)
+		if (count > super.vMax) {
 			expandVertexArray(count);
+		}
 	}
 
 	@Override
 	protected void setECount(int count) {
-		if (count > super.eMax)
+		if (count > super.eMax) {
 			expandEdgeArray(count);
+		}
 	}
 
 	@Override
@@ -528,14 +538,16 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 
 	@Override
 	public void setId(String id) {
-		if (super.getId() != id)
+		if (super.getId() != id) {
 			this.updateId(id);
+		}
 	}
 
 	private void updateId(String id) {
 		super.setId(id);
-		if (this.isPersistent() && this.isInitialized())
+		if (this.isPersistent() && this.isInitialized()) {
 			this.writeBackGraphId();
+		}
 	}
 
 	private void writeBackGraphId() {
@@ -550,10 +562,11 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 
 	@Override
 	public Vertex getVertex(int vId) {
-		if (this.isValidVertexId(vId))
+		if (this.isValidVertexId(vId)) {
 			return this.internalGetVertexFromCacheOrDatabase(vId);
-		else
+		} else {
 			throw new GraphException("Id of vertex must be > 0.");
+		}
 	}
 
 	private boolean isValidVertexId(int vId) {
@@ -561,17 +574,19 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	}
 
 	private Vertex internalGetVertexFromCacheOrDatabase(int vId) {
-		if (this.vSeq.containsVertex(vId))
+		if (this.vSeq.containsVertex(vId)) {
 			return this.getVertexFromCacheOrDatabase(vId);
-		else
+		} else {
 			return null;
+		}
 	}
 
 	private DatabasePersistableVertex getVertexFromCacheOrDatabase(int vId) {
-		if (this.graphCache.containsVertex(this, vId))
+		if (this.graphCache.containsVertex(this, vId)) {
 			return this.graphCache.getVertex(this, vId);
-		else
+		} else {
 			return this.getAndCacheVertexFromDatabase(vId);
+		}
 	}
 
 	private DatabasePersistableVertex getAndCacheVertexFromDatabase(int vId) {
@@ -582,10 +597,11 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 
 	@Override
 	public Edge getEdge(int eId) {
-		if (this.isValidEdgeId(eId))
+		if (this.isValidEdgeId(eId)) {
 			return this.internalGetOrientedEdge(eId);
-		else
+		} else {
 			throw new GraphException("Edge id must be != 0.");
+		}
 	}
 
 	private boolean isValidEdgeId(int eId) {
@@ -593,25 +609,28 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	}
 
 	private Edge internalGetOrientedEdge(int eId) {
-		if (this.eSeq.containsEdge(eId))
+		if (this.eSeq.containsEdge(eId)) {
 			return this.getOrientedEdge(eId);
-		else
+		} else {
 			return null;
+		}
 	}
 
 	private Edge getOrientedEdge(int eId) {
-		if (eId > 0)
+		if (eId > 0) {
 			return this.getEdgeFromCacheOrDatabase(eId);
-		else
+		} else {
 			return this.getEdgeFromCacheOrDatabase(Math.abs(eId))
 					.getReversedEdge();
+		}
 	}
 
 	private DatabasePersistableEdge getEdgeFromCacheOrDatabase(int eId) {
-		if (this.graphCache.containsEdge(this, eId))
+		if (this.graphCache.containsEdge(this, eId)) {
 			return this.graphCache.getEdge(this, eId);
-		else
+		} else {
 			return this.getAndCacheEdgeFromDatabase(eId);
+		}
 	}
 
 	private DatabasePersistableEdge getAndCacheEdgeFromDatabase(int eId) {
@@ -658,8 +677,9 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 		assert vertexToBeDeleted != null;
 		DatabasePersistableVertex vertex = (DatabasePersistableVertex) vertexToBeDeleted;
 		this.graphCache.removeVertex(this, vertex.getId());
-		if (vertex.isPersistent())
+		if (vertex.isPersistent()) {
 			this.deleteVertexAndIncidentEdgesFromDatabase(vertex);
+		}
 		vertex.deleted();
 	}
 
@@ -684,8 +704,9 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	protected void edgeAfterDeleted(Edge e, Vertex oldAlpha, Vertex oldOmega) {
 		assert e != null;
 		DatabasePersistableEdge edge = (DatabasePersistableEdge) e;
-		if (edge.isPersistent())
+		if (edge.isPersistent()) {
 			this.deleteEdgeFromDatabase(edge);
+		}
 		this.graphCache.removeEdge(this, edge.getId());
 		edge.deleted();
 	}
@@ -773,36 +794,40 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 
 	@Override
 	protected void expandVertexArray(int newSize) {
-		if (newSize > vMax)
+		if (newSize > vMax) {
 			expandFreeVertexList(newSize);
-		else
+		} else {
 			throw new GraphException("newSize must > vSize: vSize=" + vMax
 					+ ", newSize=" + newSize);
+		}
 	}
 
 	private void expandFreeVertexList(int newSize) {
-		if (getFreeVertexList() == null)
+		if (getFreeVertexList() == null) {
 			setFreeVertexList(new FreeIndexList(newSize));
-		else
+		} else {
 			getFreeVertexList().expandBy(newSize - vMax);
+		}
 		vMax = newSize;
 		notifyMaxVertexCountIncreased(newSize);
 	}
 
 	@Override
 	protected void expandEdgeArray(int newSize) {
-		if (newSize > eMax)
+		if (newSize > eMax) {
 			this.expandFreeEdgeList(newSize);
-		else
+		} else {
 			throw new GraphException("newSize must be > eSize: eSize=" + eMax
 					+ ", newSize=" + newSize);
+		}
 	}
 
 	private void expandFreeEdgeList(int newSize) {
-		if (getFreeEdgeList() == null)
+		if (getFreeEdgeList() == null) {
 			setFreeEdgeList(new FreeIndexList(newSize));
-		else
+		} else {
 			getFreeEdgeList().expandBy(newSize - eMax);
+		}
 		eMax = newSize;
 		super.notifyMaxEdgeCountIncreased(newSize);
 	}
@@ -1273,6 +1298,11 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	@Override
 	public final boolean hasTransactionSupport() {
 		return false;
+	}
+	
+	@Override
+	public final boolean hasDatabaseSupport(){
+		return true;
 	}
 
 	@Override
