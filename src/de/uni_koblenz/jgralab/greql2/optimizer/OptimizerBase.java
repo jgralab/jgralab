@@ -45,6 +45,8 @@ import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
+import de.uni_koblenz.jgralab.greql2.schema.IsBoundVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsDeclaredVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsSimpleDeclOf;
 import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
@@ -132,6 +134,26 @@ public abstract class OptimizerBase implements Optimizer {
 		if (var1 == var2) {
 			return false;
 		}
+		IsBoundVarOf ibvo1 = var1.getFirstIsBoundVarOfIncidence();
+		IsBoundVarOf ibvo2 = var2.getFirstIsBoundVarOfIncidence();
+
+		if (ibvo1 != null) {
+			if (ibvo2 == null) {
+				// Externally bound vars are always before locally declared vars
+				return true;
+			}
+			Greql2Expression root = (Greql2Expression) ibvo1.getOmega();
+			for (IsBoundVarOf ibvo : root.getIsBoundVarOfIncidences()) {
+				ibvo = (IsBoundVarOf) ibvo.getNormalEdge();
+				if (ibvo == ibvo1) {
+					return true;
+				} else if (ibvo == ibvo2) {
+					return false;
+				}
+			}
+			throw new OptimizerException("You must never come here...");
+		}
+
 		SimpleDeclaration sd1 = (SimpleDeclaration) var1
 				.getFirstIsDeclaredVarOfIncidence(EdgeDirection.OUT).getOmega();
 		Declaration decl1 = (Declaration) sd1.getFirstIsSimpleDeclOfIncidence(
@@ -236,19 +258,20 @@ public abstract class OptimizerBase implements Optimizer {
 			// there's nothing to split out anymore
 			return sd;
 		}
-		Declaration parentDecl = (Declaration) sd.getFirstIsSimpleDeclOfIncidence(
-				EdgeDirection.OUT).getOmega();
+		Declaration parentDecl = (Declaration) sd
+				.getFirstIsSimpleDeclOfIncidence(EdgeDirection.OUT).getOmega();
 		IsSimpleDeclOf oldEdge = sd.getFirstIsSimpleDeclOfIncidence();
 		SimpleDeclaration newSD = syntaxgraph.createSimpleDeclaration();
 		IsSimpleDeclOf newEdge = syntaxgraph.createIsSimpleDeclOf(newSD,
 				parentDecl);
 		syntaxgraph.createIsTypeExprOfDeclaration((Expression) sd
-				.getFirstIsTypeExprOfDeclarationIncidence(EdgeDirection.IN).getAlpha(),
-				newSD);
+				.getFirstIsTypeExprOfDeclarationIncidence(EdgeDirection.IN)
+				.getAlpha(), newSD);
 		newEdge.getReversedEdge().putIncidenceAfter(oldEdge.getReversedEdge());
 
 		for (Variable var : varsToBeSplit) {
-			IsDeclaredVarOf inc = sd.getFirstIsDeclaredVarOfIncidence(EdgeDirection.IN);
+			IsDeclaredVarOf inc = sd
+					.getFirstIsDeclaredVarOfIncidence(EdgeDirection.IN);
 			HashSet<IsDeclaredVarOf> relinkIncs = new HashSet<IsDeclaredVarOf>();
 			while (inc != null) {
 				if (inc.getAlpha() == var) {

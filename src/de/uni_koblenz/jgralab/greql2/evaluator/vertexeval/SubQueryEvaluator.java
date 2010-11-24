@@ -99,8 +99,8 @@ public class SubQueryEvaluator extends FunctionApplicationEvaluator {
 		for (IsBoundVarOf ibv : root.getIsBoundVarOfIncidences()) {
 			Variable var = (Variable) ibv.getAlpha();
 			boundVariables.put(var.get_name(), parameters[i]);
-			System.out.println("Binding " + var.get_name() + " = "
-					+ parameters[i]);
+			// System.out.println("Binding " + var.get_name() + " = "
+			// + parameters[i]);
 			i++;
 		}
 		subQueryVertexEval.setBoundVariables(boundVariables);

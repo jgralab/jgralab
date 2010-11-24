@@ -129,9 +129,8 @@ public class LogCostModel extends DefaultCostModel {
 	 * @throws CostModelException
 	 *             if an invalid <code>scalingFactor</code> was given
 	 */
-	public LogCostModel(EvaluationLogReader logReader, float logScalingFactor,
-			GreqlEvaluator eval) throws CostModelException {
-		super(eval);
+	public LogCostModel(EvaluationLogReader logReader, float logScalingFactor)
+			throws CostModelException {
 		this.logReader = logReader;
 
 		if ((logScalingFactor < 0) || (logScalingFactor > 1)) {
@@ -174,9 +173,9 @@ public class LogCostModel extends DefaultCostModel {
 	@Override
 	public long calculateCardinalityBackwardVertexSet(
 			BackwardVertexSetEvaluator e, GraphSize graphSize) {
-		return getMeanCardinality(logReader
-				.getAvgResultSize(e.getLoggingName()), super
-				.calculateCardinalityBackwardVertexSet(e, graphSize));
+		return getMeanCardinality(
+				logReader.getAvgResultSize(e.getLoggingName()),
+				super.calculateCardinalityBackwardVertexSet(e, graphSize));
 	}
 
 	/*
@@ -191,9 +190,9 @@ public class LogCostModel extends DefaultCostModel {
 	@Override
 	public long calculateCardinalityBagComprehension(ComprehensionEvaluator e,
 			GraphSize graphSize) {
-		return getMeanCardinality(logReader
-				.getAvgResultSize(e.getLoggingName()), super
-				.calculateCardinalityBagComprehension(e, graphSize));
+		return getMeanCardinality(
+				logReader.getAvgResultSize(e.getLoggingName()),
+				super.calculateCardinalityBagComprehension(e, graphSize));
 	}
 
 	/*
@@ -208,9 +207,9 @@ public class LogCostModel extends DefaultCostModel {
 	@Override
 	public long calculateCardinalityBagConstruction(BagConstructionEvaluator e,
 			GraphSize graphSize) {
-		return getMeanCardinality(logReader
-				.getAvgResultSize(e.getLoggingName()), super
-				.calculateCardinalityBagConstruction(e, graphSize));
+		return getMeanCardinality(
+				logReader.getAvgResultSize(e.getLoggingName()),
+				super.calculateCardinalityBagConstruction(e, graphSize));
 	}
 
 	/*
@@ -225,9 +224,9 @@ public class LogCostModel extends DefaultCostModel {
 	@Override
 	public long calculateCardinalityConditionalExpression(
 			ConditionalExpressionEvaluator e, GraphSize graphSize) {
-		return getMeanCardinality(logReader
-				.getAvgResultSize(e.getLoggingName()), super
-				.calculateCardinalityConditionalExpression(e, graphSize));
+		return getMeanCardinality(
+				logReader.getAvgResultSize(e.getLoggingName()),
+				super.calculateCardinalityConditionalExpression(e, graphSize));
 	}
 
 	/*
@@ -262,9 +261,9 @@ public class LogCostModel extends DefaultCostModel {
 	@Override
 	public long calculateCardinalityEdgeSetExpression(
 			EdgeSetExpressionEvaluator e, GraphSize graphSize) {
-		return getMeanCardinality(logReader
-				.getAvgResultSize(e.getLoggingName()), super
-				.calculateCardinalityEdgeSetExpression(e, graphSize));
+		return getMeanCardinality(
+				logReader.getAvgResultSize(e.getLoggingName()),
+				super.calculateCardinalityEdgeSetExpression(e, graphSize));
 	}
 
 	/*
@@ -279,9 +278,9 @@ public class LogCostModel extends DefaultCostModel {
 	@Override
 	public long calculateCardinalityEdgeSubgraphExpression(
 			EdgeSubgraphExpressionEvaluator e, GraphSize graphSize) {
-		return getMeanCardinality(logReader
-				.getAvgResultSize(e.getLoggingName()), super
-				.calculateCardinalityEdgeSubgraphExpression(e, graphSize));
+		return getMeanCardinality(
+				logReader.getAvgResultSize(e.getLoggingName()),
+				super.calculateCardinalityEdgeSubgraphExpression(e, graphSize));
 	}
 
 	/*
@@ -296,9 +295,9 @@ public class LogCostModel extends DefaultCostModel {
 	@Override
 	public long calculateCardinalityForwardVertexSet(
 			ForwardVertexSetEvaluator e, GraphSize graphSize) {
-		return getMeanCardinality(logReader
-				.getAvgResultSize(e.getLoggingName()), super
-				.calculateCardinalityForwardVertexSet(e, graphSize));
+		return getMeanCardinality(
+				logReader.getAvgResultSize(e.getLoggingName()),
+				super.calculateCardinalityForwardVertexSet(e, graphSize));
 	}
 
 	/*
@@ -313,9 +312,9 @@ public class LogCostModel extends DefaultCostModel {
 	@Override
 	public long calculateCardinalityFunctionApplication(
 			FunctionApplicationEvaluator e, GraphSize graphSize) {
-		return getMeanCardinality(logReader
-				.getAvgResultSize(e.getLoggingName()), super
-				.calculateCardinalityFunctionApplication(e, graphSize));
+		return getMeanCardinality(
+				logReader.getAvgResultSize(e.getLoggingName()),
+				super.calculateCardinalityFunctionApplication(e, graphSize));
 	}
 
 	/*
@@ -330,9 +329,9 @@ public class LogCostModel extends DefaultCostModel {
 	@Override
 	public long calculateCardinalityListConstruction(
 			ListConstructionEvaluator e, GraphSize graphSize) {
-		return getMeanCardinality(logReader
-				.getAvgResultSize(e.getLoggingName()), super
-				.calculateCardinalityListConstruction(e, graphSize));
+		return getMeanCardinality(
+				logReader.getAvgResultSize(e.getLoggingName()),
+				super.calculateCardinalityListConstruction(e, graphSize));
 	}
 
 	/*
@@ -347,9 +346,9 @@ public class LogCostModel extends DefaultCostModel {
 	@Override
 	public long calculateCardinalityListRangeConstruction(
 			ListRangeConstructionEvaluator e, GraphSize graphSize) {
-		return getMeanCardinality(logReader
-				.getAvgResultSize(e.getLoggingName()), super
-				.calculateCardinalityListRangeConstruction(e, graphSize));
+		return getMeanCardinality(
+				logReader.getAvgResultSize(e.getLoggingName()),
+				super.calculateCardinalityListRangeConstruction(e, graphSize));
 	}
 
 	/*
@@ -364,9 +363,9 @@ public class LogCostModel extends DefaultCostModel {
 	@Override
 	public long calculateCardinalityRecordConstruction(
 			RecordConstructionEvaluator e, GraphSize graphSize) {
-		return getMeanCardinality(logReader
-				.getAvgResultSize(e.getLoggingName()), super
-				.calculateCardinalityRecordConstruction(e, graphSize));
+		return getMeanCardinality(
+				logReader.getAvgResultSize(e.getLoggingName()),
+				super.calculateCardinalityRecordConstruction(e, graphSize));
 	}
 
 	/*
@@ -381,9 +380,9 @@ public class LogCostModel extends DefaultCostModel {
 	@Override
 	public long calculateCardinalitySetComprehension(
 			SetComprehensionEvaluator e, GraphSize graphSize) {
-		return getMeanCardinality(logReader
-				.getAvgResultSize(e.getLoggingName()), super
-				.calculateCardinalitySetComprehension(e, graphSize));
+		return getMeanCardinality(
+				logReader.getAvgResultSize(e.getLoggingName()),
+				super.calculateCardinalitySetComprehension(e, graphSize));
 	}
 
 	/*
@@ -398,9 +397,9 @@ public class LogCostModel extends DefaultCostModel {
 	@Override
 	public long calculateCardinalitySetConstruction(SetConstructionEvaluator e,
 			GraphSize graphSize) {
-		return getMeanCardinality(logReader
-				.getAvgResultSize(e.getLoggingName()), super
-				.calculateCardinalitySetConstruction(e, graphSize));
+		return getMeanCardinality(
+				logReader.getAvgResultSize(e.getLoggingName()),
+				super.calculateCardinalitySetConstruction(e, graphSize));
 	}
 
 	/*
@@ -435,9 +434,9 @@ public class LogCostModel extends DefaultCostModel {
 	@Override
 	public long calculateCardinalityTableComprehension(
 			TableComprehensionEvaluator e, GraphSize graphSize) {
-		return getMeanCardinality(logReader
-				.getAvgResultSize(e.getLoggingName()), super
-				.calculateCardinalityTableComprehension(e, graphSize));
+		return getMeanCardinality(
+				logReader.getAvgResultSize(e.getLoggingName()),
+				super.calculateCardinalityTableComprehension(e, graphSize));
 	}
 
 	/*
@@ -452,9 +451,9 @@ public class LogCostModel extends DefaultCostModel {
 	@Override
 	public long calculateCardinalityTupleConstruction(
 			TupleConstructionEvaluator e, GraphSize graphSize) {
-		return getMeanCardinality(logReader
-				.getAvgResultSize(e.getLoggingName()), super
-				.calculateCardinalityTupleConstruction(e, graphSize));
+		return getMeanCardinality(
+				logReader.getAvgResultSize(e.getLoggingName()),
+				super.calculateCardinalityTupleConstruction(e, graphSize));
 	}
 
 	/*
@@ -469,9 +468,9 @@ public class LogCostModel extends DefaultCostModel {
 	@Override
 	public long calculateCardinalityVertexSetExpression(
 			VertexSetExpressionEvaluator e, GraphSize graphSize) {
-		return getMeanCardinality(logReader
-				.getAvgResultSize(e.getLoggingName()), super
-				.calculateCardinalityVertexSetExpression(e, graphSize));
+		return getMeanCardinality(
+				logReader.getAvgResultSize(e.getLoggingName()),
+				super.calculateCardinalityVertexSetExpression(e, graphSize));
 	}
 
 	/*
@@ -486,9 +485,9 @@ public class LogCostModel extends DefaultCostModel {
 	@Override
 	public long calculateCardinalityVertexSubgraphExpression(
 			VertexSubgraphExpressionEvaluator e, GraphSize graphSize) {
-		return getMeanCardinality(logReader
-				.getAvgResultSize(e.getLoggingName()), super
-				.calculateCardinalityVertexSubgraphExpression(e, graphSize));
+		return getMeanCardinality(
+				logReader.getAvgResultSize(e.getLoggingName()),
+				super.calculateCardinalityVertexSubgraphExpression(e, graphSize));
 	}
 
 	/**
@@ -517,8 +516,8 @@ public class LogCostModel extends DefaultCostModel {
 
 		long subtreeCosts = 0;
 		while (inc != null) {
-			PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) greqlEvaluator
-					.getVertexEvaluatorGraphMarker().getMark(inc.getAlpha());
+			PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) e
+					.getVertexEvalMarker().getMark(inc.getAlpha());
 			subtreeCosts += pathEval
 					.getCurrentSubtreeEvaluationCosts(graphSize);
 			inc = inc.getNextIsPathDescriptionOf(EdgeDirection.IN);
@@ -560,14 +559,14 @@ public class LogCostModel extends DefaultCostModel {
 		BackwardVertexSet vertex = (BackwardVertexSet) e.getVertex();
 		Expression targetExpression = (Expression) vertex
 				.getFirstIsTargetExprOfIncidence().getAlpha();
-		VertexEvaluator vertexEval = greqlEvaluator
-				.getVertexEvaluatorGraphMarker().getMark(targetExpression);
+		VertexEvaluator vertexEval = e.getVertexEvalMarker().getMark(
+				targetExpression);
 		long targetCosts = vertexEval
 				.getCurrentSubtreeEvaluationCosts(graphSize);
-		PathDescription p = (PathDescription) vertex.getFirstIsPathOfIncidence()
-				.getAlpha();
-		PathDescriptionEvaluator pathDescEval = (PathDescriptionEvaluator) greqlEvaluator
-				.getVertexEvaluatorGraphMarker().getMark(p);
+		PathDescription p = (PathDescription) vertex
+				.getFirstIsPathOfIncidence().getAlpha();
+		PathDescriptionEvaluator pathDescEval = (PathDescriptionEvaluator) e
+				.getVertexEvalMarker().getMark(p);
 		long pathDescCosts = pathDescEval
 				.getCurrentSubtreeEvaluationCosts(graphSize);
 
@@ -599,10 +598,10 @@ public class LogCostModel extends DefaultCostModel {
 			ConditionalExpressionEvaluator e, GraphSize graphSize) {
 		ConditionalExpression vertex = (ConditionalExpression) e.getVertex();
 
-		Expression condition = (Expression) vertex.getFirstIsConditionOfIncidence()
-				.getAlpha();
-		VertexEvaluator conditionEvaluator = greqlEvaluator
-				.getVertexEvaluatorGraphMarker().getMark(condition);
+		Expression condition = (Expression) vertex
+				.getFirstIsConditionOfIncidence().getAlpha();
+		VertexEvaluator conditionEvaluator = e.getVertexEvalMarker().getMark(
+				condition);
 		long conditionCosts = conditionEvaluator
 				.getCurrentSubtreeEvaluationCosts(graphSize);
 
@@ -613,16 +612,15 @@ public class LogCostModel extends DefaultCostModel {
 		}
 
 		Expression expressionToEvaluate;
-		expressionToEvaluate = (Expression) vertex.getFirstIsTrueExprOfIncidence()
-				.getAlpha();
-		VertexEvaluator vertexEval = greqlEvaluator
-				.getVertexEvaluatorGraphMarker().getMark(expressionToEvaluate);
+		expressionToEvaluate = (Expression) vertex
+				.getFirstIsTrueExprOfIncidence().getAlpha();
+		VertexEvaluator vertexEval = e.getVertexEvalMarker().getMark(
+				expressionToEvaluate);
 		long trueCosts = vertexEval.getCurrentSubtreeEvaluationCosts(graphSize);
 
-		expressionToEvaluate = (Expression) vertex.getFirstIsFalseExprOfIncidence()
-				.getAlpha();
-		vertexEval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(
-				expressionToEvaluate);
+		expressionToEvaluate = (Expression) vertex
+				.getFirstIsFalseExprOfIncidence().getAlpha();
+		vertexEval = e.getVertexEvalMarker().getMark(expressionToEvaluate);
 		long falseCosts = vertexEval
 				.getCurrentSubtreeEvaluationCosts(graphSize);
 
@@ -683,14 +681,14 @@ public class LogCostModel extends DefaultCostModel {
 		ForwardVertexSet vertex = (ForwardVertexSet) e.getVertex();
 		Expression startExpression = (Expression) vertex
 				.getFirstIsStartExprOfIncidence().getAlpha();
-		VertexEvaluator vertexEval = greqlEvaluator
-				.getVertexEvaluatorGraphMarker().getMark(startExpression);
+		VertexEvaluator vertexEval = e.getVertexEvalMarker().getMark(
+				startExpression);
 		long startCosts = vertexEval
 				.getCurrentSubtreeEvaluationCosts(graphSize);
-		PathDescription p = (PathDescription) vertex.getFirstIsPathOfIncidence()
-				.getAlpha();
-		PathDescriptionEvaluator pathDescEval = (PathDescriptionEvaluator) greqlEvaluator
-				.getVertexEvaluatorGraphMarker().getMark(p);
+		PathDescription p = (PathDescription) vertex
+				.getFirstIsPathOfIncidence().getAlpha();
+		PathDescriptionEvaluator pathDescEval = (PathDescriptionEvaluator) e
+				.getVertexEvalMarker().getMark(p);
 		long pathDescCosts = pathDescEval
 				.getCurrentSubtreeEvaluationCosts(graphSize);
 
@@ -752,12 +750,10 @@ public class LogCostModel extends DefaultCostModel {
 			ListRangeConstructionEvaluator e, GraphSize graphSize) {
 		ListRangeConstruction exp = (ListRangeConstruction) e.getVertex();
 
-		VertexEvaluator startExpEval = greqlEvaluator
-				.getVertexEvaluatorGraphMarker().getMark(
-						exp.getFirstIsFirstValueOfIncidence().getAlpha());
-		VertexEvaluator targetExpEval = greqlEvaluator
-				.getVertexEvaluatorGraphMarker().getMark(
-						exp.getFirstIsLastValueOfIncidence().getAlpha());
+		VertexEvaluator startExpEval = e.getVertexEvalMarker().getMark(
+				exp.getFirstIsFirstValueOfIncidence().getAlpha());
+		VertexEvaluator targetExpEval = e.getVertexEvalMarker().getMark(
+				exp.getFirstIsLastValueOfIncidence().getAlpha());
 
 		long startCosts = startExpEval
 				.getCurrentSubtreeEvaluationCosts(graphSize);
@@ -820,22 +816,21 @@ public class LogCostModel extends DefaultCostModel {
 		PathExistence existence = (PathExistence) e.getVertex();
 		Expression startExpression = (Expression) existence
 				.getFirstIsStartExprOfIncidence().getAlpha();
-		VertexEvaluator vertexEval = greqlEvaluator
-				.getVertexEvaluatorGraphMarker().getMark(startExpression);
+		VertexEvaluator vertexEval = e.getVertexEvalMarker().getMark(
+				startExpression);
 		long startCosts = vertexEval
 				.getCurrentSubtreeEvaluationCosts(graphSize);
 
 		Expression targetExpression = (Expression) existence
 				.getFirstIsTargetExprOfIncidence().getAlpha();
-		vertexEval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(
-				targetExpression);
+		vertexEval = e.getVertexEvalMarker().getMark(targetExpression);
 		long targetCosts = vertexEval
 				.getCurrentSubtreeEvaluationCosts(graphSize);
 
-		PathDescription p = (PathDescription) existence.getFirstIsPathOfIncidence()
-				.getAlpha();
-		PathDescriptionEvaluator pathDescEval = (PathDescriptionEvaluator) greqlEvaluator
-				.getVertexEvaluatorGraphMarker().getMark(p);
+		PathDescription p = (PathDescription) existence
+				.getFirstIsPathOfIncidence().getAlpha();
+		PathDescriptionEvaluator pathDescEval = (PathDescriptionEvaluator) e
+				.getVertexEvalMarker().getMark(p);
 		long pathDescCosts = pathDescEval
 				.getCurrentSubtreeEvaluationCosts(graphSize);
 

@@ -30,7 +30,6 @@
  */
 package de.uni_koblenz.jgralab.greql2.evaluator.costmodel;
 
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.EdgeSetExpression;
 import de.uni_koblenz.jgralab.greql2.schema.EdgeSubgraphExpression;
@@ -154,5 +153,5 @@ public abstract class CostModelBase {
 	 * Stores a reference to the {@link GreqlEvaluator} that will evaluate the
 	 * query
 	 */
-	protected GreqlEvaluator greqlEvaluator;
+//	protected GreqlEvaluator greqlEvaluator;
 }

@@ -144,8 +144,7 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 		// TODO: For now, we want that both exps are variables. Maybe that's not
 		// needed...
 		if (!(startExp instanceof Variable) || !(targetExp instanceof Variable)) {
-			logger
-					.finer("PathExistence hasn't form var1 --> var2, skipping...");
+			logger.finer("PathExistence hasn't form var1 --> var2, skipping...");
 			return false;
 		}
 
@@ -153,13 +152,11 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 		// cause we don't handle these dependencies right now...
 		Expression pathDesc = pe.get_path();
 		if (!(pathDesc instanceof PathDescription)) {
-			logger
-					.finer("PathExistence contains an Expression as PathDescription, skipping...");
+			logger.finer("PathExistence contains an Expression as PathDescription, skipping...");
 			return false;
 		}
 		if (!isOptimizablePathDescription((PathDescription) pathDesc)) {
-			logger
-					.finer("PathExistence contains an EdgePathDescription, skipping...");
+			logger.finer("PathExistence contains an EdgePathDescription, skipping...");
 			return false;
 		}
 
@@ -174,6 +171,15 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 		boolean startIsDeclaredFirst = true;
 		if (isDeclaredBefore(target, start)) {
 			startIsDeclaredFirst = false;
+		}
+
+		IsDeclaredVarOf startEdge = start.getFirstIsDeclaredVarOfIncidence();
+		IsDeclaredVarOf targetEdge = target.getFirstIsDeclaredVarOfIncidence();
+		if ((startEdge == null) || (targetEdge == null)) {
+			// TODO: Those are externally bound variables. Basically, we can
+			// still transform "x --> y" to "contains(x -->, y)" or the other
+			// way round.
+			return false;
 		}
 
 		SimpleDeclaration startSD = (SimpleDeclaration) start
@@ -228,9 +234,8 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 		// top-level conjunction.
 		if (!isConstraintAndTopLevelConjunction(pe, (Declaration) sd
 				.getFirstIsSimpleDeclOfIncidence().getOmega())) {
-			logger
-					.finer(pe
-							+ " cannot be optimized, cause it's not in an constraint conjunction...");
+			logger.finer(pe
+					+ " cannot be optimized, cause it's not in an constraint conjunction...");
 			return false;
 		}
 
@@ -238,14 +243,12 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 		Set<Variable> varsUsedInPath = OptimizerUtility
 				.collectInternallyDeclaredVariablesBelow(path);
 		if (varsUsedInPath.contains(sdsVar)) {
-			logger
-					.finer("PathExistence path contains declared var, so skipping...");
+			logger.finer("PathExistence path contains declared var, so skipping...");
 			return false;
 		}
 		for (Variable usedVar : varsUsedInPath) {
 			if (isDeclaredBefore(sdsVar, usedVar)) {
-				logger
-						.finer("PathExistence path contains a previously declared var, so skipping...");
+				logger.finer("PathExistence path contains a previously declared var, so skipping...");
 				return false;
 			}
 		}

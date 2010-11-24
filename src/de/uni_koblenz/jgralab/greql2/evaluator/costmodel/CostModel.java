@@ -31,7 +31,6 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator.costmodel;
 
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.AggregationPathDescriptionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.AlternativePathDescriptionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.BackwardVertexSetEvaluator;
@@ -97,14 +96,6 @@ public interface CostModel {
 	 *         logical equivalent, that means, if the costfunction is identical
 	 */
 	public boolean isEquivalent(CostModel costModel);
-
-	/**
-	 * Set the given {@link GreqlEvaluator} for this CostModel.
-	 * 
-	 * @param eval
-	 *            the {@link GreqlEvaluator}
-	 */
-	public void setGreqlEvaluator(GreqlEvaluator eval);
 
 	public VertexCosts calculateCostsAlternativePathDescription(
 			AlternativePathDescriptionEvaluator e, GraphSize graphSize);
