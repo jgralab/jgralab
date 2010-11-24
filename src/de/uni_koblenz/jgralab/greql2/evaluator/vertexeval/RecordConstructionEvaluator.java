@@ -82,8 +82,8 @@ public class RecordConstructionEvaluator extends VertexEvaluator {
 				.getFirstIsRecordElementOfIncidence(EdgeDirection.IN);
 		while (inc != null) {
 			RecordElement currentElement = (RecordElement) inc.getAlpha();
-			RecordElementEvaluator vertexEval = (RecordElementEvaluator) greqlEvaluator
-					.getVertexEvaluatorGraphMarker().getMark(currentElement);
+			RecordElementEvaluator vertexEval = (RecordElementEvaluator) vertexEvalMarker
+					.getMark(currentElement);
 			resultRecord
 					.add(vertexEval.getId(), vertexEval.getResult(subgraph));
 			inc = inc.getNextIsRecordElementOf(EdgeDirection.IN);

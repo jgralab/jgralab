@@ -168,16 +168,19 @@ public class VariableEvaluator extends VertexEvaluator {
 		List<Vertex> forbiddenVertices = new ArrayList<Vertex>();
 		SimpleDeclaration simpleDecl = null;
 		if (vertex.getFirstIsDeclaredVarOfIncidence(EdgeDirection.OUT) != null) {
-			simpleDecl = (SimpleDeclaration) vertex.getFirstIsDeclaredVarOfIncidence(
-					EdgeDirection.OUT).getThat();
+			simpleDecl = (SimpleDeclaration) vertex
+					.getFirstIsDeclaredVarOfIncidence(EdgeDirection.OUT)
+					.getThat();
 		}
 		if (simpleDecl != null) {
 			forbiddenVertices.add(simpleDecl);
 			Declaration declaringVertex = (Declaration) simpleDecl
 					.getFirstIsSimpleDeclOfIncidence().getThat();
-			if (declaringVertex.getFirstIsCompDeclOfIncidence(EdgeDirection.OUT) != null) {
-				forbiddenVertices.add(declaringVertex.getFirstIsCompDeclOfIncidence(
-						EdgeDirection.OUT).getThat());
+			if (declaringVertex
+					.getFirstIsCompDeclOfIncidence(EdgeDirection.OUT) != null) {
+				forbiddenVertices.add(declaringVertex
+						.getFirstIsCompDeclOfIncidence(EdgeDirection.OUT)
+						.getThat());
 			} else {
 				forbiddenVertices.add(declaringVertex
 						.getFirstIsQuantifiedDeclOfIncidence(EdgeDirection.OUT)
@@ -188,8 +191,9 @@ public class VariableEvaluator extends VertexEvaluator {
 				Definition definingVertex = (Definition) vertex
 						.getFirstIsVarOfIncidence(EdgeDirection.OUT).getThat();
 				forbiddenVertices.add(definingVertex);
-				forbiddenVertices.add(definingVertex.getFirstIsDefinitionOfIncidence(
-						EdgeDirection.OUT).getThat());
+				forbiddenVertices.add(definingVertex
+						.getFirstIsDefinitionOfIncidence(EdgeDirection.OUT)
+						.getThat());
 			} else {
 				// thisvertex, thisedge
 
@@ -199,8 +203,7 @@ public class VariableEvaluator extends VertexEvaluator {
 		queue.add(vertex);
 		while (!queue.isEmpty()) {
 			Greql2Vertex currentVertex = queue.poll();
-			VertexEvaluator eval = greqlEvaluator
-					.getVertexEvaluatorGraphMarker().getMark(currentVertex);
+			VertexEvaluator eval = vertexEvalMarker.getMark(currentVertex);
 
 			if ((eval != null) && (!dependingEvaluators.contains(eval))
 					&& (!(eval instanceof PathDescriptionEvaluator))

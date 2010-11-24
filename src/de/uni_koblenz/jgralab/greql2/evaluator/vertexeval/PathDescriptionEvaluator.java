@@ -112,14 +112,15 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 	protected void addGoalRestrictions() throws EvaluateException {
 		PathDescription pathDesc = (PathDescription) getVertex();
 		VertexEvaluator goalRestEval = null;
-		IsGoalRestrOf inc = pathDesc.getFirstIsGoalRestrOfIncidence(EdgeDirection.IN);
+		IsGoalRestrOf inc = pathDesc
+				.getFirstIsGoalRestrOfIncidence(EdgeDirection.IN);
 		if (inc == null) {
 			return;
 		}
 		JValueTypeCollection typeCollection = new JValueTypeCollection();
 		while (inc != null) {
-			VertexEvaluator vertexEval = greqlEvaluator
-					.getVertexEvaluatorGraphMarker().getMark(inc.getAlpha());
+			VertexEvaluator vertexEval = vertexEvalMarker.getMark(inc
+					.getAlpha());
 			if (vertexEval instanceof TypeIdEvaluator) {
 				TypeIdEvaluator typeEval = (TypeIdEvaluator) vertexEval;
 				try {
@@ -137,7 +138,7 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 		NFA.addGoalTypeRestriction(getNFA(), typeCollection);
 		if (goalRestEval != null) {
 			NFA.addGoalBooleanRestriction(getNFA(), goalRestEval,
-					greqlEvaluator.getVertexEvaluatorGraphMarker());
+					vertexEvalMarker);
 		}
 	}
 
@@ -150,14 +151,15 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 	protected void addStartRestrictions() throws EvaluateException {
 		PathDescription pathDesc = (PathDescription) getVertex();
 		VertexEvaluator startRestEval = null;
-		IsStartRestrOf inc = pathDesc.getFirstIsStartRestrOfIncidence(EdgeDirection.IN);
+		IsStartRestrOf inc = pathDesc
+				.getFirstIsStartRestrOfIncidence(EdgeDirection.IN);
 		if (inc == null) {
 			return;
 		}
 		JValueTypeCollection typeCollection = new JValueTypeCollection();
 		while (inc != null) {
-			VertexEvaluator vertexEval = greqlEvaluator
-					.getVertexEvaluatorGraphMarker().getMark(inc.getAlpha());
+			VertexEvaluator vertexEval = vertexEvalMarker.getMark(inc
+					.getAlpha());
 			if (vertexEval instanceof TypeIdEvaluator) {
 				TypeIdEvaluator typeEval = (TypeIdEvaluator) vertexEval;
 				try {
@@ -175,7 +177,7 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 		NFA.addStartTypeRestriction(getNFA(), typeCollection);
 		if (startRestEval != null) {
 			NFA.addStartBooleanRestriction(getNFA(), startRestEval,
-					greqlEvaluator.getVertexEvaluatorGraphMarker());
+					vertexEvalMarker);
 		}
 	}
 

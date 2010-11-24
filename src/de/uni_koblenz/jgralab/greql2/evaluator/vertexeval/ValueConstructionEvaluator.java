@@ -82,9 +82,8 @@ abstract public class ValueConstructionEvaluator extends VertexEvaluator {
 			partEvaluators = new ArrayList<VertexEvaluator>(partCount);
 			while (inc != null) {
 				Expression currentExpression = (Expression) inc.getAlpha();
-				VertexEvaluator vertexEval = greqlEvaluator
-						.getVertexEvaluatorGraphMarker().getMark(
-								currentExpression);
+				VertexEvaluator vertexEval = vertexEvalMarker
+						.getMark(currentExpression);
 				partEvaluators.add(vertexEval);
 				inc = inc.getNextIsPartOf(EdgeDirection.IN);
 			}

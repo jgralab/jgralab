@@ -85,15 +85,12 @@ public class MapComprehensionEvaluator extends ComprehensionEvaluator {
 
 		JValueMap resultMap = new JValueMap();
 
-		Vertex key = vertex.getFirstIsKeyExprOfComprehensionIncidence(EdgeDirection.IN)
-				.getAlpha();
-		VertexEvaluator keyEval = greqlEvaluator
-				.getVertexEvaluatorGraphMarker().getMark(key);
-		Vertex val = vertex
-				.getFirstIsValueExprOfComprehensionIncidence(EdgeDirection.IN)
-				.getAlpha();
-		VertexEvaluator valEval = greqlEvaluator
-				.getVertexEvaluatorGraphMarker().getMark(val);
+		Vertex key = vertex.getFirstIsKeyExprOfComprehensionIncidence(
+				EdgeDirection.IN).getAlpha();
+		VertexEvaluator keyEval = vertexEvalMarker.getMark(key);
+		Vertex val = vertex.getFirstIsValueExprOfComprehensionIncidence(
+				EdgeDirection.IN).getAlpha();
+		VertexEvaluator valEval = vertexEvalMarker.getMark(val);
 		declLayer.reset();
 		while (declLayer.iterate(subgraph)) {
 			JValue jkey = keyEval.getResult(subgraph);

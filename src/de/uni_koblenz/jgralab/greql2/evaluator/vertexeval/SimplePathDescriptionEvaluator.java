@@ -65,15 +65,15 @@ public class SimplePathDescriptionEvaluator extends
 		VertexEvaluator predicateEvaluator = null;
 		for (IsEdgeRestrOf inc : vertex
 				.getIsEdgeRestrOfIncidences(EdgeDirection.IN)) {
-			edgeRestEval = (EdgeRestrictionEvaluator) greqlEvaluator
-					.getVertexEvaluatorGraphMarker().getMark(inc.getAlpha());
+			edgeRestEval = (EdgeRestrictionEvaluator) vertexEvalMarker
+					.getMark(inc.getAlpha());
 			typeCollection.addTypes(edgeRestEval.getTypeCollection());
 			predicateEvaluator = edgeRestEval.getPredicateEvaluator();
 		}
 		createdNFA = NFA.createSimplePathDescriptionNFA(
 				getEdgeDirection(vertex), typeCollection,
-				getEdgeRoles(edgeRestEval), predicateEvaluator, greqlEvaluator
-						.getVertexEvaluatorGraphMarker());
+				getEdgeRoles(edgeRestEval), predicateEvaluator,
+				vertexEvalMarker);
 		return new JValueImpl(createdNFA);
 	}
 

@@ -83,17 +83,16 @@ public class IntermediateVertexPathDescriptionEvaluator extends
 	@Override
 	public JValue evaluate() throws EvaluateException {
 		IsSubPathOf inc = vertex.getFirstIsSubPathOfIncidence(EdgeDirection.IN);
-		PathDescriptionEvaluator firstEval = (PathDescriptionEvaluator) greqlEvaluator
-				.getVertexEvaluatorGraphMarker().getMark(inc.getAlpha());
+		PathDescriptionEvaluator firstEval = (PathDescriptionEvaluator) vertexEvalMarker
+				.getMark(inc.getAlpha());
 		NFA firstNFA = firstEval.getNFA();
 		inc = inc.getNextIsSubPathOf(EdgeDirection.IN);
-		PathDescriptionEvaluator secondEval = (PathDescriptionEvaluator) greqlEvaluator
-				.getVertexEvaluatorGraphMarker().getMark(inc.getAlpha());
+		PathDescriptionEvaluator secondEval = (PathDescriptionEvaluator) vertexEvalMarker
+				.getMark(inc.getAlpha());
 		NFA secondNFA = secondEval.getNFA();
-		VertexEvaluator vertexEval = greqlEvaluator
-				.getVertexEvaluatorGraphMarker().getMark(
-						vertex.getFirstIsIntermediateVertexOfIncidence(EdgeDirection.IN)
-								.getAlpha());
+		VertexEvaluator vertexEval = vertexEvalMarker.getMark(vertex
+				.getFirstIsIntermediateVertexOfIncidence(EdgeDirection.IN)
+				.getAlpha());
 		return new JValueImpl(NFA.createIntermediateVertexPathDescriptionNFA(
 				firstNFA, vertexEval, secondNFA));
 	}

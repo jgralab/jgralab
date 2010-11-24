@@ -77,13 +77,12 @@ public class ForwardVertexSetEvaluator extends PathSearchEvaluator {
 	private final void initialize() {
 		PathDescription p = (PathDescription) vertex.getFirstIsPathOfIncidence(
 				EdgeDirection.IN).getAlpha();
-		PathDescriptionEvaluator pathDescEval = (PathDescriptionEvaluator) greqlEvaluator
-				.getVertexEvaluatorGraphMarker().getMark(p);
+		PathDescriptionEvaluator pathDescEval = (PathDescriptionEvaluator) vertexEvalMarker
+				.getMark(p);
 
-		Expression startExpression = (Expression) vertex.getFirstIsStartExprOfIncidence(
-				EdgeDirection.IN).getAlpha();
-		startEval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(
-				startExpression);
+		Expression startExpression = (Expression) vertex
+				.getFirstIsStartExprOfIncidence(EdgeDirection.IN).getAlpha();
+		startEval = vertexEvalMarker.getMark(startExpression);
 		searchAutomaton = new DFA(pathDescEval.getNFA());
 
 		// We log the number of states as the result size of the underlying

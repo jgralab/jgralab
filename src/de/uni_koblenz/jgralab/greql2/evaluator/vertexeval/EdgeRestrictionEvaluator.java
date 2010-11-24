@@ -122,11 +122,11 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator {
 	public JValue evaluate() throws EvaluateException {
 		if (typeCollection == null) {
 			typeCollection = new JValueTypeCollection();
-			IsTypeIdOf typeInc = vertex.getFirstIsTypeIdOfIncidence(EdgeDirection.IN);
+			IsTypeIdOf typeInc = vertex
+					.getFirstIsTypeIdOfIncidence(EdgeDirection.IN);
 			while (typeInc != null) {
-				TypeIdEvaluator typeEval = (TypeIdEvaluator) greqlEvaluator
-						.getVertexEvaluatorGraphMarker().getMark(
-								typeInc.getAlpha());
+				TypeIdEvaluator typeEval = (TypeIdEvaluator) vertexEvalMarker
+						.getMark(typeInc.getAlpha());
 				try {
 					// GreqlEvaluator.println("Adding types: " +
 					// typeEval.getResult(subgraph).toJValueTypeCollection());
@@ -152,8 +152,7 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator {
 				.getFirstIsBooleanPredicateOfEdgeRestrictionIncidence(EdgeDirection.IN);
 		if (predInc != null) {
 			// System.out.println("Found a BooleanPredicateOfEdge");
-			predicateEvaluator = greqlEvaluator.getVertexEvaluatorGraphMarker()
-					.getMark(predInc.getAlpha());
+			predicateEvaluator = vertexEvalMarker.getMark(predInc.getAlpha());
 		}
 		return new JValueImpl();
 	}

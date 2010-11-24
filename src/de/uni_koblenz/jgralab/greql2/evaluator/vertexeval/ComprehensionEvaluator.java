@@ -57,19 +57,20 @@ public abstract class ComprehensionEvaluator extends VertexEvaluator {
 	protected final VertexEvaluator getResultDefinitionEvaluator() {
 		if (resultDefinitionEvaluator == null) {
 			Expression resultDefinition = (Expression) getVertex()
-					.getFirstIsCompResultDefOfIncidence(EdgeDirection.IN).getAlpha();
-			resultDefinitionEvaluator = greqlEvaluator
-					.getVertexEvaluatorGraphMarker().getMark(resultDefinition);
+					.getFirstIsCompResultDefOfIncidence(EdgeDirection.IN)
+					.getAlpha();
+			resultDefinitionEvaluator = vertexEvalMarker
+					.getMark(resultDefinition);
 		}
 		return resultDefinitionEvaluator;
 	}
 
 	protected final VariableDeclarationLayer getVariableDeclationLayer() {
 		if (varDeclLayer == null) {
-			Declaration d = (Declaration) getVertex().getFirstIsCompDeclOfIncidence(
-					EdgeDirection.IN).getAlpha();
-			DeclarationEvaluator declEval = (DeclarationEvaluator) greqlEvaluator
-					.getVertexEvaluatorGraphMarker().getMark(d);
+			Declaration d = (Declaration) getVertex()
+					.getFirstIsCompDeclOfIncidence(EdgeDirection.IN).getAlpha();
+			DeclarationEvaluator declEval = (DeclarationEvaluator) vertexEvalMarker
+					.getMark(d);
 			varDeclLayer = (VariableDeclarationLayer) declEval.getResult(
 					subgraph).toObject();
 		}

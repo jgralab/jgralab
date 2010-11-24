@@ -88,19 +88,19 @@ public class QuantifiedExpressionEvaluator extends VertexEvaluator {
 	}
 
 	private void initialize() {
-		Declaration d = (Declaration) vertex.getFirstIsQuantifiedDeclOfIncidence(
-				EdgeDirection.IN).getAlpha();
-		DeclarationEvaluator declEval = (DeclarationEvaluator) greqlEvaluator
-				.getVertexEvaluatorGraphMarker().getMark(d);
+		Declaration d = (Declaration) vertex
+				.getFirstIsQuantifiedDeclOfIncidence(EdgeDirection.IN)
+				.getAlpha();
+		DeclarationEvaluator declEval = (DeclarationEvaluator) vertexEvalMarker
+				.getMark(d);
 		declarationLayer = (VariableDeclarationLayer) declEval.getResult(
 				subgraph).toObject();
-		Quantifier quantifier = (Quantifier) vertex.getFirstIsQuantifierOfIncidence(
-				EdgeDirection.IN).getAlpha();
+		Quantifier quantifier = (Quantifier) vertex
+				.getFirstIsQuantifierOfIncidence(EdgeDirection.IN).getAlpha();
 		quantificationType = quantifier.get_type();
 		Expression b = (Expression) vertex.getFirstIsBoundExprOfIncidence(
 				EdgeDirection.IN).getAlpha();
-		predicateEvaluator = greqlEvaluator.getVertexEvaluatorGraphMarker()
-				.getMark(b);
+		predicateEvaluator = vertexEvalMarker.getMark(b);
 		initialized = true;
 	}
 
@@ -143,8 +143,8 @@ public class QuantifiedExpressionEvaluator extends VertexEvaluator {
 						if (tempResult.toBoolean().equals(
 								JValueBoolean.getTrueValue())) {
 							if (foundTrue == true) {
-								return new JValueImpl(JValueBoolean
-										.getFalseValue());
+								return new JValueImpl(
+										JValueBoolean.getFalseValue());
 							} else {
 								foundTrue = true;
 							}

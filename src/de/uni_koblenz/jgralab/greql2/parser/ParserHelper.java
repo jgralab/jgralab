@@ -217,7 +217,8 @@ public abstract class ParserHelper {
 			for (Definition definition : defList) {
 				IsExprOf isExprOf = definition
 						.getFirstIsExprOfIncidence(EdgeDirection.IN);
-				IsVarOf isVarOf = definition.getFirstIsVarOfIncidence(EdgeDirection.IN);
+				IsVarOf isVarOf = definition
+						.getFirstIsVarOfIncidence(EdgeDirection.IN);
 				Expression expr = (Expression) isExprOf.getAlpha();
 				Variable variable = (Variable) isVarOf.getAlpha();
 				isVarOf.delete();
@@ -229,8 +230,9 @@ public abstract class ParserHelper {
 				}
 				variable.delete();
 			}
-			Expression boundExpr = (Expression) exp.getFirstIsBoundExprOfIncidence(
-					EdgeDirection.IN).getAlpha();
+			Expression boundExpr = (Expression) exp
+					.getFirstIsBoundExprOfIncidence(EdgeDirection.IN)
+					.getAlpha();
 			Edge e = exp.getFirstIncidence(EdgeDirection.OUT);
 			while (e != null) {
 				e.setAlpha(boundExpr);
@@ -293,8 +295,8 @@ public abstract class ParserHelper {
 			} else {
 				Greql2Aggregation e = (Greql2Aggregation) v
 						.getFirstIncidence(EdgeDirection.OUT);
-				throw new UndefinedVariableException((Variable) v, e
-						.get_sourcePositions());
+				throw new UndefinedVariableException((Variable) v,
+						e.get_sourcePositions());
 			}
 		} else {
 			ArrayList<Edge> incidenceList = new ArrayList<Edge>();
@@ -320,8 +322,9 @@ public abstract class ParserHelper {
 		afterParsingvariableSymbolTable.blockBegin();
 		for (IsBoundVarOf isBoundVarOf : root
 				.getIsBoundVarOfIncidences(EdgeDirection.IN)) {
-			afterParsingvariableSymbolTable.insert(((Variable) isBoundVarOf
-					.getAlpha()).get_name(), isBoundVarOf.getAlpha());
+			afterParsingvariableSymbolTable.insert(
+					((Variable) isBoundVarOf.getAlpha()).get_name(),
+					isBoundVarOf.getAlpha());
 		}
 		IsQueryExprOf isQueryExprOf = root
 				.getFirstIsQueryExprOfIncidence(EdgeDirection.IN);
@@ -357,8 +360,8 @@ public abstract class ParserHelper {
 		for (IsDefinitionOf currentEdge : v
 				.getIsDefinitionOfIncidences(EdgeDirection.IN)) {
 			Definition definition = (Definition) currentEdge.getAlpha();
-			Expression expr = (Expression) definition.getFirstIsExprOfIncidence(
-					EdgeDirection.IN).getAlpha();
+			Expression expr = (Expression) definition
+					.getFirstIsExprOfIncidence(EdgeDirection.IN).getAlpha();
 			mergeVariables(expr, true);
 		}
 		if (separateScope) {
@@ -393,12 +396,13 @@ public abstract class ParserHelper {
 				.getIsSimpleDeclOfIncidences(EdgeDirection.IN)) {
 			SimpleDeclaration simpleDecl = (SimpleDeclaration) currentEdge
 					.getAlpha();
-			Expression expr = (Expression) simpleDecl.getFirstIsTypeExprOfIncidence(
-					EdgeDirection.IN).getAlpha();
+			Expression expr = (Expression) simpleDecl
+					.getFirstIsTypeExprOfIncidence(EdgeDirection.IN).getAlpha();
 			mergeVariables(expr, true);
 		}
 
-		IsSubgraphOf isSubgraphOf = v.getFirstIsSubgraphOfIncidence(EdgeDirection.IN);
+		IsSubgraphOf isSubgraphOf = v
+				.getFirstIsSubgraphOfIncidence(EdgeDirection.IN);
 		if (isSubgraphOf != null) {
 			mergeVariables(isSubgraphOf.getAlpha(), true);
 		}
@@ -448,7 +452,8 @@ public abstract class ParserHelper {
 		}
 		Edge IsCompDeclOf = v.getFirstIsCompDeclOfIncidence(EdgeDirection.IN);
 		mergeVariablesInDeclaration((Declaration) IsCompDeclOf.getAlpha());
-		Edge isCompResultDefOf = v.getFirstIsCompResultDefOfIncidence(EdgeDirection.IN);
+		Edge isCompResultDefOf = v
+				.getFirstIsCompResultDefOfIncidence(EdgeDirection.IN);
 		if (isCompResultDefOf != null) {
 			mergeVariables(isCompResultDefOf.getAlpha(), true);
 			// merge variables in table-headers if it's a bag-comprehension
@@ -557,10 +562,6 @@ public abstract class ParserHelper {
 			functionSymbolTable.put(name, functionId);
 		}
 		return functionId;
-	}
-
-	protected final boolean isFunctionName(String ident) {
-		return funlib.isGreqlFunction(ident);
 	}
 
 	protected FunctionApplication createFunctionIdAndArgumentOf(

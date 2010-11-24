@@ -34,10 +34,10 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.Map.Entry;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
@@ -83,23 +83,23 @@ public class TableComprehensionEvaluator extends VertexEvaluator {
 	private void initialize() {
 		Declaration d = (Declaration) vertex.getFirstIsCompDeclOfIncidence(
 				EdgeDirection.IN).getAlpha();
-		DeclarationEvaluator declEval = (DeclarationEvaluator) greqlEvaluator
-				.getVertexEvaluatorGraphMarker().getMark(d);
+		DeclarationEvaluator declEval = (DeclarationEvaluator) vertexEvalMarker
+				.getMark(d);
 		declarationLayer = (VariableDeclarationLayer) declEval.getResult(
 				subgraph).toObject();
 
 		Expression columnHeader = (Expression) vertex
-				.getFirstIsColumnHeaderExprOfIncidence(EdgeDirection.IN).getAlpha();
-		columnHeaderEval = greqlEvaluator.getVertexEvaluatorGraphMarker()
-				.getMark(columnHeader);
-		Expression rowHeader = (Expression) vertex.getFirstIsRowHeaderExprOfIncidence(
-				EdgeDirection.IN).getAlpha();
-		rowHeaderEval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(
-				rowHeader);
-		Expression resultDef = (Expression) vertex.getFirstIsCompResultDefOfIncidence(
-				EdgeDirection.IN).getAlpha();
-		resultDefEval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(
-				resultDef);
+				.getFirstIsColumnHeaderExprOfIncidence(EdgeDirection.IN)
+				.getAlpha();
+		columnHeaderEval = vertexEvalMarker.getMark(columnHeader);
+		Expression rowHeader = (Expression) vertex
+				.getFirstIsRowHeaderExprOfIncidence(EdgeDirection.IN)
+				.getAlpha();
+		rowHeaderEval = vertexEvalMarker.getMark(rowHeader);
+		Expression resultDef = (Expression) vertex
+				.getFirstIsCompResultDefOfIncidence(EdgeDirection.IN)
+				.getAlpha();
+		resultDefEval = vertexEvalMarker.getMark(resultDef);
 		initialized = true;
 	}
 
@@ -162,9 +162,8 @@ public class TableComprehensionEvaluator extends VertexEvaluator {
 		IsTableHeaderOf tHeader = vertex
 				.getFirstIsTableHeaderOfIncidence(EdgeDirection.IN);
 		if (tHeader != null) {
-			VertexEvaluator theval = greqlEvaluator
-					.getVertexEvaluatorGraphMarker()
-					.getMark(tHeader.getAlpha());
+			VertexEvaluator theval = vertexEvalMarker.getMark(tHeader
+					.getAlpha());
 			headerTuple.add(theval.getResult(subgraph));
 		} else {
 			headerTuple.add(new JValueImpl("")); // dummy entry in the upper
@@ -182,8 +181,8 @@ public class TableComprehensionEvaluator extends VertexEvaluator {
 			JValue currentRowHeader = currentEntry.getKey();
 			HashMap<JValue, JValue> currentRow = currentEntry.getValue();
 			colIter = completeColumnHeaderTreeSet.iterator();
-			JValueTuple rowTuple = new JValueTuple(completeColumnHeaderTuple
-					.size());
+			JValueTuple rowTuple = new JValueTuple(
+					completeColumnHeaderTuple.size());
 			rowTuple.add(currentRowHeader);
 			while (colIter.hasNext()) {
 				JValue cellEntry = currentRow.get(colIter.next());

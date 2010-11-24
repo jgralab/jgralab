@@ -83,9 +83,10 @@ public class TransposedPathDescriptionEvaluator extends
 	@Override
 	public JValue evaluate() throws EvaluateException {
 		PathDescription p = (PathDescription) vertex
-				.getFirstIsTransposedPathOfIncidence(EdgeDirection.IN).getAlpha();
-		PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) greqlEvaluator
-				.getVertexEvaluatorGraphMarker().getMark(p);
+				.getFirstIsTransposedPathOfIncidence(EdgeDirection.IN)
+				.getAlpha();
+		PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) vertexEvalMarker
+				.getMark(p);
 		return new JValueImpl(NFA.createTransposedPathDescriptionNFA(pathEval
 				.getNFA()));
 	}

@@ -92,9 +92,8 @@ public class BagComprehensionEvaluator extends ComprehensionEvaluator {
 				createHeader = true;
 				for (IsTableHeaderOf tableInc : vertex
 						.getIsTableHeaderOfIncidences(EdgeDirection.IN)) {
-					VertexEvaluator headerEval = greqlEvaluator
-							.getVertexEvaluatorGraphMarker().getMark(
-									tableInc.getAlpha());
+					VertexEvaluator headerEval = vertexEvalMarker
+							.getMark(tableInc.getAlpha());
 					headerEvaluators.add(headerEval);
 				}
 			} else {

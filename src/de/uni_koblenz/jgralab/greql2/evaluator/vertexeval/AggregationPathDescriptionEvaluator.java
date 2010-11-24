@@ -62,12 +62,13 @@ public class AggregationPathDescriptionEvaluator extends
 	@Override
 	public JValue evaluate() throws EvaluateException {
 		JValueTypeCollection typeCollection = new JValueTypeCollection();
-		IsEdgeRestrOf inc = vertex.getFirstIsEdgeRestrOfIncidence(EdgeDirection.IN);
+		IsEdgeRestrOf inc = vertex
+				.getFirstIsEdgeRestrOfIncidence(EdgeDirection.IN);
 		EdgeRestrictionEvaluator edgeRestEval = null;
 		VertexEvaluator predicateEvaluator = null;
 		if (inc != null) {
-			edgeRestEval = (EdgeRestrictionEvaluator) greqlEvaluator
-					.getVertexEvaluatorGraphMarker().getMark(inc.getAlpha());
+			edgeRestEval = (EdgeRestrictionEvaluator) vertexEvalMarker
+					.getMark(inc.getAlpha());
 			typeCollection.addTypes(edgeRestEval.getTypeCollection());
 			predicateEvaluator = edgeRestEval.getPredicateEvaluator();
 		}
@@ -75,7 +76,7 @@ public class AggregationPathDescriptionEvaluator extends
 		createdNFA = NFA.createAggregationPathDescriptionNFA(
 				((AggregationPathDescription) vertex).is_outAggregation(),
 				typeCollection, getEdgeRoles(edgeRestEval), predicateEvaluator,
-				greqlEvaluator.getVertexEvaluatorGraphMarker());
+				vertexEvalMarker);
 		return new JValueImpl(createdNFA);
 	}
 
