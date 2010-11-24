@@ -958,7 +958,6 @@ public class GreqlEvaluator {
 			if (syntaxGraphEntry != null) {
 				queryGraph = syntaxGraphEntry.getSyntaxGraph();
 				createVertexEvaluators();
-				costModel.setGreqlEvaluator(this);
 				logger.info("Using stored optimized syntax graph.");
 				return;
 			}
@@ -1058,12 +1057,12 @@ public class GreqlEvaluator {
 							(Level2Logger) evaluationLogger);
 				}
 				try {
-					costModel = new LogCostModel(logReader, 0.8f, this);
+					costModel = new LogCostModel(logReader, 0.8f);
 				} catch (CostModelException e) {
 					e.printStackTrace();
 				}
 			} else {
-				costModel = new DefaultCostModel(this);
+				costModel = new DefaultCostModel();
 			}
 		}
 
