@@ -69,7 +69,9 @@ import de.uni_koblenz.jgralab.greql2.evaluator.logging.LoggingType;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.CostModelException;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
+import de.uni_koblenz.jgralab.greql2.exception.Greql2Exception;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
+import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
@@ -588,6 +590,11 @@ public class GreqlEvaluator {
 	protected Map<String, JValue> variableMap = null;
 
 	/**
+	 * Holds the greql subqueries that can be called like other greql functions.
+	 */
+	protected Map<String, Greql2> subQueryMap = null;
+
+	/**
 	 * Holds the estimated needed for evaluation time in abstract units
 	 */
 	protected long estimatedInterpretationSteps = 0;
@@ -636,6 +643,33 @@ public class GreqlEvaluator {
 			variableMap = new HashMap<String, JValue>();
 		}
 		variableMap.put(varName, value);
+	}
+
+	public void setSubQuery(String name, String greqlQuery) {
+		GreqlParser parser = new GreqlParser(greqlQuery, subQueryMap.keySet());
+		try {
+			parser.parse();
+		} catch (Exception e) {
+			// e.printStackTrace();
+			throw new EvaluateException("Error parsing subquery \""
+					+ greqlQuery + "\".", e);
+		}
+		Greql2 subQueryGraph = parser.getGraph();
+		if (isOptimize()) {
+			if (optimizer == null) {
+				optimizer = new DefaultOptimizer();
+			}
+			optimizer.optimize(this, subQueryGraph);
+		}
+		if (Greql2FunctionLibrary.instance().isGreqlFunction(name)) {
+			throw new Greql2Exception("The subquery '" + name
+					+ "' would shadow a GReQL function!");
+		}
+		subQueryMap.put(name, subQueryGraph);
+	}
+
+	public Greql2 getSubQuery(String name) {
+		return subQueryMap.get(name);
 	}
 
 	/**
@@ -746,6 +780,7 @@ public class GreqlEvaluator {
 		}
 		knownTypes = new HashMap<String, AttributedElementClass>();
 		variableMap = variables;
+		subQueryMap = new HashMap<String, Greql2>();
 		this.progressFunction = progressFunction;
 	}
 
@@ -851,7 +886,7 @@ public class GreqlEvaluator {
 	 */
 	protected boolean parseQuery(String query) throws EvaluateException {
 		long parseStartTime = System.currentTimeMillis();
-		GreqlParser parser = new GreqlParser(query);
+		GreqlParser parser = new GreqlParser(query, subQueryMap.keySet());
 		try {
 			parser.parse();
 		} catch (Exception e) {
@@ -868,6 +903,9 @@ public class GreqlEvaluator {
 	 * Creates the VertexEvaluator-Object at the vertices in the syntaxgraph
 	 */
 	public void createVertexEvaluators() throws EvaluateException {
+		if (queryGraph == null) {
+			return;
+		}
 		if (vertexEvalGraphMarker != null) {
 			queryGraph
 					.removeGraphStructureChangedListener(vertexEvalGraphMarker);

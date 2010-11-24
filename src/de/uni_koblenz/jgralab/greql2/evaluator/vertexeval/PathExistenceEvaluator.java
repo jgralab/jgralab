@@ -78,12 +78,11 @@ public class PathExistenceEvaluator extends PathSearchEvaluator {
 	public JValue evaluate() throws EvaluateException {
 		PathDescription p = (PathDescription) vertex.getFirstIsPathOfIncidence(
 				EdgeDirection.IN).getAlpha();
-		PathDescriptionEvaluator pathDescEval = (PathDescriptionEvaluator) greqlEvaluator
-				.getVertexEvaluatorGraphMarker().getMark(p);
-		Expression startExpression = (Expression) vertex.getFirstIsStartExprOfIncidence(
-				EdgeDirection.IN).getAlpha();
-		VertexEvaluator startEval = greqlEvaluator
-				.getVertexEvaluatorGraphMarker().getMark(startExpression);
+		PathDescriptionEvaluator pathDescEval = (PathDescriptionEvaluator) vertexEvalMarker
+				.getMark(p);
+		Expression startExpression = (Expression) vertex
+				.getFirstIsStartExprOfIncidence(EdgeDirection.IN).getAlpha();
+		VertexEvaluator startEval = vertexEvalMarker.getMark(startExpression);
 		JValue res = startEval.getResult(subgraph);
 		/**
 		 * check if the result is invalid, this may occur because the
@@ -105,8 +104,7 @@ public class PathExistenceEvaluator extends PathSearchEvaluator {
 		}
 		Expression targetExpression = (Expression) vertex
 				.getFirstIsTargetExprOfIncidence(EdgeDirection.IN).getAlpha();
-		VertexEvaluator targetEval = greqlEvaluator
-				.getVertexEvaluatorGraphMarker().getMark(targetExpression);
+		VertexEvaluator targetEval = vertexEvalMarker.getMark(targetExpression);
 		Vertex targetVertex = null;
 		res = targetEval.getResult(subgraph);
 		if (!res.isValid()) {

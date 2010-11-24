@@ -99,8 +99,8 @@ public class VariableDeclaration {
 			VertexEvaluator definitionSetEvaluator,
 			AbstractGraphMarker<AttributedElement> subgraph2,
 			SimpleDeclaration decl, GreqlEvaluator eval) {
-		variableEval = (VariableEvaluator) eval.getVertexEvaluatorGraphMarker()
-				.getMark(var);
+		variableEval = (VariableEvaluator) definitionSetEvaluator
+				.getVertexEvalMarker().getMark(var);
 		this.definitionSetEvaluator = definitionSetEvaluator;
 		this.subgraph = subgraph2;
 	}

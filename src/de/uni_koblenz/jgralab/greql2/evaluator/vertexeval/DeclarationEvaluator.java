@@ -97,8 +97,8 @@ public class DeclarationEvaluator extends VertexEvaluator {
 			SubgraphExpression subgraphExp = (SubgraphExpression) edge
 					.getAlpha();
 			if (subgraphExp != null) {
-				VertexEvaluator subgraphEval = greqlEvaluator
-						.getVertexEvaluatorGraphMarker().getMark(subgraphExp);
+				VertexEvaluator subgraphEval = vertexEvalMarker
+						.getMark(subgraphExp);
 				JValue tempAttribute = subgraphEval.getResult(subgraph);
 				if (tempAttribute.isGraphMarker()) {
 					try {
@@ -117,9 +117,8 @@ public class DeclarationEvaluator extends VertexEvaluator {
 		ArrayList<VertexEvaluator> constraintList = new ArrayList<VertexEvaluator>();
 		for (IsConstraintOf consInc : vertex
 				.getIsConstraintOfIncidences(EdgeDirection.IN)) {
-			VertexEvaluator curEval = greqlEvaluator
-					.getVertexEvaluatorGraphMarker()
-					.getMark(consInc.getAlpha());
+			VertexEvaluator curEval = vertexEvalMarker.getMark(consInc
+					.getAlpha());
 			if (curEval != null) {
 				constraintList.add(curEval);
 			}
@@ -129,8 +128,8 @@ public class DeclarationEvaluator extends VertexEvaluator {
 		for (IsSimpleDeclOf inc : vertex
 				.getIsSimpleDeclOfIncidences(EdgeDirection.IN)) {
 			SimpleDeclaration simpleDecl = (SimpleDeclaration) inc.getAlpha();
-			SimpleDeclarationEvaluator simpleDeclEval = (SimpleDeclarationEvaluator) greqlEvaluator
-					.getVertexEvaluatorGraphMarker().getMark(simpleDecl);
+			SimpleDeclarationEvaluator simpleDeclEval = (SimpleDeclarationEvaluator) vertexEvalMarker
+					.getMark(simpleDecl);
 			JValue simpleResult = simpleDeclEval.getResult(newSubgraph);
 			JValueCollection resultCollection = simpleResult.toCollection();
 			for (JValue v : resultCollection) {
@@ -155,8 +154,8 @@ public class DeclarationEvaluator extends VertexEvaluator {
 		long combinations = 1;
 		Iterator<Variable> iter = getDefinedVariables().iterator();
 		while (iter.hasNext()) {
-			VariableEvaluator veval = (VariableEvaluator) greqlEvaluator
-					.getVertexEvaluatorGraphMarker().getMark(iter.next());
+			VariableEvaluator veval = (VariableEvaluator) vertexEvalMarker
+					.getMark(iter.next());
 			combinations *= veval.getVariableCombinations(graphSize);
 		}
 		return combinations;

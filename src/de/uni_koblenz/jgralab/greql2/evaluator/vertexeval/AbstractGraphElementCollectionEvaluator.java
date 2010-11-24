@@ -65,9 +65,8 @@ public abstract class AbstractGraphElementCollectionEvaluator extends
 					.getFirstIsTypeRestrOfIncidence(EdgeDirection.IN);
 			while (inc != null) {
 				if (inc.getAlpha() instanceof TypeId) {
-					TypeIdEvaluator typeEval = (TypeIdEvaluator) greqlEvaluator
-							.getVertexEvaluatorGraphMarker().getMark(
-									inc.getAlpha());
+					TypeIdEvaluator typeEval = (TypeIdEvaluator) vertexEvalMarker
+							.getMark(inc.getAlpha());
 					try {
 						typeCollection.addTypes(typeEval.getResult(subgraph)
 								.toJValueTypeCollection());

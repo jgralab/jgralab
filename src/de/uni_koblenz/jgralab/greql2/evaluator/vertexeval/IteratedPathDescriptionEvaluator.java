@@ -82,10 +82,10 @@ public class IteratedPathDescriptionEvaluator extends PathDescriptionEvaluator {
 
 	@Override
 	public JValue evaluate() throws EvaluateException {
-		PathDescription p = (PathDescription) vertex.getFirstIsIteratedPathOfIncidence(
-				EdgeDirection.IN).getAlpha();
-		PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) greqlEvaluator
-				.getVertexEvaluatorGraphMarker().getMark(p);
+		PathDescription p = (PathDescription) vertex
+				.getFirstIsIteratedPathOfIncidence(EdgeDirection.IN).getAlpha();
+		PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) vertexEvalMarker
+				.getMark(p);
 		NFA createdNFA = NFA.createIteratedPathDescriptionNFA(
 				pathEval.getNFA(), vertex.get_times() == IterationType.STAR);
 		return new JValueImpl(createdNFA);

@@ -61,7 +61,7 @@ import de.uni_koblenz.jgralab.greql2.schema.TypeId;
  */
 public class FunctionApplicationEvaluator extends VertexEvaluator {
 
-	private FunctionApplication vertex;
+	protected FunctionApplication vertex;
 
 	/**
 	 * returns the vertex this VertexEvaluator evaluates
@@ -71,15 +71,15 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 		return vertex;
 	}
 
-	private ArrayList<VertexEvaluator> parameterEvaluators = null;
+	protected ArrayList<VertexEvaluator> parameterEvaluators = null;
 
-	private JValueTypeCollection typeArgument = null;
+	protected JValueTypeCollection typeArgument = null;
 
-	private JValue[] parameters = null;
+	protected JValue[] parameters = null;
 
-	private int paramEvalCount = 0;
+	protected int paramEvalCount = 0;
 
-	boolean listCreated = false;
+	protected boolean listCreated = false;
 
 	/**
 	 * The name of this function
@@ -102,8 +102,9 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 	@Override
 	public String getLoggingName() {
 		if (functionName == null) {
-			FunctionId id = (FunctionId) vertex.getFirstIsFunctionIdOfIncidence(
-					EdgeDirection.IN).getAlpha();
+			FunctionId id = (FunctionId) vertex
+					.getFirstIsFunctionIdOfIncidence(EdgeDirection.IN)
+					.getAlpha();
 			functionName = id.get_name();
 		}
 		return functionName;
@@ -117,8 +118,9 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 	public final Greql2Function getGreql2Function() {
 		if (greql2Function == null) {
 			if (functionName == null) {
-				FunctionId id = (FunctionId) vertex.getFirstIsFunctionIdOfIncidence(
-						EdgeDirection.IN).getAlpha();
+				FunctionId id = (FunctionId) vertex
+						.getFirstIsFunctionIdOfIncidence(EdgeDirection.IN)
+						.getAlpha();
 				functionName = id.get_name();
 			}
 			greql2Function = Greql2FunctionLibrary.instance().getGreqlFunction(
@@ -147,15 +149,15 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 	 * creates the list of parameter evaluators so that it would not be
 	 * necessary to build it up each time the function gets evaluated
 	 */
-	private ArrayList<VertexEvaluator> createVertexEvaluatorList() {
+	protected ArrayList<VertexEvaluator> createVertexEvaluatorList() {
 		ArrayList<VertexEvaluator> vertexEvalList = new ArrayList<VertexEvaluator>();
-		IsArgumentOf inc = vertex.getFirstIsArgumentOfIncidence(EdgeDirection.IN);
+		IsArgumentOf inc = vertex
+				.getFirstIsArgumentOfIncidence(EdgeDirection.IN);
 		while (inc != null) {
 			Expression currentParameterExpr = (Expression) inc.getAlpha();
 			// maybe the vertex has no evaluator
-			VertexEvaluator paramEval = greqlEvaluator
-					.getVertexEvaluatorGraphMarker().getMark(
-							currentParameterExpr);
+			VertexEvaluator paramEval = vertexEvalMarker
+					.getMark(currentParameterExpr);
 			vertexEvalList.add(paramEval);
 			inc = inc.getNextIsArgumentOf(EdgeDirection.IN);
 		}
@@ -167,14 +169,15 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 	 */
 	private JValueTypeCollection createTypeArgument() throws EvaluateException {
 		TypeId typeId;
-		IsTypeExprOf typeEdge = vertex.getFirstIsTypeExprOfIncidence(EdgeDirection.IN);
+		IsTypeExprOf typeEdge = vertex
+				.getFirstIsTypeExprOfIncidence(EdgeDirection.IN);
 		JValueTypeCollection typeCollection = null;
 		if (typeEdge != null) {
 			typeCollection = new JValueTypeCollection();
 			while (typeEdge != null) {
 				typeId = (TypeId) typeEdge.getAlpha();
-				TypeIdEvaluator typeEval = (TypeIdEvaluator) greqlEvaluator
-						.getVertexEvaluatorGraphMarker().getMark(typeId);
+				TypeIdEvaluator typeEval = (TypeIdEvaluator) vertexEvalMarker
+						.getMark(typeId);
 				try {
 					typeCollection.addTypes(typeEval.getResult(subgraph)
 							.toJValueTypeCollection());

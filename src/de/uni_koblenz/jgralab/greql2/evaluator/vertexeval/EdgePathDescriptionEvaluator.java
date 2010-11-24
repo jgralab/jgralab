@@ -63,23 +63,22 @@ public class EdgePathDescriptionEvaluator extends
 		Edge evalEdge = vertex.getFirstIsEdgeExprOfIncidence();
 		VertexEvaluator edgeEval = null;
 		if (evalEdge != null) {
-			edgeEval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(
-					evalEdge.getAlpha());
+			edgeEval = vertexEvalMarker.getMark(evalEdge.getAlpha());
 		}
 		JValueTypeCollection typeCollection = new JValueTypeCollection();
-		IsTypeRestrOf inc = vertex.getFirstIsTypeRestrOfIncidence(EdgeDirection.IN);
+		IsTypeRestrOf inc = vertex
+				.getFirstIsTypeRestrOfIncidence(EdgeDirection.IN);
 		EdgeRestrictionEvaluator edgeRestEval = null;
 		VertexEvaluator predicateEvaluator = null;
 		if (inc != null) {
-			edgeRestEval = (EdgeRestrictionEvaluator) greqlEvaluator
-					.getVertexEvaluatorGraphMarker().getMark(inc.getAlpha());
+			edgeRestEval = (EdgeRestrictionEvaluator) vertexEvalMarker
+					.getMark(inc.getAlpha());
 			typeCollection.addTypes(edgeRestEval.getTypeCollection());
 			predicateEvaluator = edgeRestEval.getPredicateEvaluator();
 		}
 		createdNFA = NFA.createEdgePathDescriptionNFA(getEdgeDirection(vertex),
 				typeCollection, getEdgeRoles(edgeRestEval), edgeEval,
-				predicateEvaluator, greqlEvaluator
-						.getVertexEvaluatorGraphMarker());
+				predicateEvaluator, vertexEvalMarker);
 		return new JValueImpl(createdNFA);
 	}
 

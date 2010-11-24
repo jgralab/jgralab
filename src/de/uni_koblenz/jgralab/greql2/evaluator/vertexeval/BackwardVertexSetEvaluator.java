@@ -78,13 +78,12 @@ public class BackwardVertexSetEvaluator extends PathSearchEvaluator {
 	private final void initialize() {
 		PathDescription p = (PathDescription) vertex.getFirstIsPathOfIncidence(
 				EdgeDirection.IN).getAlpha();
-		PathDescriptionEvaluator pathDescEval = (PathDescriptionEvaluator) greqlEvaluator
-				.getVertexEvaluatorGraphMarker().getMark(p);
+		PathDescriptionEvaluator pathDescEval = (PathDescriptionEvaluator) vertexEvalMarker
+				.getMark(p);
 
 		Expression targetExpression = (Expression) vertex
 				.getFirstIsTargetExprOfIncidence(EdgeDirection.IN).getAlpha();
-		targetEval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(
-				targetExpression);
+		targetEval = vertexEvalMarker.getMark(targetExpression);
 		NFA revertedNFA = NFA.revertNFA(pathDescEval.getNFA());
 		searchAutomaton = new DFA(revertedNFA);
 

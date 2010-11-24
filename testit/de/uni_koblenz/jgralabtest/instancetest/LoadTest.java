@@ -114,7 +114,7 @@ public class LoadTest extends InstanceTest {
 	private Graph createTestGraph() throws Exception {
 		if (implementationType == ImplementationType.STANDARD) {
 			String query = "from i:c report i end where d:=\"drölfundfünfzig\", c:=b, b:=a, a:=\"Mensaessen\"";
-			return GreqlParser.parse(query);
+			return GreqlParser.parse(query, null);
 		}
 		int vertexClasses = 6;
 		int edgeClasses = 7;

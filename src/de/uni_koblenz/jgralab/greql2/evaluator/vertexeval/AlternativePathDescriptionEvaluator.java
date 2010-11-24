@@ -94,8 +94,8 @@ public class AlternativePathDescriptionEvaluator extends
 				.getFirstIsAlternativePathOfIncidence(EdgeDirection.IN);
 		ArrayList<NFA> nfaList = new ArrayList<NFA>();
 		while (inc != null) {
-			PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) greqlEvaluator
-					.getVertexEvaluatorGraphMarker().getMark(inc.getAlpha());
+			PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) vertexEvalMarker
+					.getMark(inc.getAlpha());
 			nfaList.add(pathEval.getNFA());
 			inc = inc.getNextIsAlternativePathOf(EdgeDirection.IN);
 		}

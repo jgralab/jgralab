@@ -74,8 +74,7 @@ public class ThisVertexEvaluator extends VariableEvaluator {
 		queue.add(vertex);
 		while (!queue.isEmpty()) {
 			Greql2Vertex currentVertex = queue.poll();
-			VertexEvaluator eval = greqlEvaluator
-					.getVertexEvaluatorGraphMarker().getMark(currentVertex);
+			VertexEvaluator eval = vertexEvalMarker.getMark(currentVertex);
 
 			if ((eval != null) && (!dependingEvaluators.contains(eval))
 					&& (!(eval instanceof PathDescriptionEvaluator))

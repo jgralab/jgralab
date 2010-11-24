@@ -65,8 +65,7 @@ public class MapConstructionEvaluator extends VertexEvaluator {
 		for (IsKeyExprOfConstruction e : mapConstruction
 				.getIsKeyExprOfConstructionIncidences(EdgeDirection.IN)) {
 			Vertex exp = e.getAlpha();
-			VertexEvaluator expEval = greqlEvaluator
-					.getVertexEvaluatorGraphMarker().getMark(exp);
+			VertexEvaluator expEval = vertexEvalMarker.getMark(exp);
 			keys.add(expEval.getResult(subgraph));
 		}
 
@@ -74,8 +73,7 @@ public class MapConstructionEvaluator extends VertexEvaluator {
 		for (IsValueExprOfConstruction e : mapConstruction
 				.getIsValueExprOfConstructionIncidences(EdgeDirection.IN)) {
 			Vertex exp = e.getAlpha();
-			VertexEvaluator expEval = greqlEvaluator
-					.getVertexEvaluatorGraphMarker().getMark(exp);
+			VertexEvaluator expEval = vertexEvalMarker.getMark(exp);
 			values.add(expEval.getResult(subgraph));
 		}
 

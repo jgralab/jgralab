@@ -87,10 +87,9 @@ public class ListRangeConstructionEvaluator extends VertexEvaluator {
 				.getFirstIsFirstValueOfIncidence(EdgeDirection.IN).getAlpha();
 		Expression lastElementExpression = (Expression) vertex
 				.getFirstIsLastValueOfIncidence(EdgeDirection.IN).getAlpha();
-		firstElementEvaluator = greqlEvaluator.getVertexEvaluatorGraphMarker()
+		firstElementEvaluator = vertexEvalMarker
 				.getMark(firstElementExpression);
-		lastElementEvaluator = greqlEvaluator.getVertexEvaluatorGraphMarker()
-				.getMark(lastElementExpression);
+		lastElementEvaluator = vertexEvalMarker.getMark(lastElementExpression);
 	}
 
 	@Override
