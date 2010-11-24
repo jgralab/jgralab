@@ -393,6 +393,11 @@ public abstract class GraphImpl extends
 	public final boolean hasSavememSupport() {
 		return true;
 	}
+	
+	@Override
+	public final boolean hasDatabaseSupport(){
+		return false;
+	}
 
 	@Override
 	public <T extends Record> T createRecord(Class<T> recordClass, GraphIO io) {

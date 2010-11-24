@@ -1500,6 +1500,11 @@ public abstract class GraphImpl extends
 	public final boolean hasSavememSupport() {
 		return false;
 	}
+	
+	@Override
+	public final boolean hasDatabaseSupport(){
+		return false;
+	}
 
 	@Override
 	public <T> JGraLabList<T> createList() {
