@@ -67,7 +67,7 @@ public class EdgeSetExpressionEvaluator extends ElementSetExpressionEvaluator {
 
 	@Override
 	public JValue evaluate() throws EvaluateException {
-		Graph datagraph = getDatagraph();
+		Graph datagraph = greqlEvaluator.getDatagraph();
 		// create the resulting set
 		JValueSet resultSet = new JValueSet();
 		Edge currentEdge = datagraph.getFirstEdge();

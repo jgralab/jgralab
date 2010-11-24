@@ -69,7 +69,7 @@ public class VertexSetExpressionEvaluator extends ElementSetExpressionEvaluator 
 
 	@Override
 	public JValue evaluate() throws EvaluateException {
-		Graph datagraph = getDatagraph();
+		Graph datagraph = greqlEvaluator.getDatagraph();
 		JValueTypeCollection typeCollection = getTypeCollection();
 		JValueSet resultSet = null;
 		String indexKey = null;
