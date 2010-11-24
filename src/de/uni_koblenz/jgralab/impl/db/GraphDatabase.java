@@ -78,7 +78,7 @@ public abstract class GraphDatabase {
 	}
 
 	private static GraphDatabase createVendorSpecificDb(String url) throws GraphDatabaseException {
-		if(url.startsWith("postgres:"))
+		if(url.startsWith("postgresql:"))
 			return new PostgreSqlDb(url);
 		else if(url.startsWith("derby:"))
 			return new DerbyDb(url);

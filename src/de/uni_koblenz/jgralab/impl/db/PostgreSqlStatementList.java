@@ -309,7 +309,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	private final String CREATE_GRAPH_ATTRIBUTE_VALUE_TABLE = 
 		"CREATE TABLE \"GraphAttributeValue\"("	+
 			"\"gId\" INT4,"	+
-			"\"attributeId\" INT4 REFERENCES \"Attribute\" (\"attributeId\"," +
+			"\"attributeId\" INT4 REFERENCES \"Attribute\" (\"attributeId\")," +
 			"\"value\" TEXT," +
 			"CONSTRAINT \"gaPrimaryKey\" PRIMARY KEY ( \"gId\", \"attributeId\" )" +
 		");";
@@ -1379,7 +1379,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private String STORED_PROCEDURE_REORGANIZE_VERTEX_LIST = "CREATE FUNCTION \"reorganizeVertexListOf\"(\"graphId\" INT, start BIGINT) RETURNS INT AS $$\n"
+	private String STORED_PROCEDURE_REORGANIZE_VERTEX_LIST = "CREATE FUNCTION \"reorganizeVSeqOfGraph\"(\"graphId\" INT, start BIGINT) RETURNS INT AS $$\n"
 			+ "DECLARE\n"
 			+ "distance BIGINT := 4294967296;\n"
 			+ "current BIGINT := start;\n"
@@ -1398,7 +1398,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 				.getPreparedStatement(STORED_PROCEDURE_REORGANIZE_VERTEX_LIST);
 	}
 
-	private String STORED_PROCEDURE_REORGANIZE_EDGE_LIST = "CREATE FUNCTION \"reorganizeEdgeListOf\"(\"graphId\" INT, start BIGINT) RETURNS INT AS $$\n"
+	private String STORED_PROCEDURE_REORGANIZE_EDGE_LIST = "CREATE FUNCTION \"reorganizeESeqOfGraph\"(\"graphId\" INT, start BIGINT) RETURNS INT AS $$\n"
 			+ "DECLARE\n"
 			+ "distance BIGINT := 4294967296;\n"
 			+ "current BIGINT := start;\n"
@@ -1416,32 +1416,31 @@ public class PostgreSqlStatementList extends SqlStatementList {
 		return this.getPreparedStatement(STORED_PROCEDURE_REORGANIZE_EDGE_LIST);
 	}
 
-	private String STORED_PROCEDURE_REORGANIZE_INCIDENCE_LIST = "CREATE FUNCTION \"reorganizeIncidenceListOf\"(\"vertexId\" INT, \"graphId\" INT, start BIGINT) RETURNS INT AS $$\n"
+	private String STORED_PROCEDURE_REORGANIZE_INCIDENCE_LIST = 
+		"CREATE FUNCTION \"reorganizeLambdaSeqOfVertex\"(\"vertexId\" INT, \"graphId\" INT, start BIGINT) RETURNS INT AS $$\n"
 			+ "DECLARE\n"
 			+ "distance BIGINT := 4294967296;\n"
 			+ "current BIGINT := start;\n"
 			+ "incidence RECORD;\n"
 			+ "BEGIN\n"
-			+ "FOR incidence IN (SELECT \"eId\" FROM \"Incidence\" WHERE \"vId\" = \"vertexId\" AND \"gId\" = \"graphId\" ORDER BY \"sequenceNumber\" ASC) LOOP\n"
-			+ "EXECUTE 'UPDATE \"Incidence\" SET \"sequenceNumber\" = $1 WHERE \"vId\" = $2 AND \"gId\" = $3 AND \"eId\" = $4' USING current, \"vertexId\", \"graphId\", incidence.\"eId\";\n"
+			+ "FOR incidence IN (SELECT \"eId\", direction FROM \"Incidence\" WHERE \"vId\" = \"vertexId\" AND \"gId\" = \"graphId\" ORDER BY \"sequenceNumber\" ASC) LOOP\n"
+			+ "EXECUTE 'UPDATE \"Incidence\" SET \"sequenceNumber\" = $1 WHERE \"vId\" = $2 AND \"gId\" = $3 AND \"eId\" = $4 AND direction = $5' USING current, \"vertexId\", \"graphId\", incidence.\"eId\", incidence.direction;\n"
 			+ "current := current + distance;\n"
 			+ "END LOOP;\n"
 			+ "RETURN 1;\n" + "END;\n" + "$$ LANGUAGE plpgsql;";
 
 	@Override
-	public PreparedStatement createStoredProcedureToReorganizeIncidenceList()
-			throws SQLException {
-		return this
-				.getPreparedStatement(STORED_PROCEDURE_REORGANIZE_INCIDENCE_LIST);
+	public PreparedStatement createStoredProcedureToReorganizeIncidenceList() throws SQLException {
+		return this.getPreparedStatement(STORED_PROCEDURE_REORGANIZE_INCIDENCE_LIST);
 	}
 
-	private String STORED_PROCEDURE_INSERT_VERTEX = "CREATE FUNCTION \"insertVertex\"(\"vertexId\" INT, \"graphId\" INT, \"typeId\" INT, \"sequenceNumber\" BIGINT) RETURNS INT AS $$\n"
+	private String STORED_PROCEDURE_INSERT_VERTEX = 
+		"CREATE FUNCTION \"insertVertex\"(\"vertexId\" INT, \"graphId\" INT, \"typeId\" INT, \"sequenceNumber\" BIGINT) RETURNS INT AS $$\n"
 			+ "BEGIN\n"
 			+ "EXECUTE 'INSERT INTO \"Vertex\" ( \"vId\", \"gId\", \"typeId\", \"lambdaSeqVersion\", \"sequenceNumber\" ) VALUES ($1, $2, $3, 0, $4)' USING \"vertexId\", \"graphId\", \"typeId\", \"sequenceNumber\";\n"
 			+ "RETURN 1;\n" + "END;\n" + "$$ LANGUAGE plpgsql;";
 
-	public PreparedStatement createStoredProcedureToInsertVertex()
-			throws SQLException {
+	public PreparedStatement createStoredProcedureToInsertVertex() throws SQLException {
 		return this.getPreparedStatement(STORED_PROCEDURE_INSERT_VERTEX);
 	}
 
@@ -1467,27 +1466,33 @@ public class PostgreSqlStatementList extends SqlStatementList {
 		return statement;
 	}
 
+	private static String CALL_REORGANIZE_V_SEQ = "{ ? = call \"reorganizeVSeqOfGraph\"(?, ?) }";
+	
 	@Override
 	public CallableStatement createReorganizeVertexListCall(int gId, long start) throws SQLException {
-		CallableStatement statement = this.connection.prepareCall("{ ? = call \"reorganizeVertexListOf\"(?, ?) }");
+		CallableStatement statement = this.connection.prepareCall(CALL_REORGANIZE_V_SEQ);
 		statement.registerOutParameter(1, Types.INTEGER);
 		statement.setInt(2, gId);
 		statement.setLong(3, start);
 		return statement;
 	}
+	
+	private static String CALL_REORGANIZE_E_SEQ = "{ ? = call \"reorganizeESeqOfGraph\"(?, ?) }";
 
 	@Override
 	public CallableStatement createReorganizeEdgeListCall(int gId, long start) throws SQLException {
-		CallableStatement statement = this.connection.prepareCall("{ ? = call \"reorganizeEdgeListOf\"(?, ?) }");
+		CallableStatement statement = this.connection.prepareCall(CALL_REORGANIZE_E_SEQ);
 		statement.registerOutParameter(1, Types.INTEGER);
 		statement.setInt(2, gId);
 		statement.setLong(3, start);
 		return statement;
 	}
+	
+	private static String CALL_REORGANIZE_LAMBDA_SEQ = "{ ? = call \"reorganizeLambdaSeqOfVertex\"(?, ?) }";
 
 	@Override
 	public CallableStatement createReorganizeIncidenceListCall(int vId,	int gId, long start) throws SQLException {
-		CallableStatement statement = this.connection.prepareCall("{ ? = call \"reorganizeIncidenceListOf\"(?, ?) }");
+		CallableStatement statement = this.connection.prepareCall(CALL_REORGANIZE_LAMBDA_SEQ);
 		statement.registerOutParameter(1, Types.INTEGER);
 		statement.setInt(2, vId);
 		statement.setInt(3, gId);
