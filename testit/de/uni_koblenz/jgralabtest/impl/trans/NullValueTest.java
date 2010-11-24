@@ -28,7 +28,7 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-package de.uni_koblenz.jgralabtest.trans;
+package de.uni_koblenz.jgralabtest.impl.trans;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;

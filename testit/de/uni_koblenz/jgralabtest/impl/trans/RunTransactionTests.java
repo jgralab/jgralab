@@ -28,44 +28,17 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-package de.uni_koblenz.jgralabtest.trans;
+package de.uni_koblenz.jgralabtest.impl.trans;
 
-import java.util.HashMap;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
-import de.uni_koblenz.jgralab.GraphIO;
-import de.uni_koblenz.jgralab.GraphIOException;
-import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
-import de.uni_koblenz.jgralabtest.schemas.record.Node;
-import de.uni_koblenz.jgralabtest.schemas.record.RecordTestGraph;
-import de.uni_koblenz.jgralabtest.schemas.record.RecordTestSchema;
+import de.uni_koblenz.jgralab.impl.trans.TransactionImplTest;
 
-public class TryRecordLoading {
-
-	/**
-	 * @param args
-	 * @throws GraphIOException
-	 */
-	public static void main(String[] args) throws GraphIOException {
-		// create graph without transaction support
-		RecordTestGraph graph = RecordTestSchema.instance()
-				.createRecordTestGraph();
-		Node node = graph.createNode();
-		node.set_nodeMap(new HashMap<Integer, String>());
-		node.set_testRecord(graph.createBooleanType(true, false));
-		graph.createLink(node, node);
-
-		// save graph to file
-		String filename = "./testit/testgraphs/record.tg";
-
-		GraphIO.saveGraphToFile(filename, graph, new ConsoleProgressFunction());
-
-		// load graph with transaction support
-
-		RecordTestSchema.instance().loadRecordTestGraphWithTransactionSupport(
-				filename, new ConsoleProgressFunction());
-
-		System.out.println("Success!");
-
-	}
+@RunWith(Suite.class)
+@Suite.SuiteClasses( { SavepointImplTest.class, ConflictDetectionTest.class,
+		AttributedElementIterableTest.class, TransactionImplTest.class,
+		UndoTest.class, NullValueTest.class })
+public class RunTransactionTests {
 
 }
