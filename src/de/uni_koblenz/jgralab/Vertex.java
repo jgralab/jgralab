@@ -480,7 +480,7 @@ public interface Vertex extends GraphElement {
 	 * order.
 	 * 
 	 * @param comp
-	 *            the comparator that defines the order of the incidence list.
+	 *            the comparator that defines the desired incidence order.
 	 */
 	public void sortIncidences(Comparator<Edge> comp);
 

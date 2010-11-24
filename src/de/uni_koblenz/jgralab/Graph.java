@@ -32,6 +32,7 @@
 package de.uni_koblenz.jgralab;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -223,7 +224,7 @@ public interface Graph extends AttributedElement {
 	 * @return the first Vertex, or null if this graph contains no vertices of
 	 *         the specified <code>vertexClass</code>.
 	 */
-	public Vertex getFirstVertex(VertexClass vertexClass,boolean noSubclasses);
+	public Vertex getFirstVertex(VertexClass vertexClass, boolean noSubclasses);
 
 	/**
 	 * Returns the first Vertex of the specified <code>vertexClass</code>
@@ -296,8 +297,7 @@ public interface Graph extends AttributedElement {
 	 * @return the first Edge, or null if this graph contains no edges of the
 	 *         specified <code>edgeClass</code>.
 	 */
-	public Edge getFirstEdge(EdgeClass edgeClass,
-			boolean noSubclasses);
+	public Edge getFirstEdge(EdgeClass edgeClass, boolean noSubclasses);
 
 	/**
 	 * Returns the first Edge of the specified <code>edgeClass</code> (including
@@ -764,6 +764,23 @@ public interface Graph extends AttributedElement {
 	 */
 	public <T extends Record> T createRecord(Class<T> recordClass,
 			Object... components);
+
+	/**
+	 * Sorts the vertex list according to the given comparator in ascending
+	 * order.
+	 * 
+	 * @param comp
+	 *            the comparator defining the desired vertex order.
+	 */
+	public void sortVertexList(Comparator<Vertex> comp);
+
+	/**
+	 * Sorts the edge list according to the given comparator in ascending order.
+	 * 
+	 * @param comp
+	 *            the comparator defining the desired edge order.
+	 */
+	public void sortEdgeList(Comparator<Edge> comp);
 
 	/**
 	 * Registers the given <code>newListener</code> to the internal listener
