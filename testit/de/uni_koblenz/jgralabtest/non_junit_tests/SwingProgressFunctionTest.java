@@ -32,28 +32,30 @@ package de.uni_koblenz.jgralabtest.non_junit_tests;
 
 import java.util.Locale;
 
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.impl.SwingProgressFunction;
 
 public class SwingProgressFunctionTest {
 	public static void main(String[] args) {
-		// try {
-		// // UIManager.setLookAndFeel(UIManager
-		// // .getSystemLookAndFeelClassName());
-		// // .getCrossPlatformLookAndFeelClassName());
-		// } catch (ClassNotFoundException e1) {
-		// // TODO Auto-generated catch block
-		// e1.printStackTrace();
-		// } catch (InstantiationException e1) {
-		// // TODO Auto-generated catch block
-		// e1.printStackTrace();
-		// } catch (IllegalAccessException e1) {
-		// // TODO Auto-generated catch block
-		// e1.printStackTrace();
-		// } catch (UnsupportedLookAndFeelException e1) {
-		// // TODO Auto-generated catch block
-		// e1.printStackTrace();
-		// }
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			// .getCrossPlatformLookAndFeelClassName());
+		} catch (ClassNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (InstantiationException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IllegalAccessException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (UnsupportedLookAndFeelException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		Locale.setDefault(Locale.ENGLISH);
 		ProgressFunction pf = new SwingProgressFunction("ProgressFunctionTest",
 				"simple loop", "items");
