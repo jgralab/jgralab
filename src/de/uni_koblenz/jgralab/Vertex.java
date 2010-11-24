@@ -476,7 +476,7 @@ public interface Vertex extends GraphElement {
 	public boolean isValidOmega(Edge edge);
 
 	/**
-	 * Sorts the incidence list according to the given comparator in ascending
+	 * Sorts the incidence sequence according to the given comparator in ascending
 	 * order.
 	 * 
 	 * @param comp
