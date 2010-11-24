@@ -311,6 +311,26 @@
         <styles xmi:type="umlnotation:UMLShapeStyle" xmi:id="_eq-HgfQCEd-UvoTeXzN7EA" showListStereotype="Text" showListVisibility="Text" showListSignature="true" lineColor="8421504" showStereotype="Text"/>
         <layoutConstraint xmi:type="notation:Bounds" xmi:id="_eq-HgvQCEd-UvoTeXzN7EA" x="14784" y="396"/>
       </children>
+      <children xmi:id="_je3_EPeqEd-QJNPHPWlE2A" element="_jcSlIPeqEd-QJNPHPWlE2A">
+        <children xmi:id="_je-FsPeqEd-QJNPHPWlE2A" type="ImageCompartment">
+          <layoutConstraint xmi:type="notation:Size" xmi:id="_je-FsfeqEd-QJNPHPWlE2A" width="1320" height="1320"/>
+        </children>
+        <children xmi:id="_je-FsveqEd-QJNPHPWlE2A" type="Stereotype"/>
+        <children xmi:id="_je-Fs_eqEd-QJNPHPWlE2A" type="Kind"/>
+        <children xmi:id="_je-FtPeqEd-QJNPHPWlE2A" type="Name"/>
+        <children xmi:id="_je-FtfeqEd-QJNPHPWlE2A" type="Parent"/>
+        <children xmi:id="_je-FtveqEd-QJNPHPWlE2A" type="EnumerationCompartment">
+          <styles xmi:type="umlnotation:UMLListCompartmentStyle" xmi:id="_je-Ft_eqEd-QJNPHPWlE2A"/>
+        </children>
+        <children xmi:id="_je-FuPeqEd-QJNPHPWlE2A" visible="false" type="AttributeCompartment">
+          <styles xmi:type="umlnotation:UMLListCompartmentStyle" xmi:id="_je-FufeqEd-QJNPHPWlE2A"/>
+        </children>
+        <children xmi:id="_je-FuveqEd-QJNPHPWlE2A" visible="false" type="OperationCompartment">
+          <styles xmi:type="umlnotation:UMLListCompartmentStyle" xmi:id="_je-Fu_eqEd-QJNPHPWlE2A"/>
+        </children>
+        <styles xmi:type="umlnotation:UMLShapeStyle" xmi:id="_je3_EfeqEd-QJNPHPWlE2A" showStereotype="Label"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_je3_EveqEd-QJNPHPWlE2A" x="16764" y="3828"/>
+      </children>
       <styles xmi:type="umlnotation:UMLDiagramStyle" xmi:id="_9anss_P3Ed-wcPO-1KyRbw"/>
       <edges xmi:id="_P73aUPP4Ed-wcPO-1KyRbw" element="_P7tpUPP4Ed-wcPO-1KyRbw" source="_CsufgPP4Ed-wcPO-1KyRbw" target="_OvkmUPP4Ed-wcPO-1KyRbw">
         <children xmi:id="_P73aU_P4Ed-wcPO-1KyRbw" type="NameLabel">
@@ -1167,12 +1187,24 @@
     <ownedAttribute xmi:id="_hNZA8PQCEd-UvoTeXzN7EA" name="day" visibility="private">
       <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
     </ownedAttribute>
-    <ownedAttribute xmi:id="_jGPY8PQCEd-UvoTeXzN7EA" name="month" visibility="private">
-      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
-    </ownedAttribute>
+    <ownedAttribute xmi:id="_jGPY8PQCEd-UvoTeXzN7EA" name="month" visibility="private" type="_jcSlIPeqEd-QJNPHPWlE2A"/>
     <ownedAttribute xmi:id="_k1jacPQCEd-UvoTeXzN7EA" name="year" visibility="private">
       <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
     </ownedAttribute>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Enumeration" xmi:id="_jcSlIPeqEd-QJNPHPWlE2A" name="Month">
+    <ownedLiteral xmi:id="_nqec0PeqEd-QJNPHPWlE2A" name="JAN" classifier="_jcSlIPeqEd-QJNPHPWlE2A"/>
+    <ownedLiteral xmi:id="_oB9vwPeqEd-QJNPHPWlE2A" name="FEB" classifier="_jcSlIPeqEd-QJNPHPWlE2A"/>
+    <ownedLiteral xmi:id="_oYINAPeqEd-QJNPHPWlE2A" name="MAR" classifier="_jcSlIPeqEd-QJNPHPWlE2A"/>
+    <ownedLiteral xmi:id="_orOvMPeqEd-QJNPHPWlE2A" name="APR" classifier="_jcSlIPeqEd-QJNPHPWlE2A"/>
+    <ownedLiteral xmi:id="_o7djkPeqEd-QJNPHPWlE2A" name="MAY" classifier="_jcSlIPeqEd-QJNPHPWlE2A"/>
+    <ownedLiteral xmi:id="_pNOpAPeqEd-QJNPHPWlE2A" name="JUN" classifier="_jcSlIPeqEd-QJNPHPWlE2A"/>
+    <ownedLiteral xmi:id="_pgtlsPeqEd-QJNPHPWlE2A" name="JUL" classifier="_jcSlIPeqEd-QJNPHPWlE2A"/>
+    <ownedLiteral xmi:id="_p49toPeqEd-QJNPHPWlE2A" name="AUG" classifier="_jcSlIPeqEd-QJNPHPWlE2A"/>
+    <ownedLiteral xmi:id="_qQRaYPeqEd-QJNPHPWlE2A" name="SEP" classifier="_jcSlIPeqEd-QJNPHPWlE2A"/>
+    <ownedLiteral xmi:id="_qfjMgPeqEd-QJNPHPWlE2A" name="OCT" classifier="_jcSlIPeqEd-QJNPHPWlE2A"/>
+    <ownedLiteral xmi:id="_rDLeAPeqEd-QJNPHPWlE2A" name="NOV" classifier="_jcSlIPeqEd-QJNPHPWlE2A"/>
+    <ownedLiteral xmi:id="_raYdEPeqEd-QJNPHPWlE2A" name="DEC" classifier="_jcSlIPeqEd-QJNPHPWlE2A"/>
   </packagedElement>
   <profileApplication xmi:id="_9anstfP3Ed-wcPO-1KyRbw">
     <eAnnotations xmi:id="_9anstvP3Ed-wcPO-1KyRbw" source="http://www.eclipse.org/uml2/2.0.0/UML">
