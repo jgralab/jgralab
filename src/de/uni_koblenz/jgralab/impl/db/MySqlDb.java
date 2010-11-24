@@ -24,7 +24,7 @@ public class MySqlDb extends GraphDatabase {
 		super.addPrimaryKeyConstraints();
 		//super.addForeignKeyConstraints();
 		super.addIndices();
-		//super.addStoredProcedures();		
+		super.addStoredProcedures();		
 	}
 	
 	@Override

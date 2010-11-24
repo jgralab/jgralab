@@ -16,6 +16,8 @@ import de.uni_koblenz.jgralab.schema.Schema;
  * Factory that creates MySQL specific prepared statements.
  * 
  * @author ultbreit@uni-koblenz.de
+ * 
+ * TODO Activate Multiple Statement Execution!
  */
 public class MySqlStatementList extends SqlStatementList {
 
@@ -1276,31 +1278,83 @@ public class MySqlStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private String STORED_PROCEDURE_REORGANIZE_VERTEX_LIST = ""; // TODO
+	private String STORED_PROCEDURE_REORGANIZE_VERTEX_LIST = 
+		"CREATE PROCEDURE reorganizeVSeqOfGraph( graphId INT, start BIGINT ) " +
+		"BEGIN " +
+			"DECLARE distance BIGINT;" + 
+			"DECLARE currentSequenceNumber BIGINT;" +
+			"DECLARE currentVId INT;" +
+			"DECLARE vertex CURSOR FOR SELECT vId FROM Vertex WHERE gId = graphId ORDER BY sequenceNumber ASC;" +
+			
+			"SET distance = 4294967296, currentSequenceNumber = start;" +
+			"OPEN vertex;" +
+			"BEGIN " +
+				"DECLARE EXIT HANDLER FOR NOT FOUND BEGIN END;" +
+				"LOOP" +
+					"FETCH vertex INTO currentVId;" +
+					"UPDATE Vertex SET sequenceNumber = currentSequenceNumber WHERE vId = currentVId;" +
+					"SET currentSequenceNumber = currentSequenceNumber + distance;" +
+				"END LOOP;" +
+			"END;" +	
+			"CLOSE vertex;" +
+		"END";
 
 	@Override
 	public PreparedStatement createStoredProcedureToReorganizeVertexList() throws SQLException {
 		return this.getPreparedStatement(STORED_PROCEDURE_REORGANIZE_VERTEX_LIST);
 	}
 
-	private String STORED_PROCEDURE_REORGANIZE_EDGE_LIST = ""; // TODO
-
+	private String STORED_PROCEDURE_REORGANIZE_EDGE_LIST = 
+		"CREATE PROCEDURE reorganizeESeqOfGraph( graphId INT, start BIGINT ) " +
+		"BEGIN " +
+			"DECLARE distance BIGINT;" + 
+			"DECLARE currentSequenceNumber BIGINT;" +
+			"DECLARE currentEId INT;" +
+			"DECLARE edge CURSOR FOR SELECT eId FROM Edge WHERE gId = graphId ORDER BY sequenceNumber ASC;" +
+			
+			"SET distance = 4294967296, currentSequenceNumber = start;" +
+			"OPEN edge;" +
+			"BEGIN " +
+				"DECLARE EXIT HANDLER FOR NOT FOUND BEGIN END;" +
+				"LOOP" +
+					"FETCH edge INTO currentEId;" +
+					"UPDATE Edge SET sequenceNumber = currentSequenceNumber WHERE eId = currentEId;" +
+					"SET currentSequenceNumber = currentSequenceNumber + distance;" +
+				"END LOOP;" +
+			"END;" +	
+			"CLOSE edge;" +
+		"END";
+		
 	@Override
 	public PreparedStatement createStoredProcedureToReorganizeEdgeList() throws SQLException {
 		return this.getPreparedStatement(STORED_PROCEDURE_REORGANIZE_EDGE_LIST);
 	}
 
-	private String STORED_PROCEDURE_REORGANIZE_INCIDENCE_LIST = ""; // TODO
+	private String STORED_PROCEDURE_REORGANIZE_INCIDENCE_LIST = 
+		"CREATE PROCEDURE reorganizeLambdaSeqOfVertex( vertexId INT, graphId INT, start BIGINT ) " +
+		"BEGIN " +
+			"DECLARE distance BIGINT;" + 
+			"DECLARE currentSequenceNumber BIGINT;" +
+			"DECLARE currentEId INT;" +
+			"DECLARE currentDirection ENUM('IN', 'OUT');" +
+			"DECLARE incidence CURSOR FOR SELECT eId, direction FROM Incidence WHERE vId = vertexId AND gId = graphId ORDER BY sequenceNumber ASC;" +
+			"SET incidence = 4294967296, currentSequenceNumber = start;" +
+			"OPEN edge;" +
+			"BEGIN " +
+				"DECLARE EXIT HANDLER FOR NOT FOUND BEGIN END;" +
+				"LOOP" +
+					"FETCH incidence INTO currentEId, currentDirection;" +
+					"UPDATE Incidence SET sequenceNumber = currentSequenceNumber WHERE eId = currentEId AND vId = vertexId AND gId = graphId AND direction = currentDirection;" +
+					"SET currentSequenceNumber = currentSequenceNumber + distance;" +
+				"END LOOP;" +
+			"END;" +	
+			"CLOSE edge;" +
+		"END";
+		
 
 	@Override
 	public PreparedStatement createStoredProcedureToReorganizeIncidenceList() throws SQLException {
 		return this.getPreparedStatement(STORED_PROCEDURE_REORGANIZE_INCIDENCE_LIST);
-	}
-
-	private String STORED_PROCEDURE_INSERT_VERTEX = ""; // TODO
-
-	public PreparedStatement createStoredProcedureToInsertVertex() throws SQLException {
-		return this.getPreparedStatement(STORED_PROCEDURE_INSERT_VERTEX);
 	}
 
 	private String DELETE_SCHEMA = 
@@ -1324,23 +1378,36 @@ public class MySqlStatementList extends SqlStatementList {
 		statement.setString(2, schemaName);
 		return statement;
 	}
+	
+	private static String CALL_REORGANIZE_V_SEQ = "CALL reorganizeVSeqOfGraph( ?, ? )";
 
 	@Override
 	public CallableStatement createReorganizeVertexListCall(int gId, long start) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		CallableStatement statement = this.connection.prepareCall(CALL_REORGANIZE_V_SEQ);
+		statement.setInt(1, gId);
+		statement.setLong(2, start);
+		return statement;
 	}
 
+	private static String CALL_REORGANIZE_E_SEQ = "CALL reorganizeESeqOfGraph( ?, ? )";
+	
 	@Override
 	public CallableStatement createReorganizeEdgeListCall(int gId, long start) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		CallableStatement statement = this.connection.prepareCall(CALL_REORGANIZE_E_SEQ);
+		statement.setInt(1, gId);
+		statement.setLong(2, start);
+		return statement;
 	}
 
+	private static String CALL_REORGANIZE_LAMBDA_SEQ = "CALL reorganizeLambdaSeqOfVertex( ?, ?, ? )";
+	
 	@Override
 	public CallableStatement createReorganizeIncidenceListCall(int vId, int gId, long start) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		CallableStatement statement = this.connection.prepareCall(CALL_REORGANIZE_LAMBDA_SEQ);
+		statement.setInt(1, vId);
+		statement.setInt(2, gId);
+		statement.setLong(3, start);
+		return statement;
 	}
 
 	private static String SELCT_ID_OF_GRAPHS = "SELECT uid FROM Graph";
