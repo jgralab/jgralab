@@ -99,8 +99,8 @@ public class TypeIdEvaluator extends VertexEvaluator {
 
 	@Override
 	public JValue evaluate() throws EvaluateException {
-		List<AttributedElementClass> typeList = createTypeList(getDatagraph()
-				.getSchema());
+		List<AttributedElementClass> typeList = createTypeList(greqlEvaluator
+				.getDatagraph().getSchema());
 		return new JValueTypeCollection(typeList, vertex.is_excluded());
 	}
 

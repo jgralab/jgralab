@@ -196,13 +196,6 @@ public abstract class VertexEvaluator {
 	}
 
 	/**
-	 * @return the datagraph which gets evaluated
-	 */
-	protected Graph getDatagraph() {
-		return greqlEvaluator.getDatagraph();
-	}
-
-	/**
 	 * returns the vertex this VertexEvaluator evaluates
 	 */
 	public abstract Greql2Vertex getVertex();
