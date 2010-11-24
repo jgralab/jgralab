@@ -140,8 +140,8 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl 
 
 	@Override
 	protected void setPrevEdgeInGraph(Edge prevEdge) {
-		// throw new UnsupportedOperationException(
-		// "Unsupported in savemem implementation.");
+		throw new UnsupportedOperationException(
+				"Unsupported in savemem implementation.");
 	}
 
 	@Override
@@ -156,8 +156,8 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl 
 
 	@Override
 	protected void setPrevIncidenceInternal(IncidenceImpl prevIncidence) {
-		// throw new UnsupportedOperationException(
-		// "Unsupported in savemem implementation.");
+		throw new UnsupportedOperationException(
+				"Unsupported in savemem implementation.");
 	}
 
 	@Override
