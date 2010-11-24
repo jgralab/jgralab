@@ -1072,7 +1072,7 @@ public class Rsa2Tg extends XmlProcessor {
 							+ schema.get_name() + "'");
 		}
 
-		// Checks whether each enum domain as at least one literal
+		// Checks whether each enum domain has at least one literal
 		checkEnumDomains();
 
 		// Now the RSA XMI file has been processed, pending actions to link
@@ -1114,9 +1114,6 @@ public class Rsa2Tg extends XmlProcessor {
 			for (Vertex v : preliminaryVertices) {
 				System.err.println(attributedElement2String(v));
 			}
-		}
-
-		if (!preliminaryVertices.isEmpty()) {
 			throw new ProcessingException(getFileName(),
 					"There are still vertices left over. ");
 		}
@@ -1217,7 +1214,8 @@ public class Rsa2Tg extends XmlProcessor {
 	 * @param aec
 	 */
 	private void removeAttributes(AttributedElementClass aec) {
-		for (HasAttribute ha = aec.getFirstHasAttributeIncidence(EdgeDirection.OUT); ha != null; ha = aec
+		for (HasAttribute ha = aec
+				.getFirstHasAttributeIncidence(EdgeDirection.OUT); ha != null; ha = aec
 				.getFirstHasAttributeIncidence(EdgeDirection.OUT)) {
 			ha.getThat().delete();
 		}
@@ -1239,9 +1237,9 @@ public class Rsa2Tg extends XmlProcessor {
 		}
 		if (faultyDomains.size() > 0) {
 			StringBuilder sb = new StringBuilder();
-			sb.append("The following enumeration domain").append(
-					faultyDomains.size() == 1 ? " has" : "s have").append(
-					" no literals");
+			sb.append("The following enumeration domain")
+					.append(faultyDomains.size() == 1 ? " has" : "s have")
+					.append(" no literals");
 			String delim = ": ";
 			for (String name : faultyDomains) {
 				sb.append(delim).append(name);
@@ -1293,14 +1291,16 @@ public class Rsa2Tg extends XmlProcessor {
 			assert subClass.getFirstComesFromIncidence() != null;
 			assert superClass.getFirstComesFromIncidence() != null;
 			createSubsetsForIncidences(subClass, superClass,
-					(IncidenceClass) subClass.getFirstComesFromIncidence().getThat(),
-					(IncidenceClass) superClass.getFirstComesFromIncidence().getThat());
+					(IncidenceClass) subClass.getFirstComesFromIncidence()
+							.getThat(), (IncidenceClass) superClass
+							.getFirstComesFromIncidence().getThat());
 
 			assert subClass.getFirstGoesToIncidence() != null;
 			assert superClass.getFirstGoesToIncidence() != null;
 			createSubsetsForIncidences(subClass, superClass,
-					(IncidenceClass) subClass.getFirstGoesToIncidence().getThat(),
-					(IncidenceClass) superClass.getFirstGoesToIncidence().getThat());
+					(IncidenceClass) subClass.getFirstGoesToIncidence()
+							.getThat(), (IncidenceClass) superClass
+							.getFirstGoesToIncidence().getThat());
 			spec = spec.getNextSpecializesEdgeClassInGraph();
 		}
 
@@ -1510,8 +1510,7 @@ public class Rsa2Tg extends XmlProcessor {
 	private Vertex handlePackage() throws XMLStreamException {
 
 		Package pkg = sg.createPackage();
-		pkg
-				.set_qualifiedName(getQualifiedName(getAttribute(UML_ATTRIBUTE_NAME)));
+		pkg.set_qualifiedName(getQualifiedName(getAttribute(UML_ATTRIBUTE_NAME)));
 		sg.createContainsSubPackage(packageStack.peek(), pkg);
 		packageStack.push(pkg);
 		return pkg;
@@ -1549,8 +1548,7 @@ public class Rsa2Tg extends XmlProcessor {
 		currentClass = vc;
 		String abs = getAttribute(UML_ATTRIBUTE_IS_ABSRACT);
 		vc.set_abstract((abs != null) && abs.equals(UML_TRUE));
-		vc
-				.set_qualifiedName(getQualifiedName(getAttribute(UML_ATTRIBUTE_NAME)));
+		vc.set_qualifiedName(getQualifiedName(getAttribute(UML_ATTRIBUTE_NAME)));
 		sg.createContainsGraphElementClass(packageStack.peek(), vc);
 
 		// System.out.println("currentClass = " + currentClass + " "
@@ -1636,7 +1634,8 @@ public class Rsa2Tg extends XmlProcessor {
 
 			IncidenceClass from = inc;
 			sg.createGoesTo(ec, to);
-			sg.createEndsAt(to, (VertexClass) from.getFirstEndsAtIncidence().getThat());
+			sg.createEndsAt(to, (VertexClass) from.getFirstEndsAtIncidence()
+					.getThat());
 
 			to.set_aggregation(from.get_aggregation());
 			to.set_max(from.get_max());
@@ -1674,8 +1673,7 @@ public class Rsa2Tg extends XmlProcessor {
 	private Vertex handleEnumeration() throws XMLStreamException {
 		EnumDomain ed = sg.createEnumDomain();
 		Package p = packageStack.peek();
-		ed
-				.set_qualifiedName(getQualifiedName(getAttribute(UML_ATTRIBUTE_NAME)));
+		ed.set_qualifiedName(getQualifiedName(getAttribute(UML_ATTRIBUTE_NAME)));
 		sg.createContainsDomain(p, ed);
 		ed.set_enumConstants(new ArrayList<String>());
 		Domain dom = domainMap.get(ed.get_qualifiedName());
@@ -1970,9 +1968,10 @@ public class Rsa2Tg extends XmlProcessor {
 				continue;
 			}
 
-			IncidenceClass to = (IncidenceClass) ec.getFirstGoesToIncidence().getThat();
-			IncidenceClass from = (IncidenceClass) ec.getFirstComesFromIncidence()
+			IncidenceClass to = (IncidenceClass) ec.getFirstGoesToIncidence()
 					.getThat();
+			IncidenceClass from = (IncidenceClass) ec
+					.getFirstComesFromIncidence().getThat();
 
 			String toRole = to.get_roleName();
 			if ((toRole == null) || toRole.equals("")) {
@@ -2013,8 +2012,8 @@ public class Rsa2Tg extends XmlProcessor {
 			if (isUseFromRole()) {
 				String fromRole = from.get_roleName();
 				if ((fromRole == null) || fromRole.equals("")) {
-					fromRole = ((VertexClass) from.getFirstEndsAtIncidence().getThat())
-							.get_qualifiedName();
+					fromRole = ((VertexClass) from.getFirstEndsAtIncidence()
+							.getThat()).get_qualifiedName();
 					int p = fromRole.lastIndexOf('.');
 					if (p >= 0) {
 						fromRole = fromRole.substring(p + 1);
@@ -2121,11 +2120,12 @@ public class Rsa2Tg extends XmlProcessor {
 				assert att.getDegree(HasDomain.class, EdgeDirection.OUT) == 1 : "Attribute '"
 						+ att.get_name()
 						+ "' of "
-						+ att.getFirstHasAttributeIncidence().getThat().getM1Class()
-								.getSimpleName()
+						+ att.getFirstHasAttributeIncidence().getThat()
+								.getM1Class().getSimpleName()
 						+ " '"
-						+ ((AttributedElementClass) att.getFirstHasAttributeIncidence()
-								.getThat()).get_qualifiedName()
+						+ ((AttributedElementClass) att
+								.getFirstHasAttributeIncidence().getThat())
+								.get_qualifiedName()
 						+ "' has "
 						+ att.getDegree(HasDomain.class, EdgeDirection.OUT)
 						+ " domain(s)";
@@ -2901,8 +2901,8 @@ public class Rsa2Tg extends XmlProcessor {
 			} else {
 				// create a preliminary vertex class
 				vc = sg.createVertexClass();
-				preliminaryVertices.add(vc);
 				vc.set_qualifiedName(typeId);
+				preliminaryVertices.add(vc);
 				idMap.put(typeId, vc);
 			}
 
@@ -2941,6 +2941,7 @@ public class Rsa2Tg extends XmlProcessor {
 					// create a preliminary edge class
 					ec = sg.createEdgeClass();
 				}
+
 				preliminaryVertices.add(ec);
 				idMap.put(associationId, ec);
 			}
@@ -2953,7 +2954,8 @@ public class Rsa2Tg extends XmlProcessor {
 			sg.createEndsAt(inc, vc);
 		} else {
 			EdgeClass ec = (EdgeClass) (inc.getFirstComesFromIncidence() != null ? inc
-					.getFirstComesFromIncidence() : inc.getFirstGoesToIncidence()).getThat();
+					.getFirstComesFromIncidence() : inc
+					.getFirstGoesToIncidence()).getThat();
 			String id = null;
 			for (Entry<String, Vertex> idEntry : idMap.entrySet()) {
 				if (idEntry.getValue() == ec) {
@@ -2967,7 +2969,8 @@ public class Rsa2Tg extends XmlProcessor {
 
 			// an ownedEnd of an association or an ownedAttribute of a class
 			// with a possibly preliminary vertex class
-			VertexClass vc = (VertexClass) inc.getFirstEndsAtIncidence().getThat();
+			VertexClass vc = (VertexClass) inc.getFirstEndsAtIncidence()
+					.getThat();
 			if (preliminaryVertices.contains(vc)) {
 
 				AttributedElement ae = idMap.get(typeId);
