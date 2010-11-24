@@ -33,9 +33,11 @@ package de.uni_koblenz.jgralab.impl;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
@@ -846,8 +848,7 @@ public abstract class GraphBaseImpl implements Graph {
 	 * .jgralab.schema.EdgeClass, boolean)
 	 */
 	@Override
-	public Edge getFirstEdge(EdgeClass edgeClass,
-			boolean noSubclasses) {
+	public Edge getFirstEdge(EdgeClass edgeClass, boolean noSubclasses) {
 		assert edgeClass != null;
 		return getFirstEdge(edgeClass.getM1Class(), noSubclasses);
 	}
@@ -926,8 +927,7 @@ public abstract class GraphBaseImpl implements Graph {
 	 * .schema.VertexClass, boolean)
 	 */
 	@Override
-	public Vertex getFirstVertex(VertexClass vertexClass,
-			boolean noSubclasses) {
+	public Vertex getFirstVertex(VertexClass vertexClass, boolean noSubclasses) {
 		assert vertexClass != null;
 		return getFirstVertex(vertexClass.getM1Class(), noSubclasses);
 	}
@@ -1178,10 +1178,10 @@ public abstract class GraphBaseImpl implements Graph {
 			}
 		} else {
 			// delete somewhere in the middle
-			((EdgeBaseImpl) e.getPrevEdge()).setNextEdgeInGraph(e
-					.getNextEdge());
-			((EdgeBaseImpl) e.getNextEdge()).setPrevEdgeInGraph(e
-					.getPrevEdge());
+			((EdgeBaseImpl) e.getPrevEdge())
+					.setNextEdgeInGraph(e.getNextEdge());
+			((EdgeBaseImpl) e.getNextEdge())
+					.setPrevEdgeInGraph(e.getPrevEdge());
 		}
 	}
 
@@ -1286,12 +1286,10 @@ public abstract class GraphBaseImpl implements Graph {
 		// remove moved edge from eSeq
 		if (movedEdge == getFirstEdge()) {
 			setFirstEdgeInGraph((EdgeBaseImpl) movedEdge.getNextEdge());
-			((EdgeBaseImpl) movedEdge.getNextEdge())
-					.setPrevEdgeInGraph(null);
+			((EdgeBaseImpl) movedEdge.getNextEdge()).setPrevEdgeInGraph(null);
 		} else if (movedEdge == getLastEdge()) {
 			setLastEdgeInGraph((EdgeBaseImpl) movedEdge.getPrevEdge());
-			((EdgeBaseImpl) movedEdge.getPrevEdge())
-					.setNextEdgeInGraph(null);
+			((EdgeBaseImpl) movedEdge.getPrevEdge()).setNextEdgeInGraph(null);
 		} else {
 			((EdgeBaseImpl) movedEdge.getPrevEdge())
 					.setNextEdgeInGraph(movedEdge.getNextEdge());
@@ -1666,6 +1664,281 @@ public abstract class GraphBaseImpl implements Graph {
 	protected void setFreeEdgeList(FreeIndexList freeEdgeList) {
 		this.freeEdgeList = freeEdgeList;
 	}
+
+	// sort vertices
+	public void sortVertexList(Comparator<Vertex> comp) {
+
+		if (getFirstVertex() == null) {
+			// no sorting required for empty vertex lists
+			return;
+		}
+		class VertexList {
+			VertexBaseImpl first;
+			VertexBaseImpl last;
+
+			public void add(VertexBaseImpl v) {
+				if (first == null) {
+					first = v;
+					assert (last == null);
+					last = v;
+				} else {
+					v.setPrevVertex(last);
+					last.setNextVertex(v);
+					last = v;
+				}
+				v.setNextVertex(null);
+			}
+
+			public VertexBaseImpl remove() {
+				if (first == null) {
+					throw new NoSuchElementException();
+				}
+				VertexBaseImpl out;
+				if (first == last) {
+					out = first;
+					first = null;
+					last = null;
+					return out;
+				}
+				out = first;
+				first = (VertexBaseImpl) out.getNextVertex();
+				first.setPrevVertex(null);
+				return out;
+			}
+
+			public boolean isEmpty() {
+				assert ((first == null) == (last == null));
+				return first == null;
+			}
+
+		}
+
+		VertexList a = new VertexList();
+		VertexList b = new VertexList();
+		VertexList out = a;
+
+		// split
+		VertexBaseImpl last;
+		VertexList l = new VertexList();
+		l.first = (VertexBaseImpl) getFirstVertex();
+		l.last = (VertexBaseImpl) getLastVertex();
+
+		out.add(last = l.remove());
+		while (!l.isEmpty()) {
+			VertexBaseImpl current = l.remove();
+			if (comp.compare(current, last) < 0) {
+				out = (out == a) ? b : a;
+			}
+			out.add(current);
+			last = current;
+		}
+		if (a.isEmpty() || b.isEmpty()) {
+			out = a.isEmpty() ? b : a;
+			setFirstVertex(out.first);
+			setLastVertex(out.last);
+			return;
+		}
+
+		while (true) {
+			if (a.isEmpty() || b.isEmpty()) {
+				out = a.isEmpty() ? b : a;
+				setFirstVertex(out.first);
+				setLastVertex(out.last);
+				edgeListModified();
+				return;
+			}
+
+			VertexList c = new VertexList();
+			VertexList d = new VertexList();
+			out = c;
+
+			last = null;
+			while (!a.isEmpty() && !b.isEmpty()) {
+				int compareAToLast = last != null ? comp.compare(a.first, last)
+						: 0;
+				int compareBToLast = last != null ? comp.compare(b.first, last)
+						: 0;
+
+				if ((compareAToLast >= 0) && (compareBToLast >= 0)) {
+					if (comp.compare(a.first, b.first) <= 0) {
+						out.add(last = a.remove());
+					} else {
+						out.add(last = b.remove());
+					}
+				} else if ((compareAToLast < 0) && (compareBToLast < 0)) {
+					out = (out == c) ? d : c;
+					last = null;
+				} else if ((compareAToLast < 0) && (compareBToLast >= 0)) {
+					out.add(last = b.remove());
+				} else {
+					out.add(last = a.remove());
+				}
+			}
+
+			// copy rest of A
+			while (!a.isEmpty()) {
+				VertexBaseImpl current = a.remove();
+				if (comp.compare(current, last) < 0) {
+					out = (out == c) ? d : c;
+				}
+				out.add(current);
+				last = current;
+			}
+
+			// copy rest of B
+			while (!b.isEmpty()) {
+				VertexBaseImpl current = b.remove();
+				if (comp.compare(current, last) < 0) {
+					out = (out == c) ? d : c;
+				}
+				out.add(current);
+				last = current;
+			}
+
+			a = c;
+			b = d;
+		}
+
+	}
+
+	// sort edges
+
+	public void sortEdgeList(Comparator<Edge> comp) {
+
+		if (getFirstEdge() == null) {
+			// no sorting required for empty edge lists
+			return;
+		}
+		class EdgeList {
+			EdgeBaseImpl first;
+			EdgeBaseImpl last;
+
+			public void add(EdgeBaseImpl e) {
+				if (first == null) {
+					first = e;
+					assert (last == null);
+					last = e;
+				} else {
+					e.setPrevEdgeInGraph(last);
+					last.setNextEdgeInGraph(e);
+					last = e;
+				}
+				e.setNextEdgeInGraph(null);
+			}
+
+			public EdgeBaseImpl remove() {
+				if (first == null) {
+					throw new NoSuchElementException();
+				}
+				EdgeBaseImpl out;
+				if (first == last) {
+					out = first;
+					first = null;
+					last = null;
+					return out;
+				}
+				out = first;
+				first = (EdgeBaseImpl) out.getNextEdge();
+				first.setPrevEdgeInGraph(null);
+				return out;
+			}
+
+			public boolean isEmpty() {
+				assert ((first == null) == (last == null));
+				return first == null;
+			}
+
+		}
+
+		EdgeList a = new EdgeList();
+		EdgeList b = new EdgeList();
+		EdgeList out = a;
+
+		// split
+		EdgeBaseImpl last;
+		EdgeList l = new EdgeList();
+		l.first = (EdgeBaseImpl) getFirstEdge();
+		l.last = (EdgeBaseImpl) getLastEdge();
+
+		out.add(last = l.remove());
+		while (!l.isEmpty()) {
+			EdgeBaseImpl current = l.remove();
+			if (comp.compare(current, last) < 0) {
+				out = (out == a) ? b : a;
+			}
+			out.add(current);
+			last = current;
+		}
+		if (a.isEmpty() || b.isEmpty()) {
+			out = a.isEmpty() ? b : a;
+			setFirstEdgeInGraph(out.first);
+			setLastEdgeInGraph(out.last);
+			return;
+		}
+
+		while (true) {
+			if (a.isEmpty() || b.isEmpty()) {
+				out = a.isEmpty() ? b : a;
+				setFirstEdgeInGraph(out.first);
+				setLastEdgeInGraph(out.last);
+				edgeListModified();
+				return;
+			}
+
+			EdgeList c = new EdgeList();
+			EdgeList d = new EdgeList();
+			out = c;
+
+			last = null;
+			while (!a.isEmpty() && !b.isEmpty()) {
+				int compareAToLast = last != null ? comp.compare(a.first, last)
+						: 0;
+				int compareBToLast = last != null ? comp.compare(b.first, last)
+						: 0;
+
+				if ((compareAToLast >= 0) && (compareBToLast >= 0)) {
+					if (comp.compare(a.first, b.first) <= 0) {
+						out.add(last = a.remove());
+					} else {
+						out.add(last = b.remove());
+					}
+				} else if ((compareAToLast < 0) && (compareBToLast < 0)) {
+					out = (out == c) ? d : c;
+					last = null;
+				} else if ((compareAToLast < 0) && (compareBToLast >= 0)) {
+					out.add(last = b.remove());
+				} else {
+					out.add(last = a.remove());
+				}
+			}
+
+			// copy rest of A
+			while (!a.isEmpty()) {
+				EdgeBaseImpl current = a.remove();
+				if (comp.compare(current, last) < 0) {
+					out = (out == c) ? d : c;
+				}
+				out.add(current);
+				last = current;
+			}
+
+			// copy rest of B
+			while (!b.isEmpty()) {
+				EdgeBaseImpl current = b.remove();
+				if (comp.compare(current, last) < 0) {
+					out = (out == c) ? d : c;
+				}
+				out.add(current);
+				last = current;
+			}
+
+			a = c;
+			b = d;
+		}
+
+	}
+
+	// handle GraphStructureChangedListener
 
 	/**
 	 * A list of all registered <code>GraphStructureChangedListener</code> as

@@ -36,6 +36,7 @@ import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.Collection;
+import java.util.Comparator;
 
 import org.junit.After;
 import org.junit.Before;
@@ -49,6 +50,7 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
+import de.uni_koblenz.jgralabtest.schemas.minimal.Link;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalGraph;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalSchema;
 import de.uni_koblenz.jgralabtest.schemas.minimal.Node;
@@ -58,6 +60,7 @@ public class EdgeListTest extends InstanceTest {
 	private static final int V = 4;
 	private static final int E = 4;
 	private static final int N = 10;
+	private static final int EDGE_COUNT = 10;
 	private MinimalGraph g;
 
 	@Parameters
@@ -320,5 +323,84 @@ public class EdgeListTest extends InstanceTest {
 		createReadOnlyTransaction(g);
 		assertEquals("e2 e3 e4 e6 e7 e8 e9 e1 e5 e10 e11", getESeq());
 		commit(g);
+	}
+
+	/**
+	 * Rudimentary test for sortEdgeList. It sorts the edge in reverse order to
+	 * the id and back. For transaction support it has to be tested in the same
+	 * transaction, because otherwise the IDs would be changed.
+	 * 
+	 * @throws CommitFailedException
+	 */
+	@Test
+	public void testSortEdgeList() throws CommitFailedException {
+		MinimalGraph g = null;
+		switch (implementationType) {
+		case STANDARD:
+			g = MinimalSchema.instance().createMinimalGraph(V, E);
+			break;
+		case TRANSACTION:
+			g = MinimalSchema.instance()
+					.createMinimalGraphWithTransactionSupport(V, E);
+			break;
+		case DATABASE:
+			g = this.createMinimalGraphWithDatabaseSupport(
+					"IncidenceListTest.testSortIncidences", V, E);
+			break;
+		case SAVEMEM:
+			g = MinimalSchema.instance().createMinimalGraphWithSavememSupport(
+					V, E);
+			break;
+		default:
+			fail("Implementation " + implementationType
+					+ " not yet supported by this test.");
+		}
+
+		createTransaction(g);
+		Node n1 = g.createNode();
+		Node n2 = g.createNode();
+		Link[] links = new Link[EDGE_COUNT + 1];
+		for (int i = 1; i < links.length; i++) {
+			links[i] = (g.createLink(n1, n2));
+		}
+
+		int i = 1;
+		for (Edge currentEdge : g.edges()) {
+			assertEquals(currentEdge.getId(), links[i++].getId());
+		}
+
+		Comparator<Edge> comp = new Comparator<Edge>() {
+
+			@Override
+			public int compare(Edge o1, Edge o2) {
+				return Double.compare(o2.getId(), o1.getId());
+			}
+
+		};
+
+		g.sortEdgeList(comp);
+
+		i = EDGE_COUNT;
+		for (Edge currentEdge : g.edges()) {
+			assertEquals(currentEdge.getId(), links[i--].getId());
+		}
+
+		comp = new Comparator<Edge>() {
+
+			@Override
+			public int compare(Edge o1, Edge o2) {
+				return Double.compare(o1.getId(), o2.getId());
+			}
+
+		};
+
+		g.sortEdgeList(comp);
+
+		i = 1;
+		for (Edge currentEdge : g.edges()) {
+			assertEquals(currentEdge.getId(), links[i++].getId());
+		}
+		commit(g);
+
 	}
 }

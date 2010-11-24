@@ -32,10 +32,11 @@ package de.uni_koblenz.jgralabtest.instancetest;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue; //import static junit.framework.Assert.fail;
+import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.Collection;
+import java.util.Comparator;
 
 import org.junit.After;
 import org.junit.Before;
@@ -43,14 +44,18 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalGraph;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalSchema;
+import de.uni_koblenz.jgralabtest.schemas.minimal.Node;
 
 @RunWith(Parameterized.class)
 public class VertexListTest extends InstanceTest {
+	private static final int VERTEX_COUNT = 10;
+
 	public VertexListTest(ImplementationType implementationType) {
 		super(implementationType);
 	}
@@ -283,5 +288,82 @@ public class VertexListTest extends InstanceTest {
 		createReadOnlyTransaction(g);
 		assertEquals("v2 v3 v4 v6 v7 v8 v9 v1 v5 v10 v11", getVSeq());
 		commit(g);
+	}
+	
+	/**
+	 * Rudimentary test for sortVertexList. It sorts the vertices in reverse order to
+	 * the id and back. For transaction support it has to be tested in the same
+	 * transaction, because otherwise the IDs would be changed.
+	 * 
+	 * @throws CommitFailedException
+	 */
+	@Test
+	public void testSortVertexList() throws CommitFailedException {
+		MinimalGraph g = null;
+		switch (implementationType) {
+		case STANDARD:
+			g = MinimalSchema.instance().createMinimalGraph(V, E);
+			break;
+		case TRANSACTION:
+			g = MinimalSchema.instance()
+					.createMinimalGraphWithTransactionSupport(V, E);
+			break;
+		case DATABASE:
+			g = this.createMinimalGraphWithDatabaseSupport(
+					"IncidenceListTest.testSortIncidences", V, E);
+			break;
+		case SAVEMEM:
+			g = MinimalSchema.instance().createMinimalGraphWithSavememSupport(
+					V, E);
+			break;
+		default:
+			fail("Implementation " + implementationType
+					+ " not yet supported by this test.");
+		}
+
+		createTransaction(g);
+		Node[] nodes = new Node[VERTEX_COUNT + 1];
+		for (int i = 1; i < nodes.length; i++) {
+			nodes[i] = g.createNode();
+		}
+
+		int i = 1;
+		for (Vertex currentNode : g.vertices()) {
+			assertEquals(currentNode.getId(), nodes[i++].getId());
+		}
+
+		Comparator<Vertex> comp = new Comparator<Vertex>() {
+
+			@Override
+			public int compare(Vertex o1, Vertex o2) {
+				return Double.compare(o2.getId(), o1.getId());
+			}
+
+		};
+
+		g.sortVertexList(comp);
+
+		i = VERTEX_COUNT;
+		for (Vertex currentNode : g.vertices()) {
+			assertEquals(currentNode.getId(), nodes[i--].getId());
+		}
+
+		comp = new Comparator<Vertex>() {
+
+			@Override
+			public int compare(Vertex o1, Vertex o2) {
+				return Double.compare(o1.getId(), o2.getId());
+			}
+
+		};
+
+		g.sortVertexList(comp);
+
+		i = 1;
+		for (Vertex currentNode : g.vertices()) {
+			assertEquals(currentNode.getId(), nodes[i++].getId());
+		}
+		commit(g);
+
 	}
 }
