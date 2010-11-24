@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<uml:Package xmi:version="2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://schema.omg.org/spec/UML/2.1.1" xsi:schemaLocation="http://schema.omg.org/spec/UML/2.1.1 http://www.eclipse.org/uml2/2.1.0/UML" xmi:id="_c9xei_e0Ed-smujBCUkWWA" name="de.uni_koblenz.jgralabtest.schemas.RouteSchema">
+  <packageImport xmi:type="uml:PackageImport" xmi:id="_c9xejPe0Ed-smujBCUkWWA">
+    <importedPackage xmi:type="uml:Model" href="http://schema.omg.org/spec/UML/2.1.1/uml.xml#_0"/>
+  </packageImport>
+  <packagedElement xmi:type="uml:Class" xmi:id="_c9xejfe0Ed-smujBCUkWWA" name="NamedElement" isAbstract="true">
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_c9xejve0Ed-smujBCUkWWA" name="name" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="http://schema.omg.org/spec/UML/2.1.1/uml.xml#String"/>
+    </ownedAttribute>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Package" xmi:id="_c9xej_e0Ed-smujBCUkWWA" name="localities">
+    <packagedElement xmi:type="uml:Enumeration" xmi:id="_c9xekPe0Ed-smujBCUkWWA" name="CountyTags">
+      <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_c9xekfe0Ed-smujBCUkWWA" name="HIGHEST_PEAK" classifier="_c9xekPe0Ed-smujBCUkWWA"/>
+      <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_c9xekve0Ed-smujBCUkWWA" name="SURFACE" classifier="_c9xekPe0Ed-smujBCUkWWA"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_c9xek_e0Ed-smujBCUkWWA" name="County">
+      <generalization xmi:type="uml:Generalization" xmi:id="_c9xelPe0Ed-smujBCUkWWA" general="_c9xejfe0Ed-smujBCUkWWA"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_c9xelfe0Ed-smujBCUkWWA" name="localities" visibility="private" type="_c9xeqve0Ed-smujBCUkWWA" aggregation="composite" association="_c9xeove0Ed-smujBCUkWWA">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_c9xelve0Ed-smujBCUkWWA" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_c9xel_e0Ed-smujBCUkWWA"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_c9xemPe0Ed-smujBCUkWWA" name="capital" visibility="private" type="_c9xenPe0Ed-smujBCUkWWA" association="_c9xenve0Ed-smujBCUkWWA">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_c9xemfe0Ed-smujBCUkWWA" value="1"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_c9xemve0Ed-smujBCUkWWA" value="1"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_c9xem_e0Ed-smujBCUkWWA" name="tags" visibility="private" type="_c9yFJ_e0Ed-smujBCUkWWA"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_c9xenPe0Ed-smujBCUkWWA" name="City">
+      <generalization xmi:type="uml:Generalization" xmi:id="_c9xenfe0Ed-smujBCUkWWA" general="_c9xeqPe0Ed-smujBCUkWWA"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" xmi:id="_c9xenve0Ed-smujBCUkWWA" name="HasCapital" memberEnd="_c9xemPe0Ed-smujBCUkWWA _c9xen_e0Ed-smujBCUkWWA">
+      <ownedEnd xmi:type="uml:Property" xmi:id="_c9xen_e0Ed-smujBCUkWWA" name="" visibility="private" type="_c9xek_e0Ed-smujBCUkWWA" association="_c9xenve0Ed-smujBCUkWWA">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_c9xeoPe0Ed-smujBCUkWWA" value="1"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_c9xeofe0Ed-smujBCUkWWA" value="1"/>
+      </ownedEnd>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" xmi:id="_c9xeove0Ed-smujBCUkWWA" name="ContainsLocality" memberEnd="_c9xelfe0Ed-smujBCUkWWA _c9xeo_e0Ed-smujBCUkWWA">
+      <ownedEnd xmi:type="uml:Property" xmi:id="_c9xeo_e0Ed-smujBCUkWWA" name="" visibility="private" type="_c9xek_e0Ed-smujBCUkWWA" association="_c9xeove0Ed-smujBCUkWWA">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_c9xepPe0Ed-smujBCUkWWA" value="1"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_c9xepfe0Ed-smujBCUkWWA" value="1"/>
+      </ownedEnd>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_c9xepve0Ed-smujBCUkWWA" name="Village">
+      <generalization xmi:type="uml:Generalization" xmi:id="_c9xep_e0Ed-smujBCUkWWA" general="_c9xeqve0Ed-smujBCUkWWA"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_c9xeqPe0Ed-smujBCUkWWA" name="Town">
+      <generalization xmi:type="uml:Generalization" xmi:id="_c9xeqfe0Ed-smujBCUkWWA" general="_c9xeqve0Ed-smujBCUkWWA"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_c9xeqve0Ed-smujBCUkWWA" name="Locality" isAbstract="true">
+      <generalization xmi:type="uml:Generalization" xmi:id="_c9xeq_e0Ed-smujBCUkWWA" general="_c9xejfe0Ed-smujBCUkWWA"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_c9xerPe0Ed-smujBCUkWWA" name="inhabitants" visibility="private">
+        <type xmi:type="uml:PrimitiveType" href="http://schema.omg.org/spec/UML/2.1.1/uml.xml#Integer"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_c9xerfe0Ed-smujBCUkWWA" name="crossroads" visibility="private" type="_c9xevve0Ed-smujBCUkWWA" aggregation="composite" association="_c9xesfe0Ed-smujBCUkWWA">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_c9xerve0Ed-smujBCUkWWA" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_c9xer_e0Ed-smujBCUkWWA"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_c9xesPe0Ed-smujBCUkWWA" name="foundingDate" visibility="private" type="_c9yFLPe0Ed-smujBCUkWWA"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" xmi:id="_c9xesfe0Ed-smujBCUkWWA" name="ContainsCrossroad" memberEnd="_c9xerfe0Ed-smujBCUkWWA _c9xesve0Ed-smujBCUkWWA">
+      <ownedEnd xmi:type="uml:Property" xmi:id="_c9xesve0Ed-smujBCUkWWA" name="locality" visibility="private" type="_c9xeqve0Ed-smujBCUkWWA" association="_c9xesfe0Ed-smujBCUkWWA">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_c9xes_e0Ed-smujBCUkWWA" value="1"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_c9xetPe0Ed-smujBCUkWWA"/>
+      </ownedEnd>
+    </packagedElement>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Package" xmi:id="_c9xetfe0Ed-smujBCUkWWA" name="junctions">
+    <packagedElement xmi:type="uml:Class" xmi:id="_c9xetve0Ed-smujBCUkWWA" name="Roundabout">
+      <generalization xmi:type="uml:Generalization" xmi:id="_c9xet_e0Ed-smujBCUkWWA" general="_c9xevve0Ed-smujBCUkWWA"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_c9xeuPe0Ed-smujBCUkWWA" name="Plaza">
+      <generalization xmi:type="uml:Generalization" xmi:id="_c9xeufe0Ed-smujBCUkWWA" general="_c9xevve0Ed-smujBCUkWWA"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_c9xeuve0Ed-smujBCUkWWA" name="name" visibility="private">
+        <type xmi:type="uml:PrimitiveType" href="http://schema.omg.org/spec/UML/2.1.1/uml.xml#String"/>
+      </ownedAttribute>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_c9xeu_e0Ed-smujBCUkWWA" name="Airport">
+      <generalization xmi:type="uml:Generalization" xmi:id="_c9xevPe0Ed-smujBCUkWWA" general="_c9xewPe0Ed-smujBCUkWWA"/>
+      <generalization xmi:type="uml:Generalization" xmi:id="_c9xevfe0Ed-smujBCUkWWA" general="_c9xeqve0Ed-smujBCUkWWA"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_c9xevve0Ed-smujBCUkWWA" name="Crossroad">
+      <generalization xmi:type="uml:Generalization" xmi:id="_c9xev_e0Ed-smujBCUkWWA" general="_c9xewPe0Ed-smujBCUkWWA"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_c9xewPe0Ed-smujBCUkWWA" name="Junction" isAbstract="true"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Package" xmi:id="_c9xewfe0Ed-smujBCUkWWA" name="connections">
+    <packagedElement xmi:type="uml:AssociationClass" xmi:id="_c9xewve0Ed-smujBCUkWWA" name="AirRoute" memberEnd="_c9xexfe0Ed-smujBCUkWWA _c9xeyPe0Ed-smujBCUkWWA">
+      <generalization xmi:type="uml:Generalization" xmi:id="_c9xew_e0Ed-smujBCUkWWA" general="_c9xey_e0Ed-smujBCUkWWA"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_c9xexPe0Ed-smujBCUkWWA" name="routeName" visibility="private">
+        <type xmi:type="uml:PrimitiveType" href="http://schema.omg.org/spec/UML/2.1.1/uml.xml#String"/>
+      </ownedAttribute>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_c9xexfe0Ed-smujBCUkWWA" name="" visibility="private" type="_c9xeu_e0Ed-smujBCUkWWA" association="_c9xewve0Ed-smujBCUkWWA">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_c9xexve0Ed-smujBCUkWWA" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_c9xex_e0Ed-smujBCUkWWA"/>
+      </ownedEnd>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_c9xeyPe0Ed-smujBCUkWWA" name="" visibility="private" type="_c9xeu_e0Ed-smujBCUkWWA" association="_c9xewve0Ed-smujBCUkWWA">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_c9xeyfe0Ed-smujBCUkWWA" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_c9xeyve0Ed-smujBCUkWWA"/>
+      </ownedEnd>
+    </packagedElement>
+    <packagedElement xmi:type="uml:AssociationClass" xmi:id="_c9xey_e0Ed-smujBCUkWWA" name="Connection" isAbstract="true" memberEnd="_c9xez_e0Ed-smujBCUkWWA _c9xe0ve0Ed-smujBCUkWWA">
+      <xmi:Extension extender="http://www.eclipse.org/emf/2002/Ecore">
+        <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_c9xezPe0Ed-smujBCUkWWA" source="http://www.eclipse.org/uml2/2.0.0/UML">
+          <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_c9xezfe0Ed-smujBCUkWWA" key="abstract"/>
+        </eAnnotations>
+      </xmi:Extension>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_c9xezve0Ed-smujBCUkWWA" name="length" visibility="private" type="_c9yFJve0Ed-smujBCUkWWA"/>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_c9xez_e0Ed-smujBCUkWWA" name="dests" visibility="private" type="_c9xewPe0Ed-smujBCUkWWA" association="_c9xey_e0Ed-smujBCUkWWA">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_c9xe0Pe0Ed-smujBCUkWWA" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_c9xe0fe0Ed-smujBCUkWWA"/>
+      </ownedEnd>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_c9xe0ve0Ed-smujBCUkWWA" name="srcs" visibility="private" type="_c9xewPe0Ed-smujBCUkWWA" association="_c9xey_e0Ed-smujBCUkWWA">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_c9xe0_e0Ed-smujBCUkWWA" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_c9xe1Pe0Ed-smujBCUkWWA"/>
+      </ownedEnd>
+    </packagedElement>
+    <packagedElement xmi:type="uml:AssociationClass" xmi:id="_c9xe1fe0Ed-smujBCUkWWA" name="Footpath" memberEnd="_c9xe1_e0Ed-smujBCUkWWA _c9xe2ve0Ed-smujBCUkWWA">
+      <generalization xmi:type="uml:Generalization" xmi:id="_c9xe1ve0Ed-smujBCUkWWA" general="_c9yFG_e0Ed-smujBCUkWWA"/>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_c9xe1_e0Ed-smujBCUkWWA" name="" visibility="private" type="_c9xevve0Ed-smujBCUkWWA" association="_c9xe1fe0Ed-smujBCUkWWA">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_c9xe2Pe0Ed-smujBCUkWWA" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_c9xe2fe0Ed-smujBCUkWWA"/>
+      </ownedEnd>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_c9xe2ve0Ed-smujBCUkWWA" name="" visibility="private" type="_c9xevve0Ed-smujBCUkWWA" association="_c9xe1fe0Ed-smujBCUkWWA">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_c9xe2_e0Ed-smujBCUkWWA" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_c9xe3Pe0Ed-smujBCUkWWA"/>
+      </ownedEnd>
+    </packagedElement>
+    <packagedElement xmi:type="uml:AssociationClass" xmi:id="_c9xe3fe0Ed-smujBCUkWWA" name="Highway" memberEnd="_c9xe4Pe0Ed-smujBCUkWWA _c9xe4_e0Ed-smujBCUkWWA">
+      <generalization xmi:type="uml:Generalization" xmi:id="_c9xe3ve0Ed-smujBCUkWWA" general="_c9yFEfe0Ed-smujBCUkWWA"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_c9xe3_e0Ed-smujBCUkWWA" name="lanes" visibility="private">
+        <type xmi:type="uml:PrimitiveType" href="http://schema.omg.org/spec/UML/2.1.1/uml.xml#Integer"/>
+      </ownedAttribute>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_c9xe4Pe0Ed-smujBCUkWWA" name="" visibility="private" type="_c9xevve0Ed-smujBCUkWWA" association="_c9xe3fe0Ed-smujBCUkWWA">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_c9xe4fe0Ed-smujBCUkWWA" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_c9xe4ve0Ed-smujBCUkWWA"/>
+      </ownedEnd>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_c9xe4_e0Ed-smujBCUkWWA" name="" visibility="private" type="_c9xevve0Ed-smujBCUkWWA" association="_c9xe3fe0Ed-smujBCUkWWA">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_c9xe5Pe0Ed-smujBCUkWWA" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_c9yFEPe0Ed-smujBCUkWWA"/>
+      </ownedEnd>
+    </packagedElement>
+    <packagedElement xmi:type="uml:AssociationClass" xmi:id="_c9yFEfe0Ed-smujBCUkWWA" name="Street" memberEnd="_c9yFFfe0Ed-smujBCUkWWA _c9yFGPe0Ed-smujBCUkWWA">
+      <generalization xmi:type="uml:Generalization" xmi:id="_c9yFEve0Ed-smujBCUkWWA" general="_c9yFG_e0Ed-smujBCUkWWA"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_c9yFE_e0Ed-smujBCUkWWA" name="name" visibility="private">
+        <type xmi:type="uml:PrimitiveType" href="http://schema.omg.org/spec/UML/2.1.1/uml.xml#String"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_c9yFFPe0Ed-smujBCUkWWA" name="oneway" visibility="private">
+        <type xmi:type="uml:PrimitiveType" href="http://schema.omg.org/spec/UML/2.1.1/uml.xml#Boolean"/>
+      </ownedAttribute>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_c9yFFfe0Ed-smujBCUkWWA" name="" visibility="private" type="_c9xevve0Ed-smujBCUkWWA" association="_c9yFEfe0Ed-smujBCUkWWA">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_c9yFFve0Ed-smujBCUkWWA" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_c9yFF_e0Ed-smujBCUkWWA"/>
+      </ownedEnd>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_c9yFGPe0Ed-smujBCUkWWA" name="" visibility="private" type="_c9xevve0Ed-smujBCUkWWA" association="_c9yFEfe0Ed-smujBCUkWWA">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_c9yFGfe0Ed-smujBCUkWWA" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_c9yFGve0Ed-smujBCUkWWA"/>
+      </ownedEnd>
+    </packagedElement>
+    <packagedElement xmi:type="uml:AssociationClass" xmi:id="_c9yFG_e0Ed-smujBCUkWWA" name="Way" isAbstract="true" memberEnd="_c9yFH_e0Ed-smujBCUkWWA _c9yFIve0Ed-smujBCUkWWA">
+      <xmi:Extension extender="http://www.eclipse.org/emf/2002/Ecore">
+        <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_c9yFHPe0Ed-smujBCUkWWA" source="http://www.eclipse.org/uml2/2.0.0/UML">
+          <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_c9yFHfe0Ed-smujBCUkWWA" key="abstract"/>
+        </eAnnotations>
+      </xmi:Extension>
+      <generalization xmi:type="uml:Generalization" xmi:id="_c9yFHve0Ed-smujBCUkWWA" general="_c9xey_e0Ed-smujBCUkWWA"/>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_c9yFH_e0Ed-smujBCUkWWA" name="" visibility="private" type="_c9xevve0Ed-smujBCUkWWA" association="_c9yFG_e0Ed-smujBCUkWWA">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_c9yFIPe0Ed-smujBCUkWWA" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_c9yFIfe0Ed-smujBCUkWWA"/>
+      </ownedEnd>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_c9yFIve0Ed-smujBCUkWWA" name="" visibility="private" type="_c9xevve0Ed-smujBCUkWWA" association="_c9yFG_e0Ed-smujBCUkWWA">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_c9yFI_e0Ed-smujBCUkWWA" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_c9yFJPe0Ed-smujBCUkWWA"/>
+      </ownedEnd>
+    </packagedElement>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Package" xmi:id="_c9yFJfe0Ed-smujBCUkWWA" name="PrimitiveTypes">
+    <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_c9yFJve0Ed-smujBCUkWWA" name="Double"/>
+    <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_c9yFJ_e0Ed-smujBCUkWWA" name="Map&lt;localities.CountyTags, Double>"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_c9yFKPe0Ed-smujBCUkWWA" name="RouteMap">
+    <xmi:Extension extender="http://www.eclipse.org/emf/2002/Ecore">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_c9yFKfe0Ed-smujBCUkWWA" source="http://www.eclipse.org/uml2/2.0.0/UML">
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_c9yFKve0Ed-smujBCUkWWA" key="graphclass"/>
+      </eAnnotations>
+    </xmi:Extension>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_c9yFK_e0Ed-smujBCUkWWA" name="creationDate" visibility="private" type="_c9yFLPe0Ed-smujBCUkWWA"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_c9yFLPe0Ed-smujBCUkWWA" name="Date">
+    <xmi:Extension extender="http://www.eclipse.org/emf/2002/Ecore">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_c9yFLfe0Ed-smujBCUkWWA" source="http://www.eclipse.org/uml2/2.0.0/UML">
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_c9yFLve0Ed-smujBCUkWWA" key="record"/>
+      </eAnnotations>
+    </xmi:Extension>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_c9yFL_e0Ed-smujBCUkWWA" name="day" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="http://schema.omg.org/spec/UML/2.1.1/uml.xml#Integer"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_c9yFMPe0Ed-smujBCUkWWA" name="month" visibility="private" type="_c9yFMve0Ed-smujBCUkWWA"/>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_c9yFMfe0Ed-smujBCUkWWA" name="year" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="http://schema.omg.org/spec/UML/2.1.1/uml.xml#Integer"/>
+    </ownedAttribute>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Enumeration" xmi:id="_c9yFMve0Ed-smujBCUkWWA" name="Month">
+    <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_c9yFM_e0Ed-smujBCUkWWA" name="JAN" classifier="_c9yFMve0Ed-smujBCUkWWA"/>
+    <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_c9yFNPe0Ed-smujBCUkWWA" name="FEB" classifier="_c9yFMve0Ed-smujBCUkWWA"/>
+    <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_c9yFNfe0Ed-smujBCUkWWA" name="MAR" classifier="_c9yFMve0Ed-smujBCUkWWA"/>
+    <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_c9yFNve0Ed-smujBCUkWWA" name="APR" classifier="_c9yFMve0Ed-smujBCUkWWA"/>
+    <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_c9yFN_e0Ed-smujBCUkWWA" name="MAY" classifier="_c9yFMve0Ed-smujBCUkWWA"/>
+    <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_c9yFOPe0Ed-smujBCUkWWA" name="JUN" classifier="_c9yFMve0Ed-smujBCUkWWA"/>
+    <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_c9yFOfe0Ed-smujBCUkWWA" name="JUL" classifier="_c9yFMve0Ed-smujBCUkWWA"/>
+    <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_c9yFOve0Ed-smujBCUkWWA" name="AUG" classifier="_c9yFMve0Ed-smujBCUkWWA"/>
+    <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_c9yFO_e0Ed-smujBCUkWWA" name="SEP" classifier="_c9yFMve0Ed-smujBCUkWWA"/>
+    <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_c9yFPPe0Ed-smujBCUkWWA" name="OCT" classifier="_c9yFMve0Ed-smujBCUkWWA"/>
+    <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_c9yFPfe0Ed-smujBCUkWWA" name="NOV" classifier="_c9yFMve0Ed-smujBCUkWWA"/>
+    <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_c9yFPve0Ed-smujBCUkWWA" name="DEC" classifier="_c9yFMve0Ed-smujBCUkWWA"/>
+  </packagedElement>
+  <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_c9yFP_e0Ed-smujBCUkWWA">
+    <xmi:Extension extender="http://www.eclipse.org/emf/2002/Ecore">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_c9yFQPe0Ed-smujBCUkWWA" source="http://www.eclipse.org/uml2/2.0.0/UML">
+        <references xmi:type="ecore:EPackage" href="http://schema.omg.org/spec/UML/2.1.1/StandardProfileL2.xmi#_yzU58YinEdqtvbnfB2L_5w"/>
+      </eAnnotations>
+    </xmi:Extension>
+    <appliedProfile xmi:type="uml:Profile" href="http://schema.omg.org/spec/UML/2.1.1/StandardProfileL2.xmi#_0"/>
+  </profileApplication>
+</uml:Package>
