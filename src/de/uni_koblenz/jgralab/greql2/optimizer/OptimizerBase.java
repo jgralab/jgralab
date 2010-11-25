@@ -152,6 +152,9 @@ public abstract class OptimizerBase implements Optimizer {
 				}
 			}
 			throw new OptimizerException("You must never come here...");
+		} else if (ibvo2 != null) {
+			// Only var2 is externally bound.
+			return false;
 		}
 
 		SimpleDeclaration sd1 = (SimpleDeclaration) var1

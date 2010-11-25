@@ -691,6 +691,10 @@ public class GreqlEvaluator {
 			}
 		}
 		subQueryMap.put(name, subQueryGraph);
+		// System.out.println("\nGiven subquery:");
+		// System.out.println(greqlQuery);
+		// System.out.println("\nOptimized subquery:");
+		// System.out.println(Greql2Serializer.serialize(subQueryGraph));
 	}
 
 	public Greql2 getSubQuery(String name) {

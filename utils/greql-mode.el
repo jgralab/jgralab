@@ -898,7 +898,7 @@ for editing GReTL transformations."
   :init-value nil
   ;; The indicator for the mode line.
   :lighter " GReTL"
-  (let ((regex (rx (or (and (or "==>" "=:" "&") (+ space) (+ word))
+  (let ((regex (rx (or (and (or "==>" "=:" "-:" "&") (+ space) (+ word))
 		       (and bow "transformation" eow)
 		       ";"))))
     (if gretl-minor-mode
