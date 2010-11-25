@@ -34,15 +34,9 @@ public class SubQueryEvaluator extends FunctionApplicationEvaluator {
 			throw new GraphException("No subquery with name '" + subQueryName
 					+ "'.");
 		}
-		createVertexEvaluators();
-		subQueryVertexEval = (Greql2ExpressionEvaluator) vertexEvalGraphMarker
-				.getMark(subQuery.getFirstGreql2Expression());
 	}
 
 	public void createVertexEvaluators() throws EvaluateException {
-		if (vertexEvalGraphMarker != null) {
-			subQuery.removeGraphStructureChangedListener(vertexEvalGraphMarker);
-		}
 		vertexEvalGraphMarker = new GraphMarker<VertexEvaluator>(subQuery);
 		Vertex currentVertex = subQuery.getFirstVertex();
 		while (currentVertex != null) {
@@ -68,6 +62,9 @@ public class SubQueryEvaluator extends FunctionApplicationEvaluator {
 
 	@Override
 	public JValue evaluate() throws EvaluateException {
+		createVertexEvaluators();
+		subQueryVertexEval = (Greql2ExpressionEvaluator) vertexEvalGraphMarker
+				.getMark(subQuery.getFirstGreql2Expression());
 		if (!listCreated) {
 			parameterEvaluators = createVertexEvaluatorList();
 			int parameterCount = parameterEvaluators.size();
@@ -99,13 +96,12 @@ public class SubQueryEvaluator extends FunctionApplicationEvaluator {
 		for (IsBoundVarOf ibv : root.getIsBoundVarOfIncidences()) {
 			Variable var = (Variable) ibv.getAlpha();
 			boundVariables.put(var.get_name(), parameters[i]);
-			// System.out.println("Binding " + var.get_name() + " = "
-			// + parameters[i]);
 			i++;
 		}
 		subQueryVertexEval.setBoundVariables(boundVariables);
 
-		return subQueryVertexEval.getResult(subgraph);
+		result = subQueryVertexEval.getResult(subgraph);
+		return result;
 	}
 
 	@Override
