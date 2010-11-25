@@ -649,6 +649,15 @@ public class GreqlEvaluator {
 	}
 
 	public void setSubQuery(String name, String greqlQuery) {
+		if (name == null) {
+			throw new EvaluateException(
+					"The name of a subquery must not be null!");
+		}
+		if (!name.matches("^\\w+$")) {
+			throw new EvaluateException("Invalid subquery name '" + name
+					+ "'. Only word chars are allowed.");
+		}
+
 		Set<String> definedSubQueries = subQueryMap.keySet();
 		HashSet<String> subQueryNames = new HashSet<String>(
 				definedSubQueries.size() + 1);
