@@ -58,6 +58,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.ForwardVertexSet;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.Identifier;
@@ -109,6 +110,11 @@ import de.uni_koblenz.jgralab.greql2.schema.WhereExpression;
 public class Greql2Serializer {
 
 	private StringBuffer sb = null;
+
+	public static String serialize(Greql2 greqlGraph) {
+		Greql2Serializer s = new Greql2Serializer();
+		return s.serializeGreql2Vertex(greqlGraph.getFirstGreql2Expression());
+	}
 
 	public String serializeGreql2Vertex(Greql2Vertex v) {
 		sb = new StringBuffer();

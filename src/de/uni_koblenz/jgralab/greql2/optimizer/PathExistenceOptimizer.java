@@ -160,6 +160,16 @@ public class PathExistenceOptimizer extends OptimizerBase {
 		Expression targetExp = (Expression) pe.getFirstIsTargetExprOfIncidence(
 				EdgeDirection.IN).getAlpha();
 
+		if ((startExp instanceof Variable) && (targetExp instanceof Variable)) {
+			Variable s = (Variable) startExp;
+			Variable t = (Variable) targetExp;
+			if ((s.getFirstIsBoundVarOfIncidence() != null)
+					&& (t.getFirstIsBoundVarOfIncidence() != null)) {
+				logger.finer(optimizerHeaderString()
+						+ "PathExistence has form var1 --> var2 where both vars are externally bound, skipping...");
+			}
+		}
+
 		Comparator<Variable> comparator = new Comparator<Variable>() {
 			@Override
 			public int compare(Variable v1, Variable v2) {
@@ -184,13 +194,13 @@ public class PathExistenceOptimizer extends OptimizerBase {
 		}
 
 		if (startExpVars.isEmpty()
-				|| (!targetExpVars.isEmpty() && isDeclaredBefore(startExpVars
-						.last(), targetExpVars.last()))) {
+				|| (!targetExpVars.isEmpty() && isDeclaredBefore(
+						startExpVars.last(), targetExpVars.last()))) {
 			replacePathExistenceWithContainsFunApp(pe, startExp, targetExp,
 					true);
 		} else if (targetExpVars.isEmpty()
-				|| (!startExpVars.isEmpty() && isDeclaredBefore(targetExpVars
-						.last(), startExpVars.last()))) {
+				|| (!startExpVars.isEmpty() && isDeclaredBefore(
+						targetExpVars.last(), startExpVars.last()))) {
 			replacePathExistenceWithContainsFunApp(pe, targetExp, startExp,
 					false);
 		}
@@ -248,8 +258,9 @@ public class PathExistenceOptimizer extends OptimizerBase {
 			vertexSet = syntaxgraph.createBackwardVertexSet();
 			syntaxgraph.createIsTargetExprOf(startOrTargetExp, vertexSet);
 		}
-		syntaxgraph.createIsPathOf((Expression) pe.getFirstIsPathOfIncidence(
-				EdgeDirection.IN).getAlpha(), vertexSet);
+		syntaxgraph.createIsPathOf(
+				(Expression) pe.getFirstIsPathOfIncidence(EdgeDirection.IN)
+						.getAlpha(), vertexSet);
 
 		syntaxgraph.createIsArgumentOf(vertexSet, contains);
 		syntaxgraph.createIsArgumentOf(otherExp, contains);
