@@ -40,9 +40,11 @@ import java.lang.ref.SoftReference;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -78,6 +80,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.Optimizer;
 import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
+import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
@@ -646,7 +649,12 @@ public class GreqlEvaluator {
 	}
 
 	public void setSubQuery(String name, String greqlQuery) {
-		GreqlParser parser = new GreqlParser(greqlQuery, subQueryMap.keySet());
+		Set<String> definedSubQueries = subQueryMap.keySet();
+		HashSet<String> subQueryNames = new HashSet<String>(
+				definedSubQueries.size() + 1);
+		subQueryNames.addAll(definedSubQueries);
+		subQueryNames.add(name);
+		GreqlParser parser = new GreqlParser(greqlQuery, subQueryNames);
 		try {
 			parser.parse();
 		} catch (Exception e) {
@@ -664,6 +672,14 @@ public class GreqlEvaluator {
 		if (Greql2FunctionLibrary.instance().isGreqlFunction(name)) {
 			throw new Greql2Exception("The subquery '" + name
 					+ "' would shadow a GReQL function!");
+		}
+		for (FunctionApplication fa : subQueryGraph
+				.getFunctionApplicationVertices()) {
+			if (name.equals(fa.get_functionId().get_name())) {
+				logger.warning("You are defining a recursive subquery '"
+						+ name
+						+ "'. Don't expect this to be fast or memory-efficient!");
+			}
 		}
 		subQueryMap.put(name, subQueryGraph);
 	}

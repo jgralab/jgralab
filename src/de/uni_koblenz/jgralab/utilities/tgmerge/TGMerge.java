@@ -35,6 +35,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
@@ -61,6 +62,9 @@ public class TGMerge {
 	private Map<Vertex, Vertex> old2NewVertices = new HashMap<Vertex, Vertex>();
 	private Map<Edge, Edge> new2OldEdges = new HashMap<Edge, Edge>();
 
+	private static Logger log = JGraLab.getLogger(TGMerge.class.getPackage()
+			.getName());
+
 	/**
 	 * @param graphs
 	 *            a list of graphs. The second to last graph will be merged into
@@ -75,7 +79,7 @@ public class TGMerge {
 	 *            an array of graphs. The second to last graph will be merged
 	 *            into the first one.
 	 */
-	public TGMerge(Graph[] graphs) {
+	public TGMerge(Graph... graphs) {
 		if (graphs.length < 2) {
 			throw new RuntimeException(
 					"Merging makes no sense with less than 2 Graphs.");
@@ -118,9 +122,9 @@ public class TGMerge {
 	}
 
 	public Graph merge() {
-		System.out.println("TargetGraph is '" + targetGraph.getId() + "'.");
+		log.fine("TargetGraph is '" + targetGraph.getId() + "'.");
 		for (Graph g : additionalGraphs) {
-			System.out.println("Merging graph '" + g.getId() + "'...");
+			log.fine("Merging graph '" + g.getId() + "'...");
 			copyVertices(g);
 			copyEdges(g);
 			sortIncidences();
@@ -132,7 +136,7 @@ public class TGMerge {
 	}
 
 	private void sortIncidences() {
-		System.out.println("Sorting incidences...");
+		log.fine("Sorting incidences...");
 		for (Vertex v : old2NewVertices.values()) {
 			v.sortIncidences(new Comparator<Edge>() {
 				@Override
@@ -153,12 +157,12 @@ public class TGMerge {
 
 	@SuppressWarnings("unchecked")
 	private void copyEdges(Graph g) {
-		System.out.println("Copying Edges...");
+		log.fine("Copying Edges...");
 		for (Edge e : g.edges()) {
 			Vertex start = old2NewVertices.get(e.getAlpha());
 			Vertex end = old2NewVertices.get(e.getOmega());
-			Edge newEdge = targetGraph.createEdge((Class<? extends Edge>) e
-					.getM1Class(), start, end);
+			Edge newEdge = targetGraph.createEdge(
+					(Class<? extends Edge>) e.getM1Class(), start, end);
 
 			copyAttributes(e, newEdge);
 
@@ -169,7 +173,7 @@ public class TGMerge {
 
 	@SuppressWarnings("unchecked")
 	private void copyVertices(Graph g) {
-		System.out.println("Copying Vertices...");
+		log.fine("Copying Vertices...");
 		for (Vertex v : g.vertices()) {
 			Vertex newVertex = targetGraph
 					.createVertex((Class<? extends Vertex>) v.getM1Class());
@@ -185,8 +189,8 @@ public class TGMerge {
 			AttributedElement newAttrElem) {
 		for (Attribute attr : oldAttrElem.getAttributedElementClass()
 				.getAttributeList()) {
-			newAttrElem.setAttribute(attr.getName(), oldAttrElem
-					.getAttribute(attr.getName()));
+			newAttrElem.setAttribute(attr.getName(),
+					oldAttrElem.getAttribute(attr.getName()));
 		}
 	}
 
