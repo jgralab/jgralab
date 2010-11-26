@@ -32,14 +32,8 @@ public abstract class VisitorComposition implements Visitor {
 
 	private List<Visitor> visitors;
 
-	{
-		createVisitorsLazily();
-	}
-
-	protected void createVisitorsLazily() {
-		if (visitors == null) {
-			visitors = new ArrayList<Visitor>();
-		}
+	public VisitorComposition(){
+		visitors = new ArrayList<Visitor>();
 	}
 
 	public void addVisitor(Visitor visitor) {

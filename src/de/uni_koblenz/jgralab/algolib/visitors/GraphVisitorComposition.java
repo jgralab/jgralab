@@ -35,12 +35,8 @@ public class GraphVisitorComposition extends
 
 	private List<GraphVisitor> visitors;
 
-	@Override
-	protected void createVisitorsLazily() {
-		super.createVisitorsLazily();
-		if (visitors == null) {
-			visitors = new ArrayList<GraphVisitor>();
-		}
+	public GraphVisitorComposition(){
+		visitors = new ArrayList<GraphVisitor>();
 	}
 
 	@Override

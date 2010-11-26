@@ -36,12 +36,8 @@ public class TransitiveVisitorComposition extends VisitorComposition implements
 
 	private List<TransitiveVisitor> visitors;
 
-	@Override
-	protected void createVisitorsLazily() {
-		super.createVisitorsLazily();
-		if (visitors == null) {
-			visitors = new ArrayList<TransitiveVisitor>();
-		}
+	public TransitiveVisitorComposition(){
+		visitors = new ArrayList<TransitiveVisitor>();
 	}
 
 	@Override

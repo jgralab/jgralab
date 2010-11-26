@@ -37,12 +37,8 @@ public class SearchVisitorComposition extends GraphVisitorComposition implements
 
 	private List<SearchVisitor> visitors;
 
-	@Override
-	protected void createVisitorsLazily() {
-		super.createVisitorsLazily();
-		if (visitors == null) {
-			visitors = new ArrayList<SearchVisitor>();
-		}
+	public SearchVisitorComposition(){
+		visitors = new ArrayList<SearchVisitor>();
 	}
 
 	@Override

@@ -36,12 +36,8 @@ public class ReducedGraphVisitorComposition extends VisitorComposition
 
 	private List<ReducedGraphVisitor> visitors;
 
-	@Override
-	protected void createVisitorsLazily() {
-		super.createVisitorsLazily();
-		if (visitors == null) {
-			visitors = new ArrayList<ReducedGraphVisitor>();
-		}
+	public ReducedGraphVisitorComposition(){
+		visitors = new ArrayList<ReducedGraphVisitor>();
 	}
 
 	@Override

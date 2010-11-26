@@ -26,11 +26,10 @@ package de.uni_koblenz.jgralab.algolib.algorithms.strong_components.visitors;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.GraphAlgorithm;
-import de.uni_koblenz.jgralab.algolib.problems.StrongComponentsSolver;
 
 public class ReducedGraphVisitorAdapter implements ReducedGraphVisitor {
 
-	protected StrongComponentsSolver algorithm;
+	// protected StrongComponentsWithDFS algorithm;
 
 	@Override
 	public void reset() {
@@ -39,26 +38,26 @@ public class ReducedGraphVisitorAdapter implements ReducedGraphVisitor {
 
 	@Override
 	public void setAlgorithm(GraphAlgorithm alg) {
-		if (alg instanceof StrongComponentsSolver) {
-			this.algorithm = (StrongComponentsSolver) alg;
-			reset();
-		} else {
-			throw new IllegalArgumentException(
-					"This visitor is not compatible with "
-							+ alg.getClass().getSimpleName()
-							+ " It only works with instances of "
-							+ StrongComponentsSolver.class.getSimpleName());
-		}
+		// if (alg instanceof StrongComponentsWithDFS) {
+		// this.algorithm = (StrongComponentsWithDFS) alg;
+		// reset();
+		// } else {
+		// throw new IllegalArgumentException(
+		// "This visitor is not compatible with "
+		// + alg.getClass().getSimpleName()
+		// + " It only works with instances of "
+		// + StrongComponentsSolver.class.getSimpleName());
+		// }
 	}
 
 	@Override
 	public void visitReducedEdge(Edge e) {
-		
+
 	}
 
 	@Override
 	public void visitRepresentativeVertex(Vertex v) {
-		
+
 	}
 
 }
