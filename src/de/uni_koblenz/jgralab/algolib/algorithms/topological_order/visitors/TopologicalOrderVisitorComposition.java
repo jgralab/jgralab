@@ -35,12 +35,8 @@ public class TopologicalOrderVisitorComposition extends VisitorComposition
 
 	private List<TopologicalOrderVisitor> visitors;
 
-	@Override
-	protected void createVisitorsLazily() {
-		super.createVisitorsLazily();
-		if (visitors == null) {
-			visitors = new ArrayList<TopologicalOrderVisitor>();
-		}
+	public TopologicalOrderVisitorComposition(){
+		visitors = new ArrayList<TopologicalOrderVisitor>();
 	}
 	
 	@Override

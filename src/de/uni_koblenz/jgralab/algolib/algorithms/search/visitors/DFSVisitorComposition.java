@@ -36,12 +36,8 @@ public class DFSVisitorComposition extends SearchVisitorComposition implements
 
 	private List<DFSVisitor> visitors;
 
-	@Override
-	protected void createVisitorsLazily() {
-		super.createVisitorsLazily();
-		if (visitors == null) {
-			visitors = new ArrayList<DFSVisitor>();
-		}
+	public DFSVisitorComposition(){
+		visitors = new ArrayList<DFSVisitor>();
 	}
 
 	@Override
