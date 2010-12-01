@@ -32,7 +32,6 @@ public class GraphDatabaseHandler {
 		try {
 			graphDatabase = GraphDatabase.openGraphDatabase(url
 					+ databaseName, userName, password);
-			graphDatabase.applyDbSchema();
 		} catch (GraphDatabaseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -164,9 +163,10 @@ public class GraphDatabaseHandler {
 		return graphDatabase;
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws GraphDatabaseException {
 		GraphDatabaseHandler handler = new GraphDatabaseHandler();
 		handler.connectToDatabase();
+		handler.graphDatabase.applyDbSchema();
 	}
 
 }
