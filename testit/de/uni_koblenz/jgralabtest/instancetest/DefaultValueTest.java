@@ -89,7 +89,7 @@ public class DefaultValueTest extends InstanceTest {
 	private DefaultValueTestGraph graph;
 
 	private DefaultValueTestGraph createDefaultValueTestGraphWithDatabaseSupport() {
-		super.connectToDatabase();
+		dbHandler.connectToDatabase();
 		this.loadDefaultValueTestSchemaIntoGraphDatabase();
 		return this
 				.createDefaultValueTestGraphWithDatabaseSupport("DefaultValueTest");
@@ -97,8 +97,10 @@ public class DefaultValueTest extends InstanceTest {
 
 	private void loadDefaultValueTestSchemaIntoGraphDatabase() {
 		try {
-			if (!graphDatabase.contains(DefaultValueTestSchema.instance())) {
-				loadTestSchemaIntoGraphDatabase("testit/testschemas/DefaultValueTestSchema.tg");
+			if (!dbHandler.getGraphDatabase().contains(
+					DefaultValueTestSchema.instance())) {
+				dbHandler
+						.loadTestSchemaIntoGraphDatabase("testit/testschemas/DefaultValueTestSchema.tg");
 			}
 		} catch (GraphDatabaseException e) {
 			e.printStackTrace();
@@ -110,7 +112,7 @@ public class DefaultValueTest extends InstanceTest {
 		try {
 			return DefaultValueTestSchema.instance()
 					.createDefaultValueTestGraphWithDatabaseSupport(id,
-							graphDatabase);
+							dbHandler.getGraphDatabase());
 		} catch (Exception exception) {
 			fail("Could not create test graph");
 			return null;
@@ -149,11 +151,11 @@ public class DefaultValueTest extends InstanceTest {
 	}
 
 	private void cleanAndCloseDatabase() {
-		this.cleanDatabaseOfTestGraph(graph);
-		this.cleanDatabaseOfTestGraph("secondGraph");
+		dbHandler.cleanDatabaseOfTestGraph(graph);
+		dbHandler.cleanDatabaseOfTestGraph("secondGraph");
 		// TODO
 		// this.cleanDatabaseOfTestSchema(DefaultValueTestSchema.instance());
-		super.closeGraphdatabase();
+		dbHandler.closeGraphdatabase();
 	}
 
 	/**

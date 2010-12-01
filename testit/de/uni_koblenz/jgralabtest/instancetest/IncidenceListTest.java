@@ -122,9 +122,9 @@ public class IncidenceListTest extends InstanceTest {
 	}
 
 	private MinimalGraph createMinimalGraphWithDatabaseSupport() {
-		super.connectToDatabase();
-		super.loadMinimalSchemaIntoGraphDatabase();
-		return super.createMinimalGraphWithDatabaseSupport("IncidenceListTest",
+		dbHandler.connectToDatabase();
+		dbHandler.loadMinimalSchemaIntoGraphDatabase();
+		return dbHandler.createMinimalGraphWithDatabaseSupport("IncidenceListTest",
 				V, E);
 	}
 
@@ -136,11 +136,11 @@ public class IncidenceListTest extends InstanceTest {
 	}
 
 	private void cleanAndCloseDatabase() {
-		super.cleanDatabaseOfTestGraph(g);
-		super.cleanDatabaseOfTestGraph("IncidenceListTest.testSortIncidences");
+		dbHandler.cleanDatabaseOfTestGraph(g);
+		dbHandler.cleanDatabaseOfTestGraph("IncidenceListTest.testSortIncidences");
 		// TODO, this does not seem to work
-		super.cleanDatabaseOfTestSchema(MinimalSchema.instance());
-		super.closeGraphdatabase();
+		dbHandler.cleanDatabaseOfTestSchema(MinimalSchema.instance());
+		dbHandler.closeGraphdatabase();
 	}
 
 	@Test
@@ -466,7 +466,7 @@ public class IncidenceListTest extends InstanceTest {
 					.createMinimalGraphWithTransactionSupport(V, E);
 			break;
 		case DATABASE:
-			g = this.createMinimalGraphWithDatabaseSupport(
+			g = dbHandler.createMinimalGraphWithDatabaseSupport(
 					"IncidenceListTest.testSortIncidences", V, E);
 			break;
 		case SAVEMEM:

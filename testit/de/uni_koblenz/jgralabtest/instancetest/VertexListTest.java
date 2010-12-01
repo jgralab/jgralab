@@ -98,9 +98,9 @@ public class VertexListTest extends InstanceTest {
 	}
 
 	private MinimalGraph createMinimalGraphInDatabase() {
-		super.connectToDatabase();
-		super.loadMinimalSchemaIntoGraphDatabase();
-		return super.createMinimalGraphWithDatabaseSupport("VertexListTest");
+		dbHandler.connectToDatabase();
+		dbHandler.loadMinimalSchemaIntoGraphDatabase();
+		return dbHandler.createMinimalGraphWithDatabaseSupport("VertexListTest");
 	}
 
 	@After
@@ -111,9 +111,9 @@ public class VertexListTest extends InstanceTest {
 	}
 
 	private void cleanAndCloseGraphDatabase() {
-		super.cleanDatabaseOfTestGraph(g);
+		dbHandler.cleanDatabaseOfTestGraph(g);
 		// super.cleanDatabaseOfTestSchema(MinimalSchema.instance());
-		super.closeGraphdatabase();
+		dbHandler.closeGraphdatabase();
 	}
 
 	@Test
@@ -309,7 +309,7 @@ public class VertexListTest extends InstanceTest {
 					.createMinimalGraphWithTransactionSupport(V, E);
 			break;
 		case DATABASE:
-			g = this.createMinimalGraphWithDatabaseSupport(
+			g = dbHandler.createMinimalGraphWithDatabaseSupport(
 					"IncidenceListTest.testSortIncidences", V, E);
 			break;
 		case SAVEMEM:

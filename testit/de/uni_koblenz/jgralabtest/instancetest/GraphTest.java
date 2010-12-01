@@ -88,8 +88,8 @@ public class GraphTest extends InstanceTest {
 	@Before
 	public void setUp() throws CommitFailedException {
 		if (implementationType == ImplementationType.DATABASE) {
-			super.connectToDatabase();
-			super.loadVertexTestSchemaIntoGraphDatabase();
+			dbHandler.connectToDatabase();
+			dbHandler.loadVertexTestSchemaIntoGraphDatabase();
 		}
 		g1 = createNewGraph();
 		g2 = createNewGraph();
@@ -149,7 +149,7 @@ public class GraphTest extends InstanceTest {
 			id = RandomIdGenerator.generateId();
 		}
 		this.graphIdsInUse.add(id);
-		return this.createVertexTestGraphWithDatabaseSupport(id, 1000, 1000);
+		return dbHandler.createVertexTestGraphWithDatabaseSupport(id, 1000, 1000);
 	}
 
 	@After
@@ -161,11 +161,11 @@ public class GraphTest extends InstanceTest {
 
 	private void cleanAnCloseGraphDatabase() {
 		for (String id : this.graphIdsInUse) {
-			this.cleanDatabaseOfTestGraph(id);
+			dbHandler.cleanDatabaseOfTestGraph(id);
 		}
 		this.graphIdsInUse.clear();
 		// super.cleanDatabaseOfTestSchema(VertexTestSchema.instance());
-		super.closeGraphdatabase();
+		dbHandler.closeGraphdatabase();
 	}
 
 	public void getVertexClassesOfG1() {
@@ -5376,7 +5376,7 @@ public class GraphTest extends InstanceTest {
 					.createMinimalGraphWithSavememSupport();
 			break;
 		case DATABASE:
-			g3 = this.createMinimalGraphWithDatabaseSupport("GraphTest");
+			g3 = dbHandler.createMinimalGraphWithDatabaseSupport("GraphTest");
 			this.graphIdsInUse.add(g3.getId());
 			break;
 		default:

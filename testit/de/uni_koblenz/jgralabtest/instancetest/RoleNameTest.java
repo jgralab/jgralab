@@ -117,9 +117,9 @@ public class RoleNameTest extends InstanceTest {
 	}
 
 	private VertexTestGraph createVertexTestGraphWithDatabaseSupport() {
-		super.connectToDatabase();
-		super.loadVertexTestSchemaIntoGraphDatabase();
-		return this.createVertexTestGraphWithDatabaseSupport("RoleNameTest",
+		dbHandler.connectToDatabase();
+		dbHandler.loadVertexTestSchemaIntoGraphDatabase();
+		return dbHandler.createVertexTestGraphWithDatabaseSupport("RoleNameTest",
 				100, 100);
 	}
 
@@ -131,9 +131,9 @@ public class RoleNameTest extends InstanceTest {
 	}
 
 	private void cleanAndCloseGraphDatabase() {
-		super.cleanDatabaseOfTestGraph("RoleNameTest");
+		dbHandler.cleanDatabaseOfTestGraph("RoleNameTest");
 		// super.cleanDatabaseOfTestSchema(VertexTestSchema.instance());
-		super.closeGraphdatabase();
+		dbHandler.closeGraphdatabase();
 	}
 
 	/**

@@ -104,15 +104,15 @@ public class EdgeListTest extends InstanceTest {
 	}
 
 	private MinimalGraph createMinimalGraphWithDatabaseSupport() {
-		super.connectToDatabase();
-		super.loadMinimalSchemaIntoGraphDatabase();
-		return this.createMinimalGraphWithDatabaseSupport("EdgeListTest", V, E);
+		dbHandler.connectToDatabase();
+		dbHandler.loadMinimalSchemaIntoGraphDatabase();
+		return dbHandler.createMinimalGraphWithDatabaseSupport("EdgeListTest", V, E);
 	}
 
 	@After
 	public void tearDown() {
 		if (implementationType == ImplementationType.DATABASE) {
-			super.cleanDatabaseOfTestGraph(g);
+			dbHandler.cleanDatabaseOfTestGraph(g);
 			// super.cleanDatabaseOfTestSchema(MinimalSchema.instance());
 		}
 	}
@@ -344,7 +344,7 @@ public class EdgeListTest extends InstanceTest {
 					.createMinimalGraphWithTransactionSupport(V, E);
 			break;
 		case DATABASE:
-			g = this.createMinimalGraphWithDatabaseSupport(
+			g = dbHandler.createMinimalGraphWithDatabaseSupport(
 					"IncidenceListTest.testSortIncidences", V, E);
 			break;
 		case SAVEMEM:

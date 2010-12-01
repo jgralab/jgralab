@@ -104,8 +104,8 @@ public class VertexTest extends InstanceTest {
 	@Before
 	public void setUp() {
 		if (implementationType == ImplementationType.DATABASE) {
-			super.connectToDatabase();
-			super.loadVertexTestSchemaIntoGraphDatabase();
+			dbHandler.connectToDatabase();
+			dbHandler.loadVertexTestSchemaIntoGraphDatabase();
 		}
 		g = createNewGraph();
 		rand = new Random(System.currentTimeMillis());
@@ -119,16 +119,16 @@ public class VertexTest extends InstanceTest {
 	}
 
 	private void cleanAndCloseGraphDatabase() {
-		super.cleanDatabaseOfTestGraph("VertexTest");
-		super.cleanDatabaseOfTestGraph("anotherGraph");
+		dbHandler.cleanDatabaseOfTestGraph("VertexTest");
+		dbHandler.cleanDatabaseOfTestGraph("anotherGraph");
 		for (int i = 0; i < ITERATIONS; i++) {
-			super.cleanDatabaseOfTestGraph("VertexTest" + i);
+			dbHandler.cleanDatabaseOfTestGraph("VertexTest" + i);
 		}
 		for (String id : graphIdsInUse) {
-			super.cleanDatabaseOfTestGraph(id);
+			dbHandler.cleanDatabaseOfTestGraph(id);
 		}
 		// this.cleanDatabaseOfTestSchema(g.getSchema());
-		super.closeGraphdatabase();
+		dbHandler.closeGraphdatabase();
 	}
 
 	/*
@@ -2412,7 +2412,7 @@ public class VertexTest extends InstanceTest {
 			id = RandomIdGenerator.generateId();
 		}
 		graphIdsInUse.add(id);
-		VertexTestGraph graph = this.createVertexTestGraphWithDatabaseSupport(
+		VertexTestGraph graph = dbHandler.createVertexTestGraphWithDatabaseSupport(
 				id, 100, 100);
 		return graph;
 	}
