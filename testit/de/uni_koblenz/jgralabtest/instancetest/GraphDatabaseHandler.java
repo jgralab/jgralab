@@ -14,30 +14,25 @@ import de.uni_koblenz.jgralabtest.schemas.vertextest.VertexTestSchema;
 
 public class GraphDatabaseHandler {
 
-	private static final String url = "postgresql://helena.uni-koblenz.de:5432/jgralabtest";
+	private static final String url = "postgresql://helena.uni-koblenz.de:5432/";
 	// protected String url = "mysql://localhost:3306/graphdatabase5";
 	// protected String userName = "postgres";
+	private static final String databaseName = "jgralabtest2";
 	private static final String userName = "jgralabtest";
 	private static final String password = "secret";
+
 
 	protected GraphDatabase graphDatabase;
 
 	public GraphDatabaseHandler() {
-
+		
 	}
-
-	public void createGraphDatabase() {
-
-	}
-
-	public void dropGraphDatabase() {
-
-	}
-
+	
 	public void connectToDatabase() {
 		try {
-			graphDatabase = GraphDatabase.openGraphDatabase(url, userName,
-					password);
+			graphDatabase = GraphDatabase.openGraphDatabase(url
+					+ databaseName, userName, password);
+			graphDatabase.applyDbSchema();
 		} catch (GraphDatabaseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -168,4 +163,10 @@ public class GraphDatabaseHandler {
 	public GraphDatabase getGraphDatabase() {
 		return graphDatabase;
 	}
+	
+	public static void main(String[] args) {
+		GraphDatabaseHandler handler = new GraphDatabaseHandler();
+		handler.connectToDatabase();
+	}
+
 }
