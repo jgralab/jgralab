@@ -31,6 +31,8 @@
 
 package de.uni_koblenz.jgralabtest.instancetest;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -48,4 +50,13 @@ import de.uni_koblenz.jgralabtest.graphmarker.RunGraphMarkerTests;
 		RunGraphMarkerTests.class })
 public class RunInstanceTests {
 
+	@BeforeClass
+	public static void setupClass(){
+		System.out.println("Starting instance tests...");
+	}
+	
+	@AfterClass
+	public static void cleanup(){
+		System.out.println("Fini.");
+	}
 }

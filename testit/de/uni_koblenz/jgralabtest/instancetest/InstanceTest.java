@@ -52,7 +52,7 @@ public abstract class InstanceTest {
 		parameters.add(new Object[] { ImplementationType.TRANSACTION });
 		parameters.add(new Object[] { ImplementationType.SAVEMEM });
 		// uncomment the following line for not testing db support
-		parameters.add(new Object[] { ImplementationType.DATABASE });
+		// parameters.add(new Object[] { ImplementationType.DATABASE });
 	}
 
 	protected GraphDatabaseHandler dbHandler;
