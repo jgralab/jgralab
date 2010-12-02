@@ -32,10 +32,10 @@ public abstract class GraphAlgorithmTest {
 	 */
 	public abstract void testCancel();
 
-	/**
+	/*
 	 * Tests if addVisitor works correctly and that visitors are not added multiply.
 	 */
-	public abstract void testAddVisitor();
+	// public abstract void testAddVisitor();
 
 	/**
 	 * Tests addVisitor for throwing an exception if the algorithm is not
