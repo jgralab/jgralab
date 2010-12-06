@@ -1886,4 +1886,21 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	public PreparedStatement selectIdOfGraphs() throws SQLException {
 		return this.getPreparedStatement(SELECT_ID_OF_GRAPHS);
 	}
+
+	private static String CLEAR_ALL_TABLES = "TRUNCATE TABLE \""
+			+ GraphDatabase.ATTRIBUTE_TABLE_NAME + "\",\""
+			+ GraphDatabase.EDGE_ATTRIBUTE_VALUE_TABLE_NAME + "\",\""
+			+ GraphDatabase.EDGE_TABLE_NAME + "\",\""
+			+ GraphDatabase.GRAPH_ATTRIBUTE_VALUE_TABLE_NAME + "\",\""
+			+ GraphDatabase.GRAPH_SCHEMA_TABLE_NAME + "\",\""
+			+ GraphDatabase.GRAPH_TABLE_NAME + "\",\""
+			+ GraphDatabase.INCIDENCE_TABLE_NAME + "\",\""
+			+ GraphDatabase.TYPE_TABLE_NAME + "\",\""
+			+ GraphDatabase.VERTEX_ATTRIBUTE_VALUE_TABLE_NAME + "\",\""
+			+ GraphDatabase.VERTEX_TABLE_NAME + "\";";
+
+	@Override
+	public PreparedStatement clearAllTables() throws SQLException {
+		return this.getPreparedStatement(CLEAR_ALL_TABLES);
+	}
 }

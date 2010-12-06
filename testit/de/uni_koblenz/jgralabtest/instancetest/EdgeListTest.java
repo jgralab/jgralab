@@ -113,8 +113,10 @@ public class EdgeListTest extends InstanceTest {
 	@After
 	public void tearDown() {
 		if (implementationType == ImplementationType.DATABASE) {
-			dbHandler.cleanDatabaseOfTestGraph(g);
-			// dbHandler.cleanDatabaseOfTestSchema(MinimalSchema.instance());
+			// dbHandler.cleanDatabaseOfTestGraph(g);
+			// // dbHandler.cleanDatabaseOfTestSchema(MinimalSchema.instance());
+			dbHandler.clearAllTables();
+			dbHandler.closeGraphdatabase();
 		}
 	}
 
@@ -344,7 +346,8 @@ public class EdgeListTest extends InstanceTest {
 					.createMinimalGraphWithTransactionSupport(V, E);
 			break;
 		case DATABASE:
-			return; // because edge list sorting is not implemented for db support
+			return; // because edge list sorting is not implemented for db
+			// support
 			// g = dbHandler.createMinimalGraphWithDatabaseSupport(
 			// "IncidenceListTest.testSortIncidences", V, E);
 			// break;

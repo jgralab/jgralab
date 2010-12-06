@@ -38,23 +38,26 @@ public abstract class SqlStatementList {
 		if (graphDatabase != null) {
 			this.graphDatabase = graphDatabase;
 			this.initializeWith(graphDatabase.getConnection());
-		} else
+		} else {
 			throw new GraphDatabaseException("No graph database given.");
+		}
 	}
 
 	private void initializeWith(Connection connection) throws GraphDatabaseException {
-		if (connection != null)
+		if (connection != null) {
 			this.connection = connection;
-		else
+		} else {
 			throw new GraphDatabaseException("No connection to database.");
+		}
 
 	}
 
 	protected PreparedStatement getPreparedStatement(String sqlStatement) throws SQLException {
-		if (this.preparedStatements.containsKey(sqlStatement))
+		if (this.preparedStatements.containsKey(sqlStatement)) {
 			return this.preparedStatements.get(sqlStatement);
-		else
+		} else {
 			return prepareAndCacheStatement(sqlStatement);
+		}
 	}
 
 	private PreparedStatement prepareAndCacheStatement(String sqlStatement) throws SQLException {
@@ -238,4 +241,6 @@ public abstract class SqlStatementList {
 	//public abstract PreparedStatement createStoredProcedureToInsertVertex() throws SQLException;
 	
 	public abstract PreparedStatement selectIdOfGraphs() throws SQLException;
+	
+	public abstract PreparedStatement clearAllTables() throws SQLException;
 }

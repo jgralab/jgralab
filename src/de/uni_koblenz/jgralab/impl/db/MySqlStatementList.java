@@ -557,7 +557,7 @@ public class MySqlStatementList extends SqlStatementList {
 			i++;
 			statement.setInt(i, vertex.getGId());
 			i++;
-			int attributeId = this.graphDatabase.getAttributeId((DatabasePersistableGraph) vertex.getGraph(), attribute.getName());
+			int attributeId = this.graphDatabase.getAttributeId(vertex.getGraph(), attribute.getName());
 			statement.setInt(i, attributeId);
 			i++;
 			String value = this.graphDatabase.convertToString(vertex, attribute.getName());
@@ -578,8 +578,9 @@ public class MySqlStatementList extends SqlStatementList {
 	private String createSqlInsertStatementFor(DatabasePersistableVertex vertex) {
 		String sqlStatement = INSERT_VERTEX;
 		int attributeCount = vertex.getAttributedElementClass().getAttributeList().size();
-		for (int i = 0; i < attributeCount; i++)
+		for (int i = 0; i < attributeCount; i++) {
 			sqlStatement += INSERT_VERTEX_ATTRIBUTE_VALUE;
+		}
 		return sqlStatement;
 	}
 
@@ -640,7 +641,7 @@ public class MySqlStatementList extends SqlStatementList {
 			i++;
 			statement.setInt(i, edge.getGId());
 			i++;
-			int attributeId = this.graphDatabase.getAttributeId((DatabasePersistableGraph) edge.getGraph(), attribute.getName());
+			int attributeId = this.graphDatabase.getAttributeId(edge.getGraph(), attribute.getName());
 			statement.setInt(i, attributeId);
 			i++;
 			String value = this.graphDatabase.convertToString(edge, attribute.getName());
@@ -679,8 +680,9 @@ public class MySqlStatementList extends SqlStatementList {
 		sqlStatement += INSERT_INCIDENCE;
 		sqlStatement += INSERT_INCIDENCE;
 		int attributeCount = edge.getAttributedElementClass().getAttributeList().size();
-		for (int i = 0; i < attributeCount; i++)
+		for (int i = 0; i < attributeCount; i++) {
 			sqlStatement += INSERT_EDGE_ATTRIBUTE_VALUE;
+		}
 		sqlStatement += UPDATE_INCIDENCE_LIST_VERSION;
 		sqlStatement += UPDATE_INCIDENCE_LIST_VERSION;
 		return sqlStatement;
@@ -695,12 +697,13 @@ public class MySqlStatementList extends SqlStatementList {
 		statement.setInt(1, Math.abs(eId));
 		statement.setInt(2, gId);
 		statement.setInt(3, vId);
-		if (eId > 0)
+		if (eId > 0) {
 			statement.setString(4, EdgeDirection.OUT.name());
-		else if (eId < 0)
+		} else if (eId < 0) {
 			statement.setString(4, EdgeDirection.IN.name());
-		else
+		} else {
 			throw new GraphException("Cannot insert an incidence into database with incident edge id = 0.");
+		}
 		statement.setLong(5, sequenceNumberInLambdaSeq);
 		return statement;
 	}
@@ -1258,10 +1261,11 @@ public class MySqlStatementList extends SqlStatementList {
 		statement.setInt(1, vId);
 		statement.setInt(2, Math.abs(eId));
 		statement.setInt(3, gId);
-		if (eId > 0)
+		if (eId > 0) {
 			statement.setString(4, EdgeDirection.OUT.name());
-		else if (eId < 0)
+		} else if (eId < 0) {
 			statement.setString(4, EdgeDirection.IN.name());
+		}
 		return statement;
 	}
 
@@ -1415,5 +1419,10 @@ public class MySqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement selectIdOfGraphs() throws SQLException {
 		return this.getPreparedStatement(SELCT_ID_OF_GRAPHS);
+	}
+
+	@Override
+	public PreparedStatement clearAllTables() throws SQLException {
+		throw new UnsupportedOperationException("Operation not implemented for MySQL.");
 	}
 }

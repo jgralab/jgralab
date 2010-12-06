@@ -131,8 +131,9 @@ public class RoleNameTest extends InstanceTest {
 	}
 
 	private void cleanAndCloseGraphDatabase() {
-		dbHandler.cleanDatabaseOfTestGraph("RoleNameTest");
+		// dbHandler.cleanDatabaseOfTestGraph("RoleNameTest");
 		// super.cleanDatabaseOfTestSchema(VertexTestSchema.instance());
+		dbHandler.clearAllTables();
 		dbHandler.closeGraphdatabase();
 	}
 
