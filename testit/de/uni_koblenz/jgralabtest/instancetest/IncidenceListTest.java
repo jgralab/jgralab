@@ -139,7 +139,7 @@ public class IncidenceListTest extends InstanceTest {
 		dbHandler.cleanDatabaseOfTestGraph(g);
 		dbHandler.cleanDatabaseOfTestGraph("IncidenceListTest.testSortIncidences");
 		// TODO, this does not seem to work
-		dbHandler.cleanDatabaseOfTestSchema(MinimalSchema.instance());
+		//dbHandler.cleanDatabaseOfTestSchema(MinimalSchema.instance());
 		dbHandler.closeGraphdatabase();
 	}
 
