@@ -37,6 +37,7 @@ import static org.junit.Assert.fail;
 
 import java.util.Collection;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -154,12 +155,26 @@ public class GraphStructureChangedListenerTest extends InstanceTest {
 			g = MinimalSchema.instance().createMinimalGraphWithSavememSupport(
 					V, E);
 			break;
+		case DATABASE:
+			dbHandler.connectToDatabase();
+			dbHandler.loadMinimalSchemaIntoGraphDatabase();
+			g = dbHandler.createMinimalGraphWithDatabaseSupport(
+					"GraphStructureChangedListenerTest", V, E);
+			break;
 		default:
 			fail("Implementation " + implementationType
 					+ " not yet supported by this test.");
 		}
 		trigger1 = false;
 		trigger2 = false;
+	}
+
+	@After
+	public void tearDown() {
+		if (implementationType == ImplementationType.DATABASE) {
+			dbHandler.clearAllTables();
+			dbHandler.closeGraphdatabase();
+		}
 	}
 
 	private boolean trigger1;

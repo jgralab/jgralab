@@ -38,6 +38,7 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -88,6 +89,11 @@ public class SubGraphMarkerTest extends InstanceTest {
 			g = MinimalSchema.instance()
 					.createMinimalGraphWithTransactionSupport(V, E);
 			break;
+		case DATABASE:
+			dbHandler.connectToDatabase();
+			dbHandler.loadMinimalSchemaIntoGraphDatabase();
+			g = dbHandler.createMinimalGraphWithDatabaseSupport("SubGraphMarkerTest", V,E);
+			break;
 		case SAVEMEM:
 			g = MinimalSchema.instance().createMinimalGraphWithSavememSupport(
 					V, E);
@@ -132,6 +138,14 @@ public class SubGraphMarkerTest extends InstanceTest {
 			}
 		}
 		commit(g);
+	}
+	
+	@After
+	public void tearDown(){
+		if(implementationType == ImplementationType.DATABASE){
+			dbHandler.clearAllTables();
+			dbHandler.closeGraphdatabase();
+		}
 	}
 
 	public void assertAllMarkedCorrectly() throws CommitFailedException {

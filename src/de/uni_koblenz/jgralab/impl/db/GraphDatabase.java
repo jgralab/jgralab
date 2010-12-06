@@ -2341,6 +2341,11 @@ public abstract class GraphDatabase {
 		statement.execute();
 	}
 
+	public void clearAllTables() throws SQLException {
+		PreparedStatement statement = this.sqlStatementList.clearAllTables();
+		statement.execute();
+	}
+
 	protected void dropForeignKeyConstraints() throws SQLException {
 		PreparedStatement statement = this.sqlStatementList
 				.dropForeignKeyConstraintFromGraphColumnOfVertexTable();

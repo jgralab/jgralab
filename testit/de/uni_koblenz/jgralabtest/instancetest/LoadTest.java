@@ -99,9 +99,10 @@ public class LoadTest extends InstanceTest {
 	@After
 	public void tearDown() {
 		if (implementationType == ImplementationType.DATABASE) {
-			dbHandler.cleanDatabaseOfTestGraph("VertexTest");
-			dbHandler.cleanDatabaseOfTestGraph("LoadTest");
+			// dbHandler.cleanDatabaseOfTestGraph("VertexTest");
+			// dbHandler.cleanDatabaseOfTestGraph("LoadTest");
 			// super.cleanDatabaseOfTestSchema(VertexTestSchema.instance());
+			dbHandler.clearAllTables();
 			dbHandler.closeGraphdatabase();
 		}
 	}
@@ -244,8 +245,8 @@ public class LoadTest extends InstanceTest {
 					.createVertexTestGraphWithTransactionSupport(vMax, eMax);
 			break;
 		case DATABASE:
-			graph = dbHandler.createVertexTestGraphWithDatabaseSupport("LoadTest",
-					vMax, eMax);
+			graph = dbHandler.createVertexTestGraphWithDatabaseSupport(
+					"LoadTest", vMax, eMax);
 			break;
 		case SAVEMEM:
 			graph = VertexTestSchema.instance()

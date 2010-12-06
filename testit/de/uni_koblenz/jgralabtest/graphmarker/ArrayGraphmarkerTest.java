@@ -138,6 +138,12 @@ public class ArrayGraphmarkerTest extends InstanceTest {
 			g = MinimalSchema.instance()
 					.createMinimalGraphWithTransactionSupport(V, E);
 			break;
+		case DATABASE:
+			dbHandler.connectToDatabase();
+			dbHandler.loadMinimalSchemaIntoGraphDatabase();
+			g = dbHandler.createMinimalGraphWithDatabaseSupport(
+					"GraphMarkerTest", V, E);
+			break;
 		case SAVEMEM:
 			g = MinimalSchema.instance().createMinimalGraphWithSavememSupport(
 					V, E);
@@ -159,6 +165,10 @@ public class ArrayGraphmarkerTest extends InstanceTest {
 	@After
 	public void tearDown() throws CommitFailedException, InterruptedException {
 		commit(g);
+		if(implementationType == ImplementationType.DATABASE){
+			dbHandler.clearAllTables();
+			dbHandler.closeGraphdatabase();
+		}
 		g = null;
 		marker = null;
 		System.gc();

@@ -149,7 +149,8 @@ public class GraphTest extends InstanceTest {
 			id = RandomIdGenerator.generateId();
 		}
 		this.graphIdsInUse.add(id);
-		return dbHandler.createVertexTestGraphWithDatabaseSupport(id, 1000, 1000);
+		return dbHandler.createVertexTestGraphWithDatabaseSupport(id, 1000,
+				1000);
 	}
 
 	@After
@@ -160,11 +161,8 @@ public class GraphTest extends InstanceTest {
 	}
 
 	private void cleanAnCloseGraphDatabase() {
-		for (String id : this.graphIdsInUse) {
-			dbHandler.cleanDatabaseOfTestGraph(id);
-		}
 		this.graphIdsInUse.clear();
-		// super.cleanDatabaseOfTestSchema(VertexTestSchema.instance());
+		dbHandler.clearAllTables();
 		dbHandler.closeGraphdatabase();
 	}
 
@@ -5376,6 +5374,7 @@ public class GraphTest extends InstanceTest {
 					.createMinimalGraphWithSavememSupport();
 			break;
 		case DATABASE:
+			dbHandler.loadMinimalSchemaIntoGraphDatabase();
 			g3 = dbHandler.createMinimalGraphWithDatabaseSupport("GraphTest");
 			this.graphIdsInUse.add(g3.getId());
 			break;

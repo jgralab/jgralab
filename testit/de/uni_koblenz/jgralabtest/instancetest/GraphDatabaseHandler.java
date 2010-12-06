@@ -1,6 +1,9 @@
 package de.uni_koblenz.jgralabtest.instancetest;
 
 import static org.junit.Assert.fail;
+
+import java.sql.SQLException;
+
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.impl.db.DatabasePersistableGraph;
@@ -21,17 +24,16 @@ public class GraphDatabaseHandler {
 	private static final String userName = "jgralabtest";
 	private static final String password = "secret";
 
-
 	protected GraphDatabase graphDatabase;
 
 	public GraphDatabaseHandler() {
-		
+
 	}
-	
+
 	public void connectToDatabase() {
 		try {
-			graphDatabase = GraphDatabase.openGraphDatabase(url
-					+ databaseName, userName, password);
+			graphDatabase = GraphDatabase.openGraphDatabase(url + databaseName,
+					userName, password);
 		} catch (GraphDatabaseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -159,10 +161,19 @@ public class GraphDatabaseHandler {
 		}
 	}
 
+	public void clearAllTables() {
+		try {
+			graphDatabase.clearAllTables();
+		} catch (SQLException exception) {
+			exception.printStackTrace();
+			fail("Could not clear all tables.");
+		}
+	}
+
 	public GraphDatabase getGraphDatabase() {
 		return graphDatabase;
 	}
-	
+
 	public static void main(String[] args) throws GraphDatabaseException {
 		GraphDatabaseHandler handler = new GraphDatabaseHandler();
 		handler.connectToDatabase();

@@ -151,10 +151,11 @@ public class DefaultValueTest extends InstanceTest {
 	}
 
 	private void cleanAndCloseDatabase() {
-		dbHandler.cleanDatabaseOfTestGraph(graph);
-		dbHandler.cleanDatabaseOfTestGraph("secondGraph");
+		dbHandler.clearAllTables();
+		// dbHandler.cleanDatabaseOfTestGraph(graph);
+		// dbHandler.cleanDatabaseOfTestGraph("secondGraph");
 		// TODO
-		//dbHandler.cleanDatabaseOfTestSchema(DefaultValueTestSchema.instance());
+		// dbHandler.cleanDatabaseOfTestSchema(DefaultValueTestSchema.instance());
 		dbHandler.closeGraphdatabase();
 	}
 
