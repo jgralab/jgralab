@@ -1,11 +1,14 @@
 package de.uni_koblenz.jgralab.utilities.csv2tg;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Vector;
 
@@ -14,6 +17,7 @@ import org.apache.commons.cli.Option;
 
 import de.uni_koblenz.ist.utilities.csvreader.CsvReader;
 import de.uni_koblenz.ist.utilities.option_handler.OptionHandler;
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
@@ -26,7 +30,7 @@ import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 
-public class Csv2Tg {
+public class Csv2Tg implements FilenameFilter {
 
 	private static final String CLI_OPTION_OUTPUT_FILE = "output";
 	private static final String CLI_OPTION_EDGE_FILES = "edges";
@@ -78,9 +82,8 @@ public class Csv2Tg {
 
 	private void setSchema(String optionValues) throws GraphIOException {
 		System.out.print("Loading Schema ... ");
-		Schema schema = GraphIO
-				.loadSchemaFromFile("testit/testschemas/citymapschema.tg");
-		schema.commit(CodeGeneratorConfiguration.MINIMAL);
+		Schema schema = GraphIO.loadSchemaFromFile(optionValues);
+		schema.commit(CodeGeneratorConfiguration.FULL);
 		setSchema(schema);
 		System.out.println("done.");
 	}
@@ -172,8 +175,15 @@ public class Csv2Tg {
 			throws NoSuchAttributeException, GraphIOException, IOException {
 		CsvReader reader = openCvsFile(vertexFile);
 
+		String attributeClassName = reader.getFieldNames().get(0);
+		AttributedElementClass clazz = schema
+				.getAttributedElementClass(attributeClassName);
+		@SuppressWarnings("unchecked")
+		Class<? extends Vertex> vertexClass = (Class<Vertex>) clazz
+				.getM1Class();
+
 		while (reader.readRecord()) {
-			createVertex(reader);
+			createVertex(reader, vertexClass);
 		}
 	}
 
@@ -195,23 +205,19 @@ public class Csv2Tg {
 		}
 	}
 
-	private void createVertex(CsvReader reader)
+	private void createVertex(CsvReader reader, Class<? extends Vertex> clazz)
 			throws NoSuchAttributeException, GraphIOException {
-		Vector<String> header = reader.getFieldNames();
-		AttributedElementClass clazz = schema.getAttributedElementClass(header
-				.get(0));
+		Vertex vertex = graph.createVertex(clazz);
 
-		@SuppressWarnings("unchecked")
-		Vertex vertex = graph.createVertex((Class<Vertex>) clazz.getM1Class());
+		insertAttribute(vertex, reader, 1);
 
-		for (int index = 1; index < header.size(); index++) {
-
-			String attributeName = header.get(index);
-			String valueString = reader.getFieldAt(index);
-			vertex.readAttributeValueFromString(attributeName, valueString);
+		String uniqueName = reader.getFieldAt(0);
+		if (vertices.containsKey(uniqueName)) {
+			throw new RuntimeException("The unique name \"" + uniqueName
+					+ "\" isn't in fact unique. This error occured while "
+					+ "processing the file \"" + openedFile + "\".");
 		}
-
-		vertices.put(reader.getFieldAt(0), vertex);
+		vertices.put(uniqueName, vertex);
 	}
 
 	private void loadEdgeFiles() throws NoSuchAttributeException,
@@ -225,32 +231,53 @@ public class Csv2Tg {
 			GraphIOException, IOException {
 		CsvReader reader = openCvsFile(edgeFile);
 
+		AttributedElementClass clazz = schema.getAttributedElementClass(reader
+				.getFieldNames().get(0));
+
+		@SuppressWarnings("unchecked")
+		Class<? extends Edge> edgeClass = (Class<? extends Edge>) clazz
+				.getM1Class();
+
 		while (reader.readRecord()) {
-			createEdge(reader);
+			createEdge(reader, edgeClass);
 		}
 	}
 
-	private void createEdge(CsvReader reader) throws NoSuchAttributeException,
-			GraphIOException {
-
-		Vector<String> header = reader.getFieldNames();
-		AttributedElementClass clazz = schema.getAttributedElementClass(header
-				.get(0));
+	private void createEdge(CsvReader reader, Class<? extends Edge> clazz)
+			throws NoSuchAttributeException, GraphIOException {
 
 		Vertex alpha = getVertex(reader.getFieldAt(1));
 		Vertex omega = getVertex(reader.getFieldAt(2));
 
-		@SuppressWarnings("unchecked")
-		Edge edge = graph.createEdge(
-				(Class<? extends Edge>) clazz.getM1Class(), alpha, omega);
+		Edge edge = graph.createEdge(clazz, alpha, omega);
 
-		for (int index = 3; index < header.size(); index++) {
+		insertAttribute(edge, reader, 3);
+
+	}
+
+	private void insertAttribute(AttributedElement edge, CsvReader reader,
+			int startColumnIndex) throws NoSuchAttributeException,
+			GraphIOException {
+
+		Vector<String> header = reader.getFieldNames();
+
+		for (int index = startColumnIndex; index < header.size(); index++) {
 
 			String attributeName = header.get(index);
-			String valueString = reader.getFieldAt(index).replace("\"\"\"",
-					"\"");
-			edge.readAttributeValueFromString(attributeName, valueString);
+			String valueString = reader.getFieldAt(index);
+			String transformedString = transformCsvStringValue(valueString);
+
+			edge.readAttributeValueFromString(attributeName, transformedString);
 		}
+	}
+
+	private String transformCsvStringValue(String csvStringValue) {
+		if (csvStringValue.startsWith("\"") && csvStringValue.endsWith("\"")) {
+			csvStringValue = csvStringValue.substring(1,
+					csvStringValue.length() - 1);
+		}
+		csvStringValue = csvStringValue.replace("\"\"", "\"");
+		return csvStringValue;
 	}
 
 	private Vertex getVertex(String vertexName) {
@@ -262,7 +289,7 @@ public class Csv2Tg {
 	}
 
 	public void setVertexFiles(String[] vertexFiles) {
-		this.vertexFiles = vertexFiles;
+		this.vertexFiles = getFilesInFolder(vertexFiles);
 	}
 
 	public String[] getEdgeFiles() {
@@ -270,7 +297,33 @@ public class Csv2Tg {
 	}
 
 	public void setEdgeFiles(String[] edgeFiles) {
-		this.edgeFiles = edgeFiles;
+
+		this.edgeFiles = getFilesInFolder(edgeFiles);
+	}
+
+	private String[] getFilesInFolder(String[] filenames) {
+		HashSet<String> fileList = new HashSet<String>();
+		for (String filename : filenames) {
+
+			File file = new File(filename).getAbsoluteFile();
+			if (!file.exists()) {
+				throw new RuntimeException("File or folder \"" + filename
+						+ "\" does not exist!");
+			}
+			if (file.isDirectory()) {
+				for (File foundFile : file.listFiles(this)) {
+					fileList.add(foundFile.getAbsolutePath());
+				}
+			} else {
+				fileList.add(file.getAbsolutePath());
+			}
+		}
+
+		if (fileList.isEmpty()) {
+			throw new RuntimeException("No csv-files to convert to a tg-file.");
+		}
+
+		return fileList.toArray(new String[0]);
 	}
 
 	public String getOutputFile() {
@@ -279,5 +332,10 @@ public class Csv2Tg {
 
 	public void setOutputFile(String outputFile) {
 		this.outputFile = outputFile;
+	}
+
+	@Override
+	public boolean accept(File dir, String name) {
+		return name.endsWith(".csv");
 	}
 }
