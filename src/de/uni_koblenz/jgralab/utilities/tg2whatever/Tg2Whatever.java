@@ -440,7 +440,7 @@ public abstract class Tg2Whatever {
 		oh.addOption(rolenames);
 
 		Option output = new Option("o", "output", true,
-				"(optional): the output file name, or empty for stdout");
+				"(required): the output file name, or empty for stdout");
 		output.setRequired(true);
 		output.setArgName("file");
 		oh.addOption(output);
