@@ -2,7 +2,7 @@
 <!--xtools2_universal_type_manager-->
 <?com.ibm.xtools.emf.core.signature <signature id="com.ibm.xtools.uml.msl.model" version="7.0.0"><feature description="" name="com.ibm.xtools.ruml.feature" url="" version="7.0.0"/></signature>?>
 <?com.ibm.xtools.emf.core.signature <signature id="com.ibm.xtools.mmi.ui.signatures.diagram" version="7.0.0"><feature description="" name="Rational Modeling Platform (com.ibm.xtools.rmp)" url="" version="7.0.0"/></signature>?>
-<uml:Package xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.1/notation" xmlns:uml="http://www.eclipse.org/uml2/2.1.0/UML" xmlns:umlnotation="http://www.ibm.com/xtools/1.5.2/Umlnotation" xmi:id="_9anssPP3Ed-wcPO-1KyRbw" name="de.uni_koblenz.jgralabtest.schemas.RouteSchema">
+<uml:Package xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.1/notation" xmlns:uml="http://www.eclipse.org/uml2/2.1.0/UML" xmlns:umlnotation="http://www.ibm.com/xtools/1.5.2/Umlnotation" xmi:id="_9anssPP3Ed-wcPO-1KyRbw" name="de.uni_koblenz.jgralabtest.schemas.greqltestschema.RouteSchema">
   <eAnnotations xmi:id="_9anssfP3Ed-wcPO-1KyRbw" source="uml2.diagrams" references="_9anssvP3Ed-wcPO-1KyRbw">
     <contents xmi:type="notation:Diagram" xmi:id="_9anssvP3Ed-wcPO-1KyRbw" type="Class" name="Main">
       <children xmi:id="_CsufgPP4Ed-wcPO-1KyRbw" element="_CsIpoPP4Ed-wcPO-1KyRbw">
