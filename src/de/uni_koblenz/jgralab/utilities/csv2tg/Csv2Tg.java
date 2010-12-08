@@ -201,6 +201,7 @@ public class Csv2Tg {
 		AttributedElementClass clazz = schema.getAttributedElementClass(header
 				.get(0));
 
+		@SuppressWarnings("unchecked")
 		Vertex vertex = graph.createVertex((Class<Vertex>) clazz.getM1Class());
 
 		for (int index = 1; index < header.size(); index++) {
@@ -239,8 +240,9 @@ public class Csv2Tg {
 		Vertex alpha = getVertex(reader.getFieldAt(1));
 		Vertex omega = getVertex(reader.getFieldAt(2));
 
-		Edge edge = graph.createEdge((Class<Edge>) clazz.getM1Class(), alpha,
-				omega);
+		@SuppressWarnings("unchecked")
+		Edge edge = graph.createEdge(
+				(Class<? extends Edge>) clazz.getM1Class(), alpha, omega);
 
 		for (int index = 3; index < header.size(); index++) {
 
