@@ -1,0 +1,4 @@
+connections.Street;alpha;omega;name;oneway;length
+BaldinBrücke;LützelErsteKreuzung;v1;"""Baldinbrücke""";f;400
+;v1;v2;"""Burgstraße""";f;70
+;v2;Münzplatz;"""Paradies""";f;50
