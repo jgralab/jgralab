@@ -31,7 +31,6 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AbstractTraversal;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmStates;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
-import de.uni_koblenz.jgralab.algolib.algorithms.reachability.visitors.TransitiveVisitorComposition;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.BreadthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.SearchAlgorithm;
 import de.uni_koblenz.jgralab.algolib.functions.ArrayBinaryDoubleFunction;
@@ -51,7 +50,6 @@ public class FloydAlgorithm extends AbstractTraversal implements
 		WeightedDistancesSolver, WeightedShortestPathsSolver,
 		NegativeCyclesSolver {
 
-	private TransitiveVisitorComposition visitors;
 	private IntFunction<Vertex> indexMapping;
 	private Permutation<Vertex> vertexOrder;
 	private int vertexCount;
@@ -73,8 +71,8 @@ public class FloydAlgorithm extends AbstractTraversal implements
 	@Override
 	public void addVisitor(Visitor visitor) {
 		checkStateForSettingVisitors();
-		visitor.setAlgorithm(this);
-		visitors.addVisitor(visitor);
+		throw new UnsupportedOperationException(
+				"This algorithm does not support any visitors.");
 	}
 
 	@Override
@@ -112,7 +110,8 @@ public class FloydAlgorithm extends AbstractTraversal implements
 	@Override
 	public void removeVisitor(Visitor visitor) {
 		checkStateForSettingVisitors();
-		visitors.removeVisitor(visitor);
+		throw new UnsupportedOperationException(
+				"This algorithm does not support any visitors.");
 	}
 
 	@Override
@@ -148,7 +147,6 @@ public class FloydAlgorithm extends AbstractTraversal implements
 	public void resetParameters() {
 		super.resetParameters();
 		traversalDirection = EdgeDirection.OUT;
-		visitors = new TransitiveVisitorComposition();
 	}
 
 	@Override
@@ -205,8 +203,6 @@ public class FloydAlgorithm extends AbstractTraversal implements
 						cancelIfInterrupted();
 						weightedDistance[uId][wId] = newDistance;
 						successor[uId][wId] = successor[uId][vId];
-						visitors.visitVertexTriple(vertexOrder.get(uId),
-								vertexOrder.get(vId), vertexOrder.get(wId));
 					}
 					if (uId == wId && weightedDistance[uId][wId] < 0) {
 						negativeCycles = true;
