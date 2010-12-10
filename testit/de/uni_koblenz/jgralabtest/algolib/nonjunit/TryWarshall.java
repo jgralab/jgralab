@@ -28,14 +28,12 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.reachability.WarshallAlgorithm;
-import de.uni_koblenz.jgralab.algolib.algorithms.reachability.visitors.TransitiveVisitorAdapter;
 import de.uni_koblenz.jgralab.algolib.functions.BinaryFunction;
 import de.uni_koblenz.jgralab.algolib.functions.IntFunction;
 import de.uni_koblenz.jgralab.algolib.functions.Relation;
 import de.uni_koblenz.jgralabtest.schemas.algolib.simple.SimpleGraph;
 import de.uni_koblenz.jgralabtest.schemas.algolib.simple.SimpleSchema;
 import de.uni_koblenz.jgralabtest.schemas.algolib.simple.SimpleVertex;
-
 
 @SuppressWarnings("unused")
 public class TryWarshall {
@@ -63,19 +61,21 @@ public class TryWarshall {
 		graph.createSimpleEdge(v8, v7);
 
 		final WarshallAlgorithm w = new WarshallAlgorithm(graph);
-		TransitiveVisitorAdapter visitor = new TransitiveVisitorAdapter() {
-
-			private Edge[][] successor = w.getInternalSuccessor();
-			private IntFunction<Vertex> indexMapping = w.getIndexMapping();
-
-			@Override
-			public void visitVertexTriple(Vertex u, Vertex v, Vertex w) {
-				System.out.println("From " + u + " with "
-						+ successor[indexMapping.get(u)][indexMapping.get(w)]
-						+ " over " + v + " eventually reaching " + w);
-			}
-
-		};
+		
+		// TransitiveVisitorAdapter visitor = new TransitiveVisitorAdapter() {
+		//
+		// private Edge[][] successor = w.getInternalSuccessor();
+		// private IntFunction<Vertex> indexMapping = w.getIndexMapping();
+		//
+		// @Override
+		// public void visitVertexTriple(Vertex u, Vertex v, Vertex w) {
+		// System.out.println("From " + u + " with "
+		// + successor[indexMapping.get(u)][indexMapping.get(w)]
+		// + " over " + v + " eventually reaching " + w);
+		// }
+		//
+		// };
+		
 		// w.addVisitor(visitor);
 		w.setTraversalDirection(EdgeDirection.INOUT);
 		w.execute();
