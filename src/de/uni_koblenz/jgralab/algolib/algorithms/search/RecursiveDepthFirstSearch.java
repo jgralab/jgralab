@@ -91,6 +91,9 @@ public class RecursiveDepthFirstSearch extends DepthFirstSearch {
 			Vertex nextVertex = currentEdge.getThat();
 			assert (subgraph == null || subgraph.get(nextVertex));
 			edgeOrder[eNum] = currentEdge;
+			if(enumber != null){
+				enumber.set(currentEdge, eNum);
+			}
 			visitors.visitEdge(currentEdge);
 			visitedEdges.set(currentEdge, true);
 			eNum++;

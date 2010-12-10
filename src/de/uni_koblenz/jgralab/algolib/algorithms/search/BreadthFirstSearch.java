@@ -67,6 +67,12 @@ public class BreadthFirstSearch extends SearchAlgorithm implements
 		super.withNumber();
 		return this;
 	}
+	
+	@Override
+	public BreadthFirstSearch withENumber(){
+		super.withENumber();
+		return this;
+	}
 
 	@Override
 	public BreadthFirstSearch withParent() {
@@ -83,6 +89,12 @@ public class BreadthFirstSearch extends SearchAlgorithm implements
 	@Override
 	public BreadthFirstSearch withoutNumber() {
 		super.withoutNumber();
+		return this;
+	}
+	
+	@Override
+	public BreadthFirstSearch withoutENumber() {
+		super.withoutENumber();
 		return this;
 	}
 
@@ -177,6 +189,9 @@ public class BreadthFirstSearch extends SearchAlgorithm implements
 				assert (subgraph == null || subgraph.get(nextVertex));
 
 				edgeOrder[eNum] = currentEdge;
+				if(enumber != null){
+					enumber.set(currentEdge, eNum);
+				}
 				visitors.visitEdge(currentEdge);
 				visitedEdges.set(currentEdge, true);
 				eNum++;
