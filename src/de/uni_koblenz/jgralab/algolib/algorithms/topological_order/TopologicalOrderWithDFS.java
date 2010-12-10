@@ -24,6 +24,7 @@
 package de.uni_koblenz.jgralab.algolib.algorithms.topological_order;
 
 import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
@@ -87,14 +88,12 @@ public class TopologicalOrderWithDFS extends AbstractTraversal implements
 	@Override
 	public AbstractTraversal normal() {
 		super.normal();
-		dfs.reversed();
 		return this;
 	}
 
 	@Override
 	public AbstractTraversal reversed() {
 		super.reversed();
-		dfs.normal();
 		return this;
 	}
 
@@ -135,6 +134,12 @@ public class TopologicalOrderWithDFS extends AbstractTraversal implements
 		dfs.setGraph(graph);
 		dfs.setSubgraph(subgraph);
 		dfs.setNavigable(navigable);
+		if(traversalDirection == EdgeDirection.OUT){ //normal
+			dfs.reversed();
+		} else { // reversed
+			assert traversalDirection == EdgeDirection.IN;
+			dfs.normal();
+		}
 		dfs.addVisitor(torderVisitorAdapter);
 		startRunning();
 		try {
