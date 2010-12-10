@@ -72,7 +72,7 @@ public class IterativeDepthFirstSearch extends DepthFirstSearch {
 
 	@Override
 	public void disableOptionalResults() {
-		checkStateForSettingParameters();
+		super.disableOptionalResults();
 		level = null;
 		rorder = null;
 	}
@@ -141,6 +141,9 @@ public class IterativeDepthFirstSearch extends DepthFirstSearch {
 				assert (subgraph == null || subgraph.get(nextVertex));
 				// visit current edge
 				edgeOrder[eNum] = currentEdge;
+				if(enumber != null){
+					enumber.set(currentEdge, eNum);
+				}
 				visitors.visitEdge(currentEdge);
 				visitedEdges.set(currentEdge, true);
 				eNum++;

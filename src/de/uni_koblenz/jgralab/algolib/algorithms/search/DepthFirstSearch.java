@@ -98,8 +98,15 @@ public abstract class DepthFirstSearch extends SearchAlgorithm {
 	@Override
 	public DepthFirstSearch withNumber() {
 		checkStateForSettingParameters();
-		throw new UnsupportedOperationException(
-				"The result \"number\" is mandatory for DFS and doesn't need to be explicitly activated.");
+		super.withNumber();
+		return this;
+	}
+
+	@Override
+	public DepthFirstSearch withENumber() {
+		checkStateForSettingParameters();
+		super.withENumber();
+		return this;
 	}
 
 	@Override
@@ -132,6 +139,12 @@ public abstract class DepthFirstSearch extends SearchAlgorithm {
 		checkStateForSettingParameters();
 		throw new UnsupportedOperationException(
 				"The result \"number\" is mandatory for DFS and cannot be deactivated.");
+	}
+	
+	public DepthFirstSearch withoutENumber() {
+		checkStateForSettingParameters();
+		super.withoutENumber();
+		return this;
 	}
 
 	@Override

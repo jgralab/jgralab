@@ -40,6 +40,7 @@ import de.uni_koblenz.jgralab.algolib.problems.TraversalFromVertexSolver;
 import de.uni_koblenz.jgralab.graphmarker.ArrayVertexMarker;
 import de.uni_koblenz.jgralab.graphmarker.BitSetEdgeMarker;
 import de.uni_koblenz.jgralab.graphmarker.BitSetVertexMarker;
+import de.uni_koblenz.jgralab.graphmarker.IntegerEdgeMarker;
 import de.uni_koblenz.jgralab.graphmarker.IntegerVertexMarker;
 
 /**
@@ -94,6 +95,11 @@ public abstract class SearchAlgorithm extends AbstractTraversal implements
 	 * The intermediate optional result <code>number</code>.
 	 */
 	protected IntFunction<Vertex> number;
+
+	/**
+	 * The intermediate optional result <code>enumber</code>.
+	 */
+	protected IntFunction<Edge> enumber;
 
 	/**
 	 * The intermediate optional result <code>parent</code>.
@@ -181,6 +187,32 @@ public abstract class SearchAlgorithm extends AbstractTraversal implements
 	}
 
 	/**
+	 * Activates the computation of the optional result <code>enumber</code>.
+	 * 
+	 * @return this <code>SearchAlgorithm</code>.
+	 * @throws IllegalStateException
+	 *             if not in state <code>INITIALIZED</code>.
+	 */
+	public SearchAlgorithm withENumber() {
+		checkStateForSettingParameters();
+		enumber = new IntegerEdgeMarker(graph);
+		return this;
+	}
+
+	/**
+	 * Deactivates the computation of the optional result <b>enumber</b>.
+	 * 
+	 * @return this <code>SearchAlgorithm</code>.
+	 * @throws IllegalStateException
+	 *             if not in state <code>INITIALIZED</code>.
+	 */
+	public SearchAlgorithm withoutENumber() {
+		checkStateForSettingParameters();
+		enumber = null;
+		return this;
+	}
+
+	/**
 	 * Activates the computation of the optional result <code>parent</code>.
 	 * 
 	 * @return this <code>SearchAlgorithm</code>.
@@ -212,6 +244,7 @@ public abstract class SearchAlgorithm extends AbstractTraversal implements
 		checkStateForSettingParameters();
 		level = null;
 		number = null;
+		enumber = null;
 		parent = null;
 	}
 
@@ -224,6 +257,7 @@ public abstract class SearchAlgorithm extends AbstractTraversal implements
 		visitedEdges = new BitSetEdgeMarker(graph);
 		level = level == null ? null : new IntegerVertexMarker(graph);
 		number = number == null ? null : new IntegerVertexMarker(graph);
+		enumber = enumber == null ? null : new IntegerEdgeMarker(graph);
 		parent = parent == null ? null : new ArrayVertexMarker<Edge>(graph);
 		num = 1;
 		eNum = 1;
@@ -287,6 +321,14 @@ public abstract class SearchAlgorithm extends AbstractTraversal implements
 	 */
 	public IntFunction<Vertex> getInternalNumber() {
 		return number;
+	}
+
+	/**
+	 * @return the internal representation of the optional result
+	 *         <code>enumber</code>.
+	 */
+	public IntFunction<Edge> getInternalEnumber() {
+		return enumber;
 	}
 
 	/**
@@ -362,6 +404,19 @@ public abstract class SearchAlgorithm extends AbstractTraversal implements
 	public IntFunction<Vertex> getNumber() {
 		checkStateForResult();
 		return number;
+	}
+
+	/**
+	 * Retrieves the optional result <code>enumber</code>.
+	 * 
+	 * @return the optional result <code>enumber</code>.
+	 * @throws IllegalStateException
+	 *             if not in state <code>STOPPED</code> or <code>FINISHED</code>
+	 *             .
+	 */
+	public IntFunction<Edge> getEnumber() {
+		checkStateForResult();
+		return enumber;
 	}
 
 	/**
