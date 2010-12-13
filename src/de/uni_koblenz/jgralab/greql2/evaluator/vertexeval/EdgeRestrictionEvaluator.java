@@ -1,25 +1,32 @@
 /*
- * JGraLab - The Java graph laboratory
- * (c) 2006-2010 Institute for Software Technology
- *               University of Koblenz-Landau, Germany
+ * JGraLab - The Java Graph Laboratory
  * 
- *               ist@uni-koblenz.de
+ * Copyright (C) 2006-2010 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
  * 
- * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
  * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Additional permission under GNU GPL version 3 section 7
+ * 
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
  */
 
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
@@ -115,11 +122,11 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator {
 	public JValue evaluate() throws EvaluateException {
 		if (typeCollection == null) {
 			typeCollection = new JValueTypeCollection();
-			IsTypeIdOf typeInc = vertex.getFirstIsTypeIdOf(EdgeDirection.IN);
+			IsTypeIdOf typeInc = vertex
+					.getFirstIsTypeIdOfIncidence(EdgeDirection.IN);
 			while (typeInc != null) {
-				TypeIdEvaluator typeEval = (TypeIdEvaluator) greqlEvaluator
-						.getVertexEvaluatorGraphMarker().getMark(
-								typeInc.getAlpha());
+				TypeIdEvaluator typeEval = (TypeIdEvaluator) vertexEvalMarker
+						.getMark(typeInc.getAlpha());
 				try {
 					// GreqlEvaluator.println("Adding types: " +
 					// typeEval.getResult(subgraph).toJValueTypeCollection());
@@ -134,7 +141,7 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator {
 			}
 		}
 
-		if (vertex.getFirstIsRoleIdOf() != null) {
+		if (vertex.getFirstIsRoleIdOfIncidence() != null) {
 			validRoles = new HashSet<String>();
 			for (IsRoleIdOf e : vertex.getIsRoleIdOfIncidences()) {
 				RoleId role = (RoleId) e.getAlpha();
@@ -142,11 +149,10 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator {
 			}
 		}
 		IsBooleanPredicateOfEdgeRestriction predInc = vertex
-				.getFirstIsBooleanPredicateOfEdgeRestriction(EdgeDirection.IN);
+				.getFirstIsBooleanPredicateOfEdgeRestrictionIncidence(EdgeDirection.IN);
 		if (predInc != null) {
-//			System.out.println("Found a BooleanPredicateOfEdge");
-			predicateEvaluator = greqlEvaluator.getVertexEvaluatorGraphMarker()
-					.getMark(predInc.getAlpha());
+			// System.out.println("Found a BooleanPredicateOfEdge");
+			predicateEvaluator = vertexEvalMarker.getMark(predInc.getAlpha());
 		}
 		return new JValueImpl();
 	}

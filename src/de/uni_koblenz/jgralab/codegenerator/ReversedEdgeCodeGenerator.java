@@ -1,25 +1,32 @@
 /*
- * JGraLab - The Java graph laboratory
- * (c) 2006-2010 Institute for Software Technology
- *               University of Koblenz-Landau, Germany
+ * JGraLab - The Java Graph Laboratory
  * 
- *               ist@uni-koblenz.de
+ * Copyright (C) 2006-2010 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
  * 
- * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
  * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Additional permission under GNU GPL version 3 section 7
+ * 
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
  */
 
 package de.uni_koblenz.jgralab.codegenerator;
@@ -59,15 +66,17 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 	@Override
 	protected CodeBlock createBody() {
 		CodeList code = (CodeList) super.createBody();
-		if (currentCycle.isStdOrSaveMemOrTransImpl()) {
+		if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()) {
 			rootBlock.setVariable("baseClassName", "ReversedEdgeImpl");
 
 			if (currentCycle.isStdImpl()) {
 				addImports("#jgImplStdPackage#.#baseClassName#");
 			} else if (currentCycle.isSaveMemImpl()) {
 				addImports("#jgImplSaveMemPackage#.#baseClassName#");
-			} else {
+			} else if (currentCycle.isTransImpl()) {
 				addImports("#jgImplTransPackage#.#baseClassName#");
+			} else if (currentCycle.isDbImpl()) {
+				addImports("#jgImplDbPackage#.#baseClassName#");
 			}
 
 			if (config.hasTypeSpecificMethodsSupport()) {
@@ -91,6 +100,9 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 		if (currentCycle.isTransImpl()) {
 			addImports("#jgImplTransPackage#.EdgeImpl", "#jgPackage#.Graph");
 		}
+		if (currentCycle.isDbImpl()) {
+			addImports("#jgImplDbPackage#.EdgeImpl", "#jgPackage#.Graph");
+		}
 
 		return new CodeSnippet(true, "#className#Impl(EdgeImpl e, Graph g) {",
 				"\tsuper(e, g);", "}");
@@ -105,7 +117,7 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 		code.setVariable("isOrGet", a.getDomain().getJavaClassName(
 				schemaRootPackageName).equals("Boolean") ? "is" : "get");
 
-		if (currentCycle.isStdOrSaveMemOrTransImpl()) {
+		if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()) {
 			code
 					.add(
 							"public #type# #isOrGet#_#name#() {",
@@ -125,7 +137,7 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 		code.setVariable("type", a.getDomain()
 				.getJavaAttributeImplementationTypeName(schemaRootPackageName));
 
-		if (currentCycle.isStdOrSaveMemOrTransImpl()) {
+		if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()) {
 			code
 					.add(
 							"public void set_#name#(#type# _#name#) {",
@@ -218,7 +230,7 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 		CodeSnippet code = new CodeSnippet(
 				true,
 				"public #ecName# getNext#ecCamelName#(#formalParams#) {",
-				"\treturn (#ecName#)getNextEdgeOfClass(#ecName#.class#actualParams#);",
+				"\treturn (#ecName#)getNextIncidence(#ecName#.class#actualParams#);",
 				"}");
 		code.setVariable("ecName", schemaRootPackageName + "."
 				+ ec.getQualifiedName());
@@ -283,7 +295,7 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 	}
 
 	@Override
-	protected CodeBlock createReadAttributesMethod(Set<Attribute> attrSet) {
+	protected CodeBlock createReadAttributesMethod(SortedSet<Attribute> attrSet) {
 		CodeList code = new CodeList();
 		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException");
 		code
@@ -327,28 +339,5 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 		return null;
 	}
 
-	// private CodeBlock createValidRolesMethod() {
-	// CodeList list = new CodeList();
-	// CodeSnippet code = new CodeSnippet(true);
-	// code.add("private static Set<String> validRoles;");
-	// list.add(code);
-	//
-	// code = new CodeSnippet(true);
-	// code.add("static {");
-	// code.add("validRoles = new HashSet<String>();");
-	// EdgeClass ec = (EdgeClass) aec;
-	// for (String s : ec.getTo().getAllRoles()) {
-	// code.add("validRoles.add(\"" + s + "\"");
-	// }
-	// code.add("}");
-	// list.add(code);
-	// code = new CodeSnippet(true);
-	// code.add("public boolean acceptsRolename(String rolename) {",
-	// "\treturn validRoles.contains(rolename);",
-	// "}");
-	// list.add(code);
-	//
-	// return list;
-	// }
 
 }

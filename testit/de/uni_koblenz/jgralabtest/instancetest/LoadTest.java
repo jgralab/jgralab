@@ -1,25 +1,32 @@
 /*
- * JGraLab - The Java graph laboratory
- * (c) 2006-2010 Institute for Software Technology
- *               University of Koblenz-Landau, Germany
+ * JGraLab - The Java Graph Laboratory
  * 
- *               ist@uni-koblenz.de
+ * Copyright (C) 2006-2010 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
  * 
- * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
  * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Additional permission under GNU GPL version 3 section 7
+ * 
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
  */
 package de.uni_koblenz.jgralabtest.instancetest;
 
@@ -32,6 +39,8 @@ import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Random;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -79,6 +88,25 @@ public class LoadTest extends InstanceTest {
 		return getParameters();
 	}
 
+	@Before
+	public void setUp() {
+		if (implementationType == ImplementationType.DATABASE) {
+			dbHandler.connectToDatabase();
+			dbHandler.loadVertexTestSchemaIntoGraphDatabase();
+		}
+	}
+
+	@After
+	public void tearDown() {
+		if (implementationType == ImplementationType.DATABASE) {
+			// dbHandler.cleanDatabaseOfTestGraph("VertexTest");
+			// dbHandler.cleanDatabaseOfTestGraph("LoadTest");
+			// super.cleanDatabaseOfTestSchema(VertexTestSchema.instance());
+			dbHandler.clearAllTables();
+			dbHandler.closeGraphdatabase();
+		}
+	}
+
 	// public static void main(String[] args) {
 	// LoadTest t = new LoadTest();
 	// t.testFreeElementList();
@@ -87,7 +115,7 @@ public class LoadTest extends InstanceTest {
 	private Graph createTestGraph() throws Exception {
 		if (implementationType == ImplementationType.STANDARD) {
 			String query = "from i:c report i end where d:=\"drölfundfünfzig\", c:=b, b:=a, a:=\"Mensaessen\"";
-			return GreqlParser.parse(query);
+			return GreqlParser.parse(query, null);
 		}
 		int vertexClasses = 6;
 		int edgeClasses = 7;
@@ -96,7 +124,6 @@ public class LoadTest extends InstanceTest {
 
 		VertexTestGraph g = createVertexTestGraph(vertexClasses
 				* vertexCountPerClass, edgeClasses * edgeCountPerClass);
-
 		createTransaction(g);
 
 		A[] as = new A[vertexCountPerClass];
@@ -217,6 +244,10 @@ public class LoadTest extends InstanceTest {
 			graph = VertexTestSchema.instance()
 					.createVertexTestGraphWithTransactionSupport(vMax, eMax);
 			break;
+		case DATABASE:
+			graph = dbHandler.createVertexTestGraphWithDatabaseSupport(
+					"LoadTest", vMax, eMax);
+			break;
 		case SAVEMEM:
 			graph = VertexTestSchema.instance()
 					.createVertexTestGraphWithSavememSupport(vMax, eMax);
@@ -286,6 +317,7 @@ public class LoadTest extends InstanceTest {
 	// checkEqualEdgeList(g1, g2);
 	// commit(g2);
 	// }
+	@SuppressWarnings("deprecation")
 	@Test
 	public void testFreeElementList() throws CommitFailedException {
 		Graph g1 = null;
@@ -306,6 +338,10 @@ public class LoadTest extends InstanceTest {
 				g2 = VertexTestSchema.instance()
 						.loadVertexTestGraphWithTransactionSupport(
 								TESTGRAPH_PATH + TESTGRAPH_FILENAME);
+				break;
+			case DATABASE:
+				g2 = GraphIO.loadGraphFromFile(TESTGRAPH_PATH
+						+ TESTGRAPH_FILENAME, null);
 				break;
 			case SAVEMEM:
 				g2 = VertexTestSchema.instance()
@@ -398,8 +434,8 @@ public class LoadTest extends InstanceTest {
 	}
 
 	private void checkEqualEdgeList(Graph g1, Graph g2) {
-		Edge v1 = g1.getFirstEdgeInGraph();
-		Edge v2 = g2.getFirstEdgeInGraph();
+		Edge v1 = g1.getFirstEdge();
+		Edge v2 = g2.getFirstEdge();
 		while (v1 != null) {
 			if (v2 == null) {
 				fail();
@@ -407,8 +443,8 @@ public class LoadTest extends InstanceTest {
 			assertEquals(v1.getId(), v2.getId());
 			assertEquals(v1.getAttributedElementClass().getQualifiedName(), v2
 					.getAttributedElementClass().getQualifiedName());
-			v1 = v1.getNextEdgeInGraph();
-			v2 = v2.getNextEdgeInGraph();
+			v1 = v1.getNextEdge();
+			v2 = v2.getNextEdge();
 		}
 		if (v2 != null) {
 			fail();

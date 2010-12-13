@@ -1,25 +1,32 @@
 /*
- * JGraLab - The Java graph laboratory
- * (c) 2006-2010 Institute for Software Technology
- *               University of Koblenz-Landau, Germany
+ * JGraLab - The Java Graph Laboratory
  * 
- *               ist@uni-koblenz.de
+ * Copyright (C) 2006-2010 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
  * 
- * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
  * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Additional permission under GNU GPL version 3 section 7
+ * 
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
  */
 
 package de.uni_koblenz.jgralab.impl;
@@ -41,17 +48,17 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 		super(graph);
 	}
 
-	abstract protected void setIncidentVertex(VertexBaseImpl v);
+	protected abstract void setIncidentVertex(VertexBaseImpl v);
 
-	abstract protected VertexBaseImpl getIncidentVertex();
+	protected abstract VertexBaseImpl getIncidentVertex();
 
-	abstract protected void setNextIncidence(IncidenceImpl nextIncidence);
+	protected abstract void setNextIncidenceInternal(IncidenceImpl nextIncidence);
 
-	abstract protected IncidenceImpl getNextIncidence();
+	protected abstract IncidenceImpl getNextIncidenceInternal();
 
-	abstract protected void setPrevIncidence(IncidenceImpl prevIncidence);
+	protected abstract void setPrevIncidenceInternal(IncidenceImpl prevIncidence);
 
-	abstract protected IncidenceImpl getPrevIncidence();
+	protected abstract IncidenceImpl getPrevIncidenceInternal();
 
 	/*
 	 * (non-Javadoc)
@@ -59,9 +66,9 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 	 * @see de.uni_koblenz.jgralab.Edge#getNextEdge()
 	 */
 	@Override
-	public Edge getNextEdge() {
+	public Edge getNextIncidence() {
 		assert isValid();
-		return getNextIncidence();
+		return getNextIncidenceInternal();
 	}
 
 	/*
@@ -70,9 +77,9 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 	 * @see de.uni_koblenz.jgralab.Edge#getPrevEdge()
 	 */
 	@Override
-	public Edge getPrevEdge() {
+	public Edge getPrevIncidence() {
 		assert isValid();
-		return getPrevIncidence();
+		return getPrevIncidenceInternal();
 	}
 
 	/*
@@ -83,18 +90,18 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 	 * )
 	 */
 	@Override
-	public Edge getNextEdge(EdgeDirection orientation) {
+	public Edge getNextIncidence(EdgeDirection orientation) {
 		assert isValid();
-		IncidenceImpl i = getNextIncidence();
+		IncidenceImpl i = getNextIncidenceInternal();
 		switch (orientation) {
 		case IN:
 			while ((i != null) && i.isNormal()) {
-				i = i.getNextIncidence();
+				i = i.getNextIncidenceInternal();
 			}
 			return i;
 		case OUT:
 			while ((i != null) && !i.isNormal()) {
-				i = i.getNextIncidence();
+				i = i.getNextIncidenceInternal();
 			}
 			return i;
 		case INOUT:
@@ -111,9 +118,9 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 	 * de.uni_koblenz.jgralab.schema.AggregationKind[])
 	 */
 	@Override
-	public Edge getNextEdge(boolean thisIncidence, AggregationKind... kinds) {
+	public Edge getNextIncidence(boolean thisIncidence, AggregationKind... kinds) {
 		assert isValid();
-		IncidenceImpl i = getNextIncidence();
+		IncidenceImpl i = getNextIncidenceInternal();
 		if (kinds.length == 0) {
 			return i;
 		}
@@ -124,7 +131,7 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 					return i;
 				}
 			}
-			i = i.getNextIncidence();
+			i = i.getNextIncidenceInternal();
 		}
 		return null;
 	}
@@ -135,26 +142,12 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 	 * @see de.uni_koblenz.jgralab.Edge#getNextEdgeOfClass(java.lang.Class)
 	 */
 	@Override
-	public Edge getNextEdgeOfClass(Class<? extends Edge> anEdgeClass) {
+	public Edge getNextIncidence(Class<? extends Edge> anEdgeClass) {
 		assert anEdgeClass != null;
 		assert isValid();
-		return getNextEdgeOfClass(anEdgeClass, EdgeDirection.INOUT, false);
+		return getNextIncidence(anEdgeClass, EdgeDirection.INOUT, false);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#getNextEdgeOfClass(java.lang.Class,
-	 * boolean)
-	 */
-	@Override
-	public Edge getNextEdgeOfClass(Class<? extends Edge> anEdgeClass,
-			boolean noSubclasses) {
-		assert anEdgeClass != null;
-		assert isValid();
-		return getNextEdgeOfClass(anEdgeClass, EdgeDirection.INOUT,
-				noSubclasses);
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -163,11 +156,11 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 	 * de.uni_koblenz.jgralab.EdgeDirection)
 	 */
 	@Override
-	public Edge getNextEdgeOfClass(Class<? extends Edge> anEdgeClass,
+	public Edge getNextIncidence(Class<? extends Edge> anEdgeClass,
 			EdgeDirection orientation) {
 		assert anEdgeClass != null;
 		assert isValid();
-		return getNextEdgeOfClass(anEdgeClass, orientation, false);
+		return getNextIncidence(anEdgeClass, orientation, false);
 	}
 
 	/*
@@ -177,11 +170,11 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 	 * de.uni_koblenz.jgralab.EdgeDirection, boolean)
 	 */
 	@Override
-	public Edge getNextEdgeOfClass(Class<? extends Edge> anEdgeClass,
+	public Edge getNextIncidence(Class<? extends Edge> anEdgeClass,
 			EdgeDirection orientation, boolean noSubclasses) {
 		assert anEdgeClass != null;
 		assert isValid();
-		Edge currentEdge = getNextEdge(orientation);
+		Edge currentEdge = getNextIncidence(orientation);
 		while (currentEdge != null) {
 			if (noSubclasses) {
 				if (anEdgeClass == currentEdge.getM1Class()) {
@@ -192,7 +185,7 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 					return currentEdge;
 				}
 			}
-			currentEdge = currentEdge.getNextEdge(orientation);
+			currentEdge = currentEdge.getNextIncidence(orientation);
 		}
 		return null;
 	}
@@ -205,10 +198,10 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 	 * .schema.EdgeClass)
 	 */
 	@Override
-	public Edge getNextEdgeOfClass(EdgeClass anEdgeClass) {
+	public Edge getNextIncidence(EdgeClass anEdgeClass) {
 		assert anEdgeClass != null;
 		assert isValid();
-		return getNextEdgeOfClass(anEdgeClass.getM1Class(),
+		return getNextIncidence(anEdgeClass.getM1Class(),
 				EdgeDirection.INOUT, false);
 	}
 
@@ -220,10 +213,10 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 	 * .schema.EdgeClass, boolean)
 	 */
 	@Override
-	public Edge getNextEdgeOfClass(EdgeClass anEdgeClass, boolean noSubclasses) {
+	public Edge getNextIncidence(EdgeClass anEdgeClass, boolean noSubclasses) {
 		assert anEdgeClass != null;
 		assert isValid();
-		return getNextEdgeOfClass(anEdgeClass.getM1Class(),
+		return getNextIncidence(anEdgeClass.getM1Class(),
 				EdgeDirection.INOUT, noSubclasses);
 	}
 
@@ -235,11 +228,11 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 	 * .schema.EdgeClass, de.uni_koblenz.jgralab.EdgeDirection)
 	 */
 	@Override
-	public Edge getNextEdgeOfClass(EdgeClass anEdgeClass,
+	public Edge getNextIncidence(EdgeClass anEdgeClass,
 			EdgeDirection orientation) {
 		assert anEdgeClass != null;
 		assert isValid();
-		return getNextEdgeOfClass(anEdgeClass.getM1Class(), orientation, false);
+		return getNextIncidence(anEdgeClass.getM1Class(), orientation, false);
 	}
 
 	/*
@@ -250,13 +243,20 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 	 * .schema.EdgeClass, de.uni_koblenz.jgralab.EdgeDirection, boolean)
 	 */
 	@Override
-	public Edge getNextEdgeOfClass(EdgeClass anEdgeClass,
+	public Edge getNextIncidence(EdgeClass anEdgeClass,
 			EdgeDirection orientation, boolean noSubclasses) {
 		assert anEdgeClass != null;
 		assert isValid();
-		return getNextEdgeOfClass(anEdgeClass.getM1Class(), orientation,
+		return getNextIncidence(anEdgeClass.getM1Class(), orientation,
 				noSubclasses);
 	}
+	
+	@Override
+	public Edge getNextIncidence(Class<? extends Edge> anEdgeClass,
+			boolean noSubclasses) {
+		return getNextIncidence(anEdgeClass, EdgeDirection.INOUT, noSubclasses);
+	}
+
 
 	/*
 	 * (non-Javadoc)
@@ -264,7 +264,7 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 	 * @see de.uni_koblenz.jgralab.Edge#isBefore(de.uni_koblenz.jgralab.Edge)
 	 */
 	@Override
-	public boolean isBefore(Edge e) {
+	public boolean isBeforeIncidence(Edge e) {
 		assert e != null;
 		assert isValid();
 		assert e.isValid();
@@ -274,9 +274,9 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 		if (e == this) {
 			return false;
 		}
-		IncidenceImpl i = getNextIncidence();
+		IncidenceImpl i = getNextIncidenceInternal();
 		while ((i != null) && (i != e)) {
-			i = i.getNextIncidence();
+			i = i.getNextIncidenceInternal();
 		}
 		return i != null;
 	}
@@ -287,7 +287,7 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 	 * @see de.uni_koblenz.jgralab.Edge#isAfter(de.uni_koblenz.jgralab.Edge)
 	 */
 	@Override
-	public boolean isAfter(Edge e) {
+	public boolean isAfterIncidence(Edge e) {
 		assert e != null;
 		assert isValid();
 		assert e.isValid();
@@ -297,9 +297,9 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 		if (e == this) {
 			return false;
 		}
-		IncidenceImpl i = getPrevIncidence();
+		IncidenceImpl i = getPrevIncidenceInternal();
 		while ((i != null) && (i != e)) {
-			i = i.getPrevIncidence();
+			i = i.getPrevIncidenceInternal();
 		}
 		return i != null;
 	}
@@ -311,7 +311,7 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 	 * de.uni_koblenz.jgralab.Edge#putEdgeBefore(de.uni_koblenz.jgralab.Edge)
 	 */
 	@Override
-	public void putEdgeBefore(Edge e) {
+	public void putIncidenceBefore(Edge e) {
 		assert e != null;
 		assert isValid();
 		assert e.isValid();
@@ -333,12 +333,13 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 	 * de.uni_koblenz.jgralab.Edge#putEdgeAfter(de.uni_koblenz.jgralab.Edge)
 	 */
 	@Override
-	public void putEdgeAfter(Edge e) {
+	public void putIncidenceAfter(Edge e) {
 		assert e != null;
 		assert isValid();
 		assert e.isValid();
 		assert getGraph() == e.getGraph();
-		assert getThis() == e.getThis();
+		assert getThis() == e.getThis() : "this-vertices don't match: "
+				+ getThis() + " != " + e.getThis();
 		VertexBaseImpl v = (VertexBaseImpl) getThis();
 		assert v.isValid();
 		assert e != this;

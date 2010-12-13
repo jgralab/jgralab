@@ -1,25 +1,32 @@
 /*
- * JGraLab - The Java graph laboratory
- * (c) 2006-2010 Institute for Software Technology
- *               University of Koblenz-Landau, Germany
+ * JGraLab - The Java Graph Laboratory
  * 
- *               ist@uni-koblenz.de
+ * Copyright (C) 2006-2010 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
  * 
- * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
  * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Additional permission under GNU GPL version 3 section 7
+ * 
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
  */
 
 package de.uni_koblenz.jgralab.codegenerator;
@@ -120,7 +127,13 @@ public class SchemaCodeGenerator extends CodeGenerator {
 
 	private CodeBlock createGraphFactoryMethod() {
 		addImports("#jgPackage#.Graph", "#jgPackage#.ProgressFunction",
-				"#jgPackage#.GraphIO", "#jgPackage#.GraphIOException");
+				"#jgPackage#.GraphIO",
+				"#jgImplDbPackage#.GraphDatabaseException",
+				"#jgImplDbPackage#.GraphDatabase",
+				"#jgPackage#.GraphIOException");
+		if (config.hasDatabaseSupport()) {
+			addImports("#jgPackage#.GraphException");
+		}
 		CodeSnippet code = new CodeSnippet(
 				true,
 				"/**",
@@ -207,6 +220,29 @@ public class SchemaCodeGenerator extends CodeGenerator {
 						: "\tthrow new UnsupportedOperationException(\"No Savemem support compiled.\");"),
 				"}",
 				"",
+				// ---- database support -------
+				"/**",
+				" * Creates a new #gcName# graph in a database with given <code>id</code>.",
+				" *",
+				" * @param id Identifier of new graph",
+				" * @param graphDatabase Database which should contain graph",
+				" */",
+				"public #gcName# create#gcCamelName#WithDatabaseSupport(String id, GraphDatabase graphDatabase) throws GraphDatabaseException{",
+				((config.hasDatabaseSupport()) ? "\tGraph graph = graphFactory.createGraphWithDatabaseSupport(#gcCamelName#.class, graphDatabase, id );\n\t\tif(!graphDatabase.containsGraph(id)){\n\t\t\tgraphDatabase.insert((#jgImplDbPackage#.GraphImpl)graph);\n\t\t\treturn (#gcCamelName#)graph;\n\t\t}\n\t\telse\n\t\t\tthrow new GraphException(\"Graph with identifier \" + id + \" already exists in database.\");"
+						: "\tthrow new UnsupportedOperationException(\"No database support compiled.\");"),
+				"}",
+				"/**",
+				" * Creates a new #gcName# graph in a database with given <code>id</code>.",
+				" *",
+				" * @param id Identifier of new graph",
+				" * @param vMax Maximum initial count of vertices that can be held in graph.",
+				" * @param eMax Maximum initial count of edges that can be held in graph.",
+				" * @param graphDatabase Database which should contain graph",
+				" */",
+				"public #gcName# create#gcCamelName#WithDatabaseSupport(String id, int vMax, int eMax, GraphDatabase graphDatabase) throws GraphDatabaseException{",
+				((config.hasDatabaseSupport()) ? "\tGraph graph = graphFactory.createGraphWithDatabaseSupport(#gcCamelName#.class, graphDatabase, id, vMax, eMax );\n\t\tif(!graphDatabase.containsGraph(id)){\n\t\t\tgraphDatabase.insert((#jgImplDbPackage#.GraphImpl)graph);\n\t\t\treturn (#gcCamelName#)graph;\n\t\t}\n\t\telse\n\t\t\tthrow new GraphException(\"Graph with identifier \" + id + \" already exists in database.\");"
+						: "\tthrow new UnsupportedOperationException(\"No database support compiled.\");"),
+				"}",
 				// ---- transaction support ----
 				"/**",
 				" * Creates a new #gcName# graph with transaction support with initial vertex and edge counts <code>vMax</code>, <code>eMax</code>.",
@@ -365,7 +401,6 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		code.setVariable("gcImplName", schema.getGraphClass()
 				.getQualifiedName()
 				+ "Impl");
-
 		return code;
 	}
 
@@ -413,7 +448,6 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		code.add(new CodeSnippet(true,
 				"graphFactory = new #simpleClassName#Factory();"));
 		code.addNoIndent(new CodeSnippet(true, "}"));
-
 		return code;
 	}
 
@@ -672,7 +706,6 @@ public class SchemaCodeGenerator extends CodeGenerator {
 			constraintSnippet
 					.add("#aecVariable#.addConstraint("
 							+ "new ConstraintImpl(#message#, #predicate#, #offendingElements#));");
-
 			constraintSnippet.setVariable("message", "\""
 					+ stringQuote(constraint.getMessage()) + "\"");
 			constraintSnippet.setVariable("predicate", "\""
@@ -744,8 +777,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				code.add(createComments("dom", rd));
 				code.addNoIndent(new CodeSnippet("}"));
 			} else {
-				// never reachable
-				throw new RuntimeException("FIXME!");
+				throw new RuntimeException("FIXME!"); // never reachable
 			}
 		}
 		return code;

@@ -1,25 +1,32 @@
 /*
- * JGraLab - The Java graph laboratory
- * (c) 2006-2010 Institute for Software Technology
- *               University of Koblenz-Landau, Germany
+ * JGraLab - The Java Graph Laboratory
  * 
- *               ist@uni-koblenz.de
+ * Copyright (C) 2006-2010 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
  * 
- * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
  * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Additional permission under GNU GPL version 3 section 7
+ * 
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
  */
 
 package de.uni_koblenz.jgralab;
@@ -38,19 +45,19 @@ public interface Edge extends GraphElement {
 	/**
 	 * @return the next incidence object in iSeq of current vertex
 	 */
-	public Edge getNextEdge();
+	public Edge getNextIncidence();
 
 	/**
 	 * @return the previous incidence object in iSeq of current vertex
 	 */
-	public Edge getPrevEdge();
+	public Edge getPrevIncidence();
 
 	/**
 	 * @param orientation
 	 *            the orientation the next incidence should have
 	 * @return the next incidence object in iSeq of current vertex
 	 */
-	public Edge getNextEdge(EdgeDirection orientation);
+	public Edge getNextIncidence(EdgeDirection orientation);
 
 	/**
 	 * Gets the next incident edge at the current vertex, which has one of
@@ -61,7 +68,7 @@ public interface Edge extends GraphElement {
 	 * If no <code>kind</code> is given, it simply returns the first incident
 	 * edge.
 	 * 
-	 * @see Vertex#getFirstEdge(boolean, AggregationKind...)
+	 * @see Vertex#getFirstIncidence(boolean, AggregationKind...)
 	 * 
 	 * @param thisIncidence
 	 *            if true, <code>kinds</code> has to match the incidence at the
@@ -74,7 +81,7 @@ public interface Edge extends GraphElement {
 	 *         <code>thisIncidence == true</code>) or that (
 	 *         <code>thisIncidence == false</code>) side.
 	 */
-	public Edge getNextEdge(boolean thisIncidence, AggregationKind... kinds);
+	public Edge getNextIncidence(boolean thisIncidence, AggregationKind... kinds);
 
 	/**
 	 * @param anEdgeClass
@@ -82,7 +89,7 @@ public interface Edge extends GraphElement {
 	 * @return the next incidence in iSeq where the corresponding edge is of
 	 *         class anEdgeClass
 	 */
-	public Edge getNextEdgeOfClass(EdgeClass anEdgeClass);
+	public Edge getNextIncidence(EdgeClass anEdgeClass);
 
 	/**
 	 * @param anEdgeClass
@@ -90,7 +97,7 @@ public interface Edge extends GraphElement {
 	 * @return the next incidence in iSeq where the corresponding edge is of
 	 *         class anEdgeClass
 	 */
-	public Edge getNextEdgeOfClass(Class<? extends Edge> anEdgeClass);
+	public Edge getNextIncidence(Class<? extends Edge> anEdgeClass);
 
 	/**
 	 * @param anEdgeClass
@@ -100,7 +107,7 @@ public interface Edge extends GraphElement {
 	 * @return the next incidence in iSeq where the corresponding edge is of
 	 *         class anEdgeClass
 	 */
-	public Edge getNextEdgeOfClass(EdgeClass anEdgeClass,
+	public Edge getNextIncidence(EdgeClass anEdgeClass,
 			EdgeDirection orientation);
 
 	/**
@@ -111,7 +118,7 @@ public interface Edge extends GraphElement {
 	 * @return the next incidence in iSeq where the corresponding edge is of
 	 *         class anEdgeClass
 	 */
-	public Edge getNextEdgeOfClass(Class<? extends Edge> anEdgeClass,
+	public Edge getNextIncidence(Class<? extends Edge> anEdgeClass,
 			EdgeDirection orientation);
 
 	/**
@@ -122,7 +129,7 @@ public interface Edge extends GraphElement {
 	 * @return the next incidence in iSeq where the corresponding edge is of
 	 *         explicit class anEdgeClass
 	 */
-	public Edge getNextEdgeOfClass(EdgeClass anEdgeClass, boolean noSubclasses);
+	public Edge getNextIncidence(EdgeClass anEdgeClass, boolean noSubclasses);
 
 	/**
 	 * @param anEdgeClass
@@ -132,7 +139,7 @@ public interface Edge extends GraphElement {
 	 * @return the next incidence in iSeq where the corresponding edge is of
 	 *         explicit class anEdgeClass
 	 */
-	public Edge getNextEdgeOfClass(Class<? extends Edge> anEdgeClass,
+	public Edge getNextIncidence(Class<? extends Edge> anEdgeClass,
 			boolean noSubclasses);
 
 	/**
@@ -145,7 +152,7 @@ public interface Edge extends GraphElement {
 	 * @return the next incidence in iSeq where the corresponding edge is of
 	 *         explicit class anEdgeClass
 	 */
-	public Edge getNextEdgeOfClass(EdgeClass anEdgeClass,
+	public Edge getNextIncidence(EdgeClass anEdgeClass,
 			EdgeDirection orientation, boolean noSubclasses);
 
 	/**
@@ -158,7 +165,7 @@ public interface Edge extends GraphElement {
 	 * @return the next incidence in iSeq where the corresponding edge is of
 	 *         explicit class anEdgeClass
 	 */
-	public Edge getNextEdgeOfClass(Class<? extends Edge> anEdgeClass,
+	public Edge getNextIncidence(Class<? extends Edge> anEdgeClass,
 			EdgeDirection orientation, boolean noSubclasses);
 
 	/**
@@ -186,24 +193,24 @@ public interface Edge extends GraphElement {
 	/**
 	 * @return next edge in eSeq
 	 */
-	public Edge getNextEdgeInGraph();
+	public Edge getNextEdge();
 
 	/**
 	 * @return previous edge in eSeq
 	 */
-	public Edge getPrevEdgeInGraph();
+	public Edge getPrevEdge();
 
 	/**
 	 * @param anEdgeClass
 	 * @return next edge of anEdgeClass or its superclasses in eSeq
 	 */
-	public Edge getNextEdgeOfClassInGraph(EdgeClass anEdgeClass);
+	public Edge getNextEdge(EdgeClass anEdgeClass);
 
 	/**
 	 * @param anEdgeClass
 	 * @return next edge of anEdgeClass or its superclasses in eSeq
 	 */
-	public Edge getNextEdgeOfClassInGraph(Class<? extends Edge> anEdgeClass);
+	public Edge getNextEdge(Class<? extends Edge> anEdgeClass);
 
 	/**
 	 * @param anEdgeClass
@@ -211,7 +218,7 @@ public interface Edge extends GraphElement {
 	 *            if true, no subclasses are returned
 	 * @return next edge object of explicit anEdgeClass in eSeq
 	 */
-	public Edge getNextEdgeOfClassInGraph(EdgeClass anEdgeClass,
+	public Edge getNextEdge(EdgeClass anEdgeClass,
 			boolean noSubclasses);
 
 	/**
@@ -220,7 +227,7 @@ public interface Edge extends GraphElement {
 	 *            if true, no subclasses are returned
 	 * @return next edge object of explicit anEdgeClass in eSeq
 	 */
-	public Edge getNextEdgeOfClassInGraph(Class<? extends Edge> anEdgeClass,
+	public Edge getNextEdge(Class<? extends Edge> anEdgeClass,
 			boolean noSubclasses);
 
 	/**
@@ -238,40 +245,40 @@ public interface Edge extends GraphElement {
 	 * @return true if this edge is somewhere before e in the lambda sequence of
 	 *         the this-vertex
 	 */
-	public boolean isBefore(Edge e);
+	public boolean isBeforeIncidence(Edge e);
 
 	/**
 	 * @param e
 	 * @return true if this edge is somewhere after e in the lambda sequence of
 	 *         the this-vertex
 	 */
-	public boolean isAfter(Edge e);
+	public boolean isAfterIncidence(Edge e);
 
 	/**
 	 * @param e
 	 * @return true if this edge is somewhere before e in eSeq
 	 */
-	public boolean isBeforeInGraph(Edge e);
+	public boolean isBeforeEdge(Edge e);
 
 	/**
 	 * puts this edge immediately before e in eSeq
 	 * 
 	 * @param e
 	 */
-	public void putBeforeInGraph(Edge e);
+	public void putBeforeEdge(Edge e);
 
 	/**
 	 * @param e
 	 * @return true if this edge is somewhere after e in eSeq
 	 */
-	public boolean isAfterInGraph(Edge e);
+	public boolean isAfterEdge(Edge e);
 
 	/**
 	 * puts this edge immediately after anEdge in eSeq
 	 * 
 	 * @param e
 	 */
-	public void putAfterInGraph(Edge e);
+	public void putAfterEdge(Edge e);
 
 	/**
 	 * removes this edge from eSeq and erases its attributes @ if used on an
@@ -318,7 +325,7 @@ public interface Edge extends GraphElement {
 	 * vertices, only the order of the edges at the <code>this-vertex</code> of
 	 * this edge is changed.
 	 */
-	public void putEdgeBefore(Edge e);
+	public void putIncidenceBefore(Edge e);
 
 	/**
 	 * puts this edge after the after given edge <code>previousEdge</code> in
@@ -327,7 +334,7 @@ public interface Edge extends GraphElement {
 	 * vertices, only the order of the edges at the <code>this-vertex</code> of
 	 * this edge is changed.
 	 */
-	public void putEdgeAfter(Edge e);
+	public void putIncidenceAfter(Edge e);
 
 	/**
 	 * returns the normal edge of this edge

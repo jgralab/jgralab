@@ -5,7 +5,7 @@
 <svg width="100%" height="100%" version="1.1" 
 	xmlns="http://www.w3.org/2000/svg" 
 	xmlns:xlink="http://www.w3.org/1999/xlink" 
-	xmlns:jgralab="http://userpages.uni-koblenz.de/~ist/JGraLab" onload="init(evt)">
+	xmlns:jgralab="http://userpages.uni-koblenz.de/~ist/JGraLab" onload="init(evt)" onmouseup="onMouseUp(evt)">
   <defs>
     <script type='text/ecmascript'><![CDATA[
       var svgdoc, navdoc;
@@ -29,15 +29,33 @@
         svgdoc = evt.target.ownerDocument;
       
         navdoc = svgdoc.getElementById('nav');
+        
+        var rect = svgdoc.getElementById('rect');
+        
+        // initialize wheel support
+        if (document.addEventListener){
+        	navdoc.addEventListener("DOMMouseScroll", zoomWithScroll, false);
+        }
+        navdoc.onmousewheel = document.onmousewheel = zoomWithScroll;
       
         //debug = evt.getTarget().getOwnerDocument().getElementById('debug').getFirstChild();
       
         // read viewbox coords from navdoc; set to local variables
         var vbData = navdoc.getAttributeNS(null, 'viewBox').split(' ');
-        bbX = parseInt(vbData[0]);
-        bbY = parseInt(vbData[1]);
-        bbW = parseInt(vbData[2]);
-        bbH = parseInt(vbData[3]);
+        bbX = parseFloat(vbData[0]);
+        bbY = parseFloat(vbData[1]);
+        bbW = parseFloat(vbData[2]);
+        if(bbW > 1000){
+        	var rectWidth = rect.getAttributeNS(null,"width");
+        	bbX = bbW/2 - rectWidth/2;
+        	bbW = 1000;
+        }
+        bbH = parseFloat(vbData[3]);
+        if(bbH > 1000){
+        	var rectHeight= rect.getAttributeNS(null,"height");
+        	bbY = bbH/2 - rectHeight/2;
+        	bbH = 1000;
+        }
         
         updateViewBox(bbX, bbY, bbW, bbH);
       }
@@ -46,20 +64,28 @@
       function zoom(evt) {
         if (evt.target.parentNode.getAttributeNS(null, 'id') == 'ZIn') {
           //debug.setData('ZIn!');
-          vbW *= 0.95;
-          vbH *= 0.95;
-          updateViewBox(vbX, vbY, vbW, vbH);
+          zoomIn();
         }
         else if (evt.target.parentNode.getAttributeNS(null, 'id') == 'ZOut') {
           //debug.setData('ZOut!');
-          vbW *= 1.05;
-          vbH *= 1.05;
-          updateViewBox(vbX, vbY, vbW, vbH);
+          zoomOut();
         }
         else if (evt.target.parentNode.getAttributeNS(null, 'id') == 'ZGraph') {
           updateViewBox(bbX, bbY, bbW, bbH);
           //debug.setData('ZGraph!');
         }
+      }
+      
+      function zoomIn(){
+    	  vbW *= 0.7;
+          vbH *= 0.7;
+          updateViewBox(vbX, vbY, vbW, vbH);
+      }
+      
+      function zoomOut(){
+    	  vbW *= 1.3;
+          vbH *= 1.3;
+          updateViewBox(vbX, vbY, vbW, vbH);
       }
       
       
@@ -89,6 +115,59 @@
         vbY += 50;
         navdoc.setAttributeNS(null, 'viewBox', vbX + ' ' + vbY + ' ' + vbW + ' ' + vbH);
       }
+      
+      // move picture with coursor
+      var oldCursorPosX, oldCursorPosY;
+      
+      function onMouseDown(evt){
+    	  if(evt.which?evt.which==1:evt.button==0){
+        	  navdoc.setAttributeNS(null, "onmousemove", "onMouseMove(evt);")
+    		  oldCursorPosX = evt.screenX;
+    		  oldCursorPosY = evt.screenY;
+    	  }
+      }
+      
+      function onMouseUp(evt){
+    	  if(evt.which?evt.which==1:evt.button==0){
+        	  navdoc.setAttributeNS(null, "onmousemove", "")
+    	  }
+      }
+      
+      function onMouseMove(evt){
+    	  vbX += oldCursorPosX - evt.screenX;
+    	  vbY += oldCursorPosY - evt.screenY;
+    	  navdoc.setAttributeNS(null, 'viewBox', vbX + ' ' + vbY + ' ' + vbW + ' ' + vbH);
+    	  oldCursorPosX = evt.screenX;
+    	  oldCursorPosY = evt.screenY;
+      }
+      
+      // zoom via mousewheel
+      
+      function zoomWithScroll(evt){
+    	  var direction = 0;
+    	  if (!evt){
+    		  evt = window.event;
+    	  }
+    	  if (evt.wheelDelta){
+    		  direction = evt.wheelDelta/120;
+    		  if (window.opera){
+    			  direction = -direction;
+    		  }
+    	  } else if (evt.detail) {
+    		  direction = -evt.detail/3;
+    	  }
+    	  if (direction){
+    		  zoomWheel(direction);
+    	  }
+      }
+      
+      function zoomWheel(direction) {
+    	  if (direction < 0){
+    	  	zoomIn();
+    	  }else{
+    	  	zoomOut();
+    	  }
+      }
 
     ]]></script>
   </defs>
@@ -113,8 +192,8 @@
       <text y='65' text-anchor='middle'>Graph</text> 
     </g>
   </g>
-  <rect id="rect" x="90" y="1" width="640" height="480" style="fill:white;stroke:rgb(0,0,0);" />
-  <svg id="nav" width="638" height="478" version="1.1" viewBox="?viewBox?" xmlns="http://www.w3.org/2000/svg" x="91" y="2">
+  <rect id="rect" x="90" y="1" width="640" height="480" style="fill:rgb(50,50,50);stroke:rgb(0,0,0);" />
+  <svg id="nav" width="638" height="478" version="1.1" viewBox="?viewBox?" xmlns="http://www.w3.org/2000/svg" x="91" y="2" onmousedown="onMouseDown(evt);" >
    <!--  -->
   </svg>
 </svg>

@@ -1,25 +1,32 @@
 /*
- * JGraLab - The Java graph laboratory
- * (c) 2006-2010 Institute for Software Technology
- *               University of Koblenz-Landau, Germany
+ * JGraLab - The Java Graph Laboratory
  * 
- *               ist@uni-koblenz.de
+ * Copyright (C) 2006-2010 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
  * 
- * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
  * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Additional permission under GNU GPL version 3 section 7
+ * 
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
  */
 package de.uni_koblenz.jgralabtest.instancetest;
 
@@ -29,7 +36,9 @@ import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.Collection;
+import java.util.Comparator;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,9 +50,12 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalGraph;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalSchema;
+import de.uni_koblenz.jgralabtest.schemas.minimal.Node;
 
 @RunWith(Parameterized.class)
 public class VertexListTest extends InstanceTest {
+	private static final int VERTEX_COUNT = 10;
+
 	public VertexListTest(ImplementationType implementationType) {
 		super(implementationType);
 	}
@@ -68,6 +80,9 @@ public class VertexListTest extends InstanceTest {
 			g = MinimalSchema.instance()
 					.createMinimalGraphWithTransactionSupport(V, E);
 			break;
+		case DATABASE:
+			g = this.createMinimalGraphInDatabase();
+			break;
 		case SAVEMEM:
 			g = MinimalSchema.instance().createMinimalGraph(V, E);
 			break;
@@ -80,6 +95,27 @@ public class VertexListTest extends InstanceTest {
 			g.createNode();
 		}
 		commit(g);
+	}
+
+	private MinimalGraph createMinimalGraphInDatabase() {
+		dbHandler.connectToDatabase();
+		dbHandler.loadMinimalSchemaIntoGraphDatabase();
+		return dbHandler
+				.createMinimalGraphWithDatabaseSupport("VertexListTest");
+	}
+
+	@After
+	public void tearDown() {
+		if (implementationType == ImplementationType.DATABASE) {
+			this.cleanAndCloseGraphDatabase();
+		}
+	}
+
+	private void cleanAndCloseGraphDatabase() {
+		// dbHandler.cleanDatabaseOfTestGraph(g);
+		// super.cleanDatabaseOfTestSchema(MinimalSchema.instance());
+		dbHandler.clearAllTables();
+		dbHandler.closeGraphdatabase();
 	}
 
 	@Test
@@ -254,5 +290,84 @@ public class VertexListTest extends InstanceTest {
 		createReadOnlyTransaction(g);
 		assertEquals("v2 v3 v4 v6 v7 v8 v9 v1 v5 v10 v11", getVSeq());
 		commit(g);
+	}
+
+	/**
+	 * Rudimentary test for sortVertexList. It sorts the vertices in reverse
+	 * order to the id and back. For transaction support it has to be tested in
+	 * the same transaction, because otherwise the IDs would be changed.
+	 * 
+	 * @throws CommitFailedException
+	 */
+	@Test
+	public void testSortVertexList() throws CommitFailedException {
+		MinimalGraph g = null;
+		switch (implementationType) {
+		case STANDARD:
+			g = MinimalSchema.instance().createMinimalGraph(V, E);
+			break;
+		case TRANSACTION:
+			g = MinimalSchema.instance()
+					.createMinimalGraphWithTransactionSupport(V, E);
+			break;
+		case DATABASE:
+			return; // because vertex list sorting is not implemented for db
+			// support
+			// g = dbHandler.createMinimalGraphWithDatabaseSupport(
+			// "IncidenceListTest.testSortIncidences", V, E);
+			// break;
+		case SAVEMEM:
+			g = MinimalSchema.instance().createMinimalGraphWithSavememSupport(
+					V, E);
+			break;
+		default:
+			fail("Implementation " + implementationType
+					+ " not yet supported by this test.");
+		}
+
+		createTransaction(g);
+		Node[] nodes = new Node[VERTEX_COUNT + 1];
+		for (int i = 1; i < nodes.length; i++) {
+			nodes[i] = g.createNode();
+		}
+
+		int i = 1;
+		for (Vertex currentNode : g.vertices()) {
+			assertEquals(currentNode.getId(), nodes[i++].getId());
+		}
+
+		Comparator<Vertex> comp = new Comparator<Vertex>() {
+
+			@Override
+			public int compare(Vertex o1, Vertex o2) {
+				return Double.compare(o2.getId(), o1.getId());
+			}
+
+		};
+
+		g.sortVertices(comp);
+
+		i = VERTEX_COUNT;
+		for (Vertex currentNode : g.vertices()) {
+			assertEquals(currentNode.getId(), nodes[i--].getId());
+		}
+
+		comp = new Comparator<Vertex>() {
+
+			@Override
+			public int compare(Vertex o1, Vertex o2) {
+				return Double.compare(o1.getId(), o2.getId());
+			}
+
+		};
+
+		g.sortVertices(comp);
+
+		i = 1;
+		for (Vertex currentNode : g.vertices()) {
+			assertEquals(currentNode.getId(), nodes[i++].getId());
+		}
+		commit(g);
+
 	}
 }

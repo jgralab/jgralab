@@ -1,25 +1,32 @@
 /*
- * JGraLab - The Java graph laboratory
- * (c) 2006-2010 Institute for Software Technology
- *               University of Koblenz-Landau, Germany
+ * JGraLab - The Java Graph Laboratory
  * 
- *               ist@uni-koblenz.de
+ * Copyright (C) 2006-2010 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
  * 
- * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
  * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Additional permission under GNU GPL version 3 section 7
+ * 
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
  */
 
 package de.uni_koblenz.jgralab.impl;
@@ -95,7 +102,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 	}
 
 	@Override
-	public abstract Edge getNextEdgeInGraph();
+	public abstract Edge getNextEdge();
 
 	/**
 	 * @param nextEdge
@@ -114,10 +121,10 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 	 * de.uni_koblenz.jgralab.Edge#getNextEdgeOfClassInGraph(java.lang.Class)
 	 */
 	@Override
-	public Edge getNextEdgeOfClassInGraph(Class<? extends Edge> anEdgeClass) {
+	public Edge getNextEdge(Class<? extends Edge> anEdgeClass) {
 		assert anEdgeClass != null;
 		assert isValid();
-		return getNextEdgeOfClassInGraph(anEdgeClass, false);
+		return getNextEdge(anEdgeClass, false);
 	}
 
 	/*
@@ -128,10 +135,10 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 	 * jgralab.schema.EdgeClass)
 	 */
 	@Override
-	public Edge getNextEdgeOfClassInGraph(EdgeClass anEdgeClass) {
+	public Edge getNextEdge(EdgeClass anEdgeClass) {
 		assert anEdgeClass != null;
 		assert isValid();
-		return getNextEdgeOfClassInGraph(anEdgeClass.getM1Class(), false);
+		return getNextEdge(anEdgeClass.getM1Class(), false);
 	}
 
 	/*
@@ -142,11 +149,11 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 	 * jgralab.schema.EdgeClass, boolean)
 	 */
 	@Override
-	public Edge getNextEdgeOfClassInGraph(EdgeClass anEdgeClass,
+	public Edge getNextEdge(EdgeClass anEdgeClass,
 			boolean noSubclasses) {
 		assert anEdgeClass != null;
 		assert isValid();
-		return getNextEdgeOfClassInGraph(anEdgeClass.getM1Class(), noSubclasses);
+		return getNextEdge(anEdgeClass.getM1Class(), noSubclasses);
 	}
 
 	/*
@@ -157,22 +164,20 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 	 * boolean)
 	 */
 	@Override
-	public Edge getNextEdgeOfClassInGraph(Class<? extends Edge> anEdgeClass,
+	public Edge getNextEdge(Class<? extends Edge> anEdgeClass,
 			boolean noSubclasses) {
 		assert anEdgeClass != null;
 		assert isValid();
-		Edge currentEdge = getNextEdgeInGraph();
+		Edge currentEdge = getNextEdge();
 		while (currentEdge != null) {
 			if (noSubclasses) {
 				if (anEdgeClass == currentEdge.getM1Class()) {
 					return currentEdge;
 				}
-			} else {
-				if (anEdgeClass.isInstance(currentEdge)) {
-					return currentEdge;
-				}
+			} else if (anEdgeClass.isInstance(currentEdge)) {
+				return currentEdge;
 			}
-			currentEdge = currentEdge.getNextEdgeInGraph();
+			currentEdge = currentEdge.getNextEdge();
 		}
 		return null;
 	}
@@ -261,7 +266,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 	 * de.uni_koblenz.jgralab.Edge#isAfterInGraph(de.uni_koblenz.jgralab.Edge)
 	 */
 	@Override
-	public boolean isAfterInGraph(Edge e) {
+	public boolean isAfterEdge(Edge e) {
 		assert e != null;
 		assert isValid();
 		assert e.isValid();
@@ -270,9 +275,9 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 		if (e == this) {
 			return false;
 		}
-		Edge p = getPrevEdgeInGraph();
+		Edge p = getPrevEdge();
 		while ((p != null) && (p != e)) {
-			p = p.getPrevEdgeInGraph();
+			p = p.getPrevEdge();
 		}
 		return p != null;
 	}
@@ -284,7 +289,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 	 * de.uni_koblenz.jgralab.Edge#isBeforeInGraph(de.uni_koblenz.jgralab.Edge)
 	 */
 	@Override
-	public boolean isBeforeInGraph(Edge e) {
+	public boolean isBeforeEdge(Edge e) {
 		assert e != null;
 		assert isValid();
 		assert e.isValid();
@@ -294,9 +299,9 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 		if (e == this) {
 			return false;
 		}
-		Edge n = getNextEdgeInGraph();
+		Edge n = getNextEdge();
 		while ((n != null) && (n != e)) {
-			n = n.getNextEdgeInGraph();
+			n = n.getNextEdge();
 		}
 		return n != null;
 	}
@@ -318,7 +323,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 	 * de.uni_koblenz.jgralab.Edge#putAfterInGraph(de.uni_koblenz.jgralab.Edge)
 	 */
 	@Override
-	public void putAfterInGraph(Edge e) {
+	public void putAfterEdge(Edge e) {
 		assert e != null;
 		assert isValid();
 		assert e.isValid();
@@ -336,7 +341,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 	 * de.uni_koblenz.jgralab.Edge#putBeforeInGraph(de.uni_koblenz.jgralab.Edge)
 	 */
 	@Override
-	public void putBeforeInGraph(Edge e) {
+	public void putBeforeEdge(Edge e) {
 		assert e != null;
 		assert isValid();
 		assert e.isValid();
@@ -361,8 +366,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 
 		VertexBaseImpl oldAlpha = getIncidentVertex();
 		if (alpha == oldAlpha) {
-			// nothing to change
-			return;
+			return; // nothing to change
 		}
 
 		if (!alpha.isValidAlpha(this)) {
@@ -372,11 +376,11 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 					+ alpha.getAttributedElementClass().getUniqueName());
 		}
 
-		oldAlpha.removeIncidenceFromLambaSeq(this);
+		oldAlpha.removeIncidenceFromLambdaSeq(this);
 		oldAlpha.incidenceListModified();
 
 		VertexBaseImpl newAlpha = (VertexBaseImpl) alpha;
-		newAlpha.appendIncidenceToLambaSeq(this);
+		newAlpha.appendIncidenceToLambdaSeq(this);
 		newAlpha.incidenceListModified();
 		setIncidentVertex(newAlpha);
 	}
@@ -395,8 +399,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 
 		VertexBaseImpl oldOmgea = reversedEdge.getIncidentVertex();
 		if (omega == oldOmgea) {
-			// nothing to change
-			return;
+			return; // nothing to change
 		}
 
 		if (!omega.isValidOmega(this)) {
@@ -406,13 +409,16 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 					+ omega.getAttributedElementClass().getUniqueName());
 		}
 
-		oldOmgea.removeIncidenceFromLambaSeq(reversedEdge);
+		oldOmgea.removeIncidenceFromLambdaSeq(reversedEdge);
 		oldOmgea.incidenceListModified();
 
 		VertexBaseImpl newOmega = (VertexBaseImpl) omega;
-		newOmega.appendIncidenceToLambaSeq(reversedEdge);
+		newOmega.appendIncidenceToLambdaSeq(reversedEdge);
 		newOmega.incidenceListModified();
-		reversedEdge.setIncidentVertex(newOmega);
+		reversedEdge.setIncidentVertex(newOmega); // TODO Check if this is
+		// really needed as
+		// appenIncidenceToLambdaSeq
+		// called it before.
 	}
 
 	/*

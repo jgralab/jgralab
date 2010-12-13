@@ -1,31 +1,39 @@
 /*
- * JGraLab - The Java graph laboratory
- * (c) 2006-2010 Institute for Software Technology
- *               University of Koblenz-Landau, Germany
+ * JGraLab - The Java Graph Laboratory
  * 
- *               ist@uni-koblenz.de
+ * Copyright (C) 2006-2010 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
  * 
- * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
  * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Additional permission under GNU GPL version 3 section 7
+ * 
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
  */
 
 package de.uni_koblenz.jgralab;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
@@ -33,12 +41,14 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -78,6 +88,8 @@ import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 import de.uni_koblenz.jgralab.schema.impl.BasicDomainImpl;
 import de.uni_koblenz.jgralab.schema.impl.ConstraintImpl;
 import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
+
+import de.uni_koblenz.jgralab.impl.db.*;
 
 /**
  * class for loading and storing schema and graphs in tg format
@@ -698,6 +710,7 @@ public class GraphIO {
 
 		Package oldPackage = null;
 		// write vertices
+		// System.out.println("Writing vertices");
 		Vertex nextV = graph.getFirstVertex();
 		while (nextV != null) {
 			if (subGraph != null && !subGraph.isMarked(nextV)) {
@@ -718,16 +731,17 @@ public class GraphIO {
 			space();
 			writeIdentifier(aec.getSimpleName());
 			// write incident edges
-			Edge nextI = nextV.getFirstEdge();
+			Edge nextI = nextV.getFirstIncidence();
 			write(" <");
 			noSpace();
+			// System.out.print("  Writing incidences of vertex.");
 			while (nextI != null) {
 				if (subGraph != null && !subGraph.isMarked(nextI)) {
-					nextI = nextI.getNextEdge();
+					nextI = nextI.getNextIncidence();
 					continue;
 				}
 				writeLong(nextI.getId());
-				nextI = nextI.getNextEdge();
+				nextI = nextI.getNextIncidence();
 			}
 			write(">");
 			space();
@@ -746,11 +760,12 @@ public class GraphIO {
 			}
 		}
 
+		// System.out.println("Writing edges");
 		// write edges
-		Edge nextE = graph.getFirstEdgeInGraph();
+		Edge nextE = graph.getFirstEdge();
 		while (nextE != null) {
 			if (subGraph != null && !subGraph.isMarked(nextE)) {
-				nextE = nextE.getNextEdgeInGraph();
+				nextE = nextE.getNextEdge();
 				continue;
 			}
 			eId = nextE.getId();
@@ -769,7 +784,7 @@ public class GraphIO {
 			space();
 			nextE.writeAttributeValues(this);
 			write(";\n");
-			nextE = nextE.getNextEdgeInGraph();
+			nextE = nextE.getNextEdge();
 
 			// update progress bar
 			if (pf != null) {
@@ -910,6 +925,7 @@ public class GraphIO {
 		if (BAOut == null) {
 			throw new GraphIOException("GraphIO did not write to a String");
 		}
+
 		// FIXME There should be a try-catch for every close operation
 		TGOut.flush();
 		BAOut.flush();
@@ -941,6 +957,24 @@ public class GraphIO {
 		} finally {
 			close(in);
 		}
+	}
+
+	public static Schema loadSchemaFromDatabase(GraphDatabase graphDatabase,
+			String packagePrefix, String schemaName) throws GraphIOException {
+		String definition = graphDatabase.getSchemaDefinition(packagePrefix,
+				schemaName);
+		InputStream input = new ByteArrayInputStream(definition.getBytes());
+		return loadSchemaFromStream(input);
+	}
+
+	public static Schema loadAndCommitSchemaFromDatabase(
+			GraphDatabase graphDatabase, String packagePrefix, String schemaName)
+			throws GraphIOException {
+		Schema schema = loadSchemaFromDatabase(graphDatabase, packagePrefix,
+				schemaName);
+		schema.commit("test", new CodeGeneratorConfiguration()
+				.withDatabaseSupport());
+		return schema;
 	}
 
 	public static Schema loadSchemaFromStream(InputStream in)
@@ -1204,7 +1238,7 @@ public class GraphIO {
 
 		} catch (IOException ex) {
 			throw new GraphIOException(
-					"exception while loading graph from file " + filename, ex);
+					"Exception while loading graph from file " + filename, ex);
 		} finally {
 			if (inputStream != null) {
 				close(inputStream);
@@ -1270,7 +1304,7 @@ public class GraphIO {
 					"Unable to load a graph which belongs to the schema because the Java-classes for this schema have not yet been created."
 							+ " Use Schema.commit(..) to create them!", e);
 		} catch (Exception e) {
-			throw new GraphIOException("exception while loading graph", e);
+			throw new GraphIOException("Exception while loading graph.", e);
 		}
 	}
 
@@ -2476,7 +2510,7 @@ public class GraphIO {
 	 *         name and simple name.
 	 */
 	private final String toQNameString(String pn, String sn) {
-		if (pn == null || pn.isEmpty()) {
+		if ((pn == null) || pn.isEmpty()) {
 			return sn;
 		}
 		return pn + "." + sn;
@@ -2698,8 +2732,9 @@ public class GraphIO {
 		int vId = matchInteger();
 		if (vId <= 0) {
 			throw new GraphIOException("Invalid vertex id " + vId + ".");
+		} else {
+			return vId;
 		}
-		return vId;
 	}
 
 	private void parseIncidentEdges(Vertex v) throws GraphIOException {
@@ -3128,5 +3163,36 @@ public class GraphIO {
 		List<AttributeData> attributes = new ArrayList<AttributeData>();
 
 		Set<Constraint> constraints = new HashSet<Constraint>(1);
+	}
+
+	public static Graph loadGraphFromDatabase(String id,
+			GraphDatabase graphDatabase) throws GraphDatabaseException {
+		if (graphDatabase != null) {
+			return graphDatabase.getGraph(id);
+		} else {
+			throw new GraphDatabaseException("No graph database given.");
+		}
+	}
+
+	public static void loadSchemaIntoGraphDatabase(String filePath,
+			GraphDatabase graphDatabase) throws IOException, GraphIOException,
+			SQLException {
+		String schemaDefinition = readFileAsString(filePath);
+		Schema schema = loadSchemaFromFile(filePath);
+		graphDatabase.insertSchema(schema, schemaDefinition);
+	}
+
+	private static String readFileAsString(String filePath) throws IOException {
+		StringBuffer fileData = new StringBuffer(1024);
+		BufferedReader reader = new BufferedReader(new FileReader(filePath));
+		char[] buf = new char[1024];
+		int numRead = 0;
+		while ((numRead = reader.read(buf)) != -1) {
+			String readData = String.valueOf(buf, 0, numRead);
+			fileData.append(readData);
+			buf = new char[1024];
+		}
+		reader.close();
+		return fileData.toString();
 	}
 }

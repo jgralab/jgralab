@@ -1,25 +1,32 @@
 /*
- * JGraLab - The Java graph laboratory
- * (c) 2006-2010 Institute for Software Technology
- *               University of Koblenz-Landau, Germany
+ * JGraLab - The Java Graph Laboratory
  * 
- *               ist@uni-koblenz.de
+ * Copyright (C) 2006-2010 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
  * 
- * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
  * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Additional permission under GNU GPL version 3 section 7
+ * 
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
  */
 
 package de.uni_koblenz.jgralab;
@@ -158,14 +165,14 @@ public interface Vertex extends GraphElement {
 	 *            the class of the next vertex
 	 * @return the next vertex in vSeq of class aVertexClass or its superclasses
 	 */
-	public Vertex getNextVertexOfClass(VertexClass aVertexClass);
+	public Vertex getNextVertex(VertexClass aVertexClass);
 
 	/**
 	 * @param aM1VertexClass
 	 *            the class of the next vertex
 	 * @return the next vertex in vSeq of class aVertexClass or its superclasses
 	 */
-	public Vertex getNextVertexOfClass(Class<? extends Vertex> aM1VertexClass);
+	public Vertex getNextVertex(Class<? extends Vertex> aM1VertexClass);
 
 	/**
 	 * @param aVertexClass
@@ -174,7 +181,7 @@ public interface Vertex extends GraphElement {
 	 *            if true, no subclasses are returned
 	 * @return the next vertex in vSeq of explicit class aVertexClass
 	 */
-	public Vertex getNextVertexOfClass(VertexClass aVertexClass,
+	public Vertex getNextVertex(VertexClass aVertexClass,
 			boolean noSubclasses);
 
 	/**
@@ -184,25 +191,25 @@ public interface Vertex extends GraphElement {
 	 *            if true, no subclasses are returned
 	 * @return the next vertex in vSeq of explicit class aVertexClass
 	 */
-	public Vertex getNextVertexOfClass(Class<? extends Vertex> aM1VertexClass,
+	public Vertex getNextVertex(Class<? extends Vertex> aM1VertexClass,
 			boolean noSubclasses);
 
 	/**
 	 * @return first incident edge of this vertex
 	 */
-	public Edge getFirstEdge();
+	public Edge getFirstIncidence();
 
 	/**
 	 * @return last incident edge of this vertex
 	 */
-	public Edge getLastEdge();
+	public Edge getLastIncidence();
 
 	/**
 	 * @param orientation
 	 *            of connected incidences,
 	 * @return the first incidence of vertex with direction IN or OUT
 	 */
-	public Edge getFirstEdge(EdgeDirection orientation);
+	public Edge getFirstIncidence(EdgeDirection orientation);
 
 	/**
 	 * Get the first incident edge which as one of the aggregation semantics
@@ -214,17 +221,17 @@ public interface Vertex extends GraphElement {
 	 * containment hierarchy.
 	 * 
 	 * <pre>
-	 * v.getFirstEdge(true, AggregationKind.SHARED, AggregationKind.COMPOSITE)
+	 * v.getFirstIncidence(true, AggregationKind.SHARED, AggregationKind.COMPOSITE)
 	 * </pre>
 	 * 
 	 * And this returns the first edge to a child vertex in the containment
 	 * hierarchy.
 	 * 
 	 * <pre>
-	 * v.getFirstEdge(false, AggregationKind.SHARED, AggregationKind.COMPOSITE)
+	 * v.getFirstIncidence(false, AggregationKind.SHARED, AggregationKind.COMPOSITE)
 	 * </pre>
 	 * 
-	 * @see Edge#getNextEdge(boolean, AggregationKind...)
+	 * @see Edge#getNextIncidence(boolean, AggregationKind...)
 	 * 
 	 * @param thisIncidence
 	 *            if true, <code>kinds</code> has to match the incidence at this
@@ -234,7 +241,7 @@ public interface Vertex extends GraphElement {
 	 *         (thisIncidence == true) or that vertex (thisIncidence == false)
 	 *         has one of the aggregation semantics given by <code>kind</code>.
 	 */
-	public Edge getFirstEdge(boolean thisIncidence, AggregationKind... kinds);
+	public Edge getFirstIncidence(boolean thisIncidence, AggregationKind... kinds);
 
 	/**
 	 * @param anEdgeClass
@@ -242,7 +249,7 @@ public interface Vertex extends GraphElement {
 	 * @return the first incidence in iSeq where the corresponding edge is of
 	 *         class anEdgeClass
 	 */
-	public Edge getFirstEdgeOfClass(EdgeClass anEdgeClass);
+	public Edge getFirstIncidence(EdgeClass anEdgeClass);
 
 	/**
 	 * @param anEdgeClass
@@ -250,7 +257,7 @@ public interface Vertex extends GraphElement {
 	 * @return the first incidence in iSeq where the corresponding edge is of
 	 *         class anEdgeClass
 	 */
-	public Edge getFirstEdgeOfClass(Class<? extends Edge> anEdgeClass);
+	public Edge getFirstIncidence(Class<? extends Edge> anEdgeClass);
 
 	/**
 	 * @param anEdgeClass
@@ -260,7 +267,7 @@ public interface Vertex extends GraphElement {
 	 * @return the first incidence in iSeq where the corresponding edge is of
 	 *         class anEdgeClass
 	 */
-	public Edge getFirstEdgeOfClass(EdgeClass anEdgeClass,
+	public Edge getFirstIncidence(EdgeClass anEdgeClass,
 			EdgeDirection orientation);
 
 	/**
@@ -271,7 +278,7 @@ public interface Vertex extends GraphElement {
 	 * @return the first incidence in iSeq where the corresponding edge is of
 	 *         class anEdgeClass
 	 */
-	public Edge getFirstEdgeOfClass(Class<? extends Edge> anEdgeClass,
+	public Edge getFirstIncidence(Class<? extends Edge> anEdgeClass,
 			EdgeDirection orientation);
 
 	/**
@@ -282,7 +289,7 @@ public interface Vertex extends GraphElement {
 	 * @return the first incidence in iSeq where the corresponding edge is of
 	 *         explicit class anEdgeClass
 	 */
-	public Edge getFirstEdgeOfClass(EdgeClass anEdgeClass, boolean noSubclasses);
+	public Edge getFirstIncidence(EdgeClass anEdgeClass, boolean noSubclasses);
 
 	/**
 	 * @param anEdgeClass
@@ -292,7 +299,7 @@ public interface Vertex extends GraphElement {
 	 * @return the first incidence in iSeq where the corresponding edge is of
 	 *         explicit class anEdgeClass
 	 */
-	public Edge getFirstEdgeOfClass(Class<? extends Edge> anEdgeClass,
+	public Edge getFirstIncidence(Class<? extends Edge> anEdgeClass,
 			boolean noSubclasses);
 
 	/**
@@ -306,7 +313,7 @@ public interface Vertex extends GraphElement {
 	 * @return the first incidence in iSeq where the corresponding edge is of
 	 *         explicit class anEdgeClass
 	 */
-	public Edge getFirstEdgeOfClass(EdgeClass anEdgeClass,
+	public Edge getFirstIncidence(EdgeClass anEdgeClass,
 			EdgeDirection orientation, boolean noSubclasses);
 
 	/**
@@ -320,7 +327,7 @@ public interface Vertex extends GraphElement {
 	 * @return the first incidence in iSeq where the corresponding edge is of
 	 *         explicit class anEdgeClass
 	 */
-	public Edge getFirstEdgeOfClass(Class<? extends Edge> anEdgeClass,
+	public Edge getFirstIncidence(Class<? extends Edge> anEdgeClass,
 			EdgeDirection orientation, boolean noSubclasses);
 
 	/**
@@ -469,11 +476,11 @@ public interface Vertex extends GraphElement {
 	public boolean isValidOmega(Edge edge);
 
 	/**
-	 * Sorts the incidence list according to the given comparator in ascending
+	 * Sorts the incidence sequence according to the given comparator in ascending
 	 * order.
 	 * 
 	 * @param comp
-	 *            the comparator that defines the order of the incidence list.
+	 *            the comparator that defines the desired incidence order.
 	 */
 	public void sortIncidences(Comparator<Edge> comp);
 

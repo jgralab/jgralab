@@ -1,25 +1,32 @@
 /*
- * JGraLab - The Java graph laboratory
- * (c) 2006-2010 Institute for Software Technology
- *               University of Koblenz-Landau, Germany
+ * JGraLab - The Java Graph Laboratory
  * 
- *               ist@uni-koblenz.de
+ * Copyright (C) 2006-2010 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
  * 
- * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
  * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Additional permission under GNU GPL version 3 section 7
+ * 
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
  */
 
 package de.uni_koblenz.jgralab.utilities.tgraphbrowser;
@@ -107,7 +114,6 @@ public class RequestThread extends Thread {
 
 	@Override
 	public void run() {
-		// FIXME This is a monster method and maintainable! Split it.
 		try {
 			_socket.setSoTimeout(30000);
 			InputStream inputStream = _socket.getInputStream();
@@ -131,271 +137,10 @@ public class RequestThread extends Thread {
 			}
 			if (request.startsWith("POST ")) {
 				// POST-Request
-				// Decide if it is a file upload
-				String line;
-				Long contentLength = null;
-				String contentType = null;
-				do {
-					line = readLine(in);
-					if (line.startsWith("Content-Type")) {
-						contentType = line;
-					} else if (line.startsWith("Content-Length:")) {
-						contentLength = Long.parseLong(line.substring(16));
-					}
-				} while (contentLength == null || contentType == null);
-				if (contentType.contains("multipart/form-data")) {
-					// file upload
-					TGraphBrowserServer.logger.info(request);
-					// determine overwrite
-					boolean shouldOverwrite = request
-							.contains("overwrite=true");
-					// determine boundary
-					String boundary = contentType.split("boundary=")[1];
-					String[] bounds = boundary.split("-");
-					boundary = bounds[bounds.length - 1];
-					do {
-						line = readLine(in);
-					} while (!line.contains(boundary));
-					// +2 because \r\n is cut off
-					int sizeOfLinesAlreadyRead = line.length() + 2;
-					// read Content-Disposition
-					line = readLine(in);
-					// extract filename
-					sizeOfLinesAlreadyRead += line.length() + 2;
-					String filename = line.split("filename=")[1];
-					// cut off "
-					filename = filename.substring(1, filename.length() - 1);
-					if (!filename.toLowerCase().endsWith(".tg")
-							&& !filename.toLowerCase().endsWith(".gz")) {
-						sendFile(out,
-								"TGraphBrowser_GraphChoice_AfterError.html",
-								"You can only upload .tg or .gz files!");
-					} else if (!isSizeOk(contentLength)) {
-						sendFile(out,
-								"TGraphBrowser_GraphChoice_AfterError.html",
-								"The .tg file is too big!");
-					} else {
-						// find beginning of file
-						// next in.readLine()is first line of file
-						while (line != null && !line.isEmpty()) {
-							line = readLine(in);
-							sizeOfLinesAlreadyRead += line.length() + 2;
-						}
-						// create file which does not exist in the workspace
-						// yet
-						boolean isCompressed = filename.endsWith(".gz");
-						filename = workspace.toString() + "/"
-								+ filename.substring(0, filename.length() - 3);
-						File receivedFile = new File(filename
-								+ (isCompressed ? ".gz" : ".tg"));
-						if (!shouldOverwrite) {
-							for (int i = 0; receivedFile.exists(); i++) {
-								receivedFile = new File(filename + i
-										+ (isCompressed ? ".gz" : ".tg"));
-							}
-						}
-						if (!receivedFile.createNewFile()) {
-							TGraphBrowserServer.logger
-									.info(receivedFile.toString()
-											+ " overwrites an existing file or could not be created.");
-						}
-						contentLength -= sizeOfLinesAlreadyRead;
-						// read the multipart part of the http message
-						BufferedOutputStream fileOutput = new BufferedOutputStream(
-								new FileOutputStream(receivedFile));
-						byte[] content = new byte[contentLength < 4096 ? (int) (contentLength % 4096)
-								: 4096];
-						int numberOfBytesRead = 1;
-						long totalNumberOfBytesRead = 0;
-						while (totalNumberOfBytesRead < contentLength
-								- content.length) {
-							totalNumberOfBytesRead += numberOfBytesRead = in
-									.read(content);
-							if (numberOfBytesRead <= 0) {
-								break;
-							} else {
-								fileOutput.write(content, 0, numberOfBytesRead);
-							}
-						}
-						if (numberOfBytesRead > 0) {
-							content = new byte[(int) (contentLength - totalNumberOfBytesRead)
-									% (content.length + 1)];
-							totalNumberOfBytesRead += numberOfBytesRead = in
-									.read(content);
-						}
-						// delete the end of the multipart part, which is
-						// not part of the file
-						int endOfFile = findEndOfFileInMultipart(content,
-								numberOfBytesRead);
-						fileOutput.write(content, 0, endOfFile + 1);
-						fileOutput.flush();
-						fileOutput.close();
-						// send the answer page
-						int sessionId = StateRepository
-								.createNewSession(receivedFile
-										.getAbsolutePath());
-						sendFile(
-								out,
-								"TGraphBrowser_GraphLoaded.html",
-								"= "
-										+ sessionId
-										+ ";\n\t\ttimestamp = "
-										+ StateRepository.getSession(sessionId).lastAccess);
-					}
-				} else {
-					// no file upload
-					// skip rest of header
-					do {
-						line = readLine(in);
-					} while (line != null && !line.isEmpty());
-					// read content
-					byte[] content = new byte[contentLength.intValue()];
-					if (in.read(content) <= 0) {
-						TGraphBrowserServer.logger
-								.info("content could not be read");
-					}
-					String body = new String(content);
-					String[] bodyparts = Pattern.compile(
-							Matcher.quoteReplacement("\n")).split(body);
-					// read content
-					String timestampString = bodyparts[0];
-					long timestamp = timestampString.equals("undefined") ? Long.MIN_VALUE
-							: Long.parseLong(timestampString);
-					if (timestamp
-							+ TGraphBrowserServer.DeleteUnusedStates.timeout < System
-							.currentTimeMillis()) {
-						// the state was already deleted because of timeout
-						sendErrorMessage(
-								out,
-								"This session was deleted"
-										+ " because there wasn't any communication "
-										+ "with the server in the last "
-										+ TGraphBrowserServer.DeleteUnusedStates.timeout
-										/ 1000 + "sec.");
-					} else if (timestamp < TGraphBrowserServer.starttime) {
-						// the state wasn't from this instance of the server
-						sendErrorMessage(out, "This server was restarted."
-								+ " This session is too old.");
-					} else {
-						// the state wasn't deleted yet.
-						String sessionId = bodyparts[1];
-						String methodname = bodyparts[2];
-						// read parameters
-						ArrayList<String> args = new ArrayList<String>();
-						args.add(sessionId);
-						// each line is a parameter
-						for (int i = 3; i < bodyparts.length; i++) {
-							args.add(bodyparts[i]);
-						}
-						/*
-						 * Invoke called method.
-						 */
-						StringBuilder erg = callMethod(out, methodname, args
-								.toArray(new String[0]));
-						if (erg != null) {
-							sendMessage(out, erg);
-						}
-					}
-				}
+				handlePostRequest(in, out, request);
 			} else {
 				// GET-Request
-				TGraphBrowserServer.logger.info(request);
-				String path = request.substring(5, request.length() - 9);
-				if (path.isEmpty()) {
-					// send TGraphBrowser_GraphChoice.html
-					sendFile(out, "TGraphBrowser_GraphChoice.html");
-				} else if (path.contains("jgralab-logo.png")) {
-					// send JGraLab picture
-					sendFile(out, "jgralab-logo.png");
-				} else if (path.contains("plus.png")) {
-					// send plus picture
-					sendFile(out, "plus.png");
-				} else if (path.contains("minus.png")) {
-					// send minus picture
-					sendFile(out, "minus.png");
-				} else if (path.endsWith("svg")) {
-					// check if svg-file was already created
-					if (path.charAt(0) == '_') {
-						// the request comes from an Internet Explorer
-						if (svgToDelete.contains(path)) {
-							// the second request arrived
-							svgToDelete.remove(path);
-						} else {
-							// this is the first request but there will be send
-							// a second request
-							svgToDelete.add(path);
-						}
-					}
-					String fileName = System.getProperty("java.io.tmpdir")
-							+ File.separator
-							+ "tgraphbrowser"
-							+ File.separator
-							+ (path.charAt(0) == '_' ? path.substring(1) : path);
-					File svg = new File(fileName);
-					long sleepTime = System.currentTimeMillis() + 10000;
-					while (!svg.exists()
-							&& System.currentTimeMillis() <= sleepTime) {
-					}
-					// send svgFile
-					if (svg.exists()) {
-						sendSVG(out, fileName);
-						if (!svgToDelete.contains(path)) {
-							if (!svg.delete()) {
-								TGraphBrowserServer.logger.warning(svg
-										.toString()
-										+ " could not be deleted.");
-							}
-						}
-					} else {
-						sendMessage(out, new StringBuilder(svg.toString()
-								+ " was not created."));
-					}
-				} else {
-					/*
-					 * Split received url
-					 */
-					// path.split(?) doesn't work because ? is a reserved
-					// char in RegExp
-					path = path.replace("?", "#");
-					// split path into path and method parts
-					String[] parts = path.split("#");
-					// split method parts into name and args
-					String methodname = parts.length > 0 ? parts[0] : null;
-					String[] args = null;
-					if (parts.length > 1) {
-						String[] methodArgs = parts[1].split("&");
-						args = new String[methodArgs.length];
-						for (int i = 0; i < args.length; i++) {
-							args[i] = methodArgs[i].split("=")[1];
-						}
-					}
-					/*
-					 * Invoke called method.
-					 */
-					StringBuilder erg = callMethod(out, methodname, args);
-					if (methodname.equals("loadGraphFromURI")
-							|| methodname.equals("loadGraphFromServer")) {
-						if (erg.toString().equals("-1")) {
-							sendFile(
-									out,
-									"TGraphBrowser_GraphChoice_AfterError.html",
-									"The tg.-file is too big!");
-						} else {
-							sendFile(
-									out,
-									"TGraphBrowser_GraphLoaded.html",
-									"= "
-											+ erg
-											+ ";\n\t\t timestamp = "
-											+ StateRepository
-													.getSession(Integer
-															.parseInt(erg
-																	.toString())).lastAccess);
-						}
-					} else {
-						sendMessage(out, erg);
-					}
-				}
+				handleGetRequest(out, request);
 			}
 			// close output
 			out.flush();
@@ -403,6 +148,370 @@ public class RequestThread extends Thread {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * @param out
+	 * @param request
+	 * @throws IOException
+	 * @throws FileNotFoundException
+	 */
+	private void handleGetRequest(BufferedOutputStream out, String request)
+			throws IOException, FileNotFoundException {
+		TGraphBrowserServer.logger.info(request);
+		String path = request.substring(5, request.length() - 9);
+		if (path.isEmpty()) {
+			// send TGraphBrowser_GraphChoice.html
+			sendFile(out, "TGraphBrowser_GraphChoice.html");
+		} else if (path.contains("jgralab-logo.png")) {
+			// send JGraLab picture
+			sendFile(out, "jgralab-logo.png");
+		} else if (path.contains("plus.png")) {
+			// send plus picture
+			sendFile(out, "plus.png");
+		} else if (path.contains("minus.png")) {
+			// send minus picture
+			sendFile(out, "minus.png");
+		} else if (path.endsWith("svg")) {
+			handleRequestForSVG(out, path);
+		} else {
+			handleGetMethodCall(out, path);
+		}
+	}
+
+	/**
+	 * @param out
+	 * @param path
+	 * @throws IOException
+	 */
+	private void handleGetMethodCall(BufferedOutputStream out, String path)
+			throws IOException {
+		// split received URL
+
+		// path.split(?) doesn't work because ? is a reserved
+		// char in RegExp
+		path = path.replace("?", "#");
+		// split path into path and method parts
+		String[] parts = path.split("#");
+		// split method parts into name and args
+		String methodname = parts.length > 0 ? parts[0] : null;
+		String[] args = null;
+		if (parts.length > 1) {
+			String[] methodArgs = parts[1].split("&");
+			args = new String[methodArgs.length];
+			for (int i = 0; i < args.length; i++) {
+				args[i] = methodArgs[i].split("=")[1];
+			}
+		}
+
+		// Invoke called method.
+		StringBuilder erg = callMethod(out, methodname, args);
+		if (methodname.equals("loadGraphFromURI")
+				|| methodname.equals("loadGraphFromServer")) {
+			if (erg.toString().equals("-1")) {
+				sendFile(out, "TGraphBrowser_GraphChoice_AfterError.html",
+						"The tg.-file is too big!");
+			} else {
+				try {
+					sendFile(out, "TGraphBrowser_GraphLoaded.html", "= "
+							+ erg
+							+ ";\n\t\t timestamp = "
+							+ StateRepository.getSession(Integer.parseInt(erg
+									.toString())).lastAccess);
+				} catch (NumberFormatException e) {
+					// Extract the error message
+					String ergText = erg.toString();
+					String[] partOfErg = ergText
+							.split(Pattern.quote("ERROR: "));
+					if (partOfErg.length > 0) {
+						partOfErg = partOfErg[1].split(Pattern.quote("\""));
+						ergText = partOfErg[0];
+					}
+
+					// there was an exception while loading the graph
+					sendFile(out, "TGraphBrowser_GraphChoice_AfterError.html",
+							ergText);
+				}
+			}
+		} else {
+			sendMessage(out, erg);
+		}
+	}
+
+	/**
+	 * @param out
+	 * @param path
+	 * @throws IOException
+	 */
+	private void handleRequestForSVG(BufferedOutputStream out, String path)
+			throws IOException {
+		// check if svg-file was already created
+		if (path.charAt(0) == '_') {
+			// the request comes from an Internet Explorer
+			if (svgToDelete.contains(path)) {
+				// the second request arrived
+				svgToDelete.remove(path);
+			} else {
+				// this is the first request but there will be send
+				// a second request
+				svgToDelete.add(path);
+			}
+		}
+		String fileName = System.getProperty("java.io.tmpdir") + File.separator
+				+ "tgraphbrowser" + File.separator
+				+ (path.charAt(0) == '_' ? path.substring(1) : path);
+		File svg = new File(fileName);
+		long sleepTime = System.currentTimeMillis() + 10000;
+		while (!svg.exists() && System.currentTimeMillis() <= sleepTime) {
+		}
+
+		// send svgFile
+		if (svg.exists()) {
+			sendSVG(out, fileName);
+			if (!svgToDelete.contains(path)) {
+				if (!svg.delete()) {
+					TGraphBrowserServer.logger.warning(svg.toString()
+							+ " could not be deleted.");
+				}
+			}
+		} else {
+			sendMessage(out, new StringBuilder(svg.toString()
+					+ " was not created."));
+		}
+	}
+
+	/**
+	 * @param in
+	 * @param out
+	 * @param request
+	 * @throws IOException
+	 * @throws FileNotFoundException
+	 */
+	private void handlePostRequest(DataInputStream in,
+			BufferedOutputStream out, String request) throws IOException,
+			FileNotFoundException {
+		// Decide if it is a file upload
+		String line;
+		Long contentLength = null;
+		String contentType = null;
+		do {
+			line = readLine(in);
+			if (line.startsWith("Content-Type")) {
+				contentType = line;
+			} else if (line.startsWith("Content-Length:")) {
+				contentLength = Long.parseLong(line.substring(16));
+			}
+		} while (contentLength == null || contentType == null);
+
+		if (contentType.contains("multipart/form-data")) {
+			// file upload
+			handleFileUpload(in, out, request, contentLength, contentType);
+		} else {
+			// no file upload
+			handleNoFileUpload(in, out, contentLength);
+		}
+	}
+
+	/**
+	 * @param in
+	 * @param out
+	 * @param contentLength
+	 * @throws IOException
+	 */
+	private void handleNoFileUpload(DataInputStream in,
+			BufferedOutputStream out, Long contentLength) throws IOException {
+		String line;
+		// skip rest of header
+		do {
+			line = readLine(in);
+		} while (line != null && !line.isEmpty());
+
+		// read attribute content
+		byte[] content = new byte[contentLength.intValue()];
+		if (in.read(content) <= 0) {
+			TGraphBrowserServer.logger.info("content could not be read");
+		}
+		String body = new String(content);
+		String[] bodyparts = Pattern.compile(Matcher.quoteReplacement("\n"))
+				.split(body);
+		// read content of message
+		String timestampString = bodyparts[0];
+		long timestamp = timestampString.equals("undefined") ? Long.MIN_VALUE
+				: Long.parseLong(timestampString);
+
+		if (timestamp + TGraphBrowserServer.DeleteUnusedStates.timeout < System
+				.currentTimeMillis()) {
+			// the state was already deleted because of timeout
+			sendErrorMessage(out, "This session was deleted"
+					+ " because there wasn't any communication "
+					+ "with the server in the last "
+					+ TGraphBrowserServer.DeleteUnusedStates.timeout / 1000
+					+ "sec.");
+		} else if (timestamp < TGraphBrowserServer.starttime) {
+			// the state wasn't from this instance of the server
+			sendErrorMessage(out, "This server was restarted."
+					+ " This session is too old.");
+		} else {
+			// the state wasn't deleted yet.
+			String sessionId = bodyparts[1];
+			String methodname = bodyparts[2];
+			// read parameters
+			ArrayList<String> args = new ArrayList<String>();
+			args.add(sessionId);
+			// each line is a parameter
+			for (int i = 3; i < bodyparts.length; i++) {
+				args.add(bodyparts[i]);
+			}
+			// Invoke called method.
+			StringBuilder erg = callMethod(out, methodname, args
+					.toArray(new String[0]));
+			if (erg != null) {
+				sendMessage(out, erg);
+			}
+		}
+	}
+
+	/**
+	 * @param in
+	 * @param out
+	 * @param request
+	 * @param contentLength
+	 * @param contentType
+	 * @throws IOException
+	 * @throws FileNotFoundException
+	 */
+	private void handleFileUpload(DataInputStream in, BufferedOutputStream out,
+			String request, Long contentLength, String contentType)
+			throws IOException, FileNotFoundException {
+		String line;
+		TGraphBrowserServer.logger.info(request);
+
+		// determine overwrite
+		boolean shouldOverwrite = request.contains("overwrite=true");
+
+		// determine boundary
+		String boundary = contentType.split("boundary=")[1];
+		String[] bounds = boundary.split("-");
+		boundary = bounds[bounds.length - 1];
+		do {
+			line = readLine(in);
+		} while (!line.contains(boundary));
+
+		// +2 because \r\n is cut off
+		int sizeOfLinesAlreadyRead = line.length() + 2;
+		// read Content-Disposition
+		line = readLine(in);
+		// extract filename
+		sizeOfLinesAlreadyRead += line.length() + 2;
+		String filename = line.split("filename=")[1];
+		// cut off "
+		filename = filename.substring(1, filename.length() - 1);
+
+		// handle file
+		if (!filename.toLowerCase().endsWith(".tg")
+				&& !filename.toLowerCase().endsWith(".gz")) {
+			// it is not a tg or gz file.
+			sendFile(out, "TGraphBrowser_GraphChoice_AfterError.html",
+					"You can only upload .tg or .gz files!");
+		} else if (!isSizeOk(contentLength)) {
+			// the file is too large
+			sendFile(out, "TGraphBrowser_GraphChoice_AfterError.html",
+					"The .tg file is too big!");
+		} else {
+			// receive file
+			File receivedFile = receiveFile(in, contentLength, line,
+					shouldOverwrite, sizeOfLinesAlreadyRead, filename);
+			// send the answer page
+			int sessionId = StateRepository.createNewSession(receivedFile
+					.getAbsolutePath());
+			sendFile(out, "TGraphBrowser_GraphLoaded.html", "= " + sessionId
+					+ ";\n\t\ttimestamp = "
+					+ StateRepository.getSession(sessionId).lastAccess);
+		}
+	}
+
+	/**
+	 * @param in
+	 * @param contentLength
+	 * @param line
+	 * @param shouldOverwrite
+	 * @param sizeOfLinesAlreadyRead
+	 * @param filename
+	 * @return
+	 * @throws IOException
+	 * @throws FileNotFoundException
+	 */
+	private File receiveFile(DataInputStream in, Long contentLength,
+			String line, boolean shouldOverwrite, int sizeOfLinesAlreadyRead,
+			String filename) throws IOException, FileNotFoundException {
+		// find beginning of file
+		// next in.readLine()is first line of file
+		while (line != null && !line.isEmpty()) {
+			line = readLine(in);
+			sizeOfLinesAlreadyRead += line.length() + 2;
+		}
+
+		// create file which does not exist in the workspace yet
+		boolean isCompressed = filename.endsWith(".gz");
+		filename = workspace.toString() + "/"
+				+ filename.substring(0, filename.length() - 3);
+		File receivedFile = new File(filename + (isCompressed ? ".gz" : ".tg"));
+		if (!shouldOverwrite) {
+			for (int i = 0; receivedFile.exists(); i++) {
+				receivedFile = new File(filename + i
+						+ (isCompressed ? ".gz" : ".tg"));
+			}
+		}
+		if (!receivedFile.createNewFile()) {
+			TGraphBrowserServer.logger.info(receivedFile.toString()
+					+ " overwrites an existing file or could not be created.");
+		}
+		contentLength -= sizeOfLinesAlreadyRead;
+
+		BufferedOutputStream fileOutput = createFile(in, contentLength,
+				receivedFile);
+
+		fileOutput.flush();
+		fileOutput.close();
+		return receivedFile;
+	}
+
+	/**
+	 * @param in
+	 * @param contentLength
+	 * @param receivedFile
+	 * @return
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+	private BufferedOutputStream createFile(DataInputStream in,
+			Long contentLength, File receivedFile)
+			throws FileNotFoundException, IOException {
+		// read the multipart part of the http message
+		BufferedOutputStream fileOutput = new BufferedOutputStream(
+				new FileOutputStream(receivedFile));
+		byte[] content = new byte[contentLength < 4096 ? (int) (contentLength % 4096)
+				: 4096];
+		int numberOfBytesRead = 1;
+		long totalNumberOfBytesRead = 0;
+		while (totalNumberOfBytesRead < contentLength - content.length) {
+			totalNumberOfBytesRead += numberOfBytesRead = in.read(content);
+			if (numberOfBytesRead <= 0) {
+				break;
+			} else {
+				fileOutput.write(content, 0, numberOfBytesRead);
+			}
+		}
+		if (numberOfBytesRead > 0) {
+			content = new byte[(int) (contentLength - totalNumberOfBytesRead)
+					% (content.length + 1)];
+			totalNumberOfBytesRead += numberOfBytesRead = in.read(content);
+		}
+		// delete the end of the multipart part, which is
+		// not part of the file
+		int endOfFile = findEndOfFileInMultipart(content, numberOfBytesRead);
+		fileOutput.write(content, 0, endOfFile + 1);
+		return fileOutput;
 	}
 
 	/**

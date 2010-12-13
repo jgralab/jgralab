@@ -1,25 +1,32 @@
 /*
- * JGraLab - The Java graph laboratory
- * (c) 2006-2010 Institute for Software Technology
- *               University of Koblenz-Landau, Germany
+ * JGraLab - The Java Graph Laboratory
  * 
- *               ist@uni-koblenz.de
+ * Copyright (C) 2006-2010 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
  * 
- * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
  * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Additional permission under GNU GPL version 3 section 7
+ * 
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
  */
 
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
@@ -47,8 +54,10 @@ import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.evaluator.logging.EvaluationLogger;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.QuerySourceException;
+import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
+import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Aggregation;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
@@ -165,6 +174,8 @@ public abstract class VertexEvaluator {
 	 */
 	protected Set<Variable> definedVariables = null;
 
+	protected GraphMarker<VertexEvaluator> vertexEvalMarker = null;
+
 	/**
 	 * @param eval
 	 *            the GreqlEvaluator this VertexEvaluator belongs to
@@ -173,13 +184,15 @@ public abstract class VertexEvaluator {
 		greqlEvaluator = eval;
 		graph = eval.getDatagraph();
 		evaluationLogger = eval.getEvaluationLogger();
+		vertexEvalMarker = eval.getVertexEvaluatorGraphMarker();
 	}
 
-	/**
-	 * @return the datagraph which gets evaluated
-	 */
-	protected Graph getDatagraph() {
-		return greqlEvaluator.getDatagraph();
+	protected void setVertexEvalMarker(GraphMarker<VertexEvaluator> marker) {
+		vertexEvalMarker = marker;
+	}
+
+	public GraphMarker<VertexEvaluator> getVertexEvalMarker() {
+		return vertexEvalMarker;
 	}
 
 	/**
@@ -246,15 +259,15 @@ public abstract class VertexEvaluator {
 					// The typeId restricts vertex classes
 					for (VertexClass vc : greqlEvaluator.getDatagraph()
 							.getSchema().getVertexClassesInTopologicalOrder()) {
-						evaluationLogger.logSelectivity(getLoggingName(), col
-								.acceptsType(vc));
+						evaluationLogger.logSelectivity(getLoggingName(),
+								col.acceptsType(vc));
 					}
 				} else {
 					// The typeId restricts edge classes
 					for (EdgeClass ec : greqlEvaluator.getDatagraph()
 							.getSchema().getEdgeClassesInTopologicalOrder()) {
-						evaluationLogger.logSelectivity(getLoggingName(), col
-								.acceptsType(ec));
+						evaluationLogger.logSelectivity(getLoggingName(),
+								col.acceptsType(ec));
 					}
 				}
 			}
@@ -338,11 +351,9 @@ public abstract class VertexEvaluator {
 
 	public void resetSubtreeToInitialState() {
 		resetToInitialState();
-		GraphMarker<VertexEvaluator> marker = greqlEvaluator
-				.getVertexEvaluatorGraphMarker();
 		for (Edge e : getVertex().incidences(EdgeDirection.IN)) {
 			Vertex vertex = e.getThat();
-			VertexEvaluator eval = marker.getMark(vertex);
+			VertexEvaluator eval = vertexEvalMarker.getMark(vertex);
 			if (eval != null) {
 				eval.resetSubtreeToInitialState();
 			}
@@ -423,15 +434,14 @@ public abstract class VertexEvaluator {
 	public void calculateNeededAndDefinedVariables() {
 		neededVariables = new HashSet<Variable>();
 		definedVariables = new HashSet<Variable>();
-		Edge inc = getVertex().getFirstEdge(EdgeDirection.IN);
+		Edge inc = getVertex().getFirstIncidence(EdgeDirection.IN);
 		while (inc != null) {
-			VertexEvaluator veval = greqlEvaluator
-					.getVertexEvaluatorGraphMarker().getMark(inc.getAlpha());
+			VertexEvaluator veval = vertexEvalMarker.getMark(inc.getAlpha());
 			if (veval != null) {
 				neededVariables.addAll(veval.getNeededVariables());
 				definedVariables.addAll(veval.getDefinedVariables());
 			}
-			inc = inc.getNextEdge(EdgeDirection.IN);
+			inc = inc.getNextIncidence(EdgeDirection.IN);
 		}
 		HashSet<Variable> bothVariables = new HashSet<Variable>();
 		bothVariables.addAll(neededVariables);
@@ -473,8 +483,8 @@ public abstract class VertexEvaluator {
 		int combinations = 1;
 		Iterator<Variable> iter = getNeededVariables().iterator();
 		while (iter.hasNext()) {
-			VariableEvaluator veval = (VariableEvaluator) greqlEvaluator
-					.getVertexEvaluatorGraphMarker().getMark(iter.next());
+			VariableEvaluator veval = (VariableEvaluator) vertexEvalMarker
+					.getMark(iter.next());
 			// combinations *= veval.getEstimatedCardinality(graphSize);
 			combinations *= veval.getVariableCombinations(graphSize);
 		}
@@ -523,8 +533,8 @@ public abstract class VertexEvaluator {
 	 * creates a list of possible source positions for the current vertex
 	 */
 	public List<SourcePosition> createPossibleSourcePositions() {
-		Greql2Aggregation inc = (Greql2Aggregation) getVertex().getFirstEdge(
-				EdgeDirection.OUT);
+		Greql2Aggregation inc = (Greql2Aggregation) getVertex()
+				.getFirstIncidence(EdgeDirection.OUT);
 		List<SourcePosition> possibleSourcePositions = new ArrayList<SourcePosition>();
 		while (inc != null) {
 			List<SourcePosition> sourcePositions = inc.get_sourcePositions();
@@ -550,8 +560,8 @@ public abstract class VertexEvaluator {
 	 * vertex
 	 */
 	private void removeInvalidSourcePosition(QuerySourceException ex) {
-		Greql2Aggregation inc = (Greql2Aggregation) getVertex().getFirstEdge(
-				EdgeDirection.OUT);
+		Greql2Aggregation inc = (Greql2Aggregation) getVertex()
+				.getFirstIncidence(EdgeDirection.OUT);
 		List<SourcePosition> possibleSourcePositions = new ArrayList<SourcePosition>();
 		while (inc != null) {
 			List<SourcePosition> sourcePositions = inc.get_sourcePositions();
@@ -573,8 +583,7 @@ public abstract class VertexEvaluator {
 						.get_offset())
 						&& (availablePosition.get_offset()
 								+ availablePosition.get_length() >= currentPosition
-								.get_offset()
-								+ currentPosition.get_length())) {
+								.get_offset() + currentPosition.get_length())) {
 					accepted = true;
 					break;
 				}
@@ -606,7 +615,15 @@ public abstract class VertexEvaluator {
 		if (unevaluatedVertices.contains(className)) {
 			return null;
 		}
-		String evalName = className + "Evaluator";
+		String evalName;
+		if ((vertex.getM1Class() == FunctionApplication.class)
+				&& !Greql2FunctionLibrary.instance().isGreqlFunction(
+						((FunctionApplication) vertex).get_functionId()
+								.get_name())) {
+			evalName = "SubQueryEvaluator";
+		} else {
+			evalName = className + "Evaluator";
+		}
 		evalName = evalName.substring(className.lastIndexOf(".") + 1);
 		evalName = VertexEvaluator.class.getPackage().getName() + "."
 				+ evalName;

@@ -1,25 +1,32 @@
 /*
- * JGraLab - The Java graph laboratory
- * (c) 2006-2010 Institute for Software Technology
- *               University of Koblenz-Landau, Germany
+ * JGraLab - The Java Graph Laboratory
  * 
- *               ist@uni-koblenz.de
+ * Copyright (C) 2006-2010 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
  * 
- * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
  * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Additional permission under GNU GPL version 3 section 7
+ * 
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
  */
 
 package de.uni_koblenz.jgralab.utilities.tg2dot;
@@ -51,8 +58,8 @@ public class Tg2Dot extends Tg2Whatever {
 	private int fontsize = 14;
 	private boolean abbreviateEdgeAttributeNames = false;
 	private boolean printIncidenceNumbers = false;
-	private Set<Class<? extends AttributedElement>> reversedEdgeTypes = null;
-	private Map<Class<? extends AttributedElement>, Boolean> revEdgeTypeCache = null;
+	private Set<Class<? extends Edge>> reversedEdgeTypes = null;
+	private Map<Class<? extends Edge>, Boolean> revEdgeTypeCache = null;
 
 	public boolean isPrintIncidenceNumbers() {
 		return printIncidenceNumbers;
@@ -163,7 +170,8 @@ public class Tg2Dot extends Tg2Whatever {
 			return reversedEdges;
 		}
 
-		Class<? extends AttributedElement> ec = e.getM1Class();
+		@SuppressWarnings("unchecked")
+		Class<? extends Edge> ec = (Class<? extends Edge>) e.getM1Class();
 		Boolean reversed = revEdgeTypeCache.get(ec);
 		if (reversed != null) {
 			return reversedEdges ^ reversed;
@@ -173,7 +181,7 @@ public class Tg2Dot extends Tg2Whatever {
 		if (reversedEdgeTypes.contains(ec)) {
 			rev = true;
 		} else {
-			for (Class<? extends AttributedElement> ecls : reversedEdgeTypes) {
+			for (Class<? extends Edge> ecls : reversedEdgeTypes) {
 				if (ecls.isInstance(e)) {
 					rev = true;
 					break;
@@ -405,12 +413,11 @@ public class Tg2Dot extends Tg2Whatever {
 
 	public static void printGraphAsDot(Graph graph, boolean reversedEdges,
 			String outputFileName) {
-		printGraphAsDot(graph, reversedEdges, outputFileName, null);
+		printGraphAsDot(graph, reversedEdges, outputFileName);
 	}
 
 	public static void printGraphAsDot(Graph graph, boolean reversedEdges,
-			String outputFileName,
-			List<Class<? extends AttributedElement>> reversedEdgeTypes) {
+			String outputFileName, List<Class<? extends Edge>> reversedEdgeTypes) {
 		Tg2Dot t2d = new Tg2Dot();
 		t2d.setGraph(graph);
 		t2d.setReversedEdges(reversedEdges);
@@ -418,9 +425,9 @@ public class Tg2Dot extends Tg2Whatever {
 		t2d.setRanksep(0.5);
 		t2d.setOutputFile(outputFileName);
 
-		HashSet<Class<? extends AttributedElement>> revEdgeTypes = new HashSet<Class<? extends AttributedElement>>();
+		HashSet<Class<? extends Edge>> revEdgeTypes = new HashSet<Class<? extends Edge>>();
 		if (reversedEdgeTypes != null) {
-			for (Class<? extends AttributedElement> ec : reversedEdgeTypes) {
+			for (Class<? extends Edge> ec : reversedEdgeTypes) {
 				revEdgeTypes.add(ec);
 			}
 		}
@@ -454,8 +461,8 @@ public class Tg2Dot extends Tg2Whatever {
 	 *            reversed
 	 */
 	public void setReversedEdgeTypes(
-			Set<Class<? extends AttributedElement>> reversedEdgeTypes) {
+			Set<Class<? extends Edge>> reversedEdgeTypes) {
 		this.reversedEdgeTypes = reversedEdgeTypes;
-		revEdgeTypeCache = new HashMap<Class<? extends AttributedElement>, Boolean>();
+		revEdgeTypeCache = new HashMap<Class<? extends Edge>, Boolean>();
 	}
 }

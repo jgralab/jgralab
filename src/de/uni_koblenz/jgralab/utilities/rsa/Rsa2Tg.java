@@ -1,25 +1,32 @@
 /*
- * JGraLab - The Java graph laboratory
- * (c) 2006-2010 Institute for Software Technology
- *               University of Koblenz-Landau, Germany
+ * JGraLab - The Java Graph Laboratory
  * 
- *               ist@uni-koblenz.de
+ * Copyright (C) 2006-2010 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
  * 
- * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
  * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Additional permission under GNU GPL version 3 section 7
+ * 
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
  */
 
 package de.uni_koblenz.jgralab.utilities.rsa;
@@ -1065,7 +1072,7 @@ public class Rsa2Tg extends XmlProcessor {
 							+ schema.get_name() + "'");
 		}
 
-		// Checks whether each enum domain as at least one literal
+		// Checks whether each enum domain has at least one literal
 		checkEnumDomains();
 
 		// Now the RSA XMI file has been processed, pending actions to link
@@ -1107,9 +1114,6 @@ public class Rsa2Tg extends XmlProcessor {
 			for (Vertex v : preliminaryVertices) {
 				System.err.println(attributedElement2String(v));
 			}
-		}
-
-		if (!preliminaryVertices.isEmpty()) {
 			throw new ProcessingException(getFileName(),
 					"There are still vertices left over. ");
 		}
@@ -1158,8 +1162,8 @@ public class Rsa2Tg extends XmlProcessor {
 
 		// remove all GraphElementClasses
 		for (ContainsGraphElementClass c = pkg
-				.getFirstContainsGraphElementClass(EdgeDirection.OUT); c != null; c = pkg
-				.getFirstContainsGraphElementClass(EdgeDirection.OUT)) {
+				.getFirstContainsGraphElementClassIncidence(EdgeDirection.OUT); c != null; c = pkg
+				.getFirstContainsGraphElementClassIncidence(EdgeDirection.OUT)) {
 			GraphElementClass gec = (GraphElementClass) c.getThat();
 
 			if (gec instanceof EdgeClass) {
@@ -1170,16 +1174,16 @@ public class Rsa2Tg extends XmlProcessor {
 			} else if (gec instanceof VertexClass) {
 				// in case of an EdgeClass, also remove incident EdgeClasses
 				VertexClass vc = (VertexClass) gec;
-				for (EndsAt e = vc.getFirstEndsAt(EdgeDirection.IN); e != null; e = vc
-						.getFirstEndsAt(EdgeDirection.IN)) {
+				for (EndsAt e = vc.getFirstEndsAtIncidence(EdgeDirection.IN); e != null; e = vc
+						.getFirstEndsAtIncidence(EdgeDirection.IN)) {
 					EdgeClass ec;
 					// the EdgeClass can be either outgoing (ComesFrom) or
 					// ingoing (GoesTo) to this VertexClass
 					ComesFrom cf = ((IncidenceClass) e.getThat())
-							.getFirstComesFrom();
+							.getFirstComesFromIncidence();
 					if (cf == null) {
 						GoesTo gt = ((IncidenceClass) e.getThat())
-								.getFirstGoesTo();
+								.getFirstGoesToIncidence();
 						ec = (EdgeClass) gt.getThat();
 					} else {
 						ec = (EdgeClass) cf.getThat();
@@ -1210,8 +1214,9 @@ public class Rsa2Tg extends XmlProcessor {
 	 * @param aec
 	 */
 	private void removeAttributes(AttributedElementClass aec) {
-		for (HasAttribute ha = aec.getFirstHasAttribute(EdgeDirection.OUT); ha != null; ha = aec
-				.getFirstHasAttribute(EdgeDirection.OUT)) {
+		for (HasAttribute ha = aec
+				.getFirstHasAttributeIncidence(EdgeDirection.OUT); ha != null; ha = aec
+				.getFirstHasAttributeIncidence(EdgeDirection.OUT)) {
 			ha.getThat().delete();
 		}
 	}
@@ -1278,22 +1283,24 @@ public class Rsa2Tg extends XmlProcessor {
 		System.out.println("Creating subsets and redefines relationships...");
 		// for each specialisation between edge classes, add a subsets edge
 		// between their incidence classes
-		SpecializesEdgeClass spec = sg.getFirstSpecializesEdgeClassInGraph();
+		SpecializesEdgeClass spec = sg.getFirstSpecializesEdgeClass();
 		while (spec != null) {
 			EdgeClass subClass = (EdgeClass) spec.getAlpha();
 			EdgeClass superClass = (EdgeClass) spec.getOmega();
 
-			assert subClass.getFirstComesFrom() != null;
-			assert superClass.getFirstComesFrom() != null;
+			assert subClass.getFirstComesFromIncidence() != null;
+			assert superClass.getFirstComesFromIncidence() != null;
 			createSubsetsForIncidences(subClass, superClass,
-					(IncidenceClass) subClass.getFirstComesFrom().getThat(),
-					(IncidenceClass) superClass.getFirstComesFrom().getThat());
+					(IncidenceClass) subClass.getFirstComesFromIncidence()
+							.getThat(), (IncidenceClass) superClass
+							.getFirstComesFromIncidence().getThat());
 
-			assert subClass.getFirstGoesTo() != null;
-			assert superClass.getFirstGoesTo() != null;
+			assert subClass.getFirstGoesToIncidence() != null;
+			assert superClass.getFirstGoesToIncidence() != null;
 			createSubsetsForIncidences(subClass, superClass,
-					(IncidenceClass) subClass.getFirstGoesTo().getThat(),
-					(IncidenceClass) superClass.getFirstGoesTo().getThat());
+					(IncidenceClass) subClass.getFirstGoesToIncidence()
+							.getThat(), (IncidenceClass) superClass
+							.getFirstGoesToIncidence().getThat());
 			spec = spec.getNextSpecializesEdgeClassInGraph();
 		}
 
@@ -1393,11 +1400,11 @@ public class Rsa2Tg extends XmlProcessor {
 	}
 
 	private IncidenceDirection getDirection(IncidenceClass inc) {
-		assert (inc.getFirstComesFrom() == null)
-				|| (inc.getFirstGoesTo() == null);
-		if (inc.getFirstComesFrom() != null) {
+		assert (inc.getFirstComesFromIncidence() == null)
+				|| (inc.getFirstGoesToIncidence() == null);
+		if (inc.getFirstComesFromIncidence() != null) {
 			return IncidenceDirection.OUT;
-		} else if (inc.getFirstGoesTo() != null) {
+		} else if (inc.getFirstGoesToIncidence() != null) {
 			return IncidenceDirection.IN;
 		} else {
 			return null;
@@ -1627,7 +1634,8 @@ public class Rsa2Tg extends XmlProcessor {
 
 			IncidenceClass from = inc;
 			sg.createGoesTo(ec, to);
-			sg.createEndsAt(to, (VertexClass) from.getFirstEndsAt().getThat());
+			sg.createEndsAt(to, (VertexClass) from.getFirstEndsAtIncidence()
+					.getThat());
 
 			to.set_aggregation(from.get_aggregation());
 			to.set_max(from.get_max());
@@ -1828,12 +1836,12 @@ public class Rsa2Tg extends XmlProcessor {
 		System.out
 				.println("Correcting edge directions according to navigability...");
 		for (EdgeClass e : sg.getEdgeClassVertices()) {
-			ComesFrom cf = e.getFirstComesFrom();
+			ComesFrom cf = e.getFirstComesFromIncidence();
 			if (cf == null) {
 				throw new ProcessingException(getFileName(), "EdgeClass "
 						+ e.get_qualifiedName() + " has no ComesFrom incidence");
 			}
-			GoesTo gt = e.getFirstGoesTo();
+			GoesTo gt = e.getFirstGoesToIncidence();
 			if (gt == null) {
 				throw new ProcessingException(getFileName(), "EdgeClass "
 						+ e.get_qualifiedName() + " has no GoesTo incidence");
@@ -1960,13 +1968,14 @@ public class Rsa2Tg extends XmlProcessor {
 				continue;
 			}
 
-			IncidenceClass to = (IncidenceClass) ec.getFirstGoesTo().getThat();
-			IncidenceClass from = (IncidenceClass) ec.getFirstComesFrom()
+			IncidenceClass to = (IncidenceClass) ec.getFirstGoesToIncidence()
 					.getThat();
+			IncidenceClass from = (IncidenceClass) ec
+					.getFirstComesFromIncidence().getThat();
 
 			String toRole = to.get_roleName();
 			if ((toRole == null) || toRole.equals("")) {
-				toRole = ((VertexClass) to.getFirstEndsAt().getThat())
+				toRole = ((VertexClass) to.getFirstEndsAtIncidence().getThat())
 						.get_qualifiedName();
 				int p = toRole.lastIndexOf('.');
 				if (p >= 0) {
@@ -2003,8 +2012,8 @@ public class Rsa2Tg extends XmlProcessor {
 			if (isUseFromRole()) {
 				String fromRole = from.get_roleName();
 				if ((fromRole == null) || fromRole.equals("")) {
-					fromRole = ((VertexClass) from.getFirstEndsAt().getThat())
-							.get_qualifiedName();
+					fromRole = ((VertexClass) from.getFirstEndsAtIncidence()
+							.getThat()).get_qualifiedName();
 					int p = fromRole.lastIndexOf('.');
 					if (p >= 0) {
 						fromRole = fromRole.substring(p + 1);
@@ -2111,11 +2120,12 @@ public class Rsa2Tg extends XmlProcessor {
 				assert att.getDegree(HasDomain.class, EdgeDirection.OUT) == 1 : "Attribute '"
 						+ att.get_name()
 						+ "' of "
-						+ att.getFirstHasAttribute().getThat().getM1Class()
-								.getSimpleName()
+						+ att.getFirstHasAttributeIncidence().getThat()
+								.getM1Class().getSimpleName()
 						+ " '"
-						+ ((AttributedElementClass) att.getFirstHasAttribute()
-								.getThat()).get_qualifiedName()
+						+ ((AttributedElementClass) att
+								.getFirstHasAttributeIncidence().getThat())
+								.get_qualifiedName()
 						+ "' has "
 						+ att.getDegree(HasDomain.class, EdgeDirection.OUT)
 						+ " domain(s)";
@@ -2302,8 +2312,8 @@ public class Rsa2Tg extends XmlProcessor {
 												+ " comments"
 										: ""));
 				if (commentCount > 0) {
-					for (Annotates a = p.getFirstAnnotates(); a != null; a = p
-							.getFirstAnnotates()) {
+					for (Annotates a = p.getFirstAnnotatesIncidence(); a != null; a = p
+							.getFirstAnnotatesIncidence()) {
 						a.getThat().delete();
 					}
 				}
@@ -2590,9 +2600,9 @@ public class Rsa2Tg extends XmlProcessor {
 					.get(currentClassId);
 			assert graphClass != null;
 			graphClass.set_qualifiedName(aec.get_qualifiedName());
-			Edge e = aec.getFirstEdge();
+			Edge e = aec.getFirstIncidence();
 			while (e != null) {
-				Edge n = e.getNextEdge();
+				Edge n = e.getNextIncidence();
 				if (e instanceof ContainsGraphElementClass) {
 					e.delete();
 				} else {
@@ -2615,15 +2625,15 @@ public class Rsa2Tg extends XmlProcessor {
 
 			RecordDomain rd = sg.createRecordDomain();
 			rd.set_qualifiedName(currentClass.get_qualifiedName());
-			Edge e = currentClass.getFirstEdge();
+			Edge e = currentClass.getFirstIncidence();
 			while (e != null) {
-				Edge n = e.getNextEdge();
+				Edge n = e.getNextIncidence();
 				if (e instanceof ContainsGraphElementClass) {
 					sg.createContainsDomain((Package) e.getThat(), rd);
 					e.delete();
 				} else if (e instanceof HasAttribute) {
 					Attribute att = (Attribute) e.getThat();
-					Edge d = att.getFirstHasDomain();
+					Edge d = att.getFirstHasDomainIncidence();
 					if (d != null) {
 						Domain dom = (Domain) e.getThat();
 						HasRecordDomainComponent comp = sg
@@ -2891,8 +2901,8 @@ public class Rsa2Tg extends XmlProcessor {
 			} else {
 				// create a preliminary vertex class
 				vc = sg.createVertexClass();
-				preliminaryVertices.add(vc);
 				vc.set_qualifiedName(typeId);
+				preliminaryVertices.add(vc);
 				idMap.put(typeId, vc);
 			}
 
@@ -2931,6 +2941,7 @@ public class Rsa2Tg extends XmlProcessor {
 					// create a preliminary edge class
 					ec = sg.createEdgeClass();
 				}
+
 				preliminaryVertices.add(ec);
 				idMap.put(associationId, ec);
 			}
@@ -2942,8 +2953,9 @@ public class Rsa2Tg extends XmlProcessor {
 			sg.createComesFrom(ec, inc);
 			sg.createEndsAt(inc, vc);
 		} else {
-			EdgeClass ec = (EdgeClass) (inc.getFirstComesFrom() != null ? inc
-					.getFirstComesFrom() : inc.getFirstGoesTo()).getThat();
+			EdgeClass ec = (EdgeClass) (inc.getFirstComesFromIncidence() != null ? inc
+					.getFirstComesFromIncidence() : inc
+					.getFirstGoesToIncidence()).getThat();
 			String id = null;
 			for (Entry<String, Vertex> idEntry : idMap.entrySet()) {
 				if (idEntry.getValue() == ec) {
@@ -2957,7 +2969,8 @@ public class Rsa2Tg extends XmlProcessor {
 
 			// an ownedEnd of an association or an ownedAttribute of a class
 			// with a possibly preliminary vertex class
-			VertexClass vc = (VertexClass) inc.getFirstEndsAt().getThat();
+			VertexClass vc = (VertexClass) inc.getFirstEndsAtIncidence()
+					.getThat();
 			if (preliminaryVertices.contains(vc)) {
 
 				AttributedElement ae = idMap.get(typeId);
@@ -2973,7 +2986,7 @@ public class Rsa2Tg extends XmlProcessor {
 										+ ae.getAttributedElementClass()
 												.getQualifiedName());
 					}
-					inc.getFirstEndsAt().setOmega((VertexClass) ae);
+					inc.getFirstEndsAtIncidence().setOmega((VertexClass) ae);
 
 					Set<String> gens = generalizations.getMark(vc);
 					if (gens != null) {
@@ -3014,9 +3027,9 @@ public class Rsa2Tg extends XmlProcessor {
 	 *            New {@link Vertex}, to which all edge should be attached.
 	 */
 	private void reconnectEdges(Vertex oldVertex, Vertex newVertex) {
-		Edge curr = oldVertex.getFirstEdge();
+		Edge curr = oldVertex.getFirstIncidence();
 		while (curr != null) {
-			Edge next = curr.getNextEdge();
+			Edge next = curr.getNextIncidence();
 			curr.setThis(newVertex);
 			curr = next;
 		}

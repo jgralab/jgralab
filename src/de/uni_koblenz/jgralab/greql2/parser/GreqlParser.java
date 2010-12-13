@@ -1,25 +1,32 @@
 /*
- * JGraLab - The Java graph laboratory
- * (c) 2006-2010 Institute for Software Technology
- *               University of Koblenz-Landau, Germany
+ * JGraLab - The Java Graph Laboratory
  * 
- *               ist@uni-koblenz.de
+ * Copyright (C) 2006-2010 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
  * 
- * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
  * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Additional permission under GNU GPL version 3 section 7
+ * 
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
  */
 package de.uni_koblenz.jgralab.greql2.parser;
 
@@ -42,8 +49,11 @@ import de.uni_koblenz.jgralab.greql2.schema.*;
 public class GreqlParser extends ParserHelper {
 
 	static {
-		Greql2Schema.instance().getGraphFactory().setGraphImplementationClass(
-				Greql2.class, SerializableGreql2Impl.class);
+		Greql2Schema
+				.instance()
+				.getGraphFactory()
+				.setGraphImplementationClass(Greql2.class,
+						SerializableGreql2Impl.class);
 	}
 
 	private Map<RuleEnum, int[]> testedRules = new HashMap<RuleEnum, int[]>();
@@ -63,6 +73,7 @@ public class GreqlParser extends ParserHelper {
 	private boolean predicateFulfilled = true;
 
 	private Greql2Schema schema = null;
+	private Set<String> subQueryNames = null;
 
 	/**
 	 * @return the set of variables which are valid at the current position in
@@ -136,6 +147,10 @@ public class GreqlParser extends ParserHelper {
 	}
 
 	public GreqlParser(String source) {
+		this(source, null);
+	}
+
+	public GreqlParser(String source, Set<String> subQueryNames) {
 		query = source;
 		parsingStack = new Stack<Integer>();
 		predicateStack = new Stack<Boolean>();
@@ -149,6 +164,12 @@ public class GreqlParser extends ParserHelper {
 		functionSymbolTable = new HashMap<String, FunctionId>();
 		graphCleaned = false;
 		lookAhead = tokens.get(0);
+		this.subQueryNames = subQueryNames;
+	}
+
+	protected final boolean isFunctionName(String ident) {
+		return ((subQueryNames != null) && subQueryNames.contains(ident))
+				|| funlib.isGreqlFunction(ident);
 	}
 
 	public void parse() {
@@ -188,7 +209,11 @@ public class GreqlParser extends ParserHelper {
 	}
 
 	public static Greql2 parse(String query) {
-		GreqlParser parser = new GreqlParser(query);
+		return parse(query, null);
+	}
+
+	public static Greql2 parse(String query, Set<String> subQueryNames) {
+		GreqlParser parser = new GreqlParser(query, subQueryNames);
 		parser.parse();
 		return parser.getGraph();
 	}
@@ -1431,7 +1456,7 @@ public class GreqlParser extends ParserHelper {
 		}
 		if (!inPredicateMode()) {
 			PrimaryPathDescription result = graph.createSimplePathDescription();
-			dir = (Direction) graph.getFirstVertexOfClass(Direction.class);
+			dir = (Direction) graph.getFirstVertex(Direction.class);
 			while (dir != null) {
 				if (!dir.get_dirValue().equals(direction)) {
 					dir = dir.getNextDirection();
@@ -1517,7 +1542,7 @@ public class GreqlParser extends ParserHelper {
 			} else if (!edgeStart && edgeEnd) {
 				direction = "out";
 			}
-			dir = (Direction) graph.getFirstVertexOfClass(Direction.class);
+			dir = (Direction) graph.getFirstVertex(Direction.class);
 			while (dir != null) {
 				if (!dir.get_dirValue().equals(direction)) {
 					dir = dir.getNextDirection();
@@ -1605,8 +1630,8 @@ public class GreqlParser extends ParserHelper {
 				List<VertexPosition<Expression>> expressions = parseExpressionList();
 				match(TokenTypes.RPAREN);
 				if (!inPredicateMode()) {
-					return createPartsOfValueConstruction(expressions, graph
-							.createSetConstruction());
+					return createPartsOfValueConstruction(expressions,
+							graph.createSetConstruction());
 				} else {
 					return null;
 				}
@@ -1616,8 +1641,8 @@ public class GreqlParser extends ParserHelper {
 				expressions = parseExpressionList();
 				match(TokenTypes.RPAREN);
 				if (!inPredicateMode()) {
-					return createPartsOfValueConstruction(expressions, graph
-							.createBagConstruction());
+					return createPartsOfValueConstruction(expressions,
+							graph.createBagConstruction());
 				} else {
 					return null;
 				}
@@ -1627,8 +1652,8 @@ public class GreqlParser extends ParserHelper {
 				expressions = parseExpressionList();
 				match(TokenTypes.RPAREN);
 				if (!inPredicateMode()) {
-					return createPartsOfValueConstruction(expressions, graph
-							.createTupleConstruction());
+					return createPartsOfValueConstruction(expressions,
+							graph.createTupleConstruction());
 				} else {
 					return null;
 				}
@@ -1715,8 +1740,8 @@ public class GreqlParser extends ParserHelper {
 				VertexPosition<Expression> v = new VertexPosition<Expression>(
 						startExpr, lengthStart, offsetStart);
 				allExpressions.add(0, v);
-				result = createPartsOfValueConstruction(allExpressions, graph
-						.createListConstruction());
+				result = createPartsOfValueConstruction(allExpressions,
+						graph.createListConstruction());
 			}
 		}
 		match(TokenTypes.RPAREN);
@@ -1827,8 +1852,7 @@ public class GreqlParser extends ParserHelper {
 		int offset = getCurrentOffset();
 		SimpleDeclaration decl = parseSimpleDeclaration();
 		int length = getLength(offset);
-		declList
-				.add(new VertexPosition<SimpleDeclaration>(decl, length, offset));
+		declList.add(new VertexPosition<SimpleDeclaration>(decl, length, offset));
 		if (lookAhead(0) == TokenTypes.COMMA) {
 			predicateStart();
 			try {
@@ -2093,8 +2117,8 @@ public class GreqlParser extends ParserHelper {
 			}
 		} while (tryMatch(TokenTypes.COMMA));
 		if (!inPredicateMode() && (tupConstr.getDegree(EdgeDirection.IN) == 1)) {
-			Vertex v = tupConstr.getFirstEdge(EdgeDirection.IN).getAlpha();
-			Edge e2 = tupConstr.getFirstEdge(EdgeDirection.OUT);
+			Vertex v = tupConstr.getFirstIncidence(EdgeDirection.IN).getAlpha();
+			Edge e2 = tupConstr.getFirstIncidence(EdgeDirection.OUT);
 			e2.setAlpha(v);
 			tupConstr.delete();
 		}
@@ -2154,8 +2178,8 @@ public class GreqlParser extends ParserHelper {
 						.createIsValueExprOfComprehension(
 								reportList.get(1).node,
 								(MapComprehension) comprehension);
-				keyEdge.set_sourcePositions(createSourcePositionList(reportList
-						.get(0).length, reportList.get(0).offset));
+				keyEdge.set_sourcePositions(createSourcePositionList(
+						reportList.get(0).length, reportList.get(0).offset));
 				valueEdge.set_sourcePositions(createSourcePositionList(
 						reportList.get(1).length, reportList.get(1).offset));
 			}
@@ -2176,16 +2200,14 @@ public class GreqlParser extends ParserHelper {
 						reportList.get(1).length, reportList.get(1).offset));
 				e = graph.createIsCompResultDefOf(reportList.get(2).node,
 						comprehension);
-				e.set_sourcePositions(createSourcePositionList(reportList
-						.get(2).length, reportList.get(2).offset));
+				e.set_sourcePositions(createSourcePositionList(
+						reportList.get(2).length, reportList.get(2).offset));
 				if (reportList.size() == 4) {
 					IsTableHeaderOf tHeaderE = graph.createIsTableHeaderOf(
 							reportList.get(3).node,
 							(ComprehensionWithTableHeader) comprehension);
-					tHeaderE
-							.set_sourcePositions(createSourcePositionList(
-									reportList.get(3).length,
-									reportList.get(3).offset));
+					tHeaderE.set_sourcePositions(createSourcePositionList(
+							reportList.get(3).length, reportList.get(3).offset));
 				}
 			}
 		} else {

@@ -1,25 +1,32 @@
 /*
- * JGraLab - The Java graph laboratory
- * (c) 2006-2010 Institute for Software Technology
- *               University of Koblenz-Landau, Germany
+ * JGraLab - The Java Graph Laboratory
  * 
- *               ist@uni-koblenz.de
+ * Copyright (C) 2006-2010 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
  * 
- * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
  * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Additional permission under GNU GPL version 3 section 7
+ * 
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
  */
 
 package de.uni_koblenz.jgralab.greql2.funlib;
@@ -33,12 +40,12 @@ import java.net.URLDecoder;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.Map.Entry;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
@@ -69,10 +76,6 @@ public class Greql2FunctionLibrary {
 	private static Logger logger = Logger.getLogger(Greql2FunctionLibrary.class
 			.getName());
 
-	static {
-		logger.setLevel(Level.OFF);
-	}
-
 	/**
 	 * this is the package name as greql2.evaluator.funlib
 	 */
@@ -97,23 +100,26 @@ public class Greql2FunctionLibrary {
 	 * constructs a new instance as soon as the Library gets loaded
 	 */
 	static {
+		logger.setLevel(Level.OFF);
 		packageName = Greql2FunctionLibrary.class.getPackage().getName();
 		nondottedPackageName = packageName.replace(".", "/");
-		thisInstance = new Greql2FunctionLibrary();
 	}
 
 	/**
 	 * creates a new GreqlFunctionLibrary
 	 */
-	public Greql2FunctionLibrary() throws RuntimeException {
+	private Greql2FunctionLibrary() {
 		availableFunctions = new HashMap<String, Greql2Function>();
-		registerAllFunctions();
 	}
 
 	/**
 	 * @return The one and only instance of GreqlFunctionLibrary
 	 */
 	public static Greql2FunctionLibrary instance() {
+		if (thisInstance == null) {
+			thisInstance = new Greql2FunctionLibrary();
+			thisInstance.registerAllFunctions();
+		}
 		return thisInstance;
 	}
 
@@ -452,7 +458,7 @@ public class Greql2FunctionLibrary {
 		// same name and different class may not. Implementation have to be the
 		// same.
 		if (isGreqlFunction(funName)
-				&& availableFunctions.get(funName).getClass() != functionClass) {
+				&& (availableFunctions.get(funName).getClass() != functionClass)) {
 			System.out.println(availableFunctions.get(funName) + " != "
 					+ functionClass);
 			System.exit(1);
@@ -555,7 +561,7 @@ public class Greql2FunctionLibrary {
 	 * @param packagePath
 	 *            the path to the package this .class-file is located in
 	 */
-	private boolean registerFunctionsInDirectory(String fileName) {
+	public boolean registerFunctionsInDirectory(String fileName) {
 		logger.finer("Directory Path : " + fileName);
 		boolean foundAClass = false;
 		File dir = new File(fileName);
@@ -603,7 +609,12 @@ public class Greql2FunctionLibrary {
 	}
 
 	private void registerFunctionsInResourceBundle(URL res) {
-		// TODO: how do i load classes from a bundleresource:// URL???
-		// That seems not to be possible without using eclipse stuff...
+		if (JGraLab.eclipseAdapter != null) {
+			JGraLab.eclipseAdapter.registerFunctionsInResourceBundle(res);
+		} else {
+			throw new RuntimeException(
+					"There's no EclipseGreqlFunctionLoader set, so functions "
+							+ "cannot be loaded from resource bundles.");
+		}
 	}
 }

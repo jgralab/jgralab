@@ -1,25 +1,32 @@
 /*
- * JGraLab - The Java graph laboratory
- * (c) 2006-2010 Institute for Software Technology
- *               University of Koblenz-Landau, Germany
+ * JGraLab - The Java Graph Laboratory
  * 
- *               ist@uni-koblenz.de
+ * Copyright (C) 2006-2010 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
  * 
- * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
  * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Additional permission under GNU GPL version 3 section 7
+ * 
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
  */
 
 package de.uni_koblenz.jgralab.greql2.evaluator;
@@ -33,20 +40,22 @@ import java.lang.ref.SoftReference;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
+import de.uni_koblenz.jgralab.GraphIO.TGFilenameFilter;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.GraphIO.TGFilenameFilter;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
@@ -62,13 +71,16 @@ import de.uni_koblenz.jgralab.greql2.evaluator.logging.LoggingType;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.CostModelException;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
+import de.uni_koblenz.jgralab.greql2.exception.Greql2Exception;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
+import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.Optimizer;
 import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
+import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
@@ -92,7 +104,7 @@ public class GreqlEvaluator {
 
 	public static void main(String[] args) throws FileNotFoundException,
 			IOException, GraphIOException {
-		if (args.length < 1 || args.length > 2) {
+		if ((args.length < 1) || (args.length > 2)) {
 			System.err
 					.println("Usage: java GreqlEvaluator <query> [<graphfile>]");
 			System.exit(1);
@@ -103,7 +115,7 @@ public class GreqlEvaluator {
 		Graph datagraph = null;
 		if (args.length == 2) {
 			datagraph = GraphIO.loadSchemaAndGraphFromFile(args[1],
-					CodeGeneratorConfiguration.WITHOUT_TRANSACTIONS,
+					CodeGeneratorConfiguration.MINIMAL,
 					new ConsoleProgressFunction());
 		}
 
@@ -358,8 +370,8 @@ public class GreqlEvaluator {
 		for (SyntaxGraphEntry entry : entryList) {
 			if (entry.getCostModel().isEquivalent(costModel)) {
 				Optimizer opt = entry.getOptimizer();
-				if (opt != null && opt.isEquivalent(optimizer) || opt == null
-						&& optimizer == null) {
+				if (((opt != null) && opt.isEquivalent(optimizer))
+						|| ((opt == null) && (optimizer == null))) {
 					if (entry.lock()) {
 						return entry;
 					}
@@ -581,6 +593,11 @@ public class GreqlEvaluator {
 	protected Map<String, JValue> variableMap = null;
 
 	/**
+	 * Holds the greql subqueries that can be called like other greql functions.
+	 */
+	protected Map<String, Greql2> subQueryMap = null;
+
+	/**
 	 * Holds the estimated needed for evaluation time in abstract units
 	 */
 	protected long estimatedInterpretationSteps = 0;
@@ -614,7 +631,7 @@ public class GreqlEvaluator {
 	}
 
 	public JValue getVariable(String name) {
-		if (variableMap != null && variableMap.containsKey(name)) {
+		if ((variableMap != null) && variableMap.containsKey(name)) {
 			return variableMap.get(name);
 		}
 		return new JValueImpl();
@@ -629,6 +646,59 @@ public class GreqlEvaluator {
 			variableMap = new HashMap<String, JValue>();
 		}
 		variableMap.put(varName, value);
+	}
+
+	public void setSubQuery(String name, String greqlQuery) {
+		if (name == null) {
+			throw new EvaluateException(
+					"The name of a subquery must not be null!");
+		}
+		if (!name.matches("^\\w+$")) {
+			throw new EvaluateException("Invalid subquery name '" + name
+					+ "'. Only word chars are allowed.");
+		}
+
+		Set<String> definedSubQueries = subQueryMap.keySet();
+		HashSet<String> subQueryNames = new HashSet<String>(
+				definedSubQueries.size() + 1);
+		subQueryNames.addAll(definedSubQueries);
+		subQueryNames.add(name);
+		GreqlParser parser = new GreqlParser(greqlQuery, subQueryNames);
+		try {
+			parser.parse();
+		} catch (Exception e) {
+			// e.printStackTrace();
+			throw new EvaluateException("Error parsing subquery \""
+					+ greqlQuery + "\".", e);
+		}
+		Greql2 subQueryGraph = parser.getGraph();
+		if (isOptimize()) {
+			if (optimizer == null) {
+				optimizer = new DefaultOptimizer();
+			}
+			optimizer.optimize(this, subQueryGraph);
+		}
+		if (Greql2FunctionLibrary.instance().isGreqlFunction(name)) {
+			throw new Greql2Exception("The subquery '" + name
+					+ "' would shadow a GReQL function!");
+		}
+		for (FunctionApplication fa : subQueryGraph
+				.getFunctionApplicationVertices()) {
+			if (name.equals(fa.get_functionId().get_name())) {
+				logger.warning("You are defining a recursive subquery '"
+						+ name
+						+ "'. Don't expect this to be fast or memory-efficient!");
+			}
+		}
+		subQueryMap.put(name, subQueryGraph);
+		// System.out.println("\nGiven subquery:");
+		// System.out.println(greqlQuery);
+		// System.out.println("\nOptimized subquery:");
+		// System.out.println(Greql2Serializer.serialize(subQueryGraph));
+	}
+
+	public Greql2 getSubQuery(String name) {
+		return subQueryMap.get(name);
 	}
 
 	/**
@@ -739,6 +809,7 @@ public class GreqlEvaluator {
 		}
 		knownTypes = new HashMap<String, AttributedElementClass>();
 		variableMap = variables;
+		subQueryMap = new HashMap<String, Greql2>();
 		this.progressFunction = progressFunction;
 	}
 
@@ -764,8 +835,7 @@ public class GreqlEvaluator {
 			gc.createEdgeClass("Link", n, 0, Integer.MAX_VALUE, "",
 					AggregationKind.NONE, n, 0, Integer.MAX_VALUE, "",
 					AggregationKind.NONE);
-			minimalSchema
-					.compile(CodeGeneratorConfiguration.WITHOUT_TRANSACTIONS);
+			minimalSchema.compile(CodeGeneratorConfiguration.MINIMAL);
 			Method graphCreateMethod = minimalSchema
 					.getGraphCreateMethod(ImplementationType.STANDARD);
 
@@ -845,7 +915,7 @@ public class GreqlEvaluator {
 	 */
 	protected boolean parseQuery(String query) throws EvaluateException {
 		long parseStartTime = System.currentTimeMillis();
-		GreqlParser parser = new GreqlParser(query);
+		GreqlParser parser = new GreqlParser(query, subQueryMap.keySet());
 		try {
 			parser.parse();
 		} catch (Exception e) {
@@ -862,6 +932,9 @@ public class GreqlEvaluator {
 	 * Creates the VertexEvaluator-Object at the vertices in the syntaxgraph
 	 */
 	public void createVertexEvaluators() throws EvaluateException {
+		if (queryGraph == null) {
+			return;
+		}
 		if (vertexEvalGraphMarker != null) {
 			queryGraph
 					.removeGraphStructureChangedListener(vertexEvalGraphMarker);
@@ -914,7 +987,6 @@ public class GreqlEvaluator {
 			if (syntaxGraphEntry != null) {
 				queryGraph = syntaxGraphEntry.getSyntaxGraph();
 				createVertexEvaluators();
-				costModel.setGreqlEvaluator(this);
 				logger.info("Using stored optimized syntax graph.");
 				return;
 			}
@@ -1014,12 +1086,12 @@ public class GreqlEvaluator {
 							(Level2Logger) evaluationLogger);
 				}
 				try {
-					costModel = new LogCostModel(logReader, 0.8f, this);
+					costModel = new LogCostModel(logReader, 0.8f);
 				} catch (CostModelException e) {
 					e.printStackTrace();
 				}
 			} else {
-				costModel = new DefaultCostModel(this);
+				costModel = new DefaultCostModel();
 			}
 		}
 

@@ -1,25 +1,32 @@
 /*
- * JGraLab - The Java graph laboratory
- * (c) 2006-2010 Institute for Software Technology
- *               University of Koblenz-Landau, Germany
+ * JGraLab - The Java Graph Laboratory
  * 
- *               ist@uni-koblenz.de
+ * Copyright (C) 2006-2010 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
  * 
- * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
  * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Additional permission under GNU GPL version 3 section 7
+ * 
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
  */
 
 package de.uni_koblenz.jgralab.schema;
@@ -37,9 +44,10 @@ import de.uni_koblenz.jgralab.schema.exception.M1ClassAccessException;
  * /<code>CompositionClass</code>.
  * 
  * <p>
- * <b>Note:</b> in the following, <code>attrElement</code>, and <code>attrElement'</code>
- * , will represent the states of the given <code>AttributedElementClass</code>
- * before, respectively after, any operation.
+ * <b>Note:</b> in the following, <code>attrElement</code>, and
+ * <code>attrElement'</code> , will represent the states of the given
+ * <code>AttributedElementClass</code> before, respectively after, any
+ * operation.
  * </p>
  * 
  * <p>
@@ -50,8 +58,7 @@ import de.uni_koblenz.jgralab.schema.exception.M1ClassAccessException;
  * 
  * @author ist@uni-koblenz.de
  */
-public interface AttributedElementClass extends NamedElement,
-		Comparable<AttributedElementClass> {
+public interface AttributedElementClass extends NamedElement {
 
 	/**
 	 * Adds a new attribute <code>anAttribute</code> to this element.
@@ -68,8 +75,9 @@ public interface AttributedElementClass extends NamedElement,
 	 * 
 	 * <p>
 	 * <b>Postconditions:</b> In addition to the direct and inherited
-	 * attributes(s) of <code>attrElement</code>, <code>attrElement'</code> holds a new
-	 * attribute with the specified <code>name</code> and <code>domain</code>.
+	 * attributes(s) of <code>attrElement</code>, <code>attrElement'</code>
+	 * holds a new attribute with the specified <code>name</code> and
+	 * <code>domain</code>.
 	 * </p>
 	 * 
 	 * @param anAttribute
@@ -99,8 +107,9 @@ public interface AttributedElementClass extends NamedElement,
 	 * 
 	 * <p>
 	 * <b>Postconditions:</b> In addition to the direct and inherited
-	 * attributes(s) of <code>attrElement</code>, <code>attrElement'</code> holds a new
-	 * attribute with the specified <code>name</code> and <code>domain</code>.
+	 * attributes(s) of <code>attrElement</code>, <code>attrElement'</code>
+	 * holds a new attribute with the specified <code>name</code> and
+	 * <code>domain</code>.
 	 * </p>
 	 * 
 	 * @param name
@@ -140,11 +149,13 @@ public interface AttributedElementClass extends NamedElement,
 	 * <b>Postconditions:</b>
 	 * <ul>
 	 * <li><code>attrElement'.getConstraints().size >= 0</code></li>
-	 * <li><code>attrElement'.getConstraints().size() == attrElement.getConstraints().size() + 1</code>, if for each constraint <code>c</code> of
-	 * <code>attrElement</code> the following condition holds:
-	 * <code>!constr.equals(c)</code></li>
-	 * <li><code>attrElement'.getConstraints()</code> does not contain any inherited constraints from
-	 * possible superclasses of <code>attrElement</code></li>
+	 * <li>
+	 * <code>attrElement'.getConstraints().size() == attrElement.getConstraints().size() + 1</code>
+	 * , if for each constraint <code>c</code> of <code>attrElement</code> the
+	 * following condition holds: <code>!constr.equals(c)</code></li>
+	 * <li><code>attrElement'.getConstraints()</code> does not contain any
+	 * inherited constraints from possible superclasses of
+	 * <code>attrElement</code></li>
 	 * </ul>
 	 * </p>
 	 * </p>
@@ -309,8 +320,8 @@ public interface AttributedElementClass extends NamedElement,
 	 * <ul>
 	 * <li><code>attrs != null</code></li>
 	 * <li><code>attrs.size() >= 0</code></li>
-	 * <li><code>attrs</code> contains every of <code>attrElement´s</code>direct
-	 * and inherited attributes
+	 * <li><code>attrs</code> contains every of <code>attrElement´s</code>
+	 * direct and inherited attributes
 	 * <li>the attributes in <code>attrs</code> are sorted lexicographically by
 	 * their qualified name</li>
 	 * </ul>
@@ -871,8 +882,8 @@ public interface AttributedElementClass extends NamedElement,
 	 * </p>
 	 * 
 	 * <p>
-	 * <b>Postconditions:</b> <code>attrElement'</code> is abstract and no new instances
-	 * can be created
+	 * <b>Postconditions:</b> <code>attrElement'</code> is abstract and no new
+	 * instances can be created
 	 * </p>
 	 * 
 	 * @param isAbstract

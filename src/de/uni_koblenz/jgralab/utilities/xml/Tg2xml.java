@@ -1,25 +1,32 @@
 /*
- * JGraLab - The Java graph laboratory
- * (c) 2006-2010 Institute for Software Technology
- *               University of Koblenz-Landau, Germany
+ * JGraLab - The Java Graph Laboratory
  * 
- *               ist@uni-koblenz.de
+ * Copyright (C) 2006-2010 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
  * 
- * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
  * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Additional permission under GNU GPL version 3 section 7
+ * 
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
  */
 
 package de.uni_koblenz.jgralab.utilities.xml;
@@ -135,8 +142,8 @@ public class Tg2xml extends GraphVisitor {
 		// write vertex
 		writer.writeEmptyElement(v.getAttributedElementClass()
 				.getQualifiedName());
-		writer.writeAttribute(GRUML_ATTRIBUTE_ID,
-				GRUML_ID_PREFIX_VERTEX + v.getId());
+		writer.writeAttribute(GRUML_ATTRIBUTE_ID, GRUML_ID_PREFIX_VERTEX
+				+ v.getId());
 		writeAttributes(v);
 		// iterate over incidences and mark these edges
 		int i = 1;
@@ -163,12 +170,12 @@ public class Tg2xml extends GraphVisitor {
 				.getQualifiedName());
 		writer.writeAttribute(GRUML_ATTRIBUTE_FROM, GRUML_ID_PREFIX_VERTEX
 				+ e.getAlpha().getId());
-		writer.writeAttribute(GRUML_ATTRIBUTE_FSEQ,
-				Integer.toString(currentMark.fseq));
+		writer.writeAttribute(GRUML_ATTRIBUTE_FSEQ, Integer
+				.toString(currentMark.fseq));
 		writer.writeAttribute(GRUML_ATTRIBUTE_TO, GRUML_ID_PREFIX_VERTEX
 				+ e.getOmega().getId());
-		writer.writeAttribute(GRUML_ATTRIBUTE_TSEQ,
-				Integer.toString(currentMark.tseq));
+		writer.writeAttribute(GRUML_ATTRIBUTE_TSEQ, Integer
+				.toString(currentMark.tseq));
 		writeAttributes(e);
 	}
 
@@ -209,8 +216,8 @@ public class Tg2xml extends GraphVisitor {
 				.getAttributeList()) {
 			String currentName = currentAttribute.getName();
 			try {
-				writer.writeAttribute(currentName,
-						element.writeAttributeValueToString(currentName));
+				writer.writeAttribute(currentName, element
+						.writeAttributeValueToString(currentName));
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

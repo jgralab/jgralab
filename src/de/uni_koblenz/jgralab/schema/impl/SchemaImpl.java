@@ -1,25 +1,32 @@
 /*
- * JGraLab - The Java graph laboratory
- * (c) 2006-2010 Institute for Software Technology
- *               University of Koblenz-Landau, Germany
+ * JGraLab - The Java Graph Laboratory
  * 
- *               ist@uni-koblenz.de
+ * Copyright (C) 2006-2010 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
  * 
- * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
  * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Additional permission under GNU GPL version 3 section 7
+ * 
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
  */
 
 package de.uni_koblenz.jgralab.schema.impl;
@@ -31,6 +38,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -44,8 +52,8 @@ import javax.tools.ForwardingJavaFileManager;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileManager;
 import javax.tools.JavaFileObject;
-import javax.tools.ToolProvider;
 import javax.tools.JavaFileObject.Kind;
+import javax.tools.ToolProvider;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphFactory;
@@ -81,11 +89,11 @@ import de.uni_koblenz.jgralab.schema.MapDomain;
 import de.uni_koblenz.jgralab.schema.NamedElement;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
+import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.SetDomain;
 import de.uni_koblenz.jgralab.schema.StringDomain;
 import de.uni_koblenz.jgralab.schema.VertexClass;
-import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
 import de.uni_koblenz.jgralab.schema.exception.InvalidNameException;
 import de.uni_koblenz.jgralab.schema.exception.M1ClassAccessException;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
@@ -101,6 +109,7 @@ public class SchemaImpl implements Schema {
 	 */
 	private class ClassFileManager extends
 			ForwardingJavaFileManager<JavaFileManager> {
+
 		public ClassFileManager(JavaFileManager fm) {
 			super(fm);
 		}
@@ -139,12 +148,11 @@ public class SchemaImpl implements Schema {
 	/**
 	 * This is the name of the package into which the implementation classes for
 	 * this schema are generated. The impl package is child of the package for
-	 * the Schema.
-	 * 
-	 * std => standard trans => transaction support
+	 * Schema.
 	 */
 	public static final String IMPLSTDPACKAGENAME = "impl.std";
 	public static final String IMPLTRANSPACKAGENAME = "impl.trans";
+	public static final String IMPLDATABASEPACKAGENAME = "impl.db";
 	public static final String IMPLSAVEMEMPACKAGENAME = "impl.savemem";
 
 	static final Class<?>[] VERTEX_CLASS_CREATE_SIGNATURE = { int.class };
@@ -230,35 +238,21 @@ public class SchemaImpl implements Schema {
 			.compile("^\\p{Lower}\\w*(\\.\\p{Lower}\\w*)*$");
 
 	/**
-	 * Creates a new schema object.
+	 * Creates a new <code>Schema</code>.
 	 * 
 	 * @param name
-	 *            The name of the schema
+	 *            Name of schema.
 	 * @param packagePrefix
-	 *            the package prefix of the schema
+	 *            Package prefix of schema.
 	 */
 	public SchemaImpl(String name, String packagePrefix) {
-		if (!SCHEMA_NAME_PATTERN.matcher(name).matches()) {
-			throw new InvalidNameException(
-					"Invalid schema name '"
-							+ name
-							+ "'.\n"
-							+ "The name must not be empty.\n"
-							+ "The name must start with a capital letter.\n"
-							+ "Any following character must be alphanumeric and/or a '_' character.\n"
-							+ "The name must end with an alphanumeric character.");
 
+		if (!SCHEMA_NAME_PATTERN.matcher(name).matches()) {
+			this.throwInvalidSchemaNameException();
 		}
+
 		if (!PACKAGE_PREFIX_PATTERN.matcher(packagePrefix).matches()) {
-			throw new InvalidNameException(
-					"Invalid schema package prefix '"
-							+ packagePrefix
-							+ "'.\n"
-							+ "The packagePrefix must not be empty.\n"
-							+ "The package prefix must start with a small letter.\n"
-							+ "The first character after each '.' must be a small letter.\n"
-							+ "Following characters may be alphanumeric and/or '_' characters.\n"
-							+ "The last character before a '.' and the end of the line must be an alphanumeric character.");
+			this.throwInvalidPackagePrefixNameException();
 		}
 
 		this.name = name;
@@ -278,18 +272,42 @@ public class SchemaImpl implements Schema {
 
 		/*
 		 * Needs to be created before any GraphElementClass element can be
-		 * created
+		 * created.
 		 */
 		defaultGraphClass = GraphClassImpl.createDefaultGraphClass(this);
 
-		// Creation of the default GraphElementClasses
+		// Creation of default GraphElementClasses
 		defaultVertexClass = VertexClassImpl.createDefaultVertexClass(this);
 		defaultEdgeClass = EdgeClassImpl.createDefaultEdgeClass(this);
 		config = createDefaultConfig();
 	}
 
+	private void throwInvalidSchemaNameException() {
+		throw new InvalidNameException(
+				"Invalid schema name '"
+						+ name
+						+ "'.\n"
+						+ "The name must not be empty.\n"
+						+ "The name must start with a capital letter.\n"
+						+ "Any following character must be alphanumeric and/or a '_' character.\n"
+						+ "The name must end with an alphanumeric character.");
+	}
+
+	private void throwInvalidPackagePrefixNameException() {
+		throw new InvalidNameException(
+				"Invalid schema package prefix '"
+						+ packagePrefix
+						+ "'.\n"
+						+ "The packagePrefix must not be empty.\n"
+						+ "The package prefix must start with a small letter.\n"
+						+ "The first character after each '.' must be a small letter.\n"
+						+ "Following characters may be alphanumeric and/or '_' characters.\n"
+						+ "The last character before a '.' and the end of the line must be an alphanumeric character.");
+	}
+
 	private CodeGeneratorConfiguration createDefaultConfig() {
 		CodeGeneratorConfiguration out = new CodeGeneratorConfiguration();
+		// TODO Add SAVEMEM.
 		if (java.lang.Package.getPackage(packagePrefix + ". "
 				+ IMPLSTDPACKAGENAME) == null) {
 			out.setStandardSupport(false);
@@ -298,6 +316,11 @@ public class SchemaImpl implements Schema {
 				+ IMPLTRANSPACKAGENAME) != null) {
 			out.setTransactionSupport(true);
 		}
+		if (java.lang.Package.getPackage(packagePrefix + ". "
+				+ IMPLDATABASEPACKAGENAME) != null) {
+			out.setDatabaseSupport(true);
+		}
+
 		return out.withMethodsForSubclassesSupport();
 		// TODO: Monte, check for the other values :-)
 	}
@@ -305,7 +328,6 @@ public class SchemaImpl implements Schema {
 	void addDomain(Domain dom) {
 		assert !domains.containsKey(dom.getQualifiedName()) : "There already is a Domain with the qualified name: "
 				+ dom.getQualifiedName() + " in the Schema!";
-
 		domains.put(dom.getQualifiedName(), dom);
 	}
 
@@ -322,13 +344,12 @@ public class SchemaImpl implements Schema {
 
 		namedElements.put(namedElement.getQualifiedName(), namedElement);
 
-		/*
-		 * Check if any element´s unique name needs adaptation after the add of
-		 * the new named element.
-		 */
+		// Check if any element's unique name needs adaptation after addition of
+		// the new named element.
 		Set<NamedElement> elementsWithSameSimpleName = namedElementsBySimpleName
 				.get(namedElement.getSimpleName());
-		// add the element to the map
+
+		// add element to map
 		if ((elementsWithSameSimpleName != null)
 				&& !elementsWithSameSimpleName.isEmpty()) {
 			elementsWithSameSimpleName.add(namedElement);
@@ -338,10 +359,22 @@ public class SchemaImpl implements Schema {
 			namedElementsBySimpleName.put(namedElement.getSimpleName(),
 					elementsWithSameSimpleName);
 		}
+		if (elementsWithSameSimpleName.size() < 2) {
+			return;
+		}
 
-		// uniquify if needed
-		if (elementsWithSameSimpleName.size() >= 2) {
-			for (NamedElement other : elementsWithSameSimpleName) {
+		// Uniquify simple names, if needed:
+		// We don't have to worry about domains and packages, cause for those no
+		// create<SimpleName> or getFirst/Next<SimpleName> methods have to be
+		// created.
+		List<AttributedElementClass> aecsWithSameSimpleName = new LinkedList<AttributedElementClass>();
+		for (NamedElement ne : elementsWithSameSimpleName) {
+			if (ne instanceof AttributedElementClass) {
+				aecsWithSameSimpleName.add((AttributedElementClass) ne);
+			}
+		}
+		if (aecsWithSameSimpleName.size() >= 2) {
+			for (AttributedElementClass other : aecsWithSameSimpleName) {
 				((NamedElementImpl) other).changeUniqueName();
 			}
 		}
@@ -424,7 +457,6 @@ public class SchemaImpl implements Schema {
 		}
 
 		javaSources.addAll(createClasses(config));
-
 		return javaSources;
 	}
 
@@ -507,7 +539,7 @@ public class SchemaImpl implements Schema {
 	@Override
 	public void commit(String pathPrefix, CodeGeneratorConfiguration config)
 			throws GraphIOException {
-		commit(pathPrefix, config, null);
+		this.commit(pathPrefix, config, null);
 	}
 
 	@Override
@@ -718,7 +750,7 @@ public class SchemaImpl implements Schema {
 	}
 
 	/**
-	 * Creates a {@link Package} with the given qualified name, or returns the
+	 * Creates a {@link Package} with given qualified name, or returns an
 	 * existing package with this qualified name.
 	 * 
 	 * @param qn
@@ -894,9 +926,11 @@ public class SchemaImpl implements Schema {
 								+ " does not exist in schema");
 					}
 				}
-				return m1Class.getMethod("create"
-						+ CodeGenerator.camelCase(aec.getUniqueName()),
-						signature);
+				return m1Class
+						.getMethod(
+								"create"
+										+ CodeGenerator.camelCase(aec
+												.getUniqueName()), signature);
 			}
 		} catch (SecurityException e) {
 			throw new M1ClassAccessException(
@@ -1056,11 +1090,12 @@ public class SchemaImpl implements Schema {
 		case SAVEMEM:
 			implClassName += IMPLSAVEMEMPACKAGENAME;
 			break;
+		case DATABASE:
+			implClassName += IMPLDATABASEPACKAGENAME;
 		default:
 			throw new SchemaException("Implementation type "
 					+ implementationType + " not supported yet.");
 		}
-
 		implClassName = implClassName + "." + graphClass.getSimpleName()
 				+ "Impl";
 
@@ -1078,8 +1113,8 @@ public class SchemaImpl implements Schema {
 
 	@Override
 	public Method getGraphCreateMethod(ImplementationType implementationType) {
-		return getCreateMethod(graphClass.getSimpleName(), graphClass
-				.getSimpleName(), GRAPHCLASS_CREATE_SIGNATURE,
+		return getCreateMethod(graphClass.getSimpleName(),
+				graphClass.getSimpleName(), GRAPHCLASS_CREATE_SIGNATURE,
 				implementationType);
 	}
 
@@ -1186,6 +1221,7 @@ public class SchemaImpl implements Schema {
 				return false;
 			}
 		}
+
 		return true;
 	}
 
@@ -1227,7 +1263,6 @@ public class SchemaImpl implements Schema {
 	public String toString() {
 		return "GraphClass of schema '" + qualifiedName + "':\n\n\n"
 				+ graphClass.toString();
-
 	}
 
 	@Override
@@ -1243,7 +1278,7 @@ public class SchemaImpl implements Schema {
 	/**
 	 * Set flag that transaction support should be used or not.
 	 * 
-	 * @param transactionSupport
+	 * @param config
 	 */
 	public void setConfiguration(CodeGeneratorConfiguration config) {
 		this.config = config;

@@ -1,25 +1,32 @@
 /*
- * JGraLab - The Java graph laboratory
- * (c) 2006-2010 Institute for Software Technology
- *               University of Koblenz-Landau, Germany
+ * JGraLab - The Java Graph Laboratory
  * 
- *               ist@uni-koblenz.de
+ * Copyright (C) 2006-2010 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
  * 
- * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
  * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Additional permission under GNU GPL version 3 section 7
+ * 
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
  */
 
 package de.uni_koblenz.jgralab.greql2.jvalue;
@@ -179,8 +186,9 @@ public class JValuePath extends JValueImpl {
 		HashSet<Vertex> vertices = new HashSet<Vertex>();
 		vertices.add(startVertex);
 		for (Edge e : edges) {
-			if (vertices.contains(e.getThat()))
+			if (vertices.contains(e.getThat())) {
 				return false;
+			}
 			vertices.add(e.getThat());
 		}
 		return true;
@@ -242,8 +250,9 @@ public class JValuePath extends JValueImpl {
 	 * @return the end vertex of this path
 	 */
 	public Vertex getEndVertex() {
-		if (edges.size() == 0)
+		if (edges.size() == 0) {
 			return startVertex;
+		}
 		return edges.get(edges.size() - 1).getThat();
 	}
 
@@ -252,8 +261,9 @@ public class JValuePath extends JValueImpl {
 	 */
 	public List<Vertex> nodeTrace() {
 		List<Vertex> vertices = new ArrayList<Vertex>();
-		if (startVertex == null)
+		if (startVertex == null) {
 			return vertices;
+		}
 		vertices.add(startVertex);
 		for (Edge e : edges) {
 			vertices.add(e.getThat());
@@ -317,10 +327,12 @@ public class JValuePath extends JValueImpl {
 	public int degree(Vertex vertex) {
 		int degree = 0;
 		for (Edge e : edges) {
-			if (e.getThat() == vertex)
+			if (e.getThat() == vertex) {
 				degree++;
-			if (e.getThis() == vertex)
+			}
+			if (e.getThis() == vertex) {
 				degree++;
+			}
 		}
 		return degree;
 	}
@@ -342,22 +354,26 @@ public class JValuePath extends JValueImpl {
 		switch (dir) {
 		case IN:
 			for (Edge e : edges) {
-				if (e.getOmega() == vertex)
+				if (e.getOmega() == vertex) {
 					degree++;
+				}
 			}
 			break;
 		case OUT:
 			for (Edge e : edges) {
-				if (e.getAlpha() == vertex)
+				if (e.getAlpha() == vertex) {
 					degree++;
+				}
 			}
 			break;
 		case INOUT:
 			for (Edge e : edges) {
-				if (e.getOmega() == vertex)
+				if (e.getOmega() == vertex) {
 					degree++;
-				if (e.getAlpha() == vertex)
+				}
+				if (e.getAlpha() == vertex) {
 					degree++;
+				}
 			}
 			break;
 		default:
@@ -382,8 +398,9 @@ public class JValuePath extends JValueImpl {
 		switch (dir) {
 		case IN:
 			for (Edge e : edges) {
-				if (e.getOmega() == vertex)
+				if (e.getOmega() == vertex) {
 					returnSet.add(new JValueImpl(e));
+				}
 			}
 			break;
 		case OUT:
@@ -395,10 +412,12 @@ public class JValuePath extends JValueImpl {
 			break;
 		case INOUT:
 			for (Edge e : edges) {
-				if (e.getOmega() == vertex)
+				if (e.getOmega() == vertex) {
 					returnSet.add(new JValueImpl(e));
-				if (e.getAlpha() == vertex)
+				}
+				if (e.getAlpha() == vertex) {
 					returnSet.add(new JValueImpl(e));
+				}
 			}
 			break;
 		default:
@@ -417,10 +436,12 @@ public class JValuePath extends JValueImpl {
 	public JValueSet edgesConnected(Vertex vertex) {
 		JValueSet returnSet = new JValueSet();
 		for (Edge e : edges) {
-			if (e.getOmega() == vertex)
+			if (e.getOmega() == vertex) {
 				returnSet.add(new JValueImpl(e));
-			if (e.getAlpha() == vertex)
+			}
+			if (e.getAlpha() == vertex) {
 				returnSet.add(new JValueImpl(e));
+			}
 		}
 		return returnSet;
 	}
@@ -474,11 +495,13 @@ public class JValuePath extends JValueImpl {
 	 * returns true, if this path contains the vertex
 	 */
 	public boolean contains(Vertex vertex) {
-		if (startVertex == vertex)
+		if (startVertex == vertex) {
 			return true;
+		}
 		for (Edge e : edges) {
-			if (e.getThat() == vertex)
+			if (e.getThat() == vertex) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -506,8 +529,9 @@ public class JValuePath extends JValueImpl {
 			return false;
 		}
 		for (int i = 0; i < edges.size() - 1; i++) {
-			if (edges.get(i).getThat() == path.edges.get(i).getThat())
+			if (edges.get(i).getThat() == path.edges.get(i).getThat()) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -532,16 +556,20 @@ public class JValuePath extends JValueImpl {
 		}
 		int i = 0;
 		for (i = 0; i < path.edges.size(); i++) {
-			if (edges.get(0) == path.edges.get(i))
+			if (edges.get(0) == path.edges.get(i)) {
 				break;
+			}
 		}
-		if (i == edges.size())
+		if (i == edges.size()) {
 			return false;
+		}
 		for (int j = 0; j < edges.size(); j++) {
-			if (i + j >= path.edges.size())
+			if (i + j >= path.edges.size()) {
 				return false;
-			if (edges.get(j) != path.edges.get(i + j))
+			}
+			if (edges.get(j) != path.edges.get(i + j)) {
 				return false;
+			}
 		}
 
 		return true;
@@ -554,15 +582,17 @@ public class JValuePath extends JValueImpl {
 	 */
 	@Override
 	public boolean equals(Object o) {
-		if (!(o instanceof JValuePath))
+		if (!(o instanceof JValuePath)) {
 			return false;
+		}
 		JValuePath path = (JValuePath) o;
 		if (this.pathLength() > path.pathLength()) {
 			return false;
 		}
 		for (int i = 0; i < edges.size(); i++) {
-			if (edges.get(i) != path.edges.get(i))
+			if (edges.get(i) != path.edges.get(i)) {
 				return false;
+			}
 		}
 		return true;
 	}

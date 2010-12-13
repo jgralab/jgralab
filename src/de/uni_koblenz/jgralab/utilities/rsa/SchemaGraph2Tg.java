@@ -1,25 +1,32 @@
 /*
- * JGraLab - The Java graph laboratory
- * (c) 2006-2010 Institute for Software Technology
- *               University of Koblenz-Landau, Germany
+ * JGraLab - The Java Graph Laboratory
  * 
- *               ist@uni-koblenz.de
+ * Copyright (C) 2006-2010 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
  * 
- * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
  * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Additional permission under GNU GPL version 3 section 7
+ * 
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
  */
 
 package de.uni_koblenz.jgralab.utilities.rsa;
@@ -163,7 +170,7 @@ public class SchemaGraph2Tg {
 	public void process() throws IOException {
 
 		try {
-			assert outputFilename != null && !outputFilename.equals(EMPTY) : "No output filename specified!";
+			assert (outputFilename != null) && !outputFilename.equals(EMPTY) : "No output filename specified!";
 			assert schemaGraph != null : "No SchemaGraph specified!";
 			stream = new PrintWriter(outputFilename);
 
@@ -210,17 +217,17 @@ public class SchemaGraph2Tg {
 				schema.get_name(), DELIMITER, NEWLINE);
 
 		Package defaultPackage = (Package) schema
-				.getFirstContainsDefaultPackage(EdgeDirection.OUT).getThat();
+				.getFirstContainsDefaultPackageIncidence(EdgeDirection.OUT).getThat();
 		setCurrentPackageName(defaultPackage);
 
 		// graphclass
-		GraphClass gc = (GraphClass) schema.getFirstDefinesGraphClass(
+		GraphClass gc = (GraphClass) schema.getFirstDefinesGraphClassIncidence(
 				EdgeDirection.OUT).getOmega();
 		printGraphClass(gc);
 		printComments(gc);
 
 		printPackageWithElements((Package) schema
-				.getFirstContainsDefaultPackage(EdgeDirection.OUT).getThat());
+				.getFirstContainsDefaultPackageIncidence(EdgeDirection.OUT).getThat());
 	}
 
 	private void printPackageWithElements(Package gPackage) {
@@ -269,7 +276,7 @@ public class SchemaGraph2Tg {
 		print(VERTEX_CLASS, SPACE, shortName(vc.get_qualifiedName()));
 
 		// superclasses
-		if (vc.getFirstSpecializesVertexClass(EdgeDirection.OUT) != null) {
+		if (vc.getFirstSpecializesVertexClassIncidence(EdgeDirection.OUT) != null) {
 			print(COLON, SPACE);
 			boolean first = true;
 			for (SpecializesVertexClass svc : vc
@@ -300,7 +307,7 @@ public class SchemaGraph2Tg {
 		print(EDGE_CLASS, SPACE, shortName(ec.get_qualifiedName()));
 
 		// superclasses
-		if (ec.getFirstSpecializesEdgeClass(EdgeDirection.OUT) != null) {
+		if (ec.getFirstSpecializesEdgeClassIncidence(EdgeDirection.OUT) != null) {
 			print(COLON, SPACE);
 			boolean first = true;
 			for (SpecializesEdgeClass svc : ec
@@ -316,13 +323,13 @@ public class SchemaGraph2Tg {
 		}
 
 		// from/to
-		IncidenceClass fromIC = (IncidenceClass) ec.getFirstComesFrom(
+		IncidenceClass fromIC = (IncidenceClass) ec.getFirstComesFromIncidence(
 				EdgeDirection.OUT).getThat();
-		IncidenceClass toIC = (IncidenceClass) ec.getFirstGoesTo(
+		IncidenceClass toIC = (IncidenceClass) ec.getFirstGoesToIncidence(
 				EdgeDirection.OUT).getThat();
-		VertexClass fromVC = (VertexClass) fromIC.getFirstEndsAt(
+		VertexClass fromVC = (VertexClass) fromIC.getFirstEndsAtIncidence(
 				EdgeDirection.OUT).getThat();
-		VertexClass toVC = (VertexClass) toIC.getFirstEndsAt(EdgeDirection.OUT)
+		VertexClass toVC = (VertexClass) toIC.getFirstEndsAtIncidence(EdgeDirection.OUT)
 				.getThat();
 
 		print(SPACE, FROM, SPACE, shortName(fromVC.get_qualifiedName()));
@@ -357,13 +364,19 @@ public class SchemaGraph2Tg {
 			return qname;
 		}
 
+		int lastDotIdx = qname.lastIndexOf('.');
+
 		// To refer to elements in the default package while not being there, we
 		// need to add a DOT.
-		if (!qname.contains(".") && !currentPackageName.isEmpty()) {
+		if ((lastDotIdx == -1) && !currentPackageName.isEmpty()) {
 			return '.' + qname;
 		}
-		return qname.replaceFirst("^" + currentPackageName + "\\" + DOT, "");
 
+		if ((lastDotIdx != -1)
+				&& currentPackageName.equals(qname.substring(0, lastDotIdx))) {
+			return qname.substring(lastDotIdx + 1);
+		}
+		return qname;
 	}
 
 	private boolean isPredefinedDomainName(String qname) {
@@ -381,11 +394,11 @@ public class SchemaGraph2Tg {
 		print(SPACE, ROUND_BRACKET_OPENED, min, COMMA, max,
 				ROUND_BRACKET_CLOSED);
 
-		if (ic.get_roleName() != null && !ic.get_roleName().isEmpty()) {
+		if ((ic.get_roleName() != null) && !ic.get_roleName().isEmpty()) {
 			print(SPACE, ROLE, SPACE, ic.get_roleName());
 		}
 
-		if (ic.getFirstRedefines(EdgeDirection.OUT) != null) {
+		if (ic.getFirstRedefinesIncidence(EdgeDirection.OUT) != null) {
 			print(SPACE, REDEFINES, SPACE);
 			boolean first = true;
 			for (Redefines r : ic.getRedefinesIncidences(EdgeDirection.OUT)) {
@@ -473,7 +486,7 @@ public class SchemaGraph2Tg {
 	}
 
 	private void printAttributes(AttributedElementClass aec) {
-		if (aec.getFirstHasAttribute(EdgeDirection.OUT) == null) {
+		if (aec.getFirstHasAttributeIncidence(EdgeDirection.OUT) == null) {
 			return;
 		}
 
@@ -486,7 +499,7 @@ public class SchemaGraph2Tg {
 				print(COMMA, SPACE);
 			}
 			Attribute attr = (Attribute) ha.getThat();
-			Domain dom = (Domain) attr.getFirstHasDomain(EdgeDirection.OUT)
+			Domain dom = (Domain) attr.getFirstHasDomainIncidence(EdgeDirection.OUT)
 					.getThat();
 			print(attr.get_name(), COLON, SPACE,
 					shortName(dom.get_qualifiedName()));

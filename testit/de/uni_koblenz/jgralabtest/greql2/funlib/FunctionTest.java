@@ -1,25 +1,32 @@
 /*
- * JGraLab - The Java graph laboratory
- * (c) 2006-2010 Institute for Software Technology
- *               University of Koblenz-Landau, Germany
+ * JGraLab - The Java Graph Laboratory
  * 
- *               ist@uni-koblenz.de
+ * Copyright (C) 2006-2010 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
  * 
- * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
  * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Additional permission under GNU GPL version 3 section 7
+ * 
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
  */
 
 package de.uni_koblenz.jgralabtest.greql2.funlib;
@@ -71,6 +78,8 @@ public class FunctionTest extends GenericTests {
 	 */
 	@Test
 	public void testAnd() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
 		String queryString = "from var: V{Variable}, def: V{WhereExpression} with var  -->{IsVarOf} -->{IsDefinitionOf} def and 1=1 report var end";
 		JValue result = evalTestQuery("And", queryString);
 		assertEquals(4, result.toCollection().size());
@@ -81,7 +90,7 @@ public class FunctionTest extends GenericTests {
 		String dataGraphQuery = "true"; // should contains only one edge
 		Greql2 dataGraph = GreqlParser.parse(dataGraphQuery);
 		JValue result = evalTestQuery("getEdge", "getEdge(1)", dataGraph);
-		assertEquals(dataGraph.getFirstEdgeInGraph(), result.toEdge());
+		assertEquals(dataGraph.getFirstEdge(), result.toEdge());
 	}
 
 	@Test
@@ -243,6 +252,8 @@ public class FunctionTest extends GenericTests {
 
 	@Test
 	public void testEdgesConnected() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
 		String queryString = "from x : V{WhereExpression} report edgesConnected(x) end";
 		JValue result = evalTestQuery("EdgesConnected", queryString);
 		assertEquals(6, getNthValue(result.toCollection(), 0).toCollection()
@@ -251,6 +262,8 @@ public class FunctionTest extends GenericTests {
 
 	@Test
 	public void testEdgesFrom() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
 		String queryString = "from x : V{WhereExpression} report edgesFrom(x) end";
 		JValue result = evalTestQuery("EdgesFrom", queryString);
 		assertEquals(1, result.toCollection().size());
@@ -260,6 +273,8 @@ public class FunctionTest extends GenericTests {
 
 	@Test
 	public void testEdgesTo() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
 		String queryString = "from x : V{WhereExpression} report edgesTo(x) end";
 		JValue result = evalTestQuery("EdgesTo", queryString);
 		assertEquals(1, result.toCollection().size());
@@ -270,6 +285,8 @@ public class FunctionTest extends GenericTests {
 
 	@Test
 	public void testTypes() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
 		String queryString = "from x : V{WhereExpression} report types(edgesConnected(x)) end";
 		JValue result = evalTestQuery("EdgeTypeSet", queryString);
 		assertEquals(3, getNthValue(result.toCollection(), 0).toCollection()
@@ -285,6 +302,8 @@ public class FunctionTest extends GenericTests {
 
 	@Test
 	public void testEquals2() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
 		String queryString = "from x : V{WhereExpression}, y : V{Greql2Expression} report equals(x,y) end";
 		JValue result = evalTestQuery("Equals2", queryString);
 
@@ -294,6 +313,8 @@ public class FunctionTest extends GenericTests {
 
 	@Test
 	public void testEquals3() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
 		String queryString = "from x : V{WhereExpression}, y : V{WhereExpression} report equals(x,y) end";
 		JValue result = evalTestQuery("Equals3", queryString);
 		assertEquals(true, (boolean) getNthValue(result.toCollection(), 0)
@@ -302,6 +323,8 @@ public class FunctionTest extends GenericTests {
 
 	@Test
 	public void testEquals4() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
 		String queryString = "from x : V{WhereExpression}, y : E{IsBoundExprOfDefinition} report equals(x,y) end";
 		JValue result = evalTestQuery("Equals4", queryString);
 		assertEquals(1, result.toCollection().size());
@@ -324,6 +347,8 @@ public class FunctionTest extends GenericTests {
 	 */
 	@Test
 	public void testEvaluateListAccess() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
 		String queryString = "let x := list ( \"bratwurst\", \"currywurst\", \"steak\", \"kaenguruhfleisch\", \"spiessbraten\") in from i:V{Identifier} report x[3] end";
 		JValue result = evalTestQuery("ListAccess", queryString);
 		assertEquals(5, result.toCollection().size());
@@ -347,6 +372,8 @@ public class FunctionTest extends GenericTests {
 
 	@Test
 	public void testGetValue() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
 		String queryString = "from x : V{Variable} report x.name end";
 		JValue result = evalTestQuery("GetValue", queryString);
 		assertEquals(5, result.toCollection().size());
@@ -381,6 +408,8 @@ public class FunctionTest extends GenericTests {
 
 	@Test
 	public void testHasType() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
 		String queryString = "from x : V{WhereExpression} report hasType(x, \"WhereExpression\") end";
 		JValue result = evalTestQuery("HasType", queryString);
 		assertEquals(1, result.toCollection().size());
@@ -390,6 +419,8 @@ public class FunctionTest extends GenericTests {
 
 	@Test
 	public void testHasType2() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
 		String queryString = "from x : V{WhereExpression} report hasType(x, \"Variable\") end";
 		JValue result = evalTestQuery("HasType2", queryString);
 		assertEquals(1, result.toCollection().size());
@@ -399,6 +430,8 @@ public class FunctionTest extends GenericTests {
 
 	@Test
 	public void testHasType3() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
 		String queryString = "from x : V{WhereExpression} report hasType{WhereExpression, Definition}(x) end";
 		JValue result = evalTestQuery("HasType3", queryString);
 		assertEquals(1, result.toCollection().size());
@@ -494,6 +527,8 @@ public class FunctionTest extends GenericTests {
 
 	@Test
 	public void testIsIsolated() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
 		String queryString = "from x : V{WhereExpression} report isIsolated(x) end";
 		JValue result = evalTestQuery("IsIsolated", queryString);
 		assertEquals(1, result.toCollection().size());
@@ -503,6 +538,8 @@ public class FunctionTest extends GenericTests {
 
 	@Test
 	public void testIsLoop() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
 		String queryString = "from x : E{IsBoundExprOfDefinition} report isLoop(x) end";
 		JValue result = evalTestQuery("IsLoop", queryString);
 		assertEquals(1, result.toCollection().size());
@@ -632,6 +669,8 @@ public class FunctionTest extends GenericTests {
 
 	@Test
 	public void testNotEquals() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
 		String queryString = "from x : V{WhereExpression}, y : V{Variable} reportSet x <> y end";
 		JValue result = evalTestQuery("NotEquals", queryString);
 		assertEquals(1, result.toCollection().size());
@@ -682,6 +721,8 @@ public class FunctionTest extends GenericTests {
 	 */
 	@Test
 	public void testOr() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
 		String queryString = "from var: V{Variable}, def: V{WhereExpression} with var  -->{IsVarOf} -->{IsDefinitionOf} def or 1=2 report var end";
 		JValue result = evalTestQuery("Or", queryString);
 		assertEquals(4, result.toCollection().size());
@@ -731,6 +772,8 @@ public class FunctionTest extends GenericTests {
 
 	@Test
 	public void testSiblings() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
 		String queryString = "from x: V{Definition} report siblings(x) end";
 		JValue result = evalTestQuery("Siblings", queryString);
 		assertEquals(4, result.toCollection().size());
@@ -947,6 +990,8 @@ public class FunctionTest extends GenericTests {
 
 	@Test
 	public void testTopologicalSort() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
 		String q = "topologicalSort()";
 		JValue result = evalTestQuery("TopologicalSort", q);
 		JValueList resultList = result.toJValueList();

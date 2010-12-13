@@ -1,25 +1,32 @@
 /*
- * JGraLab - The Java graph laboratory
- * (c) 2006-2010 Institute for Software Technology
- *               University of Koblenz-Landau, Germany
+ * JGraLab - The Java Graph Laboratory
  * 
- *               ist@uni-koblenz.de
+ * Copyright (C) 2006-2010 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
  * 
- * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
  * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Additional permission under GNU GPL version 3 section 7
+ * 
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
  */
 
 package de.uni_koblenz.jgralab.impl;
@@ -38,6 +45,7 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
  */
 public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 		Edge {
+
 	protected final EdgeBaseImpl normalEdge;
 
 	/**
@@ -138,8 +146,8 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 	 * @see de.uni_koblenz.jgralab.Edge#getNextEdgeInGraph()
 	 */
 	@Override
-	public Edge getNextEdgeInGraph() {
-		return normalEdge.getNextEdgeInGraph();
+	public Edge getNextEdge() {
+		return normalEdge.getNextEdge();
 	}
 
 	/*
@@ -148,8 +156,8 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 	 * @see de.uni_koblenz.jgralab.Edge#getPrevEdgeInGraph()
 	 */
 	@Override
-	public Edge getPrevEdgeInGraph() {
-		return normalEdge.getPrevEdgeInGraph();
+	public Edge getPrevEdge() {
+		return normalEdge.getPrevEdge();
 	}
 
 	/*
@@ -160,8 +168,8 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 	 * jgralab.schema.EdgeClass)
 	 */
 	@Override
-	public Edge getNextEdgeOfClassInGraph(EdgeClass anEdgeClass) {
-		return normalEdge.getNextEdgeOfClassInGraph(anEdgeClass);
+	public Edge getNextEdge(EdgeClass anEdgeClass) {
+		return normalEdge.getNextEdge(anEdgeClass);
 	}
 
 	/*
@@ -171,8 +179,8 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 	 * de.uni_koblenz.jgralab.Edge#getNextEdgeOfClassInGraph(java.lang.Class)
 	 */
 	@Override
-	public Edge getNextEdgeOfClassInGraph(Class<? extends Edge> anEdgeClass) {
-		return normalEdge.getNextEdgeOfClassInGraph(anEdgeClass);
+	public Edge getNextEdge(Class<? extends Edge> anEdgeClass) {
+		return normalEdge.getNextEdge(anEdgeClass);
 	}
 
 	/*
@@ -183,9 +191,9 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 	 * boolean)
 	 */
 	@Override
-	public Edge getNextEdgeOfClassInGraph(Class<? extends Edge> anEdgeClass,
+	public Edge getNextEdge(Class<? extends Edge> anEdgeClass,
 			boolean noSubclasses) {
-		return normalEdge.getNextEdgeOfClassInGraph(anEdgeClass, noSubclasses);
+		return normalEdge.getNextEdge(anEdgeClass, noSubclasses);
 	}
 
 	/*
@@ -196,9 +204,9 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 	 * jgralab.schema.EdgeClass, boolean)
 	 */
 	@Override
-	public Edge getNextEdgeOfClassInGraph(EdgeClass anEdgeClass,
+	public Edge getNextEdge(EdgeClass anEdgeClass,
 			boolean noSubclasses) {
-		return normalEdge.getNextEdgeOfClassInGraph(anEdgeClass, noSubclasses);
+		return normalEdge.getNextEdge(anEdgeClass, noSubclasses);
 	}
 
 	/*
@@ -290,8 +298,8 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 	 * de.uni_koblenz.jgralab.Edge#isAfterInGraph(de.uni_koblenz.jgralab.Edge)
 	 */
 	@Override
-	public boolean isAfterInGraph(Edge e) {
-		return normalEdge.isAfterInGraph(e);
+	public boolean isAfterEdge(Edge e) {
+		return normalEdge.isAfterEdge(e);
 	}
 
 	/*
@@ -301,8 +309,8 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 	 * de.uni_koblenz.jgralab.Edge#isBeforeInGraph(de.uni_koblenz.jgralab.Edge)
 	 */
 	@Override
-	public boolean isBeforeInGraph(Edge e) {
-		return normalEdge.isBeforeInGraph(e);
+	public boolean isBeforeEdge(Edge e) {
+		return normalEdge.isBeforeEdge(e);
 	}
 
 	/*
@@ -322,8 +330,8 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 	 * de.uni_koblenz.jgralab.Edge#putAfterInGraph(de.uni_koblenz.jgralab.Edge)
 	 */
 	@Override
-	public void putAfterInGraph(Edge e) {
-		normalEdge.putAfterInGraph(e);
+	public void putAfterEdge(Edge e) {
+		normalEdge.putAfterEdge(e);
 	}
 
 	/*
@@ -333,8 +341,8 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 	 * de.uni_koblenz.jgralab.Edge#putBeforeInGraph(de.uni_koblenz.jgralab.Edge)
 	 */
 	@Override
-	public void putBeforeInGraph(Edge e) {
-		normalEdge.putBeforeInGraph(e);
+	public void putBeforeEdge(Edge e) {
+		normalEdge.putBeforeEdge(e);
 	}
 
 	/*

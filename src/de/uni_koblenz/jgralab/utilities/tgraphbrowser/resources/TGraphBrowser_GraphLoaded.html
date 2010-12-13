@@ -1597,13 +1597,13 @@ div#div2DGraph{
 	<div class="option" id="div2DVis" style="display:none;">
 		<p>
 			Size of environment: 
-			<input type="text" name="textPathLength" id="textPathLength" value="1" onchange="if(this.value&lt;1){this.value='1';}refreshView();" />
+			<input type="text" name="textPathLength" id="textPathLength" value="1" onchange="if(this.value&lt;1){this.value='1';}refreshView();" onkeyup="if((event.which?event.which:event.keyCode)==13){if(this.value&lt;1){this.value='1';}refreshView();}" />
 		</p>
 	</div>
 	<a id="aChangeView" class="option" href="javascript:changeView();">&nbsp;Show graphical view&nbsp;</a>
 	&nbsp;
 	<div id="rightOption" class="option">
-		<input type="text" name="textElem" id="textElem" value="v1" size="6" onchange="selectElements(this);" />
+		<input type="text" name="textElem" id="textElem" value="v1" size="6" onchange="selectElements(this);"  onkeyup="if((event.which?event.which:event.keyCode)==13){selectElements(this);}" />
 		<a id="aGReQL" href="javascript:callGReQLWindow('aGReQL');">&nbsp;Select by GReQL&nbsp;</a>
 	</div>
 </div>
