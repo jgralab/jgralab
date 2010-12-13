@@ -86,7 +86,7 @@ public class Csv2Tg implements FilenameFilter {
 	private void setSchema(String optionValues) throws GraphIOException {
 		System.out.print("Loading Schema ... ");
 		Schema schema = GraphIO.loadSchemaFromFile(optionValues);
-		schema.commit(CodeGeneratorConfiguration.FULL);
+		schema.compile(CodeGeneratorConfiguration.FULL);
 		setSchema(schema);
 		System.out.println("done.");
 	}
