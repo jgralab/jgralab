@@ -1,25 +1,32 @@
 /*
- * JGraLab - The Java graph laboratory
- * (c) 2006-2010 Institute for Software Technology
- *               University of Koblenz-Landau, Germany
+ * JGraLab - The Java Graph Laboratory
  * 
- *               ist@uni-koblenz.de
+ * Copyright (C) 2006-2010 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
  * 
- * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
  * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Additional permission under GNU GPL version 3 section 7
+ * 
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
  */
 
 package de.uni_koblenz.jgralab.codegenerator;
@@ -105,7 +112,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	@Override
 	protected CodeBlock createBody() {
 		CodeList code = new CodeList();
-		if (currentCycle.isStdOrSaveMemOrTransImpl()) {
+		if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()) {
 			code.add(createFields(aec.getAttributeList()));
 			code.add(createConstructor());
 			code.add(createGetAttributedElementClassMethod());
@@ -135,25 +142,27 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		CodeSnippet code = new CodeSnippet(true);
 
 		code.setVariable("classOrInterface", currentCycle
-				.isStdOrSaveMemOrTransImpl() ? " class" : " interface");
-		code.setVariable("abstract", currentCycle.isStdOrSaveMemOrTransImpl()
+				.isStdOrSaveMemOrDbImplOrTransImpl() ? " class" : " interface");
+		code.setVariable("abstract", currentCycle
+				.isStdOrSaveMemOrDbImplOrTransImpl()
 				&& aec.isAbstract() ? " abstract" : "");
-		code.setVariable("impl", currentCycle.isStdOrSaveMemOrTransImpl()
+		code.setVariable("impl", currentCycle
+				.isStdOrSaveMemOrDbImplOrTransImpl()
 				&& !aec.isAbstract() ? "Impl" : "");
 		code
 				.add("public#abstract##classOrInterface# #simpleClassName##impl##extends##implements# {");
 		code
 				.setVariable(
 						"extends",
-						currentCycle.isStdOrSaveMemOrTransImpl() ? " extends #baseClassName#"
+						currentCycle.isStdOrSaveMemOrDbImplOrTransImpl() ? " extends #baseClassName#"
 								: "");
 
 		StringBuffer buf = new StringBuffer();
 		if (interfaces.size() > 0) {
-			String delim = currentCycle.isStdOrSaveMemOrTransImpl() ? " implements "
+			String delim = currentCycle.isStdOrSaveMemOrDbImplOrTransImpl() ? " implements "
 					: " extends ";
 			for (String interfaceName : interfaces) {
-				if (currentCycle.isStdOrSaveMemOrTransImpl()
+				if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()
 						|| !interfaceName.equals(aec.getQualifiedName())) {
 					if (interfaceName.equals("Vertex")
 							|| interfaceName.equals("Edge")
@@ -195,6 +204,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 			code.addNoIndent(new CodeSnippet(
 					"\tinitializeAttributesWithDefaultValues();"));
 		}
+
 		code.add(createSpecialConstructorCode());
 		code.addNoIndent(new CodeSnippet("}"));
 		return code;
@@ -293,12 +303,18 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 						.add("\t\tset_#name#(#attributeClassName#.valueOfPermitNull((String) data));");
 				s.add("\t} else {");
 				s.add("\t\tset_#name#((#attributeClassName#) data);");
+
+				// if(currentCycle.isDbImpl())
+				// s.add("\tsuper.setAttribute(attributeName, data);");
 				s.add("\t}");
 				s.add("\treturn;");
 				s.add("}");
 			} else {
 				s.add("if (attributeName.equals(\"#name#\")) {");
 				s.add("\tset_#name#((#attributeClassName#) data);");
+
+				// if(currentCycle.isDbImpl())
+				// s.add("\tsuper.setAttribute(attributeName, data);");
 				s.add("\treturn;");
 				s.add("}");
 			}
@@ -341,6 +357,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 			code.add("public #type# #isOrGet#_#name#();");
 			break;
 		case STDIMPL:
+		case DBIMPL:
 		case SAVEMEMIMPL:
 			code.add("public #type# #isOrGet#_#name#() {", "\treturn _#name#;",
 					"}");
@@ -386,9 +403,18 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 			code.add("public void set_#name#(#type# _#name#);");
 			break;
 		case STDIMPL:
+
 		case SAVEMEMIMPL:
 			code.add("public void set_#name#(#type# _#name#) {",
 					"\tthis._#name# = _#name#;", "\tgraphModified();", "}");
+			break;
+		case DBIMPL:
+			code.add("public void set_#name#(#type# _#name#) {");
+			code.add("\tthis._#name# = _#name#;");
+			// code.add("\tif(this.isInitialized())");
+			// code.add("\t\tgraphModified();");
+			code.add("\tattributeChanged(\"#name#\");");
+			code.add("}");
 			break;
 		case TRANSIMPL:
 			Domain domain = attr.getDomain();
@@ -439,7 +465,6 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 				code
 						.add("\t((JGraLabTransactionCloneable)_#name#).setName(this + \":#name#\");");
 			}
-
 			code
 					.add(
 							"\tthis._#name#.setValidValue((#ttype#) _#name#, #theGraph#.getCurrentTransaction());",
@@ -453,7 +478,8 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	protected CodeBlock createField(Attribute attr) {
 		CodeSnippet code = new CodeSnippet(true, "protected #type# _#name#;");
 		code.setVariable("name", attr.getName());
-		if (currentCycle.isStdImpl() || currentCycle.isSaveMemImpl()) {
+		if (currentCycle.isStdImpl() || currentCycle.isSaveMemImpl()
+				|| currentCycle.isDbImpl()) {
 			code.setVariable("type", attr.getDomain()
 					.getJavaAttributeImplementationTypeName(
 							schemaRootPackageName));
@@ -495,7 +521,8 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 					a.addNoIndent(new CodeSnippet("\t#setterName#(tmpVar);",
 							"\treturn;", "}"));
 				}
-				if (currentCycle.isStdImpl() || currentCycle.isSaveMemImpl()) {
+				if (currentCycle.isStdImpl() || currentCycle.isSaveMemImpl()
+						|| currentCycle.isDbImpl()) {
 					a.add(attribute.getDomain().getReadMethod(
 							schemaRootPackageName, "_" + attribute.getName(),
 							"io"));
@@ -510,7 +537,6 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 				.add(new CodeSnippet(
 						"throw new NoSuchAttributeException(\"#qualifiedClassName# doesn't contain an attribute \" + attributeName);"));
 		code.addNoIndent(new CodeSnippet("}"));
-
 		return code;
 	}
 
@@ -542,7 +568,8 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 							schemaRootPackageName, "_" + attribute.getName(),
 							"io"));
 				}
-				if (currentCycle.isStdImpl() || currentCycle.isSaveMemImpl()) {
+				if (currentCycle.isStdImpl() || currentCycle.isSaveMemImpl()
+						|| currentCycle.isDbImpl()) {
 					a.add(attribute.getDomain().getWriteMethod(
 							schemaRootPackageName, "_" + attribute.getName(),
 							"io"));
@@ -559,20 +586,20 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		return code;
 	}
 
-	protected CodeBlock createReadAttributesMethod(Set<Attribute> attrSet) {
+	protected CodeBlock createReadAttributesMethod(SortedSet<Attribute> attrSet) {
 		CodeList code = new CodeList();
 
 		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException");
 
-		code
-				.addNoIndent(new CodeSnippet(true,
+		code.addNoIndent(new CodeSnippet(true,
 						"public void readAttributeValues(GraphIO io) throws GraphIOException {"));
 		if (attrSet != null) {
 			for (Attribute attribute : attrSet) {
 				CodeSnippet snippet = new CodeSnippet();
 				snippet.setVariable("setterName", "set_" + attribute.getName());
 				snippet.setVariable("variableName", attribute.getName());
-				if (currentCycle.isStdImpl() || currentCycle.isSaveMemImpl()) {
+				if (currentCycle.isStdImpl() || currentCycle.isSaveMemImpl()
+						|| currentCycle.isDbImpl()) {
 					code.add(attribute.getDomain().getReadMethod(
 							schemaRootPackageName, "_" + attribute.getName(),
 							"io"));
@@ -603,7 +630,8 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		if ((attrSet != null) && !attrSet.isEmpty()) {
 			code.add(new CodeSnippet("io.space();"));
 			for (Attribute attribute : attrSet) {
-				if (currentCycle.isStdImpl() || currentCycle.isSaveMemImpl()) {
+				if (currentCycle.isStdImpl() || currentCycle.isSaveMemImpl()
+						|| currentCycle.isDbImpl()) {
 					code.add(attribute.getDomain().getWriteMethod(
 							schemaRootPackageName, "_" + attribute.getName(),
 							"io"));
@@ -648,5 +676,4 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		}
 		return code;
 	}
-
 }

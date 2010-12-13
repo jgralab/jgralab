@@ -1,25 +1,32 @@
 /*
- * JGraLab - The Java graph laboratory
- * (c) 2006-2010 Institute for Software Technology
- *               University of Koblenz-Landau, Germany
+ * JGraLab - The Java Graph Laboratory
  * 
- *               ist@uni-koblenz.de
+ * Copyright (C) 2006-2010 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
  * 
- * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
  * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Additional permission under GNU GPL version 3 section 7
+ * 
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
  */
 
 package de.uni_koblenz.jgralab.codegenerator;
@@ -109,7 +116,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 
 	private CodeBlock createFieldConstructor() {
 		CodeList code = new CodeList();
-		if (currentCycle.isStdOrSaveMemOrTransImpl()) {
+		if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()) {
 			StringBuilder sb = new StringBuilder();
 			CodeSnippet header = null;
 			header = new CodeSnippet(true,
@@ -158,7 +165,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 	private CodeBlock createVariableParametersSetter() {
 		CodeList code = new CodeList();
 
-		if (currentCycle.isStdOrSaveMemOrTransImpl()) {
+		if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()) {
 			CodeSnippet codeSnippet = new CodeSnippet(true);
 
 			if (hasCompositeRecordComponent()) {
@@ -187,15 +194,12 @@ public class RecordCodeGenerator extends CodeGenerator {
 				assign.setVariable("name", rdc.getName());
 				assign.setVariable("type", rdc.getDomain().getJavaClassName(
 						schemaRootPackageName));
-
 				assign.setVariable("index", Integer.valueOf(count).toString());
-
 				code.addNoIndent(assign);
 				count++;
 			}
 			code.addNoIndent(new CodeSnippet("}"));
 		}
-
 		return code;
 	}
 
@@ -231,8 +235,9 @@ public class RecordCodeGenerator extends CodeGenerator {
 	 */
 	private CodeBlock createEqualsMethod() {
 		CodeList code = new CodeList();
-		if (currentCycle.isAbstract())
+		if (currentCycle.isAbstract()) {
 			return code;
+		}
 		code.addNoIndent(new CodeSnippet(true,
 				"public boolean equals(Object o) {"));
 		code.add(new CodeSnippet("if(o == null)", "\treturn false;"));
@@ -241,7 +246,8 @@ public class RecordCodeGenerator extends CodeGenerator {
 			code.add(new CodeSnippet("if(!(o instanceof #simpleClassName#))",
 					"\treturn false;"));
 		}
-		if (currentCycle.isStdImpl() || currentCycle.isSaveMemImpl()) {
+		if (currentCycle.isStdImpl() || currentCycle.isSaveMemImpl()
+				|| currentCycle.isDbImpl()) {
 			code.add(new CodeSnippet(
 					"if(!(o instanceof #simpleImplClassName#))",
 					"\treturn false;"));
@@ -297,6 +303,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 				codeSnippet.setVariable("name", entry.getName());
 				break;
 			case STDIMPL:
+			case DBIMPL:
 			case SAVEMEMIMPL:
 				codeSnippet = new CodeSnippet(true);
 				if (entry.getDomain().isComposite()) {
@@ -333,7 +340,6 @@ public class RecordCodeGenerator extends CodeGenerator {
 		if (currentCycle.isTransImpl()) {
 			CodeSnippet codeSnippet = new CodeSnippet(true,
 					"private void init(Graph g) {");
-
 			codeSnippet.add("\tif (g == null)");
 			codeSnippet
 					.add("\t\tthrow new GraphException(\"Given graph cannot be null.\");");
@@ -343,13 +349,11 @@ public class RecordCodeGenerator extends CodeGenerator {
 							+ "\"An instance of #tclassname# can only be created for graphs with transaction support.\");");
 			codeSnippet.add("\t\tgraph = g;");
 			codeSnippet.add("}");
-
 			codeSnippet
 					.setVariable(
 							"tclassname",
 							recordDomain
 									.getTransactionJavaAttributeImplementationTypeName(schemaRootPackageName));
-
 			code.addNoIndent(codeSnippet);
 		}
 		return code;
@@ -358,7 +362,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 	@Override
 	protected CodeBlock createHeader() {
 		CodeSnippet code = null;
-		if (currentCycle.isStdOrSaveMemOrTransImpl()) {
+		if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()) {
 			addImports("de.uni_koblenz.jgralab.NoSuchAttributeException");
 		}
 		switch (currentCycle) {
@@ -368,6 +372,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 					"public abstract class #simpleClassName# implements de.uni_koblenz.jgralab.Record {");
 			break;
 		case STDIMPL:
+		case DBIMPL:
 		case SAVEMEMIMPL:
 			addImports("#jgPackage#.Graph");
 			addImports("#schemaPackage#.#simpleClassName#");
@@ -414,6 +419,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 				getterCode.add("public abstract #type# #isOrGet#_#name#();");
 				break;
 			case STDIMPL:
+			case DBIMPL:
 			case SAVEMEMIMPL:
 				getterCode.setVariable("ctype", rdc.getDomain()
 						.getJavaAttributeImplementationTypeName(
@@ -461,6 +467,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 				setterCode.add("public abstract void #setter#;");
 				break;
 			case STDIMPL:
+			case DBIMPL:
 			case SAVEMEMIMPL:
 				setterCode.setVariable("ctype", rdc.getDomain()
 						.getJavaAttributeImplementationTypeName(
@@ -480,7 +487,6 @@ public class RecordCodeGenerator extends CodeGenerator {
 				if (rdc.getDomain().isComposite()) {
 					setterCode.setVariable("dname", rdc.getDomain()
 							.getSimpleName());
-
 					setterCode
 							.add("\tif(_#name# != null && !(_#name# instanceof #jgTransPackage#.JGraLabTransactionCloneable))");
 					setterCode
@@ -520,7 +526,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 
 	private CodeBlock createMapSetter() {
 		CodeList code = new CodeList();
-		if (currentCycle.isStdOrSaveMemOrTransImpl()) {
+		if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()) {
 			// suppress "unchecked" warnings if this record domain contains a
 			// Collection domain (Set<E>, List<E>, Map<K, V>)
 			for (RecordComponent comp : recordDomain.getComponents()) {
@@ -559,7 +565,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 
 	private CodeBlock createGenericSetter() {
 		CodeList code = new CodeList();
-		if (currentCycle.isStdOrSaveMemOrTransImpl()) {
+		if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()) {
 			// suppress "unchecked" warnings if this record domain contains a
 			// Collection domain (Set<E>, List<E>, Map<K, V>)
 			for (RecordComponent comp : recordDomain.getComponents()) {
@@ -602,7 +608,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 
 	private CodeBlock createGenericGetter() {
 		CodeList code = new CodeList();
-		if (currentCycle.isStdOrSaveMemOrTransImpl()) {
+		if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()) {
 			code.addNoIndent(new CodeSnippet(false, "@Override"));
 			code.addNoIndent(new CodeSnippet(false,
 					"public Object getComponent(String name) {"));
@@ -637,7 +643,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 	private CodeBlock createReadComponentsMethod() {
 		CodeList code = new CodeList();
 		// abstract class (or better use interface?)
-		if (currentCycle.isStdOrSaveMemOrTransImpl()) {
+		if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()) {
 			addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException");
 			code.addNoIndent(new CodeSnippet("@Override"));
 			code
@@ -680,14 +686,12 @@ public class RecordCodeGenerator extends CodeGenerator {
 							"public void writeComponentValues(GraphIO io) throws IOException, GraphIOException {",
 							"\tio.writeSpace();", "\tio.write(\"(\");",
 							"\tio.noSpace();"));
-
 			for (RecordComponent c : recordDomain.getComponents()) {
 				String isOrGet = c.getDomain() instanceof BooleanDomain ? "is"
 						: "get";
 				code.add(c.getDomain().getWriteMethod(schemaRootPackageName,
 						isOrGet + "_" + c.getName() + "()", "io"));
 			}
-
 			code.addNoIndent(new CodeSnippet("\tio.write(\")\");", "}"));
 		}
 		return code;
@@ -695,10 +699,9 @@ public class RecordCodeGenerator extends CodeGenerator {
 
 	private CodeBlock createRecordComponents() {
 		CodeList code = new CodeList();
-		if (currentCycle.isStdOrSaveMemOrTransImpl()) {
+		if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()) {
 			for (RecordComponent rdc : recordDomain.getComponents()) {
 				Domain dom = rdc.getDomain();
-
 				CodeSnippet s = new CodeSnippet(true,
 						"private #type# _#field#;");
 				s.setVariable("field", rdc.getName());
@@ -749,7 +752,6 @@ public class RecordCodeGenerator extends CodeGenerator {
 			code.addNoIndent(new CodeSnippet("\tsb.append(\"]\");",
 					"\treturn sb.toString();", "}"));
 		}
-
 		return code;
 	}
 
@@ -767,7 +769,8 @@ public class RecordCodeGenerator extends CodeGenerator {
 			code.addNoIndent(new CodeSnippet(true, "@Override"));
 			code.addNoIndent(new CodeSnippet(
 					"public #simpleImplClassName# clone() {"));
-			if (currentCycle.isStdImpl() || currentCycle.isSaveMemImpl()) {
+			if (currentCycle.isStdImpl() || currentCycle.isSaveMemImpl()
+					|| currentCycle.isDbImpl()) {
 				StringBuffer arguments = new StringBuffer("#theGraph#");
 				for (RecordComponent rdc : recordDomain.getComponents()) {
 					boolean hasToBeCloned = rdc.getDomain().isComposite()
@@ -856,5 +859,4 @@ public class RecordCodeGenerator extends CodeGenerator {
 		}
 		return code;
 	}
-
 }

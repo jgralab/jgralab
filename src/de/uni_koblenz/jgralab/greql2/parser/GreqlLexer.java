@@ -1,29 +1,37 @@
 /*
- * JGraLab - The Java graph laboratory
- * (c) 2006-2010 Institute for Software Technology
- *               University of Koblenz-Landau, Germany
+ * JGraLab - The Java Graph Laboratory
  * 
- *               ist@uni-koblenz.de
+ * Copyright (C) 2006-2010 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
  * 
- * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
  * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Additional permission under GNU GPL version 3 section 7
+ * 
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
  */
 package de.uni_koblenz.jgralab.greql2.parser;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,89 +41,90 @@ import de.uni_koblenz.jgralab.greql2.exception.ParsingException;
 
 public class GreqlLexer {
 
-	protected static Map<TokenTypes, String> fixedTokens;
-
-	{
-		fixedTokens = new HashMap<TokenTypes, String>();
-		fixedTokens.put(TokenTypes.T, "T");
-		fixedTokens.put(TokenTypes.AND, "and");
-		fixedTokens.put(TokenTypes.FALSE, "false");
-		fixedTokens.put(TokenTypes.NOT, "not");
-		fixedTokens.put(TokenTypes.NULL_VALUE, "null");
-		fixedTokens.put(TokenTypes.OR, "or");
-		fixedTokens.put(TokenTypes.TRUE, "true");
-		fixedTokens.put(TokenTypes.XOR, "xor");
-		fixedTokens.put(TokenTypes.AS, "as");
-		fixedTokens.put(TokenTypes.BAG, "bag");
-		fixedTokens.put(TokenTypes.MAP, "map");
-		fixedTokens.put(TokenTypes.E, "E");
-		fixedTokens.put(TokenTypes.ESUBGRAPH, "eSubgraph");
-		fixedTokens.put(TokenTypes.EXISTS_ONE, "exists!");
-		fixedTokens.put(TokenTypes.EXISTS, "exists");
-		fixedTokens.put(TokenTypes.END, "end");
-		fixedTokens.put(TokenTypes.FORALL, "forall");
-		fixedTokens.put(TokenTypes.FROM, "from");
-		fixedTokens.put(TokenTypes.IN, "in");
-		fixedTokens.put(TokenTypes.LET, "let");
-		fixedTokens.put(TokenTypes.LIST, "list");
-		fixedTokens.put(TokenTypes.REC, "rec");
-		fixedTokens.put(TokenTypes.REPORT, "report");
-		fixedTokens.put(TokenTypes.REPORTSET, "reportSet");
-		fixedTokens.put(TokenTypes.REPORTBAG, "reportBag");
-		fixedTokens.put(TokenTypes.REPORTTABLE, "reportTable");
-		fixedTokens.put(TokenTypes.REPORTMAP, "reportMap");
-		fixedTokens.put(TokenTypes.STORE, "store");
-		fixedTokens.put(TokenTypes.SET, "set");
-		fixedTokens.put(TokenTypes.TUP, "tup");
-		fixedTokens.put(TokenTypes.USING, "using");
-		fixedTokens.put(TokenTypes.V, "V");
-		fixedTokens.put(TokenTypes.VSUBGRAPH, "vSubgraph");
-		fixedTokens.put(TokenTypes.WHERE, "where");
-		fixedTokens.put(TokenTypes.WITH, "with");
-		fixedTokens.put(TokenTypes.QUESTION, "?");
-		fixedTokens.put(TokenTypes.EXCL, "!");
-		fixedTokens.put(TokenTypes.COLON, ":");
-		fixedTokens.put(TokenTypes.COMMA, ",");
-		fixedTokens.put(TokenTypes.DOT, ".");
-		fixedTokens.put(TokenTypes.DOTDOT, "..");
-		fixedTokens.put(TokenTypes.AT, "@");
-		fixedTokens.put(TokenTypes.LPAREN, "(");
-		fixedTokens.put(TokenTypes.RPAREN, ")");
-		fixedTokens.put(TokenTypes.LBRACK, "[");
-		fixedTokens.put(TokenTypes.RBRACK, "]");
-		fixedTokens.put(TokenTypes.LCURLY, "{");
-		fixedTokens.put(TokenTypes.RCURLY, "}");
-		fixedTokens.put(TokenTypes.EDGESTART, "<-");
-		fixedTokens.put(TokenTypes.EDGEEND, "->");
-		fixedTokens.put(TokenTypes.EDGE, "--");
-		fixedTokens.put(TokenTypes.RARROW, "-->");
-		fixedTokens.put(TokenTypes.LARROW, "<--");
-		fixedTokens.put(TokenTypes.ARROW, "<->");
-		fixedTokens.put(TokenTypes.ASSIGN, ":=");
-		fixedTokens.put(TokenTypes.EQUAL, "=");
-		fixedTokens.put(TokenTypes.MATCH, "=~");
-		fixedTokens.put(TokenTypes.NOT_EQUAL, "<>");
-		fixedTokens.put(TokenTypes.LE, "<=");
-		fixedTokens.put(TokenTypes.GE, ">=");
-		fixedTokens.put(TokenTypes.L_T, "<");
-		fixedTokens.put(TokenTypes.G_T, ">");
-		fixedTokens.put(TokenTypes.DIV, "/");
-		fixedTokens.put(TokenTypes.PLUS, "+");
-		fixedTokens.put(TokenTypes.MINUS, "-");
-		fixedTokens.put(TokenTypes.STAR, "*");
-		fixedTokens.put(TokenTypes.MOD, "%");
-		fixedTokens.put(TokenTypes.PLUSPLUS, "++");
-		fixedTokens.put(TokenTypes.SEMI, ";");
-		fixedTokens.put(TokenTypes.CARET, "^");
-		fixedTokens.put(TokenTypes.BOR, "|");
-		fixedTokens.put(TokenTypes.AMP, "&");
-		fixedTokens.put(TokenTypes.SMILEY, ":-)");
-		fixedTokens.put(TokenTypes.HASH, "#");
-		fixedTokens.put(TokenTypes.OUTAGGREGATION, "<>--");
-		fixedTokens.put(TokenTypes.INAGGREGATION, "--<>");
-		fixedTokens.put(TokenTypes.PATHSYSTEMSTART, "-<");
-		fixedTokens.put(TokenTypes.IMPORT, "import");
-	}
+	@SuppressWarnings("serial")
+	protected static final Map<TokenTypes, String> fixedTokens = Collections
+			.unmodifiableMap(new HashMap<TokenTypes, String>() {
+				{
+					put(TokenTypes.T, "T");
+					put(TokenTypes.AND, "and");
+					put(TokenTypes.FALSE, "false");
+					put(TokenTypes.NOT, "not");
+					put(TokenTypes.NULL_VALUE, "null");
+					put(TokenTypes.OR, "or");
+					put(TokenTypes.TRUE, "true");
+					put(TokenTypes.XOR, "xor");
+					put(TokenTypes.AS, "as");
+					put(TokenTypes.BAG, "bag");
+					put(TokenTypes.MAP, "map");
+					put(TokenTypes.E, "E");
+					put(TokenTypes.ESUBGRAPH, "eSubgraph");
+					put(TokenTypes.EXISTS_ONE, "exists!");
+					put(TokenTypes.EXISTS, "exists");
+					put(TokenTypes.END, "end");
+					put(TokenTypes.FORALL, "forall");
+					put(TokenTypes.FROM, "from");
+					put(TokenTypes.IN, "in");
+					put(TokenTypes.LET, "let");
+					put(TokenTypes.LIST, "list");
+					put(TokenTypes.REC, "rec");
+					put(TokenTypes.REPORT, "report");
+					put(TokenTypes.REPORTSET, "reportSet");
+					put(TokenTypes.REPORTBAG, "reportBag");
+					put(TokenTypes.REPORTTABLE, "reportTable");
+					put(TokenTypes.REPORTMAP, "reportMap");
+					put(TokenTypes.STORE, "store");
+					put(TokenTypes.SET, "set");
+					put(TokenTypes.TUP, "tup");
+					put(TokenTypes.USING, "using");
+					put(TokenTypes.V, "V");
+					put(TokenTypes.VSUBGRAPH, "vSubgraph");
+					put(TokenTypes.WHERE, "where");
+					put(TokenTypes.WITH, "with");
+					put(TokenTypes.QUESTION, "?");
+					put(TokenTypes.EXCL, "!");
+					put(TokenTypes.COLON, ":");
+					put(TokenTypes.COMMA, ",");
+					put(TokenTypes.DOT, ".");
+					put(TokenTypes.DOTDOT, "..");
+					put(TokenTypes.AT, "@");
+					put(TokenTypes.LPAREN, "(");
+					put(TokenTypes.RPAREN, ")");
+					put(TokenTypes.LBRACK, "[");
+					put(TokenTypes.RBRACK, "]");
+					put(TokenTypes.LCURLY, "{");
+					put(TokenTypes.RCURLY, "}");
+					put(TokenTypes.EDGESTART, "<-");
+					put(TokenTypes.EDGEEND, "->");
+					put(TokenTypes.EDGE, "--");
+					put(TokenTypes.RARROW, "-->");
+					put(TokenTypes.LARROW, "<--");
+					put(TokenTypes.ARROW, "<->");
+					put(TokenTypes.ASSIGN, ":=");
+					put(TokenTypes.EQUAL, "=");
+					put(TokenTypes.MATCH, "=~");
+					put(TokenTypes.NOT_EQUAL, "<>");
+					put(TokenTypes.LE, "<=");
+					put(TokenTypes.GE, ">=");
+					put(TokenTypes.L_T, "<");
+					put(TokenTypes.G_T, ">");
+					put(TokenTypes.DIV, "/");
+					put(TokenTypes.PLUS, "+");
+					put(TokenTypes.MINUS, "-");
+					put(TokenTypes.STAR, "*");
+					put(TokenTypes.MOD, "%");
+					put(TokenTypes.PLUSPLUS, "++");
+					put(TokenTypes.SEMI, ";");
+					put(TokenTypes.CARET, "^");
+					put(TokenTypes.BOR, "|");
+					put(TokenTypes.AMP, "&");
+					put(TokenTypes.SMILEY, ":-)");
+					put(TokenTypes.HASH, "#");
+					put(TokenTypes.OUTAGGREGATION, "<>--");
+					put(TokenTypes.INAGGREGATION, "--<>");
+					put(TokenTypes.PATHSYSTEMSTART, "-<");
+					put(TokenTypes.IMPORT, "import");
+				}
+			});
 
 	protected String query = null;
 
@@ -192,8 +201,8 @@ public class GreqlLexer {
 				if ((position >= query.length())
 						|| (query.charAt(position) != separator)) {
 					throw new ParsingException("String started at position "
-							+ start + " but is not closed in query",
-							sb.toString(), start, position - start, query);
+							+ start + " but is not closed in query", sb
+							.toString(), start, position - start, query);
 				}
 				recognizedTokenType = TokenTypes.STRING;
 				recognizedToken = new ComplexToken(recognizedTokenType, start,
@@ -279,8 +288,8 @@ public class GreqlLexer {
 			case 'h':
 				type = TokenTypes.HEXLITERAL;
 				try {
-					value = Integer.parseInt(
-							text.substring(0, text.length() - 1), 16);
+					value = Integer.parseInt(text.substring(0,
+							text.length() - 1), 16);
 				} catch (NumberFormatException ex) {
 					throw new ParsingException("Not a valid hex number", text,
 							start, end - start, query);
@@ -294,8 +303,8 @@ public class GreqlLexer {
 				try {
 					String tokenString = text.substring(0, text.length() - 1);
 					System.out.println("TokenString: " + tokenString);
-					return new RealToken(type, start, end - start,
-							Double.parseDouble(tokenString));
+					return new RealToken(type, start, end - start, Double
+							.parseDouble(tokenString));
 				} catch (NumberFormatException ex) {
 					throw new ParsingException("Not a valid float number",
 							text, start, end - start, query);

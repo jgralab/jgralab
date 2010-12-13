@@ -1,7 +1,7 @@
 // JGraLab - The Java graph laboratory
 //   Version : Dimetrodon
-//   Revision: 2378
-//   Build ID: 68
+//   Revision: 3353
+//   Build ID: 69
 
 TGraph 2;
 Schema de.uni_koblenz.jgralabtest.schemas.defaultvaluetestschema.DefaultValueTestSchema;

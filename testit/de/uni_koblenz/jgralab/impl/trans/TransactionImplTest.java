@@ -1,25 +1,32 @@
 /*
- * JGraLab - The Java graph laboratory
- * (c) 2006-2010 Institute for Software Technology
- *               University of Koblenz-Landau, Germany
+ * JGraLab - The Java Graph Laboratory
  * 
- *               ist@uni-koblenz.de
+ * Copyright (C) 2006-2010 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
  * 
- * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
  * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Additional permission under GNU GPL version 3 section 7
+ * 
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
  */
 package de.uni_koblenz.jgralab.impl.trans;
 
@@ -486,7 +493,7 @@ public class TransactionImplTest {
 	@Test
 	public void testPutEdgeAfterInGraph() {
 		testAddEdge();
-		ex1.putAfterInGraph(ex2);
+		ex1.putAfterEdge(ex2);
 
 		Map<Edge, Map<ListPosition, Boolean>> changedEseqEdgesMap = new HashMap<Edge, Map<ListPosition, Boolean>>();
 		Map<ListPosition, Boolean> changedPosition1 = new HashMap<ListPosition, Boolean>();
@@ -510,7 +517,7 @@ public class TransactionImplTest {
 			motorwayMap.commit();
 			readOnlyTransaction = (TransactionImpl) motorwayMap
 					.newReadOnlyTransaction();
-			ex1.putAfterInGraph(ex2);
+			ex1.putAfterEdge(ex2);
 			fail();
 		} catch (GraphException ge) {
 			System.out.println("\n- testPutEdgeAfterInGraphReadOnly -");
@@ -532,7 +539,7 @@ public class TransactionImplTest {
 	@Test
 	public void testPutEdgeBeforeInGraph() {
 		testAddEdge();
-		ex2.putBeforeInGraph(ex1);
+		ex2.putBeforeEdge(ex1);
 
 		Map<Edge, Map<ListPosition, Boolean>> changedEseqEdgesMap = new HashMap<Edge, Map<ListPosition, Boolean>>();
 		Map<ListPosition, Boolean> changedPosition1 = new HashMap<ListPosition, Boolean>();
@@ -557,7 +564,7 @@ public class TransactionImplTest {
 			motorwayMap.commit();
 			readOnlyTransaction = (TransactionImpl) motorwayMap
 					.newReadOnlyTransaction();
-			ex2.putBeforeInGraph(ex1);
+			ex2.putBeforeEdge(ex1);
 			fail();
 		} catch (GraphException ge) {
 			System.out.println("\n- testPutEdgeBeforeInGraphReadOnly -");
@@ -578,7 +585,7 @@ public class TransactionImplTest {
 	@Test
 	public void testPutEdgeAfter() {
 		testAddEdge();
-		ex1.putEdgeAfter(ex2);
+		ex1.putIncidenceAfter(ex2);
 
 		Vertex alpha = ex1.getAlpha();
 		Map<Vertex, Map<Edge, Map<ListPosition, Boolean>>> vertexChangedIncidencesMap = new HashMap<Vertex, Map<Edge, Map<ListPosition, Boolean>>>();
@@ -606,7 +613,7 @@ public class TransactionImplTest {
 			motorwayMap.commit();
 			readOnlyTransaction = (TransactionImpl) motorwayMap
 					.newReadOnlyTransaction();
-			ex1.putEdgeAfter(ex2);
+			ex1.putIncidenceAfter(ex2);
 			fail();
 		} catch (GraphException ge) {
 			System.out.println("\n- testPutEdgeAfterReadOnly -");
@@ -628,7 +635,7 @@ public class TransactionImplTest {
 	@Test
 	public void testPutEdgeBefore() {
 		testAddEdge();
-		ex2.putEdgeBefore(ex1);
+		ex2.putIncidenceBefore(ex1);
 		Vertex alpha = ex1.getAlpha();
 
 		Map<Vertex, Map<Edge, Map<ListPosition, Boolean>>> vertexChangedIncidencesMap = new HashMap<Vertex, Map<Edge, Map<ListPosition, Boolean>>>();
@@ -656,7 +663,7 @@ public class TransactionImplTest {
 			motorwayMap.commit();
 			readOnlyTransaction = (TransactionImpl) motorwayMap
 					.newReadOnlyTransaction();
-			ex2.putEdgeBefore(ex1);
+			ex2.putIncidenceBefore(ex1);
 			fail();
 		} catch (GraphException ge) {
 			System.out.println("\n- testPutEdgeBeforeReadOnly -");
@@ -847,7 +854,7 @@ public class TransactionImplTest {
 					.containsKey(c1)
 					&& readWriteTransaction2.changedVseqVertices
 							.containsKey(c3));
-			ex1.putEdgeAfter(ex3);
+			ex1.putIncidenceAfter(ex3);
 			assertTrue(readWriteTransaction2.changedIncidences.containsKey(c1));
 			c1.delete();
 			assertTrue(!readWriteTransaction2.changedAttributes.containsKey(c1));
@@ -875,10 +882,10 @@ public class TransactionImplTest {
 					.newTransaction();
 			ex1.set_number(2);
 			assertTrue(readWriteTransaction2.changedAttributes.containsKey(ex1));
-			ex1.putAfterInGraph(ex3);
+			ex1.putAfterEdge(ex3);
 			assertTrue(readWriteTransaction2.changedEseqEdges.containsKey(ex1)
 					&& readWriteTransaction2.changedEseqEdges.containsKey(ex3));
-			ex1.putEdgeAfter(ex3);
+			ex1.putIncidenceAfter(ex3);
 			assertTrue(readWriteTransaction2.changedIncidences.get(c1)
 					.containsKey(ex1)
 					&& readWriteTransaction2.changedIncidences.get(c1)

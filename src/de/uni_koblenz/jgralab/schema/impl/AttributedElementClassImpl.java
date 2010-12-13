@@ -1,25 +1,32 @@
 /*
- * JGraLab - The Java graph laboratory
- * (c) 2006-2010 Institute for Software Technology
- *               University of Koblenz-Landau, Germany
+ * JGraLab - The Java Graph Laboratory
  * 
- *               ist@uni-koblenz.de
+ * Copyright (C) 2006-2010 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
  * 
- * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
  * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Additional permission under GNU GPL version 3 section 7
+ * 
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
  */
 
 package de.uni_koblenz.jgralab.schema.impl;
@@ -185,42 +192,6 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 		return output.toString();
 	}
 
-	/**
-	 * Compares this element to another attributed element.
-	 * <p>
-	 * This is done by comparing the elements´ qualified names
-	 * lexicographically.
-	 * </p>
-	 * 
-	 * <p>
-	 * <b>Pattern:</b> <code>comp = attrElement.compareTo(other);</code>
-	 * </p>
-	 * 
-	 * <p>
-	 * <b>Preconditions:</b> none
-	 * </p>
-	 * 
-	 * <p>
-	 * <b>Postconditions:</b>
-	 * <ul>
-	 * <li><code>comp < 0</code>, if this element´s qualified name is
-	 * lexicographically less than the <code>other</code> element´s qualified
-	 * name</li>
-	 * <li><code>comp == 0</code>, if both element´s qualified names are equal</li>
-	 * <li><code>comp > 0</code>, if this element´s qualified name is
-	 * lexicographically greater than the <code>other</code> element´s qualified
-	 * name</li>
-	 * </ul>
-	 * </p>
-	 * 
-	 * @return the result of the lexicographical comparison
-	 * 
-	 */
-	@Override
-	public int compareTo(AttributedElementClass other) {
-		return this.qualifiedName.compareTo(other.getQualifiedName());
-	}
-
 	@Override
 	public boolean containsAttribute(String name) {
 		return (getAttribute(name) != null);
@@ -302,9 +273,9 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 			String m1ClassName = getSchema().getPackagePrefix() + "."
 					+ getQualifiedName();
 			try {
-				m1Class = (Class<? extends AttributedElement>) Class.forName(
-						m1ClassName, true, M1ClassManager.instance(getSchema()
-								.getQualifiedName()));
+				m1Class = (Class<? extends AttributedElement>) Class
+						.forName(m1ClassName, true, M1ClassManager
+								.instance(getSchema().getQualifiedName()));
 			} catch (ClassNotFoundException e) {
 				throw new M1ClassAccessException(
 						"Can't load M1 class for AttributedElementClass '"

@@ -1,25 +1,32 @@
 /*
- * JGraLab - The Java graph laboratory
- * (c) 2006-2010 Institute for Software Technology
- *               University of Koblenz-Landau, Germany
+ * JGraLab - The Java Graph Laboratory
  * 
- *               ist@uni-koblenz.de
+ * Copyright (C) 2006-2010 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
  * 
- * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
  * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Additional permission under GNU GPL version 3 section 7
+ * 
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
  */
 
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
@@ -85,13 +92,13 @@ public class DeclarationEvaluator extends VertexEvaluator {
 	@Override
 	public JValue evaluate() throws EvaluateException {
 		AbstractGraphMarker<AttributedElement> newSubgraph = null;
-		Edge edge = vertex.getFirstIsSubgraphOf();
+		Edge edge = vertex.getFirstIsSubgraphOfIncidence();
 		if (edge != null) {
 			SubgraphExpression subgraphExp = (SubgraphExpression) edge
 					.getAlpha();
 			if (subgraphExp != null) {
-				VertexEvaluator subgraphEval = greqlEvaluator
-						.getVertexEvaluatorGraphMarker().getMark(subgraphExp);
+				VertexEvaluator subgraphEval = vertexEvalMarker
+						.getMark(subgraphExp);
 				JValue tempAttribute = subgraphEval.getResult(subgraph);
 				if (tempAttribute.isGraphMarker()) {
 					try {
@@ -110,9 +117,8 @@ public class DeclarationEvaluator extends VertexEvaluator {
 		ArrayList<VertexEvaluator> constraintList = new ArrayList<VertexEvaluator>();
 		for (IsConstraintOf consInc : vertex
 				.getIsConstraintOfIncidences(EdgeDirection.IN)) {
-			VertexEvaluator curEval = greqlEvaluator
-					.getVertexEvaluatorGraphMarker()
-					.getMark(consInc.getAlpha());
+			VertexEvaluator curEval = vertexEvalMarker.getMark(consInc
+					.getAlpha());
 			if (curEval != null) {
 				constraintList.add(curEval);
 			}
@@ -122,8 +128,8 @@ public class DeclarationEvaluator extends VertexEvaluator {
 		for (IsSimpleDeclOf inc : vertex
 				.getIsSimpleDeclOfIncidences(EdgeDirection.IN)) {
 			SimpleDeclaration simpleDecl = (SimpleDeclaration) inc.getAlpha();
-			SimpleDeclarationEvaluator simpleDeclEval = (SimpleDeclarationEvaluator) greqlEvaluator
-					.getVertexEvaluatorGraphMarker().getMark(simpleDecl);
+			SimpleDeclarationEvaluator simpleDeclEval = (SimpleDeclarationEvaluator) vertexEvalMarker
+					.getMark(simpleDecl);
 			JValue simpleResult = simpleDeclEval.getResult(newSubgraph);
 			JValueCollection resultCollection = simpleResult.toCollection();
 			for (JValue v : resultCollection) {
@@ -148,8 +154,8 @@ public class DeclarationEvaluator extends VertexEvaluator {
 		long combinations = 1;
 		Iterator<Variable> iter = getDefinedVariables().iterator();
 		while (iter.hasNext()) {
-			VariableEvaluator veval = (VariableEvaluator) greqlEvaluator
-					.getVertexEvaluatorGraphMarker().getMark(iter.next());
+			VariableEvaluator veval = (VariableEvaluator) vertexEvalMarker
+					.getMark(iter.next());
 			combinations *= veval.getVariableCombinations(graphSize);
 		}
 		return combinations;

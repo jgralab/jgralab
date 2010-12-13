@@ -1,25 +1,32 @@
 /*
- * JGraLab - The Java graph laboratory
- * (c) 2006-2010 Institute for Software Technology
- *               University of Koblenz-Landau, Germany
+ * JGraLab - The Java Graph Laboratory
  * 
- *               ist@uni-koblenz.de
+ * Copyright (C) 2006-2010 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
  * 
- * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
  * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Additional permission under GNU GPL version 3 section 7
+ * 
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
  */
 /**
  *
@@ -91,7 +98,7 @@ public class PathExistenceOptimizer extends OptimizerBase {
 	@Override
 	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
 			throws OptimizerException {
-		if (syntaxgraph.getFirstVertexOfClass(PathExistence.class) == null) {
+		if (syntaxgraph.getFirstVertex(PathExistence.class) == null) {
 			return false;
 		}
 
@@ -148,10 +155,20 @@ public class PathExistenceOptimizer extends OptimizerBase {
 	 *            a {@link PathExistence} vertex
 	 */
 	private void maybeTransformPathExistence(PathExistence pe) {
-		Expression startExp = (Expression) pe.getFirstIsStartExprOf(
+		Expression startExp = (Expression) pe.getFirstIsStartExprOfIncidence(
 				EdgeDirection.IN).getAlpha();
-		Expression targetExp = (Expression) pe.getFirstIsTargetExprOf(
+		Expression targetExp = (Expression) pe.getFirstIsTargetExprOfIncidence(
 				EdgeDirection.IN).getAlpha();
+
+		if ((startExp instanceof Variable) && (targetExp instanceof Variable)) {
+			Variable s = (Variable) startExp;
+			Variable t = (Variable) targetExp;
+			if ((s.getFirstIsBoundVarOfIncidence() != null)
+					&& (t.getFirstIsBoundVarOfIncidence() != null)) {
+				logger.finer(optimizerHeaderString()
+						+ "PathExistence has form var1 --> var2 where both vars are externally bound, skipping...");
+			}
+		}
 
 		Comparator<Variable> comparator = new Comparator<Variable>() {
 			@Override
@@ -177,13 +194,13 @@ public class PathExistenceOptimizer extends OptimizerBase {
 		}
 
 		if (startExpVars.isEmpty()
-				|| (!targetExpVars.isEmpty() && isDeclaredBefore(startExpVars
-						.last(), targetExpVars.last()))) {
+				|| (!targetExpVars.isEmpty() && isDeclaredBefore(
+						startExpVars.last(), targetExpVars.last()))) {
 			replacePathExistenceWithContainsFunApp(pe, startExp, targetExp,
 					true);
 		} else if (targetExpVars.isEmpty()
-				|| (!startExpVars.isEmpty() && isDeclaredBefore(targetExpVars
-						.last(), startExpVars.last()))) {
+				|| (!startExpVars.isEmpty() && isDeclaredBefore(
+						targetExpVars.last(), startExpVars.last()))) {
 			replacePathExistenceWithContainsFunApp(pe, targetExp, startExp,
 					false);
 		}
@@ -223,11 +240,11 @@ public class PathExistenceOptimizer extends OptimizerBase {
 
 		anOptimizationWasDone = true;
 
-		Edge inc = pe.getFirstEdge(EdgeDirection.OUT);
+		Edge inc = pe.getFirstIncidence(EdgeDirection.OUT);
 		Set<Edge> edgesToRelink = new HashSet<Edge>();
 		while (inc != null) {
 			edgesToRelink.add(inc);
-			inc = inc.getNextEdge(EdgeDirection.OUT);
+			inc = inc.getNextIncidence(EdgeDirection.OUT);
 		}
 		FunctionApplication contains = syntaxgraph.createFunctionApplication();
 		FunctionId containsId = OptimizerUtility.findOrCreateFunctionId(
@@ -241,8 +258,9 @@ public class PathExistenceOptimizer extends OptimizerBase {
 			vertexSet = syntaxgraph.createBackwardVertexSet();
 			syntaxgraph.createIsTargetExprOf(startOrTargetExp, vertexSet);
 		}
-		syntaxgraph.createIsPathOf((Expression) pe.getFirstIsPathOf(
-				EdgeDirection.IN).getAlpha(), vertexSet);
+		syntaxgraph.createIsPathOf(
+				(Expression) pe.getFirstIsPathOfIncidence(EdgeDirection.IN)
+						.getAlpha(), vertexSet);
 
 		syntaxgraph.createIsArgumentOf(vertexSet, contains);
 		syntaxgraph.createIsArgumentOf(otherExp, contains);

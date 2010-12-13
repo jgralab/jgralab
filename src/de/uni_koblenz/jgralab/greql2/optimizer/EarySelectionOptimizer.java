@@ -1,25 +1,32 @@
 /*
- * JGraLab - The Java graph laboratory
- * (c) 2006-2010 Institute for Software Technology
- *               University of Koblenz-Landau, Germany
+ * JGraLab - The Java Graph Laboratory
  * 
- *               ist@uni-koblenz.de
+ * Copyright (C) 2006-2010 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
  * 
- * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
  * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Additional permission under GNU GPL version 3 section 7
+ * 
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
  */
 /**
  *
@@ -142,7 +149,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 		// find all movable constraints in all Declarations
 		for (Declaration decl : syntaxgraph.getDeclarationVertices()) {
 			IsConstraintOf isConst = decl
-					.getFirstIsConstraintOf(EdgeDirection.IN);
+					.getFirstIsConstraintOfIncidence(EdgeDirection.IN);
 			while (isConst != null) {
 				Expression exp = (Expression) isConst.getAlpha();
 				for (Entry<SimpleDeclaration, Set<Expression>> e : collectMovableExpressions(
@@ -176,9 +183,9 @@ public class EarySelectionOptimizer extends OptimizerBase {
 					public int compare(SimpleDeclaration sd1,
 							SimpleDeclaration sd2) {
 						Declaration decl1 = (Declaration) sd1
-								.getFirstIsSimpleDeclOf().getOmega();
+								.getFirstIsSimpleDeclOfIncidence().getOmega();
 						Declaration decl2 = (Declaration) sd2
-								.getFirstIsSimpleDeclOf().getOmega();
+								.getFirstIsSimpleDeclOfIncidence().getOmega();
 						if (OptimizerUtility.isAbove(decl1, decl2)) {
 							return 1;
 						}
@@ -190,7 +197,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 				});
 
 		for (SimpleDeclaration sd : simpleDeclsWithMovableExpressions) {
-			Declaration parentDecl = (Declaration) sd.getFirstIsSimpleDeclOf()
+			Declaration parentDecl = (Declaration) sd.getFirstIsSimpleDeclOfIncidence()
 					.getOmega();
 			Set<Variable> varsDeclaredBySd = OptimizerUtility
 					.collectVariablesDeclaredBy(sd);
@@ -269,7 +276,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 		logger.finer(sb.toString() + " with predicates " + predicates + ".");
 
 		Declaration parentDeclOfOrigSD = (Declaration) origSD
-				.getFirstIsSimpleDeclOf(EdgeDirection.OUT).getOmega();
+				.getFirstIsSimpleDeclOfIncidence(EdgeDirection.OUT).getOmega();
 		assert parentDeclOfOrigSD.getDegree(EdgeDirection.OUT) == 1;
 
 		// First we search the edges that access the variables to be moved,
@@ -315,7 +322,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 		Declaration newInnerDecl = syntaxgraph.createDeclaration();
 		syntaxgraph.createIsCompDeclOf(newInnerDecl, newInnerCompr);
 		syntaxgraph.createIsCompResultDefOf(newOuterRecord, newInnerCompr);
-		origSD.getFirstIsSimpleDeclOf(EdgeDirection.OUT).setOmega(newInnerDecl);
+		origSD.getFirstIsSimpleDeclOfIncidence(EdgeDirection.OUT).setOmega(newInnerDecl);
 
 		Expression newCombinedConstraint = createConjunction(
 				new ArrayList<Expression>(predicates), new HashSet<Variable>());
@@ -377,7 +384,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 		Variable newInnerVar = undeclaredVars.iterator().next();
 
 		// Connect the edges
-		origSD.getFirstIsTypeExprOf(EdgeDirection.IN).setOmega(newInnerSD);
+		origSD.getFirstIsTypeExprOfIncidence(EdgeDirection.IN).setOmega(newInnerSD);
 		syntaxgraph.createIsTypeExprOfDeclaration(newSetComp, origSD);
 		syntaxgraph.createIsCompDeclOf(newDecl, newSetComp);
 		syntaxgraph.createIsSimpleDeclOf(newInnerSD, newDecl);
@@ -387,18 +394,18 @@ public class EarySelectionOptimizer extends OptimizerBase {
 
 		for (Expression exp : predicates) {
 			removeExpressionFromOriginalConstraint(exp, (Declaration) origSD
-					.getFirstIsSimpleDeclOf().getOmega());
+					.getFirstIsSimpleDeclOfIncidence().getOmega());
 		}
 	}
 
 	private void removeExpressionFromOriginalConstraint(Expression exp,
 			Declaration origDecl) throws OptimizerException {
-		if (exp.getFirstIsConstraintOf(EdgeDirection.OUT) != null) {
+		if (exp.getFirstIsConstraintOfIncidence(EdgeDirection.OUT) != null) {
 			// This was the only constraint expression of the parent
 			// Declaration, so we can simply delete it, unless it's used in
 			// other places. In that case, only the edge may be
 			// deleted. deleteOrphanedVertices() DTRT.
-			exp.getFirstIsConstraintOf(EdgeDirection.OUT).delete();
+			exp.getFirstIsConstraintOfIncidence(EdgeDirection.OUT).delete();
 			OptimizerUtility.deleteOrphanedVerticesBelow(exp,
 					new HashSet<Vertex>());
 			return;
@@ -533,7 +540,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 				&& OptimizerUtility.isAnd((FunctionApplication) exp)) {
 			// For AND expressions we dive deeper into the arguments.
 			FunctionApplication funApp = (FunctionApplication) exp;
-			IsArgumentOf isArg = funApp.getFirstIsArgumentOf(EdgeDirection.IN);
+			IsArgumentOf isArg = funApp.getFirstIsArgumentOfIncidence(EdgeDirection.IN);
 			while (isArg != null) {
 				for (Entry<SimpleDeclaration, Set<Expression>> entry : collectMovableExpressions(
 						(Expression) isArg.getAlpha()).entrySet()) {
@@ -555,7 +562,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 			// Only collect those SimpleDeclarations whose parent Declaration
 			// has more than one SimpleDeclaration or which declare more than
 			// one variable.
-			Declaration parent = (Declaration) sd.getFirstIsSimpleDeclOf(
+			Declaration parent = (Declaration) sd.getFirstIsSimpleDeclOfIncidence(
 					EdgeDirection.OUT).getOmega();
 			if ((collectSimpleDeclarationsOf(parent).size() > 1)
 					|| (OptimizerUtility.collectVariablesDeclaredBy(sd).size() > 1)) {
@@ -590,7 +597,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 
 		SimpleDeclaration sd = null, oldSd = null;
 		for (Variable var : neededVars) {
-			sd = (SimpleDeclaration) var.getFirstIsDeclaredVarOf().getOmega();
+			sd = (SimpleDeclaration) var.getFirstIsDeclaredVarOfIncidence().getOmega();
 			if ((oldSd != null) && (sd != oldSd)) {
 				// the last variable was declared in another
 				// SimpleDeclaration
@@ -618,7 +625,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 		Declaration localDecl = findNearestDeclarationAbove(exp);
 		for (SimpleDeclaration sd : collectSimpleDeclarationsOf(localDecl)) {
 			for (Variable var : neededVars) {
-				IsDeclaredVarOf inc = sd.getFirstIsDeclaredVarOf();
+				IsDeclaredVarOf inc = sd.getFirstIsDeclaredVarOfIncidence();
 				while (inc != null) {
 					if (inc.getAlpha() == var) {
 						neededLocalVars.add(var);
@@ -694,7 +701,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 		HashSet<Variable> undeclaredVars = new HashSet<Variable>();
 		for (Variable var : OptimizerUtility
 				.collectInternallyDeclaredVariablesBelow(vertex)) {
-			if (var.getFirstIsDeclaredVarOf(EdgeDirection.OUT) == null) {
+			if (var.getFirstIsDeclaredVarOfIncidence(EdgeDirection.OUT) == null) {
 				undeclaredVars.add(var);
 			}
 		}
@@ -753,7 +760,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 			copiedVarMap.put((Variable) origVertex, newVar);
 		}
 
-		Edge origEdge = origVertex.getFirstEdge(EdgeDirection.IN);
+		Edge origEdge = origVertex.getFirstIncidence(EdgeDirection.IN);
 		Vertex subVertex;
 
 		while (origEdge != null) {
@@ -762,7 +769,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 			Class<? extends Edge> edgeClass = (Class<? extends Edge>) origEdge
 					.getAttributedElementClass().getM1Class();
 			graph.createEdge(edgeClass, subVertex, topVertex);
-			origEdge = origEdge.getNextEdge(EdgeDirection.IN);
+			origEdge = origEdge.getNextIncidence(EdgeDirection.IN);
 		}
 
 		return topVertex;

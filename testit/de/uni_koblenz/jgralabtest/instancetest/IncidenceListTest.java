@@ -1,25 +1,32 @@
 /*
- * JGraLab - The Java graph laboratory
- * (c) 2006-2010 Institute for Software Technology
- *               University of Koblenz-Landau, Germany
+ * JGraLab - The Java Graph Laboratory
  * 
- *               ist@uni-koblenz.de
+ * Copyright (C) 2006-2010 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
  * 
- * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
  * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Additional permission under GNU GPL version 3 section 7
+ * 
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
  */
 package de.uni_koblenz.jgralabtest.instancetest;
 
@@ -39,6 +46,7 @@ import java.util.Random;
 
 import junit.framework.Assert;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -92,7 +100,11 @@ public class IncidenceListTest extends InstanceTest {
 			g = MinimalSchema.instance()
 					.createMinimalGraphWithTransactionSupport(V, E);
 			break;
+		case DATABASE:
+			g = this.createMinimalGraphWithDatabaseSupport();
+			break;
 		case SAVEMEM:
+			dbHandler.loadMinimalSchemaIntoGraphDatabase();
 			g = MinimalSchema.instance().createMinimalGraphWithSavememSupport(
 					V, E);
 			break;
@@ -110,13 +122,36 @@ public class IncidenceListTest extends InstanceTest {
 		commit(g);
 	}
 
+	private MinimalGraph createMinimalGraphWithDatabaseSupport() {
+		dbHandler.connectToDatabase();
+		dbHandler.loadMinimalSchemaIntoGraphDatabase();
+		return dbHandler.createMinimalGraphWithDatabaseSupport(
+				"IncidenceListTest", V, E);
+	}
+
+	@After
+	public void tearDown() {
+		if (implementationType == ImplementationType.DATABASE) {
+			this.cleanAndCloseDatabase();
+		}
+	}
+
+	private void cleanAndCloseDatabase() {
+		// dbHandler.cleanDatabaseOfTestGraph(g);
+		// dbHandler.cleanDatabaseOfTestGraph("IncidenceListTest.testSortIncidences");
+		// TODO, this does not seem to work
+		// dbHandler.cleanDatabaseOfTestSchema(MinimalSchema.instance());
+		dbHandler.clearAllTables();
+		dbHandler.closeGraphdatabase();
+	}
+
 	@Test
 	public void addEdgeTest() throws Exception {
 		// incidence lists must initially be empty
 		createReadOnlyTransaction(g);
 		for (int i = 0; i < N; ++i) {
 			assertEquals(0, nodes[i].getDegree());
-			Assert.assertNull(nodes[i].getFirstEdge());
+			Assert.assertNull(nodes[i].getFirstIncidence());
 		}
 		commit(g);
 
@@ -125,10 +160,10 @@ public class IncidenceListTest extends InstanceTest {
 		commit(g);
 
 		createReadOnlyTransaction(g);
-		assertEquals(e1, nodes[0].getFirstEdge());
-		assertEquals(e1, nodes[0].getLastEdge());
-		assertEquals(e1.getReversedEdge(), nodes[1].getFirstEdge());
-		assertEquals(e1.getReversedEdge(), nodes[1].getFirstEdge());
+		assertEquals(e1, nodes[0].getFirstIncidence());
+		assertEquals(e1, nodes[0].getLastIncidence());
+		assertEquals(e1.getReversedEdge(), nodes[1].getFirstIncidence());
+		assertEquals(e1.getReversedEdge(), nodes[1].getFirstIncidence());
 		assertEquals(1, nodes[0].getDegree());
 		assertEquals(1, nodes[0].getDegree(EdgeDirection.INOUT));
 		assertEquals(1, nodes[0].getDegree(EdgeDirection.OUT));
@@ -147,10 +182,10 @@ public class IncidenceListTest extends InstanceTest {
 		commit(g);
 
 		createReadOnlyTransaction(g);
-		assertEquals(e1, nodes[0].getFirstEdge());
-		assertEquals(e2.getReversedEdge(), nodes[0].getLastEdge());
-		assertEquals(e1.getReversedEdge(), nodes[1].getFirstEdge());
-		assertEquals(e1.getReversedEdge(), nodes[1].getFirstEdge());
+		assertEquals(e1, nodes[0].getFirstIncidence());
+		assertEquals(e2.getReversedEdge(), nodes[0].getLastIncidence());
+		assertEquals(e1.getReversedEdge(), nodes[1].getFirstIncidence());
+		assertEquals(e1.getReversedEdge(), nodes[1].getFirstIncidence());
 		assertEquals(3, nodes[0].getDegree());
 		assertEquals(3, nodes[0].getDegree(EdgeDirection.INOUT));
 		assertEquals(2, nodes[0].getDegree(EdgeDirection.OUT));
@@ -164,8 +199,8 @@ public class IncidenceListTest extends InstanceTest {
 		commit(g);
 
 		createReadOnlyTransaction(g);
-		assertEquals(e3, nodes[2].getFirstEdge());
-		assertEquals(e3.getReversedEdge(), nodes[0].getLastEdge());
+		assertEquals(e3, nodes[2].getFirstIncidence());
+		assertEquals(e3.getReversedEdge(), nodes[0].getLastIncidence());
 		assertEquals(4, nodes[0].getDegree());
 		assertEquals(4, nodes[0].getDegree(EdgeDirection.INOUT));
 		assertEquals(2, nodes[0].getDegree(EdgeDirection.OUT));
@@ -184,9 +219,9 @@ public class IncidenceListTest extends InstanceTest {
 		commit(g);
 
 		createReadOnlyTransaction(g);
-		assertEquals(e4.getReversedEdge(), nodes[N - 1].getFirstEdge());
-		assertEquals(e4.getReversedEdge(), nodes[N - 1].getLastEdge());
-		assertEquals(e4, nodes[0].getLastEdge());
+		assertEquals(e4.getReversedEdge(), nodes[N - 1].getFirstIncidence());
+		assertEquals(e4.getReversedEdge(), nodes[N - 1].getLastIncidence());
+		assertEquals(e4, nodes[0].getLastIncidence());
 		assertEquals(5, nodes[0].getDegree());
 		assertEquals(5, nodes[0].getDegree(EdgeDirection.INOUT));
 		assertEquals(3, nodes[0].getDegree(EdgeDirection.OUT));
@@ -245,7 +280,7 @@ public class IncidenceListTest extends InstanceTest {
 				// System.out.print(getISeq(v) + " " + ea.getId() + "
 				// before " + eb.getId());
 				createTransaction(g);
-				ea.putEdgeBefore(eb);
+				ea.putIncidenceBefore(eb);
 				commit(g);
 				// System.out.println(" => " + getISeq(v));
 				// System.out.println(il);
@@ -294,7 +329,7 @@ public class IncidenceListTest extends InstanceTest {
 				// after "
 				// + eb.getId());
 				createTransaction(g);
-				ea.putEdgeAfter(eb);
+				ea.putIncidenceAfter(eb);
 				commit(g);
 				// System.out.println(" => " + getISeq(v));
 				// System.out.println(il);
@@ -327,22 +362,22 @@ public class IncidenceListTest extends InstanceTest {
 
 		// check forward pointers
 		{
-			Edge e = v.getFirstEdge();
+			Edge e = v.getFirstIncidence();
 			for (int i = 0; i < expectedIincidences.size(); ++i) {
 				assertNotNull(e);
 				assertEquals(expectedIincidences.get(i), e);
-				e = e.getNextEdge();
+				e = e.getNextIncidence();
 			}
 			assertNull(e);
 		}
 
 		// check backward pointers
 		{
-			Edge e = v.getLastEdge();
+			Edge e = v.getLastIncidence();
 			for (int i = expectedIincidences.size() - 1; i >= 0; --i) {
 				assertNotNull(e);
 				assertEquals(expectedIincidences.get(i), e);
-				e = e.getPrevEdge();
+				e = e.getPrevIncidence();
 			}
 			assertNull(e);
 		}
@@ -432,6 +467,10 @@ public class IncidenceListTest extends InstanceTest {
 			g = MinimalSchema.instance()
 					.createMinimalGraphWithTransactionSupport(V, E);
 			break;
+		case DATABASE:
+			g = dbHandler.createMinimalGraphWithDatabaseSupport(
+					"IncidenceListTest.testSortIncidences", V, E);
+			break;
 		case SAVEMEM:
 			g = MinimalSchema.instance().createMinimalGraphWithSavememSupport(
 					V, E);
@@ -468,6 +507,13 @@ public class IncidenceListTest extends InstanceTest {
 		};
 
 		if (implementationType == ImplementationType.TRANSACTION) {
+			try {
+				isolated.sortIncidences(comp);
+				fail();
+			} catch (UnsupportedOperationException e) {
+				// as expected
+			}
+		} else if (implementationType == ImplementationType.DATABASE) {
 			try {
 				isolated.sortIncidences(comp);
 				fail();

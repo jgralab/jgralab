@@ -1,30 +1,38 @@
 /*
- * JGraLab - The Java graph laboratory
- * (c) 2006-2010 Institute for Software Technology
- *               University of Koblenz-Landau, Germany
+ * JGraLab - The Java Graph Laboratory
  * 
- *               ist@uni-koblenz.de
+ * Copyright (C) 2006-2010 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
  * 
- * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
  * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Additional permission under GNU GPL version 3 section 7
+ * 
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
  */
 
 package de.uni_koblenz.jgralab;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -199,7 +207,7 @@ public interface Graph extends AttributedElement {
 	 * @return the first Vertex, or null if this graph contains no vertices of
 	 *         the specified <code>vertexClass</code>.
 	 */
-	public Vertex getFirstVertexOfClass(VertexClass vertexClass);
+	public Vertex getFirstVertex(VertexClass vertexClass);
 
 	/**
 	 * Returns the first Vertex of the specified <code>vertexClass</code>,
@@ -216,8 +224,7 @@ public interface Graph extends AttributedElement {
 	 * @return the first Vertex, or null if this graph contains no vertices of
 	 *         the specified <code>vertexClass</code>.
 	 */
-	public Vertex getFirstVertexOfClass(VertexClass vertexClass,
-			boolean noSubclasses);
+	public Vertex getFirstVertex(VertexClass vertexClass, boolean noSubclasses);
 
 	/**
 	 * Returns the first Vertex of the specified <code>vertexClass</code>
@@ -229,7 +236,7 @@ public interface Graph extends AttributedElement {
 	 * @return the first Vertex, or null if this graph contains no vertices of
 	 *         the specified <code>vertexClass</code>.
 	 */
-	public Vertex getFirstVertexOfClass(Class<? extends Vertex> vertexClass);
+	public Vertex getFirstVertex(Class<? extends Vertex> vertexClass);
 
 	/**
 	 * Returns the first Vertex of the specified <code>vertexClass</code>,
@@ -246,7 +253,7 @@ public interface Graph extends AttributedElement {
 	 * @return the first Vertex, or null if this graph contains no vertices of
 	 *         the specified <code>vertexClass</code>.
 	 */
-	public Vertex getFirstVertexOfClass(Class<? extends Vertex> vertexClass,
+	public Vertex getFirstVertex(Class<? extends Vertex> vertexClass,
 			boolean noSubclasses);
 
 	/**
@@ -254,14 +261,14 @@ public interface Graph extends AttributedElement {
 	 * 
 	 * @return the first Edge, or null if this graph contains no edges.
 	 */
-	public Edge getFirstEdgeInGraph();
+	public Edge getFirstEdge();
 
 	/**
 	 * Returns the last Edge in the edge sequence of this Graph.
 	 * 
 	 * @return the last Edge, or null if this graph contains no edges.
 	 */
-	public Edge getLastEdgeInGraph();
+	public Edge getLastEdge();
 
 	/**
 	 * Returns the first Edge of the specified <code>edgeClass</code> (including
@@ -273,7 +280,7 @@ public interface Graph extends AttributedElement {
 	 * @return the first Edge, or null if this graph contains no edges of the
 	 *         specified <code>edgeClass</code>.
 	 */
-	public Edge getFirstEdgeOfClassInGraph(EdgeClass edgeClass);
+	public Edge getFirstEdge(EdgeClass edgeClass);
 
 	/**
 	 * Returns the first Edge of the specified <code>edgeClass</code>, including
@@ -290,8 +297,7 @@ public interface Graph extends AttributedElement {
 	 * @return the first Edge, or null if this graph contains no edges of the
 	 *         specified <code>edgeClass</code>.
 	 */
-	public Edge getFirstEdgeOfClassInGraph(EdgeClass edgeClass,
-			boolean noSubclasses);
+	public Edge getFirstEdge(EdgeClass edgeClass, boolean noSubclasses);
 
 	/**
 	 * Returns the first Edge of the specified <code>edgeClass</code> (including
@@ -303,7 +309,7 @@ public interface Graph extends AttributedElement {
 	 * @return the first Edge, or null if this graph contains no edges of the
 	 *         specified <code>edgeClass</code>.
 	 */
-	public Edge getFirstEdgeOfClassInGraph(Class<? extends Edge> edgeClass);
+	public Edge getFirstEdge(Class<? extends Edge> edgeClass);
 
 	/**
 	 * Returns the first Edge of the specified <code>edgeClass</code>, including
@@ -320,7 +326,7 @@ public interface Graph extends AttributedElement {
 	 * @return the first Edge, or null if this graph contains no edges of the
 	 *         specified <code>edgeClass</code>.
 	 */
-	public Edge getFirstEdgeOfClassInGraph(Class<? extends Edge> edgeClass,
+	public Edge getFirstEdge(Class<? extends Edge> edgeClass,
 			boolean noSubclasses);
 
 	/**
@@ -589,11 +595,18 @@ public interface Graph extends AttributedElement {
 	public boolean hasTransactionSupport();
 
 	/**
-	 * Tells whether this graph instanse supports savemem.
+	 * Tells whether this graph instance supports savemem.
 	 * 
 	 * @return true if this graph instance supports savemem.
 	 */
 	public boolean hasSavememSupport();
+	
+	/**
+	 * Tells whether this graph instance has database support.
+	 *
+	 * @return true if this graph instance has database support.
+	 */
+	public boolean hasDatabaseSupport();
 
 	/**
 	 * 
@@ -758,6 +771,24 @@ public interface Graph extends AttributedElement {
 	 */
 	public <T extends Record> T createRecord(Class<T> recordClass,
 			Object... components);
+
+	/**
+	 * Sorts the vertex sequence according to the given comparator in ascending
+	 * order.
+	 * 
+	 * @param comp
+	 *            the comparator defining the desired vertex order.
+	 */
+	public void sortVertices(Comparator<Vertex> comp);
+
+	/**
+	 * Sorts the edge sequence according to the given comparator in ascending
+	 * order.
+	 * 
+	 * @param comp
+	 *            the comparator defining the desired edge order.
+	 */
+	public void sortEdges(Comparator<Edge> comp);
 
 	/**
 	 * Registers the given <code>newListener</code> to the internal listener

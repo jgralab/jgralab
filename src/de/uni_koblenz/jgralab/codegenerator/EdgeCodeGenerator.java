@@ -1,25 +1,32 @@
 /*
- * JGraLab - The Java graph laboratory
- * (c) 2006-2010 Institute for Software Technology
- *               University of Koblenz-Landau, Germany
+ * JGraLab - The Java Graph Laboratory
  * 
- *               ist@uni-koblenz.de
+ * Copyright (C) 2006-2010 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
  * 
- * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
  * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Additional permission under GNU GPL version 3 section 7
+ * 
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
  */
 
 package de.uni_koblenz.jgralab.codegenerator;
@@ -88,7 +95,7 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 	@Override
 	protected CodeBlock createBody() {
 		CodeList code = (CodeList) super.createBody();
-		if (currentCycle.isStdOrSaveMemOrTransImpl()) {
+		if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()) {
 			rootBlock.setVariable("baseClassName", "EdgeImpl");
 			if (currentCycle.isStdImpl()) {
 				addImports("#jgImplStdPackage#.#baseClassName#");
@@ -99,15 +106,16 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 			if (currentCycle.isTransImpl()) {
 				addImports("#jgImplTransPackage#.#baseClassName#");
 			}
+			if (currentCycle.isDbImpl()) {
+				addImports("#jgImplDbPackage#.#baseClassName#");
+			}
 		}
-
 		if (config.hasTypeSpecificMethodsSupport()
 				&& !currentCycle.isClassOnly()) {
 			code.add(createNextEdgeInGraphMethods());
 			code.add(createNextEdgeAtVertexMethods());
 		}
-
-		if (currentCycle.isStdOrSaveMemOrTransImpl()) {
+		if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()) {
 			code.add(createGetSemanticsMethod());
 			code.add(createGetAlphaSemanticsMethod());
 			code.add(createGetOmegaSemanticsMethod());
@@ -133,6 +141,9 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 		if (currentCycle.isSaveMemImpl()) {
 			addImports("#schemaImplSaveMemPackage#.Reversed#simpleClassName#Impl");
 		}
+		if (currentCycle.isDbImpl()) {
+			addImports("#schemaImplDbPackage#.Reversed#simpleClassName#Impl");
+		}
 		code.add("\treturn new Reversed#simpleClassName#Impl(this, graph);");
 		code.add("}");
 		return code;
@@ -140,7 +151,6 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 
 	private CodeBlock createNextEdgeInGraphMethods() {
 		CodeList code = new CodeList();
-
 		TreeSet<AttributedElementClass> superClasses = new TreeSet<AttributedElementClass>();
 		superClasses.addAll(aec.getAllSuperClasses());
 		superClasses.add(aec);
@@ -172,28 +182,22 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 		code.setVariable("ecCamelName", camelCase(ec.getUniqueName()));
 		code.setVariable("formalParams", (withTypeFlag ? "boolean noSubClasses"
 				: ""));
-		code
-				.setVariable("actualParams", (withTypeFlag ? ", noSubClasses"
+		code.setVariable("actualParams", (withTypeFlag ? ", noSubClasses"
 						: ""));
 
 		if (currentCycle.isAbstract()) {
-			code
-					.add("/**",
+			code.add("/**",
 							" * @return the next #ecQualifiedName# edge in the global edge sequence");
 			if (withTypeFlag) {
-				code
-						.add(" * @param noSubClasses if set to <code>true</code>, no subclasses of #ecQualifiedName# are accepted");
+				code.add(" * @param noSubClasses if set to <code>true</code>, no subclasses of #ecQualifiedName# are accepted");
 			}
-			code
-					.add(" */",
+			code.add(" */",
 							"public #ecQualifiedName# getNext#ecCamelName#InGraph(#formalParams#);");
 		}
-		if (currentCycle.isStdOrSaveMemOrTransImpl()) {
-			code
-					.add(
-							"public #ecQualifiedName# getNext#ecCamelName#InGraph(#formalParams#) {",
-							"\treturn (#ecQualifiedName#)getNextEdgeOfClassInGraph(#ecQualifiedName#.class#actualParams#);",
-							"}");
+		if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()) {
+			code.add("public #ecQualifiedName# getNext#ecCamelName#InGraph(#formalParams#) {",
+					 "\treturn (#ecQualifiedName#)getNextEdge(#ecQualifiedName#.class#actualParams#);",
+					 "}");
 		}
 		return code;
 	}
@@ -212,11 +216,9 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 				}
 				addImports("#jgPackage#.EdgeDirection");
 				EdgeClass ecl = (EdgeClass) ec;
-				code
-						.addNoIndent(createNextEdgeAtVertexMethod(ecl, false,
+				code.addNoIndent(createNextEdgeAtVertexMethod(ecl, false,
 								false));
-				code
-						.addNoIndent(createNextEdgeAtVertexMethod(ecl, true,
+				code.addNoIndent(createNextEdgeAtVertexMethod(ecl, true,
 								false));
 				if (config.hasMethodsForSubclassesSupport()) {
 					if (!ecl.isAbstract()) {
@@ -263,15 +265,13 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 					.add(" */",
 							"public #ecQualifiedName# getNext#ecCamelName#(#formalParams#);");
 		}
-		if (currentCycle.isStdOrSaveMemOrTransImpl()) {
+		if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()) {
 			code
 					.add(
 							"public #ecQualifiedName# getNext#ecCamelName#(#formalParams#) {",
-							"\treturn (#ecQualifiedName#)getNextEdgeOfClass(#ecQualifiedName#.class#actualParams#);",
+							"\treturn (#ecQualifiedName#)getNextIncidence(#ecQualifiedName#.class#actualParams#);",
 							"}");
-
 		}
-
 		return code;
 	}
 
@@ -323,5 +323,4 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 						"}");
 		return code;
 	}
-
 }

@@ -1,25 +1,32 @@
 /*
- * JGraLab - The Java graph laboratory
- * (c) 2006-2010 Institute for Software Technology
- *               University of Koblenz-Landau, Germany
+ * JGraLab - The Java Graph Laboratory
  * 
- *               ist@uni-koblenz.de
+ * Copyright (C) 2006-2010 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
  * 
- * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
  * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Additional permission under GNU GPL version 3 section 7
+ * 
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
  */
 package de.uni_koblenz.jgralabtest.utilities.tg2schemagraph;
 
@@ -188,7 +195,7 @@ public class CompareSchemaWithSchemaGraph {
 	private GraphClass retrieveAndCheckGraphClass(Schema gSchema) {
 		// Get the 'only' defined GraphClass in the SchemaGraph
 		DefinesGraphClass definesGraphClass = gSchema
-				.getFirstDefinesGraphClass(OUTGOING);
+				.getFirstDefinesGraphClassIncidence(OUTGOING);
 
 		// There should be one GraphClass
 		assertTrue("There is no GraphClass or DefinesGraphClass edge defined.",
@@ -229,7 +236,7 @@ public class CompareSchemaWithSchemaGraph {
 		Vertex vertex;
 		// Gets the only defined DefaultPackage in the SchemaGraph
 		ContainsDefaultPackage containsDefaultPackage = gSchema
-				.getFirstContainsDefaultPackage(OUTGOING);
+				.getFirstContainsDefaultPackageIncidence(OUTGOING);
 		// There should be one DefaultPackage
 		assertFalse("There is no DefaultPackage defined.",
 				containsDefaultPackage == null);
@@ -303,7 +310,7 @@ public class CompareSchemaWithSchemaGraph {
 	private List<String> retrieveComments(NamedElement gElement) {
 		List<String> gComments = new ArrayList<String>();
 
-		Annotates annotates = gElement.getFirstAnnotates();
+		Annotates annotates = gElement.getFirstAnnotatesIncidence();
 
 		while (annotates != null) {
 
@@ -603,7 +610,7 @@ public class CompareSchemaWithSchemaGraph {
 			de.uni_koblenz.jgralab.schema.MapDomain domain, MapDomain gDomain) {
 
 		// KEY DOMAIN
-		HasKeyDomain hasKeyDomain = gDomain.getFirstHasKeyDomain(OUTGOING);
+		HasKeyDomain hasKeyDomain = gDomain.getFirstHasKeyDomainIncidence(OUTGOING);
 		assertTrue("There is no key Domain defined.", hasKeyDomain != null);
 		Vertex vertex = hasKeyDomain.getThat();
 		assertTrue("That should be an instance of Domain.",
@@ -620,7 +627,7 @@ public class CompareSchemaWithSchemaGraph {
 
 		// VALUE DOMAIN
 		HasValueDomain hasValueDomain = gDomain
-				.getFirstHasValueDomain(OUTGOING);
+				.getFirstHasValueDomainIncidence(OUTGOING);
 		assertTrue("There is no value Domain defined.", hasValueDomain != null);
 		vertex = hasValueDomain.getThat();
 		assertTrue("That should be an instance of Domain.",
@@ -650,7 +657,7 @@ public class CompareSchemaWithSchemaGraph {
 			CollectionDomain gDomain) {
 
 		// BASE DOMAIN
-		HasBaseDomain hasBaseDomain = gDomain.getFirstHasBaseDomain(OUTGOING);
+		HasBaseDomain hasBaseDomain = gDomain.getFirstHasBaseDomainIncidence(OUTGOING);
 		assertTrue("There should be a base Domain.", hasBaseDomain != null);
 		Vertex vertex = hasBaseDomain.getThat();
 		assertTrue("That should be an instance of Domain.",
@@ -807,12 +814,12 @@ public class CompareSchemaWithSchemaGraph {
 				superClasses.isEmpty());
 
 		// "To" and "From" edges are compared
-		ComesFrom comesFrom = gEdgeClass.getFirstComesFrom();
+		ComesFrom comesFrom = gEdgeClass.getFirstComesFromIncidence();
 		compareIncidenceClass(edgeClass.getFrom(), (IncidenceClass) comesFrom
 				.getThat(), IncidenceDirection.OUT);
 		// TODO TEST ob es weitere Kanten gibt, die es nicht geben sollte!
 
-		GoesTo goesTo = gEdgeClass.getFirstGoesTo();
+		GoesTo goesTo = gEdgeClass.getFirstGoesToIncidence();
 		compareIncidenceClass(edgeClass.getTo(), (IncidenceClass) goesTo
 				.getThat(), IncidenceDirection.IN);
 		// TODO TEST ob es weitere Kanten gibt, die es nicht geben sollte!
@@ -880,7 +887,7 @@ public class CompareSchemaWithSchemaGraph {
 	private void compareVertexClassesOfIncidenceClasses(
 			de.uni_koblenz.jgralab.schema.IncidenceClass incidence,
 			IncidenceClass gIncidence) {
-		EndsAt edgeToVertexClass = gIncidence.getFirstEndsAt();
+		EndsAt edgeToVertexClass = gIncidence.getFirstEndsAtIncidence();
 		assertTrue("That should be an instance of \"VertexClass\".",
 				edgeToVertexClass.getThat() instanceof VertexClass);
 
@@ -1003,9 +1010,9 @@ public class CompareSchemaWithSchemaGraph {
 			Set<String> gSubsettedIncidenceClasses, Subsets subsets) {
 		IncidenceClass subsettedIncidenceClass = (IncidenceClass) subsets
 				.getThat();
-		Edge edgeToEdgeClass = subsettedIncidenceClass.getFirstGoesTo();
+		Edge edgeToEdgeClass = subsettedIncidenceClass.getFirstGoesToIncidence();
 		if (edgeToEdgeClass == null) {
-			edgeToEdgeClass = subsettedIncidenceClass.getFirstComesFrom();
+			edgeToEdgeClass = subsettedIncidenceClass.getFirstComesFromIncidence();
 		}
 		assertFalse(
 				"There is no edge defined to connected this IncidenceClass to its EdgeClass.",
@@ -1053,7 +1060,7 @@ public class CompareSchemaWithSchemaGraph {
 					attributes.containsKey(gAttribute.get_name()));
 
 			// Get the Domain
-			HasDomain hasDomain = gAttribute.getFirstHasDomain(OUTGOING);
+			HasDomain hasDomain = gAttribute.getFirstHasDomainIncidence(OUTGOING);
 			assertTrue("There is no Domain defined.", hasDomain != null);
 			Vertex vertex = hasDomain.getThat();
 			assertTrue("Omega should be an instance of Domain.",

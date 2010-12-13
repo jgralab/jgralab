@@ -1,25 +1,32 @@
 /*
- * JGraLab - The Java graph laboratory
- * (c) 2006-2010 Institute for Software Technology
- *               University of Koblenz-Landau, Germany
+ * JGraLab - The Java Graph Laboratory
  * 
- *               ist@uni-koblenz.de
+ * Copyright (C) 2006-2010 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
  * 
- * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
  * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Additional permission under GNU GPL version 3 section 7
+ * 
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
  */
 package de.uni_koblenz.jgralab.greql2.parser;
 
@@ -186,8 +193,9 @@ public abstract class ParserHelper {
 	private void replaceDefinitionExpressions()
 			throws DuplicateVariableException, UndefinedVariableException {
 		List<DefinitionExpression> list = new ArrayList<DefinitionExpression>();
-		for (DefinitionExpression exp : graph.getDefinitionExpressionVertices())
+		for (DefinitionExpression exp : graph.getDefinitionExpressionVertices()) {
 			list.add(exp);
+		}
 
 		/* iterate over all definitionsexpressions in the graph */
 		for (DefinitionExpression exp : list) {
@@ -208,25 +216,27 @@ public abstract class ParserHelper {
 			/* iterate over all definitions at the current definition expression */
 			for (Definition definition : defList) {
 				IsExprOf isExprOf = definition
-						.getFirstIsExprOf(EdgeDirection.IN);
-				IsVarOf isVarOf = definition.getFirstIsVarOf(EdgeDirection.IN);
+						.getFirstIsExprOfIncidence(EdgeDirection.IN);
+				IsVarOf isVarOf = definition
+						.getFirstIsVarOfIncidence(EdgeDirection.IN);
 				Expression expr = (Expression) isExprOf.getAlpha();
 				Variable variable = (Variable) isVarOf.getAlpha();
 				isVarOf.delete();
 				isExprOf.delete();
-				Edge e = variable.getFirstEdge(EdgeDirection.OUT);
+				Edge e = variable.getFirstIncidence(EdgeDirection.OUT);
 				while (e != null) {
 					e.setAlpha(expr);
-					e = variable.getFirstEdge(EdgeDirection.OUT);
+					e = variable.getFirstIncidence(EdgeDirection.OUT);
 				}
 				variable.delete();
 			}
-			Expression boundExpr = (Expression) exp.getFirstIsBoundExprOf(
-					EdgeDirection.IN).getAlpha();
-			Edge e = exp.getFirstEdge(EdgeDirection.OUT);
+			Expression boundExpr = (Expression) exp
+					.getFirstIsBoundExprOfIncidence(EdgeDirection.IN)
+					.getAlpha();
+			Edge e = exp.getFirstIncidence(EdgeDirection.OUT);
 			while (e != null) {
 				e.setAlpha(boundExpr);
-				e = exp.getFirstEdge(EdgeDirection.OUT);
+				e = exp.getFirstIncidence(EdgeDirection.OUT);
 			}
 			exp.delete();
 		}
@@ -235,11 +245,13 @@ public abstract class ParserHelper {
 	protected void eliminateUnusedNodes() {
 		List<Vertex> deleteList = new ArrayList<Vertex>();
 		for (Vertex v : graph.vertices()) {
-			if (v.getFirstEdge() == null)
+			if (v.getFirstIncidence() == null) {
 				deleteList.add(v);
+			}
 		}
-		for (Vertex v : deleteList)
+		for (Vertex v : deleteList) {
 			v.delete();
+		}
 	}
 
 	/**
@@ -274,7 +286,7 @@ public abstract class ParserHelper {
 					.get_name());
 			if (var != null) {
 				if (var != v) {
-					Edge inc = v.getFirstEdge(EdgeDirection.OUT);
+					Edge inc = v.getFirstIncidence(EdgeDirection.OUT);
 					inc.setAlpha(var);
 					if (v.getDegree() <= 0) {
 						v.delete();
@@ -282,9 +294,9 @@ public abstract class ParserHelper {
 				}
 			} else {
 				Greql2Aggregation e = (Greql2Aggregation) v
-						.getFirstEdge(EdgeDirection.OUT);
-				throw new UndefinedVariableException((Variable) v, e
-						.get_sourcePositions());
+						.getFirstIncidence(EdgeDirection.OUT);
+				throw new UndefinedVariableException((Variable) v,
+						e.get_sourcePositions());
 			}
 		} else {
 			ArrayList<Edge> incidenceList = new ArrayList<Edge>();
@@ -310,11 +322,12 @@ public abstract class ParserHelper {
 		afterParsingvariableSymbolTable.blockBegin();
 		for (IsBoundVarOf isBoundVarOf : root
 				.getIsBoundVarOfIncidences(EdgeDirection.IN)) {
-			afterParsingvariableSymbolTable.insert(((Variable) isBoundVarOf
-					.getAlpha()).get_name(), isBoundVarOf.getAlpha());
+			afterParsingvariableSymbolTable.insert(
+					((Variable) isBoundVarOf.getAlpha()).get_name(),
+					isBoundVarOf.getAlpha());
 		}
 		IsQueryExprOf isQueryExprOf = root
-				.getFirstIsQueryExprOf(EdgeDirection.IN);
+				.getFirstIsQueryExprOfIncidence(EdgeDirection.IN);
 		mergeVariables(isQueryExprOf.getAlpha(), true);
 		afterParsingvariableSymbolTable.blockEnd();
 	}
@@ -330,28 +343,30 @@ public abstract class ParserHelper {
 	private void mergeVariablesInDefinitionExpression(DefinitionExpression v,
 			boolean separateScope) throws DuplicateVariableException,
 			UndefinedVariableException {
-		if (separateScope)
+		if (separateScope) {
 			afterParsingvariableSymbolTable.blockBegin();
+		}
 		for (IsDefinitionOf currentEdge : v
 				.getIsDefinitionOfIncidences(EdgeDirection.IN)) {
 			Definition definition = (Definition) currentEdge.getAlpha();
-			Variable variable = (Variable) definition.getFirstIsVarOf(
+			Variable variable = (Variable) definition.getFirstIsVarOfIncidence(
 					EdgeDirection.IN).getAlpha();
 			afterParsingvariableSymbolTable.insert(variable.get_name(),
 					variable);
 		}
 		Edge isBoundExprOf = v
-				.getFirstIsBoundExprOfDefinition(EdgeDirection.IN);
+				.getFirstIsBoundExprOfDefinitionIncidence(EdgeDirection.IN);
 		mergeVariables(isBoundExprOf.getAlpha(), false);
 		for (IsDefinitionOf currentEdge : v
 				.getIsDefinitionOfIncidences(EdgeDirection.IN)) {
 			Definition definition = (Definition) currentEdge.getAlpha();
-			Expression expr = (Expression) definition.getFirstIsExprOf(
-					EdgeDirection.IN).getAlpha();
+			Expression expr = (Expression) definition
+					.getFirstIsExprOfIncidence(EdgeDirection.IN).getAlpha();
 			mergeVariables(expr, true);
 		}
-		if (separateScope)
+		if (separateScope) {
 			afterParsingvariableSymbolTable.blockEnd();
+		}
 	}
 
 	/**
@@ -381,12 +396,13 @@ public abstract class ParserHelper {
 				.getIsSimpleDeclOfIncidences(EdgeDirection.IN)) {
 			SimpleDeclaration simpleDecl = (SimpleDeclaration) currentEdge
 					.getAlpha();
-			Expression expr = (Expression) simpleDecl.getFirstIsTypeExprOf(
-					EdgeDirection.IN).getAlpha();
+			Expression expr = (Expression) simpleDecl
+					.getFirstIsTypeExprOfIncidence(EdgeDirection.IN).getAlpha();
 			mergeVariables(expr, true);
 		}
 
-		IsSubgraphOf isSubgraphOf = v.getFirstIsSubgraphOf(EdgeDirection.IN);
+		IsSubgraphOf isSubgraphOf = v
+				.getFirstIsSubgraphOfIncidence(EdgeDirection.IN);
 		if (isSubgraphOf != null) {
 			mergeVariables(isSubgraphOf.getAlpha(), true);
 		}
@@ -407,16 +423,18 @@ public abstract class ParserHelper {
 	private void mergeVariablesInQuantifiedExpression(QuantifiedExpression v,
 			boolean separateScope) throws DuplicateVariableException,
 			UndefinedVariableException {
-		if (separateScope)
+		if (separateScope) {
 			afterParsingvariableSymbolTable.blockBegin();
+		}
 		IsQuantifiedDeclOf isQuantifiedDeclOf = v
-				.getFirstIsQuantifiedDeclOf(EdgeDirection.IN);
+				.getFirstIsQuantifiedDeclOfIncidence(EdgeDirection.IN);
 		mergeVariablesInDeclaration((Declaration) isQuantifiedDeclOf.getAlpha());
 		IsBoundExprOfQuantifier isBoundExprOfQuantifier = v
-				.getFirstIsBoundExprOfQuantifier(EdgeDirection.IN);
+				.getFirstIsBoundExprOfQuantifierIncidence(EdgeDirection.IN);
 		mergeVariables(isBoundExprOfQuantifier.getAlpha(), true);
-		if (separateScope)
+		if (separateScope) {
 			afterParsingvariableSymbolTable.blockEnd();
+		}
 	}
 
 	/**
@@ -429,17 +447,19 @@ public abstract class ParserHelper {
 	private void mergeVariablesInComprehension(Comprehension v,
 			boolean separateScope) throws DuplicateVariableException,
 			UndefinedVariableException {
-		if (separateScope)
+		if (separateScope) {
 			afterParsingvariableSymbolTable.blockBegin();
-		Edge IsCompDeclOf = v.getFirstIsCompDeclOf(EdgeDirection.IN);
+		}
+		Edge IsCompDeclOf = v.getFirstIsCompDeclOfIncidence(EdgeDirection.IN);
 		mergeVariablesInDeclaration((Declaration) IsCompDeclOf.getAlpha());
-		Edge isCompResultDefOf = v.getFirstIsCompResultDefOf(EdgeDirection.IN);
+		Edge isCompResultDefOf = v
+				.getFirstIsCompResultDefOfIncidence(EdgeDirection.IN);
 		if (isCompResultDefOf != null) {
 			mergeVariables(isCompResultDefOf.getAlpha(), true);
 			// merge variables in table-headers if it's a bag-comprehension
 			if (v instanceof BagComprehension) {
 				IsTableHeaderOf isTableHeaderOf = v
-						.getFirstIsTableHeaderOf(EdgeDirection.IN);
+						.getFirstIsTableHeaderOfIncidence(EdgeDirection.IN);
 				while (isTableHeaderOf != null) {
 					mergeVariables(isTableHeaderOf.getAlpha(), true);
 					isTableHeaderOf = isTableHeaderOf
@@ -449,13 +469,13 @@ public abstract class ParserHelper {
 			if (v instanceof TableComprehension) {
 				TableComprehension tc = (TableComprehension) v;
 				IsColumnHeaderExprOf ch = tc
-						.getFirstIsColumnHeaderExprOf(EdgeDirection.IN);
+						.getFirstIsColumnHeaderExprOfIncidence(EdgeDirection.IN);
 				mergeVariables(ch.getAlpha(), true);
 				IsRowHeaderExprOf rh = tc
-						.getFirstIsRowHeaderExprOf(EdgeDirection.IN);
+						.getFirstIsRowHeaderExprOfIncidence(EdgeDirection.IN);
 				mergeVariables(rh.getAlpha(), true);
 				IsTableHeaderOf th = tc
-						.getFirstIsTableHeaderOf(EdgeDirection.IN);
+						.getFirstIsTableHeaderOfIncidence(EdgeDirection.IN);
 				if (th != null) {
 					mergeVariables(th.getAlpha(), true);
 				}
@@ -463,14 +483,15 @@ public abstract class ParserHelper {
 		}
 		if (v instanceof MapComprehension) {
 			IsKeyExprOfComprehension keyEdge = ((MapComprehension) v)
-					.getFirstIsKeyExprOfComprehension();
+					.getFirstIsKeyExprOfComprehensionIncidence();
 			mergeVariables(keyEdge.getAlpha(), true);
 			IsValueExprOfComprehension valueEdge = ((MapComprehension) v)
-					.getFirstIsValueExprOfComprehension();
+					.getFirstIsValueExprOfComprehensionIncidence();
 			mergeVariables(valueEdge.getAlpha(), true);
 		}
-		if (separateScope)
+		if (separateScope) {
 			afterParsingvariableSymbolTable.blockEnd();
+		}
 	}
 
 	class FunctionConstruct {
@@ -541,10 +562,6 @@ public abstract class ParserHelper {
 			functionSymbolTable.put(name, functionId);
 		}
 		return functionId;
-	}
-
-	protected final boolean isFunctionName(String ident) {
-		return funlib.isGreqlFunction(ident);
 	}
 
 	protected FunctionApplication createFunctionIdAndArgumentOf(
@@ -651,8 +668,8 @@ public abstract class ParserHelper {
 			if (firstThisVertex == null) {
 				firstThisVertex = thisVertex;
 			} else {
-				while (thisVertex.getFirstEdge() != null) {
-					Edge e = thisVertex.getFirstEdge();
+				while (thisVertex.getFirstIncidence() != null) {
+					Edge e = thisVertex.getFirstIncidence();
 					e.setThis(firstThisVertex);
 				}
 				literalsToDelete.add(thisVertex);
@@ -663,8 +680,8 @@ public abstract class ParserHelper {
 			if (firstThisEdge == null) {
 				firstThisEdge = thisEdge;
 			} else {
-				while (thisEdge.getFirstEdge() != null) {
-					Edge e = thisEdge.getFirstEdge();
+				while (thisEdge.getFirstIncidence() != null) {
+					Edge e = thisEdge.getFirstIncidence();
 					e.setThis(firstThisEdge);
 				}
 				literalsToDelete.add(thisEdge);

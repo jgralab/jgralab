@@ -1,25 +1,32 @@
 /*
- * JGraLab - The Java graph laboratory
- * (c) 2006-2010 Institute for Software Technology
- *               University of Koblenz-Landau, Germany
+ * JGraLab - The Java Graph Laboratory
  * 
- *               ist@uni-koblenz.de
+ * Copyright (C) 2006-2010 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
  * 
- * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
  * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Additional permission under GNU GPL version 3 section 7
+ * 
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
  */
 /**
  * 
@@ -46,6 +53,7 @@ import de.uni_koblenz.jgralab.greql2.schema.EdgePathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
+import de.uni_koblenz.jgralab.greql2.schema.IsBoundVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsDeclaredVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsPathDescriptionOf;
 import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
@@ -76,7 +84,7 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 	 */
 	@Override
 	public boolean isEquivalent(Optimizer optimizer) {
-		if (optimizer instanceof PathExistenceOptimizer) {
+		if (optimizer instanceof PathExistenceToDirectedPathExpressionOptimizer) {
 			return true;
 		}
 		return false;
@@ -93,7 +101,7 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 	@Override
 	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
 			throws OptimizerException {
-		if (syntaxgraph.getFirstVertexOfClass(PathExistence.class) == null) {
+		if (syntaxgraph.getFirstVertex(PathExistence.class) == null) {
 			return false;
 		}
 
@@ -114,8 +122,8 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 		for (PathExistence pe : pes) {
 			BoolLiteral lit = syntaxgraph.createBoolLiteral();
 			lit.set_boolValue(true);
-			while (pe.getFirstEdge(EdgeDirection.OUT) != null) {
-				Edge e = pe.getFirstEdge(EdgeDirection.OUT);
+			while (pe.getFirstIncidence(EdgeDirection.OUT) != null) {
+				Edge e = pe.getFirstIncidence(EdgeDirection.OUT);
 				e.setAlpha(lit);
 				assert e.getAlpha() == lit;
 			}
@@ -137,8 +145,8 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 		// TODO: For now, we want that both exps are variables. Maybe that's not
 		// needed...
 		if (!(startExp instanceof Variable) || !(targetExp instanceof Variable)) {
-			logger
-					.finer("PathExistence hasn't form var1 --> var2, skipping...");
+			logger.finer(optimizerHeaderString()
+					+ "PathExistence hasn't form var1 --> var2, skipping...");
 			return false;
 		}
 
@@ -146,13 +154,13 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 		// cause we don't handle these dependencies right now...
 		Expression pathDesc = pe.get_path();
 		if (!(pathDesc instanceof PathDescription)) {
-			logger
-					.finer("PathExistence contains an Expression as PathDescription, skipping...");
+			logger.finer(optimizerHeaderString()
+					+ "PathExistence contains an Expression as PathDescription, skipping...");
 			return false;
 		}
 		if (!isOptimizablePathDescription((PathDescription) pathDesc)) {
-			logger
-					.finer("PathExistence contains an EdgePathDescription, skipping...");
+			logger.finer(optimizerHeaderString()
+					+ "PathExistence contains an EdgePathDescription, skipping...");
 			return false;
 		}
 
@@ -160,7 +168,8 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 		Variable target = (Variable) targetExp;
 
 		if (start == target) {
-			logger.finer("PathExistence specifies a loop, skipping...");
+			logger.finer(optimizerHeaderString()
+					+ "PathExistence specifies a loop, skipping...");
 			return false;
 		}
 
@@ -169,45 +178,75 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 			startIsDeclaredFirst = false;
 		}
 
-		SimpleDeclaration startSD = (SimpleDeclaration) start
-				.getFirstIsDeclaredVarOf().getOmega();
-		SimpleDeclaration targetSD = (SimpleDeclaration) target
-				.getFirstIsDeclaredVarOf().getOmega();
-
-		assert startSD != null;
-		assert targetSD != null;
-
 		// sd is the simple decl where we want to change the type expr of
 		SimpleDeclaration sd = null;
+		// the variable that is declared in there
 		Variable sdsVar = null;
+		// the variable that will be used in the simple decl:
+		// "sdsVar: anchorVar -->"
 		Variable anchorVar = null;
 
-		if (targetSD == startSD) {
-			if (startIsDeclaredFirst) {
-				sd = splitSimpleDecl(startSD, target);
-				anchorVar = start;
-				sdsVar = target;
-			} else {
-				sd = splitSimpleDecl(startSD, start);
-				anchorVar = target;
-				sdsVar = start;
-			}
-		} else if (startIsDeclaredFirst) {
+		IsBoundVarOf ibvoStart = start.getFirstIsBoundVarOfIncidence();
+		IsBoundVarOf ibvoTarget = target.getFirstIsBoundVarOfIncidence();
+		if ((ibvoStart != null) && (ibvoTarget != null)) {
+			// In case of "using , b: a <-- b" this is as efficient as it is...
+			return false;
+		} else if ((ibvoStart != null) && (ibvoTarget == null)) {
+			// start is a bound var, target is declared
+			anchorVar = start;
+			sdsVar = target;
+			SimpleDeclaration targetSD = (SimpleDeclaration) target
+					.getFirstIsDeclaredVarOfIncidence().getOmega();
 			if (targetSD.getDegree(IsDeclaredVarOf.class) > 1) {
 				sd = splitSimpleDecl(targetSD, target);
 			} else {
 				sd = targetSD;
 			}
-			sdsVar = target;
-			anchorVar = start;
-		} else {
+		} else if ((ibvoStart == null) && (ibvoTarget != null)) {
+			// target is a bound var, start is declared
+			anchorVar = target;
+			sdsVar = start;
+			SimpleDeclaration startSD = (SimpleDeclaration) start
+					.getFirstIsDeclaredVarOfIncidence().getOmega();
 			if (startSD.getDegree(IsDeclaredVarOf.class) > 1) {
-				sd = splitSimpleDecl(startSD, start);
+				sd = splitSimpleDecl(startSD, target);
 			} else {
 				sd = startSD;
 			}
-			anchorVar = target;
-			sdsVar = start;
+		} else {
+			// both are declared vars
+			SimpleDeclaration startSD = (SimpleDeclaration) start
+					.getFirstIsDeclaredVarOfIncidence().getOmega();
+			SimpleDeclaration targetSD = (SimpleDeclaration) target
+					.getFirstIsDeclaredVarOfIncidence().getOmega();
+
+			if (targetSD == startSD) {
+				if (startIsDeclaredFirst) {
+					sd = splitSimpleDecl(startSD, target);
+					anchorVar = start;
+					sdsVar = target;
+				} else {
+					sd = splitSimpleDecl(startSD, start);
+					anchorVar = target;
+					sdsVar = start;
+				}
+			} else if (startIsDeclaredFirst) {
+				if (targetSD.getDegree(IsDeclaredVarOf.class) > 1) {
+					sd = splitSimpleDecl(targetSD, target);
+				} else {
+					sd = targetSD;
+				}
+				sdsVar = target;
+				anchorVar = start;
+			} else {
+				if (startSD.getDegree(IsDeclaredVarOf.class) > 1) {
+					sd = splitSimpleDecl(startSD, start);
+				} else {
+					sd = startSD;
+				}
+				anchorVar = target;
+				sdsVar = start;
+			}
 		}
 
 		// We must ensure that the start/target vertex of the new
@@ -220,10 +259,10 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 		// The path expression must be in a constraint and it must be in a
 		// top-level conjunction.
 		if (!isConstraintAndTopLevelConjunction(pe, (Declaration) sd
-				.getFirstIsSimpleDeclOf().getOmega())) {
-			logger
-					.finer(pe
-							+ " cannot be optimized, cause it's not in an constraint conjunction...");
+				.getFirstIsSimpleDeclOfIncidence().getOmega())) {
+			logger.finer(optimizerHeaderString()
+					+ pe
+					+ " cannot be optimized, cause it's not in an constraint conjunction...");
 			return false;
 		}
 
@@ -231,14 +270,14 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 		Set<Variable> varsUsedInPath = OptimizerUtility
 				.collectInternallyDeclaredVariablesBelow(path);
 		if (varsUsedInPath.contains(sdsVar)) {
-			logger
-					.finer("PathExistence path contains declared var, so skipping...");
+			logger.finer(optimizerHeaderString()
+					+ "PathExistence path contains declared var, so skipping...");
 			return false;
 		}
 		for (Variable usedVar : varsUsedInPath) {
 			if (isDeclaredBefore(sdsVar, usedVar)) {
-				logger
-						.finer("PathExistence path contains a previously declared var, so skipping...");
+				logger.finer(optimizerHeaderString()
+						+ "PathExistence path contains a previously declared var, so skipping...");
 				return false;
 			}
 		}
@@ -257,7 +296,7 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 		// difference between the old type expression and a new forward/backward
 		// vertex set.
 
-		sd.getFirstIsTypeExprOfDeclaration(EdgeDirection.IN).delete();
+		sd.getFirstIsTypeExprOfDeclarationIncidence(EdgeDirection.IN).delete();
 		Greql2 g = (Greql2) typeExp.getGraph();
 		FunctionApplication diff = g.createFunctionApplication();
 		g.createIsFunctionIdOf(OptimizerUtility.findOrCreateFunctionId(
@@ -354,10 +393,11 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 		if (vse.getDegree(EdgeDirection.OUT) < 2) {
 			vse.delete();
 		} else {
-			sd.getFirstIsTypeExprOfDeclaration().delete();
+			sd.getFirstIsTypeExprOfDeclarationIncidence().delete();
 		}
 		g.createIsTypeExprOfDeclaration(newPE, sd);
-		logger.finer("Created " + newPE + " as optimization...");
+		logger.finer(optimizerHeaderString() + "Created " + newPE
+				+ " as optimization...");
 		return true;
 	}
 

@@ -1,25 +1,32 @@
 /*
- * JGraLab - The Java graph laboratory
- * (c) 2006-2010 Institute for Software Technology
- *               University of Koblenz-Landau, Germany
+ * JGraLab - The Java Graph Laboratory
  * 
- *               ist@uni-koblenz.de
+ * Copyright (C) 2006-2010 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
  * 
- * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
  * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Additional permission under GNU GPL version 3 section 7
+ * 
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
  */
 
 package de.uni_koblenz.jgralab.greql2.evaluator.fa;
@@ -72,8 +79,9 @@ public class DFAState extends State {
 	 *         represents the given state
 	 */
 	public ArrayList<Transition> addRepresentedState(State s) {
-		if (neaStates.contains(s))
+		if (neaStates.contains(s)) {
 			return new ArrayList<Transition>();
+		}
 		neaStates.add(s);
 		ArrayList<Transition> oldTransList = new ArrayList<Transition>();
 		ArrayList<Transition> newTransList = new ArrayList<Transition>();
@@ -92,12 +100,14 @@ public class DFAState extends State {
 	 * states
 	 */
 	public boolean representSameNFAStates(DFAState s) {
-		if (neaStates.size() != s.neaStates.size())
+		if (neaStates.size() != s.neaStates.size()) {
 			return false;
+		}
 		Iterator<State> iter = s.neaStates.iterator();
 		while (iter.hasNext()) {
-			if (!neaStates.contains(iter.next()))
+			if (!neaStates.contains(iter.next())) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -108,8 +118,9 @@ public class DFAState extends State {
 	public boolean containsFinalStateOfNFA(NFA nfa) {
 		Iterator<State> stateIter = neaStates.iterator();
 		while (stateIter.hasNext()) {
-			if (nfa.finalStates.contains(stateIter.next()))
+			if (nfa.finalStates.contains(stateIter.next())) {
 				return true;
+			}
 		}
 		return false;
 	}

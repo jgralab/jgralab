@@ -1,25 +1,32 @@
 /*
- * JGraLab - The Java graph laboratory
- * (c) 2006-2010 Institute for Software Technology
- *               University of Koblenz-Landau, Germany
+ * JGraLab - The Java Graph Laboratory
  * 
- *               ist@uni-koblenz.de
+ * Copyright (C) 2006-2010 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
  * 
- * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
  * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Additional permission under GNU GPL version 3 section 7
+ * 
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
  */
 
 package de.uni_koblenz.jgralab.codegenerator;
@@ -114,6 +121,8 @@ public class GraphFactoryGenerator extends CodeGenerator {
 				+ graphClass.getQualifiedName());
 		code.setVariable("graphTransactionImplName", schemaRootPackageName
 				+ ".impl.trans." + graphClass.getQualifiedName());
+		code.setVariable("graphDatabaseImplName", schemaRootPackageName
+				+ ".impl.db." + graphClass.getQualifiedName());
 		code.setVariable("graphSaveMemImplName", schemaRootPackageName
 				+ ".impl.savemem." + graphClass.getQualifiedName());
 
@@ -127,12 +136,15 @@ public class GraphFactoryGenerator extends CodeGenerator {
 				code
 						.add("setGraphTransactionImplementationClass(#graphName#.class, #graphTransactionImplName#Impl.class);");
 			}
+			if (config.hasDatabaseSupport()) {
+				code
+						.add("setGraphDatabaseImplementationClass(#graphName#.class, #graphDatabaseImplName#Impl.class);");
+			}
 			if (config.hasSavememSupport()) {
 				code
 						.add("setGraphSavememImplementationClass(#graphName#.class, #graphSaveMemImplName#Impl.class);");
 			}
 		}
-
 		return code;
 	}
 
@@ -148,6 +160,8 @@ public class GraphFactoryGenerator extends CodeGenerator {
 				+ vertexClass.getQualifiedName());
 		code.setVariable("vertexTransactionImplName", schemaRootPackageName
 				+ ".impl.trans." + vertexClass.getQualifiedName());
+		code.setVariable("vertexDatabaseImplName", schemaRootPackageName
+				+ ".impl.db." + vertexClass.getQualifiedName());
 		code.setVariable("vertexSaveMemImplName", schemaRootPackageName
 				+ ".impl.savemem." + vertexClass.getQualifiedName());
 
@@ -160,12 +174,15 @@ public class GraphFactoryGenerator extends CodeGenerator {
 				code
 						.add("setVertexTransactionImplementationClass(#vertexName#.class, #vertexTransactionImplName#Impl.class);");
 			}
+			if (config.hasDatabaseSupport()) {
+				code
+						.add("setVertexDatabaseImplementationClass(#vertexName#.class, #vertexDatabaseImplName#Impl.class);");
+			}
 			if (config.hasSavememSupport()) {
 				code
 						.add("setVertexSavememImplementationClass(#vertexName#.class, #vertexSaveMemImplName#Impl.class);");
 			}
 		}
-
 		return code;
 	}
 
@@ -193,7 +210,6 @@ public class GraphFactoryGenerator extends CodeGenerator {
 			code
 					.add("setRecordSavememImplementationClass(#recordName#.class, #recordSaveMemImplName#Impl.class);");
 		}
-
 		return code;
 	}
 
@@ -205,6 +221,8 @@ public class GraphFactoryGenerator extends CodeGenerator {
 				+ edgeClass.getQualifiedName());
 		code.setVariable("edgeTransactionImplName", schemaRootPackageName
 				+ ".impl.trans." + edgeClass.getQualifiedName());
+		code.setVariable("edgeDatabaseImplName", schemaRootPackageName
+				+ ".impl.db." + edgeClass.getQualifiedName());
 		code.setVariable("edgeSaveMemImplName", schemaRootPackageName
 				+ ".impl.savemem." + edgeClass.getQualifiedName());
 
@@ -217,13 +235,15 @@ public class GraphFactoryGenerator extends CodeGenerator {
 				code
 						.add("setEdgeTransactionImplementationClass(#edgeName#.class, #edgeTransactionImplName#Impl.class);");
 			}
+			if (config.hasDatabaseSupport()) {
+				code
+						.add("setEdgeDatabaseImplementationClass(#edgeName#.class, #edgeDatabaseImplName#Impl.class);");
+			}
 			if (config.hasSavememSupport()) {
 				code
 						.add("setEdgeSavememImplementationClass(#edgeName#.class, #edgeSaveMemImplName#Impl.class);");
 			}
 		}
-
 		return code;
 	}
-
 }

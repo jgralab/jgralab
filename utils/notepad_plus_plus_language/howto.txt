@@ -1,0 +1,33 @@
+GReQL-Syntax-Highlighting for Notepad++
+---------------------------------------
+
+The userDefineLang.xml file contains a user-defined language for Notepad++ (created for Version 5.8.2). 
+The user-defined language provides Syntax-highlighting for GReQL files. 
+Files with the ending ".greql" will automatically select this language after installation.
+
+
+++ INSTALLATION INSTRUCTIONS ++
+
+1. If you don't have an userDefineLang.xml file already in you Notepad++ configuration directory 
+   (e.g. on Win7: C:\Users\XX\AppData\Roaming\Notepad++), you can drop this file among your other 
+   configuration file, in the Notepad++ config folder. It should be named userDefineLang.xml.
+2. Otherwise, open both the existing and new file.
+	1. Select all of the new file, copy, and paste at the end of the current file.
+	2. This will have created a spurious </Notepad_Plus><Notepad_plus> pair in the middle, each 
+	   tag on a line by itself. Remove these two consecutive lines.
+	3. Close Notepad++. 
+
+Your Languages menu will show the newly added language at the bottom, next time you launch Notepad++. 
+
+See https://sourceforge.net/apps/mediawiki/notepad-plus/index.php?title=User_Defined_Language_Files for
+further information.
+
+
+++ EDIT LANGUAGE ++
+
+To edit the GReQL language or add own user-defined languages, open "View -> User-Defined Languages".
+
+
+++ QUESTIONS ++
+
+Andreas Fuhr (afuhr@uni-koblenz.de)

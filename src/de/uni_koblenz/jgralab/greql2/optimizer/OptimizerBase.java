@@ -1,25 +1,32 @@
 /*
- * JGraLab - The Java graph laboratory
- * (c) 2006-2010 Institute for Software Technology
- *               University of Koblenz-Landau, Germany
+ * JGraLab - The Java Graph Laboratory
  * 
- *               ist@uni-koblenz.de
+ * Copyright (C) 2006-2010 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
  * 
- * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
  * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Additional permission under GNU GPL version 3 section 7
+ * 
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
  */
 /**
  *
@@ -38,6 +45,8 @@ import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
+import de.uni_koblenz.jgralab.greql2.schema.IsBoundVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsDeclaredVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsSimpleDeclOf;
 import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
@@ -86,15 +95,15 @@ public abstract class OptimizerBase implements Optimizer {
 		assert from.isValid() && to.isValid() : "Relinking invalid vertices!";
 
 		// System.out.println("    relink: " + from + " --> " + to);
-		Edge e = from.getFirstEdge(EdgeDirection.IN);
+		Edge e = from.getFirstIncidence(EdgeDirection.IN);
 		while (e != null) {
-			Edge newE = e.getNextEdge(EdgeDirection.IN);
+			Edge newE = e.getNextIncidence(EdgeDirection.IN);
 			e.setOmega(to);
 			e = newE;
 		}
-		e = from.getFirstEdge(EdgeDirection.OUT);
+		e = from.getFirstIncidence(EdgeDirection.OUT);
 		while (e != null) {
-			Edge newE = e.getNextEdge(EdgeDirection.OUT);
+			Edge newE = e.getNextIncidence(EdgeDirection.OUT);
 			e.setAlpha(to);
 			e = newE;
 		}
@@ -125,13 +134,36 @@ public abstract class OptimizerBase implements Optimizer {
 		if (var1 == var2) {
 			return false;
 		}
+		IsBoundVarOf ibvo1 = var1.getFirstIsBoundVarOfIncidence();
+		IsBoundVarOf ibvo2 = var2.getFirstIsBoundVarOfIncidence();
+
+		if (ibvo1 != null) {
+			if (ibvo2 == null) {
+				// Externally bound vars are always before locally declared vars
+				return true;
+			}
+			Greql2Expression root = (Greql2Expression) ibvo1.getOmega();
+			for (IsBoundVarOf ibvo : root.getIsBoundVarOfIncidences()) {
+				ibvo = (IsBoundVarOf) ibvo.getNormalEdge();
+				if (ibvo == ibvo1) {
+					return true;
+				} else if (ibvo == ibvo2) {
+					return false;
+				}
+			}
+			throw new OptimizerException("You must never come here...");
+		} else if (ibvo2 != null) {
+			// Only var2 is externally bound.
+			return false;
+		}
+
 		SimpleDeclaration sd1 = (SimpleDeclaration) var1
-				.getFirstIsDeclaredVarOf(EdgeDirection.OUT).getOmega();
-		Declaration decl1 = (Declaration) sd1.getFirstIsSimpleDeclOf(
+				.getFirstIsDeclaredVarOfIncidence(EdgeDirection.OUT).getOmega();
+		Declaration decl1 = (Declaration) sd1.getFirstIsSimpleDeclOfIncidence(
 				EdgeDirection.OUT).getOmega();
 		SimpleDeclaration sd2 = (SimpleDeclaration) var2
-				.getFirstIsDeclaredVarOf(EdgeDirection.OUT).getOmega();
-		Declaration decl2 = (Declaration) sd2.getFirstIsSimpleDeclOf(
+				.getFirstIsDeclaredVarOfIncidence(EdgeDirection.OUT).getOmega();
+		Declaration decl2 = (Declaration) sd2.getFirstIsSimpleDeclOfIncidence(
 				EdgeDirection.OUT).getOmega();
 
 		if (decl1 == decl2) {
@@ -139,7 +171,7 @@ public abstract class OptimizerBase implements Optimizer {
 				// var1 and var2 are declared in the same SimpleDeclaration,
 				// so the order of the IsDeclaredVarOf edges matters.
 				IsDeclaredVarOf inc = sd1
-						.getFirstIsDeclaredVarOf(EdgeDirection.IN);
+						.getFirstIsDeclaredVarOfIncidence(EdgeDirection.IN);
 				while (inc != null) {
 					if (inc.getAlpha() == var1) {
 						return true;
@@ -154,7 +186,7 @@ public abstract class OptimizerBase implements Optimizer {
 				// different SimpleDeclarations, so the order of the
 				// SimpleDeclarations matters.
 				IsSimpleDeclOf inc = decl1
-						.getFirstIsSimpleDeclOf(EdgeDirection.IN);
+						.getFirstIsSimpleDeclOfIncidence(EdgeDirection.IN);
 				while (inc != null) {
 					if (inc.getAlpha() == sd1) {
 						return true;
@@ -168,9 +200,9 @@ public abstract class OptimizerBase implements Optimizer {
 		} else {
 			// start and target are declared in different Declarations, so we
 			// have to check if start was declared in the outer Declaration.
-			Vertex declParent1 = decl1.getFirstEdge(EdgeDirection.OUT)
+			Vertex declParent1 = decl1.getFirstIncidence(EdgeDirection.OUT)
 					.getOmega();
-			Vertex declParent2 = decl2.getFirstEdge(EdgeDirection.OUT)
+			Vertex declParent2 = decl2.getFirstIncidence(EdgeDirection.OUT)
 					.getOmega();
 			if (OptimizerUtility.isAbove(declParent1, declParent2)) {
 				return true;
@@ -195,13 +227,13 @@ public abstract class OptimizerBase implements Optimizer {
 			return (Declaration) vertex;
 		}
 		Declaration result = null;
-		Edge inc = vertex.getFirstEdge(EdgeDirection.OUT);
+		Edge inc = vertex.getFirstIncidence(EdgeDirection.OUT);
 		while (inc != null) {
 			result = findNearestDeclarationAbove(inc.getOmega());
 			if (result != null) {
 				return result;
 			}
-			inc = inc.getNextEdge(EdgeDirection.OUT);
+			inc = inc.getNextIncidence(EdgeDirection.OUT);
 		}
 		return null;
 	}
@@ -229,19 +261,20 @@ public abstract class OptimizerBase implements Optimizer {
 			// there's nothing to split out anymore
 			return sd;
 		}
-		Declaration parentDecl = (Declaration) sd.getFirstIsSimpleDeclOf(
-				EdgeDirection.OUT).getOmega();
-		IsSimpleDeclOf oldEdge = sd.getFirstIsSimpleDeclOf();
+		Declaration parentDecl = (Declaration) sd
+				.getFirstIsSimpleDeclOfIncidence(EdgeDirection.OUT).getOmega();
+		IsSimpleDeclOf oldEdge = sd.getFirstIsSimpleDeclOfIncidence();
 		SimpleDeclaration newSD = syntaxgraph.createSimpleDeclaration();
 		IsSimpleDeclOf newEdge = syntaxgraph.createIsSimpleDeclOf(newSD,
 				parentDecl);
 		syntaxgraph.createIsTypeExprOfDeclaration((Expression) sd
-				.getFirstIsTypeExprOfDeclaration(EdgeDirection.IN).getAlpha(),
-				newSD);
-		newEdge.getReversedEdge().putEdgeAfter(oldEdge.getReversedEdge());
+				.getFirstIsTypeExprOfDeclarationIncidence(EdgeDirection.IN)
+				.getAlpha(), newSD);
+		newEdge.getReversedEdge().putIncidenceAfter(oldEdge.getReversedEdge());
 
 		for (Variable var : varsToBeSplit) {
-			IsDeclaredVarOf inc = sd.getFirstIsDeclaredVarOf(EdgeDirection.IN);
+			IsDeclaredVarOf inc = sd
+					.getFirstIsDeclaredVarOfIncidence(EdgeDirection.IN);
 			HashSet<IsDeclaredVarOf> relinkIncs = new HashSet<IsDeclaredVarOf>();
 			while (inc != null) {
 				if (inc.getAlpha() == var) {
