@@ -60,7 +60,7 @@ public class DijkstraAlgorithm extends AStarSearch implements
 	}
 
 	@Override
-	public AStarSearch undirected() {
+	public DijkstraAlgorithm undirected() {
 		super.undirected();
 		return this;
 	}
