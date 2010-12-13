@@ -274,8 +274,8 @@ public class Csv2Tg implements FilenameFilter {
 	private void createEdge(CsvReader reader, Class<? extends Edge> clazz)
 			throws NoSuchAttributeException, GraphIOException {
 
-		Vertex alpha = getVertex(reader.getFieldAt(1));
-		Vertex omega = getVertex(reader.getFieldAt(2));
+		Vertex alpha = getVertex(reader, 1);
+		Vertex omega = getVertex(reader, 2);
 
 		Edge edge = graph.createEdge(clazz, alpha, omega);
 
@@ -308,8 +308,15 @@ public class Csv2Tg implements FilenameFilter {
 		return csvStringValue;
 	}
 
-	private Vertex getVertex(String vertexName) {
-		return vertices.get(vertexName);
+	private Vertex getVertex(CsvReader reader, int fieldNumber) {
+		String vertexName = reader.getFieldAt(fieldNumber);
+		Vertex vertex = vertices.get(vertexName);
+		if (vertex == null) {
+			throw new RuntimeException("Couldn't find vertex \"" + vertexName
+					+ "\" in line: " + reader.getLineNumber());
+			// + " in file \"" + reader.toString() + "\".");
+		}
+		return vertex;
 	}
 
 	public String[] getCsvFiles() {
