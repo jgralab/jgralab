@@ -1,10 +1,12 @@
 package de.uni_koblenz.jgralab.utilities.csv2tg;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -29,7 +31,6 @@ import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.NoSuchAttributeException;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 
@@ -157,8 +158,8 @@ public class Csv2Tg implements FilenameFilter {
 		edgeInstances = new HashMap<Class<? extends Edge>, CsvReader>();
 		// TODO Graph ID
 		try {
-			graph = (Graph) method.invoke(null,
-					new Object[] { "instance", 1, 1 });
+			graph = (Graph) method
+					.invoke(null, new Object[] { null, 128, 128 });
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
@@ -243,7 +244,9 @@ public class Csv2Tg implements FilenameFilter {
 		try {
 			// Storing as a global variable is just for debugging purposes.
 			openedFile = csvFile;
-			openFileReader = new CsvReader(new FileReader(csvFile),
+			openFileReader = new CsvReader(
+					new BufferedReader(new InputStreamReader(
+							new FileInputStream(csvFile), "UTF-8")),
 					CsvReader.WITH_FIELDNAMES);
 			return openFileReader;
 		} catch (FileNotFoundException cause) {
@@ -301,11 +304,11 @@ public class Csv2Tg implements FilenameFilter {
 	}
 
 	private String transformCsvStringValue(String csvStringValue) {
+
 		if (csvStringValue.startsWith("\"") && csvStringValue.endsWith("\"")) {
-			csvStringValue = csvStringValue.substring(1,
-					csvStringValue.length() - 1);
+			csvStringValue = GraphIO.toUtfString(csvStringValue.substring(1,
+					csvStringValue.length() - 1).replace("\\\"", "\""));
 		}
-		csvStringValue = csvStringValue.replace("\"\"", "\"");
 		return csvStringValue;
 	}
 
