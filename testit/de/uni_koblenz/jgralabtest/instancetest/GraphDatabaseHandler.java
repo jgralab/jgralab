@@ -17,12 +17,12 @@ import de.uni_koblenz.jgralabtest.schemas.vertextest.VertexTestSchema;
 
 public class GraphDatabaseHandler {
 
-	private static final String url = "postgresql://helena.uni-koblenz.de:5432/";
+	private static final String url = System.getProperty("dbaddress");
 	// protected String url = "mysql://localhost:3306/graphdatabase5";
 	// protected String userName = "postgres";
-	private static final String databaseName = "jgralabtest2";
-	private static final String userName = "jgralabtest";
-	private static final String password = "secret";
+	private static final String databaseName = System.getProperty("dbname");
+	private static final String userName = System.getProperty("user");
+	private static final String password = System.getProperty("password");
 
 	protected GraphDatabase graphDatabase;
 

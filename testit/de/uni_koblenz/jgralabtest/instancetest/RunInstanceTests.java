@@ -39,6 +39,21 @@ import org.junit.runners.Suite;
 import de.uni_koblenz.jgralabtest.graphmarker.RunGraphMarkerTests;
 
 /**
+ * This test suite runs all instance tests provided by JGraLab. By default the
+ * database implementation is not tested. If it should be tested, the following
+ * system properties have to be specified:
+ * 
+ * - dbaddress (address of the database server e.g.:
+ * "postgresql://localhost:5432/") - dbname (name of the database e.g.:
+ * "jgralabtest" - user (username using the database) - password (password for
+ * the database)
+ * 
+ * The database with the given name has to be created for the given user.
+ * Furthermore the generic database schema has to be created in the database.
+ * This can be done by running the main method of the class
+ * <code>GraphDatabaseHandler</code> with the same set of system properties
+ * shown above.
+ * 
  * @author ist@uni-koblenz.de
  * 
  */
@@ -51,12 +66,12 @@ import de.uni_koblenz.jgralabtest.graphmarker.RunGraphMarkerTests;
 public class RunInstanceTests {
 
 	@BeforeClass
-	public static void setupClass(){
+	public static void setupClass() {
 		System.out.println("Starting instance tests...");
 	}
-	
+
 	@AfterClass
-	public static void cleanup(){
+	public static void cleanup() {
 		System.out.println("Fini.");
 	}
 }
