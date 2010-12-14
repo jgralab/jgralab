@@ -51,8 +51,16 @@ public abstract class InstanceTest {
 		parameters.add(new Object[] { ImplementationType.STANDARD });
 		parameters.add(new Object[] { ImplementationType.TRANSACTION });
 		parameters.add(new Object[] { ImplementationType.SAVEMEM });
-		// uncomment the following line for not testing db support
-		parameters.add(new Object[] { ImplementationType.DATABASE });
+
+		if (System.getProperty("dbaddress") != null
+				&& System.getProperty("dbname") != null
+				&& System.getProperty("user") != null
+				&& System.getProperty("password") != null) {
+			System.out.println("Enabling database support testing...");
+			parameters.add(new Object[] { ImplementationType.DATABASE });
+		} else {
+			System.out.println("No database access data provided, disabling database support testing...");
+		}
 	}
 
 	protected GraphDatabaseHandler dbHandler;

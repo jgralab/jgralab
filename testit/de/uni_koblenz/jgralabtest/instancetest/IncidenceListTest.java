@@ -101,10 +101,10 @@ public class IncidenceListTest extends InstanceTest {
 					.createMinimalGraphWithTransactionSupport(V, E);
 			break;
 		case DATABASE:
+			dbHandler.loadMinimalSchemaIntoGraphDatabase();
 			g = this.createMinimalGraphWithDatabaseSupport();
 			break;
 		case SAVEMEM:
-			dbHandler.loadMinimalSchemaIntoGraphDatabase();
 			g = MinimalSchema.instance().createMinimalGraphWithSavememSupport(
 					V, E);
 			break;
