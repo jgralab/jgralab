@@ -56,7 +56,7 @@ public class GreqlEvaluatorFacade {
 	/**
 	 * The actual GreqlEvaluator used for evaluations.
 	 */
-	private GreqlEvaluator evaluator;
+	private final GreqlEvaluator evaluator;
 
 	/**
 	 * Current known variable set used by the
@@ -245,8 +245,8 @@ public class GreqlEvaluatorFacade {
 	 */
 	public JValue evaluate(String query) {
 		query = getUsingString() + query;
-		System.out.println(query);
 		evaluator.setQuery(query);
+
 		try {
 			evaluator.startEvaluation();
 		} catch (RuntimeException parse) {
