@@ -59,7 +59,7 @@ public class IterativeDepthFirstSearch extends DepthFirstSearch {
 	}
 
 	public IterativeDepthFirstSearch(Graph graph) {
-		super(graph);
+		this(graph, null, true, null);
 	}
 
 	@Override
@@ -72,7 +72,7 @@ public class IterativeDepthFirstSearch extends DepthFirstSearch {
 
 	@Override
 	public void disableOptionalResults() {
-		super.disableOptionalResults();
+		checkStateForSettingParameters();
 		level = null;
 		rorder = null;
 	}
@@ -141,7 +141,7 @@ public class IterativeDepthFirstSearch extends DepthFirstSearch {
 				assert (subgraph == null || subgraph.get(nextVertex));
 				// visit current edge
 				edgeOrder[eNum] = currentEdge;
-				if(enumber != null){
+				if (enumber != null) {
 					enumber.set(currentEdge, eNum);
 				}
 				visitors.visitEdge(currentEdge);
