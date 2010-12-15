@@ -50,7 +50,7 @@ import static de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacad
  * @author ist@uni-koblenz.de
  * 
  */
-public class Tg2Dot2 extends Tg2Whatever {
+public class Tg2Dot extends Tg2Whatever {
 
 	/**
 	 * Indicates to abbreviate all edge attribute names.
@@ -119,7 +119,7 @@ public class Tg2Dot2 extends Tg2Whatever {
 	public static void main(String[] args) throws JsonParseException,
 			IOException, GraphIOException {
 
-		Tg2Dot2 converter = new Tg2Dot2();
+		Tg2Dot converter = new Tg2Dot();
 		converter.getOptions(args);
 		converter.printGraph();
 	}
@@ -127,7 +127,7 @@ public class Tg2Dot2 extends Tg2Whatever {
 	/**
 	 * Initializes all data structures.
 	 */
-	public Tg2Dot2() {
+	public Tg2Dot() {
 		reversedEdgeClasses = new HashSet<AttributedElementClass>();
 	}
 
@@ -589,7 +589,7 @@ public class Tg2Dot2 extends Tg2Whatever {
 	public static void printGraphAsDot(Graph graph, boolean reversedEdges,
 			String outputFileName,
 			Class<? extends AttributedElement>... reversedEdgeTypes) {
-		Tg2Dot2 converter = new Tg2Dot2();
+		Tg2Dot converter = new Tg2Dot();
 		converter.setGraph(graph);
 		converter.setReversedEdges(reversedEdges);
 		converter.setPrintEdgeAttributes(true);
@@ -607,7 +607,7 @@ public class Tg2Dot2 extends Tg2Whatever {
 
 	public static void printGraphAsDot(BooleanGraphMarker marker,
 			boolean reversedEdges, String outputFileName) {
-		Tg2Dot2 converter = new Tg2Dot2();
+		Tg2Dot converter = new Tg2Dot();
 		converter.setGraphMarker(marker);
 		converter.setGraph(marker.getGraph());
 		converter.setReversedEdges(reversedEdges);
