@@ -37,6 +37,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.ref.SoftReference;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -1007,7 +1008,7 @@ public class GreqlEvaluator {
 			try {
 				GraphIO.saveGraphToFile(name + "tg", queryGraph,
 						new ConsoleProgressFunction());
-				// Tg2Dot.printGraphAsDot(queryGraph, true, name + "dot");
+				printGraphAsDot(queryGraph, true, name + "dot");
 			} catch (GraphIOException e) {
 				e.printStackTrace();
 			}
@@ -1113,7 +1114,7 @@ public class GreqlEvaluator {
 				try {
 					GraphIO.saveGraphToFile(name + "tg", queryGraph,
 							new ConsoleProgressFunction());
-					// Tg2Dot.printGraphAsDot(queryGraph, true, name + "dot");
+					printGraphAsDot(queryGraph, true, name + "dot");
 				} catch (GraphIOException e) {
 					e.printStackTrace();
 				}
@@ -1186,6 +1187,36 @@ public class GreqlEvaluator {
 		overallEvaluationTime = System.currentTimeMillis() - startTime;
 		started = false;
 		return true;
+	}
+
+	private void printGraphAsDot(Graph graph, boolean reversedEdges,
+			String outputFilename) {
+
+		try {
+			Class<?> tg2DotClass = Class.forName("Tg2Dot");
+			Method printMethod = tg2DotClass.getMethod("printGraphAsDot",
+					Graph.class, Boolean.class, String.class);
+			printMethod.invoke(tg2DotClass, new Object[] { graph,
+					reversedEdges, outputFilename });
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**
