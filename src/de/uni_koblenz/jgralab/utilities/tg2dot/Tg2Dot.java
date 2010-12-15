@@ -52,6 +52,8 @@ import static de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacad
  */
 public class Tg2Dot extends Tg2Whatever {
 
+	private static final int EXIT_ALL_FINE = 0;
+
 	/**
 	 * Indicates to abbreviate all edge attribute names.
 	 */
@@ -324,8 +326,7 @@ public class Tg2Dot extends Tg2Whatever {
 
 		// writeGraphLayoutToJsonFile();
 		executeDot();
-		System.out.println("Fini.");
-
+		System.out.println("Finished Processing.");
 	}
 
 	/**
@@ -567,12 +568,14 @@ public class Tg2Dot extends Tg2Whatever {
 
 			String executionString = "C:/Program Files (x86)/Graphviz2.26.3/bin/dot.exe -T"
 					+ dotBuildOutputType + " " + dotFile + " -o" + formatedFile;
-			// System.out.println(executionString);
 			Process p = Runtime.getRuntime().exec(executionString);
 			p.waitFor();
-			// System.out.println("DOT exit value: " + p.exitValue());
+			if (p.exitValue() == EXIT_ALL_FINE) {
+				System.out.println(" done.");
+			} else {
+				System.out.println(" error ocurred while executing DOT!");
+			}
 
-			System.out.println(" done.");
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (InterruptedException e) {
