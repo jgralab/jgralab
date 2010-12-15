@@ -24,7 +24,6 @@ import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -602,6 +601,14 @@ public class Tg2Dot extends Tg2Whatever {
 		converter.printGraph();
 	}
 
+	@SuppressWarnings("unchecked")
+	public static void printGraphAsDot(Graph graph, boolean reversedEdges,
+			String outputFileName) {
+
+		Class<AttributedElement> classes = null;
+		printGraphAsDot(graph, reversedEdges, outputFileName, classes);
+	}
+
 	public static Tg2Dot createConverterAndSetAttributes(Graph graph,
 			boolean reversedEdges, String outputFileName) {
 
@@ -617,8 +624,7 @@ public class Tg2Dot extends Tg2Whatever {
 	}
 
 	public static void printGraphAsDot(BooleanGraphMarker marker,
-			boolean reversedEdges, String outputFileName,
-			Class<? extends AttributedElement>... reversedEdgeTypes) {
+			boolean reversedEdges, String outputFileName) {
 
 		Tg2Dot converter = createConverterAndSetAttributes(marker.getGraph(),
 				reversedEdges, outputFileName);
