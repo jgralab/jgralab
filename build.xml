@@ -94,7 +94,7 @@
 	<property name="rsa.includes" value="rsa/** tg2schemagraph/** common/**" />
 
 	<property name="utilities.src" value="${src.dir}/de/uni_koblenz/jgralab/utilities" />
-	<property name="utilities.includes" value="ant/** common/** converter/** greqlinterface/** jgralab2owl/** schemacompare/** tg2gdl/** tg2gxl/** tg2sidiff/** tgmerge/** tgraphbrowser/** xmi2tgschema/** xml/**" />
+	<property name="utilities.includes" value="ant/** common/** converter/** csv2tg/** greqlinterface/** jgralab2owl/** schemacompare/** tg2gdl/** tg2gxl/** tg2sidiff/** tgmerge/** tgraphbrowser/** xmi2tgschema/** xml/**" />
 
 	<!-- The targets -->
 	<target name="build" depends="ist_utilities,clean,compile,jar"/>
@@ -106,6 +106,7 @@
 		<delete dir="${src.dir}/de/uni_koblenz/jgralab/greql2/schema" />
 		<delete dir="${src.dir}/de/uni_koblenz/jgralab/grumlschema" />
 		<delete dir="${testcases.dir}/de/uni_koblenz/jgralabtest/schemas" />
+		<delete file="${testschemas.dir}/greqltestschema.tg" />
 	</target>
 
 	<!-- compile -->
@@ -127,6 +128,7 @@
 		</javac>
 		<taskdef name="tgschema2java" classname="de.uni_koblenz.jgralab.utilities.ant.TgSchema2JavaTask" classpath="${classes.dir}" />
 		<taskdef name="deletegeneratedschema" classname="de.uni_koblenz.jgralab.utilities.ant.DeleteGeneratedSchemaTask" classpath="${classes.dir}" />
+		<taskdef name="rsa2tg" classname="de.uni_koblenz.jgralab.utilities.ant.Rsa2TgTask" classpath="${jgralab.location}" />
 	</target>
 
 	<!-- compiles greql2 sources -->
@@ -167,6 +169,7 @@
 
 	<!-- generates the schemas required for test cases without compiling them -->
 	<target name="generatetestschemas" depends="tgtools">
+		<rsa2tg xmifile="${testschemas.dir}/rsa-xmi/greqltestschema.xmi" schemafile="${testschemas.dir}/greqltestschema.tg"/>
 		<tgschema2java sourcePath="${testcases.dir}" implementationMode="standard,transaction,savemem,database">
 			<fileset dir="${testschemas.dir}" includes="*.tg" />
 		</tgschema2java>
