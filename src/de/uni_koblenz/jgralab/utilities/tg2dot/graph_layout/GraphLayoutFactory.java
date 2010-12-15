@@ -49,7 +49,7 @@ public class GraphLayoutFactory {
 		try {
 			reader.startProcessing(graphLayoutFile);
 		} catch (FileNotFoundException e) {
-			System.out.println("No JSON graph layout file defined.");
+			throw new RuntimeException("No JSON graph layout file defined.");
 		}
 		return reader;
 	}
@@ -69,7 +69,7 @@ public class GraphLayoutFactory {
 		try {
 			reader.startProcessing(graphLayoutFile);
 		} catch (FileNotFoundException e) {
-			System.out.println("No PList graph layout file defined.");
+			throw new RuntimeException("No PList graph layout file found.");
 		}
 		return reader;
 	}

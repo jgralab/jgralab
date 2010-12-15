@@ -14,7 +14,8 @@ import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.Temporary
  * 
  * @author ist@uni-koblenz.de
  */
-public abstract class AbstractTemporaryGraphLayoutReader implements TemporaryGraphLayoutReader {
+public abstract class AbstractTemporaryGraphLayoutReader implements
+		TemporaryGraphLayoutReader {
 
 	/**
 	 * Current temporary definition struct, which is read in.
@@ -53,6 +54,7 @@ public abstract class AbstractTemporaryGraphLayoutReader implements TemporaryGra
 	 * 
 	 * @return Temporary definition list;
 	 */
+	@Override
 	public List<TemporaryDefinitionStruct> getDefinitionList() {
 		return definitionList;
 	}
@@ -101,8 +103,8 @@ public abstract class AbstractTemporaryGraphLayoutReader implements TemporaryGra
 		if (name.startsWith("@")) {
 			globalVariables.put(removeFirstChar(name), value);
 		} else {
-			System.out.println("Field " + name
-					+ " does not have a '@' as prefix. It has been dropped.");
+			throw new RuntimeException("Field " + name
+					+ " does not have a '@' as prefix. Delete it or add an @.");
 		}
 	}
 
@@ -135,6 +137,7 @@ public abstract class AbstractTemporaryGraphLayoutReader implements TemporaryGra
 	 * 
 	 * @return List of global variables.
 	 */
+	@Override
 	public Map<String, String> getGlobalVariables() {
 		return globalVariables;
 	}

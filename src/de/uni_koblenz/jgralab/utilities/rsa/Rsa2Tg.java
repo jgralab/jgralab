@@ -157,7 +157,7 @@ import de.uni_koblenz.jgralab.grumlschema.structure.Schema;
 import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesEdgeClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.Subsets;
 import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
-import de.uni_koblenz.jgralab.utilities.tg2dot.SimpleTg2Dot;
+import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
 
 /**
  * Rsa2Tg is a utility that converts XMI files exported from IBM (tm) Rational
@@ -2160,7 +2160,7 @@ public class Rsa2Tg extends XmlProcessor {
 	 *            File name of the DOT output file.
 	 */
 	private void writeDotFile(String dotName) {
-		SimpleTg2Dot tg2Dot = new SimpleTg2Dot();
+		Tg2Dot tg2Dot = new Tg2Dot();
 		tg2Dot.setGraph(sg);
 		tg2Dot.setPrintEdgeAttributes(true);
 		tg2Dot.setOutputFile(dotName);
