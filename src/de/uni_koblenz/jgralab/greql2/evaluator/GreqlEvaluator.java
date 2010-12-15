@@ -89,7 +89,6 @@ import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
-import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
 
 /**
  * This is the core class of the GReQL-2 Evaluator. It takes a GReQL-2 Query as
@@ -1008,7 +1007,7 @@ public class GreqlEvaluator {
 			try {
 				GraphIO.saveGraphToFile(name + "tg", queryGraph,
 						new ConsoleProgressFunction());
-				Tg2Dot.printGraphAsDot(queryGraph, true, name + "dot");
+				// Tg2Dot.printGraphAsDot(queryGraph, true, name + "dot");
 			} catch (GraphIOException e) {
 				e.printStackTrace();
 			}
@@ -1114,7 +1113,7 @@ public class GreqlEvaluator {
 				try {
 					GraphIO.saveGraphToFile(name + "tg", queryGraph,
 							new ConsoleProgressFunction());
-					Tg2Dot.printGraphAsDot(queryGraph, true, name + "dot");
+					// Tg2Dot.printGraphAsDot(queryGraph, true, name + "dot");
 				} catch (GraphIOException e) {
 					e.printStackTrace();
 				}
