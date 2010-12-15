@@ -413,7 +413,7 @@ public class Tg2Dot extends Tg2Whatever {
 
 	public static void printGraphAsDot(Graph graph, boolean reversedEdges,
 			String outputFileName) {
-		printGraphAsDot(graph, reversedEdges, outputFileName);
+		printGraphAsDot(graph, reversedEdges, outputFileName, null);
 	}
 
 	public static void printGraphAsDot(Graph graph, boolean reversedEdges,
