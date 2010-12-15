@@ -24,7 +24,7 @@ public class JsonPrettyPrinter implements PrettyPrinter {
 	@Override
 	public void beforeArrayValues(JsonGenerator arg0) throws IOException,
 			JsonGenerationException {
-		throw new NotImplementedException();
+		throw new RuntimeException("Not implemented!");
 	}
 
 	@Override
@@ -35,13 +35,13 @@ public class JsonPrettyPrinter implements PrettyPrinter {
 	@Override
 	public void writeArrayValueSeparator(JsonGenerator arg0)
 			throws IOException, JsonGenerationException {
-		throw new NotImplementedException();
+		throw new RuntimeException("Not implemented!");
 	}
 
 	@Override
 	public void writeEndArray(JsonGenerator arg0, int arg1) throws IOException,
 			JsonGenerationException {
-		throw new NotImplementedException();
+		throw new RuntimeException("Not implemented!");
 	}
 
 	/**
@@ -80,13 +80,13 @@ public class JsonPrettyPrinter implements PrettyPrinter {
 	@Override
 	public void writeRootValueSeparator(JsonGenerator arg0) throws IOException,
 			JsonGenerationException {
-		throw new NotImplementedException();
+		throw new RuntimeException("Not implemented!");
 	}
 
 	@Override
 	public void writeStartArray(JsonGenerator arg0) throws IOException,
 			JsonGenerationException {
-		throw new NotImplementedException();
+		throw new RuntimeException("Not implemented!");
 	}
 
 	/**
