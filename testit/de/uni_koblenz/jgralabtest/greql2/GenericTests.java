@@ -45,7 +45,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.Optimizer;
 import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
-import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
+import de.uni_koblenz.jgralab.utilities.tg2dot.SimpleTg2Dot;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalGraph;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalSchema;
 import de.uni_koblenz.jgralabtest.schemas.minimal.Node;
@@ -204,7 +204,7 @@ public class GenericTests {
 			}
 			System.out.println(((SerializableGreql2) eval.getSyntaxGraph())
 					.serialize());
-			Tg2Dot.printGraphAsDot(eval.getSyntaxGraph(), true, dotFileName);
+			SimpleTg2Dot.printGraphAsDot(eval.getSyntaxGraph(), true, dotFileName);
 		}
 
 		printTestFunctionFooter(functionName);
