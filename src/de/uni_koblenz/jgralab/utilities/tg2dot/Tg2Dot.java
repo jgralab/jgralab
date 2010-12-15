@@ -728,11 +728,72 @@ public class Tg2Dot extends Tg2Whatever {
 		abbreviateEdgeAttributeNames = abbreviateAttributeNames;
 	}
 
-	public GraphLayout getLayout() {
+	public GraphLayout getGraphLayout() {
 		return layout;
 	}
 
-	public void setLayout(GraphLayout layout) {
+	public void setGraphLayout(GraphLayout layout) {
 		this.layout = layout;
+	}
+
+	public boolean isAbbreviateEdgeAttributeNames() {
+		return abbreviateEdgeAttributeNames;
+	}
+
+	public void setAbbreviateEdgeAttributeNames(
+			boolean abbreviateEdgeAttributeNames) {
+		this.abbreviateEdgeAttributeNames = abbreviateEdgeAttributeNames;
+	}
+
+	public boolean isPrintIncidenceIndices() {
+		return printIncidenceIndices;
+	}
+
+	public void setPrintIncidenceIndices(boolean printIncidenceIndices) {
+		this.printIncidenceIndices = printIncidenceIndices;
+	}
+
+	public boolean isPrintElementSequenceIndices() {
+		return printElementSequenceIndices;
+	}
+
+	public void setPrintElementSequenceIndices(
+			boolean printElementSequenceIndices) {
+		this.printElementSequenceIndices = printElementSequenceIndices;
+	}
+
+	public String getGraphLayoutFilename() {
+		return graphLayoutFilename;
+	}
+
+	public void setJsonGraphLayoutFilename(String graphLayoutFilename) {
+		useJsonGraphLayoutReader = true;
+		this.graphLayoutFilename = graphLayoutFilename;
+	}
+
+	public void setPListGraphLayoutFilename(String graphLayoutFilename) {
+		useJsonGraphLayoutReader = false;
+		this.graphLayoutFilename = graphLayoutFilename;
+	}
+
+	public boolean usesAJsonGraphLayout() {
+		return useJsonGraphLayoutReader;
+	}
+
+	public Set<AttributedElementClass> getReversedEdgeClasses() {
+		return reversedEdgeClasses;
+	}
+
+	public void setReversedEdgeClasses(
+			Set<AttributedElementClass> reversedEdgeClasses) {
+		this.reversedEdgeClasses = reversedEdgeClasses;
+	}
+
+	public String getDotBuildOutputType() {
+		return dotBuildOutputType;
+	}
+
+	public void setDotBuildOutputType(String dotBuildOutputType) {
+		this.dotBuildOutputType = dotBuildOutputType;
 	}
 }
