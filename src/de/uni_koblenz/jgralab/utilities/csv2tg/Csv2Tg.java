@@ -1,13 +1,14 @@
 package de.uni_koblenz.jgralab.utilities.csv2tg;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -27,6 +28,7 @@ import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
+import de.uni_koblenz.jgralab.M1ClassManager;
 import de.uni_koblenz.jgralab.NoSuchAttributeException;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
@@ -51,11 +53,11 @@ public class Csv2Tg implements FilenameFilter {
 	private String[] csvFiles;
 	private Map<Class<? extends Vertex>, CsvReader> vertexInstances;
 	private Map<Class<? extends Edge>, CsvReader> edgeInstances;
+	private Map<CsvReader, String> reader2FilenameMap;
+	private CsvReader currentReader;
 	private String outputFile;
 	private Graph graph;
 	private Map<String, Vertex> vertices;
-	private CsvReader openFileReader;
-	private String openedFile;
 
 	public Schema getSchema() {
 		return schema;
@@ -83,13 +85,26 @@ public class Csv2Tg implements FilenameFilter {
 		setOutputFile(comLine.getOptionValue(CLI_OPTION_OUTPUT_FILE));
 	}
 
-	private void setSchema(String optionValues) throws GraphIOException {
+	private void setSchema(String filename) throws GraphIOException {
 		System.out.print("Loading Schema ... ");
-		Schema schema = GraphIO.loadSchemaFromFile(optionValues);
-		// TODO compile only if classes are not present
-		// schema.compile(CodeGeneratorConfiguration.FULL);
+		Schema schema = GraphIO.loadSchemaFromFile(filename);
+
+		if (!isCompiled(schema)) {
+			System.out.print("compiling ... ");
+			schema.compile(CodeGeneratorConfiguration.MINIMAL);
+		}
 		setSchema(schema);
 		System.out.println("done.");
+	}
+
+	private boolean isCompiled(Schema schema) {
+		try {
+			Class.forName(schema.getQualifiedName(), true,
+					M1ClassManager.instance(schema.getQualifiedName()));
+		} catch (ClassNotFoundException ex) {
+			return false;
+		}
+		return true;
 	}
 
 	final protected OptionHandler createOptionHandler() {
@@ -121,21 +136,23 @@ public class Csv2Tg implements FilenameFilter {
 	}
 
 	public void process() {
-		System.out.println("Start processing ... ");
 		setUp();
 		try {
 			loadCsvFiles();
 			processVertexFiles();
 			processEdgeFiles();
+			System.out.println("Finished Processing.");
+			System.out.print("Saving Graph ...");
 			GraphIO.saveGraphToFile(outputFile, graph, null);
+			System.out.print("done.");
 		} catch (NoSuchAttributeException e) {
 			e.printStackTrace();
 		} catch (GraphIOException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			System.err.println("An error occured while processing "
-					+ openFileReader.getLineNumber() + " in file \""
-					+ openedFile + "\".");
+					+ currentReader.getLineNumber() + " in file \""
+					+ reader2FilenameMap.get(currentReader) + "\".");
 			e.printStackTrace();
 		} finally {
 			try {
@@ -145,7 +162,6 @@ public class Csv2Tg implements FilenameFilter {
 				e.printStackTrace();
 			}
 		}
-		System.out.println("done.");
 	}
 
 	private void setUp() {
@@ -155,10 +171,11 @@ public class Csv2Tg implements FilenameFilter {
 				.getGraphCreateMethod(ImplementationType.STANDARD);
 		vertexInstances = new HashMap<Class<? extends Vertex>, CsvReader>();
 		edgeInstances = new HashMap<Class<? extends Edge>, CsvReader>();
+		reader2FilenameMap = new HashMap<CsvReader, String>();
 		// TODO Graph ID
 		try {
-			graph = (Graph) method.invoke(null,
-					new Object[] { "instance", 1, 1 });
+			graph = (Graph) method
+					.invoke(null, new Object[] { null, 128, 128 });
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
@@ -176,6 +193,7 @@ public class Csv2Tg implements FilenameFilter {
 		closeAllReader(edgeInstances.values());
 		vertexInstances = null;
 		edgeInstances = null;
+		reader2FilenameMap = null;
 	}
 
 	private void closeAllReader(Collection<CsvReader> readers)
@@ -190,10 +208,12 @@ public class Csv2Tg implements FilenameFilter {
 		for (Entry<Class<? extends Edge>, CsvReader> entry : edgeInstances
 				.entrySet()) {
 
-			CsvReader reader = entry.getValue();
-			while (reader.readRecord()) {
-				createEdge(reader, entry.getKey());
+			currentReader = entry.getValue();
+			while (currentReader.readRecord()) {
+				createEdge(currentReader, entry.getKey());
 			}
+			System.out.println("\tprocessing file: "
+					+ reader2FilenameMap.get(currentReader));
 		}
 	}
 
@@ -203,26 +223,27 @@ public class Csv2Tg implements FilenameFilter {
 		for (Entry<Class<? extends Vertex>, CsvReader> entry : vertexInstances
 				.entrySet()) {
 
-			CsvReader reader = entry.getValue();
-			while (reader.readRecord()) {
-				createVertex(reader, entry.getKey());
+			currentReader = entry.getValue();
+			while (currentReader.readRecord()) {
+				createVertex(currentReader, entry.getKey());
 			}
+			System.out.println("\tprocessing file: "
+					+ reader2FilenameMap.get(currentReader));
 		}
 	}
 
 	private void loadCsvFiles() throws NoSuchAttributeException,
 			GraphIOException, IOException {
 		for (String csvFile : csvFiles) {
-			System.out.println("\tprocessing file: " + csvFile);
 			loadCsvFile(csvFile);
 		}
-		System.out.println("Finished Processing.");
 	}
 
 	@SuppressWarnings("unchecked")
 	private void loadCsvFile(String csvFile) throws NoSuchAttributeException,
 			GraphIOException, IOException {
 		CsvReader reader = openCvsFile(csvFile);
+		reader2FilenameMap.put(reader, csvFile);
 
 		String attributeClassName = reader.getFieldNames().get(0);
 		AttributedElementClass clazz = schema
@@ -242,8 +263,9 @@ public class Csv2Tg implements FilenameFilter {
 	private CsvReader openCvsFile(String csvFile) {
 		try {
 			// Storing as a global variable is just for debugging purposes.
-			openedFile = csvFile;
-			openFileReader = new CsvReader(new FileReader(csvFile),
+			CsvReader openFileReader = new CsvReader(
+					new BufferedReader(new InputStreamReader(
+							new FileInputStream(csvFile), "UTF-8")),
 					CsvReader.WITH_FIELDNAMES);
 			return openFileReader;
 		} catch (FileNotFoundException cause) {
@@ -267,7 +289,8 @@ public class Csv2Tg implements FilenameFilter {
 		if (vertices.containsKey(uniqueName)) {
 			throw new RuntimeException("The unique name \"" + uniqueName
 					+ "\" isn't in fact unique. This error occured while "
-					+ "processing the file \"" + openedFile + "\".");
+					+ "processing the file \"" + reader2FilenameMap.get(reader)
+					+ "\".");
 		}
 		vertices.put(uniqueName, vertex);
 	}
@@ -301,11 +324,11 @@ public class Csv2Tg implements FilenameFilter {
 	}
 
 	private String transformCsvStringValue(String csvStringValue) {
+
 		if (csvStringValue.startsWith("\"") && csvStringValue.endsWith("\"")) {
-			csvStringValue = csvStringValue.substring(1,
-					csvStringValue.length() - 1);
+			csvStringValue = GraphIO.toUtfString(csvStringValue.substring(1,
+					csvStringValue.length() - 1).replace("\\\"", "\""));
 		}
-		csvStringValue = csvStringValue.replace("\"\"", "\"");
 		return csvStringValue;
 	}
 
@@ -325,7 +348,6 @@ public class Csv2Tg implements FilenameFilter {
 	}
 
 	public void setCsvFiles(String[] vertexFiles) {
-		System.out.println(Arrays.toString(vertexFiles));
 		this.csvFiles = getFilesInFolder(vertexFiles);
 	}
 

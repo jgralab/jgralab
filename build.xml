@@ -91,10 +91,10 @@
 	<property name="graphvalidator.includes" value="graphvalidator/**" />
 
 	<property name="rsa.src" value="${src.dir}/de/uni_koblenz/jgralab/utilities" />
-	<property name="rsa.includes" value="rsa/** tg2schemagraph/** common/**" />
+	<property name="rsa.includes" value="ant/Rsa2TgTask.java rsa/** tg2schemagraph/** common/**" />
 
 	<property name="utilities.src" value="${src.dir}/de/uni_koblenz/jgralab/utilities" />
-	<property name="utilities.includes" value="ant/** common/** converter/** greqlinterface/** jgralab2owl/** schemacompare/** tg2gdl/** tg2gxl/** tg2sidiff/** tgmerge/** tgraphbrowser/** xmi2tgschema/** xml/**" />
+	<property name="utilities.includes" value="ant/** common/** converter/** csv2tg/** greqlinterface/** jgralab2owl/** schemacompare/** tg2gdl/** tg2gxl/** tg2sidiff/** tgmerge/** tgraphbrowser/** xmi2tgschema/** xml/**" />
 
 	<!-- The targets -->
 	<target name="build" depends="ist_utilities,clean,compile,jar"/>
@@ -106,6 +106,7 @@
 		<delete dir="${src.dir}/de/uni_koblenz/jgralab/greql2/schema" />
 		<delete dir="${src.dir}/de/uni_koblenz/jgralab/grumlschema" />
 		<delete dir="${testcases.dir}/de/uni_koblenz/jgralabtest/schemas" />
+		<delete file="${testschemas.dir}/greqltestschema.tg" />
 	</target>
 
 	<!-- compile -->
@@ -148,6 +149,7 @@
 		<javac fork="true" srcdir="${rsa.src}" includes="${rsa.includes}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" target="${javac.targetVM}">
 			<compilerarg line="-Xlint:unchecked"/>
 		</javac>
+		<taskdef classpathref="classpath" name="rsa2tg" classname="de.uni_koblenz.jgralab.utilities.ant.Rsa2TgTask" />
 	</target>
 
 	<!-- compiles utility sources -->
@@ -167,6 +169,7 @@
 
 	<!-- generates the schemas required for test cases without compiling them -->
 	<target name="generatetestschemas" depends="tgtools">
+		<rsa2tg xmifile="${testschemas.dir}/rsa-xmi/greqltestschema.xmi" schemafile="${testschemas.dir}/greqltestschema.tg"/>
 		<tgschema2java sourcePath="${testcases.dir}" implementationMode="standard,transaction,savemem,database">
 			<fileset dir="${testschemas.dir}" includes="*.tg" />
 		</tgschema2java>
