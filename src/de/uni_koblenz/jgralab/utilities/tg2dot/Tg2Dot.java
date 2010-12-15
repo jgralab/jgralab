@@ -589,6 +589,22 @@ public class Tg2Dot extends Tg2Whatever {
 	public static void printGraphAsDot(Graph graph, boolean reversedEdges,
 			String outputFileName,
 			Class<? extends AttributedElement>... reversedEdgeTypes) {
+
+		Tg2Dot converter = createConverterAndSetAttributes(graph,
+				reversedEdges, outputFileName);
+
+		if (reversedEdgeTypes != null) {
+			HashSet<Class<? extends AttributedElement>> revEdgeTypes = new HashSet<Class<? extends AttributedElement>>();
+			Collections.addAll(revEdgeTypes, reversedEdgeTypes);
+			converter.setReversedEdgeTypes(revEdgeTypes);
+		}
+
+		converter.printGraph();
+	}
+
+	public static Tg2Dot createConverterAndSetAttributes(Graph graph,
+			boolean reversedEdges, String outputFileName) {
+
 		Tg2Dot converter = new Tg2Dot();
 		converter.setGraph(graph);
 		converter.setReversedEdges(reversedEdges);
@@ -597,24 +613,18 @@ public class Tg2Dot extends Tg2Whatever {
 		// t2d.setRanksep(0.5);
 		converter.setOutputFile(outputFileName);
 
-		HashSet<Class<? extends AttributedElement>> revEdgeTypes = new HashSet<Class<? extends AttributedElement>>();
-		Collections.addAll(revEdgeTypes, reversedEdgeTypes);
-
-		converter.setReversedEdgeTypes(revEdgeTypes);
-
-		converter.printGraph();
+		return converter;
 	}
 
 	public static void printGraphAsDot(BooleanGraphMarker marker,
-			boolean reversedEdges, String outputFileName) {
-		Tg2Dot converter = new Tg2Dot();
+			boolean reversedEdges, String outputFileName,
+			Class<? extends AttributedElement>... reversedEdgeTypes) {
+
+		Tg2Dot converter = createConverterAndSetAttributes(marker.getGraph(),
+				reversedEdges, outputFileName);
+
 		converter.setGraphMarker(marker);
-		converter.setGraph(marker.getGraph());
-		converter.setReversedEdges(reversedEdges);
-		converter.setPrintEdgeAttributes(true);
-		// TODO RANKSEP
-		// t2d.setRanksep(0.5);
-		converter.setOutputFile(outputFileName);
+
 		converter.printGraph();
 	}
 
