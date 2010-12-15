@@ -31,6 +31,7 @@ import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.NoSuchAttributeException;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 
@@ -87,8 +88,9 @@ public class Csv2Tg implements FilenameFilter {
 	private void setSchema(String optionValues) throws GraphIOException {
 		System.out.print("Loading Schema ... ");
 		Schema schema = GraphIO.loadSchemaFromFile(optionValues);
+
 		// TODO compile only if classes are not present
-		// schema.compile(CodeGeneratorConfiguration.FULL);
+		schema.compile(CodeGeneratorConfiguration.MINIMAL);
 		setSchema(schema);
 		System.out.println("done.");
 	}
