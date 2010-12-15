@@ -199,8 +199,6 @@ public class Tg2Dot extends Tg2Whatever {
 		setGlobalVariables();
 		setCommandLineVariables();
 
-		System.out.println("-------------------");
-
 		try {
 			createDotWriter(out);
 
@@ -236,7 +234,6 @@ public class Tg2Dot extends Tg2Whatever {
 			} else {
 				this.layout = factory.loadPListGraphLayout(layout);
 			}
-
 		}
 
 		System.gc();

@@ -31,10 +31,8 @@ public class JsonWriter {
 			initializeWriter(path);
 			startDocument();
 		} catch (IOException e) {
-			System.out.println("\nError: " + e.getLocalizedMessage());
-			System.out
-					.println("Error: Processing of the JSON-file stopped. IO");
-			throw new RuntimeException(e);
+			throw new RuntimeException("\nError: " + e.getLocalizedMessage()
+					+ "\nError: Processing of the JSON-file stopped. IO", e);
 		}
 	}
 

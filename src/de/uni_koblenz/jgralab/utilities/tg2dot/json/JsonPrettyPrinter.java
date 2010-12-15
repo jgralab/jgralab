@@ -6,8 +6,6 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.PrettyPrinter;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 /**
  * Implements several methods to control the pretty printing process of a
  * JsonProducer.
