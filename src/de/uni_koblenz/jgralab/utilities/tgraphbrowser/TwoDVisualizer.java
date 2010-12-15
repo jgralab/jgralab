@@ -53,7 +53,7 @@ import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
-import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
+import de.uni_koblenz.jgralab.utilities.tg2dot.SimpleTg2Dot;
 import de.uni_koblenz.jgralab.utilities.tgraphbrowser.StateRepository.State;
 
 public class TwoDVisualizer {
@@ -381,7 +381,7 @@ public class TwoDVisualizer {
 	/**
 	 * Creates the specific representation for the elements.
 	 */
-	private static class MyTg2Dot extends Tg2Dot {
+	private static class MyTg2Dot extends SimpleTg2Dot {
 
 		private static final double ranksep = 1.5;
 		private static final boolean ranksepEqually = false;

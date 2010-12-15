@@ -11,5 +11,7 @@
 	<classpathentry kind="lib" path="lib/jdbc/postgresql-8.4-701.jdbc4.jar"/>
 	<classpathentry kind="lib" path="lib/jdbc/derbyclient.jar"/>
 	<classpathentry kind="lib" path="lib/jdbc/mysql-connector-java-5.0.8-bin.jar"/>
+	<classpathentry kind="lib" path="lib/json/jackson-core-lgpl-1.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/plist/org.riediger.plist.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
