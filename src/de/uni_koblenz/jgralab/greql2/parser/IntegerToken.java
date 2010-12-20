@@ -32,14 +32,17 @@ package de.uni_koblenz.jgralab.greql2.parser;
 
 public class IntegerToken extends Token {
 
-	Integer value = null;
+	Integer intValue = null;
 
 	Integer decValue = null;
+	
+	String value = null;
 
-	public IntegerToken(TokenTypes type, int offset, int length, Integer value,
+	public IntegerToken(TokenTypes type, int offset, int length, String value, Integer intValue,
 			Integer decValue) {
 		super(type, offset, length);
 		this.value = value;
+		this.intValue = intValue;
 		this.decValue = decValue;
 	}
 
@@ -47,14 +50,15 @@ public class IntegerToken extends Token {
 	public boolean isComplex() {
 		return true;
 	}
-
+	
 	@Override
 	public String getValue() {
-		return value.toString();
+		return value;
 	}
 
+
 	public Integer getNumber() {
-		return value;
+		return intValue;
 	}
 
 	public Integer getDecValue() {
