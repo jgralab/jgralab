@@ -257,7 +257,9 @@ public class GreqlLexer {
 	private final Token matchNumericToken(int start, int end, String text) {
 		int value = 0;
 		int decValue = 0;
+		String stringValue = "0";
 		TokenTypes type = null;
+		stringValue = text;
 		if ((text.charAt(0) == '0') && (text.charAt(text.length() - 1) != 'f')
 				&& (text.charAt(text.length() - 1) != 'F')
 				&& (text.charAt(text.length() - 1) != 'd')
@@ -303,8 +305,8 @@ public class GreqlLexer {
 				try {
 					String tokenString = text.substring(0, text.length() - 1);
 					System.out.println("TokenString: " + tokenString);
-					return new RealToken(type, start, end - start, Double
-							.parseDouble(tokenString));
+					return new RealToken(type, start, end - start, tokenString,
+							Double.parseDouble(tokenString));
 				} catch (NumberFormatException ex) {
 					throw new ParsingException("Not a valid float number",
 							text, start, end - start, query);
@@ -322,7 +324,7 @@ public class GreqlLexer {
 		if (type != TokenTypes.OCTLITERAL) {
 			decValue = value;
 		}
-		return new IntegerToken(type, start, end - start, value, decValue);
+		return new IntegerToken(type, start, end - start, stringValue, value, decValue);
 
 	}
 

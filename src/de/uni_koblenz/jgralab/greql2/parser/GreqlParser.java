@@ -2469,26 +2469,28 @@ public class GreqlParser extends ParserHelper {
 		}
 		if (lookAhead(0) == TokenTypes.INTLITERAL) {
 			int value = ((IntegerToken) lookAhead).getNumber();
-			double decValue = 0;
+			String integerPart = lookAhead.getValue();
 			match();
 			if (lookAhead(0) == TokenTypes.DOT) {
+				String decimalPart = "0";
 				match();
 				if ((lookAhead(0) == TokenTypes.INTLITERAL)
 						|| (lookAhead(0) == TokenTypes.OCTLITERAL)) {
-					decValue = ((IntegerToken) lookAhead).getDecValue();
+					decimalPart = ((IntegerToken) lookAhead).getValue();
 					match();
 				} else if (lookAhead(0) == TokenTypes.REALLITERAL) {
-					decValue = ((RealToken) lookAhead).getNumber();
-					match();
+					decimalPart = lookAhead.getValue().substring(0, lookAhead.getValue().length()-1);
+					System.out.println("LookAhead is: " + lookAhead.getValue());
+					System.out.println("Decimal Part is: " + decimalPart);
+					match(); 
 				} else {
 					fail("Unrecognized token as part of decimal value");
 				}
 				if (!inPredicateMode()) {
-					while (decValue > 1) {
-						decValue /= 10;
-					}
+					String realValue = integerPart + "." + decimalPart;
 					RealLiteral literal = graph.createRealLiteral();
-					literal.set_realValue(value + decValue);
+					System.out.println("Real Value: '" + realValue + "'");
+					literal.set_realValue(Double.parseDouble(realValue));
 					return literal;
 				}
 				return null;
