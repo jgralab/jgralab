@@ -1195,7 +1195,7 @@ public class GreqlEvaluator {
 		try {
 			Class<?> tg2DotClass = Class.forName("Tg2Dot");
 			Method printMethod = tg2DotClass.getMethod("printGraphAsDot",
-					Graph.class, Boolean.class, String.class);
+					Graph.class, boolean.class, String.class);
 			printMethod.invoke(tg2DotClass, new Object[] { graph,
 					reversedEdges, outputFilename });
 		} catch (ClassNotFoundException e) {
