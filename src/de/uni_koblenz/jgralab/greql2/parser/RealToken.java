@@ -32,11 +32,14 @@ package de.uni_koblenz.jgralab.greql2.parser;
 
 public class RealToken extends Token {
 
-	Double value = null;
+	Double realValue = null;
 
-	public RealToken(TokenTypes type, int offset, int length, Double value) {
+	String value = null;
+	
+	public RealToken(TokenTypes type, int offset, int length, String value, Double realValue) {
 		super(type, offset, length);
 		this.value = value;
+		this.realValue = realValue;
 	}
 
 	@Override
@@ -46,11 +49,11 @@ public class RealToken extends Token {
 
 	@Override
 	public String getValue() {
-		return value.toString();
+		return value;
 	}
 
 	public Double getNumber() {
-		return value;
+		return  realValue;
 	}
 
 }

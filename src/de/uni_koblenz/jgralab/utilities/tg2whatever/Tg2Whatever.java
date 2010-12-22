@@ -382,7 +382,6 @@ public abstract class Tg2Whatever {
 				} else {
 					loadSchemaFromGraph();
 				}
-
 			}
 			loadGraph();
 		}
