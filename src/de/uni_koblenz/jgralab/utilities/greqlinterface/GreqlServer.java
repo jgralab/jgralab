@@ -65,10 +65,10 @@ public class GreqlServer extends Thread {
 	private static Thread clientHandlerLoop;
 	private static HashSet<GreqlServer> clients = new HashSet<GreqlServer>();
 
-	private Socket socket;
-	private BufferedReader in;
-	private PrintWriter out;
-	private GreqlEvaluator eval;
+	private final Socket socket;
+	private final BufferedReader in;
+	private final PrintWriter out;
+	private final GreqlEvaluator eval;
 	private String graphFile;
 	private static Map<String, Graph> dataGraphs = Collections
 			.synchronizedMap(new HashMap<String, Graph>());
@@ -228,8 +228,7 @@ public class GreqlServer extends Thread {
 				}
 			} else if (result.isMap()) {
 				JValueMap map = result.toJValueMap();
-				println(
-						"Result map contains " + map.size() + " map entries.\n",
+				println("Result map contains " + map.size() + " map entries.\n",
 						PrintTarget.CLIENT, true);
 				for (Entry<JValue, JValue> e : map.entrySet()) {
 					println(e.getKey() + " --> " + e.getValue(),

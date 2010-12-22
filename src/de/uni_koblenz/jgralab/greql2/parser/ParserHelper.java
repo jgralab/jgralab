@@ -163,6 +163,7 @@ public abstract class ParserHelper {
 			queue.add(root);
 			while (!queue.isEmpty()) {
 				Vertex current = queue.poll();
+				if (current != null)
 				for (Edge e : current.incidences()) {
 					if (!reachableVertices.contains(e.getThat())) {
 						queue.add(e.getThat());
