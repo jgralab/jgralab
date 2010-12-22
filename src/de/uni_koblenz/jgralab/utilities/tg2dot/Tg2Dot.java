@@ -1,5 +1,13 @@
 package de.uni_koblenz.jgralab.utilities.tg2dot;
 
+import static de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade.ABBREVIATE_EDGE_ATTRIBUTE_NAMES;
+import static de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade.PRINT_DOMAIN_NAMES;
+import static de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade.PRINT_EDGE_ATTRIBUTES;
+import static de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade.PRINT_ELEMENT_SEQUENCE_INDICES;
+import static de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade.PRINT_INCIDENCE_INDICES;
+import static de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade.PRINT_ROLENAMES;
+import static de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade.SHORTEN_STRINGS;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -8,14 +16,15 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.logging.Level;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
+
 import de.uni_koblenz.ist.utilities.option_handler.OptionHandler;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
@@ -24,6 +33,7 @@ import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -39,8 +49,6 @@ import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlFunctionRegister;
 import de.uni_koblenz.jgralab.utilities.tg2dot.json.AbstractGraphLayoutWriter;
 import de.uni_koblenz.jgralab.utilities.tg2dot.json.JsonGraphLayoutWriter;
 import de.uni_koblenz.jgralab.utilities.tg2whatever.Tg2Whatever;
-
-import static de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade.*;
 
 /**
  * Tg2Dot2 takes a graph layout and a JGraLab graph and transforms the graph
@@ -601,12 +609,10 @@ public class Tg2Dot extends Tg2Whatever {
 		converter.printGraph();
 	}
 
-	@SuppressWarnings("unchecked")
 	public static void printGraphAsDot(Graph graph, boolean reversedEdges,
 			String outputFileName) {
-
-		Class<AttributedElement> classes = null;
-		printGraphAsDot(graph, reversedEdges, outputFileName, classes);
+		printGraphAsDot(graph, reversedEdges, outputFileName,
+				(Class<? extends AttributedElement>[]) null);
 	}
 
 	public static Tg2Dot createConverterAndSetAttributes(Graph graph,

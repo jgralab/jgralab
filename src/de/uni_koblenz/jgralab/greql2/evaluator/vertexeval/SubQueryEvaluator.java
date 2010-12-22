@@ -48,6 +48,8 @@ public class SubQueryEvaluator extends FunctionApplicationEvaluator {
 			}
 			currentVertex = currentVertex.getNextVertex();
 		}
+		subQueryVertexEval = (Greql2ExpressionEvaluator) vertexEvalGraphMarker
+				.getMark(subQuery.getFirstGreql2Expression());
 	}
 
 	@Override
@@ -63,8 +65,6 @@ public class SubQueryEvaluator extends FunctionApplicationEvaluator {
 	@Override
 	public JValue evaluate() throws EvaluateException {
 		createVertexEvaluators();
-		subQueryVertexEval = (Greql2ExpressionEvaluator) vertexEvalGraphMarker
-				.getMark(subQuery.getFirstGreql2Expression());
 		if (!listCreated) {
 			parameterEvaluators = createVertexEvaluatorList();
 			int parameterCount = parameterEvaluators.size();
