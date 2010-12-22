@@ -8,6 +8,8 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.SortedSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
@@ -71,6 +73,60 @@ public abstract class GraphDatabase {
 		} else {
 			throw new GraphDatabaseException(
 					"No url given to connect to graph database.");
+		}
+	}
+
+	private static final String urlRegex = "(.*)://(.*):(.*)@(.*)";
+
+	/**
+	 * Opens a graph database at location specified by an url with given
+	 * credentials. Factory method churning open graph databases. This method
+	 * takes the url in ftp-like format for including the user name and the
+	 * password in a single string.
+	 * 
+	 * @param url
+	 *            URL to the graph database in the format
+	 *            <code>driver://username:password@host:port/database</code>
+	 * @return An open graph database.
+	 * @throws GraphDatabaseException
+	 *             if the URL is not properly formatted
+	 */
+	public static GraphDatabase openGraphDatabase(String url)
+			throws GraphDatabaseException {
+		Pattern p = Pattern.compile(urlRegex);
+		Matcher m = p.matcher(url);
+		if (m.matches()) {
+			String realURL = m.group(1) + "://" + m.group(4);
+			String username = m.group(2);
+			String password = m.group(3);
+			return openGraphDatabase(realURL, username, password);
+		} else {
+			throw new GraphDatabaseException(
+					"Invalid url given. Please use the format \"driver://username:password@host:port/database\"");
+		}
+	}
+
+	/**
+	 * Opens a graph database. Factory method churning open graph databases.
+	 * This method retrieves the connection information (url, user name and
+	 * password) from a system property <code>jgralab_dbconnection</code>, which
+	 * has to be set in order to use this method. The format of the url is the
+	 * following: <code>driver://username:password@host:port/database</code>
+	 * 
+	 * @return An open graph database.
+	 * @throws GraphDatabaseException
+	 *             if there was no URL provided by the system property
+	 *             <code>jgralab_dbconnection</code> or if the provided URL is
+	 *             malformed.
+	 */
+	public static GraphDatabase openGraphDatabase()
+			throws GraphDatabaseException {
+		String url = System.getProperty("jgralab_dbconnection");
+		if (url != null)
+			return openGraphDatabase(url);
+		else {
+			throw new GraphDatabaseException(
+					"System property \"jgralab_dbconnection\" not set.");
 		}
 	}
 

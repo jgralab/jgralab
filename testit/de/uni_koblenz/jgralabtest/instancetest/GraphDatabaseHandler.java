@@ -20,9 +20,10 @@ public class GraphDatabaseHandler {
 	private static final String url = System.getProperty("dbaddress");
 	// protected String url = "mysql://localhost:3306/graphdatabase5";
 	// protected String userName = "postgres";
-	private static final String databaseName = System.getProperty("dbname");
-	private static final String userName = System.getProperty("user");
-	private static final String password = System.getProperty("password");
+
+	// private static final String databaseName = System.getProperty("dbname");
+	// private static final String userName = System.getProperty("user");
+	// private static final String password = System.getProperty("password");
 
 	protected GraphDatabase graphDatabase;
 
@@ -32,8 +33,7 @@ public class GraphDatabaseHandler {
 
 	public void connectToDatabase() {
 		try {
-			graphDatabase = GraphDatabase.openGraphDatabase(url + databaseName,
-					userName, password);
+			graphDatabase = GraphDatabase.openGraphDatabase();
 		} catch (GraphDatabaseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
