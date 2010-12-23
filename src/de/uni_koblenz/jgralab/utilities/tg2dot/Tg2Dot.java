@@ -197,8 +197,19 @@ public class Tg2Dot extends Tg2Whatever {
 		optionHandler.addOption(dotBuildOutputType);
 	}
 
+	private boolean debugIterations;
+	private boolean debugOptimization;
+
 	@Override
 	protected void graphStart(PrintStream out) {
+		// We really don't want to debug the evaluator when dotting, cause that
+		// would mean that all gazillions of GReQLs executed by Tg2Dot are
+		// dotted as well, recursively, infinitely, till hell freezes over. So
+		// disable debugging here and restore the old state in graphEnd().
+		debugIterations = GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS;
+		debugOptimization = GreqlEvaluator.DEBUG_OPTIMIZATION;
+		GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS = false;
+		GreqlEvaluator.DEBUG_OPTIMIZATION = false;
 
 		initializeEvaluator();
 		initializeGraphLayout();
@@ -324,13 +335,14 @@ public class Tg2Dot extends Tg2Whatever {
 
 	@Override
 	protected void graphEnd(PrintStream out) {
-
-		System.out.println(" done.");
 		closeOutputStream();
 
 		// writeGraphLayoutToJsonFile();
 		executeDot();
 		System.out.println("Finished Processing.");
+
+		GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS = debugIterations;
+		GreqlEvaluator.DEBUG_OPTIMIZATION = debugOptimization;
 	}
 
 	/**
