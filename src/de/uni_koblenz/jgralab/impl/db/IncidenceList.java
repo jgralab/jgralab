@@ -30,9 +30,9 @@
  */
 package de.uni_koblenz.jgralab.impl.db;
 
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.Map.Entry;
 
 import de.uni_koblenz.jgralab.GraphException;
 
@@ -425,7 +425,7 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 
 		if (targetEdge != movedEdge
 				&& !this.isNextNeighbour(targetEdge, movedEdge)) {
-			System.out.println("putAfter calls moveIncidenceBehind");
+			// System.out.println("putAfter calls moveIncidenceBehind");
 			this.moveIncidenceBehind(movedEdge, targetEdge);
 		}
 	}

@@ -201,8 +201,8 @@ public class GreqlLexer {
 				if ((position >= query.length())
 						|| (query.charAt(position) != separator)) {
 					throw new ParsingException("String started at position "
-							+ start + " but is not closed in query", sb
-							.toString(), start, position - start, query);
+							+ start + " but is not closed in query",
+							sb.toString(), start, position - start, query);
 				}
 				recognizedTokenType = TokenTypes.STRING;
 				recognizedToken = new ComplexToken(recognizedTokenType, start,
@@ -290,8 +290,8 @@ public class GreqlLexer {
 			case 'h':
 				type = TokenTypes.HEXLITERAL;
 				try {
-					value = Integer.parseInt(text.substring(0,
-							text.length() - 1), 16);
+					value = Integer.parseInt(
+							text.substring(0, text.length() - 1), 16);
 				} catch (NumberFormatException ex) {
 					throw new ParsingException("Not a valid hex number", text,
 							start, end - start, query);
@@ -304,7 +304,7 @@ public class GreqlLexer {
 				type = TokenTypes.REALLITERAL;
 				try {
 					String tokenString = text.substring(0, text.length() - 1);
-					System.out.println("TokenString: " + tokenString);
+					// System.out.println("TokenString: " + tokenString);
 					return new RealToken(type, start, end - start, tokenString,
 							Double.parseDouble(tokenString));
 				} catch (NumberFormatException ex) {
@@ -324,7 +324,8 @@ public class GreqlLexer {
 		if (type != TokenTypes.OCTLITERAL) {
 			decValue = value;
 		}
-		return new IntegerToken(type, start, end - start, stringValue, value, decValue);
+		return new IntegerToken(type, start, end - start, stringValue, value,
+				decValue);
 
 	}
 
