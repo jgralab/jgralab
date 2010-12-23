@@ -256,7 +256,12 @@ public class GreqlEvaluatorFacade {
 			throw parse;
 		}
 
-		return evaluator.getEvaluationResult();
+		JValue result = evaluator.getEvaluationResult();
+		
+		GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS = false;
+		GreqlEvaluator.DEBUG_OPTIMIZATION = false;
+		
+		return result;
 	}
 
 	/**
