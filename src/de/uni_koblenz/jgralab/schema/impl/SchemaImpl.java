@@ -614,8 +614,8 @@ public class SchemaImpl implements Schema {
 		try {
 			jfm = compiler.getStandardFileManager(null, null, null);
 		} catch (NullPointerException e) {
-			System.out.println("Cannot compile schema " + qualifiedName + ".");
-			System.out.println("Most probably you use a JRE instead of a JDK. "
+			System.err.println("Cannot compile schema " + qualifiedName + ".");
+			System.err.println("Most probably you use a JRE instead of a JDK. "
 					+ "The JRE does not provide a compiler.");
 			e.printStackTrace();
 			throw new SchemaException(e);

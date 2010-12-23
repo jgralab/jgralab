@@ -381,8 +381,7 @@ public class TgSchema2Java {
 			options.add(classpath);
 		}
 		System.out.print("Starting compilation....");
-		compiler
-				.getTask(null, fileManager, null, null, null, compilationUnits1)
+		compiler.getTask(null, fileManager, null, null, null, compilationUnits1)
 				.call();
 		System.out.println("finished");
 	}
@@ -508,7 +507,7 @@ public class TgSchema2Java {
 				"p",
 				"path",
 				true,
-				"(optional): specifies the path to where the created files are stored; default is current folder (\".\")");
+				"specifies the path to where the created files are stored; default is current folder (\".\")");
 		path.setRequired(true);
 		path.setArgName("path");
 		oh.addOption(path);

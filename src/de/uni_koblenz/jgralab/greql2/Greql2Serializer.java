@@ -300,8 +300,8 @@ public class Greql2Serializer {
 		} else if (exp instanceof ValueConstruction) {
 			serializeValueConstruction((ValueConstruction) exp);
 		} else {
-			System.err.println("Serialization so far: " + sb.toString());
-			throw new Greql2Exception("Unknown Expression " + exp + ".");
+			throw new Greql2Exception("Unknown Expression " + exp
+					+ ". Serialization so far: " + sb.toString());
 		}
 		if (addSpace) {
 			sb.append(' ');

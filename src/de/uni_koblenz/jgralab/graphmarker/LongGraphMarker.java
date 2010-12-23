@@ -136,9 +136,6 @@ public abstract class LongGraphMarker<T extends GraphElement> extends
 		long[] newTemporaryAttributes = createNewArray(newSize);
 		System.arraycopy(temporaryAttributes, 0, newTemporaryAttributes, 0,
 				temporaryAttributes.length);
-		// for (int i = 0; i < temporaryAttributes.length; i++) {
-		// newTemporaryAttributes[i] = temporaryAttributes[i];
-		// }
 		temporaryAttributes = newTemporaryAttributes;
 	}
 
