@@ -17,11 +17,12 @@ import de.uni_koblenz.jgralab.schema.Schema;
  * 
  * @author ultbreit@uni-koblenz.de
  * 
- * TODO Activate Multiple Statement Execution!
+ *         TODO Activate Multiple Statement Execution!
  */
 public class MySqlStatementList extends SqlStatementList {
 
-	public MySqlStatementList(GraphDatabase graphDatabase) throws GraphDatabaseException {
+	public MySqlStatementList(GraphDatabase graphDatabase)
+			throws GraphDatabaseException {
 		super(graphDatabase);
 	}
 
@@ -31,7 +32,8 @@ public class MySqlStatementList extends SqlStatementList {
 			+ "PRIMARY KEY(schemaId)" + ");";
 
 	@Override
-	public PreparedStatement createGraphSchemaTableWithConstraints() throws SQLException {
+	public PreparedStatement createGraphSchemaTableWithConstraints()
+			throws SQLException {
 		return this.connection.prepareStatement(CREATE_GRAPH_SCHEMA_TABLE);
 	}
 
@@ -41,7 +43,8 @@ public class MySqlStatementList extends SqlStatementList {
 			+ ");";
 
 	@Override
-	public PreparedStatement createTypeTableWithConstraints() throws SQLException {
+	public PreparedStatement createTypeTableWithConstraints()
+			throws SQLException {
 		return this.connection.prepareStatement(CREATE_TYPE_TABLE);
 	}
 
@@ -51,7 +54,8 @@ public class MySqlStatementList extends SqlStatementList {
 			+ "PRIMARY KEY(gId)" + ");";
 
 	@Override
-	public PreparedStatement createGraphTableWithConstraints() throws SQLException {
+	public PreparedStatement createGraphTableWithConstraints()
+			throws SQLException {
 		return this.connection.prepareStatement(CREATE_GRAPH_TABLE);
 	}
 
@@ -64,428 +68,450 @@ public class MySqlStatementList extends SqlStatementList {
 		return this.connection.prepareStatement(CREATE_VERTEX_TABLE);
 	}
 
-	private final String ADD_PRIMARY_KEY_CONSTRAINT_ON_VERTEX_TABLE = 
-		"ALTER TABLE Vertex ADD CONSTRAINT vertexPrimaryKey PRIMARY KEY ( vId, gId );";
+	private final String ADD_PRIMARY_KEY_CONSTRAINT_ON_VERTEX_TABLE = "ALTER TABLE Vertex ADD CONSTRAINT vertexPrimaryKey PRIMARY KEY ( vId, gId );";
 
 	@Override
-	public PreparedStatement addPrimaryKeyConstraintOnVertexTable() throws SQLException {
-		return this.connection.prepareStatement(ADD_PRIMARY_KEY_CONSTRAINT_ON_VERTEX_TABLE);
+	public PreparedStatement addPrimaryKeyConstraintOnVertexTable()
+			throws SQLException {
+		return this.connection
+				.prepareStatement(ADD_PRIMARY_KEY_CONSTRAINT_ON_VERTEX_TABLE);
 	}
 
-	private final String DROP_PRIMARY_KEY_CONSTRAINT_FROM_VERTEX_TABLE = 
-		"ALTER TABLE Vertex DROP CONSTRAINT vertexPrimaryKey;";
+	private final String DROP_PRIMARY_KEY_CONSTRAINT_FROM_VERTEX_TABLE = "ALTER TABLE Vertex DROP CONSTRAINT vertexPrimaryKey;";
 
 	@Override
-	public PreparedStatement dropPrimaryKeyConstraintFromVertexTable() throws SQLException {
-		return this.connection.prepareStatement(DROP_PRIMARY_KEY_CONSTRAINT_FROM_VERTEX_TABLE);
+	public PreparedStatement dropPrimaryKeyConstraintFromVertexTable()
+			throws SQLException {
+		return this.connection
+				.prepareStatement(DROP_PRIMARY_KEY_CONSTRAINT_FROM_VERTEX_TABLE);
 	}
 
-	private final String ADD_FOREIGN_KEY_CONSTRAINTS_ON_VERTEX_TABLE = 
-		"ALTER TABLE Vertex ADD CONSTRAINT gIdIsForeignKey FOREIGN KEY (gId) REFERENCES Graph(gId);";
+	private final String ADD_FOREIGN_KEY_CONSTRAINTS_ON_VERTEX_TABLE = "ALTER TABLE Vertex ADD CONSTRAINT gIdIsForeignKey FOREIGN KEY (gId) REFERENCES Graph(gId);";
 
 	@Override
-	public PreparedStatement addForeignKeyConstraintOnGraphColumnOfVertexTable() throws SQLException {
-		return this.connection.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINTS_ON_VERTEX_TABLE);
-	}
-	
-	private final String ADD_FOREIGN_KEY_CONSTRAINT_VERTEX_TYPE = 
-		"ALTER TABLE Vertex ADD CONSTRAINT typeIdIsForeignKey FOREIGN KEY (typeId) REFERENCES Type(typeId);";
-
-	@Override
-	public PreparedStatement addForeignKeyConstraintOnTypeColumnOfVertexTable() throws SQLException {
-		return this.connection.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_VERTEX_TYPE);
-	}	
-
-	private final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_VERTEX = 
-		"ALTER TABLE Vertex DROP CONSTRAINT gIdIsForeignKey;";
-
-	@Override
-	public PreparedStatement dropForeignKeyConstraintFromGraphColumnOfVertexTable() throws SQLException {
-		return this.connection.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_VERTEX);
+	public PreparedStatement addForeignKeyConstraintOnGraphColumnOfVertexTable()
+			throws SQLException {
+		return this.connection
+				.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINTS_ON_VERTEX_TABLE);
 	}
 
-	private final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_VERTEX_TYPE = 
-		"ALTER TABLE Vertex DROP CONSTRAINT typeIdIsForeignKey;";
+	private final String ADD_FOREIGN_KEY_CONSTRAINT_VERTEX_TYPE = "ALTER TABLE Vertex ADD CONSTRAINT typeIdIsForeignKey FOREIGN KEY (typeId) REFERENCES Type(typeId);";
 
 	@Override
-	public PreparedStatement dropForeignKeyConstraintFromTypeColumnOfVertexTable() throws SQLException {
-		return this.connection.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_VERTEX_TYPE);
+	public PreparedStatement addForeignKeyConstraintOnTypeColumnOfVertexTable()
+			throws SQLException {
+		return this.connection
+				.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_VERTEX_TYPE);
 	}
 
-	private final String CREATE_EDGE_TABLE = 
-		"CREATE TABLE Edge(" + 
-			"eId INT," +
-			"gId INT," + 
-			"typeId INT," + 
-			"sequenceNumber BIGINT" + 
-		");";
+	private final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_VERTEX = "ALTER TABLE Vertex DROP CONSTRAINT gIdIsForeignKey;";
+
+	@Override
+	public PreparedStatement dropForeignKeyConstraintFromGraphColumnOfVertexTable()
+			throws SQLException {
+		return this.connection
+				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_VERTEX);
+	}
+
+	private final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_VERTEX_TYPE = "ALTER TABLE Vertex DROP CONSTRAINT typeIdIsForeignKey;";
+
+	@Override
+	public PreparedStatement dropForeignKeyConstraintFromTypeColumnOfVertexTable()
+			throws SQLException {
+		return this.connection
+				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_VERTEX_TYPE);
+	}
+
+	private final String CREATE_EDGE_TABLE = "CREATE TABLE Edge(" + "eId INT,"
+			+ "gId INT," + "typeId INT," + "sequenceNumber BIGINT" + ");";
 
 	@Override
 	public PreparedStatement createEdgeTable() throws SQLException {
 		return this.connection.prepareStatement(CREATE_EDGE_TABLE);
 	}
 
-	private final String ADD_PRIMARY_KEY_CONSTRAINT_ON_EDGE_TABLE = 
-		"ALTER TABLE Edge ADD CONSTRAINT edgePrimaryKey PRIMARY KEY ( eId, gId );";
+	private final String ADD_PRIMARY_KEY_CONSTRAINT_ON_EDGE_TABLE = "ALTER TABLE Edge ADD CONSTRAINT edgePrimaryKey PRIMARY KEY ( eId, gId );";
 
 	@Override
-	public PreparedStatement addPrimaryKeyConstraintOnEdgeTable() throws SQLException {
-		return this.connection.prepareStatement(ADD_PRIMARY_KEY_CONSTRAINT_ON_EDGE_TABLE);
+	public PreparedStatement addPrimaryKeyConstraintOnEdgeTable()
+			throws SQLException {
+		return this.connection
+				.prepareStatement(ADD_PRIMARY_KEY_CONSTRAINT_ON_EDGE_TABLE);
 	}
 
-	private final String DROP_PRIMARY_KEY_CONSTRAINT_FROM_EDGE_TABLE = 
-		"ALTER TABLE Edge DROP CONSTRAINT edgePrimaryKey;";
+	private final String DROP_PRIMARY_KEY_CONSTRAINT_FROM_EDGE_TABLE = "ALTER TABLE Edge DROP CONSTRAINT edgePrimaryKey;";
 
 	@Override
-	public PreparedStatement dropPrimaryKeyConstraintFromEdgeTable() throws SQLException {
-		return this.connection.prepareStatement(DROP_PRIMARY_KEY_CONSTRAINT_FROM_EDGE_TABLE);
+	public PreparedStatement dropPrimaryKeyConstraintFromEdgeTable()
+			throws SQLException {
+		return this.connection
+				.prepareStatement(DROP_PRIMARY_KEY_CONSTRAINT_FROM_EDGE_TABLE);
 	}
 
-	private final String ADD_FOREIGN_KEY_CONSTRAINT_ON_GRAPH_OF_EDGE = 
-		"ALTER TABLE Edge ADD CONSTRAINT gIdIsForeignKey FOREIGN KEY (gId) REFERENCES Graph (gId);";
+	private final String ADD_FOREIGN_KEY_CONSTRAINT_ON_GRAPH_OF_EDGE = "ALTER TABLE Edge ADD CONSTRAINT gIdIsForeignKey FOREIGN KEY (gId) REFERENCES Graph (gId);";
 
 	@Override
-	public PreparedStatement addForeignKeyConstraintOnGraphColumnOfEdgeTable() throws SQLException {
-		return this.connection.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_GRAPH_OF_EDGE);
-	}
-	
-	private final String ADD_FOREIGN_KEY_CONSTRAINTS_ON_EDGE_TYPE = 
-		"ALTER TABLE Edge ADD CONSTRAINT typeIdIsForeignKey FOREIGN KEY (typeId) REFERENCES Type (typeId);";
-
-	@Override
-	public PreparedStatement addForeignKeyConstraintOnTypeColumnOfEdgeTable() throws SQLException {
-		return this.connection.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINTS_ON_EDGE_TYPE);
+	public PreparedStatement addForeignKeyConstraintOnGraphColumnOfEdgeTable()
+			throws SQLException {
+		return this.connection
+				.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_GRAPH_OF_EDGE);
 	}
 
-	private final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_EDGE = 
-		"ALTER TABLE Edge DROP CONSTRAINT gIdIsForeignKey;";
+	private final String ADD_FOREIGN_KEY_CONSTRAINTS_ON_EDGE_TYPE = "ALTER TABLE Edge ADD CONSTRAINT typeIdIsForeignKey FOREIGN KEY (typeId) REFERENCES Type (typeId);";
 
 	@Override
-	public PreparedStatement dropForeignKeyConstraintFromGraphColumnOfEdgeTable() throws SQLException {
-		return this.connection.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_EDGE);
+	public PreparedStatement addForeignKeyConstraintOnTypeColumnOfEdgeTable()
+			throws SQLException {
+		return this.connection
+				.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINTS_ON_EDGE_TYPE);
 	}
-	
-	private final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_EDGE_TYPE = 
-		"ALTER TABLE Edge DROP CONSTRAINT typeIdIsForeignKey;";
+
+	private final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_EDGE = "ALTER TABLE Edge DROP CONSTRAINT gIdIsForeignKey;";
 
 	@Override
-	public PreparedStatement dropForeignKeyConstraintFromTypeColumnOfEdgeTable() throws SQLException {
-		return this.connection.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_EDGE_TYPE);
-	}	
+	public PreparedStatement dropForeignKeyConstraintFromGraphColumnOfEdgeTable()
+			throws SQLException {
+		return this.connection
+				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_EDGE);
+	}
 
-	private final String CREATE_INCIDENCE_TABLE = 
-		"CREATE TABLE Incidence(" +
-			"eId INT," + 
-			"vId INT," + 
-			"gId INT," +
-			"direction ENUM('IN', 'OUT')," + 
-			"sequenceNumber BIGINT" + 
-		");";
+	private final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_EDGE_TYPE = "ALTER TABLE Edge DROP CONSTRAINT typeIdIsForeignKey;";
+
+	@Override
+	public PreparedStatement dropForeignKeyConstraintFromTypeColumnOfEdgeTable()
+			throws SQLException {
+		return this.connection
+				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_EDGE_TYPE);
+	}
+
+	private final String CREATE_INCIDENCE_TABLE = "CREATE TABLE Incidence("
+			+ "eId INT," + "vId INT," + "gId INT,"
+			+ "direction ENUM('IN', 'OUT')," + "sequenceNumber BIGINT" + ");";
 
 	@Override
 	public PreparedStatement createIncidenceTable() throws SQLException {
 		return this.connection.prepareStatement(CREATE_INCIDENCE_TABLE);
 	}
 
-	private final String ADD_PRIMARY_KEY_CONSTRAINT_ON_INCIDENCE_TABLE = 
-		"ALTER TABLE Incidence ADD CONSTRAINT incidencePrimaryKey PRIMARY KEY ( eId, gId, direction )";
+	private final String ADD_PRIMARY_KEY_CONSTRAINT_ON_INCIDENCE_TABLE = "ALTER TABLE Incidence ADD CONSTRAINT incidencePrimaryKey PRIMARY KEY ( eId, gId, direction )";
 
 	@Override
-	public PreparedStatement addPrimaryKeyConstraintOnIncidenceTable() throws SQLException {
-		return this.connection.prepareStatement(ADD_PRIMARY_KEY_CONSTRAINT_ON_INCIDENCE_TABLE);
+	public PreparedStatement addPrimaryKeyConstraintOnIncidenceTable()
+			throws SQLException {
+		return this.connection
+				.prepareStatement(ADD_PRIMARY_KEY_CONSTRAINT_ON_INCIDENCE_TABLE);
 	}
 
-	private final String DROP_PRIMARY_KEY_CONSTRAINT_FROM_INCIDENCE_TABLE = 
-		"ALTER TABLE Incidence DROP CONSTRAINT incidencePrimaryKey";
+	private final String DROP_PRIMARY_KEY_CONSTRAINT_FROM_INCIDENCE_TABLE = "ALTER TABLE Incidence DROP CONSTRAINT incidencePrimaryKey";
 
 	@Override
-	public PreparedStatement dropPrimaryKeyConstraintFromIncidenceTable() throws SQLException {
-		return this.connection.prepareStatement(DROP_PRIMARY_KEY_CONSTRAINT_FROM_INCIDENCE_TABLE);
+	public PreparedStatement dropPrimaryKeyConstraintFromIncidenceTable()
+			throws SQLException {
+		return this.connection
+				.prepareStatement(DROP_PRIMARY_KEY_CONSTRAINT_FROM_INCIDENCE_TABLE);
 	}
 
-	private final String ADD_FOREIGN_KEY_CONSTRAINTS_ON_GRAPH_OF_INCIDENCE = 
-		"ALTER TABLE Incidence ADD CONSTRAINT gIdIsForeignKey FOREIGN KEY (gId) REFERENCES Graph(gId)";
+	private final String ADD_FOREIGN_KEY_CONSTRAINTS_ON_GRAPH_OF_INCIDENCE = "ALTER TABLE Incidence ADD CONSTRAINT gIdIsForeignKey FOREIGN KEY (gId) REFERENCES Graph(gId)";
 
 	@Override
-	public PreparedStatement addForeignKeyConstraintOnGraphColumnOfIncidenceTable()	throws SQLException {
-		return this.connection.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINTS_ON_GRAPH_OF_INCIDENCE);
+	public PreparedStatement addForeignKeyConstraintOnGraphColumnOfIncidenceTable()
+			throws SQLException {
+		return this.connection
+				.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINTS_ON_GRAPH_OF_INCIDENCE);
 	}
 
-	private final String ADD_FOREIGN_KEY_CONSTRAINT_ON_EDGE_OF_INCIDENCE = 
-		"ALTER TABLE Incidence ADD CONSTRAINT eIdIsForeignKey FOREIGN KEY (eId, gId) REFERENCES Edge(eId, gId)";
+	private final String ADD_FOREIGN_KEY_CONSTRAINT_ON_EDGE_OF_INCIDENCE = "ALTER TABLE Incidence ADD CONSTRAINT eIdIsForeignKey FOREIGN KEY (eId, gId) REFERENCES Edge(eId, gId)";
 
 	@Override
-	public PreparedStatement addForeignKeyConstraintOnEdgeColumnOfIncidenceTable() throws SQLException {
-		return this.connection.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_EDGE_OF_INCIDENCE);
+	public PreparedStatement addForeignKeyConstraintOnEdgeColumnOfIncidenceTable()
+			throws SQLException {
+		return this.connection
+				.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_EDGE_OF_INCIDENCE);
 	}
 
-	private final String ADD_FOREIGN_KEY_CONSTRAINT_ON_VERTEX_OF_INCIDENCE = 
-		"ALTER TABLE Incidence ADD CONSTRAINT vIdIsForeignKey FOREIGN KEY (vId, gId) REFERENCES Vertex(vId, gId)";
+	private final String ADD_FOREIGN_KEY_CONSTRAINT_ON_VERTEX_OF_INCIDENCE = "ALTER TABLE Incidence ADD CONSTRAINT vIdIsForeignKey FOREIGN KEY (vId, gId) REFERENCES Vertex(vId, gId)";
 
 	@Override
-	public PreparedStatement addForeignKeyConstraintOnVertexColumnOfIncidenceTable() throws SQLException {
-		return this.connection.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_VERTEX_OF_INCIDENCE);
+	public PreparedStatement addForeignKeyConstraintOnVertexColumnOfIncidenceTable()
+			throws SQLException {
+		return this.connection
+				.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_VERTEX_OF_INCIDENCE);
 	}
-	
-	private final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_EDGE_OF_INCIDENCE = 
-		"ALTER TABLE Incidence DROP CONSTRAINT eIdIsForeignKey";
+
+	private final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_EDGE_OF_INCIDENCE = "ALTER TABLE Incidence DROP CONSTRAINT eIdIsForeignKey";
 
 	@Override
-	public PreparedStatement dropForeignKeyConstraintFromEdgeColumnOfIncidenceTable() throws SQLException {
-		return this.connection.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_EDGE_OF_INCIDENCE);
+	public PreparedStatement dropForeignKeyConstraintFromEdgeColumnOfIncidenceTable()
+			throws SQLException {
+		return this.connection
+				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_EDGE_OF_INCIDENCE);
 	}
-	
-	private final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_INCIDENCE = 
-		"ALTER TABLE Incidence DROP CONSTRAINT gIdIsForeignKey";
+
+	private final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_INCIDENCE = "ALTER TABLE Incidence DROP CONSTRAINT gIdIsForeignKey";
 
 	@Override
-	public PreparedStatement dropForeignKeyConstraintFromGraphColumnOfIncidenceTable() throws SQLException {
-		return this.connection.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_INCIDENCE);
+	public PreparedStatement dropForeignKeyConstraintFromGraphColumnOfIncidenceTable()
+			throws SQLException {
+		return this.connection
+				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_INCIDENCE);
 	}
-	
-	private final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_VERTEX_OF_INCIDENCE =
-		"ALTER TABLE Incidence DROP CONSTRAINT vIdIsForeignKey";
+
+	private final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_VERTEX_OF_INCIDENCE = "ALTER TABLE Incidence DROP CONSTRAINT vIdIsForeignKey";
 
 	@Override
-	public PreparedStatement dropForeignKeyConstraintFromVertexColumnOfIncidenceTable()	throws SQLException {
-		return this.connection.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_VERTEX_OF_INCIDENCE);
-	}		
+	public PreparedStatement dropForeignKeyConstraintFromVertexColumnOfIncidenceTable()
+			throws SQLException {
+		return this.connection
+				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_VERTEX_OF_INCIDENCE);
+	}
 
-	private String CREATE_CLUSTERED_INDEX_ON_LAMBDA_SEQ =
-		"CREATE INDEX lambdaSeqIndex ON Incidence( vId, gId, sequenceNumber ASC )";
+	private String CREATE_CLUSTERED_INDEX_ON_LAMBDA_SEQ = "CREATE INDEX lambdaSeqIndex ON Incidence( vId, gId, sequenceNumber ASC )";
 
 	@Override
 	public PreparedStatement addIndexOnLambdaSeq() throws SQLException {
 		return this.getPreparedStatement(CREATE_CLUSTERED_INDEX_ON_LAMBDA_SEQ);
 	}
-	
-	private String DROP_CLUSTERED_INDEX_ON_LAMBDA_SEQ =
-		"DROP INDEX lambdaSeqIndex ON Incidence";	
-	
+
+	private String DROP_CLUSTERED_INDEX_ON_LAMBDA_SEQ = "DROP INDEX lambdaSeqIndex ON Incidence";
+
 	@Override
 	public PreparedStatement dropIndexOnLambdaSeq() throws SQLException {
 		return this.getPreparedStatement(DROP_CLUSTERED_INDEX_ON_LAMBDA_SEQ);
-	}	
+	}
 
-	private final String CREATE_ATTRIBUTE_TABLE = 
-		"CREATE TABLE Attribute(" +
-			"attributeId INT AUTO_INCREMENT," + "name TEXT," +
-			"schemaId INT REFERENCES GraphSchema," +
-			"PRIMARY KEY(attributeId)" + 
-		");";
+	private final String CREATE_ATTRIBUTE_TABLE = "CREATE TABLE Attribute("
+			+ "attributeId INT AUTO_INCREMENT," + "name TEXT,"
+			+ "schemaId INT REFERENCES GraphSchema,"
+			+ "PRIMARY KEY(attributeId)" + ");";
 
 	@Override
-	public PreparedStatement createAttributeTableWithConstraints() throws SQLException {
+	public PreparedStatement createAttributeTableWithConstraints()
+			throws SQLException {
 		return this.connection.prepareStatement(CREATE_ATTRIBUTE_TABLE);
 	}
 
-	private final String CREATE_GRAPH_ATTRIBUTE_VALUE_TABLE = 
-		"CREATE TABLE GraphAttributeValue(" +
-			"gId INT REFERENCES Graph," +
-			"attributeId INT REFERENCES Attribute," +
-			"value TEXT," +
-			"CONSTRAINT gaPrimaryKey PRIMARY KEY ( gId, attributeId )" + 
-		");";
+	private final String CREATE_GRAPH_ATTRIBUTE_VALUE_TABLE = "CREATE TABLE GraphAttributeValue("
+			+ "gId INT REFERENCES Graph,"
+			+ "attributeId INT REFERENCES Attribute,"
+			+ "value TEXT,"
+			+ "CONSTRAINT gaPrimaryKey PRIMARY KEY ( gId, attributeId )" + ");";
 
 	@Override
-	public PreparedStatement createGraphAttributeValueTableWithConstraints() throws SQLException {
-		return this.connection.prepareStatement(CREATE_GRAPH_ATTRIBUTE_VALUE_TABLE);
+	public PreparedStatement createGraphAttributeValueTableWithConstraints()
+			throws SQLException {
+		return this.connection
+				.prepareStatement(CREATE_GRAPH_ATTRIBUTE_VALUE_TABLE);
 	}
 
-	private final String CREATE_VERTEX_ATTRIBUTE_VALUE_TABLE = 
-		"CREATE TABLE VertexAttributeValue(" +
-			"vId INT," +
-			"gId INT," +
-			"attributeId INT," +
-			"value TEXT" +
-		");";
+	private final String CREATE_VERTEX_ATTRIBUTE_VALUE_TABLE = "CREATE TABLE VertexAttributeValue("
+			+ "vId INT,"
+			+ "gId INT,"
+			+ "attributeId INT,"
+			+ "value TEXT"
+			+ ");";
 
 	@Override
-	public PreparedStatement createVertexAttributeValueTable() throws SQLException {
-		return this.connection.prepareStatement(CREATE_VERTEX_ATTRIBUTE_VALUE_TABLE);
+	public PreparedStatement createVertexAttributeValueTable()
+			throws SQLException {
+		return this.connection
+				.prepareStatement(CREATE_VERTEX_ATTRIBUTE_VALUE_TABLE);
 	}
 
-	private final String ADD_PRIMARY_KEY_CONSTRAINT_ON_VERTEX_ATTRIBUTE_VALUE_TABLE = 
-		"ALTER TABLE VertexAttributeValue ADD CONSTRAINT vertexAttributeValuePrimaryKey PRIMARY KEY ( vId, gId, attributeId )";
+	private final String ADD_PRIMARY_KEY_CONSTRAINT_ON_VERTEX_ATTRIBUTE_VALUE_TABLE = "ALTER TABLE VertexAttributeValue ADD CONSTRAINT vertexAttributeValuePrimaryKey PRIMARY KEY ( vId, gId, attributeId )";
 
 	@Override
-	public PreparedStatement addPrimaryKeyConstraintOnVertexAttributeValueTable() throws SQLException {
-		return this.connection.prepareStatement(ADD_PRIMARY_KEY_CONSTRAINT_ON_VERTEX_ATTRIBUTE_VALUE_TABLE);
+	public PreparedStatement addPrimaryKeyConstraintOnVertexAttributeValueTable()
+			throws SQLException {
+		return this.connection
+				.prepareStatement(ADD_PRIMARY_KEY_CONSTRAINT_ON_VERTEX_ATTRIBUTE_VALUE_TABLE);
 	}
 
-	private final String DROP_PRIMARY_KEY_CONSTRAINT_FROM_VERTEX_ATTRIBUTE_VALUE_TABLE = 
-		"ALTER TABLE VertexAttributeValue DROP CONSTRAINT vertexAttributeValuePrimaryKey";
+	private final String DROP_PRIMARY_KEY_CONSTRAINT_FROM_VERTEX_ATTRIBUTE_VALUE_TABLE = "ALTER TABLE VertexAttributeValue DROP CONSTRAINT vertexAttributeValuePrimaryKey";
 
 	/**
 	 * TODO Do not drop a primary key ...
 	 */
 	@Override
-	public PreparedStatement dropPrimaryKeyConstraintFromVertexAttributeValueTable()throws SQLException {
-		return this.connection.prepareStatement(DROP_PRIMARY_KEY_CONSTRAINT_FROM_VERTEX_ATTRIBUTE_VALUE_TABLE);
-	}
-	
-	private final String ADD_FOREIGN_KEY_CONSTRAINT_ON_GRAPH_OF_VERTEX_ATTRIBUTE_VALUE = 
-		"ALTER TABLE VertexAttributeValue ADD CONSTRAINT gIdIsForeignKey FOREIGN KEY (gId) REFERENCES Graph(gId)";
-
-	@Override
-	public PreparedStatement addForeignKeyConstraintOnGraphColumnOfVertexAttributeValueTable()throws SQLException {
-		return this.connection.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_GRAPH_OF_VERTEX_ATTRIBUTE_VALUE);
-	}
-	
-	private final String ADD_FOREIGN_KEY_CONSTRAINT_ON_VERTEX_OF_ATTRIBUTE_VALUE = 
-		"ALTER TABLE VertexAttributeValue ADD CONSTRAINT vIdIsForeignKey FOREIGN KEY (vId, gId) REFERENCES Vertex(vId, gId)";
-
-	@Override
-	public PreparedStatement addForeignKeyConstraintOnVertexColumnOfVertexAttributeValueTable()	throws SQLException {
-		return this.connection.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_VERTEX_OF_ATTRIBUTE_VALUE);
-	}	
-
-	private final String ADD_FOREIGN_KEY_CONSTRAINT_ON_ATTRIBUTE_OF_VERTEX_ATTRIBUTE_VALUE = 
-		"ALTER TABLE VertexAttributeValue ADD CONSTRAINT attributeIdIsForeignKey FOREIGN KEY ( attributeId ) REFERENCES Attribute (attributeId)";
-
-	@Override
-	public PreparedStatement addForeignKeyConstraintOnAttributeColumnOfVertexAttributeValueTable()	throws SQLException {
-		return this.connection.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_ATTRIBUTE_OF_VERTEX_ATTRIBUTE_VALUE);
-	}
-	
-	private final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_VERTEX_ATTRIBUTE_VALUE = 
-		"ALTER TABLE VertexAttributeValue DROP CONSTRAINT vIdIsForeignKey";
-
-	@Override
-	public PreparedStatement dropForeignKeyConstraintFromGraphColumnOfVertexAttributeValueTable() throws SQLException {
-		return this.connection.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_VERTEX_ATTRIBUTE_VALUE);
-	}	
-
-	private final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_VERTEX_OF_VERTEX_ATTRIBUTE_VALUE = 
-		"ALTER TABLE VertexAttributeValue DROP CONSTRAINT vIdIsForeignKey";
-
-	@Override
-	public PreparedStatement dropForeignKeyConstraintFromVertexColumnOfVertexAttributeValueTable() throws SQLException {
-		return this.connection.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_VERTEX_OF_VERTEX_ATTRIBUTE_VALUE);
-	}
-	
-	private final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_ATTRIBUTE_OF_VERTEX_ATTRIBUTE_VALUE = 
-		"ALTER TABLE VertexAttributeValue DROP CONSTRAINT attributeIdIsForeignKey";
-	
-	@Override
-	public PreparedStatement dropForeignKeyConstraintFromAttributeColumnOfVertexAttributeValueTable() throws SQLException {
-		return this.connection.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_ATTRIBUTE_OF_VERTEX_ATTRIBUTE_VALUE);
+	public PreparedStatement dropPrimaryKeyConstraintFromVertexAttributeValueTable()
+			throws SQLException {
+		return this.connection
+				.prepareStatement(DROP_PRIMARY_KEY_CONSTRAINT_FROM_VERTEX_ATTRIBUTE_VALUE_TABLE);
 	}
 
-	private final String CREATE_EDGE_ATTRIBUTE_VALUE_TABLE = 
-		"CREATE TABLE EdgeAttributeValue(" +
-			"eId INT," +
-			"gId INT," +
-			"attributeId INT," +
-			"value TEXT" +
-		")";
+	private final String ADD_FOREIGN_KEY_CONSTRAINT_ON_GRAPH_OF_VERTEX_ATTRIBUTE_VALUE = "ALTER TABLE VertexAttributeValue ADD CONSTRAINT gIdIsForeignKey FOREIGN KEY (gId) REFERENCES Graph(gId)";
 
 	@Override
-	public PreparedStatement createEdgeAttributeValueTable() throws SQLException {
-		return this.connection.prepareStatement(CREATE_EDGE_ATTRIBUTE_VALUE_TABLE);
+	public PreparedStatement addForeignKeyConstraintOnGraphColumnOfVertexAttributeValueTable()
+			throws SQLException {
+		return this.connection
+				.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_GRAPH_OF_VERTEX_ATTRIBUTE_VALUE);
 	}
-	
-	private final String ADD_PRIMARY_KEY_CONSTRAINT_ON_EDGE_ATTRIBUTE_VALUE_TABLE = 
-		"ALTER TABLE EdgeAttributeValue ADD CONSTRAINT edgeAttributeValuePrimaryKey PRIMARY KEY ( eId, gId, attributeId )";
+
+	private final String ADD_FOREIGN_KEY_CONSTRAINT_ON_VERTEX_OF_ATTRIBUTE_VALUE = "ALTER TABLE VertexAttributeValue ADD CONSTRAINT vIdIsForeignKey FOREIGN KEY (vId, gId) REFERENCES Vertex(vId, gId)";
 
 	@Override
-	public PreparedStatement addPrimaryKeyConstraintOnEdgeAttributeValueTable()	throws SQLException {
-		return this.connection.prepareStatement(ADD_PRIMARY_KEY_CONSTRAINT_ON_EDGE_ATTRIBUTE_VALUE_TABLE);
+	public PreparedStatement addForeignKeyConstraintOnVertexColumnOfVertexAttributeValueTable()
+			throws SQLException {
+		return this.connection
+				.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_VERTEX_OF_ATTRIBUTE_VALUE);
 	}
-	
-	private final String DROP_PRIMARY_KEY_CONSTRAINT_FROM_EDGE_ATTRIBUTE_VALUE_TABLE =
-		"ALTER TABLE EdgeAttributeValue DROP CONSTRAINT edgeAttributeValuePrimaryKey";
-	
+
+	private final String ADD_FOREIGN_KEY_CONSTRAINT_ON_ATTRIBUTE_OF_VERTEX_ATTRIBUTE_VALUE = "ALTER TABLE VertexAttributeValue ADD CONSTRAINT attributeIdIsForeignKey FOREIGN KEY ( attributeId ) REFERENCES Attribute (attributeId)";
+
+	@Override
+	public PreparedStatement addForeignKeyConstraintOnAttributeColumnOfVertexAttributeValueTable()
+			throws SQLException {
+		return this.connection
+				.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_ATTRIBUTE_OF_VERTEX_ATTRIBUTE_VALUE);
+	}
+
+	private final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_VERTEX_ATTRIBUTE_VALUE = "ALTER TABLE VertexAttributeValue DROP CONSTRAINT vIdIsForeignKey";
+
+	@Override
+	public PreparedStatement dropForeignKeyConstraintFromGraphColumnOfVertexAttributeValueTable()
+			throws SQLException {
+		return this.connection
+				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_VERTEX_ATTRIBUTE_VALUE);
+	}
+
+	private final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_VERTEX_OF_VERTEX_ATTRIBUTE_VALUE = "ALTER TABLE VertexAttributeValue DROP CONSTRAINT vIdIsForeignKey";
+
+	@Override
+	public PreparedStatement dropForeignKeyConstraintFromVertexColumnOfVertexAttributeValueTable()
+			throws SQLException {
+		return this.connection
+				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_VERTEX_OF_VERTEX_ATTRIBUTE_VALUE);
+	}
+
+	private final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_ATTRIBUTE_OF_VERTEX_ATTRIBUTE_VALUE = "ALTER TABLE VertexAttributeValue DROP CONSTRAINT attributeIdIsForeignKey";
+
+	@Override
+	public PreparedStatement dropForeignKeyConstraintFromAttributeColumnOfVertexAttributeValueTable()
+			throws SQLException {
+		return this.connection
+				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_ATTRIBUTE_OF_VERTEX_ATTRIBUTE_VALUE);
+	}
+
+	private final String CREATE_EDGE_ATTRIBUTE_VALUE_TABLE = "CREATE TABLE EdgeAttributeValue("
+			+ "eId INT," + "gId INT," + "attributeId INT," + "value TEXT" + ")";
+
+	@Override
+	public PreparedStatement createEdgeAttributeValueTable()
+			throws SQLException {
+		return this.connection
+				.prepareStatement(CREATE_EDGE_ATTRIBUTE_VALUE_TABLE);
+	}
+
+	private final String ADD_PRIMARY_KEY_CONSTRAINT_ON_EDGE_ATTRIBUTE_VALUE_TABLE = "ALTER TABLE EdgeAttributeValue ADD CONSTRAINT edgeAttributeValuePrimaryKey PRIMARY KEY ( eId, gId, attributeId )";
+
+	@Override
+	public PreparedStatement addPrimaryKeyConstraintOnEdgeAttributeValueTable()
+			throws SQLException {
+		return this.connection
+				.prepareStatement(ADD_PRIMARY_KEY_CONSTRAINT_ON_EDGE_ATTRIBUTE_VALUE_TABLE);
+	}
+
+	private final String DROP_PRIMARY_KEY_CONSTRAINT_FROM_EDGE_ATTRIBUTE_VALUE_TABLE = "ALTER TABLE EdgeAttributeValue DROP CONSTRAINT edgeAttributeValuePrimaryKey";
+
 	/**
-	 * Beware: if there is no primary key defined on a table MySql will generate a hidden clustered index,
-	 * see: http://dev.mysql.com/doc/refman/5.5/en/innodb-index-types.html
+	 * Beware: if there is no primary key defined on a table MySql will generate
+	 * a hidden clustered index, see:
+	 * http://dev.mysql.com/doc/refman/5.5/en/innodb-index-types.html
 	 */
 	@Override
-	public PreparedStatement dropPrimaryKeyConstraintFromEdgeAttributeValueTable() throws SQLException{
-		return this.connection.prepareStatement(DROP_PRIMARY_KEY_CONSTRAINT_FROM_EDGE_ATTRIBUTE_VALUE_TABLE);
-	}	
-	
-	private final String ADD_FOREIGN_KEY_CONSTRAINT_ON_GRAPH_COLUMN_OF_EDGE_ATTRIBUTE_VALUE_TABLE =
-		"ALTER TABLE EdgeAttributeValue ADD CONSTRAINT gIdIsForeignKey FOREIGN KEY (gId) REFERENCES Graph (gId)";
-	
-	@Override
-	public PreparedStatement addForeignKeyConstraintOnGraphColumnOfEdgeAttributeValueTable() throws SQLException{
-		return this.connection.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_GRAPH_COLUMN_OF_EDGE_ATTRIBUTE_VALUE_TABLE);
-	}
-	
-	private final String ADD_FOREIGN_KEY_CONSTRAINT_ON_EDGE_COLUMN_OF_EDGE_ATTRIBUTE_VALUE_TABLE =
-		"ALTER TABLE EdgeAttributeValue ADD CONSTRAINT eIdIsForeignKey FOREIGN KEY (eId) REFERENCES Edge (eId)";
-	
-	@Override
-	public PreparedStatement addForeignKeyConstraintOnEdgeColumnOfEdgeAttributeValueTable() throws SQLException{
-		return this.connection.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_EDGE_COLUMN_OF_EDGE_ATTRIBUTE_VALUE_TABLE);
-	}
-	
-	private final String ADD_FOREIGN_KEY_CONSTRAINT_ON_ATTRIBUTE_COLUMN_OF_EDGE_ATTRIBUTE_VALUE_TABLE =
-		"ALTER TABLE EdgeAttributeValue ADD CONSTRAINT attributeIdIsForeignKey FOREIGN KEY (attributeId) REFERENCES Attribute (attributeId)";	
-	
-	@Override
-	public PreparedStatement addForeignKeyConstraintOnAttributeColumnOfEdgeAttributeValueTable() throws SQLException{
-		return this.connection.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_ATTRIBUTE_COLUMN_OF_EDGE_ATTRIBUTE_VALUE_TABLE);
-	}
-	
-	private final String DROP_FOREIGN_KEY_CONSTRAINT_ON_GRAPH_OF_EDGE_ATTRIBUTE_VALUE =
-		"ALTER TABLE EdgeAttributeValue DROP CONSTRAINT gIdIsForeignKey";
-	
-	@Override
-	public PreparedStatement dropForeignKeyConstraintFromGraphColumnOfEdgeAttributeValueTable() throws SQLException{
-		return this.connection.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_ON_GRAPH_OF_EDGE_ATTRIBUTE_VALUE);
-	}
-	
-	private final String DROP_FOREIGN_KEY_CONSTRAINT_ON_EDGE_OF_ATTRIBUTE_VALUE =
-		"ALTER TABLE EdgeAttributeValue DROP CONSTRAINT eIdIsForeignKey";
-	
-	@Override
-	public PreparedStatement dropForeignKeyConstraintFromEdgeColumnOfEdgeAttributeValueTable() throws SQLException{
-		return this.connection.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_ON_EDGE_OF_ATTRIBUTE_VALUE);
-	}
-	
-	private final String DROP_FOREIGN_KEY_CONSTRAINT_ON_ATTRIBUTE_OF_EDGE_ATTRIBUTE_VALUE =
-		"ALTER TABLE EdgeAttributeValue DROP CONSTRAINT attributeIdIsForeignKey";	
-	
-	@Override
-	public PreparedStatement dropForeignKeyConstraintFromAttributeColumnOfEdgeAttributeValueTable() throws SQLException{
-		return this.connection.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_ON_ATTRIBUTE_OF_EDGE_ATTRIBUTE_VALUE);
+	public PreparedStatement dropPrimaryKeyConstraintFromEdgeAttributeValueTable()
+			throws SQLException {
+		return this.connection
+				.prepareStatement(DROP_PRIMARY_KEY_CONSTRAINT_FROM_EDGE_ATTRIBUTE_VALUE_TABLE);
 	}
 
+	private final String ADD_FOREIGN_KEY_CONSTRAINT_ON_GRAPH_COLUMN_OF_EDGE_ATTRIBUTE_VALUE_TABLE = "ALTER TABLE EdgeAttributeValue ADD CONSTRAINT gIdIsForeignKey FOREIGN KEY (gId) REFERENCES Graph (gId)";
+
+	@Override
+	public PreparedStatement addForeignKeyConstraintOnGraphColumnOfEdgeAttributeValueTable()
+			throws SQLException {
+		return this.connection
+				.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_GRAPH_COLUMN_OF_EDGE_ATTRIBUTE_VALUE_TABLE);
+	}
+
+	private final String ADD_FOREIGN_KEY_CONSTRAINT_ON_EDGE_COLUMN_OF_EDGE_ATTRIBUTE_VALUE_TABLE = "ALTER TABLE EdgeAttributeValue ADD CONSTRAINT eIdIsForeignKey FOREIGN KEY (eId) REFERENCES Edge (eId)";
+
+	@Override
+	public PreparedStatement addForeignKeyConstraintOnEdgeColumnOfEdgeAttributeValueTable()
+			throws SQLException {
+		return this.connection
+				.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_EDGE_COLUMN_OF_EDGE_ATTRIBUTE_VALUE_TABLE);
+	}
+
+	private final String ADD_FOREIGN_KEY_CONSTRAINT_ON_ATTRIBUTE_COLUMN_OF_EDGE_ATTRIBUTE_VALUE_TABLE = "ALTER TABLE EdgeAttributeValue ADD CONSTRAINT attributeIdIsForeignKey FOREIGN KEY (attributeId) REFERENCES Attribute (attributeId)";
+
+	@Override
+	public PreparedStatement addForeignKeyConstraintOnAttributeColumnOfEdgeAttributeValueTable()
+			throws SQLException {
+		return this.connection
+				.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_ATTRIBUTE_COLUMN_OF_EDGE_ATTRIBUTE_VALUE_TABLE);
+	}
+
+	private final String DROP_FOREIGN_KEY_CONSTRAINT_ON_GRAPH_OF_EDGE_ATTRIBUTE_VALUE = "ALTER TABLE EdgeAttributeValue DROP CONSTRAINT gIdIsForeignKey";
+
+	@Override
+	public PreparedStatement dropForeignKeyConstraintFromGraphColumnOfEdgeAttributeValueTable()
+			throws SQLException {
+		return this.connection
+				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_ON_GRAPH_OF_EDGE_ATTRIBUTE_VALUE);
+	}
+
+	private final String DROP_FOREIGN_KEY_CONSTRAINT_ON_EDGE_OF_ATTRIBUTE_VALUE = "ALTER TABLE EdgeAttributeValue DROP CONSTRAINT eIdIsForeignKey";
+
+	@Override
+	public PreparedStatement dropForeignKeyConstraintFromEdgeColumnOfEdgeAttributeValueTable()
+			throws SQLException {
+		return this.connection
+				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_ON_EDGE_OF_ATTRIBUTE_VALUE);
+	}
+
+	private final String DROP_FOREIGN_KEY_CONSTRAINT_ON_ATTRIBUTE_OF_EDGE_ATTRIBUTE_VALUE = "ALTER TABLE EdgeAttributeValue DROP CONSTRAINT attributeIdIsForeignKey";
+
+	@Override
+	public PreparedStatement dropForeignKeyConstraintFromAttributeColumnOfEdgeAttributeValueTable()
+			throws SQLException {
+		return this.connection
+				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_ON_ATTRIBUTE_OF_EDGE_ATTRIBUTE_VALUE);
+	}
 
 	// --- to insert schema information -------------------------------
 
-	private String INSERT_SCHEMA = 
-		"INSERT INTO GraphSchema ( packagePrefix, name, serializedDefinition ) VALUES ( ?, ?, ? )";
+	private String INSERT_SCHEMA = "INSERT INTO GraphSchema ( packagePrefix, name, serializedDefinition ) VALUES ( ?, ?, ? )";
 
 	@Override
-	public PreparedStatement insertSchema(Schema schema, String serializedDefinition) throws SQLException {
-		PreparedStatement statement = this.connection.prepareStatement(INSERT_SCHEMA, Statement.RETURN_GENERATED_KEYS);
+	public PreparedStatement insertSchema(Schema schema,
+			String serializedDefinition) throws SQLException {
+		PreparedStatement statement = this.connection.prepareStatement(
+				INSERT_SCHEMA, Statement.RETURN_GENERATED_KEYS);
 		statement.setString(1, schema.getPackagePrefix());
 		statement.setString(2, schema.getName());
 		statement.setString(3, serializedDefinition);
 		return statement;
 	}
 
-	private String INSERT_TYPE = 
-		"INSERT INTO Type( qualifiedName, schemaId ) VALUES ( ?, ? )";
+	private String INSERT_TYPE = "INSERT INTO Type( qualifiedName, schemaId ) VALUES ( ?, ? )";
 
 	@Override
-	public PreparedStatement insertType(String qualifiedName, int schemaId) throws SQLException {
+	public PreparedStatement insertType(String qualifiedName, int schemaId)
+			throws SQLException {
 		PreparedStatement statement = this.getPreparedStatement(INSERT_TYPE);
 		statement.setString(1, qualifiedName);
 		statement.setInt(2, schemaId);
 		return statement;
 	}
 
-	private String INSERT_ATTRIBUTE = 
-		"INSERT INTO Attribute ( name, schemaId ) VALUES ( ?, ? )";
+	private String INSERT_ATTRIBUTE = "INSERT INTO Attribute ( name, schemaId ) VALUES ( ?, ? )";
 
 	@Override
 	public PreparedStatement insertAttribute(String name, int schemaId)
 			throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(INSERT_ATTRIBUTE);
+		PreparedStatement statement = this
+				.getPreparedStatement(INSERT_ATTRIBUTE);
 		statement.setString(1, name);
 		statement.setInt(2, schemaId);
 		return statement;
@@ -493,14 +519,14 @@ public class MySqlStatementList extends SqlStatementList {
 
 	// --- to insert a graph ------------------------------------------
 
-	private String INSERT_GRAPH = 
-		"INSERT INTO Graph ( uid, version, vSeqVersion, eSeqVersion, typeId ) VALUES ( ?, ?, ?, ?, ? )";
+	private String INSERT_GRAPH = "INSERT INTO Graph ( uid, version, vSeqVersion, eSeqVersion, typeId ) VALUES ( ?, ?, ?, ?, ? )";
 
 	@Override
 	public PreparedStatement insertGraph(String id, long graphVersion,
 			long vertexListVersion, long edgeListVersion, int typeId)
 			throws SQLException {
-		PreparedStatement statement = this.connection.prepareStatement(INSERT_GRAPH, Statement.RETURN_GENERATED_KEYS);
+		PreparedStatement statement = this.connection.prepareStatement(
+				INSERT_GRAPH, Statement.RETURN_GENERATED_KEYS);
 		statement.setString(1, id);
 		statement.setLong(2, graphVersion);
 		statement.setLong(3, vertexListVersion);
@@ -509,13 +535,13 @@ public class MySqlStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private String INSERT_GRAPH_ATTRIBUTE_VALUE = 
-		"INSERT INTO GraphAttributeValue ( gId, attributeId, value ) VALUES ( ?, ?, ? )";
+	private String INSERT_GRAPH_ATTRIBUTE_VALUE = "INSERT INTO GraphAttributeValue ( gId, attributeId, value ) VALUES ( ?, ?, ? )";
 
 	@Override
 	public PreparedStatement insertGraphAttributeValue(int gId,
 			int attributeId, String value) throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(INSERT_GRAPH_ATTRIBUTE_VALUE);
+		PreparedStatement statement = this
+				.getPreparedStatement(INSERT_GRAPH_ATTRIBUTE_VALUE);
 		statement.setInt(1, gId);
 		statement.setInt(2, attributeId);
 		statement.setString(3, value);
@@ -524,11 +550,12 @@ public class MySqlStatementList extends SqlStatementList {
 
 	// --- to insert a vertex ------------------------------------------
 
-	private String INSERT_VERTEX = 
-		"INSERT INTO Vertex ( vId, gId, typeId, lambdaSeqVersion, sequenceNumber ) VALUES (?, ?, ?, ?, ?)";
+	private String INSERT_VERTEX = "INSERT INTO Vertex ( vId, gId, typeId, lambdaSeqVersion, sequenceNumber ) VALUES (?, ?, ?, ?, ?)";
 
 	@Override
-	public PreparedStatement insertVertex(int vId, int typeId, int gId, long incidenceListVersion, long sequenceNumberInVSeq) throws SQLException {
+	public PreparedStatement insertVertex(int vId, int typeId, int gId,
+			long incidenceListVersion, long sequenceNumberInVSeq)
+			throws SQLException {
 		PreparedStatement statement = this.getPreparedStatement(INSERT_VERTEX);
 		statement.setInt(1, vId);
 		statement.setInt(2, gId);
@@ -539,34 +566,41 @@ public class MySqlStatementList extends SqlStatementList {
 	}
 
 	@Override
-	public PreparedStatement insertVertex(DatabasePersistableVertex vertex)	throws SQLException, GraphIOException {
+	public PreparedStatement insertVertex(DatabasePersistableVertex vertex)
+			throws SQLException, GraphIOException {
 		String sqlStatement = this.createSqlInsertStatementFor(vertex);
 		PreparedStatement statement = this.getPreparedStatement(sqlStatement);
 		this.setParametersForVertex(statement, vertex);
 		this.setAttributeValuesForVertex(statement, vertex);
-		System.out.println(sqlStatement);
-		System.out.println(statement);
+		// System.out.println(sqlStatement);
+		// System.out.println(statement);
 		return statement;
 	}
 
-	private void setAttributeValuesForVertex(PreparedStatement statement, DatabasePersistableVertex vertex) throws SQLException, GraphIOException {
+	private void setAttributeValuesForVertex(PreparedStatement statement,
+			DatabasePersistableVertex vertex) throws SQLException,
+			GraphIOException {
 		int i = 6;
-		SortedSet<Attribute> attributes = vertex.getAttributedElementClass().getAttributeList();
+		SortedSet<Attribute> attributes = vertex.getAttributedElementClass()
+				.getAttributeList();
 		for (Attribute attribute : attributes) {
 			statement.setInt(i, vertex.getId());
 			i++;
 			statement.setInt(i, vertex.getGId());
 			i++;
-			int attributeId = this.graphDatabase.getAttributeId(vertex.getGraph(), attribute.getName());
+			int attributeId = this.graphDatabase.getAttributeId(
+					vertex.getGraph(), attribute.getName());
 			statement.setInt(i, attributeId);
 			i++;
-			String value = this.graphDatabase.convertToString(vertex, attribute.getName());
+			String value = this.graphDatabase.convertToString(vertex,
+					attribute.getName());
 			statement.setString(i, value);
 			i++;
 		}
 	}
 
-	private void setParametersForVertex(PreparedStatement statement, DatabasePersistableVertex vertex) throws SQLException {
+	private void setParametersForVertex(PreparedStatement statement,
+			DatabasePersistableVertex vertex) throws SQLException {
 		statement.setInt(1, vertex.getId());
 		statement.setInt(2, vertex.getGId());
 		int typeId = this.graphDatabase.getTypeIdOf(vertex);
@@ -577,19 +611,21 @@ public class MySqlStatementList extends SqlStatementList {
 
 	private String createSqlInsertStatementFor(DatabasePersistableVertex vertex) {
 		String sqlStatement = INSERT_VERTEX;
-		int attributeCount = vertex.getAttributedElementClass().getAttributeList().size();
+		int attributeCount = vertex.getAttributedElementClass()
+				.getAttributeList().size();
 		for (int i = 0; i < attributeCount; i++) {
 			sqlStatement += INSERT_VERTEX_ATTRIBUTE_VALUE;
 		}
 		return sqlStatement;
 	}
 
-	private String INSERT_VERTEX_ATTRIBUTE_VALUE = 
-		"INSERT INTO VertexAttributeValue ( vId, gId, attributeId, value ) VALUES ( ?, ?, ?, ? )";
+	private String INSERT_VERTEX_ATTRIBUTE_VALUE = "INSERT INTO VertexAttributeValue ( vId, gId, attributeId, value ) VALUES ( ?, ?, ?, ? )";
 
 	@Override
-	public PreparedStatement insertVertexAttributeValue(int vId, int gId, int attributeId, String value) throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(INSERT_VERTEX_ATTRIBUTE_VALUE);
+	public PreparedStatement insertVertexAttributeValue(int vId, int gId,
+			int attributeId, String value) throws SQLException {
+		PreparedStatement statement = this
+				.getPreparedStatement(INSERT_VERTEX_ATTRIBUTE_VALUE);
 		statement.setInt(1, vId);
 		statement.setInt(2, gId);
 		statement.setInt(3, attributeId);
@@ -599,11 +635,11 @@ public class MySqlStatementList extends SqlStatementList {
 
 	// --- to insert an edge -------------------------------------------
 
-	private String INSERT_EDGE = 
-		"INSERT INTO Edge ( eId, gId, typeId, sequenceNumber ) VALUES ( ?, ?, ?, ? )";
+	private String INSERT_EDGE = "INSERT INTO Edge ( eId, gId, typeId, sequenceNumber ) VALUES ( ?, ?, ?, ? )";
 
 	@Override
-	public PreparedStatement insertEdge(int eId, int gId, int typeId, long sequenceNumberInLambdaSeq) throws SQLException {
+	public PreparedStatement insertEdge(int eId, int gId, int typeId,
+			long sequenceNumberInLambdaSeq) throws SQLException {
 		PreparedStatement statement = this.getPreparedStatement(INSERT_EDGE);
 		statement.setInt(1, Math.abs(eId));
 		statement.setInt(2, gId);
@@ -613,7 +649,9 @@ public class MySqlStatementList extends SqlStatementList {
 	}
 
 	@Override
-	public PreparedStatement insertEdge(DatabasePersistableEdge edge, DatabasePersistableVertex alpha, DatabasePersistableVertex omega)	throws SQLException, GraphIOException {
+	public PreparedStatement insertEdge(DatabasePersistableEdge edge,
+			DatabasePersistableVertex alpha, DatabasePersistableVertex omega)
+			throws SQLException, GraphIOException {
 		String sqlStatement = this.createSqlInsertStatementFor(edge);
 		PreparedStatement statement = this.getPreparedStatement(sqlStatement);
 		this.setParametersForEdge(statement, edge);
@@ -626,7 +664,8 @@ public class MySqlStatementList extends SqlStatementList {
 		statement.setLong(9, edge.getSequenceNumberInLambdaSeq());
 
 		// insert incidence: reversed edge
-		DatabasePersistableEdge reversedEdge = (DatabasePersistableEdge) edge.getReversedEdge();
+		DatabasePersistableEdge reversedEdge = (DatabasePersistableEdge) edge
+				.getReversedEdge();
 		statement.setInt(10, Math.abs(reversedEdge.getId()));
 		statement.setInt(11, reversedEdge.getGId());
 		statement.setInt(12, reversedEdge.getIncidentVId());
@@ -635,16 +674,19 @@ public class MySqlStatementList extends SqlStatementList {
 
 		// insert attribute values
 		int i = 15;
-		SortedSet<Attribute> attributes = edge.getAttributedElementClass().getAttributeList();
+		SortedSet<Attribute> attributes = edge.getAttributedElementClass()
+				.getAttributeList();
 		for (Attribute attribute : attributes) {
 			statement.setInt(i, edge.getId());
 			i++;
 			statement.setInt(i, edge.getGId());
 			i++;
-			int attributeId = this.graphDatabase.getAttributeId(edge.getGraph(), attribute.getName());
+			int attributeId = this.graphDatabase.getAttributeId(
+					edge.getGraph(), attribute.getName());
 			statement.setInt(i, attributeId);
 			i++;
-			String value = this.graphDatabase.convertToString(edge, attribute.getName());
+			String value = this.graphDatabase.convertToString(edge,
+					attribute.getName());
 			statement.setString(i, value);
 			i++;
 		}
@@ -667,7 +709,8 @@ public class MySqlStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private void setParametersForEdge(PreparedStatement statement, DatabasePersistableEdge edge) throws SQLException {
+	private void setParametersForEdge(PreparedStatement statement,
+			DatabasePersistableEdge edge) throws SQLException {
 		statement.setInt(1, Math.abs(edge.getId()));
 		statement.setInt(2, edge.getGId());
 		int typeId = this.graphDatabase.getTypeIdOf(edge);
@@ -679,7 +722,8 @@ public class MySqlStatementList extends SqlStatementList {
 		String sqlStatement = INSERT_EDGE;
 		sqlStatement += INSERT_INCIDENCE;
 		sqlStatement += INSERT_INCIDENCE;
-		int attributeCount = edge.getAttributedElementClass().getAttributeList().size();
+		int attributeCount = edge.getAttributedElementClass()
+				.getAttributeList().size();
 		for (int i = 0; i < attributeCount; i++) {
 			sqlStatement += INSERT_EDGE_ATTRIBUTE_VALUE;
 		}
@@ -688,12 +732,13 @@ public class MySqlStatementList extends SqlStatementList {
 		return sqlStatement;
 	}
 
-	private String INSERT_INCIDENCE = 
-		"INSERT INTO Incidence ( eId, gId, vId, direction, sequenceNumber ) VALUES ( ?, ?, ?, ?, ? )";
+	private String INSERT_INCIDENCE = "INSERT INTO Incidence ( eId, gId, vId, direction, sequenceNumber ) VALUES ( ?, ?, ?, ?, ? )";
 
 	@Override
-	public PreparedStatement insertIncidence(int eId, int vId, int gId,	long sequenceNumberInLambdaSeq) throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(INSERT_INCIDENCE);
+	public PreparedStatement insertIncidence(int eId, int vId, int gId,
+			long sequenceNumberInLambdaSeq) throws SQLException {
+		PreparedStatement statement = this
+				.getPreparedStatement(INSERT_INCIDENCE);
 		statement.setInt(1, Math.abs(eId));
 		statement.setInt(2, gId);
 		statement.setInt(3, vId);
@@ -702,18 +747,20 @@ public class MySqlStatementList extends SqlStatementList {
 		} else if (eId < 0) {
 			statement.setString(4, EdgeDirection.IN.name());
 		} else {
-			throw new GraphException("Cannot insert an incidence into database with incident edge id = 0.");
+			throw new GraphException(
+					"Cannot insert an incidence into database with incident edge id = 0.");
 		}
 		statement.setLong(5, sequenceNumberInLambdaSeq);
 		return statement;
 	}
 
-	private String INSERT_EDGE_ATTRIBUTE_VALUE = 
-		"INSERT INTO EdgeAttributeValue ( eId, gId, attributeId, value ) VALUES ( ?, ?, ?, ? )";
+	private String INSERT_EDGE_ATTRIBUTE_VALUE = "INSERT INTO EdgeAttributeValue ( eId, gId, attributeId, value ) VALUES ( ?, ?, ?, ? )";
 
 	@Override
-	public PreparedStatement insertEdgeAttributeValue(int eId, int gId,	int attributeId, String value) throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(INSERT_EDGE_ATTRIBUTE_VALUE);
+	public PreparedStatement insertEdgeAttributeValue(int eId, int gId,
+			int attributeId, String value) throws SQLException {
+		PreparedStatement statement = this
+				.getPreparedStatement(INSERT_EDGE_ATTRIBUTE_VALUE);
 		statement.setInt(1, eId);
 		statement.setInt(2, gId);
 		statement.setInt(3, attributeId);
@@ -723,70 +770,69 @@ public class MySqlStatementList extends SqlStatementList {
 
 	// --- to open a graph schema -------------------------------------------
 
-	private String SELECT_SCHEMA_ID = 
-		"SELECT schemaId FROM GraphSchema WHERE packagePrefix = ? AND name = ?";
+	private String SELECT_SCHEMA_ID = "SELECT schemaId FROM GraphSchema WHERE packagePrefix = ? AND name = ?";
 
 	@Override
-	public PreparedStatement selectSchemaId(String packagePrefix, String name) throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(SELECT_SCHEMA_ID);
+	public PreparedStatement selectSchemaId(String packagePrefix, String name)
+			throws SQLException {
+		PreparedStatement statement = this
+				.getPreparedStatement(SELECT_SCHEMA_ID);
 		statement.setString(1, packagePrefix);
 		statement.setString(2, name);
 		return statement;
 	}
 
 	// TODO Rewrite as join.
-	private String SELECT_SCHEMA_DEFINITION_FOR_GRAPH = 
-		"SELECT serializedDefinition " +
-		"FROM GraphSchema WHERE schemaId = (" +
-			"SELECT schemaId FROM Type WHERE typeId = (" +
-				"SELECT typeId FROM Graph WHERE uid = ?" + 
-			")" + 
-		")";
+	private String SELECT_SCHEMA_DEFINITION_FOR_GRAPH = "SELECT serializedDefinition "
+			+ "FROM GraphSchema WHERE schemaId = ("
+			+ "SELECT schemaId FROM Type WHERE typeId = ("
+			+ "SELECT typeId FROM Graph WHERE uid = ?" + ")" + ")";
 
 	@Override
-	public PreparedStatement selectSchemaDefinitionForGraph(String uid)	throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(SELECT_SCHEMA_DEFINITION_FOR_GRAPH);
+	public PreparedStatement selectSchemaDefinitionForGraph(String uid)
+			throws SQLException {
+		PreparedStatement statement = this
+				.getPreparedStatement(SELECT_SCHEMA_DEFINITION_FOR_GRAPH);
 		statement.setString(1, uid);
 		return statement;
 	}
 
 	// TODO Rewrite as join.
-	private String SELECT_SCHEMA_NAME = 
-		"SELECT packagePrefix, name " +
-		"FROM GraphSchema " +
-		"WHERE schemaId = (" +
-			"SELECT schemaId FROM Type WHERE typeId = (" +
-				"SELECT typeId FROM Graph WHERE uid = ?" + 
-			")" + 
-		")";
+	private String SELECT_SCHEMA_NAME = "SELECT packagePrefix, name "
+			+ "FROM GraphSchema " + "WHERE schemaId = ("
+			+ "SELECT schemaId FROM Type WHERE typeId = ("
+			+ "SELECT typeId FROM Graph WHERE uid = ?" + ")" + ")";
 
 	@Override
-	public PreparedStatement selectSchemaNameForGraph(String uid) throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(SELECT_SCHEMA_NAME);
+	public PreparedStatement selectSchemaNameForGraph(String uid)
+			throws SQLException {
+		PreparedStatement statement = this
+				.getPreparedStatement(SELECT_SCHEMA_NAME);
 		statement.setString(1, uid);
 		return statement;
 	}
 
 	// TODO Rewrite as join.
-	private String SELECT_TYPES = 
-		"SELECT qualifiedName, typeId FROM Type WHERE schemaId = (SELECT schemaId FROM GraphSchema WHERE packagePrefix = ? AND name = ?)";
+	private String SELECT_TYPES = "SELECT qualifiedName, typeId FROM Type WHERE schemaId = (SELECT schemaId FROM GraphSchema WHERE packagePrefix = ? AND name = ?)";
 
 	@Override
-	public PreparedStatement selectTypesOfSchema(String packagePrefix, String name) throws SQLException {
+	public PreparedStatement selectTypesOfSchema(String packagePrefix,
+			String name) throws SQLException {
 		PreparedStatement statement = this.getPreparedStatement(SELECT_TYPES);
 		statement.setString(1, packagePrefix);
 		statement.setString(2, name);
 		return statement;
 	}
 
-	private String SELECT_ATTRIBUTES = 
-		"SELECT Attribute.name, attributeId " +
-		"FROM Attribute JOIN GraphSchema ON Attribute.schemaId = GraphSchema.schemaId " +
-		"WHERE packagePrefix = ? AND GraphSchema.name = ?";
+	private String SELECT_ATTRIBUTES = "SELECT Attribute.name, attributeId "
+			+ "FROM Attribute JOIN GraphSchema ON Attribute.schemaId = GraphSchema.schemaId "
+			+ "WHERE packagePrefix = ? AND GraphSchema.name = ?";
 
 	@Override
-	public PreparedStatement selectAttributesOfSchema(String packagePrefix,	String name) throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(SELECT_ATTRIBUTES);
+	public PreparedStatement selectAttributesOfSchema(String packagePrefix,
+			String name) throws SQLException {
+		PreparedStatement statement = this
+				.getPreparedStatement(SELECT_ATTRIBUTES);
 		statement.setString(1, packagePrefix);
 		statement.setString(2, name);
 		return statement;
@@ -794,8 +840,7 @@ public class MySqlStatementList extends SqlStatementList {
 
 	// --- to open a graph --------------------------------------------
 
-	private String SELECT_GRAPH = 
-		"SELECT gId, version, vSeqVersion, eSeqVersion FROM Graph WHERE uid = ?";
+	private String SELECT_GRAPH = "SELECT gId, version, vSeqVersion, eSeqVersion FROM Graph WHERE uid = ?";
 
 	@Override
 	public PreparedStatement selectGraph(String id) throws SQLException {
@@ -804,38 +849,37 @@ public class MySqlStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private String COUNT_VERTICES_IN_GRAPH = 
-		"SELECT COUNT(*) FROM Vertex WHERE gId = ?";
+	private String COUNT_VERTICES_IN_GRAPH = "SELECT COUNT(*) FROM Vertex WHERE gId = ?";
 
 	@Override
 	public PreparedStatement countVerticesOfGraph(int gId) throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(COUNT_VERTICES_IN_GRAPH);
+		PreparedStatement statement = this
+				.getPreparedStatement(COUNT_VERTICES_IN_GRAPH);
 		statement.setInt(1, gId);
 		return statement;
 	}
 
-	private String COUNT_EDGES_IN_GRAPH = 
-		"SELECT COUNT(*) FROM Edge WHERE gId = ?";
+	private String COUNT_EDGES_IN_GRAPH = "SELECT COUNT(*) FROM Edge WHERE gId = ?";
 
 	@Override
 	public PreparedStatement countEdgesOfGraph(int gId) throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(COUNT_EDGES_IN_GRAPH);
+		PreparedStatement statement = this
+				.getPreparedStatement(COUNT_EDGES_IN_GRAPH);
 		statement.setInt(1, gId);
 		return statement;
 	}
 
-	private String SELECT_VERTICES = 
-		"SELECT vId, sequenceNumber FROM Vertex WHERE gId = ? ORDER BY sequenceNumber ASC";
+	private String SELECT_VERTICES = "SELECT vId, sequenceNumber FROM Vertex WHERE gId = ? ORDER BY sequenceNumber ASC";
 
 	@Override
 	public PreparedStatement selectVerticesOfGraph(int gId) throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(SELECT_VERTICES);
+		PreparedStatement statement = this
+				.getPreparedStatement(SELECT_VERTICES);
 		statement.setInt(1, gId);
 		return statement;
 	}
 
-	private String SELECT_EDGES = 
-		"SELECT eId, sequenceNumber FROM Edge WHERE gId = ? ORDER BY sequenceNumber ASC";
+	private String SELECT_EDGES = "SELECT eId, sequenceNumber FROM Edge WHERE gId = ? ORDER BY sequenceNumber ASC";
 
 	@Override
 	public PreparedStatement selectEdgesOfGraph(int gId) throws SQLException {
@@ -844,65 +888,69 @@ public class MySqlStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private String SELECT_ATTRIBUTE_VALUES_OF_GRAPH = 
-		"SELECT name, value FROM GraphAttributeValue JOIN Attribute ON GraphAttributeValue.attributeId = Attribute.attributeId WHERE gId = ?";
+	private String SELECT_ATTRIBUTE_VALUES_OF_GRAPH = "SELECT name, value FROM GraphAttributeValue JOIN Attribute ON GraphAttributeValue.attributeId = Attribute.attributeId WHERE gId = ?";
 
 	@Override
-	public PreparedStatement selectAttributeValuesOfGraph(int gId) throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(SELECT_ATTRIBUTE_VALUES_OF_GRAPH);
+	public PreparedStatement selectAttributeValuesOfGraph(int gId)
+			throws SQLException {
+		PreparedStatement statement = this
+				.getPreparedStatement(SELECT_ATTRIBUTE_VALUES_OF_GRAPH);
 		statement.setInt(1, gId);
 		return statement;
 	}
 
 	// --- to get a vertex -------------------------------------------
 
-	private String SELECT_VERTEX_WITH_INCIDENCES =
-		"SELECT typeId, lambdaSeqVersion, Vertex.sequenceNumber, Incidence.sequenceNumber, direction, eId " +
-		"FROM Vertex LEFT OUTER JOIN Incidence ON ( Vertex.vId = Incidence.vId AND Vertex.gId = Incidence.gId ) " +
-		"WHERE Vertex.vId = ? AND Vertex.gId = ? " +
-		"ORDER BY Incidence.sequenceNumber ASC";
+	private String SELECT_VERTEX_WITH_INCIDENCES = "SELECT typeId, lambdaSeqVersion, Vertex.sequenceNumber, Incidence.sequenceNumber, direction, eId "
+			+ "FROM Vertex LEFT OUTER JOIN Incidence ON ( Vertex.vId = Incidence.vId AND Vertex.gId = Incidence.gId ) "
+			+ "WHERE Vertex.vId = ? AND Vertex.gId = ? "
+			+ "ORDER BY Incidence.sequenceNumber ASC";
 
 	@Override
-	public PreparedStatement selectVertexWithIncidences(int vId, int gId) throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(SELECT_VERTEX_WITH_INCIDENCES);
+	public PreparedStatement selectVertexWithIncidences(int vId, int gId)
+			throws SQLException {
+		PreparedStatement statement = this
+				.getPreparedStatement(SELECT_VERTEX_WITH_INCIDENCES);
 		statement.setInt(1, vId);
 		statement.setInt(2, gId);
 		return statement;
 	}
 
-	private String SELECT_ATTRIBUTE_VALUES_OF_VERTEX = 
-		"SELECT attributeId, value FROM VertexAttributeValue WHERE vId = ? AND gId = ?";
+	private String SELECT_ATTRIBUTE_VALUES_OF_VERTEX = "SELECT attributeId, value FROM VertexAttributeValue WHERE vId = ? AND gId = ?";
 
 	@Override
-	public PreparedStatement selectAttributeValuesOfVertex(int vId, int gId) throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(SELECT_ATTRIBUTE_VALUES_OF_VERTEX);
+	public PreparedStatement selectAttributeValuesOfVertex(int vId, int gId)
+			throws SQLException {
+		PreparedStatement statement = this
+				.getPreparedStatement(SELECT_ATTRIBUTE_VALUES_OF_VERTEX);
 		statement.setInt(1, vId);
 		statement.setInt(2, gId);
 		return statement;
 	}
 
-	
 	// --- to get an edge --------------------------------------------
 
-	private String SELECT_EDGE_WITH_INCIDENCES = 
-		"SELECT typeId, Edge.sequenceNumber, direction, vId, Incidence.sequenceNumber " +
-		"FROM Edge INNER JOIN Incidence ON ( Edge.eId = Incidence.eId AND Edge.gId = Incidence.gId ) " +
-		"WHERE Edge.eId = ? AND Edge.gId = ?";
+	private String SELECT_EDGE_WITH_INCIDENCES = "SELECT typeId, Edge.sequenceNumber, direction, vId, Incidence.sequenceNumber "
+			+ "FROM Edge INNER JOIN Incidence ON ( Edge.eId = Incidence.eId AND Edge.gId = Incidence.gId ) "
+			+ "WHERE Edge.eId = ? AND Edge.gId = ?";
 
 	@Override
-	public PreparedStatement selectEdgeWithIncidences(int eId, int gId) throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(SELECT_EDGE_WITH_INCIDENCES);
+	public PreparedStatement selectEdgeWithIncidences(int eId, int gId)
+			throws SQLException {
+		PreparedStatement statement = this
+				.getPreparedStatement(SELECT_EDGE_WITH_INCIDENCES);
 		statement.setInt(1, eId);
 		statement.setInt(2, gId);
 		return statement;
 	}
 
-	private String SELECT_ATTRIBUTE_VALUES_OF_EDGE = 
-		"SELECT attributeId, value FROM EdgeAttributeValue WHERE eId = ? AND gId = ?";
+	private String SELECT_ATTRIBUTE_VALUES_OF_EDGE = "SELECT attributeId, value FROM EdgeAttributeValue WHERE eId = ? AND gId = ?";
 
 	@Override
-	public PreparedStatement selectAttributeValuesOfEdge(int eId, int gId) throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(SELECT_ATTRIBUTE_VALUES_OF_EDGE);
+	public PreparedStatement selectAttributeValuesOfEdge(int eId, int gId)
+			throws SQLException {
+		PreparedStatement statement = this
+				.getPreparedStatement(SELECT_ATTRIBUTE_VALUES_OF_EDGE);
 		statement.setInt(1, eId);
 		statement.setInt(2, gId);
 		return statement;
@@ -910,68 +958,71 @@ public class MySqlStatementList extends SqlStatementList {
 
 	// --- to delete a graph ------------------------------------------
 
-	private String DELETE_ATTRIBUTE_VALUES_OF_GRAPH = 
-		"DELETE FROM GraphAttributeValue WHERE gId = ?";
+	private String DELETE_ATTRIBUTE_VALUES_OF_GRAPH = "DELETE FROM GraphAttributeValue WHERE gId = ?";
 
 	@Override
-	public PreparedStatement deleteAttributeValuesOfGraph(int gId) throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(DELETE_ATTRIBUTE_VALUES_OF_GRAPH);
+	public PreparedStatement deleteAttributeValuesOfGraph(int gId)
+			throws SQLException {
+		PreparedStatement statement = this
+				.getPreparedStatement(DELETE_ATTRIBUTE_VALUES_OF_GRAPH);
 		statement.setInt(1, gId);
 		return statement;
 	}
 
-	private String DELETE_EDGE_ATTRIBUTE_VALUES_OF_GRAPH = 
-		"DELETE FROM EdgeAttributeValue WHERE gId = ?";
+	private String DELETE_EDGE_ATTRIBUTE_VALUES_OF_GRAPH = "DELETE FROM EdgeAttributeValue WHERE gId = ?";
 
 	@Override
-	public PreparedStatement deleteEdgeAttributeValuesOfGraph(int gId) throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(DELETE_EDGE_ATTRIBUTE_VALUES_OF_GRAPH);
+	public PreparedStatement deleteEdgeAttributeValuesOfGraph(int gId)
+			throws SQLException {
+		PreparedStatement statement = this
+				.getPreparedStatement(DELETE_EDGE_ATTRIBUTE_VALUES_OF_GRAPH);
 		statement.setInt(1, gId);
 		return statement;
 	}
 
-	private String DELETE_VERTEX_ATTRIBUTE_VALUES_OF_GRAPH = 
-		"DELETE FROM VertexAttributeValue WHERE gId = ?";
+	private String DELETE_VERTEX_ATTRIBUTE_VALUES_OF_GRAPH = "DELETE FROM VertexAttributeValue WHERE gId = ?";
 
 	@Override
-	public PreparedStatement deleteVertexAttributeValuesOfGraph(int gId) throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(DELETE_VERTEX_ATTRIBUTE_VALUES_OF_GRAPH);
+	public PreparedStatement deleteVertexAttributeValuesOfGraph(int gId)
+			throws SQLException {
+		PreparedStatement statement = this
+				.getPreparedStatement(DELETE_VERTEX_ATTRIBUTE_VALUES_OF_GRAPH);
 		statement.setInt(1, gId);
 		return statement;
 	}
 
-	private String DELETE_INCIDENCES_OF_GRAPH = 
-		"DELETE FROM Incidence WHERE gId = ?";
+	private String DELETE_INCIDENCES_OF_GRAPH = "DELETE FROM Incidence WHERE gId = ?";
 
 	@Override
-	public PreparedStatement deleteIncidencesOfGraph(int gId) throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(DELETE_INCIDENCES_OF_GRAPH);
+	public PreparedStatement deleteIncidencesOfGraph(int gId)
+			throws SQLException {
+		PreparedStatement statement = this
+				.getPreparedStatement(DELETE_INCIDENCES_OF_GRAPH);
 		statement.setInt(1, gId);
 		return statement;
 	}
 
-	private String DELETE_VERTICES_OF_GRAPH = 
-		"DELETE FROM Vertex WHERE gId = ?";
+	private String DELETE_VERTICES_OF_GRAPH = "DELETE FROM Vertex WHERE gId = ?";
 
 	@Override
 	public PreparedStatement deleteVerticesOfGraph(int gId) throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(DELETE_VERTICES_OF_GRAPH);
+		PreparedStatement statement = this
+				.getPreparedStatement(DELETE_VERTICES_OF_GRAPH);
 		statement.setInt(1, gId);
 		return statement;
 	}
 
-	private String DELETE_EDGES_OF_GRAPH = 
-		"DELETE FROM Edge WHERE gId = ?";
+	private String DELETE_EDGES_OF_GRAPH = "DELETE FROM Edge WHERE gId = ?";
 
 	@Override
 	public PreparedStatement deleteEdgesOfGraph(int gId) throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(DELETE_EDGES_OF_GRAPH);
+		PreparedStatement statement = this
+				.getPreparedStatement(DELETE_EDGES_OF_GRAPH);
 		statement.setInt(1, gId);
 		return statement;
 	}
 
-	private String DELETE_GRAPH = 
-		"DELETE FROM Graph WHERE gId = ?";
+	private String DELETE_GRAPH = "DELETE FROM Graph WHERE gId = ?";
 
 	@Override
 	public PreparedStatement deleteGraph(int gId) throws SQLException {
@@ -982,30 +1033,31 @@ public class MySqlStatementList extends SqlStatementList {
 
 	// --- to delete a vertex -----------------------------------------
 
-	private String DELETE_ATTRIBUTE_VALUES_OF_VERTEX = 
-		"DELETE FROM VertexAttributeValue WHERE vId = ? AND gId = ?";
+	private String DELETE_ATTRIBUTE_VALUES_OF_VERTEX = "DELETE FROM VertexAttributeValue WHERE vId = ? AND gId = ?";
 
 	@Override
-	public PreparedStatement deleteAttributeValuesOfVertex(int vId, int gId) throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(DELETE_ATTRIBUTE_VALUES_OF_VERTEX);
+	public PreparedStatement deleteAttributeValuesOfVertex(int vId, int gId)
+			throws SQLException {
+		PreparedStatement statement = this
+				.getPreparedStatement(DELETE_ATTRIBUTE_VALUES_OF_VERTEX);
 		statement.setInt(1, vId);
 		statement.setInt(2, gId);
 		return statement;
 	}
 
-	private String SELECT_ID_OF_INCIDENT_EDGES_OF_VERTEX = 
-		"SELECT eId FROM Incidence WHERE vId = ? AND gId = ?";
+	private String SELECT_ID_OF_INCIDENT_EDGES_OF_VERTEX = "SELECT eId FROM Incidence WHERE vId = ? AND gId = ?";
 
 	@Override
-	public PreparedStatement selectIncidentEIdsOfVertex(int vId, int gId) throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(SELECT_ID_OF_INCIDENT_EDGES_OF_VERTEX);
+	public PreparedStatement selectIncidentEIdsOfVertex(int vId, int gId)
+			throws SQLException {
+		PreparedStatement statement = this
+				.getPreparedStatement(SELECT_ID_OF_INCIDENT_EDGES_OF_VERTEX);
 		statement.setInt(1, vId);
 		statement.setInt(2, gId);
 		return statement;
 	}
 
-	private String DELETE_VERTEX = 
-		"DELETE FROM Vertex WHERE vId = ? AND gId = ?";
+	private String DELETE_VERTEX = "DELETE FROM Vertex WHERE vId = ? AND gId = ?";
 
 	@Override
 	public PreparedStatement deleteVertex(int vId, int gId) throws SQLException {
@@ -1017,30 +1069,31 @@ public class MySqlStatementList extends SqlStatementList {
 
 	// --- to delete an edge ------------------------------------------
 
-	private String DELETE_ATTRIBUTE_VALUES_OF_EDGE = 
-		"DELETE FROM EdgeAttributeValue WHERE eId = ? AND gId = ?";
+	private String DELETE_ATTRIBUTE_VALUES_OF_EDGE = "DELETE FROM EdgeAttributeValue WHERE eId = ? AND gId = ?";
 
 	@Override
-	public PreparedStatement deleteAttributeValuesOfEdge(int eId, int gId) throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(DELETE_ATTRIBUTE_VALUES_OF_EDGE);
+	public PreparedStatement deleteAttributeValuesOfEdge(int eId, int gId)
+			throws SQLException {
+		PreparedStatement statement = this
+				.getPreparedStatement(DELETE_ATTRIBUTE_VALUES_OF_EDGE);
 		statement.setInt(1, eId);
 		statement.setInt(2, gId);
 		return statement;
 	}
 
-	private String DELETE_INCIDENCES_OF_EDGE = 
-		"DELETE FROM Incidence WHERE eId = ? AND gId = ?";
+	private String DELETE_INCIDENCES_OF_EDGE = "DELETE FROM Incidence WHERE eId = ? AND gId = ?";
 
 	@Override
-	public PreparedStatement deleteIncidencesOfEdge(int eId, int gId) throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(DELETE_INCIDENCES_OF_EDGE);
+	public PreparedStatement deleteIncidencesOfEdge(int eId, int gId)
+			throws SQLException {
+		PreparedStatement statement = this
+				.getPreparedStatement(DELETE_INCIDENCES_OF_EDGE);
 		statement.setInt(1, eId);
 		statement.setInt(2, gId);
 		return statement;
 	}
 
-	private String DELETE_EDGE = 
-		"DELETE FROM Edge WHERE eId = ? AND gId = ?";
+	private String DELETE_EDGE = "DELETE FROM Edge WHERE eId = ? AND gId = ?";
 
 	@Override
 	public PreparedStatement deleteEdge(int eId, int gId) throws SQLException {
@@ -1052,12 +1105,13 @@ public class MySqlStatementList extends SqlStatementList {
 
 	// --- to update a graph ------------------------------------------
 
-	private String UPDATE_ATTRIBUTE_VALUE_OF_GRAPH = 
-		"UPDATE GraphAttributeValue SET value = ? WHERE gId = ? AND attributeId = ?";
+	private String UPDATE_ATTRIBUTE_VALUE_OF_GRAPH = "UPDATE GraphAttributeValue SET value = ? WHERE gId = ? AND attributeId = ?";
 
 	@Override
-	public PreparedStatement updateAttributeValueOfGraph(int gId, int attributeId, String serializedValue) throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(UPDATE_ATTRIBUTE_VALUE_OF_GRAPH);
+	public PreparedStatement updateAttributeValueOfGraph(int gId,
+			int attributeId, String serializedValue) throws SQLException {
+		PreparedStatement statement = this
+				.getPreparedStatement(UPDATE_ATTRIBUTE_VALUE_OF_GRAPH);
 		statement.setString(1, serializedValue);
 		statement.setInt(2, gId);
 		statement.setInt(3, attributeId);
@@ -1065,13 +1119,15 @@ public class MySqlStatementList extends SqlStatementList {
 	}
 
 	// TODO Remove as graph version is only written back on db closing process.
-	private String UPDATE_ATTRIBUTE_VALUE_OF_GRAPH_AND_GRAPH_VERSION = 
-		"UPDATE GraphAttributeValue SET value = ? WHERE gId = ? AND attributeId = ?;" +
-		"UPDATE Graph SET version = ? WHERE gId = ?";
+	private String UPDATE_ATTRIBUTE_VALUE_OF_GRAPH_AND_GRAPH_VERSION = "UPDATE GraphAttributeValue SET value = ? WHERE gId = ? AND attributeId = ?;"
+			+ "UPDATE Graph SET version = ? WHERE gId = ?";
 
 	@Override
-	public PreparedStatement updateAttributeValueOfGraphAndGraphVersion(int gId, int attributeId, String serializedValue, long graphVersion) throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(UPDATE_ATTRIBUTE_VALUE_OF_GRAPH_AND_GRAPH_VERSION);
+	public PreparedStatement updateAttributeValueOfGraphAndGraphVersion(
+			int gId, int attributeId, String serializedValue, long graphVersion)
+			throws SQLException {
+		PreparedStatement statement = this
+				.getPreparedStatement(UPDATE_ATTRIBUTE_VALUE_OF_GRAPH_AND_GRAPH_VERSION);
 		statement.setString(1, serializedValue);
 		statement.setInt(2, gId);
 		statement.setInt(3, attributeId);
@@ -1080,45 +1136,50 @@ public class MySqlStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private String UPDATE_GRAPH_UID = 
-		"UPDATE Graph SET uid = ? WHERE gId = ?";
+	private String UPDATE_GRAPH_UID = "UPDATE Graph SET uid = ? WHERE gId = ?";
 
 	@Override
-	public PreparedStatement updateGraphId(int gId, String uid)	throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(UPDATE_GRAPH_UID);
+	public PreparedStatement updateGraphId(int gId, String uid)
+			throws SQLException {
+		PreparedStatement statement = this
+				.getPreparedStatement(UPDATE_GRAPH_UID);
 		statement.setString(1, uid);
 		statement.setInt(2, gId);
 		return statement;
 	}
 
-	private String UPDATE_GRAPH_VERSION = 
-		"UPDATE Graph SET version = ? WHERE gId = ?";
+	private String UPDATE_GRAPH_VERSION = "UPDATE Graph SET version = ? WHERE gId = ?";
 
 	@Override
-	public PreparedStatement updateGraphVersion(int gId, long version) throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(UPDATE_GRAPH_VERSION);
+	public PreparedStatement updateGraphVersion(int gId, long version)
+			throws SQLException {
+		PreparedStatement statement = this
+				.getPreparedStatement(UPDATE_GRAPH_VERSION);
 		statement.setLong(1, version);
 		statement.setInt(2, gId);
 		return statement;
 	}
 
-	private String UPDATE_VERTEX_LIST_VERSION = 
-		"UPDATE Graph SET vSeqVersion = ? WHERE gId = ?";
+	private String UPDATE_VERTEX_LIST_VERSION = "UPDATE Graph SET vSeqVersion = ? WHERE gId = ?";
 
 	@Override
-	public PreparedStatement updateVertexListVersionOfGraph(int gId, long version) throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(UPDATE_VERTEX_LIST_VERSION);
+	public PreparedStatement updateVertexListVersionOfGraph(int gId,
+			long version) throws SQLException {
+		PreparedStatement statement = this
+				.getPreparedStatement(UPDATE_VERTEX_LIST_VERSION);
 		statement.setLong(1, version);
 		statement.setInt(2, gId);
 		return statement;
 	}
 
-	private String UPDATE_EDGE_LIST_VERSION = "" +
-			"UPDATE Graph SET eSeqVersion = ? WHERE gId = ?";
+	private String UPDATE_EDGE_LIST_VERSION = ""
+			+ "UPDATE Graph SET eSeqVersion = ? WHERE gId = ?";
 
-	@Override	
-	public PreparedStatement updateEdgeListVersionOfGraph(int gId, long version)throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(UPDATE_EDGE_LIST_VERSION);
+	@Override
+	public PreparedStatement updateEdgeListVersionOfGraph(int gId, long version)
+			throws SQLException {
+		PreparedStatement statement = this
+				.getPreparedStatement(UPDATE_EDGE_LIST_VERSION);
 		statement.setLong(1, version);
 		statement.setInt(2, gId);
 		return statement;
@@ -1126,36 +1187,39 @@ public class MySqlStatementList extends SqlStatementList {
 
 	// --- to update a vertex -----------------------------------------
 
-	private String UPDATE_VERTEX_ID = 
-		"UPDATE Vertex SET vId = ? WHERE vId = ? AND gId = ?";
+	private String UPDATE_VERTEX_ID = "UPDATE Vertex SET vId = ? WHERE vId = ? AND gId = ?";
 
 	@Override
-	public PreparedStatement updateIdOfVertex(int oldVId, int gId, int newVId) throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(UPDATE_VERTEX_ID);
+	public PreparedStatement updateIdOfVertex(int oldVId, int gId, int newVId)
+			throws SQLException {
+		PreparedStatement statement = this
+				.getPreparedStatement(UPDATE_VERTEX_ID);
 		statement.setInt(1, newVId);
 		statement.setInt(2, oldVId);
 		statement.setInt(3, gId);
 		return statement;
 	}
 
-	private String UPDATE_SEQUENCE_NUMBER_OF_VERTEX = 
-		"UPDATE Vertex SET sequenceNumber = ? WHERE vId = ? AND gId = ?";
+	private String UPDATE_SEQUENCE_NUMBER_OF_VERTEX = "UPDATE Vertex SET sequenceNumber = ? WHERE vId = ? AND gId = ?";
 
 	@Override
-	public PreparedStatement updateSequenceNumberInVSeqOfVertex(int vId, int gId, long sequenceNumberInVSeq) throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(UPDATE_SEQUENCE_NUMBER_OF_VERTEX);
+	public PreparedStatement updateSequenceNumberInVSeqOfVertex(int vId,
+			int gId, long sequenceNumberInVSeq) throws SQLException {
+		PreparedStatement statement = this
+				.getPreparedStatement(UPDATE_SEQUENCE_NUMBER_OF_VERTEX);
 		statement.setLong(1, sequenceNumberInVSeq);
 		statement.setInt(2, vId);
 		statement.setInt(3, gId);
 		return statement;
 	}
 
-	private String UPDATE_ATTRIBUTE_VALUE_OF_VERTEX = 
-		"UPDATE VertexAttributeValue SET value = ? WHERE vId = ? AND gId = ? AND attributeId = ?";
+	private String UPDATE_ATTRIBUTE_VALUE_OF_VERTEX = "UPDATE VertexAttributeValue SET value = ? WHERE vId = ? AND gId = ? AND attributeId = ?";
 
 	@Override
-	public PreparedStatement updateAttributeValueOfVertex(int vId, int gId,	int attributeId, String serializedValue) throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(UPDATE_ATTRIBUTE_VALUE_OF_VERTEX);
+	public PreparedStatement updateAttributeValueOfVertex(int vId, int gId,
+			int attributeId, String serializedValue) throws SQLException {
+		PreparedStatement statement = this
+				.getPreparedStatement(UPDATE_ATTRIBUTE_VALUE_OF_VERTEX);
 		statement.setString(1, serializedValue);
 		statement.setInt(2, vId);
 		statement.setInt(3, gId);
@@ -1164,13 +1228,15 @@ public class MySqlStatementList extends SqlStatementList {
 	}
 
 	// TODO Remove as graph version is only written back on db closing process.
-	private String UPDATE_ATTRIBUTE_VALUE_OF_VERTEX_AND_GRAPH_VERSION = 
-		"UPDATE VertexAttributeValue SET value = ? WHERE vId = ? AND gId = ? AND attributeId = ?;" +
-		"UPDATE Graph SET version = ? WHERE gId = ?";
+	private String UPDATE_ATTRIBUTE_VALUE_OF_VERTEX_AND_GRAPH_VERSION = "UPDATE VertexAttributeValue SET value = ? WHERE vId = ? AND gId = ? AND attributeId = ?;"
+			+ "UPDATE Graph SET version = ? WHERE gId = ?";
 
 	@Override
-	public PreparedStatement updateAttributeValueOfVertexAndGraphVersion(int vId, int gId, int attributeId, String serializedValue,	long graphVersion) throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(UPDATE_ATTRIBUTE_VALUE_OF_VERTEX_AND_GRAPH_VERSION);
+	public PreparedStatement updateAttributeValueOfVertexAndGraphVersion(
+			int vId, int gId, int attributeId, String serializedValue,
+			long graphVersion) throws SQLException {
+		PreparedStatement statement = this
+				.getPreparedStatement(UPDATE_ATTRIBUTE_VALUE_OF_VERTEX_AND_GRAPH_VERSION);
 		statement.setString(1, serializedValue);
 		statement.setInt(2, vId);
 		statement.setInt(3, gId);
@@ -1181,12 +1247,13 @@ public class MySqlStatementList extends SqlStatementList {
 	}
 
 	// TODO Remove as version is only needed in memory for Iterator.
-	private String UPDATE_INCIDENCE_LIST_VERSION = 
-		"UPDATE Vertex SET lambdaSeqVersion = ? WHERE vId = ? AND gId = ?;";
+	private String UPDATE_INCIDENCE_LIST_VERSION = "UPDATE Vertex SET lambdaSeqVersion = ? WHERE vId = ? AND gId = ?;";
 
 	@Override
-	public PreparedStatement updateLambdaSeqVersionOfVertex(int vId, int gId, long lambdaSeqVersion) throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(UPDATE_INCIDENCE_LIST_VERSION);
+	public PreparedStatement updateLambdaSeqVersionOfVertex(int vId, int gId,
+			long lambdaSeqVersion) throws SQLException {
+		PreparedStatement statement = this
+				.getPreparedStatement(UPDATE_INCIDENCE_LIST_VERSION);
 		statement.setLong(1, lambdaSeqVersion);
 		statement.setInt(2, vId);
 		statement.setInt(3, gId);
@@ -1195,11 +1262,11 @@ public class MySqlStatementList extends SqlStatementList {
 
 	// --- to update an edge ------------------------------------------
 
-	private String UPDATE_EDGE_ID = 
-		"UPDATE Edge SET eId = ? WHERE eId = ? AND gId = ?";
+	private String UPDATE_EDGE_ID = "UPDATE Edge SET eId = ? WHERE eId = ? AND gId = ?";
 
 	@Override
-	public PreparedStatement updateIdOfEdge(int oldEId, int gId, int newEId) throws SQLException {
+	public PreparedStatement updateIdOfEdge(int oldEId, int gId, int newEId)
+			throws SQLException {
 		PreparedStatement statement = this.getPreparedStatement(UPDATE_EDGE_ID);
 		statement.setInt(1, newEId);
 		statement.setInt(2, oldEId);
@@ -1207,26 +1274,26 @@ public class MySqlStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private String UPDATE_SEQUENCE_NUMBER_IN_EDGE_LIST = 
-		"UPDATE Edge SET sequenceNumber = ? WHERE eId = ? AND gId = ?";
+	private String UPDATE_SEQUENCE_NUMBER_IN_EDGE_LIST = "UPDATE Edge SET sequenceNumber = ? WHERE eId = ? AND gId = ?";
 
 	@Override
 	public PreparedStatement updateSequenceNumberInESeqOfEdge(int eId, int gId,
 			long SequenceNumberInESeq) throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(UPDATE_SEQUENCE_NUMBER_IN_EDGE_LIST);
+		PreparedStatement statement = this
+				.getPreparedStatement(UPDATE_SEQUENCE_NUMBER_IN_EDGE_LIST);
 		statement.setLong(1, SequenceNumberInESeq);
 		statement.setInt(2, eId);
 		statement.setInt(3, gId);
 		return statement;
 	}
 
-	private String UPDATE_ATTRIBUTE_VALUE_OF_EDGE = 
-		"UPDATE EdgeAttributeValue SET value = ? WHERE eId = ? AND gId = ? AND attributeId = ?";
+	private String UPDATE_ATTRIBUTE_VALUE_OF_EDGE = "UPDATE EdgeAttributeValue SET value = ? WHERE eId = ? AND gId = ? AND attributeId = ?";
 
 	@Override
 	public PreparedStatement updateAttributeValueOfEdge(int eId, int gId,
 			int attributeId, String serializedValue) throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(UPDATE_ATTRIBUTE_VALUE_OF_EDGE);
+		PreparedStatement statement = this
+				.getPreparedStatement(UPDATE_ATTRIBUTE_VALUE_OF_EDGE);
 		statement.setString(1, serializedValue);
 		statement.setInt(2, eId);
 		statement.setInt(3, gId);
@@ -1234,15 +1301,15 @@ public class MySqlStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private String UPDATE_ATTRIBUTE_VALUE_OF_EDGE_AND_INCREMENT_GRAPH_VERSION = 
-		"UPDATE EdgeAttributeValue SET value = ? WHERE eId = ? AND gId = ? AND attributeId = ?;" +
-		"UPDATE Graph SET version = ? WHERE gId = ?;";
+	private String UPDATE_ATTRIBUTE_VALUE_OF_EDGE_AND_INCREMENT_GRAPH_VERSION = "UPDATE EdgeAttributeValue SET value = ? WHERE eId = ? AND gId = ? AND attributeId = ?;"
+			+ "UPDATE Graph SET version = ? WHERE gId = ?;";
 
 	@Override
 	public PreparedStatement updateAttributeValueOfEdgeAndGraphVersion(int eId,
 			int gId, int attributeId, String serializedValue, long graphVersion)
 			throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(UPDATE_ATTRIBUTE_VALUE_OF_EDGE_AND_INCREMENT_GRAPH_VERSION);
+		PreparedStatement statement = this
+				.getPreparedStatement(UPDATE_ATTRIBUTE_VALUE_OF_EDGE_AND_INCREMENT_GRAPH_VERSION);
 		statement.setString(1, serializedValue);
 		statement.setInt(2, eId);
 		statement.setInt(3, gId);
@@ -1252,12 +1319,13 @@ public class MySqlStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private String UPDATE_INCIDENT_VERTEX = 
-		"UPDATE Incidence SET vId = ? WHERE eId = ? AND gId = ? AND direction = ?";
+	private String UPDATE_INCIDENT_VERTEX = "UPDATE Incidence SET vId = ? WHERE eId = ? AND gId = ? AND direction = ?";
 
 	@Override
-	public PreparedStatement updateIncidentVIdOfIncidence(int eId, int vId,	int gId) throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(UPDATE_INCIDENT_VERTEX);
+	public PreparedStatement updateIncidentVIdOfIncidence(int eId, int vId,
+			int gId) throws SQLException {
+		PreparedStatement statement = this
+				.getPreparedStatement(UPDATE_INCIDENT_VERTEX);
 		statement.setInt(1, vId);
 		statement.setInt(2, Math.abs(eId));
 		statement.setInt(3, gId);
@@ -1269,12 +1337,14 @@ public class MySqlStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private String UPDATE_SEQUENCE_NUMBER_IN_INCIDENCE_LIST = 
-		"UPDATE Incidence SET sequenceNumber = ? WHERE eId = ? AND gId = ? AND vId = ?";
+	private String UPDATE_SEQUENCE_NUMBER_IN_INCIDENCE_LIST = "UPDATE Incidence SET sequenceNumber = ? WHERE eId = ? AND gId = ? AND vId = ?";
 
 	@Override
-	public PreparedStatement updateSequenceNumberInLambdaSeqOfIncidence(int eId, int vId, int gId, long sequenceNumberInLambdaSeq) throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(UPDATE_SEQUENCE_NUMBER_IN_INCIDENCE_LIST);
+	public PreparedStatement updateSequenceNumberInLambdaSeqOfIncidence(
+			int eId, int vId, int gId, long sequenceNumberInLambdaSeq)
+			throws SQLException {
+		PreparedStatement statement = this
+				.getPreparedStatement(UPDATE_SEQUENCE_NUMBER_IN_INCIDENCE_LIST);
 		statement.setLong(1, sequenceNumberInLambdaSeq);
 		statement.setInt(2, Math.abs(eId));
 		statement.setInt(3, gId);
@@ -1282,132 +1352,133 @@ public class MySqlStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private String STORED_PROCEDURE_REORGANIZE_VERTEX_LIST = 
-		"CREATE PROCEDURE reorganizeVSeqOfGraph( graphId INT, start BIGINT ) " +
-		"BEGIN " +
-			"DECLARE distance BIGINT;" + 
-			"DECLARE currentSequenceNumber BIGINT;" +
-			"DECLARE currentVId INT;" +
-			"DECLARE vertex CURSOR FOR SELECT vId FROM Vertex WHERE gId = graphId ORDER BY sequenceNumber ASC;" +
-			
-			"SET distance = 4294967296, currentSequenceNumber = start;" +
-			"OPEN vertex;" +
-			"BEGIN " +
-				"DECLARE EXIT HANDLER FOR NOT FOUND BEGIN END;" +
-				"LOOP" +
-					"FETCH vertex INTO currentVId;" +
-					"UPDATE Vertex SET sequenceNumber = currentSequenceNumber WHERE vId = currentVId;" +
-					"SET currentSequenceNumber = currentSequenceNumber + distance;" +
-				"END LOOP;" +
-			"END;" +	
-			"CLOSE vertex;" +
-		"END";
+	private String STORED_PROCEDURE_REORGANIZE_VERTEX_LIST = "CREATE PROCEDURE reorganizeVSeqOfGraph( graphId INT, start BIGINT ) "
+			+ "BEGIN "
+			+ "DECLARE distance BIGINT;"
+			+ "DECLARE currentSequenceNumber BIGINT;"
+			+ "DECLARE currentVId INT;"
+			+ "DECLARE vertex CURSOR FOR SELECT vId FROM Vertex WHERE gId = graphId ORDER BY sequenceNumber ASC;"
+			+
+
+			"SET distance = 4294967296, currentSequenceNumber = start;"
+			+ "OPEN vertex;"
+			+ "BEGIN "
+			+ "DECLARE EXIT HANDLER FOR NOT FOUND BEGIN END;"
+			+ "LOOP"
+			+ "FETCH vertex INTO currentVId;"
+			+ "UPDATE Vertex SET sequenceNumber = currentSequenceNumber WHERE vId = currentVId;"
+			+ "SET currentSequenceNumber = currentSequenceNumber + distance;"
+			+ "END LOOP;" + "END;" + "CLOSE vertex;" + "END";
 
 	@Override
-	public PreparedStatement createStoredProcedureToReorganizeVertexList() throws SQLException {
-		return this.getPreparedStatement(STORED_PROCEDURE_REORGANIZE_VERTEX_LIST);
+	public PreparedStatement createStoredProcedureToReorganizeVertexList()
+			throws SQLException {
+		return this
+				.getPreparedStatement(STORED_PROCEDURE_REORGANIZE_VERTEX_LIST);
 	}
 
-	private String STORED_PROCEDURE_REORGANIZE_EDGE_LIST = 
-		"CREATE PROCEDURE reorganizeESeqOfGraph( graphId INT, start BIGINT ) " +
-		"BEGIN " +
-			"DECLARE distance BIGINT;" + 
-			"DECLARE currentSequenceNumber BIGINT;" +
-			"DECLARE currentEId INT;" +
-			"DECLARE edge CURSOR FOR SELECT eId FROM Edge WHERE gId = graphId ORDER BY sequenceNumber ASC;" +
-			
-			"SET distance = 4294967296, currentSequenceNumber = start;" +
-			"OPEN edge;" +
-			"BEGIN " +
-				"DECLARE EXIT HANDLER FOR NOT FOUND BEGIN END;" +
-				"LOOP" +
-					"FETCH edge INTO currentEId;" +
-					"UPDATE Edge SET sequenceNumber = currentSequenceNumber WHERE eId = currentEId;" +
-					"SET currentSequenceNumber = currentSequenceNumber + distance;" +
-				"END LOOP;" +
-			"END;" +	
-			"CLOSE edge;" +
-		"END";
-		
+	private String STORED_PROCEDURE_REORGANIZE_EDGE_LIST = "CREATE PROCEDURE reorganizeESeqOfGraph( graphId INT, start BIGINT ) "
+			+ "BEGIN "
+			+ "DECLARE distance BIGINT;"
+			+ "DECLARE currentSequenceNumber BIGINT;"
+			+ "DECLARE currentEId INT;"
+			+ "DECLARE edge CURSOR FOR SELECT eId FROM Edge WHERE gId = graphId ORDER BY sequenceNumber ASC;"
+			+
+
+			"SET distance = 4294967296, currentSequenceNumber = start;"
+			+ "OPEN edge;"
+			+ "BEGIN "
+			+ "DECLARE EXIT HANDLER FOR NOT FOUND BEGIN END;"
+			+ "LOOP"
+			+ "FETCH edge INTO currentEId;"
+			+ "UPDATE Edge SET sequenceNumber = currentSequenceNumber WHERE eId = currentEId;"
+			+ "SET currentSequenceNumber = currentSequenceNumber + distance;"
+			+ "END LOOP;" + "END;" + "CLOSE edge;" + "END";
+
 	@Override
-	public PreparedStatement createStoredProcedureToReorganizeEdgeList() throws SQLException {
+	public PreparedStatement createStoredProcedureToReorganizeEdgeList()
+			throws SQLException {
 		return this.getPreparedStatement(STORED_PROCEDURE_REORGANIZE_EDGE_LIST);
 	}
 
-	private String STORED_PROCEDURE_REORGANIZE_INCIDENCE_LIST = 
-		"CREATE PROCEDURE reorganizeLambdaSeqOfVertex( vertexId INT, graphId INT, start BIGINT ) " +
-		"BEGIN " +
-			"DECLARE distance BIGINT;" + 
-			"DECLARE currentSequenceNumber BIGINT;" +
-			"DECLARE currentEId INT;" +
-			"DECLARE currentDirection ENUM('IN', 'OUT');" +
-			"DECLARE incidence CURSOR FOR SELECT eId, direction FROM Incidence WHERE vId = vertexId AND gId = graphId ORDER BY sequenceNumber ASC;" +
-			"SET incidence = 4294967296, currentSequenceNumber = start;" +
-			"OPEN edge;" +
-			"BEGIN " +
-				"DECLARE EXIT HANDLER FOR NOT FOUND BEGIN END;" +
-				"LOOP" +
-					"FETCH incidence INTO currentEId, currentDirection;" +
-					"UPDATE Incidence SET sequenceNumber = currentSequenceNumber WHERE eId = currentEId AND vId = vertexId AND gId = graphId AND direction = currentDirection;" +
-					"SET currentSequenceNumber = currentSequenceNumber + distance;" +
-				"END LOOP;" +
-			"END;" +	
-			"CLOSE edge;" +
-		"END";
-		
+	private String STORED_PROCEDURE_REORGANIZE_INCIDENCE_LIST = "CREATE PROCEDURE reorganizeLambdaSeqOfVertex( vertexId INT, graphId INT, start BIGINT ) "
+			+ "BEGIN "
+			+ "DECLARE distance BIGINT;"
+			+ "DECLARE currentSequenceNumber BIGINT;"
+			+ "DECLARE currentEId INT;"
+			+ "DECLARE currentDirection ENUM('IN', 'OUT');"
+			+ "DECLARE incidence CURSOR FOR SELECT eId, direction FROM Incidence WHERE vId = vertexId AND gId = graphId ORDER BY sequenceNumber ASC;"
+			+ "SET incidence = 4294967296, currentSequenceNumber = start;"
+			+ "OPEN edge;"
+			+ "BEGIN "
+			+ "DECLARE EXIT HANDLER FOR NOT FOUND BEGIN END;"
+			+ "LOOP"
+			+ "FETCH incidence INTO currentEId, currentDirection;"
+			+ "UPDATE Incidence SET sequenceNumber = currentSequenceNumber WHERE eId = currentEId AND vId = vertexId AND gId = graphId AND direction = currentDirection;"
+			+ "SET currentSequenceNumber = currentSequenceNumber + distance;"
+			+ "END LOOP;" + "END;" + "CLOSE edge;" + "END";
 
 	@Override
-	public PreparedStatement createStoredProcedureToReorganizeIncidenceList() throws SQLException {
-		return this.getPreparedStatement(STORED_PROCEDURE_REORGANIZE_INCIDENCE_LIST);
+	public PreparedStatement createStoredProcedureToReorganizeIncidenceList()
+			throws SQLException {
+		return this
+				.getPreparedStatement(STORED_PROCEDURE_REORGANIZE_INCIDENCE_LIST);
 	}
 
-	private String DELETE_SCHEMA = 
-		"DELETE FROM GraphSchema WHERE packagePrefix = ? AND name = ?";
+	private String DELETE_SCHEMA = "DELETE FROM GraphSchema WHERE packagePrefix = ? AND name = ?";
 
 	@Override
-	public PreparedStatement deleteSchema(String prefix, String name) throws SQLException {
+	public PreparedStatement deleteSchema(String prefix, String name)
+			throws SQLException {
 		PreparedStatement statement = this.getPreparedStatement(DELETE_SCHEMA);
 		statement.setString(1, prefix);
 		statement.setString(2, name);
 		return statement;
 	}
-	
-	private String SELECT_SCHEMA_DEFINITION = 
-		"SELECT serializedDefinition FROM GraphSchema WHERE packagePrefix = ? AND name = ?;";
-	
+
+	private String SELECT_SCHEMA_DEFINITION = "SELECT serializedDefinition FROM GraphSchema WHERE packagePrefix = ? AND name = ?;";
+
 	@Override
-	public PreparedStatement selectSchemaDefinition(String packagePrefix, String schemaName) throws SQLException{
-		PreparedStatement statement = this.connection.prepareStatement(SELECT_SCHEMA_DEFINITION);
+	public PreparedStatement selectSchemaDefinition(String packagePrefix,
+			String schemaName) throws SQLException {
+		PreparedStatement statement = this.connection
+				.prepareStatement(SELECT_SCHEMA_DEFINITION);
 		statement.setString(1, packagePrefix);
 		statement.setString(2, schemaName);
 		return statement;
 	}
-	
+
 	private static String CALL_REORGANIZE_V_SEQ = "CALL reorganizeVSeqOfGraph( ?, ? )";
 
 	@Override
-	public CallableStatement createReorganizeVertexListCall(int gId, long start) throws SQLException {
-		CallableStatement statement = this.connection.prepareCall(CALL_REORGANIZE_V_SEQ);
+	public CallableStatement createReorganizeVertexListCall(int gId, long start)
+			throws SQLException {
+		CallableStatement statement = this.connection
+				.prepareCall(CALL_REORGANIZE_V_SEQ);
 		statement.setInt(1, gId);
 		statement.setLong(2, start);
 		return statement;
 	}
 
 	private static String CALL_REORGANIZE_E_SEQ = "CALL reorganizeESeqOfGraph( ?, ? )";
-	
+
 	@Override
-	public CallableStatement createReorganizeEdgeListCall(int gId, long start) throws SQLException {
-		CallableStatement statement = this.connection.prepareCall(CALL_REORGANIZE_E_SEQ);
+	public CallableStatement createReorganizeEdgeListCall(int gId, long start)
+			throws SQLException {
+		CallableStatement statement = this.connection
+				.prepareCall(CALL_REORGANIZE_E_SEQ);
 		statement.setInt(1, gId);
 		statement.setLong(2, start);
 		return statement;
 	}
 
 	private static String CALL_REORGANIZE_LAMBDA_SEQ = "CALL reorganizeLambdaSeqOfVertex( ?, ?, ? )";
-	
+
 	@Override
-	public CallableStatement createReorganizeIncidenceListCall(int vId, int gId, long start) throws SQLException {
-		CallableStatement statement = this.connection.prepareCall(CALL_REORGANIZE_LAMBDA_SEQ);
+	public CallableStatement createReorganizeIncidenceListCall(int vId,
+			int gId, long start) throws SQLException {
+		CallableStatement statement = this.connection
+				.prepareCall(CALL_REORGANIZE_LAMBDA_SEQ);
 		statement.setInt(1, vId);
 		statement.setInt(2, gId);
 		statement.setLong(3, start);
@@ -1415,7 +1486,7 @@ public class MySqlStatementList extends SqlStatementList {
 	}
 
 	private static String SELCT_ID_OF_GRAPHS = "SELECT uid FROM Graph";
-	
+
 	@Override
 	public PreparedStatement selectIdOfGraphs() throws SQLException {
 		return this.getPreparedStatement(SELCT_ID_OF_GRAPHS);
@@ -1423,6 +1494,7 @@ public class MySqlStatementList extends SqlStatementList {
 
 	@Override
 	public PreparedStatement clearAllTables() throws SQLException {
-		throw new UnsupportedOperationException("Operation not implemented for MySQL.");
+		throw new UnsupportedOperationException(
+				"Operation not implemented for MySQL.");
 	}
 }

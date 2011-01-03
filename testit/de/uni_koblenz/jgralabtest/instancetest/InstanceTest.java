@@ -52,14 +52,12 @@ public abstract class InstanceTest {
 		parameters.add(new Object[] { ImplementationType.TRANSACTION });
 		parameters.add(new Object[] { ImplementationType.SAVEMEM });
 
-		if (System.getProperty("dbaddress") != null
-				&& System.getProperty("dbname") != null
-				&& System.getProperty("user") != null
-				&& System.getProperty("password") != null) {
+		if (System.getProperty("jgralab_dbconnection") != null) {
 			System.out.println("Enabling database support testing...");
 			parameters.add(new Object[] { ImplementationType.DATABASE });
 		} else {
-			System.out.println("No database access data provided, disabling database support testing...");
+			System.out
+					.println("No database access data provided, disabling database support testing...");
 		}
 	}
 

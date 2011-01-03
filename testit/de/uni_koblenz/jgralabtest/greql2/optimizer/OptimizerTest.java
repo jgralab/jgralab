@@ -154,6 +154,7 @@ public class OptimizerTest extends GenericTests {
 
 	@Test
 	public void testCommonSubgraphOptimizer0() throws Exception {
+		GreqlEvaluator.DEBUG_OPTIMIZATION=true;
 		String query = "from w : list(2..10), x : list(2..10), y : list(2..10), z : list(1..2) "
 				+ "     with isPrime(x + z) and x * x > y and z > x * x "
 				+ "     reportBag w, x, y, z end";

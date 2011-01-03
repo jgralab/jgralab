@@ -1193,7 +1193,8 @@ public class GreqlEvaluator {
 			String outputFilename) {
 
 		try {
-			Class<?> tg2DotClass = Class.forName("Tg2Dot");
+			Class<?> tg2DotClass = Class
+					.forName("de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot");
 			Method printMethod = tg2DotClass.getMethod("printGraphAsDot",
 					Graph.class, boolean.class, String.class);
 			printMethod.invoke(tg2DotClass, new Object[] { graph,

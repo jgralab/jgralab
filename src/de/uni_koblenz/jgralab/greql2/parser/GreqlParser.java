@@ -2479,17 +2479,19 @@ public class GreqlParser extends ParserHelper {
 					decimalPart = ((IntegerToken) lookAhead).getValue();
 					match();
 				} else if (lookAhead(0) == TokenTypes.REALLITERAL) {
-					decimalPart = lookAhead.getValue().substring(0, lookAhead.getValue().length()-1);
-					System.out.println("LookAhead is: " + lookAhead.getValue());
-					System.out.println("Decimal Part is: " + decimalPart);
-					match(); 
+					decimalPart = lookAhead.getValue().substring(0,
+							lookAhead.getValue().length() - 1);
+					// System.out.println("LookAhead is: " +
+					// lookAhead.getValue());
+					// System.out.println("Decimal Part is: " + decimalPart);
+					match();
 				} else {
 					fail("Unrecognized token as part of decimal value");
 				}
 				if (!inPredicateMode()) {
 					String realValue = integerPart + "." + decimalPart;
 					RealLiteral literal = graph.createRealLiteral();
-					System.out.println("Real Value: '" + realValue + "'");
+					// System.out.println("Real Value: '" + realValue + "'");
 					literal.set_realValue(Double.parseDouble(realValue));
 					return literal;
 				}
