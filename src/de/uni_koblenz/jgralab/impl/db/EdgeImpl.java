@@ -255,7 +255,7 @@ public abstract class EdgeImpl extends EdgeBaseImpl implements
 
 	private void assertPreCondition(Edge e) {
 		this.assertGraphPreCondition(e);
-		assert ((VertexImpl) this.getThis()).equals((VertexImpl) e.getThis());
+		assert ((VertexImpl) this.getThis()).equals(e.getThis());
 	}
 
 	private void assertGraphPreCondition(Edge e) {
@@ -339,7 +339,7 @@ public abstract class EdgeImpl extends EdgeBaseImpl implements
 		assert v.isValid();
 		// if (this.isNotTheSameEdgeAs(e)){
 		if (this != e && this != e.getNextIncidence()) {
-			System.out.println("putEdgeAfter calls v.putIncidenceAfter");
+			// System.out.println("putEdgeAfter calls v.putIncidenceAfter");
 			v.putIncidenceAfter((IncidenceImpl) e, this);
 			v.incidenceListModified();
 		}

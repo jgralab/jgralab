@@ -45,8 +45,11 @@ import de.uni_koblenz.jgralab.greql2.schema.impl.std.Greql2Impl;
 public class SerializableGreql2Impl extends Greql2Impl implements
 		SerializableGreql2 {
 	static {
-		Greql2Schema.instance().getGraphFactory().setGraphImplementationClass(
-				Greql2.class, SerializableGreql2Impl.class);
+		Greql2Schema
+				.instance()
+				.getGraphFactory()
+				.setGraphImplementationClass(Greql2.class,
+						SerializableGreql2Impl.class);
 	}
 
 	public SerializableGreql2Impl(int vMax, int eMax) {
@@ -69,7 +72,6 @@ public class SerializableGreql2Impl extends Greql2Impl implements
 		try {
 			return serializer.serializeGreql2Vertex(v);
 		} catch (Exception e) {
-			System.err.println("Couldn't serialize Query.");
 			e.printStackTrace();
 		}
 		return "";

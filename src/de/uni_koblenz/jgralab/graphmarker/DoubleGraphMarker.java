@@ -137,9 +137,6 @@ public abstract class DoubleGraphMarker<T extends GraphElement> extends
 		double[] newTemporaryAttributes = createNewArray(newSize);
 		System.arraycopy(temporaryAttributes, 0, newTemporaryAttributes, 0,
 				temporaryAttributes.length);
-		// for (int i = 0; i < temporaryAttributes.length; i++) {
-		// newTemporaryAttributes[i] = temporaryAttributes[i];
-		// }
 		temporaryAttributes = newTemporaryAttributes;
 	}
 

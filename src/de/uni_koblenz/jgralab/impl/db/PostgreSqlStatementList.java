@@ -823,12 +823,12 @@ public class PostgreSqlStatementList extends SqlStatementList {
 			i++;
 			statement.setInt(i, vertex.getGId());
 			i++;
-			int attributeId = this.graphDatabase.getAttributeId(vertex
-					.getGraph(), attribute.getName());
+			int attributeId = this.graphDatabase.getAttributeId(
+					vertex.getGraph(), attribute.getName());
 			statement.setInt(i, attributeId);
 			i++;
-			String value = this.graphDatabase.convertToString(vertex, attribute
-					.getName());
+			String value = this.graphDatabase.convertToString(vertex,
+					attribute.getName());
 			statement.setString(i, value);
 			i++;
 		}
@@ -925,8 +925,8 @@ public class PostgreSqlStatementList extends SqlStatementList {
 					edge.getGraph(), attribute.getName());
 			statement.setInt(i, attributeId);
 			i++;
-			String value = this.graphDatabase.convertToString(edge, attribute
-					.getName());
+			String value = this.graphDatabase.convertToString(edge,
+					attribute.getName());
 			statement.setString(i, value);
 			i++;
 		}

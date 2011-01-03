@@ -68,6 +68,8 @@ import java.util.zip.GZIPOutputStream;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.impl.GraphBaseImpl;
+import de.uni_koblenz.jgralab.impl.db.GraphDatabase;
+import de.uni_koblenz.jgralab.impl.db.GraphDatabaseException;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
@@ -88,8 +90,6 @@ import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 import de.uni_koblenz.jgralab.schema.impl.BasicDomainImpl;
 import de.uni_koblenz.jgralab.schema.impl.ConstraintImpl;
 import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
-
-import de.uni_koblenz.jgralab.impl.db.*;
 
 /**
  * class for loading and storing schema and graphs in tg format
@@ -2488,8 +2488,6 @@ public class GraphIO {
 		ok = ok && isValidIdentifier(result[1]);
 
 		if (!ok) {
-			System.err.println("[0] = '" + result[0] + "'");
-			System.err.println("[1] = '" + result[1] + "'");
 			throw new GraphIOException("invalid qualified name '" + lookAhead
 					+ "' in line " + line);
 		}
