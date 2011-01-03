@@ -37,7 +37,7 @@
 	<property name="documentexcludes" value="de.uni_koblenz.jgralab.greql2.schema.*,de.uni_koblenz.jgralab.grumlschema.*" />
 	<property name="unjarexcludes" value="clover/**" />
 	<property name="test.suite" value="de.uni_koblenz.jgralabtest.RunTests" />
-	
+
 	<!-- import the common build file -->
 	<import file="../common/common.xml" />
 
@@ -48,12 +48,11 @@
 	<taskdef resource="cloverlib.xml" classpath="${clover.jar}" />
 
 	<target name="with.clover">
-    	  <clover-setup/>
+		<clover-setup />
 	</target>
-	
+
 	<target name="clover.html">
-    	  <clover-html-report outdir="${project.dir}/build/clover-report"
-                              title="JGraLab Clover Report"/>
+		<clover-html-report outdir="${project.dir}/build/clover-report" title="JGraLab Clover Report" />
 	</target>
 
 
@@ -64,7 +63,7 @@
 		<fileset dir="${comlib.dir}/apache/ant" includes="**/*.jar" />
 		<fileset dir="${comlib.dir}/jdom/" includes="**/*.jar" />
 		<fileset dir="${comlib.dir}/junit/" includes="**/*.jar" />
-		<pathelement path="${clover.jar}"/>
+		<pathelement path="${clover.jar}" />
 	</path>
 
 	<!-- set project specific properties -->
@@ -78,7 +77,7 @@
 	<!-- compile src.dir and include statements for the targets
 	     it is always "targetname.src" and "targetname.includes" -->
 	<property name="core.src" value="${src.dir}/de/uni_koblenz/jgralab" />
-	<property name="core.includes" value="*.java graphmarker/** schema/** codegenerator/** impl/** jniserver/** trans/** algolib/**"/>
+	<property name="core.includes" value="*.java graphmarker/** schema/** codegenerator/** impl/** jniserver/** trans/** algolib/**" />
 
 	<property name="tgtools.src" value="${src.dir}/de/uni_koblenz/jgralab/utilities" />
 	<property name="tgtools.includes" value="tgschema2java/** ant/TgSchema2JavaTask.java ant/DeleteGeneratedSchemaTask.java tg2whatever/**" />
@@ -92,15 +91,15 @@
 
 	<property name="rsa.src" value="${src.dir}/de/uni_koblenz/jgralab/utilities" />
 	<property name="rsa.includes" value="ant/Rsa2TgTask.java rsa/** tg2schemagraph/** common/**" />
-		
+
 	<property name="tg2dot.src" value="${src.dir}/de/uni_koblenz/jgralab/utilities" />
 	<property name="tg2dot.includes" value="tg2dot/**" />
-	
+
 	<property name="utilities.src" value="${src.dir}/de/uni_koblenz/jgralab/utilities" />
 	<property name="utilities.includes" value="ant/** common/** converter/** csv2tg/** greqlinterface/** jgralab2owl/** schemacompare/** tg2gdl/** tg2gxl/** tg2sidiff/** tgmerge/** tgraphbrowser/** xmi2tgschema/** xml/**" />
 
 	<!-- The targets -->
-	<target name="build" depends="ist_utilities,clean,compile,jar"/>
+	<target name="build" depends="ist_utilities,clean,compile,jar" />
 
 	<target name="clean">
 		<delete dir="${classes.dir}" />
@@ -119,7 +118,7 @@
 	<!-- compiles jgralab basic sources -->
 	<target name="core" depends="createClassesDir">
 		<javac fork="true" srcdir="${core.src}" includes="${core.includes}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" target="${javac.targetVM}">
-			<compilerarg line="-Xlint:unchecked"/>
+			<compilerarg line="-Xlint:unchecked" />
 		</javac>
 	</target>
 
@@ -127,7 +126,7 @@
 	         and that don't depend on schemas themselves) -->
 	<target name="tgtools" depends="core">
 		<javac fork="true" srcdir="${tgtools.src}" includes="${tgtools.includes}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" target="${javac.targetVM}">
-			<compilerarg line="-Xlint:unchecked"/>
+			<compilerarg line="-Xlint:unchecked" />
 		</javac>
 		<taskdef name="tgschema2java" classname="de.uni_koblenz.jgralab.utilities.ant.TgSchema2JavaTask" classpath="${classes.dir}" />
 		<taskdef name="deletegeneratedschema" classname="de.uni_koblenz.jgralab.utilities.ant.DeleteGeneratedSchemaTask" classpath="${classes.dir}" />
@@ -137,34 +136,34 @@
 	<target name="greql2" depends="tgtools">
 		<tgschema2java schemaFile="${greql2.schemafile}" sourcePath="${src.dir}" implementationMode="standard" />
 		<javac fork="true" srcdir="${greql2.src}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" target="${javac.targetVM}">
-			<compilerarg line="-Xlint:unchecked"/>
+			<compilerarg line="-Xlint:unchecked" />
 		</javac>
 	</target>
 
 	<!-- graphvalidator -->
 	<target name="graphvalidator" depends="greql2">
 		<javac fork="true" srcdir="${graphvalidator.src}" includes="${graphvalidator.includes}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" target="${javac.targetVM}">
-			<compilerarg line="-Xlint:unchecked"/>
+			<compilerarg line="-Xlint:unchecked" />
 		</javac>
 	</target>
 
 	<target name="rsa" depends="tg2dot,gruml,graphvalidator">
 		<javac fork="true" srcdir="${rsa.src}" includes="${rsa.includes}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" target="${javac.targetVM}">
-			<compilerarg line="-Xlint:unchecked"/>
+			<compilerarg line="-Xlint:unchecked" />
 		</javac>
 		<taskdef classpathref="classpath" name="rsa2tg" classname="de.uni_koblenz.jgralab.utilities.ant.Rsa2TgTask" />
 	</target>
-	
+
 	<target name="tg2dot" depends="gruml,graphvalidator,greql2">
 		<javac fork="true" srcdir="${tg2dot.src}" includes="${tg2dot.includes}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" target="${javac.targetVM}">
-			<compilerarg line="-Xlint:unchecked"/>
+			<compilerarg line="-Xlint:unchecked" />
 		</javac>
 	</target>
 
 	<!-- compiles utility sources -->
 	<target name="utilities" depends="rsa,gruml">
 		<javac fork="true" srcdir="${utilities.src}" includes="${utilities.includes}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" target="${javac.targetVM}">
-			<compilerarg line="-Xlint:unchecked"/>
+			<compilerarg line="-Xlint:unchecked" />
 		</javac>
 	</target>
 
@@ -172,13 +171,14 @@
 	<target name="gruml" depends="tgtools,greql2">
 		<tgschema2java schemaFile="${gruml.schemafile}" sourcePath="${src.dir}" implementationMode="standard" />
 		<javac fork="true" srcdir="${gruml.src}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" target="${javac.targetVM}">
-			<compilerarg line="-Xlint:unchecked"/>
+			<compilerarg line="-Xlint:unchecked" />
 		</javac>
 	</target>
 
 	<!-- generates the schemas required for test cases without compiling them -->
 	<target name="generatetestschemas" depends="tgtools">
-		<rsa2tg xmifile="${testschemas.dir}/rsa-xmi/greqltestschema.xmi" schemafile="${testschemas.dir}/greqltestschema.tg"/>
+		<taskdef classpathref="classpath" name="rsa2tg" classname="de.uni_koblenz.jgralab.utilities.ant.Rsa2TgTask" />
+		<rsa2tg xmifile="${testschemas.dir}/rsa-xmi/greqltestschema.xmi" schemafile="${testschemas.dir}/greqltestschema.tg" />
 		<tgschema2java sourcePath="${testcases.dir}" implementationMode="standard,transaction,savemem,database">
 			<fileset dir="${testschemas.dir}" includes="*.tg" />
 		</tgschema2java>
@@ -199,4 +199,6 @@
 	<!-- release -->
 	<!-- calls targets modify, clean, jar, test and document -->
 	<target name="release" depends="modify,cleanall,jar,sourcejar,document" />
+
+	<target name="testcompile" depends="generatetestschemas,common.testcompile" />
 </project>
