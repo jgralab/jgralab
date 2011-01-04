@@ -78,10 +78,10 @@ import de.uni_koblenz.jgralab.schema.Attribute;
  * @author ist@uni-koblenz.de
  * 
  */
-public class EarySelectionOptimizer extends OptimizerBase {
+public class EarlySelectionOptimizer extends OptimizerBase {
 
 	private static Logger logger = JGraLab
-			.getLogger(EarySelectionOptimizer.class.getPackage().getName());
+			.getLogger(EarlySelectionOptimizer.class.getPackage().getName());
 
 	private Greql2 syntaxgraph;
 
@@ -94,7 +94,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 	 */
 	@Override
 	public boolean isEquivalent(Optimizer optimizer) {
-		if (optimizer instanceof EarySelectionOptimizer) {
+		if (optimizer instanceof EarlySelectionOptimizer) {
 			return true;
 		}
 		return false;
