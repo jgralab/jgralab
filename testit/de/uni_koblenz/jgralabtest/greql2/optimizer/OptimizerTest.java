@@ -42,7 +42,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.optimizer.CommonSubgraphOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.ConditionalExpressionOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
-import de.uni_koblenz.jgralab.greql2.optimizer.EarySelectionOptimizer;
+import de.uni_koblenz.jgralab.greql2.optimizer.EarlySelectionOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.MergeSimpleDeclarationsOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.Optimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.OptimizerBase;
@@ -62,7 +62,7 @@ public class OptimizerTest extends GenericTests {
 	}
 
 	private Optimizer cso = new CommonSubgraphOptimizer();
-	private Optimizer eso = new EarySelectionOptimizer();
+	private Optimizer eso = new EarlySelectionOptimizer();
 	private Optimizer peo = new PathExistenceOptimizer();
 	private Optimizer petdpeo = new PathExistenceToDirectedPathExpressionOptimizer();
 	private Optimizer defo = new DefaultOptimizer();
