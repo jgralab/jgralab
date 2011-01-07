@@ -294,7 +294,14 @@ public class Tg2Dot extends Tg2Whatever {
 	 * Starts the Graph in the output file.
 	 */
 	private void startGraph() {
-		writer.startGraph(GraphType.Directed);
+		StringBuilder sb = new StringBuilder();
+		// Names have to start with a character
+		sb.append(graph.getM1Class().getSimpleName());
+		sb.append("_");
+		sb.append(graph.getId().replace('-', '_'));
+		sb.append("__");
+		sb.append(graph.getGraphVersion());
+		writer.startGraph(GraphType.Directed, sb.toString());
 	}
 
 	@Override
