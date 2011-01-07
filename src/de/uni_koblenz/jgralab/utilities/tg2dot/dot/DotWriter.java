@@ -88,12 +88,16 @@ public class DotWriter {
 	}
 
 	/**
+	 * DON'T CREATE UNNAMED GRAPHS! Dot can handle them, but dotty cannot.
+	 * Despite of that, giving the graph a name is not a bad idea anyway.
+	 * 
 	 * Starts a unnamed DOT-graph of the specified GraphType. The nested depth
 	 * is increased by one.
 	 * 
 	 * @param type
 	 *            Indicates which type of DOT-graph should be written.
 	 */
+	@Deprecated
 	public void startGraph(GraphType type) {
 		startElement();
 		stream.write(type.name);
