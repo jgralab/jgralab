@@ -1,4 +1,46 @@
 connections.Street;alpha;omega;name;oneway;length
-BaldinBr�cke;L�tzelErsteKreuzung;v1;"""Baldinbr�cke""";f;400
-;v1;v2;"""Burgstra�e""";f;70
-;v2;M�nzplatz;"""Paradies""";f;50
+BaldinBrücke;LützelErsteKreuzung;v1;"Baldinbrücke";f;400
+;v1;v2;"Burgstraße";f;80
+;v2;Münzplatz;"Paradies";f;44
+;v2;v3;"Burgstraße";f;50
+;v3;v4;"Florenzmarkt";f;67
+;v4;v5;"Florenzmarkt";f;31
+;v5;v6;"Auf dem Danne";f;17
+;v6;v7;"Auf dem Danne";f;97
+;v7;v8;"Am Alten Hospital";f;84
+;v8;v9;"Am Alten Hospital";f;156
+;v9;v10;"Am Alten Hospital";f;103
+;v10;v11;"Kastorhof";f;120
+;v36;v35;"Peter-Altmeier-Ufer";f;93
+;v35;v34;"Peter-Altmeier-Ufer";f;185
+;v34;v33;"Peter-Altmeier-Ufer";f;72
+;v34;Rhein-Parkplatz;"";f;2
+;v32;v31;"Kastorstraße";t;262
+;v33;v37;"Danziger Freiheit";f;148
+;v37;v29;"Konrad-Adenauer-Ufer";f;455
+;v29;v64;"Konrad-Adenauer-Ufer";f;279
+;v21;v7;"Kornforte";f;50
+;v7;v30;"Kornforte";f;76
+;v30;v26;"Kornforte";f;26
+;Jesuiten-Platz;v22;"Eltzerhostraße";f;45
+;v22;v8;"Eltzerhostraße";f;87
+;v8;v31;"Eltzerhostraße";f;79
+;v31;v35;"Eltzerhostraße";f;25
+;v21;v22;"Görresstraße";f;96
+;v38;v39;"Altenhof";f;47
+;v39;v40a;"Altenhof";f;70
+;v44;v40a;"Marktstraße";f;59
+;v40a;v12;"Marktstraße";f;18
+;v12;Münzplatz;"Münzstraße";f;22
+;Münzplatz;v3;"Münzstraße";f;50
+;v43;v44;"Altengraben";f;113
+;v44;AmPlan;"Am Plan";f;11
+;AmPlan;v45;"Am Plan";f;31
+;v45;v46;"Entenpfuhl";f;46
+;v46;v49;"Entenpfuhl";f;29
+;v49;v18;"Entenpfuhl";f;14
+;v18;v19;"Entenpfuhl";f;29
+;v19;v20;"Entenpfuhl";f;26
+;v20;v21;"Entenpfuhl";f;60
+;v44;AmPlan;"Entenpfuhl";f;11
+;v44;AmPlan;"Entenpfuhl";f;11
