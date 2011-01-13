@@ -1,5 +1,19 @@
 package de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout;
 
+import static de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade.ABBREVIATE_EDGE_ATTRIBUTE_NAMES;
+import static de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade.COMPOSITE_THAT;
+import static de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade.COMPOSITE_THIS;
+import static de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade.ELEMENT;
+import static de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade.ELEMENT_SEQUENCE_INDEX;
+import static de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade.PRINT_DOMAIN_NAMES;
+import static de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade.PRINT_EDGE_ATTRIBUTES;
+import static de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade.PRINT_ELEMENT_SEQUENCE_INDICES;
+import static de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade.PRINT_INCIDENCE_INDICES;
+import static de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade.PRINT_ROLENAMES;
+import static de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade.SHARED_THAT;
+import static de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade.SHARED_THIS;
+import static de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade.SHORTEN_STRINGS;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -21,7 +35,6 @@ import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.TypeDefin
 import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade;
 import de.uni_koblenz.jgralab.utilities.tg2dot.json.JsonTemporaryGraphLayoutReader;
 import de.uni_koblenz.jgralab.utilities.tg2dot.plist.PListTemporaryGraphLayoutReader;
-import static de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade.*;
 
 public class GraphLayoutFactory {
 
@@ -34,10 +47,7 @@ public class GraphLayoutFactory {
 	private GraphLayout currentGraphLayout;
 
 	public GraphLayout loadJsonGraphLayout(File graphLayoutFile) {
-
-		System.out.println("Loading JSON-graph layout...");
 		TemporaryGraphLayoutReader reader = createAndExecuteJsonGraphLayoutReader(graphLayoutFile);
-
 		return loadGraphLayout(reader);
 	}
 
@@ -55,8 +65,6 @@ public class GraphLayoutFactory {
 	}
 
 	public GraphLayout loadPListGraphLayout(File layout) {
-
-		System.out.println("Loading PList-graph layout...");
 		TemporaryGraphLayoutReader reader = createAndExecutePListGraphLayoutReader(layout);
 
 		return loadGraphLayout(reader);

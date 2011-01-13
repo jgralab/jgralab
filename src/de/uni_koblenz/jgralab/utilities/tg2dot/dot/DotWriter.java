@@ -255,13 +255,13 @@ public class DotWriter {
 	 * Starts an Element with its correct indentation.
 	 */
 	private void startElement() {
-		intendate();
+		writeIndent();
 	}
 
 	/**
 	 * Writes the indentation correlation to the current nested depth.
 	 */
-	private void intendate() {
+	private void writeIndent() {
 		for (int i = 0; i < nestedDepth; i++) {
 			stream.write(TABULATOR);
 		}
@@ -428,7 +428,6 @@ public class DotWriter {
 	 */
 	public void close() {
 		endGraph();
-
 		stream.flush();
 		stream.close();
 	}
@@ -439,13 +438,12 @@ public class DotWriter {
 	public static final Map<String, String> reversableEdgeAttributePairs;
 
 	static {
-		reversableEdgeAttributePairs = createreversableEdgeAttributePairMap();
-
+		reversableEdgeAttributePairs = createReversableEdgeAttributePairMap();
 		allowedDotEdgeAttributes = createAllowedDotEdgeAttributes();
 		allowedDotNodeAttributes = createAllowedDotNodeAttributes();
 	}
 
-	private static Map<String, String> createreversableEdgeAttributePairMap() {
+	private static Map<String, String> createReversableEdgeAttributePairMap() {
 		// reversableEdgeAttributePairs
 		Map<String, String> edgeAttributePairs = new HashMap<String, String>();
 		edgeAttributePairs.put("headURL", "tailURL");
