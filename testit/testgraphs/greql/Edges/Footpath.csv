@@ -1,17 +1,17 @@
-connections.Footpath;alpha;omega;length;;
-;v3;v30;140;"Unter'm Stern";x
-;v30;v31;90;"Kastorstraße";x
-;v11;v28;140;"Rheinzollstraße";x
-;v39;Münzplatz;29;;x
-;v13;v40;31;"An der Liebfrauenkirche";x
-;v40;v41;29;"An der Liebfrauenkirche";x
-;v41;v42;39;"An der Liebfrauenkirche";x
-;v42;v46;43;"An der Liebfrauenkirche";x
-;v14;v15;28;;x
-;v15;v5;76;"Mehlgasse";x
-;v16;v6;148;"Florinspfaffengasse";
-;v14;v4;77;"Gemüsegasse";x
-;v48;v47;75;"Engelsgässchen";x
-;v47;v49;80;"";x
-;v47;v53;66;"";x
-;v85;v86;70;"";x
+connections.Footpath;alpha;omega;length;#
+fp1;v3;v30;140;"Unter'm Stern"
+fp2;v30;v31;90;"Kastorstraße"
+fp3;v11;v28;140;"Rheinzollstraße"
+fp4;v39;Münzplatz;29;
+fp5;v13;v40;31;"An der Liebfrauenkirche"
+fp6;v40;v41;29;"An der Liebfrauenkirche"
+fp7;v41;v42;39;"An der Liebfrauenkirche"
+fp8;v42;v46;43;"An der Liebfrauenkirche"
+fp9;v14;v15;28;
+fp10;v15;v5;76;"Mehlgasse"
+fp11;v16;v6;148;"Florinspfaffengasse"
+fp12;v14;v4;77;"Gemüsegasse"
+fp13;v48;v47;75;"Engelsgässchen"
+fp14;v47;v49;80;""
+fp15;v47;v53;66;""
+fp16;v85;v86;70;""

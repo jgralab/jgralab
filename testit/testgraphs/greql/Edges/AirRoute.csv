@@ -1,1 +1,4 @@
 connections.AirRoute;alpha;omega;routeName;length
+ar1;AP-Frankfurt;AP-Hahn;"Route Frankfurt to Hahn";81921
+ar2;AP-Frankfurt;AP-Winningen;"Route Frankfurt to Winningen";45086
+ar3;AP-Hahn;AP-Winningen;"Route Hahn to Winningen";93361
