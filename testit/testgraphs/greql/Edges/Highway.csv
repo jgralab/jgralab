@@ -1,3 +1,31 @@
 connections.Highway;alpha;omega;name;oneway;length;lanes
-A48a;ZubringerKoblenz;ZubringerHöhr;"A48";f;20000;3
-B9a;Saarkreisel;ZubringerKoblenz;"B9";f;5000;2
+hw1;ZubringerKoblenz;ZubringerHöhr;"A48";f;11790;3
+hw2;Saarkreisel;ZubringerKoblenz;"B9";f;5192;2
+hw3;v99;v105;"Friedrich-Ebert-Ring B49";f;128;2
+hw4;v105;v108;"Friedrich-Ebert-Ring B49";f;75;2
+hw5;v108;v98;"Friedrich-Ebert-Ring B49";f;71;2
+hw6;v98;v97;"Friedrich-Ebert-Ring B49";f;66;3
+hw7;v97;v96;"Friedrich-Ebert-Ring B49";f;146;3
+hw8;v96;v92;"Friedrich-Ebert-Ring B49";f;154;3
+hw9;v92;v90;"Friedrich-Ebert-Ring B49";f;76;3
+hw10;v90;Saarkreisel;"B49";f;630;2
+hw11;ZubringerHöhr;DernbacherDreieck;"A48";f;7265;3
+hw12;DernbacherDreieck;ZubringerMontabaur;"A3";f;5755;3
+hw13;v99;KO-Pfaffendorf;"B49";f;633;2
+hw14;KO-Pfaffendorf;KO-Horchheim;"B49";f;2530;2
+hw15;KO-Horchheim;ZubringerMontabaur;"B49";f;23621;2
+hw16;ZubringerMontabaur;WiesbadenerKreuz;"A3";f;64400;3
+hw17;WiesbadenerKreuz;SchiersteinerKreus;"A66";f;12648;3
+hw18;SchiersteinerKreus;DreieckMainz;"A643";f;6515;2
+hw19;DreieckMainz;DreieckNahetal;"A60";f;21370;2
+hw20;DreieckNahetal;Rheinböllen;"A61";f;47352;2
+hw21;Rheinböllen;DreieckKoblenz;"A61";f;19840;2
+hw22;DreieckKoblenz;ZubringerKoblenz;"A48";f;5991;3
+hw23;ZubringerFrankfurtFlughafen;FrankfurterKreuz;"A3";f;3711;3
+hw24;FrankfurterKreuz;ZubringerFrankfurt;"A5";f;4346;2
+hw25;WiesbadenerKreuz;ZubringerFrankfurtFlughafen;"A3";f;13460;4
+hw26;Saarkreisel;KS-Brücke-Süd;"Schlachthofstraße B49";f;2062;2
+hw27;KS-Brücke-Süd;KS-Brücke-Nord;"Kurt-Schumacher-Brücke";f;503;1
+hw28;KS-Brücke-Nord;ZentrumWinningen;"B416";f;6715;1
+hw29;ZentrumWinningen;ZubringerWinningenFlughafen;"";f;500;1
+hw30;Rheinböllen;ZubringerHahnFlughafen;"B50";f;34153;
