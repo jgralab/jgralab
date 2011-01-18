@@ -81,7 +81,7 @@ public class FunctionTest extends GenericTests {
 		// TODO: Broken, because the GReQL parser removes all WhereExpressions
 		// and LetExpressions!
 		String queryString = "from var: V{Variable}, def: V{WhereExpression} with var  -->{IsVarOf} -->{IsDefinitionOf} def and 1=1 report var end";
-		JValue result = evalTestQuery("And", queryString);
+		JValue result = evalTestQuery("and", queryString);
 		assertEquals(4, result.toCollection().size());
 	}
 
@@ -366,8 +366,8 @@ public class FunctionTest extends GenericTests {
 		String queryString = "let x := rec ( menue1:\"bratwurst\", menue2:\"currywurst\", menue3:\"steak\", menue4:\"kaenguruhfleisch\", menue5:\"spiessbraten\") in from i:V{Identifier} report x.menue4 end";
 		JValue result = evalTestQuery("RecordAccess", queryString);
 		assertEquals(1, result.toCollection().toJValueSet().size());
-		assertTrue(result.toCollection().toJValueSet().contains(
-				new JValueImpl("kaenguruhfleisch")));
+		assertTrue(result.toCollection().toJValueSet()
+				.contains(new JValueImpl("kaenguruhfleisch")));
 	}
 
 	@Test

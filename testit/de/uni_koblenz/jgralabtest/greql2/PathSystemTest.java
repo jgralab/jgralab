@@ -44,13 +44,11 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
 public class PathSystemTest extends GenericTests {
 
 	/**
-	 * • v :-) -->α baut ein Pfadsystem über Pfade, die dem regulären Aus- druck
-	 * α entsprechen, mit dem Wurzelknoten v auf. • v :-) -->α :-) w liefert
-	 * einen Pfad der Gestalt α von v nach w. • -->α :-) w liefert ein
-	 * Pfadsystem mit Pfaden der Gestalt αT mit dem Wurzelknoten w. • v :-) (
-	 * -->α :-) w ) liefert dementsprechend einen Pfad der Gestalt αT von w nach
-	 * v.
-	 * 
+	 * • v :-) -->α baut ein Pfadsystem über Pfade, die dem regulären Ausdruck α
+	 * entsprechen, mit dem Wurzelknoten v auf. • v :-) -->α :-) w liefert einen
+	 * Pfad der Gestalt α von v nach w. • -->α :-) w liefert ein Pfadsystem mit
+	 * Pfaden der Gestalt αT mit dem Wurzelknoten w. • v :-) ( -->α :-) w )
+	 * liefert dementsprechend einen Pfad der Gestalt αT von w nach v.
 	 */
 
 	/*
@@ -366,20 +364,23 @@ public class PathSystemTest extends GenericTests {
 
 	@Test
 	public void testEdgeTrace() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from v: V{WhereExpression}, w: V{Variable} report edgeTrace(extractPath(v  :-) <--{IsDefinitionOf} <--{IsVarOf}, w)) end";
-		JValue result = evalTestQuery("PathLength", queryString);
+		String queryString = "from r : (from v: V{localities.County}, a:V{junctions.Airport}, w: V{junctions.Crossroad}"
+				+ "reportSet edgeTrace(extractPath(pathSystem(v, -->{localities.ContainsLocality} a -->{localities.ContainsCrossroad}), w)) end) "
+				+ " with count(r) <> 0 report r end";
+		String queryString2 = "count(V{junctions.Airport})";
+		JValue result = evalTestQuery("PathLength", queryString,
+				TestVersion.CITY_MAP_GRAPH);
 		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(5, bag.size());
-		int emptyTraces = 0;
-		for (JValue v : bag) {
-			if (v.toCollection().size() == 0) {
-				emptyTraces++;
-			} else {
-				assertEquals(2, v.toCollection().size());
-			}
+
+		result = evalTestQuery("PathLength", queryString2,
+				TestVersion.CITY_MAP_GRAPH);
+		int airportCount = result.toInteger();
+		int traceCount = 0;
+		for (JValue value : bag) {
+			traceCount++;
+			assertEquals(2, value.toCollection().size());
 		}
+		assertEquals(airportCount, traceCount);
 	}
 
 	@Test

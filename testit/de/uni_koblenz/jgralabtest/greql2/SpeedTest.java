@@ -39,7 +39,6 @@ import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
 
 public class SpeedTest extends GenericTests {
 
-	@Override
 	protected Graph getTestGraph() throws Exception {
 		printTestFunctionHeader("GenerateTestGraph");
 

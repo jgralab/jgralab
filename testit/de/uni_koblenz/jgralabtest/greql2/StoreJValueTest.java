@@ -47,9 +47,11 @@ public class StoreJValueTest extends GenericTests {
 		String queryString = "bag(tup(\"Nodes:\", count(from v:V{} report v end)), tup(\"Edges:\", count(from e:E{} report e end)))";
 		JValue result = evalTestQuery("StoreJValue1", queryString);
 		JValueXMLOutputVisitor outputVisitor = new JValueXMLOutputVisitor(
-				result, "testit/testdata/storejvaluetest1.xml", getTestGraph());
+				result, "testit/testdata/storejvaluetest1.xml",
+				getTestGraph(TestVersion.GREQL_GRAPH));
 		outputVisitor.toString();
-		JValueXMLLoader loader = new JValueXMLLoader(getTestGraph());
+		JValueXMLLoader loader = new JValueXMLLoader(
+				getTestGraph(TestVersion.GREQL_GRAPH));
 		JValue loadedValue = loader
 				.load("testit/testdata/storejvaluetest1.xml");
 		assertNotNull(loadedValue);
@@ -61,8 +63,10 @@ public class StoreJValueTest extends GenericTests {
 		String queryString = "V{}";
 		JValue result = evalTestQuery("StoreJValue2a", queryString);
 		new JValueXMLOutputVisitor(result,
-				"testit/testdata/storejvaluetest2a.xml", getTestGraph());
-		JValueXMLLoader loader = new JValueXMLLoader(getTestGraph());
+				"testit/testdata/storejvaluetest2a.xml",
+				getTestGraph(TestVersion.GREQL_GRAPH));
+		JValueXMLLoader loader = new JValueXMLLoader(
+				getTestGraph(TestVersion.GREQL_GRAPH));
 		JValue loadedValue = loader
 				.load("testit/testdata/storejvaluetest2a.xml");
 		assertNotNull(loadedValue);
@@ -74,8 +78,10 @@ public class StoreJValueTest extends GenericTests {
 		String queryString = "from v:V{} report v as \"Nodes\" end";
 		JValue result = evalTestQuery("StoreJValue2", queryString);
 		new JValueXMLOutputVisitor(result,
-				"testit/testdata/storejvaluetest2.xml", getTestGraph());
-		JValueXMLLoader loader = new JValueXMLLoader(getTestGraph());
+				"testit/testdata/storejvaluetest2.xml",
+				getTestGraph(TestVersion.GREQL_GRAPH));
+		JValueXMLLoader loader = new JValueXMLLoader(
+				getTestGraph(TestVersion.GREQL_GRAPH));
 		JValue loadedValue = loader
 				.load("testit/testdata/storejvaluetest2.xml");
 		assertNotNull(loadedValue);
@@ -87,8 +93,10 @@ public class StoreJValueTest extends GenericTests {
 		String queryString = "from x,y:list(1..100) reportTable x, y, x*y end";
 		JValue result = evalTestQuery("StoreJValue3", queryString);
 		new JValueXMLOutputVisitor(result,
-				"testit/testdata/storejvaluetest3.xml", getTestGraph());
-		JValueXMLLoader loader = new JValueXMLLoader(getTestGraph());
+				"testit/testdata/storejvaluetest3.xml",
+				getTestGraph(TestVersion.GREQL_GRAPH));
+		JValueXMLLoader loader = new JValueXMLLoader(
+				getTestGraph(TestVersion.GREQL_GRAPH));
 		JValue loadedValue = loader
 				.load("testit/testdata/storejvaluetest3.xml");
 		assertNotNull(loadedValue);

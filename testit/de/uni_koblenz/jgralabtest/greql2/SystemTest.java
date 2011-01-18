@@ -42,7 +42,7 @@ import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
 public class SystemTest extends GenericTests {
 
 	@Override
-	protected Graph createTestGraph() throws Exception {
+	protected Graph createGreqlTestGraph() {
 		int count = 1;
 		String part1 = "from i:a report ";
 		String part2 = " end where q:=a, l:=a, m:=a, n:=a, o:=a, p:=a, k:= a, j:=a, h := a, g := a, f:= a, e := a, d:=a, c:=a, b:=a, a:=4";
