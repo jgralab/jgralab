@@ -45,7 +45,7 @@ import de.uni_koblenz.jgralabtest.greql2.optimizer.OptimizerTest;
  * 
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses( { ExceptionTest.class, FunctionTest.class,
+@Suite.SuiteClasses({ ExceptionTest.class, FunctionTest.class,
 		GreqlEvaluatorTest.class, JValueTest.class, OptimizerTest.class,
 		ParserTest.class, PathSystemTest.class, ProgressTest.class,
 		SliceTest.class, SpeedTest.class, StoreJValueTest.class,

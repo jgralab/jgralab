@@ -40,7 +40,6 @@ import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 
 public class ProgressTest extends GenericTests {
 
-	@Override
 	protected Graph getTestGraph() throws Exception {
 		printTestFunctionHeader("GenerateTestGraph");
 
