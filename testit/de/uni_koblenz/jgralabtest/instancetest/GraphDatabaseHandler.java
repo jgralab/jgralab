@@ -17,11 +17,8 @@ import de.uni_koblenz.jgralabtest.schemas.vertextest.VertexTestSchema;
 
 public class GraphDatabaseHandler {
 
-	private static final String url = "jdbc:postgresql://localhost:5432/jgtest:secret@jgtest";
-
-	// private static final String databaseName = System.getProperty("dbname");
-	// private static final String userName = System.getProperty("user");
-	// private static final String password = System.getProperty("password");
+	// TODO change to system property
+	private static final String url = "jdbc:postgresql://jgtest:secret@localhost:5432/jgtest";
 
 	protected GraphDatabase graphDatabase;
 
