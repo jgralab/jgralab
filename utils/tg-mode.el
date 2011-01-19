@@ -127,6 +127,7 @@
   (when str
     (save-match-data
       (setq str (replace-regexp-in-string "[[:space:]]+" "" str))
+      (setq str (replace-regexp-in-string "<[^>]+>" "" str))
       (let ((list (split-string str ","))
             result)
         (dolist (elem list)
