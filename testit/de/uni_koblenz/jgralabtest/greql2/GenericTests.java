@@ -72,9 +72,9 @@ public class GenericTests {
 	 */
 	public static boolean DEBUG_SYNTAXGRAPHS = false;
 
-	Graph graph = null;
-	Graph cyclicGraph = null;
-	Graph tree = null;
+	private Graph graph = null;
+	private Graph cyclicGraph = null;
+	private Graph tree = null;
 
 	private static Graph testGraph;
 
