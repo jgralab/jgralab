@@ -141,15 +141,7 @@ public class JValueSet extends JValueCollection implements Cloneable {
 	@Override
 	public int hashCode() {
 		if (storedHashCode == 0) {
-			int elementHashCode = 0;
-			int newHashCode = -1;
-
-			for (JValue value2 : this) {
-				elementHashCode = value2.hashCode();
-				newHashCode += -1 + (3 + elementHashCode)
-						* (7 + elementHashCode) * (11 + elementHashCode);
-			}
-			storedHashCode = newHashCode + JValueSet.class.hashCode();
+			storedHashCode = itemHashSet.hashCode();
 		}
 		return storedHashCode;
 	}
