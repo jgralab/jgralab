@@ -72,7 +72,11 @@ public class GreqlServer extends Thread {
 	private String graphFile;
 	private static Map<String, Graph> dataGraphs = Collections
 			.synchronizedMap(new HashMap<String, Graph>());
-
+	
+	static {
+		GreqlEvaluator.DEBUG_OPTIMIZATION = true;
+	}
+	
 	public GreqlServer(Socket s) throws IOException {
 		socket = s;
 		in = new BufferedReader(new InputStreamReader(s.getInputStream()));
@@ -110,7 +114,7 @@ public class GreqlServer extends Thread {
 	public void run() {
 		try {
 			String line = null;
-			while ((line = in.readLine()) != null && !isInterrupted()) {
+			while (((line = in.readLine()) != null) && !isInterrupted()) {
 				if (line.startsWith("g:")) {
 					graphFile = line.substring(2);
 					Graph g = dataGraphs.get(graphFile);
