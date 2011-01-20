@@ -200,7 +200,7 @@
 
 	<target name="create_manifest" depends="common.create_manifest,revisionAntTasks">
 		<!-- sets the attribute "revision" -->
-		<svnrevision />
+		<get_revision />
 		<manifest file="${manifest.file}" mode="update">
 			<section name="info">
 				<attribute name="Product" value="JGraLab" />
