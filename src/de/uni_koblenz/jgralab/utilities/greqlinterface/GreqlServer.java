@@ -73,9 +73,10 @@ public class GreqlServer extends Thread {
 	private static Map<String, Graph> dataGraphs = Collections
 			.synchronizedMap(new HashMap<String, Graph>());
 	
-	static {
-		GreqlEvaluator.DEBUG_OPTIMIZATION = true;
-	}
+
+	// static {
+	// GreqlEvaluator.DEBUG_OPTIMIZATION = true;
+	// }
 	
 	public GreqlServer(Socket s) throws IOException {
 		socket = s;
