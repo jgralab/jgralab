@@ -94,7 +94,6 @@ public class PathSystemTest extends GenericTests {
 		String queryString2 = "from r:V{junctions.Crossroad} report depth(pathSystem(r, <--{localities.ContainsCrossroad})) end";
 		JValue result2 = test.evalTestQuery("static Query", queryString2,
 				TestVersion.CITY_MAP_GRAPH);
-		System.out.println(result2);
 		uncontainedCrossroadCount = crossroadCount
 				- result.toDouble().intValue();
 	}
@@ -188,10 +187,13 @@ public class PathSystemTest extends GenericTests {
 	public void testPathSystemEdgesConnected() throws Exception {
 		// TODO: Broken, because the GReQL parser removes all WhereExpressions
 		// and LetExpressions!
-		String queryString = "from v: V{WhereExpression}, w:V{Variable}  report edgesConnected(w, v  :-) <--{IsDefinitionOf} <--{IsVarOf}) end";
-		JValue result = evalTestQuery("PathSystemConstruction", queryString);
+		String queryString = "from c: V{localities.County}, r:V{junctions.Crossroad} "
+				+ "report edgesConnected(r, pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad}))"
+				+ "end";
+		JValue result = evalTestQuery("PathSystemConstruction", queryString,
+				TestVersion.CITY_MAP_GRAPH);
 		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(5, bag.size());
+		assertEquals(crossroadCount * countyCount, bag.size());
 		int empty = 0;
 		for (JValue v : bag) {
 			if (v.toCollection().size() == 0) {
@@ -200,7 +202,7 @@ public class PathSystemTest extends GenericTests {
 				assertEquals(1, v.toCollection().size());
 			}
 		}
-		assertEquals(1, empty);
+		assertEquals(uncontainedCrossroadCount + crossroadCount, empty);
 	}
 
 	@Test
