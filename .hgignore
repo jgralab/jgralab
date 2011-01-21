@@ -1,0 +1,9 @@
+
+syntax: regexp
+build
+bin
+src/de/uni_koblenz/jgralab/grumlschema
+src/de/uni_koblenz/jgralab/greql2/schema
+testit/de/uni_koblenz/jgralabtest/schemas
+testit/testschemas/greqltestschema.tg
+
