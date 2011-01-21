@@ -112,7 +112,7 @@ public class SchemaGraph2XMITest {
 	@Test
 	public void testDefault() throws GraphIOException, FileNotFoundException,
 			XMLStreamException {
-		runTests(false, false);
+		runTests(false);
 	}
 
 	/**
@@ -125,25 +125,11 @@ public class SchemaGraph2XMITest {
 	@Test
 	public void testBidirectional() throws GraphIOException,
 			FileNotFoundException, XMLStreamException {
-		runTests(true, false);
+		runTests(true);
 	}
 
-	/**
-	 * In this test case all EdgeClasses are created navigable from TO to FROM.
-	 * 
-	 * @throws GraphIOException
-	 * @throws FileNotFoundException
-	 * @throws XMLStreamException
-	 */
-	@Test
-	public void testReverted() throws GraphIOException, FileNotFoundException,
-			XMLStreamException {
-		runTests(false, true);
-	}
-
-	private void runTests(boolean createBidirectional, boolean createReverted)
-			throws GraphIOException, FileNotFoundException, XMLStreamException {
-		assert !(createBidirectional && createReverted) : "createBidirectional or createReverted must be false";
+	private void runTests(boolean createBidirectional) throws GraphIOException,
+			FileNotFoundException, XMLStreamException {
 		// check all schemas in folder
 		for (String file : folderWithTGs.list()) {
 			if (file.toLowerCase().endsWith(".tg")) {
@@ -157,9 +143,6 @@ public class SchemaGraph2XMITest {
 				if (createBidirectional) {
 					SchemaGraph2XMI.main(new String[] { "-i", originalTg, "-o",
 							generatedXMI, "-b" });
-				} else if (createReverted) {
-					SchemaGraph2XMI.main(new String[] { "-i", originalTg, "-o",
-							generatedXMI, "-r" });
 				} else {
 					SchemaGraph2XMI.main(new String[] { "-i", originalTg, "-o",
 							generatedXMI });
@@ -172,7 +155,7 @@ public class SchemaGraph2XMITest {
 				r.process(generatedXMI);
 
 				// check generated tg
-				compareTgs(originalTg, generatedTg, createReverted);
+				compareTgs(originalTg, generatedTg);
 			}
 		}
 	}
@@ -185,8 +168,7 @@ public class SchemaGraph2XMITest {
 	 * @param generatedTg
 	 * @param isReverted
 	 */
-	private void compareTgs(String originalTg, String generatedTg,
-			boolean isReverted) {
+	private void compareTgs(String originalTg, String generatedTg) {
 		try {
 			HashSet<String> originalTgContent = new HashSet<String>();
 			HashSet<String> generatedTgContent = new HashSet<String>();
@@ -200,11 +182,6 @@ public class SchemaGraph2XMITest {
 				if (!line.isEmpty()) {
 					if (containesAttributes(line)) {
 						line = sortAttributes(line);
-					}
-					if (isReverted
-							&& (line.startsWith("EdgeClass") || line
-									.startsWith("abstract EdgeClass"))) {
-						line = changeDirection(line);
 					}
 					originalTgContent.add(line);
 				}
@@ -247,35 +224,6 @@ public class SchemaGraph2XMITest {
 					+ ":\n" + e.getMessage());
 			e.printStackTrace();
 		}
-	}
-
-	/**
-	 * Changes direction of an EdgeClass.
-	 * 
-	 * @param line
-	 * @return
-	 */
-	private String changeDirection(String line) {
-		String from = " from ";
-		String to = " to ";
-
-		int indexOfFrom = line.indexOf(from);
-		int indexOfTo = line.indexOf(to);
-		int indexOfRest = line.indexOf(" {");
-		if (indexOfRest == -1) {
-			indexOfRest = line.indexOf(" [");
-			if (indexOfRest == -1) {
-				indexOfRest = line.indexOf(';');
-			}
-		}
-
-		String startOfLine = line.substring(0, indexOfFrom);
-		String fromPart = line
-				.substring(indexOfFrom + from.length(), indexOfTo);
-		String toPart = line.substring(indexOfTo + to.length(), indexOfRest);
-		String endOfLine = line.substring(indexOfRest);
-
-		return startOfLine + from + toPart + to + fromPart + endOfLine;
 	}
 
 	/**
