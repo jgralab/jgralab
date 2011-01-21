@@ -31,7 +31,13 @@
 
 package de.uni_koblenz.jgralab;
 
+import java.io.IOException;
+import java.net.URL;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Formatter;
 import java.util.logging.Handler;
@@ -51,17 +57,40 @@ public class JGraLab {
 	 */
 	public static EclipseAdapter eclipseAdapter;
 
-	// look but don't touch, both values are updated automatically
-	private static final String revision = "$Revision$";
+	private static String revision = "unknown";
+	private static String version = revision;
 
-	private static final String buildID = "69";
-	//
-	// to use this information inside the text place $rev for the revision
-	// information and $bid for the build id
-	private static final String version = "Dimetrodon";
+	// read revision and version from the manifest
+	static {
+		try {
+			Enumeration<URL> resources = JGraLab.class.getClassLoader()
+					.getResources("META-INF/MANIFEST.MF");
+			while (resources.hasMoreElements()) {
+
+				Manifest manifest = new Manifest(resources.nextElement()
+						.openStream());
+				Map<String, Attributes> entries = manifest.getEntries();
+				Attributes info = entries.get("de/uni_koblenz/jgralab");
+				if (info == null) {
+					continue;
+				}
+				String implTitle = info.getValue("Implementation-Title");
+				if (implTitle.equals("JGraLab")) {
+					String[] versionString = info.getValue("Implementation-Version").split("@");
+					version = versionString[0];
+					revision = versionString[1];
+				}
+
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
 	private static final String[] versionInfo = {
 			"JGraLab - The Java graph laboratory", "  Version : $ver",
-			"  $rev", "  Build ID: $bid" };
+			"  Revision: $rev" };
 
 	private static final String[] copyrightInfo = {
 			"(c) 2006-2010 Institute for Software Technology",
@@ -121,11 +150,10 @@ public class JGraLab {
 					@Override
 					public String format(LogRecord record) {
 						StringBuilder sb = new StringBuilder();
-						sb.append(record.getLevel()).append(" ")
-								.append(record.getSourceClassName())
-								.append(".")
-								.append(record.getSourceMethodName())
-								.append(": ").append(record.getMessage())
+						sb.append(record.getLevel()).append(" ").append(
+								record.getSourceClassName()).append(".")
+								.append(record.getSourceMethodName()).append(
+										": ").append(record.getMessage())
 								.append('\n');
 						return sb.toString();
 					}
@@ -193,7 +221,6 @@ public class JGraLab {
 
 		outputLine = outputLine.replace("$ver", version);
 		outputLine = outputLine.replace("$rev", revString);
-		outputLine = outputLine.replace("$bid", buildID);
 
 		return outputLine;
 	}

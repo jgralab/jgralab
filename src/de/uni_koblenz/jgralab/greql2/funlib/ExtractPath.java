@@ -84,9 +84,8 @@ public class ExtractPath extends Greql2Function {
 
 	{
 		JValueType[][] x = {
-				{ JValueType.PATHSYSTEM, JValueType.PATH },
-				{ JValueType.PATHSYSTEM, JValueType.VERTEX,
-						JValueType.COLLECTION },
+				{ JValueType.PATHSYSTEM, JValueType.COLLECTION },
+				{ JValueType.PATHSYSTEM, JValueType.VERTEX, JValueType.PATH },
 				{ JValueType.PATHSYSTEM, JValueType.INT, JValueType.COLLECTION } };
 		signatures = x;
 

@@ -1,7 +1,12 @@
 package de.uni_koblenz.jgralab.impl.db;
 
 import java.lang.reflect.Method;
-import java.sql.*;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,10 +26,10 @@ import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
-import de.uni_koblenz.jgralab.schema.EdgeClass;
 
 /**
  * Database holding graphs which can be located on a PostgreSql, MySQL or Apache
@@ -66,7 +71,7 @@ public abstract class GraphDatabase {
 	 * @return An open graph database.
 	 * @throws Exception
 	 */
-	public static GraphDatabase openGraphDatabase(String url, String userName,
+	private static GraphDatabase openGraphDatabase(String url, String userName,
 			String password) throws GraphDatabaseException {
 		if (url != null) {
 			return getGraphDatabase(url, userName, password);
@@ -76,7 +81,8 @@ public abstract class GraphDatabase {
 		}
 	}
 
-	private static final String urlRegex = "(.*)://(.*):(.*)@(.*)";
+	// pattern is: jdbc:<driver>://<user>:<passwd>@<host[:port]/database....>
+	private static final String URL_REGEX = "^(jdbc:)(.*)://(.*):(.*)@(.*)$";
 
 	/**
 	 * Opens a graph database at location specified by an url with given
@@ -93,16 +99,16 @@ public abstract class GraphDatabase {
 	 */
 	public static GraphDatabase openGraphDatabase(String url)
 			throws GraphDatabaseException {
-		Pattern p = Pattern.compile(urlRegex);
+		Pattern p = Pattern.compile(URL_REGEX);
 		Matcher m = p.matcher(url);
 		if (m.matches()) {
-			String realURL = m.group(1) + "://" + m.group(4);
-			String username = m.group(2);
-			String password = m.group(3);
+			String realURL = m.group(1) + m.group(2) + "://" + m.group(5);
+			String username = m.group(3);
+			String password = m.group(4);
 			return openGraphDatabase(realURL, username, password);
 		} else {
 			throw new GraphDatabaseException(
-					"Invalid url given. Please use the format \"driver://username:password@host:port/database\"");
+					"Invalid url given. Please use the format \"jdbc:<driver>://<user>:<passwd>@<host[:port]/database...\"");
 		}
 	}
 
@@ -119,21 +125,11 @@ public abstract class GraphDatabase {
 	 *             <code>jgralab_dbconnection</code> or if the provided URL is
 	 *             malformed.
 	 */
-	public static GraphDatabase openGraphDatabase()
-			throws GraphDatabaseException {
-		String url = System.getProperty("jgralab_dbconnection");
-		if (url != null)
-			return openGraphDatabase(url);
-		else {
-			throw new GraphDatabaseException(
-					"System property \"jgralab_dbconnection\" not set.");
-		}
-	}
 
 	private static GraphDatabase getGraphDatabase(String url, String userName,
 			String password) throws GraphDatabaseException {
-		if (openGraphDatabases.containsKey(url + userName + password)) {
-			return openGraphDatabases.get(url + userName + password);
+		if (openGraphDatabases.containsKey(url)) {
+			return openGraphDatabases.get(url);
 		} else {
 			return connectToGraphDatabase(url, userName, password);
 		}
@@ -146,32 +142,27 @@ public abstract class GraphDatabase {
 		graphDb.password = password;
 		graphDb.connect();
 		graphDb.setOptimalAutoCommitMode();
-		cacheGraphDatabase(graphDb);
+		openGraphDatabases.put(url, graphDb);
 		return graphDb;
 	}
 
 	private static GraphDatabase createVendorSpecificDb(String url)
 			throws GraphDatabaseException {
-		if (url.startsWith("postgresql:")) {
+		if (url.startsWith("jdbc:postgresql:")) {
 			return new PostgreSqlDb(url);
-		} else if (url.startsWith("derby:")) {
+		} else if (url.startsWith("jdbc:derby:")) {
 			return new DerbyDb(url);
-		} else if (url.startsWith("mysql:")) {
+		} else if (url.startsWith("jdbc:mysql:")) {
 			return new MySqlDb(url);
 		} else {
 			throw new GraphDatabaseException("Database vendor not supported.");
 		}
 	}
 
-	private static void cacheGraphDatabase(GraphDatabase graphDatabase) {
-		openGraphDatabases.put(graphDatabase.url + graphDatabase.userName
-				+ graphDatabase.password, graphDatabase);
-	}
-
 	/**
 	 * Holds url to graph database.
 	 */
-	private String url = "jdbc:";
+	private String url;
 
 	/**
 	 * Holds user name.
@@ -217,15 +208,7 @@ public abstract class GraphDatabase {
 	 *             Given url is malformed.
 	 */
 	protected GraphDatabase(String url) throws GraphDatabaseException {
-		this.parse(url);
-	}
-
-	private void parse(String url) throws GraphDatabaseException {
-		if (url.contains("://")) {
-			this.url += url;
-		} else {
-			throw new GraphDatabaseException("Syntax error on url " + url);
-		}
+		this.url = url;
 	}
 
 	/**
@@ -403,11 +386,11 @@ public abstract class GraphDatabase {
 		}
 	}
 
+	@Deprecated
 	public void reconnect() throws GraphDatabaseException {
 		this.close();
 		this.connect();
 		this.setOptimalAutoCommitMode();
-		cacheGraphDatabase(this);
 	}
 
 	/**
@@ -422,7 +405,7 @@ public abstract class GraphDatabase {
 			this.writeBackVersionOfLoadedGraphs();
 			this.loadedGraphs.clear();
 			this.commitAnyTransactions();
-			openGraphDatabases.remove(this.url + this.userName + this.password);
+			openGraphDatabases.remove(this.url);
 			this.connection.close();
 		} catch (SQLException exception) {
 			throw new GraphDatabaseException(
@@ -653,15 +636,15 @@ public abstract class GraphDatabase {
 			throws SQLException, GraphIOException {
 		int typeId = this.getTypeIdOf(vertex);
 		PreparedStatement insertStatement = this.sqlStatementList.insertVertex(
-				vertex.getId(), typeId, vertex.getGId(), vertex
-						.getIncidenceListVersion(), vertex
-						.getSequenceNumberInVSeq());
+				vertex.getId(), typeId, vertex.getGId(),
+				vertex.getIncidenceListVersion(),
+				vertex.getSequenceNumberInVSeq());
 		insertStatement.executeUpdate();
 		SortedSet<Attribute> attributes = vertex.getAttributedElementClass()
 				.getAttributeList();
 		for (Attribute attribute : attributes) {
-			int attributeId = this.getAttributeId(vertex.getGraph(), attribute
-					.getName());
+			int attributeId = this.getAttributeId(vertex.getGraph(),
+					attribute.getName());
 			String value = this.convertToString(vertex, attribute.getName());
 			insertStatement = this.sqlStatementList.insertVertexAttributeValue(
 					vertex.getId(), vertex.getGId(), attributeId, value);
@@ -711,27 +694,27 @@ public abstract class GraphDatabase {
 		assert edge.isNormal();
 		int typeId = this.getTypeIdOf(edge);
 		PreparedStatement insertStatement = this.sqlStatementList.insertEdge(
-				edge.getId(), edge.getGId(), typeId, edge
-						.getSequenceNumberInESeq());
+				edge.getId(), edge.getGId(), typeId,
+				edge.getSequenceNumberInESeq());
 		insertStatement.executeUpdate();
 
 		insertStatement = this.sqlStatementList.insertIncidence(edge.getId(),
-				alpha.getId(), edge.getGId(), edge
-						.getSequenceNumberInLambdaSeq());
+				alpha.getId(), edge.getGId(),
+				edge.getSequenceNumberInLambdaSeq());
 		insertStatement.executeUpdate();
 
 		DatabasePersistableEdge reversedEdge = (DatabasePersistableEdge) edge
 				.getReversedEdge();
-		insertStatement = this.sqlStatementList.insertIncidence(reversedEdge
-				.getId(), omega.getId(), reversedEdge.getGId(), reversedEdge
-				.getSequenceNumberInLambdaSeq());
+		insertStatement = this.sqlStatementList.insertIncidence(
+				reversedEdge.getId(), omega.getId(), reversedEdge.getGId(),
+				reversedEdge.getSequenceNumberInLambdaSeq());
 		insertStatement.executeUpdate();
 
 		SortedSet<Attribute> attributes = edge.getAttributedElementClass()
 				.getAttributeList();
 		for (Attribute attribute : attributes) {
-			int attributeId = this.getAttributeId(edge.getGraph(), attribute
-					.getName());
+			int attributeId = this.getAttributeId(edge.getGraph(),
+					attribute.getName());
 			String value = this.convertToString(edge, attribute.getName());
 			insertStatement = this.sqlStatementList.insertEdgeAttributeValue(
 					edge.getId(), edge.getGId(), attributeId, value);
@@ -795,8 +778,8 @@ public abstract class GraphDatabase {
 			throws GraphDatabaseException {
 		try {
 			PreparedStatement statement = this.sqlStatementList
-					.updateVertexListVersionOfGraph(graph.getGId(), graph
-							.getVertexListVersion());
+					.updateVertexListVersionOfGraph(graph.getGId(),
+							graph.getVertexListVersion());
 			statement.executeUpdate();
 		} catch (SQLException exception) {
 			exception.printStackTrace();
@@ -818,8 +801,8 @@ public abstract class GraphDatabase {
 			throws GraphDatabaseException {
 		try {
 			PreparedStatement statement = this.sqlStatementList
-					.updateEdgeListVersionOfGraph(graph.getGId(), graph
-							.getEdgeListVersion());
+					.updateEdgeListVersionOfGraph(graph.getGId(),
+							graph.getEdgeListVersion());
 			statement.executeUpdate();
 		} catch (SQLException exception) {
 			exception.printStackTrace();
@@ -872,8 +855,8 @@ public abstract class GraphDatabase {
 					attributeName);
 			String value = this.convertToString(vertex, attributeName);
 			PreparedStatement statement = this.sqlStatementList
-					.updateAttributeValueOfVertex(vertex.getId(), vertex
-							.getGId(), attributeId, value);
+					.updateAttributeValueOfVertex(vertex.getId(),
+							vertex.getGId(), attributeId, value);
 			statement.executeUpdate();
 		} catch (Exception exception) {
 			exception.printStackTrace();
@@ -923,8 +906,8 @@ public abstract class GraphDatabase {
 			throws GraphDatabaseException {
 		try {
 			PreparedStatement statement = this.sqlStatementList
-					.updateLambdaSeqVersionOfVertex(vertex.getId(), vertex
-							.getGId(), vertex.getIncidenceListVersion());
+					.updateLambdaSeqVersionOfVertex(vertex.getId(),
+							vertex.getGId(), vertex.getIncidenceListVersion());
 			statement.executeUpdate();
 		} catch (SQLException exception) {
 			exception.printStackTrace();
@@ -946,8 +929,8 @@ public abstract class GraphDatabase {
 			throws GraphDatabaseException {
 		try {
 			PreparedStatement statement = this.sqlStatementList
-					.updateSequenceNumberInVSeqOfVertex(vertex.getId(), vertex
-							.getGId(), vertex.getSequenceNumberInVSeq());
+					.updateSequenceNumberInVSeqOfVertex(vertex.getId(),
+							vertex.getGId(), vertex.getSequenceNumberInVSeq());
 			statement.executeUpdate();
 		} catch (SQLException exception) {
 			exception.printStackTrace();
@@ -1064,8 +1047,8 @@ public abstract class GraphDatabase {
 		PreparedStatement statement;
 		try {
 			statement = this.sqlStatementList
-					.updateSequenceNumberInESeqOfEdge(edge.getId(), edge
-							.getGId(), edge.getSequenceNumberInESeq());
+					.updateSequenceNumberInESeqOfEdge(edge.getId(),
+							edge.getGId(), edge.getSequenceNumberInESeq());
 			statement.executeUpdate();
 		} catch (SQLException exception) {
 			exception.printStackTrace();
@@ -1090,10 +1073,10 @@ public abstract class GraphDatabase {
 		PreparedStatement statement;
 		try {
 			statement = this.sqlStatementList
-					.updateSequenceNumberInLambdaSeqOfIncidence(Math
-							.abs(incidence.getIncidentEId()), incidence
-							.getIncidentVId(), incidence.getGId(), incidence
-							.getSequenceNumberInLambdaSeq());
+					.updateSequenceNumberInLambdaSeqOfIncidence(
+							Math.abs(incidence.getIncidentEId()),
+							incidence.getIncidentVId(), incidence.getGId(),
+							incidence.getSequenceNumberInLambdaSeq());
 			statement.executeUpdate();
 		} catch (SQLException exception) {
 			exception.printStackTrace();
@@ -1262,8 +1245,8 @@ public abstract class GraphDatabase {
 	private DatabasePersistableEdge instanceEdgeFrom(
 			DatabasePersistableGraph graph, ResultSet edgeData, int eId)
 			throws Exception {
-		Class<? extends Edge> edgeClass = getEdgeClassFrom(graph, edgeData
-				.getInt(1));
+		Class<? extends Edge> edgeClass = getEdgeClassFrom(graph,
+				edgeData.getInt(1));
 
 		long sequenceNumberInESeq = edgeData.getLong(2);
 		Vertex alpha = null;
@@ -1691,8 +1674,8 @@ public abstract class GraphDatabase {
 	private void preloadTypesOf(Schema schema, PrimaryKeyCache typeCollector)
 			throws SQLException {
 		PreparedStatement statement = this.sqlStatementList
-				.selectTypesOfSchema(schema.getPackagePrefix(), schema
-						.getName());
+				.selectTypesOfSchema(schema.getPackagePrefix(),
+						schema.getName());
 		ResultSet result = statement.executeQuery();
 		while (result.next()) {
 			typeCollector.addType(result.getInt(2), result.getString(1));
@@ -1702,12 +1685,12 @@ public abstract class GraphDatabase {
 	private void preloadAttributesOf(Schema schema,
 			PrimaryKeyCache attributeCollector) throws SQLException {
 		PreparedStatement statement = this.sqlStatementList
-				.selectAttributesOfSchema(schema.getPackagePrefix(), schema
-						.getName());
+				.selectAttributesOfSchema(schema.getPackagePrefix(),
+						schema.getName());
 		ResultSet result = statement.executeQuery();
 		while (result.next()) {
-			attributeCollector.addAttribute(result.getInt(2), result
-					.getString(1));
+			attributeCollector.addAttribute(result.getInt(2),
+					result.getString(1));
 		}
 	}
 
@@ -1803,8 +1786,8 @@ public abstract class GraphDatabase {
 
 	private int insertGraphRecord(DatabasePersistableGraph graph, int typeId)
 			throws SQLException {
-		PreparedStatement statement = this.sqlStatementList.insertGraph(graph
-				.getId(), graph.getGraphVersion(),
+		PreparedStatement statement = this.sqlStatementList.insertGraph(
+				graph.getId(), graph.getGraphVersion(),
 				graph.getVertexListVersion(), graph.getEdgeListVersion(),
 				typeId);
 		statement.executeUpdate();
@@ -1991,8 +1974,8 @@ public abstract class GraphDatabase {
 			long start) throws GraphDatabaseException {
 		try {
 			CallableStatement statement = this.sqlStatementList
-					.createReorganizeIncidenceListCall(vertex.getId(), vertex
-							.getGId(), start);
+					.createReorganizeIncidenceListCall(vertex.getId(),
+							vertex.getGId(), start);
 			statement.execute();
 		} catch (SQLException exception) {
 			exception.printStackTrace();

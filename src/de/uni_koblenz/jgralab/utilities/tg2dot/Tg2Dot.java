@@ -202,10 +202,8 @@ public class Tg2Dot extends Tg2Whatever {
 
 	@Override
 	protected void graphStart(PrintStream out) {
-		// We really don't want to debug the evaluator when dotting, cause that
-		// would mean that all gazillions of GReQLs executed by Tg2Dot are
-		// dotted as well, recursively, infinitely, till hell freezes over. So
-		// disable debugging here and restore the old state in graphEnd().
+		// Disable debugging to prevent recursive execution and restore it in
+		// graphEnd()
 		debugIterations = GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS;
 		debugOptimization = GreqlEvaluator.DEBUG_OPTIMIZATION;
 		GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS = false;
@@ -294,7 +292,14 @@ public class Tg2Dot extends Tg2Whatever {
 	 * Starts the Graph in the output file.
 	 */
 	private void startGraph() {
-		writer.startGraph(GraphType.Directed);
+		StringBuilder sb = new StringBuilder();
+		// Names have to start with a character
+		sb.append(graph.getM1Class().getSimpleName());
+		sb.append("_");
+		sb.append(graph.getId().replace('-', '_'));
+		sb.append("__");
+		sb.append(graph.getGraphVersion());
+		writer.startGraph(GraphType.Directed, sb.toString());
 	}
 
 	@Override
@@ -582,8 +587,8 @@ public class Tg2Dot extends Tg2Whatever {
 						+ dotBuildOutputType;
 			}
 
-			String executionString = "C:/Program Files (x86)/Graphviz2.26.3/bin/dot.exe -T"
-					+ dotBuildOutputType + " " + dotFile + " -o" + formatedFile;
+			String executionString = "dot.exe -T" + dotBuildOutputType + " "
+					+ dotFile + " -o" + formatedFile;
 			Process p = Runtime.getRuntime().exec(executionString);
 			p.waitFor();
 			if (p.exitValue() == EXIT_ALL_FINE) {

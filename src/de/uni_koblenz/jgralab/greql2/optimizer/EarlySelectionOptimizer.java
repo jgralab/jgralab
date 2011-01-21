@@ -78,7 +78,7 @@ import de.uni_koblenz.jgralab.schema.Attribute;
  * @author ist@uni-koblenz.de
  * 
  */
-public class EarySelectionOptimizer extends OptimizerBase {
+public class EarlySelectionOptimizer extends OptimizerBase {
 
 	private static Logger logger = JGraLab
 			.getLogger(EarySelectionOptimizer.class.getPackage().getName());

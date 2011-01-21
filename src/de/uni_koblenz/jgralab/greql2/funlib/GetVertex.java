@@ -70,7 +70,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 public class GetVertex extends Greql2Function {
 	{
-		JValueType[][] x = { { JValueType.INT, JValueType.INT } };
+		JValueType[][] x = { { JValueType.INT, JValueType.VERTEX } };
 		signatures = x;
 
 		description = "Returns the vertex with the given id.";

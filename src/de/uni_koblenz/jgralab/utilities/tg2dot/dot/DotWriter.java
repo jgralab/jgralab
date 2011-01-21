@@ -88,12 +88,16 @@ public class DotWriter {
 	}
 
 	/**
+	 * DON'T CREATE UNNAMED GRAPHS! Dot can handle them, but dotty cannot.
+	 * Despite of that, giving the graph a name is not a bad idea anyway.
+	 * 
 	 * Starts a unnamed DOT-graph of the specified GraphType. The nested depth
 	 * is increased by one.
 	 * 
 	 * @param type
 	 *            Indicates which type of DOT-graph should be written.
 	 */
+	@Deprecated
 	public void startGraph(GraphType type) {
 		startElement();
 		stream.write(type.name);
@@ -251,13 +255,13 @@ public class DotWriter {
 	 * Starts an Element with its correct indentation.
 	 */
 	private void startElement() {
-		intendate();
+		writeIndent();
 	}
 
 	/**
 	 * Writes the indentation correlation to the current nested depth.
 	 */
-	private void intendate() {
+	private void writeIndent() {
 		for (int i = 0; i < nestedDepth; i++) {
 			stream.write(TABULATOR);
 		}
@@ -424,7 +428,6 @@ public class DotWriter {
 	 */
 	public void close() {
 		endGraph();
-
 		stream.flush();
 		stream.close();
 	}
@@ -435,13 +438,12 @@ public class DotWriter {
 	public static final Map<String, String> reversableEdgeAttributePairs;
 
 	static {
-		reversableEdgeAttributePairs = createreversableEdgeAttributePairMap();
-
+		reversableEdgeAttributePairs = createReversableEdgeAttributePairMap();
 		allowedDotEdgeAttributes = createAllowedDotEdgeAttributes();
 		allowedDotNodeAttributes = createAllowedDotNodeAttributes();
 	}
 
-	private static Map<String, String> createreversableEdgeAttributePairMap() {
+	private static Map<String, String> createReversableEdgeAttributePairMap() {
 		// reversableEdgeAttributePairs
 		Map<String, String> edgeAttributePairs = new HashMap<String, String>();
 		edgeAttributePairs.put("headURL", "tailURL");

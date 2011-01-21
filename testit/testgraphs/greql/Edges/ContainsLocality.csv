@@ -1,4 +1,12 @@
 localities.ContainsLocality;alpha;omega
-;rlp;Koblenz
-;rlp;Mainz
-;rlp;Höhr
+cl1;rlp;Koblenz
+cl2;rlp;Mainz
+cl3;rlp;HÃ¶hr
+cl4;hs;Frankfurt
+cl6;rlp;Winningen
+cl7;rlp;Kammerforst
+cl8;rlp;Lautzenhausen
+cl9;hs;AP-Frankfurt
+cl10;rlp;AP-Hahn
+cl11;rlp;AP-Winningen
+cl12;rlp;Montabaur

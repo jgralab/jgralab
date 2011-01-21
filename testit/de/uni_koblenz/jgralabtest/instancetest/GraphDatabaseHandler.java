@@ -17,13 +17,8 @@ import de.uni_koblenz.jgralabtest.schemas.vertextest.VertexTestSchema;
 
 public class GraphDatabaseHandler {
 
-	private static final String url = System.getProperty("dbaddress");
-	// protected String url = "mysql://localhost:3306/graphdatabase5";
-	// protected String userName = "postgres";
-
-	// private static final String databaseName = System.getProperty("dbname");
-	// private static final String userName = System.getProperty("user");
-	// private static final String password = System.getProperty("password");
+	// TODO change to system property
+	private static final String url = "jdbc:postgresql://jgtest:secret@localhost:5432/jgtest";
 
 	protected GraphDatabase graphDatabase;
 
@@ -33,7 +28,7 @@ public class GraphDatabaseHandler {
 
 	public void connectToDatabase() {
 		try {
-			graphDatabase = GraphDatabase.openGraphDatabase();
+			graphDatabase = GraphDatabase.openGraphDatabase(url);
 		} catch (GraphDatabaseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -51,8 +46,7 @@ public class GraphDatabaseHandler {
 	public void loadVertexTestSchemaIntoGraphDatabase() {
 		try {
 			if (!this.graphDatabase.contains(VertexTestSchema.instance())) {
-				this
-						.loadTestSchemaIntoGraphDatabase("testit/testschemas/VertexTestSchema.tg");
+				this.loadTestSchemaIntoGraphDatabase("testit/testschemas/VertexTestSchema.tg");
 			}
 		} catch (GraphDatabaseException e) {
 			e.printStackTrace();
@@ -150,10 +144,10 @@ public class GraphDatabaseHandler {
 
 	public void cleanDatabaseOfTestSchema(Schema schema) {
 		try {
-			if (graphDatabase.containsSchema(schema.getPackagePrefix(), schema
-					.getName())) {
-				graphDatabase.deleteSchema(schema.getPackagePrefix(), schema
-						.getName());
+			if (graphDatabase.containsSchema(schema.getPackagePrefix(),
+					schema.getName())) {
+				graphDatabase.deleteSchema(schema.getPackagePrefix(),
+						schema.getName());
 			}
 		} catch (GraphDatabaseException exception) {
 			exception.printStackTrace();
@@ -178,6 +172,7 @@ public class GraphDatabaseHandler {
 		GraphDatabaseHandler handler = new GraphDatabaseHandler();
 		handler.connectToDatabase();
 		handler.graphDatabase.applyDbSchema();
+		handler.graphDatabase.optimizeForGraphTraversal();
 	}
 
 }
