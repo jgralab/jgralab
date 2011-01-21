@@ -130,10 +130,7 @@ public class Tg2Dot extends Tg2Whatever {
 
 		Tg2Dot converter = new Tg2Dot();
 		converter.getOptions(args);
-		System.out.print("Start processing graph...");
-		System.out.flush();
 		converter.printGraph();
-		System.out.println("finished.");
 	}
 
 	/**
@@ -205,15 +202,14 @@ public class Tg2Dot extends Tg2Whatever {
 
 	@Override
 	protected void graphStart(PrintStream out) {
-		// We really don't want to debug the evaluator when dotting, cause that
-		// would mean that all gazillions of GReQLs executed by Tg2Dot are
-		// dotted as well, recursively, infinitely, till hell freezes over. So
-		// disable debugging here and restore the old state in graphEnd().
+		// Disable debugging to prevent recursive execution and restore it in
+		// graphEnd()
 		debugIterations = GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS;
 		debugOptimization = GreqlEvaluator.DEBUG_OPTIMIZATION;
 		GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS = false;
 		GreqlEvaluator.DEBUG_OPTIMIZATION = false;
 
+		initializeEvaluator();
 		initializeGraphLayout();
 
 		setGlobalVariables();
@@ -221,6 +217,9 @@ public class Tg2Dot extends Tg2Whatever {
 
 		try {
 			createDotWriter(out);
+
+			System.out.print("Starting processing of graph...");
+
 			startGraph();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -228,26 +227,32 @@ public class Tg2Dot extends Tg2Whatever {
 	}
 
 	/**
+	 * Initializes the GreqlEvaluator and sets all known variables.
+	 */
+	private void initializeEvaluator() {
+		evaluator = new GreqlEvaluatorFacade(graph);
+	}
+
+	/**
 	 * Creates a GraphLayoutFactory and loads the GraphLayout.
 	 */
 	private void initializeGraphLayout() {
-		if (layout == null) {
-			GraphLayoutFactory factory = new GraphLayoutFactory();
-			factory.setSchema(graph.getSchema());
-			evaluator = new GreqlEvaluatorFacade(graph);
-			factory.setGreqlEvaluator(evaluator);
+		GraphLayoutFactory factory = new GraphLayoutFactory();
+		factory.setSchema(graph.getSchema());
+		factory.setGreqlEvaluator(evaluator);
 
-			if (graphLayoutFilename == null) {
-				layout = factory.loadDefautLayout();
+		if (graphLayoutFilename == null) {
+			layout = factory.loadDefautLayout();
+		} else {
+			File layout = new File(graphLayoutFilename);
+			if (useJsonGraphLayoutReader) {
+				this.layout = factory.loadJsonGraphLayout(layout);
 			} else {
-				File layout = new File(graphLayoutFilename);
-				if (useJsonGraphLayoutReader) {
-					this.layout = factory.loadJsonGraphLayout(layout);
-				} else {
-					this.layout = factory.loadPListGraphLayout(layout);
-				}
+				this.layout = factory.loadPListGraphLayout(layout);
 			}
 		}
+
+		System.gc();
 	}
 
 	/**
@@ -339,6 +344,8 @@ public class Tg2Dot extends Tg2Whatever {
 
 		// writeGraphLayoutToJsonFile();
 		executeDot();
+		System.out.println("Finished Processing.");
+
 		GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS = debugIterations;
 		GreqlEvaluator.DEBUG_OPTIMIZATION = debugOptimization;
 	}
@@ -580,9 +587,8 @@ public class Tg2Dot extends Tg2Whatever {
 						+ dotBuildOutputType;
 			}
 
-			// TODO make executable path a parameter
-			String executionString = "C:/Program Files (x86)/Graphviz2.26.3/bin/dot.exe -T"
-					+ dotBuildOutputType + " " + dotFile + " -o" + formatedFile;
+			String executionString = "dot.exe -T" + dotBuildOutputType + " "
+					+ dotFile + " -o" + formatedFile;
 			Process p = Runtime.getRuntime().exec(executionString);
 			p.waitFor();
 			if (p.exitValue() == EXIT_ALL_FINE) {
@@ -751,6 +757,14 @@ public class Tg2Dot extends Tg2Whatever {
 		abbreviateEdgeAttributeNames = abbreviateAttributeNames;
 	}
 
+	public GraphLayout getGraphLayout() {
+		return layout;
+	}
+
+	public void setGraphLayout(GraphLayout layout) {
+		this.layout = layout;
+	}
+
 	public boolean isAbbreviateEdgeAttributeNames() {
 		return abbreviateEdgeAttributeNames;
 	}
@@ -784,13 +798,11 @@ public class Tg2Dot extends Tg2Whatever {
 	public void setJsonGraphLayoutFilename(String graphLayoutFilename) {
 		useJsonGraphLayoutReader = true;
 		this.graphLayoutFilename = graphLayoutFilename;
-		layout = null;
 	}
 
 	public void setPListGraphLayoutFilename(String graphLayoutFilename) {
 		useJsonGraphLayoutReader = false;
 		this.graphLayoutFilename = graphLayoutFilename;
-		layout = null;
 	}
 
 	public boolean usesAJsonGraphLayout() {
