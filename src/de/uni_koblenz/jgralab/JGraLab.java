@@ -59,7 +59,7 @@ public class JGraLab {
 
 	private static String revision = "unknown";
 	private static String version = revision;
-	
+
 	// read revision and version from the manifest
 	static {
 		try {
@@ -70,14 +70,14 @@ public class JGraLab {
 				Manifest manifest = new Manifest(resources.nextElement()
 						.openStream());
 				Map<String, Attributes> entries = manifest.getEntries();
-				Attributes info = entries.get("info");
-				if(info == null){
+				Attributes info = entries.get("de/uni_koblenz/jgralab");
+				if (info == null) {
 					continue;
 				}
-				String productName = info.getValue("Product");
-				if(productName.equals("JGraLab")){
-					revision = info.getValue("Revision");
-					version = info.getValue("Version");
+				String implTitle = info.getValue("Implementation-Title");
+				if (implTitle.equals("JGraLab")) {
+					revision = info.getValue("Implementation-Revision");
+					version = info.getValue("Implementation-Version");
 				}
 
 			}
@@ -89,7 +89,7 @@ public class JGraLab {
 
 	private static final String[] versionInfo = {
 			"JGraLab - The Java graph laboratory", "  Version : $ver",
-			"  Revision: $rev"};
+			"  Revision: $rev" };
 
 	private static final String[] copyrightInfo = {
 			"(c) 2006-2010 Institute for Software Technology",
