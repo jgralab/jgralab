@@ -204,8 +204,7 @@
 		<manifest file="${manifest.file}" mode="update">
 			<section name="de/uni_koblenz/jgralab">
 				<attribute name="Implementation-Title" value="JGraLab" />
-				<attribute name="Implementation-Version" value="${jgralab_version}" />
-				<attribute name="Implementation-Revision" value="${revision}" />
+				<attribute name="Implementation-Version" value="${jgralab_version}@${revision}" />
 				<attribute name="Implementation-Vendor" value="University of Koblenz, Institute for Software Technology" />
 			</section>
 		</manifest>

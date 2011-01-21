@@ -76,8 +76,9 @@ public class JGraLab {
 				}
 				String implTitle = info.getValue("Implementation-Title");
 				if (implTitle.equals("JGraLab")) {
-					revision = info.getValue("Implementation-Revision");
-					version = info.getValue("Implementation-Version");
+					String[] versionString = info.getValue("Implementation-Version").split("@");
+					version = versionString[0];
+					revision = versionString[1];
 				}
 
 			}
