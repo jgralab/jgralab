@@ -32,11 +32,18 @@
 package de.uni_koblenz.jgralabtest.greql2;
 
 import java.io.File;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 
 import org.junit.Before;
 
+import de.uni_koblenz.jgralab.AttributedElement;
+import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphIO;
+import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.greql2.SerializableGreql2;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
@@ -46,11 +53,18 @@ import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.Optimizer;
 import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
 import de.uni_koblenz.jgralab.utilities.tg2dot.SimpleTg2Dot;
+import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
+import de.uni_koblenz.jgralabtest.schemas.greqltestschema.junctions.Crossroad;
+import de.uni_koblenz.jgralabtest.schemas.greqltestschema.localities.ContainsCrossroad;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalGraph;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalSchema;
 import de.uni_koblenz.jgralabtest.schemas.minimal.Node;
 
 public class GenericTests {
+
+	public enum TestVersion {
+		GREQL_GRAPH, CITY_MAP_GRAPH
+	};
 
 	/**
 	 * Print the query syntaxgraphs (unoptimized, optimized with one specific
@@ -58,9 +72,11 @@ public class GenericTests {
 	 */
 	public static boolean DEBUG_SYNTAXGRAPHS = false;
 
-	Graph graph = null;
-	Graph cyclicGraph = null;
-	Graph tree = null;
+	private Graph graph = null;
+	private Graph cyclicGraph = null;
+	private Graph tree = null;
+
+	private static Graph testGraph;
 
 	protected void printTestFunctionHeader(String functionName) {
 		System.out
@@ -95,11 +111,16 @@ public class GenericTests {
 		return eval.getVariable(varName);
 	}
 
-	protected Graph getTestGraph() throws Exception {
-		if (graph == null) {
-			graph = createTestGraph();
+	protected Graph getTestGraph(TestVersion version) throws Exception {
+
+		if (version == TestVersion.GREQL_GRAPH) {
+			return createGreqlTestGraph();
+		} else {
+			if (graph == null) {
+				graph = createTestGraph();
+			}
+			return graph;
 		}
-		return graph;
 	}
 
 	protected Graph getTestTree() throws Exception {
@@ -116,14 +137,48 @@ public class GenericTests {
 		return cyclicGraph;
 	}
 
-	protected Graph createTestGraph() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions! Add some better test graph here and adapt all
-		// queries...
+	protected Graph createGreqlTestGraph() {
 		String query = "from i:c report i end where d:=\"nada\", c:=b, b:=a, a:=\"Mensaessen\"";
 		Graph g = GreqlParser.parse(query);
-		// Tg2Dot.printGraphAsDot(g, true, "/tmp/testgraph.dot");
 		return g;
+	}
+
+	private Graph createTestGraph() throws Exception {
+		// TODO Does this singleton conflicts with some tests? Do tests change
+		// this test graph?
+		// This singleton should prevent spending to much time in GraphIO.
+		if (testGraph == null) {
+			testGraph = GraphIO.loadGraphFromFileWithStandardSupport(
+					"testit/testgraphs/greqltestgraph.tg", null);
+		}
+
+		// TODO delete these code lines
+
+		// Tg2Dot converter = new Tg2Dot();
+		// converter.setGraph(g);
+		// converter.setReversedEdges(false);
+		// converter.setPrintEdgeAttributes(true);
+		// converter.setOutputFile("tmp/testgraph.dot");
+		// converter.setAbbreviateAttributeNames(true);
+		// converter.setShortenStrings(true);
+
+		// BooleanGraphMarker marker = new BooleanGraphMarker(g);
+		// for (Vertex v : g.vertices()) {
+		// marker.mark(v);
+		// }
+		// for (Edge e : g.edges()) {
+		// marker.mark(e);
+		// }
+		// for (Edge e : g.edges(ContainsCrossroad.class)) {
+		// marker.removeMark(e);
+		// }
+		//
+		// converter.setGraphMarker(marker);
+		// converter.setDotBuildOutputType("pdf");
+		//
+		// converter.printGraph();
+		// System.exit(0);
+		return testGraph;
 	}
 
 	protected Graph createCyclicTestGraph() throws Exception {
@@ -156,19 +211,33 @@ public class GenericTests {
 		return g;
 	}
 
+	protected JValue evalTestQuery(String functionName, String query,
+			Graph datagraph) throws Exception {
+		return evalTestQuery(functionName, query, null, datagraph);
+	}
+
 	protected JValue evalTestQuery(String functionName, String query)
 			throws Exception {
-		return evalTestQuery(functionName, query, null, getTestGraph());
+		return evalTestQuery(functionName, query, TestVersion.GREQL_GRAPH);
 	}
 
 	protected JValue evalTestQuery(String functionName, String query,
 			Optimizer optimizer) throws Exception {
-		return evalTestQuery(functionName, query, optimizer, getTestGraph());
+
+		return evalTestQuery(functionName, query, optimizer,
+				TestVersion.GREQL_GRAPH);
 	}
 
 	protected JValue evalTestQuery(String functionName, String query,
-			Graph datagraph) throws Exception {
-		return evalTestQuery(functionName, query, null, datagraph);
+			TestVersion version) throws Exception {
+		return evalTestQuery(functionName, query, null, getTestGraph(version));
+	}
+
+	protected JValue evalTestQuery(String functionName, String query,
+			Optimizer optimizer, TestVersion version) throws Exception {
+
+		return evalTestQuery(functionName, query, optimizer,
+				getTestGraph(version));
 	}
 
 	protected JValue evalTestQuery(String functionName, String query,
@@ -204,7 +273,8 @@ public class GenericTests {
 			}
 			System.out.println(((SerializableGreql2) eval.getSyntaxGraph())
 					.serialize());
-			SimpleTg2Dot.printGraphAsDot(eval.getSyntaxGraph(), true, dotFileName);
+			SimpleTg2Dot.printGraphAsDot(eval.getSyntaxGraph(), true,
+					dotFileName);
 		}
 
 		printTestFunctionFooter(functionName);

@@ -93,7 +93,7 @@ public class DefaultOptimizer extends OptimizerBase {
 		// optimizers
 		Optimizer cso = new CommonSubgraphOptimizer();
 		Optimizer pe2dpeo = new PathExistenceToDirectedPathExpressionOptimizer();
-		Optimizer eso = new EarySelectionOptimizer();
+		Optimizer eso = new EarlySelectionOptimizer();
 		Optimizer peo = new PathExistenceOptimizer();
 		Optimizer vdoo = new VariableDeclarationOrderOptimizer();
 		Optimizer ceo = new ConditionalExpressionOptimizer();

@@ -31,6 +31,9 @@
 
 <project name="jgralab" basedir="." default="build">
 
+	<!-- Change version for new release, it will automatically be added to the manifest -->
+	<property name="jgralab_version" value="Dimetrodon" />
+
 	<!-- override default properties -->
 	<property name="projectname" value="jgralab" />
 	<property name="main" value="JGraLab" />
@@ -177,7 +180,6 @@
 
 	<!-- generates the schemas required for test cases without compiling them -->
 	<target name="generatetestschemas" depends="tgtools">
-		<taskdef classpathref="classpath" name="rsa2tg" classname="de.uni_koblenz.jgralab.utilities.ant.Rsa2TgTask" />
 		<rsa2tg xmifile="${testschemas.dir}/rsa-xmi/greqltestschema.xmi" schemafile="${testschemas.dir}/greqltestschema.tg" />
 		<tgschema2java sourcePath="${testcases.dir}" implementationMode="standard,transaction,savemem,database">
 			<fileset dir="${testschemas.dir}" includes="*.tg" />
@@ -194,6 +196,18 @@
 		<copy todir="${tmp.dir}/META-INF/license">
 			<fileset dir="license" includes="jdom/** jgralab/**" />
 		</copy>
+	</target>
+
+	<target name="create_manifest" depends="common.create_manifest,revisionAntTasks">
+		<!-- sets the attribute "revision" -->
+		<get_revision />
+		<manifest file="${manifest.file}" mode="update">
+			<section name="de/uni_koblenz/jgralab">
+				<attribute name="Implementation-Title" value="JGraLab" />
+				<attribute name="Implementation-Version" value="${jgralab_version}@${revision}" />
+				<attribute name="Implementation-Vendor" value="University of Koblenz, Institute for Software Technology" />
+			</section>
+		</manifest>
 	</target>
 
 	<!-- release -->

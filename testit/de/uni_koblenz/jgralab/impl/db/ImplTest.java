@@ -38,17 +38,14 @@ import de.uni_koblenz.jgralabtest.schemas.vertextest.VertexTestSchema;
 
 public abstract class ImplTest {
 
-	protected String url = "postgresql://localhost:5432/graphdatabase_test/";
-	protected String userName = "postgres";
-	protected String password = "energizer";
+	protected String url = "jdbc:postgresql://postgres:energizer@localhost:5432/graphdatabase_test/";
 
 	protected VertexTestGraph vertexTestGraph;
 
 	protected VertexTestGraph createVertexTestGraphWithDatabaseSupport(
 			String id, int vMax, int eMax) {
 		try {
-			GraphDatabase database = GraphDatabase.openGraphDatabase(url,
-					userName, password);
+			GraphDatabase database = GraphDatabase.openGraphDatabase(url);
 			if (!database.contains(VertexTestSchema.instance())) {
 				GraphIO.loadSchemaIntoGraphDatabase(
 						"testit/testschemas/VertexTestSchema.tg", database);
@@ -65,8 +62,7 @@ public abstract class ImplTest {
 
 	protected void cleanDatabaseOfTestGraph(Graph graph) {
 		try {
-			GraphDatabase database = GraphDatabase.openGraphDatabase(url,
-					userName, password);
+			GraphDatabase database = GraphDatabase.openGraphDatabase(url);
 			if (database.containsGraph(graph.getId())) {
 				database.delete((DatabasePersistableGraph) graph);
 			}

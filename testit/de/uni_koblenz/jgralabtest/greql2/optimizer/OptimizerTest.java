@@ -42,7 +42,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.optimizer.CommonSubgraphOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.ConditionalExpressionOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
-import de.uni_koblenz.jgralab.greql2.optimizer.EarySelectionOptimizer;
+import de.uni_koblenz.jgralab.greql2.optimizer.EarlySelectionOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.MergeSimpleDeclarationsOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.Optimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.OptimizerBase;
@@ -61,17 +61,17 @@ public class OptimizerTest extends GenericTests {
 				IsPrime.class);
 	}
 
-	private Optimizer cso = new CommonSubgraphOptimizer();
-	private Optimizer eso = new EarySelectionOptimizer();
-	private Optimizer peo = new PathExistenceOptimizer();
-	private Optimizer petdpeo = new PathExistenceToDirectedPathExpressionOptimizer();
-	private Optimizer defo = new DefaultOptimizer();
-	private Optimizer vdoo = new VariableDeclarationOrderOptimizer();
-	private Optimizer csoAndMsdo = new CommonSubgraphAndMergeSDOptimizer();
-	private Optimizer ceoAndCso = new CommonSubgraphAndConditionalExpressionOptimizer();
+	private final Optimizer cso = new CommonSubgraphOptimizer();
+	private final Optimizer eso = new EarlySelectionOptimizer();
+	private final Optimizer peo = new PathExistenceOptimizer();
+	private final Optimizer petdpeo = new PathExistenceToDirectedPathExpressionOptimizer();
+	private final Optimizer defo = new DefaultOptimizer();
+	private final Optimizer vdoo = new VariableDeclarationOrderOptimizer();
+	private final Optimizer csoAndMsdo = new CommonSubgraphAndMergeSDOptimizer();
+	private final Optimizer ceoAndCso = new CommonSubgraphAndConditionalExpressionOptimizer();
 
 	private class CommonSubgraphAndMergeSDOptimizer extends OptimizerBase {
-		private Optimizer msdo = new MergeSimpleDeclarationsOptimizer();
+		private final Optimizer msdo = new MergeSimpleDeclarationsOptimizer();
 
 		@Override
 		public boolean isEquivalent(Optimizer optimizer) {
@@ -88,7 +88,7 @@ public class OptimizerTest extends GenericTests {
 
 	private class CommonSubgraphAndConditionalExpressionOptimizer extends
 			OptimizerBase {
-		private Optimizer ceo = new ConditionalExpressionOptimizer();
+		private final Optimizer ceo = new ConditionalExpressionOptimizer();
 
 		@Override
 		public boolean isEquivalent(Optimizer optimizer) {
@@ -105,11 +105,11 @@ public class OptimizerTest extends GenericTests {
 
 	private void execTimedTest(String query, String name, Optimizer o)
 			throws Exception {
-		execTimedTest(query, name, o, getTestGraph());
+		execTimedTest(query, name, o, getTestGraph(TestVersion.GREQL_GRAPH));
 	}
 
 	private void execTimedTest(String query, String name) throws Exception {
-		execTimedTest(query, name, getTestGraph());
+		execTimedTest(query, name, getTestGraph(TestVersion.GREQL_GRAPH));
 	}
 
 	private void execTimedTest(String query, String name, Graph datagraph)
@@ -154,7 +154,7 @@ public class OptimizerTest extends GenericTests {
 
 	@Test
 	public void testCommonSubgraphOptimizer0() throws Exception {
-		GreqlEvaluator.DEBUG_OPTIMIZATION=true;
+		GreqlEvaluator.DEBUG_OPTIMIZATION = true;
 		String query = "from w : list(2..10), x : list(2..10), y : list(2..10), z : list(1..2) "
 				+ "     with isPrime(x + z) and x * x > y and z > x * x "
 				+ "     reportBag w, x, y, z end";
@@ -490,7 +490,7 @@ public class OptimizerTest extends GenericTests {
 				+ "           with y<->+y and z<->+z  "
 				+ "           report x, y, z end";
 		execTimedTest(queryString, "VariableDeclarationOrderOptimizer8()",
-				vdoo, getTestGraph());
+				vdoo, getTestGraph(TestVersion.GREQL_GRAPH));
 	}
 
 	@Test

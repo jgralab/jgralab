@@ -136,7 +136,7 @@ public class GreqlEvaluatorTest extends GenericTests {
 	public void testVertexSeq() throws Exception {
 		// TODO: Broken, because the GReQL parser removes all WhereExpressions
 		// and LetExpressions!
-		Graph graph = getTestGraph();
+		Graph graph = getTestGraph(TestVersion.GREQL_GRAPH);
 		Vertex first = graph.getFirstVertex().getNextVertex();
 		Vertex last = graph.getLastVertex().getPrevVertex().getPrevVertex();
 		JValueImpl firstV = new JValueImpl(first);
@@ -348,24 +348,42 @@ public class GreqlEvaluatorTest extends GenericTests {
 		String queryString = "bag ( 1 , 2 , 3 , 7 , 34, 456, 7, 5, 455, 456, 457, 1, 2, 3, 3, 3, 3 )";
 		JValue result = evalTestQuery("BagConstruction", queryString);
 		assertEquals(17, result.toCollection().size());
-		assertEquals(2, result.toCollection().toJValueBag().getQuantity(
-				new JValueImpl(1)));
-		assertEquals(2, result.toCollection().toJValueBag().getQuantity(
-				new JValueImpl(2)));
-		assertEquals(5, result.toCollection().toJValueBag().getQuantity(
-				new JValueImpl(3)));
-		assertEquals(1, result.toCollection().toJValueBag().getQuantity(
-				new JValueImpl(5)));
-		assertEquals(2, result.toCollection().toJValueBag().getQuantity(
-				new JValueImpl(7)));
-		assertEquals(1, result.toCollection().toJValueBag().getQuantity(
-				new JValueImpl(34)));
-		assertEquals(1, result.toCollection().toJValueBag().getQuantity(
-				new JValueImpl(455)));
-		assertEquals(2, result.toCollection().toJValueBag().getQuantity(
-				new JValueImpl(456)));
-		assertEquals(1, result.toCollection().toJValueBag().getQuantity(
-				new JValueImpl(457)));
+		assertEquals(
+				2,
+				result.toCollection().toJValueBag()
+						.getQuantity(new JValueImpl(1)));
+		assertEquals(
+				2,
+				result.toCollection().toJValueBag()
+						.getQuantity(new JValueImpl(2)));
+		assertEquals(
+				5,
+				result.toCollection().toJValueBag()
+						.getQuantity(new JValueImpl(3)));
+		assertEquals(
+				1,
+				result.toCollection().toJValueBag()
+						.getQuantity(new JValueImpl(5)));
+		assertEquals(
+				2,
+				result.toCollection().toJValueBag()
+						.getQuantity(new JValueImpl(7)));
+		assertEquals(
+				1,
+				result.toCollection().toJValueBag()
+						.getQuantity(new JValueImpl(34)));
+		assertEquals(
+				1,
+				result.toCollection().toJValueBag()
+						.getQuantity(new JValueImpl(455)));
+		assertEquals(
+				2,
+				result.toCollection().toJValueBag()
+						.getQuantity(new JValueImpl(456)));
+		assertEquals(
+				1,
+				result.toCollection().toJValueBag()
+						.getQuantity(new JValueImpl(457)));
 
 		JValue resultWO = evalTestQuery("BagConstruction (wo)", queryString,
 				new DefaultOptimizer());
@@ -961,7 +979,8 @@ public class GreqlEvaluatorTest extends GenericTests {
 		JValue result = evalTestQuery("DependentDeclarations2", queryString);
 		assertEquals(4, result.toCollection().size());
 		JValueSet set = result.toCollection().toJValueSet();
-		for (Definition def : ((Greql2) getTestGraph()).getDefinitionVertices()) {
+		for (Definition def : ((Greql2) getTestGraph(TestVersion.GREQL_GRAPH))
+				.getDefinitionVertices()) {
 			assertTrue(set.contains(new JValueImpl(def)));
 		}
 		JValue resultWO = evalTestQuery("DependentDeclarations2 (wo)",
@@ -977,7 +996,8 @@ public class GreqlEvaluatorTest extends GenericTests {
 		JValue result = evalTestQuery("DependentDeclarations3", queryString);
 		assertEquals(4, result.toCollection().size());
 		JValueSet set = result.toCollection().toJValueSet();
-		for (Definition def : ((Greql2) getTestGraph()).getDefinitionVertices()) {
+		for (Definition def : ((Greql2) getTestGraph(TestVersion.GREQL_GRAPH))
+				.getDefinitionVertices()) {
 			assertNotNull(def.getFirstIsDefinitionOfIncidence());
 			assertTrue(set.contains(new JValueImpl(def)));
 		}
@@ -1497,8 +1517,10 @@ public class GreqlEvaluatorTest extends GenericTests {
 		String queryString = "let x := tup ( \"bratwurst\", \"currywurst\", \"steak\", \"kaenguruhfleisch\", \"spiessbraten\") in from i:V{Identifier} report x[3] end";
 		JValue result = evalTestQuery("TupleAccess", queryString);
 		assertEquals(5, result.toCollection().size());
-		assertEquals(5, result.toCollection().toJValueBag().getQuantity(
-				new JValueImpl("kaenguruhfleisch")));
+		assertEquals(
+				5,
+				result.toCollection().toJValueBag()
+						.getQuantity(new JValueImpl("kaenguruhfleisch")));
 		JValue resultWO = evalTestQuery("TupleAccess (wo)", queryString,
 				new DefaultOptimizer());
 		assertEquals(result, resultWO);
@@ -1714,7 +1736,7 @@ public class GreqlEvaluatorTest extends GenericTests {
 	@Test
 	public void testMultipleEvaluationStarts() throws Exception {
 		String queryString = "from i: V{Identifier} report i.name end";
-		Graph datagraph = getTestGraph();
+		Graph datagraph = getTestGraph(TestVersion.GREQL_GRAPH);
 		GreqlEvaluator eval = new GreqlEvaluator(queryString, datagraph, null);
 		eval.startEvaluation();
 		eval.startEvaluation();
@@ -1924,8 +1946,8 @@ public class GreqlEvaluatorTest extends GenericTests {
 				+ "     with isPrime(a + 1) and isPrime(b)        "
 				+ "          and (exists! y : list(10..20), x : list(1..30), x+a<y+b @ isPrime(x+y)) "
 				+ "     reportSet a, b end";
-		assertEquals(evalTestQuery("VariableOrder1", query), evalTestQuery(
-				"VariableOrder1", query2));
+		assertEquals(evalTestQuery("VariableOrder1", query),
+				evalTestQuery("VariableOrder1", query2));
 	}
 
 	@Test
@@ -1943,8 +1965,8 @@ public class GreqlEvaluatorTest extends GenericTests {
 				+ "     with isPrime(a + 1) and isPrime(b)        "
 				+ "          and (exists! x : list(1..30), y : list(10..20), x+a<y+b @ isPrime(x+y)) "
 				+ "     reportSet a, b end";
-		assertEquals(evalTestQuery("VariableOrder2", query), evalTestQuery(
-				"VariableOrder2", query2));
+		assertEquals(evalTestQuery("VariableOrder2", query),
+				evalTestQuery("VariableOrder2", query2));
 	}
 
 	/**
@@ -1968,8 +1990,8 @@ public class GreqlEvaluatorTest extends GenericTests {
 				+ "     with isPrime(a + 1) and isPrime(b)        "
 				+ "          and (exists! x : list(1..30), y : list(10..20), x+a<y+b @ isPrime(x+y)) "
 				+ "     reportSet a, b end";
-		GreqlEvaluator eval = new GreqlEvaluator((String) null, getTestGraph(),
-				null);
+		GreqlEvaluator eval = new GreqlEvaluator((String) null,
+				getTestGraph(TestVersion.GREQL_GRAPH), null);
 
 		Field parseTime = eval.getClass().getDeclaredField("parseTime");
 		parseTime.setAccessible(true);

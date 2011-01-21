@@ -40,6 +40,7 @@ public class Csv2Tg implements FilenameFilter {
 	private static final String CLI_OPTION_OUTPUT_FILE = "output";
 	private static final String CLI_OPTION_CSV_FILES = "input";
 	private static final String CLI_OPTION_SCHEMA = "schema";
+	private static final Object COMMENT_STRING = "#";
 
 	public static void main(String[] args) throws GraphIOException {
 		Csv2Tg converter = new Csv2Tg();
@@ -141,6 +142,20 @@ public class Csv2Tg implements FilenameFilter {
 			loadCsvFiles();
 			processVertexFiles();
 			processEdgeFiles();
+
+			// Prints the key value from the csv-file of vertices, which do not
+			// have any edge attached!
+			// for (Vertex v : graph.vertices()) {
+			// if (v.getDegree() == 0) {
+			// for (Entry<String, Vertex> entry : vertices.entrySet()) {
+			// if (v.equals(entry.getValue())) {
+			// System.out.println("Missing edges: "
+			// + entry.getKey());
+			// }
+			// }
+			// }
+			// }
+
 			System.out.println("Finished Processing.");
 			System.out.print("Saving Graph ...");
 			GraphIO.saveGraphToFile(outputFile, graph, null);
@@ -209,11 +224,13 @@ public class Csv2Tg implements FilenameFilter {
 				.entrySet()) {
 
 			currentReader = entry.getValue();
+
+			System.out.println("\tprocessing file: "
+					+ reader2FilenameMap.get(currentReader));
+
 			while (currentReader.readRecord()) {
 				createEdge(currentReader, entry.getKey());
 			}
-			System.out.println("\tprocessing file: "
-					+ reader2FilenameMap.get(currentReader));
 		}
 	}
 
@@ -317,14 +334,27 @@ public class Csv2Tg implements FilenameFilter {
 
 			String attributeName = header.get(index);
 			String valueString = reader.getFieldAt(index);
+
+			if (attributeName.equals(COMMENT_STRING) || valueString.isEmpty()) {
+				continue;
+			}
 			String transformedString = transformCsvStringValue(valueString);
 
-			edge.readAttributeValueFromString(attributeName, transformedString);
+			try {
+				edge.readAttributeValueFromString(attributeName,
+						transformedString);
+			} catch (NoSuchAttributeException ex) {
+				throw new RuntimeException("The attribute \"" + attributeName
+						+ "\" with value \"" + transformedString
+						+ "\" in line " + index
+						+ " is not a valid attribute name for "
+						+ edge.getGraphClass().getQualifiedName(), ex);
+			}
+
 		}
 	}
 
 	private String transformCsvStringValue(String csvStringValue) {
-
 		if (csvStringValue.startsWith("\"") && csvStringValue.endsWith("\"")) {
 			csvStringValue = GraphIO.toUtfString(csvStringValue.substring(1,
 					csvStringValue.length() - 1).replace("\\\"", "\""));
@@ -337,8 +367,8 @@ public class Csv2Tg implements FilenameFilter {
 		Vertex vertex = vertices.get(vertexName);
 		if (vertex == null) {
 			throw new RuntimeException("Couldn't find vertex \"" + vertexName
-					+ "\" in line: " + reader.getLineNumber());
-			// + " in file \"" + reader.toString() + "\".");
+					+ "\" in line: " + reader.getLineNumber() + "in file \""
+					+ reader2FilenameMap.get(reader) + "\".");
 		}
 		return vertex;
 	}

@@ -107,6 +107,11 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 
 		List<PathExistence> pes = new LinkedList<PathExistence>();
 		for (PathExistence pe : syntaxgraph.getPathExistenceVertices()) {
+			// PathExistences that are inside a not() must not be optimized,
+			// because that would filter out exactly the right elements.
+			if (isInNot(pe)) {
+				continue;
+			}
 			pes.add(pe);
 		}
 
@@ -136,6 +141,22 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 		recreateVertexEvaluators(eval);
 		OptimizerUtility.createMissingSourcePositions(syntaxgraph);
 		return !pes.isEmpty();
+	}
+
+	private boolean isInNot(Vertex v) {
+		if (v instanceof FunctionApplication) {
+			FunctionApplication fa = (FunctionApplication) v;
+			if (fa.get_functionId().get_name().equals("not")) {
+				return true;
+			}
+		}
+		for (Edge e : v.incidences(EdgeDirection.OUT)) {
+			boolean result = isInNot(e.getThat());
+			if (result) {
+				return result;
+			}
+		}
+		return false;
 	}
 
 	private boolean tryOptimizePathExistence(PathExistence pe) {
