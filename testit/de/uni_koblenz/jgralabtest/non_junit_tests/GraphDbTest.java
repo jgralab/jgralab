@@ -14,15 +14,24 @@ public class GraphDbTest {
 			System.out.println("Connecting DB...");
 			gdb = GraphDatabase
 					.openGraphDatabase("jdbc:postgresql://jgtest:secret@localhost:5432/jgtest");
-			if (!gdb.contains(JniTestSchema.instance())) {
-				gdb.insertSchema(JniTestSchema.instance(), "// no text");
+			// gdb = GraphDatabase
+			// .openGraphDatabase("jdbc:postgresql://riediger:win4all@helena.uni-koblenz.de:5432/jgtest");
+			try {
+				if (!gdb.contains(JniTestSchema.instance())) {
+					gdb.insertSchema(JniTestSchema.instance(), "// no text");
+				}
+			} catch (GraphDatabaseException e) {
+				gdb.applyDbSchema();
+				if (!gdb.contains(JniTestSchema.instance())) {
+					gdb.insertSchema(JniTestSchema.instance(), "// no text");
+				}
 			}
 			try {
-				JniTestGraph g = (JniTestGraph) gdb.getGraph("gdbtest");
+				gdb.getGraph("gdbtest");
 				System.out.println("Deleting old graph...");
 				gdb.deleteGraph("gdbtest");
-			} catch (Exception e) {
-				e.printStackTrace();
+			} catch (GraphDatabaseException e) {
+				// ignore exception
 			}
 
 			gdb.optimizeForGraphCreation();
