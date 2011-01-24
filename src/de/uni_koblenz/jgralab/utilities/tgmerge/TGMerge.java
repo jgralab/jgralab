@@ -232,6 +232,7 @@ public class TGMerge {
 
 			@Override
 			public int compare(Edge e1, Edge e2) {
+				compareCount++;
 				if (compareCount % 1000 == 0) {
 					System.out.println(compareCount + " comparisons.");
 				}
