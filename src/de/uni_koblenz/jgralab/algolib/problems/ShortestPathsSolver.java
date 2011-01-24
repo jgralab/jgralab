@@ -23,27 +23,27 @@
  */
 package de.uni_koblenz.jgralab.algolib.problems;
 
+import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
-import de.uni_koblenz.jgralab.algolib.functions.IntFunction;
+import de.uni_koblenz.jgralab.algolib.functions.BinaryFunction;
 
 /**
- * The problem <b>distance from vertex</b> is defined for directed and
- * undirected graphs. The only further parameter is the <i>vertex</i> from which
- * the distance to all reachable vertices has to be computed. The result is a
- * function that contains the distances from the given vertex to all other
- * vertices.
+ * The problem <b>weighted shortest paths</b> can be defined for directed and
+ * undirected graphs. The graph may not have negative cycles. Algorithms solving
+ * this problem are not required to check this precondition. There are no
+ * further parameters. The result is a binary function <i>successor</i> that
+ * assigns each vertex pair an edge, which is the next edge from the first
+ * vertex to follow for reaching the second vertex using a shortest path.
  * 
  * @author strauss@uni-koblenz.de
  * 
  */
-public interface DistanceFromVertexSolver extends ProblemSolver {
+public interface ShortestPathsSolver extends ProblemSolver {
 
 	/**
-	 * Solves the problem <b>distance from vertex</b>.
+	 * Solves the problem <b>weighted shortest paths</b>.
 	 * 
-	 * @param start
-	 *            the vertex to start at.
 	 * @return this algorithm object.
 	 * @throws AlgorithmTerminatedException
 	 *             if this algorithm terminated before the actual execution is
@@ -51,14 +51,14 @@ public interface DistanceFromVertexSolver extends ProblemSolver {
 	 *             from outside (Thread interruption). The algorithm state
 	 *             changes accordingly.
 	 */
-	public DistanceFromVertexSolver execute(Vertex start) throws AlgorithmTerminatedException;
+	public ShortestPathsSolver execute() throws AlgorithmTerminatedException;
 
 	/**
-	 * Retrieves the result <code>distance</code> as function.
+	 * Retrieves the result <code>successor</code>.
 	 * 
-	 * @return the result <code>distance</code>.
+	 * @return the result <code>successor</code>.
 	 * @throws IllegalStateException
 	 *             if the result is requested without being available
 	 */
-	public IntFunction<Vertex> getDistance();
+	public BinaryFunction<Vertex, Vertex, Edge> getSuccessor();
 }

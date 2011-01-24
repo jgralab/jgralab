@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package de.uni_koblenz.jgralab.algolib.algorithms.weighted_shortest_paths;
+package de.uni_koblenz.jgralab.algolib.algorithms.shortest_paths;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
@@ -30,12 +30,11 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 import de.uni_koblenz.jgralab.algolib.functions.DoubleFunction;
-import de.uni_koblenz.jgralab.algolib.problems.WeightedDistancesFromVertexSolver;
-import de.uni_koblenz.jgralab.algolib.problems.WeightedShortestPathsFromVertexSolver;
+import de.uni_koblenz.jgralab.algolib.problems.DistancesFromVertexSolver;
+import de.uni_koblenz.jgralab.algolib.problems.ShortestPathsFromVertexSolver;
 
 public class DijkstraAlgorithm extends AStarSearch implements
-		WeightedDistancesFromVertexSolver,
-		WeightedShortestPathsFromVertexSolver {
+		DistancesFromVertexSolver, ShortestPathsFromVertexSolver {
 
 	public DijkstraAlgorithm(Graph graph,
 			BooleanFunction<GraphElement> subgraph,
@@ -66,19 +65,20 @@ public class DijkstraAlgorithm extends AStarSearch implements
 	}
 
 	@Override
-	public DijkstraAlgorithm execute(Vertex start) throws AlgorithmTerminatedException {
+	public DijkstraAlgorithm execute(Vertex start)
+			throws AlgorithmTerminatedException {
 		internalExecute(start, null);
 		return this;
 	}
 
 	@Override
-	public DoubleFunction<Vertex> getWeightedDistance() {
+	public DoubleFunction<Vertex> getDistance() {
 		checkStateForResult();
-		return super.getWeightedDistance();
+		return super.getDistance();
 	}
-	
-	public DoubleFunction<Vertex> getInternalWeightedDistance(){
-		return super.getWeightedDistance();
+
+	public DoubleFunction<Vertex> getInternalDistance() {
+		return super.getDistance();
 	}
 
 }

@@ -21,13 +21,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package de.uni_koblenz.jgralab.algolib.algorithms.weighted_shortest_paths;
+package de.uni_koblenz.jgralab.algolib.algorithms.shortest_paths;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.algolib.algorithms.AbstractTraversal;
+import de.uni_koblenz.jgralab.algolib.algorithms.StructureOrientedAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmStates;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.SearchVisitorAdapter;
@@ -36,8 +36,9 @@ import de.uni_koblenz.jgralab.algolib.functions.BinaryDoubleFunction;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 import de.uni_koblenz.jgralab.algolib.functions.DoubleFunction;
 import de.uni_koblenz.jgralab.algolib.functions.Function;
-import de.uni_koblenz.jgralab.algolib.problems.WeightedDistanceFromVertexToVertexSolver;
-import de.uni_koblenz.jgralab.algolib.problems.WeightedShortestPathFromVertexToVertexSolver;
+import de.uni_koblenz.jgralab.algolib.problems.DistanceFromVertexToVertexSolver;
+import de.uni_koblenz.jgralab.algolib.problems.WeightedProblemSolver;
+import de.uni_koblenz.jgralab.algolib.problems.ShortestPathFromVertexToVertexSolver;
 import de.uni_koblenz.jgralab.algolib.util.PriorityQueue;
 import de.uni_koblenz.jgralab.algolib.visitors.GraphVisitorAdapter;
 import de.uni_koblenz.jgralab.algolib.visitors.GraphVisitorComposition;
@@ -46,9 +47,9 @@ import de.uni_koblenz.jgralab.graphmarker.ArrayVertexMarker;
 import de.uni_koblenz.jgralab.graphmarker.BitSetVertexMarker;
 import de.uni_koblenz.jgralab.graphmarker.DoubleVertexMarker;
 
-public class AStarSearch extends AbstractTraversal implements
-		WeightedDistanceFromVertexToVertexSolver,
-		WeightedShortestPathFromVertexToVertexSolver {
+public class AStarSearch extends StructureOrientedAlgorithm implements
+		DistanceFromVertexToVertexSolver,
+		ShortestPathFromVertexToVertexSolver, WeightedProblemSolver {
 
 	protected DoubleFunction<Vertex> weightedDistance;
 	protected BooleanFunction<Vertex> visitedVertices;
@@ -220,7 +221,7 @@ public class AStarSearch extends AbstractTraversal implements
 	}
 
 	@Override
-	public double getWeightedDistanceToTarget() {
+	public double getDistanceToTarget() {
 		checkStateForResult();
 		if (target != null) {
 			return weightedDistance.get(target);
@@ -247,7 +248,7 @@ public class AStarSearch extends AbstractTraversal implements
 		return visitedVertices;
 	}
 
-	public DoubleFunction<Vertex> getWeightedDistance() {
+	public DoubleFunction<Vertex> getDistance() {
 		return weightedDistance;
 	}
 }

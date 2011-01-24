@@ -21,14 +21,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package de.uni_koblenz.jgralab.algolib.algorithms.weighted_shortest_paths;
+package de.uni_koblenz.jgralab.algolib.algorithms.shortest_paths;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.algolib.algorithms.AbstractTraversal;
+import de.uni_koblenz.jgralab.algolib.algorithms.StructureOrientedAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmStates;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.BreadthFirstSearch;
@@ -42,12 +42,13 @@ import de.uni_koblenz.jgralab.algolib.functions.DoubleFunction;
 import de.uni_koblenz.jgralab.algolib.functions.IntFunction;
 import de.uni_koblenz.jgralab.algolib.functions.Permutation;
 import de.uni_koblenz.jgralab.algolib.problems.NegativeCyclesSolver;
-import de.uni_koblenz.jgralab.algolib.problems.WeightedDistancesSolver;
-import de.uni_koblenz.jgralab.algolib.problems.WeightedShortestPathsSolver;
+import de.uni_koblenz.jgralab.algolib.problems.DistancesSolver;
+import de.uni_koblenz.jgralab.algolib.problems.WeightedProblemSolver;
+import de.uni_koblenz.jgralab.algolib.problems.ShortestPathsSolver;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
 
-public class FloydAlgorithm extends AbstractTraversal implements
-		WeightedDistancesSolver, WeightedShortestPathsSolver,
+public class FloydAlgorithm extends StructureOrientedAlgorithm implements
+		WeightedProblemSolver, DistancesSolver, ShortestPathsSolver,
 		NegativeCyclesSolver {
 
 	private IntFunction<Vertex> indexMapping;
@@ -217,7 +218,7 @@ public class FloydAlgorithm extends AbstractTraversal implements
 	}
 
 	@Override
-	public BinaryDoubleFunction<Vertex, Vertex> getWeightedDistance() {
+	public BinaryDoubleFunction<Vertex, Vertex> getDistances() {
 		checkStateForResult();
 		return new ArrayBinaryDoubleFunction<Vertex>(weightedDistance,
 				indexMapping);

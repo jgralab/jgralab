@@ -32,9 +32,9 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
-import de.uni_koblenz.jgralab.algolib.algorithms.weighted_shortest_paths.AStarSearch;
-import de.uni_koblenz.jgralab.algolib.algorithms.weighted_shortest_paths.DijkstraAlgorithm;
-import de.uni_koblenz.jgralab.algolib.algorithms.weighted_shortest_paths.FordMooreAlgorithm;
+import de.uni_koblenz.jgralab.algolib.algorithms.shortest_paths.AStarSearch;
+import de.uni_koblenz.jgralab.algolib.algorithms.shortest_paths.DijkstraAlgorithm;
+import de.uni_koblenz.jgralab.algolib.algorithms.shortest_paths.FordMooreAlgorithm;
 import de.uni_koblenz.jgralab.algolib.functions.BinaryDoubleFunction;
 import de.uni_koblenz.jgralab.algolib.functions.DoubleFunction;
 import de.uni_koblenz.jgralab.algolib.functions.adapters.MethodCallToBinaryDoubleFunctionAdapter;
@@ -150,7 +150,7 @@ public class TryAStar {
 			}
 			sw.stop();
 			System.out.println(sw.getDurationString());
-			System.out.println(astar.getWeightedDistanceToTarget());
+			System.out.println(astar.getDistanceToTarget());
 			System.out.println("Max elements in queue: "
 					+ astar.getVertexQueue().getAddedCount());
 		}
@@ -170,7 +170,7 @@ public class TryAStar {
 			sw.stop();
 			System.out.println(sw.getDurationString());
 			// System.out.println(dijkstra.getWeightedDistance().get(target));
-			System.out.println(dijkstra.getWeightedDistanceToTarget());
+			System.out.println(dijkstra.getDistanceToTarget());
 			System.out.println("Max elements in queue: "
 					+ dijkstra.getVertexQueue().getAddedCount());
 		}
@@ -185,7 +185,7 @@ public class TryAStar {
 		fm.execute(start, target);
 		sw.stop();
 		System.out.println(sw.getDurationString());
-		System.out.println(fm.getWeightedDistanceToTarget());
+		System.out.println(fm.getDistanceToTarget());
 
 		System.out.println();
 		System.out.println("Fini.");

@@ -27,19 +27,21 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.algolib.algorithms.AbstractTraversal;
+import de.uni_koblenz.jgralab.algolib.algorithms.StructureOrientedAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmStates;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.BreadthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
+import de.uni_koblenz.jgralab.algolib.functions.DoubleFunction;
 import de.uni_koblenz.jgralab.algolib.functions.Function;
 import de.uni_koblenz.jgralab.algolib.functions.IntFunction;
-import de.uni_koblenz.jgralab.algolib.problems.DistanceFromVertexSolver;
+import de.uni_koblenz.jgralab.algolib.functions.adapters.MethodCallToDoubleFunctionAdapter;
+import de.uni_koblenz.jgralab.algolib.problems.DistancesFromVertexSolver;
 import de.uni_koblenz.jgralab.algolib.problems.ShortestPathsFromVertexSolver;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
 
-public class ShortestPathsWithBFS extends AbstractTraversal implements
-		DistanceFromVertexSolver, ShortestPathsFromVertexSolver {
+public class ShortestPathsWithBFS extends StructureOrientedAlgorithm implements
+		DistancesFromVertexSolver, ShortestPathsFromVertexSolver {
 
 	private BreadthFirstSearch bfs;
 
@@ -117,9 +119,23 @@ public class ShortestPathsWithBFS extends AbstractTraversal implements
 	}
 
 	@Override
-	public IntFunction<Vertex> getDistance() {
+	public DoubleFunction<Vertex> getDistance() {
 		checkStateForResult();
-		return bfs.getLevel();
+		return new MethodCallToDoubleFunctionAdapter<Vertex>() {
+
+			private IntFunction<Vertex> level = bfs.getLevel();
+			
+			@Override
+			public double get(Vertex parameter) {
+				return level.get(parameter);
+			}
+
+			@Override
+			public boolean isDefined(Vertex parameter) {
+				return level.isDefined(parameter);
+			}
+			
+		};
 	}
 
 	@Override

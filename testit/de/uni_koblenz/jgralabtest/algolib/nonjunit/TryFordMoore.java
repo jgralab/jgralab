@@ -28,8 +28,8 @@ import java.util.Stack;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
-import de.uni_koblenz.jgralab.algolib.algorithms.weighted_shortest_paths.FloydAlgorithm;
-import de.uni_koblenz.jgralab.algolib.algorithms.weighted_shortest_paths.FordMooreAlgorithm;
+import de.uni_koblenz.jgralab.algolib.algorithms.shortest_paths.FloydAlgorithm;
+import de.uni_koblenz.jgralab.algolib.algorithms.shortest_paths.FordMooreAlgorithm;
 import de.uni_koblenz.jgralab.algolib.functions.BinaryDoubleFunction;
 import de.uni_koblenz.jgralab.algolib.functions.BinaryFunction;
 import de.uni_koblenz.jgralab.algolib.functions.DoubleFunction;
@@ -76,7 +76,7 @@ public class TryFordMoore {
 		if (floyd.hasNegativeCycles()) {
 			System.out.println("negative cycle detected");
 		} else {
-			printResult(graph, floyd.getWeightedDistance(), floyd
+			printResult(graph, floyd.getDistances(), floyd
 					.getSuccessor());
 		}
 
@@ -95,7 +95,7 @@ public class TryFordMoore {
 		if (fm.hasNegativeCycleDetected()) {
 			System.out.println("negative cycle detected");
 		} else {
-			printResult2(target, fm.getParent(), fm.getWeightedDistance());
+			printResult2(target, fm.getParent(), fm.getDistance());
 		}
 
 	}

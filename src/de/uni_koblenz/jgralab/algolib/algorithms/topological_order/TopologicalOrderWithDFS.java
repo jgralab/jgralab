@@ -28,7 +28,7 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.algolib.algorithms.AbstractTraversal;
+import de.uni_koblenz.jgralab.algolib.algorithms.StructureOrientedAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.DepthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.DFSVisitorAdapter;
@@ -40,7 +40,7 @@ import de.uni_koblenz.jgralab.algolib.problems.AcyclicitySolver;
 import de.uni_koblenz.jgralab.algolib.problems.TopologicalOrderSolver;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
 
-public class TopologicalOrderWithDFS extends AbstractTraversal implements
+public class TopologicalOrderWithDFS extends StructureOrientedAlgorithm implements
 		AcyclicitySolver, TopologicalOrderSolver {
 
 	private DepthFirstSearch dfs;
@@ -86,13 +86,13 @@ public class TopologicalOrderWithDFS extends AbstractTraversal implements
 	}
 
 	@Override
-	public AbstractTraversal normal() {
+	public StructureOrientedAlgorithm normal() {
 		super.normal();
 		return this;
 	}
 
 	@Override
-	public AbstractTraversal reversed() {
+	public StructureOrientedAlgorithm reversed() {
 		super.reversed();
 		return this;
 	}

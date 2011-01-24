@@ -28,7 +28,7 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.algolib.algorithms.AbstractTraversal;
+import de.uni_koblenz.jgralab.algolib.algorithms.StructureOrientedAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmStates;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.topological_order.visitors.TopologicalOrderVisitorComposition;
@@ -41,7 +41,7 @@ import de.uni_koblenz.jgralab.algolib.problems.TopologicalOrderSolver;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
 import de.uni_koblenz.jgralab.graphmarker.IntegerVertexMarker;
 
-public class KahnKnuthAlgorithm extends AbstractTraversal implements
+public class KahnKnuthAlgorithm extends StructureOrientedAlgorithm implements
 		AcyclicitySolver, TopologicalOrderSolver {
 
 	private TopologicalOrderVisitorComposition visitors;

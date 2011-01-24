@@ -31,7 +31,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.algolib.algorithms.AbstractTraversal;
+import de.uni_koblenz.jgralab.algolib.algorithms.StructureOrientedAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.GraphAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.DepthFirstSearch;
@@ -47,7 +47,7 @@ import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
 import de.uni_koblenz.jgralab.graphmarker.ArrayVertexMarker;
 import de.uni_koblenz.jgralab.graphmarker.IntegerVertexMarker;
 
-public class StrongComponentsWithDFS extends AbstractTraversal implements
+public class StrongComponentsWithDFS extends StructureOrientedAlgorithm implements
 		StrongComponentsSolver {
 
 	private DepthFirstSearch dfs;
@@ -96,7 +96,7 @@ public class StrongComponentsWithDFS extends AbstractTraversal implements
 	}
 
 	@Override
-	public AbstractTraversal reversed() {
+	public StructureOrientedAlgorithm reversed() {
 		super.reversed();
 		return this;
 	}

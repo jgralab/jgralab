@@ -27,7 +27,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.algolib.algorithms.AbstractTraversal;
+import de.uni_koblenz.jgralab.algolib.algorithms.StructureOrientedAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmStates;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.functions.ArrayPermutation;
@@ -51,7 +51,7 @@ import de.uni_koblenz.jgralab.graphmarker.IntegerVertexMarker;
  * @author strauss@uni-koblenz.de
  * 
  */
-public abstract class SearchAlgorithm extends AbstractTraversal implements
+public abstract class SearchAlgorithm extends StructureOrientedAlgorithm implements
 		TraversalFromVertexSolver, CompleteTraversalSolver {
 
 	/**

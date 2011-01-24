@@ -28,24 +28,22 @@ import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.functions.DoubleFunction;
 
 /**
- * The problem <b>weighted distances from vertex</b> can be defined for directed
- * and undirected graphs. The graph may not have negative cycles. Algorithms
- * solving this problem are not required to check this precondition. The only
- * further parameter is the <i>start vertex</i>. Implementations compute the
- * weighted shortest distances from this vertex to all reachable vertices. The
- * result is a function <i>weighted distance</i> that assigns each vertex the
- * weighted distance from the start vertex.
+ * The problem <b>distance from vertex</b> is defined for directed and
+ * undirected graphs. The only further parameter is the <i>vertex</i> from which
+ * the distance to all reachable vertices has to be computed. The result is a
+ * function that contains the distances from the given vertex to all other
+ * vertices.
  * 
  * @author strauss@uni-koblenz.de
  * 
  */
-public interface WeightedDistancesFromVertexSolver extends WeightedProblemSolver {
+public interface DistancesFromVertexSolver extends ProblemSolver {
 
 	/**
-	 * Solves the problem <b>weighted distance from vertex</b>.
+	 * Solves the problem <b>distance from vertex</b>.
 	 * 
 	 * @param start
-	 *            the start vertex.
+	 *            the vertex to start at.
 	 * @return this algorithm object.
 	 * @throws AlgorithmTerminatedException
 	 *             if this algorithm terminated before the actual execution is
@@ -53,14 +51,14 @@ public interface WeightedDistancesFromVertexSolver extends WeightedProblemSolver
 	 *             from outside (Thread interruption). The algorithm state
 	 *             changes accordingly.
 	 */
-	public WeightedDistancesFromVertexSolver execute(Vertex start) throws AlgorithmTerminatedException;
+	public DistancesFromVertexSolver execute(Vertex start) throws AlgorithmTerminatedException;
 
 	/**
-	 * Retrieves the result <code>weightedDistance</code>.
+	 * Retrieves the result <code>distance</code> as function.
 	 * 
-	 * @return the result <code>weightedDistance</code>.
+	 * @return the result <code>distance</code>.
 	 * @throws IllegalStateException
 	 *             if the result is requested without being available
 	 */
-	public DoubleFunction<Vertex> getWeightedDistance();
+	public DoubleFunction<Vertex> getDistance();
 }
