@@ -28,7 +28,7 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.algolib.algorithms.AbstractTraversal;
+import de.uni_koblenz.jgralab.algolib.algorithms.StructureOrientedAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmStates;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.BreadthFirstSearch;
@@ -44,7 +44,7 @@ import de.uni_koblenz.jgralab.algolib.problems.ReachabilitySolver;
 import de.uni_koblenz.jgralab.algolib.problems.SimplePathsSolver;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
 
-public class WarshallAlgorithm extends AbstractTraversal implements
+public class WarshallAlgorithm extends StructureOrientedAlgorithm implements
 		ReachabilitySolver, SimplePathsSolver {
 
 	private IntFunction<Vertex> indexMapping;

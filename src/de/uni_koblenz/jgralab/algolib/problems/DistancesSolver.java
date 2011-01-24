@@ -23,26 +23,26 @@
  */
 package de.uni_koblenz.jgralab.algolib.problems;
 
-import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
-import de.uni_koblenz.jgralab.algolib.functions.BinaryFunction;
+import de.uni_koblenz.jgralab.algolib.functions.BinaryDoubleFunction;
 
 /**
- * The problem <b>weighted shortest paths</b> can be defined for directed and
+ * The problem <b>weighted distances</b> can be defined for directed and
  * undirected graphs. The graph may not have negative cycles. Algorithms solving
  * this problem are not required to check this precondition. There are no
- * further parameters. The result is a binary function <i>successor</i> that
- * assigns each vertex pair an edge, which is the next edge from the first
- * vertex to follow for reaching the second vertex using a shortest path.
+ * further parameters. The result is a binary function <i>weighted distance</i>
+ * that assigns each vertex pair the weighted distance from the first vertex to
+ * the second vertex using a shortest path.
+ * 
  * 
  * @author strauss@uni-koblenz.de
  * 
  */
-public interface WeightedShortestPathsSolver extends WeightedProblemSolver {
+public interface DistancesSolver extends ProblemSolver{
 
 	/**
-	 * Solves the problem <b>weighted shortest paths</b>.
+	 * Solves the problem <b>weighted distances</b>.
 	 * 
 	 * @return this algorithm object.
 	 * @throws AlgorithmTerminatedException
@@ -51,14 +51,15 @@ public interface WeightedShortestPathsSolver extends WeightedProblemSolver {
 	 *             from outside (Thread interruption). The algorithm state
 	 *             changes accordingly.
 	 */
-	public WeightedShortestPathsSolver execute() throws AlgorithmTerminatedException;
+	public DistancesSolver execute() throws AlgorithmTerminatedException;
 
 	/**
-	 * Retrieves the result <code>successor</code>.
+	 * Retrieves the result <code>weightedDistance</code>.
 	 * 
-	 * @return the result <code>successor</code>.
+	 * @return the result <code>weightedDistance</code>.
 	 * @throws IllegalStateException
 	 *             if the result is requested without being available
 	 */
-	public BinaryFunction<Vertex, Vertex, Edge> getSuccessor();
+	public BinaryDoubleFunction<Vertex, Vertex> getDistances();
+
 }

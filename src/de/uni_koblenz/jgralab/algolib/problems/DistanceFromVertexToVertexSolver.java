@@ -23,34 +23,30 @@
  */
 package de.uni_koblenz.jgralab.algolib.problems;
 
-import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
-import de.uni_koblenz.jgralab.algolib.functions.Function;
 
 /**
- * The problem <b>weighted shortest path from vertex to vertex</b> can be
- * defined for directed and undirected graphs. The graph may not have negative
- * cycles. Algorithms solving this problem are not required to check this
- * precondition. The further parameters are the <i>start vertex</i> and the
- * <i>target vertex</i>. The result is the function <i>parent</i> that describes
- * an incomplete path system (tree) that contains paths from the given vertex to
- * some reachable vertices. It is guaranteed to contain a shortest path from the
+ * The problem <b>weighted distance from vertex to vertex</b> can be defined for
+ * directed and undirected graphs. The graph may not have negative cycles.
+ * Algorithms solving this problem are not required to check this precondition.
+ * The further parameters are the <i>start vertex</i> and the <i>target
+ * vertex</i>. The result is a double value <i>single weighted Distance</i> that
+ * contains the weighted distance from the start vertex to the target vertex.
  * start vertex to the target vertex.
  * 
  * @author strauss@uni-koblenz.de
  * 
  */
-public interface WeightedShortestPathFromVertexToVertexSolver extends
-		WeightedProblemSolver {
+public interface DistanceFromVertexToVertexSolver extends ProblemSolver{
 
 	/**
-	 * Solves the problem <b>weighted shortest path from vertex to vertex</b>.
+	 * Solves the problem <b>weighted distance from vertex to vertex</b>.
 	 * 
 	 * @param start
-	 *            the start vertex
+	 *            the start vertex.
 	 * @param target
-	 *            the target vertex
+	 *            the target vertex.
 	 * @return this algorithm object.
 	 * @throws AlgorithmTerminatedException
 	 *             if this algorithm terminated before the actual execution is
@@ -58,15 +54,12 @@ public interface WeightedShortestPathFromVertexToVertexSolver extends
 	 *             from outside (Thread interruption). The algorithm state
 	 *             changes accordingly.
 	 */
-	public WeightedShortestPathFromVertexToVertexSolver execute(Vertex start,
-			Vertex target)  throws AlgorithmTerminatedException;
+	public DistanceFromVertexToVertexSolver execute(Vertex start,
+			Vertex target) throws AlgorithmTerminatedException;
 
 	/**
-	 * Retrieves the result <i>parent</i>.
-	 * 
-	 * @return the result <i>parent</i>.
-	 * @throws IllegalStateException
-	 *             if the result is requested without being available
+	 * Retrieves the result <code>distanceToTarget</code>.
+	 * @return the result <code>distanceToTarget</code>.
 	 */
-	public Function<Vertex, Edge> getParent();
+	public double getDistanceToTarget();
 }

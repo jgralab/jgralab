@@ -30,7 +30,7 @@ import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 import de.uni_koblenz.jgralab.algolib.problems.TraversalSolver;
 
-public abstract class AbstractTraversal extends GraphAlgorithm implements
+public abstract class StructureOrientedAlgorithm extends GraphAlgorithm implements
 		TraversalSolver {
 
 	/**
@@ -48,11 +48,11 @@ public abstract class AbstractTraversal extends GraphAlgorithm implements
 	 */
 	protected EdgeDirection traversalDirection;
 
-	public AbstractTraversal(Graph graph) {
+	public StructureOrientedAlgorithm(Graph graph) {
 		this(graph, null, null);
 	}
 
-	public AbstractTraversal(Graph graph,
+	public StructureOrientedAlgorithm(Graph graph,
 			BooleanFunction<GraphElement> subgraph,
 			BooleanFunction<Edge> navigable) {
 		super(graph, subgraph);
@@ -112,7 +112,7 @@ public abstract class AbstractTraversal extends GraphAlgorithm implements
 	 * 
 	 * @return this algorithm object.
 	 */
-	public AbstractTraversal normal() {
+	public StructureOrientedAlgorithm normal() {
 		setTraversalDirection(EdgeDirection.OUT);
 		return this;
 	}
@@ -124,7 +124,7 @@ public abstract class AbstractTraversal extends GraphAlgorithm implements
 	 * 
 	 * @return this algorithm object.
 	 */
-	public AbstractTraversal reversed() {
+	public StructureOrientedAlgorithm reversed() {
 		setTraversalDirection(EdgeDirection.IN);
 		return this;
 	}
@@ -136,7 +136,7 @@ public abstract class AbstractTraversal extends GraphAlgorithm implements
 	 * 
 	 * @return this algorithm object.
 	 */
-	public AbstractTraversal undirected() {
+	public StructureOrientedAlgorithm undirected() {
 		setTraversalDirection(EdgeDirection.INOUT);
 		return this;
 	}
