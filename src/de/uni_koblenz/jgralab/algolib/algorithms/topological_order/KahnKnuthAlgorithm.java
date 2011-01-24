@@ -197,10 +197,19 @@ public class KahnKnuthAlgorithm extends StructureOrientedAlgorithm implements
 			if (subgraph != null && !subgraph.get(currentVertex)) {
 				continue;
 			}
-			// TODO replace with proper degree computation with respect to the
-			// subgraph and the function navigable
-			int degree = currentVertex.getDegree(degreeDirection);
-
+			int degree = 0;
+			if (subgraph == null && navigable == null) {
+				degree = currentVertex.getDegree(degreeDirection);
+			} else {
+				for (Edge currentIncidence : currentVertex
+						.incidences(degreeDirection)) {
+					if ((navigable == null || navigable.get(currentIncidence))
+							&& (subgraph == null || subgraph
+									.get(currentIncidence))) {
+						degree++;
+					}
+				}
+			}
 			inDegree.set(currentVertex, degree);
 			if (degree == 0) {
 				torder[tnum] = currentVertex;
