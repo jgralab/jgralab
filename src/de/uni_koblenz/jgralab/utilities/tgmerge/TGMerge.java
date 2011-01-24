@@ -81,6 +81,7 @@ public class TGMerge {
 		if (markers.length == 0) {
 			throw new RuntimeException("No marker given!");
 		}
+		targetGraph = g;
 		for (AbstractGraphMarker<?> m : markers) {
 			additionalGraphMarkers.add(m);
 		}
