@@ -48,6 +48,7 @@ import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.Schema;
@@ -58,6 +59,8 @@ import de.uni_koblenz.jgralab.schema.Schema;
  */
 public class TGMerge {
 	private List<Graph> additionalGraphs = new LinkedList<Graph>();
+	private List<AbstractGraphMarker<?>> additionalGraphMarkers = new LinkedList<AbstractGraphMarker<?>>();
+
 	private Graph targetGraph;
 	private Map<Vertex, Vertex> old2NewVertices = new HashMap<Vertex, Vertex>();
 	private Map<Edge, Edge> new2OldEdges = new HashMap<Edge, Edge>();
@@ -72,6 +75,15 @@ public class TGMerge {
 	 */
 	public TGMerge(List<Graph> graphs) {
 		this(graphs.toArray(new Graph[graphs.size()]));
+	}
+
+	public TGMerge(Graph g, AbstractGraphMarker<?>... markers) {
+		if (markers.length == 0) {
+			throw new RuntimeException("No marker given!");
+		}
+		for (AbstractGraphMarker<?> m : markers) {
+			additionalGraphMarkers.add(m);
+		}
 	}
 
 	/**
@@ -125,8 +137,28 @@ public class TGMerge {
 		log.fine("TargetGraph is '" + targetGraph.getId() + "'.");
 		for (Graph g : additionalGraphs) {
 			log.fine("Merging graph '" + g.getId() + "'...");
-			copyVertices(g);
-			copyEdges(g);
+			for (Vertex v : g.vertices()) {
+				copyVertex(v);
+			}
+			for (Edge e : g.edges()) {
+				copyEdge(e);
+			}
+			sortIncidences();
+			old2NewVertices.clear();
+			new2OldEdges.clear();
+		}
+		for (AbstractGraphMarker<?> marker : additionalGraphMarkers) {
+			log.fine("Merging GraphMarker '" + marker + "'...");
+			for (AttributedElement ae : marker.getMarkedElements()) {
+				if (ae instanceof Vertex) {
+					copyVertex((Vertex) ae);
+				}
+			}
+			for (AttributedElement ae : marker.getMarkedElements()) {
+				if (ae instanceof Edge) {
+					copyEdge((Edge) ae);
+				}
+			}
 			sortIncidences();
 			old2NewVertices.clear();
 			new2OldEdges.clear();
@@ -156,33 +188,26 @@ public class TGMerge {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void copyEdges(Graph g) {
-		log.fine("Copying Edges...");
-		for (Edge e : g.edges()) {
-			Vertex start = old2NewVertices.get(e.getAlpha());
-			Vertex end = old2NewVertices.get(e.getOmega());
-			Edge newEdge = targetGraph.createEdge(
-					(Class<? extends Edge>) e.getM1Class(), start, end);
+	private void copyEdge(Edge e) {
+		Vertex start = old2NewVertices.get(e.getAlpha());
+		Vertex end = old2NewVertices.get(e.getOmega());
+		Edge newEdge = targetGraph.createEdge(
+				(Class<? extends Edge>) e.getM1Class(), start, end);
 
-			copyAttributes(e, newEdge);
+		copyAttributes(e, newEdge);
 
-			new2OldEdges.put(newEdge, e);
-			new2OldEdges.put(newEdge.getReversedEdge(), e.getReversedEdge());
-		}
+		new2OldEdges.put(newEdge, e);
+		new2OldEdges.put(newEdge.getReversedEdge(), e.getReversedEdge());
 	}
 
 	@SuppressWarnings("unchecked")
-	private void copyVertices(Graph g) {
-		log.fine("Copying Vertices...");
-		for (Vertex v : g.vertices()) {
-			Vertex newVertex = targetGraph
-					.createVertex((Class<? extends Vertex>) v.getM1Class());
+	private void copyVertex(Vertex v) {
+		Vertex newVertex = targetGraph.createVertex((Class<? extends Vertex>) v
+				.getM1Class());
 
-			copyAttributes(v, newVertex);
+		copyAttributes(v, newVertex);
 
-			old2NewVertices.put(v, newVertex);
-		}
-
+		old2NewVertices.put(v, newVertex);
 	}
 
 	private void copyAttributes(AttributedElement oldAttrElem,
