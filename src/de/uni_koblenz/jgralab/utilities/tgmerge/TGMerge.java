@@ -63,6 +63,7 @@ public class TGMerge {
 
 	private Graph targetGraph;
 	private Map<Vertex, Vertex> old2NewVertices = new HashMap<Vertex, Vertex>();
+	private Map<Vertex, Vertex> new2OldVertices = new HashMap<Vertex, Vertex>();
 	private Map<Edge, Edge> new2OldEdges = new HashMap<Edge, Edge>();
 
 	private static Logger log = JGraLab.getLogger(TGMerge.class.getPackage()
@@ -144,8 +145,11 @@ public class TGMerge {
 			for (Edge e : g.edges()) {
 				copyEdge(e);
 			}
+			sortVertices();
+			sortEdges();
 			sortIncidences();
 			old2NewVertices.clear();
+			new2OldVertices.clear();
 			new2OldEdges.clear();
 		}
 		for (AbstractGraphMarker<?> marker : additionalGraphMarkers) {
@@ -160,12 +164,110 @@ public class TGMerge {
 					copyEdge((Edge) ae);
 				}
 			}
+			System.out.println("sorting V");
+			sortVertices();
+			System.out.println("sorting E");
+			sortEdges();
+			System.out.println("sorting I");
 			sortIncidences();
 			old2NewVertices.clear();
+			new2OldVertices.clear();
 			new2OldEdges.clear();
 		}
 
 		return targetGraph;
+	}
+
+	private void sortVertices() {
+		log.fine("Sorting Vertices...");
+		targetGraph.sortVertices(new Comparator<Vertex>() {
+			private long compareCount = 0;
+
+			@Override
+			public int compare(Vertex v1, Vertex v2) {
+				compareCount++;
+				if (compareCount % 1000 == 0) {
+					System.out.println(compareCount + " comparisons.");
+				}
+				if (new2OldVertices.containsKey(v1)
+						&& new2OldVertices.containsKey(v2)) {
+					// Both vertices were copied
+					Vertex ov1 = new2OldVertices.get(v1);
+					Vertex ov2 = new2OldVertices.get(v2);
+					if (ov1.isBefore(ov2)) {
+						return -1;
+					} else if (ov2.isBefore(ov1)) {
+						return 1;
+					}
+					throw new RuntimeException(
+							"Exception while sorting vertices.");
+				} else if (new2OldVertices.containsKey(v1)
+						&& !new2OldVertices.containsKey(v2)) {
+					// Only v1 is a copy, so it should come after v2.
+					return 1;
+				} else if (!new2OldVertices.containsKey(v1)
+						&& new2OldVertices.containsKey(v2)) {
+					// Only v2 is a copy, so v1 should come before v2.
+					return -1;
+				} else if (!new2OldVertices.containsKey(v1)
+						&& !new2OldVertices.containsKey(v2)) {
+					// Neither v1 nor v2 is a copy, so keep stable
+					if (v1.isBefore(v2)) {
+						return -1;
+					} else if (v2.isBefore(v1)) {
+						return 1;
+					}
+					throw new RuntimeException(
+							"Exception while sorting vertices.");
+				}
+				throw new RuntimeException("Exception while sorting vertices.");
+			}
+		});
+	}
+
+	private void sortEdges() {
+		log.fine("Sorting edges...");
+		targetGraph.sortEdges(new Comparator<Edge>() {
+			private long compareCount = 0;
+
+			@Override
+			public int compare(Edge e1, Edge e2) {
+				if (compareCount % 1000 == 0) {
+					System.out.println(compareCount + " comparisons.");
+				}
+				if (new2OldEdges.containsKey(e1)
+						&& new2OldEdges.containsKey(e2)) {
+					// Both vertices were copied, so keep the order of the
+					// original graph.
+					Edge oe1 = new2OldEdges.get(e1);
+					Edge oe2 = new2OldEdges.get(e2);
+					if (oe1.isBeforeEdge(oe2)) {
+						return -1;
+					} else if (oe2.isBeforeEdge(oe1)) {
+						return 1;
+					}
+					throw new RuntimeException("Exception while sorting edges.");
+				} else if (new2OldEdges.containsKey(e1)
+						&& !new2OldEdges.containsKey(e2)) {
+					// Only e1 is a copy, so it should come after e2.
+					return 1;
+				} else if (!new2OldEdges.containsKey(e1)
+						&& new2OldEdges.containsKey(e2)) {
+					// Only e2 is a copy, so e1 should come before e2.
+					return -1;
+				} else if (!new2OldEdges.containsKey(e1)
+						&& !new2OldEdges.containsKey(e2)) {
+					// Neither e1 nor e2 is a copy, so keep stable
+					if (e1.isBeforeEdge(e2)) {
+						return -1;
+					} else if (e2.isBeforeEdge(e1)) {
+						return 1;
+					}
+					throw new RuntimeException("Exception while sorting edges.");
+				}
+				throw new RuntimeException("Exception while sorting edges.");
+			}
+		});
 	}
 
 	private void sortIncidences() {
@@ -209,6 +311,7 @@ public class TGMerge {
 		copyAttributes(v, newVertex);
 
 		old2NewVertices.put(v, newVertex);
+		new2OldVertices.put(newVertex, v);
 	}
 
 	private void copyAttributes(AttributedElement oldAttrElem,
