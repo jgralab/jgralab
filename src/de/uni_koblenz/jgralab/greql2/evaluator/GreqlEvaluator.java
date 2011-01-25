@@ -1035,7 +1035,7 @@ public class GreqlEvaluator {
 	 */
 	public boolean startEvaluation() throws EvaluateException,
 			OptimizerException {
-		return startEvaluation(false, false);
+		return startEvaluation(false, true);
 	}
 
 	/**
@@ -1141,8 +1141,6 @@ public class GreqlEvaluator {
 			return true;
 		}
 
-		warnForUnusedVariables();
-
 		// Calculate the evaluation costs
 		VertexEvaluator greql2ExpEval = vertexEvalGraphMarker
 				.getMark(queryGraph.getFirstGreql2Expression());
@@ -1190,20 +1188,6 @@ public class GreqlEvaluator {
 		overallEvaluationTime = System.currentTimeMillis() - startTime;
 		started = false;
 		return true;
-	}
-
-	private void warnForUnusedVariables() {
-		for (Variable var : queryGraph.getVariableVertices()) {
-			if (var.getFirstIsBoundVarOfIncidence() != null) {
-				// Vars imported by "using" are mostly generated, so it's pretty
-				// often the case they are not really used, like in Tg2Dot.
-				return;
-			}
-			if (var.getDegree() < 2) {
-				logger.warning("The variable " + var.get_name()
-						+ " is declared but not used.");
-			}
-		}
 	}
 
 	private void printGraphAsDot(Graph graph, boolean reversedEdges,
