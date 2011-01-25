@@ -30,12 +30,16 @@
  */
 package de.uni_koblenz.jgralab.graphmarker;
 
+import java.util.Iterator;
+
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.algolib.functions.IntFunction;
+import de.uni_koblenz.jgralab.algolib.functions.entries.IntFunctionEntry;
 
 public abstract class IntegerGraphMarker<T extends GraphElement> extends
-		AbstractGraphMarker<T> {
+		AbstractGraphMarker<T> implements IntFunction<T> {
 
 	private static final int DEFAULT_UNMARKED_VALUE = Integer.MIN_VALUE;
 
@@ -48,6 +52,7 @@ public abstract class IntegerGraphMarker<T extends GraphElement> extends
 		super(graph);
 		unmarkedValue = DEFAULT_UNMARKED_VALUE;
 		temporaryAttributes = createNewArray(size);
+		marked = 0;
 	}
 
 	private int[] createNewArray(int size) {
@@ -144,18 +149,86 @@ public abstract class IntegerGraphMarker<T extends GraphElement> extends
 	}
 
 	public void setUnmarkedValue(int newUnmarkedValue) {
-		for (int i = 0; i < temporaryAttributes.length; i++) {
-			// keep track of implicitly unmarked values
-			if (temporaryAttributes[i] == newUnmarkedValue) {
-				marked -= 1;
+		if (newUnmarkedValue != this.unmarkedValue) {
+			for (int i = 0; i < temporaryAttributes.length; i++) {
+				// keep track of implicitly unmarked values
+				if (temporaryAttributes[i] == newUnmarkedValue) {
+					marked -= 1;
+				}
+				// set all unmarked elements to new value
+				if (temporaryAttributes[i] == this.unmarkedValue) {
+					temporaryAttributes[i] = newUnmarkedValue;
+				}
+
 			}
-			// set all unmarked elements to new value
-			if (temporaryAttributes[i] == this.unmarkedValue) {
-				temporaryAttributes[i] = newUnmarkedValue;
+			this.unmarkedValue = newUnmarkedValue;
+		}
+	}
+
+	@Override
+	public int get(T parameter) {
+		return getMark(parameter);
+	}
+
+	@Override
+	public boolean isDefined(T parameter) {
+		return isMarked(parameter);
+	}
+
+	@Override
+	public void set(T parameter, int value) {
+		mark(parameter, value);
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder out = new StringBuilder();
+		out.append("[");
+		Iterator<T> iter = getMarkedElements().iterator();
+		if (iter.hasNext()) {
+			T next = iter.next();
+			out.append(next);
+			out.append(" -> ");
+			out.append(get(next));
+			while (iter.hasNext()) {
+				out.append(",\n");
+				next = iter.next();
+				out.append(next);
+				out.append(" -> ");
+				out.append(get(next));
+			}
+		}
+		out.append("]");
+		return out.toString();
+	}
+
+	@Override
+	public Iterator<IntFunctionEntry<T>> iterator() {
+		final Iterator<T> markedElements = getMarkedElements().iterator();
+		return new Iterator<IntFunctionEntry<T>>() {
+
+			@Override
+			public boolean hasNext() {
+				return markedElements.hasNext();
 			}
 
-		}
-		this.unmarkedValue = newUnmarkedValue;
+			@Override
+			public IntFunctionEntry<T> next() {
+				T currentElement = markedElements.next();
+				return new IntFunctionEntry<T>(currentElement,
+						get(currentElement));
+			}
+
+			@Override
+			public void remove() {
+				markedElements.remove();
+			}
+		};
+	}
+
+	@Override
+	public Iterable<T> getDomainElements() {
+		return getMarkedElements();
 	}
 
 }

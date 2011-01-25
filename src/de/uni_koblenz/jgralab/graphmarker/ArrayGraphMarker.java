@@ -30,9 +30,13 @@
  */
 package de.uni_koblenz.jgralab.graphmarker;
 
+import java.util.Iterator;
+
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.algolib.functions.Function;
+import de.uni_koblenz.jgralab.algolib.functions.entries.FunctionEntry;
 
 /**
  * This class is the abstract superclass of generic array graph markers.
@@ -42,7 +46,7 @@ import de.uni_koblenz.jgralab.Vertex;
  * @param <T>
  */
 public abstract class ArrayGraphMarker<T extends GraphElement, O> extends
-		AbstractGraphMarker<T> {
+		AbstractGraphMarker<T> implements Function<T, O> {
 
 	/**
 	 * The array of temporary attributes.
@@ -138,6 +142,72 @@ public abstract class ArrayGraphMarker<T extends GraphElement, O> extends
 
 	public int maxSize() {
 		return temporaryAttributes.length - 1;
+	}
+
+	@Override
+	public O get(T parameter) {
+		return getMark(parameter);
+	}
+
+	@Override
+	public boolean isDefined(T parameter) {
+		return isMarked(parameter);
+	}
+
+	@Override
+	public void set(T parameter, O value) {
+		mark(parameter, value);
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder out = new StringBuilder();
+		out.append("[");
+		Iterator<T> iter = getMarkedElements().iterator();
+		if (iter.hasNext()) {
+			T next = iter.next();
+			out.append(next);
+			out.append(" -> ");
+			out.append(get(next));
+			while (iter.hasNext()) {
+				out.append(",\n");
+				next = iter.next();
+				out.append(next);
+				out.append(" -> ");
+				out.append(get(next));
+			}
+		}
+		out.append("]");
+		return out.toString();
+	}
+	
+	@Override
+	public Iterable<T> getDomainElements() {
+		return getMarkedElements();
+	}
+
+	@Override
+	public Iterator<FunctionEntry<T, O>> iterator() {
+		final Iterator<T> markedElements = getMarkedElements().iterator();
+		return new Iterator<FunctionEntry<T,O>>() {
+
+			@Override
+			public boolean hasNext() {
+				return markedElements.hasNext();
+			}
+
+			@Override
+			public FunctionEntry<T, O> next() {
+				T currentElement = markedElements.next();
+				return new FunctionEntry<T, O>(currentElement, get(currentElement));
+			}
+
+			@Override
+			public void remove() {
+				markedElements.remove();
+			}
+			
+		};
 	}
 
 }

@@ -38,6 +38,8 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
+import de.uni_koblenz.jgralab.algolib.functions.entries.BooleanFunctionEntry;
 
 /**
  * This class serves as a special <code>BitSetGraphmarker</code>, although it
@@ -49,7 +51,8 @@ import de.uni_koblenz.jgralab.Vertex;
  * @author ist@uni-koblenz.de
  * 
  */
-public class SubGraphMarker extends AbstractGraphMarker<GraphElement> {
+public class SubGraphMarker extends AbstractGraphMarker<GraphElement> implements
+		BooleanFunction<GraphElement> {
 
 	// TODO maybe replace with BitSets
 
@@ -242,4 +245,53 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement> {
 		};
 	}
 
+	@Override
+	public boolean get(GraphElement parameter) {
+		return isMarked(parameter);
+	}
+
+	@Override
+	public boolean isDefined(GraphElement parameter) {
+		return true;
+	}
+
+	@Override
+	public void set(GraphElement parameter, boolean value) {
+		if (value) {
+			mark(parameter);
+		} else {
+			removeMark(parameter);
+		}
+	}
+
+	@Override
+	public Iterator<BooleanFunctionEntry<GraphElement>> iterator() {
+		final Iterator<GraphElement> markedElements = getMarkedElements()
+				.iterator();
+		return new Iterator<BooleanFunctionEntry<GraphElement>>() {
+
+			@Override
+			public boolean hasNext() {
+				return markedElements.hasNext();
+			}
+
+			@Override
+			public BooleanFunctionEntry<GraphElement> next() {
+				GraphElement currentElement = markedElements.next();
+				return new BooleanFunctionEntry<GraphElement>(currentElement,
+						get(currentElement));
+			}
+
+			@Override
+			public void remove() {
+				markedElements.remove();
+			}
+
+		};
+	}
+
+	@Override
+	public Iterable<GraphElement> getDomainElements() {
+		return getMarkedElements();
+	}
 }

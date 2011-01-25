@@ -1341,6 +1341,10 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	public final boolean hasStandardSupport() {
 		return false;
 	}
+	
+	public void clearCache(){
+		graphCache.clear();
+	}
 
 	// --------- Unsupported operations ------------------------------------
 
