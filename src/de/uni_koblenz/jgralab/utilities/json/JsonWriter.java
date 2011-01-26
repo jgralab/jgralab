@@ -1,4 +1,4 @@
-package de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.json;
+package de.uni_koblenz.jgralab.utilities.json;
 
 import java.io.File;
 import java.io.IOException;

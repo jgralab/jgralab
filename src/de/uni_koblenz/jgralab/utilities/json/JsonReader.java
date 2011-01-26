@@ -1,4 +1,4 @@
-package de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.json;
+package de.uni_koblenz.jgralab.utilities.json;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -26,7 +26,16 @@ public abstract class JsonReader {
 	/**
 	 * Counts the nestedDepth at the current position.
 	 */
-	int nestedDepth;
+	private int nestingDepth;
+
+	/**
+	 * Returns the nesting depth at the current position.
+	 * 
+	 * @return
+	 */
+	public int getNestingDepth() {
+		return nestingDepth;
+	}
 
 	/**
 	 * Creates a JsonReader for reading a Json-file.
@@ -74,7 +83,7 @@ public abstract class JsonReader {
 	 */
 	private void initializeReader(File sourceFile) throws JsonParseException,
 			IOException {
-		nestedDepth = 0;
+		nestingDepth = 0;
 
 		JsonFactory factory = new JsonFactory();
 		parser = factory.createJsonParser(sourceFile);
@@ -103,12 +112,12 @@ public abstract class JsonReader {
 			case START_OBJECT:
 				// can only be the beginning of the document otherwise it would
 				// be parsed by the method "parseCurrentFieldEventToken"
-				nestedDepth++;
+				nestingDepth++;
 				startDocumentEvent();
 				break;
 			case END_OBJECT:
-				nestedDepth--;
-				if (nestedDepth == 0) {
+				nestingDepth--;
+				if (nestingDepth == 0) {
 					endDocumentEvent();
 				} else {
 					endObjectEvent();
@@ -124,7 +133,7 @@ public abstract class JsonReader {
 			default:
 				throw new RuntimeException(token + " has not been considert!");
 			}
-		} while (nestedDepth != 0);
+		} while (nestingDepth != 0);
 	}
 
 	/**
@@ -140,7 +149,7 @@ public abstract class JsonReader {
 		JsonToken token = parser.nextToken();
 		switch (token) {
 		case START_OBJECT:
-			nestedDepth++;
+			nestingDepth++;
 			startObjectEvent(name);
 			break;
 		case START_ARRAY:
