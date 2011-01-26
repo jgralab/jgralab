@@ -33,6 +33,7 @@ package de.uni_koblenz.jgralabtest.greql2;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -41,6 +42,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueBag;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
+import de.uni_koblenz.jgralab.grumlschema.structure.NamedElement;
 
 public class PathSystemTest extends GenericTests {
 
@@ -371,14 +373,17 @@ public class PathSystemTest extends GenericTests {
 
 	@Test
 	public void testTypes() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from v: V{WhereExpression} report types(v  :-) <--{IsDefinitionOf} <--{IsVarOf}) end";
-		JValue result = evalTestQuery("TypeSet", queryString);
+		String queryString = "from c: V{localities.County}"
+				+ "report types(pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad})) "
+				+ "end";
+		JValue result = evalTestQuery("TypeSet", queryString,
+				TestVersion.CITY_MAP_GRAPH);
 		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(1, bag.size());
+		assertEquals(countyCount, bag.size());
+		// TODO this test is not well thought through
 		for (JValue v : bag) {
-			assertEquals(5, v.toCollection().size());
+			int size = v.toCollection().size();
+			assertTrue(size == 6 || size == 10);
 		}
 	}
 
