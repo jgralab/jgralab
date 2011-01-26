@@ -30,9 +30,9 @@ import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.Definition;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.ElementDefinition;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.TypeDefinition;
-import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.json.JsonGraphLayoutReader;
-import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.plist.PListGraphLayoutReader;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.GraphLayoutReader;
+import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.json.JsonGraphLayoutReader;
+import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.plist.PListGraphLayoutReader;
 import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade;
 
 public class GraphLayoutFactory {
