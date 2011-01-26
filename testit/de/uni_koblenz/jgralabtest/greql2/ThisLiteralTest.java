@@ -42,33 +42,40 @@ public class ThisLiteralTest extends GenericTests {
 
 	@Test
 	public void testThisVertex1() throws Exception {
-		String queryString = "from v,w:V{WhereExpression} with v {@thisVertex<>v}& --> &{@thisVertex=v} -->  w report v end";
-		JValue result = evalTestQuery("ThisVertex1", queryString);
+		String queryString = "from c: V{localities.County}, a:V{junctions.Airport} "
+				+ "with c --> & {@thisVertex = a} --> & {@thisVertex <> a} a report a "
+				+ "end";
+		JValue result = evalTestQuery("ThisVertex1", queryString,
+				TestVersion.CITY_MAP_GRAPH);
 		JValue resultOpt = evalTestQuery("ThisVertex1 (wo)", queryString,
-				new DefaultOptimizer());
+				new DefaultOptimizer(), TestVersion.CITY_MAP_GRAPH);
 		assertEquals(0, result.toCollection().size());
 		assertEquals(result, resultOpt);
 	}
 
 	@Test
 	public void testThisVertex2() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from v,w:V{WhereExpression}, g:V{Greql2Expression} with v {@thisVertex=v}& --> &{@thisVertex=g} <-- w report v end";
-		JValue result = evalTestQuery("ThisVertex2", queryString);
+		String queryString = "from c: V{localities.County}, a1,a2:V{junctions.Airport} "
+				+ "with c {@thisVertex = c} & --> & {@thisVertex = a1} <-- a2 report a1 "
+				+ "end";
+		JValue result = evalTestQuery("ThisVertex2", queryString,
+				TestVersion.CITY_MAP_GRAPH);
 		JValue resultOpt = evalTestQuery("ThisVertex2 (wo)", queryString,
-				new DefaultOptimizer());
-		assertEquals(1, result.toCollection().size());
+				new DefaultOptimizer(), TestVersion.CITY_MAP_GRAPH);
+		assertEquals(3, result.toCollection().size());
 		assertEquals(result, resultOpt);
 	}
 
 	@Test
 	public void testThisVertex3() throws Exception {
-		String queryString = "from v,w:V{WhereExpression}, g:V{Greql2Expression} with v {@thisVertex=v}& --> &{@thisVertex<>g} <-- w report v end";
-		JValue result = evalTestQuery("ThisVertex3", queryString);
+		String queryString = "from c: V{localities.County}, a1,a2:V{junctions.Airport} "
+				+ "with c {@thisVertex = c} & --> & {@thisVertex <> a1} <-- a2 report a1 "
+				+ "end";
+		JValue result = evalTestQuery("ThisVertex3", queryString,
+				TestVersion.CITY_MAP_GRAPH);
 		JValue resultOpt = evalTestQuery("ThisVertex3 (wo)", queryString,
-				new DefaultOptimizer());
-		assertEquals(0, result.toCollection().size());
+				new DefaultOptimizer(), TestVersion.CITY_MAP_GRAPH);
+		assertEquals(airportCount * 2 - 1, result.toCollection().size());
 		assertEquals(result, resultOpt);
 	}
 
