@@ -51,7 +51,6 @@ import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalGraph;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalSchema;
 import de.uni_koblenz.jgralabtest.schemas.minimal.Node;
 
-@SuppressWarnings("deprecation")
 public class GenericTests {
 
 	public enum TestVersion {
