@@ -346,14 +346,22 @@ public class PathSystemTest extends GenericTests {
 
 	@Test
 	public void testSiblings() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from v: V{WhereExpression}, w:V{Definition}  report siblings(w,  v  :-) <--{IsDefinitionOf} <--{IsVarOf}) end";
-		JValue result = evalTestQuery("Siblings", queryString);
+		String queryString = "from c: V{localities.County}, r:V{junctions.Crossroad} "
+				+ "report siblings(r, pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad})) "
+				+ "end";
+		JValue result = evalTestQuery("Siblings", queryString,
+				TestVersion.CITY_MAP_GRAPH);
 		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(4, bag.size());
+		assertEquals(countyCount * crossroadCount, bag.size());
+		int noSiblingsFound = 0;
+		int expectedValue = crossroadCount - 2 * uncontainedCrossroadCount;
 		for (JValue v : bag) {
-			assertEquals(3, v.toCollection().size());
+			int size = v.toCollection().size();
+			if (size == 0) {
+				noSiblingsFound++;
+			} else {
+				assertEquals(expectedValue, v.toCollection().size());
+			}
 		}
 	}
 
