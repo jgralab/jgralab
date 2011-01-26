@@ -3,6 +3,7 @@ package de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.json;
 import java.io.File;
 import java.io.FileNotFoundException;
 
+import de.uni_koblenz.jgralab.utilities.json.JsonReader;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.GraphLayout;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.AbstractTemporaryGraphLayoutReader;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.TemporaryGraphLayoutReader;
@@ -79,7 +80,7 @@ public class JsonTemporaryGraphLayoutReader extends
 		 */
 		@Override
 		protected void startObjectEvent(String name) {
-			if (nestedDepth != 2) {
+			if (getNestingDepth() != 2) {
 				throw new RuntimeException("Already Processing an Object!");
 			}
 			definitionStarted(name);
@@ -127,7 +128,7 @@ public class JsonTemporaryGraphLayoutReader extends
 		 */
 		private void processFieldEvent(String name, String value) {
 
-			switch (jsonReader.nestedDepth) {
+			switch (jsonReader.getNestingDepth()) {
 			case 1:
 				processGlobalVariable(name, value);
 				break;
