@@ -8,7 +8,7 @@ import org.riediger.plist.PList;
 import org.riediger.plist.PListDict;
 import org.riediger.plist.PListException;
 
-import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.AbstractTemporaryGraphLayoutReader;
+import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.AbstractTemporaryGraphLayoutReader;
 
 /**
  * A GraphLayoutReader reading in graph layout from PList-files.

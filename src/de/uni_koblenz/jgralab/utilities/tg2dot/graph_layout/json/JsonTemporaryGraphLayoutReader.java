@@ -3,8 +3,8 @@ package de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.json;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.AbstractTemporaryGraphLayoutReader;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.TemporaryGraphLayoutReader;
+import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.AbstractTemporaryGraphLayoutReader;
 
 /**
  * Reads a graph layout as Json-file in and produces a list of
