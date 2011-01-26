@@ -9,7 +9,7 @@ import org.riediger.plist.PListDict;
 import org.riediger.plist.PListException;
 
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.GraphLayout;
-import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.AbstractTemporaryGraphLayoutReader;
+import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.AbstractGraphLayoutReader;
 import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade;
 
 /**
@@ -18,13 +18,13 @@ import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade;
  * 
  * @author ist@uni-koblenz.de
  */
-public class PListTemporaryGraphLayoutReader extends
-		AbstractTemporaryGraphLayoutReader {
+public class PListGraphLayoutReader extends
+		AbstractGraphLayoutReader {
 
 	/**
 	 * Constructs a PListGraphLayoutReader.
 	 */
-	public PListTemporaryGraphLayoutReader(GreqlEvaluatorFacade evaluator) {
+	public PListGraphLayoutReader(GreqlEvaluatorFacade evaluator) {
 		super(evaluator);
 	}
 

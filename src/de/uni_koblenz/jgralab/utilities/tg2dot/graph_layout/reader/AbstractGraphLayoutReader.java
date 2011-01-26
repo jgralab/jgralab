@@ -17,8 +17,8 @@ import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade;
  * 
  * @author ist@uni-koblenz.de
  */
-public abstract class AbstractTemporaryGraphLayoutReader implements
-		TemporaryGraphLayoutReader {
+public abstract class AbstractGraphLayoutReader implements
+		GraphLayoutReader {
 
 	protected GraphLayout graphLayout;
 	protected Definition currentDefinition;
@@ -28,7 +28,7 @@ public abstract class AbstractTemporaryGraphLayoutReader implements
 	 * Creates a AbstractGraphLayoutReader for reading a graph layout and
 	 * initializes all data structures.
 	 */
-	public AbstractTemporaryGraphLayoutReader(GreqlEvaluatorFacade evaluator) {
+	public AbstractGraphLayoutReader(GreqlEvaluatorFacade evaluator) {
 		this.evaluator = evaluator;
 		initilizeStates();
 	}
