@@ -132,7 +132,7 @@ public class Tg2Dot extends Tg2Whatever {
 		converter.getOptions(args);
 		System.out.print("Start processing graph...");
 		System.out.flush();
-		converter.printGraph();
+		converter.convert();
 		System.out.println("finished.");
 	}
 
@@ -617,7 +617,7 @@ public class Tg2Dot extends Tg2Whatever {
 			converter.setReversedEdgeTypes(revEdgeTypes);
 		}
 
-		converter.printGraph();
+		converter.convert();
 	}
 
 	public static void printGraphAsDot(Graph graph, boolean reversedEdges,
@@ -648,7 +648,7 @@ public class Tg2Dot extends Tg2Whatever {
 
 		converter.setGraphMarker(marker);
 
-		converter.printGraph();
+		converter.convert();
 	}
 
 	/**

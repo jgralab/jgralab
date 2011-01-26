@@ -133,7 +133,7 @@ public class TwoDVisualizer {
 		MyTg2Dot mtd = new MyTg2Dot(elementsToDisplay, dotFileName,
 				showAttributes, currentElement, state.selectedEdgeClasses,
 				state.selectedVertexClasses);
-		mtd.printGraph();
+		mtd.convert();
 		if (mtd.exception != null) {
 			code
 					.append("document.getElementById('divError').style.display = \"block\";\n");
@@ -454,7 +454,7 @@ public class TwoDVisualizer {
 		 * de.uni_koblenz.jgralab.utilities.tg2whatever.Tg2Whatever#printGraph()
 		 */
 		@Override
-		public void printGraph() {
+		public void convert() {
 			PrintStream out = null;
 			try {
 				out = new PrintStream(new BufferedOutputStream(
