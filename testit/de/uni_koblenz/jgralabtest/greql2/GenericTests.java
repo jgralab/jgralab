@@ -32,18 +32,12 @@
 package de.uni_koblenz.jgralabtest.greql2;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 
 import org.junit.Before;
 
-import de.uni_koblenz.jgralab.AttributedElement;
-import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
-import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.greql2.SerializableGreql2;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
@@ -53,9 +47,6 @@ import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.Optimizer;
 import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
 import de.uni_koblenz.jgralab.utilities.tg2dot.SimpleTg2Dot;
-import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
-import de.uni_koblenz.jgralabtest.schemas.greqltestschema.junctions.Crossroad;
-import de.uni_koblenz.jgralabtest.schemas.greqltestschema.localities.ContainsCrossroad;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalGraph;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalSchema;
 import de.uni_koblenz.jgralabtest.schemas.minimal.Node;
