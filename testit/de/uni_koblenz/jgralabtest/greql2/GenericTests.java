@@ -35,6 +35,7 @@ import java.io.File;
 import java.util.Iterator;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
@@ -56,6 +57,49 @@ public class GenericTests {
 	public enum TestVersion {
 		GREQL_GRAPH, CITY_MAP_GRAPH
 	};
+
+	static int airportCount, crossroadCount, countyCount,
+			uncontainedCrossroadCount;
+
+	@BeforeClass
+	public static void globalSetUp() throws Exception {
+		GenericTests test = new GenericTests();
+		queryAirportCount(test);
+		queryCrossroadCount(test);
+		queryCountyCount(test);
+		queryUncontainedCrossroadCount(test);
+	}
+
+	private static void queryAirportCount(GenericTests test) throws Exception {
+		String queryString = "count(V{junctions.Airport})";
+		JValue result = test.evalTestQuery("static Query", queryString,
+				TestVersion.CITY_MAP_GRAPH);
+		airportCount = result.toInteger();
+	}
+
+	private static void queryCrossroadCount(GenericTests test) throws Exception {
+		String queryString = "count(V{junctions.Crossroad})";
+		JValue result = test.evalTestQuery("static Query", queryString,
+				TestVersion.CITY_MAP_GRAPH);
+		crossroadCount = result.toInteger();
+	}
+
+	private static void queryCountyCount(GenericTests test) throws Exception {
+		String queryString = "count(V{localities.County})";
+		JValue result = test.evalTestQuery("static Query", queryString,
+				TestVersion.CITY_MAP_GRAPH);
+		countyCount = result.toInteger();
+	}
+
+	private static void queryUncontainedCrossroadCount(GenericTests test)
+			throws Exception {
+		String queryString = "sum(from r:V{junctions.Crossroad} report depth(pathSystem(r, <--{localities.ContainsCrossroad})) end)";
+		JValue result = test.evalTestQuery("static Query", queryString,
+				TestVersion.CITY_MAP_GRAPH);
+
+		uncontainedCrossroadCount = crossroadCount
+				- result.toDouble().intValue();
+	}
 
 	/**
 	 * Print the query syntax graphs (unoptimized, optimized with one specific

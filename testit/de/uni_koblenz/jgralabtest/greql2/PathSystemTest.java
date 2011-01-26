@@ -35,7 +35,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
@@ -52,49 +51,6 @@ public class PathSystemTest extends GenericTests {
 	 * Pfaden der Gestalt αT mit dem Wurzelknoten w. • v :-) ( -->α :-) w )
 	 * liefert dementsprechend einen Pfad der Gestalt αT von w nach v.
 	 */
-
-	private static int airportCount, crossroadCount, countyCount,
-			uncontainedCrossroadCount;
-
-	@BeforeClass
-	public static void globalSetUp() throws Exception {
-		GenericTests test = new GenericTests();
-		queryAirportCount(test);
-		queryCrossroadCount(test);
-		queryCountyCount(test);
-		queryUncontainedCrossroadCount(test);
-	}
-
-	private static void queryAirportCount(GenericTests test) throws Exception {
-		String queryString = "count(V{junctions.Airport})";
-		JValue result = test.evalTestQuery("static Query", queryString,
-				TestVersion.CITY_MAP_GRAPH);
-		airportCount = result.toInteger();
-	}
-
-	private static void queryCrossroadCount(GenericTests test) throws Exception {
-		String queryString = "count(V{junctions.Crossroad})";
-		JValue result = test.evalTestQuery("static Query", queryString,
-				TestVersion.CITY_MAP_GRAPH);
-		crossroadCount = result.toInteger();
-	}
-
-	private static void queryCountyCount(GenericTests test) throws Exception {
-		String queryString = "count(V{localities.County})";
-		JValue result = test.evalTestQuery("static Query", queryString,
-				TestVersion.CITY_MAP_GRAPH);
-		countyCount = result.toInteger();
-	}
-
-	private static void queryUncontainedCrossroadCount(GenericTests test)
-			throws Exception {
-		String queryString = "sum(from r:V{junctions.Crossroad} report depth(pathSystem(r, <--{localities.ContainsCrossroad})) end)";
-		JValue result = test.evalTestQuery("static Query", queryString,
-				TestVersion.CITY_MAP_GRAPH);
-
-		uncontainedCrossroadCount = crossroadCount
-				- result.toDouble().intValue();
-	}
 
 	/*
 	 * Test method for
