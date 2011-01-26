@@ -81,12 +81,11 @@ public class ThisLiteralTest extends GenericTests {
 
 	@Test
 	public void testThisEdge1() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from v:V{Definition}, w:V{WhereExpression}  with v -->{@id(thisEdge)=15}  w report v,w end";
-		JValue result = evalTestQuery("ThisEdge1", queryString);
+		String queryString = "from c1,c2:V{junctions.Crossroad}  with c1 -->{@id(thisEdge)=100} c2 report c1,c2 end";
+		JValue result = evalTestQuery("ThisEdge1", queryString,
+				TestVersion.CITY_MAP_GRAPH);
 		JValue resultOpt = evalTestQuery("ThisEdge1 (wo)", queryString,
-				new DefaultOptimizer());
+				new DefaultOptimizer(), TestVersion.CITY_MAP_GRAPH);
 		assertEquals(1, result.toCollection().size());
 		assertEquals(result, resultOpt);
 	}
