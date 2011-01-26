@@ -34,6 +34,8 @@ import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.Temporary
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.TypeDefinition;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.json.JsonTemporaryGraphLayoutReader;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.plist.PListTemporaryGraphLayoutReader;
+import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.EmptyGraphLayoutReader;
+import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.TemporaryGraphLayoutReader;
 import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade;
 
 public class GraphLayoutFactory {

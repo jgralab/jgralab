@@ -1,12 +1,12 @@
-package de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout;
+package de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Map;
 
-import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.TemporaryGraphLayoutReader;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.TemporaryDefinitionStruct;
+import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.TemporaryGraphLayoutReader;
 
 /**
  * Reads a graph layout in and produces a list of TemporaryDefinitionStructs and
