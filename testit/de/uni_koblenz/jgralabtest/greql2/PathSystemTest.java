@@ -286,9 +286,6 @@ public class PathSystemTest extends GenericTests {
 
 	@Test
 	public void testLeaves() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-
 		String queryString = "from c: V{localities.County} "
 				+ "report leaves(pathSystem(c, -->{localities.ContainsLocality} <--{localities.HasCapital})) "
 				+ "end";
@@ -303,14 +300,15 @@ public class PathSystemTest extends GenericTests {
 
 	@Test
 	public void testMinPathLength() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from v: V{WhereExpression}, w:V{Variable}  report minPathLength( v  :-) <--{IsDefinitionOf} <--{IsVarOf}) end";
-		JValue result = evalTestQuery("MinPathLength", queryString);
+		String queryString = "from c: V{localities.County} "
+				+ "report minPathLength(pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad} -->{connections.Street})) "
+				+ "end";
+		JValue result = evalTestQuery("MinPathLength", queryString,
+				TestVersion.CITY_MAP_GRAPH);
 		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(5, bag.size());
+		assertEquals(countyCount, bag.size());
 		for (JValue v : bag) {
-			assertEquals(2, (int) v.toInteger());
+			assertEquals(3, (int) v.toInteger());
 		}
 	}
 
