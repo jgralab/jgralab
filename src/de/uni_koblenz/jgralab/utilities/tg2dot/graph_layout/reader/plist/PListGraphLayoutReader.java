@@ -1,4 +1,4 @@
-package de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.plist;
+package de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.plist;
 
 import java.io.File;
 import java.io.FileNotFoundException;
