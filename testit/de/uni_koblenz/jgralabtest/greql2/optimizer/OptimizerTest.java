@@ -61,17 +61,17 @@ public class OptimizerTest extends GenericTests {
 				IsPrime.class);
 	}
 
-	private final Optimizer cso = new CommonSubgraphOptimizer();
-	private final Optimizer eso = new EarlySelectionOptimizer();
-	private final Optimizer peo = new PathExistenceOptimizer();
-	private final Optimizer petdpeo = new PathExistenceToDirectedPathExpressionOptimizer();
-	private final Optimizer defo = new DefaultOptimizer();
-	private final Optimizer vdoo = new VariableDeclarationOrderOptimizer();
-	private final Optimizer csoAndMsdo = new CommonSubgraphAndMergeSDOptimizer();
-	private final Optimizer ceoAndCso = new CommonSubgraphAndConditionalExpressionOptimizer();
+	private Optimizer cso = new CommonSubgraphOptimizer();
+	private Optimizer eso = new EarlySelectionOptimizer();
+	private Optimizer peo = new PathExistenceOptimizer();
+	private Optimizer petdpeo = new PathExistenceToDirectedPathExpressionOptimizer();
+	private Optimizer defo = new DefaultOptimizer();
+	private Optimizer vdoo = new VariableDeclarationOrderOptimizer();
+	private Optimizer csoAndMsdo = new CommonSubgraphAndMergeSDOptimizer();
+	private Optimizer ceoAndCso = new CommonSubgraphAndConditionalExpressionOptimizer();
 
 	private class CommonSubgraphAndMergeSDOptimizer extends OptimizerBase {
-		private final Optimizer msdo = new MergeSimpleDeclarationsOptimizer();
+		private Optimizer msdo = new MergeSimpleDeclarationsOptimizer();
 
 		@Override
 		public boolean isEquivalent(Optimizer optimizer) {
@@ -88,7 +88,7 @@ public class OptimizerTest extends GenericTests {
 
 	private class CommonSubgraphAndConditionalExpressionOptimizer extends
 			OptimizerBase {
-		private final Optimizer ceo = new ConditionalExpressionOptimizer();
+		private Optimizer ceo = new ConditionalExpressionOptimizer();
 
 		@Override
 		public boolean isEquivalent(Optimizer optimizer) {
