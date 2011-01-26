@@ -352,11 +352,15 @@ public class PathSystemTest extends GenericTests {
 		JValue result = evalTestQuery("Siblings", queryString,
 				TestVersion.CITY_MAP_GRAPH);
 		JValueBag bag = result.toCollection().toJValueBag();
+
 		assertEquals(countyCount * crossroadCount, bag.size());
+
 		int noSiblingsFound = 0;
 		int expectedValue = crossroadCount - 2 * uncontainedCrossroadCount;
+
 		for (JValue v : bag) {
 			int size = v.toCollection().size();
+
 			if (size == 0) {
 				noSiblingsFound++;
 			} else {
