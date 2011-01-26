@@ -294,11 +294,12 @@ public class JValuePathSystem extends JValueImpl {
 	public JValueSet siblings(PathSystemKey key) {
 		clearPathSystem();
 		PathSystemEntry entry = keyToEntryMap.get(key);
-		JValueSet returnSet = new JValueSet();
 
 		if (entry == null) {
-			return returnSet;
+			return null;
 		}
+
+		JValueSet returnSet = new JValueSet();
 
 		for (Map.Entry<PathSystemKey, PathSystemEntry> mapEntry : keyToEntryMap
 				.entrySet()) {
