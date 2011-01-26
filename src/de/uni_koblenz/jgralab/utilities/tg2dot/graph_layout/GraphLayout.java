@@ -24,7 +24,7 @@ import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.ElementDe
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.EmptyDefinition;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.TemporaryDefinitionStruct;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.TypeDefinition;
-import de.uni_koblenz.jgralab.utilities.tg2dot.json.JsonTemporaryGraphLayoutReader;
+import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.json.JsonTemporaryGraphLayoutReader;
 
 public class GraphLayout {
 
