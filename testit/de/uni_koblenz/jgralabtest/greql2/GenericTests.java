@@ -58,16 +58,15 @@ public class GenericTests {
 	};
 
 	/**
-	 * Print the query syntaxgraphs (unoptimized, optimized with one specific
+	 * Print the query syntax graphs (unoptimized, optimized with one specific
 	 * optimizer, and optimized by the default optimizer) to user.home.
 	 */
 	public static boolean DEBUG_SYNTAXGRAPHS = false;
 
-	private Graph graph = null;
 	private Graph cyclicGraph = null;
 	private Graph tree = null;
 
-	private static Graph testGraph;
+	private static Graph testGraph, oldTestGraph;
 
 	protected void printTestFunctionHeader(String functionName) {
 		System.out
@@ -107,10 +106,7 @@ public class GenericTests {
 		if (version == TestVersion.GREQL_GRAPH) {
 			return createGreqlTestGraph();
 		} else {
-			if (graph == null) {
-				graph = createTestGraph();
-			}
-			return graph;
+			return createTestGraph();
 		}
 	}
 
@@ -129,9 +125,11 @@ public class GenericTests {
 	}
 
 	protected Graph createGreqlTestGraph() {
-		String query = "from i:c report i end where d:=\"nada\", c:=b, b:=a, a:=\"Mensaessen\"";
-		Graph g = GreqlParser.parse(query);
-		return g;
+		if (oldTestGraph == null) {
+			String query = "from i:c report i end where d:=\"nada\", c:=b, b:=a, a:=\"Mensaessen\"";
+			oldTestGraph = GreqlParser.parse(query);
+		}
+		return oldTestGraph;
 	}
 
 	private Graph createTestGraph() throws Exception {
@@ -143,32 +141,6 @@ public class GenericTests {
 					"testit/testgraphs/greqltestgraph.tg", null);
 		}
 
-		// TODO delete these code lines
-
-		// Tg2Dot converter = new Tg2Dot();
-		// converter.setGraph(g);
-		// converter.setReversedEdges(false);
-		// converter.setPrintEdgeAttributes(true);
-		// converter.setOutputFile("tmp/testgraph.dot");
-		// converter.setAbbreviateAttributeNames(true);
-		// converter.setShortenStrings(true);
-
-		// BooleanGraphMarker marker = new BooleanGraphMarker(g);
-		// for (Vertex v : g.vertices()) {
-		// marker.mark(v);
-		// }
-		// for (Edge e : g.edges()) {
-		// marker.mark(e);
-		// }
-		// for (Edge e : g.edges(ContainsCrossroad.class)) {
-		// marker.removeMark(e);
-		// }
-		//
-		// converter.setGraphMarker(marker);
-		// converter.setDotBuildOutputType("pdf");
-		//
-		// converter.printGraph();
-		// System.exit(0);
 		return testGraph;
 	}
 
