@@ -7,7 +7,7 @@ package de.uni_koblenz.jgralab.utilities.tg2dot.dot;
  */
 public enum GraphElementType {
 
-	Node("node"), Edge("edge"), Graph("graph");
+	NODE("node"), EDGE("edge"), GRAPH("graph");
 
 	/**
 	 * Attribute holding the GraphElementType name.

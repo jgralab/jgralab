@@ -294,7 +294,7 @@ public class Tg2Dot extends Tg2Whatever {
 		sb.append(graph.getId().replace('-', '_'));
 		sb.append("__");
 		sb.append(graph.getGraphVersion());
-		writer.startGraph(GraphType.Directed, sb.toString());
+		writer.startGraph(GraphType.DIRECTED, sb.toString());
 	}
 
 	@Override
