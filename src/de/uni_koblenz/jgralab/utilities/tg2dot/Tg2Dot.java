@@ -346,6 +346,7 @@ public class Tg2Dot extends Tg2Whatever {
 		executeDot();
 		System.out.println("Finished Processing.");
 
+		// Restore debugging. Also see graphStart().
 		GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS = debugIterations;
 		GreqlEvaluator.DEBUG_OPTIMIZATION = debugOptimization;
 	}
