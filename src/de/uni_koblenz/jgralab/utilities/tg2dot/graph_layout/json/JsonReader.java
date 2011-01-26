@@ -1,4 +1,4 @@
-package de.uni_koblenz.jgralab.utilities.tg2dot.json;
+package de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.json;
 
 import java.io.File;
 import java.io.FileNotFoundException;
