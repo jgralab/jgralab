@@ -1,4 +1,4 @@
-package de.uni_koblenz.jgralab.utilities.tg2dot.dot;
+package de.uni_koblenz.jgralab.utilities.dot;
 
 /**
  * Lists all supported graph element types in DOT.

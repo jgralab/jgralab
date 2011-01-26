@@ -1,4 +1,4 @@
-package de.uni_koblenz.jgralab.utilities.tg2dot.dot;
+package de.uni_koblenz.jgralab.utilities.dot;
 
 import java.io.File;
 import java.io.FileNotFoundException;
