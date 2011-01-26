@@ -7,7 +7,7 @@ package de.uni_koblenz.jgralab.utilities.tg2dot.dot;
  */
 public enum GraphType {
 
-	Directed("digraph"), Undirected("graph");
+	DIRECTED("digraph"), UNDIRECTED("graph");
 
 	/**
 	 * Holding the GraphType name;
