@@ -30,9 +30,9 @@ import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.Definition;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.ElementDefinition;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.TypeDefinition;
-import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.json.JsonTemporaryGraphLayoutReader;
-import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.plist.PListTemporaryGraphLayoutReader;
-import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.TemporaryGraphLayoutReader;
+import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.json.JsonGraphLayoutReader;
+import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.plist.PListGraphLayoutReader;
+import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.GraphLayoutReader;
 import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade;
 
 public class GraphLayoutFactory {
@@ -43,7 +43,7 @@ public class GraphLayoutFactory {
 
 	private GraphLayout currentGraphLayout;
 
-	private TemporaryGraphLayoutReader reader;
+	private GraphLayoutReader reader;
 
 	private File graphLayoutFile;
 
@@ -54,12 +54,12 @@ public class GraphLayoutFactory {
 
 	public void setJsonGraphLayoutFilename(File graphLayoutFile) {
 		this.graphLayoutFile = graphLayoutFile;
-		reader = new JsonTemporaryGraphLayoutReader(evaluator);
+		reader = new JsonGraphLayoutReader(evaluator);
 	}
 
 	public void setPListGraphLayoutFilename(File graphLayoutFile) {
 		this.graphLayoutFile = graphLayoutFile;
-		reader = new PListTemporaryGraphLayoutReader(evaluator);
+		reader = new PListGraphLayoutReader(evaluator);
 	}
 
 	public GraphLayout createGraphLayout() {

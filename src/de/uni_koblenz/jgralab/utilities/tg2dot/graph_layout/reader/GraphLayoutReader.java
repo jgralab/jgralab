@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.GraphLayout;
-import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.TemporaryGraphLayoutReader;
+import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.GraphLayoutReader;
 
 /**
  * Reads a graph layout in and produces a list of TemporaryDefinitionStructs and
@@ -12,7 +12,7 @@ import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.TemporaryGrap
  * 
  * @author ist@uni-koblenz.de
  */
-public interface TemporaryGraphLayoutReader {
+public interface GraphLayoutReader {
 
 	/**
 	 * Starts the processing of the specified file.

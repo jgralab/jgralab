@@ -5,8 +5,8 @@ import java.io.FileNotFoundException;
 
 import de.uni_koblenz.jgralab.utilities.json.JsonReader;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.GraphLayout;
-import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.AbstractTemporaryGraphLayoutReader;
-import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.TemporaryGraphLayoutReader;
+import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.AbstractGraphLayoutReader;
+import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.GraphLayoutReader;
 import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade;
 
 /**
@@ -15,9 +15,9 @@ import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade;
  * 
  * @author ist@uni-koblenz.de
  */
-public class JsonTemporaryGraphLayoutReader extends
-		AbstractTemporaryGraphLayoutReader implements
-		TemporaryGraphLayoutReader {
+public class JsonGraphLayoutReader extends
+		AbstractGraphLayoutReader implements
+		GraphLayoutReader {
 
 	/**
 	 * Internal JsonReader to process to graph layout from a json-file.
@@ -27,7 +27,7 @@ public class JsonTemporaryGraphLayoutReader extends
 	/**
 	 * Creates a JsonGraphLayoutReader and initializes the internal JsonReader.
 	 */
-	public JsonTemporaryGraphLayoutReader(GreqlEvaluatorFacade evaluator) {
+	public JsonGraphLayoutReader(GreqlEvaluatorFacade evaluator) {
 		super(evaluator);
 		jsonReader = new InternalJsonReader();
 	}
