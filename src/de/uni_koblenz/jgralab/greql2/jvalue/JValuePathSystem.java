@@ -56,21 +56,21 @@ public class JValuePathSystem extends JValueImpl {
 	 * This HashMap stores references from a tuple (Vertex,State) to a
 	 * tuple(ParentVertex, ParentEdge, ParentState, DistanceToRoot)
 	 */
-	private HashMap<PathSystemKey, PathSystemEntry> keyToEntryMap;
+	private final HashMap<PathSystemKey, PathSystemEntry> keyToEntryMap;
 
 	/**
 	 * This HashMap stores references from a vertex which is a leaf is the path
 	 * system to the first occurence of this vertex as a leaf in the above
 	 * HashMap<PathSystemKey, PathSystemEntry> keyToEntryMap
 	 */
-	private HashMap<Vertex, PathSystemKey> leafVertexToLeafKeyMap;
+	private final HashMap<Vertex, PathSystemKey> leafVertexToLeafKeyMap;
 
 	/**
 	 * This HashMap stores references from a vertex in the path system to the
 	 * first occurence of this vertex in the above HashMap<PathSystemKey,
 	 * PathSystemEntry> keyToEntryMap
 	 */
-	private HashMap<Vertex, PathSystemKey> vertexToFirstKeyMap;
+	private final HashMap<Vertex, PathSystemKey> vertexToFirstKeyMap;
 
 	/**
 	 * This is the rootvertex of the pathsystem
@@ -94,7 +94,7 @@ public class JValuePathSystem extends JValueImpl {
 	/**
 	 * This is a reference to the datagraph this pathsystem is part of
 	 */
-	private Graph datagraph;
+	private final Graph datagraph;
 
 	/**
 	 * stores the hashcode of this pathsystem so it must be calculated only if
@@ -153,7 +153,7 @@ public class JValuePathSystem extends JValueImpl {
 		type = JValueType.PATHSYSTEM;
 	}
 
-	private Queue<PathSystemEntry> entriesWithoutParentEdge = new LinkedList<PathSystemEntry>();
+	private final Queue<PathSystemEntry> entriesWithoutParentEdge = new LinkedList<PathSystemEntry>();
 
 	public void clearPathSystem() {
 		if (!isCleared) {
@@ -295,9 +295,15 @@ public class JValuePathSystem extends JValueImpl {
 		clearPathSystem();
 		PathSystemEntry entry = keyToEntryMap.get(key);
 		JValueSet returnSet = new JValueSet();
+
+		if (entry == null) {
+			return returnSet;
+		}
+
 		for (Map.Entry<PathSystemKey, PathSystemEntry> mapEntry : keyToEntryMap
 				.entrySet()) {
 			PathSystemEntry value = mapEntry.getValue();
+
 			if ((value.getParentVertex() == entry.getParentVertex())
 					&& (value.getParentStateNumber() == entry
 							.getParentStateNumber())
@@ -775,8 +781,8 @@ public class JValuePathSystem extends JValueImpl {
 			PathSystemEntry entry = keyToEntryMap.get(key);
 			if (entry.getParentEdge() != null) {
 				path.addEdge(entry.getParentEdge().getReversedEdge());
-				key = new PathSystemKey(entry.getParentVertex(), entry
-						.getParentStateNumber());
+				key = new PathSystemKey(entry.getParentVertex(),
+						entry.getParentStateNumber());
 			} else {
 				key = null;
 			}
@@ -1076,9 +1082,7 @@ public class JValuePathSystem extends JValueImpl {
 			Map.Entry<PathSystemKey, PathSystemEntry> mapEntry = iter.next();
 			PathSystemEntry thisEntry = mapEntry.getValue();
 			PathSystemKey thisKey = mapEntry.getKey();
-			logger
-					.info(thisKey.toString() + " maps to "
-							+ thisEntry.toString());
+			logger.info(thisKey.toString() + " maps to " + thisEntry.toString());
 		}
 	}
 
