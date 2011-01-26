@@ -319,7 +319,7 @@ public class JValuePathSystem extends JValueImpl {
 	/**
 	 * Calculates the parent vertex of the given vertex in this PathSystem. If
 	 * the given vertex exists more than one times in this pathsystem, the first
-	 * occurence if used. If the given vertex is not part of this pathsystem, a
+	 * occurrence if used. If the given vertex is not part of this pathsystem, a
 	 * invalid JValue will be returned
 	 */
 	public JValueImpl parent(Vertex vertex) {
