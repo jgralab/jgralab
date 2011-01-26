@@ -1,4 +1,4 @@
-package de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout;
+package de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader;
 
 import java.util.ArrayList;
 import java.util.HashMap;
