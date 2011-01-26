@@ -42,7 +42,6 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueBag;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
-import de.uni_koblenz.jgralab.grumlschema.structure.NamedElement;
 
 public class PathSystemTest extends GenericTests {
 
@@ -93,9 +92,6 @@ public class PathSystemTest extends GenericTests {
 		JValue result = test.evalTestQuery("static Query", queryString,
 				TestVersion.CITY_MAP_GRAPH);
 
-		String queryString2 = "from r:V{junctions.Crossroad} report depth(pathSystem(r, <--{localities.ContainsCrossroad})) end";
-		JValue result2 = test.evalTestQuery("static Query", queryString2,
-				TestVersion.CITY_MAP_GRAPH);
 		uncontainedCrossroadCount = crossroadCount
 				- result.toDouble().intValue();
 	}
