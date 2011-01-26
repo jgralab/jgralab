@@ -14,6 +14,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
@@ -257,10 +258,10 @@ public class GreqlEvaluatorFacade {
 		}
 
 		JValue result = evaluator.getEvaluationResult();
-		
+
 		GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS = false;
 		GreqlEvaluator.DEBUG_OPTIMIZATION = false;
-		
+
 		return result;
 	}
 
@@ -411,5 +412,9 @@ public class GreqlEvaluatorFacade {
 			JValue result = evaluate(variableEntry.getValue());
 			evaluator.setVariable(variableEntry.getKey(), result);
 		}
+	}
+
+	public Schema getSchema() {
+		return evaluator.getDatagraph().getSchema();
 	}
 }

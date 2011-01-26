@@ -232,21 +232,17 @@ public class Tg2Dot extends Tg2Whatever {
 	 */
 	private void initializeGraphLayout() {
 		if (layout == null) {
-			GraphLayoutFactory factory = new GraphLayoutFactory();
-			factory.setSchema(graph.getSchema());
 			evaluator = new GreqlEvaluatorFacade(graph);
-			factory.setGreqlEvaluator(evaluator);
+			GraphLayoutFactory factory = new GraphLayoutFactory(evaluator);
 
-			if (graphLayoutFilename == null) {
-				layout = factory.loadDefautLayout();
+			File layoutFile = new File(graphLayoutFilename);
+			if (useJsonGraphLayoutReader) {
+				factory.setJsonGraphLayoutFilename(layoutFile);
 			} else {
-				File layout = new File(graphLayoutFilename);
-				if (useJsonGraphLayoutReader) {
-					this.layout = factory.loadJsonGraphLayout(layout);
-				} else {
-					this.layout = factory.loadPListGraphLayout(layout);
-				}
+				factory.setJsonGraphLayoutFilename(layoutFile);
 			}
+
+			layout = factory.createGraphLayout();
 		}
 	}
 
@@ -581,8 +577,8 @@ public class Tg2Dot extends Tg2Whatever {
 			}
 
 			// TODO make executable path a parameter
-			String executionString = "C:/Program Files (x86)/Graphviz2.26.3/bin/dot.exe -T"
-					+ dotBuildOutputType + " " + dotFile + " -o" + formatedFile;
+			String executionString = "dot -T" + dotBuildOutputType + " "
+					+ dotFile + " -o" + formatedFile;
 			Process p = Runtime.getRuntime().exec(executionString);
 			p.waitFor();
 			if (p.exitValue() == EXIT_ALL_FINE) {

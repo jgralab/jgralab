@@ -2,10 +2,8 @@ package de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.List;
-import java.util.Map;
 
-import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.TemporaryDefinitionStruct;
+import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.GraphLayout;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.TemporaryGraphLayoutReader;
 
 /**
@@ -17,33 +15,22 @@ import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.TemporaryGrap
 public interface TemporaryGraphLayoutReader {
 
 	/**
-	 * Returns a temporary definition list of all read definitions.
-	 * 
-	 * @return Temporary definition list;
-	 */
-	public List<TemporaryDefinitionStruct> getDefinitionList();
-
-	/**
-	 * Returns a list of all read global variables.
-	 * 
-	 * @return List of global variables.
-	 */
-	public Map<String, String> getGlobalVariables();
-
-	/**
 	 * Starts the processing of the specified file.
 	 * 
 	 * @param path
 	 *            Path to the graph layout file.
 	 */
-	public void startProcessing(String path) throws FileNotFoundException;
+	public void startProcessing(String path, GraphLayout graphLayoutFactory)
+			throws FileNotFoundException;
 
 	/**
 	 * Starts the processing of the specified file.
 	 * 
 	 * @param file
 	 *            Path to the graph layout file.
+	 * @param graphLayoutFactory
 	 * @throws FileNotFoundException
 	 */
-	public void startProcessing(File file) throws FileNotFoundException;
+	public void startProcessing(File file, GraphLayout graphLayoutFactory)
+			throws FileNotFoundException;
 }

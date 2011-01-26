@@ -3,8 +3,10 @@ package de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.json;
 import java.io.File;
 import java.io.FileNotFoundException;
 
+import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.GraphLayout;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.AbstractTemporaryGraphLayoutReader;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.TemporaryGraphLayoutReader;
+import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade;
 
 /**
  * Reads a graph layout as Json-file in and produces a list of
@@ -12,7 +14,8 @@ import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.TemporaryGrap
  * 
  * @author ist@uni-koblenz.de
  */
-public class JsonTemporaryGraphLayoutReader extends AbstractTemporaryGraphLayoutReader implements
+public class JsonTemporaryGraphLayoutReader extends
+		AbstractTemporaryGraphLayoutReader implements
 		TemporaryGraphLayoutReader {
 
 	/**
@@ -23,18 +26,23 @@ public class JsonTemporaryGraphLayoutReader extends AbstractTemporaryGraphLayout
 	/**
 	 * Creates a JsonGraphLayoutReader and initializes the internal JsonReader.
 	 */
-	public JsonTemporaryGraphLayoutReader() {
+	public JsonTemporaryGraphLayoutReader(GreqlEvaluatorFacade evaluator) {
+		super(evaluator);
 		jsonReader = new InternalJsonReader();
 	}
 
 	@Override
-	public void startProcessing(String path) throws FileNotFoundException {
+	public void startProcessing(String path, GraphLayout graphLayout)
+			throws FileNotFoundException {
+
+		this.graphLayout = graphLayout;
 		jsonReader.startProcessing(path);
 	}
 
 	@Override
-	public void startProcessing(File file) throws FileNotFoundException {
-		jsonReader.startProcessing(file);
+	public void startProcessing(File file, GraphLayout graphLayout)
+			throws FileNotFoundException {
+		startProcessing(file.getPath(), graphLayout);
 	}
 
 	/**

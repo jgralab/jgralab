@@ -1,11 +1,15 @@
 package de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.TemporaryDefinitionStruct;
+import de.uni_koblenz.jgralab.AttributedElement;
+import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
+import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
+import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.GraphLayout;
+import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.Definition;
+import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.ElementDefinition;
+import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.TypeDefinition;
+import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade;
 
 /**
  * Reads a graph layout in and produces a list of TemporaryDefinitionStructs and
@@ -16,26 +20,16 @@ import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.Temporary
 public abstract class AbstractTemporaryGraphLayoutReader implements
 		TemporaryGraphLayoutReader {
 
-	/**
-	 * Current temporary definition struct, which is read in.
-	 */
-	private TemporaryDefinitionStruct definition;
-
-	/**
-	 * List of all temporary definitions.
-	 */
-	private List<TemporaryDefinitionStruct> definitionList;
-
-	/**
-	 * List of all global variables.
-	 */
-	private Map<String, String> globalVariables;
+	protected GraphLayout graphLayout;
+	protected Definition currentDefinition;
+	private GreqlEvaluatorFacade evaluator;
 
 	/**
 	 * Creates a AbstractGraphLayoutReader for reading a graph layout and
 	 * initializes all data structures.
 	 */
-	public AbstractTemporaryGraphLayoutReader() {
+	public AbstractTemporaryGraphLayoutReader(GreqlEvaluatorFacade evaluator) {
+		this.evaluator = evaluator;
 		initilizeStates();
 	}
 
@@ -44,18 +38,6 @@ public abstract class AbstractTemporaryGraphLayoutReader implements
 	 * {@link TemporaryDefinitionStruct}s.
 	 */
 	protected void initilizeStates() {
-		definitionList = new ArrayList<TemporaryDefinitionStruct>();
-		globalVariables = new HashMap<String, String>();
-	}
-
-	/**
-	 * Returns a temporary definition list of all read definitions.
-	 * 
-	 * @return Temporary definition list;
-	 */
-	@Override
-	public List<TemporaryDefinitionStruct> getDefinitionList() {
-		return definitionList;
 	}
 
 	/**
@@ -65,16 +47,65 @@ public abstract class AbstractTemporaryGraphLayoutReader implements
 	 *            Name of the definition.
 	 */
 	protected void definitionStarted(String definitionName) {
-		definition = new TemporaryDefinitionStruct();
-		definition.name = definitionName;
-		definitionList.add(definition);
+		TypeDefinition definition = graphLayout
+				.getTypeDefinition(definitionName);
+		currentDefinition = definition;
+		if (definition == null && isElementDefinition(definitionName)) {
+			currentDefinition = new ElementDefinition(definitionName);
+			graphLayout.add(definition);
+		}
+	}
+
+	/**
+	 * Determines with the GReQL-Evaluator if the provided type is a
+	 * GReQL-query.
+	 * 
+	 * @param text
+	 *            GReQL-query describing a set of {@link AttributedElement}.
+	 * @return True in case of an GReQL-query with an {@link AttributedElement}
+	 *         or a collection of {@link AttributedElement}s as result.
+	 */
+	private boolean isElementDefinition(String text) {
+		boolean isElementDefinition = false;
+		try {
+			JValue result = evaluator.evaluate(text);
+			isElementDefinition = containsAttributedElements(result);
+		} catch (EvaluateException ex) {
+			// TODO appropriate error message
+		} catch (JValueInvalidTypeException ex) {
+			// TODO description
+			throw new RuntimeException("");
+		}
+		return isElementDefinition;
+	}
+
+	/**
+	 * Determines if the given JValue is an {@link AttributedElement} or a
+	 * collection of {@link AttributedElement}s.
+	 * 
+	 * @param result
+	 *            JValue wrapping a query result.
+	 * @return True iff JValue is a {@link AttributedElement}s or a collection
+	 *         of {@link AttributedElement}s.
+	 */
+	private boolean containsAttributedElements(JValue result) {
+
+		boolean isValid = result.isVertex() || result.isEdge();
+		if (result.isCollection()) {
+			JValueSet set = result.toJValueSet();
+			for (JValue element : set) {
+				isValid = element.isVertex() || element.isEdge();
+				break;
+			}
+		}
+		return isValid;
 	}
 
 	/**
 	 * The current definition has ended.
 	 */
 	protected void definitionEnded() {
-		definition = null;
+		currentDefinition = null;
 	}
 
 	/**
@@ -85,7 +116,6 @@ public abstract class AbstractTemporaryGraphLayoutReader implements
 	 * @return Returns true, iff the String is naming a global variable.
 	 */
 	protected boolean isGlobalVariable(String string) {
-		// TODO Auto-generated method stub
 		return string.charAt(0) == '@';
 	}
 
@@ -99,8 +129,8 @@ public abstract class AbstractTemporaryGraphLayoutReader implements
 	 *            Value of the field.
 	 */
 	public void processGlobalVariable(String name, String value) {
-		if (name.startsWith("@")) {
-			globalVariables.put(removeFirstChar(name), value);
+		if (isGlobalVariable(name)) {
+			graphLayout.getGlobalVariables().put(removeFirstChar(name), value);
 		} else {
 			throw new RuntimeException("Field " + name
 					+ " does not have a '@' as prefix. Delete it or add an @.");
@@ -117,7 +147,7 @@ public abstract class AbstractTemporaryGraphLayoutReader implements
 	 *            Value of the field.
 	 */
 	public void processDefinitionAttribute(String name, String value) {
-		definition.addAttribute(name, value);
+		currentDefinition.setAttribute(name, value);
 	}
 
 	/**
@@ -129,15 +159,5 @@ public abstract class AbstractTemporaryGraphLayoutReader implements
 	 */
 	private String removeFirstChar(String name) {
 		return name.substring(1, name.length());
-	}
-
-	/**
-	 * Returns a list of all read global variables.
-	 * 
-	 * @return List of global variables.
-	 */
-	@Override
-	public Map<String, String> getGlobalVariables() {
-		return globalVariables;
 	}
 }
