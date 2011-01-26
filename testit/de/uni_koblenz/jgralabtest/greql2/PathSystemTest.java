@@ -278,7 +278,7 @@ public class PathSystemTest extends GenericTests {
 		JValue result = evalTestQuery("InnerNodes", queryString,
 				TestVersion.CITY_MAP_GRAPH);
 		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(2, bag.size());
+		assertEquals(countyCount, bag.size());
 		for (JValue v : bag) {
 			assertEquals(1, v.toCollection().size());
 		}
@@ -288,12 +288,16 @@ public class PathSystemTest extends GenericTests {
 	public void testLeaves() throws Exception {
 		// TODO: Broken, because the GReQL parser removes all WhereExpressions
 		// and LetExpressions!
-		String queryString = "from v: V{WhereExpression}, w:V{Variable}  report leaves(v  :-) <--{IsDefinitionOf} <--{IsVarOf}) end";
-		JValue result = evalTestQuery("Leaves", queryString);
+
+		String queryString = "from c: V{localities.County} "
+				+ "report leaves(pathSystem(c, -->{localities.ContainsLocality} <--{localities.HasCapital})) "
+				+ "end";
+		JValue result = evalTestQuery("Leaves", queryString,
+				TestVersion.CITY_MAP_GRAPH);
 		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(5, bag.size());
+		assertEquals(countyCount, bag.size());
 		for (JValue v : bag) {
-			assertEquals(4, v.toCollection().size());
+			assertEquals(1, v.toCollection().size());
 		}
 	}
 
