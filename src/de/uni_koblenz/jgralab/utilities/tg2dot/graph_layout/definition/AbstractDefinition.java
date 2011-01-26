@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import de.uni_koblenz.jgralab.utilities.dot.DotWriter;
-
 /**
  * Provides the general implementation for {@link Definition}.
  * 
