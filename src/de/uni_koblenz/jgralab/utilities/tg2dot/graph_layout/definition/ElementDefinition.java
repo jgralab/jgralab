@@ -1,5 +1,6 @@
 package de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.uni_koblenz.jgralab.AttributedElement;
@@ -16,19 +17,27 @@ public class ElementDefinition extends AbstractDefinition {
 	 * GReQL-string describing the set of elements specified by this
 	 * ElementDefinition.
 	 */
-	private String elementDefinitionQuery;
+	private String greqlString;
 
 	/**
 	 * List of all AttributedElements described by the GReQL-query stored in
-	 * {@link ElementDefinition#elementDefinitionQuery}.
+	 * {@link ElementDefinition#greqlString}.
 	 */
 	protected List<AttributedElement> containedElements;
 
 	/**
+	 * Constructs an ElementDefinition from a {@link TemporaryDefinitionStruct}.
 	 * 
+	 * @param struct
+	 *            {@link TemporaryDefinitionStruct} which is used to construct
+	 *            this ElementDefinition.
 	 */
-	public ElementDefinition(String elementDefinitionQuery) {
-		this.elementDefinitionQuery = elementDefinitionQuery;
+	protected ElementDefinition(TemporaryDefinitionStruct struct) {
+		super(struct);
+
+		greqlString = struct.name;
+
+		containedElements = new ArrayList<AttributedElement>();
 	}
 
 	/**
@@ -40,7 +49,7 @@ public class ElementDefinition extends AbstractDefinition {
 	 */
 	public ElementDefinition(ElementDefinition definition) {
 		super(definition);
-		elementDefinitionQuery = definition.elementDefinitionQuery;
+		greqlString = definition.greqlString;
 	}
 
 	/**
@@ -50,7 +59,7 @@ public class ElementDefinition extends AbstractDefinition {
 	 * @return The GReQL-string.
 	 */
 	public String getGreqlString() {
-		return elementDefinitionQuery;
+		return greqlString;
 	}
 
 	/**

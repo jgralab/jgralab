@@ -1,4 +1,4 @@
-package de.uni_koblenz.jgralab.utilities.dot;
+package de.uni_koblenz.jgralab.utilities.tg2dot.dot;
 
 /**
  * Lists all supported graph element types in DOT.
@@ -7,7 +7,7 @@ package de.uni_koblenz.jgralab.utilities.dot;
  */
 public enum GraphElementType {
 
-	NODE("node"), EDGE("edge"), GRAPH("graph");
+	Node("node"), Edge("edge"), Graph("graph");
 
 	/**
 	 * Attribute holding the GraphElementType name.

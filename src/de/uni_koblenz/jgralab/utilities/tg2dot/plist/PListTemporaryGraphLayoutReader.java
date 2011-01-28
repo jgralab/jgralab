@@ -1,4 +1,4 @@
-package de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.plist;
+package de.uni_koblenz.jgralab.utilities.tg2dot.plist;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -8,9 +8,7 @@ import org.riediger.plist.PList;
 import org.riediger.plist.PListDict;
 import org.riediger.plist.PListException;
 
-import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.GraphLayout;
-import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.AbstractGraphLayoutReader;
-import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade;
+import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.AbstractTemporaryGraphLayoutReader;
 
 /**
  * A GraphLayoutReader reading in graph layout from PList-files.
@@ -18,31 +16,27 @@ import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade;
  * 
  * @author ist@uni-koblenz.de
  */
-public class PListGraphLayoutReader extends
-		AbstractGraphLayoutReader {
+public class PListTemporaryGraphLayoutReader extends AbstractTemporaryGraphLayoutReader {
 
 	/**
 	 * Constructs a PListGraphLayoutReader.
 	 */
-	public PListGraphLayoutReader(GreqlEvaluatorFacade evaluator) {
-		super(evaluator);
+	public PListTemporaryGraphLayoutReader() {
 	}
 
 	@Override
-	public void startProcessing(File file, GraphLayout layout)
-			throws FileNotFoundException {
-		startProcessing(file.getPath(), layout);
+	public void startProcessing(File file) throws FileNotFoundException {
+		startProcessing(file.getPath());
 	}
 
 	@Override
-	public void startProcessing(String path, GraphLayout graphLayout)
-			throws FileNotFoundException {
-		this.graphLayout = graphLayout;
+	public void startProcessing(String path) throws FileNotFoundException {
 		try {
 			PList plist = new PList(path);
 			PListDict dict = plist.getDict();
 			readOut(dict);
 		} catch (PListException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

@@ -191,7 +191,7 @@ public abstract class Tg2Whatever {
 		domainNames = print;
 	}
 
-	public void convert() {
+	public void printGraph() {
 		initializeGraphAndSchema();
 		try {
 			PrintStream out = initializeOutputStream();
