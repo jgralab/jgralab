@@ -28,12 +28,13 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.Definition;
+import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.DefinitionFactory;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.ElementDefinition;
+import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.TemporaryDefinitionStruct;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.TypeDefinition;
-import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.GraphLayoutReader;
-import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.json.JsonGraphLayoutReader;
-import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.plist.PListGraphLayoutReader;
 import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade;
+import de.uni_koblenz.jgralab.utilities.tg2dot.json.JsonTemporaryGraphLayoutReader;
+import de.uni_koblenz.jgralab.utilities.tg2dot.plist.PListTemporaryGraphLayoutReader;
 
 public class GraphLayoutFactory {
 
@@ -41,55 +42,66 @@ public class GraphLayoutFactory {
 
 	private GreqlEvaluatorFacade evaluator;
 
+	private DefinitionFactory factory;
+
 	private GraphLayout currentGraphLayout;
 
-	private GraphLayoutReader reader;
-
-	private File graphLayoutFile;
-
-	public GraphLayoutFactory(GreqlEvaluatorFacade evaluator) {
-		this.evaluator = evaluator;
-		schema = evaluator.getSchema();
+	public GraphLayout loadJsonGraphLayout(File graphLayoutFile) {
+		TemporaryGraphLayoutReader reader = createAndExecuteJsonGraphLayoutReader(graphLayoutFile);
+		return loadGraphLayout(reader);
 	}
 
-	public void setJsonGraphLayoutFilename(File graphLayoutFile) {
-		this.graphLayoutFile = graphLayoutFile;
-		reader = new JsonGraphLayoutReader(evaluator);
-	}
-
-	public void setPListGraphLayoutFilename(File graphLayoutFile) {
-		this.graphLayoutFile = graphLayoutFile;
-		reader = new PListGraphLayoutReader(evaluator);
-	}
-
-	public GraphLayout createGraphLayout() {
+	private TemporaryGraphLayoutReader createAndExecuteJsonGraphLayoutReader(
+			File graphLayoutFile) {
+		// GraphLayoutReader processor = new JsonGraphLayoutReader();
+		TemporaryGraphLayoutReader reader = new JsonTemporaryGraphLayoutReader();
 
 		try {
-			createAndLoadGraphLayoutFromFile();
+			reader.startProcessing(graphLayoutFile);
 		} catch (FileNotFoundException e) {
-			throw new RuntimeException(e);
+			throw new RuntimeException("No JSON graph layout file defined.");
 		}
+		return reader;
+	}
+
+	public GraphLayout loadPListGraphLayout(File layout) {
+		TemporaryGraphLayoutReader reader = createAndExecutePListGraphLayoutReader(layout);
+
+		return loadGraphLayout(reader);
+	}
+
+	private TemporaryGraphLayoutReader createAndExecutePListGraphLayoutReader(
+			File graphLayoutFile) {
+		TemporaryGraphLayoutReader reader = new PListTemporaryGraphLayoutReader();
+
+		try {
+			reader.startProcessing(graphLayoutFile);
+		} catch (FileNotFoundException e) {
+			throw new RuntimeException("No PList graph layout file found.");
+		}
+		return reader;
+	}
+
+	public GraphLayout loadDefautLayout() {
+		return loadGraphLayout(new EmptyGraphLayoutReader());
+	}
+
+	public GraphLayout loadGraphLayout(TemporaryGraphLayoutReader reader) {
+
+		validate();
+
+		initializeProcessingStructures();
+		startProcessing(reader);
 
 		return currentGraphLayout;
 	}
 
-	public void createAndLoadGraphLayoutFromFile() throws FileNotFoundException {
-		validate();
+	private void initializeProcessingStructures() {
 
-		initializeProcessingStructures();
+		factory = new DefinitionFactory(evaluator, schema);
 
-		loadFromFile();
-
-		applyHierarchieToTypeDefinitions();
-
-		evaluateElementDefinitions();
-	}
-
-	private void loadFromFile() throws FileNotFoundException {
-		if (reader == null) {
-			return;
-		}
-		reader.startProcessing(graphLayoutFile, currentGraphLayout);
+		currentGraphLayout = new GraphLayout();
+		currentGraphLayout.setSchema(schema);
 	}
 
 	private void validate() {
@@ -99,11 +111,16 @@ public class GraphLayoutFactory {
 		}
 	}
 
-	private void initializeProcessingStructures() {
-		currentGraphLayout = new GraphLayout();
-		currentGraphLayout.setSchema(schema);
-		currentGraphLayout.initiateAllTypeDefinitions();
+	public void startProcessing(TemporaryGraphLayoutReader reader) {
+		currentGraphLayout.initiateAllTypeDefinitions(factory);
+		setDefaultLayout();
+		currentGraphLayout.setGlobalVariables(reader.getGlobalVariables());
+		constructDefinitions(factory, reader.getDefinitionList());
+		applyHierarchieToTypeDefinitions();
+		evaluateElementDefinitions();
+	}
 
+	private void setDefaultLayout() {
 		setDefaultVertexLayout();
 		setDefaultEdgeLayout();
 	}
@@ -169,6 +186,16 @@ public class GraphLayoutFactory {
 		definition.setAttribute("fontname", "'Helvetica'");
 	}
 
+	private void constructDefinitions(DefinitionFactory factory,
+			List<TemporaryDefinitionStruct> specificationList) {
+
+		for (TemporaryDefinitionStruct struct : specificationList) {
+
+			Definition definition = factory.produce(struct);
+			currentGraphLayout.add(definition);
+		}
+	}
+
 	private void applyHierarchieToTypeDefinitions() {
 		applyHierarchie(currentGraphLayout.vertexTypeDefinitions);
 		applyHierarchie(currentGraphLayout.edgeTypeDefinitions);
@@ -226,5 +253,21 @@ public class GraphLayoutFactory {
 			currentGraphLayout.attributedElementsDefinedByElementDefinitions
 					.add(attributedElement);
 		}
+	}
+
+	public void setGreqlEvaluator(GreqlEvaluatorFacade evaluator) {
+		this.evaluator = evaluator;
+	}
+
+	public GreqlEvaluatorFacade getGreqlEvaluator() {
+		return evaluator;
+	}
+
+	public void setSchema(Schema schema) {
+		this.schema = schema;
+	}
+
+	public Schema getSchema() {
+		return schema;
 	}
 }
