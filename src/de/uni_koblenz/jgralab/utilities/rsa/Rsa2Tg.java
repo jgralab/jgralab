@@ -2164,7 +2164,7 @@ public class Rsa2Tg extends XmlProcessor {
 		tg2Dot.setGraph(sg);
 		tg2Dot.setPrintEdgeAttributes(true);
 		tg2Dot.setOutputFile(dotName);
-		tg2Dot.convert();
+		tg2Dot.printGraph();
 	}
 
 	/**

@@ -157,6 +157,6 @@ public class Tg2Gdl extends Tg2Whatever {
 	public static void main(String[] args) {
 		Tg2Gdl converter = new Tg2Gdl();
 		converter.getOptions(args);
-		converter.convert();
+		converter.printGraph();
 	}
 }
