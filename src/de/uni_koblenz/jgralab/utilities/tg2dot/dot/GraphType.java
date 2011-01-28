@@ -1,4 +1,4 @@
-package de.uni_koblenz.jgralab.utilities.dot;
+package de.uni_koblenz.jgralab.utilities.tg2dot.dot;
 
 /**
  * Lists supported graph types in DOT.
@@ -7,7 +7,7 @@ package de.uni_koblenz.jgralab.utilities.dot;
  */
 public enum GraphType {
 
-	DIRECTED("digraph"), UNDIRECTED("graph");
+	Directed("digraph"), Undirected("graph");
 
 	/**
 	 * Holding the GraphType name;

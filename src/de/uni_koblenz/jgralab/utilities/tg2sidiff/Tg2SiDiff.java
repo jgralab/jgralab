@@ -210,7 +210,7 @@ public class Tg2SiDiff extends Tg2Whatever {
 	public static void main(String[] args) {
 		Tg2SiDiff converter = new Tg2SiDiff();
 		converter.getOptions(args);
-		converter.convert();
+		converter.printGraph();
 	}
 
 }

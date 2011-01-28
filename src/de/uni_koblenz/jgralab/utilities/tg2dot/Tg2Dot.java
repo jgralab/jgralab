@@ -37,17 +37,17 @@ import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
-import de.uni_koblenz.jgralab.utilities.dot.DotWriter;
-import de.uni_koblenz.jgralab.utilities.dot.GraphType;
+import de.uni_koblenz.jgralab.utilities.tg2dot.dot.DotWriter;
+import de.uni_koblenz.jgralab.utilities.tg2dot.dot.GraphType;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.GraphLayout;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.GraphLayoutFactory;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.Definition;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.ElementDefinition;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.TypeDefinition;
-import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.writer.AbstractGraphLayoutWriter;
-import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.writer.json.JsonGraphLayoutWriter;
 import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade;
 import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlFunctionRegister;
+import de.uni_koblenz.jgralab.utilities.tg2dot.json.AbstractGraphLayoutWriter;
+import de.uni_koblenz.jgralab.utilities.tg2dot.json.JsonGraphLayoutWriter;
 import de.uni_koblenz.jgralab.utilities.tg2whatever.Tg2Whatever;
 
 /**
@@ -132,7 +132,7 @@ public class Tg2Dot extends Tg2Whatever {
 		converter.getOptions(args);
 		System.out.print("Start processing graph...");
 		System.out.flush();
-		converter.convert();
+		converter.printGraph();
 		System.out.println("finished.");
 	}
 
@@ -232,17 +232,21 @@ public class Tg2Dot extends Tg2Whatever {
 	 */
 	private void initializeGraphLayout() {
 		if (layout == null) {
+			GraphLayoutFactory factory = new GraphLayoutFactory();
+			factory.setSchema(graph.getSchema());
 			evaluator = new GreqlEvaluatorFacade(graph);
-			GraphLayoutFactory factory = new GraphLayoutFactory(evaluator);
+			factory.setGreqlEvaluator(evaluator);
 
-			File layoutFile = new File(graphLayoutFilename);
-			if (useJsonGraphLayoutReader) {
-				factory.setJsonGraphLayoutFilename(layoutFile);
+			if (graphLayoutFilename == null) {
+				layout = factory.loadDefautLayout();
 			} else {
-				factory.setJsonGraphLayoutFilename(layoutFile);
+				File layout = new File(graphLayoutFilename);
+				if (useJsonGraphLayoutReader) {
+					this.layout = factory.loadJsonGraphLayout(layout);
+				} else {
+					this.layout = factory.loadPListGraphLayout(layout);
+				}
 			}
-
-			layout = factory.createGraphLayout();
 		}
 	}
 
@@ -290,7 +294,7 @@ public class Tg2Dot extends Tg2Whatever {
 		sb.append(graph.getId().replace('-', '_'));
 		sb.append("__");
 		sb.append(graph.getGraphVersion());
-		writer.startGraph(GraphType.DIRECTED, sb.toString());
+		writer.startGraph(GraphType.Directed, sb.toString());
 	}
 
 	@Override
@@ -577,8 +581,8 @@ public class Tg2Dot extends Tg2Whatever {
 			}
 
 			// TODO make executable path a parameter
-			String executionString = "dot -T" + dotBuildOutputType + " "
-					+ dotFile + " -o" + formatedFile;
+			String executionString = "C:/Program Files (x86)/Graphviz2.26.3/bin/dot.exe -T"
+					+ dotBuildOutputType + " " + dotFile + " -o" + formatedFile;
 			Process p = Runtime.getRuntime().exec(executionString);
 			p.waitFor();
 			if (p.exitValue() == EXIT_ALL_FINE) {
@@ -613,7 +617,7 @@ public class Tg2Dot extends Tg2Whatever {
 			converter.setReversedEdgeTypes(revEdgeTypes);
 		}
 
-		converter.convert();
+		converter.printGraph();
 	}
 
 	public static void printGraphAsDot(Graph graph, boolean reversedEdges,
@@ -644,7 +648,7 @@ public class Tg2Dot extends Tg2Whatever {
 
 		converter.setGraphMarker(marker);
 
-		converter.convert();
+		converter.printGraph();
 	}
 
 	/**

@@ -401,7 +401,7 @@ public class SimpleTg2Dot extends Tg2Whatever {
 	public static void main(String[] args) {
 		SimpleTg2Dot converter = new SimpleTg2Dot();
 		converter.getOptions(args);
-		converter.convert();
+		converter.printGraph();
 	}
 
 	public boolean isAbbreviateAttributeNames() {
@@ -434,7 +434,7 @@ public class SimpleTg2Dot extends Tg2Whatever {
 		}
 		t2d.setReversedEdgeTypes(revEdgeTypes);
 
-		t2d.convert();
+		t2d.printGraph();
 	}
 
 	public static void printGraphAsDot(BooleanGraphMarker marker,
@@ -446,7 +446,7 @@ public class SimpleTg2Dot extends Tg2Whatever {
 		t2d.setPrintEdgeAttributes(true);
 		t2d.setRanksep(0.5);
 		t2d.setOutputFile(outputFileName);
-		t2d.convert();
+		t2d.printGraph();
 	}
 
 	/**

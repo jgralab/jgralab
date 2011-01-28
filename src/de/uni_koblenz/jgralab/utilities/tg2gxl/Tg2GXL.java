@@ -461,7 +461,7 @@ public class Tg2GXL extends Tg2Whatever {
 		Tg2GXL converter = new Tg2GXL();
 		converter.getOptions(args);
 		converter.initgrUML2GXLMap();
-		converter.convert();
+		converter.printGraph();
 	}
 
 	/**
@@ -471,17 +471,17 @@ public class Tg2GXL extends Tg2Whatever {
 	 * the M2 graph is printed.
 	 */
 	@Override
-	public void convert() {
+	public void printGraph() {
 		printSchema = false;
 		setOutputFile(graphOutputName);
 		uniqueGraphClassName = graph.getSchema().getGraphClass()
 				.getQualifiedName();
-		super.convert();
+		super.printGraph();
 		setOutputFile(schemaGraphOutputName);
 		setGraph(new Schema2SchemaGraph()
 				.convert2SchemaGraph(graph.getSchema()));
 		printSchema = true;
-		super.convert();
+		super.printGraph();
 
 	}
 

@@ -1,13 +1,10 @@
-package de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.json;
+package de.uni_koblenz.jgralab.utilities.tg2dot.json;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 
-import de.uni_koblenz.jgralab.utilities.json.JsonReader;
-import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.GraphLayout;
-import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.AbstractGraphLayoutReader;
-import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.GraphLayoutReader;
-import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade;
+import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.AbstractTemporaryGraphLayoutReader;
+import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.TemporaryGraphLayoutReader;
 
 /**
  * Reads a graph layout as Json-file in and produces a list of
@@ -15,9 +12,8 @@ import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade;
  * 
  * @author ist@uni-koblenz.de
  */
-public class JsonGraphLayoutReader extends
-		AbstractGraphLayoutReader implements
-		GraphLayoutReader {
+public class JsonTemporaryGraphLayoutReader extends AbstractTemporaryGraphLayoutReader implements
+		TemporaryGraphLayoutReader {
 
 	/**
 	 * Internal JsonReader to process to graph layout from a json-file.
@@ -27,23 +23,18 @@ public class JsonGraphLayoutReader extends
 	/**
 	 * Creates a JsonGraphLayoutReader and initializes the internal JsonReader.
 	 */
-	public JsonGraphLayoutReader(GreqlEvaluatorFacade evaluator) {
-		super(evaluator);
+	public JsonTemporaryGraphLayoutReader() {
 		jsonReader = new InternalJsonReader();
 	}
 
 	@Override
-	public void startProcessing(String path, GraphLayout graphLayout)
-			throws FileNotFoundException {
-
-		this.graphLayout = graphLayout;
+	public void startProcessing(String path) throws FileNotFoundException {
 		jsonReader.startProcessing(path);
 	}
 
 	@Override
-	public void startProcessing(File file, GraphLayout graphLayout)
-			throws FileNotFoundException {
-		startProcessing(file.getPath(), graphLayout);
+	public void startProcessing(File file) throws FileNotFoundException {
+		jsonReader.startProcessing(file);
 	}
 
 	/**
@@ -80,7 +71,7 @@ public class JsonGraphLayoutReader extends
 		 */
 		@Override
 		protected void startObjectEvent(String name) {
-			if (getNestingDepth() != 2) {
+			if (nestedDepth != 2) {
 				throw new RuntimeException("Already Processing an Object!");
 			}
 			definitionStarted(name);
@@ -128,7 +119,7 @@ public class JsonGraphLayoutReader extends
 		 */
 		private void processFieldEvent(String name, String value) {
 
-			switch (jsonReader.getNestingDepth()) {
+			switch (jsonReader.nestedDepth) {
 			case 1:
 				processGlobalVariable(name, value);
 				break;
