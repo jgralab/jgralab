@@ -21,48 +21,57 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package de.uni_koblenz.jgralab.algolib.visitors;
+package de.uni_koblenz.jgralab.algolib.algorithms.topological_order.visitors;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uni_koblenz.jgralab.algolib.algorithms.GraphAlgorithm;
+import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
+import de.uni_koblenz.jgralab.algolib.visitors.VisitorList;
 
-public abstract class VisitorComposition implements Visitor {
+public class TopologicalOrderVisitorList extends VisitorList
+		implements TopologicalOrderVisitor {
 
-	private List<Visitor> visitors;
+	private List<TopologicalOrderVisitor> visitors;
 
-	public VisitorComposition(){
-		visitors = new ArrayList<Visitor>();
+	public TopologicalOrderVisitorList(){
+		visitors = new ArrayList<TopologicalOrderVisitor>();
 	}
-
+	
+	@Override
 	public void addVisitor(Visitor visitor) {
-		if (!visitors.contains(visitor)) {
-			visitors.add(visitor);
+		if (visitor instanceof TopologicalOrderVisitor) {
+			super.addVisitor(visitor);
+			visitors.add((TopologicalOrderVisitor) visitor);
+		} else {
+			throw new IllegalArgumentException(
+					"This visitor composition is only compatible with implementations of "
+							+ TopologicalOrderVisitor.class.getSimpleName()
+							+ ".");
 		}
 	}
 
+	@Override
 	public void removeVisitor(Visitor visitor) {
-		visitors.remove(visitor);
+		super.removeVisitor(visitor);
+		if (visitor instanceof TopologicalOrderVisitor) {
+			visitors.remove(visitor);
+		}
 	}
 
+	@Override
 	public void clearVisitors() {
+		super.clearVisitors();
 		visitors.clear();
 	}
 
 	@Override
-	public void reset() {
+	public void visitVertexInTopologicalOrder(Vertex v) {
 		int n = visitors.size();
 		for (int i = 0; i < n; i++) {
-			visitors.get(i).reset();
+			visitors.get(i).visitVertexInTopologicalOrder(v);
 		}
 	}
 
-	@Override
-	public void setAlgorithm(GraphAlgorithm alg) {
-		int n = visitors.size();
-		for (int i = 0; i < n; i++) {
-			visitors.get(i).setAlgorithm(alg);
-		}
-	}
 }

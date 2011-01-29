@@ -26,56 +26,43 @@ package de.uni_koblenz.jgralab.algolib.visitors;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uni_koblenz.jgralab.Edge;
-import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
+import de.uni_koblenz.jgralab.algolib.algorithms.GraphAlgorithm;
 
-public class GraphVisitorComposition extends
-		VisitorComposition implements GraphVisitor {
+public abstract class VisitorList implements Visitor {
 
-	private List<GraphVisitor> visitors;
+	private List<Visitor> visitors;
 
-	public GraphVisitorComposition(){
-		visitors = new ArrayList<GraphVisitor>();
+	public VisitorList(){
+		visitors = new ArrayList<Visitor>();
 	}
 
-	@Override
 	public void addVisitor(Visitor visitor) {
-		super.addVisitor(visitor);
-		if (visitor instanceof GraphVisitor) {
-			if (!visitors.contains(visitor)) {
-				visitors.add((GraphVisitor) visitor);
-			}
+		if (!visitors.contains(visitor)) {
+			visitors.add(visitor);
 		}
 	}
 
-	@Override
 	public void removeVisitor(Visitor visitor) {
-		super.removeVisitor(visitor);
-		if (visitor instanceof GraphVisitor) {
-			visitors.remove(visitor);
-		}
+		visitors.remove(visitor);
 	}
 
-	@Override
 	public void clearVisitors() {
-		super.clearVisitors();
 		visitors.clear();
 	}
 
 	@Override
-	public void visitEdge(Edge e)  throws AlgorithmTerminatedException {
+	public void reset() {
 		int n = visitors.size();
 		for (int i = 0; i < n; i++) {
-			visitors.get(i).visitEdge(e);
+			visitors.get(i).reset();
 		}
 	}
 
 	@Override
-	public void visitVertex(Vertex v)  throws AlgorithmTerminatedException {
+	public void setAlgorithm(GraphAlgorithm alg) {
 		int n = visitors.size();
 		for (int i = 0; i < n; i++) {
-			visitors.get(i).visitVertex(v);
+			visitors.get(i).setAlgorithm(alg);
 		}
 	}
 }

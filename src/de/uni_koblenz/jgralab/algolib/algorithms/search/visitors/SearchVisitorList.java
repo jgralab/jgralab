@@ -29,15 +29,15 @@ import java.util.List;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
-import de.uni_koblenz.jgralab.algolib.visitors.GraphVisitorComposition;
+import de.uni_koblenz.jgralab.algolib.visitors.GraphVisitorList;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
 
-public class SearchVisitorComposition extends GraphVisitorComposition implements
+public class SearchVisitorList extends GraphVisitorList implements
 		SearchVisitor {
 
 	private List<SearchVisitor> visitors;
 
-	public SearchVisitorComposition(){
+	public SearchVisitorList(){
 		visitors = new ArrayList<SearchVisitor>();
 	}
 

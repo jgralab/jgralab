@@ -21,39 +21,41 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package de.uni_koblenz.jgralab.algolib.algorithms.search.visitors;
+package de.uni_koblenz.jgralab.algolib.algorithms.strong_components.visitors;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
+import de.uni_koblenz.jgralab.algolib.visitors.VisitorList;
 
-public class DFSVisitorComposition extends SearchVisitorComposition implements
-		DFSVisitor {
+public class ReducedGraphVisitorList extends VisitorList
+		implements ReducedGraphVisitor {
 
-	private List<DFSVisitor> visitors;
+	private List<ReducedGraphVisitor> visitors;
 
-	public DFSVisitorComposition(){
-		visitors = new ArrayList<DFSVisitor>();
+	public ReducedGraphVisitorList(){
+		visitors = new ArrayList<ReducedGraphVisitor>();
 	}
 
 	@Override
 	public void addVisitor(Visitor visitor) {
-		super.addVisitor(visitor);
-		if (visitor instanceof DFSVisitor) {
-			if (!visitors.contains(visitor)) {
-				visitors.add((DFSVisitor) visitor);
-			}
+		if (visitor instanceof ReducedGraphVisitor) {
+			super.addVisitor(visitor);
+			visitors.add((ReducedGraphVisitor) visitor);
+		} else {
+			throw new IllegalArgumentException(
+					"This visitor composition is only compatible with implementations of "
+							+ ReducedGraphVisitor.class.getSimpleName() + ".");
 		}
 	}
 
 	@Override
 	public void removeVisitor(Visitor visitor) {
 		super.removeVisitor(visitor);
-		if (visitor instanceof DFSVisitor) {
+		if (visitor instanceof ReducedGraphVisitor) {
 			visitors.remove(visitor);
 		}
 	}
@@ -65,42 +67,18 @@ public class DFSVisitorComposition extends SearchVisitorComposition implements
 	}
 
 	@Override
-	public void leaveTreeEdge(Edge e) throws AlgorithmTerminatedException {
+	public void visitReducedEdge(Edge e) {
 		int n = visitors.size();
 		for (int i = 0; i < n; i++) {
-			visitors.get(i).leaveTreeEdge(e);
+			visitors.get(i).visitReducedEdge(e);
 		}
 	}
 
 	@Override
-	public void leaveVertex(Vertex v) throws AlgorithmTerminatedException {
+	public void visitRepresentativeVertex(Vertex v) {
 		int n = visitors.size();
 		for (int i = 0; i < n; i++) {
-			visitors.get(i).leaveVertex(v);
-		}
-	}
-
-	@Override
-	public void visitBackwardArc(Edge e) throws AlgorithmTerminatedException {
-		int n = visitors.size();
-		for (int i = 0; i < n; i++) {
-			visitors.get(i).visitBackwardArc(e);
-		}
-	}
-
-	@Override
-	public void visitCrosslink(Edge e) throws AlgorithmTerminatedException {
-		int n = visitors.size();
-		for (int i = 0; i < n; i++) {
-			visitors.get(i).visitCrosslink(e);
-		}
-	}
-
-	@Override
-	public void visitForwardArc(Edge e) throws AlgorithmTerminatedException {
-		int n = visitors.size();
-		for (int i = 0; i < n; i++) {
-			visitors.get(i).visitForwardArc(e);
+			visitors.get(i).visitRepresentativeVertex(v);
 		}
 	}
 }
