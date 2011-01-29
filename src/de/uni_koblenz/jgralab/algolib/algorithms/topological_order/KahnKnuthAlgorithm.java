@@ -31,7 +31,7 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.StructureOrientedAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmStates;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
-import de.uni_koblenz.jgralab.algolib.algorithms.topological_order.visitors.TopologicalOrderVisitorComposition;
+import de.uni_koblenz.jgralab.algolib.algorithms.topological_order.visitors.TopologicalOrderVisitorList;
 import de.uni_koblenz.jgralab.algolib.functions.ArrayPermutation;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 import de.uni_koblenz.jgralab.algolib.functions.IntFunction;
@@ -44,7 +44,7 @@ import de.uni_koblenz.jgralab.graphmarker.IntegerVertexMarker;
 public class KahnKnuthAlgorithm extends StructureOrientedAlgorithm implements
 		AcyclicitySolver, TopologicalOrderSolver {
 
-	private TopologicalOrderVisitorComposition visitors;
+	private TopologicalOrderVisitorList visitors;
 	private int tnum;
 	private int firstV;
 	private Vertex[] torder;
@@ -128,7 +128,7 @@ public class KahnKnuthAlgorithm extends StructureOrientedAlgorithm implements
 	@Override
 	public void resetParameters() {
 		super.resetParameters();
-		visitors = new TopologicalOrderVisitorComposition();
+		visitors = new TopologicalOrderVisitorList();
 		normal();
 	}
 

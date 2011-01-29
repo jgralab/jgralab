@@ -27,7 +27,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.DFSVisitorComposition;
+import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.DFSVisitorList;
 import de.uni_koblenz.jgralab.algolib.functions.ArrayPermutation;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 import de.uni_koblenz.jgralab.algolib.functions.Permutation;
@@ -51,7 +51,7 @@ public abstract class DepthFirstSearch extends SearchAlgorithm {
 	/**
 	 * The visitor composition containing all visitors.
 	 */
-	protected DFSVisitorComposition visitors;
+	protected DFSVisitorList visitors;
 
 	/**
 	 * This variable is needed for the computation of <code>rnumber</code> and
@@ -187,7 +187,7 @@ public abstract class DepthFirstSearch extends SearchAlgorithm {
 	@Override
 	public void resetParameters() {
 		super.resetParameters();
-		visitors = new DFSVisitorComposition();
+		visitors = new DFSVisitorList();
 	}
 
 	@Override

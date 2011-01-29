@@ -31,7 +31,7 @@ import de.uni_koblenz.jgralab.algolib.algorithms.StructureOrientedAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmStates;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.SearchVisitorAdapter;
-import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.SearchVisitorComposition;
+import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.SearchVisitorList;
 import de.uni_koblenz.jgralab.algolib.functions.BinaryDoubleFunction;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 import de.uni_koblenz.jgralab.algolib.functions.DoubleFunction;
@@ -41,7 +41,7 @@ import de.uni_koblenz.jgralab.algolib.problems.WeightedProblemSolver;
 import de.uni_koblenz.jgralab.algolib.problems.ShortestPathFromVertexToVertexSolver;
 import de.uni_koblenz.jgralab.algolib.util.PriorityQueue;
 import de.uni_koblenz.jgralab.algolib.visitors.GraphVisitorAdapter;
-import de.uni_koblenz.jgralab.algolib.visitors.GraphVisitorComposition;
+import de.uni_koblenz.jgralab.algolib.visitors.GraphVisitorList;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
 import de.uni_koblenz.jgralab.graphmarker.ArrayVertexMarker;
 import de.uni_koblenz.jgralab.graphmarker.BitSetVertexMarker;
@@ -61,7 +61,7 @@ public class AStarSearch extends StructureOrientedAlgorithm implements
 	protected GraphVisitorAdapter targetVertexReachedVisitor;
 
 	protected PriorityQueue<Vertex> vertexQueue;
-	protected GraphVisitorComposition visitors;
+	protected GraphVisitorList visitors;
 
 	public AStarSearch(Graph graph, BooleanFunction<GraphElement> subgraph,
 			BooleanFunction<Edge> navigable, DoubleFunction<Edge> edgeWeight,
@@ -132,7 +132,7 @@ public class AStarSearch extends StructureOrientedAlgorithm implements
 	@Override
 	public void resetParameters() {
 		super.resetParameters();
-		visitors = new SearchVisitorComposition();
+		visitors = new SearchVisitorList();
 		targetVertexReachedVisitor = new SearchVisitorAdapter() {
 
 			@Override

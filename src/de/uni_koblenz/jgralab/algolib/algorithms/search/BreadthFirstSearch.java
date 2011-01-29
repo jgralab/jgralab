@@ -28,7 +28,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
-import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.SearchVisitorComposition;
+import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.SearchVisitorList;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 import de.uni_koblenz.jgralab.algolib.problems.TraversalFromVertexSolver;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
@@ -43,7 +43,7 @@ import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
 public class BreadthFirstSearch extends SearchAlgorithm implements
 		TraversalFromVertexSolver {
 
-	private SearchVisitorComposition visitors;
+	private SearchVisitorList visitors;
 	private int firstV;
 
 	public BreadthFirstSearch(Graph graph,
@@ -132,7 +132,7 @@ public class BreadthFirstSearch extends SearchAlgorithm implements
 	@Override
 	public void resetParameters() {
 		super.resetParameters();
-		visitors = new SearchVisitorComposition();
+		visitors = new SearchVisitorList();
 	}
 
 	public int getFirstV() {

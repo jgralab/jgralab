@@ -33,7 +33,7 @@ import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.DepthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.DFSVisitorAdapter;
 import de.uni_koblenz.jgralab.algolib.algorithms.topological_order.visitors.TopologicalOrderVisitor;
-import de.uni_koblenz.jgralab.algolib.algorithms.topological_order.visitors.TopologicalOrderVisitorComposition;
+import de.uni_koblenz.jgralab.algolib.algorithms.topological_order.visitors.TopologicalOrderVisitorList;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 import de.uni_koblenz.jgralab.algolib.functions.Permutation;
 import de.uni_koblenz.jgralab.algolib.problems.AcyclicitySolver;
@@ -46,7 +46,7 @@ public class TopologicalOrderWithDFS extends StructureOrientedAlgorithm implemen
 	private DepthFirstSearch dfs;
 	private DFSVisitorAdapter torderVisitorAdapter;
 	private boolean acyclic;
-	private TopologicalOrderVisitorComposition visitors;
+	private TopologicalOrderVisitorList visitors;
 
 	public TopologicalOrderWithDFS(Graph graph,
 			BooleanFunction<GraphElement> subgraph, DepthFirstSearch dfs,
@@ -105,7 +105,7 @@ public class TopologicalOrderWithDFS extends StructureOrientedAlgorithm implemen
 	@Override
 	public void resetParameters() {
 		super.resetParameters();
-		visitors = new TopologicalOrderVisitorComposition();
+		visitors = new TopologicalOrderVisitorList();
 		torderVisitorAdapter = new DFSVisitorAdapter() {
 			@Override
 			public void visitBackwardArc(Edge e) throws AlgorithmTerminatedException {

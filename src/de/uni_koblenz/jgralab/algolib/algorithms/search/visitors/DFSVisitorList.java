@@ -21,41 +21,39 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package de.uni_koblenz.jgralab.algolib.algorithms.topological_order.visitors;
+package de.uni_koblenz.jgralab.algolib.algorithms.search.visitors;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
-import de.uni_koblenz.jgralab.algolib.visitors.VisitorComposition;
 
-public class TopologicalOrderVisitorComposition extends VisitorComposition
-		implements TopologicalOrderVisitor {
+public class DFSVisitorList extends SearchVisitorList implements
+		DFSVisitor {
 
-	private List<TopologicalOrderVisitor> visitors;
+	private List<DFSVisitor> visitors;
 
-	public TopologicalOrderVisitorComposition(){
-		visitors = new ArrayList<TopologicalOrderVisitor>();
+	public DFSVisitorList(){
+		visitors = new ArrayList<DFSVisitor>();
 	}
-	
+
 	@Override
 	public void addVisitor(Visitor visitor) {
-		if (visitor instanceof TopologicalOrderVisitor) {
-			super.addVisitor(visitor);
-			visitors.add((TopologicalOrderVisitor) visitor);
-		} else {
-			throw new IllegalArgumentException(
-					"This visitor composition is only compatible with implementations of "
-							+ TopologicalOrderVisitor.class.getSimpleName()
-							+ ".");
+		super.addVisitor(visitor);
+		if (visitor instanceof DFSVisitor) {
+			if (!visitors.contains(visitor)) {
+				visitors.add((DFSVisitor) visitor);
+			}
 		}
 	}
 
 	@Override
 	public void removeVisitor(Visitor visitor) {
 		super.removeVisitor(visitor);
-		if (visitor instanceof TopologicalOrderVisitor) {
+		if (visitor instanceof DFSVisitor) {
 			visitors.remove(visitor);
 		}
 	}
@@ -67,11 +65,42 @@ public class TopologicalOrderVisitorComposition extends VisitorComposition
 	}
 
 	@Override
-	public void visitVertexInTopologicalOrder(Vertex v) {
+	public void leaveTreeEdge(Edge e) throws AlgorithmTerminatedException {
 		int n = visitors.size();
 		for (int i = 0; i < n; i++) {
-			visitors.get(i).visitVertexInTopologicalOrder(v);
+			visitors.get(i).leaveTreeEdge(e);
 		}
 	}
 
+	@Override
+	public void leaveVertex(Vertex v) throws AlgorithmTerminatedException {
+		int n = visitors.size();
+		for (int i = 0; i < n; i++) {
+			visitors.get(i).leaveVertex(v);
+		}
+	}
+
+	@Override
+	public void visitBackwardArc(Edge e) throws AlgorithmTerminatedException {
+		int n = visitors.size();
+		for (int i = 0; i < n; i++) {
+			visitors.get(i).visitBackwardArc(e);
+		}
+	}
+
+	@Override
+	public void visitCrosslink(Edge e) throws AlgorithmTerminatedException {
+		int n = visitors.size();
+		for (int i = 0; i < n; i++) {
+			visitors.get(i).visitCrosslink(e);
+		}
+	}
+
+	@Override
+	public void visitForwardArc(Edge e) throws AlgorithmTerminatedException {
+		int n = visitors.size();
+		for (int i = 0; i < n; i++) {
+			visitors.get(i).visitForwardArc(e);
+		}
+	}
 }

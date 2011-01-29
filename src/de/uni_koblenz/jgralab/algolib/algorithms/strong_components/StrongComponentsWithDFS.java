@@ -38,7 +38,7 @@ import de.uni_koblenz.jgralab.algolib.algorithms.search.DepthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.DFSVisitor;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.DFSVisitorAdapter;
 import de.uni_koblenz.jgralab.algolib.algorithms.strong_components.visitors.ReducedGraphVisitor;
-import de.uni_koblenz.jgralab.algolib.algorithms.strong_components.visitors.ReducedGraphVisitorComposition;
+import de.uni_koblenz.jgralab.algolib.algorithms.strong_components.visitors.ReducedGraphVisitorList;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 import de.uni_koblenz.jgralab.algolib.functions.Function;
 import de.uni_koblenz.jgralab.algolib.functions.IntFunction;
@@ -55,7 +55,7 @@ public class StrongComponentsWithDFS extends StructureOrientedAlgorithm implemen
 	private DFSVisitor lowlinkVisitor;
 	private IntFunction<Vertex> lowlink;
 	private Function<Vertex, Vertex> strongComponents;
-	private ReducedGraphVisitorComposition visitors;
+	private ReducedGraphVisitorList visitors;
 
 	public StrongComponentsWithDFS(Graph graph, DepthFirstSearch dfs) {
 		this(graph, null, dfs, null);
@@ -138,7 +138,7 @@ public class StrongComponentsWithDFS extends StructureOrientedAlgorithm implemen
 		vertexStack = new Stack<Vertex>();
 		lowlink = new IntegerVertexMarker(graph);
 		strongComponents = new ArrayVertexMarker<Vertex>(graph);
-		visitors = new ReducedGraphVisitorComposition();
+		visitors = new ReducedGraphVisitorList();
 		lowlinkVisitor = new DFSVisitorAdapter() {
 
 			private IntFunction<Vertex> number;

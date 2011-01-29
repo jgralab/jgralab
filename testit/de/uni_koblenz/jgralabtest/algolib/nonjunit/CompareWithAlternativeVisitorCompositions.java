@@ -5,8 +5,8 @@ import java.util.Arrays;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
-import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.DFSVisitorComposition;
-import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.DFSVisitorComposition;
+import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.DFSVisitorList;
+import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.DFSVisitorList;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.DFSVisitor;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.SearchVisitor;
 import de.uni_koblenz.jgralab.algolib.visitors.GraphVisitor;
@@ -161,9 +161,9 @@ public class CompareWithAlternativeVisitorCompositions {
 			dfsVisitors[i] = new DFSVisitorExample(i);
 		}
 
-		DFSVisitorComposition comp = new DFSVisitorComposition();
+		DFSVisitorList comp = new DFSVisitorList();
 		// TODO change alternative implementation class name
-		DFSVisitorComposition acomp = new DFSVisitorComposition();
+		DFSVisitorList acomp = new DFSVisitorList();
 
 		for (GraphVisitor currentVisitor : graphVisitors) {
 			comp.addVisitor(currentVisitor);

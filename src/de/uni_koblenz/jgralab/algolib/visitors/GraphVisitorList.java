@@ -21,41 +21,38 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package de.uni_koblenz.jgralab.algolib.algorithms.strong_components.visitors;
+package de.uni_koblenz.jgralab.algolib.visitors;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
-import de.uni_koblenz.jgralab.algolib.visitors.VisitorComposition;
+import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 
-public class ReducedGraphVisitorComposition extends VisitorComposition
-		implements ReducedGraphVisitor {
+public class GraphVisitorList extends
+		VisitorList implements GraphVisitor {
 
-	private List<ReducedGraphVisitor> visitors;
+	private List<GraphVisitor> visitors;
 
-	public ReducedGraphVisitorComposition(){
-		visitors = new ArrayList<ReducedGraphVisitor>();
+	public GraphVisitorList(){
+		visitors = new ArrayList<GraphVisitor>();
 	}
 
 	@Override
 	public void addVisitor(Visitor visitor) {
-		if (visitor instanceof ReducedGraphVisitor) {
-			super.addVisitor(visitor);
-			visitors.add((ReducedGraphVisitor) visitor);
-		} else {
-			throw new IllegalArgumentException(
-					"This visitor composition is only compatible with implementations of "
-							+ ReducedGraphVisitor.class.getSimpleName() + ".");
+		super.addVisitor(visitor);
+		if (visitor instanceof GraphVisitor) {
+			if (!visitors.contains(visitor)) {
+				visitors.add((GraphVisitor) visitor);
+			}
 		}
 	}
 
 	@Override
 	public void removeVisitor(Visitor visitor) {
 		super.removeVisitor(visitor);
-		if (visitor instanceof ReducedGraphVisitor) {
+		if (visitor instanceof GraphVisitor) {
 			visitors.remove(visitor);
 		}
 	}
@@ -67,18 +64,18 @@ public class ReducedGraphVisitorComposition extends VisitorComposition
 	}
 
 	@Override
-	public void visitReducedEdge(Edge e) {
+	public void visitEdge(Edge e)  throws AlgorithmTerminatedException {
 		int n = visitors.size();
 		for (int i = 0; i < n; i++) {
-			visitors.get(i).visitReducedEdge(e);
+			visitors.get(i).visitEdge(e);
 		}
 	}
 
 	@Override
-	public void visitRepresentativeVertex(Vertex v) {
+	public void visitVertex(Vertex v)  throws AlgorithmTerminatedException {
 		int n = visitors.size();
 		for (int i = 0; i < n; i++) {
-			visitors.get(i).visitRepresentativeVertex(v);
+			visitors.get(i).visitVertex(v);
 		}
 	}
 }
