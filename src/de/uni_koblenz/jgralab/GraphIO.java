@@ -33,7 +33,6 @@ package de.uni_koblenz.jgralab;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
@@ -41,7 +40,6 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -56,11 +54,11 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.Map.Entry;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -83,9 +81,9 @@ import de.uni_koblenz.jgralab.schema.MapDomain;
 import de.uni_koblenz.jgralab.schema.NamedElement;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
-import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
+import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 import de.uni_koblenz.jgralab.schema.impl.BasicDomainImpl;
 import de.uni_koblenz.jgralab.schema.impl.ConstraintImpl;
@@ -3180,22 +3178,7 @@ public class GraphIO {
 	public static void loadSchemaIntoGraphDatabase(String filePath,
 			GraphDatabase graphDatabase) throws IOException, GraphIOException,
 			SQLException {
-		String schemaDefinition = readFileAsString(filePath);
 		Schema schema = loadSchemaFromFile(filePath);
-		graphDatabase.insertSchema(schema, schemaDefinition);
-	}
-
-	private static String readFileAsString(String filePath) throws IOException {
-		StringBuffer fileData = new StringBuffer(1024);
-		BufferedReader reader = new BufferedReader(new FileReader(filePath));
-		char[] buf = new char[1024];
-		int numRead = 0;
-		while ((numRead = reader.read(buf)) != -1) {
-			String readData = String.valueOf(buf, 0, numRead);
-			fileData.append(readData);
-			buf = new char[1024];
-		}
-		reader.close();
-		return fileData.toString();
+		graphDatabase.insertSchema(schema);
 	}
 }

@@ -1,5 +1,7 @@
 package de.uni_koblenz.jgralabtest.non_junit_tests;
 
+import java.sql.SQLException;
+
 import de.uni_koblenz.jgralab.impl.db.GraphDatabase;
 import de.uni_koblenz.jgralab.impl.db.GraphDatabaseException;
 import de.uni_koblenz.jgralabtest.schemas.jniclient.JniTestGraph;
@@ -16,21 +18,24 @@ public class GraphDbTest {
 					.getProperty("jgralabtest_dbconnection"));
 			gdb.setAutoCommitMode(false);
 			try {
-				if (!gdb.contains(JniTestSchema.instance())) {
-					gdb.insertSchema(JniTestSchema.instance(), "// no text");
-				}
-			} catch (GraphDatabaseException e) {
-				gdb.applyDbSchema();
-				if (!gdb.contains(JniTestSchema.instance())) {
-					gdb.insertSchema(JniTestSchema.instance(), "// no text");
-				}
+				System.out
+						.println("Clearing graph db (hopefully it was only a test DB :-) )...");
+				gdb.clearAllTables();
+				gdb.commitTransaction();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 			try {
-				gdb.getGraph("gdbtest");
-				System.out.println("Deleting old graph...");
-				gdb.deleteGraph("gdbtest");
+				if (!gdb.contains(JniTestSchema.instance())) {
+					gdb.insertSchema(JniTestSchema.instance());
+				}
 			} catch (GraphDatabaseException e) {
-				// ignore exception
+//				gdb.applyDbSchema();
+//				if (!gdb.contains(JniTestSchema.instance())) {
+//					gdb.insertSchema(JniTestSchema.instance());
+//				}
+				e.printStackTrace();
 			}
 
 			gdb.optimizeForGraphCreation();
