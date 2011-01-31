@@ -106,6 +106,7 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 	 */
 	public void add(long sequenceNumber, int vId) {
 		this.vertexIdMap.put(sequenceNumber, vId);
+		usedIDs.set(vId);
 	}
 
 	@Override
@@ -422,6 +423,7 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 	private void insertAt(DatabasePersistableVertex vertex, long sequenceNumber) {
 		vertex.setSequenceNumberInVSeq(sequenceNumber);
 		this.vertexIdMap.put(sequenceNumber, vertex.getId());
+		usedIDs.set(vertex.getId());
 	}
 
 	/**
@@ -439,6 +441,7 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 	public void remove(DatabasePersistableVertex vertex) {
 		assert this.contains(vertex);
 		this.vertexIdMap.remove(vertex.getSequenceNumberInVSeq());
+		usedIDs.clear(vertex.getId());
 		/*
 		 * As it is not known here if the vertex will be completely deleted or
 		 * just moved, his sequence number is not changed and thus not updated
@@ -468,6 +471,8 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 			VertexListReorganizer reorganizer = new VertexListReorganizer(
 					this.owningGraph);
 			this.vertexIdMap = reorganizer.getReorganisedMap(this.vertexIdMap);
+			// does this change the vertex IDs? (Apparently it does not)If this is the case, the
+			// BitSet has to be altered after this operation.
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -476,6 +481,7 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 	@Override
 	protected void clear() {
 		this.vertexIdMap.clear();
+		usedIDs.clear();
 	}
 
 	/**
@@ -486,6 +492,7 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 	 * @return true if list contains vertex with given id, otherwise false.
 	 */
 	protected boolean containsVertex(int vId) {
-		return this.vertexIdMap.containsValue(vId);
+		// return this.vertexIdMap.containsValue(vId);
+		return usedIDs.get(vId);
 	}
 }

@@ -59,6 +59,7 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 	 *            Vertex the incidence list belongs to.
 	 */
 	public IncidenceList(VertexImpl vertex) {
+		super();
 		this.owningVertex = vertex;
 		this.incidenceMap = new TreeMap<Long, Integer>();
 	}
@@ -104,6 +105,7 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 	 */
 	public void add(int eId, long sequenceNumber) {
 		this.incidenceMap.put(sequenceNumber, eId);
+		usedIDs.set(Math.abs(eId));
 	}
 
 	@Override
@@ -313,6 +315,7 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 	private void insertAt(DatabasePersistableEdge edge, long sequenceNumber) {
 		edge.setSequenceNumberInLambdaSeq(sequenceNumber);
 		this.incidenceMap.put(sequenceNumber, edge.getId());
+		usedIDs.set(Math.abs(edge.getId()));
 	}
 
 	/**
@@ -468,6 +471,7 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 		assert this.contains(edge);
 		if (this.incidenceMap.containsKey(edge.getSequenceNumberInLambdaSeq())) {
 			this.incidenceMap.remove(edge.getSequenceNumberInLambdaSeq());
+			usedIDs.clear(Math.abs(edge.getId()));
 			/*
 			 * As it is not known here if incidence will be completely deleted
 			 * or just updated as edge points to new alpha or omega, sequence
@@ -522,6 +526,7 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 	@Override
 	protected void clear() {
 		this.incidenceMap.clear();
+		usedIDs.clear();
 	}
 
 	/**
