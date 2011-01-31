@@ -110,6 +110,7 @@ public class EdgeList extends GraphElementList<DatabasePersistableEdge> {
 	 */
 	public void add(long sequenceNumber, int eId) {
 		this.edgeIdMap.put(sequenceNumber, eId);
+		usedIDs.set(Math.abs(eId));
 	}
 
 	/**
@@ -298,6 +299,7 @@ public class EdgeList extends GraphElementList<DatabasePersistableEdge> {
 		assert !this.contains(edge);
 		edge.setSequenceNumberInESeq(sequenceNumber);
 		this.edgeIdMap.put(sequenceNumber, edge.getId());
+		usedIDs.set(Math.abs(edge.getId()));
 	}
 
 	/**
@@ -434,6 +436,7 @@ public class EdgeList extends GraphElementList<DatabasePersistableEdge> {
 	public void remove(DatabasePersistableEdge edge) {
 		assert this.contains(edge);
 		this.edgeIdMap.remove(edge.getSequenceNumberInESeq());
+		usedIDs.clear(Math.abs(edge.getId()));
 	}
 
 	@Override
@@ -460,6 +463,7 @@ public class EdgeList extends GraphElementList<DatabasePersistableEdge> {
 	@Override
 	protected void clear() {
 		this.edgeIdMap.clear();
+		usedIDs.clear();
 	}
 
 	/**
@@ -470,6 +474,7 @@ public class EdgeList extends GraphElementList<DatabasePersistableEdge> {
 	 * @return true if an edge with given id is part of ESeq, otherwise false.
 	 */
 	protected boolean containsEdge(int eId) {
-		return this.edgeIdMap.containsValue(Math.abs(eId));
+		// return this.edgeIdMap.containsValue(Math.abs(eId));
+		return usedIDs.get(Math.abs(eId));
 	}
 }

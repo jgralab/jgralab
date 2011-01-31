@@ -30,8 +30,16 @@
  */
 package de.uni_koblenz.jgralab.impl.db;
 
+import java.util.BitSet;
 import java.util.TreeMap;
 import de.uni_koblenz.jgralab.GraphException;
+
+/* TODO refactor this class:
+ * - move tree set from specializations to this class
+ * - move all common methods, accessing the tree set, to this class 
+ */
+
+// TODO improve this class (after refactoring it). Is the TreeSet really required?
 
 /**
  * Aggregates common attributes and methods for lists in graphs. A list has a
@@ -50,10 +58,17 @@ public abstract class GraphElementList<T> {
 	protected long version;
 
 	/**
+	 * Bitset reflecting the value range of <code>vertexIdMap</code> for
+	 * avoiding the call of <code>TreeSet.containsValue()</code>.
+	 */
+	protected BitSet usedIDs;
+
+	/**
 	 * Creates and initializes a new <code>List</code>.
 	 */
 	protected GraphElementList() {
 		this.version = 0;
+		usedIDs = new BitSet();
 	}
 
 	/**
