@@ -14,8 +14,7 @@ public class GraphDbTest {
 			System.out.println("Connecting DB...");
 			gdb = GraphDatabase.openGraphDatabase(System
 					.getProperty("jgralabtest_dbconnection"));
-			// gdb = GraphDatabase
-			// .openGraphDatabase("jdbc:postgresql://riediger:win4all@helena.uni-koblenz.de:5432/jgtest");
+			gdb.setAutoCommitMode(false);
 			try {
 				if (!gdb.contains(JniTestSchema.instance())) {
 					gdb.insertSchema(JniTestSchema.instance(), "// no text");
@@ -40,8 +39,8 @@ public class GraphDbTest {
 			JniTestGraph g = JniTestSchema.instance()
 					.createJniTestGraphWithDatabaseSupport("gdbtest", gdb);
 
-			final int NV = 10000;
-			final int NE = 10000;
+			final int NV = 100000;
+			final int NE = 100000;
 
 			System.out.println("Creating " + NV + " vertices...");
 			long s0 = System.currentTimeMillis();
@@ -69,8 +68,8 @@ public class GraphDbTest {
 			System.out.println(System.currentTimeMillis() - s0 + " ms");
 			gdb.commitTransaction();
 
-			gdb.setAutoCommitMode(true);
-			gdb.optimizeForGraphTraversal();
+			// gdb.setAutoCommitMode(true);
+			// gdb.optimizeForGraphTraversal();
 			System.out.println("Fini.");
 		} catch (GraphDatabaseException e) {
 			// TODO Auto-generated catch block
