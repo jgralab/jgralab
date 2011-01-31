@@ -48,13 +48,13 @@ public abstract class InstanceTest {
 		// for (ImplementationType current : ImplementationType.values()) {
 		// parameters.add(new Object[] { current });
 		// }
-		// parameters.add(new Object[] { ImplementationType.STANDARD });
-		// parameters.add(new Object[] { ImplementationType.TRANSACTION });
-		// parameters.add(new Object[] { ImplementationType.SAVEMEM });
+		parameters.add(new Object[] { ImplementationType.STANDARD });
+		parameters.add(new Object[] { ImplementationType.TRANSACTION });
+		parameters.add(new Object[] { ImplementationType.SAVEMEM });
 
 		// TODO rename property such that "test" becomes clear... after that,
 		// delete todo
-		if (System.getProperty("jgralab_dbconnection") != null) {
+		if (System.getProperty("jgralabtest_dbconnection") != null) {
 			System.out.println("Enabling database support testing...");
 			parameters.add(new Object[] { ImplementationType.DATABASE });
 		} else {

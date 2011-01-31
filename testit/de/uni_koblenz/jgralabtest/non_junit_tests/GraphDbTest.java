@@ -12,8 +12,8 @@ public class GraphDbTest {
 		GraphDatabase gdb;
 		try {
 			System.out.println("Connecting DB...");
-			gdb = GraphDatabase
-					.openGraphDatabase("jdbc:postgresql://jgtest:secret@localhost:5432/jgtest");
+			gdb = GraphDatabase.openGraphDatabase(System
+					.getProperty("jgralabtest_dbconnection"));
 			// gdb = GraphDatabase
 			// .openGraphDatabase("jdbc:postgresql://riediger:win4all@helena.uni-koblenz.de:5432/jgtest");
 			try {
@@ -40,8 +40,8 @@ public class GraphDbTest {
 			JniTestGraph g = JniTestSchema.instance()
 					.createJniTestGraphWithDatabaseSupport("gdbtest", gdb);
 
-			final int NV = 100000;
-			final int NE = 100000;
+			final int NV = 10000;
+			final int NE = 10000;
 
 			System.out.println("Creating " + NV + " vertices...");
 			long s0 = System.currentTimeMillis();
