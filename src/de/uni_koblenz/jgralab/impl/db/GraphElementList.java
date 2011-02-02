@@ -58,6 +58,12 @@ public abstract class GraphElementList<T> {
 	protected long version;
 
 	/**
+	 * Sorted map, mapping sequence numbers of graph elements to their graph
+	 * element ID.
+	 */
+	protected TreeMap<Long, Integer> sequenceNumberToIdMap;
+
+	/**
 	 * Bitset reflecting the value range of <code>vertexIdMap</code> for
 	 * avoiding the call of <code>TreeSet.containsValue()</code>.
 	 */
@@ -67,7 +73,8 @@ public abstract class GraphElementList<T> {
 	 * Creates and initializes a new <code>List</code>.
 	 */
 	protected GraphElementList() {
-		this.version = 0;
+		version = 0;
+		sequenceNumberToIdMap = new TreeMap<Long, Integer>();
 		usedIDs = new BitSet();
 	}
 
