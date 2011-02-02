@@ -95,8 +95,8 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 	 *            Number mapping incidence's sequence in incidence list.
 	 */
 	public void add(int eId, long sequenceNumber) {
-		this.sequenceNumberToIdMap.put(sequenceNumber, eId);
-		usedIDs.set(Math.abs(eId));
+		this.sequenceNumberToIdMap.put(sequenceNumber, Math.abs(eId));
+		// usedIDs.set(Math.abs(eId));
 	}
 
 	@Override
@@ -281,14 +281,14 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 				.getSequenceNumberInLambdaSeq());
 		this.sequenceNumberToIdMap.remove(edge.getSequenceNumberInLambdaSeq());
 		edge.setSequenceNumberInLambdaSeq(sequenceNumber);
-		this.sequenceNumberToIdMap.put(sequenceNumber, eId);
+		this.sequenceNumberToIdMap.put(sequenceNumber, Math.abs(eId));
 	}
 
 	@Override
 	protected void insertAt(DatabasePersistableEdge edge, long sequenceNumber) {
 		edge.setSequenceNumberInLambdaSeq(sequenceNumber);
-		this.sequenceNumberToIdMap.put(sequenceNumber, edge.getId());
-		usedIDs.set(Math.abs(edge.getId()));
+		this.sequenceNumberToIdMap.put(sequenceNumber, Math.abs(edge.getId()));
+		// usedIDs.set(Math.abs(edge.getId()));
 	}
 
 	/**
@@ -305,8 +305,7 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 	}
 
 	private void appendByMoveOrInsert(DatabasePersistableEdge edge) {
-		long sequenceNumber = this
-				.getRegularSequenceNumberAfterLastElementOf();
+		long sequenceNumber = this.getRegularSequenceNumberAfterLastElementOf();
 		this.moveOrInsert(edge, sequenceNumber);
 	}
 
@@ -447,7 +446,7 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 				.getSequenceNumberInLambdaSeq())) {
 			this.sequenceNumberToIdMap.remove(edge
 					.getSequenceNumberInLambdaSeq());
-			usedIDs.clear(Math.abs(edge.getId()));
+			// usedIDs.clear(Math.abs(edge.getId()));
 			/*
 			 * As it is not known here if incidence will be completely deleted
 			 * or just updated as edge points to new alpha or omega, sequence
@@ -502,7 +501,7 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 	@Override
 	protected void clear() {
 		this.sequenceNumberToIdMap.clear();
-		usedIDs.clear();
+		// usedIDs.clear();
 	}
 
 	/**
@@ -543,5 +542,5 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 		}
 		return count;
 	}
-	
+
 }
