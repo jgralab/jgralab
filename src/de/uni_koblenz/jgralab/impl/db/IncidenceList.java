@@ -274,15 +274,7 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 		this.moveOrInsert(edge, sequenceNumber);
 	}
 
-	private void moveOrInsert(DatabasePersistableEdge edge, long sequenceNumber) {
-		if (this.contains(edge)) {
-			this.moveTo(edge, sequenceNumber);
-		} else {
-			this.insertAt(edge, sequenceNumber);
-		}
-	}
-
-	private void moveTo(DatabasePersistableEdge edge, long sequenceNumber) {
+	protected void moveTo(DatabasePersistableEdge edge, long sequenceNumber) {
 		assert this.contains(edge);
 		int eId = this.sequenceNumberToIdMap.get(edge
 				.getSequenceNumberInLambdaSeq());
@@ -291,7 +283,7 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 		this.sequenceNumberToIdMap.put(sequenceNumber, eId);
 	}
 
-	private void insertAt(DatabasePersistableEdge edge, long sequenceNumber) {
+	protected void insertAt(DatabasePersistableEdge edge, long sequenceNumber) {
 		edge.setSequenceNumberInLambdaSeq(sequenceNumber);
 		this.sequenceNumberToIdMap.put(sequenceNumber, edge.getId());
 		usedIDs.set(Math.abs(edge.getId()));
@@ -312,7 +304,7 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 
 	private void appendByMoveOrInsert(DatabasePersistableEdge edge) {
 		long sequenceNumber = this
-				.getRegularSequenceNumberBehindLastElementOf();
+				.getRegularSequenceNumberAfterLastElementOf();
 		this.moveOrInsert(edge, sequenceNumber);
 	}
 

@@ -265,16 +265,6 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 		this.moveOrInsert(vertex, sequenceNumber);
 	}
 
-	// TODO Candidate to move to List<T>
-	private void moveOrInsert(DatabasePersistableVertex vertex,
-			long sequenceNumber) {
-		if (this.contains(vertex)) {
-			this.moveTo(vertex, sequenceNumber);
-		} else {
-			this.insertAt(vertex, sequenceNumber);
-		}
-	}
-
 	/**
 	 * Appends a vertex to vertex list.
 	 * 
@@ -291,7 +281,7 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 	private void appendByMoveOrInsert(DatabasePersistableVertex vertex) {
 		this.assureThatElementCanBeAppended();
 		long sequenceNumber = this
-				.getRegularSequenceNumberBehindLastElementOf();
+				.getRegularSequenceNumberAfterLastElementOf();
 		this.moveOrInsert(vertex, sequenceNumber);
 	}
 
@@ -393,13 +383,13 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 		return this.getNextFreeSequenceNumber(vertex.getSequenceNumberInVSeq());
 	}
 
-	private void moveTo(DatabasePersistableVertex vertex, long sequenceNumber) {
+	protected void moveTo(DatabasePersistableVertex vertex, long sequenceNumber) {
 		this.sequenceNumberToIdMap.remove(vertex.getSequenceNumberInVSeq());
 		vertex.setSequenceNumberInVSeq(sequenceNumber);
 		this.sequenceNumberToIdMap.put(sequenceNumber, vertex.getId());
 	}
 
-	private void insertAt(DatabasePersistableVertex vertex, long sequenceNumber) {
+	protected void insertAt(DatabasePersistableVertex vertex, long sequenceNumber) {
 		vertex.setSequenceNumberInVSeq(sequenceNumber);
 		this.sequenceNumberToIdMap.put(sequenceNumber, vertex.getId());
 		usedIDs.set(vertex.getId());

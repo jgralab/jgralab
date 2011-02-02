@@ -261,22 +261,16 @@ public class EdgeList extends GraphElementList<DatabasePersistableEdge> {
 		this.moveOrInsert(edge, sequenceNumber);
 	}
 
-	private void moveOrInsert(DatabasePersistableEdge edge, long sequenceNumber) {
-		if (this.contains(edge)) {
-			this.moveTo(edge, sequenceNumber);
-		} else {
-			this.insertAt(edge, sequenceNumber);
-		}
-	}
-
-	private void moveTo(DatabasePersistableEdge edge, long sequenceNumber) {
+	@Override
+	protected void moveTo(DatabasePersistableEdge edge, long sequenceNumber) {
 		assert this.contains(edge);
 		this.sequenceNumberToIdMap.remove(edge.getSequenceNumberInESeq());
 		edge.setSequenceNumberInESeq(sequenceNumber);
 		this.sequenceNumberToIdMap.put(sequenceNumber, edge.getId());
 	}
 
-	private void insertAt(DatabasePersistableEdge edge, long sequenceNumber) {
+	@Override
+	protected void insertAt(DatabasePersistableEdge edge, long sequenceNumber) {
 		assert !this.contains(edge);
 		edge.setSequenceNumberInESeq(sequenceNumber);
 		this.sequenceNumberToIdMap.put(sequenceNumber, edge.getId());
@@ -302,7 +296,7 @@ public class EdgeList extends GraphElementList<DatabasePersistableEdge> {
 	private void appendByMoveOrInsert(DatabasePersistableEdge edge) {
 		this.assureThatElementCanBeAppended();
 		long sequenceNumber = this
-				.getRegularSequenceNumberBehindLastElementOf();
+				.getRegularSequenceNumberAfterLastElementOf();
 		this.moveOrInsert(edge, sequenceNumber);
 	}
 
