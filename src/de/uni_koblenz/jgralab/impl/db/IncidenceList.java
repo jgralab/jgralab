@@ -274,6 +274,7 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 		this.moveOrInsert(edge, sequenceNumber);
 	}
 
+	@Override
 	protected void moveTo(DatabasePersistableEdge edge, long sequenceNumber) {
 		assert this.contains(edge);
 		int eId = this.sequenceNumberToIdMap.get(edge
@@ -283,6 +284,7 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 		this.sequenceNumberToIdMap.put(sequenceNumber, eId);
 	}
 
+	@Override
 	protected void insertAt(DatabasePersistableEdge edge, long sequenceNumber) {
 		edge.setSequenceNumberInLambdaSeq(sequenceNumber);
 		this.sequenceNumberToIdMap.put(sequenceNumber, edge.getId());
@@ -398,15 +400,16 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 		assert targetEdge != movedEdge;
 
 		if (targetEdge != movedEdge
-				&& !this.isNextNeighbour(targetEdge, movedEdge)) {
+				&& !this.isNextNeighbor(targetEdge, movedEdge)) {
 			// System.out.println("putAfter calls moveIncidenceBehind");
 			this.moveIncidenceBehind(movedEdge, targetEdge);
 		}
 	}
 
-	private boolean isNextNeighbour(DatabasePersistableEdge edge,
-			DatabasePersistableEdge allegedNeighbourEdge) {
-		return this.getNextEdgeId(edge) == allegedNeighbourEdge.getId();
+	@Override
+	protected boolean isNextNeighbor(DatabasePersistableEdge edge,
+			DatabasePersistableEdge allegedNeighborEdge) {
+		return this.getNextEdgeId(edge) == allegedNeighborEdge.getId();
 	}
 
 	private int getNextEdgeId(DatabasePersistableEdge edge)

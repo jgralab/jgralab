@@ -368,15 +368,16 @@ public class EdgeList extends GraphElementList<DatabasePersistableEdge> {
 		assert this.areBothInSameEdgeList(targetEdge, movedEdge);
 		assert targetEdge != movedEdge;
 		if (targetEdge != movedEdge
-				&& !this.isNextNeighbour(targetEdge, movedEdge)) {
+				&& !this.isNextNeighbor(targetEdge, movedEdge)) {
 			this.moveEdgeBehind(movedEdge, targetEdge);
 		}
 	}
 
-	private boolean isNextNeighbour(DatabasePersistableEdge edge,
-			DatabasePersistableEdge allegedNeighbourEdge) {
+	@Override
+	protected boolean isNextNeighbor(DatabasePersistableEdge edge,
+			DatabasePersistableEdge allegedNeighborEdge) {
 		if (!this.isLast(edge)) {
-			return this.getNextEdgeId(edge) == allegedNeighbourEdge.getId();
+			return this.getNextEdgeId(edge) == allegedNeighborEdge.getId();
 		} else {
 			return false;
 		}
