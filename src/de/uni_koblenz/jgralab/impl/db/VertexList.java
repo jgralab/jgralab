@@ -98,7 +98,7 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 	 */
 	public void add(long sequenceNumber, int vId) {
 		this.sequenceNumberToIdMap.put(sequenceNumber, vId);
-		usedIDs.set(vId);
+		// usedIDs.set(vId);
 	}
 
 	@Override
@@ -395,7 +395,7 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 	protected void insertAt(DatabasePersistableVertex vertex, long sequenceNumber) {
 		vertex.setSequenceNumberInVSeq(sequenceNumber);
 		this.sequenceNumberToIdMap.put(sequenceNumber, vertex.getId());
-		usedIDs.set(vertex.getId());
+		// usedIDs.set(vertex.getId());
 	}
 
 	/**
@@ -413,7 +413,7 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 	public void remove(DatabasePersistableVertex vertex) {
 		assert this.contains(vertex);
 		this.sequenceNumberToIdMap.remove(vertex.getSequenceNumberInVSeq());
-		usedIDs.clear(vertex.getId());
+		// usedIDs.clear(vertex.getId());
 		/*
 		 * As it is not known here if the vertex will be completely deleted or
 		 * just moved, his sequence number is not changed and thus not updated
@@ -455,7 +455,7 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 	@Override
 	protected void clear() {
 		this.sequenceNumberToIdMap.clear();
-		usedIDs.clear();
+		// usedIDs.clear();
 	}
 
 	/**
@@ -466,7 +466,7 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 	 * @return true if list contains vertex with given id, otherwise false.
 	 */
 	protected boolean containsVertex(int vId) {
-		// return this.vertexIdMap.containsValue(vId);
-		return usedIDs.get(vId);
+		return this.sequenceNumberToIdMap.containsValue(vId);
+		// return usedIDs.get(vId);
 	}
 }

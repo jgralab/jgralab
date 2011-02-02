@@ -67,15 +67,46 @@ public abstract class GraphElementList<T> {
 	 * Bitset reflecting the value range of <code>vertexIdMap</code> for
 	 * avoiding the call of <code>TreeSet.containsValue()</code>.
 	 */
-	protected BitSet usedIDs;
+	// protected BitSet usedIDs;
 
 	/**
 	 * Creates and initializes a new <code>List</code>.
 	 */
 	protected GraphElementList() {
 		version = 0;
-		sequenceNumberToIdMap = new TreeMap<Long, Integer>();
-		usedIDs = new BitSet();
+		sequenceNumberToIdMap = new TreeMap<Long, Integer>() {
+			private static final long serialVersionUID = 1L;
+			private BitSet usedIDs;
+
+			{
+				usedIDs = new BitSet();
+			}
+
+			@Override
+			public void clear() {
+				super.clear();
+				usedIDs.clear();
+			}
+
+			@Override
+			public boolean containsValue(Object value) {
+				return usedIDs.get((Integer) value);
+			}
+
+			@Override
+			public Integer put(Long key, Integer value) {
+				usedIDs.set(value);
+				return super.put(key, value);
+			}
+
+			@Override
+			public Integer remove(Object key) {
+				usedIDs.clear(get(key));
+				return super.remove(key);
+			}
+
+		};
+		// usedIDs = new BitSet();
 	}
 
 	/**
@@ -246,19 +277,20 @@ public abstract class GraphElementList<T> {
 					"Distance of two elements cannot be negative.");
 		}
 	}
-	
+
 	protected abstract boolean equalsLast(T element);
+
 	protected abstract boolean equalsFirst(T element);
-	
+
 	protected boolean isLast(T element) {
-		assert(contains(element));
+		assert (contains(element));
 		if (!this.isEmpty()) {
 			return this.equalsLast(element);
 		} else {
 			return false;
 		}
 	}
-	
+
 	protected boolean isFirst(T element) {
 		assert this.contains(element);
 		if (!this.isEmpty()) {
@@ -269,8 +301,9 @@ public abstract class GraphElementList<T> {
 	}
 
 	protected abstract void moveTo(T element, long sequenceNumber);
+
 	protected abstract void insertAt(T element, long sequenceNumber);
-	
+
 	protected void moveOrInsert(T edge, long sequenceNumber) {
 		if (this.contains(edge)) {
 			this.moveTo(edge, sequenceNumber);
@@ -278,7 +311,7 @@ public abstract class GraphElementList<T> {
 			this.insertAt(edge, sequenceNumber);
 		}
 	}
-	
+
 	protected abstract boolean isNextNeighbor(T element, T allegedNeighbor);
 
 }
