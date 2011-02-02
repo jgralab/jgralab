@@ -1853,6 +1853,7 @@ public abstract class GraphDatabase {
 			final DataOutputStream dout = new DataOutputStream(out);
 
 			Thread graphIOThread = new Thread() {
+				@Override
 				public void run() {
 					try {
 						GraphIO.saveSchemaToStream(dout, schema);
@@ -1881,7 +1882,6 @@ public abstract class GraphDatabase {
 				}
 			}
 			graphIOThread.join();
-			dout.close();
 			reader.close();
 			writer.close();
 
