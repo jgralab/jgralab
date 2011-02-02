@@ -501,18 +501,16 @@ public abstract class NamedElementImpl implements NamedElement {
 	}
 
 	@Override
-	public void addComment(String... comments) {
-		for (String comment : comments) {
-			if (comment == null) {
-				continue;
+	public void addComment(String comment) {
+		if (comment == null) {
+			return;
+		}
+		comment = comment.trim();
+		if (comment.length() > 0) {
+			if (this.comments == null) {
+				this.comments = new ArrayList<String>();
 			}
-			comment = comment.trim();
-			if (comment.length() > 0) {
-				if (this.comments == null) {
-					this.comments = new ArrayList<String>();
-				}
-				this.comments.add(comment);
-			}
+			this.comments.add(comment);
 		}
 	}
 }

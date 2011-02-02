@@ -335,7 +335,7 @@ public interface NamedElement extends Comparable<NamedElement> {
 	 * @param comment
 	 *            a comment
 	 */
-	public void addComment(String... comment);
+	public void addComment(String comment);
 
 	/**
 	 * Returns the comments of this NamedElement.
