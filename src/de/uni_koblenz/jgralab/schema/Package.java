@@ -42,9 +42,6 @@ import java.util.Map;
  */
 public interface Package extends NamedElement {
 
-	/*
-	 * Touch and die!
-	 */
 	/**
 	 * The name of the <code>DefaultPackage</code>.
 	 */
