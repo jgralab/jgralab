@@ -196,15 +196,8 @@ public class EdgeList extends GraphElementList<DatabasePersistableEdge> {
 		}
 	}
 
-	private boolean isFirst(DatabasePersistableEdge edge) {
-		if (!this.isEmpty()) {
-			return this.equalsFirst(edge);
-		} else {
-			return false;
-		}
-	}
-
-	private boolean equalsFirst(DatabasePersistableEdge edge) {
+	@Override
+	protected boolean equalsFirst(DatabasePersistableEdge edge) {
 		int firstEId = this.getFirstEdgeId();
 		return firstEId == edge.getId();
 	}
@@ -236,15 +229,8 @@ public class EdgeList extends GraphElementList<DatabasePersistableEdge> {
 		}
 	}
 
-	private boolean isLast(DatabasePersistableEdge edge) {
-		if (!this.isEmpty()) {
-			return this.equalsLast(edge);
-		} else {
-			return false;
-		}
-	}
-
-	private boolean equalsLast(DatabasePersistableEdge edge) {
+	@Override
+	protected boolean equalsLast(DatabasePersistableEdge edge) {
 		int lastEId = this.getLastEdgeId();
 		return lastEId == edge.getId();
 	}
@@ -411,8 +397,7 @@ public class EdgeList extends GraphElementList<DatabasePersistableEdge> {
 
 	private long getNextFreeSequenceNumber(DatabasePersistableEdge edge) {
 		assert !isLast(edge);
-		return this.getNextFreeSequenceNumber(this.sequenceNumberToIdMap, edge
-				.getSequenceNumberInESeq());
+		return this.getNextFreeSequenceNumber(edge.getSequenceNumberInESeq());
 	}
 
 	/**

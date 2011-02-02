@@ -201,16 +201,8 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 		}
 	}
 
-	private boolean isFirst(DatabasePersistableEdge edge) {
-		assert this.contains(edge);
-		if (!this.isEmpty()) {
-			return this.equalsFirstIncidence(edge);
-		} else {
-			return false;
-		}
-	}
-
-	private boolean equalsFirstIncidence(DatabasePersistableEdge edge) {
+	@Override
+	protected boolean equalsFirst(DatabasePersistableEdge edge) {
 		return this.sequenceNumberToIdMap.firstEntry().getValue() == edge
 				.getId();
 	}
@@ -246,16 +238,8 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 		}
 	}
 
-	private boolean isLast(DatabasePersistableEdge edge) {
-		assert this.contains(edge);
-		if (!this.isEmpty()) {
-			return this.equalsLastIncidence(edge);
-		} else {
-			return false;
-		}
-	}
-
-	private boolean equalsLastIncidence(DatabasePersistableEdge edge) {
+	@Override
+	protected boolean equalsLast(DatabasePersistableEdge edge) {
 		return this.sequenceNumberToIdMap.lastEntry().getValue() == edge
 				.getId();
 	}
@@ -445,9 +429,8 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 
 	private void moveIncidenceBehind(DatabasePersistableEdge movedEdge,
 			DatabasePersistableEdge targetEdge) {
-		long newSequenceNumber = this.getNextFreeSequenceNumber(
-				this.sequenceNumberToIdMap, targetEdge
-						.getSequenceNumberInLambdaSeq());
+		long newSequenceNumber = this.getNextFreeSequenceNumber(targetEdge
+				.getSequenceNumberInLambdaSeq());
 		this.moveTo(movedEdge, newSequenceNumber);
 	}
 
@@ -565,4 +548,5 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 		}
 		return count;
 	}
+	
 }

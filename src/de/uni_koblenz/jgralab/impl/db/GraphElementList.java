@@ -224,12 +224,12 @@ public abstract class GraphElementList<T> {
 		}
 	}
 
-	protected long getNextFreeSequenceNumber(TreeMap<Long, ?> sequenceNumberToIdMap,
-			long sequenceNumber) {
+	protected long getNextFreeSequenceNumber(long sequenceNumber) {
 		if (sequenceNumberToIdMap.lastKey() == sequenceNumber) {
 			return sequenceNumber + SequenceNumber.REGULAR_DISTANCE;
 		}
-		long nextTakenSequenceNumber = sequenceNumberToIdMap.higherKey(sequenceNumber);
+		long nextTakenSequenceNumber = sequenceNumberToIdMap
+				.higherKey(sequenceNumber);
 		long distance = nextTakenSequenceNumber - sequenceNumber;
 		assert distance > 0;
 		if (distance > 3) {
@@ -238,12 +238,33 @@ public abstract class GraphElementList<T> {
 			return nextTakenSequenceNumber - 1;
 		} else if (distance == 1) {
 			this.reorganize();
-			return this.getNextFreeSequenceNumber(sequenceNumberToIdMap, sequenceNumber);
+			return this.getNextFreeSequenceNumber(sequenceNumber);
 		} else if (distance == 0) {
 			throw new GraphException("Two elements have same sequence number.");
 		} else {
 			throw new GraphException(
 					"Distance of two elements cannot be negative.");
+		}
+	}
+	
+	protected abstract boolean equalsLast(T element);
+	protected abstract boolean equalsFirst(T element);
+	
+	protected boolean isLast(T element) {
+		assert(contains(element));
+		if (!this.isEmpty()) {
+			return this.equalsLast(element);
+		} else {
+			return false;
+		}
+	}
+	
+	protected boolean isFirst(T element) {
+		assert this.contains(element);
+		if (!this.isEmpty()) {
+			return this.equalsFirst(element);
+		} else {
+			return false;
 		}
 	}
 }

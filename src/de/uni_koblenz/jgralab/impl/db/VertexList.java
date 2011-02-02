@@ -199,15 +199,8 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 		}
 	}
 
-	private boolean isFirst(DatabasePersistableVertex vertex) {
-		if (!this.isEmpty()) {
-			return this.equalsFirst(vertex);
-		} else {
-			return false;
-		}
-	}
-
-	private boolean equalsFirst(DatabasePersistableVertex vertex) {
+	@Override
+	protected boolean equalsFirst(DatabasePersistableVertex vertex) {
 		int firstVId = this.getFirstVertexId();
 		return firstVId == vertex.getId();
 	}
@@ -240,15 +233,8 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 		}
 	}
 
-	private boolean isLast(DatabasePersistableVertex vertex) {
-		if (!this.isEmpty()) {
-			return this.equalsLast(vertex);
-		} else {
-			return false;
-		}
-	}
-
-	private boolean equalsLast(DatabasePersistableVertex vertex) {
+	@Override
+	protected boolean equalsLast(DatabasePersistableVertex vertex) {
 		int lastVId = this.getLastVertexId();
 		return lastVId == vertex.getId();
 	}
@@ -404,8 +390,7 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 
 	private long getNextFreeSequenceNumber(DatabasePersistableVertex vertex) {
 		assert !isLast(vertex);
-		return this.getNextFreeSequenceNumber(this.sequenceNumberToIdMap,
-				vertex.getSequenceNumberInVSeq());
+		return this.getNextFreeSequenceNumber(vertex.getSequenceNumberInVSeq());
 	}
 
 	private void moveTo(DatabasePersistableVertex vertex, long sequenceNumber) {
