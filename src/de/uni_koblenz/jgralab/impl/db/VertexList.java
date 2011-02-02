@@ -304,7 +304,7 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 		assert this.areBothInSameVertexList(targetVertex, movedVertex);
 		assert targetVertex != movedVertex;
 		if (!targetVertex.equals(movedVertex)
-				&& !this.isNextNeighbour(targetVertex, movedVertex)) {
+				&& !this.isNextNeighbor(targetVertex, movedVertex)) {
 			this.moveVertexBehind(movedVertex, targetVertex);
 		}
 	}
@@ -349,10 +349,11 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 		}
 	}
 
-	private boolean isNextNeighbour(DatabasePersistableVertex vertex,
-			DatabasePersistableVertex allegedNeighbourVertex) {
+	@Override
+	protected boolean isNextNeighbor(DatabasePersistableVertex vertex,
+			DatabasePersistableVertex allegedNeighborVertex) {
 		if (!this.isLast(vertex)) {
-			return this.getNextVertexId(vertex) == allegedNeighbourVertex
+			return this.getNextVertexId(vertex) == allegedNeighborVertex
 					.getId();
 		} else {
 			return false;
@@ -383,12 +384,14 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 		return this.getNextFreeSequenceNumber(vertex.getSequenceNumberInVSeq());
 	}
 
+	@Override
 	protected void moveTo(DatabasePersistableVertex vertex, long sequenceNumber) {
 		this.sequenceNumberToIdMap.remove(vertex.getSequenceNumberInVSeq());
 		vertex.setSequenceNumberInVSeq(sequenceNumber);
 		this.sequenceNumberToIdMap.put(sequenceNumber, vertex.getId());
 	}
 
+	@Override
 	protected void insertAt(DatabasePersistableVertex vertex, long sequenceNumber) {
 		vertex.setSequenceNumberInVSeq(sequenceNumber);
 		this.sequenceNumberToIdMap.put(sequenceNumber, vertex.getId());

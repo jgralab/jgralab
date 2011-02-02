@@ -278,5 +278,7 @@ public abstract class GraphElementList<T> {
 			this.insertAt(edge, sequenceNumber);
 		}
 	}
+	
+	protected abstract boolean isNextNeighbor(T element, T allegedNeighbor);
 
 }
