@@ -175,7 +175,7 @@ public abstract class GraphElementList<T> {
 		}
 	}
 
-	protected long getRegularSequenceNumberBehindLastElementOf() {
+	protected long getRegularSequenceNumberAfterLastElementOf() {
 		assert !maxBorderOfNumberSpaceReached();
 		if (!sequenceNumberToIdMap.isEmpty()) {
 			return sequenceNumberToIdMap.lastKey()
@@ -267,4 +267,16 @@ public abstract class GraphElementList<T> {
 			return false;
 		}
 	}
+
+	protected abstract void moveTo(T element, long sequenceNumber);
+	protected abstract void insertAt(T element, long sequenceNumber);
+	
+	protected void moveOrInsert(T edge, long sequenceNumber) {
+		if (this.contains(edge)) {
+			this.moveTo(edge, sequenceNumber);
+		} else {
+			this.insertAt(edge, sequenceNumber);
+		}
+	}
+
 }
