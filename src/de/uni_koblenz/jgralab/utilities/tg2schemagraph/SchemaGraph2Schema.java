@@ -214,6 +214,8 @@ public class SchemaGraph2Schema {
 
 			createSubsetsAndRedefinesOfAllEdgeClasses();
 
+			addAllPackageComments(schemaGraph);
+
 			schema = this.schema;
 
 			tearDown();
@@ -222,6 +224,19 @@ public class SchemaGraph2Schema {
 		}
 
 		return schema;
+	}
+
+	private void addAllPackageComments(SchemaGraph schemaGraph) {
+		for (Package pkg : schemaGraph.getPackageVertices()) {
+			if (pkg.getFirstAnnotatesIncidence() == null) {
+				continue;
+			}
+			de.uni_koblenz.jgralab.schema.Package sp = schema.getPackage(pkg
+					.get_qualifiedName());
+			for (Comment comment : pkg.get_comment()) {
+				sp.addComment(comment.get_text());
+			}
+		}
 	}
 
 	/**
@@ -245,7 +260,8 @@ public class SchemaGraph2Schema {
 		IncidenceClass gFrom, gTo;
 		de.uni_koblenz.jgralab.schema.impl.IncidenceClassImpl from, to;
 
-		gFrom = (IncidenceClass) gEdgeClass.getFirstComesFromIncidence().getThat();
+		gFrom = (IncidenceClass) gEdgeClass.getFirstComesFromIncidence()
+				.getThat();
 		gTo = (IncidenceClass) gEdgeClass.getFirstGoesToIncidence().getThat();
 
 		assert (gFrom != null) : "FIXME! No from \"IncidenceClass\" defined.";
@@ -561,8 +577,8 @@ public class SchemaGraph2Schema {
 	private de.uni_koblenz.jgralab.schema.Domain createDomain(EnumDomain gDomain) {
 
 		// Creates a EnumDomain
-		return schema.createEnumDomain(gDomain.get_qualifiedName(), gDomain
-				.get_enumConstants());
+		return schema.createEnumDomain(gDomain.get_qualifiedName(),
+				gDomain.get_enumConstants());
 	}
 
 	/**
@@ -609,7 +625,8 @@ public class SchemaGraph2Schema {
 		assert (gDomain != null) : "FIXME! The given Domain shouldn't be null.";
 
 		// Gets the BaseDomain
-		HasBaseDomain hasBaseDomain = gDomain.getFirstHasBaseDomainIncidence(OUTGOING);
+		HasBaseDomain hasBaseDomain = gDomain
+				.getFirstHasBaseDomainIncidence(OUTGOING);
 		assert (hasBaseDomain != null) : "FIXME! No \"HasBaseDomain\" has been defined.";
 		assert (hasBaseDomain.getThat() instanceof Domain) : "FIXME! That should be an instance of Domain.";
 		Domain base = (Domain) hasBaseDomain.getThat();
@@ -634,7 +651,8 @@ public class SchemaGraph2Schema {
 		Domain key, value;
 
 		// Gets the KeyDomain
-		HasKeyDomain hasKeyDomain = gDomain.getFirstHasKeyDomainIncidence(OUTGOING);
+		HasKeyDomain hasKeyDomain = gDomain
+				.getFirstHasKeyDomainIncidence(OUTGOING);
 		assert (hasKeyDomain != null) : "No \"HasKeyDomain\" has been defined.";
 		assert (hasKeyDomain.getThat() instanceof Domain) : "That should be an instance of Domain.";
 		key = (Domain) hasKeyDomain.getThat();
@@ -747,7 +765,8 @@ public class SchemaGraph2Schema {
 				&& (gFrom.getFirstEndsAtIncidence().getThat() != null) : "One of the referenced objects is not an instance of the class VertexClass";
 
 		// Gets all attributes of the To edge
-		to = queryVertexClass((VertexClass) gTo.getFirstEndsAtIncidence().getThat());
+		to = queryVertexClass((VertexClass) gTo.getFirstEndsAtIncidence()
+				.getThat());
 		toMin = gTo.get_min();
 		toMax = gTo.get_max();
 		toRoleName = gTo.get_roleName();
@@ -755,7 +774,8 @@ public class SchemaGraph2Schema {
 				.get_aggregation().toString());
 
 		// Gets all attributes of the From edge
-		from = queryVertexClass((VertexClass) gFrom.getFirstEndsAtIncidence().getThat());
+		from = queryVertexClass((VertexClass) gFrom.getFirstEndsAtIncidence()
+				.getThat());
 		fromMin = gFrom.get_min();
 		fromMax = gFrom.get_max();
 		fromRoleName = gFrom.get_roleName();
@@ -835,13 +855,14 @@ public class SchemaGraph2Schema {
 			assert (attribute.get_name() != null) : "The name of the Attribute is null.";
 
 			// Gets the Domain
-			HasDomain hasDomain = attribute.getFirstHasDomainIncidence(OUTGOING);
+			HasDomain hasDomain = attribute
+					.getFirstHasDomainIncidence(OUTGOING);
 			assert (hasDomain != null) : "No \"HasDomain\" edge has been defined.";
 			assert (hasDomain.getThat() instanceof Domain) : "That should be an instance of Domain.";
 			// Creates and adds an Attribute
 			element.addAttribute(attribute.get_name(),
-					queryDomain((Domain) hasDomain.getThat()), attribute
-							.get_defaultValue());
+					queryDomain((Domain) hasDomain.getThat()),
+					attribute.get_defaultValue());
 			assert (hasDomain.getNextHasDomain(OUTGOING) == null);
 		}
 	}
