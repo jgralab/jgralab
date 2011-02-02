@@ -367,7 +367,9 @@ public class SchemaGraph2Schema {
 		createAllAttributes(graphClass, gGraphClass);
 		createAllConstraints(graphClass, gGraphClass);
 		if (gGraphClass.getFirstAnnotatesIncidence() != null) {
-			graphClass.addComment(createComments(gGraphClass));
+			for (String c : createComments(gGraphClass)) {
+				graphClass.addComment(c);
+			}
 		}
 
 		// Check
@@ -532,7 +534,9 @@ public class SchemaGraph2Schema {
 			}
 			// set comments
 			if (gDomain.getFirstAnnotatesIncidence() != null) {
-				domain.addComment(createComments(gDomain));
+				for (String c : createComments(gDomain)) {
+					domain.addComment(c);
+				}
 			}
 		}
 
@@ -742,7 +746,9 @@ public class SchemaGraph2Schema {
 
 		// set comments
 		if (gElement.getFirstAnnotatesIncidence() != null) {
-			element.addComment(createComments(gElement));
+			for (String c : createComments(gElement)) {
+				element.addComment(c);
+			}
 		}
 		return element;
 	}
