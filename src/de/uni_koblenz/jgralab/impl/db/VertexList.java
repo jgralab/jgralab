@@ -133,7 +133,8 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 	}
 
 	private int getFirstVertexId() {
-		Entry<Long, Integer> firstEntry = this.sequenceNumberToIdMap.firstEntry();
+		Entry<Long, Integer> firstEntry = this.sequenceNumberToIdMap
+				.firstEntry();
 		return firstEntry.getValue();
 	}
 
@@ -153,7 +154,8 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 	}
 
 	private int getLastVertexId() {
-		Entry<Long, Integer> firstEntry = this.sequenceNumberToIdMap.lastEntry();
+		Entry<Long, Integer> firstEntry = this.sequenceNumberToIdMap
+				.lastEntry();
 		return firstEntry.getValue();
 	}
 
@@ -188,7 +190,8 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 	 */
 	@Override
 	public boolean contains(DatabasePersistableVertex vertex) {
-		Integer vId = this.sequenceNumberToIdMap.get(vertex.getSequenceNumberInVSeq());
+		Integer vId = this.sequenceNumberToIdMap.get(vertex
+				.getSequenceNumberInVSeq());
 		if (vId != null) {
 			return vId == vertex.getId();
 		} else {
@@ -210,8 +213,8 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 	}
 
 	private int getPrevVertexId(DatabasePersistableVertex vertex) {
-		Entry<Long, Integer> previousEntry = this.sequenceNumberToIdMap.lowerEntry(vertex
-				.getSequenceNumberInVSeq());
+		Entry<Long, Integer> previousEntry = this.sequenceNumberToIdMap
+				.lowerEntry(vertex.getSequenceNumberInVSeq());
 		return previousEntry.getValue();
 	}
 
@@ -251,8 +254,8 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 	}
 
 	private int getNextVertexId(DatabasePersistableVertex vertex) {
-		Entry<Long, Integer> nextEntry = this.sequenceNumberToIdMap.higherEntry(vertex
-				.getSequenceNumberInVSeq());
+		Entry<Long, Integer> nextEntry = this.sequenceNumberToIdMap
+				.higherEntry(vertex.getSequenceNumberInVSeq());
 		return nextEntry.getValue();
 	}
 
@@ -270,9 +273,9 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 	}
 
 	private void prependByMoveOrInsert(DatabasePersistableVertex vertex) {
-		this.assureThatElementCanBeAppended(this.sequenceNumberToIdMap);
+		this.assureThatElementCanBeAppended();
 		long sequenceNumber = this
-				.getRegularSequenceNumberBeforeFirstElementOf(this.sequenceNumberToIdMap);
+				.getRegularSequenceNumberBeforeFirstElementOf();
 		this.moveOrInsert(vertex, sequenceNumber);
 	}
 
@@ -300,9 +303,9 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 	}
 
 	private void appendByMoveOrInsert(DatabasePersistableVertex vertex) {
-		this.assureThatElementCanBeAppended(this.sequenceNumberToIdMap);
+		this.assureThatElementCanBeAppended();
 		long sequenceNumber = this
-				.getRegularSequenceNumberBehindLastElementOf(this.sequenceNumberToIdMap);
+				.getRegularSequenceNumberBehindLastElementOf();
 		this.moveOrInsert(vertex, sequenceNumber);
 	}
 
@@ -389,8 +392,7 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 
 	private long getPrevFreeSequenceNumber(DatabasePersistableVertex vertex) {
 		assert !isFirst(vertex);
-		return this.getPrevFreeSequenceNumber(this.sequenceNumberToIdMap, vertex
-				.getSequenceNumberInVSeq());
+		return this.getPrevFreeSequenceNumber(vertex.getSequenceNumberInVSeq());
 	}
 
 	private void moveVertexBehind(DatabasePersistableVertex movedVertex,
@@ -402,8 +404,8 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 
 	private long getNextFreeSequenceNumber(DatabasePersistableVertex vertex) {
 		assert !isLast(vertex);
-		return this.getNextFreeSequenceNumber(this.sequenceNumberToIdMap, vertex
-				.getSequenceNumberInVSeq());
+		return this.getNextFreeSequenceNumber(this.sequenceNumberToIdMap,
+				vertex.getSequenceNumberInVSeq());
 	}
 
 	private void moveTo(DatabasePersistableVertex vertex, long sequenceNumber) {
@@ -462,8 +464,10 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 		try {
 			VertexListReorganizer reorganizer = new VertexListReorganizer(
 					this.owningGraph);
-			this.sequenceNumberToIdMap = reorganizer.getReorganisedMap(this.sequenceNumberToIdMap);
-			// does this change the vertex IDs? (Apparently it does not)If this is the case, the
+			this.sequenceNumberToIdMap = reorganizer
+					.getReorganisedMap(this.sequenceNumberToIdMap);
+			// does this change the vertex IDs? (Apparently it does not)If this
+			// is the case, the
 			// BitSet has to be altered after this operation.
 		} catch (Exception e) {
 			e.printStackTrace();

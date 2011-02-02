@@ -115,39 +115,39 @@ public abstract class GraphElementList<T> {
 	 */
 	protected abstract void updateVersion(long version);
 
-	abstract T getFirst();
+	public abstract T getFirst();
 
-	abstract T getLast();
+	public abstract T getLast();
 
-	abstract T getPrev(T element);
+	public abstract T getPrev(T element);
 
-	abstract T getNext(T element);
+	public abstract T getNext(T element);
 
-	abstract void prepend(T element);
+	public abstract void prepend(T element);
 
-	abstract void append(T element);
+	public abstract void append(T element);
 
-	abstract void putAfter(T targetElement, T movedElement);
+	public abstract void putAfter(T targetElement, T movedElement);
 
-	abstract void putBefore(T targetElement, T movedElement);
+	public abstract void putBefore(T targetElement, T movedElement);
 
-	abstract boolean contains(T element);
+	public abstract boolean contains(T element);
 
-	abstract void remove(T element);
+	public abstract void remove(T element);
 
 	/**
 	 * Counts elements in list.
 	 * 
 	 * @return Count of elements in list.
 	 */
-	abstract int size();
+	public abstract int size();
 
 	/**
 	 * Checks whether list is empty or not.
 	 * 
 	 * @return true if list is empty, false otherwise.
 	 */
-	abstract boolean isEmpty();
+	public abstract boolean isEmpty();
 
 	/**
 	 * Reorganizes list.
@@ -157,56 +157,56 @@ public abstract class GraphElementList<T> {
 	/**
 	 * Empties list.
 	 */
-	abstract void clear();
+	protected abstract void clear();
 
-	protected long getRegularSequenceNumberBeforeFirstElementOf(
-			TreeMap<Long, ?> map) {
-		assert !minBorderOfNumberSpaceReached(map);
-		if (!map.isEmpty()) {
-			return map.firstKey() - SequenceNumber.REGULAR_DISTANCE;
+	protected long getRegularSequenceNumberBeforeFirstElementOf() {
+		assert !minBorderOfNumberSpaceReached();
+		if (!sequenceNumberToIdMap.isEmpty()) {
+			return sequenceNumberToIdMap.firstKey()
+					- SequenceNumber.REGULAR_DISTANCE;
 		} else {
 			return SequenceNumber.DEFAULT_START_SEQUENCE_NUMBER;
 		}
 	}
 
-	protected void assureThatElementCanBePrepended(TreeMap<Long, ?> map) {
-		if (!this.isEmpty() && minBorderOfNumberSpaceReached(map)) {
+	protected void assureThatElementCanBePrepended() {
+		if (!this.isEmpty() && minBorderOfNumberSpaceReached()) {
 			this.reorganize();
 		}
 	}
 
-	protected long getRegularSequenceNumberBehindLastElementOf(
-			TreeMap<Long, ?> map) {
-		assert !maxBorderOfNumberSpaceReached(map);
-		if (!map.isEmpty()) {
-			return map.lastKey() + SequenceNumber.REGULAR_DISTANCE;
+	protected long getRegularSequenceNumberBehindLastElementOf() {
+		assert !maxBorderOfNumberSpaceReached();
+		if (!sequenceNumberToIdMap.isEmpty()) {
+			return sequenceNumberToIdMap.lastKey()
+					+ SequenceNumber.REGULAR_DISTANCE;
 		} else {
 			return SequenceNumber.DEFAULT_START_SEQUENCE_NUMBER;
 		}
 	}
 
-	protected void assureThatElementCanBeAppended(TreeMap<Long, ?> map) {
-		if (!this.isEmpty() && maxBorderOfNumberSpaceReached(map)) {
+	protected void assureThatElementCanBeAppended() {
+		if (!this.isEmpty() && maxBorderOfNumberSpaceReached()) {
 			this.reorganize();
 		}
 	}
 
-	protected static boolean minBorderOfNumberSpaceReached(TreeMap<Long, ?> map) {
-		return map.firstKey() < SequenceNumber.MIN_BORDER_OF_NUMBER_SPACE;
+	protected boolean minBorderOfNumberSpaceReached() {
+		return sequenceNumberToIdMap.firstKey() < SequenceNumber.MIN_BORDER_OF_NUMBER_SPACE;
 	}
 
-	protected static boolean maxBorderOfNumberSpaceReached(TreeMap<Long, ?> map) {
-		return map.lastKey() > SequenceNumber.MAX_BORDER_OF_NUMBER_SPACE;
+	protected boolean maxBorderOfNumberSpaceReached() {
+		return sequenceNumberToIdMap.lastKey() > SequenceNumber.MAX_BORDER_OF_NUMBER_SPACE;
 	}
 
-	protected long getPrevFreeSequenceNumber(TreeMap<Long, ?> map,
-			long sequenceNumber) {
-		if (map.firstKey() == sequenceNumber) {
+	protected long getPrevFreeSequenceNumber(long sequenceNumber) {
+		if (sequenceNumberToIdMap.firstKey() == sequenceNumber) {
 			return sequenceNumber - SequenceNumber.REGULAR_DISTANCE;
 		}
 		// lowerKey can return null if sequenceNumber is already lowest one ==
 		// first element
-		long prevTakenSequenceNumber = map.lowerKey(sequenceNumber);
+		long prevTakenSequenceNumber = sequenceNumberToIdMap
+				.lowerKey(sequenceNumber);
 		long distance = sequenceNumber - prevTakenSequenceNumber;
 		assert distance > 0;
 		if (distance > 3) {
@@ -215,7 +215,7 @@ public abstract class GraphElementList<T> {
 			return prevTakenSequenceNumber + 1;
 		} else if (distance == 1) {
 			this.reorganize();
-			return this.getPrevFreeSequenceNumber(map, sequenceNumber);
+			return this.getPrevFreeSequenceNumber(sequenceNumber);
 		} else if (distance == 0) {
 			throw new GraphException("Two elements have same sequence number.");
 		} else {
@@ -224,12 +224,12 @@ public abstract class GraphElementList<T> {
 		}
 	}
 
-	protected long getNextFreeSequenceNumber(TreeMap<Long, ?> map,
+	protected long getNextFreeSequenceNumber(TreeMap<Long, ?> sequenceNumberToIdMap,
 			long sequenceNumber) {
-		if (map.lastKey() == sequenceNumber) {
+		if (sequenceNumberToIdMap.lastKey() == sequenceNumber) {
 			return sequenceNumber + SequenceNumber.REGULAR_DISTANCE;
 		}
-		long nextTakenSequenceNumber = map.higherKey(sequenceNumber);
+		long nextTakenSequenceNumber = sequenceNumberToIdMap.higherKey(sequenceNumber);
 		long distance = nextTakenSequenceNumber - sequenceNumber;
 		assert distance > 0;
 		if (distance > 3) {
@@ -238,7 +238,7 @@ public abstract class GraphElementList<T> {
 			return nextTakenSequenceNumber - 1;
 		} else if (distance == 1) {
 			this.reorganize();
-			return this.getNextFreeSequenceNumber(map, sequenceNumber);
+			return this.getNextFreeSequenceNumber(sequenceNumberToIdMap, sequenceNumber);
 		} else if (distance == 0) {
 			throw new GraphException("Two elements have same sequence number.");
 		} else {

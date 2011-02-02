@@ -121,7 +121,8 @@ public class EdgeList extends GraphElementList<DatabasePersistableEdge> {
 	}
 
 	private int getFirstEdgeId() {
-		Entry<Long, Integer> firstEntry = this.sequenceNumberToIdMap.firstEntry();
+		Entry<Long, Integer> firstEntry = this.sequenceNumberToIdMap
+				.firstEntry();
 		return firstEntry.getValue();
 	}
 
@@ -151,7 +152,8 @@ public class EdgeList extends GraphElementList<DatabasePersistableEdge> {
 	}
 
 	private int getLastEdgeId() {
-		Entry<Long, Integer> firstEntry = this.sequenceNumberToIdMap.lastEntry();
+		Entry<Long, Integer> firstEntry = this.sequenceNumberToIdMap
+				.lastEntry();
 		return firstEntry.getValue();
 	}
 
@@ -185,7 +187,8 @@ public class EdgeList extends GraphElementList<DatabasePersistableEdge> {
 	 */
 	@Override
 	public boolean contains(DatabasePersistableEdge edge) {
-		Integer eId = this.sequenceNumberToIdMap.get(edge.getSequenceNumberInESeq());
+		Integer eId = this.sequenceNumberToIdMap.get(edge
+				.getSequenceNumberInESeq());
 		if (eId != null) {
 			return eId == Math.abs(edge.getId());
 		} else {
@@ -207,8 +210,8 @@ public class EdgeList extends GraphElementList<DatabasePersistableEdge> {
 	}
 
 	private int getPrevEdgeId(DatabasePersistableEdge edge) {
-		Entry<Long, Integer> previousEntry = this.sequenceNumberToIdMap.lowerEntry(edge
-				.getSequenceNumberInESeq());
+		Entry<Long, Integer> previousEntry = this.sequenceNumberToIdMap
+				.lowerEntry(edge.getSequenceNumberInESeq());
 		return previousEntry.getValue();
 	}
 
@@ -247,8 +250,8 @@ public class EdgeList extends GraphElementList<DatabasePersistableEdge> {
 	}
 
 	private int getNextEdgeId(DatabasePersistableEdge edge) {
-		Entry<Long, Integer> nextEntry = this.sequenceNumberToIdMap.higherEntry(edge
-				.getSequenceNumberInESeq());
+		Entry<Long, Integer> nextEntry = this.sequenceNumberToIdMap
+				.higherEntry(edge.getSequenceNumberInESeq());
 		return nextEntry.getValue();
 	}
 
@@ -266,9 +269,9 @@ public class EdgeList extends GraphElementList<DatabasePersistableEdge> {
 	}
 
 	private void prependByMoveOrInsert(DatabasePersistableEdge edge) {
-		this.assureThatElementCanBePrepended(this.sequenceNumberToIdMap);
+		this.assureThatElementCanBePrepended();
 		long sequenceNumber = this
-				.getRegularSequenceNumberBeforeFirstElementOf(this.sequenceNumberToIdMap);
+				.getRegularSequenceNumberBeforeFirstElementOf();
 		this.moveOrInsert(edge, sequenceNumber);
 	}
 
@@ -311,9 +314,9 @@ public class EdgeList extends GraphElementList<DatabasePersistableEdge> {
 	}
 
 	private void appendByMoveOrInsert(DatabasePersistableEdge edge) {
-		this.assureThatElementCanBeAppended(this.sequenceNumberToIdMap);
+		this.assureThatElementCanBeAppended();
 		long sequenceNumber = this
-				.getRegularSequenceNumberBehindLastElementOf(this.sequenceNumberToIdMap);
+				.getRegularSequenceNumberBehindLastElementOf();
 		this.moveOrInsert(edge, sequenceNumber);
 	}
 
@@ -363,8 +366,7 @@ public class EdgeList extends GraphElementList<DatabasePersistableEdge> {
 
 	private long getPrevFreeSequenceNumber(DatabasePersistableEdge edge) {
 		assert !isFirst(edge);
-		return this.getPrevFreeSequenceNumber(this.sequenceNumberToIdMap, edge
-				.getSequenceNumberInESeq());
+		return this.getPrevFreeSequenceNumber(edge.getSequenceNumberInESeq());
 	}
 
 	/**
@@ -446,7 +448,8 @@ public class EdgeList extends GraphElementList<DatabasePersistableEdge> {
 		try {
 			EdgeListReorganizer reorganizer = new EdgeListReorganizer(
 					this.owningGraph);
-			this.sequenceNumberToIdMap = reorganizer.getReorganisedMap(this.sequenceNumberToIdMap);
+			this.sequenceNumberToIdMap = reorganizer
+					.getReorganisedMap(this.sequenceNumberToIdMap);
 		} catch (Exception exception) {
 			exception.printStackTrace();
 		}
