@@ -437,14 +437,15 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 		AlternativePathDescription p = (AlternativePathDescription) e
 				.getVertex();
 		long aggregatedCosts = 0;
-		IsAlternativePathOf inc = p.getFirstIsAlternativePathOfIncidence();
+		IsAlternativePathOf inc = p
+				.getFirstIsAlternativePathOfIncidence(EdgeDirection.IN);
 		long alternatives = 0;
 		while (inc != null) {
 			PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) e
 					.getVertexEvalMarker().getMark(inc.getAlpha());
 			aggregatedCosts += pathEval
 					.getCurrentSubtreeEvaluationCosts(graphSize);
-			inc = inc.getNextIsAlternativePathOf();
+			inc = inc.getNextIsAlternativePathOf(EdgeDirection.IN);
 			alternatives++;
 		}
 		aggregatedCosts += 10 * alternatives;
@@ -717,7 +718,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 				.getVertex();
 		long exponent = defaultExponent;
 		VertexEvaluator expEval = e.getVertexEvalMarker().getMark(
-				p.getFirstIsExponentOfIncidence().getAlpha());
+				p.getFirstIsExponentOfIncidence(EdgeDirection.IN).getAlpha());
 		if (expEval instanceof IntLiteralEvaluator) {
 			try {
 				exponent = expEval.getResult(null).toLong();
@@ -727,7 +728,8 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 		long exponentCosts = expEval
 				.getCurrentSubtreeEvaluationCosts(graphSize);
 		VertexEvaluator pathEval = e.getVertexEvalMarker().getMark(
-				p.getFirstIsExponentiatedPathOfIncidence().getAlpha());
+				p.getFirstIsExponentiatedPathOfIncidence(EdgeDirection.IN)
+						.getAlpha());
 		long pathCosts = pathEval.getCurrentSubtreeEvaluationCosts(graphSize);
 		long ownCosts = (pathCosts * exponent) * 1 / 3;
 		long subtreeCosts = pathCosts + ownCosts + exponentCosts;
@@ -853,7 +855,8 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 		IteratedPathDescription iterPath = (IteratedPathDescription) e
 				.getVertex();
 		VertexEvaluator pathEval = e.getVertexEvalMarker().getMark(
-				iterPath.getFirstIsIteratedPathOfIncidence().getAlpha());
+				iterPath.getFirstIsIteratedPathOfIncidence(EdgeDirection.IN)
+						.getAlpha());
 		long ownCosts = 5;
 		long iteratedCosts = 5;
 		long subtreeCosts = ownCosts
@@ -930,7 +933,8 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 		OptionalPathDescription iterPath = (OptionalPathDescription) e
 				.getVertex();
 		VertexEvaluator pathEval = e.getVertexEvalMarker().getMark(
-				iterPath.getFirstIsOptionalPathOfIncidence().getAlpha());
+				iterPath.getFirstIsOptionalPathOfIncidence(EdgeDirection.IN)
+						.getAlpha());
 		long ownCosts = 5;
 		long iteratedCosts = 5;
 		long subtreeCosts = ownCosts
@@ -1061,14 +1065,15 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 			SequentialPathDescriptionEvaluator e, GraphSize graphSize) {
 		SequentialPathDescription p = (SequentialPathDescription) e.getVertex();
 		long aggregatedCosts = 0;
-		IsSequenceElementOf inc = p.getFirstIsSequenceElementOfIncidence();
+		IsSequenceElementOf inc = p
+				.getFirstIsSequenceElementOfIncidence(EdgeDirection.IN);
 		long alternatives = 0;
 		while (inc != null) {
 			PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) e
 					.getVertexEvalMarker().getMark(inc.getAlpha());
 			aggregatedCosts += pathEval
 					.getCurrentSubtreeEvaluationCosts(graphSize);
-			inc = inc.getNextIsSequenceElementOf();
+			inc = inc.getNextIsSequenceElementOf(EdgeDirection.IN);
 			alternatives++;
 		}
 		aggregatedCosts += 10 * alternatives;
