@@ -898,9 +898,23 @@ for editing GReTL transformations."
   :init-value nil
   ;; The indicator for the mode line.
   :lighter " GReTL"
-  (let ((regex (rx (or (and (or "==>" "=:" "-:" "&") (+ space) (+ word))
-		       (and bow "transformation" eow)
-		       ";"))))
+  (let ((regex
+	 (rx (or (or "<==" ":=" ";")
+		 (or "AddSubClass" "AddSubClasses"
+		     "AddSuperClass" "AddSuperClasses"
+		     "ExecuteTransformation" "CopyDomain"
+		     "CreateAbstractEdgeClass"
+		     "CreateAbstractVertexClass"
+		     "CreateAttribute" "CreateAttributes"
+		     "CreateEdgeClass" "CreateEdges"
+		     "CreateEnumDomain" "CreateListDomain"
+		     "CreateMapDomain" "CreateRecordDomain"
+		     "CreateSetDomain" "CreateSubgraph"
+		     "CreateVertexClass" "CreateVertices"
+		     "RedefineFromRole" "RedefineFromRoles"
+		     "RedefineToRole" "RedefineToRoles"
+		     "SetAttributes" "SetMultipleAttributes")
+		 (and bow "transformation" eow)))))
     (if gretl-minor-mode
 	(progn
 	  (message "Enabling GReTL support...")
