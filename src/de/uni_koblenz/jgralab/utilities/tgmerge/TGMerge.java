@@ -44,6 +44,7 @@ import de.uni_koblenz.ist.utilities.option_handler.OptionHandler;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.JGraLab;
@@ -59,12 +60,25 @@ import de.uni_koblenz.jgralab.schema.Schema;
  */
 public class TGMerge {
 	private List<Graph> additionalGraphs = new LinkedList<Graph>();
-	private List<AbstractGraphMarker<AttributedElement>> additionalGraphMarkers = new LinkedList<AbstractGraphMarker<AttributedElement>>();
+	private List<AbstractGraphMarker<?>> additionalGraphMarkers = new LinkedList<AbstractGraphMarker<?>>();
 
 	private Graph targetGraph;
 	private Map<Vertex, Vertex> old2NewVertices = new HashMap<Vertex, Vertex>();
 	private Map<Vertex, Vertex> new2OldVertices = new HashMap<Vertex, Vertex>();
 	private Map<Edge, Edge> new2OldEdges = new HashMap<Edge, Edge>();
+
+	/**
+	 * Remembers the positions of all copied graph elements in their original
+	 * graph to speed up sorting of vertices and edges.
+	 */
+	private Map<GraphElement, Integer> copiedGraphPositions = new HashMap<GraphElement, Integer>();
+
+	/**
+	 * Remembers the positions of all target graph elements before the elements
+	 * of another graph are merged into to speed up sorting of vertices and
+	 * edges.
+	 */
+	private Map<GraphElement, Integer> targetGraphPositions = new HashMap<GraphElement, Integer>();
 
 	private static Logger log = JGraLab.getLogger(TGMerge.class.getPackage()
 			.getName());
@@ -78,12 +92,12 @@ public class TGMerge {
 		this(graphs.toArray(new Graph[graphs.size()]));
 	}
 
-	public TGMerge(Graph g, AbstractGraphMarker<AttributedElement>... markers) {
+	public TGMerge(Graph g, AbstractGraphMarker<?>... markers) {
 		if (markers.length == 0) {
 			throw new RuntimeException("No marker given!");
 		}
 		targetGraph = g;
-		for (AbstractGraphMarker<AttributedElement> m : markers) {
+		for (AbstractGraphMarker<?> m : markers) {
 			additionalGraphMarkers.add(m);
 		}
 	}
@@ -139,29 +153,35 @@ public class TGMerge {
 		log.fine("TargetGraph is '" + targetGraph.getId() + "'.");
 		for (Graph g : additionalGraphs) {
 			log.fine("Merging graph '" + g.getId() + "'...");
+			rememberTargetGraphPositions();
+			rememberCopiedGraphPositions(g);
 			for (Vertex v : g.vertices()) {
 				copyVertex(v);
 			}
 			for (Edge e : g.edges()) {
 				copyEdge(e);
 			}
+			sortVertices();
+			sortEdges();
 			sortIncidences();
 			resetMaps();
 		}
-		for (AbstractGraphMarker<AttributedElement> marker : additionalGraphMarkers) {
+		for (AbstractGraphMarker<?> marker : additionalGraphMarkers) {
 			log.fine("Merging GraphMarker '" + marker + "'...");
-			// Iterate over the complete graph instead of only the marked
-			// elements to keep the order
-			for (Vertex v : marker.getGraph().vertices()) {
-				if (marker.isMarked(v)) {
-					copyVertex(v);
+			rememberTargetGraphPositions();
+			rememberCopiedGraphPositions(marker.getGraph());
+			for (AttributedElement ae : marker.getMarkedElements()) {
+				if (ae instanceof Vertex) {
+					copyVertex((Vertex) ae);
 				}
 			}
-			for (Edge e : marker.getGraph().edges()) {
-				if (marker.isMarked(e)) {
-					copyEdge(e);
+			for (AttributedElement ae : marker.getMarkedElements()) {
+				if (ae instanceof Edge) {
+					copyEdge((Edge) ae);
 				}
 			}
+			sortVertices();
+			sortEdges();
 			sortIncidences();
 			resetMaps();
 		}
@@ -173,6 +193,108 @@ public class TGMerge {
 		old2NewVertices.clear();
 		new2OldVertices.clear();
 		new2OldEdges.clear();
+		copiedGraphPositions.clear();
+		targetGraphPositions.clear();
+	}
+
+	private void rememberCopiedGraphPositions(Graph g) {
+		int pos = 0;
+		for (Vertex v : g.vertices()) {
+			copiedGraphPositions.put(v, ++pos);
+		}
+		pos = 0;
+		for (Edge e : g.edges()) {
+			copiedGraphPositions.put(e, ++pos);
+		}
+	}
+
+	private void rememberTargetGraphPositions() {
+		int pos = 0;
+		for (Vertex v : targetGraph.vertices()) {
+			targetGraphPositions.put(v, ++pos);
+		}
+		pos = 0;
+		for (Edge e : targetGraph.edges()) {
+			targetGraphPositions.put(e, ++pos);
+		}
+	}
+
+	private class VertexComparator implements Comparator<Vertex> {
+		long compareCount = 0;
+
+		@Override
+		public int compare(Vertex v1, Vertex v2) {
+			compareCount++;
+			if (new2OldVertices.containsKey(v1)
+					&& new2OldVertices.containsKey(v2)) {
+				// Both vertices were copied
+				Vertex ov1 = new2OldVertices.get(v1);
+				Vertex ov2 = new2OldVertices.get(v2);
+				return copiedGraphPositions.get(ov1)
+						- copiedGraphPositions.get(ov2);
+			} else if (new2OldVertices.containsKey(v1)
+					&& !new2OldVertices.containsKey(v2)) {
+				// Only v1 is a copy, so it should come after v2.
+				return 1;
+			} else if (!new2OldVertices.containsKey(v1)
+					&& new2OldVertices.containsKey(v2)) {
+				// Only v2 is a copy, so v1 should come before v2.
+				return -1;
+			} else if (!new2OldVertices.containsKey(v1)
+					&& !new2OldVertices.containsKey(v2)) {
+				// Neither v1 nor v2 is a copy, so keep stable
+				return targetGraphPositions.get(v1)
+						- targetGraphPositions.get(v2);
+			}
+			throw new RuntimeException("Exception while sorting vertices.");
+		}
+	}
+
+	private void sortVertices() {
+		log.fine("Sorting " + targetGraph.getVCount() + " vertices...");
+		VertexComparator vc = new VertexComparator();
+		targetGraph.sortVertices(vc);
+		log.fine(vc.compareCount + " comparisons were needed to sort "
+				+ targetGraph.getVCount() + " vertices.");
+	}
+
+	private class EdgeComparator implements Comparator<Edge> {
+		long compareCount = 0;
+
+		@Override
+		public int compare(Edge e1, Edge e2) {
+			compareCount++;
+			if (new2OldEdges.containsKey(e1) && new2OldEdges.containsKey(e2)) {
+				// Both vertices were copied, so keep the order of the
+				// original graph.
+				Edge oe1 = new2OldEdges.get(e1);
+				Edge oe2 = new2OldEdges.get(e2);
+				return copiedGraphPositions.get(oe1)
+						- copiedGraphPositions.get(oe2);
+			} else if (new2OldEdges.containsKey(e1)
+					&& !new2OldEdges.containsKey(e2)) {
+				// Only e1 is a copy, so it should come after e2.
+				return 1;
+			} else if (!new2OldEdges.containsKey(e1)
+					&& new2OldEdges.containsKey(e2)) {
+				// Only e2 is a copy, so e1 should come before e2.
+				return -1;
+			} else if (!new2OldEdges.containsKey(e1)
+					&& !new2OldEdges.containsKey(e2)) {
+				// Neither e1 nor e2 is a copy, so keep stable
+				return targetGraphPositions.get(e1)
+						- targetGraphPositions.get(e2);
+			}
+			throw new RuntimeException("Exception while sorting edges.");
+		}
+	}
+
+	private void sortEdges() {
+		log.fine("Sorting " + targetGraph.getECount() + " edges...");
+		EdgeComparator ec = new EdgeComparator();
+		targetGraph.sortEdges(ec);
+		log.fine(ec.compareCount + " comparisons were needed to sort "
+				+ targetGraph.getECount() + " edges.");
 	}
 
 	private void sortIncidences() {

@@ -30,11 +30,14 @@
  */
 package de.uni_koblenz.jgralab.graphmarker;
 
+import java.util.Iterator;
+
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.algolib.functions.entries.FunctionEntry;
 
 /**
  * Marks directed graphs with arbitrary objects. In contrast to the marking
@@ -117,6 +120,37 @@ public class DirectedGraphMarker<O> extends
 	@Override
 	public void vertexDeleted(Vertex v) {
 		tempAttributeMap.remove(v);
+	}
+
+	@Override
+	public Iterable<AttributedElement> getDomainElements() {
+		return getMarkedElements();
+	}
+
+	@Override
+	public Iterator<FunctionEntry<AttributedElement, O>> iterator() {
+		final Iterator<AttributedElement> markedElements = getMarkedElements()
+				.iterator();
+		return new Iterator<FunctionEntry<AttributedElement, O>>() {
+
+			@Override
+			public boolean hasNext() {
+				return markedElements.hasNext();
+			}
+
+			@Override
+			public FunctionEntry<AttributedElement, O> next() {
+				AttributedElement currentElement = markedElements.next();
+				return new FunctionEntry<AttributedElement, O>(currentElement,
+						get(currentElement));
+			}
+
+			@Override
+			public void remove() {
+				markedElements.remove();
+			}
+
+		};
 	}
 
 }

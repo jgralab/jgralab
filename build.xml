@@ -82,7 +82,7 @@
 	<!-- compile src.dir and include statements for the targets
 	     it is always "targetname.src" and "targetname.includes" -->
 	<property name="core.src" value="${src.dir}/de/uni_koblenz/jgralab" />
-	<property name="core.includes" value="*.java graphmarker/** schema/** codegenerator/** impl/** jniserver/** trans/**" />
+	<property name="core.includes" value="*.java graphmarker/** schema/** codegenerator/** impl/** jniserver/** trans/** algolib/**" />
 
 	<property name="tgtools.src" value="${src.dir}/de/uni_koblenz/jgralab/utilities" />
 	<property name="tgtools.includes" value="tgschema2java/** ant/TgSchema2JavaTask.java ant/DeleteGeneratedSchemaTask.java tg2whatever/**" />
@@ -233,4 +233,6 @@
 	<!-- release -->
 	<!-- calls targets modify, clean, jar, test and document -->
 	<target name="release" depends="modify,cleanall,jar,sourcejar,document" />
+
+	<target name="testcompile" depends="generatetestschemas,common.testcompile" />
 </project>

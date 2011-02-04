@@ -32,12 +32,15 @@
 package de.uni_koblenz.jgralab.graphmarker;
 
 import java.util.HashSet;
+import java.util.Iterator;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
+import de.uni_koblenz.jgralab.algolib.functions.entries.BooleanFunctionEntry;
 import de.uni_koblenz.jgralab.impl.ReversedEdgeBaseImpl;
 
 /**
@@ -48,7 +51,8 @@ import de.uni_koblenz.jgralab.impl.ReversedEdgeBaseImpl;
  * 
  * @author ist@uni-koblenz.de
  */
-public class BooleanGraphMarker extends AbstractGraphMarker<AttributedElement> {
+public class BooleanGraphMarker extends AbstractGraphMarker<AttributedElement>
+		implements BooleanFunction<AttributedElement> {
 
 	private final HashSet<AttributedElement> markedElements;
 
@@ -184,4 +188,55 @@ public class BooleanGraphMarker extends AbstractGraphMarker<AttributedElement> {
 	public void vertexDeleted(Vertex v) {
 		markedElements.remove(v);
 	}
+
+	@Override
+	public boolean get(AttributedElement parameter) {
+		return isMarked(parameter);
+	}
+
+	@Override
+	public boolean isDefined(AttributedElement parameter) {
+		return true;
+	}
+
+	@Override
+	public void set(AttributedElement parameter, boolean value) {
+		if (value) {
+			mark(parameter);
+		} else {
+			removeMark(parameter);
+		}
+	}
+
+	@Override
+	public Iterator<BooleanFunctionEntry<AttributedElement>> iterator() {
+		final Iterator<AttributedElement> markedElements = getMarkedElements()
+				.iterator();
+		return new Iterator<BooleanFunctionEntry<AttributedElement>>() {
+
+			@Override
+			public boolean hasNext() {
+				return markedElements.hasNext();
+			}
+
+			@Override
+			public BooleanFunctionEntry<AttributedElement> next() {
+				AttributedElement currentElement = markedElements.next();
+				return new BooleanFunctionEntry<AttributedElement>(currentElement,
+						get(currentElement));
+			}
+
+			@Override
+			public void remove() {
+				markedElements.remove();
+			}
+
+		};
+	}
+
+	@Override
+	public Iterable<AttributedElement> getDomainElements() {
+		return getMarkedElements();
+	}
+
 }
