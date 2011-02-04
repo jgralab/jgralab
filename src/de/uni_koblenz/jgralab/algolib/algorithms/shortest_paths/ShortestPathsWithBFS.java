@@ -91,27 +91,25 @@ public class ShortestPathsWithBFS extends StructureOrientedAlgorithm implements
 	public boolean isHybrid() {
 		return true;
 	}
-	
+
 	@Override
 	public void disableOptionalResults() {
 	}
 
 	@Override
-	public ShortestPathsWithBFS execute(Vertex start) {
+	public ShortestPathsWithBFS execute(Vertex start)
+			throws AlgorithmTerminatedException {
 		bfs.reset();
 		bfs.setGraph(graph);
 		bfs.setSubgraph(subgraph);
 		bfs.setNavigable(navigable);
 		bfs.setTraversalDirection(traversalDirection);
 		startRunning();
-		try {
-			bfs.withLevel().withParent().execute(start);
-		} catch (AlgorithmTerminatedException e) {
-		}
+		bfs.withLevel().withParent().execute(start);
 		done();
 		return this;
 	}
-	
+
 	@Override
 	protected void done() {
 		state = bfs.getState() == AlgorithmStates.STOPPED ? AlgorithmStates.FINISHED
@@ -124,7 +122,7 @@ public class ShortestPathsWithBFS extends StructureOrientedAlgorithm implements
 		return new MethodCallToDoubleFunctionAdapter<Vertex>() {
 
 			private IntFunction<Vertex> level = bfs.getLevel();
-			
+
 			@Override
 			public double get(Vertex parameter) {
 				return level.get(parameter);
@@ -134,7 +132,7 @@ public class ShortestPathsWithBFS extends StructureOrientedAlgorithm implements
 			public boolean isDefined(Vertex parameter) {
 				return level.isDefined(parameter);
 			}
-			
+
 		};
 	}
 
