@@ -24,6 +24,7 @@
 package de.uni_koblenz.jgralabtest.algolib.nonjunit;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.BreadthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.shortest_paths.ShortestPathsWithBFS;
 import de.uni_koblenz.jgralabtest.schemas.algolib.simple.SimpleGraph;
@@ -54,7 +55,10 @@ public class TryShortestPaths {
 		BreadthFirstSearch bfs = new BreadthFirstSearch(graph);
 		ShortestPathsWithBFS solver = new ShortestPathsWithBFS(graph, bfs).reversed();
 		
-		solver.execute(vertices[8]);
+		try {
+			solver.execute(vertices[8]);
+		} catch (AlgorithmTerminatedException e) {
+		}
 		System.out.println(solver.getDistance());
 		System.out.println(solver.getParent());
 	}
