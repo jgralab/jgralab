@@ -54,11 +54,11 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.Map.Entry;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -81,9 +81,9 @@ import de.uni_koblenz.jgralab.schema.MapDomain;
 import de.uni_koblenz.jgralab.schema.NamedElement;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
+import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
-import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 import de.uni_koblenz.jgralab.schema.impl.BasicDomainImpl;
 import de.uni_koblenz.jgralab.schema.impl.ConstraintImpl;
@@ -498,7 +498,7 @@ public class GraphIO {
 			}
 
 			// write package comments
-			writeComments(pkg, pkg.getQualifiedName());
+			writeComments(pkg, "." + pkg.getQualifiedName());
 		}
 	}
 
@@ -711,7 +711,7 @@ public class GraphIO {
 		// System.out.println("Writing vertices");
 		Vertex nextV = graph.getFirstVertex();
 		while (nextV != null) {
-			if (subGraph != null && !subGraph.isMarked(nextV)) {
+			if ((subGraph != null) && !subGraph.isMarked(nextV)) {
 				nextV = nextV.getNextVertex();
 				continue;
 			}
@@ -734,7 +734,7 @@ public class GraphIO {
 			noSpace();
 			// System.out.print("  Writing incidences of vertex.");
 			while (nextI != null) {
-				if (subGraph != null && !subGraph.isMarked(nextI)) {
+				if ((subGraph != null) && !subGraph.isMarked(nextI)) {
 					nextI = nextI.getNextIncidence();
 					continue;
 				}
@@ -762,7 +762,7 @@ public class GraphIO {
 		// write edges
 		Edge nextE = graph.getFirstEdge();
 		while (nextE != null) {
-			if (subGraph != null && !subGraph.isMarked(nextE)) {
+			if ((subGraph != null) && !subGraph.isMarked(nextE)) {
 				nextE = nextE.getNextEdge();
 				continue;
 			}
@@ -833,7 +833,7 @@ public class GraphIO {
 			write(": ");
 			String domain = a.getDomain().getTGTypeName(pkg);
 			write(domain);
-			if (a.getDefaultValueAsString() != null
+			if ((a.getDefaultValueAsString() != null)
 					&& !a.getDefaultValueAsString().equals("n")) {
 				write(" = ");
 				writeUtfString(a.getDefaultValueAsString());
@@ -1366,7 +1366,7 @@ public class GraphIO {
 			if (schema.getQualifiedName().equals(qn[0] + "." + qn[1])) {
 				// yes, everything is fine :-)
 				// skip schema part
-				while (lookAhead.length() > 0 && !lookAhead.equals("Graph")) {
+				while ((lookAhead.length() > 0) && !lookAhead.equals("Graph")) {
 					match();
 				}
 				return;
@@ -1417,8 +1417,8 @@ public class GraphIO {
 						+ "' not found in schema " + schema.getQualifiedName());
 			}
 			NamedElement el = schema.getNamedElement(e.getKey());
-			if (el instanceof Domain
-					&& !(el instanceof EnumDomain || el instanceof RecordDomain)) {
+			if ((el instanceof Domain)
+					&& !((el instanceof EnumDomain) || (el instanceof RecordDomain))) {
 				throw new GraphIOException(
 						"Default domains can not have comments. Offending domain is '"
 								+ e.getKey() + "'");
@@ -2054,18 +2054,18 @@ public class GraphIO {
 	}
 
 	private static boolean isValidPackageName(String s) {
-		if (s == null || s.length() == 0) {
+		if ((s == null) || (s.length() == 0)) {
 			return false;
 		}
 		char[] chars = s.toCharArray();
 		if (!Character.isLetter(chars[0]) || !Character.isLowerCase(chars[0])
-				|| chars[0] > 127) {
+				|| (chars[0] > 127)) {
 			return false;
 		}
 		for (int i = 1; i < chars.length; i++) {
 			if (!(Character.isLowerCase(chars[i])
-					|| Character.isDigit(chars[i]) || chars[i] == '_')
-					|| chars[i] > 127) {
+					|| Character.isDigit(chars[i]) || (chars[i] == '_'))
+					|| (chars[i] > 127)) {
 				return false;
 			}
 		}
@@ -2215,7 +2215,7 @@ public class GraphIO {
 					do {
 						out.append((char) la);
 						la = read();
-					} while (!isWs(la) && !isSeparator(la) && la != -1);
+					} while (!isWs(la) && !isSeparator(la) && (la != -1));
 				}
 			}
 		} catch (IOException e) {
@@ -2253,8 +2253,8 @@ public class GraphIO {
 			GraphIOException {
 		int startLine = line;
 		la = read();
-		LOOP: while (la != -1 && la != '"') {
-			if (la < 32 || la > 127) {
+		LOOP: while ((la != -1) && (la != '"')) {
+			if ((la < 32) || (la > 127)) {
 				throw new GraphIOException("invalid character '" + (char) la
 						+ "' in string in line " + line);
 			}
@@ -2324,13 +2324,13 @@ public class GraphIO {
 	}
 
 	private final static boolean isWs(int c) {
-		return c == ' ' || c == '\n' || c == '\t' || c == '\r';
+		return (c == ' ') || (c == '\n') || (c == '\t') || (c == '\r');
 	}
 
 	private final static boolean isSeparator(int c) {
-		return c == ';' || c == '<' || c == '>' || c == '(' || c == ')'
-				|| c == '{' || c == '}' || c == ':' || c == '[' || c == ']'
-				|| c == ',' || c == '=';
+		return (c == ';') || (c == '<') || (c == '>') || (c == '(') || (c == ')')
+				|| (c == '{') || (c == '}') || (c == ':') || (c == '[') || (c == ']')
+				|| (c == ',') || (c == '=');
 	}
 
 	private final void skipWs() throws GraphIOException {
@@ -2346,9 +2346,9 @@ public class GraphIO {
 			// skip single line comments
 			if (la == '/') {
 				la = read();
-				if (la >= 0 && la == '/') {
+				if ((la >= 0) && (la == '/')) {
 					// single line comment, skip to the end of the current line
-					while (la >= 0 && la != '\n') {
+					while ((la >= 0) && (la != '\n')) {
 						la = read();
 					}
 				} else {
@@ -2419,8 +2419,8 @@ public class GraphIO {
 			throws GraphIOException {
 		String s = lookAhead;
 		boolean ok = isValidIdentifier(s)
-				&& (isUpperCase && Character.isUpperCase(s.charAt(0)) || !isUpperCase
-						&& Character.isLowerCase(s.charAt(0)));
+				&& ((isUpperCase && Character.isUpperCase(s.charAt(0))) || (!isUpperCase
+						&& Character.isLowerCase(s.charAt(0))));
 
 		if (!ok) {
 			throw new GraphIOException("invalid simple name '" + lookAhead
@@ -2448,17 +2448,17 @@ public class GraphIO {
 		boolean ok = true;
 		if (result[0].length() > 0) {
 			String[] parts = result[0].split("\\.");
-			ok = parts.length == 1 && parts[0].length() == 0
+			ok = ((parts.length == 1) && (parts[0].length() == 0))
 					|| isValidPackageName(parts[0]);
-			for (int i = 1; i < parts.length && ok; i++) {
+			for (int i = 1; (i < parts.length) && ok; i++) {
 				ok = ok && isValidPackageName(parts[i]);
 			}
 		}
 
 		ok = ok
 				&& isValidIdentifier(result[1])
-				&& (isUpperCase && Character.isUpperCase(result[1].charAt(0)) || !isUpperCase
-						&& Character.isLowerCase(result[1].charAt(0)));
+				&& ((isUpperCase && Character.isUpperCase(result[1].charAt(0))) || (!isUpperCase
+						&& Character.isLowerCase(result[1].charAt(0))));
 
 		if (!ok) {
 			throw new GraphIOException("invalid qualified name '" + lookAhead
@@ -2476,9 +2476,9 @@ public class GraphIO {
 		boolean ok = true;
 		if (result[0].length() > 0) {
 			String[] parts = result[0].split("\\.");
-			ok = parts.length == 1 && parts[0].length() == 0
+			ok = ((parts.length == 1) && (parts[0].length() == 0))
 					|| isValidPackageName(parts[0]);
-			for (int i = 1; i < parts.length && ok; i++) {
+			for (int i = 1; (i < parts.length) && ok; i++) {
 				ok = ok && isValidPackageName(parts[i]);
 			}
 		}
@@ -2799,7 +2799,7 @@ public class GraphIO {
 				out.append("\\t");
 				break;
 			default:
-				if (c >= 32 && c <= 127) {
+				if ((c >= 32) && (c <= 127)) {
 					out.append(c);
 				} else {
 					out.append("\\u");
@@ -2824,16 +2824,16 @@ public class GraphIO {
 	}
 
 	private static boolean isValidIdentifier(String s) {
-		if (s == null || s.length() == 0) {
+		if ((s == null) || (s.length() == 0)) {
 			return false;
 		}
 		char[] chars = s.toCharArray();
-		if (!Character.isLetter(chars[0]) || chars[0] > 127) {
+		if (!Character.isLetter(chars[0]) || (chars[0] > 127)) {
 			return false;
 		}
 		for (int i = 1; i < chars.length; i++) {
-			if (!(Character.isLetter(chars[i]) || Character.isDigit(chars[i]) || chars[i] == '_')
-					|| chars[i] > 127) {
+			if (!(Character.isLetter(chars[i]) || Character.isDigit(chars[i]) || (chars[i] == '_'))
+					|| (chars[i] > 127)) {
 				return false;
 			}
 		}
