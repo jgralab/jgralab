@@ -82,12 +82,14 @@
 	<!-- compile src.dir and include statements for the targets
 	     it is always "targetname.src" and "targetname.includes" -->
 	<property name="core.src" value="${src.dir}/de/uni_koblenz/jgralab" />
-	<property name="core.includes" value="*.java graphmarker/** schema/** codegenerator/** impl/** jniserver/** trans/** algolib/**" />
+	<property name="core.includes" value="*.java graphmarker/** schema/** codegenerator/** impl/** jniserver/** trans/** algolib/functions/**" />
 
 	<property name="tgtools.src" value="${src.dir}/de/uni_koblenz/jgralab/utilities" />
 	<property name="tgtools.includes" value="tgschema2java/** ant/TgSchema2JavaTask.java ant/DeleteGeneratedSchemaTask.java tg2whatever/**" />
 
 	<property name="greql2.src" value="${src.dir}/de/uni_koblenz/jgralab/greql2" />
+
+	<property name="algolib.src" value="${src.dir}/de/uni_koblenz/jgralab/algolib" />
 
 	<property name="gruml.src" value="${src.dir}/de/uni_koblenz/jgralab/grumlschema/" />
 
@@ -123,7 +125,7 @@
 	</target>
 
 	<!-- compile -->
-	<target name="compile" depends="core,tgtools,greql2,graphvalidator,rsa,utilities,generatetestschemas" />
+	<target name="compile" depends="core,tgtools,greql2,algolib,graphvalidator,rsa,utilities,generatetestschemas" />
 
 	<!-- jgralab -->
 	<!-- compiles jgralab basic sources -->
@@ -147,6 +149,12 @@
 	<target name="greql2" depends="tgtools">
 		<tgschema2java schemaFile="${greql2.schemafile}" sourcePath="${src.dir}" implementationMode="standard" />
 		<javac fork="true" srcdir="${greql2.src}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" target="${javac.targetVM}">
+			<compilerarg line="-Xlint:unchecked" />
+		</javac>
+	</target>
+
+	<target name="algolib" depends="core">
+		<javac fork="true" srcdir="${algolib.src}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" target="${javac.targetVM}">
 			<compilerarg line="-Xlint:unchecked" />
 		</javac>
 	</target>
