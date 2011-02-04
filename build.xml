@@ -40,6 +40,8 @@
 	<property name="documentexcludes" value="de.uni_koblenz.jgralab.greql2.schema.*,de.uni_koblenz.jgralab.grumlschema.*" />
 	<property name="unjarexcludes" value="clover/**" />
 	<property name="test.suite" value="de.uni_koblenz.jgralabtest.RunTests" />
+	<property name="manifest.dir" value="../jgralab/bin/META-INF/" />
+	<property name="keep_manifest" value="true" />
 
 	<!-- import the common build file -->
 	<import file="../common/common.xml" />
