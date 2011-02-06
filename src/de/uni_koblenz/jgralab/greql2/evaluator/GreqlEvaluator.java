@@ -83,7 +83,6 @@ import de.uni_koblenz.jgralab.greql2.optimizer.Optimizer;
 import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
-import de.uni_koblenz.jgralab.greql2.schema.Variable;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
