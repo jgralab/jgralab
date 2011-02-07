@@ -71,20 +71,6 @@ import de.uni_koblenz.jgralabtest.schemas.minimal.Node;
  */
 public class FunctionTest extends GenericTests {
 
-	/*
-	 * Test method for
-	 * 'greql2.evaluator.GreqlEvaluator.evaluateSequentialPathDescription(SequentialPathDescription,
-	 * Graph)'
-	 */
-	@Test
-	public void testAnd() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from var: V{Variable}, def: V{WhereExpression} with var  -->{IsVarOf} -->{IsDefinitionOf} def and 1=1 report var end";
-		JValue result = evalTestQuery("and", queryString);
-		assertEquals(4, result.toCollection().size());
-	}
-
 	@Test
 	public void testGetEdge() throws Exception {
 		String dataGraphQuery = "true"; // should contains only one edge
@@ -712,20 +698,6 @@ public class FunctionTest extends GenericTests {
 		for (int i = 0; i < estimatedList.size(); i++) {
 			assertEquals(estimatedList.get(i), p.nodeTrace().get(i));
 		}
-	}
-
-	/*
-	 * Test method for
-	 * 'greql2.evaluator.GreqlEvaluator.evaluateSequentialPathDescription(SequentialPathDescription,
-	 * Graph)'
-	 */
-	@Test
-	public void testOr() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from var: V{Variable}, def: V{WhereExpression} with var  -->{IsVarOf} -->{IsDefinitionOf} def or 1=2 report var end";
-		JValue result = evalTestQuery("Or", queryString);
-		assertEquals(4, result.toCollection().size());
 	}
 
 	@Test
