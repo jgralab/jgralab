@@ -165,7 +165,7 @@ public class GreqlServer extends Thread {
 				marker.mark(e);
 			}
 		}
-		Tg2Dot.convertGraph(marker, false, dotFileName);
+		Tg2Dot.convertGraph(marker, dotFileName, false);
 	}
 
 	private void markResultElements(JValue val, BooleanGraphMarker marker) {
