@@ -7,6 +7,7 @@ import org.junit.Test;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralabtest.greql2.GenericTests;
 
+// TODO the functions "not" and "xor" haven't been tested.
 public class LogicFunctionTest extends GenericTests {
 
 	/*
