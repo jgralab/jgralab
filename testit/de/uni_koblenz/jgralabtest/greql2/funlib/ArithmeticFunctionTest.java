@@ -10,60 +10,78 @@ import de.uni_koblenz.jgralabtest.greql2.GenericTests;
 
 public class ArithmeticFunctionTest extends GenericTests {
 
-	@Test
-	public void testAdd() throws Exception {
-		String queryString = "6 + 1.5";
-		JValue result = evalTestQuery("Add", queryString);
-		assertEquals(9, (int) ((result.toDouble() + 1.5)));
+	private static final double DELTA = 0.00000001;
+
+	public void testArithmeticOperationAsDouble(String operationSign,
+			double arg1, double arg2, double expected) throws Exception {
+
+		String queryString = arg1 + " " + operationSign + " " + arg2;
+		JValue result = evalTestQuery(operationSign, queryString);
+		assertEquals(expected, result.toDouble().doubleValue(), DELTA);
+	}
+
+	public void testArithmeticOperationAsLong(String operationSign, long arg1,
+			long arg2, long expected) throws Exception {
+		String queryString = arg1 + " " + operationSign + " " + arg2;
+		JValue result = evalTestQuery(operationSign, queryString);
+		assertEquals(expected, result.toLong().longValue());
+	}
+
+	public void testArithmeticOperationAsInteger(String operationSign,
+			int arg1, int arg2, int expected) throws Exception {
+		String queryString = arg1 + " " + operationSign + " " + arg2;
+		JValue result = evalTestQuery(operationSign, queryString);
+		assertEquals(expected, result.toInteger().intValue());
 	}
 
 	@Test
-	public void testDiv() throws Exception {
-		String queryString = "3/3";
-		JValue result = evalTestQuery("Div", queryString);
-		assertEquals(new JValueImpl(1.0), result);
+	public void testAdd1() throws Exception {
+		testArithmeticOperationAsDouble("+", 6, 1.5, 7.5);
+	}
+
+	@Test
+	public void testAdd2() throws Exception {
+		testArithmeticOperationAsDouble("+", 6, -1.5, 4.5);
+	}
+
+	@Test
+	public void testAdd3() throws Exception {
+		testArithmeticOperationAsDouble("+", 0.025, 0.975, 1);
+	}
+
+	@Test
+	public void testDiv1() throws Exception {
+		testArithmeticOperationAsDouble("/", 3, 3, 1);
 	}
 
 	@Test
 	public void testDiv2() throws Exception {
-		String queryString = "3.0/1";
-		JValue result = evalTestQuery("Div", queryString);
-		assertEquals(new JValueImpl(3.0), result);
+		testArithmeticOperationAsDouble("/", 3, 1, 3);
 	}
 
 	@Test
 	public void testDiv3() throws Exception {
-		String queryString = "3/7";
-		JValue result = evalTestQuery("Div", queryString);
-		assertEquals(new JValueImpl(3.0 / 7), result);
+		testArithmeticOperationAsDouble("/", 3, 7, 3 / 7.0);
 	}
 
 	@Test
-	public void testSub() throws Exception {
-		String queryString = "6 - 1.5";
-		JValue result = evalTestQuery("Sub", queryString);
-		assertEquals(4.5, result.toDouble(), 0.01);
+	public void testSub1() throws Exception {
+		testArithmeticOperationAsDouble("-", 6, -1.5, 7.5);
 	}
 
 	@Test
 	public void testSub2() throws Exception {
-		String queryString = "6 - 3";
-		JValue result = evalTestQuery("Sub", queryString);
-		assertEquals(3l, (long) result.toLong());
+		testArithmeticOperationAsLong("-", 6, 3, 3);
 	}
 
 	@Test
 	public void testSub3() throws Exception {
-		String queryString = "16 - 323";
-		JValue result = evalTestQuery("Sub", queryString);
-		assertEquals(-307l, (long) result.toLong());
+		testArithmeticOperationAsLong("-", 16, 323, -307);
 	}
 
 	@Test
 	public void testSub4() throws Exception {
-		String queryString = "1.5 - 6";
-		JValue result = evalTestQuery("Sub", queryString);
-		assertEquals(-4.5, result.toDouble(), 0.01);
+		testArithmeticOperationAsDouble("-", 1.5, 6, -4.5);
 	}
 
 	@Test
@@ -74,17 +92,23 @@ public class ArithmeticFunctionTest extends GenericTests {
 	}
 
 	@Test
-	public void testMod() throws Exception {
-		String queryString = "9 % 2";
-		JValue result = evalTestQuery("Mod", queryString);
-		assertEquals(Integer.valueOf(1), result.toInteger());
+	public void testMod1() throws Exception {
+		testArithmeticOperationAsInteger("%", 9, 2, 1);
+	}
+
+	@Test
+	public void testMod2() throws Exception {
+		testArithmeticOperationAsInteger("%", -9, 2, -1);
+	}
+
+	@Test
+	public void testMod3() throws Exception {
+		testArithmeticOperationAsInteger("%", 9, 3, 0);
 	}
 
 	@Test
 	public void testMul() throws Exception {
-		String queryString = "6 * 1.5";
-		JValue result = evalTestQuery("Mul", queryString);
-		assertEquals(9, (int) (double) result.toDouble());
+		testArithmeticOperationAsDouble("*", 6, 1.5, 9);
 	}
 
 	@Test
