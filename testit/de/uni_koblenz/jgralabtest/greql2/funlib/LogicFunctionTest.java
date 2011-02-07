@@ -17,12 +17,11 @@ public class LogicFunctionTest extends GenericTests {
 	 */
 	@Test
 	public void testAnd() throws Exception {
-		String queryString = "from c: V{localities.County}, a:V{junctions.Airport} "
-				+ "with c -->{localities.ContainsLocality} -->{connections.AirRoute} a "
-				+ "and 1=1 report a end";
+		String queryString = "from el:list(1..100) "
+				+ "with el % 2 = 0 and el % 3 = 0 report el end";
 		JValue result = evalTestQuery("and", queryString,
 				TestVersion.CITY_MAP_GRAPH);
-		assertEquals(3, result.toCollection().size());
+		assertEquals(16, result.toCollection().size());
 	}
 
 	/*
