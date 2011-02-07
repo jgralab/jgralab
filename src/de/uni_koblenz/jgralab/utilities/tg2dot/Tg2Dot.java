@@ -502,7 +502,7 @@ public class Tg2Dot extends Tg2Whatever {
 		String alphaVertex = getVertexName(alpha);
 		String omegaVertex = getVertexName(omega);
 
-		// Retieves the evaluated style attribute list
+		// Retrieves the evaluated style attribute list
 		Map<String, String> evaluatedList = createEvaluatedStyleAttributeList(definition);
 		// Swaps all reversible style attributes.
 		if (isReversedEdge) {
@@ -736,7 +736,7 @@ public class Tg2Dot extends Tg2Whatever {
 	 * 
 	 * @return True, if incidence numbers should be be printed.
 	 */
-	public boolean printIncidenceNumbers() {
+	public boolean printsIncidenceNumbers() {
 		return printIncidenceIndices;
 	}
 
