@@ -502,7 +502,6 @@ public class Greql2FunctionLibrary {
 					&& !(Modifier.isAbstract(clazz.getModifiers()) || Modifier
 							.isInterface(clazz.getModifiers()))) {
 				Object o = clazz.getConstructor().newInstance();
-				System.out.println("Putting function " + funName);
 				availableFunctions.put(funName, (Greql2Function) o);
 			}
 		} catch (Exception ex) {
