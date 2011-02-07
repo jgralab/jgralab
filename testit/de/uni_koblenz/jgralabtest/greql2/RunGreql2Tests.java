@@ -36,9 +36,6 @@ import org.junit.runners.Suite;
 import de.uni_koblenz.jgralabtest.greql2.evaluator.GreqlEvaluatorTest;
 import de.uni_koblenz.jgralabtest.greql2.exception.ExceptionTest;
 import de.uni_koblenz.jgralabtest.greql2.funlib.FunctionTest;
-import de.uni_koblenz.jgralabtest.greql2.funlib.ListAccessTest;
-import de.uni_koblenz.jgralabtest.greql2.funlib.PathSystemFunctionTest;
-import de.uni_koblenz.jgralabtest.greql2.funlib.SliceFunctionTest;
 import de.uni_koblenz.jgralabtest.greql2.jvalue.JValueTest;
 import de.uni_koblenz.jgralabtest.greql2.optimizer.OptimizerTest;
 
