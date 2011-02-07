@@ -58,7 +58,7 @@ public class GenericTests {
 		GREQL_GRAPH, CITY_MAP_GRAPH
 	};
 
-	static int airportCount, crossroadCount, countyCount,
+	protected static int airportCount, crossroadCount, countyCount,
 			uncontainedCrossroadCount;
 
 	@BeforeClass
