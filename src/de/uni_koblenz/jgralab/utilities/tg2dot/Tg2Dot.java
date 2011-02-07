@@ -111,6 +111,10 @@ public class Tg2Dot extends Tg2Whatever {
 
 	private boolean useJsonGraphLayoutReader;
 
+	private boolean debugIterations;
+
+	private boolean debugOptimization;
+
 	/**
 	 * Registers all known GReQL functions and disables the JGraLab log.
 	 */
@@ -247,9 +251,6 @@ public class Tg2Dot extends Tg2Whatever {
 		optionHandler.addOption(dotBuildOutputType);
 	}
 
-	private boolean debugIterations;
-	private boolean debugOptimization;
-
 	@Override
 	protected void graphStart(PrintStream out) {
 		// Disable debugging to prevent recursive execution and restore it in
@@ -357,14 +358,6 @@ public class Tg2Dot extends Tg2Whatever {
 		writeLayoutedVertex(vertex, definition);
 	}
 
-	@Override
-	protected void printEdge(PrintStream out, Edge edge) {
-		Definition definition = getCorrespondingDefinition(edge);
-		evaluator.setStaticVariablesOfGreqlEvaluator(edge
-				.getAttributedElementClass());
-		writeLayoutedEdge(edge, definition);
-	}
-
 	/**
 	 * Returns the responsible {@link TypeDefinition} or
 	 * {@link ElementDefinition} for the specified {@link AttributedElement}.
@@ -382,44 +375,6 @@ public class Tg2Dot extends Tg2Whatever {
 					.getTypeDefinition(attributedElement);
 			return definition;
 		}
-	}
-
-	@Override
-	protected void graphEnd(PrintStream out) {
-		closeOutputStream();
-
-		// writeGraphLayoutToJsonFile();
-		executeDot();
-
-		GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS = debugIterations;
-		GreqlEvaluator.DEBUG_OPTIMIZATION = debugOptimization;
-	}
-
-	/**
-	 * Writes the current GraphLayout to a JsonFile. <b>Note:</b><br>
-	 * The written file will not be identical to the read graph layout.
-	 */
-	public void writeGraphLayoutToJsonFile() {
-		if (layout == null) {
-			throw new RuntimeException("There is no graph layout present.");
-		}
-
-		AbstractGraphLayoutWriter writer = new JsonGraphLayoutWriter();
-		try {
-			writer.startProcessing(graphLayoutFilename + ".parsed", layout);
-		} catch (JsonGenerationException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Closes the output stream in the {@link DotWriter}.
-	 */
-	private void closeOutputStream() {
-		writer.close();
-		writer = null;
 	}
 
 	/**
@@ -473,59 +428,6 @@ public class Tg2Dot extends Tg2Whatever {
 	}
 
 	/**
-	 * Evaluates all attributes of a given {@link Edge} and prints via the
-	 * {@link DotWriter}.
-	 * 
-	 * @param edge
-	 *            Provides Edge.
-	 * @param definition
-	 *            Definition object used to layout the given Vertex.
-	 */
-	private void writeLayoutedEdge(Edge edge, Definition definition) {
-
-		// Resets changed variables in the GreqlEvaluator
-		evaluator.setVariablesOfGreqlEvaluator(edge,
-				getCurrentElementSequenceIndex());
-
-		// Reverts the direction of the if isReversedEdge is true
-		// This will not change the style, but will change the layout process in
-		// GraphViz
-		boolean isReversedEdge = isReversedEdge(edge);
-
-		// Simple swap
-		Vertex alpha = !isReversedEdge ? edge.getAlpha() : edge.getOmega();
-		Vertex omega = !isReversedEdge ? edge.getOmega() : edge.getAlpha();
-
-		// Retrieves the unified names of the alpha and omega edges.
-		String alphaVertex = getVertexName(alpha);
-		String omegaVertex = getVertexName(omega);
-
-		// Retrieves the evaluated style attribute list
-		Map<String, String> evaluatedList = createEvaluatedStyleAttributeList(definition);
-		// Swaps all reversible style attributes.
-		if (isReversedEdge) {
-			revertEdgeAttributes(evaluatedList);
-		}
-
-		writer.writeEdge(alphaVertex, omegaVertex, evaluatedList);
-	}
-
-	/**
-	 * Checks whether or not the given {@link Edge} belongs to a
-	 * {@link EdgeClass}, which should be reversed.
-	 * 
-	 * @param e
-	 *            Given Edge, which should be checked.
-	 * @return Return true, if the given Edge should be reversed.
-	 */
-	private boolean isReversedEdge(Edge e) {
-
-		Boolean isReversed = reversedEdgeClasses.contains(e
-				.getAttributedElementClass());
-		return reversedEdges ^ isReversed;
-	}
-
-	/**
 	 * Returns unified vertex names. A vertex name has the prefix 'v' followed
 	 * by the {@link Vertex} id.
 	 * 
@@ -569,6 +471,67 @@ public class Tg2Dot extends Tg2Whatever {
 		return evaluatedList;
 	}
 
+	@Override
+	protected void printEdge(PrintStream out, Edge edge) {
+		Definition definition = getCorrespondingDefinition(edge);
+		evaluator.setStaticVariablesOfGreqlEvaluator(edge
+				.getAttributedElementClass());
+		writeLayoutedEdge(edge, definition);
+	}
+
+	/**
+	 * Evaluates all attributes of a given {@link Edge} and prints via the
+	 * {@link DotWriter}.
+	 * 
+	 * @param edge
+	 *            Provides Edge.
+	 * @param definition
+	 *            Definition object used to layout the given Vertex.
+	 */
+	private void writeLayoutedEdge(Edge edge, Definition definition) {
+
+		// Resets changed variables in the GreqlEvaluator
+		evaluator.setVariablesOfGreqlEvaluator(edge,
+				getCurrentElementSequenceIndex());
+
+		// Reverts the direction of the if isReversedEdge is true
+		// This will not change the style, but will change the layout process in
+		// GraphViz
+		boolean isReversedEdge = isReversedEdge(edge);
+
+		// Simple swap
+		Vertex alpha = !isReversedEdge ? edge.getAlpha() : edge.getOmega();
+		Vertex omega = !isReversedEdge ? edge.getOmega() : edge.getAlpha();
+
+		// Retrieves the unified names of the alpha and omega edges.
+		String alphaVertex = getVertexName(alpha);
+		String omegaVertex = getVertexName(omega);
+
+		// Retrieves the evaluated style attribute list
+		Map<String, String> evaluatedList = createEvaluatedStyleAttributeList(definition);
+		// Swaps all reversible style attributes.
+		if (isReversedEdge) {
+			reverseEdgeAttributes(evaluatedList);
+		}
+
+		writer.writeEdge(alphaVertex, omegaVertex, evaluatedList);
+	}
+
+	/**
+	 * Checks whether or not the given {@link Edge} belongs to a
+	 * {@link EdgeClass}, which should be reversed.
+	 * 
+	 * @param e
+	 *            Given Edge, which should be checked.
+	 * @return Return true, if the given Edge should be reversed.
+	 */
+	private boolean isReversedEdge(Edge e) {
+
+		Boolean isReversed = reversedEdgeClasses.contains(e
+				.getAttributedElementClass());
+		return reversedEdges ^ isReversed;
+	}
+
 	/**
 	 * Reverses all reversible style attributes in the provided evaluted style
 	 * attribute list.
@@ -576,7 +539,7 @@ public class Tg2Dot extends Tg2Whatever {
 	 * @param evaluatedList
 	 *            Given evaluated style attribute list as {@link Map}.
 	 */
-	private void revertEdgeAttributes(Map<String, String> evaluatedList) {
+	private void reverseEdgeAttributes(Map<String, String> evaluatedList) {
 
 		for (Entry<String, String> entry : DotWriter.reversableEdgeAttributePairs
 				.entrySet()) {
@@ -605,6 +568,25 @@ public class Tg2Dot extends Tg2Whatever {
 		if (tailValue != null) {
 			evaluatedList.put(head, tailValue);
 		}
+	}
+
+	@Override
+	protected void graphEnd(PrintStream out) {
+		closeOutputStream();
+
+		// writeGraphLayoutToJsonFile();
+		executeDot();
+
+		GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS = debugIterations;
+		GreqlEvaluator.DEBUG_OPTIMIZATION = debugOptimization;
+	}
+
+	/**
+	 * Closes the output stream in the {@link DotWriter}.
+	 */
+	private void closeOutputStream() {
+		writer.close();
+		writer = null;
 	}
 
 	/**
@@ -648,8 +630,26 @@ public class Tg2Dot extends Tg2Whatever {
 
 	@Override
 	protected String stringQuote(String s) {
-		// This function will never be called
-		return null;
+		throw new RuntimeException("This method should have been called!");
+	}
+
+	/**
+	 * Writes the current GraphLayout to a JsonFile. <b>Note:</b><br>
+	 * The written file will not be identical to the read graph layout.
+	 */
+	public void writeGraphLayoutToJsonFile() {
+		if (layout == null) {
+			throw new RuntimeException("There is no graph layout present.");
+		}
+
+		AbstractGraphLayoutWriter writer = new JsonGraphLayoutWriter();
+		try {
+			writer.startProcessing(graphLayoutFilename + ".parsed", layout);
+		} catch (JsonGenerationException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
