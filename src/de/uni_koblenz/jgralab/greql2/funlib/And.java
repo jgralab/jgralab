@@ -104,7 +104,7 @@ public class And extends BooleanFunction {
 	public JValue evaluate(Graph graph,
 			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
 			throws EvaluateException {
-		return evaluate(arguments, BooleanOperator.AND);
+		return evaluate(arguments);
 	}
 
 	@Override
