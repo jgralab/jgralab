@@ -610,7 +610,7 @@ public class Tg2Dot extends Tg2Whatever {
 		return null;
 	}
 
-	public static void printGraphAsDot(Graph graph, boolean reversedEdges,
+	public static void convertGraph(Graph graph, boolean reversedEdges,
 			String outputFileName,
 			Class<? extends AttributedElement>... reversedEdgeTypes) {
 
@@ -626,9 +626,9 @@ public class Tg2Dot extends Tg2Whatever {
 		converter.printGraph();
 	}
 
-	public static void printGraphAsDot(Graph graph, boolean reversedEdges,
+	public static void convertGraph(Graph graph, boolean reversedEdges,
 			String outputFileName) {
-		printGraphAsDot(graph, reversedEdges, outputFileName,
+		convertGraph(graph, reversedEdges, outputFileName,
 				(Class<? extends AttributedElement>[]) null);
 	}
 
@@ -646,7 +646,7 @@ public class Tg2Dot extends Tg2Whatever {
 		return converter;
 	}
 
-	public static void printGraphAsDot(BooleanGraphMarker marker,
+	public static void convertGraph(BooleanGraphMarker marker,
 			boolean reversedEdges, String outputFileName) {
 
 		Tg2Dot converter = createConverterAndSetAttributes(marker.getGraph(),
