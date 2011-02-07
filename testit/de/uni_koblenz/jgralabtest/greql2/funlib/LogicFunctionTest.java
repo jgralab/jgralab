@@ -14,8 +14,7 @@ public class LogicFunctionTest extends GenericTests {
 	 */
 	@Test
 	public void testAnd() throws Exception {
-		String queryString = "from el:list(1..100) "
-				+ "with and(true, false) report el end";
+		String queryString = "and(true, false)";
 		JValue result = evalTestQuery("and", queryString);
 		assertEquals(16, result.toCollection().size());
 	}

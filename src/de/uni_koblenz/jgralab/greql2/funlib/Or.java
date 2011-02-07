@@ -103,7 +103,7 @@ public class Or extends BooleanFunction {
 	public JValue evaluate(Graph graph,
 			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
 			throws EvaluateException {
-		return evaluate(arguments, BooleanOperator.OR);
+		return evaluate(arguments);
 	}
 
 	@Override
