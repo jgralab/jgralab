@@ -35,13 +35,22 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Test;
 
+import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueBag;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
 import de.uni_koblenz.jgralabtest.greql2.GenericTests;
+import de.uni_koblenz.jgralabtest.schemas.minimal.Link;
+import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalGraph;
+import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalSchema;
+import de.uni_koblenz.jgralabtest.schemas.minimal.Node;
 
 public class PathSystemTest extends GenericTests {
 
@@ -300,7 +309,7 @@ public class PathSystemTest extends GenericTests {
 	}
 
 	@Test
-	public void testSiblings() throws Exception {
+	public void testSiblings2() throws Exception {
 		String queryString = "from c: V{localities.County}, r:V{junctions.Crossroad} "
 				+ "report siblings(r, pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad})) "
 				+ "end";
@@ -361,7 +370,7 @@ public class PathSystemTest extends GenericTests {
 	}
 
 	@Test
-	public void testIsCycle() throws Exception {
+	public void testIsCycle2() throws Exception {
 		String queryString = "from c: V{localities.County}, r:V{junctions.Crossroad}"
 				+ "report isCycle(extractPath(pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad}), r)) "
 				+ "end";
@@ -375,7 +384,7 @@ public class PathSystemTest extends GenericTests {
 	}
 
 	@Test
-	public void testNodeTrace() throws Exception {
+	public void testNodeTrace2() throws Exception {
 		String queryString = "from c: V{localities.County}, r:V{junctions.Crossroad}"
 				+ "report nodeTrace(extractPath(pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad}), r)) "
 				+ "end";
@@ -433,5 +442,97 @@ public class PathSystemTest extends GenericTests {
 			}
 		}
 		assertEquals(airportCount, trueCounts);
+	}
+
+	@Test
+	public void testEdgesConnected() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
+		String queryString = "from x : V{WhereExpression} report edgesConnected(x) end";
+		JValue result = evalTestQuery("EdgesConnected", queryString);
+		assertEquals(6, getNthValue(result.toCollection(), 0).toCollection()
+				.size());
+	}
+
+	@Test
+	public void testEdgesFrom() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
+		String queryString = "from x : V{WhereExpression} report edgesFrom(x) end";
+		JValue result = evalTestQuery("EdgesFrom", queryString);
+		assertEquals(1, result.toCollection().size());
+		assertEquals(1, getNthValue(result.toCollection(), 0).toCollection()
+				.size());
+	}
+
+	@Test
+	public void testEdgesTo() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
+		String queryString = "from x : V{WhereExpression} report edgesTo(x) end";
+		JValue result = evalTestQuery("EdgesTo", queryString);
+		assertEquals(1, result.toCollection().size());
+		for (JValue j : result.toCollection()) {
+			assertEquals(5, j.toCollection().size());
+		}
+	}
+
+	@Test
+	public void testIsCycle() throws Exception {
+		String queryString = "from v : V reportSet isCycle(extractPath(pathSystem(v, <->*), v)) end";
+		JValue result = evalTestQuery("isCycle", queryString,
+				getCyclicTestGraph());
+		for (JValue v : result.toCollection()) {
+			assertEquals(JValueBoolean.getTrueValue(), v.toBoolean());
+		}
+	}
+
+	@Test
+	public void testIsCycle1() throws Exception {
+		String queryString = "from v,w : V with v <> w reportSet isCycle(extractPath(pathSystem(v, -->+), w)) end";
+		JValue result = evalTestQuery("isCycle", queryString,
+				getCyclicTestGraph());
+		for (JValue v : result.toCollection()) {
+			assertEquals(JValueBoolean.getFalseValue(), v.toBoolean());
+		}
+	}
+
+	@Test
+	public void testNodeTrace() throws Exception {
+		MinimalGraph minimalGraph = MinimalSchema.instance()
+				.createMinimalGraph(10, 10);
+		ArrayList<Node> nodes = new ArrayList<Node>();
+		ArrayList<Link> links = new ArrayList<Link>();
+		for (int i = 0; i < 10; i++) {
+			nodes.add(minimalGraph.createNode());
+		}
+		for (int i = 0; i < 9; i++) {
+			links.add(minimalGraph.createLink(nodes.get(i), nodes.get(i + 1)));
+		}
+		JValuePath p = new JValuePath(nodes.get(0));
+		p.addEdge(links.get(0));
+		p.addEdge(links.get(1));
+		p.addEdge(links.get(2));
+		List<Vertex> estimatedList = new ArrayList<Vertex>();
+		estimatedList.add(nodes.get(0));
+		estimatedList.add(nodes.get(1));
+		estimatedList.add(nodes.get(2));
+		estimatedList.add(nodes.get(3));
+		assertEquals(4, p.nodeTrace().size());
+		for (int i = 0; i < estimatedList.size(); i++) {
+			assertEquals(estimatedList.get(i), p.nodeTrace().get(i));
+		}
+	}
+
+	@Test
+	public void testSiblings() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
+		String queryString = "from x: V{Definition} report siblings(x) end";
+		JValue result = evalTestQuery("Siblings", queryString);
+		assertEquals(4, result.toCollection().size());
+		for (JValue j : result.toCollection()) {
+			assertTrue(5 <= j.toCollection().size());
+		}
 	}
 }
