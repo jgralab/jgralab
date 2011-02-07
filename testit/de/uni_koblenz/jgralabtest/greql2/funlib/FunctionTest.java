@@ -564,27 +564,6 @@ public class FunctionTest extends GenericTests {
 	}
 
 	@Test
-	public void testConcat() throws Exception {
-		String queryString = "\"foo\" ++ \"bar\" ++ \"baz\"";
-		JValue result = evalTestQuery("Concat", queryString);
-		assertEquals("foobarbaz", result.toString());
-	}
-
-	@Test
-	public void testConcat2() throws Exception {
-		String queryString = "list(1..3) ++ list(4..6)";
-		JValue result = evalTestQuery("Concat", queryString);
-		JValueList l = new JValueList();
-		l.add(new JValueImpl(1));
-		l.add(new JValueImpl(2));
-		l.add(new JValueImpl(3));
-		l.add(new JValueImpl(4));
-		l.add(new JValueImpl(5));
-		l.add(new JValueImpl(6));
-		assertEquals(l, result);
-	}
-
-	@Test
 	public void testPos() throws Exception {
 		String queryString = "let x:= list (5..13) in pos(x, 7)";
 		JValue result = evalTestQuery("Pos", queryString);
