@@ -31,12 +31,11 @@ public class LogicFunctionTest extends GenericTests {
 	 */
 	@Test
 	public void testOr() throws Exception {
-		String queryString = "from c: V{localities.County}, a:V{junctions.Airport} "
-				+ "with c -->{localities.ContainsLocality} -->{connections.AirRoute} a "
-				+ "or 1=2 report a end";
+		String queryString = "from el:list(1..100) "
+				+ "with el % 2 = 0 or el % 3 = 0 report el end";
 		JValue result = evalTestQuery("Or", queryString,
 				TestVersion.CITY_MAP_GRAPH);
-		assertEquals(3, result.toCollection().size());
+		assertEquals(50 + 17, result.toCollection().size());
 	}
 
 }
