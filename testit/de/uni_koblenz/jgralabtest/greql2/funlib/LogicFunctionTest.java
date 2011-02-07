@@ -7,7 +7,7 @@ import org.junit.Test;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralabtest.greql2.GenericTests;
 
-public class LogicsTest extends GenericTests {
+public class LogicFunctionTest extends GenericTests {
 
 	/*
 	 * Test method for

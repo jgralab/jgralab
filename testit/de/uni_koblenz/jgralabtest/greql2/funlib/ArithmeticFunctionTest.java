@@ -8,7 +8,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralabtest.greql2.GenericTests;
 
-public class ArithmeticsTest extends GenericTests {
+public class ArithmeticFunctionTest extends GenericTests {
 
 	@Test
 	public void testAdd() throws Exception {

@@ -52,7 +52,7 @@ import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalGraph;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalSchema;
 import de.uni_koblenz.jgralabtest.schemas.minimal.Node;
 
-public class PathSystemTest extends GenericTests {
+public class PathSystemFunctionTest extends GenericTests {
 
 	/**
 	 * • v :-) -->α baut ein Pfadsystem über Pfade, die dem regulären Ausdruck α

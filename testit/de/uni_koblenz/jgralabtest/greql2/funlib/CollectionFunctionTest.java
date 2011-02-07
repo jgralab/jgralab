@@ -18,7 +18,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueMap;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralabtest.greql2.GenericTests;
 
-public class CollectionsTest extends GenericTests {
+public class CollectionFunctionTest extends GenericTests {
 
 	@Test
 	public void testAvg() throws Exception {

@@ -9,7 +9,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
 import de.uni_koblenz.jgralabtest.greql2.GenericTests;
 
-public class StringsTest extends GenericTests {
+public class StringFunctionTest extends GenericTests {
 
 	@Test
 	public void testConcat() throws Exception {

@@ -9,7 +9,7 @@ import org.junit.Test;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralabtest.greql2.GenericTests;
 
-public class ComparisonTest extends GenericTests {
+public class ComparisonFunctionTest extends GenericTests {
 
 	@Test
 	public void testEquals() throws Exception {
