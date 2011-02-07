@@ -280,7 +280,7 @@ public class GenericTests {
 			}
 			System.out.println(((SerializableGreql2) eval.getSyntaxGraph())
 					.serialize());
-			Tg2Dot.printGraphAsDot(eval.getSyntaxGraph(), true, dotFileName);
+			Tg2Dot.convertGraph(eval.getSyntaxGraph(), true, dotFileName);
 		}
 
 		printTestFunctionFooter(functionName);
