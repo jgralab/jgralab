@@ -60,7 +60,7 @@ public abstract class BooleanFunction extends Greql2Function {
 		AND, OR, XOR
 	};
 
-	public JValue evaluate(JValue[] arguments, BooleanOperator operator)
+	public JValue evaluate(JValue[] arguments)
 			throws EvaluateException {
 		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, arguments);

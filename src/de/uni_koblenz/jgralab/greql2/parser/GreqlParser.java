@@ -1077,7 +1077,8 @@ public class GreqlParser extends ParserHelper {
 			return parseAltPathDescription();
 		}
 
-		if ((lookAhead(0) == TokenTypes.IDENTIFIER)
+		if (((lookAhead(0) == TokenTypes.IDENTIFIER) || (lookAhead(0) == TokenTypes.AND) || (lookAhead(0) == TokenTypes.NOT) 
+				|| (lookAhead(0) == TokenTypes.XOR) || (lookAhead(0) == TokenTypes.OR))
 				&& ((lookAhead(1) == TokenTypes.LCURLY) || (lookAhead(1) == TokenTypes.LPAREN))) {
 			predicateStart();
 			try {
@@ -1567,11 +1568,13 @@ public class GreqlParser extends ParserHelper {
 
 	private final FunctionApplication parseFunctionApplication() {
 		List<VertexPosition<TypeId>> typeIds = null;
-		if ((lookAhead(0) == TokenTypes.IDENTIFIER)
+		if (((lookAhead(0) == TokenTypes.IDENTIFIER) || (lookAhead(0) == TokenTypes.AND) || (lookAhead(0) == TokenTypes.NOT) 
+				|| (lookAhead(0) == TokenTypes.XOR) || (lookAhead(0) == TokenTypes.OR))
 				&& isFunctionName(lookAhead.getValue())
 				&& ((lookAhead(1) == TokenTypes.LCURLY) || (lookAhead(1) == TokenTypes.LPAREN))) {
 			int offset = getCurrentOffset();
-			String name = matchIdentifier();
+			String name = lookAhead.getValue();
+			match();
 			int length = getLength(offset);
 			if (tryMatch(TokenTypes.LCURLY)) {
 				typeIds = parseTypeExpressionList();
