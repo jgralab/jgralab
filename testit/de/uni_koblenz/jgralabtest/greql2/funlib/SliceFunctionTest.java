@@ -39,7 +39,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueBag;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSlice;
 import de.uni_koblenz.jgralabtest.greql2.GenericTests;
 
-public class SliceTest extends GenericTests {
+public class SliceFunctionTest extends GenericTests {
 
 	@Test
 	public void testSliceCreation() throws Exception {

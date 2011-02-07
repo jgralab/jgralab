@@ -8,7 +8,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
 import de.uni_koblenz.jgralabtest.greql2.GenericTests;
 
-public class SchemaAccessTest extends GenericTests {
+public class SchemaFunctionTest extends GenericTests {
 
 	@Test
 	public void testHasAttribute() throws Exception {
