@@ -130,7 +130,10 @@ public class Tg2Dot extends Tg2Whatever {
 
 		Tg2Dot converter = new Tg2Dot();
 		converter.getOptions(args);
+
+		System.out.print("Starting processing of graph...");
 		converter.printGraph();
+		System.out.println("Finished Processing.");
 	}
 
 	public static Tg2Dot createConverterAndSetAttributes(Graph graph,
@@ -265,8 +268,6 @@ public class Tg2Dot extends Tg2Whatever {
 		try {
 			createDotWriter(out);
 
-			System.out.print("Starting processing of graph...");
-
 			startGraph();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -298,8 +299,6 @@ public class Tg2Dot extends Tg2Whatever {
 				this.layout = factory.loadPListGraphLayout(layout);
 			}
 		}
-
-		System.gc();
 	}
 
 	/**
@@ -391,7 +390,6 @@ public class Tg2Dot extends Tg2Whatever {
 
 		// writeGraphLayoutToJsonFile();
 		executeDot();
-		System.out.println("Finished Processing.");
 
 		GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS = debugIterations;
 		GreqlEvaluator.DEBUG_OPTIMIZATION = debugOptimization;
@@ -564,11 +562,8 @@ public class Tg2Dot extends Tg2Whatever {
 				String result = evaluator.evaluateToString(query);
 				evaluatedList.put(attributeName, result);
 			} catch (EvaluateException ex) {
-				System.out.println("Error: " + ex.getLocalizedMessage());
-				ex.printStackTrace();
-				System.out.println("Error: "
-						+ " this Attribute has been dropped!");
-				continue;
+				throw new RuntimeException("Error: The query of attribute "
+						+ attributeName + " has produced an error!", ex);
 			}
 		}
 		return evaluatedList;
