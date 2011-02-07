@@ -28,10 +28,22 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-package de.uni_koblenz.jgralabtest.greql2.funlib;
+package de.uni_koblenz.jgralabtest.greql2;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
+
+import de.uni_koblenz.jgralabtest.greql2.funlib.ArithmeticFunctionTest;
+import de.uni_koblenz.jgralabtest.greql2.funlib.CollectionFunctionTest;
+import de.uni_koblenz.jgralabtest.greql2.funlib.ComparisonFunctionTest;
+import de.uni_koblenz.jgralabtest.greql2.funlib.GraphFunctionTest;
+import de.uni_koblenz.jgralabtest.greql2.funlib.ListAccessTest;
+import de.uni_koblenz.jgralabtest.greql2.funlib.LogicFunctionTest;
+import de.uni_koblenz.jgralabtest.greql2.funlib.PathSystemFunctionTest;
+import de.uni_koblenz.jgralabtest.greql2.funlib.ReflectionFunctionTest;
+import de.uni_koblenz.jgralabtest.greql2.funlib.SchemaFunctionTest;
+import de.uni_koblenz.jgralabtest.greql2.funlib.SliceFunctionTest;
+import de.uni_koblenz.jgralabtest.greql2.funlib.StringFunctionTest;
 
 /**
  * @author ist@uni-koblenz.de
