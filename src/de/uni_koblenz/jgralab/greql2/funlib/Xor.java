@@ -103,7 +103,7 @@ public class Xor extends BooleanFunction {
 	public JValue evaluate(Graph graph,
 			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
 			throws EvaluateException {
-		return evaluate(arguments, BooleanOperator.XOR);
+		return evaluate(arguments);
 	}
 
 	@Override
