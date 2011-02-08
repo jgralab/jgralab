@@ -35,7 +35,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -140,6 +144,23 @@ public class GenericTests {
 			Enum<?> expectedValue) throws Exception {
 		JValue result = evalTestQuery(testName, query);
 		assertEquals(expectedValue, result.toEnum());
+	}
+
+	protected void assertQueryEquals(String testName, String query,
+			List<?> expectedValue) throws Exception {
+		JValue result = evalTestQuery(testName, query);
+
+		List<?> list = toList(result.toCollection());
+		assertEquals(expectedValue, list);
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private List<?> toList(JValueCollection collection) {
+		ArrayList list = new ArrayList();
+		for (JValue value : collection) {
+			list.add(value.toObject());
+		}
+		return list;
 	}
 
 	protected void expectException(String testName, String query,
