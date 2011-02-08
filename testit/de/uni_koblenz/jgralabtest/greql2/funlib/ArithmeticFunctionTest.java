@@ -44,6 +44,43 @@ public class ArithmeticFunctionTest extends GenericTests {
 	}
 
 	@Test
+	public void testMod1() throws Exception {
+		assertQueryEquals("Sub", "9 % 2", 1);
+	}
+
+	@Test
+	public void testMod2() throws Exception {
+		assertQueryEquals("Mod", "-9 % 2", -1);
+	}
+
+	@Test
+	public void testMod3() throws Exception {
+		assertQueryEquals("Mod", "9 % 3", 0);
+	}
+
+	@Test
+	public void testMul() throws Exception {
+		assertQueryEquals("Mul", "6 * 1.5", 9.0);
+	}
+
+	@Test
+	public void testMultiplicative() throws Exception {
+		assertQueryEquals("Several Operations", "100 / 10 / 5 * 2", 4.0);
+	}
+
+	@Test
+	public void testNeg() throws Exception {
+		String queryString = "let x:= list (5..13) in from i:x report -i end";
+		JValue result = evalTestQuery("UMinus", queryString);
+		assertEquals(9, result.toCollection().size());
+		int sum = 0;
+		for (JValue j : result.toCollection()) {
+			sum += j.toInteger();
+		}
+		assertEquals(-81, sum);
+	}
+
+	@Test
 	public void testSub1() throws Exception {
 		assertQueryEquals("Sub", "6 - -1.5", 7.5);
 	}
@@ -66,43 +103,6 @@ public class ArithmeticFunctionTest extends GenericTests {
 	@Test
 	public void testSub5() throws Exception {
 		assertQueryEquals("Sub", "10 - 4 - 3 - 2", 1);
-	}
-
-	@Test
-	public void testMod1() throws Exception {
-		assertQueryEquals("Sub", "9 % 2", 1);
-	}
-
-	@Test
-	public void testMod2() throws Exception {
-		assertQueryEquals("Mod", "-9 % 2", -1);
-	}
-
-	@Test
-	public void testMod3() throws Exception {
-		assertQueryEquals("Mod", "9 % 3", 0);
-	}
-
-	@Test
-	public void testMul() throws Exception {
-		assertQueryEquals("Mul", "6 * 1.5", 9.0);
-	}
-
-	@Test
-	public void testNeg() throws Exception {
-		String queryString = "let x:= list (5..13) in from i:x report -i end";
-		JValue result = evalTestQuery("UMinus", queryString);
-		assertEquals(9, result.toCollection().size());
-		int sum = 0;
-		for (JValue j : result.toCollection()) {
-			sum += j.toInteger();
-		}
-		assertEquals(-81, sum);
-	}
-
-	@Test
-	public void testMultiplicative() throws Exception {
-		assertQueryEquals("Several Operations", "100 / 10 / 5 * 2", 4.0);
 	}
 
 }
