@@ -1252,7 +1252,9 @@ public class GraphIO {
 
 	private static void close(Closeable stream) throws GraphIOException {
 		try {
-			stream.close();
+			if (stream != null) {
+				stream.close();
+			}
 		} catch (IOException ex) {
 			throw new GraphIOException("Exception while closing the stream.",
 					ex);
