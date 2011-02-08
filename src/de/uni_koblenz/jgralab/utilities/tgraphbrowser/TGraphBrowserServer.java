@@ -151,7 +151,7 @@ public class TGraphBrowserServer extends Thread {
 	public TGraphBrowserServer(int port, String path, String maximumFileSize,
 			String maximumWorkspaceSize) throws IOException {
 		workspace = path;
-		if (path != null
+		if ((path != null)
 				&& (workspace.startsWith("\"") || workspace.startsWith("'"))) {
 			workspace = workspace.substring(1, workspace.length() - 1);
 		}
@@ -159,8 +159,7 @@ public class TGraphBrowserServer extends Thread {
 				.parseLong(maximumFileSize) * 1024 * 1024;
 		File ws = new File(workspace);
 		RequestThread.MAXIMUM_WORKSPACE_SIZE = maximumWorkspaceSize == null ? ws
-				.getFreeSpace()
-				+ ws.getTotalSpace()
+				.getFreeSpace() + ws.getTotalSpace()
 				: Long.parseLong(maximumWorkspaceSize) * 1024 * 1024;
 		_serverSocket = new ServerSocket(port);
 	}
@@ -196,6 +195,11 @@ public class TGraphBrowserServer extends Thread {
 			starttime = System.currentTimeMillis();
 			String portnumber = comLine.getOptionValue("p");
 			String workspacePath;
+
+			if (comLine.hasOption("r")) {
+				TwoDVisualizer.PRINT_ROLE_NAMES = true;
+			}
+
 			if (comLine.hasOption("w")) {
 				workspacePath = comLine.getOptionValue("w");
 			} else {
@@ -219,9 +223,10 @@ public class TGraphBrowserServer extends Thread {
 				}
 				workspacePath = workspace.getAbsolutePath();
 			}
-			new TGraphBrowserServer(portnumber == null ? DEFAULT_PORT : Integer
-					.parseInt(portnumber), workspacePath, comLine
-					.getOptionValue("m"), comLine.getOptionValue("s")).start();
+			new TGraphBrowserServer(portnumber == null ? DEFAULT_PORT
+					: Integer.parseInt(portnumber), workspacePath,
+					comLine.getOptionValue("m"), comLine.getOptionValue("s"))
+					.start();
 			if (comLine.getOptionValue("ic") != null) {
 				TabularVisualizer.NUMBER_OF_INCIDENCES_PER_PAGE = Math.max(
 						Integer.parseInt(comLine.getOptionValue("ic")), 1);
@@ -234,9 +239,9 @@ public class TGraphBrowserServer extends Thread {
 			}
 			String timeout = comLine.getOptionValue("t");
 			String checkIntervall = comLine.getOptionValue("i");
-			new DeleteUnusedStates(timeout == null ? 600 : Integer
-					.parseInt(timeout), checkIntervall == null ? 60 : Integer
-					.parseInt(checkIntervall)).start();
+			new DeleteUnusedStates(timeout == null ? 600
+					: Integer.parseInt(timeout), checkIntervall == null ? 60
+					: Integer.parseInt(checkIntervall)).start();
 			if (comLine.hasOption("td")) {
 				TwoDVisualizer.SECONDS_TO_WAIT_FOR_DOT = Integer
 						.parseInt(comLine.getOptionValue("td"));
@@ -324,6 +329,11 @@ public class TGraphBrowserServer extends Thread {
 		size.setRequired(false);
 		size.setArgName("int");
 		oh.addOption(size);
+
+		Option roleNames = new Option("r", "print-role-names", false,
+				"(optional): Print role names in the 2D view.  Defaults to false.");
+		roleNames.setRequired(false);
+		oh.addOption(roleNames);
 
 		return oh.parse(args);
 	}
