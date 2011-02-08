@@ -56,9 +56,11 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.utilities.tg2dot.SimpleTg2Dot;
 import de.uni_koblenz.jgralab.utilities.tgraphbrowser.StateRepository.State;
 
+@SuppressWarnings("deprecation")
 public class TwoDVisualizer {
 
 	public static int SECONDS_TO_WAIT_FOR_DOT = 60;
+	public static boolean PRINT_ROLE_NAMES = false;
 
 	/**
 	 * Creates the 2D-representation of <code>currentElement</code> and its
@@ -88,17 +90,17 @@ public class TwoDVisualizer {
 			RequestThread currentThread) {
 		// set currentVertex or currentEdge to the current element
 		if (currentElement.isVertex()) {
-			code.append("current").append("Vertex = \"").append(
-					currentElement.toVertex().getId()).append("\";\n");
+			code.append("current").append("Vertex = \"")
+					.append(currentElement.toVertex().getId()).append("\";\n");
 		} else if (currentElement.isEdge()) {
-			code.append("current").append("Edge = \"").append(
-					currentElement.toEdge().getId()).append("\";\n");
+			code.append("current").append("Edge = \"")
+					.append(currentElement.toEdge().getId()).append("\";\n");
 		}
 		// calculate environment
 		JValueSet elementsToDisplay = new JValueSet();
 		if (currentElement.isVertex()) {
-			JValue slice = computeElements(currentElement, pathLength, state
-					.getGraph());
+			JValue slice = computeElements(currentElement, pathLength,
+					state.getGraph());
 			calculateElementsInSet(code, state, elementsToDisplay, slice);
 		} else if (currentElement.isEdge()) {
 			Edge current = currentElement.toEdge();
@@ -135,15 +137,12 @@ public class TwoDVisualizer {
 				state.selectedVertexClasses);
 		mtd.printGraph();
 		if (mtd.exception != null) {
-			code
-					.append("document.getElementById('divError').style.display = \"block\";\n");
-			code
-					.append(
-							"document.getElementById('h2ErrorMessage').innerHTML = \"ERROR: ")
+			code.append("document.getElementById('divError').style.display = \"block\";\n");
+			code.append(
+					"document.getElementById('h2ErrorMessage').innerHTML = \"ERROR: ")
 					.append("Could not create file ").append(dotFileName)
 					.append("\";\n");
-			code
-					.append("document.getElementById('divNonError').style.display = \"none\";\n");
+			code.append("document.getElementById('divNonError').style.display = \"none\";\n");
 			return;
 		}
 		// create .svg-file
@@ -188,35 +187,27 @@ public class TwoDVisualizer {
 				} else {
 					// execution of dot is terminated because it took too long
 					code.append("changeView();\n");
-					code
-							.append("document.getElementById('divError').style.display = \"block\";\n");
-					code
-							.append(
-									"document.getElementById('h2ErrorMessage').innerHTML = \"ERROR: ")
+					code.append("document.getElementById('divError').style.display = \"block\";\n");
+					code.append(
+							"document.getElementById('h2ErrorMessage').innerHTML = \"ERROR: ")
 							.append("Creation of file ")
-							.append(
-									svgFileName.contains("\\") ? svgFileName
-											.replace("\\", "/") : svgFileName)
-							.append(
-									" was terminated because it took more than ")
-							.append(SECONDS_TO_WAIT_FOR_DOT).append(
-									" seconds.\";\n");
-					code
-							.append("document.getElementById('divNonError').style.display = \"none\";\n");
+							.append(svgFileName.contains("\\") ? svgFileName
+									.replace("\\", "/") : svgFileName)
+							.append(" was terminated because it took more than ")
+							.append(SECONDS_TO_WAIT_FOR_DOT)
+							.append(" seconds.\";\n");
+					code.append("document.getElementById('divNonError').style.display = \"none\";\n");
 					return;
 				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			code
-					.append("document.getElementById('divError').style.display = \"block\";\n");
-			code
-					.append(
-							"document.getElementById('h2ErrorMessage').innerHTML = \"ERROR: ")
+			code.append("document.getElementById('divError').style.display = \"block\";\n");
+			code.append(
+					"document.getElementById('h2ErrorMessage').innerHTML = \"ERROR: ")
 					.append("Could not create file ").append(svgFileName)
 					.append("\";\n");
-			code
-					.append("document.getElementById('divNonError').style.display = \"none\";\n");
+			code.append("document.getElementById('divNonError').style.display = \"none\";\n");
 			return;
 		}
 		if (!new File(dotFileName).delete()) {
@@ -304,9 +295,8 @@ public class TwoDVisualizer {
 		code.append("var div2D = document.getElementById(\"div2DGraph\");\n");
 		code.append("div2D.innerHTML = \"\";\n");
 		// print number of elements
-		code
-				.append(
-						"document.getElementById(\"h3HowManyElements\").innerHTML = \"")
+		code.append(
+				"document.getElementById(\"h3HowManyElements\").innerHTML = \"")
 				.append(selectedElements).append(" of ").append(totalElements)
 				.append(" elements selected.\";\n");
 	}
@@ -388,7 +378,6 @@ public class TwoDVisualizer {
 		private static final double nodesep = 0.25;
 		private static final String fontname = "Helvetica";
 		private static final int fontsize = 14;
-
 		/**
 		 * The elements to be displayed.
 		 */
@@ -570,7 +559,7 @@ public class TwoDVisualizer {
 			out.print(" label=\"e" + e.getId() + ": "
 					+ cls.getUniqueName().replace('$', '.') + "");
 
-			if (showAttributes && cls.getAttributeCount() > 0) {
+			if (showAttributes && (cls.getAttributeCount() > 0)) {
 				out.print("\\l");
 				printAttributes(out, e);
 			}
@@ -583,13 +572,21 @@ public class TwoDVisualizer {
 			out.print(" \"");
 
 			if (isPrintIncidenceNumbers()) {
-				out
-						.print(" taillabel=\"" + getIncidenceNumber(e, alpha)
-								+ "\"");
-				out
-						.print(" headlabel=\""
-								+ getIncidenceNumber(e.getReversedEdge(), omega)
-								+ "\"");
+				String fromRole = null;
+				String toRole = null;
+				if (PRINT_ROLE_NAMES) {
+					EdgeClass ec = (EdgeClass) e.getAttributedElementClass();
+					fromRole = ec.getFrom().getRolename();
+					toRole = ec.getTo().getRolename();
+				}
+				out.print(" taillabel=\""
+						+ getIncidenceNumber(e, alpha)
+						+ (((fromRole != null) && !fromRole.isEmpty()) ? ", "
+								+ fromRole : "") + "\"");
+				out.print(" headlabel=\""
+						+ getIncidenceNumber(e.getReversedEdge(), omega)
+						+ (((toRole != null) && !toRole.isEmpty()) ? ", "
+								+ toRole : "") + "\"");
 			}
 
 			out.print(" href=\"javascript:top.showElement('e" + e.getId()
@@ -654,7 +651,7 @@ public class TwoDVisualizer {
 			AttributedElementClass cls = v.getAttributedElementClass();
 			out.print("v" + v.getId() + " [label=\"{{v" + v.getId() + "|"
 					+ cls.getUniqueName().replace('$', '.') + "}");
-			if (showAttributes && cls.getAttributeCount() > 0) {
+			if (showAttributes && (cls.getAttributeCount() > 0)) {
 				out.print("|");
 				printAttributes(out, v);
 			}
