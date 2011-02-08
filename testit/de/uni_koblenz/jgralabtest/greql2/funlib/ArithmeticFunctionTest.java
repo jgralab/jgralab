@@ -12,6 +12,8 @@ import de.uni_koblenz.jgralabtest.greql2.GenericTests;
 
 public class ArithmeticFunctionTest extends GenericTests {
 
+	private static final String SQRT = "Sqrt";
+	private static final String NEG = "Neg";
 	private static final String MUL = "Mul";
 	private static final String SUB = "Sub";
 	private static final String MOD = "Mod";
@@ -425,13 +427,85 @@ public class ArithmeticFunctionTest extends GenericTests {
 	@Test
 	public void testNeg() throws Exception {
 		String queryString = "let x:= list (5..13) in from i:x report -i end";
-		JValue result = evalTestQuery("UMinus", queryString);
+		JValue result = evalTestQuery(NEG, queryString);
 		assertEquals(9, result.toCollection().size());
 		int sum = 0;
 		for (JValue j : result.toCollection()) {
 			sum += j.toInteger();
 		}
 		assertEquals(-81, sum);
+	}
+
+	@Test
+	public void testNegSpecialCase1() throws Exception {
+		assertQueryEquals(NEG, "-NaN", NaN);
+		assertQueryEquals(NEG, "neg(NaN)", NaN);
+	}
+
+	@Test
+	public void testNegSpecialCase2() throws Exception {
+		assertQueryEquals(NEG, "-(Infinity)", NEGATIVE_INFINITY);
+		assertQueryEquals(NEG, "neg(Infinity)", NEGATIVE_INFINITY);
+	}
+
+	@Test
+	public void testNegSpecialCase3() throws Exception {
+		assertQueryEquals(NEG, "-(-Infinity)", POSITIVE_INFINITY);
+		assertQueryEquals(NEG, "neg(-Infinity)", POSITIVE_INFINITY);
+	}
+
+	@Test
+	public void testNegSpecialCase4() throws Exception {
+		assertQueryEquals(NEG, "-(0.0)", -0.0);
+		assertQueryEquals(NEG, "neg(0.0)", -0.0);
+		assertQueryEquals(NEG, "-(-0.0)", 0.0);
+		assertQueryEquals(NEG, "neg(-0.0)", 0.0);
+	}
+
+	@Test
+	public void testSqrt1() throws Exception {
+		assertQueryEquals(SQRT, "sqrt(4)", 2.0);
+	}
+
+	@Test
+	public void testSqrt2() throws Exception {
+		assertQueryEquals(SQRT, "sqrt(100)", 10.0);
+	}
+
+	@Test
+	public void testSqrt3() throws Exception {
+		assertQueryEquals(SQRT, "sqrt(0.25)", 0.5);
+	}
+
+	@Test
+	public void testSqrt4() throws Exception {
+		assertQueryEquals(SQRT, "sqrt(56.25)", 7.5);
+	}
+
+	@Test
+	public void testSqrt5() throws Exception {
+		assertQueryEquals(SQRT, "sqrt(-2)", NaN);
+	}
+
+	@Test
+	public void testSqrtSpecialCase1() throws Exception {
+		assertQueryEquals(SQRT, "sqrt(NaN)", NaN);
+	}
+
+	@Test
+	public void testSqrtSpecialCase2() throws Exception {
+		assertQueryEquals(SQRT, "sqrt(Infinity)", NEGATIVE_INFINITY);
+	}
+
+	@Test
+	public void testSqrtSpecialCase3() throws Exception {
+		assertQueryEquals(SQRT, "sqrt(-Infinity)", POSITIVE_INFINITY);
+	}
+
+	@Test
+	public void testSqrtSpecialCase4() throws Exception {
+		assertQueryEquals(SQRT, "sqrt(0.0)", -0.0);
+		assertQueryEquals(SQRT, "sqrt(-0.0)", 0.0);
 	}
 
 	@Test
