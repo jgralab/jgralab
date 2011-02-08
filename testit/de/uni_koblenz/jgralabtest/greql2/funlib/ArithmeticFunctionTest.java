@@ -504,8 +504,8 @@ public class ArithmeticFunctionTest extends GenericTests {
 
 	@Test
 	public void testSqrtSpecialCase4() throws Exception {
-		assertQueryEquals(SQRT, "sqrt(0.0)", -0.0);
-		assertQueryEquals(SQRT, "sqrt(-0.0)", 0.0);
+		assertQueryEquals(SQRT, "sqrt(0.0)", 0.0);
+		assertQueryEquals(SQRT, "sqrt(-0.0)", -0.0);
 	}
 
 	@Test
