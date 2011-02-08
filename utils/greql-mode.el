@@ -913,7 +913,8 @@ for editing GReTL transformations."
 		     "CreateVertexClass" "CreateVertices"
 		     "RedefineFromRole" "RedefineFromRoles"
 		     "RedefineToRole" "RedefineToRoles"
-		     "SetAttributes" "SetMultipleAttributes")
+		     "SetAttributes" "SetMultipleAttributes"
+		     "stdout" "stderr")
 		 (and bow "transformation" eow)))))
     (if gretl-minor-mode
 	(progn
