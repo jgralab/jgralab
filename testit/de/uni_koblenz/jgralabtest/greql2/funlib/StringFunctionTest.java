@@ -1,7 +1,6 @@
 package de.uni_koblenz.jgralabtest.greql2.funlib;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 import org.junit.Test;
 
