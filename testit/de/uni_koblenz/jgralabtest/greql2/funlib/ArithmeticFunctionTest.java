@@ -83,17 +83,26 @@ public class ArithmeticFunctionTest extends GenericTests {
 
 	@Test
 	public void testMod1() throws Exception {
-		assertQueryEquals("Sub", "9 % 2", 1);
+		assertQueryEquals("Mod", "9.5 % 2", 1.5);
+		assertQueryEquals("Mod", "mod(9.5, 2)", 1.5);
 	}
 
 	@Test
 	public void testMod2() throws Exception {
-		assertQueryEquals("Mod", "-9 % 2", -1);
+		assertQueryEquals("Mod", "9 % 2", 1);
+		assertQueryEquals("Mod", "mod(9, 2)", 1);
 	}
 
 	@Test
 	public void testMod3() throws Exception {
+		assertQueryEquals("Mod", "-9 % 2", -1);
+		assertQueryEquals("Mod", "mod(-9, 2)", -1);
+	}
+
+	@Test
+	public void testMod4() throws Exception {
 		assertQueryEquals("Mod", "9 % 3", 0);
+		assertQueryEquals("Mod", "mod(9, 3)", 0);
 	}
 
 	@Test
