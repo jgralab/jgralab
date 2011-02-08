@@ -9,23 +9,40 @@ import de.uni_koblenz.jgralabtest.greql2.GenericTests;
 
 public class ArithmeticFunctionTest extends GenericTests {
 
-	// TODO create some methods named assertEqual receiving a greql string and
-	// the expected value. This should make it easier to understand and create
-	// new tests.
-
 	@Test
 	public void testAdd1() throws Exception {
-		assertQueryEquals("Add", "6 + 1.5", 7.5);
+		assertQueryEquals("Add", "0 + 1.5", 1.5);
+		assertQueryEquals("Add", "add(0, 1.5)", 1.5);
 	}
 
 	@Test
 	public void testAdd2() throws Exception {
-		assertQueryEquals("Add", "6 + -1.5", 4.5);
+		assertQueryEquals("Add", "6 + 0", 6);
+		assertQueryEquals("Add", "add(6, 0)", 6);
 	}
 
 	@Test
 	public void testAdd3() throws Exception {
+		assertQueryEquals("Add", "0 + 0", 0);
+		assertQueryEquals("Add", "add(0, 0)", 0);
+	}
+
+	@Test
+	public void testAdd4() throws Exception {
+		assertQueryEquals("Add", "6 + 1.5", 7.5);
+		assertQueryEquals("Add", "add(6, 1.5)", 7.5);
+	}
+
+	@Test
+	public void testAdd5() throws Exception {
+		assertQueryEquals("Add", "6 + -1.5", 4.5);
+		assertQueryEquals("Add", "add(6, -1.5)", 4.5);
+	}
+
+	@Test
+	public void testAdd6() throws Exception {
 		assertQueryEquals("Add", "0.025 + 0.975", 1.0);
+		assertQueryEquals("Add", "add(0.025, 0.975)", 1.0);
 	}
 
 	@Test
