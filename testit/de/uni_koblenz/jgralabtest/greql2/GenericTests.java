@@ -145,7 +145,7 @@ public class GenericTests {
 	protected void expectException(String testName, String query,
 			Class<? extends Exception> exception) {
 		try {
-			JValue value = evalTestQuery(testName, query);
+			evalTestQuery(testName, query);
 			fail();
 		} catch (Exception ex) {
 			if (!ex.getClass().equals(exception)) {
