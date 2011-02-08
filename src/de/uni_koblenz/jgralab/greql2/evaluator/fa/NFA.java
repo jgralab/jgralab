@@ -127,7 +127,7 @@ public class NFA extends FiniteAutomaton {
 	public static NFA createIteratedPathDescriptionNFA(NFA iteratedNFA,
 			boolean optional) throws EvaluateException {
 		State newFinalState;
-		if (iteratedNFA.finalStates.size() > 1) {
+		//if (iteratedNFA.finalStates.size() > 1) {
 			// there are at least two final states, there should be only one, so
 			// create a new one and epsilon-transitions
 			newFinalState = new State();
@@ -136,9 +136,10 @@ public class NFA extends FiniteAutomaton {
 			iteratedNFA.stateList.add(newFinalState);
 			// this is the only final state
 			iteratedNFA.finalStates.add(newFinalState);
-		} else {
-			newFinalState = iteratedNFA.finalStates.get(0);
-		}
+	//	}
+		//else {
+	//		newFinalState = iteratedNFA.finalStates.get(0);
+	//	}
 		Transition t = new EpsilonTransition(newFinalState,
 				iteratedNFA.initialState);
 		iteratedNFA.transitionList.add(t);
