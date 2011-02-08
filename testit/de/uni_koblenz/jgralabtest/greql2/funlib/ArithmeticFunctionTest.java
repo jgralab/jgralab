@@ -47,17 +47,38 @@ public class ArithmeticFunctionTest extends GenericTests {
 
 	@Test
 	public void testDiv1() throws Exception {
-		assertQueryEquals("Div", "3 / 3", 1.0);
+		assertQueryEquals("Div", "3 / 0", Double.POSITIVE_INFINITY);
+		assertQueryEquals("Div", "div(3, 0)", Double.POSITIVE_INFINITY);
 	}
 
 	@Test
 	public void testDiv2() throws Exception {
-		assertQueryEquals("Div", "3 / 1", 3.0);
+		assertQueryEquals("Div", "-3 / 0", Double.NEGATIVE_INFINITY);
+		assertQueryEquals("Div", "div(-3, 0)", Double.NEGATIVE_INFINITY);
 	}
 
 	@Test
 	public void testDiv3() throws Exception {
+		assertQueryEquals("Div", "0 / 3", 0.0);
+		assertQueryEquals("Div", "div(0, 3)", 0.0);
+	}
+
+	@Test
+	public void testDiv4() throws Exception {
+		assertQueryEquals("Div", "0 / 3.5", 0.0);
+		assertQueryEquals("Div", "div(0, 3.5)", 0.0);
+	}
+
+	@Test
+	public void testDiv5() throws Exception {
+		assertQueryEquals("Div", "3 / 1", 3.0);
+		assertQueryEquals("Div", "div(3, 1)", 3.0);
+	}
+
+	@Test
+	public void testDiv6() throws Exception {
 		assertQueryEquals("Div", "3 / 7", 3 / 7.0);
+		assertQueryEquals("Div", "div(3, 7)", 3 / 7.0);
 	}
 
 	@Test
