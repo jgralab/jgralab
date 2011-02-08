@@ -268,8 +268,9 @@ public class SimpleTransition extends Transition {
 			}
 		}
 		
+		boolean rolesOnly = (validEdgeRoles != null) && (typeCollection.getAllowedTypes().size() == 0) && (typeCollection.getForbiddenTypes().size() == 0);
 		boolean acceptedByRole = false;
-		
+				
 		// checks if a role restriction is set and if e has the right role
 		if (validEdgeRoles != null) {
 			EdgeClass ec = (EdgeClass) e.getAttributedElementClass();
@@ -286,15 +287,17 @@ public class SimpleTransition extends Transition {
 				}
 			}
 		}
-
-		boolean acceptedByType = false;
-		// checks if a edgeTypeRestriction is set and if e has the right type
-		AttributedElementClass edgeClass = e.getAttributedElementClass();
-		acceptedByType = typeCollection.acceptsType(edgeClass);
-		
-		if (!acceptedByType && !acceptedByRole) {
-			return false;
+		if (rolesOnly) {
+			if (!acceptedByRole)
+				return false;
+		} else {
+			if (!acceptedByRole) {
+				AttributedElementClass edgeClass = e.getAttributedElementClass();
+				if (!typeCollection.acceptsType(edgeClass))
+					return false;
+			}
 		}
+
 
 		// checks if a boolean expression exists and if it evaluates to true
 		if (predicateEvaluator != null) {
