@@ -12,15 +12,13 @@ public class LogicFunctionTest extends GenericTests {
 	public void testBooleanFunction(String functionName, boolean arg1,
 			boolean arg2, boolean expected) throws Exception {
 		String queryString = functionName + "(" + arg1 + "," + arg2 + ")";
-		JValue result = evalTestQuery("and", queryString);
-		assertEquals(expected, result.toBoolean());
+		assertQueryEquals(functionName, queryString, expected);
 	}
 
 	public void testBooleanOperant(String functionName, boolean arg1,
 			boolean arg2, boolean expected) throws Exception {
 		String queryString = arg1 + " " + functionName + " " + arg2;
-		JValue result = evalTestQuery("and", queryString);
-		assertEquals(expected, result.toBoolean());
+		assertQueryEquals(functionName, queryString, expected);
 	}
 
 	public void testBooleanOperation(String functionName, boolean arg1,
