@@ -67,7 +67,7 @@ public class Sqrt extends Greql2Function {
 			throw new WrongFunctionParameterException(this, arguments);
 		}
 
-		Double arg1 = arguments[1].toDouble();
+		Double arg1 = arguments[0].toDouble();
 		return new JValueImpl(Math.sqrt(arg1));
 	}
 
