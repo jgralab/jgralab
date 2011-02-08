@@ -266,8 +266,155 @@ public class ArithmeticFunctionTest extends GenericTests {
 	}
 
 	@Test
-	public void testMul() throws Exception {
+	public void testModSpecialCase1() throws Exception {
+		assertQueryEquals(MOD, "Infinity % 7", NaN);
+		assertQueryEquals(MOD, "mod(Infinity, 7)", NaN);
+	}
+
+	@Test
+	public void testModSpecialCase2() throws Exception {
+		assertQueryEquals(MOD, "3 % Infinity", NaN);
+		assertQueryEquals(MOD, "mod(3, Infinity)", NaN);
+	}
+
+	@Test
+	public void testModSpecialCase3() throws Exception {
+		assertQueryEquals(MOD, "-Infinity % 7", NaN);
+		assertQueryEquals(MOD, "mod(-Infinity, 7)", NaN);
+	}
+
+	@Test
+	public void testModSpecialCase4() throws Exception {
+		assertQueryEquals(MOD, "3 % -Infinity", NaN);
+		assertQueryEquals(MOD, "mod(3, -Infinity)", NaN);
+	}
+
+	@Test
+	public void testModSpecialCase5() throws Exception {
+		assertQueryEquals(MOD, "NaN % 7", NaN);
+		assertQueryEquals(MOD, "mod(Nan, 7)", NaN);
+	}
+
+	@Test
+	public void testModSpecialCase6() throws Exception {
+		assertQueryEquals(MOD, "3 % NaN", NaN);
+		assertQueryEquals(MOD, "mod(3, NaN)", NaN);
+	}
+
+	@Test
+	public void testModSpecialCases() throws Exception {
+
+		assertQueryEquals(MOD, "Infinity % Infinity", NaN);
+		assertQueryEquals(MOD, "-Infinity % -Infinity", NaN);
+		assertQueryEquals(MOD, "NaN % NaN", NaN);
+		assertQueryEquals(MOD, "Infinity % -Infinity", NaN);
+		assertQueryEquals(MOD, "Infinity % NaN", NaN);
+		assertQueryEquals(MOD, "-Infinity % NaN", NaN);
+
+		// As functions
+		assertQueryEquals(MOD, "mod(Infinity, Infinity)", NaN);
+		assertQueryEquals(MOD, "mod(-Infinity, -Infinity)", NaN);
+		assertQueryEquals(MOD, "mod(NaN, NaN)", NaN);
+		assertQueryEquals(MOD, "mod(Infinity, -Infinity)", NaN);
+		assertQueryEquals(MOD, "mod(Infinity, NaN)", NaN);
+		assertQueryEquals(MOD, "mod(-Infinity, NaN)", NaN);
+	}
+
+	@Test
+	public void testMul1() throws Exception {
 		assertQueryEquals(MUL, "6 * 1.5", 9.0);
+		assertQueryEquals(MUL, "mul(6, 1.5)", 9.0);
+	}
+
+	@Test
+	public void testMul2() throws Exception {
+		assertQueryEquals(MUL, "0 * 1.5", 0.0);
+		assertQueryEquals(MUL, "mul(0, 1.5)", 0.0);
+	}
+
+	@Test
+	public void testMul3() throws Exception {
+		assertQueryEquals(MUL, "6 * 0", 0.0);
+		assertQueryEquals(MUL, "mul(6, 0)", 0.0);
+	}
+
+	@Test
+	public void testMul4() throws Exception {
+		assertQueryEquals(MUL, "0 * 0", 0.0);
+		assertQueryEquals(MUL, "mul(0, 0)", 0.0);
+	}
+
+	@Test
+	public void testMul5() throws Exception {
+		assertQueryEquals(MUL, "1 * 1.5", 1.5);
+		assertQueryEquals(MUL, "mul(1, 1.5)", 1.5);
+	}
+
+	@Test
+	public void testMul6() throws Exception {
+		assertQueryEquals(MUL, "6 * 1", 6.0);
+		assertQueryEquals(MUL, "mul(6, 1)", 6.0);
+	}
+
+	@Test
+	public void testMul7() throws Exception {
+		assertQueryEquals(MUL, "1 * 1", 1.0);
+		assertQueryEquals(MUL, "mul(1, 1)", 1.0);
+	}
+
+	@Test
+	public void testMulSpecialCase1() throws Exception {
+		assertQueryEquals(MUL, "Infinity * 7", POSITIVE_INFINITY);
+		assertQueryEquals(MUL, "mul(Infinity, 7)", POSITIVE_INFINITY);
+	}
+
+	@Test
+	public void testMulSpecialCase2() throws Exception {
+		assertQueryEquals(MUL, "3 * Infinity", POSITIVE_INFINITY);
+		assertQueryEquals(MUL, "mul(3, Infinity)", POSITIVE_INFINITY);
+	}
+
+	@Test
+	public void testMulSpecialCase3() throws Exception {
+		assertQueryEquals(MUL, "-Infinity * 7", NEGATIVE_INFINITY);
+		assertQueryEquals(MUL, "mul(-Infinity, 7)", NEGATIVE_INFINITY);
+	}
+
+	@Test
+	public void testMulSpecialCase4() throws Exception {
+		assertQueryEquals(MUL, "3 * -Infinity", NEGATIVE_INFINITY);
+		assertQueryEquals(MUL, "mul(3, -Infinity)", NEGATIVE_INFINITY);
+	}
+
+	@Test
+	public void testMulSpecialCase5() throws Exception {
+		assertQueryEquals(MUL, "NaN * 7", NaN);
+		assertQueryEquals(MUL, "mul(Nan, 7)", NaN);
+	}
+
+	@Test
+	public void testMulSpecialCase6() throws Exception {
+		assertQueryEquals(MUL, "3 * NaN", NaN);
+		assertQueryEquals(MUL, "mul(3, NaN)", NaN);
+	}
+
+	@Test
+	public void testMulSpecialCases() throws Exception {
+
+		assertQueryEquals(MUL, "Infinity * Infinity", POSITIVE_INFINITY);
+		assertQueryEquals(MUL, "-Infinity * -Infinity", POSITIVE_INFINITY);
+		assertQueryEquals(MUL, "NaN * NaN", NaN);
+		assertQueryEquals(MUL, "Infinity * -Infinity", NEGATIVE_INFINITY);
+		assertQueryEquals(MUL, "Infinity * NaN", NaN);
+		assertQueryEquals(MUL, "-Infinity * NaN", NaN);
+
+		// As functions
+		assertQueryEquals(MUL, "mul(Infinity, Infinity)", POSITIVE_INFINITY);
+		assertQueryEquals(MUL, "mul(-Infinity, -Infinity)", POSITIVE_INFINITY);
+		assertQueryEquals(MUL, "mul(NaN, NaN)", NaN);
+		assertQueryEquals(MUL, "mul(Infinity, -Infinity)", NEGATIVE_INFINITY);
+		assertQueryEquals(MUL, "mul(Infinity, NaN)", NaN);
+		assertQueryEquals(MUL, "mul(-Infinity, NaN)", NaN);
 	}
 
 	@Test
@@ -290,62 +437,67 @@ public class ArithmeticFunctionTest extends GenericTests {
 	@Test
 	public void testSub1() throws Exception {
 		assertQueryEquals(SUB, "6 - -1.5", 7.5);
+		assertQueryEquals(SUB, "sub(6, -1.5)", 7.5);
 	}
 
 	@Test
 	public void testSub2() throws Exception {
 		assertQueryEquals(SUB, "6 - 3", 3L);
+		assertQueryEquals(SUB, "sub(6, 3)", 3L);
 	}
 
 	@Test
 	public void testSub3() throws Exception {
 		assertQueryEquals(SUB, "16 - 323", -307L);
+		assertQueryEquals(SUB, "sub(16, 323)", -307L);
 	}
 
 	@Test
 	public void testSub4() throws Exception {
 		assertQueryEquals(SUB, "1.5 - 6", -4.5);
+		assertQueryEquals(SUB, "sub(1.5, 6)", -4.5);
 	}
 
 	@Test
 	public void testSub5() throws Exception {
 		assertQueryEquals(SUB, "10 - 4 - 3 - 2", 1);
+		assertQueryEquals(SUB, "sub(sub(sub(10, 4), 3), 2)", 1);
 	}
 
 	@Test
 	public void testSubSpecialCase1() throws Exception {
 		assertQueryEquals(SUB, "Infinity - 7", POSITIVE_INFINITY);
-		assertQueryEquals(SUB, "div(Infinity, 7)", POSITIVE_INFINITY);
+		assertQueryEquals(SUB, "sub(Infinity, 7)", POSITIVE_INFINITY);
 	}
 
 	@Test
 	public void testSubSpecialCase2() throws Exception {
 		assertQueryEquals(SUB, "3 - Infinity", POSITIVE_INFINITY);
-		assertQueryEquals(SUB, "div(3, Infinity)", POSITIVE_INFINITY);
+		assertQueryEquals(SUB, "sub(3, Infinity)", POSITIVE_INFINITY);
 	}
 
 	@Test
 	public void testSubSpecialCase3() throws Exception {
 		assertQueryEquals(SUB, "-Infinity - 7", NaN);
-		assertQueryEquals(SUB, "div(-Infinity, 7)", NaN);
+		assertQueryEquals(SUB, "sub(-Infinity, 7)", NaN);
 	}
 
 	@Test
 	public void testSubSpecialCase4() throws Exception {
 		assertQueryEquals(SUB, "3 - -Infinity", NaN);
-		assertQueryEquals(SUB, "div(3, -Infinity)", NaN);
+		assertQueryEquals(SUB, "sub(3, -Infinity)", NaN);
 	}
 
 	@Test
 	public void testSubSpecialCase5() throws Exception {
 		assertQueryEquals(SUB, "NaN - 7", NaN);
-		assertQueryEquals(SUB, "div(Nan, 7)", NaN);
+		assertQueryEquals(SUB, "sub(Nan, 7)", NaN);
 	}
 
 	@Test
 	public void testSubSpecialCase6() throws Exception {
 		assertQueryEquals(SUB, "3 - NaN", NaN);
-		assertQueryEquals(SUB, "div(3, NaN)", NaN);
+		assertQueryEquals(SUB, "sub(3, NaN)", NaN);
 	}
 
 	@Test
