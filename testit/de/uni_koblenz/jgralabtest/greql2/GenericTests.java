@@ -31,6 +31,8 @@
 
 package de.uni_koblenz.jgralabtest.greql2;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.util.Iterator;
 
@@ -53,6 +55,8 @@ import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalSchema;
 import de.uni_koblenz.jgralabtest.schemas.minimal.Node;
 
 public class GenericTests {
+
+	protected static final double DELTA = 0.00000001;
 
 	public enum TestVersion {
 		GREQL_GRAPH, CITY_MAP_GRAPH
@@ -99,6 +103,42 @@ public class GenericTests {
 
 		uncontainedCrossroadCount = crossroadCount
 				- result.toDouble().intValue();
+	}
+
+	protected void assertQueryEquals(String testName, String query,
+			boolean expectedValue) throws Exception {
+		JValue result = evalTestQuery(testName, query);
+		assertEquals(expectedValue, result.toBoolean().booleanValue());
+	}
+
+	protected void assertQueryEquals(String testName, String query,
+			int expectedValue) throws Exception {
+		JValue result = evalTestQuery(testName, query);
+		assertEquals(expectedValue, result.toInteger().intValue());
+	}
+
+	protected void assertQueryEquals(String testName, String query,
+			long expectedValue) throws Exception {
+		JValue result = evalTestQuery(testName, query);
+		assertEquals(expectedValue, result.toLong().longValue());
+	}
+
+	protected void assertQueryEquals(String testName, String query,
+			double expectedValue) throws Exception {
+		JValue result = evalTestQuery(testName, query);
+		assertEquals(expectedValue, result.toDouble().doubleValue(), DELTA);
+	}
+
+	protected void assertQueryEquals(String testName, String query,
+			String expectedValue) throws Exception {
+		JValue result = evalTestQuery(testName, query);
+		assertEquals(expectedValue, result.toString());
+	}
+
+	protected void assertQueryEquals(String testName, String query,
+			Enum<?> expectedValue) throws Exception {
+		JValue result = evalTestQuery(testName, query);
+		assertEquals(expectedValue, result.toEnum());
 	}
 
 	/**
