@@ -32,6 +32,7 @@
 package de.uni_koblenz.jgralabtest.greql2;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.util.Iterator;
@@ -139,6 +140,18 @@ public class GenericTests {
 			Enum<?> expectedValue) throws Exception {
 		JValue result = evalTestQuery(testName, query);
 		assertEquals(expectedValue, result.toEnum());
+	}
+
+	protected void expectException(String testName, String query,
+			Class<? extends Exception> exception) {
+		try {
+			JValue value = evalTestQuery(testName, query);
+			fail();
+		} catch (Exception ex) {
+			if (!ex.getClass().equals(exception)) {
+				fail();
+			}
+		}
 	}
 
 	/**
