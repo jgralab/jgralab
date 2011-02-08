@@ -47,6 +47,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 import de.uni_koblenz.jgralab.greql2.schema.ThisEdge;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
 
 /**
  * This transition accepts a SimplePathDescription. A SimplePathDescription is
@@ -266,15 +267,32 @@ public class SimpleTransition extends Transition {
 				return false;
 			}
 		}
+		
+		boolean acceptedByRole = false;
+		
 		// checks if a role restriction is set and if e has the right role
-		if ((validEdgeRoles != null)
-				&& (validEdgeRoles.contains(e.getThatRole()))) {
-			return false;
+		if (validEdgeRoles != null) {
+			EdgeClass ec = (EdgeClass) e.getAttributedElementClass();
+			Set<String> roles = null;
+			if (e.isNormal()) {
+				roles = ec.getTo().getAllRoles();
+			} else {
+				roles = ec.getFrom().getAllRoles();
+			}
+			for (String role : roles) {
+				if (validEdgeRoles.contains(role)) {
+					acceptedByRole = true;
+					break;
+				}
+			}
 		}
 
+		boolean acceptedByType = false;
 		// checks if a edgeTypeRestriction is set and if e has the right type
 		AttributedElementClass edgeClass = e.getAttributedElementClass();
-		if (!typeCollection.acceptsType(edgeClass)) {
+		acceptedByType = typeCollection.acceptsType(edgeClass);
+		
+		if (!acceptedByType && !acceptedByRole) {
 			return false;
 		}
 
