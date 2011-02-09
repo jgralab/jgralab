@@ -49,7 +49,7 @@ public class StringFunctionTest extends GenericTests {
 	@Test
 	public void testCapitalizeFirst3() throws Exception {
 		assertQueryEquals(CAPITALIZE_FIRST, "capitalizeFirst(' oobarbaz')",
-				" Oobarbaz");
+				" oobarbaz");
 	}
 
 	@Test
