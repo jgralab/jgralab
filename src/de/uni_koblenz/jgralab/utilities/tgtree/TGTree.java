@@ -2,6 +2,7 @@ package de.uni_koblenz.jgralab.utilities.tgtree;
 
 import java.awt.Container;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -9,8 +10,11 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenuBar;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.ToolTipManager;
 
@@ -29,10 +33,31 @@ public class TGTree extends JFrame {
 
 	private Graph graph;
 	private JTree tree;
+	JScrollPane scrollPane;
 
 	public TGTree(Graph g) {
 		super("TGTree <" + g.getId() + ">");
 		this.graph = g;
+
+		JMenuBar menuBar = new JMenuBar();
+		JLabel idLabel = new JLabel("Select by id: ");
+		menuBar.add(idLabel);
+		final JTextField idField = new JTextField();
+		menuBar.add(idField);
+		idField.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String txt = idField.getText();
+				char type = txt.charAt(0);
+				int id = Integer.parseInt(txt.substring(1));
+				if (type == 'v') {
+					setTreeViewRoot(graph.getVertex(id));
+				} else if (type == 'e') {
+					setTreeViewRoot(graph.getEdge(id));
+				}
+			}
+		});
+		setJMenuBar(menuBar);
 
 		Container cp = getContentPane();
 		tree = new JTree(new TGraphTreeModel(new VertexTreeNode(
@@ -40,7 +65,7 @@ public class TGTree extends JFrame {
 		tree.setCellRenderer(new GraphElementCellRenderer());
 		tree.addMouseListener(new TreeViewMouseAdapter());
 		tree.addKeyListener(new TreeViewKeyAdapter());
-		JScrollPane scrollPane = new JScrollPane();
+		scrollPane = new JScrollPane();
 		scrollPane.getViewport().add(tree);
 		cp.add(scrollPane);
 
