@@ -97,7 +97,7 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 	 *            Id of vertex.
 	 */
 	public void add(long sequenceNumber, int vId) {
-		this.sequenceNumberToIdMap.put(sequenceNumber, vId);
+		sequenceNumberToIdMap.put(sequenceNumber, vId);
 		// usedIDs.set(vId);
 	}
 
@@ -114,9 +114,9 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 	 */
 	@Override
 	public DatabasePersistableVertex getFirst() {
-		if (!this.isEmpty()) {
-			return (DatabasePersistableVertex) this.owningGraph.getVertex(this
-					.getFirstVertexId());
+		if (!isEmpty()) {
+			return (DatabasePersistableVertex) owningGraph
+					.getVertex(getFirstVertexId());
 		} else {
 			return null;
 		}
@@ -129,12 +129,11 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 	 */
 	@Override
 	public boolean isEmpty() {
-		return this.sequenceNumberToIdMap.isEmpty();
+		return sequenceNumberToIdMap.isEmpty();
 	}
 
 	private int getFirstVertexId() {
-		Entry<Long, Integer> firstEntry = this.sequenceNumberToIdMap
-				.firstEntry();
+		Entry<Long, Integer> firstEntry = sequenceNumberToIdMap.firstEntry();
 		return firstEntry.getValue();
 	}
 
@@ -145,17 +144,16 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 	 */
 	@Override
 	public DatabasePersistableVertex getLast() {
-		if (!this.isEmpty()) {
-			return (DatabasePersistableVertex) this.owningGraph.getVertex(this
-					.getLastVertexId());
+		if (!isEmpty()) {
+			return (DatabasePersistableVertex) owningGraph
+					.getVertex(getLastVertexId());
 		} else {
 			return null;
 		}
 	}
 
 	private int getLastVertexId() {
-		Entry<Long, Integer> firstEntry = this.sequenceNumberToIdMap
-				.lastEntry();
+		Entry<Long, Integer> firstEntry = sequenceNumberToIdMap.lastEntry();
 		return firstEntry.getValue();
 	}
 
@@ -171,11 +169,10 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 	 */
 	@Override
 	public DatabasePersistableVertex getPrev(DatabasePersistableVertex vertex) {
-		assert this.contains(vertex);
-		if (!this.isFirst(vertex)) {
-			int prevVId = this.getPrevVertexId(vertex);
-			return (DatabasePersistableVertex) this.owningGraph
-					.getVertex(prevVId);
+		assert contains(vertex);
+		if (!isFirst(vertex)) {
+			int prevVId = getPrevVertexId(vertex);
+			return (DatabasePersistableVertex) owningGraph.getVertex(prevVId);
 		} else {
 			return null;
 		}
@@ -190,7 +187,7 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 	 */
 	@Override
 	public boolean contains(DatabasePersistableVertex vertex) {
-		Integer vId = this.sequenceNumberToIdMap.get(vertex
+		Integer vId = sequenceNumberToIdMap.get(vertex
 				.getSequenceNumberInVSeq());
 		if (vId != null) {
 			return vId == vertex.getId();
@@ -201,12 +198,12 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 
 	@Override
 	protected boolean equalsFirst(DatabasePersistableVertex vertex) {
-		int firstVId = this.getFirstVertexId();
+		int firstVId = getFirstVertexId();
 		return firstVId == vertex.getId();
 	}
 
 	private int getPrevVertexId(DatabasePersistableVertex vertex) {
-		Entry<Long, Integer> previousEntry = this.sequenceNumberToIdMap
+		Entry<Long, Integer> previousEntry = sequenceNumberToIdMap
 				.lowerEntry(vertex.getSequenceNumberInVSeq());
 		return previousEntry.getValue();
 	}
@@ -223,11 +220,10 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 	 */
 	@Override
 	public DatabasePersistableVertex getNext(DatabasePersistableVertex vertex) {
-		assert this.contains(vertex);
-		if (!this.isLast(vertex)) {
-			int nextVId = this.getNextVertexId(vertex);
-			return (DatabasePersistableVertex) this.owningGraph
-					.getVertex(nextVId);
+		assert contains(vertex);
+		if (!isLast(vertex)) {
+			int nextVId = getNextVertexId(vertex);
+			return (DatabasePersistableVertex) owningGraph.getVertex(nextVId);
 		} else {
 			return null;
 		}
@@ -235,12 +231,12 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 
 	@Override
 	protected boolean equalsLast(DatabasePersistableVertex vertex) {
-		int lastVId = this.getLastVertexId();
+		int lastVId = getLastVertexId();
 		return lastVId == vertex.getId();
 	}
 
 	private int getNextVertexId(DatabasePersistableVertex vertex) {
-		Entry<Long, Integer> nextEntry = this.sequenceNumberToIdMap
+		Entry<Long, Integer> nextEntry = sequenceNumberToIdMap
 				.higherEntry(vertex.getSequenceNumberInVSeq());
 		return nextEntry.getValue();
 	}
@@ -253,16 +249,15 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 	 */
 	@Override
 	public void prepend(DatabasePersistableVertex vertex) {
-		if (!this.isFirst(vertex)) {
-			this.prependByMoveOrInsert(vertex);
+		if (!isFirst(vertex)) {
+			prependByMoveOrInsert(vertex);
 		}
 	}
 
 	private void prependByMoveOrInsert(DatabasePersistableVertex vertex) {
-		this.assureThatElementCanBeAppended();
-		long sequenceNumber = this
-				.getRegularSequenceNumberBeforeFirstElementOf();
-		this.moveOrInsert(vertex, sequenceNumber);
+		assureThatElementCanBeAppended();
+		long sequenceNumber = getRegularSequenceNumberBeforeFirstElementOf();
+		moveOrInsert(vertex, sequenceNumber);
 	}
 
 	/**
@@ -273,16 +268,15 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 	 */
 	@Override
 	public void append(DatabasePersistableVertex vertex) {
-		if (!this.isLast(vertex)) {
-			this.appendByMoveOrInsert(vertex);
+		if (!isLast(vertex)) {
+			appendByMoveOrInsert(vertex);
 		}
 	}
 
 	private void appendByMoveOrInsert(DatabasePersistableVertex vertex) {
-		this.assureThatElementCanBeAppended();
-		long sequenceNumber = this
-				.getRegularSequenceNumberAfterLastElementOf();
-		this.moveOrInsert(vertex, sequenceNumber);
+		assureThatElementCanBeAppended();
+		long sequenceNumber = getRegularSequenceNumberAfterLastElementOf();
+		moveOrInsert(vertex, sequenceNumber);
 	}
 
 	/**
@@ -301,18 +295,18 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 	@Override
 	public void putAfter(DatabasePersistableVertex targetVertex,
 			DatabasePersistableVertex movedVertex) {
-		assert this.areBothInSameVertexList(targetVertex, movedVertex);
+		assert areBothInSameVertexList(targetVertex, movedVertex);
 		assert targetVertex != movedVertex;
 		if (!targetVertex.equals(movedVertex)
-				&& !this.isNextNeighbor(targetVertex, movedVertex)) {
-			this.moveVertexBehind(movedVertex, targetVertex);
+				&& !isNextNeighbor(targetVertex, movedVertex)) {
+			moveVertexBehind(movedVertex, targetVertex);
 		}
 	}
 
 	private boolean areBothInSameVertexList(
 			DatabasePersistableVertex targetVertex,
 			DatabasePersistableVertex movedVertex) {
-		return this.contains(targetVertex) && this.contains(movedVertex);
+		return contains(targetVertex) && contains(movedVertex);
 	}
 
 	/**
@@ -331,19 +325,18 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 	@Override
 	public void putBefore(DatabasePersistableVertex targetVertex,
 			DatabasePersistableVertex movedVertex) {
-		assert this.areBothInSameVertexList(targetVertex, movedVertex);
+		assert areBothInSameVertexList(targetVertex, movedVertex);
 		assert targetVertex != movedVertex;
 		if (!targetVertex.equals(movedVertex)
-				&& !this.isPrevNeighbour(targetVertex, movedVertex)) {
-			this.moveVertexBefore(movedVertex, targetVertex);
+				&& !isPrevNeighbour(targetVertex, movedVertex)) {
+			moveVertexBefore(movedVertex, targetVertex);
 		}
 	}
 
 	private boolean isPrevNeighbour(DatabasePersistableVertex vertex,
 			DatabasePersistableVertex allegedNeighbourVertex) {
-		if (!this.isFirst(vertex)) {
-			return this.getPrevVertexId(vertex) == allegedNeighbourVertex
-					.getId();
+		if (!isFirst(vertex)) {
+			return getPrevVertexId(vertex) == allegedNeighbourVertex.getId();
 		} else {
 			return false;
 		}
@@ -352,9 +345,8 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 	@Override
 	protected boolean isNextNeighbor(DatabasePersistableVertex vertex,
 			DatabasePersistableVertex allegedNeighborVertex) {
-		if (!this.isLast(vertex)) {
-			return this.getNextVertexId(vertex) == allegedNeighborVertex
-					.getId();
+		if (!isLast(vertex)) {
+			return getNextVertexId(vertex) == allegedNeighborVertex.getId();
 		} else {
 			return false;
 		}
@@ -363,8 +355,8 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 	private void moveVertexBefore(DatabasePersistableVertex movedVertex,
 			DatabasePersistableVertex targetVertex) {
 		long newSequenceNumber = this.getPrevFreeSequenceNumber(targetVertex);
-		this.moveTo(movedVertex, newSequenceNumber);
-		this.owningGraph.vertexListModified();
+		moveTo(movedVertex, newSequenceNumber);
+		owningGraph.vertexListModified();
 	}
 
 	private long getPrevFreeSequenceNumber(DatabasePersistableVertex vertex) {
@@ -375,8 +367,8 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 	private void moveVertexBehind(DatabasePersistableVertex movedVertex,
 			DatabasePersistableVertex targetVertex) {
 		long newSequenceNumber = this.getNextFreeSequenceNumber(targetVertex);
-		this.moveTo(movedVertex, newSequenceNumber);
-		this.owningGraph.vertexListModified();
+		moveTo(movedVertex, newSequenceNumber);
+		owningGraph.vertexListModified();
 	}
 
 	private long getNextFreeSequenceNumber(DatabasePersistableVertex vertex) {
@@ -386,15 +378,16 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 
 	@Override
 	protected void moveTo(DatabasePersistableVertex vertex, long sequenceNumber) {
-		this.sequenceNumberToIdMap.remove(vertex.getSequenceNumberInVSeq());
+		sequenceNumberToIdMap.remove(vertex.getSequenceNumberInVSeq());
 		vertex.setSequenceNumberInVSeq(sequenceNumber);
-		this.sequenceNumberToIdMap.put(sequenceNumber, vertex.getId());
+		sequenceNumberToIdMap.put(sequenceNumber, vertex.getId());
 	}
 
 	@Override
-	protected void insertAt(DatabasePersistableVertex vertex, long sequenceNumber) {
+	protected void insertAt(DatabasePersistableVertex vertex,
+			long sequenceNumber) {
 		vertex.setSequenceNumberInVSeq(sequenceNumber);
-		this.sequenceNumberToIdMap.put(sequenceNumber, vertex.getId());
+		sequenceNumberToIdMap.put(sequenceNumber, vertex.getId());
 		// usedIDs.set(vertex.getId());
 	}
 
@@ -411,8 +404,8 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 	 */
 	@Override
 	public void remove(DatabasePersistableVertex vertex) {
-		assert this.contains(vertex);
-		this.sequenceNumberToIdMap.remove(vertex.getSequenceNumberInVSeq());
+		assert contains(vertex);
+		sequenceNumberToIdMap.remove(vertex.getSequenceNumberInVSeq());
 		// usedIDs.clear(vertex.getId());
 		/*
 		 * As it is not known here if the vertex will be completely deleted or
@@ -426,13 +419,13 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 	 */
 	@Override
 	public int size() {
-		return this.sequenceNumberToIdMap.size();
+		return sequenceNumberToIdMap.size();
 	}
 
 	@Override
 	public void reorganize() {
-		this.owningGraph.reorganizeVertexListInGraphDatabase();
-		this.reorganizeAtClient();
+		owningGraph.reorganizeVertexListInGraphDatabase();
+		reorganizeAtClient();
 	}
 
 	/**
@@ -441,9 +434,9 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 	private void reorganizeAtClient() {
 		try {
 			VertexListReorganizer reorganizer = new VertexListReorganizer(
-					this.owningGraph);
-			this.sequenceNumberToIdMap = reorganizer
-					.getReorganisedMap(this.sequenceNumberToIdMap);
+					owningGraph);
+			sequenceNumberToIdMap = reorganizer
+					.getReorganisedMap(sequenceNumberToIdMap);
 			// does this change the vertex IDs? (Apparently it does not)If this
 			// is the case, the
 			// BitSet has to be altered after this operation.
@@ -454,7 +447,7 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 
 	@Override
 	protected void clear() {
-		this.sequenceNumberToIdMap.clear();
+		sequenceNumberToIdMap.clear();
 		// usedIDs.clear();
 	}
 
@@ -466,7 +459,7 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 	 * @return true if list contains vertex with given id, otherwise false.
 	 */
 	protected boolean containsVertex(int vId) {
-		return this.sequenceNumberToIdMap.containsValue(vId);
+		return sequenceNumberToIdMap.containsValue(vId);
 		// return usedIDs.get(vId);
 	}
 }
