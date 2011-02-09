@@ -385,13 +385,6 @@ public abstract class GraphDatabase {
 		}
 	}
 
-	@Deprecated
-	public void reconnect() throws GraphDatabaseException {
-		this.close();
-		this.connect();
-		this.setAutoCommit(false);
-	}
-
 	/**
 	 * Closes database, writes back graph version and commits any open
 	 * transactions.
