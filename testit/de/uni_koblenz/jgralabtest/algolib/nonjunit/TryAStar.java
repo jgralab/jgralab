@@ -47,6 +47,7 @@ import de.uni_koblenz.jgralabtest.schemas.algolib.weighted.Way;
 import de.uni_koblenz.jgralabtest.schemas.algolib.weighted.WeightedGraph;
 import de.uni_koblenz.jgralabtest.schemas.algolib.weighted.WeightedSchema;
 
+@SuppressWarnings("deprecation")
 public class TryAStar {
 
 	private static class LocationPoint extends Point {
@@ -84,7 +85,8 @@ public class TryAStar {
 	private static Location target;
 	private static KDTree<LocationPoint> kdtree;
 
-	public static void main(String[] args) throws GraphIOException, AlgorithmTerminatedException {
+	public static void main(String[] args) throws GraphIOException,
+			AlgorithmTerminatedException {
 		Stopwatch sw = new Stopwatch();
 		if (new File(filename).exists()) {
 			graph = WeightedSchema.instance().loadWeightedGraph(filename,
@@ -123,8 +125,8 @@ public class TryAStar {
 				Location v1 = (Location) parameter1;
 				Location v2 = (Location) parameter2;
 
-				return euclideanDistance(v1.get_x(), v1.get_y(), v2.get_x(), v2
-						.get_y());
+				return euclideanDistance(v1.get_x(), v1.get_y(), v2.get_x(),
+						v2.get_y());
 			}
 
 			@Override
@@ -301,8 +303,8 @@ public class TryAStar {
 
 	private static void createEdgePair(Random rng, WeightedGraph graph,
 			Location alpha, Location omega) {
-		double distance = euclideanDistance(alpha.get_x(), alpha.get_y(), omega
-				.get_x(), omega.get_y());
+		double distance = euclideanDistance(alpha.get_x(), alpha.get_y(),
+				omega.get_x(), omega.get_y());
 		double weight = distance + rng.nextDouble() * MAX_LONGER;
 
 		boolean create = true;

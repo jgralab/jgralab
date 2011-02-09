@@ -23,7 +23,6 @@
  */
 package de.uni_koblenz.jgralabtest.algolib.nonjunit;
 
-import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.BreadthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.shortest_paths.ShortestPathsWithBFS;
@@ -39,7 +38,7 @@ public class TryShortestPaths {
 		for (int i = 1; i < vertexCount; i++) {
 			vertices[i] = graph.createSimpleVertex();
 		}
-		
+
 		graph.createSimpleEdge(vertices[5], vertices[1]);
 		graph.createSimpleEdge(vertices[3], vertices[1]);
 		graph.createSimpleEdge(vertices[3], vertices[2]);
@@ -51,10 +50,11 @@ public class TryShortestPaths {
 		graph.createSimpleEdge(vertices[7], vertices[6]);
 		graph.createSimpleEdge(vertices[1], vertices[8]);
 		graph.createSimpleEdge(vertices[2], vertices[8]);
-		
+
 		BreadthFirstSearch bfs = new BreadthFirstSearch(graph);
-		ShortestPathsWithBFS solver = new ShortestPathsWithBFS(graph, bfs).reversed();
-		
+		ShortestPathsWithBFS solver = new ShortestPathsWithBFS(graph, bfs)
+				.reversed();
+
 		try {
 			solver.execute(vertices[8]);
 		} catch (AlgorithmTerminatedException e) {

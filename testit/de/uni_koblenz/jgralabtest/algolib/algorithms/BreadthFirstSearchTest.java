@@ -36,15 +36,15 @@ public class BreadthFirstSearchTest extends GraphAlgorithmTest {
 
 	private SimpleGraph g;
 	private SearchVisitor normalvisitor;
-	private SearchVisitor reversedVisitor;
-	private SearchVisitor undirectedVisitor;
+	// private SearchVisitor reversedVisitor;
+	// private SearchVisitor undirectedVisitor;
 	private List<SimpleEdge> normalTreeEdges;
-	private List<SimpleEdge> reverseTreeEdges;
-	private List<SimpleEdge> undirectedTreeEdges;
+	// private List<SimpleEdge> reverseTreeEdges;
+	// private List<SimpleEdge> undirectedTreeEdges;
 	private List<SimpleEdge> normalFronds;
-	private List<SimpleEdge> reversedFronds;
-	private List<SimpleEdge> undirectedFronds;
-	
+	// private List<SimpleEdge> reversedFronds;
+	// private List<SimpleEdge> undirectedFronds;
+
 	SimpleVertex v1;
 	SimpleVertex v2;
 	SimpleVertex v3;
@@ -89,10 +89,8 @@ public class BreadthFirstSearchTest extends GraphAlgorithmTest {
 			public void visitTreeEdge(Edge e)
 					throws AlgorithmTerminatedException {
 				assertTrue(normalTreeEdges.contains(e));
-				assertTrue(algorithm.getVisitedVertices()
-						.get(e.getThis()));
-				assertFalse(algorithm.getVisitedVertices().get(
-						e.getThat()));
+				assertTrue(algorithm.getVisitedVertices().get(e.getThis()));
+				assertFalse(algorithm.getVisitedVertices().get(e.getThat()));
 			}
 
 			@Override
@@ -107,40 +105,38 @@ public class BreadthFirstSearchTest extends GraphAlgorithmTest {
 			}
 
 		};
-		
-		reversedVisitor = new SearchVisitorAdapter(){
-			@Override
-			public void visitFrond(Edge e) throws AlgorithmTerminatedException {
-				assertTrue(normalFronds.contains(e));
-			}
 
-			@Override
-			public void visitRoot(Vertex v) throws AlgorithmTerminatedException {
-				assertEquals(v1, v);
-			}
+		// reversedVisitor = new SearchVisitorAdapter() {
+		// @Override
+		// public void visitFrond(Edge e) throws AlgorithmTerminatedException {
+		// assertTrue(normalFronds.contains(e));
+		// }
+		//
+		// @Override
+		// public void visitRoot(Vertex v) throws AlgorithmTerminatedException {
+		// assertEquals(v1, v);
+		// }
+		//
+		// @Override
+		// public void visitTreeEdge(Edge e)
+		// throws AlgorithmTerminatedException {
+		// assertTrue(normalTreeEdges.contains(e));
+		// assertTrue(algorithm.getVisitedVertices().get(e.getThis()));
+		// assertFalse(algorithm.getVisitedVertices().get(e.getThat()));
+		// }
+		//
+		// @Override
+		// public void visitEdge(Edge e) throws AlgorithmTerminatedException {
+		// assertFalse(algorithm.getVisitedEdges().get(e));
+		// }
+		//
+		// @Override
+		// public void visitVertex(Vertex v)
+		// throws AlgorithmTerminatedException {
+		// assertFalse(algorithm.getVisitedVertices().get(v));
+		// }
+		// };
 
-			@Override
-			public void visitTreeEdge(Edge e)
-					throws AlgorithmTerminatedException {
-				assertTrue(normalTreeEdges.contains(e));
-				assertTrue(algorithm.getVisitedVertices()
-						.get(e.getThis()));
-				assertFalse(algorithm.getVisitedVertices().get(
-						e.getThat()));
-			}
-
-			@Override
-			public void visitEdge(Edge e) throws AlgorithmTerminatedException {
-				assertFalse(algorithm.getVisitedEdges().get(e));
-			}
-
-			@Override
-			public void visitVertex(Vertex v)
-					throws AlgorithmTerminatedException {
-				assertFalse(algorithm.getVisitedVertices().get(v));
-			}
-		};
-		
 		bfs = new BreadthFirstSearch(g);
 	}
 
@@ -162,18 +158,18 @@ public class BreadthFirstSearchTest extends GraphAlgorithmTest {
 		} catch (AlgorithmTerminatedException e) {
 			fail("Early termination not expected");
 		}
-		
+
 		checkResultsForNormal();
-		
+
 		// TODO test with subgraph enabled
 		SubGraphMarker subgraph = new SubGraphMarker(g);
-		for(Vertex current : g.vertices()){
+		for (Vertex current : g.vertices()) {
 			subgraph.mark(current);
 		}
-		for(Edge current : g.edges()){
+		for (Edge current : g.edges()) {
 			subgraph.mark(current);
 		}
-		
+
 		// TODO test with navigable enabled
 		// TODO test with both enabled
 
@@ -240,7 +236,7 @@ public class BreadthFirstSearchTest extends GraphAlgorithmTest {
 
 	@Override
 	public void testCancel() {
-		
+
 	}
 
 	@Override
