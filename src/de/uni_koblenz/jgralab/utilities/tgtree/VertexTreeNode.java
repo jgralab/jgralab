@@ -31,6 +31,15 @@ class VertexTreeNode extends GraphElementTreeNode {
 	}
 
 	@Override
+	public String getToolTipText() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("<html>");
+		sb.append(getAttributeString());
+		sb.append("</html>");
+		return sb.toString();
+	}
+
+	@Override
 	protected GraphElement get() {
 		return v;
 	}

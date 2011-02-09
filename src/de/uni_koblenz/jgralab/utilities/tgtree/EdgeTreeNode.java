@@ -17,25 +17,50 @@ class EdgeTreeNode extends GraphElementTreeNode {
 
 	@Override
 	public String toString() {
-		String arrow = null;
+		StringBuilder sb = new StringBuilder();
 		if (e.isNormal()) {
 			if (e.getThatSemantics() != AggregationKind.NONE) {
-				arrow = "<>--> ";
+				sb.append("<>--> ");
 			} else if (e.getThisSemantics() != AggregationKind.NONE) {
-				arrow = "--><> ";
+				sb.append("--><> ");
 			} else {
-				arrow = "--> ";
+				sb.append("--> ");
 			}
 		} else {
 			if (e.getThatSemantics() != AggregationKind.NONE) {
-				arrow = "<><-- ";
+				sb.append("<><-- ");
 			} else if (e.getThisSemantics() != AggregationKind.NONE) {
-				arrow = "<--<> ";
+				sb.append("<--<> ");
 			} else {
-				arrow = "<-- ";
+				sb.append("<-- ");
 			}
 		}
-		return arrow + e.toString();
+		sb.append(e.toString());
+		return sb.toString();
+	}
+
+	@Override
+	public String getToolTipText() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("<html>");
+		String thisRole = e.getThisRole();
+		String thatRole = e.getThatRole();
+		if ((thisRole != null) && !thisRole.isEmpty()) {
+			sb.append(thisRole);
+		} else {
+			sb.append("$noRole$");
+		}
+		sb.append(" ------- ");
+		if ((thatRole != null) && !thatRole.isEmpty()) {
+			sb.append(thatRole);
+		} else {
+			sb.append("$noRole$");
+		}
+		sb.append("<br/><br/>");
+		sb.append(getAttributeString());
+		sb.append("</html>");
+		System.out.println(sb.toString());
+		return sb.toString();
 	}
 
 	@Override
