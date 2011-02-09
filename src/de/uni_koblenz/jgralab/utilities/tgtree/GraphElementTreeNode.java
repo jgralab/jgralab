@@ -65,6 +65,10 @@ abstract class GraphElementTreeNode implements TreeNode {
 
 	public abstract String getToolTipText();
 
+	public String getClipboardText() {
+		return get().getAttributedElementClass().getQualifiedName();
+	}
+
 	public String getAttributeString() {
 		if (get().getAttributedElementClass().getAttributeList().isEmpty()) {
 			return "$noAttrs$";

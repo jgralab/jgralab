@@ -1,6 +1,9 @@
 package de.uni_koblenz.jgralab.utilities.tgtree;
 
 import java.awt.Container;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -89,6 +92,13 @@ public class TGTree extends JFrame {
 		tree.setModel(new TGraphTreeModel(tn));
 	}
 
+	public void copySelectionToClipboard(GraphElementTreeNode getn) {
+		String selection = getn.getClipboardText();
+		StringSelection data = new StringSelection(selection);
+		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+		clipboard.setContents(data, null);
+	}
+
 	public static void main(String[] args) throws GraphIOException {
 		if (args.length != 1) {
 			System.err.println("Usage: TGTree <graphfile>");
@@ -114,6 +124,8 @@ public class TGTree extends JFrame {
 			if ((e.getKeyCode() == KeyEvent.VK_ENTER)
 					|| (e.getKeyChar() == '\n')) {
 				setTreeViewRoot(getn.get());
+			} else if (e.getKeyChar() == 'c') {
+				copySelectionToClipboard(getn);
 			}
 		}
 
@@ -149,6 +161,15 @@ public class TGTree extends JFrame {
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
 					setTreeViewRoot(getn.get());
+				}
+			});
+			contextMenu.add(new AbstractAction("Copy to Clipboard") {
+
+				private static final long serialVersionUID = 2860962360240219247L;
+
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					copySelectionToClipboard(getn);
 				}
 			});
 			contextMenu.show(e.getComponent(), e.getX(), e.getY());
