@@ -63,12 +63,13 @@ abstract class GraphElementTreeNode implements TreeNode {
 		return incs.isEmpty();
 	}
 
-	public String getToolTipText() {
+	public abstract String getToolTipText();
+
+	public String getAttributeString() {
 		if (get().getAttributedElementClass().getAttributeList().isEmpty()) {
-			return "<no attrs>";
+			return "$noAttrs$";
 		}
 		StringBuilder sb = new StringBuilder();
-		sb.append("<html>");
 		for (Attribute attr : get().getAttributedElementClass()
 				.getAttributeList()) {
 			sb.append(attr.getName());
@@ -76,7 +77,6 @@ abstract class GraphElementTreeNode implements TreeNode {
 			sb.append(get().getAttribute(attr.getName()));
 			sb.append("<br>");
 		}
-		sb.append("</html>");
 		return sb.toString();
 	}
 }
