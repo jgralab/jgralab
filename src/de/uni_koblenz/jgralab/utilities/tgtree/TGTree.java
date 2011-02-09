@@ -2,6 +2,8 @@ package de.uni_koblenz.jgralab.utilities.tgtree;
 
 import java.awt.Container;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -37,6 +39,7 @@ public class TGTree extends JFrame {
 				graph.getFirstVertex(), null)));
 		tree.setCellRenderer(new GraphElementCellRenderer());
 		tree.addMouseListener(new TreeViewMouseAdapter());
+		tree.addKeyListener(new TreeViewKeyAdapter());
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.getViewport().add(tree);
 		cp.add(scrollPane);
@@ -71,6 +74,25 @@ public class TGTree extends JFrame {
 				new ConsoleProgressFunction());
 		TGTree tgtree = new TGTree(g);
 		tgtree.setVisible(true);
+	}
+
+	private class TreeViewKeyAdapter extends KeyAdapter {
+
+		@Override
+		public void keyTyped(KeyEvent e) {
+			System.out.println("Key = " + e);
+			final GraphElementTreeNode getn = (GraphElementTreeNode) tree
+					.getLastSelectedPathComponent();
+			if (getn == null) {
+				return;
+			}
+			// Somehowe getKeyCode() returns 0 on my system, but enter is 10...
+			if ((e.getKeyCode() == KeyEvent.VK_ENTER)
+					|| (e.getKeyChar() == '\n')) {
+				setTreeViewRoot(getn.get());
+			}
+		}
+
 	}
 
 	private class TreeViewMouseAdapter extends MouseAdapter {
