@@ -28,7 +28,7 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-package de.uni_koblenz.jgralab.impl.db;
+ package de.uni_koblenz.jgralab.impl.db;
 
 import java.lang.ref.WeakReference;
 import java.util.Hashtable;
@@ -36,172 +36,178 @@ import java.util.Hashtable;
 import de.uni_koblenz.jgralab.Graph;
 
 /**
- * Cache for a graph.
- * Only one graph per cache as cached data is more easy to manage this way.
+ * Cache for a graph. Only one graph per cache as cached data is more easy to
+ * manage this way.
  * 
  * @author ultbreit@uni-koblenz.de
  * 
- * TODO Put something into removed vertex and edges.
- * TODO Add reference quees to clear unneeded weak references.
+ *         TODO Put something into removed vertex and edges. TODO Add reference
+ *         quees to clear unneeded weak references.
  */
-public class WeakCache implements GraphCache{
-	
+public class WeakCache implements GraphCache {
+
 	/**
 	 * Contains cached primary keys of attributes mapped by their name.
 	 */
 	private Hashtable<String, Integer> attributePrimaryKeyCache;
-	
+
 	/**
 	 * Contains cached primary keys of types mapped by their name.
-	 */	
+	 */
 	private Hashtable<String, Integer> typePrimaryKeyCache;
 
 	/**
 	 * Contains cached vertices mapped by their vId.
 	 */
 	private Hashtable<Integer, DatabasePersistableVertex> cachedVertices;
-	
+
 	/**
-	 * Contains cached edges mapped by their eId. 
+	 * Contains cached edges mapped by their eId.
 	 */
 	private Hashtable<Integer, DatabasePersistableEdge> cachedEdges;
-	
+
 	/**
-	 * Contains weak references to removed vertices so they are still reachable as long as they have not been
-	 * destroyed by garbage collector.
+	 * Contains weak references to removed vertices so they are still reachable
+	 * as long as they have not been destroyed by garbage collector.
 	 */
 	private Hashtable<Integer, WeakReference<DatabasePersistableVertex>> removedVertices;
 
 	/**
-	 * Contains weak references to removed edges so they are still reachable as long as they have not been
-	 * destroyed by garbage collector.
+	 * Contains weak references to removed edges so they are still reachable as
+	 * long as they have not been destroyed by garbage collector.
 	 */
 	private Hashtable<Integer, WeakReference<DatabasePersistableEdge>> removedEdges;
-	
+
 	// TODO Remove when pk of vertex has been removed from schema.
 	private Hashtable<Integer, Integer> vertexPrimaryKeyCache;
-	
-	// TODO Remove when pk of vertex has been removed from schema.	
+
+	// TODO Remove when pk of vertex has been removed from schema.
 	private Hashtable<Integer, Integer> edgePrimaryKeyCache;
-	
+
 	/**
 	 * Creates and initializes a new <code>WeakCache</graph>.
 	 */
-	public WeakCache(){
-		this.typePrimaryKeyCache = new Hashtable<String, Integer>();
-		this.vertexPrimaryKeyCache = new Hashtable<Integer, Integer>();
-		this.edgePrimaryKeyCache = new Hashtable<Integer, Integer>();
-		this.cachedVertices = new Hashtable<Integer, DatabasePersistableVertex>();
-		this.cachedEdges = new Hashtable<Integer, DatabasePersistableEdge>();
-		this.removedVertices = new Hashtable<Integer, WeakReference<DatabasePersistableVertex>>();
-		this.removedEdges = new Hashtable<Integer, WeakReference<DatabasePersistableEdge>>();
+	public WeakCache() {
+		typePrimaryKeyCache = new Hashtable<String, Integer>();
+		vertexPrimaryKeyCache = new Hashtable<Integer, Integer>();
+		edgePrimaryKeyCache = new Hashtable<Integer, Integer>();
+		cachedVertices = new Hashtable<Integer, DatabasePersistableVertex>();
+		cachedEdges = new Hashtable<Integer, DatabasePersistableEdge>();
+		removedVertices = new Hashtable<Integer, WeakReference<DatabasePersistableVertex>>();
+		removedEdges = new Hashtable<Integer, WeakReference<DatabasePersistableEdge>>();
 	}
-	
-	public boolean hasPrimaryKeyOfType(String qualifiedName){
-		return this.typePrimaryKeyCache.containsKey(qualifiedName);
+
+	public boolean hasPrimaryKeyOfType(String qualifiedName) {
+		return typePrimaryKeyCache.containsKey(qualifiedName);
 	}
-	
-	public int getPrimaryKeyOfType(String qualifiedTypeName){
-		return this.typePrimaryKeyCache.get(qualifiedTypeName);
+
+	public int getPrimaryKeyOfType(String qualifiedTypeName) {
+		return typePrimaryKeyCache.get(qualifiedTypeName);
 	}
-	
-	
-	public void addPrimaryKeyOfType(String qualifiedTypeName, int primaryKey){
-		this.typePrimaryKeyCache.put(qualifiedTypeName, primaryKey);
+
+	public void addPrimaryKeyOfType(String qualifiedTypeName, int primaryKey) {
+		typePrimaryKeyCache.put(qualifiedTypeName, primaryKey);
 	}
-	
+
 	// TODO Remove when pk of vertex has been removed from schema.
-	public int getPrimaryKeyOfVertex(int vId){
-		return this.vertexPrimaryKeyCache.get(vId);
+	public int getPrimaryKeyOfVertex(int vId) {
+		return vertexPrimaryKeyCache.get(vId);
 	}
-	
+
 	// TODO Remove when pk of vertex has been removed from schema.
-	public void addPrimaryKeyOfVertex(int vId, int primaryKey){
-		this.vertexPrimaryKeyCache.put(vId, primaryKey);
+	public void addPrimaryKeyOfVertex(int vId, int primaryKey) {
+		vertexPrimaryKeyCache.put(vId, primaryKey);
 	}
 
 	// TODO Remove when pk of edge has been removed from schema.
-	public int getPrimaryKeyOfEdge(int eId){
-		return this.edgePrimaryKeyCache.get(eId);
+	public int getPrimaryKeyOfEdge(int eId) {
+		return edgePrimaryKeyCache.get(eId);
 	}
-	
+
 	// TODO Remove when pk of edge has been removed from schema.
-	public void addPrimaryKeyOfEdge(int eId, int primaryKey){
-		this.edgePrimaryKeyCache.put(eId, primaryKey);
+	public void addPrimaryKeyOfEdge(int eId, int primaryKey) {
+		edgePrimaryKeyCache.put(eId, primaryKey);
 	}
 
 	// TODO Remove when pk of edge has been removed from schema.
 	public boolean hasPrimaryKeyOfEdge(int eId) {
-		return this.edgePrimaryKeyCache.containsKey(eId);
+		return edgePrimaryKeyCache.containsKey(eId);
 	}
 
 	// TODO Remove when pk of vertex has been removed from schema.
 	public boolean hasPrimaryKeyOfVertex(int vId) {
-		return this.vertexPrimaryKeyCache.containsKey(vId);
+		return vertexPrimaryKeyCache.containsKey(vId);
 	}
 
 	public boolean hasPrimaryKeyOfAttribute(String attributeName) {
-		return this.attributePrimaryKeyCache.containsKey(attributeName);
+		return attributePrimaryKeyCache.containsKey(attributeName);
 	}
 
 	public int getPrimaryKeyOfAttribute(String attributeName) {
-		return this.attributePrimaryKeyCache.get(attributeName);
+		return attributePrimaryKeyCache.get(attributeName);
 	}
 
-	public void addPrimaryKeyOfAttribute(String attributeName, int primaryKeyOfAttribute){
-		this.attributePrimaryKeyCache.put(attributeName, primaryKeyOfAttribute);
+	public void addPrimaryKeyOfAttribute(String attributeName,
+			int primaryKeyOfAttribute) {
+		attributePrimaryKeyCache.put(attributeName, primaryKeyOfAttribute);
 	}
-	
-	public void addVertex(DatabasePersistableVertex vertex){
-		this.cachedVertices.put(vertex.getId(), vertex);
+
+	public void addVertex(DatabasePersistableVertex vertex) {
+		cachedVertices.put(vertex.getId(), vertex);
 	}
-	
-	public boolean containsVertex(int vId){
-		return this.cachedVertices.containsKey(vId) || this.isVertexWeaklyReachable(vId);
+
+	public boolean containsVertex(int vId) {
+		return cachedVertices.containsKey(vId) || isVertexWeaklyReachable(vId);
 	}
-	
-	private boolean isVertexWeaklyReachable(int vId){
-		return this.removedVertices.containsKey(vId) && ( this.removedVertices.get(vId).get() != null );
+
+	private boolean isVertexWeaklyReachable(int vId) {
+		return removedVertices.containsKey(vId)
+				&& (removedVertices.get(vId).get() != null);
 	}
-	
-	public DatabasePersistableVertex getVertex(int vId){
-		DatabasePersistableVertex vertex = this.cachedVertices.get(vId);
-		if(vertex == null)
-			vertex = this.getWeakVertex(vId);
+
+	public DatabasePersistableVertex getVertex(int vId) {
+		DatabasePersistableVertex vertex = cachedVertices.get(vId);
+		if (vertex == null) {
+			vertex = getWeakVertex(vId);
+		}
 		return vertex;
 	}
-	
-	private DatabasePersistableVertex getWeakVertex(int vId){
-		if(this.removedVertices.containsKey(vId))
-			return this.removedVertices.get(vId).get();
-		else
+
+	private DatabasePersistableVertex getWeakVertex(int vId) {
+		if (removedVertices.containsKey(vId)) {
+			return removedVertices.get(vId).get();
+		} else {
 			return null;
+		}
 	}
-	
-	public void addEdge(DatabasePersistableEdge edge){
-		this.cachedEdges.put(edge.getId(), edge);
+
+	public void addEdge(DatabasePersistableEdge edge) {
+		cachedEdges.put(edge.getId(), edge);
 	}
 
 	public boolean containsEdge(int eId) {
-		return this.cachedEdges.containsKey(eId) || this.isEdgeWeaklyReachable(eId);
+		return cachedEdges.containsKey(eId) || isEdgeWeaklyReachable(eId);
 	}
-	
-	private boolean isEdgeWeaklyReachable(int eId){
-		return this.removedEdges.containsKey(eId) && ( this.removedEdges.get(eId).get() != null );
-	}	
-	
-	public DatabasePersistableEdge getEdge(int eId){
-		DatabasePersistableEdge edge = this.cachedEdges.get(eId);
-		if( edge == null )
-			edge = this.getWeakEdge(eId);
+
+	private boolean isEdgeWeaklyReachable(int eId) {
+		return removedEdges.containsKey(eId)
+				&& (removedEdges.get(eId).get() != null);
+	}
+
+	public DatabasePersistableEdge getEdge(int eId) {
+		DatabasePersistableEdge edge = cachedEdges.get(eId);
+		if (edge == null) {
+			edge = getWeakEdge(eId);
+		}
 		return edge;
 	}
 
 	private DatabasePersistableEdge getWeakEdge(int eId) {
-		if(this.removedEdges.containsKey(eId))
-			return this.removedEdges.get(eId).get();
-		else
+		if (removedEdges.containsKey(eId)) {
+			return removedEdges.get(eId).get();
+		} else {
 			return null;
+		}
 	}
 
 	@Override
@@ -219,7 +225,7 @@ public class WeakCache implements GraphCache{
 	@Override
 	public void removeVertex(DatabasePersistableGraph graph, int vId) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -237,12 +243,12 @@ public class WeakCache implements GraphCache{
 	@Override
 	public void removeEdge(DatabasePersistableGraph graph, int eId) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void clear() {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

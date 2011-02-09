@@ -46,7 +46,7 @@ public class GraphDbTest {
 			System.out.println("Connecting DB...");
 			gdb = GraphDatabase.openGraphDatabase(System
 					.getProperty("jgralabtest_dbconnection"));
-			gdb.setAutoCommitMode(false);
+			gdb.setAutoCommit(false);
 			try {
 				System.out
 						.println("Clearing graph db (hopefully it was only a test DB :-) )...");

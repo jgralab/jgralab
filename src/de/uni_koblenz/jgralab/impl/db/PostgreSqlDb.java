@@ -57,11 +57,6 @@ public class PostgreSqlDb extends GraphDatabase {
 	}
 
 	@Override
-	protected void setOptimalAutoCommitMode() throws GraphDatabaseException {
-		setAutocommitMode(false);
-	}
-
-	@Override
 	protected void applyVendorSpecificDbSchema() throws GraphDatabaseException,
 			SQLException {
 		addPrimaryKeyConstraints();

@@ -125,7 +125,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 			GraphDatabase graphDatabase) {
 		this(id, graphClass, vMax, eMax);
 		if (graphDatabase != null) {
-			this.containingDatabase = graphDatabase;
+			containingDatabase = graphDatabase;
 		} else {
 			throw new GraphException(
 					"Cannot create a graph with database support with no database given.");
@@ -146,14 +146,14 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	 */
 	private GraphImpl(String id, GraphClass graphClass, int vMax, int eMax) {
 		super(id, graphClass, vMax, eMax);
-		this.vSeq = new VertexList(this);
-		this.eSeq = new EdgeList(this);
-		this.graphCache = new SoftCache();
+		vSeq = new VertexList(this);
+		eSeq = new EdgeList(this);
+		graphCache = new SoftCache();
 	}
 
 	@Override
 	public boolean isPersistent() {
-		return this.persistent;
+		return persistent;
 	}
 
 	@Override
@@ -163,7 +163,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 
 	@Override
 	public boolean isInitialized() {
-		return !this.isLoading();
+		return !isLoading();
 	}
 
 	@Override
@@ -173,7 +173,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 
 	@Override
 	public int getGId() {
-		return this.gId;
+		return gId;
 	}
 
 	@Override
@@ -184,7 +184,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	@Override
 	public void setGraphVersion(long graphVersion) {
 		if (super.getGraphVersion() != graphVersion) {
-			this.updateGraphVersionInMemory(graphVersion);
+			updateGraphVersionInMemory(graphVersion);
 		}
 	}
 
@@ -196,20 +196,20 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	 * Notifies graph that it has been modified.
 	 */
 	protected void internalGraphModified() {
-		this.updateGraphVersionInMemory(super.getGraphVersion() + 1);
+		updateGraphVersionInMemory(super.getGraphVersion() + 1);
 	}
 
 	@Override
 	public void addVertex(int vId, long sequenceNumber) {
-		this.vSeq.add(sequenceNumber, vId);
+		vSeq.add(sequenceNumber, vId);
 	}
 
 	@Override
 	protected void addVertex(Vertex newVertex) {
 		if (newVertex.getId() == 0) {
-			this.addFreshlyCreatedVertex(newVertex);
+			addFreshlyCreatedVertex(newVertex);
 		} else {
-			this.testValidityOfLoadedVertex(newVertex);
+			testValidityOfLoadedVertex(newVertex);
 		}
 	}
 
@@ -217,21 +217,21 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 		int vId = vertex.getId();
 		if (vId <= 0) {
 			throw new GraphException("Cannot load a vertex with id <= 0.");
-		// else if (vId > vMax)
-		// throw new GraphException("Vertex id " + vId +
-		// " is bigger than vSize.");
+			// else if (vId > vMax)
+			// throw new GraphException("Vertex id " + vId +
+			// " is bigger than vSize.");
 		}
 	}
 
 	private void addFreshlyCreatedVertex(Vertex vertex) {
 		this.allocateValidIdTo(vertex);
-		this.vSeq.append((DatabasePersistableVertex) vertex);
-		this.vSeq.modified();
-		this.insertVertexIntoDatabase((DatabasePersistableVertex) vertex);
-		this.graphCache.addVertex((DatabasePersistableVertex) vertex);
+		vSeq.append((DatabasePersistableVertex) vertex);
+		vSeq.modified();
+		insertVertexIntoDatabase((DatabasePersistableVertex) vertex);
+		graphCache.addVertex((DatabasePersistableVertex) vertex);
 		internalGraphModified();
 
-		this.internalVertexAdded((VertexBaseImpl) vertex);
+		internalVertexAdded((VertexBaseImpl) vertex);
 	}
 
 	private void allocateValidIdTo(Vertex vertex) {
@@ -242,13 +242,13 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 
 	@Override
 	protected void appendVertexToVSeq(VertexBaseImpl v) {
-		this.vSeq.append((DatabasePersistableVertex) v);
-		this.vertexListModified();
+		vSeq.append((DatabasePersistableVertex) v);
+		vertexListModified();
 	}
 
 	@Override
 	public void addEdge(int eId, long sequenceNumber) {
-		this.eSeq.add(sequenceNumber, eId);
+		eSeq.add(sequenceNumber, eId);
 	}
 
 	/**
@@ -258,19 +258,19 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	 */
 	@Override
 	protected void addEdge(Edge newEdge, Vertex alpha, Vertex omega) {
-		this.assertPreConditionOfAddEdge(newEdge, alpha, omega);
-		this.testEdgeSuitingVertices(newEdge, alpha, omega);
-		this.proceedWithAdditionOf(newEdge, alpha, omega);
+		assertPreConditionOfAddEdge(newEdge, alpha, omega);
+		testEdgeSuitingVertices(newEdge, alpha, omega);
+		proceedWithAdditionOf(newEdge, alpha, omega);
 	}
 
 	private void assertPreConditionOfAddEdge(Edge newEdge, Vertex alpha,
 			Vertex omega) {
 		assert newEdge != null;
-		assert this.isVertexValid(alpha) : "Alpha vertex is invalid";
-		assert this.isVertexValid(omega) : "Omega vertex is invalid";
+		assert isVertexValid(alpha) : "Alpha vertex is invalid";
+		assert isVertexValid(omega) : "Omega vertex is invalid";
 		assert newEdge.isNormal() : "Cannot add reversed edge";
-		assert this.isSameSchemaAsGraph(newEdge, alpha, omega) : "Schemas of alpha, omega, edge and the graph do not match!";
-		assert this.isGraphMatching(newEdge, alpha, omega) : "Graphs of alpha, omega, edge and this graph do not match!";
+		assert isSameSchemaAsGraph(newEdge, alpha, omega) : "Schemas of alpha, omega, edge and the graph do not match!";
+		assert isGraphMatching(newEdge, alpha, omega) : "Graphs of alpha, omega, edge and this graph do not match!";
 	}
 
 	private boolean isVertexValid(Vertex vertex) {
@@ -279,8 +279,8 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 
 	private boolean isSameSchemaAsGraph(Edge edge, Vertex alpha, Vertex omega) {
 		return alpha.getSchema() == omega.getSchema()
-				&& alpha.getSchema() == this.getSchema()
-				&& edge.getSchema() == this.getSchema();
+				&& alpha.getSchema() == getSchema()
+				&& edge.getSchema() == getSchema();
 	}
 
 	private boolean isGraphMatching(Edge edge, Vertex alpha, Vertex omega) {
@@ -306,9 +306,9 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	private void proceedWithAdditionOf(Edge edge, Vertex alpha, Vertex omega) {
 		assert edge.getId() >= 0;
 		if (edge.getId() == 0) {
-			this.addFreshlyCreatedEdge(edge, alpha, omega);
+			addFreshlyCreatedEdge(edge, alpha, omega);
 		} else {
-			this.testValidityOfLoadedEdge(edge);
+			testValidityOfLoadedEdge(edge);
 		}
 	}
 
@@ -330,16 +330,16 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 		VertexImpl alphaImpl = (VertexImpl) alpha;
 		VertexImpl omegaImpl = (VertexImpl) omega;
 
-		this.addEdgeToIncidenceLists(edgeImpl, alphaImpl, omegaImpl);
+		addEdgeToIncidenceLists(edgeImpl, alphaImpl, omegaImpl);
 
-		this.insertEdgeIntoDatabase(edgeImpl, alphaImpl, omegaImpl);
+		insertEdgeIntoDatabase(edgeImpl, alphaImpl, omegaImpl);
 
-		this.appendEdgeToESeq(edgeImpl);
+		appendEdgeToESeq(edgeImpl);
 
-		this.graphCache.addEdge(edgeImpl);
+		graphCache.addEdge(edgeImpl);
 
 		internalGraphModified();
-		this.internalEdgeAdded(edgeImpl);
+		internalEdgeAdded(edgeImpl);
 	}
 
 	private void allocateValidIdTo(EdgeImpl edge) {
@@ -360,13 +360,13 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 
 	@Override
 	protected void appendEdgeToESeq(EdgeBaseImpl edge) {
-		this.eSeq.append((DatabasePersistableEdge) edge);
-		this.eSeq.modified();
+		eSeq.append((DatabasePersistableEdge) edge);
+		eSeq.modified();
 	}
 
 	private void insertVertexIntoDatabase(DatabasePersistableVertex vertex) {
 		try {
-			this.containingDatabase.insert(vertex);
+			containingDatabase.insert(vertex);
 		} catch (GraphDatabaseException exception) {
 			exception.printStackTrace();
 			throw new GraphException("Cannot persist vertex.", exception);
@@ -379,23 +379,23 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 		Edge edge = graphFactory.createEdgeWithDatabaseSupport(cls, 0, this,
 				alpha, omega);
 		edge.initializeAttributesWithDefaultValues();
-		this.graphCache.addEdge((DatabasePersistableEdge) edge);
+		graphCache.addEdge((DatabasePersistableEdge) edge);
 		return edge;
 	}
 
 	@Override
 	protected Vertex internalCreateVertex(Class<? extends Vertex> cls) {
-		Vertex vertex = graphFactory
-				.createVertexWithDatabaseSupport(cls, 0, this);
+		Vertex vertex = graphFactory.createVertexWithDatabaseSupport(cls, 0,
+				this);
 		vertex.initializeAttributesWithDefaultValues();
-		this.graphCache.addVertex((DatabasePersistableVertex) vertex);
+		graphCache.addVertex((DatabasePersistableVertex) vertex);
 		return vertex;
 	}
 
 	private void insertEdgeIntoDatabase(DatabasePersistableEdge edge,
 			DatabasePersistableVertex alpha, DatabasePersistableVertex omega) {
 		try {
-			this.containingDatabase.insert(edge, alpha, omega);
+			containingDatabase.insert(edge, alpha, omega);
 		} catch (GraphDatabaseException exception) {
 			exception.printStackTrace();
 			throw new GraphException("Cannot persist edge.", exception);
@@ -410,15 +410,15 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	 *            Name of attribute that has been changed.
 	 */
 	protected void attributeChanged(String attributeName) {
-		if (this.isPersistent() && this.isInitialized()) {
-			this.writeBackGraphAttribute(attributeName);
-			this.internalGraphModified();
+		if (isPersistent() && isInitialized()) {
+			writeBackGraphAttribute(attributeName);
+			internalGraphModified();
 		}
 	}
 
 	private void writeBackGraphAttribute(String attributeName) {
 		try {
-			this.containingDatabase.updateAttributeValueOf(this, attributeName);
+			containingDatabase.updateAttributeValueOf(this, attributeName);
 		} catch (GraphDatabaseException exception) {
 			exception.printStackTrace();
 			throw new GraphException(
@@ -428,32 +428,32 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 
 	@Override
 	public long getVertexListVersion() {
-		return this.vSeq.getVersion();
+		return vSeq.getVersion();
 	}
 
 	@Override
 	public long getEdgeListVersion() {
-		return this.eSeq.getVersion();
+		return eSeq.getVersion();
 	}
 
 	@Override
 	protected void setVertexListVersion(long vertexListVersion) {
-		this.vSeq.setVersion(vertexListVersion);
+		vSeq.setVersion(vertexListVersion);
 	}
 
 	@Override
 	public void setEdgeListVersion(long edgeListVersion) {
-		this.eSeq.setVersion(edgeListVersion);
+		eSeq.setVersion(edgeListVersion);
 	}
 
 	@Override
 	public int getVCount() {
-		return this.vSeq.size();
+		return vSeq.size();
 	}
 
 	@Override
 	public int getECount() {
-		return this.eSeq.size();
+		return eSeq.size();
 	}
 
 	@Override
@@ -472,30 +472,30 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 
 	@Override
 	public Vertex getFirstVertex() {
-		return this.vSeq.getFirst();
+		return vSeq.getFirst();
 	}
 
 	@Override
 	public Edge getFirstEdge() {
-		return this.eSeq.getFirst();
+		return eSeq.getFirst();
 	}
 
 	@Override
 	public Vertex getLastVertex() {
-		return this.vSeq.getLast();
+		return vSeq.getLast();
 	}
 
 	@Override
 	public Edge getLastEdge() {
-		return this.eSeq.getLast();
+		return eSeq.getLast();
 	}
 
 	private DatabasePersistableVertex getVertexFromDatabase(int vId) {
 		try {
-			this.setLoading(true);
-			DatabasePersistableVertex vertex = this.containingDatabase
-					.getVertex(vId, this);
-			this.setLoading(false);
+			setLoading(true);
+			DatabasePersistableVertex vertex = containingDatabase.getVertex(
+					vId, this);
+			setLoading(false);
 			return vertex;
 		} catch (Exception exception) {
 			exception.printStackTrace();
@@ -507,7 +507,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	protected void setFirstVertex(VertexBaseImpl vertex) {
 		if (vertex != null) { // because of super constructor
 			DatabasePersistableVertex persistentVertex = (DatabasePersistableVertex) vertex;
-			this.vSeq.prepend(persistentVertex);
+			vSeq.prepend(persistentVertex);
 		}
 	}
 
@@ -516,7 +516,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 		// assert edge != null;
 		if (edge != null) { // because of super constructor
 			DatabasePersistableEdge persistentEdge = (DatabasePersistableEdge) edge;
-			this.eSeq.prepend(persistentEdge);
+			eSeq.prepend(persistentEdge);
 		}
 	}
 
@@ -524,7 +524,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	protected void setLastVertex(VertexBaseImpl vertex) {
 		if (vertex != null) { // because of super constructor
 			DatabasePersistableVertex persistentVertex = (DatabasePersistableVertex) vertex;
-			this.vSeq.append(persistentVertex);
+			vSeq.append(persistentVertex);
 		}
 	}
 
@@ -532,27 +532,27 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	protected void setLastEdgeInGraph(EdgeBaseImpl edge) {
 		if (edge != null) { // because of super constructor
 			DatabasePersistableEdge persistentEdge = (DatabasePersistableEdge) edge;
-			this.eSeq.append(persistentEdge);
+			eSeq.append(persistentEdge);
 		}
 	}
 
 	@Override
 	public void setId(String id) {
 		if (super.getId() != id) {
-			this.updateId(id);
+			updateId(id);
 		}
 	}
 
 	private void updateId(String id) {
 		super.setId(id);
-		if (this.isPersistent() && this.isInitialized()) {
-			this.writeBackGraphId();
+		if (isPersistent() && isInitialized()) {
+			writeBackGraphId();
 		}
 	}
 
 	private void writeBackGraphId() {
 		try {
-			this.containingDatabase.updateIdOf(this);
+			containingDatabase.updateIdOf(this);
 		} catch (GraphDatabaseException exception) {
 			exception.printStackTrace();
 			throw new GraphException("Cannot write back id of graph.",
@@ -562,8 +562,8 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 
 	@Override
 	public Vertex getVertex(int vId) {
-		if (this.isValidVertexId(vId)) {
-			return this.internalGetVertexFromCacheOrDatabase(vId);
+		if (isValidVertexId(vId)) {
+			return internalGetVertexFromCacheOrDatabase(vId);
 		} else {
 			throw new GraphException("Id of vertex must be > 0.");
 		}
@@ -574,31 +574,31 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	}
 
 	private Vertex internalGetVertexFromCacheOrDatabase(int vId) {
-		if (this.vSeq.containsVertex(vId)) {
-			return this.getVertexFromCacheOrDatabase(vId);
+		if (vSeq.containsVertex(vId)) {
+			return getVertexFromCacheOrDatabase(vId);
 		} else {
 			return null;
 		}
 	}
 
 	private DatabasePersistableVertex getVertexFromCacheOrDatabase(int vId) {
-		if (this.graphCache.containsVertex(this, vId)) {
-			return this.graphCache.getVertex(this, vId);
+		if (graphCache.containsVertex(this, vId)) {
+			return graphCache.getVertex(this, vId);
 		} else {
-			return this.getAndCacheVertexFromDatabase(vId);
+			return getAndCacheVertexFromDatabase(vId);
 		}
 	}
 
 	private DatabasePersistableVertex getAndCacheVertexFromDatabase(int vId) {
-		DatabasePersistableVertex vertex = this.getVertexFromDatabase(vId);
-		this.graphCache.addVertex(vertex);
+		DatabasePersistableVertex vertex = getVertexFromDatabase(vId);
+		graphCache.addVertex(vertex);
 		return vertex;
 	}
 
 	@Override
 	public Edge getEdge(int eId) {
-		if (this.isValidEdgeId(eId)) {
-			return this.internalGetOrientedEdge(eId);
+		if (isValidEdgeId(eId)) {
+			return internalGetOrientedEdge(eId);
 		} else {
 			throw new GraphException("Edge id must be != 0.");
 		}
@@ -609,8 +609,8 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	}
 
 	private Edge internalGetOrientedEdge(int eId) {
-		if (this.eSeq.containsEdge(eId)) {
-			return this.getOrientedEdge(eId);
+		if (eSeq.containsEdge(eId)) {
+			return getOrientedEdge(eId);
 		} else {
 			return null;
 		}
@@ -618,33 +618,32 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 
 	private Edge getOrientedEdge(int eId) {
 		if (eId > 0) {
-			return this.getEdgeFromCacheOrDatabase(eId);
+			return getEdgeFromCacheOrDatabase(eId);
 		} else {
-			return this.getEdgeFromCacheOrDatabase(Math.abs(eId))
-					.getReversedEdge();
+			return getEdgeFromCacheOrDatabase(Math.abs(eId)).getReversedEdge();
 		}
 	}
 
 	private DatabasePersistableEdge getEdgeFromCacheOrDatabase(int eId) {
-		if (this.graphCache.containsEdge(this, eId)) {
-			return this.graphCache.getEdge(this, eId);
+		if (graphCache.containsEdge(this, eId)) {
+			return graphCache.getEdge(this, eId);
 		} else {
-			return this.getAndCacheEdgeFromDatabase(eId);
+			return getAndCacheEdgeFromDatabase(eId);
 		}
 	}
 
 	private DatabasePersistableEdge getAndCacheEdgeFromDatabase(int eId) {
-		DatabasePersistableEdge edge = this.getEdgeFromDatabase(eId);
-		this.graphCache.addEdge(edge);
+		DatabasePersistableEdge edge = getEdgeFromDatabase(eId);
+		graphCache.addEdge(edge);
 		return edge;
 	}
 
 	private DatabasePersistableEdge getEdgeFromDatabase(int eId) {
 		try {
-			this.setLoading(true);
-			DatabasePersistableEdge edge = this.containingDatabase.getEdge(eId,
-					this);
-			this.setLoading(false);
+			setLoading(true);
+			DatabasePersistableEdge edge = containingDatabase
+					.getEdge(eId, this);
+			setLoading(false);
 			return edge;
 		} catch (Exception exception) {
 			exception.printStackTrace();
@@ -655,7 +654,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	@Override
 	protected void removeVertexFromVSeq(VertexBaseImpl v) {
 		assert v != null;
-		this.vSeq.remove((DatabasePersistableVertex) v);
+		vSeq.remove((DatabasePersistableVertex) v);
 		freeVertexIndex(v.getId());
 	}
 
@@ -676,9 +675,9 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	protected void vertexAfterDeleted(Vertex vertexToBeDeleted) {
 		assert vertexToBeDeleted != null;
 		DatabasePersistableVertex vertex = (DatabasePersistableVertex) vertexToBeDeleted;
-		this.graphCache.removeVertex(this, vertex.getId());
+		graphCache.removeVertex(this, vertex.getId());
 		if (vertex.isPersistent()) {
-			this.deleteVertexAndIncidentEdgesFromDatabase(vertex);
+			deleteVertexAndIncidentEdgesFromDatabase(vertex);
 		}
 		vertex.deleted();
 	}
@@ -686,7 +685,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	private void deleteVertexAndIncidentEdgesFromDatabase(
 			DatabasePersistableVertex vertex) {
 		try {
-			this.containingDatabase.delete(vertex);
+			containingDatabase.delete(vertex);
 		} catch (GraphDatabaseException exception) {
 			exception.printStackTrace();
 			throw new GraphException("Cannot delete vertex.", exception);
@@ -696,8 +695,8 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	@Override
 	protected void removeEdgeFromESeq(EdgeBaseImpl e) {
 		assert e != null;
-		this.eSeq.remove((DatabasePersistableEdge) e);
-		this.freeEdgeIndex(e.getId());
+		eSeq.remove((DatabasePersistableEdge) e);
+		freeEdgeIndex(e.getId());
 	}
 
 	@Override
@@ -705,34 +704,34 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 		assert e != null;
 		DatabasePersistableEdge edge = (DatabasePersistableEdge) e;
 		if (edge.isPersistent()) {
-			this.deleteEdgeFromDatabase(edge);
+			deleteEdgeFromDatabase(edge);
 		}
-		this.graphCache.removeEdge(this, edge.getId());
+		graphCache.removeEdge(this, edge.getId());
 		edge.deleted();
 	}
 
 	private void deleteEdgeFromDatabase(DatabasePersistableEdge edge) {
 		try {
-			this.containingDatabase.delete(edge);
+			containingDatabase.delete(edge);
 		} catch (Exception exception) {
 			exception.printStackTrace();
 			throw new GraphException("Cannot delete edge " + edge.getId()
-					+ " in graph " + this.getId(), exception);
+					+ " in graph " + getId(), exception);
 		}
 	}
 
 	@Override
 	protected void vertexListModified() {
-		if (!this.isLoading()) {
-			this.vSeq.modified();
+		if (!isLoading()) {
+			vSeq.modified();
 			graphModified();
 		}
 	}
 
 	@Override
 	protected void edgeListModified() {
-		if (!this.isLoading()) {
-			this.eSeq.modified();
+		if (!isLoading()) {
+			eSeq.modified();
 			graphModified();
 		}
 	}
@@ -742,24 +741,24 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 			VertexBaseImpl movedVertex) {
 		DatabasePersistableVertex targetVertexImpl = (DatabasePersistableVertex) targetVertex;
 		DatabasePersistableVertex movedVertexImpl = (DatabasePersistableVertex) movedVertex;
-		this.vSeq.putAfter(targetVertexImpl, movedVertexImpl);
+		vSeq.putAfter(targetVertexImpl, movedVertexImpl);
 		// this.vertexListModified();
 	}
 
 	@Override
 	protected void putEdgeAfterInGraph(EdgeBaseImpl targetEdge,
 			EdgeBaseImpl movedEdge) {
-		this.assertEdges(movedEdge, targetEdge);
+		assertEdges(movedEdge, targetEdge);
 		DatabasePersistableEdge dbTargetEdge = (DatabasePersistableEdge) targetEdge;
 		DatabasePersistableEdge dbMovedEdge = (DatabasePersistableEdge) movedEdge;
-		this.eSeq.putAfter(dbTargetEdge, dbMovedEdge);
+		eSeq.putAfter(dbTargetEdge, dbMovedEdge);
 	}
 
 	private void assertEdges(EdgeBaseImpl movedEdge, EdgeBaseImpl targetEdge) {
 		assert (targetEdge != null) && targetEdge.isValid()
-				&& this.containsEdge(targetEdge);
+				&& containsEdge(targetEdge);
 		assert (movedEdge != null) && movedEdge.isValid()
-				&& this.containsEdge(movedEdge);
+				&& containsEdge(movedEdge);
 		assert !((DatabasePersistableEdge) targetEdge).equals(movedEdge);
 	}
 
@@ -768,28 +767,28 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 			VertexBaseImpl movedVertex) {
 		DatabasePersistableVertex targetVertexImpl = (DatabasePersistableVertex) targetVertex;
 		DatabasePersistableVertex movedVertexImpl = (DatabasePersistableVertex) movedVertex;
-		this.vSeq.putBefore(targetVertexImpl, movedVertexImpl);
+		vSeq.putBefore(targetVertexImpl, movedVertexImpl);
 	}
 
 	@Override
 	protected void putEdgeBeforeInGraph(EdgeBaseImpl targetEdge,
 			EdgeBaseImpl movedEdge) {
-		this.assertEdges(movedEdge, targetEdge);
+		assertEdges(movedEdge, targetEdge);
 		DatabasePersistableEdge dbTargetEdge = (DatabasePersistableEdge) targetEdge;
 		DatabasePersistableEdge dbMovedEdge = (DatabasePersistableEdge) movedEdge;
-		this.eSeq.putBefore(dbTargetEdge, dbMovedEdge);
+		eSeq.putBefore(dbTargetEdge, dbMovedEdge);
 	}
 
 	@Override
 	public boolean containsVertex(Vertex v) {
 		return v != null && v.getGraph() == this
-				&& this.vSeq.contains((DatabasePersistableVertex) v);
+				&& vSeq.contains((DatabasePersistableVertex) v);
 	}
 
 	@Override
 	public boolean containsEdge(Edge e) {
 		return (e != null) && e.getGraph() == this
-				&& this.eSeq.contains((DatabasePersistableEdge) e);
+				&& eSeq.contains((DatabasePersistableEdge) e);
 	}
 
 	@Override
@@ -815,7 +814,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	@Override
 	protected void expandEdgeArray(int newSize) {
 		if (newSize > eMax) {
-			this.expandFreeEdgeList(newSize);
+			expandFreeEdgeList(newSize);
 		} else {
 			throw new GraphException("newSize must be > eSize: eSize=" + eMax
 					+ ", newSize=" + newSize);
@@ -834,36 +833,40 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 
 	private void writeBackVertexListVersion() {
 		try {
-			this.containingDatabase.updateVertexListVersionOf(this);
+			containingDatabase.updateVertexListVersionOf(this);
 		} catch (GraphDatabaseException exception) {
 			exception.printStackTrace();
-			throw new GraphException("Could not write back vertex list version.", exception);
+			throw new GraphException(
+					"Could not write back vertex list version.", exception);
 		}
 	}
 
 	private void writeBackEdgeListVersion() {
 		try {
-			this.containingDatabase.updateEdgeListVersionOf(this);
+			containingDatabase.updateEdgeListVersionOf(this);
 		} catch (GraphDatabaseException exception) {
 			exception.printStackTrace();
-			throw new GraphException("Could not write back edge list version.", exception);
+			throw new GraphException("Could not write back edge list version.",
+					exception);
 		}
 	}
 
 	/**
 	 * Updates a vertex's attribute value in database.
-	 *
+	 * 
 	 * @param edge
 	 *            Vertex with attribute value to update.
 	 * @param attributeName
 	 *            Name of attribute.
 	 */
-	protected void updateVertexAttributeValueInDatabase(DatabasePersistableVertex vertex, String attributeName) {
+	protected void updateVertexAttributeValueInDatabase(
+			DatabasePersistableVertex vertex, String attributeName) {
 		try {
-			this.containingDatabase.updateAttributeValueOf(vertex, attributeName);
+			containingDatabase.updateAttributeValueOf(vertex, attributeName);
 		} catch (GraphDatabaseException exception) {
 			exception.printStackTrace();
-			throw new GraphException("Could write back vertex attribute value.", exception);
+			throw new GraphException(
+					"Could write back vertex attribute value.", exception);
 		}
 	}
 
@@ -875,12 +878,14 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	 * @param attributeName
 	 *            Name of attribute.
 	 */
-	protected void updateEdgeAttributeValueInDatabase(DatabasePersistableEdge edge, String attributeName) {
+	protected void updateEdgeAttributeValueInDatabase(
+			DatabasePersistableEdge edge, String attributeName) {
 		try {
-			this.containingDatabase.updateAttributeValueOf(edge, attributeName);
+			containingDatabase.updateAttributeValueOf(edge, attributeName);
 		} catch (GraphDatabaseException exception) {
 			exception.printStackTrace();
-			throw new GraphException("Could write back edge attribute value.", exception);
+			throw new GraphException("Could write back edge attribute value.",
+					exception);
 		}
 	}
 
@@ -890,12 +895,14 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	 * @param vertex
 	 *            Vertex with incidence list to update.
 	 */
-	protected void updateIncidenceListVersionInDatabase(DatabasePersistableVertex vertex) {
+	protected void updateIncidenceListVersionInDatabase(
+			DatabasePersistableVertex vertex) {
 		try {
-			this.containingDatabase.updateIncidenceListVersionOf(vertex);
+			containingDatabase.updateIncidenceListVersionOf(vertex);
 		} catch (GraphDatabaseException exception) {
 			exception.printStackTrace();
-			throw new GraphException("Could not write back incidence list of vertex.", exception);
+			throw new GraphException(
+					"Could not write back incidence list of vertex.", exception);
 		}
 	}
 
@@ -905,9 +912,10 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	 * @param vertex
 	 *            Vertex with sequence number to update.
 	 */
-	protected void updateSequenceNumberInDatabase(DatabasePersistableVertex vertex) {
+	protected void updateSequenceNumberInDatabase(
+			DatabasePersistableVertex vertex) {
 		try {
-			this.containingDatabase.updateSequenceNumberInVSeqOf(vertex);
+			containingDatabase.updateSequenceNumberInVSeqOf(vertex);
 		} catch (GraphDatabaseException exception) {
 			exception.printStackTrace();
 			throw new GraphException("", exception);
@@ -922,12 +930,14 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	 * @param vertex
 	 *            Vertex with new id.
 	 */
-	protected void updateVertexIdInDatabase(int oldVId,	DatabasePersistableVertex vertex) {
+	protected void updateVertexIdInDatabase(int oldVId,
+			DatabasePersistableVertex vertex) {
 		try {
-			this.containingDatabase.updateIdOf(oldVId, vertex);
+			containingDatabase.updateIdOf(oldVId, vertex);
 		} catch (GraphDatabaseException exception) {
 			exception.printStackTrace();
-			throw new GraphException("Could not write back new id of vertex.", exception);
+			throw new GraphException("Could not write back new id of vertex.",
+					exception);
 		}
 	}
 
@@ -939,7 +949,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	 */
 	protected void writeIncidentVIdBack(DatabasePersistableIncidence incidence) {
 		try {
-			this.containingDatabase.updateIncidentVIdOf(incidence);
+			containingDatabase.updateIncidentVIdOf(incidence);
 		} catch (GraphDatabaseException exception) {
 			exception.printStackTrace();
 			throw new GraphException(
@@ -955,7 +965,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	 */
 	protected void writeSequenceNumberInESeqBack(DatabasePersistableEdge edge) {
 		try {
-			this.containingDatabase.updateSequenceNumberInESeqOf(edge);
+			containingDatabase.updateSequenceNumberInESeqOf(edge);
 		} catch (GraphDatabaseException exception) {
 			exception.printStackTrace();
 			throw new GraphException(
@@ -971,9 +981,10 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	 *            Incidence to write back it's number mapping it's sequence in
 	 *            LambdaSeq.
 	 */
-	protected void writeSequenceNumberInLambdaSeqBack(DatabasePersistableIncidence incidence) {
+	protected void writeSequenceNumberInLambdaSeqBack(
+			DatabasePersistableIncidence incidence) {
 		try {
-			this.containingDatabase.updateSequenceNumberInLambdaSeqOf(incidence);
+			containingDatabase.updateSequenceNumberInLambdaSeqOf(incidence);
 		} catch (GraphDatabaseException exception) {
 			exception.printStackTrace();
 			throw new GraphException(
@@ -992,7 +1003,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	 */
 	protected void writeBackEdgeId(DatabasePersistableEdge edge, int newEId) {
 		try {
-			this.containingDatabase.updateIdOf(edge, newEId);
+			containingDatabase.updateIdOf(edge, newEId);
 		} catch (GraphDatabaseException exception) {
 			exception.printStackTrace();
 			throw new GraphException("Cannot write edge id back.", exception);
@@ -1010,7 +1021,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	protected Vertex getPrevVertex(DatabasePersistableVertex vertex) {
 		assert vertex.isValid();
 		assert this == vertex.getGraph();
-		return this.vSeq.getPrev(vertex);
+		return vSeq.getPrev(vertex);
 	}
 
 	/**
@@ -1024,7 +1035,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	protected Vertex getNextVertex(DatabasePersistableVertex vertex) {
 		assert vertex.isValid();
 		assert this == vertex.getGraph();
-		return this.vSeq.getNext(vertex);
+		return vSeq.getNext(vertex);
 	}
 
 	/**
@@ -1038,7 +1049,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	protected Edge getPrevEdge(DatabasePersistableEdge edge) {
 		assert edge.isValid();
 		assert this == edge.getGraph();
-		return this.eSeq.getPrev(edge);
+		return eSeq.getPrev(edge);
 	}
 
 	/**
@@ -1052,24 +1063,24 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	protected Edge getNextEdge(DatabasePersistableEdge edge) {
 		assert edge.isValid();
 		assert this == edge.getGraph();
-		return this.eSeq.getNext(edge);
+		return eSeq.getNext(edge);
 	}
 
 	@Override
 	public void deleted() {
-		this.setGId(-1);
-		this.setPersistent(false);
-		this.setLoading(false);
-		this.containingDatabase = null;
-		this.vSeq.clear();
-		this.vSeq = null;
-		this.eSeq.clear();
-		this.eSeq = null;
+		setGId(-1);
+		setPersistent(false);
+		setLoading(false);
+		containingDatabase = null;
+		vSeq.clear();
+		vSeq = null;
+		eSeq.clear();
+		eSeq = null;
 	}
 
 	@Override
 	public void loadingCompleted() {
-		this.setLoading(false);
+		setLoading(false);
 	}
 
 	/**
@@ -1080,7 +1091,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	 * @return true if vertex is cached, false otherwise.
 	 */
 	protected boolean isVertexCached(int vId) {
-		return this.graphCache.containsVertex(this, vId);
+		return graphCache.containsVertex(this, vId);
 	}
 
 	/**
@@ -1091,21 +1102,22 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	 * @return true if edge is cached, false otherwise.
 	 */
 	protected boolean isEdgeCached(int eId) {
-		return this.graphCache.containsEdge(this, eId);
+		return graphCache.containsEdge(this, eId);
 	}
 
 	/**
 	 * Reorganizes sequence numbers in vertex list at database only.
 	 * 
-	 * Precondition: Vertex list must have been reorganized in memory just before.
+	 * Precondition: Vertex list must have been reorganized in memory just
+	 * before.
 	 */
-	public void reorganizeVertexListInGraphDatabase(){
+	public void reorganizeVertexListInGraphDatabase() {
 		try {
-			long start = this.vSeq.getFirst().getSequenceNumberInVSeq();
-			this.containingDatabase.reorganizeVertexList(this, start);
+			long start = vSeq.getFirst().getSequenceNumberInVSeq();
+			containingDatabase.reorganizeVertexList(this, start);
 		} catch (GraphDatabaseException exception) {
 			exception.printStackTrace();
-			throw new GraphException("VSeq of graph " + this.getId()
+			throw new GraphException("VSeq of graph " + getId()
 					+ " could not be reorganized in database.", exception);
 		}
 	}
@@ -1115,13 +1127,13 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	 * 
 	 * Precondition: Edge list must have been reorganized in memory just before.
 	 */
-	public void reorganizeEdgeListInGraphDatabase(){
+	public void reorganizeEdgeListInGraphDatabase() {
 		try {
-			long start = this.eSeq.getFirst().getSequenceNumberInESeq();
-			this.containingDatabase.reorganizeEdgeList(this, start);
+			long start = eSeq.getFirst().getSequenceNumberInESeq();
+			containingDatabase.reorganizeEdgeList(this, start);
 		} catch (GraphDatabaseException exception) {
 			exception.printStackTrace();
-			throw new GraphException("ESeq of graph " + this.getId()
+			throw new GraphException("ESeq of graph " + getId()
 					+ " could not be reorganized in database.", exception);
 		}
 	}
@@ -1133,14 +1145,16 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	 * @param vertex
 	 *            Vertex with incidence list to reorganize.
 	 * 
-	 * Precondition: Incidence list must have been reorganized in memory just before.
+	 *            Precondition: Incidence list must have been reorganized in
+	 *            memory just before.
 	 */
-	public void reorganizeIncidenceListInDatabaseOf(DatabasePersistableVertex vertex) {
+	public void reorganizeIncidenceListInDatabaseOf(
+			DatabasePersistableVertex vertex) {
 		try {
 			Edge firstIncidence = vertex.getFirstIncidence();
 			long start = ((DatabasePersistableIncidence) firstIncidence)
 					.getSequenceNumberInLambdaSeq();
-			this.containingDatabase.reorganizeIncidenceList(vertex, start);
+			containingDatabase.reorganizeIncidenceList(vertex, start);
 		} catch (GraphDatabaseException exception) {
 			exception.printStackTrace();
 			throw new GraphException("Incidence list of vertex "
@@ -1150,9 +1164,9 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	}
 
 	@Override
-	public void delete(){
+	public void delete() {
 		try {
-			this.containingDatabase.delete(this);
+			containingDatabase.delete(this);
 		} catch (GraphDatabaseException exception) {
 			throw new GraphException(
 					"Graph could not be deleted from database.", exception);
@@ -1163,10 +1177,10 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	 * Writes version of graph and global sequences back to database.
 	 */
 	protected void writeBackVersions() {
-		if (this.isPersistent()) {
-			this.writeBackGraphVersion(this.getGraphVersion());
-			this.writeBackEdgeListVersion();
-			this.writeBackVertexListVersion();
+		if (isPersistent()) {
+			writeBackGraphVersion(getGraphVersion());
+			writeBackEdgeListVersion();
+			writeBackVertexListVersion();
 		}
 	}
 
@@ -1175,7 +1189,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	 */
 	private void writeBackGraphVersion(long graphVersion) {
 		try {
-			this.containingDatabase.updateVersionOf(this);
+			containingDatabase.updateVersionOf(this);
 		} catch (GraphDatabaseException e) {
 			e.printStackTrace();
 		}
@@ -1231,7 +1245,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 
 	@Override
 	protected List<VertexBaseImpl> getDeleteVertexList() {
-		return this.deleteVertexList;
+		return deleteVertexList;
 	}
 
 	@Override
@@ -1299,9 +1313,9 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	public final boolean hasTransactionSupport() {
 		return false;
 	}
-	
+
 	@Override
-	public final boolean hasDatabaseSupport(){
+	public final boolean hasDatabaseSupport() {
 		return true;
 	}
 
@@ -1341,8 +1355,8 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	public final boolean hasStandardSupport() {
 		return false;
 	}
-	
-	public void clearCache(){
+
+	public void clearCache() {
 		graphCache.clear();
 	}
 
