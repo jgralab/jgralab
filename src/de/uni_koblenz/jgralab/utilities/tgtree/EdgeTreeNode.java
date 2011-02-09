@@ -48,9 +48,10 @@ class EdgeTreeNode extends GraphElementTreeNode {
 			}
 		}
 
-		int lmax = (getParent() != null) ? getParent().getChildCount() : 2;
-		String lmaxs = String.valueOf(lmax);
-		String lfmt = "%" + lmaxs.length() + "d";
+		String lfmt = "%"
+				+ String.valueOf(
+						(getParent() != null) ? getParent().getChildCount() : 2)
+						.length() + "d";
 
 		sb.append(String.format(lfmt, thisIdx));
 
