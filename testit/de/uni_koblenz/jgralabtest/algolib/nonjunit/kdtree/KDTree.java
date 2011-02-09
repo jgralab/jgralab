@@ -211,6 +211,7 @@ public class KDTree<P extends Point> {
 		return nearestNeighbors;
 	}
 
+	@SuppressWarnings("unchecked")
 	private void findNearestNeighborsInSubtree(P point, int count,
 			List<P> nearestNeighbors, double[] minimalDistances,
 			TreeNode startAt) {
@@ -235,8 +236,7 @@ public class KDTree<P extends Point> {
 					minimalDistances, nextNode);
 
 			double squaredDistanceFromCurrentHyperplane = ((Point) point)
-					.get(keyNode.position)
-					- keyNode.value;
+					.get(keyNode.position) - keyNode.value;
 			squaredDistanceFromCurrentHyperplane *= squaredDistanceFromCurrentHyperplane;
 
 			if (squaredDistanceFromCurrentHyperplane < minimalDistances[count - 1]) {
@@ -251,7 +251,7 @@ public class KDTree<P extends Point> {
 			LinkedList<P> segment) {
 
 		for (P current : segment) {
-			Point currentPoint = (Point) current;
+			Point currentPoint = current;
 			double currentDistance = point.squaredDistance(currentPoint);
 			// don't return the same or equal point as nearest neighbor
 			if (!currentPoint.equals(point)) {
@@ -286,6 +286,7 @@ public class KDTree<P extends Point> {
 		return area;
 	}
 
+	@SuppressWarnings("unchecked")
 	private void appendToAreaFromSubtree(P point, double squaredRadius,
 			List<P> area, TreeNode startAt) {
 		if (startAt.isLeaf()) {

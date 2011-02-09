@@ -84,7 +84,7 @@ public class IterativeDepthFirstSearch2 extends DepthFirstSearch {
 			}
 			treeEdges.push(currentRootIncidence);
 			while (!treeEdges.isEmpty()) {
-				Edge nextTreeEdge = treeEdges.pop();
+				// Edge nextTreeEdge = treeEdges.pop();
 
 			}
 
@@ -94,9 +94,9 @@ public class IterativeDepthFirstSearch2 extends DepthFirstSearch {
 		return this;
 	}
 
-	private void handleEdge(Edge edge) throws AlgorithmTerminatedException {
-		
-	}
+	// private void handleEdge(Edge edge) throws AlgorithmTerminatedException {
+	//
+	// }
 
 	private void handleVertex(Vertex vertex)
 			throws AlgorithmTerminatedException {
