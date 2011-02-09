@@ -161,6 +161,8 @@ public class AggregationTransition extends Transition {
 		validToEdgeRoles = t.validToEdgeRoles;
 		predicateEvaluator = t.predicateEvaluator;
 		thisEdgeEvaluator = t.thisEdgeEvaluator;
+		validToEdgeRoles = t.validToEdgeRoles;
+		validFromEdgeRoles = t.validFromEdgeRoles;
 	}
 
 	/**
