@@ -1,8 +1,13 @@
 package de.uni_koblenz.jgralab.utilities.tgtree;
 
 import java.awt.Container;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
+import javax.swing.AbstractAction;
 import javax.swing.JFrame;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.ToolTipManager;
@@ -31,11 +36,14 @@ public class TGTree extends JFrame {
 		tree = new JTree(new TGraphTreeModel(new VertexTreeNode(
 				graph.getFirstVertex(), null)));
 		tree.setCellRenderer(new GraphElementCellRenderer());
+		tree.addMouseListener(new TreeViewMouseAdapter());
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.getViewport().add(tree);
 		cp.add(scrollPane);
 
 		ToolTipManager.sharedInstance().registerComponent(tree);
+
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
 
 		setSize(800, 800);
 		pack();
@@ -65,4 +73,39 @@ public class TGTree extends JFrame {
 		tgtree.setVisible(true);
 	}
 
+	private class TreeViewMouseAdapter extends MouseAdapter {
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+			if (e.isPopupTrigger()) {
+				handlePopupTrigger(e);
+			}
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			if (e.isPopupTrigger()) {
+				handlePopupTrigger(e);
+			}
+		}
+
+		private void handlePopupTrigger(MouseEvent e) {
+			final GraphElementTreeNode getn = (GraphElementTreeNode) tree
+					.getLastSelectedPathComponent();
+			if (getn == null) {
+				return;
+			}
+			JPopupMenu contextMenu = new JPopupMenu("Context Menu");
+			contextMenu.add(new AbstractAction("Set Root") {
+
+				private static final long serialVersionUID = 6789881997870852275L;
+
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					setTreeViewRoot(getn.get());
+				}
+			});
+			contextMenu.show(e.getComponent(), e.getX(), e.getY());
+		}
+	}
 }
