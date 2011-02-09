@@ -59,7 +59,6 @@ class EdgeTreeNode extends GraphElementTreeNode {
 		sb.append("<br/><br/>");
 		sb.append(getAttributeString());
 		sb.append("</html>");
-		System.out.println(sb.toString());
 		return sb.toString();
 	}
 
