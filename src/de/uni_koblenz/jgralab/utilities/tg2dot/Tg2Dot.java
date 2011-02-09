@@ -641,7 +641,7 @@ public class Tg2Dot extends Tg2Whatever {
 						+ dotBuildOutputType;
 			}
 
-			String executionString = "dot.exe -T" + dotBuildOutputType + " "
+			String executionString = "dot -T" + dotBuildOutputType + " "
 					+ dotFile + " -o" + formatedFile;
 			Process p = Runtime.getRuntime().exec(executionString);
 			p.waitFor();
