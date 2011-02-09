@@ -1034,7 +1034,7 @@ public class GreqlEvaluator {
 	 */
 	public boolean startEvaluation() throws EvaluateException,
 			OptimizerException {
-		return startEvaluation(false, true);
+		return startEvaluation(false, false);
 	}
 
 	/**
@@ -1152,6 +1152,7 @@ public class GreqlEvaluator {
 		}
 
 		long plainEvaluationStartTime = System.currentTimeMillis();
+
 		result = greql2ExpEval.getResult(subgraphMarker);
 
 		// last, remove all added tempAttributes, currently, this are only
