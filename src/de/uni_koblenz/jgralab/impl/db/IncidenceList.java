@@ -52,7 +52,7 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 	 */
 	public IncidenceList(VertexImpl vertex) {
 		super();
-		this.owningVertex = vertex;
+		owningVertex = vertex;
 	}
 
 	/**
@@ -95,17 +95,17 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 	 *            Number mapping incidence's sequence in incidence list.
 	 */
 	public void add(int eId, long sequenceNumber) {
-		this.sequenceNumberToIdMap.put(sequenceNumber, Math.abs(eId));
+		sequenceNumberToIdMap.put(sequenceNumber, Math.abs(eId));
 		// usedIDs.set(Math.abs(eId));
 	}
 
 	@Override
 	protected void updateVersion(long version) {
-		this.writeBackVersion();
+		writeBackVersion();
 	}
 
 	private void writeBackVersion() {
-		this.owningVertex.writeBackIncidenceListVersion();
+		owningVertex.writeBackIncidenceListVersion();
 	}
 
 	/**
@@ -115,8 +115,8 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 	 */
 	@Override
 	public DatabasePersistableEdge getFirst() {
-		if (!this.isEmpty()) {
-			return this.getFirstIncidence();
+		if (!isEmpty()) {
+			return getFirstIncidence();
 		} else {
 			return null;
 		}
@@ -129,13 +129,13 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 	 */
 	@Override
 	public boolean isEmpty() {
-		return this.sequenceNumberToIdMap.isEmpty();
+		return sequenceNumberToIdMap.isEmpty();
 	}
 
 	private DatabasePersistableEdge getFirstIncidence() {
-		Entry<Long, Integer> firstEntry = this.sequenceNumberToIdMap
+		Entry<Long, Integer> firstEntry = sequenceNumberToIdMap
 				.firstEntry();
-		return (DatabasePersistableEdge) this.owningVertex.getGraph().getEdge(
+		return (DatabasePersistableEdge) owningVertex.getGraph().getEdge(
 				firstEntry.getValue());
 	}
 
@@ -146,16 +146,16 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 	 */
 	@Override
 	public DatabasePersistableEdge getLast() {
-		if (!this.isEmpty()) {
-			return this.getLastIncidence();
+		if (!isEmpty()) {
+			return getLastIncidence();
 		} else {
 			return null;
 		}
 	}
 
 	private DatabasePersistableEdge getLastIncidence() {
-		Entry<Long, Integer> lastEntry = this.sequenceNumberToIdMap.lastEntry();
-		return (DatabasePersistableEdge) this.owningVertex.getGraph().getEdge(
+		Entry<Long, Integer> lastEntry = sequenceNumberToIdMap.lastEntry();
+		return (DatabasePersistableEdge) owningVertex.getGraph().getEdge(
 				lastEntry.getValue());
 	}
 
@@ -171,8 +171,8 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 	 */
 	@Override
 	public DatabasePersistableEdge getPrev(DatabasePersistableEdge edge) {
-		assert this.contains(edge);
-		if (!this.isFirst(edge)) {
+		assert contains(edge);
+		if (!isFirst(edge)) {
 			return getPrevOrientedEdge(edge);
 		} else {
 			return null;
@@ -189,13 +189,13 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 	 */
 	@Override
 	public boolean contains(DatabasePersistableEdge edge) {
-		Integer eId = this.sequenceNumberToIdMap.get(edge
+		Integer eId = sequenceNumberToIdMap.get(edge
 				.getSequenceNumberInLambdaSeq());
 		if (eId != null) {
 			return eId == edge.getId()
 					&& // Math.abs(eId) == edge.getId() &&
-					this.owningVertex.getId() == edge.getIncidentVId()
-					&& this.owningVertex.getGraph() == edge.getGraph();
+					owningVertex.getId() == edge.getIncidentVId()
+					&& owningVertex.getGraph() == edge.getGraph();
 		} else {
 			return false;
 		}
@@ -203,19 +203,19 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 
 	@Override
 	protected boolean equalsFirst(DatabasePersistableEdge edge) {
-		return this.sequenceNumberToIdMap.firstEntry().getValue() == edge
+		return sequenceNumberToIdMap.firstEntry().getValue() == edge
 				.getId();
 	}
 
 	private DatabasePersistableEdge getPrevOrientedEdge(
 			DatabasePersistableEdge edge) {
-		int eId = this.getPrevIncidenceEId(edge);
-		return (DatabasePersistableEdge) this.owningVertex.getGraph().getEdge(
+		int eId = getPrevIncidenceEId(edge);
+		return (DatabasePersistableEdge) owningVertex.getGraph().getEdge(
 				eId);
 	}
 
 	private int getPrevIncidenceEId(DatabasePersistableEdge edge) {
-		return this.sequenceNumberToIdMap.lowerEntry(
+		return sequenceNumberToIdMap.lowerEntry(
 				edge.getSequenceNumberInLambdaSeq()).getValue();
 	}
 
@@ -230,8 +230,8 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 	 */
 	@Override
 	public DatabasePersistableEdge getNext(DatabasePersistableEdge edge) {
-		assert this.contains(edge);
-		if (!this.isLast(edge)) {
+		assert contains(edge);
+		if (!isLast(edge)) {
 			return getNextOriented(edge);
 		} else {
 			return null;
@@ -240,18 +240,18 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 
 	@Override
 	protected boolean equalsLast(DatabasePersistableEdge edge) {
-		return this.sequenceNumberToIdMap.lastEntry().getValue() == edge
+		return sequenceNumberToIdMap.lastEntry().getValue() == edge
 				.getId();
 	}
 
 	private DatabasePersistableEdge getNextOriented(DatabasePersistableEdge edge) {
-		int eId = this.getNextIncidenceEId(edge);
-		return (DatabasePersistableEdge) this.owningVertex.getGraph().getEdge(
+		int eId = getNextIncidenceEId(edge);
+		return (DatabasePersistableEdge) owningVertex.getGraph().getEdge(
 				eId);
 	}
 
 	private int getNextIncidenceEId(DatabasePersistableEdge edge) {
-		return this.sequenceNumberToIdMap.higherEntry(
+		return sequenceNumberToIdMap.higherEntry(
 				edge.getSequenceNumberInLambdaSeq()).getValue();
 	}
 
@@ -263,31 +263,30 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 	 */
 	@Override
 	public void prepend(DatabasePersistableEdge edge) {
-		if (!this.isFirst(edge)) {
-			this.prependByMoveOrInsert(edge);
+		if (!isFirst(edge)) {
+			prependByMoveOrInsert(edge);
 		}
 	}
 
 	private void prependByMoveOrInsert(DatabasePersistableEdge edge) {
-		long sequenceNumber = this
-				.getRegularSequenceNumberBeforeFirstElementOf();
-		this.moveOrInsert(edge, sequenceNumber);
+		long sequenceNumber = getRegularSequenceNumberBeforeFirstElementOf();
+		moveOrInsert(edge, sequenceNumber);
 	}
 
 	@Override
 	protected void moveTo(DatabasePersistableEdge edge, long sequenceNumber) {
-		assert this.contains(edge);
-		int eId = this.sequenceNumberToIdMap.get(edge
+		assert contains(edge);
+		int eId = sequenceNumberToIdMap.get(edge
 				.getSequenceNumberInLambdaSeq());
-		this.sequenceNumberToIdMap.remove(edge.getSequenceNumberInLambdaSeq());
+		sequenceNumberToIdMap.remove(edge.getSequenceNumberInLambdaSeq());
 		edge.setSequenceNumberInLambdaSeq(sequenceNumber);
-		this.sequenceNumberToIdMap.put(sequenceNumber, Math.abs(eId));
+		sequenceNumberToIdMap.put(sequenceNumber, Math.abs(eId));
 	}
 
 	@Override
 	protected void insertAt(DatabasePersistableEdge edge, long sequenceNumber) {
 		edge.setSequenceNumberInLambdaSeq(sequenceNumber);
-		this.sequenceNumberToIdMap.put(sequenceNumber, Math.abs(edge.getId()));
+		sequenceNumberToIdMap.put(sequenceNumber, Math.abs(edge.getId()));
 		// usedIDs.set(Math.abs(edge.getId()));
 	}
 
@@ -299,14 +298,14 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 	 */
 	@Override
 	public void append(DatabasePersistableEdge edge) {
-		if (!this.isLast(edge)) {
-			this.appendByMoveOrInsert(edge);
+		if (!isLast(edge)) {
+			appendByMoveOrInsert(edge);
 		}
 	}
 
 	private void appendByMoveOrInsert(DatabasePersistableEdge edge) {
-		long sequenceNumber = this.getRegularSequenceNumberAfterLastElementOf();
-		this.moveOrInsert(edge, sequenceNumber);
+		long sequenceNumber = getRegularSequenceNumberAfterLastElementOf();
+		moveOrInsert(edge, sequenceNumber);
 	}
 
 	/**
@@ -328,8 +327,8 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 		assert haveSameIncidentVertex(targetEdge, movedEdge);
 		assert targetEdge != movedEdge;
 		if (targetEdge != movedEdge
-				&& !this.isPrevNeighbour(targetEdge, movedEdge)) {
-			this.moveIncidenceBefore(movedEdge, targetEdge);
+				&& !isPrevNeighbour(targetEdge, movedEdge)) {
+			moveIncidenceBefore(movedEdge, targetEdge);
 		}
 	}
 
@@ -351,12 +350,12 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 
 	private boolean isPrevNeighbour(DatabasePersistableEdge edge,
 			DatabasePersistableEdge allegedNeighbourEdge) {
-		return this.getPrevEdgeId(edge) == allegedNeighbourEdge.getId();
+		return getPrevEdgeId(edge) == allegedNeighbourEdge.getId();
 	}
 
 	private int getPrevEdgeId(DatabasePersistableEdge edge) {
-		if (!this.isFirst(edge) && this.contains(edge)) {
-			return this.sequenceNumberToIdMap.lowerEntry(
+		if (!isFirst(edge) && contains(edge)) {
+			return sequenceNumberToIdMap.lowerEntry(
 					edge.getSequenceNumberInLambdaSeq()).getValue();
 		} else {
 			return 0;
@@ -373,9 +372,9 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 	 */
 	private void moveIncidenceBefore(DatabasePersistableEdge movedEdge,
 			DatabasePersistableEdge targetEdge) {
-		long newSequenceNumber = this.getPrevFreeSequenceNumber(targetEdge
+		long newSequenceNumber = getPrevFreeSequenceNumber(targetEdge
 				.getSequenceNumberInLambdaSeq());
-		this.moveTo(movedEdge, newSequenceNumber);
+		moveTo(movedEdge, newSequenceNumber);
 	}
 
 	/**
@@ -399,22 +398,22 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 		assert targetEdge != movedEdge;
 
 		if (targetEdge != movedEdge
-				&& !this.isNextNeighbor(targetEdge, movedEdge)) {
+				&& !isNextNeighbor(targetEdge, movedEdge)) {
 			// System.out.println("putAfter calls moveIncidenceBehind");
-			this.moveIncidenceBehind(movedEdge, targetEdge);
+			moveIncidenceBehind(movedEdge, targetEdge);
 		}
 	}
 
 	@Override
 	protected boolean isNextNeighbor(DatabasePersistableEdge edge,
 			DatabasePersistableEdge allegedNeighborEdge) {
-		return this.getNextEdgeId(edge) == allegedNeighborEdge.getId();
+		return getNextEdgeId(edge) == allegedNeighborEdge.getId();
 	}
 
 	private int getNextEdgeId(DatabasePersistableEdge edge)
 			throws GraphException {
-		if (!this.isLast(edge) && this.contains(edge)) {
-			return this.sequenceNumberToIdMap.higherEntry(
+		if (!isLast(edge) && contains(edge)) {
+			return sequenceNumberToIdMap.higherEntry(
 					edge.getSequenceNumberInLambdaSeq()).getValue();
 		} else {
 			return 0;
@@ -423,9 +422,9 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 
 	private void moveIncidenceBehind(DatabasePersistableEdge movedEdge,
 			DatabasePersistableEdge targetEdge) {
-		long newSequenceNumber = this.getNextFreeSequenceNumber(targetEdge
+		long newSequenceNumber = getNextFreeSequenceNumber(targetEdge
 				.getSequenceNumberInLambdaSeq());
-		this.moveTo(movedEdge, newSequenceNumber);
+		moveTo(movedEdge, newSequenceNumber);
 	}
 
 	/**
@@ -441,10 +440,10 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 	 */
 	@Override
 	public void remove(DatabasePersistableEdge edge) {
-		assert this.contains(edge);
-		if (this.sequenceNumberToIdMap.containsKey(edge
+		assert contains(edge);
+		if (sequenceNumberToIdMap.containsKey(edge
 				.getSequenceNumberInLambdaSeq())) {
-			this.sequenceNumberToIdMap.remove(edge
+			sequenceNumberToIdMap.remove(edge
 					.getSequenceNumberInLambdaSeq());
 			// usedIDs.clear(Math.abs(edge.getId()));
 			/*
@@ -460,7 +459,7 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 	 */
 	@Override
 	public int size() {
-		return this.sequenceNumberToIdMap.size();
+		return sequenceNumberToIdMap.size();
 	}
 
 	/**
@@ -469,9 +468,9 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 	 */
 	@Override
 	public void reorganize() {
-		GraphImpl graph = (GraphImpl) this.owningVertex.getGraph();
-		graph.reorganizeIncidenceListInDatabaseOf(this.owningVertex);
-		this.reorganizeAtClient();
+		GraphImpl graph = (GraphImpl) owningVertex.getGraph();
+		graph.reorganizeIncidenceListInDatabaseOf(owningVertex);
+		reorganizeAtClient();
 	}
 
 	/**
@@ -480,27 +479,27 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 	private void reorganizeAtClient() {
 		try {
 			IncidenceListReorganizer reorganizer = new IncidenceListReorganizer(
-					this.owningVertex);
-			this.sequenceNumberToIdMap = reorganizer
-					.getReorganisedMap(this.sequenceNumberToIdMap);
+					owningVertex);
+			sequenceNumberToIdMap = reorganizer
+					.getReorganisedMap(sequenceNumberToIdMap);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
 	public void print() {
-		Set<Long> sequenceNumbers = this.sequenceNumberToIdMap.keySet();
+		Set<Long> sequenceNumbers = sequenceNumberToIdMap.keySet();
 		Long[] seqNumArray = {};
 		seqNumArray = sequenceNumbers.toArray(seqNumArray);
 		for (int i = 0; i < seqNumArray.length; i++) {
 			System.out.println("[" + seqNumArray[i] + ", "
-					+ this.sequenceNumberToIdMap.get(seqNumArray[i]) + "]");
+					+ sequenceNumberToIdMap.get(seqNumArray[i]) + "]");
 		}
 	}
 
 	@Override
 	protected void clear() {
-		this.sequenceNumberToIdMap.clear();
+		sequenceNumberToIdMap.clear();
 		// usedIDs.clear();
 	}
 
@@ -510,7 +509,7 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 	 * @return
 	 */
 	protected Iterable<Integer> eIds() {
-		return this.sequenceNumberToIdMap.values();
+		return sequenceNumberToIdMap.values();
 	}
 
 	/**
@@ -520,7 +519,7 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 	 */
 	protected int countOutgoing() {
 		int count = 0;
-		for (int eId : this.sequenceNumberToIdMap.values()) {
+		for (int eId : sequenceNumberToIdMap.values()) {
 			if (eId > 0) {
 				count++;
 			}
@@ -535,7 +534,7 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 	 */
 	protected int countIncoming() {
 		int count = 0;
-		for (int eId : this.sequenceNumberToIdMap.values()) {
+		for (int eId : sequenceNumberToIdMap.values()) {
 			if (eId < 0) {
 				count++;
 			}

@@ -73,8 +73,8 @@ public abstract class ReversedEdgeImpl extends ReversedEdgeBaseImpl implements
 
 	@Override
 	protected VertexBaseImpl getIncidentVertex() {
-		if (this.omegaVId > 0) {
-			return (VertexBaseImpl) this.graph.getVertex(this.omegaVId);
+		if (omegaVId > 0) {
+			return (VertexBaseImpl) graph.getVertex(omegaVId);
 		} else {
 			return null;
 		}
@@ -86,19 +86,19 @@ public abstract class ReversedEdgeImpl extends ReversedEdgeBaseImpl implements
 
 	@Override
 	protected IncidenceImpl getPrevIncidenceInternal() {
-		VertexImpl vertex = (VertexImpl) this.getIncidentVertex();
+		VertexImpl vertex = (VertexImpl) getIncidentVertex();
 		return (IncidenceImpl) vertex.getPrevIncidence(this);
 	}
 
 	@Override
 	protected IncidenceImpl getNextIncidenceInternal() {
-		VertexImpl vertex = (VertexImpl) this.getIncidentVertex();
+		VertexImpl vertex = (VertexImpl) getIncidentVertex();
 		return (IncidenceImpl) vertex.getNextIncidence(this);
 	}
 
 	@Override
 	protected void setIncidentVertex(VertexBaseImpl v) {
-		this.setIncidentVId(v.getId());
+		setIncidentVId(v.getId());
 	}
 
 	@Override
@@ -113,46 +113,46 @@ public abstract class ReversedEdgeImpl extends ReversedEdgeBaseImpl implements
 
 	@Override
 	public boolean isValid() {
-		return this.normalEdge.isValid();
+		return normalEdge.isValid();
 	}
 
 	@Override
 	public int getIncidentVId() {
-		return this.omegaVId;
+		return omegaVId;
 	}
 
 	@Override
 	public long getSequenceNumberInLambdaSeq() {
-		return this.sequenceNumberInLambdaSeq;
+		return sequenceNumberInLambdaSeq;
 	}
 
 	@Override
 	public int getGId() {
-		return this.normalEdge.getGId();
+		return normalEdge.getGId();
 	}
 
 	@Override
 	public long getSequenceNumberInESeq() {
-		return this.normalEdge.getSequenceNumberInESeq();
+		return normalEdge.getSequenceNumberInESeq();
 	}
 
 	@Override
 	public void setIncidentVId(int incidentVId) {
-		if (this.omegaVId != incidentVId) {
-			this.updateIncidentVId(incidentVId);
+		if (omegaVId != incidentVId) {
+			updateIncidentVId(incidentVId);
 		}
 	}
 
 	@Override
 	public void setSequenceNumberInLambdaSeq(long sequenceNumber) {
-		if (this.sequenceNumberInLambdaSeq != sequenceNumber) {
-			this.updateSequenceNumberInLambdaSeq(sequenceNumber);
+		if (sequenceNumberInLambdaSeq != sequenceNumber) {
+			updateSequenceNumberInLambdaSeq(sequenceNumber);
 		}
 	}
 
 	@Override
 	public void setSequenceNumberInESeq(long sequenceNumberInESeq) {
-		this.normalEdge.setSequenceNumberInESeq(sequenceNumberInESeq);
+		normalEdge.setSequenceNumberInESeq(sequenceNumberInESeq);
 	}
 
 	/**
@@ -162,9 +162,9 @@ public abstract class ReversedEdgeImpl extends ReversedEdgeBaseImpl implements
 	 * @param sequenceNumber
 	 */
 	private void updateSequenceNumberInLambdaSeq(long sequenceNumber) {
-		this.sequenceNumberInLambdaSeq = sequenceNumber;
-		if (this.isPersistent() && this.isInitialized()) {
-			this.getGraphImpl().writeSequenceNumberInLambdaSeqBack(this);
+		sequenceNumberInLambdaSeq = sequenceNumber;
+		if (isPersistent() && isInitialized()) {
+			getGraphImpl().writeSequenceNumberInLambdaSeqBack(this);
 		}
 	}
 
@@ -175,41 +175,41 @@ public abstract class ReversedEdgeImpl extends ReversedEdgeBaseImpl implements
 	 *            Id of incident vertex.
 	 */
 	private void updateIncidentVId(int vId) {
-		this.omegaVId = vId;
+		omegaVId = vId;
 		// this.getGraph();
-		if (this.isPersistent() && this.isInitialized() && vId > 0) {
+		if (isPersistent() && isInitialized() && vId > 0) {
 			;
 		}
-		this.getGraphImpl().writeIncidentVIdBack(this);
+		getGraphImpl().writeIncidentVIdBack(this);
 	}
 
 	@Override
 	public boolean isPersistent() {
-		return this.normalEdge.isPersistent();
+		return normalEdge.isPersistent();
 	}
 
 	@Override
 	public boolean isInitialized() {
-		return this.normalEdge.isInitialized();
+		return normalEdge.isInitialized();
 	}
 
 	@Override
 	public void setInitialized(boolean initialized) {
-		this.normalEdge.setInitialized(initialized);
+		normalEdge.setInitialized(initialized);
 	}
 
 	@Override
 	public void setPersistent(boolean persistent) {
-		this.normalEdge.setPersistent(persistent);
+		normalEdge.setPersistent(persistent);
 	}
 
 	@Override
 	public void deleted() {
-		this.normalEdge.deleted();
+		normalEdge.deleted();
 	}
 
 	@Override
 	public int getIncidentEId() {
-		return this.getId();
+		return getId();
 	}
 }

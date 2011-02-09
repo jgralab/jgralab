@@ -4,29 +4,25 @@ import java.sql.SQLException;
 
 public class MySqlDb extends GraphDatabase {
 
-	protected MySqlDb(String url) throws GraphDatabaseException{
+	protected MySqlDb(String url) throws GraphDatabaseException {
 		super(url);
 	}
-	
+
 	@Override
 	protected void connect() throws GraphDatabaseException {
-		this.connection = this.getConnectionWithJdbcDriver("com.mysql.jdbc.Driver");
-		this.sqlStatementList = new MySqlStatementList(this);
+		connection = getConnectionWithJdbcDriver("com.mysql.jdbc.Driver");
+		sqlStatementList = new MySqlStatementList(this);
 	}
-	
+
 	@Override
-	protected void setOptimalAutoCommitMode() throws GraphDatabaseException{
-		this.setAutocommitMode(true);
-	}	
-	
-	@Override
-	protected void applyVendorSpecificDbSchema() throws GraphDatabaseException, SQLException{
+	protected void applyVendorSpecificDbSchema() throws GraphDatabaseException,
+			SQLException {
 		super.addPrimaryKeyConstraints();
-		//super.addForeignKeyConstraints();
+		// super.addForeignKeyConstraints();
 		super.addIndices();
-		super.addStoredProcedures();		
+		super.addStoredProcedures();
 	}
-	
+
 	@Override
 	protected void changeFromBulkImportToGraphTraversal() throws SQLException {
 		super.addPrimaryKeyConstraints();
@@ -36,7 +32,8 @@ public class MySqlDb extends GraphDatabase {
 	}
 
 	@Override
-	protected void changeFromGraphCreationToGraphTraversal() throws SQLException {
+	protected void changeFromGraphCreationToGraphTraversal()
+			throws SQLException {
 		super.addForeignKeyConstraints();
 	}
 
@@ -45,24 +42,25 @@ public class MySqlDb extends GraphDatabase {
 		super.dropIndices();
 		super.dropForeignKeyConstraints();
 		super.dropPrimaryKeyConstraints();
-	}	
+	}
 
 	@Override
 	protected void changeFromGraphCreationToBulkImport() throws SQLException {
 		super.dropIndices();
-		//this.dropForeignKeyConstraints();
+		// this.dropForeignKeyConstraints();
 		super.dropPrimaryKeyConstraints();
 	}
-	
+
 	@Override
-	protected void changeFromGraphTraversalToGraphCreation() throws SQLException{
+	protected void changeFromGraphTraversalToGraphCreation()
+			throws SQLException {
 		super.dropForeignKeyConstraints();
 	}
-	
+
 	@Override
-	protected void changeFromBulkImportToGraphCreation() throws SQLException{
-		this.addPrimaryKeyConstraints();
-		//this.addForeignKeyConstraints();
-		this.addIndices();
+	protected void changeFromBulkImportToGraphCreation() throws SQLException {
+		addPrimaryKeyConstraints();
+		// this.addForeignKeyConstraints();
+		addIndices();
 	}
 }
