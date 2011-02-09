@@ -7,9 +7,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.ToolTipManager;
 
+import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 
@@ -36,6 +39,18 @@ public class TGTree extends JFrame {
 
 		setSize(800, 800);
 		pack();
+	}
+
+	public void setTreeViewRoot(GraphElement ge) {
+		GraphElementTreeNode tn = null;
+		if (ge instanceof Edge) {
+			tn = new EdgeTreeNode((Edge) ge, null);
+		} else if (ge instanceof Vertex) {
+			tn = new VertexTreeNode((Vertex) ge, null);
+		} else {
+			throw new RuntimeException(ge + " is neither Vertex nor Edge.");
+		}
+		tree.setModel(new TGraphTreeModel(tn));
 	}
 
 	public static void main(String[] args) throws GraphIOException {
