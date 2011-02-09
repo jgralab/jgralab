@@ -28,7 +28,6 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.DepthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.IterativeDepthFirstSearch;
-import de.uni_koblenz.jgralab.algolib.algorithms.search.RecursiveDepthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.strong_components.StrongComponentsWithDFS;
 import de.uni_koblenz.jgralab.algolib.algorithms.strong_components.visitors.ReducedGraphVisitorAdapter;
 import de.uni_koblenz.jgralabtest.schemas.algolib.simple.SimpleGraph;
@@ -58,7 +57,7 @@ public class TryStrongComponents {
 		DepthFirstSearch dfs = new IterativeDepthFirstSearch(graph);
 		dfs.addVisitor(new DebugSearchVisitor());
 		StrongComponentsWithDFS solver = new StrongComponentsWithDFS(graph, dfs);
-		solver.addVisitor(new ReducedGraphVisitorAdapter(){
+		solver.addVisitor(new ReducedGraphVisitorAdapter() {
 
 			@Override
 			public void visitReducedEdge(Edge e) {
@@ -69,7 +68,7 @@ public class TryStrongComponents {
 			public void visitRepresentativeVertex(Vertex v) {
 				System.out.println("Visiting representative vertex: " + v);
 			}
-			
+
 		});
 		solver.execute();
 		System.out.println(solver.getLowlink());

@@ -6,7 +6,6 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.DFSVisitorList;
-import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.DFSVisitorList;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.DFSVisitor;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.SearchVisitor;
 import de.uni_koblenz.jgralab.algolib.visitors.GraphVisitor;
@@ -40,10 +39,10 @@ public class CompareWithAlternativeVisitorCompositions {
 	private static final int EDGE_COUNT = TREE_EDGE_COUNT + FROND_COUNT;
 
 	private static class GraphVisitorExample extends GraphVisitorAdapter {
-		protected int j;
+		// protected int j;
 
 		public GraphVisitorExample(int number) {
-			this.j = number;
+			// this.j = number;
 		}
 
 		@Override
@@ -188,7 +187,7 @@ public class CompareWithAlternativeVisitorCompositions {
 		System.out.println();
 		printResult(average);
 		System.out.println();
-		
+
 		System.out.println("Current implementation:");
 		for (int k = 0; k < RUNS; k++) {
 			oneRun(sw, comp);
@@ -197,11 +196,12 @@ public class CompareWithAlternativeVisitorCompositions {
 		System.out.println();
 		printResult(average);
 		System.out.println();
-		
+
 		System.out.println("Fini.");
 	}
 
-	private static void oneRun(Stopwatch sw, DFSVisitor comp) throws AlgorithmTerminatedException {
+	private static void oneRun(Stopwatch sw, DFSVisitor comp)
+			throws AlgorithmTerminatedException {
 		sw.reset();
 		sw.start();
 		for (int i = 0; i < KAPPA; i++) {
