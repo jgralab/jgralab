@@ -93,16 +93,27 @@ public class EdgeTransition extends SimpleTransition {
 		if (!typeCollection.equals(et.typeCollection)) {
 			return false;
 		}
-		if (validEdgeRoles != null) {
-			if (et.validEdgeRoles == null) {
+		if (validToEdgeRoles != null) {
+			if (et.validToEdgeRoles == null) {
 				return false;
 			}
-			if (!validEdgeRoles.equals(et.validEdgeRoles)) {
+			if (!validToEdgeRoles.equals(et.validToEdgeRoles)) {
+				return false;
+			}
+		} else {
+			if (et.validToEdgeRoles != null) {
 				return false;
 			}
 		}
-		if (validEdgeRoles == null) {
-			if (et.validEdgeRoles != null) {
+		if (validFromEdgeRoles == null) {
+			if (et.validFromEdgeRoles != null) {
+				return false;
+			}
+		} else {
+			if (et.validFromEdgeRoles == null) {
+				return false;
+			}
+			if (!validFromEdgeRoles.equals(et.validFromEdgeRoles)) {
 				return false;
 			}
 		}
