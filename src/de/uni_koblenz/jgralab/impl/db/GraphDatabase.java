@@ -150,7 +150,7 @@ public abstract class GraphDatabase {
 		graphDb.userName = userName;
 		graphDb.password = password;
 		graphDb.connect();
-		graphDb.setOptimalAutoCommitMode();
+		graphDb.setAutoCommit(false);
 		openGraphDatabases.put(url, graphDb);
 		return graphDb;
 	}
@@ -324,16 +324,6 @@ public abstract class GraphDatabase {
 		}
 	}
 
-	protected void setAutocommitMode(boolean autoCommitMode)
-			throws GraphDatabaseException {
-		try {
-			this.connection.setAutoCommit(autoCommitMode);
-		} catch (SQLException exception) {
-			throw new GraphDatabaseException(
-					"Configuration of connection failed.", exception);
-		}
-	}
-
 	/**
 	 * Gets JDBC connection to database.
 	 * 
@@ -384,7 +374,7 @@ public abstract class GraphDatabase {
 	 * @throws GraphDatabaseException
 	 *             Auto commit mode could not be set.
 	 */
-	public void setAutoCommitMode(boolean autoCommitMode)
+	public void setAutoCommit(boolean autoCommitMode)
 			throws GraphDatabaseException {
 		try {
 			this.connection.setAutoCommit(autoCommitMode);
@@ -399,7 +389,7 @@ public abstract class GraphDatabase {
 	public void reconnect() throws GraphDatabaseException {
 		this.close();
 		this.connect();
-		this.setOptimalAutoCommitMode();
+		this.setAutoCommit(false);
 	}
 
 	/**
@@ -2262,8 +2252,6 @@ public abstract class GraphDatabase {
 			this.rollback();
 			throw new GraphDatabaseException("Could not optimize database "
 					+ this.getUrl() + " for graph traversal.", exception);
-		} finally {
-			this.setOptimalAutoCommitMode();
 		}
 	}
 
@@ -2276,8 +2264,6 @@ public abstract class GraphDatabase {
 			this.rollback();
 			throw new GraphDatabaseException("Could not optimize database "
 					+ this.getUrl() + " for bulk import.", exception);
-		} finally {
-			this.setOptimalAutoCommitMode();
 		}
 	}
 
@@ -2291,8 +2277,6 @@ public abstract class GraphDatabase {
 			throw new GraphDatabaseException(
 					"Could not optimize database for graph creation.",
 					exception);
-		} finally {
-			this.setOptimalAutoCommitMode();
 		}
 	}
 
@@ -2353,9 +2337,6 @@ public abstract class GraphDatabase {
 	protected abstract void changeFromBulkImportToGraphCreation()
 			throws SQLException;
 
-	protected abstract void setOptimalAutoCommitMode()
-			throws GraphDatabaseException;
-
 	public void applyDbSchema() throws GraphDatabaseException {
 		try {
 			this.applyDbSchemaInTransaction();
@@ -2366,8 +2347,6 @@ public abstract class GraphDatabase {
 			throw new GraphDatabaseException(
 					"Generic database schema could not be applied to database "
 							+ this.getUrl(), exception);
-		} finally {
-			this.setOptimalAutoCommitMode();
 		}
 	}
 

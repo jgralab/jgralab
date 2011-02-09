@@ -15,11 +15,6 @@ public class MySqlDb extends GraphDatabase {
 	}
 	
 	@Override
-	protected void setOptimalAutoCommitMode() throws GraphDatabaseException{
-		this.setAutocommitMode(true);
-	}	
-	
-	@Override
 	protected void applyVendorSpecificDbSchema() throws GraphDatabaseException, SQLException{
 		super.addPrimaryKeyConstraints();
 		//super.addForeignKeyConstraints();

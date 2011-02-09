@@ -15,11 +15,6 @@ public class DerbyDb extends GraphDatabase {
 	}
 	
 	@Override
-	protected void setOptimalAutoCommitMode() throws GraphDatabaseException{
-		this.setAutocommitMode(false);
-	}
-	
-	@Override
 	protected void applyVendorSpecificDbSchema() throws GraphDatabaseException, SQLException{
 		this.addPrimaryKeyConstraints();
 		//this.addForeignKeyConstraints();
