@@ -1,6 +1,7 @@
 package de.uni_koblenz.jgralab.utilities.tgtree;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.GraphElement;
@@ -15,26 +16,64 @@ class EdgeTreeNode extends GraphElementTreeNode {
 		this.e = e;
 	}
 
+	public boolean isBackEdge() {
+		if ((getParent() != null) && (getParent().getParent() != null)) {
+			Edge pp = (Edge) ((GraphElementTreeNode) getParent().getParent())
+					.get();
+			if (pp.getNormalEdge() == e.getNormalEdge()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
+		int thisIdx = -1;
+		int thatIdx = -1;
+
+		if (getParent() != null) {
+			thisIdx = getParent().getIndex(this) + 1;
+		}
+
+		VertexTreeNode child = (VertexTreeNode) getChildAt(0);
+		Enumeration<GraphElementTreeNode> en = child.children();
+		int i = 0;
+		while (en.hasMoreElements()) {
+			EdgeTreeNode etn = (EdgeTreeNode) en.nextElement();
+			i++;
+			if (etn.isBackEdge()) {
+				thatIdx = i;
+			}
+		}
+
+		int lmax = (getParent() != null) ? getParent().getChildCount() : 2;
+		String lmaxs = String.valueOf(lmax);
+		String lfmt = "%" + lmaxs.length() + "d";
+
+		sb.append(String.format(lfmt, thisIdx));
+
 		if (e.isNormal()) {
 			if (e.getThatSemantics() != AggregationKind.NONE) {
-				sb.append("<>--> ");
+				sb.append(" <>--> ");
 			} else if (e.getThisSemantics() != AggregationKind.NONE) {
-				sb.append("--><> ");
+				sb.append(" --><> ");
 			} else {
-				sb.append("--> ");
+				sb.append(" ----> ");
 			}
 		} else {
 			if (e.getThatSemantics() != AggregationKind.NONE) {
-				sb.append("<><-- ");
+				sb.append(" <><-- ");
 			} else if (e.getThisSemantics() != AggregationKind.NONE) {
-				sb.append("<--<> ");
+				sb.append(" <--<> ");
 			} else {
-				sb.append("<-- ");
+				sb.append(" <---- ");
 			}
 		}
+		sb.append(thatIdx);
+		sb.append(" | ");
+
 		sb.append(e.toString());
 		return sb.toString();
 	}

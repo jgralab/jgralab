@@ -80,7 +80,6 @@ public class TGTree extends JFrame {
 
 		@Override
 		public void keyTyped(KeyEvent e) {
-			System.out.println("Key = " + e);
 			final GraphElementTreeNode getn = (GraphElementTreeNode) tree
 					.getLastSelectedPathComponent();
 			if (getn == null) {
