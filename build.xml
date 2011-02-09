@@ -109,7 +109,7 @@
 	<property name="jsontools.includes" value="json/**" />
 
 	<property name="utilities.src" value="${src.dir}/de/uni_koblenz/jgralab/utilities" />
-	<property name="utilities.includes" value="ant/** common/** converter/** csv2tg/** greqlinterface/** jgralab2owl/** schemacompare/** tg2gdl/** tg2gxl/** tg2sidiff/** tgmerge/** tgraphbrowser/** xmi2tgschema/** xml/**" />
+	<property name="utilities.includes" value="ant/** common/** converter/** csv2tg/** greqlinterface/** jgralab2owl/** schemacompare/** tg2gdl/** tg2gxl/** tg2sidiff/** tgmerge/** tgraphbrowser/** tgtree/** xmi2tgschema/** xml/**" />
 
 	<!-- The targets -->
 	<target name="build" depends="ist_utilities,clean,compile,jar" />
