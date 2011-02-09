@@ -28,7 +28,7 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-package de.uni_koblenz.jgralab.impl.db;
+ package de.uni_koblenz.jgralab.impl.db;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -180,7 +180,7 @@ public abstract class GraphDatabase {
 		graphDb.userName = userName;
 		graphDb.password = password;
 		graphDb.connect();
-		graphDb.setOptimalAutoCommitMode();
+		graphDb.setAutoCommit(false);
 		openGraphDatabases.put(url, graphDb);
 		return graphDb;
 	}
@@ -302,29 +302,29 @@ public abstract class GraphDatabase {
 		private final HashMap<String, Integer> attributeIdMap = new HashMap<String, Integer>();
 
 		void addType(int typeId, String name) {
-			this.typeNameMap.put(typeId, name);
-			this.typeIdMap.put(name, typeId);
+			typeNameMap.put(typeId, name);
+			typeIdMap.put(name, typeId);
 		}
 
 		void addAttribute(int attributeId, String name) {
-			this.attributeNameMap.put(attributeId, name);
-			this.attributeIdMap.put(name, attributeId);
+			attributeNameMap.put(attributeId, name);
+			attributeIdMap.put(name, attributeId);
 		}
 
 		int getTypeId(String name) {
-			return this.typeIdMap.get(name);
+			return typeIdMap.get(name);
 		}
 
 		int getAttributeId(String name) {
-			return this.attributeIdMap.get(name);
+			return attributeIdMap.get(name);
 		}
 
 		String getTypeName(int typeId) {
-			return this.typeNameMap.get(typeId);
+			return typeNameMap.get(typeId);
 		}
 
 		String getAttributeName(int attributeId) {
-			return this.attributeNameMap.get(attributeId);
+			return attributeNameMap.get(attributeId);
 		}
 	}
 
@@ -341,26 +341,14 @@ public abstract class GraphDatabase {
 			throws GraphDatabaseException {
 		try {
 			Class.forName(jdbcDriverName);
-			return DriverManager.getConnection(this.url, this.userName,
-					this.password);
+			return DriverManager.getConnection(url, userName, password);
 		} catch (ClassNotFoundException exception) {
 			throw new GraphDatabaseException(
 					"JDBC driver to connect to database not found: "
 							+ jdbcDriverName, exception);
 		} catch (SQLException exception) {
 			throw new GraphDatabaseException(
-					"Could not connect to graph database at " + this.url,
-					exception);
-		}
-	}
-
-	protected void setAutocommitMode(boolean autoCommitMode)
-			throws GraphDatabaseException {
-		try {
-			this.connection.setAutoCommit(autoCommitMode);
-		} catch (SQLException exception) {
-			throw new GraphDatabaseException(
-					"Configuration of connection failed.", exception);
+					"Could not connect to graph database at " + url, exception);
 		}
 	}
 
@@ -370,7 +358,7 @@ public abstract class GraphDatabase {
 	 * @return JDBC connection to database.
 	 */
 	protected Connection getConnection() {
-		return this.connection;
+		return connection;
 	}
 
 	/**
@@ -381,7 +369,7 @@ public abstract class GraphDatabase {
 	 */
 	public void beginTransaction() throws GraphDatabaseException {
 		try {
-			this.connection.setAutoCommit(false);
+			connection.setAutoCommit(false);
 		} catch (SQLException exception) {
 			exception.printStackTrace();
 			throw new GraphDatabaseException("Could not begin transaction.",
@@ -397,7 +385,7 @@ public abstract class GraphDatabase {
 	 */
 	public void commitTransaction() throws GraphDatabaseException {
 		try {
-			this.connection.commit();
+			connection.commit();
 		} catch (SQLException exception) {
 			exception.printStackTrace();
 			throw new GraphDatabaseException("Could not commit transaction.",
@@ -414,22 +402,15 @@ public abstract class GraphDatabase {
 	 * @throws GraphDatabaseException
 	 *             Auto commit mode could not be set.
 	 */
-	public void setAutoCommitMode(boolean autoCommitMode)
+	public void setAutoCommit(boolean autoCommitMode)
 			throws GraphDatabaseException {
 		try {
-			this.connection.setAutoCommit(autoCommitMode);
+			connection.setAutoCommit(autoCommitMode);
 		} catch (SQLException exception) {
 			exception.printStackTrace();
 			throw new GraphDatabaseException("Could not set auto commit mode.",
 					exception);
 		}
-	}
-
-	@Deprecated
-	public void reconnect() throws GraphDatabaseException {
-		this.close();
-		this.connect();
-		this.setOptimalAutoCommitMode();
 	}
 
 	/**
@@ -441,27 +422,26 @@ public abstract class GraphDatabase {
 	 */
 	public void close() throws GraphDatabaseException {
 		try {
-			this.writeBackVersionOfLoadedGraphs();
-			this.loadedGraphs.clear();
-			this.commitAnyTransactions();
-			openGraphDatabases.remove(this.url);
-			this.connection.close();
+			writeBackVersionOfLoadedGraphs();
+			loadedGraphs.clear();
+			commitAnyTransactions();
+			openGraphDatabases.remove(url);
+			connection.close();
 		} catch (SQLException exception) {
 			throw new GraphDatabaseException(
-					"An error occured on closing database " + this.url,
-					exception);
+					"An error occured on closing database " + url, exception);
 		}
 	}
 
 	private void commitAnyTransactions() throws SQLException {
-		if (!this.connection.getAutoCommit()) {
-			this.connection.commit();
+		if (!connection.getAutoCommit()) {
+			connection.commit();
 		}
 	}
 
 	private void writeBackVersionOfLoadedGraphs() {
-		for (String id : this.loadedGraphs.keySet()) {
-			GraphImpl graph = this.loadedGraphs.get(id);
+		for (String id : loadedGraphs.keySet()) {
+			GraphImpl graph = loadedGraphs.get(id);
 			graph.writeBackVersions();
 		}
 	}
@@ -475,7 +455,7 @@ public abstract class GraphDatabase {
 	 *             Deletion was not successful.
 	 */
 	public void deleteGraph(String id) throws GraphDatabaseException {
-		DatabasePersistableGraph graph = this.getGraph(id);
+		DatabasePersistableGraph graph = getGraph(id);
 		this.delete(graph);
 	}
 
@@ -491,7 +471,7 @@ public abstract class GraphDatabase {
 			throws GraphDatabaseException {
 		try {
 			this.deleteGraph(graph);
-			this.loadedGraphs.remove(graph.getId());
+			loadedGraphs.remove(graph.getId());
 		} catch (SQLException exception) {
 			throw new GraphDatabaseException("Graph " + graph.getId()
 					+ " could not be deleted from database.", exception);
@@ -500,39 +480,39 @@ public abstract class GraphDatabase {
 
 	private void deleteGraph(DatabasePersistableGraph graph)
 			throws SQLException {
-		this.deleteAllAttributeValuesIn(graph);
-		this.deleteAllGraphElementsIn(graph);
+		deleteAllAttributeValuesIn(graph);
+		deleteAllGraphElementsIn(graph);
 		this.deleteGraph(graph.getGId());
 	}
 
 	private void deleteAllAttributeValuesIn(DatabasePersistableGraph graph)
 			throws SQLException {
-		PreparedStatement deleteVertexAttributesStatement = this.sqlStatementList
+		PreparedStatement deleteVertexAttributesStatement = sqlStatementList
 				.deleteVertexAttributeValuesOfGraph(graph.getGId());
 		deleteVertexAttributesStatement.executeUpdate();
-		PreparedStatement deleteEdgeAttributesStatement = this.sqlStatementList
+		PreparedStatement deleteEdgeAttributesStatement = sqlStatementList
 				.deleteEdgeAttributeValuesOfGraph(graph.getGId());
 		deleteEdgeAttributesStatement.executeUpdate();
-		PreparedStatement deleteGraphAttributesStatement = this.sqlStatementList
+		PreparedStatement deleteGraphAttributesStatement = sqlStatementList
 				.deleteAttributeValuesOfGraph(graph.getGId());
 		deleteGraphAttributesStatement.executeUpdate();
 	}
 
 	private void deleteAllGraphElementsIn(DatabasePersistableGraph graph)
 			throws SQLException {
-		PreparedStatement deleteIncidencesStatement = this.sqlStatementList
+		PreparedStatement deleteIncidencesStatement = sqlStatementList
 				.deleteIncidencesOfGraph(graph.getGId());
 		deleteIncidencesStatement.executeUpdate();
-		PreparedStatement deleteEdgeStatement = this.sqlStatementList
+		PreparedStatement deleteEdgeStatement = sqlStatementList
 				.deleteEdgesOfGraph(graph.getGId());
 		deleteEdgeStatement.executeUpdate();
-		PreparedStatement deleteVerticesStatement = this.sqlStatementList
+		PreparedStatement deleteVerticesStatement = sqlStatementList
 				.deleteVerticesOfGraph(graph.getGId());
 		deleteVerticesStatement.executeUpdate();
 	}
 
 	private void deleteGraph(int gId) throws SQLException {
-		PreparedStatement statement = this.sqlStatementList.deleteGraph(gId);
+		PreparedStatement statement = sqlStatementList.deleteGraph(gId);
 		statement.executeUpdate();
 	}
 
@@ -558,31 +538,31 @@ public abstract class GraphDatabase {
 	private void deleteVertex(DatabasePersistableVertex vertex)
 			throws SQLException {
 		// OPTIMIZE Can be done in one roundtrip.
-		this.deleteAttributesOf(vertex);
-		this.deleteIncidentEdgesOf(vertex);
+		deleteAttributesOf(vertex);
+		deleteIncidentEdgesOf(vertex);
 		this.deleteVertex(vertex.getId(), vertex.getGId());
 	}
 
 	private void deleteAttributesOf(DatabasePersistableVertex vertex)
 			throws SQLException {
-		PreparedStatement deleteAttributesStatement = this.sqlStatementList
+		PreparedStatement deleteAttributesStatement = sqlStatementList
 				.deleteAttributeValuesOfVertex(vertex.getId(), vertex.getGId());
 		deleteAttributesStatement.executeUpdate();
 	}
 
 	private void deleteIncidentEdgesOf(DatabasePersistableVertex vertex)
 			throws SQLException {
-		ArrayList<Integer> edgeIds = this.getIncidentEIdsOf(vertex);
+		ArrayList<Integer> edgeIds = getIncidentEIdsOf(vertex);
 		for (Integer eId : edgeIds) {
-			this.deleteIncidencesOfEdge(eId, vertex.getGId());
-			this.deleteAttributeValuesOfEdge(eId, vertex.getGId());
+			deleteIncidencesOfEdge(eId, vertex.getGId());
+			deleteAttributeValuesOfEdge(eId, vertex.getGId());
 			this.deleteEdge(eId, vertex.getGId());
 		}
 	}
 
 	private ArrayList<Integer> getIncidentEIdsOf(
 			DatabasePersistableVertex vertex) throws SQLException {
-		PreparedStatement statement = this.sqlStatementList
+		PreparedStatement statement = sqlStatementList
 				.selectIncidentEIdsOfVertex(vertex.getId(), vertex.getGId());
 		ResultSet result = statement.executeQuery();
 		ArrayList<Integer> edgeIds = new ArrayList<Integer>();
@@ -594,13 +574,13 @@ public abstract class GraphDatabase {
 
 	private void deleteIncidencesOfEdge(Integer eId, int gId)
 			throws SQLException {
-		PreparedStatement deleteAttributesStatement = this.sqlStatementList
+		PreparedStatement deleteAttributesStatement = sqlStatementList
 				.deleteIncidencesOfEdge(eId, gId);
 		deleteAttributesStatement.executeUpdate();
 	}
 
 	private void deleteVertex(int vId, int gId) throws SQLException {
-		PreparedStatement deleteVertexStatement = this.sqlStatementList
+		PreparedStatement deleteVertexStatement = sqlStatementList
 				.deleteVertex(vId, gId);
 		deleteVertexStatement.executeUpdate();
 	}
@@ -623,26 +603,26 @@ public abstract class GraphDatabase {
 	}
 
 	private void deleteEdge(DatabasePersistableEdge edge) throws SQLException {
-		this.deleteIncidencesOfEdge(edge.getId(), edge.getGId());
-		this.deleteAttributeValuesOf(edge);
+		deleteIncidencesOfEdge(edge.getId(), edge.getGId());
+		deleteAttributeValuesOf(edge);
 		this.deleteEdge(edge.getId(), edge.getGId());
 	}
 
 	private void deleteAttributeValuesOf(DatabasePersistableEdge edge)
 			throws SQLException {
-		this.deleteAttributeValuesOfEdge(edge.getId(), edge.getGId());
+		deleteAttributeValuesOfEdge(edge.getId(), edge.getGId());
 	}
 
 	private void deleteAttributeValuesOfEdge(int eId, int gId)
 			throws SQLException {
-		PreparedStatement deleteAttributesStatement = this.sqlStatementList
+		PreparedStatement deleteAttributesStatement = sqlStatementList
 				.deleteAttributeValuesOfEdge(eId, gId);
 		deleteAttributesStatement.executeUpdate();
 	}
 
 	private void deleteEdge(int eId, int gId) throws SQLException {
-		PreparedStatement deleteEdgeStatement = this.sqlStatementList
-				.deleteEdge(eId, gId);
+		PreparedStatement deleteEdgeStatement = sqlStatementList.deleteEdge(
+				eId, gId);
 		deleteEdgeStatement.executeUpdate();
 	}
 
@@ -658,7 +638,7 @@ public abstract class GraphDatabase {
 			throws GraphDatabaseException {
 		assert vertex.getIncidenceListVersion() == 0;
 		try {
-			if (this.sqlStatementList instanceof PostgreSqlStatementList) {
+			if (sqlStatementList instanceof PostgreSqlStatementList) {
 				this.reducedRoundtripInsert(vertex);
 			} else {
 				this.normalInsert(vertex);
@@ -674,7 +654,7 @@ public abstract class GraphDatabase {
 	private void normalInsert(DatabasePersistableVertex vertex)
 			throws SQLException, GraphIOException {
 		int typeId = this.getTypeIdOf(vertex);
-		PreparedStatement insertStatement = this.sqlStatementList.insertVertex(
+		PreparedStatement insertStatement = sqlStatementList.insertVertex(
 				vertex.getId(), typeId, vertex.getGId(), vertex
 						.getIncidenceListVersion(), vertex
 						.getSequenceNumberInVSeq());
@@ -682,10 +662,10 @@ public abstract class GraphDatabase {
 		SortedSet<Attribute> attributes = vertex.getAttributedElementClass()
 				.getAttributeList();
 		for (Attribute attribute : attributes) {
-			int attributeId = this.getAttributeId(vertex.getGraph(), attribute
+			int attributeId = getAttributeId(vertex.getGraph(), attribute
 					.getName());
-			String value = this.convertToString(vertex, attribute.getName());
-			insertStatement = this.sqlStatementList.insertVertexAttributeValue(
+			String value = convertToString(vertex, attribute.getName());
+			insertStatement = sqlStatementList.insertVertexAttributeValue(
 					vertex.getId(), vertex.getGId(), attributeId, value);
 			insertStatement.executeUpdate();
 		}
@@ -693,7 +673,7 @@ public abstract class GraphDatabase {
 
 	private void reducedRoundtripInsert(DatabasePersistableVertex vertex)
 			throws SQLException, GraphIOException {
-		PreparedStatement insertStatement = this.sqlStatementList
+		PreparedStatement insertStatement = sqlStatementList
 				.insertVertex(vertex);
 		insertStatement.executeUpdate();
 	}
@@ -714,7 +694,7 @@ public abstract class GraphDatabase {
 			DatabasePersistableVertex alpha, DatabasePersistableVertex omega)
 			throws GraphDatabaseException {
 		try {
-			if (this.sqlStatementList instanceof PostgreSqlStatementList) {
+			if (sqlStatementList instanceof PostgreSqlStatementList) {
 				this.reducedRoundtripInsert(edge, alpha, omega);
 			} else {
 				this.normalInsert(edge, alpha, omega);
@@ -732,31 +712,30 @@ public abstract class GraphDatabase {
 			throws SQLException, GraphIOException {
 		assert edge.isNormal();
 		int typeId = this.getTypeIdOf(edge);
-		PreparedStatement insertStatement = this.sqlStatementList.insertEdge(
-				edge.getId(), edge.getGId(), typeId, edge
+		PreparedStatement insertStatement = sqlStatementList
+				.insertEdge(edge.getId(), edge.getGId(), typeId, edge
 						.getSequenceNumberInESeq());
 		insertStatement.executeUpdate();
 
-		insertStatement = this.sqlStatementList.insertIncidence(edge.getId(),
-				alpha.getId(), edge.getGId(), edge
-						.getSequenceNumberInLambdaSeq());
+		insertStatement = sqlStatementList.insertIncidence(edge.getId(), alpha
+				.getId(), edge.getGId(), edge.getSequenceNumberInLambdaSeq());
 		insertStatement.executeUpdate();
 
 		DatabasePersistableEdge reversedEdge = (DatabasePersistableEdge) edge
 				.getReversedEdge();
-		insertStatement = this.sqlStatementList.insertIncidence(reversedEdge
-				.getId(), omega.getId(), reversedEdge.getGId(), reversedEdge
-				.getSequenceNumberInLambdaSeq());
+		insertStatement = sqlStatementList.insertIncidence(
+				reversedEdge.getId(), omega.getId(), reversedEdge.getGId(),
+				reversedEdge.getSequenceNumberInLambdaSeq());
 		insertStatement.executeUpdate();
 
 		SortedSet<Attribute> attributes = edge.getAttributedElementClass()
 				.getAttributeList();
 		for (Attribute attribute : attributes) {
-			int attributeId = this.getAttributeId(edge.getGraph(), attribute
+			int attributeId = getAttributeId(edge.getGraph(), attribute
 					.getName());
-			String value = this.convertToString(edge, attribute.getName());
-			insertStatement = this.sqlStatementList.insertEdgeAttributeValue(
-					edge.getId(), edge.getGId(), attributeId, value);
+			String value = convertToString(edge, attribute.getName());
+			insertStatement = sqlStatementList.insertEdgeAttributeValue(edge
+					.getId(), edge.getGId(), attributeId, value);
 			insertStatement.executeUpdate();
 		}
 	}
@@ -765,8 +744,8 @@ public abstract class GraphDatabase {
 			DatabasePersistableVertex alpha, DatabasePersistableVertex omega)
 			throws SQLException, GraphIOException {
 		assert edge.isNormal();
-		PreparedStatement insertStatement = this.sqlStatementList.insertEdge(
-				edge, alpha, omega);
+		PreparedStatement insertStatement = sqlStatementList.insertEdge(edge,
+				alpha, omega);
 		insertStatement.executeUpdate();
 	}
 
@@ -794,8 +773,8 @@ public abstract class GraphDatabase {
 	public void updateVersionOf(DatabasePersistableGraph graph)
 			throws GraphDatabaseException {
 		try {
-			PreparedStatement statement = this.sqlStatementList
-					.updateGraphVersion(graph.getGId(), graph.getGraphVersion());
+			PreparedStatement statement = sqlStatementList.updateGraphVersion(
+					graph.getGId(), graph.getGraphVersion());
 			statement.executeUpdate();
 		} catch (SQLException exception) {
 			exception.printStackTrace();
@@ -816,7 +795,7 @@ public abstract class GraphDatabase {
 	public void updateVertexListVersionOf(DatabasePersistableGraph graph)
 			throws GraphDatabaseException {
 		try {
-			PreparedStatement statement = this.sqlStatementList
+			PreparedStatement statement = sqlStatementList
 					.updateVertexListVersionOfGraph(graph.getGId(), graph
 							.getVertexListVersion());
 			statement.executeUpdate();
@@ -839,7 +818,7 @@ public abstract class GraphDatabase {
 	public void updateEdgeListVersionOf(DatabasePersistableGraph graph)
 			throws GraphDatabaseException {
 		try {
-			PreparedStatement statement = this.sqlStatementList
+			PreparedStatement statement = sqlStatementList
 					.updateEdgeListVersionOfGraph(graph.getGId(), graph
 							.getEdgeListVersion());
 			statement.executeUpdate();
@@ -863,10 +842,10 @@ public abstract class GraphDatabase {
 	 */
 	public void updateAttributeValueOf(DatabasePersistableGraph graph,
 			String attributeName) throws GraphDatabaseException {
-		int attributeId = this.getAttributeId(graph, attributeName);
+		int attributeId = getAttributeId(graph, attributeName);
 		try {
-			String value = this.convertToString(graph, attributeName);
-			PreparedStatement statement = this.sqlStatementList
+			String value = convertToString(graph, attributeName);
+			PreparedStatement statement = sqlStatementList
 					.updateAttributeValueOfGraph(graph.getGId(), attributeId,
 							value);
 			statement.executeUpdate();
@@ -890,10 +869,9 @@ public abstract class GraphDatabase {
 	public void updateAttributeValueOf(DatabasePersistableVertex vertex,
 			String attributeName) throws GraphDatabaseException {
 		try {
-			int attributeId = this.getAttributeId(vertex.getGraph(),
-					attributeName);
-			String value = this.convertToString(vertex, attributeName);
-			PreparedStatement statement = this.sqlStatementList
+			int attributeId = getAttributeId(vertex.getGraph(), attributeName);
+			String value = convertToString(vertex, attributeName);
+			PreparedStatement statement = sqlStatementList
 					.updateAttributeValueOfVertex(vertex.getId(), vertex
 							.getGId(), attributeId, value);
 			statement.executeUpdate();
@@ -918,10 +896,9 @@ public abstract class GraphDatabase {
 	public void updateAttributeValueOf(DatabasePersistableEdge edge,
 			String attributeName) throws GraphDatabaseException {
 		try {
-			String value = this.convertToString(edge, attributeName);
-			int attributeId = this.getAttributeId(edge.getGraph(),
-					attributeName);
-			PreparedStatement statement = this.sqlStatementList
+			String value = convertToString(edge, attributeName);
+			int attributeId = getAttributeId(edge.getGraph(), attributeName);
+			PreparedStatement statement = sqlStatementList
 					.updateAttributeValueOfEdge(edge.getId(), edge.getGId(),
 							attributeId, value);
 			statement.executeUpdate();
@@ -944,7 +921,7 @@ public abstract class GraphDatabase {
 	public void updateIncidenceListVersionOf(DatabasePersistableVertex vertex)
 			throws GraphDatabaseException {
 		try {
-			PreparedStatement statement = this.sqlStatementList
+			PreparedStatement statement = sqlStatementList
 					.updateLambdaSeqVersionOfVertex(vertex.getId(), vertex
 							.getGId(), vertex.getIncidenceListVersion());
 			statement.executeUpdate();
@@ -967,7 +944,7 @@ public abstract class GraphDatabase {
 	public void updateSequenceNumberInVSeqOf(DatabasePersistableVertex vertex)
 			throws GraphDatabaseException {
 		try {
-			PreparedStatement statement = this.sqlStatementList
+			PreparedStatement statement = sqlStatementList
 					.updateSequenceNumberInVSeqOfVertex(vertex.getId(), vertex
 							.getGId(), vertex.getSequenceNumberInVSeq());
 			statement.executeUpdate();
@@ -990,8 +967,8 @@ public abstract class GraphDatabase {
 	public void updateIdOf(int oldVId, DatabasePersistableVertex vertex)
 			throws GraphDatabaseException {
 		try {
-			PreparedStatement statement = this.sqlStatementList
-					.updateIdOfVertex(oldVId, vertex.getId(), vertex.getId());
+			PreparedStatement statement = sqlStatementList.updateIdOfVertex(
+					oldVId, vertex.getId(), vertex.getId());
 			statement.executeUpdate();
 		} catch (SQLException exception) {
 			exception.printStackTrace();
@@ -1012,8 +989,8 @@ public abstract class GraphDatabase {
 	public void updateIdOf(DatabasePersistableEdge edge, int newEId)
 			throws GraphDatabaseException {
 		try {
-			PreparedStatement statement = this.sqlStatementList.updateIdOfEdge(
-					edge.getId(), edge.getGId(), newEId);
+			PreparedStatement statement = sqlStatementList.updateIdOfEdge(edge
+					.getId(), edge.getGId(), newEId);
 			statement.executeUpdate();
 		} catch (SQLException exception) {
 			exception.printStackTrace();
@@ -1035,8 +1012,8 @@ public abstract class GraphDatabase {
 			throws GraphDatabaseException {
 		PreparedStatement statement;
 		try {
-			statement = this.sqlStatementList.updateGraphId(graph.getGId(),
-					graph.getId());
+			statement = sqlStatementList.updateGraphId(graph.getGId(), graph
+					.getId());
 			statement.executeUpdate();
 		} catch (SQLException exception) {
 			exception.printStackTrace();
@@ -1056,9 +1033,9 @@ public abstract class GraphDatabase {
 			throws GraphDatabaseException {
 		PreparedStatement statement;
 		try {
-			statement = this.sqlStatementList.updateIncidentVIdOfIncidence(
-					incidence.getIncidentEId(), incidence.getIncidentVId(),
-					incidence.getGId());
+			statement = sqlStatementList.updateIncidentVIdOfIncidence(incidence
+					.getIncidentEId(), incidence.getIncidentVId(), incidence
+					.getGId());
 			statement.executeUpdate();
 		} catch (SQLException exception) {
 			exception.printStackTrace();
@@ -1085,9 +1062,8 @@ public abstract class GraphDatabase {
 			throws GraphDatabaseException {
 		PreparedStatement statement;
 		try {
-			statement = this.sqlStatementList
-					.updateSequenceNumberInESeqOfEdge(edge.getId(), edge
-							.getGId(), edge.getSequenceNumberInESeq());
+			statement = sqlStatementList.updateSequenceNumberInESeqOfEdge(edge
+					.getId(), edge.getGId(), edge.getSequenceNumberInESeq());
 			statement.executeUpdate();
 		} catch (SQLException exception) {
 			exception.printStackTrace();
@@ -1111,7 +1087,7 @@ public abstract class GraphDatabase {
 			throws GraphDatabaseException {
 		PreparedStatement statement;
 		try {
-			statement = this.sqlStatementList
+			statement = sqlStatementList
 					.updateSequenceNumberInLambdaSeqOfIncidence(Math
 							.abs(incidence.getIncidentEId()), incidence
 							.getIncidentVId(), incidence.getGId(), incidence
@@ -1186,7 +1162,7 @@ public abstract class GraphDatabase {
 			DatabasePersistableGraph graph, ResultSet vertexData)
 			throws SQLException {
 		int typeId = vertexData.getInt(1);
-		String qualifiedTypeName = this.getTypeName(graph, typeId);
+		String qualifiedTypeName = getTypeName(graph, typeId);
 		Schema schema = graph.getSchema();
 		AttributedElementClass aec = schema
 				.getAttributedElementClass(qualifiedTypeName);
@@ -1195,7 +1171,7 @@ public abstract class GraphDatabase {
 
 	private ResultSet getVertexAndIncidenceData(int gId, int vId)
 			throws GraphDatabaseException, SQLException {
-		PreparedStatement statement = this.sqlStatementList
+		PreparedStatement statement = sqlStatementList
 				.selectVertexWithIncidences(vId, gId);
 		ResultSet resultSet = statement.executeQuery();
 		if (resultSet.next()) {
@@ -1227,13 +1203,13 @@ public abstract class GraphDatabase {
 	}
 
 	private String getAttributeName(Schema schema, int attributeId) {
-		PrimaryKeyCache cache = this.internalCache.get(schema);
+		PrimaryKeyCache cache = internalCache.get(schema);
 		return cache.getAttributeName(attributeId);
 	}
 
 	private ResultSet getAttributeDataOf(DatabasePersistableVertex vertex)
 			throws SQLException {
-		PreparedStatement statement = this.sqlStatementList
+		PreparedStatement statement = sqlStatementList
 				.selectAttributeValuesOfVertex(vertex.getId(), vertex.getGId());
 		return statement.executeQuery();
 	}
@@ -1253,9 +1229,9 @@ public abstract class GraphDatabase {
 	public DatabasePersistableEdge getEdge(int eId,
 			DatabasePersistableGraph graph) throws GraphDatabaseException {
 		try {
-			ResultSet edgeData = this.getEdgeAndIncidenceData(graph, eId);
-			DatabasePersistableEdge edge = this.instanceEdgeFrom(graph,
-					edgeData, eId);
+			ResultSet edgeData = getEdgeAndIncidenceData(graph, eId);
+			DatabasePersistableEdge edge = instanceEdgeFrom(graph, edgeData,
+					eId);
 			if (edge.getAttributedElementClass().hasAttributes()) {
 				this.setAttributesOf(edge);
 			}
@@ -1270,7 +1246,7 @@ public abstract class GraphDatabase {
 
 	private ResultSet getEdgeAndIncidenceData(DatabasePersistableGraph graph,
 			int eId) throws SQLException {
-		PreparedStatement statement = this.sqlStatementList
+		PreparedStatement statement = sqlStatementList
 				.selectEdgeWithIncidences(eId, graph.getGId());
 		ResultSet edgeData = statement.executeQuery();
 		if (edgeData.next()) {
@@ -1322,7 +1298,7 @@ public abstract class GraphDatabase {
 	@SuppressWarnings("unchecked")
 	private Class<? extends Edge> getEdgeClassFrom(
 			DatabasePersistableGraph graph, int typeId) throws SQLException {
-		String qualifiedTypeName = this.getTypeName(graph, typeId);
+		String qualifiedTypeName = getTypeName(graph, typeId);
 		Schema schema = graph.getSchema();
 		AttributedElementClass aec = schema
 				.getAttributedElementClass(qualifiedTypeName);
@@ -1333,8 +1309,8 @@ public abstract class GraphDatabase {
 			throws SQLException, NoSuchFieldException {
 		ResultSet attributeData = this.getAttributeDataOf(edge);
 		while (attributeData.next()) {
-			String attributeName = this.getAttributeName(edge.getGraph()
-					.getSchema(), attributeData.getInt(1));
+			String attributeName = getAttributeName(
+					edge.getGraph().getSchema(), attributeData.getInt(1));
 			String serializedAttributeValue = attributeData.getString(2);
 			try {
 				if (edge.getAttributedElementClass().containsAttribute(
@@ -1350,7 +1326,7 @@ public abstract class GraphDatabase {
 
 	private ResultSet getAttributeDataOf(DatabasePersistableEdge edge)
 			throws SQLException {
-		PreparedStatement statement = this.sqlStatementList
+		PreparedStatement statement = sqlStatementList
 				.selectAttributeValuesOfEdge(edge.getId(), edge.getGId());
 		return statement.executeQuery();
 	}
@@ -1367,7 +1343,7 @@ public abstract class GraphDatabase {
 	public int countVerticesOf(DatabasePersistableGraph graph)
 			throws GraphDatabaseException {
 		try {
-			PreparedStatement statement = this.sqlStatementList
+			PreparedStatement statement = sqlStatementList
 					.countVerticesOfGraph(graph.getGId());
 			ResultSet result = statement.executeQuery();
 			result.next();
@@ -1392,7 +1368,7 @@ public abstract class GraphDatabase {
 	public int countEdgesOf(DatabasePersistableGraph graph)
 			throws GraphDatabaseException {
 		try {
-			PreparedStatement statement = this.sqlStatementList
+			PreparedStatement statement = sqlStatementList
 					.countEdgesOfGraph(graph.getGId());
 			ResultSet result = statement.executeQuery();
 			result.next();
@@ -1415,17 +1391,17 @@ public abstract class GraphDatabase {
 	 */
 	public DatabasePersistableGraph getGraph(String id)
 			throws GraphDatabaseException {
-		if (this.loadedGraphs.containsKey(id)) {
-			return this.loadedGraphs.get(id);
+		if (loadedGraphs.containsKey(id)) {
+			return loadedGraphs.get(id);
 		} else {
-			return this.loadAndCacheGraph(id);
+			return loadAndCacheGraph(id);
 		}
 	}
 
 	private DatabasePersistableGraph loadAndCacheGraph(String id)
 			throws GraphDatabaseException {
-		DatabasePersistableGraph graph = this.loadGraph(id);
-		this.loadedGraphs.put(id, (GraphImpl) graph);
+		DatabasePersistableGraph graph = loadGraph(id);
+		loadedGraphs.put(id, (GraphImpl) graph);
 		return graph;
 	}
 
@@ -1453,7 +1429,7 @@ public abstract class GraphDatabase {
 		private final ResultSet result;
 
 		GraphDAO(String id) throws SQLException {
-			this.result = this.getGraphRecord(id);
+			result = getGraphRecord(id);
 		}
 
 		private ResultSet getGraphRecord(String uid) throws SQLException {
@@ -1488,8 +1464,8 @@ public abstract class GraphDatabase {
 			graph.setLoading(true);
 			graph.setPersistent(true);
 			setInstanceVariables(graph);
-			this.restoreVertexList(graph);
-			this.restoreEdgeList(graph);
+			restoreVertexList(graph);
+			restoreEdgeList(graph);
 			graph.setVCount(countVerticesOf(graph));
 			graph.setECount(countEdgesOf(graph));
 			restoreAttributes(graph);
@@ -1498,15 +1474,15 @@ public abstract class GraphDatabase {
 		}
 
 		private void setInstanceVariables(GraphImpl graph) throws SQLException {
-			graph.setGId(this.getGId());
-			graph.setGraphVersion(this.getGraphVersion());
-			graph.setVertexListVersion(this.getVertexListVersion());
-			graph.setEdgeListVersion(this.getEdgeListVersion());
+			graph.setGId(getGId());
+			graph.setGraphVersion(getGraphVersion());
+			graph.setVertexListVersion(getVertexListVersion());
+			graph.setEdgeListVersion(getEdgeListVersion());
 		}
 
 		private void restoreAttributes(DatabasePersistableGraph graph)
 				throws SQLException, NoSuchFieldException {
-			ResultSet graphAttributes = this.getGraphAttributes(this.getGId());
+			ResultSet graphAttributes = getGraphAttributes(getGId());
 			while (graphAttributes.next()) {
 				String attributeName = graphAttributes.getString(1);
 				String serializedValue = graphAttributes.getString(2);
@@ -1553,7 +1529,7 @@ public abstract class GraphDatabase {
 	@SuppressWarnings("unchecked")
 	private GraphImpl getEmptyGraphInstance(String id) throws SQLException,
 			GraphIOException {
-		Schema schema = this.getSchemaForGraph(id);
+		Schema schema = getSchemaForGraph(id);
 		GraphFactory graphFactory = schema.getGraphFactory();
 		GraphClass graphClass = schema.getGraphClass();
 		try {
@@ -1567,7 +1543,7 @@ public abstract class GraphDatabase {
 
 	private Schema getSchemaForGraph(String uid) throws SQLException,
 			GraphIOException {
-		PreparedStatement statement = this.sqlStatementList
+		PreparedStatement statement = sqlStatementList
 				.selectSchemaNameForGraph(uid);
 		ResultSet resultSet = statement.executeQuery();
 		if (resultSet.next()) {
@@ -1603,7 +1579,7 @@ public abstract class GraphDatabase {
 	 */
 	public boolean containsGraph(String id) throws GraphDatabaseException {
 		try {
-			PreparedStatement statement = this.sqlStatementList.selectGraph(id);
+			PreparedStatement statement = sqlStatementList.selectGraph(id);
 			ResultSet result = statement.executeQuery();
 			return result.next();
 		} catch (SQLException exception) {
@@ -1625,8 +1601,8 @@ public abstract class GraphDatabase {
 	 * @throws GraphDatabaseException
 	 */
 	public void insert(GraphImpl graph) throws GraphDatabaseException {
-		if (this.contains(graph.getSchema())) {
-			this.insertAndCacheGraph(graph);
+		if (contains(graph.getSchema())) {
+			insertAndCacheGraph(graph);
 		} else {
 			throw new GraphException(
 					"No schema stored in database for graph. First persist one with GraphIO.loadSchemaIntoGraphDatabase(...)");
@@ -1643,7 +1619,7 @@ public abstract class GraphDatabase {
 	 *             Check not successful.
 	 */
 	public boolean contains(Schema schema) throws GraphDatabaseException {
-		return this.containsSchema(schema.getPackagePrefix(), schema.getName());
+		return containsSchema(schema.getPackagePrefix(), schema.getName());
 	}
 
 	/**
@@ -1660,7 +1636,7 @@ public abstract class GraphDatabase {
 	public boolean containsSchema(String packagePrefix, String name)
 			throws GraphDatabaseException {
 		try {
-			PreparedStatement statement = this.sqlStatementList.selectSchemaId(
+			PreparedStatement statement = sqlStatementList.selectSchemaId(
 					packagePrefix, name);
 			ResultSet result = statement.executeQuery();
 			return result.next();
@@ -1674,8 +1650,8 @@ public abstract class GraphDatabase {
 	private void insertAndCacheGraph(GraphImpl graph)
 			throws GraphDatabaseException {
 		try {
-			this.insertGraph(graph);
-			this.cacheGraph(graph);
+			insertGraph(graph);
+			cacheGraph(graph);
 		} catch (Exception exception) {
 			throw new GraphDatabaseException("Graph " + graph.getId()
 					+ " could not be inserted into database.", exception);
@@ -1684,22 +1660,22 @@ public abstract class GraphDatabase {
 
 	private void insertGraph(DatabasePersistableGraph graph)
 			throws SQLException, GraphIOException {
-		if (!this.haveTypesAndAttributesBeenPreloaded(graph)) {
+		if (!haveTypesAndAttributesBeenPreloaded(graph)) {
 			preloadTypesAndAttributes(graph);
 		}
-		this.getTypeIdAndInsertGraph(graph);
-		this.insertAttributeValuesOf(graph);
+		getTypeIdAndInsertGraph(graph);
+		insertAttributeValuesOf(graph);
 		graph.setPersistent(true);
 		graph.setInitialized(true);
 	}
 
 	private void cacheGraph(GraphImpl graph) {
-		this.loadedGraphs.put(graph.getId(), graph);
+		loadedGraphs.put(graph.getId(), graph);
 	}
 
 	private boolean haveTypesAndAttributesBeenPreloaded(
 			DatabasePersistableGraph graph) {
-		return this.internalCache.containsKey(graph.getSchema());
+		return internalCache.containsKey(graph.getSchema());
 	}
 
 	private void preloadTypesAndAttributes(DatabasePersistableGraph graph)
@@ -1707,14 +1683,13 @@ public abstract class GraphDatabase {
 		PrimaryKeyCache preloadedTypesAndAttributes = new PrimaryKeyCache();
 		preloadTypesOf(graph.getSchema(), preloadedTypesAndAttributes);
 		preloadAttributesOf(graph.getSchema(), preloadedTypesAndAttributes);
-		this.internalCache.put(graph.getSchema(), preloadedTypesAndAttributes);
+		internalCache.put(graph.getSchema(), preloadedTypesAndAttributes);
 	}
 
 	private void preloadTypesOf(Schema schema, PrimaryKeyCache typeCollector)
 			throws SQLException {
-		PreparedStatement statement = this.sqlStatementList
-				.selectTypesOfSchema(schema.getPackagePrefix(), schema
-						.getName());
+		PreparedStatement statement = sqlStatementList.selectTypesOfSchema(
+				schema.getPackagePrefix(), schema.getName());
 		ResultSet result = statement.executeQuery();
 		while (result.next()) {
 			typeCollector.addType(result.getInt(2), result.getString(1));
@@ -1723,7 +1698,7 @@ public abstract class GraphDatabase {
 
 	private void preloadAttributesOf(Schema schema,
 			PrimaryKeyCache attributeCollector) throws SQLException {
-		PreparedStatement statement = this.sqlStatementList
+		PreparedStatement statement = sqlStatementList
 				.selectAttributesOfSchema(schema.getPackagePrefix(), schema
 						.getName());
 		ResultSet result = statement.executeQuery();
@@ -1741,12 +1716,12 @@ public abstract class GraphDatabase {
 	}
 
 	private int getTypeIdOf(Graph graph) {
-		PrimaryKeyCache cache = this.internalCache.get(graph.getSchema());
+		PrimaryKeyCache cache = internalCache.get(graph.getSchema());
 		return cache.getTypeId(graph.getGraphClass().getQualifiedName());
 	}
 
 	private String getTypeName(Graph graph, int typeId) {
-		PrimaryKeyCache cache = this.internalCache.get(graph.getSchema());
+		PrimaryKeyCache cache = internalCache.get(graph.getSchema());
 		return cache.getTypeName(typeId);
 	}
 
@@ -1760,11 +1735,11 @@ public abstract class GraphDatabase {
 	protected int getTypeIdOf(DatabasePersistableVertex vertex) {
 		String vertexTypeName = vertex.getAttributedElementClass()
 				.getQualifiedName();
-		return this.getTypeIdOfGraphElement(vertex.getGraph(), vertexTypeName);
+		return getTypeIdOfGraphElement(vertex.getGraph(), vertexTypeName);
 	}
 
 	private int getTypeIdOfGraphElement(Graph graph, String name) {
-		PrimaryKeyCache cache = this.internalCache.get(graph.getSchema());
+		PrimaryKeyCache cache = internalCache.get(graph.getSchema());
 		return cache.getTypeId(name);
 	}
 
@@ -1773,15 +1748,15 @@ public abstract class GraphDatabase {
 		SortedSet<Attribute> attributes = graph.getAttributedElementClass()
 				.getAttributeList();
 		for (Attribute attribute : attributes) {
-			this.insertAttributeValue(graph, attribute.getName());
+			insertAttributeValue(graph, attribute.getName());
 		}
 	}
 
 	private void insertAttributeValue(DatabasePersistableGraph graph,
 			String attributeName) throws SQLException, GraphIOException {
-		int attributeId = this.getAttributeId(graph, attributeName);
-		String value = this.convertToString(graph, attributeName);
-		PreparedStatement statement = this.sqlStatementList
+		int attributeId = getAttributeId(graph, attributeName);
+		String value = convertToString(graph, attributeName);
+		PreparedStatement statement = sqlStatementList
 				.insertGraphAttributeValue(graph.getGId(), attributeId, value);
 		statement.executeUpdate();
 	}
@@ -1796,7 +1771,7 @@ public abstract class GraphDatabase {
 	 * @return id of graph attribute.
 	 */
 	protected int getAttributeId(Graph graph, String attributeName) {
-		PrimaryKeyCache cache = this.internalCache.get(graph.getSchema());
+		PrimaryKeyCache cache = internalCache.get(graph.getSchema());
 		return cache.getAttributeId(attributeName);
 	}
 
@@ -1825,7 +1800,7 @@ public abstract class GraphDatabase {
 
 	private int insertGraphRecord(DatabasePersistableGraph graph, int typeId)
 			throws SQLException {
-		PreparedStatement statement = this.sqlStatementList.insertGraph(graph
+		PreparedStatement statement = sqlStatementList.insertGraph(graph
 				.getId(), graph.getGraphVersion(),
 				graph.getVertexListVersion(), graph.getEdgeListVersion(),
 				typeId);
@@ -1854,8 +1829,8 @@ public abstract class GraphDatabase {
 	 *            Definition of schema in TG notation.
 	 */
 	public void insertSchema(Schema schema) throws GraphDatabaseException {
-		if (!this.containsSchema(schema.getPackagePrefix(), schema.getName())) {
-			this.insertSchemaInTransaction(schema);
+		if (!containsSchema(schema.getPackagePrefix(), schema.getName())) {
+			insertSchemaInTransaction(schema);
 		} else {
 			throw new GraphDatabaseException("A schema with name "
 					+ schema.getPackagePrefix() + "." + schema.getName()
@@ -1867,14 +1842,14 @@ public abstract class GraphDatabase {
 			throws GraphDatabaseException {
 		try {
 			int schemaId = insertSchemaRecord(schema);
-			this.insertDefinedTypesOf(schema, schemaId);
+			insertDefinedTypesOf(schema, schemaId);
 		} catch (Exception exception) {
 			throw new GraphDatabaseException(
 					"Schema could not be inserted into database.", exception);
 		}
 	}
-	
-	private String schemaToString(final Schema schema){
+
+	private String schemaToString(final Schema schema) {
 		String schemaDefinition = null;
 
 		try {
@@ -1928,8 +1903,8 @@ public abstract class GraphDatabase {
 	}
 
 	private int insertSchemaRecord(Schema schema) throws SQLException {
-		PreparedStatement statement = this.sqlStatementList.insertSchema(
-				schema, schemaToString(schema));
+		PreparedStatement statement = sqlStatementList.insertSchema(schema,
+				schemaToString(schema));
 		statement.executeUpdate();
 		ResultSet result = statement.getGeneratedKeys();
 		if (result.next()) {
@@ -1943,23 +1918,22 @@ public abstract class GraphDatabase {
 
 	private void insertDefinedTypesOf(Schema schema, int schemaId)
 			throws SQLException {
-		this.insertGraphClass(schema.getGraphClass(), schemaId);
-		this.insertVertexClasses(schema.getVertexClassesInTopologicalOrder(),
+		insertGraphClass(schema.getGraphClass(), schemaId);
+		insertVertexClasses(schema.getVertexClassesInTopologicalOrder(),
 				schemaId);
-		this.insertEdgeClasses(schema.getEdgeClassesInTopologicalOrder(),
-				schemaId);
-		this.insertAttributes(schemaId);
+		insertEdgeClasses(schema.getEdgeClassesInTopologicalOrder(), schemaId);
+		insertAttributes(schemaId);
 	}
 
 	private void insertGraphClass(GraphClass graphClass, int schemaId)
 			throws SQLException {
-		this.insertType(graphClass, schemaId);
-		this.collectAttributeNamesOf(graphClass);
+		insertType(graphClass, schemaId);
+		collectAttributeNamesOf(graphClass);
 	}
 
 	private void insertType(AttributedElementClass attributedElementClass,
 			int schemaId) throws SQLException {
-		PreparedStatement statement = this.sqlStatementList.insertType(
+		PreparedStatement statement = sqlStatementList.insertType(
 				attributedElementClass.getQualifiedName(), schemaId);
 		statement.executeUpdate();
 	}
@@ -1967,13 +1941,13 @@ public abstract class GraphDatabase {
 	private void collectAttributeNamesOf(
 			AttributedElementClass attributedElementClass) {
 		for (Attribute attribute : attributedElementClass.getAttributeList()) {
-			this.attributeNames.add(attribute.getName());
+			attributeNames.add(attribute.getName());
 		}
 	}
 
 	private void insertAttribute(String attributeName, int schemaId)
 			throws SQLException {
-		PreparedStatement statement = this.sqlStatementList.insertAttribute(
+		PreparedStatement statement = sqlStatementList.insertAttribute(
 				attributeName, schemaId);
 		statement.executeUpdate();
 	}
@@ -1981,22 +1955,22 @@ public abstract class GraphDatabase {
 	private void insertVertexClasses(List<VertexClass> vertexClasses,
 			int schemaId) throws SQLException {
 		for (VertexClass vertexClass : vertexClasses) {
-			this.insertType(vertexClass, schemaId);
-			this.collectAttributeNamesOf(vertexClass);
+			insertType(vertexClass, schemaId);
+			collectAttributeNamesOf(vertexClass);
 		}
 	}
 
 	private void insertEdgeClasses(List<EdgeClass> edgeClasses, int schemaId)
 			throws SQLException {
 		for (EdgeClass edgeClass : edgeClasses) {
-			this.insertType(edgeClass, schemaId);
-			this.collectAttributeNamesOf(edgeClass);
+			insertType(edgeClass, schemaId);
+			collectAttributeNamesOf(edgeClass);
 		}
 	}
 
 	private void insertAttributes(int schemaId) throws SQLException {
-		for (String attributeName : this.attributeNames) {
-			this.insertAttribute(attributeName, schemaId);
+		for (String attributeName : attributeNames) {
+			insertAttribute(attributeName, schemaId);
 		}
 	}
 
@@ -2013,7 +1987,7 @@ public abstract class GraphDatabase {
 	public void reorganizeVertexList(GraphImpl graph, long start)
 			throws GraphDatabaseException {
 		try {
-			CallableStatement statement = this.sqlStatementList
+			CallableStatement statement = sqlStatementList
 					.createReorganizeVertexListCall(graph.getGId(), start);
 			statement.execute();
 		} catch (SQLException exception) {
@@ -2038,7 +2012,7 @@ public abstract class GraphDatabase {
 	public void reorganizeEdgeList(GraphImpl graph, long start)
 			throws GraphDatabaseException {
 		try {
-			CallableStatement statement = this.sqlStatementList
+			CallableStatement statement = sqlStatementList
 					.createReorganizeEdgeListCall(graph.getGId(), start);
 			statement.execute();
 		} catch (SQLException exception) {
@@ -2063,7 +2037,7 @@ public abstract class GraphDatabase {
 	public void reorganizeIncidenceList(DatabasePersistableVertex vertex,
 			long start) throws GraphDatabaseException {
 		try {
-			CallableStatement statement = this.sqlStatementList
+			CallableStatement statement = sqlStatementList
 					.createReorganizeIncidenceListCall(vertex.getId(), vertex
 							.getGId(), start);
 			statement.execute();
@@ -2084,7 +2058,7 @@ public abstract class GraphDatabase {
 	 */
 	public boolean isConnected() throws GraphDatabaseException {
 		try {
-			return !this.connection.isClosed();
+			return !connection.isClosed();
 		} catch (SQLException exception) {
 			exception.printStackTrace();
 			throw new GraphDatabaseException(
@@ -2112,7 +2086,7 @@ public abstract class GraphDatabase {
 			// delete them from memory and from database
 			// then attributes
 			// delete them from memory and from database
-			this.deleteSchemaRecord(prefix, name);
+			deleteSchemaRecord(prefix, name);
 		} catch (SQLException exception) {
 			throw new GraphDatabaseException("Graph schema " + prefix + "."
 					+ name + " could not be deleted.", exception);
@@ -2121,8 +2095,8 @@ public abstract class GraphDatabase {
 
 	private void deleteSchemaRecord(String prefix, String name)
 			throws SQLException {
-		PreparedStatement statement = this.sqlStatementList.deleteSchema(
-				prefix, name);
+		PreparedStatement statement = sqlStatementList.deleteSchema(prefix,
+				name);
 		statement.executeUpdate();
 	}
 
@@ -2138,8 +2112,7 @@ public abstract class GraphDatabase {
 			throws GraphDatabaseException {
 		try {
 			ArrayList<String> ids = new ArrayList<String>();
-			PreparedStatement statement = this.sqlStatementList
-					.selectIdOfGraphs();
+			PreparedStatement statement = sqlStatementList.selectIdOfGraphs();
 			ResultSet result = statement.executeQuery();
 			while (result.next()) {
 				ids.add(result.getString(1));
@@ -2165,7 +2138,7 @@ public abstract class GraphDatabase {
 	public String getSchemaDefinition(String packagePrefix, String schemaName)
 			throws GraphDatabaseException {
 		try {
-			PreparedStatement statement = this.sqlStatementList
+			PreparedStatement statement = sqlStatementList
 					.selectSchemaDefinition(packagePrefix, schemaName);
 			statement.executeQuery();
 			ResultSet result = statement.getResultSet();
@@ -2183,7 +2156,7 @@ public abstract class GraphDatabase {
 	}
 
 	public String getUrl() {
-		return this.url;
+		return url;
 	}
 
 	protected enum OptimizationMode {
@@ -2192,7 +2165,7 @@ public abstract class GraphDatabase {
 
 	public void rollback() throws GraphDatabaseException {
 		try {
-			this.connection.rollback();
+			connection.rollback();
 		} catch (SQLException exception) {
 			exception.printStackTrace();
 			throw new GraphDatabaseException(
@@ -2201,168 +2174,160 @@ public abstract class GraphDatabase {
 	}
 
 	protected void addPrimaryKeyConstraints() throws SQLException {
-		PreparedStatement statement = this.sqlStatementList
+		PreparedStatement statement = sqlStatementList
 				.addPrimaryKeyConstraintOnVertexTable();
 		statement.execute();
-		statement = this.sqlStatementList.addPrimaryKeyConstraintOnEdgeTable();
+		statement = sqlStatementList.addPrimaryKeyConstraintOnEdgeTable();
 		statement.execute();
-		statement = this.sqlStatementList
-				.addPrimaryKeyConstraintOnIncidenceTable();
+		statement = sqlStatementList.addPrimaryKeyConstraintOnIncidenceTable();
 		statement.execute();
-		statement = this.sqlStatementList
+		statement = sqlStatementList
 				.addPrimaryKeyConstraintOnVertexAttributeValueTable();
 		statement.execute();
-		statement = this.sqlStatementList
+		statement = sqlStatementList
 				.addPrimaryKeyConstraintOnEdgeAttributeValueTable();
 		statement.execute();
 	}
 
 	protected void addForeignKeyConstraints() throws SQLException {
-		PreparedStatement statement = this.sqlStatementList
+		PreparedStatement statement = sqlStatementList
 				.addForeignKeyConstraintOnGraphColumnOfVertexTable();
 		statement.execute();
-		statement = this.sqlStatementList
+		statement = sqlStatementList
 				.addForeignKeyConstraintOnTypeColumnOfVertexTable();
 		statement.execute();
-		statement = this.sqlStatementList
+		statement = sqlStatementList
 				.addForeignKeyConstraintOnGraphColumnOfEdgeTable();
 		statement.execute();
-		statement = this.sqlStatementList
+		statement = sqlStatementList
 				.addForeignKeyConstraintOnTypeColumnOfEdgeTable();
 		statement.execute();
-		statement = this.sqlStatementList
+		statement = sqlStatementList
 				.addForeignKeyConstraintOnGraphColumnOfIncidenceTable();
 		statement.execute();
-		statement = this.sqlStatementList
+		statement = sqlStatementList
 				.addForeignKeyConstraintOnEdgeColumnOfIncidenceTable();
 		statement.execute();
-		statement = this.sqlStatementList
+		statement = sqlStatementList
 				.addForeignKeyConstraintOnVertexColumnOfIncidenceTable();
 		statement.execute();
-		statement = this.sqlStatementList
+		statement = sqlStatementList
 				.addForeignKeyConstraintOnGraphColumnOfVertexAttributeValueTable();
 		statement.execute();
-		statement = this.sqlStatementList
+		statement = sqlStatementList
 				.addForeignKeyConstraintOnVertexColumnOfVertexAttributeValueTable();
 		statement.execute();
-		statement = this.sqlStatementList
+		statement = sqlStatementList
 				.addForeignKeyConstraintOnAttributeColumnOfVertexAttributeValueTable();
 		statement.execute();
-		statement = this.sqlStatementList
+		statement = sqlStatementList
 				.addForeignKeyConstraintOnGraphColumnOfEdgeAttributeValueTable();
 		statement.execute();
-		statement = this.sqlStatementList
+		statement = sqlStatementList
 				.addForeignKeyConstraintOnEdgeColumnOfEdgeAttributeValueTable();
 		statement.execute();
-		statement = this.sqlStatementList
+		statement = sqlStatementList
 				.addForeignKeyConstraintOnAttributeColumnOfEdgeAttributeValueTable();
 		statement.execute();
 	}
 
 	protected void addIndices() throws SQLException {
-		PreparedStatement statement = this.sqlStatementList
-				.addIndexOnLambdaSeq();
+		PreparedStatement statement = sqlStatementList.addIndexOnLambdaSeq();
 		statement.execute();
 	}
 
 	public void optimizeForGraphTraversal() throws GraphDatabaseException {
 		if (mode != OptimizationMode.GRAPH_TRAVERSAL) {
-			this.changeModeToGraphTraversal();
+			changeModeToGraphTraversal();
 		}
 	}
 
 	public void optimizeForBulkImport() throws GraphDatabaseException {
 		if (mode != OptimizationMode.BULK_IMPORT) {
-			this.changeModeToBulkImport();
+			changeModeToBulkImport();
 		}
 	}
 
 	public void optimizeForGraphCreation() throws GraphDatabaseException {
-		if (this.mode != OptimizationMode.GRAPH_CREATION) {
-			this.changeModeToGraphCreation();
+		if (mode != OptimizationMode.GRAPH_CREATION) {
+			changeModeToGraphCreation();
 		}
 	}
 
 	private void changeModeToGraphTraversal() throws GraphDatabaseException {
 		try {
-			this.changeModeToGraphTraversalInTransaction();
-			this.mode = OptimizationMode.GRAPH_TRAVERSAL;
+			changeModeToGraphTraversalInTransaction();
+			mode = OptimizationMode.GRAPH_TRAVERSAL;
 		} catch (SQLException exception) {
 			exception.printStackTrace();
-			this.rollback();
+			rollback();
 			throw new GraphDatabaseException("Could not optimize database "
-					+ this.getUrl() + " for graph traversal.", exception);
-		} finally {
-			this.setOptimalAutoCommitMode();
+					+ getUrl() + " for graph traversal.", exception);
 		}
 	}
 
 	private void changeModeToBulkImport() throws GraphDatabaseException {
 		try {
-			this.changeModeToBulkImportInTransaction();
-			this.mode = OptimizationMode.BULK_IMPORT;
+			changeModeToBulkImportInTransaction();
+			mode = OptimizationMode.BULK_IMPORT;
 		} catch (SQLException exception) {
 			exception.printStackTrace();
-			this.rollback();
+			rollback();
 			throw new GraphDatabaseException("Could not optimize database "
-					+ this.getUrl() + " for bulk import.", exception);
-		} finally {
-			this.setOptimalAutoCommitMode();
+					+ getUrl() + " for bulk import.", exception);
 		}
 	}
 
 	private void changeModeToGraphCreation() throws GraphDatabaseException {
 		try {
-			this.changeModeToGraphCreationInTransaction();
-			this.mode = OptimizationMode.GRAPH_CREATION;
+			changeModeToGraphCreationInTransaction();
+			mode = OptimizationMode.GRAPH_CREATION;
 		} catch (SQLException exception) {
 			exception.printStackTrace();
-			this.rollback();
+			rollback();
 			throw new GraphDatabaseException(
 					"Could not optimize database for graph creation.",
 					exception);
-		} finally {
-			this.setOptimalAutoCommitMode();
 		}
 	}
 
 	private void changeModeToGraphTraversalInTransaction()
 			throws GraphDatabaseException, SQLException {
-		this.beginTransaction();
-		if (this.mode == OptimizationMode.BULK_IMPORT) {
-			this.changeFromBulkImportToGraphTraversal();
-		} else if (this.mode == OptimizationMode.GRAPH_CREATION) {
-			this.changeFromGraphCreationToGraphTraversal();
+		beginTransaction();
+		if (mode == OptimizationMode.BULK_IMPORT) {
+			changeFromBulkImportToGraphTraversal();
+		} else if (mode == OptimizationMode.GRAPH_CREATION) {
+			changeFromGraphCreationToGraphTraversal();
 		} else {
 			throw new GraphDatabaseException("Undefined optimization mode.");
 		}
-		this.commitTransaction();
+		commitTransaction();
 	}
 
 	private void changeModeToBulkImportInTransaction()
 			throws GraphDatabaseException, SQLException {
-		this.beginTransaction();
-		if (this.mode == OptimizationMode.GRAPH_CREATION) {
-			this.changeFromGraphCreationToBulkImport();
-		} else if (this.mode == OptimizationMode.GRAPH_TRAVERSAL) {
-			this.changeFromGraphTraversalToBulkImport();
+		beginTransaction();
+		if (mode == OptimizationMode.GRAPH_CREATION) {
+			changeFromGraphCreationToBulkImport();
+		} else if (mode == OptimizationMode.GRAPH_TRAVERSAL) {
+			changeFromGraphTraversalToBulkImport();
 		} else {
 			throw new GraphDatabaseException("Undefined optimization mode.");
 		}
-		this.commitTransaction();
+		commitTransaction();
 	}
 
 	private void changeModeToGraphCreationInTransaction()
 			throws GraphDatabaseException, SQLException {
-		this.beginTransaction();
-		if (this.mode == OptimizationMode.GRAPH_TRAVERSAL) {
-			this.changeFromGraphTraversalToGraphCreation();
-		} else if (this.mode == OptimizationMode.BULK_IMPORT) {
-			this.changeFromBulkImportToGraphCreation();
+		beginTransaction();
+		if (mode == OptimizationMode.GRAPH_TRAVERSAL) {
+			changeFromGraphTraversalToGraphCreation();
+		} else if (mode == OptimizationMode.BULK_IMPORT) {
+			changeFromBulkImportToGraphCreation();
 		} else {
 			throw new GraphDatabaseException("Undefined optimization mode.");
 		}
-		this.commitTransaction();
+		commitTransaction();
 	}
 
 	protected abstract void changeFromBulkImportToGraphTraversal()
@@ -2383,54 +2348,49 @@ public abstract class GraphDatabase {
 	protected abstract void changeFromBulkImportToGraphCreation()
 			throws SQLException;
 
-	protected abstract void setOptimalAutoCommitMode()
-			throws GraphDatabaseException;
-
 	public void applyDbSchema() throws GraphDatabaseException {
 		try {
-			this.applyDbSchemaInTransaction();
-			this.mode = OptimizationMode.GRAPH_CREATION;
+			applyDbSchemaInTransaction();
+			mode = OptimizationMode.GRAPH_CREATION;
 		} catch (SQLException exception) {
 			exception.printStackTrace();
-			this.rollback();
+			rollback();
 			throw new GraphDatabaseException(
 					"Generic database schema could not be applied to database "
-							+ this.getUrl(), exception);
-		} finally {
-			this.setOptimalAutoCommitMode();
+							+ getUrl(), exception);
 		}
 	}
 
 	private void applyDbSchemaInTransaction() throws GraphDatabaseException,
 			SQLException {
-		this.beginTransaction();
-		this.createTables();
-		this.applyVendorSpecificDbSchema();
-		this.commitTransaction();
+		beginTransaction();
+		createTables();
+		applyVendorSpecificDbSchema();
+		commitTransaction();
 	}
 
 	protected void createTables() throws SQLException {
-		PreparedStatement statement = this.sqlStatementList
+		PreparedStatement statement = sqlStatementList
 				.createGraphSchemaTableWithConstraints();
 		statement.execute();
-		statement = this.sqlStatementList.createTypeTableWithConstraints();
+		statement = sqlStatementList.createTypeTableWithConstraints();
 		statement.execute();
-		statement = this.sqlStatementList.createGraphTableWithConstraints();
+		statement = sqlStatementList.createGraphTableWithConstraints();
 		statement.execute();
-		statement = this.sqlStatementList.createVertexTable();
+		statement = sqlStatementList.createVertexTable();
 		statement.execute();
-		statement = this.sqlStatementList.createEdgeTable();
+		statement = sqlStatementList.createEdgeTable();
 		statement.execute();
-		statement = this.sqlStatementList.createIncidenceTable();
+		statement = sqlStatementList.createIncidenceTable();
 		statement.execute();
-		statement = this.sqlStatementList.createAttributeTableWithConstraints();
+		statement = sqlStatementList.createAttributeTableWithConstraints();
 		statement.execute();
-		statement = this.sqlStatementList
+		statement = sqlStatementList
 				.createGraphAttributeValueTableWithConstraints();
 		statement.execute();
-		statement = this.sqlStatementList.createVertexAttributeValueTable();
+		statement = sqlStatementList.createVertexAttributeValueTable();
 		statement.execute();
-		statement = this.sqlStatementList.createEdgeAttributeValueTable();
+		statement = sqlStatementList.createEdgeAttributeValueTable();
 		statement.execute();
 	}
 
@@ -2438,81 +2398,78 @@ public abstract class GraphDatabase {
 			throws GraphDatabaseException, SQLException;
 
 	protected void addStoredProcedures() throws SQLException {
-		this.sqlStatementList.createStoredProcedureToReorganizeEdgeList();
-		this.sqlStatementList.createStoredProcedureToReorganizeVertexList();
-		this.sqlStatementList.createStoredProcedureToReorganizeIncidenceList();
+		sqlStatementList.createStoredProcedureToReorganizeEdgeList();
+		sqlStatementList.createStoredProcedureToReorganizeVertexList();
+		sqlStatementList.createStoredProcedureToReorganizeIncidenceList();
 	}
 
 	protected void dropPrimaryKeyConstraints() throws SQLException {
-		PreparedStatement statement = this.sqlStatementList
+		PreparedStatement statement = sqlStatementList
 				.dropPrimaryKeyConstraintFromVertexAttributeValueTable();
 		statement.execute();
-		statement = this.sqlStatementList
+		statement = sqlStatementList
 				.dropPrimaryKeyConstraintFromEdgeAttributeValueTable();
 		statement.execute();
-		statement = this.sqlStatementList
+		statement = sqlStatementList
 				.dropPrimaryKeyConstraintFromIncidenceTable();
 		statement.execute();
-		statement = this.sqlStatementList
-				.dropPrimaryKeyConstraintFromEdgeTable();
+		statement = sqlStatementList.dropPrimaryKeyConstraintFromEdgeTable();
 		statement.execute();
-		statement = this.sqlStatementList
-				.dropPrimaryKeyConstraintFromVertexTable();
+		statement = sqlStatementList.dropPrimaryKeyConstraintFromVertexTable();
 		statement.execute();
-		statement = this.sqlStatementList
+		statement = sqlStatementList
 				.dropPrimaryKeyConstraintFromIncidenceTable();
 		statement.execute();
 	}
 
 	protected void dropIndices() throws SQLException {
-		PreparedStatement statement = this.sqlStatementList
-				.dropIndexOnLambdaSeq();
+		PreparedStatement statement = sqlStatementList.dropIndexOnLambdaSeq();
 		statement.execute();
 	}
 
 	public void clearAllTables() throws SQLException {
-		PreparedStatement statement = this.sqlStatementList.clearAllTables();
+		PreparedStatement statement = sqlStatementList.clearAllTables();
 		statement.execute();
 	}
 
 	protected void dropForeignKeyConstraints() throws SQLException {
-		PreparedStatement statement = this.sqlStatementList
+		PreparedStatement statement = sqlStatementList
 				.dropForeignKeyConstraintFromGraphColumnOfVertexTable();
 		statement.execute();
-		statement = this.sqlStatementList
+		statement = sqlStatementList
 				.dropForeignKeyConstraintFromTypeColumnOfVertexTable();
 		statement.execute();
-		statement = this.sqlStatementList
+		statement = sqlStatementList
 				.dropForeignKeyConstraintFromGraphColumnOfEdgeTable();
 		statement.execute();
-		statement = this.sqlStatementList
+		statement = sqlStatementList
 				.dropForeignKeyConstraintFromTypeColumnOfEdgeTable();
 		statement.execute();
-		statement = this.sqlStatementList
+		statement = sqlStatementList
 				.dropForeignKeyConstraintFromEdgeColumnOfIncidenceTable();
 		statement.execute();
-		statement = this.sqlStatementList
+		statement = sqlStatementList
 				.dropForeignKeyConstraintFromGraphColumnOfIncidenceTable();
 		statement.execute();
-		statement = this.sqlStatementList
+		statement = sqlStatementList
 				.dropForeignKeyConstraintFromVertexColumnOfIncidenceTable();
 		statement.execute();
-		statement = this.sqlStatementList
+		statement = sqlStatementList
 				.dropForeignKeyConstraintFromGraphColumnOfVertexAttributeValueTable();
 		statement.execute();
-		statement = this.sqlStatementList
+		statement = sqlStatementList
 				.dropForeignKeyConstraintFromVertexColumnOfVertexAttributeValueTable();
 		statement.execute();
-		statement = this.sqlStatementList
+		statement = sqlStatementList
 				.dropForeignKeyConstraintFromAttributeColumnOfVertexAttributeValueTable();
 		statement.execute();
-		statement = this.sqlStatementList
+		statement = sqlStatementList
 				.dropForeignKeyConstraintFromGraphColumnOfEdgeAttributeValueTable();
 		statement.execute();
-		statement = this.sqlStatementList
+		statement = sqlStatementList
 				.dropForeignKeyConstraintFromEdgeColumnOfEdgeAttributeValueTable();
 		statement.execute();
-		statement = this.sqlStatementList
+		statement = sqlStatementList
 				.dropForeignKeyConstraintFromAttributeColumnOfEdgeAttributeValueTable();
 		statement.execute();
 	}

@@ -28,7 +28,7 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-package de.uni_koblenz.jgralab.impl.db;
+ package de.uni_koblenz.jgralab.impl.db;
 
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
@@ -67,7 +67,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement createGraphSchemaTableWithConstraints()
 			throws SQLException {
-		return this.connection.prepareStatement(CREATE_GRAPH_SCHEMA_TABLE);
+		return connection.prepareStatement(CREATE_GRAPH_SCHEMA_TABLE);
 	}
 
 	private final String CREATE_TYPE_TABLE = "CREATE SEQUENCE \"typeIdSequence\";"
@@ -84,7 +84,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement createTypeTableWithConstraints()
 			throws SQLException {
-		return this.connection.prepareStatement(CREATE_TYPE_TABLE);
+		return connection.prepareStatement(CREATE_TYPE_TABLE);
 	}
 
 	private final String CREATE_GRAPH_TABLE = "CREATE SEQUENCE \"graphIdSequence\";"
@@ -102,7 +102,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement createGraphTableWithConstraints()
 			throws SQLException {
-		return this.connection.prepareStatement(CREATE_GRAPH_TABLE);
+		return connection.prepareStatement(CREATE_GRAPH_TABLE);
 	}
 
 	private final String CREATE_VERTEX_TABLE = "CREATE TABLE \""
@@ -115,7 +115,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 
 	@Override
 	public PreparedStatement createVertexTable() throws SQLException {
-		return this.connection.prepareStatement(CREATE_VERTEX_TABLE);
+		return connection.prepareStatement(CREATE_VERTEX_TABLE);
 	}
 
 	private final String ADD_PRIMARY_KEY_CONSTRAINT_ON_VERTEX_TABLE = "ALTER TABLE \""
@@ -125,7 +125,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement addPrimaryKeyConstraintOnVertexTable()
 			throws SQLException {
-		return this.connection
+		return connection
 				.prepareStatement(ADD_PRIMARY_KEY_CONSTRAINT_ON_VERTEX_TABLE);
 	}
 
@@ -136,7 +136,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement dropPrimaryKeyConstraintFromVertexTable()
 			throws SQLException {
-		return this.connection
+		return connection
 				.prepareStatement(DROP_PRIMARY_KEY_CONSTRAINT_FROM_VERTEX_TABLE);
 	}
 
@@ -148,7 +148,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement addForeignKeyConstraintOnGraphColumnOfVertexTable()
 			throws SQLException {
-		return this.connection
+		return connection
 				.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_GRAPH_OF_VERTEX);
 	}
 
@@ -160,7 +160,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement addForeignKeyConstraintOnTypeColumnOfVertexTable()
 			throws SQLException {
-		return this.connection
+		return connection
 				.prepareStatement(ADD_FOREIGN_KEY_CONTRAINT_ON_VERTEX_TYPE);
 	}
 
@@ -171,7 +171,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement dropForeignKeyConstraintFromGraphColumnOfVertexTable()
 			throws SQLException {
-		return this.connection
+		return connection
 				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINTS_FROM_GRAPH_OF_VERTEX);
 	}
 
@@ -182,7 +182,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement dropForeignKeyConstraintFromTypeColumnOfVertexTable()
 			throws SQLException {
-		return this.connection
+		return connection
 				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_TYPE_COLUMN_OF_VERTEX_TABLE);
 	}
 
@@ -193,7 +193,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 
 	@Override
 	public PreparedStatement createEdgeTable() throws SQLException {
-		return this.connection.prepareStatement(CREATE_EDGE_TABLE);
+		return connection.prepareStatement(CREATE_EDGE_TABLE);
 	}
 
 	private final String ADD_PRIMARY_KEY_CONSTRAINT_ON_EDGE_TABLE = "ALTER TABLE \""
@@ -203,7 +203,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement addPrimaryKeyConstraintOnEdgeTable()
 			throws SQLException {
-		return this.connection
+		return connection
 				.prepareStatement(ADD_PRIMARY_KEY_CONSTRAINT_ON_EDGE_TABLE);
 	}
 
@@ -214,7 +214,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement dropPrimaryKeyConstraintFromEdgeTable()
 			throws SQLException {
-		return this.connection
+		return connection
 				.prepareStatement(DROP_PRIMARY_KEY_CONSTRAINT_FROM_EDGE_TABLE);
 	}
 
@@ -226,7 +226,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement addForeignKeyConstraintOnGraphColumnOfEdgeTable()
 			throws SQLException {
-		return this.connection
+		return connection
 				.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_GRAPH_OF_EDGE);
 	}
 
@@ -238,7 +238,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement addForeignKeyConstraintOnTypeColumnOfEdgeTable()
 			throws SQLException {
-		return this.connection
+		return connection
 				.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_EDGE_TYPE);
 	}
 
@@ -249,7 +249,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement dropForeignKeyConstraintFromGraphColumnOfEdgeTable()
 			throws SQLException {
-		return this.connection
+		return connection
 				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINTS_FROM_GRAPH_OF_EDGE);
 	}
 
@@ -260,7 +260,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement dropForeignKeyConstraintFromTypeColumnOfEdgeTable()
 			throws SQLException {
-		return this.connection
+		return connection
 				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINTS_FROM_EDGE_TYPE);
 	}
 
@@ -275,7 +275,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 
 	@Override
 	public PreparedStatement createIncidenceTable() throws SQLException {
-		return this.connection.prepareStatement(CREATE_INCIDENCE_TABLE);
+		return connection.prepareStatement(CREATE_INCIDENCE_TABLE);
 	}
 
 	private final String ADD_PRIMARY_KEY_CONSTRAINT_ON_INCIDENCE_TABLE = "ALTER TABLE \""
@@ -285,7 +285,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement addPrimaryKeyConstraintOnIncidenceTable()
 			throws SQLException {
-		return this.connection
+		return connection
 				.prepareStatement(ADD_PRIMARY_KEY_CONSTRAINT_ON_INCIDENCE_TABLE);
 	}
 
@@ -296,7 +296,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement dropPrimaryKeyConstraintFromIncidenceTable()
 			throws SQLException {
-		return this.connection
+		return connection
 				.prepareStatement(DROP_PRIMARY_KEY_CONSTRAINT_FROM_INCIDENCE_TABLE);
 	}
 
@@ -308,7 +308,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement addForeignKeyConstraintOnGraphColumnOfIncidenceTable()
 			throws SQLException {
-		return this.connection
+		return connection
 				.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_GRAPH_OF_INCIDENCE);
 	}
 
@@ -320,7 +320,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement addForeignKeyConstraintOnEdgeColumnOfIncidenceTable()
 			throws SQLException {
-		return this.connection
+		return connection
 				.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_EDGE_OF_INCIDENCE);
 	}
 
@@ -332,7 +332,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement addForeignKeyConstraintOnVertexColumnOfIncidenceTable()
 			throws SQLException {
-		return this.connection
+		return connection
 				.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_VERTEX_OF_INCIDENCE);
 	}
 
@@ -343,7 +343,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement dropForeignKeyConstraintFromEdgeColumnOfIncidenceTable()
 			throws SQLException {
-		return this.connection
+		return connection
 				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_EGDE_OF_INCIDENCE);
 	}
 
@@ -354,7 +354,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement dropForeignKeyConstraintFromGraphColumnOfIncidenceTable()
 			throws SQLException {
-		return this.connection
+		return connection
 				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINTS_FROM_GRAPH_OF_INCIDENCE);
 	}
 
@@ -365,7 +365,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement dropForeignKeyConstraintFromVertexColumnOfIncidenceTable()
 			throws SQLException {
-		return this.connection
+		return connection
 				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_VERTEX_OF_INCIDENCE);
 	}
 
@@ -380,21 +380,21 @@ public class PostgreSqlStatementList extends SqlStatementList {
 
 	@Override
 	public PreparedStatement addIndexOnLambdaSeq() throws SQLException {
-		return this.getPreparedStatement(CREATE_CLUSTERED_INDEX_ON_LAMBDA_SEQ);
+		return getPreparedStatement(CREATE_CLUSTERED_INDEX_ON_LAMBDA_SEQ);
 	}
 
 	private String DROP_CLUSTERED_INDEX_ON_LAMBDA_SEQ = "DROP INDEX IF EXISTS \"lambdaSeqIndex\";";
 
 	@Override
 	public PreparedStatement dropIndexOnLambdaSeq() throws SQLException {
-		return this.getPreparedStatement(DROP_CLUSTERED_INDEX_ON_LAMBDA_SEQ);
+		return getPreparedStatement(DROP_CLUSTERED_INDEX_ON_LAMBDA_SEQ);
 	}
 
 	private final String CLUSTER_INCIDENCES = "CLUSTER \""
 			+ GraphDatabase.INCIDENCE_TABLE_NAME + "\";";
 
 	public PreparedStatement clusterIncidenceTable() throws SQLException {
-		return this.getPreparedStatement(CLUSTER_INCIDENCES);
+		return getPreparedStatement(CLUSTER_INCIDENCES);
 	}
 
 	private final String CREATE_ATTRIBUTE_TABLE = "CREATE SEQUENCE \"attributeIdSequence\";"
@@ -411,7 +411,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement createAttributeTableWithConstraints()
 			throws SQLException {
-		return this.connection.prepareStatement(CREATE_ATTRIBUTE_TABLE);
+		return connection.prepareStatement(CREATE_ATTRIBUTE_TABLE);
 	}
 
 	private final String CREATE_GRAPH_ATTRIBUTE_VALUE_TABLE = "CREATE TABLE \""
@@ -428,8 +428,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement createGraphAttributeValueTableWithConstraints()
 			throws SQLException {
-		return this.connection
-				.prepareStatement(CREATE_GRAPH_ATTRIBUTE_VALUE_TABLE);
+		return connection.prepareStatement(CREATE_GRAPH_ATTRIBUTE_VALUE_TABLE);
 	}
 
 	private final String CREATE_VERTEX_ATTRIBUTE_VALUE_TABLE = "CREATE TABLE \""
@@ -444,8 +443,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement createVertexAttributeValueTable()
 			throws SQLException {
-		return this.connection
-				.prepareStatement(CREATE_VERTEX_ATTRIBUTE_VALUE_TABLE);
+		return connection.prepareStatement(CREATE_VERTEX_ATTRIBUTE_VALUE_TABLE);
 	}
 
 	private final String ADD_PRIMARY_KEY_CONSTRAINT_ON_VERTEX_ATTRIBUTE_VALUE_TABLE = "ALTER TABLE \""
@@ -455,7 +453,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement addPrimaryKeyConstraintOnVertexAttributeValueTable()
 			throws SQLException {
-		return this.connection
+		return connection
 				.prepareStatement(ADD_PRIMARY_KEY_CONSTRAINT_ON_VERTEX_ATTRIBUTE_VALUE_TABLE);
 	}
 
@@ -466,7 +464,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement dropPrimaryKeyConstraintFromVertexAttributeValueTable()
 			throws SQLException {
-		return this.connection
+		return connection
 				.prepareStatement(DROP_PRIMARY_KEY_CONSTRAINT_FROM_VERTEX_ATTRIBUTE_VALUE_TABLE);
 	}
 
@@ -478,7 +476,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement addForeignKeyConstraintOnGraphColumnOfVertexAttributeValueTable()
 			throws SQLException {
-		return this.connection
+		return connection
 				.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_GRAPH_OF_VERTEX_ATTRIBUTE_VALUE);
 	}
 
@@ -491,7 +489,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement addForeignKeyConstraintOnVertexColumnOfVertexAttributeValueTable()
 			throws SQLException {
-		return this.connection
+		return connection
 				.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_VERTEX_OF_ATTRIBUTE_VALUE);
 	}
 
@@ -505,7 +503,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement addForeignKeyConstraintOnAttributeColumnOfVertexAttributeValueTable()
 			throws SQLException {
-		return this.connection
+		return connection
 				.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_ATTRIBUTE_OF_VERTEX_ATTRIBUTE_VALUE);
 	}
 
@@ -517,7 +515,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement dropForeignKeyConstraintFromGraphColumnOfVertexAttributeValueTable()
 			throws SQLException {
-		return this.connection
+		return connection
 				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_VERTEX_ATTRIBUTE_VALUE);
 	}
 
@@ -529,7 +527,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement dropForeignKeyConstraintFromVertexColumnOfVertexAttributeValueTable()
 			throws SQLException {
-		return this.connection
+		return connection
 				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_VERTEX_OF_ATTRIBUTE_VALUE);
 	}
 
@@ -541,7 +539,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement dropForeignKeyConstraintFromAttributeColumnOfVertexAttributeValueTable()
 			throws SQLException {
-		return this.connection
+		return connection
 				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_ATTRIBUTE_OF_VERTEX_ATTRIBUTE_VALUE);
 	}
 
@@ -557,8 +555,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement createEdgeAttributeValueTable()
 			throws SQLException {
-		return this.connection
-				.prepareStatement(CREATE_EDGE_ATTRIBUTE_VALUE_TABLE);
+		return connection.prepareStatement(CREATE_EDGE_ATTRIBUTE_VALUE_TABLE);
 	}
 
 	private final String ADD_PRIMARY_KEY_CONSTRAINT_ON_EDGE_ATTRIBUTE_VALUE_TABLE = "ALTER TABLE \""
@@ -569,7 +566,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement addPrimaryKeyConstraintOnEdgeAttributeValueTable()
 			throws SQLException {
-		return this.connection
+		return connection
 				.prepareStatement(ADD_PRIMARY_KEY_CONSTRAINT_ON_EDGE_ATTRIBUTE_VALUE_TABLE);
 	}
 
@@ -581,7 +578,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement dropPrimaryKeyConstraintFromEdgeAttributeValueTable()
 			throws SQLException {
-		return this.connection
+		return connection
 				.prepareStatement(DROP_PRIMARY_KEY_CONSTRAINT_FROM_EDGE_ATTRIBUTE_VALUE_TABLE);
 	}
 
@@ -594,7 +591,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement addForeignKeyConstraintOnGraphColumnOfEdgeAttributeValueTable()
 			throws SQLException {
-		return this.connection
+		return connection
 				.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_GRAPH_OF_EDGE_ATTRIBUTE_VALUE);
 	}
 
@@ -607,7 +604,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement addForeignKeyConstraintOnEdgeColumnOfEdgeAttributeValueTable()
 			throws SQLException {
-		return this.connection
+		return connection
 				.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_EDGE_OF_ATTRIBUTE_VALUE);
 	}
 
@@ -621,7 +618,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement addForeignKeyConstraintOnAttributeColumnOfEdgeAttributeValueTable()
 			throws SQLException {
-		return this.connection
+		return connection
 				.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_EDGE_ATTRIBUTE);
 	}
 
@@ -633,7 +630,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement dropForeignKeyConstraintFromGraphColumnOfEdgeAttributeValueTable()
 			throws SQLException {
-		return this.connection
+		return connection
 				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINTS_FROM_GRAPH_OF_EDGE_ATTRIBUTE);
 	}
 
@@ -645,7 +642,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement dropForeignKeyConstraintFromEdgeColumnOfEdgeAttributeValueTable()
 			throws SQLException {
-		return this.connection
+		return connection
 				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_EDGE_OF_ATTRIBUTE_VALUE);
 	}
 
@@ -657,7 +654,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement dropForeignKeyConstraintFromAttributeColumnOfEdgeAttributeValueTable()
 			throws SQLException {
-		return this.connection
+		return connection
 				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINTS_FROM_EDGE_ATTRIBUTE);
 	}
 
@@ -741,7 +738,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement insertSchema(Schema schema,
 			String serializedDefinition) throws SQLException {
-		PreparedStatement statement = this.connection.prepareStatement(
+		PreparedStatement statement = connection.prepareStatement(
 				INSERT_SCHEMA, Statement.RETURN_GENERATED_KEYS);
 		statement.setString(1, schema.getPackagePrefix());
 		statement.setString(2, schema.getName());
@@ -756,7 +753,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement insertType(String qualifiedName, int schemaId)
 			throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(INSERT_TYPE);
+		PreparedStatement statement = getPreparedStatement(INSERT_TYPE);
 		statement.setString(1, qualifiedName);
 		statement.setInt(2, schemaId);
 		return statement;
@@ -770,8 +767,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement insertAttribute(String name, int schemaId)
 			throws SQLException {
-		PreparedStatement statement = this
-				.getPreparedStatement(INSERT_ATTRIBUTE);
+		PreparedStatement statement = getPreparedStatement(INSERT_ATTRIBUTE);
 		statement.setString(1, name);
 		statement.setInt(2, schemaId);
 		return statement;
@@ -787,8 +783,8 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	public PreparedStatement insertGraph(String id, long graphVersion,
 			long vertexListVersion, long edgeListVersion, int typeId)
 			throws SQLException {
-		PreparedStatement statement = this.connection.prepareStatement(
-				INSERT_GRAPH, Statement.RETURN_GENERATED_KEYS);
+		PreparedStatement statement = connection.prepareStatement(INSERT_GRAPH,
+				Statement.RETURN_GENERATED_KEYS);
 		statement.setString(1, id);
 		statement.setLong(2, graphVersion);
 		statement.setLong(3, vertexListVersion);
@@ -805,8 +801,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement insertGraphAttributeValue(int gId,
 			int attributeId, String value) throws SQLException {
-		PreparedStatement statement = this
-				.getPreparedStatement(INSERT_GRAPH_ATTRIBUTE_VALUE);
+		PreparedStatement statement = getPreparedStatement(INSERT_GRAPH_ATTRIBUTE_VALUE);
 		statement.setInt(1, gId);
 		statement.setInt(2, attributeId);
 		statement.setString(3, value);
@@ -823,7 +818,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	public PreparedStatement insertVertex(int vId, int typeId, int gId,
 			long incidenceListVersion, long sequenceNumberInVSeq)
 			throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(INSERT_VERTEX);
+		PreparedStatement statement = getPreparedStatement(INSERT_VERTEX);
 		statement.setInt(1, vId);
 		statement.setInt(2, gId);
 		statement.setInt(3, typeId);
@@ -836,9 +831,9 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	public PreparedStatement insertVertex(DatabasePersistableVertex vertex)
 			throws SQLException, GraphIOException {
 		String sqlStatement = this.createSqlInsertStatementFor(vertex);
-		PreparedStatement statement = this.getPreparedStatement(sqlStatement);
-		this.setParametersForVertex(statement, vertex);
-		this.setAttributeValuesForVertex(statement, vertex);
+		PreparedStatement statement = getPreparedStatement(sqlStatement);
+		setParametersForVertex(statement, vertex);
+		setAttributeValuesForVertex(statement, vertex);
 		return statement;
 	}
 
@@ -853,12 +848,12 @@ public class PostgreSqlStatementList extends SqlStatementList {
 			i++;
 			statement.setInt(i, vertex.getGId());
 			i++;
-			int attributeId = this.graphDatabase.getAttributeId(
-					vertex.getGraph(), attribute.getName());
+			int attributeId = graphDatabase.getAttributeId(vertex.getGraph(),
+					attribute.getName());
 			statement.setInt(i, attributeId);
 			i++;
-			String value = this.graphDatabase.convertToString(vertex,
-					attribute.getName());
+			String value = graphDatabase.convertToString(vertex, attribute
+					.getName());
 			statement.setString(i, value);
 			i++;
 		}
@@ -868,7 +863,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 			DatabasePersistableVertex vertex) throws SQLException {
 		statement.setInt(1, vertex.getId());
 		statement.setInt(2, vertex.getGId());
-		int typeId = this.graphDatabase.getTypeIdOf(vertex);
+		int typeId = graphDatabase.getTypeIdOf(vertex);
 		statement.setInt(3, typeId);
 		statement.setLong(4, vertex.getIncidenceListVersion());
 		statement.setLong(5, vertex.getSequenceNumberInVSeq());
@@ -892,8 +887,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement insertVertexAttributeValue(int vId, int gId,
 			int attributeId, String value) throws SQLException {
-		PreparedStatement statement = this
-				.getPreparedStatement(INSERT_VERTEX_ATTRIBUTE_VALUE);
+		PreparedStatement statement = getPreparedStatement(INSERT_VERTEX_ATTRIBUTE_VALUE);
 		statement.setInt(1, vId);
 		statement.setInt(2, gId);
 		statement.setInt(3, attributeId);
@@ -910,7 +904,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement insertEdge(int eId, int gId, int typeId,
 			long sequenceNumberInLambdaSeq) throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(INSERT_EDGE);
+		PreparedStatement statement = getPreparedStatement(INSERT_EDGE);
 		statement.setInt(1, Math.abs(eId));
 		statement.setInt(2, gId);
 		statement.setInt(3, typeId);
@@ -923,8 +917,8 @@ public class PostgreSqlStatementList extends SqlStatementList {
 			DatabasePersistableVertex alpha, DatabasePersistableVertex omega)
 			throws SQLException, GraphIOException {
 		String sqlStatement = this.createSqlInsertStatementFor(edge);
-		PreparedStatement statement = this.getPreparedStatement(sqlStatement);
-		this.setParametersForEdge(statement, edge);
+		PreparedStatement statement = getPreparedStatement(sqlStatement);
+		setParametersForEdge(statement, edge);
 
 		// insert incidence: normal edge
 		statement.setInt(5, edge.getId());
@@ -951,12 +945,12 @@ public class PostgreSqlStatementList extends SqlStatementList {
 			i++;
 			statement.setInt(i, edge.getGId());
 			i++;
-			int attributeId = this.graphDatabase.getAttributeId(
-					edge.getGraph(), attribute.getName());
+			int attributeId = graphDatabase.getAttributeId(edge.getGraph(),
+					attribute.getName());
 			statement.setInt(i, attributeId);
 			i++;
-			String value = this.graphDatabase.convertToString(edge,
-					attribute.getName());
+			String value = graphDatabase.convertToString(edge, attribute
+					.getName());
 			statement.setString(i, value);
 			i++;
 		}
@@ -983,7 +977,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 			DatabasePersistableEdge edge) throws SQLException {
 		statement.setInt(1, Math.abs(edge.getId()));
 		statement.setInt(2, edge.getGId());
-		int typeId = this.graphDatabase.getTypeIdOf(edge);
+		int typeId = graphDatabase.getTypeIdOf(edge);
 		statement.setInt(3, typeId);
 		statement.setLong(4, edge.getSequenceNumberInESeq());
 	}
@@ -1009,8 +1003,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement insertIncidence(int eId, int vId, int gId,
 			long sequenceNumberInLambdaSeq) throws SQLException {
-		PreparedStatement statement = this
-				.getPreparedStatement(INSERT_INCIDENCE);
+		PreparedStatement statement = getPreparedStatement(INSERT_INCIDENCE);
 		statement.setInt(1, Math.abs(eId));
 		statement.setInt(2, gId);
 		statement.setInt(3, vId);
@@ -1034,8 +1027,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement insertEdgeAttributeValue(int eId, int gId,
 			int attributeId, String value) throws SQLException {
-		PreparedStatement statement = this
-				.getPreparedStatement(INSERT_EDGE_ATTRIBUTE_VALUE);
+		PreparedStatement statement = getPreparedStatement(INSERT_EDGE_ATTRIBUTE_VALUE);
 		statement.setInt(1, eId);
 		statement.setInt(2, gId);
 		statement.setInt(3, attributeId);
@@ -1053,8 +1045,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement selectSchemaId(String packagePrefix, String name)
 			throws SQLException {
-		PreparedStatement statement = this
-				.getPreparedStatement(SELECT_SCHEMA_ID);
+		PreparedStatement statement = getPreparedStatement(SELECT_SCHEMA_ID);
 		statement.setString(1, packagePrefix);
 		statement.setString(2, name);
 		return statement;
@@ -1074,8 +1065,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement selectSchemaDefinitionForGraph(String uid)
 			throws SQLException {
-		PreparedStatement statement = this
-				.getPreparedStatement(SELECT_SCHEMA_DEFINITION_FOR_GRAPH);
+		PreparedStatement statement = getPreparedStatement(SELECT_SCHEMA_DEFINITION_FOR_GRAPH);
 		statement.setString(1, uid);
 		return statement;
 	}
@@ -1094,8 +1084,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement selectSchemaNameForGraph(String uid)
 			throws SQLException {
-		PreparedStatement statement = this
-				.getPreparedStatement(SELECT_SCHEMA_NAME);
+		PreparedStatement statement = getPreparedStatement(SELECT_SCHEMA_NAME);
 		statement.setString(1, uid);
 		return statement;
 	}
@@ -1111,7 +1100,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement selectTypesOfSchema(String packagePrefix,
 			String name) throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(SELECT_TYPES);
+		PreparedStatement statement = getPreparedStatement(SELECT_TYPES);
 		statement.setString(1, packagePrefix);
 		statement.setString(2, name);
 		return statement;
@@ -1127,8 +1116,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement selectAttributesOfSchema(String packagePrefix,
 			String name) throws SQLException {
-		PreparedStatement statement = this
-				.getPreparedStatement(SELECT_ATTRIBUTES);
+		PreparedStatement statement = getPreparedStatement(SELECT_ATTRIBUTES);
 		statement.setString(1, packagePrefix);
 		statement.setString(2, name);
 		return statement;
@@ -1141,7 +1129,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 
 	@Override
 	public PreparedStatement selectGraph(String id) throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(SELECT_GRAPH);
+		PreparedStatement statement = getPreparedStatement(SELECT_GRAPH);
 		statement.setString(1, id);
 		return statement;
 	}
@@ -1151,8 +1139,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 
 	@Override
 	public PreparedStatement countVerticesOfGraph(int gId) throws SQLException {
-		PreparedStatement statement = this
-				.getPreparedStatement(COUNT_VERTICES_IN_GRAPH);
+		PreparedStatement statement = getPreparedStatement(COUNT_VERTICES_IN_GRAPH);
 		statement.setInt(1, gId);
 		return statement;
 	}
@@ -1162,8 +1149,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 
 	@Override
 	public PreparedStatement countEdgesOfGraph(int gId) throws SQLException {
-		PreparedStatement statement = this
-				.getPreparedStatement(COUNT_EDGES_IN_GRAPH);
+		PreparedStatement statement = getPreparedStatement(COUNT_EDGES_IN_GRAPH);
 		statement.setInt(1, gId);
 		return statement;
 	}
@@ -1174,8 +1160,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 
 	@Override
 	public PreparedStatement selectVerticesOfGraph(int gId) throws SQLException {
-		PreparedStatement statement = this
-				.getPreparedStatement(SELECT_VERTICES);
+		PreparedStatement statement = getPreparedStatement(SELECT_VERTICES);
 		statement.setInt(1, gId);
 		return statement;
 	}
@@ -1186,7 +1171,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 
 	@Override
 	public PreparedStatement selectEdgesOfGraph(int gId) throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(SELECT_EDGES);
+		PreparedStatement statement = getPreparedStatement(SELECT_EDGES);
 		statement.setInt(1, gId);
 		return statement;
 	}
@@ -1205,8 +1190,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement selectAttributeValuesOfGraph(int gId)
 			throws SQLException {
-		PreparedStatement statement = this
-				.getPreparedStatement(SELECT_ATTRIBUTE_VALUES_OF_GRAPH);
+		PreparedStatement statement = getPreparedStatement(SELECT_ATTRIBUTE_VALUES_OF_GRAPH);
 		statement.setInt(1, gId);
 		return statement;
 	}
@@ -1243,8 +1227,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement selectVertexWithIncidences(int vId, int gId)
 			throws SQLException {
-		PreparedStatement statement = this
-				.getPreparedStatement(SELECT_VERTEX_WITH_INCIDENCES);
+		PreparedStatement statement = getPreparedStatement(SELECT_VERTEX_WITH_INCIDENCES);
 		statement.setInt(1, vId);
 		statement.setInt(2, gId);
 		return statement;
@@ -1257,8 +1240,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement selectAttributeValuesOfVertex(int vId, int gId)
 			throws SQLException {
-		PreparedStatement statement = this
-				.getPreparedStatement(SELECT_ATTRIBUTE_VALUES_OF_VERTEX);
+		PreparedStatement statement = getPreparedStatement(SELECT_ATTRIBUTE_VALUES_OF_VERTEX);
 		statement.setInt(1, vId);
 		statement.setInt(2, gId);
 		return statement;
@@ -1282,8 +1264,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement selectEdgeWithIncidences(int eId, int gId)
 			throws SQLException {
-		PreparedStatement statement = this
-				.getPreparedStatement(SELECT_EDGE_WITH_INCIDENCES);
+		PreparedStatement statement = getPreparedStatement(SELECT_EDGE_WITH_INCIDENCES);
 		statement.setInt(1, eId);
 		statement.setInt(2, gId);
 		return statement;
@@ -1296,8 +1277,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement selectAttributeValuesOfEdge(int eId, int gId)
 			throws SQLException {
-		PreparedStatement statement = this
-				.getPreparedStatement(SELECT_ATTRIBUTE_VALUES_OF_EDGE);
+		PreparedStatement statement = getPreparedStatement(SELECT_ATTRIBUTE_VALUES_OF_EDGE);
 		statement.setInt(1, eId);
 		statement.setInt(2, gId);
 		return statement;
@@ -1312,8 +1292,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement deleteAttributeValuesOfGraph(int gId)
 			throws SQLException {
-		PreparedStatement statement = this
-				.getPreparedStatement(DELETE_ATTRIBUTE_VALUES_OF_GRAPH);
+		PreparedStatement statement = getPreparedStatement(DELETE_ATTRIBUTE_VALUES_OF_GRAPH);
 		statement.setInt(1, gId);
 		return statement;
 	}
@@ -1325,8 +1304,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement deleteEdgeAttributeValuesOfGraph(int gId)
 			throws SQLException {
-		PreparedStatement statement = this
-				.getPreparedStatement(DELETE_EDGE_ATTRIBUTE_VALUES_OF_GRAPH);
+		PreparedStatement statement = getPreparedStatement(DELETE_EDGE_ATTRIBUTE_VALUES_OF_GRAPH);
 		statement.setInt(1, gId);
 		return statement;
 	}
@@ -1338,8 +1316,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement deleteVertexAttributeValuesOfGraph(int gId)
 			throws SQLException {
-		PreparedStatement statement = this
-				.getPreparedStatement(DELETE_VERTEX_ATTRIBUTE_VALUES_OF_GRAPH);
+		PreparedStatement statement = getPreparedStatement(DELETE_VERTEX_ATTRIBUTE_VALUES_OF_GRAPH);
 		statement.setInt(1, gId);
 		return statement;
 	}
@@ -1350,8 +1327,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement deleteIncidencesOfGraph(int gId)
 			throws SQLException {
-		PreparedStatement statement = this
-				.getPreparedStatement(DELETE_INCIDENCES_OF_GRAPH);
+		PreparedStatement statement = getPreparedStatement(DELETE_INCIDENCES_OF_GRAPH);
 		statement.setInt(1, gId);
 		return statement;
 	}
@@ -1361,8 +1337,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 
 	@Override
 	public PreparedStatement deleteVerticesOfGraph(int gId) throws SQLException {
-		PreparedStatement statement = this
-				.getPreparedStatement(DELETE_VERTICES_OF_GRAPH);
+		PreparedStatement statement = getPreparedStatement(DELETE_VERTICES_OF_GRAPH);
 		statement.setInt(1, gId);
 		return statement;
 	}
@@ -1372,8 +1347,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 
 	@Override
 	public PreparedStatement deleteEdgesOfGraph(int gId) throws SQLException {
-		PreparedStatement statement = this
-				.getPreparedStatement(DELETE_EDGES_OF_GRAPH);
+		PreparedStatement statement = getPreparedStatement(DELETE_EDGES_OF_GRAPH);
 		statement.setInt(1, gId);
 		return statement;
 	}
@@ -1383,7 +1357,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 
 	@Override
 	public PreparedStatement deleteGraph(int gId) throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(DELETE_GRAPH);
+		PreparedStatement statement = getPreparedStatement(DELETE_GRAPH);
 		statement.setInt(1, gId);
 		return statement;
 	}
@@ -1397,8 +1371,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement deleteAttributeValuesOfVertex(int vId, int gId)
 			throws SQLException {
-		PreparedStatement statement = this
-				.getPreparedStatement(DELETE_ATTRIBUTE_VALUES_OF_VERTEX);
+		PreparedStatement statement = getPreparedStatement(DELETE_ATTRIBUTE_VALUES_OF_VERTEX);
 		statement.setInt(1, vId);
 		statement.setInt(2, gId);
 		return statement;
@@ -1411,8 +1384,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement selectIncidentEIdsOfVertex(int vId, int gId)
 			throws SQLException {
-		PreparedStatement statement = this
-				.getPreparedStatement(SELECT_ID_OF_INCIDENT_EDGES_OF_VERTEX);
+		PreparedStatement statement = getPreparedStatement(SELECT_ID_OF_INCIDENT_EDGES_OF_VERTEX);
 		statement.setInt(1, vId);
 		statement.setInt(2, gId);
 		return statement;
@@ -1424,7 +1396,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 
 	@Override
 	public PreparedStatement deleteVertex(int vId, int gId) throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(DELETE_VERTEX);
+		PreparedStatement statement = getPreparedStatement(DELETE_VERTEX);
 		statement.setInt(1, vId);
 		statement.setInt(2, gId);
 		return statement;
@@ -1439,8 +1411,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement deleteAttributeValuesOfEdge(int eId, int gId)
 			throws SQLException {
-		PreparedStatement statement = this
-				.getPreparedStatement(DELETE_ATTRIBUTE_VALUES_OF_EDGE);
+		PreparedStatement statement = getPreparedStatement(DELETE_ATTRIBUTE_VALUES_OF_EDGE);
 		statement.setInt(1, eId);
 		statement.setInt(2, gId);
 		return statement;
@@ -1453,8 +1424,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement deleteIncidencesOfEdge(int eId, int gId)
 			throws SQLException {
-		PreparedStatement statement = this
-				.getPreparedStatement(DELETE_INCIDENCES_OF_EDGE);
+		PreparedStatement statement = getPreparedStatement(DELETE_INCIDENCES_OF_EDGE);
 		statement.setInt(1, eId);
 		statement.setInt(2, gId);
 		return statement;
@@ -1466,7 +1436,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 
 	@Override
 	public PreparedStatement deleteEdge(int eId, int gId) throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(DELETE_EDGE);
+		PreparedStatement statement = getPreparedStatement(DELETE_EDGE);
 		statement.setInt(1, eId);
 		statement.setInt(2, gId);
 		return statement;
@@ -1481,8 +1451,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement updateAttributeValueOfGraph(int gId,
 			int attributeId, String serializedValue) throws SQLException {
-		PreparedStatement statement = this
-				.getPreparedStatement(UPDATE_ATTRIBUTE_VALUE_OF_GRAPH);
+		PreparedStatement statement = getPreparedStatement(UPDATE_ATTRIBUTE_VALUE_OF_GRAPH);
 		statement.setString(1, serializedValue);
 		statement.setInt(2, gId);
 		statement.setInt(3, attributeId);
@@ -1500,8 +1469,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	public PreparedStatement updateAttributeValueOfGraphAndGraphVersion(
 			int gId, int attributeId, String serializedValue, long graphVersion)
 			throws SQLException {
-		PreparedStatement statement = this
-				.getPreparedStatement(UPDATE_ATTRIBUTE_VALUE_OF_GRAPH_AND_GRAPH_VERSION);
+		PreparedStatement statement = getPreparedStatement(UPDATE_ATTRIBUTE_VALUE_OF_GRAPH_AND_GRAPH_VERSION);
 		statement.setString(1, serializedValue);
 		statement.setInt(2, gId);
 		statement.setInt(3, attributeId);
@@ -1517,8 +1485,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement updateGraphId(int gId, String uid)
 			throws SQLException {
-		PreparedStatement statement = this
-				.getPreparedStatement(UPDATE_GRAPH_UID);
+		PreparedStatement statement = getPreparedStatement(UPDATE_GRAPH_UID);
 		statement.setString(1, uid);
 		statement.setInt(2, gId);
 		return statement;
@@ -1531,8 +1498,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement updateGraphVersion(int gId, long version)
 			throws SQLException {
-		PreparedStatement statement = this
-				.getPreparedStatement(UPDATE_GRAPH_VERSION);
+		PreparedStatement statement = getPreparedStatement(UPDATE_GRAPH_VERSION);
 		statement.setLong(1, version);
 		statement.setInt(2, gId);
 		return statement;
@@ -1545,8 +1511,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement updateVertexListVersionOfGraph(int gId,
 			long version) throws SQLException {
-		PreparedStatement statement = this
-				.getPreparedStatement(UPDATE_VERTEX_LIST_VERSION);
+		PreparedStatement statement = getPreparedStatement(UPDATE_VERTEX_LIST_VERSION);
 		statement.setLong(1, version);
 		statement.setInt(2, gId);
 		return statement;
@@ -1559,8 +1524,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement updateEdgeListVersionOfGraph(int gId, long version)
 			throws SQLException {
-		PreparedStatement statement = this
-				.getPreparedStatement(UPDATE_EDGE_LIST_VERSION);
+		PreparedStatement statement = getPreparedStatement(UPDATE_EDGE_LIST_VERSION);
 		statement.setLong(1, version);
 		statement.setInt(2, gId);
 		return statement;
@@ -1575,8 +1539,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement updateIdOfVertex(int oldVId, int gId, int newVId)
 			throws SQLException {
-		PreparedStatement statement = this
-				.getPreparedStatement(UPDATE_VERTEX_ID);
+		PreparedStatement statement = getPreparedStatement(UPDATE_VERTEX_ID);
 		statement.setInt(1, newVId);
 		statement.setInt(2, oldVId);
 		statement.setInt(3, gId);
@@ -1590,8 +1553,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement updateSequenceNumberInVSeqOfVertex(int vId,
 			int gId, long sequenceNumberInVSeq) throws SQLException {
-		PreparedStatement statement = this
-				.getPreparedStatement(UPDATE_SEQUENCE_NUMBER_OF_VERTEX);
+		PreparedStatement statement = getPreparedStatement(UPDATE_SEQUENCE_NUMBER_OF_VERTEX);
 		statement.setLong(1, sequenceNumberInVSeq);
 		statement.setInt(2, vId);
 		statement.setInt(3, gId);
@@ -1606,8 +1568,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement updateAttributeValueOfVertex(int vId, int gId,
 			int attributeId, String serializedValue) throws SQLException {
-		PreparedStatement statement = this
-				.getPreparedStatement(UPDATE_ATTRIBUTE_VALUE_OF_VERTEX);
+		PreparedStatement statement = getPreparedStatement(UPDATE_ATTRIBUTE_VALUE_OF_VERTEX);
 		statement.setString(1, serializedValue);
 		statement.setInt(2, vId);
 		statement.setInt(3, gId);
@@ -1627,8 +1588,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	public PreparedStatement updateAttributeValueOfVertexAndGraphVersion(
 			int vId, int gId, int attributeId, String serializedValue,
 			long graphVersion) throws SQLException {
-		PreparedStatement statement = this
-				.getPreparedStatement(UPDATE_ATTRIBUTE_VALUE_OF_VERTEX_AND_GRAPH_VERSION);
+		PreparedStatement statement = getPreparedStatement(UPDATE_ATTRIBUTE_VALUE_OF_VERTEX_AND_GRAPH_VERSION);
 		statement.setString(1, serializedValue);
 		statement.setInt(2, vId);
 		statement.setInt(3, gId);
@@ -1645,8 +1605,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement updateLambdaSeqVersionOfVertex(int vId, int gId,
 			long lambdaSeqVersion) throws SQLException {
-		PreparedStatement statement = this
-				.getPreparedStatement(UPDATE_INCIDENCE_LIST_VERSION);
+		PreparedStatement statement = getPreparedStatement(UPDATE_INCIDENCE_LIST_VERSION);
 		statement.setLong(1, lambdaSeqVersion);
 		statement.setInt(2, vId);
 		statement.setInt(3, gId);
@@ -1661,7 +1620,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement updateIdOfEdge(int oldEId, int gId, int newEId)
 			throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(UPDATE_EDGE_ID);
+		PreparedStatement statement = getPreparedStatement(UPDATE_EDGE_ID);
 		statement.setInt(1, newEId);
 		statement.setInt(2, oldEId);
 		statement.setInt(3, gId);
@@ -1675,8 +1634,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement updateSequenceNumberInESeqOfEdge(int eId, int gId,
 			long SequenceNumberInESeq) throws SQLException {
-		PreparedStatement statement = this
-				.getPreparedStatement(UPDATE_SEQUENCE_NUMBER_IN_EDGE_LIST);
+		PreparedStatement statement = getPreparedStatement(UPDATE_SEQUENCE_NUMBER_IN_EDGE_LIST);
 		statement.setLong(1, SequenceNumberInESeq);
 		statement.setInt(2, eId);
 		statement.setInt(3, gId);
@@ -1691,8 +1649,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement updateAttributeValueOfEdge(int eId, int gId,
 			int attributeId, String serializedValue) throws SQLException {
-		PreparedStatement statement = this
-				.getPreparedStatement(UPDATE_ATTRIBUTE_VALUE_OF_EDGE);
+		PreparedStatement statement = getPreparedStatement(UPDATE_ATTRIBUTE_VALUE_OF_EDGE);
 		statement.setString(1, serializedValue);
 		statement.setInt(2, eId);
 		statement.setInt(3, gId);
@@ -1712,8 +1669,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	public PreparedStatement updateAttributeValueOfEdgeAndGraphVersion(int eId,
 			int gId, int attributeId, String serializedValue, long graphVersion)
 			throws SQLException {
-		PreparedStatement statement = this
-				.getPreparedStatement(UPDATE_ATTRIBUTE_VALUE_OF_EDGE_AND_INCREMENT_GRAPH_VERSION);
+		PreparedStatement statement = getPreparedStatement(UPDATE_ATTRIBUTE_VALUE_OF_EDGE_AND_INCREMENT_GRAPH_VERSION);
 		statement.setString(1, serializedValue);
 		statement.setInt(2, eId);
 		statement.setInt(3, gId);
@@ -1730,8 +1686,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement updateIncidentVIdOfIncidence(int eId, int vId,
 			int gId) throws SQLException {
-		PreparedStatement statement = this
-				.getPreparedStatement(UPDATE_INCIDENT_VERTEX);
+		PreparedStatement statement = getPreparedStatement(UPDATE_INCIDENT_VERTEX);
 		statement.setInt(1, vId);
 		statement.setInt(2, Math.abs(eId));
 		statement.setInt(3, gId);
@@ -1751,8 +1706,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	public PreparedStatement updateSequenceNumberInLambdaSeqOfIncidence(
 			int eId, int vId, int gId, long sequenceNumberInLambdaSeq)
 			throws SQLException {
-		PreparedStatement statement = this
-				.getPreparedStatement(UPDATE_SEQUENCE_NUMBER_IN_INCIDENCE_LIST);
+		PreparedStatement statement = getPreparedStatement(UPDATE_SEQUENCE_NUMBER_IN_INCIDENCE_LIST);
 		statement.setLong(1, sequenceNumberInLambdaSeq);
 		statement.setInt(2, Math.abs(eId));
 		statement.setInt(3, gId);
@@ -1779,8 +1733,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement createStoredProcedureToReorganizeVertexList()
 			throws SQLException {
-		return this
-				.getPreparedStatement(STORED_PROCEDURE_REORGANIZE_VERTEX_LIST);
+		return getPreparedStatement(STORED_PROCEDURE_REORGANIZE_VERTEX_LIST);
 	}
 
 	private String STORED_PROCEDURE_REORGANIZE_EDGE_LIST = "CREATE FUNCTION \"reorganizeESeqOfGraph\"(\"graphId\" INT, start BIGINT) RETURNS INT AS $$\n"
@@ -1802,7 +1755,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement createStoredProcedureToReorganizeEdgeList()
 			throws SQLException {
-		return this.getPreparedStatement(STORED_PROCEDURE_REORGANIZE_EDGE_LIST);
+		return getPreparedStatement(STORED_PROCEDURE_REORGANIZE_EDGE_LIST);
 	}
 
 	private String STORED_PROCEDURE_REORGANIZE_INCIDENCE_LIST = "CREATE FUNCTION \"reorganizeLambdaSeqOfVertex\"(\"vertexId\" INT, \"graphId\" INT, start BIGINT) RETURNS INT AS $$\n"
@@ -1824,8 +1777,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement createStoredProcedureToReorganizeIncidenceList()
 			throws SQLException {
-		return this
-				.getPreparedStatement(STORED_PROCEDURE_REORGANIZE_INCIDENCE_LIST);
+		return getPreparedStatement(STORED_PROCEDURE_REORGANIZE_INCIDENCE_LIST);
 	}
 
 	private String STORED_PROCEDURE_INSERT_VERTEX = "CREATE FUNCTION \"insertVertex\"(\"vertexId\" INT, \"graphId\" INT, \"typeId\" INT, \"sequenceNumber\" BIGINT) RETURNS INT AS $$\n"
@@ -1837,7 +1789,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 
 	public PreparedStatement createStoredProcedureToInsertVertex()
 			throws SQLException {
-		return this.getPreparedStatement(STORED_PROCEDURE_INSERT_VERTEX);
+		return getPreparedStatement(STORED_PROCEDURE_INSERT_VERTEX);
 	}
 
 	private String DELETE_SCHEMA = "DELETE FROM \""
@@ -1848,7 +1800,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement deleteSchema(String prefix, String name)
 			throws SQLException {
-		PreparedStatement statement = this.getPreparedStatement(DELETE_SCHEMA);
+		PreparedStatement statement = getPreparedStatement(DELETE_SCHEMA);
 		statement.setString(1, prefix);
 		statement.setString(2, name);
 		return statement;
@@ -1862,7 +1814,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public PreparedStatement selectSchemaDefinition(String packagePrefix,
 			String schemaName) throws SQLException {
-		PreparedStatement statement = this.connection
+		PreparedStatement statement = connection
 				.prepareStatement(SELECT_SCHEMA_DEFINITION);
 		statement.setString(1, packagePrefix);
 		statement.setString(2, schemaName);
@@ -1874,7 +1826,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public CallableStatement createReorganizeVertexListCall(int gId, long start)
 			throws SQLException {
-		CallableStatement statement = this.connection
+		CallableStatement statement = connection
 				.prepareCall(CALL_REORGANIZE_V_SEQ);
 		statement.registerOutParameter(1, Types.INTEGER);
 		statement.setInt(2, gId);
@@ -1887,7 +1839,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public CallableStatement createReorganizeEdgeListCall(int gId, long start)
 			throws SQLException {
-		CallableStatement statement = this.connection
+		CallableStatement statement = connection
 				.prepareCall(CALL_REORGANIZE_E_SEQ);
 		statement.registerOutParameter(1, Types.INTEGER);
 		statement.setInt(2, gId);
@@ -1900,7 +1852,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	@Override
 	public CallableStatement createReorganizeIncidenceListCall(int vId,
 			int gId, long start) throws SQLException {
-		CallableStatement statement = this.connection
+		CallableStatement statement = connection
 				.prepareCall(CALL_REORGANIZE_LAMBDA_SEQ);
 		statement.registerOutParameter(1, Types.INTEGER);
 		statement.setInt(2, vId);
@@ -1914,7 +1866,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 
 	@Override
 	public PreparedStatement selectIdOfGraphs() throws SQLException {
-		return this.getPreparedStatement(SELECT_ID_OF_GRAPHS);
+		return getPreparedStatement(SELECT_ID_OF_GRAPHS);
 	}
 
 	private static String CLEAR_ALL_TABLES = "TRUNCATE TABLE \""
@@ -1931,6 +1883,6 @@ public class PostgreSqlStatementList extends SqlStatementList {
 
 	@Override
 	public PreparedStatement clearAllTables() throws SQLException {
-		return this.getPreparedStatement(CLEAR_ALL_TABLES);
+		return getPreparedStatement(CLEAR_ALL_TABLES);
 	}
 }
