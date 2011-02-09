@@ -4,65 +4,64 @@ import java.sql.SQLException;
 
 public class DerbyDb extends GraphDatabase {
 
-	protected DerbyDb(String url) throws GraphDatabaseException{
+	protected DerbyDb(String url) throws GraphDatabaseException {
 		super(url);
 	}
-	
+
 	@Override
 	protected void connect() throws GraphDatabaseException {
-		this.connection = this.getConnectionWithJdbcDriver("org.apache.derby.jdbc.ClientDriver"); 
-		this.sqlStatementList = new DerbyStatementList(this);
+		connection = getConnectionWithJdbcDriver("org.apache.derby.jdbc.ClientDriver");
+		sqlStatementList = new DerbyStatementList(this);
 	}
-	
+
 	@Override
-	protected void setOptimalAutoCommitMode() throws GraphDatabaseException{
-		this.setAutocommitMode(false);
+	protected void applyVendorSpecificDbSchema() throws GraphDatabaseException,
+			SQLException {
+		addPrimaryKeyConstraints();
+		// this.addForeignKeyConstraints();
+		addIndices();
+		// this.addStoredProcedures();
 	}
-	
-	@Override
-	protected void applyVendorSpecificDbSchema() throws GraphDatabaseException, SQLException{
-		this.addPrimaryKeyConstraints();
-		//this.addForeignKeyConstraints();
-		this.addIndices();
-		//this.addStoredProcedures();		
-	}
-	
+
 	@Override
 	protected void changeFromBulkImportToGraphTraversal() throws SQLException {
 		super.addPrimaryKeyConstraints();
 		super.addForeignKeyConstraints();
 		super.addIndices();
-		// Derby does not support clustering of records, so explicit reordering of records is omitted here.
+		// Derby does not support clustering of records, so explicit reordering
+		// of records is omitted here.
 	}
 
 	@Override
-	protected void changeFromGraphCreationToGraphTraversal() throws SQLException {
+	protected void changeFromGraphCreationToGraphTraversal()
+			throws SQLException {
 		super.addForeignKeyConstraints();
 	}
 
 	@Override
 	protected void changeFromGraphTraversalToBulkImport() throws SQLException {
-		this.dropIndices();
-		this.dropForeignKeyConstraints();
-		this.dropPrimaryKeyConstraints();
-	}	
+		dropIndices();
+		dropForeignKeyConstraints();
+		dropPrimaryKeyConstraints();
+	}
 
 	@Override
 	protected void changeFromGraphCreationToBulkImport() throws SQLException {
-		this.dropIndices();
-		//this.dropForeignKeyConstraints();
-		this.dropPrimaryKeyConstraints();
+		dropIndices();
+		// this.dropForeignKeyConstraints();
+		dropPrimaryKeyConstraints();
 	}
-	
+
 	@Override
-	protected void changeFromGraphTraversalToGraphCreation() throws SQLException{
-		this.dropForeignKeyConstraints();
+	protected void changeFromGraphTraversalToGraphCreation()
+			throws SQLException {
+		dropForeignKeyConstraints();
 	}
-	
+
 	@Override
-	protected void changeFromBulkImportToGraphCreation() throws SQLException{
-		this.addPrimaryKeyConstraints();
-		//this.addForeignKeyConstraints();
-		this.addIndices();
-	}	
+	protected void changeFromBulkImportToGraphCreation() throws SQLException {
+		addPrimaryKeyConstraints();
+		// this.addForeignKeyConstraints();
+		addIndices();
+	}
 }
