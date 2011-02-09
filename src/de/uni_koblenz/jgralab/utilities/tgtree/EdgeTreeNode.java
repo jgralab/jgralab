@@ -1,6 +1,37 @@
+/*
+ * JGraLab - The Java Graph Laboratory
+ * 
+ * Copyright (C) 2006-2010 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
+ * 
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
+ * 
+ * Additional permission under GNU GPL version 3 section 7
+ * 
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
+ */
 package de.uni_koblenz.jgralab.utilities.tgtree;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.GraphElement;
@@ -15,26 +46,65 @@ class EdgeTreeNode extends GraphElementTreeNode {
 		this.e = e;
 	}
 
+	public boolean isBackEdge() {
+		if ((getParent() != null) && (getParent().getParent() != null)) {
+			Edge pp = (Edge) ((GraphElementTreeNode) getParent().getParent())
+					.get();
+			if (pp.getNormalEdge() == e.getNormalEdge()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
+		int thisIdx = -1;
+		int thatIdx = -1;
+
+		if (getParent() != null) {
+			thisIdx = getParent().getIndex(this) + 1;
+		}
+
+		VertexTreeNode child = (VertexTreeNode) getChildAt(0);
+		Enumeration<GraphElementTreeNode> en = child.children();
+		int i = 0;
+		while (en.hasMoreElements()) {
+			EdgeTreeNode etn = (EdgeTreeNode) en.nextElement();
+			i++;
+			if (etn.isBackEdge()) {
+				thatIdx = i;
+			}
+		}
+
+		String lfmt = "%"
+				+ String.valueOf(
+						(getParent() != null) ? getParent().getChildCount() : 2)
+						.length() + "d";
+
+		sb.append(String.format(lfmt, thisIdx));
+
 		if (e.isNormal()) {
 			if (e.getThatSemantics() != AggregationKind.NONE) {
-				sb.append("<>--> ");
+				sb.append(" <>--> ");
 			} else if (e.getThisSemantics() != AggregationKind.NONE) {
-				sb.append("--><> ");
+				sb.append(" --><> ");
 			} else {
-				sb.append("--> ");
+				sb.append(" ----> ");
 			}
 		} else {
 			if (e.getThatSemantics() != AggregationKind.NONE) {
-				sb.append("<><-- ");
+				sb.append(" <><-- ");
 			} else if (e.getThisSemantics() != AggregationKind.NONE) {
-				sb.append("<--<> ");
+				sb.append(" <--<> ");
 			} else {
-				sb.append("<-- ");
+				sb.append(" <---- ");
 			}
 		}
+		sb.append(thatIdx);
+		sb.append(" | ");
+
 		sb.append(e.toString());
 		return sb.toString();
 	}
