@@ -68,10 +68,18 @@ public class SimpleTransition extends Transition {
 	protected JValueTypeCollection typeCollection;
 
 	/**
-	 * an edge may have valid roles. This set holds the valid roles for this
-	 * transition. If the transition is valid for all roles, this set is null
+	 * an edge may have valid roles. This set holds the valid roles at the other end of an edge
+	 * accepted by this transition. If the transition is valid for no explicit role, this set is null
 	 */
-	protected Set<String> validEdgeRoles;
+	protected Set<String> validToEdgeRoles;
+	
+	/**
+	 * an edge may have valid roles. This set holds the valid roles at the other end of an edge
+	 * accepted by this transition. If the transition is valid for no explicit role, this set is null
+	 */
+	protected Set<String> validFromEdgeRoles;
+	
+	
 
 	/**
 	 * this transition may accept edges in direction in, out or any
@@ -111,19 +119,31 @@ public class SimpleTransition extends Transition {
 		if (!validDirection.equals(et.validDirection)) {
 			return false;
 		}
-		if (validEdgeRoles != null) {
-			if (et.validEdgeRoles == null) {
+		if (validToEdgeRoles != null) {
+			if (et.validToEdgeRoles == null) {
 				return false;
 			}
-			if (!validEdgeRoles.equals(et.validEdgeRoles)) {
+			if (!validToEdgeRoles.equals(et.validToEdgeRoles)) {
+				return false;
+			}
+		} else {
+			if (et.validToEdgeRoles != null) {
 				return false;
 			}
 		}
-		if (validEdgeRoles == null) {
-			if (et.validEdgeRoles != null) {
+		if (validFromEdgeRoles == null) {
+			if (et.validFromEdgeRoles != null) {
+				return false;
+			}
+		} else {
+			if (et.validFromEdgeRoles == null) {
+				return false;
+			}
+			if (!validFromEdgeRoles.equals(et.validFromEdgeRoles)) {
 				return false;
 			}
 		}
+
 		if (predicateEvaluator != null) {
 			if (et.predicateEvaluator == null) {
 				return false;
@@ -149,6 +169,8 @@ public class SimpleTransition extends Transition {
 		typeCollection = new JValueTypeCollection(t.typeCollection);
 		predicateEvaluator = t.predicateEvaluator;
 		thisEdgeEvaluator = t.thisEdgeEvaluator;
+		validToEdgeRoles = t.validToEdgeRoles;
+		validFromEdgeRoles = t.validFromEdgeRoles;
 	}
 
 	/**
@@ -202,7 +224,8 @@ public class SimpleTransition extends Transition {
 			GraphMarker<VertexEvaluator> graphMarker) {
 		super(start, end);
 		validDirection = dir;
-		validEdgeRoles = roles;
+		validToEdgeRoles = roles;
+		validFromEdgeRoles = null;
 		this.typeCollection = typeCollection;
 		this.predicateEvaluator = predicateEvaluator;
 		Vertex v = graphMarker.getGraph().getFirstVertex(ThisEdge.class);
@@ -224,6 +247,9 @@ public class SimpleTransition extends Transition {
 		} else if (validDirection == AllowedEdgeDirection.OUT) {
 			validDirection = AllowedEdgeDirection.IN;
 		}
+		Set<String> tempSet = validFromEdgeRoles;
+		validFromEdgeRoles = validToEdgeRoles;
+		validToEdgeRoles = tempSet;
 	}
 
 	/*
@@ -268,14 +294,22 @@ public class SimpleTransition extends Transition {
 			}
 		}
 		
-		boolean rolesOnly = (validEdgeRoles != null) && (typeCollection.getAllowedTypes().size() == 0) && (typeCollection.getForbiddenTypes().size() == 0);
+		Set<String> validEdgeRoles = validToEdgeRoles;
+		boolean checkToEdgeRoles = true;
+		if (validEdgeRoles == null) {
+			validEdgeRoles = validFromEdgeRoles;
+			checkToEdgeRoles = false;
+		}
+		
+		boolean rolesOnly =  (validEdgeRoles != null) && (typeCollection.getAllowedTypes().size() == 0) && (typeCollection.getForbiddenTypes().size() == 0);
 		boolean acceptedByRole = false;
+		
 				
 		// checks if a role restriction is set and if e has the right role
 		if (validEdgeRoles != null) {
 			EdgeClass ec = (EdgeClass) e.getAttributedElementClass();
 			Set<String> roles = null;
-			if (e.isNormal()) {
+			if (e.isNormal() == checkToEdgeRoles) {
 				roles = ec.getTo().getAllRoles();
 			} else {
 				roles = ec.getFrom().getAllRoles();
