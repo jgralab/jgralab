@@ -54,6 +54,7 @@ import de.uni_koblenz.jgralabtest.schemas.algolib.weighted.Way;
 import de.uni_koblenz.jgralabtest.schemas.algolib.weighted.WeightedGraph;
 import de.uni_koblenz.jgralabtest.schemas.algolib.weighted.WeightedSchema;
 
+@SuppressWarnings("deprecation")
 public class TryAStar {
 
 	private static class LocationPoint extends Point {

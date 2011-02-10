@@ -30,7 +30,6 @@
  */
 package de.uni_koblenz.jgralabtest.algolib.nonjunit;
 
-import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.BreadthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.shortest_paths.ShortestPathsWithBFS;
