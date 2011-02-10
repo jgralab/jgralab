@@ -57,6 +57,13 @@ class EdgeTreeNode extends GraphElementTreeNode {
 	}
 
 	@Override
+	public String getClipboardText() {
+		return e.getThisRole() + ":"
+				+ e.getAttributedElementClass().getQualifiedName() + ":"
+				+ e.getThatRole();
+	}
+
+	@Override
 	public String toString() {
 		int thisIdx = -1;
 		int thatIdx = -1;

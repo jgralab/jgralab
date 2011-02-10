@@ -56,6 +56,11 @@ class VertexTreeNode extends GraphElementTreeNode {
 	}
 
 	@Override
+	public String getClipboardText() {
+		return v.getAttributedElementClass().getQualifiedName();
+	}
+
+	@Override
 	public String toString() {
 		return v.toString();
 	}
