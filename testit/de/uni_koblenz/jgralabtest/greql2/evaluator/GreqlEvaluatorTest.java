@@ -1803,7 +1803,7 @@ public class GreqlEvaluatorTest extends GenericTests {
 
 	@Test
 	public void testMapComprehension() throws Exception {
-		String queryString = "from x : set(1, 2, 3, 4, 5) reportMap x, x*x end";
+		String queryString = "from x : set(1, 2, 3, 4, 5) reportMap x -> x*x end";
 		JValue result = evalTestQuery("MapComprehension", queryString);
 		assertTrue(result.isMap());
 		JValueMap map = result.toJValueMap();
@@ -1819,7 +1819,7 @@ public class GreqlEvaluatorTest extends GenericTests {
 	public void testMapComprehension2() throws Exception {
 		// TODO: Broken, because the GReQL parser removes all WhereExpressions
 		// and LetExpressions!
-		String queryString = "from x : V{Variable} reportMap x.name, x end";
+		String queryString = "from x : V{Variable} reportMap x.name -> x end";
 		JValue result = evalTestQuery("MapComprehension2", queryString);
 		JValueMap map = result.toJValueMap();
 		assertEquals(5, map.size());
@@ -1833,7 +1833,7 @@ public class GreqlEvaluatorTest extends GenericTests {
 	@Test
 	public void testMapComprehension3() throws Exception {
 		// GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS = true;
-		String queryString = "from x : list(1..3) reportMap x, from y : list(1..x) reportMap y, list(y..x) end end";
+		String queryString = "from x : list(1..3) reportMap x -> from y : list(1..x) reportMap y, list(y..x) end end";
 		JValue result = evalTestQuery("MapComprehension3", queryString);
 		JValueMap map = result.toJValueMap();
 
@@ -1859,7 +1859,7 @@ public class GreqlEvaluatorTest extends GenericTests {
 	public void testTableComprehension2() throws Exception {
 		// TODO: Broken, because the GReQL parser removes all WhereExpressions
 		// and LetExpressions!
-		String queryString = "from x : V{Variable} reportMap x.name, x end";
+		String queryString = "from x : V{Variable} reportMap x.name -> x end";
 		JValue result = evalTestQuery("MapComprehension2", queryString);
 		JValueMap map = result.toJValueMap();
 		assertEquals(5, map.size());

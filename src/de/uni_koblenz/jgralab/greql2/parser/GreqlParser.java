@@ -1583,7 +1583,7 @@ public class GreqlParser extends ParserHelper {
 			match(TokenTypes.LPAREN);
 			List<VertexPosition<Expression>> expressions = null;
 			if (lookAhead(0) != TokenTypes.RPAREN) {
-				expressions = parseExpressionList();
+				expressions = parseExpressionList(TokenTypes.COMMA);
 			}
 			match(TokenTypes.RPAREN);
 			if (!inPredicateMode()) {
@@ -1630,7 +1630,7 @@ public class GreqlParser extends ParserHelper {
 			case SET:
 				match();
 				match(TokenTypes.LPAREN);
-				List<VertexPosition<Expression>> expressions = parseExpressionList();
+				List<VertexPosition<Expression>> expressions = parseExpressionList(TokenTypes.COMMA);
 				match(TokenTypes.RPAREN);
 				if (!inPredicateMode()) {
 					return createPartsOfValueConstruction(expressions,
@@ -1641,7 +1641,7 @@ public class GreqlParser extends ParserHelper {
 			case BAG:
 				match();
 				match(TokenTypes.LPAREN);
-				expressions = parseExpressionList();
+				expressions = parseExpressionList(TokenTypes.COMMA);
 				match(TokenTypes.RPAREN);
 				if (!inPredicateMode()) {
 					return createPartsOfValueConstruction(expressions,
@@ -1652,7 +1652,7 @@ public class GreqlParser extends ParserHelper {
 			case TUP:
 				match();
 				match(TokenTypes.LPAREN);
-				expressions = parseExpressionList();
+				expressions = parseExpressionList(TokenTypes.COMMA);
 				match(TokenTypes.RPAREN);
 				if (!inPredicateMode()) {
 					return createPartsOfValueConstruction(expressions,
@@ -1738,7 +1738,7 @@ public class GreqlParser extends ParserHelper {
 			}
 		} else {
 			match(TokenTypes.COMMA);
-			List<VertexPosition<Expression>> allExpressions = parseExpressionList();
+			List<VertexPosition<Expression>> allExpressions = parseExpressionList(TokenTypes.COMMA);
 			if (!inPredicateMode()) {
 				VertexPosition<Expression> v = new VertexPosition<Expression>(
 						startExpr, lengthStart, offsetStart);
@@ -1890,7 +1890,7 @@ public class GreqlParser extends ParserHelper {
 		return null;
 	}
 
-	private final List<VertexPosition<Expression>> parseExpressionList() {
+	private final List<VertexPosition<Expression>> parseExpressionList(TokenTypes separator) {
 		int pos = alreadySucceeded(RuleEnum.EXPRESSION_LIST);
 		if (skipRule(pos)) {
 			return null;
@@ -1901,7 +1901,7 @@ public class GreqlParser extends ParserHelper {
 			Expression expr = parseExpression();
 			int length = getLength(offset);
 			list.add(new VertexPosition<Expression>(expr, length, offset));
-		} while (tryMatch(TokenTypes.COMMA));
+		} while (tryMatch(separator));
 		ruleSucceeds(RuleEnum.EXPRESSION_LIST, pos);
 		return list;
 	}
@@ -2132,6 +2132,7 @@ public class GreqlParser extends ParserHelper {
 		Comprehension comprehension = null;
 		boolean vartable = false;
 		boolean map = false;
+		TokenTypes separator = TokenTypes.COMMA; 
 		switch (lookAhead(0)) {
 		case REPORT:
 			return parseLabeledReportList();
@@ -2159,19 +2160,20 @@ public class GreqlParser extends ParserHelper {
 				comprehension = graph.createMapComprehension();
 			}
 			map = true;
+			separator = TokenTypes.EDGEEND;
 			match();
 			break;
 		default:
 			fail("Unrecognized token");
 		}
 		int offset = getCurrentOffset();
-		List<VertexPosition<Expression>> reportList = parseExpressionList();
+		List<VertexPosition<Expression>> reportList = parseExpressionList(separator);
 		int length = getLength(offset);
 		IsCompResultDefOf e = null;
 		if (map) {
 			if (!inPredicateMode()) {
 				if (reportList.size() != 2) {
-					fail("reportMap keyExpr, valueExpr must be followed by exactly two arguments");
+					fail("reportMap keyExpr -> valueExpr must be followed by exactly two arguments");
 				}
 
 				IsKeyExprOfComprehension keyEdge = graph
