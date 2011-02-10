@@ -56,6 +56,28 @@ public class LogicFunctionTest extends GenericTests {
 		testBooleanFunction(functionName, arg1, arg2, expected);
 		testBooleanOperant(functionName, arg1, arg2, expected);
 	}
+	
+	
+	
+	@Test
+	public void testAndAsInfixExpression() throws Exception {
+		assertQueryEqualsDB("true", "true and true");
+		assertQueryEqualsDB("false", "true and false");
+		assertQueryEqualsDB("false", "false and true");
+		assertQueryEqualsDB("false", "false and false");
+	}
+	
+	@Test
+	public void testAndAsFunction() throws Exception {
+		assertQueryEqualsDB("true", "and(true,true)");
+		assertQueryEqualsDB("false", "and(true,false)");
+		assertQueryEqualsDB("false", "and(false,true)");
+		assertQueryEqualsDB("false", "and(false,false)");
+	}
+	
+	public void assertQueryEqualsDB(String expected, String current) throws Exception {
+		assertEquals(evalTestQuery("", expected), evalTestQuery("", current));
+	}
 
 	/*
 	 * Test method for the GReQL function 'and'.
@@ -74,6 +96,8 @@ public class LogicFunctionTest extends GenericTests {
 	@Test
 	public void testAnd1() throws Exception {
 		testBooleanOperation("and", false, false, false);
+		
+		assertQueryEquals("and", "false and false", false);
 	}
 
 	/*
