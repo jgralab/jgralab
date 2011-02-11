@@ -83,46 +83,6 @@ public class ArithmeticFunctionTest extends GenericTests {
 	public void testAdd6() throws Exception {
 		assertQueryEquals("0.025 + 0.975", 1.0);
 		assertQueryEquals("add(0.025, 0.975)", 1.0);
-
-		System.out.println(ADD);
-		System.out.println(NaN + NaN);
-		System.out.println(NaN + POSITIVE_INFINITY);
-		System.out.println(NaN + NEGATIVE_INFINITY);
-		System.out.println(POSITIVE_INFINITY + POSITIVE_INFINITY);
-		System.out.println(POSITIVE_INFINITY + NEGATIVE_INFINITY);
-		System.out.println(NEGATIVE_INFINITY + NEGATIVE_INFINITY);
-
-		System.out.println(SUB);
-		System.out.println(NaN - NaN);
-		System.out.println(NaN - POSITIVE_INFINITY);
-		System.out.println(NaN - NEGATIVE_INFINITY);
-		System.out.println(POSITIVE_INFINITY - POSITIVE_INFINITY);
-		System.out.println(POSITIVE_INFINITY - NEGATIVE_INFINITY);
-		System.out.println(NEGATIVE_INFINITY - NEGATIVE_INFINITY);
-
-		System.out.println(MUL);
-		System.out.println(NaN * NaN);
-		System.out.println(NaN * POSITIVE_INFINITY);
-		System.out.println(NaN * NEGATIVE_INFINITY);
-		System.out.println(POSITIVE_INFINITY * POSITIVE_INFINITY);
-		System.out.println(POSITIVE_INFINITY * NEGATIVE_INFINITY);
-		System.out.println(NEGATIVE_INFINITY * NEGATIVE_INFINITY);
-
-		System.out.println(DIV);
-		System.out.println(NaN / NaN);
-		System.out.println(NaN / POSITIVE_INFINITY);
-		System.out.println(NaN / NEGATIVE_INFINITY);
-		System.out.println(POSITIVE_INFINITY / POSITIVE_INFINITY);
-		System.out.println(POSITIVE_INFINITY / NEGATIVE_INFINITY);
-		System.out.println(NEGATIVE_INFINITY / NEGATIVE_INFINITY);
-
-		System.out.println(MOD);
-		System.out.println(NaN % NaN);
-		System.out.println(NaN % POSITIVE_INFINITY);
-		System.out.println(NaN % NEGATIVE_INFINITY);
-		System.out.println(POSITIVE_INFINITY % POSITIVE_INFINITY);
-		System.out.println(POSITIVE_INFINITY % NEGATIVE_INFINITY);
-		System.out.println(NEGATIVE_INFINITY % NEGATIVE_INFINITY);
 	}
 
 	@Test
