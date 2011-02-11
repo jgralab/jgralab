@@ -42,13 +42,13 @@ public class LogicFunctionTest extends GenericTests {
 	public void testBooleanFunction(String functionName, boolean arg1,
 			boolean arg2, boolean expected) throws Exception {
 		String queryString = functionName + "(" + arg1 + "," + arg2 + ")";
-		assertQueryEquals(functionName, queryString, expected);
+		assertQueryEquals(queryString, expected);
 	}
 
 	public void testBooleanOperant(String functionName, boolean arg1,
 			boolean arg2, boolean expected) throws Exception {
 		String queryString = arg1 + " " + functionName + " " + arg2;
-		assertQueryEquals(functionName, queryString, expected);
+		assertQueryEquals(queryString, expected);
 	}
 
 	public void testBooleanOperation(String functionName, boolean arg1,
@@ -97,7 +97,7 @@ public class LogicFunctionTest extends GenericTests {
 	public void testAnd1() throws Exception {
 		testBooleanOperation("and", false, false, false);
 		
-		assertQueryEquals("and", "false and false", false);
+		assertQueryEquals("false and false", false);
 	}
 
 	/*
