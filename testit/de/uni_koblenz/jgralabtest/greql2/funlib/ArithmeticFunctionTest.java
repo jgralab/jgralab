@@ -30,24 +30,15 @@
  */
 package de.uni_koblenz.jgralabtest.greql2.funlib;
 
-import static org.junit.Assert.assertEquals;
 import static java.lang.Double.NaN;
 import static java.lang.Double.NEGATIVE_INFINITY;
 import static java.lang.Double.POSITIVE_INFINITY;
 
 import org.junit.Test;
 
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralabtest.greql2.GenericTests;
 
 public class ArithmeticFunctionTest extends GenericTests {
-
-	private static final String NEG = "Neg";
-	private static final String MUL = "Mul";
-	private static final String SUB = "Sub";
-	private static final String MOD = "Mod";
-	private static final String DIV = "Div";
-	private static final String ADD = "Add";
 
 	@Test
 	public void testAdd1() throws Exception {
@@ -411,18 +402,6 @@ public class ArithmeticFunctionTest extends GenericTests {
 	@Test
 	public void testMultiplicative() throws Exception {
 		assertQueryEquals("100 / 10 / 5 * 2", 4.0);
-	}
-
-	@Test
-	public void testNeg() throws Exception {
-		String queryString = "let x:= list (5..13) in from i:x report -i end";
-		JValue result = evalTestQuery(NEG, queryString);
-		assertEquals(9, result.toCollection().size());
-		int sum = 0;
-		for (JValue j : result.toCollection()) {
-			sum += j.toInteger();
-		}
-		assertEquals(-81, sum);
 	}
 
 	@Test
