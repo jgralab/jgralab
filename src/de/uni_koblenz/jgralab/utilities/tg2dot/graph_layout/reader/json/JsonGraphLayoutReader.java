@@ -3,7 +3,7 @@ package de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.json;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-import de.uni_koblenz.jgralab.utilities.json.JsonReader;
+import de.uni_koblenz.jgralab.utilities.common.json.JsonReader;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.GraphLayout;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.AbstractGraphLayoutReader;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.reader.GraphLayoutReader;

@@ -1,4 +1,4 @@
-package de.uni_koblenz.jgralab.utilities.dot;
+package de.uni_koblenz.jgralab.utilities.common.dot;
 
 /**
  * Lists supported graph types in DOT.

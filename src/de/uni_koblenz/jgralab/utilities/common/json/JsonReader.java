@@ -1,4 +1,4 @@
-package de.uni_koblenz.jgralab.utilities.json;
+package de.uni_koblenz.jgralab.utilities.common.json;
 
 import java.io.File;
 import java.io.FileNotFoundException;
