@@ -45,6 +45,8 @@ import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib.ToDotString;
 public class GreqlFunctionRegister {
 
 	public static void registerAllKnownGreqlFunctions() {
+		// Greql2FunctionLibrary.instance().registerFunctionsInDirectory(
+		// "bin/de/uni_koblenz/jgralab/utilities/tg2dot/greql2/funlib");
 		Greql2FunctionLibrary.instance().registerUserDefinedFunction(
 				ToDotString.class);
 		Greql2FunctionLibrary.instance()
