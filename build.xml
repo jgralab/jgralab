@@ -97,17 +97,14 @@
 	<property name="graphvalidator.includes" value="graphvalidator/**" />
 
 	<property name="rsa.src" value="${src.dir}/de/uni_koblenz/jgralab/utilities" />
-	<property name="rsa.includes" value="ant/Rsa2TgTask.java rsa/** tg2schemagraph/** common/**" />
+	<property name="rsa.includes" value="ant/Rsa2TgTask.java rsa/** tg2schemagraph/**" />
 
 	<property name="tg2dot.src" value="${src.dir}/de/uni_koblenz/jgralab/utilities" />
 	<property name="tg2dot.includes" value="tg2dot/**" />
-
-	<property name="dottools.src" value="${src.dir}/de/uni_koblenz/jgralab/utilities" />
-	<property name="dottools.includes" value="dot/**" />
-
-	<property name="jsontools.src" value="${src.dir}/de/uni_koblenz/jgralab/utilities" />
-	<property name="jsontools.includes" value="json/**" />
-
+	
+	<property name="common-tools.src" value="${src.dir}/de/uni_koblenz/jgralab/utilities" />
+	<property name="common-tools.includes" value="common/**" />
+	
 	<property name="utilities.src" value="${src.dir}/de/uni_koblenz/jgralab/utilities" />
 	<property name="utilities.includes" value="ant/** common/** converter/** csv2tg/** greqlinterface/** jgralab2owl/** schemacompare/** tg2gdl/** tg2gxl/** tg2sidiff/** tgmerge/** tgraphbrowser/** tgtree/** xmi2tgschema/** xml/**" />
 
@@ -173,20 +170,14 @@
 		<taskdef classpathref="classpath" name="rsa2tg" classname="de.uni_koblenz.jgralab.utilities.ant.Rsa2TgTask" />
 	</target>
 
-	<target name="tg2dot" depends="gruml,graphvalidator,greql2,dottools,jsontools">
+	<target name="tg2dot" depends="gruml,graphvalidator,greql2,common-tools">
 		<javac fork="true" srcdir="${tg2dot.src}" includes="${tg2dot.includes}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" target="${javac.targetVM}">
 			<compilerarg line="-Xlint:unchecked" />
 		</javac>
 	</target>
 
-	<target name="dottools">
-		<javac fork="true" srcdir="${dottools.src}" includes="${dottools.includes}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" target="${javac.targetVM}">
-			<compilerarg line="-Xlint:unchecked" />
-		</javac>
-	</target>
-
-	<target name="jsontools">
-		<javac fork="true" srcdir="${jsontools.src}" includes="${jsontools.includes}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" target="${javac.targetVM}">
+	<target name="common-tools">
+		<javac fork="true" srcdir="${common-tools.src}" includes="${common-tools.includes}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" target="${javac.targetVM}">
 			<compilerarg line="-Xlint:unchecked" />
 		</javac>
 	</target>
