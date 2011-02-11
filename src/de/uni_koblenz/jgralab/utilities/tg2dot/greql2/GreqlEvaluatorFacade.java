@@ -33,12 +33,15 @@ package de.uni_koblenz.jgralab.utilities.tg2dot.greql2;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Level;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
@@ -46,6 +49,16 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
+import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib.AbbreviateString;
+import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib.AlphaIncidenceNumber;
+import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib.AlphaRolename;
+import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib.AttributeType;
+import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib.FormatString;
+import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib.Join;
+import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib.OmegaIncidenceNumber;
+import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib.OmegaRolename;
+import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib.ShortenString;
+import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib.ToDotString;
 
 /**
  * The {@link GreqlEvaluatorFacade} is just a facade for a
@@ -83,6 +96,33 @@ public class GreqlEvaluatorFacade {
 	public static final String PRINT_INCIDENCE_INDICES = "printIncidenceIndices";
 
 	public static final String PRINT_ROLENAMES = "printRolenames";
+
+	/**
+	 * Registers all known GReQL functions and disables the JGraLab log.
+	 */
+	static {
+		Greql2FunctionLibrary.instance().registerUserDefinedFunction(
+				ToDotString.class);
+		Greql2FunctionLibrary.instance()
+				.registerUserDefinedFunction(Join.class);
+		Greql2FunctionLibrary.instance().registerUserDefinedFunction(
+				AlphaRolename.class);
+		Greql2FunctionLibrary.instance().registerUserDefinedFunction(
+				AlphaIncidenceNumber.class);
+		Greql2FunctionLibrary.instance().registerUserDefinedFunction(
+				OmegaRolename.class);
+		Greql2FunctionLibrary.instance().registerUserDefinedFunction(
+				OmegaIncidenceNumber.class);
+		Greql2FunctionLibrary.instance().registerUserDefinedFunction(
+				FormatString.class);
+
+		Greql2FunctionLibrary.instance().registerUserDefinedFunction(
+				AbbreviateString.class);
+		Greql2FunctionLibrary.instance().registerUserDefinedFunction(
+				AttributeType.class);
+		Greql2FunctionLibrary.instance().registerUserDefinedFunction(
+				ShortenString.class);
+	}
 
 	/**
 	 * The actual GreqlEvaluator used for evaluations.

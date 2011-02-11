@@ -77,7 +77,6 @@ import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.TypeDefin
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.writer.AbstractGraphLayoutWriter;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.writer.json.JsonGraphLayoutWriter;
 import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade;
-import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlFunctionRegister;
 import de.uni_koblenz.jgralab.utilities.tg2whatever.Tg2Whatever;
 
 /**
@@ -145,13 +144,7 @@ public class Tg2Dot extends Tg2Whatever {
 
 	private boolean debugOptimization;
 
-	/**
-	 * Registers all known GReQL functions and disables the JGraLab log.
-	 */
-	static {
-		GreqlFunctionRegister.registerAllKnownGreqlFunctions();
-		JGraLab.setLogLevel(Level.OFF);
-	}
+	private Level jGraLabLogLevel;
 
 	/**
 	 * @param args
@@ -288,6 +281,8 @@ public class Tg2Dot extends Tg2Whatever {
 		debugOptimization = GreqlEvaluator.DEBUG_OPTIMIZATION;
 		GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS = false;
 		GreqlEvaluator.DEBUG_OPTIMIZATION = false;
+		jGraLabLogLevel = JGraLab.getRootLogger().getLevel();
+		JGraLab.setLogLevel(Level.OFF);
 
 		initializeEvaluator();
 		initializeGraphLayout();
@@ -298,7 +293,7 @@ public class Tg2Dot extends Tg2Whatever {
 		try {
 			createDotWriter(out);
 
-			startGraph();
+			startDotGraph();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -363,7 +358,7 @@ public class Tg2Dot extends Tg2Whatever {
 	/**
 	 * Starts the Graph in the output file.
 	 */
-	private void startGraph() {
+	private void startDotGraph() {
 		StringBuilder sb = new StringBuilder();
 		// Names have to start with a character
 		sb.append(graph.getM1Class().getSimpleName());
@@ -604,6 +599,7 @@ public class Tg2Dot extends Tg2Whatever {
 
 		GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS = debugIterations;
 		GreqlEvaluator.DEBUG_OPTIMIZATION = debugOptimization;
+		JGraLab.setLogLevel(jGraLabLogLevel);
 	}
 
 	/**
