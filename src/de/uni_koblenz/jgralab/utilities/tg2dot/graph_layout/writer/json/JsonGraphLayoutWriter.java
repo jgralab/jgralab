@@ -8,7 +8,7 @@ import java.util.Map.Entry;
 import org.codehaus.jackson.JsonGenerationException;
 
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
-import de.uni_koblenz.jgralab.utilities.json.JsonWriter;
+import de.uni_koblenz.jgralab.utilities.common.json.JsonWriter;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.GraphLayout;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.Definition;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.ElementDefinition;

@@ -1,4 +1,4 @@
-package de.uni_koblenz.jgralab.utilities.dot;
+package de.uni_koblenz.jgralab.utilities.common.dot;
 
 import java.io.File;
 import java.io.FileNotFoundException;
