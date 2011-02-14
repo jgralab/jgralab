@@ -61,11 +61,22 @@ public class LogicFunctionTest extends GenericTests {
 	 * Test method for the GReQL function 'and'.
 	 */
 	@Test
-	public void testAnd1() throws Exception {
-		testBooleanOperation("and", false, false, false);
-		testBooleanOperation("and", false, true, false);
-		testBooleanOperation("and", true, false, false);
-		testBooleanOperation("and", true, true, true);
+	public void testAndInfix() throws Exception {
+		assertQueryEquals("false and false", false);
+		assertQueryEquals("false and true", false);
+		assertQueryEquals("true and false", false);
+		assertQueryEquals("true and true", true);
+	}
+
+	/*
+	 * Test method for the GReQL function 'and'.
+	 */
+	@Test
+	public void testAnd() throws Exception {
+		assertQueryEquals("and(false, false)", false);
+		assertQueryEquals("and(false, true)", false);
+		assertQueryEquals("and(true, false)", false);
+		assertQueryEquals("and(true, true)", true);
 	}
 
 	/*
