@@ -103,28 +103,6 @@ public class LogicFunctionTest extends GenericTests {
 	}
 
 	/*
-	 * Test method for the GReQL function 'or'.
-	 */
-	@Test
-	public void testOr() throws Exception {
-		String queryString = "from el:list(1..100) "
-				+ "with or(el % 2 = 0, el % 3 = 0) report el end";
-		JValue result = evalTestQuery("or", queryString);
-		assertEquals(50 + 17, result.toCollection().size());
-	}
-
-	/*
-	 * Test method for the GReQL function 'xor' as Infix.
-	 */
-	@Test
-	public void testXorInfix() throws Exception {
-		String queryString = "from el:list(1..100) "
-				+ "with el % 2 = 0 xor el % 3 = 0 report el end";
-		JValue result = evalTestQuery("or", queryString);
-		assertEquals(50 + 17 - 16, result.toCollection().size());
-	}
-
-	/*
 	 * Test method for the GReQL function 'xor'.
 	 */
 	@Test
