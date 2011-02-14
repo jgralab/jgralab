@@ -97,29 +97,8 @@ public class LogicFunctionTest extends GenericTests {
 	@Test
 	public void testOr1() throws Exception {
 		testBooleanOperation("or", false, false, false);
-	}
-
-	/*
-	 * Test method for the GReQL function 'or'.
-	 */
-	@Test
-	public void testOr2() throws Exception {
 		testBooleanOperation("or", false, true, true);
-	}
-
-	/*
-	 * Test method for the GReQL function 'or'.
-	 */
-	@Test
-	public void testOr3() throws Exception {
 		testBooleanOperation("or", true, false, true);
-	}
-
-	/*
-	 * Test method for the GReQL function 'or'.
-	 */
-	@Test
-	public void testOr4() throws Exception {
 		testBooleanOperation("or", true, true, true);
 	}
 
