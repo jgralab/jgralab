@@ -37,7 +37,7 @@ import de.uni_koblenz.jgralabtest.greql2.GenericTests;
 public class LogicFunctionTest extends GenericTests {
 
 	/*
-	 * Test method for the GReQL function 'and'.
+	 * Test method for the GReQL function 'and' in infix usage.
 	 */
 	@Test
 	public void testAndInfix() throws Exception {
@@ -59,7 +59,7 @@ public class LogicFunctionTest extends GenericTests {
 	}
 
 	/*
-	 * Test method for the GReQL function 'or'.
+	 * Test method for the GReQL function 'or' in infix usage.
 	 */
 	@Test
 	public void testOrInfix() throws Exception {
@@ -81,7 +81,7 @@ public class LogicFunctionTest extends GenericTests {
 	}
 
 	/*
-	 * Test method for the GReQL function 'xor'.
+	 * Test method for the GReQL function 'xor' in infix usage.
 	 */
 	@Test
 	public void testXorInfix() throws Exception {
