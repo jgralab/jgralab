@@ -316,7 +316,7 @@ public class Tg2Dot extends Tg2Whatever {
 		if (useJsonGraphLayoutReader) {
 			factory.setJsonGraphLayoutFilename(layoutFile);
 		} else {
-			factory.setJsonGraphLayoutFilename(layoutFile);
+			factory.setPListGraphLayoutFilename(layoutFile);
 		}
 
 		layout = factory.createGraphLayout();
