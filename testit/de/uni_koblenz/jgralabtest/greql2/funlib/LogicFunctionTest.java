@@ -56,9 +56,7 @@ public class LogicFunctionTest extends GenericTests {
 		testBooleanFunction(functionName, arg1, arg2, expected);
 		testBooleanOperant(functionName, arg1, arg2, expected);
 	}
-	
-	
-	
+
 	@Test
 	public void testAndAsInfixExpression() throws Exception {
 		assertQueryEqualsDB("true", "true and true");
@@ -66,7 +64,7 @@ public class LogicFunctionTest extends GenericTests {
 		assertQueryEqualsDB("false", "false and true");
 		assertQueryEqualsDB("false", "false and false");
 	}
-	
+
 	@Test
 	public void testAndAsFunction() throws Exception {
 		assertQueryEqualsDB("true", "and(true,true)");
@@ -74,8 +72,9 @@ public class LogicFunctionTest extends GenericTests {
 		assertQueryEqualsDB("false", "and(false,true)");
 		assertQueryEqualsDB("false", "and(false,false)");
 	}
-	
-	public void assertQueryEqualsDB(String expected, String current) throws Exception {
+
+	public void assertQueryEqualsDB(String expected, String current)
+			throws Exception {
 		assertEquals(evalTestQuery("", expected), evalTestQuery("", current));
 	}
 
@@ -96,7 +95,7 @@ public class LogicFunctionTest extends GenericTests {
 	@Test
 	public void testAnd1() throws Exception {
 		testBooleanOperation("and", false, false, false);
-		
+
 		assertQueryEquals("false and false", false);
 	}
 
