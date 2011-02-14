@@ -57,27 +57,6 @@ public class LogicFunctionTest extends GenericTests {
 		testBooleanOperant(functionName, arg1, arg2, expected);
 	}
 
-	@Test
-	public void testAndAsInfixExpression() throws Exception {
-		assertQueryEqualsDB("true", "true and true");
-		assertQueryEqualsDB("false", "true and false");
-		assertQueryEqualsDB("false", "false and true");
-		assertQueryEqualsDB("false", "false and false");
-	}
-
-	@Test
-	public void testAndAsFunction() throws Exception {
-		assertQueryEqualsDB("true", "and(true,true)");
-		assertQueryEqualsDB("false", "and(true,false)");
-		assertQueryEqualsDB("false", "and(false,true)");
-		assertQueryEqualsDB("false", "and(false,false)");
-	}
-
-	public void assertQueryEqualsDB(String expected, String current)
-			throws Exception {
-		assertEquals(evalTestQuery("", expected), evalTestQuery("", current));
-	}
-
 	/*
 	 * Test method for the GReQL function 'and'.
 	 */
@@ -87,8 +66,6 @@ public class LogicFunctionTest extends GenericTests {
 		testBooleanOperation("and", false, true, false);
 		testBooleanOperation("and", true, false, false);
 		testBooleanOperation("and", true, true, true);
-
-		assertQueryEquals("false and false", false);
 	}
 
 	/*
@@ -111,16 +88,5 @@ public class LogicFunctionTest extends GenericTests {
 		testBooleanOperation("xor", false, true, true);
 		testBooleanOperation("xor", true, false, true);
 		testBooleanOperation("xor", true, true, false);
-	}
-
-	/*
-	 * Test method for the GReQL function 'xor'.
-	 */
-	@Test
-	public void testXor() throws Exception {
-		String queryString = "from el:list(1..100) "
-				+ "with xor(el % 2 = 0, el % 3 = 0) report el end";
-		JValue result = evalTestQuery("or", queryString);
-		assertEquals(50 + 17 - 16, result.toCollection().size());
 	}
 }
