@@ -138,6 +138,13 @@ public class GenericTests {
 		assertEquals(expectedValue, result.toString());
 	}
 
+	protected void assertQueryEqualsQuery(String query, String resultQuery)
+			throws Exception {
+		JValue result = evalTestQuery("", query);
+		JValue expectedResult = evalTestQuery("", resultQuery);
+		assertEquals(result, expectedResult);
+	}
+
 	protected void assertQueryEquals(String query, Enum<?> expectedValue)
 			throws Exception {
 		JValue result = evalTestQuery("", query);
@@ -352,8 +359,7 @@ public class GenericTests {
 	}
 
 	private void printDebuggingSyntaxGraph(Optimizer optimizer) {
-		String dotFileName = System.getProperty("user.home")
-				+ File.separator;
+		String dotFileName = System.getProperty("user.home") + File.separator;
 		if (optimizer != null) {
 			System.out.println("Optimized Query:");
 			if (optimizer instanceof DefaultOptimizer) {
