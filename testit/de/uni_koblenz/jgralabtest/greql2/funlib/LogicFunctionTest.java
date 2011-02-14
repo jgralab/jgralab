@@ -59,6 +59,24 @@ public class LogicFunctionTest extends GenericTests {
 	}
 
 	/*
+	 * Test method for the GReQL function 'and' in prefix usage.
+	 */
+	@Test
+	public void testNotPrefix() throws Exception {
+		assertQueryEquals("not false", true);
+		assertQueryEquals("not true", false);
+	}
+
+	/*
+	 * Test method for the GReQL function 'not'.
+	 */
+	@Test
+	public void testNot() throws Exception {
+		assertQueryEquals("not(false)", true);
+		assertQueryEquals("not(true)", false);
+	}
+
+	/*
 	 * Test method for the GReQL function 'or' in infix usage.
 	 */
 	@Test
