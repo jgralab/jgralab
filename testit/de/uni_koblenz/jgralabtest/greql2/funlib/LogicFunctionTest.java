@@ -30,32 +30,11 @@
  */
 package de.uni_koblenz.jgralabtest.greql2.funlib;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
 
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralabtest.greql2.GenericTests;
 
 public class LogicFunctionTest extends GenericTests {
-
-	public void testBooleanFunction(String functionName, boolean arg1,
-			boolean arg2, boolean expected) throws Exception {
-		String queryString = functionName + "(" + arg1 + "," + arg2 + ")";
-		assertQueryEquals(queryString, expected);
-	}
-
-	public void testBooleanOperant(String functionName, boolean arg1,
-			boolean arg2, boolean expected) throws Exception {
-		String queryString = arg1 + " " + functionName + " " + arg2;
-		assertQueryEquals(queryString, expected);
-	}
-
-	public void testBooleanOperation(String functionName, boolean arg1,
-			boolean arg2, boolean expected) throws Exception {
-		testBooleanFunction(functionName, arg1, arg2, expected);
-		testBooleanOperant(functionName, arg1, arg2, expected);
-	}
 
 	/*
 	 * Test method for the GReQL function 'and'.
