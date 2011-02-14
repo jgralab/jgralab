@@ -82,45 +82,13 @@ public class LogicFunctionTest extends GenericTests {
 	 * Test method for the GReQL function 'and'.
 	 */
 	@Test
-	public void testAnd() throws Exception {
-		String queryString = "from el:list(1..100) "
-				+ "with  el % 2 = 0 and el % 3 = 0 report el end";
-		JValue result = evalTestQuery("and", queryString);
-		assertEquals(16, result.toCollection().size());
-	}
-
-	/*
-	 * Test method for the GReQL function 'and'.
-	 */
-	@Test
 	public void testAnd1() throws Exception {
 		testBooleanOperation("and", false, false, false);
+		testBooleanOperation("and", false, true, false);
+		testBooleanOperation("and", true, false, false);
+		testBooleanOperation("and", true, true, true);
 
 		assertQueryEquals("false and false", false);
-	}
-
-	/*
-	 * Test method for the GReQL function 'and'.
-	 */
-	@Test
-	public void testAnd2() throws Exception {
-		testBooleanOperation("and", false, true, false);
-	}
-
-	/*
-	 * Test method for the GReQL function 'and'.
-	 */
-	@Test
-	public void testAnd3() throws Exception {
-		testBooleanOperation("and", true, false, false);
-	}
-
-	/*
-	 * Test method for the GReQL function 'and'.
-	 */
-	@Test
-	public void testAnd4() throws Exception {
-		testBooleanOperation("and", true, true, true);
 	}
 
 	/*
