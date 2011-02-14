@@ -326,33 +326,13 @@ public class GenericTests {
 		eval.setDatagraph(datagraph);
 		eval.setUseSavedOptimizedSyntaxGraph(false);
 
-		if (optimizer != null) {
-			eval.setOptimize(true);
-			eval.setOptimizer(optimizer);
-		} else {
-			eval.setOptimize(false);
-		}
+		setOptimizer(optimizer);
 
 		// when optimizing turn on logging, too.
 		eval.startEvaluation(eval.isOptimize(), true);
 
 		if (DEBUG_SYNTAXGRAPHS) {
-			String dotFileName = System.getProperty("user.home")
-					+ File.separator;
-			if (optimizer != null) {
-				System.out.println("Optimized Query:");
-				if (optimizer instanceof DefaultOptimizer) {
-					dotFileName += "default-optimized-query.dot";
-				} else {
-					dotFileName += "optimized-query.dot";
-				}
-			} else {
-				System.out.println("Unoptimized Query:");
-				dotFileName += "unoptimized-query.dot";
-			}
-			System.out.println(((SerializableGreql2) eval.getSyntaxGraph())
-					.serialize());
-			Tg2Dot.convertGraph(eval.getSyntaxGraph(), dotFileName, true);
+			printDebuggingSyntaxGraph(optimizer);
 		}
 
 		printTestFunctionFooter(functionName);
@@ -360,6 +340,34 @@ public class GenericTests {
 		JValue result = eval.getEvaluationResult();
 		eval.printEvaluationTimes();
 		return result;
+	}
+
+	private void setOptimizer(Optimizer optimizer) {
+		if (optimizer != null) {
+			eval.setOptimize(true);
+			eval.setOptimizer(optimizer);
+		} else {
+			eval.setOptimize(false);
+		}
+	}
+
+	private void printDebuggingSyntaxGraph(Optimizer optimizer) {
+		String dotFileName = System.getProperty("user.home")
+				+ File.separator;
+		if (optimizer != null) {
+			System.out.println("Optimized Query:");
+			if (optimizer instanceof DefaultOptimizer) {
+				dotFileName += "default-optimized-query.dot";
+			} else {
+				dotFileName += "optimized-query.dot";
+			}
+		} else {
+			System.out.println("Unoptimized Query:");
+			dotFileName += "unoptimized-query.dot";
+		}
+		System.out.println(((SerializableGreql2) eval.getSyntaxGraph())
+				.serialize());
+		Tg2Dot.convertGraph(eval.getSyntaxGraph(), dotFileName, true);
 	}
 
 	protected JValue getNthValue(JValueCollection col, int n) {
