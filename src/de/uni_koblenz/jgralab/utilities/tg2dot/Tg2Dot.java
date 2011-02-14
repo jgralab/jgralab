@@ -312,11 +312,13 @@ public class Tg2Dot extends Tg2Whatever {
 	private void initializeGraphLayout() {
 		GraphLayoutFactory factory = new GraphLayoutFactory(evaluator);
 
-		File layoutFile = new File(graphLayoutFilename);
-		if (useJsonGraphLayoutReader) {
-			factory.setJsonGraphLayoutFilename(layoutFile);
-		} else {
-			factory.setPListGraphLayoutFilename(layoutFile);
+		if (graphLayoutFilename != null) {
+			File layoutFile = new File(graphLayoutFilename);
+			if (useJsonGraphLayoutReader) {
+				factory.setJsonGraphLayoutFilename(layoutFile);
+			} else {
+				factory.setPListGraphLayoutFilename(layoutFile);
+			}
 		}
 
 		layout = factory.createGraphLayout();
