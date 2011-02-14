@@ -105,10 +105,21 @@ public class LogicFunctionTest extends GenericTests {
 	 * Test method for the GReQL function 'xor'.
 	 */
 	@Test
-	public void testXor1() throws Exception {
-		testBooleanOperation("xor", false, false, false);
-		testBooleanOperation("xor", false, true, true);
-		testBooleanOperation("xor", true, false, true);
-		testBooleanOperation("xor", true, true, false);
+	public void testXorInfix() throws Exception {
+		assertQueryEquals("xor(false, false)", false);
+		assertQueryEquals("xor(false, true)", true);
+		assertQueryEquals("xor(true, false)", true);
+		assertQueryEquals("xor(true, true)", false);
+	}
+
+	/*
+	 * Test method for the GReQL function 'xor'.
+	 */
+	@Test
+	public void testXor() throws Exception {
+		assertQueryEquals("false xor false", false);
+		assertQueryEquals("false xor true", true);
+		assertQueryEquals("true xor false", true);
+		assertQueryEquals("true xor true", false);
 	}
 }
