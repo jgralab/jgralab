@@ -78,6 +78,7 @@ public class PostgreSqlDb extends GraphDatabase {
 			throws SQLException {
 		// addPrimaryKeyConstraints
 		// addForeignKeyConstraintsAndIndicesOnThem
+		addForeignKeyConstraints();
 		cluster();
 	}
 
@@ -104,7 +105,8 @@ public class PostgreSqlDb extends GraphDatabase {
 	@Override
 	protected void changeFromGraphTraversalToGraphCreation()
 			throws SQLException {
-		// TODO drop FKs
+		dropForeignKeyConstraints();
+		cluster();
 	}
 
 	@Override
@@ -112,5 +114,6 @@ public class PostgreSqlDb extends GraphDatabase {
 		addPrimaryKeyConstraints();
 		// this.addForeignKeyConstraints();
 		addIndices();
+		cluster();
 	}
 }
