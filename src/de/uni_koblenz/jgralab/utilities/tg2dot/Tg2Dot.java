@@ -42,7 +42,6 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Collections;
 import java.util.HashMap;
@@ -51,9 +50,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
-
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
@@ -74,7 +70,6 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.utilities.common.dot.DotWriter;
 import de.uni_koblenz.jgralab.utilities.common.dot.GraphType;
-import de.uni_koblenz.jgralab.utilities.common.dot.GraphVizProgram;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.GraphLayout;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.GraphLayoutFactory;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.Definition;
@@ -262,97 +257,6 @@ public class Tg2Dot extends Tg2Whatever {
 		process.waitFor();
 
 		return inputStream;
-	}
-
-	/**
-	 * Converts a given Graph over the DOT format and a {@link GraphVizProgram}
-	 * into an image to the provided path. Edges can be reversed for the hole
-	 * graph or individually.
-	 * 
-	 * @param graph
-	 *            Graph, which should be converted.
-	 * @param program
-	 *            A GraphVizProgram holding all needed parameters to executed
-	 *            the selected GraphViz program.
-	 * @param imageOutputPath
-	 *            The image output path.
-	 * @param reversedEdges
-	 *            Flag to indicate the reversal of all edge directions.
-	 * @param reversedEdgeTypes
-	 *            Type of edges, which should be reversed.
-	 * @throws InterruptedException
-	 * @throws IOException
-	 */
-	public static void convertGraph2ImageFile(Graph graph,
-			GraphVizProgram program, String imageOutputPath,
-			boolean reversedEdges,
-			Class<? extends AttributedElement>... reversedEdgeTypes)
-			throws InterruptedException, IOException {
-
-		String executionString = String.format("%s%s -T%s -o%s", program.path,
-				program.layouter, program.outputFormat, imageOutputPath);
-		convertGraphPipeToProgram(graph, executionString, reversedEdges,
-				reversedEdgeTypes);
-	}
-
-	/**
-	 * Converts a given Graph over the DOT format and a {@link GraphVizProgram}
-	 * into an {@link ImageIcon}. Edges can be reversed for the hole graph or
-	 * individually.
-	 * 
-	 * @param graph
-	 *            Graph, which should be converted.
-	 * @param program
-	 *            A GraphVizProgram holding all needed parameters to executed
-	 *            the selected GraphViz program.
-	 * @param reversedEdges
-	 *            Flag to indicate the reversal of all edge directions.
-	 * @param reversedEdgeTypes
-	 *            Type of edges, which should be reversed.
-	 * @return A loaded ImageIcon.
-	 * @throws InterruptedException
-	 * @throws IOException
-	 */
-	public static ImageIcon convertGraph2ImageIcon(Graph graph,
-			GraphVizProgram program, boolean reversedEdges,
-			Class<? extends AttributedElement>... reversedEdgeTypes)
-			throws InterruptedException, IOException {
-
-		String executionString = String.format("%s%s -T%s", program.path,
-				program.layouter, program.outputFormat);
-		InputStream imageStream = convertGraphPipeToProgram(graph,
-				executionString, reversedEdges, reversedEdgeTypes);
-
-		return new ImageIcon(ImageIO.read(imageStream));
-	}
-
-	/**
-	 * Converts a given Graph over the DOT format and a {@link GraphVizProgram}
-	 * into a {@link BufferedInputStream}. Edges can be reversed for the hole
-	 * graph or individually.
-	 * 
-	 * @param graph
-	 *            Graph, which should be converted.
-	 * @param program
-	 *            A GraphVizProgram holding all needed parameters to executed
-	 *            the selected GraphViz program.
-	 * @param reversedEdges
-	 *            Flag to indicate the reversal of all edge directions.
-	 * @param reversedEdgeTypes
-	 *            Type of edges, which should be reversed.
-	 * @return
-	 * @throws InterruptedException
-	 * @throws IOException
-	 */
-	public static BufferedInputStream convertGraph2ImageStream(Graph graph,
-			GraphVizProgram program, boolean reversedEdges,
-			Class<? extends AttributedElement>... reversedEdgeTypes)
-			throws InterruptedException, IOException {
-
-		String executionString = String.format("%s%s -T%s", program.path,
-				program.layouter, program.outputFormat);
-		return convertGraphPipeToProgram(graph, executionString, reversedEdges,
-				reversedEdgeTypes);
 	}
 
 	/**
