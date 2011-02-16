@@ -163,67 +163,43 @@ public class ArithmeticFunctionTest extends GenericTests {
 	}
 
 	@Test
-	public void testMod1() throws Exception {
+	public void testModInfix() throws Exception {
 		assertQueryEquals("9.5 % 2", 1.5);
-		assertQueryEquals("mod(9.5, 2)", 1.5);
-	}
-
-	@Test
-	public void testMod2() throws Exception {
 		assertQueryEquals("9 % 2", 1);
-		assertQueryEquals("mod(9, 2)", 1);
-	}
-
-	@Test
-	public void testMod3() throws Exception {
 		assertQueryEquals("-9 % 2", -1);
-		assertQueryEquals("mod(-9, 2)", -1);
+		assertQueryEquals("9 % 3", 0);
 	}
 
 	@Test
-	public void testMod4() throws Exception {
-		assertQueryEquals("9 % 3", 0);
+	public void testMod() throws Exception {
+		assertQueryEquals("mod(9, 2)", 1);
+		assertQueryEquals("mod(9.5, 2)", 1.5);
+		assertQueryEquals("mod(-9, 2)", -1);
 		assertQueryEquals("mod(9, 3)", 0);
 	}
 
 	@Test
-	public void testModSpecialCase1() throws Exception {
+	public void testModSpecialCases1Infix() throws Exception {
 		assertQueryEquals("Infinity % 7", NaN);
-		assertQueryEquals("mod(Infinity, 7)", NaN);
-	}
-
-	@Test
-	public void testModSpecialCase2() throws Exception {
 		assertQueryEquals("3 % Infinity", NaN);
-		assertQueryEquals("mod(3, Infinity)", NaN);
-	}
-
-	@Test
-	public void testModSpecialCase3() throws Exception {
 		assertQueryEquals("-Infinity % 7", NaN);
-		assertQueryEquals("mod(-Infinity, 7)", NaN);
-	}
-
-	@Test
-	public void testModSpecialCase4() throws Exception {
 		assertQueryEquals("3 % -Infinity", NaN);
-		assertQueryEquals("mod(3, -Infinity)", NaN);
-	}
-
-	@Test
-	public void testModSpecialCase5() throws Exception {
 		assertQueryEquals("NaN % 7", NaN);
-		assertQueryEquals("mod(Nan, 7)", NaN);
+		assertQueryEquals("3 % NaN", NaN);
 	}
 
 	@Test
-	public void testModSpecialCase6() throws Exception {
-		assertQueryEquals("3 % NaN", NaN);
+	public void testModSpecialCases1() throws Exception {
+		assertQueryEquals("mod(3, Infinity)", NaN);
+		assertQueryEquals("mod(Infinity, 7)", NaN);
+		assertQueryEquals("mod(-Infinity, 7)", NaN);
+		assertQueryEquals("mod(3, -Infinity)", NaN);
+		assertQueryEquals("mod(Nan, 7)", NaN);
 		assertQueryEquals("mod(3, NaN)", NaN);
 	}
 
 	@Test
-	public void testModSpecialCases() throws Exception {
+	public void testModSpecialCases2Infix() throws Exception {
 
 		assertQueryEquals("Infinity % Infinity", NaN);
 		assertQueryEquals("-Infinity % -Infinity", NaN);
@@ -231,6 +207,10 @@ public class ArithmeticFunctionTest extends GenericTests {
 		assertQueryEquals("Infinity % -Infinity", NaN);
 		assertQueryEquals("Infinity % NaN", NaN);
 		assertQueryEquals("-Infinity % NaN", NaN);
+	}
+
+	@Test
+	public void testModSpecialCases2() throws Exception {
 
 		// As functions
 		assertQueryEquals("mod(Infinity, Infinity)", NaN);
