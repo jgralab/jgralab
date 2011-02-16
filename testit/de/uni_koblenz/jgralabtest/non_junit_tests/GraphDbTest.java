@@ -68,7 +68,7 @@ public class GraphDbTest {
 			e.printStackTrace();
 		}
 		
-		gdb.optimizeForGraphCreation();
+//		gdb.optimizeForGraphCreation();
 		gdb.commitTransaction();
 		System.out.println("Creating graph...");
 		JniTestGraph g = JniTestSchema.instance()
@@ -101,7 +101,7 @@ public class GraphDbTest {
 		}
 		System.out.println();
 		System.out.println(System.currentTimeMillis() - s0 + " ms");
-		gdb.optimizeForGraphCreation();
+		// gdb.optimizeForGraphCreation();
 		gdb.commitTransaction();
 
 		// gdb.setAutoCommitMode(true);
