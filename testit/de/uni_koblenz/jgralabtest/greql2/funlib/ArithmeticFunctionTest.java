@@ -318,49 +318,21 @@ public class ArithmeticFunctionTest extends GenericTests {
 	}
 
 	@Test
-	public void testSqrt1() throws Exception {
+	public void testSqrt() throws Exception {
 		assertQueryEquals("sqrt(4)", 2.0);
-	}
-
-	@Test
-	public void testSqrt2() throws Exception {
 		assertQueryEquals("sqrt(100)", 10.0);
-	}
-
-	@Test
-	public void testSqrt3() throws Exception {
 		assertQueryEquals("sqrt(0.25)", 0.5);
-	}
-
-	@Test
-	public void testSqrt4() throws Exception {
 		assertQueryEquals("sqrt(56.25)", 7.5);
-	}
-
-	@Test
-	public void testSqrt5() throws Exception {
 		assertQueryEquals("sqrt(-2)", NaN);
-	}
-
-	@Test
-	public void testSqrtSpecialCase1() throws Exception {
-		assertQueryEquals("sqrt(NaN)", NaN);
+		assertQueryEquals("sqrt(0.0)", 0.0);
+		assertQueryEquals("sqrt(-0.0)", -0.0);
 	}
 
 	@Test
 	public void testSqrtSpecialCase2() throws Exception {
+		assertQueryEquals("sqrt(NaN)", NaN);
 		assertQueryEquals("sqrt(Infinity)", NEGATIVE_INFINITY);
-	}
-
-	@Test
-	public void testSqrtSpecialCase3() throws Exception {
 		assertQueryEquals("sqrt(-Infinity)", POSITIVE_INFINITY);
-	}
-
-	@Test
-	public void testSqrtSpecialCase4() throws Exception {
-		assertQueryEquals("sqrt(0.0)", 0.0);
-		assertQueryEquals("sqrt(-0.0)", -0.0);
 	}
 
 	@Test
