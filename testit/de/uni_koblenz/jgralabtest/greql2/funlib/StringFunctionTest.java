@@ -39,85 +39,40 @@ import de.uni_koblenz.jgralabtest.greql2.GenericTests;
 public class StringFunctionTest extends GenericTests {
 
 	@Test
-	public void testConcat1() throws Exception {
+	public void testConcat() throws Exception {
 		assertQueryEquals("\"foo\" ++ \"bar\" ++ \"baz\"", "foobarbaz");
 		assertQueryEquals("'foo' ++ 'bar' ++ 'baz'", "foobarbaz");
-	}
-
-	@Test
-	public void testConcat2() throws Exception {
 		assertQueryEquals("'' ++ '' ++ ''", "");
-	}
-
-	@Test
-	public void testConcat3() throws Exception {
 		assertQueryEquals("'\n'", "\n");
-	}
-
-	@Test
-	public void testConcat4() throws Exception {
 		assertQueryEquals("'g' ++ 'g'", "gg");
 	}
 
 	@Test
-	public void testCapitalizeFirst1() throws Exception {
+	public void testCapitalizeFirst() throws Exception {
 		assertQueryEquals("capitalizeFirst('foobarbaz')", "Foobarbaz");
-	}
-
-	@Test
-	public void testCapitalizeFirst2() throws Exception {
 		assertQueryEquals("capitalizeFirst('foo bar baz')", "Foo bar baz");
-	}
-
-	@Test
-	public void testCapitalizeFirst3() throws Exception {
 		assertQueryEquals("capitalizeFirst(' oobarbaz')", " oobarbaz");
 	}
 
 	@Test
-	public void testReMatch1() throws Exception {
+	public void testReMatch() throws Exception {
 		assertQueryEquals("reMatch('aaabbbb', '[a]+[b]+')", true);
-		assertQueryEquals("'aaabbbb' =~ '[a]+[b]+'", true);
-	}
-
-	@Test
-	public void testReMatch2() throws Exception {
 		assertQueryEquals("reMatch('aaa', '[a]+[b]+')", false);
-		assertQueryEquals("'aaa' =~ '[a]+[b]+'", false);
-	}
-
-	@Test
-	public void testReMatch3() throws Exception {
 		assertQueryEquals("reMatch('aaabc', '[a]+[b]+')", false);
+		assertQueryEquals("'aaabbbb' =~ '[a]+[b]+'", true);
+		assertQueryEquals("'aaa' =~ '[a]+[b]+'", false);
 		assertQueryEquals("'aaabc' =~ '[a]+[b]+'", false);
 	}
 
 	@Test
-	public void testSplitt1() throws Exception {
+	public void testSplitt() throws Exception {
 
 		assertQueryEquals("split('aaabc', '[a]+[b]+')", Arrays.asList("", "c"));
-	}
-
-	@Test
-	public void testSplitt2() throws Exception {
-
 		assertQueryEquals("split('Eckhard-Großmann', '-')",
 				Arrays.asList("Eckhard", "Großmann"));
-	}
-
-	@Test
-	public void testSplitt3() throws Exception {
 		assertQueryEquals("split('aaa bc', ' ')", Arrays.asList("aaa", "bc"));
-	}
-
-	@Test
-	public void testSplitt4() throws Exception {
 		assertQueryEquals("split('Software-Technik', '[-e]')",
 				Arrays.asList("Softwar", "", "T", "chnik"));
-	}
-
-	@Test
-	public void testSplitt5() throws Exception {
 		assertQueryEquals("split('JGraLab', '\\p{javaLowerCase}')",
 				Arrays.asList("JG", "", "L"));
 	}
