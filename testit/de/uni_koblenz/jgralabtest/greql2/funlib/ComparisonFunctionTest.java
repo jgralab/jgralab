@@ -133,4 +133,28 @@ public class ComparisonFunctionTest extends GenericTests {
 		assertQueryEquals("leEqual(117.4, 111)", false);
 		assertQueryEquals("leEqual(3, 187.00001)", true);
 	}
+
+	@Test
+	public void testLeThanInfix() throws Exception {
+		assertQueryEquals("3 < 2", false);
+		assertQueryEquals("17 < 17", false);
+		assertQueryEquals("0.000000000000001 < 0", false);
+		assertQueryEquals("17 < 199", true);
+		assertQueryEquals("5.50 < 4.701", false);
+		assertQueryEquals("33.1 < 33.1", false);
+		assertQueryEquals("117.4 < 111", false);
+		assertQueryEquals("3 < 187.00001", true);
+	}
+
+	@Test
+	public void testLeThan() throws Exception {
+		assertQueryEquals("leThan(3, 2)", false);
+		assertQueryEquals("leThan(17, 17.0)", false);
+		assertQueryEquals("leThan(0.000000000000001, 0)", false);
+		assertQueryEquals("leThan(17, 199)", true);
+		assertQueryEquals("leThan(5.50, 4.701)", false);
+		assertQueryEquals("leThan(33.1, 33.1)", false);
+		assertQueryEquals("leThan(117.4, 111)", false);
+		assertQueryEquals("leThan(3, 187.00001)", true);
+	}
 }
