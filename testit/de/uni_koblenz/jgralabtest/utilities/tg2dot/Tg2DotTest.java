@@ -30,4 +30,5 @@ public class Tg2DotTest {
 
 		Tg2Dot.convertGraphToSvg(g, "testit/testoutput.svg", false);
 	}
+
 }
