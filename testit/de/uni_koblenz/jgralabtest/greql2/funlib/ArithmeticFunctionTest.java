@@ -41,89 +41,57 @@ import de.uni_koblenz.jgralabtest.greql2.GenericTests;
 public class ArithmeticFunctionTest extends GenericTests {
 
 	@Test
-	public void testAdd1() throws Exception {
+	public void testAddInfix() throws Exception {
 		assertQueryEquals("0 + 1.5", 1.5);
-		assertQueryEquals("add(0, 1.5)", 1.5);
-	}
-
-	@Test
-	public void testAdd2() throws Exception {
 		assertQueryEquals("6 + 0", 6);
-		assertQueryEquals("add(6, 0)", 6);
-	}
-
-	@Test
-	public void testAdd3() throws Exception {
 		assertQueryEquals("0 + 0", 0);
-		assertQueryEquals("add(0, 0)", 0);
-	}
-
-	@Test
-	public void testAdd4() throws Exception {
 		assertQueryEquals("6 + 1.5", 7.5);
-		assertQueryEquals("add(6, 1.5)", 7.5);
-	}
-
-	@Test
-	public void testAdd5() throws Exception {
 		assertQueryEquals("6 + -1.5", 4.5);
-		assertQueryEquals("add(6, -1.5)", 4.5);
+		assertQueryEquals("0.025 + 0.975", 1.0);
 	}
 
 	@Test
-	public void testAdd6() throws Exception {
-		assertQueryEquals("0.025 + 0.975", 1.0);
+	public void testAdd() throws Exception {
+		assertQueryEquals("add(6, 0)", 6);
+		assertQueryEquals("add(0, 1.5)", 1.5);
+		assertQueryEquals("add(0, 0)", 0);
+		assertQueryEquals("add(6, 1.5)", 7.5);
+		assertQueryEquals("add(6, -1.5)", 4.5);
 		assertQueryEquals("add(0.025, 0.975)", 1.0);
 	}
 
 	@Test
-	public void testAddSpecialCase1() throws Exception {
+	public void testAddSpecialCases1Infix() throws Exception {
 		assertQueryEquals("Infinity + 1.5", POSITIVE_INFINITY);
-		assertQueryEquals("add(Infinity, 1.5)", POSITIVE_INFINITY);
-	}
-
-	@Test
-	public void testAddSpecialCase2() throws Exception {
 		assertQueryEquals("6 + Infinity", POSITIVE_INFINITY);
-		assertQueryEquals("add(6, Infinity)", POSITIVE_INFINITY);
-	}
-
-	@Test
-	public void testAddSpecialCase3() throws Exception {
 		assertQueryEquals("-Infinity + 1.5", NEGATIVE_INFINITY);
-		assertQueryEquals("add(-Infinity, 1.5)", NEGATIVE_INFINITY);
-	}
-
-	@Test
-	public void testAddSpecialCase4() throws Exception {
 		assertQueryEquals("6 + -Infinity", NEGATIVE_INFINITY);
-		assertQueryEquals("add(6, -Infinity)", NEGATIVE_INFINITY);
-	}
-
-	@Test
-	public void testAddSpecialCase5() throws Exception {
 		assertQueryEquals("NaN + 1.5", NaN);
-		assertQueryEquals("add(-NaN, 1.5)", NEGATIVE_INFINITY);
-	}
-
-	@Test
-	public void testAddSpecialCase6() throws Exception {
 		assertQueryEquals("6 + -NaN", NaN);
-		assertQueryEquals("add(6, -NaN)", NaN);
-
 	}
 
 	@Test
-	public void testAddSpecialCases() throws Exception {
+	public void testAddSpecialCases1() throws Exception {
+		assertQueryEquals("add(Infinity, 1.5)", POSITIVE_INFINITY);
+		assertQueryEquals("add(6, Infinity)", POSITIVE_INFINITY);
+		assertQueryEquals("add(-Infinity, 1.5)", NEGATIVE_INFINITY);
+		assertQueryEquals("add(6, -Infinity)", NEGATIVE_INFINITY);
+		assertQueryEquals("add(-NaN, 1.5)", NEGATIVE_INFINITY);
+		assertQueryEquals("add(6, -NaN)", NaN);
+	}
 
+	@Test
+	public void testAddSpecialCases2Infix() throws Exception {
 		assertQueryEquals("Infinity + Infinity", POSITIVE_INFINITY);
 		assertQueryEquals("-Infinity + -Infinity", NEGATIVE_INFINITY);
 		assertQueryEquals("-NaN + -NaN", NaN);
 		assertQueryEquals("Infinity + -Infinity", NaN);
 		assertQueryEquals("Infinity + NaN", NaN);
 		assertQueryEquals("-Infinity + NaN", NaN);
+	}
 
-		// As functions
+	@Test
+	public void testAddSpecialCases2() throws Exception {
 		assertQueryEquals("add(Infinity, Infinity)", POSITIVE_INFINITY);
 		assertQueryEquals("add(-Infinity, -Infinity)", NEGATIVE_INFINITY);
 		assertQueryEquals("add(-NaN, -NaN)", NaN);
