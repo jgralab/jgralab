@@ -101,79 +101,47 @@ public class ArithmeticFunctionTest extends GenericTests {
 	}
 
 	@Test
-	public void testDiv1() throws Exception {
+	public void testDivInfix() throws Exception {
 		assertQueryEquals("3 / 0", POSITIVE_INFINITY);
-		assertQueryEquals("div(3, 0)", POSITIVE_INFINITY);
-	}
-
-	@Test
-	public void testDiv2() throws Exception {
 		assertQueryEquals("-3 / 0", NEGATIVE_INFINITY);
-		assertQueryEquals("div(-3, 0)", NEGATIVE_INFINITY);
-	}
-
-	@Test
-	public void testDiv3() throws Exception {
 		assertQueryEquals("0 / 3", 0.0);
-		assertQueryEquals("div(0, 3)", 0.0);
-	}
-
-	@Test
-	public void testDiv4() throws Exception {
 		assertQueryEquals("0 / 3.5", 0.0);
-		assertQueryEquals("div(0, 3.5)", 0.0);
-	}
-
-	@Test
-	public void testDiv5() throws Exception {
 		assertQueryEquals("3 / 1", 3.0);
-		assertQueryEquals("div(3, 1)", 3.0);
+		assertQueryEquals("3 / 7", 3 / 7.0);
 	}
 
 	@Test
-	public void testDiv6() throws Exception {
-		assertQueryEquals("3 / 7", 3 / 7.0);
+	public void testDiv() throws Exception {
+		assertQueryEquals("div(-3, 0)", NEGATIVE_INFINITY);
+		assertQueryEquals("div(3, 0)", POSITIVE_INFINITY);
+		assertQueryEquals("div(0, 3)", 0.0);
+		assertQueryEquals("div(0, 3.5)", 0.0);
+		assertQueryEquals("div(3, 1)", 3.0);
 		assertQueryEquals("div(3, 7)", 3 / 7.0);
 	}
 
 	@Test
-	public void testDivSpecialCase1() throws Exception {
+	public void testDivSpecialCases1Infix() throws Exception {
 		assertQueryEquals("Infinity / 7", POSITIVE_INFINITY);
-		assertQueryEquals("div(Infinity, 7)", POSITIVE_INFINITY);
-	}
-
-	@Test
-	public void testDivSpecialCase2() throws Exception {
 		assertQueryEquals("3 / Infinity", POSITIVE_INFINITY);
-		assertQueryEquals("div(3, Infinity)", POSITIVE_INFINITY);
-	}
-
-	@Test
-	public void testDivSpecialCase3() throws Exception {
 		assertQueryEquals("-Infinity / 7", NaN);
-		assertQueryEquals("div(-Infinity, 7)", NaN);
-	}
-
-	@Test
-	public void testDivSpecialCase4() throws Exception {
 		assertQueryEquals("3 / -Infinity", NaN);
-		assertQueryEquals("div(3, -Infinity)", NaN);
-	}
-
-	@Test
-	public void testDivSpecialCase5() throws Exception {
 		assertQueryEquals("NaN / 7", NaN);
-		assertQueryEquals("div(Nan, 7)", NaN);
+		assertQueryEquals("3 / NaN", NaN);
 	}
 
 	@Test
-	public void testDivSpecialCase6() throws Exception {
-		assertQueryEquals("3 / NaN", NaN);
+	public void testDivSpecialCases1() throws Exception {
+		assertQueryEquals("div(3, Infinity)", POSITIVE_INFINITY);
+		assertQueryEquals("div(Infinity, 7)", POSITIVE_INFINITY);
+		assertQueryEquals("div(-Infinity, 7)", NaN);
+		assertQueryEquals("div(3, -Infinity)", NaN);
+		assertQueryEquals("div(Nan, 7)", NaN);
 		assertQueryEquals("div(3, NaN)", NaN);
 	}
 
 	@Test
-	public void testDivSpecialCases() throws Exception {
+	public void testDivSpecialCases2Infix() throws Exception {
 
 		assertQueryEquals("Infinity / Infinity", NaN);
 		assertQueryEquals("-Infinity / -Infinity", NaN);
@@ -181,7 +149,10 @@ public class ArithmeticFunctionTest extends GenericTests {
 		assertQueryEquals("Infinity / -Infinity", NaN);
 		assertQueryEquals("Infinity / NaN", NaN);
 		assertQueryEquals("-Infinity / NaN", NaN);
+	}
 
+	@Test
+	public void testDivSpecialCases2() throws Exception {
 		// As functions
 		assertQueryEquals("div(Infinity, Infinity)", NaN);
 		assertQueryEquals("div(-Infinity, -Infinity)", NaN);
