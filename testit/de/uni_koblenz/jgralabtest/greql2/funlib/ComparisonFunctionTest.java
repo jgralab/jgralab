@@ -66,50 +66,26 @@ public class ComparisonFunctionTest extends GenericTests {
 	}
 
 	@Test
-	public void testGrEqual1() throws Exception {
+	public void testGrEqualInfix() throws Exception {
 		assertQueryEquals("3 >= 2", true);
-		assertQueryEquals("grEqual(3, 2)", true);
-	}
-
-	@Test
-	public void testGrEqual2() throws Exception {
 		assertQueryEquals("17 >= 17", true);
-		assertQueryEquals("grEqual(17, 17.0)", true);
-	}
-
-	@Test
-	public void testGrEqual3() throws Exception {
 		assertQueryEquals("0.000000000000001 >= 0", true);
-		assertQueryEquals("grEqual(0.000000000000001, 0)", true);
-	}
-
-	@Test
-	public void testGrEqual4() throws Exception {
 		assertQueryEquals("17 >= 199", false);
-		assertQueryEquals("grEqual(17, 199)", false);
-	}
-
-	@Test
-	public void testGrEqual5() throws Exception {
 		assertQueryEquals("5.50 >= 4.701", true);
-		assertQueryEquals("grEqual(5.50, 4.701)", true);
-	}
-
-	@Test
-	public void testGrEqual6() throws Exception {
 		assertQueryEquals("33.1 >= 33.1", true);
-		assertQueryEquals("grEqual(33.1, 33.1)", true);
-	}
-
-	@Test
-	public void testGrEqual7() throws Exception {
 		assertQueryEquals("117.4 >= 111", true);
-		assertQueryEquals("grEqual(117.4, 111)", true);
+		assertQueryEquals("3 >= 187.00001", false);
 	}
 
 	@Test
-	public void testGrEqual8() throws Exception {
-		assertQueryEquals("3 >= 187.00001", false);
+	public void testGrEqual() throws Exception {
+		assertQueryEquals("grEqual(3, 2)", true);
+		assertQueryEquals("grEqual(17, 17.0)", true);
+		assertQueryEquals("grEqual(0.000000000000001, 0)", true);
+		assertQueryEquals("grEqual(17, 199)", false);
+		assertQueryEquals("grEqual(5.50, 4.701)", true);
+		assertQueryEquals("grEqual(33.1, 33.1)", true);
+		assertQueryEquals("grEqual(117.4, 111)", true);
 		assertQueryEquals("grEqual(3, 187.00001)", false);
 	}
 
