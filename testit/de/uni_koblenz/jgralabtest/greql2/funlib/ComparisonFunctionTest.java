@@ -66,30 +66,6 @@ public class ComparisonFunctionTest extends GenericTests {
 	}
 
 	@Test
-	public void testEquals7() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from x : V{WhereExpression}, y : V{WhereExpression} report equals(x,y) end";
-		assertQueryEquals(queryString, true);
-	}
-
-	@Test
-	public void testEquals8() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from x : V{WhereExpression}, y : E{IsBoundExprOfDefinition} report equals(x,y) end";
-		assertQueryEquals(queryString, true);
-	}
-
-	public void testEquals9() throws Exception {
-		String queryString = "from x : V, y : E report equals(x,y) end";
-		JValue result = evalTestQuery("Equals5", queryString);
-		for (JValue v : result.toCollection()) {
-			assertEquals(Boolean.FALSE, v.toBoolean());
-		}
-	}
-
-	@Test
 	public void testGrEqual1() throws Exception {
 		assertQueryEquals("3 >= 2", true);
 		assertQueryEquals("grEqual(3, 2)", true);
