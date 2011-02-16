@@ -284,6 +284,22 @@ public class ArithmeticFunctionTest extends GenericTests {
 	}
 
 	@Test
+	public void testNegInfix() throws Exception {
+		assertQueryEquals("-(-1)", 1);
+		assertQueryEquals("-(1)", -1);
+		assertQueryEquals("-(-(-1)", -1);
+		assertQueryEquals("-(1.23123)", -1.23123);
+	}
+
+	@Test
+	public void testNeg() throws Exception {
+		assertQueryEquals("neg(-1)", 1);
+		assertQueryEquals("neg(1)", -1);
+		assertQueryEquals("neg(neg(-1))", -1);
+		assertQueryEquals("neg(1.23123)", -1.23123);
+	}
+
+	@Test
 	public void testNegSpecialCasesInfix() throws Exception {
 		assertQueryEquals("-NaN", NaN);
 		assertQueryEquals("-(Infinity)", NEGATIVE_INFINITY);
