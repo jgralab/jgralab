@@ -47,6 +47,8 @@ public class ComparisonFunctionTest extends GenericTests {
 		assertQueryEquals("'' = ''", true);
 		assertQueryEquals("'a' = 'a'", true);
 		assertQueryEquals("99.001 = 99.001", true);
+		assertQueryEquals("'Eckhard Großmann' = 'Eckhard Grossmann'", false);
+		assertQueryEquals("'Eckhard Großmann' = 'Eckhard Großmann'", true);
 	}
 
 	@Test
@@ -57,6 +59,10 @@ public class ComparisonFunctionTest extends GenericTests {
 		assertQueryEquals("equals('', '')", true);
 		assertQueryEquals("equals('a', 'a')", true);
 		assertQueryEquals("equals(99.001, 99.001)", true);
+		assertQueryEquals("equals('Eckhard Großmann', 'Eckhard Grossmann')",
+				false);
+		assertQueryEquals("equals('Eckhard Großmann', 'Eckhard Großmann')",
+				true);
 	}
 
 	@Test
