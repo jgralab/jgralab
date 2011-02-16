@@ -63,6 +63,32 @@ public class ComparisonFunctionTest extends GenericTests {
 	}
 
 	@Test
+	public void testNEqualsInfix() throws Exception {
+		assertQueryEquals("5 <> 9", true);
+		assertQueryEquals("'' <> 'a'", true);
+		assertQueryEquals("'a' <> ''", true);
+		assertQueryEquals("'' <> ''", false);
+		assertQueryEquals("'a' <> 'a'", false);
+		assertQueryEquals("99.001 <> 99.001", false);
+		assertQueryEquals("'Eckhard Großmann' <> 'Eckhard Grossmann'", true);
+		assertQueryEquals("'Eckhard Großmann' <> 'Eckhard Großmann'", false);
+	}
+
+	@Test
+	public void testNEquals() throws Exception {
+		assertQueryEquals("nequals(5, 9)", true);
+		assertQueryEquals("nequals('', 'a')", true);
+		assertQueryEquals("nequals('a', '')", true);
+		assertQueryEquals("nequals('', '')", false);
+		assertQueryEquals("nequals('a', 'a')", false);
+		assertQueryEquals("nequals(99.001, 99.001)", false);
+		assertQueryEquals("nequals('Eckhard Großmann', 'Eckhard Grossmann')",
+				true);
+		assertQueryEquals("nequals('Eckhard Großmann', 'Eckhard Großmann')",
+				false);
+	}
+
+	@Test
 	public void testGrEqualInfix() throws Exception {
 		assertQueryEquals("3 >= 2", true);
 		assertQueryEquals("17 >= 17", true);
