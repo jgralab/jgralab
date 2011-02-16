@@ -40,7 +40,8 @@ import de.uni_koblenz.jgralabtest.schemas.jniclient.Node;
 
 public class GraphDbTest {
 
-	public static void main(String[] args) throws GraphDatabaseException, SQLException {
+	public static void main(String[] args) throws GraphDatabaseException,
+			SQLException {
 		GraphDatabase gdb;
 
 		System.out.println("Connecting DB...");
@@ -53,7 +54,6 @@ public class GraphDbTest {
 			gdb.clearAllTables();
 			gdb.commitTransaction();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		try {
@@ -67,9 +67,29 @@ public class GraphDbTest {
 			// }
 			e.printStackTrace();
 		}
-		
-//		gdb.optimizeForGraphCreation();
 		gdb.commitTransaction();
+
+		boolean containsSchema = gdb.contains(JniTestSchema.instance());
+		System.out.println(containsSchema);
+
+		try {
+			gdb.dropForeignKeyConstraints();
+			gdb.commitTransaction();
+		} catch (Exception e) {
+			gdb.rollback();
+		}
+		
+		containsSchema = gdb.contains(JniTestSchema.instance());
+		System.out.println(containsSchema);
+
+		try {
+			gdb.dropIndices();
+			gdb.commitTransaction();
+		} catch (Exception e) {
+			gdb.rollback();
+		}
+		gdb.commitTransaction();
+		
 		System.out.println("Creating graph...");
 		JniTestGraph g = JniTestSchema.instance()
 				.createJniTestGraphWithDatabaseSupport("gdbtest", gdb);
