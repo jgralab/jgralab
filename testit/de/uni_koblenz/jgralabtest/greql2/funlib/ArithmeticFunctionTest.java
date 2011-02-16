@@ -287,7 +287,7 @@ public class ArithmeticFunctionTest extends GenericTests {
 	public void testNegInfix() throws Exception {
 		assertQueryEquals("-(-1)", 1);
 		assertQueryEquals("-(1)", -1);
-		assertQueryEquals("-(-(-1)", -1);
+		assertQueryEquals("-(-(-1))", -1);
 		assertQueryEquals("-(1.23123)", -1.23123);
 	}
 
