@@ -164,15 +164,12 @@ public class Tg2Dot extends Tg2Whatever {
 	}
 
 	public static Tg2Dot createConverterAndSetAttributes(Graph graph,
-			boolean reversedEdges, String outputFileName) {
+			boolean reversedEdges) {
 
 		Tg2Dot converter = new Tg2Dot();
 		converter.setGraph(graph);
 		converter.setReversedEdges(reversedEdges);
 		converter.setPrintEdgeAttributes(true);
-		// TODO RANKSEP
-		// t2d.setRanksep(0.5);
-		converter.setOutputFile(outputFileName);
 
 		return converter;
 	}
@@ -181,8 +178,8 @@ public class Tg2Dot extends Tg2Whatever {
 			boolean reversedEdges,
 			Class<? extends AttributedElement>... reversedEdgeTypes) {
 
-		Tg2Dot converter = createConverterAndSetAttributes(graph,
-				reversedEdges, outputFileName);
+		Tg2Dot converter = createConverterAndSetAttributes(graph, reversedEdges);
+		converter.setOutputFile(outputFileName);
 
 		if (reversedEdgeTypes != null) {
 			HashSet<Class<? extends AttributedElement>> revEdgeTypes = new HashSet<Class<? extends AttributedElement>>();
@@ -203,10 +200,45 @@ public class Tg2Dot extends Tg2Whatever {
 			String outputFileName, boolean reversedEdges) {
 
 		Tg2Dot converter = createConverterAndSetAttributes(marker.getGraph(),
-				reversedEdges, outputFileName);
+				reversedEdges);
+		converter.setOutputFile(outputFileName);
 
 		converter.setGraphMarker(marker);
+	}
 
+	public static void convertGraphToStream(Graph graph,
+			PrintStream outputStream, boolean reversedEdges,
+			Class<? extends AttributedElement>... reversedEdgeTypes) {
+
+		Tg2Dot converter = createConverterAndSetAttributes(graph, reversedEdges);
+
+		if (reversedEdgeTypes != null) {
+			HashSet<Class<? extends AttributedElement>> revEdgeTypes = new HashSet<Class<? extends AttributedElement>>();
+			Collections.addAll(revEdgeTypes, reversedEdgeTypes);
+			converter.setReversedEdgeTypes(revEdgeTypes);
+		}
+
+		converter.convert(outputStream);
+	}
+
+	public static void convertGraphToSvg(Graph graph, String outputFileName,
+			boolean reversedEdges) throws InterruptedException, IOException {
+		Process process = null;
+		try {
+			process = Runtime.getRuntime().exec(
+					"dot -Tsvg -o" + outputFileName, null, null);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		PrintStream ps = new PrintStream(process.getOutputStream());
+
+		convertGraphToStream(graph, ps, reversedEdges,
+				(Class<? extends AttributedElement>[]) null);
+		ps.flush();
+		ps.close();
+		process.waitFor();
 	}
 
 	/**
