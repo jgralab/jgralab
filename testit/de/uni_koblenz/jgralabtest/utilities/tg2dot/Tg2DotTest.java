@@ -12,6 +12,7 @@ import de.uni_koblenz.jgralab.WorkInProgress;
 import de.uni_koblenz.jgralab.utilities.common.dot.GraphVizOutputFormat;
 import de.uni_koblenz.jgralab.utilities.common.dot.GraphVizProgram;
 import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
+import de.uni_koblenz.jgralab.utilities.tg2image.Tg2Image;
 
 @WorkInProgress(responsibleDevelopers = "mmce@uni-koblenz.de", description = "More test have to be included. Every static method should be tested. Additionally the class itself should be tested.")
 public class Tg2DotTest {
@@ -34,7 +35,7 @@ public class Tg2DotTest {
 		GraphVizProgram program = new GraphVizProgram().path("").outputFormat(
 				GraphVizOutputFormat.PNG);
 
-		Tg2Dot.convertGraph2ImageFile(g, program, "testit/testoutput.png",
+		Tg2Image.convertGraph2ImageFile(g, program, "testit/testoutput.png",
 				false);
 	}
 }
