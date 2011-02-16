@@ -60,26 +60,15 @@ public class PostgreSqlDb extends GraphDatabase {
 	protected void applyVendorSpecificDbSchema() throws GraphDatabaseException,
 			SQLException {
 		addPrimaryKeyConstraints();
-		// this.addForeignKeyConstraints();
-		addIndices();
 		addStoredProcedures();
 	}
 
-	@Override
-	protected void changeFromBulkImportToGraphTraversal() throws SQLException {
-		addPrimaryKeyConstraints();
-		addForeignKeyConstraints();
-		addIndices();
-		cluster();
-	}
-
-	@Override
-	protected void changeFromGraphCreationToGraphTraversal()
-			throws SQLException {
-		addForeignKeyConstraints();
-		cluster();
-	}
-
+	/**
+	 * Rearranges the table storage according to the indices for optimized table
+	 * access.
+	 * 
+	 * @throws SQLException
+	 */
 	private void cluster() throws SQLException {
 		PreparedStatement statement = ((PostgreSqlStatementList) sqlStatementList)
 				.clusterIncidenceTable();
@@ -87,29 +76,8 @@ public class PostgreSqlDb extends GraphDatabase {
 	}
 
 	@Override
-	protected void changeFromGraphTraversalToBulkImport() throws SQLException {
-		dropIndices();
-		dropForeignKeyConstraints();
-		dropPrimaryKeyConstraints();
-	}
-
-	@Override
-	protected void changeFromGraphCreationToBulkImport() throws SQLException {
-		dropIndices();
-		dropPrimaryKeyConstraints();
-	}
-
-	@Override
-	protected void changeFromGraphTraversalToGraphCreation()
-			throws SQLException {
-		dropForeignKeyConstraints();
-		cluster();
-	}
-
-	@Override
-	protected void changeFromBulkImportToGraphCreation() throws SQLException {
-		addPrimaryKeyConstraints();
-		addIndices();
+	public void addIndices() throws SQLException {
+		super.addIndices();
 		cluster();
 	}
 }
