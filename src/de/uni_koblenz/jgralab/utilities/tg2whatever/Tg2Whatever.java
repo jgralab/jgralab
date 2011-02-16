@@ -192,18 +192,22 @@ public abstract class Tg2Whatever {
 	}
 
 	public void convert() {
-		initializeGraphAndSchema();
 		try {
 			PrintStream out = initializeOutputStream();
-			graphStart(out);
-			printVertices(out);
-			printEdges(out);
-			graphEnd(out);
+			convert(out);
 		} catch (FileNotFoundException e) {
 			System.err.println("File '" + outputName
 					+ "' could not be created.");
 			System.exit(1);
 		}
+	}
+
+	public void convert(PrintStream out) {
+		initializeGraphAndSchema();
+		graphStart(out);
+		printVertices(out);
+		printEdges(out);
+		graphEnd(out);
 	}
 
 	private PrintStream initializeOutputStream() throws FileNotFoundException {
