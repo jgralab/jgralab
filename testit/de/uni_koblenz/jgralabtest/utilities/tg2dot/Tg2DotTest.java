@@ -9,6 +9,8 @@ import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.WorkInProgress;
+import de.uni_koblenz.jgralab.utilities.common.dot.GraphVizOutputFormat;
+import de.uni_koblenz.jgralab.utilities.common.dot.GraphVizProgram;
 import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
 
 @WorkInProgress(responsibleDevelopers = "mmce@uni-koblenz.de", description = "More test have to be included. Every static method should be tested. Additionally the class itself should be tested.")
@@ -29,6 +31,10 @@ public class Tg2DotTest {
 
 		"testit/testgraphs/greqltestgraph.tg", (ProgressFunction) null);
 
-		Tg2Dot.convertGraphToSvg(g, "testit/testoutput.svg", false);
+		GraphVizProgram program = new GraphVizProgram().path("").outputFormat(
+				GraphVizOutputFormat.PNG);
+
+		Tg2Dot.convertGraph2ImageFile(g, program, "testit/testoutput.png",
+				false);
 	}
 }
