@@ -18,17 +18,17 @@ public class Tg2DotTest {
 	public void convertGraph() throws GraphIOException {
 		Graph g = GraphIO.loadGraphFromFileWithStandardSupport(
 				"testit/testgraphs/greqltestgraph.tg", (ProgressFunction) null);
-
 		Tg2Dot.convertGraph(g, "testit/testoutput.dot", false);
 	}
 
 	@Test
 	public void convertGraph2Svg() throws GraphIOException,
 			InterruptedException, IOException {
+
 		Graph g = GraphIO.loadGraphFromFileWithStandardSupport(
-				"testit/testgraphs/greqltestgraph.tg", (ProgressFunction) null);
+
+		"testit/testgraphs/greqltestgraph.tg", (ProgressFunction) null);
 
 		Tg2Dot.convertGraphToSvg(g, "testit/testoutput.svg", false);
 	}
-
 }
