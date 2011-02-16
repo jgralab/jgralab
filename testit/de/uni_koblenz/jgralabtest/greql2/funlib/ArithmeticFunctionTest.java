@@ -338,71 +338,43 @@ public class ArithmeticFunctionTest extends GenericTests {
 	@Test
 	public void testSub1() throws Exception {
 		assertQueryEquals("6 - -1.5", 7.5);
-		assertQueryEquals("sub(6, -1.5)", 7.5);
+		assertQueryEquals("6 - 3", 3L);
+		assertQueryEquals("16 - 323", -307L);
+		assertQueryEquals("1.5 - 6", -4.5);
+		assertQueryEquals("10 - 4 - 3 - 2", 1);
 	}
 
 	@Test
 	public void testSub2() throws Exception {
-		assertQueryEquals("6 - 3", 3L);
+		assertQueryEquals("sub(6, -1.5)", 7.5);
 		assertQueryEquals("sub(6, 3)", 3L);
-	}
-
-	@Test
-	public void testSub3() throws Exception {
-		assertQueryEquals("16 - 323", -307L);
 		assertQueryEquals("sub(16, 323)", -307L);
-	}
-
-	@Test
-	public void testSub4() throws Exception {
-		assertQueryEquals("1.5 - 6", -4.5);
 		assertQueryEquals("sub(1.5, 6)", -4.5);
-	}
-
-	@Test
-	public void testSub5() throws Exception {
-		assertQueryEquals("10 - 4 - 3 - 2", 1);
 		assertQueryEquals("sub(sub(sub(10, 4), 3), 2)", 1);
 	}
 
 	@Test
 	public void testSubSpecialCase1() throws Exception {
 		assertQueryEquals("Infinity - 7", POSITIVE_INFINITY);
-		assertQueryEquals("sub(Infinity, 7)", POSITIVE_INFINITY);
+		assertQueryEquals("3 - Infinity", POSITIVE_INFINITY);
+		assertQueryEquals("-Infinity - 7", NaN);
+		assertQueryEquals("3 - -Infinity", NaN);
+		assertQueryEquals("NaN - 7", NaN);
+		assertQueryEquals("3 - NaN", NaN);
 	}
 
 	@Test
 	public void testSubSpecialCase2() throws Exception {
-		assertQueryEquals("3 - Infinity", POSITIVE_INFINITY);
+		assertQueryEquals("sub(Infinity, 7)", POSITIVE_INFINITY);
 		assertQueryEquals("sub(3, Infinity)", POSITIVE_INFINITY);
-	}
-
-	@Test
-	public void testSubSpecialCase3() throws Exception {
-		assertQueryEquals("-Infinity - 7", NaN);
 		assertQueryEquals("sub(-Infinity, 7)", NaN);
-	}
-
-	@Test
-	public void testSubSpecialCase4() throws Exception {
-		assertQueryEquals("3 - -Infinity", NaN);
 		assertQueryEquals("sub(3, -Infinity)", NaN);
-	}
-
-	@Test
-	public void testSubSpecialCase5() throws Exception {
-		assertQueryEquals("NaN - 7", NaN);
 		assertQueryEquals("sub(Nan, 7)", NaN);
-	}
-
-	@Test
-	public void testSubSpecialCase6() throws Exception {
-		assertQueryEquals("3 - NaN", NaN);
 		assertQueryEquals("sub(3, NaN)", NaN);
 	}
 
 	@Test
-	public void testSubSpecialCases() throws Exception {
+	public void testSubSpecialCasesInfix() throws Exception {
 
 		assertQueryEquals("Infinity - Infinity", NaN);
 		assertQueryEquals("-Infinity - -Infinity", NaN);
@@ -410,6 +382,10 @@ public class ArithmeticFunctionTest extends GenericTests {
 		assertQueryEquals("Infinity - -Infinity", POSITIVE_INFINITY);
 		assertQueryEquals("Infinity - NaN", NaN);
 		assertQueryEquals("-Infinity - NaN", NaN);
+	}
+
+	@Test
+	public void testSubSpecialCases() throws Exception {
 
 		// As functions
 		assertQueryEquals("sub(Infinity, Infinity)", NaN);
