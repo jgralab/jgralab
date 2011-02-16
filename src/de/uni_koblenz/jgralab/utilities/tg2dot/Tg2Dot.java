@@ -38,9 +38,11 @@ import static de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacad
 import static de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade.PRINT_ROLENAMES;
 import static de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade.SHORTEN_STRINGS;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Collections;
 import java.util.HashMap;
@@ -49,6 +51,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
+
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
@@ -69,6 +74,7 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.utilities.common.dot.DotWriter;
 import de.uni_koblenz.jgralab.utilities.common.dot.GraphType;
+import de.uni_koblenz.jgralab.utilities.common.dot.GraphVizProgram;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.GraphLayout;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.GraphLayoutFactory;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.Definition;
@@ -164,12 +170,19 @@ public class Tg2Dot extends Tg2Whatever {
 	}
 
 	public static Tg2Dot createConverterAndSetAttributes(Graph graph,
-			boolean reversedEdges) {
+			boolean reversedEdges,
+			Class<? extends AttributedElement>... reversedEdgeTypes) {
 
 		Tg2Dot converter = new Tg2Dot();
 		converter.setGraph(graph);
 		converter.setReversedEdges(reversedEdges);
 		converter.setPrintEdgeAttributes(true);
+
+		if (reversedEdgeTypes != null) {
+			HashSet<Class<? extends AttributedElement>> revEdgeTypes = new HashSet<Class<? extends AttributedElement>>();
+			Collections.addAll(revEdgeTypes, reversedEdgeTypes);
+			converter.setReversedEdgeTypes(revEdgeTypes);
+		}
 
 		return converter;
 	}
@@ -178,7 +191,8 @@ public class Tg2Dot extends Tg2Whatever {
 			boolean reversedEdges,
 			Class<? extends AttributedElement>... reversedEdgeTypes) {
 
-		Tg2Dot converter = createConverterAndSetAttributes(graph, reversedEdges);
+		Tg2Dot converter = createConverterAndSetAttributes(graph,
+				reversedEdges, (Class<? extends AttributedElement>[]) null);
 		converter.setOutputFile(outputFileName);
 
 		if (reversedEdgeTypes != null) {
@@ -200,45 +214,67 @@ public class Tg2Dot extends Tg2Whatever {
 			String outputFileName, boolean reversedEdges) {
 
 		Tg2Dot converter = createConverterAndSetAttributes(marker.getGraph(),
-				reversedEdges);
+				reversedEdges, (Class<? extends AttributedElement>[]) null);
 		converter.setOutputFile(outputFileName);
 
 		converter.setGraphMarker(marker);
 	}
 
-	public static void convertGraphToStream(Graph graph,
-			PrintStream outputStream, boolean reversedEdges,
-			Class<? extends AttributedElement>... reversedEdgeTypes) {
+	public static BufferedInputStream convertGraphPipeToProgram(Graph graph,
+			String executionString, boolean reversedEdges,
+			Class<? extends AttributedElement>... reversedEdgeTypes)
+			throws InterruptedException, IOException {
 
-		Tg2Dot converter = createConverterAndSetAttributes(graph, reversedEdges);
+		Tg2Dot converter = createConverterAndSetAttributes(graph,
+				reversedEdges, reversedEdgeTypes);
 
-		if (reversedEdgeTypes != null) {
-			HashSet<Class<? extends AttributedElement>> revEdgeTypes = new HashSet<Class<? extends AttributedElement>>();
-			Collections.addAll(revEdgeTypes, reversedEdgeTypes);
-			converter.setReversedEdgeTypes(revEdgeTypes);
-		}
-
-		converter.convert(outputStream);
-	}
-
-	public static void convertGraphToSvg(Graph graph, String outputFileName,
-			boolean reversedEdges) throws InterruptedException, IOException {
 		Process process = null;
 		try {
-			process = Runtime.getRuntime().exec(
-					"dot -Tsvg -o" + outputFileName, null, null);
+			process = Runtime.getRuntime().exec(executionString, null, null);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 		PrintStream ps = new PrintStream(process.getOutputStream());
+		BufferedInputStream inputStream = new BufferedInputStream(
+				process.getInputStream());
 
-		convertGraphToStream(graph, ps, reversedEdges,
-				(Class<? extends AttributedElement>[]) null);
+		converter.convert(ps);
 		ps.flush();
 		ps.close();
 		process.waitFor();
+
+		return inputStream;
+	}
+
+	public static void convertGraph2ImageFile(Graph graph,
+			GraphVizProgram program, String imagePath, boolean reversedEdges)
+			throws InterruptedException, IOException {
+
+		String executionString = String.format("%s%s -T%s -o%s", program.path,
+				program.layouter, program.outputFormat, imagePath);
+		convertGraphPipeToProgram(graph, executionString, reversedEdges);
+	}
+
+	public static ImageIcon convertGraph2ImageIcon(Graph graph,
+			GraphVizProgram program, boolean reversedEdges)
+			throws InterruptedException, IOException {
+
+		String executionString = String.format("%s%s -T%s", program.path,
+				program.layouter, program.outputFormat);
+		InputStream imageStream = convertGraphPipeToProgram(graph,
+				executionString, reversedEdges);
+
+		return new ImageIcon(ImageIO.read(imageStream));
+	}
+
+	public static BufferedInputStream convertGraph2ImageStream(Graph graph,
+			GraphVizProgram program, boolean reversedEdges)
+			throws InterruptedException, IOException {
+
+		String executionString = String.format("%s%s -T%s", program.path,
+				program.layouter, program.outputFormat);
+		return convertGraphPipeToProgram(graph, executionString, reversedEdges);
 	}
 
 	/**
