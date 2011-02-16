@@ -40,38 +40,22 @@ import de.uni_koblenz.jgralabtest.greql2.GenericTests;
 public class ComparisonFunctionTest extends GenericTests {
 
 	@Test
-	public void testEquals1() throws Exception {
+	public void testEqualsInfix() throws Exception {
 		assertQueryEquals("5 = 9", false);
-		assertQueryEquals("equals(5, 9)", false);
-	}
-
-	@Test
-	public void testEquals2() throws Exception {
 		assertQueryEquals("'' = 'a'", false);
-		assertQueryEquals("equals('', 'a')", false);
-	}
-
-	@Test
-	public void testEquals3() throws Exception {
 		assertQueryEquals("'a' = ''", false);
-		assertQueryEquals("equals('a', '')", false);
-	}
-
-	@Test
-	public void testEquals4() throws Exception {
 		assertQueryEquals("'' = ''", true);
-		assertQueryEquals("equals('', '')", true);
-	}
-
-	@Test
-	public void testEquals5() throws Exception {
 		assertQueryEquals("'a' = 'a'", true);
-		assertQueryEquals("equals('a', 'a')", true);
+		assertQueryEquals("99.001 = 99.001", true);
 	}
 
 	@Test
-	public void testEquals6() throws Exception {
-		assertQueryEquals("99.001 = 99.001", true);
+	public void testEquals() throws Exception {
+		assertQueryEquals("equals(5, 9)", false);
+		assertQueryEquals("equals('', 'a')", false);
+		assertQueryEquals("equals('a', '')", false);
+		assertQueryEquals("equals('', '')", true);
+		assertQueryEquals("equals('a', 'a')", true);
 		assertQueryEquals("equals(99.001, 99.001)", true);
 	}
 
