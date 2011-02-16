@@ -226,7 +226,7 @@ public abstract class GraphDatabase {
 	/**
 	 * Current optimization mode of database.
 	 */
-	protected OptimizationMode mode = OptimizationMode.GRAPH_TRAVERSAL;
+	protected OptimizationMode mode = OptimizationMode.GRAPH_CREATION;
 
 	/**
 	 * Collects graphs which were loaded from this graph database.
@@ -2416,9 +2416,6 @@ public abstract class GraphDatabase {
 		statement = sqlStatementList.dropPrimaryKeyConstraintFromEdgeTable();
 		statement.execute();
 		statement = sqlStatementList.dropPrimaryKeyConstraintFromVertexTable();
-		statement.execute();
-		statement = sqlStatementList
-				.dropPrimaryKeyConstraintFromIncidenceTable();
 		statement.execute();
 	}
 
