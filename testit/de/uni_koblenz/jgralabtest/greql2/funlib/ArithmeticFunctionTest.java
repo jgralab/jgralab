@@ -336,7 +336,7 @@ public class ArithmeticFunctionTest extends GenericTests {
 	}
 
 	@Test
-	public void testSub1() throws Exception {
+	public void testSubInfix() throws Exception {
 		assertQueryEquals("6 - -1.5", 7.5);
 		assertQueryEquals("6 - 3", 3L);
 		assertQueryEquals("16 - 323", -307L);
@@ -375,7 +375,6 @@ public class ArithmeticFunctionTest extends GenericTests {
 
 	@Test
 	public void testSubSpecialCasesInfix() throws Exception {
-
 		assertQueryEquals("Infinity - Infinity", NaN);
 		assertQueryEquals("-Infinity - -Infinity", NaN);
 		assertQueryEquals("NaN - NaN", NaN);
@@ -386,8 +385,6 @@ public class ArithmeticFunctionTest extends GenericTests {
 
 	@Test
 	public void testSubSpecialCases() throws Exception {
-
-		// As functions
 		assertQueryEquals("sub(Infinity, Infinity)", NaN);
 		assertQueryEquals("sub(-Infinity, -Infinity)", NaN);
 		assertQueryEquals("sub(NaN, NaN)", NaN);
