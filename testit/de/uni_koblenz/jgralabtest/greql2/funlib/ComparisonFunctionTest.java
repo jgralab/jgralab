@@ -30,11 +30,8 @@
  */
 package de.uni_koblenz.jgralabtest.greql2.funlib;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
 
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralabtest.greql2.GenericTests;
 
 public class ComparisonFunctionTest extends GenericTests {
@@ -90,22 +87,26 @@ public class ComparisonFunctionTest extends GenericTests {
 	}
 
 	@Test
-	public void testNotEquals() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from x : V{WhereExpression}, y : V{Variable} reportSet x <> y end";
-		JValue result = evalTestQuery("NotEquals", queryString);
-		assertEquals(1, result.toCollection().size());
-		assertEquals(true, (boolean) getNthValue(result.toCollection(), 0)
-				.toBoolean());
+	public void testGrThanInfix() throws Exception {
+		assertQueryEquals("3 > 2", true);
+		assertQueryEquals("17 > 17", false);
+		assertQueryEquals("0.000000000000001 > 0", true);
+		assertQueryEquals("17 > 199", false);
+		assertQueryEquals("5.50 > 4.701", true);
+		assertQueryEquals("33.1 > 33.1", false);
+		assertQueryEquals("117.4 > 111", true);
+		assertQueryEquals("3 > 187.00001", false);
 	}
 
 	@Test
-	public void testNotEquals2() throws Exception {
-		String queryString = "from x : V{Greql2Expression}, y : V{Greql2Expression} reportSet x <> y end";
-		JValue result = evalTestQuery("NotEquals2", queryString);
-		assertEquals(1, result.toCollection().size());
-		assertEquals(false, (boolean) getNthValue(result.toCollection(), 0)
-				.toBoolean());
+	public void testGrThan() throws Exception {
+		assertQueryEquals("grThan(3, 2)", true);
+		assertQueryEquals("grThan(17, 17.0)", false);
+		assertQueryEquals("grThan(0.000000000000001, 0)", true);
+		assertQueryEquals("grThan(17, 199)", false);
+		assertQueryEquals("grThan(5.50, 4.701)", true);
+		assertQueryEquals("grThan(33.1, 33.1)", false);
+		assertQueryEquals("grThan(117.4, 111)", true);
+		assertQueryEquals("grThan(3, 187.00001)", false);
 	}
 }
