@@ -48,7 +48,8 @@ import de.uni_koblenz.jgralabtest.schemas.vertextest.VertexTestSchema;
 public class GraphDatabaseHandler {
 
 	// TODO change to system property
-	private static final String url = System.getProperty("jgralabtest_dbconnection");
+	private static final String url = System
+			.getProperty("jgralabtest_dbconnection");
 
 	protected GraphDatabase graphDatabase;
 
@@ -76,7 +77,8 @@ public class GraphDatabaseHandler {
 	public void loadVertexTestSchemaIntoGraphDatabase() {
 		try {
 			if (!this.graphDatabase.contains(VertexTestSchema.instance())) {
-				this.loadTestSchemaIntoGraphDatabase("testit/testschemas/VertexTestSchema.tg");
+				this
+						.loadTestSchemaIntoGraphDatabase("testit/testschemas/VertexTestSchema.tg");
 			}
 		} catch (GraphDatabaseException e) {
 			e.printStackTrace();
@@ -174,10 +176,10 @@ public class GraphDatabaseHandler {
 
 	public void cleanDatabaseOfTestSchema(Schema schema) {
 		try {
-			if (graphDatabase.containsSchema(schema.getPackagePrefix(),
-					schema.getName())) {
-				graphDatabase.deleteSchema(schema.getPackagePrefix(),
-						schema.getName());
+			if (graphDatabase.containsSchema(schema.getPackagePrefix(), schema
+					.getName())) {
+				graphDatabase.deleteSchema(schema.getPackagePrefix(), schema
+						.getName());
 			}
 		} catch (GraphDatabaseException exception) {
 			exception.printStackTrace();
@@ -202,7 +204,8 @@ public class GraphDatabaseHandler {
 		GraphDatabaseHandler handler = new GraphDatabaseHandler();
 		handler.connectToDatabase();
 		handler.graphDatabase.applyDbSchema();
-		handler.graphDatabase.optimizeForGraphTraversal();
+		// TODO enable indices and foreign key constraints
+		// handler.graphDatabase.optimizeForGraphTraversal();
 	}
 
 }
