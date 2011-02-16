@@ -67,8 +67,8 @@ public class PostgreSqlDb extends GraphDatabase {
 
 	@Override
 	protected void changeFromBulkImportToGraphTraversal() throws SQLException {
-		super.addPrimaryKeyConstraints();
-		super.addForeignKeyConstraints();
+		addPrimaryKeyConstraints();
+		addForeignKeyConstraints();
 		addIndices();
 		cluster();
 	}
@@ -76,8 +76,6 @@ public class PostgreSqlDb extends GraphDatabase {
 	@Override
 	protected void changeFromGraphCreationToGraphTraversal()
 			throws SQLException {
-		// addPrimaryKeyConstraints
-		// addForeignKeyConstraintsAndIndicesOnThem
 		addForeignKeyConstraints();
 		cluster();
 	}
@@ -98,7 +96,6 @@ public class PostgreSqlDb extends GraphDatabase {
 	@Override
 	protected void changeFromGraphCreationToBulkImport() throws SQLException {
 		dropIndices();
-		dropForeignKeyConstraints();
 		dropPrimaryKeyConstraints();
 	}
 
@@ -112,7 +109,6 @@ public class PostgreSqlDb extends GraphDatabase {
 	@Override
 	protected void changeFromBulkImportToGraphCreation() throws SQLException {
 		addPrimaryKeyConstraints();
-		// this.addForeignKeyConstraints();
 		addIndices();
 		cluster();
 	}
