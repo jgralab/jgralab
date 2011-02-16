@@ -1,5 +1,7 @@
 package de.uni_koblenz.jgralabtest.utilities.tg2dot;
 
+import java.io.IOException;
+
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.Graph;
@@ -18,5 +20,14 @@ public class Tg2DotTest {
 				"testit/testgraphs/greqltestgraph.tg", (ProgressFunction) null);
 
 		Tg2Dot.convertGraph(g, "testit/testoutput.dot", false);
+	}
+
+	@Test
+	public void convertGraph2Svg() throws GraphIOException,
+			InterruptedException, IOException {
+		Graph g = GraphIO.loadGraphFromFileWithStandardSupport(
+				"testit/testgraphs/greqltestgraph.tg", (ProgressFunction) null);
+
+		Tg2Dot.convertGraphToSvg(g, "testit/testoutput.svg", false);
 	}
 }
