@@ -10,11 +10,11 @@ public class ReflectionFunctionTest extends GenericTests {
 		assertQueryEquals("hasJValueType(true, 'BOOL')", true);
 		assertQueryEquals("hasJValueType(1, 'BOOL')", false);
 		assertQueryEquals("hasJValueType(1, 'INT')", true);
-		// assertQueryEquals("hasJValueType(12L, 'INT')", false);
-		// assertQueryEquals("hasJValueType(21L, 'LONG')", true);
+		assertQueryEquals("hasJValueType(12L, 'INT')", false);
+		assertQueryEquals("hasJValueType(21L, 'LONG')", true);
 		assertQueryEquals("hasJValueType(1.9, 'DOUBLE')", true);
 		assertQueryEquals("hasJValueType(1, 'NUMBER')", true);
-		// assertQueryEquals("hasJValueType(1L, 'NUMBER')", true);
+		assertQueryEquals("hasJValueType(1L, 'NUMBER')", true);
 		assertQueryEquals("hasJValueType(1.0, 'NUMBER')", true);
 
 		assertQueryEquals("hasJValueType(1.0, 'STRING')", false);
