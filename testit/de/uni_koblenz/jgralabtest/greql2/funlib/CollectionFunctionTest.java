@@ -136,6 +136,26 @@ public class CollectionFunctionTest extends GenericTests {
 				+ "4 -> 'Four', 5 -> 'Five', 6 -> 'Six') store as m");
 		assertQueryEqualsQuery("using m: from x: keySet(m) reportSet m[x] end",
 				"using m: toSet(values(m))");
+
+		evalTestQuery("list ('bratwurst', 'currywurst', 'steak', 'kaenguruhfleisch', 'spiessbraten') store as x");
+		assertQueryEquals("using x: x[3]", "kaenguruhfleisch");
+		assertQueryEquals("using x: x[0]", "bratwurst");
+		assertQueryEquals("using x: x[4]", "spiessbraten");
+		assertQueryEquals("using x: x[2]", "steak");
+
+		expectException("using x: x[-1]", ArrayIndexOutOfBoundsException.class);
+		// expectException("using x: x[5]",
+		// ArrayIndexOutOfBoundsException.class);
+
+		evalTestQuery("rec (menue1:'bratwurst', menue2:'currywurst', menue3:'steak', menue4:'kaenguruhfleisch', menue5:'spiessbraten') store as x");
+
+		assertQueryEquals("using x: x.menue4", "kaenguruhfleisch");
+		assertQueryEquals("using x: x.menue1", "bratwurst");
+		assertQueryEquals("using x: x.menue5", "spiessbraten");
+		assertQueryEquals("using x: x.menue3", "steak");
+
+		assertQueryEqualsNull("using x: x.menue0");
+		assertQueryEqualsNull("using x: x.menue6");
 	}
 
 	@Test

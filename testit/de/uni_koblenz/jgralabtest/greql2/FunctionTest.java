@@ -37,7 +37,6 @@ import de.uni_koblenz.jgralabtest.greql2.funlib.ArithmeticFunctionTest;
 import de.uni_koblenz.jgralabtest.greql2.funlib.CollectionFunctionTest;
 import de.uni_koblenz.jgralabtest.greql2.funlib.ComparisonFunctionTest;
 import de.uni_koblenz.jgralabtest.greql2.funlib.GraphFunctionTest;
-import de.uni_koblenz.jgralabtest.greql2.funlib.ListAccessTest;
 import de.uni_koblenz.jgralabtest.greql2.funlib.LogicFunctionTest;
 import de.uni_koblenz.jgralabtest.greql2.funlib.PathSystemFunctionTest;
 import de.uni_koblenz.jgralabtest.greql2.funlib.ReflectionFunctionTest;
@@ -52,7 +51,7 @@ import de.uni_koblenz.jgralabtest.greql2.funlib.StringFunctionTest;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({ ArithmeticFunctionTest.class,
 		CollectionFunctionTest.class, ComparisonFunctionTest.class,
-		GraphFunctionTest.class, ListAccessTest.class, LogicFunctionTest.class,
+		GraphFunctionTest.class, LogicFunctionTest.class,
 		PathSystemFunctionTest.class, ReflectionFunctionTest.class,
 		SchemaFunctionTest.class, SliceFunctionTest.class,
 		StringFunctionTest.class })
