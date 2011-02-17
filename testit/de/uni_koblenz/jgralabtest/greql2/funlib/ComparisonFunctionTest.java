@@ -28,144 +28,159 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
- package de.uni_koblenz.jgralabtest.greql2.funlib;
-
-import static org.junit.Assert.assertEquals;
+package de.uni_koblenz.jgralabtest.greql2.funlib;
 
 import org.junit.Test;
 
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralabtest.greql2.GenericTests;
 
 public class ComparisonFunctionTest extends GenericTests {
 
-	private static final String EQUALS = "Equals";
-
 	@Test
-	public void testEquals1() throws Exception {
-		assertQueryEquals(EQUALS, "5 = 9", false);
-		assertQueryEquals(EQUALS, "equals(5, 9)", false);
+	public void testEqualsInfix() throws Exception {
+		assertQueryEquals("5 = 9", false);
+		assertQueryEquals("'' = 'a'", false);
+		assertQueryEquals("'a' = ''", false);
+		assertQueryEquals("'' = ''", true);
+		assertQueryEquals("'a' = 'a'", true);
+		assertQueryEquals("99.001 = 99.001", true);
+		assertQueryEquals("'Eckhard Großmann' = 'Eckhard Grossmann'", false);
+		assertQueryEquals("'Eckhard Großmann' = 'Eckhard Großmann'", true);
 	}
 
 	@Test
-	public void testEquals2() throws Exception {
-		assertQueryEquals(EQUALS, "'' = 'a'", false);
-		assertQueryEquals(EQUALS, "equals('', 'a')", false);
+	public void testEquals() throws Exception {
+		assertQueryEquals("equals(5, 9)", false);
+		assertQueryEquals("equals('', 'a')", false);
+		assertQueryEquals("equals('a', '')", false);
+		assertQueryEquals("equals('', '')", true);
+		assertQueryEquals("equals('a', 'a')", true);
+		assertQueryEquals("equals(99.001, 99.001)", true);
+		assertQueryEquals("equals('Eckhard Großmann', 'Eckhard Grossmann')",
+				false);
+		assertQueryEquals("equals('Eckhard Großmann', 'Eckhard Großmann')",
+				true);
 	}
 
 	@Test
-	public void testEquals3() throws Exception {
-		assertQueryEquals(EQUALS, "'a' = ''", false);
-		assertQueryEquals(EQUALS, "equals('a', '')", false);
+	public void testNEqualsInfix() throws Exception {
+		assertQueryEquals("5 <> 9", true);
+		assertQueryEquals("'' <> 'a'", true);
+		assertQueryEquals("'a' <> ''", true);
+		assertQueryEquals("'' <> ''", false);
+		assertQueryEquals("'a' <> 'a'", false);
+		assertQueryEquals("99.001 <> 99.001", false);
+		assertQueryEquals("'Eckhard Großmann' <> 'Eckhard Grossmann'", true);
+		assertQueryEquals("'Eckhard Großmann' <> 'Eckhard Großmann'", false);
 	}
 
 	@Test
-	public void testEquals4() throws Exception {
-		assertQueryEquals(EQUALS, "'' = ''", true);
-		assertQueryEquals(EQUALS, "equals('', '')", true);
+	public void testNEquals() throws Exception {
+		assertQueryEquals("nequals(5, 9)", true);
+		assertQueryEquals("nequals('', 'a')", true);
+		assertQueryEquals("nequals('a', '')", true);
+		assertQueryEquals("nequals('', '')", false);
+		assertQueryEquals("nequals('a', 'a')", false);
+		assertQueryEquals("nequals(99.001, 99.001)", false);
+		assertQueryEquals("nequals('Eckhard Großmann', 'Eckhard Grossmann')",
+				true);
+		assertQueryEquals("nequals('Eckhard Großmann', 'Eckhard Großmann')",
+				false);
 	}
 
 	@Test
-	public void testEquals5() throws Exception {
-		assertQueryEquals(EQUALS, "'a' = 'a'", true);
-		assertQueryEquals(EQUALS, "equals('a', 'a')", true);
+	public void testGrEqualInfix() throws Exception {
+		assertQueryEquals("3 >= 2", true);
+		assertQueryEquals("17 >= 17", true);
+		assertQueryEquals("0.000000000000001 >= 0", true);
+		assertQueryEquals("17 >= 199", false);
+		assertQueryEquals("5.50 >= 4.701", true);
+		assertQueryEquals("33.1 >= 33.1", true);
+		assertQueryEquals("117.4 >= 111", true);
+		assertQueryEquals("3 >= 187.00001", false);
 	}
 
 	@Test
-	public void testEquals6() throws Exception {
-		assertQueryEquals(EQUALS, "99.001 = 99.001", true);
-		assertQueryEquals(EQUALS, "equals(99.001, 99.001)", true);
+	public void testGrEqual() throws Exception {
+		assertQueryEquals("grEqual(3, 2)", true);
+		assertQueryEquals("grEqual(17, 17.0)", true);
+		assertQueryEquals("grEqual(0.000000000000001, 0)", true);
+		assertQueryEquals("grEqual(17, 199)", false);
+		assertQueryEquals("grEqual(5.50, 4.701)", true);
+		assertQueryEquals("grEqual(33.1, 33.1)", true);
+		assertQueryEquals("grEqual(117.4, 111)", true);
+		assertQueryEquals("grEqual(3, 187.00001)", false);
 	}
 
 	@Test
-	public void testEquals7() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from x : V{WhereExpression}, y : V{WhereExpression} report equals(x,y) end";
-		assertQueryEquals(EQUALS, queryString, true);
+	public void testGrThanInfix() throws Exception {
+		assertQueryEquals("3 > 2", true);
+		assertQueryEquals("17 > 17", false);
+		assertQueryEquals("0.000000000000001 > 0", true);
+		assertQueryEquals("17 > 199", false);
+		assertQueryEquals("5.50 > 4.701", true);
+		assertQueryEquals("33.1 > 33.1", false);
+		assertQueryEquals("117.4 > 111", true);
+		assertQueryEquals("3 > 187.00001", false);
 	}
 
 	@Test
-	public void testEquals8() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from x : V{WhereExpression}, y : E{IsBoundExprOfDefinition} report equals(x,y) end";
-		assertQueryEquals(EQUALS, queryString, true);
-	}
-
-	public void testEquals9() throws Exception {
-		String queryString = "from x : V, y : E report equals(x,y) end";
-		JValue result = evalTestQuery("Equals5", queryString);
-		for (JValue v : result.toCollection()) {
-			assertEquals(Boolean.FALSE, v.toBoolean());
-		}
+	public void testGrThan() throws Exception {
+		assertQueryEquals("grThan(3, 2)", true);
+		assertQueryEquals("grThan(17, 17.0)", false);
+		assertQueryEquals("grThan(0.000000000000001, 0)", true);
+		assertQueryEquals("grThan(17, 199)", false);
+		assertQueryEquals("grThan(5.50, 4.701)", true);
+		assertQueryEquals("grThan(33.1, 33.1)", false);
+		assertQueryEquals("grThan(117.4, 111)", true);
+		assertQueryEquals("grThan(3, 187.00001)", false);
 	}
 
 	@Test
-	public void testGrEqual1() throws Exception {
-		assertQueryEquals("GrEqual", "3 >= 2", true);
-		assertQueryEquals("GrEqual", "grEqual(3, 2)", true);
+	public void testLeEqualInfix() throws Exception {
+		assertQueryEquals("3 <= 2", false);
+		assertQueryEquals("17 <= 17", true);
+		assertQueryEquals("0.000000000000001 <= 0", false);
+		assertQueryEquals("17 <= 199", true);
+		assertQueryEquals("5.50 <= 4.701", false);
+		assertQueryEquals("33.1 <= 33.1", true);
+		assertQueryEquals("117.4 <= 111", false);
+		assertQueryEquals("3 <= 187.00001", true);
 	}
 
 	@Test
-	public void testGrEqual2() throws Exception {
-		assertQueryEquals("GrEqual", "17 >= 17", true);
-		assertQueryEquals("GrEqual", "grEqual(17, 17.0)", true);
+	public void testLeEqual() throws Exception {
+		assertQueryEquals("leEqual(3, 2)", false);
+		assertQueryEquals("leEqual(17, 17.0)", true);
+		assertQueryEquals("leEqual(0.000000000000001, 0)", false);
+		assertQueryEquals("leEqual(17, 199)", true);
+		assertQueryEquals("leEqual(5.50, 4.701)", false);
+		assertQueryEquals("leEqual(33.1, 33.1)", true);
+		assertQueryEquals("leEqual(117.4, 111)", false);
+		assertQueryEquals("leEqual(3, 187.00001)", true);
 	}
 
 	@Test
-	public void testGrEqual3() throws Exception {
-		assertQueryEquals("GrEqual", "0.000000000000001 >= 0", true);
-		assertQueryEquals("GrEqual", "grEqual(0.000000000000001, 0)", true);
+	public void testLeThanInfix() throws Exception {
+		assertQueryEquals("3 < 2", false);
+		assertQueryEquals("17 < 17", false);
+		assertQueryEquals("0.000000000000001 < 0", false);
+		assertQueryEquals("17 < 199", true);
+		assertQueryEquals("5.50 < 4.701", false);
+		assertQueryEquals("33.1 < 33.1", false);
+		assertQueryEquals("117.4 < 111", false);
+		assertQueryEquals("3 < 187.00001", true);
 	}
 
 	@Test
-	public void testGrEqual4() throws Exception {
-		assertQueryEquals("GrEqual", "17 >= 199", false);
-		assertQueryEquals("GrEqual", "grEqual(17, 199)", false);
-	}
-
-	@Test
-	public void testGrEqual5() throws Exception {
-		assertQueryEquals("GrEqual", "5.50 >= 4.701", true);
-		assertQueryEquals("GrEqual", "grEqual(5.50, 4.701)", true);
-	}
-
-	@Test
-	public void testGrEqual6() throws Exception {
-		assertQueryEquals("GrEqual", "33.1 >= 33.1", true);
-		assertQueryEquals("GrEqual", "grEqual(33.1, 33.1)", true);
-	}
-
-	@Test
-	public void testGrEqual7() throws Exception {
-		assertQueryEquals("GrEqual", "117.4 >= 111", true);
-		assertQueryEquals("GrEqual", "grEqual(117.4, 111)", true);
-	}
-
-	@Test
-	public void testGrEqual8() throws Exception {
-		assertQueryEquals("GrEqual", "3 >= 187.00001", false);
-		assertQueryEquals("GrEqual", "grEqual(3, 187.00001)", false);
-	}
-
-	@Test
-	public void testNotEquals() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from x : V{WhereExpression}, y : V{Variable} reportSet x <> y end";
-		JValue result = evalTestQuery("NotEquals", queryString);
-		assertEquals(1, result.toCollection().size());
-		assertEquals(true, (boolean) getNthValue(result.toCollection(), 0)
-				.toBoolean());
-	}
-
-	@Test
-	public void testNotEquals2() throws Exception {
-		String queryString = "from x : V{Greql2Expression}, y : V{Greql2Expression} reportSet x <> y end";
-		JValue result = evalTestQuery("NotEquals2", queryString);
-		assertEquals(1, result.toCollection().size());
-		assertEquals(false, (boolean) getNthValue(result.toCollection(), 0)
-				.toBoolean());
+	public void testLeThan() throws Exception {
+		assertQueryEquals("leThan(3, 2)", false);
+		assertQueryEquals("leThan(17, 17.0)", false);
+		assertQueryEquals("leThan(0.000000000000001, 0)", false);
+		assertQueryEquals("leThan(17, 199)", true);
+		assertQueryEquals("leThan(5.50, 4.701)", false);
+		assertQueryEquals("leThan(33.1, 33.1)", false);
+		assertQueryEquals("leThan(117.4, 111)", false);
+		assertQueryEquals("leThan(3, 187.00001)", true);
 	}
 }

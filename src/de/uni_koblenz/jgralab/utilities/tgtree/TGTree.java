@@ -124,6 +124,7 @@ public class TGTree extends JFrame {
 
 	public void copySelectionToClipboard(GraphElementTreeNode getn) {
 		String selection = getn.getClipboardText();
+		System.out.println(selection + " ==> Clipboard");
 		StringSelection data = new StringSelection(selection);
 		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 		clipboard.setContents(data, null);

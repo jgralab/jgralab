@@ -56,16 +56,6 @@ public abstract class AbstractDefinition implements Definition {
 	}
 
 	/**
-	 * Constructs an AbstractDefinition from a {@link TemporaryDefinitionStruct}
-	 * and initializes all data structures.
-	 */
-	public AbstractDefinition(TemporaryDefinitionStruct struct) {
-		this();
-
-		attributes = struct.getAttributeList();
-	}
-
-	/**
 	 * Constructs an AbstractDefinition from a AbstractDefinition and copys all
 	 * data structures.
 	 */
@@ -87,6 +77,15 @@ public abstract class AbstractDefinition implements Definition {
 	@Override
 	public void setAttribute(String name, String value) {
 		attributes.put(name, value);
+	}
+
+	// public abstract void validateAttributeNames();
+
+	// TODO implement this mechanism to prevent wrong attribute to occur.
+	public void validateAttributeNames(Set<String> allowedNames) {
+		for (String attributeName : attributes.keySet()) {
+			allowedNames.contains(attributeName);
+		}
 	}
 
 	@Override
