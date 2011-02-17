@@ -129,40 +129,19 @@ public class CollectionFunctionTest extends GenericTests {
 
 	@Test
 	public void testGet() throws Exception {
-		String queryString = "let m := map(1 -> \"One\",   2 -> \"Two\",  "
-				+ "                        3 -> \"Three\", 4 -> \"Four\", "
-				+ "                        5 -> \"Five\",  6 -> \"Six\")  "
-				+ "           in                                          "
-				+ "           from x : keySet(m) "
-				+ "           reportSet get(m, x) end";
-		JValue result = evalTestQuery("Get", queryString);
-		JValueSet set = result.toJValueSet();
-		assertEquals(6, set.size());
-		assertTrue(set.contains(new JValueImpl("One")));
-		assertTrue(set.contains(new JValueImpl("Two")));
-		assertTrue(set.contains(new JValueImpl("Three")));
-		assertTrue(set.contains(new JValueImpl("Four")));
-		assertTrue(set.contains(new JValueImpl("Five")));
-		assertTrue(set.contains(new JValueImpl("Six")));
+		evalTestQuery("", "map(1 -> 'One', 2 -> 'Two', 3 -> 'Three', "
+				+ "4 -> 'Four', 5 -> 'Five', 6 -> 'Six') store as m");
+		assertQueryEqualsQuery(
+				"using m: from x: keySet(m) reportSet get(m, x) end",
+				"using m: toSet(values(m))");
 	}
 
 	@Test
-	public void testGet2() throws Exception {
-		String queryString = "let m := map(1 -> \"One\",   2 -> \"Two\",  "
-				+ "                        3 -> \"Three\", 4 -> \"Four\", "
-				+ "                        5 -> \"Five\",  6 -> \"Six\")  "
-				+ "           in                                          "
-				+ "           from x : keySet(m) "
-				+ "           reportSet m[x] end";
-		JValue result = evalTestQuery("Get", queryString);
-		JValueSet set = result.toJValueSet();
-		assertEquals(6, set.size());
-		assertTrue(set.contains(new JValueImpl("One")));
-		assertTrue(set.contains(new JValueImpl("Two")));
-		assertTrue(set.contains(new JValueImpl("Three")));
-		assertTrue(set.contains(new JValueImpl("Four")));
-		assertTrue(set.contains(new JValueImpl("Five")));
-		assertTrue(set.contains(new JValueImpl("Six")));
+	public void testGetSuffix() throws Exception {
+		evalTestQuery("", "map(1 -> 'One', 2 -> 'Two', 3 -> 'Three', "
+				+ "4 -> 'Four', 5 -> 'Five', 6 -> 'Six') store as m");
+		assertQueryEqualsQuery("using m: from x: keySet(m) reportSet m[x] end",
+				"using m: toSet(values(m))");
 	}
 
 	@Test
