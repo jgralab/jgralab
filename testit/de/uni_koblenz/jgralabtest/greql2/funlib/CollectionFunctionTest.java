@@ -39,9 +39,7 @@ import java.util.Map.Entry;
 
 import org.junit.Test;
 
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueMap;
@@ -89,46 +87,18 @@ public class CollectionFunctionTest extends GenericTests {
 
 	@Test
 	public void testContains() throws Exception {
-		String queryString = "let x:= list (5..13) in contains(x, 7)";
-		JValue result = evalTestQuery("ContainsTrue", queryString);
-		assertEquals(true, (boolean) result.toBoolean());
+		assertQueryEquals("let x:= list (5..13) in contains(x, 7)", true);
 	}
 
 	@Test
 	public void testContains2() throws Exception {
-		String queryString = "let x:= list (5..13) in contains(x, 56)";
-		JValue result = evalTestQuery("ContainsFalse", queryString);
-		assertEquals(false, (boolean) result.toBoolean());
+
+		assertQueryEquals("let x:= list (5..13) in contains(x, 56)", false);
 	}
 
 	@Test
 	public void testContains3() throws Exception {
-		String queryString = "let x:= list (5..13) in contains(x, 13)";
-		JValue result = evalTestQuery("ContainsTrue2", queryString);
-		assertEquals(true, (boolean) result.toBoolean());
-	}
-
-	@Test
-	public void testContains4() throws Exception {
-		String queryString = "from v : V reportSet contains(eSubgraph{Link}, v) end";
-		JValue result = evalTestQuery("Contains", queryString,
-				getCyclicTestGraph());
-		for (JValue v : result.toCollection()) {
-			assertEquals(JValueBoolean.getTrueValue(), v.toBoolean());
-		}
-	}
-
-	@Test
-	public void testContains5() throws Exception {
-		String queryString = "from v : V "
-				+ "           in eSubgraph{Link}      "
-				+ "           reportSet isIn(v) end";
-		try {
-			evalTestQuery("Contains5", queryString, getCyclicTestGraph());
-			fail();
-		} catch (EvaluateException e) {
-			// an eval exception is expected here
-		}
+		assertQueryEquals("let x:= list (5..13) in contains(x, 13)", true);
 	}
 
 	@Test
