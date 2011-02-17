@@ -258,12 +258,15 @@ public class CollectionFunctionTest extends GenericTests {
 	}
 
 	@Test
-	public void testUnion() throws Exception {
+	public void testUnionSetAndSet() throws Exception {
 		evalTestQuery("", "set(5, 7, 9, 13) store as x");
 		evalTestQuery("", "set(5, 6, 7, 8)  store as y");
 		assertQueryEqualsQuery("using x, y: union(x, y)",
 				"set(5, 6, 7, 8, 9, 13)");
+	}
 
+	@Test
+	public void testUnionMapAndMap() throws Exception {
 		evalTestQuery("", "map(1 -> 'A', 2 -> 'A', 3 -> 'B') store as map1");
 		evalTestQuery("", "map(4 -> 'A', 5 -> 'C', 6 -> 'D') store as map2");
 		evalTestQuery("", "map(1 -> 'A', 2 -> 'A', 3 -> 'B', 4 -> 'A', "
@@ -279,7 +282,10 @@ public class CollectionFunctionTest extends GenericTests {
 		} catch (Exception ex) {
 			// :)
 		}
+	}
 
+	@Test
+	public void testUnionSetOfSets() throws Exception {
 		evalTestQuery("", "set(set(1, 2, 3), set(1, 2, 3), set(3, 4, 5), "
 				+ "set(7, 8, 9)) store as set1");
 		assertQueryEqualsQuery("using set1: union(set1)",
