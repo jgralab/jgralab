@@ -32,6 +32,7 @@
 package de.uni_koblenz.jgralabtest.greql2;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 import java.io.File;
@@ -108,6 +109,11 @@ public class GenericTests {
 				- result.toDouble().intValue();
 	}
 
+	protected void assertQueryEqualsNull(String query) throws Exception {
+		JValue result = evalTestQuery(query);
+		assertNull(result);
+	}
+
 	protected void assertQueryEquals(String query, boolean expectedValue)
 			throws Exception {
 		JValue result = evalTestQuery(query);
@@ -171,11 +177,14 @@ public class GenericTests {
 	protected void expectException(String query,
 			Class<? extends Exception> exception) {
 		try {
-			evalTestQuery(query);
-			fail();
+			JValue value = evalTestQuery(query);
+			fail("This test should fail. Instead the query could be evaluated to: "
+					+ value);
 		} catch (Exception ex) {
 			if (!ex.getClass().equals(exception)) {
-				fail();
+				throw new RuntimeException("Expected \"" + exception.getName()
+						+ "\" but instead caught \"" + ex.getClass().getName()
+						+ "\".", ex);
 			}
 		}
 	}
