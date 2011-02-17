@@ -52,9 +52,13 @@ public class CollectionFunctionTest extends GenericTests {
 
 	@Test
 	public void testAvg() throws Exception {
-		String queryString = "let x:= list (5..13) in avg(x)";
-		JValue result = evalTestQuery("Avg", queryString);
-		assertEquals(9.0, result.toDouble(), 0.001);
+		assertQueryEquals("let x:= list (5..13) in avg(x)", 9.0);
+		assertQueryEquals("let x:= list (3) in avg(x)", 3.0);
+		assertQueryEquals("let x:= list () in avg(x)", 0.0);
+		assertQueryEquals("let x:= list (3, 100) in avg(x)", 51.5);
+		assertQueryEquals("let x:= list (0..10000) in avg(x)", 5000.0);
+		assertQueryEquals("let x:= list (-100..100) in avg(x)", 0.0);
+		assertQueryEquals("let x:= list (5, -5, 0) in avg(x)", 0.0);
 	}
 
 	@Test
