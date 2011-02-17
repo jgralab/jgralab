@@ -146,12 +146,9 @@ public class CollectionFunctionTest extends GenericTests {
 
 	@Test
 	public void testIntersection() throws Exception {
-		String queryString = "let x:= set(5, 7, 9, 13), y := set(5,6,7,8) in intersection(x, y)";
-		JValue result = evalTestQuery("Intersection", queryString);
-		for (JValue j : result.toCollection()) {
-			System.out.println("Element:" + j);
-		}
-		assertEquals(2, result.toCollection().size());
+		evalTestQuery("", "set(5, 7, 9, 13) store as x");
+		evalTestQuery("", "set(5, 6, 7, 8)  store as y");
+		assertQueryEqualsQuery("using x,y: intersection(x, y)", "set(5, 7)");
 	}
 
 	@Test
