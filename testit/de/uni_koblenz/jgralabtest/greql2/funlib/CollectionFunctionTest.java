@@ -152,7 +152,7 @@ public class CollectionFunctionTest extends GenericTests {
 	}
 
 	@Test
-	public void testIsEmpty1() throws Exception {
+	public void testIsEmpty() throws Exception {
 		evalTestQuery("", "set(1, 2, 3) store as x");
 		assertQueryEquals("using x: isEmpty(x)", false);
 
@@ -167,24 +167,14 @@ public class CollectionFunctionTest extends GenericTests {
 	}
 
 	@Test
-	public void testIsSubSet1() throws Exception {
-		String queryString = "let x:= set(5, 7, 9, 13), y := set(5,6,7,8) in isSubSet(x,y)";
-		JValue result = evalTestQuery("IsSubset", queryString);
-		assertEquals(false, (boolean) result.toBoolean());
-	}
+	public void testIsSubSet() throws Exception {
+		evalTestQuery("", "set(5, 7, 9, 13) store as x");
+		evalTestQuery("", "set(5, 6, 7, 8)  store as y");
+		assertQueryEquals("using x,y: isSubSet(x,y)", false);
 
-	@Test
-	public void testIsSubSet2() throws Exception {
-		String queryString = "let x:= set(5, 7, 9, 13), y := set(5,7) in isSubSet(x, y)";
-		JValue result = evalTestQuery("IsSubset2", queryString);
-		assertEquals(false, (boolean) result.toBoolean());
-	}
-
-	@Test
-	public void testIsSubSet3() throws Exception {
-		String queryString = "let x:= set(5, 7, 9, 13), y := set(5,7) in isSubSet(y, x)";
-		JValue result = evalTestQuery("IsSubset3", queryString);
-		assertEquals(true, (boolean) result.toBoolean());
+		evalTestQuery("", "set(5, 7) store as y");
+		assertQueryEquals("using x,y: isSubSet(x,y)", false);
+		assertQueryEquals("using x,y: isSubSet(y,x)", true);
 	}
 
 	@Test
