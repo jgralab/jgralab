@@ -35,7 +35,6 @@ import java.util.Enumeration;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.GraphElement;
-import de.uni_koblenz.jgralab.schema.AggregationKind;
 
 class EdgeTreeNode extends GraphElementTreeNode {
 
@@ -58,8 +57,14 @@ class EdgeTreeNode extends GraphElementTreeNode {
 	}
 
 	@Override
+	public String getClipboardText() {
+		return e.getThisRole() + ":"
+				+ e.getAttributedElementClass().getQualifiedName() + ":"
+				+ e.getThatRole();
+	}
+
+	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
 		int thisIdx = -1;
 		int thatIdx = -1;
 
@@ -77,34 +82,11 @@ class EdgeTreeNode extends GraphElementTreeNode {
 				thatIdx = i;
 			}
 		}
-
-		String lfmt = "%"
-				+ String.valueOf(
-						(getParent() != null) ? getParent().getChildCount() : 2)
-						.length() + "d";
-
-		sb.append(String.format(lfmt, thisIdx));
-
-		if (e.isNormal()) {
-			if (e.getThatSemantics() != AggregationKind.NONE) {
-				sb.append(" <>--> ");
-			} else if (e.getThisSemantics() != AggregationKind.NONE) {
-				sb.append(" --><> ");
-			} else {
-				sb.append(" ----> ");
-			}
-		} else {
-			if (e.getThatSemantics() != AggregationKind.NONE) {
-				sb.append(" <><-- ");
-			} else if (e.getThisSemantics() != AggregationKind.NONE) {
-				sb.append(" <--<> ");
-			} else {
-				sb.append(" <---- ");
-			}
-		}
-		sb.append(thatIdx);
+		StringBuilder sb = new StringBuilder();
+		sb.append(String.format("%3d", thisIdx));
+		sb.append('/');
+		sb.append(String.format("%3d", thatIdx));
 		sb.append(" | ");
-
 		sb.append(e.toString());
 		return sb.toString();
 	}

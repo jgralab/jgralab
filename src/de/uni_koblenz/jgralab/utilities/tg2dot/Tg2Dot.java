@@ -38,6 +38,7 @@ import static de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacad
 import static de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade.PRINT_ROLENAMES;
 import static de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade.SHORTEN_STRINGS;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -67,17 +68,16 @@ import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
-import de.uni_koblenz.jgralab.utilities.tg2dot.dot.DotWriter;
-import de.uni_koblenz.jgralab.utilities.tg2dot.dot.GraphType;
+import de.uni_koblenz.jgralab.utilities.common.dot.DotWriter;
+import de.uni_koblenz.jgralab.utilities.common.dot.GraphType;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.GraphLayout;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.GraphLayoutFactory;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.Definition;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.ElementDefinition;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.TypeDefinition;
+import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.writer.AbstractGraphLayoutWriter;
+import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.writer.json.JsonGraphLayoutWriter;
 import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacade;
-import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlFunctionRegister;
-import de.uni_koblenz.jgralab.utilities.tg2dot.json.AbstractGraphLayoutWriter;
-import de.uni_koblenz.jgralab.utilities.tg2dot.json.JsonGraphLayoutWriter;
 import de.uni_koblenz.jgralab.utilities.tg2whatever.Tg2Whatever;
 
 /**
@@ -145,13 +145,7 @@ public class Tg2Dot extends Tg2Whatever {
 
 	private boolean debugOptimization;
 
-	/**
-	 * Registers all known GReQL functions and disables the JGraLab log.
-	 */
-	static {
-		GreqlFunctionRegister.registerAllKnownGreqlFunctions();
-		JGraLab.setLogLevel(Level.OFF);
-	}
+	private Level jGraLabLogLevel;
 
 	/**
 	 * @param args
@@ -166,20 +160,24 @@ public class Tg2Dot extends Tg2Whatever {
 		converter.getOptions(args);
 
 		System.out.print("Starting processing of graph...");
-		converter.printGraph();
+		converter.convert();
 		System.out.println("Finished Processing.");
 	}
 
 	public static Tg2Dot createConverterAndSetAttributes(Graph graph,
-			boolean reversedEdges, String outputFileName) {
+			boolean reversedEdges,
+			Class<? extends AttributedElement>... reversedEdgeTypes) {
 
 		Tg2Dot converter = new Tg2Dot();
 		converter.setGraph(graph);
 		converter.setReversedEdges(reversedEdges);
 		converter.setPrintEdgeAttributes(true);
-		// TODO RANKSEP
-		// t2d.setRanksep(0.5);
-		converter.setOutputFile(outputFileName);
+
+		if (reversedEdgeTypes != null) {
+			HashSet<Class<? extends AttributedElement>> revEdgeTypes = new HashSet<Class<? extends AttributedElement>>();
+			Collections.addAll(revEdgeTypes, reversedEdgeTypes);
+			converter.setReversedEdgeTypes(revEdgeTypes);
+		}
 
 		return converter;
 	}
@@ -189,7 +187,8 @@ public class Tg2Dot extends Tg2Whatever {
 			Class<? extends AttributedElement>... reversedEdgeTypes) {
 
 		Tg2Dot converter = createConverterAndSetAttributes(graph,
-				reversedEdges, outputFileName);
+				reversedEdges, (Class<? extends AttributedElement>[]) null);
+		converter.setOutputFile(outputFileName);
 
 		if (reversedEdgeTypes != null) {
 			HashSet<Class<? extends AttributedElement>> revEdgeTypes = new HashSet<Class<? extends AttributedElement>>();
@@ -197,7 +196,7 @@ public class Tg2Dot extends Tg2Whatever {
 			converter.setReversedEdgeTypes(revEdgeTypes);
 		}
 
-		converter.printGraph();
+		converter.convert();
 	}
 
 	public static void convertGraph(Graph graph, String outputFileName,
@@ -210,11 +209,54 @@ public class Tg2Dot extends Tg2Whatever {
 			String outputFileName, boolean reversedEdges) {
 
 		Tg2Dot converter = createConverterAndSetAttributes(marker.getGraph(),
-				reversedEdges, outputFileName);
+				reversedEdges, (Class<? extends AttributedElement>[]) null);
+		converter.setOutputFile(outputFileName);
 
 		converter.setGraphMarker(marker);
+	}
 
-		converter.printGraph();
+	/**
+	 * Converts a given TGraph into DOT and pipes the output as input stream to
+	 * an application specified by the execution string. Edges can be reversed
+	 * for the hole graph or individually.
+	 * 
+	 * @param graph
+	 *            Graph, which should be converted.
+	 * @param executionString
+	 *            The command line string to execute the program.
+	 * @param reversedEdges
+	 *            Flag to indicate the reversal of all edge directions.
+	 * @param reversedEdgeTypes
+	 *            Type of edges, which should be reversed.
+	 * @return
+	 * @throws InterruptedException
+	 * @throws IOException
+	 */
+	public static BufferedInputStream convertGraphPipeToProgram(Graph graph,
+			String executionString, boolean reversedEdges,
+			Class<? extends AttributedElement>... reversedEdgeTypes)
+			throws InterruptedException, IOException {
+
+		Tg2Dot converter = createConverterAndSetAttributes(graph,
+				reversedEdges, reversedEdgeTypes);
+
+		Process process = null;
+		try {
+			process = Runtime.getRuntime().exec(executionString, null, null);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		PrintStream ps = new PrintStream(process.getOutputStream());
+		BufferedInputStream inputStream = new BufferedInputStream(
+				process.getInputStream());
+
+		converter.convert(ps);
+		ps.flush();
+		ps.close();
+		process.waitFor();
+
+		return inputStream;
 	}
 
 	/**
@@ -289,6 +331,8 @@ public class Tg2Dot extends Tg2Whatever {
 		debugOptimization = GreqlEvaluator.DEBUG_OPTIMIZATION;
 		GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS = false;
 		GreqlEvaluator.DEBUG_OPTIMIZATION = false;
+		jGraLabLogLevel = JGraLab.getRootLogger().getLevel();
+		JGraLab.setLogLevel(Level.OFF);
 
 		initializeEvaluator();
 		initializeGraphLayout();
@@ -299,7 +343,7 @@ public class Tg2Dot extends Tg2Whatever {
 		try {
 			createDotWriter(out);
 
-			startGraph();
+			startDotGraph();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -316,20 +360,18 @@ public class Tg2Dot extends Tg2Whatever {
 	 * Creates a GraphLayoutFactory and loads the GraphLayout.
 	 */
 	private void initializeGraphLayout() {
-		GraphLayoutFactory factory = new GraphLayoutFactory();
-		factory.setSchema(graph.getSchema());
-		factory.setGreqlEvaluator(evaluator);
+		GraphLayoutFactory factory = new GraphLayoutFactory(evaluator);
 
-		if (graphLayoutFilename == null) {
-			layout = factory.loadDefautLayout();
-		} else {
-			File layout = new File(graphLayoutFilename);
+		if (graphLayoutFilename != null) {
+			File layoutFile = new File(graphLayoutFilename);
 			if (useJsonGraphLayoutReader) {
-				this.layout = factory.loadJsonGraphLayout(layout);
+				factory.setJsonGraphLayoutFilename(layoutFile);
 			} else {
-				this.layout = factory.loadPListGraphLayout(layout);
+				factory.setPListGraphLayoutFilename(layoutFile);
 			}
 		}
+
+		layout = factory.createGraphLayout();
 	}
 
 	/**
@@ -368,7 +410,7 @@ public class Tg2Dot extends Tg2Whatever {
 	/**
 	 * Starts the Graph in the output file.
 	 */
-	private void startGraph() {
+	private void startDotGraph() {
 		StringBuilder sb = new StringBuilder();
 		// Names have to start with a character
 		sb.append(graph.getM1Class().getSimpleName());
@@ -376,7 +418,7 @@ public class Tg2Dot extends Tg2Whatever {
 		sb.append(graph.getId().replace('-', '_'));
 		sb.append("__");
 		sb.append(graph.getGraphVersion());
-		writer.startGraph(GraphType.Directed, sb.toString());
+		writer.startGraph(GraphType.DIRECTED, sb.toString());
 	}
 
 	@Override
@@ -609,6 +651,7 @@ public class Tg2Dot extends Tg2Whatever {
 
 		GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS = debugIterations;
 		GreqlEvaluator.DEBUG_OPTIMIZATION = debugOptimization;
+		JGraLab.setLogLevel(jGraLabLogLevel);
 	}
 
 	/**

@@ -38,97 +38,54 @@ import de.uni_koblenz.jgralabtest.greql2.GenericTests;
 
 public class StringFunctionTest extends GenericTests {
 
-	private static final String RE_MATCH = "ReMatch";
-	private static final String SPLIT = "Split";
-	private static final String CONCAT = "Concat";
-	private static final String CAPITALIZE_FIRST = "CapitalizeFirst";
-
 	@Test
-	public void testConcat1() throws Exception {
-		assertQueryEquals(CONCAT, "\"foo\" ++ \"bar\" ++ \"baz\"", "foobarbaz");
-		assertQueryEquals(CONCAT, "'foo' ++ 'bar' ++ 'baz'", "foobarbaz");
+	public void testConcatInfix() throws Exception {
+		assertQueryEquals("\"foo\" ++ \"bar\" ++ \"baz\"", "foobarbaz");
+		assertQueryEquals("'foo' ++ 'bar' ++ 'baz'", "foobarbaz");
+		assertQueryEquals("'' ++ '' ++ ''", "");
+		assertQueryEquals("'g' ++ 'g'", "gg");
 	}
 
 	@Test
-	public void testConcat2() throws Exception {
-		assertQueryEquals(CONCAT, "'' ++ '' ++ ''", "");
+	public void testConcat() throws Exception {
+		assertQueryEquals("concat(concat(\"foo\", \"bar\"), \"baz\")",
+				"foobarbaz");
+		assertQueryEquals("concat(concat('foo', 'bar'), 'baz')", "foobarbaz");
+		assertQueryEquals("concat(concat('', ''), '')", "");
+		assertQueryEquals("concat('g', 'g')", "gg");
 	}
 
 	@Test
-	public void testConcat3() throws Exception {
-		assertQueryEquals(CONCAT, "'\n'", "\n");
+	public void testCapitalizeFirst() throws Exception {
+		assertQueryEquals("capitalizeFirst('foobarbaz')", "Foobarbaz");
+		assertQueryEquals("capitalizeFirst('foo bar baz')", "Foo bar baz");
+		assertQueryEquals("capitalizeFirst(' oobarbaz')", " oobarbaz");
 	}
 
 	@Test
-	public void testConcat4() throws Exception {
-		assertQueryEquals(CONCAT, "'g' ++ 'g'", "gg");
+	public void testReMatchInfix() throws Exception {
+		assertQueryEquals("'aaabbbb' =~ '[a]+[b]+'", true);
+		assertQueryEquals("'aaa' =~ '[a]+[b]+'", false);
+		assertQueryEquals("'aaabc' =~ '[a]+[b]+'", false);
 	}
 
 	@Test
-	public void testCapitalizeFirst1() throws Exception {
-		assertQueryEquals(CAPITALIZE_FIRST, "capitalizeFirst('foobarbaz')",
-				"Foobarbaz");
+	public void testReMatch() throws Exception {
+		assertQueryEquals("reMatch('aaabbbb', '[a]+[b]+')", true);
+		assertQueryEquals("reMatch('aaa', '[a]+[b]+')", false);
+		assertQueryEquals("reMatch('aaabc', '[a]+[b]+')", false);
 	}
 
 	@Test
-	public void testCapitalizeFirst2() throws Exception {
-		assertQueryEquals(CAPITALIZE_FIRST, "capitalizeFirst('foo bar baz')",
-				"Foo bar baz");
-	}
+	public void testSplitt() throws Exception {
 
-	@Test
-	public void testCapitalizeFirst3() throws Exception {
-		assertQueryEquals(CAPITALIZE_FIRST, "capitalizeFirst(' oobarbaz')",
-				" oobarbaz");
-	}
-
-	@Test
-	public void testReMatch1() throws Exception {
-		assertQueryEquals(RE_MATCH, "reMatch('aaabbbb', '[a]+[b]+')", true);
-		assertQueryEquals(RE_MATCH, "'aaabbbb' =~ '[a]+[b]+'", true);
-	}
-
-	@Test
-	public void testReMatch2() throws Exception {
-		assertQueryEquals(RE_MATCH, "reMatch('aaa', '[a]+[b]+')", false);
-		assertQueryEquals(RE_MATCH, "'aaa' =~ '[a]+[b]+'", false);
-	}
-
-	@Test
-	public void testReMatch3() throws Exception {
-		assertQueryEquals(RE_MATCH, "reMatch('aaabc', '[a]+[b]+')", false);
-		assertQueryEquals(RE_MATCH, "'aaabc' =~ '[a]+[b]+'", false);
-	}
-
-	@Test
-	public void testSplitt1() throws Exception {
-
-		assertQueryEquals(SPLIT, "split('aaabc', '[a]+[b]+')",
-				Arrays.asList("", "c"));
-	}
-
-	@Test
-	public void testSplitt2() throws Exception {
-
-		assertQueryEquals(SPLIT, "split('Eckhard-Großmann', '-')",
-				Arrays.asList("Eckhard", "Großmann"));
-	}
-
-	@Test
-	public void testSplitt3() throws Exception {
-		assertQueryEquals(SPLIT, "split('aaa bc', ' ')",
-				Arrays.asList("aaa", "bc"));
-	}
-
-	@Test
-	public void testSplitt4() throws Exception {
-		assertQueryEquals(SPLIT, "split('Software-Technik', '[-e]')",
-				Arrays.asList("Softwar", "", "T", "chnik"));
-	}
-
-	@Test
-	public void testSplitt5() throws Exception {
-		assertQueryEquals(SPLIT, "split('JGraLab', '\\p{javaLowerCase}')",
-				Arrays.asList("JG", "", "L"));
+		assertQueryEquals("split('aaabc', '[a]+[b]+')", Arrays.asList("", "c"));
+		assertQueryEqualsQuery("split('Eckhard-Großmann', '-')",
+				"list('Eckhard', 'Großmann')");
+		assertQueryEqualsQuery("split('aaa bc', ' ')", "list('aaa', 'bc')");
+		assertQueryEqualsQuery("split('Software-Technik', '[-e]')",
+				"list('Softwar', '', 'T', 'chnik')");
+		assertQueryEqualsQuery("split('JGraLab', '\\p{javaLowerCase}')",
+				"list('JG', '', 'L')");
 	}
 }

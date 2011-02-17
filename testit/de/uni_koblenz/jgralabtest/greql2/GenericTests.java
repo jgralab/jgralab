@@ -108,45 +108,52 @@ public class GenericTests {
 				- result.toDouble().intValue();
 	}
 
-	protected void assertQueryEquals(String testName, String query,
-			boolean expectedValue) throws Exception {
-		JValue result = evalTestQuery(testName, query);
+	protected void assertQueryEquals(String query, boolean expectedValue)
+			throws Exception {
+		JValue result = evalTestQuery("", query);
 		assertEquals(expectedValue, result.toBoolean().booleanValue());
 	}
 
-	protected void assertQueryEquals(String testName, String query,
-			int expectedValue) throws Exception {
-		JValue result = evalTestQuery(testName, query);
+	protected void assertQueryEquals(String query, int expectedValue)
+			throws Exception {
+		JValue result = evalTestQuery("", query);
 		assertEquals(expectedValue, result.toInteger().intValue());
 	}
 
-	protected void assertQueryEquals(String testName, String query,
-			long expectedValue) throws Exception {
-		JValue result = evalTestQuery(testName, query);
+	protected void assertQueryEquals(String query, long expectedValue)
+			throws Exception {
+		JValue result = evalTestQuery("", query);
 		assertEquals(expectedValue, result.toLong().longValue());
 	}
 
-	protected void assertQueryEquals(String testName, String query,
-			double expectedValue) throws Exception {
-		JValue result = evalTestQuery(testName, query);
+	protected void assertQueryEquals(String query, double expectedValue)
+			throws Exception {
+		JValue result = evalTestQuery("", query);
 		assertEquals(expectedValue, result.toDouble().doubleValue(), DELTA);
 	}
 
-	protected void assertQueryEquals(String testName, String query,
-			String expectedValue) throws Exception {
-		JValue result = evalTestQuery(testName, query);
+	protected void assertQueryEquals(String query, String expectedValue)
+			throws Exception {
+		JValue result = evalTestQuery("", query);
 		assertEquals(expectedValue, result.toString());
 	}
 
-	protected void assertQueryEquals(String testName, String query,
-			Enum<?> expectedValue) throws Exception {
-		JValue result = evalTestQuery(testName, query);
+	protected void assertQueryEqualsQuery(String query, String resultQuery)
+			throws Exception {
+		JValue result = evalTestQuery("", query);
+		JValue expectedResult = evalTestQuery("", resultQuery);
+		assertEquals(result, expectedResult);
+	}
+
+	protected void assertQueryEquals(String query, Enum<?> expectedValue)
+			throws Exception {
+		JValue result = evalTestQuery("", query);
 		assertEquals(expectedValue, result.toEnum());
 	}
 
-	protected void assertQueryEquals(String testName, String query,
-			List<?> expectedValue) throws Exception {
-		JValue result = evalTestQuery(testName, query);
+	protected void assertQueryEquals(String query, List<?> expectedValue)
+			throws Exception {
+		JValue result = evalTestQuery("", query);
 
 		List<?> list = toList(result.toCollection());
 		assertEquals(expectedValue, list);
@@ -161,10 +168,10 @@ public class GenericTests {
 		return list;
 	}
 
-	protected void expectException(String testName, String query,
+	protected void expectException(String query,
 			Class<? extends Exception> exception) {
 		try {
-			evalTestQuery(testName, query);
+			evalTestQuery("", query);
 			fail();
 		} catch (Exception ex) {
 			if (!ex.getClass().equals(exception)) {
@@ -326,33 +333,13 @@ public class GenericTests {
 		eval.setDatagraph(datagraph);
 		eval.setUseSavedOptimizedSyntaxGraph(false);
 
-		if (optimizer != null) {
-			eval.setOptimize(true);
-			eval.setOptimizer(optimizer);
-		} else {
-			eval.setOptimize(false);
-		}
+		setOptimizer(optimizer);
 
 		// when optimizing turn on logging, too.
 		eval.startEvaluation(eval.isOptimize(), true);
 
 		if (DEBUG_SYNTAXGRAPHS) {
-			String dotFileName = System.getProperty("user.home")
-					+ File.separator;
-			if (optimizer != null) {
-				System.out.println("Optimized Query:");
-				if (optimizer instanceof DefaultOptimizer) {
-					dotFileName += "default-optimized-query.dot";
-				} else {
-					dotFileName += "optimized-query.dot";
-				}
-			} else {
-				System.out.println("Unoptimized Query:");
-				dotFileName += "unoptimized-query.dot";
-			}
-			System.out.println(((SerializableGreql2) eval.getSyntaxGraph())
-					.serialize());
-			Tg2Dot.convertGraph(eval.getSyntaxGraph(), dotFileName, true);
+			printDebuggingSyntaxGraph(optimizer);
 		}
 
 		printTestFunctionFooter(functionName);
@@ -360,6 +347,33 @@ public class GenericTests {
 		JValue result = eval.getEvaluationResult();
 		eval.printEvaluationTimes();
 		return result;
+	}
+
+	private void setOptimizer(Optimizer optimizer) {
+		if (optimizer != null) {
+			eval.setOptimize(true);
+			eval.setOptimizer(optimizer);
+		} else {
+			eval.setOptimize(false);
+		}
+	}
+
+	private void printDebuggingSyntaxGraph(Optimizer optimizer) {
+		String dotFileName = System.getProperty("user.home") + File.separator;
+		if (optimizer != null) {
+			System.out.println("Optimized Query:");
+			if (optimizer instanceof DefaultOptimizer) {
+				dotFileName += "default-optimized-query.dot";
+			} else {
+				dotFileName += "optimized-query.dot";
+			}
+		} else {
+			System.out.println("Unoptimized Query:");
+			dotFileName += "unoptimized-query.dot";
+		}
+		System.out.println(((SerializableGreql2) eval.getSyntaxGraph())
+				.serialize());
+		Tg2Dot.convertGraph(eval.getSyntaxGraph(), dotFileName, true);
 	}
 
 	protected JValue getNthValue(JValueCollection col, int n) {

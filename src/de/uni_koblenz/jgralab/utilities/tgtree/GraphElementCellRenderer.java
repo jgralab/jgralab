@@ -33,13 +33,36 @@ package de.uni_koblenz.jgralab.utilities.tgtree;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
+import java.awt.Image;
+import java.util.HashMap;
+import java.util.Map;
 
+import javax.swing.ImageIcon;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
+
+import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.schema.AggregationKind;
 
 class GraphElementCellRenderer extends DefaultTreeCellRenderer {
 
 	private static final long serialVersionUID = -1698523886275339684L;
+
+	private static final Map<String, ImageIcon> ICON_CACHE = new HashMap<String, ImageIcon>();
+
+	private static ImageIcon getIcon(String name) {
+		ImageIcon icon = ICON_CACHE.get(name);
+		if (icon == null) {
+			icon = new ImageIcon(
+					GraphElementCellRenderer.class.getResource("icons/" + name
+							+ ".png"));
+			// Scale the image to some smaller size
+			icon.setImage(icon.getImage().getScaledInstance(24, 8,
+					Image.SCALE_SMOOTH));
+			ICON_CACHE.put(name, icon);
+		}
+		return icon;
+	}
 
 	@Override
 	public Component getTreeCellRendererComponent(JTree tree, Object value,
@@ -52,11 +75,40 @@ class GraphElementCellRenderer extends DefaultTreeCellRenderer {
 		setToolTipText(getn.getToolTipText());
 		setFont(new Font(Font.MONOSPACED, Font.PLAIN, tree.getFont().getSize()));
 		if (getn instanceof EdgeTreeNode) {
-			setIcon(null);
+			String iconName = null;
+			Edge e = (Edge) ((EdgeTreeNode) getn).get();
+			if (e.isNormal()) {
+				if (e.getThatSemantics() == AggregationKind.SHARED) {
+					iconName = "l_aggr_r";
+				} else if (e.getThatSemantics() == AggregationKind.COMPOSITE) {
+					iconName = "l_comp_r";
+				} else if (e.getThisSemantics() == AggregationKind.SHARED) {
+					iconName = "r_aggr_r";
+				} else if (e.getThisSemantics() == AggregationKind.COMPOSITE) {
+					iconName = "r_comp_r";
+				} else {
+					iconName = "edge_r";
+				}
+			} else {
+				if (e.getThatSemantics() == AggregationKind.SHARED) {
+					iconName = "l_aggr_l";
+				} else if (e.getThatSemantics() == AggregationKind.COMPOSITE) {
+					iconName = "l_comp_l";
+				} else if (e.getThisSemantics() == AggregationKind.SHARED) {
+					iconName = "r_aggr_l";
+				} else if (e.getThisSemantics() == AggregationKind.COMPOSITE) {
+					iconName = "r_comp_l";
+				} else {
+					iconName = "edge_l";
+				}
+			}
+			setIcon(getIcon(iconName));
 			EdgeTreeNode etn = (EdgeTreeNode) getn;
 			if (etn.isBackEdge()) {
 				setForeground(Color.LIGHT_GRAY);
 			}
+		} else if (getn instanceof VertexTreeNode) {
+			setIcon(getIcon("vertex"));
 		}
 
 		return this;

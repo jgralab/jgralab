@@ -62,8 +62,8 @@ import de.uni_koblenz.jgralab.schema.IntegerDomain;
 import de.uni_koblenz.jgralab.schema.ListDomain;
 import de.uni_koblenz.jgralab.schema.LongDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
-import de.uni_koblenz.jgralab.schema.SetDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
+import de.uni_koblenz.jgralab.schema.SetDomain;
 import de.uni_koblenz.jgralab.utilities.tg2schemagraph.Schema2SchemaGraph;
 import de.uni_koblenz.jgralab.utilities.tg2whatever.Tg2Whatever;
 
@@ -155,17 +155,15 @@ public class Tg2GXL extends Tg2Whatever {
 
 		if (printSchema) {
 
-			out
-					.println("<graph id=\""
-							+ uniqueGraphClassName
-							+ "Graph\" edgeids=\" true\" edgemode=\" directed\" hypergraph=\" false\">");
+			out.println("<graph id=\""
+					+ uniqueGraphClassName
+					+ "Graph\" edgeids=\" true\" edgemode=\" directed\" hypergraph=\" false\">");
 			out.println("<type xlink:href=\"" + gxlMetaSchema
 					+ "#gxl-1.0\" xlink:type=\" simple\"/>");
 		} else {
-			out
-					.println("<graph id=\""
-							+ graph.getId()
-							+ "\" edgeids=\" true\" edgemode=\" directed\" hypergraph=\" false\">");
+			out.println("<graph id=\""
+					+ graph.getId()
+					+ "\" edgeids=\" true\" edgemode=\" directed\" hypergraph=\" false\">");
 			out.println("<type xlink:href=\"" + schemaGraphOutputName + "#"
 					+ graph.getGraphClass().getQualifiedName()
 					+ "\" xlink:type=\" simple\"/>");
@@ -387,9 +385,9 @@ public class Tg2GXL extends Tg2Whatever {
 					out.println("" + stringQuote(component.getName()));
 					out.println("</String>");
 					try {
-						printComposite(out, component.getDomain(), val
-								.getClass().getField(component.getName()).get(
-										val));
+						printComposite(out, component.getDomain(),
+								val.getClass().getField(component.getName())
+										.get(val));
 					} catch (Exception e) {
 
 					}
@@ -417,11 +415,11 @@ public class Tg2GXL extends Tg2Whatever {
 		String attrValue = "null";
 
 		if (val != null) {
-			if ((val instanceof Double) || (val instanceof Float)) {
-				val = Double.parseDouble(val.toString());
+			if (val instanceof Float) {
+				val = ((Float) val).doubleValue();
 			}
-			if ((val instanceof Long) || (val instanceof Integer)) {
-				val = Long.parseLong(val.toString());
+			if (val instanceof Integer) {
+				val = ((Integer) val).longValue();
 			}
 			attrValue = stringQuote(val.toString());
 		}
@@ -461,7 +459,7 @@ public class Tg2GXL extends Tg2Whatever {
 		Tg2GXL converter = new Tg2GXL();
 		converter.getOptions(args);
 		converter.initgrUML2GXLMap();
-		converter.printGraph();
+		converter.convert();
 	}
 
 	/**
@@ -471,17 +469,17 @@ public class Tg2GXL extends Tg2Whatever {
 	 * the M2 graph is printed.
 	 */
 	@Override
-	public void printGraph() {
+	public void convert() {
 		printSchema = false;
 		setOutputFile(graphOutputName);
 		uniqueGraphClassName = graph.getSchema().getGraphClass()
 				.getQualifiedName();
-		super.printGraph();
+		super.convert();
 		setOutputFile(schemaGraphOutputName);
 		setGraph(new Schema2SchemaGraph()
 				.convert2SchemaGraph(graph.getSchema()));
 		printSchema = true;
-		super.printGraph();
+		super.convert();
 
 	}
 
@@ -514,8 +512,7 @@ public class Tg2GXL extends Tg2Whatever {
 		if (comLine.hasOption("o")) {
 			graphOutputName = comLine.getOptionValue("o");
 			schemaGraphOutputName = graphOutputName.substring(0,
-					graphOutputName.length() - 4)
-					+ "Schema.gxl";
+					graphOutputName.length() - 4) + "Schema.gxl";
 		}
 		if (outputName == null) {
 			outputName = "";

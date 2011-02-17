@@ -31,7 +31,6 @@
 package de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition;
 
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
-import de.uni_koblenz.jgralab.schema.Schema;
 
 /**
  * A TypeDefinition is a description of graph elements of a specific schema type
@@ -53,32 +52,10 @@ public class TypeDefinition extends AbstractDefinition {
 	 * @param type
 	 *            {@link AttributedElementClass} this definition describes.
 	 */
-	protected TypeDefinition(AttributedElementClass type) {
+	public TypeDefinition(AttributedElementClass type) {
 		super();
 
 		typeClass = type;
-	}
-
-	/**
-	 * Constructs a TypeDefinition from a {@link TemporaryDefinitionStruct} and
-	 * its corresponding {@link Schema} and copy all attributes.
-	 * 
-	 * @param schema
-	 *            Schema corresponding to the type specified by the
-	 *            {@link TemporaryDefinitionStruct}.
-	 * @param struct
-	 *            {@link TemporaryDefinitionStruct} from which this definition
-	 *            is created from.
-	 */
-	protected TypeDefinition(Schema schema, TemporaryDefinitionStruct struct) {
-		super(struct);
-
-		typeClass = schema.getAttributedElementClass(struct.name);
-		if (typeClass == null) {
-			throw new RuntimeException(
-					"There is no AttributedElementClass this TemporaryDefinitionStruct can be associated to. Its type is: "
-							+ struct.name);
-		}
 	}
 
 	/**

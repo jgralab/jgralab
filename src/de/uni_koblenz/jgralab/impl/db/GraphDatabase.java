@@ -224,11 +224,6 @@ public abstract class GraphDatabase {
 	protected SqlStatementList sqlStatementList;
 
 	/**
-	 * Current optimization mode of database.
-	 */
-	protected OptimizationMode mode = OptimizationMode.GRAPH_TRAVERSAL;
-
-	/**
 	 * Collects graphs which were loaded from this graph database.
 	 */
 	private final Hashtable<String, GraphImpl> loadedGraphs = new Hashtable<String, GraphImpl>();
@@ -2159,10 +2154,6 @@ public abstract class GraphDatabase {
 		return url;
 	}
 
-	protected enum OptimizationMode {
-		GRAPH_TRAVERSAL, GRAPH_CREATION, BULK_IMPORT
-	}
-
 	public void rollback() throws GraphDatabaseException {
 		try {
 			connection.rollback();
@@ -2189,7 +2180,7 @@ public abstract class GraphDatabase {
 		statement.execute();
 	}
 
-	protected void addForeignKeyConstraints() throws SQLException {
+	public void addForeignKeyConstraints() throws SQLException {
 		PreparedStatement statement = sqlStatementList
 				.addForeignKeyConstraintOnGraphColumnOfVertexTable();
 		statement.execute();
@@ -2231,127 +2222,14 @@ public abstract class GraphDatabase {
 		statement.execute();
 	}
 
-	protected void addIndices() throws SQLException {
+	public void addIndices() throws SQLException {
 		PreparedStatement statement = sqlStatementList.addIndexOnLambdaSeq();
 		statement.execute();
 	}
 
-	public void optimizeForGraphTraversal() throws GraphDatabaseException {
-		if (mode != OptimizationMode.GRAPH_TRAVERSAL) {
-			changeModeToGraphTraversal();
-		}
-	}
-
-	public void optimizeForBulkImport() throws GraphDatabaseException {
-		if (mode != OptimizationMode.BULK_IMPORT) {
-			changeModeToBulkImport();
-		}
-	}
-
-	public void optimizeForGraphCreation() throws GraphDatabaseException {
-		if (mode != OptimizationMode.GRAPH_CREATION) {
-			changeModeToGraphCreation();
-		}
-	}
-
-	private void changeModeToGraphTraversal() throws GraphDatabaseException {
-		try {
-			changeModeToGraphTraversalInTransaction();
-			mode = OptimizationMode.GRAPH_TRAVERSAL;
-		} catch (SQLException exception) {
-			exception.printStackTrace();
-			rollback();
-			throw new GraphDatabaseException("Could not optimize database "
-					+ getUrl() + " for graph traversal.", exception);
-		}
-	}
-
-	private void changeModeToBulkImport() throws GraphDatabaseException {
-		try {
-			changeModeToBulkImportInTransaction();
-			mode = OptimizationMode.BULK_IMPORT;
-		} catch (SQLException exception) {
-			exception.printStackTrace();
-			rollback();
-			throw new GraphDatabaseException("Could not optimize database "
-					+ getUrl() + " for bulk import.", exception);
-		}
-	}
-
-	private void changeModeToGraphCreation() throws GraphDatabaseException {
-		try {
-			changeModeToGraphCreationInTransaction();
-			mode = OptimizationMode.GRAPH_CREATION;
-		} catch (SQLException exception) {
-			exception.printStackTrace();
-			rollback();
-			throw new GraphDatabaseException(
-					"Could not optimize database for graph creation.",
-					exception);
-		}
-	}
-
-	private void changeModeToGraphTraversalInTransaction()
-			throws GraphDatabaseException, SQLException {
-		beginTransaction();
-		if (mode == OptimizationMode.BULK_IMPORT) {
-			changeFromBulkImportToGraphTraversal();
-		} else if (mode == OptimizationMode.GRAPH_CREATION) {
-			changeFromGraphCreationToGraphTraversal();
-		} else {
-			throw new GraphDatabaseException("Undefined optimization mode.");
-		}
-		commitTransaction();
-	}
-
-	private void changeModeToBulkImportInTransaction()
-			throws GraphDatabaseException, SQLException {
-		beginTransaction();
-		if (mode == OptimizationMode.GRAPH_CREATION) {
-			changeFromGraphCreationToBulkImport();
-		} else if (mode == OptimizationMode.GRAPH_TRAVERSAL) {
-			changeFromGraphTraversalToBulkImport();
-		} else {
-			throw new GraphDatabaseException("Undefined optimization mode.");
-		}
-		commitTransaction();
-	}
-
-	private void changeModeToGraphCreationInTransaction()
-			throws GraphDatabaseException, SQLException {
-		beginTransaction();
-		if (mode == OptimizationMode.GRAPH_TRAVERSAL) {
-			changeFromGraphTraversalToGraphCreation();
-		} else if (mode == OptimizationMode.BULK_IMPORT) {
-			changeFromBulkImportToGraphCreation();
-		} else {
-			throw new GraphDatabaseException("Undefined optimization mode.");
-		}
-		commitTransaction();
-	}
-
-	protected abstract void changeFromBulkImportToGraphTraversal()
-			throws SQLException;
-
-	protected abstract void changeFromGraphCreationToGraphTraversal()
-			throws SQLException;
-
-	protected abstract void changeFromGraphCreationToBulkImport()
-			throws SQLException;
-
-	protected abstract void changeFromGraphTraversalToBulkImport()
-			throws SQLException;
-
-	protected abstract void changeFromGraphTraversalToGraphCreation()
-			throws SQLException;
-
-	protected abstract void changeFromBulkImportToGraphCreation()
-			throws SQLException;
-
 	public void applyDbSchema() throws GraphDatabaseException {
 		try {
 			applyDbSchemaInTransaction();
-			mode = OptimizationMode.GRAPH_CREATION;
 		} catch (SQLException exception) {
 			exception.printStackTrace();
 			rollback();
@@ -2403,26 +2281,7 @@ public abstract class GraphDatabase {
 		sqlStatementList.createStoredProcedureToReorganizeIncidenceList();
 	}
 
-	protected void dropPrimaryKeyConstraints() throws SQLException {
-		PreparedStatement statement = sqlStatementList
-				.dropPrimaryKeyConstraintFromVertexAttributeValueTable();
-		statement.execute();
-		statement = sqlStatementList
-				.dropPrimaryKeyConstraintFromEdgeAttributeValueTable();
-		statement.execute();
-		statement = sqlStatementList
-				.dropPrimaryKeyConstraintFromIncidenceTable();
-		statement.execute();
-		statement = sqlStatementList.dropPrimaryKeyConstraintFromEdgeTable();
-		statement.execute();
-		statement = sqlStatementList.dropPrimaryKeyConstraintFromVertexTable();
-		statement.execute();
-		statement = sqlStatementList
-				.dropPrimaryKeyConstraintFromIncidenceTable();
-		statement.execute();
-	}
-
-	protected void dropIndices() throws SQLException {
+	public void dropIndices() throws SQLException {
 		PreparedStatement statement = sqlStatementList.dropIndexOnLambdaSeq();
 		statement.execute();
 	}
@@ -2432,7 +2291,7 @@ public abstract class GraphDatabase {
 		statement.execute();
 	}
 
-	protected void dropForeignKeyConstraints() throws SQLException {
+	public void dropForeignKeyConstraints() throws SQLException {
 		PreparedStatement statement = sqlStatementList
 				.dropForeignKeyConstraintFromGraphColumnOfVertexTable();
 		statement.execute();
