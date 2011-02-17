@@ -113,16 +113,8 @@ public class CollectionFunctionTest extends GenericTests {
 
 	@Test
 	public void testCount() throws Exception {
-		String queryString = "let x:= list (5..13) in count(x)";
-		JValue result = evalTestQuery("Count", queryString);
-		assertEquals(9, (int) result.toInteger());
-	}
-
-	@Test
-	public void testCount2() throws Exception {
-		String queryString = "let x:= 17 in count(x)";
-		JValue result = evalTestQuery("Count", queryString);
-		assertEquals(1, (int) result.toInteger());
+		assertQueryEquals("let x:= list (5..13) in count(x)", 9);
+		assertQueryEquals("let x:= 17 in count(x)", 1);
 	}
 
 	@Test
