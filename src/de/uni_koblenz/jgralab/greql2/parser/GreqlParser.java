@@ -2457,27 +2457,37 @@ public class GreqlParser extends ParserHelper {
 	}
 
 	private final Expression parseNumericLiteral() {
-		if (lookAhead(0) == TokenTypes.REALLITERAL) {
-			RealLiteral literal = null;
-			if (!inPredicateMode()) {
-				literal = graph.createRealLiteral();
-				literal.set_realValue(((RealToken) lookAhead).getNumber());
-			}
-			match();
-			return literal;
-		}
+//		if (lookAhead(0) == TokenTypes.REALLITERAL) {
+//			RealLiteral literal = null;
+//			if (!inPredicateMode()) {
+//				literal = graph.createRealLiteral();
+//				literal.set_realValue(((RealToken) lookAhead).getNumber());
+//			}
+//			match();
+//			return literal;
+//		}
 		if ((lookAhead(0) == TokenTypes.HEXLITERAL)
 				|| (lookAhead(0) == TokenTypes.OCTLITERAL)) {
-			IntLiteral literal = null;
-			if (!inPredicateMode()) {
-				literal = graph.createIntLiteral();
-				literal.set_intValue(((IntegerToken) lookAhead).getNumber());
+			if (((IntegerToken) lookAhead).getNumber().intValue() == ((IntegerToken) lookAhead).getNumber().longValue()) {
+				IntLiteral literal = null;
+				if (!inPredicateMode()) {
+					literal = graph.createIntLiteral();
+					literal.set_intValue(((IntegerToken) lookAhead).getNumber().intValue());
+				}
+				match();
+				return literal;
+			} else {
+				LongLiteral literal = null;
+				if (!inPredicateMode()) {
+					literal = graph.createLongLiteral();
+					literal.set_longValue(((IntegerToken) lookAhead).getNumber());
+				}
+				match();
+				return literal;
 			}
-			match();
-			return literal;
 		}
-		if (lookAhead(0) == TokenTypes.INTLITERAL) {
-			int value = ((IntegerToken) lookAhead).getNumber();
+		if ((lookAhead(0) == TokenTypes.INTLITERAL)) {
+			long value = ((IntegerToken) lookAhead).getNumber().longValue();
 			String integerPart = lookAhead.getValue();
 			match();
 			if (lookAhead(0) == TokenTypes.DOT) {
@@ -2487,13 +2497,10 @@ public class GreqlParser extends ParserHelper {
 						|| (lookAhead(0) == TokenTypes.OCTLITERAL)) {
 					decimalPart = ((IntegerToken) lookAhead).getValue();
 					match();
-				} else if (lookAhead(0) == TokenTypes.REALLITERAL) {
-					decimalPart = lookAhead.getValue().substring(0,
-							lookAhead.getValue().length() - 1);
-					// System.out.println("LookAhead is: " +
-					// lookAhead.getValue());
-					// System.out.println("Decimal Part is: " + decimalPart);
-					match();
+			//	} else if (lookAhead(0) == TokenTypes.REALLITERAL) {
+					//decimalPart = lookAhead.getValue().substring(0,
+					//		lookAhead.getValue().length() - 1);
+					//match();
 				} else {
 					fail("Unrecognized token as part of decimal value");
 				}
@@ -2507,9 +2514,15 @@ public class GreqlParser extends ParserHelper {
 				return null;
 			} else {
 				if (!inPredicateMode()) {
-					IntLiteral literal = graph.createIntLiteral();
-					literal.set_intValue(value);
-					return literal;
+					if ((value < Integer.MAX_VALUE) && (value > Integer.MIN_VALUE))  {
+						IntLiteral literal = graph.createIntLiteral();
+						literal.set_intValue((int)value);
+						return literal;
+					} else {
+						LongLiteral literal = graph.createLongLiteral();
+						literal.set_longValue(value);
+						return literal;
+					}
 				}
 				return null;
 			}
