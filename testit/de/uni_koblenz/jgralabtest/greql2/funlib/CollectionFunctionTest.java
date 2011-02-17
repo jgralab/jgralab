@@ -62,15 +62,33 @@ public class CollectionFunctionTest extends GenericTests {
 	}
 
 	@Test
-	public void testConcat2() throws Exception {
+	public void testConcatInfix() throws Exception {
 		assertQueryEqualsQuery("list(1..3) ++ list(4..6)", "list(1..6)");
+		assertQueryEqualsQuery("list(1..2) ++ list(5..6)", "list(1,2,5,6)");
+		assertQueryEqualsQuery("list(1,23,3) ++ list(5,2,5)",
+				"list(1,23,3,5,2,5)");
+		assertQueryEqualsQuery("list() ++ list(5,2,5)", "list(5,2,5)");
+		assertQueryEqualsQuery("list(1) ++ list(5,2,5)", "list(1,5,2,5)");
+		assertQueryEqualsQuery("list(1,23,3) ++ list()", "list(1,23,3)");
+		assertQueryEqualsQuery("list(1,23,3) ++ list(5)", "list(1,23,3,5,)");
+	}
+
+	@Test
+	public void testConcat() throws Exception {
+		assertQueryEqualsQuery("concat(list(1..3), list(4..6))", "list(1..6)");
+		assertQueryEqualsQuery("concat(list(1..2), list(5..6))",
+				"list(1,2,5,6)");
+		assertQueryEqualsQuery("concat(list(1,23,3), list(5,2,5))",
+				"list(1,23,3,5,2,5)");
+		assertQueryEqualsQuery("concat(list(), list(5,2,5))", "list(5,2,5)");
+		assertQueryEqualsQuery("concat(list(1), list(5,2,5))", "list(1,5,2,5)");
+		assertQueryEqualsQuery("concat(list(1,23,3), list())", "list(1,23,3)");
+		assertQueryEqualsQuery("concat(list(1,23,3), list(5))",
+				"list(1,23,3,5,)");
 	}
 
 	@Test
 	public void testContains() throws Exception {
-
-		assertQueryEquals("let x:= list (5..13) in contains(x, 7)", true);
-
 		String queryString = "let x:= list (5..13) in contains(x, 7)";
 		JValue result = evalTestQuery("ContainsTrue", queryString);
 		assertEquals(true, (boolean) result.toBoolean());
