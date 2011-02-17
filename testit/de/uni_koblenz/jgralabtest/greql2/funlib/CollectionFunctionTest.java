@@ -250,49 +250,30 @@ public class CollectionFunctionTest extends GenericTests {
 
 	@Test
 	public void testSum() throws Exception {
-		String queryString = "let x:= list (5..13) in sum(x)";
-		JValue result = evalTestQuery("Sum", queryString);
-		assertEquals(81, (int) (double) result.toDouble());
+		assertQueryEquals("let x:= list (5..13) in sum(x)", 81.0);
 	}
 
 	@Test
 	public void testSymDifference() throws Exception {
-		String queryString = "let x:= set(5, 7, 9, 13), y := set(5,6,7,8) in symDifference(x, y)";
-		JValue result = evalTestQuery("SymetricDifference", queryString);
-		assertEquals(4, result.toCollection().size());
+		evalTestQuery("", "set(5, 7, 9, 13) store as x");
+		evalTestQuery("", "set(5, 6, 7, 8)  store as y");
+		assertQueryEqualsQuery("using x, y: symDifference(x, y)",
+				"set(6, 8, 9, 13)");
 	}
 
 	@Test
-	public void testUnion1() throws Exception {
-		String queryString = "let x:= set(5, 7, 9, 13), y := set(5,6,7,8) in union(x, y)";
-		JValue result = evalTestQuery("Union1", queryString);
-		assertEquals(6, result.toCollection().size());
-	}
+	public void testUnion() throws Exception {
+		evalTestQuery("", "set(5, 7, 9, 13) store as x");
+		evalTestQuery("", "set(5, 6, 7, 8)  store as y");
+		assertQueryEqualsQuery("using x, y: union(x, y)",
+				"set(5, 6, 7, 8, 9, 13)");
 
-	@Test
-	public void testUnion2() throws Exception {
-		JValueMap map1 = new JValueMap();
-		map1.put(new JValueImpl(1), new JValueImpl("A"));
-		map1.put(new JValueImpl(2), new JValueImpl("A"));
-		map1.put(new JValueImpl(3), new JValueImpl("B"));
-		JValueMap map2 = new JValueMap();
-		map2.put(new JValueImpl(4), new JValueImpl("A"));
-		map2.put(new JValueImpl(5), new JValueImpl("C"));
-		map2.put(new JValueImpl(6), new JValueImpl("D"));
-
-		setBoundVariable("map1", map1);
-		setBoundVariable("map2", map2);
-
-		String queryString = "using map1, map2: union(map1, map2, true)";
-		JValue result = evalTestQuery("Union2", queryString);
-		assertEquals(6, result.toJValueMap().size());
-		JValueMap rmap = result.toJValueMap();
-		assertEquals(new JValueImpl("A"), rmap.get(new JValueImpl(1)));
-		assertEquals(new JValueImpl("A"), rmap.get(new JValueImpl(2)));
-		assertEquals(new JValueImpl("B"), rmap.get(new JValueImpl(3)));
-		assertEquals(new JValueImpl("A"), rmap.get(new JValueImpl(4)));
-		assertEquals(new JValueImpl("C"), rmap.get(new JValueImpl(5)));
-		assertEquals(new JValueImpl("D"), rmap.get(new JValueImpl(6)));
+		evalTestQuery("", "map(1 -> 'A', 2 -> 'A', 3 -> 'B') store as map1");
+		evalTestQuery("", "map(4 -> 'A', 5 -> 'C', 6 -> 'D') store as map2");
+		evalTestQuery("",
+				"map(1 -> 'A', 2 -> 'A', 3 -> 'B', 4 -> 'A', 5 -> 'C', 6 -> 'D') store as map3");
+		assertQueryEqualsQuery("using map1, map2: union(map1, map2, true)",
+				"using map3: map3");
 	}
 
 	@Test
