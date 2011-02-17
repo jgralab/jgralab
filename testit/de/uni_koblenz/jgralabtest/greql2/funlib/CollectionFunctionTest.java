@@ -97,7 +97,7 @@ public class CollectionFunctionTest extends GenericTests {
 
 	@Test
 	public void testContainsKey() throws Exception {
-		evalTestQuery("", "map(1 --> 'a string') store as x");
+		evalTestQuery("", "map(1 -> 'a string' ) store as x");
 		assertQueryEquals("using x: containsKey(x, 1)", true);
 		assertQueryEquals("using x: containsKey(x, 2)", false);
 		assertQueryEquals("using x: containsKey(x, 0)", false);
@@ -105,7 +105,7 @@ public class CollectionFunctionTest extends GenericTests {
 
 	@Test
 	public void testContainsValue() throws Exception {
-		evalTestQuery("", "map(1 --> 'a string') store as x");
+		evalTestQuery("", "map(1 -> 'a string') store as x");
 		assertQueryEquals("using x: containsValue(x, 'a string')", true);
 		assertQueryEquals("using x: containsValue(x, 1)", false);
 		assertQueryEquals("using x: containsValue(x, 'string')", false);
