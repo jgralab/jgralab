@@ -88,17 +88,11 @@ public class CollectionFunctionTest extends GenericTests {
 	@Test
 	public void testContains() throws Exception {
 		assertQueryEquals("let x:= list (5..13) in contains(x, 7)", true);
-	}
-
-	@Test
-	public void testContains2() throws Exception {
-
 		assertQueryEquals("let x:= list (5..13) in contains(x, 56)", false);
-	}
-
-	@Test
-	public void testContains3() throws Exception {
 		assertQueryEquals("let x:= list (5..13) in contains(x, 13)", true);
+		assertQueryEquals("let x:= list (5..13) in contains(x, 14)", false);
+		assertQueryEquals("let x:= list (5..13) in contains(x, 5)", true);
+		assertQueryEquals("let x:= list (5..13) in contains(x, 4)", false);
 	}
 
 	@Test
