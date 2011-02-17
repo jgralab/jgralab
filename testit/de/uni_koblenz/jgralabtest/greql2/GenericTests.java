@@ -307,6 +307,10 @@ public class GenericTests {
 		return evalTestQuery(functionName, query, TestVersion.GREQL_GRAPH);
 	}
 
+	protected JValue evalTestQuery(String query) throws Exception {
+		return evalTestQuery("", query, TestVersion.GREQL_GRAPH);
+	}
+
 	protected JValue evalTestQuery(String functionName, String query,
 			Optimizer optimizer) throws Exception {
 
