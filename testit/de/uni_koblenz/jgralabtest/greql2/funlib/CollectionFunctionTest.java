@@ -217,16 +217,8 @@ public class CollectionFunctionTest extends GenericTests {
 
 	@Test
 	public void testPos() throws Exception {
-		String queryString = "let x:= list (5..13) in pos(x, 7)";
-		JValue result = evalTestQuery("Pos", queryString);
-		assertEquals(2, (int) result.toInteger());
-	}
-
-	@Test
-	public void testPos2() throws Exception {
-		String queryString = "let x:= list (5..13) in pos(x, 2)";
-		JValue result = evalTestQuery("Pos2", queryString);
-		assertEquals(-1, (int) result.toInteger());
+		assertQueryEquals("let x:= list (5..13) in pos(x, 7)", 2);
+		assertQueryEquals("let x:= list (5..13) in pos(x, 2)", -1);
 	}
 
 	@Test
