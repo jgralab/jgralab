@@ -31,7 +31,6 @@
 package de.uni_koblenz.jgralabtest.greql2.funlib;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -98,7 +97,6 @@ public class CollectionFunctionTest extends GenericTests {
 
 	@Test
 	public void testContainsKey() throws Exception {
-
 		evalTestQuery("", "map(1 --> 'a string') store as x");
 		assertQueryEquals("using x: containsKey(x, 1)", true);
 		assertQueryEquals("using x: containsKey(x, 2)", false);
@@ -106,33 +104,11 @@ public class CollectionFunctionTest extends GenericTests {
 	}
 
 	@Test
-	public void testContainsValue1() throws Exception {
-		JValueMap map = new JValueMap();
-		map.put(new JValueImpl(1), new JValueImpl("a string"));
-		setBoundVariable("emap", map);
-		String queryString = "using emap: containsValue(emap, \"a string\")";
-		JValue result = evalTestQuery("ContainsValue1", queryString);
-		assertTrue(result.toBoolean());
-	}
-
-	@Test
-	public void testContainsValue2() throws Exception {
-		JValueMap map = new JValueMap();
-		map.put(new JValueImpl(1), new JValueImpl("a string"));
-		setBoundVariable("emap", map);
-		String queryString = "using emap: containsValue(emap, 1)";
-		JValue result = evalTestQuery("ContainsValue2", queryString);
-		assertFalse(result.toBoolean());
-	}
-
-	@Test
-	public void testContainsValue3() throws Exception {
-		JValueMap map = new JValueMap();
-		map.put(new JValueImpl(1), new JValueImpl("a string"));
-		setBoundVariable("emap", map);
-		String queryString = "using emap: containsValue(emap, \"string\")";
-		JValue result = evalTestQuery("ContainsValue3", queryString);
-		assertFalse(result.toBoolean());
+	public void testContainsValue() throws Exception {
+		evalTestQuery("", "map(1 --> 'a string') store as x");
+		assertQueryEquals("using x: containsValue(x, 'a string')", true);
+		assertQueryEquals("using x: containsValue(x, 1)", false);
+		assertQueryEquals("using x: containsValue(x, 'string')", false);
 	}
 
 	@Test
