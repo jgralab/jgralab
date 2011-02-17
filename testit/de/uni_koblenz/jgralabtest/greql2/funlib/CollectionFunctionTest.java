@@ -30,14 +30,10 @@
  */
 package de.uni_koblenz.jgralabtest.greql2.funlib;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueMap;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
@@ -270,77 +266,24 @@ public class CollectionFunctionTest extends GenericTests {
 
 		evalTestQuery("", "map(1 -> 'A', 2 -> 'A', 3 -> 'B') store as map1");
 		evalTestQuery("", "map(4 -> 'A', 5 -> 'C', 6 -> 'D') store as map2");
-		evalTestQuery("",
-				"map(1 -> 'A', 2 -> 'A', 3 -> 'B', 4 -> 'A', 5 -> 'C', 6 -> 'D') store as map3");
+		evalTestQuery("", "map(1 -> 'A', 2 -> 'A', 3 -> 'B', 4 -> 'A', "
+				+ "5 -> 'C', 6 -> 'D') store as map3");
 		assertQueryEqualsQuery("using map1, map2: union(map1, map2, true)",
 				"using map3: map3");
-	}
 
-	@Test
-	public void testUnion3() throws Exception {
-		JValueMap map1 = new JValueMap();
-		map1.put(new JValueImpl(1), new JValueImpl("A"));
-		map1.put(new JValueImpl(2), new JValueImpl("A"));
-		map1.put(new JValueImpl(3), new JValueImpl("B"));
-		JValueMap map2 = new JValueMap();
-		map2.put(new JValueImpl(1), new JValueImpl("A"));
-		map2.put(new JValueImpl(3), new JValueImpl("C"));
-		map2.put(new JValueImpl(4), new JValueImpl("D"));
-
-		setBoundVariable("map1", map1);
-		setBoundVariable("map2", map2);
-
-		String queryString = "using map1, map2: union(map1, map2)";
+		evalTestQuery("", "map(1 -> 'A', 3 -> 'C', 4 -> 'D') store as map2");
 		try {
-			evalTestQuery("Union3", queryString);
+			assertQueryEqualsQuery("using map1, map2: union(map1, map2, true)",
+					"using map3: map3");
 			fail("Expected Exception on using union with two non-disjoint maps");
 		} catch (Exception ex) {
 			// :)
 		}
-	}
 
-	@Test
-	public void testUnion4() throws Exception {
-		JValueSet set1 = new JValueSet();
-		set1.add(new JValueImpl(1));
-		set1.add(new JValueImpl(2));
-		set1.add(new JValueImpl(3));
-
-		JValueSet set2 = new JValueSet();
-		set2.add(new JValueImpl(1));
-		set2.add(new JValueImpl(2));
-		set2.add(new JValueImpl(3));
-
-		JValueSet set3 = new JValueSet();
-		set3.add(new JValueImpl(3));
-		set3.add(new JValueImpl(4));
-		set3.add(new JValueImpl(5));
-
-		JValueSet set4 = new JValueSet();
-		set4.add(new JValueImpl(7));
-		set4.add(new JValueImpl(8));
-		set4.add(new JValueImpl(9));
-
-		JValueSet cset = new JValueSet();
-		cset.add(set1);
-		cset.add(set2);
-		cset.add(set3);
-		cset.add(set4);
-
-		setBoundVariable("cset", cset);
-
-		String queryString = "using cset: union(cset)";
-		JValue result = evalTestQuery("Union4", queryString);
-		assertEquals(8, result.toJValueSet().size());
-		JValueSet rset = result.toJValueSet();
-		assertTrue(rset.contains(new JValueImpl(1)));
-		assertTrue(rset.contains(new JValueImpl(2)));
-		assertTrue(rset.contains(new JValueImpl(3)));
-		assertTrue(rset.contains(new JValueImpl(4)));
-		assertTrue(rset.contains(new JValueImpl(5)));
-		assertTrue(rset.contains(new JValueImpl(7)));
-		assertTrue(rset.contains(new JValueImpl(8)));
-		assertTrue(rset.contains(new JValueImpl(9)));
+		evalTestQuery("", "set(set(1, 2, 3), set(1, 2, 3), set(3, 4, 5), "
+				+ "set(7, 8, 9)) store as set1");
+		assertQueryEqualsQuery("using set1: union(set1)",
+				"set(1, 2, 3, 4, 5, 7, 8, 9)");
 	}
 
 }
