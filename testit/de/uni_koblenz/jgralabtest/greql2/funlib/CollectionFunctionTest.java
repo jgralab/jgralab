@@ -80,7 +80,7 @@ public class CollectionFunctionTest extends GenericTests {
 
 	@Test
 	public void testContains() throws Exception {
-		evalTestQuery("", "list (5..13) store as x");
+		evalTestQuery("list (5..13) store as x");
 		assertQueryEquals("using x: contains(x, 7)", true);
 		assertQueryEquals("using x: contains(x, 56)", false);
 		assertQueryEquals("using x: contains(x, 13)", true);
@@ -91,7 +91,7 @@ public class CollectionFunctionTest extends GenericTests {
 
 	@Test
 	public void testContainsKey() throws Exception {
-		evalTestQuery("", "map(1 -> 'a string' ) store as x");
+		evalTestQuery("map(1 -> 'a string' ) store as x");
 		assertQueryEquals("using x: containsKey(x, 1)", true);
 		assertQueryEquals("using x: containsKey(x, 2)", false);
 		assertQueryEquals("using x: containsKey(x, 0)", false);
@@ -99,7 +99,7 @@ public class CollectionFunctionTest extends GenericTests {
 
 	@Test
 	public void testContainsValue() throws Exception {
-		evalTestQuery("", "map(1 -> 'a string') store as x");
+		evalTestQuery("map(1 -> 'a string') store as x");
 		assertQueryEquals("using x: containsValue(x, 'a string')", true);
 		assertQueryEquals("using x: containsValue(x, 1)", false);
 		assertQueryEquals("using x: containsValue(x, 'string')", false);
@@ -123,7 +123,7 @@ public class CollectionFunctionTest extends GenericTests {
 
 	@Test
 	public void testGet() throws Exception {
-		evalTestQuery("", "map(1 -> 'One', 2 -> 'Two', 3 -> 'Three', "
+		evalTestQuery("map(1 -> 'One', 2 -> 'Two', 3 -> 'Three', "
 				+ "4 -> 'Four', 5 -> 'Five', 6 -> 'Six') store as m");
 		assertQueryEqualsQuery(
 				"using m: from x: keySet(m) reportSet get(m, x) end",
@@ -132,7 +132,7 @@ public class CollectionFunctionTest extends GenericTests {
 
 	@Test
 	public void testGetSuffix() throws Exception {
-		evalTestQuery("", "map(1 -> 'One', 2 -> 'Two', 3 -> 'Three', "
+		evalTestQuery("map(1 -> 'One', 2 -> 'Two', 3 -> 'Three', "
 				+ "4 -> 'Four', 5 -> 'Five', 6 -> 'Six') store as m");
 		assertQueryEqualsQuery("using m: from x: keySet(m) reportSet m[x] end",
 				"using m: toSet(values(m))");
@@ -140,14 +140,14 @@ public class CollectionFunctionTest extends GenericTests {
 
 	@Test
 	public void testIntersection() throws Exception {
-		evalTestQuery("", "set(5, 7, 9, 13) store as x");
-		evalTestQuery("", "set(5, 6, 7, 8)  store as y");
+		evalTestQuery("set(5, 7, 9, 13) store as x");
+		evalTestQuery("set(5, 6, 7, 8)  store as y");
 		assertQueryEqualsQuery("using x,y: intersection(x, y)", "set(5, 7)");
 	}
 
 	@Test
 	public void testIsEmpty() throws Exception {
-		evalTestQuery("", "set(1, 2, 3) store as x");
+		evalTestQuery("set(1, 2, 3) store as x");
 		assertQueryEquals("using x: isEmpty(x)", false);
 
 		setBoundVariable("x", new JValueList());
@@ -162,33 +162,33 @@ public class CollectionFunctionTest extends GenericTests {
 
 	@Test
 	public void testIsSubSet() throws Exception {
-		evalTestQuery("", "set(5, 7, 9, 13) store as x");
-		evalTestQuery("", "set(5, 6, 7, 8)  store as y");
+		evalTestQuery("set(5, 7, 9, 13) store as x");
+		evalTestQuery("set(5, 6, 7, 8)  store as y");
 		assertQueryEquals("using x,y: isSubSet(x,y)", false);
 
-		evalTestQuery("", "set(5, 7) store as y");
+		evalTestQuery("set(5, 7) store as y");
 		assertQueryEquals("using x,y: isSubSet(x,y)", false);
 		assertQueryEquals("using x,y: isSubSet(y,x)", true);
 	}
 
 	@Test
 	public void testIsSuperSet() throws Exception {
-		evalTestQuery("", "set(5, 7, 9, 13) store as x");
-		evalTestQuery("", "set(1, 5, 7)  store as y");
+		evalTestQuery("set(5, 7, 9, 13) store as x");
+		evalTestQuery("set(1, 5, 7)  store as y");
 		assertQueryEquals("using x,y: isSuperSet(x, y)", false);
 
-		evalTestQuery("", "set(5, 7)  store as y");
+		evalTestQuery("set(5, 7)  store as y");
 		assertQueryEquals("using x,y: isSuperSet(x, y)", true);
 		assertQueryEquals("using x,y: isSuperSet(y, x)", false);
 
-		evalTestQuery("", "set(5, 7, 13, 9)  store as y");
+		evalTestQuery("set(5, 7, 13, 9)  store as y");
 		assertQueryEquals("using x,y: isSuperSet(x, y)", true);
 		assertQueryEquals("using x,y: isSuperSet(y, x)", true);
 	}
 
 	@Test
 	public void testKeySet() throws Exception {
-		evalTestQuery("", "map(1 -> 'One',   2 -> 'Two', 3 -> 'Three'"
+		evalTestQuery("map(1 -> 'One',   2 -> 'Two', 3 -> 'Three'"
 				+ ", 4 -> 'Four', 5 -> 'Five', 6 -> 'Six')  store as m");
 		assertQueryEqualsQuery("using m: from x : keySet(m) reportSet x end",
 				"set(1,2,3,4,5,6)");
@@ -196,12 +196,9 @@ public class CollectionFunctionTest extends GenericTests {
 
 	@Test
 	public void testMergeMaps1() throws Exception {
-		evalTestQuery("",
-				"map(tup(1,2) -> set(3), tup(3,4) -> set(7)) store as m1");
-		evalTestQuery("",
-				"map(tup(1,2) -> set(3,4), tup(3,4) -> set(7,8,9)) store as m2");
-		evalTestQuery("",
-				"map(tup(1,2) -> set(4), tup(3,4) -> set(8,9)) store as m3");
+		evalTestQuery("map(tup(1,2) -> set(3), tup(3,4) -> set(7)) store as m1");
+		evalTestQuery("map(tup(1,2) -> set(3,4), tup(3,4) -> set(7,8,9)) store as m2");
+		evalTestQuery("map(tup(1,2) -> set(4), tup(3,4) -> set(8,9)) store as m3");
 		// merging equal maps should return an equal map
 		assertQueryEqualsQuery("using m1: m1", "using m1: mergeMaps(m1, m1)");
 		assertQueryEqualsQuery("using m2: m2",
@@ -251,30 +248,30 @@ public class CollectionFunctionTest extends GenericTests {
 
 	@Test
 	public void testSymDifference() throws Exception {
-		evalTestQuery("", "set(5, 7, 9, 13) store as x");
-		evalTestQuery("", "set(5, 6, 7, 8)  store as y");
+		evalTestQuery("set(5, 7, 9, 13) store as x");
+		evalTestQuery("set(5, 6, 7, 8)  store as y");
 		assertQueryEqualsQuery("using x, y: symDifference(x, y)",
 				"set(6, 8, 9, 13)");
 	}
 
 	@Test
 	public void testUnionSetAndSet() throws Exception {
-		evalTestQuery("", "set(5, 7, 9, 13) store as x");
-		evalTestQuery("", "set(5, 6, 7, 8)  store as y");
+		evalTestQuery("set(5, 7, 9, 13) store as x");
+		evalTestQuery("set(5, 6, 7, 8)  store as y");
 		assertQueryEqualsQuery("using x, y: union(x, y)",
 				"set(5, 6, 7, 8, 9, 13)");
 	}
 
 	@Test
 	public void testUnionMapAndMap() throws Exception {
-		evalTestQuery("", "map(1 -> 'A', 2 -> 'A', 3 -> 'B') store as map1");
-		evalTestQuery("", "map(4 -> 'A', 5 -> 'C', 6 -> 'D') store as map2");
-		evalTestQuery("", "map(1 -> 'A', 2 -> 'A', 3 -> 'B', 4 -> 'A', "
+		evalTestQuery("map(1 -> 'A', 2 -> 'A', 3 -> 'B') store as map1");
+		evalTestQuery("map(4 -> 'A', 5 -> 'C', 6 -> 'D') store as map2");
+		evalTestQuery("map(1 -> 'A', 2 -> 'A', 3 -> 'B', 4 -> 'A', "
 				+ "5 -> 'C', 6 -> 'D') store as map3");
 		assertQueryEqualsQuery("using map1, map2: union(map1, map2, true)",
 				"using map3: map3");
 
-		evalTestQuery("", "map(1 -> 'A', 3 -> 'C', 4 -> 'D') store as map2");
+		evalTestQuery("map(1 -> 'A', 3 -> 'C', 4 -> 'D') store as map2");
 		try {
 			assertQueryEqualsQuery("using map1, map2: union(map1, map2, true)",
 					"using map3: map3");
@@ -286,10 +283,9 @@ public class CollectionFunctionTest extends GenericTests {
 
 	@Test
 	public void testUnionSetOfSets() throws Exception {
-		evalTestQuery("", "set(set(1, 2, 3), set(1, 2, 3), set(3, 4, 5), "
+		evalTestQuery("set(set(1, 2, 3), set(1, 2, 3), set(3, 4, 5), "
 				+ "set(7, 8, 9)) store as set1");
 		assertQueryEqualsQuery("using set1: union(set1)",
 				"set(1, 2, 3, 4, 5, 7, 8, 9)");
 	}
-
 }
