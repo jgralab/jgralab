@@ -489,7 +489,7 @@ public class GreqlEvaluator {
 	/**
 	 * This attribute holds the query-graph
 	 */
-	private Greql2 queryGraph = null;
+	protected Greql2 queryGraph = null;
 
 	/**
 	 * This attribute holds the entry of the optimizedSyntaxGraph map that is

@@ -260,10 +260,7 @@ public class GreqlLexer {
 		String stringValue = "0";
 		TokenTypes type = null;
 		stringValue = text;
-		if ((text.charAt(0) == '0') && (text.charAt(text.length() - 1) != 'f')
-				&& (text.charAt(text.length() - 1) != 'F')
-				&& (text.charAt(text.length() - 1) != 'd')
-				&& (text.charAt(text.length() - 1) != 'D')) {
+		if (text.charAt(0) == '0') {
 			if (text.length() == 1) {
 				type = TokenTypes.INTLITERAL;
 				value = 0;
@@ -297,20 +294,6 @@ public class GreqlLexer {
 							start, end - start, query);
 				}
 				break;
-			case 'd':
-			case 'D':
-			case 'f':
-			case 'F':
-				type = TokenTypes.REALLITERAL;
-				try {
-					String tokenString = text.substring(0, text.length() - 1);
-					// System.out.println("TokenString: " + tokenString);
-					return new RealToken(type, start, end - start, tokenString,
-							Double.parseDouble(tokenString));
-				} catch (NumberFormatException ex) {
-					throw new ParsingException("Not a valid float number",
-							text, start, end - start, query);
-				}
 			default:
 				type = TokenTypes.INTLITERAL;
 				try {

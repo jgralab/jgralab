@@ -55,6 +55,7 @@ VertexClass FunctionId: Identifier;
 VertexClass Greql2Expression: Greql2Vertex { importedTypes: Set<String>, queryText: String, optimizer: String, costModel: String };
 VertexClass Identifier : Expression { name: String };
 VertexClass IntLiteral: Literal { intValue: Integer };
+VertexClass LongLiteral: Literal { longValue: Long };
 VertexClass IntermediateVertexPathDescription: PathDescription;
 VertexClass IteratedPathDescription: PathDescription { times: IterationType };
 VertexClass LetExpression: DefinitionExpression;
