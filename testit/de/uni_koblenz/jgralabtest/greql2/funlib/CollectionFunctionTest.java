@@ -72,6 +72,50 @@ public class CollectionFunctionTest extends GenericTests {
 	}
 
 	@Test
+	public void testContains() throws Exception {
+		String queryString = "let x:= list (5..13) in contains(x, 7)";
+		JValue result = evalTestQuery("ContainsTrue", queryString);
+		assertEquals(true, (boolean) result.toBoolean());
+	}
+
+	@Test
+	public void testContains2() throws Exception {
+		String queryString = "let x:= list (5..13) in contains(x, 56)";
+		JValue result = evalTestQuery("ContainsFalse", queryString);
+		assertEquals(false, (boolean) result.toBoolean());
+	}
+
+	@Test
+	public void testContains3() throws Exception {
+		String queryString = "let x:= list (5..13) in contains(x, 13)";
+		JValue result = evalTestQuery("ContainsTrue2", queryString);
+		assertEquals(true, (boolean) result.toBoolean());
+	}
+
+	@Test
+	public void testContains4() throws Exception {
+		String queryString = "from v : V reportSet contains(eSubgraph{Link}, v) end";
+		JValue result = evalTestQuery("Contains", queryString,
+				getCyclicTestGraph());
+		for (JValue v : result.toCollection()) {
+			assertEquals(JValueBoolean.getTrueValue(), v.toBoolean());
+		}
+	}
+
+	@Test
+	public void testContains5() throws Exception {
+		String queryString = "from v : V "
+				+ "           in eSubgraph{Link}      "
+				+ "           reportSet isIn(v) end";
+		try {
+			evalTestQuery("Contains5", queryString, getCyclicTestGraph());
+			fail();
+		} catch (EvaluateException e) {
+			// an eval exception is expected here
+		}
+	}
+
+	@Test
 	public void testContainsKey1() throws Exception {
 		JValueMap map = new JValueMap();
 		map.put(new JValueImpl(1), new JValueImpl("a string"));
@@ -119,27 +163,6 @@ public class CollectionFunctionTest extends GenericTests {
 		String queryString = "using emap: containsValue(emap, \"string\")";
 		JValue result = evalTestQuery("ContainsValue3", queryString);
 		assertFalse(result.toBoolean());
-	}
-
-	@Test
-	public void testContains() throws Exception {
-		String queryString = "let x:= list (5..13) in contains(x, 7)";
-		JValue result = evalTestQuery("ContainsTrue", queryString);
-		assertEquals(true, (boolean) result.toBoolean());
-	}
-
-	@Test
-	public void testContains2() throws Exception {
-		String queryString = "let x:= list (5..13) in contains(x, 56)";
-		JValue result = evalTestQuery("ContainsFalse", queryString);
-		assertEquals(false, (boolean) result.toBoolean());
-	}
-
-	@Test
-	public void testContains3() throws Exception {
-		String queryString = "let x:= list (5..13) in contains(x, 13)";
-		JValue result = evalTestQuery("ContainsTrue2", queryString);
-		assertEquals(true, (boolean) result.toBoolean());
 	}
 
 	@Test
@@ -504,29 +527,6 @@ public class CollectionFunctionTest extends GenericTests {
 		assertTrue(rset.contains(new JValueImpl(7)));
 		assertTrue(rset.contains(new JValueImpl(8)));
 		assertTrue(rset.contains(new JValueImpl(9)));
-	}
-
-	@Test
-	public void testContains4() throws Exception {
-		String queryString = "from v : V reportSet contains(eSubgraph{Link}, v) end";
-		JValue result = evalTestQuery("Contains", queryString,
-				getCyclicTestGraph());
-		for (JValue v : result.toCollection()) {
-			assertEquals(JValueBoolean.getTrueValue(), v.toBoolean());
-		}
-	}
-
-	@Test
-	public void testContains5() throws Exception {
-		String queryString = "from v : V "
-				+ "           in eSubgraph{Link}      "
-				+ "           reportSet isIn(v) end";
-		try {
-			evalTestQuery("Contains5", queryString, getCyclicTestGraph());
-			fail();
-		} catch (EvaluateException e) {
-			// an eval exception is expected here
-		}
 	}
 
 }
