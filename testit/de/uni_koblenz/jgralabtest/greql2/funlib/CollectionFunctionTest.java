@@ -34,8 +34,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.Map.Entry;
-
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
@@ -219,49 +217,35 @@ public class CollectionFunctionTest extends GenericTests {
 	public void testPos() throws Exception {
 		assertQueryEquals("let x:= list (5..13) in pos(x, 7)", 2);
 		assertQueryEquals("let x:= list (5..13) in pos(x, 2)", -1);
+		assertQueryEquals("let x:= list (5..13) in pos(x, 5)", 0);
+		assertQueryEquals("let x:= list (5..13) in pos(x, 13)", 8);
+		assertQueryEquals("let x:= list (5..13) in pos(x, 14)", -1);
+		assertQueryEquals("let x:= list (5..13) in pos(x, 4)", -1);
 	}
 
 	@Test
 	public void testSortBag() throws Exception {
-		String queryString = "sort(bag(4, 1, 2, 10, 9, 7, 8, 3, 5, 6))";
-		JValueList result = evalTestQuery("Sort1", queryString).toJValueList();
-		assertEquals(10, result.size());
-		for (int i = 1; i <= 10; i++) {
-			assertEquals(new JValueImpl(i), result.get(i - 1));
-		}
+		assertQueryEqualsQuery("sort(bag(4, 1, 2, 10, 9, 7, 8, 3, 5, 6))",
+				"bag(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)");
 	}
 
 	@Test
 	public void testSortList() throws Exception {
-		String queryString = "sort(list(4, 1, 2, 10, 9, 7, 8, 3, 5, 6))";
-		JValueList result = evalTestQuery("Sort1", queryString).toJValueList();
-		assertEquals(10, result.size());
-		for (int i = 1; i <= 10; i++) {
-			assertEquals(new JValueImpl(i), result.get(i - 1));
-		}
+		assertQueryEqualsQuery("sort(list(4, 1, 2, 10, 9, 7, 8, 3, 5, 6))",
+				"list(1..10)");
 	}
 
 	@Test
 	public void testSortMap() throws Exception {
-		String queryString = "sort(from i : list (1..10) reportMap i, i*i end)";
-		JValueMap result = evalTestQuery("Sort2", queryString).toJValueMap();
-		assertEquals(10, result.size());
-		int i = 1;
-		for (Entry<JValue, JValue> e : result.entrySet()) {
-			assertEquals(new JValueImpl(i), e.getKey());
-			assertEquals(new JValueImpl(i * i), e.getValue());
-			i++;
-		}
+		assertQueryEqualsQuery("sort(map(4 -> 16, 1 -> 1, 2 -> 4, 10 -> 100, "
+				+ "9 -> 81, 7 -> 49, 8 -> 64, 3 -> 9, 5 -> 25, 6 -> 36))",
+				"from i : list (1..10) reportMap i -> i*i end");
 	}
 
 	@Test
 	public void testSortSet() throws Exception {
-		String queryString = "sort(set(4, 1, 2, 10, 9, 7, 8, 3, 5, 6))";
-		JValueList result = evalTestQuery("Sort1", queryString).toJValueList();
-		assertEquals(10, result.size());
-		for (int i = 1; i <= 10; i++) {
-			assertEquals(new JValueImpl(i), result.get(i - 1));
-		}
+		assertQueryEqualsQuery("sort(set(4, 1, 2, 10, 9, 7, 8, 3, 5, 6))",
+				"set(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)");
 	}
 
 	@Test
