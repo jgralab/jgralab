@@ -87,32 +87,22 @@ public class CollectionFunctionTest extends GenericTests {
 
 	@Test
 	public void testContains() throws Exception {
-		assertQueryEquals("let x:= list (5..13) in contains(x, 7)", true);
-		assertQueryEquals("let x:= list (5..13) in contains(x, 56)", false);
-		assertQueryEquals("let x:= list (5..13) in contains(x, 13)", true);
-		assertQueryEquals("let x:= list (5..13) in contains(x, 14)", false);
-		assertQueryEquals("let x:= list (5..13) in contains(x, 5)", true);
-		assertQueryEquals("let x:= list (5..13) in contains(x, 4)", false);
+		evalTestQuery("", "list (5..13) store as x");
+		assertQueryEquals("using x: contains(x, 7)", true);
+		assertQueryEquals("using x: contains(x, 56)", false);
+		assertQueryEquals("using x: contains(x, 13)", true);
+		assertQueryEquals("using x: contains(x, 14)", false);
+		assertQueryEquals("using x: contains(x, 5)", true);
+		assertQueryEquals("using x: contains(x, 4)", false);
 	}
 
 	@Test
-	public void testContainsKey1() throws Exception {
-		JValueMap map = new JValueMap();
-		map.put(new JValueImpl(1), new JValueImpl("a string"));
-		setBoundVariable("emap", map);
-		String queryString = "using emap: containsKey(emap, 1)";
-		JValue result = evalTestQuery("ContainsKey1", queryString);
-		assertTrue(result.toBoolean());
-	}
+	public void testContainsKey() throws Exception {
 
-	@Test
-	public void testContainsKey2() throws Exception {
-		JValueMap map = new JValueMap();
-		map.put(new JValueImpl(1), new JValueImpl("a string"));
-		setBoundVariable("emap", map);
-		String queryString = "using emap: containsKey(emap, 2)";
-		JValue result = evalTestQuery("ContainsKey2", queryString);
-		assertFalse(result.toBoolean());
+		evalTestQuery("", "map(1 --> 'a string') store as x");
+		assertQueryEquals("using x: containsKey(x, 1)", true);
+		assertQueryEquals("using x: containsKey(x, 2)", false);
+		assertQueryEquals("using x: containsKey(x, 0)", false);
 	}
 
 	@Test
