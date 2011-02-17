@@ -255,8 +255,8 @@ public class GreqlLexer {
 
 	// TODO: Exponenten
 	private final Token matchNumericToken(int start, int end, String text) {
-		int value = 0;
-		int decValue = 0;
+		long value = 0;
+		long decValue = 0;
 		String stringValue = "0";
 		TokenTypes type = null;
 		stringValue = text;
