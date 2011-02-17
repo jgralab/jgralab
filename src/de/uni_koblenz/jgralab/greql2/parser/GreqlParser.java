@@ -1737,11 +1737,15 @@ public class GreqlParser extends ParserHelper {
 						lengthEnd, offsetEnd));
 			}
 		} else {
-			match(TokenTypes.COMMA);
-			List<VertexPosition<Expression>> allExpressions = parseExpressionList(TokenTypes.COMMA);
+			List<VertexPosition<Expression>> allExpressions = null;
+			if (tryMatch(TokenTypes.COMMA)) {
+				allExpressions  = parseExpressionList(TokenTypes.COMMA);
+			} 
 			if (!inPredicateMode()) {
 				VertexPosition<Expression> v = new VertexPosition<Expression>(
 						startExpr, lengthStart, offsetStart);
+				if (allExpressions == null)
+					allExpressions = new ArrayList<VertexPosition<Expression>>(1);
 				allExpressions.add(0, v);
 				result = createPartsOfValueConstruction(allExpressions,
 						graph.createListConstruction());
