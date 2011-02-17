@@ -110,50 +110,50 @@ public class GenericTests {
 
 	protected void assertQueryEquals(String query, boolean expectedValue)
 			throws Exception {
-		JValue result = evalTestQuery("", query);
+		JValue result = evalTestQuery(query);
 		assertEquals(expectedValue, result.toBoolean().booleanValue());
 	}
 
 	protected void assertQueryEquals(String query, int expectedValue)
 			throws Exception {
-		JValue result = evalTestQuery("", query);
+		JValue result = evalTestQuery(query);
 		assertEquals(expectedValue, result.toInteger().intValue());
 	}
 
 	protected void assertQueryEquals(String query, long expectedValue)
 			throws Exception {
-		JValue result = evalTestQuery("", query);
+		JValue result = evalTestQuery(query);
 		assertEquals(expectedValue, result.toLong().longValue());
 	}
 
 	protected void assertQueryEquals(String query, double expectedValue)
 			throws Exception {
-		JValue result = evalTestQuery("", query);
+		JValue result = evalTestQuery(query);
 		assertEquals(expectedValue, result.toDouble().doubleValue(), DELTA);
 	}
 
 	protected void assertQueryEquals(String query, String expectedValue)
 			throws Exception {
-		JValue result = evalTestQuery("", query);
+		JValue result = evalTestQuery(query);
 		assertEquals(expectedValue, result.toString());
 	}
 
 	protected void assertQueryEqualsQuery(String query, String resultQuery)
 			throws Exception {
-		JValue result = evalTestQuery("", query);
-		JValue expectedResult = evalTestQuery("", resultQuery);
+		JValue result = evalTestQuery(query);
+		JValue expectedResult = evalTestQuery(resultQuery);
 		assertEquals(result, expectedResult);
 	}
 
 	protected void assertQueryEquals(String query, Enum<?> expectedValue)
 			throws Exception {
-		JValue result = evalTestQuery("", query);
+		JValue result = evalTestQuery(query);
 		assertEquals(expectedValue, result.toEnum());
 	}
 
 	protected void assertQueryEquals(String query, List<?> expectedValue)
 			throws Exception {
-		JValue result = evalTestQuery("", query);
+		JValue result = evalTestQuery(query);
 
 		List<?> list = toList(result.toCollection());
 		assertEquals(expectedValue, list);
@@ -171,7 +171,7 @@ public class GenericTests {
 	protected void expectException(String query,
 			Class<? extends Exception> exception) {
 		try {
-			evalTestQuery("", query);
+			evalTestQuery(query);
 			fail();
 		} catch (Exception ex) {
 			if (!ex.getClass().equals(exception)) {
