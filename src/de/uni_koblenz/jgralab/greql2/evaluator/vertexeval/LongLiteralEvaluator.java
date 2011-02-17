@@ -28,41 +28,52 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-package de.uni_koblenz.jgralab.greql2.parser;
 
-public class IntegerToken extends Token {
+package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
-	Long intValue = null;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
+import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
+import de.uni_koblenz.jgralab.greql2.schema.LongLiteral;
 
-	Long decValue = null;
-	
-	String value = null;
+/**
+ * Evaluates a Long Literal, that means, provides access to the literal value
+ * using the getResult(...)-Method. This is needed, because is should make no
+ * difference for the other VertexEvaluators, if a value is the result of a
+ * maybe complex evaluation or if it is a literal.
+ * 
+ * @author ist@uni-koblenz.de
+ * 
+ */
+public class LongLiteralEvaluator extends VertexEvaluator {
 
-	public IntegerToken(TokenTypes type, int offset, int length, String value, Long intValue,
-			Long decValue) {
-		super(type, offset, length);
-		this.value = value;
-		this.intValue = intValue;
-		this.decValue = decValue;
+	private LongLiteral vertex;
+
+	/**
+	 * returns the vertex this VertexEvaluator evaluates
+	 */
+	@Override
+	public Greql2Vertex getVertex() {
+		return vertex;
+	}
+
+	public LongLiteralEvaluator(LongLiteral vertex, GreqlEvaluator eval) {
+		super(eval);
+		this.vertex = vertex;
 	}
 
 	@Override
-	public boolean isComplex() {
-		return true;
+	public JValue evaluate() throws EvaluateException {
+		return new JValueImpl(vertex.get_longValue());
 	}
-	
+
 	@Override
-	public String getValue() {
-		return value;
-	}
-
-
-	public Long getNumber() {
-		return intValue;
-	}
-
-	public Long getDecValue() {
-		return decValue;
+	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
+		return new VertexCosts(1, 1, 1);
 	}
 
 }
