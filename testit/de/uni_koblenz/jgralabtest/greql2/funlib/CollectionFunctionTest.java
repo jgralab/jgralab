@@ -119,16 +119,12 @@ public class CollectionFunctionTest extends GenericTests {
 
 	@Test
 	public void testDifference() throws Exception {
-		String queryString = "let x:= set(5, 7, 9, 13), y := set(5,6,7,8) in difference(x, y)";
-		JValue result = evalTestQuery("Difference", queryString);
-		assertEquals(2, result.toCollection().size());
-	}
-
-	@Test
-	public void testDifference2() throws Exception {
-		String queryString = "let x:= set(5, 7, 9, 13), y := list(5,5,6,7,8) in difference(x, y)";
-		JValue result = evalTestQuery("Difference", queryString);
-		assertEquals(2, result.toCollection().size());
+		assertQueryEqualsQuery(
+				"let x:= set(5, 7, 9, 13), y := set(5,6,7,8) in difference(x, y)",
+				"set(9,13)");
+		assertQueryEqualsQuery(
+				"let x:= set(5, 7, 9, 13), y := list(5,5,6,7,8) in difference(x, y)",
+				"set(9,13)");
 	}
 
 	@Test
