@@ -153,32 +153,17 @@ public class CollectionFunctionTest extends GenericTests {
 
 	@Test
 	public void testIsEmpty1() throws Exception {
-		JValueSet set1 = new JValueSet();
-		set1.add(new JValueImpl(1));
-		set1.add(new JValueImpl(2));
-		set1.add(new JValueImpl(3));
-		setBoundVariable("cset", set1);
-		String queryString = "using cset: isEmpty(cset)";
-		JValue result = evalTestQuery("IsEmpty1", queryString);
-		assertEquals(false, result.toBoolean());
-	}
+		evalTestQuery("", "set(1, 2, 3) store as x");
+		assertQueryEquals("using x: isEmpty(x)", false);
 
-	@Test
-	public void testIsEmpty2() throws Exception {
-		JValueSet set1 = new JValueSet();
-		setBoundVariable("cset", set1);
-		String queryString = "using cset: isEmpty(cset)";
-		JValue result = evalTestQuery("IsEmpty2", queryString);
-		assertEquals(true, result.toBoolean());
-	}
+		setBoundVariable("x", new JValueList());
+		assertQueryEquals("using x: isEmpty(x)", true);
 
-	@Test
-	public void testIsEmpty3() throws Exception {
-		JValueMap map1 = new JValueMap();
-		setBoundVariable("cset", map1);
-		String queryString = "using cset: isEmpty(cset)";
-		JValue result = evalTestQuery("IsEmpty3", queryString);
-		assertEquals(true, result.toBoolean());
+		setBoundVariable("x", new JValueSet());
+		assertQueryEquals("using x: isEmpty(x)", true);
+
+		setBoundVariable("cset", new JValueMap());
+		assertQueryEquals("using x: isEmpty(x)", true);
 	}
 
 	@Test
