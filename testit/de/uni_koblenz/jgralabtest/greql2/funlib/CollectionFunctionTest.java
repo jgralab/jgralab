@@ -194,40 +194,25 @@ public class CollectionFunctionTest extends GenericTests {
 
 	@Test
 	public void testKeySet() throws Exception {
-		String queryString = "from x : keySet(map(1 -> \"One\",   2 -> \"Two\", "
-				+ "                               3 -> \"Three\", 4 -> \"Four\", "
-				+ "                               5 -> \"Five\",  6 -> \"Six\")) "
-				+ "           reportSet x end";
-		JValue result = evalTestQuery("KeySet", queryString);
-		JValueSet set = result.toJValueSet();
-		assertEquals(6, set.size());
-		assertTrue(set.contains(new JValueImpl(1)));
-		assertTrue(set.contains(new JValueImpl(2)));
-		assertTrue(set.contains(new JValueImpl(3)));
-		assertTrue(set.contains(new JValueImpl(4)));
-		assertTrue(set.contains(new JValueImpl(5)));
-		assertTrue(set.contains(new JValueImpl(6)));
+		evalTestQuery("", "map(1 -> 'One',   2 -> 'Two', 3 -> 'Three'"
+				+ ", 4 -> 'Four', 5 -> 'Five', 6 -> 'Six')  store as m");
+		assertQueryEqualsQuery("using m: from x : keySet(m) reportSet x end",
+				"set(1,2,3,4,5,6)");
 	}
 
 	@Test
 	public void testMergeMaps1() throws Exception {
+		evalTestQuery("",
+				"map(tup(1,2) -> set(3), tup(3,4) -> set(7)) store as m1");
+		evalTestQuery("",
+				"map(tup(1,2) -> set(3,4), tup(3,4) -> set(7,8,9)) store as m2");
+		evalTestQuery("",
+				"map(tup(1,2) -> set(4), tup(3,4) -> set(8,9)) store as m3");
 		// merging equal maps should return an equal map
-		assertEquals(
-				evalTestQuery("expected MergeMaps",
-						"map(tup(1,2) -> set(3), tup(3,4) -> set(7))"),
-				evalTestQuery(
-						"MergeMaps",
-						"mergeMaps(map(tup(1,2) -> set(3), tup(3,4) -> set(7)), map(tup(1,2) -> set(3), tup(3,4) -> set(7)))"));
-	}
+		assertQueryEqualsQuery("using m1: m1", "using m1: mergeMaps(m1, m1)");
+		assertQueryEqualsQuery("using m2: m2",
+				"using m1, m3: mergeMaps(m1, m3)");
 
-	@Test
-	public void testMergeMaps2() throws Exception {
-		assertEquals(
-				evalTestQuery("expected MergeMaps",
-						"map(tup(1,2) -> set(3,4), tup(3,4) -> set(7,8,9))"),
-				evalTestQuery(
-						"MergeMaps",
-						"mergeMaps(map(tup(1,2) -> set(3), tup(3,4) -> set(7)), map(tup(1,2) -> set(4), tup(3,4) -> set(8,9)))"));
 	}
 
 	@Test
