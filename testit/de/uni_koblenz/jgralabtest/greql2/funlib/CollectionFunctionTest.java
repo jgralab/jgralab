@@ -178,31 +178,18 @@ public class CollectionFunctionTest extends GenericTests {
 	}
 
 	@Test
-	public void testIsSuperSet1() throws Exception {
-		String queryString = "let x:= set(5, 7, 9, 13), y := set(1, 5,7) in isSuperSet(x, y)";
-		JValue result = evalTestQuery("IsSuperset1", queryString);
-		assertEquals(false, (boolean) result.toBoolean());
-	}
+	public void testIsSuperSet() throws Exception {
+		evalTestQuery("", "set(5, 7, 9, 13) store as x");
+		evalTestQuery("", "set(1, 5, 7)  store as y");
+		assertQueryEquals("using x,y: isSuperSet(x, y)", false);
 
-	@Test
-	public void testIsSuperSet2() throws Exception {
-		String queryString = "let x:= set(5, 7, 9, 13), y := set(5,7) in isSuperSet(x, y)";
-		JValue result = evalTestQuery("IsSuperset2", queryString);
-		assertEquals(true, (boolean) result.toBoolean());
-	}
+		evalTestQuery("", "set(5, 7)  store as y");
+		assertQueryEquals("using x,y: isSuperSet(x, y)", true);
+		assertQueryEquals("using x,y: isSuperSet(y, x)", false);
 
-	@Test
-	public void testIsSuperSet3() throws Exception {
-		String queryString = "let x:= set(5, 7, 9, 13), y := set(5,7) in isSuperSet(y, x)";
-		JValue result = evalTestQuery("IsSuperset3", queryString);
-		assertEquals(false, (boolean) result.toBoolean());
-	}
-
-	@Test
-	public void testIsSuperSet4() throws Exception {
-		String queryString = "let x:= set(5, 7, 9, 13), y := set(5, 7, 13, 9) in isSuperSet(x, y)";
-		JValue result = evalTestQuery("IsSuperset4", queryString);
-		assertEquals(true, (boolean) result.toBoolean());
+		evalTestQuery("", "set(5, 7, 13, 9)  store as y");
+		assertQueryEquals("using x,y: isSuperSet(x, y)", true);
+		assertQueryEquals("using x,y: isSuperSet(y, x)", true);
 	}
 
 	@Test
