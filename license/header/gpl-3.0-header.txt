@@ -4,7 +4,7 @@ Copyright (C) 2006-2011 Institute for Software Technology
                         University of Koblenz-Landau, Germany
                         ist@uni-koblenz.de
 
-For bug reports, documentation, and further information, visit
+For bug reports, documentation and further information, visit
 
                         http://jgralab.uni-koblenz.de
 
