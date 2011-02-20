@@ -252,21 +252,27 @@ public class CollectionFunctionTest extends GenericTests {
 	}
 
 	@Test
-	public void testMin() throws Exception {
+	public void testMinList() throws Exception {
 		// assertQueryEquals("min(list())", 0);
 		assertQueryEquals("min(list(-5))", -5);
 		assertQueryEquals("min(list(6))", 6);
 		assertQueryEquals("min(list(-5, 6))", -5);
 		assertQueryEquals("min(list(6 , 5))", 5);
 		assertQueryEquals("min(list(1, 2, 4, -6, 65, 73, 65, 322, 1))", -6);
+	}
 
+	@Test
+	public void testMinSet() throws Exception {
 		// assertQueryEquals("min(set())", 0);
 		assertQueryEquals("min(set(-5))", -5);
 		assertQueryEquals("min(set(6))", 6);
 		assertQueryEquals("min(set(-5, 6))", -5);
 		assertQueryEquals("min(set(6 , 5))", 5);
 		assertQueryEquals("min(set(1, 2, 4, -6, 65, 73, 65, 322, 1))", -6);
+	}
 
+	@Test
+	public void testMinBag() throws Exception {
 		// assertQueryEquals("min(bag())", 0);
 		assertQueryEquals("min(bag(-5))", -5);
 		assertQueryEquals("min(bag(6))", 6);
