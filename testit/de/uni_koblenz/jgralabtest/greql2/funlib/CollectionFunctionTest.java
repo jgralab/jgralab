@@ -34,6 +34,7 @@ import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
+import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueMap;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
@@ -119,6 +120,31 @@ public class CollectionFunctionTest extends GenericTests {
 		assertQueryEqualsQuery(
 				"let x:= set(5, 7, 9, 13), y := list(5,5,6,7,8) in difference(x, y)",
 				"set(9,13)");
+	}
+
+	@Test
+	public void testElements() throws Exception {
+		// JValue value = evalTestQuery("set() store as x");
+		// assertQueryEquals("elements( set())", value);
+		// assertQueryEquals("elements(list())", value);
+		// assertQueryEquals("elements( bag())", value);
+
+		JValue value = evalTestQuery("set(41) store as x");
+		assertQueryEquals("elements( set(41))", value);
+		assertQueryEquals("elements( set(41, 41, 41))", value);
+		assertQueryEquals("elements(list(41))", value);
+		assertQueryEquals("elements(list(41, 41, 41))", value);
+		assertQueryEquals("elements( bag(41))", value);
+		assertQueryEquals("elements( bag(41, 41, 41))", value);
+
+		value = evalTestQuery("set(5, 7, 9, 13) store as x");
+
+		// assertQueryEqualsQuery("elements(list())", "using x:x");
+		assertQueryEquals("elements( set(7, 5, 9, 13, 5))", value);
+		assertQueryEquals("elements(list(7, 5, 9, 13, 5))", value);
+		assertQueryEquals("elements( bag(7, 5, 9, 13, 5))", value);
+		// assertQueryEqualsQuery("elements(list())", "using x:x");
+		// assertQueryEqualsQuery("elements(list())", "using x:x");
 	}
 
 	@Test
