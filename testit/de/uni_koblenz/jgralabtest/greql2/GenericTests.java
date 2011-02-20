@@ -157,6 +157,12 @@ public class GenericTests {
 		assertEquals(expectedValue, result.toEnum());
 	}
 
+	protected void assertQueryEquals(String query, JValue expectedValue)
+			throws Exception {
+		JValue result = evalTestQuery(query);
+		assertEquals(expectedValue, result);
+	}
+
 	protected void assertQueryEquals(String query, List<?> expectedValue)
 			throws Exception {
 		JValue result = evalTestQuery(query);
