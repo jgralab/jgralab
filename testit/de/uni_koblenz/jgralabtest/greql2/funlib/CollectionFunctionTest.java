@@ -455,4 +455,23 @@ public class CollectionFunctionTest extends GenericTests {
 		assertQueryEqualsQuery("using set1: union(set1)",
 				"set(1, 2, 3, 4, 5, 7, 8, 9)");
 	}
+
+	@Test
+	public void testValues() throws Exception {
+		// evalTestQuery("map() store as m");
+		// assertQueryEqualsQuery("using m: values(m)", "bag()");
+
+		evalTestQuery("map(1 -> 'a string') store as m");
+		assertQueryEqualsQuery("using m: values(m)", "bag('a string')");
+
+		evalTestQuery("map(1 -> 'a string', 2 -> 'another string') store as m");
+		assertQueryEqualsQuery("using m: values(m)",
+				"bag('a string', 'another string')");
+
+		evalTestQuery("map('milk' -> 1, 'honey' -> 2, 'milk' -> 3) store as m");
+		assertQueryEqualsQuery("using m: values(m)", "bag(2, 3)");
+
+		evalTestQuery("map('milk' -> 1, 'honey' -> 1, 'milk' -> 1) store as m");
+		assertQueryEqualsQuery("using m: values(m)", "bag(1,1)");
+	}
 }
