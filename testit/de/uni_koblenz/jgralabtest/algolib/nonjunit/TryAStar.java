@@ -35,9 +35,6 @@
 package de.uni_koblenz.jgralabtest.algolib.nonjunit;
 
 import java.io.File;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.GraphIOException;
@@ -50,68 +47,46 @@ import de.uni_koblenz.jgralab.algolib.functions.BinaryDoubleFunction;
 import de.uni_koblenz.jgralab.algolib.functions.DoubleFunction;
 import de.uni_koblenz.jgralab.algolib.functions.adapters.MethodCallToBinaryDoubleFunctionAdapter;
 import de.uni_koblenz.jgralab.algolib.functions.adapters.MethodCallToDoubleFunctionAdapter;
-import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
-import de.uni_koblenz.jgralabtest.algolib.nonjunit.kdtree.KDTree;
-import de.uni_koblenz.jgralabtest.algolib.nonjunit.kdtree.Point;
+import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
+import de.uni_koblenz.jgralabtest.algolib.nonjunit.RandomGraphForAStar.LocationPoint;
 import de.uni_koblenz.jgralabtest.schemas.algolib.weighted.Location;
 import de.uni_koblenz.jgralabtest.schemas.algolib.weighted.Way;
 import de.uni_koblenz.jgralabtest.schemas.algolib.weighted.WeightedGraph;
 import de.uni_koblenz.jgralabtest.schemas.algolib.weighted.WeightedSchema;
 
-@SuppressWarnings("deprecation")
 public class TryAStar {
 
-	private static class LocationPoint extends Point {
-		private Location l;
-
-		public LocationPoint(Location l) {
-			super(2);
-			this.l = l;
-		}
-
-		@Override
-		public double get(int position) {
-			switch (position) {
-			case 0:
-				return l.get_x();
-			case 1:
-				return l.get_y();
-			default:
-				throw new IndexOutOfBoundsException();
-			}
-		}
-
-	}
-
-	private static final int KD_SEGMENT_SIZE = 100;
-	private static final double MAX = 1000.0;
-	private static final double MAX_LONGER = 25;
 	private static final int VERTEXCOUNT = 500000;
 	private static final int EDGESPERVERTEX = 4;
+	private static final double MAX = 1000.0;
+	private static final double MAX_DEVIATION = 25;
 	private static final String filename = "./testit/testgraphs/astar.tg.gz";
 
 	// private static double[] distances;
 	private static WeightedGraph graph;
 	private static Location start;
 	private static Location target;
-	private static KDTree<LocationPoint> kdtree;
+	private static RandomGraphForAStar graphGenerator;
 
-	public static void main(String[] args) throws GraphIOException, AlgorithmTerminatedException {
+	public static void main(String[] args) throws GraphIOException,
+			AlgorithmTerminatedException {
 		Stopwatch sw = new Stopwatch();
+		graphGenerator = new RandomGraphForAStar(MAX, MAX, MAX_DEVIATION);
 		if (new File(filename).exists()) {
 			graph = WeightedSchema.instance().loadWeightedGraph(filename,
-					new ProgressFunctionImpl());
+					new ConsoleProgressFunction());
 			System.out.println("Loaded graph with " + graph.getVCount()
 					+ " vertices and " + graph.getECount() + " edges.");
-			createKDTree(graph);
+			graphGenerator.createKDTree(graph);
 		} else {
 			sw.start();
-			graph = createPlanarRandomGraph(VERTEXCOUNT, EDGESPERVERTEX);
+			graph = graphGenerator.createPlanarRandomGraph(VERTEXCOUNT,
+					EDGESPERVERTEX);
 			sw.stop();
 			System.out.println(sw.getDurationString());
 			System.out.println();
 			WeightedSchema.instance().saveWeightedGraph(filename, graph,
-					new ProgressFunctionImpl());
+					new ConsoleProgressFunction());
 		}
 
 		DoubleFunction<Edge> edgeWeight = new MethodCallToDoubleFunctionAdapter<Edge>() {
@@ -135,8 +110,8 @@ public class TryAStar {
 				Location v1 = (Location) parameter1;
 				Location v2 = (Location) parameter2;
 
-				return euclideanDistance(v1.get_x(), v1.get_y(), v2.get_x(), v2
-						.get_y());
+				return RandomGraphForAStar.euclideanDistance(v1.get_x(), v1
+						.get_y(), v2.get_x(), v2.get_y());
 			}
 
 			@Override
@@ -208,14 +183,14 @@ public class TryAStar {
 		nearBorder.set_x(0.0);
 		nearBorder.set_y(0.0);
 		LocationPoint from = new LocationPoint(nearBorder);
-		start = getNearestNeighbors(from, 1).get(0).l;
+		start = graphGenerator.getNearestNeighbors(from, 1).get(0).l;
 		Location nearCenter = graph.createLocation();
 		nearCenter.set_x(MAX / 2.0);
 		nearCenter.set_y(MAX / 2.0);
 		LocationPoint to = new LocationPoint(nearCenter);
-		target = getNearestNeighbors(to, 1).get(0).l;
-		double distance = euclideanDistance(start.get_x(), start.get_y(),
-				target.get_x(), target.get_y());
+		target = graphGenerator.getNearestNeighbors(to, 1).get(0).l;
+		double distance = RandomGraphForAStar.euclideanDistance(start.get_x(),
+				start.get_y(), target.get_x(), target.get_y());
 		System.out.println("Selected start vertex at location: ("
 				+ start.get_x() + "," + start.get_y() + ")");
 		System.out.println("Selected target vertex at location: ("
@@ -223,125 +198,5 @@ public class TryAStar {
 		System.out.println("Direct distance: " + distance);
 		nearBorder.delete();
 		nearCenter.delete();
-
-		// start = graph.getFirstLocation();
-		// target = start;
-		// double minimum = start.get_x() + start.get_y();
-		// double maximum = minimum;
-		// for (Vertex current : graph.vertices()) {
-		// double currentValue = ((Location) current).get_x()
-		// + ((Location) current).get_y();
-		// if (currentValue < minimum) {
-		// minimum = currentValue;
-		// start = (Location) current;
-		// }
-		// if (currentValue > maximum) {
-		// maximum = currentValue;
-		// target = (Location) current;
-		// }
-		// }
-	}
-
-	private static WeightedGraph createPlanarRandomGraph(int vertexCount,
-			int edgesPerVertex) {
-
-		Random rng = new Random();
-		WeightedGraph graph = WeightedSchema.instance().createWeightedGraph();
-		int chunkSize = vertexCount / 100;
-		createRandomVertices(vertexCount, rng, graph, chunkSize);
-
-		LinkedList<LocationPoint> locations = createKDTree(graph);
-
-		System.out.println("Creating edges...");
-		int i = 0;
-		for (LocationPoint currentAlpha : locations) {
-			// for (int i = 0; i < vertexCount; i++) {
-			if (chunkSize > 0) {
-				printPoint(chunkSize, i);
-			}
-			Location alpha = currentAlpha.l;
-			List<LocationPoint> nearestNeighbors = getNearestNeighbors(
-					currentAlpha, edgesPerVertex);
-			// System.out.println(nearestNeighbors);
-			// Location[] omegas = getNearestNeighbors(graph, alpha,
-			// edgesPerVertex);
-			for (LocationPoint currentOmega : nearestNeighbors) {
-				Location omega = currentOmega.l;
-				createEdgePair(rng, graph, alpha, omega);
-			}
-			i++;
-		}
-
-		System.out.println();
-		System.out.println("Created " + graph.getECount() + " edges.");
-		System.out.println("Graph created.");
-		return graph;
-	}
-
-	private static LinkedList<LocationPoint> createKDTree(WeightedGraph graph) {
-		LinkedList<LocationPoint> locations = new LinkedList<LocationPoint>();
-
-		for (Location currentLocation : graph.getLocationVertices()) {
-			locations.add(new LocationPoint(currentLocation));
-		}
-
-		System.out.println("Creating KD-tree...");
-		kdtree = new KDTree<LocationPoint>(locations, KD_SEGMENT_SIZE);
-		return locations;
-	}
-
-	private static List<LocationPoint> getNearestNeighbors(LocationPoint from,
-			int count) {
-		return kdtree.getNearestNeighbors(from, count);
-	}
-
-	private static void createRandomVertices(int vertexCount, Random rng,
-			WeightedGraph graph, int chunkSize) {
-		// Location[] vertices = new Location[vertexCount];
-		System.out.println("Creating vertices...");
-		for (int i = 0; i < vertexCount; i++) {
-			if (chunkSize > 0) {
-				printPoint(chunkSize, i);
-			}
-			Location currentVertex = graph.createLocation();
-			currentVertex.set_x(rng.nextDouble() * MAX);
-			currentVertex.set_y(rng.nextDouble() * MAX);
-		}
-		System.out.println();
-		System.out.println("Created " + graph.getVCount() + " vertices.");
-	}
-
-	private static void createEdgePair(Random rng, WeightedGraph graph,
-			Location alpha, Location omega) {
-		double distance = euclideanDistance(alpha.get_x(), alpha.get_y(), omega
-				.get_x(), omega.get_y());
-		double weight = distance + rng.nextDouble() * MAX_LONGER;
-
-		boolean create = true;
-		for (Way current : alpha.getWayIncidences()) {
-			if (current.getThat() == omega) {
-				create = false;
-				break;
-			}
-		}
-		if (create) {
-			Way link = graph.createWay(alpha, omega);
-			link.set_weight(weight);
-		}
-	}
-
-	private static void printPoint(int chunkSize, int i) {
-		if (i % chunkSize == 0) {
-			System.out.print(".");
-			System.out.flush();
-		}
-	}
-
-	private static double euclideanDistance(double x1, double y1, double x2,
-			double y2) {
-		double x = x2 - x1;
-		double y = y2 - y1;
-		double value = Math.sqrt(x * x + y * y);
-		return value;
 	}
 }
