@@ -241,6 +241,36 @@ public class CollectionFunctionTest extends GenericTests {
 	}
 
 	@Test
+	public void testMaxList() throws Exception {
+		// assertQueryEquals("max(list())", 0);
+		assertQueryEquals("max(list(-5))", -5);
+		assertQueryEquals("max(list(6))", 6);
+		assertQueryEquals("max(list(-5, 6))", 6);
+		assertQueryEquals("max(list(6 , 5))", 6);
+		assertQueryEquals("max(list(1, 2, 4, -6, 65, 73, 65, 322, 1))", 322);
+	}
+
+	@Test
+	public void testMaxSet() throws Exception {
+		// assertQueryEquals("max(set())", 0);
+		assertQueryEquals("max(set(-5))", -5);
+		assertQueryEquals("max(set(6))", 6);
+		assertQueryEquals("max(set(-5, 6))", 6);
+		assertQueryEquals("max(set(6 , 5))", 6);
+		assertQueryEquals("max(set(1, 2, 4, -6, 65, 73, 65, 322, 1))", 322);
+	}
+
+	@Test
+	public void testMaxBag() throws Exception {
+		// assertQueryEquals("max(bag())", 0);
+		assertQueryEquals("max(bag(-5))", -5);
+		assertQueryEquals("max(bag(6))", 6);
+		assertQueryEquals("max(bag(-5, 6))", 6);
+		assertQueryEquals("max(bag(6 , 5))", 6);
+		assertQueryEquals("max(bag(1, 2, 4, -6, 65, 73, 65, 322, 1))", 322);
+	}
+
+	@Test
 	public void testMergeMaps() throws Exception {
 		evalTestQuery("map(tup(1,2) -> set(3), tup(3,4) -> set(7)) store as m1");
 		evalTestQuery("map(tup(1,2) -> set(3,4), tup(3,4) -> set(7,8,9)) store as m2");
