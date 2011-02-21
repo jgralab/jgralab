@@ -170,6 +170,47 @@ public class CollectionFunctionTest extends GenericTests {
 	}
 
 	@Test
+	public void testFlattenBag() throws Exception {
+		// TODO the result of flatten is somehow correct, but must be sorted.
+		// The order cannot be determined.
+		evalTestQuery("bag(bag(1, 2, 3), bag(1, 2, 3), bag(3, 4, 5), "
+				+ "bag(7, 8, 9)) store as bag1");
+		assertQueryEqualsQuery("using bag1: sort(flatten(bag1))",
+				"list(1, 1, 2, 2, 3, 3, 3, 4, 5, 7, 8, 9)");
+
+		evalTestQuery("set(bag(1, 2, 3), bag(1, 2, 3), bag(3, 4, 5), "
+				+ "bag(7, 8, 9)) store as bag1");
+		assertQueryEqualsQuery("using bag1: sort(flatten(bag1))",
+				"list(1, 2, 3, 3, 4, 5, 7, 8, 9)");
+	}
+
+	@Test
+	public void testFlattenList() throws Exception {
+		evalTestQuery("list(list(1, 2, 3, 3), list(3, 4, 5), "
+				+ "list(7, 8, 9, 1)) store as list1");
+		assertQueryEqualsQuery("using list1: flatten(list1)",
+				"list(1, 2, 3, 3, 3, 4, 5, 7, 8, 9, 1)");
+
+		evalTestQuery("set(list(1, 2, 3, 3), list(3, 4, 5), "
+				+ "list(7, 8, 9, 1)) store as list1");
+		assertQueryEqualsQuery("using list1: flatten(list1)",
+				"list(1, 2, 3, 3, 3, 4, 5, 7, 8, 9, 1)");
+	}
+
+	@Test
+	public void testFlattenSet() throws Exception {
+		evalTestQuery("set(set(1, 2, 3), set(1, 2, 3), set(3, 4, 5), "
+				+ "set(7, 8, 9)) store as set1");
+		assertQueryEqualsQuery("using set1: flatten(set1)",
+				"list(1, 2, 3,  3, 4, 5,  7, 8, 9)");
+
+		evalTestQuery("set(set(1, 2, 4), set(1, 2, 3), set(3, 4, 5), "
+				+ "set(7, 8, 9)) store as set1");
+		assertQueryEqualsQuery("using set1: flatten(set1)",
+				"list(1, 2, 4,  1, 2, 3,  3, 4, 5,  7, 8, 9)");
+	}
+
+	@Test
 	public void testGet() throws Exception {
 		evalTestQuery("map(1 -> 'One', 2 -> 'Two', 3 -> 'Three', "
 				+ "4 -> 'Four', 5 -> 'Five', 6 -> 'Six') store as m");
