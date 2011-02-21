@@ -127,6 +127,24 @@ public class CollectionFunctionTest extends GenericTests {
 	}
 
 	@Test
+	public void testEntrySet() throws Exception {
+		// evalTestQuery("map() store as m");
+		// assertQueryEqualsQuery("using m: entrySet(m)", "set()");
+
+		evalTestQuery("map(1 -> 'a string') store as m");
+		assertQueryEqualsQuery("using m: entrySet(m)",
+				"set(tup(1, 'a string'))");
+
+		evalTestQuery("map(1 -> 'a string', 2 -> 'another string') store as m");
+		assertQueryEqualsQuery("using m: entrySet(m)",
+				"set(tup(1, 'a string'), tup(2, 'another string'))");
+
+		evalTestQuery("map('milk' -> 1, 'honey' -> 2, 'milk' -> 3) store as m");
+		assertQueryEqualsQuery("using m: entrySet(m)",
+				"set(tup('honey', 2), tup('milk', 3))");
+	}
+
+	@Test
 	public void testElements() throws Exception {
 		// JValue value = evalTestQuery("set() store as x");
 		// assertQueryEquals("elements( set())", value);
