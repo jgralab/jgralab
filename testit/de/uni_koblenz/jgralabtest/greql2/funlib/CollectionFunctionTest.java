@@ -256,10 +256,20 @@ public class CollectionFunctionTest extends GenericTests {
 
 	@Test
 	public void testKeySet() throws Exception {
+		// evalTestQuery("map()  store as m");
+		// assertQueryEqualsQuery("using m: keySet(m)",
+		// "set()");
+
+		evalTestQuery("map(4 -> 'Four')  store as m");
+		assertQueryEqualsQuery("using m: keySet(m)", "set(4)");
+
+		evalTestQuery("map(3 -> 'Three', 5 -> 'Five')  store as m");
+		assertQueryEqualsQuery("using m: keySet(m)", "set(3,5)");
+
 		evalTestQuery("map(1 -> 'One',   2 -> 'Two', 3 -> 'Three'"
 				+ ", 4 -> 'Four', 5 -> 'Five', 6 -> 'Six')  store as m");
-		assertQueryEqualsQuery("using m: from x : keySet(m) reportSet x end",
-				"set(1,2,3,4,5,6)");
+		assertQueryEqualsQuery("using m: keySet(m)", "set(1,2,3,4,5,6)");
+
 	}
 
 	@Test
