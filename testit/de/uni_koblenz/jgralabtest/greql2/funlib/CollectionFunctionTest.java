@@ -169,8 +169,6 @@ public class CollectionFunctionTest extends GenericTests {
 		assertQueryEquals("elements( set(7, 5, 9, 13, 5))", value);
 		assertQueryEquals("elements(list(7, 5, 9, 13, 5))", value);
 		assertQueryEquals("elements( bag(7, 5, 9, 13, 5))", value);
-		// assertQueryEqualsQuery("elements(list())", "using x:x");
-		// assertQueryEqualsQuery("elements(list())", "using x:x");
 	}
 
 	@Test
