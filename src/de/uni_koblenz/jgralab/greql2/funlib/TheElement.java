@@ -47,8 +47,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Returns the one and only element of the given set, bag or list. If it
- * contains more than one value an {@link WrongFunctionParameterException} is
- * thrown at you.
+ * contains more than one value an {@link EvaluateException} is thrown at you.
  * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
@@ -78,7 +77,7 @@ public class TheElement extends Greql2Function {
 		JValueType[][] x = { { JValueType.COLLECTION, JValueType.OBJECT } };
 		signatures = x;
 
-		description = "Returns the one and only element in the given collection, otherwise WrongFunctionParameterException is returned.";
+		description = "Returns the one and only element in the given collection, otherwise EvaluateException is returned.";
 
 		Category[] c = { Category.COLLECTIONS_AND_MAPS };
 		categories = c;
