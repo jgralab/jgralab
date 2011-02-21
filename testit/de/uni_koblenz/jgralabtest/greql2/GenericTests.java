@@ -187,12 +187,19 @@ public class GenericTests {
 			fail("This test should fail. Instead the query could be evaluated to: "
 					+ value);
 		} catch (Exception ex) {
-			if (!ex.getClass().equals(exception)) {
+			if (!doesExceptionTypesEqual(exception, ex)) {
 				throw new RuntimeException("Expected \"" + exception.getName()
 						+ "\" but instead caught \"" + ex.getClass().getName()
 						+ "\".", ex);
 			}
 		}
+	}
+
+	private boolean doesExceptionTypesEqual(
+			Class<? extends Exception> exceptionClass, Throwable exception) {
+		return exception != null
+				&& (exception.getClass().equals(exceptionClass) || doesExceptionTypesEqual(
+						exceptionClass, exception.getCause()));
 	}
 
 	/**
