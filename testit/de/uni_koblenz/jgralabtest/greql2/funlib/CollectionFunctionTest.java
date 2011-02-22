@@ -235,12 +235,12 @@ public class CollectionFunctionTest extends GenericTests {
 
 	@Test
 	public void testElements() throws Exception {
-		// JValue value = evalTestQuery("set() store as x");
+		// JValue value = evalTestQuery("set()");
 		// assertQueryEquals("elements( set())", value);
 		// assertQueryEquals("elements(list())", value);
 		// assertQueryEquals("elements( bag())", value);
 
-		JValue value = evalTestQuery("set(41) store as x");
+		JValue value = evalTestQuery("set(41)");
 		assertQueryEquals("elements( set(41))", value);
 		assertQueryEquals("elements( set(41, 41, 41))", value);
 		assertQueryEquals("elements(list(41))", value);
@@ -248,9 +248,8 @@ public class CollectionFunctionTest extends GenericTests {
 		assertQueryEquals("elements( bag(41))", value);
 		assertQueryEquals("elements( bag(41, 41, 41))", value);
 
-		value = evalTestQuery("set(5, 7, 9, 13) store as x");
+		value = evalTestQuery("set(5, 7, 9, 13)");
 
-		// assertQueryEqualsQuery("elements(list())", "using x:x");
 		assertQueryEquals("elements( set(7, 5, 9, 13, 5))", value);
 		assertQueryEquals("elements(list(7, 5, 9, 13, 5))", value);
 		assertQueryEquals("elements( bag(7, 5, 9, 13, 5))", value);
