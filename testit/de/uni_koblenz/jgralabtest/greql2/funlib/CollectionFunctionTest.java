@@ -42,6 +42,7 @@ import org.junit.Test;
 
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueBag;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueMap;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
@@ -228,6 +229,9 @@ public class CollectionFunctionTest extends GenericTests {
 		assertQueryEqualsQuery(
 				"let x:= set(5, 7, 9, 13), y := list(6, 8, 10, 11, 12) in difference(x, y)",
 				"set(5, 7, 9, 13)");
+		assertQueryEqualsQuery(
+				"let x:= list(5, 5, 6, 7, 9, 13), y := list(6, 8, 10, 11, 12) in difference(x, y)",
+				"set(5, 7, 9, 13)");
 		assertQueryEquals(
 				"let x:= set(5), y := list(5, 6) in difference(x, y)",
 				Arrays.asList());
@@ -353,23 +357,46 @@ public class CollectionFunctionTest extends GenericTests {
 
 	@Test
 	public void testIntersection() throws Exception {
+		// evalTestQuery("set() store as x");
+		// evalTestQuery("set()  store as y");
+		// assertQueryEqualsQuery("using x,y: intersection(x, y)", "set()");
+		// assertQueryEqualsQuery("using x,y: intersection(y, x)", "set()");
+		// assertQueryEqualsQuery("using x: intersection(x, x)", "set()");
+		// assertQueryEqualsQuery("using y: intersection(y, y)", "set()");
+
+		evalTestQuery("set(5) store as x");
+		evalTestQuery("set(6)  store as y");
+		assertQueryEqualsQuery("using x: intersection(x, x)", "using x: x");
+		assertQueryEqualsQuery("using y: intersection(y, y)", "using y: y");
+		assertQueryEquals("using x, y: intersection(x, y)", Arrays.asList());
+		assertQueryEquals("using x, y: intersection(y, x)", Arrays.asList());
+
 		evalTestQuery("set(5, 7, 9, 13) store as x");
 		evalTestQuery("set(5, 6, 7, 8)  store as y");
 		assertQueryEqualsQuery("using x,y: intersection(x, y)", "set(5, 7)");
+		assertQueryEqualsQuery("using x,y: intersection(y, x)", "set(5, 7)");
+		assertQueryEqualsQuery("using x: intersection(x, x)", "using x : x");
+		assertQueryEqualsQuery("using y: intersection(y, y)", "using y : y");
 	}
 
 	@Test
 	public void testIsEmpty() throws Exception {
 		evalTestQuery("set(1, 2, 3) store as x");
 		assertQueryEquals("using x: isEmpty(x)", false);
+		evalTestQuery("list(1..3) store as x");
+		assertQueryEquals("using x: isEmpty(x)", false);
+		evalTestQuery("bag(1, 2, 3) store as x");
+		assertQueryEquals("using x: isEmpty(x)", false);
+		evalTestQuery("map(1 -> '') store as x");
+		assertQueryEquals("using x: isEmpty(x)", false);
 
 		setBoundVariable("x", new JValueList());
 		assertQueryEquals("using x: isEmpty(x)", true);
-
 		setBoundVariable("x", new JValueSet());
 		assertQueryEquals("using x: isEmpty(x)", true);
-
-		setBoundVariable("cset", new JValueMap());
+		setBoundVariable("x", new JValueBag());
+		assertQueryEquals("using x: isEmpty(x)", true);
+		setBoundVariable("x", new JValueMap());
 		assertQueryEquals("using x: isEmpty(x)", true);
 	}
 
