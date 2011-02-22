@@ -36,6 +36,8 @@ package de.uni_koblenz.jgralabtest.greql2.funlib;
 
 import static org.junit.Assert.fail;
 
+import java.util.Arrays;
+
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
@@ -88,7 +90,28 @@ public class CollectionFunctionTest extends GenericTests {
 	}
 
 	@Test
-	public void testContains() throws Exception {
+	public void testContainsBag() throws Exception {
+		evalTestQuery("bag (5, 5, 5, 6, 7, 8, 9, 10, 11, 12, 13) store as x");
+		assertQueryEquals("using x: contains(x, 7)", true);
+		assertQueryEquals("using x: contains(x, 56)", false);
+		assertQueryEquals("using x: contains(x, 13)", true);
+		assertQueryEquals("using x: contains(x, 14)", false);
+		assertQueryEquals("using x: contains(x, 5)", true);
+		assertQueryEquals("using x: contains(x, 4)", false);
+
+		evalTestQuery("bag (5) store as x");
+		assertQueryEquals("using x: contains(x, 4)", false);
+		assertQueryEquals("using x: contains(x, 5)", true);
+		assertQueryEquals("using x: contains(x, 6)", false);
+
+		// evalTestQuery("bag () store as x");
+		// assertQueryEquals("using x: contains(x, 0)", false);
+		// assertQueryEquals("using x: contains(x, 5)", false);
+		// assertQueryEquals("using x: contains(x, 6)", false);
+	}
+
+	@Test
+	public void testContainsList() throws Exception {
 		evalTestQuery("list (5..13) store as x");
 		assertQueryEquals("using x: contains(x, 7)", true);
 		assertQueryEquals("using x: contains(x, 56)", false);
@@ -103,6 +126,27 @@ public class CollectionFunctionTest extends GenericTests {
 		assertQueryEquals("using x: contains(x, 6)", false);
 
 		// evalTestQuery("list () store as x");
+		// assertQueryEquals("using x: contains(x, 0)", false);
+		// assertQueryEquals("using x: contains(x, 5)", false);
+		// assertQueryEquals("using x: contains(x, 6)", false);
+	}
+
+	@Test
+	public void testContainsSet() throws Exception {
+		evalTestQuery("set(5, 5, 5, 6, 7, 8, 9, 10, 11, 12, 13) store as x");
+		assertQueryEquals("using x: contains(x, 7)", true);
+		assertQueryEquals("using x: contains(x, 56)", false);
+		assertQueryEquals("using x: contains(x, 13)", true);
+		assertQueryEquals("using x: contains(x, 14)", false);
+		assertQueryEquals("using x: contains(x, 5)", true);
+		assertQueryEquals("using x: contains(x, 4)", false);
+
+		evalTestQuery("set(5) store as x");
+		assertQueryEquals("using x: contains(x, 4)", false);
+		assertQueryEquals("using x: contains(x, 5)", true);
+		assertQueryEquals("using x: contains(x, 6)", false);
+
+		// evalTestQuery("set() store as x");
 		// assertQueryEquals("using x: contains(x, 0)", false);
 		// assertQueryEquals("using x: contains(x, 5)", false);
 		// assertQueryEquals("using x: contains(x, 6)", false);
@@ -176,11 +220,17 @@ public class CollectionFunctionTest extends GenericTests {
 	@Test
 	public void testDifference() throws Exception {
 		assertQueryEqualsQuery(
-				"let x:= set(5, 7, 9, 13), y := set(5,6,7,8) in difference(x, y)",
+				"let x:= set(5, 7, 9, 13), y := set(5, 6, 7, 8) in difference(x, y)",
 				"set(9,13)");
 		assertQueryEqualsQuery(
-				"let x:= set(5, 7, 9, 13), y := list(5,5,6,7,8) in difference(x, y)",
+				"let x:= set(5, 7, 9, 13), y := list(5, 5, 6, 7, 8) in difference(x, y)",
 				"set(9,13)");
+		assertQueryEqualsQuery(
+				"let x:= set(5, 7, 9, 13), y := list(6, 8, 10, 11, 12) in difference(x, y)",
+				"set(5, 7, 9, 13)");
+		assertQueryEquals(
+				"let x:= set(5), y := list(5, 6) in difference(x, y)",
+				Arrays.asList());
 	}
 
 	@Test
