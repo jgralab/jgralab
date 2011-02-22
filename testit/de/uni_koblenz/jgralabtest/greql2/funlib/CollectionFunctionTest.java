@@ -409,6 +409,12 @@ public class CollectionFunctionTest extends GenericTests {
 		evalTestQuery("set(5, 7) store as y");
 		assertQueryEquals("using x,y: isSubSet(x,y)", false);
 		assertQueryEquals("using x,y: isSubSet(y,x)", true);
+
+		assertQueryEquals("using x: isSubSet(x,x)", true);
+
+		// evalTestQuery("set() store as y");
+		// assertQueryEquals("using x,y: isSubSet(x,y)", false);
+		// assertQueryEquals("using x,y: isSubSet(y,x)", true);
 	}
 
 	@Test
@@ -421,9 +427,11 @@ public class CollectionFunctionTest extends GenericTests {
 		assertQueryEquals("using x,y: isSuperSet(x, y)", true);
 		assertQueryEquals("using x,y: isSuperSet(y, x)", false);
 
-		evalTestQuery("set(5, 7, 13, 9)  store as y");
-		assertQueryEquals("using x,y: isSuperSet(x, y)", true);
-		assertQueryEquals("using x,y: isSuperSet(y, x)", true);
+		assertQueryEquals("using x: isSuperSet(x, x)", true);
+
+		// evalTestQuery("set()  store as y");
+		// assertQueryEquals("using x,y: isSuperSet(x, y)", true);
+		// assertQueryEquals("using x,y: isSuperSet(y, x)", false);
 	}
 
 	@Test
