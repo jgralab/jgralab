@@ -662,10 +662,30 @@ public class CollectionFunctionTest extends GenericTests {
 
 	@Test
 	public void testSymDifference() throws Exception {
+		// evalTestQuery("set() store as x");
+		// assertQueryEqualsQuery("using x: symDifference(x, x)", "set()");
+
+		evalTestQuery("set(5)  store as x");
+		evalTestQuery("set(6)  store as y");
+		assertQueryEquals("using x: symDifference(x, x)", Arrays.asList());
+		assertQueryEquals("using y: symDifference(y, y)", Arrays.asList());
+		assertQueryEqualsQuery("using x, y: symDifference(x, y)", "set(5, 6)");
+		assertQueryEqualsQuery("using x, y: symDifference(y, x)", "set(5, 6)");
+
+		assertQueryEquals("using x: symDifference(x, x)", Arrays.asList());
+		assertQueryEquals("using y: symDifference(y, y)", Arrays.asList());
+
+		assertQueryEquals("using x: symDifference(x, x)", Arrays.asList());
+		assertQueryEquals("using y: symDifference(y, y)", Arrays.asList());
+
 		evalTestQuery("set(5, 7, 9, 13) store as x");
 		evalTestQuery("set(5, 6, 7, 8)  store as y");
 		assertQueryEqualsQuery("using x, y: symDifference(x, y)",
 				"set(6, 8, 9, 13)");
+
+		assertQueryEquals("using x: symDifference(x, x)", Arrays.asList());
+		assertQueryEquals("using y: symDifference(y, y)", Arrays.asList());
+
 	}
 
 	@Test
