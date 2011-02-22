@@ -435,6 +435,36 @@ public class CollectionFunctionTest extends GenericTests {
 	}
 
 	@Test
+	public void testIsUniqueBag() throws Exception {
+		// assertQueryEquals("let x := bag() in isUnique(x)", true);
+		assertQueryEquals("let x := bag(1) in isUnique(x)", true);
+		assertQueryEquals("let x := bag(1, 1) in isUnique(x)", false);
+		assertQueryEquals("let x := bag(1, 2, 3, 4, 99) in isUnique(x)", true);
+		assertQueryEquals("let x := bag(1, 2, 3, 4, 1, 99) in isUnique(x)",
+				false);
+	}
+
+	@Test
+	public void testIsUniqueList() throws Exception {
+		// assertQueryEquals("let x := list() in isUnique(x)", true);
+		assertQueryEquals("let x := list(1) in isUnique(x)", true);
+		assertQueryEquals("let x := list(1, 1) in isUnique(x)", false);
+		assertQueryEquals("let x := list(1, 2, 3, 4, 99) in isUnique(x)", true);
+		assertQueryEquals("let x := list(1, 2, 3, 4, 1, 99) in isUnique(x)",
+				false);
+	}
+
+	@Test
+	public void testIsUniqueSet() throws Exception {
+		// assertQueryEquals("let x := set() in isUnique(x)", true);
+		assertQueryEquals("let x := set(1) in isUnique(x)", true);
+		assertQueryEquals("let x := set(1, 1) in isUnique(x)", true);
+		assertQueryEquals("let x := set(1, 2, 3, 4, 99) in isUnique(x)", true);
+		assertQueryEquals("let x := set(1, 2, 3, 4, 1, 99) in isUnique(x)",
+				true);
+	}
+
+	@Test
 	public void testKeySet() throws Exception {
 		// evalTestQuery("map()  store as m");
 		// assertQueryEqualsQuery("using m: keySet(m)",
