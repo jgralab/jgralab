@@ -36,7 +36,6 @@
 package de.uni_koblenz.jgralabtest.greql2;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 import java.io.File;
@@ -115,7 +114,7 @@ public class GenericTests {
 
 	protected void assertQueryEqualsNull(String query) throws Exception {
 		JValue result = evalTestQuery(query);
-		assertNull(result.toObject());
+		assertEquals(null, result.toObject());
 	}
 
 	protected void assertQueryEquals(String query, boolean expectedValue)
