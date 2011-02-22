@@ -639,7 +639,25 @@ public class CollectionFunctionTest extends GenericTests {
 
 	@Test
 	public void testSum() throws Exception {
-		assertQueryEquals("let x:= list (5..13) in sum(x)", 81.0);
+		// assertQueryEquals("let x:= list() in sum(x)", 0.0);
+		assertQueryEquals("let x:= list(5) in sum(x)", 5.0);
+		assertQueryEquals("let x:= list(5..13) in sum(x)", 81.0);
+
+		// assertQueryEquals("let x:= set() in sum(x)", 0.0);
+		assertQueryEquals("let x:= set(5) in sum(x)", 5.0);
+		assertQueryEquals(
+				"let x:= set(5, 6, 7, 8, 9, 10, 11, 12, 13) in sum(x)", 81.0);
+
+		// assertQueryEquals("let x:= bag() in sum(x)", 0.0);
+		assertQueryEquals("let x:= bag(5) in sum(x)", 5.0);
+		assertQueryEquals(
+				"let x:= bag(5, 6, 7, 8, 9, 10, 11, 12, 13) in sum(x)", 81.0);
+
+		expectException("let x:= bag('test') in sum(x)",
+				EvaluateException.class);
+		expectException("let x:= bag(true) in sum(x)", EvaluateException.class);
+		expectException("let x:= bag(rec(name: 'Daniel') in sum(x)",
+				EvaluateException.class);
 	}
 
 	@Test
