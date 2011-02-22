@@ -564,6 +564,47 @@ public class CollectionFunctionTest extends GenericTests {
 	}
 
 	@Test
+	public void testPredecessorBag() throws Exception {
+		// assertQueryEquals("let x := bag() in predecessor(???)", true);
+		assertQueryEqualsNull("let x := bag(1) in predecessor(1, x)");
+		assertQueryEqualsNull("let x := bag(1, 1) in predecessor(1, x)");
+
+		evalTestQuery("sort(bag(1, 2, 3, 4, 1, 99)) store as x");
+		assertQueryEqualsNull("using x: predecessor(1, x)");
+		assertQueryEquals("using x: predecessor(2, x)", 1);
+		assertQueryEquals("using x: predecessor(3, x)", 2);
+		assertQueryEquals("using x: predecessor(4, x)", 3);
+		assertQueryEquals("using x: predecessor(99, x)", 4);
+	}
+
+	@Test
+	public void testPredecessorList() throws Exception {
+		// assertQueryEquals("let x := list() in predecessor(???)", true);
+		assertQueryEqualsNull("let x := list(1) in predecessor(1, x)");
+		assertQueryEqualsNull("let x := list(1, 1) in predecessor(1, x)");
+
+		evalTestQuery("list(1, 2, 3, 4, 1, 99) store as x");
+		assertQueryEqualsNull("using x: predecessor(1, x)");
+		assertQueryEquals("using x: predecessor(2, x)", 1);
+		assertQueryEquals("using x: predecessor(3, x)", 2);
+		assertQueryEquals("using x: predecessor(4, x)", 3);
+		assertQueryEquals("using x: predecessor(99, x)", 1);
+	}
+
+	@Test
+	public void testPredecessorSet() throws Exception {
+		// assertQueryEquals("let x := set() in predecessor(???)", true);
+		assertQueryEqualsNull("let x := set(1) in predecessor(1, x)");
+		assertQueryEqualsNull("let x := set(1, 1) in predecessor(1, x)");
+		evalTestQuery("sort(set(1, 2, 3, 4, 1, 99)) store as x");
+		assertQueryEqualsNull("using x: predecessor(1, x)");
+		assertQueryEquals("using x: predecessor(2, x)", 1);
+		assertQueryEquals("using x: predecessor(3, x)", 2);
+		assertQueryEquals("using x: predecessor(4, x)", 3);
+		assertQueryEquals("using x: predecessor(99, x)", 4);
+	}
+
+	@Test
 	public void testSortBag() throws Exception {
 		assertQueryEqualsQuery("sort(bag(4, 1, 2, 10, 9, 7, 8, 3, 5, 6))",
 				"bag(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)");
