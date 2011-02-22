@@ -96,13 +96,34 @@ public class CollectionFunctionTest extends GenericTests {
 		assertQueryEquals("using x: contains(x, 14)", false);
 		assertQueryEquals("using x: contains(x, 5)", true);
 		assertQueryEquals("using x: contains(x, 4)", false);
+
+		evalTestQuery("list (5) store as x");
+		assertQueryEquals("using x: contains(x, 4)", false);
+		assertQueryEquals("using x: contains(x, 5)", true);
+		assertQueryEquals("using x: contains(x, 6)", false);
+
+		evalTestQuery("list () store as x");
+		assertQueryEquals("using x: contains(x, 0)", false);
+		assertQueryEquals("using x: contains(x, 5)", false);
+		assertQueryEquals("using x: contains(x, 6)", false);
 	}
 
 	@Test
 	public void testContainsKey() throws Exception {
+		evalTestQuery("map() store as x");
+		assertQueryEquals("using x: containsKey(x, 1)", false);
+		assertQueryEquals("using x: containsKey(x, 2)", false);
+		assertQueryEquals("using x: containsKey(x, 0)", false);
+
 		evalTestQuery("map(1 -> 'a string' ) store as x");
 		assertQueryEquals("using x: containsKey(x, 1)", true);
 		assertQueryEquals("using x: containsKey(x, 2)", false);
+		assertQueryEquals("using x: containsKey(x, 0)", false);
+
+		evalTestQuery("map(1 -> 'a string', 2 -> 'another string', 1 -> '') store as x");
+		assertQueryEquals("using x: containsKey(x, 1)", true);
+		assertQueryEquals("using x: containsKey(x, 2)", true);
+		assertQueryEquals("using x: containsKey(x, 3)", false);
 		assertQueryEquals("using x: containsKey(x, 0)", false);
 	}
 
