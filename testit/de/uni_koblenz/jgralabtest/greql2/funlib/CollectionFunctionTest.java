@@ -606,18 +606,24 @@ public class CollectionFunctionTest extends GenericTests {
 
 	@Test
 	public void testSortBag() throws Exception {
+		// assertQueryEqualsQuery("sort(bag())", "bag()");
+		assertQueryEqualsQuery("sort(bag(4))", "bag(4)");
 		assertQueryEqualsQuery("sort(bag(4, 1, 2, 10, 9, 7, 8, 3, 5, 6))",
 				"bag(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)");
 	}
 
 	@Test
 	public void testSortList() throws Exception {
+		// assertQueryEqualsQuery("sort(list())", "list()");
+		assertQueryEqualsQuery("sort(list(4))", "list(4)");
 		assertQueryEqualsQuery("sort(list(4, 1, 2, 10, 9, 7, 8, 3, 5, 6))",
 				"list(1..10)");
 	}
 
 	@Test
 	public void testSortMap() throws Exception {
+		// assertQueryEqualsQuery("sort(map())", "map()");
+		assertQueryEqualsQuery("sort(map(4 -> 16))", "map(4 -> 16)");
 		assertQueryEqualsQuery("sort(map(4 -> 16, 1 -> 1, 2 -> 4, 10 -> 100, "
 				+ "9 -> 81, 7 -> 49, 8 -> 64, 3 -> 9, 5 -> 25, 6 -> 36))",
 				"from i : list (1..10) reportMap i -> i*i end");
@@ -625,6 +631,8 @@ public class CollectionFunctionTest extends GenericTests {
 
 	@Test
 	public void testSortSet() throws Exception {
+		// assertQueryEqualsQuery("sort(set())", "set()");
+		assertQueryEqualsQuery("sort(set(4))", "set(4)");
 		assertQueryEqualsQuery("sort(set(4, 1, 2, 10, 9, 7, 8, 3, 5, 6))",
 				"set(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)");
 	}
