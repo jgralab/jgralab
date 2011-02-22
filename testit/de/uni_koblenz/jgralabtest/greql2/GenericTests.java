@@ -115,7 +115,7 @@ public class GenericTests {
 
 	protected void assertQueryEqualsNull(String query) throws Exception {
 		JValue result = evalTestQuery(query);
-		assertNull(result);
+		assertNull(result.toObject());
 	}
 
 	protected void assertQueryEquals(String query, boolean expectedValue)
