@@ -149,6 +149,27 @@ public class CollectionFunctionTest extends GenericTests {
 	@Test
 	public void testCount() throws Exception {
 		assertQueryEquals("let x:= list (5..13) in count(x)", 9);
+		assertQueryEquals("let x:= list(17) in count(x)", 1);
+		// assertQueryEquals("let x:= list() in count(x)", 0);
+
+		assertQueryEquals(
+				"let x:= bag (5, 5, 5, 6, 7, 8, 9, 10, 11, 12, 13) in count(x)",
+				11);
+		assertQueryEquals("let x:= bag(17) in count(x)", 1);
+		// assertQueryEquals("let x:= bag() in count(x)", 0);
+
+		assertQueryEquals(
+				"let x:= set (5, 5, 5, 6, 7, 8, 9, 10, 10, 11, 12, 13) in count(x)",
+				9);
+		assertQueryEquals("let x:= set(17) in count(x)", 1);
+		// assertQueryEquals("let x:= set() in count(x)", 0);
+
+		assertQueryEquals(
+				"let x:= map (5 -> '', 5 -> 'juhu', 6 -> 'A', 7 -> 'B') in count(x)",
+				3);
+		assertQueryEquals("let x:= map('' -> 17) in count(x)", 1);
+		// assertQueryEquals("let x:= map() in count(x)", 0);
+
 		assertQueryEquals("let x:= 17 in count(x)", 1);
 	}
 
