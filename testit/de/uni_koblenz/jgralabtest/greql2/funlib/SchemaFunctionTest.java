@@ -132,19 +132,26 @@ public class SchemaFunctionTest extends GenericTests {
 
 	@Test
 	public void testHasAttribute() throws Exception {
-		String queryString = "from x : V{Variable} report hasAttribute(x, \"name\") end";
-		JValue result = evalTestQuery("HasAttribute", queryString);
-		for (JValue v : result.toCollection()) {
-			assertEquals(JValueBoolean.getTrueValue(), v.toBoolean());
+		Graph currentGraph = this.getTestGraph(TestVersion.CITY_MAP_GRAPH);
+		Schema schema = currentGraph.getSchema();
+		testHasAttribute(schema.getVertexClassesInTopologicalOrder());
+		testHasAttribute(schema.getEdgeClassesInTopologicalOrder());
+	}
+
+	private void testHasAttribute(List<? extends AttributedElementClass> classes)
+			throws Exception {
+		for (AttributedElementClass clazz : classes) {
+			testHasAttribute(clazz);
 		}
 	}
 
-	@Test
-	public void testHasAttribute2() throws Exception {
-		String queryString = "from x : V{Variable} report hasAttribute(type(x), \"name\") end";
-		JValue result = evalTestQuery("HasAttribute2", queryString);
-		for (JValue v : result.toCollection()) {
-			assertEquals(JValueBoolean.getTrueValue(), v.toBoolean());
+	private void testHasAttribute(AttributedElementClass clazz)
+			throws Exception {
+		for (Attribute attribute : clazz.getAttributeList()) {
+			String query = "hasAttribute(type('" + clazz.getQualifiedName()
+					+ "'), '" + attribute.getName() + "')";
+			assertQueryEquals(query, true);
+			System.out.println(query);
 		}
 	}
 
