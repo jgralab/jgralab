@@ -37,6 +37,7 @@ package de.uni_koblenz.jgralabtest.greql2.funlib;
 import static org.junit.Assert.assertEquals;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.Test;
@@ -46,6 +47,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralabtest.greql2.GenericTests;
 
 public class SchemaFunctionTest extends GenericTests {
@@ -53,33 +55,22 @@ public class SchemaFunctionTest extends GenericTests {
 	@Test
 	public void testAttributeNames() throws Exception {
 		Graph currentGraph = this.getTestGraph(TestVersion.CITY_MAP_GRAPH);
-		testAttributeNames(currentGraph, "NamedElement");
-		testAttributeNames(currentGraph, "localities.County");
-		testAttributeNames(currentGraph, "localities.Locality");
-		testAttributeNames(currentGraph, "localities.Town");
-		testAttributeNames(currentGraph, "localities.City");
-		testAttributeNames(currentGraph, "localities.Village");
-		testAttributeNames(currentGraph, "localities.HasCapital");
-		testAttributeNames(currentGraph, "localities.ContainsLocality");
-		testAttributeNames(currentGraph, "junctions.Junction");
-		testAttributeNames(currentGraph, "junctions.Crossroad");
-		testAttributeNames(currentGraph, "junctions.Plaza");
-		testAttributeNames(currentGraph, "junctions.Roundabout");
-		testAttributeNames(currentGraph, "junctions.Airport");
-		testAttributeNames(currentGraph, "connections.AirRoute");
-		testAttributeNames(currentGraph, "connections.Connection");
-		testAttributeNames(currentGraph, "connections.Way");
-		testAttributeNames(currentGraph, "connections.Street");
-		testAttributeNames(currentGraph, "connections.Highway");
-		testAttributeNames(currentGraph, "connections.Footpath");
+		Schema schema = currentGraph.getSchema();
+		testAttributeNames(schema.getVertexClassesInTopologicalOrder());
+		testAttributeNames(schema.getEdgeClassesInTopologicalOrder());
 	}
 
-	private void testAttributeNames(Graph currentGraph, String className)
+	private void testAttributeNames(
+			List<? extends AttributedElementClass> classes) throws Exception {
+		for (AttributedElementClass clazz : classes) {
+			testAttributeNames(clazz);
+		}
+	}
+
+	private void testAttributeNames(AttributedElementClass clazz)
 			throws Exception {
-		AttributedElementClass clazz = currentGraph.getSchema()
-				.getAttributedElementClass(className);
-		assertQueryEquals("attributeNames(type('" + className + "'))",
-				getAttributeNames(clazz.getAttributeList()));
+		assertQueryEquals("attributeNames(type('" + clazz.getQualifiedName()
+				+ "'))", getAttributeNames(clazz.getAttributeList()));
 	}
 
 	private Set<String> getAttributeNames(Set<Attribute> attributes) {
