@@ -16,4 +16,6 @@ public class AdditionalTest extends GenericTests {
 		assertQueryEqualsNull("using x: x.menue0");
 		assertQueryEqualsNull("using x: x.menue6");
 	}
+	
+
 }

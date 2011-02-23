@@ -127,6 +127,9 @@ public class GreqlLexer {
 					put(TokenTypes.INAGGREGATION, "--<>");
 					put(TokenTypes.PATHSYSTEMSTART, "-<");
 					put(TokenTypes.IMPORT, "import");
+					put(TokenTypes.POS_INFINITY, "POSITIVE_INFINITY");
+					put(TokenTypes.NEG_INFINITY, "NEGATIVE_INFINITY");
+					put(TokenTypes.NaN, "NaN");
 				}
 			});
 
@@ -230,6 +233,9 @@ public class GreqlLexer {
 				} else if (tokenText.equals("thisEdge")) {
 					recognizedToken = new ComplexToken(TokenTypes.THISEDGE,
 							start, position - start, tokenText);
+				} else if (tokenText.equals(fixedTokens.get(TokenTypes.POS_INFINITY)) || tokenText.equals(fixedTokens.get(TokenTypes.NEG_INFINITY))  || tokenText.equals(fixedTokens.get(TokenTypes.NaN)) ) {
+					recognizedToken = matchDoubleConstantToken(start,
+							position - start, tokenText);
 				} else if (startsWithNumber(tokenText)) {
 					recognizedToken = matchNumericToken(start,
 							position - start, tokenText);
@@ -250,6 +256,11 @@ public class GreqlLexer {
 					position, query);
 		}
 		return recognizedToken;
+	}
+
+	private final Token matchDoubleConstantToken(int start, int i, String tokenText) {
+		Double value = Double.parseDouble(tokenText);
+		return new RealToken(TokenTypes.REALLITERAL, start, i, tokenText, value);
 	}
 
 	private final boolean startsWithNumber(String text) {
