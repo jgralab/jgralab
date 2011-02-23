@@ -28,28 +28,25 @@ public class GraphDbPerformance {
 	private static final double SIZE = 1000.0;
 	private static final double MAX_DEVIATION = 25.0;
 
-	private static final int REPEAT = 5;
+	private static final int REPEAT = 1;
 	private static final long SEED = 42l;
 
 	private static enum RunType {
-		CREATE, DFS, BFS, DIJKSTRA
+		CREATE, DELETE, DFS, BFS, DIJKSTRA
 	}
 
 	private static class RunConfiguration {
 		private RunType type;
 		private boolean withForeignKeys;
 		private boolean withIndices;
-		private boolean withCache;
 		private int repeat;
 
 		public RunConfiguration(RunType type, boolean withForeignKeys,
-				boolean withIndices, boolean withCache, int vertexCount,
-				int repeat) {
+				boolean withIndices, int vertexCount, int repeat) {
 			super();
 			this.type = type;
 			this.withForeignKeys = withForeignKeys;
 			this.withIndices = withIndices;
-			this.withCache = withCache;
 			this.repeat = repeat;
 		}
 
@@ -62,17 +59,32 @@ public class GraphDbPerformance {
 
 		List<RunConfiguration> runs = new LinkedList<RunConfiguration>();
 
-		boolean[] possibleValues1 = new boolean[] { false, true };
-		for (RunType currentRunType : RunType.values()) {
-			for (boolean currentWithForeignKeys : possibleValues1) {
-				for (boolean currentWithIndices : possibleValues1) {
-					for (boolean currentWithCache : possibleValues1) {
-						if (!(currentRunType.equals(RunType.CREATE) && currentWithCache == false)) {
-							runs.add(new RunConfiguration(currentRunType,
-									currentWithForeignKeys, currentWithIndices,
-									currentWithCache, VERTEX_COUNT, REPEAT));
-						}
-					}
+		RunType currentRunType = RunType.CREATE;
+		for (boolean currentWithForeignKeys : new boolean[] { false, true }) {
+			for (boolean currentWithIndices : new boolean[] { false, true }) {
+				runs.add(new RunConfiguration(currentRunType,
+						currentWithForeignKeys, currentWithIndices,
+						VERTEX_COUNT, REPEAT));
+			}
+		}
+
+		currentRunType = RunType.DELETE;
+		for (boolean currentWithForeignKeys : new boolean[] { false, true }) {
+			for (boolean currentWithIndices : new boolean[] { false, true }) {
+				runs.add(new RunConfiguration(currentRunType,
+						currentWithForeignKeys, currentWithIndices,
+						VERTEX_COUNT, REPEAT));
+			}
+		}
+
+		RunType[] algorithmRunTypes = new RunType[] { RunType.DFS, RunType.BFS,
+				RunType.DIJKSTRA };
+
+		for (RunType type : algorithmRunTypes) {
+			for (boolean currentWithForeignKeys : new boolean[] { false, true }) {
+				for (boolean currentWithIndices : new boolean[] { true }) {
+					runs.add(new RunConfiguration(type, currentWithForeignKeys,
+							currentWithIndices, VERTEX_COUNT, REPEAT));
 				}
 			}
 		}
@@ -109,7 +121,7 @@ public class GraphDbPerformance {
 		for (RunConfiguration currentConfiguration : runs) {
 			performRun(currentConfiguration);
 		}
-		
+		gdb.commitTransaction();
 		System.out.println("Fini.");
 	}
 
@@ -128,8 +140,6 @@ public class GraphDbPerformance {
 					+ (config.withForeignKeys ? "ON" : "OFF"));
 			System.out.println("Indices     : "
 					+ (config.withIndices ? "ON" : "OFF"));
-			System.out.println("Cache       : "
-					+ (config.withCache ? "ON" : "OFF"));
 
 			Stopwatch sw = new Stopwatch();
 			double totalDuration = 0.0;
@@ -139,11 +149,6 @@ public class GraphDbPerformance {
 
 			for (int i = 0; i < config.repeat; i++) {
 				sw.reset();
-
-				if (config.type.equals(RunType.CREATE) && !config.withCache) {
-					System.out.println("Skipping...");
-					break;
-				}
 
 				switch (config.type) {
 				case CREATE:
@@ -158,26 +163,26 @@ public class GraphDbPerformance {
 					createTheGraph();
 					sw.stop();
 					break;
+				case DELETE:
+					getTheGraph();
+					sw.start();
+					deleteTheGraph();
+					sw.stop();
+					break;
 				case DFS:
-					if (!config.withCache) {
-						clearCache(graph);
-					}
+					clearCache(graph);
 					sw.start();
 					runDFS(graph);
 					sw.stop();
 					break;
 				case BFS:
-					if (!config.withCache) {
-						clearCache(graph);
-					}
+					clearCache(graph);
 					sw.start();
 					runBFS(graph);
 					sw.stop();
 					break;
 				case DIJKSTRA:
-					if (!config.withCache) {
-						clearCache(graph);
-					}
+					clearCache(graph);
 					sw.start();
 					runDijkstra(graph);
 					sw.stop();
@@ -202,10 +207,10 @@ public class GraphDbPerformance {
 	}
 
 	private static void runDFS(WeightedGraph graph) {
-		DepthFirstSearch dfs = new RecursiveDepthFirstSearch(graph)
-				.undirected();
+		DepthFirstSearch dfs = new RecursiveDepthFirstSearch(graph);
 		try {
-			dfs.execute();
+			dfs.undirected().execute(graph.getFirstVertex());
+			System.out.println(dfs.getNum());
 		} catch (AlgorithmTerminatedException e) {
 		}
 	}
@@ -213,7 +218,7 @@ public class GraphDbPerformance {
 	private static void runBFS(WeightedGraph graph) {
 		BreadthFirstSearch bfs = new BreadthFirstSearch(graph);
 		try {
-			bfs.execute();
+			bfs.undirected().execute(graph.getFirstVertex());
 		} catch (AlgorithmTerminatedException e) {
 		}
 	}
@@ -244,6 +249,7 @@ public class GraphDbPerformance {
 				.createWeightedGraphWithDatabaseSupport(GRAPH_ID, gdb);
 		graphGenerator.createPlanarRandomGraph(graph, VERTEX_COUNT,
 				INCIDENCES_PER_VERTEX, new Random(SEED), false);
+		gdb.commitTransaction();
 		return graph;
 	}
 
@@ -256,6 +262,7 @@ public class GraphDbPerformance {
 		if (gdb.containsGraph(GRAPH_ID)) {
 			gdb.deleteGraph(GRAPH_ID);
 		}
+		gdb.commitTransaction();
 	}
 
 	private static void clearCache(WeightedGraph graph) {
