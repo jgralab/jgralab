@@ -48,6 +48,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.EnumDomain;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralabtest.greql2.GenericTests;
 
@@ -118,9 +119,14 @@ public class SchemaFunctionTest extends GenericTests {
 	public void testEnumConstant() throws Exception {
 		Graph currentGraph = this.getTestGraph(TestVersion.CITY_MAP_GRAPH);
 		Schema schema = currentGraph.getSchema();
-		for (de.uni_koblenz.jgralab.schema.EnumDomain enumDomain : schema
-				.getEnumDomains()) {
 
+		for (final EnumDomain enumDomain : schema.getEnumDomains()) {
+			String enumDomainName = enumDomain.getQualifiedName();
+			for (String enumConst : enumDomain.getConsts()) {
+				JValue result = evalTestQuery("enumConstant('" + enumDomainName
+						+ "', '" + enumConst + "')");
+				assertEquals(enumConst, result.toEnum().name());
+			}
 		}
 	}
 
