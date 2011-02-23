@@ -174,6 +174,12 @@ public class GenericTests {
 		assertEquals(expectedValue, list);
 	}
 
+	protected void assertQueryEquals(String query, Object expectedValue)
+			throws Exception {
+		Object result = evalTestQuery(query).toObject();
+		assertEquals(expectedValue, result);
+	}
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private List<?> toList(JValueCollection collection) {
 		ArrayList list = new ArrayList();
@@ -333,7 +339,7 @@ public class GenericTests {
 	}
 
 	protected JValue evalTestQuery(String query) throws Exception {
-		return evalTestQuery("", query, TestVersion.GREQL_GRAPH);
+		return evalTestQuery("", query, TestVersion.CITY_MAP_GRAPH);
 	}
 
 	protected JValue evalTestQuery(String functionName, String query,
