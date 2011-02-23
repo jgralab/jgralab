@@ -140,6 +140,7 @@ public class ParserTest {
 		Greql2FunctionLibrary.instance().registerUserDefinedFunction(
 				IsPrime.class);
 	}
+	
 
 	private Greql2 parseQuery(String query) throws ParsingException {
 		return parseQuery(query, null);
