@@ -1634,6 +1634,9 @@ public class GreqlParser extends ParserHelper {
 			case SET:
 				match();
 				match(TokenTypes.LPAREN);
+				if (tryMatch(TokenTypes.RPAREN)) {
+					return graph.createSetConstruction();
+				}
 				List<VertexPosition<Expression>> expressions = parseExpressionList(TokenTypes.COMMA);
 				match(TokenTypes.RPAREN);
 				if (!inPredicateMode()) {
@@ -1645,6 +1648,9 @@ public class GreqlParser extends ParserHelper {
 			case BAG:
 				match();
 				match(TokenTypes.LPAREN);
+				if (tryMatch(TokenTypes.RPAREN)) {
+					return graph.createBagConstruction();
+				}
 				expressions = parseExpressionList(TokenTypes.COMMA);
 				match(TokenTypes.RPAREN);
 				if (!inPredicateMode()) {
@@ -1656,6 +1662,9 @@ public class GreqlParser extends ParserHelper {
 			case TUP:
 				match();
 				match(TokenTypes.LPAREN);
+				if (tryMatch(TokenTypes.RPAREN)) {
+					return graph.createTupleConstruction();
+				}
 				expressions = parseExpressionList(TokenTypes.COMMA);
 				match(TokenTypes.RPAREN);
 				if (!inPredicateMode()) {
@@ -1673,6 +1682,9 @@ public class GreqlParser extends ParserHelper {
 	private final MapConstruction parseMapConstruction() {
 		match(TokenTypes.MAP);
 		match(TokenTypes.LPAREN);
+		if (tryMatch(TokenTypes.RPAREN)) {
+			return graph.createMapConstruction();
+		}
 		MapConstruction mapConstr = null;
 		if (!inPredicateMode()) {
 			mapConstr = graph.createMapConstruction();
@@ -1721,6 +1733,9 @@ public class GreqlParser extends ParserHelper {
 	private final ValueConstruction parseListConstruction() {
 		match(TokenTypes.LIST);
 		match(TokenTypes.LPAREN);
+		if (tryMatch(TokenTypes.RPAREN)) {
+			return graph.createListConstruction();
+		}
 		ValueConstruction result = null;
 		int offsetStart = getCurrentOffset();
 		Expression startExpr = parseExpression();
