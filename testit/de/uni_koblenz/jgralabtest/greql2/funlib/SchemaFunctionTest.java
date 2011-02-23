@@ -38,11 +38,22 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralabtest.greql2.GenericTests;
 
 public class SchemaFunctionTest extends GenericTests {
+
+	@Test
+	public void testAttributeNames() throws Exception {
+		Graph currentGraph = this.getTestGraph(TestVersion.CITY_MAP_GRAPH);
+		AttributedElementClass clazz = currentGraph.getSchema()
+				.getAttributedElementClass("junctions.Crossroad");
+		assertQueryEquals("attributeNames(type('junctions.Crossroad'))",
+				clazz.getAttributeList());
+	}
 
 	@Test
 	public void testHasAttribute() throws Exception {
