@@ -36,6 +36,7 @@ package de.uni_koblenz.jgralabtest.greql2.funlib;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -79,6 +80,48 @@ public class SchemaFunctionTest extends GenericTests {
 			result.add(attribute.getName());
 		}
 		return result;
+	}
+
+	@Test
+	public void testAttributes() throws Exception {
+		Graph currentGraph = this.getTestGraph(TestVersion.CITY_MAP_GRAPH);
+		Schema schema = currentGraph.getSchema();
+		testAttributes(schema.getVertexClassesInTopologicalOrder());
+		testAttributes(schema.getEdgeClassesInTopologicalOrder());
+	}
+
+	private void testAttributes(List<? extends AttributedElementClass> classes)
+			throws Exception {
+		for (AttributedElementClass clazz : classes) {
+			testAttributes(clazz);
+		}
+	}
+
+	private void testAttributes(AttributedElementClass clazz) throws Exception {
+		assertQueryEquals("attributes(type('" + clazz.getQualifiedName()
+				+ "'))", getAttributes(clazz.getAttributeList()));
+	}
+
+	private Set<List<String>> getAttributes(Set<Attribute> attributes) {
+		Set<List<String>> result = new HashSet<List<String>>(attributes.size());
+		for (Attribute attribute : attributes) {
+
+			ArrayList<String> tup = new ArrayList<String>();
+			tup.add(attribute.getName());
+			tup.add(attribute.getDomain().getQualifiedName());
+			result.add(tup);
+		}
+		return result;
+	}
+
+	@Test
+	public void testEnumConstant() throws Exception {
+		Graph currentGraph = this.getTestGraph(TestVersion.CITY_MAP_GRAPH);
+		Schema schema = currentGraph.getSchema();
+		for (de.uni_koblenz.jgralab.schema.EnumDomain enumDomain : schema
+				.getEnumDomains()) {
+
+		}
 	}
 
 	@Test
