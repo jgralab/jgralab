@@ -2461,15 +2461,15 @@ public class GreqlParser extends ParserHelper {
 	}
 
 	private final Expression parseNumericLiteral() {
-//		if (lookAhead(0) == TokenTypes.REALLITERAL) {
-//			RealLiteral literal = null;
-//			if (!inPredicateMode()) {
-//				literal = graph.createRealLiteral();
-//				literal.set_realValue(((RealToken) lookAhead).getNumber());
-//			}
-//			match();
-//			return literal;
-//		}
+		if (lookAhead(0) == TokenTypes.REALLITERAL) {
+			RealLiteral literal = null;
+			if (!inPredicateMode()) {
+				literal = graph.createRealLiteral();
+				literal.set_realValue(((RealToken) lookAhead).getNumber());
+			}
+			match();
+			return literal;
+		}
 		if ((lookAhead(0) == TokenTypes.HEXLITERAL)
 				|| (lookAhead(0) == TokenTypes.OCTLITERAL)) {
 			if (((IntegerToken) lookAhead).getNumber().intValue() == ((IntegerToken) lookAhead).getNumber().longValue()) {
