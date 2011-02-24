@@ -52,17 +52,16 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
 public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 
 	public ReversedEdgeCodeGenerator(EdgeClass edgeClass,
-			String schemaPackageName, String implementationName,
-			CodeGeneratorConfiguration config) {
-		super(edgeClass, schemaPackageName, implementationName, config);
+			String schemaPackageName, CodeGeneratorConfiguration config) {
+		super(edgeClass, schemaPackageName, config);
 		rootBlock.setVariable("graphElementClass", "ReversedEdge");
 		rootBlock.setVariable("isImplementationClassOnly", "true");
-		rootBlock.setVariable("className", "Reversed"
-				+ edgeClass.getSimpleName());
-		rootBlock.setVariable("simpleClassName", "Reversed"
-				+ edgeClass.getSimpleName());
-		rootBlock.setVariable("simpleImplClassName", "Reversed"
-				+ edgeClass.getSimpleName() + "Impl");
+		rootBlock.setVariable("className",
+				"Reversed" + edgeClass.getSimpleName());
+		rootBlock.setVariable("simpleClassName",
+				"Reversed" + edgeClass.getSimpleName());
+		rootBlock.setVariable("simpleImplClassName",
+				"Reversed" + edgeClass.getSimpleName() + "Impl");
 		rootBlock.setVariable("normalQualifiedClassName", schemaRootPackageName
 				+ "." + edgeClass.getQualifiedName());
 	}
@@ -118,15 +117,16 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 		code.setVariable("name", a.getName());
 		code.setVariable("type", a.getDomain()
 				.getJavaAttributeImplementationTypeName(schemaRootPackageName));
-		code.setVariable("isOrGet", a.getDomain().getJavaClassName(
-				schemaRootPackageName).equals("Boolean") ? "is" : "get");
+		code.setVariable(
+				"isOrGet",
+				a.getDomain().getJavaClassName(schemaRootPackageName)
+						.equals("Boolean") ? "is" : "get");
 
 		if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()) {
-			code
-					.add(
-							"public #type# #isOrGet#_#name#() {",
-							"\treturn ((#normalQualifiedClassName#)normalEdge).#isOrGet#_#name#();",
-							"}");
+			code.add(
+					"public #type# #isOrGet#_#name#() {",
+					"\treturn ((#normalQualifiedClassName#)normalEdge).#isOrGet#_#name#();",
+					"}");
 		}
 		if (currentCycle.isAbstract()) {
 			code.add("public #type# #isOrGet#_#name#();");
@@ -142,11 +142,10 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 				.getJavaAttributeImplementationTypeName(schemaRootPackageName));
 
 		if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()) {
-			code
-					.add(
-							"public void set_#name#(#type# _#name#) {",
-							"\t((#normalQualifiedClassName#)normalEdge).set_#name#(_#name#);",
-							"}");
+			code.add(
+					"public void set_#name#(#type# _#name#) {",
+					"\t((#normalQualifiedClassName#)normalEdge).set_#name#(_#name#);",
+					"}");
 		}
 		if (currentCycle.isAbstract()) {
 			code.add("public void set_#name#(#type# _#name#);");
@@ -194,8 +193,8 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 				"\treturn ((#ecName#)normalEdge).getNext#ecCamelName#InGraph(#actualParams#);",
 				"}");
 
-		code.setVariable("ecName", schemaRootPackageName + "."
-				+ ec.getQualifiedName());
+		code.setVariable("ecName",
+				schemaRootPackageName + "." + ec.getQualifiedName());
 		code.setVariable("ecCamelName", camelCase(ec.getUniqueName()));
 		code.setVariable("formalParams", (withTypeFlag ? "boolean noSubClasses"
 				: ""));
@@ -219,9 +218,7 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 			code.addNoIndent(createNextEdgeAtVertexMethod(ecl, false, false));
 			code.addNoIndent(createNextEdgeAtVertexMethod(ecl, true, false));
 			if (!ecl.isAbstract()) {
-				code
-						.addNoIndent(createNextEdgeAtVertexMethod(ecl, false,
-								true));
+				code.addNoIndent(createNextEdgeAtVertexMethod(ecl, false, true));
 				code.addNoIndent(createNextEdgeAtVertexMethod(ecl, true, true));
 			}
 		}
@@ -236,8 +233,8 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 				"public #ecName# getNext#ecCamelName#(#formalParams#) {",
 				"\treturn (#ecName#)getNextIncidence(#ecName#.class#actualParams#);",
 				"}");
-		code.setVariable("ecName", schemaRootPackageName + "."
-				+ ec.getQualifiedName());
+		code.setVariable("ecName",
+				schemaRootPackageName + "." + ec.getQualifiedName());
 		code.setVariable("ecCamelName", camelCase(ec.getUniqueName()));
 		code.setVariable("formalParams",
 				(withOrientation ? "EdgeDirection orientation" : "")
@@ -271,13 +268,11 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 			Set<Attribute> attrSet) {
 		CodeList code = new CodeList();
 		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException");
-		code
-				.addNoIndent(new CodeSnippet(
-						true,
-						"public void readAttributeValueFromString(String attributeName, String value) throws GraphIOException {"));
-		code
-				.add(new CodeSnippet(
-						"throw new GraphIOException(\"Can not call readAttributeValuesFromString for reversed Edges.\");"));
+		code.addNoIndent(new CodeSnippet(
+				true,
+				"public void readAttributeValueFromString(String attributeName, String value) throws GraphIOException {"));
+		code.add(new CodeSnippet(
+				"throw new GraphIOException(\"Can not call readAttributeValuesFromString for reversed Edges.\");"));
 		code.addNoIndent(new CodeSnippet("}"));
 		return code;
 	}
@@ -287,13 +282,11 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 			Set<Attribute> attrSet) {
 		CodeList code = new CodeList();
 		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException");
-		code
-				.addNoIndent(new CodeSnippet(
-						true,
-						"public String writeAttributeValueToString(String _attributeName) throws IOException, GraphIOException {"));
-		code
-				.add(new CodeSnippet(
-						"throw new GraphIOException(\"Can not call writeAttributeValueToString for reversed Edges.\");"));
+		code.addNoIndent(new CodeSnippet(
+				true,
+				"public String writeAttributeValueToString(String _attributeName) throws IOException, GraphIOException {"));
+		code.add(new CodeSnippet(
+				"throw new GraphIOException(\"Can not call writeAttributeValueToString for reversed Edges.\");"));
 		code.addNoIndent(new CodeSnippet("}"));
 		return code;
 	}
@@ -302,12 +295,10 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 	protected CodeBlock createReadAttributesMethod(SortedSet<Attribute> attrSet) {
 		CodeList code = new CodeList();
 		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException");
-		code
-				.addNoIndent(new CodeSnippet(true,
-						"public void readAttributeValues(GraphIO io) throws GraphIOException {"));
-		code
-				.add(new CodeSnippet(
-						"throw new GraphIOException(\"Can not call readAttributeValues for reversed Edges.\");"));
+		code.addNoIndent(new CodeSnippet(true,
+				"public void readAttributeValues(GraphIO io) throws GraphIOException {"));
+		code.add(new CodeSnippet(
+				"throw new GraphIOException(\"Can not call readAttributeValues for reversed Edges.\");"));
 		code.addNoIndent(new CodeSnippet("}"));
 		return code;
 	}
@@ -317,13 +308,11 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 		CodeList code = new CodeList();
 		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException",
 				"java.io.IOException");
-		code
-				.addNoIndent(new CodeSnippet(
-						true,
-						"public void writeAttributeValues(GraphIO io) throws GraphIOException, IOException {"));
-		code
-				.add(new CodeSnippet(
-						"throw new GraphIOException(\"Can not call writeAttributeValues for reversed Edges.\");"));
+		code.addNoIndent(new CodeSnippet(
+				true,
+				"public void writeAttributeValues(GraphIO io) throws GraphIOException, IOException {"));
+		code.add(new CodeSnippet(
+				"throw new GraphIOException(\"Can not call writeAttributeValues for reversed Edges.\");"));
 		code.addNoIndent(new CodeSnippet("}"));
 		return code;
 	}
@@ -334,14 +323,12 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 		if (currentCycle.isTransImpl()) {
 			// delegate to attributes()-method in corresponding normalEdge
 			CodeSnippet code = new CodeSnippet();
-			code
-					.add("protected java.util.Set<de.uni_koblenz.jgralab.trans.VersionedDataObject<?>> attributes() {");
+			code.add("protected java.util.Set<de.uni_koblenz.jgralab.trans.VersionedDataObject<?>> attributes() {");
 			code.add("\treturn ((EdgeImpl) normalEdge).attributes();");
 			code.add("}");
 			return code;
 		}
 		return null;
 	}
-
 
 }

@@ -70,8 +70,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	 */
 	protected AttributedElementCodeGenerator(
 			AttributedElementClass attributedElementClass,
-			String schemaRootPackageName, String implementationName,
-			CodeGeneratorConfiguration config) {
+			String schemaRootPackageName, CodeGeneratorConfiguration config) {
 		super(schemaRootPackageName, attributedElementClass.getPackageName(),
 				config);
 		aec = attributedElementClass;
@@ -128,12 +127,8 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 			code.add(createReadAttributesFromStringMethod(aec
 					.getAttributeList()));
 			code.add(createWriteAttributesMethod(aec.getAttributeList()));
-			code
-					.add(createWriteAttributeToStringMethod(aec
-							.getAttributeList()));
-			code
-					.add(createGetVersionedAttributesMethod(aec
-							.getAttributeList()));
+			code.add(createWriteAttributeToStringMethod(aec.getAttributeList()));
+			code.add(createGetVersionedAttributesMethod(aec.getAttributeList()));
 		}
 		if (currentCycle.isAbstract()) {
 			code.add(createGettersAndSetters(aec.getOwnAttributeList()));
@@ -147,19 +142,19 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 
 		code.setVariable("classOrInterface", currentCycle
 				.isStdOrSaveMemOrDbImplOrTransImpl() ? " class" : " interface");
-		code.setVariable("abstract", currentCycle
-				.isStdOrSaveMemOrDbImplOrTransImpl()
-				&& aec.isAbstract() ? " abstract" : "");
-		code.setVariable("impl", currentCycle
-				.isStdOrSaveMemOrDbImplOrTransImpl()
-				&& !aec.isAbstract() ? "Impl" : "");
-		code
-				.add("public#abstract##classOrInterface# #simpleClassName##impl##extends##implements# {");
-		code
-				.setVariable(
-						"extends",
-						currentCycle.isStdOrSaveMemOrDbImplOrTransImpl() ? " extends #baseClassName#"
-								: "");
+		code.setVariable(
+				"abstract",
+				currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()
+						&& aec.isAbstract() ? " abstract" : "");
+		code.setVariable(
+				"impl",
+				currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()
+						&& !aec.isAbstract() ? "Impl" : "");
+		code.add("public#abstract##classOrInterface# #simpleClassName##impl##extends##implements# {");
+		code.setVariable(
+				"extends",
+				currentCycle.isStdOrSaveMemOrDbImplOrTransImpl() ? " extends #baseClassName#"
+						: "");
 
 		StringBuffer buf = new StringBuffer();
 		if (interfaces.size() > 0) {
@@ -250,16 +245,15 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		for (Attribute attr : attrSet) {
 			CodeSnippet s = new CodeSnippet();
 			s.setVariable("name", attr.getName());
-			s.setVariable("isOrGet", attr.getDomain().getJavaClassName(
-					schemaRootPackageName).equals("Boolean") ? "is" : "get");
+			s.setVariable("isOrGet",
+					attr.getDomain().getJavaClassName(schemaRootPackageName)
+							.equals("Boolean") ? "is" : "get");
 			s.setVariable("cName", attr.getName());
-			s
-					.add("if (attributeName.equals(\"#name#\")) return #isOrGet#_#cName#();");
+			s.add("if (attributeName.equals(\"#name#\")) return #isOrGet#_#cName#();");
 			code.add(s);
 		}
-		code
-				.add(new CodeSnippet(
-						"throw new NoSuchAttributeException(\"#qualifiedClassName# doesn't contain an attribute \" + attributeName);"));
+		code.add(new CodeSnippet(
+				"throw new NoSuchAttributeException(\"#qualifiedClassName# doesn't contain an attribute \" + attributeName);"));
 		code.addNoIndent(new CodeSnippet("}"));
 
 		return code;
@@ -280,17 +274,18 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		if (suppressWarningsNeeded) {
 			snip.add("@SuppressWarnings(\"unchecked\")");
 		}
-		snip
-				.add("public void setAttribute(String attributeName, Object data) {");
+		snip.add("public void setAttribute(String attributeName, Object data) {");
 		code.addNoIndent(snip);
 		for (Attribute attr : attrSet) {
 			CodeSnippet s = new CodeSnippet();
 			s.setVariable("name", attr.getName());
 
 			if (attr.getDomain().isComposite()) {
-				s.setVariable("attributeClassName", attr.getDomain()
-						.getJavaAttributeImplementationTypeName(
-								schemaRootPackageName));
+				s.setVariable(
+						"attributeClassName",
+						attr.getDomain()
+								.getJavaAttributeImplementationTypeName(
+										schemaRootPackageName));
 			} else {
 				s.setVariable("attributeClassName", attr.getDomain()
 						.getJavaClassName(schemaRootPackageName));
@@ -303,8 +298,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 			if (isEnumDomain) {
 				s.add("if (attributeName.equals(\"#name#\")) {");
 				s.add("\tif (data instanceof String) {");
-				s
-						.add("\t\tset_#name#(#attributeClassName#.valueOfPermitNull((String) data));");
+				s.add("\t\tset_#name#(#attributeClassName#.valueOfPermitNull((String) data));");
 				s.add("\t} else {");
 				s.add("\t\tset_#name#((#attributeClassName#) data);");
 
@@ -324,9 +318,8 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 			}
 			code.add(s);
 		}
-		code
-				.add(new CodeSnippet(
-						"throw new NoSuchAttributeException(\"#qualifiedClassName# doesn't contain an attribute \" + attributeName);"));
+		code.add(new CodeSnippet(
+				"throw new NoSuchAttributeException(\"#qualifiedClassName# doesn't contain an attribute \" + attributeName);"));
 		code.addNoIndent(new CodeSnippet("}"));
 		return code;
 	}
@@ -353,8 +346,9 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		code.setVariable("name", attr.getName());
 		code.setVariable("type", attr.getDomain()
 				.getJavaAttributeImplementationTypeName(schemaRootPackageName));
-		code.setVariable("isOrGet", attr.getDomain().getJavaClassName(
-				schemaRootPackageName).equals("Boolean") ? "is" : "get");
+		code.setVariable("isOrGet",
+				attr.getDomain().getJavaClassName(schemaRootPackageName)
+						.equals("Boolean") ? "is" : "get");
 
 		switch (currentCycle) {
 		case ABSTRACT:
@@ -368,15 +362,16 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 			break;
 		case TRANSIMPL:
 			code.setVariable("initValue", attr.getDomain().getInitialValue());
-			code.setVariable("ttype", attr.getDomain()
-					.getTransactionJavaAttributeImplementationTypeName(
-							schemaRootPackageName));
+			code.setVariable(
+					"ttype",
+					attr.getDomain()
+							.getTransactionJavaAttributeImplementationTypeName(
+									schemaRootPackageName));
 
 			code.add("public #type# #isOrGet#_#name#() {");
 			addCheckValidityCode(code);
-			code
-					.add("\tif (_#name# == null)", "\t\treturn #initValue#;",
-							"\t#ttype# value = _#name#.getValidValue(#theGraph#.getCurrentTransaction());");
+			code.add("\tif (_#name# == null)", "\t\treturn #initValue#;",
+					"\t#ttype# value = _#name#.getValidValue(#theGraph#.getCurrentTransaction());");
 
 			if (attr.getDomain().isComposite()) {
 				code.add("\tif(_#name# != null && value != null)");
@@ -389,10 +384,9 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	}
 
 	protected void addCheckValidityCode(CodeSnippet code) {
-		code
-				.add(
-						"\tif (!isValid())",
-						"\t\tthrow new #jgPackage#.GraphException(\"Cannot access attribute '#name#', because \" + this + \" isn't valid in current transaction.\");");
+		code.add(
+				"\tif (!isValid())",
+				"\t\tthrow new #jgPackage#.GraphException(\"Cannot access attribute '#name#', because \" + this + \" isn't valid in current transaction.\");");
 	}
 
 	protected CodeBlock createSetter(Attribute attr) {
@@ -423,11 +417,13 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		case TRANSIMPL:
 			Domain domain = attr.getDomain();
 			// setter for transaction support
-			code.setVariable("ttype", attr.getDomain()
-					.getTransactionJavaAttributeImplementationTypeName(
-							schemaRootPackageName));
-			code.setVariable("vclass", attr.getDomain().getVersionedClass(
-					schemaRootPackageName));
+			code.setVariable(
+					"ttype",
+					attr.getDomain()
+							.getTransactionJavaAttributeImplementationTypeName(
+									schemaRootPackageName));
+			code.setVariable("vclass",
+					attr.getDomain().getVersionedClass(schemaRootPackageName));
 
 			if (!(domain instanceof RecordDomain)) {
 				code.setVariable("initLoading",
@@ -446,14 +442,10 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 				addImports("#jgPackage#.GraphException");
 				code.setVariable("tclassname", attr.getDomain()
 						.getTransactionJavaClassName(schemaRootPackageName));
-				code
-						.add("\tif(_#name# != null && !(_#name# instanceof #jgTransPackage#.JGraLabTransactionCloneable))");
-				code
-						.add("\t\tthrow new GraphException(\"The given parameter of type #dname# doesn't support transactions.\");");
-				code
-						.add("\tif(_#name# != null && ((#jgTransPackage#.JGraLabTransactionCloneable)_#name#).getGraph() != #theGraph#)");
-				code
-						.add("\t\tthrow new GraphException(\"The given parameter of type #dname# belongs to another graph.\");");
+				code.add("\tif(_#name# != null && !(_#name# instanceof #jgTransPackage#.JGraLabTransactionCloneable))");
+				code.add("\t\tthrow new GraphException(\"The given parameter of type #dname# doesn't support transactions.\");");
+				code.add("\tif(_#name# != null && ((#jgTransPackage#.JGraLabTransactionCloneable)_#name#).getGraph() != #theGraph#)");
+				code.add("\t\tthrow new GraphException(\"The given parameter of type #dname# belongs to another graph.\");");
 				code.setVariable("initLoading",
 						"new #vclass#(this, (#ttype#) _#name#, \"#name#\");");
 			}
@@ -466,14 +458,12 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 
 			if (domain.isComposite()) {
 				code.add("\tif(_#name# != null)");
-				code
-						.add("\t((JGraLabTransactionCloneable)_#name#).setName(this + \":#name#\");");
+				code.add("\t((JGraLabTransactionCloneable)_#name#).setName(this + \":#name#\");");
 			}
-			code
-					.add(
-							"\tthis._#name#.setValidValue((#ttype#) _#name#, #theGraph#.getCurrentTransaction());",
-							"\tattributeChanged(this._#name#);",
-							"\tgraphModified();", "}");
+			code.add(
+					"\tthis._#name#.setValidValue((#ttype#) _#name#, #theGraph#.getCurrentTransaction());",
+					"\tattributeChanged(this._#name#);", "\tgraphModified();",
+					"}");
 			break;
 		}
 		return code;
@@ -484,13 +474,14 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		code.setVariable("name", attr.getName());
 		if (currentCycle.isStdImpl() || currentCycle.isSaveMemImpl()
 				|| currentCycle.isDbImpl()) {
-			code.setVariable("type", attr.getDomain()
-					.getJavaAttributeImplementationTypeName(
+			code.setVariable(
+					"type",
+					attr.getDomain().getJavaAttributeImplementationTypeName(
 							schemaRootPackageName));
 		}
 		if (currentCycle.isTransImpl()) {
-			code.setVariable("type", attr.getDomain().getVersionedClass(
-					schemaRootPackageName));
+			code.setVariable("type",
+					attr.getDomain().getVersionedClass(schemaRootPackageName));
 		}
 		return code;
 	}
@@ -500,20 +491,18 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		CodeList code = new CodeList();
 		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException",
 				"#jgPackage#.NoSuchAttributeException");
-		code
-				.addNoIndent(new CodeSnippet(
-						true,
-						"public void readAttributeValueFromString(String attributeName, String value) throws GraphIOException {"));
+		code.addNoIndent(new CodeSnippet(
+				true,
+				"public void readAttributeValueFromString(String attributeName, String value) throws GraphIOException {"));
 
 		if (attrSet != null) {
 			for (Attribute attribute : attrSet) {
 				CodeList a = new CodeList();
 				a.setVariable("variableName", attribute.getName());
 				a.setVariable("setterName", "set_" + attribute.getName());
-				a
-						.addNoIndent(new CodeSnippet(
-								"if (attributeName.equals(\"#variableName#\")) {",
-								"\tGraphIO io = GraphIO.createStringReader(value, getSchema());"));
+				a.addNoIndent(new CodeSnippet(
+						"if (attributeName.equals(\"#variableName#\")) {",
+						"\tGraphIO io = GraphIO.createStringReader(value, getSchema());"));
 				if (currentCycle.isTransImpl()) {
 					CodeSnippet readBlock = new CodeSnippet();
 					readBlock.setVariable("variableType", attribute.getDomain()
@@ -537,9 +526,8 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 				code.add(a);
 			}
 		}
-		code
-				.add(new CodeSnippet(
-						"throw new NoSuchAttributeException(\"#qualifiedClassName# doesn't contain an attribute \" + attributeName);"));
+		code.add(new CodeSnippet(
+				"throw new NoSuchAttributeException(\"#qualifiedClassName# doesn't contain an attribute \" + attributeName);"));
 		code.addNoIndent(new CodeSnippet("}"));
 		return code;
 	}
@@ -554,19 +542,17 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		CodeList code = new CodeList();
 		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException",
 				"#jgPackage#.NoSuchAttributeException");
-		code
-				.addNoIndent(new CodeSnippet(
-						true,
-						"public String writeAttributeValueToString(String attributeName) throws IOException, GraphIOException {"));
+		code.addNoIndent(new CodeSnippet(
+				true,
+				"public String writeAttributeValueToString(String attributeName) throws IOException, GraphIOException {"));
 		if (attrSet != null) {
 			for (Attribute attribute : attrSet) {
 				CodeList a = new CodeList();
 				a.setVariable("variableName", attribute.getName());
 				a.setVariable("setterName", "set_" + attribute.getName());
-				a
-						.addNoIndent(new CodeSnippet(
-								"if (attributeName.equals(\"#variableName#\")) {",
-								"\tGraphIO io = GraphIO.createStringWriter(getSchema());"));
+				a.addNoIndent(new CodeSnippet(
+						"if (attributeName.equals(\"#variableName#\")) {",
+						"\tGraphIO io = GraphIO.createStringWriter(getSchema());"));
 				if (currentCycle.isTransImpl()) {
 					a.add(attribute.getDomain().getTransactionWriteMethod(
 							schemaRootPackageName, "_" + attribute.getName(),
@@ -583,9 +569,8 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 				code.add(a);
 			}
 		}
-		code
-				.add(new CodeSnippet(
-						"throw new NoSuchAttributeException(\"#qualifiedClassName# doesn't contain an attribute \" + attributeName);"));
+		code.add(new CodeSnippet(
+				"throw new NoSuchAttributeException(\"#qualifiedClassName# doesn't contain an attribute \" + attributeName);"));
 		code.addNoIndent(new CodeSnippet("}"));
 		return code;
 	}
@@ -596,7 +581,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException");
 
 		code.addNoIndent(new CodeSnippet(true,
-						"public void readAttributeValues(GraphIO io) throws GraphIOException {"));
+				"public void readAttributeValues(GraphIO io) throws GraphIOException {"));
 		if (attrSet != null) {
 			for (Attribute attribute : attrSet) {
 				CodeSnippet snippet = new CodeSnippet();
@@ -627,10 +612,9 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException",
 				"java.io.IOException");
 
-		code
-				.addNoIndent(new CodeSnippet(
-						true,
-						"public void writeAttributeValues(GraphIO io) throws GraphIOException, IOException {"));
+		code.addNoIndent(new CodeSnippet(
+				true,
+				"public void writeAttributeValues(GraphIO io) throws GraphIOException, IOException {"));
 		if ((attrSet != null) && !attrSet.isEmpty()) {
 			code.add(new CodeSnippet("io.space();"));
 			for (Attribute attribute : attrSet) {

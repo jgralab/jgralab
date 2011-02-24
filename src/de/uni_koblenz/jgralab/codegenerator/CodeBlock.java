@@ -143,6 +143,9 @@ public abstract class CodeBlock {
 	 *            its value
 	 */
 	public void setVariable(String name, String value) {
+		assert name != null && name.trim().length() > 0
+				&& name.equals(name.trim());
+		assert value != null;
 		variables.put(name, value);
 	}
 

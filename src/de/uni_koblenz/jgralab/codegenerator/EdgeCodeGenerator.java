@@ -50,8 +50,8 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
 public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 
 	public EdgeCodeGenerator(EdgeClass edgeClass, String schemaPackageName,
-			String implementationName, CodeGeneratorConfiguration config) {
-		super(edgeClass, schemaPackageName, implementationName, config);
+			CodeGeneratorConfiguration config) {
+		super(edgeClass, schemaPackageName, config);
 		rootBlock.setVariable("graphElementClass", "Edge");
 	}
 
@@ -82,11 +82,10 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 	protected CodeBlock createConstructor() {
 		CodeList code = new CodeList();
 		addImports("#jgPackage#.Vertex");
-		code
-				.addNoIndent(new CodeSnippet(
-						true,
-						"public #simpleClassName#Impl(int id, #jgPackage#.Graph g, Vertex alpha, Vertex omega) {",
-						"\tsuper(id, g, alpha, omega);"));
+		code.addNoIndent(new CodeSnippet(
+				true,
+				"public #simpleClassName#Impl(int id, #jgPackage#.Graph g, Vertex alpha, Vertex omega) {",
+				"\tsuper(id, g, alpha, omega);"));
 		if (hasDefaultAttributeValues()) {
 			code.addNoIndent(new CodeSnippet(
 					"\tinitializeAttributesWithDefaultValues();"));
@@ -168,9 +167,7 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 				code.addNoIndent(createNextEdgeInGraphMethod(ecl, false));
 				if (config.hasMethodsForSubclassesSupport()) {
 					if (!ecl.isAbstract()) {
-						code
-								.addNoIndent(createNextEdgeInGraphMethod(ecl,
-										true));
+						code.addNoIndent(createNextEdgeInGraphMethod(ecl, true));
 					}
 				}
 			}
@@ -181,27 +178,27 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 	private CodeBlock createNextEdgeInGraphMethod(EdgeClass ec,
 			boolean withTypeFlag) {
 		CodeSnippet code = new CodeSnippet(true);
-		code.setVariable("ecQualifiedName", schemaRootPackageName + "."
-				+ ec.getQualifiedName());
+		code.setVariable("ecQualifiedName",
+				schemaRootPackageName + "." + ec.getQualifiedName());
 		code.setVariable("ecCamelName", camelCase(ec.getUniqueName()));
 		code.setVariable("formalParams", (withTypeFlag ? "boolean noSubClasses"
 				: ""));
-		code.setVariable("actualParams", (withTypeFlag ? ", noSubClasses"
-						: ""));
+		code.setVariable("actualParams", (withTypeFlag ? ", noSubClasses" : ""));
 
 		if (currentCycle.isAbstract()) {
 			code.add("/**",
-							" * @return the next #ecQualifiedName# edge in the global edge sequence");
+					" * @return the next #ecQualifiedName# edge in the global edge sequence");
 			if (withTypeFlag) {
 				code.add(" * @param noSubClasses if set to <code>true</code>, no subclasses of #ecQualifiedName# are accepted");
 			}
 			code.add(" */",
-							"public #ecQualifiedName# getNext#ecCamelName#InGraph(#formalParams#);");
+					"public #ecQualifiedName# getNext#ecCamelName#InGraph(#formalParams#);");
 		}
 		if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()) {
-			code.add("public #ecQualifiedName# getNext#ecCamelName#InGraph(#formalParams#) {",
-					 "\treturn (#ecQualifiedName#)getNextEdge(#ecQualifiedName#.class#actualParams#);",
-					 "}");
+			code.add(
+					"public #ecQualifiedName# getNext#ecCamelName#InGraph(#formalParams#) {",
+					"\treturn (#ecQualifiedName#)getNextEdge(#ecQualifiedName#.class#actualParams#);",
+					"}");
 		}
 		return code;
 	}
@@ -220,10 +217,8 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 				}
 				addImports("#jgPackage#.EdgeDirection");
 				EdgeClass ecl = (EdgeClass) ec;
-				code.addNoIndent(createNextEdgeAtVertexMethod(ecl, false,
-								false));
-				code.addNoIndent(createNextEdgeAtVertexMethod(ecl, true,
-								false));
+				code.addNoIndent(createNextEdgeAtVertexMethod(ecl, false, false));
+				code.addNoIndent(createNextEdgeAtVertexMethod(ecl, true, false));
 				if (config.hasMethodsForSubclassesSupport()) {
 					if (!ecl.isAbstract()) {
 						code.addNoIndent(createNextEdgeAtVertexMethod(ecl,
@@ -241,8 +236,8 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 			boolean withOrientation, boolean withTypeFlag) {
 
 		CodeSnippet code = new CodeSnippet(true);
-		code.setVariable("ecQualifiedName", schemaRootPackageName + "."
-				+ ec.getQualifiedName());
+		code.setVariable("ecQualifiedName",
+				schemaRootPackageName + "." + ec.getQualifiedName());
 		code.setVariable("ecCamelName", camelCase(ec.getUniqueName()));
 		code.setVariable("formalParams",
 				(withOrientation ? "EdgeDirection orientation" : "")
@@ -254,27 +249,23 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 						+ (withOrientation && withTypeFlag ? ", " : "")
 						+ (withTypeFlag ? "noSubClasses" : ""));
 		if (currentCycle.isAbstract()) {
-			code
-					.add("/**",
-							" * @return the next edge of class #ecQualifiedName# at the \"this\" vertex");
+			code.add("/**",
+					" * @return the next edge of class #ecQualifiedName# at the \"this\" vertex");
 
 			if (withOrientation) {
 				code.add(" * @param orientation the orientation of the edge");
 			}
 			if (withTypeFlag) {
-				code
-						.add(" * @param noSubClasses if set to <code>true</code>, no subclasses of #ecQualifiedName# are accepted");
+				code.add(" * @param noSubClasses if set to <code>true</code>, no subclasses of #ecQualifiedName# are accepted");
 			}
-			code
-					.add(" */",
-							"public #ecQualifiedName# getNext#ecCamelName#(#formalParams#);");
+			code.add(" */",
+					"public #ecQualifiedName# getNext#ecCamelName#(#formalParams#);");
 		}
 		if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()) {
-			code
-					.add(
-							"public #ecQualifiedName# getNext#ecCamelName#(#formalParams#) {",
-							"\treturn (#ecQualifiedName#)getNextIncidence(#ecQualifiedName#.class#actualParams#);",
-							"}");
+			code.add(
+					"public #ecQualifiedName# getNext#ecCamelName#(#formalParams#) {",
+					"\treturn (#ecQualifiedName#)getNextIncidence(#ecQualifiedName#.class#actualParams#);",
+					"}");
 		}
 		return code;
 	}
@@ -292,11 +283,10 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 			val = "SHARED";
 		}
 		code.setVariable("semantics", val);
-		code
-				.add(
-						"public de.uni_koblenz.jgralab.schema.AggregationKind getSemantics() {",
-						"\treturn de.uni_koblenz.jgralab.schema.AggregationKind.#semantics#;",
-						"}");
+		code.add(
+				"public de.uni_koblenz.jgralab.schema.AggregationKind getSemantics() {",
+				"\treturn de.uni_koblenz.jgralab.schema.AggregationKind.#semantics#;",
+				"}");
 		return code;
 	}
 
@@ -305,12 +295,11 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 		EdgeClass ec = (EdgeClass) aec;
 		code.setVariable("semantics", ec.getFrom().getAggregationKind()
 				.toString());
-		code
-				.add(
-						"@Override",
-						"public de.uni_koblenz.jgralab.schema.AggregationKind getAlphaSemantics() {",
-						"\treturn de.uni_koblenz.jgralab.schema.AggregationKind.#semantics#;",
-						"}");
+		code.add(
+				"@Override",
+				"public de.uni_koblenz.jgralab.schema.AggregationKind getAlphaSemantics() {",
+				"\treturn de.uni_koblenz.jgralab.schema.AggregationKind.#semantics#;",
+				"}");
 		return code;
 	}
 
@@ -319,12 +308,11 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 		EdgeClass ec = (EdgeClass) aec;
 		code.setVariable("semantics", ec.getTo().getAggregationKind()
 				.toString());
-		code
-				.add(
-						"@Override",
-						"public de.uni_koblenz.jgralab.schema.AggregationKind getOmegaSemantics() {",
-						"\treturn de.uni_koblenz.jgralab.schema.AggregationKind.#semantics#;",
-						"}");
+		code.add(
+				"@Override",
+				"public de.uni_koblenz.jgralab.schema.AggregationKind getOmegaSemantics() {",
+				"\treturn de.uni_koblenz.jgralab.schema.AggregationKind.#semantics#;",
+				"}");
 		return code;
 	}
 }
