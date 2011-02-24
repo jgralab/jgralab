@@ -36,7 +36,7 @@ Schema de.uni_koblenz.jgralabtest.schemas.citymap.CityMapSchema;
 GraphClass CityMap;
 
 abstract VertexClass Junction { name: String };
-VertexClass Intersection: Junction { isRoundabout: Boolean };
+VertexClass Intersection: Junction { roundabout: Boolean };
 VertexClass CarPark: Junction { capacity:Integer };
 VertexClass ParkingGarage: CarPark;
 

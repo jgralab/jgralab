@@ -53,8 +53,6 @@ public class IntDomainTest extends NativeDomainTest {
 		expectedDirectoryName1 = "Integer";
 		expectedDirectoryName2 = "Integer";
 		expectedSimpleName = "Integer";
-		expectedUniqueName1 = "Integer";
-		expectedUniqueName2 = "Integer";
 		domain1 = schema1.getDomain("Integer");
 		domain2 = schema2.getDomain("Integer");
 		otherDomain1 = schema1.getDomain("Boolean");

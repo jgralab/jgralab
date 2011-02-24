@@ -58,8 +58,6 @@ public class ListDomainTest extends CollectionDomainTest {
 		expectedDirectoryName1 = "List<Integer>";
 		expectedDirectoryName2 = "List<Integer>";
 		expectedSimpleName = "List<Integer>";
-		expectedUniqueName1 = "List<Integer>";
-		expectedUniqueName2 = "List<Integer>";
 		domain1 = schema1.createListDomain(schema1.getDomain("Integer"));
 		domain2 = schema2.createListDomain(schema2.getDomain("Integer"));
 		otherDomain1 = schema1.getDomain("Integer");

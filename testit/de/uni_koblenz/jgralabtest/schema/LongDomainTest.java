@@ -53,8 +53,6 @@ public class LongDomainTest extends NativeDomainTest {
 		expectedDirectoryName1 = "Long";
 		expectedDirectoryName2 = "Long";
 		expectedSimpleName = "Long";
-		expectedUniqueName1 = "Long";
-		expectedUniqueName2 = "Long";
 		domain1 = schema1.getDomain("Long");
 		domain2 = schema2.getDomain("Long");
 		otherDomain1 = schema1.getDomain("Boolean");

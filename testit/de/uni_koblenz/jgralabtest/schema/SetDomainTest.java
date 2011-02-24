@@ -58,8 +58,6 @@ public class SetDomainTest extends CollectionDomainTest {
 		expectedDirectoryName1 = "Set<Integer>";
 		expectedDirectoryName2 = "Set<Integer>";
 		expectedSimpleName = "Set<Integer>";
-		expectedUniqueName1 = "Set<Integer>";
-		expectedUniqueName2 = "Set<Integer>";
 		domain1 = schema1.createSetDomain(schema1.getDomain("Integer"));
 		domain2 = schema2.createSetDomain(schema2.getDomain("Integer"));
 		otherDomain1 = schema1.getDomain("Integer");

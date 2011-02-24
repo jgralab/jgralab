@@ -53,8 +53,6 @@ public class DoubleDomainTest extends NativeDomainTest {
 		expectedDirectoryName1 = "Double";
 		expectedDirectoryName2 = "Double";
 		expectedSimpleName = "Double";
-		expectedUniqueName1 = "Double";
-		expectedUniqueName2 = "Double";
 		domain1 = schema1.getDomain("Double");
 		domain2 = schema2.getDomain("Double");
 		otherDomain1 = schema1.getDomain("Integer");

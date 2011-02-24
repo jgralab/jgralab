@@ -121,8 +121,6 @@ public abstract class DomainTest {
 	protected String expectedPathName1;
 	protected String expectedPathName2;
 	protected String expectedSimpleName;
-	protected String expectedUniqueName1;
-	protected String expectedUniqueName2;
 
 	public void init() {
 		schema1 = new SchemaImpl(schema1Name, schema1Package);
@@ -158,17 +156,17 @@ public abstract class DomainTest {
 	@Test
 	public void testGetJavaAttributeImplementationTypeName() {
 		// tests if the correct javaAttributeImplementationTypeName is returned
-		assertEquals(expectedJavaAttributeImplementationTypeName, domain1
-				.getJavaAttributeImplementationTypeName(schema1Package));
-		assertEquals(expectedJavaAttributeImplementationTypeName, domain1
-				.getJavaAttributeImplementationTypeName("Hugo"));
+		assertEquals(expectedJavaAttributeImplementationTypeName,
+				domain1.getJavaAttributeImplementationTypeName(schema1Package));
+		assertEquals(expectedJavaAttributeImplementationTypeName,
+				domain1.getJavaAttributeImplementationTypeName("Hugo"));
 	}
 
 	@Test
 	public void testGetJavaClassName() {
 		// tests if the correct javaClassName is returned
-		assertEquals(expectedJavaClassName, domain1
-				.getJavaClassName(schema1Package));
+		assertEquals(expectedJavaClassName,
+				domain1.getJavaClassName(schema1Package));
 	}
 
 	@Test
@@ -181,8 +179,8 @@ public abstract class DomainTest {
 	@Test
 	public void testTGTypeName() {
 		// tests if the correct tgTypeName is returned
-		assertEquals(expectedTgTypeName, domain1.getTGTypeName(domain1
-				.getPackage()));
+		assertEquals(expectedTgTypeName,
+				domain1.getTGTypeName(domain1.getPackage()));
 	}
 
 	@Test
@@ -227,13 +225,6 @@ public abstract class DomainTest {
 		// tests if the correct simpleName is returned
 		assertEquals(expectedSimpleName, domain1.getSimpleName());
 		assertEquals(expectedSimpleName, domain2.getSimpleName());
-	}
-
-	@Test
-	public void testGetUniqueName() {
-		// tests if the correct uniqueName is returned
-		assertEquals(expectedUniqueName1, domain1.getUniqueName());
-		assertEquals(expectedUniqueName2, domain2.getUniqueName());
 	}
 
 	@Test

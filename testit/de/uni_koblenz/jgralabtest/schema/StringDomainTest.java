@@ -53,8 +53,6 @@ public class StringDomainTest extends NativeDomainTest {
 		expectedDirectoryName1 = "String";
 		expectedDirectoryName2 = "String";
 		expectedSimpleName = "String";
-		expectedUniqueName1 = "String";
-		expectedUniqueName2 = "String";
 		domain1 = schema1.getDomain("String");
 		domain2 = schema2.getDomain("String");
 		otherDomain1 = schema1.getDomain("Boolean");
