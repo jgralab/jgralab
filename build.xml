@@ -35,7 +35,7 @@
 <project name="jgralab" basedir="." default="build">
 
 	<!-- Change version for new release, it will automatically be added to the manifest -->
-	<property name="jgralab_version" value="Dimetrodon" />
+	<property name="jgralab_version" value="Efraasia" />
 
 	<!-- override default properties -->
 	<property name="projectname" value="jgralab" />
@@ -77,7 +77,7 @@
 	<!-- set project specific properties -->
 
 	<property name="greql2.schemafile" value="${src.dir}/de/uni_koblenz/jgralab/greql2/greql2Schema.tg" />
-	<property name="gruml.schemafile" value="${src.dir}/de/uni_koblenz/jgralab/utilities/tg2schemagraph/GrumlSchema.tg" />
+	<property name="gruml.schemafile" value="${src.dir}/de/uni_koblenz/jgralab/schema/GrumlSchema.tg" />
 
 	<!-- the directory location for the testschemas -->
 	<property name="testschemas.dir" value="${testcases.dir}/testschemas" />
