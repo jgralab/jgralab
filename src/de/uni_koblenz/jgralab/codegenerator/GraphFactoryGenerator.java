@@ -52,7 +52,7 @@ public class GraphFactoryGenerator extends CodeGenerator {
 	private final Schema schema;
 
 	public GraphFactoryGenerator(Schema schema, String schemaPackageName,
-			String implementationName, CodeGeneratorConfiguration config) {
+			CodeGeneratorConfiguration config) {
 		super(schemaPackageName, "", config);
 		this.schema = schema;
 		rootBlock.setVariable("className", schema.getName() + "Factory");
@@ -119,8 +119,8 @@ public class GraphFactoryGenerator extends CodeGenerator {
 		}
 
 		CodeSnippet code = new CodeSnippet(true);
-		code.setVariable("graphName", schemaRootPackageName + "."
-				+ graphClass.getQualifiedName());
+		code.setVariable("graphName",
+				schemaRootPackageName + "." + graphClass.getQualifiedName());
 		code.setVariable("graphImplName", schemaRootPackageName + ".impl.std."
 				+ graphClass.getQualifiedName());
 		code.setVariable("graphTransactionImplName", schemaRootPackageName
@@ -133,20 +133,16 @@ public class GraphFactoryGenerator extends CodeGenerator {
 		if (!graphClass.isAbstract()) {
 			code.add("/* code for graph #graphName# */");
 			if (config.hasStandardSupport()) {
-				code
-						.add("setGraphImplementationClass(#graphName#.class, #graphImplName#Impl.class);");
+				code.add("setGraphImplementationClass(#graphName#.class, #graphImplName#Impl.class);");
 			}
 			if (config.hasTransactionSupport()) {
-				code
-						.add("setGraphTransactionImplementationClass(#graphName#.class, #graphTransactionImplName#Impl.class);");
+				code.add("setGraphTransactionImplementationClass(#graphName#.class, #graphTransactionImplName#Impl.class);");
 			}
 			if (config.hasDatabaseSupport()) {
-				code
-						.add("setGraphDatabaseImplementationClass(#graphName#.class, #graphDatabaseImplName#Impl.class);");
+				code.add("setGraphDatabaseImplementationClass(#graphName#.class, #graphDatabaseImplName#Impl.class);");
 			}
 			if (config.hasSavememSupport()) {
-				code
-						.add("setGraphSavememImplementationClass(#graphName#.class, #graphSaveMemImplName#Impl.class);");
+				code.add("setGraphSavememImplementationClass(#graphName#.class, #graphSaveMemImplName#Impl.class);");
 			}
 		}
 		return code;
@@ -171,20 +167,16 @@ public class GraphFactoryGenerator extends CodeGenerator {
 
 		if (!vertexClass.isAbstract()) {
 			if (config.hasStandardSupport()) {
-				code
-						.add("setVertexImplementationClass(#vertexName#.class, #vertexImplName#Impl.class);");
+				code.add("setVertexImplementationClass(#vertexName#.class, #vertexImplName#Impl.class);");
 			}
 			if (config.hasTransactionSupport()) {
-				code
-						.add("setVertexTransactionImplementationClass(#vertexName#.class, #vertexTransactionImplName#Impl.class);");
+				code.add("setVertexTransactionImplementationClass(#vertexName#.class, #vertexTransactionImplName#Impl.class);");
 			}
 			if (config.hasDatabaseSupport()) {
-				code
-						.add("setVertexDatabaseImplementationClass(#vertexName#.class, #vertexDatabaseImplName#Impl.class);");
+				code.add("setVertexDatabaseImplementationClass(#vertexName#.class, #vertexDatabaseImplName#Impl.class);");
 			}
 			if (config.hasSavememSupport()) {
-				code
-						.add("setVertexSavememImplementationClass(#vertexName#.class, #vertexSaveMemImplName#Impl.class);");
+				code.add("setVertexSavememImplementationClass(#vertexName#.class, #vertexSaveMemImplName#Impl.class);");
 			}
 		}
 		return code;
@@ -203,24 +195,21 @@ public class GraphFactoryGenerator extends CodeGenerator {
 				+ ".impl.savemem." + recordDomain.getQualifiedName());
 
 		if (config.hasStandardSupport()) {
-			code
-					.add("setRecordImplementationClass(#recordName#.class, #recordImplName#Impl.class);");
+			code.add("setRecordImplementationClass(#recordName#.class, #recordImplName#Impl.class);");
 		}
 		if (config.hasTransactionSupport()) {
-			code
-					.add("setRecordTransactionImplementationClass(#recordName#.class, #recordTransactionImplName#Impl.class);");
+			code.add("setRecordTransactionImplementationClass(#recordName#.class, #recordTransactionImplName#Impl.class);");
 		}
 		if (config.hasSavememSupport()) {
-			code
-					.add("setRecordSavememImplementationClass(#recordName#.class, #recordSaveMemImplName#Impl.class);");
+			code.add("setRecordSavememImplementationClass(#recordName#.class, #recordSaveMemImplName#Impl.class);");
 		}
 		return code;
 	}
 
 	protected CodeBlock createFillTableForEdge(EdgeClass edgeClass) {
 		CodeSnippet code = new CodeSnippet(true);
-		code.setVariable("edgeName", schemaRootPackageName + "."
-				+ edgeClass.getQualifiedName());
+		code.setVariable("edgeName",
+				schemaRootPackageName + "." + edgeClass.getQualifiedName());
 		code.setVariable("edgeImplName", schemaRootPackageName + ".impl.std."
 				+ edgeClass.getQualifiedName());
 		code.setVariable("edgeTransactionImplName", schemaRootPackageName
@@ -232,20 +221,16 @@ public class GraphFactoryGenerator extends CodeGenerator {
 
 		if (!edgeClass.isAbstract()) {
 			if (config.hasStandardSupport()) {
-				code
-						.add("setEdgeImplementationClass(#edgeName#.class, #edgeImplName#Impl.class);");
+				code.add("setEdgeImplementationClass(#edgeName#.class, #edgeImplName#Impl.class);");
 			}
 			if (config.hasTransactionSupport()) {
-				code
-						.add("setEdgeTransactionImplementationClass(#edgeName#.class, #edgeTransactionImplName#Impl.class);");
+				code.add("setEdgeTransactionImplementationClass(#edgeName#.class, #edgeTransactionImplName#Impl.class);");
 			}
 			if (config.hasDatabaseSupport()) {
-				code
-						.add("setEdgeDatabaseImplementationClass(#edgeName#.class, #edgeDatabaseImplName#Impl.class);");
+				code.add("setEdgeDatabaseImplementationClass(#edgeName#.class, #edgeDatabaseImplName#Impl.class);");
 			}
 			if (config.hasSavememSupport()) {
-				code
-						.add("setEdgeSavememImplementationClass(#edgeName#.class, #edgeSaveMemImplName#Impl.class);");
+				code.add("setEdgeSavememImplementationClass(#edgeName#.class, #edgeSaveMemImplName#Impl.class);");
 			}
 		}
 		return code;

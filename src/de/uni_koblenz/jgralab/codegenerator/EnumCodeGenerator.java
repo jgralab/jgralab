@@ -51,8 +51,7 @@ public class EnumCodeGenerator extends CodeGenerator {
 	 * Creates a new EnumCodeGenerator which creates code for the given
 	 * enumDomain object
 	 */
-	public EnumCodeGenerator(EnumDomain enumDomain, String schemaPackageName,
-			String implementationName) {
+	public EnumCodeGenerator(EnumDomain enumDomain, String schemaPackageName) {
 		super(schemaPackageName, enumDomain.getPackageName(),
 				new CodeGeneratorConfiguration());
 		rootBlock.setVariable("simpleClassName", enumDomain.getSimpleName());
@@ -77,8 +76,7 @@ public class EnumCodeGenerator extends CodeGenerator {
 
 			CodeSnippet valueOfCode = new CodeSnippet(true);
 			valueOfCode
-					.add(
-							"public static #simpleClassName# valueOfPermitNull(String val) {",
+					.add("public static #simpleClassName# valueOfPermitNull(String val) {",
 							"\tif (val.equals(de.uni_koblenz.jgralab.GraphIO.NULL_LITERAL)) {",
 							"\t\treturn null;", "\t}",
 							"\treturn valueOf(val);", "}");

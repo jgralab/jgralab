@@ -453,7 +453,7 @@ public abstract class NamedElementImpl implements NamedElement {
 	}
 
 	@Override
-	public final String getUniqueName() {
+	public String getUniqueName() {
 		return uniqueName;
 	}
 

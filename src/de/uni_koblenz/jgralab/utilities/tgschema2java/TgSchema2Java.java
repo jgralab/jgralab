@@ -615,7 +615,7 @@ public class TgSchema2Java {
 				throw new IllegalArgumentException(
 						"Illegal value for implementation mode: "
 								+ v
-								+ "\nOnly \"transaction\",\"standard\" and \"savemem\" are supported.");
+								+ "\nOnly \"transaction\",\"standard\", \"savemem\", and \"database\" are supported.");
 			}
 		}
 	}
