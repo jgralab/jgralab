@@ -424,8 +424,6 @@ public interface Schema extends Comparable<Schema> {
 	public Method getVertexCreateMethod(String vertexClassQName,
 			ImplementationType implementationType);
 
-	public boolean isSimpleNameUnique(String sn);
-
 	/**
 	 * Checks if the given name is a valid enumeration constant in this Schema.
 	 * 

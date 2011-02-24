@@ -40,6 +40,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.BasicDomain;
 import de.uni_koblenz.jgralab.schema.CollectionDomain;
 import de.uni_koblenz.jgralab.schema.GraphClass;
@@ -369,7 +370,9 @@ public abstract class NamedElementImpl implements NamedElement {
 		 * If the unique name is in use, then addToKnownElements() will change
 		 * it.
 		 */
-		uniqueName = simpleName;
+		if (this instanceof AttributedElementClass) {
+			uniqueName = simpleName;
+		}
 		((SchemaImpl) schema).addNamedElement(this);
 		comments = new ArrayList<String>();
 	}

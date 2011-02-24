@@ -49,8 +49,8 @@ import de.uni_koblenz.jgralab.schema.CompositeDomain;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.ListDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
-import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
+import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.exception.InvalidNameException;
 import de.uni_koblenz.jgralab.schema.exception.NoSuchRecordComponentException;
 import de.uni_koblenz.jgralab.schema.exception.RecordCycleException;
@@ -66,22 +66,16 @@ public class RecordDomainTest extends CompositeDomainTest {
 		// Initializing of DomainTest
 		List<RecordComponent> elements = new ArrayList<RecordComponent>();
 		elements.add(new RecordComponent("int1", schema1.getDomain("Integer")));
-		elements
-				.add(new RecordComponent("double1", schema1.getDomain("Double")));
-		elements
-				.add(new RecordComponent("bool1", schema1.getDomain("Boolean")));
-		elements
-				.add(new RecordComponent("string1", schema1.getDomain("String")));
+		elements.add(new RecordComponent("double1", schema1.getDomain("Double")));
+		elements.add(new RecordComponent("bool1", schema1.getDomain("Boolean")));
+		elements.add(new RecordComponent("string1", schema1.getDomain("String")));
 		schema1.createRecordDomain("package1.Record1", elements);
 		domain1 = schema1.getDomain("package1.Record1");
 		elements = new ArrayList<RecordComponent>();
 		elements.add(new RecordComponent("int1", schema2.getDomain("Integer")));
-		elements
-				.add(new RecordComponent("double1", schema2.getDomain("Double")));
-		elements
-				.add(new RecordComponent("bool1", schema2.getDomain("Boolean")));
-		elements
-				.add(new RecordComponent("string1", schema2.getDomain("String")));
+		elements.add(new RecordComponent("double1", schema2.getDomain("Double")));
+		elements.add(new RecordComponent("bool1", schema2.getDomain("Boolean")));
+		elements.add(new RecordComponent("string1", schema2.getDomain("String")));
 		schema2.createRecordDomain("package1.Record1", elements);
 		domain2 = schema2.getDomain("package1.Record1");
 		otherDomain1 = schema1.getDomain("Boolean");
@@ -99,8 +93,6 @@ public class RecordDomainTest extends CompositeDomainTest {
 		expectedSimpleName = "Record1";
 		expectedDirectoryName1 = "package1" + sep + "Record1";
 		expectedDirectoryName2 = "package1" + sep + "Record1";
-		expectedUniqueName1 = "Record1";
-		expectedUniqueName2 = "Record1";
 		// Initializing of CompositeDomainTest
 		domain3 = (CompositeDomain) domain1;
 		schema1.createListDomain(schema1.getDomain("Boolean"));
@@ -223,8 +215,8 @@ public class RecordDomainTest extends CompositeDomainTest {
 		RecordDomain r1 = s.createRecordDomain("test.R1");
 		RecordDomain r2 = s.createRecordDomain("test.R2");
 
-		r1.addComponent("myList", s.createListDomain(s.createMapDomain(s
-				.getDomain("String"), r2)));
+		r1.addComponent("myList", s.createListDomain(s.createMapDomain(
+				s.getDomain("String"), r2)));
 
 		// now r1 <>-- r2 holds
 
@@ -267,25 +259,8 @@ public class RecordDomainTest extends CompositeDomainTest {
 	@Test
 	public void testGetJavaAttributeImplementationTypeName() {
 		// tests if the correct javaAttributeImplementationTypeName is returned
-		assertEquals(schema1Package + ".package1.Record1", domain1
-				.getJavaAttributeImplementationTypeName(schema1Package));
-	}
-
-	@Test
-	public void testGetUniqueNameOfElementsWithSameSimpleName() {
-		// Test if uniqueName is changed if two elements have the same
-		// simpleName
-		schema1.createRecordDomain("package1.Rec1");
-		schema1.createRecordDomain("package2.Rec1");
-		Domain domain1 = schema1.getDomain("package1.Rec1");
-		Domain domain2 = schema1.getDomain("package2.Rec1");
-		assertEquals("package1$Rec1", domain1.getUniqueName());
-		assertEquals("package2$Rec1", domain2.getUniqueName());
-		// Test if uniqueName of a third element with the same simpleName is
-		// changed
-		schema1.createRecordDomain("package3.Rec1");
-		Domain domain3 = schema1.getDomain("package3.Rec1");
-		assertEquals("package3$Rec1", domain3.getUniqueName());
+		assertEquals(schema1Package + ".package1.Record1",
+				domain1.getJavaAttributeImplementationTypeName(schema1Package));
 	}
 
 	@Test
@@ -301,12 +276,9 @@ public class RecordDomainTest extends CompositeDomainTest {
 				.getComponents();
 		List<RecordComponent> elements = new ArrayList<RecordComponent>(4);
 		elements.add(new RecordComponent("int1", schema1.getDomain("Integer")));
-		elements
-				.add(new RecordComponent("double1", schema1.getDomain("Double")));
-		elements
-				.add(new RecordComponent("bool1", schema1.getDomain("Boolean")));
-		elements
-				.add(new RecordComponent("string1", schema1.getDomain("String")));
+		elements.add(new RecordComponent("double1", schema1.getDomain("Double")));
+		elements.add(new RecordComponent("bool1", schema1.getDomain("Boolean")));
+		elements.add(new RecordComponent("string1", schema1.getDomain("String")));
 
 		for (RecordComponent component : components) {
 			assertTrue(components.contains(component));
@@ -317,12 +289,12 @@ public class RecordDomainTest extends CompositeDomainTest {
 	public void testGetDomainOfComponent() {
 		// tests if the correct domain is returned
 		RecordDomain rec1 = (RecordDomain) domain1;
-		assertEquals(schema1.getDomain("Boolean"), rec1
-				.getDomainOfComponent("bool1"));
+		assertEquals(schema1.getDomain("Boolean"),
+				rec1.getDomainOfComponent("bool1"));
 		rec1 = (RecordDomain) domain4;
 		assertEquals(domain1, rec1.getDomainOfComponent("aRecord"));
-		assertEquals(schema1.getDomain("List<Boolean>"), rec1
-				.getDomainOfComponent("aList"));
+		assertEquals(schema1.getDomain("List<Boolean>"),
+				rec1.getDomainOfComponent("aList"));
 	}
 
 	@Test(expected = NoSuchRecordComponentException.class)

@@ -69,7 +69,6 @@ public class SchemaGraph2XMITest {
 
 	{
 		r = new Rsa2Tg();
-
 		r.setUseFromRole(true);
 		r.setRemoveUnusedDomains(true);
 		r.setUseNavigability(true);
@@ -183,8 +182,8 @@ public class SchemaGraph2XMITest {
 			String line;
 			while ((line = reader.readLine()) != null) {
 				line = line.trim();
-				if (!line.isEmpty()) {
-					if (containesAttributes(line)) {
+				if (!line.isEmpty() && !line.startsWith("//")) {
+					if (containsAttributes(line)) {
 						line = sortAttributes(line);
 					}
 					originalTgContent.add(line);
@@ -196,8 +195,8 @@ public class SchemaGraph2XMITest {
 			reader = new LineNumberReader(new FileReader(generatedTg));
 			while ((line = reader.readLine()) != null) {
 				line = line.trim();
-				if (!line.isEmpty()) {
-					if (containesAttributes(line)) {
+				if (!line.isEmpty() && !line.startsWith("//")) {
+					if (containsAttributes(line)) {
 						line = sortAttributes(line);
 					}
 					generatedTgContent.add(line);
@@ -329,7 +328,7 @@ public class SchemaGraph2XMITest {
 	 * @param line
 	 * @return
 	 */
-	private boolean containesAttributes(String line) {
+	private boolean containsAttributes(String line) {
 		return !line.startsWith("Comment")
 				&& line.contains("{")
 				&& (!line.contains("[") || line.indexOf("{") < line

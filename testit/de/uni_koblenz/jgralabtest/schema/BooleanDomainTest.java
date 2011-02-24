@@ -53,8 +53,6 @@ public class BooleanDomainTest extends NativeDomainTest {
 		expectedDirectoryName1 = "Boolean";
 		expectedDirectoryName2 = "Boolean";
 		expectedSimpleName = "Boolean";
-		expectedUniqueName1 = "Boolean";
-		expectedUniqueName2 = "Boolean";
 		domain1 = schema1.getDomain("Boolean");
 		domain2 = schema2.getDomain("Boolean");
 		otherDomain1 = schema1.getDomain("Integer");

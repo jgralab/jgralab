@@ -98,8 +98,7 @@ public class MapDomainTest extends CompositeDomainTest {
 		expectedDirectoryName2 = "Map<Integer, Boolean>";
 		expectedQualifiedName1 = "Map<Integer, Boolean>";
 		expectedQualifiedName2 = "Map<Integer, Boolean>";
-		expectedSimpleName = expectedUniqueName1 = expectedQualifiedName1;
-		expectedUniqueName2 = expectedQualifiedName2;
+		expectedSimpleName = expectedQualifiedName1;
 		// Initializing for the CompositeDomainTest
 		keyDomain3 = schema1.createListDomain(schema1.getDomain("Integer"));
 		List<RecordComponent> components = new ArrayList<RecordComponent>();
@@ -144,8 +143,8 @@ public class MapDomainTest extends CompositeDomainTest {
 	@Test
 	public void testEquals() {
 		super.testEquals();
-		schema1.createMapDomain(schema1.getDomain("String"), schema1
-				.getDomain("Double"));
+		schema1.createMapDomain(schema1.getDomain("String"),
+				schema1.getDomain("Double"));
 		// A MapDomains with a different KeyDomain must not be equal
 		assertFalse(schema1.getDomain("Map<String, Double>").equals(
 				otherDomain1));

@@ -42,12 +42,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.Vector;
 import java.util.regex.Pattern;
 
@@ -207,7 +204,7 @@ public class SchemaImpl implements Schema {
 	 * Maps from simple names to a set of {@link NamedElement}s which have this
 	 * simple name. Used for creation of unique names.
 	 */
-	private Map<String, Set<NamedElement>> namedElementsBySimpleName = new HashMap<String, Set<NamedElement>>();
+	private Map<String, AttributedElementClass> duplicateSimpleNames = new HashMap<String, AttributedElementClass>();
 
 	/**
 	 * Maps from qualified name to the {@link Package} with that qualified name.
@@ -348,39 +345,22 @@ public class SchemaImpl implements Schema {
 
 		namedElements.put(namedElement.getQualifiedName(), namedElement);
 
-		// Check if any element's unique name needs adaptation after addition of
-		// the new named element.
-		Set<NamedElement> elementsWithSameSimpleName = namedElementsBySimpleName
-				.get(namedElement.getSimpleName());
-
-		// add element to map
-		if ((elementsWithSameSimpleName != null)
-				&& !elementsWithSameSimpleName.isEmpty()) {
-			elementsWithSameSimpleName.add(namedElement);
-		} else {
-			elementsWithSameSimpleName = new TreeSet<NamedElement>();
-			elementsWithSameSimpleName.add(namedElement);
-			namedElementsBySimpleName.put(namedElement.getSimpleName(),
-					elementsWithSameSimpleName);
-		}
-		if (elementsWithSameSimpleName.size() < 2) {
+		if (!(namedElement instanceof AttributedElementClass)) {
 			return;
 		}
 
-		// Uniquify simple names, if needed:
-		// We don't have to worry about domains and packages, cause for those no
-		// create<SimpleName> or getFirst/Next<SimpleName> methods have to be
-		// created.
-		List<AttributedElementClass> aecsWithSameSimpleName = new LinkedList<AttributedElementClass>();
-		for (NamedElement ne : elementsWithSameSimpleName) {
-			if (ne instanceof AttributedElementClass) {
-				aecsWithSameSimpleName.add((AttributedElementClass) ne);
-			}
-		}
-		if (aecsWithSameSimpleName.size() >= 2) {
-			for (AttributedElementClass other : aecsWithSameSimpleName) {
+		AttributedElementClass aec = (AttributedElementClass) namedElement;
+
+		if (duplicateSimpleNames.containsKey(aec.getSimpleName())) {
+			AttributedElementClass other = duplicateSimpleNames.get(aec
+					.getSimpleName());
+			if (other != null) {
 				((NamedElementImpl) other).changeUniqueName();
+				duplicateSimpleNames.put(aec.getSimpleName(), null);
 			}
+			((NamedElementImpl) aec).changeUniqueName();
+		} else {
+			duplicateSimpleNames.put(aec.getSimpleName(), aec);
 		}
 	}
 
@@ -1232,11 +1212,6 @@ public class SchemaImpl implements Schema {
 	@Override
 	public boolean knows(String qn) {
 		return (namedElements.containsKey(qn) || getQualifiedName().equals(qn));
-	}
-
-	@Override
-	public boolean isSimpleNameUnique(String sn) {
-		return namedElementsBySimpleName.containsKey(sn);
 	}
 
 	@Override
