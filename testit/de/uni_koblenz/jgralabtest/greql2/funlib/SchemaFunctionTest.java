@@ -223,40 +223,6 @@ public class SchemaFunctionTest extends GenericTests {
 	}
 
 	@Test
-	public void testHasType2() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from x : V{WhereExpression} report hasType(x, \"WhereExpression\") end";
-		JValue result = evalTestQuery("HasType", queryString);
-		assertEquals(1, result.toCollection().size());
-		assertEquals(true, (boolean) getNthValue(result.toCollection(), 0)
-				.toBoolean());
-	}
-
-	@Test
-	public void testHasType3a() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from x : V{WhereExpression} report hasType(x, \"Variable\") end";
-		JValue result = evalTestQuery("HasType2", queryString);
-		assertEquals(1, result.toCollection().size());
-		assertEquals(false, (boolean) getNthValue(result.toCollection(), 0)
-				.toBoolean());
-	}
-
-	@Test
-	public void testHasType3() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from x : V{WhereExpression} report hasType{WhereExpression, Definition}(x) end";
-		JValue result = evalTestQuery("HasType3", queryString);
-		assertEquals(1, result.toCollection().size());
-		for (JValue j : result.toCollection()) {
-			assertEquals(true, (boolean) j.toBoolean());
-		}
-	}
-
-	@Test
 	public void testIsA() throws Exception {
 		String queryString = "isA(\"Variable\", \"Identifier\")";
 		JValue result = evalTestQuery("IsA", queryString);
