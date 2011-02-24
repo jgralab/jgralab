@@ -50,6 +50,7 @@ import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
 import de.uni_koblenz.jgralab.schema.Schema;
+import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralabtest.greql2.GenericTests;
 
 public class SchemaFunctionTest extends GenericTests {
@@ -156,7 +157,73 @@ public class SchemaFunctionTest extends GenericTests {
 	}
 
 	@Test
+	public void testHasAttributeFails() throws Exception {
+		assertQueryEquals(
+				"hasAttribute(type('junctions.Crossroad'), 'jajslkdasd')",
+				false);
+		assertQueryEquals("hasAttribute(type('junctions.Crossroad'), 'Name')",
+				false);
+	}
+
+	@Test
 	public void testHasType() throws Exception {
+		Graph currentGraph = this.getTestGraph(TestVersion.CITY_MAP_GRAPH);
+		Schema schema = currentGraph.getSchema();
+		testHasType(schema.getVertexClassesInTopologicalOrder());
+		testHasType(schema.getEdgeClassesInTopologicalOrder());
+	}
+
+	private void testHasType(List<? extends AttributedElementClass> classes)
+			throws Exception {
+		for (AttributedElementClass clazz : classes) {
+			if (clazz.isInternal() || clazz.isAbstract()) {
+				continue;
+			}
+			testHasTypeForSubTypes(clazz.getQualifiedName(), clazz);
+			testHasTypeForSuperTypes(clazz.getQualifiedName(), clazz);
+		}
+	}
+
+	private String queryForTestType = "hasType(%s{%s!}[0], '%s')";
+
+	private void testHasTypeForSubTypes(String qualifiedName,
+			AttributedElementClass clazz) throws Exception {
+
+		boolean equal = qualifiedName.equals(clazz.getQualifiedName());
+		String formatedString = String.format(queryForTestType,
+				dertermineClassTypeChar(clazz), qualifiedName,
+				clazz.getQualifiedName());
+		System.out.println(formatedString);
+		assertQueryEquals(formatedString, equal);
+
+		for (AttributedElementClass elementClass : clazz.getAllSubClasses()) {
+			testHasTypeForSubTypes(qualifiedName, elementClass);
+		}
+	}
+
+	private String dertermineClassTypeChar(AttributedElementClass clazz) {
+		String type = clazz instanceof VertexClass ? "V" : "E";
+		return type;
+	}
+
+	private void testHasTypeForSuperTypes(String qualifiedName,
+			AttributedElementClass clazz) throws Exception {
+
+		boolean equal = qualifiedName.equals(clazz.getQualifiedName());
+		String formatedString = String.format(queryForTestType,
+				dertermineClassTypeChar(clazz), qualifiedName,
+				clazz.getQualifiedName());
+		System.out.println(formatedString);
+		assertQueryEquals(formatedString, true);
+
+		for (AttributedElementClass elementClass : clazz.getAllSuperClasses()) {
+			testHasTypeForSuperTypes(qualifiedName, elementClass);
+		}
+
+	}
+
+	@Test
+	public void testHasType2() throws Exception {
 		// TODO: Broken, because the GReQL parser removes all WhereExpressions
 		// and LetExpressions!
 		String queryString = "from x : V{WhereExpression} report hasType(x, \"WhereExpression\") end";
@@ -167,7 +234,7 @@ public class SchemaFunctionTest extends GenericTests {
 	}
 
 	@Test
-	public void testHasType2() throws Exception {
+	public void testHasType3a() throws Exception {
 		// TODO: Broken, because the GReQL parser removes all WhereExpressions
 		// and LetExpressions!
 		String queryString = "from x : V{WhereExpression} report hasType(x, \"Variable\") end";
