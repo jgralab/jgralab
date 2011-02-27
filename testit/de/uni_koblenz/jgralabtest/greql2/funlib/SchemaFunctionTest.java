@@ -52,7 +52,6 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueMap;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
@@ -490,15 +489,6 @@ public class SchemaFunctionTest extends GenericTests {
 
 		set = evalTestQuery("E{connections.Street!}").toJValueSet();
 		testTypes(set);
-	}
-
-	private void add(JValueCollection collection, AttributedElementClass clazz) {
-		collection.add(new JValueImpl(clazz));
-	}
-
-	private void addClass(JValueCollection collection, String className)
-			throws Exception {
-		add(collection, getSchema().getAttributedElementClass(className));
 	}
 
 	private void testTypes(JValueCollection collection) throws Exception {
