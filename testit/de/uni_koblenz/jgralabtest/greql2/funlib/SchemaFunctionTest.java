@@ -41,14 +41,17 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.junit.Test;
 
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueMap;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
@@ -60,8 +63,7 @@ public class SchemaFunctionTest extends GenericTests {
 
 	@Test
 	public void testAttributeNames() throws Exception {
-		Graph currentGraph = this.getTestGraph(TestVersion.CITY_MAP_GRAPH);
-		Schema schema = currentGraph.getSchema();
+		Schema schema = getSchema();
 		testAttributeNames(schema.getVertexClassesInTopologicalOrder());
 		testAttributeNames(schema.getEdgeClassesInTopologicalOrder());
 	}
@@ -89,8 +91,7 @@ public class SchemaFunctionTest extends GenericTests {
 
 	@Test
 	public void testAttributes() throws Exception {
-		Graph currentGraph = this.getTestGraph(TestVersion.CITY_MAP_GRAPH);
-		Schema schema = currentGraph.getSchema();
+		Schema schema = getSchema();
 		testAttributes(schema.getVertexClassesInTopologicalOrder());
 		testAttributes(schema.getEdgeClassesInTopologicalOrder());
 	}
@@ -121,8 +122,7 @@ public class SchemaFunctionTest extends GenericTests {
 
 	@Test
 	public void testEnumConstant() throws Exception {
-		Graph currentGraph = this.getTestGraph(TestVersion.CITY_MAP_GRAPH);
-		Schema schema = currentGraph.getSchema();
+		Schema schema = getSchema();
 
 		for (final EnumDomain enumDomain : schema.getEnumDomains()) {
 			String enumDomainName = enumDomain.getQualifiedName();
@@ -136,8 +136,7 @@ public class SchemaFunctionTest extends GenericTests {
 
 	@Test
 	public void testHasAttribute() throws Exception {
-		Graph currentGraph = this.getTestGraph(TestVersion.CITY_MAP_GRAPH);
-		Schema schema = currentGraph.getSchema();
+		Schema schema = getSchema();
 		testHasAttribute(schema.getVertexClassesInTopologicalOrder());
 		testHasAttribute(schema.getEdgeClassesInTopologicalOrder());
 	}
@@ -170,8 +169,8 @@ public class SchemaFunctionTest extends GenericTests {
 
 	@Test
 	public void testHasType() throws Exception {
-		Graph currentGraph = this.getTestGraph(TestVersion.CITY_MAP_GRAPH);
-		Schema schema = currentGraph.getSchema();
+		Schema schema = getSchema();
+
 		testHasType(schema.getVertexClassesInTopologicalOrder());
 		testHasType(schema.getEdgeClassesInTopologicalOrder());
 	}
@@ -241,8 +240,7 @@ public class SchemaFunctionTest extends GenericTests {
 
 	@Test
 	public void testIsA() throws Exception {
-		Graph currentGraph = this.getTestGraph(TestVersion.CITY_MAP_GRAPH);
-		Schema schema = currentGraph.getSchema();
+		Schema schema = getSchema();
 		testIsA(schema.getVertexClassesInTopologicalOrder());
 		testIsA(schema.getEdgeClassesInTopologicalOrder());
 	}
@@ -296,8 +294,7 @@ public class SchemaFunctionTest extends GenericTests {
 
 	@Test
 	public void testSubTypes() throws Exception {
-		Graph currentGraph = this.getTestGraph(TestVersion.CITY_MAP_GRAPH);
-		Schema schema = currentGraph.getSchema();
+		Schema schema = getSchema();
 
 		testSubTypes(schema.getVertexClassesInTopologicalOrder());
 		testSubTypes(schema.getEdgeClassesInTopologicalOrder());
@@ -327,8 +324,7 @@ public class SchemaFunctionTest extends GenericTests {
 
 	@Test
 	public void testSuperTypes() throws Exception {
-		Graph currentGraph = this.getTestGraph(TestVersion.CITY_MAP_GRAPH);
-		Schema schema = currentGraph.getSchema();
+		Schema schema = getSchema();
 
 		testSuperTypes(schema.getVertexClassesInTopologicalOrder());
 		testSuperTypes(schema.getEdgeClassesInTopologicalOrder());
@@ -354,6 +350,32 @@ public class SchemaFunctionTest extends GenericTests {
 			}
 			assertTrue(superClasses.isEmpty());
 		}
+	}
+
+	@Test
+	public void testType() throws Exception {
+		JValueMap vertices = evalTestQuery(
+				"from v:V reportMap v -> type(v) end").toJValueMap();
+		testTypes(vertices);
+		JValueMap edges = evalTestQuery("from e:E reportMap e -> type(e) end")
+				.toJValueMap();
+		testTypes(edges);
+
+	}
+
+	private void testTypes(JValueMap attributedElements) {
+		for (Entry<JValue, JValue> entry : attributedElements.entrySet()) {
+			AttributedElement element = entry.getKey().toAttributedElement();
+			AttributedElementClass clazz = entry.getValue()
+					.toAttributedElementClass();
+
+			assertEquals(element.getAttributedElementClass(), clazz);
+		}
+	}
+
+	private Schema getSchema() throws Exception {
+		Graph currentGraph = this.getTestGraph(TestVersion.CITY_MAP_GRAPH);
+		return currentGraph.getSchema();
 	}
 
 	//
