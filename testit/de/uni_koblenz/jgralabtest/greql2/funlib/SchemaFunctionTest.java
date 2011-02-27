@@ -39,6 +39,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
@@ -51,7 +52,10 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueMap;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
@@ -398,16 +402,6 @@ public class SchemaFunctionTest extends GenericTests {
 	// }
 
 	@Test
-	public void testTypes2() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from x : V{WhereExpression} report types(edgesConnected(x)) end";
-		JValue result = evalTestQuery("EdgeTypeSet", queryString);
-		assertEquals(3, getNthValue(result.toCollection(), 0).toCollection()
-				.size());
-	}
-
-	@Test
 	public void testTypeName() throws Exception {
 		JValueMap elements = evalTestQuery(
 				"from el:union(V, E) reportMap el -> typeName(el) end")
@@ -429,6 +423,109 @@ public class SchemaFunctionTest extends GenericTests {
 					.getQualifiedName();
 			assertEquals(expectedQualfiedName, qualifiedName);
 		}
+	}
+
+	@Test
+	public void testTypesUnspecific() throws Exception {
+		JValueCollection types = evalTestQuery("types()").toCollection();
+		Set<AttributedElementClass> classes = new HashSet<AttributedElementClass>();
+		classes.addAll(getSchema().getVertexClassesInTopologicalOrder());
+		classes.addAll(getSchema().getEdgeClassesInTopologicalOrder());
+		testTypes(types, classes);
+	}
+
+	@Test
+	public void testTypesForList() throws Exception {
+		testTypes(new JValueList());
+
+		JValueList list = evalTestQuery("V ++ E").toJValueList();
+		testTypes(list);
+
+		list = evalTestQuery("V ++ V").toJValueList();
+		testTypes(list);
+
+		list = evalTestQuery("V{localities.Locality}").toJValueList();
+		testTypes(list);
+
+		list = evalTestQuery("V{junctions.Junction}").toJValueList();
+		testTypes(list);
+
+		list = evalTestQuery("V{junctions.Crossroad!}").toJValueList();
+		testTypes(list);
+
+		list = evalTestQuery("E ++ E").toJValueList();
+		testTypes(list);
+
+		list = evalTestQuery("E{connections.Connection}").toJValueList();
+		testTypes(list);
+
+		list = evalTestQuery("E{connections.Street!}").toJValueList();
+		testTypes(list);
+	}
+
+	@Test
+	public void testTypesForSet() throws Exception {
+		testTypes(new JValueList());
+
+		JValueSet set = evalTestQuery("union(V, E)").toJValueSet();
+		testTypes(set);
+
+		set = evalTestQuery("V").toJValueSet();
+		testTypes(set);
+
+		set = evalTestQuery("V{localities.Locality}").toJValueSet();
+		testTypes(set);
+
+		set = evalTestQuery("V{junctions.Junction}").toJValueSet();
+		testTypes(set);
+
+		set = evalTestQuery("V{junctions.Crossroad!}").toJValueSet();
+		testTypes(set);
+
+		set = evalTestQuery("E").toJValueSet();
+		testTypes(set);
+
+		set = evalTestQuery("E{connections.Connection}").toJValueSet();
+		testTypes(set);
+
+		set = evalTestQuery("E{connections.Street!}").toJValueSet();
+		testTypes(set);
+	}
+
+	private void add(JValueCollection collection, AttributedElementClass clazz) {
+		collection.add(new JValueImpl(clazz));
+	}
+
+	private void addClass(JValueCollection collection, String className)
+			throws Exception {
+		add(collection, getSchema().getAttributedElementClass(className));
+	}
+
+	private void testTypes(JValueCollection collection) throws Exception {
+
+		setBoundVariable("collection", collection);
+		JValueCollection types = evalTestQuery(
+				"using collection: types(collection)").toCollection();
+		testTypes(types, extract(collection));
+	}
+
+	private Set<AttributedElementClass> extract(
+			JValueCollection elementsAsJValues) {
+		Set<AttributedElementClass> classes = new HashSet<AttributedElementClass>();
+		for (JValue elementAsJValue : elementsAsJValues) {
+			AttributedElement element = elementAsJValue.toAttributedElement();
+			classes.add(element.getAttributedElementClass());
+		}
+		return classes;
+	}
+
+	private void testTypes(JValueCollection types,
+			Collection<? extends AttributedElementClass> classes) {
+		for (JValue type : types) {
+			AttributedElementClass clazz = type.toAttributedElementClass();
+			assertTrue(classes.remove(clazz));
+		}
+		assertTrue(classes.isEmpty());
 	}
 
 	@Test
