@@ -35,6 +35,8 @@
 package de.uni_koblenz.jgralabtest.greql2.funlib;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -44,7 +46,9 @@ import java.util.Set;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
@@ -288,8 +292,52 @@ public class SchemaFunctionTest extends GenericTests {
 		for (AttributedElementClass elementClass : clazz.getAllSuperClasses()) {
 			testIsAForSuperTypes(currentQualifiedName, elementClass);
 		}
-
 	}
+
+	@Test
+	public void testSubTypes() throws Exception {
+		Graph currentGraph = this.getTestGraph(TestVersion.CITY_MAP_GRAPH);
+		Schema schema = currentGraph.getSchema();
+
+		testSubTypes(schema.getVertexClassesInTopologicalOrder());
+		testSubTypes(schema.getEdgeClassesInTopologicalOrder());
+	}
+
+	private void testSubTypes(
+			List<? extends AttributedElementClass> attributedElementClasses)
+			throws JValueInvalidTypeException, Exception {
+		for (AttributedElementClass clazz : attributedElementClasses) {
+			Set<AttributedElementClass> subClasses = clazz
+					.getDirectSubClasses();
+			Set<AttributedElementClass> superClasses = clazz
+					.getDirectSuperClasses();
+			JValueCollection collection = evalTestQuery(
+					"subtypes('" + clazz.getQualifiedName() + "')")
+					.toCollection();
+
+			for (JValue value : collection) {
+				AttributedElementClass attrClass = value
+						.toAttributedElementClass();
+				subClasses.remove(attrClass);
+				assertFalse(superClasses.remove(attrClass));
+			}
+			assertTrue(subClasses.isEmpty());
+		}
+	}
+
+	//
+	// private String getNames(Set<AttributedElementClass> subClasses) {
+	// StringBuilder sb = new StringBuilder();
+	// String delimiter = "";
+	// sb.append("{");
+	// for (AttributedElementClass clazz : subClasses) {
+	// sb.append(delimiter);
+	// sb.append(clazz.getQualifiedName());
+	// delimiter = ", ";
+	// }
+	// sb.append("}");
+	// return sb.toString();
+	// }
 
 	@Test
 	public void testTypes() throws Exception {
