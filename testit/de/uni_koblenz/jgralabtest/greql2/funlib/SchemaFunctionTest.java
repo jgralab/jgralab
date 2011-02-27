@@ -325,6 +325,37 @@ public class SchemaFunctionTest extends GenericTests {
 		}
 	}
 
+	@Test
+	public void testSuperTypes() throws Exception {
+		Graph currentGraph = this.getTestGraph(TestVersion.CITY_MAP_GRAPH);
+		Schema schema = currentGraph.getSchema();
+
+		testSuperTypes(schema.getVertexClassesInTopologicalOrder());
+		testSuperTypes(schema.getEdgeClassesInTopologicalOrder());
+	}
+
+	private void testSuperTypes(
+			List<? extends AttributedElementClass> attributedElementClasses)
+			throws JValueInvalidTypeException, Exception {
+		for (AttributedElementClass clazz : attributedElementClasses) {
+			Set<AttributedElementClass> subClasses = clazz
+					.getDirectSubClasses();
+			Set<AttributedElementClass> superClasses = clazz
+					.getDirectSuperClasses();
+			JValueCollection collection = evalTestQuery(
+					"supertypes('" + clazz.getQualifiedName() + "')")
+					.toCollection();
+
+			for (JValue value : collection) {
+				AttributedElementClass attrClass = value
+						.toAttributedElementClass();
+				superClasses.remove(attrClass);
+				assertFalse(subClasses.remove(attrClass));
+			}
+			assertTrue(superClasses.isEmpty());
+		}
+	}
+
 	//
 	// private String getNames(Set<AttributedElementClass> subClasses) {
 	// StringBuilder sb = new StringBuilder();
