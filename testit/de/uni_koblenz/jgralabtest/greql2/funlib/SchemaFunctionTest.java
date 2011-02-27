@@ -45,7 +45,6 @@ import org.junit.Test;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
@@ -184,21 +183,39 @@ public class SchemaFunctionTest extends GenericTests {
 		}
 	}
 
-	private String queryForTestType = "hasType(%s{%s!}[0], '%s')";
+	private String queryFor_hasType_Test1 = "hasType(%s{%s!}[0], '%s')";
+	private String queryFor_hasType_Test2 = "hasType(%s{%s!}[0], type('%s'))";
+	private String queryFor_hasType_Test3 = "hasType{%s}(%s{%s!}[0])";
 
-	private void testHasTypeForSubTypes(String qualifiedName,
+	private void testHasTypeForSubTypes(String currentQualifiedName,
 			AttributedElementClass clazz) throws Exception {
 
-		boolean equal = qualifiedName.equals(clazz.getQualifiedName());
-		String formatedString = String.format(queryForTestType,
-				dertermineClassTypeChar(clazz), qualifiedName,
-				clazz.getQualifiedName());
+		boolean equal = currentQualifiedName.equals(clazz.getQualifiedName());
+		String typeChar = dertermineClassTypeChar(clazz);
+		String qualifiedName = clazz.getQualifiedName();
+		hasType(currentQualifiedName, equal, typeChar, qualifiedName);
+
+		for (AttributedElementClass elementClass : clazz.getAllSubClasses()) {
+			testHasTypeForSubTypes(currentQualifiedName, elementClass);
+		}
+	}
+
+	private void hasType(String currentQualifiedName, boolean equal,
+			String typeChar, String qualifiedName) throws Exception {
+		String formatedString = String.format(queryFor_hasType_Test1, typeChar,
+				currentQualifiedName, qualifiedName);
 		System.out.println(formatedString);
 		assertQueryEquals(formatedString, equal);
 
-		for (AttributedElementClass elementClass : clazz.getAllSubClasses()) {
-			testHasTypeForSubTypes(qualifiedName, elementClass);
-		}
+		formatedString = String.format(queryFor_hasType_Test2, typeChar,
+				currentQualifiedName, qualifiedName);
+		System.out.println(formatedString);
+		assertQueryEquals(formatedString, equal);
+
+		formatedString = String.format(queryFor_hasType_Test3, qualifiedName,
+				typeChar, currentQualifiedName);
+		System.out.println(formatedString);
+		assertQueryEquals(formatedString, equal);
 	}
 
 	private String dertermineClassTypeChar(AttributedElementClass clazz) {
@@ -206,27 +223,72 @@ public class SchemaFunctionTest extends GenericTests {
 		return type;
 	}
 
-	private void testHasTypeForSuperTypes(String qualifiedName,
+	private void testHasTypeForSuperTypes(String currentQualifiedName,
 			AttributedElementClass clazz) throws Exception {
 
-		boolean equal = qualifiedName.equals(clazz.getQualifiedName());
-		String formatedString = String.format(queryForTestType,
-				dertermineClassTypeChar(clazz), qualifiedName,
+		hasType(currentQualifiedName, true, dertermineClassTypeChar(clazz),
 				clazz.getQualifiedName());
-		System.out.println(formatedString);
-		assertQueryEquals(formatedString, true);
 
 		for (AttributedElementClass elementClass : clazz.getAllSuperClasses()) {
-			testHasTypeForSuperTypes(qualifiedName, elementClass);
+			testHasTypeForSuperTypes(currentQualifiedName, elementClass);
 		}
 
 	}
 
 	@Test
 	public void testIsA() throws Exception {
-		String queryString = "isA(\"Variable\", \"Identifier\")";
-		JValue result = evalTestQuery("IsA", queryString);
-		assertEquals(JValueBoolean.getTrueValue(), result.toBoolean());
+		Graph currentGraph = this.getTestGraph(TestVersion.CITY_MAP_GRAPH);
+		Schema schema = currentGraph.getSchema();
+		testIsA(schema.getVertexClassesInTopologicalOrder());
+		testIsA(schema.getEdgeClassesInTopologicalOrder());
+	}
+
+	private void testIsA(List<? extends AttributedElementClass> classes)
+			throws Exception {
+		for (AttributedElementClass clazz : classes) {
+			if (clazz.isInternal() || clazz.isAbstract()) {
+				continue;
+			}
+			testIsAForSubTypes(clazz.getQualifiedName(), clazz);
+			testIsAForSuperTypes(clazz.getQualifiedName(), clazz);
+		}
+	}
+
+	private String[] queriesFor_IsA_Test = new String[] { "isA('%s' , '%s')",
+			"isA('%s' , type('%s'))", "isA(type('%s') , '%s')",
+			"isA(type('%s') , type('%s'))" };
+
+	private void testIsAForSubTypes(String currentQualifiedName,
+			AttributedElementClass clazz) throws Exception {
+
+		String qualifiedName = clazz.getQualifiedName();
+		testIsA(currentQualifiedName, qualifiedName, false);
+
+		for (AttributedElementClass elementClass : clazz.getAllSubClasses()) {
+			testIsAForSubTypes(currentQualifiedName, elementClass);
+		}
+	}
+
+	private void testIsA(String currentQualifiedName, String qualifiedName,
+			boolean equal) throws Exception {
+		for (String formatString : queriesFor_IsA_Test) {
+			String formattedString = String.format(formatString,
+					currentQualifiedName, qualifiedName);
+			System.out.println(formattedString);
+			assertQueryEquals(formattedString, equal);
+		}
+	}
+
+	private void testIsAForSuperTypes(String currentQualifiedName,
+			AttributedElementClass clazz) throws Exception {
+
+		boolean equal = currentQualifiedName.equals(clazz.getQualifiedName());
+		testIsA(currentQualifiedName, clazz.getQualifiedName(), !equal);
+
+		for (AttributedElementClass elementClass : clazz.getAllSuperClasses()) {
+			testIsAForSuperTypes(currentQualifiedName, elementClass);
+		}
+
 	}
 
 	@Test
