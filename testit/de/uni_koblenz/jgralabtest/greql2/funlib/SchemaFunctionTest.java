@@ -357,7 +357,7 @@ public class SchemaFunctionTest extends GenericTests {
 		JValueMap vertices = evalTestQuery(
 				"from el:union(V, E) reportMap el -> type(el) end")
 				.toJValueMap();
-		testType(vertices);
+		testTypes(vertices);
 	}
 
 	@Test
@@ -365,10 +365,10 @@ public class SchemaFunctionTest extends GenericTests {
 		JValueMap vertices = evalTestQuery(
 				"from el:union(V, E) reportMap el -> type(typeName(el)) end")
 				.toJValueMap();
-		testType(vertices);
+		testTypes(vertices);
 	}
 
-	private void testType(JValueMap attributedElements) {
+	private void testTypes(JValueMap attributedElements) {
 		for (Entry<JValue, JValue> entry : attributedElements.entrySet()) {
 			AttributedElement element = entry.getKey().toAttributedElement();
 			AttributedElementClass clazz = entry.getValue()
@@ -398,7 +398,7 @@ public class SchemaFunctionTest extends GenericTests {
 	// }
 
 	@Test
-	public void testTypes() throws Exception {
+	public void testTypes2() throws Exception {
 		// TODO: Broken, because the GReQL parser removes all WhereExpressions
 		// and LetExpressions!
 		String queryString = "from x : V{WhereExpression} report types(edgesConnected(x)) end";
@@ -407,4 +407,51 @@ public class SchemaFunctionTest extends GenericTests {
 				.size());
 	}
 
+	@Test
+	public void testTypeName() throws Exception {
+		JValueMap elements = evalTestQuery(
+				"from el:union(V, E) reportMap el -> typeName(el) end")
+				.toJValueMap();
+		testTypeName(elements);
+
+		elements = evalTestQuery(
+				"from el:union(V, E) reportMap el -> typeName(type(el)) end")
+				.toJValueMap();
+		testTypeName(elements);
+	}
+
+	private void testTypeName(JValueMap elements) {
+
+		for (Entry<JValue, JValue> entry : elements.entrySet()) {
+			AttributedElement element = entry.getKey().toAttributedElement();
+			String qualifiedName = entry.getValue().toString();
+			String expectedQualfiedName = element.getAttributedElementClass()
+					.getQualifiedName();
+			assertEquals(expectedQualfiedName, qualifiedName);
+		}
+	}
+
+	@Test
+	public void testUniqueTypeName() throws Exception {
+		JValueMap elements = evalTestQuery(
+				"from el:union(V, E) reportMap el -> uniqueTypeName(el) end")
+				.toJValueMap();
+		testUniqueTypeName(elements);
+
+		elements = evalTestQuery(
+				"from el:union(V, E) reportMap el -> uniqueTypeName(type(el)) end")
+				.toJValueMap();
+		testUniqueTypeName(elements);
+	}
+
+	private void testUniqueTypeName(JValueMap elements) {
+
+		for (Entry<JValue, JValue> entry : elements.entrySet()) {
+			AttributedElement element = entry.getKey().toAttributedElement();
+			String uniquedName = entry.getValue().toString();
+			String expectedUniqueName = element.getAttributedElementClass()
+					.getUniqueName();
+			assertEquals(expectedUniqueName, uniquedName);
+		}
+	}
 }
