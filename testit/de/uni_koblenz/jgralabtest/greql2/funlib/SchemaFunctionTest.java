@@ -355,15 +355,20 @@ public class SchemaFunctionTest extends GenericTests {
 	@Test
 	public void testType() throws Exception {
 		JValueMap vertices = evalTestQuery(
-				"from v:V reportMap v -> type(v) end").toJValueMap();
-		testTypes(vertices);
-		JValueMap edges = evalTestQuery("from e:E reportMap e -> type(e) end")
+				"from el:union(V, E) reportMap el -> type(el) end")
 				.toJValueMap();
-		testTypes(edges);
-
+		testType(vertices);
 	}
 
-	private void testTypes(JValueMap attributedElements) {
+	@Test
+	public void testTypeAsString() throws Exception {
+		JValueMap vertices = evalTestQuery(
+				"from el:union(V, E) reportMap el -> type(typeName(el)) end")
+				.toJValueMap();
+		testType(vertices);
+	}
+
+	private void testType(JValueMap attributedElements) {
 		for (Entry<JValue, JValue> entry : attributedElements.entrySet()) {
 			AttributedElement element = entry.getKey().toAttributedElement();
 			AttributedElementClass clazz = entry.getValue()
