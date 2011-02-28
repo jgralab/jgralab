@@ -47,6 +47,7 @@ import org.junit.Test;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
@@ -165,11 +166,13 @@ public class GraphFunctionTest extends GenericTests {
 
 	@Test
 	public void testId() throws Exception {
-		String queryString = "from x : V{Greql2Expression} report id(x) end";
-		JValue result = evalTestQuery("Id", queryString);
-		assertEquals(1, result.toCollection().size());
-		for (JValue j : result.toCollection()) {
-			assertEquals(1, (int) j.toInteger());
+		JValueMap map = evalTestQuery(
+				"from el:union(V,E) reportMap el -> id(el) end").toJValueMap();
+
+		for (Entry<JValue, JValue> entry : map.entrySet()) {
+			GraphElement element = (GraphElement) entry.getKey().toObject();
+			int id = entry.getValue().toInteger();
+			assertEquals(element.getId(), id);
 		}
 	}
 
