@@ -92,8 +92,8 @@ public class Children extends Greql2Function {
 
 		description = "Returns the set of all children of the given vertex.\n"
 				+ "They may be restricted by an optional pathsystem.\n"
-				+ "Children are those vertices, from which edges point to the given vertex. The\n"
-				+ "child vertices are returned as a set.";
+				+ "Children are those vertices that are reachable by an outgoing edge from "
+				+ "the current vertex. The child vertices are returned as a set.";
 
 		Category[] c = { Category.GRAPH };
 		categories = c;
@@ -119,7 +119,7 @@ public class Children extends Greql2Function {
 		if (pathSystem != null) {
 			return pathSystem.children(vertex);
 		} else {
-			Edge inc = vertex.getFirstIncidence(EdgeDirection.IN);
+			Edge inc = vertex.getFirstIncidence(EdgeDirection.OUT);
 			Vertex other = null;
 			JValueSet resultSet = new JValueSet();
 			while (inc != null) {
