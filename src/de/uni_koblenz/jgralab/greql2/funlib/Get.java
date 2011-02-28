@@ -103,7 +103,11 @@ public class Get extends Greql2Function {
 		case 1:
 			int index = arguments[1].toInteger();
 			JValueCollection col = arguments[0].toCollection();
-			return col.toJValueList().get(index);
+			try {
+				return col.toJValueList().get(index);
+			} catch (Exception ex) {
+				throw new EvaluateException("Index out of bounds", ex);
+			}
 		default:
 			throw new WrongFunctionParameterException(this, arguments);
 		}
