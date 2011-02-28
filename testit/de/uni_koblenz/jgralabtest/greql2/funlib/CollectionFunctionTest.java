@@ -41,7 +41,6 @@ import java.util.Arrays;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueBag;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
@@ -333,8 +332,7 @@ public class CollectionFunctionTest extends GenericTests {
 		assertQueryEquals("using x: get(x, 2)", "steak");
 		expectException("using x: get(x, -1)",
 				ArrayIndexOutOfBoundsException.class);
-		expectException("using x: get(x, 5)",
-				ArrayIndexOutOfBoundsException.class);
+		expectException("using x: get(x, 5)", IndexOutOfBoundsException.class);
 	}
 
 	@Test
@@ -351,7 +349,7 @@ public class CollectionFunctionTest extends GenericTests {
 		assertQueryEquals("using x: x[2]", "steak");
 
 		expectException("using x: x[-1]", ArrayIndexOutOfBoundsException.class);
-		expectException("using x: x[5]", ArrayIndexOutOfBoundsException.class);
+		expectException("using x: x[5]", IndexOutOfBoundsException.class);
 	}
 
 	@Test
@@ -482,7 +480,7 @@ public class CollectionFunctionTest extends GenericTests {
 
 	@Test
 	public void testMaxBag() throws Exception {
-		assertQueryEquals("max(bag())", 0);
+		assertQueryEquals("max(bag())", Long.MIN_VALUE);
 		assertQueryEquals("max(bag(-5))", -5);
 		assertQueryEquals("max(bag(6))", 6);
 		assertQueryEquals("max(bag(-5, 6))", 6);
@@ -492,7 +490,7 @@ public class CollectionFunctionTest extends GenericTests {
 
 	@Test
 	public void testMaxList() throws Exception {
-		assertQueryEquals("max(list())", 0);
+		assertQueryEquals("max(list())", Long.MIN_VALUE);
 		assertQueryEquals("max(list(-5))", -5);
 		assertQueryEquals("max(list(6))", 6);
 		assertQueryEquals("max(list(-5, 6))", 6);
@@ -502,7 +500,7 @@ public class CollectionFunctionTest extends GenericTests {
 
 	@Test
 	public void testMaxSet() throws Exception {
-		assertQueryEquals("max(set())", 0);
+		assertQueryEquals("max(set())", Long.MIN_VALUE);
 		assertQueryEquals("max(set(-5))", -5);
 		assertQueryEquals("max(set(6))", 6);
 		assertQueryEquals("max(set(-5, 6))", 6);
@@ -516,14 +514,19 @@ public class CollectionFunctionTest extends GenericTests {
 		evalTestQuery("map(tup(1,2) -> set(3,4), tup(3,4) -> set(7,8,9)) store as m2");
 		evalTestQuery("map(tup(1,2) -> set(4), tup(3,4) -> set(8,9)) store as m3");
 		// merging equal maps should return an equal map
-		assertQueryEqualsQuery("using m1: m1", "using m1: mergeMaps(m1, m1)");
-		assertQueryEqualsQuery("using m2: m2",
-				"using m1, m3: mergeMaps(m1, m3)");
+		assertQueryEqualsQuery("using m1: mergeMaps(m1, m1)", "using m1: m1");
+		assertQueryEqualsQuery("using m1, m3: mergeMaps(m1, m3)",
+				"using m2: m2");
+
+		assertQueryEqualsQuery("using m3: mergeMaps(map(), m3)", "using m3: m3");
+		assertQueryEqualsQuery("using m1: mergeMaps(m1, map())", "using m1: m1");
+		assertQueryEqualsQuery("mergeMaps(map(), map())", "map()");
+
 	}
 
 	@Test
 	public void testMinBag() throws Exception {
-		assertQueryEquals("min(bag())", 0);
+		assertQueryEquals("min(bag())", Long.MAX_VALUE);
 		assertQueryEquals("min(bag(-5))", -5);
 		assertQueryEquals("min(bag(6))", 6);
 		assertQueryEquals("min(bag(-5, 6))", -5);
@@ -533,7 +536,7 @@ public class CollectionFunctionTest extends GenericTests {
 
 	@Test
 	public void testMinList() throws Exception {
-		assertQueryEquals("min(list())", 0);
+		assertQueryEquals("min(list())", Long.MAX_VALUE);
 		assertQueryEquals("min(list(-5))", -5);
 		assertQueryEquals("min(list(6))", 6);
 		assertQueryEquals("min(list(-5, 6))", -5);
@@ -543,7 +546,7 @@ public class CollectionFunctionTest extends GenericTests {
 
 	@Test
 	public void testMinSet() throws Exception {
-		assertQueryEquals("min(set())", 0);
+		assertQueryEquals("min(set())", Long.MAX_VALUE);
 		assertQueryEquals("min(set(-5))", -5);
 		assertQueryEquals("min(set(6))", 6);
 		assertQueryEquals("min(set(-5, 6))", -5);
@@ -563,7 +566,7 @@ public class CollectionFunctionTest extends GenericTests {
 
 	@Test
 	public void testPredecessorBag() throws Exception {
-		assertQueryEquals("let x := bag() in predecessor(???)", true);
+		assertQueryEqualsNull("let x := bag() in predecessor(1, x)");
 		assertQueryEqualsNull("let x := bag(1) in predecessor(1, x)");
 		assertQueryEqualsNull("let x := bag(1, 1) in predecessor(1, x)");
 
@@ -577,7 +580,7 @@ public class CollectionFunctionTest extends GenericTests {
 
 	@Test
 	public void testPredecessorList() throws Exception {
-		assertQueryEquals("let x := list() in predecessor(???)", true);
+		assertQueryEqualsNull("let x := list() in predecessor(1, x)");
 		assertQueryEqualsNull("let x := list(1) in predecessor(1, x)");
 		assertQueryEqualsNull("let x := list(1, 1) in predecessor(1, x)");
 
@@ -591,7 +594,7 @@ public class CollectionFunctionTest extends GenericTests {
 
 	@Test
 	public void testPredecessorSet() throws Exception {
-		assertQueryEquals("let x := set() in predecessor(???)", true);
+		assertQueryEqualsNull("let x := set() in predecessor(1, x)");
 		assertQueryEqualsNull("let x := set(1) in predecessor(1, x)");
 		assertQueryEqualsNull("let x := set(1, 1) in predecessor(1, x)");
 		evalTestQuery("sort(set(1, 2, 3, 4, 1, 99)) store as x");
@@ -689,7 +692,7 @@ public class CollectionFunctionTest extends GenericTests {
 	@Test
 	public void testTheElementBag() throws Exception {
 		expectException("let x := bag() in theElement(x)",
-				WrongFunctionParameterException.class);
+				EvaluateException.class);
 		assertQueryEquals("let x := bag(-1) in theElement(x)", -1);
 		assertQueryEquals("let x := bag(123) in theElement(x)", 123);
 		expectException("let x := bag(5, 4) in theElement(x)",
@@ -699,7 +702,7 @@ public class CollectionFunctionTest extends GenericTests {
 	@Test
 	public void testTheElementList() throws Exception {
 		expectException("let x := list() in theElement(x)",
-				WrongFunctionParameterException.class);
+				EvaluateException.class);
 		assertQueryEquals("let x := list(-1) in theElement(x)", -1);
 		assertQueryEquals("let x := list(123) in theElement(x)", 123);
 		expectException("let x := list(5, 4) in theElement(x)",
@@ -709,7 +712,7 @@ public class CollectionFunctionTest extends GenericTests {
 	@Test
 	public void testTheElementSet() throws Exception {
 		expectException("let x := set() in theElement(x)",
-				WrongFunctionParameterException.class);
+				EvaluateException.class);
 		assertQueryEquals("let x := set(-1) in theElement(x)", -1);
 		assertQueryEquals("let x := set(123) in theElement(x)", 123);
 		expectException("let x := set(5, 4) in theElement(x)",
