@@ -37,22 +37,24 @@ package de.uni_koblenz.jgralabtest.greql2.funlib;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueMap;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueRecord;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueTuple;
 import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralabtest.greql2.GenericTests;
@@ -66,58 +68,72 @@ public class GraphFunctionTest extends GenericTests {
 
 		for (Entry<JValue, JValue> entry : map.entrySet()) {
 			Vertex vertex = entry.getKey().toVertex();
-			List<Vertex> children2 = getChildren(vertex, EdgeDirection.IN);
 			JValueSet children = entry.getValue().toJValueSet();
 
-			System.out.println(children);
-			System.out.println(getChildren(vertex, EdgeDirection.IN));
-			System.out.println(getChildren(vertex, EdgeDirection.OUT));
-			System.out.println(getChildren(vertex, EdgeDirection.INOUT));
+			Set<Vertex> children2 = getChildren(vertex);
 
 			for (JValue child : children) {
 				System.out.println(child);
 				assertTrue(child.toString() + " not in " + children2,
 						children2.remove(child.toVertex()));
 			}
-			assertTrue(children2.isEmpty());
+			assertTrue(children2 + " is not empty", children2.isEmpty());
 		}
 	}
 
-	private List<Vertex> getChildren(Vertex vertex, EdgeDirection direction) {
-		List<Vertex> children = new ArrayList<Vertex>();
-		for (Edge edge : vertex.incidences(direction)) {
-			children.add(edge.getAlpha());
+	private Set<Vertex> getChildren(Vertex vertex) {
+		Set<Vertex> children = new HashSet<Vertex>();
+		for (Edge edge : vertex.incidences(EdgeDirection.OUT)) {
+			children.add(edge.getThat());
 		}
 		return children;
 	}
 
 	@Test
-	public void testDegree1() throws Exception {
-		String queryString = "from x : V{BagComprehension} report degree{IsCompResultDefOf}(x) end";
-		JValue result = evalTestQuery("Degree1", queryString);
-		assertEquals(1, result.toCollection().size());
-		for (JValue j : result.toCollection()) {
-			assertEquals(1, (int) j.toInteger());
+	public void testDegree() throws Exception {
+		JValueMap map = evalTestQuery("from v:V reportMap v -> degree(v) end")
+				.toJValueMap();
+
+		for (Entry<JValue, JValue> entry : map.entrySet()) {
+			Vertex vertex = entry.getKey().toVertex();
+			Integer degree = entry.getValue().toInteger();
+
+			assertEquals(vertex.getDegree(), degree, DELTA);
 		}
 	}
 
 	@Test
-	public void testDegree2() throws Exception {
-		String queryString = "from x : V{BagComprehension} report degree(x) end";
-		JValue result = evalTestQuery("Degree2", queryString);
-		assertEquals(1, result.toCollection().size());
-		for (JValue j : result.toCollection()) {
-			assertEquals(3, (int) j.toInteger());
-		}
-	}
+	public void testDescribe() throws Exception {
+		JValueMap map = evalTestQuery("from v:V reportMap v -> describe(v) end")
+				.toJValueMap();
 
-	@Test
-	public void testDegree5() throws Exception {
-		String queryString = "from x : V{BagComprehension} report edgesConnected(x) end";
-		JValue result = evalTestQuery("Degree5", queryString);
-		assertEquals(1, result.toCollection().size());
-		for (JValue j : result.toCollection()) {
-			System.out.println(j);
+		for (Entry<JValue, JValue> entry : map.entrySet()) {
+			Vertex vertex = entry.getKey().toVertex();
+			JValueTuple tuple = entry.getValue().toJValueTuple();
+
+			assertEquals(vertex.getAttributedElementClass().getQualifiedName(),
+					tuple.get(0).toString());
+			assertEquals(vertex.getId(), tuple.get(1).toInteger().intValue());
+			JValueRecord attributeRecord = tuple.get(2).toJValueRecord();
+			for (Entry<String, JValue> recordEntry : attributeRecord.entrySet()) {
+				assertEquals(vertex.getAttribute(recordEntry.getKey()),
+						recordEntry.getValue().toObject());
+			}
+		}
+
+		JValueTuple tuple = evalTestQuery("describe()").toJValueTuple();
+		Graph graph = getTestGraph(TestVersion.CITY_MAP_GRAPH);
+
+		assertEquals(graph.getAttributedElementClass().getQualifiedName(),
+				tuple.get(0).toString());
+		JValueRecord versionRecord = tuple.get(1).toJValueRecord();
+		assertEquals(graph.getId(), versionRecord.get("id").toObject());
+		assertEquals(graph.getGraphVersion(), versionRecord.get("version")
+				.toObject());
+		JValueRecord attributeRecord = tuple.get(2).toJValueRecord();
+		for (Entry<String, JValue> recordEntry : attributeRecord.entrySet()) {
+			assertEquals(graph.getAttribute(recordEntry.getKey()), recordEntry
+					.getValue().toObject());
 		}
 	}
 
