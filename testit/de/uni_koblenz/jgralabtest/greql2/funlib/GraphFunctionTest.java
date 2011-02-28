@@ -37,8 +37,11 @@ package de.uni_koblenz.jgralabtest.greql2.funlib;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map.Entry;
 
 import org.junit.Test;
 
@@ -48,11 +51,45 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueMap;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralabtest.greql2.GenericTests;
 
 public class GraphFunctionTest extends GenericTests {
+
+	@Test
+	public void testChildren() throws Exception {
+		JValueMap map = evalTestQuery("from v:V reportMap v -> children(v) end")
+				.toJValueMap().toJValueMap();
+
+		for (Entry<JValue, JValue> entry : map.entrySet()) {
+			Vertex vertex = entry.getKey().toVertex();
+			List<Vertex> children2 = getChildren(vertex, EdgeDirection.IN);
+			JValueSet children = entry.getValue().toJValueSet();
+
+			System.out.println(children);
+			System.out.println(getChildren(vertex, EdgeDirection.IN));
+			System.out.println(getChildren(vertex, EdgeDirection.OUT));
+			System.out.println(getChildren(vertex, EdgeDirection.INOUT));
+
+			for (JValue child : children) {
+				System.out.println(child);
+				assertTrue(child.toString() + " not in " + children2,
+						children2.remove(child.toVertex()));
+			}
+			assertTrue(children2.isEmpty());
+		}
+	}
+
+	private List<Vertex> getChildren(Vertex vertex, EdgeDirection direction) {
+		List<Vertex> children = new ArrayList<Vertex>();
+		for (Edge edge : vertex.incidences(direction)) {
+			children.add(edge.getAlpha());
+		}
+		return children;
+	}
 
 	@Test
 	public void testDegree1() throws Exception {
