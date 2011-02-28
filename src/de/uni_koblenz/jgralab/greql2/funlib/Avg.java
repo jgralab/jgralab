@@ -102,7 +102,7 @@ public class Avg extends Greql2Function {
 				throw new WrongFunctionParameterException(this, arguments);
 			}
 		}
-		return new JValueImpl(sum / col.size());
+		return new JValueImpl(col.size() == 0 ? 0.0 : sum / col.size());
 	}
 
 	@Override

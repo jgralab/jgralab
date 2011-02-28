@@ -54,7 +54,7 @@ public class CollectionFunctionTest extends GenericTests {
 	public void testAvg() throws Exception {
 		assertQueryEquals("let x:= list (5..13) in avg(x)", 9.0);
 		assertQueryEquals("let x:= list (3) in avg(x)", 3.0);
-		assertQueryEquals("let x:= list () in avg(x)", Double.NaN);
+		assertQueryEquals("let x:= list () in avg(x)", 0.0);
 		assertQueryEquals("let x:= list (3, 100) in avg(x)", 51.5);
 		assertQueryEquals("let x:= list (0..10000) in avg(x)", 5000.0);
 		assertQueryEquals("let x:= list (-100..100) in avg(x)", 0.0);
@@ -387,14 +387,10 @@ public class CollectionFunctionTest extends GenericTests {
 		evalTestQuery("map(1 -> '') store as x");
 		assertQueryEquals("using x: isEmpty(x)", false);
 
-		setBoundVariable("x", new JValueList());
-		assertQueryEquals("using x: isEmpty(x)", true);
-		setBoundVariable("x", new JValueSet());
-		assertQueryEquals("using x: isEmpty(x)", true);
-		setBoundVariable("x", new JValueBag());
-		assertQueryEquals("using x: isEmpty(x)", true);
-		setBoundVariable("x", new JValueMap());
-		assertQueryEquals("using x: isEmpty(x)", true);
+		assertQueryEquals("isEmpty(list())", true);
+		assertQueryEquals("isEmpty(set())", true);
+		assertQueryEquals("isEmpty(bag())", true);
+		assertQueryEquals("isEmpty(map())", true);
 	}
 
 	@Test
