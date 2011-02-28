@@ -104,7 +104,7 @@ public class GraphFunctionTest extends GenericTests {
 	}
 
 	@Test
-	public void testDescribe() throws Exception {
+	public void testDescribeGraphElements() throws Exception {
 		JValueMap map = evalTestQuery("from v:V reportMap v -> describe(v) end")
 				.toJValueMap();
 
@@ -121,7 +121,10 @@ public class GraphFunctionTest extends GenericTests {
 						recordEntry.getValue().toObject());
 			}
 		}
+	}
 
+	@Test
+	public void testDescribeGraph() throws Exception {
 		JValueTuple tuple = evalTestQuery("describe()").toJValueTuple();
 		Graph graph = getTestGraph(TestVersion.CITY_MAP_GRAPH);
 
