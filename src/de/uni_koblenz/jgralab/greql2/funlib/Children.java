@@ -119,17 +119,15 @@ public class Children extends Greql2Function {
 		if (pathSystem != null) {
 			return pathSystem.children(vertex);
 		} else {
-			 Edge inc = vertex.getFirstIncidence(EdgeDirection.OUT);
 			Vertex other = null;
 			JValueSet resultSet = new JValueSet();
-			 while (inc != null) {
-//			for (Edge inc : vertex.incidences(EdgeDirection.OUT)) {
+
+			for (Edge inc : vertex.incidences(EdgeDirection.OUT)) {
 				other = inc.getThat();
 
 				if ((subgraph == null) || subgraph.isMarked(other)) {
 					resultSet.add(new JValueImpl(other));
 				}
-				 inc = inc.getNextIncidence(EdgeDirection.OUT);
 			}
 			return resultSet;
 		}
