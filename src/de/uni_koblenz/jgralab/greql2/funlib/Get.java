@@ -103,12 +103,6 @@ public class Get extends Greql2Function {
 		case 1:
 			int index = arguments[1].toInteger();
 			JValueCollection col = arguments[0].toCollection();
-			// if (index >= col.size()) {
-			// throw new EvaluateException(
-			// "The given collection has fewer than " + (index + 1)
-			// + " elements.  There are exactly " + col.size()
-			// + ".");
-			// }
 			return col.toJValueList().get(index);
 		default:
 			throw new WrongFunctionParameterException(this, arguments);
