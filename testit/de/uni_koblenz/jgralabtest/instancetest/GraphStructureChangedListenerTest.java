@@ -50,7 +50,7 @@ import org.junit.runners.Parameterized.Parameters;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.GraphStructureChangedAdapter;
-import de.uni_koblenz.jgralab.GraphStructureChangedAdapterWithAutoRevome;
+import de.uni_koblenz.jgralab.GraphStructureChangedAdapterWithAutoRemove;
 import de.uni_koblenz.jgralab.GraphStructureChangedListener;
 import de.uni_koblenz.jgralab.GraphStructureChangedListenerWithAutoRemove;
 import de.uni_koblenz.jgralab.ImplementationType;
@@ -88,33 +88,29 @@ public class GraphStructureChangedListenerTest extends InstanceTest {
 		@Override
 		public void vertexAdded(Vertex v) {
 			trigger();
-			assertTrue("The given vertex has not been added to the graph.", v
-					.isValid()
-					&& (v.getGraph() == g));
+			assertTrue("The given vertex has not been added to the graph.",
+					v.isValid() && (v.getGraph() == g));
 		}
 
 		@Override
 		public void vertexDeleted(Vertex v) {
 			trigger();
-			assertTrue("The given vertex is not valid, but it should be.", v
-					.isValid()
-					&& (v.getGraph() == g));
+			assertTrue("The given vertex is not valid, but it should be.",
+					v.isValid() && (v.getGraph() == g));
 		}
 
 		@Override
 		public void edgeAdded(Edge e) {
 			trigger();
-			assertTrue("The given edge has not been added to the graph", e
-					.isValid()
-					&& (e.getGraph() == g));
+			assertTrue("The given edge has not been added to the graph",
+					e.isValid() && (e.getGraph() == g));
 		}
 
 		@Override
 		public void edgeDeleted(Edge e) {
 			trigger();
-			assertTrue("The given edge is not valid, but it should be.", e
-					.isValid()
-					&& (e.getGraph() == g));
+			assertTrue("The given edge is not valid, but it should be.",
+					e.isValid() && (e.getGraph() == g));
 		}
 
 		@Override
@@ -335,7 +331,7 @@ public class GraphStructureChangedListenerTest extends InstanceTest {
 		GraphStructureChangedListener[] listenersWithAutoRemove = new GraphStructureChangedListener[LISTENERS];
 		GraphStructureChangedListener[] normalListeners = new GraphStructureChangedListener[LISTENERS];
 		for (int i = 0; i < listenersWithAutoRemove.length; i++) {
-			listenersWithAutoRemove[i] = new GraphStructureChangedAdapterWithAutoRevome() {
+			listenersWithAutoRemove[i] = new GraphStructureChangedAdapterWithAutoRemove() {
 			};
 			normalListeners[i] = new GraphStructureChangedAdapter() {
 			};
@@ -345,16 +341,16 @@ public class GraphStructureChangedListenerTest extends InstanceTest {
 
 		// test explicit unregister
 		createReadOnlyTransaction(g);
-		assertTrue("The wrong amount of listeners was created.", g
-				.getGraphStructureChangedListenerCount() == LISTENERS * 2);
+		assertTrue("The wrong amount of listeners was created.",
+				g.getGraphStructureChangedListenerCount() == LISTENERS * 2);
 		commit(g);
 
 		g.removeGraphStructureChangedListener(listenersWithAutoRemove[1]);
 		g.removeGraphStructureChangedListener(normalListeners[1]);
 
 		createReadOnlyTransaction(g);
-		assertEquals(LISTENERS * 2 - 2, g
-				.getGraphStructureChangedListenerCount());
+		assertEquals(LISTENERS * 2 - 2,
+				g.getGraphStructureChangedListenerCount());
 		commit(g);
 
 		// test implicit unregister
@@ -375,8 +371,8 @@ public class GraphStructureChangedListenerTest extends InstanceTest {
 
 		createReadOnlyTransaction(g);
 		// only the auto removal one is expected to be deleted
-		assertEquals(LISTENERS * 2 - 3, g
-				.getGraphStructureChangedListenerCount());
+		assertEquals(LISTENERS * 2 - 3,
+				g.getGraphStructureChangedListenerCount());
 		commit(g);
 
 		for (int i = 0; i < LISTENERS; i++) {

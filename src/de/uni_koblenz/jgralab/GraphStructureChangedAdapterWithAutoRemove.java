@@ -34,7 +34,7 @@
  */
 package de.uni_koblenz.jgralab;
 
-public class GraphStructureChangedAdapterWithAutoRevome extends
+public class GraphStructureChangedAdapterWithAutoRemove extends
 		GraphStructureChangedAdapter implements
 		GraphStructureChangedListenerWithAutoRemove {
 }
