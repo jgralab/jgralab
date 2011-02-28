@@ -123,7 +123,7 @@ public class EnumConstant extends Greql2Function {
 					.getClass().getClassLoader());
 			Method fromString = myEnum.getMethod("valueOf",
 					new Class<?>[] { String.class });
-			Object constant = fromString.invoke(null,
+			Enum<?> constant = (Enum<?>) fromString.invoke(null,
 					new Object[] { enumConstantName });
 			result = new JValueImpl(constant);
 		} catch (ClassNotFoundException e) {
