@@ -168,6 +168,20 @@ public class GraphFunctionTest extends GenericTests {
 
 	@Test
 	public void testGetEdge() throws Exception {
+		JValueMap map = evalTestQuery(
+				"from el:list(1..id(lastEdge())) reportMap el -> getEdge(el) end")
+				.toJValueMap();
+		Graph graph = getTestGraph(TestVersion.CITY_MAP_GRAPH);
+
+		for (Entry<JValue, JValue> entry : map.entrySet()) {
+			int id = entry.getKey().toInteger();
+			Edge edge = entry.getValue().toEdge();
+			assertEquals(graph.getEdge(id), edge);
+		}
+	}
+
+	@Test
+	public void testGetEdge2() throws Exception {
 		String dataGraphQuery = "true"; // should contains only one edge
 		Greql2 dataGraph = GreqlParser.parse(dataGraphQuery);
 		JValue result = evalTestQuery("getEdge", "getEdge(1)", dataGraph);
@@ -189,6 +203,20 @@ public class GraphFunctionTest extends GenericTests {
 					|| (col.toString().equals("c"))
 					|| (col.toString().equals("d"))
 					|| (col.toString().equals("i")));
+		}
+	}
+
+	@Test
+	public void testGetVertex() throws Exception {
+		JValueMap map = evalTestQuery(
+				"from el:list(1..id(lastVertex())) reportMap el -> getVertex(el) end")
+				.toJValueMap();
+		Graph graph = getTestGraph(TestVersion.CITY_MAP_GRAPH);
+
+		for (Entry<JValue, JValue> entry : map.entrySet()) {
+			int id = entry.getKey().toInteger();
+			Vertex vertex = entry.getValue().toVertex();
+			assertEquals(graph.getVertex(id), vertex);
 		}
 	}
 
