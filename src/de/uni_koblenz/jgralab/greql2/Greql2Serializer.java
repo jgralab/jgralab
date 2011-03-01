@@ -52,6 +52,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Definition;
 import de.uni_koblenz.jgralab.greql2.schema.DefinitionExpression;
 import de.uni_koblenz.jgralab.greql2.schema.Direction;
+import de.uni_koblenz.jgralab.greql2.schema.DoubleLiteral;
 import de.uni_koblenz.jgralab.greql2.schema.EdgePathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.EdgeRestriction;
 import de.uni_koblenz.jgralab.greql2.schema.EdgeSetExpression;
@@ -84,7 +85,6 @@ import de.uni_koblenz.jgralab.greql2.schema.PathExpression;
 import de.uni_koblenz.jgralab.greql2.schema.PrimaryPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.QuantifiedExpression;
 import de.uni_koblenz.jgralab.greql2.schema.Quantifier;
-import de.uni_koblenz.jgralab.greql2.schema.RealLiteral;
 import de.uni_koblenz.jgralab.greql2.schema.RecordConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.RecordElement;
 import de.uni_koblenz.jgralab.greql2.schema.RoleId;
@@ -751,8 +751,8 @@ public class Greql2Serializer {
 			sb.append(((IntLiteral) exp).get_intValue());
 		} else if (exp instanceof NullLiteral) {
 			sb.append("null");
-		} else if (exp instanceof RealLiteral) {
-			sb.append(((RealLiteral) exp).get_realValue());
+		} else if (exp instanceof DoubleLiteral) {
+			sb.append(((DoubleLiteral) exp).get_doubleValue());
 		} else if (exp instanceof StringLiteral) {
 			sb.append("\"");
 			sb.append(((StringLiteral) exp).get_stringValue());

@@ -32,52 +32,33 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
+package de.uni_koblenz.jgralab.greql2.parser;
 
-package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
+public class DoubleToken extends Token {
 
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
-import de.uni_koblenz.jgralab.greql2.schema.RealLiteral;
+	Double doubleValue = null;
 
-/**
- * Evaluates a Integer Literal, that means, provides access to the literal value
- * using the getResult(...)-Method. This is needed, because is should make no
- * difference for the other VertexEvaluators, if a value is the result of a
- * maybe complex evaluation or if it is a literal.
- * 
- * @author ist@uni-koblenz.de
- * 
- */
-public class RealLiteralEvaluator extends VertexEvaluator {
+	String value = null;
 
-	private RealLiteral vertex;
-
-	/**
-	 * returns the vertex this VertexEvaluator evaluates
-	 */
-	@Override
-	public Greql2Vertex getVertex() {
-		return vertex;
-	}
-
-	public RealLiteralEvaluator(RealLiteral vertex, GreqlEvaluator eval) {
-		super(eval);
-		this.vertex = vertex;
+	public DoubleToken(TokenTypes type, int offset, int length, String value,
+			Double doubleValue) {
+		super(type, offset, length);
+		this.value = value;
+		this.doubleValue = doubleValue;
 	}
 
 	@Override
-	public JValue evaluate() throws EvaluateException {
-		return new JValueImpl(vertex.get_realValue());
+	public boolean isComplex() {
+		return true;
 	}
 
 	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
-		return new VertexCosts(1, 1, 1);
+	public String getValue() {
+		return value;
+	}
+
+	public Double getNumber() {
+		return doubleValue;
 	}
 
 }

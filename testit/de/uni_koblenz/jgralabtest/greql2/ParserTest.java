@@ -58,6 +58,7 @@ import de.uni_koblenz.jgralab.greql2.schema.BagComprehension;
 import de.uni_koblenz.jgralab.greql2.schema.BoolLiteral;
 import de.uni_koblenz.jgralab.greql2.schema.ConditionalExpression;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
+import de.uni_koblenz.jgralab.greql2.schema.DoubleLiteral;
 import de.uni_koblenz.jgralab.greql2.schema.EdgePathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.EdgeRestriction;
 import de.uni_koblenz.jgralab.greql2.schema.EdgeSetExpression;
@@ -101,7 +102,6 @@ import de.uni_koblenz.jgralab.greql2.schema.PathExistence;
 import de.uni_koblenz.jgralab.greql2.schema.QuantificationType;
 import de.uni_koblenz.jgralab.greql2.schema.QuantifiedExpression;
 import de.uni_koblenz.jgralab.greql2.schema.Quantifier;
-import de.uni_koblenz.jgralab.greql2.schema.RealLiteral;
 import de.uni_koblenz.jgralab.greql2.schema.RecordConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.RecordElement;
 import de.uni_koblenz.jgralab.greql2.schema.RecordId;
@@ -140,7 +140,6 @@ public class ParserTest {
 		Greql2FunctionLibrary.instance().registerUserDefinedFunction(
 				IsPrime.class);
 	}
-	
 
 	private Greql2 parseQuery(String query) throws ParsingException {
 		return parseQuery(query, null);
@@ -395,24 +394,24 @@ public class ParserTest {
 	}
 
 	@Test
-	public void testRealLiteral() throws Exception {
-		System.out.println("------------------");
-		System.out.println("Testing RealLiteral");
-		System.out.println("------------------");
+	public void testDoubleLiteral() throws Exception {
+		System.out.println("---------------------");
+		System.out.println("Testing DoubleLiteral");
+		System.out.println("---------------------");
 		Greql2 graph = null;
-		RealLiteral lit = null;
+		DoubleLiteral lit = null;
 		graph = parseQuery("5.0");
-		lit = graph.getFirstRealLiteral();
+		lit = graph.getFirstDoubleLiteral();
 		assertNotNull(lit);
-		assertEquals(5, lit.get_realValue(), 0.0001);
+		assertEquals(5, lit.get_doubleValue(), 0.0001);
 		graph = parseQuery("5.0f");
-		lit = graph.getFirstRealLiteral();
+		lit = graph.getFirstDoubleLiteral();
 		assertNotNull(lit);
-		assertEquals(5.0, lit.get_realValue(), 0.0001);
+		assertEquals(5.0, lit.get_doubleValue(), 0.0001);
 		graph = parseQuery("0.5");
-		lit = graph.getFirstRealLiteral();
+		lit = graph.getFirstDoubleLiteral();
 		assertNotNull(lit);
-		assertEquals(0.5, lit.get_realValue(), 0.0001);
+		assertEquals(0.5, lit.get_doubleValue(), 0.0001);
 	}
 
 	@Test

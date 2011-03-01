@@ -32,32 +32,52 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-package de.uni_koblenz.jgralab.greql2.parser;
 
-public class RealToken extends Token {
+package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
-	Double realValue = null;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
+import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
+import de.uni_koblenz.jgralab.greql2.schema.DoubleLiteral;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 
-	String value = null;
-	
-	public RealToken(TokenTypes type, int offset, int length, String value, Double realValue) {
-		super(type, offset, length);
-		this.value = value;
-		this.realValue = realValue;
+/**
+ * Evaluates a Integer Literal, that means, provides access to the literal value
+ * using the getResult(...)-Method. This is needed, because is should make no
+ * difference for the other VertexEvaluators, if a value is the result of a
+ * maybe complex evaluation or if it is a literal.
+ * 
+ * @author ist@uni-koblenz.de
+ * 
+ */
+public class DoubleLiteralEvaluator extends VertexEvaluator {
+
+	private DoubleLiteral vertex;
+
+	/**
+	 * returns the vertex this VertexEvaluator evaluates
+	 */
+	@Override
+	public Greql2Vertex getVertex() {
+		return vertex;
+	}
+
+	public DoubleLiteralEvaluator(DoubleLiteral vertex, GreqlEvaluator eval) {
+		super(eval);
+		this.vertex = vertex;
 	}
 
 	@Override
-	public boolean isComplex() {
-		return true;
+	public JValue evaluate() throws EvaluateException {
+		return new JValueImpl(vertex.get_doubleValue());
 	}
 
 	@Override
-	public String getValue() {
-		return value;
-	}
-
-	public Double getNumber() {
-		return  realValue;
+	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
+		return new VertexCosts(1, 1, 1);
 	}
 
 }
