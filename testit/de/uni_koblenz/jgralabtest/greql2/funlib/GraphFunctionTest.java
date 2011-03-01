@@ -56,8 +56,6 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueMap;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueRecord;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTuple;
-import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralabtest.greql2.GenericTests;
 import de.uni_koblenz.jgralabtest.schemas.greqltestschema.connections.Way;
 import de.uni_koblenz.jgralabtest.schemas.greqltestschema.junctions.Crossroad;
@@ -168,8 +166,9 @@ public class GraphFunctionTest extends GenericTests {
 
 	@Test
 	public void testGetEdge() throws Exception {
+		evalTestQuery("list(1..id(lastEdge())) ++ list(-id(lastEdge())..-1) store as idList");
 		JValueMap map = evalTestQuery(
-				"from el:list(1..id(lastEdge())) reportMap el -> getEdge(el) end")
+				"using idList: from el:list(1..id(lastEdge())) reportMap el -> getEdge(el) end")
 				.toJValueMap();
 		Graph graph = getTestGraph(TestVersion.CITY_MAP_GRAPH);
 
@@ -182,10 +181,9 @@ public class GraphFunctionTest extends GenericTests {
 
 	@Test
 	public void testGetEdge2() throws Exception {
-		String dataGraphQuery = "true"; // should contains only one edge
-		Greql2 dataGraph = GreqlParser.parse(dataGraphQuery);
-		JValue result = evalTestQuery("getEdge", "getEdge(1)", dataGraph);
-		assertEquals(dataGraph.getFirstEdge(), result.toEdge());
+		assertQueryEquals("getEdge(0)", (Edge) null);
+		assertQueryEquals("getEdge(id(lastEdge()) + 1)", (Edge) null);
+		assertQueryEquals("getEdge(-id(lastEdge()) -1)", (Edge) null);
 	}
 
 	@Test
@@ -218,6 +216,14 @@ public class GraphFunctionTest extends GenericTests {
 			Vertex vertex = entry.getValue().toVertex();
 			assertEquals(graph.getVertex(id), vertex);
 		}
+	}
+
+	@Test
+	public void testGetVertex2() throws Exception {
+		assertQueryEquals("getVertex(0)", (Vertex) null);
+		assertQueryEquals("getVertex(-1)", (Vertex) null);
+		assertQueryEquals("getVertex(id(lastVertex()) + 1)", (Vertex) null);
+		assertQueryEquals("getVertex(-id(lastVertex()) -1)", (Vertex) null);
 	}
 
 	@Test
