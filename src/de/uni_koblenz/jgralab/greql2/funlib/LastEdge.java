@@ -92,7 +92,7 @@ public class LastEdge extends Greql2Function {
 			return new JValueImpl(graph.getLastEdge());
 		case 1:
 			Edge current = graph.getLastEdge();
-			JValueTypeCollection tc = arguments[2].toJValueTypeCollection();
+			JValueTypeCollection tc = arguments[0].toJValueTypeCollection();
 			while (current != null) {
 				if (tc.acceptsType(current.getAttributedElementClass())) {
 					return new JValueImpl(current);
