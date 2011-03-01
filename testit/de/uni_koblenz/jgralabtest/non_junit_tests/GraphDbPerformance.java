@@ -16,6 +16,7 @@ import de.uni_koblenz.jgralab.impl.db.GraphDatabase;
 import de.uni_koblenz.jgralab.impl.db.GraphDatabaseException;
 import de.uni_koblenz.jgralabtest.algolib.nonjunit.RandomGraphForAStar;
 import de.uni_koblenz.jgralabtest.algolib.nonjunit.Stopwatch;
+import de.uni_koblenz.jgralabtest.schemas.algolib.weighted.Location;
 import de.uni_koblenz.jgralabtest.schemas.algolib.weighted.Way;
 import de.uni_koblenz.jgralabtest.schemas.algolib.weighted.WeightedGraph;
 import de.uni_koblenz.jgralabtest.schemas.algolib.weighted.WeightedSchema;
@@ -23,10 +24,7 @@ import de.uni_koblenz.jgralabtest.schemas.algolib.weighted.WeightedSchema;
 public class GraphDbPerformance {
 
 	private static final String GRAPH_ID = "Hugo";
-	private static final int VERTEX_COUNT = 10000;
-	private static final int INCIDENCES_PER_VERTEX = 4;
-	private static final double SIZE = 1000.0;
-	private static final double MAX_DEVIATION = 25.0;
+	private static final int VERTICES_PER_DIMENSION = 100;
 
 	private static final int REPEAT = 1;
 	private static final long SEED = 42l;
@@ -53,29 +51,32 @@ public class GraphDbPerformance {
 	}
 
 	private static GraphDatabase gdb;
-	private static RandomGraphForAStar graphGenerator;
+
+	// private static RandomGraphForAStar graphGenerator;
 
 	public static void main(String[] args) throws Exception {
 
 		List<RunConfiguration> runs = new LinkedList<RunConfiguration>();
 
-		RunType currentRunType = RunType.CREATE;
-		for (boolean currentWithForeignKeys : new boolean[] { false, true }) {
-			for (boolean currentWithIndices : new boolean[] { false, true }) {
-				runs.add(new RunConfiguration(currentRunType,
-						currentWithForeignKeys, currentWithIndices,
-						VERTEX_COUNT, REPEAT));
-			}
-		}
-
-		currentRunType = RunType.DELETE;
-		for (boolean currentWithForeignKeys : new boolean[] { false, true }) {
-			for (boolean currentWithIndices : new boolean[] { false, true }) {
-				runs.add(new RunConfiguration(currentRunType,
-						currentWithForeignKeys, currentWithIndices,
-						VERTEX_COUNT, REPEAT));
-			}
-		}
+		// RunType currentRunType = RunType.CREATE;
+		// for (boolean currentWithForeignKeys : new boolean[] { false, true })
+		// {
+		// for (boolean currentWithIndices : new boolean[] { false, true }) {
+		// runs.add(new RunConfiguration(currentRunType,
+		// currentWithForeignKeys, currentWithIndices,
+		// VERTICES_PER_DIMENSION, REPEAT));
+		// }
+		// }
+		//
+		// currentRunType = RunType.DELETE;
+		// for (boolean currentWithForeignKeys : new boolean[] { false, true })
+		// {
+		// for (boolean currentWithIndices : new boolean[] { false, true }) {
+		// runs.add(new RunConfiguration(currentRunType,
+		// currentWithForeignKeys, currentWithIndices,
+		// VERTICES_PER_DIMENSION, REPEAT));
+		// }
+		// }
 
 		RunType[] algorithmRunTypes = new RunType[] { RunType.DFS, RunType.BFS,
 				RunType.DIJKSTRA };
@@ -83,15 +84,31 @@ public class GraphDbPerformance {
 		for (RunType type : algorithmRunTypes) {
 			for (boolean currentWithForeignKeys : new boolean[] { false, true }) {
 				for (boolean currentWithIndices : new boolean[] { true }) {
-					runs.add(new RunConfiguration(type, currentWithForeignKeys,
-							currentWithIndices, VERTEX_COUNT, REPEAT));
+					runs
+							.add(new RunConfiguration(type,
+									currentWithForeignKeys, currentWithIndices,
+									VERTICES_PER_DIMENSION, REPEAT));
 				}
 			}
 		}
 
+		gdb = prepareDatabase();
+
+		// graphGenerator = new RandomGraphForAStar(SIZE, SIZE, MAX_DEVIATION);
+		System.out.println("Launching benchmark...");
+		System.out.println();
+
+		for (RunConfiguration currentConfiguration : runs) {
+			performRun(currentConfiguration);
+		}
+		gdb.commitTransaction();
+		System.out.println("Fini.");
+	}
+
+	public static GraphDatabase prepareDatabase() throws GraphDatabaseException {
 		System.out.println("Connecting DB...");
 		String dbAddress = System.getProperty("jgralabtest_dbconnection");
-		gdb = GraphDatabase.openGraphDatabase(dbAddress);
+		GraphDatabase gdb = GraphDatabase.openGraphDatabase(dbAddress);
 		gdb.setAutoCommit(false);
 		try {
 			System.out
@@ -113,16 +130,7 @@ public class GraphDbPerformance {
 			e.printStackTrace();
 		}
 		gdb.commitTransaction();
-
-		graphGenerator = new RandomGraphForAStar(SIZE, SIZE, MAX_DEVIATION);
-		System.out.println("Launching benchmark...");
-		System.out.println();
-
-		for (RunConfiguration currentConfiguration : runs) {
-			performRun(currentConfiguration);
-		}
-		gdb.commitTransaction();
-		System.out.println("Fini.");
+		return gdb;
 	}
 
 	private static void performRun(RunConfiguration config) throws Exception {
@@ -247,8 +255,9 @@ public class GraphDbPerformance {
 	private static WeightedGraph createTheGraph() throws GraphDatabaseException {
 		WeightedGraph graph = WeightedSchema.instance()
 				.createWeightedGraphWithDatabaseSupport(GRAPH_ID, gdb);
-		graphGenerator.createPlanarRandomGraph(graph, VERTEX_COUNT,
-				INCIDENCES_PER_VERTEX, new Random(SEED), false);
+		// graphGenerator.createPlanarRandomGraph(graph, VERTICES_PER_DIMENSION,
+		// INCIDENCES_PER_VERTEX, new Random(SEED), false);
+		createGraphWithRandomEdgeWeight(graph, VERTICES_PER_DIMENSION, SEED);
 		gdb.commitTransaction();
 		return graph;
 	}
@@ -267,6 +276,45 @@ public class GraphDbPerformance {
 
 	private static void clearCache(WeightedGraph graph) {
 		((de.uni_koblenz.jgralab.impl.db.GraphImpl) graph).clearCache();
+	}
+
+	public static void createGraphWithRandomEdgeWeight(WeightedGraph graph,
+			int verticesPerDimension, long seed) {
+		assert graph.getVCount() == 0;
+		Random rng = new Random(seed);
+		Location[][] vertices = new Location[verticesPerDimension][verticesPerDimension];
+
+		// create vertices along grid
+		for (int i = 0; i < verticesPerDimension; i++) {
+			for (int j = 0; j < verticesPerDimension; j++) {
+				Location newVertex = graph.createLocation();
+				newVertex.set_x(i);
+				newVertex.set_y(j);
+				newVertex.set_name("(" + i + ":" + j + ")");
+				vertices[j][i] = newVertex;
+				// create at most 2 edges
+				if (i > 0) {
+					Location alpha = vertices[j][i - 1];
+					Way newWay = graph.createWay(alpha, newVertex);
+					createRandomWeight(rng, newWay);
+				}
+				if (j > 0) {
+					Location alpha = vertices[j - 1][i];
+					Way newWay = graph.createWay(alpha, newVertex);
+					createRandomWeight(rng, newWay);
+				}
+			}
+		}
+	}
+
+	private static void createRandomWeight(Random rng, Way newWay) {
+		// set length to at most twice the actual distance and at
+		// least as long as the actual distance
+		Location alpha = (Location) newWay.getAlpha();
+		Location omega = (Location) newWay.getOmega();
+		newWay.set_weight(RandomGraphForAStar.euclideanDistance(alpha.get_x(),
+				alpha.get_y(), omega.get_x(), omega.get_y())
+				* (1 + rng.nextDouble()));
 	}
 
 }
