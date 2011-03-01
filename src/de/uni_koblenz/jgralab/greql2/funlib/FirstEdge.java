@@ -91,15 +91,12 @@ public class FirstEdge extends Greql2Function {
 		case 0:
 			return new JValueImpl(graph.getFirstEdge());
 		case 1:
-			// Edge current = graph.getFirstEdge();
 			JValueTypeCollection tc = arguments[0].toJValueTypeCollection();
 			for (Edge current : graph.edges()) {
 				if (tc.acceptsType(current.getAttributedElementClass())) {
 					return new JValueImpl(current);
 				}
 			}
-			// current = current.getNextEdge();
-			// }
 			return new JValueImpl((Edge) null);
 		default:
 			throw new WrongFunctionParameterException(this, arguments);
