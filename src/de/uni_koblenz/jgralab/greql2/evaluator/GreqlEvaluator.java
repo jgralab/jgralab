@@ -1203,7 +1203,7 @@ public class GreqlEvaluator {
 			Method printMethod = tg2DotClass.getMethod("convertGraph",
 					Graph.class, String.class, boolean.class);
 			printMethod.invoke(tg2DotClass, new Object[] { graph,
-					reversedEdges, outputFilename });
+					outputFilename, reversedEdges });
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
