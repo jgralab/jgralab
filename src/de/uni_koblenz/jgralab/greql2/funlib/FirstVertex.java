@@ -91,13 +91,12 @@ public class FirstVertex extends Greql2Function {
 		case 0:
 			return new JValueImpl(graph.getFirstVertex());
 		case 1:
-			Vertex current = graph.getFirstVertex();
-			JValueTypeCollection tc = arguments[2].toJValueTypeCollection();
-			while (current != null) {
+			JValueTypeCollection tc = arguments[0].toJValueTypeCollection();
+
+			for (Vertex current : graph.vertices()) {
 				if (tc.acceptsType(current.getAttributedElementClass())) {
 					return new JValueImpl(current);
 				}
-				current = current.getNextVertex();
 			}
 			return new JValueImpl((Vertex) null);
 		default:
