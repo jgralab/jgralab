@@ -59,6 +59,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTuple;
 import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralabtest.greql2.GenericTests;
+import de.uni_koblenz.jgralabtest.schemas.greqltestschema.connections.Way;
+import de.uni_koblenz.jgralabtest.schemas.greqltestschema.junctions.Crossroad;
 
 public class GraphFunctionTest extends GenericTests {
 
@@ -150,6 +152,18 @@ public class GraphFunctionTest extends GenericTests {
 	public void testFirstEdge() throws Exception {
 		Graph graph = getTestGraph(TestVersion.CITY_MAP_GRAPH);
 		assertQueryEquals("firstEdge()", graph.getFirstEdge());
+		assertQueryEquals("firstEdge{connections.Way}()",
+				graph.getFirstEdge(Way.class));
+		assertQueryEquals("firstEdge{Edge!}()", (Edge) null);
+	}
+
+	@Test
+	public void testFirstVertex() throws Exception {
+		Graph graph = getTestGraph(TestVersion.CITY_MAP_GRAPH);
+		assertQueryEquals("firstVertex()", graph.getFirstVertex());
+		assertQueryEquals("firstVertex{junctions.Crossroad}()",
+				graph.getFirstVertex(Crossroad.class));
+		assertQueryEquals("firstVertex{Vertex!}()", (Vertex) null);
 	}
 
 	@Test
@@ -253,6 +267,47 @@ public class GraphFunctionTest extends GenericTests {
 	public void testLastEdge() throws Exception {
 		Graph graph = getTestGraph(TestVersion.CITY_MAP_GRAPH);
 		assertQueryEquals("lastEdge()", graph.getLastEdge());
+		assertQueryEquals("lastEdge{connections.Way}()",
+				getLastEdgeForType(Way.class));
+		assertQueryEquals("lastEdge{Edge!}()", (Edge) null);
+	}
+
+	@Test
+	public void testLastVertex() throws Exception {
+		Graph graph = getTestGraph(TestVersion.CITY_MAP_GRAPH);
+		assertQueryEquals("lastVertex()", graph.getLastVertex());
+		assertQueryEquals("lastVertex{junctions.Crossroad}()",
+				getLastVertexForType(Crossroad.class));
+		assertQueryEquals("lastVertex{Vertex!}()", (Vertex) null);
+	}
+
+	public Edge getLastEdgeForType(Class<? extends Edge> type) throws Exception {
+		Graph graph = getTestGraph(TestVersion.CITY_MAP_GRAPH);
+		Edge lastEdge = graph.getLastEdge();
+
+		while (lastEdge != null) {
+			if (type.isAssignableFrom(lastEdge.getClass())) {
+				break;
+			}
+			lastEdge = lastEdge.getPrevEdge();
+		}
+
+		return lastEdge;
+	}
+
+	public Vertex getLastVertexForType(Class<? extends Vertex> type)
+			throws Exception {
+		Graph graph = getTestGraph(TestVersion.CITY_MAP_GRAPH);
+		Vertex lastVertex = graph.getLastVertex();
+
+		while (lastVertex != null) {
+			if (type.isAssignableFrom(lastVertex.getClass())) {
+				break;
+			}
+			lastVertex = lastVertex.getPrevVertex();
+		}
+
+		return lastVertex;
 	}
 
 	@Test
