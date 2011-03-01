@@ -1081,7 +1081,9 @@ public class GreqlParser extends ParserHelper {
 			return parseAltPathDescription();
 		}
 
-		if (((lookAhead(0) == TokenTypes.IDENTIFIER) || (lookAhead(0) == TokenTypes.AND) || (lookAhead(0) == TokenTypes.NOT) 
+		if (((lookAhead(0) == TokenTypes.IDENTIFIER)
+				|| (lookAhead(0) == TokenTypes.AND)
+				|| (lookAhead(0) == TokenTypes.NOT)
 				|| (lookAhead(0) == TokenTypes.XOR) || (lookAhead(0) == TokenTypes.OR))
 				&& ((lookAhead(1) == TokenTypes.LCURLY) || (lookAhead(1) == TokenTypes.LPAREN))) {
 			predicateStart();
@@ -1572,7 +1574,9 @@ public class GreqlParser extends ParserHelper {
 
 	private final FunctionApplication parseFunctionApplication() {
 		List<VertexPosition<TypeId>> typeIds = null;
-		if (((lookAhead(0) == TokenTypes.IDENTIFIER) || (lookAhead(0) == TokenTypes.AND) || (lookAhead(0) == TokenTypes.NOT) 
+		if (((lookAhead(0) == TokenTypes.IDENTIFIER)
+				|| (lookAhead(0) == TokenTypes.AND)
+				|| (lookAhead(0) == TokenTypes.NOT)
 				|| (lookAhead(0) == TokenTypes.XOR) || (lookAhead(0) == TokenTypes.OR))
 				&& isFunctionName(lookAhead.getValue())
 				&& ((lookAhead(1) == TokenTypes.LCURLY) || (lookAhead(1) == TokenTypes.LPAREN))) {
@@ -1758,13 +1762,15 @@ public class GreqlParser extends ParserHelper {
 		} else {
 			List<VertexPosition<Expression>> allExpressions = null;
 			if (tryMatch(TokenTypes.COMMA)) {
-				allExpressions  = parseExpressionList(TokenTypes.COMMA);
-			} 
+				allExpressions = parseExpressionList(TokenTypes.COMMA);
+			}
 			if (!inPredicateMode()) {
 				VertexPosition<Expression> v = new VertexPosition<Expression>(
 						startExpr, lengthStart, offsetStart);
-				if (allExpressions == null)
-					allExpressions = new ArrayList<VertexPosition<Expression>>(1);
+				if (allExpressions == null) {
+					allExpressions = new ArrayList<VertexPosition<Expression>>(
+							1);
+				}
 				allExpressions.add(0, v);
 				result = createPartsOfValueConstruction(allExpressions,
 						graph.createListConstruction());
@@ -1913,7 +1919,8 @@ public class GreqlParser extends ParserHelper {
 		return null;
 	}
 
-	private final List<VertexPosition<Expression>> parseExpressionList(TokenTypes separator) {
+	private final List<VertexPosition<Expression>> parseExpressionList(
+			TokenTypes separator) {
 		int pos = alreadySucceeded(RuleEnum.EXPRESSION_LIST);
 		if (skipRule(pos)) {
 			return null;
@@ -2155,7 +2162,7 @@ public class GreqlParser extends ParserHelper {
 		Comprehension comprehension = null;
 		boolean vartable = false;
 		boolean map = false;
-		TokenTypes separator = TokenTypes.COMMA; 
+		TokenTypes separator = TokenTypes.COMMA;
 		switch (lookAhead(0)) {
 		case REPORT:
 			return parseLabeledReportList();
@@ -2476,22 +2483,24 @@ public class GreqlParser extends ParserHelper {
 	}
 
 	private final Expression parseNumericLiteral() {
-		if (lookAhead(0) == TokenTypes.REALLITERAL) {
-			RealLiteral literal = null;
+		if (lookAhead(0) == TokenTypes.DOUBLELITERAL) {
+			DoubleLiteral literal = null;
 			if (!inPredicateMode()) {
-				literal = graph.createRealLiteral();
-				literal.set_realValue(((RealToken) lookAhead).getNumber());
+				literal = graph.createDoubleLiteral();
+				literal.set_doubleValue(((DoubleToken) lookAhead).getNumber());
 			}
 			match();
 			return literal;
 		}
 		if ((lookAhead(0) == TokenTypes.HEXLITERAL)
 				|| (lookAhead(0) == TokenTypes.OCTLITERAL)) {
-			if (((IntegerToken) lookAhead).getNumber().intValue() == ((IntegerToken) lookAhead).getNumber().longValue()) {
+			if (((IntegerToken) lookAhead).getNumber().intValue() == ((IntegerToken) lookAhead)
+					.getNumber().longValue()) {
 				IntLiteral literal = null;
 				if (!inPredicateMode()) {
 					literal = graph.createIntLiteral();
-					literal.set_intValue(((IntegerToken) lookAhead).getNumber().intValue());
+					literal.set_intValue(((IntegerToken) lookAhead).getNumber()
+							.intValue());
 				}
 				match();
 				return literal;
@@ -2499,7 +2508,8 @@ public class GreqlParser extends ParserHelper {
 				LongLiteral literal = null;
 				if (!inPredicateMode()) {
 					literal = graph.createLongLiteral();
-					literal.set_longValue(((IntegerToken) lookAhead).getNumber());
+					literal.set_longValue(((IntegerToken) lookAhead)
+							.getNumber());
 				}
 				match();
 				return literal;
@@ -2516,26 +2526,27 @@ public class GreqlParser extends ParserHelper {
 						|| (lookAhead(0) == TokenTypes.OCTLITERAL)) {
 					decimalPart = ((IntegerToken) lookAhead).getValue();
 					match();
-			//	} else if (lookAhead(0) == TokenTypes.REALLITERAL) {
-					//decimalPart = lookAhead.getValue().substring(0,
-					//		lookAhead.getValue().length() - 1);
-					//match();
+					// } else if (lookAhead(0) == TokenTypes.REALLITERAL) {
+					// decimalPart = lookAhead.getValue().substring(0,
+					// lookAhead.getValue().length() - 1);
+					// match();
 				} else {
 					fail("Unrecognized token as part of decimal value");
 				}
 				if (!inPredicateMode()) {
-					String realValue = integerPart + "." + decimalPart;
-					RealLiteral literal = graph.createRealLiteral();
+					String doubleValue = integerPart + "." + decimalPart;
+					DoubleLiteral literal = graph.createDoubleLiteral();
 					// System.out.println("Real Value: '" + realValue + "'");
-					literal.set_realValue(Double.parseDouble(realValue));
+					literal.set_doubleValue(Double.parseDouble(doubleValue));
 					return literal;
 				}
 				return null;
 			} else {
 				if (!inPredicateMode()) {
-					if ((value < Integer.MAX_VALUE) && (value > Integer.MIN_VALUE))  {
+					if ((value < Integer.MAX_VALUE)
+							&& (value > Integer.MIN_VALUE)) {
 						IntLiteral literal = graph.createIntLiteral();
-						literal.set_intValue((int)value);
+						literal.set_intValue((int) value);
 						return literal;
 					} else {
 						LongLiteral literal = graph.createLongLiteral();
@@ -2553,7 +2564,7 @@ public class GreqlParser extends ParserHelper {
 	private final Expression parseLiteral() {
 		if (lookAhead(0) != null) {
 			switch (lookAhead(0)) {
-			case REALLITERAL:
+			case DOUBLELITERAL:
 			case HEXLITERAL:
 			case INTLITERAL:
 			case OCTLITERAL:

@@ -438,9 +438,9 @@ public class GreqlEvaluatorTest extends GenericTests {
 
 	@Test
 	public void testEvaluateConditionalExpression3() throws Exception {
-		String queryString = "1?1:2";
+		String queryString = "false ? 1 : 2";
 		JValue result = evalTestQuery("ConditionalExpression3", queryString);
-		assertEquals(3, (int) result.toInteger());
+		assertEquals(2, (int) result.toInteger());
 		JValue resultWO = evalTestQuery("ConditionalExpression3 (wo)",
 				queryString, new DefaultOptimizer());
 		assertEquals(result, resultWO);

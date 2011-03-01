@@ -79,7 +79,7 @@ VertexClass OptionalPathDescription: PathDescription;
 VertexClass PathExistence: PathExpression;
 VertexClass QuantifiedExpression: Expression;
 VertexClass Quantifier: Greql2Vertex { type: QuantificationType };
-VertexClass RealLiteral: Literal { realValue: Double };
+VertexClass DoubleLiteral: Literal { doubleValue: Double };
 VertexClass RecordConstruction: ValueConstruction;
 VertexClass RecordElement: Greql2Vertex;
 VertexClass RecordId: Identifier;

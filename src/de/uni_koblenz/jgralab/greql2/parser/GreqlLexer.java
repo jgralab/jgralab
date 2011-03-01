@@ -260,7 +260,7 @@ public class GreqlLexer {
 
 	private final Token matchDoubleConstantToken(int start, int i, String tokenText) {
 		Double value = Double.parseDouble(tokenText);
-		return new RealToken(TokenTypes.REALLITERAL, start, i, tokenText, value);
+		return new DoubleToken(TokenTypes.DOUBLELITERAL, start, i, tokenText, value);
 	}
 
 	private final boolean startsWithNumber(String text) {
