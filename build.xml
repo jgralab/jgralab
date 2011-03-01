@@ -103,7 +103,7 @@
 	<property name="rsa.includes" value="ant/Rsa2TgTask.java rsa/** tg2schemagraph/**" />
 
 	<property name="tg2dot.src" value="${src.dir}/de/uni_koblenz/jgralab/utilities" />
-	<property name="tg2dot.includes" value="tg2dot/**" />
+	<property name="tg2dot.includes" value="tg2dot/** tg2image/**" />
 
 	<property name="common-tools.src" value="${src.dir}/de/uni_koblenz/jgralab/utilities" />
 	<property name="common-tools.includes" value="common/**" />
