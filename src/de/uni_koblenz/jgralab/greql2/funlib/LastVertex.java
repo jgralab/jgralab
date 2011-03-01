@@ -92,7 +92,7 @@ public class LastVertex extends Greql2Function {
 			return new JValueImpl(graph.getLastVertex());
 		case 1:
 			Vertex current = graph.getLastVertex();
-			JValueTypeCollection tc = arguments[1].toJValueTypeCollection();
+			JValueTypeCollection tc = arguments[0].toJValueTypeCollection();
 			while (current != null) {
 				if (tc.acceptsType(current.getAttributedElementClass())) {
 					return new JValueImpl(current);
