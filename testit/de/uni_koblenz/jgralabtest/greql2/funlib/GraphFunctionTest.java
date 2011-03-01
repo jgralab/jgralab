@@ -142,6 +142,17 @@ public class GraphFunctionTest extends GenericTests {
 	}
 
 	@Test
+	public void testEdgeSeq() throws Exception {
+		assertQueryEqualsQuery("edgeSeq(firstEdge(), lastEdge())", "E");
+	}
+
+	@Test
+	public void testFirstEdge() throws Exception {
+		Graph graph = getTestGraph(TestVersion.CITY_MAP_GRAPH);
+		assertQueryEquals("firstEdge()", graph.getFirstEdge());
+	}
+
+	@Test
 	public void testGetEdge() throws Exception {
 		String dataGraphQuery = "true"; // should contains only one edge
 		Greql2 dataGraph = GreqlParser.parse(dataGraphQuery);
@@ -236,6 +247,12 @@ public class GraphFunctionTest extends GenericTests {
 		String queryString = "isTree()";
 		JValue result = evalTestQuery("IsTree3", queryString, getTestTree());
 		assertEquals(JValueBoolean.getTrueValue(), result.toBoolean());
+	}
+
+	@Test
+	public void testLastEdge() throws Exception {
+		Graph graph = getTestGraph(TestVersion.CITY_MAP_GRAPH);
+		assertQueryEquals("lastEdge()", graph.getLastEdge());
 	}
 
 	@Test
