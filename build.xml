@@ -52,7 +52,7 @@
 	<property name="license.file" value="../jgralab/license/header/gpl-3.0-header.txt" />
 
 	<!-- enable clover for the testcases: run with "ant with.clover build test" -->
-	<property name="clover.jar" value="${lib.dir}/clover/clover-3.0.1.jar" />
+	<property name="clover.jar" value="${lib.dir}/clover/clover-3.0.2.jar" />
 	<taskdef resource="cloverlib.xml" classpath="${clover.jar}" />
 
 	<target name="with.clover">
