@@ -1200,8 +1200,8 @@ public class GreqlEvaluator {
 		try {
 			Class<?> tg2DotClass = Class
 					.forName("de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot");
-			Method printMethod = tg2DotClass.getMethod("printGraphAsDot",
-					Graph.class, boolean.class, String.class);
+			Method printMethod = tg2DotClass.getMethod("convertGraph",
+					Graph.class, String.class, boolean.class);
 			printMethod.invoke(tg2DotClass, new Object[] { graph,
 					reversedEdges, outputFilename });
 		} catch (ClassNotFoundException e) {
