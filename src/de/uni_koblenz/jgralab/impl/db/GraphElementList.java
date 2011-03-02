@@ -227,11 +227,13 @@ public abstract class GraphElementList<T> {
 	}
 
 	protected boolean minBorderOfNumberSpaceReached() {
-		return sequenceNumberToIdMap.firstKey() < SequenceNumber.MIN_BORDER_OF_NUMBER_SPACE;
+		return !sequenceNumberToIdMap.isEmpty()
+				&& sequenceNumberToIdMap.firstKey() < SequenceNumber.MIN_BORDER_OF_NUMBER_SPACE;
 	}
 
 	protected boolean maxBorderOfNumberSpaceReached() {
-		return sequenceNumberToIdMap.lastKey() > SequenceNumber.MAX_BORDER_OF_NUMBER_SPACE;
+		return !sequenceNumberToIdMap.isEmpty()
+				&& sequenceNumberToIdMap.lastKey() > SequenceNumber.MAX_BORDER_OF_NUMBER_SPACE;
 	}
 
 	protected long getPrevFreeSequenceNumber(long sequenceNumber) {
@@ -287,7 +289,6 @@ public abstract class GraphElementList<T> {
 	protected abstract boolean equalsFirst(T element);
 
 	protected boolean isLast(T element) {
-		assert (contains(element));
 		if (!this.isEmpty()) {
 			return this.equalsLast(element);
 		} else {
@@ -296,7 +297,6 @@ public abstract class GraphElementList<T> {
 	}
 
 	protected boolean isFirst(T element) {
-		assert this.contains(element);
 		if (!this.isEmpty()) {
 			return this.equalsFirst(element);
 		} else {
@@ -308,11 +308,11 @@ public abstract class GraphElementList<T> {
 
 	protected abstract void insertAt(T element, long sequenceNumber);
 
-	protected void moveOrInsert(T edge, long sequenceNumber) {
-		if (this.contains(edge)) {
-			this.moveTo(edge, sequenceNumber);
+	protected void moveOrInsert(T element, long sequenceNumber) {
+		if (this.contains(element)) {
+			this.moveTo(element, sequenceNumber);
 		} else {
-			this.insertAt(edge, sequenceNumber);
+			this.insertAt(element, sequenceNumber);
 		}
 	}
 
