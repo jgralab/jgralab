@@ -156,16 +156,15 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 	public static void checkIncidenceClassSpecialization(
 			IncidenceClass special, IncidenceClass general) {
 		// Vertex same
-		if ((special.getVertexClass() != general.getVertexClass())
-				&& (!general.getVertexClass().isSuperClassOf(
-						special.getVertexClass()))) {
+		if ((!general.getVertexClass().isSuperClassOfOrEquals(
+				special.getVertexClass()))) {
 			String dir = special.getDirection() == IncidenceDirection.OUT ? "Alpha"
 					: "Omega";
 			throw new SchemaException(
-					"An IncidenceClass may specialize only IncidenceClasses whose connected vertex class is identical or a superclass of the own one. Offending"
-							+ "EdgeClasses are "
+					"An IncidenceClass may specialize only IncidenceClasses whose connected vertex class "
+							+ "is identical or a superclass of the own one. Offending EdgeClasses are "
 							+ special.getEdgeClass().getQualifiedName()
-							+ " and "
+							+ " which wants to specialize "
 							+ general.getEdgeClass().getQualifiedName()
 							+ " at end " + dir);
 		}
@@ -174,8 +173,8 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 			String dir = special.getDirection() == IncidenceDirection.OUT ? "Alpha"
 					: "Omega";
 			throw new SchemaException(
-					"The multiplicity of an edge class may not be larger than the multiplicities of its superclass. Offending"
-							+ "EdgeClasses are "
+					"The multiplicity of an edge class may not be larger than "
+							+ "the multiplicities of its superclass. Offending EdgeClasses are "
 							+ special.getEdgeClass().getQualifiedName()
 							+ " and "
 							+ general.getEdgeClass().getQualifiedName()
