@@ -2,6 +2,7 @@ package de.uni_koblenz.jgralabtest.non_junit_tests;
 
 import java.util.Iterator;
 
+import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.BreadthFirstSearch;
@@ -17,15 +18,15 @@ import de.uni_koblenz.jgralabtest.schemas.algolib.weighted.WeightedSchema;
 
 public class DebugGraphDB {
 	private static final long SEED = 42l;
-	private static final int VERTICES_PER_DIMENSION = 100;
+	private static final int VERTICES_PER_DIMENSION = 20;
 
 	public static void main(String[] args) throws Exception {
 		WeightedSchema schema = WeightedSchema.instance();
 		Stopwatch sw = new Stopwatch();
 		System.out.println("Creating graph in memory...");
 		sw.start();
-		WeightedGraph graph = schema.createWeightedGraph();
-		GraphDbPerformance.createGraphWithRandomEdgeWeight(graph,
+		WeightedGraph graph1 = schema.createWeightedGraph();
+		GraphDbPerformance.createGraphWithRandomEdgeWeight(graph1,
 				VERTICES_PER_DIMENSION, SEED);
 		sw.stop();
 		System.out.println(sw.getDurationString());
@@ -46,10 +47,12 @@ public class DebugGraphDB {
 		System.out.println(sw.getDurationString());
 
 		System.out.println();
-		printInfo(graph);
+		printInfo(graph1);
 		System.out.println();
 		printInfo(graph2);
-		
+
+		checkIncidences(graph1, graph2);
+
 		// db.addIndices();
 		// db.commitTransaction();
 
@@ -64,35 +67,47 @@ public class DebugGraphDB {
 
 		System.out.println();
 		System.out.println("Running on graph in memory...");
-		sampleRun(graph);
+		sampleRun(graph1);
 
 		System.out.println();
 		System.out.println("Running on graph in database...");
 		sampleRun(graph2);
 
-		((de.uni_koblenz.jgralab.impl.db.GraphImpl) graph2).clearCache();
-		System.out.println();
-		System.out
-				.println("Running on graph in database with cleared cache...");
-		sampleRun(graph2);
+		// ((de.uni_koblenz.jgralab.impl.db.GraphImpl) graph2).clearCache();
+		// System.out.println();
+		// System.out
+		// .println("Running on graph in database with cleared cache...");
+		// sampleRun(graph2);
 
 		// db.dropIndices();
 		// db.commitTransaction();
 		System.out.println("Fini.");
 	}
-	
-	private static void compareGraphs(WeightedGraph graph1, WeightedGraph graph2){
+
+	private static void checkIncidences(WeightedGraph graph1,
+			WeightedGraph graph2) {
 		Iterator<Vertex> iter1 = graph1.vertices().iterator();
 		Iterator<Vertex> iter2 = graph2.vertices().iterator();
-		while(iter1.hasNext()){
+		while (iter1.hasNext()) {
 			assert iter2.hasNext();
 			Vertex next1 = iter1.next();
 			Vertex next2 = iter2.next();
 			assert next1.getId() == next2.getId();
+			Iterator<Edge> eIter1 = next1.incidences().iterator();
+			Iterator<Edge> eIter2 = next2.incidences().iterator();
+			while (eIter1.hasNext()) {
+				assert eIter2.hasNext();
+				Edge incidence1 = eIter1.next();
+				Edge incidence2 = eIter2.next();
+				boolean normal1 = incidence1.isNormal();
+				boolean normal2 = incidence2.isNormal();
+				assert normal1 == normal2;
+				assert incidence1.getId() == incidence2.getId();
+			}
 		}
 	}
-	
-	private static void printInfo(WeightedGraph graph){
+
+	private static void printInfo(WeightedGraph graph) {
 		System.out.println("Info for " + graph.getClass());
 		System.out.println("Vertices: " + graph.getVCount());
 		System.out.println("Edges: " + graph.getECount());
