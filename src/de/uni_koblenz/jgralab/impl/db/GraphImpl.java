@@ -37,6 +37,7 @@ package de.uni_koblenz.jgralab.impl.db;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphIO;
@@ -356,9 +357,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 			VertexImpl omega) {
 		alpha.appendIncidenceToLambdaSeq(edge);
 		alpha.incidenceListModifiedAtClient();
-		omega
-				.appendIncidenceToLambdaSeq((IncidenceImpl) edge
-						.getReversedEdge());
+		omega.appendIncidenceToLambdaSeq((IncidenceImpl) edge.getReversedEdge());
 		omega.incidenceListModifiedAtClient();
 	}
 
@@ -613,7 +612,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	}
 
 	private Edge internalGetOrientedEdge(int eId) {
-		if (eSeq.containsEdge(eId)) {
+		if (eSeq.containsEdge(Math.abs(eId))) {
 			return getOrientedEdge(eId);
 		} else {
 			return null;
@@ -621,10 +620,11 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	}
 
 	private Edge getOrientedEdge(int eId) {
+		assert eId != 0;
 		if (eId > 0) {
 			return getEdgeFromCacheOrDatabase(eId);
 		} else {
-			return getEdgeFromCacheOrDatabase(Math.abs(eId)).getReversedEdge();
+			return getEdgeFromCacheOrDatabase(-eId).getReversedEdge();
 		}
 	}
 
