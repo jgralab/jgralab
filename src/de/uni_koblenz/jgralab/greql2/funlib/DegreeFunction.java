@@ -60,8 +60,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 public abstract class DegreeFunction extends Greql2Function {
 	{
 		JValueType[][] x = {
-				{ JValueType.VERTEX, JValueType.INT },
-				{ JValueType.VERTEX, JValueType.TYPECOLLECTION, JValueType.INT },
+				{ JValueType.VERTEX, JValueType.INT },//
+				{ JValueType.VERTEX, JValueType.TYPECOLLECTION, JValueType.INT },//
 				{ JValueType.VERTEX, JValueType.PATH, JValueType.INT },
 				{ JValueType.VERTEX, JValueType.PATHSYSTEM, JValueType.INT },
 				{ JValueType.VERTEX, JValueType.PATHSYSTEM,
@@ -78,52 +78,62 @@ public abstract class DegreeFunction extends Greql2Function {
 		JValueTypeCollection typeCol = null;
 		JValuePathSystem pathSystem = null;
 		JValuePath path = null;
-		Vertex vertex = null;
-		switch (checkArguments(arguments)) {
-		case 0:
-			break;
-		case 1:
-			typeCol = (JValueTypeCollection) arguments[1];
-			break;
-		case 2:
-			path = arguments[1].toPath();
-			break;
-		case 4:
-			typeCol = (JValueTypeCollection) arguments[2];
-		case 3:
-			pathSystem = arguments[1].toPathSystem();
-			break;
-		default:
-			throw new WrongFunctionParameterException(this, arguments);
-		}
-		vertex = (arguments[0].isVertex()) ? arguments[0].toVertex() : null;
+		Vertex vertex = (arguments[0].isVertex()) ? arguments[0].toVertex()
+				: null;
 
 		if (vertex == null) {
 			return new JValueImpl();
 		}
 
-		if ((path == null) && (pathSystem == null)) {
-			if (typeCol == null) {
-				return new JValueImpl(vertex.getDegree(direction));
-			} else {
-				Edge inc = vertex.getFirstIncidence(direction);
-				int count = 0;
-				while (inc != null) {
-					if (((subgraph == null) || subgraph.isMarked(inc))
-							&& typeCol.acceptsType(inc
-									.getAttributedElementClass())) {
-						count++;
-					}
-					inc = inc.getNextIncidence(direction);
-				}
-				return new JValueImpl(count);
+		switch (checkArguments(arguments)) {
+		case 0:
+			return handleVertex(vertex, direction);
+		case 1:
+			typeCol = (JValueTypeCollection) arguments[1];
+			return handleTypeCollection(subgraph, vertex, typeCol, direction);
+		case 2:
+			path = arguments[1].toPath();
+			return handlePath(path, vertex, direction);
+		case 4:
+			typeCol = (JValueTypeCollection) arguments[2];
+		case 3:
+			pathSystem = arguments[1].toPathSystem();
+			return handlePathSystem(pathSystem, vertex, typeCol, direction);
+		default:
+			throw new WrongFunctionParameterException(this, arguments);
+		}
+	}
+
+	private JValueImpl handleTypeCollection(
+			AbstractGraphMarker<AttributedElement> subgraph, Vertex vertex,
+			JValueTypeCollection typeCollection, EdgeDirection direction) {
+		Edge inc = vertex.getFirstIncidence(direction);
+		int count = 0;
+		while (inc != null) {
+			if (((subgraph == null) || subgraph.isMarked(inc))
+					&& typeCollection.acceptsType(inc
+							.getAttributedElementClass())) {
+				count++;
 			}
+			inc = inc.getNextIncidence(direction);
 		}
-		if (pathSystem != null) {
-			return new JValueImpl(pathSystem.degree(vertex, direction, typeCol));
-		}
-		// path
+		return new JValueImpl(count);
+	}
+
+	private JValueImpl handlePath(JValuePath path, Vertex vertex,
+			EdgeDirection direction) {
 		return new JValueImpl(path.degree(vertex, direction));
+	}
+
+	private JValueImpl handlePathSystem(JValuePathSystem pathSystem,
+			Vertex vertex, JValueTypeCollection typeCollection,
+			EdgeDirection direction) {
+		return new JValueImpl(pathSystem.degree(vertex, direction,
+				typeCollection));
+	}
+
+	private JValueImpl handleVertex(Vertex vertex, EdgeDirection direction) {
+		return new JValueImpl(vertex.getDegree(direction));
 	}
 
 	/*
