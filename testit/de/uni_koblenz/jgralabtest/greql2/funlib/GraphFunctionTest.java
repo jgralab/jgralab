@@ -82,6 +82,11 @@ public class GraphFunctionTest extends GenericTests {
 		}
 	}
 
+	@Test
+	public void testChildrenNull() throws Exception {
+		assertQueryEqualsNull("using nll: children(nll)");
+	}
+
 	private Set<Vertex> getChildren(Vertex vertex) {
 		Set<Vertex> children = new HashSet<Vertex>();
 		for (Edge edge : vertex.incidences(EdgeDirection.OUT)) {
@@ -104,6 +109,11 @@ public class GraphFunctionTest extends GenericTests {
 	}
 
 	@Test
+	public void testDegreeNull() throws Exception {
+		assertQueryEqualsNull("using null: degree(nll)");
+	}
+
+	@Test
 	public void testDegreeWithTypeCollection() throws Exception {
 		JValueMap map = evalTestQuery(
 				"from v:V reportMap v -> degree{connections.Way}(v) end")
@@ -115,6 +125,11 @@ public class GraphFunctionTest extends GenericTests {
 
 			assertEquals(vertex.getDegree(Way.class), degree, DELTA);
 		}
+	}
+
+	@Test
+	public void testDegreeWithTypeCollectionAndNull() throws Exception {
+		assertQueryEqualsNull("using null: degree(nll)");
 	}
 
 	@Test
