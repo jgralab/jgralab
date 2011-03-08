@@ -453,27 +453,6 @@ public class IncidenceListTest extends InstanceTest {
 
 	@Test
 	public void testSortIncidences() throws CommitFailedException {
-		MinimalGraph g = null;
-		switch (implementationType) {
-		case STANDARD:
-			g = MinimalSchema.instance().createMinimalGraph(V, E);
-			break;
-		case TRANSACTION:
-			g = MinimalSchema.instance()
-					.createMinimalGraphWithTransactionSupport(V, E);
-			break;
-		case DATABASE:
-			g = createMinimalGraphWithDatabaseSupport();
-			break;
-		case SAVEMEM:
-			g = MinimalSchema.instance().createMinimalGraphWithSavememSupport(
-					V, E);
-			break;
-		default:
-			fail("Implementation " + implementationType
-					+ " not yet supported by this test.");
-		}
-
 		Node[] nodes = new Node[NODE_COUNT];
 
 		createTransaction(g);
