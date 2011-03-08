@@ -104,6 +104,20 @@ public class GraphFunctionTest extends GenericTests {
 	}
 
 	@Test
+	public void testDegreeWithTypeCollection() throws Exception {
+		JValueMap map = evalTestQuery(
+				"from v:V reportMap v -> degree{connections.Way}(v) end")
+				.toJValueMap();
+
+		for (Entry<JValue, JValue> entry : map.entrySet()) {
+			Vertex vertex = entry.getKey().toVertex();
+			Integer degree = entry.getValue().toInteger();
+
+			assertEquals(vertex.getDegree(Way.class), degree, DELTA);
+		}
+	}
+
+	@Test
 	public void testDescribeGraphElements() throws Exception {
 		JValueMap map = evalTestQuery("from v:V reportMap v -> describe(v) end")
 				.toJValueMap();
@@ -144,6 +158,13 @@ public class GraphFunctionTest extends GenericTests {
 	@Test
 	public void testEdgeSeq() throws Exception {
 		assertQueryEqualsQuery("edgeSeq(firstEdge(), lastEdge())", "E");
+	}
+
+	@Test
+	public void testEdgeSeqWithTypeCollection() throws Exception {
+		assertQueryEqualsQuery(
+				"edgeSeq{connections.Way}(firstEdge(), lastEdge())",
+				"E{connections.Way}");
 	}
 
 	@Test
@@ -235,6 +256,34 @@ public class GraphFunctionTest extends GenericTests {
 			GraphElement element = (GraphElement) entry.getKey().toObject();
 			int id = entry.getValue().toInteger();
 			assertEquals(element.getId(), id);
+		}
+	}
+
+	@Test
+	public void testInDegree() throws Exception {
+		JValueMap map = evalTestQuery("from v:V reportMap v -> inDegree(v) end")
+				.toJValueMap();
+
+		for (Entry<JValue, JValue> entry : map.entrySet()) {
+			Vertex vertex = entry.getKey().toVertex();
+			Integer degree = entry.getValue().toInteger();
+
+			assertEquals(vertex.getDegree(EdgeDirection.IN), degree, DELTA);
+		}
+	}
+
+	@Test
+	public void testInDegreeWithTypeCollection() throws Exception {
+		JValueMap map = evalTestQuery(
+				"from v:V reportMap v -> inDegree{connections.Way}(v) end")
+				.toJValueMap();
+
+		for (Entry<JValue, JValue> entry : map.entrySet()) {
+			Vertex vertex = entry.getKey().toVertex();
+			Integer degree = entry.getValue().toInteger();
+
+			assertEquals(vertex.getDegree(Way.class, EdgeDirection.IN), degree,
+					DELTA);
 		}
 	}
 
@@ -342,6 +391,34 @@ public class GraphFunctionTest extends GenericTests {
 		}
 
 		return lastVertex;
+	}
+
+	@Test
+	public void testOutDegree() throws Exception {
+		JValueMap map = evalTestQuery(
+				"from v:V reportMap v -> outDegree(v) end").toJValueMap();
+
+		for (Entry<JValue, JValue> entry : map.entrySet()) {
+			Vertex vertex = entry.getKey().toVertex();
+			Integer degree = entry.getValue().toInteger();
+
+			assertEquals(vertex.getDegree(EdgeDirection.OUT), degree, DELTA);
+		}
+	}
+
+	@Test
+	public void testOutDegreeWithTypeCollection() throws Exception {
+		JValueMap map = evalTestQuery(
+				"from v:V reportMap v -> outDegree{connections.Way}(v) end")
+				.toJValueMap();
+
+		for (Entry<JValue, JValue> entry : map.entrySet()) {
+			Vertex vertex = entry.getKey().toVertex();
+			Integer degree = entry.getValue().toInteger();
+
+			assertEquals(vertex.getDegree(Way.class, EdgeDirection.OUT),
+					degree, DELTA);
+		}
 	}
 
 	@Test
