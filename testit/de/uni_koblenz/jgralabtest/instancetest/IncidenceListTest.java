@@ -105,8 +105,7 @@ public class IncidenceListTest extends InstanceTest {
 					.createMinimalGraphWithTransactionSupport(V, E);
 			break;
 		case DATABASE:
-			dbHandler.loadMinimalSchemaIntoGraphDatabase();
-			g = this.createMinimalGraphWithDatabaseSupport();
+			g = createMinimalGraphWithDatabaseSupport();
 			break;
 		case SAVEMEM:
 			g = MinimalSchema.instance().createMinimalGraphWithSavememSupport(
@@ -128,6 +127,7 @@ public class IncidenceListTest extends InstanceTest {
 
 	private MinimalGraph createMinimalGraphWithDatabaseSupport() {
 		dbHandler.connectToDatabase();
+		dbHandler.clearAllTables();
 		dbHandler.loadMinimalSchemaIntoGraphDatabase();
 		return dbHandler.createMinimalGraphWithDatabaseSupport(
 				"IncidenceListTest", V, E);
@@ -136,17 +136,8 @@ public class IncidenceListTest extends InstanceTest {
 	@After
 	public void tearDown() {
 		if (implementationType == ImplementationType.DATABASE) {
-			this.cleanAndCloseDatabase();
+			dbHandler.closeGraphdatabase();
 		}
-	}
-
-	private void cleanAndCloseDatabase() {
-		// dbHandler.cleanDatabaseOfTestGraph(g);
-		// dbHandler.cleanDatabaseOfTestGraph("IncidenceListTest.testSortIncidences");
-		// TODO, this does not seem to work
-		// dbHandler.cleanDatabaseOfTestSchema(MinimalSchema.instance());
-		dbHandler.clearAllTables();
-		dbHandler.closeGraphdatabase();
 	}
 
 	@Test
@@ -167,7 +158,7 @@ public class IncidenceListTest extends InstanceTest {
 		assertEquals(e1, nodes[0].getFirstIncidence());
 		assertEquals(e1, nodes[0].getLastIncidence());
 		assertEquals(e1.getReversedEdge(), nodes[1].getFirstIncidence());
-		assertEquals(e1.getReversedEdge(), nodes[1].getFirstIncidence());
+		assertEquals(e1.getReversedEdge(), nodes[1].getLastIncidence());
 		assertEquals(1, nodes[0].getDegree());
 		assertEquals(1, nodes[0].getDegree(EdgeDirection.INOUT));
 		assertEquals(1, nodes[0].getDegree(EdgeDirection.OUT));
@@ -189,7 +180,7 @@ public class IncidenceListTest extends InstanceTest {
 		assertEquals(e1, nodes[0].getFirstIncidence());
 		assertEquals(e2.getReversedEdge(), nodes[0].getLastIncidence());
 		assertEquals(e1.getReversedEdge(), nodes[1].getFirstIncidence());
-		assertEquals(e1.getReversedEdge(), nodes[1].getFirstIncidence());
+		assertEquals(e1.getReversedEdge(), nodes[1].getLastIncidence());
 		assertEquals(3, nodes[0].getDegree());
 		assertEquals(3, nodes[0].getDegree(EdgeDirection.INOUT));
 		assertEquals(2, nodes[0].getDegree(EdgeDirection.OUT));
@@ -472,8 +463,7 @@ public class IncidenceListTest extends InstanceTest {
 					.createMinimalGraphWithTransactionSupport(V, E);
 			break;
 		case DATABASE:
-			g = dbHandler.createMinimalGraphWithDatabaseSupport(
-					"IncidenceListTest.testSortIncidences", V, E);
+			g = createMinimalGraphWithDatabaseSupport();
 			break;
 		case SAVEMEM:
 			g = MinimalSchema.instance().createMinimalGraphWithSavememSupport(
