@@ -446,20 +446,20 @@ public class JValuePathSystem extends JValueImpl {
 	}
 
 	/**
-	 * Calculates the number of incomming or outgoing edges of the given vertex
+	 * Calculates the number of incoming or outgoing edges of the given vertex
 	 * which are part of this PathSystem
 	 * 
 	 * @param vertex
 	 *            the vertex for which the number of edges gets counted
 	 * @param orientation
-	 *            if set to true, the incomming edges will be counted,
-	 *            otherwise, the outgoing ones will be counted
+	 *            if set to true, the incoming edges will be counted, otherwise,
+	 *            the outgoing ones will be counted
 	 * @param typeCol
-	 *            the JValueTypeCollection which toggles wether a type is
+	 *            the JValueTypeCollection which toggles whether a type is
 	 *            accepted or not
 	 * @return the number of edges with the given orientation connected to the
 	 *         given vertex or -1 if the given vertex is not part of this
-	 *         pathsystem
+	 *         PathSystem
 	 */
 	public int degree(Vertex vertex, EdgeDirection direction,
 			JValueTypeCollection typeCol) {
