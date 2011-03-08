@@ -108,12 +108,17 @@ public class Children extends Greql2Function {
 
 		switch (checkArguments(arguments)) {
 		case 1:
-			pathSystem = arguments[1].toPathSystem();
+			pathSystem = (arguments[1].isPathSystem()) ? arguments[1]
+					.toPathSystem() : null;
 		case 0:
-			vertex = arguments[0].toVertex();
+			vertex = (arguments[0].isVertex()) ? arguments[0].toVertex() : null;
 			break;
 		default:
 			throw new WrongFunctionParameterException(this, arguments);
+		}
+
+		if (vertex == null) {
+			return new JValueImpl();
 		}
 
 		if (pathSystem != null) {

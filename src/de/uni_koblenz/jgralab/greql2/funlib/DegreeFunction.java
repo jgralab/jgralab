@@ -96,7 +96,11 @@ public abstract class DegreeFunction extends Greql2Function {
 		default:
 			throw new WrongFunctionParameterException(this, arguments);
 		}
-		vertex = arguments[0].toVertex();
+		vertex = (arguments[0].isVertex()) ? arguments[0].toVertex() : null;
+
+		if (vertex == null) {
+			return new JValueImpl();
+		}
 
 		if ((path == null) && (pathSystem == null)) {
 			if (typeCol == null) {
