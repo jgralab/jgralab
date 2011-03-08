@@ -72,7 +72,7 @@ public abstract class DegreeFunction extends Greql2Function {
 		categories = c;
 	}
 
-	public JValueImpl evaluate(AbstractGraphMarker<AttributedElement> subgraph,
+	public JValue evaluate(AbstractGraphMarker<AttributedElement> subgraph,
 			JValue[] arguments, EdgeDirection direction)
 			throws EvaluateException {
 		JValueTypeCollection typeCol = null;
@@ -104,7 +104,7 @@ public abstract class DegreeFunction extends Greql2Function {
 		}
 	}
 
-	private JValueImpl handleTypeCollection(
+	private JValue handleTypeCollection(
 			AbstractGraphMarker<AttributedElement> subgraph, Vertex vertex,
 			JValueTypeCollection typeCollection, EdgeDirection direction) {
 		Edge inc = vertex.getFirstIncidence(direction);
@@ -120,19 +120,18 @@ public abstract class DegreeFunction extends Greql2Function {
 		return new JValueImpl(count);
 	}
 
-	private JValueImpl handlePath(JValuePath path, Vertex vertex,
+	private JValue handlePath(JValuePath path, Vertex vertex,
 			EdgeDirection direction) {
 		return new JValueImpl(path.degree(vertex, direction));
 	}
 
-	private JValueImpl handlePathSystem(JValuePathSystem pathSystem,
-			Vertex vertex, JValueTypeCollection typeCollection,
-			EdgeDirection direction) {
+	private JValue handlePathSystem(JValuePathSystem pathSystem, Vertex vertex,
+			JValueTypeCollection typeCollection, EdgeDirection direction) {
 		return new JValueImpl(pathSystem.degree(vertex, direction,
 				typeCollection));
 	}
 
-	private JValueImpl handleVertex(Vertex vertex, EdgeDirection direction) {
+	private JValue handleVertex(Vertex vertex, EdgeDirection direction) {
 		return new JValueImpl(vertex.getDegree(direction));
 	}
 
