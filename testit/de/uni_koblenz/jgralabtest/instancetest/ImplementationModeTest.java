@@ -85,6 +85,9 @@ public class ImplementationModeTest extends InstanceTest {
 		case SAVEMEM:
 			g = MinimalSchema.instance().createMinimalGraph(V, E);
 			break;
+		case DATABASE:
+			// load graph from file not (yet) implemented in DATABASE
+			return;
 		default:
 			fail("Implementation " + implementationType
 					+ " not yet supported by this test.");
@@ -134,6 +137,10 @@ public class ImplementationModeTest extends InstanceTest {
 			assertFalse(g2.hasTransactionSupport());
 			assertTrue(g2.hasSavememSupport());
 			break;
+		case DATABASE:
+			// load graph from file not (yet) implemented in DATABASE
+			return;
+
 		default:
 			fail("Implementation " + implementationType
 					+ " not yet supported by this test.");
