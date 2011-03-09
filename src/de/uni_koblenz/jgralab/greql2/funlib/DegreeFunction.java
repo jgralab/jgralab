@@ -105,17 +105,22 @@ public abstract class DegreeFunction extends Greql2Function {
 	private JValue handleTypeCollection(
 			AbstractGraphMarker<AttributedElement> subgraph, Vertex vertex,
 			JValueTypeCollection typeCollection, EdgeDirection direction) {
-		Edge inc = vertex.getFirstIncidence(direction);
+
 		int count = 0;
-		while (inc != null) {
-			if (((subgraph == null) || subgraph.isMarked(inc))
-					&& typeCollection.acceptsType(inc
-							.getAttributedElementClass())) {
+		for (Edge incidence : vertex.incidences(direction)) {
+			if (isValidEdge(subgraph, typeCollection, incidence)) {
 				count++;
 			}
-			inc = inc.getNextIncidence(direction);
 		}
 		return new JValueImpl(count);
+	}
+
+	private boolean isValidEdge(
+			AbstractGraphMarker<AttributedElement> subgraph,
+			JValueTypeCollection typeCollection, Edge incidence) {
+		return (subgraph == null || subgraph.isMarked(incidence))
+				&& typeCollection.acceptsType(incidence
+						.getAttributedElementClass());
 	}
 
 	private JValue handlePath(JValuePath path, Vertex vertex,
