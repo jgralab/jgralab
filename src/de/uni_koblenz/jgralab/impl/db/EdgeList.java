@@ -106,7 +106,6 @@ public class EdgeList extends GraphElementList<DatabasePersistableEdge> {
 	 */
 	public void add(long sequenceNumber, int eId) {
 		sequenceNumberToIdMap.put(sequenceNumber, Math.abs(eId));
-		// usedIDs.set(Math.abs(eId));
 	}
 
 	/**
@@ -117,15 +116,15 @@ public class EdgeList extends GraphElementList<DatabasePersistableEdge> {
 	@Override
 	public DatabasePersistableEdge getFirst() {
 		if (!isEmpty()) {
-			return (DatabasePersistableEdge) owningGraph.getEdge(getFirstEdgeId());
+			return (DatabasePersistableEdge) owningGraph
+					.getEdge(getFirstEdgeId());
 		} else {
 			return null;
 		}
 	}
 
 	private int getFirstEdgeId() {
-		Entry<Long, Integer> firstEntry = sequenceNumberToIdMap
-				.firstEntry();
+		Entry<Long, Integer> firstEntry = sequenceNumberToIdMap.firstEntry();
 		return firstEntry.getValue();
 	}
 
@@ -147,15 +146,15 @@ public class EdgeList extends GraphElementList<DatabasePersistableEdge> {
 	@Override
 	public DatabasePersistableEdge getLast() {
 		if (!isEmpty()) {
-			return (DatabasePersistableEdge) owningGraph.getEdge(getLastEdgeId());
+			return (DatabasePersistableEdge) owningGraph
+					.getEdge(getLastEdgeId());
 		} else {
 			return null;
 		}
 	}
 
 	private int getLastEdgeId() {
-		Entry<Long, Integer> firstEntry = sequenceNumberToIdMap
-				.lastEntry();
+		Entry<Long, Integer> firstEntry = sequenceNumberToIdMap.lastEntry();
 		return firstEntry.getValue();
 	}
 
@@ -189,8 +188,7 @@ public class EdgeList extends GraphElementList<DatabasePersistableEdge> {
 	 */
 	@Override
 	public boolean contains(DatabasePersistableEdge edge) {
-		Integer eId = sequenceNumberToIdMap.get(edge
-				.getSequenceNumberInESeq());
+		Integer eId = sequenceNumberToIdMap.get(edge.getSequenceNumberInESeq());
 		if (eId != null) {
 			return eId == Math.abs(edge.getId());
 		} else {
@@ -238,8 +236,8 @@ public class EdgeList extends GraphElementList<DatabasePersistableEdge> {
 	}
 
 	private int getNextEdgeId(DatabasePersistableEdge edge) {
-		Entry<Long, Integer> nextEntry = sequenceNumberToIdMap
-				.higherEntry(edge.getSequenceNumberInESeq());
+		Entry<Long, Integer> nextEntry = sequenceNumberToIdMap.higherEntry(edge
+				.getSequenceNumberInESeq());
 		return nextEntry.getValue();
 	}
 
@@ -267,15 +265,14 @@ public class EdgeList extends GraphElementList<DatabasePersistableEdge> {
 		assert contains(edge);
 		sequenceNumberToIdMap.remove(edge.getSequenceNumberInESeq());
 		edge.setSequenceNumberInESeq(sequenceNumber);
-		sequenceNumberToIdMap.put(sequenceNumber, Math.abs(edge.getId()));
+		sequenceNumberToIdMap.put(sequenceNumber, edge.getId());
 	}
 
 	@Override
 	protected void insertAt(DatabasePersistableEdge edge, long sequenceNumber) {
 		assert !contains(edge);
 		edge.setSequenceNumberInESeq(sequenceNumber);
-		sequenceNumberToIdMap.put(sequenceNumber, Math.abs(edge.getId()));
-		// usedIDs.set(Math.abs(edge.getId()));
+		sequenceNumberToIdMap.put(sequenceNumber, edge.getId());
 	}
 
 	/**
@@ -317,8 +314,7 @@ public class EdgeList extends GraphElementList<DatabasePersistableEdge> {
 	public void putBefore(DatabasePersistableEdge targetEdge,
 			DatabasePersistableEdge movedEdge) {
 		assert areBothInSameEdgeList(targetEdge, movedEdge);
-		if (targetEdge != movedEdge
-				&& !isPrevNeighbour(targetEdge, movedEdge)) {
+		if (targetEdge != movedEdge && !isPrevNeighbour(targetEdge, movedEdge)) {
 			moveEdgeBefore(movedEdge, targetEdge);
 		}
 	}
@@ -367,8 +363,7 @@ public class EdgeList extends GraphElementList<DatabasePersistableEdge> {
 			DatabasePersistableEdge movedEdge) {
 		assert areBothInSameEdgeList(targetEdge, movedEdge);
 		assert targetEdge != movedEdge;
-		if (targetEdge != movedEdge
-				&& !isNextNeighbor(targetEdge, movedEdge)) {
+		if (targetEdge != movedEdge && !isNextNeighbor(targetEdge, movedEdge)) {
 			moveEdgeBehind(movedEdge, targetEdge);
 		}
 	}
@@ -410,7 +405,6 @@ public class EdgeList extends GraphElementList<DatabasePersistableEdge> {
 	public void remove(DatabasePersistableEdge edge) {
 		assert contains(edge);
 		sequenceNumberToIdMap.remove(edge.getSequenceNumberInESeq());
-		// usedIDs.clear(Math.abs(edge.getId()));
 	}
 
 	@Override
@@ -438,7 +432,6 @@ public class EdgeList extends GraphElementList<DatabasePersistableEdge> {
 	@Override
 	protected void clear() {
 		sequenceNumberToIdMap.clear();
-		// usedIDs.clear();
 	}
 
 	/**
@@ -449,7 +442,6 @@ public class EdgeList extends GraphElementList<DatabasePersistableEdge> {
 	 * @return true if an edge with given id is part of ESeq, otherwise false.
 	 */
 	protected boolean containsEdge(int eId) {
-		return sequenceNumberToIdMap.containsValue(Math.abs(eId));
-		// return usedIDs.get(Math.abs(eId));
+		return sequenceNumberToIdMap.containsValue(eId);
 	}
 }
