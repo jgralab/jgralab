@@ -51,6 +51,8 @@ import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueMap;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueRecord;
@@ -180,6 +182,64 @@ public class GraphFunctionTest extends GenericTest {
 		assertQueryEqualsQuery(
 				"edgeSeq{connections.Way}(firstEdge(), lastEdge())",
 				"E{connections.Way}");
+	}
+
+	public void testConnectedEdges(String query, Class<? extends Edge> clazz,
+			EdgeDirection direction) throws Exception {
+
+		JValueMap map = evalTestQuery(query).toJValueMap();
+
+		for (Entry<JValue, JValue> entry : map.entrySet()) {
+			Vertex vertex = entry.getKey().toVertex();
+			JValueCollection connectedEdges = entry.getValue().toCollection();
+			for (Edge edge : vertex.incidences(clazz, direction)) {
+				boolean success = connectedEdges.remove(new JValueImpl(edge));
+				assertTrue(success);
+			}
+			assertTrue(connectedEdges.isEmpty());
+		}
+	}
+
+	@Test
+	public void testEdgesConnected() throws Exception {
+		EdgeDirection direction = EdgeDirection.INOUT;
+		String query = "from v:V reportMap v -> edgesConnected(v) end";
+		testConnectedEdges(query, Edge.class, direction);
+		query = "from v:V reportMap v -> edgesConnected{connections.Way}(v) end";
+		testConnectedEdges(query, Way.class, direction);
+	}
+
+	@Test
+	public void testEdgesConnectedNull() throws Exception {
+		assertQueryEqualsNull("edgesConnected(nll)");
+	}
+
+	@Test
+	public void testEdgesFrom() throws Exception {
+		EdgeDirection direction = EdgeDirection.OUT;
+		String query = "from v:V reportMap v -> edgesFrom(v) end";
+		testConnectedEdges(query, Edge.class, direction);
+		query = "from v:V reportMap v -> edgesFrom{connections.Way}(v) end";
+		testConnectedEdges(query, Way.class, direction);
+	}
+
+	@Test
+	public void testEdgesFromNull() throws Exception {
+		assertQueryEqualsNull("edgesFrom(nll)");
+	}
+
+	@Test
+	public void testEdgesTo() throws Exception {
+		EdgeDirection direction = EdgeDirection.IN;
+		String query = "from v:V reportMap v -> edgesTo(v) end";
+		testConnectedEdges(query, Edge.class, direction);
+		query = "from v:V reportMap v -> edgesTo{connections.Way}(v) end";
+		testConnectedEdges(query, Way.class, direction);
+	}
+
+	@Test
+	public void testEdgesToNull() throws Exception {
+		assertQueryEqualsNull("edgesTo(nll)");
 	}
 
 	@Test
