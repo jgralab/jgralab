@@ -438,6 +438,12 @@ public class GraphFunctionTest extends GenericTest {
 	}
 
 	@Test
+	public void testIsNull() throws Exception {
+		assertQueryEquals("isNull(list())", false);
+		assertQueryEquals("using nll: isNull(nll)", true);
+	}
+
+	@Test
 	public void testIsTree() throws Exception {
 		String queryString = "isTree()";
 		JValue result = evalTestQuery("IsTree", queryString,
