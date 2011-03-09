@@ -189,6 +189,18 @@ public class GraphFunctionTest extends GenericTest {
 				"E{connections.Way}");
 	}
 
+	@Test
+	public void testEdgeSeqWithTypeCollectionAndNull() throws Exception {
+
+		assertQueryEqualsNull("using nll: edgeSeq(nll, lastEdge())");
+		assertQueryEqualsNull("using nll: edgeSeq(nll, nll)");
+		assertQueryEqualsNull("using nll: edgeSeq(nll, nll)");
+
+		assertQueryEqualsNull("using nll: edgeSeq{Vertex}(nll, nll)");
+		assertQueryEqualsNull("using nll: edgeSeq{Vertex}(nll, nll)");
+		assertQueryEqualsNull("using nll: edgeSeq{Vertex}(nll, nll)");
+	}
+
 	public void testConnectedEdges(String query, Class<? extends Edge> clazz,
 			EdgeDirection direction) throws Exception {
 
@@ -299,11 +311,11 @@ public class GraphFunctionTest extends GenericTest {
 	}
 
 	@Test
-	public void testGetEdge2() throws Exception {
+	public void testGetEdgeNull() throws Exception {
 		assertQueryEqualsNull("using nll: getEdge(nll)");
-		assertQueryEquals("getEdge(0)", (Edge) null);
-		assertQueryEquals("getEdge(id(lastEdge()) + 1)", (Edge) null);
-		assertQueryEquals("getEdge(-id(lastEdge()) -1)", (Edge) null);
+		assertQueryEqualsNull("getEdge(0)");
+		assertQueryEqualsNull("getEdge(id(lastEdge()) + 1)");
+		assertQueryEqualsNull("getEdge(-id(lastEdge()) -1)");
 	}
 
 	@Test
@@ -357,11 +369,12 @@ public class GraphFunctionTest extends GenericTest {
 	}
 
 	@Test
-	public void testGetVertex2() throws Exception {
-		assertQueryEquals("getVertex(0)", (Vertex) null);
-		assertQueryEquals("getVertex(-1)", (Vertex) null);
-		assertQueryEquals("getVertex(id(lastVertex()) + 1)", (Vertex) null);
-		assertQueryEquals("getVertex(-id(lastVertex()) -1)", (Vertex) null);
+	public void testGetVertexNull() throws Exception {
+		assertQueryEqualsNull("using nll: getVertex(nll)");
+		assertQueryEqualsNull("getVertex(0)");
+		assertQueryEqualsNull("getVertex(-1)");
+		assertQueryEqualsNull("getVertex(id(lastVertex()) + 1)");
+		assertQueryEqualsNull("getVertex(-id(lastVertex()) -1)");
 	}
 
 	@Test
