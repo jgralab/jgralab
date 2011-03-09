@@ -56,11 +56,11 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueMap;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueRecord;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTuple;
-import de.uni_koblenz.jgralabtest.greql2.GenericTests;
+import de.uni_koblenz.jgralabtest.greql2.GenericTest;
 import de.uni_koblenz.jgralabtest.schemas.greqltestschema.connections.Way;
 import de.uni_koblenz.jgralabtest.schemas.greqltestschema.junctions.Crossroad;
 
-public class GraphFunctionTest extends GenericTests {
+public class GraphFunctionTest extends GenericTest {
 
 	@Test
 	public void testChildren() throws Exception {
@@ -110,7 +110,7 @@ public class GraphFunctionTest extends GenericTests {
 
 	@Test
 	public void testDegreeNull() throws Exception {
-		assertQueryEqualsNull("using null: degree(nll)");
+		assertQueryEqualsNull("using nll: degree(nll)");
 	}
 
 	@Test
@@ -129,7 +129,7 @@ public class GraphFunctionTest extends GenericTests {
 
 	@Test
 	public void testDegreeWithTypeCollectionAndNull() throws Exception {
-		assertQueryEqualsNull("using null: degree(nll)");
+		assertQueryEqualsNull("using nll: degree(nll)");
 	}
 
 	@Test

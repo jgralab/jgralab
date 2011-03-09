@@ -2,7 +2,7 @@ package de.uni_koblenz.jgralabtest.greql2;
 
 import org.junit.Test;
 
-public class AdditionalTest extends GenericTests {
+public class AdditionalTest extends GenericTest {
 
 	@Test
 	public void testRecordAccess() throws Exception {
