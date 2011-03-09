@@ -173,6 +173,11 @@ public class GraphFunctionTest extends GenericTest {
 	}
 
 	@Test
+	public void testDescribeNull() throws Exception {
+		assertQueryEqualsNull("using nll: describe(nll)");
+	}
+
+	@Test
 	public void testEdgeSeq() throws Exception {
 		assertQueryEqualsQuery("edgeSeq(firstEdge(), lastEdge())", "E");
 	}
