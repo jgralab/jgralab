@@ -97,36 +97,30 @@ public class GraphFunctionTest extends GenericTest {
 		return children;
 	}
 
-	@Test
-	public void testDegree() throws Exception {
-		JValueMap map = evalTestQuery("from v:V reportMap v -> degree(v) end")
-				.toJValueMap();
+	public void testDegree(String query, Class<? extends Edge> clazz,
+			EdgeDirection direction) throws Exception {
+		JValueMap map = evalTestQuery(query).toJValueMap();
 
 		for (Entry<JValue, JValue> entry : map.entrySet()) {
 			Vertex vertex = entry.getKey().toVertex();
 			Integer degree = entry.getValue().toInteger();
 
-			assertEquals(vertex.getDegree(), degree, DELTA);
+			assertEquals(vertex.getDegree(clazz, direction), degree.intValue());
 		}
+	}
+
+	@Test
+	public void testDegreeWithTypeCollection() throws Exception {
+		EdgeDirection direction = EdgeDirection.INOUT;
+		String query = "from v:V reportMap v -> degree(v) end";
+		testDegree(query, Edge.class, direction);
+		query = "from v:V reportMap v -> degree{connections.Way}(v) end";
+		testDegree(query, Way.class, direction);
 	}
 
 	@Test
 	public void testDegreeNull() throws Exception {
 		assertQueryEqualsNull("using nll: degree(nll)");
-	}
-
-	@Test
-	public void testDegreeWithTypeCollection() throws Exception {
-		JValueMap map = evalTestQuery(
-				"from v:V reportMap v -> degree{connections.Way}(v) end")
-				.toJValueMap();
-
-		for (Entry<JValue, JValue> entry : map.entrySet()) {
-			Vertex vertex = entry.getKey().toVertex();
-			Integer degree = entry.getValue().toInteger();
-
-			assertEquals(vertex.getDegree(Way.class), degree, DELTA);
-		}
 	}
 
 	@Test
@@ -218,7 +212,7 @@ public class GraphFunctionTest extends GenericTest {
 	}
 
 	@Test
-	public void testEdgesConnected() throws Exception {
+	public void testEdgesConnectedWithTypeCollection() throws Exception {
 		EdgeDirection direction = EdgeDirection.INOUT;
 		String query = "from v:V reportMap v -> edgesConnected(v) end";
 		testConnectedEdges(query, Edge.class, direction);
@@ -229,10 +223,11 @@ public class GraphFunctionTest extends GenericTest {
 	@Test
 	public void testEdgesConnectedNull() throws Exception {
 		assertQueryEqualsNull("using nll: edgesConnected(nll)");
+		assertQueryEqualsNull("using nll: edgesConnected{Vertex}(nll)");
 	}
 
 	@Test
-	public void testEdgesFrom() throws Exception {
+	public void testEdgesFromWithTypeCollection() throws Exception {
 		EdgeDirection direction = EdgeDirection.OUT;
 		String query = "from v:V reportMap v -> edgesFrom(v) end";
 		testConnectedEdges(query, Edge.class, direction);
@@ -243,10 +238,11 @@ public class GraphFunctionTest extends GenericTest {
 	@Test
 	public void testEdgesFromNull() throws Exception {
 		assertQueryEqualsNull("using nll: edgesFrom(nll)");
+		assertQueryEqualsNull("using nll: edgesFrom{Vertex}(nll)");
 	}
 
 	@Test
-	public void testEdgesTo() throws Exception {
+	public void testEdgesToWithTypeCollection() throws Exception {
 		EdgeDirection direction = EdgeDirection.IN;
 		String query = "from v:V reportMap v -> edgesTo(v) end";
 		testConnectedEdges(query, Edge.class, direction);
@@ -257,6 +253,7 @@ public class GraphFunctionTest extends GenericTest {
 	@Test
 	public void testEdgesToNull() throws Exception {
 		assertQueryEqualsNull("using nll: edgesTo(nll)");
+		assertQueryEqualsNull("using nll: edgesTo{Vertex}(nll)");
 	}
 
 	@Test
@@ -395,31 +392,12 @@ public class GraphFunctionTest extends GenericTest {
 	}
 
 	@Test
-	public void testInDegree() throws Exception {
-		JValueMap map = evalTestQuery("from v:V reportMap v -> inDegree(v) end")
-				.toJValueMap();
-
-		for (Entry<JValue, JValue> entry : map.entrySet()) {
-			Vertex vertex = entry.getKey().toVertex();
-			Integer degree = entry.getValue().toInteger();
-
-			assertEquals(vertex.getDegree(EdgeDirection.IN), degree, DELTA);
-		}
-	}
-
-	@Test
 	public void testInDegreeWithTypeCollection() throws Exception {
-		JValueMap map = evalTestQuery(
-				"from v:V reportMap v -> inDegree{connections.Way}(v) end")
-				.toJValueMap();
-
-		for (Entry<JValue, JValue> entry : map.entrySet()) {
-			Vertex vertex = entry.getKey().toVertex();
-			Integer degree = entry.getValue().toInteger();
-
-			assertEquals(vertex.getDegree(Way.class, EdgeDirection.IN), degree,
-					DELTA);
-		}
+		EdgeDirection direction = EdgeDirection.IN;
+		String query = "from v:V reportMap v -> inDegree(v) end";
+		testDegree(query, Edge.class, direction);
+		query = "from v:V reportMap v -> inDegree{connections.Way}(v) end";
+		testDegree(query, Way.class, direction);
 	}
 
 	@Test
@@ -487,7 +465,7 @@ public class GraphFunctionTest extends GenericTest {
 		assertQueryEquals("lastEdge()", graph.getLastEdge());
 		assertQueryEquals("lastEdge{connections.Way}()",
 				getLastEdgeForType(Way.class));
-		assertQueryEquals("lastEdge{Edge!}()", (Edge) null);
+		assertQueryEqualsNull("lastEdge{Edge!}()");
 	}
 
 	@Test
@@ -496,7 +474,7 @@ public class GraphFunctionTest extends GenericTest {
 		assertQueryEquals("lastVertex()", graph.getLastVertex());
 		assertQueryEquals("lastVertex{junctions.Crossroad}()",
 				getLastVertexForType(Crossroad.class));
-		assertQueryEquals("lastVertex{Vertex!}()", (Vertex) null);
+		assertQueryEqualsNull("lastVertex{Vertex!}()");
 	}
 
 	public Edge getLastEdgeForType(Class<? extends Edge> type) throws Exception {
@@ -529,31 +507,17 @@ public class GraphFunctionTest extends GenericTest {
 	}
 
 	@Test
-	public void testOutDegree() throws Exception {
-		JValueMap map = evalTestQuery(
-				"from v:V reportMap v -> outDegree(v) end").toJValueMap();
-
-		for (Entry<JValue, JValue> entry : map.entrySet()) {
-			Vertex vertex = entry.getKey().toVertex();
-			Integer degree = entry.getValue().toInteger();
-
-			assertEquals(vertex.getDegree(EdgeDirection.OUT), degree, DELTA);
-		}
+	public void testOutDegreeWithTypeCollection() throws Exception {
+		EdgeDirection direction = EdgeDirection.OUT;
+		String query = "from v:V reportMap v -> outDegree(v) end";
+		testDegree(query, Edge.class, direction);
+		query = "from v:V reportMap v -> outDegree{connections.Way}(v) end";
+		testDegree(query, Way.class, direction);
 	}
 
 	@Test
-	public void testOutDegreeWithTypeCollection() throws Exception {
-		JValueMap map = evalTestQuery(
-				"from v:V reportMap v -> outDegree{connections.Way}(v) end")
-				.toJValueMap();
-
-		for (Entry<JValue, JValue> entry : map.entrySet()) {
-			Vertex vertex = entry.getKey().toVertex();
-			Integer degree = entry.getValue().toInteger();
-
-			assertEquals(vertex.getDegree(Way.class, EdgeDirection.OUT),
-					degree, DELTA);
-		}
+	public void testOutDegreeNull() throws Exception {
+		assertQueryEqualsNull("using nll: outDegree(nll)");
 	}
 
 	@Test
