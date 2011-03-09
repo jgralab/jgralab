@@ -104,7 +104,8 @@ public class DefaultValueTest extends InstanceTest {
 			if (!dbHandler.getGraphDatabase().contains(
 					DefaultValueTestSchema.instance())) {
 				dbHandler
-						.loadTestSchemaIntoGraphDatabase("testit/testschemas/DefaultValueTestSchema.tg");
+						.loadTestSchemaIntoGraphDatabase(DefaultValueTestSchema
+								.instance());
 			}
 		} catch (GraphDatabaseException e) {
 			e.printStackTrace();
