@@ -36,9 +36,9 @@ package de.uni_koblenz.jgralabtest.greql2.funlib;
 
 import org.junit.Test;
 
-import de.uni_koblenz.jgralabtest.greql2.GenericTests;
+import de.uni_koblenz.jgralabtest.greql2.GenericTest;
 
-public class ComparisonFunctionTest extends GenericTests {
+public class ComparisonFunctionTest extends GenericTest {
 
 	@Test
 	public void testEqualsInfix() throws Exception {

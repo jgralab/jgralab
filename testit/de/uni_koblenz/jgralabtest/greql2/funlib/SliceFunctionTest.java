@@ -41,9 +41,9 @@ import org.junit.Test;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueBag;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSlice;
-import de.uni_koblenz.jgralabtest.greql2.GenericTests;
+import de.uni_koblenz.jgralabtest.greql2.GenericTest;
 
-public class SliceFunctionTest extends GenericTests {
+public class SliceFunctionTest extends GenericTest {
 
 	@Test
 	public void testSliceCreation() throws Exception {

@@ -38,9 +38,9 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
-import de.uni_koblenz.jgralabtest.greql2.GenericTests;
+import de.uni_koblenz.jgralabtest.greql2.GenericTest;
 
-public class StringFunctionTest extends GenericTests {
+public class StringFunctionTest extends GenericTest {
 
 	@Test
 	public void testConcatInfix() throws Exception {

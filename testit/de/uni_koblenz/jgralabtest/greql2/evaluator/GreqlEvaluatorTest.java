@@ -66,10 +66,10 @@ import de.uni_koblenz.jgralab.greql2.optimizer.VariableDeclarationOrderOptimizer
 import de.uni_koblenz.jgralab.greql2.schema.Definition;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.greql2.schema.impl.std.Greql2Impl;
-import de.uni_koblenz.jgralabtest.greql2.GenericTests;
+import de.uni_koblenz.jgralabtest.greql2.GenericTest;
 import de.uni_koblenz.jgralabtest.greql2.testfunctions.IsPrime;
 
-public class GreqlEvaluatorTest extends GenericTests {
+public class GreqlEvaluatorTest extends GenericTest {
 	static {
 		Greql2FunctionLibrary.instance().registerUserDefinedFunction(
 				IsPrime.class);

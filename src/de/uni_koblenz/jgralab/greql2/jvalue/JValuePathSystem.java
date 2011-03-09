@@ -40,6 +40,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.logging.Logger;
 
@@ -445,20 +446,20 @@ public class JValuePathSystem extends JValueImpl {
 	}
 
 	/**
-	 * Calculates the number of incomming or outgoing edges of the given vertex
+	 * Calculates the number of incoming or outgoing edges of the given vertex
 	 * which are part of this PathSystem
 	 * 
 	 * @param vertex
 	 *            the vertex for which the number of edges gets counted
 	 * @param orientation
-	 *            if set to true, the incomming edges will be counted,
-	 *            otherwise, the outgoing ones will be counted
+	 *            if set to true, the incoming edges will be counted, otherwise,
+	 *            the outgoing ones will be counted
 	 * @param typeCol
-	 *            the JValueTypeCollection which toggles wether a type is
+	 *            the JValueTypeCollection which toggles whether a type is
 	 *            accepted or not
 	 * @return the number of edges with the given orientation connected to the
 	 *         given vertex or -1 if the given vertex is not part of this
-	 *         pathsystem
+	 *         PathSystem
 	 */
 	public int degree(Vertex vertex, EdgeDirection direction,
 			JValueTypeCollection typeCol) {
@@ -467,52 +468,41 @@ public class JValuePathSystem extends JValueImpl {
 			return -1;
 		}
 		int degree = 0;
-		switch (direction) {
-		case IN:
-			for (Map.Entry<PathSystemKey, PathSystemEntry> entry : keyToEntryMap
-					.entrySet()) {
-				if ((entry.getKey().getVertex() == vertex)
-						&& ((typeCol == null) || (typeCol.acceptsType(entry
-								.getValue().getParentEdge()
-								.getAttributedElementClass())))) {
+		boolean countIncomingEdges = direction == EdgeDirection.IN
+				|| direction == EdgeDirection.INOUT;
+		boolean countOutgoingEdges = direction == EdgeDirection.OUT
+				|| direction == EdgeDirection.INOUT;
+
+		for (Entry<PathSystemKey, PathSystemEntry> entry : keyToEntryMap
+				.entrySet()) {
+			if (isAcceptedByTypeCollection(typeCol, entry)) {
+				if (countOutgoingEdges && isOutgoingEdge(entry, vertex)) {
+					degree++;
+				}
+				if (countIncomingEdges && isIncommingEdge(entry, vertex)) {
 					degree++;
 				}
 			}
-			break;
-		case OUT:
-			for (Map.Entry<PathSystemKey, PathSystemEntry> entry : keyToEntryMap
-					.entrySet()) {
-				if ((entry.getValue().getParentVertex() == vertex)
-						&& ((typeCol == null) || (typeCol.acceptsType(entry
-								.getValue().getParentEdge()
-								.getAttributedElementClass())))) {
-					degree++;
-				}
-			}
-			break;
-		case INOUT:
-			for (Map.Entry<PathSystemKey, PathSystemEntry> entry : keyToEntryMap
-					.entrySet()) {
-				PathSystemEntry pe = entry.getValue();
-				if ((typeCol == null)
-						|| typeCol.acceptsType(pe.getParentEdge()
-								.getAttributedElementClass())) {
-					if (pe.getParentVertex() == vertex) {
-						degree++;
-					}
-					// cannot transform two if statements to one if with an or,
-					// because an edge may be a loop
-					if (entry.getKey().getVertex() == vertex) {
-						degree++;
-					}
-				}
-			}
-			break;
-		default:
-			throw new JValuePathException(
-					"Incomplete switch statement in JValuePathSystem");
 		}
 		return degree;
+	}
+
+	public boolean isAcceptedByTypeCollection(
+			JValueTypeCollection typeCollection,
+			Entry<PathSystemKey, PathSystemEntry> entry) {
+		return typeCollection == null
+				|| typeCollection.acceptsType(entry.getValue().getParentEdge()
+						.getAttributedElementClass());
+	}
+
+	public boolean isOutgoingEdge(Entry<PathSystemKey, PathSystemEntry> entry,
+			Vertex vertex) {
+		return entry.getValue().getParentVertex() == vertex;
+	}
+
+	public boolean isIncommingEdge(Entry<PathSystemKey, PathSystemEntry> entry,
+			Vertex vertex) {
+		return entry.getKey().getVertex() == vertex;
 	}
 
 	/**

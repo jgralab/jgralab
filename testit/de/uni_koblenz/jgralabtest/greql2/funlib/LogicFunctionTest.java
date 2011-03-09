@@ -36,9 +36,9 @@ package de.uni_koblenz.jgralabtest.greql2.funlib;
 
 import org.junit.Test;
 
-import de.uni_koblenz.jgralabtest.greql2.GenericTests;
+import de.uni_koblenz.jgralabtest.greql2.GenericTest;
 
-public class LogicFunctionTest extends GenericTests {
+public class LogicFunctionTest extends GenericTest {
 
 	/*
 	 * Test method for the GReQL function 'and' in infix usage.

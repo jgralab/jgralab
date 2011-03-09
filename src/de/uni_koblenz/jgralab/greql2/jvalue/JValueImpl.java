@@ -76,6 +76,7 @@ public class JValueImpl implements JValue {
 	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#getBrowsingInfo()
 	 */
+	@Override
 	public AttributedElement getBrowsingInfo() {
 		return browsingInfo;
 	}
@@ -87,6 +88,7 @@ public class JValueImpl implements JValue {
 	 * de.uni_koblenz.jgralab.greql2.jvalue.JValue#setBrowsingInfo(de.uni_koblenz
 	 * .jgralab.AttributedElement)
 	 */
+	@Override
 	public void setBrowsingInfo(AttributedElement bInfo) {
 		storedHashCode = 0;
 		browsingInfo = bInfo;
@@ -99,6 +101,7 @@ public class JValueImpl implements JValue {
 	 * de.uni_koblenz.jgralab.greql2.jvalue.JValue#accept(de.uni_koblenz.jgralab
 	 * .greql2.jvalue.JValueVisitor)
 	 */
+	@Override
 	public void accept(JValueVisitor v) {
 		if (this.type == null) {
 			v.visitObject(this);
@@ -198,6 +201,7 @@ public class JValueImpl implements JValue {
 	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#getType()
 	 */
+	@Override
 	public JValueType getType() {
 		return type;
 	}
@@ -215,6 +219,7 @@ public class JValueImpl implements JValue {
 	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#isValid()
 	 */
+	@Override
 	public boolean isValid() {
 		return type != null;
 	}
@@ -269,6 +274,7 @@ public class JValueImpl implements JValue {
 	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#isPath()
 	 */
+	@Override
 	public boolean isPath() {
 		return (this.type == JValueType.PATH);
 	}
@@ -278,6 +284,7 @@ public class JValueImpl implements JValue {
 	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#toPath()
 	 */
+	@Override
 	public JValuePath toPath() throws JValueInvalidTypeException {
 		throw new JValueInvalidTypeException(JValueType.PATH, type);
 	}
@@ -287,6 +294,7 @@ public class JValueImpl implements JValue {
 	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#isPathSystem()
 	 */
+	@Override
 	public boolean isPathSystem() {
 		return (this.type == JValueType.PATHSYSTEM);
 	}
@@ -296,6 +304,7 @@ public class JValueImpl implements JValue {
 	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#toPathSystem()
 	 */
+	@Override
 	public JValuePathSystem toPathSystem() throws JValueInvalidTypeException {
 		throw new JValueInvalidTypeException(JValueType.PATHSYSTEM, type);
 	}
@@ -305,6 +314,7 @@ public class JValueImpl implements JValue {
 	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#toSlice()
 	 */
+	@Override
 	public JValueSlice toSlice() throws JValueInvalidTypeException {
 		throw new JValueInvalidTypeException(JValueType.SLICE, type);
 	}
@@ -335,6 +345,7 @@ public class JValueImpl implements JValue {
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.jvalue.JValue#isAttributedElementClass()
 	 */
+	@Override
 	public boolean isAttributedElementClass() {
 		return (type == JValueType.ATTRELEMCLASS);
 	}
@@ -345,6 +356,7 @@ public class JValueImpl implements JValue {
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.jvalue.JValue#toAttributedElementClass()
 	 */
+	@Override
 	public AttributedElementClass toAttributedElementClass()
 			throws JValueInvalidTypeException {
 		if (isAttributedElementClass()) {
@@ -358,6 +370,7 @@ public class JValueImpl implements JValue {
 	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#isJValueTypeCollection()
 	 */
+	@Override
 	public boolean isJValueTypeCollection() {
 		return (type == JValueType.TYPECOLLECTION);
 	}
@@ -367,6 +380,7 @@ public class JValueImpl implements JValue {
 	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#toJValueTypeCollection()
 	 */
+	@Override
 	public JValueTypeCollection toJValueTypeCollection()
 			throws JValueInvalidTypeException {
 		if (isJValueTypeCollection()) {
@@ -380,6 +394,7 @@ public class JValueImpl implements JValue {
 	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#isAttributedElement()
 	 */
+	@Override
 	public boolean isAttributedElement() {
 		return (isEdge() || isVertex() || isGraph());
 	}
@@ -389,6 +404,7 @@ public class JValueImpl implements JValue {
 	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#toAttributedElement()
 	 */
+	@Override
 	public AttributedElement toAttributedElement()
 			throws JValueInvalidTypeException {
 		if (isAttributedElement()) {
@@ -419,6 +435,7 @@ public class JValueImpl implements JValue {
 	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#isBoolean()
 	 */
+	@Override
 	public boolean isBoolean() {
 		return (type == JValueType.BOOL);
 	}
@@ -428,6 +445,7 @@ public class JValueImpl implements JValue {
 	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#toBoolean()
 	 */
+	@Override
 	public Boolean toBoolean() throws JValueInvalidTypeException {
 		if (isBoolean()) {
 			return (Boolean) value;
@@ -440,6 +458,7 @@ public class JValueImpl implements JValue {
 	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#isInteger()
 	 */
+	@Override
 	public boolean isInteger() {
 		return (type == JValueType.INT);
 	}
@@ -449,6 +468,7 @@ public class JValueImpl implements JValue {
 	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#isNumber()
 	 */
+	@Override
 	public boolean isNumber() {
 		return isInteger() || isLong() || isDouble();
 	}
@@ -458,6 +478,7 @@ public class JValueImpl implements JValue {
 	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#toInteger()
 	 */
+	@Override
 	public Integer toInteger() throws JValueInvalidTypeException {
 		if (isInteger() || (canConvert(JValueType.INT))) {
 			return (Integer) value;
@@ -504,6 +525,7 @@ public class JValueImpl implements JValue {
 	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#isLong()
 	 */
+	@Override
 	public boolean isLong() {
 		return (type == JValueType.LONG);
 	}
@@ -513,6 +535,7 @@ public class JValueImpl implements JValue {
 	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#toLong()
 	 */
+	@Override
 	public Long toLong() throws JValueInvalidTypeException {
 		if (isLong() || (canConvert(JValueType.LONG))) {
 			if (value instanceof Long) {
@@ -547,6 +570,7 @@ public class JValueImpl implements JValue {
 	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#isDouble()
 	 */
+	@Override
 	public boolean isDouble() {
 		return (type == JValueType.DOUBLE);
 	}
@@ -556,6 +580,7 @@ public class JValueImpl implements JValue {
 	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#toDouble()
 	 */
+	@Override
 	public Double toDouble() throws JValueInvalidTypeException {
 		if (isDouble() || (canConvert(JValueType.DOUBLE))) {
 			if (isInteger()) {
@@ -592,6 +617,7 @@ public class JValueImpl implements JValue {
 	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#isString()
 	 */
+	@Override
 	public boolean isString() {
 		return (type == JValueType.STRING);
 	}
@@ -633,6 +659,7 @@ public class JValueImpl implements JValue {
 	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#isEnum()
 	 */
+	@Override
 	public boolean isEnum() {
 		return (type == JValueType.ENUMVALUE);
 	}
@@ -642,6 +669,7 @@ public class JValueImpl implements JValue {
 	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#toEnum()
 	 */
+	@Override
 	public Enum<?> toEnum() {
 		if (isEnum()) {
 			return (Enum<?>) value;
@@ -654,6 +682,7 @@ public class JValueImpl implements JValue {
 	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#isVertex()
 	 */
+	@Override
 	public boolean isVertex() {
 		return (type == JValueType.VERTEX);
 	}
@@ -663,6 +692,7 @@ public class JValueImpl implements JValue {
 	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#toVertex()
 	 */
+	@Override
 	public Vertex toVertex() throws JValueInvalidTypeException {
 		if (isVertex()) {
 			return (Vertex) value;
@@ -692,6 +722,7 @@ public class JValueImpl implements JValue {
 	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#isEdge()
 	 */
+	@Override
 	public boolean isEdge() {
 		return (type == JValueType.EDGE);
 	}
@@ -701,6 +732,7 @@ public class JValueImpl implements JValue {
 	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#toEdge()
 	 */
+	@Override
 	public Edge toEdge() throws JValueInvalidTypeException {
 		if (isEdge()) {
 			return (Edge) value;
@@ -747,6 +779,7 @@ public class JValueImpl implements JValue {
 	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#isGraph()
 	 */
+	@Override
 	public boolean isGraph() {
 		return (type == JValueType.GRAPH);
 	}
@@ -756,6 +789,7 @@ public class JValueImpl implements JValue {
 	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#toGraph()
 	 */
+	@Override
 	public Graph toGraph() throws JValueInvalidTypeException {
 		if (isGraph()) {
 			return (Graph) value;
@@ -777,6 +811,7 @@ public class JValueImpl implements JValue {
 	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#isNFA()
 	 */
+	@Override
 	public boolean isAutomaton() {
 		return (type == JValueType.AUTOMATON);
 	}
@@ -786,6 +821,7 @@ public class JValueImpl implements JValue {
 	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#toNFA()
 	 */
+	@Override
 	public FiniteAutomaton toAutomaton() throws JValueInvalidTypeException {
 		if (isAutomaton()) {
 			return (FiniteAutomaton) value;
@@ -823,6 +859,7 @@ public class JValueImpl implements JValue {
 	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#isObject()
 	 */
+	@Override
 	public boolean isObject() {
 		return (type == JValueType.OBJECT);
 	}
@@ -832,6 +869,7 @@ public class JValueImpl implements JValue {
 	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#toObject()
 	 */
+	@Override
 	public Object toObject() {
 		if (isObject() || (canConvert(JValueType.OBJECT))) {
 			return value;
@@ -844,6 +882,7 @@ public class JValueImpl implements JValue {
 	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#isCollection()
 	 */
+	@Override
 	public boolean isCollection() {
 		return false;
 	}
@@ -853,6 +892,7 @@ public class JValueImpl implements JValue {
 	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#isMap()
 	 */
+	@Override
 	public boolean isMap() {
 		return false;
 	}
@@ -862,6 +902,7 @@ public class JValueImpl implements JValue {
 	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#toCollection()
 	 */
+	@Override
 	public JValueCollection toCollection() throws JValueInvalidTypeException {
 		throw new JValueInvalidTypeException(JValueType.COLLECTION, type);
 	}
@@ -871,6 +912,7 @@ public class JValueImpl implements JValue {
 	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#toJValueSet()
 	 */
+	@Override
 	public JValueSet toJValueSet() throws JValueInvalidTypeException {
 		throw new JValueInvalidTypeException(JValueType.COLLECTION, type);
 	}
@@ -880,6 +922,7 @@ public class JValueImpl implements JValue {
 	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#toJValueBag()
 	 */
+	@Override
 	public JValueBag toJValueBag() throws JValueInvalidTypeException {
 		throw new JValueInvalidTypeException(JValueType.COLLECTION, type);
 	}
@@ -889,6 +932,7 @@ public class JValueImpl implements JValue {
 	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#toJValueTable()
 	 */
+	@Override
 	public JValueTable toJValueTable() throws JValueInvalidTypeException {
 		throw new JValueInvalidTypeException(JValueType.COLLECTION, type);
 	}
@@ -898,6 +942,7 @@ public class JValueImpl implements JValue {
 	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#toJValueList()
 	 */
+	@Override
 	public JValueList toJValueList() throws JValueInvalidTypeException {
 		throw new JValueInvalidTypeException(JValueType.COLLECTION, type);
 	}
@@ -907,6 +952,7 @@ public class JValueImpl implements JValue {
 	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#toJValueMap()
 	 */
+	@Override
 	public JValueMap toJValueMap() throws JValueInvalidTypeException {
 		throw new JValueInvalidTypeException(JValueType.MAP, type);
 	}
@@ -916,6 +962,7 @@ public class JValueImpl implements JValue {
 	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#toJValueTuple()
 	 */
+	@Override
 	public JValueTuple toJValueTuple() throws JValueInvalidTypeException {
 		throw new JValueInvalidTypeException(JValueType.COLLECTION, type);
 	}
@@ -925,6 +972,7 @@ public class JValueImpl implements JValue {
 	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#toJValueRecord()
 	 */
+	@Override
 	public JValueRecord toJValueRecord() throws JValueInvalidTypeException {
 		throw new JValueInvalidTypeException(JValueType.RECORD, type);
 	}
@@ -952,6 +1000,7 @@ public class JValueImpl implements JValue {
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.jvalue.JValue#isSubgraphTempAttribute()
 	 */
+	@Override
 	public boolean isGraphMarker() {
 		return (type == JValueType.MARKER);
 	}
@@ -962,6 +1011,7 @@ public class JValueImpl implements JValue {
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.jvalue.JValue#toSubgraphTempAttribute()
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public AbstractGraphMarker<AttributedElement> toGraphMarker()
 			throws JValueInvalidTypeException {
@@ -978,6 +1028,7 @@ public class JValueImpl implements JValue {
 	 * de.uni_koblenz.jgralab.greql2.jvalue.JValue#canConvert(de.uni_koblenz
 	 * .jgralab.greql2.jvalue.JValueType)
 	 */
+	@Override
 	public boolean canConvert(JValueType atype) {
 		return conversionCosts(atype) >= 0;
 	}
@@ -989,6 +1040,7 @@ public class JValueImpl implements JValue {
 	 * de.uni_koblenz.jgralab.greql2.jvalue.JValue#conversionCosts(de.uni_koblenz
 	 * .jgralab.greql2.jvalue.JValueType)
 	 */
+	@Override
 	public int conversionCosts(JValueType targetType) {
 		if (this.type == targetType) {
 			return 0;
@@ -1170,6 +1222,7 @@ public class JValueImpl implements JValue {
 	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#toNumber()
 	 */
+	@Override
 	public Number toNumber() {
 		if (isNumber() || (canConvert(JValueType.NUMBER))) {
 			return (Number) value;
