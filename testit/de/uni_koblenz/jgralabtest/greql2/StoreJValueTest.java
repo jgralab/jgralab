@@ -44,7 +44,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueXMLLoader;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueXMLOutputVisitor;
 
-public class StoreJValueTest extends GenericTests {
+public class StoreJValueTest extends GenericTest {
 
 	@Test
 	public void testStoreJValue1() throws Exception {

@@ -39,9 +39,9 @@ import org.junit.Test;
 
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.QuerySourceException;
-import de.uni_koblenz.jgralabtest.greql2.GenericTests;
+import de.uni_koblenz.jgralabtest.greql2.GenericTest;
 
-public class ExceptionTest extends GenericTests {
+public class ExceptionTest extends GenericTest {
 
 	@Test(expected = QuerySourceException.class)
 	public void testFunctionException() throws Exception {

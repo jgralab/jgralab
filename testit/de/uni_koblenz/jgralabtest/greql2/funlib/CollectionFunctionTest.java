@@ -42,9 +42,9 @@ import org.junit.Test;
 
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralabtest.greql2.GenericTests;
+import de.uni_koblenz.jgralabtest.greql2.GenericTest;
 
-public class CollectionFunctionTest extends GenericTests {
+public class CollectionFunctionTest extends GenericTest {
 
 	@Test
 	public void testAvg() throws Exception {
