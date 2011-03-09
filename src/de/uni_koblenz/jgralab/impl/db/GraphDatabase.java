@@ -32,9 +32,10 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
- package de.uni_koblenz.jgralab.impl.db;
+package de.uni_koblenz.jgralab.impl.db;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -1848,62 +1849,9 @@ public abstract class GraphDatabase {
 		}
 	}
 
-	private String schemaToString(final Schema schema) {
-		String schemaDefinition = null;
-
-		try {
-			PipedOutputStream out = new PipedOutputStream();
-			PipedInputStream in = new PipedInputStream(out);
-			final DataOutputStream dout = new DataOutputStream(out);
-
-			Thread graphIOThread = new Thread() {
-				@Override
-				public void run() {
-					try {
-						GraphIO.saveSchemaToStream(dout, schema);
-						dout.close();
-					} catch (GraphIOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			};
-
-			BufferedReader reader = new BufferedReader(
-					new InputStreamReader(in));
-			StringWriter stringWriter = new StringWriter();
-			PrintWriter writer = new PrintWriter(stringWriter);
-
-			graphIOThread.start();
-			String currentLine = "";
-			while (currentLine != null) {
-				currentLine = reader.readLine();
-				if (currentLine != null) {
-					writer.println(currentLine);
-				}
-			}
-			graphIOThread.join();
-			reader.close();
-			writer.close();
-
-			schemaDefinition = stringWriter.toString();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			// e.printStackTrace();
-			throw new RuntimeException(e);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return schemaDefinition;
-	}
-
 	private int insertSchemaRecord(Schema schema) throws SQLException {
 		PreparedStatement statement = sqlStatementList.insertSchema(schema,
-				schemaToString(schema));
+				schema.toTGString());
 		statement.executeUpdate();
 		ResultSet result = statement.getGeneratedKeys();
 		if (result.next()) {

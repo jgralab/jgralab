@@ -469,4 +469,11 @@ public interface Schema extends Comparable<Schema> {
 	 */
 	public void setGraphFactory(GraphFactory factory);
 
+	/**
+	 * Creates a string representation of this schema in the TG language. Do not
+	 * use in GraphIO.
+	 * 
+	 * @return the TG String of this schema
+	 */
+	public String toTGString();
 }
