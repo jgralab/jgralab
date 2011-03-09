@@ -75,15 +75,13 @@ public abstract class DegreeFunction extends Greql2Function {
 	public JValue evaluate(AbstractGraphMarker<AttributedElement> subgraph,
 			JValue[] arguments, EdgeDirection direction)
 			throws EvaluateException {
-		JValueTypeCollection typeCol = null;
-		JValuePathSystem pathSystem = null;
-		JValuePath path = null;
-		Vertex vertex = (arguments[0].isVertex()) ? arguments[0].toVertex()
-				: null;
 
-		if (vertex == null) {
+		if (!arguments[0].isVertex()) {
 			return new JValueImpl();
 		}
+
+		JValueTypeCollection typeCol = null;
+		Vertex vertex = arguments[0].toVertex();
 
 		switch (checkArguments(arguments)) {
 		case 0:
@@ -92,12 +90,12 @@ public abstract class DegreeFunction extends Greql2Function {
 			typeCol = (JValueTypeCollection) arguments[1];
 			return handleTypeCollection(subgraph, vertex, typeCol, direction);
 		case 2:
-			path = arguments[1].toPath();
+			JValuePath path = arguments[1].toPath();
 			return handlePath(path, vertex, direction);
 		case 4:
 			typeCol = (JValueTypeCollection) arguments[2];
 		case 3:
-			pathSystem = arguments[1].toPathSystem();
+			JValuePathSystem pathSystem = arguments[1].toPathSystem();
 			return handlePathSystem(pathSystem, vertex, typeCol, direction);
 		default:
 			throw new WrongFunctionParameterException(this, arguments);
