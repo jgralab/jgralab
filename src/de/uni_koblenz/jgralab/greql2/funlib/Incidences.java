@@ -139,24 +139,22 @@ public abstract class Incidences extends Greql2Function {
 		}
 
 		JValueSet resultSet = new JValueSet();
-		Edge inc = vertex.getFirstIncidence(direction);
-		if (typeCol == null) {
-			while (inc != null) {
-				if ((subgraph == null) || (subgraph.isMarked(inc))) {
-					resultSet.add(new JValueImpl(inc));
-				}
-				inc = inc.getNextIncidence(direction);
-			}
-		} else {
-			while (inc != null) {
-				if ((subgraph == null) || (subgraph.isMarked(inc))) {
-					if (typeCol.acceptsType(inc.getAttributedElementClass())) {
-						resultSet.add(new JValueImpl(inc));
-					}
-				}
-				inc = inc.getNextIncidence(direction);
+		for (Edge incidence : vertex.incidences(direction)) {
+			if (isInSubGraph(subgraph, incidence)
+					&& isValidType(typeCol, incidence)) {
+				resultSet.add(new JValueImpl(incidence));
 			}
 		}
 		return resultSet;
+	}
+
+	private boolean isInSubGraph(
+			AbstractGraphMarker<AttributedElement> subgraph, Edge edge) {
+		return (subgraph == null) || (subgraph.isMarked(edge));
+	}
+
+	private boolean isValidType(JValueTypeCollection typeCollection, Edge edge) {
+		return typeCollection == null
+				|| typeCollection.acceptsType(edge.getAttributedElementClass());
 	}
 }
