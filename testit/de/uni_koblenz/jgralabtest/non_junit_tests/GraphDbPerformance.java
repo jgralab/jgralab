@@ -24,9 +24,9 @@ import de.uni_koblenz.jgralabtest.schemas.algolib.weighted.WeightedSchema;
 public class GraphDbPerformance {
 
 	private static final String GRAPH_ID = "Hugo";
-	private static final int VERTICES_PER_DIMENSION = 100;
+	private static final int VERTICES_PER_DIMENSION = 25;
 
-	private static final int REPEAT = 1;
+	private static final int REPEAT = 10;
 	private static final long SEED = 42l;
 
 	private static enum RunType {
@@ -58,25 +58,23 @@ public class GraphDbPerformance {
 
 		List<RunConfiguration> runs = new LinkedList<RunConfiguration>();
 
-		// RunType currentRunType = RunType.CREATE;
-		// for (boolean currentWithForeignKeys : new boolean[] { false, true })
-		// {
-		// for (boolean currentWithIndices : new boolean[] { false, true }) {
-		// runs.add(new RunConfiguration(currentRunType,
-		// currentWithForeignKeys, currentWithIndices,
-		// VERTICES_PER_DIMENSION, REPEAT));
-		// }
-		// }
-		//
-		// currentRunType = RunType.DELETE;
-		// for (boolean currentWithForeignKeys : new boolean[] { false, true })
-		// {
-		// for (boolean currentWithIndices : new boolean[] { false, true }) {
-		// runs.add(new RunConfiguration(currentRunType,
-		// currentWithForeignKeys, currentWithIndices,
-		// VERTICES_PER_DIMENSION, REPEAT));
-		// }
-		// }
+		RunType currentRunType = RunType.CREATE;
+		for (boolean currentWithForeignKeys : new boolean[] { false, true }) {
+			for (boolean currentWithIndices : new boolean[] { false, true }) {
+				runs.add(new RunConfiguration(currentRunType,
+						currentWithForeignKeys, currentWithIndices,
+						VERTICES_PER_DIMENSION, REPEAT));
+			}
+		}
+
+		currentRunType = RunType.DELETE;
+		for (boolean currentWithForeignKeys : new boolean[] { false, true }) {
+			for (boolean currentWithIndices : new boolean[] { false, true }) {
+				runs.add(new RunConfiguration(currentRunType,
+						currentWithForeignKeys, currentWithIndices,
+						VERTICES_PER_DIMENSION, REPEAT));
+			}
+		}
 
 		RunType[] algorithmRunTypes = new RunType[] { RunType.DFS, RunType.BFS,
 				RunType.DIJKSTRA };
