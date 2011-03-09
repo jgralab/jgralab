@@ -44,6 +44,7 @@ import java.util.Set;
 
 import org.junit.Test;
 
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
@@ -282,7 +283,7 @@ public class GraphFunctionTest extends GenericTest {
 	public void testGetEdge() throws Exception {
 		evalTestQuery("list(1..id(lastEdge())) ++ list(-id(lastEdge())..-1) store as idList");
 		JValueMap map = evalTestQuery(
-				"using idList: from el:list(1..id(lastEdge())) reportMap el -> getEdge(el) end")
+				"using idList: from el:idList reportMap el -> getEdge(el) end")
 				.toJValueMap();
 		Graph graph = getTestGraph(TestVersion.CITY_MAP_GRAPH);
 
@@ -295,13 +296,42 @@ public class GraphFunctionTest extends GenericTest {
 
 	@Test
 	public void testGetEdge2() throws Exception {
+		assertQueryEqualsNull("using nll: getEdge(nll)");
 		assertQueryEquals("getEdge(0)", (Edge) null);
 		assertQueryEquals("getEdge(id(lastEdge()) + 1)", (Edge) null);
 		assertQueryEquals("getEdge(-id(lastEdge()) -1)", (Edge) null);
 	}
 
 	@Test
+	public void testGetGraph() throws Exception {
+		assertQueryEquals("getGraph()",
+				getTestGraph(TestVersion.CITY_MAP_GRAPH));
+	}
+
+	@Test
 	public void testGetValue() throws Exception {
+
+		String subQuery = "from name:attributeNames(el) reportMap name -> getValue(el, name) end";
+		String query = "from el:union(E,V) reportMap el -> " + subQuery
+				+ " end";
+		JValueMap map = evalTestQuery(query).toJValueMap();
+
+		for (Entry<JValue, JValue> entry : map.entrySet()) {
+			AttributedElement element = entry.getKey().toAttributedElement();
+			JValueMap attributes = entry.getValue().toJValueMap();
+
+			for (Entry<JValue, JValue> attributePair : attributes.entrySet()) {
+				String name = attributePair.getKey().toString();
+				Object value = attributePair.getValue().toObject();
+
+				Object expectedValue = element.getAttribute(name);
+				assertEquals(expectedValue, value);
+			}
+		}
+	}
+
+	public void test() throws Exception {
+
 		// TODO: Broken, because the GReQL parser removes all WhereExpressions
 		// and LetExpressions!
 		String queryString = "from x : V{Variable} report x.name end";
