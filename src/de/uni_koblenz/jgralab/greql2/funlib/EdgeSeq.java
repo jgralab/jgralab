@@ -97,35 +97,41 @@ public class EdgeSeq extends Greql2Function {
 	public JValue evaluate(Graph graph,
 			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
 			throws EvaluateException {
-		JValueSet edges = new JValueSet();
+
+		if (!arguments[0].isEdge() || !arguments[1].isEdge()) {
+			return new JValueImpl();
+		}
+
 		Edge start = arguments[0].toEdge();
 		Edge end = arguments[1].toEdge();
-		Edge current = start;
 		switch (checkArguments(arguments)) {
 		case 0:
-			while (current != null) {
-				edges.add(new JValueImpl(current));
-				if (current == end) {
-					return edges;
-				}
-				current = current.getNextEdge();
-			}
-			return edges;
+			return edgeSequence(start, end, null);
 		case 1:
-			JValueTypeCollection tc = (JValueTypeCollection) arguments[2];
-			while (current != null) {
-				if (tc.acceptsType(current.getAttributedElementClass())) {
-					edges.add(new JValueImpl(current));
-				}
-				if (current == end) {
-					return edges;
-				}
-				current = current.getNextEdge();
-			}
-			return edges;
+			JValueTypeCollection typeCollection = arguments[2]
+					.toJValueTypeCollection();
+			return edgeSequence(start, end, typeCollection);
 		default:
 			throw new WrongFunctionParameterException(this, arguments);
 		}
+	}
+
+	private JValue edgeSequence(Edge start, Edge end, JValueTypeCollection tc) {
+		boolean acceptsAllTypes = tc == null;
+
+		JValueSet edges = new JValueSet();
+
+		while (start != null) {
+			if (acceptsAllTypes
+					|| tc.acceptsType(start.getAttributedElementClass())) {
+				edges.add(new JValueImpl(start));
+			}
+			if (start == end) {
+				return edges;
+			}
+			start = start.getNextEdge();
+		}
+		return edges;
 	}
 
 	@Override

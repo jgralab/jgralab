@@ -90,7 +90,11 @@ public class GetVertex extends Greql2Function {
 		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, arguments);
 		}
-		Vertex vertex = graph.getVertex(arguments[0].toInteger());
+		Integer index = arguments[0].toInteger();
+		if (index == null) {
+			return new JValueImpl();
+		}
+		Vertex vertex = graph.getVertex(index);
 		return new JValueImpl(vertex, vertex);
 	}
 
