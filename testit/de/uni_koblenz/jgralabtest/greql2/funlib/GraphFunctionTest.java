@@ -211,7 +211,7 @@ public class GraphFunctionTest extends GenericTest {
 
 	@Test
 	public void testEdgesConnectedNull() throws Exception {
-		assertQueryEqualsNull("edgesConnected(nll)");
+		assertQueryEqualsNull("using nll: edgesConnected(nll)");
 	}
 
 	@Test
@@ -225,7 +225,7 @@ public class GraphFunctionTest extends GenericTest {
 
 	@Test
 	public void testEdgesFromNull() throws Exception {
-		assertQueryEqualsNull("edgesFrom(nll)");
+		assertQueryEqualsNull("using nll: edgesFrom(nll)");
 	}
 
 	@Test
@@ -239,7 +239,7 @@ public class GraphFunctionTest extends GenericTest {
 
 	@Test
 	public void testEdgesToNull() throws Exception {
-		assertQueryEqualsNull("edgesTo(nll)");
+		assertQueryEqualsNull("using nll: edgesTo(nll)");
 	}
 
 	@Test
