@@ -61,7 +61,7 @@ import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalGraph;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalSchema;
 import de.uni_koblenz.jgralabtest.schemas.minimal.Node;
 
-public class GenericTests {
+public class GenericTest {
 
 	protected static final double DELTA = 0.00000001;
 
@@ -74,35 +74,36 @@ public class GenericTests {
 
 	@BeforeClass
 	public static void globalSetUp() throws Exception {
-		GenericTests test = new GenericTests();
+		GenericTest test = new GenericTest();
 		queryAirportCount(test);
 		queryCrossroadCount(test);
 		queryCountyCount(test);
 		queryUncontainedCrossroadCount(test);
+		test.setBoundVariable("nll", new JValueImpl((Object) null));
 	}
 
-	private static void queryAirportCount(GenericTests test) throws Exception {
+	private static void queryAirportCount(GenericTest test) throws Exception {
 		String queryString = "count(V{junctions.Airport})";
 		JValue result = test.evalTestQuery("static Query", queryString,
 				TestVersion.CITY_MAP_GRAPH);
 		airportCount = result.toInteger();
 	}
 
-	private static void queryCrossroadCount(GenericTests test) throws Exception {
+	private static void queryCrossroadCount(GenericTest test) throws Exception {
 		String queryString = "count(V{junctions.Crossroad})";
 		JValue result = test.evalTestQuery("static Query", queryString,
 				TestVersion.CITY_MAP_GRAPH);
 		crossroadCount = result.toInteger();
 	}
 
-	private static void queryCountyCount(GenericTests test) throws Exception {
+	private static void queryCountyCount(GenericTest test) throws Exception {
 		String queryString = "count(V{localities.County})";
 		JValue result = test.evalTestQuery("static Query", queryString,
 				TestVersion.CITY_MAP_GRAPH);
 		countyCount = result.toInteger();
 	}
 
-	private static void queryUncontainedCrossroadCount(GenericTests test)
+	private static void queryUncontainedCrossroadCount(GenericTest test)
 			throws Exception {
 		String queryString = "sum(from r:V{junctions.Crossroad} report depth(pathSystem(r, <--{localities.ContainsCrossroad})) end)";
 		JValue result = test.evalTestQuery("static Query", queryString,
@@ -151,7 +152,21 @@ public class GenericTests {
 			String expectedResultAsQuery) throws Exception {
 		JValue result = evalTestQuery(query);
 		JValue expectedResult = evalTestQuery(expectedResultAsQuery);
-		assertEquals(expectedResult, result);
+		try {
+			assertEquals(expectedResult, result);
+		} catch (AssertionError ex) {
+			if (result.isCollection() && expectedResult.isCollection()) {
+				JValueCollection col = result.toCollection();
+				JValueCollection col2 = expectedResult.toCollection();
+				col.removeAll(col2);
+				System.out.println("O L D +++++");
+				System.out.println(col.toObject());
+				System.out.println("N E W +++++");
+				System.out.println(col2.toObject());
+				System.out.println("E N D +++++");
+			}
+			throw ex;
+		}
 	}
 
 	protected void assertQueryEquals(String query, Enum<?> expectedValue)

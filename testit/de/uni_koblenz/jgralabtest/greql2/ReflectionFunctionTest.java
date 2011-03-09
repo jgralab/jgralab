@@ -36,7 +36,7 @@ package de.uni_koblenz.jgralabtest.greql2;
 
 import org.junit.Test;
 
-public class ReflectionFunctionTest extends GenericTests {
+public class ReflectionFunctionTest extends GenericTest {
 
 	@Test
 	public void testHasJValueType() throws Exception {
