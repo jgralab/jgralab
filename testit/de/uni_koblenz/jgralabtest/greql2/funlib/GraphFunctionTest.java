@@ -38,7 +38,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -310,7 +309,6 @@ public class GraphFunctionTest extends GenericTest {
 
 	@Test
 	public void testGetValue() throws Exception {
-
 		String subQuery = "from name:attributeNames(el) reportMap name -> getValue(el, name) end";
 		String query = "from el:union(E,V) reportMap el -> " + subQuery
 				+ " end";
@@ -330,22 +328,13 @@ public class GraphFunctionTest extends GenericTest {
 		}
 	}
 
-	public void test() throws Exception {
-
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from x : V{Variable} report x.name end";
-		JValue result = evalTestQuery("GetValue", queryString);
-		assertEquals(5, result.toCollection().size());
-		Iterator<JValue> iter = result.toCollection().iterator();
-		while (iter.hasNext()) {
-			JValue col = iter.next();
-			assertTrue((col.toString().equals("a"))
-					|| (col.toString().equals("b"))
-					|| (col.toString().equals("c"))
-					|| (col.toString().equals("d"))
-					|| (col.toString().equals("i")));
-		}
+	@Test
+	public void testGetValueNull() throws Exception {
+		evalTestQuery("V[1] store as vertex");
+		evalTestQuery("using vertex: attributeNames(vertex)[0] store as attributeName");
+		assertQueryEqualsNull("using nll: getValue(nll, nll)");
+		assertQueryEqualsNull("using nll, attributeName: getValue(nll, attributeName)");
+		assertQueryEqualsNull("using nll, vertex: getValue(vertex, nll)");
 	}
 
 	@Test
