@@ -243,6 +243,24 @@ public class GraphFunctionTest extends GenericTest {
 	}
 
 	@Test
+	public void testEndVertex() throws Exception {
+		String query = "from e:E reportMap e -> endVertex(e) end";
+		JValueMap map = evalTestQuery(query).toJValueMap();
+
+		for (Entry<JValue, JValue> entry : map.entrySet()) {
+			Edge edge = entry.getKey().toEdge();
+			Vertex omega = entry.getValue().toVertex();
+
+			assertEquals(edge.getOmega(), omega);
+		}
+	}
+
+	@Test
+	public void testEndVertexNull() throws Exception {
+		assertQueryEqualsNull("using nll: endVertex(nll)");
+	}
+
+	@Test
 	public void testFirstEdge() throws Exception {
 		Graph graph = getTestGraph(TestVersion.CITY_MAP_GRAPH);
 		assertQueryEquals("firstEdge()", graph.getFirstEdge());
