@@ -43,8 +43,8 @@ import static org.junit.Assert.fail;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.junit.After;
 import org.junit.Before;
@@ -171,13 +171,13 @@ public class DefaultValueTest extends InstanceTest {
 	@Test
 	public void testGraphAttributes() throws CommitFailedException {
 		createReadOnlyTransaction(graph);
-		checkAttributes(graph.is_boolGraph(), graph.get_intGraph(), graph
-				.get_longGraph(), graph.get_doubleGraph(), graph
-				.get_stringGraph(), graph.get_enumGraph(), graph
-				.get_listGraph(), graph.get_complexListGraph(), graph
-				.get_setGraph(), graph.get_complexSetGraph(), graph
-				.get_mapGraph(), graph.get_complexMapGraph(), graph
-				.get_recordGraph());
+		checkAttributes(graph.is_boolGraph(), graph.get_intGraph(),
+				graph.get_longGraph(), graph.get_doubleGraph(),
+				graph.get_stringGraph(), graph.get_enumGraph(),
+				graph.get_listGraph(), graph.get_complexListGraph(),
+				graph.get_setGraph(), graph.get_complexSetGraph(),
+				graph.get_mapGraph(), graph.get_complexMapGraph(),
+				graph.get_recordGraph());
 		commit(graph);
 	}
 
@@ -194,19 +194,19 @@ public class DefaultValueTest extends InstanceTest {
 		commit(graph);
 
 		createReadOnlyTransaction(graph);
-		checkAttributes(v.is_boolVertex(), v.get_intVertex(), v
-				.get_longVertex(), v.get_doubleVertex(), v.get_stringVertex(),
-				v.get_enumVertex(), v.get_listVertex(), v
-						.get_complexListVertex(), v.get_setVertex(), v
-						.get_complexSetVertex(), v.get_mapVertex(), v
-						.get_complexMapVertex(), v.get_recordVertex());
-		checkNotEqual(graph.get_listGraph(), v.get_listVertex(), graph
-				.get_complexListGraph(), v.get_complexListVertex(), graph
-				.get_setGraph(), v.get_setVertex(),
-				graph.get_complexSetGraph(), v.get_complexSetVertex(), graph
-						.get_mapGraph(), v.get_mapVertex(), graph
-						.get_complexMapGraph(), v.get_complexMapVertex(), graph
-						.get_recordGraph(), v.get_recordVertex());
+		checkAttributes(v.is_boolVertex(), v.get_intVertex(),
+				v.get_longVertex(), v.get_doubleVertex(), v.get_stringVertex(),
+				v.get_enumVertex(), v.get_listVertex(),
+				v.get_complexListVertex(), v.get_setVertex(),
+				v.get_complexSetVertex(), v.get_mapVertex(),
+				v.get_complexMapVertex(), v.get_recordVertex());
+		checkNotEqual(graph.get_listGraph(), v.get_listVertex(),
+				graph.get_complexListGraph(), v.get_complexListVertex(),
+				graph.get_setGraph(), v.get_setVertex(),
+				graph.get_complexSetGraph(), v.get_complexSetVertex(),
+				graph.get_mapGraph(), v.get_mapVertex(),
+				graph.get_complexMapGraph(), v.get_complexMapVertex(),
+				graph.get_recordGraph(), v.get_recordVertex());
 		commit(graph);
 	}
 
@@ -223,19 +223,19 @@ public class DefaultValueTest extends InstanceTest {
 		commit(graph);
 
 		createReadOnlyTransaction(graph);
-		checkAttributes(v.is_boolVertex(), v.get_intVertex(), v
-				.get_longVertex(), v.get_doubleVertex(), v.get_stringVertex(),
-				v.get_enumVertex(), v.get_listVertex(), v
-						.get_complexListVertex(), v.get_setVertex(), v
-						.get_complexSetVertex(), v.get_mapVertex(), v
-						.get_complexMapVertex(), v.get_recordVertex());
-		checkNotEqual(graph.get_listGraph(), v.get_listVertex(), graph
-				.get_complexListGraph(), v.get_complexListVertex(), graph
-				.get_setGraph(), v.get_setVertex(),
-				graph.get_complexSetGraph(), v.get_complexSetVertex(), graph
-						.get_mapGraph(), v.get_mapVertex(), graph
-						.get_complexMapGraph(), v.get_complexMapVertex(), graph
-						.get_recordGraph(), v.get_recordVertex());
+		checkAttributes(v.is_boolVertex(), v.get_intVertex(),
+				v.get_longVertex(), v.get_doubleVertex(), v.get_stringVertex(),
+				v.get_enumVertex(), v.get_listVertex(),
+				v.get_complexListVertex(), v.get_setVertex(),
+				v.get_complexSetVertex(), v.get_mapVertex(),
+				v.get_complexMapVertex(), v.get_recordVertex());
+		checkNotEqual(graph.get_listGraph(), v.get_listVertex(),
+				graph.get_complexListGraph(), v.get_complexListVertex(),
+				graph.get_setGraph(), v.get_setVertex(),
+				graph.get_complexSetGraph(), v.get_complexSetVertex(),
+				graph.get_mapGraph(), v.get_mapVertex(),
+				graph.get_complexMapGraph(), v.get_complexMapVertex(),
+				graph.get_recordGraph(), v.get_recordVertex());
 		commit(graph);
 	}
 
@@ -252,23 +252,24 @@ public class DefaultValueTest extends InstanceTest {
 		TestEdge e = graph.createTestEdge(v, v);
 		commit(graph);
 		createReadOnlyTransaction(graph);
-		checkAttributes(e.is_boolEdge(), e.get_intEdge(), e.get_longEdge(), e
-				.get_doubleEdge(), e.get_stringEdge(), e.get_enumEdge(), e
-				.get_listEdge(), e.get_complexListEdge(), e.get_setEdge(), e
-				.get_complexSetEdge(), e.get_mapEdge(), e.get_complexMapEdge(),
-				e.get_recordEdge());
-		checkNotEqual(graph.get_listGraph(), e.get_listEdge(), graph
-				.get_complexListGraph(), e.get_complexListEdge(), graph
-				.get_setGraph(), e.get_setEdge(), graph.get_complexSetGraph(),
-				e.get_complexSetEdge(), graph.get_mapGraph(), e.get_mapEdge(),
-				graph.get_complexMapGraph(), e.get_complexMapEdge(), graph
-						.get_recordGraph(), e.get_recordEdge());
-		checkNotEqual(e.get_listEdge(), v.get_listVertex(), e
-				.get_complexListEdge(), v.get_complexListVertex(), e
-				.get_setEdge(), v.get_setVertex(), e.get_complexSetEdge(), v
-				.get_complexSetVertex(), e.get_mapEdge(), v.get_mapVertex(), e
-				.get_complexMapEdge(), v.get_complexMapVertex(), e
-				.get_recordEdge(), v.get_recordVertex());
+		checkAttributes(e.is_boolEdge(), e.get_intEdge(), e.get_longEdge(),
+				e.get_doubleEdge(), e.get_stringEdge(), e.get_enumEdge(),
+				e.get_listEdge(), e.get_complexListEdge(), e.get_setEdge(),
+				e.get_complexSetEdge(), e.get_mapEdge(),
+				e.get_complexMapEdge(), e.get_recordEdge());
+		checkNotEqual(graph.get_listGraph(), e.get_listEdge(),
+				graph.get_complexListGraph(), e.get_complexListEdge(),
+				graph.get_setGraph(), e.get_setEdge(),
+				graph.get_complexSetGraph(), e.get_complexSetEdge(),
+				graph.get_mapGraph(), e.get_mapEdge(),
+				graph.get_complexMapGraph(), e.get_complexMapEdge(),
+				graph.get_recordGraph(), e.get_recordEdge());
+		checkNotEqual(e.get_listEdge(), v.get_listVertex(),
+				e.get_complexListEdge(), v.get_complexListVertex(),
+				e.get_setEdge(), v.get_setVertex(), e.get_complexSetEdge(),
+				v.get_complexSetVertex(), e.get_mapEdge(), v.get_mapVertex(),
+				e.get_complexMapEdge(), v.get_complexMapVertex(),
+				e.get_recordEdge(), v.get_recordVertex());
 		commit(graph);
 	}
 
@@ -281,22 +282,15 @@ public class DefaultValueTest extends InstanceTest {
 	public void testGraphAttributesAreCloned() throws CommitFailedException {
 		DefaultValueTestGraph secondGraph = null;
 		switch (implementationType) {
-		case STANDARD:
-			secondGraph = DefaultValueTestSchema.instance()
-					.createDefaultValueTestGraph();
-			break;
 		case TRANSACTION:
 			secondGraph = DefaultValueTestSchema.instance()
 					.createDefaultValueTestGraphWithTransactionSupport();
 			break;
+		case STANDARD:
 		case SAVEMEM:
-			secondGraph = DefaultValueTestSchema.instance()
-					.createDefaultValueTestGraphWithSavememSupport();
-			break;
 		case DATABASE:
-			secondGraph = this
-					.createDefaultValueTestGraphWithDatabaseSupport("secondGraph");
-			break;
+			// cloning not supported except in TRANSACTION implementation
+			return;
 		default:
 			fail("Implementation " + implementationType
 					+ " not yet supported by this test.");
@@ -304,12 +298,12 @@ public class DefaultValueTest extends InstanceTest {
 		createReadOnlyTransaction(graph);
 		createReadOnlyTransaction(secondGraph);
 		checkNotEqual(secondGraph.get_listGraph(), graph.get_listGraph(),
-				secondGraph.get_complexListGraph(), graph
-						.get_complexListGraph(), secondGraph.get_setGraph(),
-				graph.get_setGraph(), secondGraph.get_complexSetGraph(), graph
-						.get_complexSetGraph(), secondGraph.get_mapGraph(),
-				graph.get_mapGraph(), secondGraph.get_complexMapGraph(), graph
-						.get_complexMapGraph(), secondGraph.get_recordGraph(),
+				secondGraph.get_complexListGraph(),
+				graph.get_complexListGraph(), secondGraph.get_setGraph(),
+				graph.get_setGraph(), secondGraph.get_complexSetGraph(),
+				graph.get_complexSetGraph(), secondGraph.get_mapGraph(),
+				graph.get_mapGraph(), secondGraph.get_complexMapGraph(),
+				graph.get_complexMapGraph(), secondGraph.get_recordGraph(),
 				graph.get_recordGraph());
 		commit(secondGraph);
 		commit(graph);
@@ -323,18 +317,22 @@ public class DefaultValueTest extends InstanceTest {
 	 */
 	@Test
 	public void testVertexAttributesAreCloned() throws CommitFailedException {
+		if (implementationType != ImplementationType.TRANSACTION) {
+			// cloning not supported except in TRANSACTION implementation
+			return;
+		}
 		createTransaction(graph);
 		TestVertex v1 = graph.createTestVertex();
 		TestVertex v2 = graph.createTestVertex();
 		commit(graph);
 		createReadOnlyTransaction(graph);
-		checkNotEqual(v1.get_listVertex(), v2.get_listVertex(), v1
-				.get_complexListVertex(), v2.get_complexListVertex(), v1
-				.get_setVertex(), v2.get_setVertex(),
-				v1.get_complexSetVertex(), v2.get_complexSetVertex(), v1
-						.get_mapVertex(), v2.get_mapVertex(), v1
-						.get_complexMapVertex(), v2.get_complexMapVertex(), v1
-						.get_recordVertex(), v2.get_recordVertex());
+		checkNotEqual(v1.get_listVertex(), v2.get_listVertex(),
+				v1.get_complexListVertex(), v2.get_complexListVertex(),
+				v1.get_setVertex(), v2.get_setVertex(),
+				v1.get_complexSetVertex(), v2.get_complexSetVertex(),
+				v1.get_mapVertex(), v2.get_mapVertex(),
+				v1.get_complexMapVertex(), v2.get_complexMapVertex(),
+				v1.get_recordVertex(), v2.get_recordVertex());
 		commit(graph);
 	}
 
@@ -347,18 +345,22 @@ public class DefaultValueTest extends InstanceTest {
 	@Test
 	public void testInheritedVertexAttributesAreCloned()
 			throws CommitFailedException {
+		if (implementationType != ImplementationType.TRANSACTION) {
+			// cloning not supported except in TRANSACTION implementation
+			return;
+		}
 		createTransaction(graph);
 		TestVertex v1 = graph.createTestVertex();
 		TestSubVertex v2 = graph.createTestSubVertex();
 		commit(graph);
 		createReadOnlyTransaction(graph);
-		checkNotEqual(v1.get_listVertex(), v2.get_listVertex(), v1
-				.get_complexListVertex(), v2.get_complexListVertex(), v1
-				.get_setVertex(), v2.get_setVertex(),
-				v1.get_complexSetVertex(), v2.get_complexSetVertex(), v1
-						.get_mapVertex(), v2.get_mapVertex(), v1
-						.get_complexMapVertex(), v2.get_complexMapVertex(), v1
-						.get_recordVertex(), v2.get_recordVertex());
+		checkNotEqual(v1.get_listVertex(), v2.get_listVertex(),
+				v1.get_complexListVertex(), v2.get_complexListVertex(),
+				v1.get_setVertex(), v2.get_setVertex(),
+				v1.get_complexSetVertex(), v2.get_complexSetVertex(),
+				v1.get_mapVertex(), v2.get_mapVertex(),
+				v1.get_complexMapVertex(), v2.get_complexMapVertex(),
+				v1.get_recordVertex(), v2.get_recordVertex());
 		commit(graph);
 	}
 
@@ -370,18 +372,22 @@ public class DefaultValueTest extends InstanceTest {
 	 */
 	@Test
 	public void testEdgeAttributesAreCloned() throws CommitFailedException {
+		if (implementationType != ImplementationType.TRANSACTION) {
+			// cloning not supported except in TRANSACTION implementation
+			return;
+		}
 		createTransaction(graph);
 		TestVertex v = graph.createTestVertex();
 		TestEdge e1 = graph.createTestEdge(v, v);
 		TestEdge e2 = graph.createTestEdge(v, v);
 		commit(graph);
 		createReadOnlyTransaction(graph);
-		checkNotEqual(e1.get_listEdge(), e2.get_listEdge(), e1
-				.get_complexListEdge(), e2.get_complexListEdge(), e1
-				.get_setEdge(), e2.get_setEdge(), e1.get_complexSetEdge(), e2
-				.get_complexSetEdge(), e1.get_mapEdge(), e2.get_mapEdge(), e1
-				.get_complexMapEdge(), e2.get_complexMapEdge(), e1
-				.get_recordEdge(), e2.get_recordEdge());
+		checkNotEqual(e1.get_listEdge(), e2.get_listEdge(),
+				e1.get_complexListEdge(), e2.get_complexListEdge(),
+				e1.get_setEdge(), e2.get_setEdge(), e1.get_complexSetEdge(),
+				e2.get_complexSetEdge(), e1.get_mapEdge(), e2.get_mapEdge(),
+				e1.get_complexMapEdge(), e2.get_complexMapEdge(),
+				e1.get_recordEdge(), e2.get_recordEdge());
 		commit(graph);
 	}
 
@@ -480,8 +486,8 @@ public class DefaultValueTest extends InstanceTest {
 
 		if (record != null) {
 			checkAttributes(record.is_boolRecord(), record.get_intRecord(),
-					record.get_longRecord(), record.get_doubleRecord(), record
-							.get_stringRecord(), record.get_enumRecord(),
+					record.get_longRecord(), record.get_doubleRecord(),
+					record.get_stringRecord(), record.get_enumRecord(),
 					record.get_listRecord(), null, record.get_setRecord(),
 					null, record.get_mapRecord(), null, null);
 		}
@@ -641,8 +647,8 @@ public class DefaultValueTest extends InstanceTest {
 				.getBooleanDomain());
 		SetDomain complexSetDomain = schema.createSetDomain(simpleSetDomain);
 
-		MapDomain simpleMapDomain = schema.createMapDomain(schema
-				.getIntegerDomain(), schema.getBooleanDomain());
+		MapDomain simpleMapDomain = schema.createMapDomain(
+				schema.getIntegerDomain(), schema.getBooleanDomain());
 		MapDomain complexMapDomain = schema.createMapDomain(simpleListDomain,
 				simpleSetDomain);
 
@@ -733,7 +739,6 @@ public class DefaultValueTest extends InstanceTest {
 				.withoutTypeSpecificMethodSupport());
 		GraphIO.saveSchemaToFile(
 				"./testit/testschemas/DefaultValueTestSchema.tg", schema);
-		GraphIO
-				.loadSchemaFromFile("./testit/testschemas/DefaultValueTestSchema.tg");
+		GraphIO.loadSchemaFromFile("./testit/testschemas/DefaultValueTestSchema.tg");
 	}
 }
