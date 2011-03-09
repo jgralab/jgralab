@@ -390,6 +390,11 @@ public class GraphFunctionTest extends GenericTest {
 	}
 
 	@Test
+	public void testIdNull() throws Exception {
+		assertQueryEqualsNull("using nll: id(nll)");
+	}
+
+	@Test
 	public void testInDegree() throws Exception {
 		JValueMap map = evalTestQuery("from v:V reportMap v -> inDegree(v) end")
 				.toJValueMap();
