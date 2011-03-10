@@ -65,6 +65,11 @@ public class IsEmpty extends Greql2Function {
 	public JValue evaluate(Graph graph,
 			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
 			throws EvaluateException {
+
+		if (isAnyArgumentNull(arguments)) {
+			return new JValueImpl();
+		}
+
 		switch (checkArguments(arguments)) {
 		case 0:
 			return new JValueImpl(arguments[0].toCollection().size() == 0);

@@ -93,6 +93,10 @@ public class Max extends Greql2Function {
 			throw new WrongFunctionParameterException(this, arguments);
 		}
 
+		if (isAnyArgumentNull(arguments)) {
+			return new JValueImpl();
+		}
+
 		JValueCollection col = arguments[0].toCollection();
 		boolean doubleFound = false;
 		double max = Double.NEGATIVE_INFINITY;
