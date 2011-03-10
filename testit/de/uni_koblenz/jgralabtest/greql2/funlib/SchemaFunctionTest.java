@@ -93,6 +93,11 @@ public class SchemaFunctionTest extends GenericTest {
 	}
 
 	@Test
+	public void testAttributeNamesNull() throws Exception {
+		assertQueryEqualsNull("using nll: attributeNames(nll)");
+	}
+
+	@Test
 	public void testAttributes() throws Exception {
 		Schema schema = getSchema();
 		testAttributes(schema.getVertexClassesInTopologicalOrder());
@@ -124,6 +129,11 @@ public class SchemaFunctionTest extends GenericTest {
 	}
 
 	@Test
+	public void testAttributesNull() throws Exception {
+		assertQueryEqualsNull("using nll: attributes(nll)");
+	}
+
+	@Test
 	public void testEnumConstant() throws Exception {
 		Schema schema = getSchema();
 
@@ -135,6 +145,13 @@ public class SchemaFunctionTest extends GenericTest {
 				assertEquals(enumConst, result.toEnum().name());
 			}
 		}
+	}
+
+	@Test
+	public void testEnumConstantNull() throws Exception {
+		assertQueryEqualsNull("using nll: enumConstant(nll, '?')");
+		assertQueryEqualsNull("using nll: enumConstant('?', nll)");
+		assertQueryEqualsNull("using nll: enumConstant(nll, nll)");
 	}
 
 	@Test
@@ -168,6 +185,14 @@ public class SchemaFunctionTest extends GenericTest {
 				false);
 		assertQueryEquals("hasAttribute(type('junctions.Crossroad'), 'Name')",
 				false);
+	}
+
+	@Test
+	public void testHasAttributeNull() throws Exception {
+		assertQueryEqualsNull("using nll: hasAttribute(firstVertex(), nll)");
+		assertQueryEqualsNull("using nll: hasAttribute(type(firstVertex()), nll)");
+		assertQueryEqualsNull("using nll: hasAttribute(nll, '?')");
+		assertQueryEqualsNull("using nll: hasAttribute(nll, nll)");
 	}
 
 	@Test
@@ -210,17 +235,14 @@ public class SchemaFunctionTest extends GenericTest {
 			String typeChar, String qualifiedName) throws Exception {
 		String formatedString = String.format(queryFor_hasType_Test1, typeChar,
 				currentQualifiedName, qualifiedName);
-		System.out.println(formatedString);
 		assertQueryEquals(formatedString, equal);
 
 		formatedString = String.format(queryFor_hasType_Test2, typeChar,
 				currentQualifiedName, qualifiedName);
-		System.out.println(formatedString);
 		assertQueryEquals(formatedString, equal);
 
 		formatedString = String.format(queryFor_hasType_Test3, qualifiedName,
 				typeChar, currentQualifiedName);
-		System.out.println(formatedString);
 		assertQueryEquals(formatedString, equal);
 	}
 
@@ -239,6 +261,15 @@ public class SchemaFunctionTest extends GenericTest {
 			testHasTypeForSuperTypes(currentQualifiedName, elementClass);
 		}
 
+	}
+
+	@Test
+	public void testHasTypeNull() throws Exception {
+		assertQueryEqualsNull("using nll: hasType(firstVertex(), nll)");
+		assertQueryEqualsNull("using nll: hasType(nll, '?')");
+		assertQueryEqualsNull("using nll: hasType(nll, type(firstVertex()))");
+		assertQueryEqualsNull("using nll: hasType{Vertex}(nll)");
+		assertQueryEqualsNull("using nll: hasType(nll, nll)");
 	}
 
 	@Test
@@ -296,6 +327,15 @@ public class SchemaFunctionTest extends GenericTest {
 	}
 
 	@Test
+	public void testIsANull() throws Exception {
+		assertQueryEqualsNull("using nll: isA('?', nll)");
+		assertQueryEqualsNull("using nll: isA(firstVertex(), nll)");
+		assertQueryEqualsNull("using nll: isA(nll, '?')");
+		assertQueryEqualsNull("using nll: isA(nll, firstVertex())");
+		assertQueryEqualsNull("using nll: isA(nll, nll)");
+	}
+
+	@Test
 	public void testSubTypes() throws Exception {
 		Schema schema = getSchema();
 
@@ -326,6 +366,11 @@ public class SchemaFunctionTest extends GenericTest {
 	}
 
 	@Test
+	public void testSubTypesNull() throws Exception {
+		assertQueryEqualsNull("using nll: subTypes(nll)");
+	}
+
+	@Test
 	public void testSuperTypes() throws Exception {
 		Schema schema = getSchema();
 
@@ -353,6 +398,11 @@ public class SchemaFunctionTest extends GenericTest {
 			}
 			assertTrue(superClasses.isEmpty());
 		}
+	}
+
+	@Test
+	public void testSuperTypesNull() throws Exception {
+		assertQueryEqualsNull("using nll: superTypes(nll)");
 	}
 
 	@Test
@@ -401,6 +451,11 @@ public class SchemaFunctionTest extends GenericTest {
 	// }
 
 	@Test
+	public void testTypeNull() throws Exception {
+		assertQueryEqualsNull("using nll: type(nll)");
+	}
+
+	@Test
 	public void testTypeName() throws Exception {
 		JValueMap elements = evalTestQuery(
 				"from el:union(V, E) reportMap el -> typeName(el) end")
@@ -422,6 +477,11 @@ public class SchemaFunctionTest extends GenericTest {
 					.getQualifiedName();
 			assertEquals(expectedQualfiedName, qualifiedName);
 		}
+	}
+
+	@Test
+	public void testTypeNameNull() throws Exception {
+		assertQueryEqualsNull("using nll: typeName(nll)");
 	}
 
 	@Test
@@ -519,6 +579,11 @@ public class SchemaFunctionTest extends GenericTest {
 	}
 
 	@Test
+	public void testTypesNull() throws Exception {
+		assertQueryEqualsNull("using nll: types(nll)");
+	}
+
+	@Test
 	public void testUniqueTypeName() throws Exception {
 		JValueMap elements = evalTestQuery(
 				"from el:union(V, E) reportMap el -> uniqueTypeName(el) end")
@@ -540,5 +605,10 @@ public class SchemaFunctionTest extends GenericTest {
 					.getUniqueName();
 			assertEquals(expectedUniqueName, uniquedName);
 		}
+	}
+
+	@Test
+	public void testUniqueTypeNameNull() throws Exception {
+		assertQueryEqualsNull("using nll: uniqueTypeName(nll)");
 	}
 }
