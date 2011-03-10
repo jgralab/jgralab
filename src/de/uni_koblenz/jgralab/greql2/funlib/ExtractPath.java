@@ -125,6 +125,7 @@ public class ExtractPath extends Greql2Function {
 		JValuePathSystem pathSystem = arguments[0].toPathSystem();
 
 		if (vertex != null) {
+			System.out.println("Extracting path to vertex " + vertex);
 			return pathSystem.extractPath(vertex);
 		}
 		if (length != null) {

@@ -40,6 +40,11 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.State;
 
 public class PathSystemMarkerEntry {
+	
+	/**
+	 * The vertex that is marked 
+	 */
+	public Vertex vertex;
 
 	/**
 	 * The state this vertex gets marked with
@@ -78,12 +83,13 @@ public class PathSystemMarkerEntry {
 	 * @param distance
 	 *            the distance to the root vertex of the pathsystem
 	 */
-	public PathSystemMarkerEntry(Vertex parentVertex, Edge parentEdge, State s,
+	public PathSystemMarkerEntry(Vertex vertex, Vertex parentVertex, Edge parentEdge, State s,
 			State parentState, int distance) {
 		this.distanceToRoot = distance;
 		this.state = s;
 		this.edgeToParentVertex = parentEdge;
 		this.parentVertex = parentVertex;
 		this.parentState = parentState;
+		this.vertex = vertex;
 	}
 }

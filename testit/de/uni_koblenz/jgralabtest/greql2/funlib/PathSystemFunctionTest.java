@@ -44,6 +44,7 @@ import java.util.List;
 
 import org.junit.Test;
 
+import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueBag;
@@ -59,13 +60,36 @@ import de.uni_koblenz.jgralabtest.schemas.minimal.Node;
 public class PathSystemFunctionTest extends GenericTest {
 
 	/**
-	 * • v :-) -->α baut ein Pfadsystem über Pfade, die dem regulären Ausdruck α
-	 * entsprechen, mit dem Wurzelknoten v auf. • v :-) -->α :-) w liefert einen
-	 * Pfad der Gestalt α von v nach w. • -->α :-) w liefert ein Pfadsystem mit
-	 * Pfaden der Gestalt αT mit dem Wurzelknoten w. • v :-) ( -->α :-) w )
-	 * liefert dementsprechend einen Pfad der Gestalt αT von w nach v.
+	 * ‚Ä¢ v :-) -->Œ± baut ein Pfadsystem √ºber Pfade, die dem regul√§ren Ausdruck Œ±
+	 * entsprechen, mit dem Wurzelknoten v auf. ‚Ä¢ v :-) -->Œ± :-) w liefert einen
+	 * Pfad der Gestalt Œ± von v nach w. ‚Ä¢ -->Œ± :-) w liefert ein Pfadsystem mit
+	 * Pfaden der Gestalt Œ±T mit dem Wurzelknoten w. ‚Ä¢ v :-) ( -->Œ± :-) w )
+	 * liefert dementsprechend einen Pfad der Gestalt Œ±T von w nach v.
 	 */
 
+	
+	@Test 
+	public void testPathSystemOnGreqlGraph() throws Exception {
+		String queryString = "extractPath(pathSystem(getVertex(1), (<>--|(<-- <->))*), getVertex(34))";
+		JValue result = evalTestQuery("PathSystemOnGreqlGraph", queryString, GraphIO.loadGraphFromFile("/Users/dbildh/repositories/ist/jgralab/testit/testgraphs/greqltestgraph.tg",null));
+		JValuePath path = result.toPath();
+		System.out.println("Path has length " + path.toPath().pathLength());
+		System.out.println(path);
+	}
+	
+	@Test 
+	public void testPathSystemOnGreqlGraph2() throws Exception {
+		String queryString = "extractPath(pathSystem(getVertex(1), (<>--|(<-- <->))*))";
+		JValue result = evalTestQuery("PathSystemOnGreqlGraph", queryString, GraphIO.loadGraphFromFile("/Users/dbildh/repositories/ist/jgralab/testit/testgraphs/greqltestgraph.tg",null));
+		for (JValue e : result.toJValueSet()) {
+			JValuePath path = e.toPath();
+			System.out.println("Path has length " + path.toPath().pathLength());
+			System.out.println(path);
+		}
+		
+	}
+	
+	
 	/*
 	 * Test method for
 	 * 'greql2.evaluator.GreqlEvaluator.evaluateForwardVertexSet(ForwardVertexSet,

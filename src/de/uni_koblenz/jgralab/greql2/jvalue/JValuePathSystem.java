@@ -254,8 +254,9 @@ public class JValuePathSystem extends JValueImpl {
 			throw new JValuePathException("Cannot modify a finished path system");
 		}
 		PathSystemKey key = new PathSystemKey(vertex, stateNumber);
-		if (!keyToEntryMap.containsKey(key)) {
-			PathSystemEntry entry = new PathSystemEntry(parentVertex,
+		PathSystemEntry entry = keyToEntryMap.get(key);
+		if ((entry == null) || ((entry.getDistanceToRoot() > distance) && (!entry.getStateIsFinal() || finalState))) {
+			entry = new PathSystemEntry(parentVertex,
 					parentEdge, parentStateNumber, distance, finalState);
 			keyToEntryMap.put(key, entry);
 			//add vertex to leaves
@@ -263,8 +264,7 @@ public class JValuePathSystem extends JValueImpl {
 				PathSystemKey existingLeafkey = leafVertexToLeafKeyMap.get(vertex);
 				if ((existingLeafkey == null) || (keyToEntryMap.get(existingLeafkey).getDistanceToRoot() > distance)) {
 					leafVertexToLeafKeyMap.put(vertex, key);
-					leafKeys = null;
-				}	
+				} 
 			}
 			if (parentEdge != null) {
 				PathSystemKey firstKey = vertexToFirstKeyMap.get(vertex);
