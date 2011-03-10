@@ -65,7 +65,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
  * <dl>
  * <dt><b>Parameters:</b></dt>
  * <dd><code>start</code> - the first edge of the subsequence of Eseq to return</dd>
- * <dd><code>end</code> - the last rdge of the subsequence of Eseq to return</dd>
+ * <dd><code>end</code> - the last edge of the subsequence of Eseq to return</dd>
  * <dt><b>Returns:</b></dt>
  * <dd>the subsequence of Eseq containing all edges between start and end
  * (including both)</dd>
@@ -116,14 +116,16 @@ public class EdgeSeq extends Greql2Function {
 		}
 	}
 
-	private JValue edgeSequence(Edge start, Edge end, JValueTypeCollection tc) {
-		boolean acceptsAllTypes = tc == null;
+	private JValue edgeSequence(Edge start, Edge end,
+			JValueTypeCollection typeCollection) {
+		boolean acceptsAllTypes = typeCollection == null;
 
 		JValueSet edges = new JValueSet();
 
 		while (start != null) {
 			if (acceptsAllTypes
-					|| tc.acceptsType(start.getAttributedElementClass())) {
+					|| typeCollection.acceptsType(start
+							.getAttributedElementClass())) {
 				edges.add(new JValueImpl(start));
 			}
 			if (start == end) {
@@ -131,7 +133,7 @@ public class EdgeSeq extends Greql2Function {
 			}
 			start = start.getNextEdge();
 		}
-		return edges;
+		return new JValueImpl();
 	}
 
 	@Override

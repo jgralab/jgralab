@@ -187,12 +187,15 @@ public class GraphFunctionTest extends GenericTest {
 	public void testEdgeSeqWithTypeCollectionAndNull() throws Exception {
 
 		assertQueryEqualsNull("using nll: edgeSeq(nll, lastEdge())");
-		assertQueryEqualsNull("using nll: edgeSeq(nll, nll)");
+		assertQueryEqualsNull("using nll: edgeSeq(firstEdge(), nll)");
 		assertQueryEqualsNull("using nll: edgeSeq(nll, nll)");
 
-		assertQueryEqualsNull("using nll: edgeSeq{Vertex}(nll, nll)");
-		assertQueryEqualsNull("using nll: edgeSeq{Vertex}(nll, nll)");
-		assertQueryEqualsNull("using nll: edgeSeq{Vertex}(nll, nll)");
+		assertQueryEqualsNull("using nll: edgeSeq{Edge}(nll, lastEdge())");
+		assertQueryEqualsNull("using nll: edgeSeq{Edge}(firstEdge(), nll)");
+		assertQueryEqualsNull("using nll: edgeSeq{Edge}(nll, nll)");
+
+		assertQueryEqualsNull("using nll: edgeSeq(lastEdge(), firstEdge())");
+		assertQueryEqualsNull("using nll: edgeSeq{Edge}(lastEdge(), firstEdge())");
 	}
 
 	public void testConnectedEdges(String query, Class<? extends Edge> clazz,
@@ -402,13 +405,18 @@ public class GraphFunctionTest extends GenericTest {
 
 	@Test
 	public void testIsAcyclic() throws Exception {
+		assertQueryEquals("isAcyclic()", false);
+	}
+
+	@Test
+	public void testIsAcyclic2() throws Exception {
 		String queryString = "isAcyclic()";
 		JValue result = evalTestQuery("IsAcyclic", queryString);
 		assertEquals(JValueBoolean.getTrueValue(), result.toBoolean());
 	}
 
 	@Test
-	public void testIsAcyclic2() throws Exception {
+	public void testIsAcyclic3() throws Exception {
 		String queryString = "isAcyclic()";
 		JValue result = evalTestQuery("IsAcyclic2", queryString,
 				getCyclicTestGraph());
@@ -527,6 +535,42 @@ public class GraphFunctionTest extends GenericTest {
 	}
 
 	@Test
+	public void testSiblings() throws Exception {
+		String query = "from v:V reportMap v -> siblings(v) end";
+		JValueMap map = evalTestQuery(query).toJValueMap();
+
+		for (Entry<JValue, JValue> entry : map.entrySet()) {
+			Vertex vertex = entry.getKey().toVertex();
+			Set<Vertex> parents = getParentVertices(vertex);
+			JValueCollection siblings = entry.getValue().toCollection();
+
+			for (JValue sibling : siblings) {
+				Vertex siblingVertex = sibling.toVertex();
+				Set<Vertex> siblingParents = getParentVertices(siblingVertex);
+
+				boolean test = containsAny(parents, siblingParents);
+				assertTrue(test);
+			}
+		}
+	}
+
+	private Set<Vertex> getParentVertices(Vertex vertex) {
+		Set<Vertex> parents = new HashSet<Vertex>();
+		for (Edge outgoing : vertex.incidences(EdgeDirection.OUT)) {
+			parents.add(outgoing.getOmega());
+		}
+		return parents;
+	}
+
+	private boolean containsAny(Set<Vertex> parents, Set<Vertex> siblingParents) {
+		boolean containsAny = false;
+		for (Vertex parent : parents) {
+			containsAny = containsAny | siblingParents.contains(parent);
+		}
+		return containsAny;
+	}
+
+	@Test
 	public void testStartVertex() throws Exception {
 		String query = "from e:E reportMap e -> startVertex(e) end";
 		JValueMap map = evalTestQuery(query).toJValueMap();
@@ -546,6 +590,12 @@ public class GraphFunctionTest extends GenericTest {
 
 	@Test
 	public void testTopologicalSort() throws Exception {
+		String query = "topologicalSort()";
+		assertQueryEqualsNull(query);
+	}
+
+	@Test
+	public void testTopologicalSort2() throws Exception {
 		// TODO: Broken, because the GReQL parser removes all WhereExpressions
 		// and LetExpressions!
 		String q = "topologicalSort()";
@@ -565,6 +615,33 @@ public class GraphFunctionTest extends GenericTest {
 			}
 			previousVertices.add(vertex);
 		}
+	}
+
+	@Test
+	public void testVertexSeq() throws Exception {
+		assertQueryEqualsQuery("vertexSeq(firstVertex(), lastVertex())", "V");
+	}
+
+	@Test
+	public void testVertexSeqWithTypeCollection() throws Exception {
+		assertQueryEqualsQuery(
+				"vertexSeq{junctions.Crossroad}(firstVertex(), lastVertex())",
+				"V{junctions.Crossroad}");
+	}
+
+	@Test
+	public void testVertexSeqWithTypeCollectionAndNull() throws Exception {
+
+		assertQueryEqualsNull("using nll: vertexSeq(nll, lastVertex())");
+		assertQueryEqualsNull("using nll: vertexSeq(firstVertex(), nll)");
+		assertQueryEqualsNull("using nll: vertexSeq(nll, nll)");
+
+		assertQueryEqualsNull("using nll: vertexSeq{Vertex}(nll, lastVertex())");
+		assertQueryEqualsNull("using nll: vertexSeq{Vertex}(firstVertex(), nll)");
+		assertQueryEqualsNull("using nll: vertexSeq{Vertex}(nll, nll)");
+
+		assertQueryEqualsNull("using nll: vertexSeq(lastVertex(), firstVertex())");
+		assertQueryEqualsNull("using nll: vertexSeq{Vertex}(lastVertex(), firstVertex())");
 	}
 
 }
