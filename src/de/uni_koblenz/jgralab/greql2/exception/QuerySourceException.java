@@ -136,9 +136,8 @@ public class QuerySourceException extends EvaluateException {
 		if (positions.size() > 0) {
 			sb.append(errorMessage);
 			sb.append(": query part '");
-			sb.append((element != null) ? ((SerializableGreql2) element
-					.getGraph()).serialize(element) : "<unknown element>");
-			sb.append("' at position (");
+//			sb.append((element != null) ? ((SerializableGreql2) element
+//			sb.append("' at position (");
 			sb.append(positions.get(0).get_offset());
 			sb.append(", ");
 			sb.append(positions.get(0).get_length());
@@ -153,7 +152,7 @@ public class QuerySourceException extends EvaluateException {
 
 		if (element != null) {
 			sb.append("\nComplete (optimized) Query: ");
-			sb.append(((SerializableGreql2) element.getGraph()).serialize());
+	//		sb.append(((SerializableGreql2) element.getGraph()).serialize());
 		}
 
 		return sb.toString();

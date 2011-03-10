@@ -56,7 +56,6 @@ import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.funlib.pathsearch.PathSystemMarkerEntry;
 import de.uni_koblenz.jgralab.greql2.funlib.pathsearch.PathSystemMarkerList;
-import de.uni_koblenz.jgralab.greql2.funlib.pathsearch.PathSystemQueueEntry;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
@@ -118,17 +117,16 @@ public class PathSystem extends Greql2Function {
 	/**
 	 * Holds a set of states for each AttributedElement
 	 */
-	private GraphMarker<Set<State>> stateMarker;
+	//private GraphMarker<Set<State>> stateMarker;
 
 	/**
 	 * marks the given vertex with the given PathSystemMarker
 	 * 
-	 * @return true if the vertex was marked successfull, false if it is already
-	 *         marked with this state
+	 * @return the marker created
 	 */
-	protected boolean markVertex(Vertex v, State s, Vertex parentVertex,
+	protected PathSystemMarkerEntry markVertex(Vertex v, State s, Vertex parentVertex,
 			Edge e, State ps, int d) {
-		PathSystemMarkerEntry m = new PathSystemMarkerEntry(parentVertex, e, s,
+		PathSystemMarkerEntry m = new PathSystemMarkerEntry(v, parentVertex, e, s,
 				ps, d);
 		GraphMarker<PathSystemMarkerList> currentMarker = getGraphMarkerForState(s.number);
 		PathSystemMarkerList list = currentMarker.getMark(v);
@@ -137,17 +135,15 @@ public class PathSystem extends Greql2Function {
 			currentMarker.mark(v, list);
 		}
 		list.put(parentVertex, m);
-		return true;
+		return m;
 	}
 
 	/**
 	 * @param stateNumber
 	 * @return the GraphMarker for the given state number
 	 */
-	private final GraphMarker<PathSystemMarkerList> getGraphMarkerForState(
-			int stateNumber) {
-		GraphMarker<PathSystemMarkerList> currentMarker = marker
-				.get(stateNumber);
+	private final GraphMarker<PathSystemMarkerList> getGraphMarkerForState(int stateNumber) {
+		GraphMarker<PathSystemMarkerList> currentMarker = marker.get(stateNumber);
 		if (currentMarker == null) {
 			currentMarker = new GraphMarker<PathSystemMarkerList>(graph);
 			marker.set(stateNumber, currentMarker);
@@ -187,60 +183,48 @@ public class PathSystem extends Greql2Function {
 	 *             if something went wrong, several EvaluateException can be
 	 *             thrown
 	 */
-	private Set<Vertex> markVerticesOfPathSystem(Vertex startVertex, DFA dfa,
+	private Set<PathSystemMarkerEntry> markVerticesOfPathSystem(Vertex startVertex, DFA dfa,
 			AbstractGraphMarker<AttributedElement> subgraph)
 			throws EvaluateException {
-		// GreqlEvaluator.errprintln("Start marking vertices of path system");
-		Set<Vertex> finalVertices = new HashSet<Vertex>();
-		Queue<PathSystemQueueEntry> queue = new LinkedList<PathSystemQueueEntry>();
-		PathSystemQueueEntry currentEntry = new PathSystemQueueEntry(
-				startVertex, dfa.initialState, null, null, 0);
-		markVertex(startVertex, dfa.initialState, null /* no parent state */,
-				null /* no parent vertex */, null /* no parent state */, 0 /*
-																		 * distance
-																		 * to
-																		 * root
-																		 * is
-																		 * null
-																		 */);
-
+		Set<PathSystemMarkerEntry> finalEntries = new HashSet<PathSystemMarkerEntry>();
+		Queue<PathSystemMarkerEntry> queue = new LinkedList<PathSystemMarkerEntry>();
+		PathSystemMarkerEntry currentEntry = markVertex(startVertex, dfa.initialState, null /* no parent state */,
+				null /* no parent vertex */, null /* no parent state */, 0 );
+		if (dfa.initialState.isFinal) {
+			finalEntries.add(currentEntry);
+		}
+		queue.add(currentEntry);
 		int count = 0, countWTrans = 0;
-		while (currentEntry != null) {
-			if (currentEntry.state.isFinal) {
-				//current vertex is a leaf
-				finalVertices.add(currentEntry.vertex);
-			}
-			Edge inc = currentEntry.vertex.getFirstIncidence();
+		while (!queue.isEmpty()) {
+			currentEntry = queue.poll();
+			Vertex currentVertex = currentEntry.vertex;
+			Edge inc = currentVertex.getFirstIncidence();
 			while (inc != null) {
 				count++;
 				for (Transition currentTransition : currentEntry.state.outTransitions) {
 					countWTrans++;
-					Vertex nextVertex = currentTransition.getNextVertex(currentEntry.vertex, inc);
+					Vertex nextVertex = currentTransition.getNextVertex(currentVertex, inc);
 					if (!isMarked(nextVertex, currentTransition.endState)) {
-						if (currentTransition.accepts(currentEntry.vertex, inc,
-								subgraph)) {
+						if (currentTransition.accepts(currentVertex, inc, subgraph)) {
 							Edge traversedEdge = inc;
-							if (nextVertex == currentEntry.vertex) {
+							//TODO: Error with recognition of loops, need to test, if the edge is really consumed by the transition 
+							if (nextVertex == currentVertex) {
 								traversedEdge = null;
 							}
-							markVertex(nextVertex, currentTransition.endState,
-									currentEntry.vertex, traversedEdge,
-									currentEntry.state,
-									currentEntry.distanceToRoot + 1);
-							PathSystemQueueEntry nextEntry = new PathSystemQueueEntry(
-									nextVertex, currentTransition.endState,
-									traversedEdge, currentEntry.state,
-									currentEntry.distanceToRoot + 1);
-							queue.add(nextEntry);
+							PathSystemMarkerEntry newEntry = markVertex(nextVertex, currentTransition.endState,
+									currentVertex, traversedEdge, currentEntry.state, currentEntry.distanceToRoot + 1);
+							if (currentTransition.endState.isFinal) {
+								finalEntries.add(newEntry);
+							}
+							queue.add(newEntry);
 						}
 					}
 				}
 				inc = inc.getNextIncidence();
 			}
-			currentEntry = queue.poll();
 		}
 
-		return finalVertices;
+		return finalEntries;
 	}
 
 	/**
@@ -266,7 +250,7 @@ public class PathSystem extends Greql2Function {
 		for (int i = 0; i < dfa.stateList.size(); i++) {
 			marker.add(new GraphMarker<PathSystemMarkerList>(graph));
 		}
-		Set<Vertex> leaves = markVerticesOfPathSystem(startVertex, dfa,
+		Set<PathSystemMarkerEntry> leaves = markVerticesOfPathSystem(startVertex, dfa,
 				subgraph);
 		JValuePathSystem resultPathSystem = createPathSystemFromMarkings(
 				startVertex, leaves);
@@ -281,94 +265,33 @@ public class PathSystem extends Greql2Function {
 	 * @return
 	 */
 	private JValuePathSystem createPathSystemFromMarkings(Vertex rootVertex,
-			Set<Vertex> leaves) {
+			Set<PathSystemMarkerEntry> leafEntries) {
 		JValuePathSystem pathSystem = new JValuePathSystem(rootVertex.getGraph());
 		PathSystemMarkerList rootMarkerList = marker.get(0).getMark(rootVertex);
 		PathSystemMarkerEntry rootMarker = rootMarkerList
 				.getPathSystemMarkerEntryWithParentVertex(null);
 		pathSystem.setRootVertex(rootVertex, rootMarker.state.number,
 				rootMarker.state.isFinal);
-		stateMarker = new GraphMarker<Set<State>>(rootVertex.getGraph());
-		int count = 0;
-		for (Vertex leaf : leaves) {
-			for (GraphMarker<PathSystemMarkerList> currentGraphMarker : marker) {
-				PathSystemMarkerList marking = (PathSystemMarkerList) currentGraphMarker.getMark(leaf);
-				if (marking != null) {
-					for (PathSystemMarkerEntry currentMarker :  marking.values()) {
-						if (!currentMarker.state.isFinal) { // || // if state of
-								// current PathSystemMarkerEntry is final or
-				//				isVertexMarkedWithState(leaf,
-				//						currentMarker.state)) { // (leaf, state)
-							// has already been processed
-							continue;
-						}
-						if (leaf.getId() == 34) {
-							System.out.println("Creating paths for vertex 34");
-						}
-						Vertex currentVertex = leaf;
-						while (currentVertex != null
-								&& !isVertexMarkedWithState(currentVertex,
-										currentMarker.state)) {
-							int parentStateNumber = 0;
-							if (currentMarker.parentState != null) {
-								parentStateNumber = currentMarker.parentState.number;
-							}
-							count++;
-							pathSystem.addVertex(currentVertex,
+		for (PathSystemMarkerEntry currentMarker : leafEntries) {
+			Vertex currentVertex = currentMarker.vertex;
+			while (currentVertex != null) {  //&& !isVertexMarkedWithState(currentVertex, currentMarker.state)
+				int parentStateNumber = 0;
+				if (currentMarker.parentState != null) {
+					parentStateNumber = currentMarker.parentState.number;
+				}
+				pathSystem.addVertex(currentVertex,
 									currentMarker.state.number,
 									currentMarker.edgeToParentVertex,
 									currentMarker.parentVertex,
 									parentStateNumber,
 									currentMarker.distanceToRoot,
 									currentMarker.state.isFinal);
-							markVertexWithState(currentVertex,
-									currentMarker.state);
-							if (leaf.getId() == 34) {
-								System.out.println("  parent vertex is: " + currentMarker.parentVertex);
-								System.out.println("  distance to root of currentVertex " + currentMarker.distanceToRoot);
-							}
-							
-							currentVertex = currentMarker.parentVertex;
-							currentMarker = getMarkerWithState(currentVertex, currentMarker.parentState);
-						}
-					}
-				}
+				currentVertex = currentMarker.parentVertex;
+				currentMarker = getMarkerWithState(currentVertex, currentMarker.parentState);
 			}
 		}
 		pathSystem.finish();
 		return pathSystem;
-	}
-
-	/**
-	 * Adds the given state to the set of states maintained for the given
-	 * vertex.
-	 * 
-	 * @param v
-	 *            the vertex to be marked
-	 * @param s
-	 *            the state which shall be added to {@code v}'s state set
-	 */
-	private void markVertexWithState(Vertex v, State s) {
-		if (stateMarker.getMark(v) == null) {
-			stateMarker.mark(v, new HashSet<State>());
-		}
-		stateMarker.getMark(v).add(s);
-	}
-
-	/**
-	 * Checks if the given vertex' state set contains the given state.
-	 * 
-	 * @param v
-	 *            the vertex to be checked
-	 * @param s
-	 *            the state to be checked for
-	 * @return true, if {@code v}'s set of states contains {@code s}, false else
-	 */
-	private boolean isVertexMarkedWithState(Vertex v, State s) {
-		if (stateMarker.getMark(v) == null) {
-			return false;
-		}
-		return stateMarker.getMark(v).contains(s);
 	}
 
 	/**
