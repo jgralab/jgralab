@@ -90,11 +90,17 @@ public class StartVertex extends Greql2Function {
 	public JValue evaluate(Graph graph,
 			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
 			throws EvaluateException {
+
+		JValue firstParameter = arguments[0];
+		if (!firstParameter.isEdge() && !firstParameter.isPath()) {
+			return new JValueImpl();
+		}
+
 		switch (checkArguments(arguments)) {
 		case 0:
-			return new JValueImpl(arguments[0].toPath().getStartVertex());
+			return new JValueImpl(firstParameter.toPath().getStartVertex());
 		case 1:
-			return new JValueImpl(arguments[0].toEdge().getAlpha());
+			return new JValueImpl(firstParameter.toEdge().getAlpha());
 		default:
 			throw new WrongFunctionParameterException(this, arguments);
 		}

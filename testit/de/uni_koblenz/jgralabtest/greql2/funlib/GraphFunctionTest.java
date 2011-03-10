@@ -433,8 +433,8 @@ public class GraphFunctionTest extends GenericTest {
 		String queryString = "from x : E{IsBoundExprOfDefinition} report isLoop(x) end";
 		JValue result = evalTestQuery("IsLoop", queryString);
 		assertEquals(1, result.toCollection().size());
-		assertEquals(false, (boolean) getNthValue(result.toCollection(), 0)
-				.toBoolean());
+		assertEquals(false, getNthValue(result.toCollection(), 0).toBoolean()
+				.booleanValue());
 	}
 
 	@Test
@@ -524,6 +524,24 @@ public class GraphFunctionTest extends GenericTest {
 	@Test
 	public void testOutDegreeNull() throws Exception {
 		assertQueryEqualsNull("using nll: outDegree(nll)");
+	}
+
+	@Test
+	public void testStartVertex() throws Exception {
+		String query = "from e:E reportMap e -> startVertex(e) end";
+		JValueMap map = evalTestQuery(query).toJValueMap();
+
+		for (Entry<JValue, JValue> entry : map.entrySet()) {
+			Edge edge = entry.getKey().toEdge();
+			Vertex alpha = entry.getValue().toVertex();
+
+			assertEquals(edge.getAlpha(), alpha);
+		}
+	}
+
+	@Test
+	public void testStartVertexNull() throws Exception {
+		assertQueryEqualsNull("using nll: startVertex(nll)");
 	}
 
 	@Test
