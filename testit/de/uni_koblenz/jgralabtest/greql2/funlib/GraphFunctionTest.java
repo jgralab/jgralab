@@ -561,7 +561,7 @@ public class GraphFunctionTest extends GenericTest {
 
 	private Set<Vertex> getParentVertices(Vertex vertex) {
 		Set<Vertex> parents = new HashSet<Vertex>();
-		for (Edge outgoing : vertex.incidences(EdgeDirection.OUT)) {
+		for (Edge outgoing : vertex.incidences(EdgeDirection.IN)) {
 			parents.add(outgoing.getOmega());
 		}
 		return parents;
