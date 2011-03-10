@@ -95,18 +95,28 @@ public class HasAttribute extends Greql2Function {
 	public JValue evaluate(Graph graph,
 			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
 			throws EvaluateException {
+
+		if (arguments[0].toObject() == null) {
+			return new JValueImpl();
+		}
+
 		AttributedElementClass clazz = null;
 		switch (checkArguments(arguments)) {
 		case 0:
 			clazz = arguments[0].toAttributedElement()
 					.getAttributedElementClass();
-			break;
+			return hasAttribute(clazz, arguments);
 		case 1:
 			clazz = arguments[0].toAttributedElementClass();
-			break;
+			return hasAttribute(clazz, arguments);
 		default:
 			throw new WrongFunctionParameterException(this, arguments);
 		}
+
+	}
+
+	private JValueImpl hasAttribute(AttributedElementClass clazz,
+			JValue[] arguments) {
 		return new JValueImpl(clazz.containsAttribute(arguments[1].toString()));
 	}
 

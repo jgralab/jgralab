@@ -102,39 +102,46 @@ public class HasType extends Greql2Function {
 	public JValue evaluate(Graph graph,
 			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
 			throws EvaluateException {
-		String typeName = null;
-		AttributedElementClass aeClass = null;
-		JValueTypeCollection typeCollection = null;
-		switch (checkArguments(arguments)) {
-		case 0:
-			typeName = arguments[1].toString();
-			break;
-		case 1:
-			aeClass = arguments[1].toAttributedElementClass();
-			break;
-		case 2:
-			typeCollection = arguments[1].toJValueTypeCollection();
-			break;
-		default:
-			throw new WrongFunctionParameterException(this, arguments);
+
+		if (!arguments[0].isAttributedElement()) {
+			return new JValueImpl();
 		}
 		AttributedElement elem = arguments[0].toAttributedElement();
 
-		if (typeCollection != null) {
-			return new JValueImpl(typeCollection.acceptsType(elem
-					.getAttributedElementClass()), elem);
+		switch (checkArguments(arguments)) {
+		case 0:
+			String typeName = arguments[1].toString();
+			return hasTypeOfQualifiedName(typeName, elem);
+		case 1:
+			AttributedElementClass aeClass = arguments[1]
+					.toAttributedElementClass();
+			return hasTypeOfAttributedElementClass(aeClass, elem);
+		case 2:
+			JValueTypeCollection typeCollection = arguments[1]
+					.toJValueTypeCollection();
+			return hasTypeFromTypeCollection(typeCollection, elem);
+		default:
+			throw new WrongFunctionParameterException(this, arguments);
 		}
+	}
 
-		if (aeClass != null) {
-			return new JValueImpl((elem.getAttributedElementClass() == aeClass)
-					|| elem.getAttributedElementClass().isSubClassOf(aeClass),
-					elem);
-		}
-
+	private JValue hasTypeOfQualifiedName(String typeName,
+			AttributedElement elem) {
 		AttributedElementClass type = elem.getSchema()
 				.getAttributedElementClass(typeName);
-		return new JValueImpl((elem.getAttributedElementClass() == type)
-				|| elem.getAttributedElementClass().isSubClassOf(type), elem);
+		return hasTypeOfAttributedElementClass(type, elem);
+	}
+
+	private JValue hasTypeOfAttributedElementClass(
+			AttributedElementClass aeClass, AttributedElement elem) {
+		return new JValueImpl((elem.getAttributedElementClass() == aeClass)
+				|| elem.getAttributedElementClass().isSubClassOf(aeClass), elem);
+	}
+
+	private JValue hasTypeFromTypeCollection(
+			JValueTypeCollection typeCollection, AttributedElement elem) {
+		return new JValueImpl(typeCollection.acceptsType(elem
+				.getAttributedElementClass()), elem);
 	}
 
 	@Override
