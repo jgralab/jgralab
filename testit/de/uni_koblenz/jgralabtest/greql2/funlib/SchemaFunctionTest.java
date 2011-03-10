@@ -60,9 +60,9 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
-import de.uni_koblenz.jgralabtest.greql2.GenericTests;
+import de.uni_koblenz.jgralabtest.greql2.GenericTest;
 
-public class SchemaFunctionTest extends GenericTests {
+public class SchemaFunctionTest extends GenericTest {
 
 	@Test
 	public void testAttributeNames() throws Exception {

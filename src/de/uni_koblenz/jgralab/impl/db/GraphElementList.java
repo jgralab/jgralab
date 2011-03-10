@@ -36,6 +36,7 @@ package de.uni_koblenz.jgralab.impl.db;
 
 import java.util.BitSet;
 import java.util.TreeMap;
+
 import de.uni_koblenz.jgralab.GraphException;
 
 /* TODO refactor this class:
@@ -68,49 +69,56 @@ public abstract class GraphElementList<T> {
 	protected TreeMap<Long, Integer> sequenceNumberToIdMap;
 
 	/**
-	 * Bitset reflecting the value range of <code>vertexIdMap</code> for
-	 * avoiding the call of <code>TreeSet.containsValue()</code>.
-	 */
-	// protected BitSet usedIDs;
-
-	/**
 	 * Creates and initializes a new <code>List</code>.
 	 */
 	protected GraphElementList() {
 		version = 0;
 		sequenceNumberToIdMap = new TreeMap<Long, Integer>() {
 			private static final long serialVersionUID = 1L;
-			private BitSet usedIDs;
+			private BitSet positiveIDs, negativeIDs;
 
 			{
-				usedIDs = new BitSet();
+				positiveIDs = new BitSet();
+				negativeIDs = new BitSet();
 			}
 
 			@Override
 			public void clear() {
 				super.clear();
-				usedIDs.clear();
+				positiveIDs.clear();
+				negativeIDs.clear();
 			}
 
 			@Override
 			public boolean containsValue(Object value) {
-				return usedIDs.get((Integer) value);
+				int i = (Integer) value;
+
+				return i < 0 ? negativeIDs.get(-i) : positiveIDs.get(i);
 			}
 
 			@Override
 			public Integer put(Long key, Integer value) {
-				usedIDs.set(value);
+				int i = value;
+				if (i < 0) {
+					negativeIDs.set(-i);
+				} else {
+					positiveIDs.set(i);
+				}
 				return super.put(key, value);
 			}
 
 			@Override
 			public Integer remove(Object key) {
-				usedIDs.clear(get(key));
+				int i = get(key);
+				if (i < 0) {
+					negativeIDs.clear(-i);
+				} else {
+					positiveIDs.clear(i);
+				}
 				return super.remove(key);
 			}
 
 		};
-		// usedIDs = new BitSet();
 	}
 
 	/**
@@ -227,11 +235,13 @@ public abstract class GraphElementList<T> {
 	}
 
 	protected boolean minBorderOfNumberSpaceReached() {
-		return sequenceNumberToIdMap.firstKey() < SequenceNumber.MIN_BORDER_OF_NUMBER_SPACE;
+		return !sequenceNumberToIdMap.isEmpty()
+				&& sequenceNumberToIdMap.firstKey() < SequenceNumber.MIN_BORDER_OF_NUMBER_SPACE;
 	}
 
 	protected boolean maxBorderOfNumberSpaceReached() {
-		return sequenceNumberToIdMap.lastKey() > SequenceNumber.MAX_BORDER_OF_NUMBER_SPACE;
+		return !sequenceNumberToIdMap.isEmpty()
+				&& sequenceNumberToIdMap.lastKey() > SequenceNumber.MAX_BORDER_OF_NUMBER_SPACE;
 	}
 
 	protected long getPrevFreeSequenceNumber(long sequenceNumber) {
@@ -287,7 +297,6 @@ public abstract class GraphElementList<T> {
 	protected abstract boolean equalsFirst(T element);
 
 	protected boolean isLast(T element) {
-		assert (contains(element));
 		if (!this.isEmpty()) {
 			return this.equalsLast(element);
 		} else {
@@ -296,7 +305,6 @@ public abstract class GraphElementList<T> {
 	}
 
 	protected boolean isFirst(T element) {
-		assert this.contains(element);
 		if (!this.isEmpty()) {
 			return this.equalsFirst(element);
 		} else {
@@ -308,11 +316,11 @@ public abstract class GraphElementList<T> {
 
 	protected abstract void insertAt(T element, long sequenceNumber);
 
-	protected void moveOrInsert(T edge, long sequenceNumber) {
-		if (this.contains(edge)) {
-			this.moveTo(edge, sequenceNumber);
+	protected void moveOrInsert(T element, long sequenceNumber) {
+		if (this.contains(element)) {
+			this.moveTo(element, sequenceNumber);
 		} else {
-			this.insertAt(edge, sequenceNumber);
+			this.insertAt(element, sequenceNumber);
 		}
 	}
 

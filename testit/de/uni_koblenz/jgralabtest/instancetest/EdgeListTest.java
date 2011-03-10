@@ -101,14 +101,15 @@ public class EdgeListTest extends InstanceTest {
 			g.createNode();
 		}
 		for (int i = 0; i < N; ++i) {
-			g.createLink((Node) g.getVertex(i + 1), (Node) g.getVertex((i + 1)
-					% N + 1));
+			g.createLink((Node) g.getVertex(i + 1),
+					(Node) g.getVertex((i + 1) % N + 1));
 		}
 		commit(g);
 	}
 
 	private MinimalGraph createMinimalGraphWithDatabaseSupport() {
 		dbHandler.connectToDatabase();
+		dbHandler.clearAllTables();
 		dbHandler.loadMinimalSchemaIntoGraphDatabase();
 		return dbHandler.createMinimalGraphWithDatabaseSupport("EdgeListTest",
 				V, E);
@@ -117,9 +118,6 @@ public class EdgeListTest extends InstanceTest {
 	@After
 	public void tearDown() {
 		if (implementationType == ImplementationType.DATABASE) {
-			// dbHandler.cleanDatabaseOfTestGraph(g);
-			// // dbHandler.cleanDatabaseOfTestSchema(MinimalSchema.instance());
-			dbHandler.clearAllTables();
 			dbHandler.closeGraphdatabase();
 		}
 	}

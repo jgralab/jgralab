@@ -81,8 +81,8 @@ public class GraphDatabaseHandler {
 	public void loadVertexTestSchemaIntoGraphDatabase() {
 		try {
 			if (!this.graphDatabase.contains(VertexTestSchema.instance())) {
-				this
-						.loadTestSchemaIntoGraphDatabase("testit/testschemas/VertexTestSchema.tg");
+				this.loadTestSchemaIntoGraphDatabase(VertexTestSchema
+						.instance());
 			}
 		} catch (GraphDatabaseException e) {
 			e.printStackTrace();
@@ -92,21 +92,32 @@ public class GraphDatabaseHandler {
 	public void loadMinimalSchemaIntoGraphDatabase() {
 		try {
 			if (!this.graphDatabase.contains(MinimalSchema.instance())) {
-				GraphIO.loadSchemaIntoGraphDatabase(
-						"testit/testschemas/MinimalSchema.tg",
-						this.graphDatabase);
+				loadTestSchemaIntoGraphDatabase(MinimalSchema.instance());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void loadTestSchemaIntoGraphDatabase(String file) {
+	// public void loadTestSchemaIntoGraphDatabase(String file) {
+	// try {
+	// GraphIO.loadSchemaIntoGraphDatabase(file, graphDatabase);
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// fail("Could not load " + file + " into graph database.");
+	// }
+	// }
+
+	public void loadTestSchemaIntoGraphDatabase(Schema schema) {
 		try {
-			GraphIO.loadSchemaIntoGraphDatabase(file, graphDatabase);
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Could not load " + file + " into graph database.");
+			graphDatabase.insertSchema(schema);
+		} catch (GraphDatabaseException e) {
+			try {
+				graphDatabase.applyDbSchema();
+				graphDatabase.insertSchema(schema);
+			} catch (GraphDatabaseException e1) {
+				e1.printStackTrace();
+			}
 		}
 	}
 

@@ -39,7 +39,6 @@ import java.util.ArrayList;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.NoSuchAttributeException;
 import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
@@ -99,41 +98,40 @@ public class GetValue extends Greql2Function {
 	public JValue evaluate(Graph graph,
 			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
 			throws EvaluateException {
-		AttributedElement attrElem = null;
-		JValueRecord record = null;
-		GraphMarker<?> marker = null;
 
-		switch (checkArguments(arguments)) {
-		case 0:
-			attrElem = arguments[0].toAttributedElement();
-			break;
-		case 1:
-			record = arguments[0].toJValueRecord();
-			break;
-		case 2:
-			attrElem = arguments[0].toAttributedElement();
-			marker = (GraphMarker<?>) arguments[1].toGraphMarker();
-			break;
-		default:
-			throw new WrongFunctionParameterException(this, arguments);
+		if (arguments[0].toObject() == null || arguments[1].toObject() == null) {
+			return new JValueImpl();
 		}
 		String fieldName = arguments[1].toString();
 
-		if (attrElem != null) {
-			if (marker != null) {
-				return JValueImpl
-						.fromObject(marker.getMark(attrElem), attrElem);
-			} else {
-				try {
-					return JValueImpl.fromObject(
-							attrElem.getAttribute(fieldName), attrElem);
-				} catch (NoSuchAttributeException e) {
-					e.printStackTrace();
-					throw new EvaluateException("GetValue failed!", e);
-				}
-			}
+		switch (checkArguments(arguments)) {
+		case 0:
+			return getValueFromAttributedElement(arguments, fieldName);
+		case 1:
+			return getValueFromRecord(arguments, fieldName);
+		case 2:
+			return getValueFromMarker(arguments);
+		default:
+			throw new WrongFunctionParameterException(this, arguments);
 		}
+	}
+
+	private JValue getValueFromMarker(JValue[] arguments) {
+		AttributedElement attrElem = arguments[0].toAttributedElement();
+		GraphMarker<?> marker = (GraphMarker<?>) arguments[1].toGraphMarker();
+		return JValueImpl.fromObject(marker.getMark(attrElem), attrElem);
+	}
+
+	private JValue getValueFromRecord(JValue[] arguments, String fieldName) {
+		JValueRecord record = arguments[0].toJValueRecord();
 		return record.get(fieldName);
+	}
+
+	private JValue getValueFromAttributedElement(JValue[] arguments,
+			String fieldName) {
+		AttributedElement attrElem = arguments[0].toAttributedElement();
+		return JValueImpl
+				.fromObject(attrElem.getAttribute(fieldName), attrElem);
 	}
 
 	@Override

@@ -41,6 +41,7 @@ import java.util.Collection;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.ImplementationType;
+import de.uni_koblenz.jgralab.impl.db.GraphDatabaseException;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
 
 public abstract class InstanceTest {
@@ -59,11 +60,15 @@ public abstract class InstanceTest {
 		// TODO rename property such that "test" becomes clear... after that,
 		// delete todo
 		if (System.getProperty("jgralabtest_dbconnection") != null) {
-			System.out.println("Enabling database support testing...");
+			System.out.println("Enabling database support testing using "
+					+ System.getProperty("jgralabtest_dbconnection"));
+
 			parameters.add(new Object[] { ImplementationType.DATABASE });
 		} else {
 			System.out
-					.println("No database access data provided, disabling database support testing...");
+					.println("No database access data provided, disabling database support testing.");
+			System.out
+					.println("To enable database support test, set the property 'jgralabtest_dbconnection' to a valid JDBC database URL.");
 		}
 	}
 
@@ -121,9 +126,20 @@ public abstract class InstanceTest {
 	 *             if the commit yields an error
 	 */
 	protected void commit(Graph g) throws CommitFailedException {
-		if (implementationType == ImplementationType.TRANSACTION) {
+		switch (implementationType) {
+		case TRANSACTION:
 			g.commit();
+			break;
+		case DATABASE:
+			try {
+				dbHandler.graphDatabase.commitTransaction();
+			} catch (GraphDatabaseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			break;
 		}
+
 	}
 
 	/**

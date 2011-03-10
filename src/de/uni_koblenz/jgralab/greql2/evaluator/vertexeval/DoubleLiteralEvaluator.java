@@ -45,8 +45,8 @@ import de.uni_koblenz.jgralab.greql2.schema.DoubleLiteral;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 
 /**
- * Evaluates a Integer Literal, that means, provides access to the literal value
- * using the getResult(...)-Method. This is needed, because is should make no
+ * Evaluates a Double Literal, that means, provides access to the literal value
+ * using the getResult(...)-Method. This is needed, because it should make no
  * difference for the other VertexEvaluators, if a value is the result of a
  * maybe complex evaluation or if it is a literal.
  * 

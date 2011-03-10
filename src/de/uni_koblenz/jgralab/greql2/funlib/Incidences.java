@@ -115,52 +115,46 @@ public abstract class Incidences extends Greql2Function {
 			AbstractGraphMarker<AttributedElement> subgraph,
 			JValue[] arguments, EdgeDirection direction)
 			throws EvaluateException {
-		JValuePath path = null;
-		JValuePathSystem pathSystem = null;
 		JValueTypeCollection typeCol = null;
+
+		if (!arguments[0].isVertex()) {
+			return new JValueImpl();
+		}
+		Vertex vertex = arguments[0].toVertex();
+
 		switch (checkArguments(arguments)) {
 		case 0:
 			break;
 		case 1:
-			path = arguments[1].toPath();
-			break;
+			JValuePath path = arguments[1].toPath();
+			return path.edgesConnected(vertex, direction);
 		case 2:
-			pathSystem = arguments[1].toPathSystem();
-			break;
+			JValuePathSystem pathSystem = arguments[1].toPathSystem();
+			return pathSystem.edgesConnected(vertex, direction);
 		case 3:
 			typeCol = arguments[1].toJValueTypeCollection();
 			break;
 		default:
 			throw new WrongFunctionParameterException(this, arguments);
 		}
-		Vertex vertex = arguments[0].toVertex();
 
-		if (path != null) {
-			return path.edgesConnected(vertex, direction);
-		}
-		if (pathSystem != null) {
-			return pathSystem.edgesConnected(vertex, direction);
-		}
 		JValueSet resultSet = new JValueSet();
-		Edge inc = vertex.getFirstIncidence(direction);
-		if (typeCol == null) {
-			while (inc != null) {
-				if ((subgraph == null) || (subgraph.isMarked(inc))) {
-					resultSet.add(new JValueImpl(inc));
-				}
-				inc = inc.getNextIncidence(direction);
-			}
-		} else {
-			while (inc != null) {
-				if ((subgraph == null) || (subgraph.isMarked(inc))) {
-					if (typeCol.acceptsType(inc.getAttributedElementClass())) {
-						resultSet.add(new JValueImpl(inc));
-					}
-				}
-				inc = inc.getNextIncidence(direction);
+		for (Edge incidence : vertex.incidences(direction)) {
+			if (isInSubGraph(subgraph, incidence)
+					&& isValidType(typeCol, incidence)) {
+				resultSet.add(new JValueImpl(incidence));
 			}
 		}
 		return resultSet;
 	}
 
+	private boolean isInSubGraph(
+			AbstractGraphMarker<AttributedElement> subgraph, Edge edge) {
+		return (subgraph == null) || (subgraph.isMarked(edge));
+	}
+
+	private boolean isValidType(JValueTypeCollection typeCollection, Edge edge) {
+		return typeCollection == null
+				|| typeCollection.acceptsType(edge.getAttributedElementClass());
+	}
 }

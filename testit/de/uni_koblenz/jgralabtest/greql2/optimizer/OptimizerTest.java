@@ -55,10 +55,10 @@ import de.uni_koblenz.jgralab.greql2.optimizer.PathExistenceToDirectedPathExpres
 import de.uni_koblenz.jgralab.greql2.optimizer.VariableDeclarationOrderOptimizer;
 import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
-import de.uni_koblenz.jgralabtest.greql2.GenericTests;
+import de.uni_koblenz.jgralabtest.greql2.GenericTest;
 import de.uni_koblenz.jgralabtest.greql2.testfunctions.IsPrime;
 
-public class OptimizerTest extends GenericTests {
+public class OptimizerTest extends GenericTest {
 
 	static {
 		Greql2FunctionLibrary.instance().registerUserDefinedFunction(

@@ -42,7 +42,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 
-public class ProgressTest extends GenericTests {
+public class ProgressTest extends GenericTest {
 
 	protected Graph getTestGraph() throws Exception {
 		printTestFunctionHeader("GenerateTestGraph");

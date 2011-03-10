@@ -91,11 +91,17 @@ public class EndVertex extends Greql2Function {
 	public JValue evaluate(Graph graph,
 			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
 			throws EvaluateException {
+
+		JValue firstParameter = arguments[0];
+		if (!firstParameter.isEdge() && !firstParameter.isPath()) {
+			return new JValueImpl();
+		}
+
 		switch (checkArguments(arguments)) {
 		case 0:
-			return new JValueImpl(arguments[0].toEdge().getOmega());
+			return new JValueImpl(firstParameter.toEdge().getOmega());
 		case 1:
-			return new JValueImpl(arguments[0].toPath().getEndVertex());
+			return new JValueImpl(firstParameter.toPath().getEndVertex());
 		default:
 			throw new WrongFunctionParameterException(this, arguments);
 		}

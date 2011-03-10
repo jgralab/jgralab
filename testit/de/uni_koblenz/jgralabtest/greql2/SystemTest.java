@@ -43,7 +43,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
 
-public class SystemTest extends GenericTests {
+public class SystemTest extends GenericTest {
 
 	@Override
 	protected Graph createGreqlTestGraph() {
