@@ -99,35 +99,42 @@ public class VertexSeq extends Greql2Function {
 	public JValue evaluate(Graph graph,
 			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
 			throws EvaluateException {
-		JValueSet vertices = new JValueSet();
+
+		if (!arguments[0].isVertex() || !arguments[1].isVertex()) {
+			return new JValueImpl();
+		}
+
 		Vertex start = arguments[0].toVertex();
 		Vertex end = arguments[1].toVertex();
-		Vertex current = start;
 		switch (checkArguments(arguments)) {
 		case 0:
-			while (current != null) {
-				vertices.add(new JValueImpl(current));
-				if (current == end) {
-					return vertices;
-				}
-				current = current.getNextVertex();
-			}
-			return vertices;
+			return vertexSequence(start, end, null);
 		case 1:
-			JValueTypeCollection tc = arguments[2].toJValueTypeCollection();
-			while (current != null) {
-				if (tc.acceptsType(current.getAttributedElementClass())) {
-					vertices.add(new JValueImpl(current));
-				}
-				if (current == end) {
-					return vertices;
-				}
-				current = current.getNextVertex();
-			}
-			return vertices;
+			return vertexSequence(start, end,
+					arguments[2].toJValueTypeCollection());
 		default:
 			throw new WrongFunctionParameterException(this, arguments);
 		}
+	}
+
+	private JValue vertexSequence(Vertex start, Vertex end,
+			JValueTypeCollection typeCollection) {
+		boolean acceptsAllTypes = typeCollection == null;
+
+		JValueSet vertices = new JValueSet();
+
+		while (start != null) {
+			if (acceptsAllTypes
+					|| typeCollection.acceptsType(start
+							.getAttributedElementClass())) {
+				vertices.add(new JValueImpl(start));
+			}
+			if (start == end) {
+				return vertices;
+			}
+			start = start.getNextVertex();
+		}
+		return new JValueImpl();
 	}
 
 	@Override
