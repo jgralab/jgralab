@@ -189,8 +189,9 @@ public class SchemaFunctionTest extends GenericTest {
 
 	@Test
 	public void testHasAttributeNull() throws Exception {
-		assertQueryEqualsNull("using nll: hasAttribute(firstVertex(), nll)");
-		assertQueryEqualsNull("using nll: hasAttribute(type(firstVertex()), nll)");
+		assertQueryEquals("using nll: hasAttribute(firstVertex(), nll)", false);
+		assertQueryEquals("using nll: hasAttribute(type(firstVertex()), nll)",
+				false);
 		assertQueryEqualsNull("using nll: hasAttribute(nll, '?')");
 		assertQueryEqualsNull("using nll: hasAttribute(nll, nll)");
 	}
@@ -265,7 +266,7 @@ public class SchemaFunctionTest extends GenericTest {
 
 	@Test
 	public void testHasTypeNull() throws Exception {
-		assertQueryEqualsNull("using nll: hasType(firstVertex(), nll)");
+		assertQueryEquals("using nll: hasType(firstVertex(), nll)", false);
 		assertQueryEqualsNull("using nll: hasType(nll, '?')");
 		assertQueryEqualsNull("using nll: hasType(nll, type(firstVertex()))");
 		assertQueryEqualsNull("using nll: hasType{Vertex}(nll)");

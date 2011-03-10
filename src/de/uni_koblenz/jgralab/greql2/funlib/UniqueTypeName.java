@@ -88,6 +88,11 @@ public class UniqueTypeName extends Greql2Function {
 	public JValue evaluate(Graph graph,
 			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
 			throws EvaluateException {
+
+		if (arguments[0].toObject() == null) {
+			return new JValueImpl();
+		}
+
 		AttributedElementClass aec = null;
 		AttributedElement elem = null;
 		switch (checkArguments(arguments)) {
