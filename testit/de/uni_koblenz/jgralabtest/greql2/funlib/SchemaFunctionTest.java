@@ -367,7 +367,7 @@ public class SchemaFunctionTest extends GenericTest {
 
 	@Test
 	public void testSubTypesNull() throws Exception {
-		assertQueryEqualsNull("using nll: subTypes(nll)");
+		assertQueryEqualsNull("using nll: subtypes(nll)");
 	}
 
 	@Test
@@ -402,7 +402,7 @@ public class SchemaFunctionTest extends GenericTest {
 
 	@Test
 	public void testSuperTypesNull() throws Exception {
-		assertQueryEqualsNull("using nll: superTypes(nll)");
+		assertQueryEqualsNull("using nll: supertypes(nll)");
 	}
 
 	@Test
