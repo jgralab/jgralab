@@ -295,15 +295,12 @@ public class PathSystem extends Greql2Function {
 		pathSystem.setRootVertex(rootVertex, rootMarker.state.number,
 				rootMarker.state.isFinal);
 		stateMarker = new GraphMarker<Set<State>>(rootVertex.getGraph());
-		Iterator<Vertex> iter = leaves.iterator();
 		int count = 0;
-		while (iter.hasNext()) {
-			Vertex leaf = iter.next();
+		for (Vertex leaf : leaves) {
 			for (GraphMarker<PathSystemMarkerList> currentGraphMarker : marker) {
-				Object tempAttribute = currentGraphMarker.getMark(leaf);
-				if (tempAttribute != null) {
-					for (PathSystemMarkerEntry currentMarker : ((PathSystemMarkerList) tempAttribute)
-							.values()) {
+				PathSystemMarkerList marking = (PathSystemMarkerList) currentGraphMarker.getMark(leaf);
+				if (marking != null) {
+					for (PathSystemMarkerEntry currentMarker :  marking.values()) {
 						if (!currentMarker.state.isFinal || // if state of
 								// current PathSystemMarkerEntry is final or
 								isVertexMarkedWithState(leaf,
