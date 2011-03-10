@@ -247,8 +247,8 @@ public class GreqlServer extends Thread {
 							PrintTarget.CLIENT, false);
 				}
 			} else {
-				println("Result is a single element.\n", PrintTarget.CLIENT,
-						true);
+				println("Result is a single element of type "
+						+ result.getType() + ".\n", PrintTarget.CLIENT, true);
 				println(result.toString(), PrintTarget.CLIENT, false);
 			}
 			out.flush();
