@@ -79,7 +79,7 @@ public class GenericTest {
 		queryCrossroadCount(test);
 		queryCountyCount(test);
 		queryUncontainedCrossroadCount(test);
-		test.setBoundVariable("nll", new JValueImpl((Object) null));
+		test.setBoundVariable("nll", new JValueImpl());
 	}
 
 	private static void queryAirportCount(GenericTest test) throws Exception {
