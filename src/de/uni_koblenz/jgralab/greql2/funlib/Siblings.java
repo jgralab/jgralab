@@ -110,40 +110,30 @@ public class Siblings extends Greql2Function {
 			return new JValueImpl();
 		}
 
+		Vertex vertex = arguments[0].toVertex();
+
 		JValuePathSystem pathSystem = null;
 		switch (checkArguments(arguments)) {
 		case 0:
-			break;
+			return getAllSiblings(vertex);
 		case 1:
 			pathSystem = arguments[1].toPathSystem();
-			break;
+			return pathSystem.siblings(vertex);
 		default:
 			throw new WrongFunctionParameterException(this, arguments);
 		}
+	}
 
-		Vertex vertex = arguments[0].toVertex();
-
-		if (pathSystem != null) {
-			return pathSystem.siblings(vertex);
-		}
-
-		// Edge inc1 = vertex.getFirstIncidence();
+	private JValueSet getAllSiblings(Vertex vertex) {
 		JValueSet siblings = new JValueSet();
-		// while (inc1 != null) {
 		for (Edge inc1 : vertex.incidences(EdgeDirection.OUT)) {
-			// Vertex father = inc1.getThat();
 			Vertex father = inc1.getOmega();
-			// Edge inc2 = father.getFirstIncidence();
-			// while (inc2 != null) {
 			for (Edge inc2 : father.incidences(EdgeDirection.IN)) {
-				// Vertex anotherVertex = inc2.getThat();
 				Vertex sibling = inc2.getAlpha();
 				if (sibling != vertex) {
 					siblings.add(new JValueImpl(sibling, vertex));
 				}
-				// inc2 = inc2.getNextIncidence();
 			}
-			// inc1 = inc1.getNextIncidence();
 		}
 		return siblings;
 	}
