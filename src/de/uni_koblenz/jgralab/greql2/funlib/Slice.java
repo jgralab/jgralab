@@ -129,7 +129,7 @@ public class Slice extends Greql2Function {
 	 */
 	protected boolean markVertex(Vertex v, State s, Vertex parentVertex,
 			Edge e, State ps, int d) {
-		PathSystemMarkerEntry m = new PathSystemMarkerEntry(parentVertex, e, s,
+		PathSystemMarkerEntry m = new PathSystemMarkerEntry(v, parentVertex, e, s,
 				ps, d);
 		GraphMarker<PathSystemMarkerList> currentMarker = marker.get(s.number);
 		if (currentMarker == null) {
