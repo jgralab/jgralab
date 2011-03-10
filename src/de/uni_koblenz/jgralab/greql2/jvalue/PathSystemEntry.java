@@ -144,7 +144,7 @@ public class PathSystemEntry {
 		this.stateIsFinal = stateIsFinal;
 	}
 
-	public boolean isStateIsFinal() {
+	public boolean getStateIsFinal() {
 		return stateIsFinal;
 	}
 

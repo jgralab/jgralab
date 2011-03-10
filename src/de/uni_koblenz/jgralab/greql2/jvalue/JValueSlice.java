@@ -349,7 +349,7 @@ public class JValueSlice extends JValueImpl {
 		for (Map.Entry<PathSystemKey, List<PathSystemEntry>> mapEntry : keyToEntryMap
 				.entrySet()) {
 			for (PathSystemEntry entry : mapEntry.getValue()) {
-				if ((!entry.isStateIsFinal())
+				if ((!entry.getStateIsFinal())
 						&& (entry.getParentVertex() != null)) {
 					resultSet
 							.add(new JValueImpl(mapEntry.getKey().getVertex()));
@@ -390,7 +390,7 @@ public class JValueSlice extends JValueImpl {
 				.entrySet()) {
 			boolean isFinal = false;
 			for (PathSystemEntry entry : mapEntry.getValue()) {
-				if (entry.isStateIsFinal()) {
+				if (entry.getStateIsFinal()) {
 					isFinal = true;
 				}
 			}
