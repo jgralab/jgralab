@@ -119,7 +119,8 @@ public class SchemaGraph2Schema {
 	/**
 	 * Holds all GraphElementClass objects of the SchemaGraph.
 	 */
-	private ArrayList<GraphElementClass> gGraphElementClasses;
+	private ArrayList<GraphElementClass> gGraphElementClasses,
+			gTempVertexClasses, gTempEdgeClasses;
 
 	/**
 	 * Hold all Domain objects of the SchemaGraph.
@@ -160,6 +161,8 @@ public class SchemaGraph2Schema {
 
 		incidenceMap = new HashMap<IncidenceClass, de.uni_koblenz.jgralab.schema.IncidenceClass>();
 		gGraphElementClasses = new ArrayList<GraphElementClass>();
+		gTempVertexClasses = new ArrayList<GraphElementClass>();
+		gTempEdgeClasses = new ArrayList<GraphElementClass>();
 		gDomains = new ArrayList<Domain>();
 		gSuperEdgeClasses = new ArrayList<EdgeClass>();
 	}
@@ -274,14 +277,14 @@ public class SchemaGraph2Schema {
 		from = (IncidenceClassImpl) incidenceMap.get(gFrom);
 		to = (IncidenceClassImpl) incidenceMap.get(gTo);
 
-		assert (from != null) : "FIXME! No from \"IncidenceClass\" created yet.";
-		assert (to != null) : "FIXME! No to \"IncidenceClass\" created yet.";
+		assert (from != null) : "FIXME! No from \"IncidenceClass\" d yet.";
+		assert (to != null) : "FIXME! No to \"IncidenceClass\" d yet.";
 
 		// set subsetted IncidenceClasses of from
 		for (Subsets sub : gFrom.getSubsetsIncidences(EdgeDirection.OUT)) {
 			de.uni_koblenz.jgralab.schema.IncidenceClass superIncidenceClass = incidenceMap
 					.get(sub.getThat());
-			assert (superIncidenceClass != null) : "FIXME! No subsetted \"IncidenceClass\" created yet.";
+			assert (superIncidenceClass != null) : "FIXME! No subsetted \"IncidenceClass\" d yet.";
 			from.addSubsettedIncidenceClass(superIncidenceClass);
 		}
 
@@ -289,7 +292,7 @@ public class SchemaGraph2Schema {
 		for (Redefines sub : gFrom.getRedefinesIncidences(EdgeDirection.OUT)) {
 			de.uni_koblenz.jgralab.schema.IncidenceClass superIncidenceClass = incidenceMap
 					.get(sub.getThat());
-			assert (superIncidenceClass != null) : "FIXME! No redefined \"IncidenceClass\" created yet.";
+			assert (superIncidenceClass != null) : "FIXME! No redefined \"IncidenceClass\" d yet.";
 			if ((superIncidenceClass.getRolename() != null)
 					&& !superIncidenceClass.getRolename().isEmpty()) {
 				from.addRedefinedRole(superIncidenceClass.getRolename());
@@ -300,7 +303,7 @@ public class SchemaGraph2Schema {
 		for (Subsets sub : gTo.getSubsetsIncidences(EdgeDirection.OUT)) {
 			de.uni_koblenz.jgralab.schema.IncidenceClass superIncidenceClass = incidenceMap
 					.get(sub.getThat());
-			assert (superIncidenceClass != null) : "FIXME! No subsetted \"IncidenceClass\" created yet.";
+			assert (superIncidenceClass != null) : "FIXME! No subsetted \"IncidenceClass\" d yet.";
 			from.addSubsettedIncidenceClass(superIncidenceClass);
 		}
 
@@ -308,7 +311,7 @@ public class SchemaGraph2Schema {
 		for (Redefines sub : gTo.getRedefinesIncidences(EdgeDirection.OUT)) {
 			de.uni_koblenz.jgralab.schema.IncidenceClass superIncidenceClass = incidenceMap
 					.get(sub.getThat());
-			assert (superIncidenceClass != null) : "FIXME! No redefined \"IncidenceClass\" created yet.";
+			assert (superIncidenceClass != null) : "FIXME! No redefined \"IncidenceClass\" d yet.";
 			if ((superIncidenceClass.getRolename() != null)
 					&& !superIncidenceClass.getRolename().isEmpty()) {
 				from.addRedefinedRole(superIncidenceClass.getRolename());
@@ -401,6 +404,9 @@ public class SchemaGraph2Schema {
 
 		// Starts the recursive collecting process with the DefaultPackage
 		getAllGraphElementClassesAndDomains(defaultPackage);
+
+		gGraphElementClasses.addAll(gTempVertexClasses);
+		gGraphElementClasses.addAll(gTempEdgeClasses);
 	}
 
 	/**
@@ -457,7 +463,12 @@ public class SchemaGraph2Schema {
 					.getThat();
 
 			// Adds a GraphElementClass object to the ArrayList
-			gGraphElementClasses.add(gGraphElementClass);
+			if (gGraphElementClass instanceof VertexClass) {
+				gTempVertexClasses.add(gGraphElementClass);
+			} else {
+				gTempEdgeClasses.add(gGraphElementClass);
+			}
+			// gGraphElementClasses.add(gGraphElementClass);
 
 			// find all EdgeClass objects which have no outgoing
 			// SpecializesEdgeClass
@@ -960,7 +971,7 @@ public class SchemaGraph2Schema {
 	 * @param edgeClass
 	 *            VertexClass of the Schema, which should be linked with their
 	 *            superclass.
-	 * @param gEdgeClass
+	 * @param gTempEdgeClasses
 	 *            VertexClass of the SchemaGraph, which holds the linkage.
 	 */
 	private void linkSuperClasses(

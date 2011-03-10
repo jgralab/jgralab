@@ -35,7 +35,10 @@
 
 package de.uni_koblenz.jgralab.schema.impl;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -58,6 +61,7 @@ import javax.tools.ToolProvider;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphFactory;
+import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.M1ClassManager;
@@ -903,11 +907,9 @@ public class SchemaImpl implements Schema {
 								+ " does not exist in schema");
 					}
 				}
-				return m1Class
-						.getMethod(
-								"create"
-										+ CodeGenerator.camelCase(aec
-												.getUniqueName()), signature);
+				return m1Class.getMethod("create"
+						+ CodeGenerator.camelCase(aec.getUniqueName()),
+						signature);
 			}
 		} catch (SecurityException e) {
 			throw new M1ClassAccessException(
@@ -1090,8 +1092,8 @@ public class SchemaImpl implements Schema {
 
 	@Override
 	public Method getGraphCreateMethod(ImplementationType implementationType) {
-		return getCreateMethod(graphClass.getSimpleName(),
-				graphClass.getSimpleName(), GRAPHCLASS_CREATE_SIGNATURE,
+		return getCreateMethod(graphClass.getSimpleName(), graphClass
+				.getSimpleName(), GRAPHCLASS_CREATE_SIGNATURE,
 				implementationType);
 	}
 
@@ -1235,6 +1237,24 @@ public class SchemaImpl implements Schema {
 	public String toString() {
 		return "GraphClass of schema '" + qualifiedName + "':\n\n\n"
 				+ graphClass.toString();
+	}
+
+	@Override
+	public String toTGString() {
+		String schemaDefinition = null;
+		ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+		DataOutputStream dout = new DataOutputStream(byteOut);
+		try {
+			GraphIO.saveSchemaToStream(dout, this);
+			dout.close();
+			byteOut.close();
+			schemaDefinition = new String(byteOut.toByteArray());
+		} catch (GraphIOException e) {
+			throw new RuntimeException(e);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		return schemaDefinition;
 	}
 
 	@Override

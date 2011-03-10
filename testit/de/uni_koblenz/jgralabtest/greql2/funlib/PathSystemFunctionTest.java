@@ -50,13 +50,13 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueBag;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
-import de.uni_koblenz.jgralabtest.greql2.GenericTests;
+import de.uni_koblenz.jgralabtest.greql2.GenericTest;
 import de.uni_koblenz.jgralabtest.schemas.minimal.Link;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalGraph;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalSchema;
 import de.uni_koblenz.jgralabtest.schemas.minimal.Node;
 
-public class PathSystemFunctionTest extends GenericTests {
+public class PathSystemFunctionTest extends GenericTest {
 
 	/**
 	 * • v :-) -->α baut ein Pfadsystem über Pfade, die dem regulären Ausdruck α

@@ -40,9 +40,9 @@ import static java.lang.Double.POSITIVE_INFINITY;
 
 import org.junit.Test;
 
-import de.uni_koblenz.jgralabtest.greql2.GenericTests;
+import de.uni_koblenz.jgralabtest.greql2.GenericTest;
 
-public class ArithmeticFunctionTest extends GenericTests {
+public class ArithmeticFunctionTest extends GenericTest {
 
 	@Test
 	public void testAddInfix() throws Exception {

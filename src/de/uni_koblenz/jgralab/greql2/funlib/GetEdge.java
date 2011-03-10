@@ -90,8 +90,14 @@ public class GetEdge extends Greql2Function {
 		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, arguments);
 		}
-		Edge e = graph.getEdge(arguments[0].toInteger());
-		return new JValueImpl(e, e);
+		Integer index = arguments[0].toInteger();
+		if (index == null) {
+			return new JValueImpl();
+		} else {
+			Edge e = graph.getEdge(index);
+			return new JValueImpl(e, e);
+		}
+
 	}
 
 	@Override

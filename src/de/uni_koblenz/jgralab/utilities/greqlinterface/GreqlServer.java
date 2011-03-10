@@ -76,12 +76,11 @@ public class GreqlServer extends Thread {
 	private String graphFile;
 	private static Map<String, Graph> dataGraphs = Collections
 			.synchronizedMap(new HashMap<String, Graph>());
-	
 
 	// static {
 	// GreqlEvaluator.DEBUG_OPTIMIZATION = true;
 	// }
-	
+
 	public GreqlServer(Socket s) throws IOException {
 		socket = s;
 		in = new BufferedReader(new InputStreamReader(s.getInputStream()));
@@ -221,9 +220,13 @@ public class GreqlServer extends Thread {
 		eval.setQueryFile(new File(queryFile));
 		JValue result = null;
 		try {
+			long startTime = System.currentTimeMillis();
 			eval.startEvaluation();
 			result = eval.getEvaluationResult();
+			long evalTime = System.currentTimeMillis() - startTime;
 			println("<result not printed>", PrintTarget.SERVER, false);
+			out.println();
+			out.println("Evaluation took " + evalTime + "ms.");
 			out.println();
 			out.println("Evaluation Result:");
 			out.println("==================");

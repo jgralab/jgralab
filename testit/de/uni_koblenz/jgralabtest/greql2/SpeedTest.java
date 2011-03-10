@@ -41,7 +41,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
 
-public class SpeedTest extends GenericTests {
+public class SpeedTest extends GenericTest {
 
 	protected Graph getTestGraph() throws Exception {
 		printTestFunctionHeader("GenerateTestGraph");
