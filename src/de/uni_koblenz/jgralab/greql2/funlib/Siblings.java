@@ -126,9 +126,9 @@ public class Siblings extends Greql2Function {
 
 	private JValueSet getAllSiblings(Vertex vertex) {
 		JValueSet siblings = new JValueSet();
-		for (Edge inc1 : vertex.incidences(EdgeDirection.OUT)) {
+		for (Edge inc1 : vertex.incidences(EdgeDirection.IN)) {
 			Vertex father = inc1.getOmega();
-			for (Edge inc2 : father.incidences(EdgeDirection.IN)) {
+			for (Edge inc2 : father.incidences(EdgeDirection.OUT)) {
 				Vertex sibling = inc2.getAlpha();
 				if (sibling != vertex) {
 					siblings.add(new JValueImpl(sibling, vertex));
