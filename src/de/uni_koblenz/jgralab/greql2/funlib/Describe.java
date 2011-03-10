@@ -110,16 +110,20 @@ public class Describe extends Greql2Function {
 	public JValue evaluate(Graph graph,
 			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
 			throws EvaluateException {
-		AttributedElement attrElem = null;
 		switch (checkArguments(arguments)) {
 		case 0:
-			attrElem = graph;
-			break;
+			return createDescribtion(graph);
 		case 1:
-			attrElem = arguments[0].toAttributedElement();
-			break;
+			return createDescribtion((AttributedElement) arguments[0]
+					.toObject());
 		default:
 			throw new WrongFunctionParameterException(this, arguments);
+		}
+	}
+
+	private JValue createDescribtion(AttributedElement attrElem) {
+		if (attrElem == null) {
+			return new JValueImpl();
 		}
 
 		JValueTuple tuple = new JValueTuple();
