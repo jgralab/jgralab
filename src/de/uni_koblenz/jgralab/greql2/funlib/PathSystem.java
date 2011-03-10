@@ -181,17 +181,17 @@ public class PathSystem extends Greql2Function {
 	 *            describes the pathsystem
 	 * @param subgraph
 	 *            the subgraph all parts of the pathsystem belong to
-	 * @return the list of leaves in the pathsystem, that is the set of states
+	 * @return the set of leaves in the pathsystem, that is the set of states
 	 *         which are marked with a final state of the dfa
 	 * @throws EvaluateException
 	 *             if something went wrong, several EvaluateException can be
 	 *             thrown
 	 */
-	private List<Vertex> markVerticesOfPathSystem(Vertex startVertex, DFA dfa,
+	private Set<Vertex> markVerticesOfPathSystem(Vertex startVertex, DFA dfa,
 			AbstractGraphMarker<AttributedElement> subgraph)
 			throws EvaluateException {
 		// GreqlEvaluator.errprintln("Start marking vertices of path system");
-		ArrayList<Vertex> finalVertices = new ArrayList<Vertex>();
+		Set<Vertex> finalVertices = new HashSet<Vertex>();
 		Queue<PathSystemQueueEntry> queue = new LinkedList<PathSystemQueueEntry>();
 		PathSystemQueueEntry currentEntry = new PathSystemQueueEntry(
 				startVertex, dfa.initialState, null, null, 0);
@@ -212,14 +212,9 @@ public class PathSystem extends Greql2Function {
 			Edge inc = currentEntry.vertex.getFirstIncidence();
 			while (inc != null) {
 				count++;
-
-				Iterator<Transition> transitionIter = currentEntry.state.outTransitions
-						.iterator();
-				while (transitionIter.hasNext()) {
+				for (Transition currentTransition : currentEntry.state.outTransitions) {
 					countWTrans++;
-					Transition currentTransition = transitionIter.next();
-					Vertex nextVertex = currentTransition.getNextVertex(
-							currentEntry.vertex, inc);
+					Vertex nextVertex = currentTransition.getNextVertex(currentEntry.vertex, inc);
 					if (!isMarked(nextVertex, currentTransition.endState)) {
 						if (currentTransition.accepts(currentEntry.vertex, inc,
 								subgraph)) {
@@ -266,12 +261,11 @@ public class PathSystem extends Greql2Function {
 		Vertex startVertex = arguments[0].toVertex();
 		this.graph = graph;
 
-		marker = new ArrayList<GraphMarker<PathSystemMarkerList>>(dfa.stateList
-				.size());
+		marker = new ArrayList<GraphMarker<PathSystemMarkerList>>(dfa.stateList.size());
 		for (int i = 0; i < dfa.stateList.size(); i++) {
 			marker.add(new GraphMarker<PathSystemMarkerList>(graph));
 		}
-		List<Vertex> leaves = markVerticesOfPathSystem(startVertex, dfa,
+		Set<Vertex> leaves = markVerticesOfPathSystem(startVertex, dfa,
 				subgraph);
 		JValuePathSystem resultPathSystem = createPathSystemFromMarkings(
 				startVertex, leaves);
@@ -279,16 +273,15 @@ public class PathSystem extends Greql2Function {
 	}
 
 	/**
-	 * Creates a JValuePathSystem-object which contains all path which start at
-	 * the given root vertex andend with the given leaves
+	 * Creates a JValuePathSystem-object which contains all paths which start at
+	 * the given root vertex and end with one of the given leaves
 	 * 
 	 * @param leaves
 	 * @return
 	 */
 	private JValuePathSystem createPathSystemFromMarkings(Vertex rootVertex,
-			List<Vertex> leaves) {
-		JValuePathSystem pathSystem = new JValuePathSystem(rootVertex
-				.getGraph());
+			Set<Vertex> leaves) {
+		JValuePathSystem pathSystem = new JValuePathSystem(rootVertex.getGraph());
 		PathSystemMarkerList rootMarkerList = marker.get(0).getMark(rootVertex);
 		PathSystemMarkerEntry rootMarker = rootMarkerList
 				.getPathSystemMarkerEntryWithParentVertex(null);
@@ -301,10 +294,10 @@ public class PathSystem extends Greql2Function {
 				PathSystemMarkerList marking = (PathSystemMarkerList) currentGraphMarker.getMark(leaf);
 				if (marking != null) {
 					for (PathSystemMarkerEntry currentMarker :  marking.values()) {
-						if (!currentMarker.state.isFinal || // if state of
+						if (!currentMarker.state.isFinal) { // || // if state of
 								// current PathSystemMarkerEntry is final or
-								isVertexMarkedWithState(leaf,
-										currentMarker.state)) { // (leaf, state)
+				//				isVertexMarkedWithState(leaf,
+				//						currentMarker.state)) { // (leaf, state)
 							// has already been processed
 							continue;
 						}
@@ -334,8 +327,7 @@ public class PathSystem extends Greql2Function {
 				}
 			}
 		}
-		// System.out.println("PathSystem - createPathSystem: " + count);
-
+		pathSystem.finish();
 		return pathSystem;
 	}
 
