@@ -39,6 +39,7 @@ import java.util.ArrayList;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
@@ -104,6 +105,11 @@ public class Siblings extends Greql2Function {
 	public JValue evaluate(Graph graph,
 			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
 			throws EvaluateException {
+
+		if (!arguments[0].isVertex()) {
+			return new JValueImpl();
+		}
+
 		JValuePathSystem pathSystem = null;
 		switch (checkArguments(arguments)) {
 		case 0:
@@ -121,21 +127,25 @@ public class Siblings extends Greql2Function {
 			return pathSystem.siblings(vertex);
 		}
 
-		Edge inc1 = vertex.getFirstIncidence();
-		JValueSet returnSet = new JValueSet();
-		while (inc1 != null) {
-			Vertex father = inc1.getThat();
-			Edge inc2 = father.getFirstIncidence();
-			while (inc2 != null) {
-				Vertex anotherVertex = inc2.getThat();
-				if (anotherVertex != vertex) {
-					returnSet.add(new JValueImpl(anotherVertex, vertex));
+		// Edge inc1 = vertex.getFirstIncidence();
+		JValueSet siblings = new JValueSet();
+		// while (inc1 != null) {
+		for (Edge inc1 : vertex.incidences(EdgeDirection.OUT)) {
+			// Vertex father = inc1.getThat();
+			Vertex father = inc1.getOmega();
+			// Edge inc2 = father.getFirstIncidence();
+			// while (inc2 != null) {
+			for (Edge inc2 : father.incidences(EdgeDirection.IN)) {
+				// Vertex anotherVertex = inc2.getThat();
+				Vertex sibling = inc2.getAlpha();
+				if (sibling != vertex) {
+					siblings.add(new JValueImpl(sibling, vertex));
 				}
-				inc2 = inc2.getNextIncidence();
+				// inc2 = inc2.getNextIncidence();
 			}
-			inc1 = inc1.getNextIncidence();
+			// inc1 = inc1.getNextIncidence();
 		}
-		return returnSet;
+		return siblings;
 	}
 
 	@Override

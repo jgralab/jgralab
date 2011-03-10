@@ -554,6 +554,11 @@ public class GraphFunctionTest extends GenericTest {
 		}
 	}
 
+	@Test
+	public void testSiblingsNull() throws Exception {
+		assertQueryEqualsNull("using nll: siblings(nll)");
+	}
+
 	private Set<Vertex> getParentVertices(Vertex vertex) {
 		Set<Vertex> parents = new HashSet<Vertex>();
 		for (Edge outgoing : vertex.incidences(EdgeDirection.OUT)) {
