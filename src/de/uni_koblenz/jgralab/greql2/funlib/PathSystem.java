@@ -207,6 +207,7 @@ public class PathSystem extends Greql2Function {
 		int count = 0, countWTrans = 0;
 		while (currentEntry != null) {
 			if (currentEntry.state.isFinal) {
+				//current vertex is a leaf
 				finalVertices.add(currentEntry.vertex);
 			}
 			Edge inc = currentEntry.vertex.getFirstIncidence();
@@ -301,6 +302,9 @@ public class PathSystem extends Greql2Function {
 							// has already been processed
 							continue;
 						}
+						if (leaf.getId() == 34) {
+							System.out.println("Creating paths for vertex 34");
+						}
 						Vertex currentVertex = leaf;
 						while (currentVertex != null
 								&& !isVertexMarkedWithState(currentVertex,
@@ -319,9 +323,13 @@ public class PathSystem extends Greql2Function {
 									currentMarker.state.isFinal);
 							markVertexWithState(currentVertex,
 									currentMarker.state);
+							if (leaf.getId() == 34) {
+								System.out.println("  parent vertex is: " + currentMarker.parentVertex);
+								System.out.println("  distance to root of currentVertex " + currentMarker.distanceToRoot);
+							}
+							
 							currentVertex = currentMarker.parentVertex;
-							currentMarker = getMarkerWithState(currentVertex,
-									currentMarker.parentState);
+							currentMarker = getMarkerWithState(currentVertex, currentMarker.parentState);
 						}
 					}
 				}
