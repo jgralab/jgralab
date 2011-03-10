@@ -140,6 +140,14 @@ public abstract class Greql2Function {
 		}
 	}
 
+	protected final boolean isAnyArgumentNull(JValue[] arguments) {
+		boolean nullFound = false;
+		for (JValue value : arguments) {
+			nullFound = nullFound || value.toObject() == null;
+		}
+		return nullFound;
+	}
+
 	public final String getExpectedParameters() {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < signatures.length; i++) {

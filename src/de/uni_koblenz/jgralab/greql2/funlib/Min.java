@@ -93,11 +93,16 @@ public class Min extends Greql2Function {
 			throw new WrongFunctionParameterException(this, arguments);
 		}
 
+		if (isAnyArgumentNull(arguments)) {
+			return new JValueImpl();
+		}
+
 		JValueCollection col = arguments[0].toCollection();
 		boolean doubleFound = false;
 		double min = Double.POSITIVE_INFINITY;
 		for (JValue curVal : col) {
 			if (curVal.isNumber()) {
+				doubleFound = doubleFound || curVal.isDouble();
 				if (curVal.toNumber().doubleValue() < min) {
 					min = curVal.toNumber().doubleValue();
 				}

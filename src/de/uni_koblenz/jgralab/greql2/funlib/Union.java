@@ -44,6 +44,7 @@ import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueMap;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
@@ -117,6 +118,9 @@ public class Union extends Greql2Function {
 	public JValue evaluate(Graph graph,
 			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
 			throws EvaluateException {
+		if (isAnyArgumentNull(arguments)) {
+			return new JValueImpl();
+		}
 		switch (checkArguments(arguments)) {
 		case 0:
 			JValueSet firstSet = arguments[0].toCollection().toJValueSet();
@@ -129,18 +133,22 @@ public class Union extends Greql2Function {
 		case 2:
 			JValueSet set = arguments[0].toCollection().toJValueSet();
 			JValueSet result = new JValueSet();
-			for (JValue jv : set) {
-				if (!(jv instanceof JValueCollection)) {
-					throw new WrongFunctionParameterException(this, arguments);
-				}
-				for (JValue jv2 : jv.toCollection().toJValueSet()) {
-					result.add(jv2);
-				}
-			}
-			return result;
+			return union(set, result, arguments);
 		default:
 			throw new WrongFunctionParameterException(this, arguments);
 		}
+	}
+
+	private JValue union(JValueSet set, JValueSet result, JValue[] arguments) {
+		for (JValue jv : set) {
+			if (!(jv instanceof JValueCollection)) {
+				throw new WrongFunctionParameterException(this, arguments);
+			}
+			for (JValue jv2 : jv.toCollection().toJValueSet()) {
+				result.add(jv2);
+			}
+		}
+		return result;
 	}
 
 	@Override
