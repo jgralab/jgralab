@@ -40,6 +40,11 @@ import java.util.HashMap;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.State;
 
+/**
+ * Contains the list of all markings of a vertex with a state
+ * @author dbildh
+ *
+ */
 public class PathSystemMarkerList extends
 		HashMap<Vertex, PathSystemMarkerEntry> {
 
