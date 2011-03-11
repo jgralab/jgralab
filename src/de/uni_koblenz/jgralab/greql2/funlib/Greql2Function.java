@@ -107,8 +107,7 @@ public abstract class Greql2Function {
 		out: for (int i = 0; i < signatures.length; i++) {
 			if (signatures[i].length - 1 != args.length) {
 				// The current argument list has another length than the given
-				// one, so
-				// it cannot match.
+				// one, so it cannot match.
 				continue;
 			}
 			int conversionCosts = 0;
