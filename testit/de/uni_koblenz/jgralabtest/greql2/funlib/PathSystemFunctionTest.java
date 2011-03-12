@@ -38,6 +38,7 @@ package de.uni_koblenz.jgralabtest.greql2.funlib;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,36 +61,57 @@ import de.uni_koblenz.jgralabtest.schemas.minimal.Node;
 public class PathSystemFunctionTest extends GenericTest {
 
 	/**
-	 * ‚Ä¢ v :-) -->Œ± baut ein Pfadsystem √ºber Pfade, die dem regul√§ren Ausdruck Œ±
-	 * entsprechen, mit dem Wurzelknoten v auf. ‚Ä¢ v :-) -->Œ± :-) w liefert einen
-	 * Pfad der Gestalt Œ± von v nach w. ‚Ä¢ -->Œ± :-) w liefert ein Pfadsystem mit
-	 * Pfaden der Gestalt Œ±T mit dem Wurzelknoten w. ‚Ä¢ v :-) ( -->Œ± :-) w )
-	 * liefert dementsprechend einen Pfad der Gestalt Œ±T von w nach v.
+	 * ‚Ä¢ v :-) -->Œ± baut ein Pfadsystem √ºber Pfade, die dem regul√§ren
+	 * Ausdruck Œ± entsprechen, mit dem Wurzelknoten v auf. ‚Ä¢ v :-) -->Œ± :-)
+	 * w liefert einen Pfad der Gestalt Œ± von v nach w. ‚Ä¢ -->Œ± :-) w liefert
+	 * ein Pfadsystem mit Pfaden der Gestalt Œ±T mit dem Wurzelknoten w. ‚Ä¢ v
+	 * :-) ( -->Œ± :-) w ) liefert dementsprechend einen Pfad der Gestalt Œ±T
+	 * von w nach v.
 	 */
 
-	
-	@Test 
+	@Test
+	public void testContains() throws Exception {
+		// TODO
+		fail();
+	}
+
+	@Test
+	public void testContainsNull() throws Exception {
+		// TODO
+		fail();
+	}
+
+	@Test
 	public void testPathSystemOnGreqlGraph() throws Exception {
 		String queryString = "extractPath(pathSystem(getVertex(1), (<>--|(<-- <->))*), getVertex(34))";
-		JValue result = evalTestQuery("PathSystemOnGreqlGraph", queryString, GraphIO.loadGraphFromFile("/Users/dbildh/repositories/ist/jgralab/testit/testgraphs/greqltestgraph.tg",null));
+		JValue result = evalTestQuery(
+				"PathSystemOnGreqlGraph",
+				queryString,
+				GraphIO.loadGraphFromFile(
+						"/Users/dbildh/repositories/ist/jgralab/testit/testgraphs/greqltestgraph.tg",
+						null));
 		JValuePath path = result.toPath();
 		System.out.println("Path has length " + path.toPath().pathLength());
 		System.out.println(path);
 	}
-	
-	@Test 
+
+	@Test
 	public void testPathSystemOnGreqlGraph2() throws Exception {
 		String queryString = "extractPath(pathSystem(getVertex(1), (<>--|(<-- <->))*))";
-		JValue result = evalTestQuery("PathSystemOnGreqlGraph", queryString, GraphIO.loadGraphFromFile("/Users/dbildh/repositories/ist/jgralab/testit/testgraphs/greqltestgraph.tg",null));
+		JValue result = evalTestQuery(
+				"PathSystemOnGreqlGraph",
+				queryString,
+				GraphIO.loadGraphFromFile(
+						"/Users/dbildh/repositories/ist/jgralab/testit/testgraphs/greqltestgraph.tg",
+						null));
 		for (JValue e : result.toJValueSet()) {
 			JValuePath path = e.toPath();
 			System.out.println("Path has length " + path.toPath().pathLength());
 			System.out.println(path);
 		}
-		
+
 	}
-	
-	
+
 	/*
 	 * Test method for
 	 * 'greql2.evaluator.GreqlEvaluator.evaluateForwardVertexSet(ForwardVertexSet,
