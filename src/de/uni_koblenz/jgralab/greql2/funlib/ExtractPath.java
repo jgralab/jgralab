@@ -44,8 +44,8 @@ import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
@@ -107,30 +107,23 @@ public class ExtractPath extends Greql2Function {
 	public JValue evaluate(Graph graph,
 			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
 			throws EvaluateException {
-		Vertex vertex = null;
-		Integer length = null;
-		switch (checkArguments(arguments)) {
-		case 0:
-			break;
-		case 1:
-			vertex = arguments[1].toVertex();
-			break;
-		case 2:
-			length = arguments[1].toInteger();
-			break;
-		default:
+
+		int argumentCase = checkArguments(arguments);
+		if (argumentCase == -1) {
 			throw new WrongFunctionParameterException(this, arguments);
+		}
+		if (isAnyArgumentNull(arguments)) {
+			return new JValueImpl();
 		}
 
 		JValuePathSystem pathSystem = arguments[0].toPathSystem();
-
-		if (vertex != null) {
-			System.out.println("Extracting path to vertex " + vertex);
+		switch (argumentCase) {
+		case 1:
+			Vertex vertex = arguments[1].toVertex();
 			return pathSystem.extractPath(vertex);
-		}
-		if (length != null) {
-			JValueSet paths = pathSystem.extractPaths(length);
-			return paths;
+		case 2:
+			Integer length = arguments[1].toInteger();
+			return pathSystem.extractPaths(length);
 		}
 		return pathSystem.extractPaths();
 	}
