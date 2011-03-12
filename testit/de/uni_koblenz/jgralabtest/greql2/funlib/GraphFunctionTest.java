@@ -36,6 +36,7 @@ package de.uni_koblenz.jgralabtest.greql2.funlib;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.HashSet;
 import java.util.Map.Entry;
@@ -50,7 +51,6 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
@@ -406,16 +406,8 @@ public class GraphFunctionTest extends GenericTest {
 	@Test
 	public void testIsAcyclic() throws Exception {
 		assertQueryEquals("isAcyclic()", false);
-	}
-
-	@Test
-	public void testIsAcyclic2() throws Exception {
 		setDefaultTestVersion(TestVersion.GREQL_GRAPH);
 		assertQueryEquals("isAcyclic()", true);
-	}
-
-	@Test
-	public void testIsAcyclic3() throws Exception {
 		setDefaultTestVersion(TestVersion.CYCLIC_GRAPH);
 		assertQueryEquals("isAcyclic()", false);
 	}
@@ -425,41 +417,34 @@ public class GraphFunctionTest extends GenericTest {
 		assertQueryEqualsNull("using nll: isAcyclic(nll)");
 	}
 
-	// @Test
-	// public void testIsIsolated() throws Exception {
-	// // TODO: Broken, because the GReQL parser removes all WhereExpressions
-	// // and LetExpressions!
-	// String queryString =
-	// "from x : V{WhereExpression} report isIsolated(x) end";
-	// JValue result = evalTestQuery("IsIsolated", queryString);
-	// assertEquals(1, result.toCollection().size());
-	// assertEquals(false, (boolean) getNthValue(result.toCollection(), 0)
-	// .toBoolean());
-	// }
+	@Test
+	public void testIsIsolated() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
+
+		String queryString = "from x : V{WhereExpression} report isIsolated(x) end";
+		JValue result = evalTestQuery("IsIsolated", queryString);
+		assertEquals(1, result.toCollection().size());
+		assertEquals(false, (boolean) getNthValue(result.toCollection(), 0)
+				.toBoolean());
+	}
 
 	@Test
 	public void testIsIsolatedNull() throws Exception {
 		assertQueryEqualsNull("using nll: isIsolated(nll)");
 	}
 
-	// @Test
-	// public void testIsLoop() throws Exception {
-	//
-	// // TODO: Broken, because the GReQL parser removes all WhereExpressions
-	// // and LetExpressions!
-	// String queryString =
-	// "from x : E{IsBoundExprOfDefinition} report isLoop(x) end";
-	// JValue result = evalTestQuery("IsLoop", queryString);
-	// assertEquals(1, result.toCollection().size());
-	// assertEquals(false, getNthValue(result.toCollection(), 0).toBoolean()
-	// .booleanValue());
-	// }
-
 	@Test
-	public void testIsLoop2() throws Exception {
-		JValueList list = evalTestQuery("from e:E with isLoop(e) report e end")
-				.toJValueList();
-		assertTrue(list.isEmpty());
+	public void testIsLoop() throws Exception {
+
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
+
+		String queryString = "from x : E{IsBoundExprOfDefinition} report isLoop(x) end";
+		JValue result = evalTestQuery("IsLoop", queryString);
+		assertEquals(1, result.toCollection().size());
+		assertEquals(false, getNthValue(result.toCollection(), 0).toBoolean()
+				.booleanValue());
 	}
 
 	@Test
@@ -468,8 +453,15 @@ public class GraphFunctionTest extends GenericTest {
 	}
 
 	@Test
+	public void testIsMarked() throws Exception {
+		// TODO
+		fail();
+	}
+
+	@Test
 	public void testIsMarkedNull() throws Exception {
 		assertQueryEqualsNull("using nll: isMarked(lastVertex(), nll)");
+		// TODO
 		// assertQueryEqualsNull("using nll: isMarked(nll, ???)");
 		assertQueryEqualsNull("using nll: isMarked(nll, nll)");
 	}
@@ -478,28 +470,19 @@ public class GraphFunctionTest extends GenericTest {
 	public void testIsNull() throws Exception {
 		assertQueryEquals("isNull(list())", false);
 		assertQueryEquals("using nll: isNull(nll)", true);
+		setBoundVariable("nll2", new JValueImpl((Object) null));
+		assertQueryEquals("using nll2: isNull(nll2)", true);
 	}
 
 	@Test
 	public void testIsTree() throws Exception {
-		String queryString = "isTree()";
-		JValue result = evalTestQuery("IsTree", queryString,
-				getCyclicTestGraph());
-		assertEquals(JValueBoolean.getFalseValue(), result.toBoolean());
-	}
-
-	@Test
-	public void testIsTree2() throws Exception {
-		String queryString = "isTree()";
-		JValue result = evalTestQuery("IsTree2", queryString);
-		assertEquals(JValueBoolean.getFalseValue(), result.toBoolean());
-	}
-
-	@Test
-	public void testIsTree3() throws Exception {
-		String queryString = "isTree()";
-		JValue result = evalTestQuery("IsTree3", queryString, getTestTree());
-		assertEquals(JValueBoolean.getTrueValue(), result.toBoolean());
+		assertQueryEquals("isTree()", false);
+		setDefaultTestVersion(TestVersion.CYCLIC_GRAPH);
+		assertQueryEquals("isTree()", false);
+		setDefaultTestVersion(TestVersion.GREQL_GRAPH);
+		assertQueryEquals("isTree()", false);
+		setDefaultTestVersion(TestVersion.TREE_GRAPH);
+		assertQueryEquals("isTree()", true);
 	}
 
 	@Test
