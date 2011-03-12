@@ -93,6 +93,11 @@ public class IsLoop extends Greql2Function {
 		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, arguments);
 		}
+
+		if (isAnyArgumentNull(arguments)) {
+			return new JValueImpl();
+		}
+
 		Edge edge = arguments[0].toEdge();
 		return new JValueImpl(edge.getAlpha() == edge.getOmega(), edge);
 	}
