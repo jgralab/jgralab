@@ -410,39 +410,68 @@ public class GraphFunctionTest extends GenericTest {
 
 	@Test
 	public void testIsAcyclic2() throws Exception {
-		String queryString = "isAcyclic()";
-		JValue result = evalTestQuery("IsAcyclic", queryString);
-		assertEquals(JValueBoolean.getTrueValue(), result.toBoolean());
+		setDefaultTestVersion(TestVersion.GREQL_GRAPH);
+		assertQueryEquals("isAcyclic()", true);
 	}
 
 	@Test
 	public void testIsAcyclic3() throws Exception {
-		String queryString = "isAcyclic()";
-		JValue result = evalTestQuery("IsAcyclic2", queryString,
-				getCyclicTestGraph());
-		assertEquals(JValueBoolean.getFalseValue(), result.toBoolean());
+		setDefaultTestVersion(TestVersion.CYCLIC_GRAPH);
+		assertQueryEquals("isAcyclic()", false);
 	}
 
 	@Test
-	public void testIsIsolated() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from x : V{WhereExpression} report isIsolated(x) end";
-		JValue result = evalTestQuery("IsIsolated", queryString);
-		assertEquals(1, result.toCollection().size());
-		assertEquals(false, (boolean) getNthValue(result.toCollection(), 0)
-				.toBoolean());
+	public void testIsAcyclicNull() throws Exception {
+		assertQueryEqualsNull("using nll: isAcyclic(nll)");
+	}
+
+	// @Test
+	// public void testIsIsolated() throws Exception {
+	// // TODO: Broken, because the GReQL parser removes all WhereExpressions
+	// // and LetExpressions!
+	// String queryString =
+	// "from x : V{WhereExpression} report isIsolated(x) end";
+	// JValue result = evalTestQuery("IsIsolated", queryString);
+	// assertEquals(1, result.toCollection().size());
+	// assertEquals(false, (boolean) getNthValue(result.toCollection(), 0)
+	// .toBoolean());
+	// }
+
+	@Test
+	public void testIsIsolatedNull() throws Exception {
+		assertQueryEqualsNull("using nll: isIsolated(nll)");
+	}
+
+	// @Test
+	// public void testIsLoop() throws Exception {
+	//
+	// // TODO: Broken, because the GReQL parser removes all WhereExpressions
+	// // and LetExpressions!
+	// String queryString =
+	// "from x : E{IsBoundExprOfDefinition} report isLoop(x) end";
+	// JValue result = evalTestQuery("IsLoop", queryString);
+	// assertEquals(1, result.toCollection().size());
+	// assertEquals(false, getNthValue(result.toCollection(), 0).toBoolean()
+	// .booleanValue());
+	// }
+
+	@Test
+	public void testIsLoop2() throws Exception {
+		JValueList list = evalTestQuery("from e:E with isLoop(e) report e end")
+				.toJValueList();
+		assertTrue(list.isEmpty());
 	}
 
 	@Test
-	public void testIsLoop() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from x : E{IsBoundExprOfDefinition} report isLoop(x) end";
-		JValue result = evalTestQuery("IsLoop", queryString);
-		assertEquals(1, result.toCollection().size());
-		assertEquals(false, getNthValue(result.toCollection(), 0).toBoolean()
-				.booleanValue());
+	public void testIsLoopNull() throws Exception {
+		assertQueryEqualsNull("using nll: isLoop(nll)");
+	}
+
+	@Test
+	public void testIsMarkedNull() throws Exception {
+		assertQueryEqualsNull("using nll: isMarked(lastVertex(), nll)");
+		// assertQueryEqualsNull("using nll: isMarked(nll, ???)");
+		assertQueryEqualsNull("using nll: isMarked(nll, nll)");
 	}
 
 	@Test
@@ -601,12 +630,9 @@ public class GraphFunctionTest extends GenericTest {
 
 	@Test
 	public void testTopologicalSort2() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String q = "topologicalSort()";
-		JValue result = evalTestQuery("TopologicalSort", q);
-		JValueList resultList = result.toJValueList();
-		assertEquals(16, resultList.size());
+		setDefaultTestVersion(TestVersion.TREE_GRAPH);
+		JValueList resultList = evalTestQuery("topologicalSort()")
+				.toJValueList();
 		/*
 		 * test, if for each vertex v in the result list each vertex w in
 		 * Lambda^-(v) is contained in the result list at a lower position than
