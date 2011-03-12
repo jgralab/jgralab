@@ -66,11 +66,13 @@ public class GenericTest {
 	protected static final double DELTA = 0.00000001;
 
 	public enum TestVersion {
-		GREQL_GRAPH, CITY_MAP_GRAPH
+		GREQL_GRAPH, CITY_MAP_GRAPH, CYCLIC_GRAPH, TREE_GRAPH
 	};
 
 	protected static int airportCount, crossroadCount, countyCount,
 			uncontainedCrossroadCount;
+
+	private TestVersion defaultVersion = TestVersion.CITY_MAP_GRAPH;
 
 	@BeforeClass
 	public static void globalSetUp() throws Exception {
@@ -272,10 +274,17 @@ public class GenericTest {
 
 	protected Graph getTestGraph(TestVersion version) throws Exception {
 
-		if (version == TestVersion.GREQL_GRAPH) {
+		switch (version) {
+		case GREQL_GRAPH:
 			return createGreqlTestGraph();
-		} else {
+		case CITY_MAP_GRAPH:
 			return createTestGraph();
+		case CYCLIC_GRAPH:
+			return getCyclicTestGraph();
+		case TREE_GRAPH:
+			return getTestTree();
+		default:
+			throw new RuntimeException("Unsupported enum.");
 		}
 	}
 
@@ -354,7 +363,15 @@ public class GenericTest {
 	}
 
 	protected JValue evalTestQuery(String query) throws Exception {
-		return evalTestQuery("", query, TestVersion.CITY_MAP_GRAPH);
+		return evalTestQuery("", query, defaultVersion);
+	}
+
+	public TestVersion getDefaultTestVersion() {
+		return defaultVersion;
+	}
+
+	public void setDefaultTestVersion(TestVersion defaultVersion) {
+		this.defaultVersion = defaultVersion;
 	}
 
 	protected JValue evalTestQuery(String functionName, String query,
