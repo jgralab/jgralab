@@ -99,6 +99,9 @@ public class Split extends Greql2Function {
 		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, arguments);
 		}
+		if (isAnyArgumentNull(arguments)) {
+			return new JValueImpl();
+		}
 		String str = arguments[0].toString();
 		String regex = arguments[1].toString();
 		String[] splits = str.split(regex);

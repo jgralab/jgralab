@@ -89,6 +89,9 @@ public class CapitalizeFirst extends Greql2Function {
 		if (checkArguments(arguments) < 0) {
 			throw new WrongFunctionParameterException(this, arguments);
 		}
+		if (isAnyArgumentNull(arguments)) {
+			return new JValueImpl();
+		}
 		String str = arguments[0].toString();
 		if (str.length() == 0) {
 			return arguments[0];
