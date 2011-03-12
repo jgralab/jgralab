@@ -94,6 +94,9 @@ public class IsIsolated extends Greql2Function {
 		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, arguments);
 		}
+		if (isAnyArgumentNull(arguments)) {
+			return new JValueImpl();
+		}
 
 		Vertex firstVertex = arguments[0].toVertex();
 		return new JValueImpl(firstVertex.getDegree() == 0, firstVertex);
