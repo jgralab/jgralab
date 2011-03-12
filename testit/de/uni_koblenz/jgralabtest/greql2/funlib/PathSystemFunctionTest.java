@@ -45,13 +45,11 @@ import java.util.List;
 
 import org.junit.Test;
 
-import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueBag;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
 import de.uni_koblenz.jgralabtest.greql2.GenericTest;
 import de.uni_koblenz.jgralabtest.schemas.minimal.Link;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalGraph;
@@ -82,81 +80,7 @@ public class PathSystemFunctionTest extends GenericTest {
 	}
 
 	@Test
-	public void testPathSystemOnGreqlGraph() throws Exception {
-		String queryString = "extractPath(pathSystem(getVertex(1), (<>--|(<-- <->))*), getVertex(34))";
-		JValue result = evalTestQuery(
-				"PathSystemOnGreqlGraph",
-				queryString,
-				GraphIO.loadGraphFromFile(
-						"/Users/dbildh/repositories/ist/jgralab/testit/testgraphs/greqltestgraph.tg",
-						null));
-		JValuePath path = result.toPath();
-		System.out.println("Path has length " + path.toPath().pathLength());
-		System.out.println(path);
-	}
-
-	@Test
-	public void testPathSystemOnGreqlGraph2() throws Exception {
-		String queryString = "extractPath(pathSystem(getVertex(1), (<>--|(<-- <->))*))";
-		JValue result = evalTestQuery(
-				"PathSystemOnGreqlGraph",
-				queryString,
-				GraphIO.loadGraphFromFile(
-						"/Users/dbildh/repositories/ist/jgralab/testit/testgraphs/greqltestgraph.tg",
-						null));
-		for (JValue e : result.toJValueSet()) {
-			JValuePath path = e.toPath();
-			System.out.println("Path has length " + path.toPath().pathLength());
-			System.out.println(path);
-		}
-
-	}
-
-	/*
-	 * Test method for
-	 * 'greql2.evaluator.GreqlEvaluator.evaluateForwardVertexSet(ForwardVertexSet,
-	 * Graph)'
-	 */
-	@Test
-	public void testPathSystemConstruction() throws Exception {
-		String queryString = "from c: V{localities.County} "
-				+ "with c.name = 'Rheinland-Pfalz' "
-				+ "report pathSystem(c, -->{localities.ContainsLocality} -->{connections.AirRoute}) "
-				+ "end";
-		JValue result = evalTestQuery("PathSystemConstruction", queryString,
-				TestVersion.CITY_MAP_GRAPH);
-		JValueBag bag = result.toCollection().toJValueBag();
-		System.out.println(bag);
-		assertEquals(1, bag.size());
-		for (JValue v : bag) {
-			JValuePathSystem sys = v.toPathSystem();
-			assertEquals(2, sys.depth());
-			assertEquals(3, sys.weight());
-		}
-	}
-
-	/*
-	 * Test method for
-	 * 'greql2.evaluator.GreqlEvaluator.evaluateForwardVertexSet(ForwardVertexSet,
-	 * Graph)'
-	 */
-	@Test
-	public void testPathSystemWeight() throws Exception {
-		String queryString = "from c: V{localities.County} "
-				+ "with c.name <> 'Rheinland-Pfalz' "
-				+ "report weight(pathSystem(c, -->{localities.ContainsLocality} -->{connections.AirRoute})) "
-				+ "end";
-		JValue result = evalTestQuery("PathSystemWeight", queryString,
-				TestVersion.CITY_MAP_GRAPH);
-		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(1, bag.size());
-		for (JValue v : bag) {
-			assertEquals(4, (int) v.toInteger());
-		}
-	}
-
-	@Test
-	public void testPathSystemContains() throws Exception {
+	public void testContainsPathSystem() throws Exception {
 		String queryString = "from c: V{localities.County}, a:V{junctions.Airport} "
 				+ "with c.name <> 'Rheinland-Pfalz' "
 				+ "report contains(pathSystem(c, -->{localities.ContainsLocality} -->{connections.AirRoute}), a) "
@@ -175,7 +99,31 @@ public class PathSystemFunctionTest extends GenericTest {
 	}
 
 	@Test
-	public void testPathSystemDistance() throws Exception {
+	public void testDepth() throws Exception {
+		// TODO
+		fail();
+	}
+
+	@Test
+	public void testDepthNull() throws Exception {
+		// TODO
+		fail();
+	}
+
+	@Test
+	public void testDistance() throws Exception {
+		// TODO
+		fail();
+	}
+
+	@Test
+	public void testDistanceNull() throws Exception {
+		// TODO
+		fail();
+	}
+
+	@Test
+	public void testDistancePathSystem() throws Exception {
 		String queryString = "from c: V{localities.County}, r:V{junctions.Crossroad} "
 				+ "report distance(pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad}), r)"
 				+ "end";
@@ -198,7 +146,23 @@ public class PathSystemFunctionTest extends GenericTest {
 	}
 
 	@Test
-	public void testPathSystemEdgesConnected() throws Exception {
+	public void testEdgesConnected() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
+		String queryString = "from x : V{WhereExpression} report edgesConnected(x) end";
+		JValue result = evalTestQuery("EdgesConnected", queryString);
+		assertEquals(6, getNthValue(result.toCollection(), 0).toCollection()
+				.size());
+	}
+
+	@Test
+	public void testEdgesConnectedNull() throws Exception {
+		// TODO
+		fail();
+	}
+
+	@Test
+	public void testEdgesConnectedPathSystem() throws Exception {
 		String queryString = "from c: V{localities.County}, r:V{junctions.Crossroad} "
 				+ "report edgesConnected(r, pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad}))"
 				+ "end";
@@ -219,7 +183,24 @@ public class PathSystemFunctionTest extends GenericTest {
 	}
 
 	@Test
-	public void testPathSystemEdgesFrom() throws Exception {
+	public void testEdgesFrom() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
+		String queryString = "from x : V{WhereExpression} report edgesFrom(x) end";
+		JValue result = evalTestQuery("EdgesFrom", queryString);
+		assertEquals(1, result.toCollection().size());
+		assertEquals(1, getNthValue(result.toCollection(), 0).toCollection()
+				.size());
+	}
+
+	@Test
+	public void testEdgesFromNull() throws Exception {
+		// TODO
+		fail();
+	}
+
+	@Test
+	public void testEdgesFromPathSystem() throws Exception {
 		String queryString = "from c: V{localities.County}, a:V{junctions.Airport} "
 				+ "with c.name <> 'Rheinland-Pfalz' "
 				+ "report edgesFrom(a, pathSystem(c, -->{localities.ContainsLocality} -->{connections.AirRoute})) "
@@ -242,7 +223,25 @@ public class PathSystemFunctionTest extends GenericTest {
 	}
 
 	@Test
-	public void testPathSystemEdgesTo() throws Exception {
+	public void testEdgesTo() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
+		String queryString = "from x : V{WhereExpression} report edgesTo(x) end";
+		JValue result = evalTestQuery("EdgesTo", queryString);
+		assertEquals(1, result.toCollection().size());
+		for (JValue j : result.toCollection()) {
+			assertEquals(5, j.toCollection().size());
+		}
+	}
+
+	@Test
+	public void testEdgesToNull() throws Exception {
+		// TODO
+		fail();
+	}
+
+	@Test
+	public void testEdgesToPathSystem() throws Exception {
 		String queryString = "from c: V{localities.County}, r:V{junctions.Crossroad} "
 				+ "report edgesTo(r, pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad}))"
 				+ "end";
@@ -263,194 +262,9 @@ public class PathSystemFunctionTest extends GenericTest {
 	}
 
 	@Test
-	public void testExtractPath() throws Exception {
-		String queryString = "from c: V{localities.County}, r:V{junctions.Crossroad} "
-				+ "report extractPath(pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad}), r)"
-				+ "end";
-		JValue result = evalTestQuery("ExtractPath", queryString,
-				TestVersion.CITY_MAP_GRAPH);
-		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(countyCount * crossroadCount, bag.size());
-		int invalidPaths = 0;
-		for (JValue v : bag) {
-			JValuePath p = v.toPath();
-			if (!p.isValidPath()) {
-				invalidPaths++;
-			} else {
-				assertEquals(2, p.pathLength());
-			}
-		}
-		assertEquals(uncontainedCrossroadCount + crossroadCount, invalidPaths);
-	}
-
-	@Test
-	public void testInnerNodes() throws Exception {
-
-		String queryString = "from c: V{localities.County} "
-				+ "report innerNodes(pathSystem(c, -->{localities.ContainsLocality} -->{connections.AirRoute})) "
-				+ "end";
-		JValue result = evalTestQuery("InnerNodes", queryString,
-				TestVersion.CITY_MAP_GRAPH);
-		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(countyCount, bag.size());
-		for (JValue v : bag) {
-			assertEquals(1, v.toCollection().size());
-		}
-	}
-
-	@Test
-	public void testLeaves() throws Exception {
-		String queryString = "from c: V{localities.County} "
-				+ "report leaves(pathSystem(c, -->{localities.ContainsLocality} <--{localities.HasCapital})) "
-				+ "end";
-		JValue result = evalTestQuery("Leaves", queryString,
-				TestVersion.CITY_MAP_GRAPH);
-		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(countyCount, bag.size());
-		for (JValue v : bag) {
-			assertEquals(1, v.toCollection().size());
-		}
-	}
-
-	@Test
-	public void testMinPathLength() throws Exception {
-		String queryString = "from c: V{localities.County} "
-				+ "report minPathLength(pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad} -->{connections.Street})) "
-				+ "end";
-		JValue result = evalTestQuery("MinPathLength", queryString,
-				TestVersion.CITY_MAP_GRAPH);
-		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(countyCount, bag.size());
-		for (JValue v : bag) {
-			assertEquals(3, (int) v.toInteger());
-		}
-	}
-
-	@Test
-	public void testMaxPathLength() throws Exception {
-		String queryString = "from c: V{localities.County} "
-				+ "report minPathLength(pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad} -->{connections.Street})) "
-				+ "end";
-		JValue result = evalTestQuery("MaxPathLength", queryString,
-				TestVersion.CITY_MAP_GRAPH);
-		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(countyCount, bag.size());
-		for (JValue v : bag) {
-			assertEquals(3, (int) v.toInteger());
-		}
-	}
-
-	@Test
-	public void testParent() throws Exception {
-		String queryString = "from c: V{localities.County}, r:V{junctions.Crossroad} "
-				+ "report parent(pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad}), r) "
-				+ "end";
-		JValue result = evalTestQuery("Parent", queryString,
-				TestVersion.CITY_MAP_GRAPH);
-		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(countyCount * crossroadCount, bag.size());
-		int invalid = 0;
-		for (JValue v : bag) {
-			if (!v.isValid()) {
-				invalid++;
-			}
-		}
-		assertEquals(crossroadCount + uncontainedCrossroadCount, invalid);
-	}
-
-	@Test
-	public void testSiblings2() throws Exception {
-		String queryString = "from c: V{localities.County}, r:V{junctions.Crossroad} "
-				+ "report siblings(r, pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad})) "
-				+ "end";
-		JValue result = evalTestQuery("Siblings", queryString,
-				TestVersion.CITY_MAP_GRAPH);
-		JValueBag bag = result.toCollection().toJValueBag();
-
-		assertEquals(countyCount * crossroadCount, bag.size());
-
-		int noSiblingsFound = 0;
-		int expectedValue = crossroadCount - 2 * uncontainedCrossroadCount;
-
-		for (JValue v : bag) {
-			int size = v != null ? v.toCollection().size() : 0;
-
-			if (size == 0) {
-				noSiblingsFound++;
-			} else {
-				assertEquals(expectedValue, v.toCollection().size());
-			}
-		}
-	}
-
-	@Test
-	public void testTypes() throws Exception {
-		String queryString = "from c: V{localities.County}"
-				+ "report types(pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad})) "
-				+ "end";
-		JValue result = evalTestQuery("TypeSet", queryString,
-				TestVersion.CITY_MAP_GRAPH);
-		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(countyCount, bag.size());
-		// TODO this test is not well thought through
-		for (JValue v : bag) {
-			int size = v.toCollection().size();
-			assertTrue(size == 6 || size == 10);
-		}
-	}
-
-	@Test
-	public void testPathLength() throws Exception {
-		String queryString = "from c: V{localities.County}, r:V{junctions.Crossroad}"
-				+ "report pathLength(extractPath(pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad}), r)) "
-				+ "end";
-		JValue result = evalTestQuery("PathLength", queryString,
-				TestVersion.CITY_MAP_GRAPH);
-		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(countyCount * crossroadCount, bag.size());
-		int nullPath = 0;
-		for (JValue v : bag) {
-			if (v.toInteger() == 0) {
-				nullPath++;
-			} else {
-				assertEquals(2, (int) v.toInteger());
-			}
-		}
-		assertEquals(crossroadCount + uncontainedCrossroadCount, nullPath);
-	}
-
-	@Test
-	public void testIsCycle2() throws Exception {
-		String queryString = "from c: V{localities.County}, r:V{junctions.Crossroad}"
-				+ "report isCycle(extractPath(pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad}), r)) "
-				+ "end";
-		JValue result = evalTestQuery("isCycle", queryString,
-				TestVersion.CITY_MAP_GRAPH);
-		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(countyCount * crossroadCount, bag.size());
-		for (JValue v : bag) {
-			assertFalse(v.toBoolean());
-		}
-	}
-
-	@Test
-	public void testNodeTrace2() throws Exception {
-		String queryString = "from c: V{localities.County}, r:V{junctions.Crossroad}"
-				+ "report nodeTrace(extractPath(pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad}), r)) "
-				+ "end";
-		JValue result = evalTestQuery("PathLength", queryString,
-				TestVersion.CITY_MAP_GRAPH);
-		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(countyCount * crossroadCount, bag.size());
-		int emptyTraces = 0;
-		for (JValue v : bag) {
-			if (v.toCollection().isEmpty()) {
-				emptyTraces++;
-			} else {
-				assertEquals(3, v.toCollection().size());
-			}
-		}
-		assertEquals(crossroadCount + uncontainedCrossroadCount, emptyTraces);
+	public void testEdgesTraceNull() throws Exception {
+		// TODO
+		fail();
 	}
 
 	@Test
@@ -476,55 +290,75 @@ public class PathSystemFunctionTest extends GenericTest {
 	}
 
 	@Test
-	public void testIsSubPath() throws Exception {
-		String queryString = "from v: V{localities.County}, a:V{junctions.Airport}, w: V{junctions.Crossroad} report"
-				+ " isSubPathOf( "
-				+ "extractPath(pathSystem(v, -->{localities.ContainsLocality}), a), "
-				+ "extractPath(pathSystem(v, -->{localities.ContainsLocality} a -->{localities.ContainsCrossroad}), w)) end";
-		JValue result = evalTestQuery("IsSubPath", queryString,
+	public void testElements() throws Exception {
+		// TODO
+		fail();
+	}
+
+	@Test
+	public void testElementsNull() throws Exception {
+		// TODO
+		fail();
+	}
+
+	@Test
+	public void testEndVertexDepth() throws Exception {
+		// TODO
+		fail();
+	}
+
+	@Test
+	public void testEndVertexNull() throws Exception {
+		// TODO
+		fail();
+	}
+
+	@Test
+	public void testExtractPath() throws Exception {
+		String queryString = "from c: V{localities.County}, r:V{junctions.Crossroad} "
+				+ "report extractPath(pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad}), r)"
+				+ "end";
+		JValue result = evalTestQuery("ExtractPath", queryString,
 				TestVersion.CITY_MAP_GRAPH);
 		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(countyCount * airportCount * crossroadCount, bag.size());
-		int trueCounts = 0;
+		assertEquals(countyCount * crossroadCount, bag.size());
+		int invalidPaths = 0;
 		for (JValue v : bag) {
-			if (v.toBoolean()) {
-				trueCounts++;
+			JValuePath p = v.toPath();
+			if (!p.isValidPath()) {
+				invalidPaths++;
+			} else {
+				assertEquals(2, p.pathLength());
 			}
 		}
-		assertEquals(airportCount, trueCounts);
+		assertEquals(uncontainedCrossroadCount + crossroadCount, invalidPaths);
 	}
 
 	@Test
-	public void testEdgesConnected() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from x : V{WhereExpression} report edgesConnected(x) end";
-		JValue result = evalTestQuery("EdgesConnected", queryString);
-		assertEquals(6, getNthValue(result.toCollection(), 0).toCollection()
-				.size());
+	public void testExtractPathNull() throws Exception {
+		// TODO
+		fail();
 	}
 
 	@Test
-	public void testEdgesFrom() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from x : V{WhereExpression} report edgesFrom(x) end";
-		JValue result = evalTestQuery("EdgesFrom", queryString);
-		assertEquals(1, result.toCollection().size());
-		assertEquals(1, getNthValue(result.toCollection(), 0).toCollection()
-				.size());
-	}
+	public void testInnerNodes() throws Exception {
 
-	@Test
-	public void testEdgesTo() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from x : V{WhereExpression} report edgesTo(x) end";
-		JValue result = evalTestQuery("EdgesTo", queryString);
-		assertEquals(1, result.toCollection().size());
-		for (JValue j : result.toCollection()) {
-			assertEquals(5, j.toCollection().size());
+		String queryString = "from c: V{localities.County} "
+				+ "report innerNodes(pathSystem(c, -->{localities.ContainsLocality} -->{connections.AirRoute})) "
+				+ "end";
+		JValue result = evalTestQuery("InnerNodes", queryString,
+				TestVersion.CITY_MAP_GRAPH);
+		JValueBag bag = result.toCollection().toJValueBag();
+		assertEquals(countyCount, bag.size());
+		for (JValue v : bag) {
+			assertEquals(1, v.toCollection().size());
 		}
+	}
+
+	@Test
+	public void testInnerNodesNull() throws Exception {
+		// TODO
+		fail();
 	}
 
 	@Test
@@ -545,6 +379,147 @@ public class PathSystemFunctionTest extends GenericTest {
 		for (JValue v : result.toCollection()) {
 			assertEquals(JValueBoolean.getFalseValue(), v.toBoolean());
 		}
+	}
+
+	@Test
+	public void testIsCycle2() throws Exception {
+		String queryString = "from c: V{localities.County}, r:V{junctions.Crossroad}"
+				+ "report isCycle(extractPath(pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad}), r)) "
+				+ "end";
+		JValue result = evalTestQuery("isCycle", queryString,
+				TestVersion.CITY_MAP_GRAPH);
+		JValueBag bag = result.toCollection().toJValueBag();
+		assertEquals(countyCount * crossroadCount, bag.size());
+		for (JValue v : bag) {
+			assertFalse(v.toBoolean());
+		}
+	}
+
+	@Test
+	public void testIsCyclicNull() throws Exception {
+		// TODO
+		fail();
+	}
+
+	@Test
+	public void testIsReachable() throws Exception {
+		// TODO
+		fail();
+	}
+
+	@Test
+	public void testIsReachableNull() throws Exception {
+		// TODO
+		fail();
+	}
+
+	@Test
+	public void testIsSubPath() throws Exception {
+		String queryString = "from v: V{localities.County}, a:V{junctions.Airport}, w: V{junctions.Crossroad} report"
+				+ " isSubPathOf( "
+				+ "extractPath(pathSystem(v, -->{localities.ContainsLocality}), a), "
+				+ "extractPath(pathSystem(v, -->{localities.ContainsLocality} a -->{localities.ContainsCrossroad}), w)) end";
+		JValue result = evalTestQuery("IsSubPath", queryString,
+				TestVersion.CITY_MAP_GRAPH);
+		JValueBag bag = result.toCollection().toJValueBag();
+		assertEquals(countyCount * airportCount * crossroadCount, bag.size());
+		int trueCounts = 0;
+		for (JValue v : bag) {
+			if (v.toBoolean()) {
+				trueCounts++;
+			}
+		}
+		assertEquals(airportCount, trueCounts);
+	}
+
+	@Test
+	public void testIsSubPathNull() throws Exception {
+		// TODO
+		fail();
+	}
+
+	@Test
+	public void testLeaves() throws Exception {
+		String queryString = "from c: V{localities.County} "
+				+ "report leaves(pathSystem(c, -->{localities.ContainsLocality} <--{localities.HasCapital})) "
+				+ "end";
+		JValue result = evalTestQuery("Leaves", queryString,
+				TestVersion.CITY_MAP_GRAPH);
+		JValueBag bag = result.toCollection().toJValueBag();
+		assertEquals(countyCount, bag.size());
+		for (JValue v : bag) {
+			assertEquals(1, v.toCollection().size());
+		}
+	}
+
+	@Test
+	public void testLeavesNull() throws Exception {
+		// TODO
+		fail();
+	}
+
+	@Test
+	public void testMatches() throws Exception {
+		// TODO
+		fail();
+	}
+
+	@Test
+	public void testMatchesNull() throws Exception {
+		// TODO
+		fail();
+	}
+
+	@Test
+	public void testMaxPathLength() throws Exception {
+		String queryString = "from c: V{localities.County} "
+				+ "report minPathLength(pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad} -->{connections.Street})) "
+				+ "end";
+		JValue result = evalTestQuery("MaxPathLength", queryString,
+				TestVersion.CITY_MAP_GRAPH);
+		JValueBag bag = result.toCollection().toJValueBag();
+		assertEquals(countyCount, bag.size());
+		for (JValue v : bag) {
+			assertEquals(3, (int) v.toInteger());
+		}
+	}
+
+	@Test
+	public void testMaxPathLengthNull() throws Exception {
+		// TODO
+		fail();
+	}
+
+	@Test
+	public void testMinPathLength() throws Exception {
+		String queryString = "from c: V{localities.County} "
+				+ "report minPathLength(pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad} -->{connections.Street})) "
+				+ "end";
+		JValue result = evalTestQuery("MinPathLength", queryString,
+				TestVersion.CITY_MAP_GRAPH);
+		JValueBag bag = result.toCollection().toJValueBag();
+		assertEquals(countyCount, bag.size());
+		for (JValue v : bag) {
+			assertEquals(3, (int) v.toInteger());
+		}
+	}
+
+	@Test
+	public void testMinPathLengthNull() throws Exception {
+		// TODO
+		fail();
+	}
+
+	@Test
+	public void testNodes() throws Exception {
+		// TODO
+		fail();
+	}
+
+	@Test
+	public void testNodesNull() throws Exception {
+		// TODO
+		fail();
 	}
 
 	@Test
@@ -575,6 +550,106 @@ public class PathSystemFunctionTest extends GenericTest {
 	}
 
 	@Test
+	public void testNodeTrace2() throws Exception {
+		String queryString = "from c: V{localities.County}, r:V{junctions.Crossroad}"
+				+ "report nodeTrace(extractPath(pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad}), r)) "
+				+ "end";
+		JValue result = evalTestQuery("PathLength", queryString,
+				TestVersion.CITY_MAP_GRAPH);
+		JValueBag bag = result.toCollection().toJValueBag();
+		assertEquals(countyCount * crossroadCount, bag.size());
+		int emptyTraces = 0;
+		for (JValue v : bag) {
+			if (v.toCollection().isEmpty()) {
+				emptyTraces++;
+			} else {
+				assertEquals(3, v.toCollection().size());
+			}
+		}
+		assertEquals(crossroadCount + uncontainedCrossroadCount, emptyTraces);
+	}
+
+	@Test
+	public void testNodeTraceNull() throws Exception {
+		// TODO
+		fail();
+	}
+
+	@Test
+	public void testParent() throws Exception {
+		String queryString = "from c: V{localities.County}, r:V{junctions.Crossroad} "
+				+ "report parent(pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad}), r) "
+				+ "end";
+		JValue result = evalTestQuery("Parent", queryString,
+				TestVersion.CITY_MAP_GRAPH);
+		JValueBag bag = result.toCollection().toJValueBag();
+		assertEquals(countyCount * crossroadCount, bag.size());
+		int invalid = 0;
+		for (JValue v : bag) {
+			if (!v.isValid()) {
+				invalid++;
+			}
+		}
+		assertEquals(crossroadCount + uncontainedCrossroadCount, invalid);
+	}
+
+	@Test
+	public void testParentNull() throws Exception {
+		// TODO
+		fail();
+	}
+
+	@Test
+	public void testPathConcat() throws Exception {
+		// TODO
+		fail();
+	}
+
+	@Test
+	public void testPathConcatNull() throws Exception {
+		// TODO
+		fail();
+	}
+
+	@Test
+	public void testPathExpr() throws Exception {
+		// TODO
+		fail();
+	}
+
+	@Test
+	public void testPathExprNull() throws Exception {
+		// TODO
+		fail();
+	}
+
+	@Test
+	public void testPathLength() throws Exception {
+		String queryString = "from c: V{localities.County}, r:V{junctions.Crossroad}"
+				+ "report pathLength(extractPath(pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad}), r)) "
+				+ "end";
+		JValue result = evalTestQuery("PathLength", queryString,
+				TestVersion.CITY_MAP_GRAPH);
+		JValueBag bag = result.toCollection().toJValueBag();
+		assertEquals(countyCount * crossroadCount, bag.size());
+		int nullPath = 0;
+		for (JValue v : bag) {
+			if (v.toInteger() == 0) {
+				nullPath++;
+			} else {
+				assertEquals(2, (int) v.toInteger());
+			}
+		}
+		assertEquals(crossroadCount + uncontainedCrossroadCount, nullPath);
+	}
+
+	@Test
+	public void testPathLengthNull() throws Exception {
+		// TODO
+		fail();
+	}
+
+	@Test
 	public void testSiblings() throws Exception {
 		// TODO: Broken, because the GReQL parser removes all WhereExpressions
 		// and LetExpressions!
@@ -584,5 +659,108 @@ public class PathSystemFunctionTest extends GenericTest {
 		for (JValue j : result.toCollection()) {
 			assertTrue(5 <= j.toCollection().size());
 		}
+	}
+
+	@Test
+	public void testSiblings2() throws Exception {
+		String queryString = "from c: V{localities.County}, r:V{junctions.Crossroad} "
+				+ "report siblings(r, pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad})) "
+				+ "end";
+		JValue result = evalTestQuery("Siblings", queryString,
+				TestVersion.CITY_MAP_GRAPH);
+		JValueBag bag = result.toCollection().toJValueBag();
+
+		assertEquals(countyCount * crossroadCount, bag.size());
+
+		int noSiblingsFound = 0;
+		int expectedValue = crossroadCount - 2 * uncontainedCrossroadCount;
+
+		for (JValue v : bag) {
+			int size = v != null ? v.toCollection().size() : 0;
+
+			if (size == 0) {
+				noSiblingsFound++;
+			} else {
+				assertEquals(expectedValue, v.toCollection().size());
+			}
+		}
+	}
+
+	@Test
+	public void testSiblingsNull() throws Exception {
+		// TODO
+		fail();
+	}
+
+	@Test
+	public void testSlice() throws Exception {
+		// TODO
+		fail();
+	}
+
+	@Test
+	public void testSliceNull() throws Exception {
+		// TODO
+		fail();
+	}
+
+	@Test
+	public void testTypes() throws Exception {
+		String queryString = "from c: V{localities.County}"
+				+ "report types(pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad})) "
+				+ "end";
+		JValue result = evalTestQuery("TypeSet", queryString,
+				TestVersion.CITY_MAP_GRAPH);
+		JValueBag bag = result.toCollection().toJValueBag();
+		assertEquals(countyCount, bag.size());
+		// TODO this test is not well thought through
+		for (JValue v : bag) {
+			int size = v.toCollection().size();
+			assertTrue(size == 6 || size == 10);
+		}
+	}
+
+	@Test
+	public void testStartVertex() throws Exception {
+		// TODO
+		fail();
+	}
+
+	@Test
+	public void testStartVertexNull() throws Exception {
+		// TODO
+		fail();
+	}
+
+	/*
+	 * Test method for
+	 * 'greql2.evaluator.GreqlEvaluator.evaluateForwardVertexSet(ForwardVertexSet,
+	 * Graph)'
+	 */
+	@Test
+	public void testWeightPathSystem() throws Exception {
+		String queryString = "from c: V{localities.County} "
+				+ "with c.name <> 'Rheinland-Pfalz' "
+				+ "report weight(pathSystem(c, -->{localities.ContainsLocality} -->{connections.AirRoute})) "
+				+ "end";
+		JValue result = evalTestQuery("PathSystemWeight", queryString,
+				TestVersion.CITY_MAP_GRAPH);
+		JValueBag bag = result.toCollection().toJValueBag();
+		assertEquals(1, bag.size());
+		for (JValue v : bag) {
+			assertEquals(4, (int) v.toInteger());
+		}
+	}
+
+	@Test
+	public void testWeight() throws Exception {
+		// TODO
+		fail();
+	}
+
+	@Test
+	public void testWeightNull() throws Exception {
+		// TODO
+		fail();
 	}
 }
