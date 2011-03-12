@@ -1199,4 +1199,9 @@ public class JValuePathSystem extends JValueImpl {
 		return toJValueSet();
 	}
 
+	@Override
+	public Object toObject() {
+		return this;
+	}
+
 }

@@ -74,12 +74,6 @@ public class PathSystemFunctionTest extends GenericTest {
 	}
 
 	@Test
-	public void testContainsNull() throws Exception {
-		// TODO
-		fail();
-	}
-
-	@Test
 	public void testContainsPathSystem() throws Exception {
 		String queryString = "from c: V{localities.County}, a:V{junctions.Airport} "
 				+ "with c.name <> 'Rheinland-Pfalz' "
@@ -106,8 +100,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testDepthNull() throws Exception {
-		// TODO
-		fail();
+		assertQueryEqualsNull("using nll: depth(nll)");
 	}
 
 	@Test
@@ -119,7 +112,9 @@ public class PathSystemFunctionTest extends GenericTest {
 	@Test
 	public void testDistanceNull() throws Exception {
 		// TODO
-		fail();
+		assertQueryEqualsNull("using nll: distance(nll, nll)");
+		// assertQueryEqualsNull("using nll: distance(?, nll)");
+		// assertQueryEqualsNull("using nll: distance(nll, ?)");
 	}
 
 	@Test
@@ -263,8 +258,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testEdgesTraceNull() throws Exception {
-		// TODO
-		fail();
+		assertQueryEqualsNull("using nll: edgeTrace(nll)");
 	}
 
 	@Test
@@ -337,7 +331,11 @@ public class PathSystemFunctionTest extends GenericTest {
 	@Test
 	public void testExtractPathNull() throws Exception {
 		// TODO
-		fail();
+		assertQueryEqualsNull("using nll: extractPath(nll)");
+		assertQueryEqualsNull("using nll: extractPath(nll, nll)");
+		// assertQueryEqualsNull("using nll: extractPath(?, nll)");
+		assertQueryEqualsNull("using nll: extractPath(nll, 1)");
+		assertQueryEqualsNull("using nll: extractPath(nll, firstVertex())");
 	}
 
 	@Test
@@ -357,8 +355,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testInnerNodesNull() throws Exception {
-		// TODO
-		fail();
+		assertQueryEqualsNull("using nll: innerNodes(nll)");
 	}
 
 	@Test
@@ -397,8 +394,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testIsCyclicNull() throws Exception {
-		// TODO
-		fail();
+		assertQueryEqualsNull("using nll: isCycle(nll)");
 	}
 
 	@Test
