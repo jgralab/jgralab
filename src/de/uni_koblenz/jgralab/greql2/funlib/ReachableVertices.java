@@ -105,17 +105,18 @@ public class ReachableVertices extends Greql2Function {
 	public JValue evaluate(Graph graph,
 			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
 			throws EvaluateException {
-		DFA dfa = null;
-		switch (checkArguments(arguments)) {
-		case 0:
-		case 1:
-			dfa = arguments[1].toAutomaton().getDFA();
-			break;
-		default:
+
+		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, arguments);
 		}
-		Vertex startVertex = arguments[0].toVertex();
+		if (isAnyArgumentNull(arguments)) {
+			return new JValueImpl();
+		}
 
+		// TODO The second signature is not supported by the existing code.
+
+		DFA dfa = arguments[1].toAutomaton().getDFA();
+		Vertex startVertex = arguments[0].toVertex();
 		return search(startVertex, dfa, subgraph);
 	}
 

@@ -106,7 +106,7 @@ public class Siblings extends Greql2Function {
 			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
 			throws EvaluateException {
 
-		if (!arguments[0].isVertex()) {
+		if (isAnyArgumentNull(arguments)) {
 			return new JValueImpl();
 		}
 
