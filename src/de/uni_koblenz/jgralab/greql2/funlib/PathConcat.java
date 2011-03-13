@@ -43,6 +43,7 @@ import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
@@ -95,6 +96,9 @@ public class PathConcat extends Greql2Function {
 			throws EvaluateException {
 		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, arguments);
+		}
+		if (isAnyArgumentNull(arguments)) {
+			return new JValueImpl();
 		}
 
 		JValuePath path1 = arguments[0].toPath();

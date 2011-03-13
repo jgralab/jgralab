@@ -477,9 +477,11 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testMatchesNull() throws Exception {
+		// TODO
 		assertQueryEqualsNull("using nll: matches(nll, nll)");
-		assertQueryEqualsNull("using nll: matches(nll, ?)");
-		assertQueryEqualsNull("using nll: matches(?, nll)");
+		// assertQueryEqualsNull("using nll: matches(nll, ?)");
+		// assertQueryEqualsNull("using nll: matches(?, nll)");
+		fail();
 	}
 
 	@Test
@@ -498,7 +500,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testMaxPathLengthNull() throws Exception {
-		assertQueryEqualsNull("using nll: maxLength(nll)");
+		assertQueryEqualsNull("using nll: maxPathLength(nll)");
 	}
 
 	@Test
@@ -517,7 +519,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testMinPathLengthNull() throws Exception {
-		assertQueryEqualsNull("using nll: minLength(nll)");
+		assertQueryEqualsNull("using nll: minPathLength(nll)");
 		fail();
 	}
 
@@ -671,19 +673,19 @@ public class PathSystemFunctionTest extends GenericTest {
 	@Test
 	public void testReachableVertexNull() throws Exception {
 		// TODO
-		assertQueryEqualsNull("using nll: pathConcat(nll, nll)");
-		// assertQueryEqualsNull("using nll: pathConcat(nll, ?)");
-		assertQueryEqualsNull("using nll: pathConcat(firstVertex(), nll)");
+		assertQueryEqualsNull("using nll: reachableVertices(nll, nll)");
+		// assertQueryEqualsNull("using nll: reachableVertices(nll, ?)");
+		assertQueryEqualsNull("using nll: reachableVertices(firstVertex(), nll)");
 
-		assertQueryEqualsNull("using nll: pathConcat(nll, nll, nll)");
-		// assertQueryEqualsNull("using nll: pathConcat(nll, ?, nll)");
-		assertQueryEqualsNull("using nll: pathConcat(firstVertex(), nll, nll)");
-		// assertQueryEqualsNull("using nll: pathConcat(firstVertex(), ?, nll)");
+		assertQueryEqualsNull("using nll: reachableVertices(nll, nll, nll)");
+		// assertQueryEqualsNull("using nll: reachableVertices(nll, ?, nll)");
+		assertQueryEqualsNull("using nll: reachableVertices(firstVertex(), nll, nll)");
+		// assertQueryEqualsNull("using nll: reachableVertices(firstVertex(), ?, nll)");
 
-		assertQueryEqualsNull("using nll: pathConcat(nll, nll, ?)");
-		// assertQueryEqualsNull("using nll: pathConcat(nll, ?, ?)");
-		// assertQueryEqualsNull("using nll: pathConcat(firstVertex(), nll, ?)");
-		// assertQueryEqualsNull("using nll: pathConcat(firstVertex(), ?, ?)");
+		// assertQueryEqualsNull("using nll: reachableVertices(nll, nll, ?)");
+		// assertQueryEqualsNull("using nll: reachableVertices(nll, ?, ?)");
+		// assertQueryEqualsNull("using nll: reachableVertices(firstVertex(), nll, ?)");
+		// assertQueryEqualsNull("using nll: reachableVertices(firstVertex(), ?, ?)");
 		fail();
 	}
 
@@ -727,9 +729,9 @@ public class PathSystemFunctionTest extends GenericTest {
 	@Test
 	public void testSiblingsNull() throws Exception {
 		// TODO
-		assertQueryEqualsNull("using nll: pathConcat(nll, nll)");
-		// assertQueryEqualsNull("using nll: pathConcat(nll, ?)");
-		assertQueryEqualsNull("using nll: pathConcat(firstVertex(), nll)");
+		assertQueryEqualsNull("using nll: siblings(nll, nll)");
+		// assertQueryEqualsNull("using nll: siblings(nll, ?)");
+		assertQueryEqualsNull("using nll: siblings(firstVertex(), nll)");
 		fail();
 	}
 
