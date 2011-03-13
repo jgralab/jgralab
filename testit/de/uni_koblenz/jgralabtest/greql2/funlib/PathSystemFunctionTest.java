@@ -92,6 +92,11 @@ public class PathSystemFunctionTest extends GenericTest {
 		assertEquals(0, falseFound);
 	}
 
+	// @Test
+	public void testContainsNull() throws Exception {
+		// See CollectionFunctions
+	}
+
 	@Test
 	public void testDepth() throws Exception {
 		// TODO
@@ -115,6 +120,7 @@ public class PathSystemFunctionTest extends GenericTest {
 		assertQueryEqualsNull("using nll: distance(nll, nll)");
 		// assertQueryEqualsNull("using nll: distance(?, nll)");
 		// assertQueryEqualsNull("using nll: distance(nll, ?)");
+		fail();
 	}
 
 	@Test
@@ -146,14 +152,15 @@ public class PathSystemFunctionTest extends GenericTest {
 		// and LetExpressions!
 		String queryString = "from x : V{WhereExpression} report edgesConnected(x) end";
 		JValue result = evalTestQuery("EdgesConnected", queryString);
+		JValue result2 = evalTestQuery("", "V{WhereExpression}");
+		System.out.println(result2);
 		assertEquals(6, getNthValue(result.toCollection(), 0).toCollection()
 				.size());
 	}
 
-	@Test
+	// @Test
 	public void testEdgesConnectedNull() throws Exception {
-		// TODO
-		fail();
+		// See GraphFunctions
 	}
 
 	@Test
@@ -188,10 +195,9 @@ public class PathSystemFunctionTest extends GenericTest {
 				.size());
 	}
 
-	@Test
+	// @Test
 	public void testEdgesFromNull() throws Exception {
-		// TODO
-		fail();
+		// See GraphFunctions
 	}
 
 	@Test
@@ -229,10 +235,9 @@ public class PathSystemFunctionTest extends GenericTest {
 		}
 	}
 
-	@Test
+	// @Test
 	public void testEdgesToNull() throws Exception {
-		// TODO
-		fail();
+		// See GraphFunctions
 	}
 
 	@Test
@@ -254,11 +259,6 @@ public class PathSystemFunctionTest extends GenericTest {
 			}
 		}
 		assertEquals(crossroadCount + uncontainedCrossroadCount, empty);
-	}
-
-	@Test
-	public void testEdgesTraceNull() throws Exception {
-		assertQueryEqualsNull("using nll: edgeTrace(nll)");
 	}
 
 	@Test
@@ -284,27 +284,30 @@ public class PathSystemFunctionTest extends GenericTest {
 	}
 
 	@Test
+	public void testEdgesTraceNull() throws Exception {
+		assertQueryEqualsNull("using nll: edgeTrace(nll)");
+	}
+
+	@Test
 	public void testElements() throws Exception {
 		// TODO
 		fail();
 	}
 
-	@Test
+	// @Test
 	public void testElementsNull() throws Exception {
+		// See CollectionFunctions
+	}
+
+	@Test
+	public void testEndVertex() throws Exception {
 		// TODO
 		fail();
 	}
 
-	@Test
-	public void testEndVertexDepth() throws Exception {
-		// TODO
-		fail();
-	}
-
-	@Test
+	// @Test
 	public void testEndVertexNull() throws Exception {
-		// TODO
-		fail();
+		// See GraphFunctions
 	}
 
 	@Test
@@ -406,11 +409,20 @@ public class PathSystemFunctionTest extends GenericTest {
 	@Test
 	public void testIsReachableNull() throws Exception {
 		// TODO
+		assertQueryEqualsNull("using nll: isReachable(nll, nll, nll)");
+		assertQueryEqualsNull("using nll: isReachable(firstVertex(), nll, nll)");
+		assertQueryEqualsNull("using nll: isReachable(nll, lastVertex(), nll)");
+		assertQueryEqualsNull("using nll: isReachable(firstVertex(), lastVertex(), nll)");
+
+		// assertQueryEqualsNull("using nll: isReachable(nll, nll, ?)");
+		// assertQueryEqualsNull("using nll: isReachable(firstVertex(), nll, ?)");
+		// assertQueryEqualsNull("using nll: isReachable(nll, lastVertex(), ?)");
+		// assertQueryEqualsNull("using nll: isReachable(firstVertex(), lastVertex(), ?)");
 		fail();
 	}
 
 	@Test
-	public void testIsSubPath() throws Exception {
+	public void testIsSubPathOf() throws Exception {
 		String queryString = "from v: V{localities.County}, a:V{junctions.Airport}, w: V{junctions.Crossroad} report"
 				+ " isSubPathOf( "
 				+ "extractPath(pathSystem(v, -->{localities.ContainsLocality}), a), "
@@ -429,8 +441,12 @@ public class PathSystemFunctionTest extends GenericTest {
 	}
 
 	@Test
-	public void testIsSubPathNull() throws Exception {
+	public void testIsSubPathOfNull() throws Exception {
 		// TODO
+
+		assertQueryEqualsNull("using nll: isSubPathOf(nll, nll)");
+		// assertQueryEqualsNull("using nll: isSubPathOf(?, nll)");
+		// assertQueryEqualsNull("using nll: isSubPathOf(nll, ?)");
 		fail();
 	}
 
@@ -450,8 +466,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testLeavesNull() throws Exception {
-		// TODO
-		fail();
+		assertQueryEqualsNull("using nll: leaves(nll)");
 	}
 
 	@Test
@@ -462,8 +477,9 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testMatchesNull() throws Exception {
-		// TODO
-		fail();
+		assertQueryEqualsNull("using nll: matches(nll, nll)");
+		assertQueryEqualsNull("using nll: matches(nll, ?)");
+		assertQueryEqualsNull("using nll: matches(?, nll)");
 	}
 
 	@Test
@@ -482,8 +498,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testMaxPathLengthNull() throws Exception {
-		// TODO
-		fail();
+		assertQueryEqualsNull("using nll: maxLength(nll)");
 	}
 
 	@Test
@@ -502,7 +517,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testMinPathLengthNull() throws Exception {
-		// TODO
+		assertQueryEqualsNull("using nll: minLength(nll)");
 		fail();
 	}
 
@@ -514,8 +529,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testNodesNull() throws Exception {
-		// TODO
-		fail();
+		assertQueryEqualsNull("using nll: nodes(nll)");
 	}
 
 	@Test
@@ -567,8 +581,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testNodeTraceNull() throws Exception {
-		// TODO
-		fail();
+		assertQueryEqualsNull("using nll: nodeTrace(nll)");
 	}
 
 	@Test
@@ -592,6 +605,9 @@ public class PathSystemFunctionTest extends GenericTest {
 	@Test
 	public void testParentNull() throws Exception {
 		// TODO
+		assertQueryEqualsNull("using nll: parent(nll, nll)");
+		// assertQueryEqualsNull("using nll: parent(?, nll)");
+		// assertQueryEqualsNull("using nll: parent(nll, ?)");
 		fail();
 	}
 
@@ -604,6 +620,9 @@ public class PathSystemFunctionTest extends GenericTest {
 	@Test
 	public void testPathConcatNull() throws Exception {
 		// TODO
+		assertQueryEqualsNull("using nll: pathConcat(nll, nll)");
+		// assertQueryEqualsNull("using nll: pathConcat(?, nll)");
+		// assertQueryEqualsNull("using nll: pathConcat(nll, ?)");
 		fail();
 	}
 
@@ -615,8 +634,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testPathExprNull() throws Exception {
-		// TODO
-		fail();
+		assertQueryEqualsNull("using nll: pathExpr(nll)");
 	}
 
 	@Test
@@ -641,7 +659,31 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testPathLengthNull() throws Exception {
+		assertQueryEqualsNull("using nll: pathLength(nll)");
+	}
+
+	@Test
+	public void testReachableVertex() throws Exception {
 		// TODO
+		fail();
+	}
+
+	@Test
+	public void testReachableVertexNull() throws Exception {
+		// TODO
+		assertQueryEqualsNull("using nll: pathConcat(nll, nll)");
+		// assertQueryEqualsNull("using nll: pathConcat(nll, ?)");
+		assertQueryEqualsNull("using nll: pathConcat(firstVertex(), nll)");
+
+		assertQueryEqualsNull("using nll: pathConcat(nll, nll, nll)");
+		// assertQueryEqualsNull("using nll: pathConcat(nll, ?, nll)");
+		assertQueryEqualsNull("using nll: pathConcat(firstVertex(), nll, nll)");
+		// assertQueryEqualsNull("using nll: pathConcat(firstVertex(), ?, nll)");
+
+		assertQueryEqualsNull("using nll: pathConcat(nll, nll, ?)");
+		// assertQueryEqualsNull("using nll: pathConcat(nll, ?, ?)");
+		// assertQueryEqualsNull("using nll: pathConcat(firstVertex(), nll, ?)");
+		// assertQueryEqualsNull("using nll: pathConcat(firstVertex(), ?, ?)");
 		fail();
 	}
 
@@ -685,6 +727,9 @@ public class PathSystemFunctionTest extends GenericTest {
 	@Test
 	public void testSiblingsNull() throws Exception {
 		// TODO
+		assertQueryEqualsNull("using nll: pathConcat(nll, nll)");
+		// assertQueryEqualsNull("using nll: pathConcat(nll, ?)");
+		assertQueryEqualsNull("using nll: pathConcat(firstVertex(), nll)");
 		fail();
 	}
 
@@ -722,10 +767,9 @@ public class PathSystemFunctionTest extends GenericTest {
 		fail();
 	}
 
-	@Test
+	// @Test
 	public void testStartVertexNull() throws Exception {
-		// TODO
-		fail();
+		// See GraphFunctionTest
 	}
 
 	/*
@@ -749,14 +793,7 @@ public class PathSystemFunctionTest extends GenericTest {
 	}
 
 	@Test
-	public void testWeight() throws Exception {
-		// TODO
-		fail();
-	}
-
-	@Test
 	public void testWeightNull() throws Exception {
-		// TODO
-		fail();
+		assertQueryEqualsNull("using nll: weight(nll)");
 	}
 }
