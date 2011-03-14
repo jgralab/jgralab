@@ -57,10 +57,8 @@ import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
-import de.uni_koblenz.jgralab.utilities.tg2dot.SimpleTg2Dot;
 import de.uni_koblenz.jgralab.utilities.tgraphbrowser.StateRepository.State;
 
-@SuppressWarnings("deprecation")
 public class TwoDVisualizer {
 
 	public static int SECONDS_TO_WAIT_FOR_DOT = 60;
@@ -375,13 +373,17 @@ public class TwoDVisualizer {
 	/**
 	 * Creates the specific representation for the elements.
 	 */
-	private static class MyTg2Dot extends SimpleTg2Dot {
+	private static class MyTg2Dot {
 
 		private static final double ranksep = 1.5;
 		private static final boolean ranksepEqually = false;
 		private static final double nodesep = 0.25;
 		private static final String fontname = "Helvetica";
 		private static final int fontsize = 14;
+
+		protected String outputName = null;
+		private boolean printIncidenceNumbers = false;
+
 		/**
 		 * The elements to be displayed.
 		 */
@@ -440,13 +442,19 @@ public class TwoDVisualizer {
 			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * de.uni_koblenz.jgralab.utilities.tg2whatever.Tg2Whatever#printGraph()
+		/**
+		 * @param printIncidenceNumbers
+		 *            if true, then the incidence numbers will be printed near
+		 *            the start and end points of edges.
 		 */
-		@Override
+		public void setPrintIncidenceNumbers(boolean printIncidenceNumbers) {
+			this.printIncidenceNumbers = printIncidenceNumbers;
+		}
+
+		public boolean isPrintIncidenceNumbers() {
+			return printIncidenceNumbers;
+		}
+
 		public void convert() {
 			PrintStream out = null;
 			try {
@@ -472,14 +480,10 @@ public class TwoDVisualizer {
 			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot#graphStart(java.io
-		 * .PrintStream)
-		 */
-		@Override
+		public void graphEnd(PrintStream out) {
+			out.println("}");
+		}
+
 		public void graphStart(PrintStream out) {
 			out.println("digraph \"" + outputName + "\"");
 			out.println("{");
@@ -503,14 +507,6 @@ public class TwoDVisualizer {
 					+ " penwidth=\"3\"  arrowsize=\"1.5\" " + "];");
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot#printEdge(java.io.
-		 * PrintStream, de.uni_koblenz.jgralab.Edge)
-		 */
-		@Override
 		protected void printEdge(PrintStream out, Edge e) {
 			if (!selectedEdgeClasses.get(e.getAttributedElementClass())) {
 				return;
@@ -643,14 +639,6 @@ public class TwoDVisualizer {
 			out.print(value);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot#printVertex(java.io
-		 * .PrintStream, de.uni_koblenz.jgralab.Vertex)
-		 */
-		@Override
 		protected void printVertex(PrintStream out, Vertex v) {
 			AttributedElementClass cls = v.getAttributedElementClass();
 			out.print("v" + v.getId() + " [label=\"{{v" + v.getId() + "|"
@@ -686,6 +674,55 @@ public class TwoDVisualizer {
 					break;
 				}
 			}
+		}
+
+		protected String stringQuote(String s) {
+			StringBuffer sb = new StringBuffer();
+			for (char ch : s.toCharArray()) {
+				switch (ch) {
+				case '\\':
+					sb.append("\\\\");
+					break;
+				case '<':
+					sb.append("\\<");
+					break;
+				case '>':
+					sb.append("\\>");
+					break;
+				case '{':
+					sb.append("\\{");
+					break;
+				case '}':
+					sb.append("\\}");
+					break;
+				case '"':
+					sb.append("\\\"");
+					break;
+				case '|':
+					sb.append("\\|");
+					break;
+				case '\n':
+					sb.append("\\\\n");
+					break;
+				case '\r':
+					sb.append("\\\\r");
+					break;
+				case '\t':
+					sb.append("\\\\t");
+					break;
+				default:
+					if ((ch < ' ') || (ch > '\u007F')) {
+						sb.append("\\\\u");
+						String code = "000" + Integer.toHexString(ch);
+						sb.append(code.substring(code.length() - 4,
+								code.length()));
+					} else {
+						sb.append(ch);
+					}
+					break;
+				}
+			}
+			return sb.toString();
 		}
 	}
 }
