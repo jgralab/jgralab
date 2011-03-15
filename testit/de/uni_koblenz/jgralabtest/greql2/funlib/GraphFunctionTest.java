@@ -347,11 +347,9 @@ public class GraphFunctionTest extends GenericTest {
 
 	@Test
 	public void testGetValueNull() throws Exception {
-		evalTestQuery("V[1] store as vertex");
-		evalTestQuery("using vertex: attributeNames(vertex)[0] store as attributeName");
 		assertQueryEqualsNull("using nll: getValue(nll, nll)");
-		assertQueryEqualsNull("using nll, attributeName: getValue(nll, attributeName)");
-		assertQueryEqualsNull("using nll, vertex: getValue(vertex, nll)");
+		assertQueryEqualsNull("using nll: getValue(nll, '?')");
+		assertQueryEqualsNull("using nll: getValue(firstVertex(), nll)");
 	}
 
 	@Test
@@ -419,14 +417,8 @@ public class GraphFunctionTest extends GenericTest {
 
 	@Test
 	public void testIsIsolated() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-
-		String queryString = "from x : V{WhereExpression} report isIsolated(x) end";
-		JValue result = evalTestQuery("IsIsolated", queryString);
-		assertEquals(1, result.toCollection().size());
-		assertEquals(false, (boolean) getNthValue(result.toCollection(), 0)
-				.toBoolean());
+		evalTestQuery("theElement(from v : V{localities.County} with v.name = 'Berlin' report v end) store as iso");
+		assertQueryEquals("using iso: isIsolated(iso)", true);
 	}
 
 	@Test
@@ -436,15 +428,11 @@ public class GraphFunctionTest extends GenericTest {
 
 	@Test
 	public void testIsLoop() throws Exception {
-
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-
-		String queryString = "from x : E{IsBoundExprOfDefinition} report isLoop(x) end";
-		JValue result = evalTestQuery("IsLoop", queryString);
-		assertEquals(1, result.toCollection().size());
-		assertEquals(false, getNthValue(result.toCollection(), 0).toBoolean()
-				.booleanValue());
+		evalTestQuery("theElement(from e : E{connections.Street} with e.name = 'Südallee' report e end) store as loop");
+		assertQueryEquals("using loop: isLoop(loop)", true);
+		evalTestQuery("from e : E{connections.Street} with e.name <> 'Südallee' report e end store as nonLoops");
+		assertQueryEquals(
+				"using nonLoops : forall e : nonLoops @ not(isLoop(e))", true);
 	}
 
 	@Test
