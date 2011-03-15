@@ -406,6 +406,8 @@ public class GraphFunctionTest extends GenericTest {
 		assertQueryEquals("isAcyclic()", false);
 		setDefaultTestVersion(TestVersion.GREQL_GRAPH);
 		assertQueryEquals("isAcyclic()", true);
+		setDefaultTestVersion(TestVersion.TREE_GRAPH);
+		assertQueryEquals("isAcyclic()", true);
 		setDefaultTestVersion(TestVersion.CYCLIC_GRAPH);
 		assertQueryEquals("isAcyclic()", false);
 	}
@@ -452,10 +454,12 @@ public class GraphFunctionTest extends GenericTest {
 		// TODO
 		// assertQueryEqualsNull("using nll: isMarked(nll, ???)");
 		assertQueryEqualsNull("using nll: isMarked(nll, nll)");
+		fail();
 	}
 
 	@Test
 	public void testIsNull() throws Exception {
+		// TODO
 		assertQueryEquals("isNull(list())", false);
 		assertQueryEquals("using nll: isNull(nll)", true);
 		setBoundVariable("nll2", new JValueImpl((Object) null));
