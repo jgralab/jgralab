@@ -65,13 +65,27 @@ public class SQLConstantExtractor {
 		}
 	}
 
-	private static final Comparator<CSVEntry> entryComparator = new Comparator<CSVEntry>() {
+	private static final Comparator<CSVEntry> entryComparator1 = new Comparator<CSVEntry>() {
 
 		@Override
 		public int compare(CSVEntry o1, CSVEntry o2) {
-			return o1.getName().compareTo(o2.getName());
+			int out = o1.getName().compareTo(o2.getName());
+			return out;
 		}
 
+	};
+
+	private static final Comparator<CSVEntry> entryComparator2 = new Comparator<CSVEntry>() {
+		@Override
+		public int compare(CSVEntry o1, CSVEntry o2) {
+			boolean allSet1 = o1.getDerbyValue() != null
+					&& o1.getMysqlValue() != null
+					&& o1.getPostgreValue() != null;
+			boolean allSet2 = o2.getDerbyValue() != null
+					&& o2.getMysqlValue() != null
+					&& o2.getPostgreValue() != null;
+			return Double.compare(allSet1 ? 0.0 : 1.0, allSet2 ? 0.0 : 1.0);
+		}
 	};
 
 	private static Map<String, CSVEntry> entries;
@@ -96,7 +110,8 @@ public class SQLConstantExtractor {
 			csvOutputList.add(current);
 		}
 
-		Collections.sort(csvOutputList, entryComparator);
+		Collections.sort(csvOutputList, entryComparator1);
+		Collections.sort(csvOutputList, entryComparator2);
 
 		PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(
 				out)));
