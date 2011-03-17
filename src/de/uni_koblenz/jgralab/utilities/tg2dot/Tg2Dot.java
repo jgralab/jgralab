@@ -639,6 +639,8 @@ public class Tg2Dot extends Tg2Whatever {
 	protected void graphEnd(PrintStream out) {
 		writer.close();
 		writer = null;
+
+		// TODO replace by directly piping output to DOT layouter
 		executeDot();
 
 		GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS = debugIterations;
@@ -649,7 +651,16 @@ public class Tg2Dot extends Tg2Whatever {
 	/**
 	 * Executes the Dot program of GraphViz.
 	 */
+	@Deprecated
 	private void executeDot() {
+
+		// TODO if dotBuildOutputType is set, the outputName is mangled.
+
+		// If the outputname was set by the user, e.g. "foo.svg" for output type
+		// "svg", this file is used twice (at first as output file for tg2dot
+		// and then as output file of the dot program). This results into a call
+		// to "dot" with same input and output filenames.
+
 		if (dotBuildOutputType == null) {
 			return;
 		}
