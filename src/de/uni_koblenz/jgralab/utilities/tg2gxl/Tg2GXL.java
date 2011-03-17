@@ -38,6 +38,7 @@ package de.uni_koblenz.jgralab.utilities.tg2gxl;
 //import gnu.getopt.Getopt;
 //import gnu.getopt.LongOpt;
 
+import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Collection;
 import java.util.HashMap;
@@ -463,7 +464,12 @@ public class Tg2GXL extends Tg2Whatever {
 		Tg2GXL converter = new Tg2GXL();
 		converter.getOptions(args);
 		converter.initgrUML2GXLMap();
-		converter.convert();
+		try {
+			converter.convert();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -473,7 +479,7 @@ public class Tg2GXL extends Tg2Whatever {
 	 * the M2 graph is printed.
 	 */
 	@Override
-	public void convert() {
+	public void convert() throws IOException {
 		printSchema = false;
 		setOutputFile(graphOutputName);
 		uniqueGraphClassName = graph.getSchema().getGraphClass()

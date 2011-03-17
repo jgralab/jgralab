@@ -35,8 +35,8 @@
 
 package de.uni_koblenz.jgralab.utilities.tg2whatever;
 
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
 
 import org.apache.commons.cli.CommandLine;
@@ -195,20 +195,13 @@ public abstract class Tg2Whatever {
 		domainNames = print;
 	}
 
-	public void convert() {
-		try {
-			if (outputName == null || outputName.equals("")) {
-				convert(System.out);
-			} else {
-				PrintStream out = new PrintStream(new FileOutputStream(
-						outputName));
-				convert(out);
-				out.close();
-			}
-		} catch (FileNotFoundException e) {
-			System.err.println("File '" + outputName
-					+ "' could not be created.");
-			System.exit(1);
+	public void convert() throws IOException {
+		if (outputName == null || outputName.equals("")) {
+			convert(System.out);
+		} else {
+			PrintStream out = new PrintStream(new FileOutputStream(outputName));
+			convert(out);
+			out.close();
 		}
 	}
 

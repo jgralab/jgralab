@@ -1426,9 +1426,14 @@ public class Rsa2Tg extends XmlProcessor {
 		boolean fileCreated = false;
 
 		if (filenameDot != null) {
-			writeDotFile(filenameDot);
-			printTypeAndFilename("GraphvViz DOT file", filenameDot);
-			fileCreated = true;
+			try {
+				writeDotFile(filenameDot);
+				printTypeAndFilename("GraphvViz DOT file", filenameDot);
+				fileCreated = true;
+			} catch (IOException e) {
+				System.out.println("Could not create DOT file.");
+				System.out.println("Exception was " + e);
+			}
 		}
 
 		if (filenameSchemaGraph != null) {
@@ -2162,8 +2167,9 @@ public class Rsa2Tg extends XmlProcessor {
 	 * 
 	 * @param dotName
 	 *            File name of the DOT output file.
+	 * @throws IOException
 	 */
-	private void writeDotFile(String dotName) {
+	private void writeDotFile(String dotName) throws IOException {
 		Tg2Dot tg2Dot = new Tg2Dot();
 		tg2Dot.setGraph(sg);
 		tg2Dot.setPrintEdgeAttributes(true);

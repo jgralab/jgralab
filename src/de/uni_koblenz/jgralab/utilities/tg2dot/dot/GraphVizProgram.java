@@ -32,23 +32,36 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-package de.uni_koblenz.jgralab.utilities.common.dot;
+package de.uni_koblenz.jgralab.utilities.tg2dot.dot;
 
-/**
- * Lists all supported graph element types in DOT.
- * 
- * @author ist@uni-koblenz.de
- */
-public enum GraphElementType {
-
-	NODE("node"), EDGE("edge"), GRAPH("graph");
+public class GraphVizProgram {
 
 	/**
-	 * Attribute holding the GraphElementType name.
+	 * Must end with "/". For example: "GraphViz/bin/"
 	 */
-	public String name;
+	public String path;
+	public GraphVizLayouter layouter;
+	public GraphVizOutputFormat outputFormat;
 
-	GraphElementType(String name) {
-		this.name = name;
+	public GraphVizProgram() {
+		path = "";
+		layouter = GraphVizLayouter.DOT;
+		outputFormat = GraphVizOutputFormat.PDF;
 	}
+
+	public GraphVizProgram path(String path) {
+		this.path = path;
+		return this;
+	}
+
+	public GraphVizProgram layouter(GraphVizLayouter layouter) {
+		this.layouter = layouter;
+		return this;
+	}
+
+	public GraphVizProgram outputFormat(GraphVizOutputFormat outputFormat) {
+		this.outputFormat = outputFormat;
+		return this;
+	}
+
 }

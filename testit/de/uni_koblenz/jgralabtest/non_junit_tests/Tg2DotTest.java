@@ -42,30 +42,24 @@ import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.WorkInProgress;
 import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
-import de.uni_koblenz.jgralab.utilities.tg2image.GraphVizOutputFormat;
-import de.uni_koblenz.jgralab.utilities.tg2image.GraphVizProgram;
-import de.uni_koblenz.jgralab.utilities.tg2image.Tg2Image;
+import de.uni_koblenz.jgralab.utilities.tg2dot.dot.GraphVizOutputFormat;
 
 @WorkInProgress(responsibleDevelopers = "mmce@uni-koblenz.de", description = "More test have to be included. Every static method should be tested. Additionally the class itself should be tested.")
 public class Tg2DotTest {
 
-	public void convertGraph() throws GraphIOException {
+	public void convertGraph() throws GraphIOException, IOException {
 		Graph g = GraphIO.loadGraphFromFileWithStandardSupport(
 				"testit/testgraphs/greqltestgraph.tg", (ProgressFunction) null);
-		Tg2Dot.convertGraph(g, "testit/testoutput.dot", false);
+		Tg2Dot.convertGraph(g, "testit/testoutput.dot");
 	}
 
-	public void convertGraph2Svg() throws GraphIOException,
-			InterruptedException, IOException {
-
+	public void convertGraph2Svg() throws GraphIOException, IOException {
 		Graph g = GraphIO.loadGraphFromFileWithStandardSupport(
-
-		"testit/testgraphs/greqltestgraph.tg", (ProgressFunction) null);
-
-		GraphVizProgram program = new GraphVizProgram().path("").outputFormat(
-				GraphVizOutputFormat.PNG);
-
-		Tg2Image.convertGraph2ImageFile(g, program, "testit/testoutput.png",
-				false);
+				"testit/testgraphs/greqltestgraph.tg", (ProgressFunction) null);
+		Tg2Dot t2d = new Tg2Dot();
+		t2d.setGraph(g);
+		t2d.setGraphVizOutputFormat(GraphVizOutputFormat.PNG);
+		t2d.setOutputFile("testit/testoutput.png");
+		t2d.convert();
 	}
 }

@@ -34,6 +34,7 @@
  */
 package de.uni_koblenz.jgralab.utilities.tg2gdl;
 
+import java.io.IOException;
 import java.io.PrintStream;
 
 import de.uni_koblenz.jgralab.AttributedElement;
@@ -104,8 +105,7 @@ public class Tg2Gdl extends Tg2Whatever {
 			}
 			out.print(attr.getName()
 					+ " = "
-					+ stringQuote(String.valueOf(ae
-							.getAttribute(attr.getName()))));
+					+ stringQuote(String.valueOf(ae.getAttribute(attr.getName()))));
 		}
 		out.print("\"");
 	}
@@ -161,6 +161,11 @@ public class Tg2Gdl extends Tg2Whatever {
 	public static void main(String[] args) {
 		Tg2Gdl converter = new Tg2Gdl();
 		converter.getOptions(args);
-		converter.convert();
+		try {
+			converter.convert();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
