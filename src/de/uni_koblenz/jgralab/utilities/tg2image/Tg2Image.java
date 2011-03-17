@@ -53,6 +53,9 @@ import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
  * @author ist@uni-koblenz.de
  */
 public class Tg2Image {
+	// TODO this class does NOT allow to specify a layout description :-(
+	// Make it more usable...
+
 	/**
 	 * Converts a given Graph over the DOT format and a {@link GraphVizProgram}
 	 * into an image to the provided path. Edges can be reversed for the hole
