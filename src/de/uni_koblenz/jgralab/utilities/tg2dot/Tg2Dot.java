@@ -44,8 +44,8 @@ import static de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacad
 
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Collections;
 import java.util.HashMap;
@@ -236,30 +236,25 @@ public class Tg2Dot extends Tg2Whatever {
 	 * @throws InterruptedException
 	 * @throws IOException
 	 */
-	public static BufferedInputStream convertGraphPipeToProgram(Graph graph,
-			String executionString, boolean reversedEdges,
-			Class<? extends AttributedElement>... reversedEdgeTypes)
-			throws InterruptedException, IOException {
+	public static InputStream convertGraphPipeToProgram(final Graph graph,
+			String executionString, final boolean reversedEdges,
+			final Class<? extends AttributedElement>... reversedEdgeTypes)
+			throws IOException {
 
-		Tg2Dot converter = createConverterAndSetAttributes(graph,
-				reversedEdges, reversedEdgeTypes);
-
-		Process process = null;
-		try {
-			process = Runtime.getRuntime().exec(executionString, null, null);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		PrintStream ps = new PrintStream(process.getOutputStream());
-		BufferedInputStream inputStream = new BufferedInputStream(
+		final Process process = Runtime.getRuntime().exec(executionString);
+		InputStream inputStream = new BufferedInputStream(
 				process.getInputStream());
-
-		converter.convert(ps);
-		ps.flush();
-		ps.close();
-		process.waitFor();
-
+		new Thread() {
+			@Override
+			public void run() {
+				PrintStream ps = new PrintStream(process.getOutputStream());
+				Tg2Dot converter = createConverterAndSetAttributes(graph,
+						reversedEdges, reversedEdgeTypes);
+				converter.convert(ps);
+				ps.flush();
+				ps.close();
+			};
+		}.start();
 		return inputStream;
 	}
 
@@ -344,13 +339,8 @@ public class Tg2Dot extends Tg2Whatever {
 		setGlobalVariables();
 		setCommandLineVariables();
 
-		try {
-			createDotWriter(out);
-
-			startDotGraph();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
+		createDotWriter(out);
+		startDotGraph();
 	}
 
 	/**
@@ -405,9 +395,8 @@ public class Tg2Dot extends Tg2Whatever {
 	 * 
 	 * @param out
 	 *            Provides stream, the DotWriter will use.
-	 * @throws FileNotFoundException
 	 */
-	private void createDotWriter(PrintStream out) throws FileNotFoundException {
+	private void createDotWriter(PrintStream out) {
 		writer = new DotWriter(out);
 	}
 
@@ -648,22 +637,13 @@ public class Tg2Dot extends Tg2Whatever {
 
 	@Override
 	protected void graphEnd(PrintStream out) {
-		closeOutputStream();
-
-		// writeGraphLayoutToJsonFile();
+		writer.close();
+		writer = null;
 		executeDot();
 
 		GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS = debugIterations;
 		GreqlEvaluator.DEBUG_OPTIMIZATION = debugOptimization;
 		JGraLab.setLogLevel(jGraLabLogLevel);
-	}
-
-	/**
-	 * Closes the output stream in the {@link DotWriter}.
-	 */
-	private void closeOutputStream() {
-		writer.close();
-		writer = null;
 	}
 
 	/**
@@ -695,7 +675,8 @@ public class Tg2Dot extends Tg2Whatever {
 			if (p.exitValue() == EXIT_ALL_FINE) {
 				System.out.println(" done.");
 			} else {
-				System.out.println(" error ocurred while executing DOT!");
+				System.out.println(" error " + p.exitValue()
+						+ " ocurred while executing DOT!");
 			}
 
 		} catch (IOException e) {

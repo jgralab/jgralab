@@ -518,9 +518,6 @@ public class Tg2GXL extends Tg2Whatever {
 			schemaGraphOutputName = graphOutputName.substring(0,
 					graphOutputName.length() - 4) + "Schema.gxl";
 		}
-		if (outputName == null) {
-			outputName = "";
-		}
 	}
 
 	protected static CommandLine processCommandlineOptions(String[] args) {

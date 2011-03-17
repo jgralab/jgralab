@@ -35,6 +35,8 @@
 package de.uni_koblenz.jgralab.utilities.tg2image;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -43,7 +45,6 @@ import javax.swing.ImageIcon;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.utilities.common.dot.GraphVizProgram;
 import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
 
 /**
@@ -75,12 +76,24 @@ public class Tg2Image {
 			GraphVizProgram program, String imageOutputPath,
 			boolean reversedEdges,
 			Class<? extends AttributedElement>... reversedEdgeTypes)
-			throws InterruptedException, IOException {
+			throws IOException {
 
-		String executionString = String.format("%s%s -T%s -o%s", program.path,
+		String executionString = String.format("%s%s -T%s", program.path,
 				program.layouter, program.outputFormat, imageOutputPath);
-		Tg2Dot.convertGraphPipeToProgram(graph, executionString, reversedEdges,
-				reversedEdgeTypes);
+
+		byte[] buffer = new byte[4096];
+		BufferedInputStream is = new BufferedInputStream(
+				Tg2Dot.convertGraphPipeToProgram(graph, executionString,
+						reversedEdges, reversedEdgeTypes), buffer.length);
+		BufferedOutputStream os = new BufferedOutputStream(
+				new FileOutputStream(imageOutputPath), buffer.length);
+		int n = is.read(buffer);
+		while (n > 0) {
+			os.write(buffer, 0, n);
+			n = is.read(buffer);
+		}
+		is.close();
+		os.close();
 	}
 
 	/**
@@ -104,19 +117,19 @@ public class Tg2Image {
 	public static ImageIcon convertGraph2ImageIcon(Graph graph,
 			GraphVizProgram program, boolean reversedEdges,
 			Class<? extends AttributedElement>... reversedEdgeTypes)
-			throws InterruptedException, IOException {
+			throws IOException {
 
 		String executionString = String.format("%s%s -T%s", program.path,
 				program.layouter, program.outputFormat);
-		InputStream imageStream = Tg2Dot.convertGraphPipeToProgram(graph,
-				executionString, reversedEdges, reversedEdgeTypes);
-
+		BufferedInputStream imageStream = new BufferedInputStream(
+				Tg2Dot.convertGraphPipeToProgram(graph, executionString,
+						reversedEdges, reversedEdgeTypes));
 		return new ImageIcon(ImageIO.read(imageStream));
 	}
 
 	/**
 	 * Converts a given Graph over the DOT format and a {@link GraphVizProgram}
-	 * into a {@link BufferedInputStream}. Edges can be reversed for the hole
+	 * into a {@link BufferedInputStream}. Edges can be reversed for the whole
 	 * graph or individually.
 	 * 
 	 * @param graph
@@ -132,11 +145,10 @@ public class Tg2Image {
 	 * @throws InterruptedException
 	 * @throws IOException
 	 */
-	public static BufferedInputStream convertGraph2ImageStream(Graph graph,
+	public static InputStream convertGraph2Stream(Graph graph,
 			GraphVizProgram program, boolean reversedEdges,
 			Class<? extends AttributedElement>... reversedEdgeTypes)
-			throws InterruptedException, IOException {
-
+			throws IOException {
 		String executionString = String.format("%s%s -T%s", program.path,
 				program.layouter, program.outputFormat);
 		return Tg2Dot.convertGraphPipeToProgram(graph, executionString,

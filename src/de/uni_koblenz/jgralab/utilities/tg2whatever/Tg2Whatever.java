@@ -197,8 +197,14 @@ public abstract class Tg2Whatever {
 
 	public void convert() {
 		try {
-			PrintStream out = initializeOutputStream();
-			convert(out);
+			if (outputName == null || outputName.equals("")) {
+				convert(System.out);
+			} else {
+				PrintStream out = new PrintStream(new FileOutputStream(
+						outputName));
+				convert(out);
+				out.close();
+			}
 		} catch (FileNotFoundException e) {
 			System.err.println("File '" + outputName
 					+ "' could not be created.");
@@ -212,16 +218,6 @@ public abstract class Tg2Whatever {
 		printVertices(out);
 		printEdges(out);
 		graphEnd(out);
-	}
-
-	private PrintStream initializeOutputStream() throws FileNotFoundException {
-		PrintStream out;
-		if (outputName.equals("")) {
-			out = System.out;
-		} else {
-			out = new PrintStream(new FileOutputStream(outputName));
-		}
-		return out;
 	}
 
 	private void printEdges(PrintStream out) {
@@ -354,11 +350,9 @@ public abstract class Tg2Whatever {
 			}
 		}
 		if (comLine.hasOption("o")) {
-			outputName = comLine.getOptionValue("o");
+			outputName = comLine.getOptionValue("o").trim();
 		}
-		if (outputName == null) {
-			outputName = "";
-		}
+
 		if (comLine.hasOption("a")) {
 			schemaName = comLine.getOptionValue("a");
 			setSchema(schemaName);
