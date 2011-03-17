@@ -37,7 +37,6 @@ package de.uni_koblenz.jgralab.utilities.common.dot;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -62,11 +61,6 @@ public class DotWriter {
 	private static final String QUOTATIONMARKS = "\"";
 
 	/**
-	 * Char for spacing.
-	 */
-	private static final char SPACE = ' ';
-
-	/**
 	 * A tabluator string.
 	 */
 	private static final String TABULATOR = "  ";
@@ -78,7 +72,7 @@ public class DotWriter {
 	/**
 	 * Output PrintWriter created from a given file or a PrintStream.
 	 */
-	private PrintWriter stream;
+	private PrintStream out;
 
 	/**
 	 * Status variable for the current nestedDepth at the current position. Is
@@ -95,7 +89,7 @@ public class DotWriter {
 	 * @throws FileNotFoundException
 	 */
 	public DotWriter(String filename) throws FileNotFoundException {
-		stream = new PrintWriter(filename);
+		out = new PrintStream(filename);
 	}
 
 	/**
@@ -108,7 +102,7 @@ public class DotWriter {
 	 *             Occurs in case of a not writable or uncreateable file.
 	 */
 	public DotWriter(File file) throws FileNotFoundException {
-		stream = new PrintWriter(file);
+		out = new PrintStream(file);
 	}
 
 	/**
@@ -118,24 +112,7 @@ public class DotWriter {
 	 *            Provided stream.
 	 */
 	public DotWriter(PrintStream out) {
-		stream = new PrintWriter(out);
-	}
-
-	/**
-	 * DON'T CREATE UNNAMED GRAPHS! Dot can handle them, but dotty cannot.
-	 * Despite of that, giving the graph a name is not a bad idea anyway.
-	 * 
-	 * Starts a unnamed DOT-graph of the specified GraphType. The nested depth
-	 * is increased by one.
-	 * 
-	 * @param type
-	 *            Indicates which type of DOT-graph should be written.
-	 */
-	@Deprecated
-	public void startGraph(GraphType type) {
-		startElement();
-		stream.write(type.name);
-		startAbstractGroup();
+		this.out = out;
 	}
 
 	/**
@@ -149,10 +126,7 @@ public class DotWriter {
 	 */
 	public void startGraph(GraphType type, String name) {
 		startElement();
-		stream.write(type.name);
-		stream.write(SPACE);
-		stream.write(name);
-		stream.write(SPACE);
+		out.print(type.name + " " + name + " ");
 		startAbstractGroup();
 	}
 
@@ -170,15 +144,7 @@ public class DotWriter {
 	 */
 	private void startAbstractGroup() {
 		nestedDepth++;
-		stream.write('{');
-		newLine();
-	}
-
-	/**
-	 * Writes a new line.
-	 */
-	private void newLine() {
-		stream.write('\n');
+		out.println('{');
 	}
 
 	/**
@@ -187,8 +153,7 @@ public class DotWriter {
 	public void endGroup() {
 		nestedDepth--;
 		startElement();
-		stream.write('}');
-		newLine();
+		out.println('}');
 	}
 
 	/**
@@ -217,7 +182,7 @@ public class DotWriter {
 	public void writeGeneralAttributeList(GraphElementType type,
 			Map<String, String> attributeList) {
 		startElement();
-		stream.write(type.name);
+		out.print(type.name);
 		writeAttributeList(attributeList);
 		endElement();
 	}
@@ -240,7 +205,7 @@ public class DotWriter {
 		startAttributeList();
 		String delimiter = "";
 		for (Entry<String, String> entry : attributeList.entrySet()) {
-			stream.write(delimiter);
+			out.print(delimiter);
 			delimiter = ", ";
 			writeAttribute(entry.getKey(), entry.getValue());
 		}
@@ -252,7 +217,7 @@ public class DotWriter {
 	 * Starts a AttributeList with a opening bracket.
 	 */
 	private void startAttributeList() {
-		stream.write('[');
+		out.print('[');
 	}
 
 	/**
@@ -266,23 +231,17 @@ public class DotWriter {
 	 *            Value of a corresponding DOT-type.
 	 */
 	private void writeAttribute(String name, String value) {
-		stream.write(name);
-
-		stream.write(" = ");
-
+		out.print(name + " = ");
 		boolean isHtml = value.startsWith("<<") && value.endsWith(">>");
 		String quotationMarks = isHtml ? "" : QUOTATIONMARKS;
-
-		stream.write(quotationMarks);
-		stream.write(value);
-		stream.write(quotationMarks);
+		out.print(quotationMarks + value + quotationMarks);
 	}
 
 	/**
 	 * Ends a attribute list with a closing bracket.
 	 */
 	private void endAttributeList() {
-		stream.write(']');
+		out.print(']');
 	}
 
 	/**
@@ -297,7 +256,7 @@ public class DotWriter {
 	 */
 	private void writeIndent() {
 		for (int i = 0; i < nestedDepth; i++) {
-			stream.write(TABULATOR);
+			out.print(TABULATOR);
 		}
 	}
 
@@ -305,8 +264,7 @@ public class DotWriter {
 	 * Ends an Element with a semicolon and a new line.
 	 */
 	private void endElement() {
-		stream.write(';');
-		newLine();
+		out.println(';');
 	}
 
 	/**
@@ -365,10 +323,8 @@ public class DotWriter {
 			Map<String, String> attributeList) {
 
 		startElement();
-		stream.write(processName(startNode));
-		stream.write(" -> ");
+		out.print(processName(startNode) + " -> ");
 		writeNodeList(endNodes);
-
 		if (attributeList != null) {
 			writeAttributeList(attributeList);
 		}
@@ -397,7 +353,7 @@ public class DotWriter {
 
 		startElement();
 		name = processName(name);
-		stream.write(name);
+		out.print(name);
 
 		if (attributeList != null) {
 			writeAttributeList(attributeList);
@@ -429,9 +385,9 @@ public class DotWriter {
 	private void writeNodeList(String[] nodeNames) {
 		String delimiter = "";
 		for (String name : nodeNames) {
-			stream.write(delimiter);
+			out.print(delimiter);
 			delimiter = ", ";
-			stream.write(processName(name));
+			out.print(processName(name));
 		}
 	}
 
@@ -440,7 +396,7 @@ public class DotWriter {
 	 */
 	public void startSubgraph() {
 		startElement();
-		stream.write("subgraph");
+		out.print("subgraph");
 		startAbstractGroup();
 	}
 
@@ -452,8 +408,7 @@ public class DotWriter {
 	 */
 	public void startCluster(String name) {
 		startElement();
-		stream.write("subgraph ");
-		stream.write(name);
+		out.print("subgraph " + name);
 		startAbstractGroup();
 	}
 
@@ -462,8 +417,7 @@ public class DotWriter {
 	 */
 	public void close() {
 		endGraph();
-		stream.flush();
-		stream.close();
+		out.flush();
 	}
 
 	/**
