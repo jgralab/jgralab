@@ -352,5 +352,9 @@ public class AggregationTransition extends Transition {
 
 		return symbol + "{" + b + "}";
 	}
+	
+	public boolean consumedEdge() {
+		return true;
+	}
 
 }

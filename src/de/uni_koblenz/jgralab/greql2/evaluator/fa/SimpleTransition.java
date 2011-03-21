@@ -384,4 +384,8 @@ public class SimpleTransition extends Transition {
 		return symbol + "{" + b + "}";
 	}
 
+	public boolean consumedEdge() {
+		return true;
+	}
+	
 }

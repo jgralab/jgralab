@@ -108,18 +108,7 @@ public class BoolExpressionTransition extends Transition {
 	}
 
 	/**
-	 * Creates a new transition from start state to end state. The Transition
-	 * accepts all edges that have the right direction, role, startVertexType,
-	 * endVertexType, edgeType and even it's possible to define a specific edge.
-	 * This constructor creates a transition to accept a EdgePathDescription
-	 * 
-	 * @param start
-	 *            The state where this transition starts
-	 * @param end
-	 *            The state where this transition ends
-	 * @param boolEval
-	 *            the VertexEvaluator which evaluates the boolean expression
-	 *            this transition accepts
+	 * Creates a new transition from start state to end state. 
 	 */
 	public BoolExpressionTransition(State start, State end,
 			VertexEvaluator boolEval, GraphMarker<VertexEvaluator> graphMarker) {
@@ -173,5 +162,9 @@ public class BoolExpressionTransition extends Transition {
 				+ new Greql2Serializer()
 						.serializeGreql2Vertex(boolExpressionEvaluator
 								.getVertex());
+	}
+	
+	public boolean consumedEdge() {
+		return false;
 	}
 }
