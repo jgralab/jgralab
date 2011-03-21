@@ -180,4 +180,8 @@ public class IntermediateVertexTransition extends Transition {
 								.getVertex());
 	}
 
+	
+	public boolean consumedEdge() {
+		return false;
+	}
 }
