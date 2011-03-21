@@ -140,8 +140,8 @@ public class EpsilonTransition extends Transition {
 		return "epsilon";
 	}
 
-	public boolean consumedEdge() {
+	@Override
+	public boolean consumesEdge() {
 		return false;
 	}
-	
 }

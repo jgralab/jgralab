@@ -76,7 +76,7 @@ public class AggregationTransition extends Transition {
 	 * transition. If the transition is valid for all roles, this set is null
 	 */
 	protected Set<String> validToEdgeRoles;
-	
+
 	protected Set<String> validFromEdgeRoles;
 
 	protected boolean aggregateFrom;
@@ -138,8 +138,7 @@ public class AggregationTransition extends Transition {
 				return false;
 			}
 		}
-		
-		
+
 		if (predicateEvaluator != null) {
 			if (et.predicateEvaluator == null) {
 				return false;
@@ -274,11 +273,12 @@ public class AggregationTransition extends Transition {
 			validEdgeRoles = validFromEdgeRoles;
 			checkToEdgeRoles = false;
 		}
-		
-		boolean rolesOnly =  (validEdgeRoles != null) && (typeCollection.getAllowedTypes().size() == 0) && (typeCollection.getForbiddenTypes().size() == 0);
+
+		boolean rolesOnly = (validEdgeRoles != null)
+				&& (typeCollection.getAllowedTypes().size() == 0)
+				&& (typeCollection.getForbiddenTypes().size() == 0);
 		boolean acceptedByRole = false;
-		
-				
+
 		// checks if a role restriction is set and if e has the right role
 		if (validEdgeRoles != null) {
 			EdgeClass ec = (EdgeClass) e.getAttributedElementClass();
@@ -296,17 +296,18 @@ public class AggregationTransition extends Transition {
 			}
 		}
 		if (rolesOnly) {
-			if (!acceptedByRole)
+			if (!acceptedByRole) {
 				return false;
+			}
 		} else {
 			if (!acceptedByRole) {
-				AttributedElementClass edgeClass = e.getAttributedElementClass();
-				if (!typeCollection.acceptsType(edgeClass))
+				AttributedElementClass edgeClass = e
+						.getAttributedElementClass();
+				if (!typeCollection.acceptsType(edgeClass)) {
 					return false;
+				}
 			}
 		}
-
-
 
 		// checks if a boolean expression exists and if it evaluates to true
 		if (predicateEvaluator != null) {
@@ -352,9 +353,9 @@ public class AggregationTransition extends Transition {
 
 		return symbol + "{" + b + "}";
 	}
-	
-	public boolean consumedEdge() {
+
+	@Override
+	public boolean consumesEdge() {
 		return true;
 	}
-
 }
