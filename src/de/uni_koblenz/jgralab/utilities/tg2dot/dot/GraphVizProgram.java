@@ -32,44 +32,36 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-package de.uni_koblenz.jgralabtest.utilities.tg2dot;
+package de.uni_koblenz.jgralab.utilities.tg2dot.dot;
 
-import java.io.IOException;
+public class GraphVizProgram {
 
-import org.junit.Test;
+	/**
+	 * Must end with "/". For example: "GraphViz/bin/"
+	 */
+	public String path;
+	public GraphVizLayouter layouter;
+	public GraphVizOutputFormat outputFormat;
 
-import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphIO;
-import de.uni_koblenz.jgralab.GraphIOException;
-import de.uni_koblenz.jgralab.ProgressFunction;
-import de.uni_koblenz.jgralab.WorkInProgress;
-import de.uni_koblenz.jgralab.utilities.common.dot.GraphVizOutputFormat;
-import de.uni_koblenz.jgralab.utilities.common.dot.GraphVizProgram;
-import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
-import de.uni_koblenz.jgralab.utilities.tg2image.Tg2Image;
-
-@WorkInProgress(responsibleDevelopers = "mmce@uni-koblenz.de", description = "More test have to be included. Every static method should be tested. Additionally the class itself should be tested.")
-public class Tg2DotTest {
-
-	@Test
-	public void convertGraph() throws GraphIOException {
-		Graph g = GraphIO.loadGraphFromFileWithStandardSupport(
-				"testit/testgraphs/greqltestgraph.tg", (ProgressFunction) null);
-		Tg2Dot.convertGraph(g, "testit/testoutput.dot", false);
+	public GraphVizProgram() {
+		path = "";
+		layouter = GraphVizLayouter.DOT;
+		outputFormat = GraphVizOutputFormat.PDF;
 	}
 
-	@Test
-	public void convertGraph2Svg() throws GraphIOException,
-			InterruptedException, IOException {
-
-		Graph g = GraphIO.loadGraphFromFileWithStandardSupport(
-
-		"testit/testgraphs/greqltestgraph.tg", (ProgressFunction) null);
-
-		GraphVizProgram program = new GraphVizProgram().path("").outputFormat(
-				GraphVizOutputFormat.PNG);
-
-		Tg2Image.convertGraph2ImageFile(g, program, "testit/testoutput.png",
-				false);
+	public GraphVizProgram path(String path) {
+		this.path = path;
+		return this;
 	}
+
+	public GraphVizProgram layouter(GraphVizLayouter layouter) {
+		this.layouter = layouter;
+		return this;
+	}
+
+	public GraphVizProgram outputFormat(GraphVizOutputFormat outputFormat) {
+		this.outputFormat = outputFormat;
+		return this;
+	}
+
 }

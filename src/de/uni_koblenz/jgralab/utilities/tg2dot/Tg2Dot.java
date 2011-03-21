@@ -44,8 +44,8 @@ import static de.uni_koblenz.jgralab.utilities.tg2dot.greql2.GreqlEvaluatorFacad
 
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Collections;
 import java.util.HashMap;
@@ -54,6 +54,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
+
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
@@ -72,8 +75,11 @@ import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
-import de.uni_koblenz.jgralab.utilities.common.dot.DotWriter;
-import de.uni_koblenz.jgralab.utilities.common.dot.GraphType;
+import de.uni_koblenz.jgralab.utilities.tg2dot.dot.DotWriter;
+import de.uni_koblenz.jgralab.utilities.tg2dot.dot.GraphType;
+import de.uni_koblenz.jgralab.utilities.tg2dot.dot.GraphVizLayouter;
+import de.uni_koblenz.jgralab.utilities.tg2dot.dot.GraphVizOutputFormat;
+import de.uni_koblenz.jgralab.utilities.tg2dot.dot.GraphVizProgram;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.GraphLayout;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.GraphLayoutFactory;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.Definition;
@@ -92,8 +98,6 @@ import de.uni_koblenz.jgralab.utilities.tg2whatever.Tg2Whatever;
  * 
  */
 public class Tg2Dot extends Tg2Whatever {
-
-	private static final int EXIT_ALL_FINE = 0;
 
 	/**
 	 * Indicates to abbreviate all edge attribute names.
@@ -141,7 +145,9 @@ public class Tg2Dot extends Tg2Whatever {
 	 * Specifies the type of file, which will be passed to dot in order to
 	 * generate an output.
 	 */
-	private String dotBuildOutputType;
+	private GraphVizLayouter graphVizLayouter;
+
+	private GraphVizOutputFormat graphVizOutputFormat;
 
 	private boolean useJsonGraphLayoutReader;
 
@@ -157,15 +163,30 @@ public class Tg2Dot extends Tg2Whatever {
 	 * @throws JsonParseException
 	 * @throws GraphIOException
 	 */
-	public static void main(String[] args) throws JsonParseException,
-			IOException, GraphIOException {
-
+	public static void main(String[] args) {
 		Tg2Dot converter = new Tg2Dot();
 		converter.getOptions(args);
-
 		System.out.print("Starting processing of graph...");
-		converter.convert();
+		try {
+			converter.convert();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		System.out.println("Finished Processing.");
+	}
+
+	@Override
+	public void convert() throws IOException {
+		if (graphVizOutputFormat == null) {
+			super.convert();
+			return;
+		}
+		// write dot output into pipe to GraphViz layouter and store result as
+		// file
+		GraphVizProgram prog = new GraphVizProgram().layouter(graphVizLayouter)
+				.outputFormat(graphVizOutputFormat);
+		pipeToGraphViz(prog);
 	}
 
 	public static Tg2Dot createConverterAndSetAttributes(Graph graph,
@@ -186,9 +207,15 @@ public class Tg2Dot extends Tg2Whatever {
 		return converter;
 	}
 
+	public static void convertGraph(Graph graph, String outputFileName)
+			throws IOException {
+		convertGraph(graph, outputFileName, false);
+	}
+
 	public static void convertGraph(Graph graph, String outputFileName,
 			boolean reversedEdges,
-			Class<? extends AttributedElement>... reversedEdgeTypes) {
+			Class<? extends AttributedElement>... reversedEdgeTypes)
+			throws IOException {
 
 		Tg2Dot converter = createConverterAndSetAttributes(graph,
 				reversedEdges, (Class<? extends AttributedElement>[]) null);
@@ -203,64 +230,67 @@ public class Tg2Dot extends Tg2Whatever {
 		converter.convert();
 	}
 
-	public static void convertGraph(Graph graph, String outputFileName,
-			boolean reversedEdges) {
-		convertGraph(graph, outputFileName, reversedEdges,
-				(Class<? extends AttributedElement>[]) null);
+	public static void convertGraph(BooleanGraphMarker marker,
+			String outputFileName) throws IOException {
+		convertGraph(marker, outputFileName, false);
 	}
 
 	public static void convertGraph(BooleanGraphMarker marker,
-			String outputFileName, boolean reversedEdges) {
+			String outputFileName, boolean reversedEdges,
+			Class<? extends AttributedElement>... reversedEdgeTypes)
+			throws IOException {
 
 		Tg2Dot converter = createConverterAndSetAttributes(marker.getGraph(),
-				reversedEdges, (Class<? extends AttributedElement>[]) null);
+				reversedEdges, reversedEdgeTypes);
 		converter.setOutputFile(outputFileName);
-
 		converter.setGraphMarker(marker);
+		converter.convert();
 	}
 
-	/**
-	 * Converts a given TGraph into DOT and pipes the output as input stream to
-	 * an application specified by the execution string. Edges can be reversed
-	 * for the hole graph or individually.
-	 * 
-	 * @param graph
-	 *            Graph, which should be converted.
-	 * @param executionString
-	 *            The command line string to execute the program.
-	 * @param reversedEdges
-	 *            Flag to indicate the reversal of all edge directions.
-	 * @param reversedEdgeTypes
-	 *            Type of edges, which should be reversed.
-	 * @return
-	 * @throws InterruptedException
-	 * @throws IOException
-	 */
-	public static BufferedInputStream convertGraphPipeToProgram(Graph graph,
-			String executionString, boolean reversedEdges,
-			Class<? extends AttributedElement>... reversedEdgeTypes)
-			throws InterruptedException, IOException {
-
-		Tg2Dot converter = createConverterAndSetAttributes(graph,
-				reversedEdges, reversedEdgeTypes);
-
-		Process process = null;
+	public void pipeToGraphViz(GraphVizProgram prog) throws IOException {
+		String executionString = String.format("%s%s -T%s -o%s", prog.path,
+				prog.layouter, prog.outputFormat, outputName);
+		final Process process = Runtime.getRuntime().exec(executionString);
+		new Thread() {
+			@Override
+			public void run() {
+				PrintStream ps = new PrintStream(process.getOutputStream());
+				convert(ps);
+				ps.flush();
+				ps.close();
+			};
+		}.start();
 		try {
-			process = Runtime.getRuntime().exec(executionString, null, null);
-		} catch (IOException e) {
-			e.printStackTrace();
+			process.waitFor();
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
 		}
+	}
 
-		PrintStream ps = new PrintStream(process.getOutputStream());
-		BufferedInputStream inputStream = new BufferedInputStream(
+	public InputStream convertToGraphVizStream(GraphVizProgram prog)
+			throws IOException {
+		String executionString = String.format("%s%s -T%s", prog.path,
+				prog.layouter, prog.outputFormat);
+		final Process process = Runtime.getRuntime().exec(executionString);
+		InputStream inputStream = new BufferedInputStream(
 				process.getInputStream());
-
-		converter.convert(ps);
-		ps.flush();
-		ps.close();
-		process.waitFor();
-
+		new Thread() {
+			@Override
+			public void run() {
+				PrintStream ps = new PrintStream(process.getOutputStream());
+				convert(ps);
+				ps.flush();
+				ps.close();
+			};
+		}.start();
 		return inputStream;
+	}
+
+	public ImageIcon convertToGraphVizImageIcon(GraphVizProgram prog)
+			throws IOException {
+		BufferedInputStream imageStream = new BufferedInputStream(
+				convertToGraphVizStream(prog));
+		return new ImageIcon(ImageIO.read(imageStream));
 	}
 
 	/**
@@ -284,8 +314,23 @@ public class Tg2Dot extends Tg2Whatever {
 
 		printIncidenceIndices = comLine.hasOption('i');
 		printElementSequenceIndices = comLine.hasOption('m');
-		dotBuildOutputType = comLine.hasOption('t') ? comLine
+
+		String gvLayouter = comLine.hasOption('l') ? comLine
+				.getOptionValue('l') : null;
+		graphVizLayouter = GraphVizLayouter.valueOf(gvLayouter);
+		if (graphVizLayouter == null) {
+			throw new RuntimeException("Unknown layouter '" + gvLayouter
+					+ "'. Possible values are " + GraphVizLayouter.values());
+		}
+
+		String gvOutputFormat = comLine.hasOption('t') ? comLine
 				.getOptionValue('t') : null;
+
+		graphVizOutputFormat = GraphVizOutputFormat.valueOf(gvOutputFormat);
+		if (graphVizOutputFormat == null) {
+			throw new RuntimeException("Unknown output format  '" + gvLayouter
+					+ "'. Possible values are " + GraphVizOutputFormat.values());
+		}
 	}
 
 	@Override
@@ -318,13 +363,15 @@ public class Tg2Dot extends Tg2Whatever {
 		elementSequenceIndices.setRequired(false);
 		optionHandler.addOption(elementSequenceIndices);
 
-		Option dotBuildOutputType = new Option(
-				"t",
-				"dotBuildOutputType",
-				true,
-				"(optional): determins the output format in order to build graphical file from the generated dot file.");
-		dotBuildOutputType.setRequired(false);
-		optionHandler.addOption(dotBuildOutputType);
+		Option gvFormat = new Option("t", "graphVizFormat", true,
+				"(optional): determines the GraphViz output format");
+		gvFormat.setRequired(false);
+		optionHandler.addOption(gvFormat);
+
+		Option gvLayouter = new Option("l", "graphVizLayouter", true,
+				"(optional): determines the GraphViz layout program (default: 'dot')");
+		gvLayouter.setRequired(false);
+		optionHandler.addOption(gvLayouter);
 	}
 
 	@Override
@@ -344,13 +391,8 @@ public class Tg2Dot extends Tg2Whatever {
 		setGlobalVariables();
 		setCommandLineVariables();
 
-		try {
-			createDotWriter(out);
-
-			startDotGraph();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
+		createDotWriter(out);
+		startDotGraph();
 	}
 
 	/**
@@ -405,9 +447,8 @@ public class Tg2Dot extends Tg2Whatever {
 	 * 
 	 * @param out
 	 *            Provides stream, the DotWriter will use.
-	 * @throws FileNotFoundException
 	 */
-	private void createDotWriter(PrintStream out) throws FileNotFoundException {
+	private void createDotWriter(PrintStream out) {
 		writer = new DotWriter(out);
 	}
 
@@ -648,62 +689,65 @@ public class Tg2Dot extends Tg2Whatever {
 
 	@Override
 	protected void graphEnd(PrintStream out) {
-		closeOutputStream();
-
-		// writeGraphLayoutToJsonFile();
-		executeDot();
-
+		writer.close();
+		writer = null;
 		GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS = debugIterations;
 		GreqlEvaluator.DEBUG_OPTIMIZATION = debugOptimization;
 		JGraLab.setLogLevel(jGraLabLogLevel);
 	}
 
 	/**
-	 * Closes the output stream in the {@link DotWriter}.
-	 */
-	private void closeOutputStream() {
-		writer.close();
-		writer = null;
-	}
-
-	/**
 	 * Executes the Dot program of GraphViz.
 	 */
-	private void executeDot() {
-		if (dotBuildOutputType == null) {
-			return;
-		}
-
-		System.out.print("Processing dot-file with GraphViz as \""
-				+ dotBuildOutputType + "\"...");
-
-		try {
-			File outputFile = new File(outputName);
-			String dotFile = outputFile.getAbsolutePath();
-			String formatedFile = dotFile + "." + dotBuildOutputType;
-			int lastIntPosition = dotFile.lastIndexOf('.');
-
-			if (lastIntPosition != -1) {
-				formatedFile = dotFile.substring(0, lastIntPosition) + "."
-						+ dotBuildOutputType;
-			}
-
-			String executionString = "dot -T" + dotBuildOutputType + " "
-					+ dotFile + " -o" + formatedFile;
-			Process p = Runtime.getRuntime().exec(executionString);
-			p.waitFor();
-			if (p.exitValue() == EXIT_ALL_FINE) {
-				System.out.println(" done.");
-			} else {
-				System.out.println(" error ocurred while executing DOT!");
-			}
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
+	// @Deprecated
+	// private void executeDot() {
+	//
+	// // TODO if dotBuildOutputType is set, the outputName is mangled.
+	//
+	// // If the outputname was set by the user, e.g. "foo.svg" for output type
+	// // "svg", this file is used twice (at first as output file for tg2dot
+	// // and then as output file of the dot program). This results into a call
+	// // to "dot" with same input and output filenames.
+	//
+	// if (graphVizOutputFormat == null) {
+	// return;
+	// }
+	//
+	// if (graphVizLayouter == null) {
+	// graphVizLayouter = GraphVizLayouter.DOT;
+	// }
+	//
+	// System.out.print("Creating " + graphVizOutputFormat + " with "
+	// + graphVizLayouter + "...");
+	//
+	// try {
+	// File outputFile = new File(outputName);
+	// String dotFile = outputFile.getAbsolutePath();
+	// String formatedFile = dotFile + "." + dotBuildOutputType;
+	// int lastIntPosition = dotFile.lastIndexOf('.');
+	//
+	// if (lastIntPosition != -1) {
+	// formatedFile = dotFile.substring(0, lastIntPosition) + "."
+	// + dotBuildOutputType;
+	// }
+	//
+	// String executionString = "dot -T" + dotBuildOutputType + " "
+	// + dotFile + " -o" + formatedFile;
+	// Process p = Runtime.getRuntime().exec(executionString);
+	// p.waitFor();
+	// if (p.exitValue() == EXIT_ALL_FINE) {
+	// System.out.println(" done.");
+	// } else {
+	// System.out.println(" error " + p.exitValue()
+	// + " ocurred while executing DOT!");
+	// }
+	//
+	// } catch (IOException e) {
+	// e.printStackTrace();
+	// } catch (InterruptedException e) {
+	// e.printStackTrace();
+	// }
+	// }
 
 	@Override
 	protected String stringQuote(String s) {
@@ -886,11 +930,20 @@ public class Tg2Dot extends Tg2Whatever {
 		this.reversedEdgeClasses = reversedEdgeClasses;
 	}
 
-	public String getDotBuildOutputType() {
-		return dotBuildOutputType;
+	public GraphVizLayouter getGraphVizLayouter() {
+		return graphVizLayouter;
 	}
 
-	public void setDotBuildOutputType(String dotBuildOutputType) {
-		this.dotBuildOutputType = dotBuildOutputType;
+	public void setGraphVizLayouter(GraphVizLayouter graphVizLayouter) {
+		this.graphVizLayouter = graphVizLayouter;
+	}
+
+	public GraphVizOutputFormat getGraphVizOutputFormat() {
+		return graphVizOutputFormat;
+	}
+
+	public void setGraphVizOutputFormat(
+			GraphVizOutputFormat graphVizOutputFormat) {
+		this.graphVizOutputFormat = graphVizOutputFormat;
 	}
 }

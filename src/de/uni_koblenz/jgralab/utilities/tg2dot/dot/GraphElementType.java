@@ -32,21 +32,23 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-package de.uni_koblenz.jgralab.utilities.common.dot;
+package de.uni_koblenz.jgralab.utilities.tg2dot.dot;
 
-public enum GraphVizOutputFormat {
+/**
+ * Lists all supported graph element types in DOT.
+ * 
+ * @author ist@uni-koblenz.de
+ */
+public enum GraphElementType {
 
-	POSTSCRIPT("ps"), SVG("svg"), SVG_ZIPPED("svgz"), PNG("png"), GIF("gif"), PDF(
-			"pdf");
+	NODE("node"), EDGE("edge"), GRAPH("graph");
 
+	/**
+	 * Attribute holding the GraphElementType name.
+	 */
 	public String name;
 
-	GraphVizOutputFormat(String name) {
+	GraphElementType(String name) {
 		this.name = name;
-	}
-
-	@Override
-	public String toString() {
-		return name;
 	}
 }

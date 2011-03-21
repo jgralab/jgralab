@@ -156,7 +156,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 				.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_GRAPH_OF_VERTEX);
 	}
 
-	private static final String ADD_FOREIGN_KEY_CONTRAINT_ON_VERTEX_TYPE = "ALTER TABLE \""
+	private static final String ADD_FOREIGN_KEY_CONSTRAINT_ON_VERTEX_TYPE = "ALTER TABLE \""
 			+ GraphDatabase.VERTEX_TABLE_NAME
 			+ "\" ADD CONSTRAINT \"typeIdIsForeignKey\" FOREIGN KEY (\"typeId\") REFERENCES \""
 			+ GraphDatabase.TYPE_TABLE_NAME + "\" (\"typeId\");";
@@ -165,10 +165,10 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	public PreparedStatement addForeignKeyConstraintOnTypeColumnOfVertexTable()
 			throws SQLException {
 		return connection
-				.prepareStatement(ADD_FOREIGN_KEY_CONTRAINT_ON_VERTEX_TYPE);
+				.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_VERTEX_TYPE);
 	}
 
-	private static final String DROP_FOREIGN_KEY_CONSTRAINTS_FROM_GRAPH_OF_VERTEX = "ALTER TABLE \""
+	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_VERTEX = "ALTER TABLE \""
 			+ GraphDatabase.VERTEX_TABLE_NAME
 			+ "\" DROP CONSTRAINT \"gIdIsForeignKey\";";
 
@@ -176,10 +176,10 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	public PreparedStatement dropForeignKeyConstraintFromGraphColumnOfVertexTable()
 			throws SQLException {
 		return connection
-				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINTS_FROM_GRAPH_OF_VERTEX);
+				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_VERTEX);
 	}
 
-	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_TYPE_COLUMN_OF_VERTEX_TABLE = "ALTER TABLE \""
+	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_VERTEX_TYPE = "ALTER TABLE \""
 			+ GraphDatabase.VERTEX_TABLE_NAME
 			+ "\" DROP CONSTRAINT \"typeIdIsForeignKey\";";
 
@@ -187,7 +187,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	public PreparedStatement dropForeignKeyConstraintFromTypeColumnOfVertexTable()
 			throws SQLException {
 		return connection
-				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_TYPE_COLUMN_OF_VERTEX_TABLE);
+				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_VERTEX_TYPE);
 	}
 
 	private static final String CREATE_EDGE_TABLE = "CREATE TABLE \""
@@ -246,7 +246,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 				.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_EDGE_TYPE);
 	}
 
-	private static final String DROP_FOREIGN_KEY_CONSTRAINTS_FROM_GRAPH_OF_EDGE = "ALTER TABLE \""
+	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_EDGE = "ALTER TABLE \""
 			+ GraphDatabase.EDGE_TABLE_NAME
 			+ "\" DROP CONSTRAINT \"gIdIsForeignKey\";";
 
@@ -254,10 +254,10 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	public PreparedStatement dropForeignKeyConstraintFromGraphColumnOfEdgeTable()
 			throws SQLException {
 		return connection
-				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINTS_FROM_GRAPH_OF_EDGE);
+				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_EDGE);
 	}
 
-	private static final String DROP_FOREIGN_KEY_CONSTRAINTS_FROM_EDGE_TYPE = "ALTER TABLE \""
+	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_EDGE_TYPE = "ALTER TABLE \""
 			+ GraphDatabase.EDGE_TABLE_NAME
 			+ "\" DROP CONSTRAINT \"typeIdIsForeignKey\";";
 
@@ -265,7 +265,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	public PreparedStatement dropForeignKeyConstraintFromTypeColumnOfEdgeTable()
 			throws SQLException {
 		return connection
-				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINTS_FROM_EDGE_TYPE);
+				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_EDGE_TYPE);
 	}
 
 	private static final String CREATE_INCIDENCE_TABLE = "CREATE TYPE \"DIRECTION\" AS ENUM( 'OUT', 'IN' );"
@@ -340,7 +340,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 				.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_VERTEX_OF_INCIDENCE);
 	}
 
-	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_EGDE_OF_INCIDENCE = "ALTER TABLE \""
+	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_EDGE_OF_INCIDENCE = "ALTER TABLE \""
 			+ GraphDatabase.INCIDENCE_TABLE_NAME
 			+ "\" DROP CONSTRAINT \"eIdIsForeignKey\";";
 
@@ -348,10 +348,10 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	public PreparedStatement dropForeignKeyConstraintFromEdgeColumnOfIncidenceTable()
 			throws SQLException {
 		return connection
-				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_EGDE_OF_INCIDENCE);
+				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_EDGE_OF_INCIDENCE);
 	}
 
-	private static final String DROP_FOREIGN_KEY_CONSTRAINTS_FROM_GRAPH_OF_INCIDENCE = "ALTER TABLE \""
+	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_INCIDENCE = "ALTER TABLE \""
 			+ GraphDatabase.INCIDENCE_TABLE_NAME
 			+ "\" DROP CONSTRAINT \"gIdIsForeignKey\";";
 
@@ -359,7 +359,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	public PreparedStatement dropForeignKeyConstraintFromGraphColumnOfIncidenceTable()
 			throws SQLException {
 		return connection
-				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINTS_FROM_GRAPH_OF_INCIDENCE);
+				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_INCIDENCE);
 	}
 
 	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_VERTEX_OF_INCIDENCE = "ALTER TABLE \""
@@ -373,7 +373,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_VERTEX_OF_INCIDENCE);
 	}
 
-	private static final String CREATE_CLUSTERED_INDEX_ON_LAMBDA_SEQ = "CREATE INDEX \"lambdaSeqIndex\" ON \""
+	private static final String CREATE_INDEX_ON_LAMBDA_SEQ = "CREATE INDEX \"lambdaSeqIndex\" ON \""
 			+ GraphDatabase.INCIDENCE_TABLE_NAME
 			+ "\"( \"vId\", \"gId\", \"sequenceNumber\" ASC ) WITH (FILLFACTOR=80);"
 			+ "ALTER TABLE \""
@@ -384,14 +384,14 @@ public class PostgreSqlStatementList extends SqlStatementList {
 
 	@Override
 	public PreparedStatement addIndexOnLambdaSeq() throws SQLException {
-		return getPreparedStatement(CREATE_CLUSTERED_INDEX_ON_LAMBDA_SEQ);
+		return getPreparedStatement(CREATE_INDEX_ON_LAMBDA_SEQ);
 	}
 
-	private static final String DROP_CLUSTERED_INDEX_ON_LAMBDA_SEQ = "DROP INDEX IF EXISTS \"lambdaSeqIndex\";";
+	private static final String DROP_INDEX_ON_LAMBDA_SEQ = "DROP INDEX IF EXISTS \"lambdaSeqIndex\";";
 
 	@Override
 	public PreparedStatement dropIndexOnLambdaSeq() throws SQLException {
-		return getPreparedStatement(DROP_CLUSTERED_INDEX_ON_LAMBDA_SEQ);
+		return getPreparedStatement(DROP_INDEX_ON_LAMBDA_SEQ);
 	}
 
 	private static final String CLUSTER_INCIDENCES = "CLUSTER \""
@@ -626,7 +626,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 				.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_EDGE_ATTRIBUTE);
 	}
 
-	private static final String DROP_FOREIGN_KEY_CONSTRAINTS_FROM_GRAPH_OF_EDGE_ATTRIBUTE = "ALTER TABLE \""
+	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_EDGE_ATTRIBUTE = "ALTER TABLE \""
 
 			+ GraphDatabase.EDGE_ATTRIBUTE_VALUE_TABLE_NAME
 			+ "\" DROP CONSTRAINT \"gIdIsForeignKey\";";
@@ -635,7 +635,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	public PreparedStatement dropForeignKeyConstraintFromGraphColumnOfEdgeAttributeValueTable()
 			throws SQLException {
 		return connection
-				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINTS_FROM_GRAPH_OF_EDGE_ATTRIBUTE);
+				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_EDGE_ATTRIBUTE);
 	}
 
 	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_EDGE_OF_ATTRIBUTE_VALUE = "ALTER TABLE \""
@@ -650,7 +650,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_EDGE_OF_ATTRIBUTE_VALUE);
 	}
 
-	private static final String DROP_FOREIGN_KEY_CONSTRAINTS_FROM_EDGE_ATTRIBUTE = "ALTER TABLE \""
+	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_EDGE_ATTRIBUTE = "ALTER TABLE \""
 
 			+ GraphDatabase.EDGE_ATTRIBUTE_VALUE_TABLE_NAME
 			+ "\" DROP CONSTRAINT \"attributeIdIsForeignKey\";";
@@ -659,7 +659,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	public PreparedStatement dropForeignKeyConstraintFromAttributeColumnOfEdgeAttributeValueTable()
 			throws SQLException {
 		return connection
-				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINTS_FROM_EDGE_ATTRIBUTE);
+				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_EDGE_ATTRIBUTE);
 	}
 
 	/*

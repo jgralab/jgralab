@@ -32,23 +32,34 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-package de.uni_koblenz.jgralab.utilities.common.dot;
+package de.uni_koblenz.jgralabtest.non_junit_tests;
 
-/**
- * Lists all supported graph element types in DOT.
- * 
- * @author ist@uni-koblenz.de
- */
-public enum GraphElementType {
+import java.io.IOException;
 
-	NODE("node"), EDGE("edge"), GRAPH("graph");
+import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphIO;
+import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.ProgressFunction;
+import de.uni_koblenz.jgralab.WorkInProgress;
+import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
+import de.uni_koblenz.jgralab.utilities.tg2dot.dot.GraphVizOutputFormat;
 
-	/**
-	 * Attribute holding the GraphElementType name.
-	 */
-	public String name;
+@WorkInProgress(responsibleDevelopers = "mmce@uni-koblenz.de", description = "More test have to be included. Every static method should be tested. Additionally the class itself should be tested.")
+public class Tg2DotTest {
 
-	GraphElementType(String name) {
-		this.name = name;
+	public void convertGraph() throws GraphIOException, IOException {
+		Graph g = GraphIO.loadGraphFromFileWithStandardSupport(
+				"testit/testgraphs/greqltestgraph.tg", (ProgressFunction) null);
+		Tg2Dot.convertGraph(g, "testit/testoutput.dot");
+	}
+
+	public void convertGraph2Svg() throws GraphIOException, IOException {
+		Graph g = GraphIO.loadGraphFromFileWithStandardSupport(
+				"testit/testgraphs/greqltestgraph.tg", (ProgressFunction) null);
+		Tg2Dot t2d = new Tg2Dot();
+		t2d.setGraph(g);
+		t2d.setGraphVizOutputFormat(GraphVizOutputFormat.PNG);
+		t2d.setOutputFile("testit/testoutput.png");
+		t2d.convert();
 	}
 }

@@ -35,6 +35,7 @@
 
 package de.uni_koblenz.jgralab.utilities.tg2sidiff;
 
+import java.io.IOException;
 import java.io.PrintStream;
 
 import de.uni_koblenz.jgralab.AttributedElement;
@@ -214,7 +215,12 @@ public class Tg2SiDiff extends Tg2Whatever {
 	public static void main(String[] args) {
 		Tg2SiDiff converter = new Tg2SiDiff();
 		converter.getOptions(args);
-		converter.convert();
+		try {
+			converter.convert();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }
