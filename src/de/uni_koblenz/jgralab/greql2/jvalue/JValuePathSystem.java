@@ -272,7 +272,8 @@ public class JValuePathSystem extends JValueImpl {
 					vertexToFirstKeyMap.put(vertex, key);
 				}
 			} else {
-				entriesWithoutParentEdge.add(entry);
+				if (!(vertex == rootVertex && distance == 0))
+					entriesWithoutParentEdge.add(entry);
 			}
 		}
 	}
