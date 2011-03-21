@@ -217,5 +217,9 @@ public class EdgeTransition extends SimpleTransition {
 		}
 		return true;
 	}
+	
+	public boolean consumedEdge() {
+		return true;
+	}
 
 }

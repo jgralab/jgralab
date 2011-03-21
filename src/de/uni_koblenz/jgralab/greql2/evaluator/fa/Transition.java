@@ -188,4 +188,11 @@ public abstract class Transition {
 	 */
 	public abstract Vertex getNextVertex(Vertex v, Edge e);
 
+	/**
+	 * @return true if the transition consumes an edge (e.g. for a SimpleTransition),
+	 * false otherwise (e.g. for a goal restriction which does not traverse and 
+	 * consume an edge)
+	 */
+	public abstract boolean consumesEdge();
+
 }

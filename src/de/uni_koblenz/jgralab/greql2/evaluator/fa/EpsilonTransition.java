@@ -140,4 +140,8 @@ public class EpsilonTransition extends Transition {
 		return "epsilon";
 	}
 
+	public boolean consumedEdge() {
+		return false;
+	}
+	
 }
