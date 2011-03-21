@@ -186,15 +186,13 @@ public class JValuePathSystem extends JValueImpl {
 		}
 		while (!entriesWithoutParentEdge.isEmpty()) {
 			PathSystemEntry te = entriesWithoutParentEdge.poll();
-				if (te.getDistanceToRoot() == 0)
-					continue;
 			PathSystemEntry pe = null;
 			if (te.getParentVertex() != null) {
-				pe = keyToEntryMap.get(new PathSystemKey(te.getParentVertex(),
-						te.getParentStateNumber()));
+				pe = keyToEntryMap.get(new PathSystemKey(te
+						.getParentVertex(), te.getParentStateNumber()));
 			} else {
-				pe = keyToEntryMap.get(new PathSystemKey(rootVertex, te
-						.getParentStateNumber()));
+				PathSystemKey key = new PathSystemKey(rootVertex, te.getParentStateNumber());
+				pe = keyToEntryMap.get(key);
 			}
 			te.setParentEdge(pe.getParentEdge());
 			te.setDistanceToRoot(pe.getDistanceToRoot());
