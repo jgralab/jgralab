@@ -186,6 +186,8 @@ public class JValuePathSystem extends JValueImpl {
 		}
 		while (!entriesWithoutParentEdge.isEmpty()) {
 			PathSystemEntry te = entriesWithoutParentEdge.poll();
+				if (te.getDistanceToRoot() == 0)
+					continue;
 			PathSystemEntry pe = null;
 			if (te.getParentVertex() != null) {
 				pe = keyToEntryMap.get(new PathSystemKey(te.getParentVertex(),
