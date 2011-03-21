@@ -176,9 +176,9 @@ public class VertexTypeRestrictionTransition extends Transition {
 		}
 		return "&{" + b + "}";
 	}
-	
-	public boolean consumedEdge() {
+
+	@Override
+	public boolean consumesEdge() {
 		return false;
 	}
-
 }
