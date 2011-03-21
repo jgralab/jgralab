@@ -180,27 +180,26 @@ public class JValuePathSystem extends JValueImpl {
 	 * edge information
 	 */
 	private void clearPathSystem() {
-		if (isFinished) {
-			throw new JValuePathException(
-					"Cannot modify a finished path system");
-		}
+		checkIfFinished();
+
 		while (!entriesWithoutParentEdge.isEmpty()) {
 			PathSystemEntry te = entriesWithoutParentEdge.poll();
 			PathSystemEntry pe = null;
 			if (te.getParentVertex() != null) {
-				pe = keyToEntryMap.get(new PathSystemKey(te
-						.getParentVertex(), te.getParentStateNumber()));
+				pe = keyToEntryMap.get(new PathSystemKey(te.getParentVertex(),
+						te.getParentStateNumber()));
 			} else {
-				PathSystemKey key = new PathSystemKey(rootVertex, te.getParentStateNumber());
+				PathSystemKey key = new PathSystemKey(rootVertex,
+						te.getParentStateNumber());
 				pe = keyToEntryMap.get(key);
 			}
-			//if pe is null, te is the entry of the root vertex
+			// if pe is null, te is the entry of the root vertex
 			if (pe != null) {
 				te.setParentEdge(pe.getParentEdge());
 				te.setDistanceToRoot(pe.getDistanceToRoot());
 				te.setParentStateNumber(pe.getParentStateNumber());
 				te.setParentVertex(pe.getParentVertex());
-			}	
+			}
 		}
 	}
 
@@ -217,10 +216,7 @@ public class JValuePathSystem extends JValueImpl {
 	 *            true if the rootvertex is visited by the dfa in a final state
 	 */
 	public void setRootVertex(Vertex vertex, int stateNumber, boolean finalState) {
-		if (isFinished) {
-			throw new JValuePathException(
-					"Cannot modify a finished path system");
-		}
+		checkIfFinished();
 		PathSystemKey key = new PathSystemKey(vertex, stateNumber);
 		PathSystemEntry entry = new PathSystemEntry(null, null, -1, 0,
 				finalState);
@@ -256,10 +252,7 @@ public class JValuePathSystem extends JValueImpl {
 	public void addVertex(Vertex vertex, int stateNumber, Edge parentEdge,
 			Vertex parentVertex, int parentStateNumber, int distance,
 			boolean finalState) {
-		if (isFinished) {
-			throw new JValuePathException(
-					"Cannot modify a finished path system");
-		}
+		checkIfFinished();
 		PathSystemKey key = new PathSystemKey(vertex, stateNumber);
 		PathSystemEntry entry = keyToEntryMap.get(key);
 		if ((entry == null)
@@ -285,8 +278,9 @@ public class JValuePathSystem extends JValueImpl {
 					vertexToFirstKeyMap.put(vertex, key);
 				}
 			} else {
-				if (!(vertex == rootVertex && distance == 0))
+				if (!(vertex == rootVertex && distance == 0)) {
 					entriesWithoutParentEdge.add(entry);
+				}
 			}
 		}
 	}
@@ -305,10 +299,8 @@ public class JValuePathSystem extends JValueImpl {
 	 * Calculates the set of child the given key has in this PathSystem
 	 */
 	public JValueSet children(PathSystemKey key) {
-		if (!isFinished) {
-			throw new JValuePathException(
-					"Path System needs to be finished before it can be used. Use PathSystem.finish()");
-		}
+		checkIfUnfinished();
+
 		JValueSet returnSet = new JValueSet();
 		for (Map.Entry<PathSystemKey, PathSystemEntry> mapEntry : keyToEntryMap
 				.entrySet()) {
@@ -337,10 +329,8 @@ public class JValuePathSystem extends JValueImpl {
 	 * Calculates the set of children the given key has in this PathSystem
 	 */
 	public JValueSet siblings(PathSystemKey key) {
-		if (!isFinished) {
-			throw new JValuePathException(
-					"Path System needs to be finished before it can be used. Use PathSystem.finish()");
-		}
+		checkIfUnfinished();
+
 		PathSystemEntry entry = keyToEntryMap.get(key);
 
 		if (entry == null) {
@@ -379,10 +369,8 @@ public class JValuePathSystem extends JValueImpl {
 	 * Calculates the parent vertex of the given key in this PathSystem.
 	 */
 	public JValueImpl parent(PathSystemKey key) {
-		if (!isFinished) {
-			throw new JValuePathException(
-					"Path System needs to be finished before it can be used. Use PathSystem.finish()");
-		}
+		checkIfUnfinished();
+
 		if (key == null) {
 			return new JValueImpl();
 		}
@@ -394,10 +382,8 @@ public class JValuePathSystem extends JValueImpl {
 	 * Calculates the set of types this pathsystem contains
 	 */
 	public JValueSet types() {
-		if (!isFinished) {
-			throw new JValuePathException(
-					"Path System needs to be finished before it can be used. Use PathSystem.finish()");
-		}
+		checkIfUnfinished();
+
 		JValueSet returnSet = new JValueSet();
 		for (Map.Entry<PathSystemKey, PathSystemEntry> entry : keyToEntryMap
 				.entrySet()) {
@@ -415,10 +401,8 @@ public class JValuePathSystem extends JValueImpl {
 	 * Calculates the set of vertextypes this pathsystem contains
 	 */
 	public JValueSet vertexTypes() {
-		if (!isFinished) {
-			throw new JValuePathException(
-					"Path System needs to be finished before it can be used. Use PathSystem.finish()");
-		}
+		checkIfUnfinished();
+
 		JValueSet returnSet = new JValueSet();
 		for (Map.Entry<PathSystemKey, PathSystemEntry> entry : keyToEntryMap
 				.entrySet()) {
@@ -432,10 +416,7 @@ public class JValuePathSystem extends JValueImpl {
 	 * Calculates the set of edgetypes this pathsystem contains
 	 */
 	public JValueSet edgeTypes() {
-		if (!isFinished) {
-			throw new JValuePathException(
-					"Path System needs to be finished before it can be used. Use PathSystem.finish()");
-		}
+		checkIfUnfinished();
 		JValueSet returnSet = new JValueSet();
 		for (Map.Entry<PathSystemKey, PathSystemEntry> entry : keyToEntryMap
 				.entrySet()) {
@@ -454,10 +435,8 @@ public class JValuePathSystem extends JValueImpl {
 	 * @return true, if the element is part of this system, false otherwise
 	 */
 	public boolean contains(GraphElement elem) {
-		if (!isFinished) {
-			throw new JValuePathException(
-					"Path System needs to be finished before it can be used. Use PathSystem.finish()");
-		}
+		checkIfUnfinished();
+
 		for (Map.Entry<PathSystemKey, PathSystemEntry> entry : keyToEntryMap
 				.entrySet()) {
 			if (entry.getValue().getParentEdge() == elem) {
@@ -477,10 +456,8 @@ public class JValuePathSystem extends JValueImpl {
 	 * @return true, if the element is part of this system, false otherwise
 	 */
 	public boolean contains(AttributedElementClass type) {
-		if (!isFinished) {
-			throw new JValuePathException(
-					"Path System needs to be finished before it can be used. Use PathSystem.finish()");
-		}
+		checkIfUnfinished();
+
 		for (Map.Entry<PathSystemKey, PathSystemEntry> entry : keyToEntryMap
 				.entrySet()) {
 			if (entry.getValue().getParentEdge().getAttributedElementClass() == type) {
@@ -511,9 +488,8 @@ public class JValuePathSystem extends JValueImpl {
 	 */
 	public int degree(Vertex vertex, EdgeDirection direction,
 			JValueTypeCollection typeCol) {
-		if (!isFinished) {
-			throw new JValuePathException("Path System needs to be finished before it can be used. Use PathSystem.finish()");
-		}
+		checkIfUnfinished();
+
 		if (vertex == null) {
 			return -1;
 		}
@@ -568,10 +544,8 @@ public class JValuePathSystem extends JValueImpl {
 	 *         given vertex is not part of this pathsystem
 	 */
 	public int degree(Vertex vertex, JValueTypeCollection typeCol) {
-		if (!isFinished) {
-			throw new JValuePathException(
-					"Path System needs to be finished before it can be used. Use PathSystem.finish()");
-		}
+		checkIfUnfinished();
+
 		if (vertex == null) {
 			return -1;
 		}
@@ -609,16 +583,15 @@ public class JValuePathSystem extends JValueImpl {
 	 *         pathsystem
 	 */
 	public JValueSet edgesConnected(Vertex vertex, EdgeDirection direction) {
-		if (!isFinished) {
-			throw new JValuePathException(
-					"Path System needs to be finished before it can be used. Use PathSystem.finish()");
-		}
+		checkIfUnfinished();
 		JValueSet resultSet = new JValueSet();
 		if (vertex == null) {
 			return resultSet;
 		}
 		for (Map.Entry<PathSystemKey, PathSystemEntry> entry : keyToEntryMap
 				.entrySet()) {
+
+			// TODO reduce switch case
 			if (entry.getKey().getVertex() == vertex) {
 				Edge edge = entry.getValue().getParentEdge();
 				if (edge == null) {
@@ -681,10 +654,8 @@ public class JValuePathSystem extends JValueImpl {
 	 *         the vertex is not part of this pathsystem
 	 */
 	public JValueSet edgesConnected(Vertex vertex) {
-		if (!isFinished) {
-			throw new JValuePathException(
-					"Path System needs to be finished before it can be used. Use PathSystem.finish()");
-		}
+		checkIfUnfinished();
+
 		JValueSet resultSet = new JValueSet();
 		if (vertex == null) {
 			return resultSet;
@@ -705,10 +676,8 @@ public class JValuePathSystem extends JValueImpl {
 	 * Calculates the set of edges nodes in this PathSystem.
 	 */
 	public JValueSet edges() {
-		if (!isFinished) {
-			throw new JValuePathException(
-					"Path System needs to be finished before it can be used. Use PathSystem.finish()");
-		}
+		checkIfUnfinished();
+
 		JValueSet resultSet = new JValueSet();
 		for (Map.Entry<PathSystemKey, PathSystemEntry> mapEntry : keyToEntryMap
 				.entrySet()) {
@@ -724,10 +693,7 @@ public class JValuePathSystem extends JValueImpl {
 	 * Calculates the set of nodes which are part of this pathsystem.
 	 */
 	public JValueSet nodes() {
-		if (!isFinished) {
-			throw new JValuePathException(
-					"Path System needs to be finished before it can be used. Use PathSystem.finish()");
-		}
+		checkIfUnfinished();
 		JValueSet returnSet = new JValueSet();
 		for (PathSystemKey key : keyToEntryMap.keySet()) {
 			returnSet.add(new JValueImpl(key.getVertex()));
@@ -741,10 +707,8 @@ public class JValuePathSystem extends JValueImpl {
 	 * number of vertices in the path system
 	 */
 	public JValueSet innerNodes() {
-		if (!isFinished) {
-			throw new JValuePathException(
-					"Path System needs to be finished before it can be used. Use PathSystem.finish()");
-		}
+		checkIfUnfinished();
+
 		JValueSet resultSet = new JValueSet();
 		for (Map.Entry<PathSystemKey, PathSystemEntry> entry : keyToEntryMap
 				.entrySet()) {
@@ -763,10 +727,8 @@ public class JValuePathSystem extends JValueImpl {
 	 * once.
 	 */
 	public JValueSet leaves() {
-		if (!isFinished) {
-			throw new JValuePathException(
-					"Path System needs to be finished before it can be used. Use PathSystem.finish()");
-		}
+		checkIfUnfinished();
+
 		JValueSet leaves = new JValueSet();
 		// create the set of leaves out of the key set
 		for (PathSystemKey key : leafKeys) {
@@ -779,10 +741,8 @@ public class JValuePathSystem extends JValueImpl {
 	 * create the set of leave keys
 	 */
 	private void createLeafKeys() {
-		if (isFinished) {
-			throw new JValuePathException(
-					"A finished path system may not be modified");
-		}
+		checkIfFinished();
+
 		if (leafKeys != null) {
 			return;
 		}
@@ -805,10 +765,8 @@ public class JValuePathSystem extends JValueImpl {
 	 * @return a Path from rootVertex to given vertex
 	 */
 	public JValuePath extractPath(Vertex vertex) throws JValuePathException {
-		if (!isFinished) {
-			throw new JValuePathException(
-					"Path System needs to be finished before it can be used. Use PathSystem.finish()");
-		}
+		checkIfUnfinished();
+
 		PathSystemKey key = leafVertexToLeafKeyMap.get(vertex);
 		if (key == null) {
 			return new JValuePath((Vertex) null);
@@ -825,10 +783,8 @@ public class JValuePathSystem extends JValueImpl {
 	 * @return a Path from rootVertex to given vertex
 	 */
 	public JValuePath extractPath(PathSystemKey key) throws JValuePathException {
-		if (!isFinished) {
-			throw new JValuePathException(
-					"Path System needs to be finished before it can be used. Use PathSystem.finish()");
-		}
+		checkIfUnfinished();
+
 		JValuePath path = new JValuePath(key.getVertex());
 		while (key != null) {
 			PathSystemEntry entry = keyToEntryMap.get(key);
@@ -850,10 +806,8 @@ public class JValuePathSystem extends JValueImpl {
 	 * @return a set of Paths from rootVertex to leaves
 	 */
 	public JValueSet extractPaths() throws JValuePathException {
-		if (!isFinished) {
-			throw new JValuePathException(
-					"Path System needs to be finished before it can be used. Use PathSystem.finish()");
-		}
+		checkIfUnfinished();
+
 		JValueSet pathSet = new JValueSet();
 		for (PathSystemKey leaf : leafKeys) {
 			pathSet.add(extractPath(leaf));
@@ -867,10 +821,7 @@ public class JValuePathSystem extends JValueImpl {
 	 * @return a set of Paths from rootVertex to leaves
 	 */
 	public JValueSet extractPaths(int len) throws JValuePathException {
-		if (!isFinished) {
-			throw new JValuePathException(
-					"Path System needs to be finished before it can be used. Use PathSystem.finish()");
-		}
+		checkIfUnfinished();
 		JValueSet pathSet = new JValueSet();
 		for (PathSystemKey leaf : leafKeys) {
 			JValuePath path = extractPath(leaf);
@@ -886,10 +837,8 @@ public class JValuePathSystem extends JValueImpl {
 	 * of this PathSystem n times, it is counted n times
 	 */
 	public int weight() {
-		if (!isFinished) {
-			throw new JValuePathException(
-					"Path System needs to be finished before it can be used. Use PathSystem.finish()");
-		}
+		checkIfUnfinished();
+
 		return keyToEntryMap.size();
 	}
 
@@ -897,10 +846,8 @@ public class JValuePathSystem extends JValueImpl {
 	 * calculates the depth of this pathtree
 	 */
 	public int depth() {
-		if (!isFinished) {
-			throw new JValuePathException(
-					"Path System needs to be finished before it can be used. Use PathSystem.finish()");
-		}
+		checkIfUnfinished();
+
 		int maxdepth = 0;
 		for (Map.Entry<PathSystemKey, PathSystemEntry> entry : keyToEntryMap
 				.entrySet()) {
@@ -933,10 +880,8 @@ public class JValuePathSystem extends JValueImpl {
 	 *         system.
 	 */
 	public int distance(PathSystemKey key) {
-		if (!isFinished) {
-			throw new JValuePathException(
-					"Path System needs to be finished before it can be used. Use PathSystem.finish()");
-		}
+		checkIfUnfinished();
+
 		if (key == null) {
 			return -1;
 		}
@@ -950,10 +895,8 @@ public class JValuePathSystem extends JValueImpl {
 	 * pathsystem
 	 */
 	public int minPathLength() {
-		if (!isFinished) {
-			throw new JValuePathException(
-					"Path System needs to be finished before it can be used. Use PathSystem.finish()");
-		}
+		checkIfUnfinished();
+
 		int minDistance = Integer.MAX_VALUE;
 		for (PathSystemKey key : leafKeys) {
 			PathSystemEntry entry = keyToEntryMap.get(key);
@@ -969,10 +912,8 @@ public class JValuePathSystem extends JValueImpl {
 	 * root vertex, this is the length of the longest path in this pathsystem
 	 */
 	public int maxPathLength() {
-		if (!isFinished) {
-			throw new JValuePathException(
-					"Path System needs to be finished before it can be used. Use PathSystem.finish()");
-		}
+		checkIfUnfinished();
+
 		int maxDistance = 0;
 		for (PathSystemKey key : leafKeys) {
 			PathSystemEntry entry = keyToEntryMap.get(key);
@@ -1004,10 +945,8 @@ public class JValuePathSystem extends JValueImpl {
 	 *         keys is not part of this pathsystem, false is returned
 	 */
 	public boolean isNeighbour(PathSystemKey key1, PathSystemKey key2) {
-		if (!isFinished) {
-			throw new JValuePathException(
-					"Path System needs to be finished before it can be used. Use PathSystem.finish()");
-		}
+		checkIfUnfinished();
+
 		if ((key1 == null) || (key2 == null)) {
 			return false;
 		}
@@ -1044,10 +983,8 @@ public class JValuePathSystem extends JValueImpl {
 	 *         keys is not part of this pathsystem, false is returned
 	 */
 	public boolean isSibling(PathSystemKey key1, PathSystemKey key2) {
-		if (!isFinished) {
-			throw new JValuePathException(
-					"Path System needs to be finished before it can be used. Use PathSystem.finish()");
-		}
+		checkIfUnfinished();
+
 		if ((key1 == null) || (key2 == null)) {
 			return false;
 		}
@@ -1066,10 +1003,8 @@ public class JValuePathSystem extends JValueImpl {
 	 *         otherwise
 	 */
 	public boolean containsPath(JValuePath path) {
-		if (!isFinished) {
-			throw new JValuePathException(
-					"Path System needs to be finished before it can be used. Use PathSystem.finish()");
-		}
+		checkIfUnfinished();
+
 		if (path.getStartVertex() != rootVertex) {
 			return false;
 		}
@@ -1094,10 +1029,8 @@ public class JValuePathSystem extends JValueImpl {
 	 * Prints this pathsystem as ascii-art
 	 */
 	public void printAscii() {
-		if (!isFinished) {
-			throw new JValuePathException(
-					"Path System needs to be finished before it can be used. Use PathSystem.finish()");
-		}
+		checkIfUnfinished();
+
 		try {
 			JValueSet pathSet = extractPaths();
 			for (JValue path : pathSet) {
@@ -1113,10 +1046,8 @@ public class JValuePathSystem extends JValueImpl {
 	 */
 	@Override
 	public String toString() {
-		if (!isFinished) {
-			throw new JValuePathException(
-					"Path System needs to be finished before it can be used. Use PathSystem.finish()");
-		}
+		checkIfUnfinished();
+
 		StringBuffer returnString = new StringBuffer("PathSystem: \n");
 		try {
 			JValueSet pathSet = extractPaths();
@@ -1133,10 +1064,7 @@ public class JValuePathSystem extends JValueImpl {
 	 * prints the <key, entry> map
 	 */
 	public void printEntryMap() {
-		if (!isFinished) {
-			throw new JValuePathException(
-					"Path System needs to be finished before it can be used. Use PathSystem.finish()");
-		}
+		checkIfUnfinished();
 		logger.info("<Key, Entry> Set of PathSystem is:");
 		for (Map.Entry<PathSystemKey, PathSystemEntry> entry : keyToEntryMap
 				.entrySet()) {
@@ -1150,10 +1078,8 @@ public class JValuePathSystem extends JValueImpl {
 	 * prints the <vertex, key map
 	 */
 	public void printKeyMap() {
-		if (!isFinished) {
-			throw new JValuePathException(
-					"Path System needs to be finished before it can be used. Use PathSystem.finish()");
-		}
+		checkIfUnfinished();
+
 		logger.info("<Vertex, FirstKey> Set of PathSystem is:");
 		for (Map.Entry<Vertex, PathSystemKey> entry : vertexToFirstKeyMap
 				.entrySet()) {
@@ -1168,10 +1094,8 @@ public class JValuePathSystem extends JValueImpl {
 	 */
 	@Override
 	public void accept(JValueVisitor v) {
-		if (!isFinished) {
-			throw new JValuePathException(
-					"Path System needs to be finished before it can be used. Use PathSystem.finish()");
-		}
+		checkIfUnfinished();
+
 		v.visitPathSystem(this);
 	}
 
@@ -1181,10 +1105,8 @@ public class JValuePathSystem extends JValueImpl {
 	 */
 	@Override
 	public JValueSet toJValueSet() throws JValueInvalidTypeException {
-		if (!isFinished) {
-			throw new JValuePathException(
-					"Path System needs to be finished before it can be used. Use PathSystem.finish()");
-		}
+		checkIfUnfinished();
+
 		JValueSet edges = edges();
 		JValueSet nodes = nodes();
 		JValueSet edgesAndNodes = new JValueSet(edges.size() + nodes.size());
@@ -1207,4 +1129,17 @@ public class JValuePathSystem extends JValueImpl {
 		return this;
 	}
 
+	private void checkIfFinished() {
+		if (isFinished) {
+			throw new JValuePathException(
+					"Cannot modify a finished path system");
+		}
+	}
+
+	private void checkIfUnfinished() {
+		if (!isFinished) {
+			throw new JValuePathException(
+					"Path System needs to be finished before it can be used. Use PathSystem.finish()");
+		}
+	}
 }
