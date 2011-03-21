@@ -206,11 +206,7 @@ public class PathSystem extends Greql2Function {
 					Vertex nextVertex = currentTransition.getNextVertex(currentVertex, inc);
 					if (!isMarked(nextVertex, currentTransition.endState)) {
 						if (currentTransition.accepts(currentVertex, inc, subgraph)) {
-							Edge traversedEdge = inc;
-							//TODO: Error with recognition of loops, need to test, if the edge is really consumed by the transition 
-							if (nextVertex == currentVertex) {
-								traversedEdge = null;
-							}
+							Edge traversedEdge = currentTransition.consumesEdge() ? inc : null;
 							PathSystemMarkerEntry newEntry = markVertex(nextVertex, currentTransition.endState,
 									currentVertex, traversedEdge, currentEntry.state, currentEntry.distanceToRoot + 1);
 							if (currentTransition.endState.isFinal) {
