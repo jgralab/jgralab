@@ -87,12 +87,12 @@ public class PathSystemFunctionTest extends GenericTest {
 	public static void initializePathAndPathSystemVariables()
 			throws JValueInvalidTypeException, Exception {
 		PathSystemFunctionTest t = new PathSystemFunctionTest();
-		JValue v1 = t
-				.evalTestQuery("theElement(from v : V{localities.County} with v.name = 'Hessen' report v end) store as hessen");
-		JValue v2 = t
-				.evalTestQuery("using hessen: pathSystem(hessen, -->{localities.ContainsLocality} -->{connections.AirRoute}* ) store as noPS");
-		emtpyPath = t.evalTestQuery(
-				"using noPS: extractPath(noPS, firstVertex())").toPath();
+		// JValue v1 = t
+		// .evalTestQuery("theElement(from v : V{localities.County} with v.name = 'Hessen' report v end) store as hessen");
+		// JValue v2 = t
+		// .evalTestQuery("using hessen: pathSystem(hessen, -->{localities.ContainsLocality} -->{connections.AirRoute}* ) store as noPS");
+		// emtpyPath = t.evalTestQuery(
+		// "using noPS: extractPath(noPS, firstVertex())").toPath();
 		// oneElementPath = t.evalTestQuery(
 		// "using noPS, cV: extractPath(noPS, hessen)").toPath();
 
