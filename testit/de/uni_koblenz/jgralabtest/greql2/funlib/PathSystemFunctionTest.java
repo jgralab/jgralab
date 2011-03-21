@@ -43,13 +43,17 @@ import static org.junit.Assert.fail;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueBag;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
 import de.uni_koblenz.jgralabtest.greql2.GenericTest;
 import de.uni_koblenz.jgralabtest.schemas.minimal.Link;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalGraph;
@@ -66,6 +70,71 @@ public class PathSystemFunctionTest extends GenericTest {
 	 * :-) ( -->Œ± :-) w ) liefert dementsprechend einen Pfad der Gestalt Œ±T
 	 * von w nach v.
 	 */
+
+	private static JValuePath emtpyPath, oneElementPath, twoElementPath,
+			MultipleElementPath;
+	private static JValuePathSystem emptyPathSystem;
+	private static JValuePathSystem depthOnePathSystemWithOnePath,
+			depthTwoPathSystemWithOnePath, multipleDepthPathSystemWithOnePath;
+	private static JValuePathSystem depthOnePathSystemWithTwoPaths,
+			depthTwoPathSystemWithTwoPaths,
+			multipleDepthPathSystemWithTwoPaths;
+	private static JValuePathSystem depthOnePathSystemWithMultiPaths,
+			depthTwoPathSystemWithMultiPaths,
+			multipleDepthPathSystemWithMultiPaths;
+
+	@BeforeClass
+	public static void initializePathAndPathSystemVariables()
+			throws JValueInvalidTypeException, Exception {
+		PathSystemFunctionTest t = new PathSystemFunctionTest();
+		JValue v1 = t
+				.evalTestQuery("theElement(from v : V{localities.County} with v.name = 'Hessen' report v end) store as hessen");
+		JValue v2 = t
+				.evalTestQuery("using hessen: pathSystem(hessen, -->{localities.ContainsLocality} -->{connections.AirRoute}* ) store as noPS");
+		emtpyPath = t.evalTestQuery(
+				"using noPS: extractPath(noPS, firstVertex())").toPath();
+		// oneElementPath = t.evalTestQuery(
+		// "using noPS, cV: extractPath(noPS, hessen)").toPath();
+
+		JValue v3 = t
+				.evalTestQuery("theElement(from v : V{junctions.Crossroad} with v --> v report v end) store as suedallee");
+		JValue v4 = t
+				.evalTestQuery("using suedallee: pathSystem(suedallee, -->{connections.Street}) store as PS");
+
+		JValuePath path = t.evalTestQuery(
+				"using suedallee, PS: extractPath(PS, suedallee)").toPath();
+
+		twoElementPath = null;
+		MultipleElementPath = null;
+		emptyPathSystem = null;
+		depthOnePathSystemWithOnePath = null;
+		depthTwoPathSystemWithOnePath = null;
+		multipleDepthPathSystemWithOnePath = null;
+		depthOnePathSystemWithTwoPaths = null;
+		depthTwoPathSystemWithTwoPaths = null;
+		multipleDepthPathSystemWithTwoPaths = null;
+		depthOnePathSystemWithMultiPaths = null;
+		depthTwoPathSystemWithMultiPaths = null;
+		multipleDepthPathSystemWithMultiPaths = null;
+	}
+
+	@Before
+	public void setPathAndPathSystemVariables() {
+		setBoundVariable("emptyPath", emtpyPath);
+		setBoundVariable("oneElementPath", oneElementPath);
+		setBoundVariable("twoElementPath", twoElementPath);
+		setBoundVariable("multiElementPath", MultipleElementPath);
+		setBoundVariable("emtpyPathSystem", emptyPathSystem);
+		setBoundVariable("d1p1PS", depthOnePathSystemWithOnePath);
+		setBoundVariable("d2p1PS", depthTwoPathSystemWithOnePath);
+		setBoundVariable("dmp1PS", multipleDepthPathSystemWithOnePath);
+		setBoundVariable("d1p2PS", depthOnePathSystemWithTwoPaths);
+		setBoundVariable("d2p2PS", depthTwoPathSystemWithTwoPaths);
+		setBoundVariable("dmp2PS", multipleDepthPathSystemWithTwoPaths);
+		setBoundVariable("d1pmPS", depthOnePathSystemWithMultiPaths);
+		setBoundVariable("d2pmPS", depthTwoPathSystemWithMultiPaths);
+		setBoundVariable("dmpmPS", multipleDepthPathSystemWithMultiPaths);
+	}
 
 	@Test
 	public void testContains() throws Exception {
