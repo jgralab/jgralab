@@ -47,11 +47,13 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueBag;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
 import de.uni_koblenz.jgralabtest.greql2.GenericTest;
@@ -72,7 +74,7 @@ public class PathSystemFunctionTest extends GenericTest {
 	 */
 
 	private static JValuePath emtpyPath, oneElementPath, twoElementPath,
-			MultipleElementPath;
+			multipleElementPath, loopPath, longPath;
 	private static JValuePathSystem emptyPathSystem;
 	private static JValuePathSystem depthOnePathSystemWithOnePath,
 			depthTwoPathSystemWithOnePath, multipleDepthPathSystemWithOnePath;
@@ -87,25 +89,30 @@ public class PathSystemFunctionTest extends GenericTest {
 	public static void initializePathAndPathSystemVariables()
 			throws JValueInvalidTypeException, Exception {
 		PathSystemFunctionTest t = new PathSystemFunctionTest();
-		// JValue v1 = t
-		// .evalTestQuery("theElement(from v : V{localities.County} with v.name = 'Hessen' report v end) store as hessen");
-		// JValue v2 = t
-		// .evalTestQuery("using hessen: pathSystem(hessen, -->{localities.ContainsLocality} -->{connections.AirRoute}* ) store as noPS");
-		// emtpyPath = t.evalTestQuery(
-		// "using noPS: extractPath(noPS, firstVertex())").toPath();
-		// oneElementPath = t.evalTestQuery(
-		// "using noPS, cV: extractPath(noPS, hessen)").toPath();
+		t.evalTestQuery("theElement(from v : V{localities.County} with v.name = 'Hessen' report v end) store as hessen");
+		t.evalTestQuery("using hessen: pathSystem(hessen, -->{localities.ContainsLocality} -->{connections.AirRoute}* ) store as noPS");
+		emtpyPath = t.evalTestQuery(
+				"using noPS: extractPath(noPS, firstVertex())").toPath();
+		multipleElementPath = t.evalTestQuery(
+				"using noPS: extractPath(noPS, 2)[0]").toPath();
 
-		JValue v3 = t
-				.evalTestQuery("theElement(from v : V{junctions.Crossroad} with v --> v report v end) store as suedallee");
-		JValue v4 = t
-				.evalTestQuery("using suedallee: pathSystem(suedallee, -->{connections.Street}) store as PS");
+		t.evalTestQuery("using hessen: pathSystem(hessen, -->{localities.ContainsLocality} ) store as PS");
+		twoElementPath = t.evalTestQuery("using PS: extractPath(PS, 1)[0]")
+				.toPath();
 
-		JValuePath path = t.evalTestQuery(
+		t.evalTestQuery("theElement(from v : V{junctions.Crossroad} with v --> v report v end) store as suedallee");
+		t.evalTestQuery("using suedallee: pathSystem(suedallee, -->{connections.Street}) store as PS");
+		loopPath = t.evalTestQuery(
 				"using suedallee, PS: extractPath(PS, suedallee)").toPath();
 
-		twoElementPath = null;
-		MultipleElementPath = null;
+		t.evalTestQuery("using suedallee: pathSystem(suedallee, [-->{connections.Footpath}]) store as PS");
+		oneElementPath = t.evalTestQuery(
+				"using suedallee, PS: extractPath(PS, suedallee)").toPath();
+		longPath = t
+				.evalTestQuery(
+						"extractPath(pathSystem(V{junctions.Crossroad}[0], <->*), 5)[0]")
+				.toPath();
+
 		emptyPathSystem = null;
 		depthOnePathSystemWithOnePath = null;
 		depthTwoPathSystemWithOnePath = null;
@@ -123,7 +130,10 @@ public class PathSystemFunctionTest extends GenericTest {
 		setBoundVariable("emptyPath", emtpyPath);
 		setBoundVariable("oneElementPath", oneElementPath);
 		setBoundVariable("twoElementPath", twoElementPath);
-		setBoundVariable("multiElementPath", MultipleElementPath);
+		setBoundVariable("multiElementPath", multipleElementPath);
+		setBoundVariable("loopPath", loopPath);
+		setBoundVariable("longPath", loopPath);
+
 		setBoundVariable("emtpyPathSystem", emptyPathSystem);
 		setBoundVariable("d1p1PS", depthOnePathSystemWithOnePath);
 		setBoundVariable("d2p1PS", depthTwoPathSystemWithOnePath);
@@ -344,24 +354,27 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testEdgeTrace() throws Exception {
-		String queryString = "from v: V{localities.County}, w: V{junctions.Crossroad}"
-				+ "report edgeTrace(extractPath(pathSystem(v, -->{localities.ContainsLocality} {junctions.Airport} & -->{localities.ContainsCrossroad}), w)) end";
-		JValue result = evalTestQuery("EdgeTrace", queryString,
-				TestVersion.CITY_MAP_GRAPH);
-		JValueBag bag = result.toCollection().toJValueBag();
 
-		assertEquals(countyCount * crossroadCount, bag.size());
-		int traceCount = 0;
-		for (JValue value : bag) {
-			int size = value.toCollection().size();
-			if (size == 0) {
-				continue;
-			}
+		testEdgeTrace(emtpyPath);
+		testEdgeTrace(oneElementPath);
+		testEdgeTrace(twoElementPath);
+		testEdgeTrace(multipleElementPath);
+		testEdgeTrace(longPath);
+		testEdgeTrace(loopPath);
+	}
 
-			traceCount++;
-			assertEquals(2, value.toCollection().size());
+	public void testEdgeTrace(JValuePath usedPath)
+			throws JValueInvalidTypeException, Exception {
+		setBoundVariable("usedPath", usedPath);
+		JValueCollection trace = evalTestQuery(
+				"using usedPath: edgeTrace(usedPath)").toCollection();
+
+		List<Edge> edgeTrace = usedPath.edgeTrace();
+		for (JValue tracedEdge : trace) {
+			Edge edge = tracedEdge.toEdge();
+			assertTrue(edgeTrace.remove(edge));
 		}
-		assertEquals(airportCount, traceCount);
+		assertTrue(edgeTrace.isEmpty());
 	}
 
 	@Test
