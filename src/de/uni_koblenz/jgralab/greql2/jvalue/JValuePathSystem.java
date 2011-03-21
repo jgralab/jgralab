@@ -285,7 +285,8 @@ public class JValuePathSystem extends JValueImpl {
 					vertexToFirstKeyMap.put(vertex, key);
 				}
 			} else {
-				entriesWithoutParentEdge.add(entry);
+				if (!(vertex == rootVertex && distance == 0))
+					entriesWithoutParentEdge.add(entry);
 			}
 		}
 	}
@@ -510,7 +511,9 @@ public class JValuePathSystem extends JValueImpl {
 	 */
 	public int degree(Vertex vertex, EdgeDirection direction,
 			JValueTypeCollection typeCol) {
-		clearPathSystem();
+		if (!isFinished) {
+			throw new JValuePathException("Path System needs to be finished before it can be used. Use PathSystem.finish()");
+		}
 		if (vertex == null) {
 			return -1;
 		}

@@ -32,21 +32,23 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-package de.uni_koblenz.jgralab.utilities.common.dot;
+package de.uni_koblenz.jgralab.utilities.tg2dot.dot;
 
-public enum GraphVizLayouter {
+/**
+ * Lists supported graph types in DOT.
+ * 
+ * @author mmce
+ */
+public enum GraphType {
 
-	DOT("dot"), NEATO("neato"), TWOPI("twopi"), CIRCO("circo"), FDP("fdp"), SFDP(
-			"sfdp");
+	DIRECTED("digraph"), UNDIRECTED("graph");
 
+	/**
+	 * Holding the GraphType name;
+	 */
 	public String name;
 
-	GraphVizLayouter(String name) {
+	GraphType(String name) {
 		this.name = name;
-	}
-
-	@Override
-	public String toString() {
-		return name;
 	}
 }

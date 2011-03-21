@@ -39,6 +39,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -440,7 +441,12 @@ public class GenericTest {
 		}
 		System.out.println(((SerializableGreql2) eval.getSyntaxGraph())
 				.serialize());
-		Tg2Dot.convertGraph(eval.getSyntaxGraph(), dotFileName, true);
+		try {
+			Tg2Dot.convertGraph(eval.getSyntaxGraph(), dotFileName, true);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	protected JValue getNthValue(JValueCollection col, int n) {

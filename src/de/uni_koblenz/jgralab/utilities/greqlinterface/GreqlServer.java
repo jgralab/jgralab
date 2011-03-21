@@ -159,7 +159,7 @@ public class GreqlServer extends Thread {
 		}
 	}
 
-	private void saveAsDot(JValue val, String dotFileName) {
+	private void saveAsDot(JValue val, String dotFileName) throws IOException {
 		Graph g = eval.getDatagraph();
 		BooleanGraphMarker marker = new BooleanGraphMarker(g);
 		markResultElements(val, marker);
@@ -168,7 +168,7 @@ public class GreqlServer extends Thread {
 				marker.mark(e);
 			}
 		}
-		Tg2Dot.convertGraph(marker, dotFileName, false);
+		Tg2Dot.convertGraph(marker, dotFileName);
 	}
 
 	private void markResultElements(JValue val, BooleanGraphMarker marker) {

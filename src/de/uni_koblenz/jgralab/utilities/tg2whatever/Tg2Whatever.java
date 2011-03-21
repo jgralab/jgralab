@@ -35,8 +35,8 @@
 
 package de.uni_koblenz.jgralab.utilities.tg2whatever;
 
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
 
 import org.apache.commons.cli.CommandLine;
@@ -195,14 +195,13 @@ public abstract class Tg2Whatever {
 		domainNames = print;
 	}
 
-	public void convert() {
-		try {
-			PrintStream out = initializeOutputStream();
+	public void convert() throws IOException {
+		if (outputName == null || outputName.equals("")) {
+			convert(System.out);
+		} else {
+			PrintStream out = new PrintStream(new FileOutputStream(outputName));
 			convert(out);
-		} catch (FileNotFoundException e) {
-			System.err.println("File '" + outputName
-					+ "' could not be created.");
-			System.exit(1);
+			out.close();
 		}
 	}
 
@@ -212,16 +211,6 @@ public abstract class Tg2Whatever {
 		printVertices(out);
 		printEdges(out);
 		graphEnd(out);
-	}
-
-	private PrintStream initializeOutputStream() throws FileNotFoundException {
-		PrintStream out;
-		if (outputName.equals("")) {
-			out = System.out;
-		} else {
-			out = new PrintStream(new FileOutputStream(outputName));
-		}
-		return out;
 	}
 
 	private void printEdges(PrintStream out) {
@@ -354,11 +343,9 @@ public abstract class Tg2Whatever {
 			}
 		}
 		if (comLine.hasOption("o")) {
-			outputName = comLine.getOptionValue("o");
+			outputName = comLine.getOptionValue("o").trim();
 		}
-		if (outputName == null) {
-			outputName = "";
-		}
+
 		if (comLine.hasOption("a")) {
 			schemaName = comLine.getOptionValue("a");
 			setSchema(schemaName);
