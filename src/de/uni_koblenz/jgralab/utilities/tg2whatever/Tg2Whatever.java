@@ -70,7 +70,7 @@ public abstract class Tg2Whatever {
 
 	protected boolean edgeAttributes = false;
 
-	protected boolean reversedEdges = false;
+	private boolean reversedEdges = false;
 
 	private int currentElementSequenceIndex = -1;
 
