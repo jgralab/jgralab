@@ -244,7 +244,8 @@ public class Tg2Dot extends Tg2Whatever {
 
 	public static void convertGraph(BooleanGraphMarker marker,
 			String outputFileName) throws IOException {
-		convertGraph(marker, outputFileName, false);
+		convertGraph(marker, outputFileName, false,
+				(Class<? extends AttributedElement>[]) null);
 	}
 
 	public static void convertGraph(BooleanGraphMarker marker,
@@ -655,10 +656,9 @@ public class Tg2Dot extends Tg2Whatever {
 	 * @return Return true, if the given Edge should be reversed.
 	 */
 	private boolean isReversedEdge(Edge e) {
-
 		Boolean isReversed = reversedEdgeClasses.contains(e
 				.getAttributedElementClass());
-		return reversedEdges ^ isReversed;
+		return isReversedEdges() ^ isReversed;
 	}
 
 	/**
