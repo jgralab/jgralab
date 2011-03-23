@@ -143,7 +143,7 @@ public class Tg2Dot extends Tg2Whatever {
 
 	/**
 	 * Specifies the type of file, which will be passed to dot in order to
-	 * generate an output.
+	 * generate an output. Defaults to DOT.
 	 */
 	private GraphVizLayouter graphVizLayouter;
 
@@ -209,17 +209,29 @@ public class Tg2Dot extends Tg2Whatever {
 
 	public static void convertGraph(Graph graph, String outputFileName)
 			throws IOException {
-		convertGraph(graph, outputFileName, false);
+		convertGraph(graph, outputFileName, false, GraphVizOutputFormat.XDOT);
 	}
 
 	public static void convertGraph(Graph graph, String outputFileName,
-			boolean reversedEdges,
+			boolean reversedEdges) throws IOException {
+		convertGraph(graph, outputFileName, reversedEdges,
+				GraphVizOutputFormat.XDOT);
+	}
+
+	public static void convertGraph(Graph graph, String outputFileName,
+			GraphVizOutputFormat format) throws IOException {
+		convertGraph(graph, outputFileName, false, format);
+	}
+
+	public static void convertGraph(Graph graph, String outputFileName,
+			boolean reversedEdges, GraphVizOutputFormat format,
 			Class<? extends AttributedElement>... reversedEdgeTypes)
 			throws IOException {
 
 		Tg2Dot converter = createConverterAndSetAttributes(graph,
 				reversedEdges, (Class<? extends AttributedElement>[]) null);
 		converter.setOutputFile(outputFileName);
+		converter.setGraphVizOutputFormat(format);
 
 		if (reversedEdgeTypes != null) {
 			HashSet<Class<? extends AttributedElement>> revEdgeTypes = new HashSet<Class<? extends AttributedElement>>();
