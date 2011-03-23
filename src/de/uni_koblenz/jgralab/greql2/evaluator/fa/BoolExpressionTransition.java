@@ -108,14 +108,13 @@ public class BoolExpressionTransition extends Transition {
 	}
 
 	/**
-	 * Creates a new transition from start state to end state. 
+	 * Creates a new transition from start state to end state.
 	 */
 	public BoolExpressionTransition(State start, State end,
 			VertexEvaluator boolEval, GraphMarker<VertexEvaluator> graphMarker) {
 		super(start, end);
 		boolExpressionEvaluator = boolEval;
-		Vertex v = graphMarker.getGraph().getFirstVertex(
-				ThisVertex.class);
+		Vertex v = graphMarker.getGraph().getFirstVertex(ThisVertex.class);
 		if (v != null) {
 			thisVertexEvaluator = (ThisVertexEvaluator) graphMarker.getMark(v);
 		}
@@ -163,8 +162,9 @@ public class BoolExpressionTransition extends Transition {
 						.serializeGreql2Vertex(boolExpressionEvaluator
 								.getVertex());
 	}
-	
-	public boolean consumedEdge() {
+
+	@Override
+	public boolean consumesEdge() {
 		return false;
 	}
 }
