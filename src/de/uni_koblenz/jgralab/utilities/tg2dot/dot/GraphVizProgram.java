@@ -55,12 +55,16 @@ public class GraphVizProgram {
 	}
 
 	public GraphVizProgram layouter(GraphVizLayouter layouter) {
-		this.layouter = layouter;
+		if (layouter != null) {
+			this.layouter = layouter;
+		}
 		return this;
 	}
 
 	public GraphVizProgram outputFormat(GraphVizOutputFormat outputFormat) {
-		this.outputFormat = outputFormat;
+		if (outputFormat != null) {
+			this.outputFormat = outputFormat;
+		}
 		return this;
 	}
 
