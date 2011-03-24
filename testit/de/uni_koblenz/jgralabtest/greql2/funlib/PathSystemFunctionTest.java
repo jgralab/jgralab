@@ -36,11 +36,9 @@
 package de.uni_koblenz.jgralabtest.greql2.funlib;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
@@ -52,15 +50,10 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueBag;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
 import de.uni_koblenz.jgralabtest.greql2.GenericTest;
-import de.uni_koblenz.jgralabtest.schemas.minimal.Link;
-import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalGraph;
-import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalSchema;
-import de.uni_koblenz.jgralabtest.schemas.minimal.Node;
 
 public class PathSystemFunctionTest extends GenericTest {
 
@@ -73,7 +66,7 @@ public class PathSystemFunctionTest extends GenericTest {
 	 * von w nach v.
 	 */
 
-	private static JValuePath emtpyPath, oneElementPath, twoElementPath,
+	private static JValuePath emptyPath, oneElementPath, twoElementPath,
 			multipleElementPath, loopPath, longPath;
 	private static JValuePathSystem emptyPathSystem;
 	private static JValuePathSystem depthOnePathSystemWithOnePath,
@@ -91,7 +84,7 @@ public class PathSystemFunctionTest extends GenericTest {
 		PathSystemFunctionTest t = new PathSystemFunctionTest();
 		t.evalTestQuery("theElement(from v : V{localities.County} with v.name = 'Hessen' report v end) store as hessen");
 		t.evalTestQuery("using hessen: pathSystem(hessen, -->{localities.ContainsLocality} -->{connections.AirRoute}* ) store as noPS");
-		emtpyPath = t.evalTestQuery(
+		emptyPath = t.evalTestQuery(
 				"using noPS: extractPath(noPS, firstVertex())").toPath();
 		multipleElementPath = t.evalTestQuery(
 				"using noPS: extractPath(noPS, 2)[0]").toPath();
@@ -127,7 +120,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Before
 	public void setPathAndPathSystemVariables() {
-		setBoundVariable("emptyPath", emtpyPath);
+		setBoundVariable("emptyPath", emptyPath);
 		setBoundVariable("oneElementPath", oneElementPath);
 		setBoundVariable("twoElementPath", twoElementPath);
 		setBoundVariable("multiElementPath", multipleElementPath);
@@ -355,7 +348,7 @@ public class PathSystemFunctionTest extends GenericTest {
 	@Test
 	public void testEdgeTrace() throws Exception {
 
-		testEdgeTrace(emtpyPath);
+		testEdgeTrace(emptyPath);
 		testEdgeTrace(oneElementPath);
 		testEdgeTrace(twoElementPath);
 		testEdgeTrace(multipleElementPath);
@@ -395,8 +388,18 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testEndVertex() throws Exception {
-		// TODO
-		fail();
+		testEndVertex(loopPath);
+		testEndVertex(emptyPath);
+		testEndVertex(oneElementPath);
+		testEndVertex(twoElementPath);
+		testEndVertex(multipleElementPath);
+		testEndVertex(longPath);
+	}
+
+	private void testEndVertex(JValuePath usedPath) throws Exception {
+		setBoundVariable("usedPath", usedPath);
+		Vertex endVertex = usedPath.getEndVertex();
+		assertQueryEquals("using usedPath: endVertex(usedPath)", endVertex);
 	}
 
 	// @Test
@@ -458,36 +461,19 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testIsCycle() throws Exception {
-		String queryString = "from v : V reportSet isCycle(extractPath(pathSystem(v, <->*), v)) end";
-		JValue result = evalTestQuery("isCycle", queryString,
-				getCyclicTestGraph());
-		for (JValue v : result.toCollection()) {
-			assertEquals(JValueBoolean.getTrueValue(), v.toBoolean());
-		}
+		testIsCycle(loopPath);
+		testIsCycle(emptyPath);
+		testIsCycle(oneElementPath);
+		testIsCycle(twoElementPath);
+		testIsCycle(multipleElementPath);
+		testIsCycle(longPath);
 	}
 
-	@Test
-	public void testIsCycle1() throws Exception {
-		String queryString = "from v,w : V with v <> w reportSet isCycle(extractPath(pathSystem(v, -->+), w)) end";
-		JValue result = evalTestQuery("isCycle", queryString,
-				getCyclicTestGraph());
-		for (JValue v : result.toCollection()) {
-			assertEquals(JValueBoolean.getFalseValue(), v.toBoolean());
-		}
-	}
-
-	@Test
-	public void testIsCycle2() throws Exception {
-		String queryString = "from c: V{localities.County}, r:V{junctions.Crossroad}"
-				+ "report isCycle(extractPath(pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad}), r)) "
-				+ "end";
-		JValue result = evalTestQuery("isCycle", queryString,
-				TestVersion.CITY_MAP_GRAPH);
-		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(countyCount * crossroadCount, bag.size());
-		for (JValue v : bag) {
-			assertFalse(v.toBoolean());
-		}
+	private void testIsCycle(JValuePath usedPath) throws Exception {
+		setBoundVariable("usedPath", usedPath);
+		boolean isCycle = usedPath.getStartVertex() != null
+				&& usedPath.getStartVertex() == usedPath.getEndVertex();
+		assertQueryEquals("using usedPath: isCycle(usedPath)", isCycle);
 	}
 
 	@Test
@@ -631,29 +617,26 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testNodeTrace() throws Exception {
-		MinimalGraph minimalGraph = MinimalSchema.instance()
-				.createMinimalGraph(10, 10);
-		ArrayList<Node> nodes = new ArrayList<Node>();
-		ArrayList<Link> links = new ArrayList<Link>();
-		for (int i = 0; i < 10; i++) {
-			nodes.add(minimalGraph.createNode());
+		testNodeTrace(loopPath);
+		testNodeTrace(emptyPath);
+		testNodeTrace(oneElementPath);
+		testNodeTrace(twoElementPath);
+		testNodeTrace(multipleElementPath);
+		testNodeTrace(longPath);
+	}
+
+	private void testNodeTrace(JValuePath usedPath) throws Exception {
+		setBoundVariable("usedPath", usedPath);
+
+		JValueCollection collection = evalTestQuery(
+				"using usedPath: nodeTrace(usedPath)").toCollection();
+		List<Vertex> innerNodes = usedPath.nodeTrace();
+		for (JValue value : collection) {
+			Vertex innerNode = value.toVertex();
+			assertTrue(innerNodes.remove(innerNode));
 		}
-		for (int i = 0; i < 9; i++) {
-			links.add(minimalGraph.createLink(nodes.get(i), nodes.get(i + 1)));
-		}
-		JValuePath p = new JValuePath(nodes.get(0));
-		p.addEdge(links.get(0));
-		p.addEdge(links.get(1));
-		p.addEdge(links.get(2));
-		List<Vertex> estimatedList = new ArrayList<Vertex>();
-		estimatedList.add(nodes.get(0));
-		estimatedList.add(nodes.get(1));
-		estimatedList.add(nodes.get(2));
-		estimatedList.add(nodes.get(3));
-		assertEquals(4, p.nodeTrace().size());
-		for (int i = 0; i < estimatedList.size(); i++) {
-			assertEquals(estimatedList.get(i), p.nodeTrace().get(i));
-		}
+		assertTrue(innerNodes.isEmpty());
+
 	}
 
 	@Test
@@ -736,22 +719,18 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testPathLength() throws Exception {
-		String queryString = "from c: V{localities.County}, r:V{junctions.Crossroad}"
-				+ "report pathLength(extractPath(pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad}), r)) "
-				+ "end";
-		JValue result = evalTestQuery("PathLength", queryString,
-				TestVersion.CITY_MAP_GRAPH);
-		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(countyCount * crossroadCount, bag.size());
-		int nullPath = 0;
-		for (JValue v : bag) {
-			if (v.toInteger() == 0) {
-				nullPath++;
-			} else {
-				assertEquals(2, (int) v.toInteger());
-			}
-		}
-		assertEquals(crossroadCount + uncontainedCrossroadCount, nullPath);
+		testPathLength(loopPath);
+		testPathLength(emptyPath);
+		testPathLength(oneElementPath);
+		testPathLength(twoElementPath);
+		testPathLength(multipleElementPath);
+		testPathLength(longPath);
+	}
+
+	private void testPathLength(JValuePath usedPath) throws Exception {
+		setBoundVariable("usedPath", usedPath);
+		int length = usedPath.pathLength();
+		assertQueryEquals("using usedPath: pathLength(usedPath)", length);
 	}
 
 	@Test
@@ -860,8 +839,18 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testStartVertex() throws Exception {
-		// TODO
-		fail();
+		testStartVertex(loopPath);
+		testStartVertex(emptyPath);
+		testStartVertex(oneElementPath);
+		testStartVertex(twoElementPath);
+		testStartVertex(multipleElementPath);
+		testStartVertex(longPath);
+	}
+
+	private void testStartVertex(JValuePath usedPath) throws Exception {
+		setBoundVariable("usedPath", usedPath);
+		Vertex startVertex = usedPath.getStartVertex();
+		assertQueryEquals("using usedPath: startVertex(usedPath)", startVertex);
 	}
 
 	// @Test
