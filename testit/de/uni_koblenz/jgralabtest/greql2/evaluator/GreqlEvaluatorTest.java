@@ -38,7 +38,6 @@ package de.uni_koblenz.jgralabtest.greql2.evaluator;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Field;
@@ -49,7 +48,6 @@ import java.util.List;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
@@ -134,31 +132,6 @@ public class GreqlEvaluatorTest extends GenericTest {
 		for (JValue v : result.toCollection()) {
 			System.out.println(v);
 		}
-	}
-
-	@Test
-	public void testVertexSeq() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		Graph graph = getTestGraph(TestVersion.GREQL_GRAPH);
-		Vertex first = graph.getFirstVertex().getNextVertex();
-		Vertex last = graph.getLastVertex().getPrevVertex().getPrevVertex();
-		JValueImpl firstV = new JValueImpl(first);
-		JValueImpl lastV = new JValueImpl(last);
-		setBoundVariable("firstV", firstV);
-		setBoundVariable("lastV", lastV);
-		String queryString = "using firstV, lastV: vertexSeq{Definition}(firstV, lastV)";
-		JValue result = evalTestQuery("vertexSeq", queryString);
-		JValueSet set = result.toJValueSet();
-		if (!(first instanceof Definition)) {
-			first = first.getNextVertex(Definition.class);
-		}
-		Definition current = (Definition) first;
-		for (JValue cv : set) {
-			assertEquals(current, cv.toVertex());
-			current = current.getNextDefinition();
-		}
-		assertNull(current.getNextDefinition());
 	}
 
 	/*
