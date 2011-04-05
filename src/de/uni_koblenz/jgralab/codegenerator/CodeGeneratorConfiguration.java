@@ -81,7 +81,8 @@ public class CodeGeneratorConfiguration {
 
 	public static final CodeGeneratorConfiguration MINIMAL = new CodeGeneratorConfiguration()
 			.withoutTypeSpecificMethodSupport();
-
+	public static final CodeGeneratorConfiguration NORMAL = new CodeGeneratorConfiguration();
+	
 	/** toggles, if the classes for standard support should be created */
 	private boolean standardSupport = true;
 
