@@ -45,6 +45,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -57,6 +58,7 @@ import javax.tools.JavaCompiler;
 import javax.tools.JavaFileManager;
 import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
+import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
 import de.uni_koblenz.jgralab.Graph;
@@ -78,6 +80,7 @@ import de.uni_koblenz.jgralab.codegenerator.RecordCodeGenerator;
 import de.uni_koblenz.jgralab.codegenerator.ReversedEdgeCodeGenerator;
 import de.uni_koblenz.jgralab.codegenerator.SchemaCodeGenerator;
 import de.uni_koblenz.jgralab.codegenerator.VertexCodeGenerator;
+import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.BooleanDomain;
@@ -416,6 +419,53 @@ public class SchemaImpl implements Schema {
 		}
 
 		return javaSources;
+	}
+
+	@Override
+	public void createJAR(CodeGeneratorConfiguration config,
+			String jarFileName) throws IOException, GraphIOException {
+		File tmpDir = new File(File.createTempFile("tmp", "tmp").getParent());
+		File schemaDir = new File(tmpDir + File.separator + getName());
+		schemaDir.deleteOnExit();
+		if (!schemaDir.mkdir()) {
+			System.err.println("Couldn't create " + schemaDir);
+			return;
+		}
+		System.out.println("Committing schema classes to " + schemaDir);
+		commit(schemaDir.getAbsolutePath(), config,
+				new ConsoleProgressFunction());
+
+		compileClasses(schemaDir);
+
+		// TODO: That should be doable without resorting to the cmd line, but
+		// how? JarFile seems to provide only read access...
+		Runtime.getRuntime().exec(
+				"jar cf " + jarFileName + " -C " + schemaDir.getAbsolutePath()
+						+ " .");
+	}
+
+	private void compileClasses(File schemaDir) throws IOException {
+		JavaCompiler c = ToolProvider.getSystemJavaCompiler();
+		StandardJavaFileManager fileManager = c.getStandardFileManager(null,
+				null, null);
+		Iterable<? extends JavaFileObject> compilationUnits = fileManager
+				.getJavaFileObjectsFromFiles(getJavaFiles(schemaDir));
+		c.getTask(null, fileManager, null, null, null, compilationUnits).call();
+		fileManager.close();
+	}
+
+	private List<File> getJavaFiles(File schemaDir) {
+		LinkedList<File> sources = new LinkedList<File>();
+		for (File f : schemaDir.listFiles()) {
+			if (f.isDirectory()) {
+				sources.addAll(getJavaFiles(f));
+			} else if (f.getName().endsWith(".java")) {
+				sources.add(f);
+			} else {
+				System.out.println("Skipping " + f + "...");
+			}
+		}
+		return sources;
 	}
 
 	@Override
@@ -907,9 +957,11 @@ public class SchemaImpl implements Schema {
 								+ " does not exist in schema");
 					}
 				}
-				return m1Class.getMethod("create"
-						+ CodeGenerator.camelCase(aec.getUniqueName()),
-						signature);
+				return m1Class
+						.getMethod(
+								"create"
+										+ CodeGenerator.camelCase(aec
+												.getUniqueName()), signature);
 			}
 		} catch (SecurityException e) {
 			throw new M1ClassAccessException(
@@ -1092,8 +1144,8 @@ public class SchemaImpl implements Schema {
 
 	@Override
 	public Method getGraphCreateMethod(ImplementationType implementationType) {
-		return getCreateMethod(graphClass.getSimpleName(), graphClass
-				.getSimpleName(), GRAPHCLASS_CREATE_SIGNATURE,
+		return getCreateMethod(graphClass.getSimpleName(),
+				graphClass.getSimpleName(), GRAPHCLASS_CREATE_SIGNATURE,
 				implementationType);
 	}
 
