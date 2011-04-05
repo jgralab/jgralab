@@ -440,10 +440,15 @@ public class SchemaImpl implements Schema {
 
 		// TODO: That should be doable without resorting to the cmd line, but
 		// how? JarFile seems to provide only read access...
-		Runtime.getRuntime().exec(
+		Process proc = Runtime.getRuntime().exec(
 				"jar cf " + jarFileName + " -C " + schemaDir.getAbsolutePath()
 						+ " .");
 
+		try {
+			proc.waitFor();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		deleteRecursively(schemaDir);
 	}
 
