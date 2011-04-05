@@ -422,13 +422,12 @@ public class SchemaImpl implements Schema {
 	}
 
 	@Override
-	public void createJAR(CodeGeneratorConfiguration config,
-			String jarFileName) throws IOException, GraphIOException {
+	public void createJAR(CodeGeneratorConfiguration config, String jarFileName)
+			throws IOException, GraphIOException {
 		File tmpFile = File.createTempFile("jar-creation", "tmp");
 		tmpFile.deleteOnExit();
 		File tmpDir = new File(tmpFile.getParent());
 		File schemaDir = new File(tmpDir + File.separator + getName());
-		schemaDir.deleteOnExit();
 		if (!schemaDir.mkdir()) {
 			System.err.println("Couldn't create " + schemaDir);
 			return;
@@ -444,6 +443,19 @@ public class SchemaImpl implements Schema {
 		Runtime.getRuntime().exec(
 				"jar cf " + jarFileName + " -C " + schemaDir.getAbsolutePath()
 						+ " .");
+
+		deleteRecursively(schemaDir);
+	}
+
+	private void deleteRecursively(File file) {
+		if (file.isDirectory()) {
+			for (File f : file.listFiles()) {
+				deleteRecursively(f);
+			}
+			file.delete();
+		} else {
+			file.delete();
+		}
 	}
 
 	private void compileClasses(File schemaDir) throws IOException {
