@@ -424,7 +424,9 @@ public class SchemaImpl implements Schema {
 	@Override
 	public void createJAR(CodeGeneratorConfiguration config,
 			String jarFileName) throws IOException, GraphIOException {
-		File tmpDir = new File(File.createTempFile("tmp", "tmp").getParent());
+		File tmpFile = File.createTempFile("jar-creation", "tmp");
+		tmpFile.deleteOnExit();
+		File tmpDir = new File(tmpFile.getParent());
 		File schemaDir = new File(tmpDir + File.separator + getName());
 		schemaDir.deleteOnExit();
 		if (!schemaDir.mkdir()) {
