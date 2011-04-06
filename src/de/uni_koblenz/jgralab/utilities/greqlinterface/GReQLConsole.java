@@ -66,7 +66,8 @@ import de.uni_koblenz.jgralab.schema.Schema;
 @WorkInProgress(responsibleDevelopers = "dbildh")
 public class GReQLConsole {
 
-	Graph graph = null;
+	private Graph graph = null;
+	private boolean verbose = false;
 
 	/**
 	 * Creates a new instance of this class, reads the graph and the schema from
@@ -74,16 +75,21 @@ public class GReQLConsole {
 	 * 
 	 * @param filename
 	 *            the name of the file that contains the schema and the graph
+	 * @param verbose
+	 *            produce verbose output
 	 */
-	public GReQLConsole(String filename, boolean loadSchema) {
+	public GReQLConsole(String filename, boolean loadSchema, boolean verbose) {
+		this.verbose = verbose;
 		try {
 			if (loadSchema) {
-				System.out.println("Loading schema from file");
+				if (verbose) {
+					System.out.println("Loading schema from file");
+				}
 				Schema schema = GraphIO.loadSchemaFromFile(filename);
 				schema.compile(CodeGeneratorConfiguration.MINIMAL);
 			}
 			graph = GraphIO.loadGraphFromFileWithStandardSupport(filename,
-					new ConsoleProgressFunction());
+					(verbose ? new ConsoleProgressFunction() : null));
 		} catch (GraphIOException e) {
 			e.printStackTrace();
 		}
@@ -141,16 +147,19 @@ public class GReQLConsole {
 		try {
 			Map<String, JValue> boundVariables = new HashMap<String, JValue>();
 			for (String query : loadQueries(queryFile)) {
-				System.out.println("Evaluating query: ");
-				System.out.println(query);
+				if (verbose) {
+					System.out.println("Evaluating query: ");
+					System.out.println(query);
+				}
 				GreqlEvaluator eval = new GreqlEvaluator(query, graph,
-						boundVariables, new ConsoleProgressFunction());
+						boundVariables,
+						(verbose ? new ConsoleProgressFunction() : null));
 				// eval.setOptimize(false);
 				eval.setEvaluationLogger(null);
 				eval.startEvaluation();
 
 				result = eval.getEvaluationResult();
-				if (result.isCollection()) {
+				if (verbose && result.isCollection()) {
 					System.out.println("Result size is: "
 							+ result.toCollection().size());
 				}
@@ -189,7 +198,8 @@ public class GReQLConsole {
 		boolean loadSchema = comLine.hasOption("s");
 
 		JGraLab.setLogLevel(Level.SEVERE);
-		GReQLConsole console = new GReQLConsole(graphFile, loadSchema);
+		GReQLConsole console = new GReQLConsole(graphFile, loadSchema,
+				comLine.hasOption('v'));
 		JValue result = console.performQuery(new File(queryFile));
 
 		if (comLine.hasOption("o")) {
@@ -225,6 +235,10 @@ public class GReQLConsole {
 		Option loadschema = new Option("s", "loadschema", false,
 				"(optional): Loads also the schema from the file");
 		oh.addOption(loadschema);
+
+		Option verbose = new Option("v", "verbose", false,
+				"(optional): Produce verbose output");
+		oh.addOption(verbose);
 
 		return oh.parse(args);
 	}
