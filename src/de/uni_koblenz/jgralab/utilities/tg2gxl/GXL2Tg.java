@@ -295,7 +295,7 @@ public class GXL2Tg {
 		} else {
 			if (schemaGraph.getFirstSchema()
 					.getFirstContainsDefaultPackageIncidence() == null) {
-				// the default package was not created yet
+				// the default package has not been created yet
 				createDefaultPackage();
 			}
 			if (type.equals("NodeClass")) {
