@@ -58,7 +58,6 @@ public abstract class DomainImpl extends NamedElementImpl implements Domain {
 
 	@Override
 	public String getUniqueName() {
-		throw new UnsupportedOperationException(
-				"Domains do not have a unique name. Use getSimpleName() instead.");
+		return qualifiedName;
 	}
 }
