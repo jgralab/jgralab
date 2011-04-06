@@ -1372,7 +1372,14 @@ public class GraphIO {
 			if (schema.getQualifiedName().equals(qn[0] + "." + qn[1])) {
 				// yes, everything is fine :-)
 				// skip schema part
-				while ((lookAhead.length() > 0) && !lookAhead.equals("Graph")) {
+				//
+				// Beware: it's totally ok to have a VertexClass Graph, so
+				// lookAhead = Graph is a too weak check. So we test that before
+				// the Graph, the last token is a ;, too.
+				String prev = "";
+				while ((lookAhead.length() > 0)
+						&& !(prev.equals(";") && lookAhead.equals("Graph"))) {
+					prev = lookAhead;
 					match();
 				}
 				return;
@@ -2334,9 +2341,9 @@ public class GraphIO {
 	}
 
 	private final static boolean isSeparator(int c) {
-		return (c == ';') || (c == '<') || (c == '>') || (c == '(') || (c == ')')
-				|| (c == '{') || (c == '}') || (c == ':') || (c == '[') || (c == ']')
-				|| (c == ',') || (c == '=');
+		return (c == ';') || (c == '<') || (c == '>') || (c == '(')
+				|| (c == ')') || (c == '{') || (c == '}') || (c == ':')
+				|| (c == '[') || (c == ']') || (c == ',') || (c == '=');
 	}
 
 	private final void skipWs() throws GraphIOException {
@@ -2425,8 +2432,8 @@ public class GraphIO {
 			throws GraphIOException {
 		String s = lookAhead;
 		boolean ok = isValidIdentifier(s)
-				&& ((isUpperCase && Character.isUpperCase(s.charAt(0))) || (!isUpperCase
-						&& Character.isLowerCase(s.charAt(0))));
+				&& ((isUpperCase && Character.isUpperCase(s.charAt(0))) || (!isUpperCase && Character
+						.isLowerCase(s.charAt(0))));
 
 		if (!ok) {
 			throw new GraphIOException("invalid simple name '" + lookAhead
@@ -2463,8 +2470,8 @@ public class GraphIO {
 
 		ok = ok
 				&& isValidIdentifier(result[1])
-				&& ((isUpperCase && Character.isUpperCase(result[1].charAt(0))) || (!isUpperCase
-						&& Character.isLowerCase(result[1].charAt(0))));
+				&& ((isUpperCase && Character.isUpperCase(result[1].charAt(0))) || (!isUpperCase && Character
+						.isLowerCase(result[1].charAt(0))));
 
 		if (!ok) {
 			throw new GraphIOException("invalid qualified name '" + lookAhead
