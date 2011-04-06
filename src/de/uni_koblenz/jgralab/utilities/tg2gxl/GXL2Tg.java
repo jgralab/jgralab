@@ -2,6 +2,7 @@ package de.uni_koblenz.jgralab.utilities.tg2gxl;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.util.HashMap;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
@@ -16,13 +17,19 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 
 import de.uni_koblenz.ist.utilities.option_handler.OptionHandler;
+import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.grumlschema.GrumlSchema;
 import de.uni_koblenz.jgralab.grumlschema.SchemaGraph;
+import de.uni_koblenz.jgralab.grumlschema.domains.Domain;
+import de.uni_koblenz.jgralab.grumlschema.structure.AttributedElementClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.GraphClass;
+import de.uni_koblenz.jgralab.grumlschema.structure.GraphElementClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.NamedElement;
+import de.uni_koblenz.jgralab.grumlschema.structure.Package;
 import de.uni_koblenz.jgralab.grumlschema.structure.Schema;
+import de.uni_koblenz.jgralab.utilities.tg2schemagraph.SchemaGraph2Schema;
 
 public class GXL2Tg {
 
@@ -30,6 +37,10 @@ public class GXL2Tg {
 	private String graphInputName;
 
 	private SchemaGraph schemaGraph;
+	private Package currentPackage;
+	private final HashMap<String, NamedElement> id2Class = new HashMap<String, NamedElement>();
+
+	private final boolean isGraphPresent = false;
 
 	private XMLEventReader inputReader;
 
@@ -104,8 +115,17 @@ public class GXL2Tg {
 		schemaGraph = GrumlSchema.instance().createSchemaGraph();
 
 		convertSchemaGraph();
+		de.uni_koblenz.jgralab.schema.Schema schema = new SchemaGraph2Schema()
+				.convert(schemaGraph);
 
 		inputReader.close();
+
+		// write tg
+		if (isGraphPresent) {
+			// GraphIO.saveGraphToFile(graphOutputName, null, null);
+		} else {
+			GraphIO.saveSchemaToFile(graphOutputName, schema);
+		}
 	}
 
 	private void convertSchemaGraph() throws XMLStreamException,
@@ -173,8 +193,6 @@ public class GXL2Tg {
 
 	private void handleNode(StartElement nodeElement)
 			throws XMLStreamException, GraphIOException {
-		String name = nodeElement.getAttributeByName(new QName("id"))
-				.getValue();
 		String type = null;
 		NamedElement ne = null;
 		while (inputReader.hasNext()) {
@@ -192,15 +210,17 @@ public class GXL2Tg {
 											"href")).getValue().split("#")[1];
 				} else if (startElement.getName().getLocalPart().equals("attr")) {
 					if (ne == null) {
-						ne = createNamedElement(type, name);
+						ne = createNamedElement(type, nodeElement
+								.getAttributeByName(new QName("id")).getValue());
 					}
-					createAttribute(ne,
+					handleAttr((AttributedElementClass) ne,
 							startElement.getAttributeByName(new QName("id")),
 							startElement.getAttributeByName(new QName("name")),
 							startElement.getAttributeByName(new QName("kind")));
 				} else {
-					// TODO
-					System.out.println(startElement.getName().getLocalPart());
+					throw new GraphIOException("\""
+							+ startElement.getName().getLocalPart()
+							+ "\" is an unexpected tag in \"node\".");
 				}
 				break;
 			case XMLEvent.END_ELEMENT:
@@ -213,32 +233,103 @@ public class GXL2Tg {
 		}
 	}
 
-	private void createAttribute(NamedElement ne, Attribute id, Attribute name,
-			Attribute kind) throws XMLStreamException {
-		// TODO Auto-generated method stub
-
+	private void handleAttr(AttributedElementClass aec, Attribute id,
+			Attribute name, Attribute kind) throws XMLStreamException,
+			GraphIOException {
 		while (inputReader.hasNext()) {
 			XMLEvent event = inputReader.nextEvent();
+			String content = null;
 			switch (event.getEventType()) {
 			case XMLEvent.START_ELEMENT:
+				StartElement startElement = event.asStartElement();
+				if (startElement.getName().getLocalPart().equals("attr")) {
+					throw new GraphIOException(
+							"Attributes in Attributes are not yet supported.");
+				}
 				break;
+			case XMLEvent.CHARACTERS:
+				content = event.asCharacters().getData();
+				break;
+			case XMLEvent.END_ELEMENT:
+				EndElement endElement = event.asEndElement();
+				if (endElement.getName().getLocalPart().equals("attr")) {
+					// this attribute is finished
+					return;
+				} else {
+					setFieldOfAttributedElementClass(aec, name.getValue(),
+							content, endElement.getName().getLocalPart());
+				}
 			}
 		}
 	}
 
-	private NamedElement createNamedElement(String type, String name) {
-		if (type == null) {
-			// TODO handle null value
+	private void setFieldOfAttributedElementClass(AttributedElementClass aec,
+			String attributeName, String content, String type)
+			throws GraphIOException {
+		if (attributeName.equals("name")) {
+			if (!type.equals("string")) {
+				throw new GraphIOException(
+						"The qualifiedName value must be of type string.");
+			}
+			aec.set_qualifiedName(content);
+		} else if (attributeName.equals("isabstract")) {
+			if (!type.equals("bool")) {
+				throw new GraphIOException(
+						"The abstract value must be of type bool.");
+			}
+			((GraphElementClass) aec).set_abstract(Boolean
+					.parseBoolean(content));
+		} else {
+			throw new GraphIOException("\"" + attributeName
+					+ "\" is an unknown attribute.");
 		}
+	}
+
+	private NamedElement createNamedElement(String type, String id) {
 		// create NamedElement
 		NamedElement ne = null;
-		if (name.equals("GraphClass")) {
+		if (type.equals("GraphClass")) {
 			ne = schemaGraph.createGraphClass();
 			schemaGraph.createDefinesGraphClass(schemaGraph.getFirstSchema(),
 					(GraphClass) ne);
+		} else {
+			if (schemaGraph.getFirstSchema()
+					.getFirstContainsDefaultPackageIncidence() == null) {
+				// the default package was not created yet
+				createDefaultPackage();
+			}
+			if (type.equals("NodeClass")) {
+				ne = schemaGraph.createVertexClass();
+				schemaGraph.createContainsGraphElementClass(currentPackage,
+						(GraphElementClass) ne);
+			} else if (type.equals("Bool")) {
+				ne = schemaGraph.createBooleanDomain();
+				schemaGraph.createContainsDomain(currentPackage, (Domain) ne);
+			} else if (type.equals("Int")) {
+				ne = schemaGraph.createIntegerDomain();
+				schemaGraph.createContainsDomain(currentPackage, (Domain) ne);
+			} else if (type.equals("Float")) {
+				if (schemaGraph.getFirstDoubleDomain() == null) {
+					ne = schemaGraph.createDoubleDomain();
+					schemaGraph.createContainsDomain(currentPackage,
+							(Domain) ne);
+				}
+			} else if (type.equals("String")) {
+				ne = schemaGraph.createStringDomain();
+				schemaGraph.createContainsDomain(currentPackage, (Domain) ne);
+			} else if (type.equals("Enum")) {
+				// TODO atWork
+				ne = schemaGraph.createEnumDomain();
+				schemaGraph.createContainsDomain(currentPackage, (Domain) ne);
+			}
 		}
-		ne.set_qualifiedName(name);
-		// TODO do not forget default package
+		id2Class.put(id, ne);
 		return ne;
+	}
+
+	private void createDefaultPackage() {
+		currentPackage = schemaGraph.createPackage();
+		schemaGraph.createContainsDefaultPackage(schemaGraph.getFirstSchema(),
+				currentPackage);
 	}
 }
