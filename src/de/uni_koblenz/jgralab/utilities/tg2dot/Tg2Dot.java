@@ -332,21 +332,28 @@ public class Tg2Dot extends Tg2Whatever {
 		printIncidenceIndices = comLine.hasOption('i');
 		printElementSequenceIndices = comLine.hasOption('m');
 
-		String gvLayouter = comLine.hasOption('l') ? comLine
-				.getOptionValue('l') : null;
-		graphVizLayouter = GraphVizLayouter.valueOf(gvLayouter);
-		if (graphVizLayouter == null) {
-			throw new RuntimeException("Unknown layouter '" + gvLayouter
-					+ "'. Possible values are " + GraphVizLayouter.values());
+		String gvLayouter = comLine.getOptionValue('l');
+
+		if (gvLayouter != null) {
+			try {
+				graphVizLayouter = GraphVizLayouter.valueOf(gvLayouter);
+			} catch (IllegalArgumentException e) {
+				throw new RuntimeException("Unknown layouter '" + gvLayouter
+						+ "'. Possible values are "
+						+ GraphVizLayouter.describeValues());
+			}
 		}
 
-		String gvOutputFormat = comLine.hasOption('t') ? comLine
-				.getOptionValue('t') : null;
-
-		graphVizOutputFormat = GraphVizOutputFormat.valueOf(gvOutputFormat);
-		if (graphVizOutputFormat == null) {
-			throw new RuntimeException("Unknown output format  '" + gvLayouter
-					+ "'. Possible values are " + GraphVizOutputFormat.values());
+		String gvOutputFormat = comLine.getOptionValue('t');
+		if (gvOutputFormat != null) {
+			try {
+				graphVizOutputFormat = GraphVizOutputFormat
+						.valueOf(gvOutputFormat);
+			} catch (IllegalArgumentException e) {
+				throw new RuntimeException("Unknown output format  '"
+						+ gvOutputFormat + "'. Possible values are "
+						+ GraphVizOutputFormat.describeValues());
+			}
 		}
 	}
 
