@@ -41,6 +41,9 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.Edge;
@@ -167,31 +170,21 @@ public class ParserTest {
 
 	@Test
 	public void testWhereWithSameScope() throws ParsingException {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
 		Greql2 graph = parseQuery("from a,b:V with connected report a,b end where connected := a-->b");
-		Variable a = null;
-		Variable b = null;
-		Variable connected = null;
+
+		Map<String, Variable> map = new HashMap<String, Variable>();
+
 		for (Variable v : graph.getVariableVertices()) {
-			if (v.get_name().equals("a")) {
-				assertNull(a);
-				a = v;
-			} else if (v.get_name().equals("b")) {
-				assertNull(b);
-				b = v;
-			} else if (v.get_name().equals("connected")) {
-				assertNull(connected);
-				connected = v;
-			} else {
-				fail("There is a variable named '"
-						+ v.get_name()
-						+ "' in the graph which is not present in the query text");
-			}
+			map.put(v.get_name(), v);
 		}
-		assertNotNull(a);
-		assertNotNull(b);
-		assertNotNull(connected);
+
+		String[] validVariables = { "a", "b" };
+		for (String validVariable : validVariables) {
+			Variable variable = map.get(validVariable);
+			assertNotNull(variable);
+			map.remove(validVariable);
+		}
+		assertTrue(map.isEmpty());
 	}
 
 	@Test
