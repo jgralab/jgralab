@@ -49,4 +49,18 @@ public enum GraphVizLayouter {
 	public String toString() {
 		return name;
 	}
+
+	public static String describeValues() {
+		StringBuilder sb = new StringBuilder();
+		boolean first = true;
+		for (GraphVizLayouter l : values()) {
+			if (first) {
+				first = false;
+			} else {
+				sb.append(", ");
+			}
+			sb.append(l);
+		}
+		return sb.toString();
+	}
 }
