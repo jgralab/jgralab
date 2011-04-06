@@ -2,7 +2,9 @@ package de.uni_koblenz.jgralab.utilities.tg2gxl;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
@@ -23,7 +25,9 @@ import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.grumlschema.GrumlSchema;
 import de.uni_koblenz.jgralab.grumlschema.SchemaGraph;
 import de.uni_koblenz.jgralab.grumlschema.domains.Domain;
+import de.uni_koblenz.jgralab.grumlschema.domains.EnumDomain;
 import de.uni_koblenz.jgralab.grumlschema.structure.AttributedElementClass;
+import de.uni_koblenz.jgralab.grumlschema.structure.EdgeClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.GraphClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.GraphElementClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.NamedElement;
@@ -39,6 +43,7 @@ public class GXL2Tg {
 	private SchemaGraph schemaGraph;
 	private Package currentPackage;
 	private final HashMap<String, NamedElement> id2Class = new HashMap<String, NamedElement>();
+	private final HashMap<String, String> id2EnumValues = new HashMap<String, String>();
 
 	private final boolean isGraphPresent = false;
 
@@ -138,9 +143,9 @@ public class GXL2Tg {
 				if (startElement.getName().getLocalPart().equals("graph")) {
 					createSchema(startElement);
 				} else if (startElement.getName().getLocalPart().equals("node")) {
-					handleNode(startElement);
+					handleNodeOrEdge(startElement);
 				} else if (startElement.getName().getLocalPart().equals("edge")) {
-					// TODO handle edges
+					handleNodeOrEdge(startElement);
 				} else if (startElement.getName().getLocalPart().equals("rel")) {
 					throw new GraphIOException("Hypergraphs are not supported.");
 				} else {
@@ -191,10 +196,11 @@ public class GXL2Tg {
 		}
 	}
 
-	private void handleNode(StartElement nodeElement)
+	private void handleNodeOrEdge(StartElement element)
 			throws XMLStreamException, GraphIOException {
 		String type = null;
-		NamedElement ne = null;
+		Attribute idAttribute = element.getAttributeByName(new QName("id"));
+		String id = idAttribute != null ? idAttribute.getValue() : null;
 		while (inputReader.hasNext()) {
 			XMLEvent event = inputReader.nextEvent();
 			switch (event.getEventType()) {
@@ -209,11 +215,16 @@ public class GXL2Tg {
 									new QName("http://www.w3.org/1999/xlink",
 											"href")).getValue().split("#")[1];
 				} else if (startElement.getName().getLocalPart().equals("attr")) {
-					if (ne == null) {
-						ne = createNamedElement(type, nodeElement
-								.getAttributeByName(new QName("id")).getValue());
+					if (type.equals("EnumVal")) {
+						assert id2EnumValues.get(id) == null : "the enum constant with id \""
+								+ id + "\" already exists.";
+						id2EnumValues.put(id, "");
+					} else {
+						createNamedElement(type, id,
+								element.getAttributeByName(new QName("from")),
+								element.getAttributeByName(new QName("to")));
 					}
-					handleAttr((AttributedElementClass) ne,
+					handleAttr(id,
 							startElement.getAttributeByName(new QName("id")),
 							startElement.getAttributeByName(new QName("name")),
 							startElement.getAttributeByName(new QName("kind")));
@@ -225,7 +236,11 @@ public class GXL2Tg {
 				break;
 			case XMLEvent.END_ELEMENT:
 				EndElement endElement = event.asEndElement();
-				if (endElement.getName().getLocalPart().equals("node")) {
+				if (endElement.getName().getLocalPart().equals("node")
+						|| endElement.getName().getLocalPart().equals("edge")) {
+					createNamedElement(type, id,
+							element.getAttributeByName(new QName("from")),
+							element.getAttributeByName(new QName("to")));
 					return;
 				}
 				break;
@@ -233,12 +248,14 @@ public class GXL2Tg {
 		}
 	}
 
-	private void handleAttr(AttributedElementClass aec, Attribute id,
-			Attribute name, Attribute kind) throws XMLStreamException,
-			GraphIOException {
+	private void handleAttr(String aecId, Attribute id, Attribute name,
+			Attribute kind) throws XMLStreamException, GraphIOException {
+		AttributedElementClass aec = (AttributedElementClass) id2Class
+				.get(aecId);
+		String content = null;
+		boolean updateContent = false;
 		while (inputReader.hasNext()) {
 			XMLEvent event = inputReader.nextEvent();
-			String content = null;
 			switch (event.getEventType()) {
 			case XMLEvent.START_ELEMENT:
 				StartElement startElement = event.asStartElement();
@@ -246,21 +263,48 @@ public class GXL2Tg {
 					throw new GraphIOException(
 							"Attributes in Attributes are not yet supported.");
 				}
+				updateContent = isCorrectAtributeValue(startElement.getName()
+						.getLocalPart());
 				break;
 			case XMLEvent.CHARACTERS:
-				content = event.asCharacters().getData();
+				if (updateContent) {
+					content = event.asCharacters().getData();
+				}
 				break;
 			case XMLEvent.END_ELEMENT:
 				EndElement endElement = event.asEndElement();
 				if (endElement.getName().getLocalPart().equals("attr")) {
 					// this attribute is finished
 					return;
+				} else if (isCorrectAtributeValue(endElement.getName()
+						.getLocalPart())) {
+					updateContent = false;
 				} else {
-					setFieldOfAttributedElementClass(aec, name.getValue(),
-							content, endElement.getName().getLocalPart());
+					String type = endElement.getName().getLocalPart();
+					System.err.println(name.getValue());
+					if (name.getValue().equals("value")) {
+						// this is an enum constant
+						if (!type.equals("string")) {
+							throw new GraphIOException(
+									"The enum constant must be of type \"string\".");
+						}
+						System.out.println(aecId + " -> " + content);
+						id2EnumValues.put(aecId, content);
+					} else {
+						setFieldOfAttributedElementClass(aec, name.getValue(),
+								content, type);
+					}
 				}
 			}
 		}
+	}
+
+	private boolean isCorrectAtributeValue(String value) {
+		return value.equals("locator") || value.equals("bool")
+				|| value.equals("int") || value.equals("float")
+				|| value.equals("string") || value.equals("enum")
+				|| value.equals("seq") || value.equals("set")
+				|| value.equals("bag") || value.equals("tup");
 	}
 
 	private void setFieldOfAttributedElementClass(AttributedElementClass aec,
@@ -269,13 +313,13 @@ public class GXL2Tg {
 		if (attributeName.equals("name")) {
 			if (!type.equals("string")) {
 				throw new GraphIOException(
-						"The qualifiedName value must be of type string.");
+						"The qualifiedName value must be of type \"string\".");
 			}
 			aec.set_qualifiedName(content);
 		} else if (attributeName.equals("isabstract")) {
 			if (!type.equals("bool")) {
 				throw new GraphIOException(
-						"The abstract value must be of type bool.");
+						"The abstract value must be of type \"bool\".");
 			}
 			((GraphElementClass) aec).set_abstract(Boolean
 					.parseBoolean(content));
@@ -285,45 +329,86 @@ public class GXL2Tg {
 		}
 	}
 
-	private NamedElement createNamedElement(String type, String id) {
-		// create NamedElement
-		NamedElement ne = null;
-		if (type.equals("GraphClass")) {
-			ne = schemaGraph.createGraphClass();
-			schemaGraph.createDefinesGraphClass(schemaGraph.getFirstSchema(),
-					(GraphClass) ne);
-		} else {
-			if (schemaGraph.getFirstSchema()
-					.getFirstContainsDefaultPackageIncidence() == null) {
-				// the default package has not been created yet
-				createDefaultPackage();
-			}
-			if (type.equals("NodeClass")) {
-				ne = schemaGraph.createVertexClass();
-				schemaGraph.createContainsGraphElementClass(currentPackage,
-						(GraphElementClass) ne);
-			} else if (type.equals("Bool")) {
-				ne = schemaGraph.createBooleanDomain();
-				schemaGraph.createContainsDomain(currentPackage, (Domain) ne);
-			} else if (type.equals("Int")) {
-				ne = schemaGraph.createIntegerDomain();
-				schemaGraph.createContainsDomain(currentPackage, (Domain) ne);
-			} else if (type.equals("Float")) {
-				if (schemaGraph.getFirstDoubleDomain() == null) {
-					ne = schemaGraph.createDoubleDomain();
-					schemaGraph.createContainsDomain(currentPackage,
-							(Domain) ne);
+	private NamedElement createNamedElement(String type, String id,
+			Attribute fromAttribute, Attribute toAttribute)
+			throws GraphIOException {
+		System.out.println(id + " " + type);
+		if (fromAttribute == null && toAttribute == null) {
+			return createNamedElement(type, id);
+		}
+		EdgeClass ec = (EdgeClass) id2Class.get(id);
+		if (ec == null && !id2EnumValues.containsKey(id)) {
+			String from = fromAttribute.getValue();
+			String to = toAttribute.getValue();
+			if (type.equals("containsValue")) {
+				// this edge connects an enumeration constant to an enumeration
+				EnumDomain enumDomain = (EnumDomain) id2Class.get(from);
+				String enumConstant = id2EnumValues.get(to);
+				assert enumDomain != null;
+				assert enumConstant != null : "\"" + to
+						+ "\" is an unknown enum constant";
+				List<String> constants = enumDomain.get_enumConstants();
+				if (constants == null) {
+					constants = new ArrayList<String>();
+					enumDomain.set_enumConstants(constants);
 				}
-			} else if (type.equals("String")) {
-				ne = schemaGraph.createStringDomain();
-				schemaGraph.createContainsDomain(currentPackage, (Domain) ne);
-			} else if (type.equals("Enum")) {
-				// TODO atWork
-				ne = schemaGraph.createEnumDomain();
-				schemaGraph.createContainsDomain(currentPackage, (Domain) ne);
+				constants.add(enumConstant);
+			} else {
+				throw new GraphIOException("\"" + type
+						+ "\" is an unknown type.");
 			}
 		}
-		id2Class.put(id, ne);
+		return ec;
+	}
+
+	private NamedElement createNamedElement(String type, String id)
+			throws GraphIOException {
+		// create NamedElement
+		NamedElement ne = id2Class.get(id);
+		if (ne == null && !id2EnumValues.containsKey(id)) {
+			if (type.equals("GraphClass")) {
+				ne = schemaGraph.createGraphClass();
+				schemaGraph.createDefinesGraphClass(
+						schemaGraph.getFirstSchema(), (GraphClass) ne);
+			} else {
+				if (schemaGraph.getFirstSchema()
+						.getFirstContainsDefaultPackageIncidence() == null) {
+					// the default package has not been created yet
+					createDefaultPackage();
+				}
+				if (type.equals("NodeClass")) {
+					ne = schemaGraph.createVertexClass();
+					schemaGraph.createContainsGraphElementClass(currentPackage,
+							(GraphElementClass) ne);
+				} else if (type.equals("Bool")) {
+					ne = schemaGraph.createBooleanDomain();
+					schemaGraph.createContainsDomain(currentPackage,
+							(Domain) ne);
+				} else if (type.equals("Int")) {
+					ne = schemaGraph.createIntegerDomain();
+					schemaGraph.createContainsDomain(currentPackage,
+							(Domain) ne);
+				} else if (type.equals("Float")) {
+					if (schemaGraph.getFirstDoubleDomain() == null) {
+						ne = schemaGraph.createDoubleDomain();
+						schemaGraph.createContainsDomain(currentPackage,
+								(Domain) ne);
+					}
+				} else if (type.equals("String")) {
+					ne = schemaGraph.createStringDomain();
+					schemaGraph.createContainsDomain(currentPackage,
+							(Domain) ne);
+				} else if (type.equals("Enum")) {
+					ne = schemaGraph.createEnumDomain();
+					schemaGraph.createContainsDomain(currentPackage,
+							(Domain) ne);
+				} else {
+					throw new GraphIOException("\"" + type
+							+ "\" is an unknown type.");
+				}
+			}
+			id2Class.put(id, ne);
+		}
 		return ne;
 	}
 
