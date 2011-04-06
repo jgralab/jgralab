@@ -233,7 +233,7 @@ public class Tg2Dot extends Tg2Whatever {
 		converter.setOutputFile(outputFileName);
 		converter.setGraphVizOutputFormat(format);
 
-		if (reversedEdgeTypes != null) {
+		if ((reversedEdgeTypes != null) && (reversedEdgeTypes.length > 0)) {
 			HashSet<Class<? extends AttributedElement>> revEdgeTypes = new HashSet<Class<? extends AttributedElement>>();
 			Collections.addAll(revEdgeTypes, reversedEdgeTypes);
 			converter.setReversedEdgeTypes(revEdgeTypes);
@@ -274,7 +274,11 @@ public class Tg2Dot extends Tg2Whatever {
 			};
 		}.start();
 		try {
-			process.waitFor();
+			int retVal = process.waitFor();
+			if (retVal != 0) {
+				throw new RuntimeException(
+						"GraphViz process failed! Error code = " + retVal);
+			}
 		} catch (InterruptedException e) {
 			throw new RuntimeException(e);
 		}
@@ -469,14 +473,9 @@ public class Tg2Dot extends Tg2Whatever {
 	 * Starts the Graph in the output file.
 	 */
 	private void startDotGraph() {
-		StringBuilder sb = new StringBuilder();
-		// Names have to start with a character
-		sb.append(graph.getM1Class().getSimpleName());
-		sb.append("_");
-		sb.append(graph.getId().replace('-', '_'));
-		sb.append("__");
-		sb.append(graph.getGraphVersion());
-		writer.startGraph(GraphType.DIRECTED, sb.toString());
+		writer.startGraph(GraphType.DIRECTED, graph.getM1Class()
+				.getSimpleName(),
+				graph.getId() + " / " + graph.getGraphVersion());
 	}
 
 	@Override
