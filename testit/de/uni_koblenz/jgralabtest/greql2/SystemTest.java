@@ -108,8 +108,7 @@ public class SystemTest extends GenericTest {
 	}
 
 	@Test
-	public void testVariableAsVariableDefinition() throws Exception {
-
+	public void test() throws Exception {
 		String X1 = "X1";
 		String X2 = "X2";
 
