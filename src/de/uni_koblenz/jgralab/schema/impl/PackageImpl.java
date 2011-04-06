@@ -266,7 +266,6 @@ public final class PackageImpl extends NamedElementImpl implements Package {
 
 	@Override
 	public String getUniqueName() {
-		throw new UnsupportedOperationException(
-				"Domains do not have a unique name. Use getSimpleName() instead.");
+		return qualifiedName;
 	}
 }
