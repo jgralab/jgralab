@@ -113,21 +113,13 @@ public class SystemTest extends GenericTest {
 		String X1 = "X1";
 		String X2 = "X2";
 
-		String queryString = "from x:V{junctions.Street}, y:V{junctions.Street} "
-				+ "with x --> <-- y report id(x) as '"
-				+ X1
-				+ "', id(y) as '"
-				+ X2 + "' end";
+		String queryString = "from x:V{junctions.Crossroad}, y:V{junctions.Crossroad} "
+				+ "with x -->{connections.Street} <--{connections.Footpath} y report id(x) as '"
+				+ X1 + "', id(y) as '" + X2 + "' end";
 		JValueTable result = evalTestQuery(queryString).toJValueTable();
 		checkHeader(result, X1, X2);
 
-		for (JValue value : result.getData()) {
-			JValueTuple tuple = value.toJValueTuple();
-
-			Vertex x1 = tuple.get(0).toVertex();
-			Vertex x2 = tuple.get(1).toVertex();
-		}
-
+		assertEquals(12, result.size());
 	}
 
 	private void checkHeader(JValueTable table, String... headerStrings) {
@@ -140,7 +132,7 @@ public class SystemTest extends GenericTest {
 	}
 
 	@Test
-	public void testIdentifierWithUsage() throws Exception {
+	public void testCrossroadWithUsage() throws Exception {
 		String VERTEX = "Vertex";
 		String IDENTIFIER = "Identifier";
 		String USAGE_COUNT = "UsageCount";
@@ -170,5 +162,7 @@ public class SystemTest extends GenericTest {
 			}
 			assertTrue(usages.isEmpty());
 		}
+
+		assertEquals(crossroadCount, result.size());
 	}
 }
