@@ -902,6 +902,7 @@ for editing GReTL transformations."
 	 (rx (or (or "<==" ":=" ";")
 		 (or "AddSubClass" "AddSubClasses"
 		     "AddSuperClass" "AddSuperClasses"
+		     "Assert"
 		     "ExecuteTransformation" "CopyDomain"
 		     "CreateAbstractEdgeClass"
 		     "CreateAbstractVertexClass"
