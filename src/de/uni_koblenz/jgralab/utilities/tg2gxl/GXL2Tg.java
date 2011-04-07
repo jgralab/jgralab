@@ -1,10 +1,12 @@
 package de.uni_koblenz.jgralab.utilities.tg2gxl;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
@@ -26,10 +28,14 @@ import de.uni_koblenz.jgralab.grumlschema.GrumlSchema;
 import de.uni_koblenz.jgralab.grumlschema.SchemaGraph;
 import de.uni_koblenz.jgralab.grumlschema.domains.Domain;
 import de.uni_koblenz.jgralab.grumlschema.domains.EnumDomain;
+import de.uni_koblenz.jgralab.grumlschema.structure.AggregationKind;
 import de.uni_koblenz.jgralab.grumlschema.structure.AttributedElementClass;
+import de.uni_koblenz.jgralab.grumlschema.structure.ComesFrom;
 import de.uni_koblenz.jgralab.grumlschema.structure.EdgeClass;
+import de.uni_koblenz.jgralab.grumlschema.structure.EndsAt;
 import de.uni_koblenz.jgralab.grumlschema.structure.GraphClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.GraphElementClass;
+import de.uni_koblenz.jgralab.grumlschema.structure.IncidenceClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.NamedElement;
 import de.uni_koblenz.jgralab.grumlschema.structure.Package;
 import de.uni_koblenz.jgralab.grumlschema.structure.Schema;
@@ -48,6 +54,7 @@ public class GXL2Tg {
 	private final HashMap<String, NamedElement> id2Class = new HashMap<String, NamedElement>();
 	private final HashMap<String, de.uni_koblenz.jgralab.grumlschema.structure.Attribute> id2Attribute = new HashMap<String, de.uni_koblenz.jgralab.grumlschema.structure.Attribute>();
 	private final HashMap<String, String> id2EnumValues = new HashMap<String, String>();
+	private AggregationKind aggregationKind = AggregationKind.NONE;
 
 	private final boolean isGraphPresent = false;
 
@@ -124,6 +131,18 @@ public class GXL2Tg {
 		schemaGraph = GrumlSchema.instance().createSchemaGraph();
 
 		convertSchemaGraph();
+		for (Entry<String, NamedElement> entry : id2Class.entrySet()) {
+			if (entry.getValue().getM1Class() == EdgeClass.class) {
+				assert entry.getValue().getDegree(ComesFrom.class) == 1 : entry
+						.getKey()
+						+ " has more than one ComesFrom "
+						+ entry.getValue().getDegree(ComesFrom.class);
+				assert entry.getValue().getDegree(EndsAt.class) == 1 : entry
+						.getKey()
+						+ " has more than one EndsAt "
+						+ entry.getValue().getDegree(EndsAt.class);
+			}
+		}
 		de.uni_koblenz.jgralab.schema.Schema schema = new SchemaGraph2Schema()
 				.convert(schemaGraph);
 
@@ -137,6 +156,10 @@ public class GXL2Tg {
 		}
 	}
 
+	/*
+	 * schema specific methods
+	 */
+
 	private void convertSchemaGraph() throws XMLStreamException,
 			GraphIOException {
 		while (inputReader.hasNext()) {
@@ -144,13 +167,6 @@ public class GXL2Tg {
 			switch (event.getEventType()) {
 			case XMLEvent.START_ELEMENT:
 				StartElement startElement = event.asStartElement();
-				System.out
-						.println(startElement.getName()
-								+ " "
-								+ (startElement.getAttributeByName(new QName(
-										"id")) != null ? startElement
-										.getAttributeByName(new QName("id"))
-										.getValue() : "null"));// TODO
 				if (startElement.getName().getLocalPart().equals("graph")) {
 					createSchema(startElement);
 				} else if (startElement.getName().getLocalPart().equals("node")) {
@@ -183,6 +199,7 @@ public class GXL2Tg {
 		Schema schema = schemaGraph.createSchema();
 		schema.set_name(schemaElement.getAttributeByName(new QName("id"))
 				.getValue());
+		schema.set_packagePrefix(getPackagePrefixOfSchema());
 		// check if this is the schema part
 		if (inputReader.hasNext()) {
 			XMLEvent event = inputReader.peek();
@@ -205,6 +222,13 @@ public class GXL2Tg {
 			}
 
 		}
+	}
+
+	private String getPackagePrefixOfSchema() {
+		String packagePrefix = graphInputName;
+		int start = packagePrefix.lastIndexOf(File.separator);
+		int end = packagePrefix.lastIndexOf(".");
+		return packagePrefix.substring(start + 1, end);
 	}
 
 	private void handleNodeOrEdge(StartElement element)
@@ -232,7 +256,13 @@ public class GXL2Tg {
 					} else if (type.split(TYPE_PREFIX)[1]
 							.equals("AttributeClass")) {
 						id2Attribute.put(id, schemaGraph.createAttribute());
-					} else {
+					} else if (type.split(TYPE_PREFIX)[1].equals("from")
+							|| type.split(TYPE_PREFIX)[1].equals("to")) {
+						createIncidenceClass(
+								type.split(TYPE_PREFIX)[1].equals("from"),
+								element.getAttributeByName(new QName("from")),
+								element.getAttributeByName(new QName("to")));
+					} else if (id != null) {
 						createNamedElement(type, id,
 								element.getAttributeByName(new QName("from")),
 								element.getAttributeByName(new QName("to")));
@@ -240,7 +270,9 @@ public class GXL2Tg {
 					handleAttr(id,
 							startElement.getAttributeByName(new QName("id")),
 							startElement.getAttributeByName(new QName("name")),
-							startElement.getAttributeByName(new QName("kind")));
+							startElement.getAttributeByName(new QName("kind")),
+							element.getAttributeByName(new QName("from")),
+							element.getAttributeByName(new QName("to")));
 				} else {
 					throw new GraphIOException("\""
 							+ startElement.getName().getLocalPart()
@@ -251,10 +283,13 @@ public class GXL2Tg {
 				EndElement endElement = event.asEndElement();
 				if (endElement.getName().getLocalPart().equals("node")
 						|| endElement.getName().getLocalPart().equals("edge")) {
-					if (!type.split(TYPE_PREFIX)[1].equals("AttributeClass")) {
+					if (!type.split(TYPE_PREFIX)[1].equals("AttributeClass")
+							&& !type.split(TYPE_PREFIX)[1].equals("from")
+							&& !type.split(TYPE_PREFIX)[1].equals("to")) {
 						createNamedElement(type, id,
 								element.getAttributeByName(new QName("from")),
 								element.getAttributeByName(new QName("to")));
+						aggregationKind = AggregationKind.NONE;
 					}
 					return;
 				}
@@ -264,10 +299,11 @@ public class GXL2Tg {
 	}
 
 	private void handleAttr(String aecId, Attribute id, Attribute name,
-			Attribute kind) throws XMLStreamException, GraphIOException {
-		AttributedElementClass aec = (AttributedElementClass) id2Class
-				.get(aecId);
-		String content = null;
+			Attribute kind, Attribute edgeClassId, Attribute vertexClassId)
+			throws XMLStreamException, GraphIOException {
+		AttributedElementClass aec = aecId != null ? (AttributedElementClass) id2Class
+				.get(aecId) : null;
+		String content = "";
 		String type = null;
 		boolean updateContent = false;
 		while (inputReader.hasNext()) {
@@ -285,7 +321,7 @@ public class GXL2Tg {
 				break;
 			case XMLEvent.CHARACTERS:
 				if (updateContent) {
-					content = event.asCharacters().getData();
+					content += event.asCharacters().getData();
 				}
 				break;
 			case XMLEvent.END_ELEMENT:
@@ -300,13 +336,19 @@ public class GXL2Tg {
 						}
 						id2EnumValues.put(aecId, content);
 					} else if (aec == null) {
-						// this is an attribute
-						if (!name.getValue().equals("name")) {
-							throw new GraphIOException(
-									"An attribute does not have a field with name \""
-											+ name.getValue() + "\".");
+						if (name.getValue().equals("name")) {
+							// this is an attribute
+							id2Attribute.get(aecId).set_name(content);
+						} else if (name.getValue().equals("limits")) {
+							// this is the multiplicity of an IncidenceClass
+							setMultiplicities(edgeClassId, vertexClassId,
+									content);
+						} else if (name.getValue().equals("isordered")) {
+							// TODO in JGraLab all Incidences are ordered
+						} else {
+							throw new GraphIOException("\"" + name.getValue()
+									+ "\" is an unknown attribute.");
 						}
-						id2Attribute.get(aecId).set_name(content);
 					} else {
 						setFieldOfAttributedElementClass(aec, name.getValue(),
 								content, type);
@@ -322,6 +364,40 @@ public class GXL2Tg {
 							+ "\" is not expected in an \"attr\" tag.");
 				}
 			}
+		}
+	}
+
+	private void setMultiplicities(Attribute edgeClassId,
+			Attribute vertexClassId, String content) {
+		IncidenceClass ic = getIncidenceClass(edgeClassId, vertexClassId);
+		String[] multiplicities = content.split("</?int>");
+		ic.set_min(Integer.parseInt(multiplicities[1]));
+		ic.set_max(multiplicities[3].equals("-1") ? Integer.MAX_VALUE : Integer
+				.parseInt(multiplicities[3]));
+	}
+
+	private IncidenceClass getIncidenceClass(Attribute edgeClassId,
+			Attribute vertexClassId) {
+		assert edgeClassId != null : "To get the IncidenceClass the id of the corresponding EdgeClass is needed.";
+		EdgeClass ec = (EdgeClass) id2Class.get(edgeClassId.getValue());
+		assert ec != null : "There does not exist an EdgeClass with the id \""
+				+ edgeClassId.getValue() + "\".";
+		assert vertexClassId != null : "To get the IncidenceClass the id of the corresponding VertexClass is needed.";
+		VertexClass vc = (VertexClass) id2Class.get(vertexClassId.getValue());
+		assert vc != null : "There does not exist an VertexClass with the id \""
+				+ vertexClassId.getValue() + "\".";
+
+		IncidenceClass ic = (IncidenceClass) ec.getFirstComesFromIncidence()
+				.getThat();
+		if (ic.getFirstEndsAtIncidence().getThat() == vc) {
+			return ic;
+		} else {
+			ic = (IncidenceClass) ec.getFirstGoesToIncidence().getThat();
+			assert ic.getFirstEndsAtIncidence().getThat() == vc : "There does not exist an IncidenceClass which connects the EdgeClass \""
+					+ ec.get_qualifiedName()
+					+ "\" with the VertexClass \""
+					+ vc.get_qualifiedName() + "\".";
+			return ic;
 		}
 	}
 
@@ -349,6 +425,8 @@ public class GXL2Tg {
 			}
 			((GraphElementClass) aec).set_abstract(Boolean
 					.parseBoolean(content));
+		} else if (attributeName.equals("isdirected")) {
+			// TODO in JGraLab every Edge is directed
 		} else {
 			throw new GraphIOException("\"" + attributeName
 					+ "\" is an unknown attribute.");
@@ -369,37 +447,63 @@ public class GXL2Tg {
 		return new String(cont);
 	}
 
-	private NamedElement createNamedElement(String type, String id,
+	private void createNamedElement(String type, String id,
 			Attribute fromAttribute, Attribute toAttribute)
 			throws GraphIOException {
 		if (fromAttribute == null && toAttribute == null) {
-			return createNamedElement(type, id);
+			createNamedElement(type, id);
+			return;
 		}
-		EdgeClass ec = (EdgeClass) id2Class.get(id);
-		if (ec == null && !id2EnumValues.containsKey(id)) {
-			String from = fromAttribute.getValue();
-			String to = toAttribute.getValue();
-			type = type.split(TYPE_PREFIX)[1];
-			if (type.equals("containsValue")) {
-				// this edge connects an enumeration constant to an enumeration
-				addEnumConstant(from, to);
-			} else if (type.equals("hasDomain")) {
-				// this edge connects an attribute with a domain
-				createHasDomain(from, to);
-			} else if (type.equals("contains")) {
-				// TODO there does not exist an equivalent element in the tg
-				// schema, which expresses, that an GraphElementClass belongs to
-				// a graph
-			} else if (type.equals("isA")) {
-				createSpecialization(from, to);
-			} else if (type.equals("hasAttribute")) {
-				createHasAttribute(from, to);
-			} else {
-				throw new GraphIOException("\"" + type
-						+ "\" is an unknown type.");
-			}
+		String from = fromAttribute.getValue();
+		String to = toAttribute.getValue();
+		type = type.split(TYPE_PREFIX)[1];
+		if (type.equals("containsValue")) {
+			// this edge connects an enumeration constant to an enumeration
+			addEnumConstant(from, to);
+		} else if (type.equals("hasDomain")) {
+			// this edge connects an attribute with a domain
+			createHasDomain(from, to);
+		} else if (type.equals("contains")) {
+			// TODO there does not exist an equivalent element in the tg
+			// schema, which expresses, that an GraphElementClass belongs to
+			// a graph
+		} else if (type.equals("isA")) {
+			createSpecialization(from, to);
+		} else if (type.equals("hasAttribute")) {
+			createHasAttribute(from, to);
+		} else {
+			throw new GraphIOException("\"" + type + "\" is an unknown type.");
 		}
-		return ec;
+	}
+
+	private void createIncidenceClass(boolean isFrom, Attribute from,
+			Attribute to) {
+		String f = from.getValue();
+		String t = to.getValue();
+
+		EdgeClass ec = (EdgeClass) id2Class.get(f);
+		if (ec == null) {
+			ec = schemaGraph.createEdgeClass();
+			id2Class.put(f, ec);
+		}
+
+		VertexClass vc = (VertexClass) id2Class.get(t);
+		if (vc == null) {
+			vc = schemaGraph.createVertexClass();
+			id2Class.put(t, vc);
+		}
+
+		IncidenceClass ic = schemaGraph.createIncidenceClass();
+		ic.set_aggregation(aggregationKind);
+		aggregationKind = AggregationKind.NONE;
+		ic.set_roleName("");
+		schemaGraph.createEndsAt(ic, vc);
+		if (isFrom) {
+			schemaGraph.createComesFrom(ec, ic);
+		} else {
+			schemaGraph.createGoesTo(ec, ic);
+		}
+
 	}
 
 	private void createHasAttribute(String from, String to) {
@@ -475,7 +579,7 @@ public class GXL2Tg {
 		}
 	}
 
-	private NamedElement createNamedElement(String type, String id)
+	private void createNamedElement(String type, String id)
 			throws GraphIOException {
 		// create NamedElement
 		NamedElement ne = id2Class.get(id);
@@ -496,17 +600,16 @@ public class GXL2Tg {
 					schemaGraph.createContainsGraphElementClass(currentPackage,
 							(GraphElementClass) ne);
 				} else if (type.equals("EdgeClass")) {
-					// TODO work at EdgeClass
 					ne = schemaGraph.createEdgeClass();
 					schemaGraph.createContainsGraphElementClass(currentPackage,
 							(GraphElementClass) ne);
 				} else if (type.equals("AggregationClass")) {
-					// TODO work at AggregationClass
+					aggregationKind = AggregationKind.SHARED;
 					ne = schemaGraph.createEdgeClass();
 					schemaGraph.createContainsGraphElementClass(currentPackage,
 							(GraphElementClass) ne);
 				} else if (type.equals("CompositionClass")) {
-					// TODO work at CompositionClass
+					aggregationKind = AggregationKind.COMPOSITE;
 					ne = schemaGraph.createEdgeClass();
 					schemaGraph.createContainsGraphElementClass(currentPackage,
 							(GraphElementClass) ne);
@@ -542,7 +645,6 @@ public class GXL2Tg {
 			}
 			id2Class.put(id, ne);
 		}
-		return ne;
 	}
 
 	private void createDefaultPackage() {
