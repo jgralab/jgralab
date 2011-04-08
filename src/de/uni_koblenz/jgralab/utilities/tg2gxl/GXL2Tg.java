@@ -72,7 +72,7 @@ public class GXL2Tg {
 
 	private de.uni_koblenz.jgralab.schema.Schema schema = null;
 	private Graph graph;
-	private final HashMap<Integer, GraphElement> id2GraphElement = new HashMap<String, GraphElement>();
+	private final HashMap<Integer, GraphElement> id2GraphElement = new HashMap<Integer, GraphElement>();
 	private final Map<String, Method> createMethods = new HashMap<String, Method>();
 
 	private XMLEventReader inputReader;
