@@ -26,6 +26,7 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 
 import de.uni_koblenz.ist.utilities.option_handler.OptionHandler;
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.GraphIO;
@@ -753,6 +754,8 @@ public class GXL2Tg {
 			switch (event.getEventType()) {
 			case XMLEvent.START_ELEMENT:
 				StartElement startElement = event.asStartElement();
+				System.out.println(startElement.getAttributeByName(
+						new QName("id")).getValue());
 				if (startElement.getName().getLocalPart().equals("graph")) {
 					schema.compile(new CodeGeneratorConfiguration());
 					createGraph(startElement);
@@ -784,7 +787,7 @@ public class GXL2Tg {
 
 	private void createVertex(StartElement element) throws XMLStreamException,
 			IllegalArgumentException, IllegalAccessException,
-			InvocationTargetException {
+			InvocationTargetException, GraphIOException {
 		String vcName = extractType();
 		Method createMethod = createMethods.get(vcName);
 		if (createMethod == null) {
@@ -798,7 +801,105 @@ public class GXL2Tg {
 				+ id;
 		id2GraphElement.put(id, vertex);
 
-		// TODO handle Attributes
+		// handle Attributes
+		createAttributes(vertex);
+	}
+
+	private void createAttributes(AttributedElement ae)
+			throws XMLStreamException, GraphIOException {
+		if (hasAttributes()) {
+			int depth = 0;
+			String attributeName = null;
+			String content = "";
+			String type = null;
+			boolean updateContent = false;
+			while (inputReader.hasNext()) {
+				XMLEvent event = inputReader.nextEvent();
+				switch (event.getEventType()) {
+				case XMLStreamConstants.START_ELEMENT:
+					StartElement startElement = event.asStartElement();
+					if (startElement.getName().getLocalPart().equals("attr")) {
+						depth++;
+						content = "";
+						attributeName = startElement.getAttributeByName(
+								new QName("name")).getValue();
+						if (depth > 1) {
+							throw new GraphIOException(
+									"Attributes in Attributes are not supported yet.");
+						}
+					}
+					updateContent = isCorrectAtributeValue(startElement
+							.getName().getLocalPart());
+					type = null;
+					break;
+				case XMLStreamConstants.CHARACTERS:
+					if (updateContent) {
+						content += event.asCharacters().getData();
+					}
+					break;
+				case XMLStreamConstants.END_ELEMENT:
+					EndElement endElement = event.asEndElement();
+					if (endElement.getName().getLocalPart().equals("attr")) {
+						// this attribute is finished
+						depth--;
+						setAttribute(ae, attributeName, type, content);
+						attributeName = null;
+					} else if (isCorrectAtributeValue(endElement.getName()
+							.getLocalPart())) {
+						type = endElement.getName().getLocalPart();
+						updateContent = false;
+					} else if (endElement.getName().getLocalPart()
+							.equals("node")
+							|| endElement.getName().getLocalPart()
+									.equals("edge")) {
+						// all attributes are set
+						return;
+					} else {
+						throw new GraphIOException("\""
+								+ endElement.getName().getLocalPart()
+								+ "\" is not expected in an \"attr\" tag.");
+					}
+				}
+			}
+		}
+	}
+
+	private void setAttribute(AttributedElement ae, String attributeName,
+			String type, String value) throws GraphIOException {
+		if (type.equals("bool")) {
+			ae.setAttribute(attributeName, Boolean.parseBoolean(value));
+		} else if (type.equals("int")) {
+			ae.setAttribute(attributeName, Integer.parseInt(value));
+		} else if (type.equals("float")) {
+			ae.setAttribute(attributeName, Double.parseDouble(value));
+		} else if (type.equals("string")) {
+			ae.setAttribute(attributeName, value);
+		} else if (type.equals("enum")) {
+			ae.readAttributeValueFromString(attributeName, value);
+		} else {
+			throw new GraphIOException("The attribute type \"" + type
+					+ "\" is not supported yet.");
+		}
+	}
+
+	private boolean hasAttributes() throws XMLStreamException {
+		if (inputReader.hasNext()) {
+			XMLEvent event = inputReader.peek();
+			switch (event.getEventType()) {
+			case XMLEvent.CHARACTERS:
+				event = inputReader.nextEvent();
+				event = inputReader.peek();
+				if (!event.isStartElement()) {
+					return false;
+				}
+			case XMLEvent.START_ELEMENT:
+				StartElement startElement = event.asStartElement();
+				if (startElement.getName().getLocalPart().equals("attr")) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	private void createGraph(StartElement element) throws XMLStreamException,
@@ -857,9 +958,11 @@ public class GXL2Tg {
 					nameOfGraphClass = startElement.getAttributeByName(
 							new QName("http://www.w3.org/1999/xlink", "href"))
 							.getValue();
-					// skip '#'
+					// delete '#'
 					nameOfGraphClass = nameOfGraphClass.substring(1);
-					event = inputReader.nextEvent();
+					inputReader.nextEvent();
+					// skip EndEvent of type
+					inputReader.nextEvent();
 				}
 			}
 		}
