@@ -755,8 +755,6 @@ public class GXL2Tg {
 			switch (event.getEventType()) {
 			case XMLEvent.START_ELEMENT:
 				StartElement startElement = event.asStartElement();
-				System.out.println(startElement.getAttributeByName(
-						new QName("id")).getValue());
 				if (startElement.getName().getLocalPart().equals("graph")) {
 					schema.compile(new CodeGeneratorConfiguration());
 					createGraph(startElement);
