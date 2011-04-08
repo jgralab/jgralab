@@ -1,6 +1,5 @@
 package de.uni_koblenz.jgralab.utilities.tg2gxl;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.lang.reflect.InvocationTargetException;
@@ -51,6 +50,9 @@ import de.uni_koblenz.jgralab.grumlschema.structure.Schema;
 import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
 import de.uni_koblenz.jgralab.utilities.tg2schemagraph.SchemaGraph2Schema;
 
+/**
+ * TODO set IDs of GXL as new Attribute
+ */
 public class GXL2Tg {
 
 	private final String TYPE_PREFIX = "http://www.gupro.de/GXL/gxl-1.0.gxl#";
@@ -59,6 +61,7 @@ public class GXL2Tg {
 	private String graphInputName;
 
 	private SchemaGraph schemaGraph;
+	private String packagePrefix;
 	private Package currentPackage;
 	private final HashMap<String, NamedElement> id2Class = new HashMap<String, NamedElement>();
 	private final HashMap<String, de.uni_koblenz.jgralab.grumlschema.structure.Attribute> id2Attribute = new HashMap<String, de.uni_koblenz.jgralab.grumlschema.structure.Attribute>();
@@ -72,7 +75,7 @@ public class GXL2Tg {
 
 	private de.uni_koblenz.jgralab.schema.Schema schema = null;
 	private Graph graph;
-	private final HashMap<Integer, GraphElement> id2GraphElement = new HashMap<Integer, GraphElement>();
+	private final HashMap<String, GraphElement> id2GraphElement = new HashMap<String, GraphElement>();
 	private final Map<String, Method> createMethods = new HashMap<String, Method>();
 
 	private XMLEventReader inputReader;
@@ -80,7 +83,7 @@ public class GXL2Tg {
 	/**
 	 * You can launch this tool from the command-line.
 	 * 
-	 * i.e. java GXL2Tg -i /myTg/myGraph.gxl -o /myGxl/myGraph.tg -c
+	 * i.e. java GXL2Tg -i /myTg/myGraph.gxl -o /myGxl/myGraph.tg -p prefix
 	 * 
 	 * @param args
 	 *            the command-line option set processed by
@@ -113,6 +116,9 @@ public class GXL2Tg {
 				graphOutputName = graphOutputName + ".tg";
 			}
 		}
+		if (comLine.hasOption("p")) {
+			packagePrefix = comLine.getOptionValue("p");
+		}
 	}
 
 	protected CommandLine processCommandlineOptions(String[] args) {
@@ -131,6 +137,12 @@ public class GXL2Tg {
 		output.setRequired(true);
 		output.setArgName("file");
 		oh.addOption(output);
+
+		Option prefix = new Option("p", "packagePrefix", true,
+				"(required): the package prefix of the schema");
+		prefix.setRequired(true);
+		prefix.setArgName("string");
+		oh.addOption(prefix);
 
 		return oh.parse(args);
 	}
@@ -221,7 +233,7 @@ public class GXL2Tg {
 		Schema schema = schemaGraph.createSchema();
 		schema.set_name(schemaElement.getAttributeByName(new QName("id"))
 				.getValue());
-		schema.set_packagePrefix(getPackagePrefixOfSchema());
+		schema.set_packagePrefix(packagePrefix);
 		// check if this is the schema part
 		if (inputReader.hasNext()) {
 			XMLEvent event = inputReader.peek();
@@ -244,13 +256,6 @@ public class GXL2Tg {
 			}
 
 		}
-	}
-
-	private String getPackagePrefixOfSchema() {
-		String packagePrefix = graphInputName;
-		int start = packagePrefix.lastIndexOf(File.separator);
-		int end = packagePrefix.lastIndexOf(".");
-		return packagePrefix.substring(start + 1, end);
 	}
 
 	private void handleNodeOrEdge(StartElement element)
@@ -758,37 +763,20 @@ public class GXL2Tg {
 	private void createVertex(StartElement element) throws XMLStreamException,
 			IllegalArgumentException, IllegalAccessException,
 			InvocationTargetException {
-		String vcName = className();
+		String vcName = extractType();
 		Method createMethod = createMethods.get(vcName);
 		if (createMethod == null) {
 			createMethod = schema.getVertexCreateMethod(vcName,
 					ImplementationType.STANDARD);
 			createMethods.put(vcName, createMethod);
 		}
-		int id = getId(element);
-		Vertex vertex = (Vertex) createMethod
-				.invoke(graph, new Object[] { id });
+		String id = element.getAttributeByName(new QName("id")).getValue();
+		Vertex vertex = (Vertex) createMethod.invoke(graph, new Object[] { 0 });
 		assert id2GraphElement.get(id) == null : "There already exists a Vertex with id "
 				+ id;
 		id2GraphElement.put(id, vertex);
 
 		// TODO handle Attributes
-	}
-
-	/**
-	 * the id is the id of GXL reduced by (n|e)-
-	 * 
-	 * @param element
-	 * @return
-	 */
-	private int getId(StartElement element) {
-		String id = element.getAttributeByName(new QName("id")).getValue()
-				.substring(1);
-		return Integer.parseInt(id.charAt(0) == '-' ? id.substring(1) : id);
-	}
-
-	private String className() throws XMLStreamException {
-		return getPackagePrefixOfSchema() + "." + extractType();
 	}
 
 	private void createGraph(StartElement element) throws XMLStreamException,
@@ -811,6 +799,7 @@ public class GXL2Tg {
 						new Object[] {
 								element.getAttributeByName(new QName("id"))
 										.getValue(), 100, 100 });
+
 		Attribute role = element.getAttributeByName(new QName("role"));
 		if (role != null) {
 			// TODO the role of a graph is not defined in JGraLab
