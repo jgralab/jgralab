@@ -491,7 +491,7 @@ public class GXL2Tg {
 		if (Character.isLowerCase(cont[pos])) {
 			cont[pos] = Character.toUpperCase(cont[pos]);
 		}
-		// TODO check if name already exists
+		// check if name already exists
 		// this avoid reserved names like Edge or Vertex
 		String baseName = new String(cont);
 		String name = baseName;
