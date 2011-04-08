@@ -2,6 +2,7 @@ package de.uni_koblenz.jgralab.utilities.tg2gxl;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import java.util.Map.Entry;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.EndElement;
@@ -59,6 +61,7 @@ public class GXL2Tg {
 
 	private String graphOutputName;
 	private String graphInputName;
+	private String jarOutputName;
 
 	private SchemaGraph schemaGraph;
 	private String packagePrefix;
@@ -119,6 +122,9 @@ public class GXL2Tg {
 		if (comLine.hasOption("p")) {
 			packagePrefix = comLine.getOptionValue("p");
 		}
+		if (comLine.hasOption('j')) {
+			jarOutputName = comLine.getOptionValue('j');
+		}
 	}
 
 	protected CommandLine processCommandlineOptions(String[] args) {
@@ -143,6 +149,12 @@ public class GXL2Tg {
 		prefix.setRequired(true);
 		prefix.setArgName("string");
 		oh.addOption(prefix);
+
+		Option jarOutput = new Option("j", "schema-jar", true,
+				"(optional): the schema classes JAR output file name");
+		jarOutput.setRequired(false);
+		jarOutput.setArgName("jar-file");
+		oh.addOption(jarOutput);
 
 		return oh.parse(args);
 	}
@@ -169,6 +181,16 @@ public class GXL2Tg {
 		convertSchemaGraph();
 		schema = new SchemaGraph2Schema().convert(schemaGraph);
 
+		if (jarOutputName != null) {
+			try {
+				schema.createJAR(CodeGeneratorConfiguration.MINIMAL,
+						jarOutputName);
+			} catch (IOException e) {
+				System.out.println("Could not create schema JAR file.");
+				e.printStackTrace();
+			}
+		}
+
 		convertGraph();
 
 		inputReader.close();
@@ -190,7 +212,7 @@ public class GXL2Tg {
 		while (inputReader.hasNext()) {
 			XMLEvent event = inputReader.nextEvent();
 			switch (event.getEventType()) {
-			case XMLEvent.START_ELEMENT:
+			case XMLStreamConstants.START_ELEMENT:
 				StartElement startElement = event.asStartElement();
 				if (startElement.getName().getLocalPart().equals("graph")) {
 					createSchema(startElement);
@@ -207,7 +229,7 @@ public class GXL2Tg {
 					}
 				}
 				break;
-			case XMLEvent.END_ELEMENT:
+			case XMLStreamConstants.END_ELEMENT:
 				EndElement endElement = event.asEndElement();
 				if (endElement.getName().getLocalPart().equals("graph")) {
 					// schema is completely parsed
@@ -238,10 +260,10 @@ public class GXL2Tg {
 		if (inputReader.hasNext()) {
 			XMLEvent event = inputReader.peek();
 			switch (event.getEventType()) {
-			case XMLEvent.CHARACTERS:
+			case XMLStreamConstants.CHARACTERS:
 				event = inputReader.nextEvent();
 				event = inputReader.peek();
-			case XMLEvent.START_ELEMENT:
+			case XMLStreamConstants.START_ELEMENT:
 				StartElement startElement = event.asStartElement();
 				if (startElement.getName().getLocalPart().equals("type")) {
 					if (!startElement
@@ -268,7 +290,7 @@ public class GXL2Tg {
 		while (inputReader.hasNext()) {
 			XMLEvent event = inputReader.nextEvent();
 			switch (event.getEventType()) {
-			case XMLEvent.START_ELEMENT:
+			case XMLStreamConstants.START_ELEMENT:
 				StartElement startElement = event.asStartElement();
 				if (startElement.getName().getLocalPart().equals("graph")) {
 					throw new GraphIOException(
@@ -304,7 +326,7 @@ public class GXL2Tg {
 							+ "\" is an unexpected tag in \"node\".");
 				}
 				break;
-			case XMLEvent.END_ELEMENT:
+			case XMLStreamConstants.END_ELEMENT:
 				EndElement endElement = event.asEndElement();
 				if (endElement.getName().getLocalPart().equals("node")
 						|| endElement.getName().getLocalPart().equals("edge")) {
@@ -331,7 +353,7 @@ public class GXL2Tg {
 		while (inputReader.hasNext()) {
 			XMLEvent event = inputReader.nextEvent();
 			switch (event.getEventType()) {
-			case XMLEvent.START_ELEMENT:
+			case XMLStreamConstants.START_ELEMENT:
 				StartElement startElement = event.asStartElement();
 				if (startElement.getName().getLocalPart().equals("attr")) {
 					throw new GraphIOException(
@@ -341,12 +363,12 @@ public class GXL2Tg {
 						.getLocalPart());
 				type = null;
 				break;
-			case XMLEvent.CHARACTERS:
+			case XMLStreamConstants.CHARACTERS:
 				if (updateContent) {
 					content += event.asCharacters().getData();
 				}
 				break;
-			case XMLEvent.END_ELEMENT:
+			case XMLStreamConstants.END_ELEMENT:
 				EndElement endElement = event.asEndElement();
 				if (endElement.getName().getLocalPart().equals("attr")) {
 					// this attribute is finished
@@ -481,7 +503,7 @@ public class GXL2Tg {
 	private void createNamedElement(String type, String id,
 			Attribute fromAttribute, Attribute toAttribute)
 			throws GraphIOException {
-		if (fromAttribute == null && toAttribute == null) {
+		if ((fromAttribute == null) && (toAttribute == null)) {
 			createNamedElement(type, id);
 			return;
 		}
@@ -605,7 +627,7 @@ public class GXL2Tg {
 	private void createSpecialization(String from, String to) {
 		GraphElementClass f = (GraphElementClass) id2Class.get(from);
 		GraphElementClass t = (GraphElementClass) id2Class.get(to);
-		assert f != null || t != null;
+		assert (f != null) || (t != null);
 		// create missing class
 		if (f == null) {
 			if (t.getM1Class() == VertexClass.class) {
@@ -635,7 +657,7 @@ public class GXL2Tg {
 			throws GraphIOException {
 		// create NamedElement
 		NamedElement ne = id2Class.get(id);
-		if (ne == null && !id2EnumValues.containsKey(id)) {
+		if ((ne == null) && !id2EnumValues.containsKey(id)) {
 			type = type.split(TYPE_PREFIX)[1];
 			if (type.equals("GraphClass")) {
 				ne = schemaGraph.createGraphClass();
