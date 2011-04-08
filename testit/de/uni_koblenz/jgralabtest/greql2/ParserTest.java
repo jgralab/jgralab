@@ -388,23 +388,18 @@ public class ParserTest {
 
 	@Test
 	public void testDoubleLiteral() throws Exception {
-		System.out.println("---------------------");
-		System.out.println("Testing DoubleLiteral");
-		System.out.println("---------------------");
-		Greql2 graph = null;
-		DoubleLiteral lit = null;
-		graph = parseQuery("5.0");
-		lit = graph.getFirstDoubleLiteral();
-		assertNotNull(lit);
-		assertEquals(5, lit.get_doubleValue(), 0.0001);
-		graph = parseQuery("5.0f");
-		lit = graph.getFirstDoubleLiteral();
-		assertNotNull(lit);
-		assertEquals(5.0, lit.get_doubleValue(), 0.0001);
-		graph = parseQuery("0.5");
-		lit = graph.getFirstDoubleLiteral();
-		assertNotNull(lit);
-		assertEquals(0.5, lit.get_doubleValue(), 0.0001);
+		assertDoubleLiteralEquals("5.0", 5.0);
+		assertDoubleLiteralEquals("0.5", 0.5);
+	}
+
+	static final double DELTA = 0.00000001;
+
+	public void assertDoubleLiteralEquals(String literal, double expectedValue) {
+		Greql2 graph = parseQuery(literal);
+		DoubleLiteral lit = graph.getFirstDoubleLiteral();
+		Double value = lit.get_doubleValue();
+		assertNotNull(value);
+		assertEquals(expectedValue, value, DELTA);
 	}
 
 	@Test
