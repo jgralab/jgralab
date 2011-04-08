@@ -27,6 +27,7 @@ import org.apache.commons.cli.Option;
 
 import de.uni_koblenz.ist.utilities.option_handler.OptionHandler;
 import de.uni_koblenz.jgralab.AttributedElement;
+import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.GraphIO;
@@ -462,7 +463,7 @@ public class GXL2Tg {
 				throw new GraphIOException(
 						"The qualifiedName value must be of type \"string\".");
 			}
-			aec.set_qualifiedName(transferIntoQualifiendName(content));
+			aec.set_qualifiedName(transferIntoQualifiedName(content));
 		} else if (attributeName.equals("isabstract")) {
 			if (!type.equals("bool")) {
 				throw new GraphIOException(
@@ -478,7 +479,7 @@ public class GXL2Tg {
 		}
 	}
 
-	private String transferIntoQualifiendName(String content)
+	private String transferIntoQualifiedName(String content)
 			throws GraphIOException {
 		if (content.startsWith("#")) {
 			throw new GraphIOException("\"" + content
@@ -762,7 +763,7 @@ public class GXL2Tg {
 				} else if (startElement.getName().getLocalPart().equals("node")) {
 					createVertex(startElement);
 				} else if (startElement.getName().getLocalPart().equals("edge")) {
-					// TODO handle edge
+					createEdge(startElement);
 				} else if (startElement.getName().getLocalPart().equals("rel")) {
 					throw new GraphIOException("Hypergraphs are not supported.");
 				} else {
@@ -783,6 +784,61 @@ public class GXL2Tg {
 			}
 		}
 
+	}
+
+	private void createEdge(StartElement element) throws XMLStreamException,
+			IllegalArgumentException, IllegalAccessException,
+			InvocationTargetException, GraphIOException {
+		// extract attributes
+		Attribute idAttribute = element.getAttributeByName(new QName("id"));
+		String id = idAttribute != null ? idAttribute.getValue() : null;
+
+		Attribute fromAttribute = element.getAttributeByName(new QName("from"));
+		Vertex from = (Vertex) id2GraphElement.get(fromAttribute.getValue());
+		assert from != null : "Edge cannot be created because the vertex refered by the from id \""
+				+ fromAttribute.getValue() + "\" does not exist.";
+
+		Attribute toAttribute = element.getAttributeByName(new QName("to"));
+		Vertex to = (Vertex) id2GraphElement.get(toAttribute.getValue());
+		assert to != null : "Edge cannot be created because the vertex refered by the to id \""
+				+ toAttribute.getValue() + "\" does not exist.";
+
+		Attribute fromOrderAttribute = element.getAttributeByName(new QName(
+				"fromorder"));
+		if (fromOrderAttribute != null) {
+			// TODO
+			throw new GraphIOException("fromorder is not supported yet");
+		}
+
+		Attribute toOrderAttribute = element.getAttributeByName(new QName(
+				"toorder"));
+		if (toOrderAttribute != null) {
+			// TODO
+			throw new GraphIOException("toorder is not supported yet");
+		}
+
+		Attribute isDirectedAttribute = element.getAttributeByName(new QName(
+				"isdirected"));
+		if (isDirectedAttribute != null) {
+			// TODO in JGraLab all edges are directed
+		}
+
+		// create edge
+		String ecName = extractType();
+		Method createMethod = createMethods.get(ecName);
+		if (createMethod == null) {
+			createMethod = schema.getEdgeCreateMethod(ecName,
+					ImplementationType.STANDARD);
+			createMethods.put(ecName, createMethod);
+		}
+		Edge edge = (Edge) createMethod.invoke(graph, new Object[] { 0, from,
+				to });
+		assert id2GraphElement.get(id) == null : "There already exists an Edge with id "
+				+ id;
+		id2GraphElement.put(id, edge);
+
+		// handle Attributes
+		createAttributes(edge);
 	}
 
 	private void createVertex(StartElement element) throws XMLStreamException,
