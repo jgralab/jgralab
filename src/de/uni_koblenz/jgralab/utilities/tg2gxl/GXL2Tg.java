@@ -3,10 +3,13 @@ package de.uni_koblenz.jgralab.utilities.tg2gxl;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.xml.namespace.QName;
@@ -23,9 +26,13 @@ import org.apache.commons.cli.Option;
 
 import de.uni_koblenz.ist.utilities.option_handler.OptionHandler;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
+import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.grumlschema.GrumlSchema;
 import de.uni_koblenz.jgralab.grumlschema.SchemaGraph;
 import de.uni_koblenz.jgralab.grumlschema.domains.Domain;
@@ -65,6 +72,8 @@ public class GXL2Tg {
 
 	private de.uni_koblenz.jgralab.schema.Schema schema = null;
 	private Graph graph;
+	private final HashMap<Integer, GraphElement> id2GraphElement = new HashMap<String, GraphElement>();
+	private final Map<String, Method> createMethods = new HashMap<String, Method>();
 
 	private XMLEventReader inputReader;
 
@@ -79,9 +88,13 @@ public class GXL2Tg {
 	 * @throws XMLStreamException
 	 * @throws FileNotFoundException
 	 * @throws GraphIOException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
+	 * @throws IllegalArgumentException
 	 */
 	public static void main(String[] args) throws FileNotFoundException,
-			XMLStreamException, GraphIOException {
+			XMLStreamException, GraphIOException, IllegalArgumentException,
+			IllegalAccessException, InvocationTargetException {
 		GXL2Tg converter = new GXL2Tg();
 		converter.getOptions(args);
 		converter.convert();
@@ -123,14 +136,17 @@ public class GXL2Tg {
 	}
 
 	public void convert(String inputGraphName, String outputGraph)
-			throws FileNotFoundException, XMLStreamException, GraphIOException {
+			throws FileNotFoundException, XMLStreamException, GraphIOException,
+			IllegalArgumentException, IllegalAccessException,
+			InvocationTargetException {
 		graphInputName = inputGraphName;
 		graphOutputName = outputGraph;
 		convert();
 	}
 
 	public void convert() throws FileNotFoundException, XMLStreamException,
-			GraphIOException {
+			GraphIOException, IllegalArgumentException, IllegalAccessException,
+			InvocationTargetException {
 		XMLInputFactory factory = XMLInputFactory.newInstance();
 		inputReader = factory.createXMLEventReader(new FileReader(
 				graphInputName));
@@ -139,8 +155,9 @@ public class GXL2Tg {
 		schemaGraph = GrumlSchema.instance().createSchemaGraph();
 
 		convertSchemaGraph();
-		GraphIO.saveGraphToFile("D:/graphen/gxl.tg", schemaGraph, null);
 		schema = new SchemaGraph2Schema().convert(schemaGraph);
+
+		convertGraph();
 
 		inputReader.close();
 
@@ -695,5 +712,146 @@ public class GXL2Tg {
 		currentPackage = schemaGraph.createPackage();
 		schemaGraph.createContainsDefaultPackage(schemaGraph.getFirstSchema(),
 				currentPackage);
+	}
+
+	/*
+	 * graph instance specific methods
+	 */
+
+	private void convertGraph() throws XMLStreamException, GraphIOException,
+			IllegalArgumentException, IllegalAccessException,
+			InvocationTargetException {
+		while (inputReader.hasNext()) {
+			XMLEvent event = inputReader.nextEvent();
+			switch (event.getEventType()) {
+			case XMLEvent.START_ELEMENT:
+				StartElement startElement = event.asStartElement();
+				if (startElement.getName().getLocalPart().equals("graph")) {
+					schema.compile(new CodeGeneratorConfiguration());
+					createGraph(startElement);
+				} else if (startElement.getName().getLocalPart().equals("node")) {
+					createVertex(startElement);
+				} else if (startElement.getName().getLocalPart().equals("edge")) {
+					// TODO handle edge
+				} else if (startElement.getName().getLocalPart().equals("rel")) {
+					throw new GraphIOException("Hypergraphs are not supported.");
+				} else {
+					if (!startElement.getName().getLocalPart().equals("gxl")) {
+						throw new GraphIOException("Invalid GXL: \""
+								+ startElement.getName().getLocalPart()
+								+ "\" not possible at this position.");
+					}
+				}
+				break;
+			case XMLEvent.END_ELEMENT:
+				EndElement endElement = event.asEndElement();
+				if (endElement.getName().getLocalPart().equals("graph")) {
+					// graph is completely loaded
+					return;
+				}
+				break;
+			}
+		}
+
+	}
+
+	private void createVertex(StartElement element) throws XMLStreamException,
+			IllegalArgumentException, IllegalAccessException,
+			InvocationTargetException {
+		String vcName = className();
+		Method createMethod = createMethods.get(vcName);
+		if (createMethod == null) {
+			createMethod = schema.getVertexCreateMethod(vcName,
+					ImplementationType.STANDARD);
+			createMethods.put(vcName, createMethod);
+		}
+		int id = getId(element);
+		Vertex vertex = (Vertex) createMethod
+				.invoke(graph, new Object[] { id });
+		assert id2GraphElement.get(id) == null : "There already exists a Vertex with id "
+				+ id;
+		id2GraphElement.put(id, vertex);
+
+		// TODO handle Attributes
+	}
+
+	/**
+	 * the id is the id of GXL reduced by (n|e)-
+	 * 
+	 * @param element
+	 * @return
+	 */
+	private int getId(StartElement element) {
+		String id = element.getAttributeByName(new QName("id")).getValue()
+				.substring(1);
+		return Integer.parseInt(id.charAt(0) == '-' ? id.substring(1) : id);
+	}
+
+	private String className() throws XMLStreamException {
+		return getPackagePrefixOfSchema() + "." + extractType();
+	}
+
+	private void createGraph(StartElement element) throws XMLStreamException,
+			GraphIOException, IllegalArgumentException, IllegalAccessException,
+			InvocationTargetException {
+
+		// extract name of GraphClass
+		String nameOfGraphClass = extractType();
+
+		// create graph
+		de.uni_koblenz.jgralab.schema.GraphClass gc = schema.getGraphClass();
+		if (!gc.getQualifiedName().equals(nameOfGraphClass)) {
+			throw new GraphIOException("The GraphClass \"" + nameOfGraphClass
+					+ "\" is undefined.");
+		}
+
+		graph = (Graph) schema
+				.getGraphCreateMethod(ImplementationType.STANDARD).invoke(
+						null,
+						new Object[] {
+								element.getAttributeByName(new QName("id"))
+										.getValue(), 100, 100 });
+		Attribute role = element.getAttributeByName(new QName("role"));
+		if (role != null) {
+			// TODO the role of a graph is not defined in JGraLab
+		}
+		Attribute edgeids = element.getAttributeByName(new QName("edgeids"));
+		if (edgeids != null) {
+			// TODO JGraLab uses it own ids
+		}
+		Attribute hypergraph = element.getAttributeByName(new QName(
+				"hypergraph"));
+		if (hypergraph != null) {
+			if (Boolean.parseBoolean(hypergraph.getValue())) {
+				throw new GraphIOException("Hypergraphs are not supported yet.");
+			}
+		}
+		Attribute edgemode = element.getAttributeByName(new QName("edgemode"));
+		if (edgemode != null) {
+			// TODO in JGraLab all edges are directed
+		}
+	}
+
+	private String extractType() throws XMLStreamException {
+		String nameOfGraphClass = null;
+		if (inputReader.hasNext()) {
+			XMLEvent event = inputReader.peek();
+			switch (event.getEventType()) {
+			case XMLEvent.CHARACTERS:
+				event = inputReader.nextEvent();
+				event = inputReader.peek();
+			case XMLEvent.START_ELEMENT:
+				StartElement startElement = event.asStartElement();
+				if (startElement.getName().getLocalPart().equals("type")) {
+					nameOfGraphClass = startElement.getAttributeByName(
+							new QName("http://www.w3.org/1999/xlink", "href"))
+							.getValue();
+					// skip '#'
+					nameOfGraphClass = nameOfGraphClass.substring(1);
+					event = inputReader.nextEvent();
+				}
+			}
+		}
+		return nameOfGraphClass;
 	}
 }
