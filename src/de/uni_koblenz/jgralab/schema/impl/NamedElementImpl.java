@@ -99,7 +99,7 @@ public abstract class NamedElementImpl implements NamedElement {
 	 * {@link #NamedElementImpl(String, Package, Schema) here} for details.
 	 */
 	private static final Pattern PACKAGE_NAME_PATTERN = Pattern
-			.compile("\\p{Lower}(\\w*\\p{Alnum})?");
+			.compile("\\p{Lower}\\w*");
 
 	/**
 	 * Pattern to match the simple name of AttributedElementClass and any Domain
@@ -108,7 +108,7 @@ public abstract class NamedElementImpl implements NamedElement {
 	 * {@link #NamedElementImpl(String, Package, Schema) here} for details.
 	 */
 	private static final Pattern ATTRELEM_OR_NOCOLLDOMAIN_PATTERN = Pattern
-			.compile("\\p{Upper}(\\w*\\p{Alnum})?");
+			.compile("\\p{Upper}\\w*?");
 
 	/**
 	 * The list of comments of this NamedElement. Only contains non-empty
