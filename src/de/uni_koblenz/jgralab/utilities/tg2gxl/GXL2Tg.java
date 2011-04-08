@@ -788,8 +788,6 @@ public class GXL2Tg {
 			IllegalArgumentException, IllegalAccessException,
 			InvocationTargetException, GraphIOException {
 		// extract attributes
-		Attribute idAttribute = element.getAttributeByName(new QName("id"));
-		String id = idAttribute != null ? idAttribute.getValue() : null;
 
 		Attribute fromAttribute = element.getAttributeByName(new QName("from"));
 		Vertex from = (Vertex) id2GraphElement.get(fromAttribute.getValue());
@@ -800,6 +798,10 @@ public class GXL2Tg {
 		Vertex to = (Vertex) id2GraphElement.get(toAttribute.getValue());
 		assert to != null : "Edge cannot be created because the vertex refered by the to id \""
 				+ toAttribute.getValue() + "\" does not exist.";
+
+		Attribute idAttribute = element.getAttributeByName(new QName("id"));
+		String id = idAttribute != null ? idAttribute.getValue()
+				: fromAttribute.getValue() + "_" + toAttribute.getValue();
 
 		Attribute fromOrderAttribute = element.getAttributeByName(new QName(
 				"fromorder"));
@@ -983,7 +985,7 @@ public class GXL2Tg {
 		}
 		Attribute edgeids = element.getAttributeByName(new QName("edgeids"));
 		if (edgeids != null) {
-			// TODO JGraLab uses it own ids
+			// if edgeids="false" then the id of the edge is fromId_toId
 		}
 		Attribute hypergraph = element.getAttributeByName(new QName(
 				"hypergraph"));
