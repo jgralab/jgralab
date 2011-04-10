@@ -28,6 +28,7 @@ import org.apache.commons.cli.Option;
 import de.uni_koblenz.ist.utilities.option_handler.OptionHandler;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.GraphIO;
@@ -40,6 +41,7 @@ import de.uni_koblenz.jgralab.grumlschema.GrumlSchema;
 import de.uni_koblenz.jgralab.grumlschema.SchemaGraph;
 import de.uni_koblenz.jgralab.grumlschema.domains.Domain;
 import de.uni_koblenz.jgralab.grumlschema.domains.EnumDomain;
+import de.uni_koblenz.jgralab.grumlschema.domains.StringDomain;
 import de.uni_koblenz.jgralab.grumlschema.structure.AggregationKind;
 import de.uni_koblenz.jgralab.grumlschema.structure.AttributedElementClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.ComesFrom;
@@ -54,10 +56,9 @@ import de.uni_koblenz.jgralab.grumlschema.structure.Schema;
 import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
 import de.uni_koblenz.jgralab.utilities.tg2schemagraph.SchemaGraph2Schema;
 
-/**
- * TODO set IDs of GXL as new Attribute
- */
 public class GXL2Tg {
+
+	private static final String ID_ATTRIBUTE_NAME = "id";
 
 	private final String TYPE_PREFIX = "http://www.gupro.de/GXL/gxl-1.0.gxl#";
 
@@ -84,6 +85,8 @@ public class GXL2Tg {
 	private final Map<String, Method> createMethods = new HashMap<String, Method>();
 
 	private XMLEventReader inputReader;
+
+	private boolean storeIds;
 
 	/**
 	 * You can launch this tool from the command-line.
@@ -124,6 +127,7 @@ public class GXL2Tg {
 		if (comLine.hasOption("p")) {
 			packagePrefix = comLine.getOptionValue("p");
 		}
+		storeIds = comLine.hasOption("s");
 		if (comLine.hasOption('j')) {
 			jarOutputName = comLine.getOptionValue('j');
 		}
@@ -151,6 +155,11 @@ public class GXL2Tg {
 		prefix.setRequired(true);
 		prefix.setArgName("string");
 		oh.addOption(prefix);
+
+		Option saveIds = new Option("s", "saveIds", false,
+				"(optional): stores the GXL id as a new attribute");
+		saveIds.setRequired(false);
+		oh.addOption(saveIds);
 
 		Option jarOutput = new Option("j", "schema-jar", true,
 				"(optional): the schema classes JAR output file name");
@@ -181,6 +190,9 @@ public class GXL2Tg {
 		schemaGraph = GrumlSchema.instance().createSchemaGraph();
 
 		convertSchemaGraph();
+		if (storeIds) {
+			createIdAttribute();
+		}
 		schema = new SchemaGraph2Schema().convert(schemaGraph);
 
 		if (jarOutputName != null) {
@@ -208,6 +220,36 @@ public class GXL2Tg {
 	/*
 	 * schema specific methods
 	 */
+
+	private void createIdAttribute() {
+		StringDomain string = schemaGraph.getFirstStringDomain();
+		if (string == null) {
+			string = schemaGraph.createStringDomain();
+			string.set_qualifiedName("String");
+		}
+
+		ArrayList<GraphElementClass> gecs = new ArrayList<GraphElementClass>();
+		for (VertexClass vc : schemaGraph.getVertexClassVertices()) {
+			if (vc.getFirstSpecializesVertexClassIncidence(EdgeDirection.OUT) == null) {
+				// this is a top level VertexClass
+				gecs.add(vc);
+			}
+		}
+
+		for (EdgeClass ec : schemaGraph.getEdgeClassVertices()) {
+			if (ec.getFirstSpecializesEdgeClassIncidence(EdgeDirection.OUT) == null) {
+				// this is a top level EdgeClass
+				gecs.add(ec);
+			}
+		}
+		for (GraphElementClass gec : gecs) {
+			de.uni_koblenz.jgralab.grumlschema.structure.Attribute attr = schemaGraph
+					.createAttribute();
+			attr.set_name(ID_ATTRIBUTE_NAME);
+			schemaGraph.createHasDomain(attr, string);
+			schemaGraph.createHasAttribute(gec, attr);
+		}
+	}
 
 	private void convertSchemaGraph() throws XMLStreamException,
 			GraphIOException {
@@ -390,7 +432,7 @@ public class GXL2Tg {
 							setMultiplicities(edgeClassId, vertexClassId,
 									content);
 						} else if (name.getValue().equals("isordered")) {
-							// TODO in JGraLab all Incidences are ordered
+							// in JGraLab all Incidences are ordered
 						} else {
 							throw new GraphIOException("\"" + name.getValue()
 									+ "\" is an unknown attribute.");
@@ -472,7 +514,7 @@ public class GXL2Tg {
 			((GraphElementClass) aec).set_abstract(Boolean
 					.parseBoolean(content));
 		} else if (attributeName.equals("isdirected")) {
-			// TODO in JGraLab every Edge is directed
+			// in JGraLab every Edge is directed
 		} else {
 			throw new GraphIOException("\"" + attributeName
 					+ "\" is an unknown attribute.");
@@ -519,7 +561,7 @@ public class GXL2Tg {
 			// this edge connects an attribute with a domain
 			createHasDomain(from, to);
 		} else if (type.equals("contains")) {
-			// TODO there does not exist an equivalent element in the tg
+			// there does not exist an equivalent element in the tg
 			// schema, which expresses, that an GraphElementClass belongs to
 			// a graph
 		} else if (type.equals("isA")) {
@@ -820,7 +862,7 @@ public class GXL2Tg {
 		Attribute isDirectedAttribute = element.getAttributeByName(new QName(
 				"isdirected"));
 		if (isDirectedAttribute != null) {
-			// TODO in JGraLab all edges are directed
+			// in JGraLab all edges are directed
 		}
 
 		// create edge
@@ -838,7 +880,7 @@ public class GXL2Tg {
 		id2GraphElement.put(id, edge);
 
 		// handle Attributes
-		createAttributes(edge);
+		createAttributes(edge, id);
 	}
 
 	private void createVertex(StartElement element) throws XMLStreamException,
@@ -858,11 +900,15 @@ public class GXL2Tg {
 		id2GraphElement.put(id, vertex);
 
 		// handle Attributes
-		createAttributes(vertex);
+		createAttributes(vertex, id);
 	}
 
-	private void createAttributes(AttributedElement ae)
+	private void createAttributes(AttributedElement ae, String id)
 			throws XMLStreamException, GraphIOException {
+		if (storeIds) {
+			ae.setAttribute(ID_ATTRIBUTE_NAME, id);
+		}
+
 		if (hasAttributes()) {
 			int depth = 0;
 			String attributeName = null;
@@ -981,7 +1027,7 @@ public class GXL2Tg {
 
 		Attribute role = element.getAttributeByName(new QName("role"));
 		if (role != null) {
-			// TODO the role of a graph is not defined in JGraLab
+			// the role of a graph is not defined in JGraLab
 		}
 		Attribute edgeids = element.getAttributeByName(new QName("edgeids"));
 		if (edgeids != null) {
@@ -996,7 +1042,7 @@ public class GXL2Tg {
 		}
 		Attribute edgemode = element.getAttributeByName(new QName("edgemode"));
 		if (edgemode != null) {
-			// TODO in JGraLab all edges are directed
+			// in JGraLab all edges are directed
 		}
 	}
 
