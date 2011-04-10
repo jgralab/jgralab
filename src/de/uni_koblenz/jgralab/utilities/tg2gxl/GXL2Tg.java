@@ -88,6 +88,8 @@ public class GXL2Tg {
 
 	private boolean storeIds;
 
+	private boolean haveEdgesIds;
+
 	/**
 	 * You can launch this tool from the command-line.
 	 * 
@@ -191,6 +193,7 @@ public class GXL2Tg {
 
 		convertSchemaGraph();
 		if (storeIds) {
+			extractEdgeid();
 			createIdAttribute();
 		}
 		schema = new SchemaGraph2Schema().convert(schemaGraph);
@@ -217,6 +220,24 @@ public class GXL2Tg {
 		}
 	}
 
+	private void extractEdgeid() throws XMLStreamException {
+		XMLEvent event = inputReader.peek();
+		if (event.isCharacters()) {
+			inputReader.nextEvent();
+			event = inputReader.peek();
+		}
+		if (event.isStartElement()) {
+			StartElement startElement = event.asStartElement();
+			if (startElement.getName().getLocalPart().equals("graph")) {
+				Attribute attr = startElement.getAttributeByName(new QName(
+						"edgeids"));
+				if (attr != null) {
+					haveEdgesIds = Boolean.parseBoolean(attr.getValue());
+				}
+			}
+		}
+	}
+
 	/*
 	 * schema specific methods
 	 */
@@ -235,11 +256,12 @@ public class GXL2Tg {
 				gecs.add(vc);
 			}
 		}
-
-		for (EdgeClass ec : schemaGraph.getEdgeClassVertices()) {
-			if (ec.getFirstSpecializesEdgeClassIncidence(EdgeDirection.OUT) == null) {
-				// this is a top level EdgeClass
-				gecs.add(ec);
+		if (haveEdgesIds) {
+			for (EdgeClass ec : schemaGraph.getEdgeClassVertices()) {
+				if (ec.getFirstSpecializesEdgeClassIncidence(EdgeDirection.OUT) == null) {
+					// this is a top level EdgeClass
+					gecs.add(ec);
+				}
 			}
 		}
 		for (GraphElementClass gec : gecs) {
@@ -906,7 +928,11 @@ public class GXL2Tg {
 	private void createAttributes(AttributedElement ae, String id)
 			throws XMLStreamException, GraphIOException {
 		if (storeIds) {
-			ae.setAttribute(ID_ATTRIBUTE_NAME, id);
+			if (ae.getAttributedElementClass().isSubClassOf(
+					schema.getDefaultVertexClass())
+					|| haveEdgesIds) {
+				ae.setAttribute(ID_ATTRIBUTE_NAME, id);
+			}
 		}
 
 		if (hasAttributes()) {
@@ -1029,10 +1055,8 @@ public class GXL2Tg {
 		if (role != null) {
 			// the role of a graph is not defined in JGraLab
 		}
-		Attribute edgeids = element.getAttributeByName(new QName("edgeids"));
-		if (edgeids != null) {
-			// if edgeids="false" then the id of the edge is fromId_toId
-		}
+		// edgeids is already evaluated @see #extractEdgeid()
+		// if edgeids="false" then the id of the edge is fromId_toId
 		Attribute hypergraph = element.getAttributeByName(new QName(
 				"hypergraph"));
 		if (hypergraph != null) {
