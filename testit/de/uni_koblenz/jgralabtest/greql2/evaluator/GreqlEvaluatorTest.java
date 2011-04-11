@@ -1851,21 +1851,6 @@ public class GreqlEvaluatorTest extends GenericTest {
 	}
 
 	@Test
-	public void testTableComprehension2() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from x : V{Variable} reportMap x.name -> x end";
-		JValue result = evalTestQuery("MapComprehension2", queryString);
-		JValueMap map = result.toJValueMap();
-		assertEquals(5, map.size());
-		assertTrue(map.containsKey(new JValueImpl("a")));
-		assertTrue(map.containsKey(new JValueImpl("b")));
-		assertTrue(map.containsKey(new JValueImpl("c")));
-		assertTrue(map.containsKey(new JValueImpl("d")));
-		assertTrue(map.containsKey(new JValueImpl("i")));
-	}
-
-	@Test
 	public void testQueryWithoutDatagraph() throws Exception {
 		String queryString = "(3 + 4) * 7";
 		JValue result = evalTestQuery("QueryWithoutDatagraph", queryString,
