@@ -1659,19 +1659,12 @@ public class GreqlEvaluatorTest extends GenericTest {
 
 	@Test
 	public void testEvaluateVertexSubgraphExpression3() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from i:V{Identifier} in vSubgraph{Identifier} report i.name end";
-		JValue result = evalTestQuery("VertexSubgraphExpression3", queryString);
-		assertEquals(5, result.toCollection().size());
-		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(1, bag.getQuantity(new JValueImpl("a")));
-		assertEquals(1, bag.getQuantity(new JValueImpl("b")));
-		assertEquals(1, bag.getQuantity(new JValueImpl("c")));
-		assertEquals(1, bag.getQuantity(new JValueImpl("d")));
-		assertEquals(1, bag.getQuantity(new JValueImpl("i")));
+		String queryString = "from i:V{localities.County} in vSubgraph{localities.County} report i.name end";
+		JValue result = evalTestQuery(queryString);
+
+		containsAllElements(COUNTIES, result.toCollection());
 		JValue resultWO = evalTestQuery("VertexSubgraphExpression3 (wo)",
-				queryString, new DefaultOptimizer());
+				queryString, new DefaultOptimizer(), TestVersion.CITY_MAP_GRAPH);
 		assertEquals(result, resultWO);
 	}
 
@@ -1820,11 +1813,12 @@ public class GreqlEvaluatorTest extends GenericTest {
 	private void containsAllElements(Object[] elements,
 			JValueCollection collection) {
 
-		assertEquals(elements.length, collection.size());
+		JValueList list = new JValueList(collection);
+		assertEquals(elements.length, list.size());
 		for (Object county : elements) {
-			assertTrue(collection.remove(new JValueImpl(county)));
+			assertTrue(list.remove(new JValueImpl(county)));
 		}
-		assertTrue(collection.isEmpty());
+		assertTrue(list.isEmpty());
 	}
 
 	@Test
