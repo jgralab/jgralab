@@ -1516,13 +1516,14 @@ public class GreqlEvaluatorTest extends GenericTest {
 	public void testEvaluateTupleAccess() throws Exception {
 		// TODO: Broken, because the GReQL parser removes all WhereExpressions
 		// and LetExpressions!
-		String queryString = "let x := tup ( \"bratwurst\", \"currywurst\", \"steak\", \"kaenguruhfleisch\", \"spiessbraten\") in from i:V{Identifier} report x[3] end";
-		JValue result = evalTestQuery("TupleAccess", queryString);
+		String queryString = "let x := tup ( 'bratwurst', 'currywurst', 'steak',"
+				+ " 'kaenguruhfleisch', 'spiessbraten') in from i:V{Identifier} report x[3] end";
+		JValue result = evalTestQuery(queryString);
 		assertEquals(5, result.toCollection().size());
 		assertEquals(
 				5,
-				result.toCollection().toJValueBag()
-						.getQuantity(new JValueImpl("kaenguruhfleisch")));
+				result.toJValueBag().getQuantity(
+						new JValueImpl("kaenguruhfleisch")));
 		JValue resultWO = evalTestQuery("TupleAccess (wo)", queryString,
 				new DefaultOptimizer());
 		assertEquals(result, resultWO);
@@ -1600,19 +1601,12 @@ public class GreqlEvaluatorTest extends GenericTest {
 	 */
 	@Test
 	public void testEvaluateVertexSetExpression() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from i: V{Variable} report i.name end";
-		JValue result = evalTestQuery("VertexSetExpression", queryString);
-		assertEquals(5, result.toCollection().size());
-		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(1, bag.getQuantity(new JValueImpl("a")));
-		assertEquals(1, bag.getQuantity(new JValueImpl("b")));
-		assertEquals(1, bag.getQuantity(new JValueImpl("c")));
-		assertEquals(1, bag.getQuantity(new JValueImpl("d")));
-		assertEquals(1, bag.getQuantity(new JValueImpl("i")));
+		String queryString = "from i: V{localities.County} report i.name end";
+		JValue result = evalTestQuery(queryString);
+		containsAllElements(COUNTIES, result.toCollection());
+
 		JValue resultWO = evalTestQuery("VertexSetExpression (wo)",
-				queryString, new DefaultOptimizer());
+				queryString, new DefaultOptimizer(), TestVersion.CITY_MAP_GRAPH);
 		assertEquals(result, resultWO);
 	}
 
@@ -1623,37 +1617,23 @@ public class GreqlEvaluatorTest extends GenericTest {
 	 */
 	@Test
 	public void testEvaluateVertexSubgraphExpression1() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from i:V{Identifier} in vSubgraph{Expression} report i.name end";
-		JValue result = evalTestQuery("VertexSubgraphExpression1", queryString);
-		assertEquals(5, result.toCollection().size());
-		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(1, bag.getQuantity(new JValueImpl("a")));
-		assertEquals(1, bag.getQuantity(new JValueImpl("b")));
-		assertEquals(1, bag.getQuantity(new JValueImpl("c")));
-		assertEquals(1, bag.getQuantity(new JValueImpl("d")));
-		assertEquals(1, bag.getQuantity(new JValueImpl("i")));
+		String queryString = "from i:V{NamedElement} in vSubgraph{localities.Locality, ^localities.City} report i.name end";
+		JValue result = evalTestQuery(queryString);
+		containsAllElements(LOCALITIES_WITHOUT_CITIES, result.toCollection());
+
 		JValue resultWO = evalTestQuery("VertexSubgraphExpression1 (wo)",
-				queryString, new DefaultOptimizer());
+				queryString, new DefaultOptimizer(), TestVersion.CITY_MAP_GRAPH);
 		assertEquals(result, resultWO);
 	}
 
 	@Test
 	public void testEvaluateVertexSubgraphExpression2() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from i:V{Identifier} in vSubgraph{^Definition} report i.name end";
-		JValue result = evalTestQuery("VertexSubgraphExpression2", queryString);
-		assertEquals(5, result.toCollection().size());
-		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(1, bag.getQuantity(new JValueImpl("a")));
-		assertEquals(1, bag.getQuantity(new JValueImpl("b")));
-		assertEquals(1, bag.getQuantity(new JValueImpl("c")));
-		assertEquals(1, bag.getQuantity(new JValueImpl("d")));
-		assertEquals(1, bag.getQuantity(new JValueImpl("i")));
+		String queryString = "from i:V{NamedElement} in vSubgraph{^localities.Locality} report i.name end";
+		JValue result = evalTestQuery(queryString);
+		containsAllElements(COUNTIES, result.toCollection());
+
 		JValue resultWO = evalTestQuery("VertexSubgraphExpression2 (wo)",
-				queryString, new DefaultOptimizer());
+				queryString, new DefaultOptimizer(), TestVersion.CITY_MAP_GRAPH);
 		assertEquals(result, resultWO);
 	}
 
