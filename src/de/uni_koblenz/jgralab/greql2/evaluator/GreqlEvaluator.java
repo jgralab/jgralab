@@ -677,10 +677,10 @@ public class GreqlEvaluator {
 		}
 		Greql2 subQueryGraph = parser.getGraph();
 		if (isOptimize()) {
-			if (optimizer == null) {
-				optimizer = new DefaultOptimizer();
-			}
-			optimizer.optimize(this, subQueryGraph);
+			Greql2 oldQueryGraph = queryGraph;
+			queryGraph = subQueryGraph;
+			createOptimizedSyntaxGraph();
+			queryGraph = oldQueryGraph;
 		}
 		if (Greql2FunctionLibrary.instance().isGreqlFunction(name)) {
 			throw new Greql2Exception("The subquery '" + name
@@ -983,6 +983,9 @@ public class GreqlEvaluator {
 		long optimizerStartTime = System.currentTimeMillis();
 		if (optimizer == null) {
 			optimizer = new DefaultOptimizer();
+		}
+		if (costModel == null) {
+			costModel = new DefaultCostModel();
 		}
 		if (useSavedOptimizedSyntaxGraph
 				&& optimizedGraphs.containsKey(queryString)) {

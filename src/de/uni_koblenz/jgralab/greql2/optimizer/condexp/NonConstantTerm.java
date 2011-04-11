@@ -39,6 +39,7 @@ package de.uni_koblenz.jgralab.greql2.optimizer.condexp;
 
 import java.util.ArrayList;
 
+import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
@@ -99,18 +100,11 @@ public class NonConstantTerm extends Formula {
 		} else {
 			graphSize = OptimizerUtility.getDefaultGraphSize();
 		}
-		VertexEvaluator veval = greqlEvaluator.getVertexEvaluatorGraphMarker()
-				.getMark(expression);
+
+		GraphMarker<VertexEvaluator> marker = greqlEvaluator
+				.getVertexEvaluatorGraphMarker();
+		VertexEvaluator veval = marker.getMark(expression);
 		double selectivity = veval.calculateEstimatedSelectivity(graphSize);
-		if (this.toString().equals("v14")) {
-			selectivity = 0.8;
-		}
-		if (this.toString().equals("v21")) {
-			selectivity = 0.5;
-		}
-		if (this.toString().equals("v29")) {
-			selectivity = 0.3;
-		}
 		logger.finer("selectivity[" + this + "] = " + selectivity);
 		return selectivity;
 	}
