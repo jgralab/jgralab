@@ -182,14 +182,11 @@ public class GreqlEvaluatorTest extends GenericTest {
 
 	@Test
 	public void testEvaluateExponentiatedPathDescription() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from var: V{Definition} with var  <->^2 var report var end";
-		JValue result = evalTestQuery("ExponentiatedPathDescription",
-				queryString);
-		assertEquals(4, result.toCollection().size());
+		String queryString = "from airport: V{junctions.Airport} with airport  <->^2 airport report airport end";
+		JValue result = evalTestQuery(queryString);
+		assertEquals(airportCount, result.toCollection().size());
 		JValue resultWO = evalTestQuery("ExponentiatedPathDescription (wo)",
-				queryString, new DefaultOptimizer());
+				queryString, new DefaultOptimizer(), TestVersion.CITY_MAP_GRAPH);
 		assertEquals(result, resultWO);
 	}
 
