@@ -678,9 +678,12 @@ public class GreqlEvaluator {
 		Greql2 subQueryGraph = parser.getGraph();
 		if (isOptimize()) {
 			Greql2 oldQueryGraph = queryGraph;
+			String oldQueryString = queryString;
 			queryGraph = subQueryGraph;
+			queryString = greqlQuery;
 			createOptimizedSyntaxGraph();
 			queryGraph = oldQueryGraph;
+			queryString = oldQueryString;
 		}
 		if (Greql2FunctionLibrary.instance().isGreqlFunction(name)) {
 			throw new Greql2Exception("The subquery '" + name
