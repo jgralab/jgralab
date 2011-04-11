@@ -79,6 +79,13 @@ public class GreqlEvaluatorTest extends GenericTest {
 				IsPrime.class);
 	}
 
+	private static final String[] COUNTIES = { "Berlin", "Hessen",
+			"Rheinland-Pfalz" };
+	private static final String[] LOCALITIES_WITHOUT_CITIES = { "Kammerforst",
+			"Frankfurt-Flughafen", "Höhr-Grenzhausen",
+			"Flugplatz Koblenz-Winningen", "Winningen", "Lautzenhausen",
+			"Montabaur", "Flughafen Frankfurt-Hahn" };
+
 	private JValueBag createBagWithMeat(List<JValueImpl> list) {
 		JValueBag bag = new JValueBag();
 		list.add(new JValueImpl("Currywurst"));
@@ -1680,19 +1687,13 @@ public class GreqlEvaluatorTest extends GenericTest {
 
 	@Test
 	public void testEvaluateVertexSubgraphExpression5() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from i:V{Identifier} in vSubgraph{^WhereExpression} report i.name end";
-		JValue result = evalTestQuery("VertexSubgraphExpression5", queryString);
-		assertEquals(5, result.toCollection().size());
-		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(1, bag.getQuantity(new JValueImpl("a")));
-		assertEquals(1, bag.getQuantity(new JValueImpl("b")));
-		assertEquals(1, bag.getQuantity(new JValueImpl("c")));
-		assertEquals(1, bag.getQuantity(new JValueImpl("d")));
-		assertEquals(1, bag.getQuantity(new JValueImpl("i")));
+		String queryString = "from i:V{localities.Locality} in vSubgraph{^localities.City} report i.name end";
+		JValue result = evalTestQuery(queryString);
+
+		containsAllElements(LOCALITIES_WITHOUT_CITIES, result.toCollection());
+
 		JValue resultWO = evalTestQuery("VertexSubgraphExpression5 (wo)",
-				queryString, new DefaultOptimizer());
+				queryString, new DefaultOptimizer(), TestVersion.CITY_MAP_GRAPH);
 		assertEquals(result, resultWO);
 	}
 
@@ -1773,19 +1774,12 @@ public class GreqlEvaluatorTest extends GenericTest {
 	 */
 	@Test
 	public void testStore() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from v: V{Variable} report v.name end store as VariableNames";
-		evalTestQuery("Store", queryString);
-		JValueBag storedBag = getBoundVariable("VariableNames").toCollection()
+		String queryString = "from v: V{localities.County} report v.name end store as CountyNames";
+		evalTestQuery(queryString);
+		JValueBag storedBag = getBoundVariable("CountyNames").toCollection()
 				.toJValueBag();
-		assertEquals(5, storedBag.size());
-		assertTrue(storedBag.contains(new JValueImpl("a")));
-		assertTrue(storedBag.contains(new JValueImpl("b")));
-		assertTrue(storedBag.contains(new JValueImpl("c")));
-		assertTrue(storedBag.contains(new JValueImpl("d")));
-		assertTrue(storedBag.contains(new JValueImpl("i")));
-		assertTrue(!storedBag.contains(new JValueImpl("x")));
+
+		containsAllElements(COUNTIES, storedBag);
 	}
 
 	@Test
@@ -1812,17 +1806,25 @@ public class GreqlEvaluatorTest extends GenericTest {
 
 	@Test
 	public void testMapComprehension2() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from x : V{Variable} reportMap x.name -> x end";
-		JValue result = evalTestQuery("MapComprehension2", queryString);
-		JValueMap map = result.toJValueMap();
-		assertEquals(5, map.size());
-		assertTrue(map.containsKey(new JValueImpl("a")));
-		assertTrue(map.containsKey(new JValueImpl("b")));
-		assertTrue(map.containsKey(new JValueImpl("c")));
-		assertTrue(map.containsKey(new JValueImpl("d")));
-		assertTrue(map.containsKey(new JValueImpl("i")));
+		String queryString = "from x : V{localities.County} reportMap x.name -> x end";
+		JValueMap map = evalTestQuery(queryString).toJValueMap();
+
+		containsAllKeys(COUNTIES, map);
+	}
+
+	private void containsAllKeys(Object[] counties, JValueMap map) {
+		assertEquals(counties.length, map.size());
+		containsAllElements(counties, map.keySet());
+	}
+
+	private void containsAllElements(Object[] elements,
+			JValueCollection collection) {
+
+		assertEquals(elements.length, collection.size());
+		for (Object county : elements) {
+			assertTrue(collection.remove(new JValueImpl(county)));
+		}
+		assertTrue(collection.isEmpty());
 	}
 
 	@Test
