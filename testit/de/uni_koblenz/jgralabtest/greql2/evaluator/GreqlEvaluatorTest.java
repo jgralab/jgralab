@@ -39,6 +39,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -48,10 +49,12 @@ import java.util.List;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueBag;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueMap;
@@ -66,6 +69,8 @@ import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.greql2.schema.impl.std.Greql2Impl;
 import de.uni_koblenz.jgralabtest.greql2.GenericTest;
 import de.uni_koblenz.jgralabtest.greql2.testfunctions.IsPrime;
+import de.uni_koblenz.jgralabtest.schemas.greqltestschema.junctions.Airport;
+import de.uni_koblenz.jgralabtest.schemas.greqltestschema.localities.County;
 
 public class GreqlEvaluatorTest extends GenericTest {
 	static {
@@ -141,14 +146,18 @@ public class GreqlEvaluatorTest extends GenericTest {
 	 */
 	@Test
 	public void testEvaluateAlternativePathDescription() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from var: V{Definition}, def: V{WhereExpression} with var  -->{IsDefinitionOf} | -->{IsVarOf}  def report var end";
-		JValue result = evalTestQuery("AlternativePathDescription", queryString);
-		assertEquals(4, result.toCollection().size());
-		JValue resultWO = evalTestQuery("AlternativePathDescription (wo)",
-				queryString, new DefaultOptimizer());
-		assertEquals(result, resultWO);
+		String queryString = "from airport: V{junctions.Airport}, x: V with x "
+				+ "(-->{localities.ContainsLocality} | -->{connections.AirRoute}) airport "
+				+ "report x end";
+		JValueCollection result = evalTestQuery(queryString).toCollection();
+
+		assertFalse(result.isEmpty());
+		for (JValue value : result.toCollection()) {
+			Vertex vertex = value.toVertex();
+			if (!(vertex instanceof Airport || vertex instanceof County)) {
+				fail();
+			}
+		}
 	}
 
 	@Test
