@@ -116,19 +116,9 @@ public class GXL2Tg {
 	protected void getOptions(String[] args) {
 		CommandLine comLine = processCommandlineOptions(args);
 		assert comLine != null;
-		if (comLine.hasOption("i")) {
-			graphInputName = comLine.getOptionValue("i");
-		}
-		if (comLine.hasOption("o")) {
-			graphOutputName = comLine.getOptionValue("o");
-			if (!graphOutputName.endsWith(".tg")
-					&& !graphOutputName.endsWith(".gz")) {
-				graphOutputName = graphOutputName + ".tg";
-			}
-		}
-		if (comLine.hasOption("p")) {
-			packagePrefix = comLine.getOptionValue("p");
-		}
+		graphInputName = comLine.getOptionValue("i");
+		graphOutputName = comLine.getOptionValue("o");
+		packagePrefix = comLine.getOptionValue("p");
 		storeIds = comLine.hasOption("s");
 		if (comLine.hasOption('j')) {
 			jarOutputName = comLine.getOptionValue('j');
