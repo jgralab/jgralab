@@ -140,6 +140,10 @@ public class SubQueryEvaluator extends FunctionApplicationEvaluator {
 
 	@Override
 	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
+		if (subQueryVertexEval == null) {
+			return new VertexCosts(ownEvaluationCosts, iteratedEvaluationCosts,
+					currentSubtreeEvaluationCosts);
+		}
 		return subQueryVertexEval.calculateSubtreeEvaluationCosts(graphSize);
 	}
 
