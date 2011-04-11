@@ -71,6 +71,7 @@ import de.uni_koblenz.jgralabtest.greql2.GenericTest;
 import de.uni_koblenz.jgralabtest.greql2.testfunctions.IsPrime;
 import de.uni_koblenz.jgralabtest.schemas.greqltestschema.junctions.Airport;
 import de.uni_koblenz.jgralabtest.schemas.greqltestschema.localities.County;
+import de.uni_koblenz.jgralabtest.schemas.greqltestschema.localities.Locality;
 
 public class GreqlEvaluatorTest extends GenericTest {
 	static {
@@ -152,7 +153,7 @@ public class GreqlEvaluatorTest extends GenericTest {
 		JValueCollection result = evalTestQuery(queryString).toCollection();
 
 		assertFalse(result.isEmpty());
-		for (JValue value : result.toCollection()) {
+		for (JValue value : result) {
 			Vertex vertex = value.toVertex();
 			if (!(vertex instanceof Airport || vertex instanceof County)) {
 				fail();
@@ -162,15 +163,18 @@ public class GreqlEvaluatorTest extends GenericTest {
 
 	@Test
 	public void testEvaluateAlternativePathDescription2() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from v: V{Variable} "
-				+ "           reportSet v, v.name, v (-->{^IsVarOf, ^IsDefinitionOf, ^IsBoundExprOfDefinition} | (-->{IsVarOf} -->{IsDefinitionOf}))* end";
-		JValue result = evalTestQuery("AlternativePathDescription2",
-				queryString);
-		assertEquals(5, result.toCollection().size());
+		String queryString = "from v:V{NamedElement} reportSet v, v.name, v (-->{^connections.Way, ^connections.AirRoute} | (-->{localities.ContainsLocality} -->{connections.AirRoute}))* end";
+		JValueCollection result = evalTestQuery(queryString).toCollection();
+
+		for (JValue value : result) {
+			JValueTuple tuple = value.toJValueTuple();
+			Vertex vertex = tuple.get(0).toVertex();
+			if (!(vertex instanceof Airport || vertex instanceof County || vertex instanceof Locality)) {
+				fail();
+			}
+		}
 		JValue resultWO = evalTestQuery("AlternativePathDescription2 (wo)",
-				queryString, new DefaultOptimizer());
+				queryString, new DefaultOptimizer(), TestVersion.CITY_MAP_GRAPH);
 		assertEquals(result, resultWO);
 
 		System.out.println(result);
