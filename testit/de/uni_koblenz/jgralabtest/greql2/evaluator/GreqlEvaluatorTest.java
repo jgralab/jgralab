@@ -1828,7 +1828,7 @@ public class GreqlEvaluatorTest extends GenericTest {
 	@Test
 	public void testMapComprehension3() throws Exception {
 		// GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS = true;
-		String queryString = "from x : list(1..3) reportMap x -> from y : list(1..x) reportMap y, list(y..x) end end";
+		String queryString = "from x : list(1..3) reportMap x -> from y : list(1..x) reportMap y -> list(y..x) end end";
 		JValue result = evalTestQuery("MapComprehension3", queryString);
 		JValueMap map = result.toJValueMap();
 
