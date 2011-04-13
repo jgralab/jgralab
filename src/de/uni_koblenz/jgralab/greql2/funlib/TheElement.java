@@ -100,7 +100,8 @@ public class TheElement extends Greql2Function {
 		// element.
 		if (col.size() != 1) {
 			throw new EvaluateException("The given collection contains "
-					+ (col.size() < 1 ? "less" : "more") + " than one element!");
+					+ (col.size() < 1 ? "less" : "more")
+					+ " than one element: " + col);
 		}
 		Iterator<JValue> it = col.iterator();
 		return it.next();
