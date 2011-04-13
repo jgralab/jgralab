@@ -142,8 +142,9 @@ public class DerbyStatementList extends SqlStatementList {
 				.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_VERTEX_TYPE);
 	}
 
-	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_VERTEX = "ALTER TABLE \"Vertex\" DROP CONSTRAINT \"gIdIsForeignKey\""
-			+ "ALTER TABLE \"Vertex\" DROP CONSTRAINT \"typeIdIsForeignKey\"";
+	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_VERTEX = "ALTER TABLE \"Vertex\" DROP CONSTRAINT \"gIdIsForeignKey\"";
+
+	// + "ALTER TABLE \"Vertex\" DROP CONSTRAINT \"typeIdIsForeignKey\"";
 
 	@Override
 	public PreparedStatement dropForeignKeyConstraintFromGraphColumnOfVertexTable()
@@ -1414,23 +1415,81 @@ public class DerbyStatementList extends SqlStatementList {
 		return getPreparedStatement(SELECT_ID_OF_GRAPHS);
 	}
 
-	// TODO replace with "delete * from <table_name>" for each table, use mysql
-	// variant as base.
-	private static final String CLEAR_ALL_TABLES = "TRUNCATE TABLE \""
-			+ GraphDatabase.ATTRIBUTE_TABLE_NAME + "\",\""
-			+ GraphDatabase.EDGE_ATTRIBUTE_VALUE_TABLE_NAME + "\",\""
-			+ GraphDatabase.EDGE_TABLE_NAME + "\",\""
-			+ GraphDatabase.GRAPH_ATTRIBUTE_VALUE_TABLE_NAME + "\",\""
-			+ GraphDatabase.GRAPH_SCHEMA_TABLE_NAME + "\",\""
-			+ GraphDatabase.GRAPH_TABLE_NAME + "\",\""
-			+ GraphDatabase.INCIDENCE_TABLE_NAME + "\",\""
-			+ GraphDatabase.TYPE_TABLE_NAME + "\",\""
-			+ GraphDatabase.VERTEX_ATTRIBUTE_VALUE_TABLE_NAME + "\",\""
-			+ GraphDatabase.VERTEX_TABLE_NAME + "\";";
+	private static final String CLEAR_TABLE_ATTRIBUTE = "DELETE FROM \""
+			+ GraphDatabase.ATTRIBUTE_TABLE_NAME + "\"";
+
+	public PreparedStatement clearTableAttribute() throws SQLException {
+		return getPreparedStatement(CLEAR_TABLE_ATTRIBUTE);
+	}
+
+	private static final String CLEAR_TABLE_EDGE_ATTRIBUTE_VALUE = "DELETE FROM \""
+			+ GraphDatabase.EDGE_ATTRIBUTE_VALUE_TABLE_NAME + "\"";
+
+	public PreparedStatement clearTableEdgeAttributeValue() throws SQLException {
+		return getPreparedStatement(CLEAR_TABLE_EDGE_ATTRIBUTE_VALUE);
+	}
+
+	private static final String CLEAR_TABLE_EDGE = "DELETE FROM \""
+			+ GraphDatabase.EDGE_TABLE_NAME + "\"";
+
+	public PreparedStatement clearTableEdge() throws SQLException {
+		return getPreparedStatement(CLEAR_TABLE_EDGE);
+	}
+
+	private static final String CLEAR_TABLE_GRAPH_ATTRIBUTE_VALUE = "DELETE FROM \""
+			+ GraphDatabase.GRAPH_ATTRIBUTE_VALUE_TABLE_NAME + "\"";
+
+	public PreparedStatement clearTableGraphAttributeValue()
+			throws SQLException {
+		return getPreparedStatement(CLEAR_TABLE_GRAPH_ATTRIBUTE_VALUE);
+	}
+
+	private static final String CLEAR_TABLE_GRAPH_SCHEMA = "DELETE FROM \""
+			+ GraphDatabase.GRAPH_SCHEMA_TABLE_NAME + "\"";
+
+	public PreparedStatement clearTableGraphSchema() throws SQLException {
+		return getPreparedStatement(CLEAR_TABLE_GRAPH_SCHEMA);
+	}
+
+	private static final String CLEAR_TABLE_GRAPH = "DELETE FROM \""
+			+ GraphDatabase.GRAPH_TABLE_NAME + "\"";
+
+	public PreparedStatement clearTableGraph() throws SQLException {
+		return getPreparedStatement(CLEAR_TABLE_GRAPH);
+	}
+
+	private static final String CLEAR_TABLE_INCIDENCE = "DELETE FROM \""
+			+ GraphDatabase.INCIDENCE_TABLE_NAME + "\"";
+
+	public PreparedStatement clearTableIncidence() throws SQLException {
+		return getPreparedStatement(CLEAR_TABLE_INCIDENCE);
+	}
+
+	private static final String CLEAR_TABLE_TYPE = "DELETE FROM \""
+			+ GraphDatabase.TYPE_TABLE_NAME + "\"";
+
+	public PreparedStatement clearTableType() throws SQLException {
+		return getPreparedStatement(CLEAR_TABLE_TYPE);
+	}
+
+	private static final String CLEAR_TABLE_ATTRIBUTE_VALUE = "DELETE FROM \""
+			+ GraphDatabase.VERTEX_ATTRIBUTE_VALUE_TABLE_NAME + "\"";
+
+	public PreparedStatement clearTableAttributeValue() throws SQLException {
+		return getPreparedStatement(CLEAR_TABLE_ATTRIBUTE_VALUE);
+	}
+
+	private static final String CLEAR_TABLE_VERTEX = "DELETE FROM \""
+			+ GraphDatabase.VERTEX_TABLE_NAME + "\"";
+
+	public PreparedStatement clearTableVertex() throws SQLException {
+		return getPreparedStatement(CLEAR_TABLE_VERTEX);
+	}
 
 	@Override
 	public PreparedStatement clearAllTables() throws SQLException {
-		// TODO does not work yet
-		return getPreparedStatement(CLEAR_ALL_TABLES);
+		throw new UnsupportedOperationException(
+				"Does not work in Derby implementation.");
 	}
+
 }
