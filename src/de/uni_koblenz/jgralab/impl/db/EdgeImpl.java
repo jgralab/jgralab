@@ -397,7 +397,7 @@ public abstract class EdgeImpl extends EdgeBaseImpl implements
 	/**
 	 * Updates id of edge.
 	 * 
-	 * @param id
+	 * @param graphId
 	 *            Id of edge.
 	 */
 	private void updateId(int newEId) {

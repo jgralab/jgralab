@@ -78,7 +78,7 @@ public abstract class VertexImpl extends
 	 * persistent and temporary values for new instances within the transaction
 	 * this instance is created in.
 	 * 
-	 * @param id
+	 * @param graphId
 	 *            the Id of the <code>Vertex</code>
 	 * @param graph
 	 *            the corresponding <code>Graph</code>

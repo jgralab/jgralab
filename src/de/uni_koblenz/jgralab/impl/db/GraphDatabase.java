@@ -284,13 +284,12 @@ public abstract class GraphDatabase {
 							+ jdbcDriverName, exception);
 		} catch (SQLException exception) {
 			throw new GraphDatabaseException(
-					"Could not connect to graph database at "
-							+ url
-							+ "\nThe url has to be in jdbc-format for " +
-									"including the username and the password.\n" +
-									"The correct pattern is: 'jdbc:<driver>:" +
-									"[[host][:port]][/]<db_name>" +
-									"[?user=<user_name>&password=<password>]'",
+					"Could not connect to graph database at " + url
+							+ "\nThe url has to be in jdbc-format for "
+							+ "including the username and the password.\n"
+							+ "The correct pattern is: 'jdbc:<driver>:"
+							+ "[[host][:port]][/]<db_name>"
+							+ "[?user=<user_name>&password=<password>]'",
 					exception);
 		}
 	}
@@ -512,6 +511,7 @@ public abstract class GraphDatabase {
 		while (result.next()) {
 			edgeIds.add(result.getInt(1));
 		}
+		result.close();
 		return edgeIds;
 	}
 
@@ -1093,6 +1093,7 @@ public abstract class GraphDatabase {
 				}
 			} while (vertexData.next());
 		}
+		vertexData.close();
 		if (vertex.getAttributedElementClass().hasAttributes()) {
 			setAttributesOf(vertex);
 		}
@@ -1143,6 +1144,7 @@ public abstract class GraphDatabase {
 				e.printStackTrace();
 			}
 		}
+		attributeData.close();
 	}
 
 	private String getAttributeName(Schema schema, int attributeId) {
@@ -1175,6 +1177,7 @@ public abstract class GraphDatabase {
 			ResultSet edgeData = getEdgeAndIncidenceData(graph, eId);
 			DatabasePersistableEdge edge = instanceEdgeFrom(graph, edgeData,
 					eId);
+			edgeData.close();
 			if (edge.getAttributedElementClass().hasAttributes()) {
 				this.setAttributesOf(edge);
 			}
@@ -1265,6 +1268,7 @@ public abstract class GraphDatabase {
 				e.printStackTrace();
 			}
 		}
+		attributeData.close();
 	}
 
 	private ResultSet getAttributeDataOf(DatabasePersistableEdge edge)
@@ -1290,7 +1294,9 @@ public abstract class GraphDatabase {
 					.countVerticesOfGraph(graph.getGId());
 			ResultSet result = statement.executeQuery();
 			result.next();
-			return result.getInt(1);
+			int vertexCount = result.getInt(1);
+			result.close();
+			return vertexCount;
 		} catch (SQLException exception) {
 			exception.printStackTrace();
 			throw new GraphDatabaseException(
@@ -1315,7 +1321,9 @@ public abstract class GraphDatabase {
 					.countEdgesOfGraph(graph.getGId());
 			ResultSet result = statement.executeQuery();
 			result.next();
-			return result.getInt(1);
+			int edgeCount = result.getInt(1);
+			result.close();
+			return edgeCount;
 		} catch (SQLException exception) {
 			exception.printStackTrace();
 			throw new GraphDatabaseException("Could not count edges in graph "
@@ -1369,10 +1377,18 @@ public abstract class GraphDatabase {
 	 */
 	private class GraphDAO {
 
-		private final ResultSet result;
+		int graphId;
+		long graphVersion;
+		long vertexListVersion;
+		long edgeListVersion;
 
 		GraphDAO(String id) throws SQLException {
-			result = getGraphRecord(id);
+			ResultSet result = getGraphRecord(id);
+			graphId = result.getInt(1);
+			graphVersion = result.getLong(2);
+			vertexListVersion = result.getLong(3);
+			edgeListVersion = result.getLong(4);
+			result.close();
 		}
 
 		private ResultSet getGraphRecord(String uid) throws SQLException {
@@ -1386,20 +1402,20 @@ public abstract class GraphDatabase {
 			}
 		}
 
-		private int getGId() throws SQLException {
-			return result.getInt(1);
+		private int getGraphId() throws SQLException {
+			return graphId;
 		}
 
 		private long getGraphVersion() throws SQLException {
-			return result.getLong(2);
+			return graphVersion;
 		}
 
 		private long getVertexListVersion() throws SQLException {
-			return result.getLong(3);
+			return vertexListVersion;
 		}
 
 		private long getEdgeListVersion() throws SQLException {
-			return result.getLong(4);
+			return edgeListVersion;
 		}
 
 		void restoreStateInto(GraphImpl graph) throws SQLException,
@@ -1417,7 +1433,7 @@ public abstract class GraphDatabase {
 		}
 
 		private void setInstanceVariables(GraphImpl graph) throws SQLException {
-			graph.setGId(getGId());
+			graph.setGId(getGraphId());
 			graph.setGraphVersion(getGraphVersion());
 			graph.setVertexListVersion(getVertexListVersion());
 			graph.setEdgeListVersion(getEdgeListVersion());
@@ -1425,7 +1441,7 @@ public abstract class GraphDatabase {
 
 		private void restoreAttributes(DatabasePersistableGraph graph)
 				throws SQLException, NoSuchFieldException {
-			ResultSet graphAttributes = getGraphAttributes(getGId());
+			ResultSet graphAttributes = getGraphAttributes(getGraphId());
 			while (graphAttributes.next()) {
 				String attributeName = graphAttributes.getString(1);
 				String serializedValue = graphAttributes.getString(2);
@@ -1436,6 +1452,7 @@ public abstract class GraphDatabase {
 					e.printStackTrace();
 				}
 			}
+			graphAttributes.close();
 		}
 
 		private ResultSet getGraphAttributes(int gId) throws SQLException {
@@ -1454,6 +1471,7 @@ public abstract class GraphDatabase {
 				long sequenceNumber = vertexRecords.getLong(2);
 				graph.addVertex(vId, sequenceNumber);
 			}
+			vertexRecords.close();
 		}
 
 		private void restoreEdgeList(DatabasePersistableGraph graph)
@@ -1466,7 +1484,9 @@ public abstract class GraphDatabase {
 				long sequenceNumber = edgeRecords.getLong(2);
 				graph.addEdge(eId, sequenceNumber);
 			}
+			edgeRecords.close();
 		}
+
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1490,7 +1510,10 @@ public abstract class GraphDatabase {
 				.selectSchemaNameForGraph(uid);
 		ResultSet resultSet = statement.executeQuery();
 		if (resultSet.next()) {
-			return createSchema(resultSet.getString(1), resultSet.getString(2));
+			Schema schema = createSchema(resultSet.getString(1), resultSet
+					.getString(2));
+			resultSet.close();
+			return schema;
 		} else {
 			throw new GraphIOException("No schema for graph in database.");
 		}
@@ -1524,7 +1547,9 @@ public abstract class GraphDatabase {
 		try {
 			PreparedStatement statement = sqlStatementList.selectGraph(id);
 			ResultSet result = statement.executeQuery();
-			return result.next();
+			boolean containsGraph = result.next();
+			result.close();
+			return containsGraph;
 		} catch (SQLException exception) {
 			exception.printStackTrace();
 			throw new GraphDatabaseException(
@@ -1582,7 +1607,9 @@ public abstract class GraphDatabase {
 			PreparedStatement statement = sqlStatementList.selectSchemaId(
 					packagePrefix, name);
 			ResultSet result = statement.executeQuery();
-			return result.next();
+			boolean containsSchema = result.next();
+			result.close();
+			return containsSchema;
 		} catch (SQLException exception) {
 			throw new GraphDatabaseException(
 					"Could not determine if database contains schema "
@@ -1637,6 +1664,7 @@ public abstract class GraphDatabase {
 		while (result.next()) {
 			typeCollector.addType(result.getInt(2), result.getString(1));
 		}
+		result.close();
 	}
 
 	private void preloadAttributesOf(Schema schema,
@@ -1649,6 +1677,7 @@ public abstract class GraphDatabase {
 			attributeCollector.addAttribute(result.getInt(2), result
 					.getString(1));
 		}
+		result.close();
 	}
 
 	private void getTypeIdAndInsertGraph(DatabasePersistableGraph graph)
@@ -2007,6 +2036,7 @@ public abstract class GraphDatabase {
 			while (result.next()) {
 				ids.add(result.getString(1));
 			}
+			result.close();
 			return ids;
 		} catch (SQLException exception) {
 			exception.printStackTrace();
@@ -2032,11 +2062,12 @@ public abstract class GraphDatabase {
 					.selectSchemaDefinition(packagePrefix, schemaName);
 			statement.executeQuery();
 			ResultSet result = statement.getResultSet();
-			if (result.next()) {
-				return result.getString(1);
-			} else {
-				return null;
-			}
+
+			String schemaDefinition = result.next() ? result.getString(1)
+					: null;
+			result.close();
+			return schemaDefinition;
+
 		} catch (SQLException exception) {
 			exception.printStackTrace();
 			throw new GraphDatabaseException(
@@ -2076,6 +2107,7 @@ public abstract class GraphDatabase {
 	}
 
 	public void addForeignKeyConstraints() throws SQLException {
+		commitAnyTransactions();
 		PreparedStatement statement = sqlStatementList
 				.addForeignKeyConstraintOnGraphColumnOfVertexTable();
 		statement.execute();
