@@ -98,8 +98,8 @@ public class GraphDbPerformance {
 
 		for (RunConfiguration currentConfiguration : runs) {
 			performRun(currentConfiguration);
+			gdb.commitTransaction();
 		}
-		gdb.commitTransaction();
 		System.out.println("Fini.");
 	}
 
@@ -115,6 +115,8 @@ public class GraphDbPerformance {
 			gdb.commitTransaction();
 		} catch (SQLException e) {
 			e.printStackTrace();
+			// gdb.rollback();
+			// gdb.applyDbSchema();
 		}
 		try {
 			if (!gdb.contains(WeightedSchema.instance())) {
