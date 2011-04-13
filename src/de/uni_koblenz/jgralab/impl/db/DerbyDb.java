@@ -34,6 +34,7 @@
  */
 package de.uni_koblenz.jgralab.impl.db;
 
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class DerbyDb extends GraphDatabase {
@@ -54,4 +55,12 @@ public class DerbyDb extends GraphDatabase {
 		addPrimaryKeyConstraints();
 		// this.addStoredProcedures();
 	}
+
+	// TODO make it run
+	@Override
+	public void clearAllTables() throws SQLException {
+		PreparedStatement statement = sqlStatementList.clearAllTables();
+		statement.execute();
+	}
+
 }
