@@ -47,8 +47,6 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.SortedSet;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
@@ -94,35 +92,9 @@ public abstract class GraphDatabase {
 
 	/**
 	 * Opens a graph database at location specified by an url with given
-	 * credentials. Factory method churning open graph databases.
-	 * 
-	 * @param url
-	 *            Url to graph database.
-	 * @param userName
-	 *            User name.
-	 * @param password
-	 *            Password.
-	 * @return An open graph database.
-	 * @throws Exception
-	 */
-	private static GraphDatabase openGraphDatabase(String url, String userName,
-			String password) throws GraphDatabaseException {
-		if (url != null) {
-			return getGraphDatabase(url, userName, password);
-		} else {
-			throw new GraphDatabaseException(
-					"No url given to connect to graph database.");
-		}
-	}
-
-	// pattern is: jdbc:<driver>://<user>:<passwd>@<host[:port]/database....>
-	private static final String URL_REGEX = "^(jdbc:)(.*)://(.*):(.*)@(.*)$";
-
-	/**
-	 * Opens a graph database at location specified by an url with given
 	 * credentials. Factory method churning open graph databases. This method
-	 * takes the url in ftp-like format for including the user name and the
-	 * password in a single string.
+	 * takes the url in jdbc format for including the user name and the password
+	 * in a single string.
 	 * 
 	 * @param url
 	 *            URL to the graph database in the format
@@ -133,16 +105,19 @@ public abstract class GraphDatabase {
 	 */
 	public static GraphDatabase openGraphDatabase(String url)
 			throws GraphDatabaseException {
-		Pattern p = Pattern.compile(URL_REGEX);
-		Matcher m = p.matcher(url);
-		if (m.matches()) {
-			String realURL = m.group(1) + m.group(2) + "://" + m.group(5);
-			String username = m.group(3);
-			String password = m.group(4);
-			return openGraphDatabase(realURL, username, password);
+		if (url == null) {
+			throw new GraphDatabaseException("The given url may not be null.");
+		}
+		url = url.trim();
+
+		if (openGraphDatabases.containsKey(url)) {
+			return openGraphDatabases.get(url);
 		} else {
-			throw new GraphDatabaseException(
-					"Invalid url given. Please use the format \"jdbc:<driver>://<user>:<passwd>@<host[:port]/database...\"");
+			GraphDatabase out = createVendorSpecificDb(url);
+			out.connect();
+			out.setAutoCommit(false);
+			openGraphDatabases.put(url, out);
+			return out;
 		}
 	}
 
@@ -159,26 +134,6 @@ public abstract class GraphDatabase {
 	 *             <code>jgralab_dbconnection</code> or if the provided URL is
 	 *             malformed.
 	 */
-
-	private static GraphDatabase getGraphDatabase(String url, String userName,
-			String password) throws GraphDatabaseException {
-		if (openGraphDatabases.containsKey(url)) {
-			return openGraphDatabases.get(url);
-		} else {
-			return connectToGraphDatabase(url, userName, password);
-		}
-	}
-
-	private static GraphDatabase connectToGraphDatabase(String url,
-			String userName, String password) throws GraphDatabaseException {
-		GraphDatabase graphDb = createVendorSpecificDb(url);
-		graphDb.userName = userName;
-		graphDb.password = password;
-		graphDb.connect();
-		graphDb.setAutoCommit(false);
-		openGraphDatabases.put(url, graphDb);
-		return graphDb;
-	}
 
 	private static GraphDatabase createVendorSpecificDb(String url)
 			throws GraphDatabaseException {
@@ -197,16 +152,6 @@ public abstract class GraphDatabase {
 	 * Holds url to graph database.
 	 */
 	private String url;
-
-	/**
-	 * Holds user name.
-	 */
-	private String userName;
-
-	/**
-	 * Holds the password.
-	 */
-	private String password;
 
 	/**
 	 * JDBC connection to database.
@@ -331,14 +276,22 @@ public abstract class GraphDatabase {
 			throws GraphDatabaseException {
 		try {
 			Class.forName(jdbcDriverName);
-			return DriverManager.getConnection(url, userName, password);
+			// return DriverManager.getConnection(url, userName, password);
+			return DriverManager.getConnection(url);
 		} catch (ClassNotFoundException exception) {
 			throw new GraphDatabaseException(
 					"JDBC driver to connect to database not found: "
 							+ jdbcDriverName, exception);
 		} catch (SQLException exception) {
 			throw new GraphDatabaseException(
-					"Could not connect to graph database at " + url, exception);
+					"Could not connect to graph database at "
+							+ url
+							+ "\nThe url has to be in jdbc-format for " +
+									"including the username and the password.\n" +
+									"The correct pattern is: 'jdbc:<driver>:" +
+									"[[host][:port]][/]<db_name>" +
+									"[?user=<user_name>&password=<password>]'",
+					exception);
 		}
 	}
 

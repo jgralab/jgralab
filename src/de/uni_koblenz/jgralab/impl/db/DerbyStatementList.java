@@ -61,7 +61,8 @@ public class DerbyStatementList extends SqlStatementList {
 
 	private static final String CREATE_GRAPH_SCHEMA_TABLE = "CREATE TABLE \"GraphSchema\"("
 			+ "\"schemaId\" INT GENERATED ALWAYS AS IDENTITY CONSTRAINT \"schemaPrimaryKey\" PRIMARY KEY,"
-			+ "\"packagePrefix\" VARCHAR(2048)," + "\"name\" VARCHAR(2048),"
+			+ "\"packagePrefix\" VARCHAR(2048),"
+			+ "\"name\" VARCHAR(2048),"
 			+ "\"serializedDefinition\" LONG VARCHAR" + ")";
 
 	@Override
@@ -94,8 +95,10 @@ public class DerbyStatementList extends SqlStatementList {
 	}
 
 	private static final String CREATE_VERTEX_TABLE = "CREATE TABLE \"Vertex\"("
-			+ "\"vId\" INT NOT NULL," + "\"gId\" INT NOT NULL,"
-			+ "\"typeId\" INT NOT NULL," + "\"lambdaSeqVersion\" BIGINT,"
+			+ "\"vId\" INT NOT NULL,"
+			+ "\"gId\" INT NOT NULL,"
+			+ "\"typeId\" INT NOT NULL,"
+			+ "\"lambdaSeqVersion\" BIGINT,"
 			+ "\"sequenceNumber\" BIGINT" + ")";
 
 	@Override
@@ -222,8 +225,10 @@ public class DerbyStatementList extends SqlStatementList {
 	}
 
 	private static final String CREATE_INCIDENCE_TABLE = "CREATE TABLE \"Incidence\"("
-			+ "\"eId\" INT NOT NULL," + "\"vId\" INT NOT NULL,"
-			+ "\"gId\" INT NOT NULL," + "\"direction\" VARCHAR(3) NOT NULL,"
+			+ "\"eId\" INT NOT NULL,"
+			+ "\"vId\" INT NOT NULL,"
+			+ "\"gId\" INT NOT NULL,"
+			+ "\"direction\" VARCHAR(3) NOT NULL,"
 			+ "\"sequenceNumber\" BIGINT NOT NULL" + ")";
 
 	@Override
@@ -631,7 +636,8 @@ public class DerbyStatementList extends SqlStatementList {
 		statement.setLong(5, vertex.getSequenceNumberInVSeq());
 	}
 
-	private static final String createSqlInsertStatementFor(DatabasePersistableVertex vertex) {
+	private static final String createSqlInsertStatementFor(
+			DatabasePersistableVertex vertex) {
 		String sqlStatement = INSERT_VERTEX;
 		int attributeCount = vertex.getAttributedElementClass()
 				.getAttributeList().size();
@@ -739,7 +745,8 @@ public class DerbyStatementList extends SqlStatementList {
 		statement.setLong(4, edge.getSequenceNumberInESeq());
 	}
 
-	private static final String createSqlInsertStatementFor(DatabasePersistableEdge edge) {
+	private static final String createSqlInsertStatementFor(
+			DatabasePersistableEdge edge) {
 		String sqlStatement = INSERT_EDGE;
 		sqlStatement += INSERT_INCIDENCE;
 		sqlStatement += INSERT_INCIDENCE;
@@ -1407,9 +1414,23 @@ public class DerbyStatementList extends SqlStatementList {
 		return getPreparedStatement(SELECT_ID_OF_GRAPHS);
 	}
 
+	// TODO replace with "delete * from <table_name>" for each table, use mysql
+	// variant as base.
+	private static final String CLEAR_ALL_TABLES = "TRUNCATE TABLE \""
+			+ GraphDatabase.ATTRIBUTE_TABLE_NAME + "\",\""
+			+ GraphDatabase.EDGE_ATTRIBUTE_VALUE_TABLE_NAME + "\",\""
+			+ GraphDatabase.EDGE_TABLE_NAME + "\",\""
+			+ GraphDatabase.GRAPH_ATTRIBUTE_VALUE_TABLE_NAME + "\",\""
+			+ GraphDatabase.GRAPH_SCHEMA_TABLE_NAME + "\",\""
+			+ GraphDatabase.GRAPH_TABLE_NAME + "\",\""
+			+ GraphDatabase.INCIDENCE_TABLE_NAME + "\",\""
+			+ GraphDatabase.TYPE_TABLE_NAME + "\",\""
+			+ GraphDatabase.VERTEX_ATTRIBUTE_VALUE_TABLE_NAME + "\",\""
+			+ GraphDatabase.VERTEX_TABLE_NAME + "\";";
+
 	@Override
 	public PreparedStatement clearAllTables() throws SQLException {
-		throw new UnsupportedOperationException(
-				"Operation not implemented for derby.");
+		// TODO does not work yet
+		return getPreparedStatement(CLEAR_ALL_TABLES);
 	}
 }
