@@ -2228,10 +2228,7 @@ public abstract class GraphDatabase {
 		statement.execute();
 	}
 
-	public void clearAllTables() throws SQLException {
-		PreparedStatement statement = sqlStatementList.clearAllTables();
-		statement.execute();
-	}
+	public abstract void clearAllTables() throws SQLException;
 
 	public void dropForeignKeyConstraints() throws SQLException {
 		PreparedStatement statement = sqlStatementList
