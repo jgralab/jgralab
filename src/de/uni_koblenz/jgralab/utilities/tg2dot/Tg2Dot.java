@@ -260,6 +260,19 @@ public class Tg2Dot extends Tg2Whatever {
 		converter.convert();
 	}
 
+	public static void convertGraph(BooleanGraphMarker marker,
+			String outputFileName, GraphVizOutputFormat format,
+			boolean reversedEdges,
+			Class<? extends AttributedElement>... reversedEdgeTypes)
+			throws IOException {
+		Tg2Dot converter = createConverterAndSetAttributes(marker.getGraph(),
+				reversedEdges, reversedEdgeTypes);
+		converter.setOutputFile(outputFileName);
+		converter.setGraphVizOutputFormat(format);
+		converter.setGraphMarker(marker);
+		converter.convert();
+	}
+
 	public void pipeToGraphViz(GraphVizProgram prog) throws IOException {
 		String executionString = String.format("%s%s -T%s -o%s", prog.path,
 				prog.layouter, prog.outputFormat, outputName);
