@@ -900,25 +900,26 @@ for editing GReTL transformations."
   :lighter " GReTL"
   (let ((regex
 	 (rx (or (or "<==" ":=" ";")
-		 (or "AddSubClass" "AddSubClasses"
-		     "AddSuperClass" "AddSuperClasses"
-		     "Assert"
-		     "ExecuteTransformation" "CopyDomain"
-		     "CreateAbstractEdgeClass"
-		     "CreateAbstractVertexClass"
-		     "CreateAttribute" "CreateAttributes"
-		     "CreateEdgeClass" "CreateEdges"
-		     "CreateEnumDomain" "CreateListDomain"
-		     "CreateMapDomain" "CreateRecordDomain"
-		     "CreateSetDomain" "CreateSubgraph"
-		     "CreateVertexClass" "CreateVertices"
-		     "Delete"
-		     "Iteratively" "MatchReplace"
-		     "RedefineFromRole" "RedefineFromRoles"
-		     "RedefineToRole" "RedefineToRoles"
-		     "SetAttributes" "SetMultipleAttributes"
-		     "stdout" "stderr")
-		 (and bow "transformation" eow)))))
+		 (and bow
+		      (or "AddSubClass" "AddSubClasses"
+			  "AddSuperClass" "AddSuperClasses"
+			  "Assert" "ExecuteTransformation"
+			  "CopyDomain"
+			  "CreateAbstractEdgeClass"
+			  "CreateAbstractVertexClass"
+			  "CreateAttribute" "CreateAttributes"
+			  "CreateEdgeClass" "CreateEdges"
+			  "CreateEnumDomain" "CreateListDomain"
+			  "CreateMapDomain" "CreateRecordDomain"
+			  "CreateSetDomain" "CreateSubgraph"
+			  "CreateVertexClass" "CreateVertices"
+			  "Delete" "Iteratively" "MatchReplace"
+			  "MergeVertices" "PrintGraph"
+			  "RedefineFromRole" "RedefineFromRoles"
+			  "RedefineToRole" "RedefineToRoles"
+			  "SetAttributes" "SetMultipleAttributes"
+			  "SysOut" "SysErr" "transformation")
+		      eow)))))
     (if gretl-minor-mode
 	(progn
 	  (message "Enabling GReTL support...")
