@@ -52,9 +52,9 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.Stack;
-import java.util.Map.Entry;
 
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLInputFactory;
@@ -170,7 +170,7 @@ public class Xml2tg {
 		String schemaName = cmdl.getOptionValue('s').trim();
 		String outputFilename = cmdl.getOptionValue('o').trim();
 
-		if (cmdl.getArgList().size() > 1 && !cmdl.hasOption('m')) {
+		if ((cmdl.getArgList().size() > 1) && !cmdl.hasOption('m')) {
 			System.err
 					.println("When multiple XML files are given, the -m option has to be specified.");
 			optionHandler.printHelpAndExit(1);
@@ -311,8 +311,8 @@ public class Xml2tg {
 					} else if (level == 1) {
 						// root element (graph)
 						String graphClassName = reader.getName().getLocalPart();
-						if (!schema.getGraphClass().getQualifiedName().equals(
-								graphClassName)) {
+						if (!schema.getGraphClass().getQualifiedName()
+								.equals(graphClassName)) {
 							throw new SchemaException(
 									"Name mismatch for GraphClass: should be "
 											+ schema.getGraphClass()
@@ -326,11 +326,11 @@ public class Xml2tg {
 									+ graphClassName + "' unknown.");
 						}
 						stack.push(new AttributedElementInfo(aec));
-						if (graph != null && multiXml) {
+						if ((graph != null) && multiXml) {
 							break;
 						}
-						String graphID = stack.peek().getAttributes().get(
-								GRUML_ATTRIBUTE_ID);
+						String graphID = stack.peek().getAttributes()
+								.get(GRUML_ATTRIBUTE_ID);
 						try {
 							// System.out.println("Creating instance of "
 							// + graphClassName);
@@ -391,7 +391,8 @@ public class Xml2tg {
 
 	public void saveGraph() throws GraphIOException {
 		System.out.println("Saving graph to " + tgOutput);
-		GraphIO.saveGraphToFile(tgOutput, graph, new ConsoleProgressFunction());
+		GraphIO.saveGraphToFile(tgOutput, graph, new ConsoleProgressFunction(
+				"Saving"));
 	}
 
 	private void sortIncidenceLists() {

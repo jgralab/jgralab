@@ -89,7 +89,7 @@ public class GReQLConsole {
 				schema.compile(CodeGeneratorConfiguration.MINIMAL);
 			}
 			graph = GraphIO.loadGraphFromFileWithStandardSupport(filename,
-					(verbose ? new ConsoleProgressFunction() : null));
+					(verbose ? new ConsoleProgressFunction("Loading") : null));
 		} catch (GraphIOException e) {
 			e.printStackTrace();
 		}

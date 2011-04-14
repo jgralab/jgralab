@@ -127,7 +127,7 @@ public class GreqlServer extends Thread {
 								true);
 						g = GraphIO.loadSchemaAndGraphFromFile(graphFile,
 								CodeGeneratorConfiguration.MINIMAL,
-								new ConsoleProgressFunction());
+								new ConsoleProgressFunction("Loading"));
 						dataGraphs.put(graphFile, g);
 					}
 					eval.setDatagraph(g);

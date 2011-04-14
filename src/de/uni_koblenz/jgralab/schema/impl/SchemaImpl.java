@@ -435,7 +435,7 @@ public class SchemaImpl implements Schema {
 		}
 		System.out.println("Committing schema classes to " + schemaDir);
 		commit(schemaDir.getAbsolutePath(), config,
-				new ConsoleProgressFunction());
+				new ConsoleProgressFunction("Committing"));
 
 		compileClasses(schemaDir);
 

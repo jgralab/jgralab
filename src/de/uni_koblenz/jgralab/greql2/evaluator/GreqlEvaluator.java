@@ -120,7 +120,7 @@ public class GreqlEvaluator {
 		if (args.length == 2) {
 			datagraph = GraphIO.loadSchemaAndGraphFromFile(args[1],
 					CodeGeneratorConfiguration.MINIMAL,
-					new ConsoleProgressFunction());
+					new ConsoleProgressFunction("Loading"));
 		}
 
 		GreqlEvaluator eval = new GreqlEvaluator(query, datagraph, null);
@@ -1017,7 +1017,7 @@ public class GreqlEvaluator {
 			String name = "__greql-query.";
 			try {
 				GraphIO.saveGraphToFile(name + "tg", queryGraph,
-						new ConsoleProgressFunction());
+						new ConsoleProgressFunction("Saving broken GReQL graph:"));
 				printGraphAsDot(queryGraph, true, name + "dot");
 			} catch (GraphIOException e) {
 				e.printStackTrace();
@@ -1123,7 +1123,7 @@ public class GreqlEvaluator {
 				String name = "__optimized-greql-query.";
 				try {
 					GraphIO.saveGraphToFile(name + "tg", queryGraph,
-							new ConsoleProgressFunction());
+							new ConsoleProgressFunction("Saving"));
 					printGraphAsDot(queryGraph, true, name + "dot");
 				} catch (GraphIOException e) {
 					e.printStackTrace();
