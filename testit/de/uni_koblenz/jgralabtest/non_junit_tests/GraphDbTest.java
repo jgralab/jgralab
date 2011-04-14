@@ -100,8 +100,8 @@ public class GraphDbTest {
 		JniTestGraph g = JniTestSchema.instance()
 				.createJniTestGraphWithDatabaseSupport("gdbtest", gdb);
 
-		final int NV = 100000;
-		final int NE = 100000;
+		final int NV = 1000;
+		final int NE = 1000;
 
 		System.out.println("Creating " + NV + " vertices...");
 		long s0 = System.currentTimeMillis();

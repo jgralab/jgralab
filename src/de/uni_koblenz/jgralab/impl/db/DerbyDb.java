@@ -59,33 +59,45 @@ public class DerbyDb extends GraphDatabase {
 	@Override
 	public void clearAllTables() throws SQLException {
 		DerbyStatementList derbyStatementList = (DerbyStatementList) sqlStatementList;
-		PreparedStatement statement = derbyStatementList.clearTableAttribute();
-		statement.execute();
-		statement.close();
-		statement = derbyStatementList.clearTableEdge();
-		statement.execute();
-		statement.close();
-		statement = derbyStatementList.clearTableEdgeAttributeValue();
-		statement.execute();
-		statement.close();
-		statement = derbyStatementList.clearTableGraphAttributeValue();
-		statement.execute();
-		statement.close();
-		statement = derbyStatementList.clearTableGraph();
-		statement.execute();
-		statement.close();
-		statement = derbyStatementList.clearTableIncidence();
-		statement.execute();
-		statement.close();
-		statement = derbyStatementList.clearTableType();
-		statement.execute();
-		statement.close();
+		
+		PreparedStatement statement;
+		
 		statement = derbyStatementList.clearTableAttributeValue();
 		statement.execute();
 		statement.close();
+		
+		statement = derbyStatementList.clearTableEdgeAttributeValue();
+		statement.execute();
+		statement.close();
+		
+		statement = derbyStatementList.clearTableGraphAttributeValue();
+		statement.execute();
+		statement.close();
+		
+		statement = derbyStatementList.clearTableIncidence();
+		statement.execute();
+		statement.close();
+		
+		statement = derbyStatementList.clearTableEdge();
+		statement.execute();
+		statement.close();
+		
 		statement = derbyStatementList.clearTableVertex();
 		statement.execute();
 		statement.close();
+		
+		statement = derbyStatementList.clearTableGraph();
+		statement.execute();
+		statement.close();
+		
+		statement = derbyStatementList.clearTableAttribute();
+		statement.execute();
+		statement.close();	
+		
+		statement = derbyStatementList.clearTableType();
+		statement.execute();
+		statement.close();	
+		
 		statement = derbyStatementList.clearTableGraphSchema();
 		statement.execute();
 		statement.close();
