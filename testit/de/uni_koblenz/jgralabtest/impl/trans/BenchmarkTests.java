@@ -190,7 +190,7 @@ public class BenchmarkTests {
 		if (transactionSupport) {
 			motorwayMap = MotorwayMapSchema.instance()
 					.loadMotorwayMapWithTransactionSupport(FILENAME,
-							new ConsoleProgressFunction());
+							new ConsoleProgressFunction("Loading"));
 		} else {
 			motorwayMap = MotorwayMapSchema.instance().loadMotorwayMap(
 					FILENAME, new ConsoleProgressFunction());
