@@ -74,16 +74,61 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
  */
 public abstract class GraphDatabase {
 
-	public static final String GRAPH_SCHEMA_TABLE_NAME = "GraphSchema";
-	public static final String GRAPH_ATTRIBUTE_VALUE_TABLE_NAME = "GraphAttributeValue";
-	public static final String GRAPH_TABLE_NAME = "Graph";
-	public static final String EDGE_ATTRIBUTE_VALUE_TABLE_NAME = "EdgeAttributeValue";
-	public static final String VERTEX_ATTRIBUTE_VALUE_TABLE_NAME = "VertexAttributeValue";
-	public static final String ATTRIBUTE_TABLE_NAME = "Attribute";
-	public static final String EDGE_TABLE_NAME = "Edge";
-	public static final String INCIDENCE_TABLE_NAME = "Incidence";
-	public static final String TYPE_TABLE_NAME = "Type";
-	public static final String VERTEX_TABLE_NAME = "Vertex";
+	public static final String TABLE_SCHEMA = "GraphSchema";
+	public static final String COLUMN_SCHEMA_ID = "schemaId";
+	public static final String COLUMN_SCHEMA_PACKAGE_PREFIX = "packagePrefix";
+	public static final String COLUMN_SCHEMA_NAME = "name";
+	public static final String COLUMN_SCHEMA_TG = "serializedDefinition";
+	public static final String PRIMARY_KEY_SCHEMA = "schemaPrimaryKey";
+
+	public static final String TABLE_TYPE = "Type";
+	public static final String COLUMN_TYPE_ID = "typeId";
+	public static final String COLUMN_TYPE_QNAME = "qualifiedName";
+	public static final String COLUMN_TYPE_SCHEMA_ID = "schemaId";
+	public static final String PRIMARY_KEY_TYPE = "typePrimaryKey";
+
+	public static final String TABLE_GRAPH = "Graph";
+	public static final String COLUMN_GRAPH_ID = "gId";
+	public static final String COLUMN_GRAPH_UID = "uid";
+	public static final String COLUMN_GRAPH_VERSION = "version";
+	public static final String COLUMN_GRAPH_VSEQ_VERSION = "vSeqVersion";
+	public static final String COLUMN_GRAPH_ESEQ_VERSION = "eSeqVersion";
+	public static final String COLUMN_GRAPH_TYPE_ID = "";
+	public static final String PRIMARY_KEY_GRAPH = "graphPrimaryKey";
+
+	public static final String TABLE_VERTEX_ATTRIBUTE_VALUE = "VertexAttributeValue";
+	public static final String COLUMN_VERTEX_ID = "vId";
+	public static final String COLUMN_VERTEX_GRAPH_ID = "gId";
+	public static final String COLUMN_VERTEX_TYPE_ID = "typeId";
+	public static final String COLUMN_VERTEX_LAMBDA_SEQ_VERSION = "lambdaSeqVersion";
+	public static final String COLUMN_VERTEX_SEQUENCE_NUMBER = "sequenceNumber";
+	public static final String PRIMARY_KEY_VERTEX = "vertexPrimaryKey";
+	public static final String FOREIGN_KEY_VERTEX_TO_GRAPH = "gIdIsForeignKeyForVertex";
+	public static final String FOREIGN_KEY_VERTEX_TO_TYPE = "typeIdIsForeignKeyForVertex";
+
+	public static final String TABLE_EDGE = "Edge";
+	public static final String COLUMN_EDGE_ID = "eId";
+	public static final String COLUMN_EDGE_GRAPH_ID = "gId";
+	public static final String COLUMN_EDGE_TYPE_ID = "typeId";
+	public static final String COLUMN_EDGE_SEQUENCE_NUMBER = "sequenceNumber";
+	public static final String PRIMARY_KEY_EDGE = "edgePrimaryKey";
+	public static final String FOREIGN_KEY_EDGE_TO_GRAPH = "gIdIsForeignKeyForEdge";
+	public static final String FOREIGN_KEY_EDGE_TO_TYPE = "typeIdIsForeignKeyForEdge";
+
+	public static final String TABLE_INCIDENCE = "Incidence";
+	public static final String COLUMN_INCIDENCE_EDGE_ID = "eId";
+	public static final String COLUMN_INCIDENCE_VERTEX_ID = "vId";
+	public static final String COLUMN_INCIDENCE_GRAPH_ID = "gId";
+	public static final String COLUMN_INCIDENCE_DIRECTION = "direction";
+	public static final String COLUMN_INCIDENCE_SEQUENCE_NUMBER = "sequenceNumber";
+	public static final String PRIMARY_KEY_INCIDENCE = "incidencePrimaryKey";
+
+	// TODO continue here
+
+	public static final String TABLE_GRAPH_ATTRIBUTE_VALUE = "GraphAttributeValue";
+	public static final String TABLE_EDGE_ATTRIBUTE_VALUE = "EdgeAttributeValue";
+	public static final String TABLE_ATTRIBUTE = "Attribute";
+	public static final String TABLE_VERTEX = "Vertex";
 
 	/**
 	 * Holds graph databases which are still open.
