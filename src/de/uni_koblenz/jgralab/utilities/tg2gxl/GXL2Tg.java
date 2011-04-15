@@ -24,6 +24,7 @@ import javax.xml.stream.events.XMLEvent;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionGroup;
 
 import de.uni_koblenz.ist.utilities.option_handler.OptionHandler;
 import de.uni_koblenz.jgralab.AttributedElement;
@@ -65,6 +66,7 @@ public class GXL2Tg {
 	private String graphOutputName;
 	private String graphInputName;
 	private String jarOutputName;
+	private String existingSchemaFile;
 
 	private SchemaGraph schemaGraph;
 	private String packagePrefix;
@@ -120,9 +122,8 @@ public class GXL2Tg {
 		graphOutputName = comLine.getOptionValue("o");
 		packagePrefix = comLine.getOptionValue("p");
 		storeIds = comLine.hasOption("s");
-		if (comLine.hasOption('j')) {
-			jarOutputName = comLine.getOptionValue('j');
-		}
+		existingSchemaFile = comLine.getOptionValue('n');
+		jarOutputName = comLine.getOptionValue('j');
 	}
 
 	protected CommandLine processCommandlineOptions(String[] args) {
@@ -143,10 +144,25 @@ public class GXL2Tg {
 		oh.addOption(output);
 
 		Option prefix = new Option("p", "packagePrefix", true,
-				"(required): the package prefix of the schema");
-		prefix.setRequired(true);
-		prefix.setArgName("string");
+				"(required): the package prefix of the schema. "
+						+ "Either this or -n must be provided.");
+		prefix.setArgName("prefix");
 		oh.addOption(prefix);
+
+		Option schemaFile = new Option(
+				"n",
+				"schemaFile",
+				true,
+				"(required): use this existing schema instead of creating a new one. "
+						+ "In that case, the GXL file must contain only one graph (not schema graph + graph). "
+						+ "Either this or -p must be provided.");
+		schemaFile.setArgName("schema-file");
+
+		OptionGroup prefixOrSchema = new OptionGroup();
+		prefixOrSchema.addOption(prefix);
+		prefixOrSchema.addOption(schemaFile);
+		prefixOrSchema.setRequired(true);
+		oh.addOptionGroup(prefixOrSchema);
 
 		Option saveIds = new Option("s", "saveIds", false,
 				"(optional): stores the GXL id as a new attribute");
@@ -178,24 +194,27 @@ public class GXL2Tg {
 		inputReader = factory.createXMLEventReader(new FileReader(
 				graphInputName));
 
-		// initialize SchemaGraph
-		schemaGraph = GrumlSchema.instance().createSchemaGraph();
-
-		convertSchemaGraph();
-		if (storeIds) {
-			extractEdgeid();
-			createIdAttribute();
-		}
-		schema = new SchemaGraph2Schema().convert(schemaGraph);
-
-		if (jarOutputName != null) {
-			try {
-				schema.createJAR(CodeGeneratorConfiguration.MINIMAL,
-						jarOutputName);
-			} catch (IOException e) {
-				System.out.println("Could not create schema JAR file.");
-				e.printStackTrace();
+		if (existingSchemaFile == null) {
+			// initialize SchemaGraph
+			schemaGraph = GrumlSchema.instance().createSchemaGraph();
+			convertSchemaGraph();
+			if (storeIds) {
+				extractEdgeid();
+				createIdAttribute();
 			}
+			schema = new SchemaGraph2Schema().convert(schemaGraph);
+
+			if (jarOutputName != null) {
+				try {
+					schema.createJAR(CodeGeneratorConfiguration.MINIMAL,
+							jarOutputName);
+				} catch (IOException e) {
+					System.out.println("Could not create schema JAR file.");
+					e.printStackTrace();
+				}
+			}
+		} else {
+			schema = GraphIO.loadSchemaFromFile(existingSchemaFile);
 		}
 
 		convertGraph();
@@ -861,14 +880,14 @@ public class GXL2Tg {
 				"fromorder"));
 		if (fromOrderAttribute != null) {
 			// TODO
-			throw new GraphIOException("fromorder is not supported yet");
+			System.err.println("fromorder is not supported yet");
 		}
 
 		Attribute toOrderAttribute = element.getAttributeByName(new QName(
 				"toorder"));
 		if (toOrderAttribute != null) {
 			// TODO
-			throw new GraphIOException("toorder is not supported yet");
+			System.err.println("toorder is not supported yet");
 		}
 
 		Attribute isDirectedAttribute = element.getAttributeByName(new QName(
@@ -1061,7 +1080,7 @@ public class GXL2Tg {
 	}
 
 	private String extractType() throws XMLStreamException {
-		String nameOfGraphClass = null;
+		String typeName = null;
 		if (inputReader.hasNext()) {
 			XMLEvent event = inputReader.peek();
 			switch (event.getEventType()) {
@@ -1071,17 +1090,18 @@ public class GXL2Tg {
 			case XMLEvent.START_ELEMENT:
 				StartElement startElement = event.asStartElement();
 				if (startElement.getName().getLocalPart().equals("type")) {
-					nameOfGraphClass = startElement.getAttributeByName(
+					typeName = startElement.getAttributeByName(
 							new QName("http://www.w3.org/1999/xlink", "href"))
 							.getValue();
-					// delete '#'
-					nameOfGraphClass = nameOfGraphClass.substring(1);
+					// delete up to '#'
+					int index = typeName.indexOf('#');
+					typeName = typeName.substring(index + 1);
 					inputReader.nextEvent();
 					// skip EndEvent of type
 					inputReader.nextEvent();
 				}
 			}
 		}
-		return nameOfGraphClass;
+		return typeName;
 	}
 }
