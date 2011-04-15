@@ -46,6 +46,8 @@ import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.Schema;
 
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.*;
+
 /**
  * Factory that creates Apache Derby/JavaDB specific prepared statements.
  * BEWARE: Strings are limited to 2048 bytes.
@@ -59,11 +61,13 @@ public class DerbyStatementList extends SqlStatementList {
 		super(graphDatabase);
 	}
 
-	private static final String CREATE_GRAPH_SCHEMA_TABLE = "CREATE TABLE \"GraphSchema\"("
-			+ "\"schemaId\" INT GENERATED ALWAYS AS IDENTITY CONSTRAINT \"schemaPrimaryKey\" PRIMARY KEY,"
-			+ "\"packagePrefix\" VARCHAR(2048),"
-			+ "\"name\" VARCHAR(2048),"
-			+ "\"serializedDefinition\" LONG VARCHAR" + ")";
+	private static final String CREATE_GRAPH_SCHEMA_TABLE = "CREATE TABLE \""
+			+ TABLE_SCHEMA + "\"(\"" + COLUMN_SCHEMA_ID
+			+ "\" INT GENERATED ALWAYS AS IDENTITY CONSTRAINT \""
+			+ PRIMARY_KEY_SCHEMA + "\" PRIMARY KEY," + "\""
+			+ COLUMN_SCHEMA_PACKAGE_PREFIX + "\" VARCHAR(2048)," + "\""
+			+ COLUMN_SCHEMA_NAME + "\" VARCHAR(2048)," + "\""
+			+ COLUMN_SCHEMA_TG + "\" LONG VARCHAR" + ")";
 
 	@Override
 	public PreparedStatement createGraphSchemaTableWithConstraints()
@@ -71,10 +75,12 @@ public class DerbyStatementList extends SqlStatementList {
 		return connection.prepareStatement(CREATE_GRAPH_SCHEMA_TABLE);
 	}
 
-	private static final String CREATE_TYPE_TABLE = "CREATE TABLE \"Type\"("
-			+ "\"typeId\" INT GENERATED ALWAYS AS IDENTITY CONSTRAINT \"typePrimaryKey\" PRIMARY KEY,"
-			+ "\"qualifiedName\" VARCHAR(2048),"
-			+ "\"schemaId\" INT REFERENCES \"GraphSchema\"" + ")";
+	private static final String CREATE_TYPE_TABLE = "CREATE TABLE \""
+			+ TABLE_TYPE + "\"(" + "\"" + COLUMN_TYPE_ID
+			+ "\" INT GENERATED ALWAYS AS IDENTITY CONSTRAINT \""
+			+ PRIMARY_KEY_TYPE + "\" PRIMARY KEY," + "\"" + COLUMN_TYPE_QNAME
+			+ "\" VARCHAR(2048)," + "\"" + COLUMN_TYPE_SCHEMA_ID
+			+ "\" INT REFERENCES \"" + TABLE_SCHEMA + "\"" + ")";
 
 	@Override
 	public PreparedStatement createTypeTableWithConstraints()
@@ -82,11 +88,15 @@ public class DerbyStatementList extends SqlStatementList {
 		return connection.prepareStatement(CREATE_TYPE_TABLE);
 	}
 
-	private static final String CREATE_GRAPH_TABLE = "CREATE TABLE \"Graph\"("
-			+ "\"gId\" INT GENERATED ALWAYS AS IDENTITY CONSTRAINT \"graphPrimaryKey\" PRIMARY KEY,"
-			+ "\"uid\" VARCHAR(2048)," + "\"version\" BIGINT,"
-			+ "\"vSeqVersion\" BIGINT," + "\"eSeqVersion\" BIGINT,"
-			+ "\"typeId\" INT REFERENCES \"Type\"" + ")";
+	private static final String CREATE_GRAPH_TABLE = "CREATE TABLE \""
+			+ TABLE_GRAPH + "\"(" + "\"" + COLUMN_GRAPH_ID
+			+ "\" INT GENERATED ALWAYS AS IDENTITY CONSTRAINT \""
+			+ PRIMARY_KEY_GRAPH + "\" PRIMARY KEY," + "\"" + COLUMN_GRAPH_UID
+			+ "\" VARCHAR(2048)," + "\"" + COLUMN_GRAPH_VERSION + "\" BIGINT,"
+			+ "\"" + COLUMN_GRAPH_VSEQ_VERSION + "\" BIGINT," + "\""
+			+ COLUMN_GRAPH_ESEQ_VERSION + "\" BIGINT," + "\""
+			+ COLUMN_GRAPH_TYPE_ID + "\" INT REFERENCES \"" + TABLE_TYPE + "\""
+			+ ")";
 
 	@Override
 	public PreparedStatement createGraphTableWithConstraints()
@@ -94,19 +104,27 @@ public class DerbyStatementList extends SqlStatementList {
 		return connection.prepareStatement(CREATE_GRAPH_TABLE);
 	}
 
-	private static final String CREATE_VERTEX_TABLE = "CREATE TABLE \"Vertex\"("
-			+ "\"vId\" INT NOT NULL,"
-			+ "\"gId\" INT NOT NULL,"
-			+ "\"typeId\" INT NOT NULL,"
-			+ "\"lambdaSeqVersion\" BIGINT,"
-			+ "\"sequenceNumber\" BIGINT" + ")";
+	private static final String CREATE_VERTEX_TABLE = "CREATE TABLE \""
+			+ TABLE_VERTEX + "\"(" + "\"" + COLUMN_VERTEX_ID
+			+ "\" INT NOT NULL," + "\"" + COLUMN_VERTEX_GRAPH_ID
+			+ "\" INT NOT NULL," + "\"" + COLUMN_VERTEX_TYPE_ID
+			+ "\" INT NOT NULL," + "\"" + COLUMN_VERTEX_LAMBDA_SEQ_VERSION
+			+ "\" BIGINT," + "\"" + COLUMN_VERTEX_SEQUENCE_NUMBER + "\" BIGINT"
+			+ ")";
 
 	@Override
 	public PreparedStatement createVertexTable() throws SQLException {
 		return connection.prepareStatement(CREATE_VERTEX_TABLE);
 	}
 
-	private static final String ADD_PRIMARY_KEY_CONSTRAINT_ON_VERTEX_TABLE = "ALTER TABLE \"Vertex\" ADD CONSTRAINT \"vertexPrimaryKey\" PRIMARY KEY ( \"vId\", \"gId\" )";
+	private static final String ADD_PRIMARY_KEY_CONSTRAINT_ON_VERTEX_TABLE = "ALTER TABLE \""
+			+ TABLE_VERTEX
+			+ "\" ADD CONSTRAINT \""
+			+ PRIMARY_KEY_VERTEX
+			+ "\" PRIMARY KEY ( \""
+			+ COLUMN_VERTEX_ID
+			+ "\", \""
+			+ COLUMN_VERTEX_GRAPH_ID + "\" )";
 
 	@Override
 	public PreparedStatement addPrimaryKeyConstraintOnVertexTable()
@@ -115,7 +133,11 @@ public class DerbyStatementList extends SqlStatementList {
 				.prepareStatement(ADD_PRIMARY_KEY_CONSTRAINT_ON_VERTEX_TABLE);
 	}
 
-	private static final String DROP_PRIMARY_KEY_CONSTRAINT_FROM_VERTEX_TABLE = "ALTER TABLE \"Vertex\" DROP CONSTRAINT \"vertexPrimaryKey\"";
+	private static final String DROP_PRIMARY_KEY_CONSTRAINT_FROM_VERTEX_TABLE = "ALTER TABLE \""
+			+ TABLE_VERTEX
+			+ "\" DROP CONSTRAINT \""
+			+ PRIMARY_KEY_VERTEX
+			+ "\"";
 
 	@Override
 	public PreparedStatement dropPrimaryKeyConstraintFromVertexTable()
@@ -124,7 +146,15 @@ public class DerbyStatementList extends SqlStatementList {
 				.prepareStatement(DROP_PRIMARY_KEY_CONSTRAINT_FROM_VERTEX_TABLE);
 	}
 
-	private static final String ADD_FOREIGN_KEY_CONSTRAINT_ON_GRAPH_OF_VERTEX = "ALTER TABLE \"Vertex\" ADD CONSTRAINT \"gIdIsForeignKeyForVertex\" FOREIGN KEY (\"gId\") REFERENCES \"Graph\" (\"gId\")";
+	private static final String ADD_FOREIGN_KEY_CONSTRAINT_ON_GRAPH_OF_VERTEX = "ALTER TABLE \""
+			+ TABLE_VERTEX
+			+ "\" ADD CONSTRAINT \""
+			+ FOREIGN_KEY_VERTEX_TO_GRAPH
+			+ "\" FOREIGN KEY (\""
+			+ COLUMN_VERTEX_GRAPH_ID
+			+ "\") REFERENCES \""
+			+ TABLE_GRAPH
+			+ "\" (\"" + COLUMN_GRAPH_ID + "\")";
 
 	@Override
 	public PreparedStatement addForeignKeyConstraintOnGraphColumnOfVertexTable()
@@ -133,7 +163,15 @@ public class DerbyStatementList extends SqlStatementList {
 				.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_GRAPH_OF_VERTEX);
 	}
 
-	private static final String ADD_FOREIGN_KEY_CONSTRAINT_ON_VERTEX_TYPE = "ALTER TABLE \"Vertex\" ADD CONSTRAINT \"typeIdIsForeignKeyForVertex\" FOREIGN KEY (\"typeId\") REFERENCES \"Type\" (\"typeId\")";
+	private static final String ADD_FOREIGN_KEY_CONSTRAINT_ON_VERTEX_TYPE = "ALTER TABLE \""
+			+ TABLE_VERTEX
+			+ "\" ADD CONSTRAINT \""
+			+ FOREIGN_KEY_VERTEX_TO_TYPE
+			+ "\" FOREIGN KEY (\""
+			+ COLUMN_VERTEX_TYPE_ID
+			+ "\") REFERENCES \""
+			+ TABLE_TYPE
+			+ "\" (\"" + COLUMN_TYPE_ID + "\")";
 
 	@Override
 	public PreparedStatement addForeignKeyConstraintOnTypeColumnOfVertexTable()
@@ -142,9 +180,10 @@ public class DerbyStatementList extends SqlStatementList {
 				.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_VERTEX_TYPE);
 	}
 
-	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_VERTEX = "ALTER TABLE \"Vertex\" DROP CONSTRAINT \"gIdIsForeignKeyForVertex\"";
-
-	// + "ALTER TABLE \"Vertex\" DROP CONSTRAINT \"typeIdIsForeignKey\"";
+	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_VERTEX = "ALTER TABLE \""
+			+ TABLE_VERTEX
+			+ "\" DROP CONSTRAINT \""
+			+ FOREIGN_KEY_VERTEX_TO_GRAPH + "\"";
 
 	@Override
 	public PreparedStatement dropForeignKeyConstraintFromGraphColumnOfVertexTable()
@@ -153,7 +192,10 @@ public class DerbyStatementList extends SqlStatementList {
 				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_VERTEX);
 	}
 
-	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_VERTEX_TYPE = "ALTER TABLE \"Vertex\" DROP CONSTRAINT \"typeIdIsForeignKeyForVertex\"";
+	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_VERTEX_TYPE = "ALTER TABLE \""
+			+ TABLE_VERTEX
+			+ "\" DROP CONSTRAINT \""
+			+ FOREIGN_KEY_VERTEX_TO_TYPE + "\"";
 
 	@Override
 	public PreparedStatement dropForeignKeyConstraintFromTypeColumnOfVertexTable()
@@ -162,16 +204,25 @@ public class DerbyStatementList extends SqlStatementList {
 				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_VERTEX_TYPE);
 	}
 
-	private static final String CREATE_EDGE_TABLE = "CREATE TABLE \"Edge\"("
-			+ "\"eId\" INT NOT NULL," + "\"gId\" INT NOT NULL,"
-			+ "\"typeId\" INT NOT NULL," + "\"sequenceNumber\" BIGINT" + ")";
+	private static final String CREATE_EDGE_TABLE = "CREATE TABLE \""
+			+ TABLE_EDGE + "\"(" + "\"" + COLUMN_EDGE_ID + "\" INT NOT NULL,"
+			+ "\"" + COLUMN_EDGE_GRAPH_ID + "\" INT NOT NULL," + "\""
+			+ COLUMN_EDGE_TYPE_ID + "\" INT NOT NULL," + "\""
+			+ COLUMN_EDGE_SEQUENCE_NUMBER + "\" BIGINT" + ")";
 
 	@Override
 	public PreparedStatement createEdgeTable() throws SQLException {
 		return connection.prepareStatement(CREATE_EDGE_TABLE);
 	}
 
-	private static final String ADD_PRIMARY_KEY_CONSTRAINT_ON_EDGE_TABLE = "ALTER TABLE \"Edge\" ADD CONSTRAINT \"edgePrimaryKey\" PRIMARY KEY ( \"eId\", \"gId\" )";
+	private static final String ADD_PRIMARY_KEY_CONSTRAINT_ON_EDGE_TABLE = "ALTER TABLE \""
+			+ TABLE_EDGE
+			+ "\" ADD CONSTRAINT \""
+			+ PRIMARY_KEY_EDGE
+			+ "\" PRIMARY KEY ( \""
+			+ COLUMN_EDGE_ID
+			+ "\", \"+"
+			+ COLUMN_EDGE_GRAPH_ID + "\" )";
 
 	@Override
 	public PreparedStatement addPrimaryKeyConstraintOnEdgeTable()
@@ -180,7 +231,8 @@ public class DerbyStatementList extends SqlStatementList {
 				.prepareStatement(ADD_PRIMARY_KEY_CONSTRAINT_ON_EDGE_TABLE);
 	}
 
-	private static final String DROP_PRIMARY_KEY_CONSTRAINT_FROM_EDGE_TABLE = "ALTER TABLE \"Edge\" DROP CONSTRAINT \"edgePrimaryKey\"";
+	private static final String DROP_PRIMARY_KEY_CONSTRAINT_FROM_EDGE_TABLE = "ALTER TABLE \"Edge\" DROP CONSTRAINT \""
+			+ PRIMARY_KEY_EDGE + "\"";
 
 	@Override
 	public PreparedStatement dropPrimaryKeyConstraintFromEdgeTable()
@@ -189,7 +241,14 @@ public class DerbyStatementList extends SqlStatementList {
 				.prepareStatement(DROP_PRIMARY_KEY_CONSTRAINT_FROM_EDGE_TABLE);
 	}
 
-	private static final String ADD_FOREIGN_KEY_CONSTRAINT_ON_GRAPH_OF_EDGE = "ALTER TABLE \"Edge\" ADD CONSTRAINT \"gIdIsForeignKeyForEdge\" FOREIGN KEY (\"gId\") REFERENCES \"Graph\" (\"gId\")";
+	private static final String ADD_FOREIGN_KEY_CONSTRAINT_ON_GRAPH_OF_EDGE = "ALTER TABLE \""
+			+ TABLE_EDGE
+			+ "\" ADD CONSTRAINT \""
+			+ FOREIGN_KEY_EDGE_TO_GRAPH
+			+ "\" FOREIGN KEY (\""
+			+ COLUMN_EDGE_GRAPH_ID
+			+ "\") REFERENCES \""
+			+ TABLE_GRAPH + "\" (\"" + COLUMN_GRAPH_ID + "\")";
 
 	@Override
 	public PreparedStatement addForeignKeyConstraintOnGraphColumnOfEdgeTable()
@@ -198,7 +257,14 @@ public class DerbyStatementList extends SqlStatementList {
 				.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_GRAPH_OF_EDGE);
 	}
 
-	private static final String ADD_FOREIGN_KEY_CONSTRAINT_ON_EDGE_TYPE = "ALTER TABLE \"Edge\" ADD CONSTRAINT \"typeIdIsForeignKeyForEdge\" FOREIGN KEY (\"typeId\") REFERENCES \"Type\" (\"typeId\")";
+	private static final String ADD_FOREIGN_KEY_CONSTRAINT_ON_EDGE_TYPE = "ALTER TABLE \""
+			+ TABLE_EDGE
+			+ "\" ADD CONSTRAINT \""
+			+ FOREIGN_KEY_EDGE_TO_TYPE
+			+ "\" FOREIGN KEY (\""
+			+ COLUMN_EDGE_TYPE_ID
+			+ "\") REFERENCES \""
+			+ TABLE_TYPE + "\" (\"" + COLUMN_TYPE_ID + "\")";
 
 	@Override
 	public PreparedStatement addForeignKeyConstraintOnTypeColumnOfEdgeTable()
@@ -207,7 +273,11 @@ public class DerbyStatementList extends SqlStatementList {
 				.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_EDGE_TYPE);
 	}
 
-	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_EDGE = "ALTER TABLE \"Edge\" DROP CONSTRAINT \"gIdIsForeignKeyForEdge\"";
+	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_EDGE = "ALTER TABLE \""
+			+ TABLE_EDGE
+			+ "\" DROP CONSTRAINT \""
+			+ FOREIGN_KEY_EDGE_TO_GRAPH
+			+ "\"";
 
 	@Override
 	public PreparedStatement dropForeignKeyConstraintFromGraphColumnOfEdgeTable()
@@ -216,7 +286,11 @@ public class DerbyStatementList extends SqlStatementList {
 				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_EDGE);
 	}
 
-	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_EDGE_TYPE = "ALTER TABLE \"Edge\" DROP CONSTRAINT \"typeIdIsForeignKeyForEdge\"";
+	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_EDGE_TYPE = "ALTER TABLE \""
+			+ TABLE_EDGE
+			+ "\" DROP CONSTRAINT \""
+			+ FOREIGN_KEY_EDGE_TO_TYPE
+			+ "\"";
 
 	@Override
 	public PreparedStatement dropForeignKeyConstraintFromTypeColumnOfEdgeTable()
@@ -225,19 +299,27 @@ public class DerbyStatementList extends SqlStatementList {
 				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_EDGE_TYPE);
 	}
 
-	private static final String CREATE_INCIDENCE_TABLE = "CREATE TABLE \"Incidence\"("
-			+ "\"eId\" INT NOT NULL,"
-			+ "\"vId\" INT NOT NULL,"
-			+ "\"gId\" INT NOT NULL,"
-			+ "\"direction\" VARCHAR(3) NOT NULL,"
-			+ "\"sequenceNumber\" BIGINT NOT NULL" + ")";
+	private static final String CREATE_INCIDENCE_TABLE = "CREATE TABLE \""
+			+ TABLE_INCIDENCE + "\"(" + "\"" + COLUMN_INCIDENCE_EDGE_ID
+			+ "\" INT NOT NULL," + "\"" + COLUMN_INCIDENCE_VERTEX_ID
+			+ "\" INT NOT NULL," + "\"" + COLUMN_INCIDENCE_GRAPH_ID
+			+ "\" INT NOT NULL," + "\"" + COLUMN_INCIDENCE_DIRECTION
+			+ "\" VARCHAR(3) NOT NULL," + "\""
+			+ COLUMN_INCIDENCE_SEQUENCE_NUMBER + "\" BIGINT NOT NULL" + ")";
 
 	@Override
 	public PreparedStatement createIncidenceTable() throws SQLException {
 		return connection.prepareStatement(CREATE_INCIDENCE_TABLE);
 	}
 
-	private static final String ADD_PRIMARY_KEY_CONSTRAINT_ON_INCIDENCE_TABLE = "ALTER TABLE \"Incidence\" ADD CONSTRAINT \"incidencePrimaryKey\" PRIMARY KEY ( \"eId\", \"gId\", \"direction\" )";
+	private static final String ADD_PRIMARY_KEY_CONSTRAINT_ON_INCIDENCE_TABLE = "ALTER TABLE \""
+			+ TABLE_INCIDENCE
+			+ "\" ADD CONSTRAINT \""
+			+ PRIMARY_KEY_INCIDENCE
+			+ "\" PRIMARY KEY ( \""
+			+ COLUMN_INCIDENCE_EDGE_ID
+			+ "\", \""
+			+ COLUMN_INCIDENCE_GRAPH_ID + "\", \"direction\" )";
 
 	@Override
 	public PreparedStatement addPrimaryKeyConstraintOnIncidenceTable()
@@ -246,7 +328,11 @@ public class DerbyStatementList extends SqlStatementList {
 				.prepareStatement(ADD_PRIMARY_KEY_CONSTRAINT_ON_INCIDENCE_TABLE);
 	}
 
-	private static final String DROP_PRIMARY_KEY_CONSTRAINT_FROM_INCIDENCE_TABLE = "ALTER TABLE \"Incidence\" DROP CONSTRAINT \"incidencePrimaryKey\"";
+	private static final String DROP_PRIMARY_KEY_CONSTRAINT_FROM_INCIDENCE_TABLE = "ALTER TABLE \""
+			+ TABLE_INCIDENCE
+			+ "\" DROP CONSTRAINT \""
+			+ PRIMARY_KEY_INCIDENCE
+			+ "\"";
 
 	@Override
 	public PreparedStatement dropPrimaryKeyConstraintFromIncidenceTable()
@@ -254,6 +340,8 @@ public class DerbyStatementList extends SqlStatementList {
 		return connection
 				.prepareStatement(DROP_PRIMARY_KEY_CONSTRAINT_FROM_INCIDENCE_TABLE);
 	}
+
+	// TODO continue here
 
 	private static final String ADD_FOREIGN_KEY_CONSTRAINT_ON_GRAPH_OF_INCIDENCE = "ALTER TABLE \"Incidence\" ADD CONSTRAINT \"gIdIsForeignKeyForIncidence\" FOREIGN KEY (\"gId\") REFERENCES \"Graph\" (\"gId\")";
 
@@ -1416,28 +1504,28 @@ public class DerbyStatementList extends SqlStatementList {
 	}
 
 	private static final String CLEAR_TABLE_ATTRIBUTE = "DELETE FROM \""
-			+ GraphDatabase.ATTRIBUTE_TABLE_NAME + "\"";
+			+ TABLE_ATTRIBUTE + "\"";
 
 	public PreparedStatement clearTableAttribute() throws SQLException {
 		return getPreparedStatement(CLEAR_TABLE_ATTRIBUTE);
 	}
 
 	private static final String CLEAR_TABLE_EDGE_ATTRIBUTE_VALUE = "DELETE FROM \""
-			+ GraphDatabase.EDGE_ATTRIBUTE_VALUE_TABLE_NAME + "\"";
+			+ TABLE_EDGE_ATTRIBUTE_VALUE + "\"";
 
 	public PreparedStatement clearTableEdgeAttributeValue() throws SQLException {
 		return getPreparedStatement(CLEAR_TABLE_EDGE_ATTRIBUTE_VALUE);
 	}
 
 	private static final String CLEAR_TABLE_EDGE = "DELETE FROM \""
-			+ GraphDatabase.EDGE_TABLE_NAME + "\"";
+			+ TABLE_EDGE + "\"";
 
 	public PreparedStatement clearTableEdge() throws SQLException {
 		return getPreparedStatement(CLEAR_TABLE_EDGE);
 	}
 
 	private static final String CLEAR_TABLE_GRAPH_ATTRIBUTE_VALUE = "DELETE FROM \""
-			+ GraphDatabase.GRAPH_ATTRIBUTE_VALUE_TABLE_NAME + "\"";
+			+ TABLE_GRAPH_ATTRIBUTE_VALUE + "\"";
 
 	public PreparedStatement clearTableGraphAttributeValue()
 			throws SQLException {
@@ -1445,42 +1533,42 @@ public class DerbyStatementList extends SqlStatementList {
 	}
 
 	private static final String CLEAR_TABLE_GRAPH_SCHEMA = "DELETE FROM \""
-			+ GraphDatabase.GRAPH_SCHEMA_TABLE_NAME + "\"";
+			+ TABLE_SCHEMA + "\"";
 
 	public PreparedStatement clearTableGraphSchema() throws SQLException {
 		return getPreparedStatement(CLEAR_TABLE_GRAPH_SCHEMA);
 	}
 
 	private static final String CLEAR_TABLE_GRAPH = "DELETE FROM \""
-			+ GraphDatabase.GRAPH_TABLE_NAME + "\"";
+			+ TABLE_GRAPH + "\"";
 
 	public PreparedStatement clearTableGraph() throws SQLException {
 		return getPreparedStatement(CLEAR_TABLE_GRAPH);
 	}
 
 	private static final String CLEAR_TABLE_INCIDENCE = "DELETE FROM \""
-			+ GraphDatabase.INCIDENCE_TABLE_NAME + "\"";
+			+ TABLE_INCIDENCE + "\"";
 
 	public PreparedStatement clearTableIncidence() throws SQLException {
 		return getPreparedStatement(CLEAR_TABLE_INCIDENCE);
 	}
 
 	private static final String CLEAR_TABLE_TYPE = "DELETE FROM \""
-			+ GraphDatabase.TYPE_TABLE_NAME + "\"";
+			+ TABLE_TYPE + "\"";
 
 	public PreparedStatement clearTableType() throws SQLException {
 		return getPreparedStatement(CLEAR_TABLE_TYPE);
 	}
 
 	private static final String CLEAR_TABLE_ATTRIBUTE_VALUE = "DELETE FROM \""
-			+ GraphDatabase.VERTEX_ATTRIBUTE_VALUE_TABLE_NAME + "\"";
+			+ TABLE_VERTEX_ATTRIBUTE_VALUE + "\"";
 
 	public PreparedStatement clearTableAttributeValue() throws SQLException {
 		return getPreparedStatement(CLEAR_TABLE_ATTRIBUTE_VALUE);
 	}
 
 	private static final String CLEAR_TABLE_VERTEX = "DELETE FROM \""
-			+ GraphDatabase.VERTEX_TABLE_NAME + "\"";
+			+ TABLE_VERTEX + "\"";
 
 	public PreparedStatement clearTableVertex() throws SQLException {
 		return getPreparedStatement(CLEAR_TABLE_VERTEX);

@@ -1488,28 +1488,28 @@ public class MySqlStatementList extends SqlStatementList {
 	}
 
 	private static final String CLEAR_TABLE_ATTRIBUTE = "TRUNCATE TABLE "
-			+ GraphDatabase.ATTRIBUTE_TABLE_NAME;
+			+ GraphDatabase.TABLE_ATTRIBUTE;
 
 	public PreparedStatement clearTableAttribute() throws SQLException {
 		return getPreparedStatement(CLEAR_TABLE_ATTRIBUTE);
 	}
 
 	private static final String CLEAR_TABLE_EDGE_ATTRIBUTE_VALUE = "TRUNCATE TABLE "
-			+ GraphDatabase.EDGE_ATTRIBUTE_VALUE_TABLE_NAME;
+			+ GraphDatabase.TABLE_EDGE_ATTRIBUTE_VALUE;
 
 	public PreparedStatement clearTableEdgeAttributeValue() throws SQLException {
 		return getPreparedStatement(CLEAR_TABLE_EDGE_ATTRIBUTE_VALUE);
 	}
 
 	private static final String CLEAR_TABLE_EDGE = "TRUNCATE TABLE "
-			+ GraphDatabase.EDGE_TABLE_NAME;
+			+ GraphDatabase.TABLE_EDGE;
 
 	public PreparedStatement clearTableEdge() throws SQLException {
 		return getPreparedStatement(CLEAR_TABLE_EDGE);
 	}
 
 	private static final String CLEAR_TABLE_GRAPH_ATTRIBUTE_VALUE = "TRUNCATE TABLE "
-			+ GraphDatabase.GRAPH_ATTRIBUTE_VALUE_TABLE_NAME;
+			+ GraphDatabase.TABLE_GRAPH_ATTRIBUTE_VALUE;
 
 	public PreparedStatement clearTableGraphAttributeValue()
 			throws SQLException {
@@ -1517,42 +1517,42 @@ public class MySqlStatementList extends SqlStatementList {
 	}
 
 	private static final String CLEAR_TABLE_GRAPH_SCHEMA = "TRUNCATE TABLE "
-			+ GraphDatabase.GRAPH_SCHEMA_TABLE_NAME;
+			+ GraphDatabase.TABLE_SCHEMA;
 
 	public PreparedStatement clearTableGraphSchema() throws SQLException {
 		return getPreparedStatement(CLEAR_TABLE_GRAPH_SCHEMA);
 	}
 
 	private static final String CLEAR_TABLE_GRAPH = "TRUNCATE TABLE "
-			+ GraphDatabase.GRAPH_TABLE_NAME;
+			+ GraphDatabase.TABLE_GRAPH;
 
 	public PreparedStatement clearTableGraph() throws SQLException {
 		return getPreparedStatement(CLEAR_TABLE_GRAPH);
 	}
 
 	private static final String CLEAR_TABLE_INCIDENCE = "TRUNCATE TABLE "
-			+ GraphDatabase.INCIDENCE_TABLE_NAME;
+			+ GraphDatabase.TABLE_INCIDENCE;
 
 	public PreparedStatement clearTableIncidence() throws SQLException {
 		return getPreparedStatement(CLEAR_TABLE_INCIDENCE);
 	}
 
 	private static final String CLEAR_TABLE_TYPE = "TRUNCATE TABLE "
-			+ GraphDatabase.TYPE_TABLE_NAME;
+			+ GraphDatabase.TABLE_TYPE;
 
 	public PreparedStatement clearTableType() throws SQLException {
 		return getPreparedStatement(CLEAR_TABLE_TYPE);
 	}
 
 	private static final String CLEAR_TABLE_ATTRIBUTE_VALUE = "TRUNCATE TABLE "
-			+ GraphDatabase.VERTEX_ATTRIBUTE_VALUE_TABLE_NAME;
+			+ GraphDatabase.TABLE_VERTEX_ATTRIBUTE_VALUE;
 
 	public PreparedStatement clearTableAttributeValue() throws SQLException {
 		return getPreparedStatement(CLEAR_TABLE_ATTRIBUTE_VALUE);
 	}
 
 	private static final String CLEAR_TABLE_VERTEX = "TRUNCATE TABLE "
-			+ GraphDatabase.VERTEX_TABLE_NAME + ";";
+			+ GraphDatabase.TABLE_VERTEX + ";";
 
 	public PreparedStatement clearTableVertex() throws SQLException {
 		return getPreparedStatement(CLEAR_TABLE_VERTEX);
