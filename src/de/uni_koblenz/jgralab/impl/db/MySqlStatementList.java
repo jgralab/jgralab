@@ -1495,7 +1495,7 @@ public class MySqlStatementList extends SqlStatementList {
 	}
 
 	private static final String CLEAR_TABLE_EDGE_ATTRIBUTE_VALUE = "TRUNCATE TABLE "
-			+ GraphDatabase.TABLE_EDGE_ATTRIBUTE_VALUE;
+			+ GraphDatabase.TABLE_EDGE_ATTRIBUTE;
 
 	public PreparedStatement clearTableEdgeAttributeValue() throws SQLException {
 		return getPreparedStatement(CLEAR_TABLE_EDGE_ATTRIBUTE_VALUE);
@@ -1509,7 +1509,7 @@ public class MySqlStatementList extends SqlStatementList {
 	}
 
 	private static final String CLEAR_TABLE_GRAPH_ATTRIBUTE_VALUE = "TRUNCATE TABLE "
-			+ GraphDatabase.TABLE_GRAPH_ATTRIBUTE_VALUE;
+			+ GraphDatabase.TABLE_GRAPH_ATTRIBUTE;
 
 	public PreparedStatement clearTableGraphAttributeValue()
 			throws SQLException {
@@ -1545,7 +1545,7 @@ public class MySqlStatementList extends SqlStatementList {
 	}
 
 	private static final String CLEAR_TABLE_ATTRIBUTE_VALUE = "TRUNCATE TABLE "
-			+ GraphDatabase.TABLE_VERTEX_ATTRIBUTE_VALUE;
+			+ GraphDatabase.TABLE_VERTEX_ATTRIBUTE;
 
 	public PreparedStatement clearTableAttributeValue() throws SQLException {
 		return getPreparedStatement(CLEAR_TABLE_ATTRIBUTE_VALUE);
