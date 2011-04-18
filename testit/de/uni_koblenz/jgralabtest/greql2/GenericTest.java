@@ -367,7 +367,7 @@ public class GenericTest {
 	}
 
 	protected JValue evalTestQuery(String query) throws Exception {
-		return evalTestQuery("", query, defaultVersion);
+		return evalTestQueryNoMessage(query, defaultVersion);
 	}
 
 	public TestVersion getDefaultTestVersion() {
@@ -388,6 +388,11 @@ public class GenericTest {
 	protected JValue evalTestQuery(String functionName, String query,
 			TestVersion version) throws Exception {
 		return evalTestQuery(functionName, query, null, getTestGraph(version));
+	}
+
+	protected JValue evalTestQueryNoMessage(String query, TestVersion version)
+			throws Exception {
+		return evalQuery(query, null, getTestGraph(version));
 	}
 
 	protected JValue evalTestQuery(String functionName, String query,
@@ -417,6 +422,20 @@ public class GenericTest {
 
 		JValue result = eval.getEvaluationResult();
 		eval.printEvaluationTimes();
+		return result;
+	}
+
+	protected JValue evalQuery(String query, Optimizer optimizer,
+			Graph datagraph) throws Exception {
+		eval.setQuery(query);
+		eval.setDatagraph(datagraph);
+		eval.setUseSavedOptimizedSyntaxGraph(false);
+
+		setOptimizer(optimizer);
+
+		// when optimizing turn on logging, too.
+		eval.startEvaluation(eval.isOptimize(), true);
+		JValue result = eval.getEvaluationResult();
 		return result;
 	}
 
