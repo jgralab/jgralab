@@ -599,35 +599,15 @@ public class GreqlEvaluatorTest extends GenericTest {
 
 	/*
 	 * Test method for
-	 * 'greql2.evaluator.GreqlEvaluator.evaluateFunctionApplication(FunctionApplication,
-	 * Graph)'
-	 */
-	@Test
-	public void testEvaluateFunctionApplication() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "using FOO: from i: V{Identifier} report i.name end";
-		JValue result = evalTestQuery("FunctionApplication", queryString);
-		assertEquals(5, result.toCollection().size());
-		JValue resultWO = evalTestQuery("FunctionApplication (wo)",
-				queryString, new DefaultOptimizer());
-		assertEquals(result, resultWO);
-	}
-
-	/*
-	 * Test method for
 	 * 'greql2.evaluator.GreqlEvaluator.evaluateSequentialPathDescription(SequentialPathDescription,
 	 * Graph)'
 	 */
 	@Test
 	public void testEvaluateGoalRestriction1() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from var: V{Variable}, def: V{WhereExpression} with var  -->{IsVarOf} & {Definition} -->{IsDefinitionOf} def report var end";
-		JValue result = evalTestQuery("GoalRestriction1", queryString);
-		assertEquals(4, result.toCollection().size());
-		JValue resultWO = evalTestQuery("GoalRestriction1 (wo)", queryString,
-				new DefaultOptimizer());
+		String queryString = "from county: V{localities.County}, junction: V{junctions.Junction} with county -->{localities.ContainsLocality} & {localities.Town!} -->{localities.ContainsCrossroad} junction report junction end";
+		JValue result = evalTestQuery(queryString);
+		assertEquals(3, result.toCollection().size());
+		JValue resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
