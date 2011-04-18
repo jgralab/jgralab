@@ -71,7 +71,7 @@ public class GenericTest {
 	};
 
 	protected static int airportCount, crossroadCount, countyCount,
-			uncontainedCrossroadCount, localityCount;
+			uncontainedCrossroadCount, localityCount, footpathCount;
 
 	private TestVersion defaultVersion = TestVersion.CITY_MAP_GRAPH;
 
@@ -83,6 +83,7 @@ public class GenericTest {
 		queryCountyCount(test);
 		queryUncontainedCrossroadCount(test);
 		queryLocalityCount(test);
+		queryFootpathCount(test);
 		test.setBoundVariable("nll", new JValueImpl());
 	}
 
@@ -102,6 +103,12 @@ public class GenericTest {
 		String queryString = "count(V{localities.County})";
 		JValue result = test.evalTestQuery(queryString);
 		countyCount = result.toInteger();
+	}
+
+	private static void queryFootpathCount(GenericTest test) throws Exception {
+		String queryString = "count(E{connections.Footpath})";
+		JValue result = test.evalTestQuery(queryString);
+		footpathCount = result.toInteger();
 	}
 
 	private static void queryLocalityCount(GenericTest test) throws Exception {
