@@ -1265,8 +1265,6 @@ public class GreqlEvaluatorTest extends GenericTest {
 	 */
 	@Test
 	public void testEvaluateSimplePathDescription1() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
 		String queryString = "from var: V{Definition}, def: V{WhereExpression} with var --> def report var end";
 		JValue result = evalTestQuery("SimplePathDescription1", queryString);
 		assertEquals(4, result.toCollection().size());
@@ -1287,8 +1285,6 @@ public class GreqlEvaluatorTest extends GenericTest {
 
 	@Test
 	public void testEvaluateSimplePathDescription3() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
 		String queryString = "from var: V{Definition}, def: V{BagComprehension, WhereExpression}  with var --> def report var end";
 		JValue result = evalTestQuery("SimplePathDescription3", queryString);
 		assertEquals(4, result.toCollection().size());
