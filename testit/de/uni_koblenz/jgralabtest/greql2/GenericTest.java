@@ -71,7 +71,7 @@ public class GenericTest {
 	};
 
 	protected static int airportCount, crossroadCount, countyCount,
-			uncontainedCrossroadCount;
+			uncontainedCrossroadCount, localityCount;
 
 	private TestVersion defaultVersion = TestVersion.CITY_MAP_GRAPH;
 
@@ -82,35 +82,38 @@ public class GenericTest {
 		queryCrossroadCount(test);
 		queryCountyCount(test);
 		queryUncontainedCrossroadCount(test);
+		queryLocalityCount(test);
 		test.setBoundVariable("nll", new JValueImpl());
 	}
 
 	private static void queryAirportCount(GenericTest test) throws Exception {
 		String queryString = "count(V{junctions.Airport})";
-		JValue result = test.evalTestQuery("static Query", queryString,
-				TestVersion.CITY_MAP_GRAPH);
+		JValue result = test.evalTestQuery(queryString);
 		airportCount = result.toInteger();
 	}
 
 	private static void queryCrossroadCount(GenericTest test) throws Exception {
 		String queryString = "count(V{junctions.Crossroad})";
-		JValue result = test.evalTestQuery("static Query", queryString,
-				TestVersion.CITY_MAP_GRAPH);
+		JValue result = test.evalTestQuery(queryString);
 		crossroadCount = result.toInteger();
 	}
 
 	private static void queryCountyCount(GenericTest test) throws Exception {
 		String queryString = "count(V{localities.County})";
-		JValue result = test.evalTestQuery("static Query", queryString,
-				TestVersion.CITY_MAP_GRAPH);
+		JValue result = test.evalTestQuery(queryString);
 		countyCount = result.toInteger();
+	}
+
+	private static void queryLocalityCount(GenericTest test) throws Exception {
+		String queryString = "count(V{localities.Locality})";
+		JValue result = test.evalTestQuery(queryString);
+		localityCount = result.toInteger();
 	}
 
 	private static void queryUncontainedCrossroadCount(GenericTest test)
 			throws Exception {
 		String queryString = "sum(from r:V{junctions.Crossroad} report depth(pathSystem(r, <--{localities.ContainsCrossroad})) end)";
-		JValue result = test.evalTestQuery("static Query", queryString,
-				TestVersion.CITY_MAP_GRAPH);
+		JValue result = test.evalTestQuery(queryString);
 
 		uncontainedCrossroadCount = crossroadCount
 				- result.toDouble().intValue();
