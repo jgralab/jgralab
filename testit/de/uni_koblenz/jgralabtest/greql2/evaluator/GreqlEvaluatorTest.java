@@ -243,16 +243,21 @@ public class GreqlEvaluatorTest extends GenericTest {
 	 */
 	@Test
 	public void testEvaluateBackwardVertexSet2() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from w: V{WhereExpression} report w <--{IsDefinitionOf} [<--{IsVarOf}] end";
-		JValue result = evalTestQuery("BackwardVertexSet2", queryString);
-		assertEquals(1, result.toCollection().size());
+		String queryString = "from w: V{junctions.Junction} report w <--{localities.ContainsCrossroad} [<--{localities.ContainsLocality}] end";
+		JValue result = evalTestQuery(queryString);
+
+		assertEquals(crossroadCount + airportCount, result.toCollection()
+				.size());
 		for (JValue j : result.toCollection()) {
-			assertEquals(8, j.toCollection().size());
+			for (JValue value : j.toCollection()) {
+				Vertex vertex = value.toVertex();
+				if (!(vertex instanceof Locality || vertex instanceof County)) {
+					fail();
+				}
+			}
 		}
 		JValue resultWO = evalTestQuery("BackwardVertexSet2 (wo)", queryString,
-				new DefaultOptimizer());
+				new DefaultOptimizer(), TestVersion.CITY_MAP_GRAPH);
 		assertEquals(result, resultWO);
 	}
 
