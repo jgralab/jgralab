@@ -4,7 +4,9 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
+import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueBag;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
@@ -38,12 +40,8 @@ public class GreqlConstructions extends GenericTest {
 	@Test
 	public void testPathSystemOnGreqlGraph() throws Exception {
 		String queryString = "extractPath(pathSystem(getVertex(1), (<>--|(<-- <->))*), getVertex(34))";
-		JValue result = evalTestQuery(
-				"PathSystemOnGreqlGraph",
-				queryString,
-				GraphIO.loadGraphFromFile(
-						"/Users/dbildh/repositories/ist/jgralab/testit/testgraphs/greqltestgraph.tg",
-						null));
+		JValue result = evalTestQuery("PathSystemOnGreqlGraph", queryString,
+				loadTestGraph());
 		JValuePath path = result.toPath();
 		System.out.println("Path has length " + path.toPath().pathLength());
 		System.out.println(path);
@@ -52,17 +50,21 @@ public class GreqlConstructions extends GenericTest {
 	@Test
 	public void testPathSystemOnGreqlGraph2() throws Exception {
 		String queryString = "extractPath(pathSystem(getVertex(1), (<>--|(<-- <->))*))";
-		JValue result = evalTestQuery(
-				"PathSystemOnGreqlGraph",
-				queryString,
-				GraphIO.loadGraphFromFile(
-						"/Users/dbildh/repositories/ist/jgralab/testit/testgraphs/greqltestgraph.tg",
-						null));
+		JValue result = evalTestQuery("PathSystemOnGreqlGraph", queryString,
+				loadTestGraph());
 		for (JValue e : result.toJValueSet()) {
 			JValuePath path = e.toPath();
 			System.out.println("Path has length " + path.toPath().pathLength());
 			System.out.println(path);
 		}
+
+	}
+
+	private Graph loadTestGraph() throws GraphIOException {
+		return GraphIO
+				.loadGraphFromFileWithStandardSupport(
+						"/Users/dbildh/repositories/ist/jgralab/testit/testgraphs/greqltestgraph.tg",
+						null);
 
 	}
 }
