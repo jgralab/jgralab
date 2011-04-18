@@ -34,6 +34,7 @@
  */
 package de.uni_koblenz.jgralab.impl.db;
 
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class DerbyDb extends GraphDatabase {
@@ -54,4 +55,52 @@ public class DerbyDb extends GraphDatabase {
 		addPrimaryKeyConstraints();
 		// this.addStoredProcedures();
 	}
+
+	@Override
+	public void clearAllTables() throws SQLException {
+		DerbyStatementList derbyStatementList = (DerbyStatementList) sqlStatementList;
+		
+		PreparedStatement statement;
+		
+		statement = derbyStatementList.clearTableAttributeValue();
+		statement.execute();
+		statement.close();
+		
+		statement = derbyStatementList.clearTableEdgeAttributeValue();
+		statement.execute();
+		statement.close();
+		
+		statement = derbyStatementList.clearTableGraphAttributeValue();
+		statement.execute();
+		statement.close();
+		
+		statement = derbyStatementList.clearTableIncidence();
+		statement.execute();
+		statement.close();
+		
+		statement = derbyStatementList.clearTableEdge();
+		statement.execute();
+		statement.close();
+		
+		statement = derbyStatementList.clearTableVertex();
+		statement.execute();
+		statement.close();
+		
+		statement = derbyStatementList.clearTableGraph();
+		statement.execute();
+		statement.close();
+		
+		statement = derbyStatementList.clearTableAttribute();
+		statement.execute();
+		statement.close();	
+		
+		statement = derbyStatementList.clearTableType();
+		statement.execute();
+		statement.close();	
+		
+		statement = derbyStatementList.clearTableGraphSchema();
+		statement.execute();
+		statement.close();
+	}
+
 }

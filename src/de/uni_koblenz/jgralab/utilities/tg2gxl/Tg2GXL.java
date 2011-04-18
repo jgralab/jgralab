@@ -69,6 +69,7 @@ import de.uni_koblenz.jgralab.schema.LongDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
 import de.uni_koblenz.jgralab.schema.SetDomain;
+import de.uni_koblenz.jgralab.schema.StringDomain;
 import de.uni_koblenz.jgralab.utilities.tg2schemagraph.Schema2SchemaGraph;
 import de.uni_koblenz.jgralab.utilities.tg2whatever.Tg2Whatever;
 
@@ -162,16 +163,16 @@ public class Tg2GXL extends Tg2Whatever {
 
 			out.println("<graph id=\""
 					+ uniqueGraphClassName
-					+ "Graph\" edgeids=\" true\" edgemode=\" directed\" hypergraph=\" false\">");
+					+ "Graph\" edgeids=\"true\" edgemode=\"directed\" hypergraph=\"false\">");
 			out.println("<type xlink:href=\"" + gxlMetaSchema
-					+ "#gxl-1.0\" xlink:type=\" simple\"/>");
+					+ "#gxl-1.0\" xlink:type=\"simple\"/>");
 		} else {
 			out.println("<graph id=\""
 					+ graph.getId()
-					+ "\" edgeids=\" true\" edgemode=\" directed\" hypergraph=\" false\">");
+					+ "\" edgeids=\"true\" edgemode=\"directed\" hypergraph=\"false\">");
 			out.println("<type xlink:href=\"" + schemaGraphOutputName + "#"
 					+ graph.getGraphClass().getQualifiedName()
-					+ "\" xlink:type=\" simple\"/>");
+					+ "\" xlink:type=\"simple\"/>");
 		}
 	}
 
@@ -204,11 +205,8 @@ public class Tg2GXL extends Tg2Whatever {
 			}
 			out.println("<type xlink:href=\"" + gxlMetaSchema + "#"
 					+ grUML2GXL.get(elemClass.getQualifiedName())
-					+ "\" xlink:type=\" simple\"/>");
-			// print attributes
-			if (elemClass.getAttributeCount() > 0) {
-				printAttributes(out, v);
-			}
+					+ "\" xlink:type=\"simple\"/>");
+			printAttributes(out, v);
 			out.println("</node>");
 		}
 
@@ -216,12 +214,8 @@ public class Tg2GXL extends Tg2Whatever {
 			out.println("<node id=\"v:" + v.getId() + "\">");
 			out.println("<type xlink:href=\"" + schemaGraphOutputName + "#"
 					+ elemClass.getQualifiedName()
-					+ "\" xlink:type=\" simple\"/>");
-
-			// print attributes
-			if (elemClass.getAttributeCount() > 0) {
-				printAttributes(out, v);
-			}
+					+ "\" xlink:type=\"simple\"/>");
+			printAttributes(out, v);
 			out.println("</node>");
 		}
 	}
@@ -279,12 +273,9 @@ public class Tg2GXL extends Tg2Whatever {
 					+ "\" from=\"" + thisVertex + "\">");
 			out.println("<type xlink:href=\"" + gxlMetaSchema + "#"
 					+ grUML2GXL.get(elemClass.getQualifiedName())
-					+ "\" xlink:type=\" simple\"/>");
+					+ "\" xlink:type=\"simple\"/>");
 
-			// printAttributes
-			if (elemClass.getAttributeCount() > 0) {
-				printAttributes(out, e);
-			}
+			printAttributes(out, e);
 			out.println("</edge>");
 		} else if (!printSchema) {
 			int toOrder = getEdgeIncidence(e.getReversedEdge(), e.getThat());
@@ -295,11 +286,10 @@ public class Tg2GXL extends Tg2Whatever {
 					+ "\" fromorder=\" " + fromOrder + "\">");
 			out.println("<type xlink:href=\"" + schemaGraphOutputName + "#"
 					+ elemClass.getQualifiedName()
-					+ "\" xlink:type=\" simple\"/>");
-			// printAttributes
-			if (elemClass.getAttributeCount() > 0) {
-				printAttributes(out, e);
-			}
+					+ "\" xlink:type=\"simple\"/>");
+
+			printAttributes(out, e);
+
 			out.println("</edge>");
 		}
 	}
@@ -329,7 +319,6 @@ public class Tg2GXL extends Tg2Whatever {
 	 */
 
 	private void printAttributes(PrintStream out, AttributedElement elem) {
-
 		for (Attribute attr : elem.getAttributedElementClass()
 				.getAttributeList()) {
 
@@ -361,34 +350,34 @@ public class Tg2GXL extends Tg2Whatever {
 			printValue(out, dom, val);
 		} else {
 			if (dom instanceof SetDomain) {
-				out.println("<Set>");
+				out.println("<set>");
 				if (val != null) {
 					for (Object o : (Set<?>) val) {
 						printComposite(out, ((SetDomain) dom).getBaseDomain(),
 								o);
 					}
 				}
-				out.println("</Set>");
+				out.println("</set>");
 			}
 			if (dom instanceof ListDomain) {
-				out.println("<List>");
+				out.println("<list>");
 				for (Object o : (List<?>) val) {
 					printComposite(out, ((ListDomain) dom).getBaseDomain(), o);
 				}
-				out.println("</List>");
+				out.println("</list>");
 			}
 			if (dom instanceof RecordDomain) {
-				out.println("<Tup>");
-				out.println("<String>");
+				out.println("<tup>");
+				out.println("<string>");
 				out.println("" + ((RecordDomain) dom).getQualifiedName());
-				out.println("</String>");
+				out.println("</string>");
 				Collection<RecordComponent> components = ((RecordDomain) dom)
 						.getComponents();
 				for (RecordComponent component : components) {
-					out.println("<Tup>");
-					out.println("<String>");
+					out.println("<tup>");
+					out.println("<string>");
 					out.println("" + stringQuote(component.getName()));
-					out.println("</String>");
+					out.println("</string>");
 					try {
 						printComposite(out, component.getDomain(),
 								val.getClass().getField(component.getName())
@@ -396,9 +385,9 @@ public class Tg2GXL extends Tg2Whatever {
 					} catch (Exception e) {
 
 					}
-					out.println("</Tup>");
+					out.println("</tup>");
 				}
-				out.println("</Tup>");
+				out.println("</tup>");
 			}
 		}
 	}
@@ -430,24 +419,24 @@ public class Tg2GXL extends Tg2Whatever {
 		}
 
 		if (dom instanceof BooleanDomain) {
-			out.println("<Bool>");
-			out.println("" + attrValue);
-			out.println("</Bool>");
+			out.print("<bool>");
+			out.print("" + attrValue);
+			out.println("</bool>");
 		}
 		if (dom instanceof DoubleDomain) {
-			out.println("<Float>");
-			out.println("" + attrValue);
-			out.println("</Float>");
+			out.print("<float>");
+			out.print("" + attrValue);
+			out.println("<float>");
 		}
-		if (dom instanceof EnumDomain) {
-			out.println("<String>");
-			out.println("" + attrValue);
-			out.println("</String>");
+		if ((dom instanceof EnumDomain) || (dom instanceof StringDomain)) {
+			out.print("<string>");
+			out.print("" + attrValue);
+			out.println("</string>");
 		}
 		if ((dom instanceof IntegerDomain) || (dom instanceof LongDomain)) {
-			out.println("<Int>");
-			out.println("" + attrValue);
-			out.println("</Int>");
+			out.print("<int>");
+			out.print("" + attrValue);
+			out.println("</int>");
 		}
 	}
 

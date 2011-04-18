@@ -141,7 +141,7 @@ public class TGTree extends JFrame {
 		}
 		Graph g = GraphIO.loadSchemaAndGraphFromFile(args[0],
 				CodeGeneratorConfiguration.MINIMAL,
-				new ConsoleProgressFunction());
+				new ConsoleProgressFunction("Loading"));
 		TGTree tgtree = new TGTree(g);
 		tgtree.setVisible(true);
 	}

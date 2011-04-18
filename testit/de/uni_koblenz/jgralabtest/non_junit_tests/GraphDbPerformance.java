@@ -24,9 +24,9 @@ import de.uni_koblenz.jgralabtest.schemas.algolib.weighted.WeightedSchema;
 public class GraphDbPerformance {
 
 	private static final String GRAPH_ID = "Hugo";
-	private static final int VERTICES_PER_DIMENSION = 25;
+	private static final int VERTICES_PER_DIMENSION = 10;
 
-	private static final int REPEAT = 10;
+	private static final int REPEAT = 1;
 	private static final long SEED = 42l;
 
 	private static enum RunType {
@@ -98,8 +98,8 @@ public class GraphDbPerformance {
 
 		for (RunConfiguration currentConfiguration : runs) {
 			performRun(currentConfiguration);
+			gdb.commitTransaction();
 		}
-		gdb.commitTransaction();
 		System.out.println("Fini.");
 	}
 
@@ -115,6 +115,8 @@ public class GraphDbPerformance {
 			gdb.commitTransaction();
 		} catch (SQLException e) {
 			e.printStackTrace();
+			// gdb.rollback();
+			// gdb.applyDbSchema();
 		}
 		try {
 			if (!gdb.contains(WeightedSchema.instance())) {
@@ -216,7 +218,7 @@ public class GraphDbPerformance {
 		DepthFirstSearch dfs = new RecursiveDepthFirstSearch(graph);
 		try {
 			dfs.undirected().execute(graph.getFirstVertex());
-			System.out.println(dfs.getNum());
+			// System.out.println(dfs.getNum());
 		} catch (AlgorithmTerminatedException e) {
 		}
 	}

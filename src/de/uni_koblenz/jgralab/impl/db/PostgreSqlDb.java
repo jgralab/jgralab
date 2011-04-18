@@ -84,4 +84,10 @@ public class PostgreSqlDb extends GraphDatabase {
 		super.addIndices();
 		cluster();
 	}
+
+	@Override
+	public void clearAllTables() throws SQLException {
+		PreparedStatement statement = sqlStatementList.clearAllTables();
+		statement.execute();
+	}
 }

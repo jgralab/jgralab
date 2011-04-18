@@ -233,7 +233,7 @@ public class Tg2Dot extends Tg2Whatever {
 		converter.setOutputFile(outputFileName);
 		converter.setGraphVizOutputFormat(format);
 
-		if (reversedEdgeTypes != null) {
+		if ((reversedEdgeTypes != null) && (reversedEdgeTypes.length > 0)) {
 			HashSet<Class<? extends AttributedElement>> revEdgeTypes = new HashSet<Class<? extends AttributedElement>>();
 			Collections.addAll(revEdgeTypes, reversedEdgeTypes);
 			converter.setReversedEdgeTypes(revEdgeTypes);
@@ -260,6 +260,19 @@ public class Tg2Dot extends Tg2Whatever {
 		converter.convert();
 	}
 
+	public static void convertGraph(BooleanGraphMarker marker,
+			String outputFileName, GraphVizOutputFormat format,
+			boolean reversedEdges,
+			Class<? extends AttributedElement>... reversedEdgeTypes)
+			throws IOException {
+		Tg2Dot converter = createConverterAndSetAttributes(marker.getGraph(),
+				reversedEdges, reversedEdgeTypes);
+		converter.setOutputFile(outputFileName);
+		converter.setGraphVizOutputFormat(format);
+		converter.setGraphMarker(marker);
+		converter.convert();
+	}
+
 	public void pipeToGraphViz(GraphVizProgram prog) throws IOException {
 		String executionString = String.format("%s%s -T%s -o%s", prog.path,
 				prog.layouter, prog.outputFormat, outputName);
@@ -274,7 +287,11 @@ public class Tg2Dot extends Tg2Whatever {
 			};
 		}.start();
 		try {
-			process.waitFor();
+			int retVal = process.waitFor();
+			if (retVal != 0) {
+				throw new RuntimeException(
+						"GraphViz process failed! Error code = " + retVal);
+			}
 		} catch (InterruptedException e) {
 			throw new RuntimeException(e);
 		}
@@ -328,21 +345,28 @@ public class Tg2Dot extends Tg2Whatever {
 		printIncidenceIndices = comLine.hasOption('i');
 		printElementSequenceIndices = comLine.hasOption('m');
 
-		String gvLayouter = comLine.hasOption('l') ? comLine
-				.getOptionValue('l') : null;
-		graphVizLayouter = GraphVizLayouter.valueOf(gvLayouter);
-		if (graphVizLayouter == null) {
-			throw new RuntimeException("Unknown layouter '" + gvLayouter
-					+ "'. Possible values are " + GraphVizLayouter.values());
+		String gvLayouter = comLine.getOptionValue('l');
+
+		if (gvLayouter != null) {
+			try {
+				graphVizLayouter = GraphVizLayouter.valueOf(gvLayouter);
+			} catch (IllegalArgumentException e) {
+				throw new RuntimeException("Unknown layouter '" + gvLayouter
+						+ "'. Possible values are "
+						+ GraphVizLayouter.describeValues());
+			}
 		}
 
-		String gvOutputFormat = comLine.hasOption('t') ? comLine
-				.getOptionValue('t') : null;
-
-		graphVizOutputFormat = GraphVizOutputFormat.valueOf(gvOutputFormat);
-		if (graphVizOutputFormat == null) {
-			throw new RuntimeException("Unknown output format  '" + gvLayouter
-					+ "'. Possible values are " + GraphVizOutputFormat.values());
+		String gvOutputFormat = comLine.getOptionValue('t');
+		if (gvOutputFormat != null) {
+			try {
+				graphVizOutputFormat = GraphVizOutputFormat
+						.valueOf(gvOutputFormat);
+			} catch (IllegalArgumentException e) {
+				throw new RuntimeException("Unknown output format  '"
+						+ gvOutputFormat + "'. Possible values are "
+						+ GraphVizOutputFormat.describeValues());
+			}
 		}
 	}
 
@@ -469,14 +493,9 @@ public class Tg2Dot extends Tg2Whatever {
 	 * Starts the Graph in the output file.
 	 */
 	private void startDotGraph() {
-		StringBuilder sb = new StringBuilder();
-		// Names have to start with a character
-		sb.append(graph.getM1Class().getSimpleName());
-		sb.append("_");
-		sb.append(graph.getId().replace('-', '_'));
-		sb.append("__");
-		sb.append(graph.getGraphVersion());
-		writer.startGraph(GraphType.DIRECTED, sb.toString());
+		writer.startGraph(GraphType.DIRECTED, graph.getM1Class()
+				.getSimpleName(),
+				graph.getId() + " / " + graph.getGraphVersion());
 	}
 
 	@Override
