@@ -532,7 +532,8 @@ public class GreqlEvaluatorTest extends GenericTest {
 		assertEquals(result, resultWO);
 	}
 
-	private JValue evalQueryWithOptimizer(String queryString) throws Exception {
+	protected JValue evalQueryWithOptimizer(String queryString)
+			throws Exception {
 		return evalTestQuery("", queryString, new DefaultOptimizer(),
 				TestVersion.CITY_MAP_GRAPH);
 	}
@@ -589,13 +590,10 @@ public class GreqlEvaluatorTest extends GenericTest {
 	 */
 	@Test
 	public void testEvaluateForwardVertexSet() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from var: V{Variable} report var --> end";
-		JValue result = evalTestQuery("ForwardVertexSet", queryString);
-		assertEquals(5, result.toCollection().size());
-		JValue resultWO = evalTestQuery("ForwardVertexSet (wo)", queryString,
-				new DefaultOptimizer());
+		String queryString = "from airport: V{junctions.Airport} report airport --> end";
+		JValue result = evalTestQuery(queryString);
+		assertEquals(airportCount, result.toCollection().size());
+		JValue resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
