@@ -180,8 +180,7 @@ public class GreqlEvaluatorTest extends GenericTest {
 				fail();
 			}
 		}
-		JValue resultWO = evalTestQuery("AlternativePathDescription2 (wo)",
-				queryString, new DefaultOptimizer(), TestVersion.CITY_MAP_GRAPH);
+		JValue resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 
 		System.out.println(result);
@@ -192,8 +191,7 @@ public class GreqlEvaluatorTest extends GenericTest {
 		String queryString = "from airport: V{junctions.Airport} with airport  <->^2 airport report airport end";
 		JValue result = evalTestQuery(queryString);
 		assertEquals(airportCount, result.toCollection().size());
-		JValue resultWO = evalTestQuery("ExponentiatedPathDescription (wo)",
-				queryString, new DefaultOptimizer(), TestVersion.CITY_MAP_GRAPH);
+		JValue resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
@@ -220,8 +218,7 @@ public class GreqlEvaluatorTest extends GenericTest {
 				}
 			}
 		}
-		JValue resultWO = evalTestQuery("BackwardVertexSet1 (wo)", queryString,
-				new DefaultOptimizer(), TestVersion.CITY_MAP_GRAPH);
+		JValue resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
@@ -256,8 +253,7 @@ public class GreqlEvaluatorTest extends GenericTest {
 				}
 			}
 		}
-		JValue resultWO = evalTestQuery("BackwardVertexSet2 (wo)", queryString,
-				new DefaultOptimizer(), TestVersion.CITY_MAP_GRAPH);
+		JValue resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
@@ -392,8 +388,7 @@ public class GreqlEvaluatorTest extends GenericTest {
 				result.toCollection().toJValueBag()
 						.getQuantity(new JValueImpl(457)));
 
-		JValue resultWO = evalTestQuery("BagConstruction (wo)", queryString,
-				new DefaultOptimizer());
+		JValue resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
@@ -410,8 +405,7 @@ public class GreqlEvaluatorTest extends GenericTest {
 				+ "reportSet locality end";
 		JValue result = evalTestQuery(queryString);
 		assertEquals(localityCount, result.toCollection().size());
-		JValue resultWO = evalTestQuery("ComplexDescription (wo)", queryString,
-				new DefaultOptimizer(), TestVersion.CITY_MAP_GRAPH);
+		JValue resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
@@ -425,8 +419,7 @@ public class GreqlEvaluatorTest extends GenericTest {
 		String queryString = "1=1?1:2";
 		JValue result = evalTestQuery("ConditionalExpression", queryString);
 		assertEquals(1, (int) result.toInteger());
-		JValue resultWO = evalTestQuery("ConditionalExpression (wo)",
-				queryString, new DefaultOptimizer());
+		JValue resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
@@ -435,8 +428,7 @@ public class GreqlEvaluatorTest extends GenericTest {
 		String queryString = "1=2?1:2";
 		JValue result = evalTestQuery("ConditionalExpression2", queryString);
 		assertEquals(2, (int) result.toInteger());
-		JValue resultWO = evalTestQuery("ConditionalExpression2 (wo)",
-				queryString, new DefaultOptimizer());
+		JValue resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
@@ -445,8 +437,7 @@ public class GreqlEvaluatorTest extends GenericTest {
 		String queryString = "false ? 1 : 2";
 		JValue result = evalTestQuery("ConditionalExpression3", queryString);
 		assertEquals(2, (int) result.toInteger());
-		JValue resultWO = evalTestQuery("ConditionalExpression3 (wo)",
-				queryString, new DefaultOptimizer());
+		JValue resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
@@ -462,8 +453,7 @@ public class GreqlEvaluatorTest extends GenericTest {
 				+ "report target end";
 		JValue result = evalTestQuery(queryString);
 		assertEquals(1, result.toCollection().size());
-		JValue resultWO = evalTestQuery("EdgePathDescription (wo)",
-				queryString, new DefaultOptimizer(), TestVersion.CITY_MAP_GRAPH);
+		JValue resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
@@ -479,8 +469,7 @@ public class GreqlEvaluatorTest extends GenericTest {
 				+ "with origin <-edge-> target report target end end)";
 		JValue result = evalTestQuery(queryString);
 		assertEquals(1, result.toCollection().size());
-		JValue resultWO = evalTestQuery("EdgePathDescription2 (wo)",
-				queryString, new DefaultOptimizer(), TestVersion.CITY_MAP_GRAPH);
+		JValue resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
@@ -516,8 +505,7 @@ public class GreqlEvaluatorTest extends GenericTest {
 		for (JValue j : result.toCollection()) {
 			assertEquals(6, j.toCollection().size());
 		}
-		JValue resultWO = evalTestQuery("EdgePathDescription4 (wo)",
-				queryString, new DefaultOptimizer(), TestVersion.CITY_MAP_GRAPH);
+		JValue resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
@@ -531,47 +519,39 @@ public class GreqlEvaluatorTest extends GenericTest {
 		String queryString = "from footpath:E{connections.Footpath} report footpath end";
 		JValue result = evalTestQuery(queryString);
 		assertEquals(footpathCount, result.toCollection().size());
-		JValue resultWO = evalTestQuery("EdgeSetExpression (wo)", queryString,
-				new DefaultOptimizer(), TestVersion.CITY_MAP_GRAPH);
+		JValue resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
 	@Test
 	public void testEvaluateEdgeSubgraphExpression1() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from i: E in eSubgraph{IsDefinitionOf} report i end";
-		JValue result = evalTestQuery("EdgeSubgraphExpression1", queryString);
-		assertEquals(4, result.toCollection().size());
-		JValue resultWO = evalTestQuery("EdgeSubgraphExpression1 (wo)",
-				queryString, new DefaultOptimizer());
+		String queryString = "from footpath: E in eSubgraph{connections.Footpath} report footpath end";
+		JValue result = evalTestQuery(queryString);
+		assertEquals(footpathCount, result.toCollection().size());
+		JValue resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
+	}
+
+	private JValue evalQueryWithOptimizer(String queryString) throws Exception {
+		return evalTestQuery("", queryString, new DefaultOptimizer(),
+				TestVersion.CITY_MAP_GRAPH);
 	}
 
 	@Test
 	public void testEvaluateEdgeSubgraphExpression2() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from i: V in eSubgraph{IsDefinitionOf} report i end";
-		JValue result = evalTestQuery("EdgeSubgraphExpression2", queryString);
-		assertEquals(5, result.toCollection().size());
-		JValue resultWO = evalTestQuery("EdgeSubgraphExpression2 (wo)",
-				queryString, new DefaultOptimizer());
+		String queryString = "from i: V in eSubgraph{connections.Footpath} report i end";
+		JValue result = evalTestQuery(queryString);
+		assertEquals(24, result.toCollection().size());
+		JValue resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
 	@Test
 	public void testEvaluateEdgeSubgraphExpression3() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from i: V in eSubgraph{^IsDefinitionOf} report i end";
-		JValue result = evalTestQuery("EdgeSubgraphExpression3", queryString);
-		assertEquals(16, result.toCollection().size()); /*
-														 * with new parser only
-														 * 16
-														 */
-		JValue resultWO = evalTestQuery("EdgeSubgraphExpression3 (wo)",
-				queryString, new DefaultOptimizer());
+		String queryString = "from i: V in eSubgraph{^connections.Footpath} report i end";
+		JValue result = evalTestQuery(queryString);
+		assertEquals(156, result.toCollection().size());
+		JValue resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
@@ -1570,8 +1550,7 @@ public class GreqlEvaluatorTest extends GenericTest {
 		JValue result = evalTestQuery(queryString);
 		containsAllElements(COUNTIES, result.toCollection());
 
-		JValue resultWO = evalTestQuery("VertexSetExpression (wo)",
-				queryString, new DefaultOptimizer(), TestVersion.CITY_MAP_GRAPH);
+		JValue resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
@@ -1597,8 +1576,7 @@ public class GreqlEvaluatorTest extends GenericTest {
 		JValue result = evalTestQuery(queryString);
 		containsAllElements(COUNTIES, result.toCollection());
 
-		JValue resultWO = evalTestQuery("VertexSubgraphExpression2 (wo)",
-				queryString, new DefaultOptimizer(), TestVersion.CITY_MAP_GRAPH);
+		JValue resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
@@ -1608,8 +1586,7 @@ public class GreqlEvaluatorTest extends GenericTest {
 		JValue result = evalTestQuery(queryString);
 
 		containsAllElements(COUNTIES, result.toCollection());
-		JValue resultWO = evalTestQuery("VertexSubgraphExpression3 (wo)",
-				queryString, new DefaultOptimizer(), TestVersion.CITY_MAP_GRAPH);
+		JValue resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
@@ -1630,8 +1607,7 @@ public class GreqlEvaluatorTest extends GenericTest {
 
 		containsAllElements(LOCALITIES_WITHOUT_CITIES, result.toCollection());
 
-		JValue resultWO = evalTestQuery("VertexSubgraphExpression5 (wo)",
-				queryString, new DefaultOptimizer(), TestVersion.CITY_MAP_GRAPH);
+		JValue resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
