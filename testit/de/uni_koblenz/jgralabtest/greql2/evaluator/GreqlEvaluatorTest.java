@@ -659,12 +659,6 @@ public class GreqlEvaluatorTest extends GenericTest {
 		assertEquals(result, resultWO);
 	}
 
-
-	@Test
-	public void testEvaluateIntermediateVertexPathDescription()
-			throws Exception {
-	}
-
 	/*
 	 * Test method for
 	 * 'greql2.evaluator.GreqlEvaluator.evaluateIteratedPathDescription(IteratedPathDescription,
