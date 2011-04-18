@@ -659,18 +659,6 @@ public class GreqlEvaluatorTest extends GenericTest {
 		assertEquals(result, resultWO);
 	}
 
-	@Test
-	public void testEvaluateIntermediateVertexDescription() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from var: V{Variable}, def:V{Definition}, whr: V{WhereExpression} with isReachable(var, whr, -->{IsVarOf} def -->{IsDefinitionOf}) report var end";
-		JValue result = evalTestQuery("IntermediateVertexDescription",
-				queryString);
-		assertEquals(4, result.toCollection().size());
-		JValue resultWO = evalTestQuery("IntermediateVertexDescription (wo)",
-				queryString, new DefaultOptimizer());
-		assertEquals(result, resultWO);
-	}
 
 	@Test
 	public void testEvaluateIntermediateVertexPathDescription()
