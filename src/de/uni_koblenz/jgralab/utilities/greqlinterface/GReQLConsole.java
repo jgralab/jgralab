@@ -66,7 +66,8 @@ import de.uni_koblenz.jgralab.schema.Schema;
 @WorkInProgress(responsibleDevelopers = "dbildh")
 public class GReQLConsole {
 
-	Graph graph = null;
+	private Graph graph = null;
+	private boolean verbose = false;
 
 	/**
 	 * Creates a new instance of this class, reads the graph and the schema from
@@ -74,16 +75,21 @@ public class GReQLConsole {
 	 * 
 	 * @param filename
 	 *            the name of the file that contains the schema and the graph
+	 * @param verbose
+	 *            produce verbose output
 	 */
-	public GReQLConsole(String filename, boolean loadSchema) {
+	public GReQLConsole(String filename, boolean loadSchema, boolean verbose) {
+		this.verbose = verbose;
 		try {
 			if (loadSchema) {
-				System.out.println("Loading schema from file");
+				if (verbose) {
+					System.out.println("Loading schema from file");
+				}
 				Schema schema = GraphIO.loadSchemaFromFile(filename);
 				schema.compile(CodeGeneratorConfiguration.MINIMAL);
 			}
 			graph = GraphIO.loadGraphFromFileWithStandardSupport(filename,
-					new ConsoleProgressFunction());
+					(verbose ? new ConsoleProgressFunction("Loading") : null));
 		} catch (GraphIOException e) {
 			e.printStackTrace();
 		}
@@ -91,7 +97,8 @@ public class GReQLConsole {
 
 	/**
 	 * Loads all queries stored in a given file and returns a list of query
-	 * strings
+	 * strings. Multiple queries have to be separated by lines containing only
+	 * "//--".
 	 * 
 	 * @param queryFile
 	 *            the file with queries to load
@@ -107,17 +114,10 @@ public class GReQLConsole {
 			reader = new BufferedReader(new FileReader(queryFile));
 			String line = null;
 			while ((line = reader.readLine()) != null) {
-				String trimmedLine = line.trim();
-				if (trimmedLine.startsWith("//")) {
-					continue;
-				}
-				if (trimmedLine.length() == 0) {
-					// found end of a query
-					if (builder.length() != 0) {
-						String query = builder.toString();
-						builder = new StringBuilder();
-						queries.add(query);
-					}
+				if (line.startsWith("//--")) {
+					// End of query, and this line can be ignored.
+					queries.add(builder.toString());
+					builder = new StringBuilder();
 				} else {
 					builder.append(line + " \n");
 				}
@@ -147,22 +147,19 @@ public class GReQLConsole {
 		try {
 			Map<String, JValue> boundVariables = new HashMap<String, JValue>();
 			for (String query : loadQueries(queryFile)) {
-				System.out.println("Evaluating query: ");
-				System.out.println(query);
+				if (verbose) {
+					System.out.println("Evaluating query: ");
+					System.out.println(query);
+				}
 				GreqlEvaluator eval = new GreqlEvaluator(query, graph,
-						boundVariables, new ConsoleProgressFunction());
+						boundVariables,
+						(verbose ? new ConsoleProgressFunction() : null));
 				// eval.setOptimize(false);
 				eval.setEvaluationLogger(null);
 				eval.startEvaluation();
 
 				result = eval.getEvaluationResult();
-				System.out.println("Query parsing took " + eval.getParseTime()
-						+ " Milliseconds");
-				System.out.println("Optimization took "
-						+ eval.getOptimizationTime() + " Milliseconds");
-				System.out.println("Whole evaluation took "
-						+ eval.getOverallEvaluationTime() + " Milliseconds");
-				if (result.isCollection()) {
+				if (verbose && result.isCollection()) {
 					System.out.println("Result size is: "
 							+ result.toCollection().size());
 				}
@@ -196,26 +193,19 @@ public class GReQLConsole {
 		CommandLine comLine = processCommandLineOptions(args);
 		assert comLine != null;
 
-		// String queryFile = null;
-		// String inputFile = null;
-
-		// if (args.length < 2) {
-		// System.out.println("GReQL2 QUERY_FILE INPUT_FILE [HTML_FILE]");
-		// System.exit(-1);
-		// }
-
-		String queryFile = comLine.getOptionValue("q");// args[0];
-		String inputFile = comLine.getOptionValue("g");// args[1];
-		boolean loadSchema = comLine.hasOption("s"); // args[1];
+		String queryFile = comLine.getOptionValue("q");
+		String graphFile = comLine.getOptionValue("g");
+		boolean loadSchema = comLine.hasOption("s");
 
 		JGraLab.setLogLevel(Level.SEVERE);
-		GReQLConsole example = new GReQLConsole(inputFile, loadSchema);
-		JValue result = example.performQuery(new File(queryFile));
+		GReQLConsole console = new GReQLConsole(graphFile, loadSchema,
+				comLine.hasOption('v'));
+		JValue result = console.performQuery(new File(queryFile));
 
-		if (comLine.hasOption("o")) {// args.length == 3) {
-			example.resultToHTML(result, comLine.getOptionValue("o"));// args[2]);
+		if (comLine.hasOption("o")) {
+			console.resultToHTML(result, comLine.getOptionValue("o"));
 		} else {
-			// System.out.println("Result: " + result);
+			System.out.println("Result: " + result);
 		}
 	}
 
@@ -225,14 +215,15 @@ public class GReQLConsole {
 		OptionHandler oh = new OptionHandler(toolString, versionString);
 
 		Option queryfile = new Option("q", "queryfile", true,
-				"(required): queryfile which should be executed");
+				"(required): queryfile which should be executed. May contain "
+						+ "many queries separated by //-- on a line");
 		queryfile.setRequired(true);
 		queryfile.setArgName("file");
 		oh.addOption(queryfile);
 
 		Option inputFile = new Option("g", "graph", true,
-				"(required): the tg-file of the graph");
-		inputFile.setRequired(true);
+				"(optional): the tg-file of the graph");
+		inputFile.setRequired(false);
 		inputFile.setArgName("file");
 		oh.addOption(inputFile);
 
@@ -244,6 +235,10 @@ public class GReQLConsole {
 		Option loadschema = new Option("s", "loadschema", false,
 				"(optional): Loads also the schema from the file");
 		oh.addOption(loadschema);
+
+		Option verbose = new Option("v", "verbose", false,
+				"(optional): Produce verbose output");
+		oh.addOption(verbose);
 
 		return oh.parse(args);
 	}

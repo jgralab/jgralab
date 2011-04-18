@@ -40,6 +40,7 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -434,16 +435,21 @@ public class SchemaImpl implements Schema {
 		}
 		System.out.println("Committing schema classes to " + schemaDir);
 		commit(schemaDir.getAbsolutePath(), config,
-				new ConsoleProgressFunction());
+				new ConsoleProgressFunction("Committing"));
 
 		compileClasses(schemaDir);
 
 		// TODO: That should be doable without resorting to the cmd line, but
 		// how? JarFile seems to provide only read access...
-		Runtime.getRuntime().exec(
+		Process proc = Runtime.getRuntime().exec(
 				"jar cf " + jarFileName + " -C " + schemaDir.getAbsolutePath()
 						+ " .");
 
+		try {
+			proc.waitFor();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		deleteRecursively(schemaDir);
 	}
 
@@ -669,6 +675,19 @@ public class SchemaImpl implements Schema {
 		ClassFileManager manager = new ClassFileManager(jfm);
 
 		Vector<String> options = new Vector<String>();
+
+		// If jgralab is run from a JAR and jgralabClassPath is not set
+		// explicitly, there is the possibility that some other custom
+		// classloader is running the compiler. In that case, we have to set the
+		// -cp arg to the JAR.
+		URL url = SchemaImpl.class.getResource(SchemaImpl.class.getSimpleName()
+				+ ".class");
+		if ((url != null) && url.getProtocol().equals("jar")
+				&& (jgralabClassPath == null)) {
+			String urlStr = url.toString();
+			int firstExcMark = urlStr.indexOf('!');
+			jgralabClassPath = url.toString().substring(9, firstExcMark);
+		}
 		if (jgralabClassPath != null) {
 			options.add("-cp");
 			options.add(jgralabClassPath);

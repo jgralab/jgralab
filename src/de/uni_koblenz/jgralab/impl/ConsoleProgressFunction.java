@@ -48,11 +48,15 @@ import de.uni_koblenz.jgralab.ProgressFunction;
 public class ConsoleProgressFunction implements ProgressFunction {
 	private static final int DEFAULTLENGTH = 60;
 
+	private static final String DEFAULTMESSAGE = "Processing";
+
 	private long totalElements;
 	private long length;
 	private long startTime;
 	private int currentChar;
 	private PrintStream printStream;
+
+	private String message;
 
 	/**
 	 * Creates a ProgressFunction with default length writing to System.out.
@@ -69,7 +73,18 @@ public class ConsoleProgressFunction implements ProgressFunction {
 	 *            number of characters
 	 */
 	public ConsoleProgressFunction(int length) {
-		this(System.out, length);
+		this(System.out);
+	}
+
+	/**
+	 * Creates a ProgressFunction with writing message (Loading, Saving,
+	 * Transforming,...) and progress bar to System.out.
+	 * 
+	 * @param message
+	 * 
+	 */
+	public ConsoleProgressFunction(String message) {
+		this(System.out, message);
 	}
 
 	/**
@@ -104,8 +119,18 @@ public class ConsoleProgressFunction implements ProgressFunction {
 	 * 
 	 */
 	public ConsoleProgressFunction(PrintStream printStream, int length) {
+		this(printStream, DEFAULTMESSAGE, length);
+	}
+
+	public ConsoleProgressFunction(PrintStream printStream, String message) {
+		this(printStream, message, DEFAULTLENGTH);
+	}
+
+	public ConsoleProgressFunction(PrintStream printStream, String message,
+			int length) {
 		this.printStream = printStream;
 		this.length = length;
+		this.message = message;
 	}
 
 	/*
@@ -125,7 +150,7 @@ public class ConsoleProgressFunction implements ProgressFunction {
 	 */
 	@Override
 	public void init(long elements) {
-		printStream.println("processing " + elements + " elements");
+		printStream.println(message + " " + elements + " elements");
 		currentChar = 0;
 		this.totalElements = elements;
 		printStream.print("[");

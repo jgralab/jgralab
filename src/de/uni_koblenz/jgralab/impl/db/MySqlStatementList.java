@@ -61,8 +61,10 @@ public class MySqlStatementList extends SqlStatementList {
 	}
 
 	private static final String CREATE_GRAPH_SCHEMA_TABLE = "CREATE TABLE GraphSchema("
-			+ "schemaId INT AUTO_INCREMENT," + "packagePrefix TEXT,"
-			+ "name TEXT," + "serializedDefinition TEXT,"
+			+ "schemaId INT AUTO_INCREMENT,"
+			+ "packagePrefix TEXT,"
+			+ "name TEXT,"
+			+ "serializedDefinition TEXT,"
 			+ "PRIMARY KEY(schemaId)" + ");";
 
 	@Override
@@ -138,7 +140,7 @@ public class MySqlStatementList extends SqlStatementList {
 				.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_VERTEX_TYPE);
 	}
 
-	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_VERTEX = "ALTER TABLE Vertex DROP CONSTRAINT gIdIsForeignKey;";
+	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_VERTEX = "ALTER TABLE Vertex DROP FOREIGN KEY gIdIsForeignKey;";
 
 	@Override
 	public PreparedStatement dropForeignKeyConstraintFromGraphColumnOfVertexTable()
@@ -147,7 +149,7 @@ public class MySqlStatementList extends SqlStatementList {
 				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_VERTEX);
 	}
 
-	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_VERTEX_TYPE = "ALTER TABLE Vertex DROP CONSTRAINT typeIdIsForeignKey;";
+	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_VERTEX_TYPE = "ALTER TABLE Vertex DROP FOREIGN KEY typeIdIsForeignKey;";
 
 	@Override
 	public PreparedStatement dropForeignKeyConstraintFromTypeColumnOfVertexTable()
@@ -156,8 +158,9 @@ public class MySqlStatementList extends SqlStatementList {
 				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_VERTEX_TYPE);
 	}
 
-	private static final String CREATE_EDGE_TABLE = "CREATE TABLE Edge(" + "eId INT,"
-			+ "gId INT," + "typeId INT," + "sequenceNumber BIGINT" + ");";
+	private static final String CREATE_EDGE_TABLE = "CREATE TABLE Edge("
+			+ "eId INT," + "gId INT," + "typeId INT," + "sequenceNumber BIGINT"
+			+ ");";
 
 	@Override
 	public PreparedStatement createEdgeTable() throws SQLException {
@@ -200,7 +203,7 @@ public class MySqlStatementList extends SqlStatementList {
 				.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_EDGE_TYPE);
 	}
 
-	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_EDGE = "ALTER TABLE Edge DROP CONSTRAINT gIdIsForeignKey;";
+	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_EDGE = "ALTER TABLE Edge DROP FOREIGN KEY gIdIsForeignKey;";
 
 	@Override
 	public PreparedStatement dropForeignKeyConstraintFromGraphColumnOfEdgeTable()
@@ -209,7 +212,7 @@ public class MySqlStatementList extends SqlStatementList {
 				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_EDGE);
 	}
 
-	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_EDGE_TYPE = "ALTER TABLE Edge DROP CONSTRAINT typeIdIsForeignKey;";
+	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_EDGE_TYPE = "ALTER TABLE Edge DROP FOREIGN KEY typeIdIsForeignKey;";
 
 	@Override
 	public PreparedStatement dropForeignKeyConstraintFromTypeColumnOfEdgeTable()
@@ -219,7 +222,9 @@ public class MySqlStatementList extends SqlStatementList {
 	}
 
 	private static final String CREATE_INCIDENCE_TABLE = "CREATE TABLE Incidence("
-			+ "eId INT," + "vId INT," + "gId INT,"
+			+ "eId INT,"
+			+ "vId INT,"
+			+ "gId INT,"
 			+ "direction ENUM('IN', 'OUT')," + "sequenceNumber BIGINT" + ");";
 
 	@Override
@@ -272,7 +277,7 @@ public class MySqlStatementList extends SqlStatementList {
 				.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_VERTEX_OF_INCIDENCE);
 	}
 
-	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_EDGE_OF_INCIDENCE = "ALTER TABLE Incidence DROP CONSTRAINT eIdIsForeignKey";
+	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_EDGE_OF_INCIDENCE = "ALTER TABLE Incidence DROP FOREIGN KEY eIdIsForeignKey";
 
 	@Override
 	public PreparedStatement dropForeignKeyConstraintFromEdgeColumnOfIncidenceTable()
@@ -281,7 +286,7 @@ public class MySqlStatementList extends SqlStatementList {
 				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_EDGE_OF_INCIDENCE);
 	}
 
-	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_INCIDENCE = "ALTER TABLE Incidence DROP CONSTRAINT gIdIsForeignKey";
+	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_INCIDENCE = "ALTER TABLE Incidence DROP FOREIGN KEY gIdIsForeignKey";
 
 	@Override
 	public PreparedStatement dropForeignKeyConstraintFromGraphColumnOfIncidenceTable()
@@ -290,7 +295,7 @@ public class MySqlStatementList extends SqlStatementList {
 				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_INCIDENCE);
 	}
 
-	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_VERTEX_OF_INCIDENCE = "ALTER TABLE Incidence DROP CONSTRAINT vIdIsForeignKey";
+	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_VERTEX_OF_INCIDENCE = "ALTER TABLE Incidence DROP FOREIGN KEY vIdIsForeignKey";
 
 	@Override
 	public PreparedStatement dropForeignKeyConstraintFromVertexColumnOfIncidenceTable()
@@ -314,7 +319,8 @@ public class MySqlStatementList extends SqlStatementList {
 	}
 
 	private static final String CREATE_ATTRIBUTE_TABLE = "CREATE TABLE Attribute("
-			+ "attributeId INT AUTO_INCREMENT," + "name TEXT,"
+			+ "attributeId INT AUTO_INCREMENT,"
+			+ "name TEXT,"
 			+ "schemaId INT REFERENCES GraphSchema,"
 			+ "PRIMARY KEY(attributeId)" + ");";
 
@@ -397,7 +403,7 @@ public class MySqlStatementList extends SqlStatementList {
 				.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_ATTRIBUTE_OF_VERTEX_ATTRIBUTE_VALUE);
 	}
 
-	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_VERTEX_ATTRIBUTE_VALUE = "ALTER TABLE VertexAttributeValue DROP CONSTRAINT vIdIsForeignKey";
+	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_VERTEX_ATTRIBUTE_VALUE = "ALTER TABLE VertexAttributeValue DROP FOREIGN KEY vIdIsForeignKey";
 
 	@Override
 	public PreparedStatement dropForeignKeyConstraintFromGraphColumnOfVertexAttributeValueTable()
@@ -406,7 +412,7 @@ public class MySqlStatementList extends SqlStatementList {
 				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_VERTEX_ATTRIBUTE_VALUE);
 	}
 
-	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_VERTEX_OF_ATTRIBUTE_VALUE = "ALTER TABLE VertexAttributeValue DROP CONSTRAINT vIdIsForeignKey";
+	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_VERTEX_OF_ATTRIBUTE_VALUE = "ALTER TABLE VertexAttributeValue DROP FOREIGN KEY vIdIsForeignKey";
 
 	@Override
 	public PreparedStatement dropForeignKeyConstraintFromVertexColumnOfVertexAttributeValueTable()
@@ -415,7 +421,7 @@ public class MySqlStatementList extends SqlStatementList {
 				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_VERTEX_OF_ATTRIBUTE_VALUE);
 	}
 
-	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_ATTRIBUTE_OF_VERTEX_ATTRIBUTE_VALUE = "ALTER TABLE VertexAttributeValue DROP CONSTRAINT attributeIdIsForeignKey";
+	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_ATTRIBUTE_OF_VERTEX_ATTRIBUTE_VALUE = "ALTER TABLE VertexAttributeValue DROP FOREIGN KEY attributeIdIsForeignKey";
 
 	@Override
 	public PreparedStatement dropForeignKeyConstraintFromAttributeColumnOfVertexAttributeValueTable()
@@ -483,7 +489,7 @@ public class MySqlStatementList extends SqlStatementList {
 				.prepareStatement(ADD_FOREIGN_KEY_CONSTRAINT_ON_EDGE_ATTRIBUTE);
 	}
 
-	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_EDGE_ATTRIBUTE = "ALTER TABLE EdgeAttributeValue DROP CONSTRAINT gIdIsForeignKey";
+	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_EDGE_ATTRIBUTE = "ALTER TABLE EdgeAttributeValue DROP FOREIGN KEY gIdIsForeignKey";
 
 	@Override
 	public PreparedStatement dropForeignKeyConstraintFromGraphColumnOfEdgeAttributeValueTable()
@@ -492,7 +498,7 @@ public class MySqlStatementList extends SqlStatementList {
 				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_EDGE_ATTRIBUTE);
 	}
 
-	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_EDGE_OF_ATTRIBUTE_VALUE = "ALTER TABLE EdgeAttributeValue DROP CONSTRAINT eIdIsForeignKey";
+	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_EDGE_OF_ATTRIBUTE_VALUE = "ALTER TABLE EdgeAttributeValue DROP FOREIGN KEY eIdIsForeignKey";
 
 	@Override
 	public PreparedStatement dropForeignKeyConstraintFromEdgeColumnOfEdgeAttributeValueTable()
@@ -501,7 +507,7 @@ public class MySqlStatementList extends SqlStatementList {
 				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_EDGE_OF_ATTRIBUTE_VALUE);
 	}
 
-	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_EDGE_ATTRIBUTE = "ALTER TABLE EdgeAttributeValue DROP CONSTRAINT attributeIdIsForeignKey";
+	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_EDGE_ATTRIBUTE = "ALTER TABLE EdgeAttributeValue DROP FOREIGN KEY attributeIdIsForeignKey";
 
 	@Override
 	public PreparedStatement dropForeignKeyConstraintFromAttributeColumnOfEdgeAttributeValueTable()
@@ -638,7 +644,8 @@ public class MySqlStatementList extends SqlStatementList {
 		statement.setLong(5, vertex.getSequenceNumberInVSeq());
 	}
 
-	private static final String createSqlInsertStatementFor(DatabasePersistableVertex vertex) {
+	private static final String createSqlInsertStatementFor(
+			DatabasePersistableVertex vertex) {
 		String sqlStatement = INSERT_VERTEX;
 		int attributeCount = vertex.getAttributedElementClass()
 				.getAttributeList().size();
@@ -746,7 +753,8 @@ public class MySqlStatementList extends SqlStatementList {
 		statement.setLong(4, edge.getSequenceNumberInESeq());
 	}
 
-	private static final String createSqlInsertStatementFor(DatabasePersistableEdge edge) {
+	private static final String createSqlInsertStatementFor(
+			DatabasePersistableEdge edge) {
 		String sqlStatement = INSERT_EDGE;
 		sqlStatement += INSERT_INCIDENCE;
 		sqlStatement += INSERT_INCIDENCE;
@@ -823,7 +831,8 @@ public class MySqlStatementList extends SqlStatementList {
 
 	// TODO Rewrite as join.
 	private static final String SELECT_SCHEMA_NAME = "SELECT packagePrefix, name "
-			+ "FROM GraphSchema " + "WHERE schemaId = ("
+			+ "FROM GraphSchema "
+			+ "WHERE schemaId = ("
 			+ "SELECT schemaId FROM Type WHERE typeId = ("
 			+ "SELECT typeId FROM Graph WHERE uid = ?" + ")" + ")";
 
@@ -1478,9 +1487,81 @@ public class MySqlStatementList extends SqlStatementList {
 		return getPreparedStatement(SELECT_ID_OF_GRAPHS);
 	}
 
+	private static final String CLEAR_TABLE_ATTRIBUTE = "TRUNCATE TABLE "
+			+ GraphDatabase.TABLE_ATTRIBUTE;
+
+	public PreparedStatement clearTableAttribute() throws SQLException {
+		return getPreparedStatement(CLEAR_TABLE_ATTRIBUTE);
+	}
+
+	private static final String CLEAR_TABLE_EDGE_ATTRIBUTE_VALUE = "TRUNCATE TABLE "
+			+ GraphDatabase.TABLE_EDGE_ATTRIBUTE;
+
+	public PreparedStatement clearTableEdgeAttributeValue() throws SQLException {
+		return getPreparedStatement(CLEAR_TABLE_EDGE_ATTRIBUTE_VALUE);
+	}
+
+	private static final String CLEAR_TABLE_EDGE = "TRUNCATE TABLE "
+			+ GraphDatabase.TABLE_EDGE;
+
+	public PreparedStatement clearTableEdge() throws SQLException {
+		return getPreparedStatement(CLEAR_TABLE_EDGE);
+	}
+
+	private static final String CLEAR_TABLE_GRAPH_ATTRIBUTE_VALUE = "TRUNCATE TABLE "
+			+ GraphDatabase.TABLE_GRAPH_ATTRIBUTE;
+
+	public PreparedStatement clearTableGraphAttributeValue()
+			throws SQLException {
+		return getPreparedStatement(CLEAR_TABLE_GRAPH_ATTRIBUTE_VALUE);
+	}
+
+	private static final String CLEAR_TABLE_GRAPH_SCHEMA = "TRUNCATE TABLE "
+			+ GraphDatabase.TABLE_SCHEMA;
+
+	public PreparedStatement clearTableGraphSchema() throws SQLException {
+		return getPreparedStatement(CLEAR_TABLE_GRAPH_SCHEMA);
+	}
+
+	private static final String CLEAR_TABLE_GRAPH = "TRUNCATE TABLE "
+			+ GraphDatabase.TABLE_GRAPH;
+
+	public PreparedStatement clearTableGraph() throws SQLException {
+		return getPreparedStatement(CLEAR_TABLE_GRAPH);
+	}
+
+	private static final String CLEAR_TABLE_INCIDENCE = "TRUNCATE TABLE "
+			+ GraphDatabase.TABLE_INCIDENCE;
+
+	public PreparedStatement clearTableIncidence() throws SQLException {
+		return getPreparedStatement(CLEAR_TABLE_INCIDENCE);
+	}
+
+	private static final String CLEAR_TABLE_TYPE = "TRUNCATE TABLE "
+			+ GraphDatabase.TABLE_TYPE;
+
+	public PreparedStatement clearTableType() throws SQLException {
+		return getPreparedStatement(CLEAR_TABLE_TYPE);
+	}
+
+	private static final String CLEAR_TABLE_ATTRIBUTE_VALUE = "TRUNCATE TABLE "
+			+ GraphDatabase.TABLE_VERTEX_ATTRIBUTE;
+
+	public PreparedStatement clearTableAttributeValue() throws SQLException {
+		return getPreparedStatement(CLEAR_TABLE_ATTRIBUTE_VALUE);
+	}
+
+	private static final String CLEAR_TABLE_VERTEX = "TRUNCATE TABLE "
+			+ GraphDatabase.TABLE_VERTEX + ";";
+
+	public PreparedStatement clearTableVertex() throws SQLException {
+		return getPreparedStatement(CLEAR_TABLE_VERTEX);
+	}
+
 	@Override
 	public PreparedStatement clearAllTables() throws SQLException {
 		throw new UnsupportedOperationException(
-				"Operation not implemented for MySQL.");
+				"Does not work in MySQL implementation.");
 	}
+
 }

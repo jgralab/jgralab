@@ -143,14 +143,14 @@ public class TGMerge {
 		List<Graph> graphs = new LinkedList<Graph>();
 		for (String g : cmdl.getArgs()) {
 			graphs.add(GraphIO.loadGraphFromFileWithStandardSupport(g,
-					new ConsoleProgressFunction()));
+					new ConsoleProgressFunction("Loading")));
 		}
 
 		TGMerge tgmerge = new TGMerge(graphs);
 		Graph merged = tgmerge.merge();
 
 		GraphIO.saveGraphToFile(outputFilename, merged,
-				new ConsoleProgressFunction());
+				new ConsoleProgressFunction("Saving"));
 	}
 
 	public Graph merge() {
