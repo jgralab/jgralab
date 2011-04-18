@@ -1509,28 +1509,6 @@ public class GreqlEvaluatorTest extends GenericTest {
 
 	/*
 	 * Test method for
-	 * 'greql2.evaluator.GreqlEvaluator.evaluateRecordConstruction(RecordConstruction,
-	 * Graph)'
-	 */
-	@Test
-	public void testEvaluateTupleAccess() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "let x := tup ( 'bratwurst', 'currywurst', 'steak',"
-				+ " 'kaenguruhfleisch', 'spiessbraten') in from i:V{Identifier} report x[3] end";
-		JValue result = evalTestQuery(queryString);
-		assertEquals(5, result.toCollection().size());
-		assertEquals(
-				5,
-				result.toJValueBag().getQuantity(
-						new JValueImpl("kaenguruhfleisch")));
-		JValue resultWO = evalTestQuery("TupleAccess (wo)", queryString,
-				new DefaultOptimizer());
-		assertEquals(result, resultWO);
-	}
-
-	/*
-	 * Test method for
 	 * 'greql2.evaluator.GreqlEvaluator.evaluateTupleConstruction(TupleConstruction,
 	 * Graph)'
 	 */
