@@ -457,13 +457,11 @@ public class GreqlEvaluatorTest extends GenericTest {
 	 */
 	@Test
 	public void testEvaluateEdgePathDescription() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from edge: E, var: V{Definition}, def: V{WhereExpression} in eSubgraph{IsDefinitionOf!} with var --edge-> def report var end";
-		JValue result = evalTestQuery("EdgePathDescription", queryString);
-		assertEquals(4, result.toCollection().size());
+		String queryString = "from edge: E, origin: V{junctions.Plaza}, target: V{junctions.Crossroad} in eSubgraph{connections.Footpath!} with origin <-edge-> target report target end";
+		JValue result = evalTestQuery(queryString);
+		assertEquals(1, result.toCollection().size());
 		JValue resultWO = evalTestQuery("EdgePathDescription (wo)",
-				queryString, new DefaultOptimizer());
+				queryString, new DefaultOptimizer(), TestVersion.CITY_MAP_GRAPH);
 		assertEquals(result, resultWO);
 	}
 
