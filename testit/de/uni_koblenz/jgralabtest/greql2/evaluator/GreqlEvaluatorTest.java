@@ -457,7 +457,9 @@ public class GreqlEvaluatorTest extends GenericTest {
 	 */
 	@Test
 	public void testEvaluateEdgePathDescription() throws Exception {
-		String queryString = "from edge: E, origin: V{junctions.Plaza}, target: V{junctions.Crossroad} in eSubgraph{connections.Footpath!} with origin <-edge-> target report target end";
+		String queryString = "from edge: E, origin: V{junctions.Plaza}, target: V{junctions.Crossroad} "
+				+ "in eSubgraph{connections.Footpath!} with origin <-edge-> target "
+				+ "report target end";
 		JValue result = evalTestQuery(queryString);
 		assertEquals(1, result.toCollection().size());
 		JValue resultWO = evalTestQuery("EdgePathDescription (wo)",
@@ -472,13 +474,13 @@ public class GreqlEvaluatorTest extends GenericTest {
 	 */
 	@Test
 	public void testEvaluateEdgePathDescription2() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from edge: E in eSubgraph{IsDefinitionOf!} report from var: V{Definition}, def: V{WhereExpression} with var --edge-> def report var end end";
-		JValue result = evalTestQuery("EdgePathDescription2", queryString);
-		assertEquals(4, result.toCollection().size());
+		String queryString = "flatten(from edge: E in eSubgraph{connections.Footpath!} report "
+				+ "from origin: V{junctions.Plaza}, target: V{junctions.Crossroad} "
+				+ "with origin <-edge-> target report target end end)";
+		JValue result = evalTestQuery(queryString);
+		assertEquals(1, result.toCollection().size());
 		JValue resultWO = evalTestQuery("EdgePathDescription2 (wo)",
-				queryString, new DefaultOptimizer());
+				queryString, new DefaultOptimizer(), TestVersion.CITY_MAP_GRAPH);
 		assertEquals(result, resultWO);
 	}
 
@@ -489,14 +491,15 @@ public class GreqlEvaluatorTest extends GenericTest {
 	 */
 	@Test
 	public void testEvaluateEdgePathDescription3() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from edge: E in eSubgraph{IsVarOf} report from var: V{Variable}, def: V{Definition} with var --edge-> def report var end end";
-		String queryString2 = "from edge: E in eSubgraph{IsVarOf} report from var: V{Variable}, def: V{Definition} with contains(--edge-> def, var) = true report var end end";
-		JValue result = evalTestQuery("EdgePathDescription3", queryString);
-		assertEquals(4, result.toCollection().size());
-		JValue resultWO = evalTestQuery("EdgePathDescription3 (wo)",
-				queryString2/* , new DefaultOptimizer() */);
+		String queryString = "flatten(from edge: E in eSubgraph{connections.Footpath!} report "
+				+ "from origin: V{junctions.Plaza}, target: V{junctions.Crossroad} "
+				+ "with origin <-edge-> target report target end end)";
+		String queryString2 = "flatten(from edge: E in eSubgraph{connections.Footpath!} report "
+				+ "from origin: V{junctions.Plaza}, target: V{junctions.Crossroad} "
+				+ "with contains(<-edge-> target, origin) report target end end)";
+		JValue result = evalTestQuery(queryString);
+		assertEquals(1, result.toCollection().size());
+		JValue resultWO = evalTestQuery(queryString2);
 		assertEquals(result, resultWO);
 	}
 
@@ -507,33 +510,15 @@ public class GreqlEvaluatorTest extends GenericTest {
 	 */
 	@Test
 	public void testEvaluateEdgePathDescription4() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from edge: E in eSubgraph{IsVarOf} report from var: V{Definition} report var end end";
-		JValue result = evalTestQuery("EdgePathDescription4", queryString);
-		assertEquals(4, result.toCollection().size());
+		String queryString = "from edge: E in eSubgraph{connections.Footpath} report from plaza: V{junctions.Plaza} report plaza end end";
+		JValue result = evalTestQuery(queryString);
+		assertEquals(16, result.toCollection().size());
 		for (JValue j : result.toCollection()) {
-			assertEquals(4, j.toCollection().size());
+			assertEquals(6, j.toCollection().size());
 		}
 		JValue resultWO = evalTestQuery("EdgePathDescription4 (wo)",
-				queryString, new DefaultOptimizer());
+				queryString, new DefaultOptimizer(), TestVersion.CITY_MAP_GRAPH);
 		assertEquals(result, resultWO);
-	}
-
-	/*
-	 * Test method for
-	 * 'greql2.evaluator.GreqlEvaluator.evaluateEdgePathDescription(EdgePathDescription,
-	 * Graph)'
-	 */
-	@Test
-	public void testEvaluateEdgePathDescription5() throws Exception {
-		String queryString = "from edge: E in eSubgraph{IsDefinitionOf!} report from var: V{Definition}, def: V{WhereExpression} with contains(--edge-> def, var) report var end end";
-		JValue result = evalTestQuery("EdgePathDescription5", queryString);
-		System.out.println(result);
-		// assertEquals(4, result.toCollection().size());
-		// JValue resultWO = evalTestQuery("EdgePathDescription3 (wo)",
-		// queryString, new DefaultOptimizer());
-		// assertEquals(result, resultWO);
 	}
 
 	/*
