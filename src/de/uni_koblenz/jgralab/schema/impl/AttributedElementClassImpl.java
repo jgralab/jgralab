@@ -134,6 +134,11 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 			String defaultValueAsString) {
 		addAttribute(new AttributeImpl(name, domain, this, defaultValueAsString));
 	}
+	
+	@Override
+	public void addAttribute(String name, Domain domain) {
+		addAttribute(new AttributeImpl(name, domain, this, null));
+	}
 
 	@Override
 	public void addConstraint(Constraint constraint) {
