@@ -85,9 +85,8 @@ public class ThisLiteralTest extends GenericTest {
 
 	@Test
 	public void testThisEdge1() throws Exception {
-		String queryString = "from c1,c2:V{junctions.Crossroad}  with c1 -->{@id(thisEdge)=100} c2 report c1,c2 end";
-		JValue result = evalTestQuery("ThisEdge1", queryString,
-				TestVersion.CITY_MAP_GRAPH);
+		String queryString = "from c1,c2:V{junctions.Crossroad}  with c1 -->{@isLoop(thisEdge)} c2 report c1,c2 end";
+		JValue result = evalTestQuery(queryString);
 		JValue resultOpt = evalTestQuery("ThisEdge1 (wo)", queryString,
 				new DefaultOptimizer(), TestVersion.CITY_MAP_GRAPH);
 		assertEquals(1, result.toCollection().size());
