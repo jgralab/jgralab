@@ -403,14 +403,15 @@ public class GreqlEvaluatorTest extends GenericTest {
 	 * Graph)'
 	 */
 	@Test
-	public void testEvaluateComplexePathDescription() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from var: V{Variable}, def: V{WhereExpression} with var  (-->{IsVarOf} -->{IsDefinitionOf}) | (-->{IsVarOf} -->{IsArgumentOf} -->{IsExprOf}+)  def report var end";
-		JValue result = evalTestQuery("ComplexDescription", queryString);
-		assertEquals(4, result.toCollection().size());
+	public void testEvaluateComplexPathDescription() throws Exception {
+		String queryString = "from county: V{localities.County}, locality: V{localities.Locality} "
+				+ "with county (-->{localities.ContainsLocality}) | "
+				+ "(-->{localities.HasCapital}) locality "
+				+ "reportSet locality end";
+		JValue result = evalTestQuery(queryString);
+		assertEquals(localityCount, result.toCollection().size());
 		JValue resultWO = evalTestQuery("ComplexDescription (wo)", queryString,
-				new DefaultOptimizer());
+				new DefaultOptimizer(), TestVersion.CITY_MAP_GRAPH);
 		assertEquals(result, resultWO);
 	}
 
