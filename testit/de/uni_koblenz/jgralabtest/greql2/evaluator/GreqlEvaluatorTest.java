@@ -557,36 +557,28 @@ public class GreqlEvaluatorTest extends GenericTest {
 
 	@Test
 	public void testEvaluateExponentiatedPathDescription1() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from def: V{Definition}, whe: V{WhereExpression} with def -->{IsDefinitionOf}^1 whe report def end";
-		JValue result = evalTestQuery("ExponentiatedPathDescription1",
-				queryString);
-		assertEquals(4, result.toCollection().size());
-		JValue resultWO = evalTestQuery("ExponentiatedPathDescription1 (wo)",
-				queryString, new DefaultOptimizer());
+		String queryString = "from origin: V{junctions.Airport}, target: V{junctions.Airport} with origin <--{connections.AirRoute}^1 target report origin end";
+		JValue result = evalTestQuery(queryString);
+		assertEquals(3, result.toCollection().size());
+		JValue resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
 	@Test
 	public void testEvaluateExponentiatedPathDescription2() throws Exception {
-		String queryString = "from def: V{Definition}, whe: V{WhereExpression} with def -->{IsDefinitionOf}^2 whe report def end";
-		JValue result = evalTestQuery("ExponentiatedPathDescription2",
-				queryString);
-		assertEquals(0, result.toCollection().size());
-		JValue resultWO = evalTestQuery("ExponentiatedPathDescription2 (wo)",
-				queryString, new DefaultOptimizer());
+		String queryString = "from origin: V{junctions.Airport}, target: V{junctions.Airport} with origin <--{connections.AirRoute}^2 target report origin end";
+		JValue result = evalTestQuery(queryString);
+		assertEquals(1, result.toCollection().size());
+		JValue resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
 	@Test
 	public void testEvaluateExponentiatedPathDescription3() throws Exception {
-		String queryString = "from def: V{Definition}, whe: V{WhereExpression} with def -->{IsDefinitionOf}^3 whe report def end";
-		JValue result = evalTestQuery("ExponentiatedPathDescription3",
-				queryString);
+		String queryString = "from origin: V{junctions.Airport}, target: V{junctions.Airport} with origin <--{connections.AirRoute}^3 target report origin end";
+		JValue result = evalTestQuery(queryString);
 		assertEquals(0, result.toCollection().size());
-		JValue resultWO = evalTestQuery("ExponentiatedPathDescription3 (wo)",
-				queryString, new DefaultOptimizer());
+		JValue resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
