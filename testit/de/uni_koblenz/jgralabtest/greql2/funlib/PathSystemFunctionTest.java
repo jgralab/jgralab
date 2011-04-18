@@ -53,6 +53,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueBag;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
+import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
 import de.uni_koblenz.jgralabtest.greql2.GenericTest;
 
 public class PathSystemFunctionTest extends GenericTest {
@@ -483,8 +484,15 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testIsReachable() throws Exception {
-		// TODO
-		fail();
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
+		String queryString = "from var: V{Variable}, def:V{Definition}, whr: V{WhereExpression} with isReachable(var, whr, -->{IsVarOf} def -->{IsDefinitionOf}) report var end";
+		JValue result = evalTestQuery("IntermediateVertexDescription",
+				queryString);
+		assertEquals(4, result.toCollection().size());
+		JValue resultWO = evalTestQuery("IntermediateVertexDescription (wo)",
+				queryString, new DefaultOptimizer());
+		assertEquals(result, resultWO);
 	}
 
 	@Test
