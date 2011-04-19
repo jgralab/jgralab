@@ -716,8 +716,7 @@ public class GreqlEvaluatorTest extends GenericTest {
 				+ "report origin end";
 		JValue result = evalTestQuery(queryString);
 		assertEquals(177, result.toCollection().size());
-		JValue resultWO = evalTestQuery("IteratedPathDescription3 (wo)",
-				queryString, new DefaultOptimizer());
+		JValue resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
