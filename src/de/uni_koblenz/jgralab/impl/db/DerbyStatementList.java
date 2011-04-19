@@ -79,7 +79,7 @@ public class DerbyStatementList extends SqlStatementList {
 			+ TABLE_TYPE + "\"(" + "\"" + COLUMN_TYPE_ID
 			+ "\" INT GENERATED ALWAYS AS IDENTITY CONSTRAINT \""
 			+ PRIMARY_KEY_TYPE + "\" PRIMARY KEY," + "\"" + COLUMN_TYPE_QNAME
-			+ "\" VARCHAR(2048)," + "\"" + COLUMN_TYPE_SCHEMA_ID
+			+ "\" VARCHAR(2048)," + "\"" + COLUMN_SCHEMA_ID
 			+ "\" INT REFERENCES \"" + TABLE_SCHEMA + "\"" + ")";
 
 	@Override
@@ -94,9 +94,8 @@ public class DerbyStatementList extends SqlStatementList {
 			+ PRIMARY_KEY_GRAPH + "\" PRIMARY KEY," + "\"" + COLUMN_GRAPH_UID
 			+ "\" VARCHAR(2048)," + "\"" + COLUMN_GRAPH_VERSION + "\" BIGINT,"
 			+ "\"" + COLUMN_GRAPH_VSEQ_VERSION + "\" BIGINT," + "\""
-			+ COLUMN_GRAPH_ESEQ_VERSION + "\" BIGINT," + "\""
-			+ COLUMN_GRAPH_TYPE_ID + "\" INT REFERENCES \"" + TABLE_TYPE + "\""
-			+ ")";
+			+ COLUMN_GRAPH_ESEQ_VERSION + "\" BIGINT," + "\"" + COLUMN_TYPE_ID
+			+ "\" INT REFERENCES \"" + TABLE_TYPE + "\"" + ")";
 
 	@Override
 	public PreparedStatement createGraphTableWithConstraints()
@@ -106,11 +105,10 @@ public class DerbyStatementList extends SqlStatementList {
 
 	private static final String CREATE_VERTEX_TABLE = "CREATE TABLE \""
 			+ TABLE_VERTEX + "\"(" + "\"" + COLUMN_VERTEX_ID
-			+ "\" INT NOT NULL," + "\"" + COLUMN_VERTEX_GRAPH_ID
-			+ "\" INT NOT NULL," + "\"" + COLUMN_VERTEX_TYPE_ID
-			+ "\" INT NOT NULL," + "\"" + COLUMN_VERTEX_LAMBDA_SEQ_VERSION
-			+ "\" BIGINT," + "\"" + COLUMN_VERTEX_SEQUENCE_NUMBER + "\" BIGINT"
-			+ ")";
+			+ "\" INT NOT NULL," + "\"" + COLUMN_GRAPH_ID + "\" INT NOT NULL,"
+			+ "\"" + COLUMN_TYPE_ID + "\" INT NOT NULL," + "\""
+			+ COLUMN_VERTEX_LAMBDA_SEQ_VERSION + "\" BIGINT," + "\""
+			+ COLUMN_SEQUENCE_NUMBER + "\" BIGINT" + ")";
 
 	@Override
 	public PreparedStatement createVertexTable() throws SQLException {
@@ -124,7 +122,7 @@ public class DerbyStatementList extends SqlStatementList {
 			+ "\" PRIMARY KEY ( \""
 			+ COLUMN_VERTEX_ID
 			+ "\", \""
-			+ COLUMN_VERTEX_GRAPH_ID + "\" )";
+			+ COLUMN_GRAPH_ID + "\" )";
 
 	@Override
 	public PreparedStatement addPrimaryKeyConstraintOnVertexTable()
@@ -151,10 +149,11 @@ public class DerbyStatementList extends SqlStatementList {
 			+ "\" ADD CONSTRAINT \""
 			+ FOREIGN_KEY_VERTEX_TO_GRAPH
 			+ "\" FOREIGN KEY (\""
-			+ COLUMN_VERTEX_GRAPH_ID
+			+ COLUMN_GRAPH_ID
 			+ "\") REFERENCES \""
 			+ TABLE_GRAPH
-			+ "\" (\"" + COLUMN_GRAPH_ID + "\")";
+			+ "\" (\""
+			+ COLUMN_GRAPH_ID + "\")";
 
 	@Override
 	public PreparedStatement addForeignKeyConstraintOnGraphColumnOfVertexTable()
@@ -168,10 +167,11 @@ public class DerbyStatementList extends SqlStatementList {
 			+ "\" ADD CONSTRAINT \""
 			+ FOREIGN_KEY_VERTEX_TO_TYPE
 			+ "\" FOREIGN KEY (\""
-			+ COLUMN_VERTEX_TYPE_ID
+			+ COLUMN_TYPE_ID
 			+ "\") REFERENCES \""
 			+ TABLE_TYPE
-			+ "\" (\"" + COLUMN_TYPE_ID + "\")";
+			+ "\" (\""
+			+ COLUMN_TYPE_ID + "\")";
 
 	@Override
 	public PreparedStatement addForeignKeyConstraintOnTypeColumnOfVertexTable()
@@ -206,9 +206,9 @@ public class DerbyStatementList extends SqlStatementList {
 
 	private static final String CREATE_EDGE_TABLE = "CREATE TABLE \""
 			+ TABLE_EDGE + "\"(" + "\"" + COLUMN_EDGE_ID + "\" INT NOT NULL,"
-			+ "\"" + COLUMN_EDGE_GRAPH_ID + "\" INT NOT NULL," + "\""
-			+ COLUMN_EDGE_TYPE_ID + "\" INT NOT NULL," + "\""
-			+ COLUMN_EDGE_SEQUENCE_NUMBER + "\" BIGINT" + ")";
+			+ "\"" + COLUMN_GRAPH_ID + "\" INT NOT NULL," + "\""
+			+ COLUMN_TYPE_ID + "\" INT NOT NULL," + "\""
+			+ COLUMN_SEQUENCE_NUMBER + "\" BIGINT" + ")";
 
 	@Override
 	public PreparedStatement createEdgeTable() throws SQLException {
@@ -221,8 +221,8 @@ public class DerbyStatementList extends SqlStatementList {
 			+ PRIMARY_KEY_EDGE
 			+ "\" PRIMARY KEY ( \""
 			+ COLUMN_EDGE_ID
-			+ "\", \"+"
-			+ COLUMN_EDGE_GRAPH_ID + "\" )";
+			+ "\", \""
+			+ COLUMN_GRAPH_ID + "\" )";
 
 	@Override
 	public PreparedStatement addPrimaryKeyConstraintOnEdgeTable()
@@ -231,8 +231,8 @@ public class DerbyStatementList extends SqlStatementList {
 				.prepareStatement(ADD_PRIMARY_KEY_CONSTRAINT_ON_EDGE_TABLE);
 	}
 
-	private static final String DROP_PRIMARY_KEY_CONSTRAINT_FROM_EDGE_TABLE = "ALTER TABLE \"Edge\" DROP CONSTRAINT \""
-			+ PRIMARY_KEY_EDGE + "\"";
+	private static final String DROP_PRIMARY_KEY_CONSTRAINT_FROM_EDGE_TABLE = "ALTER TABLE \""
+			+ TABLE_EDGE + "\" DROP CONSTRAINT \"" + PRIMARY_KEY_EDGE + "\"";
 
 	@Override
 	public PreparedStatement dropPrimaryKeyConstraintFromEdgeTable()
@@ -246,7 +246,7 @@ public class DerbyStatementList extends SqlStatementList {
 			+ "\" ADD CONSTRAINT \""
 			+ FOREIGN_KEY_EDGE_TO_GRAPH
 			+ "\" FOREIGN KEY (\""
-			+ COLUMN_EDGE_GRAPH_ID
+			+ COLUMN_GRAPH_ID
 			+ "\") REFERENCES \""
 			+ TABLE_GRAPH + "\" (\"" + COLUMN_GRAPH_ID + "\")";
 
@@ -262,7 +262,7 @@ public class DerbyStatementList extends SqlStatementList {
 			+ "\" ADD CONSTRAINT \""
 			+ FOREIGN_KEY_EDGE_TO_TYPE
 			+ "\" FOREIGN KEY (\""
-			+ COLUMN_EDGE_TYPE_ID
+			+ COLUMN_TYPE_ID
 			+ "\") REFERENCES \""
 			+ TABLE_TYPE + "\" (\"" + COLUMN_TYPE_ID + "\")";
 
@@ -300,12 +300,11 @@ public class DerbyStatementList extends SqlStatementList {
 	}
 
 	private static final String CREATE_INCIDENCE_TABLE = "CREATE TABLE \""
-			+ TABLE_INCIDENCE + "\"(" + "\"" + COLUMN_INCIDENCE_EDGE_ID
-			+ "\" INT NOT NULL," + "\"" + COLUMN_INCIDENCE_VERTEX_ID
-			+ "\" INT NOT NULL," + "\"" + COLUMN_INCIDENCE_GRAPH_ID
-			+ "\" INT NOT NULL," + "\"" + COLUMN_INCIDENCE_DIRECTION
-			+ "\" VARCHAR(3) NOT NULL," + "\""
-			+ COLUMN_INCIDENCE_SEQUENCE_NUMBER + "\" BIGINT NOT NULL" + ")";
+			+ TABLE_INCIDENCE + "\"(" + "\"" + COLUMN_EDGE_ID
+			+ "\" INT NOT NULL," + "\"" + COLUMN_VERTEX_ID + "\" INT NOT NULL,"
+			+ "\"" + COLUMN_GRAPH_ID + "\" INT NOT NULL," + "\""
+			+ COLUMN_INCIDENCE_DIRECTION + "\" VARCHAR(3) NOT NULL," + "\""
+			+ COLUMN_SEQUENCE_NUMBER + "\" BIGINT NOT NULL" + ")";
 
 	@Override
 	public PreparedStatement createIncidenceTable() throws SQLException {
@@ -317,9 +316,9 @@ public class DerbyStatementList extends SqlStatementList {
 			+ "\" ADD CONSTRAINT \""
 			+ PRIMARY_KEY_INCIDENCE
 			+ "\" PRIMARY KEY ( \""
-			+ COLUMN_INCIDENCE_EDGE_ID
+			+ COLUMN_EDGE_ID
 			+ "\", \""
-			+ COLUMN_INCIDENCE_GRAPH_ID + "\", \"direction\" )";
+			+ COLUMN_GRAPH_ID + "\", \"" + COLUMN_INCIDENCE_DIRECTION + "\" )";
 
 	@Override
 	public PreparedStatement addPrimaryKeyConstraintOnIncidenceTable()
@@ -346,10 +345,11 @@ public class DerbyStatementList extends SqlStatementList {
 			+ "\" ADD CONSTRAINT \""
 			+ FOREIGN_KEY_INCIDENCE_TO_GRAPH
 			+ "\" FOREIGN KEY (\""
-			+ COLUMN_INCIDENCE_GRAPH_ID
+			+ COLUMN_GRAPH_ID
 			+ "\") REFERENCES \""
 			+ TABLE_GRAPH
-			+ "\" (\"" + COLUMN_GRAPH_ID + "\")";
+			+ "\" (\""
+			+ COLUMN_GRAPH_ID + "\")";
 
 	@Override
 	public PreparedStatement addForeignKeyConstraintOnGraphColumnOfIncidenceTable()
@@ -362,14 +362,15 @@ public class DerbyStatementList extends SqlStatementList {
 			+ "\" ADD CONSTRAINT \""
 			+ FOREIGN_KEY_INCIDENCE_TO_EDGE
 			+ "\" FOREIGN KEY (\""
-			+ COLUMN_INCIDENCE_EDGE_ID
+			+ COLUMN_EDGE_ID
 			+ "\", \""
-			+ COLUMN_INCIDENCE_GRAPH_ID
+			+ COLUMN_GRAPH_ID
 			+ "\") REFERENCES \""
 			+ TABLE_EDGE
 			+ "\" (\""
 			+ COLUMN_EDGE_ID
-			+ "\", \"" + COLUMN_EDGE_GRAPH_ID + "\")";
+			+ "\", \""
+			+ COLUMN_GRAPH_ID + "\")";
 
 	@Override
 	public PreparedStatement addForeignKeyConstraintOnEdgeColumnOfIncidenceTable()
@@ -382,14 +383,14 @@ public class DerbyStatementList extends SqlStatementList {
 			+ "\" ADD CONSTRAINT \""
 			+ FOREIGN_KEY_INCIDENCE_TO_VERTEX
 			+ "\" FOREIGN KEY (\""
-			+ COLUMN_INCIDENCE_VERTEX_ID
+			+ COLUMN_VERTEX_ID
 			+ "\", \""
-			+ COLUMN_INCIDENCE_GRAPH_ID
+			+ COLUMN_GRAPH_ID
 			+ "\") REFERENCES \""
 			+ TABLE_VERTEX
 			+ "\" (\""
 			+ COLUMN_VERTEX_ID
-			+ "\", \"" + COLUMN_VERTEX_GRAPH_ID + "\")";
+			+ "\", \"" + COLUMN_GRAPH_ID + "\")";
 
 	@Override
 	public PreparedStatement addForeignKeyConstraintOnVertexColumnOfIncidenceTable()
@@ -432,9 +433,8 @@ public class DerbyStatementList extends SqlStatementList {
 
 	private static final String CREATE_INDEX_ON_LAMBDA_SEQ = "CREATE INDEX \""
 			+ INDEX_INCIDENCE_LAMBDA_SEQ + "\" ON \"" + TABLE_INCIDENCE
-			+ "\"( \"" + COLUMN_INCIDENCE_VERTEX_ID + "\", \""
-			+ COLUMN_INCIDENCE_GRAPH_ID + "\", \""
-			+ COLUMN_INCIDENCE_SEQUENCE_NUMBER + "\" ASC )";
+			+ "\"( \"" + COLUMN_VERTEX_ID + "\", \"" + COLUMN_GRAPH_ID
+			+ "\", \"" + COLUMN_SEQUENCE_NUMBER + "\" ASC )";
 
 	@Override
 	public PreparedStatement addIndexOnLambdaSeq() throws SQLException {
@@ -455,8 +455,8 @@ public class DerbyStatementList extends SqlStatementList {
 			+ "\" INT GENERATED ALWAYS AS IDENTITY CONSTRAINT \""
 			+ PRIMARY_KEY_ATTRIBUTE + "\" PRIMARY KEY," + "\""
 			+ COLUMN_ATTRIBUTE_NAME + "\" VARCHAR(2048) NOT NULL," + "\""
-			+ COLUMN_ATTRIBUTE_SCHEMA_ID + "\" INT REFERENCES \""
-			+ TABLE_SCHEMA + "\" NOT NULL" + ")";
+			+ COLUMN_SCHEMA_ID + "\" INT REFERENCES \"" + TABLE_SCHEMA
+			+ "\" NOT NULL" + ")";
 
 	@Override
 	public PreparedStatement createAttributeTableWithConstraints()
@@ -468,23 +468,22 @@ public class DerbyStatementList extends SqlStatementList {
 			+ TABLE_GRAPH_ATTRIBUTE
 			+ "\"("
 			+ "\""
-			+ COLUMN_GRAPH_ATTRIBUTE_GRAPH_ID
+			+ COLUMN_GRAPH_ID
 			+ "\" INT REFERENCES \""
 			+ TABLE_GRAPH
 			+ "\" NOT NULL,"
 			+ "\""
-			+ COLUMN_GRAPH_ATTRIBUTE_ATTRIBUTE_ID
+			+ COLUMN_ATTRIBUTE_ID
 			+ "\" INT REFERENCES \""
 			+ TABLE_ATTRIBUTE
 			+ "\" NOT NULL,"
 			+ "\""
-			+ COLUMN_GRAPH_ATTRIBUTE_VALUE
+			+ COLUMN_ATTRIBUTE_VALUE
 			+ "\" LONG VARCHAR NOT NULL,"
 			+ "CONSTRAINT \""
 			+ PRIMARY_KEY_GRAPH_ATTRIBUTE
 			+ "\" PRIMARY KEY ( \""
-			+ COLUMN_GRAPH_ATTRIBUTE_GRAPH_ID
-			+ "\", \"" + COLUMN_GRAPH_ATTRIBUTE_ATTRIBUTE_ID + "\" )" + ")";
+			+ COLUMN_GRAPH_ID + "\", \"" + COLUMN_ATTRIBUTE_ID + "\" )" + ")";
 
 	@Override
 	public PreparedStatement createGraphAttributeValueTableWithConstraints()
@@ -496,16 +495,16 @@ public class DerbyStatementList extends SqlStatementList {
 			+ TABLE_VERTEX_ATTRIBUTE
 			+ "\"("
 			+ "\""
-			+ COLUMN_VERTEX_ATTRIBUTE_VERTEX_ID
+			+ COLUMN_VERTEX_ID
 			+ "\" INT NOT NULL,"
 			+ "\""
-			+ COLUMN_VERTEX_ATTRIBUTE_GRAPH_ID
+			+ COLUMN_GRAPH_ID
 			+ "\" INT NOT NULL,"
 			+ "\""
-			+ COLUMN_VERTEX_ATTRIBUTE_ATTRIBUTE_ID
+			+ COLUMN_ATTRIBUTE_ID
 			+ "\" INT NOT NULL,"
 			+ "\""
-			+ COLUMN_VERTEX_ATTRIBUTE_VALUE + "\" VARCHAR(2048) NOT NULL" + ")";
+			+ COLUMN_ATTRIBUTE_VALUE + "\" VARCHAR(2048) NOT NULL" + ")";
 
 	@Override
 	public PreparedStatement createVertexAttributeValueTable()
@@ -518,11 +517,11 @@ public class DerbyStatementList extends SqlStatementList {
 			+ "\" ADD CONSTRAINT \""
 			+ PRIMARY_KEY_VERTEX_ATTRIBUTE
 			+ "\" PRIMARY KEY ( \""
-			+ COLUMN_VERTEX_ATTRIBUTE_VERTEX_ID
+			+ COLUMN_VERTEX_ID
 			+ "\", \""
-			+ COLUMN_VERTEX_ATTRIBUTE_GRAPH_ID
+			+ COLUMN_GRAPH_ID
 			+ "\", \""
-			+ COLUMN_VERTEX_ATTRIBUTE_ATTRIBUTE_ID + "\" ) ";
+			+ COLUMN_ATTRIBUTE_ID + "\" ) ";
 
 	@Override
 	public PreparedStatement addPrimaryKeyConstraintOnVertexAttributeValueTable()
@@ -548,9 +547,10 @@ public class DerbyStatementList extends SqlStatementList {
 			+ "\" ADD CONSTRAINT \""
 			+ FOREIGN_KEY_VERTEX_ATTRIBUTE_TO_ATTRIBUTE
 			+ "\" FOREIGN KEY (\""
-			+ COLUMN_VERTEX_ATTRIBUTE_ATTRIBUTE_ID
+			+ COLUMN_ATTRIBUTE_ID
 			+ "\" ) REFERENCES \""
-			+ TABLE_ATTRIBUTE + "\" (\"" + COLUMN_ATTRIBUTE_ID + "\") ";
+			+ TABLE_ATTRIBUTE
+			+ "\" (\"" + COLUMN_ATTRIBUTE_ID + "\") ";
 
 	@Override
 	public PreparedStatement addForeignKeyConstraintOnAttributeColumnOfVertexAttributeValueTable()
@@ -564,9 +564,11 @@ public class DerbyStatementList extends SqlStatementList {
 			+ "\" ADD CONSTRAINT \""
 			+ FOREIGN_KEY_VERTEX_ATTRIBUTE_TO_GRAPH
 			+ "\" FOREIGN KEY (\""
-			+ COLUMN_VERTEX_ATTRIBUTE_GRAPH_ID
+			+ COLUMN_GRAPH_ID
 			+ "\") REFERENCES \""
-			+ TABLE_GRAPH + "\" (\"" + COLUMN_GRAPH_ID + "\")";
+			+ TABLE_GRAPH
+			+ "\" (\""
+			+ COLUMN_GRAPH_ID + "\")";
 
 	@Override
 	public PreparedStatement addForeignKeyConstraintOnGraphColumnOfVertexAttributeValueTable()
@@ -580,15 +582,14 @@ public class DerbyStatementList extends SqlStatementList {
 			+ "\" ADD CONSTRAINT \""
 			+ FOREIGN_KEY_VERTEX_ATTRIBUTE_TO_VERTEX
 			+ "\" FOREIGN KEY (\""
-			+ COLUMN_VERTEX_ATTRIBUTE_VERTEX_ID
+			+ COLUMN_VERTEX_ID
 			+ "\", \""
-			+ COLUMN_VERTEX_ATTRIBUTE_GRAPH_ID
+			+ COLUMN_GRAPH_ID
 			+ "\") REFERENCES \""
 			+ TABLE_VERTEX
 			+ "\" (\""
 			+ COLUMN_VERTEX_ID
-			+ "\", \""
-			+ COLUMN_VERTEX_GRAPH_ID + "\")";
+			+ "\", \"" + COLUMN_GRAPH_ID + "\")";
 
 	@Override
 	public PreparedStatement addForeignKeyConstraintOnVertexColumnOfVertexAttributeValueTable()
@@ -639,16 +640,16 @@ public class DerbyStatementList extends SqlStatementList {
 			+ TABLE_EDGE_ATTRIBUTE
 			+ "\"("
 			+ "\""
-			+ COLUMN_EDGE_ATTRIBUTE_EDGE_ID
+			+ COLUMN_EDGE_ID
 			+ "\" INT NOT NULL,"
 			+ "\""
-			+ COLUMN_EDGE_ATTRIBUTE_GRAPH_ID
+			+ COLUMN_GRAPH_ID
 			+ "\" INT NOT NULL,"
 			+ "\""
-			+ COLUMN_EDGE_ATTRIBUTE_ATTRIBUTE_ID
+			+ COLUMN_ATTRIBUTE_ID
 			+ "\" INT NOT NULL,"
 			+ "\""
-			+ COLUMN_EDGE_ATTRIBUTE_VALUE + "\" LONG VARCHAR NOT NULL" + ")";
+			+ COLUMN_ATTRIBUTE_VALUE + "\" LONG VARCHAR NOT NULL" + ")";
 
 	@Override
 	public PreparedStatement createEdgeAttributeValueTable()
@@ -661,11 +662,11 @@ public class DerbyStatementList extends SqlStatementList {
 			+ "\" ADD CONSTRAINT \""
 			+ PRIMARY_KEY_EDGE_ATTRIBUTE
 			+ "\" PRIMARY KEY ( \""
-			+ COLUMN_EDGE_ATTRIBUTE_EDGE_ID
+			+ COLUMN_EDGE_ID
 			+ "\", \""
-			+ COLUMN_EDGE_ATTRIBUTE_GRAPH_ID
+			+ COLUMN_GRAPH_ID
 			+ "\", \""
-			+ COLUMN_EDGE_ATTRIBUTE_ATTRIBUTE_ID + "\" )";
+			+ COLUMN_ATTRIBUTE_ID + "\" )";
 
 	@Override
 	public PreparedStatement addPrimaryKeyConstraintOnEdgeAttributeValueTable()
@@ -691,9 +692,11 @@ public class DerbyStatementList extends SqlStatementList {
 			+ "\" ADD CONSTRAINT \""
 			+ FOREIGN_KEY_EDGE_ATTRIBUTE_TO_GRAPH
 			+ "\" FOREIGN KEY (\""
-			+ COLUMN_EDGE_ATTRIBUTE_GRAPH_ID
+			+ COLUMN_GRAPH_ID
 			+ "\") REFERENCES \""
-			+ TABLE_GRAPH + "\" (\"" + COLUMN_GRAPH_ID + "\")";
+			+ TABLE_GRAPH
+			+ "\" (\""
+			+ COLUMN_GRAPH_ID + "\")";
 
 	@Override
 	public PreparedStatement addForeignKeyConstraintOnGraphColumnOfEdgeAttributeValueTable()
@@ -707,16 +710,15 @@ public class DerbyStatementList extends SqlStatementList {
 			+ "\" ADD CONSTRAINT \""
 			+ FOREIGN_KEY_EDGE_ATTRIBUTE_TO_EDGE
 			+ "\" FOREIGN KEY (\""
-			+ COLUMN_EDGE_ATTRIBUTE_EDGE_ID
+			+ COLUMN_EDGE_ID
 			+ "\", \""
-			+ COLUMN_EDGE_ATTRIBUTE_GRAPH_ID
+			+ COLUMN_GRAPH_ID
 			+ "\") REFERENCES \""
 			+ TABLE_EDGE
 			+ "\" (\""
 			+ COLUMN_EDGE_ID
 			+ "\", \""
-			+ COLUMN_EDGE_GRAPH_ID
-			+ "\")";
+			+ COLUMN_GRAPH_ID + "\")";
 
 	@Override
 	public PreparedStatement addForeignKeyConstraintOnEdgeColumnOfEdgeAttributeValueTable()
@@ -730,9 +732,10 @@ public class DerbyStatementList extends SqlStatementList {
 			+ "\" ADD CONSTRAINT \""
 			+ FOREIGN_KEY_EDGE_ATTRIBUTE_TO_ATTRIBUTE
 			+ "\" FOREIGN KEY (\""
-			+ COLUMN_EDGE_ATTRIBUTE_ATTRIBUTE_ID
+			+ COLUMN_ATTRIBUTE_ID
 			+ "\") REFERENCES \""
-			+ TABLE_ATTRIBUTE + "\" (\"" + COLUMN_ATTRIBUTE_ID + "\")";
+			+ TABLE_ATTRIBUTE
+			+ "\" (\"" + COLUMN_ATTRIBUTE_ID + "\")";
 
 	@Override
 	public PreparedStatement addForeignKeyConstraintOnAttributeColumnOfEdgeAttributeValueTable()
@@ -780,7 +783,10 @@ public class DerbyStatementList extends SqlStatementList {
 	// TODO continue here
 	// --- to insert schema information -------------------------------
 
-	private static final String INSERT_SCHEMA = "INSERT INTO \"GraphSchema\" ( \"packagePrefix\", \"name\", \"serializedDefinition\" ) VALUES ( ?, ?, ? )";
+	private static final String INSERT_SCHEMA = "INSERT INTO \"" + TABLE_SCHEMA
+			+ "\" ( \"" + COLUMN_SCHEMA_PACKAGE_PREFIX + "\", \""
+			+ COLUMN_SCHEMA_NAME + "\", \"" + COLUMN_SCHEMA_TG
+			+ "\" ) VALUES ( ?, ?, ? )";
 
 	@Override
 	public PreparedStatement insertSchema(Schema schema,
@@ -793,7 +799,9 @@ public class DerbyStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private static final String INSERT_TYPE = "INSERT INTO \"Type\"( \"qualifiedName\", \"schemaId\" ) VALUES ( ?, ? )";
+	private static final String INSERT_TYPE = "INSERT INTO \"" + TABLE_TYPE
+			+ "\"( \"" + COLUMN_TYPE_QNAME + "\", \"" + COLUMN_SCHEMA_ID
+			+ "\" ) VALUES ( ?, ? )";
 
 	@Override
 	public PreparedStatement insertType(String qualifiedName, int schemaId)
@@ -804,7 +812,9 @@ public class DerbyStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private static final String INSERT_ATTRIBUTE = "INSERT INTO \"Attribute\" ( \"name\", \"schemaId\" ) VALUES ( ?, ? )";
+	private static final String INSERT_ATTRIBUTE = "INSERT INTO \""
+			+ TABLE_ATTRIBUTE + "\" ( \"" + COLUMN_ATTRIBUTE_NAME + "\", \""
+			+ COLUMN_SCHEMA_ID + "\" ) VALUES ( ?, ? )";
 
 	@Override
 	public PreparedStatement insertAttribute(String name, int schemaId)
@@ -817,7 +827,11 @@ public class DerbyStatementList extends SqlStatementList {
 
 	// --- to insert a graph ------------------------------------------
 
-	private static final String INSERT_GRAPH = "INSERT INTO \"Graph\" ( \"uid\", \"version\", \"vSeqVersion\", \"eSeqVersion\", \"typeId\" ) VALUES ( ?, ?, ?, ?, ? )";
+	private static final String INSERT_GRAPH = "INSERT INTO \"" + TABLE_GRAPH
+			+ "\" ( \"" + COLUMN_GRAPH_UID + "\", \"" + COLUMN_GRAPH_VERSION
+			+ "\", \"" + COLUMN_GRAPH_VSEQ_VERSION + "\", \""
+			+ COLUMN_GRAPH_ESEQ_VERSION + "\", \"" + COLUMN_TYPE_ID
+			+ "\" ) VALUES ( ?, ?, ?, ?, ? )";
 
 	@Override
 	public PreparedStatement insertGraph(String id, long graphVersion,
@@ -833,7 +847,10 @@ public class DerbyStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private static final String INSERT_GRAPH_ATTRIBUTE_VALUE = "INSERT INTO \"GraphAttributeValue\" ( \"gId\", \"attributeId\", \"value\" ) VALUES ( ?, ?, ? )";
+	private static final String INSERT_GRAPH_ATTRIBUTE_VALUE = "INSERT INTO \""
+			+ TABLE_GRAPH_ATTRIBUTE + "\" ( \"" + COLUMN_GRAPH_ID + "\", \""
+			+ COLUMN_ATTRIBUTE_ID + "\", \"" + COLUMN_ATTRIBUTE_VALUE
+			+ "\" ) VALUES ( ?, ?, ? )";
 
 	@Override
 	public PreparedStatement insertGraphAttributeValue(int gId,
@@ -847,7 +864,11 @@ public class DerbyStatementList extends SqlStatementList {
 
 	// --- to insert a vertex ------------------------------------------
 
-	private static final String INSERT_VERTEX = "INSERT INTO \"Vertex\" ( \"vId\", \"gId\", \"typeId\", \"lambdaSeqVersion\", \"sequenceNumber\" ) VALUES (?, ?, ?, ?, ?)";
+	private static final String INSERT_VERTEX = "INSERT INTO \"" + TABLE_VERTEX
+			+ "\" ( \"" + COLUMN_VERTEX_ID + "\", \"" + COLUMN_GRAPH_ID
+			+ "\", \"" + COLUMN_TYPE_ID + "\", \""
+			+ COLUMN_VERTEX_LAMBDA_SEQ_VERSION + "\", \""
+			+ COLUMN_SEQUENCE_NUMBER + "\" ) VALUES (?, ?, ?, ?, ?)";
 
 	@Override
 	public PreparedStatement insertVertex(int vId, int typeId, int gId,
@@ -915,7 +936,16 @@ public class DerbyStatementList extends SqlStatementList {
 		return sqlStatement;
 	}
 
-	private static final String INSERT_VERTEX_ATTRIBUTE_VALUE = "INSERT INTO \"VertexAttributeValue\" ( \"vId\", \"gId\", \"attributeId\", \"value\" ) VALUES ( ?, ?, ?, ? )";
+	private static final String INSERT_VERTEX_ATTRIBUTE_VALUE = "INSERT INTO \""
+			+ TABLE_VERTEX_ATTRIBUTE
+			+ "\" ( \""
+			+ COLUMN_VERTEX_ID
+			+ "\", \""
+			+ COLUMN_GRAPH_ID
+			+ "\", \""
+			+ COLUMN_ATTRIBUTE_ID
+			+ "\", \""
+			+ COLUMN_ATTRIBUTE_VALUE + "\" ) VALUES ( ?, ?, ?, ? )";
 
 	@Override
 	public PreparedStatement insertVertexAttributeValue(int vId, int gId,
@@ -930,7 +960,10 @@ public class DerbyStatementList extends SqlStatementList {
 
 	// --- to insert an edge -------------------------------------------
 
-	private static final String INSERT_EDGE = "INSERT INTO \"Edge\" ( \"eId\", \"gId\", \"typeId\", \"sequenceNumber\" ) VALUES ( ?, ?, ?, ? )";
+	private static final String INSERT_EDGE = "INSERT INTO \"" + TABLE_EDGE
+			+ "\" ( \"" + COLUMN_EDGE_ID + "\", \"" + COLUMN_GRAPH_ID
+			+ "\", \"" + COLUMN_TYPE_ID + "\", \"" + COLUMN_SEQUENCE_NUMBER
+			+ "\" ) VALUES ( ?, ?, ?, ? )";
 
 	@Override
 	public PreparedStatement insertEdge(int eId, int gId, int typeId,
@@ -1028,7 +1061,11 @@ public class DerbyStatementList extends SqlStatementList {
 		return sqlStatement;
 	}
 
-	private static final String INSERT_INCIDENCE = "INSERT INTO \"Incidence\" ( \"eId\", \"gId\", \"vId\", \"direction\", \"sequenceNumber\" ) VALUES ( ?, ?, ?, ?, ? )";
+	private static final String INSERT_INCIDENCE = "INSERT INTO \""
+			+ TABLE_INCIDENCE + "\" ( \"" + COLUMN_EDGE_ID + "\", \""
+			+ COLUMN_GRAPH_ID + "\", \"" + COLUMN_VERTEX_ID + "\", \""
+			+ COLUMN_INCIDENCE_DIRECTION + "\", \"" + COLUMN_SEQUENCE_NUMBER
+			+ "\" ) VALUES ( ?, ?, ?, ?, ? )";
 
 	@Override
 	public PreparedStatement insertIncidence(int eId, int vId, int gId,
@@ -1049,7 +1086,10 @@ public class DerbyStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private static final String INSERT_EDGE_ATTRIBUTE_VALUE = "INSERT INTO \"EdgeAttributeValue\" ( \"eId\", \"gId\", \"attributeId\", \"value\" ) VALUES ( ?, ?, ?, ? )";
+	private static final String INSERT_EDGE_ATTRIBUTE_VALUE = "INSERT INTO \""
+			+ TABLE_EDGE_ATTRIBUTE + "\" ( \"" + COLUMN_EDGE_ID + "\", \""
+			+ COLUMN_GRAPH_ID + "\", \"" + COLUMN_ATTRIBUTE_ID + "\", \""
+			+ COLUMN_ATTRIBUTE_VALUE + "\" ) VALUES ( ?, ?, ?, ? )";
 
 	@Override
 	public PreparedStatement insertEdgeAttributeValue(int eId, int gId,
@@ -1064,7 +1104,10 @@ public class DerbyStatementList extends SqlStatementList {
 
 	// --- to open a graph schema -------------------------------------------
 
-	private static final String SELECT_SCHEMA_ID = "SELECT \"schemaId\" FROM \"GraphSchema\" WHERE \"packagePrefix\" = ? AND \"name\" = ?";
+	private static final String SELECT_SCHEMA_ID = "SELECT \""
+			+ COLUMN_SCHEMA_ID + "\" FROM \"" + TABLE_SCHEMA + "\" WHERE \""
+			+ COLUMN_SCHEMA_PACKAGE_PREFIX + "\" = ? AND \""
+			+ COLUMN_SCHEMA_NAME + "\" = ?";
 
 	@Override
 	public PreparedStatement selectSchemaId(String packagePrefix, String name)
@@ -1075,7 +1118,10 @@ public class DerbyStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private static final String SELECT_SCHEMA_DEFINITION_BY_NAME = "SELECT \"serializedDefinition\" FROM \"GraphSchema\" WHERE \"packagePrefix\" = ? AND name = ?;";
+	private static final String SELECT_SCHEMA_DEFINITION_BY_NAME = "SELECT \""
+			+ COLUMN_SCHEMA_TG + "\" FROM \"" + TABLE_SCHEMA + "\" WHERE \""
+			+ COLUMN_SCHEMA_PACKAGE_PREFIX + "\" = ? AND " + COLUMN_SCHEMA_NAME
+			+ " = ?;";
 
 	@Override
 	public PreparedStatement selectSchemaDefinition(String packagePrefix,
@@ -1087,9 +1133,13 @@ public class DerbyStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private static final String SELECT_SCHEMA_DEFINITION = "SELECT \"serializedDefinition\" FROM \"GraphSchema\" WHERE \"schemaId\" = ("
-			+ "SELECT \"schemaId\" FROM \"Type\" WHERE \"typeId\" = ("
-			+ "SELECT \"typeId\" FROM \"Graph\" WHERE \"uid\" = ?" + ")" + ")";
+	private static final String SELECT_SCHEMA_DEFINITION = "SELECT \""
+			+ COLUMN_SCHEMA_TG + "\" FROM \"" + TABLE_SCHEMA + "\" WHERE \""
+			+ COLUMN_SCHEMA_ID + "\" = (" + "SELECT \"" + COLUMN_SCHEMA_ID
+			+ "\" FROM \"" + TABLE_TYPE + "\" WHERE \"" + COLUMN_TYPE_ID
+			+ "\" = (" + "SELECT \"" + COLUMN_TYPE_ID + "\" FROM \""
+			+ TABLE_GRAPH + "\" WHERE \"" + COLUMN_GRAPH_UID + "\" = ?" + ")"
+			+ ")";
 
 	@Override
 	public PreparedStatement selectSchemaDefinitionForGraph(String uid)
@@ -1099,9 +1149,13 @@ public class DerbyStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private static final String SELECT_SCHEMA_NAME = "SELECT \"packagePrefix\", \"name\" FROM \"GraphSchema\" WHERE \"schemaId\" = ("
-			+ "SELECT \"schemaId\" FROM \"Type\" WHERE \"typeId\" = ("
-			+ "SELECT \"typeId\" FROM \"Graph\" WHERE \"uid\" = ?" + ")" + ")";
+	private static final String SELECT_SCHEMA_NAME = "SELECT \""
+			+ COLUMN_SCHEMA_PACKAGE_PREFIX + "\", \"" + COLUMN_SCHEMA_NAME
+			+ "\" FROM \"" + TABLE_SCHEMA + "\" WHERE \"" + COLUMN_SCHEMA_ID
+			+ "\" = (" + "SELECT \"" + COLUMN_SCHEMA_ID + "\" FROM \""
+			+ TABLE_TYPE + "\" WHERE \"" + COLUMN_TYPE_ID + "\" = ("
+			+ "SELECT \"" + COLUMN_TYPE_ID + "\" FROM \"" + TABLE_GRAPH
+			+ "\" WHERE \"" + COLUMN_GRAPH_UID + "\" = ?" + ")" + ")";
 
 	@Override
 	public PreparedStatement selectSchemaNameForGraph(String uid)
@@ -1111,8 +1165,12 @@ public class DerbyStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private static final String SELECT_TYPES = "SELECT \"qualifiedName\", \"typeId\" FROM \"Type\" WHERE \"schemaId\" = "
-			+ "(SELECT \"schemaId\" FROM \"GraphSchema\" WHERE \"packagePrefix\" = ? AND \"name\" = ?)";
+	private static final String SELECT_TYPES = "SELECT \"" + COLUMN_TYPE_QNAME
+			+ "\", \"" + COLUMN_TYPE_ID + "\" FROM \"" + TABLE_TYPE
+			+ "\" WHERE \"" + COLUMN_SCHEMA_ID + "\" = " + "(SELECT \""
+			+ COLUMN_SCHEMA_ID + "\" FROM \"" + TABLE_SCHEMA + "\" WHERE \""
+			+ COLUMN_SCHEMA_PACKAGE_PREFIX + "\" = ? AND \""
+			+ COLUMN_SCHEMA_NAME + "\" = ?)";
 
 	@Override
 	public PreparedStatement selectTypesOfSchema(String packagePrefix,
@@ -1123,8 +1181,12 @@ public class DerbyStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private static final String SELECT_ATTRIBUTES = "SELECT \"name\", \"attributeId\" FROM \"Attribute\" WHERE \"schemaId\" = "
-			+ "(SELECT \"schemaId\" FROM \"GraphSchema\" WHERE \"packagePrefix\" = ? AND \"name\" = ?)";
+	private static final String SELECT_ATTRIBUTES = "SELECT \""
+			+ COLUMN_ATTRIBUTE_NAME + "\", \"" + COLUMN_ATTRIBUTE_ID
+			+ "\" FROM \"" + TABLE_ATTRIBUTE + "\" WHERE \"" + COLUMN_SCHEMA_ID
+			+ "\" = " + "(SELECT \"" + COLUMN_SCHEMA_ID + "\" FROM \""
+			+ TABLE_SCHEMA + "\" WHERE \"" + COLUMN_SCHEMA_PACKAGE_PREFIX
+			+ "\" = ? AND \"" + COLUMN_SCHEMA_NAME + "\" = ?)";
 
 	@Override
 	public PreparedStatement selectAttributesOfSchema(String packagePrefix,
@@ -1137,7 +1199,11 @@ public class DerbyStatementList extends SqlStatementList {
 
 	// --- to open a graph --------------------------------------------
 
-	private static final String SELECT_GRAPH = "SELECT \"gId\", \"version\", \"vSeqVersion\", \"eSeqVersion\" FROM \"Graph\" WHERE \"uid\" = ?";
+	private static final String SELECT_GRAPH = "SELECT \"" + COLUMN_GRAPH_ID
+			+ "\", \"" + COLUMN_GRAPH_VERSION + "\", \""
+			+ COLUMN_GRAPH_VSEQ_VERSION + "\", \"" + COLUMN_GRAPH_ESEQ_VERSION
+			+ "\" FROM \"" + TABLE_GRAPH + "\" WHERE \"" + COLUMN_GRAPH_UID
+			+ "\" = ?";
 
 	@Override
 	public PreparedStatement selectGraph(String id) throws SQLException {
@@ -1146,7 +1212,8 @@ public class DerbyStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private static final String COUNT_VERTICES_IN_GRAPH = "SELECT COUNT (*) FROM \"Vertex\" WHERE \"gId\" = ?";
+	private static final String COUNT_VERTICES_IN_GRAPH = "SELECT COUNT (*) FROM \""
+			+ TABLE_VERTEX + "\" WHERE \"" + COLUMN_GRAPH_ID + "\" = ?";
 
 	@Override
 	public PreparedStatement countVerticesOfGraph(int gId) throws SQLException {
@@ -1155,7 +1222,8 @@ public class DerbyStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private static final String COUNT_EDGES_IN_GRAPH = "SELECT COUNT (*) FROM \"Edge\" WHERE \"gId\" = ?";
+	private static final String COUNT_EDGES_IN_GRAPH = "SELECT COUNT (*) FROM \""
+			+ TABLE_EDGE + "\" WHERE \"" + COLUMN_GRAPH_ID + "\" = ?";
 
 	@Override
 	public PreparedStatement countEdgesOfGraph(int gId) throws SQLException {
@@ -1164,7 +1232,10 @@ public class DerbyStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private static final String SELECT_VERTICES = "SELECT \"vId\", \"sequenceNumber\"  FROM \"Vertex\" WHERE \"gId\" = ? ORDER BY \"sequenceNumber\" ASC";
+	private static final String SELECT_VERTICES = "SELECT \""
+			+ COLUMN_VERTEX_ID + "\", \"" + COLUMN_SEQUENCE_NUMBER
+			+ "\"  FROM \"" + TABLE_VERTEX + "\" WHERE \"" + COLUMN_GRAPH_ID
+			+ "\" = ? ORDER BY \"" + COLUMN_SEQUENCE_NUMBER + "\" ASC";
 
 	@Override
 	public PreparedStatement selectVerticesOfGraph(int gId) throws SQLException {
@@ -1173,7 +1244,10 @@ public class DerbyStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private static final String SELECT_EDGES = "SELECT \"eId\", \"sequenceNumber\"  FROM \"Edge\" WHERE \"gId\" = ? ORDER BY \"sequenceNumber\" ASC";
+	private static final String SELECT_EDGES = "SELECT \"" + COLUMN_EDGE_ID
+			+ "\", \"" + COLUMN_SEQUENCE_NUMBER + "\"  FROM \"" + TABLE_EDGE
+			+ "\" WHERE \"" + COLUMN_GRAPH_ID + "\" = ? ORDER BY \""
+			+ COLUMN_SEQUENCE_NUMBER + "\" ASC";
 
 	@Override
 	public PreparedStatement selectEdgesOfGraph(int gId) throws SQLException {
@@ -1182,7 +1256,12 @@ public class DerbyStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private static final String SELECT_ATTRIBUTE_VALUES_OF_GRAPH = "SELECT \"name\", \"value\" FROM \"GraphAttributeValue\" JOIN \"Attribute\" ON \"GraphAttributeValue\".\"attributeId\" = \"Attribute\".\"attributeId\" WHERE \"gId\" = ?";
+	private static final String SELECT_ATTRIBUTE_VALUES_OF_GRAPH = "SELECT \""
+			+ COLUMN_ATTRIBUTE_NAME + "\", \"" + COLUMN_ATTRIBUTE_VALUE
+			+ "\" FROM \"" + TABLE_GRAPH_ATTRIBUTE + "\" JOIN \""
+			+ TABLE_ATTRIBUTE + "\" ON \"" + TABLE_GRAPH_ATTRIBUTE + "\".\""
+			+ COLUMN_ATTRIBUTE_ID + "\" = \"" + TABLE_ATTRIBUTE + "\".\""
+			+ COLUMN_ATTRIBUTE_ID + "\" WHERE \"" + COLUMN_GRAPH_ID + "\" = ?";
 
 	@Override
 	public PreparedStatement selectAttributeValuesOfGraph(int gId)
@@ -1194,10 +1273,20 @@ public class DerbyStatementList extends SqlStatementList {
 
 	// --- to get a vertex -------------------------------------------
 
-	private static final String SELECT_VERTEX_WITH_INCIDENCES = "SELECT \"typeId\", \"lambdaSeqVersion\", \"Vertex\".\"sequenceNumber\", \"Incidence\".\"sequenceNumber\", \"direction\", \"eId\" FROM"
-			+ "\"Vertex\" LEFT OUTER JOIN \"Incidence\" ON ( \"Vertex\".\"vId\" = \"Incidence\".\"vId\" AND \"Vertex\".\"gId\" = \"Incidence\".\"gId\" )"
-			+ "WHERE \"Vertex\".\"vId\" = ? AND \"Vertex\".\"gId\" = ?"
-			+ "ORDER BY \"Incidence\".\"sequenceNumber\" ASC";
+	private static final String SELECT_VERTEX_WITH_INCIDENCES = "SELECT \""
+			+ COLUMN_TYPE_ID + "\", \"" + COLUMN_VERTEX_LAMBDA_SEQ_VERSION
+			+ "\", \"" + TABLE_VERTEX + "\".\"" + COLUMN_SEQUENCE_NUMBER
+			+ "\", \"" + TABLE_INCIDENCE + "\".\"" + COLUMN_SEQUENCE_NUMBER
+			+ "\", \"" + COLUMN_INCIDENCE_DIRECTION + "\", \"" + COLUMN_EDGE_ID
+			+ "\" FROM" + "\"" + TABLE_VERTEX + "\" LEFT OUTER JOIN \""
+			+ TABLE_INCIDENCE + "\" ON ( \"" + TABLE_VERTEX + "\".\""
+			+ COLUMN_VERTEX_ID + "\" = \"" + TABLE_INCIDENCE + "\".\""
+			+ COLUMN_VERTEX_ID + "\" AND \"" + TABLE_VERTEX + "\".\""
+			+ COLUMN_GRAPH_ID + "\" = \"" + TABLE_INCIDENCE + "\".\""
+			+ COLUMN_GRAPH_ID + "\" )" + "WHERE \"" + TABLE_VERTEX + "\".\""
+			+ COLUMN_VERTEX_ID + "\" = ? AND \"" + TABLE_VERTEX + "\".\""
+			+ COLUMN_GRAPH_ID + "\" = ?" + "ORDER BY \"" + TABLE_INCIDENCE
+			+ "\".\"" + COLUMN_SEQUENCE_NUMBER + "\" ASC";
 
 	@Override
 	public PreparedStatement selectVertexWithIncidences(int vId, int gId)
@@ -1208,7 +1297,10 @@ public class DerbyStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private static final String SELECT_ATTRIBUTE_VALUES_OF_VERTEX = "SELECT \"attributeId\", \"value\" FROM \"VertexAttributeValue\" WHERE \"vId\" = ? AND \"gId\" = ?";
+	private static final String SELECT_ATTRIBUTE_VALUES_OF_VERTEX = "SELECT \""
+			+ COLUMN_ATTRIBUTE_ID + "\", \"" + COLUMN_ATTRIBUTE_VALUE
+			+ "\" FROM \"" + TABLE_VERTEX_ATTRIBUTE + "\" WHERE \""
+			+ COLUMN_VERTEX_ID + "\" = ? AND \"" + COLUMN_GRAPH_ID + "\" = ?";
 
 	@Override
 	public PreparedStatement selectAttributeValuesOfVertex(int vId, int gId)
@@ -1221,9 +1313,18 @@ public class DerbyStatementList extends SqlStatementList {
 
 	// --- to get an edge --------------------------------------------
 
-	private static final String SELECT_EDGE_WITH_INCIDENCES = "SELECT \"typeId\", \"Edge\".\"sequenceNumber\", \"direction\", \"vId\", \"Incidence\".\"sequenceNumber\" FROM"
-			+ "\"Edge\" INNER JOIN \"Incidence\" ON ( \"Edge\".\"eId\" = \"Incidence\".\"eId\" AND \"Edge\".\"gId\" = \"Incidence\".\"gId\" )"
-			+ "WHERE \"Edge\".\"eId\" = ? AND \"Edge\".\"gId\" = ?";
+	private static final String SELECT_EDGE_WITH_INCIDENCES = "SELECT \""
+			+ COLUMN_TYPE_ID + "\", \"" + TABLE_EDGE + "\".\""
+			+ COLUMN_SEQUENCE_NUMBER + "\", \"" + COLUMN_INCIDENCE_DIRECTION
+			+ "\", \"" + COLUMN_VERTEX_ID + "\", \"" + TABLE_INCIDENCE
+			+ "\".\"" + COLUMN_SEQUENCE_NUMBER + "\" FROM" + "\"" + TABLE_EDGE
+			+ "\" INNER JOIN \"" + TABLE_INCIDENCE + "\" ON ( \"" + TABLE_EDGE
+			+ "\".\"" + COLUMN_EDGE_ID + "\" = \"" + TABLE_INCIDENCE + "\".\""
+			+ COLUMN_EDGE_ID + "\" AND \"" + TABLE_EDGE + "\".\""
+			+ COLUMN_GRAPH_ID + "\" = \"" + TABLE_INCIDENCE + "\".\""
+			+ COLUMN_GRAPH_ID + "\" )" + "WHERE \"" + TABLE_EDGE + "\".\""
+			+ COLUMN_EDGE_ID + "\" = ? AND \"" + TABLE_EDGE + "\".\""
+			+ COLUMN_GRAPH_ID + "\" = ?";
 
 	@Override
 	public PreparedStatement selectEdgeWithIncidences(int eId, int gId)
@@ -1234,7 +1335,10 @@ public class DerbyStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private static final String SELECT_ATTRIBUTE_VALUES_OF_EDGE = "SELECT \"attributeId\", \"value\" FROM \"EdgeAttributeValue\" WHERE \"eId\" = ? AND \"gId\" = ?";
+	private static final String SELECT_ATTRIBUTE_VALUES_OF_EDGE = "SELECT \""
+			+ COLUMN_ATTRIBUTE_ID + "\", \"" + COLUMN_ATTRIBUTE_VALUE
+			+ "\" FROM \"" + TABLE_EDGE_ATTRIBUTE + "\" WHERE \""
+			+ COLUMN_EDGE_ID + "\" = ? AND \"" + COLUMN_GRAPH_ID + "\" = ?";
 
 	@Override
 	public PreparedStatement selectAttributeValuesOfEdge(int eId, int gId)
@@ -1247,7 +1351,11 @@ public class DerbyStatementList extends SqlStatementList {
 
 	// --- to delete a graph ------------------------------------------
 
-	private static final String DELETE_ATTRIBUTE_VALUES_OF_GRAPH = "DELETE FROM \"GraphAttributeValue\" WHERE \"gId\" = ?";
+	private static final String DELETE_ATTRIBUTE_VALUES_OF_GRAPH = "DELETE FROM \""
+			+ TABLE_GRAPH_ATTRIBUTE
+			+ "\" WHERE \""
+			+ COLUMN_GRAPH_ID
+			+ "\" = ?";
 
 	@Override
 	public PreparedStatement deleteAttributeValuesOfGraph(int gId)
@@ -1257,7 +1365,8 @@ public class DerbyStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private static final String DELETE_EDGE_ATTRIBUTE_VALUES_OF_GRAPH = "DELETE FROM \"EdgeAttributeValue\" WHERE \"gId\" = ?";
+	private static final String DELETE_EDGE_ATTRIBUTE_VALUES_OF_GRAPH = "DELETE FROM \""
+			+ TABLE_EDGE_ATTRIBUTE + "\" WHERE \"" + COLUMN_GRAPH_ID + "\" = ?";
 
 	@Override
 	public PreparedStatement deleteEdgeAttributeValuesOfGraph(int gId)
@@ -1267,7 +1376,11 @@ public class DerbyStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private static final String DELETE_VERTEX_ATTRIBUTE_VALUES_OF_GRAPH = "DELETE FROM \"VertexAttributeValue\" WHERE \"gId\" = ?";
+	private static final String DELETE_VERTEX_ATTRIBUTE_VALUES_OF_GRAPH = "DELETE FROM \""
+			+ TABLE_VERTEX_ATTRIBUTE
+			+ "\" WHERE \""
+			+ COLUMN_GRAPH_ID
+			+ "\" = ?";
 
 	@Override
 	public PreparedStatement deleteVertexAttributeValuesOfGraph(int gId)
@@ -1277,7 +1390,8 @@ public class DerbyStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private static final String DELETE_INCIDENCES_OF_GRAPH = "DELETE FROM \"Incidence\" WHERE \"gId\" = ?";
+	private static final String DELETE_INCIDENCES_OF_GRAPH = "DELETE FROM \""
+			+ TABLE_INCIDENCE + "\" WHERE \"" + COLUMN_GRAPH_ID + "\" = ?";
 
 	@Override
 	public PreparedStatement deleteIncidencesOfGraph(int gId)
@@ -1287,7 +1401,8 @@ public class DerbyStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private static final String DELETE_VERTICES_OF_GRAPH = "DELETE FROM \"Vertex\" WHERE \"gId\" = ?";
+	private static final String DELETE_VERTICES_OF_GRAPH = "DELETE FROM \""
+			+ TABLE_VERTEX + "\" WHERE \"" + COLUMN_GRAPH_ID + "\" = ?";
 
 	@Override
 	public PreparedStatement deleteVerticesOfGraph(int gId) throws SQLException {
@@ -1296,8 +1411,8 @@ public class DerbyStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private static final String DELETE_EDGES_OF_GRAPH = ""
-			+ "DELETE FROM \"Edge\" WHERE \"gId\" = ?";
+	private static final String DELETE_EDGES_OF_GRAPH = "" + "DELETE FROM \""
+			+ TABLE_EDGE + "\" WHERE \"" + COLUMN_GRAPH_ID + "\" = ?";
 
 	@Override
 	public PreparedStatement deleteEdgesOfGraph(int gId) throws SQLException {
@@ -1306,7 +1421,8 @@ public class DerbyStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private static final String DELETE_GRAPH = "DELETE FROM \"Graph\" WHERE \"gId\" = ?";
+	private static final String DELETE_GRAPH = "DELETE FROM \"" + TABLE_GRAPH
+			+ "\" WHERE \"" + COLUMN_GRAPH_ID + "\" = ?";
 
 	@Override
 	public PreparedStatement deleteGraph(int gId) throws SQLException {
@@ -1317,7 +1433,11 @@ public class DerbyStatementList extends SqlStatementList {
 
 	// --- to delete a vertex -----------------------------------------
 
-	private static final String DELETE_ATTRIBUTE_VALUES_OF_VERTEX = "DELETE FROM \"VertexAttributeValue\" WHERE \"vId\" = ? AND \"gId\" = ?";
+	private static final String DELETE_ATTRIBUTE_VALUES_OF_VERTEX = "DELETE FROM \""
+			+ TABLE_VERTEX_ATTRIBUTE
+			+ "\" WHERE \""
+			+ COLUMN_VERTEX_ID
+			+ "\" = ? AND \"" + COLUMN_GRAPH_ID + "\" = ?";
 
 	@Override
 	public PreparedStatement deleteAttributeValuesOfVertex(int vId, int gId)
@@ -1328,7 +1448,12 @@ public class DerbyStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private static final String SELECT_ID_OF_INCIDENT_EDGES_OF_VERTEX = "SELECT \"eId\" FROM \"Incidence\" WHERE \"vId\" = ? AND \"gId\" = ?";
+	private static final String SELECT_ID_OF_INCIDENT_EDGES_OF_VERTEX = "SELECT \""
+			+ COLUMN_EDGE_ID
+			+ "\" FROM \""
+			+ TABLE_INCIDENCE
+			+ "\" WHERE \""
+			+ COLUMN_VERTEX_ID + "\" = ? AND \"" + COLUMN_GRAPH_ID + "\" = ?";
 
 	@Override
 	public PreparedStatement selectIncidentEIdsOfVertex(int vId, int gId)
@@ -1339,7 +1464,9 @@ public class DerbyStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private static final String DELETE_VERTEX = "DELETE FROM \"Vertex\" WHERE \"vId\" = ? AND \"gId\" = ?";
+	private static final String DELETE_VERTEX = "DELETE FROM \"" + TABLE_VERTEX
+			+ "\" WHERE \"" + COLUMN_VERTEX_ID + "\" = ? AND \""
+			+ COLUMN_GRAPH_ID + "\" = ?";
 
 	@Override
 	public PreparedStatement deleteVertex(int vId, int gId) throws SQLException {
@@ -1351,7 +1478,11 @@ public class DerbyStatementList extends SqlStatementList {
 
 	// --- to delete an edge ------------------------------------------
 
-	private static final String DELETE_ATTRIBUTE_VALUES_OF_EDGE = "DELETE FROM \"EdgeAttributeValue\" WHERE \"eId\" = ? AND \"gId\" = ?";
+	private static final String DELETE_ATTRIBUTE_VALUES_OF_EDGE = "DELETE FROM \""
+			+ TABLE_EDGE_ATTRIBUTE
+			+ "\" WHERE \""
+			+ COLUMN_EDGE_ID
+			+ "\" = ? AND \"" + COLUMN_GRAPH_ID + "\" = ?";
 
 	@Override
 	public PreparedStatement deleteAttributeValuesOfEdge(int eId, int gId)
@@ -1362,7 +1493,9 @@ public class DerbyStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private static final String DELETE_INCIDENCES_OF_EDGE = "DELETE FROM \"Incidence\" WHERE \"eId\" = ? AND \"gId\" = ?";
+	private static final String DELETE_INCIDENCES_OF_EDGE = "DELETE FROM \""
+			+ TABLE_INCIDENCE + "\" WHERE \"" + COLUMN_EDGE_ID
+			+ "\" = ? AND \"" + COLUMN_GRAPH_ID + "\" = ?";
 
 	@Override
 	public PreparedStatement deleteIncidencesOfEdge(int eId, int gId)
@@ -1373,7 +1506,9 @@ public class DerbyStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private static final String DELETE_EDGE = "DELETE FROM \"Edge\" WHERE \"eId\" = ? AND \"gId\" = ?";
+	private static final String DELETE_EDGE = "DELETE FROM \"" + TABLE_EDGE
+			+ "\" WHERE \"" + COLUMN_EDGE_ID + "\" = ? AND \""
+			+ COLUMN_GRAPH_ID + "\" = ?";
 
 	@Override
 	public PreparedStatement deleteEdge(int eId, int gId) throws SQLException {
@@ -1385,7 +1520,10 @@ public class DerbyStatementList extends SqlStatementList {
 
 	// --- to update a graph ------------------------------------------
 
-	private static final String UPDATE_ATTRIBUTE_VALUE_OF_GRAPH = "UPDATE \"GraphAttributeValue\" SET \"value\" = ? WHERE \"gId\" = ? AND \"attributeId\" = ?";
+	private static final String UPDATE_ATTRIBUTE_VALUE_OF_GRAPH = "UPDATE \""
+			+ TABLE_GRAPH_ATTRIBUTE + "\" SET \"" + COLUMN_ATTRIBUTE_VALUE
+			+ "\" = ? WHERE \"" + COLUMN_GRAPH_ID + "\" = ? AND \""
+			+ COLUMN_ATTRIBUTE_ID + "\" = ?";
 
 	@Override
 	public PreparedStatement updateAttributeValueOfGraph(int gId,
@@ -1397,8 +1535,21 @@ public class DerbyStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private static final String UPDATE_ATTRIBUTE_VALUE_OF_GRAPH_AND_GRAPH_VERSION = "UPDATE \"GraphAttributeValue\" SET \"value\" = ? WHERE \"gId\" = ? AND \"attributeId\" = ?;"
-			+ "UPDATE \"Graph\" SET \"version\" = ? WHERE \"gId\" = ?";
+	private static final String UPDATE_ATTRIBUTE_VALUE_OF_GRAPH_AND_GRAPH_VERSION = "UPDATE \""
+			+ TABLE_GRAPH_ATTRIBUTE
+			+ "\" SET \""
+			+ COLUMN_ATTRIBUTE_VALUE
+			+ "\" = ? WHERE \""
+			+ COLUMN_GRAPH_ID
+			+ "\" = ? AND \""
+			+ COLUMN_ATTRIBUTE_ID
+			+ "\" = ?;"
+			+ "UPDATE \""
+			+ TABLE_GRAPH
+			+ "\" SET \""
+			+ COLUMN_GRAPH_VERSION
+			+ "\" = ? WHERE \""
+			+ COLUMN_GRAPH_ID + "\" = ?";
 
 	@Override
 	public PreparedStatement updateAttributeValueOfGraphAndGraphVersion(
@@ -1413,7 +1564,9 @@ public class DerbyStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private static final String UPDATE_GRAPH_UID = "UPDATE \"Graph\" SET \"uid\" = ? WHERE \"gId\" = ?";
+	private static final String UPDATE_GRAPH_UID = "UPDATE \"" + TABLE_GRAPH
+			+ "\" SET \"" + COLUMN_GRAPH_UID + "\" = ? WHERE \""
+			+ COLUMN_GRAPH_ID + "\" = ?";
 
 	@Override
 	public PreparedStatement updateGraphId(int gId, String uid)
@@ -1424,7 +1577,9 @@ public class DerbyStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private static final String UPDATE_GRAPH_VERSION = "UPDATE \"Graph\" SET \"version\" = ? WHERE \"gId\" = ?";
+	private static final String UPDATE_GRAPH_VERSION = "UPDATE \""
+			+ TABLE_GRAPH + "\" SET \"" + COLUMN_GRAPH_VERSION
+			+ "\" = ? WHERE \"" + COLUMN_GRAPH_ID + "\" = ?";
 
 	@Override
 	public PreparedStatement updateGraphVersion(int gId, long version)
@@ -1435,7 +1590,9 @@ public class DerbyStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private static final String UPDATE_VERTEX_LIST_VERSION = "UPDATE \"Graph\" SET \"vSeqVersion\" = ? WHERE \"gId\" = ?";
+	private static final String UPDATE_VERTEX_LIST_VERSION = "UPDATE \""
+			+ TABLE_GRAPH + "\" SET \"" + COLUMN_GRAPH_VSEQ_VERSION
+			+ "\" = ? WHERE \"" + COLUMN_GRAPH_ID + "\" = ?";
 
 	@Override
 	public PreparedStatement updateVertexListVersionOfGraph(int gId,
@@ -1446,7 +1603,9 @@ public class DerbyStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private static final String UPDATE_EDGE_LIST_VERSION = "UPDATE \"Graph\" SET \"eSeqVersion\" = ? WHERE \"gId\" = ?";
+	private static final String UPDATE_EDGE_LIST_VERSION = "UPDATE \""
+			+ TABLE_GRAPH + "\" SET \"" + COLUMN_GRAPH_ESEQ_VERSION
+			+ "\" = ? WHERE \"" + COLUMN_GRAPH_ID + "\" = ?";
 
 	@Override
 	public PreparedStatement updateEdgeListVersionOfGraph(int gId, long version)
@@ -1459,7 +1618,9 @@ public class DerbyStatementList extends SqlStatementList {
 
 	// --- to update a vertex -----------------------------------------
 
-	private static final String UPDATE_VERTEX_ID = "UPDATE \"Vertex\" SET \"vId\" = ? WHERE \"vId\" = ? AND \"gId\" = ?";
+	private static final String UPDATE_VERTEX_ID = "UPDATE \"" + TABLE_VERTEX
+			+ "\" SET \"" + COLUMN_VERTEX_ID + "\" = ? WHERE \""
+			+ COLUMN_VERTEX_ID + "\" = ? AND \"" + COLUMN_GRAPH_ID + "\" = ?";
 
 	@Override
 	public PreparedStatement updateIdOfVertex(int oldVId, int gId, int newVId)
@@ -1471,7 +1632,10 @@ public class DerbyStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private static final String UPDATE_SEQUENCE_NUMBER_OF_VERTEX = "UPDATE \"Vertex\" SET \"sequenceNumber\" = ? WHERE \"vId\" = ? AND \"gId\" = ?";
+	private static final String UPDATE_SEQUENCE_NUMBER_OF_VERTEX = "UPDATE \""
+			+ TABLE_VERTEX + "\" SET \"" + COLUMN_SEQUENCE_NUMBER
+			+ "\" = ? WHERE \"" + COLUMN_VERTEX_ID + "\" = ? AND \""
+			+ COLUMN_GRAPH_ID + "\" = ?";
 
 	@Override
 	public PreparedStatement updateSequenceNumberInVSeqOfVertex(int vId,
@@ -1483,7 +1647,11 @@ public class DerbyStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private static final String UPDATE_ATTRIBUTE_VALUE_OF_VERTEX = "UPDATE \"VertexAttributeValue\" SET \"value\" = ? WHERE \"vId\" = ? AND \"gId\" = ? AND \"attributeId\" = ?";
+	private static final String UPDATE_ATTRIBUTE_VALUE_OF_VERTEX = "UPDATE \""
+			+ TABLE_VERTEX_ATTRIBUTE + "\" SET \"" + COLUMN_ATTRIBUTE_VALUE
+			+ "\" = ? WHERE \"" + COLUMN_VERTEX_ID + "\" = ? AND \""
+			+ COLUMN_GRAPH_ID + "\" = ? AND \"" + COLUMN_ATTRIBUTE_ID
+			+ "\" = ?";
 
 	@Override
 	public PreparedStatement updateAttributeValueOfVertex(int vId, int gId,
@@ -1496,8 +1664,24 @@ public class DerbyStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private static final String UPDATE_ATTRIBUTE_VALUE_OF_VERTEX_AND_GRAPH_VERSION = "UPDATE \"VertexAttributeValue\" SET \"value\" = ? WHERE \"vId\" = ? AND \"gId\" = ? AND \"attributeId\" = ?"
-			+ " UPDATE \"Graph\" SET \"version\" = ? WHERE \"gId\" = ?";
+	private static final String UPDATE_ATTRIBUTE_VALUE_OF_VERTEX_AND_GRAPH_VERSION = "UPDATE \""
+			+ TABLE_VERTEX_ATTRIBUTE
+			+ "\" SET \""
+			+ COLUMN_ATTRIBUTE_VALUE
+			+ "\" = ? WHERE \""
+			+ COLUMN_VERTEX_ID
+			+ "\" = ? AND \""
+			+ COLUMN_GRAPH_ID
+			+ "\" = ? AND \""
+			+ COLUMN_ATTRIBUTE_ID
+			+ "\" = ?"
+			+ " UPDATE \""
+			+ TABLE_GRAPH
+			+ "\" SET \""
+			+ COLUMN_GRAPH_VERSION
+			+ "\" = ? WHERE \""
+			+ COLUMN_GRAPH_ID
+			+ "\" = ?";
 
 	@Override
 	public PreparedStatement updateAttributeValueOfVertexAndGraphVersion(
@@ -1513,7 +1697,10 @@ public class DerbyStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private static final String UPDATE_INCIDENCE_LIST_VERSION = "UPDATE \"Vertex\" SET \"lambdaSeqVersion\" = ? WHERE \"vId\" = ? AND \"gId\" = ?";
+	private static final String UPDATE_INCIDENCE_LIST_VERSION = "UPDATE \""
+			+ TABLE_VERTEX + "\" SET \"" + COLUMN_VERTEX_LAMBDA_SEQ_VERSION
+			+ "\" = ? WHERE \"" + COLUMN_VERTEX_ID + "\" = ? AND \""
+			+ COLUMN_GRAPH_ID + "\" = ?";
 
 	@Override
 	public PreparedStatement updateLambdaSeqVersionOfVertex(int vId, int gId,
@@ -1527,7 +1714,9 @@ public class DerbyStatementList extends SqlStatementList {
 
 	// --- to update an edge ------------------------------------------
 
-	private static final String UPDATE_EDGE_ID = "UPDATE \"Edge\" SET \"eId\" = ? WHERE \"eId\" = ? AND \"gId\" = ?";
+	private static final String UPDATE_EDGE_ID = "UPDATE \"" + TABLE_EDGE
+			+ "\" SET \"" + COLUMN_EDGE_ID + "\" = ? WHERE \"" + COLUMN_EDGE_ID
+			+ "\" = ? AND \"" + COLUMN_GRAPH_ID + "\" = ?";
 
 	@Override
 	public PreparedStatement updateIdOfEdge(int oldEId, int gId, int newEId)
@@ -1539,7 +1728,14 @@ public class DerbyStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private static final String UPDATE_SEQUENCE_NUMBER_IN_EDGE_LIST = "UPDATE \"Edge\" SET \"sequenceNumber\" = ? WHERE \"eId\" = ? AND \"gId\" = ?";
+	private static final String UPDATE_SEQUENCE_NUMBER_IN_EDGE_LIST = "UPDATE \""
+			+ TABLE_EDGE
+			+ "\" SET \""
+			+ COLUMN_SEQUENCE_NUMBER
+			+ "\" = ? WHERE \""
+			+ COLUMN_EDGE_ID
+			+ "\" = ? AND \""
+			+ COLUMN_GRAPH_ID + "\" = ?";
 
 	@Override
 	public PreparedStatement updateSequenceNumberInESeqOfEdge(int eId, int gId,
@@ -1551,7 +1747,11 @@ public class DerbyStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private static final String UPDATE_ATTRIBUTE_VALUE_OF_EDGE = "UPDATE \"EdgeAttributeValue\" SET \"value\" = ? WHERE \"eId\" = ? AND \"gId\" = ? AND \"attributeId\" = ?";
+	private static final String UPDATE_ATTRIBUTE_VALUE_OF_EDGE = "UPDATE \""
+			+ TABLE_EDGE_ATTRIBUTE + "\" SET \"" + COLUMN_ATTRIBUTE_VALUE
+			+ "\" = ? WHERE \"" + COLUMN_EDGE_ID + "\" = ? AND \""
+			+ COLUMN_GRAPH_ID + "\" = ? AND \"" + COLUMN_ATTRIBUTE_ID
+			+ "\" = ?";
 
 	@Override
 	public PreparedStatement updateAttributeValueOfEdge(int eId, int gId,
@@ -1564,8 +1764,24 @@ public class DerbyStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private static final String UPDATE_ATTRIBUTE_VALUE_OF_EDGE_AND_INCREMENT_GRAPH_VERSION = "UPDATE \"EdgeAttributeValue\" SET \"value\" = ? WHERE \"eId\" = ? AND \"gId\" = ? AND \"attributeId\" = ?"
-			+ " UPDATE \"Graph\" SET \"version\" = ? WHERE \"gId\" = ?;";
+	private static final String UPDATE_ATTRIBUTE_VALUE_OF_EDGE_AND_INCREMENT_GRAPH_VERSION = "UPDATE \""
+			+ TABLE_EDGE_ATTRIBUTE
+			+ "\" SET \""
+			+ COLUMN_ATTRIBUTE_VALUE
+			+ "\" = ? WHERE \""
+			+ COLUMN_EDGE_ID
+			+ "\" = ? AND \""
+			+ COLUMN_GRAPH_ID
+			+ "\" = ? AND \""
+			+ COLUMN_ATTRIBUTE_ID
+			+ "\" = ?"
+			+ " UPDATE \""
+			+ TABLE_GRAPH
+			+ "\" SET \""
+			+ COLUMN_GRAPH_VERSION
+			+ "\" = ? WHERE \""
+			+ COLUMN_GRAPH_ID
+			+ "\" = ?;";
 
 	@Override
 	public PreparedStatement updateAttributeValueOfEdgeAndGraphVersion(int eId,
@@ -1581,7 +1797,11 @@ public class DerbyStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private static final String UPDATE_INCIDENT_VERTEX = "UPDATE \"Incidence\" SET \"vId\" = ? WHERE \"eId\" = ? AND \"gId\" = ? AND \"direction\" = ?";
+	private static final String UPDATE_INCIDENT_VERTEX = "UPDATE \""
+			+ TABLE_INCIDENCE + "\" SET \"" + COLUMN_VERTEX_ID
+			+ "\" = ? WHERE \"" + COLUMN_EDGE_ID + "\" = ? AND \""
+			+ COLUMN_GRAPH_ID + "\" = ? AND \"" + COLUMN_INCIDENCE_DIRECTION
+			+ "\" = ?";
 
 	@Override
 	public PreparedStatement updateIncidentVIdOfIncidence(int eId, int vId,
@@ -1598,7 +1818,14 @@ public class DerbyStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private static final String UPDATE_SEQUENCE_NUMBER_IN_INCIDENCE_LIST = "UPDATE \"Incidence\" SET \"sequenceNumber\" = ? WHERE \"eId\" = ? AND \"gId\" = ? AND \"vId\" = ?";
+	private static final String UPDATE_SEQUENCE_NUMBER_IN_INCIDENCE_LIST = "UPDATE \""
+			+ TABLE_INCIDENCE
+			+ "\" SET \""
+			+ COLUMN_SEQUENCE_NUMBER
+			+ "\" = ? WHERE \""
+			+ COLUMN_EDGE_ID
+			+ "\" = ? AND \""
+			+ COLUMN_GRAPH_ID + "\" = ? AND \"" + COLUMN_VERTEX_ID + "\" = ?";
 
 	@Override
 	public PreparedStatement updateSequenceNumberInLambdaSeqOfIncidence(
@@ -1643,7 +1870,9 @@ public class DerbyStatementList extends SqlStatementList {
 		return getPreparedStatement(STORED_PROCEDURE_INSERT_VERTEX);
 	}
 
-	private static final String DELETE_SCHEMA = "DELETE FROM \"GraphSchema\" WHERE \"packagePrefix\" = ? AND \"name\" = ?";
+	private static final String DELETE_SCHEMA = "DELETE FROM \"" + TABLE_SCHEMA
+			+ "\" WHERE \"" + COLUMN_SCHEMA_PACKAGE_PREFIX + "\" = ? AND \""
+			+ COLUMN_SCHEMA_NAME + "\" = ?";
 
 	@Override
 	public PreparedStatement deleteSchema(String prefix, String name)
@@ -1675,7 +1904,8 @@ public class DerbyStatementList extends SqlStatementList {
 		return null;
 	}
 
-	private static final String SELECT_ID_OF_GRAPHS = "SELECT \"uid\" FROM \"Graph\"";
+	private static final String SELECT_ID_OF_GRAPHS = "SELECT \""
+			+ COLUMN_GRAPH_UID + "\" FROM \"" + TABLE_GRAPH + "\"";
 
 	@Override
 	public PreparedStatement selectIdOfGraphs() throws SQLException {
