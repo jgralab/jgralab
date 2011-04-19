@@ -84,7 +84,6 @@ public abstract class GraphDatabase {
 	public static final String TABLE_TYPE = "Type";
 	public static final String COLUMN_TYPE_ID = "typeId";
 	public static final String COLUMN_TYPE_QNAME = "qualifiedName";
-	public static final String COLUMN_TYPE_SCHEMA_ID = "schemaId";
 	public static final String PRIMARY_KEY_TYPE = "typePrimaryKey";
 
 	public static final String TABLE_GRAPH = "Graph";
@@ -93,34 +92,24 @@ public abstract class GraphDatabase {
 	public static final String COLUMN_GRAPH_VERSION = "version";
 	public static final String COLUMN_GRAPH_VSEQ_VERSION = "vSeqVersion";
 	public static final String COLUMN_GRAPH_ESEQ_VERSION = "eSeqVersion";
-	public static final String COLUMN_GRAPH_TYPE_ID = "";
 	public static final String PRIMARY_KEY_GRAPH = "graphPrimaryKey";
 
 	public static final String TABLE_VERTEX = "Vertex";
 	public static final String COLUMN_VERTEX_ID = "vId";
-	public static final String COLUMN_VERTEX_GRAPH_ID = "gId";
-	public static final String COLUMN_VERTEX_TYPE_ID = "typeId";
 	public static final String COLUMN_VERTEX_LAMBDA_SEQ_VERSION = "lambdaSeqVersion";
-	public static final String COLUMN_VERTEX_SEQUENCE_NUMBER = "sequenceNumber";
+	public static final String COLUMN_SEQUENCE_NUMBER = "sequenceNumber";
 	public static final String PRIMARY_KEY_VERTEX = "vertexPrimaryKey";
 	public static final String FOREIGN_KEY_VERTEX_TO_GRAPH = "gIdIsForeignKeyForVertex";
 	public static final String FOREIGN_KEY_VERTEX_TO_TYPE = "typeIdIsForeignKeyForVertex";
 
 	public static final String TABLE_EDGE = "Edge";
 	public static final String COLUMN_EDGE_ID = "eId";
-	public static final String COLUMN_EDGE_GRAPH_ID = "gId";
-	public static final String COLUMN_EDGE_TYPE_ID = "typeId";
-	public static final String COLUMN_EDGE_SEQUENCE_NUMBER = "sequenceNumber";
 	public static final String PRIMARY_KEY_EDGE = "edgePrimaryKey";
 	public static final String FOREIGN_KEY_EDGE_TO_GRAPH = "gIdIsForeignKeyForEdge";
 	public static final String FOREIGN_KEY_EDGE_TO_TYPE = "typeIdIsForeignKeyForEdge";
 
 	public static final String TABLE_INCIDENCE = "Incidence";
-	public static final String COLUMN_INCIDENCE_EDGE_ID = "eId";
-	public static final String COLUMN_INCIDENCE_VERTEX_ID = "vId";
-	public static final String COLUMN_INCIDENCE_GRAPH_ID = "gId";
 	public static final String COLUMN_INCIDENCE_DIRECTION = "direction";
-	public static final String COLUMN_INCIDENCE_SEQUENCE_NUMBER = "sequenceNumber";
 	public static final String PRIMARY_KEY_INCIDENCE = "incidencePrimaryKey";
 	public static final String FOREIGN_KEY_INCIDENCE_TO_GRAPH = "gIdIsForeignKeyForIncidence";
 	public static final String FOREIGN_KEY_INCIDENCE_TO_EDGE = "eIdIsForeignKeyForIndices";
@@ -130,30 +119,19 @@ public abstract class GraphDatabase {
 	public static final String TABLE_ATTRIBUTE = "Attribute";
 	public static final String COLUMN_ATTRIBUTE_ID = "attributeId";
 	public static final String COLUMN_ATTRIBUTE_NAME = "name";
-	public static final String COLUMN_ATTRIBUTE_SCHEMA_ID = "schemaId";
 	public static final String PRIMARY_KEY_ATTRIBUTE = "PK_ATTRIBUTE";
 
 	public static final String TABLE_GRAPH_ATTRIBUTE = "GraphAttributeValue";
-	public static final String COLUMN_GRAPH_ATTRIBUTE_GRAPH_ID = "gId";
-	public static final String COLUMN_GRAPH_ATTRIBUTE_ATTRIBUTE_ID = "attributeId";
-	public static final String COLUMN_GRAPH_ATTRIBUTE_VALUE = "value";
+	public static final String COLUMN_ATTRIBUTE_VALUE = "value";
 	public static final String PRIMARY_KEY_GRAPH_ATTRIBUTE = "gaPrimaryKey";
 
 	public static final String TABLE_VERTEX_ATTRIBUTE = "VertexAttributeValue";
-	public static final String COLUMN_VERTEX_ATTRIBUTE_VERTEX_ID = "vId";
-	public static final String COLUMN_VERTEX_ATTRIBUTE_GRAPH_ID = "gId";
-	public static final String COLUMN_VERTEX_ATTRIBUTE_ATTRIBUTE_ID = "attributeId";
-	public static final String COLUMN_VERTEX_ATTRIBUTE_VALUE = "value";
 	public static final String PRIMARY_KEY_VERTEX_ATTRIBUTE = "vertexAttributeValuePrimaryKey";
 	public static final String FOREIGN_KEY_VERTEX_ATTRIBUTE_TO_ATTRIBUTE = "attributeIdIsForeignKeyForVertexAttribute";
 	public static final String FOREIGN_KEY_VERTEX_ATTRIBUTE_TO_GRAPH = "gIdIsForeignKeyForVertexAttribute";
 	public static final String FOREIGN_KEY_VERTEX_ATTRIBUTE_TO_VERTEX = "vIdIsForeignKeyForVertexAttribute";
 
 	public static final String TABLE_EDGE_ATTRIBUTE = "EdgeAttributeValue";
-	public static final String COLUMN_EDGE_ATTRIBUTE_EDGE_ID = "eId";
-	public static final String COLUMN_EDGE_ATTRIBUTE_GRAPH_ID = "gId";
-	public static final String COLUMN_EDGE_ATTRIBUTE_ATTRIBUTE_ID = "attributeId";
-	public static final String COLUMN_EDGE_ATTRIBUTE_VALUE = "value";
 	public static final String PRIMARY_KEY_EDGE_ATTRIBUTE = "edgeAttributeValuePrimaryKey";
 	public static final String FOREIGN_KEY_EDGE_ATTRIBUTE_TO_ATTRIBUTE = "attributeIdIsForeignKeyForEdgeAttribute";
 	public static final String FOREIGN_KEY_EDGE_ATTRIBUTE_TO_GRAPH = "gIdIsForeignKeyForEdgeAttribute";
