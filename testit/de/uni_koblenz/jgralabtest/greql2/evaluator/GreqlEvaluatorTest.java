@@ -37,7 +37,6 @@ package de.uni_koblenz.jgralabtest.greql2.evaluator;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -48,6 +47,7 @@ import java.util.List;
 
 import org.junit.Test;
 
+import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
@@ -64,11 +64,11 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTable;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTuple;
 import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.VariableDeclarationOrderOptimizer;
-import de.uni_koblenz.jgralab.greql2.schema.Definition;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.greql2.schema.impl.std.Greql2Impl;
 import de.uni_koblenz.jgralabtest.greql2.GenericTest;
 import de.uni_koblenz.jgralabtest.greql2.testfunctions.IsPrime;
+import de.uni_koblenz.jgralabtest.schemas.greqltestschema.RouteMap;
+import de.uni_koblenz.jgralabtest.schemas.greqltestschema.connections.AirRoute;
 import de.uni_koblenz.jgralabtest.schemas.greqltestschema.junctions.Airport;
 import de.uni_koblenz.jgralabtest.schemas.greqltestschema.localities.County;
 import de.uni_koblenz.jgralabtest.schemas.greqltestschema.localities.Locality;
@@ -535,7 +535,7 @@ public class GreqlEvaluatorTest extends GenericTest {
 	protected JValue evalQueryWithOptimizer(String queryString)
 			throws Exception {
 		return evalTestQuery("", queryString, new DefaultOptimizer(),
-				TestVersion.CITY_MAP_GRAPH);
+				TestVersion.ROUTE_MAP_GRAPH);
 	}
 
 	@Test
@@ -891,36 +891,33 @@ public class GreqlEvaluatorTest extends GenericTest {
 
 	@Test
 	public void testEvaluateDependentDeclarations2() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from whe: V{WhereExpression}, def: -->{IsDefinitionOf} whe reportSet def end";
-		JValue result = evalTestQuery("DependentDeclarations2", queryString);
-		assertEquals(4, result.toCollection().size());
+		String queryString = "from airport: V{junctions.Airport}, destination: -->{connections.AirRoute} airport reportSet destination end";
+		JValue result = evalTestQuery(queryString);
+		assertEquals(airportCount - 1, result.toCollection().size());
 		JValueSet set = result.toCollection().toJValueSet();
-		for (Definition def : ((Greql2) getTestGraph(TestVersion.GREQL_GRAPH))
-				.getDefinitionVertices()) {
-			assertTrue(set.contains(new JValueImpl(def)));
+		for (Airport airport : ((RouteMap) getTestGraph(TestVersion.ROUTE_MAP_GRAPH))
+				.getAirportVertices()) {
+			if (airport.getDegree(AirRoute.class, EdgeDirection.OUT) != 0) {
+				assertTrue(set.contains(new JValueImpl(airport)));
+			}
 		}
-		JValue resultWO = evalTestQuery("DependentDeclarations2 (wo)",
-				queryString, new DefaultOptimizer());
+		JValue resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
 	@Test
 	public void testEvaluateDependentDeclarations3() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from def: V{Definition}, whe: <--{IsDefinitionOf} def report def end";
-		JValue result = evalTestQuery("DependentDeclarations3", queryString);
-		assertEquals(4, result.toCollection().size());
+		String queryString = "from airport: V{junctions.Airport}, destination: <--{connections.AirRoute} airport reportSet airport end";
+		JValue result = evalTestQuery(queryString);
+		assertEquals(airportCount - 1, result.toCollection().size());
 		JValueSet set = result.toCollection().toJValueSet();
-		for (Definition def : ((Greql2) getTestGraph(TestVersion.GREQL_GRAPH))
-				.getDefinitionVertices()) {
-			assertNotNull(def.getFirstIsDefinitionOfIncidence());
-			assertTrue(set.contains(new JValueImpl(def)));
+		for (Airport airport : ((RouteMap) getTestGraph(TestVersion.ROUTE_MAP_GRAPH))
+				.getAirportVertices()) {
+			if (airport.getDegree(AirRoute.class, EdgeDirection.OUT) != 0) {
+				assertTrue(set.contains(new JValueImpl(airport)));
+			}
 		}
-		JValue resultWO = evalTestQuery("DependentDeclarations3 (wo)",
-				queryString, new DefaultOptimizer());
+		JValue resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
@@ -1511,7 +1508,8 @@ public class GreqlEvaluatorTest extends GenericTest {
 		containsAllElements(LOCALITIES_WITHOUT_CITIES, result.toCollection());
 
 		JValue resultWO = evalTestQuery("VertexSubgraphExpression1 (wo)",
-				queryString, new DefaultOptimizer(), TestVersion.CITY_MAP_GRAPH);
+				queryString, new DefaultOptimizer(),
+				TestVersion.ROUTE_MAP_GRAPH);
 		assertEquals(result, resultWO);
 	}
 
