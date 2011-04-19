@@ -666,33 +666,32 @@ public class GreqlEvaluatorTest extends GenericTest {
 	 */
 	@Test
 	public void testEvaluateIteratedPathDescription1() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from var: V{Definition}, def: V{WhereExpression} with var  -->{IsDefinitionOf}* def report var end";
-		JValue result = evalTestQuery("IteratedPathDescription1", queryString);
-		assertEquals(4, result.toCollection().size());
-		JValue resultWO = evalTestQuery("IteratedPathDescription1 (wo)",
-				queryString, new DefaultOptimizer());
+		String queryString = "from origin: V{junctions.Crossroad}, target: V{junctions.Airport} "
+				+ "with origin  -->{connections.Street}* <--{localities.ContainsCrossroad} target "
+				+ "report origin end";
+		JValue result = evalTestQuery(queryString);
+		assertEquals(180, result.toCollection().size());
+		JValue resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
 	@Test
 	public void testEvaluateIteratedPathDescription12() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from var: V{Definition}, def: V{WhereExpression} with var  -->{IsDefinitionOf}* def report var end";
-		JValue result = evalTestQuery("IteratedPathDescription12", queryString);
-		assertEquals(4, result.toCollection().size());
+		String queryString = "from origin: V{junctions.Crossroad}, target: V{junctions.Airport} "
+				+ "with origin  -->{connections.Street}* <--{localities.ContainsCrossroad} target "
+				+ "report origin end";
+		JValue result = evalTestQuery(queryString);
+		assertEquals(180, result.toCollection().size());
 
-		String queryString2 = "from var: V{Definition}, def: var -->{IsDefinitionOf}* &{WhereExpression} report var end";
-		JValue result2 = evalTestQuery("IteratedPathDescription12 (2)",
-				queryString2);
-		assertEquals(result, result2);
+		String queryString2 = "from origin: V{junctions.Crossroad}, "
+				+ " target: origin  -->{connections.Street}* <--{localities.ContainsCrossroad} &{junctions.Airport} "
+				+ "report origin end";
+		assertQueryEquals(queryString2, result);
 
-		String queryString3 = "from var: V{Definition}, def: var (-->{IsDefinitionOf}*) &{WhereExpression} report var end";
-		JValue result3 = evalTestQuery("IteratedPathDescription12 (2)",
-				queryString3);
-		assertEquals(result, result3);
+		String queryString3 = "from origin: V{junctions.Crossroad}, "
+				+ " target: origin  (-->{connections.Street}* <--{localities.ContainsCrossroad}) &{junctions.Airport} "
+				+ "report origin end";
+		assertQueryEquals(queryString3, result);
 	}
 
 	/*
@@ -712,11 +711,11 @@ public class GreqlEvaluatorTest extends GenericTest {
 
 	@Test
 	public void testEvaluateIteratedPathDescription3() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from var: V{Definition}, def: V{WhereExpression} with var  -->{IsDefinitionOf}+ def report var end";
-		JValue result = evalTestQuery("IteratedPathDescription3", queryString);
-		assertEquals(4, result.toCollection().size());
+		String queryString = "from origin: V{junctions.Crossroad}, target: V{junctions.Airport} "
+				+ "with origin  -->{connections.Street}+ <--{localities.ContainsCrossroad} target "
+				+ "report origin end";
+		JValue result = evalTestQuery(queryString);
+		assertEquals(177, result.toCollection().size());
 		JValue resultWO = evalTestQuery("IteratedPathDescription3 (wo)",
 				queryString, new DefaultOptimizer());
 		assertEquals(result, resultWO);
@@ -724,13 +723,12 @@ public class GreqlEvaluatorTest extends GenericTest {
 
 	@Test
 	public void testEvaluateIteratedPathDescription4() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from var: V{Definition}, def: V{WhereExpression} with var -->{IsVarOf}* -->{IsDefinitionOf} def report var end";
-		JValue result = evalTestQuery("IteratedPathDescription4", queryString);
-		assertEquals(4, result.toCollection().size());
-		JValue resultWO = evalTestQuery("IteratedPathDescription4 (wo)",
-				queryString, new DefaultOptimizer());
+		String queryString = "from origin: V{junctions.Crossroad}, target: V{junctions.Airport} "
+				+ "with origin  -->{connections.Street}* <--{localities.ContainsCrossroad} -->{connections.AirRoute} target "
+				+ "report origin end";
+		JValue result = evalTestQuery(queryString);
+		assertEquals(127, result.toCollection().size());
+		JValue resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
