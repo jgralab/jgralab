@@ -36,12 +36,23 @@
 package de.uni_koblenz.jgralabtest.greql2;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueBag;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueTable;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueTuple;
 import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
+import de.uni_koblenz.jgralabtest.schemas.greqltestschema.connections.Way;
 
 public class SystemTest extends GenericTest {
 
@@ -97,22 +108,61 @@ public class SystemTest extends GenericTest {
 	}
 
 	@Test
-	public void testVariableAsVariableDefinition() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from x:V{Variable}, y:V{Variable} with x -->{IsVarOf} <--{IsExprOf} y report x.name as \"DefinedVariable\", y.name as \"Definition\" end";
-		JValue result = evalTestQuery("VariableAsVariableDefinition",
-				queryString);
-		assertEquals(15, result.toCollection().size());
+	public void test() throws Exception {
+		String X1 = "X1";
+		String X2 = "X2";
+
+		String queryString = "from x:V{junctions.Crossroad}, y:V{junctions.Crossroad} "
+				+ "with x -->{connections.Street} <--{connections.Footpath} y report id(x) as '"
+				+ X1 + "', id(y) as '" + X2 + "' end";
+		JValueTable result = evalTestQuery(queryString).toJValueTable();
+		checkHeader(result, X1, X2);
+
+		assertEquals(12, result.size());
+	}
+
+	private void checkHeader(JValueTable table, String... headerStrings) {
+		JValueList header = table.getHeader().toJValueList();
+
+		for (String headerString : headerStrings) {
+			assertTrue(header.remove(new JValueImpl(headerString)));
+		}
+		assertTrue(header.isEmpty());
 	}
 
 	@Test
-	public void testIdentifierWithUsage() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from x:V{Identifier} report x.name as \"Identifier\", outDegree{IsArgumentOf}(x) as \"UsageCount\", edgesFrom(x) as \"Usages\" end";
-		JValue result = evalTestQuery("IdentifierWithUsage", queryString);
-		assertEquals(21, result.toCollection().size());
-	}
+	public void testCrossroadWithUsage() throws Exception {
+		String VERTEX = "Vertex";
+		String IDENTIFIER = "Identifier";
+		String USAGE_COUNT = "UsageCount";
+		String USAGES = "Usages";
 
+		String queryString = "from c:V{junctions.Crossroad} report c as '"
+				+ VERTEX + "', id(c) as '" + IDENTIFIER + "', "
+				+ "outDegree{connections.Way}(c) as '" + USAGE_COUNT + "', "
+				+ "edgesFrom(c) as '" + USAGES + "' end";
+		JValueTable result = evalTestQuery(queryString).toJValueTable();
+		JValueBag data = result.getData().toJValueBag();
+
+		checkHeader(result, VERTEX, IDENTIFIER, USAGE_COUNT, USAGES);
+
+		for (JValue value : data) {
+			JValueTuple tuple = value.toJValueTuple();
+			Vertex vertex = tuple.get(0).toVertex();
+			int identifier = tuple.get(1).toInteger().intValue();
+			int usage_count = tuple.get(2).toInteger().intValue();
+			JValueCollection usages = tuple.get(3).toCollection();
+
+			assertEquals(vertex.getId(), identifier);
+			assertEquals(vertex.getDegree(Way.class, EdgeDirection.OUT),
+					usage_count);
+
+			for (Edge edge : vertex.incidences(Way.class, EdgeDirection.OUT)) {
+				assertTrue(usages.remove(new JValueImpl(edge)));
+			}
+			assertTrue(usages.isEmpty());
+		}
+
+		assertEquals(crossroadCount, result.size());
+	}
 }

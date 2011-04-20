@@ -93,6 +93,9 @@ public class IsCycle extends Greql2Function {
 		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, arguments);
 		}
+		if (isAnyArgumentNull(arguments)) {
+			return new JValueImpl();
+		}
 		return new JValueImpl(arguments[0].toPath().isCycle());
 	}
 

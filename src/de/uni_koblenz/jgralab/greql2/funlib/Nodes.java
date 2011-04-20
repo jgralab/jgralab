@@ -42,6 +42,7 @@ import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 public class Nodes extends Greql2Function {
@@ -62,6 +63,11 @@ public class Nodes extends Greql2Function {
 	public JValue evaluate(Graph graph,
 			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
 			throws EvaluateException {
+
+		if (isAnyArgumentNull(arguments)) {
+			return new JValueImpl();
+		}
+
 		switch (checkArguments(arguments)) {
 		case 0:
 			return arguments[0].toPathSystem().nodes();

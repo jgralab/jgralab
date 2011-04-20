@@ -99,6 +99,10 @@ public class Pos extends Greql2Function {
 		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, arguments);
 		}
+		if (isAnyArgumentNull(arguments)) {
+			return new JValueImpl();
+		}
+
 		JValue object = arguments[1];
 		JValueCollection col = arguments[0].toCollection();
 		if (col.isJValueList()) {

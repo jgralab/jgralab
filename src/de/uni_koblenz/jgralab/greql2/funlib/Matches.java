@@ -54,6 +54,7 @@ import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.funlib.pathsearch.PathSystemQueueEntry;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
@@ -103,20 +104,21 @@ public class Matches extends Greql2Function {
 	public JValue evaluate(Graph graph,
 			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
 			throws EvaluateException {
-		DFA dfa = null;
-		switch (checkArguments(arguments)) {
-		case 0:
-			dfa = arguments[1].toAutomaton().getDFA();
-			break;
-		default:
+
+		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, arguments);
 		}
+		if (isAnyArgumentNull(arguments)) {
+			return new JValueImpl();
+		}
+
+		DFA dfa = arguments[1].toAutomaton().getDFA();
 
 		JValuePath path = arguments[0].toPath();
 
 		Queue<PathSystemQueueEntry> queue = new LinkedList<PathSystemQueueEntry>();
-		PathSystemQueueEntry currentEntry = new PathSystemQueueEntry(path
-				.getStartVertex(), dfa.initialState, null, null, 0);
+		PathSystemQueueEntry currentEntry = new PathSystemQueueEntry(
+				path.getStartVertex(), dfa.initialState, null, null, 0);
 		BooleanGraphMarker[] markers = new BooleanGraphMarker[dfa.stateList
 				.size()];
 		for (State s : dfa.stateList) {

@@ -51,6 +51,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.greql2.SerializableGreql2;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
@@ -67,48 +68,37 @@ public class GenericTest {
 	protected static final double DELTA = 0.00000001;
 
 	public enum TestVersion {
-		GREQL_GRAPH, CITY_MAP_GRAPH
+		GREQL_GRAPH, ROUTE_MAP_GRAPH, CYCLIC_GRAPH, TREE_GRAPH
 	};
 
 	protected static int airportCount, crossroadCount, countyCount,
-			uncontainedCrossroadCount;
+			uncontainedCrossroadCount, localityCount, footpathCount,
+			plazaCount, townCount;
+
+	private TestVersion defaultVersion = TestVersion.ROUTE_MAP_GRAPH;
 
 	@BeforeClass
 	public static void globalSetUp() throws Exception {
 		GenericTest test = new GenericTest();
-		queryAirportCount(test);
-		queryCrossroadCount(test);
-		queryCountyCount(test);
-		queryUncontainedCrossroadCount(test);
-		test.setBoundVariable("nll", new JValueImpl((Object) null));
+		airportCount = test.queryInteger("count(V{junctions.Airport})");
+		townCount = test.queryInteger("count(V{localities.Town})");
+		crossroadCount = test.queryInteger("count(V{junctions.Crossroad})");
+		countyCount = test.queryInteger("count(V{localities.County})");
+		footpathCount = test.queryInteger("count(E{connections.Footpath})");
+		plazaCount = test.queryInteger("count(V{junctions.Plaza})");
+		localityCount = test.queryInteger("count(V{localities.Locality})");
+		test.setBoundVariable("nll", new JValueImpl());
 	}
 
-	private static void queryAirportCount(GenericTest test) throws Exception {
-		String queryString = "count(V{junctions.Airport})";
-		JValue result = test.evalTestQuery("static Query", queryString,
-				TestVersion.CITY_MAP_GRAPH);
-		airportCount = result.toInteger();
-	}
-
-	private static void queryCrossroadCount(GenericTest test) throws Exception {
-		String queryString = "count(V{junctions.Crossroad})";
-		JValue result = test.evalTestQuery("static Query", queryString,
-				TestVersion.CITY_MAP_GRAPH);
-		crossroadCount = result.toInteger();
-	}
-
-	private static void queryCountyCount(GenericTest test) throws Exception {
-		String queryString = "count(V{localities.County})";
-		JValue result = test.evalTestQuery("static Query", queryString,
-				TestVersion.CITY_MAP_GRAPH);
-		countyCount = result.toInteger();
+	private int queryInteger(String query) throws JValueInvalidTypeException,
+			Exception {
+		return evalTestQuery(query).toInteger().intValue();
 	}
 
 	private static void queryUncontainedCrossroadCount(GenericTest test)
 			throws Exception {
 		String queryString = "sum(from r:V{junctions.Crossroad} report depth(pathSystem(r, <--{localities.ContainsCrossroad})) end)";
-		JValue result = test.evalTestQuery("static Query", queryString,
-				TestVersion.CITY_MAP_GRAPH);
+		JValue result = test.evalTestQuery(queryString);
 
 		uncontainedCrossroadCount = crossroadCount
 				- result.toDouble().intValue();
@@ -273,10 +263,17 @@ public class GenericTest {
 
 	protected Graph getTestGraph(TestVersion version) throws Exception {
 
-		if (version == TestVersion.GREQL_GRAPH) {
+		switch (version) {
+		case GREQL_GRAPH:
 			return createGreqlTestGraph();
-		} else {
+		case ROUTE_MAP_GRAPH:
 			return createTestGraph();
+		case CYCLIC_GRAPH:
+			return getCyclicTestGraph();
+		case TREE_GRAPH:
+			return getTestTree();
+		default:
+			throw new RuntimeException("Unsupported enum.");
 		}
 	}
 
@@ -355,7 +352,15 @@ public class GenericTest {
 	}
 
 	protected JValue evalTestQuery(String query) throws Exception {
-		return evalTestQuery("", query, TestVersion.CITY_MAP_GRAPH);
+		return evalTestQueryNoMessage(query, defaultVersion);
+	}
+
+	public TestVersion getDefaultTestVersion() {
+		return defaultVersion;
+	}
+
+	public void setDefaultTestVersion(TestVersion defaultVersion) {
+		this.defaultVersion = defaultVersion;
 	}
 
 	protected JValue evalTestQuery(String functionName, String query,
@@ -368,6 +373,11 @@ public class GenericTest {
 	protected JValue evalTestQuery(String functionName, String query,
 			TestVersion version) throws Exception {
 		return evalTestQuery(functionName, query, null, getTestGraph(version));
+	}
+
+	protected JValue evalTestQueryNoMessage(String query, TestVersion version)
+			throws Exception {
+		return evalQuery(query, null, getTestGraph(version));
 	}
 
 	protected JValue evalTestQuery(String functionName, String query,
@@ -397,6 +407,20 @@ public class GenericTest {
 
 		JValue result = eval.getEvaluationResult();
 		eval.printEvaluationTimes();
+		return result;
+	}
+
+	protected JValue evalQuery(String query, Optimizer optimizer,
+			Graph datagraph) throws Exception {
+		eval.setQuery(query);
+		eval.setDatagraph(datagraph);
+		eval.setUseSavedOptimizedSyntaxGraph(false);
+
+		setOptimizer(optimizer);
+
+		// when optimizing turn on logging, too.
+		eval.startEvaluation(eval.isOptimize(), true);
+		JValue result = eval.getEvaluationResult();
 		return result;
 	}
 

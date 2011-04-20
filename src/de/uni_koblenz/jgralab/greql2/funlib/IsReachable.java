@@ -112,6 +112,10 @@ public class IsReachable extends Greql2Function {
 		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, arguments);
 		}
+
+		if (isAnyArgumentNull(arguments)) {
+			return new JValueImpl();
+		}
 		Vertex startVertex = arguments[0].toVertex();
 		Vertex endVertex = arguments[1].toVertex();
 		DFA dfa = arguments[2].toAutomaton().getDFA();
@@ -131,23 +135,26 @@ public class IsReachable extends Greql2Function {
 			if (currentEntry.vertex == endVertex && currentEntry.state.isFinal) {
 				return new JValueImpl(true, startVertex);
 			}
-			Edge inc = currentEntry.vertex.getFirstIncidence();
-			while (inc != null) {
+			// Edge inc = currentEntry.vertex.getFirstIncidence();
+			for (Edge inc : currentEntry.vertex.incidences()) {
 				for (Transition currentTransition : currentEntry.state.outTransitions) {
 					Vertex nextVertex = currentTransition.getNextVertex(
 							currentEntry.vertex, inc);
-					if (!markers[currentTransition.endState.number]
-							.isMarked(nextVertex)) {
-						if (currentTransition.accepts(currentEntry.vertex, inc,
-								subgraph)) {
-							PathSearchQueueEntry nextEntry = new PathSearchQueueEntry(
-									nextVertex, currentTransition.endState);
-							markers[nextEntry.state.number].mark(nextVertex);
-							queue.add(nextEntry);
-						}
+
+					boolean isNotMarked = !markers[currentTransition.endState.number]
+							.isMarked(nextVertex);
+					boolean transitionIsPossible = currentTransition.accepts(
+							currentEntry.vertex, inc, subgraph);
+
+					if (isNotMarked && transitionIsPossible) {
+						PathSearchQueueEntry nextEntry = new PathSearchQueueEntry(
+								nextVertex, currentTransition.endState);
+						markers[nextEntry.state.number].mark(nextVertex);
+						queue.add(nextEntry);
+
 					}
 				}
-				inc = inc.getNextIncidence();
+				// inc = inc.getNextIncidence();
 			}
 		}
 		return new JValueImpl(false, startVertex);

@@ -34,6 +34,15 @@
  */
 package de.uni_koblenz.jgralabtest.greql2.funlib;
 
+import static org.junit.Assert.fail;
+
+import org.junit.Test;
+
 public class ReflectionFunctionTest {
 
+	@Test
+	public void testHasJValueType() throws Exception {
+		// TODO
+		fail();
+	}
 }

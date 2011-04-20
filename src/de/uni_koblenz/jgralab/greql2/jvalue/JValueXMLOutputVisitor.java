@@ -154,8 +154,8 @@ public class JValueXMLOutputVisitor extends JValueDefaultVisitor implements
 			writer.writeAttribute(ge instanceof Edge ? ATTR_EDGE_LINK
 					: ATTR_VERTEX_LINK, Integer.toString(ge.getId()));
 			if (ge.getGraph() != graph) {
-				writer.writeAttribute(ATTR_GRAPH_LINK, String.valueOf(ge
-						.getGraph().getId()));
+				writer.writeAttribute(ATTR_GRAPH_LINK,
+						String.valueOf(ge.getGraph().getId()));
 			}
 		} else {
 			writer.writeAttribute(ATTR_GRAPH_LINK, ((Graph) bi).getId());
@@ -231,8 +231,8 @@ public class JValueXMLOutputVisitor extends JValueDefaultVisitor implements
 			writer.writeEmptyElement(EDGE);
 			writer.writeAttribute(ATTR_ID, Integer.toString(edge.getId()));
 			if (edge.getGraph() != graph) {
-				writer.writeAttribute(ATTR_GRAPH_ID, String.valueOf(edge
-						.getGraph().getId()));
+				writer.writeAttribute(ATTR_GRAPH_ID,
+						String.valueOf(edge.getGraph().getId()));
 			}
 			if (edge != e.getBrowsingInfo()) {
 				writeBrowsingInfo(e);
@@ -459,8 +459,8 @@ public class JValueXMLOutputVisitor extends JValueDefaultVisitor implements
 			writer.writeEmptyElement(VERTEX);
 			writer.writeAttribute(ATTR_ID, String.valueOf(vertex.getId()));
 			if (vertex.getGraph() != graph) {
-				writer.writeAttribute(ATTR_GRAPH_ID, String.valueOf(vertex
-						.getGraph().getId()));
+				writer.writeAttribute(ATTR_GRAPH_ID,
+						String.valueOf(vertex.getGraph().getId()));
 			}
 			if (vertex != v.getBrowsingInfo()) {
 				writeBrowsingInfo(v);

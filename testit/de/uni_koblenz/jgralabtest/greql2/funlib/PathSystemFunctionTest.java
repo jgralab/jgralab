@@ -36,111 +36,124 @@
 package de.uni_koblenz.jgralabtest.greql2.funlib;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.uni_koblenz.jgralab.GraphIO;
+import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueBag;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
+import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
 import de.uni_koblenz.jgralabtest.greql2.GenericTest;
-import de.uni_koblenz.jgralabtest.schemas.minimal.Link;
-import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalGraph;
-import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalSchema;
-import de.uni_koblenz.jgralabtest.schemas.minimal.Node;
 
 public class PathSystemFunctionTest extends GenericTest {
 
 	/**
-	 * ‚Ä¢ v :-) -->Œ± baut ein Pfadsystem √ºber Pfade, die dem regul√§ren Ausdruck Œ±
-	 * entsprechen, mit dem Wurzelknoten v auf. ‚Ä¢ v :-) -->Œ± :-) w liefert einen
-	 * Pfad der Gestalt Œ± von v nach w. ‚Ä¢ -->Œ± :-) w liefert ein Pfadsystem mit
-	 * Pfaden der Gestalt Œ±T mit dem Wurzelknoten w. ‚Ä¢ v :-) ( -->Œ± :-) w )
-	 * liefert dementsprechend einen Pfad der Gestalt Œ±T von w nach v.
+	 * ‚Ä¢ v :-) -->Œ± baut ein Pfadsystem √ºber Pfade, die dem regul√§ren
+	 * Ausdruck Œ± entsprechen, mit dem Wurzelknoten v auf. ‚Ä¢ v :-) -->Œ± :-)
+	 * w liefert einen Pfad der Gestalt Œ± von v nach w. ‚Ä¢ -->Œ± :-) w liefert
+	 * ein Pfadsystem mit Pfaden der Gestalt Œ±T mit dem Wurzelknoten w. ‚Ä¢ v
+	 * :-) ( -->Œ± :-) w ) liefert dementsprechend einen Pfad der Gestalt Œ±T
+	 * von w nach v.
 	 */
 
-	
-	@Test 
-	public void testPathSystemOnGreqlGraph() throws Exception {
-		String queryString = "extractPath(pathSystem(getVertex(1), (<>--|(<-- <->))*), getVertex(34))";
-		JValue result = evalTestQuery("PathSystemOnGreqlGraph", queryString, GraphIO.loadGraphFromFile("/Users/dbildh/repositories/ist/jgralab/testit/testgraphs/greqltestgraph.tg",null));
-		JValuePath path = result.toPath();
-		System.out.println("Path has length " + path.toPath().pathLength());
-		System.out.println(path);
-	}
-	
-	@Test 
-	public void testPathSystemOnGreqlGraph2() throws Exception {
-		String queryString = "extractPath(pathSystem(getVertex(1), (<>--|(<-- <->))*))";
-		JValue result = evalTestQuery("PathSystemOnGreqlGraph", queryString, GraphIO.loadGraphFromFile("/Users/dbildh/repositories/ist/jgralab/testit/testgraphs/greqltestgraph.tg",null));
-		for (JValue e : result.toJValueSet()) {
-			JValuePath path = e.toPath();
-			System.out.println("Path has length " + path.toPath().pathLength());
-			System.out.println(path);
-		}
-		
-	}
-	
-	
-	/*
-	 * Test method for
-	 * 'greql2.evaluator.GreqlEvaluator.evaluateForwardVertexSet(ForwardVertexSet,
-	 * Graph)'
-	 */
-	@Test
-	public void testPathSystemConstruction() throws Exception {
-		String queryString = "from c: V{localities.County} "
-				+ "with c.name = 'Rheinland-Pfalz' "
-				+ "report pathSystem(c, -->{localities.ContainsLocality} -->{connections.AirRoute}) "
-				+ "end";
-		JValue result = evalTestQuery("PathSystemConstruction", queryString,
-				TestVersion.CITY_MAP_GRAPH);
-		JValueBag bag = result.toCollection().toJValueBag();
-		System.out.println(bag);
-		assertEquals(1, bag.size());
-		for (JValue v : bag) {
-			JValuePathSystem sys = v.toPathSystem();
-			assertEquals(2, sys.depth());
-			assertEquals(3, sys.weight());
-		}
+	private static JValuePath emptyPath, oneElementPath, twoElementPath,
+			multipleElementPath, loopPath, longPath;
+	private static JValuePathSystem emptyPathSystem;
+	private static JValuePathSystem depthOnePathSystemWithOnePath,
+			depthTwoPathSystemWithOnePath, multipleDepthPathSystemWithOnePath;
+	private static JValuePathSystem depthOnePathSystemWithTwoPaths,
+			depthTwoPathSystemWithTwoPaths,
+			multipleDepthPathSystemWithTwoPaths;
+	private static JValuePathSystem depthOnePathSystemWithMultiPaths,
+			depthTwoPathSystemWithMultiPaths,
+			multipleDepthPathSystemWithMultiPaths;
+
+	@BeforeClass
+	public static void initializePathAndPathSystemVariables()
+			throws JValueInvalidTypeException, Exception {
+		PathSystemFunctionTest t = new PathSystemFunctionTest();
+		t.evalTestQuery("theElement(from v : V{localities.County} with v.name = 'Hessen' report v end) store as hessen");
+		t.evalTestQuery("using hessen: pathSystem(hessen, -->{localities.ContainsLocality} -->{connections.AirRoute}* ) store as noPS");
+		emptyPath = t.evalTestQuery(
+				"using noPS: extractPath(noPS, firstVertex())").toPath();
+		multipleElementPath = t.evalTestQuery(
+				"using noPS: extractPath(noPS, 2)[0]").toPath();
+
+		t.evalTestQuery("using hessen: pathSystem(hessen, -->{localities.ContainsLocality} ) store as PS");
+		twoElementPath = t.evalTestQuery("using PS: extractPath(PS, 1)[0]")
+				.toPath();
+
+		t.evalTestQuery("theElement(from v : V{junctions.Crossroad} with v --> v report v end) store as suedallee");
+		t.evalTestQuery("using suedallee: pathSystem(suedallee, -->{connections.Street}) store as PS");
+		loopPath = t.evalTestQuery(
+				"using suedallee, PS: extractPath(PS, suedallee)").toPath();
+
+		t.evalTestQuery("using suedallee: pathSystem(suedallee, [-->{connections.Footpath}]) store as PS");
+		oneElementPath = t.evalTestQuery(
+				"using suedallee, PS: extractPath(PS, suedallee)").toPath();
+		longPath = t
+				.evalTestQuery(
+						"extractPath(pathSystem(V{junctions.Crossroad}[0], <->*), 5)[0]")
+				.toPath();
+
+		emptyPathSystem = null;
+		depthOnePathSystemWithOnePath = null;
+		depthTwoPathSystemWithOnePath = null;
+		multipleDepthPathSystemWithOnePath = null;
+		depthOnePathSystemWithTwoPaths = null;
+		depthTwoPathSystemWithTwoPaths = null;
+		multipleDepthPathSystemWithTwoPaths = null;
+		depthOnePathSystemWithMultiPaths = null;
+		depthTwoPathSystemWithMultiPaths = null;
+		multipleDepthPathSystemWithMultiPaths = null;
 	}
 
-	/*
-	 * Test method for
-	 * 'greql2.evaluator.GreqlEvaluator.evaluateForwardVertexSet(ForwardVertexSet,
-	 * Graph)'
-	 */
-	@Test
-	public void testPathSystemWeight() throws Exception {
-		String queryString = "from c: V{localities.County} "
-				+ "with c.name <> 'Rheinland-Pfalz' "
-				+ "report weight(pathSystem(c, -->{localities.ContainsLocality} -->{connections.AirRoute})) "
-				+ "end";
-		JValue result = evalTestQuery("PathSystemWeight", queryString,
-				TestVersion.CITY_MAP_GRAPH);
-		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(1, bag.size());
-		for (JValue v : bag) {
-			assertEquals(4, (int) v.toInteger());
-		}
+	@Before
+	public void setPathAndPathSystemVariables() {
+		setBoundVariable("emptyPath", emptyPath);
+		setBoundVariable("oneElementPath", oneElementPath);
+		setBoundVariable("twoElementPath", twoElementPath);
+		setBoundVariable("multiElementPath", multipleElementPath);
+		setBoundVariable("loopPath", loopPath);
+		setBoundVariable("longPath", loopPath);
+
+		setBoundVariable("emtpyPathSystem", emptyPathSystem);
+		setBoundVariable("d1p1PS", depthOnePathSystemWithOnePath);
+		setBoundVariable("d2p1PS", depthTwoPathSystemWithOnePath);
+		setBoundVariable("dmp1PS", multipleDepthPathSystemWithOnePath);
+		setBoundVariable("d1p2PS", depthOnePathSystemWithTwoPaths);
+		setBoundVariable("d2p2PS", depthTwoPathSystemWithTwoPaths);
+		setBoundVariable("dmp2PS", multipleDepthPathSystemWithTwoPaths);
+		setBoundVariable("d1pmPS", depthOnePathSystemWithMultiPaths);
+		setBoundVariable("d2pmPS", depthTwoPathSystemWithMultiPaths);
+		setBoundVariable("dmpmPS", multipleDepthPathSystemWithMultiPaths);
 	}
 
 	@Test
-	public void testPathSystemContains() throws Exception {
+	public void testContains() throws Exception {
+		// TODO
+		fail();
+	}
+
+	@Test
+	public void testContainsPathSystem() throws Exception {
 		String queryString = "from c: V{localities.County}, a:V{junctions.Airport} "
-				+ "with c.name <> 'Rheinland-Pfalz' "
+				+ "with c.name = 'Hessen' "
 				+ "report contains(pathSystem(c, -->{localities.ContainsLocality} -->{connections.AirRoute}), a) "
 				+ "end";
 		JValue result = evalTestQuery("PathSystemContains", queryString,
-				TestVersion.CITY_MAP_GRAPH);
+				TestVersion.ROUTE_MAP_GRAPH);
 		JValueBag bag = result.toCollection().toJValueBag();
 		assertEquals(airportCount, bag.size());
 		int falseFound = 0;
@@ -152,13 +165,43 @@ public class PathSystemFunctionTest extends GenericTest {
 		assertEquals(0, falseFound);
 	}
 
+	// @Test
+	public void testContainsNull() throws Exception {
+		// See CollectionFunctions
+	}
+
 	@Test
-	public void testPathSystemDistance() throws Exception {
-		String queryString = "from c: V{localities.County}, r:V{junctions.Crossroad} "
-				+ "report distance(pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad}), r)"
+	public void testDepth() throws Exception {
+		// TODO
+		fail();
+	}
+
+	@Test
+	public void testDepthNull() throws Exception {
+		assertQueryEqualsNull("using nll: depth(nll)");
+	}
+
+	@Test
+	public void testDistance() throws Exception {
+		// TODO
+		fail();
+	}
+
+	@Test
+	public void testDistanceNull() throws Exception {
+		// TODO
+		assertQueryEqualsNull("using nll: distance(nll, nll)");
+		// assertQueryEqualsNull("using nll: distance(?, nll)");
+		// assertQueryEqualsNull("using nll: distance(nll, ?)");
+		fail();
+	}
+
+	@Test
+	public void testDistancePathSystem() throws Exception {
+		evalTestQuery("from c : V{localities.County} report pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad}) end store as pS");
+		String queryString = "using pS: from p:pS, r:V{junctions.Crossroad} report distance(p, r)"
 				+ "end";
-		JValue result = evalTestQuery("PathSystemDistance", queryString,
-				TestVersion.CITY_MAP_GRAPH);
+		JValue result = evalTestQuery(queryString);
 		JValueBag bag = result.toCollection().toJValueBag();
 		assertEquals(crossroadCount * countyCount, bag.size());
 		int falseFound = 0;
@@ -172,16 +215,38 @@ public class PathSystemFunctionTest extends GenericTest {
 				falseFound++;
 			}
 		}
-		assertEquals(uncontainedCrossroadCount + crossroadCount, falseFound);
+		assertEquals(uncontainedCrossroadCount
+				+ (crossroadCount * (countyCount - 1)), falseFound);
 	}
 
 	@Test
-	public void testPathSystemEdgesConnected() throws Exception {
+	public void testEdgesConnected() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
+		String queryString = "from x : V{WhereExpression} report edgesConnected(x) end";
+		JValue result = evalTestQuery("EdgesConnected", queryString);
+		JValue result2 = evalTestQuery("", "V{WhereExpression}");
+		System.out.println(result2);
+		assertEquals(6, getNthValue(result.toCollection(), 0).toCollection()
+				.size());
+	}
+
+	@Test
+	public void testEdgesConnectedNull() throws Exception {
+		// TODO
+		assertQueryEqualsNull("using nll: edgesConnected(nll, nll)");
+		assertQueryEqualsNull("using nll: edgesConnected(firstVertex(), nll)");
+		// assertQueryEqualsNull("using nll: edgesConnected(nll, ?)");
+		fail();
+	}
+
+	@Test
+	public void testEdgesConnectedPathSystem() throws Exception {
 		String queryString = "from c: V{localities.County}, r:V{junctions.Crossroad} "
 				+ "report edgesConnected(r, pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad}))"
 				+ "end";
 		JValue result = evalTestQuery("PathSystemEdgesConnected", queryString,
-				TestVersion.CITY_MAP_GRAPH);
+				TestVersion.ROUTE_MAP_GRAPH);
 		JValueBag bag = result.toCollection().toJValueBag();
 		assertEquals(crossroadCount * countyCount, bag.size());
 		int empty = 0;
@@ -193,17 +258,37 @@ public class PathSystemFunctionTest extends GenericTest {
 				assertEquals(1, connectedEdges);
 			}
 		}
-		assertEquals(uncontainedCrossroadCount + crossroadCount, empty);
+		assertEquals(uncontainedCrossroadCount
+				+ (crossroadCount * (countyCount - 1)), empty);
 	}
 
 	@Test
-	public void testPathSystemEdgesFrom() throws Exception {
+	public void testEdgesFrom() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
+		String queryString = "from x : V{WhereExpression} report edgesFrom(x) end";
+		JValue result = evalTestQuery("EdgesFrom", queryString);
+		assertEquals(1, result.toCollection().size());
+		assertEquals(1, getNthValue(result.toCollection(), 0).toCollection()
+				.size());
+	}
+
+	@Test
+	public void testEdgesFromNull() throws Exception {
+		assertQueryEqualsNull("using nll: edgesFrom(nll, nll)");
+		assertQueryEqualsNull("using nll: edgesFrom(firstVertex(), nll)");
+		// assertQueryEqualsNull("using nll: edgesFrom(nll, ?)");
+		fail();
+	}
+
+	@Test
+	public void testEdgesFromPathSystem() throws Exception {
 		String queryString = "from c: V{localities.County}, a:V{junctions.Airport} "
-				+ "with c.name <> 'Rheinland-Pfalz' "
+				+ "with c.name = 'Hessen' "
 				+ "report edgesFrom(a, pathSystem(c, -->{localities.ContainsLocality} -->{connections.AirRoute})) "
 				+ "end";
 		JValue result = evalTestQuery("PathSystemEdgesFrom", queryString,
-				TestVersion.CITY_MAP_GRAPH);
+				TestVersion.ROUTE_MAP_GRAPH);
 		JValueBag bag = result.toCollection().toJValueBag();
 		assertEquals(airportCount, bag.size());
 		int empty = 0;
@@ -220,12 +305,32 @@ public class PathSystemFunctionTest extends GenericTest {
 	}
 
 	@Test
-	public void testPathSystemEdgesTo() throws Exception {
+	public void testEdgesTo() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
+		String queryString = "from x : V{WhereExpression} report edgesTo(x) end";
+		JValue result = evalTestQuery("EdgesTo", queryString);
+		assertEquals(1, result.toCollection().size());
+		for (JValue j : result.toCollection()) {
+			assertEquals(5, j.toCollection().size());
+		}
+	}
+
+	@Test
+	public void testEdgesToNull() throws Exception {
+		assertQueryEqualsNull("using nll: edgesTo(nll, nll)");
+		assertQueryEqualsNull("using nll: edgesTo(firstVertex(), nll)");
+		// assertQueryEqualsNull("using nll: edgesTo(nll, ?)");
+		fail();
+	}
+
+	@Test
+	public void testEdgesToPathSystem() throws Exception {
 		String queryString = "from c: V{localities.County}, r:V{junctions.Crossroad} "
 				+ "report edgesTo(r, pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad}))"
 				+ "end";
 		JValue result = evalTestQuery("PathSystemEdgesTo", queryString,
-				TestVersion.CITY_MAP_GRAPH);
+				TestVersion.ROUTE_MAP_GRAPH);
 		JValueBag bag = result.toCollection().toJValueBag();
 		assertEquals(crossroadCount * countyCount, bag.size());
 		int empty = 0;
@@ -237,7 +342,70 @@ public class PathSystemFunctionTest extends GenericTest {
 				assertEquals(1, connectedEdges);
 			}
 		}
-		assertEquals(crossroadCount + uncontainedCrossroadCount, empty);
+		assertEquals((crossroadCount * (countyCount - 1))
+				+ uncontainedCrossroadCount, empty);
+	}
+
+	@Test
+	public void testEdgeTrace() throws Exception {
+
+		testEdgeTrace(emptyPath);
+		testEdgeTrace(oneElementPath);
+		testEdgeTrace(twoElementPath);
+		testEdgeTrace(multipleElementPath);
+		testEdgeTrace(longPath);
+		testEdgeTrace(loopPath);
+	}
+
+	public void testEdgeTrace(JValuePath usedPath)
+			throws JValueInvalidTypeException, Exception {
+		setBoundVariable("usedPath", usedPath);
+		JValueCollection trace = evalTestQuery(
+				"using usedPath: edgeTrace(usedPath)").toCollection();
+
+		List<Edge> edgeTrace = usedPath.edgeTrace();
+		for (JValue tracedEdge : trace) {
+			Edge edge = tracedEdge.toEdge();
+			assertTrue(edgeTrace.remove(edge));
+		}
+		assertTrue(edgeTrace.isEmpty());
+	}
+
+	@Test
+	public void testEdgesTraceNull() throws Exception {
+		assertQueryEqualsNull("using nll: edgeTrace(nll)");
+	}
+
+	@Test
+	public void testElements() throws Exception {
+		// TODO
+		fail();
+	}
+
+	// @Test
+	public void testElementsNull() throws Exception {
+		// See CollectionFunctions
+	}
+
+	@Test
+	public void testEndVertex() throws Exception {
+		testEndVertex(loopPath);
+		testEndVertex(emptyPath);
+		testEndVertex(oneElementPath);
+		testEndVertex(twoElementPath);
+		testEndVertex(multipleElementPath);
+		testEndVertex(longPath);
+	}
+
+	private void testEndVertex(JValuePath usedPath) throws Exception {
+		setBoundVariable("usedPath", usedPath);
+		Vertex endVertex = usedPath.getEndVertex();
+		assertQueryEquals("using usedPath: endVertex(usedPath)", endVertex);
+	}
+
+	// @Test
+	public void testEndVertexNull() throws Exception {
+		// See GraphFunctions
 	}
 
 	@Test
@@ -246,7 +414,7 @@ public class PathSystemFunctionTest extends GenericTest {
 				+ "report extractPath(pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad}), r)"
 				+ "end";
 		JValue result = evalTestQuery("ExtractPath", queryString,
-				TestVersion.CITY_MAP_GRAPH);
+				TestVersion.ROUTE_MAP_GRAPH);
 		JValueBag bag = result.toCollection().toJValueBag();
 		assertEquals(countyCount * crossroadCount, bag.size());
 		int invalidPaths = 0;
@@ -258,50 +426,151 @@ public class PathSystemFunctionTest extends GenericTest {
 				assertEquals(2, p.pathLength());
 			}
 		}
-		assertEquals(uncontainedCrossroadCount + crossroadCount, invalidPaths);
+		assertEquals(uncontainedCrossroadCount
+				+ (crossroadCount * (countyCount - 1)), invalidPaths);
+	}
+
+	@Test
+	public void testExtractPathNull() throws Exception {
+		// TODO
+		assertQueryEqualsNull("using nll: extractPath(nll)");
+		assertQueryEqualsNull("using nll: extractPath(nll, nll)");
+		// assertQueryEqualsNull("using nll: extractPath(?, nll)");
+		assertQueryEqualsNull("using nll: extractPath(nll, 1)");
+		assertQueryEqualsNull("using nll: extractPath(nll, firstVertex())");
 	}
 
 	@Test
 	public void testInnerNodes() throws Exception {
 
-		String queryString = "from c: V{localities.County} "
+		String queryString = "from c: V{localities.County} with c.name <> 'Berlin'"
 				+ "report innerNodes(pathSystem(c, -->{localities.ContainsLocality} -->{connections.AirRoute})) "
 				+ "end";
 		JValue result = evalTestQuery("InnerNodes", queryString,
-				TestVersion.CITY_MAP_GRAPH);
+				TestVersion.ROUTE_MAP_GRAPH);
 		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(countyCount, bag.size());
+		assertEquals(countyCount - 1, bag.size());
 		for (JValue v : bag) {
 			assertEquals(1, v.toCollection().size());
 		}
+	}
+
+	@Test
+	public void testInnerNodesNull() throws Exception {
+		assertQueryEqualsNull("using nll: innerNodes(nll)");
+	}
+
+	@Test
+	public void testIsCycle() throws Exception {
+		testIsCycle(loopPath);
+		testIsCycle(emptyPath);
+		testIsCycle(oneElementPath);
+		testIsCycle(twoElementPath);
+		testIsCycle(multipleElementPath);
+		testIsCycle(longPath);
+	}
+
+	private void testIsCycle(JValuePath usedPath) throws Exception {
+		setBoundVariable("usedPath", usedPath);
+		boolean isCycle = usedPath.getStartVertex() != null
+				&& usedPath.getStartVertex() == usedPath.getEndVertex();
+		assertQueryEquals("using usedPath: isCycle(usedPath)", isCycle);
+	}
+
+	@Test
+	public void testIsCyclicNull() throws Exception {
+		assertQueryEqualsNull("using nll: isCycle(nll)");
+	}
+
+	@Test
+	public void testIsReachable() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
+		String queryString = "from var: V{Variable}, def:V{Definition}, whr: V{WhereExpression} with isReachable(var, whr, -->{IsVarOf} def -->{IsDefinitionOf}) report var end";
+		JValue result = evalTestQuery("IntermediateVertexDescription",
+				queryString);
+		assertEquals(4, result.toCollection().size());
+		JValue resultWO = evalTestQuery("IntermediateVertexDescription (wo)",
+				queryString, new DefaultOptimizer());
+		assertEquals(result, resultWO);
+	}
+
+	@Test
+	public void testIsReachableNull() throws Exception {
+		// TODO
+		assertQueryEqualsNull("using nll: isReachable(nll, nll, nll)");
+		assertQueryEqualsNull("using nll: isReachable(firstVertex(), nll, nll)");
+		assertQueryEqualsNull("using nll: isReachable(nll, lastVertex(), nll)");
+		assertQueryEqualsNull("using nll: isReachable(firstVertex(), lastVertex(), nll)");
+
+		// assertQueryEqualsNull("using nll: isReachable(nll, nll, ?)");
+		// assertQueryEqualsNull("using nll: isReachable(firstVertex(), nll, ?)");
+		// assertQueryEqualsNull("using nll: isReachable(nll, lastVertex(), ?)");
+		// assertQueryEqualsNull("using nll: isReachable(firstVertex(), lastVertex(), ?)");
+		fail();
+	}
+
+	@Test
+	public void testIsSubPathOf() throws Exception {
+		String queryString = "from v: V{localities.County}, a:V{junctions.Airport}, w: V{junctions.Crossroad} report"
+				+ " isSubPathOf( "
+				+ "extractPath(pathSystem(v, -->{localities.ContainsLocality}), a), "
+				+ "extractPath(pathSystem(v, -->{localities.ContainsLocality} a -->{localities.ContainsCrossroad}), w)) end";
+		JValue result = evalTestQuery("IsSubPath", queryString,
+				TestVersion.ROUTE_MAP_GRAPH);
+		JValueBag bag = result.toCollection().toJValueBag();
+		assertEquals(countyCount * airportCount * crossroadCount, bag.size());
+		int trueCounts = 0;
+		for (JValue v : bag) {
+			if (v.toBoolean()) {
+				trueCounts++;
+			}
+		}
+		assertEquals(airportCount, trueCounts);
+	}
+
+	@Test
+	public void testIsSubPathOfNull() throws Exception {
+		// TODO
+
+		assertQueryEqualsNull("using nll: isSubPathOf(nll, nll)");
+		// assertQueryEqualsNull("using nll: isSubPathOf(?, nll)");
+		// assertQueryEqualsNull("using nll: isSubPathOf(nll, ?)");
+		fail();
 	}
 
 	@Test
 	public void testLeaves() throws Exception {
-		String queryString = "from c: V{localities.County} "
+		String queryString = "from c: V{localities.County} with c.name <> 'Berlin'"
 				+ "report leaves(pathSystem(c, -->{localities.ContainsLocality} <--{localities.HasCapital})) "
 				+ "end";
 		JValue result = evalTestQuery("Leaves", queryString,
-				TestVersion.CITY_MAP_GRAPH);
+				TestVersion.ROUTE_MAP_GRAPH);
 		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(countyCount, bag.size());
+		assertEquals(countyCount - 1, bag.size());
 		for (JValue v : bag) {
 			assertEquals(1, v.toCollection().size());
 		}
 	}
 
 	@Test
-	public void testMinPathLength() throws Exception {
-		String queryString = "from c: V{localities.County} "
-				+ "report minPathLength(pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad} -->{connections.Street})) "
-				+ "end";
-		JValue result = evalTestQuery("MinPathLength", queryString,
-				TestVersion.CITY_MAP_GRAPH);
-		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(countyCount, bag.size());
-		for (JValue v : bag) {
-			assertEquals(3, (int) v.toInteger());
-		}
+	public void testLeavesNull() throws Exception {
+		assertQueryEqualsNull("using nll: leaves(nll)");
+	}
+
+	@Test
+	public void testMatches() throws Exception {
+		// TODO
+		fail();
+	}
+
+	@Test
+	public void testMatchesNull() throws Exception {
+		// TODO
+		assertQueryEqualsNull("using nll: matches(nll, nll)");
+		// assertQueryEqualsNull("using nll: matches(nll, ?)");
+		// assertQueryEqualsNull("using nll: matches(?, nll)");
+		fail();
 	}
 
 	@Test
@@ -310,7 +579,7 @@ public class PathSystemFunctionTest extends GenericTest {
 				+ "report minPathLength(pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad} -->{connections.Street})) "
 				+ "end";
 		JValue result = evalTestQuery("MaxPathLength", queryString,
-				TestVersion.CITY_MAP_GRAPH);
+				TestVersion.ROUTE_MAP_GRAPH);
 		JValueBag bag = result.toCollection().toJValueBag();
 		assertEquals(countyCount, bag.size());
 		for (JValue v : bag) {
@@ -319,12 +588,97 @@ public class PathSystemFunctionTest extends GenericTest {
 	}
 
 	@Test
+	public void testMaxPathLengthNull() throws Exception {
+		assertQueryEqualsNull("using nll: maxPathLength(nll)");
+	}
+
+	@Test
+	public void testMinPathLength() throws Exception {
+		String queryString = "from c: V{localities.County} "
+				+ "report minPathLength(pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad} -->{connections.Street})) "
+				+ "end";
+		JValue result = evalTestQuery("MinPathLength", queryString,
+				TestVersion.ROUTE_MAP_GRAPH);
+		JValueBag bag = result.toCollection().toJValueBag();
+		assertEquals(countyCount, bag.size());
+		for (JValue v : bag) {
+			assertEquals(3, (int) v.toInteger());
+		}
+	}
+
+	@Test
+	public void testMinPathLengthNull() throws Exception {
+		assertQueryEqualsNull("using nll: minPathLength(nll)");
+		fail();
+	}
+
+	@Test
+	public void testNodes() throws Exception {
+		// TODO
+		fail();
+	}
+
+	@Test
+	public void testNodesNull() throws Exception {
+		assertQueryEqualsNull("using nll: nodes(nll)");
+	}
+
+	@Test
+	public void testNodeTrace() throws Exception {
+		testNodeTrace(loopPath);
+		testNodeTrace(emptyPath);
+		testNodeTrace(oneElementPath);
+		testNodeTrace(twoElementPath);
+		testNodeTrace(multipleElementPath);
+		testNodeTrace(longPath);
+	}
+
+	private void testNodeTrace(JValuePath usedPath) throws Exception {
+		setBoundVariable("usedPath", usedPath);
+
+		JValueCollection collection = evalTestQuery(
+				"using usedPath: nodeTrace(usedPath)").toCollection();
+		List<Vertex> innerNodes = usedPath.nodeTrace();
+		for (JValue value : collection) {
+			Vertex innerNode = value.toVertex();
+			assertTrue(innerNodes.remove(innerNode));
+		}
+		assertTrue(innerNodes.isEmpty());
+
+	}
+
+	@Test
+	public void testNodeTrace2() throws Exception {
+		String queryString = "from c: V{localities.County}, r:V{junctions.Crossroad}"
+				+ "report nodeTrace(extractPath(pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad}), r)) "
+				+ "end";
+		JValue result = evalTestQuery("PathLength", queryString,
+				TestVersion.ROUTE_MAP_GRAPH);
+		JValueBag bag = result.toCollection().toJValueBag();
+		assertEquals(countyCount * crossroadCount, bag.size());
+		int emptyTraces = 0;
+		for (JValue v : bag) {
+			if (v.toCollection().isEmpty()) {
+				emptyTraces++;
+			} else {
+				assertEquals(3, v.toCollection().size());
+			}
+		}
+		assertEquals(crossroadCount + uncontainedCrossroadCount, emptyTraces);
+	}
+
+	@Test
+	public void testNodeTraceNull() throws Exception {
+		assertQueryEqualsNull("using nll: nodeTrace(nll)");
+	}
+
+	@Test
 	public void testParent() throws Exception {
 		String queryString = "from c: V{localities.County}, r:V{junctions.Crossroad} "
 				+ "report parent(pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad}), r) "
 				+ "end";
 		JValue result = evalTestQuery("Parent", queryString,
-				TestVersion.CITY_MAP_GRAPH);
+				TestVersion.ROUTE_MAP_GRAPH);
 		JValueBag bag = result.toCollection().toJValueBag();
 		assertEquals(countyCount * crossroadCount, bag.size());
 		int invalid = 0;
@@ -337,12 +691,105 @@ public class PathSystemFunctionTest extends GenericTest {
 	}
 
 	@Test
+	public void testParentNull() throws Exception {
+		// TODO
+		assertQueryEqualsNull("using nll: parent(nll, nll)");
+		// assertQueryEqualsNull("using nll: parent(?, nll)");
+		// assertQueryEqualsNull("using nll: parent(nll, ?)");
+		fail();
+	}
+
+	@Test
+	public void testPathConcat() throws Exception {
+		// TODO
+		fail();
+	}
+
+	@Test
+	public void testPathConcatNull() throws Exception {
+		// TODO
+		assertQueryEqualsNull("using nll: pathConcat(nll, nll)");
+		// assertQueryEqualsNull("using nll: pathConcat(?, nll)");
+		// assertQueryEqualsNull("using nll: pathConcat(nll, ?)");
+		fail();
+	}
+
+	@Test
+	public void testPathExpr() throws Exception {
+		// TODO
+		fail();
+	}
+
+	@Test
+	public void testPathExprNull() throws Exception {
+		assertQueryEqualsNull("using nll: pathExpr(nll)");
+	}
+
+	@Test
+	public void testPathLength() throws Exception {
+		testPathLength(loopPath);
+		testPathLength(emptyPath);
+		testPathLength(oneElementPath);
+		testPathLength(twoElementPath);
+		testPathLength(multipleElementPath);
+		testPathLength(longPath);
+	}
+
+	private void testPathLength(JValuePath usedPath) throws Exception {
+		setBoundVariable("usedPath", usedPath);
+		int length = usedPath.pathLength();
+		assertQueryEquals("using usedPath: pathLength(usedPath)", length);
+	}
+
+	@Test
+	public void testPathLengthNull() throws Exception {
+		assertQueryEqualsNull("using nll: pathLength(nll)");
+	}
+
+	@Test
+	public void testReachableVertex() throws Exception {
+		// TODO
+		fail();
+	}
+
+	@Test
+	public void testReachableVertexNull() throws Exception {
+		// TODO
+		assertQueryEqualsNull("using nll: reachableVertices(nll, nll)");
+		// assertQueryEqualsNull("using nll: reachableVertices(nll, ?)");
+		assertQueryEqualsNull("using nll: reachableVertices(firstVertex(), nll)");
+
+		assertQueryEqualsNull("using nll: reachableVertices(nll, nll, nll)");
+		// assertQueryEqualsNull("using nll: reachableVertices(nll, ?, nll)");
+		assertQueryEqualsNull("using nll: reachableVertices(firstVertex(), nll, nll)");
+		// assertQueryEqualsNull("using nll: reachableVertices(firstVertex(), ?, nll)");
+
+		// assertQueryEqualsNull("using nll: reachableVertices(nll, nll, ?)");
+		// assertQueryEqualsNull("using nll: reachableVertices(nll, ?, ?)");
+		// assertQueryEqualsNull("using nll: reachableVertices(firstVertex(), nll, ?)");
+		// assertQueryEqualsNull("using nll: reachableVertices(firstVertex(), ?, ?)");
+		fail();
+	}
+
+	@Test
+	public void testSiblings() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
+		String queryString = "from x: V{Definition} report siblings(x) end";
+		JValue result = evalTestQuery("Siblings", queryString);
+		assertEquals(4, result.toCollection().size());
+		for (JValue j : result.toCollection()) {
+			assertTrue(5 <= j.toCollection().size());
+		}
+	}
+
+	@Test
 	public void testSiblings2() throws Exception {
 		String queryString = "from c: V{localities.County}, r:V{junctions.Crossroad} "
 				+ "report siblings(r, pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad})) "
 				+ "end";
 		JValue result = evalTestQuery("Siblings", queryString,
-				TestVersion.CITY_MAP_GRAPH);
+				TestVersion.ROUTE_MAP_GRAPH);
 		JValueBag bag = result.toCollection().toJValueBag();
 
 		assertEquals(countyCount * crossroadCount, bag.size());
@@ -362,12 +809,33 @@ public class PathSystemFunctionTest extends GenericTest {
 	}
 
 	@Test
+	public void testSiblingsNull() throws Exception {
+		// TODO
+		assertQueryEqualsNull("using nll: siblings(nll, nll)");
+		// assertQueryEqualsNull("using nll: siblings(nll, ?)");
+		assertQueryEqualsNull("using nll: siblings(firstVertex(), nll)");
+		fail();
+	}
+
+	@Test
+	public void testSlice() throws Exception {
+		// TODO
+		fail();
+	}
+
+	@Test
+	public void testSliceNull() throws Exception {
+		// TODO
+		fail();
+	}
+
+	@Test
 	public void testTypes() throws Exception {
 		String queryString = "from c: V{localities.County}"
 				+ "report types(pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad})) "
 				+ "end";
 		JValue result = evalTestQuery("TypeSet", queryString,
-				TestVersion.CITY_MAP_GRAPH);
+				TestVersion.ROUTE_MAP_GRAPH);
 		JValueBag bag = result.toCollection().toJValueBag();
 		assertEquals(countyCount, bag.size());
 		// TODO this test is not well thought through
@@ -378,189 +846,48 @@ public class PathSystemFunctionTest extends GenericTest {
 	}
 
 	@Test
-	public void testPathLength() throws Exception {
-		String queryString = "from c: V{localities.County}, r:V{junctions.Crossroad}"
-				+ "report pathLength(extractPath(pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad}), r)) "
+	public void testStartVertex() throws Exception {
+		testStartVertex(loopPath);
+		testStartVertex(emptyPath);
+		testStartVertex(oneElementPath);
+		testStartVertex(twoElementPath);
+		testStartVertex(multipleElementPath);
+		testStartVertex(longPath);
+	}
+
+	private void testStartVertex(JValuePath usedPath) throws Exception {
+		setBoundVariable("usedPath", usedPath);
+		Vertex startVertex = usedPath.getStartVertex();
+		assertQueryEquals("using usedPath: startVertex(usedPath)", startVertex);
+	}
+
+	// @Test
+	public void testStartVertexNull() throws Exception {
+		// See GraphFunctionTest
+	}
+
+	/*
+	 * Test method for
+	 * 'greql2.evaluator.GreqlEvaluator.evaluateForwardVertexSet(ForwardVertexSet,
+	 * Graph)'
+	 */
+	@Test
+	public void testWeightPathSystem() throws Exception {
+		String queryString = "from c: V{localities.County} "
+				+ "with c.name <> 'Rheinland-Pfalz' "
+				+ "report weight(pathSystem(c, -->{localities.ContainsLocality} -->{connections.AirRoute})) "
 				+ "end";
-		JValue result = evalTestQuery("PathLength", queryString,
-				TestVersion.CITY_MAP_GRAPH);
+		JValue result = evalTestQuery("PathSystemWeight", queryString,
+				TestVersion.ROUTE_MAP_GRAPH);
 		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(countyCount * crossroadCount, bag.size());
-		int nullPath = 0;
+		assertEquals(1, bag.size());
 		for (JValue v : bag) {
-			if (v.toInteger() == 0) {
-				nullPath++;
-			} else {
-				assertEquals(2, (int) v.toInteger());
-			}
-		}
-		assertEquals(crossroadCount + uncontainedCrossroadCount, nullPath);
-	}
-
-	@Test
-	public void testIsCycle2() throws Exception {
-		String queryString = "from c: V{localities.County}, r:V{junctions.Crossroad}"
-				+ "report isCycle(extractPath(pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad}), r)) "
-				+ "end";
-		JValue result = evalTestQuery("isCycle", queryString,
-				TestVersion.CITY_MAP_GRAPH);
-		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(countyCount * crossroadCount, bag.size());
-		for (JValue v : bag) {
-			assertFalse(v.toBoolean());
+			assertEquals(4, (int) v.toInteger());
 		}
 	}
 
 	@Test
-	public void testNodeTrace2() throws Exception {
-		String queryString = "from c: V{localities.County}, r:V{junctions.Crossroad}"
-				+ "report nodeTrace(extractPath(pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad}), r)) "
-				+ "end";
-		JValue result = evalTestQuery("PathLength", queryString,
-				TestVersion.CITY_MAP_GRAPH);
-		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(countyCount * crossroadCount, bag.size());
-		int emptyTraces = 0;
-		for (JValue v : bag) {
-			if (v.toCollection().isEmpty()) {
-				emptyTraces++;
-			} else {
-				assertEquals(3, v.toCollection().size());
-			}
-		}
-		assertEquals(crossroadCount + uncontainedCrossroadCount, emptyTraces);
-	}
-
-	@Test
-	public void testEdgeTrace() throws Exception {
-		String queryString = "from v: V{localities.County}, w: V{junctions.Crossroad}"
-				+ "report edgeTrace(extractPath(pathSystem(v, -->{localities.ContainsLocality} {junctions.Airport} & -->{localities.ContainsCrossroad}), w)) end";
-		JValue result = evalTestQuery("EdgeTrace", queryString,
-				TestVersion.CITY_MAP_GRAPH);
-		JValueBag bag = result.toCollection().toJValueBag();
-
-		assertEquals(countyCount * crossroadCount, bag.size());
-		int traceCount = 0;
-		for (JValue value : bag) {
-			int size = value.toCollection().size();
-			if (size == 0) {
-				continue;
-			}
-
-			traceCount++;
-			assertEquals(2, value.toCollection().size());
-		}
-		assertEquals(airportCount, traceCount);
-	}
-
-	@Test
-	public void testIsSubPath() throws Exception {
-		String queryString = "from v: V{localities.County}, a:V{junctions.Airport}, w: V{junctions.Crossroad} report"
-				+ " isSubPathOf( "
-				+ "extractPath(pathSystem(v, -->{localities.ContainsLocality}), a), "
-				+ "extractPath(pathSystem(v, -->{localities.ContainsLocality} a -->{localities.ContainsCrossroad}), w)) end";
-		JValue result = evalTestQuery("IsSubPath", queryString,
-				TestVersion.CITY_MAP_GRAPH);
-		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(countyCount * airportCount * crossroadCount, bag.size());
-		int trueCounts = 0;
-		for (JValue v : bag) {
-			if (v.toBoolean()) {
-				trueCounts++;
-			}
-		}
-		assertEquals(airportCount, trueCounts);
-	}
-
-	@Test
-	public void testEdgesConnected() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from x : V{WhereExpression} report edgesConnected(x) end";
-		JValue result = evalTestQuery("EdgesConnected", queryString);
-		assertEquals(6, getNthValue(result.toCollection(), 0).toCollection()
-				.size());
-	}
-
-	@Test
-	public void testEdgesFrom() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from x : V{WhereExpression} report edgesFrom(x) end";
-		JValue result = evalTestQuery("EdgesFrom", queryString);
-		assertEquals(1, result.toCollection().size());
-		assertEquals(1, getNthValue(result.toCollection(), 0).toCollection()
-				.size());
-	}
-
-	@Test
-	public void testEdgesTo() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from x : V{WhereExpression} report edgesTo(x) end";
-		JValue result = evalTestQuery("EdgesTo", queryString);
-		assertEquals(1, result.toCollection().size());
-		for (JValue j : result.toCollection()) {
-			assertEquals(5, j.toCollection().size());
-		}
-	}
-
-	@Test
-	public void testIsCycle() throws Exception {
-		String queryString = "from v : V reportSet isCycle(extractPath(pathSystem(v, <->*), v)) end";
-		JValue result = evalTestQuery("isCycle", queryString,
-				getCyclicTestGraph());
-		for (JValue v : result.toCollection()) {
-			assertEquals(JValueBoolean.getTrueValue(), v.toBoolean());
-		}
-	}
-
-	@Test
-	public void testIsCycle1() throws Exception {
-		String queryString = "from v,w : V with v <> w reportSet isCycle(extractPath(pathSystem(v, -->+), w)) end";
-		JValue result = evalTestQuery("isCycle", queryString,
-				getCyclicTestGraph());
-		for (JValue v : result.toCollection()) {
-			assertEquals(JValueBoolean.getFalseValue(), v.toBoolean());
-		}
-	}
-
-	@Test
-	public void testNodeTrace() throws Exception {
-		MinimalGraph minimalGraph = MinimalSchema.instance()
-				.createMinimalGraph(10, 10);
-		ArrayList<Node> nodes = new ArrayList<Node>();
-		ArrayList<Link> links = new ArrayList<Link>();
-		for (int i = 0; i < 10; i++) {
-			nodes.add(minimalGraph.createNode());
-		}
-		for (int i = 0; i < 9; i++) {
-			links.add(minimalGraph.createLink(nodes.get(i), nodes.get(i + 1)));
-		}
-		JValuePath p = new JValuePath(nodes.get(0));
-		p.addEdge(links.get(0));
-		p.addEdge(links.get(1));
-		p.addEdge(links.get(2));
-		List<Vertex> estimatedList = new ArrayList<Vertex>();
-		estimatedList.add(nodes.get(0));
-		estimatedList.add(nodes.get(1));
-		estimatedList.add(nodes.get(2));
-		estimatedList.add(nodes.get(3));
-		assertEquals(4, p.nodeTrace().size());
-		for (int i = 0; i < estimatedList.size(); i++) {
-			assertEquals(estimatedList.get(i), p.nodeTrace().get(i));
-		}
-	}
-
-	@Test
-	public void testSiblings() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from x: V{Definition} report siblings(x) end";
-		JValue result = evalTestQuery("Siblings", queryString);
-		assertEquals(4, result.toCollection().size());
-		for (JValue j : result.toCollection()) {
-			assertTrue(5 <= j.toCollection().size());
-		}
+	public void testWeightNull() throws Exception {
+		assertQueryEqualsNull("using nll: weight(nll)");
 	}
 }

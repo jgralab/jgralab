@@ -102,6 +102,10 @@ public class EnumConstant extends Greql2Function {
 		if (checkArguments(arguments) < 0) {
 			throw new WrongFunctionParameterException(this, arguments);
 		}
+		if (arguments[0].toObject() == null || arguments[1].toObject() == null) {
+			return new JValueImpl();
+		}
+
 		String enumDomainName = arguments[0].toString();
 		String enumConstantName = arguments[1].toString();
 

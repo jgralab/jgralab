@@ -41,6 +41,7 @@ import java.util.Arrays;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
+import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralabtest.greql2.GenericTest;
 
@@ -55,6 +56,11 @@ public class CollectionFunctionTest extends GenericTest {
 		assertQueryEquals("let x:= list (0..10000) in avg(x)", 5000.0);
 		assertQueryEquals("let x:= list (-100..100) in avg(x)", 0.0);
 		assertQueryEquals("let x:= list (5, -5, 0) in avg(x)", 0.0);
+	}
+
+	@Test
+	public void testAvgNull() throws Exception {
+		assertQueryEqualsNull("using nll: avg(nll)");
 	}
 
 	@Test
@@ -73,6 +79,13 @@ public class CollectionFunctionTest extends GenericTest {
 	}
 
 	@Test
+	public void testConcatNull() throws Exception {
+		assertQueryEqualsNull("using nll: concat(list(), nll)");
+		assertQueryEqualsNull("using nll: concat(nll, list())");
+		assertQueryEqualsNull("using nll: concat(nll, nll)");
+	}
+
+	@Test
 	public void testConcatInfix() throws Exception {
 		assertQueryEqualsQuery("list(1..3) ++ list(4..6)", "list(1..6)");
 		assertQueryEqualsQuery("list(1..2) ++ list(5..6)", "list(1,2,5,6)");
@@ -83,6 +96,13 @@ public class CollectionFunctionTest extends GenericTest {
 		assertQueryEqualsQuery("list(1) ++ list(5,2,5)", "list(1,5,2,5)");
 		assertQueryEqualsQuery("list(1,23,3) ++ list()", "list(1,23,3)");
 		assertQueryEqualsQuery("list(1,23,3) ++ list(5)", "list(1,23,3,5)");
+	}
+
+	@Test
+	public void testConcatInfixNull() throws Exception {
+		assertQueryEqualsNull("using nll: nll ++ nll");
+		assertQueryEqualsNull("using nll: list() ++ nll");
+		assertQueryEqualsNull("using nll: nll ++ list()");
 	}
 
 	@Test
@@ -104,25 +124,6 @@ public class CollectionFunctionTest extends GenericTest {
 		assertQueryEquals("using x: contains(x, 0)", false);
 		assertQueryEquals("using x: contains(x, 5)", false);
 		assertQueryEquals("using x: contains(x, 6)", false);
-	}
-
-	@Test
-	public void testContainsKey() throws Exception {
-		evalTestQuery("map() store as x");
-		assertQueryEquals("using x: containsKey(x, 1)", false);
-		assertQueryEquals("using x: containsKey(x, 2)", false);
-		assertQueryEquals("using x: containsKey(x, 0)", false);
-
-		evalTestQuery("map(1 -> 'a string' ) store as x");
-		assertQueryEquals("using x: containsKey(x, 1)", true);
-		assertQueryEquals("using x: containsKey(x, 2)", false);
-		assertQueryEquals("using x: containsKey(x, 0)", false);
-
-		evalTestQuery("map(1 -> 'a string', 2 -> 'another string', 1 -> '') store as x");
-		assertQueryEquals("using x: containsKey(x, 1)", true);
-		assertQueryEquals("using x: containsKey(x, 2)", true);
-		assertQueryEquals("using x: containsKey(x, 3)", false);
-		assertQueryEquals("using x: containsKey(x, 0)", false);
 	}
 
 	@Test
@@ -168,6 +169,46 @@ public class CollectionFunctionTest extends GenericTest {
 	}
 
 	@Test
+	public void testContainsNull() throws Exception {
+		assertQueryEqualsNull("using nll: contains(nll, nll)");
+		assertQueryEqualsNull("using nll: contains(list(nll), nll)");
+		assertQueryEqualsNull("using nll: contains(list(), nll)");
+		assertQueryEqualsNull("using nll: contains(nll, 1)");
+		assertQueryEqualsNull("using nll: contains(nll, nll)");
+	}
+
+	@Test
+	public void testContainsKey() throws Exception {
+		evalTestQuery("map() store as x");
+		assertQueryEquals("using x: containsKey(x, 1)", false);
+		assertQueryEquals("using x: containsKey(x, 2)", false);
+		assertQueryEquals("using x: containsKey(x, 0)", false);
+
+		evalTestQuery("map(1 -> 'a string' ) store as x");
+		assertQueryEquals("using x: containsKey(x, 1)", true);
+		assertQueryEquals("using x: containsKey(x, 2)", false);
+		assertQueryEquals("using x: containsKey(x, 0)", false);
+
+		evalTestQuery("map(1 -> 'a string', 2 -> 'another string', 1 -> '') store as x");
+		assertQueryEquals("using x: containsKey(x, 1)", true);
+		assertQueryEquals("using x: containsKey(x, 2)", true);
+		assertQueryEquals("using x: containsKey(x, 3)", false);
+		assertQueryEquals("using x: containsKey(x, 0)", false);
+	}
+
+	@Test
+	public void testContainsKeyNull() throws Exception {
+		assertQueryEqualsNull("using nll: containsKey(nll, nll)");
+		assertQueryEqualsNull("using nll: containsKey(map(nll -> nll), nll)");
+		assertQueryEqualsNull("using nll: containsKey(map(nll -> 1), nll)");
+		assertQueryEqualsNull("using nll: containsKey(map(1 -> nll), nll)");
+		assertQueryEqualsNull("using nll: containsKey(map(1 -> 1), nll)");
+		assertQueryEqualsNull("using nll: containsKey(map(), nll)");
+		assertQueryEqualsNull("using nll: containsKey(nll, 1)");
+		assertQueryEqualsNull("using nll: containsKey(nll, nll)");
+	}
+
+	@Test
 	public void testContainsValue() throws Exception {
 		evalTestQuery("map() store as x");
 		assertQueryEquals("using x: containsValue(x, 'a string')", false);
@@ -184,6 +225,18 @@ public class CollectionFunctionTest extends GenericTest {
 		assertQueryEquals("using x: containsValue(x, '')", true);
 		assertQueryEquals("using x: containsValue(x, 1)", false);
 		assertQueryEquals("using x: containsValue(x, 'another string')", true);
+	}
+
+	@Test
+	public void testContainsValueNull() throws Exception {
+		assertQueryEqualsNull("using nll: containsValue(nll, nll)");
+		assertQueryEqualsNull("using nll: containsValue(map(nll -> nll), nll)");
+		assertQueryEqualsNull("using nll: containsValue(map(nll -> 1), nll)");
+		assertQueryEqualsNull("using nll: containsValue(map(1 -> nll), nll)");
+		assertQueryEqualsNull("using nll: containsValue(map(1 -> 1), nll)");
+		assertQueryEqualsNull("using nll: containsValue(map(), nll)");
+		assertQueryEqualsNull("using nll: containsValue(nll, 1)");
+		assertQueryEqualsNull("using nll: containsValue(nll, nll)");
 	}
 
 	@Test
@@ -214,6 +267,11 @@ public class CollectionFunctionTest extends GenericTest {
 	}
 
 	@Test
+	public void testCountNull() throws Exception {
+		assertQueryEqualsNull("using nll: count(nll)");
+	}
+
+	@Test
 	public void testDifference() throws Exception {
 		assertQueryEqualsQuery(
 				"let x:= set(5, 7, 9, 13), y := set(5, 6, 7, 8) in difference(x, y)",
@@ -230,6 +288,15 @@ public class CollectionFunctionTest extends GenericTest {
 		assertQueryEquals(
 				"let x:= set(5), y := list(5, 6) in difference(x, y)",
 				Arrays.asList());
+	}
+
+	@Test
+	public void testDifferenceNull() throws Exception {
+		assertQueryEqualsNull("using nll: difference(set(), nll)");
+		assertQueryEqualsNull("using nll: difference(list(), nll)");
+		assertQueryEqualsNull("using nll: difference(nll, set())");
+		assertQueryEqualsNull("using nll: difference(nll, list())");
+		assertQueryEqualsNull("using nll: difference(nll, nll)");
 	}
 
 	@Test
@@ -255,6 +322,11 @@ public class CollectionFunctionTest extends GenericTest {
 	}
 
 	@Test
+	public void testElementsNull() throws Exception {
+		assertQueryEqualsNull("using nll: elements(nll)");
+	}
+
+	@Test
 	public void testEntrySet() throws Exception {
 		evalTestQuery("map() store as m");
 		assertQueryEqualsQuery("using m: entrySet(m)", "set()");
@@ -270,6 +342,11 @@ public class CollectionFunctionTest extends GenericTest {
 		evalTestQuery("map('milk' -> 1, 'honey' -> 2, 'milk' -> 3) store as m");
 		assertQueryEqualsQuery("using m: entrySet(m)",
 				"set(tup('honey', 2), tup('milk', 3))");
+	}
+
+	@Test
+	public void testEntrySetNull() throws Exception {
+		assertQueryEqualsNull("using nll: entrySet(nll)");
 	}
 
 	@Test
@@ -314,6 +391,11 @@ public class CollectionFunctionTest extends GenericTest {
 	}
 
 	@Test
+	public void testFlattenNull() throws Exception {
+		assertQueryEqualsNull("using nll: flatten(nll)");
+	}
+
+	@Test
 	public void testGet() throws Exception {
 		evalTestQuery("map(1 -> 'One', 2 -> 'Two', 3 -> 'Three', "
 				+ "4 -> 'Four', 5 -> 'Five', 6 -> 'Six') store as m");
@@ -332,6 +414,11 @@ public class CollectionFunctionTest extends GenericTest {
 	}
 
 	@Test
+	public void testGetNull() throws Exception {
+		assertQueryEqualsNull("using nll: get(nll)");
+	}
+
+	@Test
 	public void testGetSuffix() throws Exception {
 		evalTestQuery("map(1 -> 'One', 2 -> 'Two', 3 -> 'Three', "
 				+ "4 -> 'Four', 5 -> 'Five', 6 -> 'Six') store as m");
@@ -346,6 +433,11 @@ public class CollectionFunctionTest extends GenericTest {
 
 		expectException("using x: x[-1]", ArrayIndexOutOfBoundsException.class);
 		expectException("using x: x[5]", IndexOutOfBoundsException.class);
+	}
+
+	@Test
+	public void testGetSuffixNull() throws Exception {
+		assertQueryEqualsNull("using nll: nll[0]");
 	}
 
 	@Test
@@ -373,6 +465,13 @@ public class CollectionFunctionTest extends GenericTest {
 	}
 
 	@Test
+	public void testIntersectionNull() throws Exception {
+		assertQueryEqualsNull("using nll: intersection(set(), nll)");
+		assertQueryEqualsNull("using nll: intersection(nll, set())");
+		assertQueryEqualsNull("using nll: intersection(nll, nll)");
+	}
+
+	@Test
 	public void testIsEmpty() throws Exception {
 		evalTestQuery("set(1, 2, 3) store as x");
 		assertQueryEquals("using x: isEmpty(x)", false);
@@ -387,6 +486,11 @@ public class CollectionFunctionTest extends GenericTest {
 		assertQueryEquals("isEmpty(set())", true);
 		assertQueryEquals("isEmpty(bag())", true);
 		assertQueryEquals("isEmpty(map())", true);
+	}
+
+	@Test
+	public void testIsEmptyNull() throws Exception {
+		assertQueryEqualsNull("using nll: isEmpty(nll)");
 	}
 
 	@Test
@@ -407,6 +511,13 @@ public class CollectionFunctionTest extends GenericTest {
 	}
 
 	@Test
+	public void testIsSubSetNull() throws Exception {
+		assertQueryEqualsNull("using nll: isSubSet(set(), nll)");
+		assertQueryEqualsNull("using nll: isSubSet(nll, set())");
+		assertQueryEqualsNull("using nll: isSubSet(nll, nll)");
+	}
+
+	@Test
 	public void testIsSuperSet() throws Exception {
 		evalTestQuery("set(5, 7, 9, 13) store as x");
 		evalTestQuery("set(1, 5, 7)  store as y");
@@ -421,6 +532,13 @@ public class CollectionFunctionTest extends GenericTest {
 		evalTestQuery("set()  store as y");
 		assertQueryEquals("using x,y: isSuperSet(x, y)", true);
 		assertQueryEquals("using x,y: isSuperSet(y, x)", false);
+	}
+
+	@Test
+	public void testIsSuperSetNull() throws Exception {
+		assertQueryEqualsNull("using nll: isSuperSet(set(), nll)");
+		assertQueryEqualsNull("using nll: isSuperSet(nll, set())");
+		assertQueryEqualsNull("using nll: isSuperSet(nll, nll)");
 	}
 
 	@Test
@@ -454,6 +572,11 @@ public class CollectionFunctionTest extends GenericTest {
 	}
 
 	@Test
+	public void testIsUniqueNull() throws Exception {
+		assertQueryEqualsNull("using nll: isUnique(nll)");
+	}
+
+	@Test
 	public void testKeySet() throws Exception {
 		evalTestQuery("map()  store as m");
 		assertQueryEqualsQuery("using m: keySet(m)", "set()");
@@ -468,6 +591,11 @@ public class CollectionFunctionTest extends GenericTest {
 				+ ", 4 -> 'Four', 5 -> 'Five', 6 -> 'Six')  store as m");
 		assertQueryEqualsQuery("using m: keySet(m)", "set(1,2,3,4,5,6)");
 
+	}
+
+	@Test
+	public void testKeySetNull() throws Exception {
+		assertQueryEqualsNull("using nll: keySet(nll)");
 	}
 
 	@Test
@@ -501,6 +629,11 @@ public class CollectionFunctionTest extends GenericTest {
 	}
 
 	@Test
+	public void testMaxNull() throws Exception {
+		assertQueryEqualsNull("using nll: max(nll)");
+	}
+
+	@Test
 	public void testMergeMaps() throws Exception {
 		evalTestQuery("map(tup(1,2) -> set(3), tup(3,4) -> set(7)) store as m1");
 		evalTestQuery("map(tup(1,2) -> set(3,4), tup(3,4) -> set(7,8,9)) store as m2");
@@ -513,7 +646,13 @@ public class CollectionFunctionTest extends GenericTest {
 		assertQueryEqualsQuery("using m3: mergeMaps(map(), m3)", "using m3: m3");
 		assertQueryEqualsQuery("using m1: mergeMaps(m1, map())", "using m1: m1");
 		assertQueryEqualsQuery("mergeMaps(map(), map())", "map()");
+	}
 
+	@Test
+	public void testMergeMapsNull() throws Exception {
+		assertQueryEqualsNull("using nll: mergeMaps(nll, nll)");
+		assertQueryEqualsNull("using nll: mergeMaps(map(), nll)");
+		assertQueryEqualsNull("using nll: mergeMaps(nll, map())");
 	}
 
 	@Test
@@ -534,6 +673,13 @@ public class CollectionFunctionTest extends GenericTest {
 		assertQueryEquals("min(list(-5, 6))", -5);
 		assertQueryEquals("min(list(6 , 5))", 5);
 		assertQueryEquals("min(list(1, 2, 4, -6, 65, 73, 65, 322, 1))", -6);
+		assertQueryEquals("min(list(1.01, 2 ))", 1.01);
+		assertQueryEquals("min(list(1, 2.0 ))", 1.0);
+		try {
+			assertQueryEquals("min(list(1, 2.0 ))", 1);
+			fail();
+		} catch (JValueInvalidTypeException ex) {
+		}
 	}
 
 	@Test
@@ -547,6 +693,11 @@ public class CollectionFunctionTest extends GenericTest {
 	}
 
 	@Test
+	public void testMinNull() throws Exception {
+		assertQueryEqualsNull("using nll: min(nll)");
+	}
+
+	@Test
 	public void testPos() throws Exception {
 		assertQueryEquals("let x:= list (5..13) in pos(x, 7)", 2);
 		assertQueryEquals("let x:= list (5..13) in pos(x, 2)", -1);
@@ -554,6 +705,13 @@ public class CollectionFunctionTest extends GenericTest {
 		assertQueryEquals("let x:= list (5..13) in pos(x, 13)", 8);
 		assertQueryEquals("let x:= list (5..13) in pos(x, 14)", -1);
 		assertQueryEquals("let x:= list (5..13) in pos(x, 4)", -1);
+	}
+
+	@Test
+	public void testPosNull() throws Exception {
+		assertQueryEqualsNull("using nll: pos(nll, nll)");
+		assertQueryEqualsNull("using nll: pos(list(), nll)");
+		assertQueryEqualsNull("using nll: pos(nll, 1)");
 	}
 
 	@Test
@@ -598,6 +756,14 @@ public class CollectionFunctionTest extends GenericTest {
 	}
 
 	@Test
+	public void testPredecessorNull() throws Exception {
+		assertQueryEqualsNull("using nll: pos(nll, 1)");
+		assertQueryEqualsNull("using nll: pos(list(), nll)");
+		assertQueryEqualsNull("using nll: pos(set(), nll)");
+		assertQueryEqualsNull("using nll: pos(nll, nll)");
+	}
+
+	@Test
 	public void testSortBag() throws Exception {
 		assertQueryEqualsQuery("sort(bag())", "bag()");
 		assertQueryEqualsQuery("sort(bag(4))", "bag(4)");
@@ -631,6 +797,11 @@ public class CollectionFunctionTest extends GenericTest {
 	}
 
 	@Test
+	public void testSortNull() throws Exception {
+		assertQueryEqualsNull("using nll: sort(nll)");
+	}
+
+	@Test
 	public void testSum() throws Exception {
 		assertQueryEquals("let x:= list() in sum(x)", 0.0);
 		assertQueryEquals("let x:= list(5) in sum(x)", 5.0);
@@ -651,6 +822,11 @@ public class CollectionFunctionTest extends GenericTest {
 		expectException("let x:= bag(true) in sum(x)", EvaluateException.class);
 		expectException("let x:= bag(rec(name: 'Daniel') in sum(x)",
 				EvaluateException.class);
+	}
+
+	@Test
+	public void testSumNull() throws Exception {
+		assertQueryEqualsNull("using nll: sum(nll)");
 	}
 
 	@Test
@@ -678,7 +854,15 @@ public class CollectionFunctionTest extends GenericTest {
 
 		assertQueryEquals("using x: symDifference(x, x)", Arrays.asList());
 		assertQueryEquals("using y: symDifference(y, y)", Arrays.asList());
+	}
 
+	@Test
+	public void testSymDifferenceNull() throws Exception {
+		assertQueryEqualsNull("using nll: symDifference(set(), nll)");
+		assertQueryEqualsNull("using nll: symDifference(list(), nll)");
+		assertQueryEqualsNull("using nll: symDifference(nll, set())");
+		assertQueryEqualsNull("using nll: symDifference(nll, list())");
+		assertQueryEqualsNull("using nll: symDifference(nll, nll)");
 	}
 
 	@Test
@@ -709,6 +893,11 @@ public class CollectionFunctionTest extends GenericTest {
 		assertQueryEquals("let x := set(123) in theElement(x)", 123);
 		expectException("let x := set(5, 4) in theElement(x)",
 				EvaluateException.class);
+	}
+
+	@Test
+	public void testTheElementNull() throws Exception {
+		assertQueryEqualsNull("using nll: theElement(nll)");
 	}
 
 	@Test
@@ -747,6 +936,22 @@ public class CollectionFunctionTest extends GenericTest {
 	}
 
 	@Test
+	public void testUnionNull() throws Exception {
+		assertQueryEqualsNull("using nll: union(map(), nll, false)");
+		assertQueryEqualsNull("using nll: union(map(), nll, true)");
+		assertQueryEqualsNull("using nll: union(map(), nll, nll)");
+		assertQueryEqualsNull("using nll: union(map(), map(), nll)");
+		assertQueryEqualsNull("using nll: union(nll, map(), false)");
+		assertQueryEqualsNull("using nll: union(nll, map(), true)");
+		assertQueryEqualsNull("using nll: union(nll, map(), nll)");
+		assertQueryEqualsNull("using nll: union(nll, nll, nll)");
+
+		assertQueryEqualsNull("using nll: union(set(), nll)");
+		assertQueryEqualsNull("using nll: union(nll, set())");
+		assertQueryEqualsNull("using nll: union(nll, nll)");
+	}
+
+	@Test
 	public void testValues() throws Exception {
 		evalTestQuery("map() store as m");
 		assertQueryEqualsQuery("using m: values(m)", "bag()");
@@ -763,5 +968,10 @@ public class CollectionFunctionTest extends GenericTest {
 
 		evalTestQuery("map('milk' -> 1, 'honey' -> 1, 'milk' -> 1) store as m");
 		assertQueryEqualsQuery("using m: values(m)", "bag(1,1)");
+	}
+
+	@Test
+	public void testValuesNull() throws Exception {
+		assertQueryEqualsNull("using nll: values(nll)");
 	}
 }

@@ -91,6 +91,11 @@ public class Count extends Greql2Function {
 	public JValue evaluate(Graph graph,
 			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
 			throws EvaluateException {
+
+		if (isAnyArgumentNull(arguments)) {
+			return new JValueImpl();
+		}
+
 		JValueImpl result = null;
 		switch (checkArguments(arguments)) {
 		case 0:
