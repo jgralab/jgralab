@@ -106,7 +106,8 @@ public class Get extends Greql2Function {
 			try {
 				return col.toJValueList().get(index);
 			} catch (Exception ex) {
-				throw new EvaluateException("Index out of bounds: " + col, ex);
+				throw new EvaluateException("Index " + index
+						+ " out of bounds: " + col, ex);
 			}
 		default:
 			throw new WrongFunctionParameterException(this, arguments);
