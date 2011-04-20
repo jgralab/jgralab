@@ -34,6 +34,8 @@
  */
 package de.uni_koblenz.jgralab.utilities.tg2dot.dot;
 
+import java.util.Arrays;
+
 public enum GraphVizLayouter {
 
 	DOT("dot"), NEATO("neato"), TWOPI("twopi"), CIRCO("circo"), FDP("fdp"), SFDP(
@@ -48,5 +50,9 @@ public enum GraphVizLayouter {
 	@Override
 	public String toString() {
 		return name;
+	}
+
+	public static String describeValues() {
+		return Arrays.toString(values());
 	}
 }

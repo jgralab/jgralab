@@ -70,7 +70,7 @@ public abstract class Tg2Whatever {
 
 	protected boolean edgeAttributes = false;
 
-	protected boolean reversedEdges = false;
+	private boolean reversedEdges = false;
 
 	private int currentElementSequenceIndex = -1;
 
@@ -140,7 +140,7 @@ public abstract class Tg2Whatever {
 		graphFileName = fileName;
 		graph = GraphIO.loadSchemaAndGraphFromFile(graphFileName,
 				CodeGeneratorConfiguration.MINIMAL,
-				new ConsoleProgressFunction());
+				new ConsoleProgressFunction("Loading"));
 	}
 
 	/**
@@ -196,7 +196,7 @@ public abstract class Tg2Whatever {
 	}
 
 	public void convert() throws IOException {
-		if (outputName == null || outputName.equals("")) {
+		if ((outputName == null) || outputName.equals("")) {
 			convert(System.out);
 		} else {
 			PrintStream out = new PrintStream(new FileOutputStream(outputName));
@@ -241,7 +241,7 @@ public abstract class Tg2Whatever {
 		try {
 			System.out.println("Loading graph from file " + graphFileName);
 			graph = GraphIO.loadGraphFromFileWithStandardSupport(graphFileName,
-					schema, new ConsoleProgressFunction());
+					schema, new ConsoleProgressFunction("Loading"));
 			System.out.println("Graph loaded");
 		} catch (GraphIOException ex) {
 			System.err.println("Graph in file '" + graphFileName

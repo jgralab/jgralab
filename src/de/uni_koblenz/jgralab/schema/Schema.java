@@ -35,6 +35,7 @@
 
 package de.uni_koblenz.jgralab.schema;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
@@ -158,6 +159,21 @@ public interface Schema extends Comparable<Schema> {
 	 *            the classpath to JGraLab
 	 */
 	public void compile(String jgralabClassPath);
+
+	/**
+	 * Generates Java classes in a temp directory, compiles them, and packs them
+	 * in a JAR file.
+	 * 
+	 * @param config
+	 *            the {@link CodeGeneratorConfiguration} to be used for class
+	 *            generation
+	 * @param jarFileName
+	 *            the name of the JAR file to be created
+	 * @throws IOException
+	 * @throws GraphIOException
+	 */
+	public void createJAR(CodeGeneratorConfiguration config, String jarFileName)
+			throws IOException, GraphIOException;
 
 	/**
 	 * Creates a new Attribute <code>name</code> with domain <code>dom</code>.

@@ -123,8 +123,10 @@ public class DotWriter {
 	 *            Indicates which type of Dot-graph should be written.
 	 * @param name
 	 *            Provides the name for the DOT-graph.
+	 * @param idAndVersion
 	 */
-	public void startGraph(GraphType type, String name) {
+	public void startGraph(GraphType type, String name, String idAndVersion) {
+		out.println("# Graph ID / Version: " + idAndVersion);
 		startElement();
 		out.print(type.name + " " + name + " ");
 		startAbstractGroup();

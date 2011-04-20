@@ -47,8 +47,6 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.SortedSet;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
@@ -76,16 +74,68 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
  */
 public abstract class GraphDatabase {
 
-	public static final String GRAPH_SCHEMA_TABLE_NAME = "GraphSchema";
-	public static final String GRAPH_ATTRIBUTE_VALUE_TABLE_NAME = "GraphAttributeValue";
-	public static final String GRAPH_TABLE_NAME = "Graph";
-	public static final String EDGE_ATTRIBUTE_VALUE_TABLE_NAME = "EdgeAttributeValue";
-	public static final String VERTEX_ATTRIBUTE_VALUE_TABLE_NAME = "VertexAttributeValue";
-	public static final String ATTRIBUTE_TABLE_NAME = "Attribute";
-	public static final String EDGE_TABLE_NAME = "Edge";
-	public static final String INCIDENCE_TABLE_NAME = "Incidence";
-	public static final String TYPE_TABLE_NAME = "Type";
-	public static final String VERTEX_TABLE_NAME = "Vertex";
+	public static final String TABLE_SCHEMA = "GraphSchema";
+	public static final String COLUMN_SCHEMA_ID = "schemaId";
+	public static final String COLUMN_SCHEMA_PACKAGE_PREFIX = "packagePrefix";
+	public static final String COLUMN_SCHEMA_NAME = "name";
+	public static final String COLUMN_SCHEMA_TG = "serializedDefinition";
+	public static final String PRIMARY_KEY_SCHEMA = "schemaPrimaryKey";
+
+	public static final String TABLE_TYPE = "Type";
+	public static final String COLUMN_TYPE_ID = "typeId";
+	public static final String COLUMN_TYPE_QNAME = "qualifiedName";
+	public static final String PRIMARY_KEY_TYPE = "typePrimaryKey";
+
+	public static final String TABLE_GRAPH = "Graph";
+	public static final String COLUMN_GRAPH_ID = "gId";
+	public static final String COLUMN_GRAPH_UID = "uid";
+	public static final String COLUMN_GRAPH_VERSION = "version";
+	public static final String COLUMN_GRAPH_VSEQ_VERSION = "vSeqVersion";
+	public static final String COLUMN_GRAPH_ESEQ_VERSION = "eSeqVersion";
+	public static final String PRIMARY_KEY_GRAPH = "graphPrimaryKey";
+
+	public static final String TABLE_VERTEX = "Vertex";
+	public static final String COLUMN_VERTEX_ID = "vId";
+	public static final String COLUMN_VERTEX_LAMBDA_SEQ_VERSION = "lambdaSeqVersion";
+	public static final String COLUMN_SEQUENCE_NUMBER = "sequenceNumber";
+	public static final String PRIMARY_KEY_VERTEX = "vertexPrimaryKey";
+	public static final String FOREIGN_KEY_VERTEX_TO_GRAPH = "gIdIsForeignKeyForVertex";
+	public static final String FOREIGN_KEY_VERTEX_TO_TYPE = "typeIdIsForeignKeyForVertex";
+
+	public static final String TABLE_EDGE = "Edge";
+	public static final String COLUMN_EDGE_ID = "eId";
+	public static final String PRIMARY_KEY_EDGE = "edgePrimaryKey";
+	public static final String FOREIGN_KEY_EDGE_TO_GRAPH = "gIdIsForeignKeyForEdge";
+	public static final String FOREIGN_KEY_EDGE_TO_TYPE = "typeIdIsForeignKeyForEdge";
+
+	public static final String TABLE_INCIDENCE = "Incidence";
+	public static final String COLUMN_INCIDENCE_DIRECTION = "direction";
+	public static final String PRIMARY_KEY_INCIDENCE = "incidencePrimaryKey";
+	public static final String FOREIGN_KEY_INCIDENCE_TO_GRAPH = "gIdIsForeignKeyForIncidence";
+	public static final String FOREIGN_KEY_INCIDENCE_TO_EDGE = "eIdIsForeignKeyForIndices";
+	public static final String FOREIGN_KEY_INCIDENCE_TO_VERTEX = "vIdIsForeignKeyForIncidence";
+	public static final String INDEX_INCIDENCE_LAMBDA_SEQ = "lambdaSeqIndex";
+
+	public static final String TABLE_ATTRIBUTE = "Attribute";
+	public static final String COLUMN_ATTRIBUTE_ID = "attributeId";
+	public static final String COLUMN_ATTRIBUTE_NAME = "name";
+	public static final String PRIMARY_KEY_ATTRIBUTE = "PK_ATTRIBUTE";
+
+	public static final String TABLE_GRAPH_ATTRIBUTE = "GraphAttributeValue";
+	public static final String COLUMN_ATTRIBUTE_VALUE = "value";
+	public static final String PRIMARY_KEY_GRAPH_ATTRIBUTE = "gaPrimaryKey";
+
+	public static final String TABLE_VERTEX_ATTRIBUTE = "VertexAttributeValue";
+	public static final String PRIMARY_KEY_VERTEX_ATTRIBUTE = "vertexAttributeValuePrimaryKey";
+	public static final String FOREIGN_KEY_VERTEX_ATTRIBUTE_TO_ATTRIBUTE = "attributeIdIsForeignKeyForVertexAttribute";
+	public static final String FOREIGN_KEY_VERTEX_ATTRIBUTE_TO_GRAPH = "gIdIsForeignKeyForVertexAttribute";
+	public static final String FOREIGN_KEY_VERTEX_ATTRIBUTE_TO_VERTEX = "vIdIsForeignKeyForVertexAttribute";
+
+	public static final String TABLE_EDGE_ATTRIBUTE = "EdgeAttributeValue";
+	public static final String PRIMARY_KEY_EDGE_ATTRIBUTE = "edgeAttributeValuePrimaryKey";
+	public static final String FOREIGN_KEY_EDGE_ATTRIBUTE_TO_ATTRIBUTE = "attributeIdIsForeignKeyForEdgeAttribute";
+	public static final String FOREIGN_KEY_EDGE_ATTRIBUTE_TO_GRAPH = "gIdIsForeignKeyForEdgeAttribute";
+	public static final String FOREIGN_KEY_EDGE_ATTRIBUTE_TO_EDGE = "eIdIsForeignKeyForEdgeAttribute";
 
 	/**
 	 * Holds graph databases which are still open.
@@ -94,35 +144,9 @@ public abstract class GraphDatabase {
 
 	/**
 	 * Opens a graph database at location specified by an url with given
-	 * credentials. Factory method churning open graph databases.
-	 * 
-	 * @param url
-	 *            Url to graph database.
-	 * @param userName
-	 *            User name.
-	 * @param password
-	 *            Password.
-	 * @return An open graph database.
-	 * @throws Exception
-	 */
-	private static GraphDatabase openGraphDatabase(String url, String userName,
-			String password) throws GraphDatabaseException {
-		if (url != null) {
-			return getGraphDatabase(url, userName, password);
-		} else {
-			throw new GraphDatabaseException(
-					"No url given to connect to graph database.");
-		}
-	}
-
-	// pattern is: jdbc:<driver>://<user>:<passwd>@<host[:port]/database....>
-	private static final String URL_REGEX = "^(jdbc:)(.*)://(.*):(.*)@(.*)$";
-
-	/**
-	 * Opens a graph database at location specified by an url with given
 	 * credentials. Factory method churning open graph databases. This method
-	 * takes the url in ftp-like format for including the user name and the
-	 * password in a single string.
+	 * takes the url in jdbc format for including the user name and the password
+	 * in a single string.
 	 * 
 	 * @param url
 	 *            URL to the graph database in the format
@@ -133,16 +157,19 @@ public abstract class GraphDatabase {
 	 */
 	public static GraphDatabase openGraphDatabase(String url)
 			throws GraphDatabaseException {
-		Pattern p = Pattern.compile(URL_REGEX);
-		Matcher m = p.matcher(url);
-		if (m.matches()) {
-			String realURL = m.group(1) + m.group(2) + "://" + m.group(5);
-			String username = m.group(3);
-			String password = m.group(4);
-			return openGraphDatabase(realURL, username, password);
+		if (url == null) {
+			throw new GraphDatabaseException("The given url may not be null.");
+		}
+		url = url.trim();
+
+		if (openGraphDatabases.containsKey(url)) {
+			return openGraphDatabases.get(url);
 		} else {
-			throw new GraphDatabaseException(
-					"Invalid url given. Please use the format \"jdbc:<driver>://<user>:<passwd>@<host[:port]/database...\"");
+			GraphDatabase out = createVendorSpecificDb(url);
+			out.connect();
+			out.setAutoCommit(false);
+			openGraphDatabases.put(url, out);
+			return out;
 		}
 	}
 
@@ -159,26 +186,6 @@ public abstract class GraphDatabase {
 	 *             <code>jgralab_dbconnection</code> or if the provided URL is
 	 *             malformed.
 	 */
-
-	private static GraphDatabase getGraphDatabase(String url, String userName,
-			String password) throws GraphDatabaseException {
-		if (openGraphDatabases.containsKey(url)) {
-			return openGraphDatabases.get(url);
-		} else {
-			return connectToGraphDatabase(url, userName, password);
-		}
-	}
-
-	private static GraphDatabase connectToGraphDatabase(String url,
-			String userName, String password) throws GraphDatabaseException {
-		GraphDatabase graphDb = createVendorSpecificDb(url);
-		graphDb.userName = userName;
-		graphDb.password = password;
-		graphDb.connect();
-		graphDb.setAutoCommit(false);
-		openGraphDatabases.put(url, graphDb);
-		return graphDb;
-	}
 
 	private static GraphDatabase createVendorSpecificDb(String url)
 			throws GraphDatabaseException {
@@ -197,16 +204,6 @@ public abstract class GraphDatabase {
 	 * Holds url to graph database.
 	 */
 	private String url;
-
-	/**
-	 * Holds user name.
-	 */
-	private String userName;
-
-	/**
-	 * Holds the password.
-	 */
-	private String password;
 
 	/**
 	 * JDBC connection to database.
@@ -331,14 +328,21 @@ public abstract class GraphDatabase {
 			throws GraphDatabaseException {
 		try {
 			Class.forName(jdbcDriverName);
-			return DriverManager.getConnection(url, userName, password);
+			// return DriverManager.getConnection(url, userName, password);
+			return DriverManager.getConnection(url);
 		} catch (ClassNotFoundException exception) {
 			throw new GraphDatabaseException(
 					"JDBC driver to connect to database not found: "
 							+ jdbcDriverName, exception);
 		} catch (SQLException exception) {
 			throw new GraphDatabaseException(
-					"Could not connect to graph database at " + url, exception);
+					"Could not connect to graph database at " + url
+							+ "\nThe url has to be in jdbc-format for "
+							+ "including the username and the password.\n"
+							+ "The correct pattern is: 'jdbc:<driver>:"
+							+ "[[host][:port]][/]<db_name>"
+							+ "[?user=<user_name>&password=<password>]'",
+					exception);
 		}
 	}
 
@@ -559,6 +563,7 @@ public abstract class GraphDatabase {
 		while (result.next()) {
 			edgeIds.add(result.getInt(1));
 		}
+		result.close();
 		return edgeIds;
 	}
 
@@ -1140,6 +1145,7 @@ public abstract class GraphDatabase {
 				}
 			} while (vertexData.next());
 		}
+		vertexData.close();
 		if (vertex.getAttributedElementClass().hasAttributes()) {
 			setAttributesOf(vertex);
 		}
@@ -1190,6 +1196,7 @@ public abstract class GraphDatabase {
 				e.printStackTrace();
 			}
 		}
+		attributeData.close();
 	}
 
 	private String getAttributeName(Schema schema, int attributeId) {
@@ -1222,6 +1229,7 @@ public abstract class GraphDatabase {
 			ResultSet edgeData = getEdgeAndIncidenceData(graph, eId);
 			DatabasePersistableEdge edge = instanceEdgeFrom(graph, edgeData,
 					eId);
+			edgeData.close();
 			if (edge.getAttributedElementClass().hasAttributes()) {
 				this.setAttributesOf(edge);
 			}
@@ -1312,6 +1320,7 @@ public abstract class GraphDatabase {
 				e.printStackTrace();
 			}
 		}
+		attributeData.close();
 	}
 
 	private ResultSet getAttributeDataOf(DatabasePersistableEdge edge)
@@ -1337,7 +1346,9 @@ public abstract class GraphDatabase {
 					.countVerticesOfGraph(graph.getGId());
 			ResultSet result = statement.executeQuery();
 			result.next();
-			return result.getInt(1);
+			int vertexCount = result.getInt(1);
+			result.close();
+			return vertexCount;
 		} catch (SQLException exception) {
 			exception.printStackTrace();
 			throw new GraphDatabaseException(
@@ -1362,7 +1373,9 @@ public abstract class GraphDatabase {
 					.countEdgesOfGraph(graph.getGId());
 			ResultSet result = statement.executeQuery();
 			result.next();
-			return result.getInt(1);
+			int edgeCount = result.getInt(1);
+			result.close();
+			return edgeCount;
 		} catch (SQLException exception) {
 			exception.printStackTrace();
 			throw new GraphDatabaseException("Could not count edges in graph "
@@ -1416,10 +1429,18 @@ public abstract class GraphDatabase {
 	 */
 	private class GraphDAO {
 
-		private final ResultSet result;
+		int graphId;
+		long graphVersion;
+		long vertexListVersion;
+		long edgeListVersion;
 
 		GraphDAO(String id) throws SQLException {
-			result = getGraphRecord(id);
+			ResultSet result = getGraphRecord(id);
+			graphId = result.getInt(1);
+			graphVersion = result.getLong(2);
+			vertexListVersion = result.getLong(3);
+			edgeListVersion = result.getLong(4);
+			result.close();
 		}
 
 		private ResultSet getGraphRecord(String uid) throws SQLException {
@@ -1433,20 +1454,20 @@ public abstract class GraphDatabase {
 			}
 		}
 
-		private int getGId() throws SQLException {
-			return result.getInt(1);
+		private int getGraphId() throws SQLException {
+			return graphId;
 		}
 
 		private long getGraphVersion() throws SQLException {
-			return result.getLong(2);
+			return graphVersion;
 		}
 
 		private long getVertexListVersion() throws SQLException {
-			return result.getLong(3);
+			return vertexListVersion;
 		}
 
 		private long getEdgeListVersion() throws SQLException {
-			return result.getLong(4);
+			return edgeListVersion;
 		}
 
 		void restoreStateInto(GraphImpl graph) throws SQLException,
@@ -1464,7 +1485,7 @@ public abstract class GraphDatabase {
 		}
 
 		private void setInstanceVariables(GraphImpl graph) throws SQLException {
-			graph.setGId(getGId());
+			graph.setGId(getGraphId());
 			graph.setGraphVersion(getGraphVersion());
 			graph.setVertexListVersion(getVertexListVersion());
 			graph.setEdgeListVersion(getEdgeListVersion());
@@ -1472,7 +1493,7 @@ public abstract class GraphDatabase {
 
 		private void restoreAttributes(DatabasePersistableGraph graph)
 				throws SQLException, NoSuchFieldException {
-			ResultSet graphAttributes = getGraphAttributes(getGId());
+			ResultSet graphAttributes = getGraphAttributes(getGraphId());
 			while (graphAttributes.next()) {
 				String attributeName = graphAttributes.getString(1);
 				String serializedValue = graphAttributes.getString(2);
@@ -1483,6 +1504,7 @@ public abstract class GraphDatabase {
 					e.printStackTrace();
 				}
 			}
+			graphAttributes.close();
 		}
 
 		private ResultSet getGraphAttributes(int gId) throws SQLException {
@@ -1501,6 +1523,7 @@ public abstract class GraphDatabase {
 				long sequenceNumber = vertexRecords.getLong(2);
 				graph.addVertex(vId, sequenceNumber);
 			}
+			vertexRecords.close();
 		}
 
 		private void restoreEdgeList(DatabasePersistableGraph graph)
@@ -1513,7 +1536,9 @@ public abstract class GraphDatabase {
 				long sequenceNumber = edgeRecords.getLong(2);
 				graph.addEdge(eId, sequenceNumber);
 			}
+			edgeRecords.close();
 		}
+
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1537,7 +1562,10 @@ public abstract class GraphDatabase {
 				.selectSchemaNameForGraph(uid);
 		ResultSet resultSet = statement.executeQuery();
 		if (resultSet.next()) {
-			return createSchema(resultSet.getString(1), resultSet.getString(2));
+			Schema schema = createSchema(resultSet.getString(1), resultSet
+					.getString(2));
+			resultSet.close();
+			return schema;
 		} else {
 			throw new GraphIOException("No schema for graph in database.");
 		}
@@ -1571,7 +1599,9 @@ public abstract class GraphDatabase {
 		try {
 			PreparedStatement statement = sqlStatementList.selectGraph(id);
 			ResultSet result = statement.executeQuery();
-			return result.next();
+			boolean containsGraph = result.next();
+			result.close();
+			return containsGraph;
 		} catch (SQLException exception) {
 			exception.printStackTrace();
 			throw new GraphDatabaseException(
@@ -1629,7 +1659,9 @@ public abstract class GraphDatabase {
 			PreparedStatement statement = sqlStatementList.selectSchemaId(
 					packagePrefix, name);
 			ResultSet result = statement.executeQuery();
-			return result.next();
+			boolean containsSchema = result.next();
+			result.close();
+			return containsSchema;
 		} catch (SQLException exception) {
 			throw new GraphDatabaseException(
 					"Could not determine if database contains schema "
@@ -1684,6 +1716,7 @@ public abstract class GraphDatabase {
 		while (result.next()) {
 			typeCollector.addType(result.getInt(2), result.getString(1));
 		}
+		result.close();
 	}
 
 	private void preloadAttributesOf(Schema schema,
@@ -1696,6 +1729,7 @@ public abstract class GraphDatabase {
 			attributeCollector.addAttribute(result.getInt(2), result
 					.getString(1));
 		}
+		result.close();
 	}
 
 	private void getTypeIdAndInsertGraph(DatabasePersistableGraph graph)
@@ -2054,6 +2088,7 @@ public abstract class GraphDatabase {
 			while (result.next()) {
 				ids.add(result.getString(1));
 			}
+			result.close();
 			return ids;
 		} catch (SQLException exception) {
 			exception.printStackTrace();
@@ -2079,11 +2114,12 @@ public abstract class GraphDatabase {
 					.selectSchemaDefinition(packagePrefix, schemaName);
 			statement.executeQuery();
 			ResultSet result = statement.getResultSet();
-			if (result.next()) {
-				return result.getString(1);
-			} else {
-				return null;
-			}
+
+			String schemaDefinition = result.next() ? result.getString(1)
+					: null;
+			result.close();
+			return schemaDefinition;
+
 		} catch (SQLException exception) {
 			exception.printStackTrace();
 			throw new GraphDatabaseException(
@@ -2123,6 +2159,7 @@ public abstract class GraphDatabase {
 	}
 
 	public void addForeignKeyConstraints() throws SQLException {
+		commitAnyTransactions();
 		PreparedStatement statement = sqlStatementList
 				.addForeignKeyConstraintOnGraphColumnOfVertexTable();
 		statement.execute();
@@ -2228,10 +2265,7 @@ public abstract class GraphDatabase {
 		statement.execute();
 	}
 
-	public void clearAllTables() throws SQLException {
-		PreparedStatement statement = sqlStatementList.clearAllTables();
-		statement.execute();
-	}
+	public abstract void clearAllTables() throws SQLException;
 
 	public void dropForeignKeyConstraints() throws SQLException {
 		PreparedStatement statement = sqlStatementList

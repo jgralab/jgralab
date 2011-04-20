@@ -88,7 +88,7 @@ public class GraphValidator {
 			System.exit(1);
 		}
 		Graph g = GraphIO.loadGraphFromFileWithStandardSupport(args[0],
-				new ConsoleProgressFunction());
+				new ConsoleProgressFunction("Loading"));
 		GraphValidator v = new GraphValidator(g);
 		v.createValidationReport("__validation_report.html");
 	}
@@ -113,7 +113,7 @@ public class GraphValidator {
 		Set<AttributedElement> badOutgoing = new HashSet<AttributedElement>();
 		for (Vertex v : graph.vertices(ec.getFrom().getVertexClass())) {
 			int degree = v.getDegree(ec, EdgeDirection.OUT);
-			if (degree < toMin || degree > toMax) {
+			if ((degree < toMin) || (degree > toMax)) {
 				badOutgoing.add(v);
 			}
 		}
@@ -129,7 +129,7 @@ public class GraphValidator {
 		Set<AttributedElement> badIncoming = new HashSet<AttributedElement>();
 		for (Vertex v : graph.vertices(ec.getTo().getVertexClass())) {
 			int degree = v.getDegree(ec, EdgeDirection.IN);
-			if (degree < fromMin || degree > fromMax) {
+			if ((degree < fromMin) || (degree > fromMax)) {
 				badIncoming.add(v);
 			}
 		}

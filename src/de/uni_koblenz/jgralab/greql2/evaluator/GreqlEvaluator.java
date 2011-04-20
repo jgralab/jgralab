@@ -120,7 +120,7 @@ public class GreqlEvaluator {
 		if (args.length == 2) {
 			datagraph = GraphIO.loadSchemaAndGraphFromFile(args[1],
 					CodeGeneratorConfiguration.MINIMAL,
-					new ConsoleProgressFunction());
+					new ConsoleProgressFunction("Loading"));
 		}
 
 		GreqlEvaluator eval = new GreqlEvaluator(query, datagraph, null);
@@ -677,10 +677,13 @@ public class GreqlEvaluator {
 		}
 		Greql2 subQueryGraph = parser.getGraph();
 		if (isOptimize()) {
-			if (optimizer == null) {
-				optimizer = new DefaultOptimizer();
-			}
-			optimizer.optimize(this, subQueryGraph);
+			Greql2 oldQueryGraph = queryGraph;
+			String oldQueryString = queryString;
+			queryGraph = subQueryGraph;
+			queryString = greqlQuery;
+			createOptimizedSyntaxGraph();
+			queryGraph = oldQueryGraph;
+			queryString = oldQueryString;
 		}
 		if (Greql2FunctionLibrary.instance().isGreqlFunction(name)) {
 			throw new Greql2Exception("The subquery '" + name
@@ -984,6 +987,9 @@ public class GreqlEvaluator {
 		if (optimizer == null) {
 			optimizer = new DefaultOptimizer();
 		}
+		if (costModel == null) {
+			costModel = new DefaultCostModel();
+		}
 		if (useSavedOptimizedSyntaxGraph
 				&& optimizedGraphs.containsKey(queryString)) {
 			syntaxGraphEntry = getOptimizedSyntaxGraph(queryString, optimizer,
@@ -1011,7 +1017,7 @@ public class GreqlEvaluator {
 			String name = "__greql-query.";
 			try {
 				GraphIO.saveGraphToFile(name + "tg", queryGraph,
-						new ConsoleProgressFunction());
+						new ConsoleProgressFunction("Saving broken GReQL graph:"));
 				printGraphAsDot(queryGraph, true, name + "dot");
 			} catch (GraphIOException e) {
 				e.printStackTrace();
@@ -1117,7 +1123,7 @@ public class GreqlEvaluator {
 				String name = "__optimized-greql-query.";
 				try {
 					GraphIO.saveGraphToFile(name + "tg", queryGraph,
-							new ConsoleProgressFunction());
+							new ConsoleProgressFunction("Saving"));
 					printGraphAsDot(queryGraph, true, name + "dot");
 				} catch (GraphIOException e) {
 					e.printStackTrace();
