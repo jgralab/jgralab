@@ -13,7 +13,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 public class Ceil extends Greql2Function {
 	{
-		JValueType[][] x = { { JValueType.DOUBLE, JValueType.LONG } };
+		JValueType[][] x = { { JValueType.DOUBLE, JValueType.INT } };
 		signatures = x;
 		description = "Returns the smallest natural number >= the given value.";
 
@@ -29,6 +29,9 @@ public class Ceil extends Greql2Function {
 			throw new WrongFunctionParameterException(this, arguments);
 		}
 		double d = Math.ceil(arguments[0].toDouble());
+		if ((d < Integer.MAX_VALUE) && (d > Integer.MIN_VALUE)) {
+			return new JValueImpl((int) d);
+		}
 		return new JValueImpl((long) d);
 	}
 
