@@ -29,7 +29,7 @@ public class Floor extends Greql2Function {
 			throw new WrongFunctionParameterException(this, arguments);
 		}
 		double d = Math.floor(arguments[0].toDouble());
-		if ((d < Integer.MAX_VALUE) && (d > Integer.MIN_VALUE)) {
+		if ((d <= Integer.MAX_VALUE) && (d >= Integer.MIN_VALUE)) {
 			return new JValueImpl((int) d);
 		}
 		return new JValueImpl((long) d);
