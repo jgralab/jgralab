@@ -1104,13 +1104,10 @@ public class GreqlEvaluatorTest extends GenericTest {
 	 */
 	@Test
 	public void testEvaluateSequentialPathDescription1() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from var: V{Variable}, def: V{WhereExpression} with var  -->{IsVarOf} -->{IsDefinitionOf} def report var end";
-		JValue result = evalTestQuery("SequentialPathDescription1", queryString);
-		assertEquals(4, result.toCollection().size());
-		JValue resultWO = evalTestQuery("SequentialPathDescription1 (wo)",
-				queryString, new DefaultOptimizer());
+		String queryString = "from county: V{localities.County}, airport: V{junctions.Airport} with county -->{localities.ContainsLocality} -->{connections.AirRoute} airport report county end";
+		JValue result = evalTestQuery(queryString);
+		assertEquals(airportCount, result.toCollection().size());
+		JValue resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
