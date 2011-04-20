@@ -928,23 +928,19 @@ public class GreqlEvaluatorTest extends GenericTest {
 	 */
 	@Test
 	public void testEvaluateOptionalPathDescription() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from var: V{Definition}, def: V{WhereExpression} with var [ -->{IsVarOf} ] -->{IsDefinitionOf} def report var end";
-		JValue result = evalTestQuery("OptionalPathDescription1", queryString);
-		assertEquals(4, result.toCollection().size());
-		JValue resultWO = evalTestQuery("OptionalPathDescription1 (wo)",
-				queryString, new DefaultOptimizer());
+		String queryString = "from junction: V{junctions.Junction}, airport: V{junctions.Airport} with junction [ -->{connections.Street} ] -->{connections.AirRoute} airport report junction end";
+		JValue result = evalTestQuery(queryString);
+		assertEquals(3, result.toCollection().size());
+		JValue resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
 	@Test
 	public void testEvaluateOptionalPathDescription2() throws Exception {
-		String queryString = "from var: V{Definition}, def: V{WhereExpression} with var -->{IsVarOf} [-->{IsDefinitionOf}] def report var end";
-		JValue result = evalTestQuery("OptionalPathDescription2", queryString);
+		String queryString = "from junction: V{junctions.Junction}, airport: V{junctions.Airport} with junction  -->{connections.Street}  [-->{connections.AirRoute}] airport report junction end";
+		JValue result = evalTestQuery(queryString);
 		assertEquals(0, result.toCollection().size());
-		JValue resultWO = evalTestQuery("OptionalPathDescription2 (wo)",
-				queryString, new DefaultOptimizer());
+		JValue resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
