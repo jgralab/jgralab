@@ -1234,13 +1234,10 @@ public class GreqlEvaluatorTest extends GenericTest {
 
 	@Test
 	public void testEvaluateStartRestriction1() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from var: V{Variable}, def: V{WhereExpression} with var -->{IsVarOf} {Definition} & -->{IsDefinitionOf} def report var end";
-		JValue result = evalTestQuery("StartRestriction1", queryString);
-		assertEquals(4, result.toCollection().size());
-		JValue resultWO = evalTestQuery("StartRestriction1 (wo)", queryString,
-				new DefaultOptimizer());
+		String queryString = "from county: V{localities.County}, airport: V{junctions.Airport} with county -->{localities.ContainsLocality} {localities.Locality} & -->{connections.AirRoute} crossroad report county end";
+		JValue result = evalTestQuery(queryString);
+		assertEquals(3, result.toCollection().size());
+		JValue resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
