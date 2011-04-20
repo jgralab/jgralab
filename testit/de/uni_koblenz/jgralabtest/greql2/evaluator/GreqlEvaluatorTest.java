@@ -1177,11 +1177,10 @@ public class GreqlEvaluatorTest extends GenericTest {
 	 */
 	@Test
 	public void testEvaluateSimplePathDescription1() throws Exception {
-		String queryString = "from var: V{Definition}, def: V{WhereExpression} with var --> def report var end";
-		JValue result = evalTestQuery("SimplePathDescription1", queryString);
-		assertEquals(4, result.toCollection().size());
-		JValue resultWO = evalTestQuery("SimplePathDescription1 (wo)",
-				queryString, new DefaultOptimizer());
+		String queryString = "from county: V{localities.County}, airport: V{junctions.Airport} with county --> airport report county end";
+		JValue result = evalTestQuery(queryString);
+		assertEquals(airportCount, result.toCollection().size());
+		JValue resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
@@ -1197,11 +1196,10 @@ public class GreqlEvaluatorTest extends GenericTest {
 
 	@Test
 	public void testEvaluateSimplePathDescription3() throws Exception {
-		String queryString = "from var: V{Definition}, def: V{BagComprehension, WhereExpression}  with var --> def report var end";
-		JValue result = evalTestQuery("SimplePathDescription3", queryString);
-		assertEquals(4, result.toCollection().size());
-		JValue resultWO = evalTestQuery("SimplePathDescription3 (wo)",
-				queryString, new DefaultOptimizer());
+		String queryString = "from county: V{localities.County}, airport: V{junctions.Airport, localities.Town} with county --> airport report county end";
+		JValue result = evalTestQuery(queryString);
+		assertEquals(airportCount + townCount, result.toCollection().size());
+		JValue resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
