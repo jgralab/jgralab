@@ -34,6 +34,8 @@
  */
 package de.uni_koblenz.jgralab.utilities.tg2dot.dot;
 
+import java.util.Arrays;
+
 public enum GraphVizOutputFormat {
 
 	POSTSCRIPT("ps"), SVG("svg"), SVG_ZIPPED("svgz"), PNG("png"), GIF("gif"), PDF(
@@ -48,5 +50,9 @@ public enum GraphVizOutputFormat {
 	@Override
 	public String toString() {
 		return name;
+	}
+
+	public static String describeValues() {
+		return Arrays.toString(values());
 	}
 }

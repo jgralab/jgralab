@@ -63,5 +63,20 @@ public abstract class Token {
 	public int getLength() {
 		return length;
 	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(getValue());
+		sb.append(" (");
+		sb.append(type);
+		sb.append(", ");
+		sb.append("[");
+		sb.append(offset);
+		sb.append(", ");
+		sb.append(length);
+		sb.append("])");
+		return sb.toString();
+	}
 
 }

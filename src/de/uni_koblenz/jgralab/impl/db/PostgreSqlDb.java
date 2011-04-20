@@ -42,6 +42,11 @@ import java.sql.SQLException;
 // TODO index on FK is good practice
 public class PostgreSqlDb extends GraphDatabase {
 
+	public static final String SEQUENCE_SCHEMA = "schemaIdSequence";
+	public static final String SEQUENCE_TYPE = "typeIdSequence";
+	public static final String SEQUENCE_GRAPH = "graphIdSequence";
+	public static final String SEQUENCE_ATTRIBUTE = "attributeIdSequence";
+
 	/**
 	 * Creates a new <code>PostgreSqlDb</code>.
 	 * 
@@ -83,5 +88,11 @@ public class PostgreSqlDb extends GraphDatabase {
 	public void addIndices() throws SQLException {
 		super.addIndices();
 		cluster();
+	}
+
+	@Override
+	public void clearAllTables() throws SQLException {
+		PreparedStatement statement = sqlStatementList.clearAllTables();
+		statement.execute();
 	}
 }

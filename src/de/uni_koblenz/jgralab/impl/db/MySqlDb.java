@@ -34,6 +34,7 @@
  */
 package de.uni_koblenz.jgralab.impl.db;
 
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class MySqlDb extends GraphDatabase {
@@ -51,8 +52,32 @@ public class MySqlDb extends GraphDatabase {
 	@Override
 	protected void applyVendorSpecificDbSchema() throws GraphDatabaseException,
 			SQLException {
-		super.addPrimaryKeyConstraints();
-		super.addStoredProcedures();
+		addPrimaryKeyConstraints();
+		addStoredProcedures();
 	}
 
+	@Override
+	public void clearAllTables() throws SQLException {
+		MySqlStatementList mySqlStatementList = (MySqlStatementList) sqlStatementList;
+		PreparedStatement statement = mySqlStatementList.clearTableAttribute();
+		statement.execute();
+		statement = mySqlStatementList.clearTableEdge();
+		statement.execute();
+		statement = mySqlStatementList.clearTableEdgeAttributeValue();
+		statement.execute();
+		statement = mySqlStatementList.clearTableGraphAttributeValue();
+		statement.execute();
+		statement = mySqlStatementList.clearTableGraphSchema();
+		statement.execute();
+		statement = mySqlStatementList.clearTableGraph();
+		statement.execute();
+		statement = mySqlStatementList.clearTableIncidence();
+		statement.execute();
+		statement = mySqlStatementList.clearTableType();
+		statement.execute();
+		statement = mySqlStatementList.clearTableAttributeValue();
+		statement.execute();
+		statement = mySqlStatementList.clearTableVertex();
+		statement.execute();
+	}
 }

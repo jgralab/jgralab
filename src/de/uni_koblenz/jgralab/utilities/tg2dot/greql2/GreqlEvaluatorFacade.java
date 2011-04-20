@@ -202,7 +202,7 @@ public class GreqlEvaluatorFacade {
 
 		semanticType = edgeClass.getTo().getAggregationKind();
 		setVariable(SHARED_THAT, semanticType == AggregationKind.SHARED);
-		setVariable(COMPOSITE_THAT, semanticType == AggregationKind.SHARED);
+		setVariable(COMPOSITE_THAT, semanticType == AggregationKind.COMPOSITE);
 	}
 
 	/**

@@ -165,8 +165,8 @@ public class Tg2SiDiff extends Tg2Whatever {
 	@Override
 	protected void printEdge(PrintStream out, Edge e) {
 		EdgeClass cls = (EdgeClass) e.getAttributedElementClass();
-		Vertex alpha = (reversedEdges ? e.getOmega() : e.getAlpha());
-		Vertex omega = (reversedEdges ? e.getAlpha() : e.getOmega());
+		Vertex alpha = (isReversedEdges() ? e.getOmega() : e.getAlpha());
+		Vertex omega = (isReversedEdges() ? e.getAlpha() : e.getOmega());
 		boolean aggregateTo = (e.getAlphaSemantics() != AggregationKind.NONE);
 		boolean aggregateFrom = (e.getOmegaSemantics() != AggregationKind.NONE);
 

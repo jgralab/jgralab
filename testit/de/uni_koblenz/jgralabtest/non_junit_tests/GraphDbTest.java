@@ -59,6 +59,8 @@ public class GraphDbTest {
 			gdb.commitTransaction();
 		} catch (SQLException e) {
 			e.printStackTrace();
+			gdb.rollback();
+			gdb.applyDbSchema();
 		}
 		try {
 			if (!gdb.contains(JniTestSchema.instance())) {
@@ -82,7 +84,7 @@ public class GraphDbTest {
 		} catch (Exception e) {
 			gdb.rollback();
 		}
-		
+
 		containsSchema = gdb.contains(JniTestSchema.instance());
 		System.out.println(containsSchema);
 
@@ -93,13 +95,13 @@ public class GraphDbTest {
 			gdb.rollback();
 		}
 		gdb.commitTransaction();
-		
+
 		System.out.println("Creating graph...");
 		JniTestGraph g = JniTestSchema.instance()
 				.createJniTestGraphWithDatabaseSupport("gdbtest", gdb);
 
-		final int NV = 10000;
-		final int NE = 10000;
+		final int NV = 1000;
+		final int NE = 1000;
 
 		System.out.println("Creating " + NV + " vertices...");
 		long s0 = System.currentTimeMillis();
