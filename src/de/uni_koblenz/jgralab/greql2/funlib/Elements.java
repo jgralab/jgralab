@@ -45,6 +45,7 @@ import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
@@ -98,6 +99,11 @@ public class Elements extends Greql2Function {
 	public JValue evaluate(Graph graph,
 			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
 			throws EvaluateException {
+
+		if (isAnyArgumentNull(arguments)) {
+			return new JValueImpl();
+		}
+
 		JValueSet set = new JValueSet();
 		JValue structure = arguments[0];
 		switch (checkArguments(arguments)) {
@@ -111,9 +117,7 @@ public class Elements extends Greql2Function {
 					if (next.isCollection() || next.isPath()
 							|| next.isPathSystem()) {
 						JValue[] params = { next };
-						set
-								.addAll((JValueSet) evaluate(graph, subgraph,
-										params));
+						set.addAll((JValueSet) evaluate(graph, subgraph, params));
 					} else {
 						set.add(next);
 					}

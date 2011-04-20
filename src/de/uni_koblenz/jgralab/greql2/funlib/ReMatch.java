@@ -102,6 +102,11 @@ public class ReMatch extends Greql2Function {
 		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, arguments);
 		}
+
+		if (isAnyArgumentNull(arguments)) {
+			return new JValueImpl();
+		}
+
 		String s = arguments[0].toString();
 		String p = arguments[1].toString();
 

@@ -181,5 +181,4 @@ public class VertexTypeRestrictionTransition extends Transition {
 	public boolean consumesEdge() {
 		return false;
 	}
-
 }

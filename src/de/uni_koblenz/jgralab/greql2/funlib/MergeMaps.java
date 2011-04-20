@@ -42,6 +42,7 @@ import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueMap;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
@@ -104,6 +105,11 @@ public class MergeMaps extends Greql2Function {
 		if (checkArguments(arguments) < 0) {
 			throw new WrongFunctionParameterException(this, arguments);
 		}
+
+		if (isAnyArgumentNull(arguments)) {
+			return new JValueImpl();
+		}
+
 		JValueMap m1 = arguments[0].toJValueMap();
 		JValueMap m2 = arguments[1].toJValueMap();
 		return m1.merge(m2);

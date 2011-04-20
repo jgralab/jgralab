@@ -94,6 +94,9 @@ public class NodeTrace extends Greql2Function {
 		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, arguments);
 		}
+		if (isAnyArgumentNull(arguments)) {
+			return new JValueImpl();
+		}
 
 		JValueList resultList = new JValueList();
 		for (Vertex v : arguments[0].toPath().nodeTrace()) {

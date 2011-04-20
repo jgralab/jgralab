@@ -107,8 +107,7 @@ public abstract class Greql2Function {
 		out: for (int i = 0; i < signatures.length; i++) {
 			if (signatures[i].length - 1 != args.length) {
 				// The current argument list has another length than the given
-				// one, so
-				// it cannot match.
+				// one, so it cannot match.
 				continue;
 			}
 			int conversionCosts = 0;
@@ -138,6 +137,14 @@ public abstract class Greql2Function {
 		for (int i = 0; i < args.length; i++) {
 			System.out.println("  args[" + i + "] = " + args[i]);
 		}
+	}
+
+	protected final boolean isAnyArgumentNull(JValue[] arguments) {
+		boolean nullFound = false;
+		for (JValue value : arguments) {
+			nullFound = nullFound || value.toObject() == null;
+		}
+		return nullFound;
 	}
 
 	public final String getExpectedParameters() {

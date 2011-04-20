@@ -38,9 +38,8 @@ package de.uni_koblenz.jgralab.greql2.funlib;
 import java.util.ArrayList;
 
 import de.uni_koblenz.jgralab.AttributedElement;
-import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
@@ -91,17 +90,20 @@ public class Id extends Greql2Function {
 	public JValue evaluate(Graph graph,
 			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
 			throws EvaluateException {
+
 		switch (checkArguments(arguments)) {
 		case 0:
-			Vertex v = arguments[0].toVertex();
-			return new JValueImpl(v.getId(), v);
 		case 1:
-			Edge e = arguments[0].toEdge();
-			return new JValueImpl(e.getId(), e);
+			GraphElement element = (GraphElement) arguments[0].toObject();
+			return getId(element);
 		default:
 			throw new WrongFunctionParameterException(this, arguments);
 		}
+	}
 
+	private JValue getId(GraphElement element) {
+		return (element == null) ? new JValueImpl() : new JValueImpl(
+				element.getId(), element);
 	}
 
 	@Override

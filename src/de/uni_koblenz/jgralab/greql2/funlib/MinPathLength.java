@@ -91,6 +91,10 @@ public class MinPathLength extends Greql2Function {
 			throw new WrongFunctionParameterException(this, arguments);
 		}
 
+		if (isAnyArgumentNull(arguments)) {
+			return new JValueImpl();
+		}
+
 		return new JValueImpl(arguments[0].toPathSystem().minPathLength());
 	}
 

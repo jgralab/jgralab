@@ -91,17 +91,16 @@ public class IsMarked extends Greql2Function {
 	public JValue evaluate(Graph graph,
 			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
 			throws EvaluateException {
-		AttributedElement attrElem = null;
-		GraphMarker<?> marker = null;
 
-		switch (checkArguments(arguments)) {
-		case 0:
-			attrElem = arguments[0].toAttributedElement();
-			marker = (GraphMarker<?>) arguments[1].toGraphMarker();
-			break;
-		default:
+		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, arguments);
 		}
+		if (isAnyArgumentNull(arguments)) {
+			return new JValueImpl();
+		}
+
+		AttributedElement attrElem = arguments[0].toAttributedElement();
+		GraphMarker<?> marker = (GraphMarker<?>) arguments[1].toGraphMarker();
 
 		return new JValueImpl(marker.isMarked(attrElem));
 	}

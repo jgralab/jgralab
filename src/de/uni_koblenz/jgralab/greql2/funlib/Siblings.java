@@ -39,6 +39,7 @@ import java.util.ArrayList;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
@@ -104,38 +105,37 @@ public class Siblings extends Greql2Function {
 	public JValue evaluate(Graph graph,
 			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
 			throws EvaluateException {
-		JValuePathSystem pathSystem = null;
-		switch (checkArguments(arguments)) {
-		case 0:
-			break;
-		case 1:
-			pathSystem = arguments[1].toPathSystem();
-			break;
-		default:
-			throw new WrongFunctionParameterException(this, arguments);
+
+		if (isAnyArgumentNull(arguments)) {
+			return new JValueImpl();
 		}
 
 		Vertex vertex = arguments[0].toVertex();
 
-		if (pathSystem != null) {
+		JValuePathSystem pathSystem = null;
+		switch (checkArguments(arguments)) {
+		case 0:
+			return getAllSiblings(vertex);
+		case 1:
+			pathSystem = arguments[1].toPathSystem();
 			return pathSystem.siblings(vertex);
+		default:
+			throw new WrongFunctionParameterException(this, arguments);
 		}
+	}
 
-		Edge inc1 = vertex.getFirstIncidence();
-		JValueSet returnSet = new JValueSet();
-		while (inc1 != null) {
-			Vertex father = inc1.getThat();
-			Edge inc2 = father.getFirstIncidence();
-			while (inc2 != null) {
-				Vertex anotherVertex = inc2.getThat();
-				if (anotherVertex != vertex) {
-					returnSet.add(new JValueImpl(anotherVertex, vertex));
+	private JValueSet getAllSiblings(Vertex vertex) {
+		JValueSet siblings = new JValueSet();
+		for (Edge inc1 : vertex.incidences(EdgeDirection.IN)) {
+			Vertex father = inc1.getOmega();
+			for (Edge inc2 : father.incidences(EdgeDirection.OUT)) {
+				Vertex sibling = inc2.getAlpha();
+				if (sibling != vertex) {
+					siblings.add(new JValueImpl(sibling, vertex));
 				}
-				inc2 = inc2.getNextIncidence();
 			}
-			inc1 = inc1.getNextIncidence();
 		}
-		return returnSet;
+		return siblings;
 	}
 
 	@Override

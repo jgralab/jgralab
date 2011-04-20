@@ -49,7 +49,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 
 /**
- * This class models all Variables of one Declaration-Vertex. It allowes to
+ * This class models all Variables of one Declaration-Vertex. It allows to
  * iterate over all possible combinations of this variables using the method
  * iterate(). The value of each variable is stored as temporary attribute at the
  * variable-vertex, so the evaluate()-methods don't need to know if the
@@ -87,7 +87,7 @@ public class VariableDeclarationLayer {
 
 	/**
 	 * Creates a new {@link VariableDeclarationLayer} for iterating over all
-	 * variable combinations that fulfil the constraints in constraintList.
+	 * variable combinations that fulfill the constraints in constraintList.
 	 * 
 	 * @param vertex
 	 * 
@@ -97,7 +97,7 @@ public class VariableDeclarationLayer {
 	 *            since the result of a {@link DeclarationEvaluator} is a
 	 *            {@link VariableDeclarationLayer} object, the
 	 *            {@link EvaluationLogger} cannot log the result size (which is
-	 *            the number of variable combinations that fulfil the
+	 *            the number of variable combinations that fulfill the
 	 *            constraints) before iterating the layer. So the logging of the
 	 *            result size {@link Declaration} is done here.
 	 */
@@ -232,10 +232,10 @@ public class VariableDeclarationLayer {
 	}
 
 	/**
-	 * Checks if the current variable combination fullfills the constraints.
+	 * Checks if the current variable combination fulfills the constraints.
 	 * 
 	 * @param subgraph
-	 * @return true if the combination fullfills the constraint, false otherwise
+	 * @return true if the combination fulfills the constraint, false otherwise
 	 * @throws EvaluateException
 	 */
 	private boolean fullfillsConstraints(
@@ -270,5 +270,4 @@ public class VariableDeclarationLayer {
 		firstIteration = true;
 		possibleCombinations = 0;
 	}
-
 }
