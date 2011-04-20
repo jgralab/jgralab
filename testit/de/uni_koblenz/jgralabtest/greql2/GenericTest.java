@@ -51,6 +51,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.greql2.SerializableGreql2;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
@@ -71,7 +72,8 @@ public class GenericTest {
 	};
 
 	protected static int airportCount, crossroadCount, countyCount,
-			uncontainedCrossroadCount, localityCount, footpathCount;
+			uncontainedCrossroadCount, localityCount, footpathCount,
+			plazaCount;
 
 	private TestVersion defaultVersion = TestVersion.ROUTE_MAP_GRAPH;
 
@@ -84,37 +86,37 @@ public class GenericTest {
 		queryUncontainedCrossroadCount(test);
 		queryLocalityCount(test);
 		queryFootpathCount(test);
+		queryPlazaCount(test);
 		test.setBoundVariable("nll", new JValueImpl());
 	}
 
+	private int queryInteger(String query) throws JValueInvalidTypeException,
+			Exception {
+		return evalTestQuery(query).toInteger().intValue();
+	}
+
 	private static void queryAirportCount(GenericTest test) throws Exception {
-		String queryString = "count(V{junctions.Airport})";
-		JValue result = test.evalTestQuery(queryString);
-		airportCount = result.toInteger();
+		airportCount = test.queryInteger("count(V{junctions.Airport})");
 	}
 
 	private static void queryCrossroadCount(GenericTest test) throws Exception {
-		String queryString = "count(V{junctions.Crossroad})";
-		JValue result = test.evalTestQuery(queryString);
-		crossroadCount = result.toInteger();
+		crossroadCount = test.queryInteger("count(V{junctions.Crossroad})");
 	}
 
 	private static void queryCountyCount(GenericTest test) throws Exception {
-		String queryString = "count(V{localities.County})";
-		JValue result = test.evalTestQuery(queryString);
-		countyCount = result.toInteger();
+		countyCount = test.queryInteger("count(V{localities.County})");
 	}
 
 	private static void queryFootpathCount(GenericTest test) throws Exception {
-		String queryString = "count(E{connections.Footpath})";
-		JValue result = test.evalTestQuery(queryString);
-		footpathCount = result.toInteger();
+		footpathCount = test.queryInteger("count(E{connections.Footpath})");
+	}
+
+	private static void queryPlazaCount(GenericTest test) throws Exception {
+		plazaCount = test.queryInteger("count(V{junctions.Plaza})");
 	}
 
 	private static void queryLocalityCount(GenericTest test) throws Exception {
-		String queryString = "count(V{localities.Locality})";
-		JValue result = test.evalTestQuery(queryString);
-		localityCount = result.toInteger();
+		localityCount = test.queryInteger("count(V{localities.Locality})");
 	}
 
 	private static void queryUncontainedCrossroadCount(GenericTest test)
