@@ -1205,25 +1205,19 @@ public class GreqlEvaluatorTest extends GenericTest {
 
 	@Test
 	public void testEvaluateAggregationPathDescription1() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from var: V{Variable}, def: V{Definition} with var --<> def report var end";
-		JValue result = evalTestQuery("SimplePathDescription2", queryString);
-		assertEquals(6, result.toCollection().size());
-		JValue resultWO = evalTestQuery("SimplePathDescription2 (wo)",
-				queryString, new DefaultOptimizer());
+		String queryString = "from county: V{localities.County}, loc: V{localities.Locality} with loc --<> county report loc end";
+		JValue result = evalTestQuery(queryString);
+		assertEquals(localityCount, result.toCollection().size());
+		JValue resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
 	@Test
 	public void testEvaluateAggregationPathDescription2() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from var: V{Variable}, def: V{Definition} with def <>-- var report var end";
-		JValue result = evalTestQuery("SimplePathDescription2", queryString);
-		assertEquals(6, result.toCollection().size());
-		JValue resultWO = evalTestQuery("SimplePathDescription2 (wo)",
-				queryString, new DefaultOptimizer());
+		String queryString = "from county: V{localities.County}, loc: V{localities.Locality} with county <>-- loc report loc end";
+		JValue result = evalTestQuery(queryString);
+		assertEquals(localityCount, result.toCollection().size());
+		JValue resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
