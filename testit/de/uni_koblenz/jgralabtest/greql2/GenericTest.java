@@ -73,50 +73,26 @@ public class GenericTest {
 
 	protected static int airportCount, crossroadCount, countyCount,
 			uncontainedCrossroadCount, localityCount, footpathCount,
-			plazaCount;
+			plazaCount, townCount;
 
 	private TestVersion defaultVersion = TestVersion.ROUTE_MAP_GRAPH;
 
 	@BeforeClass
 	public static void globalSetUp() throws Exception {
 		GenericTest test = new GenericTest();
-		queryAirportCount(test);
-		queryCrossroadCount(test);
-		queryCountyCount(test);
-		queryUncontainedCrossroadCount(test);
-		queryLocalityCount(test);
-		queryFootpathCount(test);
-		queryPlazaCount(test);
+		airportCount = test.queryInteger("count(V{junctions.Airport})");
+		townCount = test.queryInteger("count(V{localities.Town})");
+		crossroadCount = test.queryInteger("count(V{junctions.Crossroad})");
+		countyCount = test.queryInteger("count(V{localities.County})");
+		footpathCount = test.queryInteger("count(E{connections.Footpath})");
+		plazaCount = test.queryInteger("count(V{junctions.Plaza})");
+		localityCount = test.queryInteger("count(V{localities.Locality})");
 		test.setBoundVariable("nll", new JValueImpl());
 	}
 
 	private int queryInteger(String query) throws JValueInvalidTypeException,
 			Exception {
 		return evalTestQuery(query).toInteger().intValue();
-	}
-
-	private static void queryAirportCount(GenericTest test) throws Exception {
-		airportCount = test.queryInteger("count(V{junctions.Airport})");
-	}
-
-	private static void queryCrossroadCount(GenericTest test) throws Exception {
-		crossroadCount = test.queryInteger("count(V{junctions.Crossroad})");
-	}
-
-	private static void queryCountyCount(GenericTest test) throws Exception {
-		countyCount = test.queryInteger("count(V{localities.County})");
-	}
-
-	private static void queryFootpathCount(GenericTest test) throws Exception {
-		footpathCount = test.queryInteger("count(E{connections.Footpath})");
-	}
-
-	private static void queryPlazaCount(GenericTest test) throws Exception {
-		plazaCount = test.queryInteger("count(V{junctions.Plaza})");
-	}
-
-	private static void queryLocalityCount(GenericTest test) throws Exception {
-		localityCount = test.queryInteger("count(V{localities.Locality})");
 	}
 
 	private static void queryUncontainedCrossroadCount(GenericTest test)
