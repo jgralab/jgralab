@@ -153,7 +153,7 @@ public class PathSystemFunctionTest extends GenericTest {
 				+ "report contains(pathSystem(c, -->{localities.ContainsLocality} -->{connections.AirRoute}), a) "
 				+ "end";
 		JValue result = evalTestQuery("PathSystemContains", queryString,
-				TestVersion.CITY_MAP_GRAPH);
+				TestVersion.ROUTE_MAP_GRAPH);
 		JValueBag bag = result.toCollection().toJValueBag();
 		assertEquals(airportCount, bag.size());
 		int falseFound = 0;
@@ -246,7 +246,7 @@ public class PathSystemFunctionTest extends GenericTest {
 				+ "report edgesConnected(r, pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad}))"
 				+ "end";
 		JValue result = evalTestQuery("PathSystemEdgesConnected", queryString,
-				TestVersion.CITY_MAP_GRAPH);
+				TestVersion.ROUTE_MAP_GRAPH);
 		JValueBag bag = result.toCollection().toJValueBag();
 		assertEquals(crossroadCount * countyCount, bag.size());
 		int empty = 0;
@@ -288,7 +288,7 @@ public class PathSystemFunctionTest extends GenericTest {
 				+ "report edgesFrom(a, pathSystem(c, -->{localities.ContainsLocality} -->{connections.AirRoute})) "
 				+ "end";
 		JValue result = evalTestQuery("PathSystemEdgesFrom", queryString,
-				TestVersion.CITY_MAP_GRAPH);
+				TestVersion.ROUTE_MAP_GRAPH);
 		JValueBag bag = result.toCollection().toJValueBag();
 		assertEquals(airportCount, bag.size());
 		int empty = 0;
@@ -330,7 +330,7 @@ public class PathSystemFunctionTest extends GenericTest {
 				+ "report edgesTo(r, pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad}))"
 				+ "end";
 		JValue result = evalTestQuery("PathSystemEdgesTo", queryString,
-				TestVersion.CITY_MAP_GRAPH);
+				TestVersion.ROUTE_MAP_GRAPH);
 		JValueBag bag = result.toCollection().toJValueBag();
 		assertEquals(crossroadCount * countyCount, bag.size());
 		int empty = 0;
@@ -414,7 +414,7 @@ public class PathSystemFunctionTest extends GenericTest {
 				+ "report extractPath(pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad}), r)"
 				+ "end";
 		JValue result = evalTestQuery("ExtractPath", queryString,
-				TestVersion.CITY_MAP_GRAPH);
+				TestVersion.ROUTE_MAP_GRAPH);
 		JValueBag bag = result.toCollection().toJValueBag();
 		assertEquals(countyCount * crossroadCount, bag.size());
 		int invalidPaths = 0;
@@ -447,7 +447,7 @@ public class PathSystemFunctionTest extends GenericTest {
 				+ "report innerNodes(pathSystem(c, -->{localities.ContainsLocality} -->{connections.AirRoute})) "
 				+ "end";
 		JValue result = evalTestQuery("InnerNodes", queryString,
-				TestVersion.CITY_MAP_GRAPH);
+				TestVersion.ROUTE_MAP_GRAPH);
 		JValueBag bag = result.toCollection().toJValueBag();
 		assertEquals(countyCount - 1, bag.size());
 		for (JValue v : bag) {
@@ -517,7 +517,7 @@ public class PathSystemFunctionTest extends GenericTest {
 				+ "extractPath(pathSystem(v, -->{localities.ContainsLocality}), a), "
 				+ "extractPath(pathSystem(v, -->{localities.ContainsLocality} a -->{localities.ContainsCrossroad}), w)) end";
 		JValue result = evalTestQuery("IsSubPath", queryString,
-				TestVersion.CITY_MAP_GRAPH);
+				TestVersion.ROUTE_MAP_GRAPH);
 		JValueBag bag = result.toCollection().toJValueBag();
 		assertEquals(countyCount * airportCount * crossroadCount, bag.size());
 		int trueCounts = 0;
@@ -545,7 +545,7 @@ public class PathSystemFunctionTest extends GenericTest {
 				+ "report leaves(pathSystem(c, -->{localities.ContainsLocality} <--{localities.HasCapital})) "
 				+ "end";
 		JValue result = evalTestQuery("Leaves", queryString,
-				TestVersion.CITY_MAP_GRAPH);
+				TestVersion.ROUTE_MAP_GRAPH);
 		JValueBag bag = result.toCollection().toJValueBag();
 		assertEquals(countyCount - 1, bag.size());
 		for (JValue v : bag) {
@@ -579,7 +579,7 @@ public class PathSystemFunctionTest extends GenericTest {
 				+ "report minPathLength(pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad} -->{connections.Street})) "
 				+ "end";
 		JValue result = evalTestQuery("MaxPathLength", queryString,
-				TestVersion.CITY_MAP_GRAPH);
+				TestVersion.ROUTE_MAP_GRAPH);
 		JValueBag bag = result.toCollection().toJValueBag();
 		assertEquals(countyCount, bag.size());
 		for (JValue v : bag) {
@@ -598,7 +598,7 @@ public class PathSystemFunctionTest extends GenericTest {
 				+ "report minPathLength(pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad} -->{connections.Street})) "
 				+ "end";
 		JValue result = evalTestQuery("MinPathLength", queryString,
-				TestVersion.CITY_MAP_GRAPH);
+				TestVersion.ROUTE_MAP_GRAPH);
 		JValueBag bag = result.toCollection().toJValueBag();
 		assertEquals(countyCount, bag.size());
 		for (JValue v : bag) {
@@ -653,7 +653,7 @@ public class PathSystemFunctionTest extends GenericTest {
 				+ "report nodeTrace(extractPath(pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad}), r)) "
 				+ "end";
 		JValue result = evalTestQuery("PathLength", queryString,
-				TestVersion.CITY_MAP_GRAPH);
+				TestVersion.ROUTE_MAP_GRAPH);
 		JValueBag bag = result.toCollection().toJValueBag();
 		assertEquals(countyCount * crossroadCount, bag.size());
 		int emptyTraces = 0;
@@ -678,7 +678,7 @@ public class PathSystemFunctionTest extends GenericTest {
 				+ "report parent(pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad}), r) "
 				+ "end";
 		JValue result = evalTestQuery("Parent", queryString,
-				TestVersion.CITY_MAP_GRAPH);
+				TestVersion.ROUTE_MAP_GRAPH);
 		JValueBag bag = result.toCollection().toJValueBag();
 		assertEquals(countyCount * crossroadCount, bag.size());
 		int invalid = 0;
@@ -789,7 +789,7 @@ public class PathSystemFunctionTest extends GenericTest {
 				+ "report siblings(r, pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad})) "
 				+ "end";
 		JValue result = evalTestQuery("Siblings", queryString,
-				TestVersion.CITY_MAP_GRAPH);
+				TestVersion.ROUTE_MAP_GRAPH);
 		JValueBag bag = result.toCollection().toJValueBag();
 
 		assertEquals(countyCount * crossroadCount, bag.size());
@@ -835,7 +835,7 @@ public class PathSystemFunctionTest extends GenericTest {
 				+ "report types(pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad})) "
 				+ "end";
 		JValue result = evalTestQuery("TypeSet", queryString,
-				TestVersion.CITY_MAP_GRAPH);
+				TestVersion.ROUTE_MAP_GRAPH);
 		JValueBag bag = result.toCollection().toJValueBag();
 		assertEquals(countyCount, bag.size());
 		// TODO this test is not well thought through
@@ -878,7 +878,7 @@ public class PathSystemFunctionTest extends GenericTest {
 				+ "report weight(pathSystem(c, -->{localities.ContainsLocality} -->{connections.AirRoute})) "
 				+ "end";
 		JValue result = evalTestQuery("PathSystemWeight", queryString,
-				TestVersion.CITY_MAP_GRAPH);
+				TestVersion.ROUTE_MAP_GRAPH);
 		JValueBag bag = result.toCollection().toJValueBag();
 		assertEquals(1, bag.size());
 		for (JValue v : bag) {

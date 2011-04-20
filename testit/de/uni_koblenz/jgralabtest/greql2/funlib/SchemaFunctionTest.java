@@ -433,7 +433,7 @@ public class SchemaFunctionTest extends GenericTest {
 	}
 
 	private Schema getSchema() throws Exception {
-		Graph currentGraph = this.getTestGraph(TestVersion.CITY_MAP_GRAPH);
+		Graph currentGraph = this.getTestGraph(TestVersion.ROUTE_MAP_GRAPH);
 		return currentGraph.getSchema();
 	}
 

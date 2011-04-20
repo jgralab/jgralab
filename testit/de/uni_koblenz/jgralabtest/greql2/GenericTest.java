@@ -67,13 +67,13 @@ public class GenericTest {
 	protected static final double DELTA = 0.00000001;
 
 	public enum TestVersion {
-		GREQL_GRAPH, CITY_MAP_GRAPH, CYCLIC_GRAPH, TREE_GRAPH
+		GREQL_GRAPH, ROUTE_MAP_GRAPH, CYCLIC_GRAPH, TREE_GRAPH
 	};
 
 	protected static int airportCount, crossroadCount, countyCount,
 			uncontainedCrossroadCount, localityCount, footpathCount;
 
-	private TestVersion defaultVersion = TestVersion.CITY_MAP_GRAPH;
+	private TestVersion defaultVersion = TestVersion.ROUTE_MAP_GRAPH;
 
 	@BeforeClass
 	public static void globalSetUp() throws Exception {
@@ -288,7 +288,7 @@ public class GenericTest {
 		switch (version) {
 		case GREQL_GRAPH:
 			return createGreqlTestGraph();
-		case CITY_MAP_GRAPH:
+		case ROUTE_MAP_GRAPH:
 			return createTestGraph();
 		case CYCLIC_GRAPH:
 			return getCyclicTestGraph();
