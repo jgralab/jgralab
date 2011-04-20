@@ -26,7 +26,7 @@ public class GreqlConstructions extends GenericTest {
 				+ "report pathSystem(c, -->{localities.ContainsLocality} -->{connections.AirRoute}) "
 				+ "end";
 		JValue result = evalTestQuery("PathSystemConstruction", queryString,
-				TestVersion.CITY_MAP_GRAPH);
+				TestVersion.ROUTE_MAP_GRAPH);
 		JValueBag bag = result.toCollection().toJValueBag();
 		System.out.println(bag);
 		assertEquals(1, bag.size());

@@ -151,7 +151,7 @@ public class GraphFunctionTest extends GenericTest {
 	@Test
 	public void testDescribeGraph() throws Exception {
 		JValueTuple tuple = evalTestQuery("describe()").toJValueTuple();
-		Graph graph = getTestGraph(TestVersion.CITY_MAP_GRAPH);
+		Graph graph = getTestGraph(TestVersion.ROUTE_MAP_GRAPH);
 
 		assertEquals(graph.getAttributedElementClass().getQualifiedName(),
 				tuple.get(0).toString());
@@ -279,7 +279,7 @@ public class GraphFunctionTest extends GenericTest {
 
 	@Test
 	public void testFirstEdge() throws Exception {
-		Graph graph = getTestGraph(TestVersion.CITY_MAP_GRAPH);
+		Graph graph = getTestGraph(TestVersion.ROUTE_MAP_GRAPH);
 		assertQueryEquals("firstEdge()", graph.getFirstEdge());
 		assertQueryEquals("firstEdge{connections.Way}()",
 				graph.getFirstEdge(Way.class));
@@ -288,7 +288,7 @@ public class GraphFunctionTest extends GenericTest {
 
 	@Test
 	public void testFirstVertex() throws Exception {
-		Graph graph = getTestGraph(TestVersion.CITY_MAP_GRAPH);
+		Graph graph = getTestGraph(TestVersion.ROUTE_MAP_GRAPH);
 		assertQueryEquals("firstVertex()", graph.getFirstVertex());
 		assertQueryEquals("firstVertex{junctions.Crossroad}()",
 				graph.getFirstVertex(Crossroad.class));
@@ -301,7 +301,7 @@ public class GraphFunctionTest extends GenericTest {
 		JValueMap map = evalTestQuery(
 				"using idList: from el:idList reportMap el -> getEdge(el) end")
 				.toJValueMap();
-		Graph graph = getTestGraph(TestVersion.CITY_MAP_GRAPH);
+		Graph graph = getTestGraph(TestVersion.ROUTE_MAP_GRAPH);
 
 		for (Entry<JValue, JValue> entry : map.entrySet()) {
 			int id = entry.getKey().toInteger();
@@ -321,7 +321,7 @@ public class GraphFunctionTest extends GenericTest {
 	@Test
 	public void testGetGraph() throws Exception {
 		assertQueryEquals("getGraph()",
-				getTestGraph(TestVersion.CITY_MAP_GRAPH));
+				getTestGraph(TestVersion.ROUTE_MAP_GRAPH));
 	}
 
 	@Test
@@ -357,7 +357,7 @@ public class GraphFunctionTest extends GenericTest {
 		JValueMap map = evalTestQuery(
 				"from el:list(1..id(lastVertex())) reportMap el -> getVertex(el) end")
 				.toJValueMap();
-		Graph graph = getTestGraph(TestVersion.CITY_MAP_GRAPH);
+		Graph graph = getTestGraph(TestVersion.ROUTE_MAP_GRAPH);
 
 		for (Entry<JValue, JValue> entry : map.entrySet()) {
 			int id = entry.getKey().toInteger();
@@ -479,7 +479,7 @@ public class GraphFunctionTest extends GenericTest {
 
 	@Test
 	public void testLastEdge() throws Exception {
-		Graph graph = getTestGraph(TestVersion.CITY_MAP_GRAPH);
+		Graph graph = getTestGraph(TestVersion.ROUTE_MAP_GRAPH);
 		assertQueryEquals("lastEdge()", graph.getLastEdge());
 		assertQueryEquals("lastEdge{connections.Way}()",
 				getLastEdgeForType(Way.class));
@@ -488,7 +488,7 @@ public class GraphFunctionTest extends GenericTest {
 
 	@Test
 	public void testLastVertex() throws Exception {
-		Graph graph = getTestGraph(TestVersion.CITY_MAP_GRAPH);
+		Graph graph = getTestGraph(TestVersion.ROUTE_MAP_GRAPH);
 		assertQueryEquals("lastVertex()", graph.getLastVertex());
 		assertQueryEquals("lastVertex{junctions.Crossroad}()",
 				getLastVertexForType(Crossroad.class));
@@ -496,7 +496,7 @@ public class GraphFunctionTest extends GenericTest {
 	}
 
 	public Edge getLastEdgeForType(Class<? extends Edge> type) throws Exception {
-		Graph graph = getTestGraph(TestVersion.CITY_MAP_GRAPH);
+		Graph graph = getTestGraph(TestVersion.ROUTE_MAP_GRAPH);
 		Edge lastEdge = graph.getLastEdge();
 
 		while (lastEdge != null) {
@@ -511,7 +511,7 @@ public class GraphFunctionTest extends GenericTest {
 
 	public Vertex getLastVertexForType(Class<? extends Vertex> type)
 			throws Exception {
-		Graph graph = getTestGraph(TestVersion.CITY_MAP_GRAPH);
+		Graph graph = getTestGraph(TestVersion.ROUTE_MAP_GRAPH);
 		Vertex lastVertex = graph.getLastVertex();
 
 		while (lastVertex != null) {
