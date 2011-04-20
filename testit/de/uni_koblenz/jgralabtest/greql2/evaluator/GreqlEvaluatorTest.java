@@ -1234,11 +1234,11 @@ public class GreqlEvaluatorTest extends GenericTest {
 
 	@Test
 	public void testEvaluateStartRestriction5() throws Exception {
-		String queryString1 = "from var: V{Variable}, def: V{WhereExpression} with var -->{IsVarOf} {Definition} & -->{IsDefinitionOf} def report var end";
-		String queryString2 = "from var: V{Variable}, def: V{WhereExpression} with contains(-->{IsVarOf} {Definition} & -->{IsDefinitionOf} def, var) report var end";
-		JValue result = evalTestQuery("StartRestriction5", queryString1);
-		assertEquals(4, result.toCollection().size());
-		JValue resultWO = evalTestQuery("StartRestriction5 (wo)", queryString2);
+		String queryString1 = "from county: V{localities.County}, plaza: V{junctions.Plaza} with county -->{localities.ContainsLocality} {localities.Town} & -->{localities.ContainsCrossroad} plaza report county end";
+		String queryString2 = "from county: V{localities.County}, plaza: V{junctions.Plaza} with contains(-->{localities.ContainsLocality} {localities.Town} & -->{localities.ContainsCrossroad} plaza, county) report county end";
+		JValue result = evalTestQuery(queryString1);
+		assertEquals(plazaCount, result.toCollection().size());
+		JValue resultWO = evalQueryWithOptimizer(queryString2);
 		assertEquals(result, resultWO);
 	}
 
@@ -1309,13 +1309,10 @@ public class GreqlEvaluatorTest extends GenericTest {
 	 */
 	@Test
 	public void testEvaluateStartRestriction4() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from var: V{Variable}, def: V{WhereExpression} with var  -->{IsVarOf} & {@1 = 1} -->{IsDefinitionOf} def  report var end";
-		JValue result = evalTestQuery("StartRestriction4", queryString);
-		assertEquals(4, result.toCollection().size());
-		JValue resultWO = evalTestQuery("StartRestriction4 (wo)", queryString,
-				new DefaultOptimizer());
+		String queryString = "from county: V{localities.County}, plaza: V{junctions.Plaza} with county -->{localities.ContainsLocality} {@ 1 = 1} & -->{localities.ContainsCrossroad} plaza report county end";
+		JValue result = evalTestQuery(queryString);
+		assertEquals(plazaCount, result.toCollection().size());
+		JValue resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
