@@ -154,7 +154,8 @@ public class SystemTest extends GenericTest {
 			JValueCollection usages = tuple.get(3).toCollection();
 
 			assertEquals(vertex.getId(), identifier);
-			assertEquals(vertex.getDegree(EdgeDirection.OUT), usage_count);
+			assertEquals(vertex.getDegree(Way.class, EdgeDirection.OUT),
+					usage_count);
 
 			for (Edge edge : vertex.incidences(Way.class, EdgeDirection.OUT)) {
 				assertTrue(usages.remove(new JValueImpl(edge)));
