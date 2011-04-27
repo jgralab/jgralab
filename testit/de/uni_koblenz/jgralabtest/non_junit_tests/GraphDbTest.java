@@ -67,6 +67,7 @@ public class GraphDbTest {
 				gdb.insertSchema(JniTestSchema.instance());
 			}
 		} catch (GraphDatabaseException e) {
+			e.printStackTrace();
 			gdb.applyDbSchema();
 			// if (!gdb.contains(JniTestSchema.instance())) {
 			gdb.insertSchema(JniTestSchema.instance());

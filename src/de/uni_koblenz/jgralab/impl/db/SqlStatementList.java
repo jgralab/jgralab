@@ -32,17 +32,27 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
- package de.uni_koblenz.jgralab.impl.db;
+package de.uni_koblenz.jgralab.impl.db;
+
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.*;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
+
+import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.schema.Schema;
 
 public abstract class SqlStatementList {
+
+	public static final String QUOTE = "$$\"$$";
+	public static final String EOQ = "$$;$$";
+	public static final String DIRECTION_TYPE = "$$?DIR$$";
 
 	/**
 	 * Connection to database.
@@ -100,10 +110,20 @@ public abstract class SqlStatementList {
 	private PreparedStatement prepareAndCacheStatement(String sqlStatement)
 			throws SQLException {
 		PreparedStatement preparedStatement = connection
-				.prepareStatement(sqlStatement);
+				.prepareStatement(makeQueryVendorSpecific(sqlStatement));
 		preparedStatements.put(sqlStatement, preparedStatement);
 		return preparedStatement;
 	}
+
+	/**
+	 * Sets quotation marks and semicolons in common queries, according to
+	 * vendor specific rules.
+	 * 
+	 * @param query
+	 *            the common query String
+	 * @return a vendor specific query query String
+	 */
+	public abstract String makeQueryVendorSpecific(String query);
 
 	// GraphSchema
 	public abstract PreparedStatement createGraphSchemaTableWithConstraints()
@@ -258,51 +278,218 @@ public abstract class SqlStatementList {
 	// addClusteredIndexOnEdgeAttributeValues() throws SQLException;
 
 	// to insert schema information
-	public abstract PreparedStatement insertSchema(Schema schema,
-			String serializedDefinition) throws SQLException;
+	private static final String INSERT_SCHEMA = "INSERT INTO " + QUOTE
+			+ TABLE_SCHEMA + QUOTE + " ( " + QUOTE
+			+ COLUMN_SCHEMA_PACKAGE_PREFIX + QUOTE + ", " + QUOTE
+			+ COLUMN_SCHEMA_NAME + QUOTE + ", " + QUOTE + COLUMN_SCHEMA_TG
+			+ QUOTE + " ) VALUES ( ?, ?, ? )" + EOQ;
 
-	public abstract PreparedStatement deleteSchema(String prefix, String name)
-			throws SQLException;
+	public PreparedStatement insertSchema(Schema schema,
+			String serializedDefinition) throws SQLException {
+		PreparedStatement statement = connection.prepareStatement(
+				makeQueryVendorSpecific(INSERT_SCHEMA),
+				Statement.RETURN_GENERATED_KEYS);
+		statement.setString(1, schema.getPackagePrefix());
+		statement.setString(2, schema.getName());
+		statement.setString(3, serializedDefinition);
+		return statement;
+	}
 
-	public abstract PreparedStatement insertType(String qualifiedName,
-			int schemaId) throws SQLException;
+	private static final String DELETE_SCHEMA = "DELETE FROM " + QUOTE
+			+ TABLE_SCHEMA + QUOTE + " WHERE " + QUOTE
+			+ COLUMN_SCHEMA_PACKAGE_PREFIX + QUOTE + " = ? AND " + QUOTE
+			+ COLUMN_SCHEMA_NAME + QUOTE + " = ?" + EOQ;
 
-	public abstract PreparedStatement insertAttribute(String name, int schemaId)
-			throws SQLException;
+	public PreparedStatement deleteSchema(String prefix, String name)
+			throws SQLException {
+		PreparedStatement statement = getPreparedStatement(DELETE_SCHEMA);
+		statement.setString(1, prefix);
+		statement.setString(2, name);
+		return statement;
+	}
+
+	private static final String INSERT_TYPE = "INSERT INTO " + QUOTE
+			+ TABLE_TYPE + QUOTE + "( " + QUOTE + COLUMN_TYPE_QNAME + QUOTE
+			+ ", " + QUOTE + COLUMN_SCHEMA_ID + QUOTE + " ) VALUES ( ?, ? )"
+			+ EOQ;
+
+	public PreparedStatement insertType(String qualifiedName, int schemaId)
+			throws SQLException {
+		PreparedStatement statement = getPreparedStatement(INSERT_TYPE);
+		statement.setString(1, qualifiedName);
+		statement.setInt(2, schemaId);
+		return statement;
+	}
+
+	private static final String INSERT_ATTRIBUTE = "INSERT INTO " + QUOTE
+			+ TABLE_ATTRIBUTE + QUOTE + " ( " + QUOTE + COLUMN_ATTRIBUTE_NAME
+			+ QUOTE + ", " + QUOTE + COLUMN_SCHEMA_ID + QUOTE
+			+ " ) VALUES ( ?, ? )" + EOQ;
+
+	public PreparedStatement insertAttribute(String name, int schemaId)
+			throws SQLException {
+		PreparedStatement statement = getPreparedStatement(INSERT_ATTRIBUTE);
+		statement.setString(1, name);
+		statement.setInt(2, schemaId);
+		return statement;
+	}
 
 	// to insert a graph
-	public abstract PreparedStatement insertGraph(String id, long graphVersion,
-			long vertexListVersion, long edgeListVersion, int typeId)
-			throws SQLException;
+	private static final String INSERT_GRAPH = "INSERT INTO " + QUOTE
+			+ TABLE_GRAPH + QUOTE + " ( " + QUOTE + COLUMN_GRAPH_UID + QUOTE
+			+ ", " + QUOTE + COLUMN_GRAPH_VERSION + QUOTE + ", " + QUOTE
+			+ COLUMN_GRAPH_VSEQ_VERSION + QUOTE + ", " + QUOTE
+			+ COLUMN_GRAPH_ESEQ_VERSION + QUOTE + ", " + QUOTE + COLUMN_TYPE_ID
+			+ QUOTE + " ) VALUES ( ?, ?, ?, ?, ? )" + EOQ;
 
-	public abstract PreparedStatement insertGraphAttributeValue(int gId,
-			int attributeId, String value) throws SQLException;
+	public PreparedStatement insertGraph(String id, long graphVersion,
+			long vertexListVersion, long edgeListVersion, int typeId)
+			throws SQLException {
+		PreparedStatement statement = connection.prepareStatement(
+				makeQueryVendorSpecific(INSERT_GRAPH),
+				Statement.RETURN_GENERATED_KEYS);
+		statement.setString(1, id);
+		statement.setLong(2, graphVersion);
+		statement.setLong(3, vertexListVersion);
+		statement.setLong(4, edgeListVersion);
+		statement.setInt(5, typeId);
+		return statement;
+	}
+
+	private static final String INSERT_GRAPH_ATTRIBUTE_VALUE = "INSERT INTO "
+			+ QUOTE + TABLE_GRAPH_ATTRIBUTE + QUOTE + " ( " + QUOTE
+			+ COLUMN_GRAPH_ID + QUOTE + ", " + QUOTE + COLUMN_ATTRIBUTE_ID
+			+ QUOTE + ", " + QUOTE + COLUMN_ATTRIBUTE_VALUE + QUOTE
+			+ " ) VALUES ( ?, ?, ? )" + EOQ;
+
+	public PreparedStatement insertGraphAttributeValue(int gId,
+			int attributeId, String value) throws SQLException {
+		PreparedStatement statement = getPreparedStatement(INSERT_GRAPH_ATTRIBUTE_VALUE);
+		statement.setInt(1, gId);
+		statement.setInt(2, attributeId);
+		statement.setString(3, value);
+		return statement;
+	}
 
 	// to insert a vertex
-	public abstract PreparedStatement insertVertex(int vId, int typeId,
-			int gId, long incidenceListVersion, long sequenceNumberInVSeq)
-			throws SQLException;
+	protected static final String INSERT_VERTEX = "INSERT INTO " + QUOTE
+			+ TABLE_VERTEX + QUOTE + " ( " + QUOTE + COLUMN_VERTEX_ID + QUOTE
+			+ ", " + QUOTE + COLUMN_GRAPH_ID + QUOTE + ", " + QUOTE
+			+ COLUMN_TYPE_ID + QUOTE + ", " + QUOTE
+			+ COLUMN_VERTEX_LAMBDA_SEQ_VERSION + QUOTE + ", " + QUOTE
+			+ COLUMN_SEQUENCE_NUMBER + QUOTE + " ) VALUES (?, ?, ?, ?, ?)"
+			+ EOQ;
+
+	public PreparedStatement insertVertex(int vId, int typeId, int gId,
+			long incidenceListVersion, long sequenceNumberInVSeq)
+			throws SQLException {
+		PreparedStatement statement = getPreparedStatement(INSERT_VERTEX);
+		statement.setInt(1, vId);
+		statement.setInt(2, gId);
+		statement.setInt(3, typeId);
+		statement.setLong(4, incidenceListVersion);
+		statement.setLong(5, sequenceNumberInVSeq);
+		return statement;
+	}
 
 	public abstract PreparedStatement insertVertex(
 			DatabasePersistableVertex vertex) throws SQLException,
 			GraphIOException;
 
-	public abstract PreparedStatement insertVertexAttributeValue(int vId,
-			int gId, int attributeId, String value) throws SQLException;
+	protected static final String INSERT_VERTEX_ATTRIBUTE_VALUE = "INSERT INTO "
+			+ QUOTE
+			+ TABLE_VERTEX_ATTRIBUTE
+			+ QUOTE
+			+ " ( "
+			+ QUOTE
+			+ COLUMN_VERTEX_ID
+			+ QUOTE
+			+ ", "
+			+ QUOTE
+			+ COLUMN_GRAPH_ID
+			+ QUOTE
+			+ ", "
+			+ QUOTE
+			+ COLUMN_ATTRIBUTE_ID
+			+ QUOTE
+			+ ", "
+			+ QUOTE
+			+ COLUMN_ATTRIBUTE_VALUE + QUOTE + " ) VALUES ( ?, ?, ?, ? )" + EOQ;
+
+	public PreparedStatement insertVertexAttributeValue(int vId, int gId,
+			int attributeId, String value) throws SQLException {
+		PreparedStatement statement = getPreparedStatement(INSERT_VERTEX_ATTRIBUTE_VALUE);
+		statement.setInt(1, vId);
+		statement.setInt(2, gId);
+		statement.setInt(3, attributeId);
+		statement.setString(4, value);
+		return statement;
+	}
 
 	// to insert an edge
-	public abstract PreparedStatement insertEdge(int eId, int gId, int typeId,
-			long sequenceNumberInLambdaSeq) throws SQLException;
+
+	protected static final String INSERT_EDGE = "INSERT INTO " + QUOTE
+			+ TABLE_EDGE + QUOTE + " ( " + QUOTE + COLUMN_EDGE_ID + QUOTE
+			+ ", " + QUOTE + COLUMN_GRAPH_ID + QUOTE + ", " + QUOTE
+			+ COLUMN_TYPE_ID + QUOTE + ", " + QUOTE + COLUMN_SEQUENCE_NUMBER
+			+ QUOTE + " ) VALUES ( ?, ?, ?, ? )" + EOQ;
+
+	public PreparedStatement insertEdge(int eId, int gId, int typeId,
+			long sequenceNumberInLambdaSeq) throws SQLException {
+		PreparedStatement statement = getPreparedStatement(INSERT_EDGE);
+		// TODO why is the edge id stored as abs?
+		statement.setInt(1, Math.abs(eId));
+		statement.setInt(2, gId);
+		statement.setInt(3, typeId);
+		statement.setLong(4, sequenceNumberInLambdaSeq);
+		return statement;
+	}
 
 	public abstract PreparedStatement insertEdge(DatabasePersistableEdge edge,
 			DatabasePersistableVertex alpha, DatabasePersistableVertex omega)
 			throws SQLException, GraphIOException;
 
-	public abstract PreparedStatement insertEdgeAttributeValue(int eId,
-			int gId, int attributeId, String value) throws SQLException;
+	protected static final String INSERT_EDGE_ATTRIBUTE_VALUE = "INSERT INTO "
+			+ QUOTE + TABLE_EDGE_ATTRIBUTE + QUOTE + " ( " + QUOTE
+			+ COLUMN_EDGE_ID + QUOTE + ", " + QUOTE + COLUMN_GRAPH_ID + QUOTE
+			+ ", " + QUOTE + COLUMN_ATTRIBUTE_ID + QUOTE + ", " + QUOTE
+			+ COLUMN_ATTRIBUTE_VALUE + QUOTE + " ) VALUES ( ?, ?, ?, ? )" + EOQ;
 
-	public abstract PreparedStatement insertIncidence(int eId, int vId,
-			int gId, long sequenceNumberInLambdaSeq) throws SQLException;
+	public PreparedStatement insertEdgeAttributeValue(int eId, int gId,
+			int attributeId, String value) throws SQLException {
+		PreparedStatement statement = getPreparedStatement(INSERT_EDGE_ATTRIBUTE_VALUE);
+		statement.setInt(1, eId);
+		statement.setInt(2, gId);
+		statement.setInt(3, attributeId);
+		statement.setString(4, value);
+		return statement;
+	}
+
+	protected static final String INSERT_INCIDENCE = "INSERT INTO " + QUOTE
+			+ TABLE_INCIDENCE + QUOTE + " ( " + QUOTE + COLUMN_EDGE_ID + QUOTE
+			+ ", " + QUOTE + COLUMN_GRAPH_ID + QUOTE + ", " + QUOTE
+			+ COLUMN_VERTEX_ID + QUOTE + ", " + QUOTE
+			+ COLUMN_INCIDENCE_DIRECTION + QUOTE + ", " + QUOTE
+			+ COLUMN_SEQUENCE_NUMBER + QUOTE + " ) VALUES ( ?, ?, ?, "
+			+ DIRECTION_TYPE + ", ? )" + EOQ;
+
+	public PreparedStatement insertIncidence(int eId, int vId, int gId,
+			long sequenceNumberInLambdaSeq) throws SQLException {
+		PreparedStatement statement = getPreparedStatement(INSERT_INCIDENCE);
+		statement.setInt(1, Math.abs(eId));
+		statement.setInt(2, gId);
+		statement.setInt(3, vId);
+		if (eId > 0) {
+			statement.setString(4, EdgeDirection.OUT.name());
+		} else if (eId < 0) {
+			statement.setString(4, EdgeDirection.IN.name());
+		} else {
+			throw new GraphException(
+					"Cannot insert an incidence into database with incident edge id = 0.");
+		}
+		statement.setLong(5, sequenceNumberInLambdaSeq);
+		return statement;
+	}
 
 	// to preload schema information when opening a graph
 	public abstract PreparedStatement selectSchemaId(String packagePrefix,
@@ -336,11 +523,25 @@ public abstract class SqlStatementList {
 	public abstract PreparedStatement selectAttributeValuesOfGraph(int gId)
 			throws SQLException;
 
-	public abstract PreparedStatement countVerticesOfGraph(int gId)
-			throws SQLException;
+	private static final String COUNT_VERTICES = "SELECT COUNT (*) FROM "
+			+ QUOTE + TABLE_VERTEX + QUOTE + " WHERE " + QUOTE
+			+ COLUMN_GRAPH_ID + QUOTE + " = ?" + EOQ;
 
-	public abstract PreparedStatement countEdgesOfGraph(int gId)
-			throws SQLException;
+	public PreparedStatement countVerticesOfGraph(int gId) throws SQLException {
+		PreparedStatement statement = getPreparedStatement(COUNT_VERTICES);
+		statement.setInt(1, gId);
+		return statement;
+	}
+
+	private static final String COUNT_EDGES = "SELECT COUNT (*) FROM " + QUOTE
+			+ TABLE_EDGE + QUOTE + " WHERE " + QUOTE + COLUMN_GRAPH_ID + QUOTE
+			+ " = ?" + EOQ;
+
+	public PreparedStatement countEdgesOfGraph(int gId) throws SQLException {
+		PreparedStatement statement = getPreparedStatement(COUNT_EDGES);
+		statement.setInt(1, gId);
+		return statement;
+	}
 
 	// to open a vertex
 	public abstract PreparedStatement selectVertexWithIncidences(int vId,
@@ -357,45 +558,153 @@ public abstract class SqlStatementList {
 			int gId) throws SQLException;
 
 	// to delete a graph
-	public abstract PreparedStatement deleteGraph(int gId) throws SQLException;
+	private static final String DELETE_GRAPH = "DELETE FROM " + QUOTE
+			+ TABLE_GRAPH + QUOTE + " WHERE " + QUOTE + COLUMN_GRAPH_ID + QUOTE
+			+ " = ?" + EOQ;
 
-	public abstract PreparedStatement deleteIncidencesOfGraph(int gId)
-			throws SQLException;
+	public PreparedStatement deleteGraph(int gId) throws SQLException {
+		PreparedStatement statement = getPreparedStatement(DELETE_GRAPH);
+		statement.setInt(1, gId);
+		return statement;
+	}
 
-	public abstract PreparedStatement deleteAttributeValuesOfGraph(int gId)
-			throws SQLException;
+	private static final String DELETE_INCIDENCES_OF_GRAPH = "DELETE FROM "
+			+ QUOTE + TABLE_INCIDENCE + QUOTE + " WHERE " + QUOTE
+			+ COLUMN_GRAPH_ID + QUOTE + " = ?" + EOQ;
 
-	public abstract PreparedStatement deleteVertexAttributeValuesOfGraph(int gId)
-			throws SQLException;
+	public PreparedStatement deleteIncidencesOfGraph(int gId)
+			throws SQLException {
+		PreparedStatement statement = getPreparedStatement(DELETE_INCIDENCES_OF_GRAPH);
+		statement.setInt(1, gId);
+		return statement;
+	}
 
-	public abstract PreparedStatement deleteEdgeAttributeValuesOfGraph(int gId)
-			throws SQLException;
+	private static final String DELETE_GRAPH_ATTRIBUTES = "DELETE FROM "
+			+ QUOTE + TABLE_GRAPH_ATTRIBUTE + QUOTE + " WHERE " + QUOTE
+			+ COLUMN_GRAPH_ID + QUOTE + " = ?" + EOQ;
 
-	public abstract PreparedStatement deleteVerticesOfGraph(int gId)
-			throws SQLException;
+	public PreparedStatement deleteAttributeValuesOfGraph(int gId)
+			throws SQLException {
+		PreparedStatement statement = getPreparedStatement(DELETE_GRAPH_ATTRIBUTES);
+		statement.setInt(1, gId);
+		return statement;
+	}
 
-	public abstract PreparedStatement deleteEdgesOfGraph(int gId)
-			throws SQLException;
+	private static final String DELETE_VERTEX_ATTRIBUTE_VALUES_OF_GRAPH = "DELETE FROM "
+			+ QUOTE
+			+ TABLE_VERTEX_ATTRIBUTE
+			+ QUOTE
+			+ " WHERE "
+			+ QUOTE
+			+ COLUMN_GRAPH_ID + QUOTE + " = ?" + EOQ;
+
+	public PreparedStatement deleteVertexAttributeValuesOfGraph(int gId)
+			throws SQLException {
+		PreparedStatement statement = getPreparedStatement(DELETE_VERTEX_ATTRIBUTE_VALUES_OF_GRAPH);
+		statement.setInt(1, gId);
+		return statement;
+	}
+
+	private static final String DELETE_EDGE_ATTRIBUTE_VALUES_OF_GRAPH = "DELETE FROM "
+			+ QUOTE
+			+ TABLE_EDGE_ATTRIBUTE
+			+ QUOTE
+			+ " WHERE "
+			+ QUOTE
+			+ COLUMN_GRAPH_ID + QUOTE + " = ?" + EOQ;
+
+	public PreparedStatement deleteEdgeAttributeValuesOfGraph(int gId)
+			throws SQLException {
+		PreparedStatement statement = getPreparedStatement(DELETE_EDGE_ATTRIBUTE_VALUES_OF_GRAPH);
+		statement.setInt(1, gId);
+		return statement;
+	}
+
+	private static final String DELETE_VERTICES_OF_GRAPH = "DELETE FROM "
+			+ QUOTE + TABLE_VERTEX + QUOTE + " WHERE " + QUOTE
+			+ COLUMN_GRAPH_ID + QUOTE + " = ?" + EOQ;
+
+	public PreparedStatement deleteVerticesOfGraph(int gId) throws SQLException {
+		PreparedStatement statement = getPreparedStatement(DELETE_VERTICES_OF_GRAPH);
+		statement.setInt(1, gId);
+		return statement;
+	}
+
+	private static final String DELETE_EDGES_OF_GRAPH = "" + "DELETE FROM "
+			+ QUOTE + TABLE_EDGE + QUOTE + " WHERE " + QUOTE + COLUMN_GRAPH_ID
+			+ QUOTE + " = ?" + EOQ;
+
+	public PreparedStatement deleteEdgesOfGraph(int gId) throws SQLException {
+		PreparedStatement statement = getPreparedStatement(DELETE_EDGES_OF_GRAPH);
+		statement.setInt(1, gId);
+		return statement;
+	}
 
 	// to delete a vertex
-	public abstract PreparedStatement deleteAttributeValuesOfVertex(int vId,
-			int gId) throws SQLException;
+	private static final String DELETE_VERTEX_ATTRIBUTES = "DELETE FROM "
+			+ QUOTE + TABLE_VERTEX_ATTRIBUTE + QUOTE + " WHERE " + QUOTE
+			+ COLUMN_VERTEX_ID + QUOTE + " = ? AND " + QUOTE + COLUMN_GRAPH_ID
+			+ QUOTE + " = ?" + EOQ;
 
-	public abstract PreparedStatement deleteVertex(int vId, int gId)
-			throws SQLException;
+	public PreparedStatement deleteAttributeValuesOfVertex(int vId, int gId)
+			throws SQLException {
+		PreparedStatement statement = getPreparedStatement(DELETE_VERTEX_ATTRIBUTES);
+		statement.setInt(1, vId);
+		statement.setInt(2, gId);
+		return statement;
+	}
+
+	private static final String DELETE_VERTEX = "DELETE FROM " + QUOTE
+			+ TABLE_VERTEX + QUOTE + " WHERE " + QUOTE + COLUMN_VERTEX_ID
+			+ QUOTE + " = ? AND " + QUOTE + COLUMN_GRAPH_ID + QUOTE + " = ?"
+			+ EOQ;
+
+	public PreparedStatement deleteVertex(int vId, int gId) throws SQLException {
+		PreparedStatement statement = getPreparedStatement(DELETE_VERTEX);
+		statement.setInt(1, vId);
+		statement.setInt(2, gId);
+		return statement;
+	}
 
 	public abstract PreparedStatement selectIncidentEIdsOfVertex(int vId,
 			int gId) throws SQLException;
 
-	// to delete an edge
-	public abstract PreparedStatement deleteAttributeValuesOfEdge(int eId,
-			int gId) throws SQLException;
+	private static final String DELETE_EDGE_ATTRIBUTES = "DELETE FROM " + QUOTE
+			+ TABLE_EDGE_ATTRIBUTE + QUOTE + " WHERE " + QUOTE + COLUMN_EDGE_ID
+			+ QUOTE + " = ? AND " + QUOTE + COLUMN_GRAPH_ID + QUOTE + " = ?"
+			+ EOQ;
 
-	public abstract PreparedStatement deleteIncidencesOfEdge(int eId, int gId)
-			throws SQLException;
+	public PreparedStatement deleteAttributeValuesOfEdge(int eId, int gId)
+			throws SQLException {
+		PreparedStatement statement = getPreparedStatement(DELETE_EDGE_ATTRIBUTES);
+		statement.setInt(1, eId);
+		statement.setInt(2, gId);
+		return statement;
+	}
 
-	public abstract PreparedStatement deleteEdge(int eId, int gId)
-			throws SQLException;
+	private static final String DELETE_INCIDENCES_OF_EDGE = "DELETE FROM "
+			+ QUOTE + TABLE_INCIDENCE + QUOTE + " WHERE " + QUOTE
+			+ COLUMN_EDGE_ID + QUOTE + " = ? AND " + QUOTE + COLUMN_GRAPH_ID
+			+ QUOTE + " = ?" + EOQ;
+
+	public PreparedStatement deleteIncidencesOfEdge(int eId, int gId)
+			throws SQLException {
+		PreparedStatement statement = getPreparedStatement(DELETE_INCIDENCES_OF_EDGE);
+		statement.setInt(1, eId);
+		statement.setInt(2, gId);
+		return statement;
+	}
+
+	private static final String DELETE_EDGE = "DELETE FROM " + QUOTE
+			+ TABLE_EDGE + QUOTE + " WHERE " + QUOTE + COLUMN_EDGE_ID + QUOTE
+			+ " = ? AND " + QUOTE + COLUMN_GRAPH_ID + QUOTE + " = ?" + EOQ;
+
+	public PreparedStatement deleteEdge(int eId, int gId) throws SQLException {
+		PreparedStatement statement = getPreparedStatement(DELETE_EDGE);
+		statement.setInt(1, eId);
+		statement.setInt(2, gId);
+		return statement;
+	}
 
 	// to update a graph
 	public abstract PreparedStatement updateGraphId(int gId, String uid)
@@ -481,7 +790,8 @@ public abstract class SqlStatementList {
 
 	public abstract PreparedStatement dropIndexOnLambdaSeq()
 			throws SQLException; // TODO find better name as it's an index on
-									// table Incidence, modeling LambdaSeq
+
+	// table Incidence, modeling LambdaSeq
 
 	// public abstract PreparedStatement clusterIncidenceTable() throws
 	// SQLException; // TODO Must be PostgreSql specific.
