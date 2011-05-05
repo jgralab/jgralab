@@ -140,11 +140,12 @@ public abstract class Greql2Function {
 	}
 
 	protected final boolean isAnyArgumentNull(JValue[] arguments) {
-		boolean nullFound = false;
 		for (JValue value : arguments) {
-			nullFound = nullFound || value.toObject() == null;
+			if (value.getType() == null) {
+				return true;
+			}
 		}
-		return nullFound;
+		return false;
 	}
 
 	public final String getExpectedParameters() {
