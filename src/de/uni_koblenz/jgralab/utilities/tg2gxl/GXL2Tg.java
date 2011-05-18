@@ -425,6 +425,7 @@ public class GXL2Tg {
 		String content = "";
 		String type = null;
 		boolean updateContent = false;
+		Integer[] multiplicity = null;
 		while (inputReader.hasNext()) {
 			XMLEvent event = inputReader.nextEvent();
 			switch (event.getEventType()) {
@@ -433,9 +434,15 @@ public class GXL2Tg {
 				if (startElement.getName().getLocalPart().equals("attr")) {
 					throw new GraphIOException(
 							"Attributes in Attributes are not yet supported.");
+				} else if (startElement.getName().getLocalPart().equals("tup")) {
+					multiplicity = new Integer[2];
+				} else {
+					updateContent = isCorrectAtributeValue(startElement
+							.getName().getLocalPart());
+					if (multiplicity != null) {
+						content = "";
+					}
 				}
-				updateContent = isCorrectAtributeValue(startElement.getName()
-						.getLocalPart());
 				type = null;
 				break;
 			case XMLStreamConstants.CHARACTERS:
@@ -461,7 +468,8 @@ public class GXL2Tg {
 						} else if (name.getValue().equals("limits")) {
 							// this is the multiplicity of an IncidenceClass
 							setMultiplicities(edgeClassId, vertexClassId,
-									content);
+									multiplicity);
+							multiplicity = null;
 						} else if (name.getValue().equals("isordered")) {
 							// in JGraLab all Incidences are ordered
 						} else {
@@ -475,8 +483,17 @@ public class GXL2Tg {
 					return;
 				} else if (isCorrectAtributeValue(endElement.getName()
 						.getLocalPart())) {
+					if (multiplicity != null) {
+						assert endElement.getName().getLocalPart()
+								.equals("int") : "Multiplicities must be of type int.";
+						assert multiplicity[0] == null
+								|| multiplicity[1] == null : "There must not be more than two multiplicities defined.";
+						multiplicity[multiplicity[0] == null ? 0 : 1] = Integer
+								.parseInt(content);
+					}
 					type = endElement.getName().getLocalPart();
 					updateContent = false;
+				} else if (endElement.getName().getLocalPart().equals("tup")) {
 				} else {
 					throw new GraphIOException("\""
 							+ endElement.getName().getLocalPart()
@@ -487,12 +504,10 @@ public class GXL2Tg {
 	}
 
 	private void setMultiplicities(Attribute edgeClassId,
-			Attribute vertexClassId, String content) {
+			Attribute vertexClassId, Integer[] multiplicity) {
 		IncidenceClass ic = getIncidenceClass(edgeClassId, vertexClassId);
-		String[] multiplicities = content.split("</?int>");
-		ic.set_min(Integer.parseInt(multiplicities[1]));
-		ic.set_max(multiplicities[3].equals("-1") ? Integer.MAX_VALUE : Integer
-				.parseInt(multiplicities[3]));
+		ic.set_min(multiplicity[0]);
+		ic.set_max(multiplicity[1]);
 	}
 
 	private IncidenceClass getIncidenceClass(Attribute edgeClassId,
@@ -525,7 +540,7 @@ public class GXL2Tg {
 				|| value.equals("int") || value.equals("float")
 				|| value.equals("string") || value.equals("enum")
 				|| value.equals("seq") || value.equals("set")
-				|| value.equals("bag") || value.equals("tup");
+				|| value.equals("bag");
 	}
 
 	private void setFieldOfAttributedElementClass(AttributedElementClass aec,
