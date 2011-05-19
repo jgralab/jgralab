@@ -46,7 +46,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -609,7 +609,7 @@ public class GreqlEvaluator {
 	/**
 	 * Holds the greql subqueries that can be called like other greql functions.
 	 */
-	protected Map<String, Greql2> subQueryMap = null;
+	protected LinkedHashMap<String, Greql2> subQueryMap = null;
 
 	/**
 	 * Holds the estimated needed for evaluation time in abstract units
@@ -826,7 +826,7 @@ public class GreqlEvaluator {
 		}
 		knownTypes = new HashMap<String, AttributedElementClass>();
 		variableMap = variables;
-		subQueryMap = new HashMap<String, Greql2>();
+		subQueryMap = new LinkedHashMap<String, Greql2>();
 		this.progressFunction = progressFunction;
 	}
 
@@ -941,29 +941,36 @@ public class GreqlEvaluator {
 					+ "\".", e);
 		}
 		queryGraph = parser.getGraph();
-		weaveInSubQueries(queryGraph);
+		weaveInSubQueries();
 		parseTime = System.currentTimeMillis() - parseStartTime;
 		return true;
 	}
 
-	private void weaveInSubQueries(Greql2 g) {
-		List<FunctionApplication> subQs = new LinkedList<FunctionApplication>();
-		for (FunctionApplication fa : g.getFunctionApplicationVertices()) {
-			if (subQueryMap.containsKey(fa.get_functionId().get_name())) {
-				subQs.add(fa);
-			}
-		}
-		for (FunctionApplication fa : subQs) {
-			TGMerge tgm = new TGMerge(queryGraph, subQueryMap.get(fa
+	private void weaveInSubQueries() {
+		FunctionApplication subqueryCall = findSubQueryCall();
+		while (subqueryCall != null) {
+			TGMerge tgm = new TGMerge(queryGraph, subQueryMap.get(subqueryCall
 					.get_functionId().get_name()));
 			tgm.merge();
-			weaveInSubquery(fa);
+			weaveInSubquery(subqueryCall);
+			subqueryCall = findSubQueryCall();
 		}
+	}
+
+	private FunctionApplication findSubQueryCall() {
+		for (FunctionApplication fa : queryGraph
+				.getFunctionApplicationVertices()) {
+			if (subQueryMap.containsKey(fa.get_functionId().get_name())) {
+				return fa;
+			}
+		}
+		return null;
 	}
 
 	private void weaveInSubquery(FunctionApplication fa) {
 		FunctionId fid = fa.get_functionId();
 		String name = fid.get_name();
+		// System.out.println("Weaving in subquery " + name);
 		Greql2Expression g2exp = null;
 		for (Greql2Expression e : queryGraph.getGreql2ExpressionVertices()) {
 			if ((e.get_queryText() != null) && e.get_queryText().equals(name)) {
@@ -983,7 +990,12 @@ public class GreqlEvaluator {
 			args.add(arg);
 		}
 
-		assert args.size() == boundVars.size();
+		if (args.size() != boundVars.size()) {
+			throw new Greql2Exception("Subquery call to '" + name + "' has "
+					+ args.size()
+					+ " arguments, but the subquery definition has "
+					+ boundVars.size() + " formal parameters!");
+		}
 
 		for (int i = 0; i < boundVars.size(); i++) {
 			Expression arg = args.get(i);
