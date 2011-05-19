@@ -212,7 +212,7 @@ public class GenericTest {
 
 	private boolean doesExceptionTypesEqual(
 			Class<? extends Exception> exceptionClass, Throwable exception) {
-		return exception != null
+		return (exception != null)
 				&& (exception.getClass().equals(exceptionClass) || doesExceptionTypesEqual(
 						exceptionClass, exception.getCause()));
 	}
@@ -277,14 +277,14 @@ public class GenericTest {
 		}
 	}
 
-	protected Graph getTestTree() throws Exception {
+	protected Graph getTestTree() {
 		if (tree == null) {
 			tree = createTestTree();
 		}
 		return tree;
 	}
 
-	protected Graph getCyclicTestGraph() throws Exception {
+	protected Graph getCyclicTestGraph() {
 		if (cyclicGraph == null) {
 			cyclicGraph = createCyclicTestGraph();
 		}
@@ -311,7 +311,7 @@ public class GenericTest {
 		return testGraph;
 	}
 
-	protected Graph createCyclicTestGraph() throws Exception {
+	protected Graph createCyclicTestGraph() {
 		MinimalSchema s = MinimalSchema.instance();
 		MinimalGraph g = s.createMinimalGraph(10, 10);
 		Node[] v = new Node[10];
@@ -324,7 +324,7 @@ public class GenericTest {
 		return g;
 	}
 
-	protected Graph createTestTree() throws Exception {
+	protected Graph createTestTree() {
 		// create a binary tree where v[0] is the root
 		MinimalSchema s = MinimalSchema.instance();
 		MinimalGraph g = s.createMinimalGraph(10, 10);
@@ -335,8 +335,8 @@ public class GenericTest {
 		for (int i = 0; i < (v.length - 1) / 2; i++) {
 			g.createLink(v[i], v[i * 2 + 1]);
 			g.createLink(v[i], v[i * 2 + 2]);
-			System.out.println("[" + i + ", " + (i * 2 + 1) + ", "
-					+ (i * 2 + 2) + "]");
+			// System.out.println("[" + i + ", " + (i * 2 + 1) + ", "
+			// + (i * 2 + 2) + "]");
 		}
 		return g;
 	}
