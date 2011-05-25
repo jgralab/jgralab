@@ -1,5 +1,7 @@
 package de.uni_koblenz.jgralab.eca.events;
 
+import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.eca.ECARule;
 import de.uni_koblenz.jgralab.eca.EventManager;
 
 public class CreateVertexEvent extends Event {
@@ -13,4 +15,13 @@ public class CreateVertexEvent extends Event {
 		}
 	}
 
+	
+	public void fire(Class<? extends Vertex> vertexClass){
+		//Event must only have a type
+		for(ECARule rule : rules){
+			if(this.getType().equals(vertexClass)){
+				rule.trigger(null);		
+			}
+		}
+	}
 }

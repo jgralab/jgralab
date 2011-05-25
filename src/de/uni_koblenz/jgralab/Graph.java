@@ -40,6 +40,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
+import de.uni_koblenz.jgralab.eca.EventManager;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
@@ -828,4 +829,6 @@ public interface Graph extends AttributedElement {
 	 *         <code>GraphStructureChangedListener</code>s
 	 */
 	public int getGraphStructureChangedListenerCount();
+	
+	public EventManager getEventManager();
 }

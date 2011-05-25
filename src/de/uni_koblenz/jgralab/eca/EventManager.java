@@ -3,7 +3,10 @@ package de.uni_koblenz.jgralab.eca;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uni_koblenz.jgralab.AttributedElement;
+import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.GraphElement;
+import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.eca.events.*;
 
 public class EventManager {
@@ -50,9 +53,9 @@ public class EventManager {
 
 	}
 	
-	public void fireBeforeCreateVertexEvents(GraphElement e){
+	public void fireBeforeCreateVertexEvents(Class<? extends Vertex> vertexClass){
 		for(CreateVertexEvent ev : beforeCreateVertexEvents){
-			ev.fire(e);
+			ev.fire(vertexClass);
 		}
 	}
 	public void fireAfterCreateVertexEvents(GraphElement e){
@@ -65,15 +68,15 @@ public class EventManager {
 			ev.fire(e);
 		}
 	}
-	public void fireAfterDeleteVertexEvents(GraphElement e){
+	public void fireAfterDeleteVertexEvents(Class <? extends AttributedElement> atClass){
 		for(DeleteVertexEvent ev : afterDeleteVertexEvents){
-			ev.fire(e);
+			ev.fire(atClass);
 		}
 	}
 	
-	public void fireBeforeCreateEdgeEvents(GraphElement e){
+	public void fireBeforeCreateEdgeEvents(Class<? extends Edge> edgeClass){
 		for(CreateEdgeEvent ev : beforeCreateEdgeEvents){
-			ev.fire(e);
+			ev.fire(edgeClass);
 		}
 	}
 	
@@ -89,9 +92,9 @@ public class EventManager {
 		}
 	}
 	
-	public void fireAfterDeleteEdgeEvents(GraphElement e){
+	public void fireAfterDeleteEdgeEvents(Class <? extends AttributedElement> atClass){
 		for(DeleteEdgeEvent ev : afterDeleteEdgeEvents){
-			ev.fire(e);
+			ev.fire(atClass);
 		}
 	}
 	
