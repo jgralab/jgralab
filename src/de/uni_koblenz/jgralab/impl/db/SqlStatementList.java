@@ -492,36 +492,155 @@ public abstract class SqlStatementList {
 	}
 
 	// to preload schema information when opening a graph
-	public abstract PreparedStatement selectSchemaId(String packagePrefix,
-			String name) throws SQLException;
+	private static final String SELECT_SCHEMA_ID = "SELECT " + QUOTE
+			+ COLUMN_SCHEMA_ID + QUOTE + " FROM " + QUOTE + TABLE_SCHEMA
+			+ QUOTE + " WHERE " + QUOTE + COLUMN_SCHEMA_PACKAGE_PREFIX + QUOTE
+			+ " = ? AND " + QUOTE + COLUMN_SCHEMA_NAME + QUOTE + " = ?" + EOQ;
 
-	public abstract PreparedStatement selectSchemaNameForGraph(String uid)
-			throws SQLException;
+	public PreparedStatement selectSchemaId(String packagePrefix, String name)
+			throws SQLException {
+		PreparedStatement statement = getPreparedStatement(SELECT_SCHEMA_ID);
+		statement.setString(1, packagePrefix);
+		statement.setString(2, name);
+		return statement;
+	}
 
-	public abstract PreparedStatement selectSchemaDefinition(
-			String packagePrefix, String schemaName) throws SQLException;
+	private static final String SELECT_SCHEMA_NAME = "SELECT " + QUOTE
+			+ COLUMN_SCHEMA_PACKAGE_PREFIX + QUOTE + ", " + QUOTE
+			+ COLUMN_SCHEMA_NAME + QUOTE + " FROM " + QUOTE + TABLE_SCHEMA
+			+ QUOTE + " WHERE " + QUOTE + COLUMN_SCHEMA_ID + QUOTE + " = ("
+			+ "SELECT " + QUOTE + COLUMN_SCHEMA_ID + QUOTE + " FROM " + QUOTE
+			+ TABLE_TYPE + QUOTE + " WHERE " + QUOTE + COLUMN_TYPE_ID + QUOTE
+			+ " = (" + "SELECT " + QUOTE + COLUMN_TYPE_ID + QUOTE + " FROM "
+			+ QUOTE + TABLE_GRAPH + QUOTE + " WHERE " + QUOTE
+			+ COLUMN_GRAPH_UID + QUOTE + " = ?" + ")" + ")" + EOQ;
 
-	public abstract PreparedStatement selectSchemaDefinitionForGraph(String uid)
-			throws SQLException;
+	public PreparedStatement selectSchemaNameForGraph(String uid)
+			throws SQLException {
+		PreparedStatement statement = getPreparedStatement(SELECT_SCHEMA_NAME);
+		statement.setString(1, uid);
+		return statement;
+	}
 
-	public abstract PreparedStatement selectTypesOfSchema(String packagePrefix,
-			String name) throws SQLException;
+	private static final String SELECT_SCHEMA_DEFINITION_BY_NAME = "SELECT "
+			+ QUOTE + COLUMN_SCHEMA_TG + QUOTE + " FROM " + QUOTE
+			+ TABLE_SCHEMA + QUOTE + " WHERE " + QUOTE
+			+ COLUMN_SCHEMA_PACKAGE_PREFIX + QUOTE + " = ? AND "
+			+ COLUMN_SCHEMA_NAME + " = ?;" + EOQ;
 
-	public abstract PreparedStatement selectAttributesOfSchema(
-			String packagePrefix, String name) throws SQLException;
+	public PreparedStatement selectSchemaDefinition(String packagePrefix,
+			String schemaName) throws SQLException {
+		PreparedStatement statement = connection
+				.prepareStatement(SELECT_SCHEMA_DEFINITION_BY_NAME);
+		statement.setString(1, packagePrefix);
+		statement.setString(2, schemaName);
+		return statement;
+	}
+
+	private static final String SELECT_SCHEMA_DEFINITION_FOR_GRAPH = "SELECT "
+			+ QUOTE + COLUMN_SCHEMA_TG + QUOTE + " FROM " + QUOTE
+			+ TABLE_SCHEMA + QUOTE + " WHERE " + QUOTE + COLUMN_SCHEMA_ID
+			+ QUOTE + " = (" + "SELECT " + QUOTE + COLUMN_SCHEMA_ID + QUOTE
+			+ " FROM " + QUOTE + TABLE_TYPE + QUOTE + " WHERE " + QUOTE
+			+ COLUMN_TYPE_ID + QUOTE + " = (" + "SELECT " + QUOTE
+			+ COLUMN_TYPE_ID + QUOTE + " FROM " + QUOTE + TABLE_GRAPH + QUOTE
+			+ " WHERE " + QUOTE + COLUMN_GRAPH_UID + QUOTE + " = ?" + ")" + ")"
+			+ EOQ;
+
+	public PreparedStatement selectSchemaDefinitionForGraph(String uid)
+			throws SQLException {
+		PreparedStatement statement = getPreparedStatement(SELECT_SCHEMA_DEFINITION_FOR_GRAPH);
+		statement.setString(1, uid);
+		return statement;
+	}
+
+	private static final String SELECT_TYPES = "SELECT " + QUOTE
+			+ COLUMN_TYPE_QNAME + QUOTE + ", " + QUOTE + COLUMN_TYPE_ID + QUOTE
+			+ " FROM " + QUOTE + TABLE_TYPE + QUOTE + " WHERE " + QUOTE
+			+ COLUMN_SCHEMA_ID + QUOTE + " = " + "(SELECT " + QUOTE
+			+ COLUMN_SCHEMA_ID + QUOTE + " FROM " + QUOTE + TABLE_SCHEMA
+			+ QUOTE + " WHERE " + QUOTE + COLUMN_SCHEMA_PACKAGE_PREFIX + QUOTE
+			+ " = ? AND " + QUOTE + COLUMN_SCHEMA_NAME + QUOTE + " = ?)" + EOQ;
+
+	public PreparedStatement selectTypesOfSchema(String packagePrefix,
+			String name) throws SQLException {
+		PreparedStatement statement = getPreparedStatement(SELECT_TYPES);
+		statement.setString(1, packagePrefix);
+		statement.setString(2, name);
+		return statement;
+	}
+
+	private static final String SELECT_ATTRIBUTES = "SELECT " + QUOTE
+			+ COLUMN_ATTRIBUTE_NAME + QUOTE + ", " + QUOTE
+			+ COLUMN_ATTRIBUTE_ID + QUOTE + " FROM " + QUOTE + TABLE_ATTRIBUTE
+			+ QUOTE + " WHERE " + QUOTE + COLUMN_SCHEMA_ID + QUOTE + " = "
+			+ "(SELECT " + QUOTE + COLUMN_SCHEMA_ID + QUOTE + " FROM " + QUOTE
+			+ TABLE_SCHEMA + QUOTE + " WHERE " + QUOTE
+			+ COLUMN_SCHEMA_PACKAGE_PREFIX + QUOTE + " = ? AND " + QUOTE
+			+ COLUMN_SCHEMA_NAME + QUOTE + " = ?)" + EOQ;
+
+	public PreparedStatement selectAttributesOfSchema(String packagePrefix,
+			String name) throws SQLException {
+		PreparedStatement statement = getPreparedStatement(SELECT_ATTRIBUTES);
+		statement.setString(1, packagePrefix);
+		statement.setString(2, name);
+		return statement;
+	}
 
 	// to open a graph
-	public abstract PreparedStatement selectGraph(String id)
-			throws SQLException;
+	private static final String SELECT_GRAPH = "SELECT " + QUOTE
+			+ COLUMN_GRAPH_ID + QUOTE + ", " + QUOTE + COLUMN_GRAPH_VERSION
+			+ QUOTE + ", " + QUOTE + COLUMN_GRAPH_VSEQ_VERSION + QUOTE + ", "
+			+ QUOTE + COLUMN_GRAPH_ESEQ_VERSION + QUOTE + " FROM " + QUOTE
+			+ TABLE_GRAPH + QUOTE + " WHERE " + QUOTE + COLUMN_GRAPH_UID
+			+ QUOTE + " = ?" + EOQ;
 
-	public abstract PreparedStatement selectVerticesOfGraph(int gId)
-			throws SQLException;
+	public PreparedStatement selectGraph(String id) throws SQLException {
+		PreparedStatement statement = getPreparedStatement(SELECT_GRAPH);
+		statement.setString(1, id);
+		return statement;
+	}
 
-	public abstract PreparedStatement selectEdgesOfGraph(int gId)
-			throws SQLException;
+	private static final String SELECT_VERTICES = "SELECT " + QUOTE
+			+ COLUMN_VERTEX_ID + QUOTE + ", " + QUOTE + COLUMN_SEQUENCE_NUMBER
+			+ QUOTE + " FROM " + QUOTE + TABLE_VERTEX + QUOTE + " WHERE "
+			+ QUOTE + COLUMN_GRAPH_ID + QUOTE + " = ? ORDER BY " + QUOTE
+			+ COLUMN_SEQUENCE_NUMBER + QUOTE + " ASC" + EOQ;
 
-	public abstract PreparedStatement selectAttributeValuesOfGraph(int gId)
-			throws SQLException;
+	public PreparedStatement selectVerticesOfGraph(int gId) throws SQLException {
+		PreparedStatement statement = getPreparedStatement(SELECT_VERTICES);
+		statement.setInt(1, gId);
+		return statement;
+	}
+
+	private static final String SELECT_EDGES = "SELECT " + QUOTE
+			+ COLUMN_EDGE_ID + QUOTE + ", " + QUOTE + COLUMN_SEQUENCE_NUMBER
+			+ QUOTE + "  FROM " + QUOTE + TABLE_EDGE + QUOTE + " WHERE "
+			+ QUOTE + COLUMN_GRAPH_ID + QUOTE + " = ? ORDER BY " + QUOTE
+			+ COLUMN_SEQUENCE_NUMBER + QUOTE + " ASC" + EOQ;
+
+	public PreparedStatement selectEdgesOfGraph(int gId) throws SQLException {
+		PreparedStatement statement = getPreparedStatement(SELECT_EDGES);
+		statement.setInt(1, gId);
+		return statement;
+	}
+
+	private static final String SELECT_ATTRIBUTE_VALUES_OF_GRAPH = "SELECT "
+			+ QUOTE + COLUMN_ATTRIBUTE_NAME + QUOTE + ", " + QUOTE
+			+ COLUMN_ATTRIBUTE_VALUE + QUOTE + " FROM " + QUOTE
+			+ TABLE_GRAPH_ATTRIBUTE + QUOTE + " JOIN " + QUOTE
+			+ TABLE_ATTRIBUTE + QUOTE + " ON " + QUOTE + TABLE_GRAPH_ATTRIBUTE
+			+ QUOTE + "." + QUOTE + COLUMN_ATTRIBUTE_ID + QUOTE + " = " + QUOTE
+			+ TABLE_ATTRIBUTE + QUOTE + "." + QUOTE + COLUMN_ATTRIBUTE_ID
+			+ QUOTE + " WHERE " + QUOTE + COLUMN_GRAPH_ID + QUOTE + " = ?"
+			+ EOQ;
+
+	public PreparedStatement selectAttributeValuesOfGraph(int gId)
+			throws SQLException {
+		PreparedStatement statement = getPreparedStatement(SELECT_ATTRIBUTE_VALUES_OF_GRAPH);
+		statement.setInt(1, gId);
+		return statement;
+	}
 
 	private static final String COUNT_VERTICES = "SELECT COUNT (*) FROM "
 			+ QUOTE + TABLE_VERTEX + QUOTE + " WHERE " + QUOTE
@@ -544,18 +663,89 @@ public abstract class SqlStatementList {
 	}
 
 	// to open a vertex
-	public abstract PreparedStatement selectVertexWithIncidences(int vId,
-			int gId) throws SQLException;
+	private static final String SELECT_VERTEX_WITH_INCIDENCES = "SELECT "
+			+ QUOTE + COLUMN_TYPE_ID + "\", " + QUOTE
+			+ COLUMN_VERTEX_LAMBDA_SEQ_VERSION + QUOTE + ", " + QUOTE
+			+ TABLE_VERTEX + QUOTE + "." + QUOTE + COLUMN_SEQUENCE_NUMBER
+			+ QUOTE + ", " + QUOTE + TABLE_INCIDENCE + QUOTE + "." + QUOTE
+			+ COLUMN_SEQUENCE_NUMBER + QUOTE + ", " + QUOTE
+			+ COLUMN_INCIDENCE_DIRECTION + QUOTE + ", " + QUOTE
+			+ COLUMN_EDGE_ID + QUOTE + " FROM " + QUOTE + TABLE_VERTEX + QUOTE
+			+ " LEFT OUTER JOIN " + QUOTE + TABLE_INCIDENCE + QUOTE + " ON ( "
+			+ QUOTE + TABLE_VERTEX + QUOTE + "." + QUOTE + COLUMN_VERTEX_ID
+			+ QUOTE + " = " + QUOTE + TABLE_INCIDENCE + QUOTE + "." + QUOTE
+			+ COLUMN_VERTEX_ID + QUOTE + " AND " + QUOTE + TABLE_VERTEX + QUOTE
+			+ "." + QUOTE + COLUMN_GRAPH_ID + QUOTE + " = " + QUOTE
+			+ TABLE_INCIDENCE + QUOTE + "." + QUOTE + COLUMN_GRAPH_ID + QUOTE
+			+ " )" + "WHERE " + QUOTE + TABLE_VERTEX + QUOTE + "." + QUOTE
+			+ COLUMN_VERTEX_ID + QUOTE + " = ? AND " + QUOTE + TABLE_VERTEX
+			+ QUOTE + "." + QUOTE + COLUMN_GRAPH_ID + QUOTE + " = ?"
+			+ "ORDER BY " + QUOTE + TABLE_INCIDENCE + QUOTE + "." + QUOTE
+			+ COLUMN_SEQUENCE_NUMBER + QUOTE + " ASC" + EOQ;
 
-	public abstract PreparedStatement selectAttributeValuesOfVertex(int vId,
-			int gId) throws SQLException;
+	public PreparedStatement selectVertexWithIncidences(int vId, int gId)
+			throws SQLException {
+		PreparedStatement statement = getPreparedStatement(SELECT_VERTEX_WITH_INCIDENCES);
+		statement.setInt(1, vId);
+		statement.setInt(2, gId);
+		return statement;
+	}
+
+	private static final String SELECT_ATTRIBUTE_VALUES_OF_VERTEX = "SELECT "
+			+ QUOTE + COLUMN_ATTRIBUTE_ID + QUOTE + ", " + QUOTE
+			+ COLUMN_ATTRIBUTE_VALUE + QUOTE + " FROM " + QUOTE
+			+ TABLE_VERTEX_ATTRIBUTE + QUOTE + " WHERE " + QUOTE
+			+ COLUMN_VERTEX_ID + QUOTE + " = ? AND " + QUOTE + COLUMN_GRAPH_ID
+			+ QUOTE + " = ?" + EOQ;
+
+	public PreparedStatement selectAttributeValuesOfVertex(int vId, int gId)
+			throws SQLException {
+		PreparedStatement statement = getPreparedStatement(SELECT_ATTRIBUTE_VALUES_OF_VERTEX);
+		statement.setInt(1, vId);
+		statement.setInt(2, gId);
+		return statement;
+	}
 
 	// to open an edge
-	public abstract PreparedStatement selectEdgeWithIncidences(int eId, int gId)
-			throws SQLException;
+	private static final String SELECT_EDGE_WITH_INCIDENCES = "SELECT " + QUOTE
+			+ COLUMN_TYPE_ID + QUOTE + ", " + QUOTE + TABLE_EDGE + QUOTE + "."
+			+ QUOTE + COLUMN_SEQUENCE_NUMBER + QUOTE + ", " + QUOTE
+			+ COLUMN_INCIDENCE_DIRECTION + QUOTE + ", " + QUOTE
+			+ COLUMN_VERTEX_ID + QUOTE + ", " + QUOTE + TABLE_INCIDENCE + QUOTE
+			+ "." + QUOTE + COLUMN_SEQUENCE_NUMBER + QUOTE + " FROM " + QUOTE
+			+ TABLE_EDGE + QUOTE + " INNER JOIN " + QUOTE + TABLE_INCIDENCE
+			+ QUOTE + " ON ( " + QUOTE + TABLE_EDGE + QUOTE + "." + QUOTE
+			+ COLUMN_EDGE_ID + QUOTE + " = " + QUOTE + TABLE_INCIDENCE + QUOTE
+			+ "." + QUOTE + COLUMN_EDGE_ID + QUOTE + " AND " + QUOTE
+			+ TABLE_EDGE + QUOTE + "." + QUOTE + COLUMN_GRAPH_ID + QUOTE
+			+ " = " + QUOTE + TABLE_INCIDENCE + QUOTE + "." + QUOTE
+			+ COLUMN_GRAPH_ID + QUOTE + " )" + "WHERE " + QUOTE + TABLE_EDGE
+			+ QUOTE + "." + QUOTE + COLUMN_EDGE_ID + QUOTE + " = ? AND "
+			+ QUOTE + TABLE_EDGE + QUOTE + "." + QUOTE + COLUMN_GRAPH_ID
+			+ QUOTE + " = ?" + EOQ;
 
-	public abstract PreparedStatement selectAttributeValuesOfEdge(int eId,
-			int gId) throws SQLException;
+	public PreparedStatement selectEdgeWithIncidences(int eId, int gId)
+			throws SQLException {
+		PreparedStatement statement = getPreparedStatement(SELECT_EDGE_WITH_INCIDENCES);
+		statement.setInt(1, eId);
+		statement.setInt(2, gId);
+		return statement;
+	}
+
+	private static final String SELECT_ATTRIBUTE_VALUES_OF_EDGE = "SELECT "
+			+ QUOTE + COLUMN_ATTRIBUTE_ID + QUOTE + ", " + QUOTE
+			+ COLUMN_ATTRIBUTE_VALUE + QUOTE + " FROM " + QUOTE
+			+ TABLE_EDGE_ATTRIBUTE + QUOTE + " WHERE " + QUOTE + COLUMN_EDGE_ID
+			+ QUOTE + " = ? AND " + QUOTE + COLUMN_GRAPH_ID + QUOTE + " = ?"
+			+ EOQ;
+
+	public PreparedStatement selectAttributeValuesOfEdge(int eId, int gId)
+			throws SQLException {
+		PreparedStatement statement = getPreparedStatement(SELECT_ATTRIBUTE_VALUES_OF_EDGE);
+		statement.setInt(1, eId);
+		statement.setInt(2, gId);
+		return statement;
+	}
 
 	// to delete a graph
 	private static final String DELETE_GRAPH = "DELETE FROM " + QUOTE
@@ -666,8 +856,32 @@ public abstract class SqlStatementList {
 		return statement;
 	}
 
-	public abstract PreparedStatement selectIncidentEIdsOfVertex(int vId,
-			int gId) throws SQLException;
+	private static final String SELECT_ID_OF_INCIDENT_EDGES_OF_VERTEX = "SELECT "
+			+ QUOTE
+			+ COLUMN_EDGE_ID
+			+ QUOTE
+			+ " FROM "
+			+ QUOTE
+			+ TABLE_INCIDENCE
+			+ QUOTE
+			+ " WHERE "
+			+ QUOTE
+			+ COLUMN_VERTEX_ID
+			+ QUOTE
+			+ " = ? AND "
+			+ QUOTE
+			+ COLUMN_GRAPH_ID
+			+ QUOTE
+			+ " = ?"
+			+ EOQ;
+
+	public PreparedStatement selectIncidentEIdsOfVertex(int vId, int gId)
+			throws SQLException {
+		PreparedStatement statement = getPreparedStatement(SELECT_ID_OF_INCIDENT_EDGES_OF_VERTEX);
+		statement.setInt(1, vId);
+		statement.setInt(2, gId);
+		return statement;
+	}
 
 	private static final String DELETE_EDGE_ATTRIBUTES = "DELETE FROM " + QUOTE
 			+ TABLE_EDGE_ATTRIBUTE + QUOTE + " WHERE " + QUOTE + COLUMN_EDGE_ID
@@ -802,7 +1016,13 @@ public abstract class SqlStatementList {
 	// public abstract PreparedStatement createStoredProcedureToInsertVertex()
 	// throws SQLException;
 
-	public abstract PreparedStatement selectIdOfGraphs() throws SQLException;
+	private static final String SELECT_ID_OF_GRAPHS = "SELECT " + QUOTE
+			+ COLUMN_GRAPH_UID + QUOTE + " FROM " + QUOTE + TABLE_GRAPH + QUOTE
+			+ EOQ;
+
+	public PreparedStatement selectIdOfGraphs() throws SQLException {
+		return getPreparedStatement(SELECT_ID_OF_GRAPHS);
+	}
 
 	public abstract PreparedStatement clearAllTables() throws SQLException;
 }
