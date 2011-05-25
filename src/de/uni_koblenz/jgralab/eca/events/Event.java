@@ -3,12 +3,13 @@ package de.uni_koblenz.jgralab.eca.events;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.eca.ECARule;
 import de.uni_koblenz.jgralab.eca.EventManager;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.schema.GraphElementClass;
+
 
 public abstract class Event {
 
@@ -23,7 +24,7 @@ public abstract class Event {
 	}
 		
 	private String contextExpression;
-	private GraphElementClass type;
+	private Class<? extends AttributedElement> type;
 	private Context context;
 	
 	private enum Context{
@@ -31,13 +32,31 @@ public abstract class Event {
 		EXPRESSION
 	}
 	
-	
+	//constructor summary
+	/*
 	public Event(EventManager manager, EventTime time){
 		this.manager = manager;
 		this.time = time;
 		this.rules = new ArrayList<ECARule>();
+	}*/
+	
+	public Event(EventManager manager, EventTime time, Class <? extends AttributedElement> type){
+		this.manager = manager;
+		this.time = time;
+		this.rules = new ArrayList<ECARule>();
+		this.type = type;
+		this.context = Context.TYPE;
 	}
 	
+	public Event(EventManager manager, EventTime time, String contExpr){
+		this.manager = manager;
+		this.time = time;
+		this.rules = new ArrayList<ECARule>();
+		this.contextExpression = contExpr;
+		this.context = Context.EXPRESSION;
+	}
+	
+	//methods
 	public void fire(GraphElement element){
 		for(ECARule rule : rules){
 			if(this.checkContext(element)){
@@ -78,7 +97,7 @@ public abstract class Event {
 	public String getContextExpression() {
 		return contextExpression;
 	}
-	public GraphElementClass getType() {
+	public Class <? extends AttributedElement> getType() {
 		return type;
 	}
 	public Context getContext() {

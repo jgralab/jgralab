@@ -130,7 +130,6 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 		try {
 			g.getEventManager().fireBeforeCreateEdgeEvents(edgeClass);
 			Edge e = edgeMap.get(edgeClass).newInstance(id, g, alpha, omega);
-			g.getEventManager().fireAfterCreateEdgeEvents(e);
 			return e;
 		} catch (Exception ex) {
 			if (ex.getCause() instanceof GraphException) {
@@ -168,7 +167,6 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 		try {
 			g.getEventManager().fireBeforeCreateVertexEvents(vertexClass);
 			Vertex v = vertexMap.get(vertexClass).newInstance(id, g);
-			g.getEventManager().fireAfterCreateVertexEvents(v);
 			return v;
 		} catch (Exception ex) {
 			if (ex.getCause() instanceof GraphException) {

@@ -6,8 +6,16 @@ import de.uni_koblenz.jgralab.eca.EventManager;
 
 public class DeleteEdgeEvent extends Event {
 
-	public DeleteEdgeEvent(EventManager manager,EventTime time) {
-		super(manager,time);
+	public DeleteEdgeEvent(EventManager manager,EventTime time, Class <? extends AttributedElement> type) {
+		super(manager,time, type);
+		if(time.equals(EventTime.BEFORE)){
+			manager.getBeforeDeleteEdgeEvents().add(this);
+		}else{
+			manager.getAfterDeleteEdgeEvents().add(this);
+		}
+	}
+	public DeleteEdgeEvent(EventManager manager,EventTime time, String contextExpr) {
+		super(manager,time, contextExpr);
 		if(time.equals(EventTime.BEFORE)){
 			manager.getBeforeDeleteEdgeEvents().add(this);
 		}else{
