@@ -210,8 +210,6 @@ public class JValueImpl implements JValue {
 	 * constructs a new invalid JValue.
 	 */
 	public JValueImpl() {
-		value = null;
-		browsingInfo = null;
 	}
 
 	/*
@@ -324,6 +322,9 @@ public class JValueImpl implements JValue {
 	 * called type)
 	 */
 	public JValueImpl(AttributedElementClass type) {
+		if (type == null) {
+			return;
+		}
 		this.type = JValueType.ATTRELEMCLASS;
 		this.value = type;
 		browsingInfo = null;
@@ -417,6 +418,9 @@ public class JValueImpl implements JValue {
 	 * constructs a new JValue with encapsulates a TrivalentBoolean value
 	 */
 	public JValueImpl(Boolean b) {
+		if (b == null) {
+			return;
+		}
 		this.type = JValueType.BOOL;
 		this.value = b;
 		browsingInfo = null;
@@ -490,6 +494,9 @@ public class JValueImpl implements JValue {
 	 * constructs a new JValue with encapsulates a Integer or int value
 	 */
 	public JValueImpl(Integer i) {
+		if (i == null) {
+			return;
+		}
 		this.type = JValueType.INT;
 		this.value = i;
 		browsingInfo = null;
@@ -552,6 +559,9 @@ public class JValueImpl implements JValue {
 	 * creates a new JValue which encapsulates the given Double
 	 */
 	public JValueImpl(Double d) {
+		if (d == null) {
+			return;
+		}
 		this.type = JValueType.DOUBLE;
 		this.value = d;
 		browsingInfo = null;
@@ -599,6 +609,9 @@ public class JValueImpl implements JValue {
 	 * creates a new JValue which encapsulates the given String
 	 */
 	public JValueImpl(String s) {
+		if (s == null) {
+			return;
+		}
 		this.type = JValueType.STRING;
 		this.value = s;
 		browsingInfo = null;
@@ -641,6 +654,9 @@ public class JValueImpl implements JValue {
 	 * creates a new JValue which encapsulates the given String
 	 */
 	public JValueImpl(Enum<?> e) {
+		if (e == null) {
+			return;
+		}
 		this.type = JValueType.ENUMVALUE;
 		this.value = e;
 		browsingInfo = null;
@@ -704,6 +720,9 @@ public class JValueImpl implements JValue {
 	 * creates a new JValue which encapsulates the given vertex
 	 */
 	public JValueImpl(Vertex vertex) {
+		if (vertex == null) {
+			return;
+		}
 		this.type = JValueType.VERTEX;
 		this.value = vertex;
 		browsingInfo = vertex;
@@ -744,6 +763,9 @@ public class JValueImpl implements JValue {
 	 * creates a new JValue which encapsulates the given edge
 	 */
 	public JValueImpl(Edge edge) {
+		if (edge == null) {
+			return;
+		}
 		this.type = JValueType.EDGE;
 		this.value = edge;
 		browsingInfo = edge;
@@ -761,6 +783,9 @@ public class JValueImpl implements JValue {
 	 * creates a new JValue which encapsulates the given graph
 	 */
 	public JValueImpl(Graph graph) {
+		if (graph == null) {
+			return;
+		}
 		this.type = JValueType.GRAPH;
 		this.value = graph;
 		browsingInfo = null;
@@ -801,6 +826,9 @@ public class JValueImpl implements JValue {
 	 * creates a new JValue which encapsulates the given NFA
 	 */
 	public JValueImpl(FiniteAutomaton nfa) {
+		if (nfa == null) {
+			return;
+		}
 		this.type = JValueType.AUTOMATON;
 		this.value = nfa;
 		browsingInfo = null;
@@ -833,7 +861,9 @@ public class JValueImpl implements JValue {
 	 * creates a new JValue which encapsulates the given Object
 	 */
 	public JValueImpl(Object o) {
-		if (o instanceof Edge) {
+		if (o == null) {
+			return;
+		} else if (o instanceof Edge) {
 			this.type = JValueType.EDGE;
 		} else if (o instanceof Vertex) {
 			this.type = JValueType.VERTEX;
@@ -981,6 +1011,9 @@ public class JValueImpl implements JValue {
 	 * constructs a new invalid JValue. Is only called in subclasses
 	 */
 	public JValueImpl(AbstractGraphMarker<?> t) {
+		if (t == null) {
+			return;
+		}
 		type = JValueType.MARKER;
 		value = t;
 		browsingInfo = null;
