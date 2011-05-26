@@ -863,15 +863,8 @@ public class JValueImpl implements JValue {
 	public JValueImpl(Object o) {
 		if (o == null) {
 			return;
-		} else if (o instanceof Edge) {
-			this.type = JValueType.EDGE;
-		} else if (o instanceof Vertex) {
-			this.type = JValueType.VERTEX;
-		} else if (o instanceof Graph) {
-			this.type = JValueType.GRAPH;
-		} else {
-			this.type = JValueType.OBJECT;
 		}
+		this.type = JValueType.OBJECT;
 		this.value = o;
 		browsingInfo = null;
 	}
@@ -1205,6 +1198,9 @@ public class JValueImpl implements JValue {
 		}
 		if (o instanceof Graph) {
 			return new JValueImpl((Graph) o);
+		}
+		if (o instanceof AttributedElementClass) {
+			return new JValueImpl((AttributedElementClass) o);
 		}
 		if (o instanceof Set) {
 			JValueSet retVal = new JValueSet();
