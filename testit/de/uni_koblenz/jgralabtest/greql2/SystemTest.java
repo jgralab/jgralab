@@ -142,6 +142,7 @@ public class SystemTest extends GenericTest {
 				+ "outDegree{connections.Way}(c) as '" + USAGE_COUNT + "', "
 				+ "edgesFrom(c) as '" + USAGES + "' end";
 		JValueTable result = evalTestQuery(queryString).toJValueTable();
+		System.out.println(result);
 		JValueBag data = result.getData().toJValueBag();
 
 		checkHeader(result, VERTEX, IDENTIFIER, USAGE_COUNT, USAGES);
@@ -153,9 +154,9 @@ public class SystemTest extends GenericTest {
 			int usage_count = tuple.get(2).toInteger().intValue();
 			JValueCollection usages = tuple.get(3).toCollection();
 
+			int wayOutDegree = vertex.getDegree(Way.class, EdgeDirection.OUT);
 			assertEquals(vertex.getId(), identifier);
-			assertEquals(vertex.getDegree(Way.class, EdgeDirection.OUT),
-					usage_count);
+			assertEquals(wayOutDegree, usage_count);
 
 			for (Edge edge : vertex.incidences(Way.class, EdgeDirection.OUT)) {
 				assertTrue(usages.remove(new JValueImpl(edge)));
