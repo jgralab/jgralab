@@ -40,7 +40,7 @@ import de.uni_koblenz.jgralab.impl.db.GraphDatabase;
 import de.uni_koblenz.jgralab.impl.db.GraphDatabaseException;
 import de.uni_koblenz.jgralabtest.schemas.jniclient.JniTestGraph;
 import de.uni_koblenz.jgralabtest.schemas.jniclient.JniTestSchema;
-import de.uni_koblenz.jgralabtest.schemas.jniclient.Node;
+import de.uni_koblenz.jgralabtest.schemas.jniclient.SimpleNode;
 
 public class GraphDbTest {
 
@@ -67,7 +67,6 @@ public class GraphDbTest {
 				gdb.insertSchema(JniTestSchema.instance());
 			}
 		} catch (GraphDatabaseException e) {
-			e.printStackTrace();
 			gdb.applyDbSchema();
 			// if (!gdb.contains(JniTestSchema.instance())) {
 			gdb.insertSchema(JniTestSchema.instance());
@@ -107,7 +106,11 @@ public class GraphDbTest {
 		System.out.println("Creating " + NV + " vertices...");
 		long s0 = System.currentTimeMillis();
 		for (int i = 1; i <= NV; ++i) {
-			g.createNode();
+			g.createSimpleNode();
+			// SimpleNode n = g.createSimpleNode();
+			// n.set_b(Math.random() < 0.5);
+			// n.set_i((int) (Math.random() * 1000) - 500);
+			// n.set_s("Node " + n.get_i());
 			if (i % 1000 == 0) {
 				System.out.print(".");
 			}
@@ -119,9 +122,11 @@ public class GraphDbTest {
 		System.out.println("Creating " + NE + " edges...");
 		s0 = System.currentTimeMillis();
 		for (int i = 1; i <= NE; ++i) {
-			Node n1 = (Node) g.getVertex((int) (Math.random() * NV) + 1);
-			Node n2 = (Node) g.getVertex((int) (Math.random() * NV) + 1);
-			g.createLink(n1, n2);
+			SimpleNode n1 = (SimpleNode) g
+					.getVertex((int) (Math.random() * NV) + 1);
+			SimpleNode n2 = (SimpleNode) g
+					.getVertex((int) (Math.random() * NV) + 1);
+			g.createSimpleEdge(n1, n2);
 			if (i % 1000 == 0) {
 				System.out.print(".");
 			}

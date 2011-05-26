@@ -108,10 +108,12 @@ public class GreqlEvaluatorTest extends GenericTest {
 		GreqlEvaluator eval = new GreqlEvaluator(query, new Greql2Impl(),
 				new HashMap<String, JValue>());
 		eval.startEvaluation();
+		// TODO test seriously
+		@SuppressWarnings("unused")
 		JValue result = eval.getEvaluationResult();
-		for (JValue v : result.toCollection()) {
-			System.out.println(v);
-		}
+		// for (JValue v : result.toCollection()) {
+		// System.out.println(v);
+		// }
 	}
 
 	@Test
@@ -122,11 +124,13 @@ public class GreqlEvaluatorTest extends GenericTest {
 		String createboundVars2 = "set(4,5,6) store as s456 ";
 		eval = new GreqlEvaluator(createboundVars, new Greql2Impl(), boundVars);
 		eval.startEvaluation();
-		System.out.println("HashMap: " + boundVars.size());
-		for (java.util.Map.Entry<String, JValue> entry : boundVars.entrySet()) {
-			System.out.println("<" + entry.getKey() + "," + entry.getValue()
-					+ ">");
-		}
+		// TODO test seriously
+		// System.out.println("HashMap: " + boundVars.size());
+		// for (java.util.Map.Entry<String, JValue> entry :
+		// boundVars.entrySet()) {
+		// System.out.println("<" + entry.getKey() + "," + entry.getValue()
+		// + ">");
+		// }
 		eval = new GreqlEvaluator(createboundVars2, new Greql2Impl(), boundVars);
 		eval.startEvaluation();
 		String query = "using s123, s456: "
@@ -141,10 +145,12 @@ public class GreqlEvaluatorTest extends GenericTest {
 		eval.setOptimize(false);
 		eval.startEvaluation();
 
+		// TODO test seriously
+		@SuppressWarnings("unused")
 		JValue result = eval.getEvaluationResult();
-		for (JValue v : result.toCollection()) {
-			System.out.println(v);
-		}
+		// for (JValue v : result.toCollection()) {
+		// System.out.println(v);
+		// }
 	}
 
 	/*
@@ -183,7 +189,8 @@ public class GreqlEvaluatorTest extends GenericTest {
 		JValue resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 
-		System.out.println(result);
+		// TODO test seriously
+		// System.out.println(result);
 	}
 
 	@Test
@@ -1543,7 +1550,6 @@ public class GreqlEvaluatorTest extends GenericTest {
 		eval.startEvaluation();
 		eval.startEvaluation();
 		eval.startEvaluation();
-		printTestFunctionFooter("MultipleEvaluationStarts");
 	}
 
 	/*

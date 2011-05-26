@@ -44,8 +44,6 @@ import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
 public class SpeedTest extends GenericTest {
 
 	protected Graph getTestGraph() throws Exception {
-		printTestFunctionHeader("GenerateTestGraph");
-
 		int count = 10;
 		String part1 = "from i:a report ";
 		String part2 = " end where q:=a, l:=a, m:=a, n:=a, o:=a, p:=a, k:= a, j:=a, h := a, g := a, f:= a, e := a, d:=a, c:=a, b:=a, a:=4";
@@ -58,9 +56,7 @@ public class SpeedTest extends GenericTest {
 			queryString.append(part2);
 		}
 		String query = queryString.toString();
-		System.out.println("QueryString is : " + query);
 		Graph g = GreqlParser.parse(query);
-		printTestFunctionFooter("GenerateTestGraph");
 		return g;
 	}
 
@@ -68,20 +64,19 @@ public class SpeedTest extends GenericTest {
 	// need more than 10 seconds. But currently it needs infinite time...
 	@Test(timeout = 10000)
 	public void testCountFunctionEvaluation() throws Exception {
-		printTestFunctionHeader("GraphSize");
 		String queryString = "bag(tup(\"Nodes:\", count(from  v:V{} report v end)), tup(\"Edges:\", count(from  e:E{} report e end)))";
 		Graph datagraph = getTestGraph();
 
-		System.out.println("Creating evaluator");
+		// System.out.println("Creating evaluator");
 		GreqlEvaluator eval = new GreqlEvaluator(queryString, datagraph, null);
-		System.out.println("Starting evaluation");
+		// System.out.println("Starting evaluation");
 		eval.startEvaluation();
 
-		System.out.println("Result of the evaluation was: "
-				+ eval.getEvaluationResult().toString());
-		System.out.println("Overall evaluation took "
-				+ eval.getOverallEvaluationTime() + " Milliseconds");
-		printTestFunctionFooter("GraphSize");
+		// TODO test seriously
+		// System.out.println("Result of the evaluation was: "
+		// + eval.getEvaluationResult().toString());
+		// System.out.println("Overall evaluation took "
+		// + eval.getOverallEvaluationTime() + " Milliseconds");
 	}
 
 }

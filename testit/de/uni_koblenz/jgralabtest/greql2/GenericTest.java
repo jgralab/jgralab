@@ -95,15 +95,6 @@ public class GenericTest {
 		return evalTestQuery(query).toInteger().intValue();
 	}
 
-	private static void queryUncontainedCrossroadCount(GenericTest test)
-			throws Exception {
-		String queryString = "sum(from r:V{junctions.Crossroad} report depth(pathSystem(r, <--{localities.ContainsCrossroad})) end)";
-		JValue result = test.evalTestQuery(queryString);
-
-		uncontainedCrossroadCount = crossroadCount
-				- result.toDouble().intValue();
-	}
-
 	protected void assertQueryEqualsNull(String query) throws Exception {
 		JValue result = evalTestQuery(query);
 		assertEquals(null, result.toObject());
@@ -228,22 +219,6 @@ public class GenericTest {
 
 	private static Graph testGraph, oldTestGraph;
 
-	protected void printTestFunctionHeader(String functionName) {
-		System.out
-				.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-		System.out.println("START     " + functionName);
-		System.out
-				.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-	}
-
-	protected void printTestFunctionFooter(String functionName) {
-		System.out
-				.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-		System.out.println("END       " + functionName);
-		System.out
-				.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-	}
-
 	private static GreqlEvaluator eval = new GreqlEvaluator((String) null,
 			null, null);
 
@@ -335,8 +310,6 @@ public class GenericTest {
 		for (int i = 0; i < (v.length - 1) / 2; i++) {
 			g.createLink(v[i], v[i * 2 + 1]);
 			g.createLink(v[i], v[i * 2 + 2]);
-			// System.out.println("[" + i + ", " + (i * 2 + 1) + ", "
-			// + (i * 2 + 2) + "]");
 		}
 		return g;
 	}
@@ -389,7 +362,6 @@ public class GenericTest {
 
 	protected JValue evalTestQuery(String functionName, String query,
 			Optimizer optimizer, Graph datagraph) throws Exception {
-		printTestFunctionHeader(functionName);
 		eval.setQuery(query);
 		eval.setDatagraph(datagraph);
 		eval.setUseSavedOptimizedSyntaxGraph(false);
@@ -403,10 +375,8 @@ public class GenericTest {
 			printDebuggingSyntaxGraph(optimizer);
 		}
 
-		printTestFunctionFooter(functionName);
-
 		JValue result = eval.getEvaluationResult();
-		eval.printEvaluationTimes();
+		// eval.printEvaluationTimes();
 		return result;
 	}
 
@@ -419,7 +389,7 @@ public class GenericTest {
 		setOptimizer(optimizer);
 
 		// when optimizing turn on logging, too.
-		eval.startEvaluation(eval.isOptimize(), true);
+		eval.startEvaluation(eval.isOptimize(), false);
 		JValue result = eval.getEvaluationResult();
 		return result;
 	}
@@ -467,14 +437,6 @@ public class GenericTest {
 			i++;
 		}
 		return null;
-	}
-
-	protected void printResult(JValue result) throws Exception {
-		System.out.println("Result is: " + result);
-		if (result.isCollection()) {
-			System.out.println("Collection size is: "
-					+ result.toCollection().size());
-		}
 	}
 
 }

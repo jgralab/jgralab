@@ -208,7 +208,6 @@ public class PathSystemFunctionTest extends GenericTest {
 		for (JValue v : bag) {
 			int distance = v.toInteger();
 			if (distance > 0) {
-				System.out.println(distance);
 				assertEquals(2, distance);
 			} else {
 				assertEquals(-1, distance);
@@ -225,8 +224,9 @@ public class PathSystemFunctionTest extends GenericTest {
 		// and LetExpressions!
 		String queryString = "from x : V{WhereExpression} report edgesConnected(x) end";
 		JValue result = evalTestQuery("EdgesConnected", queryString);
+		// TODO test seriously
+		@SuppressWarnings("unused")
 		JValue result2 = evalTestQuery("", "V{WhereExpression}");
-		System.out.println(result2);
 		assertEquals(6, getNthValue(result.toCollection(), 0).toCollection()
 				.size());
 	}
