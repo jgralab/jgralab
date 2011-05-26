@@ -28,7 +28,6 @@ public class GreqlConstructions extends GenericTest {
 		JValue result = evalTestQuery("PathSystemConstruction", queryString,
 				TestVersion.ROUTE_MAP_GRAPH);
 		JValueBag bag = result.toCollection().toJValueBag();
-		System.out.println(bag);
 		assertEquals(1, bag.size());
 		for (JValue v : bag) {
 			JValuePathSystem sys = v.toPathSystem();
@@ -42,22 +41,25 @@ public class GreqlConstructions extends GenericTest {
 		String queryString = "extractPath(pathSystem(getVertex(1), (<>--|(<-- <->))*), getVertex(34))";
 		JValue result = evalTestQuery("PathSystemOnGreqlGraph", queryString,
 				loadTestGraph());
+		// TODO test seriously
+		@SuppressWarnings("unused")
 		JValuePath path = result.toPath();
-		System.out.println("Path has length " + path.toPath().pathLength());
-		System.out.println(path);
+		// System.out.println("Path has length " + path.toPath().pathLength());
+		// System.out.println(path);
 	}
 
 	@Test
 	public void testPathSystemOnGreqlGraph2() throws Exception {
 		String queryString = "extractPath(pathSystem(getVertex(1), (<>--|(<-- <->))*))";
+		// TODO test seriously
+		@SuppressWarnings("unused")
 		JValue result = evalTestQuery("PathSystemOnGreqlGraph", queryString,
 				loadTestGraph());
-		for (JValue e : result.toJValueSet()) {
-			JValuePath path = e.toPath();
-			System.out.println("Path has length " + path.toPath().pathLength());
-			System.out.println(path);
-		}
-
+		// for (JValue e : result.toJValueSet()) {
+		// JValuePath path = e.toPath();
+		// System.out.println("Path has length " + path.toPath().pathLength());
+		// System.out.println(path);
+		// }
 	}
 
 	private Graph loadTestGraph() throws GraphIOException {

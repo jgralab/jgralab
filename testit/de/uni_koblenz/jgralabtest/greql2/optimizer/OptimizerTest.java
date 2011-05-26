@@ -125,12 +125,15 @@ public class OptimizerTest extends GenericTest {
 				+ ")", query, defo, datagraph);
 		long end = System.currentTimeMillis();
 		assertEquals(v1, v2);
+		// TODO test seriously
+		@SuppressWarnings("unused")
 		double noOptTime = (mid - start) / 1000d;
+		@SuppressWarnings("unused")
 		double optTime = (end - mid) / 1000d;
-		System.out.println("Time with no optimization:      " + noOptTime
-				+ "secs");
-		System.out.println("Time with default optimization: " + optTime
-				+ "secs");
+		// System.out.println("Time with no optimization:      " + noOptTime
+		// + "secs");
+		// System.out.println("Time with default optimization: " + optTime
+		// + "secs");
 	}
 
 	private void execTimedTest(String query, String name, Optimizer o,
@@ -146,14 +149,19 @@ public class OptimizerTest extends GenericTest {
 		long end = System.currentTimeMillis();
 		assertEquals(v1, v2);
 		assertEquals(v1, v3);
+		// TODO test seriously
+		@SuppressWarnings("unused")
 		double noOptTime = (mid1 - start) / 1000d;
+		@SuppressWarnings("unused")
 		double o1Time = (mid2 - mid1) / 1000d;
+		@SuppressWarnings("unused")
 		double o2Time = (end - mid2) / 1000d;
-		System.out.println("Time with no optimization: " + noOptTime + "secs");
-		System.out.println("Time with optimization ("
-				+ o.getClass().getSimpleName() + "): " + o1Time + "secs");
-		System.out.println("Time with optimization ("
-				+ defo.getClass().getSimpleName() + "): " + o2Time + "secs");
+		// System.out.println("Time with no optimization: " + noOptTime +
+		// "secs");
+		// System.out.println("Time with optimization ("
+		// + o.getClass().getSimpleName() + "): " + o1Time + "secs");
+		// System.out.println("Time with optimization ("
+		// + defo.getClass().getSimpleName() + "): " + o2Time + "secs");
 	}
 
 	@Test

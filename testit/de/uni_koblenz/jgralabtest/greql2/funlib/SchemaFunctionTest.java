@@ -174,7 +174,6 @@ public class SchemaFunctionTest extends GenericTest {
 			String query = "hasAttribute(type('" + clazz.getQualifiedName()
 					+ "'), '" + attribute.getName() + "')";
 			assertQueryEquals(query, true);
-			System.out.println(query);
 		}
 	}
 
@@ -311,7 +310,6 @@ public class SchemaFunctionTest extends GenericTest {
 		for (String formatString : queriesFor_IsA_Test) {
 			String formattedString = String.format(formatString,
 					currentQualifiedName, qualifiedName);
-			System.out.println(formattedString);
 			assertQueryEquals(formattedString, equal);
 		}
 	}
