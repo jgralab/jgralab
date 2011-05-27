@@ -61,8 +61,9 @@ import de.uni_koblenz.jgralabtest.schemas.minimal.Node;
 @RunWith(Parameterized.class)
 public class ArrayGraphmarkerTest extends InstanceTest {
 
-	public ArrayGraphmarkerTest(ImplementationType implementationType) {
-		super(implementationType);
+	public ArrayGraphmarkerTest(ImplementationType implementationType,
+			String dbURL) {
+		super(implementationType, dbURL);
 	}
 
 	@Parameters
@@ -169,7 +170,7 @@ public class ArrayGraphmarkerTest extends InstanceTest {
 	@After
 	public void tearDown() throws CommitFailedException, InterruptedException {
 		commit(g);
-		if(implementationType == ImplementationType.DATABASE){
+		if (implementationType == ImplementationType.DATABASE) {
 			dbHandler.clearAllTables();
 			dbHandler.closeGraphdatabase();
 		}

@@ -53,17 +53,42 @@ public abstract class InstanceTest {
 		// for (ImplementationType current : ImplementationType.values()) {
 		// parameters.add(new Object[] { current });
 		// }
-		parameters.add(new Object[] { ImplementationType.STANDARD });
-		parameters.add(new Object[] { ImplementationType.TRANSACTION });
-		parameters.add(new Object[] { ImplementationType.SAVEMEM });
 
-		// TODO rename property such that "test" becomes clear... after that,
-		// delete todo
-		if (System.getProperty("jgralabtest_dbconnection") != null) {
-			System.out.println("Enabling database support testing using "
-					+ System.getProperty("jgralabtest_dbconnection"));
+		printIndex();
+		parameters.add(new Object[] { ImplementationType.STANDARD, null });
+		System.out.println("standard implementation");
 
-			parameters.add(new Object[] { ImplementationType.DATABASE });
+		printIndex();
+		parameters.add(new Object[] { ImplementationType.TRANSACTION, null });
+		System.out.println("transaction implementation");
+
+		printIndex();
+		parameters.add(new Object[] { ImplementationType.SAVEMEM, null });
+		System.out.println("savemem implementation");
+
+		String dbURL = System.getProperty("jgralabtest_dbconnection");
+		String derbyURL = System.getProperty("jgralabtest_derby_dbconnection");
+		String postgresURL = System
+				.getProperty("jgralabtest_postgres_dbconnection");
+		String mysqlURL = System.getProperty("jgralabtest_mysql_dbconnection");
+		boolean dbConnectionEnabled = dbURL != null || derbyURL != null
+				|| postgresURL != null || mysqlURL != null;
+		if (dbConnectionEnabled) {
+			if (dbURL != null) {
+				// only one db impl is tested
+				addDBTest(dbURL);
+			} else {
+				// at least one db impl is tested
+				if (derbyURL != null) {
+					addDBTest(derbyURL);
+				}
+				if (postgresURL != null) {
+					addDBTest(postgresURL);
+				}
+				if (mysqlURL != null) {
+					addDBTest(mysqlURL);
+				}
+			}
 		} else {
 			System.out
 					.println("No database access data provided, disabling database support testing.");
@@ -72,11 +97,17 @@ public abstract class InstanceTest {
 		}
 	}
 
-	protected GraphDatabaseHandler dbHandler;
-
-	{
-		dbHandler = new GraphDatabaseHandler();
+	private static void printIndex() {
+		System.out.print("[" + parameters.size() + "] ");
 	}
+
+	private static void addDBTest(String url) {
+		printIndex();
+		parameters.add(new Object[] { ImplementationType.DATABASE, url });
+		System.out.println("database implementation using " + url);
+	}
+
+	protected GraphDatabaseHandler dbHandler;
 
 	public static Collection<Object[]> getParameters() {
 		return parameters;
@@ -88,8 +119,9 @@ public abstract class InstanceTest {
 	// protected boolean transactionsEnabled;
 	protected ImplementationType implementationType;
 
-	protected InstanceTest(ImplementationType implementationType) {
+	protected InstanceTest(ImplementationType implementationType, String dbURL) {
 		this.implementationType = implementationType;
+		dbHandler = dbURL == null ? null : new GraphDatabaseHandler(dbURL);
 		// this.transactionsEnabled = implementationType ==
 		// ImplementationType.TRANSACTION;
 	}

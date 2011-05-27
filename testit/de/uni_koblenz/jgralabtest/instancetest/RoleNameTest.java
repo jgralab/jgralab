@@ -81,8 +81,8 @@ import de.uni_koblenz.jgralabtest.schemas.vertextest.VertexTestSchema;
 @RunWith(Parameterized.class)
 public class RoleNameTest extends InstanceTest {
 
-	public RoleNameTest(ImplementationType implementationType) {
-		super(implementationType);
+	public RoleNameTest(ImplementationType implementationType, String dbURL) {
+		super(implementationType, dbURL);
 	}
 
 	@Parameters
@@ -111,7 +111,7 @@ public class RoleNameTest extends InstanceTest {
 					.createVertexTestGraphWithSavememSupport(100, 100);
 			break;
 		case DATABASE:
-			graph = this.createVertexTestGraphWithDatabaseSupport();
+			graph = createVertexTestGraphWithDatabaseSupport();
 			break;
 		default:
 			fail("Implementation " + implementationType
@@ -123,14 +123,14 @@ public class RoleNameTest extends InstanceTest {
 	private VertexTestGraph createVertexTestGraphWithDatabaseSupport() {
 		dbHandler.connectToDatabase();
 		dbHandler.loadVertexTestSchemaIntoGraphDatabase();
-		return dbHandler.createVertexTestGraphWithDatabaseSupport("RoleNameTest",
-				100, 100);
+		return dbHandler.createVertexTestGraphWithDatabaseSupport(
+				"RoleNameTest", 100, 100);
 	}
 
 	@After
 	public void tearDown() {
 		if (implementationType == ImplementationType.DATABASE) {
-			this.cleanAndCloseGraphDatabase();
+			cleanAndCloseGraphDatabase();
 		}
 	}
 

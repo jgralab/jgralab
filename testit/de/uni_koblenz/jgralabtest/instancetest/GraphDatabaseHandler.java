@@ -51,14 +51,12 @@ import de.uni_koblenz.jgralabtest.schemas.vertextest.VertexTestSchema;
 
 public class GraphDatabaseHandler {
 
-	// TODO change to system property
-	private static final String url = System
-			.getProperty("jgralabtest_dbconnection");
+	private String url;
 
 	protected GraphDatabase graphDatabase;
 
-	public GraphDatabaseHandler() {
-
+	public GraphDatabaseHandler(String url) {
+		this.url = url;
 	}
 
 	public void connectToDatabase() {
@@ -72,7 +70,7 @@ public class GraphDatabaseHandler {
 
 	public void closeGraphdatabase() {
 		try {
-			this.graphDatabase.close();
+			graphDatabase.close();
 		} catch (GraphDatabaseException e) {
 			e.printStackTrace();
 		}
@@ -80,9 +78,8 @@ public class GraphDatabaseHandler {
 
 	public void loadVertexTestSchemaIntoGraphDatabase() {
 		try {
-			if (!this.graphDatabase.contains(VertexTestSchema.instance())) {
-				this.loadTestSchemaIntoGraphDatabase(VertexTestSchema
-						.instance());
+			if (!graphDatabase.contains(VertexTestSchema.instance())) {
+				loadTestSchemaIntoGraphDatabase(VertexTestSchema.instance());
 			}
 		} catch (GraphDatabaseException e) {
 			e.printStackTrace();
@@ -91,7 +88,7 @@ public class GraphDatabaseHandler {
 
 	public void loadMinimalSchemaIntoGraphDatabase() {
 		try {
-			if (!this.graphDatabase.contains(MinimalSchema.instance())) {
+			if (!graphDatabase.contains(MinimalSchema.instance())) {
 				loadTestSchemaIntoGraphDatabase(MinimalSchema.instance());
 			}
 		} catch (Exception e) {
@@ -130,7 +127,7 @@ public class GraphDatabaseHandler {
 		try {
 			return MinimalSchema.instance()
 					.createMinimalGraphWithDatabaseSupport(id, vMax, eMax,
-							this.graphDatabase);
+							graphDatabase);
 		} catch (Exception exception) {
 			exception.printStackTrace();
 			fail("Could not create test graph.");
@@ -147,7 +144,7 @@ public class GraphDatabaseHandler {
 		try {
 			return VertexTestSchema.instance()
 					.createVertexTestGraphWithDatabaseSupport(id, vMax, eMax,
-							this.graphDatabase);
+							graphDatabase);
 		} catch (Exception exception) {
 			exception.printStackTrace();
 			fail("Could not create test graph");
@@ -216,7 +213,8 @@ public class GraphDatabaseHandler {
 	}
 
 	public static void main(String[] args) throws GraphDatabaseException {
-		GraphDatabaseHandler handler = new GraphDatabaseHandler();
+		GraphDatabaseHandler handler = new GraphDatabaseHandler(System
+				.getProperty("jgralabtest_dbconnection"));
 		handler.connectToDatabase();
 		handler.graphDatabase.applyDbSchema();
 		// TODO enable indices and foreign key constraints
