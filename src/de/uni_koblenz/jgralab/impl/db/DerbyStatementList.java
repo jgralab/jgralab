@@ -946,76 +946,6 @@ public class DerbyStatementList extends SqlStatementList {
 
 	// --- to update a graph ------------------------------------------
 
-	private static final String UPDATE_ATTRIBUTE_VALUE_OF_GRAPH = "UPDATE \""
-			+ TABLE_GRAPH_ATTRIBUTE + "\" SET \"" + COLUMN_ATTRIBUTE_VALUE
-			+ "\" = ? WHERE \"" + COLUMN_GRAPH_ID + "\" = ? AND \""
-			+ COLUMN_ATTRIBUTE_ID + "\" = ?";
-
-	@Override
-	public PreparedStatement updateAttributeValueOfGraph(int gId,
-			int attributeId, String serializedValue) throws SQLException {
-		PreparedStatement statement = getPreparedStatement(UPDATE_ATTRIBUTE_VALUE_OF_GRAPH);
-		statement.setString(1, serializedValue);
-		statement.setInt(2, gId);
-		statement.setInt(3, attributeId);
-		return statement;
-	}
-
-	private static final String UPDATE_ATTRIBUTE_VALUE_OF_GRAPH_AND_GRAPH_VERSION = "UPDATE \""
-			+ TABLE_GRAPH_ATTRIBUTE
-			+ "\" SET \""
-			+ COLUMN_ATTRIBUTE_VALUE
-			+ "\" = ? WHERE \""
-			+ COLUMN_GRAPH_ID
-			+ "\" = ? AND \""
-			+ COLUMN_ATTRIBUTE_ID
-			+ "\" = ?;"
-			+ "UPDATE \""
-			+ TABLE_GRAPH
-			+ "\" SET \""
-			+ COLUMN_GRAPH_VERSION
-			+ "\" = ? WHERE \""
-			+ COLUMN_GRAPH_ID + "\" = ?";
-
-	@Override
-	public PreparedStatement updateAttributeValueOfGraphAndGraphVersion(
-			int gId, int attributeId, String serializedValue, long graphVersion)
-			throws SQLException {
-		PreparedStatement statement = getPreparedStatement(UPDATE_ATTRIBUTE_VALUE_OF_GRAPH_AND_GRAPH_VERSION);
-		statement.setString(1, serializedValue);
-		statement.setInt(2, gId);
-		statement.setInt(3, attributeId);
-		statement.setLong(4, graphVersion);
-		statement.setInt(5, gId);
-		return statement;
-	}
-
-	private static final String UPDATE_GRAPH_UID = "UPDATE \"" + TABLE_GRAPH
-			+ "\" SET \"" + COLUMN_GRAPH_UID + "\" = ? WHERE \""
-			+ COLUMN_GRAPH_ID + "\" = ?";
-
-	@Override
-	public PreparedStatement updateGraphId(int gId, String uid)
-			throws SQLException {
-		PreparedStatement statement = getPreparedStatement(UPDATE_GRAPH_UID);
-		statement.setString(1, uid);
-		statement.setInt(2, gId);
-		return statement;
-	}
-
-	private static final String UPDATE_GRAPH_VERSION = "UPDATE \""
-			+ TABLE_GRAPH + "\" SET \"" + COLUMN_GRAPH_VERSION
-			+ "\" = ? WHERE \"" + COLUMN_GRAPH_ID + "\" = ?";
-
-	@Override
-	public PreparedStatement updateGraphVersion(int gId, long version)
-			throws SQLException {
-		PreparedStatement statement = getPreparedStatement(UPDATE_GRAPH_VERSION);
-		statement.setLong(1, version);
-		statement.setInt(2, gId);
-		return statement;
-	}
-
 	private static final String UPDATE_VERTEX_LIST_VERSION = "UPDATE \""
 			+ TABLE_GRAPH + "\" SET \"" + COLUMN_GRAPH_VSEQ_VERSION
 			+ "\" = ? WHERE \"" + COLUMN_GRAPH_ID + "\" = ?";
@@ -1024,19 +954,6 @@ public class DerbyStatementList extends SqlStatementList {
 	public PreparedStatement updateVertexListVersionOfGraph(int gId,
 			long version) throws SQLException {
 		PreparedStatement statement = getPreparedStatement(UPDATE_VERTEX_LIST_VERSION);
-		statement.setLong(1, version);
-		statement.setInt(2, gId);
-		return statement;
-	}
-
-	private static final String UPDATE_EDGE_LIST_VERSION = "UPDATE \""
-			+ TABLE_GRAPH + "\" SET \"" + COLUMN_GRAPH_ESEQ_VERSION
-			+ "\" = ? WHERE \"" + COLUMN_GRAPH_ID + "\" = ?";
-
-	@Override
-	public PreparedStatement updateEdgeListVersionOfGraph(int gId, long version)
-			throws SQLException {
-		PreparedStatement statement = getPreparedStatement(UPDATE_EDGE_LIST_VERSION);
 		statement.setLong(1, version);
 		statement.setInt(2, gId);
 		return statement;
@@ -1073,56 +990,6 @@ public class DerbyStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private static final String UPDATE_ATTRIBUTE_VALUE_OF_VERTEX = "UPDATE \""
-			+ TABLE_VERTEX_ATTRIBUTE + "\" SET \"" + COLUMN_ATTRIBUTE_VALUE
-			+ "\" = ? WHERE \"" + COLUMN_VERTEX_ID + "\" = ? AND \""
-			+ COLUMN_GRAPH_ID + "\" = ? AND \"" + COLUMN_ATTRIBUTE_ID
-			+ "\" = ?";
-
-	@Override
-	public PreparedStatement updateAttributeValueOfVertex(int vId, int gId,
-			int attributeId, String serializedValue) throws SQLException {
-		PreparedStatement statement = getPreparedStatement(UPDATE_ATTRIBUTE_VALUE_OF_VERTEX);
-		statement.setString(1, serializedValue);
-		statement.setInt(2, vId);
-		statement.setInt(3, gId);
-		statement.setInt(4, attributeId);
-		return statement;
-	}
-
-	private static final String UPDATE_ATTRIBUTE_VALUE_OF_VERTEX_AND_GRAPH_VERSION = "UPDATE \""
-			+ TABLE_VERTEX_ATTRIBUTE
-			+ "\" SET \""
-			+ COLUMN_ATTRIBUTE_VALUE
-			+ "\" = ? WHERE \""
-			+ COLUMN_VERTEX_ID
-			+ "\" = ? AND \""
-			+ COLUMN_GRAPH_ID
-			+ "\" = ? AND \""
-			+ COLUMN_ATTRIBUTE_ID
-			+ "\" = ?"
-			+ " UPDATE \""
-			+ TABLE_GRAPH
-			+ "\" SET \""
-			+ COLUMN_GRAPH_VERSION
-			+ "\" = ? WHERE \""
-			+ COLUMN_GRAPH_ID
-			+ "\" = ?";
-
-	@Override
-	public PreparedStatement updateAttributeValueOfVertexAndGraphVersion(
-			int vId, int gId, int attributeId, String serializedValue,
-			long graphVersion) throws SQLException {
-		PreparedStatement statement = getPreparedStatement(UPDATE_ATTRIBUTE_VALUE_OF_VERTEX_AND_GRAPH_VERSION);
-		statement.setString(1, serializedValue);
-		statement.setInt(2, vId);
-		statement.setInt(3, gId);
-		statement.setInt(4, attributeId);
-		statement.setLong(5, graphVersion);
-		statement.setInt(6, gId);
-		return statement;
-	}
-
 	private static final String UPDATE_INCIDENCE_LIST_VERSION = "UPDATE \""
 			+ TABLE_VERTEX + "\" SET \"" + COLUMN_VERTEX_LAMBDA_SEQ_VERSION
 			+ "\" = ? WHERE \"" + COLUMN_VERTEX_ID + "\" = ? AND \""
@@ -1140,20 +1007,6 @@ public class DerbyStatementList extends SqlStatementList {
 
 	// --- to update an edge ------------------------------------------
 
-	private static final String UPDATE_EDGE_ID = "UPDATE \"" + TABLE_EDGE
-			+ "\" SET \"" + COLUMN_EDGE_ID + "\" = ? WHERE \"" + COLUMN_EDGE_ID
-			+ "\" = ? AND \"" + COLUMN_GRAPH_ID + "\" = ?";
-
-	@Override
-	public PreparedStatement updateIdOfEdge(int oldEId, int gId, int newEId)
-			throws SQLException {
-		PreparedStatement statement = getPreparedStatement(UPDATE_EDGE_ID);
-		statement.setInt(1, newEId);
-		statement.setInt(2, oldEId);
-		statement.setInt(3, gId);
-		return statement;
-	}
-
 	private static final String UPDATE_SEQUENCE_NUMBER_IN_EDGE_LIST = "UPDATE \""
 			+ TABLE_EDGE
 			+ "\" SET \""
@@ -1170,77 +1023,6 @@ public class DerbyStatementList extends SqlStatementList {
 		statement.setLong(1, SequenceNumberInESeq);
 		statement.setInt(2, eId);
 		statement.setInt(3, gId);
-		return statement;
-	}
-
-	private static final String UPDATE_ATTRIBUTE_VALUE_OF_EDGE = "UPDATE \""
-			+ TABLE_EDGE_ATTRIBUTE + "\" SET \"" + COLUMN_ATTRIBUTE_VALUE
-			+ "\" = ? WHERE \"" + COLUMN_EDGE_ID + "\" = ? AND \""
-			+ COLUMN_GRAPH_ID + "\" = ? AND \"" + COLUMN_ATTRIBUTE_ID
-			+ "\" = ?";
-
-	@Override
-	public PreparedStatement updateAttributeValueOfEdge(int eId, int gId,
-			int attributeId, String serializedValue) throws SQLException {
-		PreparedStatement statement = getPreparedStatement(UPDATE_ATTRIBUTE_VALUE_OF_EDGE);
-		statement.setString(1, serializedValue);
-		statement.setInt(2, eId);
-		statement.setInt(3, gId);
-		statement.setInt(4, attributeId);
-		return statement;
-	}
-
-	private static final String UPDATE_ATTRIBUTE_VALUE_OF_EDGE_AND_INCREMENT_GRAPH_VERSION = "UPDATE \""
-			+ TABLE_EDGE_ATTRIBUTE
-			+ "\" SET \""
-			+ COLUMN_ATTRIBUTE_VALUE
-			+ "\" = ? WHERE \""
-			+ COLUMN_EDGE_ID
-			+ "\" = ? AND \""
-			+ COLUMN_GRAPH_ID
-			+ "\" = ? AND \""
-			+ COLUMN_ATTRIBUTE_ID
-			+ "\" = ?"
-			+ " UPDATE \""
-			+ TABLE_GRAPH
-			+ "\" SET \""
-			+ COLUMN_GRAPH_VERSION
-			+ "\" = ? WHERE \""
-			+ COLUMN_GRAPH_ID
-			+ "\" = ?;";
-
-	@Override
-	public PreparedStatement updateAttributeValueOfEdgeAndGraphVersion(int eId,
-			int gId, int attributeId, String serializedValue, long graphVersion)
-			throws SQLException {
-		PreparedStatement statement = getPreparedStatement(UPDATE_ATTRIBUTE_VALUE_OF_EDGE_AND_INCREMENT_GRAPH_VERSION);
-		statement.setString(1, serializedValue);
-		statement.setInt(2, eId);
-		statement.setInt(3, gId);
-		statement.setInt(4, attributeId);
-		statement.setLong(5, graphVersion);
-		statement.setInt(6, gId);
-		return statement;
-	}
-
-	private static final String UPDATE_INCIDENT_VERTEX = "UPDATE \""
-			+ TABLE_INCIDENCE + "\" SET \"" + COLUMN_VERTEX_ID
-			+ "\" = ? WHERE \"" + COLUMN_EDGE_ID + "\" = ? AND \""
-			+ COLUMN_GRAPH_ID + "\" = ? AND \"" + COLUMN_INCIDENCE_DIRECTION
-			+ "\" = ?";
-
-	@Override
-	public PreparedStatement updateIncidentVIdOfIncidence(int eId, int vId,
-			int gId) throws SQLException {
-		PreparedStatement statement = getPreparedStatement(UPDATE_INCIDENT_VERTEX);
-		statement.setInt(1, vId);
-		statement.setInt(2, Math.abs(eId));
-		statement.setInt(3, gId);
-		if (eId > 0) {
-			statement.setString(4, EdgeDirection.OUT.name());
-		} else if (eId < 0) {
-			statement.setString(4, EdgeDirection.IN.name());
-		}
 		return statement;
 	}
 
