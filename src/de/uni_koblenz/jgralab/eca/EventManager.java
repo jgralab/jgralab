@@ -5,34 +5,40 @@ import java.util.List;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.eca.events.*;
 
 public class EventManager {
 
-	public List<CreateVertexEvent> beforeCreateVertexEvents;
-	public List<CreateVertexEvent> afterCreateVertexEvents;
+	private Graph graph;
 	
-	public List<DeleteVertexEvent> beforeDeleteVertexEvents;
-	public List<DeleteVertexEvent> afterDeleteVertexEvents;
+	private List<CreateVertexEvent> beforeCreateVertexEvents;
+	private List<CreateVertexEvent> afterCreateVertexEvents;
 	
-	public List<CreateEdgeEvent> beforeCreateEdgeEvents;
-	public List<CreateEdgeEvent> afterCreateEdgeEvents;
+	private List<DeleteVertexEvent> beforeDeleteVertexEvents;
+	private List<DeleteVertexEvent> afterDeleteVertexEvents;
 	
-	public List<DeleteEdgeEvent> beforeDeleteEdgeEvents;
-	public List<DeleteEdgeEvent> afterDeleteEdgeEvents;
+	private List<CreateEdgeEvent> beforeCreateEdgeEvents;
+	private List<CreateEdgeEvent> afterCreateEdgeEvents;
 	
-	public List<ChangeEdgeEvent> beforeChangeEdgeEvents;
-	public List<ChangeEdgeEvent> afterChangeEdgeEvents;
+	private List<DeleteEdgeEvent> beforeDeleteEdgeEvents;
+	private List<DeleteEdgeEvent> afterDeleteEdgeEvents;
+	
+	private List<ChangeEdgeEvent> beforeChangeEdgeEvents;
+	private List<ChangeEdgeEvent> afterChangeEdgeEvents;
 
-	public List<ChangeAttributeEvent> beforeChangeAttributeEvents;
-	public List<ChangeAttributeEvent> afterChangeAttributeEvents;
+	private List<ChangeAttributeEvent> beforeChangeAttributeEvents;
+	private List<ChangeAttributeEvent> afterChangeAttributeEvents;
 	
 	/**
 	 * Constructor - initialzes members
 	 */
-	public EventManager(){
+	public EventManager(Graph graph){
+		
+		this.graph = graph;
+		
 		this.beforeCreateVertexEvents = new ArrayList<CreateVertexEvent>();
 		this.afterCreateVertexEvents = new ArrayList<CreateVertexEvent>();
 		
@@ -110,18 +116,24 @@ public class EventManager {
 		}
 	}
 	
-	public void fireBeforeChangeAttributeEvents(GraphElement e){
+	public void fireBeforeChangeAttributeEvents(AttributedElement e, String attributeName){
 		for(ChangeAttributeEvent ev : beforeChangeAttributeEvents){
-			ev.fire(e);
+			ev.fire(e, attributeName);
 		}
 	}
 	
-	public void fireAfterChangeAttributeEvents(GraphElement e){
+	public void fireAfterChangeAttributeEvents(AttributedElement e, String attributeName){
 		for(ChangeAttributeEvent ev : afterChangeAttributeEvents){
-			ev.fire(e);
+			ev.fire(e,attributeName);
 		}
 	}
 
+	//Getter und Setter
+	
+	public Graph getGraph(){
+		return this.graph;
+	}
+	
 	public List<CreateVertexEvent> getBeforeCreateVertexEvents() {
 		return beforeCreateVertexEvents;
 	}

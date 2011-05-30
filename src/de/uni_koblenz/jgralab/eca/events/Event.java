@@ -4,16 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uni_koblenz.jgralab.AttributedElement;
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.eca.ECARule;
 import de.uni_koblenz.jgralab.eca.EventManager;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 
 
 public abstract class Event {
 
 	private EventManager manager;
+	
 	protected List<ECARule> rules;
 	
 	private EventTime time;
@@ -57,7 +60,7 @@ public abstract class Event {
 	}
 	
 	//methods
-	public void fire(GraphElement element){
+	public void fire(AttributedElement element){
 		for(ECARule rule : rules){
 			if(this.checkContext(element)){
 				rule.trigger(element);
@@ -65,8 +68,7 @@ public abstract class Event {
 		}
 	}
 
-	private boolean checkContext(GraphElement element){
-		boolean result = false;
+	private boolean checkContext(AttributedElement element){
 		if(this.context.equals(Context.TYPE)){
 			if(element.getM1Class().equals(this.type)){
 				return true;
@@ -75,13 +77,21 @@ public abstract class Event {
 				return false;
 			}
 		}else{
-			//TODO find out how grequl transformations work
-			GreqlEvaluator eval = new GreqlEvaluator(this.contextExpression, element.getGraph(), null);
+			Graph graph = this.getEventManager().getGraph();
+			GreqlEvaluator eval = new GreqlEvaluator(this.contextExpression, graph, null);			
 			eval.startEvaluation();
 			JValue resultingContext = eval.getEvaluationResult();
-			
+			if(resultingContext.isCollection()){
+				JValueCollection col = resultingContext.toCollection();
+				for(JValue val : col){
+					if(val.isAttributedElement() && 
+							val.toAttributedElement().equals(element)){
+							return true;			
+					}
+				}
+			}		
 		}
-		return result;
+		return false;
 	}
 	
 	
@@ -102,5 +112,9 @@ public abstract class Event {
 	}
 	public Context getContext() {
 		return context;
+	}
+	
+	public EventManager getEventManager() {
+		return manager;
 	}
 }

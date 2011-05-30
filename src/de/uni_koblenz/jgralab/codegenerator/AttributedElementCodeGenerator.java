@@ -404,7 +404,10 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 
 		case SAVEMEMIMPL:
 			code.add("public void set_#name#(#type# _#name#) {",
-					"\tthis._#name# = _#name#;", "\tgraphModified();", "}");
+					"ecaAttributeChanging(\"#name#\");",
+					"\tthis._#name# = _#name#;", "\tgraphModified();",
+					"ecaAttributeChanged(\"#name#\");",
+					"}");
 			break;
 		case DBIMPL:
 			code.add("public void set_#name#(#type# _#name#) {");
