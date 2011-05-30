@@ -1,5 +1,6 @@
 package de.uni_koblenz.jgralab.eca;
 
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.eca.events.Event;
 
@@ -26,11 +27,12 @@ public class ECARule {
 	
 	//Methods
 	
-	public void trigger(GraphElement element){	
+	public void trigger(AttributedElement element){	
 		if(this.condition == null || this.condition.evaluate(element)){
 			this.action.doAction();
 		}			
 	}
+	
 	
 	
 	//Getter und Setter

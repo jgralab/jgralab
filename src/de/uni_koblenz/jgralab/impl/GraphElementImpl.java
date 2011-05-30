@@ -89,6 +89,14 @@ public abstract class GraphElementImpl implements GraphElement {
 	public void graphModified() {
 		graph.graphModified();
 	}
+	
+	public void ecaAttributeChanging(String name){
+		this.graph.getEventManager().fireBeforeChangeAttributeEvents(this,name);
+	}
+	
+	public void ecaAttributeChanged(String name){
+		this.graph.getEventManager().fireAfterChangeAttributeEvents(this,name);
+	}
 
 	/*
 	 * (non-Javadoc)

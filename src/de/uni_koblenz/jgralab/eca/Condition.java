@@ -1,8 +1,11 @@
 package de.uni_koblenz.jgralab.eca;
 
+import de.uni_koblenz.jgralab.AttributedElement;
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 
 public class Condition {
 
@@ -13,12 +16,21 @@ public class Condition {
 		this.conditionExpression = condEx;
 	}
 	
-	public boolean evaluate(GraphElement element){
-		//TODO find out how to give parameters with element
-		GreqlEvaluator eval = new GreqlEvaluator(conditionExpression, element.getGraph(), null);
-		eval.startEvaluation();
-		JValue result = eval.getEvaluationResult();
-		return result.toBoolean();
+	public boolean evaluate(AttributedElement element){
+		Graph graph = rule.getEvent().getEventManager().getGraph();
+		GreqlEvaluator greqlEvaluator = new GreqlEvaluator(conditionExpression, graph , null);		
+		if(this.conditionExpression.contains("using v")){
+			greqlEvaluator.setVariable("v", new JValueImpl(element)); 
+		}
+		greqlEvaluator.startEvaluation();
+		JValue result = greqlEvaluator.getEvaluationResult();
+		if(result.isBoolean()){
+			return result.toBoolean();
+		}
+		else{
+			System.err.println("Invalid Condition: "+this.conditionExpression);
+			return false;
+		}		
 	}
 	
 	public ECARule getRule() {

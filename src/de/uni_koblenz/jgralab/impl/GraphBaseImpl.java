@@ -1044,6 +1044,14 @@ public abstract class GraphBaseImpl implements Graph {
 		setGraphVersion(getGraphVersion() + 1);
 	}
 
+	public void ecaAttributeChanging(String name){
+		this.getEventManager().fireBeforeChangeAttributeEvents(this,name);
+	}
+	
+	public void ecaAttributeChanged(String name){
+		this.getEventManager().fireAfterChangeAttributeEvents(this,name);
+	}
+	
 	/**
 	 * Deletes the edge from the internal structures of this graph.
 	 * 
@@ -2011,7 +2019,7 @@ public abstract class GraphBaseImpl implements Graph {
 	//ECA Rules
 	private EventManager eventManager;
 	{
-		eventManager = new EventManager();
+		eventManager = new EventManager(this);
 	}
 	
 	public EventManager getEventManager(){
