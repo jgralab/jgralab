@@ -34,20 +34,15 @@
  */
 package de.uni_koblenz.jgralab.impl.db;
 
-import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.*;
-
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
-import java.util.SortedSet;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphException;
-import de.uni_koblenz.jgralab.GraphIOException;
-import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.Schema;
 
 public abstract class SqlStatementList {
@@ -55,6 +50,69 @@ public abstract class SqlStatementList {
 	public static final String QUOTE = "$$\"$$";
 	public static final String EOQ = "$$;$$";
 	public static final String DIRECTION_TYPE = "$$?DIR$$";
+
+	public static final String TABLE_SCHEMA = "GraphSchema";
+	public static final String COLUMN_SCHEMA_ID = "schemaId";
+	public static final String COLUMN_SCHEMA_PACKAGE_PREFIX = "packagePrefix";
+	public static final String COLUMN_SCHEMA_NAME = "name";
+	public static final String COLUMN_SCHEMA_TG = "serializedDefinition";
+	public static final String PRIMARY_KEY_SCHEMA = "schemaPrimaryKey";
+
+	public static final String TABLE_TYPE = "Type";
+	public static final String COLUMN_TYPE_ID = "typeId";
+	public static final String COLUMN_TYPE_QNAME = "qualifiedName";
+	public static final String PRIMARY_KEY_TYPE = "typePrimaryKey";
+
+	public static final String TABLE_GRAPH = "Graph";
+	public static final String COLUMN_GRAPH_ID = "gId";
+	public static final String COLUMN_GRAPH_UID = "uid";
+	public static final String COLUMN_GRAPH_VERSION = "version";
+	public static final String COLUMN_GRAPH_VSEQ_VERSION = "vSeqVersion";
+	public static final String COLUMN_GRAPH_ESEQ_VERSION = "eSeqVersion";
+	public static final String PRIMARY_KEY_GRAPH = "graphPrimaryKey";
+
+	public static final String TABLE_VERTEX = "Vertex";
+	public static final String COLUMN_VERTEX_ID = "vId";
+	public static final String COLUMN_VERTEX_LAMBDA_SEQ_VERSION = "lambdaSeqVersion";
+	public static final String COLUMN_SEQUENCE_NUMBER = "sequenceNumber";
+	public static final String PRIMARY_KEY_VERTEX = "vertexPrimaryKey";
+	public static final String FOREIGN_KEY_VERTEX_TO_GRAPH = "gIdIsForeignKeyForVertex";
+	public static final String FOREIGN_KEY_VERTEX_TO_TYPE = "typeIdIsForeignKeyForVertex";
+
+	public static final String TABLE_EDGE = "Edge";
+	public static final String COLUMN_EDGE_ID = "eId";
+	public static final String PRIMARY_KEY_EDGE = "edgePrimaryKey";
+	public static final String FOREIGN_KEY_EDGE_TO_GRAPH = "gIdIsForeignKeyForEdge";
+	public static final String FOREIGN_KEY_EDGE_TO_TYPE = "typeIdIsForeignKeyForEdge";
+
+	public static final String TABLE_INCIDENCE = "Incidence";
+	public static final String COLUMN_INCIDENCE_DIRECTION = "direction";
+	public static final String PRIMARY_KEY_INCIDENCE = "incidencePrimaryKey";
+	public static final String FOREIGN_KEY_INCIDENCE_TO_GRAPH = "gIdIsForeignKeyForIncidence";
+	public static final String FOREIGN_KEY_INCIDENCE_TO_EDGE = "eIdIsForeignKeyForIndices";
+	public static final String FOREIGN_KEY_INCIDENCE_TO_VERTEX = "vIdIsForeignKeyForIncidence";
+	public static final String INDEX_INCIDENCE_LAMBDA_SEQ = "lambdaSeqIndex";
+
+	public static final String TABLE_ATTRIBUTE = "Attribute";
+	public static final String COLUMN_ATTRIBUTE_ID = "attributeId";
+	public static final String COLUMN_ATTRIBUTE_NAME = "name";
+	public static final String PRIMARY_KEY_ATTRIBUTE = "PK_ATTRIBUTE";
+
+	public static final String TABLE_GRAPH_ATTRIBUTE = "GraphAttributeValue";
+	public static final String COLUMN_ATTRIBUTE_VALUE = "value";
+	public static final String PRIMARY_KEY_GRAPH_ATTRIBUTE = "gaPrimaryKey";
+
+	public static final String TABLE_VERTEX_ATTRIBUTE = "VertexAttributeValue";
+	public static final String PRIMARY_KEY_VERTEX_ATTRIBUTE = "vertexAttributeValuePrimaryKey";
+	public static final String FOREIGN_KEY_VERTEX_ATTRIBUTE_TO_ATTRIBUTE = "attributeIdIsForeignKeyForVertexAttribute";
+	public static final String FOREIGN_KEY_VERTEX_ATTRIBUTE_TO_GRAPH = "gIdIsForeignKeyForVertexAttribute";
+	public static final String FOREIGN_KEY_VERTEX_ATTRIBUTE_TO_VERTEX = "vIdIsForeignKeyForVertexAttribute";
+
+	public static final String TABLE_EDGE_ATTRIBUTE = "EdgeAttributeValue";
+	public static final String PRIMARY_KEY_EDGE_ATTRIBUTE = "edgeAttributeValuePrimaryKey";
+	public static final String FOREIGN_KEY_EDGE_ATTRIBUTE_TO_ATTRIBUTE = "attributeIdIsForeignKeyForEdgeAttribute";
+	public static final String FOREIGN_KEY_EDGE_ATTRIBUTE_TO_GRAPH = "gIdIsForeignKeyForEdgeAttribute";
+	public static final String FOREIGN_KEY_EDGE_ATTRIBUTE_TO_EDGE = "eIdIsForeignKeyForEdgeAttribute";
 
 	/**
 	 * Connection to database.
@@ -394,58 +452,6 @@ public abstract class SqlStatementList {
 		return statement;
 	}
 
-	public PreparedStatement insertVertex(DatabasePersistableVertex vertex)
-			throws SQLException, GraphIOException {
-		String sqlStatement = createSqlInsertStatementFor(vertex);
-		PreparedStatement statement = getPreparedStatement(sqlStatement);
-		setParametersForVertex(statement, vertex);
-		setAttributeValuesForVertex(statement, vertex);
-		return statement;
-	}
-
-	protected void setAttributeValuesForVertex(PreparedStatement statement,
-			DatabasePersistableVertex vertex) throws SQLException,
-			GraphIOException {
-		int i = 6;
-		SortedSet<Attribute> attributes = vertex.getAttributedElementClass()
-				.getAttributeList();
-		for (Attribute attribute : attributes) {
-			statement.setInt(i, vertex.getId());
-			i++;
-			statement.setInt(i, vertex.getGId());
-			i++;
-			int attributeId = graphDatabase.getAttributeId(vertex.getGraph(),
-					attribute.getName());
-			statement.setInt(i, attributeId);
-			i++;
-			String value = graphDatabase.convertToString(vertex, attribute
-					.getName());
-			statement.setString(i, value);
-			i++;
-		}
-	}
-
-	protected void setParametersForVertex(PreparedStatement statement,
-			DatabasePersistableVertex vertex) throws SQLException {
-		statement.setInt(1, vertex.getId());
-		statement.setInt(2, vertex.getGId());
-		int typeId = graphDatabase.getTypeIdOf(vertex);
-		statement.setInt(3, typeId);
-		statement.setLong(4, vertex.getIncidenceListVersion());
-		statement.setLong(5, vertex.getSequenceNumberInVSeq());
-	}
-
-	protected String createSqlInsertStatementFor(
-			DatabasePersistableVertex vertex) {
-		String sqlStatement = INSERT_VERTEX;
-		int attributeCount = vertex.getAttributedElementClass()
-				.getAttributeList().size();
-		for (int i = 0; i < attributeCount; i++) {
-			sqlStatement += INSERT_VERTEX_ATTRIBUTE_VALUE;
-		}
-		return sqlStatement;
-	}
-
 	protected static final String INSERT_VERTEX_ATTRIBUTE_VALUE = "INSERT INTO "
 			+ QUOTE
 			+ TABLE_VERTEX_ATTRIBUTE
@@ -493,89 +499,6 @@ public abstract class SqlStatementList {
 		statement.setInt(3, typeId);
 		statement.setLong(4, sequenceNumberInLambdaSeq);
 		return statement;
-	}
-
-	public PreparedStatement insertEdge(DatabasePersistableEdge edge,
-			DatabasePersistableVertex alpha, DatabasePersistableVertex omega)
-			throws SQLException, GraphIOException {
-		String sqlStatement = createSqlInsertStatementFor(edge);
-		PreparedStatement statement = getPreparedStatement(sqlStatement);
-		setParametersForEdge(statement, edge);
-
-		// insert incidence: normal edge
-		statement.setInt(5, edge.getId());
-		statement.setInt(6, edge.getGId());
-		statement.setInt(7, edge.getIncidentVId());
-		statement.setString(8, EdgeDirection.OUT.name());
-		statement.setLong(9, edge.getSequenceNumberInLambdaSeq());
-
-		// insert incidence: reversed edge
-		DatabasePersistableEdge reversedEdge = (DatabasePersistableEdge) edge
-				.getReversedEdge();
-		statement.setInt(10, Math.abs(reversedEdge.getId()));
-		statement.setInt(11, reversedEdge.getGId());
-		statement.setInt(12, reversedEdge.getIncidentVId());
-		statement.setString(13, EdgeDirection.IN.name());
-		statement.setLong(14, reversedEdge.getSequenceNumberInLambdaSeq());
-
-		// insert attribute values
-		int i = 15;
-		SortedSet<Attribute> attributes = edge.getAttributedElementClass()
-				.getAttributeList();
-		for (Attribute attribute : attributes) {
-			statement.setInt(i, edge.getId());
-			i++;
-			statement.setInt(i, edge.getGId());
-			i++;
-			int attributeId = graphDatabase.getAttributeId(edge.getGraph(),
-					attribute.getName());
-			statement.setInt(i, attributeId);
-			i++;
-			String value = graphDatabase.convertToString(edge, attribute
-					.getName());
-			statement.setString(i, value);
-			i++;
-		}
-
-		// update incidence list version of alpha
-		statement.setLong(i, alpha.getIncidenceListVersion());
-		i++;
-		statement.setInt(i, alpha.getId());
-		i++;
-		statement.setInt(i, alpha.getGId());
-		i++;
-
-		// update incidence list version of omega
-		statement.setLong(i, omega.getIncidenceListVersion());
-		i++;
-		statement.setInt(i, omega.getId());
-		i++;
-		statement.setInt(i, omega.getGId());
-
-		return statement;
-	}
-
-	protected void setParametersForEdge(PreparedStatement statement,
-			DatabasePersistableEdge edge) throws SQLException {
-		statement.setInt(1, Math.abs(edge.getId()));
-		statement.setInt(2, edge.getGId());
-		int typeId = graphDatabase.getTypeIdOf(edge);
-		statement.setInt(3, typeId);
-		statement.setLong(4, edge.getSequenceNumberInESeq());
-	}
-
-	protected String createSqlInsertStatementFor(DatabasePersistableEdge edge) {
-		String sqlStatement = INSERT_EDGE;
-		sqlStatement += INSERT_INCIDENCE;
-		sqlStatement += INSERT_INCIDENCE;
-		int attributeCount = edge.getAttributedElementClass()
-				.getAttributeList().size();
-		for (int i = 0; i < attributeCount; i++) {
-			sqlStatement += INSERT_EDGE_ATTRIBUTE_VALUE;
-		}
-		sqlStatement += UPDATE_INCIDENCE_LIST_VERSION;
-		sqlStatement += UPDATE_INCIDENCE_LIST_VERSION;
-		return sqlStatement;
 	}
 
 	protected static final String INSERT_EDGE_ATTRIBUTE_VALUE = "INSERT INTO "
