@@ -935,7 +935,8 @@ public abstract class SqlStatementList {
 
 	private static final String UPDATE_GRAPH_VERSION = "UPDATE " + QUOTE
 			+ TABLE_GRAPH + QUOTE + " SET " + QUOTE + COLUMN_GRAPH_VERSION
-			+ QUOTE + " = ? WHERE " + QUOTE + COLUMN_GRAPH_ID + QUOTE + " = ?";
+			+ QUOTE + " = ? WHERE " + QUOTE + COLUMN_GRAPH_ID + QUOTE + " = ?"
+			+ EOQ;
 
 	public PreparedStatement updateGraphVersion(int gId, long version)
 			throws SQLException {
@@ -945,8 +946,18 @@ public abstract class SqlStatementList {
 		return statement;
 	}
 
-	public abstract PreparedStatement updateVertexListVersionOfGraph(int gId,
-			long version) throws SQLException;
+	private static final String UPDATE_VERTEX_LIST_VERSION = "UPDATE " + QUOTE
+			+ TABLE_GRAPH + QUOTE + " SET " + QUOTE + COLUMN_GRAPH_VSEQ_VERSION
+			+ QUOTE + " = ? WHERE " + QUOTE + COLUMN_GRAPH_ID + QUOTE + " = ?"
+			+ EOQ;
+
+	public PreparedStatement updateVertexListVersionOfGraph(int gId,
+			long version) throws SQLException {
+		PreparedStatement statement = getPreparedStatement(UPDATE_VERTEX_LIST_VERSION);
+		statement.setLong(1, version);
+		statement.setInt(2, gId);
+		return statement;
+	}
 
 	private static final String UPDATE_EDGE_LIST_VERSION = "UPDATE " + QUOTE
 			+ TABLE_GRAPH + QUOTE + " SET " + QUOTE + COLUMN_GRAPH_ESEQ_VERSION
@@ -1021,30 +1032,49 @@ public abstract class SqlStatementList {
 	}
 
 	// to update a vertex
-	public abstract PreparedStatement updateIdOfVertex(int oldVId, int gId,
-			int newVId) throws SQLException;
+	private static final String UPDATE_VERTEX_ID = "UPDATE " + QUOTE
+			+ TABLE_VERTEX + QUOTE + " SET " + QUOTE + COLUMN_VERTEX_ID + QUOTE
+			+ " = ? WHERE " + QUOTE + COLUMN_VERTEX_ID + QUOTE + " = ? AND "
+			+ QUOTE + COLUMN_GRAPH_ID + QUOTE + " = ?" + EOQ;
 
-	public abstract PreparedStatement updateSequenceNumberInVSeqOfVertex(
-			int vId, int gId, long sequenceNumberInVSeq) throws SQLException;
+	public PreparedStatement updateIdOfVertex(int oldVId, int gId, int newVId)
+			throws SQLException {
+		PreparedStatement statement = getPreparedStatement(UPDATE_VERTEX_ID);
+		statement.setInt(1, newVId);
+		statement.setInt(2, oldVId);
+		statement.setInt(3, gId);
+		return statement;
+	}
 
-	// private static final String UPDATE_INCIDENCE_LIST_VERSION = "UPDATE "
-	// + QUOTE + TABLE_VERTEX + QUOTE + " SET " + QUOTE
-	// + COLUMN_VERTEX_LAMBDA_SEQ_VERSION + QUOTE + " = ? WHERE " + QUOTE
-	// + COLUMN_VERTEX_ID + QUOTE + " = ? AND " + QUOTE + COLUMN_GRAPH_ID
-	// + QUOTE + " = ?" + EOQ;
-	//
-	// public PreparedStatement updateLambdaSeqVersionOfVertex(int vId, int gId,
-	// long lambdaSeqVersion) throws SQLException {
-	// PreparedStatement statement =
-	// getPreparedStatement(UPDATE_INCIDENCE_LIST_VERSION);
-	// statement.setLong(1, lambdaSeqVersion);
-	// statement.setInt(2, vId);
-	// statement.setInt(3, gId);
-	// return statement;
-	// }
+	private static final String UPDATE_SEQUENCE_NUMBER_OF_VERTEX = "UPDATE "
+			+ QUOTE + TABLE_VERTEX + QUOTE + " SET " + QUOTE
+			+ COLUMN_SEQUENCE_NUMBER + QUOTE + " = ? WHERE " + QUOTE
+			+ COLUMN_VERTEX_ID + QUOTE + " = ? AND " + QUOTE + COLUMN_GRAPH_ID
+			+ QUOTE + " = ?" + EOQ;
 
-	public abstract PreparedStatement updateLambdaSeqVersionOfVertex(int vId,
-			int gId, long lambdaSeqVersion) throws SQLException;
+	public PreparedStatement updateSequenceNumberInVSeqOfVertex(int vId,
+			int gId, long sequenceNumberInVSeq) throws SQLException {
+		PreparedStatement statement = getPreparedStatement(UPDATE_SEQUENCE_NUMBER_OF_VERTEX);
+		statement.setLong(1, sequenceNumberInVSeq);
+		statement.setInt(2, vId);
+		statement.setInt(3, gId);
+		return statement;
+	}
+
+	protected static final String UPDATE_INCIDENCE_LIST_VERSION = "UPDATE "
+			+ QUOTE + TABLE_VERTEX + QUOTE + " SET " + QUOTE
+			+ COLUMN_VERTEX_LAMBDA_SEQ_VERSION + QUOTE + " = ? WHERE " + QUOTE
+			+ COLUMN_VERTEX_ID + QUOTE + " = ? AND " + QUOTE + COLUMN_GRAPH_ID
+			+ QUOTE + " = ?" + EOQ;
+
+	public PreparedStatement updateLambdaSeqVersionOfVertex(int vId, int gId,
+			long lambdaSeqVersion) throws SQLException {
+		PreparedStatement statement = getPreparedStatement(UPDATE_INCIDENCE_LIST_VERSION);
+		statement.setLong(1, lambdaSeqVersion);
+		statement.setInt(2, vId);
+		statement.setInt(3, gId);
+		return statement;
+	}
 
 	private static final String UPDATE_ATTRIBUTE_VALUE_OF_VERTEX = "UPDATE "
 			+ QUOTE + TABLE_VERTEX_ATTRIBUTE + QUOTE + " SET " + QUOTE
@@ -1113,7 +1143,7 @@ public abstract class SqlStatementList {
 	private static final String UPDATE_EDGE_ID = "UPDATE " + QUOTE + TABLE_EDGE
 			+ QUOTE + " SET " + QUOTE + COLUMN_EDGE_ID + QUOTE + " = ? WHERE "
 			+ QUOTE + COLUMN_EDGE_ID + QUOTE + " = ? AND " + QUOTE
-			+ COLUMN_GRAPH_ID + QUOTE + " = ?";
+			+ COLUMN_GRAPH_ID + QUOTE + " = ?" + EOQ;
 
 	public PreparedStatement updateIdOfEdge(int oldEId, int gId, int newEId)
 			throws SQLException {
@@ -1145,12 +1175,54 @@ public abstract class SqlStatementList {
 		return statement;
 	}
 
-	public abstract PreparedStatement updateSequenceNumberInLambdaSeqOfIncidence(
-			int eId, int vId, int gId, long sequenceNumberInLambdaSeq)
-			throws SQLException;
+	private static final String UPDATE_SEQUENCE_NUMBER_IN_INCIDENCE_LIST = "UPDATE "
+			+ QUOTE
+			+ TABLE_INCIDENCE
+			+ QUOTE
+			+ " SET "
+			+ QUOTE
+			+ COLUMN_SEQUENCE_NUMBER
+			+ QUOTE
+			+ " = ? WHERE "
+			+ QUOTE
+			+ COLUMN_EDGE_ID
+			+ QUOTE
+			+ " = ? AND "
+			+ QUOTE
+			+ COLUMN_GRAPH_ID
+			+ QUOTE
+			+ " = ? AND "
+			+ QUOTE
+			+ COLUMN_VERTEX_ID
+			+ QUOTE
+			+ " = ?"
+			+ EOQ;
 
-	public abstract PreparedStatement updateSequenceNumberInESeqOfEdge(int eId,
-			int gId, long SequenceNumberInESeq) throws SQLException;
+	public PreparedStatement updateSequenceNumberInLambdaSeqOfIncidence(
+			int eId, int vId, int gId, long sequenceNumberInLambdaSeq)
+			throws SQLException {
+		PreparedStatement statement = getPreparedStatement(UPDATE_SEQUENCE_NUMBER_IN_INCIDENCE_LIST);
+		statement.setLong(1, sequenceNumberInLambdaSeq);
+		statement.setInt(2, Math.abs(eId));
+		statement.setInt(3, gId);
+		statement.setInt(4, vId);
+		return statement;
+	}
+
+	private static final String UPDATE_SEQUENCE_NUMBER_IN_EDGE_LIST = "UPDATE "
+			+ QUOTE + TABLE_EDGE + QUOTE + " SET " + QUOTE
+			+ COLUMN_SEQUENCE_NUMBER + QUOTE + " = ? WHERE " + QUOTE
+			+ COLUMN_EDGE_ID + QUOTE + " = ? AND " + QUOTE + COLUMN_GRAPH_ID
+			+ QUOTE + " = ?" + EOQ;
+
+	public PreparedStatement updateSequenceNumberInESeqOfEdge(int eId, int gId,
+			long SequenceNumberInESeq) throws SQLException {
+		PreparedStatement statement = getPreparedStatement(UPDATE_SEQUENCE_NUMBER_IN_EDGE_LIST);
+		statement.setLong(1, SequenceNumberInESeq);
+		statement.setInt(2, eId);
+		statement.setInt(3, gId);
+		return statement;
+	}
 
 	private static final String UPDATE_ATTRIBUTE_VALUE_OF_EDGE = "UPDATE "
 			+ QUOTE + TABLE_EDGE_ATTRIBUTE + QUOTE + " SET " + QUOTE
