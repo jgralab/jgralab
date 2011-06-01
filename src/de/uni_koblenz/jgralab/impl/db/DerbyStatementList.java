@@ -34,16 +34,63 @@
  */
 package de.uni_koblenz.jgralab.impl.db;
 
-import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.*;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.COLUMN_ATTRIBUTE_ID;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.COLUMN_ATTRIBUTE_NAME;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.COLUMN_ATTRIBUTE_VALUE;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.COLUMN_EDGE_ID;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.COLUMN_GRAPH_ESEQ_VERSION;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.COLUMN_GRAPH_ID;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.COLUMN_GRAPH_UID;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.COLUMN_GRAPH_VERSION;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.COLUMN_GRAPH_VSEQ_VERSION;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.COLUMN_INCIDENCE_DIRECTION;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.COLUMN_SCHEMA_ID;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.COLUMN_SCHEMA_NAME;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.COLUMN_SCHEMA_PACKAGE_PREFIX;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.COLUMN_SCHEMA_TG;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.COLUMN_SEQUENCE_NUMBER;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.COLUMN_TYPE_ID;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.COLUMN_TYPE_QNAME;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.COLUMN_VERTEX_ID;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.COLUMN_VERTEX_LAMBDA_SEQ_VERSION;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.FOREIGN_KEY_EDGE_ATTRIBUTE_TO_ATTRIBUTE;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.FOREIGN_KEY_EDGE_ATTRIBUTE_TO_EDGE;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.FOREIGN_KEY_EDGE_ATTRIBUTE_TO_GRAPH;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.FOREIGN_KEY_EDGE_TO_GRAPH;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.FOREIGN_KEY_EDGE_TO_TYPE;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.FOREIGN_KEY_INCIDENCE_TO_EDGE;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.FOREIGN_KEY_INCIDENCE_TO_GRAPH;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.FOREIGN_KEY_INCIDENCE_TO_VERTEX;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.FOREIGN_KEY_VERTEX_ATTRIBUTE_TO_ATTRIBUTE;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.FOREIGN_KEY_VERTEX_ATTRIBUTE_TO_GRAPH;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.FOREIGN_KEY_VERTEX_ATTRIBUTE_TO_VERTEX;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.FOREIGN_KEY_VERTEX_TO_GRAPH;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.FOREIGN_KEY_VERTEX_TO_TYPE;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.INDEX_INCIDENCE_LAMBDA_SEQ;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.PRIMARY_KEY_ATTRIBUTE;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.PRIMARY_KEY_EDGE;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.PRIMARY_KEY_EDGE_ATTRIBUTE;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.PRIMARY_KEY_GRAPH;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.PRIMARY_KEY_GRAPH_ATTRIBUTE;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.PRIMARY_KEY_INCIDENCE;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.PRIMARY_KEY_SCHEMA;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.PRIMARY_KEY_TYPE;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.PRIMARY_KEY_VERTEX;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.PRIMARY_KEY_VERTEX_ATTRIBUTE;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.TABLE_ATTRIBUTE;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.TABLE_EDGE;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.TABLE_EDGE_ATTRIBUTE;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.TABLE_GRAPH;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.TABLE_GRAPH_ATTRIBUTE;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.TABLE_INCIDENCE;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.TABLE_SCHEMA;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.TABLE_TYPE;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.TABLE_VERTEX;
+import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.TABLE_VERTEX_ATTRIBUTE;
 
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.SortedSet;
-
-import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.GraphIOException;
-import de.uni_koblenz.jgralab.schema.Attribute;
 
 /**
  * Factory that creates Apache Derby/JavaDB specific prepared statements.
@@ -790,145 +837,7 @@ public class DerbyStatementList extends SqlStatementList {
 
 	// --- to insert a vertex ------------------------------------------
 
-	@Override
-	public PreparedStatement insertVertex(DatabasePersistableVertex vertex)
-			throws SQLException, GraphIOException {
-		String sqlStatement = createSqlInsertStatementFor(vertex);
-		PreparedStatement statement = getPreparedStatement(sqlStatement);
-		setParametersForVertex(statement, vertex);
-		setAttributeValuesForVertex(statement, vertex);
-		return statement;
-	}
-
-	private void setAttributeValuesForVertex(PreparedStatement statement,
-			DatabasePersistableVertex vertex) throws SQLException,
-			GraphIOException {
-		int i = 6;
-		SortedSet<Attribute> attributes = vertex.getAttributedElementClass()
-				.getAttributeList();
-		for (Attribute attribute : attributes) {
-			statement.setInt(i, vertex.getId());
-			i++;
-			statement.setInt(i, vertex.getGId());
-			i++;
-			int attributeId = graphDatabase.getAttributeId(vertex.getGraph(),
-					attribute.getName());
-			statement.setInt(i, attributeId);
-			i++;
-			String value = graphDatabase.convertToString(vertex, attribute
-					.getName());
-			statement.setString(i, value);
-			i++;
-		}
-	}
-
-	private void setParametersForVertex(PreparedStatement statement,
-			DatabasePersistableVertex vertex) throws SQLException {
-		statement.setInt(1, vertex.getId());
-		statement.setInt(2, vertex.getGId());
-		int typeId = graphDatabase.getTypeIdOf(vertex);
-		statement.setInt(3, typeId);
-		statement.setLong(4, vertex.getIncidenceListVersion());
-		statement.setLong(5, vertex.getSequenceNumberInVSeq());
-	}
-
-	private static final String createSqlInsertStatementFor(
-			DatabasePersistableVertex vertex) {
-		String sqlStatement = INSERT_VERTEX;
-		int attributeCount = vertex.getAttributedElementClass()
-				.getAttributeList().size();
-		for (int i = 0; i < attributeCount; i++) {
-			sqlStatement += INSERT_VERTEX_ATTRIBUTE_VALUE;
-		}
-		return sqlStatement;
-	}
-
 	// --- to insert an edge -------------------------------------------
-
-	@Override
-	public PreparedStatement insertEdge(DatabasePersistableEdge edge,
-			DatabasePersistableVertex alpha, DatabasePersistableVertex omega)
-			throws SQLException, GraphIOException {
-		String sqlStatement = createSqlInsertStatementFor(edge);
-		PreparedStatement statement = getPreparedStatement(sqlStatement);
-		setParametersForEdge(statement, edge);
-
-		// insert incidence: normal edge
-		statement.setInt(5, edge.getId());
-		statement.setInt(6, edge.getGId());
-		statement.setInt(7, edge.getIncidentVId());
-		statement.setString(8, EdgeDirection.OUT.name());
-		statement.setLong(9, edge.getSequenceNumberInLambdaSeq());
-
-		// insert incidence: reversed edge
-		DatabasePersistableEdge reversedEdge = (DatabasePersistableEdge) edge
-				.getReversedEdge();
-		statement.setInt(10, Math.abs(reversedEdge.getId()));
-		statement.setInt(11, reversedEdge.getGId());
-		statement.setInt(12, reversedEdge.getIncidentVId());
-		statement.setString(13, EdgeDirection.IN.name());
-		statement.setLong(14, reversedEdge.getSequenceNumberInLambdaSeq());
-
-		// insert attribute values
-		int i = 15;
-		SortedSet<Attribute> attributes = edge.getAttributedElementClass()
-				.getAttributeList();
-		for (Attribute attribute : attributes) {
-			statement.setInt(i, edge.getId());
-			i++;
-			statement.setInt(i, edge.getGId());
-			i++;
-			int attributeId = graphDatabase.getAttributeId(edge.getGraph(),
-					attribute.getName());
-			statement.setInt(i, attributeId);
-			i++;
-			String value = graphDatabase.convertToString(edge, attribute
-					.getName());
-			statement.setString(i, value);
-			i++;
-		}
-
-		// update incidence list version of alpha
-		statement.setLong(i, alpha.getIncidenceListVersion());
-		i++;
-		statement.setInt(i, alpha.getId());
-		i++;
-		statement.setInt(i, alpha.getGId());
-		i++;
-
-		// update incidence list version of omega
-		statement.setLong(i, omega.getIncidenceListVersion());
-		i++;
-		statement.setInt(i, omega.getId());
-		i++;
-		statement.setInt(i, omega.getGId());
-
-		return statement;
-	}
-
-	private void setParametersForEdge(PreparedStatement statement,
-			DatabasePersistableEdge edge) throws SQLException {
-		statement.setInt(1, Math.abs(edge.getId()));
-		statement.setInt(2, edge.getGId());
-		int typeId = graphDatabase.getTypeIdOf(edge);
-		statement.setInt(3, typeId);
-		statement.setLong(4, edge.getSequenceNumberInESeq());
-	}
-
-	private static final String createSqlInsertStatementFor(
-			DatabasePersistableEdge edge) {
-		String sqlStatement = INSERT_EDGE;
-		sqlStatement += INSERT_INCIDENCE;
-		sqlStatement += INSERT_INCIDENCE;
-		int attributeCount = edge.getAttributedElementClass()
-				.getAttributeList().size();
-		for (int i = 0; i < attributeCount; i++) {
-			sqlStatement += INSERT_EDGE_ATTRIBUTE_VALUE;
-		}
-		sqlStatement += UPDATE_INCIDENCE_LIST_VERSION;
-		sqlStatement += UPDATE_INCIDENCE_LIST_VERSION;
-		return sqlStatement;
-	}
 
 	// --- to open a graph schema -------------------------------------------
 
