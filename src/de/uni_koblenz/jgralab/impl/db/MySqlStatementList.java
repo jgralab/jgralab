@@ -34,56 +34,6 @@
  */
 package de.uni_koblenz.jgralab.impl.db;
 
-import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.COLUMN_ATTRIBUTE_ID;
-import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.COLUMN_ATTRIBUTE_NAME;
-import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.COLUMN_ATTRIBUTE_VALUE;
-import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.COLUMN_EDGE_ID;
-import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.COLUMN_GRAPH_ESEQ_VERSION;
-import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.COLUMN_GRAPH_ID;
-import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.COLUMN_GRAPH_UID;
-import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.COLUMN_GRAPH_VERSION;
-import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.COLUMN_GRAPH_VSEQ_VERSION;
-import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.COLUMN_INCIDENCE_DIRECTION;
-import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.COLUMN_SCHEMA_ID;
-import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.COLUMN_SCHEMA_NAME;
-import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.COLUMN_SCHEMA_PACKAGE_PREFIX;
-import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.COLUMN_SCHEMA_TG;
-import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.COLUMN_SEQUENCE_NUMBER;
-import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.COLUMN_TYPE_ID;
-import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.COLUMN_TYPE_QNAME;
-import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.COLUMN_VERTEX_ID;
-import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.COLUMN_VERTEX_LAMBDA_SEQ_VERSION;
-import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.FOREIGN_KEY_EDGE_ATTRIBUTE_TO_ATTRIBUTE;
-import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.FOREIGN_KEY_EDGE_ATTRIBUTE_TO_EDGE;
-import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.FOREIGN_KEY_EDGE_ATTRIBUTE_TO_GRAPH;
-import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.FOREIGN_KEY_EDGE_TO_GRAPH;
-import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.FOREIGN_KEY_EDGE_TO_TYPE;
-import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.FOREIGN_KEY_INCIDENCE_TO_EDGE;
-import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.FOREIGN_KEY_INCIDENCE_TO_GRAPH;
-import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.FOREIGN_KEY_INCIDENCE_TO_VERTEX;
-import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.FOREIGN_KEY_VERTEX_ATTRIBUTE_TO_ATTRIBUTE;
-import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.FOREIGN_KEY_VERTEX_ATTRIBUTE_TO_GRAPH;
-import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.FOREIGN_KEY_VERTEX_ATTRIBUTE_TO_VERTEX;
-import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.FOREIGN_KEY_VERTEX_TO_GRAPH;
-import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.FOREIGN_KEY_VERTEX_TO_TYPE;
-import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.INDEX_INCIDENCE_LAMBDA_SEQ;
-import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.PRIMARY_KEY_EDGE;
-import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.PRIMARY_KEY_EDGE_ATTRIBUTE;
-import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.PRIMARY_KEY_GRAPH_ATTRIBUTE;
-import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.PRIMARY_KEY_INCIDENCE;
-import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.PRIMARY_KEY_VERTEX;
-import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.PRIMARY_KEY_VERTEX_ATTRIBUTE;
-import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.TABLE_ATTRIBUTE;
-import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.TABLE_EDGE;
-import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.TABLE_EDGE_ATTRIBUTE;
-import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.TABLE_GRAPH;
-import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.TABLE_GRAPH_ATTRIBUTE;
-import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.TABLE_INCIDENCE;
-import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.TABLE_SCHEMA;
-import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.TABLE_TYPE;
-import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.TABLE_VERTEX;
-import static de.uni_koblenz.jgralab.impl.db.GraphDatabase.TABLE_VERTEX_ATTRIBUTE;
-
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -1010,28 +960,28 @@ public class MySqlStatementList extends SqlStatementList {
 	}
 
 	private static final String CLEAR_TABLE_ATTRIBUTE = "TRUNCATE TABLE "
-			+ GraphDatabase.TABLE_ATTRIBUTE;
+			+ TABLE_ATTRIBUTE;
 
 	public PreparedStatement clearTableAttribute() throws SQLException {
 		return getPreparedStatement(CLEAR_TABLE_ATTRIBUTE);
 	}
 
 	private static final String CLEAR_TABLE_EDGE_ATTRIBUTE_VALUE = "TRUNCATE TABLE "
-			+ GraphDatabase.TABLE_EDGE_ATTRIBUTE;
+			+ TABLE_EDGE_ATTRIBUTE;
 
 	public PreparedStatement clearTableEdgeAttributeValue() throws SQLException {
 		return getPreparedStatement(CLEAR_TABLE_EDGE_ATTRIBUTE_VALUE);
 	}
 
 	private static final String CLEAR_TABLE_EDGE = "TRUNCATE TABLE "
-			+ GraphDatabase.TABLE_EDGE;
+			+ TABLE_EDGE;
 
 	public PreparedStatement clearTableEdge() throws SQLException {
 		return getPreparedStatement(CLEAR_TABLE_EDGE);
 	}
 
 	private static final String CLEAR_TABLE_GRAPH_ATTRIBUTE_VALUE = "TRUNCATE TABLE "
-			+ GraphDatabase.TABLE_GRAPH_ATTRIBUTE;
+			+ TABLE_GRAPH_ATTRIBUTE;
 
 	public PreparedStatement clearTableGraphAttributeValue()
 			throws SQLException {
@@ -1039,42 +989,42 @@ public class MySqlStatementList extends SqlStatementList {
 	}
 
 	private static final String CLEAR_TABLE_GRAPH_SCHEMA = "TRUNCATE TABLE "
-			+ GraphDatabase.TABLE_SCHEMA;
+			+ TABLE_SCHEMA;
 
 	public PreparedStatement clearTableGraphSchema() throws SQLException {
 		return getPreparedStatement(CLEAR_TABLE_GRAPH_SCHEMA);
 	}
 
 	private static final String CLEAR_TABLE_GRAPH = "TRUNCATE TABLE "
-			+ GraphDatabase.TABLE_GRAPH;
+			+ TABLE_GRAPH;
 
 	public PreparedStatement clearTableGraph() throws SQLException {
 		return getPreparedStatement(CLEAR_TABLE_GRAPH);
 	}
 
 	private static final String CLEAR_TABLE_INCIDENCE = "TRUNCATE TABLE "
-			+ GraphDatabase.TABLE_INCIDENCE;
+			+ TABLE_INCIDENCE;
 
 	public PreparedStatement clearTableIncidence() throws SQLException {
 		return getPreparedStatement(CLEAR_TABLE_INCIDENCE);
 	}
 
 	private static final String CLEAR_TABLE_TYPE = "TRUNCATE TABLE "
-			+ GraphDatabase.TABLE_TYPE;
+			+ TABLE_TYPE;
 
 	public PreparedStatement clearTableType() throws SQLException {
 		return getPreparedStatement(CLEAR_TABLE_TYPE);
 	}
 
 	private static final String CLEAR_TABLE_ATTRIBUTE_VALUE = "TRUNCATE TABLE "
-			+ GraphDatabase.TABLE_VERTEX_ATTRIBUTE;
+			+ TABLE_VERTEX_ATTRIBUTE;
 
 	public PreparedStatement clearTableAttributeValue() throws SQLException {
 		return getPreparedStatement(CLEAR_TABLE_ATTRIBUTE_VALUE);
 	}
 
 	private static final String CLEAR_TABLE_VERTEX = "TRUNCATE TABLE "
-			+ GraphDatabase.TABLE_VERTEX + ";";
+			+ TABLE_VERTEX + ";";
 
 	public PreparedStatement clearTableVertex() throws SQLException {
 		return getPreparedStatement(CLEAR_TABLE_VERTEX);

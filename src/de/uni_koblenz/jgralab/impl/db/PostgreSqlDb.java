@@ -37,15 +37,12 @@ package de.uni_koblenz.jgralab.impl.db;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+import de.uni_koblenz.jgralab.GraphIOException;
+
 // TODO Check what is faster: multidimensional index or several single indices on fks
 // TODO Test with nvarchar instead of text
 // TODO index on FK is good practice
 public class PostgreSqlDb extends GraphDatabase {
-
-	public static final String SEQUENCE_SCHEMA = "schemaIdSequence";
-	public static final String SEQUENCE_TYPE = "typeIdSequence";
-	public static final String SEQUENCE_GRAPH = "graphIdSequence";
-	public static final String SEQUENCE_ATTRIBUTE = "attributeIdSequence";
 
 	/**
 	 * Creates a new <code>PostgreSqlDb</code>.
@@ -82,6 +79,24 @@ public class PostgreSqlDb extends GraphDatabase {
 		PreparedStatement statement = ((PostgreSqlStatementList) sqlStatementList)
 				.clusterIncidenceTable();
 		statement.execute();
+	}
+
+	@Override
+	protected void insertVertex(DatabasePersistableVertex vertex)
+			throws SQLException, GraphIOException {
+		PreparedStatement insertStatement = ((PostgreSqlStatementList) sqlStatementList)
+				.insertVertex(vertex);
+		insertStatement.executeUpdate();
+	}
+
+	@Override
+	protected void insertEdge(DatabasePersistableEdge edge,
+			DatabasePersistableVertex alpha, DatabasePersistableVertex omega)
+			throws SQLException, GraphIOException {
+		assert edge.isNormal();
+		PreparedStatement insertStatement = ((PostgreSqlStatementList) sqlStatementList)
+				.insertEdge(edge, alpha, omega);
+		insertStatement.executeUpdate();
 	}
 
 	@Override

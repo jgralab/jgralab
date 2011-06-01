@@ -74,69 +74,6 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
  */
 public abstract class GraphDatabase {
 
-	public static final String TABLE_SCHEMA = "GraphSchema";
-	public static final String COLUMN_SCHEMA_ID = "schemaId";
-	public static final String COLUMN_SCHEMA_PACKAGE_PREFIX = "packagePrefix";
-	public static final String COLUMN_SCHEMA_NAME = "name";
-	public static final String COLUMN_SCHEMA_TG = "serializedDefinition";
-	public static final String PRIMARY_KEY_SCHEMA = "schemaPrimaryKey";
-
-	public static final String TABLE_TYPE = "Type";
-	public static final String COLUMN_TYPE_ID = "typeId";
-	public static final String COLUMN_TYPE_QNAME = "qualifiedName";
-	public static final String PRIMARY_KEY_TYPE = "typePrimaryKey";
-
-	public static final String TABLE_GRAPH = "Graph";
-	public static final String COLUMN_GRAPH_ID = "gId";
-	public static final String COLUMN_GRAPH_UID = "uid";
-	public static final String COLUMN_GRAPH_VERSION = "version";
-	public static final String COLUMN_GRAPH_VSEQ_VERSION = "vSeqVersion";
-	public static final String COLUMN_GRAPH_ESEQ_VERSION = "eSeqVersion";
-	public static final String PRIMARY_KEY_GRAPH = "graphPrimaryKey";
-
-	public static final String TABLE_VERTEX = "Vertex";
-	public static final String COLUMN_VERTEX_ID = "vId";
-	public static final String COLUMN_VERTEX_LAMBDA_SEQ_VERSION = "lambdaSeqVersion";
-	public static final String COLUMN_SEQUENCE_NUMBER = "sequenceNumber";
-	public static final String PRIMARY_KEY_VERTEX = "vertexPrimaryKey";
-	public static final String FOREIGN_KEY_VERTEX_TO_GRAPH = "gIdIsForeignKeyForVertex";
-	public static final String FOREIGN_KEY_VERTEX_TO_TYPE = "typeIdIsForeignKeyForVertex";
-
-	public static final String TABLE_EDGE = "Edge";
-	public static final String COLUMN_EDGE_ID = "eId";
-	public static final String PRIMARY_KEY_EDGE = "edgePrimaryKey";
-	public static final String FOREIGN_KEY_EDGE_TO_GRAPH = "gIdIsForeignKeyForEdge";
-	public static final String FOREIGN_KEY_EDGE_TO_TYPE = "typeIdIsForeignKeyForEdge";
-
-	public static final String TABLE_INCIDENCE = "Incidence";
-	public static final String COLUMN_INCIDENCE_DIRECTION = "direction";
-	public static final String PRIMARY_KEY_INCIDENCE = "incidencePrimaryKey";
-	public static final String FOREIGN_KEY_INCIDENCE_TO_GRAPH = "gIdIsForeignKeyForIncidence";
-	public static final String FOREIGN_KEY_INCIDENCE_TO_EDGE = "eIdIsForeignKeyForIndices";
-	public static final String FOREIGN_KEY_INCIDENCE_TO_VERTEX = "vIdIsForeignKeyForIncidence";
-	public static final String INDEX_INCIDENCE_LAMBDA_SEQ = "lambdaSeqIndex";
-
-	public static final String TABLE_ATTRIBUTE = "Attribute";
-	public static final String COLUMN_ATTRIBUTE_ID = "attributeId";
-	public static final String COLUMN_ATTRIBUTE_NAME = "name";
-	public static final String PRIMARY_KEY_ATTRIBUTE = "PK_ATTRIBUTE";
-
-	public static final String TABLE_GRAPH_ATTRIBUTE = "GraphAttributeValue";
-	public static final String COLUMN_ATTRIBUTE_VALUE = "value";
-	public static final String PRIMARY_KEY_GRAPH_ATTRIBUTE = "gaPrimaryKey";
-
-	public static final String TABLE_VERTEX_ATTRIBUTE = "VertexAttributeValue";
-	public static final String PRIMARY_KEY_VERTEX_ATTRIBUTE = "vertexAttributeValuePrimaryKey";
-	public static final String FOREIGN_KEY_VERTEX_ATTRIBUTE_TO_ATTRIBUTE = "attributeIdIsForeignKeyForVertexAttribute";
-	public static final String FOREIGN_KEY_VERTEX_ATTRIBUTE_TO_GRAPH = "gIdIsForeignKeyForVertexAttribute";
-	public static final String FOREIGN_KEY_VERTEX_ATTRIBUTE_TO_VERTEX = "vIdIsForeignKeyForVertexAttribute";
-
-	public static final String TABLE_EDGE_ATTRIBUTE = "EdgeAttributeValue";
-	public static final String PRIMARY_KEY_EDGE_ATTRIBUTE = "edgeAttributeValuePrimaryKey";
-	public static final String FOREIGN_KEY_EDGE_ATTRIBUTE_TO_ATTRIBUTE = "attributeIdIsForeignKeyForEdgeAttribute";
-	public static final String FOREIGN_KEY_EDGE_ATTRIBUTE_TO_GRAPH = "gIdIsForeignKeyForEdgeAttribute";
-	public static final String FOREIGN_KEY_EDGE_ATTRIBUTE_TO_EDGE = "eIdIsForeignKeyForEdgeAttribute";
-
 	/**
 	 * Holds graph databases which are still open.
 	 */
@@ -633,11 +570,7 @@ public abstract class GraphDatabase {
 			throws GraphDatabaseException {
 		assert vertex.getIncidenceListVersion() == 0;
 		try {
-			if (sqlStatementList instanceof PostgreSqlStatementList) {
-				this.reducedRoundtripInsert(vertex);
-			} else {
-				this.normalInsert(vertex);
-			}
+			insertVertex(vertex);
 			vertex.setInitialized(true);
 			vertex.setPersistent(true);
 		} catch (Exception exception) {
@@ -646,7 +579,7 @@ public abstract class GraphDatabase {
 		}
 	}
 
-	private void normalInsert(DatabasePersistableVertex vertex)
+	protected void insertVertex(DatabasePersistableVertex vertex)
 			throws SQLException, GraphIOException {
 		int typeId = this.getTypeIdOf(vertex);
 		PreparedStatement insertStatement = sqlStatementList.insertVertex(
@@ -666,13 +599,6 @@ public abstract class GraphDatabase {
 		}
 	}
 
-	private void reducedRoundtripInsert(DatabasePersistableVertex vertex)
-			throws SQLException, GraphIOException {
-		PreparedStatement insertStatement = sqlStatementList
-				.insertVertex(vertex);
-		insertStatement.executeUpdate();
-	}
-
 	/**
 	 * Inserts an edge into database.
 	 * 
@@ -689,11 +615,7 @@ public abstract class GraphDatabase {
 			DatabasePersistableVertex alpha, DatabasePersistableVertex omega)
 			throws GraphDatabaseException {
 		try {
-			if (sqlStatementList instanceof PostgreSqlStatementList) {
-				this.reducedRoundtripInsert(edge, alpha, omega);
-			} else {
-				this.normalInsert(edge, alpha, omega);
-			}
+			insertEdge(edge, alpha, omega);
 			edge.setInitialized(true);
 			edge.setPersistent(true);
 		} catch (Exception exception) {
@@ -702,7 +624,7 @@ public abstract class GraphDatabase {
 		}
 	}
 
-	private void normalInsert(DatabasePersistableEdge edge,
+	protected void insertEdge(DatabasePersistableEdge edge,
 			DatabasePersistableVertex alpha, DatabasePersistableVertex omega)
 			throws SQLException, GraphIOException {
 		assert edge.isNormal();
@@ -733,15 +655,6 @@ public abstract class GraphDatabase {
 					.getId(), edge.getGId(), attributeId, value);
 			insertStatement.executeUpdate();
 		}
-	}
-
-	private void reducedRoundtripInsert(DatabasePersistableEdge edge,
-			DatabasePersistableVertex alpha, DatabasePersistableVertex omega)
-			throws SQLException, GraphIOException {
-		assert edge.isNormal();
-		PreparedStatement insertStatement = sqlStatementList.insertEdge(edge,
-				alpha, omega);
-		insertStatement.executeUpdate();
 	}
 
 	/**
