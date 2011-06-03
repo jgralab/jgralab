@@ -442,14 +442,14 @@ public class GraphFunctionTest extends GenericTest {
 
 	@Test
 	public void testIsMarked() throws Exception {
-		// TODO
+		// TODO An GraphMarker has to be created to test this function call.
 		fail();
 	}
 
 	@Test
 	public void testIsMarkedNull() throws Exception {
 		assertQueryEqualsNull("using nll: isMarked(lastVertex(), nll)");
-		// TODO
+		// TODO An GraphMarker has to be created to test this function call.
 		// assertQueryEqualsNull("using nll: isMarked(nll, ???)");
 		assertQueryEqualsNull("using nll: isMarked(nll, nll)");
 		fail();
@@ -457,7 +457,6 @@ public class GraphFunctionTest extends GenericTest {
 
 	@Test
 	public void testIsNull() throws Exception {
-		// TODO
 		assertQueryEquals("isNull(list())", false);
 		assertQueryEquals("using nll: isNull(nll)", true);
 		setBoundVariable("nll2", new JValueImpl((Object) null));
