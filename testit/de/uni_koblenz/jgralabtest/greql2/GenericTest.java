@@ -87,12 +87,22 @@ public class GenericTest {
 		footpathCount = test.queryInteger("count(E{connections.Footpath})");
 		plazaCount = test.queryInteger("count(V{junctions.Plaza})");
 		localityCount = test.queryInteger("count(V{localities.Locality})");
+		queryUncontainedCrossroadCount(test);
 		test.setBoundVariable("nll", new JValueImpl());
 	}
 
 	private int queryInteger(String query) throws JValueInvalidTypeException,
 			Exception {
 		return evalTestQuery(query).toInteger().intValue();
+	}
+
+	private static void queryUncontainedCrossroadCount(GenericTest test)
+			throws Exception {
+		String queryString = "sum(from r:V{junctions.Crossroad} report depth(pathSystem(r, <--{localities.ContainsCrossroad})) end)";
+		JValue result = test.evalTestQuery(queryString);
+
+		uncontainedCrossroadCount = crossroadCount
+				- result.toDouble().intValue();
 	}
 
 	protected void assertQueryEqualsNull(String query) throws Exception {
@@ -203,7 +213,7 @@ public class GenericTest {
 
 	private boolean doesExceptionTypesEqual(
 			Class<? extends Exception> exceptionClass, Throwable exception) {
-		return (exception != null)
+		return exception != null
 				&& (exception.getClass().equals(exceptionClass) || doesExceptionTypesEqual(
 						exceptionClass, exception.getCause()));
 	}
@@ -437,6 +447,14 @@ public class GenericTest {
 			i++;
 		}
 		return null;
+	}
+
+	protected void printResult(JValue result) throws Exception {
+		System.out.println("Result is: " + result);
+		if (result.isCollection()) {
+			System.out.println("Collection size is: "
+					+ result.toCollection().size());
+		}
 	}
 
 }

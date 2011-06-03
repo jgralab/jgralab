@@ -42,7 +42,7 @@ public class ReflectionFunctionTest {
 
 	@Test
 	public void testHasJValueType() throws Exception {
-		// TODO
+		// TODO Has to be implemented
 		fail();
 	}
 }

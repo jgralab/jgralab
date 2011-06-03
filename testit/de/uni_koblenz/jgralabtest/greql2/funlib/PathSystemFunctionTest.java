@@ -145,7 +145,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testContains() throws Exception {
-		// TODO
+		// TODO A meaningful Pathsystem is missing
 		fail();
 	}
 
@@ -175,7 +175,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testDepth() throws Exception {
-		// TODO
+		// TODO A meaningful Pathsystem is missing
 		fail();
 	}
 
@@ -186,13 +186,13 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testDistance() throws Exception {
-		// TODO
+		// TODO A meaningful Pathsystem is missing
 		fail();
 	}
 
 	@Test
 	public void testDistanceNull() throws Exception {
-		// TODO
+		// TODO A meaningful Pathsystem is missing
 		assertQueryEqualsNull("using nll: distance(nll, nll)");
 		// assertQueryEqualsNull("using nll: distance(?, nll)");
 		// assertQueryEqualsNull("using nll: distance(nll, ?)");
@@ -236,7 +236,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testEdgesConnectedNull() throws Exception {
-		// TODO
+		// TODO A meaningful Pathsystem is missing
 		assertQueryEqualsNull("using nll: edgesConnected(nll, nll)");
 		assertQueryEqualsNull("using nll: edgesConnected(firstVertex(), nll)");
 		// assertQueryEqualsNull("using nll: edgesConnected(nll, ?)");
@@ -278,6 +278,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testEdgesFromNull() throws Exception {
+		// TODO A meaningful Pathsystem is missing
 		assertQueryEqualsNull("using nll: edgesFrom(nll, nll)");
 		assertQueryEqualsNull("using nll: edgesFrom(firstVertex(), nll)");
 		// assertQueryEqualsNull("using nll: edgesFrom(nll, ?)");
@@ -321,6 +322,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testEdgesToNull() throws Exception {
+		// TODO A meaningful Pathsystem is missing
 		assertQueryEqualsNull("using nll: edgesTo(nll, nll)");
 		assertQueryEqualsNull("using nll: edgesTo(firstVertex(), nll)");
 		// assertQueryEqualsNull("using nll: edgesTo(nll, ?)");
@@ -381,13 +383,16 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testElements() throws Exception {
-		// TODO
+		// TODO A Pathsystem has to be created and checked if all elements
+		// returned as a collection.
 		fail();
 	}
 
 	// @Test
 	public void testElementsNull() throws Exception {
 		// See CollectionFunctions
+		// This function should be deleted or left her to signal, that this test
+		// is already covered
 	}
 
 	@Test
@@ -500,7 +505,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testIsReachableNull() throws Exception {
-		// TODO
+		// TODO A meaningful Pathsystem is missing
 		assertQueryEqualsNull("using nll: isReachable(nll, nll, nll)");
 		assertQueryEqualsNull("using nll: isReachable(firstVertex(), nll, nll)");
 		assertQueryEqualsNull("using nll: isReachable(nll, lastVertex(), nll)");
@@ -534,7 +539,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testIsSubPathOfNull() throws Exception {
-		// TODO
+		// TODO A meaningful Pathsystem is missing
 
 		assertQueryEqualsNull("using nll: isSubPathOf(nll, nll)");
 		// assertQueryEqualsNull("using nll: isSubPathOf(?, nll)");
@@ -563,13 +568,13 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testMatches() throws Exception {
-		// TODO
+		// TODO A meaningful Automaton is missing
 		fail();
 	}
 
 	@Test
 	public void testMatchesNull() throws Exception {
-		// TODO
+		// TODO A meaningful Automaton is missing
 		assertQueryEqualsNull("using nll: matches(nll, nll)");
 		// assertQueryEqualsNull("using nll: matches(nll, ?)");
 		// assertQueryEqualsNull("using nll: matches(?, nll)");
@@ -597,6 +602,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testMinPathLength() throws Exception {
+		// TODO This test fails! The course should be investigated
 		String queryString = "from c: V{localities.County} "
 				+ "report minPathLength(pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad} -->{connections.Street})) "
 				+ "end";
@@ -612,12 +618,11 @@ public class PathSystemFunctionTest extends GenericTest {
 	@Test
 	public void testMinPathLengthNull() throws Exception {
 		assertQueryEqualsNull("using nll: minPathLength(nll)");
-		fail();
 	}
 
 	@Test
 	public void testNodes() throws Exception {
-		// TODO
+		// TODO A meaningful Automaton is missing
 		fail();
 	}
 
@@ -652,6 +657,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testNodeTrace2() throws Exception {
+		// TODO This test fails! The course should be investigated.
 		String queryString = "from c: V{localities.County}, r:V{junctions.Crossroad}"
 				+ "report nodeTrace(extractPath(pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad}), r)) "
 				+ "end";
@@ -677,6 +683,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testParent() throws Exception {
+		// TODO This test fails! The course should be investigated.
 		String queryString = "from c: V{localities.County}, r:V{junctions.Crossroad} "
 				+ "report parent(pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad}), r) "
 				+ "end";
@@ -695,7 +702,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testParentNull() throws Exception {
-		// TODO
+		// TODO A meaningful Pathsystem is missing
 		assertQueryEqualsNull("using nll: parent(nll, nll)");
 		// assertQueryEqualsNull("using nll: parent(?, nll)");
 		// assertQueryEqualsNull("using nll: parent(nll, ?)");
@@ -704,13 +711,13 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testPathConcat() throws Exception {
-		// TODO
+		// TODO A meaningful Paths are missing
 		fail();
 	}
 
 	@Test
 	public void testPathConcatNull() throws Exception {
-		// TODO
+		// TODO A meaningful Paths are missing
 		assertQueryEqualsNull("using nll: pathConcat(nll, nll)");
 		// assertQueryEqualsNull("using nll: pathConcat(?, nll)");
 		// assertQueryEqualsNull("using nll: pathConcat(nll, ?)");
@@ -719,7 +726,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testPathExpr() throws Exception {
-		// TODO
+		// TODO A meaningful Automaton Expression is missing
 		fail();
 	}
 
@@ -751,13 +758,13 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testReachableVertex() throws Exception {
-		// TODO
+		// TODO Has to be implemented
 		fail();
 	}
 
 	@Test
 	public void testReachableVertexNull() throws Exception {
-		// TODO
+		// TODO A meaningful Pathsystem is missing
 		assertQueryEqualsNull("using nll: reachableVertices(nll, nll)");
 		// assertQueryEqualsNull("using nll: reachableVertices(nll, ?)");
 		assertQueryEqualsNull("using nll: reachableVertices(firstVertex(), nll)");
@@ -813,7 +820,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testSiblingsNull() throws Exception {
-		// TODO
+		// TODO A meaningful Pathsystem is missing
 		assertQueryEqualsNull("using nll: siblings(nll, nll)");
 		// assertQueryEqualsNull("using nll: siblings(nll, ?)");
 		assertQueryEqualsNull("using nll: siblings(firstVertex(), nll)");
@@ -822,13 +829,15 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testSlice() throws Exception {
-		// TODO
+		// TODO Has to be implemented
+		// TODO A meaningful Slice are missing
 		fail();
 	}
 
 	@Test
 	public void testSliceNull() throws Exception {
-		// TODO
+		// TODO Has to be implemented
+		// TODO A meaningful Slice are missing
 		fail();
 	}
 
@@ -880,6 +889,7 @@ public class PathSystemFunctionTest extends GenericTest {
 	 */
 	@Test
 	public void testWeightPathSystem() throws Exception {
+		// TODO This test fails! The course should be investigated.
 		String queryString = "from c: V{localities.County} "
 				+ "with c.name <> 'Rheinland-Pfalz' "
 				+ "report weight(pathSystem(c, -->{localities.ContainsLocality} -->{connections.AirRoute})) "
