@@ -1,6 +1,6 @@
 package de.uni_koblenz.jgralab.eca;
 
-public class PrintAction implements Action {
+public class PrintAction extends Action {
 
 	/**
 	 * Message to print on console
