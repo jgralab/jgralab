@@ -12,14 +12,17 @@ import de.uni_koblenz.jgralab.eca.events.CreateEdgeEvent;
 import de.uni_koblenz.jgralab.eca.events.CreateVertexEvent;
 import de.uni_koblenz.jgralab.eca.events.DeleteEdgeEvent;
 import de.uni_koblenz.jgralab.eca.events.DeleteVertexEvent;
+import de.uni_koblenz.jgralab.eca.events.Event;
 
-public class EventManager {
+public class ECARuleManager {
 
 	/**
-	 * Graph that owns this EventManager
+	 * Graph that owns this ECARuleManager
 	 */
 	private Graph graph;
 	
+	private List<ECARule> rules;
+
 	/*
 	 * CreateVertexEvents
 	 */
@@ -62,12 +65,14 @@ public class EventManager {
 	 * Constructor - initializes members
 	 * 
 	 * @param the
-	 *            Graph that owns this EventManager
+	 *            Graph that owns this ECARuleManager
 	 */
-	public EventManager(Graph graph){
+	public ECARuleManager(Graph graph){
 		
 		this.graph = graph;
 		
+		this.rules = new ArrayList<ECARule>();
+
 		this.beforeCreateVertexEvents = new ArrayList<CreateVertexEvent>();
 		this.afterCreateVertexEvents = new ArrayList<CreateVertexEvent>();
 		
@@ -253,6 +258,156 @@ public class EventManager {
 		return this.graph;
 	}
 	
+	public void addECARule(ECARule rule) {
+		this.rules.add(rule);
+		rule.setECARuleManager(this);
+		Event ev = rule.getEvent();
+		ev.getActiveECARules().add(rule);
+
+		if (ev instanceof CreateVertexEvent) {
+			this.addEventToList((CreateVertexEvent) ev);
+		}
+		if (ev instanceof DeleteVertexEvent) {
+			this.addEventToList((DeleteVertexEvent) ev);
+		}
+		if (ev instanceof CreateEdgeEvent) {
+			this.addEventToList((CreateEdgeEvent) ev);
+		}
+		if (ev instanceof DeleteEdgeEvent) {
+			this.addEventToList((DeleteEdgeEvent) ev);
+		}
+		if (ev instanceof ChangeEdgeEvent) {
+			this.addEventToList((ChangeEdgeEvent) ev);
+		}
+		if (ev instanceof ChangeAttributeEvent) {
+			this.addEventToList((ChangeAttributeEvent) ev);
+		}
+	}
+
+	public void deleteECARule(ECARule rule) {
+		this.rules.remove(rule);
+		Event ev = rule.getEvent();
+		ev.getActiveECARules().remove(rule);
+		if (ev.getActiveECARules().isEmpty()) {
+			if (ev instanceof CreateVertexEvent) {
+				if (ev.getTime().equals(Event.EventTime.BEFORE)) {
+					this.beforeCreateVertexEvents.remove(ev);
+				} else {
+					this.afterCreateVertexEvents.remove(ev);
+				}
+			}
+			if (ev instanceof DeleteVertexEvent) {
+				if (ev.getTime().equals(Event.EventTime.BEFORE)) {
+					this.beforeDeleteVertexEvents.remove(ev);
+				} else {
+					this.afterDeleteVertexEvents.remove(ev);
+				}
+			}
+			if (ev instanceof CreateEdgeEvent) {
+				if (ev.getTime().equals(Event.EventTime.BEFORE)) {
+					this.beforeCreateEdgeEvents.remove(ev);
+				} else {
+					this.afterCreateEdgeEvents.remove(ev);
+				}
+			}
+			if (ev instanceof DeleteEdgeEvent) {
+				if (ev.getTime().equals(Event.EventTime.BEFORE)) {
+					this.beforeDeleteEdgeEvents.remove(ev);
+				} else {
+					this.afterDeleteEdgeEvents.remove(ev);
+				}
+			}
+			if (ev instanceof ChangeEdgeEvent) {
+				if (ev.getTime().equals(Event.EventTime.BEFORE)) {
+					this.beforeChangeEdgeEvents.remove(ev);
+				} else {
+					this.afterChangeEdgeEvents.remove(ev);
+				}
+			}
+			if (ev instanceof ChangeAttributeEvent) {
+				if (ev.getTime().equals(Event.EventTime.BEFORE)) {
+					this.beforeChangeAttributeEvents.remove(ev);
+				} else {
+					this.afterChangeAttributeEvents.remove(ev);
+				}
+			}
+		}
+	}
+
+	private void addEventToList(CreateVertexEvent e) {
+		if (e.getTime().equals(Event.EventTime.BEFORE)) {
+			if (!this.beforeCreateVertexEvents.contains(e)) {
+				this.beforeCreateVertexEvents.add(e);
+			}
+		} else {
+			if (!this.afterCreateVertexEvents.contains(e)) {
+				this.afterCreateVertexEvents.add(e);
+			}
+		}
+	}
+
+	private void addEventToList(DeleteVertexEvent e) {
+		if (e.getTime().equals(Event.EventTime.BEFORE)) {
+			if (!this.beforeDeleteVertexEvents.contains(e)) {
+				this.beforeDeleteVertexEvents.add(e);
+			}
+		} else {
+			if (!this.afterDeleteVertexEvents.contains(e)) {
+				this.afterDeleteVertexEvents.add(e);
+			}
+		}
+	}
+
+	private void addEventToList(CreateEdgeEvent e) {
+		if (e.getTime().equals(Event.EventTime.BEFORE)) {
+			if (!this.beforeCreateEdgeEvents.contains(e)) {
+				this.beforeCreateEdgeEvents.add(e);
+			}
+		} else {
+			if (!this.afterCreateEdgeEvents.contains(e)) {
+				this.afterCreateEdgeEvents.add(e);
+			}
+		}
+	}
+
+	private void addEventToList(DeleteEdgeEvent e) {
+		if (e.getTime().equals(Event.EventTime.BEFORE)) {
+			if (!this.beforeDeleteEdgeEvents.contains(e)) {
+				this.beforeDeleteEdgeEvents.add(e);
+			}
+		} else {
+			if (!this.afterDeleteEdgeEvents.contains(e)) {
+				this.afterDeleteEdgeEvents.add(e);
+			}
+		}
+	}
+
+	private void addEventToList(ChangeEdgeEvent e) {
+		if (e.getTime().equals(Event.EventTime.BEFORE)) {
+			if (!this.beforeChangeEdgeEvents.contains(e)) {
+				this.beforeChangeEdgeEvents.add(e);
+			}
+		} else {
+			if (!this.afterChangeEdgeEvents.contains(e)) {
+				this.afterChangeEdgeEvents.add(e);
+			}
+		}
+	}
+
+	private void addEventToList(ChangeAttributeEvent e) {
+		if (e.getTime().equals(Event.EventTime.BEFORE)) {
+			if (!this.beforeChangeAttributeEvents.contains(e)) {
+				this.beforeChangeAttributeEvents.add(e);
+			}
+		} else {
+			if (!this.afterChangeAttributeEvents.contains(e)) {
+				this.afterChangeAttributeEvents.add(e);
+			}
+		}
+	}
+
+	// ////
+
 	/**
 	 * @return the List of CreateVertexEvents with EventTime BEFORE
 	 */

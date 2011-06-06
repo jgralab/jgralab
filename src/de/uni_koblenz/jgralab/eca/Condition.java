@@ -40,7 +40,7 @@ public class Condition {
 	 * @return if the condition is evaluated to true
 	 */
 	public boolean evaluate(AttributedElement element){
-		Graph graph = rule.getEvent().getEventManager().getGraph();
+		Graph graph = rule.getECARuleManager().getGraph();
 		GreqlEvaluator greqlEvaluator = new GreqlEvaluator(conditionExpression, graph , null);		
 		if(this.conditionExpression.contains("using v")){
 			greqlEvaluator.setVariable("v", new JValueImpl(element)); 

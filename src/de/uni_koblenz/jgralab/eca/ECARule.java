@@ -6,6 +6,8 @@ import de.uni_koblenz.jgralab.eca.events.Event;
 
 public class ECARule {
 
+	private ECARuleManager manager;
+
 	/**
 	 * Event part of ECARule
 	 */
@@ -88,7 +90,6 @@ public class ECARule {
 	 */
 	private void setEvent(Event event) {
 		this.event = event;
-		this.event.addRule(this);
 	}
 	
 	/**
@@ -125,35 +126,14 @@ public class ECARule {
 	public void setAction(Action action) {
 		this.action = action;
 	}
-	
-	/**
-	public ECARule(String contextExpression, Event event, Action act){
-		this.contextExpression = contextExpression;
-		this.context = Context.EXPRESSION;
-		this.setEvent(event);
-		this.setAction(act);
+
+	public void setECARuleManager(ECARuleManager manager) {
+		this.manager = manager;
+	}
+
+	public ECARuleManager getECARuleManager() {
+		return manager;
 	}
 	
-	public ECARule(GraphElementClass type, Event event, Action act){
-		this.type = type;
-		this.context = Context.TYPE;
-		this.setEvent(event);
-		this.setAction(act);
-	}
-	
-	public ECARule(String contextExpression, Event event, Condition cond, Action act){
-		this.contextExpression = contextExpression;
-		this.context = Context.EXPRESSION;
-		this.setEvent(event);
-		this.setCondition(cond);
-		this.setAction(act);
-	}
-	
-	public ECARule(GraphElementClass type, Event event, Condition cond, Action act){
-		this.type = type;
-		this.context = Context.TYPE;
-		this.setEvent(event);
-		this.setCondition(cond);
-		this.setAction(act);
-	}*/
+
 }
