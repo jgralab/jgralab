@@ -6,6 +6,9 @@ import de.uni_koblenz.jgralab.eca.events.Event;
 
 public class ECARule {
 
+	/**
+	 * ECARuleManager of this ECARule
+	 */
 	private ECARuleManager manager;
 
 	/**
@@ -127,10 +130,20 @@ public class ECARule {
 		this.action = action;
 	}
 
+	/**
+	 * Sets the ECARuleManager of this rule. The method is called by the
+	 * addECARule Method of the ECARuleManager.
+	 * 
+	 * @param manager
+	 *            the ECARulemanager that should manage this rule
+	 */
 	public void setECARuleManager(ECARuleManager manager) {
 		this.manager = manager;
 	}
 
+	/**
+	 * @return the ECARuleManager of this rule if there is one
+	 */
 	public ECARuleManager getECARuleManager() {
 		return manager;
 	}
