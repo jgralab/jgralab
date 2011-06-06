@@ -2017,13 +2017,13 @@ public abstract class GraphBaseImpl implements Graph {
 	}
 
 	//ECA Rules
-	private ECARuleManager eventManager;
+	private ECARuleManager ecaRuleManager;
 	{
-		eventManager = new ECARuleManager(this);
+		ecaRuleManager = new ECARuleManager(this);
 	}
 	
 	public ECARuleManager getECARuleManager(){
-		return eventManager;
+		return ecaRuleManager;
 	}
 	
 	// handle GraphStructureChangedListener

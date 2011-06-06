@@ -21,6 +21,9 @@ public class ECARuleManager {
 	 */
 	private Graph graph;
 	
+	/**
+	 * List with all ECARules managed by this ECARuleManager
+	 */
 	private List<ECARule> rules;
 
 	/*
@@ -257,13 +260,29 @@ public class ECARuleManager {
 	public Graph getGraph(){
 		return this.graph;
 	}
-	
+
+	/**
+	 * Getter for managed ECARules - WARNING! Don't use this method to add or
+	 * delete rules! Use {@link addECARule} and {@link deleteECARule} instead!
+	 * 
+	 * @return the List of ECARules managed by this ECARuleManager
+	 */
+	public List<ECARule> getRules() {
+		return rules;
+	}
+	// +++++ Add and delete rules ++++++++++++++++++++++++++++++++++++++++++++++
+
+	/**
+	 * Adds an ECARule to this ECARuleManager
+	 * 
+	 * @param rule
+	 *            the ECARule to add
+	 */
 	public void addECARule(ECARule rule) {
 		this.rules.add(rule);
 		rule.setECARuleManager(this);
 		Event ev = rule.getEvent();
 		ev.getActiveECARules().add(rule);
-
 		if (ev instanceof CreateVertexEvent) {
 			this.addEventToList((CreateVertexEvent) ev);
 		}
@@ -284,56 +303,48 @@ public class ECARuleManager {
 		}
 	}
 
+	/**
+	 * Deletes a ECARule from this ECARuleManager
+	 * 
+	 * @param rule
+	 *            the ECARule to delete
+	 */
 	public void deleteECARule(ECARule rule) {
 		this.rules.remove(rule);
 		Event ev = rule.getEvent();
 		ev.getActiveECARules().remove(rule);
 		if (ev.getActiveECARules().isEmpty()) {
 			if (ev instanceof CreateVertexEvent) {
-				if (ev.getTime().equals(Event.EventTime.BEFORE)) {
-					this.beforeCreateVertexEvents.remove(ev);
-				} else {
-					this.afterCreateVertexEvents.remove(ev);
-				}
+				removeEventFromList((CreateVertexEvent) ev);
 			}
 			if (ev instanceof DeleteVertexEvent) {
-				if (ev.getTime().equals(Event.EventTime.BEFORE)) {
-					this.beforeDeleteVertexEvents.remove(ev);
-				} else {
-					this.afterDeleteVertexEvents.remove(ev);
-				}
+				removeEventFromList((DeleteVertexEvent) ev);
 			}
 			if (ev instanceof CreateEdgeEvent) {
-				if (ev.getTime().equals(Event.EventTime.BEFORE)) {
-					this.beforeCreateEdgeEvents.remove(ev);
-				} else {
-					this.afterCreateEdgeEvents.remove(ev);
-				}
+				removeEventFromList((CreateEdgeEvent) ev);
 			}
 			if (ev instanceof DeleteEdgeEvent) {
-				if (ev.getTime().equals(Event.EventTime.BEFORE)) {
-					this.beforeDeleteEdgeEvents.remove(ev);
-				} else {
-					this.afterDeleteEdgeEvents.remove(ev);
-				}
+				removeEventFromList((DeleteEdgeEvent) ev);
 			}
 			if (ev instanceof ChangeEdgeEvent) {
-				if (ev.getTime().equals(Event.EventTime.BEFORE)) {
-					this.beforeChangeEdgeEvents.remove(ev);
-				} else {
-					this.afterChangeEdgeEvents.remove(ev);
-				}
+				removeEventFromList((ChangeEdgeEvent) ev);
 			}
 			if (ev instanceof ChangeAttributeEvent) {
-				if (ev.getTime().equals(Event.EventTime.BEFORE)) {
-					this.beforeChangeAttributeEvents.remove(ev);
-				} else {
-					this.afterChangeAttributeEvents.remove(ev);
-				}
+				removeEventFromList((ChangeAttributeEvent) ev);
 			}
 		}
 	}
 
+	// +++++ Add and Delete Events to the Lists
+
+	/**
+	 * Adds an CreateVertexEvent to the {@link beforeCreateVertexEvents} or
+	 * {@link afterCreateVertexEvents} list depending on its EventTime property,
+	 * if it is not already contained
+	 * 
+	 * @param e
+	 *            the CreateVertexEvent to add
+	 */
 	private void addEventToList(CreateVertexEvent e) {
 		if (e.getTime().equals(Event.EventTime.BEFORE)) {
 			if (!this.beforeCreateVertexEvents.contains(e)) {
@@ -346,6 +357,14 @@ public class ECARuleManager {
 		}
 	}
 
+	/**
+	 * Adds an DeleteVertexEvent to the {@link beforeDeleteVertexEvents} or
+	 * {@link afterDeleteVertexEvents} list depending on its EventTime property,
+	 * if it is not already contained
+	 * 
+	 * @param e
+	 *            the DeleteVertexEvent to add
+	 */
 	private void addEventToList(DeleteVertexEvent e) {
 		if (e.getTime().equals(Event.EventTime.BEFORE)) {
 			if (!this.beforeDeleteVertexEvents.contains(e)) {
@@ -358,6 +377,14 @@ public class ECARuleManager {
 		}
 	}
 
+	/**
+	 * Adds an CreateEdgeEvent to the {@link beforeCreateEdgeEvents} or
+	 * {@link afterCreateEdgeEvents} list depending on its EventTime property,
+	 * if it is not already contained
+	 * 
+	 * @param e
+	 *            the CreateEdgeEvent to add
+	 */
 	private void addEventToList(CreateEdgeEvent e) {
 		if (e.getTime().equals(Event.EventTime.BEFORE)) {
 			if (!this.beforeCreateEdgeEvents.contains(e)) {
@@ -370,6 +397,14 @@ public class ECARuleManager {
 		}
 	}
 
+	/**
+	 * Adds an DeleteEdgeEvent to the {@link beforeDeleteEdgeEvents} or
+	 * {@link afterDeleteEdgeEvents} list depending on its EventTime property,
+	 * if it is not already contained
+	 * 
+	 * @param e
+	 *            the DeleteEdgeEvent to add
+	 */
 	private void addEventToList(DeleteEdgeEvent e) {
 		if (e.getTime().equals(Event.EventTime.BEFORE)) {
 			if (!this.beforeDeleteEdgeEvents.contains(e)) {
@@ -382,6 +417,14 @@ public class ECARuleManager {
 		}
 	}
 
+	/**
+	 * Adds an ChangeEdgeEvent to the {@link beforeChangeEdgeEvents} or
+	 * {@link afterChangeEdgeEvents} list depending on its EventTime property,
+	 * if it is not already contained
+	 * 
+	 * @param e
+	 *            the ChangeEdgeEvent to add
+	 */
 	private void addEventToList(ChangeEdgeEvent e) {
 		if (e.getTime().equals(Event.EventTime.BEFORE)) {
 			if (!this.beforeChangeEdgeEvents.contains(e)) {
@@ -394,6 +437,14 @@ public class ECARuleManager {
 		}
 	}
 
+	/**
+	 * Adds an ChangeAttributeEvent to the {@link beforeChangeAttributeEvents}
+	 * or {@link afterChangeAttributeEvents} list depending on its EventTime
+	 * property, if it is not already contained
+	 * 
+	 * @param e
+	 *            the ChangeAttributeEvent to add
+	 */
 	private void addEventToList(ChangeAttributeEvent e) {
 		if (e.getTime().equals(Event.EventTime.BEFORE)) {
 			if (!this.beforeChangeAttributeEvents.contains(e)) {
@@ -406,90 +457,95 @@ public class ECARuleManager {
 		}
 	}
 
-	// ////
-
 	/**
-	 * @return the List of CreateVertexEvents with EventTime BEFORE
+	 * Removes an CreateVertexEvent from the {@link beforeCreateVertexEvents} or
+	 * {@link afterCreateVertexEvents} list depending on its EventTime property
+	 * 
+	 * @param e
+	 *            the CreateVertexEvent to delete
 	 */
-	public List<CreateVertexEvent> getBeforeCreateVertexEvents() {
-		return beforeCreateVertexEvents;
+	private void removeEventFromList(CreateVertexEvent ev) {
+		if (ev.getTime().equals(Event.EventTime.BEFORE)) {
+			this.beforeCreateVertexEvents.remove(ev);
+		} else {
+			this.afterCreateVertexEvents.remove(ev);
+		}
 	}
 
 	/**
-	 * @return the List of CreateVertexEvents with EventTime AFTER
+	 * Removes an DeleteVertexEvent from the {@link beforeDeleteVertexEvents} or
+	 * {@link afterDeleteVertexEvents} list depending on its EventTime property
+	 * 
+	 * @param e
+	 *            the DeleteVertexEvent to delete
 	 */
-	public List<CreateVertexEvent> getAfterCreateVertexEvents() {
-		return afterCreateVertexEvents;
+	private void removeEventFromList(DeleteVertexEvent ev) {
+		if (ev.getTime().equals(Event.EventTime.BEFORE)) {
+			this.beforeDeleteVertexEvents.remove(ev);
+		} else {
+			this.afterDeleteVertexEvents.remove(ev);
+		}
 	}
 
 	/**
-	 * @return the List of DeleteVertexEvents with EventTime BEFORE
+	 * Removes an CreateEdgeEvent from the {@link beforeCreateEdgeEvents} or
+	 * {@link afterCreateEdgeEvents} list depending on its EventTime property
+	 * 
+	 * @param e
+	 *            the CreateEdgeEvent to delete
 	 */
-	public List<DeleteVertexEvent> getBeforeDeleteVertexEvents() {
-		return beforeDeleteVertexEvents;
+	private void removeEventFromList(CreateEdgeEvent ev) {
+		if (ev.getTime().equals(Event.EventTime.BEFORE)) {
+			this.beforeCreateEdgeEvents.remove(ev);
+		} else {
+			this.afterCreateEdgeEvents.remove(ev);
+		}
 	}
 
 	/**
-	 * @return the List of DeleteVertexEvents with EventTime AFTER
+	 * Removes an DeleteEdgeEvent from the {@link beforeDeleteEdgeEvents} or
+	 * {@link afterDeleteEdgeEvents} list depending on its EventTime property
+	 * 
+	 * @param e
+	 *            the DeleteEdgeEvent to delete
 	 */
-	public List<DeleteVertexEvent> getAfterDeleteVertexEvents() {
-		return afterDeleteVertexEvents;
+	private void removeEventFromList(DeleteEdgeEvent ev) {
+		if (ev.getTime().equals(Event.EventTime.BEFORE)) {
+			this.beforeDeleteEdgeEvents.remove(ev);
+		} else {
+			this.afterDeleteEdgeEvents.remove(ev);
+		}
 	}
 
 	/**
-	 * @return the List of CreateEdgeEvents with EventTime BEFORE
+	 * Removes an ChangeEdgeEvent from the {@link beforeChangeEdgeEvents} or
+	 * {@link afterChangeEdgeEvents} list depending on its EventTime property
+	 * 
+	 * @param e
+	 *            the ChangeEdgeEvent to delete
 	 */
-	public List<CreateEdgeEvent> getBeforeCreateEdgeEvents() {
-		return beforeCreateEdgeEvents;
+	private void removeEventFromList(ChangeEdgeEvent ev) {
+		if (ev.getTime().equals(Event.EventTime.BEFORE)) {
+			this.beforeChangeEdgeEvents.remove(ev);
+		} else {
+			this.afterChangeEdgeEvents.remove(ev);
+		}
 	}
 
 	/**
-	 * @return the List of CreateEdgeEvents with EventTime AFTER
+	 * Removes an ChangeAttributeEvent from the
+	 * {@link beforeChangeAttributeEvents} or {@link afterChangeAttributeEvents}
+	 * list depending on its EventTime property
+	 * 
+	 * @param e
+	 *            the ChangeAttributeEvent to delete
 	 */
-	public List<CreateEdgeEvent> getAfterCreateEdgeEvents() {
-		return afterCreateEdgeEvents;
+	private void removeEventFromList(ChangeAttributeEvent ev) {
+		if (ev.getTime().equals(Event.EventTime.BEFORE)) {
+			this.beforeChangeAttributeEvents.remove(ev);
+		} else {
+			this.afterChangeAttributeEvents.remove(ev);
+		}
 	}
 
-	/**
-	 * @return the List of DeleteEdgeEvents with EventTime BEFORE
-	 */
-	public List<DeleteEdgeEvent> getBeforeDeleteEdgeEvents() {
-		return beforeDeleteEdgeEvents;
-	}
-
-	/**
-	 * @return the List of DeleteEdgeEvents with EventTime AFTER
-	 */
-	public List<DeleteEdgeEvent> getAfterDeleteEdgeEvents() {
-		return afterDeleteEdgeEvents;
-	}
-
-	/**
-	 * @return the List of ChangeEdgeEvents with EventTime BEFORE
-	 */
-	public List<ChangeEdgeEvent> getBeforeChangeEdgeEvents() {
-		return beforeChangeEdgeEvents;
-	}
-
-	/**
-	 * @return the List of ChangeEdgeEvents with EventTime AFTER
-	 */
-	public List<ChangeEdgeEvent> getAfterChangeEdgeEvents() {
-		return afterChangeEdgeEvents;
-	}
-
-	/**
-	 * @return the List of ChangeAttributeEvents with EventTime BEFORE
-	 */
-	public List<ChangeAttributeEvent> getBeforeChangeAttributeEvents() {
-		return beforeChangeAttributeEvents;
-	}
-
-	/**
-	 * @return the List of ChangeAttributeEvents with EventTime AFTER
-	 */
-	public List<ChangeAttributeEvent> getAfterChangeAttributeEvents() {
-		return afterChangeAttributeEvents;
-	}
-	
 }
