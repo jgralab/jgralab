@@ -1,7 +1,6 @@
 package de.uni_koblenz.jgralab.eca.events;
 
 import de.uni_koblenz.jgralab.AttributedElement;
-import de.uni_koblenz.jgralab.eca.EventManager;
 
 public class ChangeAttributeEvent extends Event {
 
@@ -15,8 +14,6 @@ public class ChangeAttributeEvent extends Event {
 	/**
 	 * Creates a ChangeAttributeEvent with the given parameters
 	 * 
-	 * @param manager
-	 *            the EventManager that manages this Event
 	 * @param time
 	 *            the EventTime, BEFORE or AFTER
 	 * @param type
@@ -25,22 +22,15 @@ public class ChangeAttributeEvent extends Event {
 	 * @param attributeName
 	 *            the name of the observed Attribute
 	 */
-	public ChangeAttributeEvent(EventManager manager, EventTime time,
+	public ChangeAttributeEvent(EventTime time,
 			Class<? extends AttributedElement> type, String attributeName) {
-		super(manager,time,type);
+		super(time, type);
 		this.concernedAttribute = attributeName;
-		if(time.equals(EventTime.BEFORE)){
-			manager.getBeforeChangeAttributeEvents().add(this);
-		}else{
-			manager.getAfterChangeAttributeEvents().add(this);
-		}		
 	}
 	
 	/**
 	 * Creates a ChangeAttributeEvent with the given parameters
 	 * 
-	 * @param manager
-	 *            the EventManager that manages this Event
 	 * @param time
 	 *            the EventTime, BEFORE or AFTER
 	 * @param contextExr
@@ -49,15 +39,10 @@ public class ChangeAttributeEvent extends Event {
 	 * @param attributeName
 	 *            the name of the observed Attribute
 	 */
-	public ChangeAttributeEvent(EventManager manager, EventTime time,
+	public ChangeAttributeEvent(EventTime time,
 			String contextExpr, String attributeName) {
-		super(manager,time,contextExpr);
+		super(time, contextExpr);
 		this.concernedAttribute = attributeName;
-		if(time.equals(EventTime.BEFORE)){
-			manager.getBeforeChangeAttributeEvents().add(this);
-		}else{
-			manager.getAfterChangeAttributeEvents().add(this);
-		}		
 	}
 
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

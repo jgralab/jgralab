@@ -6,23 +6,17 @@ import java.util.List;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.eca.ECARule;
-import de.uni_koblenz.jgralab.eca.EventManager;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 
 
 public abstract class Event {
-
-	/**
-	 * EventManager that manages this Event
-	 */
-	private EventManager manager;
 	
 	/**
 	 * Rules that can possibly become triggered by this Event
 	 */
-	protected List<ECARule> rules;
+	protected List<ECARule> activeRules;
 	
 	/**
 	 * EventTime: BEFORE or AFTER
@@ -62,17 +56,14 @@ public abstract class Event {
 	/**
 	 * Creates an Event with the given parameters
 	 * 
-	 * @param manager
-	 *            the EventManager that manages this Event
 	 * @param time
 	 *            the EventTime, BEFORE or AFTER
 	 * @param type
 	 *            the Class of elements, this Event monitors
 	 */
-	public Event(EventManager manager, EventTime time, Class <? extends AttributedElement> type){
-		this.manager = manager;
+	public Event(EventTime time, Class<? extends AttributedElement> type) {
 		this.time = time;
-		this.rules = new ArrayList<ECARule>();
+		this.activeRules = new ArrayList<ECARule>();
 		this.type = type;
 		this.context = Context.TYPE;
 	}
@@ -80,17 +71,14 @@ public abstract class Event {
 	/**
 	 * Creates an Event with the given parameters
 	 * 
-	 * @param manager
-	 *            the EventManager that manages this Event
 	 * @param time
 	 *            the EventTime, BEFORE or AFTER
 	 * @param contExpr
 	 *            the contextExpression to get the context
 	 */
-	public Event(EventManager manager, EventTime time, String contExpr){
-		this.manager = manager;
+	public Event(EventTime time, String contExpr) {
 		this.time = time;
-		this.rules = new ArrayList<ECARule>();
+		this.activeRules = new ArrayList<ECARule>();
 		this.contextExpression = contExpr;
 		this.context = Context.EXPRESSION;
 	}
@@ -105,8 +93,8 @@ public abstract class Event {
 	 *            the AttributedElement, this Event is fired for
 	 */
 	public void fire(AttributedElement element){
-		if (this.checkContext(element)) {
-			for (ECARule rule : rules) {
+		for (ECARule rule : activeRules) {
+			if (this.checkContext(element, rule)) {
 				rule.trigger(element);
 			}
 		}
@@ -120,7 +108,7 @@ public abstract class Event {
 	 */
 	public void fire(Class<? extends AttributedElement> elementClass){
 		if (this.getType().equals(elementClass)) {
-			for (ECARule rule : rules) {
+			for (ECARule rule : activeRules) {
 				rule.trigger(null);		
 			}
 		}
@@ -134,7 +122,7 @@ public abstract class Event {
 	 *            the element to check
 	 * @return whether the element really invokes this Event
 	 */
-	private boolean checkContext(AttributedElement element){
+	private boolean checkContext(AttributedElement element, ECARule rule) {
 		if(this.context.equals(Context.TYPE)){
 			if(element.getM1Class().equals(this.type)){
 				return true;
@@ -143,7 +131,7 @@ public abstract class Event {
 				return false;
 			}
 		}else{
-			Graph graph = this.getEventManager().getGraph();
+			Graph graph = rule.getECARuleManager().getGraph();
 			GreqlEvaluator eval = new GreqlEvaluator(this.contextExpression, graph, null);			
 			eval.startEvaluation();
 			JValue resultingContext = eval.getEvaluationResult();
@@ -171,14 +159,12 @@ public abstract class Event {
 	}
 	
 	/**
-	 * Adds an ECARule to this Event
-	 * 
-	 * @param rule
-	 *            the new added ECARule
+	 * @return list with all currently active ECARules of this Event
 	 */
-	public void addRule(ECARule rule){
-		this.rules.add(rule);
+	public List<ECARule> getActiveECARules() {
+		return this.activeRules;
 	}
+
 
 	/**
 	 * @return the contextExpression
@@ -201,10 +187,5 @@ public abstract class Event {
 		return context;
 	}
 	
-	/**
-	 * @return the managing EventManager
-	 */
-	public EventManager getEventManager() {
-		return manager;
-	}
+
 }

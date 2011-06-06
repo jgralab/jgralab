@@ -91,11 +91,11 @@ public abstract class GraphElementImpl implements GraphElement {
 	}
 	
 	public void ecaAttributeChanging(String name){
-		this.graph.getEventManager().fireBeforeChangeAttributeEvents(this,name);
+		this.graph.getECARuleManager().fireBeforeChangeAttributeEvents(this,name);
 	}
 	
 	public void ecaAttributeChanged(String name){
-		this.graph.getEventManager().fireAfterChangeAttributeEvents(this,name);
+		this.graph.getECARuleManager().fireAfterChangeAttributeEvents(this,name);
 	}
 
 	/*

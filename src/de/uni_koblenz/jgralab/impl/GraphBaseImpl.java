@@ -53,7 +53,7 @@ import de.uni_koblenz.jgralab.GraphStructureChangedListener;
 import de.uni_koblenz.jgralab.GraphStructureChangedListenerWithAutoRemove;
 import de.uni_koblenz.jgralab.RandomIdGenerator;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.eca.EventManager;
+import de.uni_koblenz.jgralab.eca.ECARuleManager;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -357,7 +357,7 @@ public abstract class GraphBaseImpl implements Graph {
 
 	protected void internalEdgeAdded(EdgeBaseImpl e) {
 		notifyEdgeAdded(e);
-		this.getEventManager().fireAfterCreateEdgeEvents(e);
+		this.getECARuleManager().fireAfterCreateEdgeEvents(e);
 	}
 
 	/*
@@ -408,7 +408,7 @@ public abstract class GraphBaseImpl implements Graph {
 
 	protected void internalVertexAdded(VertexBaseImpl v) {
 		notifyVertexAdded(v);
-		this.getEventManager().fireAfterCreateVertexEvents(v);
+		this.getECARuleManager().fireAfterCreateVertexEvents(v);
 	}
 
 	/**
@@ -1045,11 +1045,11 @@ public abstract class GraphBaseImpl implements Graph {
 	}
 
 	public void ecaAttributeChanging(String name){
-		this.getEventManager().fireBeforeChangeAttributeEvents(this,name);
+		this.getECARuleManager().fireBeforeChangeAttributeEvents(this,name);
 	}
 	
 	public void ecaAttributeChanged(String name){
-		this.getEventManager().fireAfterChangeAttributeEvents(this,name);
+		this.getECARuleManager().fireAfterChangeAttributeEvents(this,name);
 	}
 	
 	/**
@@ -1061,7 +1061,7 @@ public abstract class GraphBaseImpl implements Graph {
 	private void internalDeleteEdge(Edge edge) {
 		assert (edge != null) && edge.isValid() && containsEdge(edge);
 
-		this.getEventManager().fireBeforeDeleteEdgeEvents(edge);
+		this.getECARuleManager().fireBeforeDeleteEdgeEvents(edge);
 		
 		EdgeBaseImpl e = (EdgeBaseImpl) edge.getNormalEdge();
 		internalEdgeDeleted(e);
@@ -1077,7 +1077,7 @@ public abstract class GraphBaseImpl implements Graph {
 		removeEdgeFromESeq(e);
 		edgeAfterDeleted(e, alpha, omega);
 		
-		this.getEventManager().fireAfterDeleteEdgeEvents(e.getM1Class());
+		this.getECARuleManager().fireAfterDeleteEdgeEvents(e.getM1Class());
 	}
 
 	protected void internalEdgeDeleted(EdgeBaseImpl e) {
@@ -1094,7 +1094,7 @@ public abstract class GraphBaseImpl implements Graph {
 		while (!getDeleteVertexList().isEmpty()) {
 			VertexBaseImpl v = getDeleteVertexList().remove(0);
 			assert (v != null) && v.isValid() && containsVertex(v);
-			this.getEventManager().fireBeforeDeleteVertexEvents(v);
+			this.getECARuleManager().fireBeforeDeleteVertexEvents(v);
 			internalVertexDeleted(v);
 			// delete all incident edges including incidence objects
 			Edge e = v.getFirstIncidence();
@@ -1115,7 +1115,7 @@ public abstract class GraphBaseImpl implements Graph {
 			removeVertexFromVSeq(v);
 			vertexListModified();
 			vertexAfterDeleted(v);
-			this.getEventManager().fireAfterDeleteVertexEvents(v.getM1Class());
+			this.getECARuleManager().fireAfterDeleteVertexEvents(v.getM1Class());
 		}
 	}
 
@@ -2017,12 +2017,12 @@ public abstract class GraphBaseImpl implements Graph {
 	}
 
 	//ECA Rules
-	private EventManager eventManager;
+	private ECARuleManager eventManager;
 	{
-		eventManager = new EventManager(this);
+		eventManager = new ECARuleManager(this);
 	}
 	
-	public EventManager getEventManager(){
+	public ECARuleManager getECARuleManager(){
 		return eventManager;
 	}
 	
