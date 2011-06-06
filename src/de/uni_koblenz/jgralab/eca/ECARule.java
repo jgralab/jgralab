@@ -108,7 +108,7 @@ public class ECARule {
 	 * @param condition
 	 *            the Condition
 	 */
-	public void setCondition(Condition condition) {
+	private void setCondition(Condition condition) {
 		this.condition = condition;
 		condition.setRule(this);
 	}
@@ -126,8 +126,9 @@ public class ECARule {
 	 * @param action
 	 *            the Action
 	 */
-	public void setAction(Action action) {
+	private void setAction(Action action) {
 		this.action = action;
+		action.setRule(this);
 	}
 
 	/**
