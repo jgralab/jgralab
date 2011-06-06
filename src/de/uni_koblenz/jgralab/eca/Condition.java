@@ -41,9 +41,14 @@ public class Condition {
 	 */
 	public boolean evaluate(AttributedElement element){
 		Graph graph = rule.getECARuleManager().getGraph();
-		GreqlEvaluator greqlEvaluator = new GreqlEvaluator(conditionExpression, graph , null);		
-		if(this.conditionExpression.contains("using v")){
-			greqlEvaluator.setVariable("v", new JValueImpl(element)); 
+		GreqlEvaluator greqlEvaluator;
+		if (this.conditionExpression.contains("context")) {
+			greqlEvaluator = new GreqlEvaluator("using context: "
+					+ conditionExpression, graph, null);
+			greqlEvaluator.setVariable("context", new JValueImpl(element));
+		} else {
+			greqlEvaluator = new GreqlEvaluator(conditionExpression, graph,
+					null);
 		}
 		greqlEvaluator.startEvaluation();
 		JValue result = greqlEvaluator.getEvaluationResult();
