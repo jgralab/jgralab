@@ -15,16 +15,19 @@ public class GretlTransformAction extends Action {
 	 */
 	Class<? extends Transformation<Graph>> transformationClass;
 	
+	// +++++++++++++++++++++++++++++++++++++++++++++++++
+
 	/**
 	 * Creates a new GretlTransformAction with the given Transformation Class
 	 * 
-	 * @param t
+	 * @param transformationClass
 	 *            the Transformation Class
 	 */
-	public GretlTransformAction(Class<? extends Transformation<Graph>> t) {
-		this.transformationClass = t;
+	public GretlTransformAction(Class<? extends Transformation<Graph>> transformationClass) {
+		this.transformationClass = transformationClass;
 	}
 
+	// +++++++++++++++++++++++++++++++++++++++++++++++++
 
 	/**
 	 * Executes the action

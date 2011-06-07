@@ -23,11 +23,11 @@ public class Condition {
 	/**
 	 * Creates a Condition with the given GReQuL Query as condition Expression
 	 * 
-	 * @param condEx
+	 * @param conditionExpression
 	 *            condition as GReQuL Query
 	 */
-	public Condition(String condEx){
-		this.conditionExpression = condEx;
+	public Condition(String conditionExpression){
+		this.conditionExpression = conditionExpression;
 	}
 	
 	// +++++++++++++++++++++++++++++++++++++++++++++++++
