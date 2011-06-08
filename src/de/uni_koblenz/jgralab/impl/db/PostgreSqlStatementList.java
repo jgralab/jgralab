@@ -82,9 +82,9 @@ public class PostgreSqlStatementList extends SqlStatementList {
 			+ "\""
 			+ COLUMN_SCHEMA_PACKAGE_PREFIX
 			+ "\" TEXT,"
-			+ ""
+			+ "\""
 			+ COLUMN_SCHEMA_NAME
-			+ " TEXT,"
+			+ "\" TEXT,"
 			+ "\""
 			+ COLUMN_SCHEMA_TG
 			+ "\" TEXT" + ");";
@@ -113,8 +113,8 @@ public class PostgreSqlStatementList extends SqlStatementList {
 			+ SEQUENCE_GRAPH + "\";" + "CREATE TABLE \"" + TABLE_GRAPH + "\"("
 			+ "\"" + COLUMN_GRAPH_ID
 			+ "\" INT4 PRIMARY KEY DEFAULT NEXTVAL('\"" + SEQUENCE_GRAPH
-			+ "\"')," + "" + COLUMN_GRAPH_UID + " TEXT," + ""
-			+ COLUMN_GRAPH_VERSION + " INT8," + "\""
+			+ "\"')," + "\"" + COLUMN_GRAPH_UID + "\" TEXT," + "\""
+			+ COLUMN_GRAPH_VERSION + "\" INT8," + "\""
 			+ COLUMN_GRAPH_VSEQ_VERSION + "\" INT8," + "\""
 			+ COLUMN_GRAPH_ESEQ_VERSION + "\" INT8," + "\"" + COLUMN_TYPE_ID
 			+ "\" INT4 REFERENCES \"" + TABLE_TYPE + "\"(\"" + COLUMN_TYPE_ID
@@ -338,9 +338,9 @@ public class PostgreSqlStatementList extends SqlStatementList {
 			+ "\""
 			+ COLUMN_GRAPH_ID
 			+ "\" INT4,"
-			+ ""
+			+ "\""
 			+ COLUMN_INCIDENCE_DIRECTION
-			+ " \"DIRECTION\","
+			+ "\" \"DIRECTION\","
 			+ "\""
 			+ COLUMN_SEQUENCE_NUMBER + "\" INT8" + ");";
 
@@ -356,7 +356,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 			+ "\" PRIMARY KEY ( \""
 			+ COLUMN_EDGE_ID
 			+ "\", \""
-			+ COLUMN_GRAPH_ID + "\", " + COLUMN_INCIDENCE_DIRECTION + " );";
+			+ COLUMN_GRAPH_ID + "\", \"" + COLUMN_INCIDENCE_DIRECTION + "\" );";
 
 	@Override
 	public PreparedStatement addPrimaryKeyConstraintOnIncidenceTable()
@@ -507,7 +507,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 			+ SEQUENCE_ATTRIBUTE + "\";" + "CREATE TABLE \"" + TABLE_ATTRIBUTE
 			+ "\"(" + "\"" + COLUMN_ATTRIBUTE_ID
 			+ "\" INT4 PRIMARY KEY DEFAULT NEXTVAL('\"" + SEQUENCE_ATTRIBUTE
-			+ "\"')," + "" + COLUMN_ATTRIBUTE_NAME + " TEXT," + "\""
+			+ "\"')," + "\"" + COLUMN_ATTRIBUTE_NAME + "\" TEXT," + "\""
 			+ COLUMN_SCHEMA_ID + "\" INT4 REFERENCES \"" + TABLE_SCHEMA
 			+ "\" ON DELETE CASCADE" + ");";
 
