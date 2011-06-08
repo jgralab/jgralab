@@ -53,6 +53,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Greql2Schema;
 import de.uni_koblenz.jgralab.gretl.AddSuperClass;
 import de.uni_koblenz.jgralab.gretl.Context;
 import de.uni_koblenz.jgralab.gretl.CopyTransformation;
+import de.uni_koblenz.jgralab.gretl.CreateSubgraph;
 import de.uni_koblenz.jgralab.gretl.CreateVertexClass;
 import de.uni_koblenz.jgralab.gretl.ExecuteTransformation;
 import de.uni_koblenz.jgralab.gretl.MatchReplace;
@@ -722,6 +723,23 @@ public class GretlTest {
 			throws IOException {
 		Tg2Dot.convertGraph(g, file, false, GraphVizOutputFormat.PDF,
 				reversedEdgeTypes);
+	}
+
+	@Test
+	public void createSubgraph1() {
+		targetFileName = "createSubgraph1";
+		System.out.println(">>> " + targetFileName);
+		context = new Context(FamilySchema.instance().createFamilyGraph());
+		new CreateSubgraph(
+				context,
+				"f(Family '$[0]' | lastName = 'toString($[0])'), "
+						+ "f -->{HasFather}   (Member '$[1]' | firstName = 'toString($[1])'), "
+						+ "f -->{HasMother}   (Member '$[2]' | firstName = 'toString($[2])'), "
+						+ "f -->{HasSon}      (Member '$[3]' | firstName = 'toString($[3])'), "
+						+ "f -->{HasDaughter} (Member '$[4]' | firstName = 'toString($[4])') ",
+				"set(tup(1,2,3,4,5))").execute();
+		assertEquals(5, context.getTargetGraph().getVCount());
+		assertEquals(4, context.getTargetGraph().getECount());
 	}
 
 	@Test
