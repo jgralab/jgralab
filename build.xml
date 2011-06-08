@@ -130,6 +130,7 @@
 	  <delete dir="${src.dir}/de/uni_koblenz/jgralab/grumlschema" />
 	  <delete dir="${src.dir}/de/uni_koblenz/jgralab/gretl/template" />
 	  <delete dir="${testcases.dir}/de/uni_koblenz/jgralabtest/schemas" />
+	  <delete dir="${testcases.dir}/de/uni_koblenz/jgralabtest/gretl/schemas" />		
 	  <delete file="${testschemas.dir}/greqltestschema.tg" />
 	</target>
 
