@@ -54,8 +54,8 @@ public class MySqlStatementList extends SqlStatementList {
 
 	@Override
 	public String makeQueryVendorSpecific(String query) {
-		return query.replace(SqlStatementList.QUOTE, "").replace(
-				SqlStatementList.EOQ, "").replace(DIRECTION_TYPE, "?");
+		return query.replace(SqlStatementList.QUOTE, "`").replace(
+				SqlStatementList.EOQ, ";").replace(DIRECTION_TYPE, "?");
 	}
 
 	private static final String CREATE_GRAPH_SCHEMA_TABLE = "CREATE TABLE "
