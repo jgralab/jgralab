@@ -1,0 +1,57 @@
+transformation FamilyGraph2Genealogy;
+
+CreateAbstractVertexClass Person;
+
+CreateVertexClass Male
+  <== from m : V{Member}
+      with degree{HasFather, HasSon}(m) > 0
+      reportSet m end;
+
+CreateVertexClass Female
+  <== from m : V{Member}
+      with not(containsKey(img_Male, m))
+      reportSet m end;
+
+CreateAbstractEdgeClass HasRelative from Person to Person;
+
+CreateEdgeClass HasChild from Person (2,2) role parents
+                         to Person role children
+  <== from e: E{HasDaughter, HasSon},
+           parent: startVertex(e)<>--{HasFather, HasMother}
+      reportSet tup(endVertex(e), parent), parent, endVertex(e) end;
+
+CreateEdgeClass HasSpouse
+				from Male (0,1) role husband
+				to Female (0,1) role wife
+  <== from f : V{Family}
+      reportSet f,
+        theElement(f<>--{HasFather}),
+        theElement(f<>--{HasMother}) end;
+
+AddSubClasses Person Male Female;
+AddSubClasses HasRelative HasChild HasSpouse;
+
+CreateAttribute Person.fullName : String = '"Max Mustermann"'
+  <== from m : keySet(img_Person)
+      reportMap m -> m.firstName ++ " " ++
+        (degree{HasFather, HasMother}(m) > 0 ?
+          theElement(m--<>{HasFather, HasMother}).lastName :
+          theElement(m--<>).lastName) end;
+
+CreateEnumDomain AgeGroup(CHILD, ADULT);
+
+CreateAttribute Person.ageGroup : AgeGroup = "ADULT"
+  <== // We set only the children vals, and use ADULT as default.
+    from m : keySet(img_Person) with m.age < 18 reportMap m -> "CHILD" end;
+
+CreateRecordDomain Address(street : String, town : String);
+
+CreateAttribute Person.address : Address
+  <== from m : keySet(img_Person)
+      reportMap m ->
+        degree{HasFather, HasMother}(m) > 0 ?
+        rec(street : theElement(m --<>{HasFather, HasMother}).street,
+            town : theElement(m --<>{HasFather, HasMother}).town) :
+        rec(street : theElement(m --<>).street,
+            town : theElement(m --<>).town) end;
+

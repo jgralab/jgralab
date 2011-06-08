@@ -1,0 +1,12 @@
+TGraph 2;
+
+Schema de.uni_koblenz.jgralabtest.gretl.schemas.families.FamilySchema;
+GraphClass FamilyGraph;
+
+VertexClass Family { lastName : String, street : String, town : String };
+VertexClass Member { firstName : String, age : Integer };
+
+EdgeClass HasFather   from Family (0,1) role familyFather   to Member (1,1) role father aggregation shared;
+EdgeClass HasMother   from Family (0,1) role familyMother   to Member (1,1) role mother aggregation shared;
+EdgeClass HasSon      from Family (0,1) role familySon      to Member (0,*) role sons aggregation shared;
+EdgeClass HasDaughter from Family (0,1) role familyDaughter to Member (0,*) role daughters aggregation shared;

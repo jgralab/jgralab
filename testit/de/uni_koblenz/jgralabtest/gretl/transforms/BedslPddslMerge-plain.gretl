@@ -1,0 +1,123 @@
+transformation BedslPddslMerge;
+
+CreateAbstractVertexClass Element;
+
+CreateVertexClass Chassis
+<== #pddsl# from c : V{Chassis} reportSet c.name end;
+
+CreateVertices Chassis
+<== #bedsl# from e : V{Entity}, se : e <--{HasSupertype}+
+            with containsKey(img_Chassis, e.name)
+              and not containsKey(img_Chassis, se.name)
+            reportSet se.name end;
+
+CreateVertexClass Configuration
+<== #pddsl# from c : V{Configuration} reportSet c.name end;
+
+CreateVertices Configuration
+<== #bedsl# from e : V{Entity}, se : e <--{HasSupertype}+
+            with containsKey(img_Configuration, e.name)
+              and not containsKey(img_Configuration, se.name)
+            reportSet se.name end;
+
+CreateVertexClass Slot
+<== #pddsl# from s : V{Slot} reportSet s.name end;
+
+CreateVertices Slot
+<== #bedsl# from e : V{Entity}, se : e <--{HasSupertype}+
+            with containsKey(img_Slot, e.name)
+              and not containsKey(img_Slot, se.name)
+            reportSet se.name end;
+
+CreateVertexClass Card
+<== #pddsl# from c : V{Card} reportSet c.name end;
+
+CreateVertices Card
+<== #bedsl# from e : V{Entity}, se : e <--{HasSupertype}+
+            with containsKey(img_Card, e.name)
+              and not containsKey(img_Card, se.name)
+            reportSet se.name end;
+
+AddSubClasses Element Chassis Configuration Slot Card;
+
+CreateEdgeClass HasConfig
+from Chassis (1,1) to Configuration (1,1) role config aggregation shared
+<== #pddsl# from e: E{HasConfig}
+            reportSet t, t[0], t[1] end
+            where t:= tup(startVertex(e).name, endVertex(e).name);
+
+CreateEdges HasConfig
+<== #bedsl# from ra: V{ReferenceAttribute}
+            with ra.name = "HasConfig"
+              and not containsKey(img_HasConfig, t)
+            reportSet t, t[0], t[1] end
+            where t:= tup(theElement(<>--{HasAttribute} ra).name,
+                          theElement(ra -->{References}).name);
+
+CreateEdgeClass HasSlot
+from Configuration (1,1) to Slot (1,1) role slot aggregation shared
+<== #pddsl# from e : E{HasSlot}
+            reportSet e, startVertex(e).name, endVertex(e).name end;
+
+CreateEdges HasSlot
+<== #bedsl# from ra: V{ReferenceAttribute}
+            with ra.name = "HasSlot"
+              and not containsKey(img_HasSlot, t)
+            reportSet t, t[0], t[1] end
+            where t:= tup(theElement(<>--{HasAttribute} ra).name,
+                          theElement(ra -->{References}).name);
+
+CreateEdgeClass HasCard
+from Slot (1,1) to Card (1,1) role card aggregation shared
+<== #pddsl# from e : E{HasCard}
+            reportSet e, startVertex(e).name, endVertex(e).name end;
+
+CreateEdges HasCard
+<== #bedsl# from ra: V{ReferenceAttribute}
+            with ra.name = "HasCard"
+              and not containsKey(img_HasCard, t)
+            reportSet t, t[0], t[1] end
+            where t:= tup(theElement(<>--{HasAttribute} ra).name,
+                          theElement(ra -->{References}).name);
+
+CreateVertexClass Entity
+<== #bedsl# from e : V{Entity}
+            with not(containsKey(img_Element, e.name))
+            reportSet e.name end;
+
+AddSuperClass Element Entity;
+
+CreateAttribute Entity.name : String
+<== #bedsl# from en : keySet(img_Entity)
+            reportMap en -> en end;
+
+CreateEdgeClass HasSupertype
+from Entity role subType to Entity (0,1) role superType
+<== #bedsl# from e : E{HasSupertype}
+            reportSet e, startVertex(e).name, endVertex(e).name end;
+
+CreateAbstractVertexClass Attribute;
+CreateVertexClass SimpleAttribute <== #bedsl# V{SimpleAttribute};
+CreateAttribute SimpleAttribute.value : String
+<== #bedsl# from sa : V{SimpleAttribute}
+            reportMap sa -> sa.value end;
+
+CreateVertexClass ReferenceAttribute
+<== #bedsl# from ra : V{ReferenceAttribute}
+            with not(ra.name =~ 'Has(Card|Slot|Config)')
+            reportSet ra end;
+
+AddSubClasses Attribute SimpleAttribute ReferenceAttribute;
+CreateAttribute Attribute.name : String
+<== #bedsl# from a : keySet(img_Attribute)
+            reportMap a -> a.name end;
+
+CreateEdgeClass HasAttribute
+from Entity to Attribute role attributes aggregation composite
+<== #bedsl# from a : keySet(img_Attribute)
+            reportSet a, theElement(-->{HasAttribute} a).name, a end;
+
+CreateEdgeClass References
+from ReferenceAttribute to Entity (1,1) role entity
+<== #bedsl# from ra : keySet(img_ReferenceAttribute)
+            reportSet ra, ra, theElement(ra -->{References}).name end;

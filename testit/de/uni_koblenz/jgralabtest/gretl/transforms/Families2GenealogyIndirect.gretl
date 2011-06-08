@@ -1,0 +1,3 @@
+transformation FamilyGraph2GenealogyIndirect;
+
+ExecuteTransformation "Families2Genealogy.gretl";
