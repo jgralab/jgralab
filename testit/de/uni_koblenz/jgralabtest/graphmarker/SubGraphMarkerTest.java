@@ -79,8 +79,9 @@ public class SubGraphMarkerTest extends InstanceTest {
 	private BooleanGraphMarker oldMarker;
 	private SubGraphMarker newMarker;
 
-	public SubGraphMarkerTest(ImplementationType implementationType) {
-		super(implementationType);
+	public SubGraphMarkerTest(ImplementationType implementationType,
+			String dbURL) {
+		super(implementationType, dbURL);
 	}
 
 	@Before
@@ -96,7 +97,8 @@ public class SubGraphMarkerTest extends InstanceTest {
 		case DATABASE:
 			dbHandler.connectToDatabase();
 			dbHandler.loadMinimalSchemaIntoGraphDatabase();
-			g = dbHandler.createMinimalGraphWithDatabaseSupport("SubGraphMarkerTest", V,E);
+			g = dbHandler.createMinimalGraphWithDatabaseSupport(
+					"SubGraphMarkerTest", V, E);
 			break;
 		case SAVEMEM:
 			g = MinimalSchema.instance().createMinimalGraphWithSavememSupport(
@@ -143,10 +145,10 @@ public class SubGraphMarkerTest extends InstanceTest {
 		}
 		commit(g);
 	}
-	
+
 	@After
-	public void tearDown(){
-		if(implementationType == ImplementationType.DATABASE){
+	public void tearDown() {
+		if (implementationType == ImplementationType.DATABASE) {
 			dbHandler.clearAllTables();
 			dbHandler.closeGraphdatabase();
 		}

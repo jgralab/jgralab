@@ -72,8 +72,8 @@ public class EdgeListTest extends InstanceTest {
 		return getParameters();
 	}
 
-	public EdgeListTest(ImplementationType implementationType) {
-		super(implementationType);
+	public EdgeListTest(ImplementationType implementationType, String dbURL) {
+		super(implementationType, dbURL);
 	}
 
 	@Before
@@ -87,7 +87,7 @@ public class EdgeListTest extends InstanceTest {
 					.createMinimalGraphWithTransactionSupport(V, E);
 			break;
 		case DATABASE:
-			g = this.createMinimalGraphWithDatabaseSupport();
+			g = createMinimalGraphWithDatabaseSupport();
 			break;
 		case SAVEMEM:
 			g = MinimalSchema.instance().createMinimalGraphWithSavememSupport();
@@ -101,8 +101,8 @@ public class EdgeListTest extends InstanceTest {
 			g.createNode();
 		}
 		for (int i = 0; i < N; ++i) {
-			g.createLink((Node) g.getVertex(i + 1),
-					(Node) g.getVertex((i + 1) % N + 1));
+			g.createLink((Node) g.getVertex(i + 1), (Node) g.getVertex((i + 1)
+					% N + 1));
 		}
 		commit(g);
 	}

@@ -1,0 +1,16 @@
+TGraph 2;
+
+Schema de.uni_koblenz.jgralabtest.gretl.schemas.pddsl.PddslSchema;
+
+GraphClass PddslGraph;
+
+Package ;
+VertexClass Card: Element;
+VertexClass Chassis: Element;
+VertexClass Configuration: Element;
+abstract VertexClass Element {name: String};
+VertexClass Slot: Element;
+EdgeClass HasCard from Slot (1,1) to Card (1,1) role card aggregation shared;
+EdgeClass HasSlot from Configuration (1,1) to Slot (1,*) role slot aggregation shared;
+EdgeClass HasConfig from Chassis (1,1) to Configuration (1,1) role config aggregation shared;
+

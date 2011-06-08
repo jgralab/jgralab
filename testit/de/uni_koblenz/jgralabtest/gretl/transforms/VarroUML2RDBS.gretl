@@ -1,0 +1,92 @@
+transformation VarroUML2RDBS;
+
+import uml.Assoc;
+import uml.AssocEnd;
+import uml.Attribute;
+import uml.Class;
+import uml.General;
+import uml.Package;
+import uml.HasAssocEnd;
+import uml.HasType;
+import uml.HasAttribute;
+
+CreateAbstractVertexClass NamedElement;
+
+// (a) SchemaRule
+CreateVertexClass Schema <== V{Package};
+
+// (b) ClassRule / (c) AssociationRule
+CreateVertexClass Table <== V{Class,Assoc};
+CreateVertexClass PKey <== from x : V{Class,Assoc} reportSet x, 'pkey' end;
+CreateVertexClass Column <== from x : V{Class,Assoc} reportSet x, 'col' end;
+
+CreateEdgeClass ContainsTable from Schema to Table
+  <== from c : V{Class,Assoc}, p : c --<> & {Package}
+      reportSet tup(p,c), p, c end;
+
+CreateEdgeClass ContainsPKey from Table to PKey
+  <== from c: V{Class,Assoc} reportSet c, c, tup(c,'pkey') end;
+
+CreateEdgeClass ContainsColumn from Table to Column
+  <== from c: V{Class,Assoc} reportSet c, c, tup(c,'col') end;
+
+CreateEdgeClass KeyConsistsOf from PKey to Column
+  <== from c: V{Class,Assoc} reportSet c, tup(c, 'pkey'), tup(c,'col') end;
+
+// (d) AssocEndRule
+CreateVertices Column <== V{AssocEnd};
+CreateVertexClass FKey <== from ae : V{AssocEnd} reportSet ae, 'fkey' end;
+
+CreateEdges ContainsColumn
+  <== from ae : V{AssocEnd}
+      reportSet tup(ae,'col'), theElement(ae --<>{HasAssocEnd}), ae end;
+
+CreateEdgeClass ContainsFKey from Table to FKey
+  <== from ae : V{AssocEnd}
+      reportSet tup(ae,'fkey'),
+        theElement(ae --<>{HasAssocEnd}), tup(ae,'fkey') end;
+
+CreateEdgeClass FKeyConsistsOf from FKey to Column
+  <== from ae : V{AssocEnd}
+      reportSet tup(ae,'fkey','col'), tup(ae,'fkey'), ae end;
+
+CreateEdgeClass RefersTo from FKey to PKey
+  <== from ae : V{AssocEnd}
+      reportSet tup(ae,'refs'),
+        tup(ae,'fkey'),
+        tup(theElement(ae -->{HasType}),'pkey') end;
+
+// (e) GeneralizationRule (Subclasses refer to superclasses)
+CreateVertices FKey <== from g : V{General} reportSet g, tup(g,'fkey') end;
+
+CreateEdges ContainsColumn
+  <== from g: V{General} reportSet g,
+        theElement(g -->{HasSub}), tup(g,'col') end;
+
+CreateEdges ContainsFKey
+  <== from g: V{General} reportSet g,
+        theElement(g -->{HasSub}), tup(g,'fkey') end;
+
+CreateEdges FKeyConsistsOf
+  <== from g: V{General} reportSet g, tup(g,'fkey'), tup(g,'col') end;
+
+CreateEdges RefersTo
+  <== from g: V{General}
+      reportSet g, tup(g,'fkey'), tup(theElement(g-->{HasSuper}),'pkey') end;
+
+// (f) AttributeRule
+CreateVertices Column <== V{Attribute};
+
+CreateEdges ContainsColumn
+  <== from a:V{Attribute} reportSet a, theElement(a--<>{HasAttribute}), a end;
+
+AddSubClass NamedElement Schema;
+AddSubClass NamedElement Table;
+AddSubClass NamedElement Column;
+AddSubClass NamedElement PKey;
+AddSubClass NamedElement FKey;
+
+CreateAttribute NamedElement.name : String
+  <== from ne : keySet(img_NamedElement)
+      reportMap ne ->
+        hasJValueType(ne, "VERTEX") ? ne.name : ne[1] ++ '_' ++ ne[0].name end;

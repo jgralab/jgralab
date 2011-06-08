@@ -332,9 +332,6 @@ public class ParserTest {
 
 	@Test
 	public void testBooleanLiteral() throws Exception {
-		System.out.println("------------------");
-		System.out.println("Testing BooleanLiteral");
-		System.out.println("------------------");
 		Greql2 graph = parseQuery("true");
 		BoolLiteral lit = graph.getFirstBoolLiteral();
 		assertNotNull(lit);
@@ -347,9 +344,6 @@ public class ParserTest {
 
 	@Test
 	public void testIntegerLiteral() throws Exception {
-		System.out.println("------------------");
-		System.out.println("Testing IntLiteral");
-		System.out.println("------------------");
 		Greql2 graph = parseQuery("5");
 		IntLiteral lit = graph.getFirstIntLiteral();
 		assertNotNull(lit);
@@ -358,9 +352,6 @@ public class ParserTest {
 
 	@Test
 	public void testHexLiteral() throws Exception {
-		System.out.println("------------------");
-		System.out.println("Testing HexLiteral");
-		System.out.println("------------------");
 		Greql2 graph = parseQuery("0x5");
 		IntLiteral lit = graph.getFirstIntLiteral();
 		assertNotNull(lit);
@@ -373,9 +364,6 @@ public class ParserTest {
 
 	@Test
 	public void testOctLiteral() throws Exception {
-		System.out.println("------------------");
-		System.out.println("Testing OctLiteral");
-		System.out.println("------------------");
 		Greql2 graph = parseQuery("05");
 		IntLiteral lit = graph.getFirstIntLiteral();
 		assertNotNull(lit);
@@ -989,9 +977,10 @@ public class ParserTest {
 	public void testSimplePathDescription() throws Exception {
 		Greql2 graph = parseQuery("using v: v --> ");
 		SimplePathDescription pathDescr = graph.getFirstSimplePathDescription();
-		for (Vertex v : graph.vertices()) {
-			System.out.println("VErtex: " + v);
-		}
+		// TODO test seriously
+		// for (Vertex v : graph.vertices()) {
+		// System.out.println("VErtex: " + v);
+		// }
 		assertNotNull(pathDescr);
 	}
 
@@ -1264,7 +1253,6 @@ public class ParserTest {
 	@Test
 	public void testStringWithEscape1() {
 		String queryString = "\"my simple \\\"string\"";
-		System.out.println("QueryString: " + queryString);
 		Greql2 graph = parseQuery(queryString);
 		assertNotNull(graph);
 		StringLiteral lit = graph.getFirstStringLiteral();
@@ -1275,7 +1263,6 @@ public class ParserTest {
 	@Test
 	public void testStringWithEscape2() {
 		String queryString = "\"my simple \nstring\"";
-		System.out.println("QueryString: " + queryString);
 		Greql2 graph = parseQuery(queryString);
 		assertNotNull(graph);
 		StringLiteral lit = graph.getFirstStringLiteral();
@@ -1299,7 +1286,6 @@ public class ParserTest {
 			parseQuery("from v:X report v --> --> end");
 			fail("Expected ParsingException at offset 7");
 		} catch (UndefinedVariableException ex) {
-			System.out.println("Exception offset: " + ex.getOffset());
 			assertEquals(7, ex.getOffset());
 		}
 	}
@@ -1311,11 +1297,6 @@ public class ParserTest {
 		try {
 			parser.parse();
 		} catch (ParsingException ex) {
-			// ex.printStackTrace();
-			System.out.println("Known variables: ");
-			for (String vs : parser.getValidVariables()) {
-				System.out.println(vs);
-			}
 			assertEquals(1, parser.getValidVariables().size());
 			for (String vs : parser.getValidVariables()) {
 				assertEquals("var", vs);

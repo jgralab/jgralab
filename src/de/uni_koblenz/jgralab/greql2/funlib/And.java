@@ -43,56 +43,6 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
 
 /**
- * Returns the result of the logical operation <code>a and b</code>.
- * <dl>
- * <dt><b>GReQL-signature</b></dt>
- * <dd><code>BOOL and(a:BOOL, b:BOOL)</code></dd>
- * <dd>&nbsp;</dd>
- * <dd>This function can be used in infix notation: <code>a and b</code></dd>
- * <dd>&nbsp;</dd>
- * </dl>
- * <dl>
- * <dt></dt>
- * <dd>
- * <dl>
- * <dt><b>Parameters:</b></dt>
- * <dd><code>a: BOOL</code> - first operand</dd>
- * <dd><code>b: BOOL</code> - second operand</dd>
- * <dt><b>Returns:</b></dt>
- * <dd>the result of the logical operation <code>a and b</code> as defined
- * below:</dd>
- * <dd>&nbsp;</dd>
- * <dd>
- * <table border = "1">
- * <tr>
- * <th>a\b</th>
- * <th bgcolor="#cc996f">false</th>
- * <th bgcolor="#bababa">Null</th>
- * <th * bgcolor="#92cc90">true</th>
- * </tr>
- * <tr>
- * <th bgcolor="#cc996f">false</th>
- * <td bgcolor="#ffbf8b">false</td>
- * <td bgcolor="#ffbf8b">false</td>
- * <td bgcolor="#ffbf8b">false</td>
- * </tr>
- * <tr>
- * <th bgcolor="#bababa">Null</th>
- * <td bgcolor="#ffbf8b">false</td>
- * <td bgcolor="#eeeeee">Null</td>
- * <td bgcolor="#eeeeee">Null</td>
- * </tr>
- * <tr>
- * <th bgcolor="#92cc90">true</th>
- * <td bgcolor="#ffbf8b">false</td>
- * <td bgcolor="#eeeeee">Null</td>
- * <td bgcolor="#b7ffb4">true</td>
- * </tr>
- * </table>
- * </dd>
- * </dl>
- * </dd>
- * </dl>
  * 
  * @author ist@uni-koblenz.de
  * 
@@ -118,7 +68,8 @@ public class And extends BooleanFunction {
 
 	@Override
 	protected JValue applyFunction(JValue leftHandSide, JValue rightHandSide) {
-		return JValueBoolean.and(leftHandSide, rightHandSide);
+		return JValueBoolean.getValue(leftHandSide.toBoolean()
+				&& rightHandSide.toBoolean());
 	}
 
 }

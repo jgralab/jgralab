@@ -1,0 +1,27 @@
+transformation GretlJava2TransformationUsages;
+
+CreateVertexClass Transformation
+  <== from class: V{ClassDefinition}
+      with class.name = "Transformation"
+        or not isEmpty(
+          class (<--{IsSuperClassOf} <--{IsTypeDefinitionOf})+
+            & {ClassDefinition @ thisVertex.name = "Transformation"})
+      reportSet class end;
+
+CreateAttribute Transformation.name : String
+  <== from class: keySet(img_Transformation)
+      reportMap class -> class.name end;
+
+CreateEdgeClass Extends from Transformation to Transformation
+  <== from c1, c2: keySet(img_Transformation)
+      with c1 <--{IsSuperClassOf} <--{IsTypeDefinitionOf} c2
+      reportSet tup(c1,c2), c1, c2 end;
+
+CreateEdgeClass Invokes from Transformation to Transformation
+  <== from caller, callee: keySet(img_Transformation),
+           t: caller <--{IsClassBlockOf} <--{IsMemberOf} & {MethodDefinition!}
+      with theElement(t <--{IsNameOfMethod}).name = 'transform'
+        and t <--{IsBodyOfMethod} <--{IsStatementOfBody}
+              <--{^IsDeclarationOf}* & {ObjectCreation} <--{IsTypeOfObject}
+              <--{IsTypeDefinitionOf} callee
+      reportSet tup(caller, callee), caller, callee end;

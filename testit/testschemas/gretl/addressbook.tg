@@ -1,0 +1,9 @@
+TGraph 2;
+
+Schema de.uni_koblenz.jgralabtest.gretl.schemas.addressbook.AddressBookSchema;
+
+GraphClass AddressBookGraph { name: String };
+
+VertexClass AddressBook { name : String };
+VertexClass Contact { name : String, address : String };
+EdgeClass Contains from AddressBook (1,1) to Contact (0,*) aggregation composite;

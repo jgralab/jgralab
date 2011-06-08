@@ -75,12 +75,10 @@ public class GraphFunctionTest extends GenericTest {
 
 			Set<Vertex> children2 = getChildren(vertex);
 
+			assertEquals(children.size(), children2.size());
 			for (JValue child : children) {
-				System.out.println(child);
-				assertTrue(child.toString() + " not in " + children2,
-						children2.remove(child.toVertex()));
+				assertTrue(children2.contains(child.toVertex()));
 			}
-			assertTrue(children2 + " is not empty", children2.isEmpty());
 		}
 	}
 

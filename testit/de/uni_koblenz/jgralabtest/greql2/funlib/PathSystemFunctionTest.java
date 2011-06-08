@@ -51,9 +51,12 @@ import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueBag;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
 import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
+import de.uni_koblenz.jgralab.schema.GraphClass;
+import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralabtest.greql2.GenericTest;
 
 public class PathSystemFunctionTest extends GenericTest {
@@ -208,7 +211,6 @@ public class PathSystemFunctionTest extends GenericTest {
 		for (JValue v : bag) {
 			int distance = v.toInteger();
 			if (distance > 0) {
-				System.out.println(distance);
 				assertEquals(2, distance);
 			} else {
 				assertEquals(-1, distance);
@@ -225,8 +227,9 @@ public class PathSystemFunctionTest extends GenericTest {
 		// and LetExpressions!
 		String queryString = "from x : V{WhereExpression} report edgesConnected(x) end";
 		JValue result = evalTestQuery("EdgesConnected", queryString);
+		// TODO test seriously
+		@SuppressWarnings("unused")
 		JValue result2 = evalTestQuery("", "V{WhereExpression}");
-		System.out.println(result2);
 		assertEquals(6, getNthValue(result.toCollection(), 0).toCollection()
 				.size());
 	}
@@ -472,8 +475,8 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	private void testIsCycle(JValuePath usedPath) throws Exception {
 		setBoundVariable("usedPath", usedPath);
-		boolean isCycle = usedPath.getStartVertex() != null
-				&& usedPath.getStartVertex() == usedPath.getEndVertex();
+		boolean isCycle = (usedPath.getStartVertex() != null)
+				&& (usedPath.getStartVertex() == usedPath.getEndVertex());
 		assertQueryEquals("using usedPath: isCycle(usedPath)", isCycle);
 	}
 
@@ -831,18 +834,22 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testTypes() throws Exception {
-		String queryString = "from c: V{localities.County}"
-				+ "report types(pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad})) "
-				+ "end";
-		JValue result = evalTestQuery("TypeSet", queryString,
-				TestVersion.ROUTE_MAP_GRAPH);
-		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(countyCount, bag.size());
-		// TODO this test is not well thought through
-		for (JValue v : bag) {
-			int size = v.toCollection().size();
-			assertTrue(size == 6 || size == 10);
+		// A pathSystem starting at vertex 25 captures vertices and edges of all
+		// concrete types.
+		String queryString = "types(pathSystem(getVertex(25), <->*))";
+		JValueCollection result = evalTestQuery("TypeSet", queryString,
+				TestVersion.ROUTE_MAP_GRAPH).toCollection();
+		GraphClass gc = getTestGraph(TestVersion.ROUTE_MAP_GRAPH).getSchema()
+				.getGraphClass();
+		int nonAbstractClassCount = 0;
+		for (GraphElementClass gec : gc.getGraphElementClasses()) {
+			if (gec.isAbstract()) {
+				continue;
+			}
+			nonAbstractClassCount++;
+			assertTrue(result.contains(JValueImpl.fromObject(gec)));
 		}
+		assertEquals(nonAbstractClassCount, result.size());
 	}
 
 	@Test

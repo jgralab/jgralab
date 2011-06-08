@@ -1,0 +1,107 @@
+transformation BedslPddslMerge;
+
+CreateAbstractVertexClass Element;
+
+CreateVertexClassDisjoint Chassis
+<== #pddsl# from c : V{Chassis} reportSet c.name end
+<== #bedsl# from e : V{Entity}, se : e <--{HasSupertype}+
+            with containsKey(img_Chassis, e.name)
+            reportSet se.name end;
+
+CreateVertexClassDisjoint Configuration
+<== #pddsl# from c : V{Configuration} reportSet c.name end
+<== #bedsl# from e : V{Entity}, se : e <--{HasSupertype}+
+            with containsKey(img_Configuration, e.name)
+            reportSet se.name end;
+
+CreateVertexClassDisjoint Slot
+<== #pddsl# from s : V{Slot} reportSet s.name end
+<== #bedsl# from e : V{Entity}, se : e <--{HasSupertype}+
+            with containsKey(img_Slot, e.name)
+            reportSet se.name end;
+
+CreateVertexClassDisjoint Card
+<== #pddsl# from c : V{Card} reportSet c.name end
+<== #bedsl# from e : V{Entity}, se : e <--{HasSupertype}+
+            with containsKey(img_Card, e.name)
+            reportSet se.name end;
+
+AddSubClasses Element Chassis Configuration Slot Card;
+
+CopyEdgeClass #pddsl# HasConfig
+<== startVertex(e).name, endVertex(e).name;
+
+CreateEdges HasConfig
+<== #bedsl# from ra: V{ReferenceAttribute}
+            with ra.name = "HasConfig"
+              and (forall hc: keySet(img_HasConfig) @
+                     t <> tup(startVertex(hc).name,
+                              endVertex(hc).name))
+            reportSet t, t[0], t[1] end
+            where t:= tup(theElement(<>--{HasAttribute} ra).name,
+                          theElement(ra -->{References}).name);
+
+CopyEdgeClass #pddsl# HasSlot
+<== startVertex(e).name, endVertex(e).name;
+
+CreateEdges HasSlot
+<== #bedsl# from ra: V{ReferenceAttribute}
+            with ra.name = "HasSlot"
+              and (forall hs: keySet(img_HasSlot) @
+                     t <> tup(startVertex(hs).name,
+                              endVertex(hs).name))
+            reportSet t, t[0], t[1] end
+            where t:= tup(theElement(<>--{HasAttribute} ra).name,
+                          theElement(ra -->{References}).name);
+
+CopyEdgeClass #pddsl# HasCard
+<== startVertex(e).name, endVertex(e).name;
+
+CreateEdges HasCard
+<== #bedsl# from ra: V{ReferenceAttribute}
+            with ra.name = "HasCard"
+              and (forall hc: keySet(img_HasCard) @
+                     t <> tup(startVertex(hc).name,
+                              endVertex(hc).name))
+            reportSet t, t[0], t[1] end
+            where t:= tup(theElement(<>--{HasAttribute} ra).name,
+                          theElement(ra -->{References}).name);
+
+CreateVertexClass Entity
+<== #bedsl# from e : V{Entity}
+            with not(containsKey(img_Element, e.name))
+            reportSet e.name end;
+
+AddSuperClass Element Entity;
+
+CreateAttribute Entity.name : String
+<== #bedsl# from en : keySet(img_Entity)
+            reportMap en -> en end;
+
+CopyEdgeClass #bedsl# HasSupertype
+<== startVertex(e).name, endVertex(e).name;
+
+CreateAbstractVertexClass Attribute;
+
+CopyVertexClass #bedsl# SimpleAttribute;
+
+CreateVertexClass ReferenceAttribute
+<== #bedsl# from ra : V{ReferenceAttribute}
+            with not(ra.name =~ 'Has(Card|Slot|Config)')
+            reportSet ra end;
+
+AddSubClasses Attribute SimpleAttribute ReferenceAttribute;
+
+CreateAttribute Attribute.name : String
+<== #bedsl# from sa : keySet(img_Attribute)
+            reportMap sa -> sa.name end;
+
+CreateEdgeClass HasAttribute
+from Entity to Attribute role attributes aggregation composite
+<== #bedsl# from a : keySet(img_Attribute)
+            reportSet a, theElement(-->{HasAttribute} a).name, a end;
+
+CreateEdgeClass References
+from ReferenceAttribute to Entity (1,1) role entity
+<== #bedsl# from ra : keySet(img_ReferenceAttribute)
+            reportSet ra, ra, theElement(ra -->{References}).name end;

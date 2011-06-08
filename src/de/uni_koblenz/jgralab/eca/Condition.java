@@ -1,7 +1,9 @@
 package de.uni_koblenz.jgralab.eca;
 
 import de.uni_koblenz.jgralab.AttributedElement;
+import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
@@ -45,7 +47,16 @@ public class Condition {
 		if (this.conditionExpression.contains("context")) {
 			greqlEvaluator = new GreqlEvaluator("using context: "
 					+ conditionExpression, graph, null);
-			greqlEvaluator.setVariable("context", new JValueImpl(element));
+			JValue jva;
+			if (element instanceof Vertex) {
+				jva = new JValueImpl((Vertex) element);
+			} else if (element instanceof Edge) {
+				jva = new JValueImpl((Edge) element);
+			} else {
+				jva = new JValueImpl((Graph) element);
+			}
+			greqlEvaluator.setVariable("context", jva);
+
 		} else {
 			greqlEvaluator = new GreqlEvaluator(conditionExpression, graph,
 					null);
@@ -87,4 +98,9 @@ public class Condition {
 		return conditionExpression;
 	}
 	
+	@Override
+	public String toString() {
+		return "Condition: " + this.conditionExpression;
+	}
+
 }

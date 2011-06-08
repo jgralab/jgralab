@@ -1,0 +1,379 @@
+package de.uni_koblenz.jgralab.gretl;
+
+import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.lang.reflect.Method;
+import java.util.logging.Logger;
+
+import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.JGraLab;
+import de.uni_koblenz.jgralab.greql2.exception.Greql2Exception;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.gretl.Context.TransformationPhase;
+import de.uni_koblenz.jgralab.schema.Attribute;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.BooleanDomain;
+import de.uni_koblenz.jgralab.schema.Domain;
+import de.uni_koblenz.jgralab.schema.DoubleDomain;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.GraphElementClass;
+import de.uni_koblenz.jgralab.schema.IntegerDomain;
+import de.uni_koblenz.jgralab.schema.LongDomain;
+import de.uni_koblenz.jgralab.schema.Schema;
+import de.uni_koblenz.jgralab.schema.StringDomain;
+import de.uni_koblenz.jgralab.schema.VertexClass;
+import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
+import de.uni_koblenz.jgralab.utilities.tg2dot.dot.GraphVizOutputFormat;
+
+/**
+ * Abstract base class for all user-defined transformations. Simply derive from
+ * this class and override the {@link #transform()} method. In there you have to
+ * use the {@code create}-Methods defined here, to build up a new {@link Schema}
+ * , and provide semantic expressions (GReQL queries on the source graph) to
+ * specify the transformation on instance level.
+ * 
+ * @author Tassilo Horn &lt;horn@uni-koblenz.de&gt;
+ * 
+ */
+public abstract class Transformation<T> {
+	/**
+	 * Use this annotation to annotate transformation methods that should be run
+	 * <b>after</b> the transformation finished.
+	 * 
+	 * @author Tassilo Horn &lt;horn@uni-koblenz.de&gt;
+	 * 
+	 */
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.METHOD)
+	protected @interface After {
+
+	}
+
+	/**
+	 * Use this annotation to annotate transformation methods that should be run
+	 * <b>before</b> the transformation started.
+	 * 
+	 * @author Tassilo Horn &lt;horn@uni-koblenz.de&gt;
+	 * 
+	 */
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.METHOD)
+	protected @interface Before {
+
+	}
+
+	/**
+	 * Run all methods annotated with <code>annotationClass</code> of this
+	 * transformation including annotated methods in superclasses up to the base
+	 * class {@link Transformation}.
+	 * 
+	 * @param annotationClass
+	 */
+	private final void invokeHooks(Class<? extends Annotation> annotationClass) {
+		for (Class<?> cls = getClass(); Transformation.class
+				.isAssignableFrom(cls); cls = cls.getSuperclass()) {
+			for (Method method : cls.getDeclaredMethods()) {
+				if (method.isAnnotationPresent(annotationClass)) {
+					try {
+						method.setAccessible(true);
+						method.invoke(this);
+					} catch (Exception e) {
+						log.severe("Couldn't run @"
+								+ annotationClass.getSimpleName() + " method "
+								+ method.getName() + " of "
+								+ cls.getSimpleName() + ".");
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * DEBUGGING
+	 */
+	public static boolean DEBUG_EXECUTION = Boolean.parseBoolean(System
+			.getProperty("debugGReTLExecution", "false"));
+	public static boolean DEBUG_REVERSE_EDGES = false;
+	private static int EXECUTION_STEP = 1;
+
+	protected Context context;
+	protected static Logger log = JGraLab.getLogger(Transformation.class
+			.getPackage().getName());
+
+	protected Transformation(Context context) {
+		this.context = context;
+	}
+
+	protected Transformation() {
+	}
+
+	public final void setContext(Context c) {
+		this.context = c;
+	}
+
+	/**
+	 * Executes this transformation.
+	 * 
+	 * When it finishes, the target graph be accessed via the {@link Context}
+	 * object.
+	 */
+	public final T execute() {
+		long startTime = System.currentTimeMillis();
+
+		if (context == null) {
+			throw new GReTLException("No Context set for " + this);
+		}
+
+		// Transformation starts, call the before hook
+		invokeHooks(Before.class);
+
+		T result = null;
+
+		if (context.outermost) {
+			EXECUTION_STEP = 1;
+			context.phase = TransformationPhase.SCHEMA;
+			context.outermost = false;
+
+			if (context.getTargetSchema() == null) {
+				log.info("Starting Schema creation phase...");
+				context.createTargetSchema();
+				transform();
+			} else {
+				log.info("Target Schema exists. "
+						+ "Skipping schema creation phase...");
+			}
+			context.ensureAllMappings();
+
+			// If a target graph was set externally, use that.
+			if (context.targetGraph == null) {
+				log.info("Creating a new target graph...");
+				context.createTargetGraph();
+			} else if (context.targetGraph.getSchema().getQualifiedName()
+					.equals(context.targetSchema.getQualifiedName())) {
+				log.info("Using a preset target graph...");
+			} else {
+				// This can only happen, if a user first sets a target graph and
+				// then a different target schema...
+				throw new GReTLException(context,
+						"Preset target graph has wrong schema '"
+								+ context.targetGraph.getSchema()
+										.getQualifiedName()
+								+ "'. Expected was '"
+								+ context.targetSchema.getQualifiedName()
+								+ "'.");
+			}
+
+			// init the enum_QName maps
+			context.initializeEnumValue2LiteralMaps();
+
+			// Start the GRAPH phase
+			log.info("SCHEMA Phase took "
+					+ (System.currentTimeMillis() - startTime + "ms."));
+			startTime = System.currentTimeMillis();
+
+			context.phase = TransformationPhase.GRAPH;
+			log.info("Starting instance creation phase...");
+			result = transform();
+
+			if (DEBUG_EXECUTION) {
+				// I'm the outermost, so check the mappings before finishing
+				context.validateMappings();
+			}
+
+			log.info("GRAPH Phase took "
+					+ (System.currentTimeMillis() - startTime + "ms."));
+		} else {
+			// hey, I'm nested, so run the phase my parent is running.
+			result = transform();
+
+			// Debugging stuff...
+			Graph tg = context.targetGraph;
+			if (DEBUG_EXECUTION
+					&& (tg.getVCount() + tg.getECount() < GReTLRunner.MAX_VISUALIZATION_SIZE)) {
+				try {
+					String name = getClass().getSimpleName();
+					if (name.isEmpty()) {
+						name = "$anonymous$";
+					}
+					Tg2Dot.convertGraph(context.getTargetGraph(), "__debug_"
+							+ (EXECUTION_STEP++) + "_" + name + ".pdf",
+							DEBUG_REVERSE_EDGES, GraphVizOutputFormat.PDF);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		// Transformation is done, call the after hook
+		invokeHooks(After.class);
+
+		return result;
+	}
+
+	/**
+	 * In this method the individual transformation operation calls are
+	 * specified. Concrete transformations must override this method.
+	 * 
+	 * @return
+	 */
+	protected abstract T transform();
+
+	/**
+	 * @return the {@link BooleanDomain} from the target-schema
+	 */
+	protected final BooleanDomain getBooleanDomain() {
+		return context.targetSchema.getBooleanDomain();
+	}
+
+	/**
+	 * @return the {@link IntDomain} from the target-schema
+	 */
+	protected final IntegerDomain getIntegerDomain() {
+		return context.targetSchema.getIntegerDomain();
+	}
+
+	/**
+	 * @return the {@link LongDomain} from the target-schema
+	 */
+	protected final LongDomain getLongDomain() {
+		return context.targetSchema.getLongDomain();
+	}
+
+	/**
+	 * @return the {@link StringDomain} from the target-schema
+	 */
+	protected final StringDomain getStringDomain() {
+		return context.targetSchema.getStringDomain();
+	}
+
+	/**
+	 * @return the {@link DoubleDomain} from the target-schema
+	 */
+	protected final DoubleDomain getDoubleDomain() {
+		return context.targetSchema.getDoubleDomain();
+	}
+
+	protected final void setGReQLVariable(String name, JValue val) {
+		if (context.getPhase() != TransformationPhase.GRAPH) {
+			return;
+		}
+		context.setGReQLVariable(name, val);
+	}
+
+	protected final void setGReQLVariable(String name, String greqlExpression) {
+		if (context.getPhase() != TransformationPhase.GRAPH) {
+			return;
+		}
+		context.setGReQLVariable(name, greqlExpression);
+	}
+
+	protected final void setGReQLHelper(String name, String greqlExpression) {
+		if (context.getPhase() != TransformationPhase.GRAPH) {
+			return;
+		}
+		context.setGReQLHelper(name, greqlExpression);
+	}
+
+	protected final void addGReQLImport(String qualifiedName) {
+		if (context.getPhase() != TransformationPhase.GRAPH) {
+			return;
+		}
+		context.addGReQLImport(qualifiedName);
+	}
+
+	/**
+	 * @param qualifiedName
+	 * @return the target schema {@link VertexClass} with the given qualified
+	 *         name.
+	 */
+	protected final VertexClass vc(String qualifiedName) {
+		VertexClass vc = context.targetSchema.getGraphClass().getVertexClass(
+				qualifiedName);
+		if (vc == null) {
+			throw new Greql2Exception("There's no target VertexClass '"
+					+ qualifiedName + "'.");
+		}
+		return vc;
+	}
+
+	/**
+	 * @param qualifiedName
+	 * @return the target schema {@link EdgeClass} with the given qualified
+	 *         name.
+	 */
+	protected final EdgeClass ec(String qualifiedName) {
+		EdgeClass ec = context.targetSchema.getGraphClass().getEdgeClass(
+				qualifiedName);
+		if (ec == null) {
+			throw new GReTLException(context, "There's no target EdgeClass '"
+					+ qualifiedName + "'.");
+		}
+		return ec;
+	}
+
+	/**
+	 * @param qualifiedName
+	 * @return the target schema {@link AttributedElementClass} with the given
+	 *         qualified name.
+	 */
+	protected final AttributedElementClass aec(String qualifiedName) {
+		AttributedElementClass aec = context.targetSchema
+				.getAttributedElementClass(qualifiedName);
+		if (aec == null) {
+			throw new GReTLException(context,
+					"There's no target AttributedElementClass '"
+							+ qualifiedName + "'.");
+		}
+		return aec;
+	}
+
+	/**
+	 * @param qualifiedName
+	 * @return the target schema {@link GraphElementClass} with the given
+	 *         qualified name.
+	 */
+	protected final GraphElementClass gec(String qualifiedName) {
+		GraphElementClass gec = context.targetSchema.getGraphClass()
+				.getGraphElementClass(qualifiedName);
+		if (gec == null) {
+			throw new GReTLException(context,
+					"There's no target GraphElementClass '" + qualifiedName
+							+ "'.");
+		}
+		return gec;
+	}
+
+	protected final Attribute attr(String qualifiedName) {
+		int lastDot = qualifiedName.lastIndexOf('.');
+		String className = qualifiedName.substring(0, lastDot);
+		AttributedElementClass aec = context.getTargetSchema()
+				.getAttributedElementClass(className);
+		if (aec == null) {
+			throw new GReTLException(context,
+					"There's no target AttributedElementClass '" + className
+							+ "'.");
+		}
+		String attrName = qualifiedName.substring(lastDot + 1);
+		Attribute attr = aec.getAttribute(attrName);
+		if (attr == null) {
+			throw new GReTLException(context, "There's no target Attribute '"
+					+ attrName + "' in AttributedElementClass '" + className
+					+ "'.");
+		}
+		return attr;
+	}
+
+	protected Domain domain(String domain) {
+		Domain d = context.getTargetSchema().getDomain(domain);
+		if (d == null) {
+			throw new GReTLException(context, "There's no target Domain '"
+					+ domain + "'.");
+		}
+		return d;
+	}
+}

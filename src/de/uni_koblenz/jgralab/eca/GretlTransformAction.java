@@ -1,6 +1,7 @@
 package de.uni_koblenz.jgralab.eca;
 
 
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
@@ -23,7 +24,8 @@ public class GretlTransformAction extends Action {
 	 * @param transformationClass
 	 *            the Transformation Class
 	 */
-	public GretlTransformAction(Class<? extends Transformation<Graph>> transformationClass) {
+	public GretlTransformAction(
+			Class<? extends Transformation<Graph>> transformationClass) {
 		this.transformationClass = transformationClass;
 	}
 

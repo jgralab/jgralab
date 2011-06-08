@@ -1,0 +1,15 @@
+TGraph 2;
+
+Schema de.uni_koblenz.jgralabtest.gretl.schemas.copy.CopySchema;
+
+GraphClass CopyGraph;
+ 
+Package ;
+abstract VertexClass CopyVertex { uid : Integer, name : String };
+abstract VertexClass Whole: CopyVertex;
+VertexClass WholeOne: Whole;
+VertexClass WholeTwo: Whole;
+VertexClass WholePart: CopyVertex;
+VertexClass Part: CopyVertex;
+EdgeClass IsPartOfWhole from WholePart (0, *) aggregation composite to Whole (1, 1);
+EdgeClass IsPartOfWholePart from Part (0, *) aggregation composite to WholePart (1, 1);
