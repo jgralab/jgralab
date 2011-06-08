@@ -1,0 +1,82 @@
+transformation ExtractStateMachines;
+
+import frontend.java.*;
+
+CreateVertices frontend.automatons.client.State
+  <== from st, abstractSt : V{Class}
+      with st (<>--{HasSuperClass} -->{DataObjectHasType})* abstractSt
+        and not(isEmpty(abstractSt <--{DataObjectHasType}
+            & {DataObject @ thisVertex.fullyQualifiedName =
+            'com.amadeus.rail.client.logic.AbstractState'}))
+      reportSet st end;
+
+CreateEdges frontend.automatons.client.HasSubState
+  <== from sub, super : keySet(img_frontend$automatons$client$State)
+      with sub -->{HasSuperClass} -->{DataObjectHasType} super
+      reportSet tup(super, sub), super, sub end;
+
+CreateVertices frontend.automatons.client.Action
+  <== from stateCls: keySet(img_frontend$automatons$client$State),
+           method: stateCls <>--{HasMethod}-->{DataObjectHasType}
+      with method.name =~ '^act.*'
+      reportSet stateCls, method end;
+
+CreateVertices frontend.automatons.client.Method
+  <== from stateCls: keySet(img_frontend$automatons$client$State),
+           method: stateCls <>--{HasMethod}-->{DataObjectHasType}
+      with not(containsKey(img_frontend$automatons$client$Action,
+             tup(stateCls, method)))
+      reportSet stateCls, method end;
+
+SetAttributes frontend.automatons.client.NamedElement.name
+  <== from stateCls : keySet(img_frontend$automatons$client$State)
+      reportMap stateCls -> stateCls.name end;
+
+SetAttributes frontend.automatons.client.NamedElement.name
+  <== from actTup : keySet(img_frontend$automatons$client$Method)
+      reportMap actTup -> actTup[1].name end;
+
+SetAttributes frontend.automatons.client.State.abstract
+  <== from st : keySet(img_frontend$automatons$client$State)
+      reportMap st ->
+        (isNull(st.modifier) ? false :
+          contains(st.modifier, enum_frontend$java$Modifier['ABSTRACT']))
+      end;
+
+CreateEdges frontend.automatons.client.HasMethod
+  <== from actTup : keySet(img_frontend$automatons$client$Method)
+      reportSet actTup, actTup[0], actTup end;
+
+CreateEdges frontend.automatons.client.ActivatesState
+  <== // The Transformation creates only the ActivatesState edges for all
+			// Actions, but not for Methods. Those are considered during dynamic
+			// analysis later on.
+      from t : from x : keySet(img_frontend$automatons$client$Action)
+               with not isEmpty(x[1] -->{frontend.java.ext.CallsMethod}
+                 // We can skip all action methods, that don't call any method
+                 // inside RAIL.
+                 & {@ thisVertex.fullyQualifiedName =~ '^com\\.amadeus\\.rail\\..*'})
+               reportSet x end,
+        // The method call to setAndActivateState() or CmdSeq.run(newState) may
+        // be in the action method or in a non-action method it calls
+        // (transitively).
+        caller : log('method', t[1]),
+        // Exclude all EdgeClasses, which point to elements not contained in
+        // that method's body, but allow anonymous classes.
+        methodCall : caller -->{HasMethodBlock}
+          (-->{^DataObjectHasType, ^HasDataObject, ^HasNamedType, ^CastsToTargetType,
+               ^ChecksForType, ^HasType, ^HasExpressionType}
+           | (-->{HasClassbody} -->{HasMethod} -->{DataObjectHasType} -->{HasMethodBlock})
+           | (-->{CallsMethod}) -->{DataObjectHasType} -->{HasMethodBlock})*
+           & {MethodCall},
+        activatedStateCls : methodCall -->{HasOperand, HasExpressionType, HasNamedType}+
+          & {Class @ containsKey(img_frontend$automatons$client$State, thisVertex)}
+      with
+        // State changes have the forms myNextState.setAndActivateState() or
+        // myCmdSequence.run(myNextState)
+        count(methodCall -->{CallsMethod}
+          & {@ thisVertex.fullyQualifiedName =~
+              'com.amadeus.rail.client.logic.services.CmdSequence.run(.*)V' or
+            thisVertex.fullyQualifiedName =~
+              '.*\\.setAndActivateState\\(\\)V'}) > 0
+      reportSet tup(t[1], activatedStateCls), t, activatedStateCls end;

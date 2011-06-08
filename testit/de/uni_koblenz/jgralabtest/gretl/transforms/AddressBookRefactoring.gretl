@@ -1,0 +1,49 @@
+transformation AddressBookRefactoring;
+
+// In the new graph we want only one AddressBook, but with multiple
+// categories. As archetye set we use the set containing only the number 1.
+CreateVertexClass AddressBook <== set(1);
+
+// For each source AddressBook, we now create a Category in the new
+// AddressBook.
+CreateVertexClass Category <== V{AddressBook};
+
+// Set the category name to the old address book's name.
+CreateAttribute Category.name:String
+  <== from ab : keySet(img_Category) reportMap ab -> ab.name end;
+
+// Now we connect the Categories with the single AddressBook. As archetype
+// set we use the source AddressBooks. The start vertex is always the image
+// of 1 (the new single AddressBook), the start vertices are the images of
+// the old AddressBooks. Those are the new Categories.
+CreateEdgeClass HasCategory from AddressBook role book
+                            to Category role category aggregation composite
+  <== from ab : V{AddressBook} reportSet ab, 1, ab end;
+
+// Copy the Contact vertices, but refactor the old name attribute into
+// firstName and lastName by splitting at spaces.
+CreateVertexClass Contact <== V{Contact};
+
+CreateAttribute Contact.firstName:String
+  <== from c : V{Contact} reportMap c -> split(c.name, " ")[0] end;
+
+CreateAttribute Contact.lastName : String
+  <== from c : V{Contact} reportMap c-> split(c.name, " ")[1] end;
+
+// Connect the Categories with the Contacts. This is achieved by copying the
+// old Contains edges over, but now the source vertices are Categories, not
+// AddressBooks.
+CreateEdgeClass Contains from Category to Contact aggregation composite
+  <== from c : E{Contains} reportSet c, startVertex(c), endVertex(c) end;
+
+// Refactor the Contact.address attribute into a new Address vertex class by
+// splitting the 3 parts of an address at spaces.
+CreateVertexClass Address <== V{Contact};
+
+CreateAttributes Address.city : String,
+                 Address.state : String,
+                 Address.country : String
+  <== from c : V{Contact} reportMap c -> split(c.address, ",[ ]*") end;
+
+CreateEdgeClass HasAddress from Contact (1,*) to Address (1,*)
+  <== from c : V{Contact} reportSet c, c, c end;

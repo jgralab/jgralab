@@ -123,11 +123,10 @@ public class SystemTest extends GenericTest {
 
 	private void checkHeader(JValueTable table, String... headerStrings) {
 		JValueList header = table.getHeader().toJValueList();
-
+		assertTrue(header.size() == headerStrings.length);
 		for (String headerString : headerStrings) {
-			assertTrue(header.remove(new JValueImpl(headerString)));
+			assertTrue(header.contains(new JValueImpl(headerString)));
 		}
-		assertTrue(header.isEmpty());
 	}
 
 	@Test
@@ -157,10 +156,12 @@ public class SystemTest extends GenericTest {
 			assertEquals(vertex.getDegree(Way.class, EdgeDirection.OUT),
 					usage_count);
 
+			int n = 0;
 			for (Edge edge : vertex.incidences(Way.class, EdgeDirection.OUT)) {
-				assertTrue(usages.remove(new JValueImpl(edge)));
+				++n;
+				assertTrue(usages.contains(new JValueImpl(edge)));
 			}
-			assertTrue(usages.isEmpty());
+			assertEquals(n, usages.size());
 		}
 
 		assertEquals(crossroadCount, result.size());

@@ -83,8 +83,8 @@ public class LoadTest extends InstanceTest {
 	private static final String TESTGRAPH_FILENAME = "testgraph.tg";
 	private static final String TESTGRAPH_PATH = "testit/testgraphs/";
 
-	public LoadTest(ImplementationType implementationType) {
-		super(implementationType);
+	public LoadTest(ImplementationType implementationType, String dbURL) {
+		super(implementationType, dbURL);
 	}
 
 	@Parameters

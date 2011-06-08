@@ -60,8 +60,8 @@ import de.uni_koblenz.jgralabtest.schemas.minimal.Node;
 public class VertexListTest extends InstanceTest {
 	private static final int VERTEX_COUNT = 10;
 
-	public VertexListTest(ImplementationType implementationType) {
-		super(implementationType);
+	public VertexListTest(ImplementationType implementationType, String dbURL) {
+		super(implementationType, dbURL);
 	}
 
 	@Parameters
@@ -85,7 +85,7 @@ public class VertexListTest extends InstanceTest {
 					.createMinimalGraphWithTransactionSupport(V, E);
 			break;
 		case DATABASE:
-			g = this.createMinimalGraphInDatabase();
+			g = createMinimalGraphInDatabase();
 			break;
 		case SAVEMEM:
 			g = MinimalSchema.instance().createMinimalGraph(V, E);
@@ -111,7 +111,7 @@ public class VertexListTest extends InstanceTest {
 	@After
 	public void tearDown() {
 		if (implementationType == ImplementationType.DATABASE) {
-			this.cleanAndCloseGraphDatabase();
+			cleanAndCloseGraphDatabase();
 		}
 	}
 

@@ -74,8 +74,8 @@ import de.uni_koblenz.jgralabtest.schemas.vertextest.VertexTestSchema;
 @RunWith(Parameterized.class)
 public class GraphTest extends InstanceTest {
 
-	public GraphTest(ImplementationType implementationType) {
-		super(implementationType);
+	public GraphTest(ImplementationType implementationType, String dbURL) {
+		super(implementationType, dbURL);
 	}
 
 	@Parameters

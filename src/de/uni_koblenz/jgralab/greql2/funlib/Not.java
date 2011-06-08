@@ -108,7 +108,7 @@ public class Not extends Greql2Function {
 		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, arguments);
 		}
-		return JValueBoolean.not(arguments[0]);
+		return JValueBoolean.getValue(!arguments[0].toBoolean());
 	}
 
 	@Override

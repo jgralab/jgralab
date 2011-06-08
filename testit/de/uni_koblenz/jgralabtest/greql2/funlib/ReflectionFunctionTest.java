@@ -34,15 +34,49 @@
  */
 package de.uni_koblenz.jgralabtest.greql2.funlib;
 
-import static org.junit.Assert.fail;
-
 import org.junit.Test;
 
-public class ReflectionFunctionTest {
+import de.uni_koblenz.jgralabtest.greql2.GenericTest;
+
+public class ReflectionFunctionTest extends GenericTest {
 
 	@Test
 	public void testHasJValueType() throws Exception {
-		// TODO
-		fail();
+		// GRAPH
+		assertQueryEquals("hasJValueType(getGraph(), 'GRAPH')", true);
+		assertQueryEquals("hasJValueType(getGraph(), 'ATTRELEM')", true);
+		assertQueryEquals("hasJValueType(getGraph(), 'OBJECT')", true);
+
+		// VERTEX
+		assertQueryEquals("hasJValueType(getVertex(1), 'VERTEX')", true);
+		assertQueryEquals("hasJValueType(getVertex(1), 'ATTRELEM')", true);
+		assertQueryEquals("hasJValueType(getVertex(1), 'OBJECT')", true);
+
+		// EDGE
+		assertQueryEquals("hasJValueType(getEdge(1), 'EDGE')", true);
+		assertQueryEquals("hasJValueType(getEdge(1), 'ATTRELEM')", true);
+		assertQueryEquals("hasJValueType(getEdge(1), 'OBJECT')", true);
+
+		// BOOL
+		assertQueryEquals("hasJValueType(true, 'BOOL')", true);
+		assertQueryEquals("hasJValueType(false, 'BOOL')", true);
+		assertQueryEquals("hasJValueType(false, 'OBJECT')", true);
+
+		// INT
+		assertQueryEquals("hasJValueType(17, 'INT')", true);
+		assertQueryEquals("hasJValueType(17, 'NUMBER')", true);
+		assertQueryEquals("hasJValueType(17, 'LONG')", true);
+		assertQueryEquals("hasJValueType(17, 'AUTOMATON')", false);
+
+		// STRING
+		assertQueryEquals("hasJValueType('17', 'STRING')", true);
+		assertQueryEquals("hasJValueType(\"17\", 'STRING')", true);
+		assertQueryEquals("hasJValueType('17', 'OBJECT')", true);
+		assertQueryEquals("hasJValueType(\"17\", 'OBJECT')", true);
+		assertQueryEquals("hasJValueType('17', 'AUTOMATON')", false);
+
+		// TODO: Check more types...
+		
+		// assertQueryEquals("hasJValueType(,)", true);
 	}
 }

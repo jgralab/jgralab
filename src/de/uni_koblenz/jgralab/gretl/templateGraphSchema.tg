@@ -1,0 +1,19 @@
+TGraph 2;
+Schema de.uni_koblenz.jgralab.gretl.template.TemplateSchema;
+GraphClass TemplateGraph;
+
+VertexClass CreateVertex
+  { archetype : String,
+    typeName : String,
+    typeNameIsQuery : Boolean,
+    attributes : Map<String, String>,
+    copyAttributeValues : Boolean };
+
+EdgeClass CreateEdge
+  from CreateVertex (0,*) role src
+  to CreateVertex (0,*) role dst
+  { archetype : String,
+    typeName : String,
+    typeNameIsQuery : Boolean,
+    attributes : Map<String, String>,
+    copyAttributeValues : Boolean };

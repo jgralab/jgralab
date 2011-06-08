@@ -174,7 +174,6 @@ public class SchemaFunctionTest extends GenericTest {
 			String query = "hasAttribute(type('" + clazz.getQualifiedName()
 					+ "'), '" + attribute.getName() + "')";
 			assertQueryEquals(query, true);
-			System.out.println(query);
 		}
 	}
 
@@ -311,7 +310,6 @@ public class SchemaFunctionTest extends GenericTest {
 		for (String formatString : queriesFor_IsA_Test) {
 			String formattedString = String.format(formatString,
 					currentQualifiedName, qualifiedName);
-			System.out.println(formattedString);
 			assertQueryEquals(formattedString, equal);
 		}
 	}
@@ -350,19 +348,15 @@ public class SchemaFunctionTest extends GenericTest {
 		for (AttributedElementClass clazz : attributedElementClasses) {
 			Set<AttributedElementClass> subClasses = clazz
 					.getDirectSubClasses();
-			Set<AttributedElementClass> superClasses = clazz
-					.getDirectSuperClasses();
 			JValueCollection collection = evalTestQuery(
 					"subtypes('" + clazz.getQualifiedName() + "')")
 					.toCollection();
-
+			assertEquals(subClasses.size(), collection.size());
 			for (JValue value : collection) {
 				AttributedElementClass attrClass = value
 						.toAttributedElementClass();
-				subClasses.remove(attrClass);
-				assertFalse(superClasses.remove(attrClass));
+				assertTrue(subClasses.contains(attrClass));
 			}
-			assertTrue(subClasses.isEmpty());
 		}
 	}
 

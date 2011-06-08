@@ -1,0 +1,22 @@
+TGraph 2;
+
+Schema de.uni_koblenz.jgralabtest.gretl.schemas.qvt.simpleuml.SimpleUMLSchema;
+
+GraphClass SimpleUMLGraph;
+
+Package ;
+abstract VertexClass UMLModelElement {name: String, kind: String};
+VertexClass Package: PackagableElement;
+abstract VertexClass PackagableElement: UMLModelElement;
+VertexClass Attribute: UMLModelElement;
+VertexClass Classifier: PackagableElement;
+VertexClass PrimitiveDataType: Classifier;
+VertexClass Class: Classifier;
+VertexClass Association: PackagableElement;
+EdgeClass HasAttribute from Class (1,1) role owner to Attribute (0,*) role attribute aggregation composite;
+EdgeClass HasSuperclass from Class (0,*) role subclass to Class (0,*) role general;
+EdgeClass HasSource from Association (0,*) role reverse to Class (1,1) role source;
+EdgeClass HasTarget from Association (0,*) role forward to Class (1,1) role target;
+EdgeClass Contains from Package (1,1) role namespace to PackagableElement (0,*) role element aggregation composite;
+EdgeClass HasType from Attribute (0,*) to Classifier (1,1) role type;
+

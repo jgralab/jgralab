@@ -81,14 +81,21 @@ public class GraphValidatorTest {
 		printBrokenConstraints(brokenConstraints);
 
 		// each ConstrainedNode must have (1,*) in and outgoing ConstrainedLink
-		assertEquals(2, getNumberOfBrokenConstraints(
-				MultiplicityConstraintViolation.class, brokenConstraints));
+		assertEquals(
+				2,
+				getNumberOfBrokenConstraints(
+						MultiplicityConstraintViolation.class,
+						brokenConstraints));
 		// uid should be > 0 and name has to be set
-		assertEquals(2, getNumberOfBrokenConstraints(
-				GReQLConstraintViolation.class, brokenConstraints));
+		assertEquals(
+				2,
+				getNumberOfBrokenConstraints(GReQLConstraintViolation.class,
+						brokenConstraints));
 		// The graph class has to invalid constraints
-		assertEquals(2, getNumberOfBrokenConstraints(
-				BrokenGReQLConstraintViolation.class, brokenConstraints));
+		assertEquals(
+				2,
+				getNumberOfBrokenConstraints(
+						BrokenGReQLConstraintViolation.class, brokenConstraints));
 	}
 
 	@Test
@@ -106,8 +113,10 @@ public class GraphValidatorTest {
 
 		printBrokenConstraints(brokenConstraints);
 		// This one is fine, except the broken GReQL query...
-		assertEquals(2, getNumberOfBrokenConstraints(
-				BrokenGReQLConstraintViolation.class, brokenConstraints));
+		assertEquals(
+				2,
+				getNumberOfBrokenConstraints(
+						BrokenGReQLConstraintViolation.class, brokenConstraints));
 	}
 
 	@Test
@@ -123,8 +132,10 @@ public class GraphValidatorTest {
 
 		printBrokenConstraints(brokenConstraints);
 		// This one is fine, except that niceness should be between 0 and 20.
-		assertEquals(1, getNumberOfBrokenConstraints(
-				GReQLConstraintViolation.class, brokenConstraints));
+		assertEquals(
+				1,
+				getNumberOfBrokenConstraints(GReQLConstraintViolation.class,
+						brokenConstraints));
 	}
 
 	private static int getNumberOfBrokenConstraints(
@@ -140,14 +151,15 @@ public class GraphValidatorTest {
 	}
 
 	private static void printBrokenConstraints(Set<ConstraintViolation> set) {
-		System.out.println(">>>------------------------------");
-		if (set.isEmpty()) {
-			System.out.println("No broken constraints. :-)");
-		} else {
-			for (ConstraintViolation ci : set) {
-				System.out.println(ci);
-			}
-		}
-		System.out.println("<<<------------------------------");
+		return;
+		// System.out.println(">>>------------------------------");
+		// if (set.isEmpty()) {
+		// System.out.println("No broken constraints. :-)");
+		// } else {
+		// for (ConstraintViolation ci : set) {
+		// System.out.println(ci);
+		// }
+		// }
+		// System.out.println("<<<------------------------------");
 	}
 }
