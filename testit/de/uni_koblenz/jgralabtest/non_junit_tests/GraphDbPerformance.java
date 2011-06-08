@@ -35,15 +35,13 @@ public class GraphDbPerformance {
 
 	private static class RunConfiguration {
 		private RunType type;
-		private boolean withForeignKeys;
 		private boolean withIndices;
 		private int repeat;
 
-		public RunConfiguration(RunType type, boolean withForeignKeys,
-				boolean withIndices, int vertexCount, int repeat) {
+		public RunConfiguration(RunType type, boolean withIndices,
+				int vertexCount, int repeat) {
 			super();
 			this.type = type;
-			this.withForeignKeys = withForeignKeys;
 			this.withIndices = withIndices;
 			this.repeat = repeat;
 		}
@@ -59,35 +57,29 @@ public class GraphDbPerformance {
 		List<RunConfiguration> runs = new LinkedList<RunConfiguration>();
 
 		RunType currentRunType = RunType.CREATE;
-		for (boolean currentWithForeignKeys : new boolean[] { false, true }) {
-			for (boolean currentWithIndices : new boolean[] { false, true }) {
-				runs.add(new RunConfiguration(currentRunType,
-						currentWithForeignKeys, currentWithIndices,
-						VERTICES_PER_DIMENSION, REPEAT));
-			}
+
+		for (boolean currentWithIndices : new boolean[] { false, true }) {
+			runs.add(new RunConfiguration(currentRunType, currentWithIndices,
+					VERTICES_PER_DIMENSION, REPEAT));
 		}
 
 		currentRunType = RunType.DELETE;
-		for (boolean currentWithForeignKeys : new boolean[] { false, true }) {
-			for (boolean currentWithIndices : new boolean[] { false, true }) {
-				runs.add(new RunConfiguration(currentRunType,
-						currentWithForeignKeys, currentWithIndices,
-						VERTICES_PER_DIMENSION, REPEAT));
-			}
+
+		for (boolean currentWithIndices : new boolean[] { false, true }) {
+			runs.add(new RunConfiguration(currentRunType, currentWithIndices,
+					VERTICES_PER_DIMENSION, REPEAT));
 		}
 
 		RunType[] algorithmRunTypes = new RunType[] { RunType.DFS, RunType.BFS,
 				RunType.DIJKSTRA };
 
 		for (RunType type : algorithmRunTypes) {
-			for (boolean currentWithForeignKeys : new boolean[] { false, true }) {
-				for (boolean currentWithIndices : new boolean[] { true }) {
-					runs
-							.add(new RunConfiguration(type,
-									currentWithForeignKeys, currentWithIndices,
-									VERTICES_PER_DIMENSION, REPEAT));
-				}
+
+			for (boolean currentWithIndices : new boolean[] { true }) {
+				runs.add(new RunConfiguration(type, currentWithIndices,
+						VERTICES_PER_DIMENSION, REPEAT));
 			}
+
 		}
 
 		gdb = prepareDatabase();
@@ -134,9 +126,6 @@ public class GraphDbPerformance {
 	}
 
 	private static void performRun(RunConfiguration config) throws Exception {
-		if (config.withForeignKeys) {
-			gdb.addForeignKeyConstraints();
-		}
 		if (config.withIndices) {
 			gdb.addIndices();
 		}
@@ -144,8 +133,6 @@ public class GraphDbPerformance {
 			System.out.println("Starting " + REPEAT + " run(s) " + config.type
 					+ " with:");
 			// System.out.println("Vertices    : " + config.vertexCount);
-			System.out.println("Foreign keys: "
-					+ (config.withForeignKeys ? "ON" : "OFF"));
 			System.out.println("Indices     : "
 					+ (config.withIndices ? "ON" : "OFF"));
 
@@ -160,13 +147,7 @@ public class GraphDbPerformance {
 
 				switch (config.type) {
 				case CREATE:
-					if (config.withForeignKeys) {
-						gdb.dropForeignKeyConstraints();
-					}
 					deleteTheGraph();
-					if (config.withForeignKeys) {
-						gdb.addForeignKeyConstraints();
-					}
 					sw.start();
 					createTheGraph();
 					sw.stop();
@@ -205,9 +186,6 @@ public class GraphDbPerformance {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			if (config.withForeignKeys) {
-				gdb.dropForeignKeyConstraints();
-			}
 			if (config.withIndices) {
 				gdb.dropIndices();
 			}

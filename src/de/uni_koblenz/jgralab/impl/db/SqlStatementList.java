@@ -210,18 +210,6 @@ public abstract class SqlStatementList {
 	public abstract PreparedStatement dropPrimaryKeyConstraintFromVertexTable()
 			throws SQLException;
 
-	public abstract PreparedStatement addForeignKeyConstraintOnGraphColumnOfVertexTable()
-			throws SQLException;
-
-	public abstract PreparedStatement addForeignKeyConstraintOnTypeColumnOfVertexTable()
-			throws SQLException;
-
-	public abstract PreparedStatement dropForeignKeyConstraintFromGraphColumnOfVertexTable()
-			throws SQLException;
-
-	public abstract PreparedStatement dropForeignKeyConstraintFromTypeColumnOfVertexTable()
-			throws SQLException;
-
 	// Edge
 	public abstract PreparedStatement createEdgeTable() throws SQLException;
 
@@ -229,18 +217,6 @@ public abstract class SqlStatementList {
 			throws SQLException;
 
 	public abstract PreparedStatement dropPrimaryKeyConstraintFromEdgeTable()
-			throws SQLException;
-
-	public abstract PreparedStatement addForeignKeyConstraintOnGraphColumnOfEdgeTable()
-			throws SQLException;
-
-	public abstract PreparedStatement addForeignKeyConstraintOnTypeColumnOfEdgeTable()
-			throws SQLException;
-
-	public abstract PreparedStatement dropForeignKeyConstraintFromGraphColumnOfEdgeTable()
-			throws SQLException;
-
-	public abstract PreparedStatement dropForeignKeyConstraintFromTypeColumnOfEdgeTable()
 			throws SQLException;
 
 	// Incidence
@@ -251,24 +227,6 @@ public abstract class SqlStatementList {
 			throws SQLException;
 
 	public abstract PreparedStatement dropPrimaryKeyConstraintFromIncidenceTable()
-			throws SQLException;
-
-	public abstract PreparedStatement addForeignKeyConstraintOnGraphColumnOfIncidenceTable()
-			throws SQLException;
-
-	public abstract PreparedStatement addForeignKeyConstraintOnEdgeColumnOfIncidenceTable()
-			throws SQLException;
-
-	public abstract PreparedStatement addForeignKeyConstraintOnVertexColumnOfIncidenceTable()
-			throws SQLException;
-
-	public abstract PreparedStatement dropForeignKeyConstraintFromEdgeColumnOfIncidenceTable()
-			throws SQLException;
-
-	public abstract PreparedStatement dropForeignKeyConstraintFromGraphColumnOfIncidenceTable()
-			throws SQLException;
-
-	public abstract PreparedStatement dropForeignKeyConstraintFromVertexColumnOfIncidenceTable()
 			throws SQLException;
 
 	// GraphAttributeValue
@@ -285,24 +243,6 @@ public abstract class SqlStatementList {
 	public abstract PreparedStatement dropPrimaryKeyConstraintFromVertexAttributeValueTable()
 			throws SQLException;
 
-	public abstract PreparedStatement addForeignKeyConstraintOnGraphColumnOfVertexAttributeValueTable()
-			throws SQLException;
-
-	public abstract PreparedStatement addForeignKeyConstraintOnVertexColumnOfVertexAttributeValueTable()
-			throws SQLException;
-
-	public abstract PreparedStatement addForeignKeyConstraintOnAttributeColumnOfVertexAttributeValueTable()
-			throws SQLException;
-
-	public abstract PreparedStatement dropForeignKeyConstraintFromGraphColumnOfVertexAttributeValueTable()
-			throws SQLException;
-
-	public abstract PreparedStatement dropForeignKeyConstraintFromVertexColumnOfVertexAttributeValueTable()
-			throws SQLException;
-
-	public abstract PreparedStatement dropForeignKeyConstraintFromAttributeColumnOfVertexAttributeValueTable()
-			throws SQLException;
-
 	// public abstract PreparedStatement
 	// addClusteredIndexOnVertexAttributeValues()throws SQLException;
 
@@ -314,24 +254,6 @@ public abstract class SqlStatementList {
 			throws SQLException;
 
 	public abstract PreparedStatement dropPrimaryKeyConstraintFromEdgeAttributeValueTable()
-			throws SQLException;
-
-	public abstract PreparedStatement addForeignKeyConstraintOnGraphColumnOfEdgeAttributeValueTable()
-			throws SQLException;
-
-	public abstract PreparedStatement addForeignKeyConstraintOnEdgeColumnOfEdgeAttributeValueTable()
-			throws SQLException;
-
-	public abstract PreparedStatement addForeignKeyConstraintOnAttributeColumnOfEdgeAttributeValueTable()
-			throws SQLException;
-
-	public abstract PreparedStatement dropForeignKeyConstraintFromGraphColumnOfEdgeAttributeValueTable()
-			throws SQLException;
-
-	public abstract PreparedStatement dropForeignKeyConstraintFromEdgeColumnOfEdgeAttributeValueTable()
-			throws SQLException;
-
-	public abstract PreparedStatement dropForeignKeyConstraintFromAttributeColumnOfEdgeAttributeValueTable()
 			throws SQLException;
 
 	// public abstract PreparedStatement
