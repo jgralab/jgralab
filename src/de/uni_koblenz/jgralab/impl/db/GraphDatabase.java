@@ -387,7 +387,7 @@ public abstract class GraphDatabase {
 	 */
 	public void deleteGraph(String id) throws GraphDatabaseException {
 		DatabasePersistableGraph graph = getGraph(id);
-		this.delete(graph);
+		delete(graph);
 	}
 
 	/**
