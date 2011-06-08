@@ -373,17 +373,6 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	protected void vertexAfterDeleted(Vertex vertexToBeDeleted) {
-
-	}
-
-	@Override
-	protected void edgeAfterDeleted(Edge edgeToBeDeleted, Vertex oldAlpha,
-			Vertex oldOmega) {
-
-	}
-
-	@Override
 	public final boolean hasStandardSupport() {
 		return false;
 	}
