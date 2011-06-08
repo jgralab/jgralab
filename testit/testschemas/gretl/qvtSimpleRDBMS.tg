@@ -1,0 +1,21 @@
+TGraph 2;
+
+Schema de.uni_koblenz.jgralabtest.gretl.schemas.qvt.simplerdbms.SimpleRDBMSSchema;
+
+GraphClass SimpleRDBMSGraph;
+
+Package ;
+VertexClass RModelElement {name: String, kind: String};
+VertexClass Schema: RModelElement;
+VertexClass Table: RModelElement;
+VertexClass Column: RModelElement {type: String};
+VertexClass Key: RModelElement;
+VertexClass ForeignKey: RModelElement;
+EdgeClass HasTable from Schema (1,1) role schema to Table (0,*) role table aggregation composite;
+EdgeClass HasColumn from Table (1,1) to Column (0,*) role column aggregation composite;
+EdgeClass RefersTo from ForeignKey (0,*) role referrer to Key (1,1) role referred;
+EdgeClass HasPrimaryKey from Table (1,1) to Key (0,1) role key aggregation composite;
+EdgeClass HasForeignKey from Table (1,1) to ForeignKey (0,*) role foreignKey aggregation composite;
+EdgeClass IsIdentifiedBy from Key (0,1) to Column (1,*) role column;
+EdgeClass IsIn from ForeignKey (0,1) role foreignKey to Column (1,1) role column;
+

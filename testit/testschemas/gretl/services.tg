@@ -1,0 +1,11 @@
+TGraph 2;
+Schema de.uni_koblenz.jgralabtest.gretl.schemas.services.ServiceSchema;
+GraphClass ServiceGraph;
+Package ;
+abstract VertexClass Service { name: String, owner: String };
+VertexClass ProcessService: Service;
+VertexClass ComposedService: Service;
+VertexClass BasicService: Service;
+VertexClass Database { name: String, owner: String, lastAccessTime: Long };
+EdgeClass Calls from Service (0,*) to Service (0,*);
+EdgeClass Accesses from BasicService (1,1) to Database (0,1);

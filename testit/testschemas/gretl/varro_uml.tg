@@ -1,0 +1,22 @@
+TGraph 2;
+
+Schema de.uni_koblenz.jgralabtest.gretl.schemas.varro.UMLSchema;
+
+GraphClass UMLGraph;
+Package uml;
+abstract VertexClass NamedElement { name : String };
+VertexClass Package : NamedElement;
+VertexClass Assoc : NamedElement;
+VertexClass AssocEnd : NamedElement;
+VertexClass Class : NamedElement;
+VertexClass Attribute : NamedElement;
+VertexClass General : NamedElement;
+
+EdgeClass ContainsAssoc from Package (0,1) role elemOwner to Assoc (0,*) aggregation composite;
+EdgeClass ContainsClass from Package (0,1) role elemOwner to Class (0,*) aggregation composite;
+EdgeClass ContainsGeneral from Package (0,1) role elemOwner to General (0,*) aggregation composite;
+EdgeClass HasAttribute from Class (0,1) to Attribute (0,*) role feature aggregation composite;
+EdgeClass HasAssocEnd from Assoc (1,1) to AssocEnd (2,2) role feature aggregation composite;
+EdgeClass HasType from AssocEnd (0,*) to Class (1,1) role featureType;
+EdgeClass HasSuper from General (1,1) to Class (1,1) role parentElem;
+EdgeClass HasSub from General (1,1) to Class (1,1) role childElem;

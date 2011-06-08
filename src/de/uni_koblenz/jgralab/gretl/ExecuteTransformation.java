@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -32,7 +31,7 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 public class ExecuteTransformation extends Transformation<Graph> {
 
 	static String FACTORY_METHOD_NAME = "parseAndCreate";
-	
+
 	private static HashMap<String, Method> knownTransformations = new HashMap<String, Method>();
 	private static Logger logger = JGraLab
 			.getLogger(ExecuteTransformation.class.getPackage().getName());
@@ -98,12 +97,14 @@ public class ExecuteTransformation extends Transformation<Graph> {
 		registerTransformation(SysOut.class);
 	}
 
+	private File file = null;
 	private String name = null;
 	private List<Token> tokens;
 	private int current;
 
 	public ExecuteTransformation(Context c, File file) {
 		super(c);
+		this.file = file;
 		StringBuilder sb = new StringBuilder();
 		try {
 			BufferedReader r = new BufferedReader(new FileReader(file));
@@ -130,6 +131,12 @@ public class ExecuteTransformation extends Transformation<Graph> {
 	public static ExecuteTransformation parseAndCreate(
 			final ExecuteTransformation et) {
 		File f = new File(et.match(TokenTypes.STRING).value);
+		if (!f.isAbsolute()) {
+			// File is specified relatively to the currently executed gretl
+			// file.
+			f = new File(et.file.getParent() + File.separator + f);
+		}
+		System.out.println(f.getAbsolutePath());
 		return new ExecuteTransformation(et.context, f);
 	}
 
@@ -258,15 +265,10 @@ public class ExecuteTransformation extends Transformation<Graph> {
 					this);
 			match(TokenTypes.SEMICOLON);
 			return t;
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			throw new GReTLParsingException(context, "Could not match "
+					+ transformName + " at position " + lookAhead(0).start, e);
 		}
-		throw new GReTLParsingException(context, "Could not match "
-				+ transformName + " at position " + lookAhead(0).start);
 	}
 
 	public Domain matchDomain() {

@@ -211,10 +211,15 @@
 
 	<!-- generates the schemas required for test cases without compiling them -->
 	<target name="generatetestschemas" depends="tgtools">
-		<rsa2tg xmifile="${testschemas.dir}/rsa-xmi/greqltestschema.xmi" schemafile="${testschemas.dir}/greqltestschema.tg" />
-		<tgschema2java sourcePath="${testcases.dir}" implementationMode="standard,transaction,savemem,database">
-			<fileset dir="${testschemas.dir}" includes="*.tg" />
-		</tgschema2java>
+	  <rsa2tg xmifile="${testschemas.dir}/rsa-xmi/greqltestschema.xmi" schemafile="${testschemas.dir}/greqltestschema.tg" />
+	  <!-- The jgralab & greql test schemas -->
+	  <tgschema2java sourcePath="${testcases.dir}" implementationMode="standard,transaction,savemem,database">
+	    <fileset dir="${testschemas.dir}" includes="*.tg" />
+	  </tgschema2java>
+	  <!-- The GReTL test schemas -->
+	  <tgschema2java sourcePath="${testcases.dir}" implementationMode="standard">
+	    <fileset dir="${testschemas.dir}/gretl" includes="*.tg" />
+	  </tgschema2java>
 	</target>
 
 	<!-- GReTL -->

@@ -323,9 +323,7 @@ public class GreqlEvaluatorFacade {
 		try {
 			evaluator.startEvaluation();
 		} catch (RuntimeException parse) {
-			System.err.println(parse.getMessage());
-			System.err.println("With the cause:");
-			System.err.println(parse.getCause().getMessage());
+			parse.printStackTrace();
 			throw parse;
 		}
 
@@ -349,81 +347,8 @@ public class GreqlEvaluatorFacade {
 	}
 
 	/**
-	 * Sets the given value as variable of the {@link #evaluator}.
-	 * 
-	 * @param name
-	 *            Name of the variable.
-	 * @param value
-	 *            {@link Boolean} as value.
-	 */
-	public void setVariable(String name, Boolean value) {
-		setVariable(name, new JValueImpl(value));
-	}
-
-	/**
-	 * Sets the given value as variable of the {@link #evaluator}.
-	 * 
-	 * @param name
-	 *            Name of the variable.
-	 * @param value
-	 *            {@link Integer} as value.
-	 */
-	public void setVariable(String name, Integer value) {
-		setVariable(name, new JValueImpl(value));
-	}
-
-	/**
-	 * Sets the given value as variable of the {@link #evaluator}.
-	 * 
-	 * @param name
-	 *            Name of the variable.
-	 * @param value
-	 *            {@link Double} as value.
-	 */
-	public void setVariable(String name, Double value) {
-		setVariable(name, new JValueImpl(value));
-	}
-
-	/**
-	 * Sets the given value as variable of the {@link #evaluator}.
-	 * 
-	 * @param name
-	 *            Name of the variable.
-	 * @param value
-	 *            {@link Long} as value.
-	 */
-	public void setVariable(String name, Long value) {
-		setVariable(name, new JValueImpl(value));
-	}
-
-	/**
-	 * Sets the given value as variable of the {@link #evaluator}.
-	 * 
-	 * @param name
-	 *            Name of the variable.
-	 * @param value
-	 *            {@link Graph} as value.
-	 */
-	public void setVariable(String name, Graph value) {
-		setVariable(name, new JValueImpl(value));
-	}
-
-	/**
-	 * Sets the given value as variable of the {@link #evaluator}.
-	 * 
-	 * @param name
-	 *            Name of the variable.
-	 * @param value
-	 *            {@link String} as value.
-	 */
-	public void setVariable(String name, String value) {
-		setVariable(name, new JValueImpl(value));
-	}
-
-	/**
 	 * Sets the given value as variable of the {@link #evaluator}. <br>
-	 * <b>Note:</b> It will use the {@link JValueImpl#JValueImpl(Object)}
-	 * constructor!
+	 * <b>Note:</b> It will use the {@link JValueImpl#fromObject(Object)}.
 	 * 
 	 * @param name
 	 *            Name of the variable.
@@ -431,33 +356,8 @@ public class GreqlEvaluatorFacade {
 	 *            A Generic as value.
 	 */
 	public <T> void setVariable(String name, T value) {
-		setVariable(name, new JValueImpl(value));
+		setVariable(name, JValueImpl.fromObject(value));
 
-	}
-
-	/**
-	 * Sets the given value as variable of the {@link #evaluator}.
-	 * 
-	 * @param name
-	 *            Name of the variable.
-	 * @param value
-	 *            {@link AttributedElement} as value.
-	 */
-	public void setVariable(String name, AttributedElement attributedElement) {
-		setVariable(name, new JValueImpl(attributedElement));
-	}
-
-	/**
-	 * Sets the given value as variable of the {@link #evaluator}.
-	 * 
-	 * @param name
-	 *            Name of the variable.
-	 * @param value
-	 *            {@link AttributedElementClass} as value.
-	 */
-	private void setVariable(String name,
-			AttributedElementClass attributedElementClass) {
-		setVariable(name, new JValueImpl(attributedElementClass));
 	}
 
 	/**

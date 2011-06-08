@@ -1,0 +1,15 @@
+TGraph 2;
+
+Schema de.uni_koblenz.jgralabtest.gretl.schemas.bedsl.BedslSchema;
+
+GraphClass BedslGraph;
+
+Package ;
+abstract VertexClass Attribute {name: String};
+VertexClass Entity {name: String};
+VertexClass ReferenceAttribute: Attribute;
+VertexClass SimpleAttribute: Attribute {value: String};
+EdgeClass References from ReferenceAttribute (0,*) to Entity (1,1) role entity;
+EdgeClass HasAttribute from Entity (1,1) to Attribute (0,*) role attribute aggregation composite;
+EdgeClass HasSupertype from Entity (0,*) role subType to Entity (0,1) role superType;
+
