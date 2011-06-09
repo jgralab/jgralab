@@ -273,12 +273,18 @@ public class ECARuleManager {
 	// +++++ Add and delete rules ++++++++++++++++++++++++++++++++++++++++++++++
 
 	/**
-	 * Adds an ECARule to this ECARuleManager
+	 * Adds an ECARule to this ECARuleManager, throws a Runtime Exception if the
+	 * ECARule has already an ECARuleManager
 	 * 
 	 * @param rule
 	 *            the ECARule to add
 	 */
 	public void addECARule(ECARule rule) {
+		if(rule.getECARuleManager()!=null){
+			throw new RuntimeException(
+					"ERROR: Tried to add an ECARule to an ECARulemanager,"
+							+ " but the ECARule has already a manager.");
+		}
 		this.rules.add(rule);
 		rule.setECARuleManager(this);
 		Event ev = rule.getEvent();
@@ -311,6 +317,7 @@ public class ECARuleManager {
 	 */
 	public void deleteECARule(ECARule rule) {
 		this.rules.remove(rule);
+		rule.setECARuleManager(null);
 		Event ev = rule.getEvent();
 		ev.getActiveECARules().remove(rule);
 		if (ev.getActiveECARules().isEmpty()) {

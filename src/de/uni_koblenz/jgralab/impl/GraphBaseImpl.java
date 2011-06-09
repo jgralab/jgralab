@@ -1044,12 +1044,24 @@ public abstract class GraphBaseImpl implements Graph {
 		setGraphVersion(getGraphVersion() + 1);
 	}
 
+	/**
+	 * Triggers ECA-rules before an Attribute is changed
+	 * 
+	 * @param name
+	 *            of the changing Attribute
+	 */
 	public void ecaAttributeChanging(String name){
 		if (!this.isLoading()) {
 			this.getECARuleManager().fireBeforeChangeAttributeEvents(this,name);
 		}
 	}
 	
+	/**
+	 * Triggers ECA-rule after an Attribute is changed
+	 * 
+	 * @param name
+	 *            of the changed Attribute
+	 */
 	public void ecaAttributeChanged(String name){
 		if (!this.isLoading()) {
 			this.getECARuleManager().fireAfterChangeAttributeEvents(this,name);

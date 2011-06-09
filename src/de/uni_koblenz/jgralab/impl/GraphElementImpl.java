@@ -93,12 +93,24 @@ public abstract class GraphElementImpl implements GraphElement {
 		graph.graphModified();
 	}
 	
+	/**
+	 * Triggers ECA-rules before an Attribute is changed
+	 * 
+	 * @param name
+	 *            of the changing Attribute
+	 */
 	public void ecaAttributeChanging(String name){
 		if (!this.graph.isLoading()) {
 			this.graph.getECARuleManager().fireBeforeChangeAttributeEvents(this,name);
 		}
 	}
 	
+	/**
+	 * Triggers ECA-rule after an Attribute is changed
+	 * 
+	 * @param name
+	 *            of the changed Attribute
+	 */
 	public void ecaAttributeChanged(String name){
 		if (!this.graph.isLoading()) {
 			this.graph.getECARuleManager().fireAfterChangeAttributeEvents(this,name);
