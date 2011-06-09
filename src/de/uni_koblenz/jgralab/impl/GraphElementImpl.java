@@ -58,6 +58,7 @@ public abstract class GraphElementImpl implements GraphElement {
 
 	protected GraphBaseImpl graph;
 
+	@Override
 	public Graph getGraph() {
 		return graph;
 	}
@@ -67,6 +68,7 @@ public abstract class GraphElementImpl implements GraphElement {
 	 * 
 	 * @see de.uni_koblenz.jgralab.AttributedElement#getGraphClass()
 	 */
+	@Override
 	public GraphClass getGraphClass() {
 		return (GraphClass) graph.getAttributedElementClass();
 	}
@@ -76,6 +78,7 @@ public abstract class GraphElementImpl implements GraphElement {
 	 * 
 	 * @see jgralab.AttributedElement#getSchema()
 	 */
+	@Override
 	public Schema getSchema() {
 		return graph.getSchema();
 	}
@@ -91,11 +94,15 @@ public abstract class GraphElementImpl implements GraphElement {
 	}
 	
 	public void ecaAttributeChanging(String name){
-		this.graph.getECARuleManager().fireBeforeChangeAttributeEvents(this,name);
+		if (!this.graph.isLoading()) {
+			this.graph.getECARuleManager().fireBeforeChangeAttributeEvents(this,name);
+		}
 	}
 	
 	public void ecaAttributeChanged(String name){
-		this.graph.getECARuleManager().fireAfterChangeAttributeEvents(this,name);
+		if (!this.graph.isLoading()) {
+			this.graph.getECARuleManager().fireAfterChangeAttributeEvents(this,name);
+		}
 	}
 
 	/*

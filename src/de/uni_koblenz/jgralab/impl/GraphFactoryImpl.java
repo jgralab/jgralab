@@ -125,10 +125,13 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 	// --- Methods for option STDIMPL
 	// ---------------------------------------------------
 
+	@Override
 	public Edge createEdge(Class<? extends Edge> edgeClass, int id, Graph g,
 			Vertex alpha, Vertex omega) {
 		try {
-			g.getECARuleManager().fireBeforeCreateEdgeEvents(edgeClass);
+			if (!g.isLoading()) {
+				g.getECARuleManager().fireBeforeCreateEdgeEvents(edgeClass);
+			}
 			Edge e = edgeMap.get(edgeClass).newInstance(id, g, alpha, omega);
 			return e;
 		} catch (Exception ex) {
@@ -141,6 +144,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 		}
 	}
 
+	@Override
 	public Graph createGraph(Class<? extends Graph> graphClass, String id,
 			int vMax, int eMax) {
 		try {
@@ -152,6 +156,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 		}
 	}
 
+	@Override
 	public Graph createGraph(Class<? extends Graph> graphClass, String id) {
 		try {
 			Graph g = graphMap.get(graphClass).newInstance(id, 1000, 1000);
@@ -162,10 +167,13 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 		}
 	}
 
+	@Override
 	public Vertex createVertex(Class<? extends Vertex> vertexClass, int id,
 			Graph g) {
 		try {
-			g.getECARuleManager().fireBeforeCreateVertexEvents(vertexClass);
+			if (!g.isLoading()) {
+				g.getECARuleManager().fireBeforeCreateVertexEvents(vertexClass);
+			}
 			Vertex v = vertexMap.get(vertexClass).newInstance(id, g);
 			return v;
 		} catch (Exception ex) {
@@ -178,6 +186,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 		}
 	}
 
+	@Override
 	public void setGraphImplementationClass(
 			Class<? extends Graph> originalClass,
 			Class<? extends Graph> implementationClass) {
@@ -194,6 +203,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 		}
 	}
 
+	@Override
 	public void setVertexImplementationClass(
 			Class<? extends Vertex> originalClass,
 			Class<? extends Vertex> implementationClass) {
@@ -210,6 +220,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 		}
 	}
 
+	@Override
 	public void setEdgeImplementationClass(Class<? extends Edge> originalClass,
 			Class<? extends Edge> implementationClass) {
 		if (isSuperclassOrEqual(originalClass, implementationClass)) {
@@ -226,6 +237,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 		}
 	}
 	
+	@Override
 	public void setRecordImplementationClass(
 			Class<? extends Record> m1Class,
 			Class<? extends Record> implementationClass) {
@@ -243,6 +255,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 	}
 	
 	
+	@Override
 	@SuppressWarnings("unchecked")
 	public <T extends Record> T createRecord(Class<T> recordDomain, Graph g) {
 		try {
@@ -392,6 +405,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 		}
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public <T extends Record> T createRecordWithDatabaseSupport(
 			Class<T> recordDomain, Graph g) {
@@ -411,6 +425,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 	// --- Methods for option TRANSIMPL
 	// -------------------------------------------------
 
+	@Override
 	public Edge createEdgeWithTransactionSupport(
 			Class<? extends Edge> edgeClass, int id, Graph g, Vertex alpha,
 			Vertex omega) {
@@ -429,6 +444,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 		}
 	}
 
+	@Override
 	public Graph createGraphWithTransactionSupport(
 			Class<? extends Graph> graphClass, String id, int vMax, int eMax) {
 		try {
@@ -445,6 +461,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 		}
 	}
 
+	@Override
 	public Graph createGraphWithTransactionSupport(
 			Class<? extends Graph> graphClass, String id) {
 		try {
@@ -461,6 +478,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 		}
 	}
 
+	@Override
 	public Vertex createVertexWithTransactionSupport(
 			Class<? extends Vertex> vertexClass, int id, Graph g) {
 		try {
@@ -476,6 +494,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 		}
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public <T extends Record> T createRecordWithTransactionSupport(
 			Class<T> recordDomain, Graph g) {
@@ -492,6 +511,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 		}
 	}
 
+	@Override
 	public void setGraphTransactionImplementationClass(
 			Class<? extends Graph> originalClass,
 			Class<? extends Graph> implementationClass) {
@@ -508,6 +528,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 		}
 	}
 
+	@Override
 	public void setVertexTransactionImplementationClass(
 			Class<? extends Vertex> originalClass,
 			Class<? extends Vertex> implementationClass) {
@@ -524,6 +545,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 		}
 	}
 
+	@Override
 	public void setEdgeTransactionImplementationClass(
 			Class<? extends Edge> originalClass,
 			Class<? extends Edge> implementationClass) {
@@ -541,6 +563,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 		}
 	}
 	
+	@Override
 	public void setRecordTransactionImplementationClass(
 			Class<? extends Record> m1Class,
 			Class<? extends Record> implementationClass) {
@@ -561,6 +584,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 	// Methods for the SAVEMEMIMPL option.
 	// FIXME This is currently a clone STDIMPL methods with changed maps.
 
+	@Override
 	public Edge createEdgeWithSavememSupport(Class<? extends Edge> edgeClass,
 			int id, Graph g, Vertex alpha, Vertex omega) {
 		try {
@@ -577,6 +601,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 		}
 	}
 
+	@Override
 	public Graph createGraphWithSavememSupport(
 			Class<? extends Graph> graphClass, String id, int vMax, int eMax) {
 		try {
@@ -589,6 +614,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 		}
 	}
 
+	@Override
 	public Graph createGraphWithSavememSupport(
 			Class<? extends Graph> graphClass, String id) {
 		try {
@@ -601,6 +627,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 		}
 	}
 
+	@Override
 	public Vertex createVertexWithSavememSupport(
 			Class<? extends Vertex> vertexClass, int id, Graph g) {
 		try {
@@ -616,6 +643,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 		}
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public <T extends Record> T createRecordWithSavememSupport(
 			Class<T> recordDomain, Graph g) {
@@ -632,6 +660,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 		}
 	}
 
+	@Override
 	public void setGraphSavememImplementationClass(
 			Class<? extends Graph> originalClass,
 			Class<? extends Graph> implementationClass) {
@@ -648,6 +677,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 		}
 	}
 
+	@Override
 	public void setVertexSavememImplementationClass(
 			Class<? extends Vertex> originalClass,
 			Class<? extends Vertex> implementationClass) {
@@ -664,6 +694,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 		}
 	}
 
+	@Override
 	public void setEdgeSavememImplementationClass(
 			Class<? extends Edge> originalClass,
 			Class<? extends Edge> implementationClass) {
@@ -681,6 +712,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 		}
 	}
 
+	@Override
 	public void setRecordSavememImplementationClass(
 			Class<? extends Record> m1Class,
 			Class<? extends Record> implementationClass) {
