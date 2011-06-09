@@ -1045,11 +1045,15 @@ public abstract class GraphBaseImpl implements Graph {
 	}
 
 	public void ecaAttributeChanging(String name){
-		this.getECARuleManager().fireBeforeChangeAttributeEvents(this,name);
+		if (!this.isLoading()) {
+			this.getECARuleManager().fireBeforeChangeAttributeEvents(this,name);
+		}
 	}
 	
 	public void ecaAttributeChanged(String name){
-		this.getECARuleManager().fireAfterChangeAttributeEvents(this,name);
+		if (!this.isLoading()) {
+			this.getECARuleManager().fireAfterChangeAttributeEvents(this,name);
+		}
 	}
 	
 	/**
@@ -1736,6 +1740,7 @@ public abstract class GraphBaseImpl implements Graph {
 	}
 
 	// sort vertices
+	@Override
 	public void sortVertices(Comparator<Vertex> comp) {
 
 		if (getFirstVertex() == null) {
@@ -1877,6 +1882,7 @@ public abstract class GraphBaseImpl implements Graph {
 
 	// sort edges
 
+	@Override
 	public void sortEdges(Comparator<Edge> comp) {
 
 		if (getFirstEdge() == null) {
@@ -2022,6 +2028,7 @@ public abstract class GraphBaseImpl implements Graph {
 		ecaRuleManager = new ECARuleManager(this);
 	}
 	
+	@Override
 	public ECARuleManager getECARuleManager(){
 		return ecaRuleManager;
 	}

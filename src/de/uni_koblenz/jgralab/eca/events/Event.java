@@ -51,6 +51,11 @@ public abstract class Event {
 	 */
 	private Class<? extends AttributedElement> type;
 	
+	/**
+	 * GReQL Evaluator to evaluate the context
+	 */
+	private GreqlEvaluator eval;
+
 	// +++++++ Constructors ++++++++++++++++++++++++++++++++++++++++++++++++++
 
 	/**
@@ -81,6 +86,7 @@ public abstract class Event {
 		this.activeRules = new ArrayList<ECARule>();
 		this.contextExpression = contExpr;
 		this.context = Context.EXPRESSION;
+		this.eval = new GreqlEvaluator(this.contextExpression, null, null);
 	}
 	
 	// +++++ Methods ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -132,7 +138,9 @@ public abstract class Event {
 			}
 		}else{
 			Graph graph = rule.getECARuleManager().getGraph();
-			GreqlEvaluator eval = new GreqlEvaluator(this.contextExpression, graph, null);			
+			if (!this.eval.getDatagraph().equals(graph)) {
+				this.eval.setDatagraph(graph);
+			}
 			eval.startEvaluation();
 			JValue resultingContext = eval.getEvaluationResult();
 			if(resultingContext.isCollection()){

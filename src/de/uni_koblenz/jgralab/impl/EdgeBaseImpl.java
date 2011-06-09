@@ -404,8 +404,9 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 		assert omega != null;
 		assert omega.isValid();
 		assert getGraph() == omega.getGraph();
-
-		this.graph.getECARuleManager().fireBeforeChangeEdgeEvents(this);
+		if (!this.graph.isLoading()) {
+			this.graph.getECARuleManager().fireBeforeChangeEdgeEvents(this);
+		}
 		
 		VertexBaseImpl oldOmgea = reversedEdge.getIncidentVertex();
 		if (omega == oldOmgea) {
@@ -430,7 +431,9 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 		// appenIncidenceToLambdaSeq
 		// called it before.
 		
-		this.graph.getECARuleManager().fireAfterChangeEdgeEvents(this);
+		if (!this.graph.isLoading()) {
+			this.graph.getECARuleManager().fireAfterChangeEdgeEvents(this);
+		}
 	}
 
 	/*

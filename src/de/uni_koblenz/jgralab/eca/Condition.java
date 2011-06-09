@@ -20,6 +20,11 @@ public class Condition {
 	 */
 	private ECARule rule;
 
+	/**
+	 * GReQL Evaluator to evaluate the condition
+	 */
+	private GreqlEvaluator greqlEvaluator;
+
 	// +++++++++++++++++++++++++++++++++++++++++++++++++
 
 	/**
@@ -30,6 +35,7 @@ public class Condition {
 	 */
 	public Condition(String conditionExpression){
 		this.conditionExpression = conditionExpression;
+		this.greqlEvaluator = new GreqlEvaluator("", null, null);
 	}
 	
 	// +++++++++++++++++++++++++++++++++++++++++++++++++
@@ -42,11 +48,16 @@ public class Condition {
 	 * @return if the condition is evaluated to true
 	 */
 	public boolean evaluate(AttributedElement element){
-		Graph graph = rule.getECARuleManager().getGraph();
-		GreqlEvaluator greqlEvaluator;
+
+		if (!this.greqlEvaluator.getDatagraph().equals(
+				this.rule.getECARuleManager().getGraph())) {
+			this.greqlEvaluator.setDatagraph(this.rule.getECARuleManager()
+					.getGraph());
+		}
+
 		if (this.conditionExpression.contains("context")) {
-			greqlEvaluator = new GreqlEvaluator("using context: "
-					+ conditionExpression, graph, null);
+			this.greqlEvaluator.setQuery("using context: "
+					+ conditionExpression);
 			JValue jva;
 			if (element instanceof Vertex) {
 				jva = new JValueImpl((Vertex) element);
@@ -58,8 +69,7 @@ public class Condition {
 			greqlEvaluator.setVariable("context", jva);
 
 		} else {
-			greqlEvaluator = new GreqlEvaluator(conditionExpression, graph,
-					null);
+			this.greqlEvaluator.setQuery(this.conditionExpression);
 		}
 		greqlEvaluator.startEvaluation();
 		JValue result = greqlEvaluator.getEvaluationResult();
@@ -98,6 +108,10 @@ public class Condition {
 		return conditionExpression;
 	}
 	
+	public GreqlEvaluator getGreqlEvaluator() {
+		return greqlEvaluator;
+	}
+
 	@Override
 	public String toString() {
 		return "Condition: " + this.conditionExpression;
