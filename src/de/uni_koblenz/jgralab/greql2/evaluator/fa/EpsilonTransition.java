@@ -144,5 +144,4 @@ public class EpsilonTransition extends Transition {
 	public boolean consumesEdge() {
 		return false;
 	}
-
 }

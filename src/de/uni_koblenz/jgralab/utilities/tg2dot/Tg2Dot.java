@@ -209,18 +209,21 @@ public class Tg2Dot extends Tg2Whatever {
 
 	public static void convertGraph(Graph graph, String outputFileName)
 			throws IOException {
-		convertGraph(graph, outputFileName, false, GraphVizOutputFormat.XDOT);
+		convertGraph(graph, outputFileName, false, GraphVizOutputFormat.XDOT,
+				(Class<? extends AttributedElement>[]) null);
 	}
 
 	public static void convertGraph(Graph graph, String outputFileName,
 			boolean reversedEdges) throws IOException {
 		convertGraph(graph, outputFileName, reversedEdges,
-				GraphVizOutputFormat.XDOT);
+				GraphVizOutputFormat.XDOT,
+				(Class<? extends AttributedElement>[]) null);
 	}
 
 	public static void convertGraph(Graph graph, String outputFileName,
 			GraphVizOutputFormat format) throws IOException {
-		convertGraph(graph, outputFileName, false, format);
+		convertGraph(graph, outputFileName, false, format,
+				(Class<? extends AttributedElement>[]) null);
 	}
 
 	public static void convertGraph(Graph graph, String outputFileName,

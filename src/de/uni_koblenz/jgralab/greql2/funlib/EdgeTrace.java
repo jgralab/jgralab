@@ -98,6 +98,9 @@ public class EdgeTrace extends Greql2Function {
 		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, arguments);
 		}
+		if (isAnyArgumentNull(arguments)) {
+			return new JValueImpl();
+		}
 		JValuePath path = arguments[0].toPath();
 		List<Edge> list = path.edgeTrace();
 		Iterator<Edge> iter = list.iterator();

@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
@@ -63,29 +64,27 @@ public abstract class ArithmeticFunction extends Greql2Function {
 
 	public JValue evaluate(JValue[] arguments) throws EvaluateException {
 
-		JValue result = null;
+		if (isAnyArgumentNull(arguments)) {
+			return new JValueImpl();
+		}
 
 		switch (checkArguments(arguments)) {
 		case 0:
 			Double d1 = arguments[0].toDouble();
 			Double d2 = arguments[1].toDouble();
-			result = applyFunction(d1, d2);
-			break;
+			return applyFunction(d1, d2);
 		case 1:
 			Long l1 = arguments[0].toLong();
 			Long l2 = arguments[1].toLong();
-			result = applyFunction(l1, l2);
-			break;
+			return applyFunction(l1, l2);
 		case 2:
 			Integer i1 = arguments[0].toInteger();
 			Integer i2 = arguments[1].toInteger();
-			result = applyFunction(i1, i2);
-			break;
+			return applyFunction(i1, i2);
 		default:
 			throw new WrongFunctionParameterException(this, arguments);
 		}
 
-		return result;
 	}
 
 	protected abstract JValue applyFunction(Integer leftHandSide,

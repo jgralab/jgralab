@@ -90,6 +90,10 @@ public class Sum extends Greql2Function {
 			throw new WrongFunctionParameterException(this, arguments);
 		}
 
+		if (isAnyArgumentNull(arguments)) {
+			return new JValueImpl();
+		}
+
 		JValueCollection col = arguments[0].toCollection();
 		double sum = 0;
 		for (JValue v : col) {

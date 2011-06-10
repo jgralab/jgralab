@@ -57,8 +57,9 @@ import de.uni_koblenz.jgralabtest.schemas.minimal.Node;
 
 @RunWith(Parameterized.class)
 public class ImplementationModeTest extends InstanceTest {
-	public ImplementationModeTest(ImplementationType implementationType) {
-		super(implementationType);
+	public ImplementationModeTest(ImplementationType implementationType,
+			String dbURL) {
+		super(implementationType, dbURL);
 	}
 
 	@Parameters

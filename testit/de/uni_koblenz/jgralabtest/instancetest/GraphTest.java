@@ -74,8 +74,8 @@ import de.uni_koblenz.jgralabtest.schemas.vertextest.VertexTestSchema;
 @RunWith(Parameterized.class)
 public class GraphTest extends InstanceTest {
 
-	public GraphTest(ImplementationType implementationType) {
-		super(implementationType);
+	public GraphTest(ImplementationType implementationType, String dbURL) {
+		super(implementationType, dbURL);
 	}
 
 	@Parameters
@@ -137,7 +137,7 @@ public class GraphTest extends InstanceTest {
 					.createVertexTestGraphWithSavememSupport();
 			break;
 		case DATABASE:
-			out = this.createVertexTestGraphWithDatabaseSupport();
+			out = createVertexTestGraphWithDatabaseSupport();
 			break;
 		default:
 			fail("Implementation " + implementationType
@@ -149,10 +149,10 @@ public class GraphTest extends InstanceTest {
 
 	private VertexTestGraph createVertexTestGraphWithDatabaseSupport() {
 		String id = RandomIdGenerator.generateId();
-		while (this.graphIdsInUse.contains(id)) {
+		while (graphIdsInUse.contains(id)) {
 			id = RandomIdGenerator.generateId();
 		}
-		this.graphIdsInUse.add(id);
+		graphIdsInUse.add(id);
 		return dbHandler.createVertexTestGraphWithDatabaseSupport(id, 1000,
 				1000);
 	}
@@ -160,12 +160,12 @@ public class GraphTest extends InstanceTest {
 	@After
 	public void tearDown() {
 		if (implementationType == ImplementationType.DATABASE) {
-			this.cleanAnCloseGraphDatabase();
+			cleanAnCloseGraphDatabase();
 		}
 	}
 
 	private void cleanAnCloseGraphDatabase() {
-		this.graphIdsInUse.clear();
+		graphIdsInUse.clear();
 		dbHandler.clearAllTables();
 		dbHandler.closeGraphdatabase();
 	}
@@ -503,7 +503,6 @@ public class GraphTest extends InstanceTest {
 		assertEquals(false, g2.isGraphModified(gVersion2));
 		commit(g1);
 		commit(g2);
-		System.out.println("Done testing isGraphModified.");
 	}
 
 	@Test
@@ -563,7 +562,6 @@ public class GraphTest extends InstanceTest {
 		assertTrue(graphVersion2 < g2.getGraphVersion());
 		graphVersion2 = g2.getGraphVersion();
 		commit(g2);
-		System.out.println("Done testing getGraphVersion.");
 	}
 
 	@Test
@@ -765,7 +763,6 @@ public class GraphTest extends InstanceTest {
 		createReadOnlyTransaction(g1);
 		assertFalse(g1.isVertexListModified(vListVersion1));
 		commit(g1);
-		System.out.println("Done testing isVertexListModified.");
 	}
 
 	@Test
@@ -1011,7 +1008,6 @@ public class GraphTest extends InstanceTest {
 		assertEquals(vertexListVersion1, g1.getVertexListVersion());
 		commit(g1);
 
-		System.out.println("Done testing getVertexListVersion.");
 	}
 
 	@Test
@@ -1344,7 +1340,6 @@ public class GraphTest extends InstanceTest {
 		assertFalse(g2.isEdgeListModified(edgeListVersion2));
 		commit(g2);
 
-		System.out.println("Done testing isEdgeListModified.");
 	}
 
 	// TODO continue here
@@ -1720,7 +1715,6 @@ public class GraphTest extends InstanceTest {
 		// same
 		checkIfEdgeListVersionRemained(elv1);
 
-		System.out.println("Done testing getEdgeListVersion.");
 	}
 
 	/**
@@ -1850,7 +1844,6 @@ public class GraphTest extends InstanceTest {
 		assertFalse(g2.containsVertex(v14));
 		commit(g2);
 
-		System.out.println("Done testing containsVertex.");
 	}
 
 	@Test
@@ -2012,7 +2005,6 @@ public class GraphTest extends InstanceTest {
 		assertFalse(g1.containsEdge(e15));
 		commit(g1);
 
-		System.out.println("Done testing containsEdge.");
 	}
 
 	@Test
@@ -2435,7 +2427,6 @@ public class GraphTest extends InstanceTest {
 	// // reset implementation class for graph factory
 	// resetGraphClasses();
 	//
-	// System.out.println("Done testing vertexDeleted.");
 	// }
 
 	// private void resetGraphClasses() {
@@ -2489,7 +2480,6 @@ public class GraphTest extends InstanceTest {
 	//
 	// resetGraphClasses();
 	//
-	// System.out.println("Done testing vertexAdded.");
 	// }
 
 	@Test
@@ -2689,7 +2679,6 @@ public class GraphTest extends InstanceTest {
 		// cannot try to delete an edge which has never been created?
 		// graph.deleteEdge(e10);
 
-		System.out.println("Done testing deleteEdge.");
 	}
 
 	// @Test
@@ -2729,7 +2718,6 @@ public class GraphTest extends InstanceTest {
 	// // reset implementation class for graph factory
 	// resetGraphClasses();
 	//
-	// System.out.println("Done testing edgeDeleted.");
 	// }
 
 	// @Test
@@ -2797,7 +2785,6 @@ public class GraphTest extends InstanceTest {
 		assertEquals(v1, g1.getFirstVertex());
 		commit(g1);
 
-		System.out.println("Done testing getFirstVertex.");
 	}
 
 	@Test
@@ -2909,7 +2896,6 @@ public class GraphTest extends InstanceTest {
 		assertEquals(v24, g1.getLastVertex());
 		commit(g1);
 
-		System.out.println("Done testing getLastVertex.");
 	}
 
 	@Test
@@ -3101,7 +3087,6 @@ public class GraphTest extends InstanceTest {
 		assertEquals(v21, g2.getFirstVertex(DoubleSubNode.class));
 		commit(g2);
 
-		System.out.println("Done testing getFirstVertexOfClass.");
 	}
 
 	@Test
@@ -3362,7 +3347,6 @@ public class GraphTest extends InstanceTest {
 		assertEquals(v23, g2.getFirstVertex(DoubleSubNode.class, false));
 		commit(g2);
 
-		System.out.println("Done testing getFirstVertexOfClass2.");
 	}
 
 	@Test
@@ -3555,7 +3539,6 @@ public class GraphTest extends InstanceTest {
 		assertEquals(null, g2.getFirstVertex(doubleSubN));
 		commit(g2);
 
-		System.out.println("Done testing getFirstVertexOfClass3.");
 	}
 
 	@Test
@@ -3861,7 +3844,6 @@ public class GraphTest extends InstanceTest {
 		assertEquals(null, g2.getFirstVertex(doubleSubN, false));
 		commit(g2);
 
-		System.out.println("Done testing getFirstVertexOfClass4.");
 	}
 
 	@Test
@@ -4002,7 +3984,6 @@ public class GraphTest extends InstanceTest {
 		assertEquals(null, g1.getFirstEdge());
 		commit(g1);
 
-		System.out.println("Done testing getFirstEdgeInGraph.");
 	}
 
 	@Test
@@ -4159,7 +4140,6 @@ public class GraphTest extends InstanceTest {
 		assertEquals(null, g1.getLastEdge());
 		commit(g1);
 
-		System.out.println("Done testing getLastEdgeInGraph.");
 	}
 
 	@Test
@@ -4374,7 +4354,6 @@ public class GraphTest extends InstanceTest {
 		assertEquals(null, g1.getFirstEdge(LinkBack.class));
 		commit(g1);
 
-		System.out.println("Done testing getFirstEdgeOfClassInGraph.");
 	}
 
 	@Test
@@ -4652,7 +4631,6 @@ public class GraphTest extends InstanceTest {
 		assertEquals(null, g1.getFirstEdge(LinkBack.class, false));
 		commit(g1);
 
-		System.out.println("Done testing getFirstEdgeOfClassInGraph2.");
 	}
 
 	@Test
@@ -4873,7 +4851,6 @@ public class GraphTest extends InstanceTest {
 		assertEquals(null, g1.getFirstEdge(lBack));
 		commit(g1);
 
-		System.out.println("Done testing getFirstEdgeOfClassInGraph3.");
 	}
 
 	@Test
@@ -5147,7 +5124,6 @@ public class GraphTest extends InstanceTest {
 		assertEquals(null, g1.getFirstEdge(lBack, false));
 		commit(g1);
 
-		System.out.println("Done testing getFirstEdgeOfClassInGraph4.");
 	}
 
 	@Test
@@ -5196,7 +5172,6 @@ public class GraphTest extends InstanceTest {
 		commit(g2);
 		commit(g1);
 
-		System.out.println("Done testing getVertex.");
 	}
 
 	@Test
@@ -5259,7 +5234,6 @@ public class GraphTest extends InstanceTest {
 		assertEquals(1000, g3.getMaxVCount());
 		commit(g3);
 
-		System.out.println("Done testing getMaxVCount.");
 	}
 
 	@Test
@@ -5300,7 +5274,6 @@ public class GraphTest extends InstanceTest {
 		assertEquals(8000, g1.getExpandedVertexCount());
 		commit(g1);
 
-		System.out.println("Done testing getExpandedVertexCount.");
 	}
 
 	@Test
@@ -5341,7 +5314,6 @@ public class GraphTest extends InstanceTest {
 		assertEquals(8000, g1.getExpandedEdgeCount());
 		commit(g1);
 
-		System.out.println("Done testing getExpandedEdgeCount.");
 	}
 
 	@Test
@@ -5360,7 +5332,6 @@ public class GraphTest extends InstanceTest {
 		assertEquals(1000, g3.getMaxECount());
 		commit(g3);
 
-		System.out.println("Done testing getMaxECount.");
 	}
 
 	private MinimalGraph createMinimalGraph() {
@@ -5380,7 +5351,7 @@ public class GraphTest extends InstanceTest {
 		case DATABASE:
 			dbHandler.loadMinimalSchemaIntoGraphDatabase();
 			g3 = dbHandler.createMinimalGraphWithDatabaseSupport("GraphTest");
-			this.graphIdsInUse.add(g3.getId());
+			graphIdsInUse.add(g3.getId());
 			break;
 		default:
 			fail("Implementation " + implementationType
@@ -5559,7 +5530,6 @@ public class GraphTest extends InstanceTest {
 			commit(g2);
 		}
 
-		System.out.println("Done testing getVCount.");
 	}
 
 	@Test
@@ -5742,7 +5712,6 @@ public class GraphTest extends InstanceTest {
 		assertEquals(0, g1.getECount());
 		commit(g1);
 
-		System.out.println("Done testing getECount.");
 	}
 
 	@Test
@@ -5843,7 +5812,6 @@ public class GraphTest extends InstanceTest {
 		assertEquals(".k,oibt", g1.getId());
 		commit(g1);
 
-		System.out.println("Done testing setId.");
 	}
 
 	@Test
@@ -5911,7 +5879,6 @@ public class GraphTest extends InstanceTest {
 		}
 		commit(g1);
 
-		System.out.println("Done testing edges.");
 	}
 
 	@Test
@@ -5994,7 +5961,6 @@ public class GraphTest extends InstanceTest {
 		}
 		commit(g1);
 
-		System.out.println("Done testing edges2.");
 	}
 
 	@Test
@@ -6066,7 +6032,6 @@ public class GraphTest extends InstanceTest {
 		}
 		commit(g1);
 
-		System.out.println("Done testing edges3.");
 	}
 
 	@Test
@@ -6125,7 +6090,6 @@ public class GraphTest extends InstanceTest {
 		}
 		commit(g1);
 
-		System.out.println("Done testing vertices.");
 	}
 
 	@Test
@@ -6200,8 +6164,6 @@ public class GraphTest extends InstanceTest {
 			i++;
 		}
 		commit(g1);
-
-		System.out.println("Done testing vertices2.");
 
 	}
 
@@ -6280,7 +6242,6 @@ public class GraphTest extends InstanceTest {
 		}
 		commit(g1);
 
-		System.out.println("Done testing vertices3.");
 	}
 
 	@Test

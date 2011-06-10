@@ -82,6 +82,7 @@ public class TypeIdEvaluator extends VertexEvaluator {
 	 */
 	protected List<AttributedElementClass> createTypeList(Schema schema)
 			throws EvaluateException {
+
 		ArrayList<AttributedElementClass> returnTypes = new ArrayList<AttributedElementClass>();
 		AttributedElementClass elemClass = schema
 				.getAttributedElementClass(vertex.get_name());

@@ -46,6 +46,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -53,6 +54,8 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIO.TGFilenameFilter;
@@ -85,8 +88,14 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.Optimizer;
 import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
+import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
+import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
+import de.uni_koblenz.jgralab.greql2.schema.IsBoundVarOf;
+import de.uni_koblenz.jgralab.greql2.schema.IsFunctionIdOf;
+import de.uni_koblenz.jgralab.greql2.schema.Variable;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
@@ -94,6 +103,7 @@ import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
+import de.uni_koblenz.jgralab.utilities.tgmerge.TGMerge;
 
 /**
  * This is the core class of the GReQL-2 Evaluator. It takes a GReQL-2 Query as
@@ -599,7 +609,7 @@ public class GreqlEvaluator {
 	/**
 	 * Holds the greql subqueries that can be called like other greql functions.
 	 */
-	protected Map<String, Greql2> subQueryMap = null;
+	protected LinkedHashMap<String, Greql2> subQueryMap = null;
 
 	/**
 	 * Holds the estimated needed for evaluation time in abstract units
@@ -676,6 +686,7 @@ public class GreqlEvaluator {
 					+ greqlQuery + "\".", e);
 		}
 		Greql2 subQueryGraph = parser.getGraph();
+		subQueryGraph.getFirstGreql2Expression().set_queryText(name);
 		if (isOptimize()) {
 			Greql2 oldQueryGraph = queryGraph;
 			String oldQueryString = queryString;
@@ -692,9 +703,8 @@ public class GreqlEvaluator {
 		for (FunctionApplication fa : subQueryGraph
 				.getFunctionApplicationVertices()) {
 			if (name.equals(fa.get_functionId().get_name())) {
-				logger.warning("You are defining a recursive subquery '"
-						+ name
-						+ "'. Don't expect this to be fast or memory-efficient!");
+				throw new Greql2Exception("The subquery '" + name
+						+ "' is recursive.  That's not allowed!");
 			}
 		}
 		subQueryMap.put(name, subQueryGraph);
@@ -816,7 +826,7 @@ public class GreqlEvaluator {
 		}
 		knownTypes = new HashMap<String, AttributedElementClass>();
 		variableMap = variables;
-		subQueryMap = new HashMap<String, Greql2>();
+		subQueryMap = new LinkedHashMap<String, Greql2>();
 		this.progressFunction = progressFunction;
 	}
 
@@ -931,8 +941,95 @@ public class GreqlEvaluator {
 					+ "\".", e);
 		}
 		queryGraph = parser.getGraph();
+		weaveInSubQueries();
 		parseTime = System.currentTimeMillis() - parseStartTime;
 		return true;
+	}
+
+	private void weaveInSubQueries() {
+		FunctionApplication subqueryCall = findSubQueryCall();
+		while (subqueryCall != null) {
+			TGMerge tgm = new TGMerge(queryGraph, subQueryMap.get(subqueryCall
+					.get_functionId().get_name()));
+			tgm.merge();
+			weaveInSubquery(subqueryCall);
+			subqueryCall = findSubQueryCall();
+		}
+	}
+
+	private FunctionApplication findSubQueryCall() {
+		for (FunctionApplication fa : queryGraph
+				.getFunctionApplicationVertices()) {
+			if (subQueryMap.containsKey(fa.get_functionId().get_name())) {
+				return fa;
+			}
+		}
+		return null;
+	}
+
+	private void weaveInSubquery(FunctionApplication fa) {
+		FunctionId fid = fa.get_functionId();
+		String name = fid.get_name();
+		// System.out.println("Weaving in subquery " + name);
+		Greql2Expression g2exp = null;
+		for (Greql2Expression e : queryGraph.getGreql2ExpressionVertices()) {
+			if ((e.get_queryText() != null) && e.get_queryText().equals(name)) {
+				g2exp = e;
+				break;
+			}
+		}
+		Expression exp = g2exp.get_queryExpr();
+
+		ArrayList<Variable> boundVars = new ArrayList<Variable>();
+		for (Variable bv : g2exp.get_boundVar()) {
+			boundVars.add(bv);
+		}
+
+		ArrayList<Expression> args = new ArrayList<Expression>();
+		for (Expression arg : fa.get_argument()) {
+			args.add(arg);
+		}
+
+		if (args.size() != boundVars.size()) {
+			throw new Greql2Exception("Subquery call to '" + name + "' has "
+					+ args.size()
+					+ " arguments, but the subquery definition has "
+					+ boundVars.size() + " formal parameters!");
+		}
+
+		for (int i = 0; i < boundVars.size(); i++) {
+			Expression arg = args.get(i);
+			Variable bv = boundVars.get(i);
+
+			Edge e = bv.getFirstIncidence();
+			while (e != null) {
+				if (e.getM1Class() == IsBoundVarOf.class) {
+					e = e.getNextIncidence();
+					continue;
+				}
+				e.setThis(arg);
+				e = bv.getFirstIncidence();
+			}
+		}
+
+		Edge e = fa.getFirstIncidence(EdgeDirection.OUT);
+		while (e != null) {
+			if (e.getM1Class() == IsFunctionIdOf.class) {
+				e = e.getNextIncidence(EdgeDirection.OUT);
+				continue;
+			}
+			e.setThis(exp);
+			e = fa.getFirstIncidence(EdgeDirection.OUT);
+		}
+
+		fa.delete();
+		if (fid.getDegree() == 0) {
+			fid.delete();
+		}
+		g2exp.delete();
+		for (Variable bv : boundVars) {
+			bv.delete();
+		}
 	}
 
 	/**
@@ -1017,7 +1114,8 @@ public class GreqlEvaluator {
 			String name = "__greql-query.";
 			try {
 				GraphIO.saveGraphToFile(name + "tg", queryGraph,
-						new ConsoleProgressFunction("Saving broken GReQL graph:"));
+						new ConsoleProgressFunction(
+								"Saving broken GReQL graph:"));
 				printGraphAsDot(queryGraph, true, name + "dot");
 			} catch (GraphIOException e) {
 				e.printStackTrace();

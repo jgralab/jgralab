@@ -32,20 +32,17 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
- package de.uni_koblenz.jgralab.impl.db;
+package de.uni_koblenz.jgralab.impl.db;
 
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Types;
 import java.util.SortedSet;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.schema.Attribute;
-import de.uni_koblenz.jgralab.schema.Schema;
 
 /**
  * Factory that creates PostgreSql specific prepared statements.
@@ -54,19 +51,43 @@ import de.uni_koblenz.jgralab.schema.Schema;
  */
 public class PostgreSqlStatementList extends SqlStatementList {
 
+	public static final String SEQUENCE_SCHEMA = "schemaIdSequence";
+	public static final String SEQUENCE_TYPE = "typeIdSequence";
+	public static final String SEQUENCE_GRAPH = "graphIdSequence";
+	public static final String SEQUENCE_ATTRIBUTE = "attributeIdSequence";
+
 	public PostgreSqlStatementList(GraphDatabase graphDatabase)
 			throws GraphDatabaseException {
 		super(graphDatabase);
 	}
 
-	private static final String CREATE_GRAPH_SCHEMA_TABLE = "CREATE SEQUENCE \"schemaIdSequence\";"
+	@Override
+	public String makeQueryVendorSpecific(String query) {
+		return query.replace(SqlStatementList.QUOTE, "\"").replace(
+				SqlStatementList.EOQ, ";").replace(DIRECTION_TYPE,
+				"?::\"DIRECTION\"");
+	}
+
+	private static final String CREATE_GRAPH_SCHEMA_TABLE = "CREATE SEQUENCE \""
+			+ SEQUENCE_SCHEMA
+			+ "\";"
 			+ "CREATE TABLE \""
-			+ GraphDatabase.TABLE_SCHEMA
+			+ TABLE_SCHEMA
 			+ "\"("
-			+ "\"schemaId\" INT4 PRIMARY KEY DEFAULT NEXTVAL('\"schemaIdSequence\"'),"
-			+ "\"packagePrefix\" TEXT,"
-			+ "name TEXT,"
-			+ "\"serializedDefinition\" TEXT" + ");";
+			+ "\""
+			+ COLUMN_SCHEMA_ID
+			+ "\" INT4 PRIMARY KEY DEFAULT NEXTVAL('\""
+			+ SEQUENCE_SCHEMA
+			+ "\"'),"
+			+ "\""
+			+ COLUMN_SCHEMA_PACKAGE_PREFIX
+			+ "\" TEXT,"
+			+ ""
+			+ COLUMN_SCHEMA_NAME
+			+ " TEXT,"
+			+ "\""
+			+ COLUMN_SCHEMA_TG
+			+ "\" TEXT" + ");";
 
 	@Override
 	public PreparedStatement createGraphSchemaTableWithConstraints()
@@ -74,16 +95,13 @@ public class PostgreSqlStatementList extends SqlStatementList {
 		return connection.prepareStatement(CREATE_GRAPH_SCHEMA_TABLE);
 	}
 
-	private static final String CREATE_TYPE_TABLE = "CREATE SEQUENCE \"typeIdSequence\";"
-			+ "CREATE TABLE \""
-			+ GraphDatabase.TABLE_TYPE
-			+ "\"("
-			+ "\"typeId\" INT4 PRIMARY KEY DEFAULT NEXTVAL('\"typeIdSequence\"'),"
-			+ "\"qualifiedName\" TEXT,"
-			+ "\"schemaId\" INT4 REFERENCES \""
-			+ GraphDatabase.TABLE_SCHEMA
-			+ "\" ON DELETE CASCADE"
-			+ ");";
+	// TODO implicit fk constraints?
+	private static final String CREATE_TYPE_TABLE = "CREATE SEQUENCE \""
+			+ SEQUENCE_TYPE + "\";" + "CREATE TABLE \"" + TABLE_TYPE + "\"("
+			+ "\"" + COLUMN_TYPE_ID + "\" INT4 PRIMARY KEY DEFAULT NEXTVAL('\""
+			+ SEQUENCE_TYPE + "\"')," + "\"" + COLUMN_TYPE_QNAME + "\" TEXT,"
+			+ "\"" + COLUMN_SCHEMA_ID + "\" INT4 REFERENCES \"" + TABLE_SCHEMA
+			+ "\" ON DELETE CASCADE" + ");";
 
 	@Override
 	public PreparedStatement createTypeTableWithConstraints()
@@ -91,17 +109,16 @@ public class PostgreSqlStatementList extends SqlStatementList {
 		return connection.prepareStatement(CREATE_TYPE_TABLE);
 	}
 
-	private static final String CREATE_GRAPH_TABLE = "CREATE SEQUENCE \"graphIdSequence\";"
-			+ "CREATE TABLE \""
-			+ GraphDatabase.TABLE_GRAPH
-			+ "\"("
-			+ "\"gId\" INT4 PRIMARY KEY DEFAULT NEXTVAL('\"graphIdSequence\"'),"
-			+ "uid TEXT,"
-			+ "version INT8,"
-			+ "\"vSeqVersion\" INT8,"
-			+ "\"eSeqVersion\" INT8,"
-			+ "\"typeId\" INT4 REFERENCES \""
-			+ GraphDatabase.TABLE_TYPE + "\"(\"typeId\")" + ");";
+	private static final String CREATE_GRAPH_TABLE = "CREATE SEQUENCE \""
+			+ SEQUENCE_GRAPH + "\";" + "CREATE TABLE \"" + TABLE_GRAPH + "\"("
+			+ "\"" + COLUMN_GRAPH_ID
+			+ "\" INT4 PRIMARY KEY DEFAULT NEXTVAL('\"" + SEQUENCE_GRAPH
+			+ "\"')," + "" + COLUMN_GRAPH_UID + " TEXT," + ""
+			+ COLUMN_GRAPH_VERSION + " INT8," + "\""
+			+ COLUMN_GRAPH_VSEQ_VERSION + "\" INT8," + "\""
+			+ COLUMN_GRAPH_ESEQ_VERSION + "\" INT8," + "\"" + COLUMN_TYPE_ID
+			+ "\" INT4 REFERENCES \"" + TABLE_TYPE + "\"(\"" + COLUMN_TYPE_ID
+			+ "\")" + ");";
 
 	@Override
 	public PreparedStatement createGraphTableWithConstraints()
@@ -110,12 +127,15 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	}
 
 	private static final String CREATE_VERTEX_TABLE = "CREATE TABLE \""
-			+ GraphDatabase.TABLE_VERTEX + "\"(" + "\"vId\" INT4,"
-			+ "\"gId\" INT4," + "\"typeId\" INT4,"
-			+ "\"lambdaSeqVersion\" INT8," + // TODO Remove as this is really
+			+ TABLE_VERTEX + "\"(" + "\"" + COLUMN_VERTEX_ID + "\" INT4,"
+			+ "\"" + COLUMN_GRAPH_ID + "\" INT4," + "\"" + COLUMN_TYPE_ID
+			+ "\" INT4," + "\"" + COLUMN_VERTEX_LAMBDA_SEQ_VERSION + "\" INT8,"
+			+ // TODO Remove as
+			// this is
+			// really
 			// only needed while an Iterator
 			// is in memory
-			"\"sequenceNumber\" INT8" + ");";
+			"\"" + COLUMN_SEQUENCE_NUMBER + "\" INT8" + ");";
 
 	@Override
 	public PreparedStatement createVertexTable() throws SQLException {
@@ -123,8 +143,13 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	}
 
 	private static final String ADD_PRIMARY_KEY_CONSTRAINT_ON_VERTEX_TABLE = "ALTER TABLE \""
-			+ GraphDatabase.TABLE_VERTEX
-			+ "\" ADD CONSTRAINT \"vertexPrimaryKey\" PRIMARY KEY ( \"vId\", \"gId\" );";
+			+ TABLE_VERTEX
+			+ "\" ADD CONSTRAINT \""
+			+ PRIMARY_KEY_VERTEX
+			+ "\" PRIMARY KEY ( \""
+			+ COLUMN_VERTEX_ID
+			+ "\", \""
+			+ COLUMN_GRAPH_ID + "\" );";
 
 	@Override
 	public PreparedStatement addPrimaryKeyConstraintOnVertexTable()
@@ -134,8 +159,10 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	}
 
 	private static final String DROP_PRIMARY_KEY_CONSTRAINT_FROM_VERTEX_TABLE = "ALTER TABLE \""
-			+ GraphDatabase.TABLE_VERTEX
-			+ "\" DROP CONSTRAINT \"vertexPrimaryKey\";";
+			+ TABLE_VERTEX
+			+ "\" DROP CONSTRAINT \""
+			+ PRIMARY_KEY_VERTEX
+			+ "\";";
 
 	@Override
 	public PreparedStatement dropPrimaryKeyConstraintFromVertexTable()
@@ -145,9 +172,15 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	}
 
 	private static final String ADD_FOREIGN_KEY_CONSTRAINT_ON_GRAPH_OF_VERTEX = "ALTER TABLE \""
-			+ GraphDatabase.TABLE_VERTEX
-			+ "\" ADD CONSTRAINT \"gIdIsForeignKey\" FOREIGN KEY (\"gId\") REFERENCES \""
-			+ GraphDatabase.TABLE_GRAPH + "\" (\"gId\");";
+			+ TABLE_VERTEX
+			+ "\" ADD CONSTRAINT \""
+			+ FOREIGN_KEY_VERTEX_TO_GRAPH
+			+ "\" FOREIGN KEY (\""
+			+ COLUMN_GRAPH_ID
+			+ "\") REFERENCES \""
+			+ TABLE_GRAPH
+			+ "\" (\""
+			+ COLUMN_GRAPH_ID + "\");";
 
 	@Override
 	public PreparedStatement addForeignKeyConstraintOnGraphColumnOfVertexTable()
@@ -157,9 +190,15 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	}
 
 	private static final String ADD_FOREIGN_KEY_CONSTRAINT_ON_VERTEX_TYPE = "ALTER TABLE \""
-			+ GraphDatabase.TABLE_VERTEX
-			+ "\" ADD CONSTRAINT \"typeIdIsForeignKey\" FOREIGN KEY (\"typeId\") REFERENCES \""
-			+ GraphDatabase.TABLE_TYPE + "\" (\"typeId\");";
+			+ TABLE_VERTEX
+			+ "\" ADD CONSTRAINT \""
+			+ FOREIGN_KEY_VERTEX_TO_TYPE
+			+ "\" FOREIGN KEY (\""
+			+ COLUMN_TYPE_ID
+			+ "\") REFERENCES \""
+			+ TABLE_TYPE
+			+ "\" (\""
+			+ COLUMN_VERTEX_ID + "\");";
 
 	@Override
 	public PreparedStatement addForeignKeyConstraintOnTypeColumnOfVertexTable()
@@ -169,8 +208,9 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	}
 
 	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_VERTEX = "ALTER TABLE \""
-			+ GraphDatabase.TABLE_VERTEX
-			+ "\" DROP CONSTRAINT \"gIdIsForeignKey\";";
+			+ TABLE_VERTEX
+			+ "\" DROP CONSTRAINT \""
+			+ FOREIGN_KEY_VERTEX_TO_GRAPH + "\";";
 
 	@Override
 	public PreparedStatement dropForeignKeyConstraintFromGraphColumnOfVertexTable()
@@ -180,8 +220,9 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	}
 
 	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_VERTEX_TYPE = "ALTER TABLE \""
-			+ GraphDatabase.TABLE_VERTEX
-			+ "\" DROP CONSTRAINT \"typeIdIsForeignKey\";";
+			+ TABLE_VERTEX
+			+ "\" DROP CONSTRAINT \""
+			+ FOREIGN_KEY_VERTEX_TO_TYPE + "\";";
 
 	@Override
 	public PreparedStatement dropForeignKeyConstraintFromTypeColumnOfVertexTable()
@@ -191,9 +232,9 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	}
 
 	private static final String CREATE_EDGE_TABLE = "CREATE TABLE \""
-			+ GraphDatabase.TABLE_EDGE + "\"(" + "\"eId\" INT4,"
-			+ "\"gId\" INT4," + "\"typeId\" INT4," + "\"sequenceNumber\" INT8"
-			+ ");";
+			+ TABLE_EDGE + "\"(" + "\"" + COLUMN_EDGE_ID + "\" INT4," + "\""
+			+ COLUMN_GRAPH_ID + "\" INT4," + "\"" + COLUMN_TYPE_ID + "\" INT4,"
+			+ "\"" + COLUMN_SEQUENCE_NUMBER + "\" INT8" + ");";
 
 	@Override
 	public PreparedStatement createEdgeTable() throws SQLException {
@@ -201,8 +242,13 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	}
 
 	private static final String ADD_PRIMARY_KEY_CONSTRAINT_ON_EDGE_TABLE = "ALTER TABLE \""
-			+ GraphDatabase.TABLE_EDGE
-			+ "\" ADD CONSTRAINT \"edgePrimaryKey\" PRIMARY KEY ( \"eId\", \"gId\" );";
+			+ TABLE_EDGE
+			+ "\" ADD CONSTRAINT \""
+			+ PRIMARY_KEY_EDGE
+			+ "\" PRIMARY KEY ( \""
+			+ COLUMN_EDGE_ID
+			+ "\", \""
+			+ COLUMN_GRAPH_ID + "\" );";
 
 	@Override
 	public PreparedStatement addPrimaryKeyConstraintOnEdgeTable()
@@ -212,8 +258,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	}
 
 	private static final String DROP_PRIMARY_KEY_CONSTRAINT_FROM_EDGE_TABLE = "ALTER TABLE \""
-			+ GraphDatabase.TABLE_EDGE
-			+ "\" DROP CONSTRAINT \"edgePrimaryKey\";";
+			+ TABLE_EDGE + "\" DROP CONSTRAINT \"" + PRIMARY_KEY_EDGE + "\";";
 
 	@Override
 	public PreparedStatement dropPrimaryKeyConstraintFromEdgeTable()
@@ -223,9 +268,13 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	}
 
 	private static final String ADD_FOREIGN_KEY_CONSTRAINT_ON_GRAPH_OF_EDGE = "ALTER TABLE \""
-			+ GraphDatabase.TABLE_EDGE
-			+ "\" ADD CONSTRAINT \"gIdIsForeignKey\" FOREIGN KEY (\"gId\") REFERENCES \""
-			+ GraphDatabase.TABLE_GRAPH + "\" (\"gId\");";
+			+ TABLE_EDGE
+			+ "\" ADD CONSTRAINT \""
+			+ FOREIGN_KEY_EDGE_TO_GRAPH
+			+ "\" FOREIGN KEY (\""
+			+ COLUMN_GRAPH_ID
+			+ "\") REFERENCES \""
+			+ TABLE_GRAPH + "\" (\"" + COLUMN_GRAPH_ID + "\");";
 
 	@Override
 	public PreparedStatement addForeignKeyConstraintOnGraphColumnOfEdgeTable()
@@ -235,9 +284,13 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	}
 
 	private static final String ADD_FOREIGN_KEY_CONSTRAINT_ON_EDGE_TYPE = "ALTER TABLE \""
-			+ GraphDatabase.TABLE_EDGE
-			+ "\" ADD CONSTRAINT \"typeIdIsForeignKey\" FOREIGN KEY (\"typeId\") REFERENCES \""
-			+ GraphDatabase.TABLE_TYPE + "\" (\"typeId\");";
+			+ TABLE_EDGE
+			+ "\" ADD CONSTRAINT \""
+			+ FOREIGN_KEY_EDGE_TO_TYPE
+			+ "\" FOREIGN KEY (\""
+			+ COLUMN_TYPE_ID
+			+ "\") REFERENCES \""
+			+ TABLE_TYPE + "\" (\"" + COLUMN_TYPE_ID + "\");";
 
 	@Override
 	public PreparedStatement addForeignKeyConstraintOnTypeColumnOfEdgeTable()
@@ -247,8 +300,10 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	}
 
 	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_EDGE = "ALTER TABLE \""
-			+ GraphDatabase.TABLE_EDGE
-			+ "\" DROP CONSTRAINT \"gIdIsForeignKey\";";
+			+ TABLE_EDGE
+			+ "\" DROP CONSTRAINT \""
+			+ FOREIGN_KEY_EDGE_TO_GRAPH
+			+ "\";";
 
 	@Override
 	public PreparedStatement dropForeignKeyConstraintFromGraphColumnOfEdgeTable()
@@ -258,8 +313,10 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	}
 
 	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_EDGE_TYPE = "ALTER TABLE \""
-			+ GraphDatabase.TABLE_EDGE
-			+ "\" DROP CONSTRAINT \"typeIdIsForeignKey\";";
+			+ TABLE_EDGE
+			+ "\" DROP CONSTRAINT \""
+			+ FOREIGN_KEY_EDGE_TO_TYPE
+			+ "\";";
 
 	@Override
 	public PreparedStatement dropForeignKeyConstraintFromTypeColumnOfEdgeTable()
@@ -270,12 +327,22 @@ public class PostgreSqlStatementList extends SqlStatementList {
 
 	private static final String CREATE_INCIDENCE_TABLE = "CREATE TYPE \"DIRECTION\" AS ENUM( 'OUT', 'IN' );"
 			+ "CREATE TABLE \""
-			+ GraphDatabase.TABLE_INCIDENCE
+			+ TABLE_INCIDENCE
 			+ "\"("
-			+ "\"eId\" INT4,"
-			+ "\"vId\" INT4,"
-			+ "\"gId\" INT4,"
-			+ "direction \"DIRECTION\"," + "\"sequenceNumber\" INT8" + ");";
+			+ "\""
+			+ COLUMN_EDGE_ID
+			+ "\" INT4,"
+			+ "\""
+			+ COLUMN_VERTEX_ID
+			+ "\" INT4,"
+			+ "\""
+			+ COLUMN_GRAPH_ID
+			+ "\" INT4,"
+			+ ""
+			+ COLUMN_INCIDENCE_DIRECTION
+			+ " \"DIRECTION\","
+			+ "\""
+			+ COLUMN_SEQUENCE_NUMBER + "\" INT8" + ");";
 
 	@Override
 	public PreparedStatement createIncidenceTable() throws SQLException {
@@ -283,8 +350,13 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	}
 
 	private static final String ADD_PRIMARY_KEY_CONSTRAINT_ON_INCIDENCE_TABLE = "ALTER TABLE \""
-			+ GraphDatabase.TABLE_INCIDENCE
-			+ "\" ADD CONSTRAINT \"incidencePrimaryKey\" PRIMARY KEY ( \"eId\", \"gId\", direction );";
+			+ TABLE_INCIDENCE
+			+ "\" ADD CONSTRAINT \""
+			+ PRIMARY_KEY_INCIDENCE
+			+ "\" PRIMARY KEY ( \""
+			+ COLUMN_EDGE_ID
+			+ "\", \""
+			+ COLUMN_GRAPH_ID + "\", " + COLUMN_INCIDENCE_DIRECTION + " );";
 
 	@Override
 	public PreparedStatement addPrimaryKeyConstraintOnIncidenceTable()
@@ -294,8 +366,10 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	}
 
 	private static final String DROP_PRIMARY_KEY_CONSTRAINT_FROM_INCIDENCE_TABLE = "ALTER TABLE \""
-			+ GraphDatabase.TABLE_INCIDENCE
-			+ "\" DROP CONSTRAINT \"incidencePrimaryKey\";";
+			+ TABLE_INCIDENCE
+			+ "\" DROP CONSTRAINT \""
+			+ PRIMARY_KEY_INCIDENCE
+			+ "\";";
 
 	@Override
 	public PreparedStatement dropPrimaryKeyConstraintFromIncidenceTable()
@@ -305,9 +379,15 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	}
 
 	private static final String ADD_FOREIGN_KEY_CONSTRAINT_ON_GRAPH_OF_INCIDENCE = "ALTER TABLE \""
-			+ GraphDatabase.TABLE_INCIDENCE
-			+ "\" ADD CONSTRAINT \"gIdIsForeignKey\" FOREIGN KEY (\"gId\") REFERENCES \""
-			+ GraphDatabase.TABLE_GRAPH + "\" (\"gId\");";
+			+ TABLE_INCIDENCE
+			+ "\" ADD CONSTRAINT \""
+			+ FOREIGN_KEY_INCIDENCE_TO_GRAPH
+			+ "\" FOREIGN KEY (\""
+			+ COLUMN_GRAPH_ID
+			+ "\") REFERENCES \""
+			+ TABLE_GRAPH
+			+ "\" (\""
+			+ COLUMN_GRAPH_ID + "\");";
 
 	@Override
 	public PreparedStatement addForeignKeyConstraintOnGraphColumnOfIncidenceTable()
@@ -317,9 +397,19 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	}
 
 	private static final String ADD_FOREIGN_KEY_CONSTRAINT_ON_EDGE_OF_INCIDENCE = "ALTER TABLE \""
-			+ GraphDatabase.TABLE_INCIDENCE
-			+ "\" ADD CONSTRAINT \"eIdIsForeignKey\" FOREIGN KEY (\"eId\", \"gId\") REFERENCES \""
-			+ GraphDatabase.TABLE_EDGE + "\" (\"eId\", \"gId\");";
+			+ TABLE_INCIDENCE
+			+ "\" ADD CONSTRAINT \""
+			+ FOREIGN_KEY_INCIDENCE_TO_EDGE
+			+ "\" FOREIGN KEY (\""
+			+ COLUMN_EDGE_ID
+			+ "\", \""
+			+ COLUMN_GRAPH_ID
+			+ "\") REFERENCES \""
+			+ TABLE_EDGE
+			+ "\" (\""
+			+ COLUMN_EDGE_ID
+			+ "\", \""
+			+ COLUMN_GRAPH_ID + "\");";
 
 	@Override
 	public PreparedStatement addForeignKeyConstraintOnEdgeColumnOfIncidenceTable()
@@ -329,9 +419,18 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	}
 
 	private static final String ADD_FOREIGN_KEY_CONSTRAINT_ON_VERTEX_OF_INCIDENCE = "ALTER TABLE \""
-			+ GraphDatabase.TABLE_INCIDENCE
-			+ "\" ADD CONSTRAINT \"vIdIsForeignKey\" FOREIGN KEY (\"vId\", \"gId\") REFERENCES \""
-			+ GraphDatabase.TABLE_VERTEX + "\" (\"vId\", \"gId\");";
+			+ TABLE_INCIDENCE
+			+ "\" ADD CONSTRAINT \""
+			+ FOREIGN_KEY_INCIDENCE_TO_VERTEX
+			+ "\" FOREIGN KEY (\""
+			+ COLUMN_VERTEX_ID
+			+ "\", \""
+			+ COLUMN_GRAPH_ID
+			+ "\") REFERENCES \""
+			+ TABLE_VERTEX
+			+ "\" (\""
+			+ COLUMN_VERTEX_ID
+			+ "\", \"" + COLUMN_GRAPH_ID + "\");";
 
 	@Override
 	public PreparedStatement addForeignKeyConstraintOnVertexColumnOfIncidenceTable()
@@ -341,8 +440,9 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	}
 
 	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_EDGE_OF_INCIDENCE = "ALTER TABLE \""
-			+ GraphDatabase.TABLE_INCIDENCE
-			+ "\" DROP CONSTRAINT \"eIdIsForeignKey\";";
+			+ TABLE_INCIDENCE
+			+ "\" DROP CONSTRAINT \""
+			+ FOREIGN_KEY_INCIDENCE_TO_EDGE + "\";";
 
 	@Override
 	public PreparedStatement dropForeignKeyConstraintFromEdgeColumnOfIncidenceTable()
@@ -352,8 +452,9 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	}
 
 	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_INCIDENCE = "ALTER TABLE \""
-			+ GraphDatabase.TABLE_INCIDENCE
-			+ "\" DROP CONSTRAINT \"gIdIsForeignKey\";";
+			+ TABLE_INCIDENCE
+			+ "\" DROP CONSTRAINT \""
+			+ FOREIGN_KEY_INCIDENCE_TO_GRAPH + "\";";
 
 	@Override
 	public PreparedStatement dropForeignKeyConstraintFromGraphColumnOfIncidenceTable()
@@ -363,8 +464,9 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	}
 
 	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_VERTEX_OF_INCIDENCE = "ALTER TABLE \""
-			+ GraphDatabase.TABLE_INCIDENCE
-			+ "\" DROP CONSTRAINT \"vIdIsForeignKey\";";
+			+ TABLE_INCIDENCE
+			+ "\" DROP CONSTRAINT \""
+			+ FOREIGN_KEY_INCIDENCE_TO_VERTEX + "\";";
 
 	@Override
 	public PreparedStatement dropForeignKeyConstraintFromVertexColumnOfIncidenceTable()
@@ -373,21 +475,21 @@ public class PostgreSqlStatementList extends SqlStatementList {
 				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_VERTEX_OF_INCIDENCE);
 	}
 
-	private static final String CREATE_INDEX_ON_LAMBDA_SEQ = "CREATE INDEX \"lambdaSeqIndex\" ON \""
-			+ GraphDatabase.TABLE_INCIDENCE
-			+ "\"( \"vId\", \"gId\", \"sequenceNumber\" ASC ) WITH (FILLFACTOR=80);"
-			+ "ALTER TABLE \""
-			+ GraphDatabase.TABLE_INCIDENCE
-			+ "\" CLUSTER ON \"lambdaSeqIndex\";"
-			+ "ANALYZE \""
-			+ GraphDatabase.TABLE_INCIDENCE + "\";";
+	private static final String CREATE_INDEX_ON_LAMBDA_SEQ = "CREATE INDEX \""
+			+ INDEX_INCIDENCE_LAMBDA_SEQ + "\" ON \"" + TABLE_INCIDENCE
+			+ "\"( \"" + COLUMN_VERTEX_ID + "\", \"" + COLUMN_GRAPH_ID
+			+ "\", \"" + COLUMN_SEQUENCE_NUMBER
+			+ "\" ASC ) WITH (FILLFACTOR=80);" + "ALTER TABLE \""
+			+ TABLE_INCIDENCE + "\" CLUSTER ON \"" + INDEX_INCIDENCE_LAMBDA_SEQ
+			+ "\";" + "ANALYZE \"" + TABLE_INCIDENCE + "\";";
 
 	@Override
 	public PreparedStatement addIndexOnLambdaSeq() throws SQLException {
 		return getPreparedStatement(CREATE_INDEX_ON_LAMBDA_SEQ);
 	}
 
-	private static final String DROP_INDEX_ON_LAMBDA_SEQ = "DROP INDEX IF EXISTS \"lambdaSeqIndex\";";
+	private static final String DROP_INDEX_ON_LAMBDA_SEQ = "DROP INDEX IF EXISTS \""
+			+ INDEX_INCIDENCE_LAMBDA_SEQ + "\";";
 
 	@Override
 	public PreparedStatement dropIndexOnLambdaSeq() throws SQLException {
@@ -395,22 +497,19 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	}
 
 	private static final String CLUSTER_INCIDENCES = "CLUSTER \""
-			+ GraphDatabase.TABLE_INCIDENCE + "\";";
+			+ TABLE_INCIDENCE + "\";";
 
 	public PreparedStatement clusterIncidenceTable() throws SQLException {
 		return getPreparedStatement(CLUSTER_INCIDENCES);
 	}
 
-	private static final String CREATE_ATTRIBUTE_TABLE = "CREATE SEQUENCE \"attributeIdSequence\";"
-			+ "CREATE TABLE \""
-			+ GraphDatabase.TABLE_ATTRIBUTE
-			+ "\"("
-			+ "\"attributeId\" INT4 PRIMARY KEY DEFAULT NEXTVAL('\"attributeIdSequence\"'),"
-			+ "name TEXT,"
-			+ "\"schemaId\" INT4 REFERENCES \""
-			+ GraphDatabase.TABLE_SCHEMA
-			+ "\" ON DELETE CASCADE"
-			+ ");";
+	private static final String CREATE_ATTRIBUTE_TABLE = "CREATE SEQUENCE \""
+			+ SEQUENCE_ATTRIBUTE + "\";" + "CREATE TABLE \"" + TABLE_ATTRIBUTE
+			+ "\"(" + "\"" + COLUMN_ATTRIBUTE_ID
+			+ "\" INT4 PRIMARY KEY DEFAULT NEXTVAL('\"" + SEQUENCE_ATTRIBUTE
+			+ "\"')," + "" + COLUMN_ATTRIBUTE_NAME + " TEXT," + "\""
+			+ COLUMN_SCHEMA_ID + "\" INT4 REFERENCES \"" + TABLE_SCHEMA
+			+ "\" ON DELETE CASCADE" + ");";
 
 	@Override
 	public PreparedStatement createAttributeTableWithConstraints()
@@ -419,15 +518,25 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	}
 
 	private static final String CREATE_GRAPH_ATTRIBUTE_VALUE_TABLE = "CREATE TABLE \""
-			+ GraphDatabase.TABLE_GRAPH_ATTRIBUTE
+			+ TABLE_GRAPH_ATTRIBUTE
 			+ "\"("
-			+ "\"gId\" INT4,"
-			+ "\"attributeId\" INT4 REFERENCES \""
-			+ GraphDatabase.TABLE_ATTRIBUTE
-			+ "\" (\"attributeId\"),"
-			+ "\"value\" TEXT,"
-			+ "CONSTRAINT \"gaPrimaryKey\" PRIMARY KEY ( \"gId\", \"attributeId\" )"
-			+ ");";
+			+ "\""
+			+ COLUMN_GRAPH_ID
+			+ "\" INT4,"
+			+ "\""
+			+ COLUMN_ATTRIBUTE_ID
+			+ "\" INT4 REFERENCES \""
+			+ TABLE_ATTRIBUTE
+			+ "\" (\""
+			+ COLUMN_ATTRIBUTE_ID
+			+ "\"),"
+			+ "\""
+			+ COLUMN_ATTRIBUTE_VALUE
+			+ "\" TEXT,"
+			+ "CONSTRAINT \""
+			+ PRIMARY_KEY_GRAPH_ATTRIBUTE
+			+ "\" PRIMARY KEY ( \""
+			+ COLUMN_GRAPH_ID + "\", \"" + COLUMN_ATTRIBUTE_ID + "\" )" + ");";
 
 	@Override
 	public PreparedStatement createGraphAttributeValueTableWithConstraints()
@@ -436,12 +545,23 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	}
 
 	private static final String CREATE_VERTEX_ATTRIBUTE_VALUE_TABLE = "CREATE TABLE \""
-			+ GraphDatabase.TABLE_VERTEX_ATTRIBUTE
+			+ TABLE_VERTEX_ATTRIBUTE
 			+ "\"("
-			+ "\"vId\" INT4,"
-			+ "\"gId\" INT4,"
-			+ "\"attributeId\" INT4,"
-			+ "\"value\" TEXT" + // TODO Replace by NVARCHAR(k).
+			+ "\""
+			+ COLUMN_VERTEX_ID
+			+ "\" INT4,"
+			+ "\""
+			+ COLUMN_GRAPH_ID
+			+ "\" INT4,"
+			+ "\""
+			+ COLUMN_ATTRIBUTE_ID
+			+ "\" INT4,"
+			+ "\""
+			+ COLUMN_ATTRIBUTE_VALUE
+			+ "\" TEXT" + // TODO
+			// Replace
+			// by
+			// NVARCHAR(k).
 			");";
 
 	@Override
@@ -451,8 +571,15 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	}
 
 	private static final String ADD_PRIMARY_KEY_CONSTRAINT_ON_VERTEX_ATTRIBUTE_VALUE_TABLE = "ALTER TABLE \""
-			+ GraphDatabase.TABLE_VERTEX_ATTRIBUTE
-			+ "\" ADD CONSTRAINT \"vertexAttributeValuePrimaryKey\" PRIMARY KEY ( \"vId\", \"gId\", \"attributeId\" );";
+			+ TABLE_VERTEX_ATTRIBUTE
+			+ "\" ADD CONSTRAINT \""
+			+ PRIMARY_KEY_VERTEX_ATTRIBUTE
+			+ "\" PRIMARY KEY ( \""
+			+ COLUMN_VERTEX_ID
+			+ "\", \""
+			+ COLUMN_GRAPH_ID
+			+ "\", \""
+			+ COLUMN_ATTRIBUTE_ID + "\" );";
 
 	@Override
 	public PreparedStatement addPrimaryKeyConstraintOnVertexAttributeValueTable()
@@ -462,8 +589,9 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	}
 
 	private static final String DROP_PRIMARY_KEY_CONSTRAINT_FROM_VERTEX_ATTRIBUTE_VALUE_TABLE = "ALTER TABLE \""
-			+ GraphDatabase.TABLE_VERTEX_ATTRIBUTE
-			+ "\" DROP CONSTRAINT \"vertexAttributeValuePrimaryKey\";";
+			+ TABLE_VERTEX_ATTRIBUTE
+			+ "\" DROP CONSTRAINT \""
+			+ PRIMARY_KEY_VERTEX_ATTRIBUTE + "\";";
 
 	@Override
 	public PreparedStatement dropPrimaryKeyConstraintFromVertexAttributeValueTable()
@@ -473,9 +601,15 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	}
 
 	private static final String ADD_FOREIGN_KEY_CONSTRAINT_ON_GRAPH_OF_VERTEX_ATTRIBUTE_VALUE = "ALTER TABLE \""
-			+ GraphDatabase.TABLE_VERTEX_ATTRIBUTE
-			+ "\" ADD CONSTRAINT \"gIdIsForeignKey\" FOREIGN KEY (\"gId\") REFERENCES \""
-			+ GraphDatabase.TABLE_GRAPH + "\" (\"gId\");";
+			+ TABLE_VERTEX_ATTRIBUTE
+			+ "\" ADD CONSTRAINT \""
+			+ FOREIGN_KEY_VERTEX_ATTRIBUTE_TO_GRAPH
+			+ "\" FOREIGN KEY (\""
+			+ COLUMN_GRAPH_ID
+			+ "\") REFERENCES \""
+			+ TABLE_GRAPH
+			+ "\" (\""
+			+ COLUMN_GRAPH_ID + "\");";
 
 	@Override
 	public PreparedStatement addForeignKeyConstraintOnGraphColumnOfVertexAttributeValueTable()
@@ -485,10 +619,18 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	}
 
 	private static final String ADD_FOREIGN_KEY_CONSTRAINT_ON_VERTEX_OF_ATTRIBUTE_VALUE = "ALTER TABLE \""
-
-			+ GraphDatabase.TABLE_VERTEX_ATTRIBUTE
-			+ "\" ADD CONSTRAINT \"vIdIsForeignKey\" FOREIGN KEY (\"vId\", \"gId\") REFERENCES \""
-			+ GraphDatabase.TABLE_VERTEX + "\" (\"vId\", \"gId\");";
+			+ TABLE_VERTEX_ATTRIBUTE
+			+ "\" ADD CONSTRAINT \""
+			+ FOREIGN_KEY_VERTEX_ATTRIBUTE_TO_VERTEX
+			+ "\" FOREIGN KEY (\""
+			+ COLUMN_VERTEX_ID
+			+ "\", \""
+			+ COLUMN_GRAPH_ID
+			+ "\") REFERENCES \""
+			+ TABLE_VERTEX
+			+ "\" (\""
+			+ COLUMN_VERTEX_ID
+			+ "\", \"" + COLUMN_GRAPH_ID + "\");";
 
 	@Override
 	public PreparedStatement addForeignKeyConstraintOnVertexColumnOfVertexAttributeValueTable()
@@ -498,11 +640,14 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	}
 
 	private static final String ADD_FOREIGN_KEY_CONSTRAINT_ON_ATTRIBUTE_OF_VERTEX_ATTRIBUTE_VALUE = "ALTER TABLE \""
-
-			+ GraphDatabase.TABLE_VERTEX_ATTRIBUTE
-			+ "\" ADD CONSTRAINT \"attributeIdIsForeignKey\" FOREIGN KEY (\"attributeId\" ) REFERENCES \""
-
-			+ GraphDatabase.TABLE_ATTRIBUTE + "\" (\"attributeId\");";
+			+ TABLE_VERTEX_ATTRIBUTE
+			+ "\" ADD CONSTRAINT \""
+			+ FOREIGN_KEY_VERTEX_ATTRIBUTE_TO_ATTRIBUTE
+			+ "\" FOREIGN KEY (\""
+			+ COLUMN_ATTRIBUTE_ID
+			+ "\" ) REFERENCES \""
+			+ TABLE_ATTRIBUTE
+			+ "\" (\"" + COLUMN_ATTRIBUTE_ID + "\");";
 
 	@Override
 	public PreparedStatement addForeignKeyConstraintOnAttributeColumnOfVertexAttributeValueTable()
@@ -512,9 +657,9 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	}
 
 	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_VERTEX_ATTRIBUTE_VALUE = "ALTER TABLE \""
-
-			+ GraphDatabase.TABLE_VERTEX_ATTRIBUTE
-			+ "\" DROP CONSTRAINT \"gIdIsForeignKey\";";
+			+ TABLE_VERTEX_ATTRIBUTE
+			+ "\" DROP CONSTRAINT \""
+			+ FOREIGN_KEY_VERTEX_ATTRIBUTE_TO_GRAPH + "\";";
 
 	@Override
 	public PreparedStatement dropForeignKeyConstraintFromGraphColumnOfVertexAttributeValueTable()
@@ -524,9 +669,9 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	}
 
 	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_VERTEX_OF_ATTRIBUTE_VALUE = "ALTER TABLE \""
-
-			+ GraphDatabase.TABLE_VERTEX_ATTRIBUTE
-			+ "\" DROP CONSTRAINT \"vIdIsForeignKey\";";
+			+ TABLE_VERTEX_ATTRIBUTE
+			+ "\" DROP CONSTRAINT \""
+			+ FOREIGN_KEY_VERTEX_ATTRIBUTE_TO_VERTEX + "\";";
 
 	@Override
 	public PreparedStatement dropForeignKeyConstraintFromVertexColumnOfVertexAttributeValueTable()
@@ -536,9 +681,9 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	}
 
 	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_ATTRIBUTE_OF_VERTEX_ATTRIBUTE_VALUE = "ALTER TABLE \""
-
-			+ GraphDatabase.TABLE_VERTEX_ATTRIBUTE
-			+ "\" DROP CONSTRAINT \"attributeIdIsForeignKey\";";
+			+ TABLE_VERTEX_ATTRIBUTE
+			+ "\" DROP CONSTRAINT \""
+			+ FOREIGN_KEY_VERTEX_ATTRIBUTE_TO_ATTRIBUTE + "\";";
 
 	@Override
 	public PreparedStatement dropForeignKeyConstraintFromAttributeColumnOfVertexAttributeValueTable()
@@ -548,9 +693,17 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	}
 
 	private static final String CREATE_EDGE_ATTRIBUTE_VALUE_TABLE = "CREATE TABLE \""
-
-	+ GraphDatabase.TABLE_EDGE_ATTRIBUTE + "\"(" + "\"eId\" INT4,"
-			+ "\"gId\" INT4," + "\"attributeId\" INT4," + "\"value\" TEXT" + // TODO
+			+ TABLE_EDGE_ATTRIBUTE
+			+ "\"("
+			+ "\""
+			+ COLUMN_EDGE_ID
+			+ "\" INT4,"
+			+ "\""
+			+ COLUMN_GRAPH_ID
+			+ "\" INT4,"
+			+ "\""
+			+ COLUMN_ATTRIBUTE_ID
+			+ "\" INT4," + "\"" + COLUMN_ATTRIBUTE_VALUE + "\" TEXT" + // TODO
 			// Replace
 			// by
 			// NVARCHAR(k)
@@ -563,9 +716,15 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	}
 
 	private static final String ADD_PRIMARY_KEY_CONSTRAINT_ON_EDGE_ATTRIBUTE_VALUE_TABLE = "ALTER TABLE \""
-
-			+ GraphDatabase.TABLE_EDGE_ATTRIBUTE
-			+ "\" ADD CONSTRAINT \"edgeAttributeValuePrimaryKey\" PRIMARY KEY ( \"eId\", \"gId\", \"attributeId\" );";
+			+ TABLE_EDGE_ATTRIBUTE
+			+ "\" ADD CONSTRAINT \""
+			+ PRIMARY_KEY_EDGE_ATTRIBUTE
+			+ "\" PRIMARY KEY ( \""
+			+ COLUMN_EDGE_ID
+			+ "\", \""
+			+ COLUMN_GRAPH_ID
+			+ "\", \""
+			+ COLUMN_ATTRIBUTE_ID + "\" );";
 
 	@Override
 	public PreparedStatement addPrimaryKeyConstraintOnEdgeAttributeValueTable()
@@ -575,9 +734,9 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	}
 
 	private static final String DROP_PRIMARY_KEY_CONSTRAINT_FROM_EDGE_ATTRIBUTE_VALUE_TABLE = "ALTER TABLE \""
-
-			+ GraphDatabase.TABLE_EDGE_ATTRIBUTE
-			+ "\" DROP CONSTRAINT \"edgeAttributeValuePrimaryKey\";";
+			+ TABLE_EDGE_ATTRIBUTE
+			+ "\" DROP CONSTRAINT \""
+			+ PRIMARY_KEY_EDGE_ATTRIBUTE + "\";";
 
 	@Override
 	public PreparedStatement dropPrimaryKeyConstraintFromEdgeAttributeValueTable()
@@ -587,10 +746,15 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	}
 
 	private static final String ADD_FOREIGN_KEY_CONSTRAINT_ON_GRAPH_OF_EDGE_ATTRIBUTE_VALUE = "ALTER TABLE \""
-
-			+ GraphDatabase.TABLE_EDGE_ATTRIBUTE
-			+ "\" ADD CONSTRAINT \"gIdIsForeignKey\" FOREIGN KEY (\"gId\") REFERENCES \""
-			+ GraphDatabase.TABLE_GRAPH + "\" (\"gId\");";
+			+ TABLE_EDGE_ATTRIBUTE
+			+ "\" ADD CONSTRAINT \""
+			+ FOREIGN_KEY_EDGE_ATTRIBUTE_TO_GRAPH
+			+ "\" FOREIGN KEY (\""
+			+ COLUMN_GRAPH_ID
+			+ "\") REFERENCES \""
+			+ TABLE_GRAPH
+			+ "\" (\""
+			+ COLUMN_GRAPH_ID + "\");";
 
 	@Override
 	public PreparedStatement addForeignKeyConstraintOnGraphColumnOfEdgeAttributeValueTable()
@@ -600,10 +764,19 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	}
 
 	private static final String ADD_FOREIGN_KEY_CONSTRAINT_ON_EDGE_OF_ATTRIBUTE_VALUE = "ALTER TABLE \""
-
-			+ GraphDatabase.TABLE_EDGE_ATTRIBUTE
-			+ "\" ADD CONSTRAINT \"eIdIsForeignKey\" FOREIGN KEY (\"eId\", \"gId\") REFERENCES \""
-			+ GraphDatabase.TABLE_EDGE + "\" (\"eId\", \"gId\");";
+			+ TABLE_EDGE_ATTRIBUTE
+			+ "\" ADD CONSTRAINT \""
+			+ FOREIGN_KEY_EDGE_ATTRIBUTE_TO_EDGE
+			+ "\" FOREIGN KEY (\""
+			+ COLUMN_EDGE_ID
+			+ "\", \""
+			+ COLUMN_GRAPH_ID
+			+ "\") REFERENCES \""
+			+ TABLE_EDGE
+			+ "\" (\""
+			+ COLUMN_EDGE_ID
+			+ "\", \""
+			+ COLUMN_GRAPH_ID + "\");";
 
 	@Override
 	public PreparedStatement addForeignKeyConstraintOnEdgeColumnOfEdgeAttributeValueTable()
@@ -613,11 +786,14 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	}
 
 	private static final String ADD_FOREIGN_KEY_CONSTRAINT_ON_EDGE_ATTRIBUTE = "ALTER TABLE \""
-
-			+ GraphDatabase.TABLE_EDGE_ATTRIBUTE
-			+ "\" ADD CONSTRAINT \"attributeIdIsForeignKey\" FOREIGN KEY (\"attributeId\" ) REFERENCES \""
-
-			+ GraphDatabase.TABLE_ATTRIBUTE + "\" (\"attributeId\");";
+			+ TABLE_EDGE_ATTRIBUTE
+			+ "\" ADD CONSTRAINT \""
+			+ FOREIGN_KEY_EDGE_ATTRIBUTE_TO_ATTRIBUTE
+			+ "\" FOREIGN KEY (\""
+			+ COLUMN_ATTRIBUTE_ID
+			+ "\" ) REFERENCES \""
+			+ TABLE_ATTRIBUTE
+			+ "\" (\"" + COLUMN_ATTRIBUTE_ID + "\");";
 
 	@Override
 	public PreparedStatement addForeignKeyConstraintOnAttributeColumnOfEdgeAttributeValueTable()
@@ -627,9 +803,9 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	}
 
 	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_GRAPH_OF_EDGE_ATTRIBUTE = "ALTER TABLE \""
-
-			+ GraphDatabase.TABLE_EDGE_ATTRIBUTE
-			+ "\" DROP CONSTRAINT \"gIdIsForeignKey\";";
+			+ TABLE_EDGE_ATTRIBUTE
+			+ "\" DROP CONSTRAINT \""
+			+ FOREIGN_KEY_EDGE_ATTRIBUTE_TO_GRAPH + "\";";
 
 	@Override
 	public PreparedStatement dropForeignKeyConstraintFromGraphColumnOfEdgeAttributeValueTable()
@@ -639,9 +815,9 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	}
 
 	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_EDGE_OF_ATTRIBUTE_VALUE = "ALTER TABLE \""
-
-			+ GraphDatabase.TABLE_EDGE_ATTRIBUTE
-			+ "\" DROP CONSTRAINT \"eIdIsForeignKey\";";
+			+ TABLE_EDGE_ATTRIBUTE
+			+ "\" DROP CONSTRAINT \""
+			+ FOREIGN_KEY_EDGE_ATTRIBUTE_TO_EDGE + "\";";
 
 	@Override
 	public PreparedStatement dropForeignKeyConstraintFromEdgeColumnOfEdgeAttributeValueTable()
@@ -651,9 +827,9 @@ public class PostgreSqlStatementList extends SqlStatementList {
 	}
 
 	private static final String DROP_FOREIGN_KEY_CONSTRAINT_FROM_EDGE_ATTRIBUTE = "ALTER TABLE \""
-
-			+ GraphDatabase.TABLE_EDGE_ATTRIBUTE
-			+ "\" DROP CONSTRAINT \"attributeIdIsForeignKey\";";
+			+ TABLE_EDGE_ATTRIBUTE
+			+ "\" DROP CONSTRAINT \""
+			+ FOREIGN_KEY_EDGE_ATTRIBUTE_TO_ATTRIBUTE + "\";";
 
 	@Override
 	public PreparedStatement dropForeignKeyConstraintFromAttributeColumnOfEdgeAttributeValueTable()
@@ -662,176 +838,10 @@ public class PostgreSqlStatementList extends SqlStatementList {
 				.prepareStatement(DROP_FOREIGN_KEY_CONSTRAINT_FROM_EDGE_ATTRIBUTE);
 	}
 
-	/*
-	 * private static final String ADD_CLUSTERED_INDEX_ON_EDGE_ATTRIBUTE_VALUES =
-	 * "CREATE INDEX \"edgeAttributeValueIndex\" ON \""
-	 * +JGraLab.getDatabaseTablePrefix() +
-	 * GraphDatabase.EDGE_ATTRIBUTE_VALUE_TABLE_NAME
-	 * +"\"( \"eId\" ASC, \"gId\" ASC, \"attributeId\" ) WITH (FILLFACTOR=80);"
-	 * + "ALTER TABLE \""+JGraLab.getDatabaseTablePrefix() +
-	 * GraphDatabase.EDGE_ATTRIBUTE_VALUE_TABLE_NAME
-	 * +"\" CLUSTER ON \"edgeAttributeValueIndex\";" +
-	 * "ANALYZE \""+JGraLab.getDatabaseTablePrefix() +
-	 * GraphDatabase.EDGE_ATTRIBUTE_VALUE_TABLE_NAME +"\";";
-	 * 
-	 * @Override public PreparedStatement
-	 * addClusteredIndexOnEdgeAttributeValues()throws SQLException { return
-	 * this.getPreparedStatement(ADD_CLUSTERED_INDEX_ON_EDGE_ATTRIBUTE_VALUES);
-	 * }
-	 * 
-	 * private static final String ADD_CLUSTERED_INDEX_ON_VERTEX_ATTRIBUTE_VALUES =
-	 * "CREATE INDEX \"vertexAttributeValueIndex\" ON \""
-	 * +JGraLab.getDatabaseTablePrefix() +
-	 * GraphDatabase.VERTEX_ATTRIBUTE_VALUE_TABLE_NAME
-	 * +"\"( \"vId\" ASC, \"gId\" ASC, \"attributeId\" ) WITH (FILLFACTOR=80);"
-	 * + "ALTER TABLE \""+JGraLab.getDatabaseTablePrefix() +
-	 * GraphDatabase.VERTEX_ATTRIBUTE_VALUE_TABLE_NAME
-	 * +"\" CLUSTER ON \"vertexAttributeValueIndex\";" +
-	 * "ANALYZE \""+JGraLab.getDatabaseTablePrefix() +
-	 * GraphDatabase.VERTEX_ATTRIBUTE_VALUE_TABLE_NAME +"\";";
-	 * 
-	 * @Override public PreparedStatement
-	 * addClusteredIndexOnVertexAttributeValues()throws SQLException { return
-	 * this
-	 * .getPreparedStatement(ADD_CLUSTERED_INDEX_ON_VERTEX_ATTRIBUTE_VALUES); }
-	 * 
-	 * private static final String ADD_CLUSTERED_INDEX_ON_GRAPH_ATTRIBUTE_VALUES =
-	 * "CREATE INDEX \"graphAttributeValueIndex\" ON \""
-	 * +JGraLab.getDatabaseTablePrefix() +
-	 * GraphDatabase.GRAPH_ATTRIBUTE_VALUE_TABLE_NAME
-	 * +"\"( \"gId\" ASC, \"attributeId\" ) WITH (FILLFACTOR=80);" +
-	 * "ALTER TABLE \""+JGraLab.getDatabaseTablePrefix() +
-	 * GraphDatabase.GRAPH_ATTRIBUTE_VALUE_TABLE_NAME
-	 * +"\" CLUSTER ON \"graphAttributeValueIndex\";" +
-	 * "ANALYZE \""+JGraLab.getDatabaseTablePrefix() +
-	 * GraphDatabase.GRAPH_ATTRIBUTE_VALUE_TABLE_NAME +"\";";
-	 * 
-	 * @Override public PreparedStatement
-	 * addClusteredIndexOnGraphAttributeValues()throws SQLException { return
-	 * this.getPreparedStatement(ADD_CLUSTERED_INDEX_ON_GRAPH_ATTRIBUTE_VALUES);
-	 * }
-	 * 
-	 * private static final String DROP_CLUSTERED_INDICES_FROM_ATTRIBUTE_VALUES =
-	 * "DROP INDEX IF EXISTS \"edgeAttributeValueIndex\";" +
-	 * "DROP INDEX IF EXISTS \"vertexAttributeValueIndex\";" +
-	 * "DROP INDEX IF EXISTS \"graphAttributeValueIndex\";";
-	 * 
-	 * @Override public PreparedStatement
-	 * dropClusteredIndicesOnAttributeValues() throws SQLException { return
-	 * this.getPreparedStatement(DROP_CLUSTERED_INDICES_FROM_ATTRIBUTE_VALUES);
-	 * }
-	 * 
-	 * private static final String CLUSTER_ATTRIBUTE_VALUES =
-	 * "CLUSTER \""+JGraLab.getDatabaseTablePrefix() +
-	 * GraphDatabase.GRAPH_ATTRIBUTE_VALUE_TABLE_NAME +"\";" +
-	 * "CLUSTER \""+JGraLab.getDatabaseTablePrefix() +
-	 * GraphDatabase.VERTEX_ATTRIBUTE_VALUE_TABLE_NAME +"\";" +
-	 * "CLUSTER \""+JGraLab.getDatabaseTablePrefix() +
-	 * GraphDatabase.EDGE_ATTRIBUTE_VALUE_TABLE_NAME +"\";";
-	 * 
-	 * @Override public PreparedStatement clusterAttributeValues() throws
-	 * SQLException { return
-	 * this.getPreparedStatement(CLUSTER_ATTRIBUTE_VALUES); }
-	 */
-
-	private static final String INSERT_SCHEMA = "INSERT INTO \""
-
-			+ GraphDatabase.TABLE_SCHEMA
-			+ "\" ( \"packagePrefix\", name, \"serializedDefinition\" ) VALUES ( ?, ?, ? )";
-
-	@Override
-	public PreparedStatement insertSchema(Schema schema,
-			String serializedDefinition) throws SQLException {
-		PreparedStatement statement = connection.prepareStatement(
-				INSERT_SCHEMA, Statement.RETURN_GENERATED_KEYS);
-		statement.setString(1, schema.getPackagePrefix());
-		statement.setString(2, schema.getName());
-		statement.setString(3, serializedDefinition);
-		return statement;
-	}
-
-	private static final String INSERT_TYPE = "INSERT INTO \""
-			+ GraphDatabase.TABLE_TYPE
-			+ "\"( \"qualifiedName\", \"schemaId\" ) VALUES ( ?, ? )";
-
-	@Override
-	public PreparedStatement insertType(String qualifiedName, int schemaId)
-			throws SQLException {
-		PreparedStatement statement = getPreparedStatement(INSERT_TYPE);
-		statement.setString(1, qualifiedName);
-		statement.setInt(2, schemaId);
-		return statement;
-	}
-
-	private static final String INSERT_ATTRIBUTE = "INSERT INTO \""
-
-	+ GraphDatabase.TABLE_ATTRIBUTE
-			+ "\" ( name, \"schemaId\" ) VALUES ( ?, ? )";
-
-	@Override
-	public PreparedStatement insertAttribute(String name, int schemaId)
-			throws SQLException {
-		PreparedStatement statement = getPreparedStatement(INSERT_ATTRIBUTE);
-		statement.setString(1, name);
-		statement.setInt(2, schemaId);
-		return statement;
-	}
-
 	// --- to insert a graph ------------------------------------------
-
-	private static final String INSERT_GRAPH = "INSERT INTO \""
-			+ GraphDatabase.TABLE_GRAPH
-			+ "\" ( uid, version, \"vSeqVersion\", \"eSeqVersion\", \"typeId\" ) VALUES ( ?, ?, ?, ?, ? )";
-
-	@Override
-	public PreparedStatement insertGraph(String id, long graphVersion,
-			long vertexListVersion, long edgeListVersion, int typeId)
-			throws SQLException {
-		PreparedStatement statement = connection.prepareStatement(INSERT_GRAPH,
-				Statement.RETURN_GENERATED_KEYS);
-		statement.setString(1, id);
-		statement.setLong(2, graphVersion);
-		statement.setLong(3, vertexListVersion);
-		statement.setLong(4, edgeListVersion);
-		statement.setInt(5, typeId);
-		return statement;
-	}
-
-	private static final String INSERT_GRAPH_ATTRIBUTE_VALUE = "INSERT INTO \""
-
-	+ GraphDatabase.TABLE_GRAPH_ATTRIBUTE
-			+ "\" ( \"gId\", \"attributeId\", value ) VALUES ( ?, ?, ? )";
-
-	@Override
-	public PreparedStatement insertGraphAttributeValue(int gId,
-			int attributeId, String value) throws SQLException {
-		PreparedStatement statement = getPreparedStatement(INSERT_GRAPH_ATTRIBUTE_VALUE);
-		statement.setInt(1, gId);
-		statement.setInt(2, attributeId);
-		statement.setString(3, value);
-		return statement;
-	}
 
 	// --- to insert a vertex ------------------------------------------
 
-	private static final String INSERT_VERTEX = "INSERT INTO \""
-			+ GraphDatabase.TABLE_VERTEX
-			+ "\" ( \"vId\", \"gId\", \"typeId\", \"lambdaSeqVersion\", \"sequenceNumber\" ) VALUES (?, ?, ?, ?, ?);";
-
-	@Override
-	public PreparedStatement insertVertex(int vId, int typeId, int gId,
-			long incidenceListVersion, long sequenceNumberInVSeq)
-			throws SQLException {
-		PreparedStatement statement = getPreparedStatement(INSERT_VERTEX);
-		statement.setInt(1, vId);
-		statement.setInt(2, gId);
-		statement.setInt(3, typeId);
-		statement.setLong(4, incidenceListVersion);
-		statement.setLong(5, sequenceNumberInVSeq);
-		return statement;
-	}
-
-	@Override
 	public PreparedStatement insertVertex(DatabasePersistableVertex vertex)
 			throws SQLException, GraphIOException {
 		String sqlStatement = createSqlInsertStatementFor(vertex);
@@ -873,7 +883,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 		statement.setLong(5, vertex.getSequenceNumberInVSeq());
 	}
 
-	private static final String createSqlInsertStatementFor(DatabasePersistableVertex vertex) {
+	private String createSqlInsertStatementFor(DatabasePersistableVertex vertex) {
 		String sqlStatement = INSERT_VERTEX;
 		int attributeCount = vertex.getAttributedElementClass()
 				.getAttributeList().size();
@@ -883,40 +893,8 @@ public class PostgreSqlStatementList extends SqlStatementList {
 		return sqlStatement;
 	}
 
-	private static final String INSERT_VERTEX_ATTRIBUTE_VALUE = "INSERT INTO \""
-
-			+ GraphDatabase.TABLE_VERTEX_ATTRIBUTE
-			+ "\" ( \"vId\", \"gId\", \"attributeId\", value ) VALUES ( ?, ?, ?, ? );";
-
-	@Override
-	public PreparedStatement insertVertexAttributeValue(int vId, int gId,
-			int attributeId, String value) throws SQLException {
-		PreparedStatement statement = getPreparedStatement(INSERT_VERTEX_ATTRIBUTE_VALUE);
-		statement.setInt(1, vId);
-		statement.setInt(2, gId);
-		statement.setInt(3, attributeId);
-		statement.setString(4, value);
-		return statement;
-	}
-
 	// --- to insert an edge -------------------------------------------
 
-	private static final String INSERT_EDGE = "INSERT INTO \""
-			+ GraphDatabase.TABLE_EDGE
-			+ "\" ( \"eId\", \"gId\", \"typeId\", \"sequenceNumber\" ) VALUES ( ?, ?, ?, ? );";
-
-	@Override
-	public PreparedStatement insertEdge(int eId, int gId, int typeId,
-			long sequenceNumberInLambdaSeq) throws SQLException {
-		PreparedStatement statement = getPreparedStatement(INSERT_EDGE);
-		statement.setInt(1, Math.abs(eId));
-		statement.setInt(2, gId);
-		statement.setInt(3, typeId);
-		statement.setLong(4, sequenceNumberInLambdaSeq);
-		return statement;
-	}
-
-	@Override
 	public PreparedStatement insertEdge(DatabasePersistableEdge edge,
 			DatabasePersistableVertex alpha, DatabasePersistableVertex omega)
 			throws SQLException, GraphIOException {
@@ -986,7 +964,7 @@ public class PostgreSqlStatementList extends SqlStatementList {
 		statement.setLong(4, edge.getSequenceNumberInESeq());
 	}
 
-	private static final String createSqlInsertStatementFor(DatabasePersistableEdge edge) {
+	private String createSqlInsertStatementFor(DatabasePersistableEdge edge) {
 		String sqlStatement = INSERT_EDGE;
 		sqlStatement += INSERT_INCIDENCE;
 		sqlStatement += INSERT_INCIDENCE;
@@ -1000,723 +978,25 @@ public class PostgreSqlStatementList extends SqlStatementList {
 		return sqlStatement;
 	}
 
-	private static final String INSERT_INCIDENCE = "INSERT INTO \""
-			+ GraphDatabase.TABLE_INCIDENCE
-			+ "\" ( \"eId\", \"gId\", \"vId\", direction, \"sequenceNumber\" ) VALUES ( ?, ?, ?, ?::\"DIRECTION\", ? );";
-
-	@Override
-	public PreparedStatement insertIncidence(int eId, int vId, int gId,
-			long sequenceNumberInLambdaSeq) throws SQLException {
-		PreparedStatement statement = getPreparedStatement(INSERT_INCIDENCE);
-		statement.setInt(1, Math.abs(eId));
-		statement.setInt(2, gId);
-		statement.setInt(3, vId);
-		if (eId > 0) {
-			statement.setString(4, EdgeDirection.OUT.name());
-		} else if (eId < 0) {
-			statement.setString(4, EdgeDirection.IN.name());
-		} else {
-			throw new GraphException(
-					"Cannot insert an incidence into database with incident edge id = 0.");
-		}
-		statement.setLong(5, sequenceNumberInLambdaSeq);
-		return statement;
-	}
-
-	private static final String INSERT_EDGE_ATTRIBUTE_VALUE = "INSERT INTO \""
-
-			+ GraphDatabase.TABLE_EDGE_ATTRIBUTE
-			+ "\" ( \"eId\", \"gId\", \"attributeId\", value ) VALUES ( ?, ?, ?, ? );";
-
-	@Override
-	public PreparedStatement insertEdgeAttributeValue(int eId, int gId,
-			int attributeId, String value) throws SQLException {
-		PreparedStatement statement = getPreparedStatement(INSERT_EDGE_ATTRIBUTE_VALUE);
-		statement.setInt(1, eId);
-		statement.setInt(2, gId);
-		statement.setInt(3, attributeId);
-		statement.setString(4, value);
-		return statement;
-	}
-
 	// --- to open a graph schema -------------------------------------------
-
-	private static final String SELECT_SCHEMA_ID = "SELECT \"schemaId\" FROM \""
-
-	+ GraphDatabase.TABLE_SCHEMA
-			+ "\" WHERE \"packagePrefix\" = ? AND name = ?";
-
-	@Override
-	public PreparedStatement selectSchemaId(String packagePrefix, String name)
-			throws SQLException {
-		PreparedStatement statement = getPreparedStatement(SELECT_SCHEMA_ID);
-		statement.setString(1, packagePrefix);
-		statement.setString(2, name);
-		return statement;
-	}
-
-	private static final String SELECT_SCHEMA_DEFINITION_FOR_GRAPH = "SELECT \"serializedDefinition\" FROM \""
-
-			+ GraphDatabase.TABLE_SCHEMA
-			+ "\" WHERE \"schemaId\" = ("
-			+ "SELECT \"schemaId\" FROM \""
-			+ GraphDatabase.TABLE_TYPE
-			+ "\" WHERE \"typeId\" = ("
-			+ "SELECT \"typeId\" FROM \""
-			+ GraphDatabase.TABLE_GRAPH
-			+ "\" WHERE uid = ?" + ")" + ")";
-
-	@Override
-	public PreparedStatement selectSchemaDefinitionForGraph(String uid)
-			throws SQLException {
-		PreparedStatement statement = getPreparedStatement(SELECT_SCHEMA_DEFINITION_FOR_GRAPH);
-		statement.setString(1, uid);
-		return statement;
-	}
-
-	private static final String SELECT_SCHEMA_NAME = "SELECT \"packagePrefix\", name FROM \""
-
-			+ GraphDatabase.TABLE_SCHEMA
-			+ "\" WHERE \"schemaId\" = ("
-			+ "SELECT \"schemaId\" FROM \""
-			+ GraphDatabase.TABLE_TYPE
-			+ "\" WHERE \"typeId\" = ("
-			+ "SELECT \"typeId\" FROM \""
-			+ GraphDatabase.TABLE_GRAPH
-			+ "\" WHERE uid = ?" + ")" + ")";
-
-	@Override
-	public PreparedStatement selectSchemaNameForGraph(String uid)
-			throws SQLException {
-		PreparedStatement statement = getPreparedStatement(SELECT_SCHEMA_NAME);
-		statement.setString(1, uid);
-		return statement;
-	}
-
-	private static final String SELECT_TYPES = "SELECT \"qualifiedName\", \"typeId\" FROM \""
-			+ GraphDatabase.TABLE_TYPE
-			+ "\" WHERE \"schemaId\" = "
-			+ "(SELECT \"schemaId\" FROM \""
-
-			+ GraphDatabase.TABLE_SCHEMA
-			+ "\" WHERE \"packagePrefix\" = ? AND name = ?)";
-
-	@Override
-	public PreparedStatement selectTypesOfSchema(String packagePrefix,
-			String name) throws SQLException {
-		PreparedStatement statement = getPreparedStatement(SELECT_TYPES);
-		statement.setString(1, packagePrefix);
-		statement.setString(2, name);
-		return statement;
-	}
-
-	private static final String SELECT_ATTRIBUTES = "SELECT name, \"attributeId\" FROM \""
-
-	+ GraphDatabase.TABLE_ATTRIBUTE + "\" WHERE \"schemaId\" = "
-			+ "(SELECT \"schemaId\" FROM \""
-			+ GraphDatabase.TABLE_SCHEMA
-			+ "\" WHERE \"packagePrefix\" = ? AND name = ?)";
-
-	@Override
-	public PreparedStatement selectAttributesOfSchema(String packagePrefix,
-			String name) throws SQLException {
-		PreparedStatement statement = getPreparedStatement(SELECT_ATTRIBUTES);
-		statement.setString(1, packagePrefix);
-		statement.setString(2, name);
-		return statement;
-	}
 
 	// --- to open a graph --------------------------------------------
 
-	private static final String SELECT_GRAPH = "SELECT \"gId\", version, \"vSeqVersion\", \"eSeqVersion\" FROM \""
-			+ GraphDatabase.TABLE_GRAPH + "\" WHERE uid = ?";
-
-	@Override
-	public PreparedStatement selectGraph(String id) throws SQLException {
-		PreparedStatement statement = getPreparedStatement(SELECT_GRAPH);
-		statement.setString(1, id);
-		return statement;
-	}
-
-	private static final String COUNT_VERTICES_IN_GRAPH = "SELECT COUNT (*) FROM \""
-			+ GraphDatabase.TABLE_VERTEX + "\" WHERE \"gId\" = ?";
-
-	@Override
-	public PreparedStatement countVerticesOfGraph(int gId) throws SQLException {
-		PreparedStatement statement = getPreparedStatement(COUNT_VERTICES_IN_GRAPH);
-		statement.setInt(1, gId);
-		return statement;
-	}
-
-	private static final String COUNT_EDGES_IN_GRAPH = "SELECT COUNT (*) FROM \""
-			+ GraphDatabase.TABLE_EDGE + "\" WHERE \"gId\" = ?";
-
-	@Override
-	public PreparedStatement countEdgesOfGraph(int gId) throws SQLException {
-		PreparedStatement statement = getPreparedStatement(COUNT_EDGES_IN_GRAPH);
-		statement.setInt(1, gId);
-		return statement;
-	}
-
-	private static final String SELECT_VERTICES = "SELECT \"vId\", \"sequenceNumber\"  FROM \""
-			+ GraphDatabase.TABLE_VERTEX
-			+ "\" WHERE \"gId\" = ? ORDER BY \"sequenceNumber\" ASC";
-
-	@Override
-	public PreparedStatement selectVerticesOfGraph(int gId) throws SQLException {
-		PreparedStatement statement = getPreparedStatement(SELECT_VERTICES);
-		statement.setInt(1, gId);
-		return statement;
-	}
-
-	private static final String SELECT_EDGES = "SELECT \"eId\", \"sequenceNumber\"  FROM \""
-			+ GraphDatabase.TABLE_EDGE
-			+ "\" WHERE \"gId\" = ? ORDER BY \"sequenceNumber\" ASC";
-
-	@Override
-	public PreparedStatement selectEdgesOfGraph(int gId) throws SQLException {
-		PreparedStatement statement = getPreparedStatement(SELECT_EDGES);
-		statement.setInt(1, gId);
-		return statement;
-	}
-
-	private static final String SELECT_ATTRIBUTE_VALUES_OF_GRAPH = "SELECT name, \"value\" FROM \""
-
-			+ GraphDatabase.TABLE_GRAPH_ATTRIBUTE
-			+ "\" JOIN \""
-			+ GraphDatabase.TABLE_ATTRIBUTE
-			+ "\" ON \""
-			+ GraphDatabase.TABLE_GRAPH_ATTRIBUTE
-			+ "\".\"attributeId\" = \""
-			+ GraphDatabase.TABLE_ATTRIBUTE
-			+ "\".\"attributeId\" WHERE \"gId\" = ?";
-
-	@Override
-	public PreparedStatement selectAttributeValuesOfGraph(int gId)
-			throws SQLException {
-		PreparedStatement statement = getPreparedStatement(SELECT_ATTRIBUTE_VALUES_OF_GRAPH);
-		statement.setInt(1, gId);
-		return statement;
-	}
-
 	// --- to get a vertex -------------------------------------------
 
-	private static final String SELECT_VERTEX_WITH_INCIDENCES = "SELECT \"typeId\", \"lambdaSeqVersion\", \""
-			+ GraphDatabase.TABLE_VERTEX
-			+ "\".\"sequenceNumber\", \""
-			+ GraphDatabase.TABLE_INCIDENCE
-			+ "\".\"sequenceNumber\", direction, \"eId\" FROM"
-			+ "\""
-			+ GraphDatabase.TABLE_VERTEX
-			+ "\" LEFT OUTER JOIN \""
-			+ GraphDatabase.TABLE_INCIDENCE
-			+ "\" ON ( \""
-			+ GraphDatabase.TABLE_VERTEX
-			+ "\".\"vId\" = \""
-			+ GraphDatabase.TABLE_INCIDENCE
-			+ "\".\"vId\" AND \""
-			+ GraphDatabase.TABLE_VERTEX
-			+ "\".\"gId\" = \""
-			+ GraphDatabase.TABLE_INCIDENCE
-			+ "\".\"gId\" )"
-			+ "WHERE \""
-			+ GraphDatabase.TABLE_VERTEX
-			+ "\".\"vId\" = ? AND \""
-			+ GraphDatabase.TABLE_VERTEX
-			+ "\".\"gId\" = ?"
-			+ "ORDER BY \""
-			+ GraphDatabase.TABLE_INCIDENCE
-			+ "\".\"sequenceNumber\" ASC";
-
-	@Override
-	public PreparedStatement selectVertexWithIncidences(int vId, int gId)
-			throws SQLException {
-		PreparedStatement statement = getPreparedStatement(SELECT_VERTEX_WITH_INCIDENCES);
-		statement.setInt(1, vId);
-		statement.setInt(2, gId);
-		return statement;
-	}
-
-	private static final String SELECT_ATTRIBUTE_VALUES_OF_VERTEX = "SELECT \"attributeId\", \"value\" FROM \""
-			+ GraphDatabase.TABLE_VERTEX_ATTRIBUTE
-			+ "\" WHERE \"vId\" = ? AND \"gId\" = ?";
-
-	@Override
-	public PreparedStatement selectAttributeValuesOfVertex(int vId, int gId)
-			throws SQLException {
-		PreparedStatement statement = getPreparedStatement(SELECT_ATTRIBUTE_VALUES_OF_VERTEX);
-		statement.setInt(1, vId);
-		statement.setInt(2, gId);
-		return statement;
-	}
-
-	// --- to get an edge --------------------------------------------
-
-	private static final String SELECT_EDGE_WITH_INCIDENCES = "SELECT \"typeId\", \""
-			+ GraphDatabase.TABLE_EDGE
-			+ "\".\"sequenceNumber\", direction, \"vId\", \""
-			+ GraphDatabase.TABLE_INCIDENCE + "\".\"sequenceNumber\" FROM"
-			+ "\"" + GraphDatabase.TABLE_EDGE + "\" INNER JOIN \""
-			+ GraphDatabase.TABLE_INCIDENCE + "\" ON ( \""
-			+ GraphDatabase.TABLE_EDGE + "\".\"eId\" = \""
-			+ GraphDatabase.TABLE_INCIDENCE + "\".\"eId\" AND \""
-			+ GraphDatabase.TABLE_EDGE + "\".\"gId\" = \""
-			+ GraphDatabase.TABLE_INCIDENCE + "\".\"gId\" )" + "WHERE \""
-			+ GraphDatabase.TABLE_EDGE + "\".\"eId\" = ? AND \""
-			+ GraphDatabase.TABLE_EDGE + "\".\"gId\" = ?";
-
-	@Override
-	public PreparedStatement selectEdgeWithIncidences(int eId, int gId)
-			throws SQLException {
-		PreparedStatement statement = getPreparedStatement(SELECT_EDGE_WITH_INCIDENCES);
-		statement.setInt(1, eId);
-		statement.setInt(2, gId);
-		return statement;
-	}
-
-	private static final String SELECT_ATTRIBUTE_VALUES_OF_EDGE = "SELECT \"attributeId\", \"value\" FROM \""
-			+ GraphDatabase.TABLE_EDGE_ATTRIBUTE
-			+ "\" WHERE \"eId\" = ? AND \"gId\" = ?";
-
-	@Override
-	public PreparedStatement selectAttributeValuesOfEdge(int eId, int gId)
-			throws SQLException {
-		PreparedStatement statement = getPreparedStatement(SELECT_ATTRIBUTE_VALUES_OF_EDGE);
-		statement.setInt(1, eId);
-		statement.setInt(2, gId);
-		return statement;
-	}
+	// --- to get an edge ---------------------------------------------
 
 	// --- to delete a graph ------------------------------------------
 
-	private static final String DELETE_ATTRIBUTE_VALUES_OF_GRAPH = "DELETE FROM \""
-			+ GraphDatabase.TABLE_GRAPH_ATTRIBUTE
-			+ "\" WHERE \"gId\" = ?";
-
-	@Override
-	public PreparedStatement deleteAttributeValuesOfGraph(int gId)
-			throws SQLException {
-		PreparedStatement statement = getPreparedStatement(DELETE_ATTRIBUTE_VALUES_OF_GRAPH);
-		statement.setInt(1, gId);
-		return statement;
-	}
-
-	private static final String DELETE_EDGE_ATTRIBUTE_VALUES_OF_GRAPH = "DELETE FROM \""
-			+ GraphDatabase.TABLE_EDGE_ATTRIBUTE
-			+ "\" WHERE \"gId\" = ?";
-
-	@Override
-	public PreparedStatement deleteEdgeAttributeValuesOfGraph(int gId)
-			throws SQLException {
-		PreparedStatement statement = getPreparedStatement(DELETE_EDGE_ATTRIBUTE_VALUES_OF_GRAPH);
-		statement.setInt(1, gId);
-		return statement;
-	}
-
-	private static final String DELETE_VERTEX_ATTRIBUTE_VALUES_OF_GRAPH = "DELETE FROM \""
-			+ GraphDatabase.TABLE_VERTEX_ATTRIBUTE
-			+ "\" WHERE \"gId\" = ?";
-
-	@Override
-	public PreparedStatement deleteVertexAttributeValuesOfGraph(int gId)
-			throws SQLException {
-		PreparedStatement statement = getPreparedStatement(DELETE_VERTEX_ATTRIBUTE_VALUES_OF_GRAPH);
-		statement.setInt(1, gId);
-		return statement;
-	}
-
-	private static final String DELETE_INCIDENCES_OF_GRAPH = "DELETE FROM \""
-			+ GraphDatabase.TABLE_INCIDENCE + "\" WHERE \"gId\" = ?";
-
-	@Override
-	public PreparedStatement deleteIncidencesOfGraph(int gId)
-			throws SQLException {
-		PreparedStatement statement = getPreparedStatement(DELETE_INCIDENCES_OF_GRAPH);
-		statement.setInt(1, gId);
-		return statement;
-	}
-
-	private static final String DELETE_VERTICES_OF_GRAPH = "DELETE FROM \""
-			+ GraphDatabase.TABLE_VERTEX + "\" WHERE \"gId\" = ?";
-
-	@Override
-	public PreparedStatement deleteVerticesOfGraph(int gId) throws SQLException {
-		PreparedStatement statement = getPreparedStatement(DELETE_VERTICES_OF_GRAPH);
-		statement.setInt(1, gId);
-		return statement;
-	}
-
-	private static final String DELETE_EDGES_OF_GRAPH = "" + "DELETE FROM \""
-			+ GraphDatabase.TABLE_EDGE + "\" WHERE \"gId\" = ?";
-
-	@Override
-	public PreparedStatement deleteEdgesOfGraph(int gId) throws SQLException {
-		PreparedStatement statement = getPreparedStatement(DELETE_EDGES_OF_GRAPH);
-		statement.setInt(1, gId);
-		return statement;
-	}
-
-	private static final String DELETE_GRAPH = "DELETE FROM \""
-			+ GraphDatabase.TABLE_GRAPH + "\" WHERE \"gId\" = ?";
-
-	@Override
-	public PreparedStatement deleteGraph(int gId) throws SQLException {
-		PreparedStatement statement = getPreparedStatement(DELETE_GRAPH);
-		statement.setInt(1, gId);
-		return statement;
-	}
-
 	// --- to delete a vertex -----------------------------------------
-
-	private static final String DELETE_ATTRIBUTE_VALUES_OF_VERTEX = "DELETE FROM \""
-			+ GraphDatabase.TABLE_VERTEX_ATTRIBUTE
-			+ "\" WHERE \"vId\" = ? AND \"gId\" = ?";
-
-	@Override
-	public PreparedStatement deleteAttributeValuesOfVertex(int vId, int gId)
-			throws SQLException {
-		PreparedStatement statement = getPreparedStatement(DELETE_ATTRIBUTE_VALUES_OF_VERTEX);
-		statement.setInt(1, vId);
-		statement.setInt(2, gId);
-		return statement;
-	}
-
-	private static final String SELECT_ID_OF_INCIDENT_EDGES_OF_VERTEX = "SELECT \"eId\" FROM \""
-			+ GraphDatabase.TABLE_INCIDENCE
-			+ "\" WHERE \"vId\" = ? AND \"gId\" = ?";
-
-	@Override
-	public PreparedStatement selectIncidentEIdsOfVertex(int vId, int gId)
-			throws SQLException {
-		PreparedStatement statement = getPreparedStatement(SELECT_ID_OF_INCIDENT_EDGES_OF_VERTEX);
-		statement.setInt(1, vId);
-		statement.setInt(2, gId);
-		return statement;
-	}
-
-	private static final String DELETE_VERTEX = "DELETE FROM \""
-			+ GraphDatabase.TABLE_VERTEX
-			+ "\" WHERE \"vId\" = ? AND \"gId\" = ?";
-
-	@Override
-	public PreparedStatement deleteVertex(int vId, int gId) throws SQLException {
-		PreparedStatement statement = getPreparedStatement(DELETE_VERTEX);
-		statement.setInt(1, vId);
-		statement.setInt(2, gId);
-		return statement;
-	}
 
 	// --- to delete an edge ------------------------------------------
 
-	private static final String DELETE_ATTRIBUTE_VALUES_OF_EDGE = "DELETE FROM \""
-			+ GraphDatabase.TABLE_EDGE_ATTRIBUTE
-			+ "\" WHERE \"eId\" = ? AND \"gId\" = ?";
-
-	@Override
-	public PreparedStatement deleteAttributeValuesOfEdge(int eId, int gId)
-			throws SQLException {
-		PreparedStatement statement = getPreparedStatement(DELETE_ATTRIBUTE_VALUES_OF_EDGE);
-		statement.setInt(1, eId);
-		statement.setInt(2, gId);
-		return statement;
-	}
-
-	private static final String DELETE_INCIDENCES_OF_EDGE = "DELETE FROM \""
-			+ GraphDatabase.TABLE_INCIDENCE
-			+ "\" WHERE \"eId\" = ? AND \"gId\" = ?";
-
-	@Override
-	public PreparedStatement deleteIncidencesOfEdge(int eId, int gId)
-			throws SQLException {
-		PreparedStatement statement = getPreparedStatement(DELETE_INCIDENCES_OF_EDGE);
-		statement.setInt(1, eId);
-		statement.setInt(2, gId);
-		return statement;
-	}
-
-	private static final String DELETE_EDGE = "DELETE FROM \""
-			+ GraphDatabase.TABLE_EDGE
-			+ "\" WHERE \"eId\" = ? AND \"gId\" = ?";
-
-	@Override
-	public PreparedStatement deleteEdge(int eId, int gId) throws SQLException {
-		PreparedStatement statement = getPreparedStatement(DELETE_EDGE);
-		statement.setInt(1, eId);
-		statement.setInt(2, gId);
-		return statement;
-	}
-
 	// --- to update a graph ------------------------------------------
-
-	private static final String UPDATE_ATTRIBUTE_VALUE_OF_GRAPH = "UPDATE \""
-			+ GraphDatabase.TABLE_GRAPH_ATTRIBUTE
-			+ "\" SET value = ? WHERE \"gId\" = ? AND \"attributeId\" = ?";
-
-	@Override
-	public PreparedStatement updateAttributeValueOfGraph(int gId,
-			int attributeId, String serializedValue) throws SQLException {
-		PreparedStatement statement = getPreparedStatement(UPDATE_ATTRIBUTE_VALUE_OF_GRAPH);
-		statement.setString(1, serializedValue);
-		statement.setInt(2, gId);
-		statement.setInt(3, attributeId);
-		return statement;
-	}
-
-	private static final String UPDATE_ATTRIBUTE_VALUE_OF_GRAPH_AND_GRAPH_VERSION = "UPDATE \""
-			+ GraphDatabase.TABLE_GRAPH_ATTRIBUTE
-			+ "\" SET value = ? WHERE \"gId\" = ? AND \"attributeId\" = ?;"
-			+ "UPDATE \""
-			+ GraphDatabase.TABLE_GRAPH
-			+ "\" SET version = ? WHERE \"gId\" = ?";
-
-	@Override
-	public PreparedStatement updateAttributeValueOfGraphAndGraphVersion(
-			int gId, int attributeId, String serializedValue, long graphVersion)
-			throws SQLException {
-		PreparedStatement statement = getPreparedStatement(UPDATE_ATTRIBUTE_VALUE_OF_GRAPH_AND_GRAPH_VERSION);
-		statement.setString(1, serializedValue);
-		statement.setInt(2, gId);
-		statement.setInt(3, attributeId);
-		statement.setLong(4, graphVersion);
-		statement.setInt(5, gId);
-		return statement;
-	}
-
-	private static final String UPDATE_GRAPH_UID = "UPDATE \""
-			+ GraphDatabase.TABLE_GRAPH
-			+ "\" SET uid = ? WHERE \"gId\" = ?";
-
-	@Override
-	public PreparedStatement updateGraphId(int gId, String uid)
-			throws SQLException {
-		PreparedStatement statement = getPreparedStatement(UPDATE_GRAPH_UID);
-		statement.setString(1, uid);
-		statement.setInt(2, gId);
-		return statement;
-	}
-
-	private static final String UPDATE_GRAPH_VERSION = "UPDATE \""
-			+ GraphDatabase.TABLE_GRAPH
-			+ "\" SET version = ? WHERE \"gId\" = ?";
-
-	@Override
-	public PreparedStatement updateGraphVersion(int gId, long version)
-			throws SQLException {
-		PreparedStatement statement = getPreparedStatement(UPDATE_GRAPH_VERSION);
-		statement.setLong(1, version);
-		statement.setInt(2, gId);
-		return statement;
-	}
-
-	private static final String UPDATE_VERTEX_LIST_VERSION = "UPDATE \""
-			+ GraphDatabase.TABLE_GRAPH
-			+ "\" SET \"vSeqVersion\" = ? WHERE \"gId\" = ?";
-
-	@Override
-	public PreparedStatement updateVertexListVersionOfGraph(int gId,
-			long version) throws SQLException {
-		PreparedStatement statement = getPreparedStatement(UPDATE_VERTEX_LIST_VERSION);
-		statement.setLong(1, version);
-		statement.setInt(2, gId);
-		return statement;
-	}
-
-	private static final String UPDATE_EDGE_LIST_VERSION = "UPDATE \""
-			+ GraphDatabase.TABLE_GRAPH
-			+ "\" SET \"eSeqVersion\" = ? WHERE \"gId\" = ?";
-
-	@Override
-	public PreparedStatement updateEdgeListVersionOfGraph(int gId, long version)
-			throws SQLException {
-		PreparedStatement statement = getPreparedStatement(UPDATE_EDGE_LIST_VERSION);
-		statement.setLong(1, version);
-		statement.setInt(2, gId);
-		return statement;
-	}
 
 	// --- to update a vertex -----------------------------------------
 
-	private static final String UPDATE_VERTEX_ID = "UPDATE \""
-			+ GraphDatabase.TABLE_VERTEX
-			+ "\" SET \"vId\" = ? WHERE \"vId\" = ? AND \"gId\" = ?";
-
-	@Override
-	public PreparedStatement updateIdOfVertex(int oldVId, int gId, int newVId)
-			throws SQLException {
-		PreparedStatement statement = getPreparedStatement(UPDATE_VERTEX_ID);
-		statement.setInt(1, newVId);
-		statement.setInt(2, oldVId);
-		statement.setInt(3, gId);
-		return statement;
-	}
-
-	private static final String UPDATE_SEQUENCE_NUMBER_OF_VERTEX = "UPDATE \""
-			+ GraphDatabase.TABLE_VERTEX
-			+ "\" SET \"sequenceNumber\" = ? WHERE \"vId\" = ? AND \"gId\" = ?";
-
-	@Override
-	public PreparedStatement updateSequenceNumberInVSeqOfVertex(int vId,
-			int gId, long sequenceNumberInVSeq) throws SQLException {
-		PreparedStatement statement = getPreparedStatement(UPDATE_SEQUENCE_NUMBER_OF_VERTEX);
-		statement.setLong(1, sequenceNumberInVSeq);
-		statement.setInt(2, vId);
-		statement.setInt(3, gId);
-		return statement;
-	}
-
-	private static final String UPDATE_ATTRIBUTE_VALUE_OF_VERTEX = "UPDATE \""
-
-			+ GraphDatabase.TABLE_VERTEX_ATTRIBUTE
-			+ "\" SET value = ? WHERE \"vId\" = ? AND \"gId\" = ? AND \"attributeId\" = ?";
-
-	@Override
-	public PreparedStatement updateAttributeValueOfVertex(int vId, int gId,
-			int attributeId, String serializedValue) throws SQLException {
-		PreparedStatement statement = getPreparedStatement(UPDATE_ATTRIBUTE_VALUE_OF_VERTEX);
-		statement.setString(1, serializedValue);
-		statement.setInt(2, vId);
-		statement.setInt(3, gId);
-		statement.setInt(4, attributeId);
-		return statement;
-	}
-
-	private static final String UPDATE_ATTRIBUTE_VALUE_OF_VERTEX_AND_GRAPH_VERSION = "UPDATE \""
-
-			+ GraphDatabase.TABLE_VERTEX_ATTRIBUTE
-			+ "\" SET value = ? WHERE \"vId\" = ? AND \"gId\" = ? AND \"attributeId\" = ?;"
-			+ "UPDATE \""
-			+ GraphDatabase.TABLE_GRAPH
-			+ "\" SET version = ? WHERE \"gId\" = ?";
-
-	@Override
-	public PreparedStatement updateAttributeValueOfVertexAndGraphVersion(
-			int vId, int gId, int attributeId, String serializedValue,
-			long graphVersion) throws SQLException {
-		PreparedStatement statement = getPreparedStatement(UPDATE_ATTRIBUTE_VALUE_OF_VERTEX_AND_GRAPH_VERSION);
-		statement.setString(1, serializedValue);
-		statement.setInt(2, vId);
-		statement.setInt(3, gId);
-		statement.setInt(4, attributeId);
-		statement.setLong(5, graphVersion);
-		statement.setInt(6, gId);
-		return statement;
-	}
-
-	private static final String UPDATE_INCIDENCE_LIST_VERSION = "UPDATE \""
-			+ GraphDatabase.TABLE_VERTEX
-			+ "\" SET \"lambdaSeqVersion\" = ? WHERE \"vId\" = ? AND \"gId\" = ?;";
-
-	@Override
-	public PreparedStatement updateLambdaSeqVersionOfVertex(int vId, int gId,
-			long lambdaSeqVersion) throws SQLException {
-		PreparedStatement statement = getPreparedStatement(UPDATE_INCIDENCE_LIST_VERSION);
-		statement.setLong(1, lambdaSeqVersion);
-		statement.setInt(2, vId);
-		statement.setInt(3, gId);
-		return statement;
-	}
-
 	// --- to update an edge ------------------------------------------
-
-	private static final String UPDATE_EDGE_ID = "UPDATE \"" + GraphDatabase.TABLE_EDGE
-			+ "\" SET \"eId\" = ? WHERE \"eId\" = ? AND \"gId\" = ?";
-
-	@Override
-	public PreparedStatement updateIdOfEdge(int oldEId, int gId, int newEId)
-			throws SQLException {
-		PreparedStatement statement = getPreparedStatement(UPDATE_EDGE_ID);
-		statement.setInt(1, newEId);
-		statement.setInt(2, oldEId);
-		statement.setInt(3, gId);
-		return statement;
-	}
-
-	private static final String UPDATE_SEQUENCE_NUMBER_IN_EDGE_LIST = "UPDATE \""
-			+ GraphDatabase.TABLE_EDGE
-			+ "\" SET \"sequenceNumber\" = ? WHERE \"eId\" = ? AND \"gId\" = ?";
-
-	@Override
-	public PreparedStatement updateSequenceNumberInESeqOfEdge(int eId, int gId,
-			long SequenceNumberInESeq) throws SQLException {
-		PreparedStatement statement = getPreparedStatement(UPDATE_SEQUENCE_NUMBER_IN_EDGE_LIST);
-		statement.setLong(1, SequenceNumberInESeq);
-		statement.setInt(2, eId);
-		statement.setInt(3, gId);
-		return statement;
-	}
-
-	private static final String UPDATE_ATTRIBUTE_VALUE_OF_EDGE = "UPDATE \""
-
-			+ GraphDatabase.TABLE_EDGE_ATTRIBUTE
-			+ "\" SET value = ? WHERE \"eId\" = ? AND \"gId\" = ? AND \"attributeId\" = ?";
-
-	@Override
-	public PreparedStatement updateAttributeValueOfEdge(int eId, int gId,
-			int attributeId, String serializedValue) throws SQLException {
-		PreparedStatement statement = getPreparedStatement(UPDATE_ATTRIBUTE_VALUE_OF_EDGE);
-		statement.setString(1, serializedValue);
-		statement.setInt(2, eId);
-		statement.setInt(3, gId);
-		statement.setInt(4, attributeId);
-		return statement;
-	}
-
-	private static final String UPDATE_ATTRIBUTE_VALUE_OF_EDGE_AND_INCREMENT_GRAPH_VERSION = "UPDATE \""
-
-			+ GraphDatabase.TABLE_EDGE_ATTRIBUTE
-			+ "\" SET value = ? WHERE \"eId\" = ? AND \"gId\" = ? AND \"attributeId\" = ?;"
-			+ "UPDATE \""
-			+ GraphDatabase.TABLE_GRAPH
-			+ "\" SET version = ? WHERE \"gId\" = ?;";
-
-	@Override
-	public PreparedStatement updateAttributeValueOfEdgeAndGraphVersion(int eId,
-			int gId, int attributeId, String serializedValue, long graphVersion)
-			throws SQLException {
-		PreparedStatement statement = getPreparedStatement(UPDATE_ATTRIBUTE_VALUE_OF_EDGE_AND_INCREMENT_GRAPH_VERSION);
-		statement.setString(1, serializedValue);
-		statement.setInt(2, eId);
-		statement.setInt(3, gId);
-		statement.setInt(4, attributeId);
-		statement.setLong(5, graphVersion);
-		statement.setInt(6, gId);
-		return statement;
-	}
-
-	private static final String UPDATE_INCIDENT_VERTEX = "UPDATE \""
-			+ GraphDatabase.TABLE_INCIDENCE
-			+ "\" SET \"vId\" = ? WHERE \"eId\" = ? AND \"gId\" = ? AND direction = ?::\"DIRECTION\"";
-
-	@Override
-	public PreparedStatement updateIncidentVIdOfIncidence(int eId, int vId,
-			int gId) throws SQLException {
-		PreparedStatement statement = getPreparedStatement(UPDATE_INCIDENT_VERTEX);
-		statement.setInt(1, vId);
-		statement.setInt(2, Math.abs(eId));
-		statement.setInt(3, gId);
-		if (eId > 0) {
-			statement.setString(4, EdgeDirection.OUT.name());
-		} else if (eId < 0) {
-			statement.setString(4, EdgeDirection.IN.name());
-		}
-		return statement;
-	}
-
-	private static final String UPDATE_SEQUENCE_NUMBER_IN_INCIDENCE_LIST = "UPDATE \""
-			+ GraphDatabase.TABLE_INCIDENCE
-			+ "\" SET \"sequenceNumber\" = ? WHERE \"eId\" = ? AND \"gId\" = ? AND \"vId\" = ?";
-
-	@Override
-	public PreparedStatement updateSequenceNumberInLambdaSeqOfIncidence(
-			int eId, int vId, int gId, long sequenceNumberInLambdaSeq)
-			throws SQLException {
-		PreparedStatement statement = getPreparedStatement(UPDATE_SEQUENCE_NUMBER_IN_INCIDENCE_LIST);
-		statement.setLong(1, sequenceNumberInLambdaSeq);
-		statement.setInt(2, Math.abs(eId));
-		statement.setInt(3, gId);
-		statement.setInt(4, vId);
-		return statement;
-	}
 
 	private static final String STORED_PROCEDURE_REORGANIZE_VERTEX_LIST = "CREATE FUNCTION \"reorganizeVSeqOfGraph\"(\"graphId\" INT, start BIGINT) RETURNS INT AS $$\n"
 			+ "DECLARE\n"
@@ -1724,12 +1004,26 @@ public class PostgreSqlStatementList extends SqlStatementList {
 			+ "current BIGINT := start;\n"
 			+ "vertex RECORD;\n"
 			+ "BEGIN\n"
-			+ "FOR vertex IN (SELECT \"vId\" FROM \""
-			+ GraphDatabase.TABLE_VERTEX
-			+ "\" WHERE \"gId\" = \"graphId\" ORDER BY \"sequenceNumber\" ASC) LOOP\n"
+			+ "FOR vertex IN (SELECT \""
+			+ COLUMN_VERTEX_ID
+			+ "\" FROM \""
+			+ TABLE_VERTEX
+			+ "\" WHERE \""
+			+ COLUMN_GRAPH_ID
+			+ "\" = \"graphId\" ORDER BY \""
+			+ COLUMN_SEQUENCE_NUMBER
+			+ "\" ASC) LOOP\n"
 			+ "EXECUTE 'UPDATE \""
-			+ GraphDatabase.TABLE_VERTEX
-			+ "\" SET \"sequenceNumber\" = $1 WHERE \"vId\" = $2 AND \"gId\" =$3' USING current, vertex.\"vId\", \"graphId\";\n"
+			+ TABLE_VERTEX
+			+ "\" SET \""
+			+ COLUMN_SEQUENCE_NUMBER
+			+ "\" = $1 WHERE \""
+			+ COLUMN_VERTEX_ID
+			+ "\" = $2 AND \""
+			+ COLUMN_GRAPH_ID
+			+ "\" =$3' USING current, vertex.\""
+			+ COLUMN_VERTEX_ID
+			+ "\", \"graphId\";\n"
 			+ "current := current + distance;\n"
 			+ "END LOOP;\n"
 			+ "RETURN 1;\n" + "END;\n" + "$$LANGUAGE plpgsql;";
@@ -1746,12 +1040,26 @@ public class PostgreSqlStatementList extends SqlStatementList {
 			+ "current BIGINT := start;\n"
 			+ "edge RECORD;\n"
 			+ "BEGIN\n"
-			+ "FOR edge IN (SELECT \"eId\" FROM \""
-			+ GraphDatabase.TABLE_EDGE
-			+ "\" WHERE \"gId\" = \"graphId\" ORDER BY \"sequenceNumber\" ASC) LOOP\n"
+			+ "FOR edge IN (SELECT \""
+			+ COLUMN_EDGE_ID
+			+ "\" FROM \""
+			+ TABLE_EDGE
+			+ "\" WHERE \""
+			+ COLUMN_GRAPH_ID
+			+ "\" = \"graphId\" ORDER BY \""
+			+ COLUMN_SEQUENCE_NUMBER
+			+ "\" ASC) LOOP\n"
 			+ "EXECUTE 'UPDATE \""
-			+ GraphDatabase.TABLE_EDGE
-			+ "\" SET \"sequenceNumber\" = $1 WHERE \"eId\" = $2 AND \"gId\" = $3' USING current, edge.\"eId\", \"graphId\";\n"
+			+ TABLE_EDGE
+			+ "\" SET \""
+			+ COLUMN_SEQUENCE_NUMBER
+			+ "\" = $1 WHERE \""
+			+ COLUMN_EDGE_ID
+			+ "\" = $2 AND \""
+			+ COLUMN_GRAPH_ID
+			+ "\" = $3' USING current, edge.\""
+			+ COLUMN_EDGE_ID
+			+ "\", \"graphId\";\n"
 			+ "current := current + distance;\n"
 			+ "END LOOP;\n"
 			+ "RETURN 1;\n" + "END;\n" + "$$ LANGUAGE plpgsql;";
@@ -1768,12 +1076,36 @@ public class PostgreSqlStatementList extends SqlStatementList {
 			+ "current BIGINT := start;\n"
 			+ "incidence RECORD;\n"
 			+ "BEGIN\n"
-			+ "FOR incidence IN (SELECT \"eId\", direction FROM \""
-			+ GraphDatabase.TABLE_INCIDENCE
-			+ "\" WHERE \"vId\" = \"vertexId\" AND \"gId\" = \"graphId\" ORDER BY \"sequenceNumber\" ASC) LOOP\n"
+			+ "FOR incidence IN (SELECT \""
+			+ COLUMN_EDGE_ID
+			+ "\", "
+			+ COLUMN_INCIDENCE_DIRECTION
+			+ " FROM \""
+			+ TABLE_INCIDENCE
+			+ "\" WHERE \""
+			+ COLUMN_VERTEX_ID
+			+ "\" = \"vertexId\" AND \""
+			+ COLUMN_GRAPH_ID
+			+ "\" = \"graphId\" ORDER BY \""
+			+ COLUMN_SEQUENCE_NUMBER
+			+ "\" ASC) LOOP\n"
 			+ "EXECUTE 'UPDATE \""
-			+ GraphDatabase.TABLE_INCIDENCE
-			+ "\" SET \"sequenceNumber\" = $1 WHERE \"vId\" = $2 AND \"gId\" = $3 AND \"eId\" = $4 AND direction = $5' USING current, \"vertexId\", \"graphId\", incidence.\"eId\", incidence.direction;\n"
+			+ TABLE_INCIDENCE
+			+ "\" SET \""
+			+ COLUMN_SEQUENCE_NUMBER
+			+ "\" = $1 WHERE \""
+			+ COLUMN_VERTEX_ID
+			+ "\" = $2 AND \""
+			+ COLUMN_GRAPH_ID
+			+ "\" = $3 AND \""
+			+ COLUMN_EDGE_ID
+			+ "\" = $4 AND "
+			+ COLUMN_INCIDENCE_DIRECTION
+			+ " = $5' USING current, \"vertexId\", \"graphId\", incidence.\""
+			+ COLUMN_EDGE_ID
+			+ "\", incidence."
+			+ COLUMN_INCIDENCE_DIRECTION
+			+ ";\n"
 			+ "current := current + distance;\n"
 			+ "END LOOP;\n"
 			+ "RETURN 1;\n" + "END;\n" + "$$ LANGUAGE plpgsql;";
@@ -1784,45 +1116,34 @@ public class PostgreSqlStatementList extends SqlStatementList {
 		return getPreparedStatement(STORED_PROCEDURE_REORGANIZE_INCIDENCE_LIST);
 	}
 
-	private static final String STORED_PROCEDURE_INSERT_VERTEX = "CREATE FUNCTION \"insertVertex\"(\"vertexId\" INT, \"graphId\" INT, \"typeId\" INT, \"sequenceNumber\" BIGINT) RETURNS INT AS $$\n"
+	private static final String STORED_PROCEDURE_INSERT_VERTEX = "CREATE FUNCTION \"insertVertex\"(\"vertexId\" INT, \"graphId\" INT, \""
+			+ COLUMN_TYPE_ID
+			+ "\" INT, \""
+			+ COLUMN_SEQUENCE_NUMBER
+			+ "\" BIGINT) RETURNS INT AS $$\n"
 			+ "BEGIN\n"
 			+ "EXECUTE 'INSERT INTO \""
-			+ GraphDatabase.TABLE_VERTEX
-			+ "\" ( \"vId\", \"gId\", \"typeId\", \"lambdaSeqVersion\", \"sequenceNumber\" ) VALUES ($1, $2, $3, 0, $4)' USING \"vertexId\", \"graphId\", \"typeId\", \"sequenceNumber\";\n"
+			+ TABLE_VERTEX
+			+ "\" ( \""
+			+ COLUMN_VERTEX_ID
+			+ "\", \""
+			+ COLUMN_GRAPH_ID
+			+ "\", \""
+			+ COLUMN_TYPE_ID
+			+ "\", \""
+			+ COLUMN_VERTEX_LAMBDA_SEQ_VERSION
+			+ "\", \""
+			+ COLUMN_SEQUENCE_NUMBER
+			+ "\" ) VALUES ($1, $2, $3, 0, $4)' USING \"vertexId\", \"graphId\", \""
+			+ COLUMN_TYPE_ID
+			+ "\", \""
+			+ COLUMN_SEQUENCE_NUMBER
+			+ "\";\n"
 			+ "RETURN 1;\n" + "END;\n" + "$$ LANGUAGE plpgsql;";
 
 	public PreparedStatement createStoredProcedureToInsertVertex()
 			throws SQLException {
 		return getPreparedStatement(STORED_PROCEDURE_INSERT_VERTEX);
-	}
-
-	private static final String DELETE_SCHEMA = "DELETE FROM \""
-
-	+ GraphDatabase.TABLE_SCHEMA
-			+ "\" WHERE \"packagePrefix\" = ? AND name = ?";
-
-	@Override
-	public PreparedStatement deleteSchema(String prefix, String name)
-			throws SQLException {
-		PreparedStatement statement = getPreparedStatement(DELETE_SCHEMA);
-		statement.setString(1, prefix);
-		statement.setString(2, name);
-		return statement;
-	}
-
-	private static final String SELECT_SCHEMA_DEFINITION = "SELECT \"serializedDefinition\" FROM \""
-
-			+ GraphDatabase.TABLE_SCHEMA
-			+ "\" WHERE \"packagePrefix\" = ? AND name = ?;";
-
-	@Override
-	public PreparedStatement selectSchemaDefinition(String packagePrefix,
-			String schemaName) throws SQLException {
-		PreparedStatement statement = connection
-				.prepareStatement(SELECT_SCHEMA_DEFINITION);
-		statement.setString(1, packagePrefix);
-		statement.setString(2, schemaName);
-		return statement;
 	}
 
 	private static final String CALL_REORGANIZE_V_SEQ = "{ ? = call \"reorganizeVSeqOfGraph\"(?, ?) }";
@@ -1865,25 +1186,12 @@ public class PostgreSqlStatementList extends SqlStatementList {
 		return statement;
 	}
 
-	private static final String SELECT_ID_OF_GRAPHS = "SELECT \"uid\" FROM \""
-			+ GraphDatabase.TABLE_GRAPH + "\";";
-
-	@Override
-	public PreparedStatement selectIdOfGraphs() throws SQLException {
-		return getPreparedStatement(SELECT_ID_OF_GRAPHS);
-	}
-
 	private static final String CLEAR_ALL_TABLES = "TRUNCATE TABLE \""
-			+ GraphDatabase.TABLE_ATTRIBUTE + "\",\""
-			+ GraphDatabase.TABLE_EDGE_ATTRIBUTE + "\",\""
-			+ GraphDatabase.TABLE_EDGE + "\",\""
-			+ GraphDatabase.TABLE_GRAPH_ATTRIBUTE + "\",\""
-			+ GraphDatabase.TABLE_SCHEMA + "\",\""
-			+ GraphDatabase.TABLE_GRAPH + "\",\""
-			+ GraphDatabase.TABLE_INCIDENCE + "\",\""
-			+ GraphDatabase.TABLE_TYPE + "\",\""
-			+ GraphDatabase.TABLE_VERTEX_ATTRIBUTE + "\",\""
-			+ GraphDatabase.TABLE_VERTEX + "\";";
+			+ TABLE_ATTRIBUTE + "\",\"" + TABLE_EDGE_ATTRIBUTE + "\",\""
+			+ TABLE_EDGE + "\",\"" + TABLE_GRAPH_ATTRIBUTE + "\",\""
+			+ TABLE_SCHEMA + "\",\"" + TABLE_GRAPH + "\",\"" + TABLE_INCIDENCE
+			+ "\",\"" + TABLE_TYPE + "\",\"" + TABLE_VERTEX_ATTRIBUTE + "\",\""
+			+ TABLE_VERTEX + "\";";
 
 	@Override
 	public PreparedStatement clearAllTables() throws SQLException {

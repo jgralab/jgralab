@@ -36,6 +36,7 @@ package de.uni_koblenz.jgralabtest.greql2.funlib;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.HashSet;
 import java.util.Map.Entry;
@@ -50,7 +51,6 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
@@ -75,12 +75,10 @@ public class GraphFunctionTest extends GenericTest {
 
 			Set<Vertex> children2 = getChildren(vertex);
 
+			assertEquals(children.size(), children2.size());
 			for (JValue child : children) {
-				System.out.println(child);
-				assertTrue(child.toString() + " not in " + children2,
-						children2.remove(child.toVertex()));
+				assertTrue(children2.contains(child.toVertex()));
 			}
-			assertTrue(children2 + " is not empty", children2.isEmpty());
 		}
 	}
 
@@ -97,36 +95,30 @@ public class GraphFunctionTest extends GenericTest {
 		return children;
 	}
 
-	@Test
-	public void testDegree() throws Exception {
-		JValueMap map = evalTestQuery("from v:V reportMap v -> degree(v) end")
-				.toJValueMap();
+	public void testDegree(String query, Class<? extends Edge> clazz,
+			EdgeDirection direction) throws Exception {
+		JValueMap map = evalTestQuery(query).toJValueMap();
 
 		for (Entry<JValue, JValue> entry : map.entrySet()) {
 			Vertex vertex = entry.getKey().toVertex();
 			Integer degree = entry.getValue().toInteger();
 
-			assertEquals(vertex.getDegree(), degree, DELTA);
+			assertEquals(vertex.getDegree(clazz, direction), degree.intValue());
 		}
+	}
+
+	@Test
+	public void testDegreeWithTypeCollection() throws Exception {
+		EdgeDirection direction = EdgeDirection.INOUT;
+		String query = "from v:V reportMap v -> degree(v) end";
+		testDegree(query, Edge.class, direction);
+		query = "from v:V reportMap v -> degree{connections.Way}(v) end";
+		testDegree(query, Way.class, direction);
 	}
 
 	@Test
 	public void testDegreeNull() throws Exception {
 		assertQueryEqualsNull("using nll: degree(nll)");
-	}
-
-	@Test
-	public void testDegreeWithTypeCollection() throws Exception {
-		JValueMap map = evalTestQuery(
-				"from v:V reportMap v -> degree{connections.Way}(v) end")
-				.toJValueMap();
-
-		for (Entry<JValue, JValue> entry : map.entrySet()) {
-			Vertex vertex = entry.getKey().toVertex();
-			Integer degree = entry.getValue().toInteger();
-
-			assertEquals(vertex.getDegree(Way.class), degree, DELTA);
-		}
 	}
 
 	@Test
@@ -157,7 +149,7 @@ public class GraphFunctionTest extends GenericTest {
 	@Test
 	public void testDescribeGraph() throws Exception {
 		JValueTuple tuple = evalTestQuery("describe()").toJValueTuple();
-		Graph graph = getTestGraph(TestVersion.CITY_MAP_GRAPH);
+		Graph graph = getTestGraph(TestVersion.ROUTE_MAP_GRAPH);
 
 		assertEquals(graph.getAttributedElementClass().getQualifiedName(),
 				tuple.get(0).toString());
@@ -173,6 +165,11 @@ public class GraphFunctionTest extends GenericTest {
 	}
 
 	@Test
+	public void testDescribeNull() throws Exception {
+		assertQueryEqualsNull("using nll: describe(nll)");
+	}
+
+	@Test
 	public void testEdgeSeq() throws Exception {
 		assertQueryEqualsQuery("edgeSeq(firstEdge(), lastEdge())", "E");
 	}
@@ -182,6 +179,21 @@ public class GraphFunctionTest extends GenericTest {
 		assertQueryEqualsQuery(
 				"edgeSeq{connections.Way}(firstEdge(), lastEdge())",
 				"E{connections.Way}");
+	}
+
+	@Test
+	public void testEdgeSeqWithTypeCollectionAndNull() throws Exception {
+
+		assertQueryEqualsNull("using nll: edgeSeq(nll, lastEdge())");
+		assertQueryEqualsNull("using nll: edgeSeq(firstEdge(), nll)");
+		assertQueryEqualsNull("using nll: edgeSeq(nll, nll)");
+
+		assertQueryEqualsNull("using nll: edgeSeq{Edge}(nll, lastEdge())");
+		assertQueryEqualsNull("using nll: edgeSeq{Edge}(firstEdge(), nll)");
+		assertQueryEqualsNull("using nll: edgeSeq{Edge}(nll, nll)");
+
+		assertQueryEqualsNull("using nll: edgeSeq(lastEdge(), firstEdge())");
+		assertQueryEqualsNull("using nll: edgeSeq{Edge}(lastEdge(), firstEdge())");
 	}
 
 	public void testConnectedEdges(String query, Class<? extends Edge> clazz,
@@ -201,7 +213,7 @@ public class GraphFunctionTest extends GenericTest {
 	}
 
 	@Test
-	public void testEdgesConnected() throws Exception {
+	public void testEdgesConnectedWithTypeCollection() throws Exception {
 		EdgeDirection direction = EdgeDirection.INOUT;
 		String query = "from v:V reportMap v -> edgesConnected(v) end";
 		testConnectedEdges(query, Edge.class, direction);
@@ -212,10 +224,11 @@ public class GraphFunctionTest extends GenericTest {
 	@Test
 	public void testEdgesConnectedNull() throws Exception {
 		assertQueryEqualsNull("using nll: edgesConnected(nll)");
+		assertQueryEqualsNull("using nll: edgesConnected{Vertex}(nll)");
 	}
 
 	@Test
-	public void testEdgesFrom() throws Exception {
+	public void testEdgesFromWithTypeCollection() throws Exception {
 		EdgeDirection direction = EdgeDirection.OUT;
 		String query = "from v:V reportMap v -> edgesFrom(v) end";
 		testConnectedEdges(query, Edge.class, direction);
@@ -226,10 +239,11 @@ public class GraphFunctionTest extends GenericTest {
 	@Test
 	public void testEdgesFromNull() throws Exception {
 		assertQueryEqualsNull("using nll: edgesFrom(nll)");
+		assertQueryEqualsNull("using nll: edgesFrom{Vertex}(nll)");
 	}
 
 	@Test
-	public void testEdgesTo() throws Exception {
+	public void testEdgesToWithTypeCollection() throws Exception {
 		EdgeDirection direction = EdgeDirection.IN;
 		String query = "from v:V reportMap v -> edgesTo(v) end";
 		testConnectedEdges(query, Edge.class, direction);
@@ -240,6 +254,7 @@ public class GraphFunctionTest extends GenericTest {
 	@Test
 	public void testEdgesToNull() throws Exception {
 		assertQueryEqualsNull("using nll: edgesTo(nll)");
+		assertQueryEqualsNull("using nll: edgesTo{Vertex}(nll)");
 	}
 
 	@Test
@@ -262,7 +277,7 @@ public class GraphFunctionTest extends GenericTest {
 
 	@Test
 	public void testFirstEdge() throws Exception {
-		Graph graph = getTestGraph(TestVersion.CITY_MAP_GRAPH);
+		Graph graph = getTestGraph(TestVersion.ROUTE_MAP_GRAPH);
 		assertQueryEquals("firstEdge()", graph.getFirstEdge());
 		assertQueryEquals("firstEdge{connections.Way}()",
 				graph.getFirstEdge(Way.class));
@@ -271,7 +286,7 @@ public class GraphFunctionTest extends GenericTest {
 
 	@Test
 	public void testFirstVertex() throws Exception {
-		Graph graph = getTestGraph(TestVersion.CITY_MAP_GRAPH);
+		Graph graph = getTestGraph(TestVersion.ROUTE_MAP_GRAPH);
 		assertQueryEquals("firstVertex()", graph.getFirstVertex());
 		assertQueryEquals("firstVertex{junctions.Crossroad}()",
 				graph.getFirstVertex(Crossroad.class));
@@ -284,7 +299,7 @@ public class GraphFunctionTest extends GenericTest {
 		JValueMap map = evalTestQuery(
 				"using idList: from el:idList reportMap el -> getEdge(el) end")
 				.toJValueMap();
-		Graph graph = getTestGraph(TestVersion.CITY_MAP_GRAPH);
+		Graph graph = getTestGraph(TestVersion.ROUTE_MAP_GRAPH);
 
 		for (Entry<JValue, JValue> entry : map.entrySet()) {
 			int id = entry.getKey().toInteger();
@@ -294,17 +309,17 @@ public class GraphFunctionTest extends GenericTest {
 	}
 
 	@Test
-	public void testGetEdge2() throws Exception {
+	public void testGetEdgeNull() throws Exception {
 		assertQueryEqualsNull("using nll: getEdge(nll)");
-		assertQueryEquals("getEdge(0)", (Edge) null);
-		assertQueryEquals("getEdge(id(lastEdge()) + 1)", (Edge) null);
-		assertQueryEquals("getEdge(-id(lastEdge()) -1)", (Edge) null);
+		assertQueryEqualsNull("getEdge(0)");
+		assertQueryEqualsNull("getEdge(id(lastEdge()) + 1)");
+		assertQueryEqualsNull("getEdge(-id(lastEdge()) -1)");
 	}
 
 	@Test
 	public void testGetGraph() throws Exception {
 		assertQueryEquals("getGraph()",
-				getTestGraph(TestVersion.CITY_MAP_GRAPH));
+				getTestGraph(TestVersion.ROUTE_MAP_GRAPH));
 	}
 
 	@Test
@@ -330,11 +345,9 @@ public class GraphFunctionTest extends GenericTest {
 
 	@Test
 	public void testGetValueNull() throws Exception {
-		evalTestQuery("V[1] store as vertex");
-		evalTestQuery("using vertex: attributeNames(vertex)[0] store as attributeName");
 		assertQueryEqualsNull("using nll: getValue(nll, nll)");
-		assertQueryEqualsNull("using nll, attributeName: getValue(nll, attributeName)");
-		assertQueryEqualsNull("using nll, vertex: getValue(vertex, nll)");
+		assertQueryEqualsNull("using nll: getValue(nll, '?')");
+		assertQueryEqualsNull("using nll: getValue(firstVertex(), nll)");
 	}
 
 	@Test
@@ -342,7 +355,7 @@ public class GraphFunctionTest extends GenericTest {
 		JValueMap map = evalTestQuery(
 				"from el:list(1..id(lastVertex())) reportMap el -> getVertex(el) end")
 				.toJValueMap();
-		Graph graph = getTestGraph(TestVersion.CITY_MAP_GRAPH);
+		Graph graph = getTestGraph(TestVersion.ROUTE_MAP_GRAPH);
 
 		for (Entry<JValue, JValue> entry : map.entrySet()) {
 			int id = entry.getKey().toInteger();
@@ -352,11 +365,12 @@ public class GraphFunctionTest extends GenericTest {
 	}
 
 	@Test
-	public void testGetVertex2() throws Exception {
-		assertQueryEquals("getVertex(0)", (Vertex) null);
-		assertQueryEquals("getVertex(-1)", (Vertex) null);
-		assertQueryEquals("getVertex(id(lastVertex()) + 1)", (Vertex) null);
-		assertQueryEquals("getVertex(-id(lastVertex()) -1)", (Vertex) null);
+	public void testGetVertexNull() throws Exception {
+		assertQueryEqualsNull("using nll: getVertex(nll)");
+		assertQueryEqualsNull("getVertex(0)");
+		assertQueryEqualsNull("getVertex(-1)");
+		assertQueryEqualsNull("getVertex(id(lastVertex()) + 1)");
+		assertQueryEqualsNull("getVertex(-id(lastVertex()) -1)");
 	}
 
 	@Test
@@ -372,112 +386,115 @@ public class GraphFunctionTest extends GenericTest {
 	}
 
 	@Test
-	public void testInDegree() throws Exception {
-		JValueMap map = evalTestQuery("from v:V reportMap v -> inDegree(v) end")
-				.toJValueMap();
-
-		for (Entry<JValue, JValue> entry : map.entrySet()) {
-			Vertex vertex = entry.getKey().toVertex();
-			Integer degree = entry.getValue().toInteger();
-
-			assertEquals(vertex.getDegree(EdgeDirection.IN), degree, DELTA);
-		}
+	public void testIdNull() throws Exception {
+		assertQueryEqualsNull("using nll: id(nll)");
 	}
 
 	@Test
 	public void testInDegreeWithTypeCollection() throws Exception {
-		JValueMap map = evalTestQuery(
-				"from v:V reportMap v -> inDegree{connections.Way}(v) end")
-				.toJValueMap();
-
-		for (Entry<JValue, JValue> entry : map.entrySet()) {
-			Vertex vertex = entry.getKey().toVertex();
-			Integer degree = entry.getValue().toInteger();
-
-			assertEquals(vertex.getDegree(Way.class, EdgeDirection.IN), degree,
-					DELTA);
-		}
+		EdgeDirection direction = EdgeDirection.IN;
+		String query = "from v:V reportMap v -> inDegree(v) end";
+		testDegree(query, Edge.class, direction);
+		query = "from v:V reportMap v -> inDegree{connections.Way}(v) end";
+		testDegree(query, Way.class, direction);
 	}
 
 	@Test
 	public void testIsAcyclic() throws Exception {
-		String queryString = "isAcyclic()";
-		JValue result = evalTestQuery("IsAcyclic", queryString);
-		assertEquals(JValueBoolean.getTrueValue(), result.toBoolean());
+		assertQueryEquals("isAcyclic()", false);
+		setDefaultTestVersion(TestVersion.GREQL_GRAPH);
+		assertQueryEquals("isAcyclic()", true);
+		setDefaultTestVersion(TestVersion.TREE_GRAPH);
+		assertQueryEquals("isAcyclic()", true);
+		setDefaultTestVersion(TestVersion.CYCLIC_GRAPH);
+		assertQueryEquals("isAcyclic()", false);
 	}
 
 	@Test
-	public void testIsAcyclic2() throws Exception {
-		String queryString = "isAcyclic()";
-		JValue result = evalTestQuery("IsAcyclic2", queryString,
-				getCyclicTestGraph());
-		assertEquals(JValueBoolean.getFalseValue(), result.toBoolean());
+	public void testIsAcyclicNull() throws Exception {
+		assertQueryEqualsNull("using nll: isAcyclic(nll)");
 	}
 
 	@Test
 	public void testIsIsolated() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from x : V{WhereExpression} report isIsolated(x) end";
-		JValue result = evalTestQuery("IsIsolated", queryString);
-		assertEquals(1, result.toCollection().size());
-		assertEquals(false, (boolean) getNthValue(result.toCollection(), 0)
-				.toBoolean());
+		evalTestQuery("theElement(from v : V{localities.County} with v.name = 'Berlin' report v end) store as iso");
+		assertQueryEquals("using iso: isIsolated(iso)", true);
+	}
+
+	@Test
+	public void testIsIsolatedNull() throws Exception {
+		assertQueryEqualsNull("using nll: isIsolated(nll)");
 	}
 
 	@Test
 	public void testIsLoop() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from x : E{IsBoundExprOfDefinition} report isLoop(x) end";
-		JValue result = evalTestQuery("IsLoop", queryString);
-		assertEquals(1, result.toCollection().size());
-		assertEquals(false, (boolean) getNthValue(result.toCollection(), 0)
-				.toBoolean());
+		evalTestQuery("theElement(from e : E{connections.Street} with e.name = 'Südallee' report e end) store as loop");
+		assertQueryEquals("using loop: isLoop(loop)", true);
+		evalTestQuery("from e : E{connections.Street} with e.name <> 'Südallee' report e end store as nonLoops");
+		assertQueryEquals(
+				"using nonLoops : forall e : nonLoops @ not(isLoop(e))", true);
+	}
+
+	@Test
+	public void testIsLoopNull() throws Exception {
+		assertQueryEqualsNull("using nll: isLoop(nll)");
+	}
+
+	@Test
+	public void testIsMarked() throws Exception {
+		// TODO
+		fail();
+	}
+
+	@Test
+	public void testIsMarkedNull() throws Exception {
+		assertQueryEqualsNull("using nll: isMarked(lastVertex(), nll)");
+		// TODO
+		// assertQueryEqualsNull("using nll: isMarked(nll, ???)");
+		assertQueryEqualsNull("using nll: isMarked(nll, nll)");
+		fail();
+	}
+
+	@Test
+	public void testIsNull() throws Exception {
+		// TODO
+		assertQueryEquals("isNull(list())", false);
+		assertQueryEquals("using nll: isNull(nll)", true);
+		setBoundVariable("nll2", new JValueImpl((Object) null));
+		assertQueryEquals("using nll2: isNull(nll2)", true);
 	}
 
 	@Test
 	public void testIsTree() throws Exception {
-		String queryString = "isTree()";
-		JValue result = evalTestQuery("IsTree", queryString,
-				getCyclicTestGraph());
-		assertEquals(JValueBoolean.getFalseValue(), result.toBoolean());
-	}
-
-	@Test
-	public void testIsTree2() throws Exception {
-		String queryString = "isTree()";
-		JValue result = evalTestQuery("IsTree2", queryString);
-		assertEquals(JValueBoolean.getFalseValue(), result.toBoolean());
-	}
-
-	@Test
-	public void testIsTree3() throws Exception {
-		String queryString = "isTree()";
-		JValue result = evalTestQuery("IsTree3", queryString, getTestTree());
-		assertEquals(JValueBoolean.getTrueValue(), result.toBoolean());
+		assertQueryEquals("isTree()", false);
+		setDefaultTestVersion(TestVersion.CYCLIC_GRAPH);
+		assertQueryEquals("isTree()", false);
+		setDefaultTestVersion(TestVersion.GREQL_GRAPH);
+		assertQueryEquals("isTree()", false);
+		setDefaultTestVersion(TestVersion.TREE_GRAPH);
+		assertQueryEquals("isTree()", true);
 	}
 
 	@Test
 	public void testLastEdge() throws Exception {
-		Graph graph = getTestGraph(TestVersion.CITY_MAP_GRAPH);
+		Graph graph = getTestGraph(TestVersion.ROUTE_MAP_GRAPH);
 		assertQueryEquals("lastEdge()", graph.getLastEdge());
 		assertQueryEquals("lastEdge{connections.Way}()",
 				getLastEdgeForType(Way.class));
-		assertQueryEquals("lastEdge{Edge!}()", (Edge) null);
+		assertQueryEqualsNull("lastEdge{Edge!}()");
 	}
 
 	@Test
 	public void testLastVertex() throws Exception {
-		Graph graph = getTestGraph(TestVersion.CITY_MAP_GRAPH);
+		Graph graph = getTestGraph(TestVersion.ROUTE_MAP_GRAPH);
 		assertQueryEquals("lastVertex()", graph.getLastVertex());
 		assertQueryEquals("lastVertex{junctions.Crossroad}()",
 				getLastVertexForType(Crossroad.class));
-		assertQueryEquals("lastVertex{Vertex!}()", (Vertex) null);
+		assertQueryEqualsNull("lastVertex{Vertex!}()");
 	}
 
 	public Edge getLastEdgeForType(Class<? extends Edge> type) throws Exception {
-		Graph graph = getTestGraph(TestVersion.CITY_MAP_GRAPH);
+		Graph graph = getTestGraph(TestVersion.ROUTE_MAP_GRAPH);
 		Edge lastEdge = graph.getLastEdge();
 
 		while (lastEdge != null) {
@@ -492,7 +509,7 @@ public class GraphFunctionTest extends GenericTest {
 
 	public Vertex getLastVertexForType(Class<? extends Vertex> type)
 			throws Exception {
-		Graph graph = getTestGraph(TestVersion.CITY_MAP_GRAPH);
+		Graph graph = getTestGraph(TestVersion.ROUTE_MAP_GRAPH);
 		Vertex lastVertex = graph.getLastVertex();
 
 		while (lastVertex != null) {
@@ -506,41 +523,89 @@ public class GraphFunctionTest extends GenericTest {
 	}
 
 	@Test
-	public void testOutDegree() throws Exception {
-		JValueMap map = evalTestQuery(
-				"from v:V reportMap v -> outDegree(v) end").toJValueMap();
+	public void testOutDegreeWithTypeCollection() throws Exception {
+		EdgeDirection direction = EdgeDirection.OUT;
+		String query = "from v:V reportMap v -> outDegree(v) end";
+		testDegree(query, Edge.class, direction);
+		query = "from v:V reportMap v -> outDegree{connections.Way}(v) end";
+		testDegree(query, Way.class, direction);
+	}
+
+	@Test
+	public void testOutDegreeNull() throws Exception {
+		assertQueryEqualsNull("using nll: outDegree(nll)");
+	}
+
+	@Test
+	public void testSiblings() throws Exception {
+		String query = "from v:V reportMap v -> siblings(v) end";
+		JValueMap map = evalTestQuery(query).toJValueMap();
 
 		for (Entry<JValue, JValue> entry : map.entrySet()) {
 			Vertex vertex = entry.getKey().toVertex();
-			Integer degree = entry.getValue().toInteger();
+			Set<Vertex> parents = getParentVertices(vertex);
+			JValueCollection siblings = entry.getValue().toCollection();
 
-			assertEquals(vertex.getDegree(EdgeDirection.OUT), degree, DELTA);
+			for (JValue sibling : siblings) {
+				Vertex siblingVertex = sibling.toVertex();
+				Set<Vertex> siblingParents = getParentVertices(siblingVertex);
+
+				boolean test = containsAny(parents, siblingParents);
+				assertTrue(test);
+			}
 		}
 	}
 
 	@Test
-	public void testOutDegreeWithTypeCollection() throws Exception {
-		JValueMap map = evalTestQuery(
-				"from v:V reportMap v -> outDegree{connections.Way}(v) end")
-				.toJValueMap();
+	public void testSiblingsNull() throws Exception {
+		assertQueryEqualsNull("using nll: siblings(nll)");
+	}
+
+	private Set<Vertex> getParentVertices(Vertex vertex) {
+		Set<Vertex> parents = new HashSet<Vertex>();
+		for (Edge outgoing : vertex.incidences(EdgeDirection.IN)) {
+			parents.add(outgoing.getOmega());
+		}
+		return parents;
+	}
+
+	private boolean containsAny(Set<Vertex> parents, Set<Vertex> siblingParents) {
+		boolean containsAny = false;
+		for (Vertex parent : parents) {
+			containsAny = containsAny | siblingParents.contains(parent);
+		}
+		return containsAny;
+	}
+
+	@Test
+	public void testStartVertex() throws Exception {
+		String query = "from e:E reportMap e -> startVertex(e) end";
+		JValueMap map = evalTestQuery(query).toJValueMap();
 
 		for (Entry<JValue, JValue> entry : map.entrySet()) {
-			Vertex vertex = entry.getKey().toVertex();
-			Integer degree = entry.getValue().toInteger();
+			Edge edge = entry.getKey().toEdge();
+			Vertex alpha = entry.getValue().toVertex();
 
-			assertEquals(vertex.getDegree(Way.class, EdgeDirection.OUT),
-					degree, DELTA);
+			assertEquals(edge.getAlpha(), alpha);
 		}
+	}
+
+	@Test
+	public void testStartVertexNull() throws Exception {
+		assertQueryEqualsNull("using nll: startVertex(nll)");
 	}
 
 	@Test
 	public void testTopologicalSort() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String q = "topologicalSort()";
-		JValue result = evalTestQuery("TopologicalSort", q);
-		JValueList resultList = result.toJValueList();
-		assertEquals(16, resultList.size());
+		String query = "topologicalSort()";
+		assertQueryEqualsNull(query);
+	}
+
+	@Test
+	public void testTopologicalSort2() throws Exception {
+		setDefaultTestVersion(TestVersion.TREE_GRAPH);
+		JValueList resultList = evalTestQuery("topologicalSort()")
+				.toJValueList();
 		/*
 		 * test, if for each vertex v in the result list each vertex w in
 		 * Lambda^-(v) is contained in the result list at a lower position than
@@ -554,6 +619,33 @@ public class GraphFunctionTest extends GenericTest {
 			}
 			previousVertices.add(vertex);
 		}
+	}
+
+	@Test
+	public void testVertexSeq() throws Exception {
+		assertQueryEqualsQuery("vertexSeq(firstVertex(), lastVertex())", "V");
+	}
+
+	@Test
+	public void testVertexSeqWithTypeCollection() throws Exception {
+		assertQueryEqualsQuery(
+				"vertexSeq{junctions.Crossroad}(firstVertex(), lastVertex())",
+				"V{junctions.Crossroad}");
+	}
+
+	@Test
+	public void testVertexSeqWithTypeCollectionAndNull() throws Exception {
+
+		assertQueryEqualsNull("using nll: vertexSeq(nll, lastVertex())");
+		assertQueryEqualsNull("using nll: vertexSeq(firstVertex(), nll)");
+		assertQueryEqualsNull("using nll: vertexSeq(nll, nll)");
+
+		assertQueryEqualsNull("using nll: vertexSeq{Vertex}(nll, lastVertex())");
+		assertQueryEqualsNull("using nll: vertexSeq{Vertex}(firstVertex(), nll)");
+		assertQueryEqualsNull("using nll: vertexSeq{Vertex}(nll, nll)");
+
+		assertQueryEqualsNull("using nll: vertexSeq(lastVertex(), firstVertex())");
+		assertQueryEqualsNull("using nll: vertexSeq{Vertex}(lastVertex(), firstVertex())");
 	}
 
 }

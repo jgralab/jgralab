@@ -58,10 +58,8 @@ import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.evaluator.logging.EvaluationLogger;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.QuerySourceException;
-import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
-import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Aggregation;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
@@ -619,15 +617,7 @@ public abstract class VertexEvaluator {
 		if (unevaluatedVertices.contains(className)) {
 			return null;
 		}
-		String evalName;
-		if ((vertex.getM1Class() == FunctionApplication.class)
-				&& !Greql2FunctionLibrary.instance().isGreqlFunction(
-						((FunctionApplication) vertex).get_functionId()
-								.get_name())) {
-			evalName = "SubQueryEvaluator";
-		} else {
-			evalName = className + "Evaluator";
-		}
+		String evalName = className + "Evaluator";
 		evalName = evalName.substring(className.lastIndexOf(".") + 1);
 		evalName = VertexEvaluator.class.getPackage().getName() + "."
 				+ evalName;

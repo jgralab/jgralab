@@ -51,6 +51,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.greql2.SerializableGreql2;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
@@ -67,51 +68,31 @@ public class GenericTest {
 	protected static final double DELTA = 0.00000001;
 
 	public enum TestVersion {
-		GREQL_GRAPH, CITY_MAP_GRAPH
+		GREQL_GRAPH, ROUTE_MAP_GRAPH, CYCLIC_GRAPH, TREE_GRAPH
 	};
 
 	protected static int airportCount, crossroadCount, countyCount,
-			uncontainedCrossroadCount;
+			uncontainedCrossroadCount, localityCount, footpathCount,
+			plazaCount, townCount;
+
+	private TestVersion defaultVersion = TestVersion.ROUTE_MAP_GRAPH;
 
 	@BeforeClass
 	public static void globalSetUp() throws Exception {
 		GenericTest test = new GenericTest();
-		queryAirportCount(test);
-		queryCrossroadCount(test);
-		queryCountyCount(test);
-		queryUncontainedCrossroadCount(test);
-		test.setBoundVariable("nll", new JValueImpl((Object) null));
+		airportCount = test.queryInteger("count(V{junctions.Airport})");
+		townCount = test.queryInteger("count(V{localities.Town})");
+		crossroadCount = test.queryInteger("count(V{junctions.Crossroad})");
+		countyCount = test.queryInteger("count(V{localities.County})");
+		footpathCount = test.queryInteger("count(E{connections.Footpath})");
+		plazaCount = test.queryInteger("count(V{junctions.Plaza})");
+		localityCount = test.queryInteger("count(V{localities.Locality})");
+		test.setBoundVariable("nll", new JValueImpl());
 	}
 
-	private static void queryAirportCount(GenericTest test) throws Exception {
-		String queryString = "count(V{junctions.Airport})";
-		JValue result = test.evalTestQuery("static Query", queryString,
-				TestVersion.CITY_MAP_GRAPH);
-		airportCount = result.toInteger();
-	}
-
-	private static void queryCrossroadCount(GenericTest test) throws Exception {
-		String queryString = "count(V{junctions.Crossroad})";
-		JValue result = test.evalTestQuery("static Query", queryString,
-				TestVersion.CITY_MAP_GRAPH);
-		crossroadCount = result.toInteger();
-	}
-
-	private static void queryCountyCount(GenericTest test) throws Exception {
-		String queryString = "count(V{localities.County})";
-		JValue result = test.evalTestQuery("static Query", queryString,
-				TestVersion.CITY_MAP_GRAPH);
-		countyCount = result.toInteger();
-	}
-
-	private static void queryUncontainedCrossroadCount(GenericTest test)
-			throws Exception {
-		String queryString = "sum(from r:V{junctions.Crossroad} report depth(pathSystem(r, <--{localities.ContainsCrossroad})) end)";
-		JValue result = test.evalTestQuery("static Query", queryString,
-				TestVersion.CITY_MAP_GRAPH);
-
-		uncontainedCrossroadCount = crossroadCount
-				- result.toDouble().intValue();
+	private int queryInteger(String query) throws JValueInvalidTypeException,
+			Exception {
+		return evalTestQuery(query).toInteger().intValue();
 	}
 
 	protected void assertQueryEqualsNull(String query) throws Exception {
@@ -222,7 +203,7 @@ public class GenericTest {
 
 	private boolean doesExceptionTypesEqual(
 			Class<? extends Exception> exceptionClass, Throwable exception) {
-		return exception != null
+		return (exception != null)
 				&& (exception.getClass().equals(exceptionClass) || doesExceptionTypesEqual(
 						exceptionClass, exception.getCause()));
 	}
@@ -237,22 +218,6 @@ public class GenericTest {
 	private Graph tree = null;
 
 	private static Graph testGraph, oldTestGraph;
-
-	protected void printTestFunctionHeader(String functionName) {
-		System.out
-				.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-		System.out.println("START     " + functionName);
-		System.out
-				.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-	}
-
-	protected void printTestFunctionFooter(String functionName) {
-		System.out
-				.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-		System.out.println("END       " + functionName);
-		System.out
-				.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-	}
 
 	private static GreqlEvaluator eval = new GreqlEvaluator((String) null,
 			null, null);
@@ -273,21 +238,28 @@ public class GenericTest {
 
 	protected Graph getTestGraph(TestVersion version) throws Exception {
 
-		if (version == TestVersion.GREQL_GRAPH) {
+		switch (version) {
+		case GREQL_GRAPH:
 			return createGreqlTestGraph();
-		} else {
+		case ROUTE_MAP_GRAPH:
 			return createTestGraph();
+		case CYCLIC_GRAPH:
+			return getCyclicTestGraph();
+		case TREE_GRAPH:
+			return getTestTree();
+		default:
+			throw new RuntimeException("Unsupported enum.");
 		}
 	}
 
-	protected Graph getTestTree() throws Exception {
+	protected Graph getTestTree() {
 		if (tree == null) {
 			tree = createTestTree();
 		}
 		return tree;
 	}
 
-	protected Graph getCyclicTestGraph() throws Exception {
+	protected Graph getCyclicTestGraph() {
 		if (cyclicGraph == null) {
 			cyclicGraph = createCyclicTestGraph();
 		}
@@ -314,7 +286,7 @@ public class GenericTest {
 		return testGraph;
 	}
 
-	protected Graph createCyclicTestGraph() throws Exception {
+	protected Graph createCyclicTestGraph() {
 		MinimalSchema s = MinimalSchema.instance();
 		MinimalGraph g = s.createMinimalGraph(10, 10);
 		Node[] v = new Node[10];
@@ -327,7 +299,7 @@ public class GenericTest {
 		return g;
 	}
 
-	protected Graph createTestTree() throws Exception {
+	protected Graph createTestTree() {
 		// create a binary tree where v[0] is the root
 		MinimalSchema s = MinimalSchema.instance();
 		MinimalGraph g = s.createMinimalGraph(10, 10);
@@ -338,8 +310,6 @@ public class GenericTest {
 		for (int i = 0; i < (v.length - 1) / 2; i++) {
 			g.createLink(v[i], v[i * 2 + 1]);
 			g.createLink(v[i], v[i * 2 + 2]);
-			System.out.println("[" + i + ", " + (i * 2 + 1) + ", "
-					+ (i * 2 + 2) + "]");
 		}
 		return g;
 	}
@@ -355,7 +325,15 @@ public class GenericTest {
 	}
 
 	protected JValue evalTestQuery(String query) throws Exception {
-		return evalTestQuery("", query, TestVersion.CITY_MAP_GRAPH);
+		return evalTestQueryNoMessage(query, defaultVersion);
+	}
+
+	public TestVersion getDefaultTestVersion() {
+		return defaultVersion;
+	}
+
+	public void setDefaultTestVersion(TestVersion defaultVersion) {
+		this.defaultVersion = defaultVersion;
 	}
 
 	protected JValue evalTestQuery(String functionName, String query,
@@ -370,6 +348,11 @@ public class GenericTest {
 		return evalTestQuery(functionName, query, null, getTestGraph(version));
 	}
 
+	protected JValue evalTestQueryNoMessage(String query, TestVersion version)
+			throws Exception {
+		return evalQuery(query, null, getTestGraph(version));
+	}
+
 	protected JValue evalTestQuery(String functionName, String query,
 			Optimizer optimizer, TestVersion version) throws Exception {
 
@@ -379,7 +362,6 @@ public class GenericTest {
 
 	protected JValue evalTestQuery(String functionName, String query,
 			Optimizer optimizer, Graph datagraph) throws Exception {
-		printTestFunctionHeader(functionName);
 		eval.setQuery(query);
 		eval.setDatagraph(datagraph);
 		eval.setUseSavedOptimizedSyntaxGraph(false);
@@ -393,10 +375,22 @@ public class GenericTest {
 			printDebuggingSyntaxGraph(optimizer);
 		}
 
-		printTestFunctionFooter(functionName);
-
 		JValue result = eval.getEvaluationResult();
-		eval.printEvaluationTimes();
+		// eval.printEvaluationTimes();
+		return result;
+	}
+
+	protected JValue evalQuery(String query, Optimizer optimizer,
+			Graph datagraph) throws Exception {
+		eval.setQuery(query);
+		eval.setDatagraph(datagraph);
+		eval.setUseSavedOptimizedSyntaxGraph(false);
+
+		setOptimizer(optimizer);
+
+		// when optimizing turn on logging, too.
+		eval.startEvaluation(eval.isOptimize(), false);
+		JValue result = eval.getEvaluationResult();
 		return result;
 	}
 
@@ -443,14 +437,6 @@ public class GenericTest {
 			i++;
 		}
 		return null;
-	}
-
-	protected void printResult(JValue result) throws Exception {
-		System.out.println("Result is: " + result);
-		if (result.isCollection()) {
-			System.out.println("Collection size is: "
-					+ result.toCollection().size());
-		}
 	}
 
 }

@@ -103,19 +103,26 @@ public class Supertypes extends Greql2Function {
 	public JValue evaluate(Graph graph,
 			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
 			throws EvaluateException {
+
+		if (arguments[0].toObject() == null) {
+			return new JValueImpl();
+		}
+
 		AttributedElementClass clazz = null;
 		switch (checkArguments(arguments)) {
 		case 0:
 			clazz = graph.getSchema().getAttributedElementClass(
 					arguments[0].toString());
-			break;
+			return getSuperTypes(clazz);
 		case 1:
 			clazz = arguments[0].toAttributedElementClass();
-			break;
+			return getSuperTypes(clazz);
 		default:
 			throw new WrongFunctionParameterException(this, arguments);
 		}
+	}
 
+	private JValue getSuperTypes(AttributedElementClass clazz) {
 		JValueSet typeSet = new JValueSet();
 		for (AttributedElementClass c : clazz.getDirectSuperClasses()) {
 			typeSet.add(new JValueImpl(c));

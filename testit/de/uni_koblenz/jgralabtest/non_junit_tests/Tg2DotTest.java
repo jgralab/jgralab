@@ -36,13 +36,18 @@ package de.uni_koblenz.jgralabtest.non_junit_tests;
 
 import java.io.IOException;
 
+import org.junit.Test;
+
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.WorkInProgress;
+import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
+import de.uni_koblenz.jgralab.utilities.tg2dot.dot.GraphVizLayouter;
 import de.uni_koblenz.jgralab.utilities.tg2dot.dot.GraphVizOutputFormat;
+import de.uni_koblenz.jgralab.utilities.tg2schemagraph.Schema2SchemaGraph;
 
 @WorkInProgress(responsibleDevelopers = "mmce@uni-koblenz.de", description = "More test have to be included. Every static method should be tested. Additionally the class itself should be tested.")
 public class Tg2DotTest {
@@ -58,8 +63,32 @@ public class Tg2DotTest {
 				"testit/testgraphs/greqltestgraph.tg", (ProgressFunction) null);
 		Tg2Dot t2d = new Tg2Dot();
 		t2d.setGraph(g);
+		t2d.setGraphVizOutputFormat(GraphVizOutputFormat.SVG);
+		t2d.setOutputFile("testit/testoutput.svg");
+		t2d.convert();
+	}
+
+	public void convertGraph2Png() throws GraphIOException, IOException {
+		Graph g = GraphIO.loadGraphFromFileWithStandardSupport(
+				"testit/testgraphs/greqltestgraph.tg", (ProgressFunction) null);
+		Tg2Dot t2d = new Tg2Dot();
+		t2d.setGraph(g);
 		t2d.setGraphVizOutputFormat(GraphVizOutputFormat.PNG);
 		t2d.setOutputFile("testit/testoutput.png");
+		t2d.convert();
+	}
+
+	@Test
+	public void convertSchema2png() throws GraphIOException, IOException {
+		Schema schema = GraphIO
+				.loadSchemaFromFile("src/de/uni_koblenz/jgralab/greql2/greql2Schema.tg");
+		Schema2SchemaGraph converter = new Schema2SchemaGraph();
+		Graph g = converter.convert2SchemaGraph(schema);
+		Tg2Dot t2d = new Tg2Dot();
+		t2d.setGraph(g);
+		t2d.setGraphVizOutputFormat(GraphVizOutputFormat.PNG);
+		t2d.setGraphVizLayouter(GraphVizLayouter.DOT);
+		t2d.setOutputFile("greql2Schema_.png");
 		t2d.convert();
 	}
 }

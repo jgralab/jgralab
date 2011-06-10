@@ -117,6 +117,7 @@ public class Xor extends BooleanFunction {
 
 	@Override
 	protected JValue applyFunction(JValue leftHandSide, JValue rightHandSide) {
-		return JValueBoolean.xor(leftHandSide, rightHandSide);
+		return JValueBoolean.getValue(leftHandSide.toBoolean()
+				^ rightHandSide.toBoolean());
 	}
 }

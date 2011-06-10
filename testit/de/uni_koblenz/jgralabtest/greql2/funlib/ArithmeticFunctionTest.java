@@ -115,6 +115,22 @@ public class ArithmeticFunctionTest extends GenericTest {
 	}
 
 	@Test
+	public void testAddNull() throws Exception {
+
+		assertQueryEqualsNull("using nll: add(nll, nll)");
+		assertQueryEqualsNull("using nll: add(nll, 100)");
+		assertQueryEqualsNull("using nll: add(100, nll)");
+	}
+
+	@Test
+	public void testAddInfixNull() throws Exception {
+
+		assertQueryEqualsNull("using nll: nll + nll");
+		assertQueryEqualsNull("using nll: nll + 100");
+		assertQueryEqualsNull("using nll: 100 + nll");
+	}
+
+	@Test
 	public void testDiv() throws Exception {
 		assertQueryEquals("div(-3, 0)", NEGATIVE_INFINITY);
 		assertQueryEquals("div(3, 0)", POSITIVE_INFINITY);
@@ -162,6 +178,22 @@ public class ArithmeticFunctionTest extends GenericTest {
 		assertQueryEquals("div(Infinity, -Infinity)", NaN);
 		assertQueryEquals("div(Infinity, NaN)", NaN);
 		assertQueryEquals("div(-Infinity, NaN)", NaN);
+	}
+
+	@Test
+	public void testDivNull() throws Exception {
+
+		assertQueryEqualsNull("using nll: div(nll, nll)");
+		assertQueryEqualsNull("using nll: div(nll, 100)");
+		assertQueryEqualsNull("using nll: div(100, nll)");
+	}
+
+	@Test
+	public void testDivInfixNull() throws Exception {
+
+		assertQueryEqualsNull("using nll: nll / nll");
+		assertQueryEqualsNull("using nll: nll / 100");
+		assertQueryEqualsNull("using nll: 100 / nll");
 	}
 
 	@Test
@@ -218,6 +250,22 @@ public class ArithmeticFunctionTest extends GenericTest {
 		assertQueryEquals("mod(Infinity, -Infinity)", NaN);
 		assertQueryEquals("mod(Infinity, NaN)", NaN);
 		assertQueryEquals("mod(-Infinity, NaN)", NaN);
+	}
+
+	@Test
+	public void testModNull() throws Exception {
+
+		assertQueryEqualsNull("using nll: mod(nll, nll)");
+		assertQueryEqualsNull("using nll: mod(nll, 100)");
+		assertQueryEqualsNull("using nll: mod(100, nll)");
+	}
+
+	@Test
+	public void testModInfixNull() throws Exception {
+
+		assertQueryEqualsNull("using nll: nll % nll");
+		assertQueryEqualsNull("using nll: nll % 100");
+		assertQueryEqualsNull("using nll: 100 % nll");
 	}
 
 	@Test
@@ -283,6 +331,22 @@ public class ArithmeticFunctionTest extends GenericTest {
 	}
 
 	@Test
+	public void testMulNull() throws Exception {
+
+		assertQueryEqualsNull("using nll: mul(nll, nll)");
+		assertQueryEqualsNull("using nll: mul(nll, 100)");
+		assertQueryEqualsNull("using nll: mul(100, nll)");
+	}
+
+	@Test
+	public void testMulInfixNull() throws Exception {
+
+		assertQueryEqualsNull("using nll: nll * nll");
+		assertQueryEqualsNull("using nll: nll * 100");
+		assertQueryEqualsNull("using nll: 100 * nll");
+	}
+
+	@Test
 	public void testMultiplicative() throws Exception {
 		assertQueryEquals("100 / 10 / 5 * 2", 4.0);
 	}
@@ -322,6 +386,20 @@ public class ArithmeticFunctionTest extends GenericTest {
 	}
 
 	@Test
+	public void testNegNull() throws Exception {
+		assertQueryEqualsNull("using nll: neg(nll)");
+
+	}
+
+	@Test
+	public void testNegInfixNull() throws Exception {
+
+		assertQueryEqualsNull("using nll: nll - nll");
+		assertQueryEqualsNull("using nll: nll - 100");
+		assertQueryEqualsNull("using nll: 100 - nll");
+	}
+
+	@Test
 	public void testSqrt() throws Exception {
 		assertQueryEquals("sqrt(4)", 2.0);
 		assertQueryEquals("sqrt(100)", 10.0);
@@ -337,6 +415,12 @@ public class ArithmeticFunctionTest extends GenericTest {
 		assertQueryEquals("sqrt(NaN)", NaN);
 		assertQueryEquals("sqrt(Infinity)", NEGATIVE_INFINITY);
 		assertQueryEquals("sqrt(-Infinity)", POSITIVE_INFINITY);
+	}
+
+	@Test
+	public void testSqrtNull() throws Exception {
+		assertQueryEqualsNull("using nll: sqrt(nll)");
+
 	}
 
 	@Test
@@ -395,5 +479,19 @@ public class ArithmeticFunctionTest extends GenericTest {
 		assertQueryEquals("sub(Infinity, -Infinity)", POSITIVE_INFINITY);
 		assertQueryEquals("sub(Infinity, NaN)", NaN);
 		assertQueryEquals("sub(-Infinity, NaN)", NaN);
+	}
+
+	@Test
+	public void testSubNull() throws Exception {
+		assertQueryEqualsNull("using nll: sub(nll, nll)");
+		assertQueryEqualsNull("using nll: sub(nll, 100)");
+		assertQueryEqualsNull("using nll: sub(100, nll)");
+	}
+
+	@Test
+	public void testSubInfixNull() throws Exception {
+		assertQueryEqualsNull("using nll: nll - nll");
+		assertQueryEqualsNull("using nll: nll - 100");
+		assertQueryEqualsNull("using nll: 100 - nll");
 	}
 }

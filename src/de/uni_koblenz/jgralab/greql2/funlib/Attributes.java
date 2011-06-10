@@ -94,18 +94,26 @@ public class Attributes extends Greql2Function {
 	public JValue evaluate(Graph graph,
 			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
 			throws EvaluateException {
+
+		if (arguments[0].toObject() == null) {
+			return new JValueImpl();
+		}
+
 		AttributedElementClass clazz = null;
 		switch (checkArguments(arguments)) {
 		case 0:
 			clazz = arguments[0].toAttributedElement()
 					.getAttributedElementClass();
-			break;
+			return getAttributes(clazz);
 		case 1:
 			clazz = arguments[0].toAttributedElementClass();
-			break;
+			return getAttributes(clazz);
 		default:
 			throw new WrongFunctionParameterException(this, arguments);
 		}
+	}
+
+	private JValueSet getAttributes(AttributedElementClass clazz) {
 		JValueSet set = new JValueSet();
 		for (Attribute a : clazz.getAttributeList()) {
 			JValueTuple tup = new JValueTuple();

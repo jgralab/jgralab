@@ -46,9 +46,9 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Vector;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
@@ -362,7 +362,7 @@ public class Csv2Tg implements FilenameFilter {
 			int startColumnIndex) throws NoSuchAttributeException,
 			GraphIOException {
 
-		Vector<String> header = reader.getFieldNames();
+		List<String> header = reader.getFieldNames();
 
 		for (int index = startColumnIndex; index < header.size(); index++) {
 

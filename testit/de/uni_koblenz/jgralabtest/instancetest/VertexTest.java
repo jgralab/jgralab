@@ -90,8 +90,8 @@ public class VertexTest extends InstanceTest {
 
 	private static final int ITERATIONS = 25;
 
-	public VertexTest(ImplementationType implementationType) {
-		super(implementationType);
+	public VertexTest(ImplementationType implementationType, String dbURL) {
+		super(implementationType, dbURL);
 	}
 
 	@Parameters
@@ -118,7 +118,7 @@ public class VertexTest extends InstanceTest {
 	@After
 	public void tearDown() {
 		if (implementationType == ImplementationType.DATABASE) {
-			this.cleanAndCloseGraphDatabase();
+			cleanAndCloseGraphDatabase();
 		}
 	}
 
@@ -2400,7 +2400,7 @@ public class VertexTest extends InstanceTest {
 					.createVertexTestGraphWithSavememSupport(100, 100);
 			break;
 		case DATABASE:
-			graph = this.createVertexTestGraphWithDatabaseSupport();
+			graph = createVertexTestGraphWithDatabaseSupport();
 			break;
 		default:
 			fail("Implementation " + implementationType
