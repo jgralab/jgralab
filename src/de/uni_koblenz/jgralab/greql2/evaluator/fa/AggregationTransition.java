@@ -358,5 +358,4 @@ public class AggregationTransition extends Transition {
 	public boolean consumesEdge() {
 		return true;
 	}
-
 }

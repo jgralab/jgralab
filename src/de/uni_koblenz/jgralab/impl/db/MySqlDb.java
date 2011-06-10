@@ -57,14 +57,7 @@ public class MySqlDb extends GraphDatabase {
 	}
 
 	@Override
-	protected void addStoredProcedures() throws SQLException {
-		super.addStoredProcedures();
-		sqlStatementList.clearAllTables();
-	}
-
-	@Override
 	public void clearAllTables() throws SQLException {
-
 		MySqlStatementList mySqlStatementList = (MySqlStatementList) sqlStatementList;
 		PreparedStatement statement = mySqlStatementList.clearTableAttribute();
 		statement.execute();

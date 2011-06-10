@@ -93,14 +93,14 @@ public class PathExpr extends Greql2Function {
 	public JValue evaluate(Graph graph,
 			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
 			throws EvaluateException {
-		DFA dfa = null;
-		switch (checkArguments(arguments)) {
-		case 0:
-			dfa = arguments[0].toAutomaton().getDFA();
-			break;
-		default:
+		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, arguments);
 		}
+		if (isAnyArgumentNull(arguments)) {
+			return new JValueImpl();
+		}
+
+		DFA dfa = arguments[0].toAutomaton().getDFA();
 		return new JValueImpl(dfa);
 	}
 

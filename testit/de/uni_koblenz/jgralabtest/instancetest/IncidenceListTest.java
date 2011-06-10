@@ -76,8 +76,8 @@ public class IncidenceListTest extends InstanceTest {
 	private static final int RANDOM_TEST_AMOUNT = 2;
 	private static final int NODE_COUNT = 10;
 
-	public IncidenceListTest(ImplementationType implementationType) {
-		super(implementationType);
+	public IncidenceListTest(ImplementationType implementationType, String dbURL) {
+		super(implementationType, dbURL);
 	}
 
 	@Parameters

@@ -105,38 +105,32 @@ public class IsA extends Greql2Function {
 	public JValue evaluate(Graph graph,
 			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
 			throws EvaluateException {
-		String s1 = null, s2 = null;
 		AttributedElementClass aec1 = null, aec2 = null;
-		switch (checkArguments(arguments)) {
-		case 0:
-			s1 = arguments[0].toString();
-			s2 = arguments[1].toString();
-			break;
-		case 1:
-			s1 = arguments[0].toString();
-			aec2 = arguments[1].toAttributedElementClass();
-			break;
-		case 2:
-			aec1 = arguments[0].toAttributedElementClass();
-			s2 = arguments[1].toString();
-			break;
-		case 3:
-			aec1 = arguments[0].toAttributedElementClass();
-			aec2 = arguments[1].toAttributedElementClass();
-			break;
-		default:
+
+		int flag = checkArguments(arguments);
+		if (flag < 0 || flag > 4) {
 			throw new WrongFunctionParameterException(this, arguments);
 		}
 
-		Schema schema = graph.getGraphClass().getSchema();
-		if (aec1 == null) {
-			aec1 = schema.getAttributedElementClass(s1);
-		}
-		if (aec2 == null) {
-			aec2 = schema.getAttributedElementClass(s2);
-		}
+		aec1 = getAttributedElementClass(graph, arguments[0]);
+		aec2 = getAttributedElementClass(graph, arguments[1]);
 
+		if (aec1 == null || aec2 == null) {
+			return new JValueImpl();
+		}
 		return new JValueImpl(aec1.isSubClassOf(aec2));
+	}
+
+	private AttributedElementClass getAttributedElementClass(Graph graph,
+			JValue value) {
+		if (value.isAttributedElementClass()) {
+			return value.toAttributedElementClass();
+		} else if (value.isString()) {
+			String qualifiedName = value.toString();
+			Schema schema = graph.getGraphClass().getSchema();
+			return schema.getAttributedElementClass(qualifiedName);
+		}
+		return null;
 	}
 
 	@Override

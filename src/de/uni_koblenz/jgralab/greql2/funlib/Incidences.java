@@ -117,7 +117,7 @@ public abstract class Incidences extends Greql2Function {
 			throws EvaluateException {
 		JValueTypeCollection typeCol = null;
 
-		if (!arguments[0].isVertex()) {
+		if (isAnyArgumentNull(arguments)) {
 			return new JValueImpl();
 		}
 		Vertex vertex = arguments[0].toVertex();

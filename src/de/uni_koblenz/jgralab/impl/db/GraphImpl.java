@@ -661,6 +661,12 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 		vSeq.remove((DatabasePersistableVertex) v);
 		freeVertexIndex(v.getId());
 	}
+	
+	@Override
+	public void deleteVertex(Vertex v) {
+		super.deleteVertex(v);
+		vertexAfterDeleted(v);
+	}
 
 	/**
 	 * Deletes vertex from database, removes it from cache and sets it to
@@ -675,8 +681,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	 *            Postcondition: Vertex is not in cache, no longer persistent in
 	 *            database and set to deleted.
 	 */
-	@Override
-	protected void vertexAfterDeleted(Vertex vertexToBeDeleted) {
+	private void vertexAfterDeleted(Vertex vertexToBeDeleted) {
 		assert vertexToBeDeleted != null;
 		DatabasePersistableVertex vertex = (DatabasePersistableVertex) vertexToBeDeleted;
 		graphCache.removeVertex(this, vertex.getId());
@@ -702,9 +707,17 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 		eSeq.remove((DatabasePersistableEdge) e);
 		freeEdgeIndex(e.getId());
 	}
-
+	
 	@Override
-	protected void edgeAfterDeleted(Edge e, Vertex oldAlpha, Vertex oldOmega) {
+	public void deleteEdge(Edge e) {
+		Vertex alpha = e.getAlpha();
+		Vertex omega = e.getOmega();
+		
+		super.deleteEdge(e);
+		edgeAfterDeleted(e, alpha, omega);
+	}
+
+	private void edgeAfterDeleted(Edge e, Vertex oldAlpha, Vertex oldOmega) {
 		assert e != null;
 		DatabasePersistableEdge edge = (DatabasePersistableEdge) e;
 		if (edge.isPersistent()) {

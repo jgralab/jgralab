@@ -87,8 +87,8 @@ public class EdgeTest extends InstanceTest {
 
 	private final String ID = "EdgeTest";
 
-	public EdgeTest(ImplementationType implementationType) {
-		super(implementationType);
+	public EdgeTest(ImplementationType implementationType, String dbURL) {
+		super(implementationType, dbURL);
 	}
 
 	@Parameters
@@ -117,7 +117,7 @@ public class EdgeTest extends InstanceTest {
 					.createVertexTestGraphWithSavememSupport();
 			break;
 		case DATABASE:
-			g = this.createVertexTestGraphWithDatabaseSupport();
+			g = createVertexTestGraphWithDatabaseSupport();
 			break;
 		default:
 			fail("Implementation " + implementationType
@@ -136,7 +136,7 @@ public class EdgeTest extends InstanceTest {
 	@After
 	public void tearDown() {
 		if (implementationType == ImplementationType.DATABASE) {
-			this.cleanAndCloseGraphDatabase();
+			cleanAndCloseGraphDatabase();
 		}
 	}
 

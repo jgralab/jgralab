@@ -94,6 +94,9 @@ public class Weight extends Greql2Function {
 		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, arguments);
 		}
+		if (isAnyArgumentNull(arguments)) {
+			return new JValueImpl();
+		}
 
 		JValuePathSystem pathSystem = arguments[0].toPathSystem();
 		return new JValueImpl(pathSystem.weight());

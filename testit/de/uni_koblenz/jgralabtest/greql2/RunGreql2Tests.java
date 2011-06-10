@@ -51,7 +51,7 @@ import de.uni_koblenz.jgralabtest.greql2.optimizer.OptimizerTest;
 		GreqlEvaluatorTest.class, JValueTest.class, OptimizerTest.class,
 		ParserTest.class, ProgressTest.class, SpeedTest.class,
 		StoreJValueTest.class, SystemTest.class, ThisLiteralTest.class,
-		GreqlSerializationTest.class })
+		GreqlSerializationTest.class, SubQueryTest.class })
 public class RunGreql2Tests {
 
 }

@@ -624,4 +624,9 @@ public class JValuePath extends JValueImpl {
 		v.visitPath(this);
 	}
 
+	@Override
+	public Object toObject() {
+		return this;
+	}
+
 }

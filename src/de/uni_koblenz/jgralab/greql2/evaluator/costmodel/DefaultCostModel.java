@@ -73,7 +73,6 @@ import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.SetComprehensionEvalua
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.SetConstructionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.SimpleDeclarationEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.SimplePathDescriptionEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.SubQueryEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.TableComprehensionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.TransposedPathDescriptionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.TupleConstructionEvaluator;
@@ -279,17 +278,12 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 			elements += argEval.getEstimatedCardinality(graphSize);
 			inc = inc.getNextIsArgumentOf(EdgeDirection.IN);
 		}
-		if (e instanceof SubQueryEvaluator) {
-			// TODO: This is only for preventing the e.getGreql2Function() call,
-			// which is not the right thing for subquery evals...
-			return 1;
+
+		Greql2Function func = e.getGreql2Function();
+		if (func != null) {
+			return func.getEstimatedCardinality(elements);
 		} else {
-			Greql2Function func = e.getGreql2Function();
-			if (func != null) {
-				return func.getEstimatedCardinality(elements);
-			} else {
-				return 1;
-			}
+			return 1;
 		}
 	}
 

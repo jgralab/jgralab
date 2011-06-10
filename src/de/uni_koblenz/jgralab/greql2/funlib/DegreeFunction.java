@@ -118,7 +118,7 @@ public abstract class DegreeFunction extends Greql2Function {
 	private boolean isValidEdge(
 			AbstractGraphMarker<AttributedElement> subgraph,
 			JValueTypeCollection typeCollection, Edge incidence) {
-		return (subgraph == null || subgraph.isMarked(incidence))
+		return ((subgraph == null) || subgraph.isMarked(incidence))
 				&& typeCollection.acceptsType(incidence
 						.getAttributedElementClass());
 	}

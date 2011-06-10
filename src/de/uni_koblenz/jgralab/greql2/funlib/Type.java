@@ -88,6 +88,11 @@ public class Type extends Greql2Function {
 	public JValue evaluate(Graph graph,
 			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
 			throws EvaluateException {
+
+		if (arguments[0].toObject() == null) {
+			return new JValueImpl();
+		}
+
 		switch (checkArguments(arguments)) {
 		case 0:
 			return new JValueImpl(arguments[0].toAttributedElement()

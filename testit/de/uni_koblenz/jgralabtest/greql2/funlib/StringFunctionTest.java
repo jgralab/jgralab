@@ -43,11 +43,15 @@ import de.uni_koblenz.jgralabtest.greql2.GenericTest;
 public class StringFunctionTest extends GenericTest {
 
 	@Test
-	public void testConcatInfix() throws Exception {
-		assertQueryEquals("\"foo\" ++ \"bar\" ++ \"baz\"", "foobarbaz");
-		assertQueryEquals("'foo' ++ 'bar' ++ 'baz'", "foobarbaz");
-		assertQueryEquals("'' ++ '' ++ ''", "");
-		assertQueryEquals("'g' ++ 'g'", "gg");
+	public void testCapitalizeFirst() throws Exception {
+		assertQueryEquals("capitalizeFirst('foobarbaz')", "Foobarbaz");
+		assertQueryEquals("capitalizeFirst('foo bar baz')", "Foo bar baz");
+		assertQueryEquals("capitalizeFirst(' oobarbaz')", " oobarbaz");
+	}
+
+	@Test
+	public void testCapitalizeNull() throws Exception {
+		assertQueryEqualsNull("using nll: capitalizeFirst(nll)");
 	}
 
 	@Test
@@ -60,17 +64,25 @@ public class StringFunctionTest extends GenericTest {
 	}
 
 	@Test
-	public void testCapitalizeFirst() throws Exception {
-		assertQueryEquals("capitalizeFirst('foobarbaz')", "Foobarbaz");
-		assertQueryEquals("capitalizeFirst('foo bar baz')", "Foo bar baz");
-		assertQueryEquals("capitalizeFirst(' oobarbaz')", " oobarbaz");
+	public void testConcatNull() throws Exception {
+		assertQueryEqualsNull("using nll: concat('', nll)");
+		assertQueryEqualsNull("using nll: concat(nll, '')");
+		assertQueryEqualsNull("using nll: concat(nll, nll)");
 	}
 
 	@Test
-	public void testReMatchInfix() throws Exception {
-		assertQueryEquals("'aaabbbb' =~ '[a]+[b]+'", true);
-		assertQueryEquals("'aaa' =~ '[a]+[b]+'", false);
-		assertQueryEquals("'aaabc' =~ '[a]+[b]+'", false);
+	public void testConcatInfix() throws Exception {
+		assertQueryEquals("\"foo\" ++ \"bar\" ++ \"baz\"", "foobarbaz");
+		assertQueryEquals("'foo' ++ 'bar' ++ 'baz'", "foobarbaz");
+		assertQueryEquals("'' ++ '' ++ ''", "");
+		assertQueryEquals("'g' ++ 'g'", "gg");
+	}
+
+	@Test
+	public void testConcatInfixNull() throws Exception {
+		assertQueryEqualsNull("using nll: '' ++ nll");
+		assertQueryEqualsNull("using nll: nll ++ ''");
+		assertQueryEqualsNull("using nll: nll ++ nll");
 	}
 
 	@Test
@@ -81,7 +93,28 @@ public class StringFunctionTest extends GenericTest {
 	}
 
 	@Test
-	public void testSplitt() throws Exception {
+	public void testReMatchNull() throws Exception {
+		assertQueryEqualsNull("using nll: reMatch('', nll)");
+		assertQueryEqualsNull("using nll: reMatch(nll, '')");
+		assertQueryEqualsNull("using nll: reMatch(nll, nll)");
+	}
+
+	@Test
+	public void testReMatchInfix() throws Exception {
+		assertQueryEquals("'aaabbbb' =~ '[a]+[b]+'", true);
+		assertQueryEquals("'aaa' =~ '[a]+[b]+'", false);
+		assertQueryEquals("'aaabc' =~ '[a]+[b]+'", false);
+	}
+
+	@Test
+	public void testReMatchInfixNull() throws Exception {
+		assertQueryEqualsNull("using nll: '' =~ nll");
+		assertQueryEqualsNull("using nll: nll =~ ''");
+		assertQueryEqualsNull("using nll: nll =~ nll");
+	}
+
+	@Test
+	public void testSplit() throws Exception {
 
 		assertQueryEquals("split('aaabc', '[a]+[b]+')", Arrays.asList("", "c"));
 		assertQueryEqualsQuery("split('Eckhard-Großmann', '-')",
@@ -91,5 +124,12 @@ public class StringFunctionTest extends GenericTest {
 				"list('Softwar', '', 'T', 'chnik')");
 		assertQueryEqualsQuery("split('JGraLab', '\\p{javaLowerCase}')",
 				"list('JG', '', 'L')");
+	}
+
+	@Test
+	public void testSplitNull() throws Exception {
+		assertQueryEqualsNull("using nll: split('', nll)");
+		assertQueryEqualsNull("using nll: split(nll, '')");
+		assertQueryEqualsNull("using nll: split(nll, nll)");
 	}
 }

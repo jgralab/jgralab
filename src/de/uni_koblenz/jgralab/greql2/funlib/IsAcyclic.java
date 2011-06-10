@@ -88,14 +88,20 @@ public class IsAcyclic extends Greql2Function {
 	public JValue evaluate(Graph graph,
 			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
 			throws EvaluateException {
+
+		if (checkArguments(arguments) == -1) {
+			throw new WrongFunctionParameterException(this, arguments);
+		}
+		if (isAnyArgumentNull(arguments)) {
+			return new JValueImpl();
+		}
+
 		switch (checkArguments(arguments)) {
 		case 0:
 			break;
 		case 1:
 			subgraph = arguments[0].toGraphMarker();
 			break;
-		default:
-			throw new WrongFunctionParameterException(this, arguments);
 		}
 
 		Greql2Function topoSort = Greql2FunctionLibrary.instance()

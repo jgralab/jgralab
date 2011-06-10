@@ -43,6 +43,7 @@ import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
@@ -97,6 +98,11 @@ public class Get extends Greql2Function {
 	public JValue evaluate(Graph graph,
 			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
 			throws EvaluateException {
+
+		if (isAnyArgumentNull(arguments)) {
+			return new JValueImpl();
+		}
+
 		switch (checkArguments(arguments)) {
 		case 0:
 			return arguments[0].toJValueMap().get(arguments[1]);
@@ -106,7 +112,7 @@ public class Get extends Greql2Function {
 			try {
 				return col.toJValueList().get(index);
 			} catch (Exception ex) {
-				throw new EvaluateException("Index out of bounds: " + col, ex);
+				throw new EvaluateException("Index out of bounds", ex);
 			}
 		default:
 			throw new WrongFunctionParameterException(this, arguments);

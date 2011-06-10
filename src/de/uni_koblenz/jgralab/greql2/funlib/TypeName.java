@@ -90,6 +90,11 @@ public class TypeName extends Greql2Function {
 			throws EvaluateException {
 		AttributedElementClass aec = null;
 		AttributedElement elem = null;
+
+		if (arguments[0].toObject() == null) {
+			return new JValueImpl();
+		}
+
 		switch (checkArguments(arguments)) {
 		case 0:
 			elem = arguments[0].toAttributedElement();
