@@ -1,7 +1,6 @@
 package de.uni_koblenz.jgralab.eca;
 
 
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 

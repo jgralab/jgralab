@@ -9,6 +9,9 @@ public class ChangeAttributeEvent extends Event {
 	 */
 	private String concernedAttribute;
 
+	private Object latesOldValue;
+	private Object latestNewValue;
+
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 	/**
@@ -56,13 +59,24 @@ public class ChangeAttributeEvent extends Event {
 	 * @param attributeName
 	 *            the name of the changing or changed Attribute
 	 */
-	public void fire(AttributedElement element, String attributeName){
+	public void fire(AttributedElement element, String attributeName,
+			Object oldValue, Object newValue) {
 		if(concernedAttribute.equals(attributeName)){
+			this.latesOldValue = oldValue;
+			this.latestNewValue = newValue;
 			this.fire(element);
 		}
 	}
 	
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+	public Object getLatesOldValue() {
+		return latesOldValue;
+	}
+
+	public Object getLatestNewValue() {
+		return latestNewValue;
+	}
 
 	/**
 	 * @return the name of the monitored Attribute
