@@ -6,6 +6,7 @@ import java.util.List;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
+import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.eca.events.ChangeAttributeEvent;
 import de.uni_koblenz.jgralab.eca.events.ChangeEdgeEvent;
 import de.uni_koblenz.jgralab.eca.events.CreateEdgeEvent;
@@ -204,9 +205,10 @@ public class ECARuleManager {
 	 * @param element
 	 *            the Edge that will change
 	 */
-	public void fireBeforeChangeEdgeEvents(GraphElement element) {
+	public void fireBeforeChangeEdgeEvents(GraphElement element,
+			Vertex oldVertex, Vertex newVertex) {
 		for(ChangeEdgeEvent ev : beforeChangeEdgeEvents){
-			ev.fire(element);
+			ev.fire(element, oldVertex, newVertex);
 		}
 	}
 	
@@ -216,9 +218,10 @@ public class ECARuleManager {
 	 * @param element
 	 *            the Edge that changed
 	 */
-	public void fireAfterChangeEdgeEvents(GraphElement element) {
+	public void fireAfterChangeEdgeEvents(GraphElement element,
+			Vertex oldVertex, Vertex newVertex) {
 		for(ChangeEdgeEvent ev : afterChangeEdgeEvents){
-			ev.fire(element);
+			ev.fire(element, oldVertex, newVertex);
 		}
 	}
 	

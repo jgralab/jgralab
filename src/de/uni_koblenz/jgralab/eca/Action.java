@@ -10,8 +10,7 @@ public abstract class Action {
 	/**
 	 * Executes the action
 	 */
-	public void doAction() {
-	}
+	public abstract void doAction();
 
 	// +++++++++++++++++++++++++++++++++++++++++++++++++
 

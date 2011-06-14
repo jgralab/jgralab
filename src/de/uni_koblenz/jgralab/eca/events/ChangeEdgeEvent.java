@@ -1,8 +1,12 @@
 package de.uni_koblenz.jgralab.eca.events;
 
 import de.uni_koblenz.jgralab.AttributedElement;
+import de.uni_koblenz.jgralab.Vertex;
 
 public class ChangeEdgeEvent extends Event {
+
+	Vertex latestOldVertex;
+	Vertex latesNewVertex;
 
 	/**
 	 * Creates an ChangeEdgeEvent with the given parameters
@@ -27,6 +31,21 @@ public class ChangeEdgeEvent extends Event {
 	 */
 	public ChangeEdgeEvent(EventTime time, String contextExpr) {
 		super(time, contextExpr);
+	}
+
+	public void fire(AttributedElement element, Vertex oldVertex,
+			Vertex newVertex) {
+		this.latestOldVertex = oldVertex;
+		this.latesNewVertex = newVertex;
+		super.fire(element);
+	}
+
+	public Vertex getLatestOldVertex() {
+		return latestOldVertex;
+	}
+
+	public Vertex getLatesNewVertex() {
+		return latesNewVertex;
 	}
 
 }
