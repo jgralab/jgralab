@@ -231,9 +231,9 @@ public class ECARuleManager {
 	 *            the name of the Attribute that will change
 	 */
 	public void fireBeforeChangeAttributeEvents(AttributedElement element,
-			String attributeName) {
+			String attributeName, Object oldValue, Object newValue) {
 		for(ChangeAttributeEvent ev : beforeChangeAttributeEvents){
-			ev.fire(element, attributeName);
+			ev.fire(element, attributeName, oldValue, newValue);
 		}
 	}
 	
@@ -246,9 +246,9 @@ public class ECARuleManager {
 	 *            the name of the changed Attribute
 	 */
 	public void fireAfterChangeAttributeEvents(AttributedElement element,
-			String attributeName) {
+			String attributeName, Object oldValue, Object newValue) {
 		for(ChangeAttributeEvent ev : afterChangeAttributeEvents){
-			ev.fire(element, attributeName);
+			ev.fire(element, attributeName, oldValue, newValue);
 		}
 	}
 

@@ -99,9 +99,11 @@ public abstract class GraphElementImpl implements GraphElement {
 	 * @param name
 	 *            of the changing Attribute
 	 */
-	public void ecaAttributeChanging(String name){
+	public void ecaAttributeChanging(String name, Object oldValue,
+			Object newValue) {
 		if (!this.graph.isLoading()) {
-			this.graph.getECARuleManager().fireBeforeChangeAttributeEvents(this,name);
+			this.graph.getECARuleManager().fireBeforeChangeAttributeEvents(
+					this, name, oldValue, newValue);
 		}
 	}
 	
@@ -111,9 +113,11 @@ public abstract class GraphElementImpl implements GraphElement {
 	 * @param name
 	 *            of the changed Attribute
 	 */
-	public void ecaAttributeChanged(String name){
+	public void ecaAttributeChanged(String name, Object oldValue,
+			Object newValue) {
 		if (!this.graph.isLoading()) {
-			this.graph.getECARuleManager().fireAfterChangeAttributeEvents(this,name);
+			this.graph.getECARuleManager().fireAfterChangeAttributeEvents(this,
+					name, oldValue, newValue);
 		}
 	}
 
