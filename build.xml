@@ -220,6 +220,10 @@
 	  <tgschema2java sourcePath="${testcases.dir}" implementationMode="standard">
 	    <fileset dir="${testschemas.dir}/gretl" includes="*.tg" />
 	  </tgschema2java>
+	  <!-- The ECA test schemas -->
+	  <tgschema2java sourcePath="${testcases.dir}" implementationMode="standard">
+	    <fileset dir="${testschemas.dir}/eca" includes="*.tg" />
+	  </tgschema2java>
 	</target>
 
 	<!-- GReTL -->

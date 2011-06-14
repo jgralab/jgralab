@@ -23,7 +23,7 @@ public class GretlTransformAction extends Action {
 	 * @param transformationClass
 	 *            the Transformation Class
 	 */
-	public GretlTransformAction(
+	public GretlTransformAction(// ) {
 			Class<? extends Transformation<Graph>> transformationClass) {
 		this.transformationClass = transformationClass;
 	}
