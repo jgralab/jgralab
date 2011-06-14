@@ -1,0 +1,17 @@
+// JGraLab - The Java graph laboratory
+//   Version : Efraasia
+//   Revision: 3455:af36938158ca
+
+TGraph 2;
+Schema de.uni_koblenz.jgralabtest.eca.schemas.simplelibrary.SimpleLibrarySchema;
+GraphClass SimpleLibraryGraph { version: String };
+RecordDomain Date ( day: Integer, month: Integer, year: Integer );
+EnumDomain MediaType ( VHS, DVD, CD, CASSETTE, BLUERAY );
+VertexClass Book: Medium { author: String };
+VertexClass Library { name: String };
+VertexClass Magazin: Medium { publisher: String,  year: Integer };
+abstract VertexClass Medium { title: String };
+VertexClass NewMedia: Medium { type: MediaType };
+VertexClass User { name: String };
+EdgeClass HasMedia from Library (0,*) role library to Medium (0,*) role media aggregation shared;
+EdgeClass Loans from User (0,*) role user to Medium (0,*) role item { date: Date };
