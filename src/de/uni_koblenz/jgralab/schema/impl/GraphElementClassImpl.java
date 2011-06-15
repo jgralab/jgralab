@@ -63,11 +63,9 @@ public abstract class GraphElementClassImpl extends AttributedElementClassImpl
 		return graphClass;
 	}
 
-	@Override
-	public String toString() {
+	public String getDescriptionString() {
 		StringBuilder output = new StringBuilder(this.getClass()
-				.getSimpleName()
-				+ " '" + getQualifiedName() + "'");
+				.getSimpleName() + " '" + getQualifiedName() + "'");
 		if (isAbstract()) {
 			output.append(" (abstract)");
 		}
@@ -91,30 +89,8 @@ public abstract class GraphElementClassImpl extends AttributedElementClassImpl
 
 		if (this instanceof VertexClass) {
 			output.append("outgoing edge classes: ");
-			// boolean first = true;
-			// for (IncidenceClass ic : ((VertexClass) this)
-			// .getOwnOutIncidenceClasses()) {
-			// if (first) {
-			// first = false;
-			// } else {
-			// output.append(", ");
-			// }
-			// output.append(ic.getEdgeClass().getQualifiedName());
-			//
-			// }
 			output.append("\n");
 			output.append("incomming edge classes: ");
-			// first = true;
-			// for (IncidenceClass ic : ((VertexClass) this)
-			// .getOwnInIncidenceClasses()) {
-			// if (first) {
-			// first = false;
-			// } else {
-			// output.append(", ");
-			// }
-			// output.append(ic.getEdgeClass().getQualifiedName());
-			//
-			// }
 			output.append("\n");
 		}
 		output.append("\n");

@@ -134,7 +134,7 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 			String defaultValueAsString) {
 		addAttribute(new AttributeImpl(name, domain, this, defaultValueAsString));
 	}
-	
+
 	@Override
 	public void addAttribute(String name, Domain domain) {
 		addAttribute(new AttributeImpl(name, domain, this, null));
@@ -438,5 +438,4 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 		}
 		return false;
 	}
-
 }

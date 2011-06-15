@@ -235,8 +235,7 @@ public final class GraphClassImpl extends AttributedElementClassImpl implements
 		return null;
 	}
 
-	@Override
-	public String toString() {
+	public String getDescriptionString() {
 		StringBuilder output = new StringBuilder("GraphClassImpl '"
 				+ getQualifiedName() + "'");
 		if (isAbstract()) {

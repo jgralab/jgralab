@@ -388,6 +388,11 @@ public abstract class NamedElementImpl implements NamedElement {
 	 */
 	protected abstract void register();
 
+	@Override
+	public String toString() {
+		return getQualifiedName();
+	}
+
 	/**
 	 * This method is invoked on one or more element's bearing the same unique
 	 * name, when a new element is added to the schema.
