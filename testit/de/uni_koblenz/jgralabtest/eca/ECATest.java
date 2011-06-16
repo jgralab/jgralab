@@ -24,6 +24,7 @@ import de.uni_koblenz.jgralabtest.eca.schemas.simplelibrary.NewMedia;
 import de.uni_koblenz.jgralabtest.eca.schemas.simplelibrary.SimpleLibraryGraph;
 import de.uni_koblenz.jgralabtest.eca.schemas.simplelibrary.SimpleLibrarySchema;
 import de.uni_koblenz.jgralabtest.eca.schemas.simplelibrary.User;
+import de.uni_koblenz.jgralabtest.eca.useractions.CreateAVertexOfSameTypeAction;
 
 public class ECATest {
 
@@ -193,7 +194,8 @@ public class ECATest {
 		SimpleLibraryGraph newGraph = SimpleLibrarySchema.instance()
 				.createSimpleLibraryGraph();
 
-		Event aft_ev = new CreateVertexEvent(Event.EventTime.AFTER, User.class);
+		Event aft_ev = new CreateVertexEvent(Event.EventTime.AFTER,
+				Library.class);
 
 		Action aft_act = new PrintAction(
 				"ECA Test Message: Failure Test old Graph.");
@@ -212,7 +214,8 @@ public class ECATest {
 		SimpleLibraryGraph newGraph = SimpleLibrarySchema.instance()
 				.createSimpleLibraryGraph();
 
-		Event aft_ev = new CreateVertexEvent(Event.EventTime.AFTER, User.class);
+		Event aft_ev = new CreateVertexEvent(Event.EventTime.AFTER,
+				Library.class);
 		Action aft_act = new PrintAction(
 				"ECA Test Message: Failure Test two Graphs.");
 		ECARule aft_rule = new ECARule(aft_ev, aft_act);
@@ -220,6 +223,37 @@ public class ECATest {
 		simlibgraph.getECARuleManager().addECARule(aft_rule);
 		newGraph.getECARuleManager().addECARule(aft_rule);
 	}
+
+
+	@Test
+	public void testNeverEndingCreationStop() {
+		Event bef_ev = new CreateVertexEvent(Event.EventTime.BEFORE, User.class);
+		Action bef_act = new CreateAVertexOfSameTypeAction();
+		ECARule bef_rule = new ECARule(bef_ev, bef_act);
+		simlibgraph.getECARuleManager().addECARule(bef_rule);
+
+		// allow only 5 nested triggers
+		simlibgraph.getECARuleManager().setMaxNestedTriggerCalls(5);
+
+		simlibgraph.createUser();
+
+		simlibgraph.getECARuleManager().deleteECARule(bef_rule);
+	}
+
+	@Test
+	public void testGenerationOf20Users() {
+		Event bef_ev = new CreateVertexEvent(Event.EventTime.AFTER, User.class);
+		Condition aft_cond = new Condition("count (V{User}) < 20");
+		Action bef_act = new CreateAVertexOfSameTypeAction();
+		ECARule bef_rule = new ECARule(bef_ev, aft_cond, bef_act);
+		simlibgraph.getECARuleManager().addECARule(bef_rule);
+
+		simlibgraph.getECARuleManager().setMaxNestedTriggerCalls(50);
+
+		simlibgraph.createUser();
+	}
+
+
 
 	static void initGraph() {
 		SimpleLibraryGraph graph = SimpleLibrarySchema.instance()

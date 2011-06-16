@@ -1,0 +1,82 @@
+package de.uni_koblenz.jgralabtest.eca;
+
+import static org.junit.Assert.assertEquals;
+
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import de.uni_koblenz.jgralab.eca.Action;
+import de.uni_koblenz.jgralab.eca.ECARule;
+import de.uni_koblenz.jgralab.eca.GretlTransformAction;
+import de.uni_koblenz.jgralab.eca.events.DeleteVertexEvent;
+import de.uni_koblenz.jgralab.eca.events.Event;
+import de.uni_koblenz.jgralabtest.gretl.SimpleCopyTransformation;
+import de.uni_koblenz.jgralabtest.gretl.schemas.addressbook.AddressBook;
+import de.uni_koblenz.jgralabtest.gretl.schemas.addressbook.AddressBookGraph;
+import de.uni_koblenz.jgralabtest.gretl.schemas.addressbook.AddressBookSchema;
+import de.uni_koblenz.jgralabtest.gretl.schemas.addressbook.Contact;
+
+public class ECATestGretlAction {
+
+	private static AddressBookGraph testGraph;
+
+	@BeforeClass
+	public static void setUp() {
+		System.out.println("Start ECA Test with Gretl Transformation Action.");
+		initGraph();
+	}
+
+	private static void initGraph() {
+		AddressBookGraph g = AddressBookSchema.instance()
+				.createAddressBookGraph();
+		AddressBook ab1 = g.createAddressBook();
+		ab1.set_name("Democrats");
+		Contact c1 = g.createContact();
+		c1.set_name("Barack Obama");
+		c1.set_address("Honolulu, Hawaii, USA");
+		g.createContains(ab1, c1);
+		Contact c2 = g.createContact();
+		c2.set_name("Bill Clinton");
+		c2.set_address("Hope, Arkansas, USA");
+		g.createContains(ab1, c2);
+
+		AddressBook ab2 = g.createAddressBook();
+		ab2.set_name("Republicans");
+		Contact c3 = g.createContact();
+		c3.set_name("George Bush");
+		c3.set_address("New Haven, Connecticut, USA");
+		g.createContains(ab2, c3);
+		Contact c4 = g.createContact();
+		c4.set_name("Ronald Reagan");
+		c4.set_address("Tampico, Illinois, USA");
+		g.createContains(ab2, c4);
+
+		testGraph = g;
+	}
+
+	@AfterClass
+	public static void tearDown() {
+		System.out.println("Finish ECA Test with Gretl Transformation Action.");
+	}
+
+	@Test
+	public void testDoGretlTransformAsAction() {
+		Contact c5 = testGraph.createContact();
+
+		Event bef_ev = new DeleteVertexEvent(Event.EventTime.BEFORE,
+				Contact.class);
+		Action bef_act = new GretlTransformAction(
+				SimpleCopyTransformation.class);
+		ECARule bef_rule = new ECARule(bef_ev, bef_act);
+		testGraph.getECARuleManager().addECARule(bef_rule);
+
+		int oldVCount = testGraph.getVCount();
+
+		testGraph.deleteVertex(c5);
+
+		// Duplicate all Vertices and then take the deleted one away
+		assertEquals(testGraph.getVCount(), oldVCount * 2 - 1);
+
+	}
+}
