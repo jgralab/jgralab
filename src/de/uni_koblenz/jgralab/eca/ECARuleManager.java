@@ -27,6 +27,10 @@ public class ECARuleManager {
 	 */
 	private List<ECARule> rules;
 
+	private int nestedTriggerCalls = 0;
+	private int maxNestedTriggerCalls = 30;
+	private boolean blocked = false;
+
 	/*
 	 * CreateVertexEvents
 	 */
@@ -107,9 +111,14 @@ public class ECARuleManager {
 	 */
 	public void fireBeforeCreateVertexEvents(
 			Class<? extends AttributedElement> elementClass) {
+		if (this.increaseAndTestOnMaximumNestedCalls()) {
+			return;
+		}
 		for(CreateVertexEvent ev : beforeCreateVertexEvents){
 			ev.fire(elementClass);
 		}
+		this.nestedTriggerCalls--;
+
 	}
 
 	/**
@@ -119,9 +128,14 @@ public class ECARuleManager {
 	 *            the new created Vertex
 	 */
 	public void fireAfterCreateVertexEvents(GraphElement element) {
+		if (this.increaseAndTestOnMaximumNestedCalls()) {
+			return;
+		}
 		for(CreateVertexEvent ev : afterCreateVertexEvents){
 			ev.fire(element);
 		}
+		this.nestedTriggerCalls--;
+
 	}
 
 	/**
@@ -131,9 +145,14 @@ public class ECARuleManager {
 	 *            the Vertex to delete
 	 */
 	public void fireBeforeDeleteVertexEvents(GraphElement element) {
+		if (this.increaseAndTestOnMaximumNestedCalls()) {
+			return;
+		}
 		for(DeleteVertexEvent ev : beforeDeleteVertexEvents){
 			ev.fire(element);
 		}
+		this.nestedTriggerCalls--;
+
 	}
 
 	/**
@@ -144,9 +163,14 @@ public class ECARuleManager {
 	 */
 	public void fireAfterDeleteVertexEvents(
 			Class<? extends AttributedElement> elementClass) {
+		if (this.increaseAndTestOnMaximumNestedCalls()) {
+			return;
+		}
 		for(DeleteVertexEvent ev : afterDeleteVertexEvents){
 			ev.fire(elementClass);
 		}
+		this.nestedTriggerCalls--;
+
 	}
 
 	/**
@@ -157,9 +181,15 @@ public class ECARuleManager {
 	 */
 	public void fireBeforeCreateEdgeEvents(
 			Class<? extends AttributedElement> elementClass) {
+		if (this.increaseAndTestOnMaximumNestedCalls()) {
+			return;
+		}
+
 		for(CreateEdgeEvent ev : beforeCreateEdgeEvents){
 			ev.fire(elementClass);
 		}
+		this.nestedTriggerCalls--;
+
 	}
 	
 	/**
@@ -169,9 +199,15 @@ public class ECARuleManager {
 	 *            the new created Edge
 	 */
 	public void fireAfterCreateEdgeEvents(GraphElement element) {
+		if (this.increaseAndTestOnMaximumNestedCalls()) {
+			return;
+		}
+
 		for(CreateEdgeEvent ev : afterCreateEdgeEvents){
 			ev.fire(element);
 		}
+		this.nestedTriggerCalls--;
+
 	}
 	
 	/**
@@ -181,9 +217,15 @@ public class ECARuleManager {
 	 *            the Edge to delete
 	 */
 	public void fireBeforeDeleteEdgeEvents(GraphElement element) {
+		if (this.increaseAndTestOnMaximumNestedCalls()) {
+			return;
+		}
+
 		for(DeleteEdgeEvent ev : beforeDeleteEdgeEvents){
 			ev.fire(element);
 		}
+		this.nestedTriggerCalls--;
+
 	}
 	
 	/**
@@ -194,9 +236,15 @@ public class ECARuleManager {
 	 */
 	public void fireAfterDeleteEdgeEvents(
 			Class<? extends AttributedElement> elementClass) {
+		if (this.increaseAndTestOnMaximumNestedCalls()) {
+			return;
+		}
+
 		for(DeleteEdgeEvent ev : afterDeleteEdgeEvents){
 			ev.fire(elementClass);
 		}
+		this.nestedTriggerCalls--;
+
 	}
 	
 	/**
@@ -207,9 +255,15 @@ public class ECARuleManager {
 	 */
 	public void fireBeforeChangeEdgeEvents(GraphElement element,
 			Vertex oldVertex, Vertex newVertex) {
+		if (this.increaseAndTestOnMaximumNestedCalls()) {
+			return;
+		}
+
 		for(ChangeEdgeEvent ev : beforeChangeEdgeEvents){
 			ev.fire(element, oldVertex, newVertex);
 		}
+		this.nestedTriggerCalls--;
+
 	}
 	
 	/**
@@ -220,9 +274,15 @@ public class ECARuleManager {
 	 */
 	public void fireAfterChangeEdgeEvents(GraphElement element,
 			Vertex oldVertex, Vertex newVertex) {
+		if (this.increaseAndTestOnMaximumNestedCalls()) {
+			return;
+		}
+
 		for(ChangeEdgeEvent ev : afterChangeEdgeEvents){
 			ev.fire(element, oldVertex, newVertex);
 		}
+		this.nestedTriggerCalls--;
+
 	}
 	
 	/**
@@ -235,9 +295,15 @@ public class ECARuleManager {
 	 */
 	public void fireBeforeChangeAttributeEvents(AttributedElement element,
 			String attributeName, Object oldValue, Object newValue) {
+		if (this.increaseAndTestOnMaximumNestedCalls()) {
+			return;
+		}
+
 		for(ChangeAttributeEvent ev : beforeChangeAttributeEvents){
 			ev.fire(element, attributeName, oldValue, newValue);
 		}
+		this.nestedTriggerCalls--;
+
 	}
 	
 	/**
@@ -250,12 +316,35 @@ public class ECARuleManager {
 	 */
 	public void fireAfterChangeAttributeEvents(AttributedElement element,
 			String attributeName, Object oldValue, Object newValue) {
+		if (this.increaseAndTestOnMaximumNestedCalls()) {
+			return;
+		}
+
 		for(ChangeAttributeEvent ev : afterChangeAttributeEvents){
 			ev.fire(element, attributeName, oldValue, newValue);
 		}
+		this.nestedTriggerCalls--;
 	}
 
-	// +++++ Getter ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	private boolean increaseAndTestOnMaximumNestedCalls() {
+		if (this.nestedTriggerCalls == 0) {
+			this.blocked = false;
+		}
+		if (this.blocked) {
+			return true;
+		}
+		this.nestedTriggerCalls++;
+		if (this.nestedTriggerCalls >= this.maxNestedTriggerCalls) {
+			this.blocked = true;
+			System.err
+					.println("CAUTION: Maximum nested Trigger Calls arrived, Rule evaluation aborted. Stack will become cleaned up.");
+			this.nestedTriggerCalls--;
+			return true;
+		}
+		return false;
+	}
+
+	// +++++ Getter and Setter ++++++++++++++++++++++++++++++++++++++
 	
 	/**
 	 * @return the Graph that owns this EventManager
@@ -273,7 +362,17 @@ public class ECARuleManager {
 	public List<ECARule> getRules() {
 		return rules;
 	}
+
+	public int getMaxNestedTriggerCalls() {
+		return maxNestedTriggerCalls;
+	}
+
+	public void setMaxNestedTriggerCalls(int maxNestedTriggerCalls) {
+		this.maxNestedTriggerCalls = maxNestedTriggerCalls;
+	}
+
 	// +++++ Add and delete rules ++++++++++++++++++++++++++++++++++++++++++++++
+
 
 	/**
 	 * Adds an ECARule to this ECARuleManager, throws a Runtime Exception if the

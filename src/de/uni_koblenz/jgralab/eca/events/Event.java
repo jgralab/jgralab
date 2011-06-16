@@ -34,7 +34,7 @@ public abstract class Event {
 	 */
 	private Context context;
 	
-	private enum Context{
+	public enum Context {
 		TYPE,
 		EXPRESSION
 	}
