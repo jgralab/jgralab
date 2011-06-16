@@ -1318,10 +1318,13 @@ public class SchemaImpl implements Schema {
 	 *         their edge and vertex classes, all attributes and the whole
 	 *         hierarchy of those classes
 	 */
-	@Override
-	public String toString() {
+	public String getDescriptionString() {
 		return "GraphClass of schema '" + qualifiedName + "':\n\n\n"
-				+ graphClass.toString();
+				+ ((GraphClassImpl) graphClass).getDescriptionString();
+	}
+	
+	public String toString() {
+		return getQualifiedName();
 	}
 
 	@Override
