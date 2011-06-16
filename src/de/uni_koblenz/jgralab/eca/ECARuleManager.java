@@ -387,9 +387,16 @@ public class ECARuleManager {
 					"ERROR: Tried to add an ECARule to an ECARulemanager,"
 							+ " but the ECARule has already a manager.");
 		}
+		Event ev = rule.getEvent();
+		for (ECARule temprule : ev.getActiveECARules()) {
+			if (temprule.getECARuleManager() != this) {
+				throw new RuntimeException(
+						"ERROR: Tried to add an ECARule to an ECARulemanager,"
+								+ " but the Event part monitors already another Graph.");
+			}
+		}
 		this.rules.add(rule);
 		rule.setECARuleManager(this);
-		Event ev = rule.getEvent();
 		ev.getActiveECARules().add(rule);
 		if (ev instanceof CreateVertexEvent) {
 			this.addEventToList((CreateVertexEvent) ev);

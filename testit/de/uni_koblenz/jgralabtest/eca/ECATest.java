@@ -5,6 +5,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.eca.Action;
+import de.uni_koblenz.jgralab.eca.Condition;
 import de.uni_koblenz.jgralab.eca.ECARule;
 import de.uni_koblenz.jgralab.eca.PrintAction;
 import de.uni_koblenz.jgralab.eca.events.ChangeAttributeEvent;
@@ -156,6 +157,68 @@ public class ECATest {
 		simlibgraph.getECARuleManager().addECARule(aft_rule);
 
 		book1.set_title("NewTitle");
+	}
+
+	@Test
+	public void testGrequlContextOnEvent() {
+		Event aft_ev = new CreateVertexEvent(Event.EventTime.AFTER, "V{Medium}");
+		Action aft_act = new PrintAction(
+				"ECA Test Message: New Medium created.");
+		ECARule aft_rule = new ECARule(aft_ev, aft_act);
+		simlibgraph.getECARuleManager().addECARule(aft_rule);
+
+		simlibgraph.createBook();
+
+		simlibgraph.getECARuleManager().deleteECARule(aft_rule);
+
+	}
+
+	@Test
+	public void testCondition() {
+		Event aft_ev = new CreateVertexEvent(Event.EventTime.AFTER,
+				NewMedia.class);
+		Condition aft_cond = new Condition("count( V{NewMedia} ) = 2");
+		Action aft_act = new PrintAction(
+				"ECA Test Message: New Medium after Condition Test created. "
+						+ "This message should appear only once.");
+		ECARule aft_rule = new ECARule(aft_ev, aft_cond, aft_act);
+		simlibgraph.getECARuleManager().addECARule(aft_rule);
+
+		simlibgraph.createNewMedia();
+		simlibgraph.createNewMedia();
+	}
+
+	@Test(expected = RuntimeException.class)
+	public void testAddEventTo2Graphs() {
+		SimpleLibraryGraph newGraph = SimpleLibrarySchema.instance()
+				.createSimpleLibraryGraph();
+
+		Event aft_ev = new CreateVertexEvent(Event.EventTime.AFTER, User.class);
+
+		Action aft_act = new PrintAction(
+				"ECA Test Message: Failure Test old Graph.");
+		ECARule aft_rule = new ECARule(aft_ev, aft_act);
+
+		Action aft_actN = new PrintAction(
+				"ECA Test Message: Failure Test new Graph.");
+		ECARule aft_ruleN = new ECARule(aft_ev, aft_actN);
+
+		simlibgraph.getECARuleManager().addECARule(aft_rule);
+		newGraph.getECARuleManager().addECARule(aft_ruleN);
+	}
+
+	@Test(expected = RuntimeException.class)
+	public void testAddRuleTo2Graphs() {
+		SimpleLibraryGraph newGraph = SimpleLibrarySchema.instance()
+				.createSimpleLibraryGraph();
+
+		Event aft_ev = new CreateVertexEvent(Event.EventTime.AFTER, User.class);
+		Action aft_act = new PrintAction(
+				"ECA Test Message: Failure Test two Graphs.");
+		ECARule aft_rule = new ECARule(aft_ev, aft_act);
+
+		simlibgraph.getECARuleManager().addECARule(aft_rule);
+		newGraph.getECARuleManager().addECARule(aft_rule);
 	}
 
 	static void initGraph() {
