@@ -25,6 +25,8 @@ import de.uni_koblenz.jgralabtest.eca.schemas.simplelibrary.SimpleLibraryGraph;
 import de.uni_koblenz.jgralabtest.eca.schemas.simplelibrary.SimpleLibrarySchema;
 import de.uni_koblenz.jgralabtest.eca.schemas.simplelibrary.User;
 import de.uni_koblenz.jgralabtest.eca.useractions.CreateAVertexOfSameTypeAction;
+import de.uni_koblenz.jgralabtest.eca.useractions.PrintNewAndOldAttributeValueAction;
+import de.uni_koblenz.jgralabtest.eca.useractions.RevertEdgeChangingAction;
 
 public class ECATest {
 
@@ -67,6 +69,9 @@ public class ECATest {
 
 		simlibgraph.deleteVertex(newBook);
 
+		simlibgraph.getECARuleManager().deleteECARule(bef_rule);
+		simlibgraph.getECARuleManager().deleteECARule(aft_rule);
+
 	}
 
 	@Test
@@ -84,6 +89,9 @@ public class ECATest {
 		simlibgraph.getECARuleManager().addECARule(aft_rule);
 
 		simlibgraph.createBook();
+
+		simlibgraph.getECARuleManager().deleteECARule(bef_rule);
+		simlibgraph.getECARuleManager().deleteECARule(aft_rule);
 
 	}
 
@@ -104,6 +112,9 @@ public class ECATest {
 		Loans newLoans = simlibgraph.createLoans(user1, newmedia1);
 		simlibgraph.deleteEdge(newLoans);
 
+		simlibgraph.getECARuleManager().deleteECARule(bef_rule);
+		simlibgraph.getECARuleManager().deleteECARule(aft_rule);
+
 	}
 
 	@Test
@@ -122,6 +133,9 @@ public class ECATest {
 
 		simlibgraph.createLoans(user1, newmedia1);
 
+		simlibgraph.getECARuleManager().deleteECARule(bef_rule);
+		simlibgraph.getECARuleManager().deleteECARule(aft_rule);
+
 	}
 
 	@Test
@@ -139,6 +153,9 @@ public class ECATest {
 		simlibgraph.getECARuleManager().addECARule(aft_rule);
 
 		loans_u1_b1.setAlpha(user2);
+
+		simlibgraph.getECARuleManager().deleteECARule(bef_rule);
+		simlibgraph.getECARuleManager().deleteECARule(aft_rule);
 	}
 
 	@Test
@@ -157,7 +174,10 @@ public class ECATest {
 		ECARule aft_rule = new ECARule(aft_ev, aft_act);
 		simlibgraph.getECARuleManager().addECARule(aft_rule);
 
-		book1.set_title("NewTitle");
+		book1.set_title("The Return of the King");
+
+		simlibgraph.getECARuleManager().deleteECARule(bef_rule);
+		simlibgraph.getECARuleManager().deleteECARule(aft_rule);
 	}
 
 	@Test
@@ -187,6 +207,8 @@ public class ECATest {
 
 		simlibgraph.createNewMedia();
 		simlibgraph.createNewMedia();
+
+		simlibgraph.getECARuleManager().deleteECARule(aft_rule);
 	}
 
 	@Test(expected = RuntimeException.class)
@@ -207,6 +229,8 @@ public class ECATest {
 
 		simlibgraph.getECARuleManager().addECARule(aft_rule);
 		newGraph.getECARuleManager().addECARule(aft_ruleN);
+
+		simlibgraph.getECARuleManager().deleteECARule(aft_rule);
 	}
 
 	@Test(expected = RuntimeException.class)
@@ -222,6 +246,8 @@ public class ECATest {
 
 		simlibgraph.getECARuleManager().addECARule(aft_rule);
 		newGraph.getECARuleManager().addECARule(aft_rule);
+
+		simlibgraph.getECARuleManager().deleteECARule(aft_rule);
 	}
 
 
@@ -251,9 +277,50 @@ public class ECATest {
 		simlibgraph.getECARuleManager().setMaxNestedTriggerCalls(50);
 
 		simlibgraph.createUser();
+
+		simlibgraph.getECARuleManager().deleteECARule(bef_rule);
 	}
 
+	@Test
+	public void testGettingOldAndNewValueFromBeforeAttributeChanging() {
+		Event bef_ev = new ChangeAttributeEvent(Event.EventTime.BEFORE,
+				Book.class, "title");
+		Action bef_act = new PrintNewAndOldAttributeValueAction();
+		ECARule bef_rule = new ECARule(bef_ev, bef_act);
+		simlibgraph.getECARuleManager().addECARule(bef_rule);
 
+		book1.set_title("Silmarillion");
+
+		simlibgraph.getECARuleManager().deleteECARule(bef_rule);
+	}
+
+	@Test
+	public void testGettingOldAndNewValueFromAfterAttributeChanging() {
+
+		Event aft_ev = new ChangeAttributeEvent(Event.EventTime.AFTER,
+				Book.class, "title");
+		Action aft_act = new PrintNewAndOldAttributeValueAction();
+		ECARule aft_rule = new ECARule(aft_ev, aft_act);
+		simlibgraph.getECARuleManager().addECARule(aft_rule);
+
+		book1.set_title("The Hobbit");
+
+		simlibgraph.getECARuleManager().deleteECARule(aft_rule);
+	}
+
+	@Test
+	public void testRevertChangedEdge() {
+		Event aft_ev = new ChangeEdgeEvent(Event.EventTime.AFTER, Loans.class);
+		Condition aft_cond = new Condition(
+				"startVertex(context).name = \"Martin King\"");
+		Action aft_act = new RevertEdgeChangingAction();
+		ECARule aft_rule = new ECARule(aft_ev, aft_cond, aft_act);
+		simlibgraph.getECARuleManager().addECARule(aft_rule);
+
+		loans_u1_b1.setAlpha(user1);
+
+		simlibgraph.getECARuleManager().deleteECARule(aft_rule);
+	}
 
 	static void initGraph() {
 		SimpleLibraryGraph graph = SimpleLibrarySchema.instance()

@@ -64,7 +64,7 @@ public class ChangeAttributeEvent extends Event {
 		if(concernedAttribute.equals(attributeName)){
 			this.latesOldValue = oldValue;
 			this.latestNewValue = newValue;
-			this.fire(element);
+			super.fire(element);
 		}
 	}
 	

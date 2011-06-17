@@ -55,6 +55,8 @@ public abstract class Event {
 	 */
 	private GreqlEvaluator eval;
 
+	private AttributedElement latestElement;
+
 	// +++++++ Constructors ++++++++++++++++++++++++++++++++++++++++++++++++++
 
 	/**
@@ -98,6 +100,7 @@ public abstract class Event {
 	 *            the AttributedElement, this Event is fired for
 	 */
 	public void fire(AttributedElement element){
+		this.latestElement = element;
 		if (this.checkContext(element)) {
 			for (ECARule rule : activeRules) {
 				rule.trigger(element);
@@ -112,6 +115,7 @@ public abstract class Event {
 	 *            Class of the element that invokes this Event
 	 */
 	public void fire(Class<? extends AttributedElement> elementClass){
+		this.latestElement = null;
 		if (this.getType().equals(elementClass)) {
 			for (ECARule rule : activeRules) {
 				rule.trigger(null);		
@@ -190,6 +194,10 @@ public abstract class Event {
 	 */
 	public Context getContext() {
 		return context;
+	}
+
+	public AttributedElement getLatestElement() {
+		return latestElement;
 	}
 	
 
