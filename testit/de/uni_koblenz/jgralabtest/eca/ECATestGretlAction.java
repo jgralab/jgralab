@@ -2,10 +2,13 @@ package de.uni_koblenz.jgralabtest.eca;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.logging.Level;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.eca.Action;
 import de.uni_koblenz.jgralab.eca.ECARule;
 import de.uni_koblenz.jgralab.eca.GretlTransformAction;
@@ -24,6 +27,7 @@ public class ECATestGretlAction {
 	@BeforeClass
 	public static void setUp() {
 		System.out.println("Start ECA Test with Gretl Transformation Action.");
+		JGraLab.setLogLevel(Level.INFO);
 		initGraph();
 	}
 

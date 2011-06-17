@@ -1,9 +1,14 @@
 package de.uni_koblenz.jgralabtest.eca;
 
+import static org.junit.Assert.assertEquals;
+
+import java.util.logging.Level;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.eca.Action;
 import de.uni_koblenz.jgralab.eca.Condition;
 import de.uni_koblenz.jgralab.eca.ECARule;
@@ -27,6 +32,7 @@ import de.uni_koblenz.jgralabtest.eca.schemas.simplelibrary.User;
 import de.uni_koblenz.jgralabtest.eca.useractions.CreateAVertexOfSameTypeAction;
 import de.uni_koblenz.jgralabtest.eca.useractions.PrintNewAndOldAttributeValueAction;
 import de.uni_koblenz.jgralabtest.eca.useractions.RevertEdgeChangingAction;
+import de.uni_koblenz.jgralabtest.eca.useractions.RevertEdgeChangingOnHighesLevelAction;
 
 public class ECATest {
 
@@ -41,6 +47,7 @@ public class ECATest {
 	@BeforeClass
 	public static void setUp() {
 		System.out.println("Start ECA Test.");
+		JGraLab.setLogLevel(Level.OFF);
 		initGraph();
 	}
 
@@ -318,6 +325,22 @@ public class ECATest {
 		simlibgraph.getECARuleManager().addECARule(aft_rule);
 
 		loans_u1_b1.setAlpha(user1);
+
+		assertEquals(loans_u1_b1.getAlpha(), user2);
+
+		simlibgraph.getECARuleManager().deleteECARule(aft_rule);
+	}
+
+	@Test
+	public void testRevertChangedEdge2() {
+		Event aft_ev = new ChangeEdgeEvent(Event.EventTime.AFTER, Loans.class);
+		Action aft_act = new RevertEdgeChangingOnHighesLevelAction();
+		ECARule aft_rule = new ECARule(aft_ev, aft_act);
+		simlibgraph.getECARuleManager().addECARule(aft_rule);
+
+		loans_u1_b1.setAlpha(user1);
+
+		assertEquals(loans_u1_b1.getAlpha(), user2);
 
 		simlibgraph.getECARuleManager().deleteECARule(aft_rule);
 	}
