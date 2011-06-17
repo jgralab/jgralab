@@ -374,6 +374,10 @@ public class ECARuleManager {
 	// +++++ Add and delete rules ++++++++++++++++++++++++++++++++++++++++++++++
 
 
+	public int getNestedTriggerCalls() {
+		return nestedTriggerCalls;
+	}
+
 	/**
 	 * Adds an ECARule to this ECARuleManager, throws a Runtime Exception if the
 	 * ECARule has already an ECARuleManager
