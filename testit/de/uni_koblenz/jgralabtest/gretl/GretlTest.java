@@ -941,6 +941,21 @@ public class GretlTest {
 	}
 
 	@Test
+	public void familyGraph2GenealogyICMT2011Simple() throws Exception {
+		targetFileName = "familyGraph2GenealogyICMT2011Simple";
+
+		System.out.println(">>> " + targetFileName);
+
+		context = new Context("icmt2011.simple.GenealogySchema", "Genealogy");
+		context.setSourceGraph(sourceFamilyGraph);
+		File tf = getTransformationFile("transforms/F2G_ICMT2011-simple.gretl");
+		Graph tg = new ExecuteTransformation(context, tf).execute();
+		assertNotNull(tg);
+		assertEquals(sourceFamilyGraph.getVCount() - 3, tg.getVCount());
+		context.printImgMappings();
+	}
+
+	@Test
 	public void familyGraph2GenealogyConcreteSyntax() throws Exception {
 		targetFileName = "familyGraph2GenealogyConcreteSyntax";
 
