@@ -9,6 +9,7 @@ import java.lang.annotation.Target;
 import java.lang.reflect.Method;
 import java.util.logging.Logger;
 
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.exception.Greql2Exception;
@@ -202,7 +203,8 @@ public abstract class Transformation<T> {
 					}
 					Tg2Dot.convertGraph(context.getTargetGraph(), "__debug_"
 							+ (EXECUTION_STEP++) + "_" + name + ".pdf",
-							DEBUG_REVERSE_EDGES, GraphVizOutputFormat.PDF);
+							DEBUG_REVERSE_EDGES, GraphVizOutputFormat.PDF,
+							(Class<? extends AttributedElement>[]) null);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
