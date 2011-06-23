@@ -13,13 +13,13 @@ import de.uni_koblenz.jgralab.eca.Action;
 import de.uni_koblenz.jgralab.eca.Condition;
 import de.uni_koblenz.jgralab.eca.ECARule;
 import de.uni_koblenz.jgralab.eca.PrintAction;
-import de.uni_koblenz.jgralab.eca.events.ChangeAttributeEvent;
-import de.uni_koblenz.jgralab.eca.events.ChangeEdgeEvent;
-import de.uni_koblenz.jgralab.eca.events.CreateEdgeEvent;
-import de.uni_koblenz.jgralab.eca.events.CreateVertexEvent;
-import de.uni_koblenz.jgralab.eca.events.DeleteEdgeEvent;
-import de.uni_koblenz.jgralab.eca.events.DeleteVertexEvent;
-import de.uni_koblenz.jgralab.eca.events.Event;
+import de.uni_koblenz.jgralab.eca.events.ChangeAttributeEventDescription;
+import de.uni_koblenz.jgralab.eca.events.ChangeEdgeEventDescription;
+import de.uni_koblenz.jgralab.eca.events.CreateEdgeEventDescription;
+import de.uni_koblenz.jgralab.eca.events.CreateVertexEventDescription;
+import de.uni_koblenz.jgralab.eca.events.DeleteEdgeEventDescription;
+import de.uni_koblenz.jgralab.eca.events.DeleteVertexEventDescription;
+import de.uni_koblenz.jgralab.eca.events.EventDescription;
 import de.uni_koblenz.jgralabtest.eca.schemas.simplelibrary.Book;
 import de.uni_koblenz.jgralabtest.eca.schemas.simplelibrary.Library;
 import de.uni_koblenz.jgralabtest.eca.schemas.simplelibrary.Loans;
@@ -62,13 +62,13 @@ public class ECATest {
 
 		Book newBook = simlibgraph.createBook();
 
-		Event bef_ev = new DeleteVertexEvent(Event.EventTime.BEFORE, Book.class);
+		EventDescription bef_ev = new DeleteVertexEventDescription(EventDescription.EventTime.BEFORE, Book.class);
 		Action bef_act = new PrintAction(
 				"ECA Test Message: Book Vertex will become deleted.");
 		ECARule bef_rule = new ECARule(bef_ev, bef_act);
 		simlibgraph.getECARuleManager().addECARule(bef_rule);
 
-		Event aft_ev = new DeleteVertexEvent(Event.EventTime.AFTER, Book.class);
+		EventDescription aft_ev = new DeleteVertexEventDescription(EventDescription.EventTime.AFTER, Book.class);
 		Action aft_act = new PrintAction(
 				"ECA Test Message: Book Vertex is deleted.");
 		ECARule aft_rule = new ECARule(aft_ev, aft_act);
@@ -83,13 +83,13 @@ public class ECATest {
 
 	@Test
 	public void testCreateVertexEvent() {
-		Event bef_ev = new CreateVertexEvent(Event.EventTime.BEFORE, Book.class);
+		EventDescription bef_ev = new CreateVertexEventDescription(EventDescription.EventTime.BEFORE, Book.class);
 		Action bef_act = new PrintAction(
 				"ECA Test Message: New Book Vertex will become created.");
 		ECARule bef_rule = new ECARule(bef_ev, bef_act);
 		simlibgraph.getECARuleManager().addECARule(bef_rule);
 
-		Event aft_ev = new CreateVertexEvent(Event.EventTime.AFTER, Book.class);
+		EventDescription aft_ev = new CreateVertexEventDescription(EventDescription.EventTime.AFTER, Book.class);
 		Action aft_act = new PrintAction(
 				"ECA Test Message: New Book Vertex is created.");
 		ECARule aft_rule = new ECARule(aft_ev, aft_act);
@@ -104,13 +104,13 @@ public class ECATest {
 
 	@Test
 	public void testDeleteEdgeEvent() {
-		Event bef_ev = new DeleteEdgeEvent(Event.EventTime.BEFORE, Loans.class);
+		EventDescription bef_ev = new DeleteEdgeEventDescription(EventDescription.EventTime.BEFORE, Loans.class);
 		Action bef_act = new PrintAction(
 				"ECA Test Message: Loans Edge will become deleted.");
 		ECARule bef_rule = new ECARule(bef_ev, bef_act);
 		simlibgraph.getECARuleManager().addECARule(bef_rule);
 
-		Event aft_ev = new DeleteEdgeEvent(Event.EventTime.AFTER, Loans.class);
+		EventDescription aft_ev = new DeleteEdgeEventDescription(EventDescription.EventTime.AFTER, Loans.class);
 		Action aft_act = new PrintAction(
 				"ECA Test Message: Loans Edge is deleted.");
 		ECARule aft_rule = new ECARule(aft_ev, aft_act);
@@ -126,13 +126,13 @@ public class ECATest {
 
 	@Test
 	public void testCreateEdgeEvent() {
-		Event bef_ev = new CreateEdgeEvent(Event.EventTime.BEFORE, Loans.class);
+		EventDescription bef_ev = new CreateEdgeEventDescription(EventDescription.EventTime.BEFORE, Loans.class);
 		Action bef_act = new PrintAction(
 				"ECA Test Message: New Loans Edge will become created.");
 		ECARule bef_rule = new ECARule(bef_ev, bef_act);
 		simlibgraph.getECARuleManager().addECARule(bef_rule);
 
-		Event aft_ev = new CreateEdgeEvent(Event.EventTime.AFTER, Loans.class);
+		EventDescription aft_ev = new CreateEdgeEventDescription(EventDescription.EventTime.AFTER, Loans.class);
 		Action aft_act = new PrintAction(
 				"ECA Test Message: New Loans Edge is created.");
 		ECARule aft_rule = new ECARule(aft_ev, aft_act);
@@ -147,13 +147,13 @@ public class ECATest {
 
 	@Test
 	public void testChangeEdgeEvent() {
-		Event bef_ev = new ChangeEdgeEvent(Event.EventTime.BEFORE, Loans.class);
+		EventDescription bef_ev = new ChangeEdgeEventDescription(EventDescription.EventTime.BEFORE, Loans.class);
 		Action bef_act = new PrintAction(
 				"ECA Test Message: Loans Edge will become changed.");
 		ECARule bef_rule = new ECARule(bef_ev, bef_act);
 		simlibgraph.getECARuleManager().addECARule(bef_rule);
 
-		Event aft_ev = new ChangeEdgeEvent(Event.EventTime.AFTER, Loans.class);
+		EventDescription aft_ev = new ChangeEdgeEventDescription(EventDescription.EventTime.AFTER, Loans.class);
 		Action aft_act = new PrintAction(
 				"ECA Test Message: Loans Edge is changed.");
 		ECARule aft_rule = new ECARule(aft_ev, aft_act);
@@ -167,14 +167,14 @@ public class ECATest {
 
 	@Test
 	public void testChangeAttributeEvent() {
-		Event bef_ev = new ChangeAttributeEvent(Event.EventTime.BEFORE,
+		EventDescription bef_ev = new ChangeAttributeEventDescription(EventDescription.EventTime.BEFORE,
 				Book.class, "title");
 		Action bef_act = new PrintAction(
 				"ECA Test Message: Title of Book Vertex will become changed.");
 		ECARule bef_rule = new ECARule(bef_ev, bef_act);
 		simlibgraph.getECARuleManager().addECARule(bef_rule);
 
-		Event aft_ev = new ChangeAttributeEvent(Event.EventTime.AFTER,
+		EventDescription aft_ev = new ChangeAttributeEventDescription(EventDescription.EventTime.AFTER,
 				Book.class, "title");
 		Action aft_act = new PrintAction(
 				"ECA Test Message: Title of Book Vertex is changed.");
@@ -189,7 +189,7 @@ public class ECATest {
 
 	@Test
 	public void testGrequlContextOnEvent() {
-		Event aft_ev = new CreateVertexEvent(Event.EventTime.AFTER, "V{Medium}");
+		EventDescription aft_ev = new CreateVertexEventDescription(EventDescription.EventTime.AFTER, "V{Medium}");
 		Action aft_act = new PrintAction(
 				"ECA Test Message: New Medium created.");
 		ECARule aft_rule = new ECARule(aft_ev, aft_act);
@@ -203,7 +203,7 @@ public class ECATest {
 
 	@Test
 	public void testCondition() {
-		Event aft_ev = new CreateVertexEvent(Event.EventTime.AFTER,
+		EventDescription aft_ev = new CreateVertexEventDescription(EventDescription.EventTime.AFTER,
 				NewMedia.class);
 		Condition aft_cond = new Condition("count( V{NewMedia} ) = 2");
 		Action aft_act = new PrintAction(
@@ -223,7 +223,7 @@ public class ECATest {
 		SimpleLibraryGraph newGraph = SimpleLibrarySchema.instance()
 				.createSimpleLibraryGraph();
 
-		Event aft_ev = new CreateVertexEvent(Event.EventTime.AFTER,
+		EventDescription aft_ev = new CreateVertexEventDescription(EventDescription.EventTime.AFTER,
 				Library.class);
 
 		Action aft_act = new PrintAction(
@@ -245,7 +245,7 @@ public class ECATest {
 		SimpleLibraryGraph newGraph = SimpleLibrarySchema.instance()
 				.createSimpleLibraryGraph();
 
-		Event aft_ev = new CreateVertexEvent(Event.EventTime.AFTER,
+		EventDescription aft_ev = new CreateVertexEventDescription(EventDescription.EventTime.AFTER,
 				Library.class);
 		Action aft_act = new PrintAction(
 				"ECA Test Message: Failure Test two Graphs.");
@@ -260,7 +260,7 @@ public class ECATest {
 
 	@Test
 	public void testNeverEndingCreationStop() {
-		Event bef_ev = new CreateVertexEvent(Event.EventTime.BEFORE, User.class);
+		EventDescription bef_ev = new CreateVertexEventDescription(EventDescription.EventTime.BEFORE, User.class);
 		Action bef_act = new CreateAVertexOfSameTypeAction();
 		ECARule bef_rule = new ECARule(bef_ev, bef_act);
 		simlibgraph.getECARuleManager().addECARule(bef_rule);
@@ -275,7 +275,7 @@ public class ECATest {
 
 	@Test
 	public void testGenerationOf20Users() {
-		Event bef_ev = new CreateVertexEvent(Event.EventTime.AFTER, User.class);
+		EventDescription bef_ev = new CreateVertexEventDescription(EventDescription.EventTime.AFTER, User.class);
 		Condition aft_cond = new Condition("count (V{User}) < 20");
 		Action bef_act = new CreateAVertexOfSameTypeAction();
 		ECARule bef_rule = new ECARule(bef_ev, aft_cond, bef_act);
@@ -290,7 +290,7 @@ public class ECATest {
 
 	@Test
 	public void testGettingOldAndNewValueFromBeforeAttributeChanging() {
-		Event bef_ev = new ChangeAttributeEvent(Event.EventTime.BEFORE,
+		EventDescription bef_ev = new ChangeAttributeEventDescription(EventDescription.EventTime.BEFORE,
 				Book.class, "title");
 		Action bef_act = new PrintNewAndOldAttributeValueAction();
 		ECARule bef_rule = new ECARule(bef_ev, bef_act);
@@ -304,7 +304,7 @@ public class ECATest {
 	@Test
 	public void testGettingOldAndNewValueFromAfterAttributeChanging() {
 
-		Event aft_ev = new ChangeAttributeEvent(Event.EventTime.AFTER,
+		EventDescription aft_ev = new ChangeAttributeEventDescription(EventDescription.EventTime.AFTER,
 				Book.class, "title");
 		Action aft_act = new PrintNewAndOldAttributeValueAction();
 		ECARule aft_rule = new ECARule(aft_ev, aft_act);
@@ -317,7 +317,7 @@ public class ECATest {
 
 	@Test
 	public void testRevertChangedEdge() {
-		Event aft_ev = new ChangeEdgeEvent(Event.EventTime.AFTER, Loans.class);
+		EventDescription aft_ev = new ChangeEdgeEventDescription(EventDescription.EventTime.AFTER, Loans.class);
 		Condition aft_cond = new Condition(
 				"startVertex(context).name = \"Martin King\"");
 		Action aft_act = new RevertEdgeChangingAction();
@@ -333,7 +333,7 @@ public class ECATest {
 
 	@Test
 	public void testRevertChangedEdge2() {
-		Event aft_ev = new ChangeEdgeEvent(Event.EventTime.AFTER, Loans.class);
+		EventDescription aft_ev = new ChangeEdgeEventDescription(EventDescription.EventTime.AFTER, Loans.class);
 		Action aft_act = new RevertEdgeChangingOnHighesLevelAction();
 		ECARule aft_rule = new ECARule(aft_ev, aft_act);
 		simlibgraph.getECARuleManager().addECARule(aft_rule);

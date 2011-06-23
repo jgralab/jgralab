@@ -2,8 +2,8 @@ package de.uni_koblenz.jgralabtest.eca.useractions;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.eca.Action;
-import de.uni_koblenz.jgralab.eca.events.ChangeEdgeEvent;
-import de.uni_koblenz.jgralab.eca.events.Event;
+import de.uni_koblenz.jgralab.eca.events.ChangeEdgeEventDescription;
+import de.uni_koblenz.jgralab.eca.events.EventDescription;
 
 public class RevertEdgeChangingOnHighesLevelAction extends Action {
 
@@ -12,9 +12,9 @@ public class RevertEdgeChangingOnHighesLevelAction extends Action {
 		if (this.getRule().getECARuleManager().getNestedTriggerCalls() > 1) {
 			return;
 		}
-		Event event = this.getRule().getEvent();
-		if (event instanceof ChangeEdgeEvent) {
-			ChangeEdgeEvent cee = (ChangeEdgeEvent) event;
+		EventDescription event = this.getRule().getEvent();
+		if (event instanceof ChangeEdgeEventDescription) {
+			ChangeEdgeEventDescription cee = (ChangeEdgeEventDescription) event;
 			Edge edge = (Edge) (cee.getLatestElement());
 			if (edge.getAlpha().equals(cee.getLatesNewVertex())) {
 				System.out.println("ECA Test Action: Revert changed Edge. "
