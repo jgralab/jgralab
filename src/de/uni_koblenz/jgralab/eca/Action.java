@@ -4,11 +4,8 @@ import de.uni_koblenz.jgralab.eca.events.Event;
 
 public abstract class Action {
 
-	/**
-	 * Rule that owns this Action
-	 */
-	private ECARule rule;
 	
+
 	/**
 	 * Executes the action
 	 */
@@ -16,12 +13,6 @@ public abstract class Action {
 
 	// +++++++++++++++++++++++++++++++++++++++++++++++++
 
-	public ECARule getRule() {
-		return rule;
-	}
-
-	public void setRule(ECARule rule) {
-		this.rule = rule;
-	}
 	
+
 }

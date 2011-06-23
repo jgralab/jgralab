@@ -128,7 +128,6 @@ public class ECARule {
 	 */
 	private void setAction(Action action) {
 		this.action = action;
-		action.setRule(this);
 	}
 
 	/**

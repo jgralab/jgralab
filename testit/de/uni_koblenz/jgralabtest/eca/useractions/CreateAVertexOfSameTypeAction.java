@@ -16,8 +16,7 @@ public class CreateAVertexOfSameTypeAction extends Action {
 						.println("ECA Test Action: Create a new Vertex of Type: "
 								+ ((CreateVertexEvent) ev).getVertex()
 										.getM1Class().getName());
-				this.getRule().getECARuleManager().getGraph()
-						.createVertex(
+				ev.getGraph().createVertex(
 								(Class<? extends Vertex>) ((CreateVertexEvent) ev)
 										.getVertex().getM1Class());
 			}
