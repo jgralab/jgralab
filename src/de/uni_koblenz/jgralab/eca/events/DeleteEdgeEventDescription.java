@@ -36,7 +36,8 @@ public class DeleteEdgeEventDescription extends EventDescription {
 			int nested = this.getActiveECARules().get(0).getECARuleManager()
 					.getNestedTriggerCalls();
 			for (ECARule rule : activeRules) {
-				rule.trigger(new DeleteEdgeEvent(nested, (Edge) element));
+				rule.trigger(new DeleteEdgeEvent(nested, this.getTime(),
+						(Edge) element));
 			}
 		}
 	}
@@ -46,7 +47,7 @@ public class DeleteEdgeEventDescription extends EventDescription {
 			int nested = this.getActiveECARules().get(0).getECARuleManager()
 					.getNestedTriggerCalls();
 			for (ECARule rule : activeRules) {
-				rule.trigger(new DeleteEdgeEvent(nested, null));
+				rule.trigger(new DeleteEdgeEvent(nested, this.getTime(), null));
 			}
 		}
 	}

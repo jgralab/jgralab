@@ -37,7 +37,8 @@ public class CreateEdgeEventDescription extends EventDescription{
 			int nested = this.getActiveECARules().get(0).getECARuleManager()
 					.getNestedTriggerCalls();
 			for (ECARule rule : activeRules) {
-				rule.trigger(new CreateEdgeEvent(nested, (Edge) element));
+				rule.trigger(new CreateEdgeEvent(nested, this.getTime(),
+						(Edge) element));
 			}
 		}
 	}
@@ -47,7 +48,7 @@ public class CreateEdgeEventDescription extends EventDescription{
 			int nested = this.getActiveECARules().get(0).getECARuleManager()
 					.getNestedTriggerCalls();
 			for (ECARule rule : activeRules) {
-				rule.trigger(new CreateEdgeEvent(nested, null));
+				rule.trigger(new CreateEdgeEvent(nested, this.getTime(), null));
 			}
 		}
 	}

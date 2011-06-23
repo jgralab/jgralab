@@ -7,8 +7,9 @@ public class DeleteEdgeEvent extends Event {
 
 	private Edge edge;
 
-	public DeleteEdgeEvent(int nestedCalls, Edge edge) {
-		super(nestedCalls);
+	public DeleteEdgeEvent(int nestedCalls, EventDescription.EventTime time,
+			Edge edge) {
+		super(nestedCalls, time);
 		this.edge = edge;
 	}
 

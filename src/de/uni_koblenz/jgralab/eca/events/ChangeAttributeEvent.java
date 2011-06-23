@@ -9,11 +9,12 @@ public class ChangeAttributeEvent extends Event {
 	private Object oldValue;
 	private Object newValue;
 
-	public ChangeAttributeEvent(int nestedCalls, AttributedElement element,
+	public ChangeAttributeEvent(int nestedCalls,
+			EventDescription.EventTime time, AttributedElement element,
 			String attributeName,
 			Object oldValue,
 			Object newValue) {
-		super(nestedCalls);
+		super(nestedCalls, time);
 		this.element = element;
 		this.attributeName = attributeName;
 		this.oldValue = oldValue;

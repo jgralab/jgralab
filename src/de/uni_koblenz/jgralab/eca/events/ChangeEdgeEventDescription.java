@@ -39,7 +39,8 @@ public class ChangeEdgeEventDescription extends EventDescription {
 			int nested = this.getActiveECARules().get(0).getECARuleManager()
 					.getNestedTriggerCalls();
 			for (ECARule rule : activeRules) {
-				rule.trigger(new ChangeEdgeEvent(nested, (Edge) element,
+				rule.trigger(new ChangeEdgeEvent(nested, this.getTime(),
+						(Edge) element,
 						oldVertex, newVertex));
 			}
 		}

@@ -7,8 +7,9 @@ public class CreateVertexEvent extends Event {
 
 	private Vertex vertex;
 
-	public CreateVertexEvent(int nestedCalls, Vertex element) {
-		super(nestedCalls);
+	public CreateVertexEvent(int nestedCalls, EventDescription.EventTime time,
+			Vertex element) {
+		super(nestedCalls, time);
 
 		this.vertex = element;
 	}

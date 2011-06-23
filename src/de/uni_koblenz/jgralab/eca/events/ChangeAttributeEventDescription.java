@@ -65,7 +65,8 @@ public class ChangeAttributeEventDescription extends EventDescription {
 				int nested = this.getActiveECARules().get(0)
 						.getECARuleManager().getNestedTriggerCalls();
 				for (ECARule rule : activeRules) {
-					rule.trigger(new ChangeAttributeEvent(nested, element,
+					rule.trigger(new ChangeAttributeEvent(nested, this
+							.getTime(), element,
 							attributeName,
 							oldValue,
 							newValue));

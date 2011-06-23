@@ -10,9 +10,10 @@ public class ChangeEdgeEvent extends Event {
 	private Vertex oldVertex;
 	private Vertex newVertex;
 
-	public ChangeEdgeEvent(int nestedCalls, Edge edge, Vertex oldVertex,
+	public ChangeEdgeEvent(int nestedCalls, EventDescription.EventTime time,
+			Edge edge, Vertex oldVertex,
 			Vertex newVertex) {
-		super(nestedCalls);
+		super(nestedCalls, time);
 
 		this.edge = edge;
 		this.oldVertex = oldVertex;

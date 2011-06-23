@@ -36,7 +36,8 @@ public class DeleteVertexEventDescription extends EventDescription {
 			int nested = this.getActiveECARules().get(0).getECARuleManager()
 					.getNestedTriggerCalls();
 			for (ECARule rule : activeRules) {
-				rule.trigger(new DeleteVertexEvent(nested, (Vertex) element));
+				rule.trigger(new DeleteVertexEvent(nested, this.getTime(),
+						(Vertex) element));
 			}
 		}
 	}
@@ -46,7 +47,7 @@ public class DeleteVertexEventDescription extends EventDescription {
 			int nested = this.getActiveECARules().get(0).getECARuleManager()
 					.getNestedTriggerCalls();
 			for (ECARule rule : activeRules) {
-				rule.trigger(new DeleteVertexEvent(nested, null));
+				rule.trigger(new DeleteVertexEvent(nested, this.getTime(), null));
 			}
 		}
 	}
