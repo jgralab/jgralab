@@ -12,8 +12,8 @@ import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.eca.Action;
 import de.uni_koblenz.jgralab.eca.ECARule;
 import de.uni_koblenz.jgralab.eca.GretlTransformAction;
-import de.uni_koblenz.jgralab.eca.events.DeleteVertexEvent;
-import de.uni_koblenz.jgralab.eca.events.Event;
+import de.uni_koblenz.jgralab.eca.events.DeleteVertexEventDescription;
+import de.uni_koblenz.jgralab.eca.events.EventDescription;
 import de.uni_koblenz.jgralabtest.gretl.SimpleCopyTransformation;
 import de.uni_koblenz.jgralabtest.gretl.schemas.addressbook.AddressBook;
 import de.uni_koblenz.jgralabtest.gretl.schemas.addressbook.AddressBookGraph;
@@ -68,7 +68,7 @@ public class ECATestGretlAction {
 	public void testDoGretlTransformAsAction() {
 		Contact c5 = testGraph.createContact();
 
-		Event bef_ev = new DeleteVertexEvent(Event.EventTime.BEFORE,
+		EventDescription bef_ev = new DeleteVertexEventDescription(EventDescription.EventTime.BEFORE,
 				Contact.class);
 		Action bef_act = new GretlTransformAction(
 				SimpleCopyTransformation.class);

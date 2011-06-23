@@ -1,7 +1,7 @@
 package de.uni_koblenz.jgralab.eca;
 
 import de.uni_koblenz.jgralab.AttributedElement;
-import de.uni_koblenz.jgralab.eca.events.Event;
+import de.uni_koblenz.jgralab.eca.events.EventDescription;
 
 
 public class ECARule {
@@ -14,7 +14,7 @@ public class ECARule {
 	/**
 	 * Event part of ECARule
 	 */
-	private Event event;
+	private EventDescription event;
 
 	/**
 	 * Condition part of ECARule, optional
@@ -37,7 +37,7 @@ public class ECARule {
 	 * @param action
 	 *            Action
 	 */
-	public ECARule(Event event, Action action) {
+	public ECARule(EventDescription event, Action action) {
 		this.setEvent(event);
 		this.setAction(action);
 	}
@@ -52,7 +52,7 @@ public class ECARule {
 	 * @param action
 	 *            Action
 	 */
-	public ECARule(Event event, Condition condition, Action action) {
+	public ECARule(EventDescription event, Condition condition, Action action) {
 		this.setEvent(event);
 		this.setCondition(condition);
 		this.setAction(action);
@@ -81,7 +81,7 @@ public class ECARule {
 	/**
 	 * @return the Event
 	 */
-	public Event getEvent() {
+	public EventDescription getEvent() {
 		return event;
 	}
 
@@ -91,7 +91,7 @@ public class ECARule {
 	 * @param event
 	 *            the Event
 	 */
-	private void setEvent(Event event) {
+	private void setEvent(EventDescription event) {
 		this.event = event;
 	}
 	

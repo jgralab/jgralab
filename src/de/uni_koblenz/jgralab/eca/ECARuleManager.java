@@ -7,13 +7,13 @@ import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.eca.events.ChangeAttributeEvent;
-import de.uni_koblenz.jgralab.eca.events.ChangeEdgeEvent;
-import de.uni_koblenz.jgralab.eca.events.CreateEdgeEvent;
-import de.uni_koblenz.jgralab.eca.events.CreateVertexEvent;
-import de.uni_koblenz.jgralab.eca.events.DeleteEdgeEvent;
-import de.uni_koblenz.jgralab.eca.events.DeleteVertexEvent;
-import de.uni_koblenz.jgralab.eca.events.Event;
+import de.uni_koblenz.jgralab.eca.events.ChangeAttributeEventDescription;
+import de.uni_koblenz.jgralab.eca.events.ChangeEdgeEventDescription;
+import de.uni_koblenz.jgralab.eca.events.CreateEdgeEventDescription;
+import de.uni_koblenz.jgralab.eca.events.CreateVertexEventDescription;
+import de.uni_koblenz.jgralab.eca.events.DeleteEdgeEventDescription;
+import de.uni_koblenz.jgralab.eca.events.DeleteVertexEventDescription;
+import de.uni_koblenz.jgralab.eca.events.EventDescription;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 
 public class ECARuleManager {
@@ -37,38 +37,38 @@ public class ECARuleManager {
 	/*
 	 * CreateVertexEvents
 	 */
-	private List<CreateVertexEvent> beforeCreateVertexEvents;
-	private List<CreateVertexEvent> afterCreateVertexEvents;
+	private List<CreateVertexEventDescription> beforeCreateVertexEvents;
+	private List<CreateVertexEventDescription> afterCreateVertexEvents;
 	
 	/*
 	 * DeleteVertexEvents
 	 */
-	private List<DeleteVertexEvent> beforeDeleteVertexEvents;
-	private List<DeleteVertexEvent> afterDeleteVertexEvents;
+	private List<DeleteVertexEventDescription> beforeDeleteVertexEvents;
+	private List<DeleteVertexEventDescription> afterDeleteVertexEvents;
 	
 	/*
 	 * CreateEdgeEvents
 	 */
-	private List<CreateEdgeEvent> beforeCreateEdgeEvents;
-	private List<CreateEdgeEvent> afterCreateEdgeEvents;
+	private List<CreateEdgeEventDescription> beforeCreateEdgeEvents;
+	private List<CreateEdgeEventDescription> afterCreateEdgeEvents;
 	
 	/*
 	 * DeleteEdgeEvents
 	 */
-	private List<DeleteEdgeEvent> beforeDeleteEdgeEvents;
-	private List<DeleteEdgeEvent> afterDeleteEdgeEvents;
+	private List<DeleteEdgeEventDescription> beforeDeleteEdgeEvents;
+	private List<DeleteEdgeEventDescription> afterDeleteEdgeEvents;
 
 	/*
 	 * ChangeEdgeEvents
 	 */
-	private List<ChangeEdgeEvent> beforeChangeEdgeEvents;
-	private List<ChangeEdgeEvent> afterChangeEdgeEvents;
+	private List<ChangeEdgeEventDescription> beforeChangeEdgeEvents;
+	private List<ChangeEdgeEventDescription> afterChangeEdgeEvents;
 
 	/*
 	 * ChangeAttributeEvents
 	 */
-	private List<ChangeAttributeEvent> beforeChangeAttributeEvents;
-	private List<ChangeAttributeEvent> afterChangeAttributeEvents;
+	private List<ChangeAttributeEventDescription> beforeChangeAttributeEvents;
+	private List<ChangeAttributeEventDescription> afterChangeAttributeEvents;
 	
 	// +++++ Constructor ++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -86,23 +86,23 @@ public class ECARuleManager {
 
 		this.greqlEvaluator = new GreqlEvaluator("", this.graph, null);
 
-		this.beforeCreateVertexEvents = new ArrayList<CreateVertexEvent>();
-		this.afterCreateVertexEvents = new ArrayList<CreateVertexEvent>();
+		this.beforeCreateVertexEvents = new ArrayList<CreateVertexEventDescription>();
+		this.afterCreateVertexEvents = new ArrayList<CreateVertexEventDescription>();
 		
-		this.beforeDeleteVertexEvents = new ArrayList<DeleteVertexEvent>();
-		this.afterDeleteVertexEvents  = new ArrayList<DeleteVertexEvent>();
+		this.beforeDeleteVertexEvents = new ArrayList<DeleteVertexEventDescription>();
+		this.afterDeleteVertexEvents  = new ArrayList<DeleteVertexEventDescription>();
 		
-		this.beforeCreateEdgeEvents = new ArrayList<CreateEdgeEvent>();
-		this.afterCreateEdgeEvents = new ArrayList<CreateEdgeEvent>();
+		this.beforeCreateEdgeEvents = new ArrayList<CreateEdgeEventDescription>();
+		this.afterCreateEdgeEvents = new ArrayList<CreateEdgeEventDescription>();
 		
-		this.beforeDeleteEdgeEvents = new ArrayList<DeleteEdgeEvent>();
-		this.afterDeleteEdgeEvents = new ArrayList<DeleteEdgeEvent>();
+		this.beforeDeleteEdgeEvents = new ArrayList<DeleteEdgeEventDescription>();
+		this.afterDeleteEdgeEvents = new ArrayList<DeleteEdgeEventDescription>();
 		
-		this.beforeChangeEdgeEvents = new ArrayList<ChangeEdgeEvent>();
-		this.afterChangeEdgeEvents = new ArrayList<ChangeEdgeEvent>();
+		this.beforeChangeEdgeEvents = new ArrayList<ChangeEdgeEventDescription>();
+		this.afterChangeEdgeEvents = new ArrayList<ChangeEdgeEventDescription>();
 		
-		this.beforeChangeAttributeEvents = new ArrayList<ChangeAttributeEvent>();
-		this.afterChangeAttributeEvents = new ArrayList<ChangeAttributeEvent>();
+		this.beforeChangeAttributeEvents = new ArrayList<ChangeAttributeEventDescription>();
+		this.afterChangeAttributeEvents = new ArrayList<ChangeAttributeEventDescription>();
 
 	}
 	
@@ -119,7 +119,7 @@ public class ECARuleManager {
 		if (this.increaseAndTestOnMaximumNestedCalls()) {
 			return;
 		}
-		for(CreateVertexEvent ev : beforeCreateVertexEvents){
+		for(CreateVertexEventDescription ev : beforeCreateVertexEvents){
 			ev.fire(elementClass);
 		}
 		this.nestedTriggerCalls--;
@@ -136,7 +136,7 @@ public class ECARuleManager {
 		if (this.increaseAndTestOnMaximumNestedCalls()) {
 			return;
 		}
-		for(CreateVertexEvent ev : afterCreateVertexEvents){
+		for(CreateVertexEventDescription ev : afterCreateVertexEvents){
 			ev.fire(element);
 		}
 		this.nestedTriggerCalls--;
@@ -153,7 +153,7 @@ public class ECARuleManager {
 		if (this.increaseAndTestOnMaximumNestedCalls()) {
 			return;
 		}
-		for(DeleteVertexEvent ev : beforeDeleteVertexEvents){
+		for(DeleteVertexEventDescription ev : beforeDeleteVertexEvents){
 			ev.fire(element);
 		}
 		this.nestedTriggerCalls--;
@@ -171,7 +171,7 @@ public class ECARuleManager {
 		if (this.increaseAndTestOnMaximumNestedCalls()) {
 			return;
 		}
-		for(DeleteVertexEvent ev : afterDeleteVertexEvents){
+		for(DeleteVertexEventDescription ev : afterDeleteVertexEvents){
 			ev.fire(elementClass);
 		}
 		this.nestedTriggerCalls--;
@@ -190,7 +190,7 @@ public class ECARuleManager {
 			return;
 		}
 
-		for(CreateEdgeEvent ev : beforeCreateEdgeEvents){
+		for(CreateEdgeEventDescription ev : beforeCreateEdgeEvents){
 			ev.fire(elementClass);
 		}
 		this.nestedTriggerCalls--;
@@ -208,7 +208,7 @@ public class ECARuleManager {
 			return;
 		}
 
-		for(CreateEdgeEvent ev : afterCreateEdgeEvents){
+		for(CreateEdgeEventDescription ev : afterCreateEdgeEvents){
 			ev.fire(element);
 		}
 		this.nestedTriggerCalls--;
@@ -226,7 +226,7 @@ public class ECARuleManager {
 			return;
 		}
 
-		for(DeleteEdgeEvent ev : beforeDeleteEdgeEvents){
+		for(DeleteEdgeEventDescription ev : beforeDeleteEdgeEvents){
 			ev.fire(element);
 		}
 		this.nestedTriggerCalls--;
@@ -245,7 +245,7 @@ public class ECARuleManager {
 			return;
 		}
 
-		for(DeleteEdgeEvent ev : afterDeleteEdgeEvents){
+		for(DeleteEdgeEventDescription ev : afterDeleteEdgeEvents){
 			ev.fire(elementClass);
 		}
 		this.nestedTriggerCalls--;
@@ -264,7 +264,7 @@ public class ECARuleManager {
 			return;
 		}
 
-		for(ChangeEdgeEvent ev : beforeChangeEdgeEvents){
+		for(ChangeEdgeEventDescription ev : beforeChangeEdgeEvents){
 			ev.fire(element, oldVertex, newVertex);
 		}
 		this.nestedTriggerCalls--;
@@ -283,7 +283,7 @@ public class ECARuleManager {
 			return;
 		}
 
-		for(ChangeEdgeEvent ev : afterChangeEdgeEvents){
+		for(ChangeEdgeEventDescription ev : afterChangeEdgeEvents){
 			ev.fire(element, oldVertex, newVertex);
 		}
 		this.nestedTriggerCalls--;
@@ -304,7 +304,7 @@ public class ECARuleManager {
 			return;
 		}
 
-		for(ChangeAttributeEvent ev : beforeChangeAttributeEvents){
+		for(ChangeAttributeEventDescription ev : beforeChangeAttributeEvents){
 			ev.fire(element, attributeName, oldValue, newValue);
 		}
 		this.nestedTriggerCalls--;
@@ -325,7 +325,7 @@ public class ECARuleManager {
 			return;
 		}
 
-		for(ChangeAttributeEvent ev : afterChangeAttributeEvents){
+		for(ChangeAttributeEventDescription ev : afterChangeAttributeEvents){
 			ev.fire(element, attributeName, oldValue, newValue);
 		}
 		this.nestedTriggerCalls--;
@@ -395,7 +395,7 @@ public class ECARuleManager {
 	 * @param action
 	 *            Action part of Rule
 	 */
-	public void addECARule(Event event, Action action) {
+	public void addECARule(EventDescription event, Action action) {
 		ECARule newRule = new ECARule(event, action);
 		this.addECARule(newRule);
 
@@ -413,7 +413,7 @@ public class ECARuleManager {
 	 * @param action
 	 *            Action part of Rule
 	 */
-	public void addECARule(Event event, Condition condition, Action action) {
+	public void addECARule(EventDescription event, Condition condition, Action action) {
 		ECARule newRule = new ECARule(event, condition, action);
 		this.addECARule(newRule);
 	}
@@ -431,7 +431,7 @@ public class ECARuleManager {
 					"ERROR: Tried to add an ECARule to an ECARulemanager,"
 							+ " but the ECARule has already a manager.");
 		}
-		Event ev = rule.getEvent();
+		EventDescription ev = rule.getEvent();
 		for (ECARule temprule : ev.getActiveECARules()) {
 			if (temprule.getECARuleManager() != this) {
 				throw new RuntimeException(
@@ -442,23 +442,23 @@ public class ECARuleManager {
 		this.rules.add(rule);
 		rule.setECARuleManager(this);
 		ev.getActiveECARules().add(rule);
-		if (ev instanceof CreateVertexEvent) {
-			this.addEventToList((CreateVertexEvent) ev);
+		if (ev instanceof CreateVertexEventDescription) {
+			this.addEventToList((CreateVertexEventDescription) ev);
 		}
-		if (ev instanceof DeleteVertexEvent) {
-			this.addEventToList((DeleteVertexEvent) ev);
+		if (ev instanceof DeleteVertexEventDescription) {
+			this.addEventToList((DeleteVertexEventDescription) ev);
 		}
-		if (ev instanceof CreateEdgeEvent) {
-			this.addEventToList((CreateEdgeEvent) ev);
+		if (ev instanceof CreateEdgeEventDescription) {
+			this.addEventToList((CreateEdgeEventDescription) ev);
 		}
-		if (ev instanceof DeleteEdgeEvent) {
-			this.addEventToList((DeleteEdgeEvent) ev);
+		if (ev instanceof DeleteEdgeEventDescription) {
+			this.addEventToList((DeleteEdgeEventDescription) ev);
 		}
-		if (ev instanceof ChangeEdgeEvent) {
-			this.addEventToList((ChangeEdgeEvent) ev);
+		if (ev instanceof ChangeEdgeEventDescription) {
+			this.addEventToList((ChangeEdgeEventDescription) ev);
 		}
-		if (ev instanceof ChangeAttributeEvent) {
-			this.addEventToList((ChangeAttributeEvent) ev);
+		if (ev instanceof ChangeAttributeEventDescription) {
+			this.addEventToList((ChangeAttributeEventDescription) ev);
 		}
 	}
 
@@ -471,26 +471,26 @@ public class ECARuleManager {
 	public void deleteECARule(ECARule rule) {
 		this.rules.remove(rule);
 		rule.setECARuleManager(null);
-		Event ev = rule.getEvent();
+		EventDescription ev = rule.getEvent();
 		ev.getActiveECARules().remove(rule);
 		if (ev.getActiveECARules().isEmpty()) {
-			if (ev instanceof CreateVertexEvent) {
-				removeEventFromList((CreateVertexEvent) ev);
+			if (ev instanceof CreateVertexEventDescription) {
+				removeEventFromList((CreateVertexEventDescription) ev);
 			}
-			if (ev instanceof DeleteVertexEvent) {
-				removeEventFromList((DeleteVertexEvent) ev);
+			if (ev instanceof DeleteVertexEventDescription) {
+				removeEventFromList((DeleteVertexEventDescription) ev);
 			}
-			if (ev instanceof CreateEdgeEvent) {
-				removeEventFromList((CreateEdgeEvent) ev);
+			if (ev instanceof CreateEdgeEventDescription) {
+				removeEventFromList((CreateEdgeEventDescription) ev);
 			}
-			if (ev instanceof DeleteEdgeEvent) {
-				removeEventFromList((DeleteEdgeEvent) ev);
+			if (ev instanceof DeleteEdgeEventDescription) {
+				removeEventFromList((DeleteEdgeEventDescription) ev);
 			}
-			if (ev instanceof ChangeEdgeEvent) {
-				removeEventFromList((ChangeEdgeEvent) ev);
+			if (ev instanceof ChangeEdgeEventDescription) {
+				removeEventFromList((ChangeEdgeEventDescription) ev);
 			}
-			if (ev instanceof ChangeAttributeEvent) {
-				removeEventFromList((ChangeAttributeEvent) ev);
+			if (ev instanceof ChangeAttributeEventDescription) {
+				removeEventFromList((ChangeAttributeEventDescription) ev);
 			}
 		}
 	}
@@ -505,8 +505,8 @@ public class ECARuleManager {
 	 * @param e
 	 *            the CreateVertexEvent to add
 	 */
-	private void addEventToList(CreateVertexEvent e) {
-		if (e.getTime().equals(Event.EventTime.BEFORE)) {
+	private void addEventToList(CreateVertexEventDescription e) {
+		if (e.getTime().equals(EventDescription.EventTime.BEFORE)) {
 			if (!this.beforeCreateVertexEvents.contains(e)) {
 				this.beforeCreateVertexEvents.add(e);
 			}
@@ -525,8 +525,8 @@ public class ECARuleManager {
 	 * @param e
 	 *            the DeleteVertexEvent to add
 	 */
-	private void addEventToList(DeleteVertexEvent e) {
-		if (e.getTime().equals(Event.EventTime.BEFORE)) {
+	private void addEventToList(DeleteVertexEventDescription e) {
+		if (e.getTime().equals(EventDescription.EventTime.BEFORE)) {
 			if (!this.beforeDeleteVertexEvents.contains(e)) {
 				this.beforeDeleteVertexEvents.add(e);
 			}
@@ -545,8 +545,8 @@ public class ECARuleManager {
 	 * @param e
 	 *            the CreateEdgeEvent to add
 	 */
-	private void addEventToList(CreateEdgeEvent e) {
-		if (e.getTime().equals(Event.EventTime.BEFORE)) {
+	private void addEventToList(CreateEdgeEventDescription e) {
+		if (e.getTime().equals(EventDescription.EventTime.BEFORE)) {
 			if (!this.beforeCreateEdgeEvents.contains(e)) {
 				this.beforeCreateEdgeEvents.add(e);
 			}
@@ -565,8 +565,8 @@ public class ECARuleManager {
 	 * @param e
 	 *            the DeleteEdgeEvent to add
 	 */
-	private void addEventToList(DeleteEdgeEvent e) {
-		if (e.getTime().equals(Event.EventTime.BEFORE)) {
+	private void addEventToList(DeleteEdgeEventDescription e) {
+		if (e.getTime().equals(EventDescription.EventTime.BEFORE)) {
 			if (!this.beforeDeleteEdgeEvents.contains(e)) {
 				this.beforeDeleteEdgeEvents.add(e);
 			}
@@ -585,8 +585,8 @@ public class ECARuleManager {
 	 * @param e
 	 *            the ChangeEdgeEvent to add
 	 */
-	private void addEventToList(ChangeEdgeEvent e) {
-		if (e.getTime().equals(Event.EventTime.BEFORE)) {
+	private void addEventToList(ChangeEdgeEventDescription e) {
+		if (e.getTime().equals(EventDescription.EventTime.BEFORE)) {
 			if (!this.beforeChangeEdgeEvents.contains(e)) {
 				this.beforeChangeEdgeEvents.add(e);
 			}
@@ -605,8 +605,8 @@ public class ECARuleManager {
 	 * @param e
 	 *            the ChangeAttributeEvent to add
 	 */
-	private void addEventToList(ChangeAttributeEvent e) {
-		if (e.getTime().equals(Event.EventTime.BEFORE)) {
+	private void addEventToList(ChangeAttributeEventDescription e) {
+		if (e.getTime().equals(EventDescription.EventTime.BEFORE)) {
 			if (!this.beforeChangeAttributeEvents.contains(e)) {
 				this.beforeChangeAttributeEvents.add(e);
 			}
@@ -624,8 +624,8 @@ public class ECARuleManager {
 	 * @param e
 	 *            the CreateVertexEvent to delete
 	 */
-	private void removeEventFromList(CreateVertexEvent ev) {
-		if (ev.getTime().equals(Event.EventTime.BEFORE)) {
+	private void removeEventFromList(CreateVertexEventDescription ev) {
+		if (ev.getTime().equals(EventDescription.EventTime.BEFORE)) {
 			this.beforeCreateVertexEvents.remove(ev);
 		} else {
 			this.afterCreateVertexEvents.remove(ev);
@@ -639,8 +639,8 @@ public class ECARuleManager {
 	 * @param e
 	 *            the DeleteVertexEvent to delete
 	 */
-	private void removeEventFromList(DeleteVertexEvent ev) {
-		if (ev.getTime().equals(Event.EventTime.BEFORE)) {
+	private void removeEventFromList(DeleteVertexEventDescription ev) {
+		if (ev.getTime().equals(EventDescription.EventTime.BEFORE)) {
 			this.beforeDeleteVertexEvents.remove(ev);
 		} else {
 			this.afterDeleteVertexEvents.remove(ev);
@@ -654,8 +654,8 @@ public class ECARuleManager {
 	 * @param e
 	 *            the CreateEdgeEvent to delete
 	 */
-	private void removeEventFromList(CreateEdgeEvent ev) {
-		if (ev.getTime().equals(Event.EventTime.BEFORE)) {
+	private void removeEventFromList(CreateEdgeEventDescription ev) {
+		if (ev.getTime().equals(EventDescription.EventTime.BEFORE)) {
 			this.beforeCreateEdgeEvents.remove(ev);
 		} else {
 			this.afterCreateEdgeEvents.remove(ev);
@@ -669,8 +669,8 @@ public class ECARuleManager {
 	 * @param e
 	 *            the DeleteEdgeEvent to delete
 	 */
-	private void removeEventFromList(DeleteEdgeEvent ev) {
-		if (ev.getTime().equals(Event.EventTime.BEFORE)) {
+	private void removeEventFromList(DeleteEdgeEventDescription ev) {
+		if (ev.getTime().equals(EventDescription.EventTime.BEFORE)) {
 			this.beforeDeleteEdgeEvents.remove(ev);
 		} else {
 			this.afterDeleteEdgeEvents.remove(ev);
@@ -684,8 +684,8 @@ public class ECARuleManager {
 	 * @param e
 	 *            the ChangeEdgeEvent to delete
 	 */
-	private void removeEventFromList(ChangeEdgeEvent ev) {
-		if (ev.getTime().equals(Event.EventTime.BEFORE)) {
+	private void removeEventFromList(ChangeEdgeEventDescription ev) {
+		if (ev.getTime().equals(EventDescription.EventTime.BEFORE)) {
 			this.beforeChangeEdgeEvents.remove(ev);
 		} else {
 			this.afterChangeEdgeEvents.remove(ev);
@@ -700,8 +700,8 @@ public class ECARuleManager {
 	 * @param e
 	 *            the ChangeAttributeEvent to delete
 	 */
-	private void removeEventFromList(ChangeAttributeEvent ev) {
-		if (ev.getTime().equals(Event.EventTime.BEFORE)) {
+	private void removeEventFromList(ChangeAttributeEventDescription ev) {
+		if (ev.getTime().equals(EventDescription.EventTime.BEFORE)) {
 			this.beforeChangeAttributeEvents.remove(ev);
 		} else {
 			this.afterChangeAttributeEvents.remove(ev);
