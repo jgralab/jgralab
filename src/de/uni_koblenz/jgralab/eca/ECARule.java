@@ -1,6 +1,6 @@
 package de.uni_koblenz.jgralab.eca;
 
-import de.uni_koblenz.jgralab.AttributedElement;
+import de.uni_koblenz.jgralab.eca.events.Event;
 import de.uni_koblenz.jgralab.eca.events.EventDescription;
 
 
@@ -69,9 +69,9 @@ public class ECARule {
 	 *            the AttributedElement to check the condition for, null if
 	 *            there is none
 	 */
-	public void trigger(AttributedElement element){	
-		if(this.condition == null || this.condition.evaluate(element)){
-			this.action.doAction();
+	public void trigger(Event event) {
+		if (this.condition == null || this.condition.evaluate(event)) {
+			this.action.doAction(event);
 		}			
 	}
 

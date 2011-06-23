@@ -1,6 +1,7 @@
 package de.uni_koblenz.jgralab.eca.events;
 
 import de.uni_koblenz.jgralab.AttributedElement;
+import de.uni_koblenz.jgralab.eca.ECARule;
 
 public class ChangeAttributeEventDescription extends EventDescription {
 
@@ -9,8 +10,6 @@ public class ChangeAttributeEventDescription extends EventDescription {
 	 */
 	private String concernedAttribute;
 
-	private Object latesOldValue;
-	private Object latestNewValue;
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -62,21 +61,20 @@ public class ChangeAttributeEventDescription extends EventDescription {
 	public void fire(AttributedElement element, String attributeName,
 			Object oldValue, Object newValue) {
 		if(concernedAttribute.equals(attributeName)){
-			this.latesOldValue = oldValue;
-			this.latestNewValue = newValue;
-			super.fire(element);
+			if (super.checkContext(element)) {
+				int nested = this.getActiveECARules().get(0)
+						.getECARuleManager().getNestedTriggerCalls();
+				for (ECARule rule : activeRules) {
+					rule.trigger(new ChangeAttributeEvent(nested, element,
+							attributeName,
+							oldValue,
+							newValue));
+				}
+			}
 		}
 	}
 	
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-	public Object getLatesOldValue() {
-		return latesOldValue;
-	}
-
-	public Object getLatestNewValue() {
-		return latestNewValue;
-	}
 
 	/**
 	 * @return the name of the monitored Attribute

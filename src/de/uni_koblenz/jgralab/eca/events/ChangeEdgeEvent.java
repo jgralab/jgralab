@@ -1,5 +1,6 @@
 package de.uni_koblenz.jgralab.eca.events;
 
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 
@@ -28,6 +29,11 @@ public class ChangeEdgeEvent extends Event {
 
 	public Vertex getNewVertex() {
 		return newVertex;
+	}
+
+	@Override
+	public AttributedElement getElement() {
+		return this.edge;
 	}
 
 }

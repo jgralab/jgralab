@@ -1,12 +1,12 @@
 package de.uni_koblenz.jgralab.eca.events;
 
 import de.uni_koblenz.jgralab.AttributedElement;
+import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.eca.ECARule;
 
 public class ChangeEdgeEventDescription extends EventDescription {
 
-	Vertex latestOldVertex;
-	Vertex latesNewVertex;
 
 	/**
 	 * Creates an ChangeEdgeEvent with the given parameters
@@ -35,17 +35,15 @@ public class ChangeEdgeEventDescription extends EventDescription {
 
 	public void fire(AttributedElement element, Vertex oldVertex,
 			Vertex newVertex) {
-		this.latestOldVertex = oldVertex;
-		this.latesNewVertex = newVertex;
-		super.fire(element);
+		if (super.checkContext(element)) {
+			int nested = this.getActiveECARules().get(0).getECARuleManager()
+					.getNestedTriggerCalls();
+			for (ECARule rule : activeRules) {
+				rule.trigger(new ChangeEdgeEvent(nested, (Edge) element,
+						oldVertex, newVertex));
+			}
+		}
 	}
 
-	public Vertex getLatestOldVertex() {
-		return latestOldVertex;
-	}
-
-	public Vertex getLatesNewVertex() {
-		return latesNewVertex;
-	}
 
 }

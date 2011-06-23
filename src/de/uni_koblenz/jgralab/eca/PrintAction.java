@@ -1,5 +1,7 @@
 package de.uni_koblenz.jgralab.eca;
 
+import de.uni_koblenz.jgralab.eca.events.Event;
+
 public class PrintAction extends Action {
 
 	/**
@@ -25,7 +27,7 @@ public class PrintAction extends Action {
 	 * Executes the action, in this case print the message on console
 	 */
 	@Override
-	public void doAction(){
+	public void doAction(Event event) {
 		System.out.println(this.message);
 	}
 

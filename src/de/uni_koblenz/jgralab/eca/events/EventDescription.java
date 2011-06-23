@@ -87,34 +87,13 @@ public abstract class EventDescription {
 	
 	// +++++ Methods ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-	/**
-	 * Triggers each ECARule, if the element is of the right type or in the
-	 * context
-	 * 
-	 * @param element
-	 *            the AttributedElement, this Event is fired for
-	 */
-	public void fire(AttributedElement element){
-		this.latestElement = element;
-		if (this.checkContext(element)) {
-			for (ECARule rule : activeRules) {
-				rule.trigger(element);
-			}
-		}
-	}
 
-	/**
-	 * Triggers each ECARule, if the parameter is the right type
-	 * 
-	 * @param elementClass
-	 *            Class of the element that invokes this Event
-	 */
-	public void fire(Class<? extends AttributedElement> elementClass){
-		this.latestElement = null;
+	protected boolean checkContext(
+			Class<? extends AttributedElement> elementClass) {
 		if (this.getType().equals(elementClass)) {
-			for (ECARule rule : activeRules) {
-				rule.trigger(null);		
-			}
+			return true;
+		} else {
+			return false;
 		}
 	}
 
@@ -126,7 +105,7 @@ public abstract class EventDescription {
 	 *            the element to check
 	 * @return whether the element really invokes this Event
 	 */
-	private boolean checkContext(AttributedElement element) {
+	protected boolean checkContext(AttributedElement element) {
 		if(this.context.equals(Context.TYPE)){
 			if(element.getM1Class().equals(this.type)){
 				return true;
