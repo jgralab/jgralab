@@ -1,5 +1,18 @@
 package de.uni_koblenz.jgralab.eca.events;
 
-public class DeleteVertexEvent {
+import de.uni_koblenz.jgralab.Vertex;
+
+public class DeleteVertexEvent extends Event {
+
+	private Vertex vertex;
+
+	public DeleteVertexEvent(int nestedCalls, Vertex vertex) {
+		super(nestedCalls);
+		this.vertex = vertex;
+	}
+
+	public Vertex getVertex() {
+		return vertex;
+	}
 
 }

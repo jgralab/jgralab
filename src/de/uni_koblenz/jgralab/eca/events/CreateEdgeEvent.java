@@ -1,5 +1,18 @@
 package de.uni_koblenz.jgralab.eca.events;
 
-public class CreateEdgeEvent {
+import de.uni_koblenz.jgralab.Edge;
+
+public class CreateEdgeEvent extends Event {
+
+	private Edge edge;
+
+	public CreateEdgeEvent(int nestedCalls, Edge edge) {
+		super(nestedCalls);
+		this.edge = edge;
+	}
+
+	public Edge getEdge() {
+		return edge;
+	}
 
 }
