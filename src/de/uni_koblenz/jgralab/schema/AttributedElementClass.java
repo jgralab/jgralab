@@ -94,8 +94,8 @@ public interface AttributedElementClass extends NamedElement {
 	public void addAttribute(Attribute anAttribute);
 
 	/**
-	 * Adds an attribute with the given <code>name</code> and
-	 * <code>domain</code> to this element.
+	 * Adds an attribute with the given <code>name</code>, <code>domain</code>,
+	 * and default value to this element.
 	 * 
 	 * <p>
 	 * <b>Pattern:</b> <code>attrElement.addAttribute(name, domain, "7");</code>
@@ -132,6 +132,42 @@ public interface AttributedElementClass extends NamedElement {
 	 */
 	public void addAttribute(String name, Domain domain,
 			String defaultValueAsString);
+
+	/**
+	 * Adds an attribute with the given <code>name</code> and
+	 * <code>domain</code> to this element. The attribute does not have a
+	 * default value.
+	 * 
+	 * <p>
+	 * <b>Pattern:</b> <code>attrElement.addAttribute(name, domain);</code>
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Preconditions:</b>
+	 * <ul>
+	 * <li>The new attributes <code>name</code> must be distinct from all of
+	 * this <code>attrElements</code> direct and inherited attributes names.</li>
+	 * </ul>
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Postconditions:</b> In addition to the direct and inherited
+	 * attributes(s) of <code>attrElement</code>, <code>attrElement'</code>
+	 * holds a new attribute with the specified <code>name</code> and
+	 * <code>domain</code>.
+	 * </p>
+	 * 
+	 * @param name
+	 *            a unique <code>name</code> in this element´s list of direct
+	 *            and inherited attributes
+	 * @param domain
+	 *            the <code>domain</code> of the new <code>Attribute</code>
+	 * 
+	 * @throws DuplicateAttributeException
+	 *             if this element has a direct or inherited attribute with the
+	 *             same <code>name</code>
+	 */
+	public void addAttribute(String name, Domain domain);
 
 	/**
 	 * Adds a {@link Constraint} to this attributed element. Constraints are

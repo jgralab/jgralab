@@ -67,6 +67,7 @@ public class GraphDbTest {
 				gdb.insertSchema(JniTestSchema.instance());
 			}
 		} catch (GraphDatabaseException e) {
+			e.printStackTrace();
 			gdb.applyDbSchema();
 			// if (!gdb.contains(JniTestSchema.instance())) {
 			gdb.insertSchema(JniTestSchema.instance());
@@ -74,19 +75,6 @@ public class GraphDbTest {
 			e.printStackTrace();
 		}
 		gdb.commitTransaction();
-
-		boolean containsSchema = gdb.contains(JniTestSchema.instance());
-		System.out.println(containsSchema);
-
-		try {
-			gdb.dropForeignKeyConstraints();
-			gdb.commitTransaction();
-		} catch (Exception e) {
-			gdb.rollback();
-		}
-
-		containsSchema = gdb.contains(JniTestSchema.instance());
-		System.out.println(containsSchema);
 
 		try {
 			gdb.dropIndices();

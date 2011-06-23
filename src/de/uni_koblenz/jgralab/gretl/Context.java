@@ -304,6 +304,7 @@ public class Context {
 	}
 
 	public final void printImgMappings() {
+		System.out.println("Image Mappings:");
 		for (Entry<JValue, JValue> e : imgMap.entrySet()) {
 			AttributedElementClass aec = e.getKey().toAttributedElementClass();
 			JValueMap img = e.getValue().toJValueMap();

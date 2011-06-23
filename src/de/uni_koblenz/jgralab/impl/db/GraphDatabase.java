@@ -387,7 +387,7 @@ public abstract class GraphDatabase {
 	 */
 	public void deleteGraph(String id) throws GraphDatabaseException {
 		DatabasePersistableGraph graph = getGraph(id);
-		this.delete(graph);
+		delete(graph);
 	}
 
 	/**
@@ -2071,49 +2071,6 @@ public abstract class GraphDatabase {
 		statement.execute();
 	}
 
-	public void addForeignKeyConstraints() throws SQLException {
-		commitAnyTransactions();
-		PreparedStatement statement = sqlStatementList
-				.addForeignKeyConstraintOnGraphColumnOfVertexTable();
-		statement.execute();
-		statement = sqlStatementList
-				.addForeignKeyConstraintOnTypeColumnOfVertexTable();
-		statement.execute();
-		statement = sqlStatementList
-				.addForeignKeyConstraintOnGraphColumnOfEdgeTable();
-		statement.execute();
-		statement = sqlStatementList
-				.addForeignKeyConstraintOnTypeColumnOfEdgeTable();
-		statement.execute();
-		statement = sqlStatementList
-				.addForeignKeyConstraintOnGraphColumnOfIncidenceTable();
-		statement.execute();
-		statement = sqlStatementList
-				.addForeignKeyConstraintOnEdgeColumnOfIncidenceTable();
-		statement.execute();
-		statement = sqlStatementList
-				.addForeignKeyConstraintOnVertexColumnOfIncidenceTable();
-		statement.execute();
-		statement = sqlStatementList
-				.addForeignKeyConstraintOnGraphColumnOfVertexAttributeValueTable();
-		statement.execute();
-		statement = sqlStatementList
-				.addForeignKeyConstraintOnVertexColumnOfVertexAttributeValueTable();
-		statement.execute();
-		statement = sqlStatementList
-				.addForeignKeyConstraintOnAttributeColumnOfVertexAttributeValueTable();
-		statement.execute();
-		statement = sqlStatementList
-				.addForeignKeyConstraintOnGraphColumnOfEdgeAttributeValueTable();
-		statement.execute();
-		statement = sqlStatementList
-				.addForeignKeyConstraintOnEdgeColumnOfEdgeAttributeValueTable();
-		statement.execute();
-		statement = sqlStatementList
-				.addForeignKeyConstraintOnAttributeColumnOfEdgeAttributeValueTable();
-		statement.execute();
-	}
-
 	public void addIndices() throws SQLException {
 		PreparedStatement statement = sqlStatementList.addIndexOnLambdaSeq();
 		statement.execute();
@@ -2180,45 +2137,4 @@ public abstract class GraphDatabase {
 
 	public abstract void clearAllTables() throws SQLException;
 
-	public void dropForeignKeyConstraints() throws SQLException {
-		PreparedStatement statement = sqlStatementList
-				.dropForeignKeyConstraintFromGraphColumnOfVertexTable();
-		statement.execute();
-		statement = sqlStatementList
-				.dropForeignKeyConstraintFromTypeColumnOfVertexTable();
-		statement.execute();
-		statement = sqlStatementList
-				.dropForeignKeyConstraintFromGraphColumnOfEdgeTable();
-		statement.execute();
-		statement = sqlStatementList
-				.dropForeignKeyConstraintFromTypeColumnOfEdgeTable();
-		statement.execute();
-		statement = sqlStatementList
-				.dropForeignKeyConstraintFromEdgeColumnOfIncidenceTable();
-		statement.execute();
-		statement = sqlStatementList
-				.dropForeignKeyConstraintFromGraphColumnOfIncidenceTable();
-		statement.execute();
-		statement = sqlStatementList
-				.dropForeignKeyConstraintFromVertexColumnOfIncidenceTable();
-		statement.execute();
-		statement = sqlStatementList
-				.dropForeignKeyConstraintFromGraphColumnOfVertexAttributeValueTable();
-		statement.execute();
-		statement = sqlStatementList
-				.dropForeignKeyConstraintFromVertexColumnOfVertexAttributeValueTable();
-		statement.execute();
-		statement = sqlStatementList
-				.dropForeignKeyConstraintFromAttributeColumnOfVertexAttributeValueTable();
-		statement.execute();
-		statement = sqlStatementList
-				.dropForeignKeyConstraintFromGraphColumnOfEdgeAttributeValueTable();
-		statement.execute();
-		statement = sqlStatementList
-				.dropForeignKeyConstraintFromEdgeColumnOfEdgeAttributeValueTable();
-		statement.execute();
-		statement = sqlStatementList
-				.dropForeignKeyConstraintFromAttributeColumnOfEdgeAttributeValueTable();
-		statement.execute();
-	}
 }

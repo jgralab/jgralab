@@ -1,0 +1,34 @@
+transformation FamilyGraph2Genealogy;
+
+CreateAbstractVertexClass Person;
+
+CreateVertexClass Female
+<== from m: V{Member}
+    with degree{HasMother, HasDaughter}(m) > 0
+    reportSet m end;
+CreateVertexClass Male
+<== difference(V{Member}, keySet(img_Female));
+
+CreateAbstractEdgeClass HasRelative from Person to Person;
+CreateEdgeClass HasSpouse from Male   (0,1) role husband
+                          to   Female (0,1) role wife
+<== from f: V{Family} reportSet f,
+      theElement(f<>--{HasFather}),
+      theElement(f<>--{HasMother}) end;
+
+CreateEdgeClass HasChild from Person (0,2) role parents
+                         to   Person (0,*) role children
+<== from e: E{HasDaughter, HasSon},
+         par: startVertex(e)<>--{HasFather, HasMother}
+    reportSet tup(endVertex(e), par), par, endVertex(e) end;
+
+AddSubClasses Person Male Female;
+AddSubClasses HasRelative HasChild HasSpouse;
+
+getMainFamily() := using member:
+  (degree{HasFather, HasMother}(member) > 0 ?
+    theElement(member --<>{HasFather, HasMother}) :
+    theElement(member --<>));
+CreateAttribute Person.fullName : String
+<== from m: keySet(img_Person)
+    reportMap m -> m.firstName ++ " " ++ getMainFamily(m).lastName end;
