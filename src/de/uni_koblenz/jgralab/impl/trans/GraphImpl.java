@@ -998,7 +998,10 @@ public abstract class GraphImpl extends
 				edgeSync.writeLock().unlock();
 			}
 			try {
+				Vertex alpha = edgeToBeDeleted.getAlpha();
+				Vertex omega = edgeToBeDeleted.getOmega();
 				super.deleteEdge(edgeToBeDeleted);
+				edgeAfterDeleted(edgeToBeDeleted, alpha, omega);
 			} catch (GraphException e) {
 				throw e;
 			}
@@ -1006,8 +1009,7 @@ public abstract class GraphImpl extends
 		}
 	}
 
-	@Override
-	protected void edgeAfterDeleted(Edge edgeToBeDeleted, Vertex oldAlpha,
+	private void edgeAfterDeleted(Edge edgeToBeDeleted, Vertex oldAlpha,
 			Vertex oldOmega) {
 		TransactionImpl transaction = (TransactionImpl) getCurrentTransaction();
 		assert ((transaction != null) && !transaction.isReadOnly()
@@ -1091,14 +1093,14 @@ public abstract class GraphImpl extends
 			}
 			try {
 				super.deleteVertex(vertexToBeDeleted);
+				vertexAfterDeleted(vertexToBeDeleted);
 			} catch (GraphException e) {
 				throw e;
 			}
 		}
 	}
 
-	@Override
-	protected void vertexAfterDeleted(Vertex vertexToBeDeleted) {
+	private void vertexAfterDeleted(Vertex vertexToBeDeleted) {
 		TransactionImpl transaction = (TransactionImpl) getCurrentTransaction();
 		assert ((transaction != null) && !transaction.isReadOnly()
 				&& transaction.isValid() && (transaction.getState() != TransactionState.NOTRUNNING));

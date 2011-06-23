@@ -36,9 +36,11 @@
 package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
@@ -54,7 +56,6 @@ import de.uni_koblenz.jgralab.greql2.evaluator.fa.Transition;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.funlib.pathsearch.PathSystemMarkerEntry;
-import de.uni_koblenz.jgralab.greql2.funlib.pathsearch.PathSystemMarkerList;
 import de.uni_koblenz.jgralab.greql2.funlib.pathsearch.PathSystemQueueEntry;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
@@ -109,12 +110,7 @@ public class Slice extends Greql2Function {
 	/**
 	 * for each state in the fa (normally < 10) a seperate GraphMarker is used
 	 */
-	private ArrayList<GraphMarker<PathSystemMarkerList>> marker;
-
-	/**
-	 * The graph the search is performed on
-	 */
-	private Graph graph;
+	private List<GraphMarker<Map<Edge, PathSystemMarkerEntry>>> marker;
 
 	/**
 	 * Holds a set of states for each AttributedElement
@@ -122,27 +118,31 @@ public class Slice extends Greql2Function {
 	private GraphMarker<Set<State>> stateMarker;
 
 	/**
-	 * marks the given vertex with the given PathSystemMarker
+	 * marks the given vertex with the given SliceMarker
 	 * 
-	 * @return true if the vertex was marked successfull, false if it is already
-	 *         marked with this state
+	 * @return true if the vertex was marked successful, false if it is already
+	 *         marked with this parentEdge
 	 */
 	protected boolean markVertex(Vertex v, State s, Vertex parentVertex,
 			Edge e, State ps, int d) {
-		PathSystemMarkerEntry m = new PathSystemMarkerEntry(v, parentVertex, e, s,
-				ps, d);
-		GraphMarker<PathSystemMarkerList> currentMarker = marker.get(s.number);
-		if (currentMarker == null) {
-			currentMarker = new GraphMarker<PathSystemMarkerList>(graph);
-			marker.set(s.number, currentMarker);
+		PathSystemMarkerEntry m = new PathSystemMarkerEntry(v, parentVertex, e,
+				s, ps, d);
+		GraphMarker<Map<Edge, PathSystemMarkerEntry>> currentMarker = marker
+				.get(s.number);
+
+		Map<Edge, PathSystemMarkerEntry> map = currentMarker.getMark(v);
+		if (map == null) {
+			map = new HashMap<Edge, PathSystemMarkerEntry>();
+			currentMarker.mark(v, map);
 		}
-		PathSystemMarkerList list = currentMarker.getMark(v);
-		if (list == null) {
-			list = new PathSystemMarkerList(s, v);
-			currentMarker.mark(v, list);
+
+		PathSystemMarkerEntry entry = map.get(e);
+		if (entry == null) {
+			map.put(e, m);
+			return true;
+		} else {
+			return false;
 		}
-		list.put(parentVertex, m);
-		return true;
 	}
 
 	/**
@@ -151,34 +151,28 @@ public class Slice extends Greql2Function {
 	 * @return true if the vertex is marked, false otherwise
 	 */
 	protected boolean isMarked(Vertex v, State s, Edge parentEdge) {
-		GraphMarker<PathSystemMarkerList> currentMarker = marker.get(s.number);
-		if (currentMarker == null) {
+		GraphMarker<Map<Edge, PathSystemMarkerEntry>> currentMarker = marker
+				.get(s.number);
+
+		Map<Edge, PathSystemMarkerEntry> map = currentMarker.getMark(v);
+		if (map != null) {
+			return map.containsKey(parentEdge);
+		} else {
 			return false;
 		}
-		PathSystemMarkerList list = currentMarker.getMark(v);
-		if (list != null) {
-			for (PathSystemMarkerEntry entry : list.values()) {
-				if (entry.edgeToParentVertex == parentEdge) {
-					return true;
-				}
-			}
-		}
-		return false;
 	}
 
 	/**
-	 * Checks if the given vertex is marked with the given state and parent
-	 * vertex
+	 * Checks if the given vertex is marked with the given state
 	 * 
 	 * @return true if the vertex is marked, false otherwise
 	 */
 	protected boolean isMarked(Vertex v, State s) {
-		GraphMarker<PathSystemMarkerList> currentMarker = marker.get(s.number);
-		if (currentMarker == null) {
-			return false;
-		}
-		PathSystemMarkerList list = currentMarker.getMark(v);
-		return list != null;
+		GraphMarker<Map<Edge, PathSystemMarkerEntry>> currentMarker = marker
+				.get(s.number);
+
+		Map<Edge, PathSystemMarkerEntry> map = currentMarker.getMark(v);
+		return map != null;
 	}
 
 	/**
@@ -213,13 +207,7 @@ public class Slice extends Greql2Function {
 					null, 0);
 			queue.offer(currentEntry);
 			markVertex(v, dfa.initialState, null /* no parent state */,
-					null /* no parent vertex */, null /* no parent state */, 0 /*
-																			 * distance
-																			 * to
-																			 * root
-																			 * is
-																			 * null
-																			 */);
+					null /* no parent vertex */, null /* no parent state */, 0);
 		}
 
 		while (!queue.isEmpty()) {
@@ -234,13 +222,8 @@ public class Slice extends Greql2Function {
 					if (!isMarked(nextVertex, currentTransition.endState, inc)
 							&& currentTransition.accepts(currentEntry.vertex,
 									inc, subgraph)) {
-						Edge traversedEdge = inc;
-						int distanceToRoot = currentEntry.distanceToRoot;
-						if (nextVertex == currentEntry.vertex) {
-							traversedEdge = null;
-						} else {
-							distanceToRoot++;
-						}
+						Edge traversedEdge = currentTransition.consumesEdge() ? inc
+								: null;
 						/*
 						 * if the vertex is not marked with the state, add it to
 						 * the queue for further processing - the parent edge
@@ -249,12 +232,12 @@ public class Slice extends Greql2Function {
 						if (!isMarked(nextVertex, currentTransition.endState)) {
 							queue.add(new PathSystemQueueEntry(nextVertex,
 									currentTransition.endState, traversedEdge,
-									currentEntry.state, distanceToRoot));
+									currentEntry.state, 0));
 						}
 						/* mark the vertex with all reachability information */
 						markVertex(nextVertex, currentTransition.endState,
 								currentEntry.vertex, traversedEdge,
-								currentEntry.state, distanceToRoot);
+								currentEntry.state, 0);
 					}
 				}
 			}
@@ -271,7 +254,6 @@ public class Slice extends Greql2Function {
 			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
 			throws EvaluateException {
 		Set<Vertex> sliCritVertices = new HashSet<Vertex>();
-		this.graph = graph;
 		DFA dfa;
 		JValueSet vertices;
 		switch (checkArguments(arguments)) {
@@ -292,10 +274,10 @@ public class Slice extends Greql2Function {
 			sliCritVertices.add(v.toVertex());
 		}
 
-		marker = new ArrayList<GraphMarker<PathSystemMarkerList>>(dfa.stateList
-				.size());
+		marker = new ArrayList<GraphMarker<Map<Edge, PathSystemMarkerEntry>>>(
+				dfa.stateList.size());
 		for (int i = 0; i < dfa.stateList.size(); i++) {
-			marker.add(new GraphMarker<PathSystemMarkerList>(graph));
+			marker.add(new GraphMarker<Map<Edge, PathSystemMarkerEntry>>(graph));
 		}
 		List<Vertex> leaves = markVerticesOfSlice(sliCritVertices, dfa,
 				subgraph);
@@ -315,15 +297,15 @@ public class Slice extends Greql2Function {
 			Set<Vertex> sliCritVertices, List<Vertex> leaves) {
 		JValueSlice slice = new JValueSlice(graph);
 
-		PathSystemMarkerList sliCritVertexMarkerList;
+		Map<Edge, PathSystemMarkerEntry> sliCritVertexMarkerMap;
 		PathSystemMarkerEntry sliCritVertexMarker;
-		GraphMarker<PathSystemMarkerList> startStateMarker = marker.get(0);
+		GraphMarker<Map<Edge, PathSystemMarkerEntry>> startStateMarker = marker
+				.get(0);
 
 		// add slicing criterion vertices to slice
 		for (Vertex v : sliCritVertices) {
-			sliCritVertexMarkerList = startStateMarker.getMark(v);
-			sliCritVertexMarker = sliCritVertexMarkerList
-					.getPathSystemMarkerEntryWithParentVertex(null);
+			sliCritVertexMarkerMap = startStateMarker.getMark(v);
+			sliCritVertexMarker = sliCritVertexMarkerMap.get(null);
 			slice.addSlicingCriterionVertex(v,
 					sliCritVertexMarker.state.number,
 					sliCritVertexMarker.state.isFinal);
@@ -337,7 +319,7 @@ public class Slice extends Greql2Function {
 
 		for (Vertex leaf : leaves) { // iterate through leaves
 			// iterate through GraphMarkers (one for each state)
-			for (GraphMarker<PathSystemMarkerList> currentGraphMarker : marker) {
+			for (GraphMarker<Map<Edge, PathSystemMarkerEntry>> currentGraphMarker : marker) {
 				if (currentGraphMarker.getMark(leaf) != null) {
 					// iterate through list of PathSystemMarkerEntrys
 					// for a particular GraphMarker (a particular state)
@@ -433,18 +415,20 @@ public class Slice extends Greql2Function {
 	 * Returns the {@code PathSystemMarkerEntry} for a given vertex and state.
 	 * 
 	 * @param v
-	 *            the vertex for which to return the {@code
-	 *            PathSystemMarkerEntry}
+	 *            the vertex for which to return the
+	 *            {@code PathSystemMarkerEntry}
 	 * @param s
-	 *            the state for which to return the {@code
-	 *            PathSystemMarkerEntry}
+	 *            the state for which to return the
+	 *            {@code PathSystemMarkerEntry}
 	 * @return the {@code PathSystemMarkerEntry} for {@code v} and {@code s}
 	 */
-	private PathSystemMarkerList getMarkersWithState(Vertex v, State s) {
+	private Map<Edge, PathSystemMarkerEntry> getMarkersWithState(Vertex v,
+			State s) {
 		if (v == null) {
 			return null;
 		}
-		GraphMarker<PathSystemMarkerList> currentMarker = marker.get(s.number);
+		GraphMarker<Map<Edge, PathSystemMarkerEntry>> currentMarker = marker
+				.get(s.number);
 		return currentMarker.getMark(v);
 	}
 

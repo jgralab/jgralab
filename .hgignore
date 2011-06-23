@@ -10,3 +10,7 @@ testit/testgraphs/testgraph.tg
 
 syntax: regexp
 ^jgralabtest$
+syntax: regexp
+^testit/de/uni_koblenz/jgralabtest/gretl/schemas$
+syntax: regexp
+^src/de/uni_koblenz/jgralab/gretl/template$
