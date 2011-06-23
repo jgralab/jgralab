@@ -164,6 +164,9 @@ public class GretlTest {
 		initCopyGraph();
 		initSimpleUMLGraph();
 
+		GraphIO.saveGraphToFile(tmpDir + "sourceFamilyGraph.tg",
+				sourceFamilyGraph, null);
+
 		dotty(sourceAddressBookGraph, tmpDir + "sourceAddressBookGraph.pdf");
 		dotty(sourceFamilyGraph, tmpDir + "sourceFamilyGraph.pdf",
 				HasMother.class, HasFather.class);
