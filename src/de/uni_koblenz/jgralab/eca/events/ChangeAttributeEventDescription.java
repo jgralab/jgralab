@@ -1,6 +1,7 @@
 package de.uni_koblenz.jgralab.eca.events;
 
 import de.uni_koblenz.jgralab.AttributedElement;
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.eca.ECARule;
 
 public class ChangeAttributeEventDescription extends EventDescription {
@@ -64,9 +65,11 @@ public class ChangeAttributeEventDescription extends EventDescription {
 			if (super.checkContext(element)) {
 				int nested = this.getActiveECARules().get(0)
 						.getECARuleManager().getNestedTriggerCalls();
+				Graph graph = this.getActiveECARules().get(0)
+						.getECARuleManager().getGraph();
 				for (ECARule rule : activeRules) {
 					rule.trigger(new ChangeAttributeEvent(nested, this
-							.getTime(), element,
+							.getTime(), graph, element,
 							attributeName,
 							oldValue,
 							newValue));

@@ -38,7 +38,7 @@ public class GretlTransformAction extends Action {
 	public void doAction(Event event) {
 
 		try {
-			Graph graph = this.getRule().getECARuleManager().getGraph();
+			Graph graph = event.getGraph();
 
 			Context context = new Context(graph.getSchema());
 			context.setSourceGraph(graph);

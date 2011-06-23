@@ -2,6 +2,7 @@ package de.uni_koblenz.jgralab.eca.events;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 
 public class ChangeEdgeEvent extends Event {
@@ -11,9 +12,10 @@ public class ChangeEdgeEvent extends Event {
 	private Vertex newVertex;
 
 	public ChangeEdgeEvent(int nestedCalls, EventDescription.EventTime time,
+			Graph graph,
 			Edge edge, Vertex oldVertex,
 			Vertex newVertex) {
-		super(nestedCalls, time);
+		super(nestedCalls, time, graph);
 
 		this.edge = edge;
 		this.oldVertex = oldVertex;

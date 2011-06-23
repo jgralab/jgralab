@@ -1,6 +1,7 @@
 package de.uni_koblenz.jgralab.eca.events;
 
 import de.uni_koblenz.jgralab.AttributedElement;
+import de.uni_koblenz.jgralab.Graph;
 
 public abstract class Event {
 
@@ -8,9 +9,12 @@ public abstract class Event {
 
 	private EventDescription.EventTime time;
 
-	public Event(int nC, EventDescription.EventTime time) {
+	private Graph graph;
+
+	public Event(int nC, EventDescription.EventTime time, Graph graph) {
 		this.nestedCalls = nC;
 		this.time = time;
+		this.graph = graph;
 	}
 
 	public int getNestedCalls() {
@@ -21,6 +25,10 @@ public abstract class Event {
 
 	public EventDescription.EventTime getTime() {
 		return time;
+	}
+
+	public Graph getGraph() {
+		return graph;
 	}
 
 }
