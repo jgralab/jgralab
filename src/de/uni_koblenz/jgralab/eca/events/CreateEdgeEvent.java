@@ -1,5 +1,6 @@
 package de.uni_koblenz.jgralab.eca.events;
 
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 
 public class CreateEdgeEvent extends Event {
@@ -13,6 +14,11 @@ public class CreateEdgeEvent extends Event {
 
 	public Edge getEdge() {
 		return edge;
+	}
+
+	@Override
+	public AttributedElement getElement() {
+		return this.edge;
 	}
 
 }

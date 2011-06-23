@@ -5,20 +5,28 @@ import de.uni_koblenz.jgralab.AttributedElement;
 public class ChangeAttributeEvent extends Event {
 
 	private AttributedElement element;
+	private String attributeName;
 	private Object oldValue;
 	private Object newValue;
 
 	public ChangeAttributeEvent(int nestedCalls, AttributedElement element,
+			String attributeName,
 			Object oldValue,
 			Object newValue) {
 		super(nestedCalls);
 		this.element = element;
+		this.attributeName = attributeName;
 		this.oldValue = oldValue;
 		this.newValue = newValue;
 	}
 
+	@Override
 	public AttributedElement getElement() {
 		return element;
+	}
+
+	public String getAttributeName() {
+		return attributeName;
 	}
 
 	public Object getOldValue() {

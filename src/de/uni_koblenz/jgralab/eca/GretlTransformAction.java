@@ -5,6 +5,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.eca.events.Event;
 import de.uni_koblenz.jgralab.gretl.Context;
 import de.uni_koblenz.jgralab.gretl.Transformation;
 
@@ -34,7 +35,7 @@ public class GretlTransformAction extends Action {
 	 * Executes the action
 	 */
 	@Override
-	public void doAction(){
+	public void doAction(Event event) {
 
 		try {
 			Graph graph = this.getRule().getECARuleManager().getGraph();

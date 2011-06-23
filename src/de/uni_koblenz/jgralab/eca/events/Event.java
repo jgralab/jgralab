@@ -1,6 +1,8 @@
 package de.uni_koblenz.jgralab.eca.events;
 
-public class Event {
+import de.uni_koblenz.jgralab.AttributedElement;
+
+public abstract class Event {
 
 	private int nestedCalls;
 
@@ -11,5 +13,7 @@ public class Event {
 	public int getNestedCalls() {
 		return nestedCalls;
 	}
+
+	public abstract AttributedElement getElement();
 
 }

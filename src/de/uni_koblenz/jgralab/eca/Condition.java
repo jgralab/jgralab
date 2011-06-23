@@ -4,6 +4,7 @@ import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.eca.events.Event;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
@@ -42,7 +43,8 @@ public class Condition {
 	 *            the element to check the condition for
 	 * @return if the condition is evaluated to true
 	 */
-	public boolean evaluate(AttributedElement element){
+	public boolean evaluate(Event event){
+		AttributedElement element = event.getElement();
 		GreqlEvaluator greqlEvaluator = this.rule.getECARuleManager()
 				.getGreqlEvaluator();
 		if (this.conditionExpression.contains("context")) {
