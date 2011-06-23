@@ -1,5 +1,17 @@
 package de.uni_koblenz.jgralab.eca.events;
 
-public class DeleteEdgeEvent {
+import de.uni_koblenz.jgralab.Edge;
 
+public class DeleteEdgeEvent extends Event {
+
+	private Edge edge;
+
+	public DeleteEdgeEvent(int nestedCalls, Edge edge) {
+		super(nestedCalls);
+		this.edge = edge;
+	}
+
+	public Edge getEdge() {
+		return edge;
+	}
 }
