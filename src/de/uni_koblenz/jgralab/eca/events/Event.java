@@ -6,8 +6,11 @@ public abstract class Event {
 
 	private int nestedCalls;
 
-	public Event(int nC) {
+	private EventDescription.EventTime time;
+
+	public Event(int nC, EventDescription.EventTime time) {
 		this.nestedCalls = nC;
+		this.time = time;
 	}
 
 	public int getNestedCalls() {
@@ -15,5 +18,9 @@ public abstract class Event {
 	}
 
 	public abstract AttributedElement getElement();
+
+	public EventDescription.EventTime getTime() {
+		return time;
+	}
 
 }

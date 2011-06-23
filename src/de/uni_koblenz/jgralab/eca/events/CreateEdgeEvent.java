@@ -7,8 +7,9 @@ public class CreateEdgeEvent extends Event {
 
 	private Edge edge;
 
-	public CreateEdgeEvent(int nestedCalls, Edge edge) {
-		super(nestedCalls);
+	public CreateEdgeEvent(int nestedCalls, EventDescription.EventTime time,
+			Edge edge) {
+		super(nestedCalls, time);
 		this.edge = edge;
 	}
 

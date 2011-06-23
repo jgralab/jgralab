@@ -7,8 +7,9 @@ public class DeleteVertexEvent extends Event {
 
 	private Vertex vertex;
 
-	public DeleteVertexEvent(int nestedCalls, Vertex vertex) {
-		super(nestedCalls);
+	public DeleteVertexEvent(int nestedCalls, EventDescription.EventTime time,
+			Vertex vertex) {
+		super(nestedCalls, time);
 		this.vertex = vertex;
 	}
 

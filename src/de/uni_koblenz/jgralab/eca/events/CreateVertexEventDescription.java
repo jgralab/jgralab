@@ -36,7 +36,8 @@ public class CreateVertexEventDescription extends EventDescription {
 			int nested = this.getActiveECARules().get(0).getECARuleManager()
 					.getNestedTriggerCalls();
 			for (ECARule rule : activeRules) {
-				rule.trigger(new CreateVertexEvent(nested, (Vertex) element));
+				rule.trigger(new CreateVertexEvent(nested, this.getTime(),
+						(Vertex) element));
 			}
 		}
 	}
@@ -46,7 +47,7 @@ public class CreateVertexEventDescription extends EventDescription {
 			int nested = this.getActiveECARules().get(0).getECARuleManager()
 					.getNestedTriggerCalls();
 			for (ECARule rule : activeRules) {
-				rule.trigger(new CreateVertexEvent(nested, null));
+				rule.trigger(new CreateVertexEvent(nested, this.getTime(), null));
 			}
 		}
 	}
