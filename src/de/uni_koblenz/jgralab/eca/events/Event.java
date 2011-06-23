@@ -50,10 +50,6 @@ public abstract class Event {
 	 */
 	private Class<? extends AttributedElement> type;
 	
-	/**
-	 * GReQL Evaluator to evaluate the context
-	 */
-	private GreqlEvaluator eval;
 
 	private AttributedElement latestElement;
 
@@ -87,7 +83,6 @@ public abstract class Event {
 		this.activeRules = new ArrayList<ECARule>();
 		this.contextExpression = contExpr;
 		this.context = Context.EXPRESSION;
-		this.eval = new GreqlEvaluator(this.contextExpression, null, null);
 	}
 	
 	// +++++ Methods ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -140,8 +135,9 @@ public abstract class Event {
 				return false;
 			}
 		}else{
-			this.eval.setDatagraph(this.activeRules.get(0).getECARuleManager()
-					.getGraph());
+			GreqlEvaluator eval = this.activeRules.get(0).getECARuleManager()
+					.getGreqlEvaluator();
+			eval.setQuery(this.contextExpression);
 			eval.startEvaluation();
 			JValue resultingContext = eval.getEvaluationResult();
 			if(resultingContext.isCollection()){

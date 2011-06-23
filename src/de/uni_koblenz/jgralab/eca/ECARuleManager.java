@@ -14,6 +14,7 @@ import de.uni_koblenz.jgralab.eca.events.CreateVertexEvent;
 import de.uni_koblenz.jgralab.eca.events.DeleteEdgeEvent;
 import de.uni_koblenz.jgralab.eca.events.DeleteVertexEvent;
 import de.uni_koblenz.jgralab.eca.events.Event;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 
 public class ECARuleManager {
 
@@ -26,6 +27,8 @@ public class ECARuleManager {
 	 * List with all ECARules managed by this ECARuleManager
 	 */
 	private List<ECARule> rules;
+
+	private GreqlEvaluator greqlEvaluator;
 
 	private int nestedTriggerCalls = 0;
 	private int maxNestedTriggerCalls = 30;
@@ -80,6 +83,8 @@ public class ECARuleManager {
 		this.graph = graph;
 		
 		this.rules = new ArrayList<ECARule>();
+
+		this.greqlEvaluator = new GreqlEvaluator("", this.graph, null);
 
 		this.beforeCreateVertexEvents = new ArrayList<CreateVertexEvent>();
 		this.afterCreateVertexEvents = new ArrayList<CreateVertexEvent>();
@@ -363,6 +368,10 @@ public class ECARuleManager {
 		return rules;
 	}
 
+	public GreqlEvaluator getGreqlEvaluator() {
+		return greqlEvaluator;
+	}
+
 	public int getMaxNestedTriggerCalls() {
 		return maxNestedTriggerCalls;
 	}
@@ -371,11 +380,42 @@ public class ECARuleManager {
 		this.maxNestedTriggerCalls = maxNestedTriggerCalls;
 	}
 
-	// +++++ Add and delete rules ++++++++++++++++++++++++++++++++++++++++++++++
-
-
 	public int getNestedTriggerCalls() {
 		return nestedTriggerCalls;
+	}
+
+	// +++++ Add and delete rules ++++++++++++++++++++++++++++++++++++++++++++++
+
+	/**
+	 * Adds an ECARule with the given Event and Action to this ECARuleManager,
+	 * throws a Runtime Exception if the ECARule has already an ECARuleManager
+	 * 
+	 * @param event
+	 *            Event part of Rule
+	 * @param action
+	 *            Action part of Rule
+	 */
+	public void addECARule(Event event, Action action) {
+		ECARule newRule = new ECARule(event, action);
+		this.addECARule(newRule);
+
+	}
+
+	/**
+	 * Adds an ECARule with the given Event, Condition and Action to this
+	 * ECARuleManager, throws a Runtime Exception if the ECARule has already an
+	 * ECARuleManager
+	 * 
+	 * @param event
+	 *            Event part of Rule
+	 * @param condition
+	 *            Condition part of the Rule
+	 * @param action
+	 *            Action part of Rule
+	 */
+	public void addECARule(Event event, Condition condition, Action action) {
+		ECARule newRule = new ECARule(event, condition, action);
+		this.addECARule(newRule);
 	}
 
 	/**
