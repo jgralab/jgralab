@@ -9,7 +9,7 @@ import de.uni_koblenz.jgralab.eca.events.Event;
 import de.uni_koblenz.jgralab.gretl.Context;
 import de.uni_koblenz.jgralab.gretl.Transformation;
 
-public class GretlTransformAction extends Action {
+public class GretlTransformAction implements Action {
 
 	/**
 	 * Class of Transformation

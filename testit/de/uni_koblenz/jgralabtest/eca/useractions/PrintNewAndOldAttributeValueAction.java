@@ -5,7 +5,7 @@ import de.uni_koblenz.jgralab.eca.events.ChangeAttributeEvent;
 import de.uni_koblenz.jgralab.eca.events.Event;
 import de.uni_koblenz.jgralab.eca.events.EventDescription;
 
-public class PrintNewAndOldAttributeValueAction extends Action {
+public class PrintNewAndOldAttributeValueAction implements Action {
 
 	@Override
 	public void doAction(Event e) {
