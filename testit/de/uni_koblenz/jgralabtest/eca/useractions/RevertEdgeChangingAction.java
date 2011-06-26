@@ -5,7 +5,7 @@ import de.uni_koblenz.jgralab.eca.Action;
 import de.uni_koblenz.jgralab.eca.events.ChangeEdgeEvent;
 import de.uni_koblenz.jgralab.eca.events.Event;
 
-public class RevertEdgeChangingAction extends Action {
+public class RevertEdgeChangingAction implements Action {
 
 	@Override
 	public void doAction(Event event) {

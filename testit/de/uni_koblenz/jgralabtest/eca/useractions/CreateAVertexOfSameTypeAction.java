@@ -5,7 +5,7 @@ import de.uni_koblenz.jgralab.eca.Action;
 import de.uni_koblenz.jgralab.eca.events.CreateVertexEvent;
 import de.uni_koblenz.jgralab.eca.events.Event;
 
-public class CreateAVertexOfSameTypeAction extends Action {
+public class CreateAVertexOfSameTypeAction implements Action {
 
 	@Override
 	public void doAction(Event ev) {

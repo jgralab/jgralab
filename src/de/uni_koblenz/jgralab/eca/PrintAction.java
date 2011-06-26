@@ -2,7 +2,7 @@ package de.uni_koblenz.jgralab.eca;
 
 import de.uni_koblenz.jgralab.eca.events.Event;
 
-public class PrintAction extends Action {
+public class PrintAction implements Action {
 
 	/**
 	 * Message to print on console
