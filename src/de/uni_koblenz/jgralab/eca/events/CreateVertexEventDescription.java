@@ -8,7 +8,7 @@ import de.uni_koblenz.jgralab.eca.ECARule;
 public class CreateVertexEventDescription extends EventDescription {
 
 	/**
-	 * Creates an CreateVertexEvent with the given parameters
+	 * Creates an CreateVertexEventDescription with the given parameters
 	 * 
 	 * @param time
 	 *            the EventTime, BEFORE or AFTER
@@ -21,7 +21,7 @@ public class CreateVertexEventDescription extends EventDescription {
 	}
 
 	/**
-	 * Creates an CreateVertexEvent with the given parameters
+	 * Creates an CreateVertexEventDescription with the given parameters
 	 * 
 	 * @param time
 	 *            the EventTime, BEFORE or AFTER
@@ -32,6 +32,14 @@ public class CreateVertexEventDescription extends EventDescription {
 		super(time, contextExpr);
 	}
 
+	// ---------------------------------------------------------------------
+
+	/**
+	 * Triggers the rules if this EventDescription matches the Event
+	 * 
+	 * @param element
+	 *            the created Vertex
+	 */
 	public void fire(AttributedElement element) {
 		if (super.checkContext(element)) {
 			int nested = this.getActiveECARules().get(0).getECARuleManager()
@@ -46,6 +54,12 @@ public class CreateVertexEventDescription extends EventDescription {
 		}
 	}
 
+	/**
+	 * Triggers the rule if this EventDescription matches the Event
+	 * 
+	 * @param type
+	 *            the type of the Vertex that will become created
+	 */
 	public void fire(Class<? extends AttributedElement> type) {
 		if (super.checkContext(type)) {
 			int nested = this.getActiveECARules().get(0).getECARuleManager()

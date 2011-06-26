@@ -7,7 +7,7 @@ import de.uni_koblenz.jgralab.eca.ECARule;
 public class ChangeAttributeEventDescription extends EventDescription {
 
 	/**
-	 * Name of the Attribute, this Event monitors changes
+	 * Name of the Attribute, this EventDescription monitors changes
 	 */
 	private String concernedAttribute;
 
@@ -15,13 +15,13 @@ public class ChangeAttributeEventDescription extends EventDescription {
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 	/**
-	 * Creates a ChangeAttributeEvent with the given parameters
+	 * Creates a ChangeAttributeEventDescription with the given parameters
 	 * 
 	 * @param time
 	 *            the EventTime, BEFORE or AFTER
 	 * @param type
-	 *            the Class of elements, this Event monitors for Attribute
-	 *            changes
+	 *            the Class of elements, this EventDescription monitors for
+	 *            Attribute changes
 	 * @param attributeName
 	 *            the name of the observed Attribute
 	 */
@@ -30,15 +30,15 @@ public class ChangeAttributeEventDescription extends EventDescription {
 		super(time, type);
 		this.concernedAttribute = attributeName;
 	}
-	
+
 	/**
-	 * Creates a ChangeAttributeEvent with the given parameters
+	 * Creates a ChangeAttributeEventDescription with the given parameters
 	 * 
 	 * @param time
 	 *            the EventTime, BEFORE or AFTER
 	 * @param contextExr
 	 *            the GReQuL-Expression that represents the context of this
-	 *            Event
+	 *            EventDescription
 	 * @param attributeName
 	 *            the name of the observed Attribute
 	 */
@@ -51,8 +51,8 @@ public class ChangeAttributeEventDescription extends EventDescription {
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 	/**
-	 * Compares the Attribute names and calls in the case of Equality the Events
-	 * fire method
+	 * Compares the Attribute names and context or type, triggers the rules if
+	 * the EventDescription matches the Event
 	 * 
 	 * @param element
 	 *            the AttributedElement an Attribute will change or changed for

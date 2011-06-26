@@ -11,9 +11,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 
 
 public abstract class EventDescription {
-	
+
 	/**
-	 * Rules that can possibly become triggered by this Event
+	 * Rules that can possibly become triggered by this EventDescription
 	 */
 	protected List<ECARule> activeRules;
 	
@@ -51,12 +51,10 @@ public abstract class EventDescription {
 	private Class<? extends AttributedElement> type;
 	
 
-	private AttributedElement latestElement;
-
 	// +++++++ Constructors ++++++++++++++++++++++++++++++++++++++++++++++++++
 
 	/**
-	 * Creates an Event with the given parameters
+	 * Creates an EventDescription with the given parameters
 	 * 
 	 * @param time
 	 *            the EventTime, BEFORE or AFTER
@@ -71,7 +69,7 @@ public abstract class EventDescription {
 	}
 
 	/**
-	 * Creates an Event with the given parameters
+	 * Creates an EventDescription with the given parameters
 	 * 
 	 * @param time
 	 *            the EventTime, BEFORE or AFTER
@@ -87,7 +85,14 @@ public abstract class EventDescription {
 	
 	// +++++ Methods ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-
+	/**
+	 * Returns whether the before create or after delete Event is of the type of
+	 * this EventDescription
+	 * 
+	 * @param elementClass
+	 *            Type of the element that will become created or was deleted
+	 * @return whether the Event matches this EventDescription
+	 */
 	protected boolean checkContext(
 			Class<? extends AttributedElement> elementClass) {
 		if (this.getType().equals(elementClass)) {
@@ -103,7 +108,7 @@ public abstract class EventDescription {
 	 * 
 	 * @param element
 	 *            the element to check
-	 * @return whether the element really invokes this Event
+	 * @return whether the Event matches this EventDescription
 	 */
 	protected boolean checkContext(AttributedElement element) {
 		if(this.context.equals(Context.TYPE)){
@@ -170,10 +175,5 @@ public abstract class EventDescription {
 	public Context getContext() {
 		return context;
 	}
-
-	public AttributedElement getLatestElement() {
-		return latestElement;
-	}
-	
 
 }
