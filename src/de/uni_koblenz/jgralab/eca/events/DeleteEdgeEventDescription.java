@@ -8,7 +8,7 @@ import de.uni_koblenz.jgralab.eca.ECARule;
 public class DeleteEdgeEventDescription extends EventDescription {
 
 	/**
-	 * Creates an DeleteEdgeEvent with the given parameters
+	 * Creates an DeleteEdgeEventDescription with the given parameters
 	 * 
 	 * @param time
 	 *            the EventTime, BEFORE or AFTER
@@ -21,7 +21,7 @@ public class DeleteEdgeEventDescription extends EventDescription {
 	}
 
 	/**
-	 * Creates an DeleteEdgeEvent with the given parameters
+	 * Creates an DeleteEdgeEventDescription with the given parameters
 	 * 
 	 * @param time
 	 *            the EventTime, BEFORE or AFTER
@@ -32,6 +32,14 @@ public class DeleteEdgeEventDescription extends EventDescription {
 		super(time, contextExpr);
 	}
 
+	// -------------------------------------------------------------------
+
+	/**
+	 * Triggers the rules if this EventDescription matches the Event
+	 * 
+	 * @param element
+	 *            the to be deleted Edge
+	 */
 	public void fire(AttributedElement element) {
 		if (super.checkContext(element)) {
 			int nested = this.getActiveECARules().get(0).getECARuleManager()
@@ -45,6 +53,12 @@ public class DeleteEdgeEventDescription extends EventDescription {
 		}
 	}
 
+	/**
+	 * Triggers the rule if this EventDescription matches the Event
+	 * 
+	 * @param type
+	 *            the type of the Edge that is deleted
+	 */
 	public void fire(Class<? extends AttributedElement> type) {
 		if (super.checkContext(type)) {
 			int nested = this.getActiveECARules().get(0).getECARuleManager()

@@ -8,14 +8,13 @@ import de.uni_koblenz.jgralab.eca.ECARule;
 
 public class ChangeEdgeEventDescription extends EventDescription {
 
-
 	/**
-	 * Creates an ChangeEdgeEvent with the given parameters
+	 * Creates an ChangeEdgeEventDescription with the given parameters
 	 * 
 	 * @param time
 	 *            the EventTime, BEFORE or AFTER
 	 * @param type
-	 *            the Class of elements, this Event monitors
+	 *            the Class of elements, this EventDescription monitors
 	 */
 	public ChangeEdgeEventDescription(EventTime time,
 			Class<? extends AttributedElement> type) {
@@ -23,7 +22,7 @@ public class ChangeEdgeEventDescription extends EventDescription {
 	}
 
 	/**
-	 * Creates an ChangeEdgeEvent with the given parameters
+	 * Creates an ChangeEdgeEventDescription with the given parameters
 	 * 
 	 * @param time
 	 *            the EventTime, BEFORE or AFTER
@@ -34,6 +33,17 @@ public class ChangeEdgeEventDescription extends EventDescription {
 		super(time, contextExpr);
 	}
 
+	/**
+	 * Checks whether this EventDescription matches the Event and triggers the
+	 * rules if it is so
+	 * 
+	 * @param element
+	 *            the Edge that causes the Event
+	 * @param oldVertex
+	 *            the old Vertex of the Edge
+	 * @param newVertex
+	 *            the new Vertex of the Edge
+	 */
 	public void fire(AttributedElement element, Vertex oldVertex,
 			Vertex newVertex) {
 		if (super.checkContext(element)) {

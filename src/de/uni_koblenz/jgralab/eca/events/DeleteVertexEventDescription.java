@@ -8,12 +8,12 @@ import de.uni_koblenz.jgralab.eca.ECARule;
 public class DeleteVertexEventDescription extends EventDescription {
 
 	/**
-	 * Creates an DeleteVertexEvent with the given parameters
+	 * Creates an DeleteVertexEventDescription with the given parameters
 	 * 
 	 * @param time
 	 *            the EventTime, BEFORE or AFTER
 	 * @param type
-	 *            the Class of elements, this Event monitors
+	 *            the Class of elements, this EventDescription monitors
 	 */
 	public DeleteVertexEventDescription(EventTime time,
 			Class<? extends AttributedElement> type) {
@@ -21,7 +21,7 @@ public class DeleteVertexEventDescription extends EventDescription {
 	}
 
 	/**
-	 * Creates an DeleteVertexEvent with the given parameters
+	 * Creates an DeleteVertexEventDescription with the given parameters
 	 * 
 	 * @param time
 	 *            the EventTime, BEFORE or AFTER
@@ -32,6 +32,14 @@ public class DeleteVertexEventDescription extends EventDescription {
 		super(time, contextExpr);
 	}
 
+	// -------------------------------------------------------------------
+
+	/**
+	 * Triggers the rules if this EventDescription matches the Event
+	 * 
+	 * @param element
+	 *            the to be deleted Vertex
+	 */
 	public void fire(AttributedElement element) {
 		if (super.checkContext(element)) {
 			int nested = this.getActiveECARules().get(0).getECARuleManager()
@@ -46,6 +54,12 @@ public class DeleteVertexEventDescription extends EventDescription {
 		}
 	}
 	
+	/**
+	 * Triggers the rule if this EventDescription matches the Event
+	 * 
+	 * @param type
+	 *            the type of the Vertex that is deleted
+	 */
 	public void fire(Class<? extends AttributedElement> type) {
 		if (super.checkContext(type)) {
 			int nested = this.getActiveECARules().get(0).getECARuleManager()
