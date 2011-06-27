@@ -30,6 +30,11 @@ public class DeleteEdgeEventDescription extends EventDescription {
 	 */
 	public DeleteEdgeEventDescription(EventTime time, String contextExpr) {
 		super(time, contextExpr);
+		if (time.equals(EventTime.AFTER)) {
+			throw new RuntimeException(
+					"Event \"after delete Edge\" can not match a context expression"
+							+ " because there is no element.");
+		}
 	}
 
 	// -------------------------------------------------------------------
@@ -47,7 +52,7 @@ public class DeleteEdgeEventDescription extends EventDescription {
 			Graph graph = this.getActiveECARules().get(0).getECARuleManager()
 					.getGraph();
 			for (ECARule rule : activeRules) {
-				rule.trigger(new DeleteEdgeEvent(nested, this.getTime(), graph,
+				rule.trigger(new DeleteEdgeEvent(nested, graph,
 						(Edge) element));
 			}
 		}
@@ -66,8 +71,7 @@ public class DeleteEdgeEventDescription extends EventDescription {
 			Graph graph = this.getActiveECARules().get(0).getECARuleManager()
 					.getGraph();
 			for (ECARule rule : activeRules) {
-				rule.trigger(new DeleteEdgeEvent(nested, this.getTime(), graph,
-						null));
+				rule.trigger(new DeleteEdgeEvent(nested, graph, type));
 			}
 		}
 	}

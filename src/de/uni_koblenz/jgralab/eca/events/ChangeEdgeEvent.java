@@ -42,8 +42,7 @@ public class ChangeEdgeEvent extends Event {
 			Graph graph,
 			Edge edge, Vertex oldVertex,
 			Vertex newVertex) {
-		super(nestedCalls, time, graph);
-
+		super(nestedCalls, time, graph, edge.getM1Class());
 		this.edge = edge;
 		this.oldVertex = oldVertex;
 		this.newVertex = newVertex;

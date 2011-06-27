@@ -30,6 +30,11 @@ public class DeleteVertexEventDescription extends EventDescription {
 	 */
 	public DeleteVertexEventDescription(EventTime time, String contextExpr) {
 		super(time, contextExpr);
+		if (time.equals(EventTime.AFTER)) {
+			throw new RuntimeException(
+					"Event \"after delete Vertex\" can not match a context expression"
+							+ " because there is no element.");
+		}
 	}
 
 	// -------------------------------------------------------------------
@@ -47,8 +52,7 @@ public class DeleteVertexEventDescription extends EventDescription {
 			Graph graph = this.getActiveECARules().get(0).getECARuleManager()
 					.getGraph();
 			for (ECARule rule : activeRules) {
-				rule.trigger(new DeleteVertexEvent(nested, this.getTime(),
-						graph,
+				rule.trigger(new DeleteVertexEvent(nested, graph,
 						(Vertex) element));
 			}
 		}
@@ -67,8 +71,8 @@ public class DeleteVertexEventDescription extends EventDescription {
 			Graph graph = this.getActiveECARules().get(0).getECARuleManager()
 					.getGraph();
 			for (ECARule rule : activeRules) {
-				rule.trigger(new DeleteVertexEvent(nested, this.getTime(),
-						graph, null));
+				rule.trigger(new DeleteVertexEvent(nested, graph, this
+						.getType()));
 			}
 		}
 	}

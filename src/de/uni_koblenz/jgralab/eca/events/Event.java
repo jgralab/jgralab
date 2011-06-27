@@ -21,6 +21,11 @@ public abstract class Event {
 	private Graph graph;
 
 	/**
+	 * Type of element, VertexClass, EdgeClass or GraphClass
+	 */
+	private Class<? extends AttributedElement> type;
+
+	/**
 	 * Create an Event with the given parameters
 	 * 
 	 * @param nC
@@ -29,11 +34,15 @@ public abstract class Event {
 	 *            before or after
 	 * @param graph
 	 *            Graph where the Event happened
+	 * @param type
+	 *            type of element
 	 */
-	public Event(int nC, EventDescription.EventTime time, Graph graph) {
+	public Event(int nC, EventDescription.EventTime time, Graph graph,
+			Class<? extends AttributedElement> type) {
 		this.nestedCalls = nC;
 		this.time = time;
 		this.graph = graph;
+		this.type = type;
 	}
 
 	/**
@@ -60,6 +69,13 @@ public abstract class Event {
 	 */
 	public Graph getGraph() {
 		return graph;
+	}
+
+	/**
+	 * @return the class of the Event
+	 */
+	public Class<? extends AttributedElement> getType() {
+		return type;
 	}
 
 }
