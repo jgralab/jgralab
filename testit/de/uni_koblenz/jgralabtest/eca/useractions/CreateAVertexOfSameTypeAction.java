@@ -9,18 +9,12 @@ public class CreateAVertexOfSameTypeAction implements Action {
 
 	@Override
 	public void doAction(Event ev) {
-
 		if (ev instanceof CreateVertexEvent) {
-			System.out.println(" help");
-			if (((CreateVertexEvent) ev).getVertex() != null) {
-				System.out
-						.println("ECA Test Action: Create a new Vertex of Type: "
-								+ ((CreateVertexEvent) ev).getVertex()
-										.getM1Class().getName());
-				ev.getGraph().createVertex(
-								(Class<? extends Vertex>) ((CreateVertexEvent) ev)
-										.getVertex().getM1Class());
-			}
+			System.out.println("ECA Test Action: Create a new Vertex of Type: "
+					+ ev.getType().getName());
+			ev.getGraph()
+					.createVertex((Class<? extends Vertex>) (ev.getType()));
+			
 		}
 	}
 

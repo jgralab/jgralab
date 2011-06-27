@@ -46,19 +46,20 @@ public class ECATest {
 
 	@BeforeClass
 	public static void setUp() {
-		System.out.println("Start ECA Test.");
+		System.out.println("Start ECA Test.\n");
 		JGraLab.setLogLevel(Level.OFF);
 		initGraph();
 	}
 
 	@AfterClass
 	public static void tearDown() {
-		System.out.println("Finish ECA Test.");
+		System.out.println("Finish ECA Test.\n");
 	}
 
 
 	@Test
 	public void testDeleteVertexEvent() {
+		System.out.println("Single Tests to check if Events are recognized:");
 
 		Book newBook = simlibgraph.createBook();
 
@@ -185,10 +186,13 @@ public class ECATest {
 
 		simlibgraph.getECARuleManager().deleteECARule(bef_rule);
 		simlibgraph.getECARuleManager().deleteECARule(aft_rule);
+
+		System.out.println();
 	}
 
 	@Test
 	public void testGrequlContextOnEvent() {
+		System.out.println("Test Grequl Context:");
 		EventDescription aft_ev = new CreateVertexEventDescription(EventDescription.EventTime.AFTER, "V{Medium}");
 		Action aft_act = new PrintAction(
 				"ECA Test Message: New Medium created.");
@@ -199,10 +203,12 @@ public class ECATest {
 
 		simlibgraph.getECARuleManager().deleteECARule(aft_rule);
 
+		System.out.println();
 	}
 
 	@Test
 	public void testCondition() {
+		System.out.println("Test Condition:");
 		EventDescription aft_ev = new CreateVertexEventDescription(EventDescription.EventTime.AFTER,
 				NewMedia.class);
 		Condition aft_cond = new Condition("count( V{NewMedia} ) = 2");
@@ -216,10 +222,13 @@ public class ECATest {
 		simlibgraph.createNewMedia();
 
 		simlibgraph.getECARuleManager().deleteECARule(aft_rule);
+		System.out.println();
 	}
 
 	@Test(expected = RuntimeException.class)
 	public void testAddEventTo2Graphs() {
+		System.out
+				.println("Test if an Exception occurs when an Event is assigned to two Graphs");
 		SimpleLibraryGraph newGraph = SimpleLibrarySchema.instance()
 				.createSimpleLibraryGraph();
 
@@ -238,10 +247,13 @@ public class ECATest {
 		newGraph.getECARuleManager().addECARule(aft_ruleN);
 
 		simlibgraph.getECARuleManager().deleteECARule(aft_rule);
+		System.out.println();
 	}
 
 	@Test(expected = RuntimeException.class)
 	public void testAddRuleTo2Graphs() {
+		System.out
+				.println("Test if an Exception occurs when a Rule is assigned to two Graphs");
 		SimpleLibraryGraph newGraph = SimpleLibrarySchema.instance()
 				.createSimpleLibraryGraph();
 
@@ -255,13 +267,16 @@ public class ECATest {
 		newGraph.getECARuleManager().addECARule(aft_rule);
 
 		simlibgraph.getECARuleManager().deleteECARule(aft_rule);
+		System.out.println();
 	}
 
 
 	@Test
 	public void testNeverEndingCreationStop() {
+		System.out
+				.println("\nTest if the prevention of never ending nested calls works:");
 		EventDescription bef_ev = new CreateVertexEventDescription(
-				EventDescription.EventTime.AFTER, User.class);
+				EventDescription.EventTime.BEFORE, User.class);
 		Action bef_act = new CreateAVertexOfSameTypeAction();
 		ECARule bef_rule = new ECARule(bef_ev, bef_act);
 		simlibgraph.getECARuleManager().addECARule(bef_rule);
@@ -272,11 +287,13 @@ public class ECATest {
 		simlibgraph.createUser();
 
 		simlibgraph.getECARuleManager().deleteECARule(bef_rule);
-		System.out.println("stop");
+		System.out.println();
 	}
 
 	@Test
 	public void testGenerationOf20Users() {
+		System.out
+				.println("Test to create Users until an count of 20 is reached:");
 		EventDescription bef_ev = new CreateVertexEventDescription(EventDescription.EventTime.AFTER, User.class);
 		Condition aft_cond = new Condition("count (V{User}) < 20");
 		Action bef_act = new CreateAVertexOfSameTypeAction();
@@ -288,10 +305,14 @@ public class ECATest {
 		simlibgraph.createUser();
 
 		simlibgraph.getECARuleManager().deleteECARule(bef_rule);
+
+		System.out.println();
 	}
 
 	@Test
 	public void testGettingOldAndNewValueFromBeforeAttributeChanging() {
+		System.out
+				.println("Test Action that uses old and new Attribute value of ChangeAttributeEvent:");
 		EventDescription bef_ev = new ChangeAttributeEventDescription(EventDescription.EventTime.BEFORE,
 				Book.class, "title");
 		Action bef_act = new PrintNewAndOldAttributeValueAction();
@@ -301,11 +322,14 @@ public class ECATest {
 		book1.set_title("Silmarillion");
 
 		simlibgraph.getECARuleManager().deleteECARule(bef_rule);
+
+		System.out.println();
 	}
 
 	@Test
 	public void testGettingOldAndNewValueFromAfterAttributeChanging() {
-
+		System.out
+				.println("Test Action that uses old and new Vertex of ChangeEdgeEvent:");
 		EventDescription aft_ev = new ChangeAttributeEventDescription(EventDescription.EventTime.AFTER,
 				Book.class, "title");
 		Action aft_act = new PrintNewAndOldAttributeValueAction();
@@ -315,10 +339,14 @@ public class ECATest {
 		book1.set_title("The Hobbit");
 
 		simlibgraph.getECARuleManager().deleteECARule(aft_rule);
+
+		System.out.println();
 	}
 
 	@Test
 	public void testRevertChangedEdge() {
+		System.out
+				.println("Test Action that reverts the change of an Edge if the condition is true:");
 		EventDescription aft_ev = new ChangeEdgeEventDescription(EventDescription.EventTime.AFTER, Loans.class);
 		Condition aft_cond = new Condition(
 				"startVertex(context).name = \"Martin King\"");
@@ -331,10 +359,14 @@ public class ECATest {
 		assertEquals(loans_u1_b1.getAlpha(), user2);
 
 		simlibgraph.getECARuleManager().deleteECARule(aft_rule);
+
+		System.out.println();
 	}
 
 	@Test
 	public void testRevertChangedEdge2() {
+		System.out
+				.println("Test Action that reverts the change of an Edge if it is on the highest nested call level");
 		EventDescription aft_ev = new ChangeEdgeEventDescription(EventDescription.EventTime.AFTER, Loans.class);
 		Action aft_act = new RevertEdgeChangingOnHighesLevelAction();
 		ECARule aft_rule = new ECARule(aft_ev, aft_act);
@@ -345,6 +377,8 @@ public class ECATest {
 		assertEquals(loans_u1_b1.getAlpha(), user2);
 
 		simlibgraph.getECARuleManager().deleteECARule(aft_rule);
+
+		System.out.println();
 	}
 
 	static void initGraph() {
