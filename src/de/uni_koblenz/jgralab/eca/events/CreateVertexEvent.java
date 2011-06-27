@@ -3,6 +3,7 @@ package de.uni_koblenz.jgralab.eca.events;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.eca.events.EventDescription.EventTime;
 
 public class CreateVertexEvent extends Event {
 
@@ -16,20 +17,32 @@ public class CreateVertexEvent extends Event {
 	 * 
 	 * @param nestedCallsdepth
 	 *            of nested trigger calls
-	 * @param time
-	 *            before or after
 	 * @param graph
 	 *            Graph where the Event happened
 	 * @param element
 	 *            the created Vertex or null if the EventTime is before
 	 */
-	public CreateVertexEvent(int nestedCalls, EventDescription.EventTime time,
-			Graph graph,
-			Vertex element) {
-		super(nestedCalls, time, graph);
-
+	public CreateVertexEvent(int nestedCalls, Graph graph, Vertex element) {
+		super(nestedCalls, EventTime.AFTER, graph, element.getM1Class());
 		this.vertex = element;
 	}
+
+	/**
+	 * Creates an CreateVertexEvent with the given parameters
+	 * 
+	 * @param nestedCallsdepth
+	 *            of nested trigger calls
+	 * @param graph
+	 *            Graph where the Event happened
+	 * @param type
+	 *            the type of the to be created Vertex
+	 */
+	public CreateVertexEvent(int nestedCalls, Graph graph,
+			Class<? extends AttributedElement> type) {
+		super(nestedCalls, EventTime.BEFORE, graph, type);
+		this.vertex = null;
+	}
+
 
 	/**
 	 * @return the created Vertex or null if the EventTime is before

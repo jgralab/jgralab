@@ -260,7 +260,8 @@ public class ECATest {
 
 	@Test
 	public void testNeverEndingCreationStop() {
-		EventDescription bef_ev = new CreateVertexEventDescription(EventDescription.EventTime.BEFORE, User.class);
+		EventDescription bef_ev = new CreateVertexEventDescription(
+				EventDescription.EventTime.AFTER, User.class);
 		Action bef_act = new CreateAVertexOfSameTypeAction();
 		ECARule bef_rule = new ECARule(bef_ev, bef_act);
 		simlibgraph.getECARuleManager().addECARule(bef_rule);
@@ -271,6 +272,7 @@ public class ECATest {
 		simlibgraph.createUser();
 
 		simlibgraph.getECARuleManager().deleteECARule(bef_rule);
+		System.out.println("stop");
 	}
 
 	@Test

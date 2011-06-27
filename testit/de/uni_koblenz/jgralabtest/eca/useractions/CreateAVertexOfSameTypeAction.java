@@ -11,6 +11,7 @@ public class CreateAVertexOfSameTypeAction implements Action {
 	public void doAction(Event ev) {
 
 		if (ev instanceof CreateVertexEvent) {
+			System.out.println(" help");
 			if (((CreateVertexEvent) ev).getVertex() != null) {
 				System.out
 						.println("ECA Test Action: Create a new Vertex of Type: "

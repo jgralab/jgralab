@@ -49,7 +49,7 @@ public class ChangeAttributeEvent extends Event {
 			String attributeName,
 			Object oldValue,
 			Object newValue) {
-		super(nestedCalls, time, graph);
+		super(nestedCalls, time, graph, element.getM1Class());
 		this.element = element;
 		this.attributeName = attributeName;
 		this.oldValue = oldValue;

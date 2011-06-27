@@ -30,6 +30,11 @@ public class CreateVertexEventDescription extends EventDescription {
 	 */
 	public CreateVertexEventDescription(EventTime time, String contextExpr) {
 		super(time, contextExpr);
+		if (time.equals(EventTime.BEFORE)) {
+			throw new RuntimeException(
+					"Event \"before create Vertex\" can not match a context expression"
+							+ " because there is no element.");
+		}
 	}
 
 	// ---------------------------------------------------------------------
@@ -47,8 +52,7 @@ public class CreateVertexEventDescription extends EventDescription {
 			Graph graph = this.getActiveECARules().get(0).getECARuleManager()
 					.getGraph();
 			for (ECARule rule : activeRules) {
-				rule.trigger(new CreateVertexEvent(nested, this.getTime(),
-						graph,
+				rule.trigger(new CreateVertexEvent(nested, graph,
 						(Vertex) element));
 			}
 		}
@@ -67,8 +71,8 @@ public class CreateVertexEventDescription extends EventDescription {
 			Graph graph = this.getActiveECARules().get(0).getECARuleManager()
 					.getGraph();
 			for (ECARule rule : activeRules) {
-				rule.trigger(new CreateVertexEvent(nested, this.getTime(),
-						graph, null));
+				rule.trigger(new CreateVertexEvent(nested, graph, this
+						.getType()));
 			}
 		}
 	}

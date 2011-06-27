@@ -30,6 +30,11 @@ public class CreateEdgeEventDescription extends EventDescription{
 	 */
 	public CreateEdgeEventDescription(EventTime time, String contextExpr) {
 		super(time, contextExpr);
+		if (time.equals(EventTime.BEFORE)) {
+			throw new RuntimeException(
+					"Event \"before create Edge\" can not match a context expression"
+							+ " because there is no element.");
+		}
 	}
 	
 	// --------------------------------------------------------------------
@@ -47,7 +52,7 @@ public class CreateEdgeEventDescription extends EventDescription{
 			Graph graph = this.getActiveECARules().get(0).getECARuleManager()
 					.getGraph();
 			for (ECARule rule : activeRules) {
-				rule.trigger(new CreateEdgeEvent(nested, this.getTime(), graph,
+				rule.trigger(new CreateEdgeEvent(nested, graph,
 						(Edge) element));
 			}
 		}
@@ -66,8 +71,8 @@ public class CreateEdgeEventDescription extends EventDescription{
 			Graph graph = this.getActiveECARules().get(0).getECARuleManager()
 					.getGraph();
 			for (ECARule rule : activeRules) {
-				rule.trigger(new CreateEdgeEvent(nested, this.getTime(), graph,
-						null));
+				rule.trigger(new CreateEdgeEvent(nested, graph,
+						this.getType()));
 			}
 		}
 	}
