@@ -31,7 +31,8 @@ public class ECAIO {
 	// ////////////////////////////////////////////////////////////////////////////
 	// // -- Only for testing -- /////////////////////////////////////////////
 
-	public static void main(String[] args) throws GraphIOException {
+	public static void main(String[] args) throws GraphIOException,
+			ECAIOException {
 		Schema schema = GraphIO
 				.loadSchemaFromFile("testit/testschemas/eca/SimpleLibrarySchema.tg");
 		schema.compile(CodeGeneratorConfiguration.NORMAL);
@@ -80,8 +81,10 @@ public class ECAIO {
 	 * @param schema
 	 * @param filename
 	 * @return
+	 * @throws ECAIOException
 	 */
-	public static List<ECARule> loadECArules(Schema schema, String filename) {
+	public static List<ECARule> loadECArules(Schema schema, String filename)
+			throws ECAIOException {
 
 		try {
 			FileInputStream fileStream = new FileInputStream(filename);
@@ -147,9 +150,11 @@ public class ECAIO {
 	/**
 	 * Internal load Method
 	 * 
+	 * @throws ECAIOException
+	 * 
 	 * @throws IOException
 	 */
-	private void load() {
+	private void load() throws ECAIOException {
 
 		try {
 
@@ -162,8 +167,7 @@ public class ECAIO {
 			inStream.close();
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new ECAIOException("Error while reading File.");
 		}
 
 	}
@@ -172,8 +176,10 @@ public class ECAIO {
 
 	/**
 	 * Match the "Rule := " and then parse Event, Condition and Action
+	 * 
+	 * @throws ECAIOException
 	 */
-	private void parseRule() {
+	private void parseRule() throws ECAIOException {
 		match("Rule");
 		match(":=");
 
@@ -186,8 +192,6 @@ public class ECAIO {
 		} else {
 			this.rules.add(new ECARule(ed, cond, action));
 		}
-		
-
 	}
 
 	// ######################################################################
@@ -195,8 +199,9 @@ public class ECAIO {
 	/**
 	 * 
 	 * @return
+	 * @throws ECAIOException
 	 */
-	private EventDescription parseEventDescription() {
+	private EventDescription parseEventDescription() throws ECAIOException {
 
 		// Check whether a context is given
 		String next = this.nextToken();
@@ -224,7 +229,9 @@ public class ECAIO {
 			test = this.nextToken();
 		}
 		if (!isMatching(test, ")") && !isMatching(test, ",")) {
-			throw new RuntimeException();
+			throw new ECAIOException(
+					"Error while parsing Event. ')' or ',' expected, found '"
+							+ test + "'.");
 		}
 
 
@@ -259,48 +266,60 @@ public class ECAIO {
 		}
 		// -- wrong syntax
 		else {
-			throw new RuntimeException("");
+			throw new ECAIOException(
+					"Type of EventDescription not recognized. Found "
+							+ eventdestype
+							+ " Possible are \"createVertex\", \"deleteVertex\", "
+							+ "\"createEdge\", \"deleteEdge\", "
+							+ "\"updatedStartVertex\", \"updatedEndVertex\", "
+							+ "\"changeAttributeValue");
 		}
 	}
 
 	private EventDescription finishDeleteEdgeEventDescription(String context,
-			EventTime et, String type) {
+			EventTime et, String type) throws ECAIOException {
 		if (context != null && type == null) {
 			return new DeleteEdgeEventDescription(et, context);
 		} else if (context == null && type != null) {
 			return new DeleteEdgeEventDescription(et,
 					this.getAttributedElement(type));
 		} else {
-			throw new RuntimeException();
+			throw new ECAIOException(
+					"It's necessary to give a context OR a type. Its an XOR. Found: context: \""
+							+ context + "\" and type: \"" + type + "\"");
 		}
 	}
 
 	private EventDescription finishDeleteVertexEventDescription(String context,
-			EventTime et, String type) {
+			EventTime et, String type) throws ECAIOException {
 		if (context != null && type == null) {
 			return new DeleteVertexEventDescription(et, context);
 		} else if (context == null && type != null) {
 			return new DeleteVertexEventDescription(et,
 					this.getAttributedElement(type));
 		} else {
-			throw new RuntimeException();
+			throw new ECAIOException(
+					"It's necessary to give a context OR a type. Its an XOR. Found: context: \""
+							+ context + "\" and type: \"" + type + "\"");
 		}
 	}
 
 	private EventDescription finishChangeEdgeEventDescription(String context,
-			EventTime et, String type) {
+			EventTime et, String type) throws ECAIOException {
 		if (context != null && type == null) {
 			return new ChangeEdgeEventDescription(et, context);
 		} else if (context == null && type != null) {
 			return new ChangeEdgeEventDescription(et,
 					this.getAttributedElement(type));
 		} else {
-			throw new RuntimeException();
+			throw new ECAIOException(
+					"It's necessary to give a context OR a type. Its an XOR. Found: context: \""
+							+ context + "\" and type: \"" + type + "\"");
 		}
 	}
 
 	private EventDescription finishChangeAttributeEventDescription(
-			String context, EventTime et, String type) {
+			String context, EventTime et, String type) throws ECAIOException {
 		match("<");
 		String name = this.nextToken();
 		match(">");
@@ -312,31 +331,37 @@ public class ECAIO {
 			return new ChangeAttributeEventDescription(et,
 					this.getAttributedElement(type), name);
 		} else {
-			throw new RuntimeException();
+			throw new ECAIOException(
+					"It's necessary to give a context OR a type. Its an XOR. Found: context: \""
+							+ context + "\" and type: \"" + type + "\"");
 		}
 	}
 
 	private EventDescription finishCreateEdgeEventDescription(String context,
-			EventTime et, String type) {
+			EventTime et, String type) throws ECAIOException {
 		if (context != null && type == null) {
 			return new CreateEdgeEventDescription(et, context);
 		} else if (context == null && type != null) {
 			return new CreateEdgeEventDescription(et,
 					this.getAttributedElement(type));
 		} else {
-			throw new RuntimeException();
+			throw new ECAIOException(
+					"It's necessary to give a context OR a type. Its an XOR. Found: context: \""
+							+ context + "\" and type: \"" + type + "\"");
 		}
 	}
 
 	private EventDescription finishCreateVertexEvent(String context,
-			EventTime et, String type) {
+			EventTime et, String type) throws ECAIOException {
 		if (context != null && type == null) {
 			return new CreateVertexEventDescription(et, context);
 		} else if (context == null && type != null) {
 			return new CreateVertexEventDescription(et,
 					this.getAttributedElement(type));
 		} else {
-			throw new RuntimeException();
+			throw new ECAIOException(
+					"It's necessary to give a context OR a type. Its an XOR. Found: context: \""
+							+ context + "\" and type: \"" + type + "\"");
 		}
 	}
 
@@ -345,15 +370,18 @@ public class ECAIO {
 	 * 
 	 * @param next
 	 * @return
+	 * @throws ECAIOException
 	 */
-	private EventTime getEventTime(String next) {
+	private EventTime getEventTime(String next) throws ECAIOException {
 		EventTime et;
 		if (next.equals("after")) {
 			et = EventTime.AFTER;
 		} else if (next.equals("before")) {
 			et = EventTime.BEFORE;
 		} else {
-			throw new RuntimeException("");
+			throw new ECAIOException(
+					"EventTime expected. Possible are \"before\" and \"after\". Found: \""
+							+ next + "\"");
 		}
 		return et;
 	}
@@ -364,8 +392,9 @@ public class ECAIO {
 	 * Parses the condition
 	 * 
 	 * @return the condition or null if there is no
+	 * @throws ECAIOException
 	 */
-	private Condition parseCondition() {
+	private Condition parseCondition() throws ECAIOException {
 		String next = this.nextToken();
 		if (isMatching(next, "do")) {
 			return null;
@@ -376,7 +405,9 @@ public class ECAIO {
 			match("do");
 			return new Condition(condexpr);
 		} else {
-			throw new RuntimeException();
+			throw new ECAIOException(
+					"Parsing Error. Expected \"do\" or \"with\". Found: \""
+					+ next + "\"");
 		}
 	}
 
@@ -386,8 +417,9 @@ public class ECAIO {
 	 * Parses the Action
 	 * 
 	 * @return the resulting Action
+	 * @throws ECAIOException
 	 */
-	private Action parseAction() {
+	private Action parseAction() throws ECAIOException {
 		match("<");
 		String print = this.nextToken();
 		match(">");
@@ -407,10 +439,11 @@ public class ECAIO {
 		}
 	}
 	
-	private void match(String expected) {
+	private void match(String expected) throws ECAIOException {
 		String token = this.nextToken();
 		if (!token.equals(expected)) {
-			throw new RuntimeException("parsing error");
+			throw new ECAIOException("Parsing Error: Expected \"" + expected
+					+ "\" Found: \"" + token + "\"");
 		}
 	}
 
@@ -546,6 +579,26 @@ public class ECAIO {
 		AttributedElementClass aeclo = schema.getAttributedElementClass(name);
 		aecl = aeclo.getM1Class();
 		return aecl;
+	}
+
+	// Exception
+	public class ECAIOException extends Exception {
+		private static final long serialVersionUID = 4569564712278582919L;
+
+		public ECAIOException() {
+		}
+
+		public ECAIOException(String msg) {
+			super(msg);
+		}
+
+		public ECAIOException(Throwable t) {
+			super(t);
+		}
+
+		public ECAIOException(String msg, Throwable t) {
+			super(msg, t);
+		}
 	}
 
 }
