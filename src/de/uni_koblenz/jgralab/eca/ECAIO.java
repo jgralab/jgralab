@@ -2,7 +2,6 @@ package de.uni_koblenz.jgralab.eca;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -28,6 +27,9 @@ import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
 public class ECAIO {
+
+	// ////////////////////////////////////////////////////////////////////////////
+	// // -- Only for testing -- /////////////////////////////////////////////
 
 	public static void main(String[] args) throws GraphIOException {
 		Schema schema = GraphIO
@@ -62,55 +64,118 @@ public class ECAIO {
 		}
 	}
 
-	private static final int BUFFER_SIZE = 65536;
+	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-	private Schema schema;
+	
+	// #########################################################################
+	// ++++++++ public static Methods - behavior to the outside ++++++++++++++++
+	// #########################################################################
 
-	private List<ECARule> rules;
-
-	private BufferedInputStream inStream;
-
-	private ECAIO(BufferedInputStream in) {
-		this.inStream = in;
-		this.rules = new ArrayList<ECARule>();
-	}
-
+	/**
+	 * Loads ECARules from a given File using a schema to get Vertex- and
+	 * EdgeClasses
+	 * 
+	 * @param schema
+	 * @param filename
+	 * @return
+	 */
 	public static List<ECARule> loadECArules(Schema schema, String filename) {
 
 		try {
 			FileInputStream fileStream = new FileInputStream(filename);
 			BufferedInputStream inputStream = new BufferedInputStream(
-					fileStream,
-					BUFFER_SIZE);
-			ECAIO ecaLoader = new ECAIO(inputStream);
+					fileStream, BUFFER_SIZE);
+
+			ECAIO ecaLoader = new ECAIO();
+
+			ecaLoader.inStream = inputStream;
 			ecaLoader.schema = schema;
-			try {
-				ecaLoader.load();
-				return ecaLoader.rules;
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			ecaLoader.load();
+
+			return ecaLoader.rules;
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block e.printStackTrace();
 		}
-
 		return null;
 	}
 
-	private void load() throws IOException {
+	// #########################################################################
+	// ++++++++ Members ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	// #########################################################################
 
-		this.la = inStream.read();
-		// parse Rules until the Stream is finished
-		while (la != -1) {
-			parseRule();
-			skipWs();
+	private static final int BUFFER_SIZE = 65536;
+
+	/**
+	 * Schema to get Vertex- and EdgeClasses by name
+	 */
+	private Schema schema;
+
+	/**
+	 * List with loaded rules or to be saved rules
+	 */
+	private List<ECARule> rules;
+
+	/**
+	 * InputStream to read
+	 */
+	private BufferedInputStream inStream;
+
+	/**
+	 * last character read from inputStream
+	 */
+	int la;
+
+	// #########################################################################
+	// ++++++++ Constructor ++++++++++++++++++++++++++++++++++++++++++++++++++++
+	// #########################################################################
+	/**
+	 * 
+	 * @param in
+	 */
+	private ECAIO() {
+		this.rules = new ArrayList<ECARule>();
+	}
+
+	// #########################################################################
+	// ++++++++ Loading ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	// #########################################################################
+
+	/**
+	 * Internal load Method
+	 * 
+	 * @throws IOException
+	 */
+	private void load() {
+
+		try {
+
+			this.la = inStream.read();
+			// parse Rules until the Stream is finished
+			while (la != -1) {
+				parseRule();
+				skipWs();
+			}
+			inStream.close();
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+
 	}
 	
+	// ######################################################################
+
+	/**
+	 * Match the "Rule := " and then parse Event, Condition and Action
+	 */
 	private void parseRule() {
-		matchRule();
+		match("Rule");
+		match(":=");
 
 		EventDescription ed = parseEventDescription();
 		Condition cond = parseCondition();
@@ -125,104 +190,162 @@ public class ECAIO {
 
 	}
 
+	// ######################################################################
+
+	/**
+	 * 
+	 * @return
+	 */
 	private EventDescription parseEventDescription() {
 
-		EventTime et = null;
-
+		// Check whether a context is given
 		String next = this.nextToken();
 		String context = null;
 		if (next.equals("<")) {
-			context = matchContext();
+			context = this.nextToken();
+			match(">");
+			match(":");
 			next = this.nextToken();
 		}
-		et = this.getEventTime(next);
 
+		// Get the EventTime
+		EventTime et = this.getEventTime(next);
+
+		// Get the Type of the EventDescription
 		String eventdestype = this.nextToken();
-		System.out.println(eventdestype);
-		EventDescription ed;
-		String type = matchType();
 
+		// Get the Type of the AttributedElement if there is one
+		String type = null;
+		match("(");
+		String test = this.nextToken();
+		if (isMatching(test, "<")) {
+			type = this.nextToken();
+			match(">");
+			test = this.nextToken();
+		}
+		if (!isMatching(test, ")") && !isMatching(test, ",")) {
+			throw new RuntimeException();
+		}
+
+
+		// Create an EventDescription depending on the Type
+		// -- CreateVertexEventDescription
 		if (eventdestype.equals("createVertex")) {
-			staticMatch(")");
-			if (context != null && type == null) {
-				ed = new CreateVertexEventDescription(et, context);
-			} else if (context == null && type != null) {
-				ed = new CreateVertexEventDescription(et,
-						this.getAttributedElement(type));
-			} else {
-				throw new RuntimeException();
-			}
-		} else if (eventdestype.equals("createEdge")) {
-			staticMatch(")");
-			if (context != null && type == null) {
-				ed = new CreateEdgeEventDescription(et, context);
-			} else if (context == null && type != null) {
-				ed = new CreateEdgeEventDescription(et,
-						this.getAttributedElement(type));
-			} else {
-				throw new RuntimeException();
-			}
-		} else if (eventdestype.equals("updatedAttributeValue")) {
-			if (type != null) {
-				staticMatch(",");
-			}
-			String name = this.matchAttributeName();
-			staticMatch(")");
-			if (context != null && type == null) {
-				ed = new ChangeAttributeEventDescription(et, context, name);
-			} else if (context == null && type != null) {
-				ed = new ChangeAttributeEventDescription(et,
-						this.getAttributedElement(type), name);
-			} else {
-				throw new RuntimeException();
-			}
-		} else if (eventdestype.equals("updatedStartVertex")) {
-			staticMatch(")");
-			if (context != null && type == null) {
-				ed = new ChangeEdgeEventDescription(et, context);
-			} else if (context == null && type != null) {
-				ed = new ChangeEdgeEventDescription(et,
-						this.getAttributedElement(type));
-			} else {
-				throw new RuntimeException();
-			}
-
-		} else if (eventdestype.equals("updatedEndVertex")) {
-			staticMatch(")");
-			if (context != null && type == null) {
-				ed = new ChangeEdgeEventDescription(et, context);
-			} else if (context == null && type != null) {
-				ed = new ChangeEdgeEventDescription(et,
-						this.getAttributedElement(type));
-			} else {
-				throw new RuntimeException();
-			}
-		} else if (eventdestype.equals("deleteVertex")) {
-			staticMatch(")");
-			if (context != null && type == null) {
-				ed = new DeleteVertexEventDescription(et, context);
-			} else if (context == null && type != null) {
-				ed = new DeleteVertexEventDescription(et,
-						this.getAttributedElement(type));
-			} else {
-				throw new RuntimeException();
-			}
-		} else if (eventdestype.equals("deleteEdge")) {
-			staticMatch(")");
-			if (context != null && type == null) {
-				ed = new DeleteEdgeEventDescription(et, context);
-			} else if (context == null && type != null) {
-				ed = new DeleteEdgeEventDescription(et,
-						this.getAttributedElement(type));
-			} else {
-				throw new RuntimeException();
-			}
-		} else {
+			return finishCreateVertexEvent(context, et, type);
+		}
+		// -- CreateEdgeEventDescription
+		else if (eventdestype.equals("createEdge")) {
+			return finishCreateEdgeEventDescription(context, et, type);
+		}
+		// -- ChangeAttributeEventDescription
+		else if (eventdestype.equals("updatedAttributeValue")) {
+			return finishChangeAttributeEventDescription(context, et, type);
+		}
+		// -- ChangeEdgeEventDescription
+		else if (eventdestype.equals("updatedStartVertex")) {
+			return finishChangeEdgeEventDescription(context, et, type);
+		}
+		// -- ChangeEdgeEventDescription
+		else if (eventdestype.equals("updatedEndVertex")) {
+			return finishChangeEdgeEventDescription(context, et, type);
+		}
+		// -- DeleteVertexEventDescription
+		else if (eventdestype.equals("deleteVertex")) {
+			return finishDeleteVertexEventDescription(context, et, type);
+		}
+		// -- DeleteEdgeEventDescription
+		else if (eventdestype.equals("deleteEdge")) {
+			return finishDeleteEdgeEventDescription(context, et, type);
+		}
+		// -- wrong syntax
+		else {
 			throw new RuntimeException("");
 		}
-		return ed;
 	}
 
+	private EventDescription finishDeleteEdgeEventDescription(String context,
+			EventTime et, String type) {
+		if (context != null && type == null) {
+			return new DeleteEdgeEventDescription(et, context);
+		} else if (context == null && type != null) {
+			return new DeleteEdgeEventDescription(et,
+					this.getAttributedElement(type));
+		} else {
+			throw new RuntimeException();
+		}
+	}
+
+	private EventDescription finishDeleteVertexEventDescription(String context,
+			EventTime et, String type) {
+		if (context != null && type == null) {
+			return new DeleteVertexEventDescription(et, context);
+		} else if (context == null && type != null) {
+			return new DeleteVertexEventDescription(et,
+					this.getAttributedElement(type));
+		} else {
+			throw new RuntimeException();
+		}
+	}
+
+	private EventDescription finishChangeEdgeEventDescription(String context,
+			EventTime et, String type) {
+		if (context != null && type == null) {
+			return new ChangeEdgeEventDescription(et, context);
+		} else if (context == null && type != null) {
+			return new ChangeEdgeEventDescription(et,
+					this.getAttributedElement(type));
+		} else {
+			throw new RuntimeException();
+		}
+	}
+
+	private EventDescription finishChangeAttributeEventDescription(
+			String context, EventTime et, String type) {
+		match("<");
+		String name = this.nextToken();
+		match(">");
+		match(")");
+
+		if (context != null && type == null) {
+			return new ChangeAttributeEventDescription(et, context, name);
+		} else if (context == null && type != null) {
+			return new ChangeAttributeEventDescription(et,
+					this.getAttributedElement(type), name);
+		} else {
+			throw new RuntimeException();
+		}
+	}
+
+	private EventDescription finishCreateEdgeEventDescription(String context,
+			EventTime et, String type) {
+		if (context != null && type == null) {
+			return new CreateEdgeEventDescription(et, context);
+		} else if (context == null && type != null) {
+			return new CreateEdgeEventDescription(et,
+					this.getAttributedElement(type));
+		} else {
+			throw new RuntimeException();
+		}
+	}
+
+	private EventDescription finishCreateVertexEvent(String context,
+			EventTime et, String type) {
+		if (context != null && type == null) {
+			return new CreateVertexEventDescription(et, context);
+		} else if (context == null && type != null) {
+			return new CreateVertexEventDescription(et,
+					this.getAttributedElement(type));
+		} else {
+			throw new RuntimeException();
+		}
+	}
+
+	/**
+	 * Determines the EventTime
+	 * 
+	 * @param next
+	 * @return
+	 */
 	private EventTime getEventTime(String next) {
 		EventTime et;
 		if (next.equals("after")) {
@@ -235,63 +358,46 @@ public class ECAIO {
 		return et;
 	}
 
+	// ######################################################################
+
+	/**
+	 * Parses the condition
+	 * 
+	 * @return the condition or null if there is no
+	 */
 	private Condition parseCondition() {
 		String next = this.nextToken();
 		if (isMatching(next, "do")) {
 			return null;
 		} else if (isMatching(next, "with")) {
-			staticMatch("<");
+			match("<");
 			String condexpr = this.nextToken();
-			staticMatch(">");
-			staticMatch("do");
+			match(">");
+			match("do");
 			return new Condition(condexpr);
+		} else {
+			throw new RuntimeException();
 		}
-		return null;
 	}
 
+	// ######################################################################
+
+	/**
+	 * Parses the Action
+	 * 
+	 * @return the resulting Action
+	 */
 	private Action parseAction() {
-
-
-		staticMatch("<");
+		match("<");
 		String print = this.nextToken();
-		staticMatch(">");
+		match(">");
 		return new PrintAction(print);
 	}
 
-	private void matchRule() {
-		staticMatch("Rule");
-		staticMatch(":=");
-	}
+	// #########################################################################
+	// ++++++++ Help-Methods for parsing +++++++++++++++++++++++++++++++++++++++
+	// #########################################################################
 
-	private String matchContext() {
-		String context = this.nextToken();
-		staticMatch(">");
-		staticMatch(":");
-		return context;
-	}
-
-	private String matchAttributeName() {
-		staticMatch("<");
-		String name = this.nextToken();
-		staticMatch(">");
-		return name;
-	}
-
-	private String matchType() {
-		staticMatch("(");
-		String next = this.nextToken();
-		if (isMatching(next, "<")) {
-			return matchElementType();
-		} else {
-			return null;
-		}
-	}
-
-	private String matchElementType() {
-		String typename = this.nextToken();
-		staticMatch(">");
-		return typename;
-	}
 
 	private boolean isMatching(String one, String two) {
 		if (one.equals(two)) {
@@ -301,18 +407,20 @@ public class ECAIO {
 		}
 	}
 	
-
-	private void staticMatch(String toMatch) {
+	private void match(String expected) {
 		String token = this.nextToken();
-		System.out.println("Match: " + token);
-		if (!token.equals(toMatch)) {
+		if (!token.equals(expected)) {
 			throw new RuntimeException("parsing error");
 		}
-
 	}
 
-	int la;
+	// #########################################################################
+	// ++++++++ Tokenizing ++++++++++++++++++++++++++++++++++++++++++++++++++++
+	// #########################################################################
 
+	/**
+	 * @return the next Token from the inputString
+	 */
 	private String nextToken() {
 		StringBuilder out = new StringBuilder();
 
@@ -341,7 +449,6 @@ public class ECAIO {
 	}
 
 	private final void skipWs() throws IOException {
-
 		while (isWs(la)) {
 			la = inStream.read();
 		}
@@ -349,12 +456,17 @@ public class ECAIO {
 	private boolean isWs(int c) {
 		return (c == ' ') || (c == '\n') || (c == '\t') || (c == '\r');
 	}
-
 	private boolean isBracket(int c) {
 		return (c == '>') || (c == '<') || (c == '(') || (c == ')')
 				|| (c == ',');
-
 	}
+
+	/**
+	 * Reads String in quotes as one token - copied from GraphIO
+	 * 
+	 * @param out
+	 * @throws IOException
+	 */
 	private final void readUtfString(StringBuilder out) throws IOException {
 		la = inStream.read();
 		LOOP: while ((la != -1) && (la != '"')) {
@@ -423,11 +535,15 @@ public class ECAIO {
 		la = inStream.read();
 	}
 
+	/**
+	 * Gets the given AttributedElement
+	 * 
+	 * @param name
+	 * @return
+	 */
 	private Class<? extends AttributedElement> getAttributedElement(String name) {
 		Class<? extends AttributedElement> aecl;
 		AttributedElementClass aeclo = schema.getAttributedElementClass(name);
-		System.out.println(aeclo);
-		System.out.println(aeclo.getM1Class());
 		aecl = aeclo.getM1Class();
 		return aecl;
 	}
