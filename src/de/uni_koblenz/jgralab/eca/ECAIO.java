@@ -291,13 +291,9 @@ public class ECAIO {
 			actionstring += "\n";
 		} else if (act instanceof GretlTransformAction) {
 			GretlTransformAction gta = ((GretlTransformAction) act);
-			actionstring += "<";
 			actionstring += gta.getTransformationClass().getName();
-			actionstring += ">";
 		} else {
-			actionstring += "<";
 			actionstring += act.getClass().getName();
-			actionstring += ">";
 		}
 
 		this.writeToStream(actionstring);
@@ -549,9 +545,18 @@ public class ECAIO {
 		} else if (next.equals("before")) {
 			et = EventTime.BEFORE;
 		} else {
+			String before = "before";
+			for (int i = 0; i < next.length(); i++) {
+				System.out.println(i + ":  " + (int) next.charAt(i));
+			}
+			for (int i = 0; i < before.length(); i++) {
+				System.out.println(i + ":  " + (int) before.charAt(i));
+			}
 			throw new ECAIOException(
 					"EventTime expected. Possible are \"before\" and \"after\". Found: \""
-							+ next + "\"");
+							+ next + "\" " + next.equals("before")
+							+ next.concat("before") + next.hashCode()
+							+ before.hashCode());
 		}
 		return et;
 	}
@@ -670,14 +675,27 @@ public class ECAIO {
 		}
 		
 		System.out.println("CURRENT_TOKEN: " + out.toString());
-		return out.toString();
+		return myTrim0(out.toString());
 	}
 
 	private final void skipWs() throws IOException {
-		while (isWs(la)) {
+		while (isWs(la) || la == 0) {
 			la = inStream.read();
 		}
 	}
+
+	private String myTrim0(String x) {
+		char[] ar = x.toCharArray();
+		String ex = "";
+		for (int i = 0; i < ar.length; i++) {
+			if (ar[i] != 0) {
+				ex+=ar[i];
+			}
+		}
+		return ex;
+
+	}
+
 	private boolean isWs(int c) {
 		return (c == ' ') || (c == '\n') || (c == '\t') || (c == '\r');
 	}
