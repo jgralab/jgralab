@@ -73,6 +73,7 @@ public class ECATestGretlAction {
 		Action bef_act = new GretlTransformAction(
 				SimpleCopyTransformation.class);
 		ECARule bef_rule = new ECARule(bef_ev, bef_act);
+
 		testGraph.getECARuleManager().addECARule(bef_rule);
 
 		int oldVCount = testGraph.getVCount();
@@ -81,6 +82,7 @@ public class ECATestGretlAction {
 
 		// Duplicate all Vertices and then take the deleted one away
 		assertEquals(testGraph.getVCount(), oldVCount * 2 - 1);
+
 
 	}
 }
