@@ -26,6 +26,7 @@ import de.uni_koblenz.jgralab.eca.events.DeleteEdgeEventDescription;
 import de.uni_koblenz.jgralab.eca.events.DeleteVertexEventDescription;
 import de.uni_koblenz.jgralab.eca.events.EventDescription;
 import de.uni_koblenz.jgralab.eca.events.EventDescription.EventTime;
+import de.uni_koblenz.jgralab.gretl.Transformation;
 import de.uni_koblenz.jgralab.gretl.eca.GretlTransformAction;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Schema;
@@ -57,6 +58,8 @@ public class ECAIO {
 					.getAttributedElementClass("Book");
 
 			graph.createVertex(vc.getM1Class());
+
+			ECAIO.saveECArules(schema, "../../rule2test.txt", list);
 
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
@@ -117,7 +120,8 @@ public class ECAIO {
 	 * @param rules
 	 * @throws ECAIOException
 	 */
-	public static void saveECArules(String filename, List<ECARule> rules)
+	public static void saveECArules(Schema schema, String filename,
+			List<ECARule> rules)
 			throws ECAIOException {
 		DataOutputStream out = null;
 		try{
@@ -126,6 +130,7 @@ public class ECAIO {
 							BUFFER_SIZE));
 			ECAIO ecaSaver = new ECAIO();
 			ecaSaver.rules = rules;
+			ecaSaver.schema = schema;
 			ecaSaver.outStream = out;
 			ecaSaver.save();
 		} catch (IOException ex) {
@@ -157,6 +162,9 @@ public class ECAIO {
 	 */
 	private BufferedInputStream inStream;
 
+	/**
+	 * OutputStream to write
+	 */
 	private DataOutputStream outStream;
 
 	/**
@@ -185,13 +193,28 @@ public class ECAIO {
 		}
 	}
 
+	/**
+	 * Save an ECARule to output stream
+	 * 
+	 * @param rule
+	 * @throws ECAIOException
+	 */
 	private void saveRule(ECARule rule) throws ECAIOException {
 		this.saveEventDescriptionToStream(rule.getEventDescription());
-		this.saveConditionToStream(rule.getCondition());
+		if (rule.getCondition() != null) {
+			this.saveConditionToStream(rule.getCondition());
+		}
 		this.saveActionToStream(rule.getAction());
 	}
 
-	private void saveEventDescriptionToStream(EventDescription ev) {
+	/**
+	 * Save an EventDescription to output stream
+	 * 
+	 * @param ev
+	 * @throws ECAIOException
+	 */
+	private void saveEventDescriptionToStream(EventDescription ev)
+			throws ECAIOException {
 		String eventstring = "";
 		if (ev.getContext().equals(EventDescription.Context.EXPRESSION)) {
 			eventstring += "<\"";
@@ -206,6 +229,7 @@ public class ECAIO {
 
 		eventstring += this.getEventDescriptionType(ev);
 
+		this.writeToStream(eventstring);
 	}
 
 	private String getEventDescriptionType(EventDescription ev) {
@@ -219,6 +243,10 @@ public class ECAIO {
 					+ ", <"
 					+ ((ChangeAttributeEventDescription) ev)
 							.getConcernedAttribute();
+		} else if (ev instanceof ChangeEdgeEventDescription) {
+			// TODO decide whether there should be a difference between alpha
+			// and omega
+			return "";
 		} else if (ev instanceof CreateEdgeEventDescription) {
 			return "createEdge(" + getEventElementTypeString(ev) + ") ";
 		} else {
@@ -231,16 +259,29 @@ public class ECAIO {
 		String eventstring = "";
 		if (ev.getContext().equals(EventDescription.Context.TYPE)) {
 			eventstring += "<";
-			eventstring += ev.getType().getName();
-			eventstring += "> ";
+			eventstring += ev.getType().getName()
+					.replace(schema.getPackagePrefix() + ".", "");
+			eventstring += ">";
 		}
 		return eventstring;
 	}
 
+	/**
+	 * Save Condition as String to output stream
+	 * 
+	 * @param cond
+	 * @throws ECAIOException
+	 */
 	private void saveConditionToStream(Condition cond) throws ECAIOException {
 		this.writeToStream("with <\"" + cond.getConditionExpression() + "\"> ");
 	}
 
+	/**
+	 * Save Action as String to output stream
+	 * 
+	 * @param act
+	 * @throws ECAIOException
+	 */
 	private void saveActionToStream(Action act) throws ECAIOException {
 		String actionstring = "do ";
 		if (act instanceof PrintAction) {
@@ -262,6 +303,12 @@ public class ECAIO {
 		this.writeToStream(actionstring);
 	}
 
+	/**
+	 * Write a given text to output stream
+	 * 
+	 * @param text
+	 * @throws ECAIOException
+	 */
 	private void writeToStream(String text) throws ECAIOException {
 		try {
 			this.outStream.writeChars(text);
@@ -279,8 +326,6 @@ public class ECAIO {
 	 * Internal load Method
 	 * 
 	 * @throws ECAIOException
-	 * 
-	 * @throws IOException
 	 */
 	private void load() throws ECAIOException {
 
@@ -545,10 +590,32 @@ public class ECAIO {
 	 * @throws ECAIOException
 	 */
 	private Action parseAction() throws ECAIOException {
-		match("<");
-		String print = this.nextToken();
-		match(">");
-		return new PrintAction(print);
+		String next = this.nextToken();
+		if(isMatching("<", next)){
+			String print = this.nextToken();
+			match(">");
+			return new PrintAction(print);
+		}else{
+			try {
+				Class<?> actionclass = Class.forName(next);
+				if (actionclass.getSuperclass().equals(Transformation.class)) {
+					return new GretlTransformAction(
+							(Class<? extends Transformation<Graph>>) actionclass);
+				} else {
+					return (Action) actionclass.newInstance();
+				}
+
+			} catch (ClassNotFoundException e) {
+				throw new ECAIOException("Specified Action "+next+" not found.");
+			} catch (InstantiationException e) {
+				throw new ECAIOException("Error while instanciating Action "
+						+ next);
+			} catch (IllegalAccessException e) {
+				throw new ECAIOException("Error while instanciating Action "
+						+ next);
+			}
+		}
+		
 	}
 
 	// #########################################################################
