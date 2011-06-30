@@ -25,7 +25,7 @@ public class GretlTransformAction implements Action {
 	 * @param transformationClass
 	 *            the Transformation Class
 	 */
-	public GretlTransformAction(// ) {
+	public GretlTransformAction(
 			Class<? extends Transformation<Graph>> transformationClass) {
 		this.transformationClass = transformationClass;
 	}
@@ -71,6 +71,13 @@ public class GretlTransformAction implements Action {
 					+ this.transformationClass.getName() + " failed!");
 		}
 
+	}
+
+	/**
+	 * @return the Gretl Transformation
+	 */
+	public Class<? extends Transformation<Graph>> getTransformationClass() {
+		return transformationClass;
 	}
 
 }

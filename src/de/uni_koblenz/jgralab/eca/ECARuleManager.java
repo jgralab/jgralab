@@ -431,7 +431,7 @@ public class ECARuleManager {
 					"ERROR: Tried to add an ECARule to an ECARulemanager,"
 							+ " but the ECARule has already a manager.");
 		}
-		EventDescription ev = rule.getEvent();
+		EventDescription ev = rule.getEventDescription();
 		for (ECARule temprule : ev.getActiveECARules()) {
 			if (temprule.getECARuleManager() != this) {
 				throw new RuntimeException(
@@ -471,7 +471,7 @@ public class ECARuleManager {
 	public void deleteECARule(ECARule rule) {
 		this.rules.remove(rule);
 		rule.setECARuleManager(null);
-		EventDescription ev = rule.getEvent();
+		EventDescription ev = rule.getEventDescription();
 		ev.getActiveECARules().remove(rule);
 		if (ev.getActiveECARules().isEmpty()) {
 			if (ev instanceof CreateVertexEventDescription) {
