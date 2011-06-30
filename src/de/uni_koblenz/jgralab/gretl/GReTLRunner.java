@@ -123,20 +123,21 @@ public class GReTLRunner {
 			graphclass = "BazGraph";
 		}
 
+		Schema targetSchema = getExistingSchema(schema);
+		Context c;
+		if (targetSchema != null) {
+			c = new Context(targetSchema);
+		} else {
+			c = new Context(schema, graphclass);
+		}
+
 		if (cli.getArgs().length == 0) {
 			if (cli.hasOption('u') || cli.hasOption('i')) {
 				System.err
 						.println("Options -u and -i cannot be used if no source graph is given.");
 				oh.printHelpAndExit(1);
 			}
-			Schema targetSchema = getExistingSchema(schema);
-			Context c;
-			if (targetSchema != null) {
-				System.out.println("Using existing schema " + schema);
-				c = new Context(targetSchema);
-			} else {
-				c = new Context(schema, graphclass);
-			}
+
 			Graph outGraph = executeTransformation(c,
 					new File(cli.getOptionValue('t')));
 			String outFileName = null;
@@ -151,14 +152,11 @@ public class GReTLRunner {
 				Graph inGraph = GraphIO.loadSchemaAndGraphFromFile(in,
 						CodeGeneratorConfiguration.MINIMAL,
 						new ConsoleProgressFunction("Loading"));
-				Context c = null;
 				if (cli.hasOption('u')) {
 					c = new Context(inGraph.getSchema());
 				} else if (cli.hasOption('i')) {
 					c = new Context(inGraph.getSchema());
 					c.setTargetGraph(inGraph);
-				} else {
-					c = new Context(schema, graphclass);
 				}
 				c.setSourceGraph(inGraph);
 				Graph outGraph = executeTransformation(c,
