@@ -14,7 +14,7 @@ public class ECARule {
 	/**
 	 * Event part of ECARule
 	 */
-	private EventDescription event;
+	private EventDescription eventDescription;
 
 	/**
 	 * Condition part of ECARule, optional
@@ -38,7 +38,7 @@ public class ECARule {
 	 *            Action
 	 */
 	public ECARule(EventDescription event, Action action) {
-		this.setEvent(event);
+		this.setEventDescription(event);
 		this.setAction(action);
 	}
 	
@@ -53,7 +53,7 @@ public class ECARule {
 	 *            Action
 	 */
 	public ECARule(EventDescription event, Condition condition, Action action) {
-		this.setEvent(event);
+		this.setEventDescription(event);
 		this.setCondition(condition);
 		this.setAction(action);
 	}
@@ -81,8 +81,8 @@ public class ECARule {
 	/**
 	 * @return the Event
 	 */
-	public EventDescription getEvent() {
-		return event;
+	public EventDescription getEventDescription() {
+		return eventDescription;
 	}
 
 	/**
@@ -91,8 +91,8 @@ public class ECARule {
 	 * @param event
 	 *            the Event
 	 */
-	private void setEvent(EventDescription event) {
-		this.event = event;
+	private void setEventDescription(EventDescription event) {
+		this.eventDescription = event;
 	}
 	
 	/**

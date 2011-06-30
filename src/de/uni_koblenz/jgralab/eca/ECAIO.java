@@ -1,7 +1,11 @@
 package de.uni_koblenz.jgralab.eca;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.Closeable;
+import java.io.DataOutputStream;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -22,6 +26,7 @@ import de.uni_koblenz.jgralab.eca.events.DeleteEdgeEventDescription;
 import de.uni_koblenz.jgralab.eca.events.DeleteVertexEventDescription;
 import de.uni_koblenz.jgralab.eca.events.EventDescription;
 import de.uni_koblenz.jgralab.eca.events.EventDescription.EventTime;
+import de.uni_koblenz.jgralab.gretl.eca.GretlTransformAction;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
@@ -105,6 +110,32 @@ public class ECAIO {
 		}
 	}
 
+	/**
+	 * Save ECA rules to file
+	 * 
+	 * @param filename
+	 * @param rules
+	 * @throws ECAIOException
+	 */
+	public static void saveECArules(String filename, List<ECARule> rules)
+			throws ECAIOException {
+		DataOutputStream out = null;
+		try{
+			out = new DataOutputStream(
+					new BufferedOutputStream(new FileOutputStream(filename),
+							BUFFER_SIZE));
+			ECAIO ecaSaver = new ECAIO();
+			ecaSaver.rules = rules;
+			ecaSaver.outStream = out;
+			ecaSaver.save();
+		} catch (IOException ex) {
+			throw new ECAIOException("Error while saving ECA rules to "
+					+ filename);
+		} finally {
+			close(out);
+		}
+	}
+
 	// #########################################################################
 	// ++++++++ Members ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	// #########################################################################
@@ -126,6 +157,8 @@ public class ECAIO {
 	 */
 	private BufferedInputStream inStream;
 
+	private DataOutputStream outStream;
+
 	/**
 	 * last character read from inputStream
 	 */
@@ -140,6 +173,102 @@ public class ECAIO {
 	 */
 	private ECAIO() {
 		this.rules = new ArrayList<ECARule>();
+	}
+
+	// #########################################################################
+	// ++++++++ Saving ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	// #########################################################################
+
+	private void save() throws ECAIOException {
+		for (ECARule rule : rules) {
+			this.saveRule(rule);
+		}
+	}
+
+	private void saveRule(ECARule rule) throws ECAIOException {
+		this.saveEventDescriptionToStream(rule.getEventDescription());
+		this.saveConditionToStream(rule.getCondition());
+		this.saveActionToStream(rule.getAction());
+	}
+
+	private void saveEventDescriptionToStream(EventDescription ev) {
+		String eventstring = "";
+		if (ev.getContext().equals(EventDescription.Context.EXPRESSION)) {
+			eventstring += "<\"";
+			eventstring += ev.getContextExpression();
+			eventstring += "\"> ";
+		}
+		if (ev.getTime().equals(EventTime.AFTER)) {
+			eventstring += "after ";
+		} else {
+			eventstring += "before ";
+		}
+
+		eventstring += this.getEventDescriptionType(ev);
+
+	}
+
+	private String getEventDescriptionType(EventDescription ev) {
+		if (ev instanceof CreateVertexEventDescription) {
+			return "createVertex(" + getEventElementTypeString(ev) + ") ";
+		} else if (ev instanceof DeleteVertexEventDescription) {
+			return "deleteVertex(" + getEventElementTypeString(ev) + ") ";
+		} else if (ev instanceof ChangeAttributeEventDescription) {
+			return "updatedAttributeValue("
+					+ getEventElementTypeString(ev)
+					+ ", <"
+					+ ((ChangeAttributeEventDescription) ev)
+							.getConcernedAttribute();
+		} else if (ev instanceof CreateEdgeEventDescription) {
+			return "createEdge(" + getEventElementTypeString(ev) + ") ";
+		} else {
+			return "deleteEdge(" + getEventElementTypeString(ev) + ") ";
+		}
+
+	}
+
+	private String getEventElementTypeString(EventDescription ev) {
+		String eventstring = "";
+		if (ev.getContext().equals(EventDescription.Context.TYPE)) {
+			eventstring += "<";
+			eventstring += ev.getType().getName();
+			eventstring += "> ";
+		}
+		return eventstring;
+	}
+
+	private void saveConditionToStream(Condition cond) throws ECAIOException {
+		this.writeToStream("with <\"" + cond.getConditionExpression() + "\"> ");
+	}
+
+	private void saveActionToStream(Action act) throws ECAIOException {
+		String actionstring = "do ";
+		if (act instanceof PrintAction) {
+			actionstring += "<\"";
+			actionstring += ((PrintAction) act).getMessage();
+			actionstring += "\">";
+			actionstring += "\n";
+		} else if (act instanceof GretlTransformAction) {
+			GretlTransformAction gta = ((GretlTransformAction) act);
+			actionstring += "<";
+			actionstring += gta.getTransformationClass().getName();
+			actionstring += ">";
+		} else {
+			actionstring += "<";
+			actionstring += act.getClass().getName();
+			actionstring += ">";
+		}
+
+		this.writeToStream(actionstring);
+	}
+
+	private void writeToStream(String text) throws ECAIOException {
+		try {
+			this.outStream.writeChars(text);
+		} catch (IOException e) {
+			throw new ECAIOException("Error while writing " + text
+					+ " to stream.");
+		}
 	}
 
 	// #########################################################################
@@ -578,5 +707,14 @@ public class ECAIO {
 	}
 
 
+	private static void close(Closeable stream) throws ECAIOException {
+		try {
+			if (stream != null) {
+				stream.close();
+			}
+		} catch (IOException ex) {
+			throw new ECAIOException("Exception while closing the stream.", ex);
+		}
+	}
 
 }
