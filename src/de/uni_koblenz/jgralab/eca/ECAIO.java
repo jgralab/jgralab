@@ -101,9 +101,8 @@ public class ECAIO {
 			return ecaLoader.rules;
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block e.printStackTrace();
+			throw new ECAIOException("Error while reading file " + filename);
 		}
-		return null;
 	}
 
 	// #########################################################################
@@ -175,14 +174,11 @@ public class ECAIO {
 	// ######################################################################
 
 	/**
-	 * Match the "Rule := " and then parse Event, Condition and Action
+	 * Match with parsing Event, Condition and Action
 	 * 
 	 * @throws ECAIOException
 	 */
 	private void parseRule() throws ECAIOException {
-		match("Rule");
-		match(":=");
-
 		EventDescription ed = parseEventDescription();
 		Condition cond = parseCondition();
 		Action action = parseAction();
@@ -581,24 +577,6 @@ public class ECAIO {
 		return aecl;
 	}
 
-	// Exception
-	public class ECAIOException extends Exception {
-		private static final long serialVersionUID = 4569564712278582919L;
 
-		public ECAIOException() {
-		}
-
-		public ECAIOException(String msg) {
-			super(msg);
-		}
-
-		public ECAIOException(Throwable t) {
-			super(t);
-		}
-
-		public ECAIOException(String msg, Throwable t) {
-			super(msg, t);
-		}
-	}
 
 }
