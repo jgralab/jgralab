@@ -1279,4 +1279,9 @@ public class JValueImpl implements JValue {
 			throws JValueVisitorException {
 		new JValueXMLOutputVisitor(this, filename, graph);
 	}
+	
+	@Override
+	public void removeAllBrowsingInformation() {
+		browsingInfo = null;
+	}
 }

@@ -439,4 +439,12 @@ public interface JValue extends Comparable<JValue> {
 	 *             if something goes wrong, e.g. the file can not be created
 	 */
 	void storeAsXML(String filename, Graph graph) throws JValueVisitorException;
+	
+	
+	/**
+	 * Removes all browsing information, i.e. the links to the vertices and edges
+	 * of the graph the JValue's value has been calculated on, from the JValue
+	 * and thus allows to keep the JValue in memory but to unload the graph
+	 */
+	public void removeAllBrowsingInformation();
 }

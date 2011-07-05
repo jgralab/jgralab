@@ -359,4 +359,12 @@ abstract public class JValueCollection extends JValueImpl implements
 	 */
 	public abstract void sort();
 
+	
+	@Override
+	public void removeAllBrowsingInformation() {
+		for (JValue v : this) {
+			v.removeAllBrowsingInformation();
+		}
+	}
+	
 }
