@@ -11,6 +11,7 @@ import org.junit.Test;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.eca.Action;
 import de.uni_koblenz.jgralab.eca.ECARule;
+import de.uni_koblenz.jgralab.eca.ECARuleManager;
 import de.uni_koblenz.jgralab.eca.events.DeleteVertexEventDescription;
 import de.uni_koblenz.jgralab.eca.events.EventDescription;
 import de.uni_koblenz.jgralab.gretl.eca.GretlTransformAction;
@@ -68,13 +69,13 @@ public class ECATestGretlAction {
 	public void testDoGretlTransformAsAction() {
 		Contact c5 = testGraph.createContact();
 
-		EventDescription bef_ev = new DeleteVertexEventDescription(EventDescription.EventTime.BEFORE,
-				Contact.class);
+		EventDescription bef_ev = new DeleteVertexEventDescription(
+				EventDescription.EventTime.BEFORE, Contact.class);
 		Action bef_act = new GretlTransformAction(
 				SimpleCopyTransformation.class);
 		ECARule bef_rule = new ECARule(bef_ev, bef_act);
 
-		testGraph.getECARuleManager().addECARule(bef_rule);
+		((ECARuleManager) testGraph.getECARuleManager()).addECARule(bef_rule);
 
 		int oldVCount = testGraph.getVCount();
 
@@ -82,7 +83,6 @@ public class ECATestGretlAction {
 
 		// Duplicate all Vertices and then take the deleted one away
 		assertEquals(testGraph.getVCount(), oldVCount * 2 - 1);
-
 
 	}
 }
