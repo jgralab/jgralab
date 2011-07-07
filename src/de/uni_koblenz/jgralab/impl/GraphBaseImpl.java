@@ -36,6 +36,8 @@
 package de.uni_koblenz.jgralab.impl;
 
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -53,7 +55,7 @@ import de.uni_koblenz.jgralab.GraphStructureChangedListener;
 import de.uni_koblenz.jgralab.GraphStructureChangedListenerWithAutoRemove;
 import de.uni_koblenz.jgralab.RandomIdGenerator;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.eca.ECARuleManager;
+import de.uni_koblenz.jgralab.eca.ECARuleManagerInterface;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -357,7 +359,7 @@ public abstract class GraphBaseImpl implements Graph {
 
 	protected void internalEdgeAdded(EdgeBaseImpl e) {
 		notifyEdgeAdded(e);
-		this.getECARuleManager().fireAfterCreateEdgeEvents(e);
+		getECARuleManager().fireAfterCreateEdgeEvents(e);
 	}
 
 	/*
@@ -408,7 +410,7 @@ public abstract class GraphBaseImpl implements Graph {
 
 	protected void internalVertexAdded(VertexBaseImpl v) {
 		notifyVertexAdded(v);
-		this.getECARuleManager().fireAfterCreateVertexEvents(v);
+		getECARuleManager().fireAfterCreateVertexEvents(v);
 	}
 
 	/**
@@ -1033,12 +1035,12 @@ public abstract class GraphBaseImpl implements Graph {
 	 */
 	public void ecaAttributeChanging(String name, Object oldValue,
 			Object newValue) {
-		if (!this.isLoading()) {
-			this.getECARuleManager().fireBeforeChangeAttributeEvents(this,
-					name, oldValue, newValue);
+		if (!isLoading()) {
+			getECARuleManager().fireBeforeChangeAttributeEvents(this, name,
+					oldValue, newValue);
 		}
 	}
-	
+
 	/**
 	 * Triggers ECA-rule after an Attribute is changed
 	 * 
@@ -1047,12 +1049,12 @@ public abstract class GraphBaseImpl implements Graph {
 	 */
 	public void ecaAttributeChanged(String name, Object oldValue,
 			Object newValue) {
-		if (!this.isLoading()) {
-			this.getECARuleManager().fireAfterChangeAttributeEvents(this, name,
+		if (!isLoading()) {
+			getECARuleManager().fireAfterChangeAttributeEvents(this, name,
 					oldValue, newValue);
 		}
 	}
-	
+
 	/**
 	 * Deletes the edge from the internal structures of this graph.
 	 * 
@@ -1062,8 +1064,8 @@ public abstract class GraphBaseImpl implements Graph {
 	private void internalDeleteEdge(Edge edge) {
 		assert (edge != null) && edge.isValid() && containsEdge(edge);
 
-		this.getECARuleManager().fireBeforeDeleteEdgeEvents(edge);
-		
+		getECARuleManager().fireBeforeDeleteEdgeEvents(edge);
+
 		EdgeBaseImpl e = (EdgeBaseImpl) edge.getNormalEdge();
 		internalEdgeDeleted(e);
 
@@ -1077,8 +1079,8 @@ public abstract class GraphBaseImpl implements Graph {
 
 		removeEdgeFromESeq(e);
 		edgeListModified();
-		
-		this.getECARuleManager().fireAfterDeleteEdgeEvents(e.getM1Class());
+
+		getECARuleManager().fireAfterDeleteEdgeEvents(e.getM1Class());
 	}
 
 	protected void internalEdgeDeleted(EdgeBaseImpl e) {
@@ -1095,7 +1097,7 @@ public abstract class GraphBaseImpl implements Graph {
 		while (!getDeleteVertexList().isEmpty()) {
 			VertexBaseImpl v = getDeleteVertexList().remove(0);
 			assert (v != null) && v.isValid() && containsVertex(v);
-			this.getECARuleManager().fireBeforeDeleteVertexEvents(v);
+			getECARuleManager().fireBeforeDeleteVertexEvents(v);
 			internalVertexDeleted(v);
 			// delete all incident edges including incidence objects
 			Edge e = v.getFirstIncidence();
@@ -1115,7 +1117,7 @@ public abstract class GraphBaseImpl implements Graph {
 			}
 			removeVertexFromVSeq(v);
 			vertexListModified();
-			this.getECARuleManager().fireAfterDeleteVertexEvents(v.getM1Class());
+			getECARuleManager().fireAfterDeleteVertexEvents(v.getM1Class());
 		}
 	}
 
@@ -1562,7 +1564,6 @@ public abstract class GraphBaseImpl implements Graph {
 		loading = isLoading;
 	}
 
-
 	/**
 	 * Changes the vertex sequence version of this graph. Should be called
 	 * whenever the vertex list of this graph is changed, for instance by
@@ -1634,7 +1635,9 @@ public abstract class GraphBaseImpl implements Graph {
 			if (newVMax != vMax) {
 				vMax = newVMax;
 				VertexBaseImpl[] newVertex = new VertexBaseImpl[vMax + 1];
-				System.arraycopy(getVertex(), 0, newVertex, 0, newVertex.length);
+				System
+						.arraycopy(getVertex(), 0, newVertex, 0,
+								newVertex.length);
 				setVertex(newVertex);
 			}
 			graphModified();
@@ -2008,17 +2011,27 @@ public abstract class GraphBaseImpl implements Graph {
 
 	}
 
-	//ECA Rules
-	private ECARuleManager ecaRuleManager;
+	// ECA Rules
+	private ECARuleManagerInterface ecaRuleManager;
 	{
-		ecaRuleManager = new ECARuleManager(this);
+		Constructor<?> ruleManagerConstructor;
+		try {
+			ruleManagerConstructor = Class.forName(
+					"de.uni_koblenz.jgralab.eca.ECARuleManager")
+					.getConstructor(Graph.class);
+			ecaRuleManager = (ECARuleManagerInterface) ruleManagerConstructor
+					.newInstance(this);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		assert ecaRuleManager != null;
 	}
-	
+
 	@Override
-	public ECARuleManager getECARuleManager(){
+	public ECARuleManagerInterface getECARuleManager() {
 		return ecaRuleManager;
 	}
-	
+
 	// handle GraphStructureChangedListener
 
 	/**
@@ -2091,18 +2104,21 @@ public abstract class GraphBaseImpl implements Graph {
 	@Override
 	public int getGraphStructureChangedListenerCount() {
 		return graphStructureChangedListenersWithAutoRemoval == null ? graphStructureChangedListeners
-				.size() : graphStructureChangedListenersWithAutoRemoval.size()
-				+ graphStructureChangedListeners.size();
+				.size()
+				: graphStructureChangedListenersWithAutoRemoval.size()
+						+ graphStructureChangedListeners.size();
 	}
 
 	private Iterator<WeakReference<GraphStructureChangedListener>> getListenerListIteratorForAutoRemove() {
 		return graphStructureChangedListenersWithAutoRemoval != null ? graphStructureChangedListenersWithAutoRemoval
-				.iterator() : null;
+				.iterator()
+				: null;
 	}
 
 	private Iterator<GraphStructureChangedListener> getListenerListIterator() {
 		return graphStructureChangedListeners != null ? graphStructureChangedListeners
-				.iterator() : null;
+				.iterator()
+				: null;
 	}
 
 	/**

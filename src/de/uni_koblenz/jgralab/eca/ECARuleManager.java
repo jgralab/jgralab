@@ -16,7 +16,7 @@ import de.uni_koblenz.jgralab.eca.events.DeleteVertexEventDescription;
 import de.uni_koblenz.jgralab.eca.events.EventDescription;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 
-public class ECARuleManager {
+public class ECARuleManager implements ECARuleManagerInterface {
 
 	/**
 	 * Graph that owns this ECARuleManager
@@ -108,11 +108,8 @@ public class ECARuleManager {
 	
 	// +++++ Fire Events ++++++++++++++++++++++++++++++++++++++++++++++
 
-	/**
-	 * Fire Events from {@link beforeCreateVertexEvents} list
-	 * 
-	 * @param elementClass
-	 *            the Class of the new Vertex
+	/* (non-Javadoc)
+	 * @see de.uni_koblenz.jgralab.eca.ECARuleManagerInterface#fireBeforeCreateVertexEvents(java.lang.Class)
 	 */
 	public void fireBeforeCreateVertexEvents(
 			Class<? extends AttributedElement> elementClass) {
@@ -126,11 +123,8 @@ public class ECARuleManager {
 
 	}
 
-	/**
-	 * Fire Events from {@link afterCreateVertexEvents} list
-	 * 
-	 * @param element
-	 *            the new created Vertex
+	/* (non-Javadoc)
+	 * @see de.uni_koblenz.jgralab.eca.ECARuleManagerInterface#fireAfterCreateVertexEvents(de.uni_koblenz.jgralab.GraphElement)
 	 */
 	public void fireAfterCreateVertexEvents(GraphElement element) {
 		if (this.increaseAndTestOnMaximumNestedCalls()) {
@@ -143,11 +137,8 @@ public class ECARuleManager {
 
 	}
 
-	/**
-	 * Fire Events from {@link beforeDeleteVertexEvents} list
-	 * 
-	 * @param element
-	 *            the Vertex to delete
+	/* (non-Javadoc)
+	 * @see de.uni_koblenz.jgralab.eca.ECARuleManagerInterface#fireBeforeDeleteVertexEvents(de.uni_koblenz.jgralab.GraphElement)
 	 */
 	public void fireBeforeDeleteVertexEvents(GraphElement element) {
 		if (this.increaseAndTestOnMaximumNestedCalls()) {
@@ -160,11 +151,8 @@ public class ECARuleManager {
 
 	}
 
-	/**
-	 * Fire Events from {@link afterDeleteVertexEvents} list
-	 * 
-	 * @param elementClass
-	 *            the Class of the deleted Vertex
+	/* (non-Javadoc)
+	 * @see de.uni_koblenz.jgralab.eca.ECARuleManagerInterface#fireAfterDeleteVertexEvents(java.lang.Class)
 	 */
 	public void fireAfterDeleteVertexEvents(
 			Class<? extends AttributedElement> elementClass) {
@@ -178,11 +166,8 @@ public class ECARuleManager {
 
 	}
 
-	/**
-	 * Fire Events from {@link beforeCreateEdgeEvents} list
-	 * 
-	 * @param elementClass
-	 *            the Class of the new Edge
+	/* (non-Javadoc)
+	 * @see de.uni_koblenz.jgralab.eca.ECARuleManagerInterface#fireBeforeCreateEdgeEvents(java.lang.Class)
 	 */
 	public void fireBeforeCreateEdgeEvents(
 			Class<? extends AttributedElement> elementClass) {
@@ -197,11 +182,8 @@ public class ECARuleManager {
 
 	}
 	
-	/**
-	 * Fire Events from {@link afterCreateEdgeEvents} list
-	 * 
-	 * @param element
-	 *            the new created Edge
+	/* (non-Javadoc)
+	 * @see de.uni_koblenz.jgralab.eca.ECARuleManagerInterface#fireAfterCreateEdgeEvents(de.uni_koblenz.jgralab.GraphElement)
 	 */
 	public void fireAfterCreateEdgeEvents(GraphElement element) {
 		if (this.increaseAndTestOnMaximumNestedCalls()) {
@@ -215,11 +197,8 @@ public class ECARuleManager {
 
 	}
 	
-	/**
-	 * Fire Events from {@link beforeDeleteEdgeEvents} list
-	 * 
-	 * @param element
-	 *            the Edge to delete
+	/* (non-Javadoc)
+	 * @see de.uni_koblenz.jgralab.eca.ECARuleManagerInterface#fireBeforeDeleteEdgeEvents(de.uni_koblenz.jgralab.GraphElement)
 	 */
 	public void fireBeforeDeleteEdgeEvents(GraphElement element) {
 		if (this.increaseAndTestOnMaximumNestedCalls()) {
@@ -233,11 +212,8 @@ public class ECARuleManager {
 
 	}
 	
-	/**
-	 * Fire Events from {@link afterDeleteEdgeEvents} list
-	 * 
-	 * @param elementClass
-	 *            the Class of the deleted Edge
+	/* (non-Javadoc)
+	 * @see de.uni_koblenz.jgralab.eca.ECARuleManagerInterface#fireAfterDeleteEdgeEvents(java.lang.Class)
 	 */
 	public void fireAfterDeleteEdgeEvents(
 			Class<? extends AttributedElement> elementClass) {
@@ -252,11 +228,8 @@ public class ECARuleManager {
 
 	}
 	
-	/**
-	 * Fire Events from {@link beforeChangeEdgeEvents} list
-	 * 
-	 * @param element
-	 *            the Edge that will change
+	/* (non-Javadoc)
+	 * @see de.uni_koblenz.jgralab.eca.ECARuleManagerInterface#fireBeforeChangeEdgeEvents(de.uni_koblenz.jgralab.GraphElement, de.uni_koblenz.jgralab.Vertex, de.uni_koblenz.jgralab.Vertex)
 	 */
 	public void fireBeforeChangeEdgeEvents(GraphElement element,
 			Vertex oldVertex, Vertex newVertex) {
@@ -271,11 +244,8 @@ public class ECARuleManager {
 
 	}
 	
-	/**
-	 * Fire Events from {@link afterChangeEdgeEvents} list
-	 * 
-	 * @param element
-	 *            the Edge that changed
+	/* (non-Javadoc)
+	 * @see de.uni_koblenz.jgralab.eca.ECARuleManagerInterface#fireAfterChangeEdgeEvents(de.uni_koblenz.jgralab.GraphElement, de.uni_koblenz.jgralab.Vertex, de.uni_koblenz.jgralab.Vertex)
 	 */
 	public void fireAfterChangeEdgeEvents(GraphElement element,
 			Vertex oldVertex, Vertex newVertex) {
@@ -290,13 +260,8 @@ public class ECARuleManager {
 
 	}
 	
-	/**
-	 * Fire Events from {@link beforeChangeAttributeEvents} list
-	 * 
-	 * @param element
-	 *            the element of which the Attribute will change
-	 * @param attributeName
-	 *            the name of the Attribute that will change
+	/* (non-Javadoc)
+	 * @see de.uni_koblenz.jgralab.eca.ECARuleManagerInterface#fireBeforeChangeAttributeEvents(de.uni_koblenz.jgralab.AttributedElement, java.lang.String, java.lang.Object, java.lang.Object)
 	 */
 	public void fireBeforeChangeAttributeEvents(AttributedElement element,
 			String attributeName, Object oldValue, Object newValue) {
@@ -311,13 +276,8 @@ public class ECARuleManager {
 
 	}
 	
-	/**
-	 * Fire Events from {@link afterChangeAttributeEvents} list
-	 * 
-	 * @param element
-	 *            the element of which the Attribute changed
-	 * @param attributeName
-	 *            the name of the changed Attribute
+	/* (non-Javadoc)
+	 * @see de.uni_koblenz.jgralab.eca.ECARuleManagerInterface#fireAfterChangeAttributeEvents(de.uni_koblenz.jgralab.AttributedElement, java.lang.String, java.lang.Object, java.lang.Object)
 	 */
 	public void fireAfterChangeAttributeEvents(AttributedElement element,
 			String attributeName, Object oldValue, Object newValue) {
@@ -351,8 +311,8 @@ public class ECARuleManager {
 
 	// +++++ Getter and Setter ++++++++++++++++++++++++++++++++++++++
 	
-	/**
-	 * @return the Graph that owns this EventManager
+	/* (non-Javadoc)
+	 * @see de.uni_koblenz.jgralab.eca.ECARuleManagerInterface#getGraph()
 	 */
 	public Graph getGraph(){
 		return this.graph;
@@ -372,14 +332,23 @@ public class ECARuleManager {
 		return greqlEvaluator;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.uni_koblenz.jgralab.eca.ECARuleManagerInterface#getMaxNestedTriggerCalls()
+	 */
 	public int getMaxNestedTriggerCalls() {
 		return maxNestedTriggerCalls;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.uni_koblenz.jgralab.eca.ECARuleManagerInterface#setMaxNestedTriggerCalls(int)
+	 */
 	public void setMaxNestedTriggerCalls(int maxNestedTriggerCalls) {
 		this.maxNestedTriggerCalls = maxNestedTriggerCalls;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.uni_koblenz.jgralab.eca.ECARuleManagerInterface#getNestedTriggerCalls()
+	 */
 	public int getNestedTriggerCalls() {
 		return nestedTriggerCalls;
 	}
