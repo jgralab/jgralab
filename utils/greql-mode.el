@@ -230,12 +230,10 @@
 
   (setq greql-evaluation-buffer (concat "*GReQL Evaluation: " (buffer-name) "*"))
 
-  ;; If this is a GReTL mode buffer, enable gretl-minor-mode, too.
+  ;; If this is a GReTL buffer, enable gretl-minor-mode, too.
   (when (string-match "\\.gretl$"
 		      (or (buffer-file-name) (buffer-name)))
-    (add-hook 'greql-mode-hook
-	      (lambda ()
-		(gretl-minor-mode 1))))
+    (gretl-minor-mode 1))
 
   (progn
     (define-key greql-mode-map (kbd "M-TAB")   'greql-complete)
