@@ -70,7 +70,9 @@ public class Condition {
 		}
 		else{
 			System.err.println("Invalid Condition: "+this.conditionExpression);
-			return false;
+			throw new ECAException("Invalid Condition: \""
+					+ this.conditionExpression + "\" evaluates to JValueType "
+					+ result.getType() + " but the result has to be a boolean.");
 		}		
 	}
 

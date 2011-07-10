@@ -232,6 +232,13 @@ public class ECAIO {
 		writeToStream(eventstring);
 	}
 
+	/**
+	 * Determines the String representation of an EventDescription
+	 * 
+	 * @param ev
+	 *            the EventDescription
+	 * @return the EventDescription as String
+	 */
 	private String getEventDescriptionType(EventDescription ev) {
 		if (ev instanceof CreateVertexEventDescription) {
 			return "createVertex(" + getEventElementTypeString(ev) + ") ";
@@ -262,6 +269,13 @@ public class ECAIO {
 
 	}
 
+	/**
+	 * Determines the type that a given EventDescription monitors
+	 * 
+	 * @param ev
+	 *            EventDescription to get the type
+	 * @return the type as string or "" if the elements are filtered by context
+	 */
 	private String getEventElementTypeString(EventDescription ev) {
 		String eventstring = "";
 		if (ev.getContext().equals(EventDescription.Context.TYPE)) {
@@ -615,6 +629,7 @@ public class ECAIO {
 	 * @return the resulting Action
 	 * @throws ECAIOException
 	 */
+	@SuppressWarnings("unchecked")
 	private Action parseAction() throws ECAIOException {
 		String next = nextToken();
 		if (isMatching("<", next)) {

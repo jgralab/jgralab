@@ -12,6 +12,9 @@ public class ChangeEdgeEventDescription extends EventDescription {
 		ALPHA, OMEGA, BOTH
 	}
 
+	/**
+	 * Whether this EventDescription monitors changes on ALPHA, OMEGA or BOTH
+	 */
 	private EdgeEnd edgeEnd;
 
 	/**
@@ -66,6 +69,10 @@ public class ChangeEdgeEventDescription extends EventDescription {
 		}
 	}
 
+	/**
+	 * @return if the ChangeEdgeEventDescription monitors the change of the
+	 *         alpha end, the omega end or both
+	 */
 	public EdgeEnd getEdgeEnd() {
 		return edgeEnd;
 	}

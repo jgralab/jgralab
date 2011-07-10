@@ -467,14 +467,14 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 */
 	public void addECARule(ECARule rule) {
 		if(rule.getECARuleManager()!=null){
-			throw new RuntimeException(
+			throw new ECAException(
 					"ERROR: Tried to add an ECARule to an ECARulemanager,"
 							+ " but the ECARule has already a manager.");
 		}
 		EventDescription ev = rule.getEventDescription();
 		for (ECARule temprule : ev.getActiveECARules()) {
 			if (temprule.getECARuleManager() != this) {
-				throw new RuntimeException(
+				throw new ECAException(
 						"ERROR: Tried to add an ECARule to an ECARulemanager,"
 								+ " but the Event part monitors already another Graph.");
 			}

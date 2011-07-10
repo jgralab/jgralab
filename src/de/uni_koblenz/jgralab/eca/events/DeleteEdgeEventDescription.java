@@ -3,6 +3,7 @@ package de.uni_koblenz.jgralab.eca.events;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.eca.ECAException;
 import de.uni_koblenz.jgralab.eca.ECARule;
 
 public class DeleteEdgeEventDescription extends EventDescription {
@@ -31,7 +32,7 @@ public class DeleteEdgeEventDescription extends EventDescription {
 	public DeleteEdgeEventDescription(EventTime time, String contextExpr) {
 		super(time, contextExpr);
 		if (time.equals(EventTime.AFTER)) {
-			throw new RuntimeException(
+			throw new ECAException(
 					"Event \"after delete Edge\" can not match a context expression"
 							+ " because there is no element.");
 		}
