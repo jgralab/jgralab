@@ -7,6 +7,7 @@ import de.uni_koblenz.jgralab.eca.events.Event;
 
 public class CreateAVertexOfSameTypeAction implements Action {
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void doAction(Event ev) {
 		if (ev instanceof CreateVertexEvent) {
