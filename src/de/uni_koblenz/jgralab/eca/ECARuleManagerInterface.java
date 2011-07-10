@@ -76,21 +76,39 @@ public interface ECARuleManagerInterface {
 			Class<? extends AttributedElement> elementClass);
 
 	/**
-	 * Fire Events from {@link beforeChangeEdgeEvents} list
+	 * Fire Events from {@link beforeChangeAlphaOfEdgeEvents} list
 	 * 
 	 * @param element
 	 *            the Edge that will change
 	 */
-	public abstract void fireBeforeChangeEdgeEvents(GraphElement element,
+	public abstract void fireBeforeChangeAlphaOfEdgeEvents(GraphElement element,
 			Vertex oldVertex, Vertex newVertex);
 
 	/**
-	 * Fire Events from {@link afterChangeEdgeEvents} list
+	 * Fire Events from {@link afterChangeAlphaOfEdgeEvents} list
 	 * 
 	 * @param element
 	 *            the Edge that changed
 	 */
-	public abstract void fireAfterChangeEdgeEvents(GraphElement element,
+	public abstract void fireAfterChangeAlphaOfEdgeEvents(GraphElement element,
+			Vertex oldVertex, Vertex newVertex);
+
+	/**
+	 * Fire Events from {@link beforeChangeOmegaOfEdgeEvents} list
+	 * 
+	 * @param element
+	 *            the Edge that will change
+	 */
+	public abstract void fireBeforeChangeOmegaOfEdgeEvents(
+			GraphElement element, Vertex oldVertex, Vertex newVertex);
+
+	/**
+	 * Fire Events from {@link afterChangeOmegaOfEdgeEvents} list
+	 * 
+	 * @param element
+	 *            the Edge that changed
+	 */
+	public abstract void fireAfterChangeOmegaOfEdgeEvents(GraphElement element,
 			Vertex oldVertex, Vertex newVertex);
 
 	/**

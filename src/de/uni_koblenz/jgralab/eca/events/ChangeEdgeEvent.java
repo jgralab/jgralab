@@ -4,6 +4,7 @@ import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.eca.events.ChangeEdgeEventDescription.EdgeEnd;
 
 public class ChangeEdgeEvent extends Event {
 
@@ -23,6 +24,11 @@ public class ChangeEdgeEvent extends Event {
 	private Vertex newVertex;
 
 	/**
+	 * If alpha or omega end is affected
+	 */
+	private EdgeEnd edgeEnd;
+
+	/**
 	 * Creates a new ChangeEdgeEvent with the given parameters
 	 * 
 	 * @param nestedCalls
@@ -39,13 +45,13 @@ public class ChangeEdgeEvent extends Event {
 	 *            new Vertex of Edge
 	 */
 	public ChangeEdgeEvent(int nestedCalls, EventDescription.EventTime time,
-			Graph graph,
-			Edge edge, Vertex oldVertex,
-			Vertex newVertex) {
+			Graph graph, Edge edge, Vertex oldVertex, Vertex newVertex,
+			EdgeEnd end) {
 		super(nestedCalls, time, graph, edge.getM1Class());
 		this.edge = edge;
 		this.oldVertex = oldVertex;
 		this.newVertex = newVertex;
+		this.edgeEnd = end;
 	}
 
 	// ------------------------------------------------------------------------
@@ -77,6 +83,13 @@ public class ChangeEdgeEvent extends Event {
 	@Override
 	public AttributedElement getElement() {
 		return this.edge;
+	}
+
+	/**
+	 * @return whether the alpha or omega end is affected
+	 */
+	public EdgeEnd getEdgeEnd() {
+		return edgeEnd;
 	}
 
 }

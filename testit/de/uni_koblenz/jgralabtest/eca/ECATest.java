@@ -13,10 +13,10 @@ import de.uni_koblenz.jgralab.eca.Action;
 import de.uni_koblenz.jgralab.eca.Condition;
 import de.uni_koblenz.jgralab.eca.ECARule;
 import de.uni_koblenz.jgralab.eca.ECARuleManager;
-import de.uni_koblenz.jgralab.eca.ECARuleManagerInterface;
 import de.uni_koblenz.jgralab.eca.PrintAction;
 import de.uni_koblenz.jgralab.eca.events.ChangeAttributeEventDescription;
 import de.uni_koblenz.jgralab.eca.events.ChangeEdgeEventDescription;
+import de.uni_koblenz.jgralab.eca.events.ChangeEdgeEventDescription.EdgeEnd;
 import de.uni_koblenz.jgralab.eca.events.CreateEdgeEventDescription;
 import de.uni_koblenz.jgralab.eca.events.CreateVertexEventDescription;
 import de.uni_koblenz.jgralab.eca.events.DeleteEdgeEventDescription;
@@ -165,7 +165,7 @@ public class ECATest {
 	@Test
 	public void testChangeEdgeEvent() {
 		EventDescription bef_ev = new ChangeEdgeEventDescription(
-				EventDescription.EventTime.BEFORE, Loans.class);
+				EventDescription.EventTime.BEFORE, Loans.class, EdgeEnd.BOTH);
 		Action bef_act = new PrintAction(
 				"ECA Test Message: Loans Edge will become changed.");
 		ECARule bef_rule = new ECARule(bef_ev, bef_act);
@@ -174,7 +174,7 @@ public class ECATest {
 		ecaRuleManager.addECARule(bef_rule);
 
 		EventDescription aft_ev = new ChangeEdgeEventDescription(
-				EventDescription.EventTime.AFTER, Loans.class);
+				EventDescription.EventTime.AFTER, Loans.class, EdgeEnd.BOTH);
 		Action aft_act = new PrintAction(
 				"ECA Test Message: Loans Edge is changed.");
 		ECARule aft_rule = new ECARule(aft_ev, aft_act);
@@ -387,7 +387,7 @@ public class ECATest {
 		System.out
 				.println("Test Action that reverts the change of an Edge if the condition is true:");
 		EventDescription aft_ev = new ChangeEdgeEventDescription(
-				EventDescription.EventTime.AFTER, Loans.class);
+				EventDescription.EventTime.AFTER, Loans.class, EdgeEnd.BOTH);
 		Condition aft_cond = new Condition(
 				"startVertex(context).name = \"Martin King\"");
 		Action aft_act = new RevertEdgeChangingAction();
@@ -410,7 +410,7 @@ public class ECATest {
 		System.out
 				.println("Test Action that reverts the change of an Edge if it is on the highest nested call level");
 		EventDescription aft_ev = new ChangeEdgeEventDescription(
-				EventDescription.EventTime.AFTER, Loans.class);
+				EventDescription.EventTime.AFTER, Loans.class, EdgeEnd.BOTH);
 		Action aft_act = new RevertEdgeChangingOnHighesLevelAction();
 		ECARule aft_rule = new ECARule(aft_ev, aft_act);
 		ECARuleManager ecaRuleManager = (ECARuleManager) simlibgraph

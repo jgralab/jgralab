@@ -371,7 +371,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 		VertexBaseImpl oldAlpha = getIncidentVertex();
 
 		if (!this.graph.isLoading()) {
-			this.graph.getECARuleManager().fireBeforeChangeEdgeEvents(this,
+			this.graph.getECARuleManager().fireBeforeChangeAlphaOfEdgeEvents(this,
 					oldAlpha, alpha);
 		}
 		
@@ -394,7 +394,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 		newAlpha.incidenceListModified();
 		setIncidentVertex(newAlpha);
 		if (!this.graph.isLoading()) {
-			this.graph.getECARuleManager().fireAfterChangeEdgeEvents(this,
+			this.graph.getECARuleManager().fireAfterChangeAlphaOfEdgeEvents(this,
 					oldAlpha, alpha);
 		}
 	}
@@ -414,8 +414,8 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 		VertexBaseImpl oldOmgea = reversedEdge.getIncidentVertex();
 
 		if (!this.graph.isLoading()) {
-			this.graph.getECARuleManager().fireBeforeChangeEdgeEvents(this,
-					oldOmgea, omega);
+			this.graph.getECARuleManager().fireBeforeChangeOmegaOfEdgeEvents(
+					this, oldOmgea, omega);
 		}
 		
 		if (omega == oldOmgea) {
@@ -441,7 +441,8 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 		// called it before.
 		
 		if (!this.graph.isLoading()) {
-			this.graph.getECARuleManager().fireAfterChangeEdgeEvents(this,
+			this.graph.getECARuleManager().fireAfterChangeOmegaOfEdgeEvents(
+					this,
 					oldOmgea, omega);
 		}
 	}

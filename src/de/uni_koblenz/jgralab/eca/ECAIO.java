@@ -20,6 +20,7 @@ import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.eca.events.ChangeAttributeEventDescription;
 import de.uni_koblenz.jgralab.eca.events.ChangeEdgeEventDescription;
+import de.uni_koblenz.jgralab.eca.events.ChangeEdgeEventDescription.EdgeEnd;
 import de.uni_koblenz.jgralab.eca.events.CreateEdgeEventDescription;
 import de.uni_koblenz.jgralab.eca.events.CreateVertexEventDescription;
 import de.uni_koblenz.jgralab.eca.events.DeleteEdgeEventDescription;
@@ -243,9 +244,16 @@ public class ECAIO {
 					+ ((ChangeAttributeEventDescription) ev)
 							.getConcernedAttribute();
 		} else if (ev instanceof ChangeEdgeEventDescription) {
-			// TODO decide whether there should be a difference between alpha
-			// and omega
-			return "";
+			if (((ChangeEdgeEventDescription) ev).getEdgeEnd().equals(
+					EdgeEnd.ALPHA)) {
+				return "updatedStartVertex(";
+			} else if (((ChangeEdgeEventDescription) ev).getEdgeEnd().equals(
+					EdgeEnd.OMEGA)) {
+				return "updatedEndVertex(";
+			} else {
+				// TODO decide whether BOTH is although possible
+				return "";
+			}
 		} else if (ev instanceof CreateEdgeEventDescription) {
 			return "createEdge(" + getEventElementTypeString(ev) + ") ";
 		} else {
@@ -414,11 +422,11 @@ public class ECAIO {
 		}
 		// -- ChangeEdgeEventDescription
 		else if (eventdestype.equals("updatedStartVertex")) {
-			return finishChangeEdgeEventDescription(context, et, type);
+			return finishChangeAlphaOfEdgeEventDescription(context, et, type);
 		}
 		// -- ChangeEdgeEventDescription
 		else if (eventdestype.equals("updatedEndVertex")) {
-			return finishChangeEdgeEventDescription(context, et, type);
+			return finishChangeOmegaOfEdgeEventDescription(context, et, type);
 		}
 		// -- DeleteVertexEventDescription
 		else if (eventdestype.equals("deleteVertex")) {
@@ -468,13 +476,28 @@ public class ECAIO {
 		}
 	}
 
-	private EventDescription finishChangeEdgeEventDescription(String context,
+	private EventDescription finishChangeAlphaOfEdgeEventDescription(
+			String context,
 			EventTime et, String type) throws ECAIOException {
 		if (context != null && type == null) {
 			return new ChangeEdgeEventDescription(et, context);
 		} else if (context == null && type != null) {
 			return new ChangeEdgeEventDescription(et,
-					getAttributedElement(type));
+					getAttributedElement(type), EdgeEnd.ALPHA);
+		} else {
+			throw new ECAIOException(
+					"It's necessary to give a context OR a type. Its an XOR. Found: context: \""
+							+ context + "\" and type: \"" + type + "\"");
+		}
+	}
+
+	private EventDescription finishChangeOmegaOfEdgeEventDescription(
+			String context, EventTime et, String type) throws ECAIOException {
+		if (context != null && type == null) {
+			return new ChangeEdgeEventDescription(et, context);
+		} else if (context == null && type != null) {
+			return new ChangeEdgeEventDescription(et,
+					getAttributedElement(type), EdgeEnd.OMEGA);
 		} else {
 			throw new ECAIOException(
 					"It's necessary to give a context OR a type. Its an XOR. Found: context: \""
