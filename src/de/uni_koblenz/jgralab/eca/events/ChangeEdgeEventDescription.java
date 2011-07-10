@@ -8,6 +8,12 @@ import de.uni_koblenz.jgralab.eca.ECARule;
 
 public class ChangeEdgeEventDescription extends EventDescription {
 
+	public enum EdgeEnd {
+		ALPHA, OMEGA, BOTH
+	}
+
+	private EdgeEnd edgeEnd;
+
 	/**
 	 * Creates an ChangeEdgeEventDescription with the given parameters
 	 * 
@@ -17,8 +23,9 @@ public class ChangeEdgeEventDescription extends EventDescription {
 	 *            the Class of elements, this EventDescription monitors
 	 */
 	public ChangeEdgeEventDescription(EventTime time,
-			Class<? extends AttributedElement> type) {
+			Class<? extends AttributedElement> type, EdgeEnd end) {
 		super(time, type);
+		this.edgeEnd = end;
 	}
 
 	/**
@@ -45,7 +52,7 @@ public class ChangeEdgeEventDescription extends EventDescription {
 	 *            the new Vertex of the Edge
 	 */
 	public void fire(AttributedElement element, Vertex oldVertex,
-			Vertex newVertex) {
+			Vertex newVertex, EdgeEnd endOfEdge) {
 		if (super.checkContext(element)) {
 			int nested = this.getActiveECARules().get(0).getECARuleManager()
 					.getNestedTriggerCalls();
@@ -53,11 +60,14 @@ public class ChangeEdgeEventDescription extends EventDescription {
 					.getGraph();
 			for (ECARule rule : activeRules) {
 				rule.trigger(new ChangeEdgeEvent(nested, this.getTime(), graph,
-						(Edge) element,
-						oldVertex, newVertex));
+						(Edge) element, oldVertex, newVertex, endOfEdge));
+
 			}
 		}
 	}
 
+	public EdgeEnd getEdgeEnd() {
+		return edgeEnd;
+	}
 
 }
