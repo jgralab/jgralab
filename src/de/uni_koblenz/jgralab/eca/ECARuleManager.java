@@ -19,11 +19,15 @@ import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 
 public class ECARuleManager implements ECARuleManagerInterface {
 
+	public static ECARuleManager getECARuleManagerForGraph(Graph g) {
+		return (ECARuleManager) g.getECARuleManager();
+	}
+
 	/**
 	 * Graph that owns this ECARuleManager
 	 */
 	private Graph graph;
-	
+
 	/**
 	 * List with all ECARules managed by this ECARuleManager
 	 */
@@ -40,19 +44,19 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 */
 	private List<CreateVertexEventDescription> beforeCreateVertexEvents;
 	private List<CreateVertexEventDescription> afterCreateVertexEvents;
-	
+
 	/*
 	 * DeleteVertexEvents
 	 */
 	private List<DeleteVertexEventDescription> beforeDeleteVertexEvents;
 	private List<DeleteVertexEventDescription> afterDeleteVertexEvents;
-	
+
 	/*
 	 * CreateEdgeEvents
 	 */
 	private List<CreateEdgeEventDescription> beforeCreateEdgeEvents;
 	private List<CreateEdgeEventDescription> afterCreateEdgeEvents;
-	
+
 	/*
 	 * DeleteEdgeEvents
 	 */
@@ -72,7 +76,7 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 */
 	private List<ChangeAttributeEventDescription> beforeChangeAttributeEvents;
 	private List<ChangeAttributeEventDescription> afterChangeAttributeEvents;
-	
+
 	// +++++ Constructor ++++++++++++++++++++++++++++++++++++++++++++++
 
 	/**
@@ -81,163 +85,191 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 * @param the
 	 *            Graph that owns this ECARuleManager
 	 */
-	public ECARuleManager(Graph graph){
-		
+	public ECARuleManager(Graph graph) {
+
 		this.graph = graph;
-		
-		this.rules = new ArrayList<ECARule>();
 
-		this.greqlEvaluator = new GreqlEvaluator("", this.graph, null);
+		rules = new ArrayList<ECARule>();
 
-		this.beforeCreateVertexEvents = new ArrayList<CreateVertexEventDescription>();
-		this.afterCreateVertexEvents = new ArrayList<CreateVertexEventDescription>();
-		
-		this.beforeDeleteVertexEvents = new ArrayList<DeleteVertexEventDescription>();
-		this.afterDeleteVertexEvents  = new ArrayList<DeleteVertexEventDescription>();
-		
-		this.beforeCreateEdgeEvents = new ArrayList<CreateEdgeEventDescription>();
-		this.afterCreateEdgeEvents = new ArrayList<CreateEdgeEventDescription>();
-		
-		this.beforeDeleteEdgeEvents = new ArrayList<DeleteEdgeEventDescription>();
-		this.afterDeleteEdgeEvents = new ArrayList<DeleteEdgeEventDescription>();
-		
-		this.beforeChangeAlphaOfEdgeEvents = new ArrayList<ChangeEdgeEventDescription>();
-		this.afterChangeAlphaOfEdgeEvents = new ArrayList<ChangeEdgeEventDescription>();
-		this.beforeChangeOmegaOfEdgeEvents = new ArrayList<ChangeEdgeEventDescription>();
-		this.afterChangeOmegaOfEdgeEvents = new ArrayList<ChangeEdgeEventDescription>();
-		
-		this.beforeChangeAttributeEvents = new ArrayList<ChangeAttributeEventDescription>();
-		this.afterChangeAttributeEvents = new ArrayList<ChangeAttributeEventDescription>();
+		greqlEvaluator = new GreqlEvaluator("", this.graph, null);
+
+		beforeCreateVertexEvents = new ArrayList<CreateVertexEventDescription>();
+		afterCreateVertexEvents = new ArrayList<CreateVertexEventDescription>();
+
+		beforeDeleteVertexEvents = new ArrayList<DeleteVertexEventDescription>();
+		afterDeleteVertexEvents = new ArrayList<DeleteVertexEventDescription>();
+
+		beforeCreateEdgeEvents = new ArrayList<CreateEdgeEventDescription>();
+		afterCreateEdgeEvents = new ArrayList<CreateEdgeEventDescription>();
+
+		beforeDeleteEdgeEvents = new ArrayList<DeleteEdgeEventDescription>();
+		afterDeleteEdgeEvents = new ArrayList<DeleteEdgeEventDescription>();
+
+		beforeChangeAlphaOfEdgeEvents = new ArrayList<ChangeEdgeEventDescription>();
+		afterChangeAlphaOfEdgeEvents = new ArrayList<ChangeEdgeEventDescription>();
+		beforeChangeOmegaOfEdgeEvents = new ArrayList<ChangeEdgeEventDescription>();
+		afterChangeOmegaOfEdgeEvents = new ArrayList<ChangeEdgeEventDescription>();
+
+		beforeChangeAttributeEvents = new ArrayList<ChangeAttributeEventDescription>();
+		afterChangeAttributeEvents = new ArrayList<ChangeAttributeEventDescription>();
 
 	}
-	
+
 	// +++++ Fire Events ++++++++++++++++++++++++++++++++++++++++++++++
 
-	/* (non-Javadoc)
-	 * @see de.uni_koblenz.jgralab.eca.ECARuleManagerInterface#fireBeforeCreateVertexEvents(java.lang.Class)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seede.uni_koblenz.jgralab.eca.ECARuleManagerInterface#
+	 * fireBeforeCreateVertexEvents(java.lang.Class)
 	 */
 	@Override
 	public void fireBeforeCreateVertexEvents(
 			Class<? extends AttributedElement> elementClass) {
-		if (this.increaseAndTestOnMaximumNestedCalls()) {
+		if (increaseAndTestOnMaximumNestedCalls()) {
 			return;
 		}
-		for(CreateVertexEventDescription ev : beforeCreateVertexEvents){
+		for (CreateVertexEventDescription ev : beforeCreateVertexEvents) {
 			ev.fire(elementClass);
 		}
-		this.nestedTriggerCalls--;
+		nestedTriggerCalls--;
 
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uni_koblenz.jgralab.eca.ECARuleManagerInterface#fireAfterCreateVertexEvents(de.uni_koblenz.jgralab.GraphElement)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seede.uni_koblenz.jgralab.eca.ECARuleManagerInterface#
+	 * fireAfterCreateVertexEvents(de.uni_koblenz.jgralab.GraphElement)
 	 */
 	@Override
 	public void fireAfterCreateVertexEvents(GraphElement element) {
-		if (this.increaseAndTestOnMaximumNestedCalls()) {
+		if (increaseAndTestOnMaximumNestedCalls()) {
 			return;
 		}
-		for(CreateVertexEventDescription ev : afterCreateVertexEvents){
+		for (CreateVertexEventDescription ev : afterCreateVertexEvents) {
 			ev.fire(element);
 		}
-		this.nestedTriggerCalls--;
+		nestedTriggerCalls--;
 
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uni_koblenz.jgralab.eca.ECARuleManagerInterface#fireBeforeDeleteVertexEvents(de.uni_koblenz.jgralab.GraphElement)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seede.uni_koblenz.jgralab.eca.ECARuleManagerInterface#
+	 * fireBeforeDeleteVertexEvents(de.uni_koblenz.jgralab.GraphElement)
 	 */
 	@Override
 	public void fireBeforeDeleteVertexEvents(GraphElement element) {
-		if (this.increaseAndTestOnMaximumNestedCalls()) {
+		if (increaseAndTestOnMaximumNestedCalls()) {
 			return;
 		}
-		for(DeleteVertexEventDescription ev : beforeDeleteVertexEvents){
+		for (DeleteVertexEventDescription ev : beforeDeleteVertexEvents) {
 			ev.fire(element);
 		}
-		this.nestedTriggerCalls--;
+		nestedTriggerCalls--;
 
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uni_koblenz.jgralab.eca.ECARuleManagerInterface#fireAfterDeleteVertexEvents(java.lang.Class)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seede.uni_koblenz.jgralab.eca.ECARuleManagerInterface#
+	 * fireAfterDeleteVertexEvents(java.lang.Class)
 	 */
 	@Override
 	public void fireAfterDeleteVertexEvents(
 			Class<? extends AttributedElement> elementClass) {
-		if (this.increaseAndTestOnMaximumNestedCalls()) {
+		if (increaseAndTestOnMaximumNestedCalls()) {
 			return;
 		}
-		for(DeleteVertexEventDescription ev : afterDeleteVertexEvents){
+		for (DeleteVertexEventDescription ev : afterDeleteVertexEvents) {
 			ev.fire(elementClass);
 		}
-		this.nestedTriggerCalls--;
+		nestedTriggerCalls--;
 
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uni_koblenz.jgralab.eca.ECARuleManagerInterface#fireBeforeCreateEdgeEvents(java.lang.Class)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.eca.ECARuleManagerInterface#fireBeforeCreateEdgeEvents
+	 * (java.lang.Class)
 	 */
 	@Override
 	public void fireBeforeCreateEdgeEvents(
 			Class<? extends AttributedElement> elementClass) {
-		if (this.increaseAndTestOnMaximumNestedCalls()) {
+		if (increaseAndTestOnMaximumNestedCalls()) {
 			return;
 		}
 
-		for(CreateEdgeEventDescription ev : beforeCreateEdgeEvents){
+		for (CreateEdgeEventDescription ev : beforeCreateEdgeEvents) {
 			ev.fire(elementClass);
 		}
-		this.nestedTriggerCalls--;
+		nestedTriggerCalls--;
 
 	}
-	
-	/* (non-Javadoc)
-	 * @see de.uni_koblenz.jgralab.eca.ECARuleManagerInterface#fireAfterCreateEdgeEvents(de.uni_koblenz.jgralab.GraphElement)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.eca.ECARuleManagerInterface#fireAfterCreateEdgeEvents
+	 * (de.uni_koblenz.jgralab.GraphElement)
 	 */
 	@Override
 	public void fireAfterCreateEdgeEvents(GraphElement element) {
-		if (this.increaseAndTestOnMaximumNestedCalls()) {
+		if (increaseAndTestOnMaximumNestedCalls()) {
 			return;
 		}
 
-		for(CreateEdgeEventDescription ev : afterCreateEdgeEvents){
+		for (CreateEdgeEventDescription ev : afterCreateEdgeEvents) {
 			ev.fire(element);
 		}
-		this.nestedTriggerCalls--;
+		nestedTriggerCalls--;
 
 	}
-	
-	/* (non-Javadoc)
-	 * @see de.uni_koblenz.jgralab.eca.ECARuleManagerInterface#fireBeforeDeleteEdgeEvents(de.uni_koblenz.jgralab.GraphElement)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.eca.ECARuleManagerInterface#fireBeforeDeleteEdgeEvents
+	 * (de.uni_koblenz.jgralab.GraphElement)
 	 */
 	@Override
 	public void fireBeforeDeleteEdgeEvents(GraphElement element) {
-		if (this.increaseAndTestOnMaximumNestedCalls()) {
+		if (increaseAndTestOnMaximumNestedCalls()) {
 			return;
 		}
 
-		for(DeleteEdgeEventDescription ev : beforeDeleteEdgeEvents){
+		for (DeleteEdgeEventDescription ev : beforeDeleteEdgeEvents) {
 			ev.fire(element);
 		}
-		this.nestedTriggerCalls--;
+		nestedTriggerCalls--;
 
 	}
-	
-	/* (non-Javadoc)
-	 * @see de.uni_koblenz.jgralab.eca.ECARuleManagerInterface#fireAfterDeleteEdgeEvents(java.lang.Class)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.eca.ECARuleManagerInterface#fireAfterDeleteEdgeEvents
+	 * (java.lang.Class)
 	 */
 	@Override
 	public void fireAfterDeleteEdgeEvents(
 			Class<? extends AttributedElement> elementClass) {
-		if (this.increaseAndTestOnMaximumNestedCalls()) {
+		if (increaseAndTestOnMaximumNestedCalls()) {
 			return;
 		}
 
-		for(DeleteEdgeEventDescription ev : afterDeleteEdgeEvents){
+		for (DeleteEdgeEventDescription ev : afterDeleteEdgeEvents) {
 			ev.fire(elementClass);
 		}
-		this.nestedTriggerCalls--;
+		nestedTriggerCalls--;
 
 	}
 
@@ -251,14 +283,14 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	@Override
 	public void fireBeforeChangeAlphaOfEdgeEvents(GraphElement element,
 			Vertex oldVertex, Vertex newVertex) {
-		if (this.increaseAndTestOnMaximumNestedCalls()) {
+		if (increaseAndTestOnMaximumNestedCalls()) {
 			return;
 		}
 
-		for(ChangeEdgeEventDescription ev : beforeChangeAlphaOfEdgeEvents){
+		for (ChangeEdgeEventDescription ev : beforeChangeAlphaOfEdgeEvents) {
 			ev.fire(element, oldVertex, newVertex, EdgeEnd.ALPHA);
 		}
-		this.nestedTriggerCalls--;
+		nestedTriggerCalls--;
 
 	}
 
@@ -272,17 +304,17 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	@Override
 	public void fireAfterChangeAlphaOfEdgeEvents(GraphElement element,
 			Vertex oldVertex, Vertex newVertex) {
-		if (this.increaseAndTestOnMaximumNestedCalls()) {
+		if (increaseAndTestOnMaximumNestedCalls()) {
 			return;
 		}
 
-		for(ChangeEdgeEventDescription ev : afterChangeAlphaOfEdgeEvents){
+		for (ChangeEdgeEventDescription ev : afterChangeAlphaOfEdgeEvents) {
 			ev.fire(element, oldVertex, newVertex, EdgeEnd.ALPHA);
 		}
-		this.nestedTriggerCalls--;
+		nestedTriggerCalls--;
 
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -293,14 +325,14 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	@Override
 	public void fireBeforeChangeOmegaOfEdgeEvents(GraphElement element,
 			Vertex oldVertex, Vertex newVertex) {
-		if (this.increaseAndTestOnMaximumNestedCalls()) {
+		if (increaseAndTestOnMaximumNestedCalls()) {
 			return;
 		}
 
 		for (ChangeEdgeEventDescription ev : beforeChangeOmegaOfEdgeEvents) {
 			ev.fire(element, oldVertex, newVertex, EdgeEnd.OMEGA);
 		}
-		this.nestedTriggerCalls--;
+		nestedTriggerCalls--;
 
 	}
 
@@ -314,76 +346,86 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	@Override
 	public void fireAfterChangeOmegaOfEdgeEvents(GraphElement element,
 			Vertex oldVertex, Vertex newVertex) {
-		if (this.increaseAndTestOnMaximumNestedCalls()) {
+		if (increaseAndTestOnMaximumNestedCalls()) {
 			return;
 		}
 
 		for (ChangeEdgeEventDescription ev : afterChangeOmegaOfEdgeEvents) {
 			ev.fire(element, oldVertex, newVertex, EdgeEnd.OMEGA);
 		}
-		this.nestedTriggerCalls--;
+		nestedTriggerCalls--;
 
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uni_koblenz.jgralab.eca.ECARuleManagerInterface#fireBeforeChangeAttributeEvents(de.uni_koblenz.jgralab.AttributedElement, java.lang.String, java.lang.Object, java.lang.Object)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seede.uni_koblenz.jgralab.eca.ECARuleManagerInterface#
+	 * fireBeforeChangeAttributeEvents(de.uni_koblenz.jgralab.AttributedElement,
+	 * java.lang.String, java.lang.Object, java.lang.Object)
 	 */
 	@Override
 	public void fireBeforeChangeAttributeEvents(AttributedElement element,
 			String attributeName, Object oldValue, Object newValue) {
-		if (this.increaseAndTestOnMaximumNestedCalls()) {
+		if (increaseAndTestOnMaximumNestedCalls()) {
 			return;
 		}
 
-		for(ChangeAttributeEventDescription ev : beforeChangeAttributeEvents){
+		for (ChangeAttributeEventDescription ev : beforeChangeAttributeEvents) {
 			ev.fire(element, attributeName, oldValue, newValue);
 		}
-		this.nestedTriggerCalls--;
+		nestedTriggerCalls--;
 
 	}
-	
-	/* (non-Javadoc)
-	 * @see de.uni_koblenz.jgralab.eca.ECARuleManagerInterface#fireAfterChangeAttributeEvents(de.uni_koblenz.jgralab.AttributedElement, java.lang.String, java.lang.Object, java.lang.Object)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seede.uni_koblenz.jgralab.eca.ECARuleManagerInterface#
+	 * fireAfterChangeAttributeEvents(de.uni_koblenz.jgralab.AttributedElement,
+	 * java.lang.String, java.lang.Object, java.lang.Object)
 	 */
 	@Override
 	public void fireAfterChangeAttributeEvents(AttributedElement element,
 			String attributeName, Object oldValue, Object newValue) {
-		if (this.increaseAndTestOnMaximumNestedCalls()) {
+		if (increaseAndTestOnMaximumNestedCalls()) {
 			return;
 		}
 
-		for(ChangeAttributeEventDescription ev : afterChangeAttributeEvents){
+		for (ChangeAttributeEventDescription ev : afterChangeAttributeEvents) {
 			ev.fire(element, attributeName, oldValue, newValue);
 		}
-		this.nestedTriggerCalls--;
+		nestedTriggerCalls--;
 	}
 
 	private boolean increaseAndTestOnMaximumNestedCalls() {
-		if (this.nestedTriggerCalls == 0) {
-			this.blocked = false;
+		if (nestedTriggerCalls == 0) {
+			blocked = false;
 		}
-		if (this.blocked) {
+		if (blocked) {
 			return true;
 		}
-		this.nestedTriggerCalls++;
-		if (this.nestedTriggerCalls >= this.maxNestedTriggerCalls) {
-			this.blocked = true;
+		nestedTriggerCalls++;
+		if (nestedTriggerCalls >= maxNestedTriggerCalls) {
+			blocked = true;
 			System.err
 					.println("CAUTION: Maximum nested Trigger Calls arrived, Rule evaluation aborted. Stack will become cleaned up.");
-			this.nestedTriggerCalls--;
+			nestedTriggerCalls--;
 			return true;
 		}
 		return false;
 	}
 
 	// +++++ Getter and Setter ++++++++++++++++++++++++++++++++++++++
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see de.uni_koblenz.jgralab.eca.ECARuleManagerInterface#getGraph()
 	 */
 	@Override
-	public Graph getGraph(){
-		return this.graph;
+	public Graph getGraph() {
+		return graph;
 	}
 
 	/**
@@ -400,24 +442,36 @@ public class ECARuleManager implements ECARuleManagerInterface {
 		return greqlEvaluator;
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uni_koblenz.jgralab.eca.ECARuleManagerInterface#getMaxNestedTriggerCalls()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.eca.ECARuleManagerInterface#getMaxNestedTriggerCalls
+	 * ()
 	 */
 	@Override
 	public int getMaxNestedTriggerCalls() {
 		return maxNestedTriggerCalls;
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uni_koblenz.jgralab.eca.ECARuleManagerInterface#setMaxNestedTriggerCalls(int)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.eca.ECARuleManagerInterface#setMaxNestedTriggerCalls
+	 * (int)
 	 */
 	@Override
 	public void setMaxNestedTriggerCalls(int maxNestedTriggerCalls) {
 		this.maxNestedTriggerCalls = maxNestedTriggerCalls;
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uni_koblenz.jgralab.eca.ECARuleManagerInterface#getNestedTriggerCalls()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.eca.ECARuleManagerInterface#getNestedTriggerCalls
+	 * ()
 	 */
 	@Override
 	public int getNestedTriggerCalls() {
@@ -453,7 +507,8 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 * @param action
 	 *            Action part of Rule
 	 */
-	public void addECARule(EventDescription event, Condition condition, Action action) {
+	public void addECARule(EventDescription event, Condition condition,
+			Action action) {
 		ECARule newRule = new ECARule(event, condition, action);
 		this.addECARule(newRule);
 	}
@@ -466,7 +521,7 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 *            the ECARule to add
 	 */
 	public void addECARule(ECARule rule) {
-		if(rule.getECARuleManager()!=null){
+		if (rule.getECARuleManager() != null) {
 			throw new ECAException(
 					"ERROR: Tried to add an ECARule to an ECARulemanager,"
 							+ " but the ECARule has already a manager.");
@@ -479,7 +534,7 @@ public class ECARuleManager implements ECARuleManagerInterface {
 								+ " but the Event part monitors already another Graph.");
 			}
 		}
-		this.rules.add(rule);
+		rules.add(rule);
 		rule.setECARuleManager(this);
 		ev.getActiveECARules().add(rule);
 		if (ev instanceof CreateVertexEventDescription) {
@@ -509,7 +564,7 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 *            the ECARule to delete
 	 */
 	public void deleteECARule(ECARule rule) {
-		this.rules.remove(rule);
+		rules.remove(rule);
 		rule.setECARuleManager(null);
 		EventDescription ev = rule.getEventDescription();
 		ev.getActiveECARules().remove(rule);
@@ -547,12 +602,12 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 */
 	private void addEventToList(CreateVertexEventDescription e) {
 		if (e.getTime().equals(EventDescription.EventTime.BEFORE)) {
-			if (!this.beforeCreateVertexEvents.contains(e)) {
-				this.beforeCreateVertexEvents.add(e);
+			if (!beforeCreateVertexEvents.contains(e)) {
+				beforeCreateVertexEvents.add(e);
 			}
 		} else {
-			if (!this.afterCreateVertexEvents.contains(e)) {
-				this.afterCreateVertexEvents.add(e);
+			if (!afterCreateVertexEvents.contains(e)) {
+				afterCreateVertexEvents.add(e);
 			}
 		}
 	}
@@ -567,12 +622,12 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 */
 	private void addEventToList(DeleteVertexEventDescription e) {
 		if (e.getTime().equals(EventDescription.EventTime.BEFORE)) {
-			if (!this.beforeDeleteVertexEvents.contains(e)) {
-				this.beforeDeleteVertexEvents.add(e);
+			if (!beforeDeleteVertexEvents.contains(e)) {
+				beforeDeleteVertexEvents.add(e);
 			}
 		} else {
-			if (!this.afterDeleteVertexEvents.contains(e)) {
-				this.afterDeleteVertexEvents.add(e);
+			if (!afterDeleteVertexEvents.contains(e)) {
+				afterDeleteVertexEvents.add(e);
 			}
 		}
 	}
@@ -587,12 +642,12 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 */
 	private void addEventToList(CreateEdgeEventDescription e) {
 		if (e.getTime().equals(EventDescription.EventTime.BEFORE)) {
-			if (!this.beforeCreateEdgeEvents.contains(e)) {
-				this.beforeCreateEdgeEvents.add(e);
+			if (!beforeCreateEdgeEvents.contains(e)) {
+				beforeCreateEdgeEvents.add(e);
 			}
 		} else {
-			if (!this.afterCreateEdgeEvents.contains(e)) {
-				this.afterCreateEdgeEvents.add(e);
+			if (!afterCreateEdgeEvents.contains(e)) {
+				afterCreateEdgeEvents.add(e);
 			}
 		}
 	}
@@ -607,12 +662,12 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 */
 	private void addEventToList(DeleteEdgeEventDescription e) {
 		if (e.getTime().equals(EventDescription.EventTime.BEFORE)) {
-			if (!this.beforeDeleteEdgeEvents.contains(e)) {
-				this.beforeDeleteEdgeEvents.add(e);
+			if (!beforeDeleteEdgeEvents.contains(e)) {
+				beforeDeleteEdgeEvents.add(e);
 			}
 		} else {
-			if (!this.afterDeleteEdgeEvents.contains(e)) {
-				this.afterDeleteEdgeEvents.add(e);
+			if (!afterDeleteEdgeEvents.contains(e)) {
+				afterDeleteEdgeEvents.add(e);
 			}
 		}
 	}
@@ -628,36 +683,36 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	private void addEventToList(ChangeEdgeEventDescription e) {
 		if (e.getTime().equals(EventDescription.EventTime.BEFORE)) {
 			if (e.getEdgeEnd().equals(EdgeEnd.ALPHA)) {
-				if (!this.beforeChangeAlphaOfEdgeEvents.contains(e)) {
-					this.beforeChangeAlphaOfEdgeEvents.add(e);
+				if (!beforeChangeAlphaOfEdgeEvents.contains(e)) {
+					beforeChangeAlphaOfEdgeEvents.add(e);
 				}
 			} else if (e.getEdgeEnd().equals(EdgeEnd.OMEGA)) {
-				if (!this.beforeChangeOmegaOfEdgeEvents.contains(e)) {
-					this.beforeChangeOmegaOfEdgeEvents.add(e);
+				if (!beforeChangeOmegaOfEdgeEvents.contains(e)) {
+					beforeChangeOmegaOfEdgeEvents.add(e);
 				}
 			} else /* BOTH */{
-				if (!this.beforeChangeAlphaOfEdgeEvents.contains(e)) {
-					this.beforeChangeAlphaOfEdgeEvents.add(e);
+				if (!beforeChangeAlphaOfEdgeEvents.contains(e)) {
+					beforeChangeAlphaOfEdgeEvents.add(e);
 				}
-				if (!this.beforeChangeOmegaOfEdgeEvents.contains(e)) {
-					this.beforeChangeOmegaOfEdgeEvents.add(e);
+				if (!beforeChangeOmegaOfEdgeEvents.contains(e)) {
+					beforeChangeOmegaOfEdgeEvents.add(e);
 				}
 			}
 		} else {
 			if (e.getEdgeEnd().equals(EdgeEnd.ALPHA)) {
-				if (!this.afterChangeAlphaOfEdgeEvents.contains(e)) {
-					this.afterChangeAlphaOfEdgeEvents.add(e);
+				if (!afterChangeAlphaOfEdgeEvents.contains(e)) {
+					afterChangeAlphaOfEdgeEvents.add(e);
 				}
 			} else if (e.getEdgeEnd().equals(EdgeEnd.OMEGA)) {
-				if (!this.afterChangeOmegaOfEdgeEvents.contains(e)) {
-					this.afterChangeOmegaOfEdgeEvents.add(e);
+				if (!afterChangeOmegaOfEdgeEvents.contains(e)) {
+					afterChangeOmegaOfEdgeEvents.add(e);
 				}
 			} else /* BOTH */{
-				if (!this.afterChangeAlphaOfEdgeEvents.contains(e)) {
-					this.afterChangeAlphaOfEdgeEvents.add(e);
+				if (!afterChangeAlphaOfEdgeEvents.contains(e)) {
+					afterChangeAlphaOfEdgeEvents.add(e);
 				}
-				if (!this.afterChangeOmegaOfEdgeEvents.contains(e)) {
-					this.afterChangeOmegaOfEdgeEvents.add(e);
+				if (!afterChangeOmegaOfEdgeEvents.contains(e)) {
+					afterChangeOmegaOfEdgeEvents.add(e);
 				}
 			}
 		}
@@ -673,12 +728,12 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 */
 	private void addEventToList(ChangeAttributeEventDescription e) {
 		if (e.getTime().equals(EventDescription.EventTime.BEFORE)) {
-			if (!this.beforeChangeAttributeEvents.contains(e)) {
-				this.beforeChangeAttributeEvents.add(e);
+			if (!beforeChangeAttributeEvents.contains(e)) {
+				beforeChangeAttributeEvents.add(e);
 			}
 		} else {
-			if (!this.afterChangeAttributeEvents.contains(e)) {
-				this.afterChangeAttributeEvents.add(e);
+			if (!afterChangeAttributeEvents.contains(e)) {
+				afterChangeAttributeEvents.add(e);
 			}
 		}
 	}
@@ -692,9 +747,9 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 */
 	private void removeEventFromList(CreateVertexEventDescription ev) {
 		if (ev.getTime().equals(EventDescription.EventTime.BEFORE)) {
-			this.beforeCreateVertexEvents.remove(ev);
+			beforeCreateVertexEvents.remove(ev);
 		} else {
-			this.afterCreateVertexEvents.remove(ev);
+			afterCreateVertexEvents.remove(ev);
 		}
 	}
 
@@ -707,9 +762,9 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 */
 	private void removeEventFromList(DeleteVertexEventDescription ev) {
 		if (ev.getTime().equals(EventDescription.EventTime.BEFORE)) {
-			this.beforeDeleteVertexEvents.remove(ev);
+			beforeDeleteVertexEvents.remove(ev);
 		} else {
-			this.afterDeleteVertexEvents.remove(ev);
+			afterDeleteVertexEvents.remove(ev);
 		}
 	}
 
@@ -722,9 +777,9 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 */
 	private void removeEventFromList(CreateEdgeEventDescription ev) {
 		if (ev.getTime().equals(EventDescription.EventTime.BEFORE)) {
-			this.beforeCreateEdgeEvents.remove(ev);
+			beforeCreateEdgeEvents.remove(ev);
 		} else {
-			this.afterCreateEdgeEvents.remove(ev);
+			afterCreateEdgeEvents.remove(ev);
 		}
 	}
 
@@ -737,9 +792,9 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 */
 	private void removeEventFromList(DeleteEdgeEventDescription ev) {
 		if (ev.getTime().equals(EventDescription.EventTime.BEFORE)) {
-			this.beforeDeleteEdgeEvents.remove(ev);
+			beforeDeleteEdgeEvents.remove(ev);
 		} else {
-			this.afterDeleteEdgeEvents.remove(ev);
+			afterDeleteEdgeEvents.remove(ev);
 		}
 	}
 
@@ -752,11 +807,11 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 */
 	private void removeEventFromList(ChangeEdgeEventDescription ev) {
 		if (ev.getTime().equals(EventDescription.EventTime.BEFORE)) {
-			this.beforeChangeAlphaOfEdgeEvents.remove(ev);
-			this.beforeChangeOmegaOfEdgeEvents.remove(ev);
+			beforeChangeAlphaOfEdgeEvents.remove(ev);
+			beforeChangeOmegaOfEdgeEvents.remove(ev);
 		} else /* AFTER */{
-			this.afterChangeAlphaOfEdgeEvents.remove(ev);
-			this.afterChangeOmegaOfEdgeEvents.remove(ev);
+			afterChangeAlphaOfEdgeEvents.remove(ev);
+			afterChangeOmegaOfEdgeEvents.remove(ev);
 		}
 	}
 
@@ -770,9 +825,9 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 */
 	private void removeEventFromList(ChangeAttributeEventDescription ev) {
 		if (ev.getTime().equals(EventDescription.EventTime.BEFORE)) {
-			this.beforeChangeAttributeEvents.remove(ev);
+			beforeChangeAttributeEvents.remove(ev);
 		} else {
-			this.afterChangeAttributeEvents.remove(ev);
+			afterChangeAttributeEvents.remove(ev);
 		}
 	}
 
