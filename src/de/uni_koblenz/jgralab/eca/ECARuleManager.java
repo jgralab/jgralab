@@ -199,9 +199,6 @@ public class ECARuleManager implements ECARuleManagerInterface {
 		for (int i = 0; i < max; i++) {
 			beforeCreateVertexEvents.get(i).fire(elementClass);
 		}
-		// for (CreateVertexEventDescription ev : beforeCreateVertexEvents) {
-		// ev.fire(elementClass);
-		// }
 		nestedTriggerCalls--;
 
 	}
@@ -224,9 +221,6 @@ public class ECARuleManager implements ECARuleManagerInterface {
 		for (int i = 0; i < max; i++) {
 			afterCreateVertexEvents.get(i).fire(element);
 		}
-		// for (CreateVertexEventDescription ev : afterCreateVertexEvents) {
-		// ev.fire(element);
-		// }
 		nestedTriggerCalls--;
 
 	}
@@ -249,9 +243,6 @@ public class ECARuleManager implements ECARuleManagerInterface {
 		for (int i = 0; i < max; i++) {
 			beforeDeleteVertexEvents.get(i).fire(element);
 		}
-		// for (DeleteVertexEventDescription ev : beforeDeleteVertexEvents) {
-		// ev.fire(element);
-		// }
 		nestedTriggerCalls--;
 
 	}
@@ -275,9 +266,6 @@ public class ECARuleManager implements ECARuleManagerInterface {
 		for (int i = 0; i < max; i++) {
 			afterDeleteVertexEvents.get(i).fire(elementClass);
 		}
-		// for (DeleteVertexEventDescription ev : afterDeleteVertexEvents) {
-		// ev.fire(elementClass);
-		// }
 		nestedTriggerCalls--;
 
 	}
@@ -302,9 +290,6 @@ public class ECARuleManager implements ECARuleManagerInterface {
 		for (int i = 0; i < max; i++) {
 			beforeCreateEdgeEvents.get(i).fire(elementClass);
 		}
-		// for (CreateEdgeEventDescription ev : beforeCreateEdgeEvents) {
-		// ev.fire(elementClass);
-		// }
 		nestedTriggerCalls--;
 
 	}
@@ -328,9 +313,6 @@ public class ECARuleManager implements ECARuleManagerInterface {
 		for (int i = 0; i < max; i++) {
 			afterCreateEdgeEvents.get(i).fire(element);
 		}
-		// for (CreateEdgeEventDescription ev : afterCreateEdgeEvents) {
-		// ev.fire(element);
-		// }
 		nestedTriggerCalls--;
 
 	}
@@ -354,9 +336,6 @@ public class ECARuleManager implements ECARuleManagerInterface {
 		for (int i = 0; i < max; i++) {
 			beforeDeleteEdgeEvents.get(i).fire(element);
 		}
-		// for (DeleteEdgeEventDescription ev : beforeDeleteEdgeEvents) {
-		// ev.fire(element);
-		// }
 		nestedTriggerCalls--;
 
 	}
@@ -381,9 +360,6 @@ public class ECARuleManager implements ECARuleManagerInterface {
 		for (int i = 0; i < max; i++) {
 			afterDeleteEdgeEvents.get(i).fire(elementClass);
 		}
-		// for (DeleteEdgeEventDescription ev : afterDeleteEdgeEvents) {
-		// ev.fire(elementClass);
-		// }
 		nestedTriggerCalls--;
 
 	}
@@ -409,9 +385,6 @@ public class ECARuleManager implements ECARuleManagerInterface {
 			beforeChangeAlphaOfEdgeEvents.get(i).fire(element, oldVertex,
 					newVertex, EdgeEnd.ALPHA);
 		}
-		// for (ChangeEdgeEventDescription ev : beforeChangeAlphaOfEdgeEvents) {
-		// ev.fire(element, oldVertex, newVertex, EdgeEnd.ALPHA);
-		// }
 		nestedTriggerCalls--;
 
 	}
@@ -437,9 +410,6 @@ public class ECARuleManager implements ECARuleManagerInterface {
 			afterChangeAlphaOfEdgeEvents.get(i).fire(element, oldVertex,
 					newVertex, EdgeEnd.ALPHA);
 		}
-		// for (ChangeEdgeEventDescription ev : afterChangeAlphaOfEdgeEvents) {
-		// ev.fire(element, oldVertex, newVertex, EdgeEnd.ALPHA);
-		// }
 		nestedTriggerCalls--;
 
 	}
@@ -465,9 +435,6 @@ public class ECARuleManager implements ECARuleManagerInterface {
 			beforeChangeOmegaOfEdgeEvents.get(i).fire(element, oldVertex,
 					newVertex, EdgeEnd.OMEGA);
 		}
-		// for (ChangeEdgeEventDescription ev : beforeChangeOmegaOfEdgeEvents) {
-		// ev.fire(element, oldVertex, newVertex, EdgeEnd.OMEGA);
-		// }
 		nestedTriggerCalls--;
 
 	}
@@ -493,9 +460,6 @@ public class ECARuleManager implements ECARuleManagerInterface {
 			afterChangeOmegaOfEdgeEvents.get(i).fire(element, oldVertex,
 					newVertex, EdgeEnd.OMEGA);
 		}
-		// for (ChangeEdgeEventDescription ev : afterChangeOmegaOfEdgeEvents) {
-		// ev.fire(element, oldVertex, newVertex, EdgeEnd.OMEGA);
-		// }
 		nestedTriggerCalls--;
 
 	}
@@ -521,10 +485,6 @@ public class ECARuleManager implements ECARuleManagerInterface {
 			beforeChangeAttributeEvents.get(i).fire(element, attributeName,
 					oldValue, newValue);
 		}
-		// for (ChangeAttributeEventDescription ev :
-		// beforeChangeAttributeEvents) {
-		// ev.fire(element, attributeName, oldValue, newValue);
-		// }
 		nestedTriggerCalls--;
 
 	}
@@ -550,10 +510,6 @@ public class ECARuleManager implements ECARuleManagerInterface {
 			afterChangeAttributeEvents.get(i).fire(element, attributeName,
 					oldValue, newValue);
 		}
-		// for (ChangeAttributeEventDescription ev : afterChangeAttributeEvents)
-		// {
-		// ev.fire(element, attributeName, oldValue, newValue);
-		// }
 		nestedTriggerCalls--;
 	}
 
