@@ -92,27 +92,90 @@ public class ECARuleManager implements ECARuleManagerInterface {
 		rules = new ArrayList<ECARule>();
 
 		greqlEvaluator = new GreqlEvaluator("", this.graph, null);
+	}
 
-		beforeCreateVertexEvents = new ArrayList<CreateVertexEventDescription>();
-		afterCreateVertexEvents = new ArrayList<CreateVertexEventDescription>();
+	private void createBeforeCreateVertexEventsLazily() {
+		if (beforeCreateVertexEvents == null) {
+			beforeCreateVertexEvents = new ArrayList<CreateVertexEventDescription>();
+		}
+	}
 
-		beforeDeleteVertexEvents = new ArrayList<DeleteVertexEventDescription>();
-		afterDeleteVertexEvents = new ArrayList<DeleteVertexEventDescription>();
+	private void createAfterCreateVertexEventsLazily() {
+		if (afterCreateVertexEvents == null) {
+			afterCreateVertexEvents = new ArrayList<CreateVertexEventDescription>();
+		}
+	}
 
-		beforeCreateEdgeEvents = new ArrayList<CreateEdgeEventDescription>();
-		afterCreateEdgeEvents = new ArrayList<CreateEdgeEventDescription>();
+	private void createBeforeDeleteVertexEventsLazily() {
+		if (beforeDeleteVertexEvents == null) {
+			beforeDeleteVertexEvents = new ArrayList<DeleteVertexEventDescription>();
+		}
+	}
 
-		beforeDeleteEdgeEvents = new ArrayList<DeleteEdgeEventDescription>();
-		afterDeleteEdgeEvents = new ArrayList<DeleteEdgeEventDescription>();
+	private void createAfterDeleteVertexEventsLazily() {
+		if (afterDeleteVertexEvents == null) {
+			afterDeleteVertexEvents = new ArrayList<DeleteVertexEventDescription>();
+		}
+	}
 
-		beforeChangeAlphaOfEdgeEvents = new ArrayList<ChangeEdgeEventDescription>();
-		afterChangeAlphaOfEdgeEvents = new ArrayList<ChangeEdgeEventDescription>();
-		beforeChangeOmegaOfEdgeEvents = new ArrayList<ChangeEdgeEventDescription>();
-		afterChangeOmegaOfEdgeEvents = new ArrayList<ChangeEdgeEventDescription>();
+	private void createBeforeCreateEdgeEventsLazily() {
+		if (beforeCreateEdgeEvents == null) {
+			beforeCreateEdgeEvents = new ArrayList<CreateEdgeEventDescription>();
+		}
+	}
 
-		beforeChangeAttributeEvents = new ArrayList<ChangeAttributeEventDescription>();
-		afterChangeAttributeEvents = new ArrayList<ChangeAttributeEventDescription>();
+	private void createAfterCreateEdgeEventsLazily() {
+		if (afterCreateEdgeEvents == null) {
+			afterCreateEdgeEvents = new ArrayList<CreateEdgeEventDescription>();
+		}
+	}
 
+	private void createBeforeDeleteEdgeEventsLazily() {
+		if (beforeDeleteEdgeEvents == null) {
+			beforeDeleteEdgeEvents = new ArrayList<DeleteEdgeEventDescription>();
+		}
+	}
+
+	private void createAfterDeleteEdgeEventsLazily() {
+		if (afterDeleteEdgeEvents == null) {
+			afterDeleteEdgeEvents = new ArrayList<DeleteEdgeEventDescription>();
+		}
+	}
+
+	private void createBeforeChangeAlphaOfEdgeEventsLazily() {
+		if (beforeChangeAlphaOfEdgeEvents == null) {
+			beforeChangeAlphaOfEdgeEvents = new ArrayList<ChangeEdgeEventDescription>();
+		}
+	}
+
+	private void createAfterChangeAlphaOfEdgeEventsLazily() {
+		if (afterChangeAlphaOfEdgeEvents == null) {
+			afterChangeAlphaOfEdgeEvents = new ArrayList<ChangeEdgeEventDescription>();
+		}
+	}
+
+	private void createBeforeChangeOmegaOfEdgeEventsLazily() {
+		if (beforeChangeOmegaOfEdgeEvents == null) {
+			beforeChangeOmegaOfEdgeEvents = new ArrayList<ChangeEdgeEventDescription>();
+		}
+	}
+
+	private void createAfterChangeOmegaOfEdgeEventsLazily() {
+		if (afterChangeOmegaOfEdgeEvents == null) {
+			afterChangeOmegaOfEdgeEvents = new ArrayList<ChangeEdgeEventDescription>();
+		}
+	}
+
+	private void createBeforeChangeAttributeEventsLazily() {
+		if (beforeChangeAttributeEvents == null) {
+			beforeChangeAttributeEvents = new ArrayList<ChangeAttributeEventDescription>();
+		}
+	}
+
+	private void createAfterChangeAttributeEventsLazily() {
+		if (afterChangeAttributeEvents == null) {
+			afterChangeAttributeEvents = new ArrayList<ChangeAttributeEventDescription>();
+		}
 	}
 
 	// +++++ Fire Events ++++++++++++++++++++++++++++++++++++++++++++++
@@ -126,12 +189,19 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	@Override
 	public void fireBeforeCreateVertexEvents(
 			Class<? extends AttributedElement> elementClass) {
+		if (beforeCreateVertexEvents == null) {
+			return;
+		}
 		if (increaseAndTestOnMaximumNestedCalls()) {
 			return;
 		}
-		for (CreateVertexEventDescription ev : beforeCreateVertexEvents) {
-			ev.fire(elementClass);
+		int max = beforeCreateVertexEvents.size();
+		for (int i = 0; i < max; i++) {
+			beforeCreateVertexEvents.get(i).fire(elementClass);
 		}
+		// for (CreateVertexEventDescription ev : beforeCreateVertexEvents) {
+		// ev.fire(elementClass);
+		// }
 		nestedTriggerCalls--;
 
 	}
@@ -144,12 +214,19 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 */
 	@Override
 	public void fireAfterCreateVertexEvents(GraphElement element) {
+		if (afterCreateVertexEvents == null) {
+			return;
+		}
 		if (increaseAndTestOnMaximumNestedCalls()) {
 			return;
 		}
-		for (CreateVertexEventDescription ev : afterCreateVertexEvents) {
-			ev.fire(element);
+		int max = afterCreateVertexEvents.size();
+		for (int i = 0; i < max; i++) {
+			afterCreateVertexEvents.get(i).fire(element);
 		}
+		// for (CreateVertexEventDescription ev : afterCreateVertexEvents) {
+		// ev.fire(element);
+		// }
 		nestedTriggerCalls--;
 
 	}
@@ -162,12 +239,19 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 */
 	@Override
 	public void fireBeforeDeleteVertexEvents(GraphElement element) {
+		if (beforeDeleteVertexEvents == null) {
+			return;
+		}
 		if (increaseAndTestOnMaximumNestedCalls()) {
 			return;
 		}
-		for (DeleteVertexEventDescription ev : beforeDeleteVertexEvents) {
-			ev.fire(element);
+		int max = beforeDeleteVertexEvents.size();
+		for (int i = 0; i < max; i++) {
+			beforeDeleteVertexEvents.get(i).fire(element);
 		}
+		// for (DeleteVertexEventDescription ev : beforeDeleteVertexEvents) {
+		// ev.fire(element);
+		// }
 		nestedTriggerCalls--;
 
 	}
@@ -181,12 +265,19 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	@Override
 	public void fireAfterDeleteVertexEvents(
 			Class<? extends AttributedElement> elementClass) {
+		if (afterDeleteVertexEvents == null) {
+			return;
+		}
 		if (increaseAndTestOnMaximumNestedCalls()) {
 			return;
 		}
-		for (DeleteVertexEventDescription ev : afterDeleteVertexEvents) {
-			ev.fire(elementClass);
+		int max = afterDeleteVertexEvents.size();
+		for (int i = 0; i < max; i++) {
+			afterDeleteVertexEvents.get(i).fire(elementClass);
 		}
+		// for (DeleteVertexEventDescription ev : afterDeleteVertexEvents) {
+		// ev.fire(elementClass);
+		// }
 		nestedTriggerCalls--;
 
 	}
@@ -201,13 +292,19 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	@Override
 	public void fireBeforeCreateEdgeEvents(
 			Class<? extends AttributedElement> elementClass) {
+		if (beforeCreateEdgeEvents == null) {
+			return;
+		}
 		if (increaseAndTestOnMaximumNestedCalls()) {
 			return;
 		}
-
-		for (CreateEdgeEventDescription ev : beforeCreateEdgeEvents) {
-			ev.fire(elementClass);
+		int max = beforeCreateEdgeEvents.size();
+		for (int i = 0; i < max; i++) {
+			beforeCreateEdgeEvents.get(i).fire(elementClass);
 		}
+		// for (CreateEdgeEventDescription ev : beforeCreateEdgeEvents) {
+		// ev.fire(elementClass);
+		// }
 		nestedTriggerCalls--;
 
 	}
@@ -221,13 +318,19 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 */
 	@Override
 	public void fireAfterCreateEdgeEvents(GraphElement element) {
+		if (afterCreateEdgeEvents == null) {
+			return;
+		}
 		if (increaseAndTestOnMaximumNestedCalls()) {
 			return;
 		}
-
-		for (CreateEdgeEventDescription ev : afterCreateEdgeEvents) {
-			ev.fire(element);
+		int max = afterCreateEdgeEvents.size();
+		for (int i = 0; i < max; i++) {
+			afterCreateEdgeEvents.get(i).fire(element);
 		}
+		// for (CreateEdgeEventDescription ev : afterCreateEdgeEvents) {
+		// ev.fire(element);
+		// }
 		nestedTriggerCalls--;
 
 	}
@@ -241,13 +344,19 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 */
 	@Override
 	public void fireBeforeDeleteEdgeEvents(GraphElement element) {
+		if (beforeDeleteEdgeEvents == null) {
+			return;
+		}
 		if (increaseAndTestOnMaximumNestedCalls()) {
 			return;
 		}
-
-		for (DeleteEdgeEventDescription ev : beforeDeleteEdgeEvents) {
-			ev.fire(element);
+		int max = beforeDeleteEdgeEvents.size();
+		for (int i = 0; i < max; i++) {
+			beforeDeleteEdgeEvents.get(i).fire(element);
 		}
+		// for (DeleteEdgeEventDescription ev : beforeDeleteEdgeEvents) {
+		// ev.fire(element);
+		// }
 		nestedTriggerCalls--;
 
 	}
@@ -262,13 +371,19 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	@Override
 	public void fireAfterDeleteEdgeEvents(
 			Class<? extends AttributedElement> elementClass) {
+		if (afterDeleteEdgeEvents == null) {
+			return;
+		}
 		if (increaseAndTestOnMaximumNestedCalls()) {
 			return;
 		}
-
-		for (DeleteEdgeEventDescription ev : afterDeleteEdgeEvents) {
-			ev.fire(elementClass);
+		int max = afterDeleteEdgeEvents.size();
+		for (int i = 0; i < max; i++) {
+			afterDeleteEdgeEvents.get(i).fire(elementClass);
 		}
+		// for (DeleteEdgeEventDescription ev : afterDeleteEdgeEvents) {
+		// ev.fire(elementClass);
+		// }
 		nestedTriggerCalls--;
 
 	}
@@ -283,13 +398,20 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	@Override
 	public void fireBeforeChangeAlphaOfEdgeEvents(GraphElement element,
 			Vertex oldVertex, Vertex newVertex) {
+		if (beforeChangeAlphaOfEdgeEvents == null) {
+			return;
+		}
 		if (increaseAndTestOnMaximumNestedCalls()) {
 			return;
 		}
-
-		for (ChangeEdgeEventDescription ev : beforeChangeAlphaOfEdgeEvents) {
-			ev.fire(element, oldVertex, newVertex, EdgeEnd.ALPHA);
+		int max = beforeChangeAlphaOfEdgeEvents.size();
+		for (int i = 0; i < max; i++) {
+			beforeChangeAlphaOfEdgeEvents.get(i).fire(element, oldVertex,
+					newVertex, EdgeEnd.ALPHA);
 		}
+		// for (ChangeEdgeEventDescription ev : beforeChangeAlphaOfEdgeEvents) {
+		// ev.fire(element, oldVertex, newVertex, EdgeEnd.ALPHA);
+		// }
 		nestedTriggerCalls--;
 
 	}
@@ -304,13 +426,20 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	@Override
 	public void fireAfterChangeAlphaOfEdgeEvents(GraphElement element,
 			Vertex oldVertex, Vertex newVertex) {
+		if (afterChangeAlphaOfEdgeEvents == null) {
+			return;
+		}
 		if (increaseAndTestOnMaximumNestedCalls()) {
 			return;
 		}
-
-		for (ChangeEdgeEventDescription ev : afterChangeAlphaOfEdgeEvents) {
-			ev.fire(element, oldVertex, newVertex, EdgeEnd.ALPHA);
+		int max = afterChangeAlphaOfEdgeEvents.size();
+		for (int i = 0; i < max; i++) {
+			afterChangeAlphaOfEdgeEvents.get(i).fire(element, oldVertex,
+					newVertex, EdgeEnd.ALPHA);
 		}
+		// for (ChangeEdgeEventDescription ev : afterChangeAlphaOfEdgeEvents) {
+		// ev.fire(element, oldVertex, newVertex, EdgeEnd.ALPHA);
+		// }
 		nestedTriggerCalls--;
 
 	}
@@ -325,13 +454,20 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	@Override
 	public void fireBeforeChangeOmegaOfEdgeEvents(GraphElement element,
 			Vertex oldVertex, Vertex newVertex) {
+		if (beforeChangeOmegaOfEdgeEvents == null) {
+			return;
+		}
 		if (increaseAndTestOnMaximumNestedCalls()) {
 			return;
 		}
-
-		for (ChangeEdgeEventDescription ev : beforeChangeOmegaOfEdgeEvents) {
-			ev.fire(element, oldVertex, newVertex, EdgeEnd.OMEGA);
+		int max = beforeChangeOmegaOfEdgeEvents.size();
+		for (int i = 0; i < max; i++) {
+			beforeChangeOmegaOfEdgeEvents.get(i).fire(element, oldVertex,
+					newVertex, EdgeEnd.OMEGA);
 		}
+		// for (ChangeEdgeEventDescription ev : beforeChangeOmegaOfEdgeEvents) {
+		// ev.fire(element, oldVertex, newVertex, EdgeEnd.OMEGA);
+		// }
 		nestedTriggerCalls--;
 
 	}
@@ -346,13 +482,20 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	@Override
 	public void fireAfterChangeOmegaOfEdgeEvents(GraphElement element,
 			Vertex oldVertex, Vertex newVertex) {
+		if (afterChangeOmegaOfEdgeEvents == null) {
+			return;
+		}
 		if (increaseAndTestOnMaximumNestedCalls()) {
 			return;
 		}
-
-		for (ChangeEdgeEventDescription ev : afterChangeOmegaOfEdgeEvents) {
-			ev.fire(element, oldVertex, newVertex, EdgeEnd.OMEGA);
+		int max = afterChangeOmegaOfEdgeEvents.size();
+		for (int i = 0; i < max; i++) {
+			afterChangeOmegaOfEdgeEvents.get(i).fire(element, oldVertex,
+					newVertex, EdgeEnd.OMEGA);
 		}
+		// for (ChangeEdgeEventDescription ev : afterChangeOmegaOfEdgeEvents) {
+		// ev.fire(element, oldVertex, newVertex, EdgeEnd.OMEGA);
+		// }
 		nestedTriggerCalls--;
 
 	}
@@ -367,13 +510,21 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	@Override
 	public void fireBeforeChangeAttributeEvents(AttributedElement element,
 			String attributeName, Object oldValue, Object newValue) {
+		if (beforeChangeAttributeEvents == null) {
+			return;
+		}
 		if (increaseAndTestOnMaximumNestedCalls()) {
 			return;
 		}
-
-		for (ChangeAttributeEventDescription ev : beforeChangeAttributeEvents) {
-			ev.fire(element, attributeName, oldValue, newValue);
+		int max = beforeChangeAttributeEvents.size();
+		for (int i = 0; i < max; i++) {
+			beforeChangeAttributeEvents.get(i).fire(element, attributeName,
+					oldValue, newValue);
 		}
+		// for (ChangeAttributeEventDescription ev :
+		// beforeChangeAttributeEvents) {
+		// ev.fire(element, attributeName, oldValue, newValue);
+		// }
 		nestedTriggerCalls--;
 
 	}
@@ -388,13 +539,21 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	@Override
 	public void fireAfterChangeAttributeEvents(AttributedElement element,
 			String attributeName, Object oldValue, Object newValue) {
+		if (afterChangeAttributeEvents == null) {
+			return;
+		}
 		if (increaseAndTestOnMaximumNestedCalls()) {
 			return;
 		}
-
-		for (ChangeAttributeEventDescription ev : afterChangeAttributeEvents) {
-			ev.fire(element, attributeName, oldValue, newValue);
+		int max = afterChangeAttributeEvents.size();
+		for (int i = 0; i < max; i++) {
+			afterChangeAttributeEvents.get(i).fire(element, attributeName,
+					oldValue, newValue);
 		}
+		// for (ChangeAttributeEventDescription ev : afterChangeAttributeEvents)
+		// {
+		// ev.fire(element, attributeName, oldValue, newValue);
+		// }
 		nestedTriggerCalls--;
 	}
 
@@ -602,10 +761,12 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 */
 	private void addEventToList(CreateVertexEventDescription e) {
 		if (e.getTime().equals(EventDescription.EventTime.BEFORE)) {
+			createBeforeCreateVertexEventsLazily();
 			if (!beforeCreateVertexEvents.contains(e)) {
 				beforeCreateVertexEvents.add(e);
 			}
 		} else {
+			createAfterCreateVertexEventsLazily();
 			if (!afterCreateVertexEvents.contains(e)) {
 				afterCreateVertexEvents.add(e);
 			}
@@ -622,10 +783,12 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 */
 	private void addEventToList(DeleteVertexEventDescription e) {
 		if (e.getTime().equals(EventDescription.EventTime.BEFORE)) {
+			createBeforeDeleteVertexEventsLazily();
 			if (!beforeDeleteVertexEvents.contains(e)) {
 				beforeDeleteVertexEvents.add(e);
 			}
 		} else {
+			createAfterDeleteVertexEventsLazily();
 			if (!afterDeleteVertexEvents.contains(e)) {
 				afterDeleteVertexEvents.add(e);
 			}
@@ -642,10 +805,12 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 */
 	private void addEventToList(CreateEdgeEventDescription e) {
 		if (e.getTime().equals(EventDescription.EventTime.BEFORE)) {
+			createBeforeCreateEdgeEventsLazily();
 			if (!beforeCreateEdgeEvents.contains(e)) {
 				beforeCreateEdgeEvents.add(e);
 			}
 		} else {
+			createAfterCreateEdgeEventsLazily();
 			if (!afterCreateEdgeEvents.contains(e)) {
 				afterCreateEdgeEvents.add(e);
 			}
@@ -662,10 +827,12 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 */
 	private void addEventToList(DeleteEdgeEventDescription e) {
 		if (e.getTime().equals(EventDescription.EventTime.BEFORE)) {
+			createBeforeDeleteEdgeEventsLazily();
 			if (!beforeDeleteEdgeEvents.contains(e)) {
 				beforeDeleteEdgeEvents.add(e);
 			}
 		} else {
+			createAfterDeleteEdgeEventsLazily();
 			if (!afterDeleteEdgeEvents.contains(e)) {
 				afterDeleteEdgeEvents.add(e);
 			}
@@ -683,14 +850,18 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	private void addEventToList(ChangeEdgeEventDescription e) {
 		if (e.getTime().equals(EventDescription.EventTime.BEFORE)) {
 			if (e.getEdgeEnd().equals(EdgeEnd.ALPHA)) {
+				createBeforeChangeAlphaOfEdgeEventsLazily();
 				if (!beforeChangeAlphaOfEdgeEvents.contains(e)) {
 					beforeChangeAlphaOfEdgeEvents.add(e);
 				}
 			} else if (e.getEdgeEnd().equals(EdgeEnd.OMEGA)) {
+				createBeforeChangeOmegaOfEdgeEventsLazily();
 				if (!beforeChangeOmegaOfEdgeEvents.contains(e)) {
 					beforeChangeOmegaOfEdgeEvents.add(e);
 				}
 			} else /* BOTH */{
+				createBeforeChangeAlphaOfEdgeEventsLazily();
+				createBeforeChangeOmegaOfEdgeEventsLazily();
 				if (!beforeChangeAlphaOfEdgeEvents.contains(e)) {
 					beforeChangeAlphaOfEdgeEvents.add(e);
 				}
@@ -700,14 +871,18 @@ public class ECARuleManager implements ECARuleManagerInterface {
 			}
 		} else {
 			if (e.getEdgeEnd().equals(EdgeEnd.ALPHA)) {
+				createAfterChangeAlphaOfEdgeEventsLazily();
 				if (!afterChangeAlphaOfEdgeEvents.contains(e)) {
 					afterChangeAlphaOfEdgeEvents.add(e);
 				}
 			} else if (e.getEdgeEnd().equals(EdgeEnd.OMEGA)) {
+				createAfterChangeOmegaOfEdgeEventsLazily();
 				if (!afterChangeOmegaOfEdgeEvents.contains(e)) {
 					afterChangeOmegaOfEdgeEvents.add(e);
 				}
 			} else /* BOTH */{
+				createAfterChangeAlphaOfEdgeEventsLazily();
+				createAfterChangeOmegaOfEdgeEventsLazily();
 				if (!afterChangeAlphaOfEdgeEvents.contains(e)) {
 					afterChangeAlphaOfEdgeEvents.add(e);
 				}
@@ -728,10 +903,12 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	 */
 	private void addEventToList(ChangeAttributeEventDescription e) {
 		if (e.getTime().equals(EventDescription.EventTime.BEFORE)) {
+			createBeforeChangeAttributeEventsLazily();
 			if (!beforeChangeAttributeEvents.contains(e)) {
 				beforeChangeAttributeEvents.add(e);
 			}
 		} else {
+			createAfterChangeAttributeEventsLazily();
 			if (!afterChangeAttributeEvents.contains(e)) {
 				afterChangeAttributeEvents.add(e);
 			}
