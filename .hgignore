@@ -14,3 +14,5 @@ syntax: regexp
 ^testit/de/uni_koblenz/jgralabtest/gretl/schemas$
 syntax: regexp
 ^src/de/uni_koblenz/jgralab/gretl/template$
+syntax: regexp
+^testit/jgralabtest\.properties$

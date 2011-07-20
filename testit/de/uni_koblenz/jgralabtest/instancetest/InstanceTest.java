@@ -67,10 +67,17 @@ public abstract class InstanceTest {
 		System.out.println("savemem implementation");
 
 		String dbURL = System.getProperty("jgralabtest_dbconnection");
+		dbURL = dbURL != null && dbURL.startsWith("jdbc") ? dbURL : null;
 		String derbyURL = System.getProperty("jgralabtest_derby_dbconnection");
+		derbyURL = derbyURL != null && derbyURL.startsWith("jdbc") ? derbyURL
+				: null;
 		String postgresURL = System
 				.getProperty("jgralabtest_postgres_dbconnection");
+		postgresURL = postgresURL != null && postgresURL.startsWith("jdbc") ? postgresURL
+				: null;
 		String mysqlURL = System.getProperty("jgralabtest_mysql_dbconnection");
+		mysqlURL = mysqlURL != null && mysqlURL.startsWith("jdbc") ? mysqlURL
+				: null;
 		boolean dbConnectionEnabled = dbURL != null || derbyURL != null
 				|| postgresURL != null || mysqlURL != null;
 		if (dbConnectionEnabled) {

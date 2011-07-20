@@ -1,0 +1,8 @@
+# create a file named "jgralabtest.properties" in this folder with the following properties set to the correct values
+
+# For Derby this should be sufficient for everyone
+jgralabtest_derby_dbconnection = jdbc:derby:jgralabtest;create=true
+
+#The following two need adjustments
+jgralabtest_mysql_dbconnection = jdbc:mysql://<address>/<dbname>?user=<username>&password=<password>
+jgralabtest_postgres_dbconnection = jdbc:postgresql://<address>/<dbname>?user=<username>&password=<password>

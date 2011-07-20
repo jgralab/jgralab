@@ -53,6 +53,8 @@
 
 	<property name="license.file" value="../jgralab/license/header/gpl-3.0-header.txt" />
 
+	<property file="${testcases.dir}/jgralabtest.properties"/>
+
 	<!-- enable clover for the testcases: run with "ant with.clover build test" -->
 	<property name="clover.jar" value="${lib.dir}/clover/clover-3.1.0.jar" />
 	<taskdef resource="cloverlib.xml" classpath="${clover.jar}" />
@@ -231,7 +233,9 @@
 	</target>
 
 	<!-- generates the schemas required for test cases without compiling them -->
-	<target name="generatetestschemas" depends="tgtools,rsa">
+	<target name="generatetestschemas" depends="tgtools">
+	  <taskdef classpathref="classpath" name="rsa2tg" classname="de.uni_koblenz.jgralab.utilities.ant.Rsa2TgTask" />
+       	  <taskdef name="tgschema2java" classname="de.uni_koblenz.jgralab.utilities.ant.TgSchema2JavaTask" classpath="${classes.dir}" />
 	  <rsa2tg xmifile="${testschemas.dir}/rsa-xmi/greqltestschema.xmi" schemafile="${testschemas.dir}/greqltestschema.tg" />
 	  <!-- The jgralab & greql test schemas -->
 	  <tgschema2java sourcePath="${testcases.dir}" implementationMode="standard,transaction,savemem,database">
@@ -290,4 +294,22 @@
 	<target name="release" depends="modify,cleanall,jar,sourcejar,document" />
 
 	<target name="testcompile" depends="generatetestschemas,common.testcompile" />
+
+	<!-- test -->
+	<!-- run the test suite specified by test.suite -->
+	<target name="test" if="test.suite" depends="testcompile">
+		<mkdir dir="${testresults.dir}" />
+		<echo>Starting the test...</echo>
+		<junit fork="yes" forkmode="perTest" maxmemory="${maxmemsize}" printsummary="on" showoutput="true" outputtoformatters="true">
+			<sysproperty key="jgralabtest_derby_dbconnection" value="${jgralabtest_derby_dbconnection}"/>
+			<sysproperty key="jgralabtest_mysql_dbconnection" value="${jgralabtest_mysql_dbconnection}"/>
+			<sysproperty key="jgralabtest_postgres_dbconnection" value="${jgralabtest_postgres_dbconnection}"/>
+			<jvmarg value="-enableassertions" />
+			<classpath>
+				<path refid="testclasspath" />
+			</classpath>
+			<formatter type="${test.formattertype}" />
+			<test name="${test.suite}" todir="${testresults.dir}" />
+		</junit>
+	</target>
 </project>
