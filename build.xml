@@ -44,6 +44,7 @@
 		  value="de.uni_koblenz.jgralab.greql2.schema.*,de.uni_koblenz.jgralab.grumlschema.*" />
 	<property name="unjarexcludes" value="clover/**" />
 	<property name="test.suite" value="de.uni_koblenz.jgralabtest.RunTests" />
+	<!-- <property name="test.suite" value="de.uni_koblenz.jgralabtest.instancetest.GraphTest" /> -->
 	<property name="manifest.dir" value="../jgralab/bin/META-INF/" />
 	<property name="keep_manifest" value="true" />
 
@@ -61,9 +62,18 @@
 	</target>
 
 	<target name="clover.html">
-	  <clover-html-report
-	      outdir="${project.dir}/build/clover-report"
-	      title="JGraLab Clover Report" />
+	  <clover-report>
+	    <current outfile="${project.dir}/build/clover-report"
+		     title="JGraLab">
+	      <format type="html"/>
+	      <!-- What to include/exclude from the report -->
+	      <fileset dir="${src.dir}" includes="**/*.java" />
+	      <fileset dir="${testcases.dir}" includes="**/*.java" />
+	      <!-- <fileset dir="${testcases.dir}/de/uni_koblenz/jgralabtest/schemas" excludes="**/*.java" /> -->
+	      <!-- Where are the test classes (listed separately in the report) -->
+	      <testsources dir="${testcases.dir}" includes="**/*.java" />
+	    </current>
+	  </clover-report>
 	</target>
 
 
