@@ -221,7 +221,7 @@
 	</target>
 
 	<!-- generates the schemas required for test cases without compiling them -->
-	<target name="generatetestschemas" depends="tgtools">
+	<target name="generatetestschemas" depends="tgtools,rsa">
 	  <rsa2tg xmifile="${testschemas.dir}/rsa-xmi/greqltestschema.xmi" schemafile="${testschemas.dir}/greqltestschema.tg" />
 	  <!-- The jgralab & greql test schemas -->
 	  <tgschema2java sourcePath="${testcases.dir}" implementationMode="standard,transaction,savemem,database">
