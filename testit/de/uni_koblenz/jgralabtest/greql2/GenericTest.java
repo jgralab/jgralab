@@ -79,6 +79,7 @@ public class GenericTest {
 
 	@BeforeClass
 	public static void globalSetUp() throws Exception {
+		// TODO why this?
 		GenericTest test = new GenericTest();
 		airportCount = test.queryInteger("count(V{junctions.Airport})");
 		townCount = test.queryInteger("count(V{localities.Town})");
@@ -177,7 +178,7 @@ public class GenericTest {
 		assertEquals(expectedValue, result);
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings( { "rawtypes", "unchecked" })
 	private List<?> toList(JValueCollection collection) {
 		ArrayList list = new ArrayList();
 		for (JValue value : collection) {

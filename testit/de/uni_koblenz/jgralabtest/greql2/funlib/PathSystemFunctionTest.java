@@ -86,23 +86,29 @@ public class PathSystemFunctionTest extends GenericTest {
 	public static void initializePathAndPathSystemVariables()
 			throws JValueInvalidTypeException, Exception {
 		PathSystemFunctionTest t = new PathSystemFunctionTest();
-		t.evalTestQuery("theElement(from v : V{localities.County} with v.name = 'Hessen' report v end) store as hessen");
-		t.evalTestQuery("using hessen: pathSystem(hessen, -->{localities.ContainsLocality} -->{connections.AirRoute}* ) store as noPS");
+		t
+				.evalTestQuery("theElement(from v : V{localities.County} with v.name = 'Hessen' report v end) store as hessen");
+		t
+				.evalTestQuery("using hessen: pathSystem(hessen, -->{localities.ContainsLocality} -->{connections.AirRoute}* ) store as noPS");
 		emptyPath = t.evalTestQuery(
 				"using noPS: extractPath(noPS, firstVertex())").toPath();
 		multipleElementPath = t.evalTestQuery(
 				"using noPS: extractPath(noPS, 2)[0]").toPath();
 
-		t.evalTestQuery("using hessen: pathSystem(hessen, -->{localities.ContainsLocality} ) store as PS");
+		t
+				.evalTestQuery("using hessen: pathSystem(hessen, -->{localities.ContainsLocality} ) store as PS");
 		twoElementPath = t.evalTestQuery("using PS: extractPath(PS, 1)[0]")
 				.toPath();
 
-		t.evalTestQuery("theElement(from v : V{junctions.Crossroad} with v --> v report v end) store as suedallee");
-		t.evalTestQuery("using suedallee: pathSystem(suedallee, -->{connections.Street}) store as PS");
+		t
+				.evalTestQuery("theElement(from v : V{junctions.Crossroad} with v --> v report v end) store as suedallee");
+		t
+				.evalTestQuery("using suedallee: pathSystem(suedallee, -->{connections.Street}) store as PS");
 		loopPath = t.evalTestQuery(
 				"using suedallee, PS: extractPath(PS, suedallee)").toPath();
 
-		t.evalTestQuery("using suedallee: pathSystem(suedallee, [-->{connections.Footpath}]) store as PS");
+		t
+				.evalTestQuery("using suedallee: pathSystem(suedallee, [-->{connections.Footpath}]) store as PS");
 		oneElementPath = t.evalTestQuery(
 				"using suedallee, PS: extractPath(PS, suedallee)").toPath();
 		longPath = t
@@ -223,6 +229,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testEdgesConnected() throws Exception {
+		fail(); // NullpointerException
 		// TODO: Broken, because the GReQL parser removes all WhereExpressions
 		// and LetExpressions!
 		String queryString = "from x : V{WhereExpression} report edgesConnected(x) end";

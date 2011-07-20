@@ -37,6 +37,7 @@ package de.uni_koblenz.jgralabtest.greql2;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
@@ -48,6 +49,7 @@ public class StoreJValueTest extends GenericTest {
 
 	@Test
 	public void testStoreJValue1() throws Exception {
+		fail(); // JValueVisitorException
 		String queryString = "bag(tup(\"Nodes:\", count(from v:V{} report v end)), tup(\"Edges:\", count(from e:E{} report e end)))";
 		JValue result = evalTestQuery("StoreJValue1", queryString);
 		JValueXMLOutputVisitor outputVisitor = new JValueXMLOutputVisitor(
@@ -64,6 +66,7 @@ public class StoreJValueTest extends GenericTest {
 
 	@Test
 	public void testStoreJValue2a() throws Exception {
+		fail(); // JValueVisitorException
 		String queryString = "V{}";
 		JValue result = evalTestQuery("StoreJValue2a", queryString);
 		new JValueXMLOutputVisitor(result,
@@ -79,6 +82,7 @@ public class StoreJValueTest extends GenericTest {
 
 	@Test
 	public void testStoreJValue2() throws Exception {
+		fail(); // JValueVisitorException
 		String queryString = "from v:V{} report v as \"Nodes\" end";
 		JValue result = evalTestQuery("StoreJValue2", queryString);
 		new JValueXMLOutputVisitor(result,
@@ -94,6 +98,7 @@ public class StoreJValueTest extends GenericTest {
 
 	@Test
 	public void testStoreJValue3() throws Exception {
+		fail(); // JValueVisitorException
 		String queryString = "from x,y:list(1..100) reportTable x, y, x*y end";
 		JValue result = evalTestQuery("StoreJValue3", queryString);
 		new JValueXMLOutputVisitor(result,

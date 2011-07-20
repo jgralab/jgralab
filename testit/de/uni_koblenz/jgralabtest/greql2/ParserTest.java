@@ -787,6 +787,7 @@ public class ParserTest {
 
 	@Test
 	public void testLetExpression2() throws Exception {
+		fail(); // RuntimeException
 		// TODO: Broken, because the GReQL parser removes all WhereExpressions
 		// and LetExpressions!
 		Greql2 graph = parseQuery("let x:= list (5..13) in count(x)",
