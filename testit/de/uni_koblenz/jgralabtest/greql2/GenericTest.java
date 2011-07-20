@@ -43,12 +43,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.SerializableGreql2;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
@@ -79,7 +81,6 @@ public class GenericTest {
 
 	@BeforeClass
 	public static void globalSetUp() throws Exception {
-		// TODO why this?
 		GenericTest test = new GenericTest();
 		airportCount = test.queryInteger("count(V{junctions.Airport})");
 		townCount = test.queryInteger("count(V{localities.Town})");
@@ -88,7 +89,8 @@ public class GenericTest {
 		footpathCount = test.queryInteger("count(E{connections.Footpath})");
 		plazaCount = test.queryInteger("count(V{junctions.Plaza})");
 		localityCount = test.queryInteger("count(V{localities.Locality})");
-		test.setBoundVariable("nll", new JValueImpl());
+		eval.setVariable("nll", new JValueImpl());
+		JGraLab.setLogLevel(Level.OFF);
 	}
 
 	private int queryInteger(String query) throws JValueInvalidTypeException,
