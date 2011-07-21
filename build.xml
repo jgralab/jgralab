@@ -55,7 +55,8 @@
 
 	<property file="${testcases.dir}/jgralabtest.properties"/>
 
-	<!-- enable clover for the testcases: run with "ant with.clover build test" -->
+	<!-- enable clover for the testcases:
+	     run with "$ ant with.clover build test clover.html" -->
 	<property name="clover.jar" value="${lib.dir}/clover/clover-3.1.0.jar" />
 	<taskdef resource="cloverlib.xml" classpath="${clover.jar}" />
 
@@ -68,11 +69,15 @@
 	    <current outfile="${project.dir}/build/clover-report"
 		     title="JGraLab">
 	      <format type="html"/>
-	      <!-- What to include/exclude from the report -->
-	      <fileset dir="${src.dir}" includes="**/*.java" />
+	      <!-- What to include/exclude from the report (include
+	           everything except the generated schema classes in
+	           src/. -->
+	      <fileset dir="${src.dir}"
+		       includes="**/*.java"
+		       excludes="de/uni_koblenz/jgralab/grumlschema/**/*.java de/uni_koblenz/jgralab/greql2/schema/**/*.java de/uni_koblenz/jgralab/gretl/template/**/*.java" />
 	      <fileset dir="${testcases.dir}" includes="**/*.java" />
-	      <!-- <fileset dir="${testcases.dir}/de/uni_koblenz/jgralabtest/schemas" excludes="**/*.java" /> -->
-	      <!-- Where are the test classes (listed separately in the report) -->
+	      <!-- Where are the test classes (listed separately in
+	           the report) -->
 	      <testsources dir="${testcases.dir}" includes="**/*.java" />
 	    </current>
 	  </clover-report>
