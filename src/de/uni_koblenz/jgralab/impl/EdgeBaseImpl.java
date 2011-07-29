@@ -371,7 +371,6 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 		if (alpha == oldAlpha) {
 			return; // nothing to change
 		}
-
 		if (!alpha.isValidAlpha(this)) {
 			throw new GraphException("Edges of class "
 					+ getAttributedElementClass().getUniqueName()
@@ -379,13 +378,16 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 					+ alpha.getAttributedElementClass().getUniqueName());
 		}
 
-		oldAlpha.removeIncidenceFromLambdaSeq(this);
-		oldAlpha.incidenceListModified();
-
-		VertexBaseImpl newAlpha = (VertexBaseImpl) alpha;
-		newAlpha.appendIncidenceToLambdaSeq(this);
-		newAlpha.incidenceListModified();
-		setIncidentVertex(newAlpha);
+		synchronized (alpha) {
+			synchronized (oldAlpha) {
+				oldAlpha.removeIncidenceFromLambdaSeq(this);
+				oldAlpha.incidenceListModified();
+			}
+			VertexBaseImpl newAlpha = (VertexBaseImpl) alpha;
+			newAlpha.appendIncidenceToLambdaSeq(this);
+			newAlpha.incidenceListModified();
+			setIncidentVertex(newAlpha);
+		}
 	}
 
 	/*
@@ -412,16 +414,18 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 					+ omega.getAttributedElementClass().getUniqueName());
 		}
 
-		oldOmgea.removeIncidenceFromLambdaSeq(reversedEdge);
-		oldOmgea.incidenceListModified();
-
-		VertexBaseImpl newOmega = (VertexBaseImpl) omega;
-		newOmega.appendIncidenceToLambdaSeq(reversedEdge);
-		newOmega.incidenceListModified();
-		reversedEdge.setIncidentVertex(newOmega); // TODO Check if this is
-		// really needed as
-		// appenIncidenceToLambdaSeq
-		// called it before.
+		synchronized (omega) {
+			synchronized (oldOmgea) {
+				oldOmgea.removeIncidenceFromLambdaSeq(reversedEdge);
+				oldOmgea.incidenceListModified();
+			}
+			VertexBaseImpl newOmega = (VertexBaseImpl) omega;
+			newOmega.appendIncidenceToLambdaSeq(reversedEdge);
+			newOmega.incidenceListModified();
+			// TODO Check if this is really needed as
+			// appenIncidenceToLambdaSeq called it before.
+			reversedEdge.setIncidentVertex(newOmega);
+		}
 	}
 
 	/*

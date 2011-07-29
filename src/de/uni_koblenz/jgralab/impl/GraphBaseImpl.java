@@ -564,7 +564,11 @@ public abstract class GraphBaseImpl implements Graph {
 	public synchronized <T extends Edge> T createEdge(Class<T> cls,
 			Vertex alpha, Vertex omega) {
 		try {
-			return (T) internalCreateEdge(cls, alpha, omega);
+			synchronized (alpha) {
+				synchronized (omega) {
+					return (T) internalCreateEdge(cls, alpha, omega);
+				}
+			}
 		} catch (Exception exception) {
 			if (exception instanceof GraphException) {
 				throw (GraphException) exception;
