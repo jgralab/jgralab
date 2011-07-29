@@ -153,8 +153,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 	 * jgralab.schema.EdgeClass, boolean)
 	 */
 	@Override
-	public Edge getNextEdge(EdgeClass anEdgeClass,
-			boolean noSubclasses) {
+	public Edge getNextEdge(EdgeClass anEdgeClass, boolean noSubclasses) {
 		assert anEdgeClass != null;
 		assert isValid();
 		return getNextEdge(anEdgeClass.getM1Class(), noSubclasses);
@@ -362,7 +361,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 	 * @see de.uni_koblenz.jgralab.Edge#setAlpha(de.uni_koblenz.jgralab.Vertex)
 	 */
 	@Override
-	public void setAlpha(Vertex alpha) {
+	public synchronized void setAlpha(Vertex alpha) {
 		assert isValid();
 		assert alpha != null;
 		assert alpha.isValid();
@@ -395,7 +394,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 	 * @see de.uni_koblenz.jgralab.Edge#setOmega(de.uni_koblenz.jgralab.Vertex)
 	 */
 	@Override
-	public void setOmega(Vertex omega) {
+	public synchronized void setOmega(Vertex omega) {
 		assert isValid();
 		assert omega != null;
 		assert omega.isValid();
