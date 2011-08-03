@@ -16,3 +16,5 @@ syntax: regexp
 ^src/de/uni_koblenz/jgralab/gretl/template$
 syntax: regexp
 ^testit/jgralabtest\.properties$
+syntax: regexp
+^testit/testschemas/rsa-xmi/.*\.tg$
