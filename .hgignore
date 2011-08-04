@@ -16,3 +16,5 @@ syntax: regexp
 ^src/de/uni_koblenz/jgralab/gretl/template$
 syntax: regexp
 ^testit/de/uni_koblenz/jgralabtest/eca/schemas$
+syntax: regexp
+^testit/jgralabtest\.properties$

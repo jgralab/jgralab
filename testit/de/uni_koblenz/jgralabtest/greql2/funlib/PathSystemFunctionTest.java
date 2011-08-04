@@ -145,7 +145,30 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testContains() throws Exception {
-		// TODO
+		// TODO A meaningful test is missing for
+		// MARKER x ATTRELEM -> BOOL
+		fail();
+	}
+
+	// @Test
+	public void testContainsNull() throws Exception {
+		// TODO A meaningful test for test for the following signatures is
+		// missing:
+		// PATH x ATTRELEM -> BOOL
+		// PATHSYSTEM x ATTRELEM -> BOOL
+		// PATHSYSTEM x PATH -> BOOL
+		// MARKER x ATTRELEM -> BOOL
+		// SLICE x ATTRELEM -> BOOL
+		//
+		// The rest of the null test is implemented in the
+		// CollectionFunctionTest.
+		fail();
+	}
+
+	@Test
+	public void testContainsPath() throws Exception {
+		// TODO A meaningful test is missing for
+		// PATH x ATTRELEM -> BOOL
 		fail();
 	}
 
@@ -166,37 +189,28 @@ public class PathSystemFunctionTest extends GenericTest {
 			}
 		}
 		assertEquals(0, falseFound);
+
+		// TODO A meaningful test is missing for
+		// PATHSYSTEM x PATH -> BOOL
+		fail();
 	}
 
-	// @Test
-	public void testContainsNull() throws Exception {
-		// See CollectionFunctions
+	@Test
+	public void testContainsSlice() throws Exception {
+		// TODO A meaningful test is missing for
+		// SLICE x ATTRELEM -> BOOL
+		fail();
 	}
 
 	@Test
 	public void testDepth() throws Exception {
-		// TODO
+		// TODO A meaningful pathsystem for a test is missing
 		fail();
 	}
 
 	@Test
 	public void testDepthNull() throws Exception {
 		assertQueryEqualsNull("using nll: depth(nll)");
-	}
-
-	@Test
-	public void testDistance() throws Exception {
-		// TODO
-		fail();
-	}
-
-	@Test
-	public void testDistanceNull() throws Exception {
-		// TODO
-		assertQueryEqualsNull("using nll: distance(nll, nll)");
-		// assertQueryEqualsNull("using nll: distance(?, nll)");
-		// assertQueryEqualsNull("using nll: distance(nll, ?)");
-		fail();
 	}
 
 	@Test
@@ -222,24 +236,27 @@ public class PathSystemFunctionTest extends GenericTest {
 	}
 
 	@Test
-	public void testEdgesConnected() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from x : V{WhereExpression} report edgesConnected(x) end";
-		JValue result = evalTestQuery("EdgesConnected", queryString);
-		// TODO test seriously
-		@SuppressWarnings("unused")
-		JValue result2 = evalTestQuery("", "V{WhereExpression}");
-		assertEquals(6, getNthValue(result.toCollection(), 0).toCollection()
-				.size());
+	public void testDistanceNull() throws Exception {
+		// TODO A meaningful Pathsystem is missing
+		assertQueryEqualsNull("using nll: distance(nll, nll)");
+		// assertQueryEqualsNull("using nll: distance(?, nll)");
+		// assertQueryEqualsNull("using nll: distance(nll, ?)");
+		fail();
 	}
 
 	@Test
 	public void testEdgesConnectedNull() throws Exception {
-		// TODO
+		// TODO A meaningful Pathsystem is missing
 		assertQueryEqualsNull("using nll: edgesConnected(nll, nll)");
 		assertQueryEqualsNull("using nll: edgesConnected(firstVertex(), nll)");
 		// assertQueryEqualsNull("using nll: edgesConnected(nll, ?)");
+		fail();
+	}
+
+	@Test
+	public void testEdgesConnectedPath() throws Exception {
+		// TODO A meaningful test is missing for
+		// VERTEX x PATH -> COLLECTION
 		fail();
 	}
 
@@ -266,6 +283,13 @@ public class PathSystemFunctionTest extends GenericTest {
 	}
 
 	@Test
+	public void testEdgesConnectedTypeCollection() throws Exception {
+		// TODO A meaningful test is missing for
+		// VERTEX x TYPECOLLECTION -> COLLECTION
+		fail();
+	}
+
+	@Test
 	public void testEdgesFrom() throws Exception {
 		// TODO: Broken, because the GReQL parser removes all WhereExpressions
 		// and LetExpressions!
@@ -278,9 +302,17 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testEdgesFromNull() throws Exception {
+		// TODO A meaningful Pathsystem is missing
 		assertQueryEqualsNull("using nll: edgesFrom(nll, nll)");
 		assertQueryEqualsNull("using nll: edgesFrom(firstVertex(), nll)");
 		// assertQueryEqualsNull("using nll: edgesFrom(nll, ?)");
+		fail();
+	}
+
+	@Test
+	public void testEdgesFromPath() throws Exception {
+		// TODO A meaningful test is missing for
+		// VERTEX x PATH -> COLLECTION
 		fail();
 	}
 
@@ -308,22 +340,18 @@ public class PathSystemFunctionTest extends GenericTest {
 	}
 
 	@Test
-	public void testEdgesTo() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from x : V{WhereExpression} report edgesTo(x) end";
-		JValue result = evalTestQuery("EdgesTo", queryString);
-		assertEquals(1, result.toCollection().size());
-		for (JValue j : result.toCollection()) {
-			assertEquals(5, j.toCollection().size());
-		}
-	}
-
-	@Test
 	public void testEdgesToNull() throws Exception {
+		// TODO A meaningful Pathsystem is missing
 		assertQueryEqualsNull("using nll: edgesTo(nll, nll)");
 		assertQueryEqualsNull("using nll: edgesTo(firstVertex(), nll)");
 		// assertQueryEqualsNull("using nll: edgesTo(nll, ?)");
+		fail();
+	}
+
+	@Test
+	public void testEdgesToPath() throws Exception {
+		// TODO A meaningful test is missing for
+		// VERTEX x PATH -> COLLECTION
 		fail();
 	}
 
@@ -347,6 +375,11 @@ public class PathSystemFunctionTest extends GenericTest {
 		}
 		assertEquals((crossroadCount * (countyCount - 1))
 				+ uncontainedCrossroadCount, empty);
+	}
+
+	@Test
+	public void testEdgesTraceNull() throws Exception {
+		assertQueryEqualsNull("using nll: edgeTrace(nll)");
 	}
 
 	@Test
@@ -375,19 +408,24 @@ public class PathSystemFunctionTest extends GenericTest {
 	}
 
 	@Test
-	public void testEdgesTraceNull() throws Exception {
-		assertQueryEqualsNull("using nll: edgeTrace(nll)");
-	}
-
-	@Test
-	public void testElements() throws Exception {
-		// TODO
+	public void testElementsPath() throws Exception {
+		// TODO A meaningful test is missing for
+		// PATH -> COLLECTION
 		fail();
 	}
 
-	// @Test
-	public void testElementsNull() throws Exception {
-		// See CollectionFunctions
+	@Test
+	public void testElementsPathSystem() throws Exception {
+		// TODO A meaningful test is missing for
+		// PATHSYSTEM -> COLLECTION
+		fail();
+	}
+
+	@Test
+	public void testElementsSlice() throws Exception {
+		// TODO A meaningful test is missing for
+		// SLICE -> COLLECTION
+		fail();
 	}
 
 	@Test
@@ -406,13 +444,8 @@ public class PathSystemFunctionTest extends GenericTest {
 		assertQueryEquals("using usedPath: endVertex(usedPath)", endVertex);
 	}
 
-	// @Test
-	public void testEndVertexNull() throws Exception {
-		// See GraphFunctions
-	}
-
 	@Test
-	public void testExtractPath() throws Exception {
+	public void testExtractPathWithVertex() throws Exception {
 		String queryString = "from c: V{localities.County}, r:V{junctions.Crossroad} "
 				+ "report extractPath(pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad}), r)"
 				+ "end";
@@ -434,6 +467,20 @@ public class PathSystemFunctionTest extends GenericTest {
 	}
 
 	@Test
+	public void testExtractPath() throws Exception {
+		// TODO A meaningful test is missing for
+		// PATHSYSTEM -> PATH
+		fail();
+	}
+
+	@Test
+	public void testExtractPathWithInt() throws Exception {
+		// TODO A meaningful test is missing for
+		// PATHSYSTEM x INT -> COLLECTION
+		fail();
+	}
+
+	@Test
 	public void testExtractPathNull() throws Exception {
 		// TODO
 		assertQueryEqualsNull("using nll: extractPath(nll)");
@@ -444,7 +491,7 @@ public class PathSystemFunctionTest extends GenericTest {
 	}
 
 	@Test
-	public void testInnerNodes() throws Exception {
+	public void testInnerNodesPathSystem() throws Exception {
 
 		String queryString = "from c: V{localities.County} with c.name <> 'Berlin'"
 				+ "report innerNodes(pathSystem(c, -->{localities.ContainsLocality} -->{connections.AirRoute})) "
@@ -456,6 +503,13 @@ public class PathSystemFunctionTest extends GenericTest {
 		for (JValue v : bag) {
 			assertEquals(1, v.toCollection().size());
 		}
+	}
+
+	@Test
+	public void testInnerNodesSlice() throws Exception {
+		// TODO A meaningful test is missing for
+		// SLICE -> COLLECTION
+		fail();
 	}
 
 	@Test
@@ -500,7 +554,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testIsReachableNull() throws Exception {
-		// TODO
+		// TODO A meaningful Pathsystem is missing
 		assertQueryEqualsNull("using nll: isReachable(nll, nll, nll)");
 		assertQueryEqualsNull("using nll: isReachable(firstVertex(), nll, nll)");
 		assertQueryEqualsNull("using nll: isReachable(nll, lastVertex(), nll)");
@@ -534,7 +588,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testIsSubPathOfNull() throws Exception {
-		// TODO
+		// TODO A meaningful Pathsystem is missing
 
 		assertQueryEqualsNull("using nll: isSubPathOf(nll, nll)");
 		// assertQueryEqualsNull("using nll: isSubPathOf(?, nll)");
@@ -543,7 +597,7 @@ public class PathSystemFunctionTest extends GenericTest {
 	}
 
 	@Test
-	public void testLeaves() throws Exception {
+	public void testLeavesPathSystem() throws Exception {
 		String queryString = "from c: V{localities.County} with c.name <> 'Berlin'"
 				+ "report leaves(pathSystem(c, -->{localities.ContainsLocality} <--{localities.HasCapital})) "
 				+ "end";
@@ -557,19 +611,26 @@ public class PathSystemFunctionTest extends GenericTest {
 	}
 
 	@Test
+	public void testLeavesSlice() throws Exception {
+		// TODO A meaningful test is missing for
+		// SLICE -> COLLECTION
+		fail();
+	}
+
+	@Test
 	public void testLeavesNull() throws Exception {
 		assertQueryEqualsNull("using nll: leaves(nll)");
 	}
 
 	@Test
 	public void testMatches() throws Exception {
-		// TODO
+		// TODO A meaningful Automaton is missing
 		fail();
 	}
 
 	@Test
 	public void testMatchesNull() throws Exception {
-		// TODO
+		// TODO A meaningful Automaton is missing
 		assertQueryEqualsNull("using nll: matches(nll, nll)");
 		// assertQueryEqualsNull("using nll: matches(nll, ?)");
 		// assertQueryEqualsNull("using nll: matches(?, nll)");
@@ -597,6 +658,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testMinPathLength() throws Exception {
+		// TODO This test fails! The course should be investigated
 		String queryString = "from c: V{localities.County} "
 				+ "report minPathLength(pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad} -->{connections.Street})) "
 				+ "end";
@@ -612,12 +674,19 @@ public class PathSystemFunctionTest extends GenericTest {
 	@Test
 	public void testMinPathLengthNull() throws Exception {
 		assertQueryEqualsNull("using nll: minPathLength(nll)");
+	}
+
+	@Test
+	public void testNodesPathSystem() throws Exception {
+		// TODO A meaningful test is missing for
+		// PATHSYSTEM -> COLLECTION
 		fail();
 	}
 
 	@Test
-	public void testNodes() throws Exception {
-		// TODO
+	public void testNodesSlice() throws Exception {
+		// TODO A meaningful test is missing for
+		// SLICE -> COLLECTION
 		fail();
 	}
 
@@ -652,6 +721,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testNodeTrace2() throws Exception {
+		// TODO This test fails! The course should be investigated.
 		String queryString = "from c: V{localities.County}, r:V{junctions.Crossroad}"
 				+ "report nodeTrace(extractPath(pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad}), r)) "
 				+ "end";
@@ -677,6 +747,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testParent() throws Exception {
+		// TODO This test fails! The course should be investigated.
 		String queryString = "from c: V{localities.County}, r:V{junctions.Crossroad} "
 				+ "report parent(pathSystem(c, -->{localities.ContainsLocality} -->{localities.ContainsCrossroad}), r) "
 				+ "end";
@@ -695,7 +766,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testParentNull() throws Exception {
-		// TODO
+		// TODO A meaningful Pathsystem is missing
 		assertQueryEqualsNull("using nll: parent(nll, nll)");
 		// assertQueryEqualsNull("using nll: parent(?, nll)");
 		// assertQueryEqualsNull("using nll: parent(nll, ?)");
@@ -704,13 +775,14 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testPathConcat() throws Exception {
-		// TODO
+		// TODO This function should be renamed to concat
+		// TODO A meaningful Paths are missing
 		fail();
 	}
 
 	@Test
 	public void testPathConcatNull() throws Exception {
-		// TODO
+		// TODO A meaningful Paths are missing
 		assertQueryEqualsNull("using nll: pathConcat(nll, nll)");
 		// assertQueryEqualsNull("using nll: pathConcat(?, nll)");
 		// assertQueryEqualsNull("using nll: pathConcat(nll, ?)");
@@ -719,7 +791,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testPathExpr() throws Exception {
-		// TODO
+		// TODO A meaningful Automaton Expression is missing
 		fail();
 	}
 
@@ -750,14 +822,28 @@ public class PathSystemFunctionTest extends GenericTest {
 	}
 
 	@Test
+	public void testPathSystem() throws Exception {
+		// TODO A meaningful test is missing for
+		// VERTEX x AUTOMATON -> COLLECTION
+		fail();
+	}
+
+	@Test
+	public void testPathSystemNull() throws Exception {
+		// TODO A meaningful test is missing for
+		// * x * -> COLLECTION
+		fail();
+	}
+
+	@Test
 	public void testReachableVertex() throws Exception {
-		// TODO
+		// TODO Has to be implemented
 		fail();
 	}
 
 	@Test
 	public void testReachableVertexNull() throws Exception {
-		// TODO
+		// TODO A meaningful Pathsystem is missing
 		assertQueryEqualsNull("using nll: reachableVertices(nll, nll)");
 		// assertQueryEqualsNull("using nll: reachableVertices(nll, ?)");
 		assertQueryEqualsNull("using nll: reachableVertices(firstVertex(), nll)");
@@ -813,7 +899,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testSiblingsNull() throws Exception {
-		// TODO
+		// TODO A meaningful Pathsystem is missing
 		assertQueryEqualsNull("using nll: siblings(nll, nll)");
 		// assertQueryEqualsNull("using nll: siblings(nll, ?)");
 		assertQueryEqualsNull("using nll: siblings(firstVertex(), nll)");
@@ -821,35 +907,24 @@ public class PathSystemFunctionTest extends GenericTest {
 	}
 
 	@Test
-	public void testSlice() throws Exception {
-		// TODO
+	public void testSliceCollection() throws Exception {
+		// TODO A meaningful test is missing for
+		// COLLECTION x AUTOMATON -> COLLECTION
+		fail();
+	}
+
+	@Test
+	public void testSliceVertex() throws Exception {
+		// TODO A meaningful test is missing for
+		// VERTEX x AUTOMATON -> COLLECTION
 		fail();
 	}
 
 	@Test
 	public void testSliceNull() throws Exception {
-		// TODO
+		// TODO Has to be implemented
+		// TODO A meaningful Slice are missing
 		fail();
-	}
-
-	@Test
-	public void testTypes() throws Exception {
-		// A pathSystem starting at vertex 25 captures vertices and edges of all
-		// concrete types.
-		String queryString = "types(pathSystem(getVertex(25), <->*))";
-		JValueCollection result = evalTestQuery("TypeSet", queryString,
-				TestVersion.ROUTE_MAP_GRAPH).toCollection();
-		GraphClass gc = getTestGraph(TestVersion.ROUTE_MAP_GRAPH).getSchema()
-				.getGraphClass();
-		int nonAbstractClassCount = 0;
-		for (GraphElementClass gec : gc.getGraphElementClasses()) {
-			if (gec.isAbstract()) {
-				continue;
-			}
-			nonAbstractClassCount++;
-			assertTrue(result.contains(JValueImpl.fromObject(gec)));
-		}
-		assertEquals(nonAbstractClassCount, result.size());
 	}
 
 	@Test
@@ -873,6 +948,31 @@ public class PathSystemFunctionTest extends GenericTest {
 		// See GraphFunctionTest
 	}
 
+	@Test
+	public void testTypes() throws Exception {
+		// A pathSystem starting at vertex 25 captures vertices and edges of all
+		// concrete types.
+		String queryString = "types(pathSystem(getVertex(25), <->*))";
+		JValueCollection result = evalTestQuery("TypeSet", queryString,
+				TestVersion.ROUTE_MAP_GRAPH).toCollection();
+		GraphClass gc = getTestGraph(TestVersion.ROUTE_MAP_GRAPH).getSchema()
+				.getGraphClass();
+		int nonAbstractClassCount = 0;
+		for (GraphElementClass gec : gc.getGraphElementClasses()) {
+			if (gec.isAbstract()) {
+				continue;
+			}
+			nonAbstractClassCount++;
+			assertTrue(result.contains(JValueImpl.fromObject(gec)));
+		}
+		assertEquals(nonAbstractClassCount, result.size());
+	}
+
+	@Test
+	public void testWeightNull() throws Exception {
+		assertQueryEqualsNull("using nll: weight(nll)");
+	}
+
 	/*
 	 * Test method for
 	 * 'greql2.evaluator.GreqlEvaluator.evaluateForwardVertexSet(ForwardVertexSet,
@@ -880,6 +980,7 @@ public class PathSystemFunctionTest extends GenericTest {
 	 */
 	@Test
 	public void testWeightPathSystem() throws Exception {
+		// TODO This test fails! The course should be investigated.
 		String queryString = "from c: V{localities.County} "
 				+ "with c.name <> 'Rheinland-Pfalz' "
 				+ "report weight(pathSystem(c, -->{localities.ContainsLocality} -->{connections.AirRoute})) "
@@ -891,10 +992,5 @@ public class PathSystemFunctionTest extends GenericTest {
 		for (JValue v : bag) {
 			assertEquals(4, (int) v.toInteger());
 		}
-	}
-
-	@Test
-	public void testWeightNull() throws Exception {
-		assertQueryEqualsNull("using nll: weight(nll)");
 	}
 }

@@ -67,11 +67,11 @@
                (:meta keyword :name "import" :description "ImportStatement: import <Type>|<Wildcart>")
                (:meta keyword :name "true" :description "Logically true")
                (:meta keyword :name "false" :description "Logically false"))))
-    (let ((rx (concat "\\<" (regexp-opt
-                             (mapcar (lambda (e) (plist-get e :name))
-                                     lst)
-                             t)
-                      "\\>"))
+    (let ((rx (concat "\\_<" (regexp-opt
+			      (mapcar (lambda (e) (plist-get e :name))
+				      lst)
+			      t)
+                      "\\_>"))
           lst2)
       (dolist (kw lst)
         (setq lst2 (cons (list
@@ -160,7 +160,7 @@
                  (not (string= greql-fontlock-types-regex ""))
                  (looking-back "{[[:alnum:][:space:]^.!_,]*")
                  (looking-at   "[[:alnum:][:space:]^.!_,]*\\(?:@.*\\)?}")
-                 (looking-at (concat "[[:space:]^]*\\<" greql-fontlock-types-regex "\\>"))
+                 (looking-at (concat "[[:space:]]*\\_<" greql-fontlock-types-regex "\\_>"))
                  (match-string 1))
         (goto-char (match-end 1))
         (throw 'found t)))))
@@ -172,8 +172,8 @@
                  (looking-at   "[[:alnum:][:space:]^.!_,]*\\(?:@.*\\)?}")
                  (or greql-fontlock-types-regex
                      (not (string= greql-fontlock-types-regex ""))
-                     (not (looking-at (concat "[[:space:]^]*\\<" greql-fontlock-types-regex "\\>")))))
-        (looking-at "[[:space:]^]*\\<\\([[:alnum:]._]+\\)\\>")
+                     (not (looking-at (concat "[[:space:]^]*\\_<" greql-fontlock-types-regex "\\_>")))))
+        (looking-at "[[:space:]^]*\\_<\\([[:alnum:]._]+\\)\\_>")
         (goto-char (match-end 1))
         (throw 'found t)))))
 
@@ -230,12 +230,10 @@
 
   (setq greql-evaluation-buffer (concat "*GReQL Evaluation: " (buffer-name) "*"))
 
-  ;; If this is a GReTL mode buffer, enable gretl-minor-mode, too.
+  ;; If this is a GReTL buffer, enable gretl-minor-mode, too.
   (when (string-match "\\.gretl$"
 		      (or (buffer-file-name) (buffer-name)))
-    (add-hook 'greql-mode-hook
-	      (lambda ()
-		(gretl-minor-mode 1))))
+    (gretl-minor-mode 1))
 
   (progn
     (define-key greql-mode-map (kbd "M-TAB")   'greql-complete)
@@ -468,10 +466,10 @@ elements."
                     (when (greql-variable-p) "[.]")))
 
 (defparameter greql--indent-regexp
-  "\\(?:\\<\\(?:exists!?\\|forall\\|from\\)\\>\\|(\\)")
+  "\\(?:\\_<\\(?:exists!?\\|forall\\|from\\)\\_>\\|(\\)")
 
 (defparameter greql--deindent-regexp
-  "\\(?:)\\|\\<end\\>\\)")
+  "\\(?:)\\|\\_<end\\_>\\)")
 
 (defun greql-calculate-indent ()
   "Calculate the indentation level of the current line."
@@ -523,7 +521,7 @@ elements."
   (save-excursion
     (let ((beg (if (use-region-p) (region-beginning) (point-min)))
           (end (if (use-region-p) (region-end) (point-max)))
-          (line-break-regexp "\\<\\(?:from\\|with\\|report\\(?:\\|Set\\|Map\\)\\|and\\|end\\)\\>"))
+          (line-break-regexp "\\_<\\(?:from\\|with\\|report\\(?:\\|Set\\|Map\\)\\|and\\|end\\)\\_>"))
       (goto-char beg)
       (while (search-forward "\n" end t)
         (replace-match " " nil t))
@@ -652,9 +650,9 @@ for some variable declared as
       (re-search-backward "[[:space:],()@]" nil t 1)
       (setq var (buffer-substring-no-properties (+ 1 (point)) end))
       (re-search-backward
-       (concat "\\<"
+       (concat "\\_<"
                var
-               "\\>[^:{}]*:[[:space:]]*\\([VE]\\){\\([^}]+\\)}") nil t 1)
+               "\\_>[^:{}]*:[[:space:]]*\\([VE]\\){\\([^}]+\\)}") nil t 1)
       (when (and (match-beginning 1) (match-end 1))
         (let* ((mtype-match (buffer-substring-no-properties (match-beginning 1)
                                                             (match-end 1)))

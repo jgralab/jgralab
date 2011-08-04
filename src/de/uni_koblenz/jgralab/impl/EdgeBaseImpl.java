@@ -153,8 +153,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 	 * jgralab.schema.EdgeClass, boolean)
 	 */
 	@Override
-	public Edge getNextEdge(EdgeClass anEdgeClass,
-			boolean noSubclasses) {
+	public Edge getNextEdge(EdgeClass anEdgeClass, boolean noSubclasses) {
 		assert anEdgeClass != null;
 		assert isValid();
 		return getNextEdge(anEdgeClass.getM1Class(), noSubclasses);
@@ -362,7 +361,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 	 * @see de.uni_koblenz.jgralab.Edge#setAlpha(de.uni_koblenz.jgralab.Vertex)
 	 */
 	@Override
-	public void setAlpha(Vertex alpha) {
+	public synchronized void setAlpha(Vertex alpha) {
 		assert isValid();
 		assert alpha != null;
 		assert alpha.isValid();
@@ -374,11 +373,10 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 			this.graph.getECARuleManager().fireBeforeChangeAlphaOfEdgeEvents(this,
 					oldAlpha, alpha);
 		}
-		
+
 		if (alpha == oldAlpha) {
 			return; // nothing to change
 		}
-
 		if (!alpha.isValidAlpha(this)) {
 			throw new GraphException("Edges of class "
 					+ getAttributedElementClass().getUniqueName()
@@ -386,13 +384,17 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 					+ alpha.getAttributedElementClass().getUniqueName());
 		}
 
-		oldAlpha.removeIncidenceFromLambdaSeq(this);
-		oldAlpha.incidenceListModified();
-
-		VertexBaseImpl newAlpha = (VertexBaseImpl) alpha;
-		newAlpha.appendIncidenceToLambdaSeq(this);
-		newAlpha.incidenceListModified();
-		setIncidentVertex(newAlpha);
+		synchronized (alpha) {
+			synchronized (oldAlpha) {
+				oldAlpha.removeIncidenceFromLambdaSeq(this);
+				oldAlpha.incidenceListModified();
+			}
+			VertexBaseImpl newAlpha = (VertexBaseImpl) alpha;
+			newAlpha.appendIncidenceToLambdaSeq(this);
+			newAlpha.incidenceListModified();
+			setIncidentVertex(newAlpha);
+		}
+			
 		if (!this.graph.isLoading()) {
 			this.graph.getECARuleManager().fireAfterChangeAlphaOfEdgeEvents(this,
 					oldAlpha, alpha);
@@ -405,7 +407,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 	 * @see de.uni_koblenz.jgralab.Edge#setOmega(de.uni_koblenz.jgralab.Vertex)
 	 */
 	@Override
-	public void setOmega(Vertex omega) {
+	public synchronized void setOmega(Vertex omega) {
 		assert isValid();
 		assert omega != null;
 		assert omega.isValid();
@@ -417,7 +419,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 			this.graph.getECARuleManager().fireBeforeChangeOmegaOfEdgeEvents(
 					this, oldOmgea, omega);
 		}
-		
+
 		if (omega == oldOmgea) {
 			return; // nothing to change
 		}
@@ -429,16 +431,18 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 					+ omega.getAttributedElementClass().getUniqueName());
 		}
 
-		oldOmgea.removeIncidenceFromLambdaSeq(reversedEdge);
-		oldOmgea.incidenceListModified();
-
-		VertexBaseImpl newOmega = (VertexBaseImpl) omega;
-		newOmega.appendIncidenceToLambdaSeq(reversedEdge);
-		newOmega.incidenceListModified();
-		reversedEdge.setIncidentVertex(newOmega); // TODO Check if this is
-		// really needed as
-		// appenIncidenceToLambdaSeq
-		// called it before.
+		synchronized (omega) {
+			synchronized (oldOmgea) {
+				oldOmgea.removeIncidenceFromLambdaSeq(reversedEdge);
+				oldOmgea.incidenceListModified();
+			}
+			VertexBaseImpl newOmega = (VertexBaseImpl) omega;
+			newOmega.appendIncidenceToLambdaSeq(reversedEdge);
+			newOmega.incidenceListModified();
+			// TODO Check if this is really needed as
+			// appenIncidenceToLambdaSeq called it before.
+			reversedEdge.setIncidentVertex(newOmega);
+		}
 		
 		if (!this.graph.isLoading()) {
 			this.graph.getECARuleManager().fireAfterChangeOmegaOfEdgeEvents(

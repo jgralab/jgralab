@@ -280,13 +280,17 @@ public class SchemaGraph2XMI {
 			// close the XMLStreamWriter
 			writer.flush();
 			out.flush();
+		} catch (Exception e) {
+			e.printStackTrace();
 		} finally {
 			// no handling of exceptions, because they are throw as mentioned in
 			// the declaration.
 			try {
 				writer.close();
 			} finally {
-				out.close();
+				if (out != null) {
+					out.close();
+				}
 			}
 		}
 	}

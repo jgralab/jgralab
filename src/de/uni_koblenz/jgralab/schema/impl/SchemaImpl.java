@@ -604,7 +604,7 @@ public class SchemaImpl implements Schema {
 			if (config.hasTransactionSupport()) {
 				elements *= 2;
 			}
-			progressFunction.init(getNumberOfElements());
+			progressFunction.init(elements);
 			interval = progressFunction.getUpdateInterval();
 		}
 

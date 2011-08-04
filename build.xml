@@ -40,9 +40,11 @@
 	<!-- override default properties -->
 	<property name="projectname" value="jgralab" />
 	<property name="main" value="JGraLab" />
-	<property name="documentexcludes" value="de.uni_koblenz.jgralab.greql2.schema.*,de.uni_koblenz.jgralab.grumlschema.*" />
+	<property name="documentexcludes"
+		  value="de.uni_koblenz.jgralab.greql2.schema.*,de.uni_koblenz.jgralab.grumlschema.*" />
 	<property name="unjarexcludes" value="clover/**" />
 	<property name="test.suite" value="de.uni_koblenz.jgralabtest.RunTests" />
+	<!-- <property name="test.suite" value="de.uni_koblenz.jgralabtest.instancetest.GraphTest" /> -->
 	<property name="manifest.dir" value="../jgralab/bin/META-INF/" />
 	<property name="keep_manifest" value="true" />
 
@@ -51,16 +53,34 @@
 
 	<property name="license.file" value="../jgralab/license/header/gpl-3.0-header.txt" />
 
-	<!-- enable clover for the testcases: run with "ant with.clover build test" -->
+	<property file="${testcases.dir}/jgralabtest.properties"/>
+
+	<!-- enable clover for the testcases:
+	     run with "$ ant with.clover build test clover.html" -->
 	<property name="clover.jar" value="${lib.dir}/clover/clover-3.1.0.jar" />
 	<taskdef resource="cloverlib.xml" classpath="${clover.jar}" />
 
 	<target name="with.clover">
-		<clover-setup />
+	  <clover-setup />
 	</target>
 
 	<target name="clover.html">
-		<clover-html-report outdir="${project.dir}/build/clover-report" title="JGraLab Clover Report" />
+	  <clover-report>
+	    <current outfile="${project.dir}/build/clover-report"
+		     title="JGraLab">
+	      <format type="html"/>
+	      <!-- What to include/exclude from the report (include
+	           everything except the generated schema classes in
+	           src/. -->
+	      <fileset dir="${src.dir}"
+		       includes="**/*.java"
+		       excludes="de/uni_koblenz/jgralab/grumlschema/**/*.java de/uni_koblenz/jgralab/greql2/schema/**/*.java de/uni_koblenz/jgralab/gretl/template/**/*.java" />
+	      <fileset dir="${testcases.dir}" includes="**/*.java" />
+	      <!-- Where are the test classes (listed separately in
+	           the report) -->
+	      <testsources dir="${testcases.dir}" includes="**/*.java" />
+	    </current>
+	  </clover-report>
 	</target>
 
 
@@ -76,9 +96,12 @@
 
 	<!-- set project specific properties -->
 
-	<property name="greql2.schemafile" value="${src.dir}/de/uni_koblenz/jgralab/greql2/greql2Schema.tg" />
-	<property name="gruml.schemafile" value="${src.dir}/de/uni_koblenz/jgralab/schema/GrumlSchema.tg" />
-	<property name="gretl.templategraphschemafile" value="${src.dir}/de/uni_koblenz/jgralab/gretl/templateGraphSchema.tg" />
+	<property name="greql2.schemafile"
+		  value="${src.dir}/de/uni_koblenz/jgralab/greql2/greql2Schema.tg" />
+	<property name="gruml.schemafile"
+		  value="${src.dir}/de/uni_koblenz/jgralab/schema/GrumlSchema.tg" />
+	<property name="gretl.templategraphschemafile"
+		  value="${src.dir}/de/uni_koblenz/jgralab/gretl/templateGraphSchema.tg" />
 
 	<!-- the directory location for the testschemas -->
 	<property name="testschemas.dir" value="${testcases.dir}/testschemas" />
@@ -95,7 +118,7 @@
 	
 	<property name="gretl_and_eca.src" value="${src.dir}/de/uni_koblenz/jgralab/" />
 	<property name="gretl_and_eca.includes" value="gretl/** eca/**" />
-
+	
 	<property name="algolib.src" value="${src.dir}/de/uni_koblenz/jgralab/algolib" />
 
 	<property name="gruml.src" value="${src.dir}/de/uni_koblenz/jgralab/grumlschema/" />
@@ -119,15 +142,15 @@
 	<target name="build" depends="ist_utilities,clean,compile,jar" />
 
 	<target name="clean">
-		<delete dir="${classes.dir}" />
-		<delete dir="${tmp.dir}" />
-		<delete dir="${testclasses.dir}" />
-		<delete dir="${src.dir}/de/uni_koblenz/jgralab/greql2/schema" />
-		<delete dir="${src.dir}/de/uni_koblenz/jgralab/grumlschema" />
-		<delete dir="${src.dir}/de/uni_koblenz/jgralab/gretl/template" />
-		<delete dir="${testcases.dir}/de/uni_koblenz/jgralabtest/schemas" />
-		<delete dir="${testcases.dir}/de/uni_koblenz/jgralabtest/gretl/schemas" />
-		<delete file="${testschemas.dir}/greqltestschema.tg" />
+	  <delete dir="${classes.dir}" />
+	  <delete dir="${tmp.dir}" />
+	  <delete dir="${testclasses.dir}" />
+	  <delete dir="${src.dir}/de/uni_koblenz/jgralab/greql2/schema" />
+	  <delete dir="${src.dir}/de/uni_koblenz/jgralab/grumlschema" />
+	  <delete dir="${src.dir}/de/uni_koblenz/jgralab/gretl/template" />
+	  <delete dir="${testcases.dir}/de/uni_koblenz/jgralabtest/schemas" />
+	  <delete dir="${testcases.dir}/de/uni_koblenz/jgralabtest/gretl/schemas" />		
+	  <delete file="${testschemas.dir}/greqltestschema.tg" />
 	</target>
 
 	<!-- compile -->
@@ -136,7 +159,8 @@
 	<!-- jgralab -->
 	<!-- compiles jgralab basic sources -->
 	<target name="core" depends="createClassesDir">
-		<javac fork="true" srcdir="${core.src}" includes="${core.includes}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" target="${javac.targetVM}" includeantruntime="false">
+		<javac fork="true" srcdir="${core.src}" includes="${core.includes}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" target="${javac.targetVM}"
+		  	 includeantruntime="false">
 			<compilerarg line="-Xlint:unchecked" />
 		</javac>
 	</target>
@@ -144,7 +168,8 @@
 	<!-- tgtools (utils which are needed for schema creation (TgSchema2Java)
 	         and that don't depend on schemas themselves) -->
 	<target name="tgtools" depends="core">
-		<javac fork="true" srcdir="${tgtools.src}" includes="${tgtools.includes}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" target="${javac.targetVM}" includeantruntime="false">
+		<javac fork="true" srcdir="${tgtools.src}" includes="${tgtools.includes}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" target="${javac.targetVM}"
+		  	 includeantruntime="false">
 			<compilerarg line="-Xlint:unchecked" />
 		</javac>
 		<taskdef name="tgschema2java" classname="de.uni_koblenz.jgralab.utilities.ant.TgSchema2JavaTask" classpath="${classes.dir}" />
@@ -154,46 +179,53 @@
 	<!-- compiles greql2 sources -->
 	<target name="greql2" depends="tgtools">
 		<tgschema2java schemaFile="${greql2.schemafile}" sourcePath="${src.dir}" implementationMode="standard" />
-		<javac fork="true" srcdir="${greql2.src}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" target="${javac.targetVM}" includeantruntime="false">
+		<javac fork="true" srcdir="${greql2.src}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" target="${javac.targetVM}"
+		  	 includeantruntime="false">
 			<compilerarg line="-Xlint:unchecked" />
 		</javac>
 	</target>
 
 	<target name="algolib" depends="core">
-		<javac fork="true" srcdir="${algolib.src}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" target="${javac.targetVM}" includeantruntime="false">
+		<javac fork="true" srcdir="${algolib.src}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" target="${javac.targetVM}"
+		  	 includeantruntime="false">
 			<compilerarg line="-Xlint:unchecked" />
 		</javac>
 	</target>
 
 	<!-- graphvalidator -->
 	<target name="graphvalidator" depends="greql2">
-		<javac fork="true" srcdir="${graphvalidator.src}" includes="${graphvalidator.includes}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" target="${javac.targetVM}" includeantruntime="false">
+		<javac fork="true" srcdir="${graphvalidator.src}" includes="${graphvalidator.includes}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" target="${javac.targetVM}"
+		  	 includeantruntime="false">
 			<compilerarg line="-Xlint:unchecked" />
 		</javac>
 	</target>
 
 	<target name="rsa" depends="tg2dot,gruml,graphvalidator">
-		<javac fork="true" srcdir="${rsa.src}" includes="${rsa.includes}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" target="${javac.targetVM}" includeantruntime="false">
+		<javac fork="true" srcdir="${rsa.src}" includes="${rsa.includes}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" target="${javac.targetVM}"
+		  	 includeantruntime="false">
 			<compilerarg line="-Xlint:unchecked" />
 		</javac>
 		<taskdef classpathref="classpath" name="rsa2tg" classname="de.uni_koblenz.jgralab.utilities.ant.Rsa2TgTask" />
 	</target>
 
 	<target name="tg2dot" depends="gruml,graphvalidator,greql2,common-tools">
-		<javac fork="true" srcdir="${tg2dot.src}" includes="${tg2dot.includes}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" target="${javac.targetVM}" includeantruntime="false">
+		<javac fork="true" srcdir="${tg2dot.src}" includes="${tg2dot.includes}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" target="${javac.targetVM}"
+	  	 includeantruntime="false">
 			<compilerarg line="-Xlint:unchecked" />
 		</javac>
 	</target>
 
 	<target name="common-tools">
-		<javac fork="true" srcdir="${common-tools.src}" includes="${common-tools.includes}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" target="${javac.targetVM}" includeantruntime="false">
-			<compilerarg line="-Xlint:unchecked" />
+		<javac fork="true" srcdir="${common-tools.src}" includes="${common-tools.includes}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" target="${javac.targetVM}"
+	  	 includeantruntime="false">
+	<compilerarg line="-Xlint:unchecked" />
 		</javac>
 	</target>
 
 	<!-- compiles utility sources -->
 	<target name="utilities" depends="rsa,gruml">
-		<javac fork="true" srcdir="${utilities.src}" includes="${utilities.includes}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" target="${javac.targetVM}" includeantruntime="false">
+		<javac fork="true" srcdir="${utilities.src}" includes="${utilities.includes}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" target="${javac.targetVM}"
+		  	 includeantruntime="false">
 			<compilerarg line="-Xlint:unchecked" />
 		</javac>
 	</target>
@@ -201,34 +233,48 @@
 	<!-- generates the gruml schema and compiles it -->
 	<target name="gruml" depends="tgtools,greql2">
 		<tgschema2java schemaFile="${gruml.schemafile}" sourcePath="${src.dir}" implementationMode="standard" />
-		<javac fork="true" srcdir="${gruml.src}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" target="${javac.targetVM}" includeantruntime="false">
+		<javac fork="true" srcdir="${gruml.src}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" target="${javac.targetVM}"
+		  	 includeantruntime="false">
 			<compilerarg line="-Xlint:unchecked" />
 		</javac>
 	</target>
 
 	<!-- generates the schemas required for test cases without compiling them -->
 	<target name="generatetestschemas" depends="tgtools">
-		<rsa2tg xmifile="${testschemas.dir}/rsa-xmi/greqltestschema.xmi" schemafile="${testschemas.dir}/greqltestschema.tg" />
-		<!-- The jgralab & greql test schemas -->
-		<tgschema2java sourcePath="${testcases.dir}" implementationMode="standard,transaction,savemem,database">
-			<fileset dir="${testschemas.dir}" includes="*.tg" />
-		</tgschema2java>
-		<!-- The GReTL test schemas -->
-		<tgschema2java sourcePath="${testcases.dir}" implementationMode="standard">
-			<fileset dir="${testschemas.dir}/gretl" includes="*.tg" />
-		</tgschema2java>
-		<!-- The ECA test schemas -->
-		<tgschema2java sourcePath="${testcases.dir}" implementationMode="standard">
-			<fileset dir="${testschemas.dir}/eca" includes="*.tg" />
-		</tgschema2java>
+	  <taskdef classpathref="classpath" name="rsa2tg" classname="de.uni_koblenz.jgralab.utilities.ant.Rsa2TgTask" />
+       	  <taskdef name="tgschema2java" classname="de.uni_koblenz.jgralab.utilities.ant.TgSchema2JavaTask" classpath="${classes.dir}" />
+	  <rsa2tg xmifile="${testschemas.dir}/rsa-xmi/greqltestschema.xmi" schemafile="${testschemas.dir}/greqltestschema.tg" />
+	  <!-- The jgralab & greql test schemas -->
+	  <tgschema2java sourcePath="${testcases.dir}" implementationMode="standard,transaction,savemem,database">
+	    <fileset dir="${testschemas.dir}" includes="*.tg" />
+	  </tgschema2java>
+	  <!-- The GReTL test schemas -->
+	  <tgschema2java sourcePath="${testcases.dir}" implementationMode="standard">
+	    <fileset dir="${testschemas.dir}/gretl" includes="*.tg" />
+	  </tgschema2java>
+	  <!-- The ECA test schemas -->
+	  <tgschema2java sourcePath="${testcases.dir}" implementationMode="standard">
+		<fileset dir="${testschemas.dir}/eca" includes="*.tg" />
+	  </tgschema2java>
 	</target>
 
 	<!-- GReTL -->
 	<target name="gretl_and_eca" depends="tgtools">
-		<tgschema2java schemaFile="${gretl.templategraphschemafile}" sourcePath="${src.dir}" implementationMode="standard" />
-		<javac fork="true" srcdir="${gretl_and_eca.src}" includes="${gretl_and_eca.includes}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" target="${javac.targetVM}" includeantruntime="false">
-			<compilerarg line="-Xlint:unchecked" />
-		</javac>
+	  <tgschema2java schemaFile="${gretl.templategraphschemafile}"
+			 sourcePath="${src.dir}"
+			 implementationMode="standard" />
+	  <javac fork="true" 
+		 srcdir="${gretl_and_eca.src}"
+		 includes="${gretl_and_eca.includes}"
+		 destdir="${classes.dir}"
+		 memoryinitialsize="${minmemsize}"
+		 memorymaximumsize="${maxmemsize}"
+		 classpathref="classpath" 
+		 debug="${debug}" 
+		 target="${javac.targetVM}"
+	  	 includeantruntime="false">
+	    <compilerarg line="-Xlint:unchecked" />
+	  </javac>
 	</target>
 
 	<!-- unjar -->
@@ -260,4 +306,38 @@
 	<target name="release" depends="modify,cleanall,jar,sourcejar,document" />
 
 	<target name="testcompile" depends="generatetestschemas,common.testcompile" />
+
+	<!-- test -->
+	<!-- run the test suite specified by test.suite -->
+	<target name="test" if="test.suite" depends="testcompile">
+		<mkdir dir="${testresults.dir}" />
+		<echo>Starting the test...</echo>
+		<junit fork="yes" forkmode="perTest" maxmemory="${maxmemsize}" printsummary="on" showoutput="true" outputtoformatters="true">
+			<sysproperty key="jgralabtest_derby_dbconnection" value="${jgralabtest_derby_dbconnection}"/>
+			<sysproperty key="jgralabtest_mysql_dbconnection" value="${jgralabtest_mysql_dbconnection}"/>
+			<sysproperty key="jgralabtest_postgres_dbconnection" value="${jgralabtest_postgres_dbconnection}"/>
+			<jvmarg value="-enableassertions" />
+			<classpath>
+				<path refid="testclasspath" />
+			</classpath>
+			<formatter type="${test.formattertype}" />
+			<test name="${test.suite}" todir="${testresults.dir}" />
+		</junit>
+	</target>
+	
+	<target name="manualtest" if="manual.test.suite">
+			<mkdir dir="${testresults.dir}" />
+			<echo>Starting the test...</echo>
+			<junit fork="yes" forkmode="perTest" maxmemory="${maxmemsize}" printsummary="on" showoutput="true" outputtoformatters="true">
+				<sysproperty key="jgralabtest_derby_dbconnection" value="${jgralabtest_derby_dbconnection}"/>
+				<sysproperty key="jgralabtest_mysql_dbconnection" value="${jgralabtest_mysql_dbconnection}"/>
+				<sysproperty key="jgralabtest_postgres_dbconnection" value="${jgralabtest_postgres_dbconnection}"/>
+				<jvmarg value="-enableassertions" />
+				<classpath>
+					<path refid="testclasspath" />
+				</classpath>
+				<formatter type="${test.formattertype}" />
+				<test name="${manual.test.suite}" todir="${testresults.dir}" />
+			</junit>
+		</target>
 </project>

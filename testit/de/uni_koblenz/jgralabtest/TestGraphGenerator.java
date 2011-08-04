@@ -106,8 +106,7 @@ public class TestGraphGenerator {
 		e11.set_name("e11");
 
 		System.out.println("Storing graph to file 'citymapgraph.tg'");
-		GraphIO.saveGraphToFile("citymapgraph.tg", g1,
-				new ConsoleProgressFunction());
+		GraphIO.saveGraphToFile("citymapgraph.tg", g1, null);
 	}
 
 }
