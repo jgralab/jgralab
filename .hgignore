@@ -7,6 +7,7 @@ src/de/uni_koblenz/jgralab/greql2/schema
 testit/de/uni_koblenz/jgralabtest/schemas
 testit/testschemas/greqltestschema.tg
 testit/testgraphs/testgraph.tg
+testit/de/uni_koblenz/jgralabtest/eca/io
 
 syntax: regexp
 ^jgralabtest$
