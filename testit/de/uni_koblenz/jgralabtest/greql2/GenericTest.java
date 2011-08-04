@@ -43,12 +43,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.SerializableGreql2;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
@@ -87,12 +89,23 @@ public class GenericTest {
 		footpathCount = test.queryInteger("count(E{connections.Footpath})");
 		plazaCount = test.queryInteger("count(V{junctions.Plaza})");
 		localityCount = test.queryInteger("count(V{localities.Locality})");
-		test.setBoundVariable("nll", new JValueImpl());
+		queryUncontainedCrossroadCount(test);
+		eval.setVariable("nll", new JValueImpl());
+		JGraLab.setLogLevel(Level.OFF);
 	}
 
 	private int queryInteger(String query) throws JValueInvalidTypeException,
 			Exception {
 		return evalTestQuery(query).toInteger().intValue();
+	}
+
+	private static void queryUncontainedCrossroadCount(GenericTest test)
+			throws Exception {
+		String queryString = "sum(from r:V{junctions.Crossroad} report depth(pathSystem(r, <--{localities.ContainsCrossroad})) end)";
+		JValue result = test.evalTestQuery(queryString);
+
+		uncontainedCrossroadCount = crossroadCount
+				- result.toDouble().intValue();
 	}
 
 	protected void assertQueryEqualsNull(String query) throws Exception {
@@ -203,7 +216,7 @@ public class GenericTest {
 
 	private boolean doesExceptionTypesEqual(
 			Class<? extends Exception> exceptionClass, Throwable exception) {
-		return (exception != null)
+		return exception != null
 				&& (exception.getClass().equals(exceptionClass) || doesExceptionTypesEqual(
 						exceptionClass, exception.getCause()));
 	}
@@ -437,6 +450,14 @@ public class GenericTest {
 			i++;
 		}
 		return null;
+	}
+
+	protected void printResult(JValue result) throws Exception {
+		System.out.println("Result is: " + result);
+		if (result.isCollection()) {
+			System.out.println("Collection size is: "
+					+ result.toCollection().size());
+		}
 	}
 
 }
