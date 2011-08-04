@@ -96,22 +96,22 @@ public class ECAIO {
 	public static List<ECARule> loadECArules(Schema schema, String filename)
 			throws ECAIOException {
 
+		BufferedInputStream inputStream = null;
 		try {
-			FileInputStream fileStream = new FileInputStream(filename);
-			BufferedInputStream inputStream = new BufferedInputStream(
-					fileStream, BUFFER_SIZE);
+			inputStream = new BufferedInputStream(
+					new FileInputStream(filename), BUFFER_SIZE);
 
 			ECAIO ecaLoader = new ECAIO();
-
 			ecaLoader.inStream = inputStream;
 			ecaLoader.schema = schema;
-
 			ecaLoader.load();
 
 			return ecaLoader.rules;
 
 		} catch (IOException e) {
 			throw new ECAIOException("Error while reading file " + filename);
+		} finally {
+			close(inputStream);
 		}
 	}
 
@@ -128,11 +128,13 @@ public class ECAIO {
 		try {
 			out = new DataOutputStream(new BufferedOutputStream(
 					new FileOutputStream(filename), BUFFER_SIZE));
+
 			ECAIO ecaSaver = new ECAIO();
 			ecaSaver.rules = rules;
 			ecaSaver.schema = schema;
 			ecaSaver.outStream = out;
 			ecaSaver.save();
+
 		} catch (IOException ex) {
 			throw new ECAIOException("Error while saving ECA rules to "
 					+ filename);
@@ -177,7 +179,6 @@ public class ECAIO {
 	// #########################################################################
 	/**
 	 * 
-	 * @param in
 	 */
 	private ECAIO() {
 		rules = new ArrayList<ECARule>();
@@ -187,6 +188,9 @@ public class ECAIO {
 	// ++++++++ Saving ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	// #########################################################################
 
+	/**
+	 * Save all given ECARules
+	 */
 	private void save() throws ECAIOException {
 		for (ECARule rule : rules) {
 			saveRule(rule);
@@ -217,9 +221,8 @@ public class ECAIO {
 			throws ECAIOException {
 		String eventstring = "";
 		if (ev.getContext().equals(EventDescription.Context.EXPRESSION)) {
-			eventstring += "<\"";
 			eventstring += ev.getContextExpression();
-			eventstring += "\"> ";
+			eventstring += " : ";
 		}
 		if (ev.getTime().equals(EventTime.AFTER)) {
 			eventstring += "after ";
@@ -233,21 +236,21 @@ public class ECAIO {
 	}
 
 	/**
-	 * Determines the String representation of an EventDescription
+	 * Determines the String representation of an EventDescription type
 	 * 
 	 * @param ev
 	 *            the EventDescription
-	 * @return the EventDescription as String
+	 * @return the type of an EventDescription as String
 	 */
 	private String getEventDescriptionType(EventDescription ev) {
 		if (ev instanceof CreateVertexEventDescription) {
-			return "createVertex(" + getEventElementTypeString(ev) + ") ";
+			return "createdVertex(" + getEventElementTypeString(ev) + ") ";
 		} else if (ev instanceof DeleteVertexEventDescription) {
-			return "deleteVertex(" + getEventElementTypeString(ev) + ") ";
+			return "deletedVertex(" + getEventElementTypeString(ev) + ") ";
 		} else if (ev instanceof ChangeAttributeEventDescription) {
 			return "updatedAttributeValue("
 					+ getEventElementTypeString(ev)
-					+ ", <"
+					+ ", "
 					+ ((ChangeAttributeEventDescription) ev)
 							.getConcernedAttribute();
 		} else if (ev instanceof ChangeEdgeEventDescription) {
@@ -262,27 +265,27 @@ public class ECAIO {
 				return "";
 			}
 		} else if (ev instanceof CreateEdgeEventDescription) {
-			return "createEdge(" + getEventElementTypeString(ev) + ") ";
+			return "createdEdge(" + getEventElementTypeString(ev) + ") ";
 		} else {
-			return "deleteEdge(" + getEventElementTypeString(ev) + ") ";
+			return "deletedEdge(" + getEventElementTypeString(ev) + ") ";
 		}
 
 	}
 
 	/**
-	 * Determines the type that a given EventDescription monitors
+	 * Determines the type of the Vertex or Edge that a given EventDescription
+	 * monitors
 	 * 
 	 * @param ev
 	 *            EventDescription to get the type
-	 * @return the type as string or "" if the elements are filtered by context
+	 * @return the type of the monitored Edge or Vertex as string or "" if the
+	 *         elements are filtered by context
 	 */
 	private String getEventElementTypeString(EventDescription ev) {
 		String eventstring = "";
 		if (ev.getContext().equals(EventDescription.Context.TYPE)) {
-			eventstring += "<";
 			eventstring += ev.getType().getName().replace(
 					schema.getPackagePrefix() + ".", "");
-			eventstring += ">";
 		}
 		return eventstring;
 	}
@@ -294,7 +297,7 @@ public class ECAIO {
 	 * @throws ECAIOException
 	 */
 	private void saveConditionToStream(Condition cond) throws ECAIOException {
-		writeToStream("with <\"" + cond.getConditionExpression() + "\"> ");
+		writeToStream("with \"" + cond.getConditionExpression() + "\" ");
 	}
 
 	/**
@@ -306,9 +309,9 @@ public class ECAIO {
 	private void saveActionToStream(Action act) throws ECAIOException {
 		String actionstring = "do ";
 		if (act instanceof PrintAction) {
-			actionstring += "<\"";
+			actionstring += "print \"";
 			actionstring += ((PrintAction) act).getMessage();
-			actionstring += "\">";
+			actionstring += "\"";
 			actionstring += "\n";
 		} else if (act instanceof GretlTransformAction) {
 			GretlTransformAction gta = ((GretlTransformAction) act);
@@ -391,74 +394,73 @@ public class ECAIO {
 	private EventDescription parseEventDescription() throws ECAIOException {
 
 		// Check whether a context is given
-		String next = nextToken();
 		String context = null;
-		if (next.equals("<")) {
-			context = nextToken();
-			match(">");
-			match(":");
-			next = nextToken();
+		String next1 = nextToken();
+		String next2 = nextToken();
+		if (next2.equals(":")) {
+			context = next1;
+			next1 = nextToken();
+			next2 = nextToken();
 		}
 
 		// Get the EventTime
-		EventTime et = getEventTime(next);
+		EventTime et = getEventTime(next1);
 
 		// Get the Type of the EventDescription
-		String eventdestype = nextToken();
+		String eventdestype = next2;
 
 		// Get the Type of the AttributedElement if there is one
 		String type = null;
 		match("(");
-		String test = nextToken();
-		if (isMatching(test, "<")) {
+		if (context == null) {
 			type = nextToken();
-			match(">");
-			test = nextToken();
-		}
-		if (!isMatching(test, ")") && !isMatching(test, ",")) {
-			throw new ECAIOException(
-					"Error while parsing Event. ')' or ',' expected, found '"
-							+ test + "'.");
 		}
 
 		// Create an EventDescription depending on the Type
-		// -- CreateVertexEventDescription
-		if (eventdestype.equals("createVertex")) {
-			return finishCreateVertexEvent(context, et, type);
-		}
-		// -- CreateEdgeEventDescription
-		else if (eventdestype.equals("createEdge")) {
-			return finishCreateEdgeEventDescription(context, et, type);
-		}
+
 		// -- ChangeAttributeEventDescription
-		else if (eventdestype.equals("updatedAttributeValue")) {
+
+		if (eventdestype.equals("updatedAttributeValue")) {
+			match(",");
 			return finishChangeAttributeEventDescription(context, et, type);
-		}
-		// -- ChangeEdgeEventDescription
-		else if (eventdestype.equals("updatedStartVertex")) {
-			return finishChangeAlphaOfEdgeEventDescription(context, et, type);
-		}
-		// -- ChangeEdgeEventDescription
-		else if (eventdestype.equals("updatedEndVertex")) {
-			return finishChangeOmegaOfEdgeEventDescription(context, et, type);
-		}
-		// -- DeleteVertexEventDescription
-		else if (eventdestype.equals("deleteVertex")) {
-			return finishDeleteVertexEventDescription(context, et, type);
-		}
-		// -- DeleteEdgeEventDescription
-		else if (eventdestype.equals("deleteEdge")) {
-			return finishDeleteEdgeEventDescription(context, et, type);
-		}
-		// -- wrong syntax
-		else {
-			throw new ECAIOException(
-					"Type of EventDescription not recognized. Found "
-							+ eventdestype
-							+ " Possible are \"createVertex\", \"deleteVertex\", "
-							+ "\"createEdge\", \"deleteEdge\", "
-							+ "\"updatedStartVertex\", \"updatedEndVertex\", "
-							+ "\"changeAttributeValue");
+		} else {
+			match(")");
+			// -- CreateVertexEventDescription
+			if (eventdestype.equals("createVertex")) {
+				return finishCreateVertexEvent(context, et, type);
+			}
+			// -- CreateEdgeEventDescription
+			else if (eventdestype.equals("createEdge")) {
+				return finishCreateEdgeEventDescription(context, et, type);
+			}
+			// -- ChangeEdgeEventDescription
+			else if (eventdestype.equals("updatedStartVertex")) {
+				return finishChangeAlphaOfEdgeEventDescription(context, et,
+						type);
+			}
+			// -- ChangeEdgeEventDescription
+			else if (eventdestype.equals("updatedEndVertex")) {
+				return finishChangeOmegaOfEdgeEventDescription(context, et,
+						type);
+			}
+			// -- DeleteVertexEventDescription
+			else if (eventdestype.equals("deleteVertex")) {
+				return finishDeleteVertexEventDescription(context, et, type);
+			}
+			// -- DeleteEdgeEventDescription
+			else if (eventdestype.equals("deleteEdge")) {
+				return finishDeleteEdgeEventDescription(context, et, type);
+			}
+			// -- wrong syntax
+			else {
+				throw new ECAIOException(
+						"Type of EventDescription not recognized. Found "
+								+ eventdestype
+								+ " Possible are \"createVertex\", \"deleteVertex\", "
+								+ "\"createEdge\", \"deleteEdge\", "
+								+ "\"updatedStartVertex\", \"updatedEndVertex\", "
+								+ "\"changeAttributeValue");
+			}
 		}
 	}
 
@@ -521,9 +523,7 @@ public class ECAIO {
 
 	private EventDescription finishChangeAttributeEventDescription(
 			String context, EventTime et, String type) throws ECAIOException {
-		match("<");
 		String name = nextToken();
-		match(">");
 		match(")");
 
 		if (context != null && type == null) {
@@ -609,9 +609,7 @@ public class ECAIO {
 		if (isMatching(next, "do")) {
 			return null;
 		} else if (isMatching(next, "with")) {
-			match("<");
 			String condexpr = nextToken();
-			match(">");
 			match("do");
 			return new Condition(condexpr);
 		} else {
@@ -632,10 +630,9 @@ public class ECAIO {
 	@SuppressWarnings("unchecked")
 	private Action parseAction() throws ECAIOException {
 		String next = nextToken();
-		if (isMatching("<", next)) {
-			String print = nextToken();
-			match(">");
-			return new PrintAction(print);
+		if (isMatching("print", next)) {
+			String message = nextToken();
+			return new PrintAction(message);
 		} else {
 			try {
 				Class<?> actionclass = Class.forName(next);
