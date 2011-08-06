@@ -2,6 +2,8 @@ package de.uni_koblenz.jgralabtest.eca;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 
 import org.junit.AfterClass;
@@ -10,6 +12,8 @@ import org.junit.Test;
 
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.eca.Action;
+import de.uni_koblenz.jgralab.eca.ECAIO;
+import de.uni_koblenz.jgralab.eca.ECAIOException;
 import de.uni_koblenz.jgralab.eca.ECARule;
 import de.uni_koblenz.jgralab.eca.ECARuleManager;
 import de.uni_koblenz.jgralab.eca.events.DeleteVertexEventDescription;
@@ -62,7 +66,10 @@ public class ECATestGretlAction {
 
 	@AfterClass
 	public static void tearDown() {
-		System.out.println("Finish ECA Test with Gretl Transformation Action.");
+		System.out
+				.println("Finish ECA Test with Gretl Transformation Action.\n");
+		System.out.println("-----------------------------------------------");
+		System.out.println();
 	}
 
 	@Test
@@ -84,5 +91,58 @@ public class ECATestGretlAction {
 		// Duplicate all Vertices and then take the deleted one away
 		assertEquals(testGraph.getVCount(), oldVCount * 2 - 1);
 
+		((ECARuleManager) testGraph.getECARuleManager())
+				.deleteECARule(bef_rule);
+
+	}
+
+	@Test
+	public void testSaveGretlTransformAction() {
+		System.out.println("Save rule with GretlTransformAction.");
+		EventDescription bef_ev = new DeleteVertexEventDescription(
+				EventDescription.EventTime.BEFORE, Contact.class);
+		Action bef_act = new GretlTransformAction(
+				SimpleCopyTransformation.class);
+		ECARule bef_rule = new ECARule(bef_ev, bef_act);
+
+		ArrayList<ECARule> rules = new ArrayList<ECARule>();
+		rules.add(bef_rule);
+
+		try {
+			ECAIO.saveECArules(
+					testGraph.getSchema(),
+					"testit/de/uni_koblenz/jgralabtest/eca/io/testSaveRules2.eca",
+					rules);
+		} catch (ECAIOException e) {
+			e.printStackTrace();
+			assert false;
+		}
+	}
+
+	@Test
+	public void testLoadGretlTransformAction() {
+		System.out.println("Load rule with GretlTransformAction.");
+		Contact c5 = testGraph.createContact();
+
+		try {
+			List<ECARule> rules = ECAIO
+					.loadECArules(testGraph.getSchema(),
+							"testit/de/uni_koblenz/jgralabtest/eca/io/testSaveRules2.eca");
+			ECARuleManager ecaRuleManager = (ECARuleManager) testGraph
+					.getECARuleManager();
+			for (ECARule rule : rules) {
+				ecaRuleManager.addECARule(rule);
+			}
+		} catch (ECAIOException e) {
+			e.printStackTrace();
+			assert false;
+		}
+
+		int oldVCount = testGraph.getVCount();
+
+		testGraph.deleteVertex(c5);
+
+		// Duplicate all Vertices and then take the deleted one away
+		assertEquals(testGraph.getVCount(), oldVCount * 2 - 1);
 	}
 }
