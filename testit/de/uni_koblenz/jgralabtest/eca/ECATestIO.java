@@ -1,6 +1,9 @@
 package de.uni_koblenz.jgralabtest.eca;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 
 import org.junit.AfterClass;
@@ -13,7 +16,10 @@ import de.uni_koblenz.jgralab.eca.Condition;
 import de.uni_koblenz.jgralab.eca.ECAIO;
 import de.uni_koblenz.jgralab.eca.ECAIOException;
 import de.uni_koblenz.jgralab.eca.ECARule;
+import de.uni_koblenz.jgralab.eca.ECARuleManager;
 import de.uni_koblenz.jgralab.eca.PrintAction;
+import de.uni_koblenz.jgralab.eca.events.ChangeEdgeEventDescription;
+import de.uni_koblenz.jgralab.eca.events.ChangeEdgeEventDescription.EdgeEnd;
 import de.uni_koblenz.jgralab.eca.events.CreateVertexEventDescription;
 import de.uni_koblenz.jgralab.eca.events.DeleteVertexEventDescription;
 import de.uni_koblenz.jgralab.eca.events.EventDescription;
@@ -26,11 +32,17 @@ import de.uni_koblenz.jgralabtest.eca.schemas.simplelibrary.NewMedia;
 import de.uni_koblenz.jgralabtest.eca.schemas.simplelibrary.SimpleLibraryGraph;
 import de.uni_koblenz.jgralabtest.eca.schemas.simplelibrary.SimpleLibrarySchema;
 import de.uni_koblenz.jgralabtest.eca.schemas.simplelibrary.User;
+import de.uni_koblenz.jgralabtest.eca.useractions.RevertEdgeChangingAction;
 
 public class ECATestIO {
 
 	private static SimpleLibraryGraph simlibgraph;
+	private static User user1;
+	private static User user2;
+	private static Loans loans_u1_b1;
 
+	private static String folderForRuleFiles = "testit/de/uni_koblenz/jgralabtest/eca/io/";
+	
 	@BeforeClass
 	public static void setUp() {
 		System.out.println("Start ECA IO Test.\n");
@@ -44,7 +56,8 @@ public class ECATestIO {
 	}
 
 	@Test
-	public void testSaveRule() {
+	public void testSimpleSaveRule() {
+		System.out.println("Saving an ECA Rule.");
 		EventDescription bef_ev = new DeleteVertexEventDescription(
 				EventDescription.EventTime.BEFORE, Book.class);
 		Action bef_act = new PrintAction(
@@ -65,15 +78,141 @@ public class ECATestIO {
 		try {
 			ECAIO.saveECArules(
 					simlibgraph.getSchema(),
-					"testit/de/uni_koblenz/jgralabtest/eca/io/testSaveRules1.eca",
+ folderForRuleFiles
+					+ "testSaveRules1.eca",
 					rules);
 		} catch (ECAIOException e) {
 			e.printStackTrace();
 			assert false;
 		}
+
+		System.out.println();
 	}
 
+	@Test
+	public void testSimpleLoadRule() {
+		System.out.println("Loading an ECA rule.");
 
+		Book newBook = simlibgraph.createBook();
+
+		try {
+
+			List<ECARule> rules = ECAIO
+					.loadECArules(simlibgraph.getSchema(),
+					folderForRuleFiles + "testSaveRules1.eca");
+
+			ECARuleManager ecaRuleManager = (ECARuleManager) simlibgraph
+					.getECARuleManager();
+			for (ECARule rule : rules) {
+				ecaRuleManager.addECARule(rule);
+			}
+
+		} catch (ECAIOException e) {
+			e.printStackTrace();
+			assert false;
+		}
+
+		simlibgraph.deleteVertex(newBook);
+		simlibgraph.createNewMedia();
+		simlibgraph.createNewMedia();
+
+		System.out.println();
+	}
+
+	@Test
+	public void saveRuleWithContext() {
+		System.out.println("Save ECA rule with context.");
+		EventDescription aft_ev = new CreateVertexEventDescription(
+				EventDescription.EventTime.AFTER, "V{Medium}");
+		Action aft_act = new PrintAction(
+				"ECA Test Message: New Medium created.");
+		ECARule aft_rule = new ECARule(aft_ev, aft_act);
+
+		ArrayList<ECARule> rules = new ArrayList<ECARule>();
+		rules.add(aft_rule);
+		try {
+			ECAIO.saveECArules(simlibgraph.getSchema(), folderForRuleFiles
+					+ "testSaveRules3.eca", rules);
+		} catch (ECAIOException e) {
+			e.printStackTrace();
+			assert false;
+		}
+		System.out.println();
+	}
+
+	@Test
+	public void loadRuleWithContext() {
+		System.out.println("Load rule with context.");
+		List<ECARule> rules = null;
+		try {
+			rules = ECAIO.loadECArules(simlibgraph.getSchema(),
+					folderForRuleFiles + "testSaveRules3.eca");
+		} catch (ECAIOException e) {
+			e.printStackTrace();
+			assert false;
+		}
+		ECARuleManager ecaRuleManager = (ECARuleManager) simlibgraph
+				.getECARuleManager();
+		ecaRuleManager.addECARule(rules.get(0));
+
+		simlibgraph.createBook();
+
+		ecaRuleManager.deleteECARule(rules.get(0));
+		System.out.println();
+	}
+
+	@Test
+	public void saveRuleWithOwnAction() {
+		System.out.println("Save rule with own action.");
+
+		EventDescription aft_ev = new ChangeEdgeEventDescription(
+				EventDescription.EventTime.AFTER, Loans.class, EdgeEnd.BOTH);
+		Condition aft_cond = new Condition(
+				"startVertex(context).name = 'Stephanie Plum'");
+		Action aft_act = new RevertEdgeChangingAction();
+		ECARule aft_rule = new ECARule(aft_ev, aft_cond, aft_act);
+
+		ArrayList<ECARule> rules = new ArrayList<ECARule>();
+		rules.add(aft_rule);
+		try {
+			ECAIO.saveECArules(simlibgraph.getSchema(), folderForRuleFiles
+					+ "testSaveRules4.eca", rules);
+		} catch (ECAIOException e) {
+			e.printStackTrace();
+			assert false;
+		}
+
+		System.out.println();
+	}
+
+	@Test
+	public void loadRuleWithOwnAction() {
+		System.out.println("Load rule with own action.");
+
+		List<ECARule> rules = null;
+		try {
+			rules = ECAIO.loadECArules(simlibgraph.getSchema(),
+					folderForRuleFiles + "testSaveRules4.eca");
+		} catch (ECAIOException e) {
+			e.printStackTrace();
+			assert false;
+		}
+		ECARuleManager ecaRuleManager = (ECARuleManager) simlibgraph
+				.getECARuleManager();
+		ecaRuleManager.addECARule(rules.get(0));
+
+		loans_u1_b1.setAlpha(user2);
+
+		assertEquals(loans_u1_b1.getAlpha(), user1);
+
+		ecaRuleManager.deleteECARule(rules.get(0));
+
+		System.out.println();
+	}
+
+	/**
+	 * Create the Graph for testing
+	 */
 	public static void initGraph() {
 		SimpleLibraryGraph graph = SimpleLibrarySchema.instance()
 				.createSimpleLibraryGraph();
@@ -84,10 +223,10 @@ public class ECATestIO {
 		lib.set_name("Bibliothequa");
 
 		// Users
-		User user1 = graph.createUser();
+		user1 = graph.createUser();
 		user1.set_name("Martin King");
 
-		User user2 = graph.createUser();
+		user2 = graph.createUser();
 		user2.set_name("Stephanie Plum");
 
 		// Media
@@ -110,7 +249,7 @@ public class ECATestIO {
 		lib.add_media(newmedia1);
 
 		// user1 loans book1
-		Loans loans_u1_b1 = graph.createLoans(user1, book1);
+		loans_u1_b1 = graph.createLoans(user1, book1);
 		loans_u1_b1.set_date(graph.createDate(1, 1, 2011));
 
 		// user 2 loans magazin1
@@ -119,4 +258,5 @@ public class ECATestIO {
 
 		simlibgraph = graph;
 	}
+
 }

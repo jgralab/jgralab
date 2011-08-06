@@ -55,6 +55,8 @@ public class ECATest {
 	@AfterClass
 	public static void tearDown() {
 		System.out.println("Finish ECA Test.\n");
+		System.out.println("-----------------------------------------------");
+		System.out.println();
 	}
 
 	@Test
@@ -389,7 +391,7 @@ public class ECATest {
 		EventDescription aft_ev = new ChangeEdgeEventDescription(
 				EventDescription.EventTime.AFTER, Loans.class, EdgeEnd.BOTH);
 		Condition aft_cond = new Condition(
-				"startVertex(context).name = \"Martin King\"");
+				"startVertex(context).name = 'Martin King'");
 		Action aft_act = new RevertEdgeChangingAction();
 		ECARule aft_rule = new ECARule(aft_ev, aft_cond, aft_act);
 		ECARuleManager ecaRuleManager = (ECARuleManager) simlibgraph

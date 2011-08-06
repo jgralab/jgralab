@@ -256,13 +256,15 @@ public class ECAIO {
 		} else if (ev instanceof ChangeEdgeEventDescription) {
 			if (((ChangeEdgeEventDescription) ev).getEdgeEnd().equals(
 					EdgeEnd.ALPHA)) {
-				return "updatedStartVertex(";
+				return "updatedStartVertex(" + getEventElementTypeString(ev)
+						+ ") ";
 			} else if (((ChangeEdgeEventDescription) ev).getEdgeEnd().equals(
 					EdgeEnd.OMEGA)) {
-				return "updatedEndVertex(";
+				return "updatedEndVertex(" + getEventElementTypeString(ev)
+						+ ") ";
 			} else {
-				// TODO decide whether BOTH is although possible
-				return "";
+				return "updatedStartOrEndVertex("
+						+ getEventElementTypeString(ev) + ") ";
 			}
 		} else if (ev instanceof CreateEdgeEventDescription) {
 			return "createdEdge(" + getEventElementTypeString(ev) + ") ";
@@ -426,11 +428,11 @@ public class ECAIO {
 		} else {
 			match(")");
 			// -- CreateVertexEventDescription
-			if (eventdestype.equals("createVertex")) {
+			if (eventdestype.equals("createdVertex")) {
 				return finishCreateVertexEvent(context, et, type);
 			}
 			// -- CreateEdgeEventDescription
-			else if (eventdestype.equals("createEdge")) {
+			else if (eventdestype.equals("createdEdge")) {
 				return finishCreateEdgeEventDescription(context, et, type);
 			}
 			// -- ChangeEdgeEventDescription
@@ -443,12 +445,16 @@ public class ECAIO {
 				return finishChangeOmegaOfEdgeEventDescription(context, et,
 						type);
 			}
+			// -- ChangeEdgeDescription
+			else if (eventdestype.equals("updatedStartOrEndVertex")) {
+				return finishChangeEndOfEdgeEventDescription(context, et, type);
+			}
 			// -- DeleteVertexEventDescription
-			else if (eventdestype.equals("deleteVertex")) {
+			else if (eventdestype.equals("deletedVertex")) {
 				return finishDeleteVertexEventDescription(context, et, type);
 			}
 			// -- DeleteEdgeEventDescription
-			else if (eventdestype.equals("deleteEdge")) {
+			else if (eventdestype.equals("deletedEdge")) {
 				return finishDeleteEdgeEventDescription(context, et, type);
 			}
 			// -- wrong syntax
@@ -514,6 +520,20 @@ public class ECAIO {
 		} else if (context == null && type != null) {
 			return new ChangeEdgeEventDescription(et,
 					getAttributedElement(type), EdgeEnd.OMEGA);
+		} else {
+			throw new ECAIOException(
+					"It's necessary to give a context OR a type. Its an XOR. Found: context: \""
+							+ context + "\" and type: \"" + type + "\"");
+		}
+	}
+
+	private EventDescription finishChangeEndOfEdgeEventDescription(
+			String context, EventTime et, String type) throws ECAIOException {
+		if (context != null && type == null) {
+			return new ChangeEdgeEventDescription(et, context);
+		} else if (context == null && type != null) {
+			return new ChangeEdgeEventDescription(et,
+					getAttributedElement(type), EdgeEnd.BOTH);
 		} else {
 			throw new ECAIOException(
 					"It's necessary to give a context OR a type. Its an XOR. Found: context: \""
@@ -692,7 +712,6 @@ public class ECAIO {
 			if (la == '"') {
 				readUtfString(out);
 			} else if (isBracket(la)) {
-				System.out.println("bracket " + la);
 				out.append((char) la);
 				la = inStream.read();
 			} else {
@@ -707,7 +726,6 @@ public class ECAIO {
 
 		}
 
-		System.out.println("CURRENT_TOKEN: " + out.toString());
 		return myTrim0(out.toString());
 	}
 
@@ -747,8 +765,13 @@ public class ECAIO {
 	private final void readUtfString(StringBuilder out) throws IOException {
 		la = inStream.read();
 		LOOP: while ((la != -1) && (la != '"')) {
+			if (la == 0) {
+				la = inStream.read();
+				continue;
+			}
 			if ((la < 32) || (la > 127)) {
-				throw new RuntimeException("invalid character '" + (char) la);
+				throw new RuntimeException("invalid character '" + (char) la
+						+ "'");
 			}
 			if (la == '\\') {
 				la = inStream.read();
