@@ -18,6 +18,7 @@ import de.uni_koblenz.jgralab.eca.ECAIOException;
 import de.uni_koblenz.jgralab.eca.ECARule;
 import de.uni_koblenz.jgralab.eca.ECARuleManager;
 import de.uni_koblenz.jgralab.eca.PrintAction;
+import de.uni_koblenz.jgralab.eca.events.ChangeAttributeEventDescription;
 import de.uni_koblenz.jgralab.eca.events.ChangeEdgeEventDescription;
 import de.uni_koblenz.jgralab.eca.events.ChangeEdgeEventDescription.EdgeEnd;
 import de.uni_koblenz.jgralab.eca.events.CreateVertexEventDescription;
@@ -94,27 +95,75 @@ public class ECATestIO {
 		System.out.println("Loading an ECA rule.");
 
 		Book newBook = simlibgraph.createBook();
-
+		List<ECARule> rules = null;
 		try {
 
-			List<ECARule> rules = ECAIO
-					.loadECArules(simlibgraph.getSchema(),
+			rules = ECAIO.loadECArules(simlibgraph.getSchema(),
 					folderForRuleFiles + "testSaveRules1.eca");
-
-			ECARuleManager ecaRuleManager = (ECARuleManager) simlibgraph
-					.getECARuleManager();
-			for (ECARule rule : rules) {
-				ecaRuleManager.addECARule(rule);
-			}
 
 		} catch (ECAIOException e) {
 			e.printStackTrace();
 			assert false;
 		}
 
+		ECARuleManager ecaRuleManager = (ECARuleManager) simlibgraph
+				.getECARuleManager();
+		for (ECARule rule : rules) {
+			ecaRuleManager.addECARule(rule);
+		}
+
 		simlibgraph.deleteVertex(newBook);
 		simlibgraph.createNewMedia();
 		simlibgraph.createNewMedia();
+
+		for (ECARule rule : rules) {
+			ecaRuleManager.deleteECARule(rule);
+		}
+
+		System.out.println();
+	}
+
+	@Test
+	public void saveRuleWithChangeAttributeEvent() {
+		System.out.println("Saving a rule monitoring a ChangeAttributeEvent.");
+		EventDescription bef_ev = new ChangeAttributeEventDescription(
+				EventDescription.EventTime.BEFORE, Book.class, "title");
+		Action bef_act = new PrintAction(
+				"ECA Test Message: Title of Book Vertex will become changed.");
+		ECARule bef_rule = new ECARule(bef_ev, bef_act);
+		ArrayList<ECARule> rules = new ArrayList<ECARule>();
+		rules.add(bef_rule);
+		try {
+			ECAIO.saveECArules(simlibgraph.getSchema(), folderForRuleFiles
+					+ "testSaveRulesChangeAttribute", rules);
+		} catch (ECAIOException e) {
+			e.printStackTrace();
+			assert false;
+		}
+		System.out.println();
+	}
+
+	@Test
+	public void loadRuleWithChangeAttributeEvent() {
+		System.out.println("Loading a rule monitoring a ChangeAttributeEvent.");
+
+		List<ECARule> rules = null;
+		try {
+			rules = ECAIO.loadECArules(simlibgraph.getSchema(),
+					folderForRuleFiles + "testSaveRulesChangeAttribute");
+		} catch (ECAIOException e) {
+			e.printStackTrace();
+			assert false;
+		}
+		
+		ECARuleManager ecaRuleManager = (ECARuleManager) simlibgraph
+		.getECARuleManager();
+		ecaRuleManager.addECARule(rules.get(0));
+
+		Book book = simlibgraph.createBook();
+		book.set_title("A new Book");
+
+		ecaRuleManager.deleteECARule(rules.get(0));
 
 		System.out.println();
 	}
