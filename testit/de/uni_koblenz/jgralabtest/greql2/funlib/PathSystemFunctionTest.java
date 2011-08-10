@@ -162,7 +162,6 @@ public class PathSystemFunctionTest extends GenericTest {
 				.evalTestQuery(
 						"using loehrCenter: pathSystem(loehrCenter, <->{connections.Street}+)")
 				.toPathSystem();
-		System.out.println(multipleDepthPathSystemWithMultiPaths);
 	}
 
 	@Before

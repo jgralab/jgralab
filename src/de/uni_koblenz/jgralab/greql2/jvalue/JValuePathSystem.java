@@ -189,8 +189,8 @@ public class JValuePathSystem extends JValueImpl {
 				pe = keyToEntryMap.get(new PathSystemKey(te.getParentVertex(),
 						te.getParentStateNumber()));
 			} else {
-				PathSystemKey key = new PathSystemKey(rootVertex,
-						te.getParentStateNumber());
+				PathSystemKey key = new PathSystemKey(rootVertex, te
+						.getParentStateNumber());
 				pe = keyToEntryMap.get(key);
 			}
 			// if pe is null, te is the entry of the root vertex
@@ -790,8 +790,8 @@ public class JValuePathSystem extends JValueImpl {
 			PathSystemEntry entry = keyToEntryMap.get(key);
 			if (entry.getParentEdge() != null) {
 				path.addEdge(entry.getParentEdge().getReversedEdge());
-				key = new PathSystemKey(entry.getParentVertex(),
-						entry.getParentStateNumber());
+				key = new PathSystemKey(entry.getParentVertex(), entry
+						.getParentStateNumber());
 			} else {
 				key = null;
 			}
@@ -1053,6 +1053,7 @@ public class JValuePathSystem extends JValueImpl {
 			JValueSet pathSet = extractPaths();
 			for (JValue path : pathSet) {
 				returnString.append(path.toString());
+				returnString.append('\n');
 			}
 		} catch (JValuePathException ex) {
 			return ex.toString();
@@ -1070,7 +1071,9 @@ public class JValuePathSystem extends JValueImpl {
 				.entrySet()) {
 			PathSystemEntry thisEntry = entry.getValue();
 			PathSystemKey thisKey = entry.getKey();
-			logger.info(thisKey.toString() + " maps to " + thisEntry.toString());
+			logger
+					.info(thisKey.toString() + " maps to "
+							+ thisEntry.toString());
 		}
 	}
 
