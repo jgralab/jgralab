@@ -86,23 +86,29 @@ public class PathSystemFunctionTest extends GenericTest {
 	public static void initializePathAndPathSystemVariables()
 			throws JValueInvalidTypeException, Exception {
 		PathSystemFunctionTest t = new PathSystemFunctionTest();
-		t.evalTestQuery("theElement(from v : V{localities.County} with v.name = 'Hessen' report v end) store as hessen");
-		t.evalTestQuery("using hessen: pathSystem(hessen, -->{localities.ContainsLocality} -->{connections.AirRoute}* ) store as noPS");
+		t
+				.evalTestQuery("theElement(from v : V{localities.County} with v.name = 'Hessen' report v end) store as hessen");
+		t
+				.evalTestQuery("using hessen: pathSystem(hessen, -->{localities.ContainsLocality} -->{connections.AirRoute}* ) store as noPS");
 		emptyPath = t.evalTestQuery(
 				"using noPS: extractPath(noPS, firstVertex())").toPath();
 		multipleElementPath = t.evalTestQuery(
 				"using noPS: extractPath(noPS, 2)[0]").toPath();
 
-		t.evalTestQuery("using hessen: pathSystem(hessen, -->{localities.ContainsLocality} ) store as PS");
+		t
+				.evalTestQuery("using hessen: pathSystem(hessen, -->{localities.ContainsLocality} ) store as PS");
 		twoElementPath = t.evalTestQuery("using PS: extractPath(PS, 1)[0]")
 				.toPath();
 
-		t.evalTestQuery("theElement(from v : V{junctions.Crossroad} with v --> v report v end) store as suedallee");
-		t.evalTestQuery("using suedallee: pathSystem(suedallee, -->{connections.Street}) store as PS");
+		t
+				.evalTestQuery("theElement(from v : V{junctions.Crossroad} with v --> v report v end) store as suedallee");
+		t
+				.evalTestQuery("using suedallee: pathSystem(suedallee, -->{connections.Street}) store as PS");
 		loopPath = t.evalTestQuery(
 				"using suedallee, PS: extractPath(PS, suedallee)").toPath();
 
-		t.evalTestQuery("using suedallee: pathSystem(suedallee, [-->{connections.Footpath}]) store as PS");
+		t
+				.evalTestQuery("using suedallee: pathSystem(suedallee, [-->{connections.Footpath}]) store as PS");
 		oneElementPath = t.evalTestQuery(
 				"using suedallee, PS: extractPath(PS, suedallee)").toPath();
 		longPath = t
@@ -110,16 +116,53 @@ public class PathSystemFunctionTest extends GenericTest {
 						"extractPath(pathSystem(V{junctions.Crossroad}[0], <->*), 5)[0]")
 				.toPath();
 
-		emptyPathSystem = null;
-		depthOnePathSystemWithOnePath = null;
-		depthTwoPathSystemWithOnePath = null;
-		multipleDepthPathSystemWithOnePath = null;
-		depthOnePathSystemWithTwoPaths = null;
-		depthTwoPathSystemWithTwoPaths = null;
-		multipleDepthPathSystemWithTwoPaths = null;
-		depthOnePathSystemWithMultiPaths = null;
-		depthTwoPathSystemWithMultiPaths = null;
-		multipleDepthPathSystemWithMultiPaths = null;
+		// TODO initialize path systems
+		t
+				.evalTestQuery("theElement(from v : V{localities.County} with v.name = 'Berlin' report v end) store as berlin");
+		emptyPathSystem = t
+				.evalTestQuery(
+						"using berlin : pathSystem(berlin, -->{localities.ContainsLocality})")
+				.toPathSystem();
+
+		t
+				.evalTestQuery("theElement(from v: V{localities.County} with v.name = 'Rheinland-Pfalz' report v end) store as rp");
+		depthOnePathSystemWithOnePath = t.evalTestQuery(
+				"using rp: pathSystem(rp, -->{localities.HasCapital})")
+				.toPathSystem();
+
+		depthTwoPathSystemWithOnePath = t
+				.evalTestQuery(
+						"using hessen : pathSystem(hessen,-->{localities.HasCapital}-->{localities.ContainsCrossroad})")
+				.toPathSystem();
+
+		multipleDepthPathSystemWithOnePath = t
+				.evalTestQuery(
+						"using hessen : pathSystem(hessen,-->{localities.HasCapital}-->{localities.ContainsCrossroad}<--{connections.Highway})")
+				.toPathSystem();
+		depthOnePathSystemWithTwoPaths = t
+				.evalTestQuery(
+						"using hessen : pathSystem(hessen,-->{localities.ContainsLocality})")
+				.toPathSystem();
+		depthTwoPathSystemWithTwoPaths = t
+				.evalTestQuery(
+						"using hessen : pathSystem(hessen,-->{localities.ContainsLocality}-->{localities.ContainsCrossroad})")
+				.toPathSystem();
+		multipleDepthPathSystemWithTwoPaths = t
+				.evalTestQuery(
+						"using hessen : pathSystem(hessen,-->{localities.ContainsLocality}-->{localities.ContainsCrossroad}<--{connections.Highway})")
+				.toPathSystem();
+
+		depthOnePathSystemWithMultiPaths = t.evalTestQuery(
+				"using rp : pathSystem(rp,-->)").toPathSystem();
+		depthTwoPathSystemWithMultiPaths = t.evalTestQuery(
+				"using rp : pathSystem(rp,-->^2)").toPathSystem();
+		t
+				.evalTestQuery("theElement(from v:V{junctions.Plaza} with v.name = 'L\u00f6hr-Center' report v end) store as loehrCenter");
+		multipleDepthPathSystemWithMultiPaths = t
+				.evalTestQuery(
+						"using loehrCenter: pathSystem(loehrCenter, <->{connections.Street}+)")
+				.toPathSystem();
+		System.out.println(multipleDepthPathSystemWithMultiPaths);
 	}
 
 	@Before
