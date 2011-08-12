@@ -48,7 +48,13 @@ import java.util.Set;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.pcollections.PMap;
+import org.pcollections.PSet;
+import org.pcollections.PVector;
 
+import de.uni_koblenz.ist.pcollections.ArrayPMap;
+import de.uni_koblenz.ist.pcollections.ArrayPSet;
+import de.uni_koblenz.ist.pcollections.ArrayPVector;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.GraphException;
@@ -793,19 +799,19 @@ public class TransactionImplTest {
 
 		c1Impl.set_testEnum(TestEnum.Test1);
 
-		List<TestRecord> list1 = motorwayMap.createList();
-		c1Impl.set_testList(list1);
+		PVector<TestRecord> tl = ArrayPVector.empty();
+		c1Impl.set_testList(tl);
 
-		Map<String, String> map1 = motorwayMap.createMap();
-		c1Impl.set_testMap(map1);
+		PVector<String> list = ArrayPVector.empty();
 
-		Set<String> set1 = motorwayMap.createSet();
-		c1Impl.set_testSet(set1);
+		PMap<String, String> map = ArrayPMap.empty();
+		c1Impl.set_testMap(map);
 
-		List<String> list2 = motorwayMap.createList();
-		Set<String> set2 = motorwayMap.createSet();
-		c1Impl.set_testRecord(motorwayMap.createTestRecord("test", list2, set2,
-				2, 2D, 2L, false));
+		PSet<String> set = ArrayPSet.empty();
+		c1Impl.set_testSet(set);
+
+		c1Impl.set_testRecord(new TestRecord("test", list, set, 2, 2D, 2L,
+				false));
 
 		Map<AttributedElement, Set<VersionedDataObject<?>>> changedAttributesMap = new HashMap<AttributedElement, Set<VersionedDataObject<?>>>();
 		changedAttributesMap.put(c1, c1Impl.attributes());

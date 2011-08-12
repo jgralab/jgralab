@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.pcollections.PMap;
+
+import de.uni_koblenz.ist.pcollections.ArrayPMap;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.gretl.template.CreateEdge;
@@ -49,7 +52,7 @@ public class TemplateGraphParser {
 		String ecName = null;
 		boolean typeIsQuery = false;
 		String arch = null;
-		Map<String, String> attrs = null;
+		PMap<String, String> attrs = null;
 		boolean copyAttributes = false;
 
 		if (tryMatch(TokenType.L_ARROW)) {
@@ -154,8 +157,8 @@ public class TemplateGraphParser {
 		return vertex;
 	}
 
-	private Map<String, String> matchAttributes() {
-		Map<String, String> attrs = new HashMap<String, String>();
+	private PMap<String, String> matchAttributes() {
+		PMap<String, String> attrs = ArrayPMap.empty();
 		do {
 			if (tryMatch(TokenType.TRIPLE_DOT)) {
 				return attrs;
@@ -163,7 +166,7 @@ public class TemplateGraphParser {
 			String attrName = matchComplexToken(TokenType.IDENT).value;
 			match(TokenType.ASSIGN);
 			String val = matchComplexToken(TokenType.STRING).value;
-			attrs.put(attrName, val);
+			attrs = attrs.plus(attrName, val);
 		} while (tryMatch(TokenType.COMMA) && (match(TokenType.COMMA) != null));
 		return attrs;
 	}

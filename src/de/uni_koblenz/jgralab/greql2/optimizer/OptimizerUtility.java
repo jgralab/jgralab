@@ -39,9 +39,11 @@ package de.uni_koblenz.jgralab.greql2.optimizer;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
+import org.pcollections.PVector;
+
+import de.uni_koblenz.ist.pcollections.ArrayPVector;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
@@ -103,8 +105,8 @@ public class OptimizerUtility {
 	 *         {@link FunctionApplication} of {@link And}.
 	 */
 	public static boolean isAnd(FunctionApplication funApp) {
-		return ((FunctionId) funApp.getFirstIsFunctionIdOfIncidence().getAlpha())
-				.get_name().equals("and");
+		return ((FunctionId) funApp.getFirstIsFunctionIdOfIncidence()
+				.getAlpha()).get_name().equals("and");
 	}
 
 	/**
@@ -116,8 +118,8 @@ public class OptimizerUtility {
 	 *         {@link FunctionApplication} of {@link And}.
 	 */
 	public static boolean isOr(FunctionApplication funApp) {
-		return ((FunctionId) funApp.getFirstIsFunctionIdOfIncidence().getAlpha())
-				.get_name().equals("or");
+		return ((FunctionId) funApp.getFirstIsFunctionIdOfIncidence()
+				.getAlpha()).get_name().equals("or");
 	}
 
 	/**
@@ -129,8 +131,8 @@ public class OptimizerUtility {
 	 *         {@link FunctionApplication} of {@link And}.
 	 */
 	public static boolean isXor(FunctionApplication funApp) {
-		return ((FunctionId) funApp.getFirstIsFunctionIdOfIncidence().getAlpha())
-				.get_name().equals("xor");
+		return ((FunctionId) funApp.getFirstIsFunctionIdOfIncidence()
+				.getAlpha()).get_name().equals("xor");
 	}
 
 	/**
@@ -142,8 +144,8 @@ public class OptimizerUtility {
 	 *         {@link FunctionApplication} of {@link And}.
 	 */
 	public static boolean isNot(FunctionApplication funApp) {
-		return ((FunctionId) funApp.getFirstIsFunctionIdOfIncidence().getAlpha())
-				.get_name().equals("not");
+		return ((FunctionId) funApp.getFirstIsFunctionIdOfIncidence()
+				.getAlpha()).get_name().equals("not");
 	}
 
 	/**
@@ -159,16 +161,16 @@ public class OptimizerUtility {
 	 */
 	public static void mergeSourcePositions(Greql2Aggregation from,
 			Greql2Aggregation to) {
-		List<SourcePosition> toSourcePositions = to.get_sourcePositions();
+		PVector<SourcePosition> toSourcePositions = to.get_sourcePositions();
 		if (toSourcePositions == null) {
-			toSourcePositions = new ArrayList<SourcePosition>();
-			to.set_sourcePositions(toSourcePositions);
+			toSourcePositions = ArrayPVector.empty();
 		}
 		for (SourcePosition sp : from.get_sourcePositions()) {
 			if (!toSourcePositions.contains(sp)) {
-				toSourcePositions.add(sp);
+				toSourcePositions = toSourcePositions.plus(sp);
 			}
 		}
+		to.set_sourcePositions(toSourcePositions);
 	}
 
 	/**
@@ -208,7 +210,8 @@ public class OptimizerUtility {
 	public static void createMissingSourcePositions(Greql2 graph) {
 		for (Greql2Aggregation aggr : graph.getGreql2AggregationEdges()) {
 			if (aggr.get_sourcePositions() == null) {
-				aggr.set_sourcePositions(new ArrayList<SourcePosition>());
+				PVector<SourcePosition> l = ArrayPVector.empty();
+				aggr.set_sourcePositions(l);
 			}
 		}
 	}

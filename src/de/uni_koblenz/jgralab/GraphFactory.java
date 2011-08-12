@@ -87,25 +87,6 @@ public interface GraphFactory {
 			Class<? extends Edge> implementationClass);
 
 	/**
-	 * Creates an record of class <code>recordDomain</code> in the graph g
-	 */
-	public <T extends Record> T createRecord(Class<T> recordDomain, Graph g);
-
-	/**
-	 * Assigns an implementation class with transaction support for a
-	 * <code>Record</code>.
-	 * 
-	 * @param record
-	 * @param implementationClass
-	 */
-	public void setRecordImplementationClass(Class<? extends Record> record,
-			Class<? extends Record> implementationClass);
-
-	// -------------------------------------------------------------------------
-	// Methods for the DATABASE option.
-	// -------------------------------------------------------------------------
-
-	/**
 	 * Creates a graph with database support.
 	 * 
 	 * @param graphClass
@@ -273,35 +254,6 @@ public interface GraphFactory {
 			Class<? extends Edge> implementationClass);
 
 	/**
-	 * Creates an record with transaction support of class
-	 * <code>recordDomain</code> in the graph g
-	 */
-	public <T extends Record> T createRecordWithTransactionSupport(
-			Class<T> recordDomain, Graph g);
-
-	/**
-	 * Creates an record with database support of class
-	 * <code>recordDomain</code> in the graph g
-	 */
-	public <T extends Record> T createRecordWithDatabaseSupport(
-			Class<T> recordDomain, Graph g);
-
-	/**
-	 * Assigns an implementation class with transaction support for a
-	 * <code>Record</code>.
-	 * 
-	 * @param record
-	 * @param implementationClass
-	 */
-	public void setRecordTransactionImplementationClass(
-			Class<? extends Record> record,
-			Class<? extends Record> implementationClass);
-
-	// -------------------------------------------------------------------------
-	// Methods for the SAVEMEMIMPL option.
-	// -------------------------------------------------------------------------
-
-	/**
 	 * creates a Graph-object for the specified class with savemem support. The
 	 * returned object may be an instance of a subclass of the specified
 	 * graphClass.
@@ -365,23 +317,5 @@ public interface GraphFactory {
 	public void setEdgeSavememImplementationClass(
 			Class<? extends Edge> edgeM1Class,
 			Class<? extends Edge> implementationClass);
-
-	/**
-	 * Assigns an implementation class with savemem support for a
-	 * <code>Record</code>.
-	 * 
-	 * @param record
-	 * @param implementationClass
-	 */
-	public void setRecordSavememImplementationClass(
-			Class<? extends Record> record,
-			Class<? extends Record> implementationClass);
-
-	/**
-	 * Creates an record with savemem support of class <code>recordDomain</code>
-	 * in the graph g
-	 */
-	public <T extends Record> T createRecordWithSavememSupport(
-			Class<T> recordDomain, Graph g);
 
 }
