@@ -41,10 +41,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.LineNumberReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
@@ -65,8 +61,6 @@ import org.pcollections.PMap;
 import de.uni_koblenz.ist.pcollections.ArrayPMap;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.GraphIO;
-import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.NoSuchAttributeException;
 import de.uni_koblenz.jgralab.RandomIdGenerator;
@@ -8812,160 +8806,6 @@ public class VertexTest extends InstanceTest {
 		assertEquals(gc, v2.getGraphClass());
 		commit(anotherGraph);
 		commit(g);
-	}
-
-	// tests of the methods
-	// void writeAttributeValues(GraphIO io) throws IOException,
-	// GraphIOException;
-	// and
-	// void readAttributeValues(GraphIO io) throws GraphIOException;
-
-	/**
-	 * Test with null values.
-	 * 
-	 * @throws CommitFailedException
-	 */
-	@Test
-	public void writeReadAttributeValues0() throws GraphIOException,
-			IOException, CommitFailedException {
-		createTransaction(g);
-		DoubleSubNode v0 = g.createDoubleSubNode();
-		commit(g);
-		// test of writeAttributeValues
-		createReadOnlyTransaction(g);
-		GraphIO.saveGraphToFile("test.tg", g, null);
-		commit(g);
-		LineNumberReader reader = new LineNumberReader(
-				new FileReader("test.tg"));
-		String line = "";
-		String[] parts = null;
-		while ((line = reader.readLine()) != null) {
-			if (line.length() > 0) {
-				line = line.substring(0, line.length() - 1);
-			}
-			parts = line.split(" ");
-			createReadOnlyTransaction(g);
-			if (parts[0].equals(((Integer) v0.getId()).toString())) {
-				break;
-			}
-			commit(g);
-		}
-		assertEquals("n", parts[3]);
-		assertEquals("n", parts[4]);
-		assertEquals("0", parts[5]);
-		// test of readAttributeValues
-		VertexTestGraph loadedgraph = null;
-		switch (implementationType) {
-		case DATABASE:
-		case STANDARD:
-			loadedgraph = VertexTestSchema.instance().loadVertexTestGraph(
-					"test.tg");
-			break;
-		case TRANSACTION:
-			loadedgraph = VertexTestSchema.instance()
-					.loadVertexTestGraphWithTransactionSupport("test.tg");
-			break;
-		case SAVEMEM:
-			loadedgraph = VertexTestSchema.instance()
-					.loadVertexTestGraphWithSavememSupport("test.tg");
-			break;
-		default:
-			fail("Implementation " + implementationType
-					+ " not yet supported by this test.");
-		}
-		createReadOnlyTransaction(loadedgraph);
-		DoubleSubNode loadedv0 = loadedgraph.getFirstDoubleSubNode();
-		assertEquals(v0.get_name(), loadedv0.get_name());
-		assertEquals(v0.get_number(), loadedv0.get_number());
-		assertEquals(v0.get_nodeMap(), loadedv0.get_nodeMap());
-		commit(loadedgraph);
-		// delete created file
-		System.gc();
-		reader.close();
-		File f = new File("test.tg");
-		f.delete();
-	}
-
-	/**
-	 * Test with values.
-	 * 
-	 * @throws CommitFailedException
-	 */
-	@Test
-	public void writeReadAttributeValues1() throws GraphIOException,
-			IOException, CommitFailedException {
-		createTransaction(g);
-		DoubleSubNode v0 = g.createDoubleSubNode();
-		v0.set_name("NameVonV0");
-		v0.set_number(17);
-		PMap<Integer, String> map = ArrayPMap.empty();
-		map = map.plus(1, "First").plus(2, "Second");
-		v0.set_nodeMap(map);
-		commit(g);
-		// test of writeAttributeValues
-
-		createReadOnlyTransaction(g);
-		GraphIO.saveGraphToFile("test.tg", g, null);
-		commit(g);
-
-		LineNumberReader reader = new LineNumberReader(
-				new FileReader("test.tg"));
-		String line = "";
-		String[] parts = null;
-		while ((line = reader.readLine()) != null) {
-			if (line.length() > 0) {
-				line = line.substring(0, line.length() - 1);
-			}
-			parts = line.split(" ");
-			createReadOnlyTransaction(g);
-			if (parts[0].equals(((Integer) v0.getId()).toString())) {
-				break;
-			}
-			commit(g);
-		}
-		assertEquals("\"NameVonV0\"", parts[3]);
-		String mapString = map.toString();
-		mapString = mapString.replace("=", " - \"");
-		mapString = mapString.replace(", ", "\" ");
-		mapString = mapString.replace("}", "\"}");
-		String[] mapParts = mapString.split(" ");
-		int i = 0;
-		while (i < mapParts.length) {
-			assertEquals(mapParts[i], parts[i + 4]);
-			i++;
-		}
-		assertEquals("17", parts[i + 4]);
-		// test of readAttributeValues
-		VertexTestGraph loadedgraph = null;
-		switch (implementationType) {
-		case DATABASE:
-		case STANDARD:
-			loadedgraph = VertexTestSchema.instance().loadVertexTestGraph(
-					"test.tg");
-			break;
-		case TRANSACTION:
-			loadedgraph = VertexTestSchema.instance()
-					.loadVertexTestGraphWithTransactionSupport("test.tg");
-			break;
-		case SAVEMEM:
-			loadedgraph = VertexTestSchema.instance()
-					.loadVertexTestGraphWithSavememSupport("test.tg");
-			break;
-		default:
-			fail("Implementation " + implementationType
-					+ " not yet supported by this test.");
-		}
-		createReadOnlyTransaction(loadedgraph);
-		DoubleSubNode loadedv0 = loadedgraph.getFirstDoubleSubNode();
-		assertEquals(v0.get_name(), loadedv0.get_name());
-		assertEquals(v0.get_number(), loadedv0.get_number());
-		assertEquals(v0.get_nodeMap(), loadedv0.get_nodeMap());
-		commit(g);
-		// delete created file
-		System.gc();
-		reader.close();
-		File f = new File("test.tg");
-		f.delete();
 	}
 
 	// tests of the method Object getAttribute(String name) throws
