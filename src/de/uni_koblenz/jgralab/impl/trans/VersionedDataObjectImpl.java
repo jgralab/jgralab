@@ -38,10 +38,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.Map.Entry;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
@@ -102,8 +102,6 @@ public abstract class VersionedDataObjectImpl<E> implements
 	 * <code>persistentValue</code> should be set to <code>null</code>.
 	 */
 	private E persistentValue;
-
-	private boolean isPartOfRecord = false;
 
 	/**
 	 * This map is needed, to assign the "real" version number to a versioned
@@ -1206,16 +1204,6 @@ public abstract class VersionedDataObjectImpl<E> implements
 			}
 		}
 		return false;
-	}
-
-	@Override
-	public boolean isPartOfRecord() {
-		return isPartOfRecord;
-	}
-
-	@Override
-	public void setPartOfRecord(boolean isPartOfRecord) {
-		this.isPartOfRecord = isPartOfRecord;
 	}
 
 	/**

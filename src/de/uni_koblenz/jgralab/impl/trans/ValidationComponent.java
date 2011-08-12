@@ -35,8 +35,8 @@
 package de.uni_koblenz.jgralab.impl.trans;
 
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
@@ -411,9 +411,8 @@ public class ValidationComponent {
 														.containsKey(vertex.nextVertex
 																.getLatestPersistentValue())
 														&& transaction.changedVseqVertices
-																.get(
-																		vertex.nextVertex
-																				.getLatestPersistentValue())
+																.get(vertex.nextVertex
+																		.getLatestPersistentValue())
 																.keySet()
 																.contains(
 																		ListPosition.PREV) && vertex.nextVertex
@@ -477,9 +476,8 @@ public class ValidationComponent {
 														.containsKey(vertex.prevVertex
 																.getLatestPersistentValue())
 														&& transaction.changedVseqVertices
-																.get(
-																		vertex.prevVertex
-																				.getLatestPersistentValue())
+																.get(vertex.prevVertex
+																		.getLatestPersistentValue())
 																.keySet()
 																.contains(
 																		ListPosition.NEXT) && vertex.prevVertex
@@ -596,9 +594,8 @@ public class ValidationComponent {
 															.containsKey(edge.nextEdge
 																	.getLatestPersistentValue())
 															&& transaction.changedEseqEdges
-																	.get(
-																			edge.nextEdge
-																					.getLatestPersistentValue())
+																	.get(edge.nextEdge
+																			.getLatestPersistentValue())
 																	.keySet()
 																	.contains(
 																			ListPosition.PREV) || edge.nextEdge
@@ -663,9 +660,8 @@ public class ValidationComponent {
 														.containsKey(edge.prevEdge
 																.getLatestPersistentValue())
 														&& transaction.changedEseqEdges
-																.get(
-																		edge.prevEdge
-																				.getLatestPersistentValue())
+																.get(edge.prevEdge
+																		.getLatestPersistentValue())
 																.keySet()
 																.contains(
 																		ListPosition.NEXT) && edge.prevEdge
@@ -769,8 +765,9 @@ public class ValidationComponent {
 							boolean movedIncidence = entry.getValue();
 							switch (entry.getKey()) {
 							case PREV: {
-								if (!prevIncidence.getTemporaryValue(
-										transaction).getNormalEdge().isValid()
+								if (!prevIncidence
+										.getTemporaryValue(transaction)
+										.getNormalEdge().isValid()
 										&& (transaction.addedEdges == null || transaction.addedEdges
 												.contains(prevIncidence
 														.getTemporaryValue(
@@ -841,9 +838,8 @@ public class ValidationComponent {
 															.containsKey(nextIncidence
 																	.getLatestPersistentValue())
 															&& transaction.changedIncidences
-																	.get(
-																			nextIncidence
-																					.getLatestPersistentValue())
+																	.get(nextIncidence
+																			.getLatestPersistentValue())
 																	.keySet()
 																	.contains(
 																			ListPosition.PREV) && nextIncidence
@@ -867,8 +863,9 @@ public class ValidationComponent {
 								break;
 							}
 							case NEXT: {
-								if (!nextIncidence.getTemporaryValue(
-										transaction).getNormalEdge().isValid()
+								if (!nextIncidence
+										.getTemporaryValue(transaction)
+										.getNormalEdge().isValid()
 										&& (transaction.addedEdges == null || transaction.addedEdges
 												.contains(nextIncidence
 														.getTemporaryValue(
@@ -937,9 +934,8 @@ public class ValidationComponent {
 														.containsKey(prevIncidence
 																.getLatestPersistentValue())
 														&& transaction.changedIncidences
-																.get(
-																		prevIncidence
-																				.getLatestPersistentValue())
+																.get(prevIncidence
+																		.getLatestPersistentValue())
 																.keySet()
 																.contains(
 																		ListPosition.NEXT) && prevIncidence
@@ -1157,7 +1153,7 @@ public class ValidationComponent {
 		Set<VersionedDataObject<?>> versionedDataObjects = transaction
 				.getRemainingVersionedDataObjects();
 		for (VersionedDataObject<?> vdo : versionedDataObjects) {
-			if (vdo.isCloneable() || vdo.isPartOfRecord()) {
+			if (vdo.isCloneable()) {
 				boolean conflict = isAttributeInConflict(vdo);
 				if (conflict) {
 					conflictReason = "A lost update has been detected for the versioned dataobject "
