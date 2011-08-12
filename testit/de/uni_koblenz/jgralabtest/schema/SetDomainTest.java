@@ -48,9 +48,9 @@ public class SetDomainTest extends CollectionDomainTest {
 	public void init() {
 		super.init();
 		// Initializing of DomainTest
-		expectedDomainName = "Set<Integer>";
-		expectedJavaAttributeImplementationTypeName = "java.util.Set<Integer>";
-		expectedJavaClassName = "java.util.Set<Integer>";
+		expectedDomainName = "PSet<Integer>";
+		expectedJavaAttributeImplementationTypeName = "org.pcollections.PSet<Integer>";
+		expectedJavaClassName = "org.pcollections.PSet<Integer>";
 		expectedTgTypeName = "Set<Integer>";
 		expectedStringRepresentation = "domain Set<domain Integer>";
 		expectedQualifiedName1 = "Set<Integer>";

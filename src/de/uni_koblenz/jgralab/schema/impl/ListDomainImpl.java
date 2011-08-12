@@ -76,17 +76,14 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 	@Override
 	public String getJavaAttributeImplementationTypeName(
 			String schemaRootPackagePrefix) {
-		return "java.util." + LISTDOMAIN_NAME + "<"
+		return LISTDOMAIN_TYPE + "<"
 				+ baseDomain.getJavaClassName(schemaRootPackagePrefix) + ">";
 	}
 
 	@Override
 	public String getTransactionJavaAttributeImplementationTypeName(
 			String schemaRootPackagePrefix) {
-		return "de.uni_koblenz.jgralab.impl.trans.JGraLabListImpl<"
-				+ baseDomain
-						.getTransactionJavaClassName(schemaRootPackagePrefix)
-				+ ">";
+		return getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
 	}
 
 	@Override
@@ -96,15 +93,12 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 
 	@Override
 	public String getTransactionJavaClassName(String schemaRootPackagePrefix) {
-		// return "de.uni_koblenz.jgralab.impl.trans.JGraLabListImpl";
-		// return
-		// getTransactionJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
 		return getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
 	}
 
 	@Override
 	public String getVersionedClass(String schemaRootPackagePrefix) {
-		return "de.uni_koblenz.jgralab.impl.trans.VersionedJGraLabCloneableImpl<"
+		return "de.uni_koblenz.jgralab.impl.trans.VersionedReferenceImpl<"
 				+ getTransactionJavaAttributeImplementationTypeName(schemaRootPackagePrefix)
 				+ ">";
 	}
@@ -144,32 +138,27 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 	private void internalGetReadMethod(CodeList code, String schemaPrefix,
 			String variableName, String graphIoVariableName) {
 		code.setVariable("name", variableName);
-		code.setVariable("tmpname", "$" + variableName);
-		code.setVariable("basedom", getBaseDomain().getJavaClassName(
-				schemaPrefix));
+		code.setVariable("empty", ListDomain.EMPTY_LIST);
+		code.setVariable("basedom",
+				getBaseDomain().getJavaClassName(schemaPrefix));
 		code.setVariable("basetype", getBaseDomain()
 				.getJavaAttributeImplementationTypeName(schemaPrefix));
 		code.setVariable("io", graphIoVariableName);
 
 		code.addNoIndent(new CodeSnippet("#init#"));
 		code.addNoIndent(new CodeSnippet("if (#io#.isNextToken(\"[\")) {"));
-		code
-				.add(new CodeSnippet(
-						"java.util.LinkedList<#basedom#> #tmpname# = new java.util.LinkedList<#basedom#>();",
-						"#io#.match(\"[\");",
-						"while (!#io#.isNextToken(\"]\")) {"));
+		code.add(new CodeSnippet("#name# = #empty#;", "#io#.match(\"[\");",
+				"while (!#io#.isNextToken(\"]\")) {"));
 		if (getBaseDomain().isComposite()) {
 			code.add(new CodeSnippet("\t#basetype# $#name#Element = null;"));
 		} else {
 			code.add(new CodeSnippet("\t#basetype# $#name#Element;"));
 		}
-		code.add(getBaseDomain().getReadMethod(schemaPrefix,
-				"$" + variableName + "Element", graphIoVariableName), 1);
-		code.add(new CodeSnippet("\t#tmpname#.add($#name#Element);", "}",
-				"#io#.match(\"]\");"));
-		code.add(new CodeSnippet(
-				"#name# = #theGraph#.createList(#tmpname#.size());"));
-		code.add(new CodeSnippet("#name#.addAll(#tmpname#);"));
+		code.add(
+				getBaseDomain().getReadMethod(schemaPrefix,
+						"$" + variableName + "Element", graphIoVariableName), 1);
+		code.add(new CodeSnippet("\t#name# = #name#.plus($#name#Element);",
+				"}", "#io#.match(\"]\");"));
 		code.addNoIndent(new CodeSnippet(
 				"} else if (#io#.isNextToken(GraphIO.NULL_LITERAL)) {"));
 
@@ -180,9 +169,10 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 	private void internalGetWriteMethod(CodeList code,
 			String schemaRootPackagePrefix, String variableName,
 			String graphIoVariableName) {
-		code.setVariable("basedom", getBaseDomain().getJavaClassName(
-				schemaRootPackagePrefix));
-		code.setVariable("basetype",
+		code.setVariable("basedom",
+				getBaseDomain().getJavaClassName(schemaRootPackagePrefix));
+		code.setVariable(
+				"basetype",
 				getBaseDomain().getJavaAttributeImplementationTypeName(
 						schemaRootPackagePrefix));
 		code.setVariable("io", graphIoVariableName);
@@ -195,8 +185,9 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 		code.addNoIndent(new CodeSnippet("if (#name# != null) {"));
 		code.add(new CodeSnippet("#io#.writeSpace();", "#io#.write(\"[\");",
 				"#io#.noSpace();", "for (#basetype# #element# : #name#) {"));
-		code.add(getBaseDomain().getWriteMethod(schemaRootPackagePrefix,
-				code.getVariable("element"), graphIoVariableName), 1);
+		code.add(
+				getBaseDomain().getWriteMethod(schemaRootPackagePrefix,
+						code.getVariable("element"), graphIoVariableName), 1);
 		code.add(new CodeSnippet("}", "#io#.write(\"]\");", "#io#.space();"));
 		code.addNoIndent(new CodeSnippet("} else {"));
 		code.add(new CodeSnippet(graphIoVariableName
@@ -208,7 +199,7 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 	public CodeBlock getTransactionReadMethod(String schemaPrefix,
 			String variableName, String graphIoVariableName) {
 		CodeList code = new CodeList();
-		code.setVariable("init", "java.util.List<#basedom#> #name# = null;");
+		code.setVariable("init", LISTDOMAIN_TYPE + "<#basedom#> #name# = null;");
 		internalGetReadMethod(code, schemaPrefix, variableName,
 				graphIoVariableName);
 		return code;

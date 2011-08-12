@@ -86,8 +86,8 @@ public class MapDomainTest extends CompositeDomainTest {
 		otherDomain1 = schema1.createMapDomain(keyDomain1, otherValueDomain);
 		Domain otherKeyDomain = schema1.getDomain("String");
 		otherDomain2 = schema1.createMapDomain(otherKeyDomain, valueDomain1);
-		expectedJavaAttributeImplementationTypeName = "java.util.Map<Integer, Boolean>";
-		expectedJavaClassName = "java.util.Map<Integer, Boolean>";
+		expectedJavaAttributeImplementationTypeName = "org.pcollections.PMap<Integer, Boolean>";
+		expectedJavaClassName = "org.pcollections.PMap<Integer, Boolean>";
 		expectedPackage1 = "";
 		expectedPackage2 = "";
 		expectedPathName1 = "";

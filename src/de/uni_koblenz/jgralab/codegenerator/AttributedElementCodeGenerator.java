@@ -41,7 +41,6 @@ import java.util.TreeSet;
 
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
-import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
 
@@ -372,11 +371,6 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 			addCheckValidityCode(code);
 			code.add("\tif (_#name# == null)", "\t\treturn #initValue#;",
 					"\t#ttype# value = _#name#.getValidValue(#theGraph#.getCurrentTransaction());");
-
-			if (attr.getDomain().isComposite()) {
-				code.add("\tif(_#name# != null && value != null)");
-				code.add("\t\tvalue.setName(this + \":#name#\");");
-			}
 			code.add("\treturn (value == null) ? #initValue# : value;", "}");
 			break;
 		}
@@ -415,7 +409,6 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 			code.add("}");
 			break;
 		case TRANSIMPL:
-			Domain domain = attr.getDomain();
 			// setter for transaction support
 			code.setVariable(
 					"ttype",
@@ -425,42 +418,19 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 			code.setVariable("vclass",
 					attr.getDomain().getVersionedClass(schemaRootPackageName));
 
-			if (!(domain instanceof RecordDomain)) {
-				code.setVariable("initLoading",
-						"new #vclass#(this, _#name#, \"#name#\");");
-			} else {
-				code.setVariable("initLoading",
-						"new #vclass#(this, (#ttype) _#name#, \"#name#\");");
-			}
+			code.setVariable("initLoading",
+					"new #vclass#(this, _#name#, \"#name#\");");
 			code.setVariable("init", "new #vclass#(this);");
 
 			code.add("public void set_#name#(#type# _#name#) {");
 			addCheckValidityCode(code);
-
-			if (domain.isComposite()) {
-				addImports("#jgTransPackage#.JGraLabTransactionCloneable");
-				addImports("#jgPackage#.GraphException");
-				code.setVariable("tclassname", attr.getDomain()
-						.getTransactionJavaClassName(schemaRootPackageName));
-				code.add("\tif(_#name# != null && !(_#name# instanceof #jgTransPackage#.JGraLabTransactionCloneable))");
-				code.add("\t\tthrow new GraphException(\"The given parameter of type #dname# doesn't support transactions.\");");
-				code.add("\tif(_#name# != null && ((#jgTransPackage#.JGraLabTransactionCloneable)_#name#).getGraph() != #theGraph#)");
-				code.add("\t\tthrow new GraphException(\"The given parameter of type #dname# belongs to another graph.\");");
-				code.setVariable("initLoading",
-						"new #vclass#(this, (#ttype#) _#name#, \"#name#\");");
-			}
-
-			code.add("\tif(#theGraph#.isLoading())",
+			code.add(
+					"\tif(#theGraph#.isLoading())",
 					"\t\tthis._#name# = #initLoading#",
 					"\tif(this._#name# == null) {",
 					"\t\tthis._#name# = #init#",
-					"\t\tthis._#name#.setName(\"#name#\");", "\t}");
-
-			if (domain.isComposite()) {
-				code.add("\tif(_#name# != null)");
-				code.add("\t((JGraLabTransactionCloneable)_#name#).setName(this + \":#name#\");");
-			}
-			code.add(
+					"\t\tthis._#name#.setName(\"#name#\");",
+					"\t}",
 					"\tthis._#name#.setValidValue((#ttype#) _#name#, #theGraph#.getCurrentTransaction());",
 					"\tattributeChanged(this._#name#);", "\tgraphModified();",
 					"}");

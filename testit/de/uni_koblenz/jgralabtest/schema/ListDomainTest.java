@@ -49,8 +49,8 @@ public class ListDomainTest extends CollectionDomainTest {
 		super.init();
 		// Initializing of DomainTest
 		expectedDomainName = "List<Integer>";
-		expectedJavaAttributeImplementationTypeName = "java.util.List<Integer>";
-		expectedJavaClassName = "java.util.List<Integer>";
+		expectedJavaAttributeImplementationTypeName = "org.pcollections.PVector<Integer>";
+		expectedJavaClassName = "org.pcollections.PVector<Integer>";
 		expectedTgTypeName = "List<Integer>";
 		expectedStringRepresentation = "domain List<domain Integer>";
 		expectedQualifiedName1 = "List<Integer>";

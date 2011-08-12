@@ -34,17 +34,9 @@
  */
 package de.uni_koblenz.jgralab.impl.std;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import de.uni_koblenz.jgralab.Edge;
-import de.uni_koblenz.jgralab.GraphIO;
-import de.uni_koblenz.jgralab.GraphIOException;
-import de.uni_koblenz.jgralab.JGraLabList;
-import de.uni_koblenz.jgralab.JGraLabMap;
-import de.uni_koblenz.jgralab.JGraLabSet;
-import de.uni_koblenz.jgralab.Record;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.EdgeBaseImpl;
 import de.uni_koblenz.jgralab.impl.FreeIndexList;
@@ -340,93 +332,10 @@ public abstract class GraphImpl extends
 	public final boolean hasSavememSupport() {
 		return false;
 	}
-	
+
 	@Override
-	public final boolean hasDatabaseSupport(){
+	public final boolean hasDatabaseSupport() {
 		return false;
-	}
-
-	@Override
-	public <T> JGraLabList<T> createList() {
-		return new JGraLabListImpl<T>();
-	}
-
-	@Override
-	public <T> JGraLabList<T> createList(Collection<? extends T> collection) {
-		return new JGraLabListImpl<T>(collection);
-	}
-
-	@Override
-	public <T> JGraLabList<T> createList(int initialCapacity) {
-		return new JGraLabListImpl<T>(initialCapacity);
-	}
-
-	@Override
-	public <T> JGraLabSet<T> createSet() {
-		return new JGraLabSetImpl<T>();
-	}
-
-	@Override
-	public <T> JGraLabSet<T> createSet(Collection<? extends T> collection) {
-		return new JGraLabSetImpl<T>(collection);
-	}
-
-	@Override
-	public <T> JGraLabSet<T> createSet(int initialCapacity) {
-		return new JGraLabSetImpl<T>(initialCapacity);
-	}
-
-	@Override
-	public <T> JGraLabSet<T> createSet(int initialCapacity, float loadFactor) {
-		return new JGraLabSetImpl<T>(initialCapacity, loadFactor);
-	}
-
-	@Override
-	public <K, V> JGraLabMap<K, V> createMap() {
-		return new JGraLabMapImpl<K, V>();
-	}
-
-	@Override
-	public <K, V> JGraLabMap<K, V> createMap(Map<? extends K, ? extends V> map) {
-		return new JGraLabMapImpl<K, V>(map);
-	}
-
-	@Override
-	public <K, V> JGraLabMap<K, V> createMap(int initialCapacity) {
-		return new JGraLabMapImpl<K, V>(initialCapacity);
-	}
-
-	@Override
-	public <K, V> JGraLabMap<K, V> createMap(int initialCapacity,
-			float loadFactor) {
-		return new JGraLabMapImpl<K, V>(initialCapacity, loadFactor);
-	}
-
-	@Override
-	public <T extends Record> T createRecord(Class<T> recordClass, GraphIO io) {
-		T record = graphFactory.createRecord(recordClass, this);
-		try {
-			record.readComponentValues(io);
-		} catch (GraphIOException e) {
-			e.printStackTrace();
-		}
-		return record;
-	}
-
-	@Override
-	public <T extends Record> T createRecord(Class<T> recordClass,
-			Map<String, Object> fields) {
-		T record = graphFactory.createRecord(recordClass, this);
-		record.setComponentValues(fields);
-		return record;
-	}
-
-	@Override
-	public <T extends Record> T createRecord(Class<T> recordClass,
-			Object... components) {
-		T record = graphFactory.createRecord(recordClass, this);
-		record.setComponentValues(components);
-		return record;
 	}
 
 	@Override
