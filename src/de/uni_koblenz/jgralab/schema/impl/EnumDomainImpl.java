@@ -200,4 +200,9 @@ public final class EnumDomainImpl extends DomainImpl implements EnumDomain {
 	public String getInitialValue() {
 		return "null";
 	}
+
+	@Override
+	public boolean isPrimitive() {
+		return false;
+	}
 }

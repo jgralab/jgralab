@@ -126,7 +126,8 @@ public final class SetDomainImpl extends CollectionDomainImpl implements
 
 		code.addNoIndent(new CodeSnippet("#init#"));
 		code.addNoIndent(new CodeSnippet("if (#io#.isNextToken(\"{\")) {"));
-		code.add(new CodeSnippet("#name# = #empty#;"));
+		code.add(new CodeSnippet(SETDOMAIN_TYPE
+				+ "<#basedom#> $#name# = #empty#;"));
 		code.add(new CodeSnippet("#io#.match(\"{\");",
 				"while (!#io#.isNextToken(\"}\")) {"));
 		if (getBaseDomain().isComposite()) {
@@ -137,12 +138,12 @@ public final class SetDomainImpl extends CollectionDomainImpl implements
 		code.add(
 				getBaseDomain().getReadMethod(schemaRootPackagePrefix,
 						"$" + variableName + "Element", graphIoVariableName), 1);
-		code.add(new CodeSnippet("\t#name# = #name#.plus($#name#Element);",
-				"}", "#io#.match(\"}\");", "#io#.space();"));
+		code.add(new CodeSnippet("\t$#name# = $#name#.plus($#name#Element);",
+				"}", "#io#.match(\"}\");", "#name# = $#name#;"));
 		code.addNoIndent(new CodeSnippet(
 				"} else if (#io#.isNextToken(GraphIO.NULL_LITERAL)) {"));
-		code.add(new CodeSnippet("#io#.match();"));
-		code.addNoIndent(new CodeSnippet("}"));
+		code.add(new CodeSnippet("#io#.match();", "#name# = null;"));
+		code.addNoIndent(new CodeSnippet("} else {", "\t#name# = null;", "}"));
 	}
 
 	private void internalGetWriteMethod(CodeList code,

@@ -244,9 +244,8 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		for (Attribute attr : attrSet) {
 			CodeSnippet s = new CodeSnippet();
 			s.setVariable("name", attr.getName());
-			s.setVariable("isOrGet",
-					attr.getDomain().getJavaClassName(schemaRootPackageName)
-							.equals("Boolean") ? "is" : "get");
+			s.setVariable("isOrGet", attr.getDomain().isBoolean() ? "is"
+					: "get");
 			s.setVariable("cName", attr.getName());
 			s.add("if (attributeName.equals(\"#name#\")) return #isOrGet#_#cName#();");
 			code.add(s);
@@ -345,9 +344,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		code.setVariable("name", attr.getName());
 		code.setVariable("type", attr.getDomain()
 				.getJavaAttributeImplementationTypeName(schemaRootPackageName));
-		code.setVariable("isOrGet",
-				attr.getDomain().getJavaClassName(schemaRootPackageName)
-						.equals("Boolean") ? "is" : "get");
+		code.setVariable("isOrGet", attr.getDomain().isBoolean() ? "is" : "get");
 
 		switch (currentCycle) {
 		case ABSTRACT:
