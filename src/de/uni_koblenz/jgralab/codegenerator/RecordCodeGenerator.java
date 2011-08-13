@@ -120,28 +120,25 @@ public class RecordCodeGenerator extends CodeGenerator {
 
 	private CodeBlock createMapConstructor() {
 		CodeList code = new CodeList();
+		code.setVariable("rcname", recordDomain.getQualifiedName());
 
 		code.addNoIndent(new CodeSnippet(true,
 				"public #simpleClassName#(java.util.Map<String, Object> componentValues) {"));
 		code.add(new CodeSnippet(
-				"throw new RuntimeException(\"Not yet implemented\");"));
-		// TODO (ido) implement!!
-		// StringBuilder sb = new StringBuilder();
-		// String delim = "";
-		// for (RecordComponent rdc : recordDomain.getComponents()) {
-		// sb.append(delim);
-		// delim = ", ";
-		// sb.append(rdc.getDomain().getJavaAttributeImplementationTypeName(
-		// schemaRootPackageName));
-		// sb.append(" _");
-		// sb.append(rdc.getName());
-		//
-		// CodeBlock assign = null;
-		// assign = new CodeSnippet("this._#name# = _#name#;");
-		// assign.setVariable("name", rdc.getName());
-		// code.add(assign);
-		// }
-		// header.setVariable("fields", sb.toString());
+				"for (String comp: componentValues.keySet()) {"));
+		for (RecordComponent rdc : recordDomain.getComponents()) {
+			CodeBlock assign = new CodeSnippet(
+					"\tif (comp.equals(\"#name#\")) {",
+					"\t\t_#name# = (#cls#)componentValues.get(comp);",
+					"\t\tcontinue;", "\t}");
+			assign.setVariable("name", rdc.getName());
+			assign.setVariable("cls",
+					rdc.getDomain().getJavaClassName(schemaRootPackageName));
+			code.add(assign);
+		}
+		code.add(new CodeSnippet(
+				"\tthrow new NoSuchAttributeException(\"#rcname# doesn't contain an attribute '\" + comp + \"'\");",
+				"}"));
 		code.addNoIndent(new CodeSnippet("}"));
 		return code;
 	}
