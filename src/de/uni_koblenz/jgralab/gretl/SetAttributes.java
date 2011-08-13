@@ -1,5 +1,6 @@
 package de.uni_koblenz.jgralab.gretl;
 
+import java.lang.reflect.Constructor;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,6 +10,7 @@ import org.pcollections.PMap;
 
 import de.uni_koblenz.ist.pcollections.ArrayPMap;
 import de.uni_koblenz.jgralab.AttributedElement;
+import de.uni_koblenz.jgralab.Record;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueMap;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueRecord;
@@ -135,12 +137,18 @@ public class SetAttributes extends
 		return val.toObject();
 	}
 
-	private Object convertJValueRecordToRecord(JValueRecord jrec) {
-		throw new RuntimeException("Not yet implemented");
+	@SuppressWarnings("unchecked")
+	private Record convertJValueRecordToRecord(JValueRecord jrec) {
 		// TODO (ido) implement construction via reflection
-		// Map<String, Object> compVals = jrec.toObject();
-		// RecordDomain rd = (RecordDomain) attribute.getDomain();
-		// return context.targetGraph.createRecord(
-		// (Class<? extends Record>) rd.getM1Class(), compVals);
+		RecordDomain rd = (RecordDomain) attribute.getDomain();
+		Constructor<? extends Record> c;
+		try {
+			c = (Constructor<? extends Record>) rd.getM1Class().getConstructor(
+					Map.class);
+			Map<String, Object> compVals = jrec.toObject();
+			return c.newInstance(compVals);
+		} catch (Exception e) {
+			throw new RuntimeException("Can't convert JValue to Record", e);
+		}
 	}
 }
