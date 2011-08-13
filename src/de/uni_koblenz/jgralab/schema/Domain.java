@@ -88,6 +88,16 @@ public interface Domain extends NamedElement {
 	public boolean isComposite();
 
 	/**
+	 * @return true if this domain is a primitive type
+	 */
+	public boolean isPrimitive();
+
+	/**
+	 * @return true if this domain is a primitive type
+	 */
+	public boolean isBoolean();
+
+	/**
 	 * example: Integer for integer List<Boolean> for a list with basedomain
 	 * boolean
 	 * 

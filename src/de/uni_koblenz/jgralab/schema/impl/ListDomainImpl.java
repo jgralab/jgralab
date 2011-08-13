@@ -147,7 +147,8 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 
 		code.addNoIndent(new CodeSnippet("#init#"));
 		code.addNoIndent(new CodeSnippet("if (#io#.isNextToken(\"[\")) {"));
-		code.add(new CodeSnippet("#name# = #empty#;", "#io#.match(\"[\");",
+		code.add(new CodeSnippet(LISTDOMAIN_TYPE
+				+ "<#basedom#> $#name# = #empty#;", "#io#.match(\"[\");",
 				"while (!#io#.isNextToken(\"]\")) {"));
 		if (getBaseDomain().isComposite()) {
 			code.add(new CodeSnippet("\t#basetype# $#name#Element = null;"));
@@ -157,13 +158,13 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 		code.add(
 				getBaseDomain().getReadMethod(schemaPrefix,
 						"$" + variableName + "Element", graphIoVariableName), 1);
-		code.add(new CodeSnippet("\t#name# = #name#.plus($#name#Element);",
-				"}", "#io#.match(\"]\");"));
+		code.add(new CodeSnippet("\t$#name# = $#name#.plus($#name#Element);",
+				"}", "#io#.match(\"]\");", "#name# = $#name#;"));
 		code.addNoIndent(new CodeSnippet(
 				"} else if (#io#.isNextToken(GraphIO.NULL_LITERAL)) {"));
 
-		code.add(new CodeSnippet("#io#.match();"));
-		code.addNoIndent(new CodeSnippet("}"));
+		code.add(new CodeSnippet("#io#.match(); ", "#name# = null;"));
+		code.addNoIndent(new CodeSnippet("} else {", "\t#name# = null;", "}"));
 	}
 
 	private void internalGetWriteMethod(CodeList code,

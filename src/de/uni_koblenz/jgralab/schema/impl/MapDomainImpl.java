@@ -195,7 +195,8 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 
 		code.addNoIndent(new CodeSnippet("#init#"));
 		code.addNoIndent(new CodeSnippet("if (#io#.isNextToken(\"{\")) {"));
-		code.add(new CodeSnippet("#name# = #empty#;"));
+		code.add(new CodeSnippet(MAPDOMAIN_TYPE
+				+ "<#keydom#, #valuedom#> $#name# = #empty#;"));
 		code.add(new CodeSnippet("#io#.match(\"{\");",
 				"while (!#io#.isNextToken(\"}\")) {"));
 
@@ -218,12 +219,12 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 				getValueDomain().getReadMethod(schemaRootPackagePrefix,
 						variableName + "Value", graphIoVariableName), 1);
 		code.add(new CodeSnippet(
-				"\t#name# = #name#.plus(#name#Key, #name#Value);", "}",
-				"#io#.match(\"}\");"));
+				"\t$#name# = $#name#.plus(#name#Key, #name#Value);", "}",
+				"#io#.match(\"}\");", "#name# = $#name#;"));
 		code.addNoIndent(new CodeSnippet(
 				"} else if (#io#.isNextToken(GraphIO.NULL_LITERAL)) {"));
 		code.add(new CodeSnippet("#io#.match();", "#name# = null;"));
-		code.addNoIndent(new CodeSnippet("}"));
+		code.addNoIndent(new CodeSnippet("} else {", "\t#name# = null;", "}"));
 	}
 
 	private void internalGetWriteMethod(CodeList code,
