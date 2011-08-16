@@ -615,6 +615,7 @@ public abstract class GraphBaseImpl implements Graph {
 	public synchronized void deleteEdge(Edge e) {
 		assert (e != null) && e.isValid() && containsEdge(e);
 		internalDeleteEdge(e);
+		edgeListModified();
 	}
 
 	/*
@@ -629,6 +630,24 @@ public abstract class GraphBaseImpl implements Graph {
 
 		getDeleteVertexList().add((VertexBaseImpl) v);
 		internalDeleteVertex();
+	}
+	
+	/**
+	 * Callback function for triggered actions just after the edge
+	 * <code>e</code> was deleted from this Graph. Override this method to
+	 * implement user-defined behaviour upon deletion of edges. Note that any
+	 * changes to this graph are forbidden.
+	 * 
+	 * Needed for transaction support.
+	 * 
+	 * @param e
+	 *            the deleted Edge
+	 * @param oldAlpha
+	 *            the alpha-vertex before deletion
+	 * @param oldOmega
+	 *            the omega-vertex before deletion
+	 */
+	protected void edgeAfterDeleted(Edge e, Vertex oldAlpha, Vertex oldOmega) {
 	}
 
 	/**
@@ -1047,7 +1066,7 @@ public abstract class GraphBaseImpl implements Graph {
 		omega.incidenceListModified();
 
 		removeEdgeFromESeq(e);
-		edgeListModified();
+		edgeAfterDeleted(e, alpha, omega);
 	}
 
 	protected void internalEdgeDeleted(EdgeBaseImpl e) {
@@ -1083,6 +1102,7 @@ public abstract class GraphBaseImpl implements Graph {
 			}
 			removeVertexFromVSeq(v);
 			vertexListModified();
+			vertexAfterDeleted(v);
 		}
 	}
 
@@ -1528,6 +1548,17 @@ public abstract class GraphBaseImpl implements Graph {
 	public void setLoading(boolean isLoading) {
 		loading = isLoading;
 	}
+	
+	/**
+	 * Callback function for triggered actions just after the vertex
+	 * <code>v</code> was deleted from this Graph. Override this method to
+	 * implement user-defined behaviour upon deletion of vertices. Note that any
+	 * changes to this graph are forbidden.
+	 * 
+	 * @param v
+	 *            the deleted vertex
+	 */
+	abstract protected void vertexAfterDeleted(Vertex v);
 
 	/**
 	 * Changes the vertex sequence version of this graph. Should be called

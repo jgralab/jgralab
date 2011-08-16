@@ -681,7 +681,8 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	 *            Postcondition: Vertex is not in cache, no longer persistent in
 	 *            database and set to deleted.
 	 */
-	private void vertexAfterDeleted(Vertex vertexToBeDeleted) {
+	@Override
+	protected void vertexAfterDeleted(Vertex vertexToBeDeleted) {
 		assert vertexToBeDeleted != null;
 		DatabasePersistableVertex vertex = (DatabasePersistableVertex) vertexToBeDeleted;
 		graphCache.removeVertex(this, vertex.getId());
@@ -710,14 +711,11 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	
 	@Override
 	public void deleteEdge(Edge e) {
-		Vertex alpha = e.getAlpha();
-		Vertex omega = e.getOmega();
-		
 		super.deleteEdge(e);
-		edgeAfterDeleted(e, alpha, omega);
 	}
 
-	private void edgeAfterDeleted(Edge e, Vertex oldAlpha, Vertex oldOmega) {
+	@Override
+	protected void edgeAfterDeleted(Edge e, Vertex oldAlpha, Vertex oldOmega) {
 		assert e != null;
 		DatabasePersistableEdge edge = (DatabasePersistableEdge) e;
 		if (edge.isPersistent()) {
