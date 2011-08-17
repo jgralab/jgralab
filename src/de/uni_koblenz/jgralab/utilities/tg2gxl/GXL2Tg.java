@@ -24,9 +24,9 @@ import javax.xml.stream.events.XMLEvent;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionGroup;
+import org.pcollections.ArrayPVector;
 import org.pcollections.PVector;
 
-import de.uni_koblenz.ist.pcollections.ArrayPVector;
 import de.uni_koblenz.ist.utilities.option_handler.OptionHandler;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;

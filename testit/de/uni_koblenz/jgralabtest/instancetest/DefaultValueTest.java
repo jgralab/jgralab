@@ -51,11 +51,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.pcollections.ArrayPMap;
 import org.pcollections.PMap;
 import org.pcollections.PSet;
 import org.pcollections.PVector;
 
-import de.uni_koblenz.ist.pcollections.ArrayPMap;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;

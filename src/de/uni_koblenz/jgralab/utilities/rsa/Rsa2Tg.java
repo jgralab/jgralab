@@ -113,9 +113,9 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
+import org.pcollections.ArrayPVector;
 import org.pcollections.PVector;
 
-import de.uni_koblenz.ist.pcollections.ArrayPVector;
 import de.uni_koblenz.ist.utilities.option_handler.OptionHandler;
 import de.uni_koblenz.ist.utilities.xml.XmlProcessor;
 import de.uni_koblenz.jgralab.AttributedElement;

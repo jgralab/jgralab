@@ -56,9 +56,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.pcollections.ArrayPMap;
 import org.pcollections.PMap;
 
-import de.uni_koblenz.ist.pcollections.ArrayPMap;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.ImplementationType;

@@ -34,9 +34,9 @@
  */
 package de.uni_koblenz.jgralabtest.impl.trans;
 
+import org.pcollections.ArrayPMap;
 import org.pcollections.PMap;
 
-import de.uni_koblenz.ist.pcollections.ArrayPMap;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;

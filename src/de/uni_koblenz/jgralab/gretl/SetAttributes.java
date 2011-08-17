@@ -6,9 +6,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.pcollections.ArrayPMap;
 import org.pcollections.PMap;
 
-import de.uni_koblenz.ist.pcollections.ArrayPMap;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Record;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
