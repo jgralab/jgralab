@@ -38,18 +38,21 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.pcollections.ArrayPMap;
+import org.pcollections.ArrayPSet;
+import org.pcollections.ArrayPVector;
+import org.pcollections.PMap;
+import org.pcollections.PSet;
+import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralab.trans.InvalidSavepointException;
 import de.uni_koblenz.jgralab.trans.Savepoint;
 import de.uni_koblenz.jgralab.trans.Transaction;
+import de.uni_koblenz.jgralabtest.schemas.record.BooleanType;
 import de.uni_koblenz.jgralabtest.schemas.record.Hugo;
 import de.uni_koblenz.jgralabtest.schemas.record.Link;
 import de.uni_koblenz.jgralabtest.schemas.record.Node;
@@ -86,22 +89,18 @@ public class UndoTest {
 		assertNull(graph.getFirstNode());
 
 		node2 = graph.createNode();
-		Map<Integer, String> map = graph.createMap();
-		map.put(1, "Hugo");
-		map.put(100, "Volker");
+		PMap<Integer, String> map = ArrayPMap.empty();
+		map = map.plus(1, "Hugo").plus(100, "Volker");
 		node2.set_nodeMap(map);
 		node2.set_testEnum(Hugo.A);
-		List<String> list = graph.createList();
-		list.add("Hugo");
-		list.add("Lalala");
+		PVector<String> list = ArrayPVector.empty();
+		list = list.plus("Hugo").plus("Lalala");
 		node2.set_testList(list);
-		Set<Integer> set = graph.createSet();
-		set.add(1);
-		set.add(3);
-		set.add(8);
+		PSet<Integer> set = ArrayPSet.empty();
+		set = set.plus(1).plus(3).plus(8);
 		node2.set_testSet(set);
 		node2.set_testString("Hugo");
-		node2.set_testRecord(graph.createBooleanType(true, true));
+		node2.set_testRecord(new BooleanType(true, true));
 
 		assertTrue(graph.getFirstNode() != null);
 		assertTrue(graph.getFirstNode() == node2);

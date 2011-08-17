@@ -34,11 +34,13 @@
  */
 package de.uni_koblenz.jgralabtest.impl.trans;
 
-import java.util.HashMap;
+import org.pcollections.ArrayPMap;
+import org.pcollections.PMap;
 
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
+import de.uni_koblenz.jgralabtest.schemas.record.BooleanType;
 import de.uni_koblenz.jgralabtest.schemas.record.Node;
 import de.uni_koblenz.jgralabtest.schemas.record.RecordTestGraph;
 import de.uni_koblenz.jgralabtest.schemas.record.RecordTestSchema;
@@ -54,8 +56,9 @@ public class TryRecordLoading {
 		RecordTestGraph graph = RecordTestSchema.instance()
 				.createRecordTestGraph();
 		Node node = graph.createNode();
-		node.set_nodeMap(new HashMap<Integer, String>());
-		node.set_testRecord(graph.createBooleanType(true, false));
+		PMap<Integer, String> map = ArrayPMap.empty();
+		node.set_nodeMap(map);
+		node.set_testRecord(new BooleanType(true, false));
 		graph.createLink(node, node);
 
 		// save graph to file
@@ -71,5 +74,4 @@ public class TryRecordLoading {
 		System.out.println("Success!");
 
 	}
-
 }

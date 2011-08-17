@@ -35,8 +35,10 @@
 
 package de.uni_koblenz.jgralab.schema.impl;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import org.pcollections.ArrayPVector;
+import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.codegenerator.CodeBlock;
 import de.uni_koblenz.jgralab.codegenerator.CodeGenerator;
@@ -50,7 +52,7 @@ public final class EnumDomainImpl extends DomainImpl implements EnumDomain {
 	/**
 	 * holds a list of the components of the enumeration
 	 */
-	private final List<String> constants = new ArrayList<String>();
+	private PVector<String> constants = ArrayPVector.empty();
 
 	/**
 	 * @param qn
@@ -75,11 +77,11 @@ public final class EnumDomainImpl extends DomainImpl implements EnumDomain {
 			throw new InvalidNameException(aConst
 					+ " is not a valid enumeration constant.");
 		}
-		constants.add(aConst);
+		constants = constants.plus(aConst);
 	}
 
 	@Override
-	public List<String> getConsts() {
+	public PVector<String> getConsts() {
 		return constants;
 	}
 
@@ -171,8 +173,8 @@ public final class EnumDomainImpl extends DomainImpl implements EnumDomain {
 	@Override
 	public CodeBlock getTransactionWriteMethod(String schemaRootPackagePrefix,
 			String variableName, String graphIoVariableName) {
-		return getWriteMethod(schemaRootPackagePrefix, "get"
-				+ CodeGenerator.camelCase(variableName) + "()",
+		return getWriteMethod(schemaRootPackagePrefix,
+				"get" + CodeGenerator.camelCase(variableName) + "()",
 				graphIoVariableName);
 	}
 
@@ -197,5 +199,10 @@ public final class EnumDomainImpl extends DomainImpl implements EnumDomain {
 	@Override
 	public String getInitialValue() {
 		return "null";
+	}
+
+	@Override
+	public boolean isPrimitive() {
+		return false;
 	}
 }
