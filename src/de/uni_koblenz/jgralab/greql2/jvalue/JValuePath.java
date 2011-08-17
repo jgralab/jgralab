@@ -403,24 +403,26 @@ public class JValuePath extends JValueImpl {
 		case IN:
 			for (Edge e : edges) {
 				if (e.getOmega() == vertex) {
-					returnSet.add(new JValueImpl(e));
+					returnSet.add(new JValueImpl(e.getNormalEdge()
+							.getReversedEdge()));
 				}
 			}
 			break;
 		case OUT:
 			for (Edge e : edges) {
 				if (e.getAlpha() == vertex) {
-					returnSet.add(new JValueImpl(e));
+					returnSet.add(new JValueImpl(e.getNormalEdge()));
 				}
 			}
 			break;
 		case INOUT:
 			for (Edge e : edges) {
 				if (e.getOmega() == vertex) {
-					returnSet.add(new JValueImpl(e));
+					returnSet.add(new JValueImpl(e.getNormalEdge()
+							.getReversedEdge()));
 				}
 				if (e.getAlpha() == vertex) {
-					returnSet.add(new JValueImpl(e));
+					returnSet.add(new JValueImpl(e.getNormalEdge()));
 				}
 			}
 			break;
@@ -441,10 +443,11 @@ public class JValuePath extends JValueImpl {
 		JValueSet returnSet = new JValueSet();
 		for (Edge e : edges) {
 			if (e.getOmega() == vertex) {
-				returnSet.add(new JValueImpl(e));
+				returnSet.add(new JValueImpl(e.getNormalEdge()
+						.getReversedEdge()));
 			}
 			if (e.getAlpha() == vertex) {
-				returnSet.add(new JValueImpl(e));
+				returnSet.add(new JValueImpl(e.getNormalEdge()));
 			}
 		}
 		return returnSet;
@@ -523,13 +526,13 @@ public class JValuePath extends JValueImpl {
 	 *         vertices
 	 */
 	public boolean isParallel(JValuePath path) {
-		if (path.getEndVertex() != this.getEndVertex()) {
+		if (path.getEndVertex() != getEndVertex()) {
 			return false;
 		}
-		if (path.getStartVertex() != this.getStartVertex()) {
+		if (path.getStartVertex() != getStartVertex()) {
 			return false;
 		}
-		if (path.pathLength() != this.pathLength()) {
+		if (path.pathLength() != pathLength()) {
 			return false;
 		}
 		for (int i = 0; i < edges.size() - 1; i++) {
@@ -555,7 +558,7 @@ public class JValuePath extends JValueImpl {
 	 * @return true, if this path is a subpath of the given path
 	 */
 	public boolean isSubPathOf(JValuePath path) {
-		if (this.pathLength() > path.pathLength()) {
+		if (pathLength() > path.pathLength()) {
 			return false;
 		}
 		int i = 0;
@@ -590,7 +593,7 @@ public class JValuePath extends JValueImpl {
 			return false;
 		}
 		JValuePath path = (JValuePath) o;
-		if (this.pathLength() > path.pathLength()) {
+		if (pathLength() > path.pathLength()) {
 			return false;
 		}
 		for (int i = 0; i < edges.size(); i++) {
@@ -607,7 +610,7 @@ public class JValuePath extends JValueImpl {
 	 * start vertex of the given path must be the same
 	 */
 	public JValuePath pathConcat(JValuePath p2) {
-		if (this.getEndVertex() != p2.getStartVertex()) {
+		if (getEndVertex() != p2.getStartVertex()) {
 			throw new JValuePathException(
 					"Cannot append a path to another with an end vertex other than the start vertex of the path to append");
 		}
