@@ -35,6 +35,7 @@
 package de.uni_koblenz.jgralabtest.greql2.funlib;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
@@ -61,6 +62,13 @@ public class SliceFunctionTest extends GenericTest {
 		// System.out.println("    Node: " + n);
 		// }
 		// }
+	}
+
+	@Test
+	public void testSliceContainsElement() throws Exception {
+		// TODO A meaningful test is missing for
+		// SLICE x ATTRELEM -> BOOL
+		fail();
 	}
 
 }
