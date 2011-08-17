@@ -600,23 +600,22 @@ public class JValuePathSystem extends JValueImpl {
 				switch (direction) {
 				case IN:
 					if (edge.isNormal()) {
-						resultSet.add(new JValueImpl(edge));
+						addEdgeToResult(resultSet, edge, vertex);
 					}
 					break;
 				case OUT:
 					if (!edge.isNormal()) {
-						resultSet.add(new JValueImpl(edge));
+						addEdgeToResult(resultSet, edge, vertex);
 					}
 					break;
 				case INOUT:
-					resultSet.add(new JValueImpl(edge));
+					addEdgeToResult(resultSet, edge, vertex);
 					break;
 				default:
 					throw new JValuePathException(
 							"Incomplete switch statement in JValuePathSystem");
 				}
-			}
-			if (entry.getValue().getParentVertex() == vertex) {
+			} else if (entry.getValue().getParentVertex() == vertex) {
 				Edge edge = entry.getValue().getParentEdge();
 				if (edge == null) {
 					continue;
@@ -624,16 +623,16 @@ public class JValuePathSystem extends JValueImpl {
 				switch (direction) {
 				case IN:
 					if (!edge.isNormal()) {
-						resultSet.add(new JValueImpl(edge));
+						addEdgeToResult(resultSet, edge, vertex);
 					}
 					break;
 				case OUT:
 					if (edge.isNormal()) {
-						resultSet.add(new JValueImpl(edge));
+						addEdgeToResult(resultSet, edge, vertex);
 					}
 					break;
 				case INOUT:
-					resultSet.add(new JValueImpl(edge));
+					addEdgeToResult(resultSet, edge, vertex);
 					break;
 				default:
 					throw new JValuePathException(
@@ -642,6 +641,15 @@ public class JValuePathSystem extends JValueImpl {
 			}
 		}
 		return resultSet;
+	}
+
+	private void addEdgeToResult(JValueSet resultSet, Edge edge, Vertex context) {
+		if (context == edge.getAlpha()) {
+			resultSet.add(JValueImpl.fromObject(edge.getNormalEdge()));
+		} else if (context == edge.getOmega()) {
+			resultSet.add(JValueImpl.fromObject(edge.getNormalEdge()
+					.getReversedEdge()));
+		}
 	}
 
 	/**
