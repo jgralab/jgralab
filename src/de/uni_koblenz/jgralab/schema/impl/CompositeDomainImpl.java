@@ -73,4 +73,9 @@ public abstract class CompositeDomainImpl extends DomainImpl implements
 	public boolean isComposite() {
 		return true;
 	}
+
+	@Override
+	public boolean isPrimitive() {
+		return false;
+	}
 }

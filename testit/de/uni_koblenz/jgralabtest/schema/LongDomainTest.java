@@ -45,7 +45,7 @@ public class LongDomainTest extends NativeDomainTest {
 		// Initializing of DomainTest
 		expectedDomainName = "Long";
 		expectedJavaAttributeImplementationTypeName = "long";
-		expectedJavaClassName = "Long";
+		expectedJavaClassName = "java.lang.Long";
 		expectedTgTypeName = "Long";
 		expectedStringRepresentation = "domain Long";
 		expectedQualifiedName1 = "Long";

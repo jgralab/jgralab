@@ -60,4 +60,9 @@ public abstract class DomainImpl extends NamedElementImpl implements Domain {
 	public String getUniqueName() {
 		return qualifiedName;
 	}
+
+	@Override
+	public boolean isBoolean() {
+		return false;
+	}
 }

@@ -37,7 +37,6 @@ package de.uni_koblenz.jgralab.codegenerator;
 
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
-import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
@@ -102,9 +101,6 @@ public class GraphFactoryGenerator extends CodeGenerator {
 		}
 		for (EdgeClass edgeClass : graphClass.getEdgeClasses()) {
 			code.add(createFillTableForEdge(edgeClass));
-		}
-		for (RecordDomain recordDomain : schema.getRecordDomains()) {
-			code.add(createFillTableForRecord(recordDomain));
 		}
 
 		s = new CodeSnippet(true);
@@ -178,30 +174,6 @@ public class GraphFactoryGenerator extends CodeGenerator {
 			if (config.hasSavememSupport()) {
 				code.add("setVertexSavememImplementationClass(#vertexName#.class, #vertexSaveMemImplName#Impl.class);");
 			}
-		}
-		return code;
-	}
-
-	protected CodeBlock createFillTableForRecord(RecordDomain recordDomain) {
-
-		CodeSnippet code = new CodeSnippet(true);
-		code.setVariable("recordName", schemaRootPackageName + "."
-				+ recordDomain.getQualifiedName());
-		code.setVariable("recordImplName", schemaRootPackageName + ".impl.std."
-				+ recordDomain.getQualifiedName());
-		code.setVariable("recordTransactionImplName", schemaRootPackageName
-				+ ".impl.trans." + recordDomain.getQualifiedName());
-		code.setVariable("recordSaveMemImplName", schemaRootPackageName
-				+ ".impl.savemem." + recordDomain.getQualifiedName());
-
-		if (config.hasStandardSupport()) {
-			code.add("setRecordImplementationClass(#recordName#.class, #recordImplName#Impl.class);");
-		}
-		if (config.hasTransactionSupport()) {
-			code.add("setRecordTransactionImplementationClass(#recordName#.class, #recordTransactionImplName#Impl.class);");
-		}
-		if (config.hasSavememSupport()) {
-			code.add("setRecordSavememImplementationClass(#recordName#.class, #recordSaveMemImplName#Impl.class);");
 		}
 		return code;
 	}

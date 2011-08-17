@@ -35,10 +35,8 @@
 
 package de.uni_koblenz.jgralab;
 
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
@@ -604,177 +602,13 @@ public interface Graph extends AttributedElement {
 	 * @return true if this graph instance supports savemem.
 	 */
 	public boolean hasSavememSupport();
-	
+
 	/**
 	 * Tells whether this graph instance has database support.
-	 *
+	 * 
 	 * @return true if this graph instance has database support.
 	 */
 	public boolean hasDatabaseSupport();
-
-	/**
-	 * 
-	 * @param <T>
-	 *            the generic type
-	 * @param cls
-	 *            the class for the generic type of the list
-	 * @return
-	 */
-	public <T> JGraLabList<T> createList();
-
-	/**
-	 * 
-	 * @param <T>
-	 *            the generic type
-	 * @param cls
-	 *            the class for the generic type of the list
-	 * @param collection
-	 * @return
-	 */
-	public <T> JGraLabList<T> createList(Collection<? extends T> collection);
-
-	/**
-	 * 
-	 * @param <T>
-	 *            the generic type
-	 * @param cls
-	 *            the class for the generic type of the list
-	 * @param initialCapacity
-	 * @return
-	 */
-	public <T> JGraLabList<T> createList(int initialCapacity);
-
-	/**
-	 * 
-	 * @param <T>
-	 *            the generic type
-	 * @param cls
-	 *            the class for the generic type of the set
-	 * @return
-	 */
-	public <T> JGraLabSet<T> createSet();
-
-	/**
-	 * 
-	 * @param <T>
-	 *            the generic type
-	 * @param cls
-	 *            the class for the generic type of the set
-	 * @param collection
-	 * @return
-	 */
-	public <T> JGraLabSet<T> createSet(Collection<? extends T> collection);
-
-	/**
-	 * 
-	 * @param <T>
-	 *            the generic type
-	 * @param cls
-	 *            the class for the generic type of the set
-	 * @param initialCapacity
-	 * @return
-	 */
-	public <T> JGraLabSet<T> createSet(int initialCapacity);
-
-	/**
-	 * 
-	 * @param <T>
-	 *            the generic type
-	 * @param cls
-	 *            the class for the generic type of the set
-	 * @param initialCapacity
-	 * @param loadFactor
-	 * @return
-	 */
-	public <T> JGraLabSet<T> createSet(int initialCapacity, float loadFactor);
-
-	/**
-	 * 
-	 * @param <K>
-	 *            the generic type for the key
-	 * @param <V>
-	 *            the generic type for the value
-	 * @param key
-	 *            the class for the generic type of the key
-	 * @param value
-	 *            the class for the generic type of the value
-	 * @return
-	 */
-	public <K, V> JGraLabMap<K, V> createMap();
-
-	/**
-	 * 
-	 * @param <K>
-	 *            the generic type for the key
-	 * @param <V>
-	 *            the generic type for the value
-	 * @param key
-	 *            the class for the generic type of the key
-	 * @param value
-	 *            the class for the generic type of the value
-	 * @param map
-	 * @return
-	 */
-	public <K, V> JGraLabMap<K, V> createMap(Map<? extends K, ? extends V> map);
-
-	/**
-	 * 
-	 * @param key
-	 *            the class for the generic type of the key
-	 * @param value
-	 *            the class for the generic type of the value
-	 * @param initialCapacity
-	 * @return
-	 */
-	public <K, V> JGraLabMap<K, V> createMap(int initialCapacity);
-
-	/**
-	 * 
-	 * @param <K>
-	 *            the generic type for the key
-	 * @param <V>
-	 *            the generic type for the value
-	 * @param key
-	 *            the class for the generic type of the key
-	 * @param value
-	 *            the class for the generic type of the value
-	 * @param initialCapacity
-	 * @param loadFactor
-	 * @return
-	 */
-	public <K, V> JGraLabMap<K, V> createMap(int initialCapacity,
-			float loadFactor);
-
-	/**
-	 * Generic creation of records.
-	 * 
-	 * @param <T>
-	 *            *
-	 * @param recordClass
-	 * @param io
-	 * @return
-	 */
-	public <T extends Record> T createRecord(Class<T> recordClass, GraphIO io);
-
-	/**
-	 * 
-	 * @param <T>
-	 * @param recordClass
-	 * @param io
-	 * @return
-	 */
-	public <T extends Record> T createRecord(Class<T> recordClass,
-			Map<String, Object> fields);
-
-	/**
-	 * 
-	 * @param <T>
-	 * @param recordClass
-	 * @param io
-	 * @return
-	 */
-	public <T extends Record> T createRecord(Class<T> recordClass,
-			Object... components);
 
 	/**
 	 * Sorts the vertex sequence according to the given comparator in ascending

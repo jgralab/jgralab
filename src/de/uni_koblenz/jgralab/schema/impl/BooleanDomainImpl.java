@@ -52,12 +52,12 @@ public final class BooleanDomainImpl extends BasicDomainImpl implements
 	@Override
 	public String getJavaAttributeImplementationTypeName(
 			String schemaRootPackagePrefix) {
-		return BOOLEANDOMAIN_NAME.toLowerCase();
+		return "boolean";
 	}
 
 	@Override
 	public String getJavaClassName(String schemaRootPackagePrefix) {
-		return BOOLEANDOMAIN_NAME;
+		return "java.lang.Boolean";
 	}
 
 	@Override
@@ -91,15 +91,15 @@ public final class BooleanDomainImpl extends BasicDomainImpl implements
 	@Override
 	public CodeBlock getTransactionWriteMethod(String schemaRootPackagePrefix,
 			String variableName, String graphIoVariableName) {
-		return getWriteMethod(schemaRootPackagePrefix, "is"
-				+ CodeGenerator.camelCase(variableName) + "()",
+		return getWriteMethod(schemaRootPackagePrefix,
+				"is" + CodeGenerator.camelCase(variableName) + "()",
 				graphIoVariableName);
 	}
 
 	@Override
 	public String getTransactionJavaAttributeImplementationTypeName(
 			String schemaRootPackagePrefix) {
-		return "Boolean";
+		return "java.lang.Boolean";
 	}
 
 	@Override
@@ -116,5 +116,15 @@ public final class BooleanDomainImpl extends BasicDomainImpl implements
 	@Override
 	public String getInitialValue() {
 		return "false";
+	}
+
+	@Override
+	public boolean isPrimitive() {
+		return true;
+	}
+
+	@Override
+	public boolean isBoolean() {
+		return true;
 	}
 }
