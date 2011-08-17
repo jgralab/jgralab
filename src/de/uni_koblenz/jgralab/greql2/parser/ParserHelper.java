@@ -43,9 +43,9 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
+import org.pcollections.ArrayPVector;
 import org.pcollections.PVector;
 
-import de.uni_koblenz.ist.pcollections.ArrayPVector;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;

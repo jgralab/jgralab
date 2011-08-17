@@ -46,7 +46,7 @@ public interface MapDomain extends CompositeDomain {
 
 	public static final String MAPDOMAIN_NAME = "Map";
 	public final static String MAPDOMAIN_TYPE = "org.pcollections.PMap";
-	public final static String EMPTY_MAP = "de.uni_koblenz.ist.pcollections.ArrayPMap.empty()";
+	public final static String EMPTY_MAP = "org.pcollections.ArrayPMap.empty()";
 
 	/**
 	 * @return the key domain of the collection

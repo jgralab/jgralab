@@ -37,9 +37,9 @@ package de.uni_koblenz.jgralab.schema.impl;
 
 import java.util.List;
 
+import org.pcollections.ArrayPVector;
 import org.pcollections.PVector;
 
-import de.uni_koblenz.ist.pcollections.ArrayPVector;
 import de.uni_koblenz.jgralab.codegenerator.CodeBlock;
 import de.uni_koblenz.jgralab.codegenerator.CodeGenerator;
 import de.uni_koblenz.jgralab.codegenerator.CodeSnippet;
