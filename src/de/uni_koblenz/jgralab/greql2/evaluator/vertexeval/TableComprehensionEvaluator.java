@@ -138,10 +138,8 @@ public class TableComprehensionEvaluator extends VertexEvaluator {
 		Set<JValue> completeColumnHeaderTuple = new HashSet<JValue>();
 		TreeSet<JValue> rowHeaderSet = new TreeSet<JValue>();
 
-		int noOfVarCombinations = 0;
 		declarationLayer.reset();
 		while (declarationLayer.iterate(subgraph)) {
-			noOfVarCombinations++;
 			JValue columnHeaderEntry = columnHeaderEval.getResult(subgraph);
 			completeColumnHeaderTuple.add(columnHeaderEntry);
 			JValue rowHeaderEntry = rowHeaderEval.getResult(subgraph);
