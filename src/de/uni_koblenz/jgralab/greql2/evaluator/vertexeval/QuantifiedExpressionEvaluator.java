@@ -117,13 +117,11 @@ public class QuantifiedExpressionEvaluator extends VertexEvaluator {
 			initialize();
 		}
 
-		int noOfVariableCombinations = 0;
 		boolean foundTrue = false;
 		declarationLayer.reset();
 		switch (quantificationType) {
 		case EXISTS:
 			while (declarationLayer.iterate(subgraph)) {
-				noOfVariableCombinations++;
 				JValue tempResult = predicateEvaluator.getResult(subgraph);
 				if (tempResult.isBoolean()) {
 					try {
@@ -140,7 +138,6 @@ public class QuantifiedExpressionEvaluator extends VertexEvaluator {
 			return new JValueImpl(JValueBoolean.getFalseValue());
 		case EXISTSONE:
 			while (declarationLayer.iterate(subgraph)) {
-				noOfVariableCombinations++;
 				JValue tempResult = predicateEvaluator.getResult(subgraph);
 				if (tempResult.isBoolean()) {
 					try {
@@ -165,7 +162,6 @@ public class QuantifiedExpressionEvaluator extends VertexEvaluator {
 			return new JValueImpl(JValueBoolean.getFalseValue());
 		case FORALL:
 			while (declarationLayer.iterate(subgraph)) {
-				noOfVariableCombinations++;
 				JValue tempResult = predicateEvaluator.getResult(subgraph);
 				if (tempResult.isBoolean()) {
 					try {

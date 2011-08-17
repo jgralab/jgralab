@@ -87,9 +87,7 @@ public abstract class ComprehensionEvaluator extends VertexEvaluator {
 		VertexEvaluator resultDefEval = getResultDefinitionEvaluator();
 		JValueCollection resultCollection = getResultDatastructure();
 		declLayer.reset();
-		int noOfVarCombinations = 0;
 		while (declLayer.iterate(subgraph)) {
-			noOfVarCombinations++;
 			JValue localResult = resultDefEval.getResult(subgraph);
 			resultCollection.add(localResult);
 		}
