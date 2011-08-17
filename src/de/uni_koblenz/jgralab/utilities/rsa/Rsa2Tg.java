@@ -113,6 +113,8 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
+import org.pcollections.ArrayPVector;
+import org.pcollections.PVector;
 
 import de.uni_koblenz.ist.utilities.option_handler.OptionHandler;
 import de.uni_koblenz.ist.utilities.xml.XmlProcessor;
@@ -1684,7 +1686,8 @@ public class Rsa2Tg extends XmlProcessor {
 		Package p = packageStack.peek();
 		ed.set_qualifiedName(getQualifiedName(getAttribute(UML_ATTRIBUTE_NAME)));
 		sg.createContainsDomain(p, ed);
-		ed.set_enumConstants(new ArrayList<String>());
+		PVector<String> empty = ArrayPVector.empty();
+		ed.set_enumConstants(empty);
 		Domain dom = domainMap.get(ed.get_qualifiedName());
 		if (dom != null) {
 			// there was a preliminary vertex for this domain
@@ -1815,7 +1818,7 @@ public class Rsa2Tg extends XmlProcessor {
 					+ "' should be all uppercase letters.");
 		}
 
-		ed.get_enumConstants().add(s);
+		ed.set_enumConstants(ed.get_enumConstants().plus(s));
 	}
 
 	/**

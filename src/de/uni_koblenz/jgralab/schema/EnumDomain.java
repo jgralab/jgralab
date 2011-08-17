@@ -35,7 +35,7 @@
 
 package de.uni_koblenz.jgralab.schema;
 
-import java.util.List;
+import org.pcollections.PVector;
 
 /**
  * Represents an enumeration domain, instances may exist multiple times per
@@ -48,7 +48,7 @@ public interface EnumDomain extends Domain {
 	/**
 	 * @return all the enum constants of this enum domain
 	 */
-	public List<String> getConsts();
+	public PVector<String> getConsts();
 
 	/**
 	 * add an enum constant

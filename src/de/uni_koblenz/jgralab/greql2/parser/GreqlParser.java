@@ -36,11 +36,15 @@ package de.uni_koblenz.jgralab.greql2.parser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+
+import org.pcollections.ArrayPSet;
+import org.pcollections.ArrayPVector;
+import org.pcollections.PSet;
+import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
@@ -204,12 +208,11 @@ public class GreqlParser extends ParserHelper {
 		}
 	}
 
-	protected final List<SourcePosition> createSourcePositionList(
+	protected final PVector<SourcePosition> createSourcePositionList(
 			int startOffset) {
-		List<SourcePosition> list = new ArrayList<SourcePosition>();
-		list.add(graph.createSourcePosition(getCurrentOffset() - startOffset,
+		PVector<SourcePosition> list = ArrayPVector.empty();
+		return list.plus(new SourcePosition(getCurrentOffset() - startOffset,
 				startOffset));
-		return list;
 	}
 
 	public static Greql2 parse(String query) {
@@ -540,8 +543,8 @@ public class GreqlParser extends ParserHelper {
 		mergeVariablesInGreql2Expression(rootExpr);
 	}
 
-	private final Set<String> parseImports() {
-		Set<String> importedTypes = new HashSet<String>();
+	private final PSet<String> parseImports() {
+		PSet<String> importedTypes = ArrayPSet.empty();
 		while (lookAhead(0) == TokenTypes.IMPORT) {
 			match(TokenTypes.IMPORT);
 			StringBuilder importedType = new StringBuilder();
@@ -554,7 +557,7 @@ public class GreqlParser extends ParserHelper {
 				importedType.append(".");
 				importedType.append(matchSimpleName());
 			}
-			importedTypes.add(importedType.toString());
+			importedTypes = importedTypes.plus(importedType.toString());
 			match(TokenTypes.SEMI);
 		}
 		return importedTypes;

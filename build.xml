@@ -91,6 +91,7 @@
 		<fileset dir="${comlib.dir}/apache/ant" includes="**/*.jar" />
 		<fileset dir="${comlib.dir}/jdom/" includes="**/*.jar" />
 		<fileset dir="${comlib.dir}/junit/" includes="**/*.jar" />
+		<fileset dir="${comlib.dir}/pcollections/" includes="**/*.jar" />
 		<pathelement path="${clover.jar}" />
 	</path>
 
@@ -170,7 +171,7 @@
 		  	 includeantruntime="false">
 			<compilerarg line="-Xlint:unchecked" />
 		</javac>
-		<taskdef name="tgschema2java" classname="de.uni_koblenz.jgralab.utilities.ant.TgSchema2JavaTask" classpath="${classes.dir}" />
+		<taskdef name="tgschema2java" classname="de.uni_koblenz.jgralab.utilities.ant.TgSchema2JavaTask" classpath="${classes.dir}:${comlib.dir}/ist_utilities/ist_utilities.jar:${comlib.dir}/pcollections/pcollections-2.0.1.jar" />
 		<taskdef name="deletegeneratedschema" classname="de.uni_koblenz.jgralab.utilities.ant.DeleteGeneratedSchemaTask" classpath="${classes.dir}" />
 	</target>
 
@@ -240,8 +241,10 @@
 	<!-- generates the schemas required for test cases without compiling them -->
 	<target name="generatetestschemas" depends="tgtools">
 	  <taskdef classpathref="classpath" name="rsa2tg" classname="de.uni_koblenz.jgralab.utilities.ant.Rsa2TgTask" />
-       	  <taskdef name="tgschema2java" classname="de.uni_koblenz.jgralab.utilities.ant.TgSchema2JavaTask" classpath="${classes.dir}" />
-	  <rsa2tg xmifile="${testschemas.dir}/rsa-xmi/greqltestschema.xmi" schemafile="${testschemas.dir}/greqltestschema.tg" />
+<!--
+   	  <taskdef name="tgschema2java" classname="de.uni_koblenz.jgralab.utilities.ant.TgSchema2JavaTask" classpath="${classes.dir}" />
+-->
+		<rsa2tg xmifile="${testschemas.dir}/rsa-xmi/greqltestschema.xmi" schemafile="${testschemas.dir}/greqltestschema.tg" />
 	  <!-- The jgralab & greql test schemas -->
 	  <tgschema2java sourcePath="${testcases.dir}" implementationMode="standard,transaction,savemem,database">
 	    <fileset dir="${testschemas.dir}" includes="*.tg" />
@@ -276,6 +279,7 @@
 		<unjar dest="${tmp.dir}">
 			<fileset dir="${comlib.dir}/apache/commons/cli/" includes="**/*.jar" />
 			<fileset dir="${comlib.dir}/jdom/" includes="**/*.jar" />
+			<fileset dir="${comlib.dir}/pcollections" includes="*.jar" />
 		</unjar>
 		<copy todir="${tmp.dir}/META-INF/license">
 			<fileset dir="license" includes="jdom/** jgralab/**" />

@@ -117,10 +117,7 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 		code.setVariable("name", a.getName());
 		code.setVariable("type", a.getDomain()
 				.getJavaAttributeImplementationTypeName(schemaRootPackageName));
-		code.setVariable(
-				"isOrGet",
-				a.getDomain().getJavaClassName(schemaRootPackageName)
-						.equals("Boolean") ? "is" : "get");
+		code.setVariable("isOrGet", a.getDomain().isBoolean() ? "is" : "get");
 
 		if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()) {
 			code.add(
