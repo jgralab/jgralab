@@ -36,6 +36,7 @@
 package de.uni_koblenz.jgralabtest.greql2;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 import java.io.File;
@@ -108,9 +109,9 @@ public class GenericTest {
 				- result.toDouble().intValue();
 	}
 
-	protected void assertQueryEqualsNull(String query) throws Exception {
+	protected void assertQueryIsNull(String query) throws Exception {
 		JValue result = evalTestQuery(query);
-		org.junit.Assert.assertNull(result.toObject());
+		assertNull(result.toObject());
 	}
 
 	protected void assertQueryEquals(String query, boolean expectedValue)
@@ -190,7 +191,7 @@ public class GenericTest {
 		assertEquals(expectedValue, result);
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings( { "rawtypes", "unchecked" })
 	private List<?> toList(JValueCollection collection) {
 		ArrayList list = new ArrayList();
 		for (JValue value : collection) {
@@ -287,7 +288,7 @@ public class GenericTest {
 		return oldTestGraph;
 	}
 
-	private Graph createTestGraph() throws Exception {
+	public static Graph createTestGraph() throws Exception {
 		// TODO Does this singleton conflicts with some tests? Do tests change
 		// this test graph?
 		// This singleton should prevent spending to much time in GraphIO.

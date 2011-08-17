@@ -51,7 +51,7 @@ public class StringFunctionTest extends GenericTest {
 
 	@Test
 	public void testCapitalizeNull() throws Exception {
-		assertQueryEqualsNull("using nll: capitalizeFirst(nll)");
+		assertQueryIsNull("using nll: capitalizeFirst(nll)");
 	}
 
 	@Test
@@ -65,9 +65,9 @@ public class StringFunctionTest extends GenericTest {
 
 	@Test
 	public void testConcatNull() throws Exception {
-		assertQueryEqualsNull("using nll: concat('', nll)");
-		assertQueryEqualsNull("using nll: concat(nll, '')");
-		assertQueryEqualsNull("using nll: concat(nll, nll)");
+		assertQueryIsNull("using nll: concat('', nll)");
+		assertQueryIsNull("using nll: concat(nll, '')");
+		assertQueryIsNull("using nll: concat(nll, nll)");
 	}
 
 	@Test
@@ -80,9 +80,9 @@ public class StringFunctionTest extends GenericTest {
 
 	@Test
 	public void testConcatInfixNull() throws Exception {
-		assertQueryEqualsNull("using nll: '' ++ nll");
-		assertQueryEqualsNull("using nll: nll ++ ''");
-		assertQueryEqualsNull("using nll: nll ++ nll");
+		assertQueryIsNull("using nll: '' ++ nll");
+		assertQueryIsNull("using nll: nll ++ ''");
+		assertQueryIsNull("using nll: nll ++ nll");
 	}
 
 	@Test
@@ -94,9 +94,9 @@ public class StringFunctionTest extends GenericTest {
 
 	@Test
 	public void testReMatchNull() throws Exception {
-		assertQueryEqualsNull("using nll: reMatch('', nll)");
-		assertQueryEqualsNull("using nll: reMatch(nll, '')");
-		assertQueryEqualsNull("using nll: reMatch(nll, nll)");
+		assertQueryIsNull("using nll: reMatch('', nll)");
+		assertQueryIsNull("using nll: reMatch(nll, '')");
+		assertQueryIsNull("using nll: reMatch(nll, nll)");
 	}
 
 	@Test
@@ -108,9 +108,9 @@ public class StringFunctionTest extends GenericTest {
 
 	@Test
 	public void testReMatchInfixNull() throws Exception {
-		assertQueryEqualsNull("using nll: '' =~ nll");
-		assertQueryEqualsNull("using nll: nll =~ ''");
-		assertQueryEqualsNull("using nll: nll =~ nll");
+		assertQueryIsNull("using nll: '' =~ nll");
+		assertQueryIsNull("using nll: nll =~ ''");
+		assertQueryIsNull("using nll: nll =~ nll");
 	}
 
 	@Test
@@ -128,8 +128,8 @@ public class StringFunctionTest extends GenericTest {
 
 	@Test
 	public void testSplitNull() throws Exception {
-		assertQueryEqualsNull("using nll: split('', nll)");
-		assertQueryEqualsNull("using nll: split(nll, '')");
-		assertQueryEqualsNull("using nll: split(nll, nll)");
+		assertQueryIsNull("using nll: split('', nll)");
+		assertQueryIsNull("using nll: split(nll, '')");
+		assertQueryIsNull("using nll: split(nll, nll)");
 	}
 }
