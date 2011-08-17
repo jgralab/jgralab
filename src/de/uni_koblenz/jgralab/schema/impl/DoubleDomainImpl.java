@@ -52,12 +52,12 @@ public final class DoubleDomainImpl extends BasicDomainImpl implements
 	@Override
 	public String getJavaAttributeImplementationTypeName(
 			String schemaRootPackagePrefix) {
-		return DOUBLEDOMAIN_NAME.toLowerCase();
+		return "double";
 	}
 
 	@Override
 	public String getJavaClassName(String schemaRootPackagePrefix) {
-		return DOUBLEDOMAIN_NAME;
+		return "java.lang.Double";
 	}
 
 	@Override
@@ -91,15 +91,15 @@ public final class DoubleDomainImpl extends BasicDomainImpl implements
 	@Override
 	public CodeBlock getTransactionWriteMethod(String schemaRootPackagePrefix,
 			String variableName, String graphIoVariableName) {
-		return getWriteMethod(schemaRootPackagePrefix, "get"
-				+ CodeGenerator.camelCase(variableName) + "()",
+		return getWriteMethod(schemaRootPackagePrefix,
+				"get" + CodeGenerator.camelCase(variableName) + "()",
 				graphIoVariableName);
 	}
 
 	@Override
 	public String getTransactionJavaAttributeImplementationTypeName(
 			String schemaRootPackagePrefix) {
-		return "Double";
+		return "java.lang.Double";
 	}
 
 	@Override
@@ -115,6 +115,11 @@ public final class DoubleDomainImpl extends BasicDomainImpl implements
 
 	@Override
 	public String getInitialValue() {
-		return "0D";
+		return "0.0";
+	}
+
+	@Override
+	public boolean isPrimitive() {
+		return true;
 	}
 }

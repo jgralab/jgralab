@@ -45,7 +45,7 @@ public class DoubleDomainTest extends NativeDomainTest {
 		// Initializing DomainTest
 		expectedDomainName = "Double";
 		expectedJavaAttributeImplementationTypeName = "double";
-		expectedJavaClassName = "Double";
+		expectedJavaClassName = "java.lang.Double";
 		expectedTgTypeName = "Double";
 		expectedStringRepresentation = "domain Double";
 		expectedQualifiedName1 = "Double";

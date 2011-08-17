@@ -61,9 +61,9 @@ public class EnumCodeGenerator extends CodeGenerator {
 
 	@Override
 	protected CodeBlock createBody() {
-		CodeSnippet constCode = new CodeSnippet(true);
 		CodeList result = new CodeList();
 		if (currentCycle.isClassOnly()) {
+			CodeSnippet constCode = new CodeSnippet(true);
 			String delim = "";
 			StringBuilder constants = new StringBuilder();
 			for (String s : enumDomain.getConsts()) {

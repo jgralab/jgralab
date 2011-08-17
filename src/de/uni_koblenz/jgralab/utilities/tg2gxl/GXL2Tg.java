@@ -8,7 +8,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -25,7 +24,9 @@ import javax.xml.stream.events.XMLEvent;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionGroup;
+import org.pcollections.PVector;
 
+import de.uni_koblenz.ist.pcollections.ArrayPVector;
 import de.uni_koblenz.ist.utilities.option_handler.OptionHandler;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
@@ -694,12 +695,12 @@ public class GXL2Tg {
 			enumConstant = "";
 			id2EnumValues.put(to, enumConstant);
 		}
-		List<String> constants = enumDomain.get_enumConstants();
+		PVector<String> constants = enumDomain.get_enumConstants();
 		if (constants == null) {
-			constants = new ArrayList<String>();
+			constants = ArrayPVector.empty();
 			enumDomain.set_enumConstants(constants);
 		}
-		constants.add(enumConstant);
+		constants = constants.plus(enumConstant);
 	}
 
 	private void createHasDomain(String from, String to) {

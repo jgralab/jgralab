@@ -100,7 +100,7 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 	@Override
 	public String getJavaAttributeImplementationTypeName(
 			String schemaRootPackagePrefix) {
-		return "java.util." + MAPDOMAIN_NAME + "<"
+		return MAPDOMAIN_TYPE + "<"
 				+ keyDomain.getJavaClassName(schemaRootPackagePrefix) + ", "
 				+ valueDomain.getJavaClassName(schemaRootPackagePrefix) + ">";
 	}
@@ -176,16 +176,18 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 			String schemaRootPackagePrefix, String variableName,
 			String graphIoVariableName) {
 		code.setVariable("name", variableName);
-
-		code.setVariable("keydom", getKeyDomain().getJavaClassName(
-				schemaRootPackagePrefix));
-		code.setVariable("keytype",
+		code.setVariable("empty", MapDomain.EMPTY_MAP);
+		code.setVariable("keydom",
+				getKeyDomain().getJavaClassName(schemaRootPackagePrefix));
+		code.setVariable(
+				"keytype",
 				getKeyDomain().getJavaAttributeImplementationTypeName(
 						schemaRootPackagePrefix));
 
-		code.setVariable("valuedom", getValueDomain().getJavaClassName(
-				schemaRootPackagePrefix));
-		code.setVariable("valuetype",
+		code.setVariable("valuedom",
+				getValueDomain().getJavaClassName(schemaRootPackagePrefix));
+		code.setVariable(
+				"valuetype",
 				getValueDomain().getJavaAttributeImplementationTypeName(
 						schemaRootPackagePrefix));
 
@@ -193,7 +195,8 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 
 		code.addNoIndent(new CodeSnippet("#init#"));
 		code.addNoIndent(new CodeSnippet("if (#io#.isNextToken(\"{\")) {"));
-		code.add(new CodeSnippet("#name# = #theGraph#.createMap();"));
+		code.add(new CodeSnippet(MAPDOMAIN_TYPE
+				+ "<#keydom#, #valuedom#> $#name# = #empty#;"));
 		code.add(new CodeSnippet("#io#.match(\"{\");",
 				"while (!#io#.isNextToken(\"}\")) {"));
 
@@ -208,17 +211,20 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 			code.add(new CodeSnippet("\t\t#valuetype# #name#Value;"));
 		}
 
-		code.add(getKeyDomain().getReadMethod(schemaRootPackagePrefix,
-				variableName + "Key", graphIoVariableName), 1);
+		code.add(
+				getKeyDomain().getReadMethod(schemaRootPackagePrefix,
+						variableName + "Key", graphIoVariableName), 1);
 		code.add(new CodeSnippet("\t#io#.match(\"-\");"));
-		code.add(getValueDomain().getReadMethod(schemaRootPackagePrefix,
-				variableName + "Value", graphIoVariableName), 1);
-		code.add(new CodeSnippet("\t#name#.put(#name#Key, #name#Value);", "}",
-				"#io#.match(\"}\");"));
+		code.add(
+				getValueDomain().getReadMethod(schemaRootPackagePrefix,
+						variableName + "Value", graphIoVariableName), 1);
+		code.add(new CodeSnippet(
+				"\t$#name# = $#name#.plus(#name#Key, #name#Value);", "}",
+				"#io#.match(\"}\");", "#name# = $#name#;"));
 		code.addNoIndent(new CodeSnippet(
 				"} else if (#io#.isNextToken(GraphIO.NULL_LITERAL)) {"));
 		code.add(new CodeSnippet("#io#.match();", "#name# = null;"));
-		code.addNoIndent(new CodeSnippet("}"));
+		code.addNoIndent(new CodeSnippet("} else {", "\t#name# = null;", "}"));
 	}
 
 	private void internalGetWriteMethod(CodeList code,
@@ -227,11 +233,13 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 		code.setVariable("nameKey", "key");
 		code.setVariable("nameValue", "value");
 
-		code.setVariable("keytype",
+		code.setVariable(
+				"keytype",
 				getKeyDomain().getJavaAttributeImplementationTypeName(
 						schemaRootPackagePrefix));
 
-		code.setVariable("valuetype",
+		code.setVariable(
+				"valuetype",
 				getValueDomain().getJavaAttributeImplementationTypeName(
 						schemaRootPackagePrefix));
 
@@ -240,19 +248,19 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 		code.addNoIndent(new CodeSnippet("if (#name# != null) {"));
 		code.add(new CodeSnippet("#io#.writeSpace();", "#io#.write(\"{\");",
 				"#io#.noSpace();"));
-		code
-				.add(new CodeSnippet(
-						"for (#keytype# #nameKey#: #name#.keySet()) {"));
+		code.add(new CodeSnippet("for (#keytype# #nameKey#: #name#.keySet()) {"));
 
 		code.add(new CodeSnippet(
 				"#valuetype# #nameValue# = #name#.get(#nameKey#);"), 1);
-		code.add(getKeyDomain().getWriteMethod(schemaRootPackagePrefix,
-				code.getVariable("nameKey"), graphIoVariableName), 1);
+		code.add(
+				getKeyDomain().getWriteMethod(schemaRootPackagePrefix,
+						code.getVariable("nameKey"), graphIoVariableName), 1);
 
 		code.add(new CodeSnippet("\t#io#.write(\" -\");"));
 
-		code.add(getValueDomain().getWriteMethod(schemaRootPackagePrefix,
-				code.getVariable("nameValue"), graphIoVariableName), 1);
+		code.add(
+				getValueDomain().getWriteMethod(schemaRootPackagePrefix,
+						code.getVariable("nameValue"), graphIoVariableName), 1);
 
 		code.add(new CodeSnippet("}", "#io#.write(\"}\");", "#io#.space();"));
 		code.addNoIndent(new CodeSnippet("} else {"));
@@ -267,8 +275,8 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 		CodeList code = new CodeList();
 		code.setVariable("name", "get" + CodeGenerator.camelCase(variableName)
 				+ "()");
-		code.setVariable("init",
-				"java.util.Map<#keydom#, #valuedom#> #name# = null;");
+		code.setVariable("init", MAPDOMAIN_TYPE
+				+ "<#keydom#, #valuedom#> #name# = null;");
 		internalGetReadMethod(code, schemaPrefix, variableName,
 				graphIoVariableName);
 		return code;
@@ -288,26 +296,17 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 	@Override
 	public String getTransactionJavaAttributeImplementationTypeName(
 			String schemaRootPackagePrefix) {
-		return "de.uni_koblenz.jgralab.impl.trans.JGraLabMapImpl<"
-				+ keyDomain
-						.getTransactionJavaClassName(schemaRootPackagePrefix)
-				+ ", "
-				+ valueDomain
-						.getTransactionJavaClassName(schemaRootPackagePrefix)
-				+ ">";
+		return getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
 	}
 
 	@Override
 	public String getTransactionJavaClassName(String schemaRootPackagePrefix) {
-		// return "de.uni_koblenz.jgralab.impl.trans.JGraLabListImpl";
-		// return
-		// getTransactionJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
 		return getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
 	}
 
 	@Override
 	public String getVersionedClass(String schemaRootPackagePrefix) {
-		return "de.uni_koblenz.jgralab.impl.trans.VersionedJGraLabCloneableImpl<"
+		return "de.uni_koblenz.jgralab.impl.trans.VersionedReferenceImpl<"
 				+ getTransactionJavaAttributeImplementationTypeName(schemaRootPackagePrefix)
 				+ ">";
 	}

@@ -1,10 +1,14 @@
 package de.uni_koblenz.jgralab.gretl;
 
+import java.lang.reflect.Constructor;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.pcollections.PMap;
+
+import de.uni_koblenz.ist.pcollections.ArrayPMap;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Record;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
@@ -110,8 +114,7 @@ public class SetAttributes extends
 			Domain vd = md.getValueDomain();
 			if ((kd instanceof RecordDomain) || (vd instanceof RecordDomain)) {
 				JValueMap jmap = val.toJValueMap();
-				Map<Object, Object> map = context.getTargetGraph().createMap(
-						jmap.size());
+				PMap<Object, Object> map = ArrayPMap.empty();
 				Object k = null, v = null;
 				for (Entry<JValue, JValue> e : jmap.entrySet()) {
 					if (kd instanceof RecordDomain) {
@@ -126,7 +129,7 @@ public class SetAttributes extends
 					} else {
 						v = e.getValue().toObject();
 					}
-					map.put(k, v);
+					map = map.plus(k, v);
 				}
 				return map;
 			}
@@ -135,10 +138,17 @@ public class SetAttributes extends
 	}
 
 	@SuppressWarnings("unchecked")
-	private Object convertJValueRecordToRecord(JValueRecord jrec) {
-		Map<String, Object> compVals = jrec.toObject();
+	private Record convertJValueRecordToRecord(JValueRecord jrec) {
+		// TODO (ido) implement construction via reflection
 		RecordDomain rd = (RecordDomain) attribute.getDomain();
-		return context.targetGraph.createRecord(
-				(Class<? extends Record>) rd.getM1Class(), compVals);
+		Constructor<? extends Record> c;
+		try {
+			c = (Constructor<? extends Record>) rd.getM1Class().getConstructor(
+					Map.class);
+			Map<String, Object> compVals = jrec.toObject();
+			return c.newInstance(compVals);
+		} catch (Exception e) {
+			throw new RuntimeException("Can't convert JValue to Record", e);
+		}
 	}
 }

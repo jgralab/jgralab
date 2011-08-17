@@ -117,10 +117,7 @@ public interface RecordDomain extends CompositeDomain {
 	 * 
 	 * @return java representation of this attribute
 	 */
-	public String getStandardJavaAttributeImplementationTypeName(
-			String schemaRootPackagePrefix);
-
-	public String getSavememJavaAttributeImplementationTypeName(
+	public String getJavaAttributeImplementationTypeName(
 			String schemaRootPackagePrefix);
 
 	public Class<? extends Object> getM1Class();
