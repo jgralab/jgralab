@@ -3,7 +3,7 @@
 //   Revision: 3455:af36938158ca
 
 TGraph 2;
-Schema de.uni_koblenz.jgralabtest.eca.schemas.simplelibrary.SimpleLibrarySchema;
+Schema de.uni_koblenz.jgralabtest.schemas.eca.simplelibrary.SimpleLibrarySchema;
 GraphClass SimpleLibraryGraph { version: String };
 RecordDomain Date ( day: Integer, month: Integer, year: Integer );
 EnumDomain MediaType ( VHS, DVD, CD, CASSETTE, BLUERAY );
