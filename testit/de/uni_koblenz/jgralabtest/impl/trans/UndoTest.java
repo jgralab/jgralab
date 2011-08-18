@@ -64,7 +64,7 @@ public class UndoTest {
 	private RecordTestGraph graph;
 	Node node1;
 	Node node2;
-	String filename = "record_testgraph.tg";
+	String filename = "testit/testdata/record_testgraph.tg";
 
 	@Before
 	public void setUp() throws CommitFailedException {

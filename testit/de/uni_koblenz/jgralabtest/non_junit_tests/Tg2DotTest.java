@@ -55,7 +55,7 @@ public class Tg2DotTest {
 	public void convertGraph() throws GraphIOException, IOException {
 		Graph g = GraphIO.loadGraphFromFileWithStandardSupport(
 				"testit/testgraphs/greqltestgraph.tg", (ProgressFunction) null);
-		Tg2Dot.convertGraph(g, "testit/testoutput.dot");
+		Tg2Dot.convertGraph(g, "testit/testdata/testoutput.dot");
 	}
 
 	public void convertGraph2Svg() throws GraphIOException, IOException {
@@ -64,7 +64,7 @@ public class Tg2DotTest {
 		Tg2Dot t2d = new Tg2Dot();
 		t2d.setGraph(g);
 		t2d.setGraphVizOutputFormat(GraphVizOutputFormat.SVG);
-		t2d.setOutputFile("testit/testoutput.svg");
+		t2d.setOutputFile("testit/testdata/testoutput.svg");
 		t2d.convert();
 	}
 
@@ -74,7 +74,7 @@ public class Tg2DotTest {
 		Tg2Dot t2d = new Tg2Dot();
 		t2d.setGraph(g);
 		t2d.setGraphVizOutputFormat(GraphVizOutputFormat.PNG);
-		t2d.setOutputFile("testit/testoutput.png");
+		t2d.setOutputFile("testit/testdata/testoutput.png");
 		t2d.convert();
 	}
 
@@ -88,7 +88,7 @@ public class Tg2DotTest {
 		t2d.setGraph(g);
 		t2d.setGraphVizOutputFormat(GraphVizOutputFormat.PNG);
 		t2d.setGraphVizLayouter(GraphVizLayouter.DOT);
-		t2d.setOutputFile("greql2Schema_.png");
+		t2d.setOutputFile("testit/testdata/greql2Schema.png");
 		t2d.convert();
 	}
 }

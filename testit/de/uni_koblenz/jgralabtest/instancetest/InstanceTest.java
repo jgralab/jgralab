@@ -36,11 +36,13 @@ package de.uni_koblenz.jgralabtest.instancetest;
 
 import static org.junit.Assert.fail;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.ImplementationType;
+import de.uni_koblenz.jgralab.impl.db.GraphDatabase;
 import de.uni_koblenz.jgralab.impl.db.GraphDatabaseException;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
 
@@ -68,6 +70,7 @@ public abstract class InstanceTest {
 
 		String dbURL = System.getProperty("jgralabtest_dbconnection");
 		dbURL = dbURL != null && dbURL.startsWith("jdbc") ? dbURL : null;
+
 		String derbyURL = System.getProperty("jgralabtest_derby_dbconnection");
 		derbyURL = derbyURL != null && derbyURL.startsWith("jdbc") ? derbyURL
 				: null;
@@ -75,9 +78,11 @@ public abstract class InstanceTest {
 				.getProperty("jgralabtest_postgres_dbconnection");
 		postgresURL = postgresURL != null && postgresURL.startsWith("jdbc") ? postgresURL
 				: null;
+
 		String mysqlURL = System.getProperty("jgralabtest_mysql_dbconnection");
 		mysqlURL = mysqlURL != null && mysqlURL.startsWith("jdbc") ? mysqlURL
 				: null;
+
 		boolean dbConnectionEnabled = dbURL != null || derbyURL != null
 				|| postgresURL != null || mysqlURL != null;
 		if (dbConnectionEnabled) {
@@ -85,16 +90,9 @@ public abstract class InstanceTest {
 				// only one db impl is tested
 				addDBTest(dbURL);
 			} else {
-				// at least one db impl is tested
-				if (derbyURL != null) {
-					addDBTest(derbyURL);
-				}
-				if (postgresURL != null) {
-					addDBTest(postgresURL);
-				}
-				if (mysqlURL != null) {
-					addDBTest(mysqlURL);
-				}
+				addDBTest(derbyURL);
+				addDBTest(postgresURL);
+				addDBTest(mysqlURL);
 			}
 		} else {
 			System.out
@@ -109,9 +107,29 @@ public abstract class InstanceTest {
 	}
 
 	private static void addDBTest(String url) {
-		printIndex();
-		parameters.add(new Object[] { ImplementationType.DATABASE, url });
-		System.out.println("database implementation using " + url);
+		if (url != null) {
+			printIndex();
+			parameters.add(new Object[] { ImplementationType.DATABASE, url });
+			System.out.println("database implementation using " + url);
+			GraphDatabase gdb;
+			try {
+				// install graph database tables if not already existent
+				gdb = GraphDatabase.openGraphDatabase(url);
+				gdb.setAutoCommit(false);
+				try {
+					System.out.println("Clearing graph database at " + url);
+					gdb.clearAllTables();
+					gdb.commitTransaction();
+				} catch (SQLException e) {
+					// in this case, the tables did not exist, so install them
+					gdb.rollback();
+					gdb.applyDbSchema();
+				}
+			} catch (GraphDatabaseException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
 	}
 
 	protected GraphDatabaseHandler dbHandler;

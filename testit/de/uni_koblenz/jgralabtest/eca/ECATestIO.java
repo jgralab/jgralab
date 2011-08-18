@@ -43,7 +43,7 @@ public class ECATestIO {
 	private static User user2;
 	private static Loans loans_u1_b1;
 
-	private static String folderForRuleFiles = "testit/de/uni_koblenz/jgralabtest/eca/io/";
+	public static String FOLDER_FOR_RULE_FILES = "testit/testdata/";
 
 	@BeforeClass
 	public static void setUp() {
@@ -78,7 +78,7 @@ public class ECATestIO {
 		rules.add(bef_rule);
 		rules.add(aft_rule);
 		try {
-			ECAIO.saveECArules(simlibgraph.getSchema(), folderForRuleFiles
+			ECAIO.saveECArules(simlibgraph.getSchema(), FOLDER_FOR_RULE_FILES
 					+ "testSaveRules1.eca", rules);
 		} catch (ECAIOException e) {
 			e.printStackTrace();
@@ -97,7 +97,7 @@ public class ECATestIO {
 		try {
 
 			rules = ECAIO.loadECArules(simlibgraph.getSchema(),
-					folderForRuleFiles + "testSaveRules1.eca");
+					FOLDER_FOR_RULE_FILES + "testSaveRules1.eca");
 
 		} catch (ECAIOException e) {
 			e.printStackTrace();
@@ -132,7 +132,7 @@ public class ECATestIO {
 		ArrayList<ECARule> rules = new ArrayList<ECARule>();
 		rules.add(bef_rule);
 		try {
-			ECAIO.saveECArules(simlibgraph.getSchema(), folderForRuleFiles
+			ECAIO.saveECArules(simlibgraph.getSchema(), FOLDER_FOR_RULE_FILES
 					+ "testSaveRulesChangeAttribute", rules);
 		} catch (ECAIOException e) {
 			e.printStackTrace();
@@ -148,7 +148,7 @@ public class ECATestIO {
 		List<ECARule> rules = null;
 		try {
 			rules = ECAIO.loadECArules(simlibgraph.getSchema(),
-					folderForRuleFiles + "testSaveRulesChangeAttribute");
+					FOLDER_FOR_RULE_FILES + "testSaveRulesChangeAttribute");
 		} catch (ECAIOException e) {
 			e.printStackTrace();
 			assert false;
@@ -178,7 +178,7 @@ public class ECATestIO {
 		ArrayList<ECARule> rules = new ArrayList<ECARule>();
 		rules.add(aft_rule);
 		try {
-			ECAIO.saveECArules(simlibgraph.getSchema(), folderForRuleFiles
+			ECAIO.saveECArules(simlibgraph.getSchema(), FOLDER_FOR_RULE_FILES
 					+ "testSaveRules3.eca", rules);
 		} catch (ECAIOException e) {
 			e.printStackTrace();
@@ -193,7 +193,7 @@ public class ECATestIO {
 		List<ECARule> rules = null;
 		try {
 			rules = ECAIO.loadECArules(simlibgraph.getSchema(),
-					folderForRuleFiles + "testSaveRules3.eca");
+					FOLDER_FOR_RULE_FILES + "testSaveRules3.eca");
 		} catch (ECAIOException e) {
 			e.printStackTrace();
 			assert false;
@@ -222,7 +222,7 @@ public class ECATestIO {
 		ArrayList<ECARule> rules = new ArrayList<ECARule>();
 		rules.add(aft_rule);
 		try {
-			ECAIO.saveECArules(simlibgraph.getSchema(), folderForRuleFiles
+			ECAIO.saveECArules(simlibgraph.getSchema(), FOLDER_FOR_RULE_FILES
 					+ "testSaveRules4.eca", rules);
 		} catch (ECAIOException e) {
 			e.printStackTrace();
@@ -239,7 +239,7 @@ public class ECATestIO {
 		List<ECARule> rules = null;
 		try {
 			rules = ECAIO.loadECArules(simlibgraph.getSchema(),
-					folderForRuleFiles + "testSaveRules4.eca");
+					FOLDER_FOR_RULE_FILES + "testSaveRules4.eca");
 		} catch (ECAIOException e) {
 			e.printStackTrace();
 			assert false;
