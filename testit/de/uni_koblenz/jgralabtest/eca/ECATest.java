@@ -22,20 +22,20 @@ import de.uni_koblenz.jgralab.eca.events.CreateVertexEventDescription;
 import de.uni_koblenz.jgralab.eca.events.DeleteEdgeEventDescription;
 import de.uni_koblenz.jgralab.eca.events.DeleteVertexEventDescription;
 import de.uni_koblenz.jgralab.eca.events.EventDescription;
-import de.uni_koblenz.jgralabtest.eca.schemas.simplelibrary.Book;
-import de.uni_koblenz.jgralabtest.eca.schemas.simplelibrary.Date;
-import de.uni_koblenz.jgralabtest.eca.schemas.simplelibrary.Library;
-import de.uni_koblenz.jgralabtest.eca.schemas.simplelibrary.Loans;
-import de.uni_koblenz.jgralabtest.eca.schemas.simplelibrary.Magazin;
-import de.uni_koblenz.jgralabtest.eca.schemas.simplelibrary.MediaType;
-import de.uni_koblenz.jgralabtest.eca.schemas.simplelibrary.NewMedia;
-import de.uni_koblenz.jgralabtest.eca.schemas.simplelibrary.SimpleLibraryGraph;
-import de.uni_koblenz.jgralabtest.eca.schemas.simplelibrary.SimpleLibrarySchema;
-import de.uni_koblenz.jgralabtest.eca.schemas.simplelibrary.User;
 import de.uni_koblenz.jgralabtest.eca.useractions.CreateAVertexOfSameTypeAction;
 import de.uni_koblenz.jgralabtest.eca.useractions.PrintNewAndOldAttributeValueAction;
 import de.uni_koblenz.jgralabtest.eca.useractions.RevertEdgeChangingAction;
 import de.uni_koblenz.jgralabtest.eca.useractions.RevertEdgeChangingOnHighesLevelAction;
+import de.uni_koblenz.jgralabtest.schemas.eca.simplelibrary.Book;
+import de.uni_koblenz.jgralabtest.schemas.eca.simplelibrary.Date;
+import de.uni_koblenz.jgralabtest.schemas.eca.simplelibrary.Library;
+import de.uni_koblenz.jgralabtest.schemas.eca.simplelibrary.Loans;
+import de.uni_koblenz.jgralabtest.schemas.eca.simplelibrary.Magazin;
+import de.uni_koblenz.jgralabtest.schemas.eca.simplelibrary.MediaType;
+import de.uni_koblenz.jgralabtest.schemas.eca.simplelibrary.NewMedia;
+import de.uni_koblenz.jgralabtest.schemas.eca.simplelibrary.SimpleLibraryGraph;
+import de.uni_koblenz.jgralabtest.schemas.eca.simplelibrary.SimpleLibrarySchema;
+import de.uni_koblenz.jgralabtest.schemas.eca.simplelibrary.User;
 
 public class ECATest {
 
