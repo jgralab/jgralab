@@ -1,5 +1,5 @@
 TGraph 2;
-Schema de.uni_koblenz.jgralabtest.gretl.schemas.services.ServiceSchema;
+Schema de.uni_koblenz.jgralabtest.schemas.gretl.services.ServiceSchema;
 GraphClass ServiceGraph;
 Package ;
 abstract VertexClass Service { name: String, owner: String };

@@ -13,13 +13,13 @@ import de.uni_koblenz.jgralab.gretl.CreateEdges;
 import de.uni_koblenz.jgralab.gretl.CreateVertices;
 import de.uni_koblenz.jgralab.gretl.SetAttributes;
 import de.uni_koblenz.jgralab.gretl.Transformation;
-import de.uni_koblenz.jgralabtest.gretl.schemas.qvt.simpleuml.Attribute;
-import de.uni_koblenz.jgralabtest.gretl.schemas.qvt.simpleuml.Classifier;
-import de.uni_koblenz.jgralabtest.gretl.schemas.qvt.simpleuml.Contains;
-import de.uni_koblenz.jgralabtest.gretl.schemas.qvt.simpleuml.PackagableElement;
-import de.uni_koblenz.jgralabtest.gretl.schemas.qvt.simpleuml.Package;
-import de.uni_koblenz.jgralabtest.gretl.schemas.qvt.simpleuml.PrimitiveDataType;
-import de.uni_koblenz.jgralabtest.gretl.schemas.qvt.simpleuml.SimpleUMLGraph;
+import de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simpleuml.Attribute;
+import de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simpleuml.Classifier;
+import de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simpleuml.Contains;
+import de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simpleuml.PackagableElement;
+import de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simpleuml.Package;
+import de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simpleuml.PrimitiveDataType;
+import de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simpleuml.SimpleUMLGraph;
 
 public class SimpleUML2SimpleRDBMS extends Transformation<Graph> {
 	SimpleUMLGraph g;
@@ -144,8 +144,8 @@ public class SimpleUML2SimpleRDBMS extends Transformation<Graph> {
 	private JValueList calculatePersistentClassTups() {
 		JValueList lst = new JValueList();
 		for (Vertex v : g
-				.vertices(de.uni_koblenz.jgralabtest.gretl.schemas.qvt.simpleuml.Class.class)) {
-			de.uni_koblenz.jgralabtest.gretl.schemas.qvt.simpleuml.Class cls = (de.uni_koblenz.jgralabtest.gretl.schemas.qvt.simpleuml.Class) v;
+				.vertices(de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simpleuml.Class.class)) {
+			de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simpleuml.Class cls = (de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simpleuml.Class) v;
 			if (!"persistent".equals(cls.get_kind())) {
 				continue;
 			}
@@ -175,8 +175,8 @@ public class SimpleUML2SimpleRDBMS extends Transformation<Graph> {
 	private JValueMap calculateClass2AttibutesMap() {
 		JValueMap cls2attrs = new JValueMap();
 		for (Vertex v : g
-				.vertices(de.uni_koblenz.jgralabtest.gretl.schemas.qvt.simpleuml.Class.class)) {
-			de.uni_koblenz.jgralabtest.gretl.schemas.qvt.simpleuml.Class cls = (de.uni_koblenz.jgralabtest.gretl.schemas.qvt.simpleuml.Class) v;
+				.vertices(de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simpleuml.Class.class)) {
+			de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simpleuml.Class cls = (de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simpleuml.Class) v;
 			if (!"persistent".equals(cls.get_kind())) {
 				continue;
 			}

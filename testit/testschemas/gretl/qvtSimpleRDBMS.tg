@@ -1,6 +1,6 @@
 TGraph 2;
 
-Schema de.uni_koblenz.jgralabtest.gretl.schemas.qvt.simplerdbms.SimpleRDBMSSchema;
+Schema de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simplerdbms.SimpleRDBMSSchema;
 
 GraphClass SimpleRDBMSGraph;
 

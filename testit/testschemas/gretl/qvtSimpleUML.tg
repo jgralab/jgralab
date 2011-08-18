@@ -1,6 +1,6 @@
 TGraph 2;
 
-Schema de.uni_koblenz.jgralabtest.gretl.schemas.qvt.simpleuml.SimpleUMLSchema;
+Schema de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simpleuml.SimpleUMLSchema;
 
 GraphClass SimpleUMLGraph;
 

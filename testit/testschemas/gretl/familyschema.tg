@@ -1,6 +1,6 @@
 TGraph 2;
 
-Schema de.uni_koblenz.jgralabtest.gretl.schemas.families.FamilySchema;
+Schema de.uni_koblenz.jgralabtest.schemas.gretl.families.FamilySchema;
 GraphClass FamilyGraph;
 
 VertexClass Family { lastName : String, street : String, town : String };

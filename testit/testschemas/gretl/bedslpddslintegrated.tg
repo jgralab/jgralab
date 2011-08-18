@@ -1,5 +1,5 @@
 TGraph 2;
-Schema de.uni_koblenz.jgralabtest.gretl.schemas.bedsl_pddsl.IntegratedBedslPddslSchema;
+Schema de.uni_koblenz.jgralabtest.schemas.gretl.bedsl_pddsl.IntegratedBedslPddslSchema;
 GraphClass IntegratedBedslPddslGraph;
 EnumDomain TransformationSource ( BEDSL, PDDSL, BOTH );
 abstract VertexClass Attribute { name: String };

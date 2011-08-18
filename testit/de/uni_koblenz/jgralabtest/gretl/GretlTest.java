@@ -63,48 +63,48 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.utilities.schemacompare.SchemaCompare;
 import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
 import de.uni_koblenz.jgralab.utilities.tg2dot.dot.GraphVizOutputFormat;
-import de.uni_koblenz.jgralabtest.gretl.schemas.addressbook.AddressBook;
-import de.uni_koblenz.jgralabtest.gretl.schemas.addressbook.AddressBookGraph;
-import de.uni_koblenz.jgralabtest.gretl.schemas.addressbook.AddressBookSchema;
-import de.uni_koblenz.jgralabtest.gretl.schemas.addressbook.Contact;
-import de.uni_koblenz.jgralabtest.gretl.schemas.bedsl.BedslGraph;
-import de.uni_koblenz.jgralabtest.gretl.schemas.bedsl.BedslSchema;
-import de.uni_koblenz.jgralabtest.gretl.schemas.bedsl.Entity;
-import de.uni_koblenz.jgralabtest.gretl.schemas.bedsl.ReferenceAttribute;
-import de.uni_koblenz.jgralabtest.gretl.schemas.bedsl.SimpleAttribute;
-import de.uni_koblenz.jgralabtest.gretl.schemas.copy.CopyGraph;
-import de.uni_koblenz.jgralabtest.gretl.schemas.copy.CopySchema;
-import de.uni_koblenz.jgralabtest.gretl.schemas.copy.Part;
-import de.uni_koblenz.jgralabtest.gretl.schemas.copy.Whole;
-import de.uni_koblenz.jgralabtest.gretl.schemas.copy.WholePart;
-import de.uni_koblenz.jgralabtest.gretl.schemas.families.Family;
-import de.uni_koblenz.jgralabtest.gretl.schemas.families.FamilyGraph;
-import de.uni_koblenz.jgralabtest.gretl.schemas.families.FamilySchema;
-import de.uni_koblenz.jgralabtest.gretl.schemas.families.HasFather;
-import de.uni_koblenz.jgralabtest.gretl.schemas.families.HasMother;
-import de.uni_koblenz.jgralabtest.gretl.schemas.families.Member;
-import de.uni_koblenz.jgralabtest.gretl.schemas.pddsl.Card;
-import de.uni_koblenz.jgralabtest.gretl.schemas.pddsl.Chassis;
-import de.uni_koblenz.jgralabtest.gretl.schemas.pddsl.Configuration;
-import de.uni_koblenz.jgralabtest.gretl.schemas.pddsl.PddslGraph;
-import de.uni_koblenz.jgralabtest.gretl.schemas.pddsl.PddslSchema;
-import de.uni_koblenz.jgralabtest.gretl.schemas.pddsl.Slot;
-import de.uni_koblenz.jgralabtest.gretl.schemas.qvt.simplerdbms.SimpleRDBMSSchema;
-import de.uni_koblenz.jgralabtest.gretl.schemas.qvt.simpleuml.Association;
-import de.uni_koblenz.jgralabtest.gretl.schemas.qvt.simpleuml.PrimitiveDataType;
-import de.uni_koblenz.jgralabtest.gretl.schemas.qvt.simpleuml.SimpleUMLGraph;
-import de.uni_koblenz.jgralabtest.gretl.schemas.qvt.simpleuml.SimpleUMLSchema;
-import de.uni_koblenz.jgralabtest.gretl.schemas.services.BasicService;
-import de.uni_koblenz.jgralabtest.gretl.schemas.services.ComposedService;
-import de.uni_koblenz.jgralabtest.gretl.schemas.services.Database;
-import de.uni_koblenz.jgralabtest.gretl.schemas.services.ProcessService;
-import de.uni_koblenz.jgralabtest.gretl.schemas.services.ServiceGraph;
-import de.uni_koblenz.jgralabtest.gretl.schemas.services.ServiceSchema;
-import de.uni_koblenz.jgralabtest.gretl.schemas.varro.UMLGraph;
-import de.uni_koblenz.jgralabtest.gretl.schemas.varro.UMLSchema;
-import de.uni_koblenz.jgralabtest.gretl.schemas.varro.uml.Assoc;
-import de.uni_koblenz.jgralabtest.gretl.schemas.varro.uml.AssocEnd;
-import de.uni_koblenz.jgralabtest.gretl.schemas.varro.uml.Attribute;
+import de.uni_koblenz.jgralabtest.schemas.gretl.addressbook.AddressBook;
+import de.uni_koblenz.jgralabtest.schemas.gretl.addressbook.AddressBookGraph;
+import de.uni_koblenz.jgralabtest.schemas.gretl.addressbook.AddressBookSchema;
+import de.uni_koblenz.jgralabtest.schemas.gretl.addressbook.Contact;
+import de.uni_koblenz.jgralabtest.schemas.gretl.bedsl.BedslGraph;
+import de.uni_koblenz.jgralabtest.schemas.gretl.bedsl.BedslSchema;
+import de.uni_koblenz.jgralabtest.schemas.gretl.bedsl.Entity;
+import de.uni_koblenz.jgralabtest.schemas.gretl.bedsl.ReferenceAttribute;
+import de.uni_koblenz.jgralabtest.schemas.gretl.bedsl.SimpleAttribute;
+import de.uni_koblenz.jgralabtest.schemas.gretl.copy.CopyGraph;
+import de.uni_koblenz.jgralabtest.schemas.gretl.copy.CopySchema;
+import de.uni_koblenz.jgralabtest.schemas.gretl.copy.Part;
+import de.uni_koblenz.jgralabtest.schemas.gretl.copy.Whole;
+import de.uni_koblenz.jgralabtest.schemas.gretl.copy.WholePart;
+import de.uni_koblenz.jgralabtest.schemas.gretl.families.Family;
+import de.uni_koblenz.jgralabtest.schemas.gretl.families.FamilyGraph;
+import de.uni_koblenz.jgralabtest.schemas.gretl.families.FamilySchema;
+import de.uni_koblenz.jgralabtest.schemas.gretl.families.HasFather;
+import de.uni_koblenz.jgralabtest.schemas.gretl.families.HasMother;
+import de.uni_koblenz.jgralabtest.schemas.gretl.families.Member;
+import de.uni_koblenz.jgralabtest.schemas.gretl.pddsl.Card;
+import de.uni_koblenz.jgralabtest.schemas.gretl.pddsl.Chassis;
+import de.uni_koblenz.jgralabtest.schemas.gretl.pddsl.Configuration;
+import de.uni_koblenz.jgralabtest.schemas.gretl.pddsl.PddslGraph;
+import de.uni_koblenz.jgralabtest.schemas.gretl.pddsl.PddslSchema;
+import de.uni_koblenz.jgralabtest.schemas.gretl.pddsl.Slot;
+import de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simplerdbms.SimpleRDBMSSchema;
+import de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simpleuml.Association;
+import de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simpleuml.PrimitiveDataType;
+import de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simpleuml.SimpleUMLGraph;
+import de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simpleuml.SimpleUMLSchema;
+import de.uni_koblenz.jgralabtest.schemas.gretl.services.BasicService;
+import de.uni_koblenz.jgralabtest.schemas.gretl.services.ComposedService;
+import de.uni_koblenz.jgralabtest.schemas.gretl.services.Database;
+import de.uni_koblenz.jgralabtest.schemas.gretl.services.ProcessService;
+import de.uni_koblenz.jgralabtest.schemas.gretl.services.ServiceGraph;
+import de.uni_koblenz.jgralabtest.schemas.gretl.services.ServiceSchema;
+import de.uni_koblenz.jgralabtest.schemas.gretl.varro.UMLGraph;
+import de.uni_koblenz.jgralabtest.schemas.gretl.varro.UMLSchema;
+import de.uni_koblenz.jgralabtest.schemas.gretl.varro.uml.Assoc;
+import de.uni_koblenz.jgralabtest.schemas.gretl.varro.uml.AssocEnd;
+import de.uni_koblenz.jgralabtest.schemas.gretl.varro.uml.Attribute;
 
 /**
  * @author Tassilo Horn <horn@uni-koblenz.de>
@@ -195,69 +195,69 @@ public class GretlTest {
 		PrimitiveDataType doub = g.createPrimitiveDataType();
 		doub.set_name("double");
 
-		de.uni_koblenz.jgralabtest.gretl.schemas.qvt.simpleuml.Class clsGeoLoc = g
+		de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simpleuml.Class clsGeoLoc = g
 				.createClass();
 		clsGeoLoc.set_name("GeoLoc");
 
-		de.uni_koblenz.jgralabtest.gretl.schemas.qvt.simpleuml.Attribute attrGeoLocLat = g
+		de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simpleuml.Attribute attrGeoLocLat = g
 				.createAttribute();
 		attrGeoLocLat.set_name("lat");
 		g.createHasType(attrGeoLocLat, doub);
 		g.createHasAttribute(clsGeoLoc, attrGeoLocLat);
 
-		de.uni_koblenz.jgralabtest.gretl.schemas.qvt.simpleuml.Attribute attrGeoLocLon = g
+		de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simpleuml.Attribute attrGeoLocLon = g
 				.createAttribute();
 		attrGeoLocLon.set_name("lon");
 		g.createHasType(attrGeoLocLon, doub);
 		g.createHasAttribute(clsGeoLoc, attrGeoLocLon);
 
-		de.uni_koblenz.jgralabtest.gretl.schemas.qvt.simpleuml.Class clsAddress = g
+		de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simpleuml.Class clsAddress = g
 				.createClass();
 		clsAddress.set_name("Address");
 
-		de.uni_koblenz.jgralabtest.gretl.schemas.qvt.simpleuml.Attribute attrAddressStreet = g
+		de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simpleuml.Attribute attrAddressStreet = g
 				.createAttribute();
 		attrAddressStreet.set_name("street");
 		g.createHasType(attrAddressStreet, string);
 		g.createHasAttribute(clsAddress, attrAddressStreet);
 
-		de.uni_koblenz.jgralabtest.gretl.schemas.qvt.simpleuml.Attribute attrAddressTown = g
+		de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simpleuml.Attribute attrAddressTown = g
 				.createAttribute();
 		attrAddressTown.set_name("town");
 		g.createHasType(attrAddressTown, string);
 		g.createHasAttribute(clsAddress, attrAddressTown);
 
-		de.uni_koblenz.jgralabtest.gretl.schemas.qvt.simpleuml.Attribute attrAddressLoc = g
+		de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simpleuml.Attribute attrAddressLoc = g
 				.createAttribute();
 		attrAddressLoc.set_name("loc");
 		g.createHasType(attrAddressLoc, clsGeoLoc);
 		g.createHasAttribute(clsAddress, attrAddressLoc);
 
 		// entity classes
-		de.uni_koblenz.jgralabtest.gretl.schemas.qvt.simpleuml.Class clsAddressBook = g
+		de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simpleuml.Class clsAddressBook = g
 				.createClass();
 		clsAddressBook.set_name("AddressBook");
 		clsAddressBook.set_kind("persistent");
 
-		de.uni_koblenz.jgralabtest.gretl.schemas.qvt.simpleuml.Attribute attrAddressBookName = g
+		de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simpleuml.Attribute attrAddressBookName = g
 				.createAttribute();
 		attrAddressBookName.set_name("abName");
 		attrAddressBookName.set_kind("primary");
 		g.createHasType(attrAddressBookName, string);
 		g.createHasAttribute(clsAddressBook, attrAddressBookName);
 
-		de.uni_koblenz.jgralabtest.gretl.schemas.qvt.simpleuml.Class clsPerson = g
+		de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simpleuml.Class clsPerson = g
 				.createClass();
 		clsPerson.set_name("Person");
 		clsPerson.set_kind("persistent");
 
-		de.uni_koblenz.jgralabtest.gretl.schemas.qvt.simpleuml.Attribute attrPersonAddress = g
+		de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simpleuml.Attribute attrPersonAddress = g
 				.createAttribute();
 		attrPersonAddress.set_name("address");
 		g.createHasType(attrPersonAddress, clsAddress);
 		g.createHasAttribute(clsPerson, attrPersonAddress);
 
-		de.uni_koblenz.jgralabtest.gretl.schemas.qvt.simpleuml.Attribute attrPersonName = g
+		de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simpleuml.Attribute attrPersonName = g
 				.createAttribute();
 		attrPersonName.set_name("pName");
 		attrPersonName.set_kind("primary");
@@ -270,20 +270,20 @@ public class GretlTest {
 		assocAddressBookContainsPerson.addAdjacence("target", clsPerson);
 
 		// packages
-		de.uni_koblenz.jgralabtest.gretl.schemas.qvt.simpleuml.Package pkgEntities = g
+		de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simpleuml.Package pkgEntities = g
 				.createPackage();
 		pkgEntities.set_name("entities");
 		g.createContains(pkgEntities, clsAddressBook);
 		g.createContains(pkgEntities, clsPerson);
 		g.createContains(pkgEntities, assocAddressBookContainsPerson);
 
-		de.uni_koblenz.jgralabtest.gretl.schemas.qvt.simpleuml.Package pkgData = g
+		de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simpleuml.Package pkgData = g
 				.createPackage();
 		pkgData.set_name("data");
 		g.createContains(pkgData, clsAddress);
 		g.createContains(pkgData, clsGeoLoc);
 
-		de.uni_koblenz.jgralabtest.gretl.schemas.qvt.simpleuml.Package pkgDefault = g
+		de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simpleuml.Package pkgDefault = g
 				.createPackage();
 		pkgDefault.set_name("");
 		g.createContains(pkgDefault, pkgData);
@@ -295,7 +295,7 @@ public class GretlTest {
 	private static void initVarroUMLGraph() {
 		UMLGraph g = UMLSchema.instance().createUMLGraph();
 
-		de.uni_koblenz.jgralabtest.gretl.schemas.varro.uml.Package p = g
+		de.uni_koblenz.jgralabtest.schemas.gretl.varro.uml.Package p = g
 				.createPackage();
 		p.set_name("p");
 
@@ -329,7 +329,7 @@ public class GretlTest {
 		g.createHasAssocEnd(hold, ae6);
 		g.createContainsAssoc(p, hold);
 
-		de.uni_koblenz.jgralabtest.gretl.schemas.varro.uml.Class phil = g
+		de.uni_koblenz.jgralabtest.schemas.gretl.varro.uml.Class phil = g
 				.createClass();
 		phil.set_name("phil");
 		g.createContainsClass(p, phil);
@@ -337,7 +337,7 @@ public class GretlTest {
 		g.createHasType(ae3, phil);
 		g.createHasType(ae5, phil);
 
-		de.uni_koblenz.jgralabtest.gretl.schemas.varro.uml.Class fork = g
+		de.uni_koblenz.jgralabtest.schemas.gretl.varro.uml.Class fork = g
 				.createClass();
 		fork.set_name("fork");
 		g.createContainsClass(p, fork);

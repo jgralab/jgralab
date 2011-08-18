@@ -1,6 +1,6 @@
 TGraph 2;
 
-Schema de.uni_koblenz.jgralabtest.gretl.schemas.copy.CopySchema;
+Schema de.uni_koblenz.jgralabtest.schemas.gretl.copy.CopySchema;
 
 GraphClass CopyGraph;
  
