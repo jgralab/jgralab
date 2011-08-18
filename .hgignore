@@ -18,4 +18,6 @@ syntax: regexp
 syntax: regexp
 ^testit/de/uni_koblenz/jgralabtest/eca/schemas$
 syntax: regexp
-^testit/jgralabtest\.properties$
+^testit/jgralabtest/\.properties$
+syntax: regexp
+^testit/testschemas/rsa-xmi/.*\.tg$

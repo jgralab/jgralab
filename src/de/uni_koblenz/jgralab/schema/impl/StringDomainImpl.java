@@ -104,7 +104,7 @@ public final class StringDomainImpl extends BasicDomainImpl implements
 
 	@Override
 	public String getTransactionJavaClassName(String schemaRootPackagePrefix) {
-		return getJavaClassName(schemaRootPackagePrefix);
+		return "java.lang.String";
 	}
 
 	@Override
@@ -117,5 +117,10 @@ public final class StringDomainImpl extends BasicDomainImpl implements
 	@Override
 	public String getInitialValue() {
 		return "null";
+	}
+
+	@Override
+	public boolean isPrimitive() {
+		return false;
 	}
 }

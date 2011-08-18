@@ -34,18 +34,10 @@
  */
 package de.uni_koblenz.jgralab.impl.db;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.GraphException;
-import de.uni_koblenz.jgralab.GraphIO;
-import de.uni_koblenz.jgralab.GraphIOException;
-import de.uni_koblenz.jgralab.JGraLabList;
-import de.uni_koblenz.jgralab.JGraLabMap;
-import de.uni_koblenz.jgralab.JGraLabSet;
-import de.uni_koblenz.jgralab.Record;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.EdgeBaseImpl;
 import de.uni_koblenz.jgralab.impl.FreeIndexList;
@@ -53,9 +45,6 @@ import de.uni_koblenz.jgralab.impl.GraphBaseImpl;
 import de.uni_koblenz.jgralab.impl.IncidenceImpl;
 import de.uni_koblenz.jgralab.impl.ReversedEdgeBaseImpl;
 import de.uni_koblenz.jgralab.impl.VertexBaseImpl;
-import de.uni_koblenz.jgralab.impl.std.JGraLabListImpl;
-import de.uni_koblenz.jgralab.impl.std.JGraLabMapImpl;
-import de.uni_koblenz.jgralab.impl.std.JGraLabSetImpl;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralab.trans.InvalidSavepointException;
@@ -661,7 +650,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 		vSeq.remove((DatabasePersistableVertex) v);
 		freeVertexIndex(v.getId());
 	}
-	
+
 	@Override
 	public void deleteVertex(Vertex v) {
 		super.deleteVertex(v);
@@ -681,7 +670,8 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	 *            Postcondition: Vertex is not in cache, no longer persistent in
 	 *            database and set to deleted.
 	 */
-	private void vertexAfterDeleted(Vertex vertexToBeDeleted) {
+	@Override
+	protected void vertexAfterDeleted(Vertex vertexToBeDeleted) {
 		assert vertexToBeDeleted != null;
 		DatabasePersistableVertex vertex = (DatabasePersistableVertex) vertexToBeDeleted;
 		graphCache.removeVertex(this, vertex.getId());
@@ -707,17 +697,14 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 		eSeq.remove((DatabasePersistableEdge) e);
 		freeEdgeIndex(e.getId());
 	}
-	
+
 	@Override
 	public void deleteEdge(Edge e) {
-		Vertex alpha = e.getAlpha();
-		Vertex omega = e.getOmega();
-		
 		super.deleteEdge(e);
-		edgeAfterDeleted(e, alpha, omega);
 	}
 
-	private void edgeAfterDeleted(Edge e, Vertex oldAlpha, Vertex oldOmega) {
+	@Override
+	protected void edgeAfterDeleted(Edge e, Vertex oldAlpha, Vertex oldOmega) {
 		assert e != null;
 		DatabasePersistableEdge edge = (DatabasePersistableEdge) e;
 		if (edge.isPersistent()) {
@@ -1271,62 +1258,6 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	}
 
 	@Override
-	public <T> JGraLabList<T> createList() {
-		return new JGraLabListImpl<T>();
-	}
-
-	@Override
-	public <T> JGraLabList<T> createList(Collection<? extends T> collection) {
-		return new JGraLabListImpl<T>(collection);
-	}
-
-	@Override
-	public <T> JGraLabList<T> createList(int initialCapacity) {
-		return new JGraLabListImpl<T>(initialCapacity);
-	}
-
-	@Override
-	public <K, V> JGraLabMap<K, V> createMap() {
-		return new JGraLabMapImpl<K, V>();
-	}
-
-	@Override
-	public <K, V> JGraLabMap<K, V> createMap(Map<? extends K, ? extends V> map) {
-		return new JGraLabMapImpl<K, V>(map);
-	}
-
-	@Override
-	public <K, V> JGraLabMap<K, V> createMap(int initialCapacity) {
-		return new JGraLabMapImpl<K, V>(initialCapacity);
-	}
-
-	@Override
-	public <K, V> JGraLabMap<K, V> createMap(int initialCapacity,
-			float loadFactor) {
-		return new JGraLabMapImpl<K, V>(initialCapacity, loadFactor);
-	}
-
-	@Override
-	public <T> JGraLabSet<T> createSet() {
-		return new JGraLabSetImpl<T>();
-	}
-
-	@Override
-	public <T> JGraLabSet<T> createSet(Collection<? extends T> collection) {
-		return new JGraLabSetImpl<T>(collection);
-	}
-
-	@Override
-	public <T> JGraLabSet<T> createSet(int initialCapacity) {
-		return new JGraLabSetImpl<T>(initialCapacity);
-	}
-
-	@Override
-	public <T> JGraLabSet<T> createSet(int initialCapacity, float loadFactor) {
-		return new JGraLabSetImpl<T>(initialCapacity, loadFactor);
-	}
-
-	@Override
 	public final boolean hasTransactionSupport() {
 		return false;
 	}
@@ -1334,33 +1265,6 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	@Override
 	public final boolean hasDatabaseSupport() {
 		return true;
-	}
-
-	@Override
-	public <T extends Record> T createRecord(Class<T> recordClass, GraphIO io) {
-		T record = graphFactory.createRecord(recordClass, this);
-		try {
-			record.readComponentValues(io);
-		} catch (GraphIOException e) {
-			e.printStackTrace();
-		}
-		return record;
-	}
-
-	@Override
-	public <T extends Record> T createRecord(Class<T> recordClass,
-			Map<String, Object> fields) {
-		T record = graphFactory.createRecord(recordClass, this);
-		record.setComponentValues(fields);
-		return record;
-	}
-
-	@Override
-	public <T extends Record> T createRecord(Class<T> recordClass,
-			Object... components) {
-		T record = graphFactory.createRecord(recordClass, this);
-		record.setComponentValues(components);
-		return record;
 	}
 
 	@Override

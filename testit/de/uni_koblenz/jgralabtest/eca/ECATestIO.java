@@ -25,6 +25,7 @@ import de.uni_koblenz.jgralab.eca.events.CreateVertexEventDescription;
 import de.uni_koblenz.jgralab.eca.events.DeleteVertexEventDescription;
 import de.uni_koblenz.jgralab.eca.events.EventDescription;
 import de.uni_koblenz.jgralabtest.eca.schemas.simplelibrary.Book;
+import de.uni_koblenz.jgralabtest.eca.schemas.simplelibrary.Date;
 import de.uni_koblenz.jgralabtest.eca.schemas.simplelibrary.Library;
 import de.uni_koblenz.jgralabtest.eca.schemas.simplelibrary.Loans;
 import de.uni_koblenz.jgralabtest.eca.schemas.simplelibrary.Magazin;
@@ -43,7 +44,7 @@ public class ECATestIO {
 	private static Loans loans_u1_b1;
 
 	private static String folderForRuleFiles = "testit/de/uni_koblenz/jgralabtest/eca/io/";
-	
+
 	@BeforeClass
 	public static void setUp() {
 		System.out.println("Start ECA IO Test.\n");
@@ -77,11 +78,8 @@ public class ECATestIO {
 		rules.add(bef_rule);
 		rules.add(aft_rule);
 		try {
-			ECAIO.saveECArules(
-					simlibgraph.getSchema(),
- folderForRuleFiles
-					+ "testSaveRules1.eca",
-					rules);
+			ECAIO.saveECArules(simlibgraph.getSchema(), folderForRuleFiles
+					+ "testSaveRules1.eca", rules);
 		} catch (ECAIOException e) {
 			e.printStackTrace();
 			assert false;
@@ -155,9 +153,9 @@ public class ECATestIO {
 			e.printStackTrace();
 			assert false;
 		}
-		
+
 		ECARuleManager ecaRuleManager = (ECARuleManager) simlibgraph
-		.getECARuleManager();
+				.getECARuleManager();
 		ecaRuleManager.addECARule(rules.get(0));
 
 		Book book = simlibgraph.createBook();
@@ -299,11 +297,11 @@ public class ECATestIO {
 
 		// user1 loans book1
 		loans_u1_b1 = graph.createLoans(user1, book1);
-		loans_u1_b1.set_date(graph.createDate(1, 1, 2011));
+		loans_u1_b1.set_date(new Date(1, 1, 2011));
 
 		// user 2 loans magazin1
 		Loans loans_u2_m1 = graph.createLoans(user2, magazin1);
-		loans_u2_m1.set_date(graph.createDate(5, 5, 2011));
+		loans_u2_m1.set_date(new Date(5, 5, 2011));
 
 		simlibgraph = graph;
 	}

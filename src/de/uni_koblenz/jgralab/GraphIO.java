@@ -99,16 +99,15 @@ import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
  * @author ist@uni-koblenz.de
  */
 public class GraphIO {
-	private static final int BUFFER_SIZE = 65536;
 	/**
 	 * TG File Version this GraphIO recognizes.
 	 */
-	public static int TGFILE_VERSION = 2;
-	public static String NULL_LITERAL = "n";
-	public static String TRUE_LITERAL = "t";
-	public static String FALSE_LITERAL = "f";
-	public static String TGRAPH_FILE_EXTENSION = ".tg";
-	public static String TGRAPH_COMPRESSED_FILE_EXTENSION = ".tg.gz";
+	public static final int TGFILE_VERSION = 2;
+	public static final String NULL_LITERAL = "n";
+	public static final String TRUE_LITERAL = "t";
+	public static final String FALSE_LITERAL = "f";
+	public static final String TGRAPH_FILE_EXTENSION = ".tg";
+	public static final String TGRAPH_COMPRESSED_FILE_EXTENSION = ".tg.gz";
 
 	/**
 	 * A {@link FilenameFilter} that accepts TG files.
@@ -158,6 +157,8 @@ public class GraphIO {
 			return "TG Files";
 		}
 	}
+
+	private static final int BUFFER_SIZE = 65536;
 
 	private static Logger logger = Logger.getLogger(GraphIO.class.getName());
 
@@ -2734,11 +2735,6 @@ public class GraphIO {
 
 	private String className() throws GraphIOException {
 		String[] qn = matchQualifiedName(true);
-		// The following time-consuming test is performed in the invocation and
-		// thus not longer needed here
-		// if (!schema.knows(className))
-		// throw new GraphIOException("Class " + className
-		// + " of read element does not exist.");
 		return toQNameString(qn);
 	}
 
@@ -2755,19 +2751,20 @@ public class GraphIO {
 		int eId = 0;
 		int prevId = 0;
 		int vId = v.getId();
-		boolean first = true;
-
 		match("<");
+		if (!lookAhead.equals(">")) {
+			eId = eId();
+			firstIncidence[vId] = eId;
+			if (eId < 0) {
+				edgeIn[-eId] = v;
+			} else {
+				edgeOut[eId] = v;
+			}
+		}
 		while (!lookAhead.equals(">")) {
 			prevId = eId;
 			eId = eId();
-			// if (firstEdgeAtVertex[vId] == 0) {
-			if (first) {
-				firstIncidence[vId] = eId;
-				first = false;
-			} else {
-				nextIncidence[edgeOffset + prevId] = eId;
-			}
+			nextIncidence[edgeOffset + prevId] = eId;
 			if (eId < 0) {
 				edgeIn[-eId] = v;
 			} else {
@@ -2930,7 +2927,6 @@ public class GraphIO {
 				}
 			}
 		}
-
 		recordDomainBuffer = orderedRdList;
 	}
 

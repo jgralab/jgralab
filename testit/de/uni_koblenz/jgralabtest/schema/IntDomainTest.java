@@ -45,7 +45,7 @@ public class IntDomainTest extends NativeDomainTest {
 		// Initializing of DomainTest
 		expectedDomainName = "Integer";
 		expectedJavaAttributeImplementationTypeName = "int";
-		expectedJavaClassName = "Integer";
+		expectedJavaClassName = "java.lang.Integer";
 		expectedTgTypeName = "Integer";
 		expectedStringRepresentation = "domain Integer";
 		expectedQualifiedName1 = "Integer";

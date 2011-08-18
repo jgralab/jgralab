@@ -84,7 +84,7 @@ public class GraphFunctionTest extends GenericTest {
 
 	@Test
 	public void testChildrenNull() throws Exception {
-		assertQueryEqualsNull("using nll: children(nll)");
+		assertQueryIsNull("using nll: children(nll)");
 	}
 
 	private Set<Vertex> getChildren(Vertex vertex) {
@@ -118,12 +118,12 @@ public class GraphFunctionTest extends GenericTest {
 
 	@Test
 	public void testDegreeNull() throws Exception {
-		assertQueryEqualsNull("using nll: degree(nll)");
+		assertQueryIsNull("using nll: degree(nll)");
 	}
 
 	@Test
 	public void testDegreeWithTypeCollectionAndNull() throws Exception {
-		assertQueryEqualsNull("using nll: degree(nll)");
+		assertQueryIsNull("using nll: degree(nll)");
 	}
 
 	@Test
@@ -166,7 +166,7 @@ public class GraphFunctionTest extends GenericTest {
 
 	@Test
 	public void testDescribeNull() throws Exception {
-		assertQueryEqualsNull("using nll: describe(nll)");
+		assertQueryIsNull("using nll: describe(nll)");
 	}
 
 	@Test
@@ -184,16 +184,16 @@ public class GraphFunctionTest extends GenericTest {
 	@Test
 	public void testEdgeSeqWithTypeCollectionAndNull() throws Exception {
 
-		assertQueryEqualsNull("using nll: edgeSeq(nll, lastEdge())");
-		assertQueryEqualsNull("using nll: edgeSeq(firstEdge(), nll)");
-		assertQueryEqualsNull("using nll: edgeSeq(nll, nll)");
+		assertQueryIsNull("using nll: edgeSeq(nll, lastEdge())");
+		assertQueryIsNull("using nll: edgeSeq(firstEdge(), nll)");
+		assertQueryIsNull("using nll: edgeSeq(nll, nll)");
 
-		assertQueryEqualsNull("using nll: edgeSeq{Edge}(nll, lastEdge())");
-		assertQueryEqualsNull("using nll: edgeSeq{Edge}(firstEdge(), nll)");
-		assertQueryEqualsNull("using nll: edgeSeq{Edge}(nll, nll)");
+		assertQueryIsNull("using nll: edgeSeq{Edge}(nll, lastEdge())");
+		assertQueryIsNull("using nll: edgeSeq{Edge}(firstEdge(), nll)");
+		assertQueryIsNull("using nll: edgeSeq{Edge}(nll, nll)");
 
-		assertQueryEqualsNull("using nll: edgeSeq(lastEdge(), firstEdge())");
-		assertQueryEqualsNull("using nll: edgeSeq{Edge}(lastEdge(), firstEdge())");
+		assertQueryIsNull("using nll: edgeSeq(lastEdge(), firstEdge())");
+		assertQueryIsNull("using nll: edgeSeq{Edge}(lastEdge(), firstEdge())");
 	}
 
 	public void testConnectedEdges(String query, Class<? extends Edge> clazz,
@@ -223,8 +223,8 @@ public class GraphFunctionTest extends GenericTest {
 
 	@Test
 	public void testEdgesConnectedNull() throws Exception {
-		assertQueryEqualsNull("using nll: edgesConnected(nll)");
-		assertQueryEqualsNull("using nll: edgesConnected{Vertex}(nll)");
+		assertQueryIsNull("using nll: edgesConnected(nll)");
+		assertQueryIsNull("using nll: edgesConnected{Vertex}(nll)");
 	}
 
 	@Test
@@ -238,8 +238,8 @@ public class GraphFunctionTest extends GenericTest {
 
 	@Test
 	public void testEdgesFromNull() throws Exception {
-		assertQueryEqualsNull("using nll: edgesFrom(nll)");
-		assertQueryEqualsNull("using nll: edgesFrom{Vertex}(nll)");
+		assertQueryIsNull("using nll: edgesFrom(nll)");
+		assertQueryIsNull("using nll: edgesFrom{Vertex}(nll)");
 	}
 
 	@Test
@@ -253,8 +253,8 @@ public class GraphFunctionTest extends GenericTest {
 
 	@Test
 	public void testEdgesToNull() throws Exception {
-		assertQueryEqualsNull("using nll: edgesTo(nll)");
-		assertQueryEqualsNull("using nll: edgesTo{Vertex}(nll)");
+		assertQueryIsNull("using nll: edgesTo(nll)");
+		assertQueryIsNull("using nll: edgesTo{Vertex}(nll)");
 	}
 
 	@Test
@@ -272,15 +272,15 @@ public class GraphFunctionTest extends GenericTest {
 
 	@Test
 	public void testEndVertexNull() throws Exception {
-		assertQueryEqualsNull("using nll: endVertex(nll)");
+		assertQueryIsNull("using nll: endVertex(nll)");
 	}
 
 	@Test
 	public void testFirstEdge() throws Exception {
 		Graph graph = getTestGraph(TestVersion.ROUTE_MAP_GRAPH);
 		assertQueryEquals("firstEdge()", graph.getFirstEdge());
-		assertQueryEquals("firstEdge{connections.Way}()",
-				graph.getFirstEdge(Way.class));
+		assertQueryEquals("firstEdge{connections.Way}()", graph
+				.getFirstEdge(Way.class));
 		assertQueryEquals("firstEdge{Edge!}()", (Edge) null);
 	}
 
@@ -288,8 +288,8 @@ public class GraphFunctionTest extends GenericTest {
 	public void testFirstVertex() throws Exception {
 		Graph graph = getTestGraph(TestVersion.ROUTE_MAP_GRAPH);
 		assertQueryEquals("firstVertex()", graph.getFirstVertex());
-		assertQueryEquals("firstVertex{junctions.Crossroad}()",
-				graph.getFirstVertex(Crossroad.class));
+		assertQueryEquals("firstVertex{junctions.Crossroad}()", graph
+				.getFirstVertex(Crossroad.class));
 		assertQueryEquals("firstVertex{Vertex!}()", (Vertex) null);
 	}
 
@@ -310,10 +310,10 @@ public class GraphFunctionTest extends GenericTest {
 
 	@Test
 	public void testGetEdgeNull() throws Exception {
-		assertQueryEqualsNull("using nll: getEdge(nll)");
-		assertQueryEqualsNull("getEdge(0)");
-		assertQueryEqualsNull("getEdge(id(lastEdge()) + 1)");
-		assertQueryEqualsNull("getEdge(-id(lastEdge()) -1)");
+		assertQueryIsNull("using nll: getEdge(nll)");
+		assertQueryIsNull("getEdge(0)");
+		assertQueryIsNull("getEdge(id(lastEdge()) + 1)");
+		assertQueryIsNull("getEdge(-id(lastEdge()) -1)");
 	}
 
 	@Test
@@ -345,9 +345,9 @@ public class GraphFunctionTest extends GenericTest {
 
 	@Test
 	public void testGetValueNull() throws Exception {
-		assertQueryEqualsNull("using nll: getValue(nll, nll)");
-		assertQueryEqualsNull("using nll: getValue(nll, '?')");
-		assertQueryEqualsNull("using nll: getValue(firstVertex(), nll)");
+		assertQueryIsNull("using nll: getValue(nll, nll)");
+		assertQueryIsNull("using nll: getValue(nll, '?')");
+		assertQueryIsNull("using nll: getValue(firstVertex(), nll)");
 	}
 
 	@Test
@@ -366,11 +366,11 @@ public class GraphFunctionTest extends GenericTest {
 
 	@Test
 	public void testGetVertexNull() throws Exception {
-		assertQueryEqualsNull("using nll: getVertex(nll)");
-		assertQueryEqualsNull("getVertex(0)");
-		assertQueryEqualsNull("getVertex(-1)");
-		assertQueryEqualsNull("getVertex(id(lastVertex()) + 1)");
-		assertQueryEqualsNull("getVertex(-id(lastVertex()) -1)");
+		assertQueryIsNull("using nll: getVertex(nll)");
+		assertQueryIsNull("getVertex(0)");
+		assertQueryIsNull("getVertex(-1)");
+		assertQueryIsNull("getVertex(id(lastVertex()) + 1)");
+		assertQueryIsNull("getVertex(-id(lastVertex()) -1)");
 	}
 
 	@Test
@@ -387,7 +387,7 @@ public class GraphFunctionTest extends GenericTest {
 
 	@Test
 	public void testIdNull() throws Exception {
-		assertQueryEqualsNull("using nll: id(nll)");
+		assertQueryIsNull("using nll: id(nll)");
 	}
 
 	@Test
@@ -412,7 +412,7 @@ public class GraphFunctionTest extends GenericTest {
 
 	@Test
 	public void testIsAcyclicNull() throws Exception {
-		assertQueryEqualsNull("using nll: isAcyclic(nll)");
+		assertQueryIsNull("using nll: isAcyclic(nll)");
 	}
 
 	@Test
@@ -423,7 +423,7 @@ public class GraphFunctionTest extends GenericTest {
 
 	@Test
 	public void testIsIsolatedNull() throws Exception {
-		assertQueryEqualsNull("using nll: isIsolated(nll)");
+		assertQueryIsNull("using nll: isIsolated(nll)");
 	}
 
 	@Test
@@ -437,22 +437,23 @@ public class GraphFunctionTest extends GenericTest {
 
 	@Test
 	public void testIsLoopNull() throws Exception {
-		assertQueryEqualsNull("using nll: isLoop(nll)");
+		assertQueryIsNull("using nll: isLoop(nll)");
 	}
 
 	@Test
 	public void testIsMarked() throws Exception {
-		// TODO An GraphMarker has to be created to test this function call.
+		// TODO A GraphMarker has to be created to test this function call.
+		// How do you create a graph marker with greql?
 		fail();
 	}
 
 	@Test
 	public void testIsMarkedNull() throws Exception {
-		assertQueryEqualsNull("using nll: isMarked(lastVertex(), nll)");
+		assertQueryIsNull("using nll: isMarked(lastVertex(), nll)");
 		// TODO An GraphMarker has to be created to test this function call.
 		// assertQueryEqualsNull("using nll: isMarked(nll, ???)");
-		assertQueryEqualsNull("using nll: isMarked(nll, nll)");
-		fail();
+		assertQueryIsNull("using nll: isMarked(nll, nll)");
+		// fail();
 	}
 
 	@Test
@@ -480,7 +481,7 @@ public class GraphFunctionTest extends GenericTest {
 		assertQueryEquals("lastEdge()", graph.getLastEdge());
 		assertQueryEquals("lastEdge{connections.Way}()",
 				getLastEdgeForType(Way.class));
-		assertQueryEqualsNull("lastEdge{Edge!}()");
+		assertQueryIsNull("lastEdge{Edge!}()");
 	}
 
 	@Test
@@ -489,7 +490,7 @@ public class GraphFunctionTest extends GenericTest {
 		assertQueryEquals("lastVertex()", graph.getLastVertex());
 		assertQueryEquals("lastVertex{junctions.Crossroad}()",
 				getLastVertexForType(Crossroad.class));
-		assertQueryEqualsNull("lastVertex{Vertex!}()");
+		assertQueryIsNull("lastVertex{Vertex!}()");
 	}
 
 	public Edge getLastEdgeForType(Class<? extends Edge> type) throws Exception {
@@ -532,7 +533,7 @@ public class GraphFunctionTest extends GenericTest {
 
 	@Test
 	public void testOutDegreeNull() throws Exception {
-		assertQueryEqualsNull("using nll: outDegree(nll)");
+		assertQueryIsNull("using nll: outDegree(nll)");
 	}
 
 	@Test
@@ -557,7 +558,7 @@ public class GraphFunctionTest extends GenericTest {
 
 	@Test
 	public void testSiblingsNull() throws Exception {
-		assertQueryEqualsNull("using nll: siblings(nll)");
+		assertQueryIsNull("using nll: siblings(nll)");
 	}
 
 	private Set<Vertex> getParentVertices(Vertex vertex) {
@@ -591,13 +592,13 @@ public class GraphFunctionTest extends GenericTest {
 
 	@Test
 	public void testStartVertexNull() throws Exception {
-		assertQueryEqualsNull("using nll: startVertex(nll)");
+		assertQueryIsNull("using nll: startVertex(nll)");
 	}
 
 	@Test
 	public void testTopologicalSort() throws Exception {
 		String query = "topologicalSort()";
-		assertQueryEqualsNull(query);
+		assertQueryIsNull(query);
 	}
 
 	@Test
@@ -635,16 +636,16 @@ public class GraphFunctionTest extends GenericTest {
 	@Test
 	public void testVertexSeqWithTypeCollectionAndNull() throws Exception {
 
-		assertQueryEqualsNull("using nll: vertexSeq(nll, lastVertex())");
-		assertQueryEqualsNull("using nll: vertexSeq(firstVertex(), nll)");
-		assertQueryEqualsNull("using nll: vertexSeq(nll, nll)");
+		assertQueryIsNull("using nll: vertexSeq(nll, lastVertex())");
+		assertQueryIsNull("using nll: vertexSeq(firstVertex(), nll)");
+		assertQueryIsNull("using nll: vertexSeq(nll, nll)");
 
-		assertQueryEqualsNull("using nll: vertexSeq{Vertex}(nll, lastVertex())");
-		assertQueryEqualsNull("using nll: vertexSeq{Vertex}(firstVertex(), nll)");
-		assertQueryEqualsNull("using nll: vertexSeq{Vertex}(nll, nll)");
+		assertQueryIsNull("using nll: vertexSeq{Vertex}(nll, lastVertex())");
+		assertQueryIsNull("using nll: vertexSeq{Vertex}(firstVertex(), nll)");
+		assertQueryIsNull("using nll: vertexSeq{Vertex}(nll, nll)");
 
-		assertQueryEqualsNull("using nll: vertexSeq(lastVertex(), firstVertex())");
-		assertQueryEqualsNull("using nll: vertexSeq{Vertex}(lastVertex(), firstVertex())");
+		assertQueryIsNull("using nll: vertexSeq(lastVertex(), firstVertex())");
+		assertQueryIsNull("using nll: vertexSeq{Vertex}(lastVertex(), firstVertex())");
 	}
 
 }

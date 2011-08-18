@@ -57,7 +57,7 @@ public final class IntegerDomainImpl extends BasicDomainImpl implements
 
 	@Override
 	public String getJavaClassName(String schemaRootPackagePrefix) {
-		return INTDOMAIN_NAME;
+		return "java.lang.Integer";
 	}
 
 	@Override
@@ -91,15 +91,15 @@ public final class IntegerDomainImpl extends BasicDomainImpl implements
 	@Override
 	public CodeBlock getTransactionWriteMethod(String schemaRootPackagePrefix,
 			String variableName, String graphIoVariableName) {
-		return getWriteMethod(schemaRootPackagePrefix, "get"
-				+ CodeGenerator.camelCase(variableName) + "()",
+		return getWriteMethod(schemaRootPackagePrefix,
+				"get" + CodeGenerator.camelCase(variableName) + "()",
 				graphIoVariableName);
 	}
 
 	@Override
 	public String getTransactionJavaAttributeImplementationTypeName(
 			String schemaRootPackagePrefix) {
-		return "Integer";
+		return "java.lang.Integer";
 	}
 
 	@Override
@@ -116,5 +116,10 @@ public final class IntegerDomainImpl extends BasicDomainImpl implements
 	@Override
 	public String getInitialValue() {
 		return "0";
+	}
+
+	@Override
+	public boolean isPrimitive() {
+		return true;
 	}
 }

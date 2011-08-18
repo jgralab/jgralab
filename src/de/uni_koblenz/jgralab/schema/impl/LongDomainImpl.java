@@ -51,12 +51,12 @@ public final class LongDomainImpl extends BasicDomainImpl implements LongDomain 
 	@Override
 	public String getJavaAttributeImplementationTypeName(
 			String schemaRootPackagePrefix) {
-		return LONGDOMAIN_NAME.toLowerCase();
+		return "long";
 	}
 
 	@Override
 	public String getJavaClassName(String schemaRootPackagePrefix) {
-		return LONGDOMAIN_NAME;
+		return "java.lang.Long";
 	}
 
 	@Override
@@ -90,15 +90,15 @@ public final class LongDomainImpl extends BasicDomainImpl implements LongDomain 
 	@Override
 	public CodeBlock getTransactionWriteMethod(String schemaRootPackagePrefix,
 			String variableName, String graphIoVariableName) {
-		return getWriteMethod(schemaRootPackagePrefix, "get"
-				+ CodeGenerator.camelCase(variableName) + "()",
+		return getWriteMethod(schemaRootPackagePrefix,
+				"get" + CodeGenerator.camelCase(variableName) + "()",
 				graphIoVariableName);
 	}
 
 	@Override
 	public String getTransactionJavaAttributeImplementationTypeName(
 			String schemaRootPackagePrefix) {
-		return "Long";
+		return "java.lang.Long";
 	}
 
 	@Override
@@ -115,5 +115,10 @@ public final class LongDomainImpl extends BasicDomainImpl implements LongDomain 
 	@Override
 	public String getInitialValue() {
 		return "0L";
+	}
+
+	@Override
+	public boolean isPrimitive() {
+		return true;
 	}
 }

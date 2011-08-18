@@ -189,8 +189,8 @@ public class JValuePathSystem extends JValueImpl {
 				pe = keyToEntryMap.get(new PathSystemKey(te.getParentVertex(),
 						te.getParentStateNumber()));
 			} else {
-				PathSystemKey key = new PathSystemKey(rootVertex,
-						te.getParentStateNumber());
+				PathSystemKey key = new PathSystemKey(rootVertex, te
+						.getParentStateNumber());
 				pe = keyToEntryMap.get(key);
 			}
 			// if pe is null, te is the entry of the root vertex
@@ -600,23 +600,22 @@ public class JValuePathSystem extends JValueImpl {
 				switch (direction) {
 				case IN:
 					if (edge.isNormal()) {
-						resultSet.add(new JValueImpl(edge));
+						addEdgeToResult(resultSet, edge, vertex);
 					}
 					break;
 				case OUT:
 					if (!edge.isNormal()) {
-						resultSet.add(new JValueImpl(edge));
+						addEdgeToResult(resultSet, edge, vertex);
 					}
 					break;
 				case INOUT:
-					resultSet.add(new JValueImpl(edge));
+					addEdgeToResult(resultSet, edge, vertex);
 					break;
 				default:
 					throw new JValuePathException(
 							"Incomplete switch statement in JValuePathSystem");
 				}
-			}
-			if (entry.getValue().getParentVertex() == vertex) {
+			} else if (entry.getValue().getParentVertex() == vertex) {
 				Edge edge = entry.getValue().getParentEdge();
 				if (edge == null) {
 					continue;
@@ -624,16 +623,16 @@ public class JValuePathSystem extends JValueImpl {
 				switch (direction) {
 				case IN:
 					if (!edge.isNormal()) {
-						resultSet.add(new JValueImpl(edge));
+						addEdgeToResult(resultSet, edge, vertex);
 					}
 					break;
 				case OUT:
 					if (edge.isNormal()) {
-						resultSet.add(new JValueImpl(edge));
+						addEdgeToResult(resultSet, edge, vertex);
 					}
 					break;
 				case INOUT:
-					resultSet.add(new JValueImpl(edge));
+					addEdgeToResult(resultSet, edge, vertex);
 					break;
 				default:
 					throw new JValuePathException(
@@ -642,6 +641,15 @@ public class JValuePathSystem extends JValueImpl {
 			}
 		}
 		return resultSet;
+	}
+
+	private void addEdgeToResult(JValueSet resultSet, Edge edge, Vertex context) {
+		if (context == edge.getAlpha()) {
+			resultSet.add(JValueImpl.fromObject(edge.getNormalEdge()));
+		} else if (context == edge.getOmega()) {
+			resultSet.add(JValueImpl.fromObject(edge.getNormalEdge()
+					.getReversedEdge()));
+		}
 	}
 
 	/**
@@ -790,8 +798,8 @@ public class JValuePathSystem extends JValueImpl {
 			PathSystemEntry entry = keyToEntryMap.get(key);
 			if (entry.getParentEdge() != null) {
 				path.addEdge(entry.getParentEdge().getReversedEdge());
-				key = new PathSystemKey(entry.getParentVertex(),
-						entry.getParentStateNumber());
+				key = new PathSystemKey(entry.getParentVertex(), entry
+						.getParentStateNumber());
 			} else {
 				key = null;
 			}
@@ -1053,6 +1061,7 @@ public class JValuePathSystem extends JValueImpl {
 			JValueSet pathSet = extractPaths();
 			for (JValue path : pathSet) {
 				returnString.append(path.toString());
+				returnString.append('\n');
 			}
 		} catch (JValuePathException ex) {
 			return ex.toString();
@@ -1070,7 +1079,9 @@ public class JValuePathSystem extends JValueImpl {
 				.entrySet()) {
 			PathSystemEntry thisEntry = entry.getValue();
 			PathSystemKey thisKey = entry.getKey();
-			logger.info(thisKey.toString() + " maps to " + thisEntry.toString());
+			logger
+					.info(thisKey.toString() + " maps to "
+							+ thisEntry.toString());
 		}
 	}
 

@@ -35,7 +35,6 @@
 package de.uni_koblenz.jgralab.impl.trans;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -48,13 +47,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.GraphException;
-import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.GraphStructureChangedListener;
-import de.uni_koblenz.jgralab.JGraLabList;
-import de.uni_koblenz.jgralab.JGraLabMap;
-import de.uni_koblenz.jgralab.JGraLabSet;
-import de.uni_koblenz.jgralab.Record;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.FreeIndexList;
 import de.uni_koblenz.jgralab.impl.IncidenceImpl;
@@ -548,8 +542,8 @@ public abstract class GraphImpl extends
 
 	@Override
 	public void setCurrentTransaction(Transaction transaction) {
-		transactionManager.setTransactionForThread(transaction, Thread
-				.currentThread());
+		transactionManager.setTransactionForThread(transaction,
+				Thread.currentThread());
 	}
 
 	@Override
@@ -998,10 +992,7 @@ public abstract class GraphImpl extends
 				edgeSync.writeLock().unlock();
 			}
 			try {
-				Vertex alpha = edgeToBeDeleted.getAlpha();
-				Vertex omega = edgeToBeDeleted.getOmega();
 				super.deleteEdge(edgeToBeDeleted);
-				edgeAfterDeleted(edgeToBeDeleted, alpha, omega);
 			} catch (GraphException e) {
 				throw e;
 			}
@@ -1009,7 +1000,8 @@ public abstract class GraphImpl extends
 		}
 	}
 
-	private void edgeAfterDeleted(Edge edgeToBeDeleted, Vertex oldAlpha,
+	@Override
+	protected void edgeAfterDeleted(Edge edgeToBeDeleted, Vertex oldAlpha,
 			Vertex oldOmega) {
 		TransactionImpl transaction = (TransactionImpl) getCurrentTransaction();
 		assert ((transaction != null) && !transaction.isReadOnly()
@@ -1093,14 +1085,14 @@ public abstract class GraphImpl extends
 			}
 			try {
 				super.deleteVertex(vertexToBeDeleted);
-				vertexAfterDeleted(vertexToBeDeleted);
 			} catch (GraphException e) {
 				throw e;
 			}
 		}
 	}
 
-	private void vertexAfterDeleted(Vertex vertexToBeDeleted) {
+	@Override
+	protected void vertexAfterDeleted(Vertex vertexToBeDeleted) {
 		TransactionImpl transaction = (TransactionImpl) getCurrentTransaction();
 		assert ((transaction != null) && !transaction.isReadOnly()
 				&& transaction.isValid() && (transaction.getState() != TransactionState.NOTRUNNING));
@@ -1197,8 +1189,7 @@ public abstract class GraphImpl extends
 				positionsMap.put(ListPosition.NEXT, true);
 				if (transaction.changedEseqEdges.get(movedEdge) == null) {
 					transaction.changedEseqEdges
-							.put(
-									(de.uni_koblenz.jgralab.impl.trans.EdgeImpl) movedEdge,
+							.put((de.uni_koblenz.jgralab.impl.trans.EdgeImpl) movedEdge,
 									positionsMap);
 				}
 				positionsMap = transaction.changedEseqEdges.get(targetEdge);
@@ -1209,8 +1200,7 @@ public abstract class GraphImpl extends
 				positionsMap.put(ListPosition.PREV, false);
 				if (transaction.changedEseqEdges.get(targetEdge) == null) {
 					transaction.changedEseqEdges
-							.put(
-									(de.uni_koblenz.jgralab.impl.trans.EdgeImpl) targetEdge,
+							.put((de.uni_koblenz.jgralab.impl.trans.EdgeImpl) targetEdge,
 									positionsMap);
 				}
 			}
@@ -1259,8 +1249,7 @@ public abstract class GraphImpl extends
 				positionsMap.put(ListPosition.PREV, true);
 				if (transaction.changedEseqEdges.get(movedEdge) == null) {
 					transaction.changedEseqEdges
-							.put(
-									(de.uni_koblenz.jgralab.impl.trans.EdgeImpl) movedEdge,
+							.put((de.uni_koblenz.jgralab.impl.trans.EdgeImpl) movedEdge,
 									positionsMap);
 				}
 				positionsMap = transaction.changedEseqEdges.get(targetEdge);
@@ -1271,8 +1260,7 @@ public abstract class GraphImpl extends
 				positionsMap.put(ListPosition.NEXT, false);
 				if (transaction.changedEseqEdges.get(targetEdge) == null) {
 					transaction.changedEseqEdges
-							.put(
-									(de.uni_koblenz.jgralab.impl.trans.EdgeImpl) targetEdge,
+							.put((de.uni_koblenz.jgralab.impl.trans.EdgeImpl) targetEdge,
 									positionsMap);
 				}
 			}
@@ -1321,8 +1309,7 @@ public abstract class GraphImpl extends
 				positionsMap.put(ListPosition.PREV, true);
 				if (transaction.changedVseqVertices.get(movedVertex) == null) {
 					transaction.changedVseqVertices
-							.put(
-									(de.uni_koblenz.jgralab.impl.trans.VertexImpl) movedVertex,
+							.put((de.uni_koblenz.jgralab.impl.trans.VertexImpl) movedVertex,
 									positionsMap);
 				}
 				positionsMap = transaction.changedVseqVertices
@@ -1334,8 +1321,7 @@ public abstract class GraphImpl extends
 				positionsMap.put(ListPosition.NEXT, false);
 				if (transaction.changedVseqVertices.get(targetVertex) == null) {
 					transaction.changedVseqVertices
-							.put(
-									(de.uni_koblenz.jgralab.impl.trans.VertexImpl) targetVertex,
+							.put((de.uni_koblenz.jgralab.impl.trans.VertexImpl) targetVertex,
 									positionsMap);
 				}
 			}
@@ -1384,8 +1370,7 @@ public abstract class GraphImpl extends
 				positionsMap.put(ListPosition.NEXT, true);
 				if (transaction.changedVseqVertices.get(movedVertex) == null) {
 					transaction.changedVseqVertices
-							.put(
-									(de.uni_koblenz.jgralab.impl.trans.VertexImpl) movedVertex,
+							.put((de.uni_koblenz.jgralab.impl.trans.VertexImpl) movedVertex,
 									positionsMap);
 				}
 				positionsMap = transaction.changedVseqVertices
@@ -1397,8 +1382,7 @@ public abstract class GraphImpl extends
 				positionsMap.put(ListPosition.PREV, false);
 				if (transaction.changedVseqVertices.get(targetVertex) == null) {
 					transaction.changedVseqVertices
-							.put(
-									(de.uni_koblenz.jgralab.impl.trans.VertexImpl) targetVertex,
+							.put((de.uni_koblenz.jgralab.impl.trans.VertexImpl) targetVertex,
 									positionsMap);
 				}
 			}
@@ -1424,14 +1408,14 @@ public abstract class GraphImpl extends
 
 	@Override
 	public Iterable<Vertex> vertices(Class<? extends Vertex> vertexClass) {
-		return new AttributedElementIterable<Vertex>(super
-				.vertices(vertexClass), this);
+		return new AttributedElementIterable<Vertex>(
+				super.vertices(vertexClass), this);
 	}
 
 	@Override
 	public Iterable<Vertex> vertices(VertexClass vertexClass) {
-		return new AttributedElementIterable<Vertex>(super
-				.vertices(vertexClass), this);
+		return new AttributedElementIterable<Vertex>(
+				super.vertices(vertexClass), this);
 	}
 
 	@Override
@@ -1506,140 +1490,10 @@ public abstract class GraphImpl extends
 	public final boolean hasSavememSupport() {
 		return false;
 	}
-	
+
 	@Override
-	public final boolean hasDatabaseSupport(){
+	public final boolean hasDatabaseSupport() {
 		return false;
-	}
-
-	@Override
-	public <T> JGraLabList<T> createList() {
-		if (!isLoading() && getCurrentTransaction().isReadOnly()) {
-			throw new GraphException(
-					"Read-only transactions are not allowed to create Lists.");
-		}
-		return new JGraLabListImpl<T>(this);
-	}
-
-	@Override
-	public <T> JGraLabList<T> createList(Collection<? extends T> collection) {
-		if (!isLoading() && getCurrentTransaction().isReadOnly()) {
-			throw new GraphException(
-					"Read-only transactions are not allowed to create Lists.");
-		}
-		return new JGraLabListImpl<T>(this, collection);
-	}
-
-	@Override
-	public <T> JGraLabList<T> createList(int initialCapacity) {
-		if (!isLoading() && getCurrentTransaction().isReadOnly()) {
-			throw new GraphException(
-					"Read-only transactions are not allowed to create Lists.");
-		}
-		return new JGraLabListImpl<T>(this, initialCapacity);
-	}
-
-	@Override
-	public <T> JGraLabSet<T> createSet() {
-		if (!isLoading() && getCurrentTransaction().isReadOnly()) {
-			throw new GraphException(
-					"Read-only transactions are not allowed to create Sets.");
-		}
-		return new JGraLabSetImpl<T>(this);
-	}
-
-	@Override
-	public <T> JGraLabSet<T> createSet(Collection<? extends T> collection) {
-		if (!isLoading() && getCurrentTransaction().isReadOnly()) {
-			throw new GraphException(
-					"Read-only transactions are not allowed to create Sets.");
-		}
-		return new JGraLabSetImpl<T>(this, collection);
-	}
-
-	@Override
-	public <T> JGraLabSet<T> createSet(int initialCapacity) {
-		if (!isLoading() && getCurrentTransaction().isReadOnly()) {
-			throw new GraphException(
-					"Read-only transactions are not allowed to create Sets.");
-		}
-		return new JGraLabSetImpl<T>(this, initialCapacity);
-	}
-
-	@Override
-	public <T> JGraLabSet<T> createSet(int initialCapacity, float loadFactor) {
-		if (!isLoading() && getCurrentTransaction().isReadOnly()) {
-			throw new GraphException(
-					"Read-only transactions are not allowed to create Sets.");
-		}
-		return new JGraLabSetImpl<T>(this, initialCapacity, loadFactor);
-	}
-
-	@Override
-	public <K, V> JGraLabMap<K, V> createMap() {
-		if (!isLoading() && getCurrentTransaction().isReadOnly()) {
-			throw new GraphException(
-					"Read-only transactions are not allowed to create Maps.");
-		}
-		return new JGraLabMapImpl<K, V>(this);
-	}
-
-	@Override
-	public <K, V> JGraLabMap<K, V> createMap(Map<? extends K, ? extends V> map) {
-		if (!isLoading() && getCurrentTransaction().isReadOnly()) {
-			throw new GraphException(
-					"Read-only transactions are not allowed to create Maps.");
-		}
-		return new JGraLabMapImpl<K, V>(this, map);
-	}
-
-	@Override
-	public <K, V> JGraLabMap<K, V> createMap(int initialCapacity) {
-		if (!isLoading() && getCurrentTransaction().isReadOnly()) {
-			throw new GraphException(
-					"Read-only transactions are not allowed to create Maps.");
-		}
-		return new JGraLabMapImpl<K, V>(this, initialCapacity);
-	}
-
-	@Override
-	public <K, V> JGraLabMap<K, V> createMap(int initialCapacity,
-			float loadFactor) {
-		if (!isLoading() && getCurrentTransaction().isReadOnly()) {
-			throw new GraphException(
-					"Read-only transactions are not allowed to create Maps.");
-		}
-		return new JGraLabMapImpl<K, V>(this, initialCapacity, loadFactor);
-	}
-
-	@Override
-	public <T extends Record> T createRecord(Class<T> recordClass, GraphIO io) {
-		T record = graphFactory.createRecordWithTransactionSupport(recordClass,
-				this);
-		try {
-			record.readComponentValues(io);
-		} catch (GraphIOException e) {
-			e.printStackTrace();
-		}
-		return record;
-	}
-
-	@Override
-	public <T extends Record> T createRecord(Class<T> recordClass,
-			Map<String, Object> fields) {
-		T record = graphFactory.createRecordWithTransactionSupport(recordClass,
-				this);
-		record.setComponentValues(fields);
-		return record;
-	}
-
-	@Override
-	public <T extends Record> T createRecord(Class<T> recordClass,
-			Object... components) {
-		T record = graphFactory.createRecordWithTransactionSupport(recordClass,
-				this);
-		record.setComponentValues(components);
-		return record;
 	}
 
 	private boolean isWriting() {

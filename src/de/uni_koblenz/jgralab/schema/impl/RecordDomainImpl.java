@@ -149,8 +149,9 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 			String m1ClassName = getSchema().getPackagePrefix() + "."
 					+ getQualifiedName();
 			try {
-				m1Class = Class.forName(m1ClassName, true, M1ClassManager
-						.instance(getSchema().getQualifiedName()));
+				m1Class = Class
+						.forName(m1ClassName, true, M1ClassManager
+								.instance(getSchema().getQualifiedName()));
 			} catch (ClassNotFoundException e) {
 				throw new M1ClassAccessException(
 						"Can't load M1 class for AttributedElementClass '"
@@ -245,14 +246,8 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 			String variableName, String graphIoVariableName) {
 		code.add("#init#");
 		code.add("if (" + graphIoVariableName + ".isNextToken(\"(\")) {");
-		/*
-		 * code.add("\t" + "#name# = ((" + schemaPrefix + "." +
-		 * parentPackage.getSchema().getGraphClass().getSimpleName() + ")" +
-		 * "graph).create" + getSimpleName() + "(io);");
-		 */
-		code.add("\t" + "#name# = #theGraph#.createRecord("
-				+ getSchema().getPackagePrefix() + "." + getQualifiedName()
-				+ ".class, io);");
+		code.add("\t" + "#name# = new " + getSchema().getPackagePrefix() + "."
+				+ getQualifiedName() + "(io);");
 		code.add("} else if (" + graphIoVariableName
 				+ ".isNextToken(GraphIO.NULL_LITERAL)) {");
 		code.add("\t" + graphIoVariableName + ".match();");
@@ -301,9 +296,7 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 	@Override
 	public String getTransactionJavaAttributeImplementationTypeName(
 			String schemaRootPackagePrefix) {
-		return getJavaAttributeImplementationTypeName(schemaRootPackagePrefix
-				+ ".impl.trans")
-				+ "Impl";
+		return getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
 	}
 
 	@Override
@@ -313,7 +306,7 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 
 	@Override
 	public String getVersionedClass(String schemaRootPackagePrefix) {
-		return "de.uni_koblenz.jgralab.impl.trans.VersionedJGraLabCloneableImpl<"
+		return "de.uni_koblenz.jgralab.impl.trans.VersionedReferenceImpl<"
 				+ getTransactionJavaAttributeImplementationTypeName(schemaRootPackagePrefix)
 				+ ">";
 	}
@@ -321,19 +314,5 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 	@Override
 	public String getInitialValue() {
 		return "null";
-	}
-
-	@Override
-	public String getStandardJavaAttributeImplementationTypeName(
-			String schemaRootPackagePrefix) {
-		return schemaRootPackagePrefix + ".impl.std." + getQualifiedName()
-				+ "Impl";
-	}
-
-	@Override
-	public String getSavememJavaAttributeImplementationTypeName(
-			String schemaRootPackagePrefix) {
-		return schemaRootPackagePrefix + ".impl.savemem." + getQualifiedName()
-				+ "Impl";
 	}
 }

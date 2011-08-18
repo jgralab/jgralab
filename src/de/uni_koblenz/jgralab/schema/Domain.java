@@ -45,7 +45,8 @@ import de.uni_koblenz.jgralab.codegenerator.CodeBlock;
 public interface Domain extends NamedElement {
 
 	/**
-	 * example: int for integer List<Boolean> for a list with basedomain boolean
+	 * example: int for Integer, List<Boolean> for a list with basedomain
+	 * boolean
 	 * 
 	 * @return java representation of this attribute
 	 */
@@ -85,6 +86,16 @@ public interface Domain extends NamedElement {
 	 * @return true if this domain is a composite domain
 	 */
 	public boolean isComposite();
+
+	/**
+	 * @return true if this domain is a primitive type
+	 */
+	public boolean isPrimitive();
+
+	/**
+	 * @return true if this domain is a primitive type
+	 */
+	public boolean isBoolean();
 
 	/**
 	 * example: Integer for integer List<Boolean> for a list with basedomain

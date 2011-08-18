@@ -43,6 +43,9 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
+import org.pcollections.ArrayPVector;
+import org.pcollections.PVector;
+
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
@@ -137,12 +140,12 @@ public abstract class ParserHelper {
 		if (pathDescr == null) {
 			pathDescr = graph.createVertex(vc);
 			edge = (Greql2Aggregation) graph.createEdge(ec, part1, pathDescr);
-			edge.set_sourcePositions((createSourcePositionList(lengthPart1,
-					offsetPart1)));
+			edge.set_sourcePositions(createSourcePositionList(lengthPart1,
+					offsetPart1));
 		}
 		edge = (Greql2Aggregation) graph.createEdge(ec, part2, pathDescr);
-		edge.set_sourcePositions((createSourcePositionList(lengthPart2,
-				offsetPart2)));
+		edge.set_sourcePositions(createSourcePositionList(lengthPart2,
+				offsetPart2));
 		return pathDescr;
 	}
 
@@ -167,11 +170,12 @@ public abstract class ParserHelper {
 			queue.add(root);
 			while (!queue.isEmpty()) {
 				Vertex current = queue.poll();
-				if (current != null)
-				for (Edge e : current.incidences()) {
-					if (!reachableVertices.contains(e.getThat())) {
-						queue.add(e.getThat());
-						reachableVertices.add(e.getThat());
+				if (current != null) {
+					for (Edge e : current.incidences()) {
+						if (!reachableVertices.contains(e.getThat())) {
+							queue.add(e.getThat());
+							reachableVertices.add(e.getThat());
+						}
 					}
 				}
 			}
@@ -581,20 +585,19 @@ public abstract class ParserHelper {
 		IsArgumentOf arg1Of = null;
 		if (binary) {
 			arg1Of = graph.createIsArgumentOf(arg1, fa);
-			arg1Of.set_sourcePositions((createSourcePositionList(lengthArg1,
-					offsetArg1)));
+			arg1Of.set_sourcePositions(createSourcePositionList(lengthArg1,
+					offsetArg1));
 		}
 		IsArgumentOf arg2Of = graph.createIsArgumentOf(arg2, fa);
-		arg2Of.set_sourcePositions((createSourcePositionList(lengthArg2,
-				offsetArg2)));
+		arg2Of.set_sourcePositions(createSourcePositionList(lengthArg2,
+				offsetArg2));
 		return fa;
 	}
 
-	protected final List<SourcePosition> createSourcePositionList(int length,
-			int offset) {
-		List<SourcePosition> list = new ArrayList<SourcePosition>();
-		list.add(graph.createSourcePosition(length, offset));
-		return list;
+	protected final PVector<SourcePosition> createSourcePositionList(
+			int length, int offset) {
+		PVector<SourcePosition> list = ArrayPVector.empty();
+		return list.plus(new SourcePosition(length, offset));
 	}
 
 	/**

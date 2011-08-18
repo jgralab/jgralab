@@ -45,7 +45,7 @@ public class BooleanDomainTest extends NativeDomainTest {
 		// Initializing DomainTest
 		expectedDomainName = "Boolean";
 		expectedJavaAttributeImplementationTypeName = "boolean";
-		expectedJavaClassName = "Boolean";
+		expectedJavaClassName = "java.lang.Boolean";
 		expectedTgTypeName = "Boolean";
 		expectedStringRepresentation = "domain Boolean";
 		expectedQualifiedName1 = "Boolean";
