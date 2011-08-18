@@ -678,11 +678,13 @@ public class SchemaCodeGenerator extends CodeGenerator {
 			if (attr.getDefaultValueAsString() == null) {
 				s.setVariable("defaultValue", "null");
 			} else {
-				s.setVariable(
-						"defaultValue",
-						"\""
-								+ attr.getDefaultValueAsString().replaceAll(
-										"([\\\"])", "\\\\$1") + "\"");
+				// quote double quotes
+				String defaultValue = attr.getDefaultValueAsString()
+						.replaceAll("([\\\"])", "\\\\$1");
+				// don't confuse code generator with # characters contained in
+				// default values
+				defaultValue = defaultValue.replaceAll("#", "\\u0023");
+				s.setVariable("defaultValue", "\"" + defaultValue + "\"");
 			}
 			code.addNoIndent(s);
 		}
