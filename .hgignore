@@ -6,7 +6,6 @@ syntax: regexp
 ^src/de/uni_koblenz/jgralab/greql2/schema
 ^src/de/uni_koblenz/jgralab/gretl/template
 
-^testit/de/uni_koblenz/jgralabtest/gretl/schemas
 ^testit/de/uni_koblenz/jgralabtest/schemas
 ^testit/jgralabtest\.properties$
 ^testit/testdata/.*$
