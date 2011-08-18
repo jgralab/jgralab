@@ -34,12 +34,11 @@
  */
 package de.uni_koblenz.jgralab.utilities.tg2schemagraph;
 
-import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import de.uni_koblenz.jgralab.grumlschema.SchemaGraph;
 import de.uni_koblenz.jgralab.grumlschema.domains.CollectionDomain;
@@ -581,10 +580,10 @@ public class Schema2SchemaGraph {
 		domainMap.put(domain, gDomain);
 
 		// Links this Domain with its key- and value domains
-		schemaGraph.createHasKeyDomain(gDomain, queryGDomain(domain
-				.getKeyDomain()));
-		schemaGraph.createHasValueDomain(gDomain, queryGDomain(domain
-				.getValueDomain()));
+		schemaGraph.createHasKeyDomain(gDomain,
+				queryGDomain(domain.getKeyDomain()));
+		schemaGraph.createHasValueDomain(gDomain,
+				queryGDomain(domain.getValueDomain()));
 		return gDomain;
 	}
 
@@ -606,7 +605,7 @@ public class Schema2SchemaGraph {
 
 		// The existing ArrayList is copied and set as EnumConstants
 		assert (domain.getConsts() != null) : "FIXME! No consts defined.";
-		gDomain.set_enumConstants(new ArrayList<String>(domain.getConsts()));
+		gDomain.set_enumConstants(domain.getConsts());
 		return gDomain;
 	}
 
@@ -624,8 +623,7 @@ public class Schema2SchemaGraph {
 
 		// A ListDomain or SetDomain is created.
 		CollectionDomain gDomain = (domain instanceof de.uni_koblenz.jgralab.schema.ListDomain) ? schemaGraph
-				.createListDomain()
-				: schemaGraph.createSetDomain();
+				.createListDomain() : schemaGraph.createSetDomain();
 		assert (gDomain != null) : "FIXME! No Domain has been created!";
 
 		// Registers this Domain in the Domain map. This is must be done, before
@@ -1099,8 +1097,8 @@ public class Schema2SchemaGraph {
 					IncidenceClass gRedefinedIncidence = incidenceClassMap
 							.get(redefinedIncidence);
 					assert gRedefinedIncidence != null : "FIXME! No redefined IncidenceClass created yet!";
-					Redefines link = schemaGraph.createRedefines(entry
-							.getValue(), gRedefinedIncidence);
+					Redefines link = schemaGraph.createRedefines(
+							entry.getValue(), gRedefinedIncidence);
 					assert (link != null) : "FIXME! No link RedefinesIncidenceClass has been created!";
 				}
 			}
@@ -1115,8 +1113,8 @@ public class Schema2SchemaGraph {
 						IncidenceClass gSubsettedIncidence = incidenceClassMap
 								.get(subsettedIncidence);
 						assert gSubsettedIncidence != null : "FIXME! No subsetted IncidenceClass created yet!";
-						Subsets link = schemaGraph.createSubsets(entry
-								.getValue(), gSubsettedIncidence);
+						Subsets link = schemaGraph.createSubsets(
+								entry.getValue(), gSubsettedIncidence);
 						assert (link != null) : "FIXME! No link SubsetsIncidenceClass has been created!";
 					}
 				}

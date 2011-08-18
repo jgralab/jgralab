@@ -23,6 +23,7 @@ import de.uni_koblenz.jgralab.eca.events.DeleteEdgeEventDescription;
 import de.uni_koblenz.jgralab.eca.events.DeleteVertexEventDescription;
 import de.uni_koblenz.jgralab.eca.events.EventDescription;
 import de.uni_koblenz.jgralabtest.eca.schemas.simplelibrary.Book;
+import de.uni_koblenz.jgralabtest.eca.schemas.simplelibrary.Date;
 import de.uni_koblenz.jgralabtest.eca.schemas.simplelibrary.Library;
 import de.uni_koblenz.jgralabtest.eca.schemas.simplelibrary.Loans;
 import de.uni_koblenz.jgralabtest.eca.schemas.simplelibrary.Magazin;
@@ -465,11 +466,11 @@ public class ECATest {
 
 		// user1 loans book1
 		loans_u1_b1 = graph.createLoans(user1, book1);
-		loans_u1_b1.set_date(graph.createDate(1, 1, 2011));
+		loans_u1_b1.set_date(new Date(1, 1, 2011));
 
 		// user 2 loans magazin1
 		Loans loans_u2_m1 = graph.createLoans(user2, magazin1);
-		loans_u2_m1.set_date(graph.createDate(5, 5, 2011));
+		loans_u2_m1.set_date(new Date(5, 5, 2011));
 
 		simlibgraph = graph;
 	}

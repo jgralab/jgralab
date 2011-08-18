@@ -173,15 +173,12 @@ public class PathSystem extends Greql2Function {
 			finalEntries.add(currentEntry);
 		}
 		queue.add(currentEntry);
-		int count = 0, countWTrans = 0;
 		while (!queue.isEmpty()) {
 			currentEntry = queue.poll();
 			Vertex currentVertex = currentEntry.vertex;
 			
 			for (Edge inc : currentVertex.incidences()) {
-				count++;
 				for (Transition currentTransition : currentEntry.state.outTransitions) {
-					countWTrans++;
 					Vertex nextVertex = currentTransition.getNextVertex(
 							currentVertex, inc);
 				

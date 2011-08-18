@@ -1860,8 +1860,7 @@ public class GraphTest extends InstanceTest {
 		Edge e1 = g1.createEdge(SubLink.class, v9, v7);
 		SubLink e2 = g2.createSubLink(v13, v17);
 		Edge e3 = g1.createEdge(Link.class, v10, v5);
-		de.uni_koblenz.jgralabtest.schemas.vertextest.Link e4 = g2.createLink(
-				v15, v17);
+		Link e4 = g2.createLink(v15, v17);
 		Edge e5 = g1.createEdge(LinkBack.class, v7, v1);
 		LinkBack e6 = g2.createLinkBack(v17, v13);
 		Edge e7 = g1.createEdge(SubLink.class, v10, v5);
@@ -6309,8 +6308,8 @@ public class GraphTest extends InstanceTest {
 
 			// create links (resulting graph is a ring)
 			for (int i = 0; i < 20; i++) {
-				links[i] = g.createLink((Node) g.getVertex(i + 1), (Node) g
-						.getVertex(i % 20 + 1));
+				links[i] = g.createLink((Node) g.getVertex(i + 1),
+						(Node) g.getVertex(i % 20 + 1));
 			}
 			// test if all ids from 1 to 20 have been assigned in correct order
 			for (int i = 0; i < 20; i++) {

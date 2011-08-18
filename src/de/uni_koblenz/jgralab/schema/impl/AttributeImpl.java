@@ -37,7 +37,6 @@ package de.uni_koblenz.jgralab.schema.impl;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.GraphIOException;
-import de.uni_koblenz.jgralab.JGraLabCloneable;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Domain;
@@ -178,9 +177,7 @@ public class AttributeImpl implements Attribute, Comparable<Attribute> {
 			throws GraphIOException {
 		if (defaultValueAsString != null) {
 			if (!defaultTransactionValueComputed) {
-				element
-						.readAttributeValueFromString(name,
-								defaultValueAsString);
+				element.readAttributeValueFromString(name, defaultValueAsString);
 				if (!domain.isComposite()) {
 					defaultTransactionValue = element.getAttribute(name);
 					defaultTransactionValueComputed = true;
@@ -196,22 +193,12 @@ public class AttributeImpl implements Attribute, Comparable<Attribute> {
 			throws GraphIOException {
 		if (!defaultValueComputed) {
 			if (defaultValueAsString != null) {
-				element
-						.readAttributeValueFromString(name,
-								defaultValueAsString);
+				element.readAttributeValueFromString(name, defaultValueAsString);
 			}
 			defaultValue = element.getAttribute(name);
 			defaultValueComputed = true;
 		} else {
-			Object cloneOfDefaultValue = null;
-
-			if (defaultValue instanceof JGraLabCloneable) {
-				cloneOfDefaultValue = ((JGraLabCloneable) defaultValue).clone();
-			} else {
-				cloneOfDefaultValue = defaultValue;
-			}
-
-			element.setAttribute(name, cloneOfDefaultValue);
+			element.setAttribute(name, defaultValue);
 		}
 	}
 }

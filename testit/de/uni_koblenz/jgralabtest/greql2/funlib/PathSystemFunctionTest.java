@@ -37,23 +37,28 @@ package de.uni_koblenz.jgralabtest.greql2.funlib;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
 import java.util.List;
 
+import org.apache.derby.impl.store.raw.data.RemoveFileOperation;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
+import de.uni_koblenz.jgralab.greql2.funlib.GetGraph;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueBag;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
@@ -86,23 +91,29 @@ public class PathSystemFunctionTest extends GenericTest {
 	public static void initializePathAndPathSystemVariables()
 			throws JValueInvalidTypeException, Exception {
 		PathSystemFunctionTest t = new PathSystemFunctionTest();
-		t.evalTestQuery("theElement(from v : V{localities.County} with v.name = 'Hessen' report v end) store as hessen");
-		t.evalTestQuery("using hessen: pathSystem(hessen, -->{localities.ContainsLocality} -->{connections.AirRoute}* ) store as noPS");
+		t
+				.evalTestQuery("theElement(from v : V{localities.County} with v.name = 'Hessen' report v end) store as hessen");
+		t
+				.evalTestQuery("using hessen: pathSystem(hessen, -->{localities.ContainsLocality} -->{connections.AirRoute}* ) store as noPS");
 		emptyPath = t.evalTestQuery(
 				"using noPS: extractPath(noPS, firstVertex())").toPath();
 		multipleElementPath = t.evalTestQuery(
 				"using noPS: extractPath(noPS, 2)[0]").toPath();
 
-		t.evalTestQuery("using hessen: pathSystem(hessen, -->{localities.ContainsLocality} ) store as PS");
+		t
+				.evalTestQuery("using hessen: pathSystem(hessen, -->{localities.ContainsLocality} ) store as PS");
 		twoElementPath = t.evalTestQuery("using PS: extractPath(PS, 1)[0]")
 				.toPath();
 
-		t.evalTestQuery("theElement(from v : V{junctions.Crossroad} with v --> v report v end) store as suedallee");
-		t.evalTestQuery("using suedallee: pathSystem(suedallee, -->{connections.Street}) store as PS");
+		t
+				.evalTestQuery("theElement(from v : V{junctions.Crossroad} with v --> v report v end) store as suedallee");
+		t
+				.evalTestQuery("using suedallee: pathSystem(suedallee, -->{connections.Street}) store as PS");
 		loopPath = t.evalTestQuery(
 				"using suedallee, PS: extractPath(PS, suedallee)").toPath();
 
-		t.evalTestQuery("using suedallee: pathSystem(suedallee, [-->{connections.Footpath}]) store as PS");
+		t
+				.evalTestQuery("using suedallee: pathSystem(suedallee, [-->{connections.Footpath}]) store as PS");
 		oneElementPath = t.evalTestQuery(
 				"using suedallee, PS: extractPath(PS, suedallee)").toPath();
 		longPath = t
@@ -110,16 +121,51 @@ public class PathSystemFunctionTest extends GenericTest {
 						"extractPath(pathSystem(V{junctions.Crossroad}[0], <->*), 5)[0]")
 				.toPath();
 
-		emptyPathSystem = null;
-		depthOnePathSystemWithOnePath = null;
-		depthTwoPathSystemWithOnePath = null;
-		multipleDepthPathSystemWithOnePath = null;
-		depthOnePathSystemWithTwoPaths = null;
-		depthTwoPathSystemWithTwoPaths = null;
-		multipleDepthPathSystemWithTwoPaths = null;
-		depthOnePathSystemWithMultiPaths = null;
-		depthTwoPathSystemWithMultiPaths = null;
-		multipleDepthPathSystemWithMultiPaths = null;
+		t
+				.evalTestQuery("theElement(from v : V{localities.County} with v.name = 'Berlin' report v end) store as berlin");
+		emptyPathSystem = t
+				.evalTestQuery(
+						"using berlin : pathSystem(berlin, -->{localities.ContainsLocality})")
+				.toPathSystem();
+
+		t
+				.evalTestQuery("theElement(from v: V{localities.County} with v.name = 'Rheinland-Pfalz' report v end) store as rp");
+		depthOnePathSystemWithOnePath = t.evalTestQuery(
+				"using rp: pathSystem(rp, -->{localities.HasCapital})")
+				.toPathSystem();
+
+		depthTwoPathSystemWithOnePath = t
+				.evalTestQuery(
+						"using hessen : pathSystem(hessen,-->{localities.HasCapital}-->{localities.ContainsCrossroad})")
+				.toPathSystem();
+
+		multipleDepthPathSystemWithOnePath = t
+				.evalTestQuery(
+						"using hessen : pathSystem(hessen,-->{localities.HasCapital}-->{localities.ContainsCrossroad}<--{connections.Highway})")
+				.toPathSystem();
+		depthOnePathSystemWithTwoPaths = t
+				.evalTestQuery(
+						"using hessen : pathSystem(hessen,-->{localities.ContainsLocality})")
+				.toPathSystem();
+		depthTwoPathSystemWithTwoPaths = t
+				.evalTestQuery(
+						"using hessen : pathSystem(hessen,-->{localities.ContainsLocality}-->{localities.ContainsCrossroad})")
+				.toPathSystem();
+		multipleDepthPathSystemWithTwoPaths = t
+				.evalTestQuery(
+						"using hessen : pathSystem(hessen,-->{localities.ContainsLocality}-->{localities.ContainsCrossroad}<--{connections.Highway})")
+				.toPathSystem();
+
+		depthOnePathSystemWithMultiPaths = t.evalTestQuery(
+				"using rp : pathSystem(rp,-->)").toPathSystem();
+		depthTwoPathSystemWithMultiPaths = t.evalTestQuery(
+				"using rp : pathSystem(rp,-->^2)").toPathSystem();
+		t
+				.evalTestQuery("theElement(from v:V{junctions.Plaza} with v.name = 'L\u00f6hr-Center' report v end) store as loehrCenter");
+		multipleDepthPathSystemWithMultiPaths = t
+				.evalTestQuery(
+						"using loehrCenter: pathSystem(loehrCenter, <->{connections.Street}+)")
+				.toPathSystem();
 	}
 
 	@Before
@@ -131,27 +177,28 @@ public class PathSystemFunctionTest extends GenericTest {
 		setBoundVariable("loopPath", loopPath);
 		setBoundVariable("longPath", loopPath);
 
-		setBoundVariable("emtpyPathSystem", emptyPathSystem);
-		setBoundVariable("d1p1PS", depthOnePathSystemWithOnePath);
-		setBoundVariable("d2p1PS", depthTwoPathSystemWithOnePath);
-		setBoundVariable("dmp1PS", multipleDepthPathSystemWithOnePath);
-		setBoundVariable("d1p2PS", depthOnePathSystemWithTwoPaths);
-		setBoundVariable("d2p2PS", depthTwoPathSystemWithTwoPaths);
-		setBoundVariable("dmp2PS", multipleDepthPathSystemWithTwoPaths);
-		setBoundVariable("d1pmPS", depthOnePathSystemWithMultiPaths);
-		setBoundVariable("d2pmPS", depthTwoPathSystemWithMultiPaths);
-		setBoundVariable("dmpmPS", multipleDepthPathSystemWithMultiPaths);
+		setBoundVariable("emptyPathSystem", emptyPathSystem);
+		setBoundVariable("d1p1PathSystem", depthOnePathSystemWithOnePath);
+		setBoundVariable("d2p1PathSystem", depthTwoPathSystemWithOnePath);
+		setBoundVariable("dmp1PathSystem", multipleDepthPathSystemWithOnePath);
+		setBoundVariable("d1p2PathSystem", depthOnePathSystemWithTwoPaths);
+		setBoundVariable("d2p2PathSystem", depthTwoPathSystemWithTwoPaths);
+		setBoundVariable("dmp2PathSystem", multipleDepthPathSystemWithTwoPaths);
+		setBoundVariable("d1pmPathSystem", depthOnePathSystemWithMultiPaths);
+		setBoundVariable("d2pmPathSystem", depthTwoPathSystemWithMultiPaths);
+		setBoundVariable("dmpmPathSystem",
+				multipleDepthPathSystemWithMultiPaths);
 	}
 
 	@Test
-	public void testContains() throws Exception {
+	public void testCollectionContains() throws Exception {
 		// TODO A meaningful test is missing for
 		// MARKER x ATTRELEM -> BOOL
 		fail();
 	}
 
 	// @Test
-	public void testContainsNull() throws Exception {
+	public void testCollectionContainsNull() throws Exception {
 		// TODO A meaningful test for test for the following signatures is
 		// missing:
 		// PATH x ATTRELEM -> BOOL
@@ -166,14 +213,19 @@ public class PathSystemFunctionTest extends GenericTest {
 	}
 
 	@Test
-	public void testContainsPath() throws Exception {
+	public void testPathContainsElement() throws Exception {
 		// TODO A meaningful test is missing for
 		// PATH x ATTRELEM -> BOOL
 		fail();
 	}
 
 	@Test
-	public void testContainsPathSystem() throws Exception {
+	public void testPathContainsNull() throws Exception {
+		fail();
+	}
+
+	@Test
+	public void testPathSystemContainsElement() throws Exception {
 		String queryString = "from c: V{localities.County}, a:V{junctions.Airport} "
 				+ "with c.name = 'Hessen' "
 				+ "report contains(pathSystem(c, -->{localities.ContainsLocality} -->{connections.AirRoute}), a) "
@@ -189,28 +241,57 @@ public class PathSystemFunctionTest extends GenericTest {
 			}
 		}
 		assertEquals(0, falseFound);
+	}
 
-		// TODO A meaningful test is missing for
-		// PATHSYSTEM x PATH -> BOOL
+	@Test
+	public void testPathSystemContainsPath() {
+		// TODO how is a path created without a path system?
 		fail();
 	}
 
 	@Test
-	public void testContainsSlice() throws Exception {
-		// TODO A meaningful test is missing for
-		// SLICE x ATTRELEM -> BOOL
+	public void testPathSystemContainsNull() throws Exception {
+		assertQueryIsNull("using emptyPathSystem,nll : contains(emptyPathSystem,nll)");
+		assertQueryIsNull("using d1p1PathSystem,nll : contains(d1p1PathSystem,nll)");
+		assertQueryIsNull("using d1p2PathSystem,nll : contains(d1p2PathSystem,nll)");
+		assertQueryIsNull("using d1pmPathSystem,nll : contains(d1pmPathSystem,nll)");
+		assertQueryIsNull("using d2p1PathSystem,nll : contains(d2p1PathSystem,nll)");
+		assertQueryIsNull("using d2p2PathSystem,nll : contains(d2p2PathSystem,nll)");
+		assertQueryIsNull("using d2pmPathSystem,nll : contains(d2pmPathSystem,nll)");
+		assertQueryIsNull("using dmp1PathSystem,nll : contains(dmp1PathSystem,nll)");
+		assertQueryIsNull("using dmp2PathSystem,nll : contains(dmp2PathSystem,nll)");
+		assertQueryIsNull("using dmpmPathSystem,nll : contains(dmpmPathSystem,nll)");
+	}
+
+	@Test
+	public void testMarkerContainsElement() throws Exception {
+		// TODO how to create a marker for using in GReQL
+		fail();
+	}
+
+	@Test
+	public void testMarkerConstainsNull() throws Exception {
+		// TODO how to create a marker for using in GReQL
 		fail();
 	}
 
 	@Test
 	public void testDepth() throws Exception {
-		// TODO A meaningful pathsystem for a test is missing
-		fail();
+		assertQueryEquals("using emptyPathSystem : depth(emptyPathSystem)", 0);
+		assertQueryEquals("using d1p1PathSystem : depth(d1p1PathSystem)", 1);
+		assertQueryEquals("using d1p2PathSystem : depth(d1p2PathSystem)", 1);
+		assertQueryEquals("using d1pmPathSystem : depth(d1pmPathSystem)", 1);
+		assertQueryEquals("using d2p1PathSystem : depth(d2p1PathSystem)", 2);
+		assertQueryEquals("using d2p2PathSystem : depth(d2p2PathSystem)", 2);
+		assertQueryEquals("using d2pmPathSystem : depth(d2pmPathSystem)", 2);
+		assertQueryEquals("using dmp1PathSystem : depth(dmp1PathSystem)", 3);
+		assertQueryEquals("using dmp2PathSystem : depth(dmp2PathSystem)", 3);
+		assertQueryEquals("using dmpmPathSystem : depth(dmpmPathSystem)", 14);
 	}
 
 	@Test
 	public void testDepthNull() throws Exception {
-		assertQueryEqualsNull("using nll: depth(nll)");
+		assertQueryIsNull("using nll: depth(nll)");
 	}
 
 	@Test
@@ -237,27 +318,54 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testDistanceNull() throws Exception {
-		// TODO A meaningful Pathsystem is missing
-		assertQueryEqualsNull("using nll: distance(nll, nll)");
-		// assertQueryEqualsNull("using nll: distance(?, nll)");
-		// assertQueryEqualsNull("using nll: distance(nll, ?)");
-		fail();
+		assertQueryIsNull("using dmpmPathSystem,nll: distance(dmpmPathSystem,nll)");
+		assertQueryIsNull("using nll: distance(nll,firstVertex())");
+		assertQueryIsNull("using nll: distance(nll, nll)");
 	}
 
 	@Test
-	public void testEdgesConnectedNull() throws Exception {
-		// TODO A meaningful Pathsystem is missing
-		assertQueryEqualsNull("using nll: edgesConnected(nll, nll)");
-		assertQueryEqualsNull("using nll: edgesConnected(firstVertex(), nll)");
-		// assertQueryEqualsNull("using nll: edgesConnected(nll, ?)");
-		fail();
+	public void testEdgesConnectedVertexOnly() throws Exception {
+		JValueSet result = evalTestQuery(
+				"let v20 := getVertex(20) in edgesConnected(v20)")
+				.toJValueSet();
+		Graph testgraph = getTestGraph(TestVersion.ROUTE_MAP_GRAPH);
+		assertTrue(result
+				.contains(JValueImpl.fromObject(testgraph.getEdge(-2))));
+		assertTrue(result.contains(JValueImpl
+				.fromObject(testgraph.getEdge(315))));
+		assertTrue(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-316))));
+		assertTrue(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-336))));
 	}
 
 	@Test
 	public void testEdgesConnectedPath() throws Exception {
-		// TODO A meaningful test is missing for
-		// VERTEX x PATH -> COLLECTION
-		fail();
+		// create a sample path with three vertices to test the method with the
+		// first vertex, the last vertex and a vertex in between
+		JValuePath samplePath = evalTestQuery(
+				"using dmpmPathSystem: extractPath(dmpmPathSystem,getVertex(103))")
+				.toPath();
+
+		setBoundVariable("samplePath", samplePath);
+		Graph testgraph = getTestGraph(TestVersion.ROUTE_MAP_GRAPH);
+
+		JValue result = evalTestQuery("using samplePath: theElement(edgesConnected(getVertex(142),samplePath))");
+		assertEquals(testgraph.getEdge(-294), result.toEdge());
+
+		result = evalTestQuery("using samplePath: edgesConnected(getVertex(104),samplePath)");
+		JValueCollection col = result.toCollection();
+		assertTrue(col.contains(JValueImpl.fromObject(testgraph.getEdge(294))));
+		assertTrue(col.contains(JValueImpl.fromObject(testgraph.getEdge(-232))));
+
+		result = evalTestQuery("using samplePath: theElement(edgesConnected(getVertex(103),samplePath))");
+		assertEquals(testgraph.getEdge(232), result.toEdge());
+
+		// not in PS
+		col = evalTestQuery(
+				"using dmpmPathSystem: edgesConnected(getVertex(64),dmpmPathSystem)")
+				.toCollection();
+		assertEquals(0, col.size());
 	}
 
 	@Test
@@ -283,10 +391,69 @@ public class PathSystemFunctionTest extends GenericTest {
 	}
 
 	@Test
+	public void testEdgesConnectedPathSystem2() throws Exception {
+		Graph testgraph = getTestGraph(TestVersion.ROUTE_MAP_GRAPH);
+		JValueCollection result = evalTestQuery(
+				"using dmpmPathSystem: edgesConnected(getVertex(142),dmpmPathSystem)")
+				.toCollection();
+		// root of PS
+		assertTrue(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-294))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(294))));
+		assertEquals(1, result.size());
+
+		// inside PS
+		result = evalTestQuery(
+				"using dmpmPathSystem: edgesConnected(getVertex(104),dmpmPathSystem)")
+				.toCollection();
+		assertTrue(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-232))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(232))));
+
+		// check if duplicate edge 233 is not included (it should also not be
+		// included in PS)
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-233))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(233))));
+
+		assertTrue(result.contains(JValueImpl
+				.fromObject(testgraph.getEdge(234))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-234))));
+		assertEquals(3, result.size());
+
+		// leaf of PS
+		result = evalTestQuery(
+				"using dmpmPathSystem: edgesConnected(getVertex(1),dmpmPathSystem)")
+				.toCollection();
+		assertTrue(result.contains(JValueImpl
+				.fromObject(testgraph.getEdge(135))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-135))));
+		assertEquals(1, result.size());
+
+		// not in PS
+		result = evalTestQuery(
+				"using dmpmPathSystem: edgesConnected(getVertex(64),dmpmPathSystem)")
+				.toCollection();
+		assertEquals(0, result.size());
+	}
+
+	@Test
 	public void testEdgesConnectedTypeCollection() throws Exception {
 		// TODO A meaningful test is missing for
 		// VERTEX x TYPECOLLECTION -> COLLECTION
 		fail();
+	}
+
+	@Test
+	public void testEdgesConnectedNull() throws Exception {
+		assertQueryIsNull("using nll: edgesConnected(nll, nll)");
+		assertQueryIsNull("using nll: edgesConnected(firstVertex(), nll)");
+		assertQueryIsNull("using nll: edgesConnected(nll,firstVertex())");
 	}
 
 	@Test
@@ -303,8 +470,8 @@ public class PathSystemFunctionTest extends GenericTest {
 	@Test
 	public void testEdgesFromNull() throws Exception {
 		// TODO A meaningful Pathsystem is missing
-		assertQueryEqualsNull("using nll: edgesFrom(nll, nll)");
-		assertQueryEqualsNull("using nll: edgesFrom(firstVertex(), nll)");
+		assertQueryIsNull("using nll: edgesFrom(nll, nll)");
+		assertQueryIsNull("using nll: edgesFrom(firstVertex(), nll)");
 		// assertQueryEqualsNull("using nll: edgesFrom(nll, ?)");
 		fail();
 	}
@@ -342,8 +509,8 @@ public class PathSystemFunctionTest extends GenericTest {
 	@Test
 	public void testEdgesToNull() throws Exception {
 		// TODO A meaningful Pathsystem is missing
-		assertQueryEqualsNull("using nll: edgesTo(nll, nll)");
-		assertQueryEqualsNull("using nll: edgesTo(firstVertex(), nll)");
+		assertQueryIsNull("using nll: edgesTo(nll, nll)");
+		assertQueryIsNull("using nll: edgesTo(firstVertex(), nll)");
 		// assertQueryEqualsNull("using nll: edgesTo(nll, ?)");
 		fail();
 	}
@@ -379,7 +546,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testEdgesTraceNull() throws Exception {
-		assertQueryEqualsNull("using nll: edgeTrace(nll)");
+		assertQueryIsNull("using nll: edgeTrace(nll)");
 	}
 
 	@Test
@@ -483,11 +650,11 @@ public class PathSystemFunctionTest extends GenericTest {
 	@Test
 	public void testExtractPathNull() throws Exception {
 		// TODO
-		assertQueryEqualsNull("using nll: extractPath(nll)");
-		assertQueryEqualsNull("using nll: extractPath(nll, nll)");
+		assertQueryIsNull("using nll: extractPath(nll)");
+		assertQueryIsNull("using nll: extractPath(nll, nll)");
 		// assertQueryEqualsNull("using nll: extractPath(?, nll)");
-		assertQueryEqualsNull("using nll: extractPath(nll, 1)");
-		assertQueryEqualsNull("using nll: extractPath(nll, firstVertex())");
+		assertQueryIsNull("using nll: extractPath(nll, 1)");
+		assertQueryIsNull("using nll: extractPath(nll, firstVertex())");
 	}
 
 	@Test
@@ -514,7 +681,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testInnerNodesNull() throws Exception {
-		assertQueryEqualsNull("using nll: innerNodes(nll)");
+		assertQueryIsNull("using nll: innerNodes(nll)");
 	}
 
 	@Test
@@ -536,7 +703,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testIsCyclicNull() throws Exception {
-		assertQueryEqualsNull("using nll: isCycle(nll)");
+		assertQueryIsNull("using nll: isCycle(nll)");
 	}
 
 	@Test
@@ -555,10 +722,10 @@ public class PathSystemFunctionTest extends GenericTest {
 	@Test
 	public void testIsReachableNull() throws Exception {
 		// TODO A meaningful Pathsystem is missing
-		assertQueryEqualsNull("using nll: isReachable(nll, nll, nll)");
-		assertQueryEqualsNull("using nll: isReachable(firstVertex(), nll, nll)");
-		assertQueryEqualsNull("using nll: isReachable(nll, lastVertex(), nll)");
-		assertQueryEqualsNull("using nll: isReachable(firstVertex(), lastVertex(), nll)");
+		assertQueryIsNull("using nll: isReachable(nll, nll, nll)");
+		assertQueryIsNull("using nll: isReachable(firstVertex(), nll, nll)");
+		assertQueryIsNull("using nll: isReachable(nll, lastVertex(), nll)");
+		assertQueryIsNull("using nll: isReachable(firstVertex(), lastVertex(), nll)");
 
 		// assertQueryEqualsNull("using nll: isReachable(nll, nll, ?)");
 		// assertQueryEqualsNull("using nll: isReachable(firstVertex(), nll, ?)");
@@ -590,7 +757,7 @@ public class PathSystemFunctionTest extends GenericTest {
 	public void testIsSubPathOfNull() throws Exception {
 		// TODO A meaningful Pathsystem is missing
 
-		assertQueryEqualsNull("using nll: isSubPathOf(nll, nll)");
+		assertQueryIsNull("using nll: isSubPathOf(nll, nll)");
 		// assertQueryEqualsNull("using nll: isSubPathOf(?, nll)");
 		// assertQueryEqualsNull("using nll: isSubPathOf(nll, ?)");
 		fail();
@@ -619,7 +786,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testLeavesNull() throws Exception {
-		assertQueryEqualsNull("using nll: leaves(nll)");
+		assertQueryIsNull("using nll: leaves(nll)");
 	}
 
 	@Test
@@ -631,7 +798,7 @@ public class PathSystemFunctionTest extends GenericTest {
 	@Test
 	public void testMatchesNull() throws Exception {
 		// TODO A meaningful Automaton is missing
-		assertQueryEqualsNull("using nll: matches(nll, nll)");
+		assertQueryIsNull("using nll: matches(nll, nll)");
 		// assertQueryEqualsNull("using nll: matches(nll, ?)");
 		// assertQueryEqualsNull("using nll: matches(?, nll)");
 		fail();
@@ -653,7 +820,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testMaxPathLengthNull() throws Exception {
-		assertQueryEqualsNull("using nll: maxPathLength(nll)");
+		assertQueryIsNull("using nll: maxPathLength(nll)");
 	}
 
 	@Test
@@ -673,7 +840,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testMinPathLengthNull() throws Exception {
-		assertQueryEqualsNull("using nll: minPathLength(nll)");
+		assertQueryIsNull("using nll: minPathLength(nll)");
 	}
 
 	@Test
@@ -692,7 +859,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testNodesNull() throws Exception {
-		assertQueryEqualsNull("using nll: nodes(nll)");
+		assertQueryIsNull("using nll: nodes(nll)");
 	}
 
 	@Test
@@ -742,7 +909,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testNodeTraceNull() throws Exception {
-		assertQueryEqualsNull("using nll: nodeTrace(nll)");
+		assertQueryIsNull("using nll: nodeTrace(nll)");
 	}
 
 	@Test
@@ -767,7 +934,7 @@ public class PathSystemFunctionTest extends GenericTest {
 	@Test
 	public void testParentNull() throws Exception {
 		// TODO A meaningful Pathsystem is missing
-		assertQueryEqualsNull("using nll: parent(nll, nll)");
+		assertQueryIsNull("using nll: parent(nll, nll)");
 		// assertQueryEqualsNull("using nll: parent(?, nll)");
 		// assertQueryEqualsNull("using nll: parent(nll, ?)");
 		fail();
@@ -783,7 +950,7 @@ public class PathSystemFunctionTest extends GenericTest {
 	@Test
 	public void testPathConcatNull() throws Exception {
 		// TODO A meaningful Paths are missing
-		assertQueryEqualsNull("using nll: pathConcat(nll, nll)");
+		assertQueryIsNull("using nll: pathConcat(nll, nll)");
 		// assertQueryEqualsNull("using nll: pathConcat(?, nll)");
 		// assertQueryEqualsNull("using nll: pathConcat(nll, ?)");
 		fail();
@@ -797,7 +964,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testPathExprNull() throws Exception {
-		assertQueryEqualsNull("using nll: pathExpr(nll)");
+		assertQueryIsNull("using nll: pathExpr(nll)");
 	}
 
 	@Test
@@ -818,11 +985,12 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testPathLengthNull() throws Exception {
-		assertQueryEqualsNull("using nll: pathLength(nll)");
+		assertQueryIsNull("using nll: pathLength(nll)");
 	}
 
 	@Test
 	public void testPathSystem() throws Exception {
+
 		// TODO A meaningful test is missing for
 		// VERTEX x AUTOMATON -> COLLECTION
 		fail();
@@ -844,13 +1012,13 @@ public class PathSystemFunctionTest extends GenericTest {
 	@Test
 	public void testReachableVertexNull() throws Exception {
 		// TODO A meaningful Pathsystem is missing
-		assertQueryEqualsNull("using nll: reachableVertices(nll, nll)");
+		assertQueryIsNull("using nll: reachableVertices(nll, nll)");
 		// assertQueryEqualsNull("using nll: reachableVertices(nll, ?)");
-		assertQueryEqualsNull("using nll: reachableVertices(firstVertex(), nll)");
+		assertQueryIsNull("using nll: reachableVertices(firstVertex(), nll)");
 
-		assertQueryEqualsNull("using nll: reachableVertices(nll, nll, nll)");
+		assertQueryIsNull("using nll: reachableVertices(nll, nll, nll)");
 		// assertQueryEqualsNull("using nll: reachableVertices(nll, ?, nll)");
-		assertQueryEqualsNull("using nll: reachableVertices(firstVertex(), nll, nll)");
+		assertQueryIsNull("using nll: reachableVertices(firstVertex(), nll, nll)");
 		// assertQueryEqualsNull("using nll: reachableVertices(firstVertex(), ?, nll)");
 
 		// assertQueryEqualsNull("using nll: reachableVertices(nll, nll, ?)");
@@ -900,9 +1068,9 @@ public class PathSystemFunctionTest extends GenericTest {
 	@Test
 	public void testSiblingsNull() throws Exception {
 		// TODO A meaningful Pathsystem is missing
-		assertQueryEqualsNull("using nll: siblings(nll, nll)");
+		assertQueryIsNull("using nll: siblings(nll, nll)");
 		// assertQueryEqualsNull("using nll: siblings(nll, ?)");
-		assertQueryEqualsNull("using nll: siblings(firstVertex(), nll)");
+		assertQueryIsNull("using nll: siblings(firstVertex(), nll)");
 		fail();
 	}
 
@@ -970,7 +1138,7 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testWeightNull() throws Exception {
-		assertQueryEqualsNull("using nll: weight(nll)");
+		assertQueryIsNull("using nll: weight(nll)");
 	}
 
 	/*
