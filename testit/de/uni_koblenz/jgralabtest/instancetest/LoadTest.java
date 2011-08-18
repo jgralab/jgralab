@@ -81,7 +81,7 @@ import de.uni_koblenz.jgralabtest.schemas.vertextest.VertexTestSchema;
 public class LoadTest extends InstanceTest {
 
 	private static final String TESTGRAPH_FILENAME = "testgraph.tg";
-	private static final String TESTGRAPH_PATH = "testit/testgraphs/";
+	private static final String TESTGRAPH_PATH = "testit/testdata/";
 
 	public LoadTest(ImplementationType implementationType, String dbURL) {
 		super(implementationType, dbURL);

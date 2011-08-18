@@ -109,9 +109,8 @@ public class ECATestGretlAction {
 		rules.add(bef_rule);
 
 		try {
-			ECAIO.saveECArules(
-					testGraph.getSchema(),
-					"testit/de/uni_koblenz/jgralabtest/eca/io/testSaveRules2.eca",
+			ECAIO.saveECArules(testGraph.getSchema(),
+					ECATestIO.FOLDER_FOR_RULE_FILES + "testSaveRules2.eca",
 					rules);
 		} catch (ECAIOException e) {
 			e.printStackTrace();
@@ -125,9 +124,8 @@ public class ECATestGretlAction {
 		Contact c5 = testGraph.createContact();
 
 		try {
-			List<ECARule> rules = ECAIO
-					.loadECArules(testGraph.getSchema(),
-							"testit/de/uni_koblenz/jgralabtest/eca/io/testSaveRules2.eca");
+			List<ECARule> rules = ECAIO.loadECArules(testGraph.getSchema(),
+					ECATestIO.FOLDER_FOR_RULE_FILES + "testSaveRules2.eca");
 			ECARuleManager ecaRuleManager = (ECARuleManager) testGraph
 					.getECARuleManager();
 			for (ECARule rule : rules) {
