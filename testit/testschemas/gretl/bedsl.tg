@@ -1,6 +1,6 @@
 TGraph 2;
 
-Schema de.uni_koblenz.jgralabtest.gretl.schemas.bedsl.BedslSchema;
+Schema de.uni_koblenz.jgralabtest.schemas.gretl.bedsl.BedslSchema;
 
 GraphClass BedslGraph;
 

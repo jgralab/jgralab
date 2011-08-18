@@ -20,10 +20,10 @@ import de.uni_koblenz.jgralab.eca.events.DeleteVertexEventDescription;
 import de.uni_koblenz.jgralab.eca.events.EventDescription;
 import de.uni_koblenz.jgralab.gretl.eca.GretlTransformAction;
 import de.uni_koblenz.jgralabtest.gretl.SimpleCopyTransformation;
-import de.uni_koblenz.jgralabtest.gretl.schemas.addressbook.AddressBook;
-import de.uni_koblenz.jgralabtest.gretl.schemas.addressbook.AddressBookGraph;
-import de.uni_koblenz.jgralabtest.gretl.schemas.addressbook.AddressBookSchema;
-import de.uni_koblenz.jgralabtest.gretl.schemas.addressbook.Contact;
+import de.uni_koblenz.jgralabtest.schemas.gretl.addressbook.AddressBook;
+import de.uni_koblenz.jgralabtest.schemas.gretl.addressbook.AddressBookGraph;
+import de.uni_koblenz.jgralabtest.schemas.gretl.addressbook.AddressBookSchema;
+import de.uni_koblenz.jgralabtest.schemas.gretl.addressbook.Contact;
 
 public class ECATestGretlAction {
 
