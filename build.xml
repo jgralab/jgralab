@@ -232,7 +232,7 @@
 		<!--
    	  <taskdef name="tgschema2java" classname="de.uni_koblenz.jgralab.utilities.ant.TgSchema2JavaTask" classpath="${classes.dir}" />
 -->
-		<rsa2tg xmifile="${testschemas.dir}/rsa-xmi/greqltestschema.xmi" schemafile="${testschemas.dir}/greqltestschema.xmi.rsa.tg" />
+		<rsa2tg xmifile="${testschemas.dir}/rsa-xmi/greqltestschema.xmi" schemafile="${testschemas.dir}/greqltestschema.tg" />
 		<!-- The jgralab & greql test schemas -->
 		<tgschema2java sourcePath="${testcases.dir}" implementationMode="standard,transaction,savemem,database">
 			<fileset dir="${testschemas.dir}" includes="*.tg" />
