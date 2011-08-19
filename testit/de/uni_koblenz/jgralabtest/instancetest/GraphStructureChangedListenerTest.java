@@ -155,10 +155,6 @@ public class GraphStructureChangedListenerTest extends InstanceTest {
 			g = MinimalSchema.instance()
 					.createMinimalGraphWithTransactionSupport(V, E);
 			break;
-		case SAVEMEM:
-			g = MinimalSchema.instance().createMinimalGraphWithSavememSupport(
-					V, E);
-			break;
 		case DATABASE:
 			dbHandler.connectToDatabase();
 			dbHandler.loadMinimalSchemaIntoGraphDatabase();

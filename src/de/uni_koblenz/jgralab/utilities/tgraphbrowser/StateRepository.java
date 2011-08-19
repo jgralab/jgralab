@@ -2111,7 +2111,7 @@ public class StateRepository {
 					currentGraph.graph = GraphIO.loadSchemaAndGraphFromFile(
 							currentGraph.graphPath,
 							new CodeGeneratorConfiguration()
-									.withSaveMemSupport(),
+									.withoutStandardSupport(),
 							new MyProgressFunction(currentGraph));
 					assert currentGraph.graph != null : "The graph wasn't loaded correctly.";
 					currentGraph = null;

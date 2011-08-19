@@ -74,11 +74,6 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 	protected HashMap<Class<? extends Edge>, Constructor<? extends Edge>> edgeTransactionMap;
 	protected HashMap<Class<? extends Vertex>, Constructor<? extends Vertex>> vertexTransactionMap;
 
-	// Maps for savemem support.
-	protected HashMap<Class<? extends Graph>, Constructor<? extends Graph>> graphSavememMap;
-	protected HashMap<Class<? extends Edge>, Constructor<? extends Edge>> edgeSavememMap;
-	protected HashMap<Class<? extends Vertex>, Constructor<? extends Vertex>> vertexSavememMap;
-
 	/**
 	 * Creates and initializes a new <code>GraphFactoryImpl</code>.
 	 */
@@ -86,7 +81,6 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 		this.createMapsForStandardSupport();
 		this.createMapsForDatabaseSupport();
 		this.createMapsForTransactionSupport();
-		this.createMapsForSaveMemSupport();
 	}
 
 	private void createMapsForStandardSupport() {
@@ -105,12 +99,6 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 		graphTransactionMap = new HashMap<Class<? extends Graph>, Constructor<? extends Graph>>();
 		edgeTransactionMap = new HashMap<Class<? extends Edge>, Constructor<? extends Edge>>();
 		vertexTransactionMap = new HashMap<Class<? extends Vertex>, Constructor<? extends Vertex>>();
-	}
-
-	private void createMapsForSaveMemSupport() {
-		graphSavememMap = new HashMap<Class<? extends Graph>, Constructor<? extends Graph>>();
-		edgeSavememMap = new HashMap<Class<? extends Edge>, Constructor<? extends Edge>>();
-		vertexSavememMap = new HashMap<Class<? extends Vertex>, Constructor<? extends Vertex>>();
 	}
 
 	// --- Methods for option STDIMPL
@@ -465,120 +453,6 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 			} catch (NoSuchMethodException ex) {
 				throw new M1ClassAccessException(
 						"Unable to locate transaction constructor for edgeclass"
-								+ implementationClass, ex);
-			}
-		}
-	}
-
-	// -------------------------------------------------------------------------
-	// Methods for the SAVEMEMIMPL option.
-	// FIXME This is currently a clone STDIMPL methods with changed maps.
-
-	@Override
-	public Edge createEdgeWithSavememSupport(Class<? extends Edge> edgeClass,
-			int id, Graph g, Vertex alpha, Vertex omega) {
-		try {
-			return edgeSavememMap.get(edgeClass).newInstance(id, g, alpha,
-					omega);
-		} catch (Exception ex) {
-			if (ex.getCause() instanceof GraphException) {
-				throw new GraphException(ex.getCause().getLocalizedMessage(),
-						ex);
-			} else {
-				throw new M1ClassAccessException("Cannot create edge of class "
-						+ edgeClass.getCanonicalName(), ex);
-			}
-		}
-	}
-
-	@Override
-	public Graph createGraphWithSavememSupport(
-			Class<? extends Graph> graphClass, String id, int vMax, int eMax) {
-		try {
-			Graph g = graphSavememMap.get(graphClass).newInstance(id, vMax,
-					eMax);
-			return g;
-		} catch (Exception ex) {
-			throw new M1ClassAccessException("Cannot create graph of class "
-					+ graphClass.getCanonicalName(), ex);
-		}
-	}
-
-	@Override
-	public Graph createGraphWithSavememSupport(
-			Class<? extends Graph> graphClass, String id) {
-		try {
-			Graph g = graphSavememMap.get(graphClass).newInstance(id, 1000,
-					1000);
-			return g;
-		} catch (Exception ex) {
-			throw new M1ClassAccessException("Cannot create graph of class "
-					+ graphClass.getCanonicalName(), ex);
-		}
-	}
-
-	@Override
-	public Vertex createVertexWithSavememSupport(
-			Class<? extends Vertex> vertexClass, int id, Graph g) {
-		try {
-			Vertex v = vertexSavememMap.get(vertexClass).newInstance(id, g);
-			return v;
-		} catch (Exception ex) {
-			if (ex.getCause() instanceof GraphException) {
-				throw new GraphException(ex.getCause().getLocalizedMessage(),
-						ex);
-			}
-			throw new M1ClassAccessException("Cannot create vertex of class "
-					+ vertexClass.getCanonicalName(), ex);
-		}
-	}
-
-	public void setGraphSavememImplementationClass(
-			Class<? extends Graph> originalClass,
-			Class<? extends Graph> implementationClass) {
-		if (isSuperclassOrEqual(originalClass, implementationClass)) {
-			try {
-				Class<?>[] params = { String.class, int.class, int.class };
-				graphSavememMap.put(originalClass,
-						implementationClass.getConstructor(params));
-			} catch (NoSuchMethodException ex) {
-				throw new M1ClassAccessException(
-						"Unable to locate default constructor for graphclass "
-								+ implementationClass.getName(), ex);
-			}
-		}
-	}
-
-	@Override
-	public void setVertexSavememImplementationClass(
-			Class<? extends Vertex> originalClass,
-			Class<? extends Vertex> implementationClass) {
-		if (isSuperclassOrEqual(originalClass, implementationClass)) {
-			try {
-				Class<?>[] params = { int.class, Graph.class };
-				vertexSavememMap.put(originalClass,
-						implementationClass.getConstructor(params));
-			} catch (NoSuchMethodException ex) {
-				throw new M1ClassAccessException(
-						"Unable to locate default constructor for vertexclass"
-								+ implementationClass, ex);
-			}
-		}
-	}
-
-	@Override
-	public void setEdgeSavememImplementationClass(
-			Class<? extends Edge> originalClass,
-			Class<? extends Edge> implementationClass) {
-		if (isSuperclassOrEqual(originalClass, implementationClass)) {
-			try {
-				Class<?>[] params = { int.class, Graph.class, Vertex.class,
-						Vertex.class };
-				edgeSavememMap.put(originalClass,
-						implementationClass.getConstructor(params));
-			} catch (NoSuchMethodException ex) {
-				throw new M1ClassAccessException(
-						"Unable to locate default constructor for edgeclass"
 								+ implementationClass, ex);
 			}
 		}

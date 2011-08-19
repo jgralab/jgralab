@@ -106,10 +106,6 @@ public class RoleNameTest extends InstanceTest {
 			graph = VertexTestSchema.instance()
 					.createVertexTestGraphWithTransactionSupport(100, 100);
 			break;
-		case SAVEMEM:
-			graph = VertexTestSchema.instance()
-					.createVertexTestGraphWithSavememSupport(100, 100);
-			break;
 		case DATABASE:
 			graph = createVertexTestGraphWithDatabaseSupport();
 			break;

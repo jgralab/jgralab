@@ -132,10 +132,6 @@ public class GraphTest extends InstanceTest {
 			out = VertexTestSchema.instance()
 					.createVertexTestGraphWithTransactionSupport();
 			break;
-		case SAVEMEM:
-			out = VertexTestSchema.instance()
-					.createVertexTestGraphWithSavememSupport();
-			break;
 		case DATABASE:
 			out = createVertexTestGraphWithDatabaseSupport();
 			break;
@@ -5342,10 +5338,6 @@ public class GraphTest extends InstanceTest {
 		case TRANSACTION:
 			g3 = MinimalSchema.instance()
 					.createMinimalGraphWithTransactionSupport();
-			break;
-		case SAVEMEM:
-			g3 = MinimalSchema.instance()
-					.createMinimalGraphWithSavememSupport();
 			break;
 		case DATABASE:
 			dbHandler.loadMinimalSchemaIntoGraphDatabase();

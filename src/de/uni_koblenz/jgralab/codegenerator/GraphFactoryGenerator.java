@@ -123,8 +123,6 @@ public class GraphFactoryGenerator extends CodeGenerator {
 				+ ".impl.trans." + graphClass.getQualifiedName());
 		code.setVariable("graphDatabaseImplName", schemaRootPackageName
 				+ ".impl.db." + graphClass.getQualifiedName());
-		code.setVariable("graphSaveMemImplName", schemaRootPackageName
-				+ ".impl.savemem." + graphClass.getQualifiedName());
 
 		if (!graphClass.isAbstract()) {
 			code.add("/* code for graph #graphName# */");
@@ -136,9 +134,6 @@ public class GraphFactoryGenerator extends CodeGenerator {
 			}
 			if (config.hasDatabaseSupport()) {
 				code.add("setGraphDatabaseImplementationClass(#graphName#.class, #graphDatabaseImplName#Impl.class);");
-			}
-			if (config.hasSavememSupport()) {
-				code.add("setGraphSavememImplementationClass(#graphName#.class, #graphSaveMemImplName#Impl.class);");
 			}
 		}
 		return code;
@@ -158,8 +153,6 @@ public class GraphFactoryGenerator extends CodeGenerator {
 				+ ".impl.trans." + vertexClass.getQualifiedName());
 		code.setVariable("vertexDatabaseImplName", schemaRootPackageName
 				+ ".impl.db." + vertexClass.getQualifiedName());
-		code.setVariable("vertexSaveMemImplName", schemaRootPackageName
-				+ ".impl.savemem." + vertexClass.getQualifiedName());
 
 		if (!vertexClass.isAbstract()) {
 			if (config.hasStandardSupport()) {
@@ -170,9 +163,6 @@ public class GraphFactoryGenerator extends CodeGenerator {
 			}
 			if (config.hasDatabaseSupport()) {
 				code.add("setVertexDatabaseImplementationClass(#vertexName#.class, #vertexDatabaseImplName#Impl.class);");
-			}
-			if (config.hasSavememSupport()) {
-				code.add("setVertexSavememImplementationClass(#vertexName#.class, #vertexSaveMemImplName#Impl.class);");
 			}
 		}
 		return code;
@@ -188,8 +178,6 @@ public class GraphFactoryGenerator extends CodeGenerator {
 				+ ".impl.trans." + edgeClass.getQualifiedName());
 		code.setVariable("edgeDatabaseImplName", schemaRootPackageName
 				+ ".impl.db." + edgeClass.getQualifiedName());
-		code.setVariable("edgeSaveMemImplName", schemaRootPackageName
-				+ ".impl.savemem." + edgeClass.getQualifiedName());
 
 		if (!edgeClass.isAbstract()) {
 			if (config.hasStandardSupport()) {
@@ -200,9 +188,6 @@ public class GraphFactoryGenerator extends CodeGenerator {
 			}
 			if (config.hasDatabaseSupport()) {
 				code.add("setEdgeDatabaseImplementationClass(#edgeName#.class, #edgeDatabaseImplName#Impl.class);");
-			}
-			if (config.hasSavememSupport()) {
-				code.add("setEdgeSavememImplementationClass(#edgeName#.class, #edgeSaveMemImplName#Impl.class);");
 			}
 		}
 		return code;

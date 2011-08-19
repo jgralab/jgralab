@@ -100,10 +100,6 @@ public class SubGraphMarkerTest extends InstanceTest {
 			g = dbHandler.createMinimalGraphWithDatabaseSupport(
 					"SubGraphMarkerTest", V, E);
 			break;
-		case SAVEMEM:
-			g = MinimalSchema.instance().createMinimalGraphWithSavememSupport(
-					V, E);
-			break;
 		default:
 			fail("Implementation " + implementationType
 					+ " not yet supported by this test.");

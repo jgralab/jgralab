@@ -149,10 +149,6 @@ public class ArrayGraphmarkerTest extends InstanceTest {
 			g = dbHandler.createMinimalGraphWithDatabaseSupport(
 					"GraphMarkerTest", V, E);
 			break;
-		case SAVEMEM:
-			g = MinimalSchema.instance().createMinimalGraphWithSavememSupport(
-					V, E);
-			break;
 		default:
 			fail("Implementation " + implementationType
 					+ " not yet supported by this test.");

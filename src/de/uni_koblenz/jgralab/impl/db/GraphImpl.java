@@ -1268,11 +1268,6 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	}
 
 	@Override
-	public final boolean hasSavememSupport() {
-		return false;
-	}
-
-	@Override
 	public final boolean hasStandardSupport() {
 		return false;
 	}

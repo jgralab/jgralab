@@ -234,7 +234,7 @@
 -->
 		<rsa2tg xmifile="${testschemas.dir}/rsa-xmi/greqltestschema.xmi" schemafile="${testschemas.dir}/greqltestschema.tg" />
 		<!-- The jgralab & greql test schemas -->
-		<tgschema2java sourcePath="${testcases.dir}" implementationMode="standard,transaction,savemem,database">
+		<tgschema2java sourcePath="${testcases.dir}" implementationMode="standard,transaction,database">
 			<fileset dir="${testschemas.dir}" includes="*.tg" />
 		</tgschema2java>
 		<!-- The GReTL test schemas -->

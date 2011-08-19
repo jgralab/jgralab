@@ -185,7 +185,6 @@ public class TgSchema2Java {
 				.println("Warning: this call is deprecated, use option \"-i\" instead.");
 		config.setStandardSupport(false);
 		config.setTransactionSupport(true);
-		config.setSaveMemSupport(false);
 	}
 
 	@Deprecated
@@ -194,7 +193,6 @@ public class TgSchema2Java {
 				.println("Warning: this call is deprecated, use option \"-i\" instead.");
 		config.setStandardSupport(true);
 		config.setTransactionSupport(false);
-		config.setSaveMemSupport(false);
 	}
 
 	public void setStandardSupport(boolean value) {
@@ -203,10 +201,6 @@ public class TgSchema2Java {
 
 	public void setTransactionSupport(boolean value) {
 		config.setTransactionSupport(value);
-	}
-
-	public void setSavememSupport(boolean value) {
-		config.setSaveMemSupport(value);
 	}
 
 	public void setDatabaseSupport(boolean value) {
@@ -595,7 +589,6 @@ public class TgSchema2Java {
 			// paranoid ;-) ensure nothing is activated to minimize surprises
 			setTransactionSupport(false);
 			setStandardSupport(false);
-			setSavememSupport(false);
 			setDatabaseSupport(false);
 		} else {
 			throw new IllegalArgumentException(
@@ -607,15 +600,13 @@ public class TgSchema2Java {
 				setTransactionSupport(true);
 			} else if (v.equals("standard")) {
 				setStandardSupport(true);
-			} else if (v.equals("savemem")) {
-				setSavememSupport(true);
-			} else if (v.equals("database")) {
+			}else if (v.equals("database")) {
 				setDatabaseSupport(true);
 			} else {
 				throw new IllegalArgumentException(
 						"Illegal value for implementation mode: "
 								+ v
-								+ "\nOnly \"transaction\",\"standard\", \"savemem\", and \"database\" are supported.");
+								+ "\nOnly \"transaction\",\"standard\" and \"database\" are supported.");
 			}
 		}
 	}

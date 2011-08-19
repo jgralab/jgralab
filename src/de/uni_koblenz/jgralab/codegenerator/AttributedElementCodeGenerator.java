@@ -114,7 +114,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	@Override
 	protected CodeBlock createBody() {
 		CodeList code = new CodeList();
-		if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()) {
+		if (currentCycle.isStdOrDbImplOrTransImpl()) {
 			code.add(createFields(aec.getAttributeList()));
 			code.add(createConstructor());
 			code.add(createGetAttributedElementClassMethod());
@@ -140,27 +140,27 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		CodeSnippet code = new CodeSnippet(true);
 
 		code.setVariable("classOrInterface", currentCycle
-				.isStdOrSaveMemOrDbImplOrTransImpl() ? " class" : " interface");
+				.isStdOrDbImplOrTransImpl() ? " class" : " interface");
 		code.setVariable(
 				"abstract",
-				currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()
+				currentCycle.isStdOrDbImplOrTransImpl()
 						&& aec.isAbstract() ? " abstract" : "");
 		code.setVariable(
 				"impl",
-				currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()
+				currentCycle.isStdOrDbImplOrTransImpl()
 						&& !aec.isAbstract() ? "Impl" : "");
 		code.add("public#abstract##classOrInterface# #simpleClassName##impl##extends##implements# {");
 		code.setVariable(
 				"extends",
-				currentCycle.isStdOrSaveMemOrDbImplOrTransImpl() ? " extends #baseClassName#"
+				currentCycle.isStdOrDbImplOrTransImpl() ? " extends #baseClassName#"
 						: "");
 
 		StringBuffer buf = new StringBuffer();
 		if (interfaces.size() > 0) {
-			String delim = currentCycle.isStdOrSaveMemOrDbImplOrTransImpl() ? " implements "
+			String delim = currentCycle.isStdOrDbImplOrTransImpl() ? " implements "
 					: " extends ";
 			for (String interfaceName : interfaces) {
-				if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()
+				if (currentCycle.isStdOrDbImplOrTransImpl()
 						|| !interfaceName.equals(aec.getQualifiedName())) {
 					if (interfaceName.equals("Vertex")
 							|| interfaceName.equals("Edge")
@@ -352,7 +352,6 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 			break;
 		case STDIMPL:
 		case DBIMPL:
-		case SAVEMEMIMPL:
 			code.add("public #type# #isOrGet#_#name#() {", "\treturn _#name#;",
 					"}");
 			break;
@@ -392,8 +391,6 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 			code.add("public void set_#name#(#type# _#name#);");
 			break;
 		case STDIMPL:
-
-		case SAVEMEMIMPL:
 			code.add("public void set_#name#(#type# _#name#) {",
 					"\tecaAttributeChanging(\"#name#\", this._#name#, _#name#);",
 					"\tObject oldValue = this._#name#;",
@@ -443,8 +440,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	protected CodeBlock createField(Attribute attr) {
 		CodeSnippet code = new CodeSnippet(true, "protected #type# _#name#;");
 		code.setVariable("name", attr.getName());
-		if (currentCycle.isStdImpl() || currentCycle.isSaveMemImpl()
-				|| currentCycle.isDbImpl()) {
+		if (currentCycle.isStdImpl() || currentCycle.isDbImpl()) {
 			code.setVariable(
 					"type",
 					attr.getDomain().getJavaAttributeImplementationTypeName(
@@ -485,8 +481,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 					a.addNoIndent(new CodeSnippet("\t#setterName#(tmpVar);",
 							"\treturn;", "}"));
 				}
-				if (currentCycle.isStdImpl() || currentCycle.isSaveMemImpl()
-						|| currentCycle.isDbImpl()) {
+				if (currentCycle.isStdImpl() || currentCycle.isDbImpl()) {
 					a.add(attribute.getDomain().getReadMethod(
 							schemaRootPackageName, "_" + attribute.getName(),
 							"io"));
@@ -529,8 +524,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 							schemaRootPackageName, "_" + attribute.getName(),
 							"io"));
 				}
-				if (currentCycle.isStdImpl() || currentCycle.isSaveMemImpl()
-						|| currentCycle.isDbImpl()) {
+				if (currentCycle.isStdImpl() || currentCycle.isDbImpl()) {
 					a.add(attribute.getDomain().getWriteMethod(
 							schemaRootPackageName, "_" + attribute.getName(),
 							"io"));
@@ -558,8 +552,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 				CodeSnippet snippet = new CodeSnippet();
 				snippet.setVariable("setterName", "set_" + attribute.getName());
 				snippet.setVariable("variableName", attribute.getName());
-				if (currentCycle.isStdImpl() || currentCycle.isSaveMemImpl()
-						|| currentCycle.isDbImpl()) {
+				if (currentCycle.isStdImpl() || currentCycle.isDbImpl()) {
 					code.add(attribute.getDomain().getReadMethod(
 							schemaRootPackageName, "_" + attribute.getName(),
 							"io"));
@@ -589,8 +582,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		if ((attrSet != null) && !attrSet.isEmpty()) {
 			code.add(new CodeSnippet("io.space();"));
 			for (Attribute attribute : attrSet) {
-				if (currentCycle.isStdImpl() || currentCycle.isSaveMemImpl()
-						|| currentCycle.isDbImpl()) {
+				if (currentCycle.isStdImpl() || currentCycle.isDbImpl()) {
 					code.add(attribute.getDomain().getWriteMethod(
 							schemaRootPackageName, "_" + attribute.getName(),
 							"io"));

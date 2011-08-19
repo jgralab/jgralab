@@ -112,10 +112,6 @@ public class EdgeTest extends InstanceTest {
 			g = VertexTestSchema.instance()
 					.createVertexTestGraphWithTransactionSupport();
 			break;
-		case SAVEMEM:
-			g = VertexTestSchema.instance()
-					.createVertexTestGraphWithSavememSupport();
-			break;
 		case DATABASE:
 			g = createVertexTestGraphWithDatabaseSupport();
 			break;
@@ -324,10 +320,6 @@ public class EdgeTest extends InstanceTest {
 				g = VertexTestSchema.instance()
 						.createVertexTestGraphWithTransactionSupport();
 				break;
-			case SAVEMEM:
-				g = VertexTestSchema.instance()
-						.createVertexTestGraphWithSavememSupport();
-				break;
 			case DATABASE:
 				g = dbHandler.createVertexTestGraphWithDatabaseSupport(ID + i);
 				break;
@@ -534,10 +526,6 @@ public class EdgeTest extends InstanceTest {
 				g = VertexTestSchema.instance()
 						.createVertexTestGraphWithTransactionSupport();
 				break;
-			case SAVEMEM:
-				g = VertexTestSchema.instance()
-						.createVertexTestGraphWithSavememSupport();
-				break;
 			case DATABASE:
 				g = dbHandler.createVertexTestGraphWithDatabaseSupport(ID + i);
 				break;
@@ -690,10 +678,6 @@ public class EdgeTest extends InstanceTest {
 			case TRANSACTION:
 				g = VertexTestSchema.instance()
 						.createVertexTestGraphWithTransactionSupport();
-				break;
-			case SAVEMEM:
-				g = VertexTestSchema.instance()
-						.createVertexTestGraphWithSavememSupport();
 				break;
 			case DATABASE:
 				g = dbHandler.createVertexTestGraphWithDatabaseSupport(ID + i);
@@ -925,10 +909,6 @@ public class EdgeTest extends InstanceTest {
 			case TRANSACTION:
 				g = VertexTestSchema.instance()
 						.createVertexTestGraphWithTransactionSupport();
-				break;
-			case SAVEMEM:
-				g = VertexTestSchema.instance()
-						.createVertexTestGraphWithSavememSupport();
 				break;
 			case DATABASE:
 				g = dbHandler.createVertexTestGraphWithDatabaseSupport(ID + i);
@@ -1259,10 +1239,6 @@ public class EdgeTest extends InstanceTest {
 				g = VertexTestSchema.instance()
 						.createVertexTestGraphWithTransactionSupport();
 				break;
-			case SAVEMEM:
-				g = VertexTestSchema.instance()
-						.createVertexTestGraphWithSavememSupport();
-				break;
 			case DATABASE:
 				g = dbHandler.createVertexTestGraphWithDatabaseSupport(ID + i);
 				break;
@@ -1549,10 +1525,6 @@ public class EdgeTest extends InstanceTest {
 				g = VertexTestSchema.instance()
 						.createVertexTestGraphWithTransactionSupport();
 				break;
-			case SAVEMEM:
-				g = VertexTestSchema.instance()
-						.createVertexTestGraphWithSavememSupport();
-				break;
 			case DATABASE:
 				g = dbHandler.createVertexTestGraphWithDatabaseSupport(ID + i);
 				break;
@@ -1774,10 +1746,6 @@ public class EdgeTest extends InstanceTest {
 			case TRANSACTION:
 				g = VertexTestSchema.instance()
 						.createVertexTestGraphWithTransactionSupport();
-				break;
-			case SAVEMEM:
-				g = VertexTestSchema.instance()
-						.createVertexTestGraphWithSavememSupport();
 				break;
 			case DATABASE:
 				g = dbHandler.createVertexTestGraphWithDatabaseSupport(ID + i);
@@ -2142,10 +2110,6 @@ public class EdgeTest extends InstanceTest {
 			case TRANSACTION:
 				g = VertexTestSchema.instance()
 						.createVertexTestGraphWithTransactionSupport();
-				break;
-			case SAVEMEM:
-				g = VertexTestSchema.instance()
-						.createVertexTestGraphWithSavememSupport();
 				break;
 			case DATABASE:
 				g = dbHandler.createVertexTestGraphWithDatabaseSupport(ID + i);
@@ -2649,10 +2613,6 @@ public class EdgeTest extends InstanceTest {
 			case TRANSACTION:
 				g = VertexTestSchema.instance()
 						.createVertexTestGraphWithTransactionSupport();
-				break;
-			case SAVEMEM:
-				g = VertexTestSchema.instance()
-						.createVertexTestGraphWithSavememSupport();
 				break;
 			case DATABASE:
 				g = dbHandler.createVertexTestGraphWithDatabaseSupport(ID + i);
@@ -4994,10 +4954,6 @@ public class EdgeTest extends InstanceTest {
 			anotherGraph = VertexTestSchema.instance()
 					.createVertexTestGraphWithTransactionSupport();
 			break;
-		case SAVEMEM:
-			anotherGraph = VertexTestSchema.instance()
-					.createVertexTestGraphWithSavememSupport();
-			break;
 		case DATABASE:
 			anotherGraph = dbHandler
 					.createVertexTestGraphWithDatabaseSupport("anotherGraph");
@@ -5253,10 +5209,6 @@ public class EdgeTest extends InstanceTest {
 		case TRANSACTION:
 			loadedgraph = (VertexTestGraph) GraphIO
 					.loadGraphFromFileWithTransactionSupport("test.tg", null);
-			break;
-		case SAVEMEM:
-			loadedgraph = VertexTestSchema.instance()
-					.loadVertexTestGraphWithSavememSupport("test.tg");
 			break;
 		default:
 			fail("Implementation " + implementationType

@@ -107,10 +107,6 @@ public class IncidenceListTest extends InstanceTest {
 		case DATABASE:
 			g = createMinimalGraphWithDatabaseSupport();
 			break;
-		case SAVEMEM:
-			g = MinimalSchema.instance().createMinimalGraphWithSavememSupport(
-					V, E);
-			break;
 		default:
 			fail("Implementation " + implementationType
 					+ " not yet supported by this test.");
@@ -242,10 +238,6 @@ public class IncidenceListTest extends InstanceTest {
 
 	@Test
 	public void putEdgeBeforeTest() throws Exception {
-		// TODO remove when problem is resolved
-		// if(implementationType == ImplementationType.SAVEMEM){
-		// fail("testcase creates an infinite loop.");
-		// }
 		createTransaction(g);
 		createRandomEdges();
 		commit(g);

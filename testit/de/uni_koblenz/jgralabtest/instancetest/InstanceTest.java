@@ -64,10 +64,6 @@ public abstract class InstanceTest {
 		parameters.add(new Object[] { ImplementationType.TRANSACTION, null });
 		System.out.println("transaction implementation");
 
-		printIndex();
-		parameters.add(new Object[] { ImplementationType.SAVEMEM, null });
-		System.out.println("savemem implementation");
-
 		String dbURL = System.getProperty("jgralabtest_dbconnection");
 		dbURL = dbURL != null && dbURL.startsWith("jdbc") ? dbURL : null;
 
