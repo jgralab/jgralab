@@ -69,13 +69,11 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 	@Override
 	protected CodeBlock createBody() {
 		CodeList code = (CodeList) super.createBody();
-		if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()) {
+		if (currentCycle.isStdOrDbImplOrTransImpl()) {
 			rootBlock.setVariable("baseClassName", "ReversedEdgeImpl");
 
 			if (currentCycle.isStdImpl()) {
 				addImports("#jgImplStdPackage#.#baseClassName#");
-			} else if (currentCycle.isSaveMemImpl()) {
-				addImports("#jgImplSaveMemPackage#.#baseClassName#");
 			} else if (currentCycle.isTransImpl()) {
 				addImports("#jgImplTransPackage#.#baseClassName#");
 			} else if (currentCycle.isDbImpl()) {
@@ -97,9 +95,6 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 		if (currentCycle.isStdImpl()) {
 			addImports("#jgImplStdPackage#.EdgeImpl", "#jgPackage#.Graph");
 		}
-		if (currentCycle.isSaveMemImpl()) {
-			addImports("#jgImplSaveMemPackage#.EdgeImpl", "#jgPackage#.Graph");
-		}
 		if (currentCycle.isTransImpl()) {
 			addImports("#jgImplTransPackage#.EdgeImpl", "#jgPackage#.Graph");
 		}
@@ -119,7 +114,7 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 				.getJavaAttributeImplementationTypeName(schemaRootPackageName));
 		code.setVariable("isOrGet", a.getDomain().isBoolean() ? "is" : "get");
 
-		if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()) {
+		if (currentCycle.isStdOrDbImplOrTransImpl()) {
 			code.add(
 					"public #type# #isOrGet#_#name#() {",
 					"\treturn ((#normalQualifiedClassName#)normalEdge).#isOrGet#_#name#();",
@@ -138,7 +133,7 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 		code.setVariable("type", a.getDomain()
 				.getJavaAttributeImplementationTypeName(schemaRootPackageName));
 
-		if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()) {
+		if (currentCycle.isStdOrDbImplOrTransImpl()) {
 			code.add(
 					"public void set_#name#(#type# _#name#) {",
 					"\t((#normalQualifiedClassName#)normalEdge).set_#name#(_#name#);",

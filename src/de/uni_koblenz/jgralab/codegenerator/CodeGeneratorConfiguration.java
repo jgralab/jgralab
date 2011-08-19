@@ -56,8 +56,6 @@ package de.uni_koblenz.jgralab.codegenerator;
  * default.<br>
  * <br>
  * 
- * - <code>saveMemSupport</code> toggles, if the memory saving classes should be
- * created, disabled by default.
  */
 public class CodeGeneratorConfiguration {
 
@@ -69,11 +67,10 @@ public class CodeGeneratorConfiguration {
 
 	public static final CodeGeneratorConfiguration FULL = new CodeGeneratorConfiguration()
 			.withTransactionSupport().withMethodsForSubclassesSupport()
-			.withSaveMemSupport().withDatabaseSupport();
+			.withDatabaseSupport();
 
 	public static final CodeGeneratorConfiguration FULL_WITHOUT_SUBCLASS_FLAGS = new CodeGeneratorConfiguration()
-			.withTransactionSupport().withSaveMemSupport()
-			.withDatabaseSupport();
+			.withTransactionSupport().withDatabaseSupport();
 
 	public static final CodeGeneratorConfiguration WITHOUT_TYPESPECIFIC_METHODS = new CodeGeneratorConfiguration()
 			.withTransactionSupport().withoutTypeSpecificMethodSupport()
@@ -92,12 +89,6 @@ public class CodeGeneratorConfiguration {
 	/** toggles, if classes for database support should be created */
 	private boolean databaseSupport = false;
 
-	/**
-	 * toggles, if the memory saving std classes shall be used or not. If true,
-	 * singly linked lists will be used internally, instead of double linked
-	 * lists. Runtime will be possibly worse, though.
-	 */
-	private boolean saveMemSupport = false;
 
 	/**
 	 * toggles, if the type-specific methods such as "getNextXYVertex" should be
@@ -119,12 +110,10 @@ public class CodeGeneratorConfiguration {
 	 * this.transactionSupport = false <br>
 	 * this.typespecificMethodSupport = true <br>
 	 * this.methodsForSubclassesSupport = false <br>
-	 * this.saveMemSupport = false <br>
 	 */
 	public CodeGeneratorConfiguration() {
 		standardSupport = true;
 		transactionSupport = false;
-		saveMemSupport = false;
 		typespecificMethodSupport = true;
 		methodsForSubclassesSupport = false;
 		databaseSupport = false;
@@ -142,11 +131,6 @@ public class CodeGeneratorConfiguration {
 
 	public CodeGeneratorConfiguration withDatabaseSupport() {
 		databaseSupport = true;
-		return this;
-	}
-
-	public CodeGeneratorConfiguration withSaveMemSupport() {
-		saveMemSupport = true;
 		return this;
 	}
 
@@ -171,7 +155,6 @@ public class CodeGeneratorConfiguration {
 		this.standardSupport = other.standardSupport;
 		this.transactionSupport = other.transactionSupport;
 		this.typespecificMethodSupport = other.typespecificMethodSupport;
-		this.saveMemSupport = other.saveMemSupport;
 		this.databaseSupport = other.databaseSupport;
 		this.methodsForSubclassesSupport = other.methodsForSubclassesSupport;
 	}
@@ -217,11 +200,4 @@ public class CodeGeneratorConfiguration {
 		return methodsForSubclassesSupport;
 	}
 
-	public void setSaveMemSupport(boolean saveMemSupport) {
-		this.saveMemSupport = saveMemSupport;
-	}
-
-	public boolean hasSavememSupport() {
-		return this.saveMemSupport;
-	}
 }

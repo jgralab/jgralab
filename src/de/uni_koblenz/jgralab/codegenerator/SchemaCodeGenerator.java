@@ -181,49 +181,6 @@ public class SchemaCodeGenerator extends CodeGenerator {
 						: "\tthrow new UnsupportedOperationException(\"No Standard support compiled.\");"),
 				"}",
 				"",
-				// ---- savemem support ----
-				// TODO Currently redirect to STD methods. Extension needed?
-				"/**",
-				" * Creates a new #gcName# graph with savemem support with initial vertex and edge counts <code>vMax</code>, <code>eMax</code>.",
-				" *",
-				" * @param vMax initial vertex count",
-				" * @param eMax initial edge count",
-				"*/",
-				"public #gcName# create#gcCamelName#WithSavememSupport(int vMax, int eMax) {",
-				((config.hasSavememSupport()) ? "\treturn (#gcCamelName#) graphFactory.createGraphWithSavememSupport(#gcCamelName#.class, null, vMax, eMax);"
-						: "\tthrow new UnsupportedOperationException(\"No Savemem support compiled.\");"),
-				"}",
-				"",
-				"/**",
-				" * Creates a new #gcName# graph with savemem support with the ID <code>id</code> initial vertex and edge counts <code>vMax</code>, <code>eMax</code>.",
-				" *",
-				" * @param id the id name of the new graph",
-				" * @param vMax initial vertex count",
-				" * @param eMax initial edge count",
-				" */",
-				"public #gcName# create#gcCamelName#WithSavememSupport(String id, int vMax, int eMax) {",
-				((config.hasSavememSupport()) ? "\treturn (#gcCamelName#) graphFactory.createGraphWithSavememSupport(#gcCamelName#.class, id, vMax, eMax);"
-						: "\tthrow new UnsupportedOperationException(\"No Savemem support compiled.\");"),
-				"}",
-				"",
-				"/**",
-				" * Creates a new #gcName# graph.",
-				"*/",
-				"public #gcName# create#gcCamelName#WithSavememSupport() {",
-				((config.hasSavememSupport()) ? "\treturn (#gcCamelName#) graphFactory.createGraphWithSavememSupport(#gcCamelName#.class, null);"
-						: "\tthrow new UnsupportedOperationException(\"No Savemem support compiled.\");"),
-				"}",
-				"",
-				"/**",
-				" * Creates a new #gcName# graph with the ID <code>id</code>.",
-				" *",
-				" * @param id the id name of the new graph",
-				" */",
-				"public #gcName# create#gcCamelName#WithSavememSupport(String id) {",
-				((config.hasSavememSupport()) ? "\treturn (#gcCamelName#) graphFactory.createGraphWithSavememSupport(#gcCamelName#.class, id);"
-						: "\tthrow new UnsupportedOperationException(\"No Savemem support compiled.\");"),
-				"}",
-				"",
 				// ---- database support -------
 				"/**",
 				" * Creates a new #gcName# graph in a database with given <code>id</code>.",
@@ -342,35 +299,6 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				"\tGraphIO.saveGraphToFile(filename, #gcCamelName#, pf);",
 				"}",
 				"",
-				// ---- file handling methods with savemem support ----
-				// TODO Currently redirect to STD methods. Extension needed?
-				"/**",
-				" * Loads a #gcName# graph with savemem support from the file <code>filename</code>.",
-				" *",
-				" * @param filename the name of the file",
-				" * @return the loaded #gcName#",
-				" * @throws GraphIOException if the graph cannot be loaded",
-				" */",
-				"public #gcName# load#gcCamelName#WithSavememSupport(String filename) throws GraphIOException {",
-				((config.hasSavememSupport()) ? "\treturn load#gcCamelName#WithSavememSupport(filename, null);"
-						: "\tthrow new UnsupportedOperationException(\"No Savemem support compiled.\");"),
-				"}",
-				"",
-				"/**",
-				" * Loads a #gcName# graph with savemem support from the file <code>filename</code>.",
-				" *",
-				" * @param filename the name of the file",
-				" * @param pf a progress function to monitor graph loading",
-				" * @return the loaded #gcName#",
-				" * @throws GraphIOException if the graph cannot be loaded",
-				" */",
-				"public #gcName# load#gcCamelName#WithSavememSupport(String filename, ProgressFunction pf) throws GraphIOException {",
-				((config.hasSavememSupport()) ? "\tGraph graph = GraphIO.loadGraphFromFileWithSavememSupport(filename, pf);\n"
-						+ "\tif (!(graph instanceof #gcName#)) {\n"
-						+ "\t\tthrow new GraphIOException(\"Graph in file '\" + filename + \"' is not an instance of GraphClass #gcName#\");\n"
-						+ "\t}" + "\treturn (#gcName#) graph;"
-						: "\tthrow new UnsupportedOperationException(\"No Savemem support compiled.\");"),
-				"}",
 				// ---- file handling methods with transaction support ----
 				"/**",
 				" * Loads a #gcName# graph with transaction support from the file <code>filename</code>.",

@@ -138,10 +138,6 @@ public class DefaultValueTest extends InstanceTest {
 			graph = DefaultValueTestSchema.instance()
 					.createDefaultValueTestGraphWithTransactionSupport();
 			break;
-		case SAVEMEM:
-			graph = DefaultValueTestSchema.instance()
-					.createDefaultValueTestGraphWithSavememSupport();
-			break;
 		case DATABASE:
 			graph = createDefaultValueTestGraphWithDatabaseSupport();
 			break;
@@ -264,7 +260,6 @@ public class DefaultValueTest extends InstanceTest {
 					.createDefaultValueTestGraphWithTransactionSupport();
 			break;
 		case STANDARD:
-		case SAVEMEM:
 		case DATABASE:
 			// cloning not supported except in TRANSACTION implementation
 			return;

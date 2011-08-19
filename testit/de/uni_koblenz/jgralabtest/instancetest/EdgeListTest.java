@@ -89,9 +89,6 @@ public class EdgeListTest extends InstanceTest {
 		case DATABASE:
 			g = createMinimalGraphWithDatabaseSupport();
 			break;
-		case SAVEMEM:
-			g = MinimalSchema.instance().createMinimalGraphWithSavememSupport();
-			break;
 		default:
 			fail("Implementation " + implementationType
 					+ " not yet supported by this test.");
@@ -145,10 +142,6 @@ public class EdgeListTest extends InstanceTest {
 
 	@Test
 	public void putBeforeTest() throws Exception {
-		// TODO remove when problem is resolved
-		// if(implementationType == ImplementationType.SAVEMEM){
-		// fail("testcase creates an infinite loop.");
-		// }
 		createReadOnlyTransaction(g);
 		Edge e5 = g.getEdge(5).getReversedEdge();
 		commit(g);
@@ -353,10 +346,6 @@ public class EdgeListTest extends InstanceTest {
 			// g = dbHandler.createMinimalGraphWithDatabaseSupport(
 			// "IncidenceListTest.testSortIncidences", V, E);
 			// break;
-		case SAVEMEM:
-			g = MinimalSchema.instance().createMinimalGraphWithSavememSupport(
-					V, E);
-			break;
 		default:
 			fail("Implementation " + implementationType
 					+ " not yet supported by this test.");

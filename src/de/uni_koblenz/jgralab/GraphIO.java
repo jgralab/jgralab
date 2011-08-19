@@ -1128,49 +1128,6 @@ public class GraphIO {
 				ImplementationType.TRANSACTION);
 	}
 
-	/**
-	 * Loads a graph with savemem support from the file <code>filename</code>.
-	 * When the <code>filename</code> ends with <code>.gz</code>, it is assumed
-	 * that the input is GZIP compressed, otherwise uncompressed plain text. A
-	 * {@link ProgressFunction} <code>pf</code> can be used to monitor progress.
-	 * 
-	 * @param filename
-	 *            the name of the TG file to be read
-	 * @param pf
-	 *            a {@link ProgressFunction}, may be <code>null</code>
-	 * @return the loaded graph
-	 * @throws GraphIOException
-	 *             if an IOException occurs or the compiled schema classes can
-	 *             not be loaded
-	 */
-	public static Graph loadGraphFromFileWithSavememSupport(String filename,
-			ProgressFunction pf) throws GraphIOException {
-		return loadGraphFromFile(filename, null, pf, ImplementationType.SAVEMEM);
-	}
-
-	/**
-	 * Loads a graph with savemem support from the file <code>filename</code>.
-	 * When the <code>filename</code> ends with <code>.gz</code>, it is assumed
-	 * that the input is GZIP compressed, otherwise uncompressed plain text. A
-	 * {@link ProgressFunction} <code>pf</code> can be used to monitor progress.
-	 * 
-	 * @param filename
-	 *            the name of the TG file to be read
-	 * @param schema
-	 *            the schema (must be the same schema as in the TG file read by
-	 *            the InputStream), may be <code>null</code>
-	 * @param pf
-	 *            a {@link ProgressFunction}, may be <code>null</code>
-	 * @return the loaded graph
-	 * @throws GraphIOException
-	 *             if an IOException occurs or the compiled schema classes can
-	 *             not be loaded
-	 */
-	public static Graph loadGraphFromFileWithSavememSupport(String filename,
-			Schema schema, ProgressFunction pf) throws GraphIOException {
-		return loadGraphFromFile(filename, schema, pf,
-				ImplementationType.SAVEMEM);
-	}
 
 	/**
 	 * Use {@link loadGraphFromFileWithStandardSupport} instead.

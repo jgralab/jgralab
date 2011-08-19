@@ -98,13 +98,10 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 	@Override
 	protected CodeBlock createBody() {
 		CodeList code = (CodeList) super.createBody();
-		if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()) {
+		if (currentCycle.isStdOrDbImplOrTransImpl()) {
 			rootBlock.setVariable("baseClassName", "EdgeImpl");
 			if (currentCycle.isStdImpl()) {
 				addImports("#jgImplStdPackage#.#baseClassName#");
-			}
-			if (currentCycle.isSaveMemImpl()) {
-				addImports("#jgImplSaveMemPackage#.#baseClassName#");
 			}
 			if (currentCycle.isTransImpl()) {
 				addImports("#jgImplTransPackage#.#baseClassName#");
@@ -118,7 +115,7 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 			code.add(createNextEdgeInGraphMethods());
 			code.add(createNextEdgeAtVertexMethods());
 		}
-		if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()) {
+		if (currentCycle.isStdOrDbImplOrTransImpl()) {
 			code.add(createGetSemanticsMethod());
 			code.add(createGetAlphaSemanticsMethod());
 			code.add(createGetOmegaSemanticsMethod());
@@ -140,9 +137,6 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 		}
 		if (currentCycle.isTransImpl()) {
 			addImports("#schemaImplTransPackage#.Reversed#simpleClassName#Impl");
-		}
-		if (currentCycle.isSaveMemImpl()) {
-			addImports("#schemaImplSaveMemPackage#.Reversed#simpleClassName#Impl");
 		}
 		if (currentCycle.isDbImpl()) {
 			addImports("#schemaImplDbPackage#.Reversed#simpleClassName#Impl");
@@ -194,7 +188,7 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 			code.add(" */",
 					"public #ecQualifiedName# getNext#ecCamelName#InGraph(#formalParams#);");
 		}
-		if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()) {
+		if (currentCycle.isStdOrDbImplOrTransImpl()) {
 			code.add(
 					"public #ecQualifiedName# getNext#ecCamelName#InGraph(#formalParams#) {",
 					"\treturn (#ecQualifiedName#)getNextEdge(#ecQualifiedName#.class#actualParams#);",
@@ -261,7 +255,7 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 			code.add(" */",
 					"public #ecQualifiedName# getNext#ecCamelName#(#formalParams#);");
 		}
-		if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()) {
+		if (currentCycle.isStdOrDbImplOrTransImpl()) {
 			code.add(
 					"public #ecQualifiedName# getNext#ecCamelName#(#formalParams#) {",
 					"\treturn (#ecQualifiedName#)getNextIncidence(#ecQualifiedName#.class#actualParams#);",

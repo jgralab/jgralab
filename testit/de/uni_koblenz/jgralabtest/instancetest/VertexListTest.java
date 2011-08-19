@@ -87,9 +87,6 @@ public class VertexListTest extends InstanceTest {
 		case DATABASE:
 			g = createMinimalGraphInDatabase();
 			break;
-		case SAVEMEM:
-			g = MinimalSchema.instance().createMinimalGraph(V, E);
-			break;
 		default:
 			fail("Implementation " + implementationType
 					+ " not yet supported by this test.");
@@ -320,10 +317,6 @@ public class VertexListTest extends InstanceTest {
 			// g = dbHandler.createMinimalGraphWithDatabaseSupport(
 			// "IncidenceListTest.testSortIncidences", V, E);
 			// break;
-		case SAVEMEM:
-			g = MinimalSchema.instance().createMinimalGraphWithSavememSupport(
-					V, E);
-			break;
 		default:
 			fail("Implementation " + implementationType
 					+ " not yet supported by this test.");

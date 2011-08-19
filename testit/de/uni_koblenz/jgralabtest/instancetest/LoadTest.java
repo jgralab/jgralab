@@ -252,10 +252,6 @@ public class LoadTest extends InstanceTest {
 			graph = dbHandler.createVertexTestGraphWithDatabaseSupport(
 					"LoadTest", vMax, eMax);
 			break;
-		case SAVEMEM:
-			graph = VertexTestSchema.instance()
-					.createVertexTestGraphWithSavememSupport(vMax, eMax);
-			break;
 		default:
 			fail("Implementation " + implementationType
 					+ " not yet supported by this test.");
@@ -346,11 +342,6 @@ public class LoadTest extends InstanceTest {
 			case DATABASE:
 				g2 = GraphIO.loadGraphFromFile(TESTGRAPH_PATH
 						+ TESTGRAPH_FILENAME, null);
-				break;
-			case SAVEMEM:
-				g2 = VertexTestSchema.instance()
-						.loadVertexTestGraphWithSavememSupport(
-								TESTGRAPH_PATH + TESTGRAPH_FILENAME);
 				break;
 			default:
 				fail("Implementation " + implementationType

@@ -64,7 +64,7 @@ import de.uni_koblenz.jgralab.utilities.tgschema2java.TgSchema2Java;
  * <li><code>implementationMode</code> takes a comma separated list of possible
  * implementation modes. If unset, all implementations will be generated.
  * Possible implementation modes are currently "standard", "transaction" and
- * "savemem".</li>
+ * "db".</li>
  * <li><code>subtypeFlag</code> corresponds to the cli option -f . If set,
  * separate methods with subtype flag will be created.</li>
  * <li><code>withoutTypes</code> corresponds to the cli option -w . If set, no

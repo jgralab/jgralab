@@ -83,9 +83,6 @@ public class ImplementationModeTest extends InstanceTest {
 			g = MinimalSchema.instance()
 					.createMinimalGraphWithTransactionSupport(V, E);
 			break;
-		case SAVEMEM:
-			g = MinimalSchema.instance().createMinimalGraph(V, E);
-			break;
 		case DATABASE:
 			// load graph from file not (yet) implemented in DATABASE
 			return;
@@ -120,7 +117,6 @@ public class ImplementationModeTest extends InstanceTest {
 			g2 = MinimalSchema.instance().loadMinimalGraph(filename);
 			assertTrue(g2.hasStandardSupport());
 			assertFalse(g2.hasTransactionSupport());
-			assertFalse(g2.hasSavememSupport());
 			break;
 		case TRANSACTION:
 			g2 = MinimalSchema.instance()
@@ -128,15 +124,7 @@ public class ImplementationModeTest extends InstanceTest {
 			createReadOnlyTransaction(g2);
 			assertFalse(g2.hasStandardSupport());
 			assertTrue(g2.hasTransactionSupport());
-			assertFalse(g2.hasSavememSupport());
 			commit(g2);
-			break;
-		case SAVEMEM:
-			g2 = MinimalSchema.instance().loadMinimalGraphWithSavememSupport(
-					filename);
-			assertFalse(g2.hasStandardSupport());
-			assertFalse(g2.hasTransactionSupport());
-			assertTrue(g2.hasSavememSupport());
 			break;
 		case DATABASE:
 			// load graph from file not (yet) implemented in DATABASE

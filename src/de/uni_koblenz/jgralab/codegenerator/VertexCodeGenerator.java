@@ -75,11 +75,9 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 	@Override
 	protected CodeBlock createBody() {
 		CodeList code = (CodeList) super.createBody();
-		if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()) {
+		if (currentCycle.isStdOrDbImplOrTransImpl()) {
 			if (currentCycle.isStdImpl()) {
 				addImports("#jgImplStdPackage#.#baseClassName#");
-			} else if (currentCycle.isSaveMemImpl()) {
-				addImports("#jgImplSaveMemPackage#.#baseClassName#");
 			} else if (currentCycle.isTransImpl()) {
 				addImports("#jgImplTransPackage#.#baseClassName#");
 			} else if (currentCycle.isDbImpl()) {
@@ -95,10 +93,10 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 			code.add(createNextVertexMethods());
 			code.add(createFirstEdgeMethods());
 			code.add(rolenameGenerator.createRolenameMethods(currentCycle
-					.isStdOrSaveMemOrDbImplOrTransImpl()));
+					.isStdOrDbImplOrTransImpl()));
 			code.add(createIncidenceIteratorMethods());
 		}
-		if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()) {
+		if (currentCycle.isStdOrDbImplOrTransImpl()) {
 			code.add(createGetEdgeForRolenameMethod());
 		}
 
@@ -116,7 +114,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 		CodeList code = new CodeList();
 		VertexClass vc = (VertexClass) aec;
 		Set<EdgeClass> edgeClassSet = new HashSet<EdgeClass>();
-		if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()) {
+		if (currentCycle.isStdOrDbImplOrTransImpl()) {
 			edgeClassSet.addAll(vc.getConnectedEdgeClasses());
 		}
 		if (currentCycle.isAbstract()) {
@@ -194,7 +192,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 			code.add(" */",
 					"public #ecQualifiedName# getFirst#ecCamelName#Incidence(#formalParams#);");
 		}
-		if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()) {
+		if (currentCycle.isStdOrDbImplOrTransImpl()) {
 			code.add(
 					"@Override",
 					"public #ecQualifiedName# getFirst#ecCamelName#Incidence(#formalParams#) {",
@@ -263,7 +261,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 			code.add(" */",
 					"public #vcQualifiedName# getNext#vcCamelName#(#formalParams#);");
 		}
-		if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()) {
+		if (currentCycle.isStdOrDbImplOrTransImpl()) {
 			code.add(
 					"@Override",
 					"public #vcQualifiedName# getNext#vcCamelName#(#formalParams#) {",
@@ -285,7 +283,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 		VertexClass vc = (VertexClass) aec;
 		CodeList code = new CodeList();
 		Set<EdgeClass> edgeClassSet = new HashSet<EdgeClass>();
-		if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()) {
+		if (currentCycle.isStdOrDbImplOrTransImpl()) {
 			edgeClassSet.addAll(vc.getConnectedEdgeClasses());
 		}
 		if (currentCycle.isAbstract()) {
@@ -310,7 +308,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 				continue;
 			}
 
-			if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()) {
+			if (currentCycle.isStdOrDbImplOrTransImpl()) {
 				addImports("#jgImplPackage#.IncidenceIterable");
 			}
 
@@ -330,7 +328,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 				s.add(" */");
 				s.add("public Iterable<#edgeClassQualifiedName#> get#edgeClassUniqueName#Incidences();");
 			}
-			if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()) {
+			if (currentCycle.isStdOrDbImplOrTransImpl()) {
 				s.add("@Override");
 				s.add("public Iterable<#edgeClassQualifiedName#> get#edgeClassUniqueName#Incidences() {");
 				s.add("\treturn new IncidenceIterable<#edgeClassQualifiedName#>(this, #edgeClassQualifiedName#.class);");
@@ -346,7 +344,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 					s.add(" */");
 					s.add("public Iterable<#edgeClassQualifiedName#> get#edgeClassUniqueName#Incidences(boolean noSubClasses);");
 				}
-				if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()) {
+				if (currentCycle.isStdOrDbImplOrTransImpl()) {
 					s.add("@Override");
 					s.add("public Iterable<#edgeClassQualifiedName#> get#edgeClassUniqueName#Incidences(boolean noSubClasses) {");
 					s.add("\treturn new IncidenceIterable<#edgeClassQualifiedName#>(this, #edgeClassQualifiedName#.class, noSubClasses);");
@@ -363,7 +361,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 					s.add(" */");
 					s.add("public Iterable<#edgeClassQualifiedName#> get#edgeClassUniqueName#Incidences(EdgeDirection direction, boolean noSubClasses);");
 				}
-				if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()) {
+				if (currentCycle.isStdOrDbImplOrTransImpl()) {
 					s.add("@Override");
 					s.add("public Iterable<#edgeClassQualifiedName#> get#edgeClassUniqueName#Incidences(EdgeDirection direction, boolean noSubClasses) {");
 					s.add("\treturn  new IncidenceIterable<#edgeClassQualifiedName#>(this, #edgeClassQualifiedName#.class, direction, noSubClasses);");
@@ -379,7 +377,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 				s.add(" */");
 				s.add("public Iterable<#edgeClassQualifiedName#> get#edgeClassUniqueName#Incidences(EdgeDirection direction);");
 			}
-			if (currentCycle.isStdOrSaveMemOrDbImplOrTransImpl()) {
+			if (currentCycle.isStdOrDbImplOrTransImpl()) {
 				s.add("@Override");
 				s.add("public Iterable<#edgeClassQualifiedName#> get#edgeClassUniqueName#Incidences(EdgeDirection direction) {");
 				s.add("\treturn new IncidenceIterable<#edgeClassQualifiedName#>(this, #edgeClassQualifiedName#.class, direction);");

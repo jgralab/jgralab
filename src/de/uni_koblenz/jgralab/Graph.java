@@ -597,12 +597,6 @@ public interface Graph extends AttributedElement {
 	 */
 	public boolean hasTransactionSupport();
 
-	/**
-	 * Tells whether this graph instance supports savemem.
-	 * 
-	 * @return true if this graph instance supports savemem.
-	 */
-	public boolean hasSavememSupport();
 
 	/**
 	 * Tells whether this graph instance has database support.
