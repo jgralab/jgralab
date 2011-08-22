@@ -11,7 +11,7 @@
             <Keywords name="Folder-"></Keywords>
             <Keywords name="Operators">&amp; ( ) , : ? [ ] { }</Keywords>
             <Keywords name="Comment">1/* 2*/ 0//</Keywords>
-            <Keywords name="Words1">E V as bag eSubgraph end exists! exists forall from in let list path pathSystem rec report reportList reportSet set store tup using vSubgraph where with</Keywords>
+            <Keywords name="Words1">E V as eSubgraph end exists! exists forall from in let list path pathSystem rec report reportList reportSet set store tup using vSubgraph where with</Keywords>
             <Keywords name="Words2">and avg children contains count degree depth difference distance dividedBy edgesConnected edgesFrom edgesTo edgeTrace edgeTypeSet endVertex equals extractPath getEdge getValue getVertex grEqual grThan hasAttribute hasType id inDegree innerNodes intersection isAcyclic isA isCycle isIn isIsolated isLoop isNeighbour isParallel isReachable isSibling isSubPathOfPath isSubSet isSuperSet isTrail isTree leaves leEqual leThan matches maxPathLength minPathLength minus modulo nequals nodeTrace not nthElement or outDegree package-info parent pathConcat pathLength pathSystem plus pos reachableVertices reMatch schemaFunctions siblings squareRoot startVertex subtypes sum supertypes symDifference times toString type typeName typeSet types uminus union vertexTypeSet weight xor</Keywords>
             <Keywords name="Words3">&lt;-- --&gt; &lt;-&gt;</Keywords>
             <Keywords name="Words4">theElement</Keywords>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- TODO this DTD is far from complete... not (yet) suitable for validation... --> 
 <!DOCTYPE jvalue [
-<!ELEMENT jvalue (integer|long|double|string|boolean|enum|list|bag|set|tuple|graph|attributedelementClass)>
+<!ELEMENT jvalue (integer|long|double|string|boolean|enum|list|set|tuple|graph|attributedelementClass)>
 <!ATTLIST jvalue graphId CDATA #IMPLIED>
 <!ATTLIST browsingInfo >
 <!ELEMENT integer EMPTY>
