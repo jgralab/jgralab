@@ -57,7 +57,7 @@ import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
 import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
 import de.uni_koblenz.jgralab.greql2.schema.AggregationPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.AlternativePathDescription;
-import de.uni_koblenz.jgralab.greql2.schema.BagComprehension;
+import de.uni_koblenz.jgralab.greql2.schema.ListComprehension;
 import de.uni_koblenz.jgralab.greql2.schema.BoolLiteral;
 import de.uni_koblenz.jgralab.greql2.schema.ConditionalExpression;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
@@ -579,7 +579,7 @@ public class ParserTest {
 		Variable var = graph.getFirstVariable();
 		assertNotNull(var);
 		assertEquals("var", var.get_name());
-		BagComprehension comp = graph.getFirstBagComprehension();
+		ListComprehension comp = graph.getFirstListComprehension();
 		assertNotNull(comp);
 		IsCompDeclOf declEdge = comp.getFirstIsCompDeclOfIncidence();
 		assertNotNull(declEdge);
@@ -602,7 +602,7 @@ public class ParserTest {
 		var = var.getNextVariable();
 		assertNotNull(var);
 		assertEquals("def", var.get_name());
-		BagComprehension comp = graph.getFirstBagComprehension();
+		ListComprehension comp = graph.getFirstListComprehension();
 		assertNotNull(comp);
 		IsCompDeclOf declEdge = comp.getFirstIsCompDeclOfIncidence();
 		assertNotNull(declEdge);
@@ -639,7 +639,7 @@ public class ParserTest {
 	@Test
 	public void testSimpleQuery1() throws Exception {
 		Greql2 graph = parseQuery("from var: V{Definition}, def: V{WhereExpression} with var -->{IsDefinitionOf} | -->{IsVarOf}  def report var end");
-		BagComprehension comp = graph.getFirstBagComprehension();
+		ListComprehension comp = graph.getFirstListComprehension();
 		assertNotNull(comp);
 		IsCompDeclOf declEdge = comp.getFirstIsCompDeclOfIncidence();
 		assertNotNull(declEdge);
@@ -719,7 +719,7 @@ public class ParserTest {
 		Variable boundVar = (Variable) boundVarEdge.getAlpha();
 		assertEquals("FOO", boundVar.get_name());
 
-		BagComprehension comp = (BagComprehension) graph
+		ListComprehension comp = (ListComprehension) graph
 				.getFirstIsQueryExprOf().getAlpha();
 		assertNotNull(comp);
 		IsCompDeclOf declEdge = comp.getFirstIsCompDeclOfIncidence();

@@ -51,9 +51,9 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueBag;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
@@ -221,10 +221,10 @@ public class PathSystemFunctionTest extends GenericTest {
 				+ "end";
 		JValue result = evalTestQuery("PathSystemContains", queryString,
 				TestVersion.ROUTE_MAP_GRAPH);
-		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(airportCount, bag.size());
+		JValueList list = result.toCollection().toJValueList();
+		assertEquals(airportCount, list.size());
 		int falseFound = 0;
-		for (JValue v : bag) {
+		for (JValue v : list) {
 			if (v.toBoolean() == false) {
 				falseFound++;
 			}
@@ -289,10 +289,10 @@ public class PathSystemFunctionTest extends GenericTest {
 		String queryString = "using pS: from p:pS, r:V{junctions.Crossroad} report distance(p, r)"
 				+ "end";
 		JValue result = evalTestQuery(queryString);
-		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(crossroadCount * countyCount, bag.size());
+		JValueList list = result.toCollection().toJValueList();
+		assertEquals(crossroadCount * countyCount, list.size());
 		int falseFound = 0;
-		for (JValue v : bag) {
+		for (JValue v : list) {
 			int distance = v.toInteger();
 			if (distance > 0) {
 				assertEquals(2, distance);
@@ -364,10 +364,10 @@ public class PathSystemFunctionTest extends GenericTest {
 				+ "end";
 		JValue result = evalTestQuery("PathSystemEdgesConnected", queryString,
 				TestVersion.ROUTE_MAP_GRAPH);
-		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(crossroadCount * countyCount, bag.size());
+		JValueList list = result.toCollection().toJValueList();
+		assertEquals(crossroadCount * countyCount, list.size());
 		int empty = 0;
-		for (JValue v : bag) {
+		for (JValue v : list) {
 			int connectedEdges = v.toCollection().size();
 			if (connectedEdges == 0) {
 				empty++;
@@ -480,10 +480,10 @@ public class PathSystemFunctionTest extends GenericTest {
 				+ "end";
 		JValue result = evalTestQuery("PathSystemEdgesFrom", queryString,
 				TestVersion.ROUTE_MAP_GRAPH);
-		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(airportCount, bag.size());
+		JValueList list = result.toCollection().toJValueList();
+		assertEquals(airportCount, list.size());
 		int empty = 0;
-		for (JValue v : bag) {
+		for (JValue v : list) {
 			int edgeCount = v.toCollection().size();
 			if (edgeCount == 0) {
 				empty++;
@@ -518,10 +518,10 @@ public class PathSystemFunctionTest extends GenericTest {
 				+ "end";
 		JValue result = evalTestQuery("PathSystemEdgesTo", queryString,
 				TestVersion.ROUTE_MAP_GRAPH);
-		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(crossroadCount * countyCount, bag.size());
+		JValueList list = result.toCollection().toJValueList();
+		assertEquals(crossroadCount * countyCount, list.size());
 		int empty = 0;
-		for (JValue v : bag) {
+		for (JValue v : list) {
 			int connectedEdges = v.toCollection().size();
 			if (connectedEdges == 0) {
 				empty++;
@@ -607,10 +607,10 @@ public class PathSystemFunctionTest extends GenericTest {
 				+ "end";
 		JValue result = evalTestQuery("ExtractPath", queryString,
 				TestVersion.ROUTE_MAP_GRAPH);
-		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(countyCount * crossroadCount, bag.size());
+		JValueList list = result.toCollection().toJValueList();
+		assertEquals(countyCount * crossroadCount, list.size());
 		int invalidPaths = 0;
-		for (JValue v : bag) {
+		for (JValue v : list) {
 			JValuePath p = v.toPath();
 			if (!p.isValidPath()) {
 				invalidPaths++;
@@ -654,9 +654,9 @@ public class PathSystemFunctionTest extends GenericTest {
 				+ "end";
 		JValue result = evalTestQuery("InnerNodes", queryString,
 				TestVersion.ROUTE_MAP_GRAPH);
-		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(countyCount - 1, bag.size());
-		for (JValue v : bag) {
+		JValueList list = result.toCollection().toJValueList();
+		assertEquals(countyCount - 1, list.size());
+		for (JValue v : list) {
 			assertEquals(1, v.toCollection().size());
 		}
 	}
@@ -731,10 +731,10 @@ public class PathSystemFunctionTest extends GenericTest {
 				+ "extractPath(pathSystem(v, -->{localities.ContainsLocality} a -->{localities.ContainsCrossroad}), w)) end";
 		JValue result = evalTestQuery("IsSubPath", queryString,
 				TestVersion.ROUTE_MAP_GRAPH);
-		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(countyCount * airportCount * crossroadCount, bag.size());
+		JValueList list = result.toCollection().toJValueList();
+		assertEquals(countyCount * airportCount * crossroadCount, list.size());
 		int trueCounts = 0;
-		for (JValue v : bag) {
+		for (JValue v : list) {
 			if (v.toBoolean()) {
 				trueCounts++;
 			}
@@ -759,9 +759,9 @@ public class PathSystemFunctionTest extends GenericTest {
 				+ "end";
 		JValue result = evalTestQuery("Leaves", queryString,
 				TestVersion.ROUTE_MAP_GRAPH);
-		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(countyCount - 1, bag.size());
-		for (JValue v : bag) {
+		JValueList list = result.toCollection().toJValueList();
+		assertEquals(countyCount - 1, list.size());
+		for (JValue v : list) {
 			assertEquals(1, v.toCollection().size());
 		}
 	}
@@ -800,9 +800,9 @@ public class PathSystemFunctionTest extends GenericTest {
 				+ "end";
 		JValue result = evalTestQuery("MaxPathLength", queryString,
 				TestVersion.ROUTE_MAP_GRAPH);
-		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(countyCount, bag.size());
-		for (JValue v : bag) {
+		JValueList list = result.toCollection().toJValueList();
+		assertEquals(countyCount, list.size());
+		for (JValue v : list) {
 			assertEquals(3, (int) v.toInteger());
 		}
 	}
@@ -820,9 +820,9 @@ public class PathSystemFunctionTest extends GenericTest {
 				+ "end";
 		JValue result = evalTestQuery("MinPathLength", queryString,
 				TestVersion.ROUTE_MAP_GRAPH);
-		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(countyCount, bag.size());
-		for (JValue v : bag) {
+		JValueList list = result.toCollection().toJValueList();
+		assertEquals(countyCount, list.size());
+		for (JValue v : list) {
 			assertEquals(3, (int) v.toInteger());
 		}
 	}
@@ -883,10 +883,10 @@ public class PathSystemFunctionTest extends GenericTest {
 				+ "end";
 		JValue result = evalTestQuery("PathLength", queryString,
 				TestVersion.ROUTE_MAP_GRAPH);
-		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(countyCount * crossroadCount, bag.size());
+		JValueList list = result.toCollection().toJValueList();
+		assertEquals(countyCount * crossroadCount, list.size());
 		int emptyTraces = 0;
-		for (JValue v : bag) {
+		for (JValue v : list) {
 			if (v.toCollection().isEmpty()) {
 				emptyTraces++;
 			} else {
@@ -909,10 +909,10 @@ public class PathSystemFunctionTest extends GenericTest {
 				+ "end";
 		JValue result = evalTestQuery("Parent", queryString,
 				TestVersion.ROUTE_MAP_GRAPH);
-		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(countyCount * crossroadCount, bag.size());
+		JValueList list = result.toCollection().toJValueList();
+		assertEquals(countyCount * crossroadCount, list.size());
 		int invalid = 0;
-		for (JValue v : bag) {
+		for (JValue v : list) {
 			if (!v.isValid()) {
 				invalid++;
 			}
@@ -1036,14 +1036,14 @@ public class PathSystemFunctionTest extends GenericTest {
 				+ "end";
 		JValue result = evalTestQuery("Siblings", queryString,
 				TestVersion.ROUTE_MAP_GRAPH);
-		JValueBag bag = result.toCollection().toJValueBag();
+		JValueList list = result.toCollection().toJValueList();
 
-		assertEquals(countyCount * crossroadCount, bag.size());
+		assertEquals(countyCount * crossroadCount, list.size());
 
 		int noSiblingsFound = 0;
 		int expectedValue = crossroadCount - 2 * uncontainedCrossroadCount;
 
-		for (JValue v : bag) {
+		for (JValue v : list) {
 			int size = v != null ? v.toCollection().size() : 0;
 
 			if (size == 0) {
@@ -1144,9 +1144,9 @@ public class PathSystemFunctionTest extends GenericTest {
 				+ "end";
 		JValue result = evalTestQuery("PathSystemWeight", queryString,
 				TestVersion.ROUTE_MAP_GRAPH);
-		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(1, bag.size());
-		for (JValue v : bag) {
+		JValueList list = result.toCollection().toJValueList();
+		assertEquals(1, list.size());
+		for (JValue v : list) {
 			assertEquals(4, (int) v.toInteger());
 		}
 	}

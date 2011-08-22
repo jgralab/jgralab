@@ -51,14 +51,13 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
- * Returns the one and only element of the given set, bag or list. If it
+ * Returns the one and only element of the given set or list. If it
  * contains more than one value an {@link EvaluateException} is thrown at you.
  * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>OBJECT theElement(list:LIST&lt;OBJECT&gt;)</code></dd>
  * <dd><code>OBJECT TheElement(set:SET&lt;OBJECT&gt;)</code></dd>
- * <dd><code>OBJECT TheElement(bag:BAG&lt;OBJECT&gt;)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>
@@ -68,9 +67,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * <dt><b>Parameters:</b></dt>
  * <dd><code>list</code> - list to return the element for</dd>
  * <dd><code>set</code> - set to return the element for</dd>
- * <dd><code>bog</code> - bag to return the element for</dd>
  * <dt><b>Returns:</b></dt>
- * <dd>the one and only element of the given list, set or bag</dd>
+ * <dd>the one and only element of the given list or set </dd>
  * </dl>
  * </dd>
  * </dl>

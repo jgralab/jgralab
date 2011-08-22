@@ -43,7 +43,6 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.AggregationPathDescriptionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.AlternativePathDescriptionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.BackwardVertexSetEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.BagConstructionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ComprehensionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ConditionalExpressionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.DeclarationEvaluator;
@@ -84,8 +83,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexSubgraphExpressi
 import de.uni_koblenz.jgralab.greql2.funlib.Greql2Function;
 import de.uni_koblenz.jgralab.greql2.schema.AlternativePathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.BackwardVertexSet;
-import de.uni_koblenz.jgralab.greql2.schema.BagComprehension;
-import de.uni_koblenz.jgralab.greql2.schema.BagConstruction;
+import de.uni_koblenz.jgralab.greql2.schema.ListComprehension;
 import de.uni_koblenz.jgralab.greql2.schema.ConditionalExpression;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.EdgePathDescription;
@@ -164,27 +162,14 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 	}
 
 	@Override
-	public long calculateCardinalityBagComprehension(ComprehensionEvaluator e,
+	public long calculateCardinalityListComprehension(ComprehensionEvaluator e,
 			GraphSize graphSize) {
-		BagComprehension bagComp = (BagComprehension) e.getVertex();
-		Declaration decl = (Declaration) bagComp
+		ListComprehension listComp = (ListComprehension) e.getVertex();
+		Declaration decl = (Declaration) listComp
 				.getFirstIsCompDeclOfIncidence().getAlpha();
 		DeclarationEvaluator declEval = (DeclarationEvaluator) e
 				.getVertexEvalMarker().getMark(decl);
 		return declEval.getEstimatedCardinality(graphSize);
-	}
-
-	@Override
-	public long calculateCardinalityBagConstruction(BagConstructionEvaluator e,
-			GraphSize graphSize) {
-		BagConstruction bagCons = (BagConstruction) e.getVertex();
-		IsPartOf inc = bagCons.getFirstIsPartOfIncidence();
-		long parts = 0;
-		while (inc != null) {
-			parts++;
-			inc = inc.getNextIsPartOf();
-		}
-		return parts;
 	}
 
 	@Override
@@ -486,22 +471,22 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 	 * (non-Javadoc)
 	 * 
 	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
-	 * calculateCostsBagComprehension
+	 * calculateCostsListComprehension
 	 * (de.uni_koblenz.jgralab.greql2.evaluator.vertexeval
-	 * .BagComprehensionEvaluator,
+	 * .ListComprehensionEvaluator,
 	 * de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
-	public VertexCosts calculateCostsBagComprehension(ComprehensionEvaluator e,
+	public VertexCosts calculateCostsListComprehension(ComprehensionEvaluator e,
 			GraphSize graphSize) {
-		BagComprehension bagComp = (BagComprehension) e.getVertex();
-		Declaration decl = (Declaration) bagComp
+		ListComprehension listComp = (ListComprehension) e.getVertex();
+		Declaration decl = (Declaration) listComp
 				.getFirstIsCompDeclOfIncidence().getAlpha();
 		DeclarationEvaluator declEval = (DeclarationEvaluator) e
 				.getVertexEvalMarker().getMark(decl);
 		long declCosts = declEval.getCurrentSubtreeEvaluationCosts(graphSize);
 
-		Vertex resultDef = bagComp.getFirstIsCompResultDefOfIncidence()
+		Vertex resultDef = listComp.getFirstIsCompResultDefOfIncidence()
 				.getAlpha();
 		VertexEvaluator resultDefEval = e.getVertexEvalMarker().getMark(
 				resultDef);
@@ -509,40 +494,9 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 				.getCurrentSubtreeEvaluationCosts(graphSize);
 
 		long ownCosts = declEval.getEstimatedCardinality(graphSize)
-				* addToBagCosts;
+				* addToListCosts;
 		long iteratedCosts = ownCosts * e.getVariableCombinations(graphSize);
 		long subtreeCosts = iteratedCosts + resultCosts + declCosts;
-		return new VertexCosts(ownCosts, iteratedCosts, subtreeCosts);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
-	 * calculateCostsBagConstruction
-	 * (de.uni_koblenz.jgralab.greql2.evaluator.vertexeval
-	 * .BagConstructionEvaluator,
-	 * de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
-	 */
-	@Override
-	public VertexCosts calculateCostsBagConstruction(
-			BagConstructionEvaluator e, GraphSize graphSize) {
-		BagConstruction bagCons = (BagConstruction) e.getVertex();
-		IsPartOf inc = bagCons.getFirstIsPartOfIncidence(EdgeDirection.IN);
-
-		long parts = 0;
-		long partCosts = 0;
-		while (inc != null) {
-			parts++;
-			VertexEvaluator partEval = e.getVertexEvalMarker().getMark(
-					inc.getAlpha());
-			partCosts += partEval.getCurrentSubtreeEvaluationCosts(graphSize);
-			inc = inc.getNextIsPartOf(EdgeDirection.IN);
-		}
-
-		long ownCosts = parts * addToBagCosts + 2;
-		long iteratedCosts = ownCosts * e.getVariableCombinations(graphSize);
-		long subtreeCosts = iteratedCosts + partCosts;
 		return new VertexCosts(ownCosts, iteratedCosts, subtreeCosts);
 	}
 
@@ -1215,7 +1169,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 	public VertexCosts calculateCostsTableComprehension(
 			TableComprehensionEvaluator e, GraphSize graphSize) {
 		// TODO (heimdall): What is a TableComprehension? Syntax? Where do the
-		// costs differ from a BagComprehension?
+		// costs differ from a ListComprehension?
 		TableComprehension tableComp = (TableComprehension) e.getVertex();
 
 		Declaration decl = (Declaration) tableComp
@@ -1232,7 +1186,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 				.getCurrentSubtreeEvaluationCosts(graphSize);
 
 		long ownCosts = resultDefEval.getEstimatedCardinality(graphSize)
-				* addToBagCosts;
+				* addToListCosts;
 		long iteratedCosts = ownCosts * e.getVariableCombinations(graphSize);
 		long subtreeCosts = iteratedCosts + resultCosts + declCosts;
 		return new VertexCosts(ownCosts, iteratedCosts, subtreeCosts);

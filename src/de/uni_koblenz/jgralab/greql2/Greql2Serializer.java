@@ -43,8 +43,7 @@ import de.uni_koblenz.jgralab.greql2.exception.Greql2Exception;
 import de.uni_koblenz.jgralab.greql2.schema.AggregationPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.AlternativePathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.BackwardVertexSet;
-import de.uni_koblenz.jgralab.greql2.schema.BagComprehension;
-import de.uni_koblenz.jgralab.greql2.schema.BagConstruction;
+import de.uni_koblenz.jgralab.greql2.schema.ListComprehension;
 import de.uni_koblenz.jgralab.greql2.schema.BoolLiteral;
 import de.uni_koblenz.jgralab.greql2.schema.Comprehension;
 import de.uni_koblenz.jgralab.greql2.schema.ConditionalExpression;
@@ -313,9 +312,7 @@ public class Greql2Serializer {
 	}
 
 	private void serializeValueConstruction(ValueConstruction exp) {
-		if (exp instanceof BagConstruction) {
-			serializeBagConstruction((BagConstruction) exp);
-		} else if (exp instanceof ListConstruction) {
+		if (exp instanceof ListConstruction) {
 			serializeListConstruction((ListConstruction) exp);
 		} else if (exp instanceof MapConstruction) {
 			serializeMapConstruction((MapConstruction) exp);
@@ -409,20 +406,6 @@ public class Greql2Serializer {
 				}
 				serializeExpression(val, false);
 			}
-		}
-		sb.append(")");
-	}
-
-	private void serializeBagConstruction(BagConstruction exp) {
-		sb.append("bag(");
-		boolean first = true;
-		for (Expression val : exp.get_part()) {
-			if (first) {
-				first = false;
-			} else {
-				sb.append(", ");
-			}
-			serializeExpression(val, false);
 		}
 		sb.append(")");
 	}
@@ -705,7 +688,7 @@ public class Greql2Serializer {
 		serializeDeclaration(exp.get_compDecl(), true);
 		if (exp instanceof SetComprehension) {
 			sb.append(" reportSet ");
-		} else if (exp instanceof BagComprehension) {
+		} else if (exp instanceof ListComprehension) {
 			sb.append(" report ");
 		} else if (exp instanceof TableComprehension) {
 			sb.append(" reportTable ");
