@@ -44,7 +44,6 @@ import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
 import de.uni_koblenz.jgralab.greql2.optimizer.CommonSubgraphOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.ConditionalExpressionOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
@@ -149,11 +148,11 @@ public class OptimizerTest extends GenericTest {
 		JValue v3 = evalTestQuery(name + " (" + defo.getClass().getSimpleName()
 				+ ")", query, defo, datagraph);
 		long end = System.currentTimeMillis();
-		
-		if(v1 instanceof JValueCollection){
+
+		if (v1 instanceof JValueCollection) {
 			assertEquals(v1.toJValueSet(), v2.toJValueSet());
 			assertEquals(v1.toJValueSet(), v3.toJValueSet());
-		}else{
+		} else {
 			assertEquals(v1, v2);
 			assertEquals(v1, v3);
 		}
