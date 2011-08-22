@@ -45,7 +45,6 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueBag;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
@@ -99,10 +98,10 @@ public class SystemTest extends GenericTest {
 	}
 
 	@Test
-	public void testFunctionAsArgumentInBagComprehensionEvaluation()
+	public void testFunctionAsArgumentInListComprehensionEvaluation()
 			throws Exception {
-		String queryString = "from x:V{FunctionApplication}, y:V{BagComprehension} with x -->{IsArgumentOf}+ -->{IsCompResultDefOf} y report tup(tup(\"Function: \", x ), tup(\"BagComprehension: \", y )) end";
-		JValue result = evalTestQuery("FunctionAsArgumentInBagComprehension",
+		String queryString = "from x:V{FunctionApplication}, y:V{ListComprehension} with x -->{IsArgumentOf}+ -->{IsCompResultDefOf} y report tup(tup(\"Function: \", x ), tup(\"ListComprehension: \", y )) end";
+		JValue result = evalTestQuery("FunctionAsArgumentInListComprehension",
 				queryString);
 		assertEquals(5, result.toCollection().size());
 	}
@@ -141,7 +140,7 @@ public class SystemTest extends GenericTest {
 				+ "outDegree{connections.Way}(c) as '" + USAGE_COUNT + "', "
 				+ "edgesFrom(c) as '" + USAGES + "' end";
 		JValueTable result = evalTestQuery(queryString).toJValueTable();
-		JValueBag data = result.getData().toJValueBag();
+		JValueList data = result.getData().toJValueList();
 
 		checkHeader(result, VERTEX, IDENTIFIER, USAGE_COUNT, USAGES);
 

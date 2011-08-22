@@ -40,7 +40,7 @@ import static org.junit.Assert.fail;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueBag;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
 import de.uni_koblenz.jgralabtest.greql2.GenericTest;
 
 public class SliceFunctionTest extends GenericTest {
@@ -51,10 +51,10 @@ public class SliceFunctionTest extends GenericTest {
 		// and LetExpressions!
 		String queryString = "from w: V{WhereExpression} report slice(w, <--) end";
 		JValue result = evalTestQuery("SliceCreation", queryString);
-		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(1, bag.size());
+		JValueList list = result.toCollection().toJValueList();
+		assertEquals(1, list.size());
 		// TODO test seriously
-		// for (JValue v : bag) {
+		// for (JValue v : list) {
 		// JValueSlice c = (JValueSlice) v;
 		// System.out.println("Result Slice is: ");
 		// System.out.println("  Number of nodes: " + c.nodes().size());

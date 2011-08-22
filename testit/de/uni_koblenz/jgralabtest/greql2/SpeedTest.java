@@ -64,7 +64,7 @@ public class SpeedTest extends GenericTest {
 	// need more than 10 seconds. But currently it needs infinite time...
 	@Test(timeout = 10000)
 	public void testCountFunctionEvaluation() throws Exception {
-		String queryString = "bag(tup(\"Nodes:\", count(from  v:V{} report v end)), tup(\"Edges:\", count(from  e:E{} report e end)))";
+		String queryString = "list(tup(\"Nodes:\", count(from  v:V{} report v end)), tup(\"Edges:\", count(from  e:E{} report e end)))";
 		Graph datagraph = getTestGraph();
 
 		// System.out.println("Creating evaluator");

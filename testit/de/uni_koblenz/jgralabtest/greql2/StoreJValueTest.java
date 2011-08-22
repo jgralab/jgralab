@@ -50,7 +50,7 @@ public class StoreJValueTest extends GenericTest {
 	@Test
 	public void testStoreJValue1() throws Exception {
 		fail(); // JValueVisitorException
-		String queryString = "bag(tup(\"Nodes:\", count(from v:V{} report v end)), tup(\"Edges:\", count(from e:E{} report e end)))";
+		String queryString = "list(tup(\"Nodes:\", count(from v:V{} report v end)), tup(\"Edges:\", count(from e:E{} report e end)))";
 		JValue result = evalTestQuery("StoreJValue1", queryString);
 		JValueXMLOutputVisitor outputVisitor = new JValueXMLOutputVisitor(
 				result, "testit/testdata/storejvaluetest1.xml",

@@ -89,7 +89,7 @@ public class JValueXMLOutputVisitor extends JValueDefaultVisitor implements
 			writer.writeStartDocument("UTF-8", "1.0");
 			// writer.writeDTD("<!DOCTYPE jvalue [\n"
 			// +
-			// "<!ENTITY % value \"integer|long|double|string|boolean|list|bag|set|tuple\">\n"
+			// "<!ENTITY % value \"integer|long|double|string|boolean|list|set|tuple\">\n"
 			// + "<!ENTITY % bi \"(browsingInfo?)\">\n"
 			// + "<!ELEMENT jvalue (value)>\n" + "<!ATTLIST jvalue\n"
 			// + "graphId CDATA #IMPLIED\n" + ">\n"
@@ -159,25 +159,6 @@ public class JValueXMLOutputVisitor extends JValueDefaultVisitor implements
 			}
 		} else {
 			writer.writeAttribute(ATTR_GRAPH_LINK, ((Graph) bi).getId());
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uni_koblenz.jgralab.greql2.jvalue.JValueDefaultVisitor#visitBag(de
-	 * .uni_koblenz.jgralab.greql2.jvalue.JValueBag)
-	 */
-	@Override
-	public void visitBag(JValueBag b) {
-		try {
-			writer.writeStartElement(BAG);
-			writeBrowsingInfo(b);
-			super.visitBag(b);
-			writer.writeEndElement();
-		} catch (XMLStreamException e) {
-			e.printStackTrace();
 		}
 	}
 

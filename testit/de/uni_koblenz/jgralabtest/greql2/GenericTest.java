@@ -58,6 +58,7 @@ import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
 import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.Optimizer;
 import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
@@ -149,7 +150,13 @@ public class GenericTest {
 		JValue result = evalTestQuery(query);
 		JValue expectedResult = evalTestQuery(expectedResultAsQuery);
 		try {
+			if(!result.equals(expectedResult)){
+				System.out.println(result);
+				System.out.println(expectedResult);
+				System.out.println(result instanceof JValueList);
+			}
 			assertEquals(expectedResult, result);
+			
 		} catch (AssertionError ex) {
 			if (result.isCollection() && expectedResult.isCollection()) {
 				JValueCollection col = result.toCollection();

@@ -60,9 +60,6 @@ abstract public class JValueCollection extends JValueImpl implements
 	 * @return a shallow copy of {@code c}
 	 */
 	public static JValueCollection shallowCopy(JValueCollection c) {
-		if (c instanceof JValueBag) {
-			return new JValueBag(c);
-		}
 		if (c instanceof JValueList) {
 			return new JValueList(c);
 		}
@@ -254,24 +251,6 @@ abstract public class JValueCollection extends JValueImpl implements
 	@Override
 	public JValueSet toJValueSet() {
 		return new JValueSet(this);
-	}
-
-	/**
-	 * returns true if this Collection is a bag
-	 */
-	public boolean isJValueBag() {
-		return false;
-	}
-
-	/**
-	 * transforms this collection into a JValueBag
-	 * 
-	 * @return a JValueBag which contains the same elements as this collection,
-	 *         duplicates won't be eliminated
-	 */
-	@Override
-	public JValueBag toJValueBag() {
-		return new JValueBag(this);
 	}
 
 	/**
