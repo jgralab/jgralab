@@ -277,7 +277,7 @@
 
 	<!-- release -->
 	<!-- calls targets modify, clean, jar, test and document -->
-	<target name="release" depends="modify,cleanall,jar,sourcejar,document" />
+	<target name="release" depends="cleanall,build,sourcejar,document" />
 
 	<target name="testcompile" depends="generatetestschemas,common.testcompile" />
 
