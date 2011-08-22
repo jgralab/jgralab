@@ -85,7 +85,6 @@
 	<path id="classpathExtension">
 		<fileset dir="${comlib.dir}/apache/commons/cli/" includes="**/*.jar" />
 		<fileset dir="${comlib.dir}/apache/ant" includes="**/*.jar" />
-		<fileset dir="${comlib.dir}/jdom/" includes="**/*.jar" />
 		<fileset dir="${comlib.dir}/junit/" includes="**/*.jar" />
 		<fileset dir="${comlib.dir}/pcollections/" includes="**/*.jar" />
 		<pathelement path="${clover.jar}" />
@@ -260,12 +259,8 @@
 	<target name="unjar" depends="common.unjar">
 		<unjar dest="${tmp.dir}">
 			<fileset dir="${comlib.dir}/apache/commons/cli/" includes="**/*.jar" />
-			<fileset dir="${comlib.dir}/jdom/" includes="**/*.jar" />
 			<fileset dir="${comlib.dir}/pcollections" includes="*.jar" />
 		</unjar>
-		<copy todir="${tmp.dir}/META-INF/license">
-			<fileset dir="license" includes="jdom/** jgralab/**" />
-		</copy>
 	</target>
 
 	<target name="create_manifest" depends="common.create_manifest,revisionAntTasks">

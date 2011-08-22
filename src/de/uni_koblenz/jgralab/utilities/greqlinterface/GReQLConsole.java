@@ -155,7 +155,6 @@ public class GReQLConsole {
 						boundVariables,
 						(verbose ? new ConsoleProgressFunction() : null));
 				// eval.setOptimize(false);
-				eval.setEvaluationLogger(null);
 				eval.startEvaluation();
 
 				result = eval.getEvaluationResult();

@@ -127,12 +127,6 @@ public class PathExistenceEvaluator extends PathSearchEvaluator {
 		if (searchAutomaton == null) {
 			searchAutomaton = pathDescEval.getNFA().getDFA();
 			// searchAutomaton.printAscii();
-			// We log the number of states as the result size of the underlying
-			// PathDescription.
-			if (evaluationLogger != null) {
-				evaluationLogger.logResultSize("PathDescription",
-						searchAutomaton.stateList.size());
-			}
 		}
 		if (function == null) {
 			function = Greql2FunctionLibrary.instance().getGreqlFunction(

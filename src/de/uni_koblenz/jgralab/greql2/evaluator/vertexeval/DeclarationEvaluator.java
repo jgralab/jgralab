@@ -141,7 +141,7 @@ public class DeclarationEvaluator extends VertexEvaluator {
 			}
 		}
 		VariableDeclarationLayer declarationLayer = new VariableDeclarationLayer(
-				vertex, varDeclList, constraintList, evaluationLogger);
+				vertex, varDeclList, constraintList);
 		return new JValueImpl(declarationLayer);
 	}
 

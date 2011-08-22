@@ -89,12 +89,6 @@ public class ForwardVertexSetEvaluator extends PathSearchEvaluator {
 		startEval = vertexEvalMarker.getMark(startExpression);
 		searchAutomaton = new DFA(pathDescEval.getNFA());
 
-		// We log the number of states as the result size of the underlying
-		// PathDescription.
-		if (evaluationLogger != null) {
-			evaluationLogger.logResultSize("PathDescription",
-					searchAutomaton.stateList.size());
-		}
 		initialized = true;
 	}
 
