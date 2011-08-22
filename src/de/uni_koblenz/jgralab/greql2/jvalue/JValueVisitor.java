@@ -52,18 +52,10 @@ public interface JValueVisitor {
 	public void visitSet(JValueSet s);
 
 	/**
-	 * Method to visit a JValueBag
-	 * 
-	 * @param b
-	 *            the bag to visit
-	 */
-	public void visitBag(JValueBag b);
-
-	/**
 	 * Method to visit a JValueMap
 	 * 
 	 * @param b
-	 *            the bag to visit
+	 *            the map to visit
 	 */
 	public void visitMap(JValueMap b);
 

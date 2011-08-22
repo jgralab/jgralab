@@ -43,6 +43,8 @@ import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
 import de.uni_koblenz.jgralab.greql2.optimizer.CommonSubgraphOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.ConditionalExpressionOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
@@ -147,8 +149,14 @@ public class OptimizerTest extends GenericTest {
 		JValue v3 = evalTestQuery(name + " (" + defo.getClass().getSimpleName()
 				+ ")", query, defo, datagraph);
 		long end = System.currentTimeMillis();
-		assertEquals(v1, v2);
-		assertEquals(v1, v3);
+		
+		if(v1 instanceof JValueCollection){
+			assertEquals(v1.toJValueSet(), v2.toJValueSet());
+			assertEquals(v1.toJValueSet(), v3.toJValueSet());
+		}else{
+			assertEquals(v1, v2);
+			assertEquals(v1, v3);
+		}
 		// TODO test seriously
 		@SuppressWarnings("unused")
 		double noOptTime = (mid1 - start) / 1000d;
@@ -168,7 +176,7 @@ public class OptimizerTest extends GenericTest {
 	public void testCommonSubgraphOptimizer0() throws Exception {
 		String query = "from w : list(2..10), x : list(2..10), y : list(2..10), z : list(1..2) "
 				+ "     with isPrime(x + z) and x * x > y and z > x * x "
-				+ "     reportBag w, x, y, z end";
+				+ "     reportList w, x, y, z end";
 		execTimedTest(query, "CommonSubgraphOptimizer0()", cso);
 	}
 
@@ -176,7 +184,7 @@ public class OptimizerTest extends GenericTest {
 	public void testCommonSubgraphOptimizer1() throws Exception {
 		String query = "from w : list(2..10), x : list(2..10), y : list(2..10), z : list(1..2) "
 				+ "     with isPrime(x + z) and (x + z) * z > y and x * x > y and (x + z) * z > x * x "
-				+ "     report isPrime(x + y), x + z, (x + z) * z, x * x, x * w * w, w * w end";
+				+ "     report w, x, y, z, isPrime(x + y), x + z, (x + z) * z, x * x, x * w * w, w * w end";
 		execTimedTest(query, "CommonSubgraphOptimizer1()", cso);
 	}
 
@@ -257,7 +265,7 @@ public class OptimizerTest extends GenericTest {
 	public void testEarlySelectionOptimizer5() throws Exception {
 		String query = "from x : list(1..10),                  "
 				+ "          y : list(11..20)"
-				+ "     reportBag from a : list(21..25),"
+				+ "     reportList from a : list(21..25),"
 				+ "                    b : list(21..25)"
 				+ "               with isPrime(x) and isPrime(y)"
 				+ "               reportSet x, y end            "
@@ -328,7 +336,7 @@ public class OptimizerTest extends GenericTest {
 	public void testEarlySelectionOptimizer10() throws Exception {
 		String query = "from a, b, c : list(1..10)"
 				+ "     with a > b and isPrime(a + c) and isPrime(b + c)"
-				+ "     reportBag a, b, c, a > b, isPrime(a + c) end";
+				+ "     reportList a, b, c, a > b, isPrime(a + c) end";
 		execTimedTest(query, "EarlySelectionOptimizer10()", eso);
 	}
 
@@ -344,9 +352,9 @@ public class OptimizerTest extends GenericTest {
 	private static Graph createPathExistenceOptimizerTestGraph()
 			throws Exception {
 		String query = "    from a : V{Variable},                              "
-				+ "              b : V{BagComprehension}                       "
+				+ "              b : V{ListComprehension}                       "
 				+ "         with a -->* b                                      "
-				+ "         reportBag from x : list(1..10),                    "
+				+ "         reportList from x : list(1..10),                    "
 				+ "                        y : list(11..20)                    "
 				+ "                   with isPrime(x * x + y - 1)              "
 				+ "                   reportSet x * x + y - 1, x, y, a, b end, "
@@ -361,7 +369,7 @@ public class OptimizerTest extends GenericTest {
 		String query = "from a : V{Variable},             "
 				+ "          b : V{SimpleDeclaration}     "
 				+ "     with a --> b                      "
-				+ "     reportBag a, b end";
+				+ "     reportList a, b end";
 		execTimedTest(query, "PathExistenceOptimizer1()", peo,
 				getPathExistenceOptimizerTestGraph());
 	}
@@ -371,7 +379,7 @@ public class OptimizerTest extends GenericTest {
 		String query = "from a : V{Variable},             "
 				+ "          b : V{SimpleDeclaration}     "
 				+ "     with b <-- a                      "
-				+ "     reportBag a, b end";
+				+ "     reportList a, b end";
 		execTimedTest(query, "PathExistenceOptimizer2()", peo,
 				getPathExistenceOptimizerTestGraph());
 	}
@@ -382,7 +390,7 @@ public class OptimizerTest extends GenericTest {
 				+ "          b : V{SimpleDeclaration},    "
 				+ "          c : V{Declaration}           "
 				+ "     with a --> b --> c or c <-- b <-- a or  a -->* c <-- b "
-				+ "     reportBag a, b, c end";
+				+ "     reportList a, b, c end";
 		execTimedTest(query, "PathExistenceOptimizer3()", peo,
 				getPathExistenceOptimizerTestGraph());
 	}
@@ -392,7 +400,7 @@ public class OptimizerTest extends GenericTest {
 		String query = "from a : V{Variable},             "
 				+ "          b : V{SimpleDeclaration}     "
 				+ "     with a --> b                      "
-				+ "     reportBag a, b end";
+				+ "     reportList a, b end";
 		execTimedTest(query, "PathExistenceToDirectedPathExpOptimizer1()",
 				petdpeo, getPathExistenceOptimizerTestGraph());
 	}
@@ -402,7 +410,7 @@ public class OptimizerTest extends GenericTest {
 		String query = "from a : V{Variable},             "
 				+ "          b : V     "
 				+ "     with a --> <>-- b                      "
-				+ "     reportBag a, b end";
+				+ "     reportList a, b end";
 		execTimedTest(query, "PathExistenceToDirectedPathExpOptimizer2()",
 				petdpeo, getPathExistenceOptimizerTestGraph());
 	}
@@ -411,7 +419,7 @@ public class OptimizerTest extends GenericTest {
 	public void testPathExistenceToDirectedPathExpOptimizer3() throws Exception {
 		String query = "from a, b : V             "
 				+ "     with a --> <>-- b                      "
-				+ "     reportBag a, b end";
+				+ "     reportList a, b end";
 		execTimedTest(query, "PathExistenceToDirectedPathExpOptimizer3()",
 				petdpeo, getPathExistenceOptimizerTestGraph());
 	}
@@ -419,7 +427,7 @@ public class OptimizerTest extends GenericTest {
 	@Test
 	public void testPathExistenceToDirectedPathExpOptimizer4() throws Exception {
 		String query = "from a, b : V             "
-				+ "     reportBag a, a --> <>-- b end";
+				+ "     reportList a, a --> <>-- b end";
 		execTimedTest(query, "PathExistenceToDirectedPathExpOptimizer4()",
 				petdpeo, getPathExistenceOptimizerTestGraph());
 	}
@@ -428,7 +436,7 @@ public class OptimizerTest extends GenericTest {
 	public void testPathExistenceToDirectedPathExpOptimizer5() throws Exception {
 		String query = "from a, b: V, c: V{Variable}             "
 				+ "     with a (-->|--<>)+ c and c --> b"
-				+ "     reportBag a, a --> <>-- b end";
+				+ "     reportList a, a --> <>-- b end";
 		execTimedTest(query, "PathExistenceToDirectedPathExpOptimizer5()",
 				petdpeo, getPathExistenceOptimizerTestGraph());
 	}

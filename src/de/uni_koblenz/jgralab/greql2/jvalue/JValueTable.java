@@ -40,8 +40,8 @@ import java.util.logging.Logger;
 
 /**
  * A JValueTable is the Java "replacement" for CvTable (but in fact it has not
- * much common with it) It's based on bag of Tuples with an additional header
- * tuple. Theoretical, it's possible to store any kind of objects in the bag,
+ * much common with it) It's based on list of Tuples with an additional header
+ * tuple. Theoretical, it's possible to store any kind of objects in the list,
  * but to hold the implementation and usage clean and fast, ony tuple are
  * allowed
  * 
@@ -77,9 +77,9 @@ public class JValueTable extends JValueCollection {
 	private JValueTuple headerTuple;
 
 	/**
-	 * This is the internal datastructure. Normaly, this is a bag, but the
+	 * This is the internal datastructure. Normaly, this is a list, but the
 	 * implementation of JValueTable is independent of the real object, so also
-	 * list, set oder some other collection can be used
+	 * set or some other collection can be used
 	 */
 	private JValueCollection data;
 
@@ -100,15 +100,7 @@ public class JValueTable extends JValueCollection {
 	}
 
 	/**
-	 * returns this table as bag, that is the databag without the header tuple
-	 */
-	@Override
-	public JValueBag toJValueBag() {
-		return data.toJValueBag();
-	}
-
-	/**
-	 * returns this table as set, that is the databag without the header tuple,
+	 * returns this table as set, that is the datalist without the header tuple,
 	 * duplicates will be eliminated
 	 */
 	@Override
@@ -117,7 +109,7 @@ public class JValueTable extends JValueCollection {
 	}
 
 	/**
-	 * returns this table as tuple, that is the databag as tuple without the
+	 * returns this table as tuple, that is the datalist as tuple without the
 	 * header tuple
 	 */
 	@Override
@@ -126,7 +118,7 @@ public class JValueTable extends JValueCollection {
 	}
 
 	/**
-	 * returns this table as list, that is the databag as list without the
+	 * returns this table as list, that is the datalist as list without the
 	 * header tuple
 	 */
 	@Override
@@ -172,14 +164,14 @@ public class JValueTable extends JValueCollection {
 	 * 
 	 * @param useSet
 	 *            if it is true, the table will be based on a <b>set</b> instead
-	 *            of a bag, so every element can exists only one in the table
+	 *            of a list, so every element can exists only one in the table
 	 */
 	public JValueTable(boolean useSet) {
 		this(new JValueTuple(), true);
 	}
 
 	/**
-	 * creates a new JValueTable which is based on a bag and sets the given
+	 * creates a new JValueTable which is based on a list and sets the given
 	 * tuple as header of that table
 	 */
 	public JValueTable(JValueTuple header) {
@@ -192,7 +184,7 @@ public class JValueTable extends JValueCollection {
 	 * 
 	 * @param useSet
 	 *            if it is true, the table will be based on a <b>set</b> instead
-	 *            of a bag, so every element can exists only one in the table
+	 *            of a list, so every element can exists only one in the table
 	 */
 	public JValueTable(JValueTuple header, boolean useSet) {
 		super();
@@ -200,7 +192,7 @@ public class JValueTable extends JValueCollection {
 		if (useSet) {
 			data = new JValueSet();
 		} else {
-			data = new JValueBag();
+			data = new JValueList();
 		}
 	}
 
@@ -263,7 +255,7 @@ public class JValueTable extends JValueCollection {
 
 	/**
 	 * adds the given Element to this Table. If the element is not a tuple, it
-	 * will be encapsulated in a JValue. Because for JValueBag and JValueSet the
+	 * will be encapsulated in a JValue. Because for JValueSet the
 	 * elementorder is not fix, the given JValue is, even if it is a collection,
 	 * not transformed into a tuple, instead of this its used as the first
 	 * element of a new created tuple

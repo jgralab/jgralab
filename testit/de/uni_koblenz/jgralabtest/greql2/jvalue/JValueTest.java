@@ -48,7 +48,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueBag;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
@@ -180,29 +179,6 @@ public class JValueTest {
 		assertFalse(l1.equals(l2));
 	}
 
-	@Test
-	public void equalsBag() {
-		JValueBag b1 = new JValueBag();
-		b1.add(new JValueImpl("one"));
-		b1.add(new JValueImpl("one"));
-		b1.add(new JValueImpl("two"));
-		b1.add(new JValueImpl("three"));
-		b1.add(new JValueImpl("three"));
-
-		JValueBag b2 = new JValueBag();
-		b2.add(new JValueImpl("three"), 2);
-		b2.add(new JValueImpl("one"), 2);
-		b2.add(new JValueImpl("two"));
-
-		assertTrue(b1.equals(b2));
-		assertTrue(b1.hashCode() == b2.hashCode());
-	}
-
-	@Test(expected = NoSuchElementException.class)
-	public void testIterNextForBag() {
-		tryIterNextException(new JValueBag());
-	}
-
 	@Test(expected = NoSuchElementException.class)
 	public void testIterNextForSet() {
 		tryIterNextException(new JValueSet());
@@ -234,11 +210,6 @@ public class JValueTest {
 		if (iter.hasNext()) {
 			iter.next();
 		}
-	}
-
-	@Test(expected = ConcurrentModificationException.class)
-	public void testConcurrentModificationOnBag() {
-		tryConcurrentModification(new JValueBag());
 	}
 
 	@Test(expected = ConcurrentModificationException.class)
@@ -274,11 +245,6 @@ public class JValueTest {
 	// }
 
 	@Test
-	public void testRemoveIterOnBag() {
-		tryRemove(new JValueBag());
-	}
-
-	@Test
 	public void testRemoveIterOnSet() {
 		tryRemove(new JValueSet());
 	}
@@ -309,11 +275,6 @@ public class JValueTest {
 	}
 
 	@Test
-	public void testRemoveAllOnBag() {
-		tryRemoveAll(new JValueBag(), new JValueBag());
-	}
-
-	@Test
 	public void testRemoveAllOnSet() {
 		tryRemoveAll(new JValueSet(), new JValueSet());
 	}
@@ -337,42 +298,6 @@ public class JValueTest {
 	// tryRemove(new JValueTuple());
 	// }
 
-	@Test
-	public void testRemoveOnBag() {
-		tryRemove(new JValueBag());
-		JValueBag bag = new JValueBag();
-		bag.add(new JValueImpl("one"));
-		bag.add(new JValueImpl("one"));
-		bag.add(new JValueImpl("one"));
-		bag.add(new JValueImpl("one"));
-		bag.add(new JValueImpl("two"));
-		bag.add(new JValueImpl("two"));
-		bag.remove(new JValueImpl("one"), 3);
-		assertEquals(3, bag.size());
-		assertEquals(2, bag.getQuantity(new JValueImpl("two")));
-		assertEquals(1, bag.getQuantity(new JValueImpl("one")));
-		bag.remove(new JValueImpl("two"), 2);
-		assertEquals(1, bag.size());
-		assertEquals(0, bag.getQuantity(new JValueImpl("two")));
-		assertEquals(1, bag.getQuantity(new JValueImpl("one")));
-		bag.remove(new JValueImpl("two"), 2);
-		assertEquals(1, bag.size());
-		assertEquals(0, bag.getQuantity(new JValueImpl("two")));
-		assertEquals(1, bag.getQuantity(new JValueImpl("one")));
-	}
-
-	@Test
-	public void testAddOnBag() {
-		JValueBag bag = new JValueBag();
-		bag.add(new JValueImpl("one"), -1);
-		assertEquals(0, bag.size());
-		bag.add(new JValueImpl("one"), 0);
-		assertEquals(0, bag.size());
-		bag.add(new JValueImpl("one"), 4);
-		assertEquals(4, bag.size());
-		bag.add(new JValueImpl("one"), -1);
-		assertEquals(4, bag.size());
-	}
 
 	@Test
 	public void testRemoveOnSet() {
@@ -410,66 +335,6 @@ public class JValueTest {
 		assertTrue(diff.contains(new JValueImpl("six")));
 		assertFalse(diff.contains(new JValueImpl("four")));
 		assertFalse(diff.contains(new JValueImpl("three")));
-	}
-
-	@Test
-	public void testSymDifferenceBag() {
-		JValueBag first = new JValueBag();
-		JValueBag second = new JValueBag();
-		first.add(new JValueImpl("one"), 3);
-		first.add(new JValueImpl("two"), 2);
-		first.add(new JValueImpl("three"), 4);
-		first.add(new JValueImpl("four"), 3);
-		second.add(new JValueImpl("three"), 2);
-		second.add(new JValueImpl("four"), 4);
-		second.add(new JValueImpl("five"), 2);
-		second.add(new JValueImpl("six"), 7);
-		JValueBag diff = first.symmetricDifference(second);
-		assertEquals(17, diff.size());
-		assertEquals(diff.getQuantity(new JValueImpl("one")), 3);
-		assertEquals(diff.getQuantity(new JValueImpl("two")), 2);
-		assertEquals(diff.getQuantity(new JValueImpl("five")), 2);
-		assertEquals(diff.getQuantity(new JValueImpl("six")), 7);
-		assertEquals(diff.getQuantity(new JValueImpl("four")), 1);
-		assertEquals(diff.getQuantity(new JValueImpl("three")), 2);
-	}
-
-	@Test
-	public void testDifferenceBag() {
-		JValueBag first = new JValueBag();
-		JValueBag second = new JValueBag();
-		first.add(new JValueImpl("one"), 3);
-		first.add(new JValueImpl("two"), 2);
-		first.add(new JValueImpl("three"), 4);
-		first.add(new JValueImpl("four"), 3);
-		second.add(new JValueImpl("three"), 2);
-		second.add(new JValueImpl("four"), 4);
-		second.add(new JValueImpl("five"), 2);
-		second.add(new JValueImpl("six"), 7);
-		JValueBag diff = first.difference(second);
-		assertEquals(7, diff.size());
-		assertEquals(3, diff.getQuantity(new JValueImpl("one")));
-		assertEquals(2, diff.getQuantity(new JValueImpl("two")));
-		assertEquals(2, diff.getQuantity(new JValueImpl("three")));
-		assertEquals(0, diff.getQuantity(new JValueImpl("four")));
-		assertEquals(0, diff.getQuantity(new JValueImpl("five")));
-		assertEquals(0, diff.getQuantity(new JValueImpl("six")));
-	}
-
-	@Test
-	public void notEqualsBag() {
-		JValueBag b1 = new JValueBag();
-		b1.add(new JValueImpl("one"));
-		b1.add(new JValueImpl("one"));
-		b1.add(new JValueImpl("two"));
-		b1.add(new JValueImpl("three"), 3);
-
-		JValueBag b2 = new JValueBag();
-		b2.add(new JValueImpl("three"), 2);
-		b2.add(new JValueImpl("one"), 2);
-		b2.add(new JValueImpl("two"));
-
-		assertFalse(b1.equals(b2));
 	}
 
 	@Test

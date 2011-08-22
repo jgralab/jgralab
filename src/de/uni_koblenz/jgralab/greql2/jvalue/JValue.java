@@ -76,7 +76,7 @@ public interface JValue extends Comparable<JValue> {
 
 	/**
 	 * calculates the hash-code of this jvalue. This is needed because the
-	 * JValueBag and JValueSet are based on HashSets and for instance JValueSet
+	 * JValueSet is based on HashSets and for instance JValueSet
 	 * should allow only one JValue which contains a "7". All subtypes of
 	 * JValue, which don't set the "value" field, must overwrite this method
 	 */
@@ -318,14 +318,6 @@ public interface JValue extends Comparable<JValue> {
 	 *             if the JValue cannot be converted to a set
 	 */
 	public JValueSet toJValueSet() throws JValueInvalidTypeException;
-
-	/**
-	 * returns a JValueBag-Reference of this JValue
-	 * 
-	 * @throws ValueInvalidTypeException
-	 *             if the JValue cannot be converted to a bag
-	 */
-	public JValueBag toJValueBag() throws JValueInvalidTypeException;
 
 	/**
 	 * returns a JValueTable-Reference of this JValue

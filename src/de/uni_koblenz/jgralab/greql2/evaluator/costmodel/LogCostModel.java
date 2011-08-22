@@ -45,7 +45,6 @@ import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql2.evaluator.logging.EvaluationLogReader;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.AlternativePathDescriptionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.BackwardVertexSetEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.BagConstructionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ComprehensionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ConditionalExpressionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.DeclarationEvaluator;
@@ -186,34 +185,17 @@ public class LogCostModel extends DefaultCostModel {
 	 * (non-Javadoc)
 	 * 
 	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
-	 * calculateCardinalityBagComprehension
+	 * calculateCardinalityListComprehension
 	 * (de.uni_koblenz.jgralab.greql2.evaluator
-	 * .vertexeval.BagComprehensionEvaluator,
+	 * .vertexeval.ListComprehensionEvaluator,
 	 * de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
-	public long calculateCardinalityBagComprehension(ComprehensionEvaluator e,
+	public long calculateCardinalityListComprehension(ComprehensionEvaluator e,
 			GraphSize graphSize) {
 		return getMeanCardinality(
 				logReader.getAvgResultSize(e.getLoggingName()),
-				super.calculateCardinalityBagComprehension(e, graphSize));
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
-	 * calculateCardinalityBagConstruction
-	 * (de.uni_koblenz.jgralab.greql2.evaluator
-	 * .vertexeval.BagConstructionEvaluator,
-	 * de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
-	 */
-	@Override
-	public long calculateCardinalityBagConstruction(BagConstructionEvaluator e,
-			GraphSize graphSize) {
-		return getMeanCardinality(
-				logReader.getAvgResultSize(e.getLoggingName()),
-				super.calculateCardinalityBagConstruction(e, graphSize));
+				super.calculateCardinalityListComprehension(e, graphSize));
 	}
 
 	/*

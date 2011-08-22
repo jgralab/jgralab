@@ -42,43 +42,43 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueBag;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTable;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTuple;
-import de.uni_koblenz.jgralab.greql2.schema.BagComprehension;
+import de.uni_koblenz.jgralab.greql2.schema.ListComprehension;
 import de.uni_koblenz.jgralab.greql2.schema.IsTableHeaderOf;
 
 /**
- * Evaluates a BagComprehensionvertex in the GReQL-2 Syntaxgraph
+ * Evaluates a ListComprehensionvertex in the GReQL-2 Syntaxgraph
  * 
  * @author ist@uni-koblenz.de
  * 
  */
-public class BagComprehensionEvaluator extends ComprehensionEvaluator {
+public class ListComprehensionEvaluator extends ComprehensionEvaluator {
 
 	/**
-	 * The BagComprehension-Vertex this evaluator evaluates
+	 * The ListComprehension-Vertex this evaluator evaluates
 	 */
-	private BagComprehension vertex;
+	private ListComprehension vertex;
 
 	/**
 	 * returns the vertex this VertexEvaluator evaluates
 	 */
 	@Override
-	public BagComprehension getVertex() {
+	public ListComprehension getVertex() {
 		return vertex;
 	}
 
 	/**
-	 * Creates a new BagComprehensionEvaluator for the given vertex
+	 * Creates a new ListComprehensionEvaluator for the given vertex
 	 * 
 	 * @param eval
 	 *            the GreqlEvaluator instance this VertexEvaluator belong to
 	 * @param vertex
 	 *            the vertex this VertexEvaluator evaluates
 	 */
-	public BagComprehensionEvaluator(BagComprehension vertex,
+	public ListComprehensionEvaluator(ListComprehension vertex,
 			GreqlEvaluator eval) {
 		super(eval);
 		this.vertex = vertex;
@@ -111,19 +111,19 @@ public class BagComprehensionEvaluator extends ComprehensionEvaluator {
 			}
 			return new JValueTable(headerTuple, false);
 		}
-		return new JValueBag();
+		return new JValueList();
 	}
 
 	@Override
 	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
 		return this.greqlEvaluator.getCostModel()
-				.calculateCostsBagComprehension(this, graphSize);
+				.calculateCostsListComprehension(this, graphSize);
 	}
 
 	@Override
 	public long calculateEstimatedCardinality(GraphSize graphSize) {
 		return greqlEvaluator.getCostModel()
-				.calculateCardinalityBagComprehension(this, graphSize);
+				.calculateCardinalityListComprehension(this, graphSize);
 	}
 
 }

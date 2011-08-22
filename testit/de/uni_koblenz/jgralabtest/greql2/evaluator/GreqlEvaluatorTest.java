@@ -53,7 +53,6 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueBag;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
@@ -86,8 +85,8 @@ public class GreqlEvaluatorTest extends GenericTest {
 			"Flugplatz Koblenz-Winningen", "Winningen", "Lautzenhausen",
 			"Montabaur", "Flughafen Frankfurt-Hahn" };
 
-	private JValueBag createBagWithMeat(List<JValueImpl> list) {
-		JValueBag bag = new JValueBag();
+	private JValueList createListWithMeat(List<JValueImpl> list) {
+		JValueList jvlist = new JValueList();
 		list.add(new JValueImpl("Currywurst"));
 		list.add(new JValueImpl("Bratwurst"));
 		list.add(new JValueImpl("Käsewurst"));
@@ -97,9 +96,9 @@ public class GreqlEvaluatorTest extends GenericTest {
 		list.add(new JValueImpl("Ketchup"));
 		list.add(new JValueImpl("Zwiebeln"));
 		for (JValueImpl v : list) {
-			bag.add(v, 3);
+			jvlist.add(v);
 		}
-		return bag;
+		return jvlist;
 	}
 
 	@Test
@@ -266,27 +265,7 @@ public class GreqlEvaluatorTest extends GenericTest {
 
 	/*
 	 * Test method for
-	 * 'greql2.evaluator.GreqlEvaluator.evaluateBagComprehension(BagComprehension,
-	 * Graph)'
-	 */
-	@Test
-	public void testEvaluateBagComprehension() throws Exception {
-		ArrayList<JValueImpl> list = new ArrayList<JValueImpl>();
-		setBoundVariable("FOO", createBagWithMeat(list));
-		String queryString = "using FOO: from i: toSet(FOO) report i end";
-		JValue result = evalTestQuery("BagComprehension", queryString);
-		assertEquals(8, result.toCollection().size());
-		for (JValue v : list) {
-			assertEquals(1, result.toCollection().toJValueBag().getQuantity(v));
-		}
-		JValue resultWO = evalTestQuery("BagComprehension (wo)", queryString,
-				new DefaultOptimizer());
-		assertEquals(result, resultWO);
-	}
-
-	/*
-	 * Test method for
-	 * 'greql2.evaluator.GreqlEvaluator.evaluateBagComprehension(BagComprehension,
+	 * 'greql2.evaluator.GreqlEvaluator.evaluateListComprehension(ListComprehension,
 	 * Graph)'
 	 */
 	@Test
@@ -302,7 +281,7 @@ public class GreqlEvaluatorTest extends GenericTest {
 
 	/*
 	 * Test method for
-	 * 'greql2.evaluator.GreqlEvaluator.evaluateBagComprehension(BagComprehension,
+	 * 'greql2.evaluator.GreqlEvaluator.evaluateListComprehension(ListComprehension,
 	 * Graph)'
 	 */
 	@Test
@@ -318,7 +297,7 @@ public class GreqlEvaluatorTest extends GenericTest {
 
 	/*
 	 * Test method for
-	 * 'greql2.evaluator.GreqlEvaluator.evaluateBagComprehension(BagComprehension,
+	 * 'greql2.evaluator.GreqlEvaluator.evaluateListComprehension(ListComprehension,
 	 * Graph)'
 	 */
 	@Test
@@ -334,7 +313,7 @@ public class GreqlEvaluatorTest extends GenericTest {
 
 	/*
 	 * Test method for
-	 * 'greql2.evaluator.GreqlEvaluator.evaluateBagComprehension(BagComprehension,
+	 * 'greql2.evaluator.GreqlEvaluator.evaluateListComprehension(ListComprehension,
 	 * Graph)'
 	 */
 	@Test
@@ -345,57 +324,6 @@ public class GreqlEvaluatorTest extends GenericTest {
 		// assertEquals("A String Another String", result.toString());
 		JValue resultWO = evalTestQuery("UsingWithPath", queryString,
 				new DefaultOptimizer());
-		assertEquals(result, resultWO);
-	}
-
-	/*
-	 * Test method for
-	 * 'greql2.evaluator.GreqlEvaluator.evaluateBagConstruction(BagConstruction,
-	 * Graph)'
-	 */
-	@Test
-	public void testEvaluateBagConstruction() throws Exception {
-		String queryString = "bag ( 1 , 2 , 3 , 7 , 34, 456, 7, 5, 455, 456, 457, 1, 2, 3, 3, 3, 3 )";
-		JValue result = evalTestQuery("BagConstruction", queryString);
-		assertEquals(17, result.toCollection().size());
-		assertEquals(
-				2,
-				result.toCollection().toJValueBag()
-						.getQuantity(new JValueImpl(1)));
-		assertEquals(
-				2,
-				result.toCollection().toJValueBag()
-						.getQuantity(new JValueImpl(2)));
-		assertEquals(
-				5,
-				result.toCollection().toJValueBag()
-						.getQuantity(new JValueImpl(3)));
-		assertEquals(
-				1,
-				result.toCollection().toJValueBag()
-						.getQuantity(new JValueImpl(5)));
-		assertEquals(
-				2,
-				result.toCollection().toJValueBag()
-						.getQuantity(new JValueImpl(7)));
-		assertEquals(
-				1,
-				result.toCollection().toJValueBag()
-						.getQuantity(new JValueImpl(34)));
-		assertEquals(
-				1,
-				result.toCollection().toJValueBag()
-						.getQuantity(new JValueImpl(455)));
-		assertEquals(
-				2,
-				result.toCollection().toJValueBag()
-						.getQuantity(new JValueImpl(456)));
-		assertEquals(
-				1,
-				result.toCollection().toJValueBag()
-						.getQuantity(new JValueImpl(457)));
-
-		JValue resultWO = evalQueryWithOptimizer(queryString);
 		assertEquals(result, resultWO);
 	}
 
@@ -615,7 +543,7 @@ public class GreqlEvaluatorTest extends GenericTest {
 		JValue result = evalTestQuery(queryString);
 		assertEquals(3, result.toCollection().size());
 		JValue resultWO = evalQueryWithOptimizer(queryString);
-		assertEquals(result, resultWO);
+		assertEquals(result.toJValueSet(), resultWO.toJValueSet());
 	}
 
 	/*
@@ -1141,7 +1069,7 @@ public class GreqlEvaluatorTest extends GenericTest {
 	@Test
 	public void testEvaluateSetComprehension() throws Exception {
 		ArrayList<JValueImpl> list = new ArrayList<JValueImpl>();
-		setBoundVariable("FOO", createBagWithMeat(list));
+		setBoundVariable("FOO", createListWithMeat(list));
 		String queryString = "using FOO: from i: toSet(FOO) reportSet i end";
 		JValue result = evalTestQuery("SetComprehension", queryString);
 		assertEquals(8, result.toCollection().size());
@@ -1216,7 +1144,7 @@ public class GreqlEvaluatorTest extends GenericTest {
 		JValue result = evalTestQuery(queryString);
 		assertEquals(localityCount, result.toCollection().size());
 		JValue resultWO = evalQueryWithOptimizer(queryString);
-		assertEquals(result, resultWO);
+		assertEquals(result.toJValueSet(), resultWO.toJValueSet());
 	}
 
 	@Test
@@ -1225,7 +1153,7 @@ public class GreqlEvaluatorTest extends GenericTest {
 		JValue result = evalTestQuery(queryString);
 		assertEquals(localityCount, result.toCollection().size());
 		JValue resultWO = evalQueryWithOptimizer(queryString);
-		assertEquals(result, resultWO);
+		assertEquals(result.toJValueSet(), resultWO.toJValueSet());
 	}
 
 	@Test
@@ -1388,16 +1316,16 @@ public class GreqlEvaluatorTest extends GenericTest {
 
 	/*
 	 * Test method for
-	 * 'greql2.evaluator.GreqlEvaluator.evaluateBagComprehension(BagComprehension,
+	 * 'greql2.evaluator.GreqlEvaluator.evaluateListComprehension(ListComprehension,
 	 * Graph)'
 	 */
 	@Test
 	public void testEvaluateVarTableComprehension1() throws Exception {
-		JValueBag bag = new JValueBag();
-		bag.add(new JValueImpl(3));
-		bag.add(new JValueImpl(4));
-		bag.add(new JValueImpl(5));
-		setBoundVariable("FOO", bag);
+		JValueList list = new JValueList();
+		list.add(new JValueImpl(3));
+		list.add(new JValueImpl(4));
+		list.add(new JValueImpl(5));
+		setBoundVariable("FOO", list);
 		String queryString = "using FOO: from i:FOO, j:FOO reportTable i,j,i*j end";
 		JValue result = evalTestQuery("VarTableComprehension1", queryString);
 		assertEquals(3, result.toCollection().size());
@@ -1411,11 +1339,11 @@ public class GreqlEvaluatorTest extends GenericTest {
 
 	@Test
 	public void testEvaluateVarTableComprehension2() throws Exception {
-		JValueBag bag = new JValueBag();
-		bag.add(new JValueImpl(3));
-		bag.add(new JValueImpl(4));
-		bag.add(new JValueImpl(5));
-		setBoundVariable("FOO", bag);
+		JValueList list = new JValueList();
+		list.add(new JValueImpl(3));
+		list.add(new JValueImpl(4));
+		list.add(new JValueImpl(5));
+		setBoundVariable("FOO", list);
 		String queryString = "using FOO: from i:FOO, j:FOO reportTable i,j,i*j,\"MultiplicationMatrix\" end";
 		JValue result = evalTestQuery("VarTableComprehension2", queryString);
 		assertEquals(3, result.toCollection().size());
@@ -1580,10 +1508,10 @@ public class GreqlEvaluatorTest extends GenericTest {
 	public void testStore() throws Exception {
 		String queryString = "from v: V{localities.County} report v.name end store as CountyNames";
 		evalTestQuery(queryString);
-		JValueBag storedBag = getBoundVariable("CountyNames").toCollection()
-				.toJValueBag();
+		JValueList storedList = getBoundVariable("CountyNames").toCollection()
+				.toJValueList();
 
-		containsAllElements(COUNTIES, storedBag);
+		containsAllElements(COUNTIES, storedList);
 	}
 
 	@Test
@@ -1698,10 +1626,10 @@ public class GreqlEvaluatorTest extends GenericTest {
 		JValue result = evalTestQuery("WhereWithSameScope", query);
 		assertTrue(result.isCollection());
 		assertTrue(result.toCollection().isJValueSet());
-		JValueSet resBag = result.toJValueSet();
-		assertEquals(10, resBag.size());
+		JValueSet resSet = result.toJValueSet();
+		assertEquals(10, resSet.size());
 		for (int i = 1; i < 11; i++) {
-			assertTrue(resBag.contains(new JValueImpl(i)));
+			assertTrue(resSet.contains(new JValueImpl(i)));
 		}
 	}
 
@@ -1711,10 +1639,10 @@ public class GreqlEvaluatorTest extends GenericTest {
 		JValue result = evalTestQuery("LetWithSameScope", query);
 		assertTrue(result.isCollection());
 		assertTrue(result.toCollection().isJValueSet());
-		JValueSet resBag = result.toJValueSet();
-		assertEquals(10, resBag.size());
+		JValueSet resSet = result.toJValueSet();
+		assertEquals(10, resSet.size());
 		for (int i = 1; i < 11; i++) {
-			assertTrue(resBag.contains(new JValueImpl(i)));
+			assertTrue(resSet.contains(new JValueImpl(i)));
 		}
 	}
 

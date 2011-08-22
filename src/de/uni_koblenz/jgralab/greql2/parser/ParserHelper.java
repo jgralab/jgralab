@@ -53,7 +53,7 @@ import de.uni_koblenz.jgralab.greql2.exception.DuplicateVariableException;
 import de.uni_koblenz.jgralab.greql2.exception.ParsingException;
 import de.uni_koblenz.jgralab.greql2.exception.UndefinedVariableException;
 import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
-import de.uni_koblenz.jgralab.greql2.schema.BagComprehension;
+import de.uni_koblenz.jgralab.greql2.schema.ListComprehension;
 import de.uni_koblenz.jgralab.greql2.schema.Comprehension;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Definition;
@@ -451,7 +451,7 @@ public abstract class ParserHelper {
 	 * merges variables within the comprehension result and tableheaders
 	 * 
 	 * @param v
-	 *            contains a set- or a bag-comprehension
+	 *            contains a set- or a list-comprehension
 	 */
 	private void mergeVariablesInComprehension(Comprehension v,
 			boolean separateScope) throws DuplicateVariableException,
@@ -465,8 +465,8 @@ public abstract class ParserHelper {
 				.getFirstIsCompResultDefOfIncidence(EdgeDirection.IN);
 		if (isCompResultDefOf != null) {
 			mergeVariables(isCompResultDefOf.getAlpha(), true);
-			// merge variables in table-headers if it's a bag-comprehension
-			if (v instanceof BagComprehension) {
+			// merge variables in table-headers if it's a list-comprehension
+			if (v instanceof ListComprehension) {
 				IsTableHeaderOf isTableHeaderOf = v
 						.getFirstIsTableHeaderOfIncidence(EdgeDirection.IN);
 				while (isTableHeaderOf != null) {

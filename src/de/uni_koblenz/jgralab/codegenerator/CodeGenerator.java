@@ -161,11 +161,11 @@ public abstract class CodeGenerator {
 	 *            calculates the name
 	 *            schemaRootPackageName.packageName.implementationName, in the
 	 *            example
-	 *            "de.uni_koblenz.jgralab.greql2.comprehension.Bagcomprehension"
+	 *            "de.uni_koblenz.jgralab.greql2.comprehension.Listcomprehension"
 	 *            for the interface and possibly
 	 *            schemaRootPackageName.impl.packageName.implementationName, in
 	 *            the example
-	 *            "de.uni_koblenz.jgralab.greql2.impl.comprehension.Bagcomprehension"
+	 *            "de.uni_koblenz.jgralab.greql2.impl.comprehension.Listcomprehension"
 	 *            for the default implementation class
 	 * @param config
 	 *            The {@link CodeGeneratorConfiguration} to be used when

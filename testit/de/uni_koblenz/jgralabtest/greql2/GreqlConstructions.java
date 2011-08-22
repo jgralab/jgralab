@@ -8,7 +8,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueBag;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
 
@@ -27,9 +27,9 @@ public class GreqlConstructions extends GenericTest {
 				+ "end";
 		JValue result = evalTestQuery("PathSystemConstruction", queryString,
 				TestVersion.ROUTE_MAP_GRAPH);
-		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(1, bag.size());
-		for (JValue v : bag) {
+		JValueList list = result.toCollection().toJValueList();
+		assertEquals(1, list.size());
+		for (JValue v : list) {
 			JValuePathSystem sys = v.toPathSystem();
 			assertEquals(2, sys.depth());
 			assertEquals(3, sys.weight());

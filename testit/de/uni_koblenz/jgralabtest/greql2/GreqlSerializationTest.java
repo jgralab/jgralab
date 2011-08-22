@@ -85,7 +85,7 @@ public class GreqlSerializationTest {
 			"from i : from i : list(30..40) with i < 35 reportSet i end, x : list(1, 3, 17, 19) with isPrime(x+i) report i, x end",
 			"from w : list(2..10), x : list(2..10), y : list(2..10), z : list(1..2) "
 					+ "     with isPrime(x + z) and x * x > y and z > x * x "
-					+ "     reportBag w, x, y, z end",
+					+ "     reportList w, x, y, z end",
 			"from x : list(1..5),                  "
 					+ "          y : list(21..100)   "
 					+ "     with isPrime(x) and isPrime(y)       "
@@ -113,9 +113,9 @@ public class GreqlSerializationTest {
 					+ "     reportSet class                              "
 					+ "     end",
 			"from a : V{Variable},                              "
-					+ "              b : V{BagComprehension}                       "
+					+ "              b : V{ListComprehension}                       "
 					+ "         with a -->* b                                      "
-					+ "         reportBag from x : list(1..10),                    "
+					+ "         reportList from x : list(1..10),                    "
 					+ "                        y : list(11..20)                    "
 					+ "                   with isPrime(x * x + y - 1)              "
 					+ "                   reportSet x * x + y - 1, x, y, a, b end, "

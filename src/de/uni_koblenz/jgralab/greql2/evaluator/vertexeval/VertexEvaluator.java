@@ -204,7 +204,7 @@ public abstract class VertexEvaluator {
 
 	/**
 	 * @return the name of the associated {@link Greql2Vertex} used for logging.
-	 *         By default this is the type name, i.e. BagComprehension, but
+	 *         By default this is the type name, i.e. ListComprehension, but
 	 *         subclasses may override this method to get a more finegrained
 	 *         control. For example {@link FunctionApplicationEvaluator}s use
 	 *         the function name of the corresponding function for logging.

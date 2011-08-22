@@ -50,7 +50,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>BAG values(m:MAP)</code></dd>
+ * <dd><code>LIST values(m:MAP)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>
@@ -60,7 +60,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * <dt><b>Parameters:</b></dt>
  * <dd><code>m</code> - map to be used</dd>
  * <dt><b>Returns:</b></dt>
- * <dd>the BAG of values in <code>m</code>.</dd>
+ * <dd>the LIST of values in <code>m</code>.</dd>
  * </dl>
  * </dd>
  * </dl>
@@ -73,7 +73,7 @@ public class Values extends Greql2Function {
 		JValueType[][] x = { { JValueType.MAP, JValueType.COLLECTION } };
 		signatures = x;
 
-		description = "Returns the bag of values of the given map.";
+		description = "Returns the list of values of the given map.";
 
 		Category[] c = { Category.COLLECTIONS_AND_MAPS };
 		categories = c;

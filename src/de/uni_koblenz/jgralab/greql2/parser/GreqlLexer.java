@@ -58,7 +58,6 @@ public class GreqlLexer {
 					put(TokenTypes.TRUE, "true");
 					put(TokenTypes.XOR, "xor");
 					put(TokenTypes.AS, "as");
-					put(TokenTypes.BAG, "bag");
 					put(TokenTypes.MAP, "map");
 					put(TokenTypes.E, "E");
 					put(TokenTypes.ESUBGRAPH, "eSubgraph");
@@ -73,7 +72,7 @@ public class GreqlLexer {
 					put(TokenTypes.REC, "rec");
 					put(TokenTypes.REPORT, "report");
 					put(TokenTypes.REPORTSET, "reportSet");
-					put(TokenTypes.REPORTBAG, "reportBag");
+					put(TokenTypes.REPORTLIST, "reportList");
 					put(TokenTypes.REPORTTABLE, "reportTable");
 					put(TokenTypes.REPORTMAP, "reportMap");
 					put(TokenTypes.STORE, "store");

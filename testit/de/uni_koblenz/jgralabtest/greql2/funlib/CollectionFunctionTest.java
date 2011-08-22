@@ -105,26 +105,6 @@ public class CollectionFunctionTest extends GenericTest {
 		assertQueryIsNull("using nll: nll ++ list()");
 	}
 
-	@Test
-	public void testContainsBag() throws Exception {
-		evalTestQuery("bag (5, 5, 5, 6, 7, 8, 9, 10, 11, 12, 13) store as x");
-		assertQueryEquals("using x: contains(x, 7)", true);
-		assertQueryEquals("using x: contains(x, 56)", false);
-		assertQueryEquals("using x: contains(x, 13)", true);
-		assertQueryEquals("using x: contains(x, 14)", false);
-		assertQueryEquals("using x: contains(x, 5)", true);
-		assertQueryEquals("using x: contains(x, 4)", false);
-
-		evalTestQuery("bag (5) store as x");
-		assertQueryEquals("using x: contains(x, 4)", false);
-		assertQueryEquals("using x: contains(x, 5)", true);
-		assertQueryEquals("using x: contains(x, 6)", false);
-
-		evalTestQuery("bag () store as x");
-		assertQueryEquals("using x: contains(x, 0)", false);
-		assertQueryEquals("using x: contains(x, 5)", false);
-		assertQueryEquals("using x: contains(x, 6)", false);
-	}
 
 	@Test
 	public void testContainsList() throws Exception {
@@ -246,12 +226,6 @@ public class CollectionFunctionTest extends GenericTest {
 		assertQueryEquals("let x:= list() in count(x)", 0);
 
 		assertQueryEquals(
-				"let x:= bag (5, 5, 5, 6, 7, 8, 9, 10, 11, 12, 13) in count(x)",
-				11);
-		assertQueryEquals("let x:= bag(17) in count(x)", 1);
-		assertQueryEquals("let x:= bag() in count(x)", 0);
-
-		assertQueryEquals(
 				"let x:= set (5, 5, 5, 6, 7, 8, 9, 10, 10, 11, 12, 13) in count(x)",
 				9);
 		assertQueryEquals("let x:= set(17) in count(x)", 1);
@@ -304,21 +278,17 @@ public class CollectionFunctionTest extends GenericTest {
 		JValue value = evalTestQuery("set()");
 		assertQueryEquals("elements( set())", value);
 		assertQueryEquals("elements(list())", value);
-		assertQueryEquals("elements( bag())", value);
 
 		value = evalTestQuery("set(41)");
 		assertQueryEquals("elements( set(41))", value);
 		assertQueryEquals("elements( set(41, 41, 41))", value);
 		assertQueryEquals("elements(list(41))", value);
 		assertQueryEquals("elements(list(41, 41, 41))", value);
-		assertQueryEquals("elements( bag(41))", value);
-		assertQueryEquals("elements( bag(41, 41, 41))", value);
-
+		
 		value = evalTestQuery("set(5, 7, 9, 13)");
 
 		assertQueryEquals("elements( set(7, 5, 9, 13, 5))", value);
 		assertQueryEquals("elements(list(7, 5, 9, 13, 5))", value);
-		assertQueryEquals("elements( bag(7, 5, 9, 13, 5))", value);
 	}
 
 	@Test
@@ -347,21 +317,6 @@ public class CollectionFunctionTest extends GenericTest {
 	@Test
 	public void testEntrySetNull() throws Exception {
 		assertQueryIsNull("using nll: entrySet(nll)");
-	}
-
-	@Test
-	public void testFlattenBag() throws Exception {
-		// TODO the result of flatten is somehow correct, but must be sorted.
-		// The order cannot be determined.
-		evalTestQuery("bag(bag(1, 2, 3), bag(1, 2, 3), bag(3, 4, 5), "
-				+ "bag(7, 8, 9)) store as bag1");
-		assertQueryEqualsQuery("using bag1: sort(flatten(bag1))",
-				"list(1, 1, 2, 2, 3, 3, 3, 4, 5, 7, 8, 9)");
-
-		evalTestQuery("set(bag(1, 2, 3), bag(1, 2, 3), bag(3, 4, 5), "
-				+ "bag(7, 8, 9)) store as bag1");
-		assertQueryEqualsQuery("using bag1: sort(flatten(bag1))",
-				"list(1, 2, 3, 3, 4, 5, 7, 8, 9)");
 	}
 
 	@Test
@@ -477,14 +432,11 @@ public class CollectionFunctionTest extends GenericTest {
 		assertQueryEquals("using x: isEmpty(x)", false);
 		evalTestQuery("list(1..3) store as x");
 		assertQueryEquals("using x: isEmpty(x)", false);
-		evalTestQuery("bag(1, 2, 3) store as x");
-		assertQueryEquals("using x: isEmpty(x)", false);
 		evalTestQuery("map(1 -> '') store as x");
 		assertQueryEquals("using x: isEmpty(x)", false);
 
 		assertQueryEquals("isEmpty(list())", true);
 		assertQueryEquals("isEmpty(set())", true);
-		assertQueryEquals("isEmpty(bag())", true);
 		assertQueryEquals("isEmpty(map())", true);
 	}
 
@@ -542,16 +494,6 @@ public class CollectionFunctionTest extends GenericTest {
 	}
 
 	@Test
-	public void testIsUniqueBag() throws Exception {
-		assertQueryEquals("let x := bag() in isUnique(x)", true);
-		assertQueryEquals("let x := bag(1) in isUnique(x)", true);
-		assertQueryEquals("let x := bag(1, 1) in isUnique(x)", false);
-		assertQueryEquals("let x := bag(1, 2, 3, 4, 99) in isUnique(x)", true);
-		assertQueryEquals("let x := bag(1, 2, 3, 4, 1, 99) in isUnique(x)",
-				false);
-	}
-
-	@Test
 	public void testIsUniqueList() throws Exception {
 		assertQueryEquals("let x := list() in isUnique(x)", true);
 		assertQueryEquals("let x := list(1) in isUnique(x)", true);
@@ -599,16 +541,6 @@ public class CollectionFunctionTest extends GenericTest {
 	}
 
 	@Test
-	public void testMaxBag() throws Exception {
-		assertQueryEquals("max(bag())", Long.MIN_VALUE);
-		assertQueryEquals("max(bag(-5))", -5);
-		assertQueryEquals("max(bag(6))", 6);
-		assertQueryEquals("max(bag(-5, 6))", 6);
-		assertQueryEquals("max(bag(6 , 5))", 6);
-		assertQueryEquals("max(bag(1, 2, 4, -6, 65, 73, 65, 322, 1))", 322);
-	}
-
-	@Test
 	public void testMaxList() throws Exception {
 		assertQueryEquals("max(list())", Long.MIN_VALUE);
 		assertQueryEquals("max(list(-5))", -5);
@@ -653,16 +585,6 @@ public class CollectionFunctionTest extends GenericTest {
 		assertQueryIsNull("using nll: mergeMaps(nll, nll)");
 		assertQueryIsNull("using nll: mergeMaps(map(), nll)");
 		assertQueryIsNull("using nll: mergeMaps(nll, map())");
-	}
-
-	@Test
-	public void testMinBag() throws Exception {
-		assertQueryEquals("min(bag())", Long.MAX_VALUE);
-		assertQueryEquals("min(bag(-5))", -5);
-		assertQueryEquals("min(bag(6))", 6);
-		assertQueryEquals("min(bag(-5, 6))", -5);
-		assertQueryEquals("min(bag(6 , 5))", 5);
-		assertQueryEquals("min(bag(1, 2, 4, -6, 65, 73, 65, 322, 1))", -6);
 	}
 
 	@Test
@@ -715,20 +637,6 @@ public class CollectionFunctionTest extends GenericTest {
 	}
 
 	@Test
-	public void testPredecessorBag() throws Exception {
-		assertQueryIsNull("let x := bag() in predecessor(1, x)");
-		assertQueryIsNull("let x := bag(1) in predecessor(1, x)");
-		assertQueryIsNull("let x := bag(1, 1) in predecessor(1, x)");
-
-		evalTestQuery("sort(bag(1, 2, 3, 4, 1, 99)) store as x");
-		assertQueryIsNull("using x: predecessor(1, x)");
-		assertQueryEquals("using x: predecessor(2, x)", 1);
-		assertQueryEquals("using x: predecessor(3, x)", 2);
-		assertQueryEquals("using x: predecessor(4, x)", 3);
-		assertQueryEquals("using x: predecessor(99, x)", 4);
-	}
-
-	@Test
 	public void testPredecessorList() throws Exception {
 		assertQueryIsNull("let x := list() in predecessor(1, x)");
 		assertQueryIsNull("let x := list(1) in predecessor(1, x)");
@@ -761,14 +669,6 @@ public class CollectionFunctionTest extends GenericTest {
 		assertQueryIsNull("using nll: pos(list(), nll)");
 		assertQueryIsNull("using nll: pos(set(), nll)");
 		assertQueryIsNull("using nll: pos(nll, nll)");
-	}
-
-	@Test
-	public void testSortBag() throws Exception {
-		assertQueryEqualsQuery("sort(bag())", "bag()");
-		assertQueryEqualsQuery("sort(bag(4))", "bag(4)");
-		assertQueryEqualsQuery("sort(bag(4, 1, 2, 10, 9, 7, 8, 3, 5, 6))",
-				"bag(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)");
 	}
 
 	@Test
@@ -812,15 +712,10 @@ public class CollectionFunctionTest extends GenericTest {
 		assertQueryEquals(
 				"let x:= set(5, 6, 7, 8, 9, 10, 11, 12, 13) in sum(x)", 81.0);
 
-		assertQueryEquals("let x:= bag() in sum(x)", 0.0);
-		assertQueryEquals("let x:= bag(5) in sum(x)", 5.0);
-		assertQueryEquals(
-				"let x:= bag(5, 6, 7, 8, 9, 10, 11, 12, 13) in sum(x)", 81.0);
-
-		expectException("let x:= bag('test') in sum(x)",
+		expectException("let x:= list('test') in sum(x)",
 				EvaluateException.class);
-		expectException("let x:= bag(true) in sum(x)", EvaluateException.class);
-		expectException("let x:= bag(rec(name: 'Daniel') in sum(x)",
+		expectException("let x:= list(true) in sum(x)", EvaluateException.class);
+		expectException("let x:= list(rec(name: 'Daniel') in sum(x)",
 				EvaluateException.class);
 	}
 
@@ -863,16 +758,6 @@ public class CollectionFunctionTest extends GenericTest {
 		assertQueryIsNull("using nll: symDifference(nll, set())");
 		assertQueryIsNull("using nll: symDifference(nll, list())");
 		assertQueryIsNull("using nll: symDifference(nll, nll)");
-	}
-
-	@Test
-	public void testTheElementBag() throws Exception {
-		expectException("let x := bag() in theElement(x)",
-				EvaluateException.class);
-		assertQueryEquals("let x := bag(-1) in theElement(x)", -1);
-		assertQueryEquals("let x := bag(123) in theElement(x)", 123);
-		expectException("let x := bag(5, 4) in theElement(x)",
-				EvaluateException.class);
 	}
 
 	@Test
@@ -954,20 +839,20 @@ public class CollectionFunctionTest extends GenericTest {
 	@Test
 	public void testValues() throws Exception {
 		evalTestQuery("map() store as m");
-		assertQueryEqualsQuery("using m: values(m)", "bag()");
+		assertQueryEqualsQuery("using m: values(m)", "list()");
 
 		evalTestQuery("map(1 -> 'a string') store as m");
-		assertQueryEqualsQuery("using m: values(m)", "bag('a string')");
+		assertQueryEqualsQuery("using m: values(m)", "list('a string')");
 
 		evalTestQuery("map(1 -> 'a string', 2 -> 'another string') store as m");
 		assertQueryEqualsQuery("using m: values(m)",
-				"bag('a string', 'another string')");
+				"list('a string', 'another string')");
 
 		evalTestQuery("map('milk' -> 1, 'honey' -> 2, 'milk' -> 3) store as m");
-		assertQueryEqualsQuery("using m: values(m)", "bag(2, 3)");
+		assertQueryEqualsQuery("using m: values(m)", "list(3, 2)");
 
 		evalTestQuery("map('milk' -> 1, 'honey' -> 1, 'milk' -> 1) store as m");
-		assertQueryEqualsQuery("using m: values(m)", "bag(1,1)");
+		assertQueryEqualsQuery("using m: values(m)", "list(1,1)");
 	}
 
 	@Test
