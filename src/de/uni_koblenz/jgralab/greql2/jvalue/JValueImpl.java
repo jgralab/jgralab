@@ -943,16 +943,6 @@ public class JValueImpl implements JValue {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#toJValueBag()
-	 */
-	@Override
-	public JValueBag toJValueBag() throws JValueInvalidTypeException {
-		throw new JValueInvalidTypeException(JValueType.COLLECTION, type);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#toJValueTable()
 	 */
 	@Override

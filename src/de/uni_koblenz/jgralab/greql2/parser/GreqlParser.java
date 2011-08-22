@@ -381,7 +381,6 @@ public class GreqlParser extends ParserHelper {
 		switch (token) {
 		case MAP:
 		case AS:
-		case BAG:
 		case IMPORT:
 		case IN:
 		case SET:
@@ -1652,20 +1651,6 @@ public class GreqlParser extends ParserHelper {
 				} else {
 					return null;
 				}
-			case BAG:
-				match();
-				match(TokenTypes.LPAREN);
-				if (tryMatch(TokenTypes.RPAREN)) {
-					return graph.createBagConstruction();
-				}
-				expressions = parseExpressionList(TokenTypes.COMMA);
-				match(TokenTypes.RPAREN);
-				if (!inPredicateMode()) {
-					return createPartsOfValueConstruction(expressions,
-							graph.createBagConstruction());
-				} else {
-					return null;
-				}
 			case TUP:
 				match();
 				match(TokenTypes.LPAREN);
@@ -2115,7 +2100,7 @@ public class GreqlParser extends ParserHelper {
 		int offset = 0;
 		int offsetAsExpr = 0;
 		int lengthAsExpr = 0;
-		BagComprehension bagCompr = null;
+		ListComprehension listCompr = null;
 		Expression expr = null;
 		int lengthExpr = 0;
 		Expression asExpr = null;
@@ -2133,11 +2118,11 @@ public class GreqlParser extends ParserHelper {
 				hasLabel = true;
 			}
 			if (!inPredicateMode()) {
-				if (bagCompr == null) {
-					bagCompr = graph.createBagComprehension();
+				if (listCompr == null) {
+					listCompr = graph.createListComprehension();
 					tupConstr = graph.createTupleConstruction();
 					IsCompResultDefOf e = graph.createIsCompResultDefOf(
-							tupConstr, bagCompr);
+							tupConstr, listCompr);
 					e.set_sourcePositions(createSourcePositionList(
 							getLength(offset), offset));
 				}
@@ -2146,7 +2131,7 @@ public class GreqlParser extends ParserHelper {
 						offsetExpr));
 				if (hasLabel) {
 					IsTableHeaderOf tableHeaderOf = graph
-							.createIsTableHeaderOf(asExpr, bagCompr);
+							.createIsTableHeaderOf(asExpr, listCompr);
 					tableHeaderOf.set_sourcePositions(createSourcePositionList(
 							lengthAsExpr, offsetAsExpr));
 				}
@@ -2158,7 +2143,7 @@ public class GreqlParser extends ParserHelper {
 			e2.setAlpha(v);
 			tupConstr.delete();
 		}
-		return bagCompr;
+		return listCompr;
 	}
 
 	private final Comprehension parseReportClause() {
@@ -2169,9 +2154,9 @@ public class GreqlParser extends ParserHelper {
 		switch (lookAhead(0)) {
 		case REPORT:
 			return parseLabeledReportList();
-		case REPORTBAG:
+		case REPORTLIST:
 			if (!inPredicateMode()) {
-				comprehension = graph.createBagComprehension();
+				comprehension = graph.createListComprehension();
 			}
 			match();
 			break;

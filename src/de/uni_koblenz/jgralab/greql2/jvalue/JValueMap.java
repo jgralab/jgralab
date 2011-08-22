@@ -137,14 +137,14 @@ public class JValueMap extends JValueImpl {
 	}
 
 	/**
-	 * @return a bag of all values of this map
+	 * @return a list of all values of this map
 	 */
-	public JValueBag values() {
-		JValueBag bag = new JValueBag();
+	public JValueList values() {
+		JValueList list = new JValueList();
 		for (JValue v : map.values()) {
-			bag.add(v);
+			list.add(v);
 		}
-		return bag;
+		return list;
 	}
 
 	/**

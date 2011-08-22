@@ -223,10 +223,7 @@ public class JValueXMLLoader extends XmlProcessor implements JValueXMLConstants 
 			}
 			val = new JValueImpl(aec);
 			// ---------------------------------------------------------------
-		} else if (elem.equals(BAG)) {
-			val = new JValueBag();
-			// ---------------------------------------------------------------
-		} else if (elem.equals(BOOLEAN)) {
+		}else if (elem.equals(BOOLEAN)) {
 			val = new JValueImpl(Boolean.valueOf(getAttribute(ATTR_VALUE)));
 			// ---------------------------------------------------------------
 		} else if (elem.equals(DOUBLE)) {

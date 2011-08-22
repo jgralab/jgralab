@@ -69,22 +69,6 @@ public class JValueDefaultVisitor implements JValueVisitor {
 	}
 
 	@Override
-	public void visitBag(JValueBag b) {
-		Iterator<JValue> iter = b.iterator();
-		boolean first = true;
-		pre();
-		while (iter.hasNext()) {
-			if (first) {
-				first = false;
-			} else {
-				inter();
-			}
-			iter.next().accept(this);
-		}
-		post();
-	}
-
-	@Override
 	public void visitTable(JValueTable t) {
 		t.getHeader().accept(this);
 		t.getData().accept(this);

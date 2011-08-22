@@ -51,12 +51,6 @@ public abstract class CostModelBase {
 
 	/**
 	 * describes, how much interpretation steps it takes to add a element to a
-	 * bag
-	 */
-	protected static final int addToBagCosts = 10;
-
-	/**
-	 * describes, how much interpretation steps it takes to add a element to a
 	 * set
 	 */
 	protected static final int addToSetCosts = 10;

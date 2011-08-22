@@ -61,7 +61,6 @@ public interface JValueXMLConstants {
 	public static final String TUPLE = "tup";
 	public static final String LIST = "list";
 	public static final String SET = "set";
-	public static final String BAG = "bag";
 	public static final String MAP = "map";
 	public static final String MAP_ENTRY = "entry";
 	public static final String TABLE = "table";
