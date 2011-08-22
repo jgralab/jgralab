@@ -80,7 +80,8 @@ public class JGraLab {
 				}
 				String implTitle = info.getValue("Implementation-Title");
 				if (implTitle.equals("JGraLab")) {
-					String[] versionString = info.getValue("Implementation-Version").split("@");
+					String[] versionString = info.getValue(
+							"Implementation-Version").split("@");
 					version = versionString[0];
 					revision = versionString[1];
 				}
@@ -117,9 +118,7 @@ public class JGraLab {
 			"You should have received a copy of the GNU General Public License",
 			"along with this program; if not, write to the Free Software",
 			"Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.",
-			"", "This software uses:", "", "JDOM 1.0",
-			"Copyright (C) 2000-2004 Jason Hunter & Brett McLaughlin.",
-			"All rights reserved.", "", "Apache Commons CLI 1.2",
+			"", "This software uses:", "", "Apache Commons CLI 1.2",
 			"Copyright 2001-2009 The Apache Software Foundation" };
 
 	private static HashMap<String, Logger> loggerMap = new HashMap<String, Logger>();
@@ -154,10 +153,11 @@ public class JGraLab {
 					@Override
 					public String format(LogRecord record) {
 						StringBuilder sb = new StringBuilder();
-						sb.append(record.getLevel()).append(" ").append(
-								record.getSourceClassName()).append(".")
-								.append(record.getSourceMethodName()).append(
-										": ").append(record.getMessage())
+						sb.append(record.getLevel()).append(" ")
+								.append(record.getSourceClassName())
+								.append(".")
+								.append(record.getSourceMethodName())
+								.append(": ").append(record.getMessage())
 								.append('\n');
 						return sb.toString();
 					}

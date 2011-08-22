@@ -71,13 +71,7 @@ import de.uni_koblenz.jgralab.greql2.SerializableGreql2;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.DefaultCostModel;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.LogCostModel;
-import de.uni_koblenz.jgralab.greql2.evaluator.logging.EvaluationLogger;
-import de.uni_koblenz.jgralab.greql2.evaluator.logging.Level2LogReader;
-import de.uni_koblenz.jgralab.greql2.evaluator.logging.Level2Logger;
-import de.uni_koblenz.jgralab.greql2.evaluator.logging.LoggingType;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
-import de.uni_koblenz.jgralab.greql2.exception.CostModelException;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.Greql2Exception;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
@@ -539,17 +533,6 @@ public class GreqlEvaluator {
 	protected JValue result = null;
 
 	/**
-	 * This attribute holds the EvaluationLogger, which logs the evaluation
-	 */
-	protected EvaluationLogger evaluationLogger = null;
-
-	/**
-	 * The {@link LoggingType} that should be used. It defaults to
-	 * {@link LoggingType#SCHEMA}.
-	 */
-	protected LoggingType evaluationLoggingType = LoggingType.SCHEMA;
-
-	/**
 	 * This attribute holds the CostModel which estimates the evaluation costs
 	 */
 	protected CostModel costModel = null;
@@ -726,13 +709,6 @@ public class GreqlEvaluator {
 	}
 
 	/**
-	 * returns the logging-component
-	 */
-	public final EvaluationLogger getEvaluationLogger() {
-		return evaluationLogger;
-	}
-
-	/**
 	 * @return the tmp directory of that system. On Unix/Linux this is /tmp.
 	 */
 	private static File getTmpDirectory() {
@@ -746,35 +722,6 @@ public class GreqlEvaluator {
 			tmpDir = new File("/tmp/");
 		}
 		return tmpDir;
-	}
-
-	/**
-	 * creates the logging-component
-	 */
-	protected void createEvaluationLogger() {
-		if (evaluationLogger == null) {
-			try {
-				evaluationLogger = new Level2Logger(evaluationLoggerDirectory,
-						datagraph, evaluationLoggingType);
-				if (evaluationLogger.load()) {
-					logger.info("Successfully loaded logger file "
-							+ evaluationLogger.getLogfileName() + ".");
-				} else {
-					logger.info("Couldn't load logger file "
-							+ evaluationLogger.getLogfileName() + ".");
-				}
-			} catch (InterruptedException e) {
-				// TODO (heimdall) Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
-
-	/**
-	 * sets the logger which is used to log the evlauation
-	 */
-	public void setEvaluationLogger(EvaluationLogger logger) {
-		evaluationLogger = logger;
 	}
 
 	/**
@@ -1135,32 +1082,15 @@ public class GreqlEvaluator {
 	}
 
 	/**
-	 * same as startEvaluation(false, true), provides for convenience
-	 * 
-	 * @return true if the evaluation succeeds, false otherwise
-	 * @throws EvaluateException
-	 */
-	public boolean startEvaluation() throws EvaluateException,
-			OptimizerException {
-		return startEvaluation(false, false);
-	}
-
-	/**
 	 * Starts the evaluation. If the query is a store-query, modifies the bound
 	 * variables
 	 * 
-	 * @param writeLogs
-	 *            if set to true, the evaluation measures will be written to
-	 *            logfiles.
-	 * @param readLogs
-	 *            if set true, existing log files will be read to give better
-	 *            cost estimations.
 	 * @return true on success, false otherwise
 	 * @throws EvaluateException
 	 *             if something gets wrong during evaluation
 	 */
-	public boolean startEvaluation(boolean writeLogs, boolean readLogs)
-			throws EvaluateException, OptimizerException {
+	public boolean startEvaluation() throws EvaluateException,
+			OptimizerException {
 		if (started) {
 			return result != null;
 		}
@@ -1177,30 +1107,9 @@ public class GreqlEvaluator {
 			datagraph = createMinimalGraph();
 		}
 
-		if (writeLogs) {
-			createEvaluationLogger();
-		}
-
 		// Initialize the CostModel if there's none
 		if (costModel == null) {
-			if (readLogs) {
-				Level2LogReader logReader;
-				if (evaluationLogger == null) {
-					evaluationLoggerDirectory = getTmpDirectory();
-					logReader = new Level2LogReader(evaluationLoggerDirectory,
-							datagraph);
-				} else {
-					logReader = new Level2LogReader(
-							(Level2Logger) evaluationLogger);
-				}
-				try {
-					costModel = new LogCostModel(logReader, 0.8f);
-				} catch (CostModelException e) {
-					e.printStackTrace();
-				}
-			} else {
-				costModel = new DefaultCostModel();
-			}
+			costModel = new DefaultCostModel();
 		}
 
 		if (optimize) {
@@ -1271,22 +1180,6 @@ public class GreqlEvaluator {
 
 		plainEvaluationTime = System.currentTimeMillis()
 				- plainEvaluationStartTime;
-
-		if (evaluationLogger != null) {
-			try {
-				if (evaluationLogger.store()) {
-					logger.info("Successfully stored logfile to "
-							+ evaluationLogger.getLogfileName() + ".");
-				} else {
-					logger.warning("Couldn't store logfile to "
-							+ evaluationLogger.getLogfileName() + ".");
-				}
-
-			} catch (IOException ex) {
-				throw new EvaluateException("Error writing log to file: "
-						+ evaluationLogger.getLogfileName(), ex);
-			}
-		}
 
 		resetVertexEvaluators();
 		if (syntaxGraphEntry != null) {
@@ -1433,16 +1326,6 @@ public class GreqlEvaluator {
 	 */
 	public static void setEvaluationLoggerDirectory(File loggerDirectory) {
 		GreqlEvaluator.evaluationLoggerDirectory = loggerDirectory;
-	}
-
-	public LoggingType getEvaluationLoggingType() {
-		return evaluationLoggingType;
-	}
-
-	public void setEvaluationLoggingType(LoggingType loggerLoggingType) {
-		evaluationLoggingType = loggerLoggingType;
-		evaluationLogger = null;
-		costModel = null;
 	}
 
 	public boolean isUseSavedOptimizedSyntaxGraph() {

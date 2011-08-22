@@ -91,12 +91,6 @@ public class BackwardVertexSetEvaluator extends PathSearchEvaluator {
 		NFA revertedNFA = NFA.revertNFA(pathDescEval.getNFA());
 		searchAutomaton = new DFA(revertedNFA);
 
-		// We log the number of states as the result size of the underlying
-		// PathDescription.
-		if (evaluationLogger != null) {
-			evaluationLogger.logResultSize("PathDescription",
-					searchAutomaton.stateList.size());
-		}
 		initialized = true;
 	}
 

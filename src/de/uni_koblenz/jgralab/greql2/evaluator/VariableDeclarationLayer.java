@@ -39,7 +39,6 @@ import java.util.List;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
-import de.uni_koblenz.jgralab.greql2.evaluator.logging.EvaluationLogger;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.DeclarationEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
@@ -77,7 +76,6 @@ public class VariableDeclarationLayer {
 	 */
 	private boolean firstIteration = true;
 
-	private EvaluationLogger logger;
 	private int possibleCombinations = 0;
 
 	/**
@@ -103,11 +101,10 @@ public class VariableDeclarationLayer {
 	 */
 	public VariableDeclarationLayer(Declaration vertex,
 			List<VariableDeclaration> varDecls,
-			List<VertexEvaluator> constraintList, EvaluationLogger logger) {
+			List<VertexEvaluator> constraintList) {
 		this.declaration = vertex;
 		variableDeclarations = varDecls;
 		this.constraintList = constraintList;
-		this.logger = logger;
 	}
 
 	/**
@@ -129,9 +126,6 @@ public class VariableDeclarationLayer {
 		boolean constraintsFullfilled = false;
 		if (firstIteration) {
 			if (!getFirstCombination(subgraph)) {
-				if (logger != null) {
-					logger.logResultSize("Declaration", possibleCombinations);
-				}
 				if (GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS) {
 					sb.append("## 1st. iteration: returning false (");
 					sb.append(declaration);
@@ -145,9 +139,6 @@ public class VariableDeclarationLayer {
 		}
 		while (!constraintsFullfilled) {
 			if (!getNextCombination(subgraph, false)) {
-				if (logger != null) {
-					logger.logResultSize("Declaration", possibleCombinations);
-				}
 				if (GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS) {
 					sb.append("## nth iteration: returning false (");
 					sb.append(declaration);

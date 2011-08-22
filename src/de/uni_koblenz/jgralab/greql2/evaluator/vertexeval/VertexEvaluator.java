@@ -51,22 +51,15 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclaration;
-import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclarationLayer;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
-import de.uni_koblenz.jgralab.greql2.evaluator.logging.EvaluationLogger;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.QuerySourceException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Aggregation;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
-import de.uni_koblenz.jgralab.schema.AttributedElementClass;
-import de.uni_koblenz.jgralab.schema.EdgeClass;
-import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * This is the base class for all VertexEvaluators which evaluate the vertices
@@ -109,11 +102,6 @@ public abstract class VertexEvaluator {
 	 * The GreqlEvaluator this VertexEvaluator belongs to
 	 */
 	protected GreqlEvaluator greqlEvaluator = null;
-
-	/**
-	 * The evaluation logger that should be used for logging
-	 */
-	protected EvaluationLogger evaluationLogger;
 
 	/**
 	 * The costs for the current evaluation of the whole subtree in the abstract
@@ -185,7 +173,6 @@ public abstract class VertexEvaluator {
 	protected VertexEvaluator(GreqlEvaluator eval) {
 		greqlEvaluator = eval;
 		graph = eval.getDatagraph();
-		evaluationLogger = eval.getEvaluationLogger();
 		vertexEvalMarker = eval.getVertexEvaluatorGraphMarker();
 	}
 
@@ -238,68 +225,6 @@ public abstract class VertexEvaluator {
 		} catch (QuerySourceException ex) {
 			removeInvalidSourcePosition(ex);
 			throw ex;
-		}
-
-		// Logging...
-		if ((evaluationLogger != null) && (result != null)) {
-			if (result.isBoolean()) {
-				// Log the selectivity for vertices that return a boolean
-				Boolean bool = result.toBoolean();
-				evaluationLogger.logSelectivity(getLoggingName(),
-						(bool != null) && bool.booleanValue());
-			} else if (result.isJValueTypeCollection()) {
-				// Log the selectivity for TypeId vertices
-				JValueTypeCollection col = result.toJValueTypeCollection();
-				AttributedElementClass aec = null;
-				if (col.getAllowedTypes().iterator().hasNext()) {
-					aec = col.getAllowedTypes().iterator().next();
-				} else {
-					aec = col.getForbiddenTypes().iterator().next();
-				}
-				if (aec.isSubClassOf(aec.getSchema().getAttributedElementClass(
-						"Vertex"))) {
-					// The typeId restricts vertex classes
-					for (VertexClass vc : greqlEvaluator.getDatagraph()
-							.getSchema().getVertexClassesInTopologicalOrder()) {
-						evaluationLogger.logSelectivity(getLoggingName(),
-								col.acceptsType(vc));
-					}
-				} else {
-					// The typeId restricts edge classes
-					for (EdgeClass ec : greqlEvaluator.getDatagraph()
-							.getSchema().getEdgeClassesInTopologicalOrder()) {
-						evaluationLogger.logSelectivity(getLoggingName(),
-								col.acceptsType(ec));
-					}
-				}
-			}
-
-			// Log the size of the result
-			if (result.isCollection()) {
-				if (this instanceof SimpleDeclarationEvaluator) {
-					int size = 1;
-					for (JValue val : result.toJValueList()) {
-						VariableDeclaration d = (VariableDeclaration) val
-								.toObject();
-						size *= d.getDefinitionCardinality();
-					}
-					evaluationLogger.logResultSize(getLoggingName(), size);
-				} else {
-					evaluationLogger.logResultSize(getLoggingName(), result
-							.toCollection().size());
-				}
-			} else if (result.toObject() instanceof VariableDeclarationLayer) {
-				// Declarations return a VariableDeclarationLayer object as
-				// result. The real result size is the number of possible
-				// variable combinations. This cannot be logged here, but it
-				// is done in DeclarationLayer itself.
-			} else if (result.isAutomaton()) {
-				// Result sizes for PathDescriptions are logged as the
-				// number of states the DFA has. That is done in
-				// Forward-/BackwardVertexSet and PathExistance.
-			} else {
-				evaluationLogger.logResultSize(getLoggingName(), 1);
-			}
 		}
 
 		// printIndentation();

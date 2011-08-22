@@ -84,9 +84,7 @@ public class TGraphBrowserServer extends Thread {
 			"", "This software uses:", "", "JGraLab Efraasia",
 			"(c) 2006-2011 Institute for Software Technology",
 			"              University of Koblenz-Landau, Germany", "",
-			"              ist@uni-koblenz.de", "", "JDOM 1.0",
-			"Copyright (C) 2000-2004 Jason Hunter & Brett McLaughlin.",
-			"All rights reserved.", "", "Apache Commons CLI 1.2",
+			"              ist@uni-koblenz.de", "", "Apache Commons CLI 1.2",
 			"Copyright 2001-2009 The Apache Software Foundation" };
 
 	public static Logger logger;

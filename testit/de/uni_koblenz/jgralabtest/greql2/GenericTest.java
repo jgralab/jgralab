@@ -191,7 +191,7 @@ public class GenericTest {
 		assertEquals(expectedValue, result);
 	}
 
-	@SuppressWarnings( { "rawtypes", "unchecked" })
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private List<?> toList(JValueCollection collection) {
 		ArrayList list = new ArrayList();
 		for (JValue value : collection) {
@@ -382,8 +382,7 @@ public class GenericTest {
 
 		setOptimizer(optimizer);
 
-		// when optimizing turn on logging, too.
-		eval.startEvaluation(eval.isOptimize(), true);
+		eval.startEvaluation();
 
 		if (DEBUG_SYNTAXGRAPHS) {
 			printDebuggingSyntaxGraph(optimizer);
@@ -402,8 +401,7 @@ public class GenericTest {
 
 		setOptimizer(optimizer);
 
-		// when optimizing turn on logging, too.
-		eval.startEvaluation(eval.isOptimize(), false);
+		eval.startEvaluation();
 		JValue result = eval.getEvaluationResult();
 		return result;
 	}
