@@ -61,12 +61,12 @@ public class TGraphBrowserServer extends Thread {
 			"  Version : 1.0" };
 
 	private static final String[] copyrightInfo = {
-			"(c) 2006-2009 Institute for Software Technology",
+			"(c) 2006-2011 Institute for Software Technology",
 			"              University of Koblenz-Landau, Germany",
 			"",
 			"              ist@uni-koblenz.de",
 			"",
-			"Please report bugs to http://serres.uni-koblenz.de/bugzilla",
+			"Please report bugs to http://helena.uni-koblenz.de/redmine",
 			"",
 			"This program is free software; you can redistribute it and/or",
 			"modify it under the terms of the GNU General Public License",
@@ -81,23 +81,12 @@ public class TGraphBrowserServer extends Thread {
 			"You should have received a copy of the GNU General Public License",
 			"along with this program; if not, write to the Free Software",
 			"Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.",
-			"",
-			"This software uses:",
-			"",
-			"JGraLab Dimetrodon",
-			"(c) 2006-2009 Institute for Software Technology",
-			"              University of Koblenz-Landau, Germany",
-			"",
-			"              ist@uni-koblenz.de",
-			"",
-			"JDOM 1.0",
+			"", "This software uses:", "", "JGraLab Efraasia",
+			"(c) 2006-2011 Institute for Software Technology",
+			"              University of Koblenz-Landau, Germany", "",
+			"              ist@uni-koblenz.de", "", "JDOM 1.0",
 			"Copyright (C) 2000-2004 Jason Hunter & Brett McLaughlin.",
-			"All rights reserved.",
-			"",
-			"Apache XML-RPC 3.0",
-			"Copyright (C) 2001-2008 The Apache Software Foundation",
-			"Please note, you need the Java Enterprise Edition to make full use",
-			"of this part of the software.", "", "Apache Commons CLI 1.2",
+			"All rights reserved.", "", "Apache Commons CLI 1.2",
 			"Copyright 2001-2009 The Apache Software Foundation" };
 
 	public static Logger logger;
