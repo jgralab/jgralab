@@ -86,7 +86,6 @@
 		<fileset dir="${comlib.dir}/apache/commons/cli/" includes="**/*.jar" />
 		<fileset dir="${comlib.dir}/apache/ant" includes="**/*.jar" />
 		<fileset dir="${comlib.dir}/junit/" includes="**/*.jar" />
-		<fileset dir="${comlib.dir}/pcollections/" includes="**/*.jar" />
 		<pathelement path="${clover.jar}" />
 	</path>
 
@@ -166,7 +165,7 @@
 		<javac fork="true" srcdir="${tgtools.src}" includes="${tgtools.includes}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" target="${javac.targetVM}" includeantruntime="false">
 			<compilerarg line="-Xlint:unchecked" />
 		</javac>
-		<taskdef name="tgschema2java" classname="de.uni_koblenz.jgralab.utilities.ant.TgSchema2JavaTask" classpath="${classes.dir}:${comlib.dir}/ist_utilities/ist_utilities.jar:${comlib.dir}/pcollections/pcollections-2.0.1.jar" />
+		<taskdef name="tgschema2java" classname="de.uni_koblenz.jgralab.utilities.ant.TgSchema2JavaTask" classpath="${classes.dir}:${comlib.dir}/ist_utilities/ist_utilities.jar" />
 		<taskdef name="deletegeneratedschema" classname="de.uni_koblenz.jgralab.utilities.ant.DeleteGeneratedSchemaTask" classpath="${classes.dir}" />
 	</target>
 
@@ -259,7 +258,7 @@
 	<target name="unjar" depends="common.unjar">
 		<unjar dest="${tmp.dir}">
 			<fileset dir="${comlib.dir}/apache/commons/cli/" includes="**/*.jar" />
-			<fileset dir="${comlib.dir}/pcollections" includes="*.jar" />
+			<fileset dir="${lib.dir}/pcollections" includes="*.jar" />
 		</unjar>
 	</target>
 
