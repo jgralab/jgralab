@@ -75,8 +75,6 @@ public class VariableDeclarationLayer {
 	 */
 	private boolean firstIteration = true;
 
-	private int possibleCombinations = 0;
-
 	/**
 	 * The declaration I belong to.
 	 */
@@ -141,8 +139,6 @@ public class VariableDeclarationLayer {
 			}
 			constraintsFullfilled = fullfillsConstraints(subgraph);
 		}
-
-		possibleCombinations++;
 
 		if (GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS) {
 			boolean first = true;
@@ -251,6 +247,5 @@ public class VariableDeclarationLayer {
 
 	public void reset() {
 		firstIteration = true;
-		possibleCombinations = 0;
 	}
 }
