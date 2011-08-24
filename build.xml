@@ -165,7 +165,7 @@
 		<javac fork="true" srcdir="${tgtools.src}" includes="${tgtools.includes}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" target="${javac.targetVM}" includeantruntime="false">
 			<compilerarg line="-Xlint:unchecked" />
 		</javac>
-		<taskdef name="tgschema2java" classname="de.uni_koblenz.jgralab.utilities.ant.TgSchema2JavaTask" classpath="${classes.dir}:${comlib.dir}/ist_utilities/ist_utilities.jar" />
+		<taskdef name="tgschema2java" classname="de.uni_koblenz.jgralab.utilities.ant.TgSchema2JavaTask" classpathref="classpath" />
 		<taskdef name="deletegeneratedschema" classname="de.uni_koblenz.jgralab.utilities.ant.DeleteGeneratedSchemaTask" classpath="${classes.dir}" />
 	</target>
 
