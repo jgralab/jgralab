@@ -86,7 +86,6 @@
 		<fileset dir="${comlib.dir}/apache/commons/cli/" includes="**/*.jar" />
 		<fileset dir="${comlib.dir}/apache/ant" includes="**/*.jar" />
 		<fileset dir="${comlib.dir}/junit/" includes="**/*.jar" />
-		<fileset dir="${comlib.dir}/pcollections/" includes="**/*.jar" />
 		<pathelement path="${clover.jar}" />
 	</path>
 
