@@ -11,7 +11,6 @@ public class ChangeAttributeEventDescription extends EventDescription {
 	 */
 	private String concernedAttribute;
 
-
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 	/**
@@ -36,14 +35,14 @@ public class ChangeAttributeEventDescription extends EventDescription {
 	 * 
 	 * @param time
 	 *            the EventTime, BEFORE or AFTER
-	 * @param contextExr
+	 * @param contextExpr
 	 *            the GReQuL-Expression that represents the context of this
 	 *            EventDescription
 	 * @param attributeName
 	 *            the name of the observed Attribute
 	 */
-	public ChangeAttributeEventDescription(EventTime time,
-			String contextExpr, String attributeName) {
+	public ChangeAttributeEventDescription(EventTime time, String contextExpr,
+			String attributeName) {
 		super(time, contextExpr);
 		this.concernedAttribute = attributeName;
 	}
@@ -61,7 +60,7 @@ public class ChangeAttributeEventDescription extends EventDescription {
 	 */
 	public void fire(AttributedElement element, String attributeName,
 			Object oldValue, Object newValue) {
-		if(concernedAttribute.equals(attributeName)){
+		if (concernedAttribute.equals(attributeName)) {
 			if (super.checkContext(element)) {
 				int nested = this.getActiveECARules().get(0)
 						.getECARuleManager().getNestedTriggerCalls();
@@ -69,15 +68,13 @@ public class ChangeAttributeEventDescription extends EventDescription {
 						.getECARuleManager().getGraph();
 				for (ECARule rule : activeRules) {
 					rule.trigger(new ChangeAttributeEvent(nested, this
-							.getTime(), graph, element,
-							attributeName,
-							oldValue,
-							newValue));
+							.getTime(), graph, element, attributeName,
+							oldValue, newValue));
 				}
 			}
 		}
 	}
-	
+
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 	/**
@@ -87,6 +84,4 @@ public class ChangeAttributeEventDescription extends EventDescription {
 		return concernedAttribute;
 	}
 
-	
-	
 }

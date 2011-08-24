@@ -167,7 +167,7 @@ public class GreqlParser extends ParserHelper {
 		graph = schema.createGreql2();
 		tokens = GreqlLexer.scan(source);
 		afterParsingvariableSymbolTable = new SymbolTable();
-		duringParsingvariableSymbolTable = new EasySymbolTable();
+		duringParsingvariableSymbolTable = new SimpleSymbolTable();
 		duringParsingvariableSymbolTable.blockBegin();
 		functionSymbolTable = new HashMap<String, FunctionId>();
 		graphCleaned = false;

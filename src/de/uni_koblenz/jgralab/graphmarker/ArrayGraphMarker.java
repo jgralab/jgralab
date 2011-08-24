@@ -98,7 +98,7 @@ public abstract class ArrayGraphMarker<T extends GraphElement, O> extends
 	/**
 	 * marks the given element with the given value
 	 * 
-	 * @param elem
+	 * @param graphElement
 	 *            the graph element to mark
 	 * @param value
 	 *            the object that should be used as marking
@@ -162,7 +162,7 @@ public abstract class ArrayGraphMarker<T extends GraphElement, O> extends
 	public void set(T parameter, O value) {
 		mark(parameter, value);
 	}
-	
+
 	@Override
 	public String toString() {
 		StringBuilder out = new StringBuilder();
@@ -184,7 +184,7 @@ public abstract class ArrayGraphMarker<T extends GraphElement, O> extends
 		out.append("]");
 		return out.toString();
 	}
-	
+
 	@Override
 	public Iterable<T> getDomainElements() {
 		return getMarkedElements();
@@ -193,7 +193,7 @@ public abstract class ArrayGraphMarker<T extends GraphElement, O> extends
 	@Override
 	public Iterator<FunctionEntry<T, O>> iterator() {
 		final Iterator<T> markedElements = getMarkedElements().iterator();
-		return new Iterator<FunctionEntry<T,O>>() {
+		return new Iterator<FunctionEntry<T, O>>() {
 
 			@Override
 			public boolean hasNext() {
@@ -203,14 +203,15 @@ public abstract class ArrayGraphMarker<T extends GraphElement, O> extends
 			@Override
 			public FunctionEntry<T, O> next() {
 				T currentElement = markedElements.next();
-				return new FunctionEntry<T, O>(currentElement, get(currentElement));
+				return new FunctionEntry<T, O>(currentElement,
+						get(currentElement));
 			}
 
 			@Override
 			public void remove() {
 				markedElements.remove();
 			}
-			
+
 		};
 	}
 

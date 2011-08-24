@@ -193,8 +193,9 @@ public class AggregationTransition extends Transition {
 	 *            aggregation with the aggregation end at the far vertex
 	 * @param typeCollection
 	 *            The types which restrict the possible edges
-	 * @param role
-	 *            The accepted edge role, or null if any role is accepted
+	 * @param roles
+	 *            The set of accepted edge role names, or null if any role is
+	 *            accepted
 	 */
 	public AggregationTransition(State start, State end, boolean aggregateFrom,
 			JValueTypeCollection typeCollection, Set<String> roles,

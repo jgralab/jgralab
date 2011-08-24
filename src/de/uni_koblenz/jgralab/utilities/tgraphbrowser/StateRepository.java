@@ -120,9 +120,6 @@ public class StateRepository {
 	/**
 	 * Creates a new StateRepository. It initializes sessions and freeSessionId
 	 * it it isn't done yet.
-	 * 
-	 * @param path
-	 * @param requestThread
 	 */
 	public StateRepository(File path, RequestThread requestThread) {
 		workspace = path;
@@ -131,14 +128,6 @@ public class StateRepository {
 
 	/**
 	 * This method is called, if a GReQL query is typed in.
-	 * 
-	 * @param sessionId
-	 * @param isTableViewShown
-	 * @param showAttributes
-	 * @param numberPerPage
-	 * @param pathLength
-	 * @param query
-	 * @return
 	 */
 	public StringBuilder computeGReQLQuery(Integer sessionId,
 			Boolean isTableViewShown, Boolean showAttributes,
@@ -166,15 +155,11 @@ public class StateRepository {
 								state, elements, code);
 						elementsAreDisplayed = true;
 					} else if (elements.isEmpty()) {
-						code
-								.append("var h3error = document.getElementById(\"h3GReQLError\");\n");
-						code
-								.append("h3error.innerHTML = \"The query has an empty set as result.\";\n");
+						code.append("var h3error = document.getElementById(\"h3GReQLError\");\n");
+						code.append("h3error.innerHTML = \"The query has an empty set as result.\";\n");
 					} else {
-						code
-								.append("var h3error = document.getElementById(\"h3GReQLError\");\n");
-						code
-								.append("h3error.innerHTML = \"Only VERTEX, EDGE or COLLECTION of vertices or edges is supported.\";\n");
+						code.append("var h3error = document.getElementById(\"h3GReQLError\");\n");
+						code.append("h3error.innerHTML = \"Only VERTEX, EDGE or COLLECTION of vertices or edges is supported.\";\n");
 					}
 				} else if (result.isVertex()) {
 					JValueSet elements = new JValueSet();
@@ -191,21 +176,16 @@ public class StateRepository {
 							elements, code);
 					elementsAreDisplayed = true;
 				} else {
-					code
-							.append("var h3error = document.getElementById(\"h3GReQLError\");\n");
-					code
-							.append(
-									"h3error.innerHTML = \"The result is of type ")
+					code.append("var h3error = document.getElementById(\"h3GReQLError\");\n");
+					code.append("h3error.innerHTML = \"The result is of type ")
 							.append(result.getType())
-							.append(
-									".<br />Only VERTEX, EDGE or a COLLECTION of vertices or edges are supported.\";\n");
+							.append(".<br />Only VERTEX, EDGE or a COLLECTION of vertices or edges are supported.\";\n");
 				}
 				if (elementsAreDisplayed) {
 					code.append("cancelGReQL();");
 				}
 			} catch (EvaluateException e) {
-				code
-						.append("var h3error = document.getElementById(\"h3GReQLError\");\n");
+				code.append("var h3error = document.getElementById(\"h3GReQLError\");\n");
 				String errorMessage = e.getCause() != null ? e.getMessage()
 						+ "\n" + e.getCause().getMessage() : e.getMessage();
 				errorMessage = errorMessage.replaceAll("\"", "'");
@@ -213,8 +193,8 @@ public class StateRepository {
 				errorMessage = errorMessage.replaceAll(">", "&gt;");
 				errorMessage = errorMessage.replaceAll("\n", "<br />");
 				errorMessage = errorMessage.replaceAll("\r", "");
-				code.append("h3error.innerHTML = \"").append("<br />").append(
-						errorMessage).append("\";\n");
+				code.append("h3error.innerHTML = \"").append("<br />")
+						.append(errorMessage).append("\";\n");
 			}
 			state.lastAccess = System.currentTimeMillis();
 			code.append("timestamp = ").append(state.lastAccess).append(";\n");
@@ -242,14 +222,6 @@ public class StateRepository {
 	/**
 	 * This method is called, if the elements to be shown are typed in
 	 * explicitly.
-	 * 
-	 * @param sessionId
-	 * @param isTableViewShown
-	 * @param showAttributes
-	 * @param numberPerPage
-	 * @param pathLength
-	 * @param content
-	 * @return
 	 */
 	public StringBuilder showTypedElements(Integer sessionId,
 			Boolean isTableViewShown, Boolean showAttributes,
@@ -270,8 +242,7 @@ public class StateRepository {
 						elements.add(new JValueImpl(element));
 					} else {
 						notExistingElements.append((notExistingElements
-								.length() == 0 ? "" : ", ")
-								+ s);
+								.length() == 0 ? "" : ", ") + s);
 					}
 				} else {
 					Edge element = state.getGraph().getEdge(
@@ -280,8 +251,7 @@ public class StateRepository {
 						elements.add(new JValueImpl(element));
 					} else {
 						notExistingElements.append((notExistingElements
-								.length() == 0 ? "" : ", ")
-								+ s);
+								.length() == 0 ? "" : ", ") + s);
 					}
 				}
 			}
@@ -306,16 +276,16 @@ public class StateRepository {
 						} else {
 							ge = element.toEdge();
 						}
-						code.append("if((areVerticesShown()&&").append(
-								element.isEdge()).append(
-								")||(!areVerticesShown()&&").append(
-								element.isVertex()).append(")){\n");
+						code.append("if((areVerticesShown()&&")
+								.append(element.isEdge())
+								.append(")||(!areVerticesShown()&&")
+								.append(element.isVertex()).append(")){\n");
 						code.append("switchTable();\n");
 						code.append("}\n");
 						new TabularVisualizer().visualizeElements(code, state,
-								numberPerPage, showAttributes, (element
-										.isVertex() ? "v" : "e")
-										+ ge.getId(), true, true);
+								numberPerPage, showAttributes,
+								(element.isVertex() ? "v" : "e") + ge.getId(),
+								true, true);
 					} else {
 						new TwoDVisualizer().visualizeElements(code, state,
 								sessionId, workspace.toString(), element,
@@ -338,15 +308,6 @@ public class StateRepository {
 	/**
 	 * Displays all elements of the JValueSet <code>elements</code>.
 	 * <code>Elements</code> must not be empty.
-	 * 
-	 * @param sessionId
-	 * @param isTableViewShown
-	 * @param showAttributes
-	 * @param numberPerPage
-	 * @param pathLength
-	 * @param state
-	 * @param elements
-	 * @param code
 	 */
 	private void displayJValueSet(Integer sessionId, Boolean isTableViewShown,
 			Boolean showAttributes, Integer numberPerPage, Integer pathLength,
@@ -356,27 +317,23 @@ public class StateRepository {
 		if (isTableViewShown) {
 			TabularVisualizer tv = new TabularVisualizer();
 			tv.calculateVertexListAndEdgeList(state, elements);
-			tv
-					.visualizeElements(
-							code,
-							state,
-							numberPerPage,
-							showAttributes,
-							"v"
-									+ (state.verticesOfTableView != null ? state.verticesOfTableView[0]
-											.getId()
-											: ""), false, false);
-			tv
-					.visualizeElements(
-							code,
-							state,
-							numberPerPage,
-							showAttributes,
-							"e"
-									+ ((state.edgesOfTableView != null)
-											&& (state.edgesOfTableView.length > 0) ? state.edgesOfTableView[0]
-											.getId()
-											: ""), false, false);
+			tv.visualizeElements(
+					code,
+					state,
+					numberPerPage,
+					showAttributes,
+					"v"
+							+ (state.verticesOfTableView != null ? state.verticesOfTableView[0]
+									.getId() : ""), false, false);
+			tv.visualizeElements(
+					code,
+					state,
+					numberPerPage,
+					showAttributes,
+					"e"
+							+ ((state.edgesOfTableView != null)
+									&& (state.edgesOfTableView.length > 0) ? state.edgesOfTableView[0]
+									.getId() : ""), false, false);
 			if (state.verticesOfTableView != null) {
 				showCorrectTable(code, new JValueImpl(
 						state.verticesOfTableView[0]));
@@ -400,13 +357,13 @@ public class StateRepository {
 	 *            if true, the attributes are shown. Otherwise they are hidden.
 	 * @param currentIndex
 	 *            the navigationHistory index of the currently shown element
-	 * @return
 	 */
 	public StringBuilder refresh2D(Integer sessionId, Integer pathLength,
 			Boolean showAttributes, Integer currentIndex) {
 		StringBuilder code = new StringBuilder("function(){\n");
-		State state = getSession(sessionId, code, "refresh2D", pathLength
-				.toString(), showAttributes.toString(), currentIndex.toString());
+		State state = getSession(sessionId, code, "refresh2D",
+				pathLength.toString(), showAttributes.toString(),
+				currentIndex.toString());
 		if (state != null) {
 			TwoDVisualizer tv = new TwoDVisualizer();
 			tv.visualizeElements(code, state, sessionId, workspace.toString(),
@@ -430,7 +387,6 @@ public class StateRepository {
 	 *            should the elements be shown
 	 * @param elementId
 	 *            the id of the element which should be shown
-	 * @return
 	 */
 	public StringBuilder showElementsAs2D(Integer sessionId,
 			Integer pathLength, Boolean showAttributes, String elementId) {
@@ -470,7 +426,6 @@ public class StateRepository {
 	 * @param pathLength
 	 * @param currentIndex
 	 *            the navigationHistory index of the currently shown element
-	 * @return
 	 */
 	public StringBuilder changeView(Integer sessionId,
 			Boolean isTableViewShown, Boolean showAttributes,
@@ -478,17 +433,16 @@ public class StateRepository {
 		StringBuilder code = new StringBuilder("function(){\n");
 		State state = getSession(sessionId, code, "changeView",
 				isTableViewShown.toString(), showAttributes.toString(),
-				numberPerPage.toString(), pathLength.toString(), currentIndex
-						.toString());
+				numberPerPage.toString(), pathLength.toString(),
+				currentIndex.toString());
 		if (state != null) {
 			if (isTableViewShown) {
-				code
-						.append("document.getElementById(\"h3HowManyElements\").style.display = \"none\";\n");
+				code.append("document.getElementById(\"h3HowManyElements\").style.display = \"none\";\n");
 				TabularVisualizer tv = new TabularVisualizer();
 				if (state.navigationHistory.get(currentIndex).isVertex()) {
 					tv.calculateVertexListAndEdgeList(state);
-					showCorrectTable(code, state.navigationHistory
-							.get(currentIndex));
+					showCorrectTable(code,
+							state.navigationHistory.get(currentIndex));
 					Vertex current = state.navigationHistory.get(currentIndex)
 							.toVertex();
 					tv.visualizeElements(code, state, numberPerPage,
@@ -508,14 +462,12 @@ public class StateRepository {
 					tv.visualizeElements(code, state, 20, false, "e"
 							+ (latestEdge != null ? latestEdge.getId() : ""),
 							false, true);
-					code
-							.append("document.getElementById(\"h3HowManyVertices\").style.display = \"block\";\n");
-					code
-							.append("document.getElementById(\"h3HowManyEdges\").style.display = \"none\";\n");
+					code.append("document.getElementById(\"h3HowManyVertices\").style.display = \"block\";\n");
+					code.append("document.getElementById(\"h3HowManyEdges\").style.display = \"none\";\n");
 				} else if (state.navigationHistory.get(currentIndex).isEdge()) {
 					tv.calculateVertexListAndEdgeList(state);
-					showCorrectTable(code, state.navigationHistory
-							.get(currentIndex));
+					showCorrectTable(code,
+							state.navigationHistory.get(currentIndex));
 					Edge current = state.navigationHistory.get(currentIndex)
 							.toEdge();
 					tv.visualizeElements(code, state, numberPerPage,
@@ -529,40 +481,38 @@ public class StateRepository {
 							break;
 						}
 					}
-					tv.visualizeElements(code, state, 20, false,
+					tv.visualizeElements(
+							code,
+							state,
+							20,
+							false,
 							"v"
 									+ (latestVertex != null ? latestVertex
 											.getId() : ""), false, true);
-					code
-							.append("document.getElementById(\"h3HowManyEdges\").style.display = \"block\";\n");
-					code
-							.append("document.getElementById(\"h3HowManyVertices\").style.display = \"none\";\n");
+					code.append("document.getElementById(\"h3HowManyEdges\").style.display = \"block\";\n");
+					code.append("document.getElementById(\"h3HowManyVertices\").style.display = \"none\";\n");
 				} else {
 					JValueSet elements = state.navigationHistory.get(
 							currentIndex).toJValueSet();
 					state.currentExplicitlyDefinedSet = elements;
 					tv.calculateVertexListAndEdgeList(state, elements);
-					tv
-							.visualizeElements(
-									code,
-									state,
-									numberPerPage,
-									showAttributes,
-									"v"
-											+ (state.verticesOfTableView != null ? state.verticesOfTableView[0]
-													.getId()
-													: ""), false, false);
-					tv
-							.visualizeElements(
-									code,
-									state,
-									numberPerPage,
-									showAttributes,
-									"e"
-											+ ((state.edgesOfTableView != null)
-													&& (state.edgesOfTableView.length > 0) ? state.edgesOfTableView[0]
-													.getId()
-													: ""), false, false);
+					tv.visualizeElements(
+							code,
+							state,
+							numberPerPage,
+							showAttributes,
+							"v"
+									+ (state.verticesOfTableView != null ? state.verticesOfTableView[0]
+											.getId() : ""), false, false);
+					tv.visualizeElements(
+							code,
+							state,
+							numberPerPage,
+							showAttributes,
+							"e"
+									+ ((state.edgesOfTableView != null)
+											&& (state.edgesOfTableView.length > 0) ? state.edgesOfTableView[0]
+											.getId() : ""), false, false);
 					if (state.verticesOfTableView != null) {
 						showCorrectTable(code, new JValueImpl(
 								state.verticesOfTableView[0]));
@@ -572,15 +522,13 @@ public class StateRepository {
 					}
 				}
 			} else {
-				code
-						.append("document.getElementById(\"h3HowManyElements\").style.display = \"block\";\n");
-				code
-						.append("document.getElementById(\"h3HowManyVertices\").style.display = \"none\";\n");
-				code
-						.append("document.getElementById(\"h3HowManyEdges\").style.display = \"none\";\n");
+				code.append("document.getElementById(\"h3HowManyElements\").style.display = \"block\";\n");
+				code.append("document.getElementById(\"h3HowManyVertices\").style.display = \"none\";\n");
+				code.append("document.getElementById(\"h3HowManyEdges\").style.display = \"none\";\n");
 				TwoDVisualizer tv = new TwoDVisualizer();
-				tv.visualizeElements(code, state, sessionId, workspace
-						.toString(), state.navigationHistory.get(currentIndex),
+				tv.visualizeElements(code, state, sessionId,
+						workspace.toString(),
+						state.navigationHistory.get(currentIndex),
 						showAttributes, pathLength, currentThread);
 			}
 			state.lastAccess = System.currentTimeMillis();
@@ -593,9 +541,6 @@ public class StateRepository {
 
 	/**
 	 * Switches the table of the browser if it is needed.
-	 * 
-	 * @param code
-	 * @param currentElement
 	 */
 	private void showCorrectTable(StringBuilder code, JValue currentElement) {
 		String infix = "";
@@ -633,7 +578,6 @@ public class StateRepository {
 	 *            the id of the current edge
 	 * @param currentIndex
 	 *            the currently selected element of the navigation history
-	 * @return
 	 */
 	public StringBuilder refreshViewAfterTypeSubmit(Integer id,
 			Boolean isTableViewShown, String deselectedVertexTypes,
@@ -643,17 +587,21 @@ public class StateRepository {
 		StringBuilder code = new StringBuilder("function(){\n");
 		State state = getSession(id, code, "refreshViewAfterTypeSubmit",
 				isTableViewShown.toString(), deselectedVertexTypes,
-				deselectedEdgeTypes, showAttributes.toString(), numberPerPage
-						.toString(), pathLength.toString(), currentVertex,
+				deselectedEdgeTypes, showAttributes.toString(),
+				numberPerPage.toString(), pathLength.toString(), currentVertex,
 				currentEdge, currentIndex.toString());
 		if (state != null) {
 			for (VertexClass type : state.selectedVertexClasses.keySet()) {
-				state.selectedVertexClasses.put(type, !deselectedVertexTypes
-						.contains("#" + type.getQualifiedName() + "#"));
+				state.selectedVertexClasses.put(
+						type,
+						!deselectedVertexTypes.contains("#"
+								+ type.getQualifiedName() + "#"));
 			}
 			for (EdgeClass type : state.selectedEdgeClasses.keySet()) {
-				state.selectedEdgeClasses.put(type, !deselectedEdgeTypes
-						.contains("#" + type.getQualifiedName() + "#"));
+				state.selectedEdgeClasses.put(
+						type,
+						!deselectedEdgeTypes.contains("#"
+								+ type.getQualifiedName() + "#"));
 			}
 			String curVertex = currentVertex;
 			String curEdge = currentEdge;
@@ -662,12 +610,10 @@ public class StateRepository {
 						state.currentExplicitlyDefinedSet);
 				curVertex = "v"
 						+ (state.verticesOfTableView != null ? state.verticesOfTableView[0]
-								.getId()
-								: "");
+								.getId() : "");
 				curEdge = "e"
 						+ (state.edgesOfTableView != null ? state.edgesOfTableView[0]
-								.getId()
-								: "");
+								.getId() : "");
 			} else {
 				new TabularVisualizer().calculateVertexListAndEdgeList(state);
 			}
@@ -682,9 +628,9 @@ public class StateRepository {
 							state.currentExplicitlyDefinedSet == null);
 				} else {
 					new TwoDVisualizer().visualizeElements(code, state, id,
-							workspace.toString(), state.navigationHistory
-									.get(currentIndex), showAttributes,
-							pathLength, currentThread);
+							workspace.toString(),
+							state.navigationHistory.get(currentIndex),
+							showAttributes, pathLength, currentThread);
 				}
 			}
 			state.lastAccess = System.currentTimeMillis();
@@ -709,7 +655,6 @@ public class StateRepository {
 	 *            the number of elements which are shown on one page
 	 * @param pathLength
 	 *            the length of the displayed path
-	 * @return
 	 */
 	public StringBuilder goBackToElement(Integer id,
 			Integer indexOfNavigationHistory, Boolean isTableShown,
@@ -717,8 +662,8 @@ public class StateRepository {
 		StringBuilder code = new StringBuilder("function(){\n");
 		State state = getSession(id, code, "goBackToElement",
 				indexOfNavigationHistory.toString(), isTableShown.toString(),
-				showAttributes.toString(), numberPerPage.toString(), pathLength
-						.toString());
+				showAttributes.toString(), numberPerPage.toString(),
+				pathLength.toString());
 		if (state != null) {
 
 			// extract the chosen element from the navigationHistory
@@ -745,8 +690,8 @@ public class StateRepository {
 			// show selected element
 			if (isTableShown) {
 				boolean isVertex = currentElement.isVertex();
-				code.append("if(").append(isVertex ? "!" : "").append(
-						"areVerticesShown()){\n");
+				code.append("if(").append(isVertex ? "!" : "")
+						.append("areVerticesShown()){\n");
 				code.append("switchTable();\n");
 				code.append("}\n");
 				new TabularVisualizer().visualizeElements(code, state,
@@ -765,8 +710,7 @@ public class StateRepository {
 											+ state.getGraph().getFirstVertex()
 													.getId()
 											: "e"
-													+ (state
-															.getGraph()
+													+ (state.getGraph()
 															.getFirstEdge() != null ? state
 															.getGraph()
 															.getFirstEdge()
@@ -775,9 +719,10 @@ public class StateRepository {
 									state.currentExplicitlyDefinedSet == null);
 				}
 				if (!currentElement.isEdge() && !currentElement.isVertex()) {
-					code.append("changeBackgroundColor(\"").append(
-							isVertex ? "v" + currentElement.toVertex().getId()
-									: "e" + currentElement.toEdge().getId())
+					code.append("changeBackgroundColor(\"")
+							.append(isVertex ? "v"
+									+ currentElement.toVertex().getId() : "e"
+									+ currentElement.toEdge().getId())
 							.append("\");");
 				}
 			} else {
@@ -802,13 +747,12 @@ public class StateRepository {
 	 *            number 1.
 	 * @param vertexTdId
 	 *            the id of the td, which displayes the incidence list
-	 * @return
 	 */
 	public StringBuilder showIncidencesPage(Integer id, Integer displayedPage,
 			String vertexTdId) {
 		StringBuilder code = new StringBuilder("function (){\n");
-		State state = getSession(id, code, "showIncidencesPage", displayedPage
-				.toString(), vertexTdId);
+		State state = getSession(id, code, "showIncidencesPage",
+				displayedPage.toString(), vertexTdId);
 		if (state != null) {
 			new TabularVisualizer().createIncidentEdges(code, state.getGraph()
 					.getVertex(Integer.parseInt(vertexTdId.split("v")[1])),
@@ -836,14 +780,13 @@ public class StateRepository {
 	 *            has the number 1
 	 * @param showVertices
 	 *            if true the vertices are shown
-	 * @return
 	 */
 	public StringBuilder showPageInTable(Integer id, Integer numberPerPage,
 			Boolean showAttributes, Integer pageNumber, Boolean showVertices) {
 		StringBuilder code = new StringBuilder("function (){\n");
-		State state = getSession(id, code, "showPageInTable", numberPerPage
-				.toString(), showAttributes.toString(), pageNumber.toString(),
-				showVertices.toString());
+		State state = getSession(id, code, "showPageInTable",
+				numberPerPage.toString(), showAttributes.toString(),
+				pageNumber.toString(), showVertices.toString());
 		if (state != null) {
 			String elementId = (showVertices ? "v" : "e")
 					+ (showVertices ? state.verticesOfTableView
@@ -871,13 +814,12 @@ public class StateRepository {
 	 *            should the elements be shown
 	 * @param elementId
 	 *            the id of the element which should be shown
-	 * @return
 	 */
 	public StringBuilder showElementsAsTable(Integer id, Integer numberPerPage,
 			Boolean showAttributes, String elementId) {
 		StringBuilder code = new StringBuilder("function(){\n");
-		State state = getSession(id, code, "showElementsAsTable", numberPerPage
-				.toString(), showAttributes.toString(), elementId);
+		State state = getSession(id, code, "showElementsAsTable",
+				numberPerPage.toString(), showAttributes.toString(), elementId);
 		if (state != null) {
 			boolean createVerticesAndEdges = false;
 			boolean isAJValueSetShown = state.currentExplicitlyDefinedSet == null;
@@ -903,8 +845,7 @@ public class StateRepository {
 												+ (state.getGraph()
 														.getFirstEdge() != null ? state
 														.getGraph()
-														.getFirstEdge()
-														.getId()
+														.getFirstEdge().getId()
 														: ""), true,
 								isAJValueSetShown);
 			}
@@ -917,8 +858,8 @@ public class StateRepository {
 						Integer.parseInt(elementId.substring(1)));
 				addToBreadcrumbBar(code, state, new JValueImpl(current), true);
 			}
-			code.append("changeBackgroundColor(\"").append(elementId).append(
-					"\");");
+			code.append("changeBackgroundColor(\"").append(elementId)
+					.append("\");");
 			code.append("timestamp = ").append(state.lastAccess).append(";\n");
 		}
 		return code.append("}");
@@ -939,14 +880,13 @@ public class StateRepository {
 	 *            the current edge
 	 * @param currentVertex
 	 *            the current vertex
-	 * @return
 	 */
 	public StringBuilder refreshTable(Integer id, Integer numberPerPage,
 			Boolean showAttributes, String currentEdge, String currentVertex) {
 		StringBuilder code = new StringBuilder("function(){\n");
-		State state = getSession(id, code, "refreshTable", numberPerPage
-				.toString(), showAttributes.toString(), currentEdge,
-				currentVertex);
+		State state = getSession(id, code, "refreshTable",
+				numberPerPage.toString(), showAttributes.toString(),
+				currentEdge, currentVertex);
 		if (state != null) {
 			new TabularVisualizer().visualizeElements(code, state,
 					numberPerPage, showAttributes, currentEdge, false,
@@ -961,39 +901,27 @@ public class StateRepository {
 	/**
 	 * Hides the loading bar, fills the filter window, initializes the
 	 * breadcrumb bar with the first vertex,visualizes the first 20 vertices.
-	 * 
-	 * @param id
-	 * @return
 	 */
 	public StringBuilder initializeGraphView(Integer id) {
 		StringBuilder code = new StringBuilder("function(){\n");
 		State state = getSession(id, code, "initializeGraphView");
 		if (state != null) {
 			// ## hide divLoadBar
-			code
-					.append("document.getElementById(\"divLoadBar\").style.display = \"none\";\n");
+			code.append("document.getElementById(\"divLoadBar\").style.display = \"none\";\n");
 			// ## show top
-			code
-					.append("document.getElementById(\"checkShowAttributes\").style.visibility = \"visible\";\n");
-			code
-					.append("document.getElementById(\"pAttributes\").style.visibility = \"visible\";\n");
-			code
-					.append("document.getElementById(\"divTextVis\").style.visibility = \"visible\";\n");
-			code
-					.append("document.getElementById(\"aChangeView\").style.visibility = \"visible\";\n");
-			code
-					.append("document.getElementById(\"rightOption\").style.visibility = \"visible\";\n");
+			code.append("document.getElementById(\"checkShowAttributes\").style.visibility = \"visible\";\n");
+			code.append("document.getElementById(\"pAttributes\").style.visibility = \"visible\";\n");
+			code.append("document.getElementById(\"divTextVis\").style.visibility = \"visible\";\n");
+			code.append("document.getElementById(\"aChangeView\").style.visibility = \"visible\";\n");
+			code.append("document.getElementById(\"rightOption\").style.visibility = \"visible\";\n");
 			if ((dot == null) || dot.isEmpty()
 					|| (state.getGraph().getVCount() == 0)) {
-				code
-						.append("document.getElementById(\"aChangeView\").style.visibility = \"hidden\";\n");
+				code.append("document.getElementById(\"aChangeView\").style.visibility = \"hidden\";\n");
 			}
 			// ## hide divLoadBar
-			code
-					.append("document.getElementById(\"divRight\").style.display = \"block\";\n");
+			code.append("document.getElementById(\"divRight\").style.display = \"block\";\n");
 			// ## hide divLoadBar
-			code
-					.append("document.getElementById(\"divFilterWindow\").style.display = \"block\";\n");
+			code.append("document.getElementById(\"divFilterWindow\").style.display = \"block\";\n");
 			// ## initialize FilterWindow
 			new SchemaVisualizer().createSchemaRepresentation(code, state);
 			// ## initialize breadcrumb bar
@@ -1008,13 +936,13 @@ public class StateRepository {
 			tv.visualizeElements(code, state, 20, false, "v"
 					+ (firstVertex != null ? firstVertex.getId() : ""), false,
 					state.currentExplicitlyDefinedSet == null);
-			code.append("changeBackgroundColor(\"v").append(
-					firstVertex != null ? firstVertex.getId() : "").append(
-					"\");\n");
+			code.append("changeBackgroundColor(\"v")
+					.append(firstVertex != null ? firstVertex.getId() : "")
+					.append("\");\n");
 			tv.visualizeElements(code, state, 20, false, "e"
 					+ (state.getGraph().getFirstEdge() != null ? state
-							.getGraph().getFirstEdge().getId() : ""),
-					false, state.currentExplicitlyDefinedSet == null);
+							.getGraph().getFirstEdge().getId() : ""), false,
+					state.currentExplicitlyDefinedSet == null);
 			code.append("timestamp = ").append(state.lastAccess).append(";\n");
 			code.append("resize();\n");
 			code.append("resize();\n");// fixes the correct size in FF
@@ -1036,7 +964,6 @@ public class StateRepository {
 	 * @param isNewElement
 	 *            It is false, if you want to show an element of the breadcrumb
 	 *            bar.
-	 * @return
 	 */
 	public StringBuilder refreshBreadcrumbBar(Integer id, String elementId,
 			Boolean isTableShown, Boolean isNewElement) {
@@ -1059,16 +986,17 @@ public class StateRepository {
 			state.insertPosition = currentIndex + 1;
 			boolean isVertex = currentElement.isVertex();
 			if (isTableShown) {
-				code.append("if(").append(isVertex ? "!" : "").append(
-						"areVerticesShown()){\n");
+				code.append("if(").append(isVertex ? "!" : "")
+						.append("areVerticesShown()){\n");
 				code.append("switchTable();\n");
 				code.append("}\n");
 			}
 			addToBreadcrumbBar(code, state, null, isNewElement);
-			code.append("current").append(isVertex ? "Vertex" : "Edge").append(
-					" = \"").append(
-					isVertex ? "v" + currentElement.toVertex().getId() : "e"
-							+ Math.abs(currentElement.toEdge().getId()))
+			code.append("current")
+					.append(isVertex ? "Vertex" : "Edge")
+					.append(" = \"")
+					.append(isVertex ? "v" + currentElement.toVertex().getId()
+							: "e" + Math.abs(currentElement.toEdge().getId()))
 					.append("\";\n");
 		}
 		code.append("timestamp = ").append(state.lastAccess).append(";\n");
@@ -1096,8 +1024,7 @@ public class StateRepository {
 	private StringBuilder addToBreadcrumbBar(StringBuilder code, State state,
 			JValue element, Boolean isNewElement) {
 		int currentPage = 0;
-		code
-				.append("var divBreadcrumbBar = document.getElementById(\"divBreadcrumbBar\");\n");
+		code.append("var divBreadcrumbBar = document.getElementById(\"divBreadcrumbBar\");\n");
 		code.append("divBreadcrumbBar.innerHTML = \"\";\n");
 		// create p
 		code.append("var breadcrumbBar = document.createElement(\"p\");\n");
@@ -1121,8 +1048,7 @@ public class StateRepository {
 			for (int i = 0; i < state.navigationHistory.size(); i++) {
 				if (i > 0) {
 					// this is not the first element
-					code
-							.append("var raquo = document.createTextNode(String.fromCharCode(187));\n");
+					code.append("var raquo = document.createTextNode(String.fromCharCode(187));\n");
 					code.append("breadcrumbBar.appendChild(raquo);\n");
 				}
 				createBreadcrumbEntry(code, state, i,
@@ -1139,24 +1065,20 @@ public class StateRepository {
 					// start element of a new breadcrumb bar page but not the
 					// first one
 					// create next p
-					code
-							.append("breadcrumbBar = document.createElement(\"p\");\n");
+					code.append("breadcrumbBar = document.createElement(\"p\");\n");
 					code.append("breadcrumbBar.id = \"pBreadcrumbContent")
 							.append(++pNumber).append("\";\n");
-					code
-							.append("divBreadcrumbBar.appendChild(breadcrumbBar);\n");
+					code.append("divBreadcrumbBar.appendChild(breadcrumbBar);\n");
 					code.append("breadcrumbBar.style.display = \"none\";\n");
 					// create ... >>
 					code.append("var aBack = document.createElement(\"a\");\n");
 					code.append("aBack.innerHTML = \"...\";\n");
-					code
-							.append(
-									"aBack.href = \"javascript:switchBreadcrumbPage('pBreadcrumbContent")
+					code.append(
+							"aBack.href = \"javascript:switchBreadcrumbPage('pBreadcrumbContent")
 							.append(pNumber).append("','pBreadcrumbContent")
 							.append(pNumber - 1).append("');\";\n");
 					code.append("breadcrumbBar.appendChild(aBack);\n");
-					code
-							.append("var raquo = document.createTextNode(String.fromCharCode(187));\n");
+					code.append("var raquo = document.createTextNode(String.fromCharCode(187));\n");
 					code.append("breadcrumbBar.appendChild(raquo);\n");
 				}
 				if (i == state.insertPosition - 1) {
@@ -1166,30 +1088,28 @@ public class StateRepository {
 						i < state.insertPosition ? "white" : "gray");
 				if (i != state.navigationHistory.size() - 1) {
 					// create >>
-					code
-							.append("var raquo = document.createTextNode(String.fromCharCode(187));\n");
+					code.append("var raquo = document.createTextNode(String.fromCharCode(187));\n");
 					code.append("breadcrumbBar.appendChild(raquo);\n");
 					if (i % NUMBER_OF_ELEMENTS_IN_BREADCRUMBBAR == (modul - 1 + NUMBER_OF_ELEMENTS_IN_BREADCRUMBBAR)
 							% NUMBER_OF_ELEMENTS_IN_BREADCRUMBBAR) {
 						// last element of a new breadcrumb bar page but not the
 						// last element in the navigationHistory
 						// create ...
-						code
-								.append("var aBack = document.createElement(\"a\");\n");
+						code.append("var aBack = document.createElement(\"a\");\n");
 						code.append("aBack.innerHTML = \"...\";\n");
-						code
-								.append(
-										"aBack.href = \"javascript:switchBreadcrumbPage('pBreadcrumbContent")
+						code.append(
+								"aBack.href = \"javascript:switchBreadcrumbPage('pBreadcrumbContent")
 								.append(pNumber)
-								.append("','pBreadcrumbContent").append(
-										pNumber + 1).append("');\";\n");
+								.append("','pBreadcrumbContent")
+								.append(pNumber + 1).append("');\";\n");
 						code.append("breadcrumbBar.appendChild(aBack);\n");
 					}
 				}
 			}
 		}
-		code.append("document.getElementById(\"pBreadcrumbContent").append(
-				currentPage).append("\").style.display = \"inline\";\n");
+		code.append("document.getElementById(\"pBreadcrumbContent")
+				.append(currentPage)
+				.append("\").style.display = \"inline\";\n");
 		return code;
 	}
 
@@ -1241,27 +1161,22 @@ public class StateRepository {
 				.append(",'").append(elementId).append("');\";\n");
 		code.append("newEntry.innerHTML = \"").append(elementId)
 				.append("\";\n");
-		code.append("newEntry.style.color = \"").append(colorOfEntry).append(
-				"\";\n");
+		code.append("newEntry.style.color = \"").append(colorOfEntry)
+				.append("\";\n");
 		code.append("breadcrumbBar.appendChild(newEntry);\n");
 	}
 
 	/**
 	 * Sets the html-page to the default values. It let's the Browser check, if
 	 * the graph is loaded.
-	 * 
-	 * @param id
-	 * @return
 	 */
 	public StringBuilder initializeBrowser(Integer id) {
 		State state = sessions.get(id);
 		StringBuilder code = new StringBuilder("function(){\n");
 		// ## initialize top bar
 		// delete the shown graphs of the server
-		code
-				.append("var optgroup = document.getElementById(\"OptgroupServersideGraph\");\n");
-		code
-				.append("var oldOpt = optgroup.getElementsByTagName(\"option\");\n");
+		code.append("var optgroup = document.getElementById(\"OptgroupServersideGraph\");\n");
+		code.append("var oldOpt = optgroup.getElementsByTagName(\"option\");\n");
 		code.append("for(var i=0; i<oldOpt.length; i++ ){\n");
 		code.append("optgroup.removeChild(oldOpt[i]);\n");
 		code.append("}\n");
@@ -1270,91 +1185,60 @@ public class StateRepository {
 		code.append("var optValue;\n");
 		code.append("var optText;\n");
 		createOptionForGraphs(code, workspace);
-		code.append("findPositionOf(\"").append(
-				state.getGraphWrapper().graphPath.replace("\\", "/")).append(
-				"\");\n");
+		code.append("findPositionOf(\"")
+				.append(state.getGraphWrapper().graphPath.replace("\\", "/"))
+				.append("\");\n");
 		// set the shown one as selected
-		code
-				.append("document.getElementById(\"selectGraph\").selectedIndex = selectedGraphIndex;\n");
+		code.append("document.getElementById(\"selectGraph\").selectedIndex = selectedGraphIndex;\n");
 		// hide rest of title
-		code
-				.append("document.getElementById(\"checkShowAttributes\").style.visibility = \"hidden\";\n");
-		code
-				.append("document.getElementById(\"pAttributes\").style.visibility = \"hidden\";\n");
-		code
-				.append("document.getElementById(\"divTextVis\").style.visibility = \"hidden\";\n");
-		code
-				.append("document.getElementById(\"aChangeView\").style.visibility = \"hidden\";\n");
-		code
-				.append("document.getElementById(\"rightOption\").style.visibility = \"hidden\";\n");
+		code.append("document.getElementById(\"checkShowAttributes\").style.visibility = \"hidden\";\n");
+		code.append("document.getElementById(\"pAttributes\").style.visibility = \"hidden\";\n");
+		code.append("document.getElementById(\"divTextVis\").style.visibility = \"hidden\";\n");
+		code.append("document.getElementById(\"aChangeView\").style.visibility = \"hidden\";\n");
+		code.append("document.getElementById(\"rightOption\").style.visibility = \"hidden\";\n");
 		// deselect checkShowAttributes
-		code
-				.append("document.getElementById(\"checkShowAttributes\").checked = \"\";\n");
-		code
-				.append("document.getElementById(\"checkShowAttributes\").style.visible = \"hidden\";\n");
+		code.append("document.getElementById(\"checkShowAttributes\").checked = \"\";\n");
+		code.append("document.getElementById(\"checkShowAttributes\").style.visible = \"hidden\";\n");
 		// show table view and table options
-		code
-				.append("document.getElementById(\"divTextVis\").style.display = \"inline\";\n");
-		code
-				.append("document.getElementById(\"div2DVis\").style.display = \"none\";\n");
-		code
-				.append("document.getElementById(\"divTextGraph\").style.display = \"block\";\n");
-		code
-				.append("document.getElementById(\"div2DGraph\").style.display = \"none\";\n");
+		code.append("document.getElementById(\"divTextVis\").style.display = \"inline\";\n");
+		code.append("document.getElementById(\"div2DVis\").style.display = \"none\";\n");
+		code.append("document.getElementById(\"divTextGraph\").style.display = \"block\";\n");
+		code.append("document.getElementById(\"div2DGraph\").style.display = \"none\";\n");
 		// set 20 as selected
-		code
-				.append("document.getElementById(\"selectElementsPerPage\").selectedIndex = 1;\n");
+		code.append("document.getElementById(\"selectElementsPerPage\").selectedIndex = 1;\n");
 		// set textPathLength to 2
-		code
-				.append("document.getElementById(\"textPathLength\").value = \"1\";\n");
+		code.append("document.getElementById(\"textPathLength\").value = \"1\";\n");
 		// ## set FilterWindow
-		code
-				.append("document.getElementById(\"h3HowManyVertices\").innerHTML = \"\";\n");
-		code
-				.append("document.getElementById(\"h3HowManyVertices\").style.display = \"block\";\n");
-		code
-				.append("document.getElementById(\"h3HowManyEdges\").innerHTML = \"\";\n");
-		code
-				.append("document.getElementById(\"h3HowManyEdges\").style.display = \"none\";\n");
-		code
-				.append("document.getElementById(\"h3HowManyElements\").innerHTML = \"\";\n");
-		code
-				.append("document.getElementById(\"h3HowManyElements\").style.display = \"none\";\n");
+		code.append("document.getElementById(\"h3HowManyVertices\").innerHTML = \"\";\n");
+		code.append("document.getElementById(\"h3HowManyVertices\").style.display = \"block\";\n");
+		code.append("document.getElementById(\"h3HowManyEdges\").innerHTML = \"\";\n");
+		code.append("document.getElementById(\"h3HowManyEdges\").style.display = \"none\";\n");
+		code.append("document.getElementById(\"h3HowManyElements\").innerHTML = \"\";\n");
+		code.append("document.getElementById(\"h3HowManyElements\").style.display = \"none\";\n");
 		// show vertexClasses
 		code.append("changeFilterView('divVertexClass','aVertex');\n");
 		// delete Content of divVertexClass and divEdgeClass
-		code
-				.append("document.getElementById(\"divVertexClass\").innerHTML = \"\";\n");
-		code
-				.append("document.getElementById(\"divEdgeClass\").innerHTML = \"\";\n");
+		code.append("document.getElementById(\"divVertexClass\").innerHTML = \"\";\n");
+		code.append("document.getElementById(\"divEdgeClass\").innerHTML = \"\";\n");
 		// select checkSelectAll
-		code
-				.append("document.getElementById(\"checkSelectAll\").checked = \"checked\";\n");
+		code.append("document.getElementById(\"checkSelectAll\").checked = \"checked\";\n");
 		// show default regExpr
-		code
-				.append("document.getElementById(\"inputRegEx\").value = \"<a case insensitive regular expression>\";\n");
+		code.append("document.getElementById(\"inputRegEx\").value = \"<a case insensitive regular expression>\";\n");
 		// ## clearDisplay and cancelGReQL
 		code.append("cancelGReQL('aGReQL');\n");
 		// ## set textElem to ""
 		code.append("document.getElementById(\"textElem\").value = \"\";\n");
 		// ## clear pBreadcrumbContent
-		code
-				.append("document.getElementById(\"pBreadcrumbContent0\").innerHTML = \"\";\n");
+		code.append("document.getElementById(\"pBreadcrumbContent0\").innerHTML = \"\";\n");
 		// ## clean up table view
 		// clear vertexTable and EdgeTable
-		code
-				.append("document.getElementById(\"divTextVertex\").innerHTML = \"\";\n");
-		code
-				.append("document.getElementById(\"divTextEdge\").innerHTML = \"\";\n");
+		code.append("document.getElementById(\"divTextVertex\").innerHTML = \"\";\n");
+		code.append("document.getElementById(\"divTextEdge\").innerHTML = \"\";\n");
 		// set to vertexTable
-		code
-				.append("var divTextVertex = document.getElementById(\"divTextVertex\");\n");
-		code
-				.append("var divTextEdge = document.getElementById(\"divTextEdge\");\n");
-		code
-				.append("var aShowVertices = document.getElementById(\"aShowVertices\");\n");
-		code
-				.append("var aShowEdges = document.getElementById(\"aShowEdges\");\n");
+		code.append("var divTextVertex = document.getElementById(\"divTextVertex\");\n");
+		code.append("var divTextEdge = document.getElementById(\"divTextEdge\");\n");
+		code.append("var aShowVertices = document.getElementById(\"aShowVertices\");\n");
+		code.append("var aShowEdges = document.getElementById(\"aShowEdges\");\n");
 		code.append("if(divTextVertex.hasAttribute){\n");
 		code.append("divTextEdge.style.display = \"none\";\n");
 		code.append("divTextVertex.style.display = \"block\";\n");
@@ -1363,20 +1247,15 @@ public class StateRepository {
 		code.append("}else{\n");
 		code.append("divTextEdge.style.display = \"none\";\n");
 		code.append("divTextVertex.style.display = \"block\";\n");
-		code
-				.append("aShowVertices.setAttribute(\"className\",\"geklickt\");\n");
+		code.append("aShowVertices.setAttribute(\"className\",\"geklickt\");\n");
 		code.append("aShowEdges.setAttribute(\"className\",\"\");\n");
 		code.append("}\n");
 		// ## clean up 2D view
-		code
-				.append("document.getElementById(\"div2DGraph\").innerHTML = \"\";\n");
+		code.append("document.getElementById(\"div2DGraph\").innerHTML = \"\";\n");
 		// ## show loadBar
-		code
-				.append("document.getElementById(\"divLoadBar\").style.display = \"block\";\n");
-		code
-				.append("document.getElementById(\"loadBarForeground\").style.width = \"0px\";\n");
-		code
-				.append("document.getElementById(\"loadBarNumber\").innerHTML = \"0 %\";\n");
+		code.append("document.getElementById(\"divLoadBar\").style.display = \"block\";\n");
+		code.append("document.getElementById(\"loadBarForeground\").style.width = \"0px\";\n");
+		code.append("document.getElementById(\"loadBarNumber\").innerHTML = \"0 %\";\n");
 		// ## set timestamp to new time
 		state.lastAccess = System.currentTimeMillis();
 		code.append("timestamp = ").append(state.lastAccess).append(";\n");
@@ -1389,9 +1268,6 @@ public class StateRepository {
 	 * If the graph wasn't loaded, the browser should ask again in 1 sec. If the
 	 * loading was canceled or an exception occurred an error message is sent
 	 * back. Otherwise the graph is loaded.
-	 * 
-	 * @param id
-	 * @return
 	 */
 	public StringBuilder checkLoading(Integer id) {
 		State state = sessions.get(id);
@@ -1407,43 +1283,36 @@ public class StateRepository {
 					if (currentGraphWrapper.excOfWorkingCallable != null) {
 						// an exception occured while loading the graph
 						Exception e = currentGraphWrapper.excOfWorkingCallable;
-						code
-								.append(
-										"document.getElementById(\"loadError\").innerHTML += \"ERROR:<br />")
+						code.append(
+								"document.getElementById(\"loadError\").innerHTML += \"ERROR:<br />")
 								.append(e.toString()).append("\";\n");
 					} else if (currentGraphWrapper.graph == null) {
-						code
-								.append("document.getElementById(\"loadError\").innerHTML += \"ERROR:<br />The graph couldn't be loaded!<br />Probably an OutOfMemoryError occured.\";\n");
+						code.append("document.getElementById(\"loadError\").innerHTML += \"ERROR:<br />The graph couldn't be loaded!<br />Probably an OutOfMemoryError occured.\";\n");
 					} else {
 						// the graph was loaded
 						currentGraphWrapper.workingCallable = null;
 						return initializeGraphView(id);
 					}
 				} else if (currentGraphWrapper.workingCallable.isCancelled()) {
-					code
-							.append("document.getElementById(\"loadError\").innerHTML += \"ERROR:<br />The loading of the graph was canceled!\";\n");
+					code.append("document.getElementById(\"loadError\").innerHTML += \"ERROR:<br />The loading of the graph was canceled!\";\n");
 				} else {
 					// the graph was not loaded completely
-					code
-							.append(
-									"document.getElementById(\"loadBarForeground\").style.width = \"")
-							.append(currentGraphWrapper.progress).append(
-									"px\";\n");
-					code
-							.append(
-									"document.getElementById(\"loadBarNumber\").innerHTML = \"")
-							.append(currentGraphWrapper.progress / 4).append(
-									" %\";\n");
-					code
-							.append("loadId = window.setTimeout(\"checkLoad()\", 1000);\n");
+					code.append(
+							"document.getElementById(\"loadBarForeground\").style.width = \"")
+							.append(currentGraphWrapper.progress)
+							.append("px\";\n");
+					code.append(
+							"document.getElementById(\"loadBarNumber\").innerHTML = \"")
+							.append(currentGraphWrapper.progress / 4)
+							.append(" %\";\n");
+					code.append("loadId = window.setTimeout(\"checkLoad()\", 1000);\n");
 					state.lastAccess = System.currentTimeMillis();
 					code.append("timestamp = ").append(state.lastAccess)
 							.append(";\n");
 				}
 			} catch (Exception e) {
-				code
-						.append(
-								"document.getElementById(\"loadError\").innerHTML += \"ERROR:<br />")
+				code.append(
+						"document.getElementById(\"loadError\").innerHTML += \"ERROR:<br />")
 						.append(e.toString()).append("\";\n");
 			}
 		}
@@ -1458,7 +1327,6 @@ public class StateRepository {
 	 * 
 	 * @param directory
 	 *            the directory to look for graphs
-	 * @return
 	 */
 	private void createOptionForGraphs(StringBuilder code, File directory) {
 		for (File f : directory.listFiles()) {
@@ -1468,17 +1336,17 @@ public class StateRepository {
 							".gz"))) {
 				// f is a graph file
 				code.append("childOpt = document.createElement(\"option\");\n");
-				code
-						.append("optValue = document.createAttribute(\"value\");\n");
-				code.append("optValue.nodeValue = \"").append(
-						f.toString().replace("\\", "/")).append("\";\n");
+				code.append("optValue = document.createAttribute(\"value\");\n");
+				code.append("optValue.nodeValue = \"")
+						.append(f.toString().replace("\\", "/"))
+						.append("\";\n");
 				code.append("childOpt.setAttributeNode(optValue);\n");
-				code.append("optText = document.createTextNode(\"").append(
-						f.toString().replace(workspace.toString(), "").replace(
-								"\\", "/").substring(1)).append("\");\n");
+				code.append("optText = document.createTextNode(\"")
+						.append(f.toString().replace(workspace.toString(), "")
+								.replace("\\", "/").substring(1))
+						.append("\");\n");
 				code.append("childOpt.appendChild(optText);\n");
-				code
-						.append("insertSortedIntoOption(childOpt,1,optgroup.childNodes.length-1);\n");
+				code.append("insertSortedIntoOption(childOpt,1,optgroup.childNodes.length-1);\n");
 			} else if (f.exists() && f.isDirectory()) {
 				// search the folder
 				createOptionForGraphs(code, f);
@@ -1489,9 +1357,6 @@ public class StateRepository {
 	/**
 	 * This method is called when the page of the browser is closed or reloaded.
 	 * The state of this session is deleted.
-	 * 
-	 * @param id
-	 * @return
 	 */
 	public StringBuilder closeSession(Integer id) {
 		State s = getSession(id);
@@ -1505,7 +1370,7 @@ public class StateRepository {
 	 * Deletes the graph <code>path</code>, from the server. The graph must be
 	 * in the workspace and end with .tg or .gz.
 	 * 
-	 * @param graph
+	 * @param path
 	 *            the path to the graph
 	 * @return an error message for the browser, if delete fails. Otherwise the
 	 *         remaining graphs are shown.
@@ -1539,8 +1404,6 @@ public class StateRepository {
 	 * If there is no workspace, an error message is returned. If there are no
 	 * graphs in the workspace it is shown in divserver. Else the graphs are
 	 * shown in divserver.
-	 * 
-	 * @return
 	 */
 	public StringBuilder showGraphsOfServer() {
 		if (workspace != null) {
@@ -1551,16 +1414,13 @@ public class StateRepository {
 			StringBuilder list = new StringBuilder();
 			if (!createListOfGraphs(list, workspace)) {
 				code.append("var h2 = document.createElement(\"h2\");\n");
-				code
-						.append("h2.innerHTML = \"There are no graphs on the server.\";\n");
+				code.append("h2.innerHTML = \"There are no graphs on the server.\";\n");
 				code.append("div.appendChild(h2);\n");
 			} else {
 				code.append("var h3 = document.createElement(\"h3\");\n");
-				code
-						.append("h3.innerHTML = \"Choose a graph from the server:\";\n");
+				code.append("h3.innerHTML = \"Choose a graph from the server:\";\n");
 				code.append("div.appendChild(h3);\n");
-				code
-						.append("div.appendChild(document.createElement(\"br\"));\n");
+				code.append("div.appendChild(document.createElement(\"br\"));\n");
 				code.append("var parentUl = document.createElement(\"ul\");\n");
 				code.append("div.appendChild(parentUl);\n");
 				code.append("parentUl.id = \"parentUl\";");
@@ -1576,9 +1436,9 @@ public class StateRepository {
 	/**
 	 * Loads the graph <code>graph</code>, from the server.
 	 * 
-	 * @param graph
+	 * @param path
 	 *            the path to the graph
-	 * @return
+	 * @return a StringBuilder with a new session number
 	 */
 	public StringBuilder loadGraphFromServer(String path) {
 		return new StringBuilder(Integer.toString(createNewSession(path)));
@@ -1589,7 +1449,7 @@ public class StateRepository {
 	 * -1 if the tg.-file is too big.
 	 * 
 	 * @param uri
-	 * @return
+	 * @return a StringBuilder with a new session number
 	 */
 	public StringBuilder loadGraphFromURI(Boolean overwrite, String uri) {
 		if (!uri.toLowerCase().endsWith(".tg")
@@ -1655,8 +1515,9 @@ public class StateRepository {
 			e.printStackTrace();
 			return returnError(e.toString());
 		}
-		return new StringBuilder(!isSizeOk ? "-1" : Integer
-				.toString(createNewSession(graphFile.getAbsolutePath())));
+		return new StringBuilder(
+				!isSizeOk ? "-1" : Integer.toString(createNewSession(graphFile
+						.getAbsolutePath())));
 	}
 
 	/**
@@ -1664,18 +1525,14 @@ public class StateRepository {
 	 * 
 	 * @param message
 	 *            the message of the error.
-	 * @return
 	 */
 	private StringBuilder returnError(String message) {
 		StringBuilder code = new StringBuilder("function() {\n");
-		code
-				.append("document.getElementById('divError').style.display = \"block\";\n");
-		code
-				.append(
-						"document.getElementById('h2ErrorMessage').innerHTML = \"ERROR: ")
+		code.append("document.getElementById('divError').style.display = \"block\";\n");
+		code.append(
+				"document.getElementById('h2ErrorMessage').innerHTML = \"ERROR: ")
 				.append(message).append("\";\n");
-		code
-				.append("document.getElementById('divNonError').style.display = \"none\";\n");
+		code.append("document.getElementById('divNonError').style.display = \"none\";\n");
 		return code.append("}");
 	}
 
@@ -1702,39 +1559,34 @@ public class StateRepository {
 					graphsExist = true;
 					code.append("var li = document.createElement(\"li\");\n");
 					code.append("var a = document.createElement(\"a\");\n");
-					code.append("a.innerHTML = \"").append(
-							Pattern.compile(Matcher.quoteReplacement("\\"))
+					code.append("a.innerHTML = \"")
+							.append(Pattern
+									.compile(Matcher.quoteReplacement("\\"))
 									.matcher(
 											f.toString().substring(
 													workspace.toString()
 															.length() + 1))
 									.replaceAll("/")).append("\";\n");
-					code
-							.append(
-									"a.href = \"javascript:document.location = 'loadGraphFromServer?path='+'")
-							.append(
-									Pattern.compile(
-											Matcher.quoteReplacement("\\"))
-											.matcher(f.toString()).replaceAll(
-													"/")).append("';\";\n");
+					code.append(
+							"a.href = \"javascript:document.location = 'loadGraphFromServer?path='+'")
+							.append(Pattern
+									.compile(Matcher.quoteReplacement("\\"))
+									.matcher(f.toString()).replaceAll("/"))
+							.append("';\";\n");
 					code.append("li.appendChild(a);\n");
-					code
-							.append("li.appendChild(document.createTextNode(String.fromCharCode(160)));\n");
-					code
-							.append("var deleteA = document.createElement(\"a\");\n");
+					code.append("li.appendChild(document.createTextNode(String.fromCharCode(160)));\n");
+					code.append("var deleteA = document.createElement(\"a\");\n");
 					code.append("deleteA.innerHTML = \"X\";\n");
 					code.append("deleteA.href = \"javascript:deleteGraph('")
-							.append(
-									Pattern.compile(
-											Matcher.quoteReplacement("\\"))
-											.matcher(f.toString()).replaceAll(
-													"/")).append("');\";\n");
+							.append(Pattern
+									.compile(Matcher.quoteReplacement("\\"))
+									.matcher(f.toString()).replaceAll("/"))
+							.append("');\";\n");
 					code.append("deleteA.style.textDecoration = \"none\";\n");
 					code.append("deleteA.style.color = \"red\";\n");
 					code.append("deleteA.style.fontWeight = \"bold\";\n");
 					code.append("li.appendChild(deleteA);\n");
-					code
-							.append("insertSorted(li, parentUl, 0, parentUl.childNodes.length-1);\n");
+					code.append("insertSorted(li, parentUl, 0, parentUl.childNodes.length-1);\n");
 				}
 			}
 		}
@@ -1744,8 +1596,8 @@ public class StateRepository {
 	/**
 	 * Reloads the current graph of this session.
 	 * 
-	 * @param {@link Integer} sessionId
-	 * @return {@link StringBuilder} the code to reinitialize the browser
+	 * @param sessionId
+	 * @return the code to reinitialize the browser
 	 */
 	public StringBuilder reloadGraph(Integer sessionId) {
 		State currentState = getSession(sessionId);
@@ -1757,14 +1609,13 @@ public class StateRepository {
 	}
 
 	/**
-	 * {@link State#ignoreNewGraphVersions} is set to true. That means it is not
-	 * checked if the tg file has changed. Further more the browser is told to
-	 * send the request, which lead to the question if the newer version should
-	 * be loaded, again.
+	 * State.ignoreNewGraphVersions is set to true. That means it is not checked
+	 * if the tg file has changed. Further more the browser is told to send the
+	 * request, which lead to the question if the newer version should be
+	 * loaded, again.
 	 * 
 	 * @param sessionId
 	 * @param oldMethodCall
-	 * @return
 	 */
 	public StringBuilder keepOldGraph(Integer sessionId, String oldMethodCall) {
 		State currentState = getSession(sessionId);
@@ -1846,7 +1697,6 @@ public class StateRepository {
 	 *            the name of the method which calls this method.
 	 * @param currentParameters
 	 *            the current parameters of the calling method
-	 * @return
 	 */
 	public static State getSession(int sessionId, StringBuilder code,
 			String calledMethod, String... currentParameters) {
@@ -1856,9 +1706,8 @@ public class StateRepository {
 		if (!state.ignoreNewGraphVersions && currentTgFile.exists()
 				&& currentTgFile.lastModified() > gw.lastModified) {
 			// the current tg-file was modified. Ask if it should be reloaded.
-			code
-					.append(
-							"var reload = confirm(\"The tg-file of the currently loaded graph has changed.\\n")
+			code.append(
+					"var reload = confirm(\"The tg-file of the currently loaded graph has changed.\\n")
 					.append("Do you want to load the modified graph?\");\n");
 			code.append("if(reload){\n");
 			code.append("sendPostRequest(\"reloadGraph\");\n");
@@ -2093,10 +1942,8 @@ public class StateRepository {
 		/**
 		 * Creates a new Collable which loads the graph.
 		 * 
-		 * @param graphIdentifier
-		 *            the .tg-file of the graph
-		 * @param state2
-		 *            the corresponsing state
+		 * @param graphWrapper
+		 *            the wrapper for the .tg-file of the graph
 		 */
 		public LoadGraphCallable(GraphWrapper graphWrapper) {
 			super();

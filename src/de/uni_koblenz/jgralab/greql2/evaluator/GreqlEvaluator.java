@@ -198,12 +198,6 @@ public class GreqlEvaluator {
 	protected static File optimizedSyntaxGraphsDirectory = getTmpDirectory();
 
 	/**
-	 * The directory where the {@link EvaluationLogger} stores and loads its
-	 * logfiles from.
-	 */
-	protected static File evaluationLoggerDirectory = getTmpDirectory();
-
-	/**
 	 * stores the graph indizes (maps graphId values to GraphIndizes)
 	 */
 	protected static Map<String, SoftReference<GraphIndex>> graphIndizes;
@@ -1309,23 +1303,6 @@ public class GreqlEvaluator {
 	public static void setOptimizedSyntaxGraphsDirectory(
 			File optimizedSyntaxGraphsDirectory) {
 		GreqlEvaluator.optimizedSyntaxGraphsDirectory = optimizedSyntaxGraphsDirectory;
-	}
-
-	/**
-	 * @return The directory where the {@link EvaluationLogger} stores and loads
-	 *         its logfiles.
-	 */
-	public static File getEvaluationLoggerDirectory() {
-		return evaluationLoggerDirectory;
-	}
-
-	/**
-	 * @param loggerDirectory
-	 *            The directory where the {@link EvaluationLogger} stores and
-	 *            loads its logfiles.
-	 */
-	public static void setEvaluationLoggerDirectory(File loggerDirectory) {
-		GreqlEvaluator.evaluationLoggerDirectory = loggerDirectory;
 	}
 
 	public boolean isUseSavedOptimizedSyntaxGraph() {

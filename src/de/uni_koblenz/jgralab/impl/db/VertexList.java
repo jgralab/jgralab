@@ -48,7 +48,7 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 	/**
 	 * Creates and initializes a new <code>VertexList</code>.
 	 * 
-	 * @param graph
+	 * @param owningGraph
 	 *            Graph the vertex list belongs to.
 	 */
 	public VertexList(GraphImpl owningGraph) {
@@ -97,7 +97,7 @@ public class VertexList extends GraphElementList<DatabasePersistableVertex> {
 	 * 
 	 * @param sequenceNumber
 	 *            Vertex's sequence number
-	 * @param primaryKeyOfVertex
+	 * @param vId
 	 *            Id of vertex.
 	 */
 	public void add(long sequenceNumber, int vId) {

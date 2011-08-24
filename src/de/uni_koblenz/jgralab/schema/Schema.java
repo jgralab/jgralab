@@ -89,8 +89,9 @@ public interface Schema extends Comparable<Schema> {
 	 * After creating the schema, this command serves to generate code for the
 	 * m1 classes, contained in {@code JavaSourceFromString} objects.
 	 * 
-	 * @param transactionSupport
-	 *            create code for transaction support
+	 * @param config
+	 *            a {@link CodeGeneratorConfiguration} specifying the requested
+	 *            implementation variant
 	 */
 	public Vector<JavaSourceFromString> commit(CodeGeneratorConfiguration config);
 
@@ -100,8 +101,9 @@ public interface Schema extends Comparable<Schema> {
 	 * 
 	 * @param path
 	 *            the path to the m1 classes which are to be generated
-	 * @param transactionSupport
-	 *            create code for transaction support
+	 * @param config
+	 *            a {@link CodeGeneratorConfiguration} specifying the requested
+	 *            implementation variant
 	 * 
 	 * @throws GraphIOException
 	 *             if an error occured during optional compilation
@@ -115,8 +117,9 @@ public interface Schema extends Comparable<Schema> {
 	 * 
 	 * @param path
 	 *            the path to the m1 classes which are to be generated
-	 * @param transactionSupport
-	 *            create code for transaction support
+	 * @param config
+	 *            a {@link CodeGeneratorConfiguration} specifying the requested
+	 *            implementation variant
 	 * @param progressFunction
 	 *            an optional progressfunction
 	 * @throws GraphIOException

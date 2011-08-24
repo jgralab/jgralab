@@ -21,7 +21,6 @@ public class Condition {
 	 */
 	private ECARule rule;
 
-
 	// +++++++++++++++++++++++++++++++++++++++++++++++++
 
 	/**
@@ -30,26 +29,25 @@ public class Condition {
 	 * @param conditionExpression
 	 *            condition as GReQuL Query
 	 */
-	public Condition(String conditionExpression){
+	public Condition(String conditionExpression) {
 		this.conditionExpression = conditionExpression;
 	}
-	
+
 	// +++++++++++++++++++++++++++++++++++++++++++++++++
 
 	/**
 	 * Evaluates the condition
 	 * 
-	 * @param element
-	 *            the element to check the condition for
+	 * @param event
+	 *            an Event containing the element to check the condition for
 	 * @return if the condition is evaluated to true
 	 */
-	public boolean evaluate(Event event){
+	public boolean evaluate(Event event) {
 		AttributedElement element = event.getElement();
 		GreqlEvaluator greqlEvaluator = this.rule.getECARuleManager()
 				.getGreqlEvaluator();
 		if (this.conditionExpression.contains("context")) {
-			greqlEvaluator.setQuery("using context: "
-					+ conditionExpression);
+			greqlEvaluator.setQuery("using context: " + conditionExpression);
 			JValue jva;
 			if (element instanceof Vertex) {
 				jva = new JValueImpl((Vertex) element);
@@ -65,15 +63,15 @@ public class Condition {
 		}
 		greqlEvaluator.startEvaluation();
 		JValue result = greqlEvaluator.getEvaluationResult();
-		if(result.isBoolean()){
+		if (result.isBoolean()) {
 			return result.toBoolean();
-		}
-		else{
-			System.err.println("Invalid Condition: "+this.conditionExpression);
+		} else {
+			System.err
+					.println("Invalid Condition: " + this.conditionExpression);
 			throw new ECAException("Invalid Condition: \""
 					+ this.conditionExpression + "\" evaluates to JValueType "
 					+ result.getType() + " but the result has to be a boolean.");
-		}		
+		}
 	}
 
 	// +++++++++++++++++++++++++++++++++++++++++++++++++
@@ -101,7 +99,6 @@ public class Condition {
 	public String getConditionExpression() {
 		return conditionExpression;
 	}
-	
 
 	@Override
 	public String toString() {

@@ -15,8 +15,8 @@ public class CreateEdgeEvent extends Event {
 	/**
 	 * Creates an CreateEdgeEvent with the given parameters, EventTime is after
 	 * 
-	 * @param nestedCallsdepth
-	 *            of nested trigger calls
+	 * @param nestedCalls
+	 *            depth of nested trigger calls
 	 * @param graph
 	 *            Graph where the Event happened
 	 * @param edge
@@ -30,8 +30,8 @@ public class CreateEdgeEvent extends Event {
 	/**
 	 * Creates an CreateEdgeEvent with the given parameters, EventTime is before
 	 * 
-	 * @param nestedCallsdepth
-	 *            of nested trigger calls
+	 * @param nestedCalls
+	 *            depth of nested trigger calls
 	 * @param graph
 	 *            Graph where the Event happened
 	 * @param type

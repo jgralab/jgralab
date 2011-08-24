@@ -50,7 +50,8 @@ public class VersionedReferenceImpl<E> extends VersionedDataObjectImpl<E> {
 	/**
 	 * Should be used for attributes.
 	 * 
-	 * @param graph
+	 * @param attributedElement
+	 *            the AttributedElement owning the reference
 	 * @param initialPersistentValue
 	 * @param name
 	 *            the name of the attribute
@@ -60,20 +61,11 @@ public class VersionedReferenceImpl<E> extends VersionedDataObjectImpl<E> {
 		super(attributedElement, initialPersistentValue, name);
 	}
 
-	/**
-	 * 
-	 * @param graph
-	 * @param initialPersistentValue
-	 */
 	public VersionedReferenceImpl(AttributedElement attributedElement,
 			E initialPersistentValue) {
 		super(attributedElement, initialPersistentValue);
 	}
 
-	/**
-	 * 
-	 * @param graph
-	 */
 	public VersionedReferenceImpl(AttributedElement attributedElement) {
 		super(attributedElement);
 	}

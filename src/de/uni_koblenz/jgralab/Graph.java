@@ -575,9 +575,6 @@ public interface Graph extends AttributedElement {
 	 *            the <code>Savepoint</code> to be restored.
 	 * 
 	 * @throws InvalidSavepointException
-	 *             if {@link Savepoint#getGraph() <code>savepoint</code>
-	 *             .getGraph()} != {@link Graph#getCurrentTransaction()
-	 * 
 	 */
 	public void restoreSavepoint(Savepoint savepoint)
 			throws InvalidSavepointException;
@@ -596,7 +593,6 @@ public interface Graph extends AttributedElement {
 	 * @return true if this graph instance supports transactions.
 	 */
 	public boolean hasTransactionSupport();
-
 
 	/**
 	 * Tells whether this graph instance has database support.

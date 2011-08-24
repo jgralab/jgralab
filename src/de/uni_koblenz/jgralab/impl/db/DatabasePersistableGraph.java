@@ -47,7 +47,7 @@ public interface DatabasePersistableGraph extends DatabasePersistable, Graph {
 	 * Sets primary key of graph in database. When retrieving a graph from
 	 * database, always set it's primary key as last.
 	 * 
-	 * @param primaryKey
+	 * @param gId
 	 *            Primary key of graph in database.
 	 */
 	void setGId(int gId);

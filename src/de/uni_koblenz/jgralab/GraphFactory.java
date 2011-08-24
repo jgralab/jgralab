@@ -155,7 +155,7 @@ public interface GraphFactory {
 	 * Assigns an implementation class with database support for a
 	 * <code>Graph</code>.
 	 * 
-	 * @param edgeM1Class
+	 * @param graphM1Class
 	 * @param implementationClass
 	 */
 	public void setGraphDatabaseImplementationClass(
@@ -166,7 +166,7 @@ public interface GraphFactory {
 	 * Assigns an implementation class with database support for a
 	 * <code>Vertex</code>.
 	 * 
-	 * @param edgeM1Class
+	 * @param vertexM1Class
 	 * @param implementationClass
 	 */
 	public void setVertexDatabaseImplementationClass(
@@ -253,5 +253,4 @@ public interface GraphFactory {
 			Class<? extends Edge> edgeM1Class,
 			Class<? extends Edge> implementationClass);
 
-	
 }

@@ -109,7 +109,7 @@ public abstract class ParserHelper {
 
 	protected SymbolTable afterParsingvariableSymbolTable = null;
 
-	protected EasySymbolTable duringParsingvariableSymbolTable = null;
+	protected SimpleSymbolTable duringParsingvariableSymbolTable = null;
 
 	protected Map<String, FunctionId> functionSymbolTable = null;
 

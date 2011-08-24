@@ -77,7 +77,7 @@ public class NeighbourIterable<E extends Edge, V extends Vertex> implements
 	 * 
 	 * @param v
 	 *            a Vertex
-	 * @param orientation
+	 * @param dir
 	 *            desired orientation
 	 */
 	public NeighbourIterable(Vertex v, EdgeDirection dir) {
@@ -93,7 +93,7 @@ public class NeighbourIterable<E extends Edge, V extends Vertex> implements
 	 *            a Vertex
 	 * @param ec
 	 *            restricts edges to that class or subclasses
-	 * @param orientation
+	 * @param dir
 	 *            desired orientation
 	 */
 	public NeighbourIterable(Vertex v, Class<? extends Edge> ec,

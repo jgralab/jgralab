@@ -131,16 +131,13 @@ public interface Domain extends NamedElement {
 			String variableName, String graphIoVariableName);
 
 	/**
-	 * 
 	 * @param schemaRootPackagePrefix
-	 * @return
+	 * @return the name of the versioned class implementation for this domain.
 	 */
 	public String getVersionedClass(String schemaRootPackagePrefix);
 
 	/**
-	 * Initial value.
-	 * 
-	 * @return
+	 * @return the initial value for this Domain
 	 */
 	public String getInitialValue();
 }

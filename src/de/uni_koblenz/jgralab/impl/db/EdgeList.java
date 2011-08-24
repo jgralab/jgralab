@@ -111,7 +111,7 @@ public class EdgeList extends GraphElementList<DatabasePersistableEdge> {
 	/**
 	 * Gets first edge in edge list.
 	 * 
-	 * @returns First edge in edge list or null if edge list is empty.
+	 * @return First edge in edge list or null if edge list is empty.
 	 */
 	@Override
 	public DatabasePersistableEdge getFirst() {
@@ -141,7 +141,7 @@ public class EdgeList extends GraphElementList<DatabasePersistableEdge> {
 	/**
 	 * Gets last edge in edge list.
 	 * 
-	 * @returns Last edge in edge list or null if edge list is empty.
+	 * @return Last edge in edge list or null if edge list is empty.
 	 */
 	@Override
 	public DatabasePersistableEdge getLast() {

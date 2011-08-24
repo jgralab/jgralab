@@ -72,18 +72,18 @@ public class SimpleTransition extends Transition {
 	protected JValueTypeCollection typeCollection;
 
 	/**
-	 * an edge may have valid roles. This set holds the valid roles at the other end of an edge
-	 * accepted by this transition. If the transition is valid for no explicit role, this set is null
+	 * an edge may have valid roles. This set holds the valid roles at the other
+	 * end of an edge accepted by this transition. If the transition is valid
+	 * for no explicit role, this set is null
 	 */
 	protected Set<String> validToEdgeRoles;
-	
+
 	/**
-	 * an edge may have valid roles. This set holds the valid roles at the other end of an edge
-	 * accepted by this transition. If the transition is valid for no explicit role, this set is null
+	 * an edge may have valid roles. This set holds the valid roles at the other
+	 * end of an edge accepted by this transition. If the transition is valid
+	 * for no explicit role, this set is null
 	 */
 	protected Set<String> validFromEdgeRoles;
-	
-	
 
 	/**
 	 * this transition may accept edges in direction in, out or any
@@ -219,8 +219,9 @@ public class SimpleTransition extends Transition {
 	 *            EdgeDirection.OUT or EdgeDirection.ANY
 	 * @param typeCollection
 	 *            The types which restrict the possible edges
-	 * @param role
-	 *            The accepted edge role, or null if any role is accepted
+	 * @param roles
+	 *            The set of accepted edge role names, or null if any role is
+	 *            accepted
 	 */
 	public SimpleTransition(State start, State end, AllowedEdgeDirection dir,
 			JValueTypeCollection typeCollection, Set<String> roles,
@@ -297,18 +298,19 @@ public class SimpleTransition extends Transition {
 				return false;
 			}
 		}
-		
+
 		Set<String> validEdgeRoles = validToEdgeRoles;
 		boolean checkToEdgeRoles = true;
 		if (validEdgeRoles == null) {
 			validEdgeRoles = validFromEdgeRoles;
 			checkToEdgeRoles = false;
 		}
-		
-		boolean rolesOnly =  (validEdgeRoles != null) && (typeCollection.getAllowedTypes().size() == 0) && (typeCollection.getForbiddenTypes().size() == 0);
+
+		boolean rolesOnly = (validEdgeRoles != null)
+				&& (typeCollection.getAllowedTypes().size() == 0)
+				&& (typeCollection.getForbiddenTypes().size() == 0);
 		boolean acceptedByRole = false;
-		
-				
+
 		// checks if a role restriction is set and if e has the right role
 		if (validEdgeRoles != null) {
 			EdgeClass ec = (EdgeClass) e.getAttributedElementClass();
@@ -326,16 +328,18 @@ public class SimpleTransition extends Transition {
 			}
 		}
 		if (rolesOnly) {
-			if (!acceptedByRole)
+			if (!acceptedByRole) {
 				return false;
+			}
 		} else {
 			if (!acceptedByRole) {
-				AttributedElementClass edgeClass = e.getAttributedElementClass();
-				if (!typeCollection.acceptsType(edgeClass))
+				AttributedElementClass edgeClass = e
+						.getAttributedElementClass();
+				if (!typeCollection.acceptsType(edgeClass)) {
 					return false;
+				}
 			}
 		}
-
 
 		// checks if a boolean expression exists and if it evaluates to true
 		if (predicateEvaluator != null) {
@@ -384,8 +388,9 @@ public class SimpleTransition extends Transition {
 		return symbol + "{" + b + "}";
 	}
 
+	@Override
 	public boolean consumesEdge() {
 		return true;
 	}
-	
+
 }

@@ -74,8 +74,8 @@ public class SchemaCodeGenerator extends CodeGenerator {
 	 *            the schema to create the code for
 	 * @param schemaPackageName
 	 *            the package the schema is located in
-	 * @param implementationName
-	 *            the special jgralab package name to use
+	 * @param config
+	 *            a CodeGenaratorConfiguration specifying the required variants
 	 */
 	public SchemaCodeGenerator(Schema schema, String schemaPackageName,
 			CodeGeneratorConfiguration config) {

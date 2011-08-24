@@ -43,11 +43,11 @@ import java.util.Set;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.exception.DuplicateVariableException;
 
-public class EasySymbolTable {
+public class SimpleSymbolTable {
 
 	protected LinkedList<HashMap<String, Vertex>> list = null;
 
-	public EasySymbolTable() {
+	public SimpleSymbolTable() {
 		list = new LinkedList<HashMap<String, Vertex>>();
 	}
 
@@ -80,9 +80,7 @@ public class EasySymbolTable {
 	}
 
 	/**
-	 * returns a set of known identifiers
-	 * 
-	 * @return
+	 * @return the set of known identifiers
 	 */
 	public Set<String> getKnownIdentifierSet() {
 		Set<String> result = new HashSet<String>();

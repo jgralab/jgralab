@@ -15,8 +15,8 @@ public class DeleteVertexEvent extends Event {
 	/**
 	 * Creates an DeleteVertexEvent with the given parameters
 	 * 
-	 * @param nestedCallsdepth
-	 *            of nested trigger calls
+	 * @param nestedCalls
+	 *            depth of nested trigger calls
 	 * @param graph
 	 *            Graph where the Event happened
 	 * @param vertex
@@ -30,8 +30,8 @@ public class DeleteVertexEvent extends Event {
 	/**
 	 * Creates an DeleteVertexEvent with the given parameters
 	 * 
-	 * @param nestedCallsdepth
-	 *            of nested trigger calls
+	 * @param nestedCalls
+	 *            depth of nested trigger calls
 	 * @param graph
 	 *            Graph where the Event happened
 	 * @param type

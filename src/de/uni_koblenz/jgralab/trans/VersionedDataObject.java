@@ -34,7 +34,6 @@
  */
 package de.uni_koblenz.jgralab.trans;
 
-import de.uni_koblenz.jgralab.impl.trans.TransactionImpl;
 
 /**
  * This interface represents a versioned data-object of type <code>E</code>. It
@@ -58,9 +57,7 @@ public interface VersionedDataObject<E> {
 	public long getLatestPersistentVersion();
 
 	/**
-	 * Returns the persistent version with a version number <=
-	 * {@link TransactionImpl#getPersistentVersionAtBot()
-	 * TransactionImpl.getPersistentVersionAtBot()}
+	 * Returns the persistent version with a version number <= BOT
 	 * 
 	 * @param transaction
 	 *            the <code>Transaction</code> for which the corresponding

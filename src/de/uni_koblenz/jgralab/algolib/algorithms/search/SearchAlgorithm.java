@@ -38,9 +38,9 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.algolib.algorithms.StructureOrientedAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmStates;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
+import de.uni_koblenz.jgralab.algolib.algorithms.StructureOrientedAlgorithm;
 import de.uni_koblenz.jgralab.algolib.functions.ArrayPermutation;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 import de.uni_koblenz.jgralab.algolib.functions.Function;
@@ -62,8 +62,8 @@ import de.uni_koblenz.jgralab.graphmarker.IntegerVertexMarker;
  * @author strauss@uni-koblenz.de
  * 
  */
-public abstract class SearchAlgorithm extends StructureOrientedAlgorithm implements
-		TraversalFromVertexSolver, CompleteTraversalSolver {
+public abstract class SearchAlgorithm extends StructureOrientedAlgorithm
+		implements TraversalFromVertexSolver, CompleteTraversalSolver {
 
 	/**
 	 * The intermediate result <code>vertexOrder</code>.
@@ -124,9 +124,6 @@ public abstract class SearchAlgorithm extends StructureOrientedAlgorithm impleme
 	 *            the graph this search algorithm works on.
 	 * @param subgraph
 	 *            the subgraph function for this search algorithm.
-	 * @param directed
-	 *            the flag that tells whether this search algorithm should treat
-	 *            the graph as directed or undirected algorithm.
 	 * @param navigable
 	 *            the navigable function for this search algorithm.
 	 */

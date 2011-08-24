@@ -3,7 +3,6 @@ package de.uni_koblenz.jgralab.eca;
 import de.uni_koblenz.jgralab.eca.events.Event;
 import de.uni_koblenz.jgralab.eca.events.EventDescription;
 
-
 public class ECARule {
 
 	/**
@@ -25,10 +24,9 @@ public class ECARule {
 	 * Action part of ECARule
 	 */
 	private Action action;
-	
-		
+
 	// +++++ Constructor Summary +++++++++++++++++++++++++++
-	
+
 	/**
 	 * Creates an ECARule with the given Event and Action
 	 * 
@@ -41,7 +39,7 @@ public class ECARule {
 		this.setEventDescription(event);
 		this.setAction(action);
 	}
-	
+
 	/**
 	 * Creates an ECARule with the given Event, Condition and Action
 	 * 
@@ -57,7 +55,7 @@ public class ECARule {
 		this.setCondition(condition);
 		this.setAction(action);
 	}
-	
+
 	// ++++++ Methods +++++++++++++++++++++++++++++++++++++
 
 	/**
@@ -65,19 +63,17 @@ public class ECARule {
 	 * by the condition, if not, null is excepted as element. If there is no
 	 * condition or the condition is evaluated to true, the action is executed.
 	 * 
-	 * @param element
-	 *            the AttributedElement to check the condition for, null if
-	 *            there is none
+	 * @param event
+	 *            an Event containing the concerned element
 	 */
 	public void trigger(Event event) {
 		if (this.condition == null || this.condition.evaluate(event)) {
 			this.action.doAction(event);
-		}			
+		}
 	}
 
-	
 	// +++++ Getter and Setter +++++++++++++++++++++++++++++
-	
+
 	/**
 	 * @return the Event
 	 */
@@ -94,7 +90,7 @@ public class ECARule {
 	private void setEventDescription(EventDescription event) {
 		this.eventDescription = event;
 	}
-	
+
 	/**
 	 * @return the Condition
 	 */
@@ -147,6 +143,5 @@ public class ECARule {
 	public ECARuleManager getECARuleManager() {
 		return manager;
 	}
-	
 
 }

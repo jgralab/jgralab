@@ -189,8 +189,8 @@ public class JValuePathSystem extends JValueImpl {
 				pe = keyToEntryMap.get(new PathSystemKey(te.getParentVertex(),
 						te.getParentStateNumber()));
 			} else {
-				PathSystemKey key = new PathSystemKey(rootVertex, te
-						.getParentStateNumber());
+				PathSystemKey key = new PathSystemKey(rootVertex,
+						te.getParentStateNumber());
 				pe = keyToEntryMap.get(key);
 			}
 			// if pe is null, te is the entry of the root vertex
@@ -476,9 +476,8 @@ public class JValuePathSystem extends JValueImpl {
 	 * 
 	 * @param vertex
 	 *            the vertex for which the number of edges gets counted
-	 * @param orientation
-	 *            if set to true, the incoming edges will be counted, otherwise,
-	 *            the outgoing ones will be counted
+	 * @param direction
+	 *            direction of edges to be counted
 	 * @param typeCol
 	 *            the JValueTypeCollection which toggles whether a type is
 	 *            accepted or not
@@ -575,9 +574,8 @@ public class JValuePathSystem extends JValueImpl {
 	 * 
 	 * @param vertex
 	 *            the vertex for which the edgeset will be created
-	 * @param orientation
-	 *            if set to true, the set of incomming edges will, be created,
-	 *            otherwise, the set of outgoing ones will be created
+	 * @param direction
+	 *            direction of edges to be returned
 	 * @return a set of edges with the given orientation connected to the given
 	 *         vertex or an empty set, if the vertex is not part of this
 	 *         pathsystem
@@ -798,8 +796,8 @@ public class JValuePathSystem extends JValueImpl {
 			PathSystemEntry entry = keyToEntryMap.get(key);
 			if (entry.getParentEdge() != null) {
 				path.addEdge(entry.getParentEdge().getReversedEdge());
-				key = new PathSystemKey(entry.getParentVertex(), entry
-						.getParentStateNumber());
+				key = new PathSystemKey(entry.getParentVertex(),
+						entry.getParentStateNumber());
 			} else {
 				key = null;
 			}
@@ -1079,9 +1077,7 @@ public class JValuePathSystem extends JValueImpl {
 				.entrySet()) {
 			PathSystemEntry thisEntry = entry.getValue();
 			PathSystemKey thisKey = entry.getKey();
-			logger
-					.info(thisKey.toString() + " maps to "
-							+ thisEntry.toString());
+			logger.info(thisKey.toString() + " maps to " + thisEntry.toString());
 		}
 	}
 

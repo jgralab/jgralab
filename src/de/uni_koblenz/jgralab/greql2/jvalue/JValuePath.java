@@ -346,9 +346,8 @@ public class JValuePath extends JValueImpl {
 	 * 
 	 * @param vertex
 	 *            the vertex to calculate the degree for
-	 * @param orientation
-	 *            if set to true, the number of incomming edges will be counted,
-	 *            otherwise, the number of outgoing edges will be counted
+	 * @param dir
+	 *            direction of edges to be counted
 	 * @return -1 (vertex is not part of this path) 0 (vertex is the only vertex
 	 *         in this path) 1 (vertex is the first or last vertex) 2 (vertex
 	 *         has a successor and a predecessor)
@@ -392,9 +391,8 @@ public class JValuePath extends JValueImpl {
 	 * 
 	 * @param vertex
 	 *            the vertex for which the connected edge will be returned
-	 * @param orientation
-	 *            if set to true, the incomming edge will be returned,
-	 *            otherwise, the outgoing one will be returned
+	 * @param dir
+	 *            direction of edges to be returned
 	 * @return the edges connected to the given vertex in the given orientation
 	 */
 	public JValueSet edgesConnected(Vertex vertex, EdgeDirection dir) {

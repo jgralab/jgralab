@@ -45,7 +45,7 @@ import de.uni_koblenz.jgralab.greql2.schema.IsVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
 
-public class SymbolTable extends EasySymbolTable {
+public class SymbolTable extends SimpleSymbolTable {
 
 	@Override
 	public void insert(String ident, Vertex v)

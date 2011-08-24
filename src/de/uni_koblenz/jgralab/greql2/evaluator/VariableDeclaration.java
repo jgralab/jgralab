@@ -92,8 +92,9 @@ public class VariableDeclaration {
 	 * @param var
 	 *            the Variable-Vertex in the GReQL-Syntaxgraph to create a
 	 *            VariableDeclaration for
-	 * @param definitionSet
-	 *            the set of possible values this variable may have
+	 * @param definitionSetEvaluator
+	 *            the evaluator for the set of possible values this variable may
+	 *            have
 	 * @param decl
 	 *            the SimpleDeclaration which declares the variable
 	 * @param eval

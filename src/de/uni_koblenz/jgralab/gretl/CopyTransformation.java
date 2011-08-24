@@ -251,8 +251,9 @@ public class CopyTransformation extends Transformation<Graph> {
 	 * @param domain
 	 *            domain of the attribute
 	 * @return see description...
-	 * @todo this won't do the trick for complex attributes that contain records
-	 *       or enums, like Set&lt;MyRecord&gt;...
+	 * 
+	 *         // TODO: this won't do the trick for complex attributes that
+	 *         contain records or enums, like Set&lt;MyRecord&gt;...
 	 */
 	public static String getAttributeReportString(String varName,
 			String attrName, Domain domain) {
