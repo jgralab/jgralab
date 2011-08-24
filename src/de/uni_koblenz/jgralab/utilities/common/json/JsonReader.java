@@ -63,9 +63,7 @@ public abstract class JsonReader {
 	private int nestingDepth;
 
 	/**
-	 * Returns the nesting depth at the current position.
-	 * 
-	 * @return
+	 * @return the nesting depth at the current position.
 	 */
 	public int getNestingDepth() {
 		return nestingDepth;

@@ -145,12 +145,10 @@ public interface Transaction {
 	 * Stores the current state of the <code>Transaction</code> and of the
 	 * (changed) data objects.
 	 * 
-	 * To restore a save-point use method
-	 * {@link #restoreSavepoint(Savepoint savepoint) restoreSavepoint(Savepoint
-	 * savepoint)}.
+	 * To restore a save-point use method {@link #restoreSavepoint(Savepoint)}.
 	 * 
-	 * Note that you can only use {@link #defineSavepoint() defineSavepoint()},
-	 * if the transaction is active in a thread!!!
+	 * Note that you can only use {@link #defineSavepoint()}, if the transaction
+	 * is active in a thread!!!
 	 * 
 	 * @return a save-point which represents the current state of the
 	 *         transaction
@@ -163,14 +161,13 @@ public interface Transaction {
 	 * @param savepoint
 	 *            the save-point to be restored
 	 * 
-	 *            Note that you can only use {@link #restoreSavepoint()
-	 *            restoreSavepoint()}, if the transaction is active in a
-	 *            thread!!!
+	 *            Note that you can only use
+	 *            {@link #restoreSavepoint(Savepoint)}, if the transaction is
+	 *            active in a thread!!!
 	 * 
 	 * @throws InvalidSavepointException
-	 *             if <code>savepoint</code>.{@link Savepoint#getTransaction()
+	 *             if <code>savepoint</code>.{@link Savepoint#getTransaction()}
 	 *             getTransaction() != <code>this</code>
-
 	 */
 	public void restoreSavepoint(Savepoint savepoint)
 			throws InvalidSavepointException;
@@ -178,8 +175,8 @@ public interface Transaction {
 	/**
 	 * Removes a save-point for the <code>Transaction</code>.
 	 * 
-	 * Note that you can only use {@link #removeSavepoint() removeSavepoint()},
-	 * if the transaction is active in a thread!!!
+	 * Note that you can only use {@link #removeSavepoint(Savepoint)}, if the
+	 * transaction is active in a thread!!!
 	 */
 	public void removeSavepoint(Savepoint savepoint);
 
@@ -187,8 +184,8 @@ public interface Transaction {
 	 * 
 	 * @return a list of all save-points for the <code>Transaction</code>
 	 * 
-	 *         Note that you can only use {@link #getSavepoints()
-	 *         getSavepoints()}, if the transaction is active in a thread!!!
+	 *         Note that you can only use {@link #getSavepoints()}, if the
+	 *         transaction is active in a thread!!!
 	 * 
 	 *         Only a copy of save-point-list is returned, so removing and
 	 *         adding save-points won't affects original list.

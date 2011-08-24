@@ -210,11 +210,6 @@ public class TgSchema2Java {
 	/**
 	 * Constructs an instance of TgSchema2Java with the given command line
 	 * arguments and creates the schema-object after reading the .tg-file
-	 * 
-	 * @param args
-	 *            the command line arguments; only the name of the .tg-file is
-	 *            mandatory, for the commit-path and the implementation to be
-	 *            used there exist default values
 	 */
 	public TgSchema2Java() {
 		config = new CodeGeneratorConfiguration();
@@ -600,7 +595,7 @@ public class TgSchema2Java {
 				setTransactionSupport(true);
 			} else if (v.equals("standard")) {
 				setStandardSupport(true);
-			}else if (v.equals("database")) {
+			} else if (v.equals("database")) {
 				setDatabaseSupport(true);
 			} else {
 				throw new IllegalArgumentException(

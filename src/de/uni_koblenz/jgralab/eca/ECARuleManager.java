@@ -1,6 +1,7 @@
 package de.uni_koblenz.jgralab.eca;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import de.uni_koblenz.jgralab.AttributedElement;
@@ -82,8 +83,8 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	/**
 	 * Constructor - initializes members
 	 * 
-	 * @param the
-	 *            Graph that owns this ECARuleManager
+	 * @param graph
+	 *            the Graph that owns this ECARuleManager
 	 */
 	public ECARuleManager(Graph graph) {
 
@@ -544,13 +545,12 @@ public class ECARuleManager implements ECARuleManagerInterface {
 	}
 
 	/**
-	 * Getter for managed ECARules - WARNING! Don't use this method to add or
-	 * delete rules! Use {@link addECARule} and {@link deleteECARule} instead!
+	 * Getter for managed ECARules.
 	 * 
 	 * @return the List of ECARules managed by this ECARuleManager
 	 */
 	public List<ECARule> getRules() {
-		return rules;
+		return Collections.unmodifiableList(rules);
 	}
 
 	public GreqlEvaluator getGreqlEvaluator() {

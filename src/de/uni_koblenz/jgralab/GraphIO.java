@@ -580,8 +580,8 @@ public class GraphIO {
 	 * used to monitor progress. The stream is <em>not</em> closed. This method
 	 * does <i>not</i> check if the subgraph marker is complete.
 	 * 
-	 * @param out
-	 *            a DataOutputStream
+	 * @param filename
+	 *            a filename
 	 * @param subGraph
 	 *            a BooleanGraphMarker denoting the subgraph to be saved
 	 * @param pf
@@ -1128,14 +1128,8 @@ public class GraphIO {
 				ImplementationType.TRANSACTION);
 	}
 
-
 	/**
-	 * Use {@link loadGraphFromFileWithStandardSupport} instead.
-	 * 
-	 * @param filename
-	 * @param pf
-	 * @return
-	 * @throws GraphIOException
+	 * Use {@link #loadGraphFromFileWithStandardSupport} instead.
 	 */
 	@Deprecated
 	public static Graph loadGraphFromFile(String filename, ProgressFunction pf)
@@ -1144,13 +1138,7 @@ public class GraphIO {
 	}
 
 	/**
-	 * Use {@link loadGraphFromFileWithStandardSupport} instead.
-	 * 
-	 * @param filename
-	 * @param schema
-	 * @param pf
-	 * @return
-	 * @throws GraphIOException
+	 * Use {@link #loadGraphFromFileWithStandardSupport} instead.
 	 */
 	@Deprecated
 	public static Graph loadGraphFromFile(String filename, Schema schema,

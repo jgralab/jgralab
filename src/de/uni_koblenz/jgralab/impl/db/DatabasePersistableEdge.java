@@ -54,7 +54,7 @@ public interface DatabasePersistableEdge extends
 	/**
 	 * Sets number mapping edge's sequence in ESeq of graph.
 	 * 
-	 * @param sequenceNumberInEseq
+	 * @param sequenceNumber
 	 *            Number mapping edge's sequence in ESeq of graph.
 	 */
 	void setSequenceNumberInESeq(long sequenceNumber);

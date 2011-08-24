@@ -8,7 +8,7 @@ import de.uni_koblenz.jgralab.Vertex;
 public interface ECARuleManagerInterface {
 
 	/**
-	 * Fire Events from {@link beforeCreateVertexEvents} list
+	 * Fire Events from beforeCreateVertexEvents list
 	 * 
 	 * @param elementClass
 	 *            the Class of the new Vertex
@@ -17,7 +17,7 @@ public interface ECARuleManagerInterface {
 			Class<? extends AttributedElement> elementClass);
 
 	/**
-	 * Fire Events from {@link afterCreateVertexEvents} list
+	 * Fire Events from afterCreateVertexEvents list
 	 * 
 	 * @param element
 	 *            the new created Vertex
@@ -25,7 +25,7 @@ public interface ECARuleManagerInterface {
 	public abstract void fireAfterCreateVertexEvents(GraphElement element);
 
 	/**
-	 * Fire Events from {@link beforeDeleteVertexEvents} list
+	 * Fire Events from beforeDeleteVertexEvents list
 	 * 
 	 * @param element
 	 *            the Vertex to delete
@@ -33,7 +33,7 @@ public interface ECARuleManagerInterface {
 	public abstract void fireBeforeDeleteVertexEvents(GraphElement element);
 
 	/**
-	 * Fire Events from {@link afterDeleteVertexEvents} list
+	 * Fire Events from afterDeleteVertexEvents list
 	 * 
 	 * @param elementClass
 	 *            the Class of the deleted Vertex
@@ -42,7 +42,7 @@ public interface ECARuleManagerInterface {
 			Class<? extends AttributedElement> elementClass);
 
 	/**
-	 * Fire Events from {@link beforeCreateEdgeEvents} list
+	 * Fire Events from beforeCreateEdgeEvents list
 	 * 
 	 * @param elementClass
 	 *            the Class of the new Edge
@@ -51,7 +51,7 @@ public interface ECARuleManagerInterface {
 			Class<? extends AttributedElement> elementClass);
 
 	/**
-	 * Fire Events from {@link afterCreateEdgeEvents} list
+	 * Fire Events from afterCreateEdgeEvents list
 	 * 
 	 * @param element
 	 *            the new created Edge
@@ -59,7 +59,7 @@ public interface ECARuleManagerInterface {
 	public abstract void fireAfterCreateEdgeEvents(GraphElement element);
 
 	/**
-	 * Fire Events from {@link beforeDeleteEdgeEvents} list
+	 * Fire Events from beforeDeleteEdgeEvents list
 	 * 
 	 * @param element
 	 *            the Edge to delete
@@ -67,7 +67,7 @@ public interface ECARuleManagerInterface {
 	public abstract void fireBeforeDeleteEdgeEvents(GraphElement element);
 
 	/**
-	 * Fire Events from {@link afterDeleteEdgeEvents} list
+	 * Fire Events from afterDeleteEdgeEvents list
 	 * 
 	 * @param elementClass
 	 *            the Class of the deleted Edge
@@ -76,16 +76,16 @@ public interface ECARuleManagerInterface {
 			Class<? extends AttributedElement> elementClass);
 
 	/**
-	 * Fire Events from {@link beforeChangeAlphaOfEdgeEvents} list
+	 * Fire Events from beforeChangeAlphaOfEdgeEvents list
 	 * 
 	 * @param element
 	 *            the Edge that will change
 	 */
-	public abstract void fireBeforeChangeAlphaOfEdgeEvents(GraphElement element,
-			Vertex oldVertex, Vertex newVertex);
+	public abstract void fireBeforeChangeAlphaOfEdgeEvents(
+			GraphElement element, Vertex oldVertex, Vertex newVertex);
 
 	/**
-	 * Fire Events from {@link afterChangeAlphaOfEdgeEvents} list
+	 * Fire Events from afterChangeAlphaOfEdgeEvents list
 	 * 
 	 * @param element
 	 *            the Edge that changed
@@ -94,7 +94,7 @@ public interface ECARuleManagerInterface {
 			Vertex oldVertex, Vertex newVertex);
 
 	/**
-	 * Fire Events from {@link beforeChangeOmegaOfEdgeEvents} list
+	 * Fire Events from beforeChangeOmegaOfEdgeEvents list
 	 * 
 	 * @param element
 	 *            the Edge that will change
@@ -103,7 +103,7 @@ public interface ECARuleManagerInterface {
 			GraphElement element, Vertex oldVertex, Vertex newVertex);
 
 	/**
-	 * Fire Events from {@link afterChangeOmegaOfEdgeEvents} list
+	 * Fire Events from afterChangeOmegaOfEdgeEvents list
 	 * 
 	 * @param element
 	 *            the Edge that changed
@@ -112,7 +112,7 @@ public interface ECARuleManagerInterface {
 			Vertex oldVertex, Vertex newVertex);
 
 	/**
-	 * Fire Events from {@link beforeChangeAttributeEvents} list
+	 * Fire Events from beforeChangeAttributeEvents list
 	 * 
 	 * @param element
 	 *            the element of which the Attribute will change
@@ -124,7 +124,7 @@ public interface ECARuleManagerInterface {
 			Object newValue);
 
 	/**
-	 * Fire Events from {@link afterChangeAttributeEvents} list
+	 * Fire Events from afterChangeAttributeEvents list
 	 * 
 	 * @param element
 	 *            the element of which the Attribute changed

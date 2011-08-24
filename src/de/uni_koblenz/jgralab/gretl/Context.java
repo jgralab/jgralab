@@ -221,9 +221,7 @@ public class Context {
 	}
 
 	/**
-	 * Creates a new Context object with the given target schema. This is only
-	 * useful if the target schema already exists and is set with the
-	 * {@link #setTargetSchema(Schema)} method afterwards.
+	 * Creates a new Context object with the given target schema.
 	 */
 	public Context(Schema targetSchema) {
 		this.targetSchema = targetSchema;
@@ -471,8 +469,7 @@ public class Context {
 	/**
 	 * Swap this context object. E.g. make the current target graph the default
 	 * source graph and reinitialize all member vars such as archMap/imgMap.
-	 * This mainly useful for sequencing transformations like
-	 * {@link TransformationChain} does.
+	 * This is mainly useful for chaining multiple transformations.
 	 * 
 	 * @return this context object itself
 	 */

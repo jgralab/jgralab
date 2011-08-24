@@ -98,7 +98,7 @@ public interface Attribute {
 	/**
 	 * Set default value for attributed elements without transaction support.
 	 * 
-	 * @param element
+	 * @param el
 	 * @throws GraphIOException
 	 */
 	public void setDefaultValue(AttributedElement el) throws GraphIOException;

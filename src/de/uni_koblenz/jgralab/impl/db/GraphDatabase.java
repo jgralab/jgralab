@@ -328,7 +328,7 @@ public abstract class GraphDatabase {
 	/**
 	 * Sets auto commit mode of database.
 	 * 
-	 * @param autoCommit
+	 * @param autoCommitMode
 	 *            Auto commit mode to set.
 	 * @throws GraphDatabaseException
 	 *             Auto commit mode could not be set.
@@ -583,15 +583,15 @@ public abstract class GraphDatabase {
 			throws SQLException, GraphIOException {
 		int typeId = this.getTypeIdOf(vertex);
 		PreparedStatement insertStatement = sqlStatementList.insertVertex(
-				vertex.getId(), typeId, vertex.getGId(), vertex
-						.getIncidenceListVersion(), vertex
-						.getSequenceNumberInVSeq());
+				vertex.getId(), typeId, vertex.getGId(),
+				vertex.getIncidenceListVersion(),
+				vertex.getSequenceNumberInVSeq());
 		insertStatement.executeUpdate();
 		SortedSet<Attribute> attributes = vertex.getAttributedElementClass()
 				.getAttributeList();
 		for (Attribute attribute : attributes) {
-			int attributeId = getAttributeId(vertex.getGraph(), attribute
-					.getName());
+			int attributeId = getAttributeId(vertex.getGraph(),
+					attribute.getName());
 			String value = convertToString(vertex, attribute.getName());
 			insertStatement = sqlStatementList.insertVertexAttributeValue(
 					vertex.getId(), vertex.getGId(), attributeId, value);
@@ -629,13 +629,14 @@ public abstract class GraphDatabase {
 			throws SQLException, GraphIOException {
 		assert edge.isNormal();
 		int typeId = this.getTypeIdOf(edge);
-		PreparedStatement insertStatement = sqlStatementList
-				.insertEdge(edge.getId(), edge.getGId(), typeId, edge
-						.getSequenceNumberInESeq());
+		PreparedStatement insertStatement = sqlStatementList.insertEdge(
+				edge.getId(), edge.getGId(), typeId,
+				edge.getSequenceNumberInESeq());
 		insertStatement.executeUpdate();
 
-		insertStatement = sqlStatementList.insertIncidence(edge.getId(), alpha
-				.getId(), edge.getGId(), edge.getSequenceNumberInLambdaSeq());
+		insertStatement = sqlStatementList.insertIncidence(edge.getId(),
+				alpha.getId(), edge.getGId(),
+				edge.getSequenceNumberInLambdaSeq());
 		insertStatement.executeUpdate();
 
 		DatabasePersistableEdge reversedEdge = (DatabasePersistableEdge) edge
@@ -648,11 +649,11 @@ public abstract class GraphDatabase {
 		SortedSet<Attribute> attributes = edge.getAttributedElementClass()
 				.getAttributeList();
 		for (Attribute attribute : attributes) {
-			int attributeId = getAttributeId(edge.getGraph(), attribute
-					.getName());
+			int attributeId = getAttributeId(edge.getGraph(),
+					attribute.getName());
 			String value = convertToString(edge, attribute.getName());
-			insertStatement = sqlStatementList.insertEdgeAttributeValue(edge
-					.getId(), edge.getGId(), attributeId, value);
+			insertStatement = sqlStatementList.insertEdgeAttributeValue(
+					edge.getId(), edge.getGId(), attributeId, value);
 			insertStatement.executeUpdate();
 		}
 	}
@@ -704,8 +705,8 @@ public abstract class GraphDatabase {
 			throws GraphDatabaseException {
 		try {
 			PreparedStatement statement = sqlStatementList
-					.updateVertexListVersionOfGraph(graph.getGId(), graph
-							.getVertexListVersion());
+					.updateVertexListVersionOfGraph(graph.getGId(),
+							graph.getVertexListVersion());
 			statement.executeUpdate();
 		} catch (SQLException exception) {
 			exception.printStackTrace();
@@ -727,8 +728,8 @@ public abstract class GraphDatabase {
 			throws GraphDatabaseException {
 		try {
 			PreparedStatement statement = sqlStatementList
-					.updateEdgeListVersionOfGraph(graph.getGId(), graph
-							.getEdgeListVersion());
+					.updateEdgeListVersionOfGraph(graph.getGId(),
+							graph.getEdgeListVersion());
 			statement.executeUpdate();
 		} catch (SQLException exception) {
 			exception.printStackTrace();
@@ -780,8 +781,8 @@ public abstract class GraphDatabase {
 			int attributeId = getAttributeId(vertex.getGraph(), attributeName);
 			String value = convertToString(vertex, attributeName);
 			PreparedStatement statement = sqlStatementList
-					.updateAttributeValueOfVertex(vertex.getId(), vertex
-							.getGId(), attributeId, value);
+					.updateAttributeValueOfVertex(vertex.getId(),
+							vertex.getGId(), attributeId, value);
 			statement.executeUpdate();
 		} catch (Exception exception) {
 			exception.printStackTrace();
@@ -794,7 +795,7 @@ public abstract class GraphDatabase {
 	/**
 	 * Updates attribute value of an edge.
 	 * 
-	 * @param vertex
+	 * @param edge
 	 *            Edge with attribute value to update.
 	 * @param attributeName
 	 *            Name of attribute
@@ -830,8 +831,8 @@ public abstract class GraphDatabase {
 			throws GraphDatabaseException {
 		try {
 			PreparedStatement statement = sqlStatementList
-					.updateLambdaSeqVersionOfVertex(vertex.getId(), vertex
-							.getGId(), vertex.getIncidenceListVersion());
+					.updateLambdaSeqVersionOfVertex(vertex.getId(),
+							vertex.getGId(), vertex.getIncidenceListVersion());
 			statement.executeUpdate();
 		} catch (SQLException exception) {
 			exception.printStackTrace();
@@ -853,8 +854,8 @@ public abstract class GraphDatabase {
 			throws GraphDatabaseException {
 		try {
 			PreparedStatement statement = sqlStatementList
-					.updateSequenceNumberInVSeqOfVertex(vertex.getId(), vertex
-							.getGId(), vertex.getSequenceNumberInVSeq());
+					.updateSequenceNumberInVSeqOfVertex(vertex.getId(),
+							vertex.getGId(), vertex.getSequenceNumberInVSeq());
 			statement.executeUpdate();
 		} catch (SQLException exception) {
 			exception.printStackTrace();
@@ -897,8 +898,8 @@ public abstract class GraphDatabase {
 	public void updateIdOf(DatabasePersistableEdge edge, int newEId)
 			throws GraphDatabaseException {
 		try {
-			PreparedStatement statement = sqlStatementList.updateIdOfEdge(edge
-					.getId(), edge.getGId(), newEId);
+			PreparedStatement statement = sqlStatementList.updateIdOfEdge(
+					edge.getId(), edge.getGId(), newEId);
 			statement.executeUpdate();
 		} catch (SQLException exception) {
 			exception.printStackTrace();
@@ -920,8 +921,8 @@ public abstract class GraphDatabase {
 			throws GraphDatabaseException {
 		PreparedStatement statement;
 		try {
-			statement = sqlStatementList.updateGraphId(graph.getGId(), graph
-					.getId());
+			statement = sqlStatementList.updateGraphId(graph.getGId(),
+					graph.getId());
 			statement.executeUpdate();
 		} catch (SQLException exception) {
 			exception.printStackTrace();
@@ -932,8 +933,8 @@ public abstract class GraphDatabase {
 	/**
 	 * Updates incident vertex of an edge.
 	 * 
-	 * @param edge
-	 *            Edge to update.
+	 * @param incidence
+	 *            Incidence to update.
 	 * @throws GraphDatabaseException
 	 *             Update not successful.
 	 */
@@ -941,9 +942,9 @@ public abstract class GraphDatabase {
 			throws GraphDatabaseException {
 		PreparedStatement statement;
 		try {
-			statement = sqlStatementList.updateIncidentVIdOfIncidence(incidence
-					.getIncidentEId(), incidence.getIncidentVId(), incidence
-					.getGId());
+			statement = sqlStatementList.updateIncidentVIdOfIncidence(
+					incidence.getIncidentEId(), incidence.getIncidentVId(),
+					incidence.getGId());
 			statement.executeUpdate();
 		} catch (SQLException exception) {
 			exception.printStackTrace();
@@ -970,8 +971,9 @@ public abstract class GraphDatabase {
 			throws GraphDatabaseException {
 		PreparedStatement statement;
 		try {
-			statement = sqlStatementList.updateSequenceNumberInESeqOfEdge(edge
-					.getId(), edge.getGId(), edge.getSequenceNumberInESeq());
+			statement = sqlStatementList
+					.updateSequenceNumberInESeqOfEdge(edge.getId(),
+							edge.getGId(), edge.getSequenceNumberInESeq());
 			statement.executeUpdate();
 		} catch (SQLException exception) {
 			exception.printStackTrace();
@@ -985,8 +987,8 @@ public abstract class GraphDatabase {
 	/**
 	 * Updates number mapping edge's sequence in LambdaSeq of incident vertex.
 	 * 
-	 * @param edge
-	 *            Edge to update.
+	 * @param incidence
+	 *            Incidence to update.
 	 * @throws GraphDatabaseException
 	 *             Could not update sequence number.
 	 */
@@ -996,10 +998,10 @@ public abstract class GraphDatabase {
 		PreparedStatement statement;
 		try {
 			statement = sqlStatementList
-					.updateSequenceNumberInLambdaSeqOfIncidence(Math
-							.abs(incidence.getIncidentEId()), incidence
-							.getIncidentVId(), incidence.getGId(), incidence
-							.getSequenceNumberInLambdaSeq());
+					.updateSequenceNumberInLambdaSeqOfIncidence(
+							Math.abs(incidence.getIncidentEId()),
+							incidence.getIncidentVId(), incidence.getGId(),
+							incidence.getSequenceNumberInLambdaSeq());
 			statement.executeUpdate();
 		} catch (SQLException exception) {
 			exception.printStackTrace();
@@ -1171,8 +1173,8 @@ public abstract class GraphDatabase {
 	private DatabasePersistableEdge instanceEdgeFrom(
 			DatabasePersistableGraph graph, ResultSet edgeData, int eId)
 			throws Exception {
-		Class<? extends Edge> edgeClass = getEdgeClassFrom(graph, edgeData
-				.getInt(1));
+		Class<? extends Edge> edgeClass = getEdgeClassFrom(graph,
+				edgeData.getInt(1));
 
 		long sequenceNumberInESeq = edgeData.getLong(2);
 		Vertex alpha = null;
@@ -1475,8 +1477,8 @@ public abstract class GraphDatabase {
 				.selectSchemaNameForGraph(uid);
 		ResultSet resultSet = statement.executeQuery();
 		if (resultSet.next()) {
-			Schema schema = createSchema(resultSet.getString(1), resultSet
-					.getString(2));
+			Schema schema = createSchema(resultSet.getString(1),
+					resultSet.getString(2));
 			resultSet.close();
 			return schema;
 		} else {
@@ -1635,12 +1637,12 @@ public abstract class GraphDatabase {
 	private void preloadAttributesOf(Schema schema,
 			PrimaryKeyCache attributeCollector) throws SQLException {
 		PreparedStatement statement = sqlStatementList
-				.selectAttributesOfSchema(schema.getPackagePrefix(), schema
-						.getName());
+				.selectAttributesOfSchema(schema.getPackagePrefix(),
+						schema.getName());
 		ResultSet result = statement.executeQuery();
 		while (result.next()) {
-			attributeCollector.addAttribute(result.getInt(2), result
-					.getString(1));
+			attributeCollector.addAttribute(result.getInt(2),
+					result.getString(1));
 		}
 		result.close();
 	}
@@ -1737,8 +1739,8 @@ public abstract class GraphDatabase {
 
 	private int insertGraphRecord(DatabasePersistableGraph graph, int typeId)
 			throws SQLException {
-		PreparedStatement statement = sqlStatementList.insertGraph(graph
-				.getId(), graph.getGraphVersion(),
+		PreparedStatement statement = sqlStatementList.insertGraph(
+				graph.getId(), graph.getGraphVersion(),
 				graph.getVertexListVersion(), graph.getEdgeListVersion(),
 				typeId);
 		statement.executeUpdate();
@@ -1762,8 +1764,6 @@ public abstract class GraphDatabase {
 	 * 
 	 * @param schema
 	 *            Schema to insert.
-	 * @param schemaDefinition
-	 *            Definition of schema in TG notation.
 	 */
 	public void insertSchema(Schema schema) throws GraphDatabaseException {
 		if (!containsSchema(schema.getPackagePrefix(), schema.getName())) {
@@ -1922,8 +1922,8 @@ public abstract class GraphDatabase {
 			long start) throws GraphDatabaseException {
 		try {
 			CallableStatement statement = sqlStatementList
-					.createReorganizeIncidenceListCall(vertex.getId(), vertex
-							.getGId(), start);
+					.createReorganizeIncidenceListCall(vertex.getId(),
+							vertex.getGId(), start);
 			statement.execute();
 		} catch (SQLException exception) {
 			exception.printStackTrace();

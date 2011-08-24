@@ -66,7 +66,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
  * </dl>
  * </dd> </dl>
  * 
- * @see LastVertex, FirstEdge
+ * @see LastVertex
  * @author ist@uni-koblenz.de
  * 
  */

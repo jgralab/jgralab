@@ -39,7 +39,6 @@ import java.util.List;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
-import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.DeclarationEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
@@ -91,13 +90,6 @@ public class VariableDeclarationLayer {
 	 * 
 	 * @param constraintList
 	 *            a list of constraints
-	 * @param logger
-	 *            since the result of a {@link DeclarationEvaluator} is a
-	 *            {@link VariableDeclarationLayer} object, the
-	 *            {@link EvaluationLogger} cannot log the result size (which is
-	 *            the number of variable combinations that fulfill the
-	 *            constraints) before iterating the layer. So the logging of the
-	 *            result size {@link Declaration} is done here.
 	 */
 	public VariableDeclarationLayer(Declaration vertex,
 			List<VariableDeclaration> varDecls,

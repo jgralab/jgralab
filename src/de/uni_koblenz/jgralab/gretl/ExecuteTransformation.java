@@ -386,7 +386,7 @@ public class ExecuteTransformation extends Transformation<Graph> {
 	/**
 	 * concrete syntax for string arrays: (val1, val2, ...)
 	 * 
-	 * @return
+	 * @return an array of identifiers
 	 */
 	public String[] matchIdentifierArray() {
 		match(TokenTypes.PAREN_OPEN);

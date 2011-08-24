@@ -3176,8 +3176,7 @@ public class Rsa2Tg extends XmlProcessor {
 	}
 
 	/**
-	 * <code>true</code> indicates, that the roles from {@link From} edges
-	 * should be used.
+	 * <code>true</code> indicates, that the roles from edges should be used.
 	 * 
 	 * @param useFromRole
 	 *            Value for the <code>useFromRole</code> flag.
@@ -3187,8 +3186,8 @@ public class Rsa2Tg extends XmlProcessor {
 	}
 
 	/**
-	 * Will return <code>true</code>, if the roles from the {@link From} edge
-	 * should be used.
+	 * Will return <code>true</code>, if the roles from the from edge should be
+	 * used.
 	 * 
 	 * @return Value of the <code>useFromRole</code> flag.
 	 */

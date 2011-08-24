@@ -87,7 +87,7 @@ public abstract class DoubleGraphMarker<T extends GraphElement> extends
 	/**
 	 * marks the given element with the given value
 	 * 
-	 * @param elem
+	 * @param graphElement
 	 *            the graph element to mark
 	 * @param value
 	 *            the object that should be used as marking
@@ -177,7 +177,8 @@ public abstract class DoubleGraphMarker<T extends GraphElement> extends
 			@Override
 			public DoubleFunctionEntry<T> next() {
 				T currentElement = markedElements.next();
-				return new DoubleFunctionEntry<T>(currentElement, get(currentElement));
+				return new DoubleFunctionEntry<T>(currentElement,
+						get(currentElement));
 			}
 
 			@Override

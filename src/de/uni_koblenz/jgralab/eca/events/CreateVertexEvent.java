@@ -15,8 +15,8 @@ public class CreateVertexEvent extends Event {
 	/**
 	 * Creates an CreateVertexEvent with the given parameters
 	 * 
-	 * @param nestedCallsdepth
-	 *            of nested trigger calls
+	 * @param nestedCalls
+	 *            depth of nested trigger calls
 	 * @param graph
 	 *            Graph where the Event happened
 	 * @param element
@@ -30,8 +30,8 @@ public class CreateVertexEvent extends Event {
 	/**
 	 * Creates an CreateVertexEvent with the given parameters
 	 * 
-	 * @param nestedCallsdepth
-	 *            of nested trigger calls
+	 * @param nestedCalls
+	 *            depth of nested trigger calls
 	 * @param graph
 	 *            Graph where the Event happened
 	 * @param type
@@ -42,7 +42,6 @@ public class CreateVertexEvent extends Event {
 		super(nestedCalls, EventTime.BEFORE, graph, type);
 		this.vertex = null;
 	}
-
 
 	/**
 	 * @return the created Vertex or null if the EventTime is before

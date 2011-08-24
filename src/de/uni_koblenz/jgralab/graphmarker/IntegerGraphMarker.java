@@ -91,7 +91,7 @@ public abstract class IntegerGraphMarker<T extends GraphElement> extends
 	/**
 	 * marks the given element with the given value
 	 * 
-	 * @param elem
+	 * @param graphElement
 	 *            the graph element to mark
 	 * @param value
 	 *            the object that should be used as marking

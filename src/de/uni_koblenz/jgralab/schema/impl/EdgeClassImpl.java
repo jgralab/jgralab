@@ -151,7 +151,8 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 	 * 
 	 * @param special
 	 * @param general
-	 * @return true iff the IncidenceClasses are compatible
+	 * @throws SchemaException
+	 *             upon illegal combinations
 	 */
 	public static void checkIncidenceClassSpecialization(
 			IncidenceClass special, IncidenceClass general) {

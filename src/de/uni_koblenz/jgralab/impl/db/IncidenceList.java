@@ -426,8 +426,8 @@ public class IncidenceList extends GraphElementList<DatabasePersistableEdge> {
 	/**
 	 * Removes an edge from incidence list.
 	 * 
-	 * @param The
-	 *            edge to remove.
+	 * @param edge
+	 *            The edge to remove.
 	 * 
 	 *            Precondition: Edge must be contained in incidence list.
 	 * 

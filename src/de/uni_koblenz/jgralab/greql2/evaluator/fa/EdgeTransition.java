@@ -173,8 +173,9 @@ public class EdgeTransition extends SimpleTransition {
 	 *            EdgeDirection.OUT or EdgeDirection.ANY
 	 * @param typeCollection
 	 *            The types which restrict the possible edges
-	 * @param role
-	 *            The accepted edge role, or null if any role is accepted
+	 * @param roles
+	 *            The set of accepted edge role names, or null if any role is
+	 *            accepted
 	 * @param edgeEval
 	 *            If this is set, only the resulting edge of this evaluator will
 	 *            be accepted
@@ -217,7 +218,7 @@ public class EdgeTransition extends SimpleTransition {
 		}
 		return true;
 	}
-	
+
 	public boolean consumedEdge() {
 		return true;
 	}

@@ -60,7 +60,7 @@ import de.uni_koblenz.jgralab.impl.ReversedEdgeBaseImpl;
  * <br/>
  * <br/>
  * 
- *Edge functions can be created in analogy to vertex functions.
+ * Edge functions can be created in analogy to vertex functions.
  * 
  * @author ist@uni-koblenz.de
  * 
@@ -160,8 +160,8 @@ public abstract class MapGraphMarker<T extends AttributedElement, O> extends
 	}
 
 	/**
-	 * @return An {@link Iterable} of all {@link T}s in the {@link Graph} that
-	 *         are marked by this marker.
+	 * @return An {@link Iterable} of all <code>T</code>s in the {@link Graph}
+	 *         that are marked by this marker.
 	 */
 	@Override
 	public Iterable<T> getMarkedElements() {
@@ -221,7 +221,7 @@ public abstract class MapGraphMarker<T extends AttributedElement, O> extends
 	@Override
 	public Iterator<FunctionEntry<T, O>> iterator() {
 		final Iterator<T> markedElements = getMarkedElements().iterator();
-		return new Iterator<FunctionEntry<T,O>>() {
+		return new Iterator<FunctionEntry<T, O>>() {
 
 			@Override
 			public boolean hasNext() {
@@ -231,17 +231,16 @@ public abstract class MapGraphMarker<T extends AttributedElement, O> extends
 			@Override
 			public FunctionEntry<T, O> next() {
 				T currentElement = markedElements.next();
-				return new FunctionEntry<T, O>(currentElement, get(currentElement));
+				return new FunctionEntry<T, O>(currentElement,
+						get(currentElement));
 			}
 
 			@Override
 			public void remove() {
 				markedElements.remove();
 			}
-			
+
 		};
 	}
-	
-	
 
 }

@@ -50,11 +50,6 @@ public class UndefinedVariableException extends QuerySourceException {
 
 	static final long serialVersionUID = -1234567;
 
-	/**
-	 * 
-	 * @param variableName
-	 * @param sourcePositions
-	 */
 	public UndefinedVariableException(Variable variable,
 			List<SourcePosition> sourcePositions) {
 		super("Undefined variable ", variable, sourcePositions);

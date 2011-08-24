@@ -43,16 +43,7 @@ import de.uni_koblenz.jgralab.impl.trans.VersionedReferenceImpl;
  * @author Jose Monte(monte@uni-koblenz.de)
  */
 public interface VersionedIncidence {
-
-	/**
-	 * 
-	 * @return
-	 */
 	VersionedReferenceImpl<IncidenceImpl> getVersionedNextIncidence();
 
-	/**
-	 * 
-	 * @return
-	 */
 	VersionedReferenceImpl<IncidenceImpl> getVersionedPrevIncidence();
 }

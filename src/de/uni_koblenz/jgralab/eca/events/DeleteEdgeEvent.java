@@ -15,8 +15,8 @@ public class DeleteEdgeEvent extends Event {
 	/**
 	 * Creates an DeleteEdgeEvent with the given parameters
 	 * 
-	 * @param nestedCallsdepth
-	 *            of nested trigger calls
+	 * @param nestedCalls
+	 *            depth of nested trigger calls
 	 * @param graph
 	 *            Graph where the Event happened
 	 * @param edge
@@ -30,8 +30,8 @@ public class DeleteEdgeEvent extends Event {
 	/**
 	 * Creates an DeleteEdgeEvent with the given parameters
 	 * 
-	 * @param nestedCallsdepth
-	 *            of nested trigger calls
+	 * @param nestedCalls
+	 *            depth of nested trigger calls
 	 * @param graph
 	 *            Graph where the Event happened
 	 * @param type
