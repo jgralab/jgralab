@@ -82,7 +82,7 @@ public class EdgesConnected extends Incidences {
 
 	{
 		description = "Returns the set of edges connected to the given vertex.\n"
-				+ "Optionally, the a path, path system or type collection may\n"
+				+ "Optionally, a path, path system or type collection may\n"
 				+ "be given.  In this case, the returned edges also are part of\n"
 				+ "that structure, or have the given type, respectively.";
 	}

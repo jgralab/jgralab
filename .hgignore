@@ -16,3 +16,6 @@ syntax: regexp
 
 # Mac OS X crap
 \.DS_Store$
+
+syntax: regexp
+^testit/testgraphs/testgraph\.tg$

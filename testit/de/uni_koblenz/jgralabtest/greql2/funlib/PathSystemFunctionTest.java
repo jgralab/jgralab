@@ -89,23 +89,29 @@ public class PathSystemFunctionTest extends GenericTest {
 	public static void initializePathAndPathSystemVariables()
 			throws JValueInvalidTypeException, Exception {
 		PathSystemFunctionTest t = new PathSystemFunctionTest();
-		t.evalTestQuery("theElement(from v : V{localities.County} with v.name = 'Hessen' report v end) store as hessen");
-		t.evalTestQuery("using hessen: pathSystem(hessen, -->{localities.ContainsLocality} -->{connections.AirRoute}* ) store as noPS");
+		t
+				.evalTestQuery("theElement(from v : V{localities.County} with v.name = 'Hessen' report v end) store as hessen");
+		t
+				.evalTestQuery("using hessen: pathSystem(hessen, -->{localities.ContainsLocality} -->{connections.AirRoute}* ) store as noPS");
 		emptyPath = t.evalTestQuery(
 				"using noPS: extractPath(noPS, firstVertex())").toPath();
 		multipleElementPath = t.evalTestQuery(
 				"using noPS: extractPath(noPS, 2)[0]").toPath();
 
-		t.evalTestQuery("using hessen: pathSystem(hessen, -->{localities.ContainsLocality} ) store as PS");
+		t
+				.evalTestQuery("using hessen: pathSystem(hessen, -->{localities.ContainsLocality} ) store as PS");
 		twoElementPath = t.evalTestQuery("using PS: extractPath(PS, 1)[0]")
 				.toPath();
 
-		t.evalTestQuery("theElement(from v : V{junctions.Crossroad} with v --> v report v end) store as suedallee");
-		t.evalTestQuery("using suedallee: pathSystem(suedallee, -->{connections.Street}) store as PS");
+		t
+				.evalTestQuery("theElement(from v : V{junctions.Crossroad} with v --> v report v end) store as suedallee");
+		t
+				.evalTestQuery("using suedallee: pathSystem(suedallee, -->{connections.Street}) store as PS");
 		loopPath = t.evalTestQuery(
 				"using suedallee, PS: extractPath(PS, suedallee)").toPath();
 
-		t.evalTestQuery("using suedallee: pathSystem(suedallee, [-->{connections.Footpath}]) store as PS");
+		t
+				.evalTestQuery("using suedallee: pathSystem(suedallee, [-->{connections.Footpath}]) store as PS");
 		oneElementPath = t.evalTestQuery(
 				"using suedallee, PS: extractPath(PS, suedallee)").toPath();
 		longPath = t
@@ -113,13 +119,15 @@ public class PathSystemFunctionTest extends GenericTest {
 						"extractPath(pathSystem(V{junctions.Crossroad}[0], <->*), 5)[0]")
 				.toPath();
 
-		t.evalTestQuery("theElement(from v : V{localities.County} with v.name = 'Berlin' report v end) store as berlin");
+		t
+				.evalTestQuery("theElement(from v : V{localities.County} with v.name = 'Berlin' report v end) store as berlin");
 		emptyPathSystem = t
 				.evalTestQuery(
 						"using berlin : pathSystem(berlin, -->{localities.ContainsLocality})")
 				.toPathSystem();
 
-		t.evalTestQuery("theElement(from v: V{localities.County} with v.name = 'Rheinland-Pfalz' report v end) store as rp");
+		t
+				.evalTestQuery("theElement(from v: V{localities.County} with v.name = 'Rheinland-Pfalz' report v end) store as rp");
 		depthOnePathSystemWithOnePath = t.evalTestQuery(
 				"using rp: pathSystem(rp, -->{localities.HasCapital})")
 				.toPathSystem();
@@ -150,7 +158,8 @@ public class PathSystemFunctionTest extends GenericTest {
 				"using rp : pathSystem(rp,-->)").toPathSystem();
 		depthTwoPathSystemWithMultiPaths = t.evalTestQuery(
 				"using rp : pathSystem(rp,-->^2)").toPathSystem();
-		t.evalTestQuery("theElement(from v:V{junctions.Plaza} with v.name = 'L\u00f6hr-Center' report v end) store as loehrCenter");
+		t
+				.evalTestQuery("theElement(from v:V{junctions.Plaza} with v.name = 'L\u00f6hr-Center' report v end) store as loehrCenter");
 		multipleDepthPathSystemWithMultiPaths = t
 				.evalTestQuery(
 						"using loehrCenter: pathSystem(loehrCenter, <->{connections.Street}+)")
@@ -320,8 +329,8 @@ public class PathSystemFunctionTest extends GenericTest {
 		Graph testgraph = getTestGraph(TestVersion.ROUTE_MAP_GRAPH);
 		assertTrue(result
 				.contains(JValueImpl.fromObject(testgraph.getEdge(-2))));
-		assertTrue(result
-				.contains(JValueImpl.fromObject(testgraph.getEdge(315))));
+		assertTrue(result.contains(JValueImpl
+				.fromObject(testgraph.getEdge(315))));
 		assertTrue(result.contains(JValueImpl.fromObject(testgraph
 				.getEdge(-316))));
 		assertTrue(result.contains(JValueImpl.fromObject(testgraph
@@ -408,8 +417,8 @@ public class PathSystemFunctionTest extends GenericTest {
 		assertFalse(result.contains(JValueImpl.fromObject(testgraph
 				.getEdge(233))));
 
-		assertTrue(result
-				.contains(JValueImpl.fromObject(testgraph.getEdge(234))));
+		assertTrue(result.contains(JValueImpl
+				.fromObject(testgraph.getEdge(234))));
 		assertFalse(result.contains(JValueImpl.fromObject(testgraph
 				.getEdge(-234))));
 		assertEquals(3, result.size());
@@ -418,8 +427,8 @@ public class PathSystemFunctionTest extends GenericTest {
 		result = evalTestQuery(
 				"using dmpmPathSystem: edgesConnected(getVertex(1),dmpmPathSystem)")
 				.toCollection();
-		assertTrue(result
-				.contains(JValueImpl.fromObject(testgraph.getEdge(135))));
+		assertTrue(result.contains(JValueImpl
+				.fromObject(testgraph.getEdge(135))));
 		assertFalse(result.contains(JValueImpl.fromObject(testgraph
 				.getEdge(-135))));
 		assertEquals(1, result.size());
@@ -435,6 +444,22 @@ public class PathSystemFunctionTest extends GenericTest {
 	public void testEdgesConnectedTypeCollection() throws Exception {
 		// TODO A meaningful test is missing for
 		// VERTEX x TYPECOLLECTION -> COLLECTION
+		Graph testgraph = getTestGraph(TestVersion.ROUTE_MAP_GRAPH);
+		JValueCollection result;
+
+		// test with all types at one vertex
+		result = evalTestQuery("").toCollection();
+
+		// test with only one type at one vertex
+
+		// test with a type not incident to a vertex
+
+		// test with vertex "null"
+
+		// test with type collection "null"
+
+		// test with both "null"
+
 		fail();
 	}
 
