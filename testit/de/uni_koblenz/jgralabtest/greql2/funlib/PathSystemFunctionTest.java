@@ -40,7 +40,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -196,7 +198,7 @@ public class PathSystemFunctionTest extends GenericTest {
 		JValuePath result = evalTestQuery(
 				"extractPath(pathSystem(getVertex(143),-->{localities.HasCapital}<--{localities.ContainsLocality}-->{localities.ContainsLocality}),getVertex(153))")
 				.toPath();
-		System.out.println(result);
+
 		setBoundVariable("testPathForContainsElement1", result);
 		assertQueryIsTrue("using testPathForContainsElement1: contains(testPathForContainsElement1,getVertex(143))");
 		assertQueryIsTrue("using testPathForContainsElement1: contains(testPathForContainsElement1,getEdge(345))");
@@ -240,7 +242,6 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testPathSystemContainsPath() throws Exception {
-		System.out.println(multipleDepthPathSystemWithMultiPaths);
 
 		// take two arbitrary paths from path system
 		assertQueryIsTrue("using dmpmPathSystem: contains(dmpmPathSystem,extractPath(dmpmPathSystem,getVertex(133)))");
@@ -600,7 +601,7 @@ public class PathSystemFunctionTest extends GenericTest {
 	public void testEdgesFromVertexOnly() throws Exception {
 		JValueSet result = evalTestQuery(
 				"let v20 := getVertex(20) in edgesFrom(v20)").toJValueSet();
-		System.out.println(result);
+
 		Graph testgraph = getTestGraph(TestVersion.ROUTE_MAP_GRAPH);
 		assertFalse(result.contains(JValueImpl
 				.fromObject(testgraph.getEdge(-2))));
@@ -692,7 +693,7 @@ public class PathSystemFunctionTest extends GenericTest {
 		result = evalTestQuery(
 				"using dmpmPathSystem: edgesFrom(getVertex(104),dmpmPathSystem)")
 				.toCollection();
-		System.out.println(result);
+
 		assertFalse(result.contains(JValueImpl.fromObject(testgraph
 				.getEdge(-232))));
 		assertFalse(result.contains(JValueImpl.fromObject(testgraph
@@ -1170,23 +1171,138 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testElementsPath() throws Exception {
-		// TODO A meaningful test is missing for
 		// PATH -> COLLECTION
-		fail();
+
+		// test a normal path
+		JValueCollection result = evalTestQuery(
+				"elements(extractPath(pathSystem(getVertex(144), -->{localities.ContainsLocality} -->{connections.AirRoute}* ),getVertex(157)))")
+				.toCollection();
+
+		Set<Integer> vertexIds = new HashSet<Integer>();
+		vertexIds.add(144);
+		vertexIds.add(155);
+		vertexIds.add(157);
+		Set<Integer> edgeIds = new HashSet<Integer>();
+		edgeIds.add(354);
+		edgeIds.add(297);
+		testCollectionForGraphElements(result, vertexIds, edgeIds);
+
+		// test path including reversed edges
+		result = evalTestQuery(
+				"using dmpmPathSystem: elements(extractPath(dmpmPathSystem,getVertex(72)))")
+				.toCollection();
+		vertexIds.clear();
+		vertexIds.add(142);
+		vertexIds.add(104);
+		vertexIds.add(72);
+		edgeIds.clear();
+		edgeIds.add(-294);
+		edgeIds.add(234);
+		testCollectionForGraphElements(result, vertexIds, edgeIds);
+
+		// test empty path
+		result = evalTestQuery("using emptyPath: elements(emptyPath)")
+				.toCollection();
+		// System.out.println(emptyPath);
+		// System.out.println(result);
+
+		testCollectionForGraphElements(result, null, null);
 	}
 
 	@Test
 	public void testElementsPathSystem() throws Exception {
-		// TODO A meaningful test is missing for
 		// PATHSYSTEM -> COLLECTION
-		fail();
+
+		// test normal path system
+		JValueCollection result = evalTestQuery(
+				"using d2p2PathSystem: elements(d2p2PathSystem)")
+				.toCollection();
+
+		Set<Integer> vertexIds = new HashSet<Integer>();
+		vertexIds.add(144);
+		vertexIds.add(154);
+		vertexIds.add(16);
+		vertexIds.add(155);
+		vertexIds.add(17);
+		Set<Integer> edgeIds = new HashSet<Integer>();
+		edgeIds.add(350);
+		edgeIds.add(127);
+		edgeIds.add(354);
+		edgeIds.add(126);
+
+		testCollectionForGraphElements(result, vertexIds, edgeIds);
+
+		// test path system containing reversed edges
+		result = evalTestQuery("elements(pathSystem(getVertex(2),<->))")
+				.toCollection();
+		vertexIds.clear();
+		vertexIds.add(2);
+		vertexIds.add(19);
+		vertexIds.add(21);
+		edgeIds.clear();
+		edgeIds.add(-325);
+		edgeIds.add(326);
+
+		testCollectionForGraphElements(result, vertexIds, edgeIds);
+
+		// test empty path system (only root)
+		result = evalTestQuery("elements(pathSystem(getVertex(1),<--))")
+				.toCollection();
+
+		vertexIds.clear();
+		vertexIds.add(1);
+		testCollectionForGraphElements(result, vertexIds, null);
+
+	}
+
+	private void testCollectionForGraphElements(JValueCollection collection,
+			Set<Integer> vertexIds, Set<Integer> edgeIds) throws Exception {
+		Graph testgraph = getTestGraph(TestVersion.ROUTE_MAP_GRAPH);
+		for (Vertex v : testgraph.vertices()) {
+			boolean collectionContainsVertex = collection.contains(JValueImpl
+					.fromObject(v));
+			if (vertexIds != null && vertexIds.contains(v.getId())) {
+				assertTrue(v + " should be in collection, but is not.",
+						collectionContainsVertex);
+			} else {
+				assertFalse(v + " is in collection, but should not be.",
+						collectionContainsVertex);
+			}
+		}
+		for (Edge e : testgraph.edges()) {
+			// check normal edge
+			boolean collectionContainsEdge = collection.contains(JValueImpl
+					.fromObject(e));
+			Edge re = e.getReversedEdge();
+			boolean collectionContainsReversedEdge = collection
+					.contains(JValueImpl.fromObject(re));
+
+			if (edgeIds != null && edgeIds.contains(e.getId())) {
+				assertTrue(e + "should be in collection, but is not.",
+						collectionContainsEdge);
+			} else {
+				assertFalse(e + " is in collection, but should not be.",
+						collectionContainsEdge);
+			}
+
+			// check reversed edge
+			if (edgeIds != null && edgeIds.contains(re.getId())) {
+				assertTrue(re + "should be in collection, but is not.",
+						collectionContainsReversedEdge);
+			} else {
+				assertFalse(re + " is in collection, but should not be.",
+						collectionContainsReversedEdge);
+			}
+		}
+
+		assertEquals((vertexIds != null ? vertexIds.size() : 0)
+				+ (edgeIds != null ? edgeIds.size() : 0), collection.size());
+
 	}
 
 	@Test
-	public void testElementsSlice() throws Exception {
-		// TODO A meaningful test is missing for
-		// SLICE -> COLLECTION
-		fail();
+	public void testElementsNull() throws Exception {
+		assertQueryIsNull("using nll: elements(nll)");
 	}
 
 	@Test
