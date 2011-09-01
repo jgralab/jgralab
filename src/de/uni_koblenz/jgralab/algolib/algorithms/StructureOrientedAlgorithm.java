@@ -41,8 +41,8 @@ import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 import de.uni_koblenz.jgralab.algolib.problems.TraversalSolver;
 
-public abstract class StructureOrientedAlgorithm extends GraphAlgorithm implements
-		TraversalSolver {
+public abstract class StructureOrientedAlgorithm extends GraphAlgorithm
+		implements TraversalSolver {
 
 	/**
 	 * This is the default value for the parameter <code>searchDirection</code>.
@@ -74,6 +74,7 @@ public abstract class StructureOrientedAlgorithm extends GraphAlgorithm implemen
 	public void setNavigable(BooleanFunction<Edge> navigable) {
 		checkStateForSettingParameters();
 		this.navigable = navigable;
+		reset();
 	}
 
 	/**
@@ -112,8 +113,8 @@ public abstract class StructureOrientedAlgorithm extends GraphAlgorithm implemen
 	@Override
 	public void resetParameters() {
 		super.resetParameters();
-		this.navigable = null;
-		this.traversalDirection = DEFAULT_TRAVERSAL_DIRECTION;
+		navigable = null;
+		traversalDirection = DEFAULT_TRAVERSAL_DIRECTION;
 	}
 
 	/**
