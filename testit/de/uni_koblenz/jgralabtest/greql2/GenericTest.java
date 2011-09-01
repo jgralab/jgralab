@@ -121,6 +121,14 @@ public class GenericTest {
 		assertEquals(expectedValue, result.toBoolean().booleanValue());
 	}
 
+	protected void assertQueryIsTrue(String query) throws Exception {
+		assertQueryEquals(query, true);
+	}
+
+	protected void assertQueryIsFalse(String query) throws Exception {
+		assertQueryEquals(query, false);
+	}
+
 	protected void assertQueryEquals(String query, int expectedValue)
 			throws Exception {
 		JValue result = evalTestQuery(query);
@@ -150,13 +158,13 @@ public class GenericTest {
 		JValue result = evalTestQuery(query);
 		JValue expectedResult = evalTestQuery(expectedResultAsQuery);
 		try {
-			if(!result.equals(expectedResult)){
+			if (!result.equals(expectedResult)) {
 				System.out.println(result);
 				System.out.println(expectedResult);
 				System.out.println(result instanceof JValueList);
 			}
 			assertEquals(expectedResult, result);
-			
+
 		} catch (AssertionError ex) {
 			if (result.isCollection() && expectedResult.isCollection()) {
 				JValueCollection col = result.toCollection();
@@ -198,7 +206,7 @@ public class GenericTest {
 		assertEquals(expectedValue, result);
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings( { "rawtypes", "unchecked" })
 	private List<?> toList(JValueCollection collection) {
 		ArrayList list = new ArrayList();
 		for (JValue value : collection) {
