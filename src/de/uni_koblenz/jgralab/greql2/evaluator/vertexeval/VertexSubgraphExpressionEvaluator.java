@@ -38,7 +38,7 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
+import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
@@ -65,7 +65,7 @@ public class VertexSubgraphExpressionEvaluator extends
 	@Override
 	public JValue evaluate() throws EvaluateException {
 		Graph dataGraph = greqlEvaluator.getDatagraph();
-		BooleanGraphMarker subgraphAttr = new BooleanGraphMarker(dataGraph);
+		SubGraphMarker subgraphAttr = new SubGraphMarker(dataGraph);
 		Vertex currentVertex = dataGraph.getFirstVertex();
 		while (currentVertex != null) {
 			JValueTypeCollection typeCollection = getTypeCollection();
@@ -81,7 +81,8 @@ public class VertexSubgraphExpressionEvaluator extends
 		// add all edges
 		Edge currentEdge = dataGraph.getFirstEdge();
 		while (currentEdge != null) {
-			if (subgraphAttr.isMarked(currentEdge.getAlpha())
+			if ((subgraph == null || subgraph.isMarked(currentEdge))
+					&& subgraphAttr.isMarked(currentEdge.getAlpha())
 					&& subgraphAttr.isMarked(currentEdge.getOmega())) {
 				subgraphAttr.mark(currentEdge);
 			}

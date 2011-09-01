@@ -131,7 +131,7 @@ public class QuantifiedExpressionEvaluator extends VertexEvaluator {
 						}
 					} catch (JValueInvalidTypeException exception) {
 						throw new EvaluateException(
-								"Error evaluation Exists clause", exception);
+								"Error evaluating Exists clause", exception);
 					}
 				}
 			}
@@ -152,7 +152,7 @@ public class QuantifiedExpressionEvaluator extends VertexEvaluator {
 						}
 					} catch (JValueInvalidTypeException exception) {
 						throw new EvaluateException(
-								"Error evaluation Exists! clause", exception);
+								"Error evaluating Exists! clause", exception);
 					}
 				}
 			}
@@ -171,14 +171,14 @@ public class QuantifiedExpressionEvaluator extends VertexEvaluator {
 						}
 					} catch (JValueInvalidTypeException exception) {
 						throw new EvaluateException(
-								"Error evaluation Forall clause", exception);
+								"Error evaluating Forall clause", exception);
 					}
 				}
 			}
 			return new JValueImpl(Boolean.TRUE);
 		default:
 			throw new EvaluateException(
-					"Found QuantifiedExpression that is neither exists, existis! not forall");
+					"Found QuantifiedExpression that is neither exists, exists!, nor forall");
 		}
 	}
 

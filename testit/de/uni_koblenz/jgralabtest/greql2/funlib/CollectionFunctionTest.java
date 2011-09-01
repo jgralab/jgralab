@@ -105,7 +105,6 @@ public class CollectionFunctionTest extends GenericTest {
 		assertQueryIsNull("using nll: nll ++ list()");
 	}
 
-
 	@Test
 	public void testContainsList() throws Exception {
 		evalTestQuery("list (5..13) store as x");
@@ -284,7 +283,7 @@ public class CollectionFunctionTest extends GenericTest {
 		assertQueryEquals("elements( set(41, 41, 41))", value);
 		assertQueryEquals("elements(list(41))", value);
 		assertQueryEquals("elements(list(41, 41, 41))", value);
-		
+
 		value = evalTestQuery("set(5, 7, 9, 13)");
 
 		assertQueryEquals("elements( set(7, 5, 9, 13, 5))", value);
@@ -849,7 +848,7 @@ public class CollectionFunctionTest extends GenericTest {
 				"list('a string', 'another string')");
 
 		evalTestQuery("map('milk' -> 1, 'honey' -> 2, 'milk' -> 3) store as m");
-		assertQueryEqualsQuery("using m: values(m)", "list(3, 2)");
+		assertQueryEqualsQuery("using m: values(m)", "list(2, 3)");
 
 		evalTestQuery("map('milk' -> 1, 'honey' -> 1, 'milk' -> 1) store as m");
 		assertQueryEqualsQuery("using m: values(m)", "list(1,1)");
