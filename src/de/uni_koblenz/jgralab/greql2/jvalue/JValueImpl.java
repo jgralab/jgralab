@@ -44,6 +44,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
+import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.FiniteAutomaton;
 import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 import de.uni_koblenz.jgralab.greql2.exception.JValueVisitorException;
@@ -990,10 +991,7 @@ public class JValueImpl implements JValue {
 		throw new JValueInvalidTypeException(JValueType.RECORD, type);
 	}
 
-	/**
-	 * constructs a new invalid JValue. Is only called in subclasses
-	 */
-	public JValueImpl(AbstractGraphMarker<?> t) {
+	public JValueImpl(SubGraphMarker t) {
 		if (t == null) {
 			return;
 		}
@@ -1002,10 +1000,7 @@ public class JValueImpl implements JValue {
 		browsingInfo = null;
 	}
 
-	/**
-	 * constructs a new invalid JValue. Is only called in subclasses
-	 */
-	public JValueImpl(AbstractGraphMarker<?> t, AttributedElement browsingInfo) {
+	public JValueImpl(SubGraphMarker t, AttributedElement browsingInfo) {
 		this(t);
 		this.browsingInfo = browsingInfo;
 	}
@@ -1269,7 +1264,7 @@ public class JValueImpl implements JValue {
 			throws JValueVisitorException {
 		new JValueXMLOutputVisitor(this, filename, graph);
 	}
-	
+
 	@Override
 	public void removeAllBrowsingInformation() {
 		browsingInfo = null;

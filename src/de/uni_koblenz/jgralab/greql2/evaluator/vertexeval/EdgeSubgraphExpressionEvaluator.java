@@ -37,8 +37,7 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
+import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
@@ -65,34 +64,23 @@ public class EdgeSubgraphExpressionEvaluator extends
 	@Override
 	public JValue evaluate() throws EvaluateException {
 		Graph dataGraph = greqlEvaluator.getDatagraph();
-		BooleanGraphMarker subgraphAttr = new BooleanGraphMarker(dataGraph);
+		SubGraphMarker subgraphAttr = new SubGraphMarker(dataGraph);
 		Edge currentEdge = dataGraph.getFirstEdge();
 		JValueTypeCollection typeCollection = getTypeCollection();
 		while (currentEdge != null) {
-			if ((subgraph == null) || (subgraph.isMarked(currentEdge))) {
+			if (subgraph == null
+					|| (subgraph.isMarked(currentEdge)
+							&& subgraph.isMarked(currentEdge.getAlpha()) && subgraph
+							.isMarked(currentEdge.getOmega()))) {
 				AttributedElementClass edgeClass = currentEdge
 						.getAttributedElementClass();
 				if (typeCollection.acceptsType(edgeClass)) {
 					subgraphAttr.mark(currentEdge);
+					subgraphAttr.mark(currentEdge.getAlpha());
+					subgraphAttr.mark(currentEdge.getOmega());
 				}
 			}
 			currentEdge = currentEdge.getNextEdge();
-		}
-		// add all vertices
-		Vertex currentVertex = greqlEvaluator.getDatagraph().getFirstVertex();
-		while (currentVertex != null) {
-			// System.out.println("Current vertex is: " + currentVertex);
-			Edge inc = currentVertex.getFirstIncidence();
-			while (inc != null) {
-				// System.out.println("Edge is: " + inc);
-				if (subgraphAttr.isMarked(inc)) {
-					subgraphAttr.mark(currentVertex);
-					// System.out.println("Marking vertex: " + currentVertex);
-					break;
-				}
-				inc = inc.getNextIncidence();
-			}
-			currentVertex = currentVertex.getNextVertex();
 		}
 		return new JValueImpl(subgraphAttr);
 	}
