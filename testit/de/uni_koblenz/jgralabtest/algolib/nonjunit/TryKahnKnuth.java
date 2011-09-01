@@ -34,18 +34,23 @@
  */
 package de.uni_koblenz.jgralabtest.algolib.nonjunit;
 
+import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.DepthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.RecursiveDepthFirstSearch;
-import de.uni_koblenz.jgralab.algolib.algorithms.topological_order.TopologicalOrderWithDFS;
 import de.uni_koblenz.jgralab.algolib.algorithms.topological_order.KahnKnuthAlgorithm;
+import de.uni_koblenz.jgralab.algolib.algorithms.topological_order.TopologicalOrderWithDFS;
+import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
+import de.uni_koblenz.jgralab.algolib.functions.adapters.MethodCallToBooleanFunctionAdapter;
+import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralabtest.schemas.algolib.simple.SimpleGraph;
 import de.uni_koblenz.jgralabtest.schemas.algolib.simple.SimpleSchema;
 import de.uni_koblenz.jgralabtest.schemas.algolib.simple.SimpleVertex;
 
 public class TryKahnKnuth {
-	
-	public static SimpleGraph danielsGraph(){
+
+	public static SimpleGraph danielsGraph() {
 		SimpleGraph graph = SimpleSchema.instance().createSimpleGraph();
 		int vertexCount = 7;
 		SimpleVertex[] vertices = new SimpleVertex[vertexCount];
@@ -60,8 +65,8 @@ public class TryKahnKnuth {
 		graph.createSimpleEdge(vertices[6], vertices[3]);
 		return graph;
 	}
-	
-	public static SimpleGraph myGraph(){
+
+	public static SimpleGraph myGraph() {
 		SimpleGraph graph = SimpleSchema.instance().createSimpleGraph();
 		int vertexCount = 9;
 		SimpleVertex[] vertices = new SimpleVertex[vertexCount];
@@ -81,16 +86,42 @@ public class TryKahnKnuth {
 		graph.createSimpleEdge(vertices[2], vertices[8]);
 		return graph;
 	}
+
 	public static void main(String[] args) throws AlgorithmTerminatedException {
-		
-		SimpleGraph graph = danielsGraph();
-		
+
+		SimpleGraph graph = myGraph();
+
+		// creating a subgraph
+		SubGraphMarker subgraph = createSubgraph(graph);
+		BooleanFunction<Edge> navigable = new MethodCallToBooleanFunctionAdapter<Edge>() {
+
+			@Override
+			public boolean get(Edge parameter) {
+				if (parameter.getAlpha() == parameter.getGraph().getVertex(1)
+						&& parameter.getOmega() == parameter.getGraph()
+								.getVertex(8)) {
+					return false;
+				}
+				return true;
+			}
+
+			@Override
+			public boolean isDefined(Edge parameter) {
+				return true;
+			}
+
+		};
 		// graph.createSimpleEdge(vertices[7], vertices[3]);
 
-		KahnKnuthAlgorithm solver = new KahnKnuthAlgorithm(graph);
+		KahnKnuthAlgorithm solver = new KahnKnuthAlgorithm(graph, subgraph,
+				navigable);
+
 		DepthFirstSearch dfs = new RecursiveDepthFirstSearch(graph);
-		TopologicalOrderWithDFS solver2 = new TopologicalOrderWithDFS(graph, dfs);
-		dfs.addVisitor(new DebugSearchVisitor());
+		TopologicalOrderWithDFS solver2 = new TopologicalOrderWithDFS(graph,
+				dfs);
+		solver2.setSubgraph(subgraph);
+		solver2.setNavigable(navigable);
+		// dfs.addVisitor(new DebugSearchVisitor());
 		System.out.println("Kahn Knuth:");
 
 		solver.execute();
@@ -106,5 +137,23 @@ public class TryKahnKnuth {
 		System.out.println(solver2.isAcyclic());
 		System.out.println(solver2.getTopologicalOrder());
 
+	}
+
+	private static SubGraphMarker createSubgraph(SimpleGraph graph) {
+		SubGraphMarker subgraph = new SubGraphMarker(graph);
+		for (Vertex v : graph.vertices()) {
+			subgraph.mark(v);
+		}
+		for (Edge e : graph.edges()) {
+			subgraph.mark(e);
+		}
+
+		Vertex v3 = graph.getVertex(3);
+		subgraph.removeMark(v3);
+		for (Edge v3i : v3.incidences()) {
+			subgraph.removeMark(v3i);
+		}
+
+		return subgraph;
 	}
 }
