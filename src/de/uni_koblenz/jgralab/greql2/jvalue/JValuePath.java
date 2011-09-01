@@ -280,9 +280,11 @@ public class JValuePath extends JValueImpl {
 	 */
 	public JValueList nodeTraceAsJValue() {
 		JValueList nodeList = new JValueList();
-		nodeList.add(new JValueImpl(startVertex));
-		for (Edge e : edges) {
-			nodeList.add(new JValueImpl(e.getThat(), e.getThat()));
+		if (startVertex != null) {
+			nodeList.add(new JValueImpl(startVertex));
+			for (Edge e : edges) {
+				nodeList.add(new JValueImpl(e.getThat(), e.getThat()));
+			}
 		}
 		return nodeList;
 	}
@@ -311,10 +313,12 @@ public class JValuePath extends JValueImpl {
 	 */
 	public JValueList traceAsJValue() {
 		JValueList list = new JValueList();
-		list.add(new JValueImpl(startVertex));
-		for (Edge edge : edges) {
-			list.add(new JValueImpl(edge, edge));
-			list.add(new JValueImpl(edge.getThat(), edge.getThat()));
+		if (startVertex != null) {
+			list.add(new JValueImpl(startVertex));
+			for (Edge edge : edges) {
+				list.add(new JValueImpl(edge, edge));
+				list.add(new JValueImpl(edge.getThat(), edge.getThat()));
+			}
 		}
 		return list;
 	}
