@@ -64,15 +64,6 @@ import de.uni_koblenz.jgralabtest.greql2.GenericTest;
 
 public class PathSystemFunctionTest extends GenericTest {
 
-	/**
-	 * ‚Ä¢ v :-) -->Œ± baut ein Pfadsystem √ºber Pfade, die dem regul√§ren
-	 * Ausdruck Œ± entsprechen, mit dem Wurzelknoten v auf. ‚Ä¢ v :-) -->Œ± :-)
-	 * w liefert einen Pfad der Gestalt Œ± von v nach w. ‚Ä¢ -->Œ± :-) w liefert
-	 * ein Pfadsystem mit Pfaden der Gestalt Œ±T mit dem Wurzelknoten w. ‚Ä¢ v
-	 * :-) ( -->Œ± :-) w ) liefert dementsprechend einen Pfad der Gestalt Œ±T
-	 * von w nach v.
-	 */
-
 	private static JValuePath emptyPath, oneElementPath, twoElementPath,
 			multipleElementPath, loopPath, longPath;
 	private static JValuePathSystem emptyPathSystem;
@@ -96,7 +87,7 @@ public class PathSystemFunctionTest extends GenericTest {
 		emptyPath = t.evalTestQuery(
 				"using noPS: extractPath(noPS, firstVertex())").toPath();
 		multipleElementPath = t.evalTestQuery(
-				"using noPS: extractPath(noPS, 2)[0]").toPath();
+				"using noPS: extractPath(noPS, getVertex(157))").toPath();
 
 		t
 				.evalTestQuery("using hessen: pathSystem(hessen, -->{localities.ContainsLocality} ) store as PS");
@@ -189,37 +180,43 @@ public class PathSystemFunctionTest extends GenericTest {
 	}
 
 	@Test
-	public void testCollectionContains() throws Exception {
-		// TODO A meaningful test is missing for
-		// MARKER x ATTRELEM -> BOOL
-		fail();
-	}
-
-	// @Test
-	public void testCollectionContainsNull() throws Exception {
-		// TODO A meaningful test for test for the following signatures is
-		// missing:
-		// PATH x ATTRELEM -> BOOL
-		// PATHSYSTEM x ATTRELEM -> BOOL
-		// PATHSYSTEM x PATH -> BOOL
-		// MARKER x ATTRELEM -> BOOL
-		// SLICE x ATTRELEM -> BOOL
-		//
-		// The rest of the null test is implemented in the
-		// CollectionFunctionTest.
-		fail();
-	}
-
-	@Test
 	public void testPathContainsElement() throws Exception {
-		// TODO A meaningful test is missing for
 		// PATH x ATTRELEM -> BOOL
-		fail();
-	}
 
-	@Test
-	public void testPathContainsNull() throws Exception {
-		fail();
+		// path with two edges in normal direction
+		assertQueryIsTrue("using multiElementPath: contains(multiElementPath,getVertex(144))");
+		assertQueryIsTrue("using multiElementPath: contains(multiElementPath,getEdge(354))");
+		assertQueryIsFalse("using multiElementPath: contains(multiElementPath,getEdge(-354))");
+		assertQueryIsTrue("using multiElementPath: contains(multiElementPath,getVertex(155))");
+		assertQueryIsTrue("using multiElementPath: contains(multiElementPath,getEdge(297))");
+		assertQueryIsFalse("using multiElementPath: contains(multiElementPath,getEdge(-297))");
+		assertQueryIsTrue("using multiElementPath: contains(multiElementPath,getVertex(157))");
+
+		// path with two edges with one reversed edge
+		JValuePath result = evalTestQuery(
+				"extractPath(pathSystem(getVertex(143),-->{localities.HasCapital}<--{localities.ContainsLocality}-->{localities.ContainsLocality}),getVertex(153))")
+				.toPath();
+		System.out.println(result);
+		setBoundVariable("testPathForContainsElement1", result);
+		assertQueryIsTrue("using testPathForContainsElement1: contains(testPathForContainsElement1,getVertex(143))");
+		assertQueryIsTrue("using testPathForContainsElement1: contains(testPathForContainsElement1,getEdge(345))");
+		assertQueryIsFalse("using testPathForContainsElement1: contains(testPathForContainsElement1,getEdge(-345))");
+		assertQueryIsTrue("using testPathForContainsElement1: contains(testPathForContainsElement1,getVertex(152))");
+		assertQueryIsTrue("using testPathForContainsElement1: contains(testPathForContainsElement1,getEdge(-348))");
+		assertQueryIsFalse("using testPathForContainsElement1: contains(testPathForContainsElement1,getEdge(348))");
+		assertQueryIsTrue("using testPathForContainsElement1: contains(testPathForContainsElement1,getEdge(347))");
+		assertQueryIsFalse("using testPathForContainsElement1: contains(testPathForContainsElement1,getEdge(-347))");
+		assertQueryIsTrue("using testPathForContainsElement1: contains(testPathForContainsElement1,getVertex(153))");
+
+		// path with arbitrary elements not contained in path
+		assertQueryIsFalse("using testPathForContainsElement1: contains(testPathForContainsElement1,getEdge(1))");
+		assertQueryIsFalse("using testPathForContainsElement1: contains(testPathForContainsElement1,getEdge(-1))");
+		assertQueryIsFalse("using testPathForContainsElement1: contains(testPathForContainsElement1,getVertex(1))");
+		assertQueryIsFalse("using testPathForContainsElement1: contains(testPathForContainsElement1,getVertex(30))");
+
+		// is null contained?
+		assertQueryIsNull("using nll,testPathForContainsElement1: contains(testPathForContainsElement1,nll)");
+
 	}
 
 	@Test
@@ -242,9 +239,22 @@ public class PathSystemFunctionTest extends GenericTest {
 	}
 
 	@Test
-	public void testPathSystemContainsPath() {
-		// TODO how is a path created without a path system?
-		fail();
+	public void testPathSystemContainsPath() throws Exception {
+		System.out.println(multipleDepthPathSystemWithMultiPaths);
+
+		// take two arbitrary paths from path system
+		assertQueryIsTrue("using dmpmPathSystem: contains(dmpmPathSystem,extractPath(dmpmPathSystem,getVertex(133)))");
+		assertQueryIsTrue("using dmpmPathSystem: contains(dmpmPathSystem,extractPath(dmpmPathSystem,getVertex(86)))");
+
+		// path from start vertex
+		assertQueryIsTrue("using dmpmPathSystem: contains(dmpmPathSystem,extractPath(dmpmPathSystem,getVertex(142)))");
+
+		// empty path
+		assertQueryIsFalse("using dmpmPathSystem,emptyPath: contains(dmpmPathSystem,emptyPath)");
+
+		// arbitrary path not included in PS
+		assertQueryIsFalse("using dmpmPathSystem,multiElementPath: contains(dmpmPathSystem,multiElementPath)");
+
 	}
 
 	@Test
@@ -261,17 +271,19 @@ public class PathSystemFunctionTest extends GenericTest {
 		assertQueryIsNull("using dmpmPathSystem,nll : contains(dmpmPathSystem,nll)");
 	}
 
-	@Test
-	public void testMarkerContainsElement() throws Exception {
-		// TODO how to create a marker for using in GReQL
-		fail();
-	}
+	// TODO markers cannot be bound to variables
 
-	@Test
-	public void testMarkerConstainsNull() throws Exception {
-		// TODO how to create a marker for using in GReQL
-		fail();
-	}
+	// @Test
+	// public void testMarkerContainsElement() throws Exception {
+	// // TODO how to create a marker for using in GReQL
+	// fail();
+	// }
+	//
+	// @Test
+	// public void testMarkerConstainsNull() throws Exception {
+	// // TODO how to create a marker for using in GReQL
+	// fail();
+	// }
 
 	@Test
 	public void testDepth() throws Exception {
@@ -442,59 +454,201 @@ public class PathSystemFunctionTest extends GenericTest {
 
 	@Test
 	public void testEdgesConnectedTypeCollection() throws Exception {
-		// TODO A meaningful test is missing for
 		// VERTEX x TYPECOLLECTION -> COLLECTION
 		Graph testgraph = getTestGraph(TestVersion.ROUTE_MAP_GRAPH);
 		JValueCollection result;
 
 		// test with all types at one vertex
-		result = evalTestQuery("").toCollection();
+		result = evalTestQuery(
+				"edgesConnected{localities.ContainsCrossroad,connections.Street}(getVertex(120))")
+				.toCollection();
+		assertTrue(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-100))));
+		assertTrue(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-245))));
+		assertTrue(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-281))));
+		assertTrue(result.contains(JValueImpl
+				.fromObject(testgraph.getEdge(291))));
+		assertTrue(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-319))));
+		assertTrue(result.contains(JValueImpl
+				.fromObject(testgraph.getEdge(320))));
+		assertEquals(6, result.size());
 
-		// test with only one type at one vertex
+		// test with only one type at one vertex (including subtypes)
+		result = evalTestQuery(
+				"edgesConnected{connections.Street}(getVertex(120))")
+				.toCollection();
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-100))));
+		assertTrue(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-245))));
+		assertTrue(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-281))));
+		assertTrue(result.contains(JValueImpl
+				.fromObject(testgraph.getEdge(291))));
+		assertTrue(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-319))));
+		assertTrue(result.contains(JValueImpl
+				.fromObject(testgraph.getEdge(320))));
+		assertEquals(5, result.size());
+
+		// test with only one type at one vertex (excluding subtypes)
+		result = evalTestQuery(
+				"edgesConnected{connections.Street!}(getVertex(120))")
+				.toCollection();
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-100))));
+		assertTrue(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-245))));
+		assertTrue(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-281))));
+		assertTrue(result.contains(JValueImpl
+				.fromObject(testgraph.getEdge(291))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-319))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(320))));
+		assertEquals(3, result.size());
+
+		// test with excluding one type (including subtypes)
+		result = evalTestQuery(
+				"edgesConnected{^connections.Street}(getVertex(120))")
+				.toCollection();
+		assertTrue(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-100))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-245))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-281))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(291))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-319))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(320))));
+		assertEquals(1, result.size());
+
+		// test with excluding one type (excluding subtypes)
+		result = evalTestQuery(
+				"edgesConnected{^connections.Street!}(getVertex(120))")
+				.toCollection();
+		assertTrue(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-100))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-245))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-281))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(291))));
+		assertTrue(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-319))));
+		assertTrue(result.contains(JValueImpl
+				.fromObject(testgraph.getEdge(320))));
+		assertEquals(3, result.size());
 
 		// test with a type not incident to a vertex
+		result = evalTestQuery(
+				"edgesConnected{connections.Footpath}(getVertex(120))")
+				.toCollection();
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-100))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-245))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-281))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(291))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-319))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(320))));
+		assertTrue(result.isEmpty());
+
+		// test with empty type collection
+		// TODO empty type collection impossible
+		// result = evalTestQuery("edgesConnected{}(getVertex(120))")
+		// .toCollection();
+		// assertFalse(result.contains(JValueImpl.fromObject(testgraph
+		// .getEdge(-100))));
+		// assertFalse(result.contains(JValueImpl.fromObject(testgraph
+		// .getEdge(-245))));
+		// assertFalse(result.contains(JValueImpl.fromObject(testgraph
+		// .getEdge(-281))));
+		// assertFalse(result.contains(JValueImpl.fromObject(testgraph
+		// .getEdge(291))));
+		// assertFalse(result.contains(JValueImpl.fromObject(testgraph
+		// .getEdge(-319))));
+		// assertFalse(result.contains(JValueImpl.fromObject(testgraph
+		// .getEdge(320))));
+		// assertTrue(result.isEmpty());
 
 		// test with vertex "null"
+		assertQueryIsNull("using nll: edgesConnected{connections.Street}(nll)");
 
-		// test with type collection "null"
-
-		// test with both "null"
-
-		fail();
 	}
 
 	@Test
 	public void testEdgesConnectedNull() throws Exception {
 		assertQueryIsNull("using nll: edgesConnected(nll, nll)");
 		assertQueryIsNull("using nll: edgesConnected(firstVertex(), nll)");
-		assertQueryIsNull("using nll: edgesConnected(nll,firstVertex())");
+		assertQueryIsNull("using dmpmPathSystem,nll: edgesConnected(nll, dmpmPathSystem)");
 	}
 
 	@Test
-	public void testEdgesFrom() throws Exception {
-		// TODO: Broken, because the GReQL parser removes all WhereExpressions
-		// and LetExpressions!
-		String queryString = "from x : V{WhereExpression} report edgesFrom(x) end";
-		JValue result = evalTestQuery("EdgesFrom", queryString);
-		assertEquals(1, result.toCollection().size());
-		assertEquals(1, getNthValue(result.toCollection(), 0).toCollection()
-				.size());
-	}
-
-	@Test
-	public void testEdgesFromNull() throws Exception {
-		// TODO A meaningful Pathsystem is missing
-		assertQueryIsNull("using nll: edgesFrom(nll, nll)");
-		assertQueryIsNull("using nll: edgesFrom(firstVertex(), nll)");
-		// assertQueryEqualsNull("using nll: edgesFrom(nll, ?)");
-		fail();
+	public void testEdgesFromVertexOnly() throws Exception {
+		JValueSet result = evalTestQuery(
+				"let v20 := getVertex(20) in edgesFrom(v20)").toJValueSet();
+		System.out.println(result);
+		Graph testgraph = getTestGraph(TestVersion.ROUTE_MAP_GRAPH);
+		assertFalse(result.contains(JValueImpl
+				.fromObject(testgraph.getEdge(-2))));
+		assertTrue(result.contains(JValueImpl
+				.fromObject(testgraph.getEdge(315))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-316))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-336))));
 	}
 
 	@Test
 	public void testEdgesFromPath() throws Exception {
-		// TODO A meaningful test is missing for
-		// VERTEX x PATH -> COLLECTION
-		fail();
+		// create a sample path with three vertices to test the method with the
+		// first vertex, the last vertex and a vertex in between
+		JValuePath samplePath = evalTestQuery(
+				"using dmpmPathSystem: extractPath(dmpmPathSystem,getVertex(103))")
+				.toPath();
+
+		setBoundVariable("samplePath", samplePath);
+		Graph testgraph = getTestGraph(TestVersion.ROUTE_MAP_GRAPH);
+
+		JValueCollection result = evalTestQuery(
+				"using samplePath: edgesFrom(getVertex(142),samplePath)")
+				.toCollection();
+		assertEquals(0, result.size());
+
+		result = evalTestQuery(
+				"using samplePath: edgesFrom(getVertex(104),samplePath)")
+				.toCollection();
+
+		assertTrue(result.contains(JValueImpl
+				.fromObject(testgraph.getEdge(294))));
+		// test if incident reversed edge is not in collection
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-232))));
+
+		result = evalTestQuery(
+				"using samplePath: edgesFrom(getVertex(103),samplePath)")
+				.toCollection();
+		assertTrue(result.contains(JValueImpl
+				.fromObject(testgraph.getEdge(232))));
+
+		// not in PS
+		result = evalTestQuery(
+				"using dmpmPathSystem: edgesFrom(getVertex(64),dmpmPathSystem)")
+				.toCollection();
+		assertEquals(0, result.size());
 	}
 
 	@Test
@@ -521,19 +675,254 @@ public class PathSystemFunctionTest extends GenericTest {
 	}
 
 	@Test
-	public void testEdgesToNull() throws Exception {
-		// TODO A meaningful Pathsystem is missing
-		assertQueryIsNull("using nll: edgesTo(nll, nll)");
-		assertQueryIsNull("using nll: edgesTo(firstVertex(), nll)");
-		// assertQueryEqualsNull("using nll: edgesTo(nll, ?)");
-		fail();
+	public void testEdgesFromPathSystem2() throws Exception {
+		Graph testgraph = getTestGraph(TestVersion.ROUTE_MAP_GRAPH);
+		JValueCollection result = evalTestQuery(
+				"using dmpmPathSystem: edgesFrom(getVertex(142),dmpmPathSystem)")
+				.toCollection();
+
+		// root of PS
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-294))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(294))));
+		assertEquals(0, result.size());
+
+		// inside PS
+		result = evalTestQuery(
+				"using dmpmPathSystem: edgesFrom(getVertex(104),dmpmPathSystem)")
+				.toCollection();
+		System.out.println(result);
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-232))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(232))));
+		assertTrue(result.contains(JValueImpl
+				.fromObject(testgraph.getEdge(294))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-294))));
+
+		// check if duplicate edge 233 is not included (it should also not be
+		// included in PS)
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-233))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(233))));
+
+		assertTrue(result.contains(JValueImpl
+				.fromObject(testgraph.getEdge(234))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-234))));
+		assertEquals(2, result.size());
+
+		// leaf of PS
+		result = evalTestQuery(
+				"using dmpmPathSystem: edgesFrom(getVertex(1),dmpmPathSystem)")
+				.toCollection();
+		assertTrue(result.contains(JValueImpl
+				.fromObject(testgraph.getEdge(135))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-135))));
+		assertEquals(1, result.size());
+
+		// not in PS
+		result = evalTestQuery(
+				"using dmpmPathSystem: edgesFrom(getVertex(64),dmpmPathSystem)")
+				.toCollection();
+		assertEquals(0, result.size());
+	}
+
+	@Test
+	public void testEdgesFromTypeCollection() throws Exception {
+		// VERTEX x TYPECOLLECTION -> COLLECTION
+		Graph testgraph = getTestGraph(TestVersion.ROUTE_MAP_GRAPH);
+		JValueCollection result;
+
+		// test with all types at one vertex
+		result = evalTestQuery(
+				"edgesFrom{localities.ContainsCrossroad,connections.Street}(getVertex(120))")
+				.toCollection();
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-100))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-245))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-281))));
+		assertTrue(result.contains(JValueImpl
+				.fromObject(testgraph.getEdge(291))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-319))));
+		assertTrue(result.contains(JValueImpl
+				.fromObject(testgraph.getEdge(320))));
+		assertEquals(2, result.size());
+
+		// test with only one type at one vertex (including subtypes)
+		result = evalTestQuery("edgesFrom{connections.Street}(getVertex(120))")
+				.toCollection();
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-100))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-245))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-281))));
+		assertTrue(result.contains(JValueImpl
+				.fromObject(testgraph.getEdge(291))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-319))));
+		assertTrue(result.contains(JValueImpl
+				.fromObject(testgraph.getEdge(320))));
+		assertEquals(2, result.size());
+
+		// test with only one type at one vertex (excluding subtypes)
+		result = evalTestQuery("edgesFrom{connections.Street!}(getVertex(120))")
+				.toCollection();
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-100))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-245))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-281))));
+		assertTrue(result.contains(JValueImpl
+				.fromObject(testgraph.getEdge(291))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-319))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(320))));
+		assertEquals(1, result.size());
+
+		// test with excluding one type (including subtypes)
+		result = evalTestQuery("edgesFrom{^connections.Street}(getVertex(120))")
+				.toCollection();
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-100))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-245))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-281))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(291))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-319))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(320))));
+		assertEquals(0, result.size());
+
+		// test with excluding one type (excluding subtypes)
+		result = evalTestQuery(
+				"edgesFrom{^connections.Street!}(getVertex(120))")
+				.toCollection();
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-100))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-245))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-281))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(291))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-319))));
+		assertTrue(result.contains(JValueImpl
+				.fromObject(testgraph.getEdge(320))));
+		assertEquals(1, result.size());
+
+		// test with a type not incident to a vertex
+		result = evalTestQuery(
+				"edgesFrom{connections.Footpath}(getVertex(120))")
+				.toCollection();
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-100))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-245))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-281))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(291))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-319))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(320))));
+		assertTrue(result.isEmpty());
+
+		// test with empty type collection
+		// TODO empty type collection impossible
+		// result = evalTestQuery("edgesConnected{}(getVertex(120))")
+		// .toCollection();
+		// assertFalse(result.contains(JValueImpl.fromObject(testgraph
+		// .getEdge(-100))));
+		// assertFalse(result.contains(JValueImpl.fromObject(testgraph
+		// .getEdge(-245))));
+		// assertFalse(result.contains(JValueImpl.fromObject(testgraph
+		// .getEdge(-281))));
+		// assertFalse(result.contains(JValueImpl.fromObject(testgraph
+		// .getEdge(291))));
+		// assertFalse(result.contains(JValueImpl.fromObject(testgraph
+		// .getEdge(-319))));
+		// assertFalse(result.contains(JValueImpl.fromObject(testgraph
+		// .getEdge(320))));
+		// assertTrue(result.isEmpty());
+
+		// test with vertex "null"
+		assertQueryIsNull("using nll: edgesFrom{connections.Street}(nll)");
+	}
+
+	@Test
+	public void testEdgesFromNull() throws Exception {
+		assertQueryIsNull("using nll: edgesFrom(nll, nll)");
+		assertQueryIsNull("using nll: edgesFrom(firstVertex(), nll)");
+		assertQueryIsNull("using dmpmPathSystem,nll: edgesFrom(nll, dmpmPathSystem)");
+	}
+
+	@Test
+	public void testEdgesToVertexOnly() throws Exception {
+		JValueSet result = evalTestQuery(
+				"let v20 := getVertex(20) in edgesTo(v20)").toJValueSet();
+		Graph testgraph = getTestGraph(TestVersion.ROUTE_MAP_GRAPH);
+		assertTrue(result
+				.contains(JValueImpl.fromObject(testgraph.getEdge(-2))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(315))));
+		assertTrue(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-316))));
+		assertTrue(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-336))));
 	}
 
 	@Test
 	public void testEdgesToPath() throws Exception {
-		// TODO A meaningful test is missing for
-		// VERTEX x PATH -> COLLECTION
-		fail();
+		// create a sample path with three vertices to test the method with the
+		// first vertex, the last vertex and a vertex in between
+		JValuePath samplePath = evalTestQuery(
+				"using dmpmPathSystem: extractPath(dmpmPathSystem,getVertex(103))")
+				.toPath();
+
+		setBoundVariable("samplePath", samplePath);
+		Graph testgraph = getTestGraph(TestVersion.ROUTE_MAP_GRAPH);
+
+		JValueCollection result = evalTestQuery(
+				"using samplePath: edgesTo(getVertex(142),samplePath)")
+				.toCollection();
+		assertEquals(1, result.size());
+		assertTrue(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-294))));
+
+		result = evalTestQuery(
+				"using samplePath: edgesTo(getVertex(104),samplePath)")
+				.toCollection();
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(294))));
+		assertTrue(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-232))));
+
+		result = evalTestQuery(
+				"using samplePath: edgesTo(getVertex(103),samplePath)")
+				.toCollection();
+		assertTrue(result.isEmpty());
+
+		// not in PS
+		result = evalTestQuery(
+				"using dmpmPathSystem: edgesTo(getVertex(64),dmpmPathSystem)")
+				.toCollection();
+		assertTrue(result.isEmpty());
 	}
 
 	@Test
@@ -559,8 +948,194 @@ public class PathSystemFunctionTest extends GenericTest {
 	}
 
 	@Test
-	public void testEdgesTraceNull() throws Exception {
-		assertQueryIsNull("using nll: edgeTrace(nll)");
+	public void testEdgesToPathSystem2() throws Exception {
+		Graph testgraph = getTestGraph(TestVersion.ROUTE_MAP_GRAPH);
+		JValueCollection result = evalTestQuery(
+				"using dmpmPathSystem: edgesTo(getVertex(142),dmpmPathSystem)")
+				.toCollection();
+		// root of PS
+		assertTrue(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-294))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(294))));
+		assertEquals(1, result.size());
+
+		// inside PS
+		result = evalTestQuery(
+				"using dmpmPathSystem: edgesTo(getVertex(104),dmpmPathSystem)")
+				.toCollection();
+		assertTrue(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-232))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(232))));
+
+		// check if duplicate edge 233 is not included (it should also not be
+		// included in PS)
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-233))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(233))));
+
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(234))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-234))));
+		assertEquals(1, result.size());
+
+		// leaf of PS
+		result = evalTestQuery(
+				"using dmpmPathSystem: edgesTo(getVertex(1),dmpmPathSystem)")
+				.toCollection();
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(135))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-135))));
+		assertEquals(0, result.size());
+
+		// not in PS
+		result = evalTestQuery(
+				"using dmpmPathSystem: edgesTo(getVertex(64),dmpmPathSystem)")
+				.toCollection();
+		assertEquals(0, result.size());
+	}
+
+	@Test
+	public void testEdgesToTypeCollection() throws Exception {
+		// VERTEX x TYPECOLLECTION -> COLLECTION
+		Graph testgraph = getTestGraph(TestVersion.ROUTE_MAP_GRAPH);
+		JValueCollection result;
+
+		// test with all types at one vertex
+		result = evalTestQuery(
+				"edgesTo{localities.ContainsCrossroad,connections.Street}(getVertex(120))")
+				.toCollection();
+		assertTrue(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-100))));
+		assertTrue(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-245))));
+		assertTrue(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-281))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(291))));
+		assertTrue(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-319))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(320))));
+		assertEquals(4, result.size());
+
+		// test with only one type at one vertex (including subtypes)
+		result = evalTestQuery("edgesTo{connections.Street}(getVertex(120))")
+				.toCollection();
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-100))));
+		assertTrue(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-245))));
+		assertTrue(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-281))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(291))));
+		assertTrue(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-319))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(320))));
+		assertEquals(3, result.size());
+
+		// test with only one type at one vertex (excluding subtypes)
+		result = evalTestQuery("edgesTo{connections.Street!}(getVertex(120))")
+				.toCollection();
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-100))));
+		assertTrue(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-245))));
+		assertTrue(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-281))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(291))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-319))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(320))));
+		assertEquals(2, result.size());
+
+		// test with excluding one type (including subtypes)
+		result = evalTestQuery("edgesTo{^connections.Street}(getVertex(120))")
+				.toCollection();
+		assertTrue(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-100))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-245))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-281))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(291))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-319))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(320))));
+		assertEquals(1, result.size());
+
+		// test with excluding one type (excluding subtypes)
+		result = evalTestQuery("edgesTo{^connections.Street!}(getVertex(120))")
+				.toCollection();
+		assertTrue(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-100))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-245))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-281))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(291))));
+		assertTrue(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-319))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(320))));
+		assertEquals(2, result.size());
+
+		// test with a type not incident to a vertex
+		result = evalTestQuery("edgesTo{connections.Footpath}(getVertex(120))")
+				.toCollection();
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-100))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-245))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-281))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(291))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(-319))));
+		assertFalse(result.contains(JValueImpl.fromObject(testgraph
+				.getEdge(320))));
+		assertTrue(result.isEmpty());
+
+		// test with empty type collection
+		// TODO empty type collection impossible
+		// result = evalTestQuery("edgesTo{}(getVertex(120))")
+		// .toCollection();
+		// assertFalse(result.contains(JValueImpl.fromObject(testgraph
+		// .getEdge(-100))));
+		// assertFalse(result.contains(JValueImpl.fromObject(testgraph
+		// .getEdge(-245))));
+		// assertFalse(result.contains(JValueImpl.fromObject(testgraph
+		// .getEdge(-281))));
+		// assertFalse(result.contains(JValueImpl.fromObject(testgraph
+		// .getEdge(291))));
+		// assertFalse(result.contains(JValueImpl.fromObject(testgraph
+		// .getEdge(-319))));
+		// assertFalse(result.contains(JValueImpl.fromObject(testgraph
+		// .getEdge(320))));
+		// assertTrue(result.isEmpty());
+
+		// test with vertex "null"
+		assertQueryIsNull("using nll: edgesTo{connections.Street}(nll)");
+	}
+
+	@Test
+	public void testEdgesToNull() throws Exception {
+		// TODO A meaningful Pathsystem is missing
+		assertQueryIsNull("using nll: edgesTo(nll, nll)");
+		assertQueryIsNull("using nll: edgesTo(firstVertex(), nll)");
+		assertQueryIsNull("using dmpmPathSystem,nll: edgesTo(nll, dmpmPathSystem)");
 	}
 
 	@Test
@@ -572,6 +1147,11 @@ public class PathSystemFunctionTest extends GenericTest {
 		testEdgeTrace(multipleElementPath);
 		testEdgeTrace(longPath);
 		testEdgeTrace(loopPath);
+	}
+
+	@Test
+	public void testEdgesTraceNull() throws Exception {
+		assertQueryIsNull("using nll: edgeTrace(nll)");
 	}
 
 	public void testEdgeTrace(JValuePath usedPath)

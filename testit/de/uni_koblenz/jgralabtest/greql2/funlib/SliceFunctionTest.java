@@ -71,4 +71,13 @@ public class SliceFunctionTest extends GenericTest {
 		fail();
 	}
 
+	// TODO are EdgesConnected, EdgesTo and EdgesFrom also defined for slices?
+
+	@Test
+	public void testElementsSlice() throws Exception {
+		// TODO A meaningful test is missing for
+		// SLICE -> COLLECTION
+		fail();
+	}
+
 }
