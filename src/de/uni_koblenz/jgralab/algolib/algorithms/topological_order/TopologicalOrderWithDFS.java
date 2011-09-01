@@ -51,8 +51,8 @@ import de.uni_koblenz.jgralab.algolib.problems.AcyclicitySolver;
 import de.uni_koblenz.jgralab.algolib.problems.TopologicalOrderSolver;
 import de.uni_koblenz.jgralab.algolib.visitors.Visitor;
 
-public class TopologicalOrderWithDFS extends StructureOrientedAlgorithm implements
-		AcyclicitySolver, TopologicalOrderSolver {
+public class TopologicalOrderWithDFS extends StructureOrientedAlgorithm
+		implements AcyclicitySolver, TopologicalOrderSolver {
 
 	private DepthFirstSearch dfs;
 	private DFSVisitorAdapter torderVisitorAdapter;
@@ -119,18 +119,19 @@ public class TopologicalOrderWithDFS extends StructureOrientedAlgorithm implemen
 		visitors = new TopologicalOrderVisitorList();
 		torderVisitorAdapter = new DFSVisitorAdapter() {
 			@Override
-			public void visitBackwardArc(Edge e) throws AlgorithmTerminatedException {
+			public void visitBackwardArc(Edge e)
+					throws AlgorithmTerminatedException {
 				acyclic = false;
 				dfs.terminate();
 			}
 
 			@Override
-			public void leaveVertex(Vertex v) throws AlgorithmTerminatedException {
+			public void leaveVertex(Vertex v)
+					throws AlgorithmTerminatedException {
 				visitors.visitVertexInTopologicalOrder(v);
 			}
 		};
-		this.normal();
-		dfs.reversed();
+		normal();
 	}
 
 	@Override
@@ -145,7 +146,7 @@ public class TopologicalOrderWithDFS extends StructureOrientedAlgorithm implemen
 		dfs.setGraph(graph);
 		dfs.setSubgraph(subgraph);
 		dfs.setNavigable(navigable);
-		if(traversalDirection == EdgeDirection.OUT){ //normal
+		if (traversalDirection == EdgeDirection.OUT) { // normal
 			dfs.reversed();
 		} else { // reversed
 			assert traversalDirection == EdgeDirection.IN;

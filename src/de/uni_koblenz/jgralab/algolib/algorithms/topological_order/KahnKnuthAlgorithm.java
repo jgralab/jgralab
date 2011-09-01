@@ -237,7 +237,8 @@ public class KahnKnuthAlgorithm extends StructureOrientedAlgorithm implements
 			for (Edge currentEdge : currentVertex
 					.incidences(traversalDirection)) {
 				cancelIfInterrupted();
-				if (subgraph != null && !subgraph.get(currentEdge)) {
+				if (navigable != null && !navigable.get(currentEdge)
+						|| subgraph != null && !subgraph.get(currentEdge)) {
 					continue;
 				}
 				Vertex nextVertex = currentEdge.getThat();

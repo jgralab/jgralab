@@ -73,7 +73,7 @@ public abstract class GraphAlgorithm implements ProblemSolver {
 	public GraphAlgorithm(Graph graph) {
 		super();
 		this.graph = graph;
-		this.state = AlgorithmStates.INITIALIZED;
+		state = AlgorithmStates.INITIALIZED;
 		resetParameters();
 		reset();
 	}
@@ -89,8 +89,12 @@ public abstract class GraphAlgorithm implements ProblemSolver {
 	 *            the subgraph this algorithm works on.
 	 */
 	public GraphAlgorithm(Graph graph, BooleanFunction<GraphElement> subgraph) {
-		this(graph);
+		super();
+		this.graph = graph;
+		state = AlgorithmStates.INITIALIZED;
+		resetParameters();
 		this.subgraph = subgraph;
+		reset();
 	}
 
 	public synchronized AlgorithmStates getState() {
@@ -101,16 +105,14 @@ public abstract class GraphAlgorithm implements ProblemSolver {
 	public void setGraph(Graph graph) {
 		checkStateForSettingParameters();
 		this.graph = graph;
-		vertexCount = -1;
-		edgeCount = -1;
+		reset();
 	}
 
 	@Override
 	public void setSubgraph(BooleanFunction<GraphElement> subgraph) {
 		checkStateForSettingParameters();
 		this.subgraph = subgraph;
-		vertexCount = -1;
-		edgeCount = -1;
+		reset();
 	}
 
 	public Graph getGraph() {
@@ -162,7 +164,9 @@ public abstract class GraphAlgorithm implements ProblemSolver {
 	 */
 	public void reset() {
 		if (getState() != AlgorithmStates.RUNNING) {
-			this.state = AlgorithmStates.INITIALIZED;
+			state = AlgorithmStates.INITIALIZED;
+			vertexCount = -1;
+			edgeCount = -1;
 		} else {
 			throw new IllegalStateException(
 					"The algorithm may not be reseted while it is running.");
@@ -177,9 +181,7 @@ public abstract class GraphAlgorithm implements ProblemSolver {
 	 */
 	public void resetParameters() {
 		checkStateForSettingParameters();
-		this.subgraph = null;
-		vertexCount = -1;
-		edgeCount = -1;
+		subgraph = null;
 		disableOptionalResults();
 	}
 

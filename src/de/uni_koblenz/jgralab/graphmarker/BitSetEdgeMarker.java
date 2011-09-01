@@ -64,10 +64,15 @@ public class BitSetEdgeMarker extends BitSetGraphMarker<Edge> {
 	}
 
 	@Override
+	public boolean removeMark(Edge edge) {
+		return super.removeMark(edge.getNormalEdge());
+	}
+
+	@Override
 	public boolean isMarked(Edge edge) {
 		return super.isMarked(edge.getNormalEdge());
 	}
-	
+
 	@Override
 	public Iterable<Edge> getMarkedElements() {
 		return new Iterable<Edge>() {
@@ -109,5 +114,4 @@ public class BitSetEdgeMarker extends BitSetGraphMarker<Edge> {
 
 		};
 	}
-
 }
