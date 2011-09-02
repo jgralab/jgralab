@@ -52,7 +52,6 @@ import org.junit.runners.Parameterized.Parameters;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.ImplementationType;
-import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralabtest.instancetest.InstanceTest;
@@ -76,7 +75,7 @@ public class SubGraphMarkerTest extends InstanceTest {
 	private MinimalGraph g;
 	private Node[] nodes;
 	private Link[] links;
-	private BooleanGraphMarker oldMarker;
+	private SubGraphMarker oldMarker;
 	private SubGraphMarker newMarker;
 
 	public SubGraphMarkerTest(ImplementationType implementationType,
@@ -107,7 +106,7 @@ public class SubGraphMarkerTest extends InstanceTest {
 		createTransaction(g);
 
 		Random rng = new Random(16L);
-		oldMarker = new BooleanGraphMarker(g);
+		oldMarker = new SubGraphMarker(g);
 		newMarker = new SubGraphMarker(g);
 		nodes = new Node[VERTEX_COUNT];
 		for (int i = 1; i <= VERTEX_COUNT; i++) {
@@ -119,8 +118,8 @@ public class SubGraphMarkerTest extends InstanceTest {
 		for (int i = 1; i <= EDGE_COUNT; i++) {
 			int alphaID = rng.nextInt(VERTEX_COUNT) + 1;
 			int omegaID = rng.nextInt(VERTEX_COUNT) + 1;
-			links[i - 1] = g.createLink((Node) g.getVertex(alphaID), (Node) g
-					.getVertex(omegaID));
+			links[i - 1] = g.createLink((Node) g.getVertex(alphaID),
+					(Node) g.getVertex(omegaID));
 		}
 
 		commit(g);
@@ -180,12 +179,12 @@ public class SubGraphMarkerTest extends InstanceTest {
 		assertAllMarkedCorrectly();
 		createReadOnlyTransaction(g);
 		for (int i = 0; i < VERTEX_COUNT; i++) {
-			assertEquals(oldMarker.removeMark(nodes[i]), newMarker
-					.removeMark(nodes[i]));
+			assertEquals(oldMarker.removeMark(nodes[i]),
+					newMarker.removeMark(nodes[i]));
 		}
 		for (int i = 0; i < EDGE_COUNT; i++) {
-			assertEquals(oldMarker.removeMark(links[i]), newMarker
-					.removeMark(links[i]));
+			assertEquals(oldMarker.removeMark(links[i]),
+					newMarker.removeMark(links[i]));
 		}
 		commit(g);
 		assertAllMarkedCorrectly();

@@ -47,7 +47,6 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 import de.uni_koblenz.jgralab.greql2.schema.VertexSubgraphExpression;
-import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
 /**
  * Evaluates the given vertex subgraph expression. All Vertices and Edges that
@@ -67,14 +66,11 @@ public class VertexSubgraphExpressionEvaluator extends
 		Graph dataGraph = greqlEvaluator.getDatagraph();
 		SubGraphMarker subgraphAttr = new SubGraphMarker(dataGraph);
 		Vertex currentVertex = dataGraph.getFirstVertex();
+		JValueTypeCollection typeCollection = getTypeCollection();
 		while (currentVertex != null) {
-			JValueTypeCollection typeCollection = getTypeCollection();
-			if ((subgraph == null) || (subgraph.isMarked(currentVertex))) {
-				AttributedElementClass vertexClass = currentVertex
-						.getAttributedElementClass();
-				if (typeCollection.acceptsType(vertexClass)) {
-					subgraphAttr.mark(currentVertex);
-				}
+			if ((subgraph == null || subgraph.isMarked(currentVertex))
+					&& typeCollection.acceptsElement(currentVertex)) {
+				subgraphAttr.mark(currentVertex);
 			}
 			currentVertex = currentVertex.getNextVertex();
 		}

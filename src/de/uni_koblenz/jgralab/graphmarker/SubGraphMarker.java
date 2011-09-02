@@ -70,6 +70,10 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement> implements
 
 	@Override
 	public void clear() {
+		if (isEmpty()) {
+			return;
+		}
+		++version;
 		edgeGraphMarker.clear();
 		vertexGraphMarker.clear();
 	}
@@ -81,11 +85,9 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement> implements
 
 	@Override
 	public boolean isMarked(GraphElement graphElement) {
-		if (graphElement instanceof Edge) {
-			return edgeGraphMarker.isMarked((Edge) graphElement);
-		} else {
-			return vertexGraphMarker.isMarked((Vertex) graphElement);
-		}
+		return graphElement instanceof Edge ? edgeGraphMarker
+				.isMarked((Edge) graphElement) : vertexGraphMarker
+				.isMarked((Vertex) graphElement);
 	}
 
 	@Override
@@ -95,12 +97,8 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement> implements
 
 	@Override
 	public boolean removeMark(GraphElement graphElement) {
-		version++;
-		if (graphElement instanceof Edge) {
-			return removeMark((Edge) graphElement);
-		} else {
-			return removeMark((Vertex) graphElement);
-		}
+		return graphElement instanceof Edge ? removeMark((Edge) graphElement)
+				: removeMark((Vertex) graphElement);
 	}
 
 	/**
@@ -113,8 +111,11 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement> implements
 	 * @return false if the given edge has already been unmarked.
 	 */
 	public boolean removeMark(Edge e) {
-		version++;
-		return edgeGraphMarker.removeMark(e);
+		if (edgeGraphMarker.removeMark(e)) {
+			++version;
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -127,11 +128,14 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement> implements
 	 * @return false if the given vertex has already been unmarked.
 	 */
 	public boolean removeMark(Vertex v) {
-		version++;
-		for (Edge incidence : v.incidences()) {
-			removeMark(incidence);
+		if (vertexGraphMarker.removeMark(v)) {
+			++version;
+			for (Edge e : v.incidences()) {
+				edgeGraphMarker.removeMark(e);
+			}
+			return true;
 		}
-		return vertexGraphMarker.removeMark(v);
+		return false;
 	}
 
 	/**
@@ -143,12 +147,8 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement> implements
 	 *         marked.
 	 */
 	public boolean mark(GraphElement graphElement) {
-		version++;
-		if (graphElement instanceof Edge) {
-			return mark((Edge) graphElement);
-		} else {
-			return mark((Vertex) graphElement);
-		}
+		return graphElement instanceof Edge ? mark((Edge) graphElement)
+				: mark((Vertex) graphElement);
 	}
 
 	/**
@@ -162,10 +162,13 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement> implements
 	 * @return false if the given edge has already been marked.
 	 */
 	public boolean mark(Edge e) {
-		version++;
-		mark(e.getAlpha());
-		mark(e.getOmega());
-		return edgeGraphMarker.mark(e);
+		if (edgeGraphMarker.mark(e)) {
+			++version;
+			vertexGraphMarker.mark(e.getAlpha());
+			vertexGraphMarker.mark(e.getOmega());
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -178,8 +181,11 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement> implements
 	 * @return false if the given vertex has already been marked.
 	 */
 	public boolean mark(Vertex v) {
-		version++;
-		return vertexGraphMarker.mark(v);
+		if (vertexGraphMarker.mark(v)) {
+			version++;
+			return true;
+		}
+		return false;
 	}
 
 	@Override
