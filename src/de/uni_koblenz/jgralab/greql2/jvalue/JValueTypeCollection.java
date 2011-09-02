@@ -40,6 +40,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
 /**
@@ -171,6 +172,10 @@ public class JValueTypeCollection extends JValueImpl {
 		} else {
 			return allowedTypes.contains(type);
 		}
+	}
+
+	public final boolean acceptsElement(AttributedElement el) {
+		return acceptsType(el.getAttributedElementClass());
 	}
 
 	/**

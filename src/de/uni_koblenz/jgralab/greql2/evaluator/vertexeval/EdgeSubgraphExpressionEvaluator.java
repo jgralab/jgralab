@@ -46,7 +46,6 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 import de.uni_koblenz.jgralab.greql2.schema.EdgeSubgraphExpression;
-import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
 /**
  * Evaluates the given edgesubgraph expression. All Vertices and Edges that
@@ -68,17 +67,9 @@ public class EdgeSubgraphExpressionEvaluator extends
 		Edge currentEdge = dataGraph.getFirstEdge();
 		JValueTypeCollection typeCollection = getTypeCollection();
 		while (currentEdge != null) {
-			if (subgraph == null
-					|| (subgraph.isMarked(currentEdge)
-							&& subgraph.isMarked(currentEdge.getAlpha()) && subgraph
-							.isMarked(currentEdge.getOmega()))) {
-				AttributedElementClass edgeClass = currentEdge
-						.getAttributedElementClass();
-				if (typeCollection.acceptsType(edgeClass)) {
-					subgraphAttr.mark(currentEdge);
-					subgraphAttr.mark(currentEdge.getAlpha());
-					subgraphAttr.mark(currentEdge.getOmega());
-				}
+			if ((subgraph == null || subgraph.isMarked(currentEdge))
+					&& typeCollection.acceptsElement(currentEdge)) {
+				subgraphAttr.mark(currentEdge);
 			}
 			currentEdge = currentEdge.getNextEdge();
 		}

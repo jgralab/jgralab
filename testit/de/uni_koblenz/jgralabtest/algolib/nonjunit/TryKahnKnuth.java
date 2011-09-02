@@ -141,19 +141,11 @@ public class TryKahnKnuth {
 
 	private static SubGraphMarker createSubgraph(SimpleGraph graph) {
 		SubGraphMarker subgraph = new SubGraphMarker(graph);
-		for (Vertex v : graph.vertices()) {
-			subgraph.mark(v);
-		}
 		for (Edge e : graph.edges()) {
 			subgraph.mark(e);
 		}
-
 		Vertex v3 = graph.getVertex(3);
 		subgraph.removeMark(v3);
-		for (Edge v3i : v3.incidences()) {
-			subgraph.removeMark(v3i);
-		}
-
 		return subgraph;
 	}
 }
