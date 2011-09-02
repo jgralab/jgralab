@@ -68,7 +68,7 @@ public class TryKahnKnuth {
 
 	public static SimpleGraph myGraph() {
 		SimpleGraph graph = SimpleSchema.instance().createSimpleGraph();
-		int vertexCount = 9;
+		int vertexCount = 10;
 		SimpleVertex[] vertices = new SimpleVertex[vertexCount];
 		for (int i = 1; i < vertexCount; i++) {
 			vertices[i] = graph.createSimpleVertex();
@@ -87,40 +87,55 @@ public class TryKahnKnuth {
 		return graph;
 	}
 
+	public static SimpleGraph volkersGraph() {
+		SimpleGraph graph = SimpleSchema.instance().createSimpleGraph();
+		int vertexCount = 5;
+		SimpleVertex[] vertices = new SimpleVertex[vertexCount];
+		for (int i = 1; i < vertexCount; i++) {
+			vertices[i] = graph.createSimpleVertex();
+		}
+		graph.createSimpleEdge(vertices[1], vertices[2]);
+		graph.createSimpleEdge(vertices[1], vertices[3]);
+		graph.createSimpleEdge(vertices[2], vertices[3]);
+		return graph;
+	}
+
 	public static void main(String[] args) throws AlgorithmTerminatedException {
 
-		SimpleGraph graph = myGraph();
+		SimpleGraph graph;// = myGraph();
 
-		// creating a subgraph
-		SubGraphMarker subgraph = createSubgraph(graph);
-		BooleanFunction<Edge> navigable = new MethodCallToBooleanFunctionAdapter<Edge>() {
+		// // creating a subgraph
+		// SubGraphMarker subgraph = createSubgraph(graph);
+		// BooleanFunction<Edge> navigable = new
+		// MethodCallToBooleanFunctionAdapter<Edge>() {
+		//
+		// @Override
+		// public boolean get(Edge parameter) {
+		// if (parameter.getAlpha() == parameter.getGraph().getVertex(1)
+		// && parameter.getOmega() == parameter.getGraph()
+		// .getVertex(8)) {
+		// return false;
+		// }
+		// return true;
+		// }
+		//
+		// @Override
+		// public boolean isDefined(Edge parameter) {
+		// return true;
+		// }
+		//
+		// };
+		// // graph.createSimpleEdge(vertices[7], vertices[3]);
 
-			@Override
-			public boolean get(Edge parameter) {
-				if (parameter.getAlpha() == parameter.getGraph().getVertex(1)
-						&& parameter.getOmega() == parameter.getGraph()
-								.getVertex(8)) {
-					return false;
-				}
-				return true;
-			}
+		graph = volkersGraph();
 
-			@Override
-			public boolean isDefined(Edge parameter) {
-				return true;
-			}
-
-		};
-		// graph.createSimpleEdge(vertices[7], vertices[3]);
-
-		KahnKnuthAlgorithm solver = new KahnKnuthAlgorithm(graph, subgraph,
-				navigable);
+		KahnKnuthAlgorithm solver = new KahnKnuthAlgorithm(graph);
 
 		DepthFirstSearch dfs = new RecursiveDepthFirstSearch(graph);
 		TopologicalOrderWithDFS solver2 = new TopologicalOrderWithDFS(graph,
 				dfs);
-		solver2.setSubgraph(subgraph);
-		solver2.setNavigable(navigable);
+		// solver2.setSubgraph(subgraph);
+		// solver2.setNavigable(navigable);
 		// dfs.addVisitor(new DebugSearchVisitor());
 		System.out.println("Kahn Knuth:");
 
@@ -141,6 +156,7 @@ public class TryKahnKnuth {
 
 	private static SubGraphMarker createSubgraph(SimpleGraph graph) {
 		SubGraphMarker subgraph = new SubGraphMarker(graph);
+		subgraph.mark(graph.getVertex(9));
 		for (Edge e : graph.edges()) {
 			subgraph.mark(e);
 		}
