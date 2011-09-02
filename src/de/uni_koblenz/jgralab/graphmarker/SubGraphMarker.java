@@ -58,8 +58,6 @@ import de.uni_koblenz.jgralab.algolib.functions.entries.BooleanFunctionEntry;
 public class SubGraphMarker extends AbstractGraphMarker<GraphElement> implements
 		BooleanFunction<GraphElement> {
 
-	// TODO maybe replace with BitSets
-
 	private final BitSetEdgeMarker edgeGraphMarker;
 	private final BitSetVertexMarker vertexGraphMarker;
 	private long version;
@@ -99,14 +97,14 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement> implements
 	public boolean removeMark(GraphElement graphElement) {
 		version++;
 		if (graphElement instanceof Edge) {
-			return edgeGraphMarker.removeMark((Edge) graphElement);
+			return removeMark((Edge) graphElement);
 		} else {
-			return vertexGraphMarker.removeMark((Vertex) graphElement);
+			return removeMark((Vertex) graphElement);
 		}
 	}
 
 	/**
-	 * Does the same as <code>unmark</code> but without performing an
+	 * Does the same as <code>removeMark</code> but without performing an
 	 * <code>instanceof</code> check. It is recommended to use this method
 	 * instead.
 	 * 
@@ -122,7 +120,7 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement> implements
 	/**
 	 * Does the same as <code>unmark</code> but without performing an
 	 * <code>instanceof</code> check. It is recommended to use this method
-	 * instead.
+	 * instead. This method also removes the mark of all incident edges.
 	 * 
 	 * @param v
 	 *            the vertex to unmark
@@ -130,6 +128,9 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement> implements
 	 */
 	public boolean removeMark(Vertex v) {
 		version++;
+		for (Edge incidence : v.incidences()) {
+			removeMark(incidence);
+		}
 		return vertexGraphMarker.removeMark(v);
 	}
 
@@ -144,16 +145,17 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement> implements
 	public boolean mark(GraphElement graphElement) {
 		version++;
 		if (graphElement instanceof Edge) {
-			return edgeGraphMarker.mark((Edge) graphElement);
+			return mark((Edge) graphElement);
 		} else {
-			return vertexGraphMarker.mark((Vertex) graphElement);
+			return mark((Vertex) graphElement);
 		}
 	}
 
 	/**
 	 * Does the same as <code>mark</code> but without performing an
 	 * <code>instanceof</code> check. It is recommended to use this method
-	 * instead.
+	 * instead. This method also marks the alpha and omega vertex of the given
+	 * edge.
 	 * 
 	 * @param e
 	 *            the edge to mark
@@ -161,6 +163,8 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement> implements
 	 */
 	public boolean mark(Edge e) {
 		version++;
+		mark(e.getAlpha());
+		mark(e.getOmega());
 		return edgeGraphMarker.mark(e);
 	}
 
