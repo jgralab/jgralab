@@ -43,6 +43,7 @@ import de.uni_koblenz.jgralab.algolib.algorithms.topological_order.KahnKnuthAlgo
 import de.uni_koblenz.jgralab.algolib.algorithms.topological_order.TopologicalOrderWithDFS;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 import de.uni_koblenz.jgralab.algolib.functions.adapters.MethodCallToBooleanFunctionAdapter;
+import de.uni_koblenz.jgralab.algolib.functions.entries.PermutationEntry;
 import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralabtest.schemas.algolib.simple.SimpleGraph;
 import de.uni_koblenz.jgralabtest.schemas.algolib.simple.SimpleSchema;
@@ -143,6 +144,9 @@ public class TryKahnKnuth {
 
 		System.out.println(solver.isAcyclic());
 		System.out.println(solver.getTopologicalOrder());
+		for (PermutationEntry<Vertex> e : solver.getTopologicalOrder()) {
+			System.out.println(e.getSecond());
+		}
 
 		System.out.println();
 		System.out.println("DFS:");
@@ -151,7 +155,9 @@ public class TryKahnKnuth {
 
 		System.out.println(solver2.isAcyclic());
 		System.out.println(solver2.getTopologicalOrder());
-
+		for (PermutationEntry<Vertex> e : solver2.getTopologicalOrder()) {
+			System.out.println(e.getSecond());
+		}
 	}
 
 	private static SubGraphMarker createSubgraph(SimpleGraph graph) {
