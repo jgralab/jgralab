@@ -199,9 +199,6 @@ public class BreadthFirstSearchTest extends GraphAlgorithmTest {
 
 		// TODO test with subgraph enabled
 		SubGraphMarker subgraph = new SubGraphMarker(g);
-		for (Vertex current : g.vertices()) {
-			subgraph.mark(current);
-		}
 		for (Edge current : g.edges()) {
 			subgraph.mark(current);
 		}
