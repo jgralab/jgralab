@@ -78,6 +78,14 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement> implements
 		vertexGraphMarker.clear();
 	}
 
+	public int getECount() {
+		return edgeGraphMarker.size();
+	}
+
+	public int getVCount() {
+		return vertexGraphMarker.size();
+	}
+
 	@Override
 	public boolean isEmpty() {
 		return edgeGraphMarker.isEmpty() && vertexGraphMarker.isEmpty();
