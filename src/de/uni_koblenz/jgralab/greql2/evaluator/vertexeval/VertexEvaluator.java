@@ -43,13 +43,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
+import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
@@ -151,7 +150,7 @@ public abstract class VertexEvaluator {
 	 * The subgraph which was uses for the last evaluation and should be used
 	 * for the next evaluation
 	 */
-	protected AbstractGraphMarker<AttributedElement> subgraph = null;
+	protected SubGraphMarker subgraph = null;
 
 	/**
 	 * The set of variables this vertex depends on
@@ -208,7 +207,7 @@ public abstract class VertexEvaluator {
 	 *            evaluated on the whole datagraph
 	 * @return the evaluation result
 	 */
-	public JValue getResult(AbstractGraphMarker<AttributedElement> newSubgraph)
+	public JValue getResult(SubGraphMarker newSubgraph)
 			throws EvaluateException {
 		if ((result != null) && (this.subgraph == newSubgraph)) {
 			return result;

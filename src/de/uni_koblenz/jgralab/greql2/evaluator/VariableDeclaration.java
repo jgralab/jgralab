@@ -37,8 +37,7 @@ package de.uni_koblenz.jgralab.greql2.evaluator;
 
 import java.util.Iterator;
 
-import de.uni_koblenz.jgralab.AttributedElement;
-import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
+import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VariableEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
@@ -64,7 +63,7 @@ public class VariableDeclaration {
 	 */
 	private JValueCollection definitionSet;
 
-	private AbstractGraphMarker<AttributedElement> subgraph;
+	private SubGraphMarker subgraph;
 
 	/**
 	 * Holds the variable-vertex of this declaration.
@@ -101,8 +100,7 @@ public class VariableDeclaration {
 	 *            the GreqlEvaluator which is used to evaluate the query
 	 */
 	public VariableDeclaration(Variable var,
-			VertexEvaluator definitionSetEvaluator,
-			AbstractGraphMarker<AttributedElement> subgraph2,
+			VertexEvaluator definitionSetEvaluator, SubGraphMarker subgraph2,
 			SimpleDeclaration decl, GreqlEvaluator eval) {
 		variableEval = (VariableEvaluator) definitionSetEvaluator
 				.getVertexEvalMarker().getMark(var);

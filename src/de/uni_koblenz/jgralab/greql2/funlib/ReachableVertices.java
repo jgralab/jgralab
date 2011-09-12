@@ -38,11 +38,11 @@ package de.uni_koblenz.jgralab.greql2.funlib;
 import java.util.ArrayList;
 import java.util.BitSet;
 
-import de.uni_koblenz.jgralab.AttributedElement;
+
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
+import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.DFA;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.State;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.Transition;
@@ -103,7 +103,7 @@ public class ReachableVertices extends Greql2Function {
 
 	@Override
 	public JValue evaluate(Graph graph,
-			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
+			SubGraphMarker subgraph, JValue[] arguments)
 			throws EvaluateException {
 
 		if (checkArguments(arguments) == -1) {
@@ -121,7 +121,7 @@ public class ReachableVertices extends Greql2Function {
 	}
 
 	public static final JValueImpl search(Vertex startVertex, DFA dfa,
-			AbstractGraphMarker<AttributedElement> subgraph) {
+			SubGraphMarker subgraph) {
 		JValueSet resultSet = new JValueSet();
 
 		BitSet[] markedElements = new BitSet[dfa.stateList.size()];

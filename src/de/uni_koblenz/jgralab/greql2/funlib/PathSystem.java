@@ -41,11 +41,11 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 
-import de.uni_koblenz.jgralab.AttributedElement;
+
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
+import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.DFA;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.State;
@@ -159,7 +159,7 @@ public class PathSystem extends Greql2Function {
 	 */
 	private Set<PathSystemMarkerEntry> markVerticesOfPathSystem(
 			Vertex startVertex, DFA dfa,
-			AbstractGraphMarker<AttributedElement> subgraph)
+			SubGraphMarker subgraph)
 			throws EvaluateException {
 		Set<PathSystemMarkerEntry> finalEntries = new HashSet<PathSystemMarkerEntry>();
 		Queue<PathSystemMarkerEntry> queue = new LinkedList<PathSystemMarkerEntry>();
@@ -210,7 +210,7 @@ public class PathSystem extends Greql2Function {
 	 */
 	@Override
 	public JValue evaluate(Graph graph,
-			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
+			SubGraphMarker subgraph, JValue[] arguments)
 			throws EvaluateException {
 		DFA dfa = null;
 		switch (checkArguments(arguments)) {

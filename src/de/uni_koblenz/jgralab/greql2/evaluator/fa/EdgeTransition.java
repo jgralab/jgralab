@@ -37,11 +37,10 @@ package de.uni_koblenz.jgralab.greql2.evaluator.fa;
 
 import java.util.Set;
 
-import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
+import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
@@ -196,8 +195,7 @@ public class EdgeTransition extends SimpleTransition {
 	 * greql2.evaluator.SubgraphTempAttribute)
 	 */
 	@Override
-	public boolean accepts(Vertex v, Edge e,
-			AbstractGraphMarker<AttributedElement> subgraph)
+	public boolean accepts(Vertex v, Edge e, SubGraphMarker subgraph)
 			throws EvaluateException {
 		if (!super.accepts(v, e, subgraph)) {
 			return false;

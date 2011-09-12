@@ -39,11 +39,11 @@ package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
 
-import de.uni_koblenz.jgralab.AttributedElement;
+
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
+import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
@@ -112,7 +112,7 @@ public abstract class Incidences extends Greql2Function {
 	}
 
 	protected JValueImpl evaluate(
-			AbstractGraphMarker<AttributedElement> subgraph,
+			SubGraphMarker subgraph,
 			JValue[] arguments, EdgeDirection direction)
 			throws EvaluateException {
 		JValueTypeCollection typeCol = null;
@@ -149,7 +149,7 @@ public abstract class Incidences extends Greql2Function {
 	}
 
 	private boolean isInSubGraph(
-			AbstractGraphMarker<AttributedElement> subgraph, Edge edge) {
+			SubGraphMarker subgraph, Edge edge) {
 		return (subgraph == null) || (subgraph.isMarked(edge));
 	}
 

@@ -39,7 +39,7 @@ import java.util.ArrayList;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
+import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
@@ -47,30 +47,6 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
-/**
- * Returns the unique type of the given attributed element.
- * 
- * <dl>
- * <dt><b>GReQL-signature</b></dt>
- * <dd><code>STRING UniqueTypeName(ae:ATTRELEM)</code></dd>
- * <dd>&nbsp;</dd>
- * </dl>
- * <dl>
- * <dt></dt>
- * <dd>
- * <dl>
- * <dt><b>Parameters:</b></dt>
- * <dd><code>ae</code> - attributed element to return type for</dd>
- * <dt><b>Returns:</b></dt>
- * <dd>the unique type name of the given attributed element as string</dd>
- * <dd><code>Null</code> if one of the parameters is <code>Null</code></dd>
- * </dl>
- * </dd>
- * </dl>
- * 
- * @author ist@uni-koblenz.de
- * 
- */
 public class UniqueTypeName extends Greql2Function {
 
 	{
@@ -85,9 +61,8 @@ public class UniqueTypeName extends Greql2Function {
 	}
 
 	@Override
-	public JValue evaluate(Graph graph,
-			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
-			throws EvaluateException {
+	public JValue evaluate(Graph graph, SubGraphMarker subgraph,
+			JValue[] arguments) throws EvaluateException {
 
 		if (arguments[0].toObject() == null) {
 			return new JValueImpl();

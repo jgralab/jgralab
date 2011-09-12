@@ -35,10 +35,9 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator.fa;
 
-import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
+import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 
 /**
@@ -177,8 +176,7 @@ public abstract class Transition {
 	 * returns true if this transition accepts the given combination of Vertex
 	 * and Edge and if both are part of the given subgraph
 	 */
-	public abstract boolean accepts(Vertex v, Edge e,
-			AbstractGraphMarker<AttributedElement> subgraph)
+	public abstract boolean accepts(Vertex v, Edge e, SubGraphMarker subgraph)
 			throws EvaluateException;
 
 	/**
@@ -189,9 +187,9 @@ public abstract class Transition {
 	public abstract Vertex getNextVertex(Vertex v, Edge e);
 
 	/**
-	 * @return true if the transition consumes an edge (e.g. for a SimpleTransition),
-	 * false otherwise (e.g. for a goal restriction which does not traverse and 
-	 * consume an edge)
+	 * @return true if the transition consumes an edge (e.g. for a
+	 *         SimpleTransition), false otherwise (e.g. for a goal restriction
+	 *         which does not traverse and consume an edge)
 	 */
 	public abstract boolean consumesEdge();
 

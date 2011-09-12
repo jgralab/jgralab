@@ -65,8 +65,8 @@ import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
-import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
+import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.SerializableGreql2;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.DefaultCostModel;
@@ -215,12 +215,12 @@ public class GreqlEvaluator {
 	 */
 	protected GraphMarker<VertexEvaluator> vertexEvalGraphMarker;
 
-	protected BooleanGraphMarker subgraphMarker;
+	protected SubGraphMarker subgraphMarker;
 
 	/**
 	 * @return the subgraphMarker
 	 */
-	public BooleanGraphMarker getSubgraphMarker() {
+	public SubGraphMarker getSubgraphMarker() {
 		return subgraphMarker;
 	}
 
@@ -231,7 +231,7 @@ public class GreqlEvaluator {
 	 * @param subgraphMarker
 	 *            the subgraphMarker to set
 	 */
-	public void setSubgraphMarker(BooleanGraphMarker subgraphMarker) {
+	public void setSubgraphMarker(SubGraphMarker subgraphMarker) {
 		this.subgraphMarker = subgraphMarker;
 		if (subgraphMarker != null) {
 			datagraph = subgraphMarker.getGraph();
