@@ -41,38 +41,13 @@ import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
+import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
-/**
- * Checks if the current graph or subgraph is a tree. That means, the graph is
- * acyclic, has exactly one vertex without incoming edges and all other vertices
- * have exactly one incoming edge.
- * 
- * <dl>
- * <dt><b>GReQL-signature</b></dt>
- * <dd><code>BOOL isTree()</code></dd>
- * <dd>&nbsp;</dd>
- * </dl>
- * <dl>
- * <dt></dt>
- * <dd>
- * <dl>
- * <dt><b>Parameters:</b></dt>
- * <dt><b>Returns:</b></dt>
- * <dd><code>true</code> if the given graph is a tree</dd>
- * <dd><code>false</code> otherwise</dd>
- * </dl>
- * </dd>
- * </dl>
- * 
- * @author ist@uni-koblenz.de
- * 
- */
 public class IsTree extends Greql2Function {
 
 	{
@@ -89,9 +64,8 @@ public class IsTree extends Greql2Function {
 	}
 
 	@Override
-	public JValue evaluate(Graph graph,
-			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
-			throws EvaluateException {
+	public JValue evaluate(Graph graph, SubGraphMarker subgraph,
+			JValue[] arguments) throws EvaluateException {
 		switch (checkArguments(arguments)) {
 		case 0:
 			break;

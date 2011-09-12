@@ -37,8 +37,7 @@ package de.uni_koblenz.jgralab.greql2.evaluator;
 
 import java.util.List;
 
-import de.uni_koblenz.jgralab.AttributedElement;
-import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
+import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
@@ -104,8 +103,7 @@ public class VariableDeclarationLayer {
 	 * 
 	 * @return true if another possible combination was found, false otherwise
 	 */
-	public boolean iterate(AbstractGraphMarker<AttributedElement> subgraph)
-			throws EvaluateException {
+	public boolean iterate(SubGraphMarker subgraph) throws EvaluateException {
 		StringBuilder sb = null;
 		if (GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS) {
 			sb = new StringBuilder();
@@ -166,7 +164,7 @@ public class VariableDeclarationLayer {
 	 * @return true if a first combination exists, false otherwise
 	 * @throws EvaluateException
 	 */
-	private boolean getFirstCombination(AbstractGraphMarker<?> subgraph)
+	private boolean getFirstCombination(SubGraphMarker subgraph)
 			throws EvaluateException {
 		variableDeclarations.get(0).reset();
 		return getNextCombination(subgraph, true);
@@ -180,7 +178,7 @@ public class VariableDeclarationLayer {
 	 * @throws EvaluateException
 	 */
 
-	private boolean getNextCombination(AbstractGraphMarker<?> subgraph,
+	private boolean getNextCombination(SubGraphMarker subgraph,
 			boolean firstCombination) throws EvaluateException {
 
 		int pointer = firstCombination ? 0 : variableDeclarations.size() - 1;
@@ -217,8 +215,7 @@ public class VariableDeclarationLayer {
 	 * @return true if the combination fulfills the constraint, false otherwise
 	 * @throws EvaluateException
 	 */
-	private boolean fullfillsConstraints(
-			AbstractGraphMarker<AttributedElement> subgraph)
+	private boolean fullfillsConstraints(SubGraphMarker subgraph)
 			throws EvaluateException {
 		if ((constraintList == null) || (constraintList.isEmpty())) {
 			return true;

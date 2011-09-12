@@ -39,7 +39,7 @@ import java.util.ArrayList;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
+import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
@@ -47,38 +47,6 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
-
-/**
- * Checks if the given edge or vertex has the given type. The type can be given
- * as AttributedElementClass or as String which holds the typename.
- * 
- * <dl>
- * <dt><b>GReQL-signature</b></dt>
- * <dd><code>BOOL hasType(ae:ATTRELEM, type:STRING)</code></dd>
- * <dd>
- * <code>BOOL hasType(ae:ATTRELEM, aec:ATTRELEMCLASS)</code></dd>
- * <dd>&nbsp;</dd>
- * </dl>
- * <dl>
- * <dt></dt>
- * <dd>
- * <dl>
- * <dt><b>Parameters:</b></dt>
- * <dd><code>ae</code> - attributed element to check</dd>
- * <dd><code>type</code> - name of the type to check for</dd>
- * <dd><code>aec</code> - attributed element class which is the type to check
- * for</dd>
- * <dt><b>Returns:</b></dt>
- * <dd><code>true</code> if the given attributed element has the given type</dd>
- * <dd><code>Null</code> if one of the parameters is <code>Null</code></dd>
- * <dd><code>false</code> otherwise</dd>
- * </dl>
- * </dd>
- * </dl>
- * 
- * @author ist@uni-koblenz.de
- * 
- */
 
 public class HasType extends Greql2Function {
 	{
@@ -99,9 +67,8 @@ public class HasType extends Greql2Function {
 	}
 
 	@Override
-	public JValue evaluate(Graph graph,
-			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
-			throws EvaluateException {
+	public JValue evaluate(Graph graph, SubGraphMarker subgraph,
+			JValue[] arguments) throws EvaluateException {
 
 		if (!arguments[0].isAttributedElement()) {
 			return new JValueImpl();

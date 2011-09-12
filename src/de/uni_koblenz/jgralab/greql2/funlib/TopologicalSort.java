@@ -41,12 +41,12 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Queue;
 
-import de.uni_koblenz.jgralab.AttributedElement;
+
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
+import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
@@ -104,7 +104,7 @@ public class TopologicalSort extends Greql2Function {
 	 */
 	@Override
 	public JValue evaluate(Graph graph,
-			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
+			SubGraphMarker subgraph, JValue[] arguments)
 			throws EvaluateException {
 		switch (checkArguments(arguments)) {
 		case 0:

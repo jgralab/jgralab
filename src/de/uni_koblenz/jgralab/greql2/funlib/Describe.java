@@ -42,7 +42,7 @@ import java.util.ArrayList;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
-import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
+import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
@@ -107,9 +107,8 @@ public class Describe extends Greql2Function {
 	 * de.uni_koblenz.jgralab.greql2.jvalue.JValue[])
 	 */
 	@Override
-	public JValue evaluate(Graph graph,
-			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
-			throws EvaluateException {
+	public JValue evaluate(Graph graph, SubGraphMarker subgraph,
+			JValue[] arguments) throws EvaluateException {
 		switch (checkArguments(arguments)) {
 		case 0:
 			return createDescribtion(graph);

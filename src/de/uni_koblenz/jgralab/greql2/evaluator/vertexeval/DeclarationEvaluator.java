@@ -39,10 +39,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
+import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclaration;
 import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclarationLayer;
@@ -95,7 +94,7 @@ public class DeclarationEvaluator extends VertexEvaluator {
 
 	@Override
 	public JValue evaluate() throws EvaluateException {
-		AbstractGraphMarker<AttributedElement> newSubgraph = null;
+		SubGraphMarker newSubgraph = null;
 		Edge edge = vertex.getFirstIsSubgraphOfIncidence();
 		if (edge != null) {
 			SubgraphExpression subgraphExp = (SubgraphExpression) edge

@@ -5,9 +5,9 @@ package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
 
-import de.uni_koblenz.jgralab.AttributedElement;
+
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
+import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
@@ -29,7 +29,7 @@ public class Error extends Greql2Function {
 
 	@Override
 	public JValue evaluate(Graph graph,
-			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
+			SubGraphMarker subgraph, JValue[] arguments)
 			throws EvaluateException {
 		if (checkArguments(arguments) < 0) {
 			throw new WrongFunctionParameterException(this, arguments);

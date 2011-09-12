@@ -35,9 +35,9 @@
 
 package de.uni_koblenz.jgralab.greql2.funlib;
 
-import de.uni_koblenz.jgralab.AttributedElement;
+
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
+import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 
@@ -92,7 +92,7 @@ public class GrEqual extends CompareFunction {
 
 	@Override
 	public JValue evaluate(Graph graph,
-			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
+			SubGraphMarker subgraph, JValue[] arguments)
 			throws EvaluateException {
 		return evaluate(arguments, CompareOperator.GR_EQUAL);
 	}

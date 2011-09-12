@@ -39,8 +39,7 @@ import java.util.ArrayList;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
-import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
+import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
@@ -83,8 +82,7 @@ public class GetValue extends Greql2Function {
 	{
 		JValueType[][] x = {
 				{ JValueType.ATTRELEM, JValueType.STRING, JValueType.OBJECT },
-				{ JValueType.RECORD, JValueType.STRING, JValueType.OBJECT },
-				{ JValueType.ATTRELEM, JValueType.MARKER, JValueType.OBJECT } };
+				{ JValueType.RECORD, JValueType.STRING, JValueType.OBJECT } };
 		signatures = x;
 
 		description = "Returns the value of the given AttrElem's or Record's (temporary) attribute or component.\n"
@@ -95,9 +93,8 @@ public class GetValue extends Greql2Function {
 	}
 
 	@Override
-	public JValue evaluate(Graph graph,
-			AbstractGraphMarker<AttributedElement> subgraph, JValue[] arguments)
-			throws EvaluateException {
+	public JValue evaluate(Graph graph, SubGraphMarker subgraph,
+			JValue[] arguments) throws EvaluateException {
 
 		if (arguments[0].toObject() == null || arguments[1].toObject() == null) {
 			return new JValueImpl();
@@ -109,17 +106,9 @@ public class GetValue extends Greql2Function {
 			return getValueFromAttributedElement(arguments, fieldName);
 		case 1:
 			return getValueFromRecord(arguments, fieldName);
-		case 2:
-			return getValueFromMarker(arguments);
 		default:
 			throw new WrongFunctionParameterException(this, arguments);
 		}
-	}
-
-	private JValue getValueFromMarker(JValue[] arguments) {
-		AttributedElement attrElem = arguments[0].toAttributedElement();
-		GraphMarker<?> marker = (GraphMarker<?>) arguments[1].toGraphMarker();
-		return JValueImpl.fromObject(marker.getMark(attrElem), attrElem);
 	}
 
 	private JValue getValueFromRecord(JValue[] arguments, String fieldName) {

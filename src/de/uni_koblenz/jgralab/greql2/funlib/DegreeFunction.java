@@ -39,11 +39,11 @@ package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
 
-import de.uni_koblenz.jgralab.AttributedElement;
+
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
+import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
@@ -72,7 +72,7 @@ public abstract class DegreeFunction extends Greql2Function {
 		categories = c;
 	}
 
-	public JValue evaluate(AbstractGraphMarker<AttributedElement> subgraph,
+	public JValue evaluate(SubGraphMarker subgraph,
 			JValue[] arguments, EdgeDirection direction)
 			throws EvaluateException {
 
@@ -103,7 +103,7 @@ public abstract class DegreeFunction extends Greql2Function {
 	}
 
 	private JValue handleTypeCollection(
-			AbstractGraphMarker<AttributedElement> subgraph, Vertex vertex,
+			SubGraphMarker subgraph, Vertex vertex,
 			JValueTypeCollection typeCollection, EdgeDirection direction) {
 
 		int count = 0;
@@ -116,7 +116,7 @@ public abstract class DegreeFunction extends Greql2Function {
 	}
 
 	private boolean isValidEdge(
-			AbstractGraphMarker<AttributedElement> subgraph,
+			SubGraphMarker subgraph,
 			JValueTypeCollection typeCollection, Edge incidence) {
 		return ((subgraph == null) || subgraph.isMarked(incidence))
 				&& typeCollection.acceptsType(incidence

@@ -37,10 +37,9 @@ package de.uni_koblenz.jgralab.greql2.evaluator.fa;
 
 import java.util.Iterator;
 
-import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
+import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.Greql2Serializer;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
@@ -131,8 +130,7 @@ public class IntermediateVertexTransition extends Transition {
 	 * greql2.evaluator.SubgraphTempAttribute)
 	 */
 	@Override
-	public boolean accepts(Vertex v, Edge e,
-			AbstractGraphMarker<AttributedElement> subgraph)
+	public boolean accepts(Vertex v, Edge e, SubGraphMarker subgraph)
 			throws EvaluateException {
 		// checks if a intermediateVertexExpression exists and if the end-vertex
 		// of e is part of the result of this expression

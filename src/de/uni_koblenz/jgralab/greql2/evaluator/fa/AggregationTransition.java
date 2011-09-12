@@ -37,11 +37,10 @@ package de.uni_koblenz.jgralab.greql2.evaluator.fa;
 
 import java.util.Set;
 
-import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.graphmarker.AbstractGraphMarker;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
+import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ThisEdgeEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
@@ -244,8 +243,7 @@ public class AggregationTransition extends Transition {
 	 * greql2.evaluator.SubgraphTempAttribute)
 	 */
 	@Override
-	public boolean accepts(Vertex v, Edge e,
-			AbstractGraphMarker<AttributedElement> subgraph)
+	public boolean accepts(Vertex v, Edge e, SubGraphMarker subgraph)
 			throws EvaluateException {
 		if (e == null) {
 			return false;
