@@ -582,14 +582,10 @@ public abstract class GraphBaseImpl implements Graph {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public synchronized <T extends Edge> T createEdge(Class<T> cls,
-			Vertex alpha, Vertex omega) {
+	public <T extends Edge> T createEdge(Class<T> cls, Vertex alpha,
+			Vertex omega) {
 		try {
-			synchronized (alpha) {
-				synchronized (omega) {
-					return (T) internalCreateEdge(cls, alpha, omega);
-				}
-			}
+			return (T) internalCreateEdge(cls, alpha, omega);
 		} catch (Exception exception) {
 			if (exception instanceof GraphException) {
 				throw (GraphException) exception;
@@ -611,7 +607,7 @@ public abstract class GraphBaseImpl implements Graph {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public synchronized <T extends Vertex> T createVertex(Class<T> cls) {
+	public <T extends Vertex> T createVertex(Class<T> cls) {
 		try {
 			return (T) internalCreateVertex(cls);
 		} catch (Exception ex) {
@@ -633,7 +629,7 @@ public abstract class GraphBaseImpl implements Graph {
 	 * @see de.uni_koblenz.jgralab.Graph#deleteEdge(de.uni_koblenz.jgralab.Edge)
 	 */
 	@Override
-	public synchronized void deleteEdge(Edge e) {
+	public void deleteEdge(Edge e) {
 		assert (e != null) && e.isValid() && containsEdge(e);
 		internalDeleteEdge(e);
 		edgeListModified();
@@ -646,7 +642,7 @@ public abstract class GraphBaseImpl implements Graph {
 	 * de.uni_koblenz.jgralab.Graph#deleteVertex(de.uni_koblenz.jgralab.Vertex)
 	 */
 	@Override
-	public synchronized void deleteVertex(Vertex v) {
+	public void deleteVertex(Vertex v) {
 		assert (v != null) && v.isValid() && containsVertex(v);
 
 		getDeleteVertexList().add((VertexBaseImpl) v);

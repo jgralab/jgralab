@@ -328,7 +328,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 	 * @see de.uni_koblenz.jgralab.Edge#setAlpha(de.uni_koblenz.jgralab.Vertex)
 	 */
 	@Override
-	public synchronized void setAlpha(Vertex alpha) {
+	public void setAlpha(Vertex alpha) {
 		assert isValid();
 		assert alpha != null;
 		assert alpha.isValid();
@@ -351,16 +351,13 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 					+ alpha.getAttributedElementClass().getUniqueName());
 		}
 
-		synchronized (alpha) {
-			synchronized (oldAlpha) {
-				oldAlpha.removeIncidenceFromLambdaSeq(this);
-				oldAlpha.incidenceListModified();
-			}
-			VertexBaseImpl newAlpha = (VertexBaseImpl) alpha;
-			newAlpha.appendIncidenceToLambdaSeq(this);
-			newAlpha.incidenceListModified();
-			setIncidentVertex(newAlpha);
-		}
+		oldAlpha.removeIncidenceFromLambdaSeq(this);
+		oldAlpha.incidenceListModified();
+
+		VertexBaseImpl newAlpha = (VertexBaseImpl) alpha;
+		newAlpha.appendIncidenceToLambdaSeq(this);
+		newAlpha.incidenceListModified();
+		setIncidentVertex(newAlpha);
 
 		if (!this.graph.isLoading()) {
 			this.graph.getECARuleManager().fireAfterChangeAlphaOfEdgeEvents(
@@ -374,7 +371,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 	 * @see de.uni_koblenz.jgralab.Edge#setOmega(de.uni_koblenz.jgralab.Vertex)
 	 */
 	@Override
-	public synchronized void setOmega(Vertex omega) {
+	public void setOmega(Vertex omega) {
 		assert isValid();
 		assert omega != null;
 		assert omega.isValid();
@@ -398,18 +395,15 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 					+ omega.getAttributedElementClass().getUniqueName());
 		}
 
-		synchronized (omega) {
-			synchronized (oldOmgea) {
-				oldOmgea.removeIncidenceFromLambdaSeq(reversedEdge);
-				oldOmgea.incidenceListModified();
-			}
-			VertexBaseImpl newOmega = (VertexBaseImpl) omega;
-			newOmega.appendIncidenceToLambdaSeq(reversedEdge);
-			newOmega.incidenceListModified();
-			// TODO Check if this is really needed as
-			// appenIncidenceToLambdaSeq called it before.
-			reversedEdge.setIncidentVertex(newOmega);
-		}
+		oldOmgea.removeIncidenceFromLambdaSeq(reversedEdge);
+		oldOmgea.incidenceListModified();
+
+		VertexBaseImpl newOmega = (VertexBaseImpl) omega;
+		newOmega.appendIncidenceToLambdaSeq(reversedEdge);
+		newOmega.incidenceListModified();
+		// TODO Check if this is really needed as
+		// appenIncidenceToLambdaSeq called it before.
+		reversedEdge.setIncidentVertex(newOmega);
 
 		if (!this.graph.isLoading()) {
 			this.graph.getECARuleManager().fireAfterChangeOmegaOfEdgeEvents(
