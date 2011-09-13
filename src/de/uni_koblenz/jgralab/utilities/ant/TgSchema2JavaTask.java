@@ -83,7 +83,6 @@ public class TgSchema2JavaTask extends Task {
 	public TgSchema2JavaTask() {
 		executeObject = new TgSchema2Java();
 		executeObject.setTypeSpecificMethodSupport(true);
-		executeObject.setMethodsForSubclassesSupport(false);
 		schemaLocation = new HashSet<String>();
 	}
 
@@ -99,16 +98,6 @@ public class TgSchema2JavaTask extends Task {
 		String v = value.toLowerCase();
 		if (v.equals("true") || v.equals("yes")) {
 			executeObject.setTypeSpecificMethodSupport(false);
-		} else if (!(v.equals("false") || v.equals("no"))) {
-			throw new BuildException("Invalid value for boolean field: "
-					+ value);
-		}
-	}
-
-	public void setSubtypeFlag(String value) {
-		String v = value.toLowerCase();
-		if (v.equals("true") || v.equals("yes")) {
-			executeObject.setMethodsForSubclassesSupport(true);
 		} else if (!(v.equals("false") || v.equals("no"))) {
 			throw new BuildException("Invalid value for boolean field: "
 					+ value);

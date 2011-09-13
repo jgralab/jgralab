@@ -213,23 +213,6 @@ public interface Graph extends AttributedElement {
 	public Vertex getFirstVertex(VertexClass vertexClass);
 
 	/**
-	 * Returns the first Vertex of the specified <code>vertexClass</code>,
-	 * including subclasses only if <code>noSubclasses</code> is set to false,
-	 * in the vertex sequence of this Graph.
-	 * 
-	 * @param vertexClass
-	 *            a VertexClass (i.e. an instance of schema.VertexClass)
-	 * 
-	 * @param noSubclasses
-	 *            if set to true, only vertices with the exact class are taken
-	 *            into account, false means that also subclasses are valid
-	 * 
-	 * @return the first Vertex, or null if this graph contains no vertices of
-	 *         the specified <code>vertexClass</code>.
-	 */
-	public Vertex getFirstVertex(VertexClass vertexClass, boolean noSubclasses);
-
-	/**
 	 * Returns the first Vertex of the specified <code>vertexClass</code>
 	 * (including subclasses) in the vertex sequence of this Graph.
 	 * 
@@ -240,24 +223,6 @@ public interface Graph extends AttributedElement {
 	 *         the specified <code>vertexClass</code>.
 	 */
 	public Vertex getFirstVertex(Class<? extends Vertex> vertexClass);
-
-	/**
-	 * Returns the first Vertex of the specified <code>vertexClass</code>,
-	 * including subclasses only if <code>noSubclasses</code> is set to false,
-	 * in the vertex sequence of this Graph.
-	 * 
-	 * @param vertexClass
-	 *            a VertexClass (i.e. an M1 interface extending Vertex)
-	 * 
-	 * @param noSubclasses
-	 *            if set to true, only vertices with the exact class are taken
-	 *            into account, false means that also subclasses are valid
-	 * 
-	 * @return the first Vertex, or null if this graph contains no vertices of
-	 *         the specified <code>vertexClass</code>.
-	 */
-	public Vertex getFirstVertex(Class<? extends Vertex> vertexClass,
-			boolean noSubclasses);
 
 	/**
 	 * Returns the first Edge in the edge sequence of this Graph.
@@ -286,23 +251,6 @@ public interface Graph extends AttributedElement {
 	public Edge getFirstEdge(EdgeClass edgeClass);
 
 	/**
-	 * Returns the first Edge of the specified <code>edgeClass</code>, including
-	 * subclasses only if <code>noSubclasses</code> is set to false, in the edge
-	 * sequence of this Graph.
-	 * 
-	 * @param edgeClass
-	 *            an EdgeClass (i.e. an instance of schema.EdgeClass)
-	 * 
-	 * @param noSubclasses
-	 *            if set to true, only edges with the exact class are taken into
-	 *            account, false means that also subclasses are valid
-	 * 
-	 * @return the first Edge, or null if this graph contains no edges of the
-	 *         specified <code>edgeClass</code>.
-	 */
-	public Edge getFirstEdge(EdgeClass edgeClass, boolean noSubclasses);
-
-	/**
 	 * Returns the first Edge of the specified <code>edgeClass</code> (including
 	 * subclasses) in the edge sequence of this Graph.
 	 * 
@@ -313,24 +261,6 @@ public interface Graph extends AttributedElement {
 	 *         specified <code>edgeClass</code>.
 	 */
 	public Edge getFirstEdge(Class<? extends Edge> edgeClass);
-
-	/**
-	 * Returns the first Edge of the specified <code>edgeClass</code>, including
-	 * subclasses only if <code>noSubclasses</code> is set to false, in the edge
-	 * sequence of this Graph.
-	 * 
-	 * @param edgeClass
-	 *            an EdgeClass (i.e. an M1 interface extending Edge)
-	 * 
-	 * @param noSubclasses
-	 *            if set to true, only edges with the exact class are taken into
-	 *            account, false means that also subclasses are valid
-	 * 
-	 * @return the first Edge, or null if this graph contains no edges of the
-	 *         specified <code>edgeClass</code>.
-	 */
-	public Edge getFirstEdge(Class<? extends Edge> edgeClass,
-			boolean noSubclasses);
 
 	/**
 	 * Returns the Vertex with the specified <code>id</code> if such a vertex
@@ -655,4 +585,8 @@ public interface Graph extends AttributedElement {
 	public int getGraphStructureChangedListenerCount();
 
 	public ECARuleManagerInterface getECARuleManager();
+
+	public TraversalContext setTraversalContext(TraversalContext tc);
+
+	public TraversalContext getTraversalContext();
 }

@@ -128,7 +128,14 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 	public Edge getNextEdge(Class<? extends Edge> anEdgeClass) {
 		assert anEdgeClass != null;
 		assert isValid();
-		return getNextEdge(anEdgeClass, false);
+		Edge currentEdge = getNextEdge();
+		while (currentEdge != null) {
+			if (anEdgeClass.isInstance(currentEdge)) {
+				return currentEdge;
+			}
+			currentEdge = currentEdge.getNextEdge();
+		}
+		return null;
 	}
 
 	/*
@@ -142,47 +149,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 	public Edge getNextEdge(EdgeClass anEdgeClass) {
 		assert anEdgeClass != null;
 		assert isValid();
-		return getNextEdge(anEdgeClass.getM1Class(), false);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uni_koblenz.jgralab.Edge#getNextEdgeOfClassInGraph(de.uni_koblenz.
-	 * jgralab.schema.EdgeClass, boolean)
-	 */
-	@Override
-	public Edge getNextEdge(EdgeClass anEdgeClass, boolean noSubclasses) {
-		assert anEdgeClass != null;
-		assert isValid();
-		return getNextEdge(anEdgeClass.getM1Class(), noSubclasses);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uni_koblenz.jgralab.Edge#getNextEdgeOfClassInGraph(java.lang.Class,
-	 * boolean)
-	 */
-	@Override
-	public Edge getNextEdge(Class<? extends Edge> anEdgeClass,
-			boolean noSubclasses) {
-		assert anEdgeClass != null;
-		assert isValid();
-		Edge currentEdge = getNextEdge();
-		while (currentEdge != null) {
-			if (noSubclasses) {
-				if (anEdgeClass == currentEdge.getM1Class()) {
-					return currentEdge;
-				}
-			} else if (anEdgeClass.isInstance(currentEdge)) {
-				return currentEdge;
-			}
-			currentEdge = currentEdge.getNextEdge();
-		}
-		return null;
+		return getNextEdge(anEdgeClass.getM1Class());
 	}
 
 	/*
@@ -370,8 +337,8 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 		VertexBaseImpl oldAlpha = getIncidentVertex();
 
 		if (!this.graph.isLoading()) {
-			this.graph.getECARuleManager().fireBeforeChangeAlphaOfEdgeEvents(this,
-					oldAlpha, alpha);
+			this.graph.getECARuleManager().fireBeforeChangeAlphaOfEdgeEvents(
+					this, oldAlpha, alpha);
 		}
 
 		if (alpha == oldAlpha) {
@@ -394,10 +361,10 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 			newAlpha.incidenceListModified();
 			setIncidentVertex(newAlpha);
 		}
-			
+
 		if (!this.graph.isLoading()) {
-			this.graph.getECARuleManager().fireAfterChangeAlphaOfEdgeEvents(this,
-					oldAlpha, alpha);
+			this.graph.getECARuleManager().fireAfterChangeAlphaOfEdgeEvents(
+					this, oldAlpha, alpha);
 		}
 	}
 
@@ -443,11 +410,10 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 			// appenIncidenceToLambdaSeq called it before.
 			reversedEdge.setIncidentVertex(newOmega);
 		}
-		
+
 		if (!this.graph.isLoading()) {
 			this.graph.getECARuleManager().fireAfterChangeOmegaOfEdgeEvents(
-					this,
-					oldOmgea, omega);
+					this, oldOmgea, omega);
 		}
 	}
 

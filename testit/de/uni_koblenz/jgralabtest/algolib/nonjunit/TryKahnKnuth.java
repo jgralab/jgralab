@@ -41,8 +41,6 @@ import de.uni_koblenz.jgralab.algolib.algorithms.search.DepthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.RecursiveDepthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.topological_order.KahnKnuthAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.topological_order.TopologicalOrderWithDFS;
-import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
-import de.uni_koblenz.jgralab.algolib.functions.adapters.MethodCallToBooleanFunctionAdapter;
 import de.uni_koblenz.jgralab.algolib.functions.entries.PermutationEntry;
 import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralabtest.schemas.algolib.simple.SimpleGraph;
@@ -101,7 +99,7 @@ public class TryKahnKnuth {
 		return graph;
 	}
 
-	public static void main(String[] args) throws AlgorithmTerminatedException {
+	public static void main(String[] args) {
 
 		SimpleGraph graph;// = myGraph();
 
@@ -132,34 +130,42 @@ public class TryKahnKnuth {
 
 		KahnKnuthAlgorithm solver = new KahnKnuthAlgorithm(graph);
 
-		DepthFirstSearch dfs = new RecursiveDepthFirstSearch(graph);
-		TopologicalOrderWithDFS solver2 = new TopologicalOrderWithDFS(graph,
-				dfs);
-		// solver2.setSubgraph(subgraph);
-		// solver2.setNavigable(navigable);
-		// dfs.addVisitor(new DebugSearchVisitor());
-		System.out.println("Kahn Knuth:");
-
-		solver.execute();
-
-		System.out.println(solver.isAcyclic());
-		System.out.println(solver.getTopologicalOrder());
-		for (PermutationEntry<Vertex> e : solver.getTopologicalOrder()) {
-			System.out.println(e.getSecond());
+		try {
+			System.out.println("Kahn Knuth:");
+			solver.execute();
+			System.out.println(solver.isAcyclic());
+			System.out.println(solver.getTopologicalOrder());
+			for (PermutationEntry<Vertex> e : solver.getTopologicalOrder()) {
+				System.out.println(e.getSecond());
+			}
+		} catch (AlgorithmTerminatedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
 
-		System.out.println();
-		System.out.println("DFS:");
+		try {
+			System.out.println("DFS:");
+			DepthFirstSearch dfs = new RecursiveDepthFirstSearch(graph);
+			TopologicalOrderWithDFS solver2 = new TopologicalOrderWithDFS(
+					graph, dfs);
+			// solver2.setSubgraph(subgraph);
+			// solver2.setNavigable(navigable);
+			// dfs.addVisitor(new DebugSearchVisitor());
 
-		solver2.execute();
-
-		System.out.println(solver2.isAcyclic());
-		System.out.println(solver2.getTopologicalOrder());
-		for (PermutationEntry<Vertex> e : solver2.getTopologicalOrder()) {
-			System.out.println(e.getSecond());
+			solver2.execute();
+			System.out.println(solver2.isAcyclic());
+			System.out.println(solver2.getTopologicalOrder());
+			for (PermutationEntry<Vertex> e : solver2.getTopologicalOrder()) {
+				System.out.println(e.getSecond());
+			}
+		} catch (AlgorithmTerminatedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
+
 	}
 
+	@SuppressWarnings("unused")
 	private static SubGraphMarker createSubgraph(SimpleGraph graph) {
 		SubGraphMarker subgraph = new SubGraphMarker(graph);
 		subgraph.mark(graph.getVertex(9));

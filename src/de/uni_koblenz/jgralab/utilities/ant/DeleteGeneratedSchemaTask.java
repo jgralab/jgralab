@@ -108,6 +108,7 @@ public class DeleteGeneratedSchemaTask extends Task {
 				}
 			}
 		} catch (GraphIOException e) {
+			e.printStackTrace();
 			throw new BuildException(e);
 		}
 	}

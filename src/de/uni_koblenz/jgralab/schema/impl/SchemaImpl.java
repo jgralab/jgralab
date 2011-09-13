@@ -325,7 +325,7 @@ public class SchemaImpl implements Schema {
 			out.setDatabaseSupport(true);
 		}
 
-		return out.withMethodsForSubclassesSupport();
+		return out;
 		// TODO: Monte, check for the other values :-)
 	}
 
@@ -1317,7 +1317,8 @@ public class SchemaImpl implements Schema {
 		return "GraphClass of schema '" + qualifiedName + "':\n\n\n"
 				+ ((GraphClassImpl) graphClass).getDescriptionString();
 	}
-	
+
+	@Override
 	public String toString() {
 		return getQualifiedName();
 	}

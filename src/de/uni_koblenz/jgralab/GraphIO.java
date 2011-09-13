@@ -666,144 +666,150 @@ public class GraphIO {
 
 	private void saveGraph(Graph graph, ProgressFunction pf,
 			BooleanGraphMarker subGraph) throws IOException, GraphIOException {
-		// Write the jgralab version and license in a comment
-		saveHeader();
+		TraversalContext tc = graph.setTraversalContext(null);
+		try {
+			// Write the jgralab version and license in a comment
+			saveHeader();
 
-		schema = graph.getSchema();
-		saveSchema(schema);
+			schema = graph.getSchema();
+			saveSchema(schema);
 
-		long eId;
-		long vId;
+			long eId;
+			long vId;
 
-		// progress bar for graph
-		long graphElements = 0, currentCount = 0, interval = 1;
-		if (pf != null) {
-			if (subGraph != null) {
-				pf.init(subGraph.size());
-			} else {
-				pf.init(graph.getVCount() + graph.getECount());
+			// progress bar for graph
+			long graphElements = 0, currentCount = 0, interval = 1;
+			if (pf != null) {
+				if (subGraph != null) {
+					pf.init(subGraph.size());
+				} else {
+					pf.init(graph.getVCount() + graph.getECount());
+				}
+				interval = pf.getUpdateInterval();
 			}
-			interval = pf.getUpdateInterval();
-		}
 
-		space();
-		write("Graph " + toUtfString(graph.getId()) + " "
-				+ graph.getGraphVersion());
-		writeIdentifier(graph.getAttributedElementClass().getQualifiedName());
-		int vCount = graph.getVCount();
-		int eCount = graph.getECount();
-		// with a GraphMarker, v/eCount have to be restricted to the marked
-		// elements.
-		if (subGraph != null) {
-			vCount = 0;
-			eCount = 0;
-			for (AttributedElement ae : subGraph.getMarkedElements()) {
-				if (ae instanceof Vertex) {
-					vCount++;
-				} else if (ae instanceof Edge) {
-					eCount++;
+			space();
+			write("Graph " + toUtfString(graph.getId()) + " "
+					+ graph.getGraphVersion());
+			writeIdentifier(graph.getAttributedElementClass()
+					.getQualifiedName());
+			int vCount = graph.getVCount();
+			int eCount = graph.getECount();
+			// with a GraphMarker, v/eCount have to be restricted to the marked
+			// elements.
+			if (subGraph != null) {
+				vCount = 0;
+				eCount = 0;
+				for (AttributedElement ae : subGraph.getMarkedElements()) {
+					if (ae instanceof Vertex) {
+						vCount++;
+					} else if (ae instanceof Edge) {
+						eCount++;
+					}
 				}
 			}
-		}
-		write(" (" + graph.getMaxVCount() + " " + graph.getMaxECount() + " "
-				+ vCount + " " + eCount + ")");
-		space();
-		graph.writeAttributeValues(this);
-		write(";\n");
-
-		Package oldPackage = null;
-		// write vertices
-		// System.out.println("Writing vertices");
-		Vertex nextV = graph.getFirstVertex();
-		while (nextV != null) {
-			if ((subGraph != null) && !subGraph.isMarked(nextV)) {
-				nextV = nextV.getNextVertex();
-				continue;
-			}
-			vId = nextV.getId();
-			AttributedElementClass aec = nextV.getAttributedElementClass();
-			Package currentPackage = aec.getPackage();
-			if (currentPackage != oldPackage) {
-				write("Package");
-				space();
-				writeIdentifier(currentPackage.getQualifiedName());
-				write(";\n");
-				oldPackage = currentPackage;
-			}
-			write(Long.toString(vId));
+			write(" (" + graph.getMaxVCount() + " " + graph.getMaxECount()
+					+ " " + vCount + " " + eCount + ")");
 			space();
-			writeIdentifier(aec.getSimpleName());
-			// write incident edges
-			Edge nextI = nextV.getFirstIncidence();
-			write(" <");
-			noSpace();
-			// System.out.print("  Writing incidences of vertex.");
-			while (nextI != null) {
-				if ((subGraph != null) && !subGraph.isMarked(nextI)) {
-					nextI = nextI.getNextIncidence();
+			graph.writeAttributeValues(this);
+			write(";\n");
+
+			Package oldPackage = null;
+			// write vertices
+			// System.out.println("Writing vertices");
+			Vertex nextV = graph.getFirstVertex();
+			while (nextV != null) {
+				if ((subGraph != null) && !subGraph.isMarked(nextV)) {
+					nextV = nextV.getNextVertex();
 					continue;
 				}
-				writeLong(nextI.getId());
-				nextI = nextI.getNextIncidence();
-			}
-			write(">");
-			space();
-			nextV.writeAttributeValues(this);
-			write(";\n");
-			nextV = nextV.getNextVertex();
-
-			// update progress bar
-			if (pf != null) {
-				graphElements++;
-				currentCount++;
-				if (currentCount == interval) {
-					pf.progress(graphElements);
-					currentCount = 0;
+				vId = nextV.getId();
+				AttributedElementClass aec = nextV.getAttributedElementClass();
+				Package currentPackage = aec.getPackage();
+				if (currentPackage != oldPackage) {
+					write("Package");
+					space();
+					writeIdentifier(currentPackage.getQualifiedName());
+					write(";\n");
+					oldPackage = currentPackage;
 				}
-			}
-		}
-
-		// System.out.println("Writing edges");
-		// write edges
-		Edge nextE = graph.getFirstEdge();
-		while (nextE != null) {
-			if ((subGraph != null) && !subGraph.isMarked(nextE)) {
-				nextE = nextE.getNextEdge();
-				continue;
-			}
-			eId = nextE.getId();
-			AttributedElementClass aec = nextE.getAttributedElementClass();
-			Package currentPackage = aec.getPackage();
-			if (currentPackage != oldPackage) {
-				write("Package");
+				write(Long.toString(vId));
 				space();
-				writeIdentifier(currentPackage.getQualifiedName());
+				writeIdentifier(aec.getSimpleName());
+				// write incident edges
+				Edge nextI = nextV.getFirstIncidence();
+				write(" <");
+				noSpace();
+				// System.out.print("  Writing incidences of vertex.");
+				while (nextI != null) {
+					if ((subGraph != null) && !subGraph.isMarked(nextI)) {
+						nextI = nextI.getNextIncidence();
+						continue;
+					}
+					writeLong(nextI.getId());
+					nextI = nextI.getNextIncidence();
+				}
+				write(">");
+				space();
+				nextV.writeAttributeValues(this);
 				write(";\n");
-				oldPackage = currentPackage;
-			}
-			write(Long.toString(eId));
-			space();
-			writeIdentifier(aec.getSimpleName());
-			space();
-			nextE.writeAttributeValues(this);
-			write(";\n");
-			nextE = nextE.getNextEdge();
+				nextV = nextV.getNextVertex();
 
-			// update progress bar
-			if (pf != null) {
-				graphElements++;
-				currentCount++;
-				if (currentCount == interval) {
-					pf.progress(graphElements);
-					currentCount = 0;
+				// update progress bar
+				if (pf != null) {
+					graphElements++;
+					currentCount++;
+					if (currentCount == interval) {
+						pf.progress(graphElements);
+						currentCount = 0;
+					}
 				}
 			}
 
-		}
-		TGOut.flush();
-		// finish progress bar
-		if (pf != null) {
-			pf.finished();
+			// System.out.println("Writing edges");
+			// write edges
+			Edge nextE = graph.getFirstEdge();
+			while (nextE != null) {
+				if ((subGraph != null) && !subGraph.isMarked(nextE)) {
+					nextE = nextE.getNextEdge();
+					continue;
+				}
+				eId = nextE.getId();
+				AttributedElementClass aec = nextE.getAttributedElementClass();
+				Package currentPackage = aec.getPackage();
+				if (currentPackage != oldPackage) {
+					write("Package");
+					space();
+					writeIdentifier(currentPackage.getQualifiedName());
+					write(";\n");
+					oldPackage = currentPackage;
+				}
+				write(Long.toString(eId));
+				space();
+				writeIdentifier(aec.getSimpleName());
+				space();
+				nextE.writeAttributeValues(this);
+				write(";\n");
+				nextE = nextE.getNextEdge();
+
+				// update progress bar
+				if (pf != null) {
+					graphElements++;
+					currentCount++;
+					if (currentCount == interval) {
+						pf.progress(graphElements);
+						currentCount = 0;
+					}
+				}
+
+			}
+			TGOut.flush();
+			// finish progress bar
+			if (pf != null) {
+				pf.finished();
+			}
+		} finally {
+			graph.setTraversalContext(tc);
 		}
 	}
 

@@ -41,6 +41,7 @@ import java.util.NoSuchElementException;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
+import de.uni_koblenz.jgralab.TraversalContext;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.functions.BooleanFunction;
 import de.uni_koblenz.jgralab.algolib.functions.entries.BooleanFunctionEntry;
@@ -56,7 +57,7 @@ import de.uni_koblenz.jgralab.algolib.functions.entries.BooleanFunctionEntry;
  * 
  */
 public class SubGraphMarker extends AbstractGraphMarker<GraphElement> implements
-		BooleanFunction<GraphElement> {
+		BooleanFunction<GraphElement>, TraversalContext {
 
 	private final BitSetEdgeMarker edgeGraphMarker;
 	private final BitSetVertexMarker vertexGraphMarker;
@@ -315,5 +316,20 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement> implements
 	@Override
 	public Iterable<GraphElement> getDomainElements() {
 		return getMarkedElements();
+	}
+
+	@Override
+	public boolean containsGraphElement(GraphElement e) {
+		return isMarked(e);
+	}
+
+	@Override
+	public boolean containsVertex(Vertex v) {
+		return isMarked(v);
+	}
+
+	@Override
+	public boolean containsEdge(Edge e) {
+		return isMarked(e);
 	}
 }
