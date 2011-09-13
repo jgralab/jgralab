@@ -85,7 +85,8 @@ public interface Edge extends GraphElement {
 	 *         <code>thisIncidence == true</code>) or that (
 	 *         <code>thisIncidence == false</code>) side.
 	 */
-	public Edge getNextIncidence(boolean thisIncidence, AggregationKind... kinds);
+	public Edge getNextIncidence(boolean thisIncidence,
+			AggregationKind... kinds);
 
 	/**
 	 * @param anEdgeClass
@@ -215,24 +216,6 @@ public interface Edge extends GraphElement {
 	 * @return next edge of anEdgeClass or its superclasses in eSeq
 	 */
 	public Edge getNextEdge(Class<? extends Edge> anEdgeClass);
-
-	/**
-	 * @param anEdgeClass
-	 * @param noSubclasses
-	 *            if true, no subclasses are returned
-	 * @return next edge object of explicit anEdgeClass in eSeq
-	 */
-	public Edge getNextEdge(EdgeClass anEdgeClass,
-			boolean noSubclasses);
-
-	/**
-	 * @param anEdgeClass
-	 * @param noSubclasses
-	 *            if true, no subclasses are returned
-	 * @return next edge object of explicit anEdgeClass in eSeq
-	 */
-	public Edge getNextEdge(Class<? extends Edge> anEdgeClass,
-			boolean noSubclasses);
 
 	/**
 	 * @return the alpha vertex of this edge

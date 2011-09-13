@@ -79,12 +79,12 @@ public class MultiplicityTest {
 	 * @throws GraphIOException
 	 */
 	private Schema compileSchema(String schemaString) throws GraphIOException {
-		ByteArrayInputStream input = new ByteArrayInputStream(schemaString
-				.getBytes());
+		ByteArrayInputStream input = new ByteArrayInputStream(
+				schemaString.getBytes());
 		Schema s = null;
 		s = GraphIO.loadSchemaFromStream(input);
 		try {
-			s.compile(CodeGeneratorConfiguration.FULL_WITHOUT_SUBCLASS_FLAGS);
+			s.compile(CodeGeneratorConfiguration.FULL);
 		} catch (Exception e) {
 			throw new GraphIOException("", e);
 		}

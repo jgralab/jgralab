@@ -141,11 +141,6 @@ public class TgSchema2Java {
 			} else {
 				t.setTypeSpecificMethodSupport(true);
 			}
-			if (comLine.hasOption('f')) {
-				t.setMethodsForSubclassesSupport(true);
-			} else {
-				t.setMethodsForSubclassesSupport(false);
-			}
 			if (comLine.hasOption('i')) {
 				t.setImplementationMode(comLine.getOptionValue('i'));
 			} else {
@@ -169,10 +164,6 @@ public class TgSchema2Java {
 
 	public void loadSchema(String tgFilename) throws GraphIOException {
 		schema = GraphIO.loadSchemaFromFile(tgFilename);
-	}
-
-	public void setMethodsForSubclassesSupport(boolean enabled) {
-		config.setMethodsForSubclassesSupport(enabled);
 	}
 
 	public void setTypeSpecificMethodSupport(boolean enabled) {
@@ -490,11 +481,6 @@ public class TgSchema2Java {
 				"(optional): Don't create typespecific methods in classes");
 		without_types.setRequired(false);
 		oh.addOption(without_types);
-
-		Option subtype_flag = new Option("f", "subtype-flag", false,
-				"(optional): Create separate methods with subtype flag");
-		subtype_flag.setRequired(false);
-		oh.addOption(subtype_flag);
 
 		Option path = new Option(
 				"p",

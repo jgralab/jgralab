@@ -93,26 +93,6 @@ public interface Vertex extends GraphElement {
 	/**
 	 * @param ec
 	 *            an EdgeClass
-	 * @param noSubClasses
-	 *            if set to <code>true</code>, subclasses of <code>ec</code> are
-	 *            not counted
-	 * @return number of IN or OUT incidences of the specified EdgeClass
-	 */
-	public int getDegree(EdgeClass ec, boolean noSubClasses);
-
-	/**
-	 * @param ec
-	 *            an EdgeClass
-	 * @param noSubClasses
-	 *            if set to <code>true</code>, subclasses of <code>ec</code> are
-	 *            not counted
-	 * @return number of IN or OUT incidences of the specified EdgeClass
-	 */
-	public int getDegree(Class<? extends Edge> ec, boolean noSubClasses);
-
-	/**
-	 * @param ec
-	 *            an EdgeClass
 	 * @param orientation
 	 *            of connected incidences,
 	 * @return number of IN or OUT incidences connected to the vertex
@@ -129,32 +109,6 @@ public interface Vertex extends GraphElement {
 	public int getDegree(Class<? extends Edge> ec, EdgeDirection orientation);
 
 	/**
-	 * @param ec
-	 *            an EdgeClass
-	 * @param orientation
-	 *            of connected incidences,
-	 * @param noSubClasses
-	 *            if set to <code>true</code>, subclasses of <code>ec</code> are
-	 *            not counted
-	 * @return number of IN or OUT incidences connected to the vertex
-	 */
-	public int getDegree(EdgeClass ec, EdgeDirection orientation,
-			boolean noSubClasses);
-
-	/**
-	 * @param ec
-	 *            an EdgeClass
-	 * @param orientation
-	 *            of connected incidences,
-	 * @param noSubClasses
-	 *            if set to <code>true</code>, subclasses of <code>ec</code> are
-	 *            not counted
-	 * @return number of IN or OUT incidences connected to the vertex
-	 */
-	public int getDegree(Class<? extends Edge> ec, EdgeDirection orientation,
-			boolean noSubClasses);
-
-	/**
 	 * @return the next vertex in vSeq
 	 */
 	public Vertex getNextVertex();
@@ -165,38 +119,18 @@ public interface Vertex extends GraphElement {
 	public Vertex getPrevVertex();
 
 	/**
-	 * @param aVertexClass
+	 * @param vertexClass
 	 *            the class of the next vertex
 	 * @return the next vertex in vSeq of class aVertexClass or its superclasses
 	 */
-	public Vertex getNextVertex(VertexClass aVertexClass);
+	public Vertex getNextVertex(VertexClass vertexClass);
 
 	/**
-	 * @param aM1VertexClass
+	 * @param vertexClass
 	 *            the class of the next vertex
 	 * @return the next vertex in vSeq of class aVertexClass or its superclasses
 	 */
-	public Vertex getNextVertex(Class<? extends Vertex> aM1VertexClass);
-
-	/**
-	 * @param aVertexClass
-	 *            the class of the next vertex
-	 * @param noSubclasses
-	 *            if true, no subclasses are returned
-	 * @return the next vertex in vSeq of explicit class aVertexClass
-	 */
-	public Vertex getNextVertex(VertexClass aVertexClass,
-			boolean noSubclasses);
-
-	/**
-	 * @param aM1VertexClass
-	 *            the class of the next vertex
-	 * @param noSubclasses
-	 *            if true, no subclasses are returned
-	 * @return the next vertex in vSeq of explicit class aVertexClass
-	 */
-	public Vertex getNextVertex(Class<? extends Vertex> aM1VertexClass,
-			boolean noSubclasses);
+	public Vertex getNextVertex(Class<? extends Vertex> vertexClass);
 
 	/**
 	 * @return first incident edge of this vertex
@@ -245,7 +179,8 @@ public interface Vertex extends GraphElement {
 	 *         (thisIncidence == true) or that vertex (thisIncidence == false)
 	 *         has one of the aggregation semantics given by <code>kind</code>.
 	 */
-	public Edge getFirstIncidence(boolean thisIncidence, AggregationKind... kinds);
+	public Edge getFirstIncidence(boolean thisIncidence,
+			AggregationKind... kinds);
 
 	/**
 	 * @param anEdgeClass
@@ -284,55 +219,6 @@ public interface Vertex extends GraphElement {
 	 */
 	public Edge getFirstIncidence(Class<? extends Edge> anEdgeClass,
 			EdgeDirection orientation);
-
-	/**
-	 * @param anEdgeClass
-	 *            the edge class to search for
-	 * @param noSubclasses
-	 *            if true, no subclasses are returned
-	 * @return the first incidence in iSeq where the corresponding edge is of
-	 *         explicit class anEdgeClass
-	 */
-	public Edge getFirstIncidence(EdgeClass anEdgeClass, boolean noSubclasses);
-
-	/**
-	 * @param anEdgeClass
-	 *            the edge class to search for
-	 * @param noSubclasses
-	 *            if true, no subclasses are returned
-	 * @return the first incidence in iSeq where the corresponding edge is of
-	 *         explicit class anEdgeClass
-	 */
-	public Edge getFirstIncidence(Class<? extends Edge> anEdgeClass,
-			boolean noSubclasses);
-
-	/**
-	 * @param anEdgeClass
-	 *            the edge class to search for
-	 * @param orientation
-	 *            set to TRUE, if edge has the 'in'-orientation, set to FALSE,
-	 *            if edge has the 'out'-orientation
-	 * @param noSubclasses
-	 *            if true, no subclasses are returned
-	 * @return the first incidence in iSeq where the corresponding edge is of
-	 *         explicit class anEdgeClass
-	 */
-	public Edge getFirstIncidence(EdgeClass anEdgeClass,
-			EdgeDirection orientation, boolean noSubclasses);
-
-	/**
-	 * @param anEdgeClass
-	 *            the edge class to search for
-	 * @param orientation
-	 *            set to TRUE, if edge has the 'in'-orientation, set to FALSE,
-	 *            if edge has the 'out'-orientation
-	 * @param noSubclasses
-	 *            if true, no subclasses are returned
-	 * @return the first incidence in iSeq where the corresponding edge is of
-	 *         explicit class anEdgeClass
-	 */
-	public Edge getFirstIncidence(Class<? extends Edge> anEdgeClass,
-			EdgeDirection orientation, boolean noSubclasses);
 
 	/**
 	 * @param v
@@ -480,8 +366,8 @@ public interface Vertex extends GraphElement {
 	public boolean isValidOmega(Edge edge);
 
 	/**
-	 * Sorts the incidence sequence according to the given comparator in ascending
-	 * order.
+	 * Sorts the incidence sequence according to the given comparator in
+	 * ascending order.
 	 * 
 	 * @param comp
 	 *            the comparator that defines the desired incidence order.

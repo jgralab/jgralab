@@ -154,27 +154,6 @@ public class RoleNameTest extends InstanceTest {
 	}
 
 	/**
-	 * Tests if the incident edges of type <code>ec</code> of <code>v</code>
-	 * equals the edges of <code>incidentEdges</code>.
-	 * 
-	 * @param ec
-	 *            (subclasses are ignored)
-	 * @param v
-	 * @param incidentEdges
-	 */
-	private void testIncidenceListOfOneEdge(Class<? extends Edge> ec, Vertex v,
-			Edge... incidentEdges) {
-		assertEquals(incidentEdges.length, v.getDegree(ec, true));
-		int i = 0;
-		for (Edge e : v.incidences(ec)) {
-			if (!(e instanceof F) && !(e instanceof G)) {
-				assertEquals(incidentEdges[i], e);
-				i++;
-			}
-		}
-	}
-
-	/**
 	 * Tests the incidences.
 	 * 
 	 * @param v1
@@ -984,8 +963,9 @@ public class RoleNameTest extends InstanceTest {
 			Edge e = inciFrom.get(i).getNormalEdge();
 			if (e.getAlpha() == from
 					&& e.getOmega() == to
-					&& checkRoleName(useTarget ? e.getThatRole() : e
-							.getThisRole(), rolenames)) {
+					&& checkRoleName(
+							useTarget ? e.getThatRole() : e.getThisRole(),
+							rolenames)) {
 				inciFrom.remove(i--);
 			}
 		}
@@ -993,8 +973,9 @@ public class RoleNameTest extends InstanceTest {
 			Edge e = inciTo.get(i).getNormalEdge();
 			if (e.getAlpha() == from
 					&& e.getOmega() == to
-					&& checkRoleName(useTarget ? e.getThatRole() : e
-							.getThisRole(), rolenames)) {
+					&& checkRoleName(
+							useTarget ? e.getThatRole() : e.getThisRole(),
+							rolenames)) {
 				inciTo.remove(i--);
 			}
 		}
@@ -1081,11 +1062,11 @@ public class RoleNameTest extends InstanceTest {
 	 * @throws GraphIOException
 	 */
 	private Schema compileSchema(String schemaString) throws GraphIOException {
-		ByteArrayInputStream input = new ByteArrayInputStream(schemaString
-				.getBytes());
+		ByteArrayInputStream input = new ByteArrayInputStream(
+				schemaString.getBytes());
 		Schema s = null;
 		s = GraphIO.loadSchemaFromStream(input);
-		s.compile(CodeGeneratorConfiguration.FULL_WITHOUT_SUBCLASS_FLAGS);
+		s.compile(CodeGeneratorConfiguration.FULL);
 		return s;
 	}
 
@@ -1115,8 +1096,8 @@ public class RoleNameTest extends InstanceTest {
 		commit(graph);
 		createReadOnlyTransaction(graph);
 		testIncidenceList(v1, e1, e2, e3, e4);
-		testIncidenceList(v2, e1.getReversedEdge(), e2.getReversedEdge(), e4
-				.getReversedEdge());
+		testIncidenceList(v2, e1.getReversedEdge(), e2.getReversedEdge(),
+				e4.getReversedEdge());
 		testIncidenceList(v3, e3.getReversedEdge());
 		commit(graph);
 	}
@@ -1138,8 +1119,8 @@ public class RoleNameTest extends InstanceTest {
 		commit(graph);
 		createReadOnlyTransaction(graph);
 		testIncidenceList(v1, e1, e2, e3, e4);
-		testIncidenceList(v2, e1.getReversedEdge(), e2.getReversedEdge(), e3
-				.getReversedEdge(), e4.getReversedEdge());
+		testIncidenceList(v2, e1.getReversedEdge(), e2.getReversedEdge(),
+				e3.getReversedEdge(), e4.getReversedEdge());
 		commit(graph);
 	}
 
@@ -1242,8 +1223,8 @@ public class RoleNameTest extends InstanceTest {
 		commit(graph);
 		createReadOnlyTransaction(graph);
 		testIncidenceList(v1, e1, e2, e3, e4);
-		testIncidenceList(v2, e1.getReversedEdge(), e2.getReversedEdge(), e3
-				.getReversedEdge(), e4.getReversedEdge());
+		testIncidenceList(v2, e1.getReversedEdge(), e2.getReversedEdge(),
+				e3.getReversedEdge(), e4.getReversedEdge());
 		commit(graph);
 	}
 
@@ -1264,8 +1245,8 @@ public class RoleNameTest extends InstanceTest {
 		commit(graph);
 		createReadOnlyTransaction(graph);
 		testIncidenceList(v1, e1, e2, e3, e4);
-		testIncidenceList(v2, e1.getReversedEdge(), e2.getReversedEdge(), e3
-				.getReversedEdge(), e4.getReversedEdge());
+		testIncidenceList(v2, e1.getReversedEdge(), e2.getReversedEdge(),
+				e3.getReversedEdge(), e4.getReversedEdge());
 		commit(graph);
 	}
 
@@ -1286,8 +1267,8 @@ public class RoleNameTest extends InstanceTest {
 		commit(graph);
 		createReadOnlyTransaction(graph);
 		testIncidenceList(v1, e1, e2, e3, e4);
-		testIncidenceList(v2, e1.getReversedEdge(), e2.getReversedEdge(), e3
-				.getReversedEdge(), e4.getReversedEdge());
+		testIncidenceList(v2, e1.getReversedEdge(), e2.getReversedEdge(),
+				e3.getReversedEdge(), e4.getReversedEdge());
 		commit(graph);
 	}
 
@@ -1308,8 +1289,8 @@ public class RoleNameTest extends InstanceTest {
 		commit(graph);
 		createReadOnlyTransaction(graph);
 		testIncidenceList(v1, e1, e2, e3, e4);
-		testIncidenceList(v2, e1.getReversedEdge(), e2.getReversedEdge(), e3
-				.getReversedEdge(), e4.getReversedEdge());
+		testIncidenceList(v2, e1.getReversedEdge(), e2.getReversedEdge(),
+				e3.getReversedEdge(), e4.getReversedEdge());
 		commit(graph);
 	}
 
@@ -1342,36 +1323,14 @@ public class RoleNameTest extends InstanceTest {
 		commit(graph);
 		createReadOnlyTransaction(graph);
 		testIncidenceList(v1, e1, e2, e6, e8, e9, e10);
-		testIncidenceListOfOneEdge(E.class, v1, e1, e2, e6, e8, e9, e10);
-		testIncidenceListOfOneEdge(F.class, v1);
-		testIncidenceListOfOneEdge(G.class, v1);
 		testIncidenceList(v2, e1.getReversedEdge(), e8.getReversedEdge());
-		testIncidenceListOfOneEdge(E.class, v2, e1.getReversedEdge(), e8
-				.getReversedEdge());
-		testIncidenceListOfOneEdge(F.class, v2);
-		testIncidenceListOfOneEdge(G.class, v2);
 		testIncidenceList(v3, e3, e4, e5, e7, e11, e12);
-		testIncidenceListOfOneEdge(E.class, v3);
-		testIncidenceListOfOneEdge(F.class, v3, e3, e5, e11);
-		testIncidenceListOfOneEdge(G.class, v3, e4, e7, e12);
-		testIncidenceList(v4, e2.getReversedEdge(), e3.getReversedEdge(), e4
-				.getReversedEdge(), e5.getReversedEdge(), e6.getReversedEdge(),
-				e7.getReversedEdge());
-		testIncidenceListOfOneEdge(E.class, v4, e2.getReversedEdge(), e6
-				.getReversedEdge());
-		testIncidenceListOfOneEdge(F.class, v4, e3.getReversedEdge(), e5
-				.getReversedEdge());
-		testIncidenceListOfOneEdge(G.class, v4, e4.getReversedEdge(), e7
-				.getReversedEdge());
+		testIncidenceList(v4, e2.getReversedEdge(), e3.getReversedEdge(),
+				e4.getReversedEdge(), e5.getReversedEdge(),
+				e6.getReversedEdge(), e7.getReversedEdge());
 		testIncidenceList(v5, e9.getReversedEdge());
-		testIncidenceListOfOneEdge(E.class, v5, e9.getReversedEdge());
-		testIncidenceListOfOneEdge(F.class, v5);
-		testIncidenceListOfOneEdge(G.class, v5);
-		testIncidenceList(v6, e10.getReversedEdge(), e11.getReversedEdge(), e12
-				.getReversedEdge());
-		testIncidenceListOfOneEdge(E.class, v6, e10.getReversedEdge());
-		testIncidenceListOfOneEdge(F.class, v6, e11.getReversedEdge());
-		testIncidenceListOfOneEdge(G.class, v6, e12.getReversedEdge());
+		testIncidenceList(v6, e10.getReversedEdge(), e11.getReversedEdge(),
+				e12.getReversedEdge());
 		commit(graph);
 	}
 
@@ -1751,8 +1710,8 @@ public class RoleNameTest extends InstanceTest {
 		commit(graph);
 		createReadOnlyTransaction(graph);
 		testIncidenceList(v1, e1, e2, e3, e4);
-		testIncidenceList(v2, e1.getReversedEdge(), e2.getReversedEdge(), e4
-				.getReversedEdge());
+		testIncidenceList(v2, e1.getReversedEdge(), e2.getReversedEdge(),
+				e4.getReversedEdge());
 		testIncidenceList(v3, e3.getReversedEdge());
 		commit(graph);
 	}
@@ -1774,8 +1733,8 @@ public class RoleNameTest extends InstanceTest {
 		commit(graph);
 		createReadOnlyTransaction(graph);
 		testIncidenceList(v1, e1, e2, e3, e4);
-		testIncidenceList(v2, e1.getReversedEdge(), e2.getReversedEdge(), e3
-				.getReversedEdge(), e4.getReversedEdge());
+		testIncidenceList(v2, e1.getReversedEdge(), e2.getReversedEdge(),
+				e3.getReversedEdge(), e4.getReversedEdge());
 		commit(graph);
 	}
 
@@ -1875,36 +1834,14 @@ public class RoleNameTest extends InstanceTest {
 		commit(graph);
 		createReadOnlyTransaction(graph);
 		testIncidenceList(v1, e1, e2, e6, e8, e9, e10);
-		testIncidenceListOfOneEdge(E.class, v1, e1, e2, e6, e8, e9, e10);
-		testIncidenceListOfOneEdge(F.class, v1);
-		testIncidenceListOfOneEdge(G.class, v1);
 		testIncidenceList(v2, e1.getReversedEdge(), e8.getReversedEdge());
-		testIncidenceListOfOneEdge(E.class, v2, e1.getReversedEdge(), e8
-				.getReversedEdge());
-		testIncidenceListOfOneEdge(F.class, v2);
-		testIncidenceListOfOneEdge(G.class, v2);
 		testIncidenceList(v3, e3, e4, e5, e7, e11, e12);
-		testIncidenceListOfOneEdge(E.class, v3);
-		testIncidenceListOfOneEdge(F.class, v3, e3, e5, e11);
-		testIncidenceListOfOneEdge(G.class, v3, e4, e7, e12);
-		testIncidenceList(v4, e2.getReversedEdge(), e3.getReversedEdge(), e4
-				.getReversedEdge(), e5.getReversedEdge(), e6.getReversedEdge(),
-				e7.getReversedEdge());
-		testIncidenceListOfOneEdge(E.class, v4, e2.getReversedEdge(), e6
-				.getReversedEdge());
-		testIncidenceListOfOneEdge(F.class, v4, e3.getReversedEdge(), e5
-				.getReversedEdge());
-		testIncidenceListOfOneEdge(G.class, v4, e4.getReversedEdge(), e7
-				.getReversedEdge());
+		testIncidenceList(v4, e2.getReversedEdge(), e3.getReversedEdge(),
+				e4.getReversedEdge(), e5.getReversedEdge(),
+				e6.getReversedEdge(), e7.getReversedEdge());
 		testIncidenceList(v5, e9.getReversedEdge());
-		testIncidenceListOfOneEdge(E.class, v5, e9.getReversedEdge());
-		testIncidenceListOfOneEdge(F.class, v5);
-		testIncidenceListOfOneEdge(G.class, v5);
-		testIncidenceList(v6, e10.getReversedEdge(), e11.getReversedEdge(), e12
-				.getReversedEdge());
-		testIncidenceListOfOneEdge(E.class, v6, e10.getReversedEdge());
-		testIncidenceListOfOneEdge(F.class, v6, e11.getReversedEdge());
-		testIncidenceListOfOneEdge(G.class, v6, e12.getReversedEdge());
+		testIncidenceList(v6, e10.getReversedEdge(), e11.getReversedEdge(),
+				e12.getReversedEdge());
 		commit(graph);
 	}
 

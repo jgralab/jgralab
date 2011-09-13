@@ -39,8 +39,8 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.algolib.algorithms.StructureOrientedAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
+import de.uni_koblenz.jgralab.algolib.algorithms.StructureOrientedAlgorithm;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.DepthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.visitors.DFSVisitorAdapter;
 import de.uni_koblenz.jgralab.algolib.algorithms.topological_order.visitors.TopologicalOrderVisitor;
@@ -141,7 +141,8 @@ public class TopologicalOrderWithDFS extends StructureOrientedAlgorithm
 	}
 
 	@Override
-	public TopologicalOrderWithDFS execute() {
+	public TopologicalOrderWithDFS execute()
+			throws AlgorithmTerminatedException {
 		dfs.reset();
 		dfs.setGraph(graph);
 		dfs.setSubgraph(subgraph);

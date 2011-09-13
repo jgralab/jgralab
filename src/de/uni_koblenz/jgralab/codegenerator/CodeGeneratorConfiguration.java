@@ -66,10 +66,6 @@ public class CodeGeneratorConfiguration {
 			.withDatabaseSupport();
 
 	public static final CodeGeneratorConfiguration FULL = new CodeGeneratorConfiguration()
-			.withTransactionSupport().withMethodsForSubclassesSupport()
-			.withDatabaseSupport();
-
-	public static final CodeGeneratorConfiguration FULL_WITHOUT_SUBCLASS_FLAGS = new CodeGeneratorConfiguration()
 			.withTransactionSupport().withDatabaseSupport();
 
 	public static final CodeGeneratorConfiguration WITHOUT_TYPESPECIFIC_METHODS = new CodeGeneratorConfiguration()
@@ -79,7 +75,7 @@ public class CodeGeneratorConfiguration {
 	public static final CodeGeneratorConfiguration MINIMAL = new CodeGeneratorConfiguration()
 			.withoutTypeSpecificMethodSupport();
 	public static final CodeGeneratorConfiguration NORMAL = new CodeGeneratorConfiguration();
-	
+
 	/** toggles, if the classes for standard support should be created */
 	private boolean standardSupport = true;
 
@@ -89,19 +85,11 @@ public class CodeGeneratorConfiguration {
 	/** toggles, if classes for database support should be created */
 	private boolean databaseSupport = false;
 
-
 	/**
 	 * toggles, if the type-specific methods such as "getNextXYVertex" should be
 	 * created
 	 */
 	private boolean typespecificMethodSupport = true;
-
-	/**
-	 * toggles, if the methods with an additional subtype-flag like
-	 * "getNextXYVertex(boolean withSubclasses)" should be created. Needs
-	 * typespecifigMethodsSupport to be enabled.
-	 */
-	private boolean methodsForSubclassesSupport = false;
 
 	/**
 	 * This constructor creates a default configuration:<br>
@@ -115,7 +103,6 @@ public class CodeGeneratorConfiguration {
 		standardSupport = true;
 		transactionSupport = false;
 		typespecificMethodSupport = true;
-		methodsForSubclassesSupport = false;
 		databaseSupport = false;
 	}
 
@@ -134,13 +121,13 @@ public class CodeGeneratorConfiguration {
 		return this;
 	}
 
-	public CodeGeneratorConfiguration withoutTypeSpecificMethodSupport() {
-		typespecificMethodSupport = false;
+	public CodeGeneratorConfiguration withTypeSpecificMethodSupport() {
+		typespecificMethodSupport = true;
 		return this;
 	}
 
-	public CodeGeneratorConfiguration withMethodsForSubclassesSupport() {
-		methodsForSubclassesSupport = true;
+	public CodeGeneratorConfiguration withoutTypeSpecificMethodSupport() {
+		typespecificMethodSupport = false;
 		return this;
 	}
 
@@ -156,7 +143,6 @@ public class CodeGeneratorConfiguration {
 		this.transactionSupport = other.transactionSupport;
 		this.typespecificMethodSupport = other.typespecificMethodSupport;
 		this.databaseSupport = other.databaseSupport;
-		this.methodsForSubclassesSupport = other.methodsForSubclassesSupport;
 	}
 
 	public void setStandardSupport(boolean standardSupport) {
@@ -190,14 +176,4 @@ public class CodeGeneratorConfiguration {
 	public boolean hasTypeSpecificMethodsSupport() {
 		return typespecificMethodSupport;
 	}
-
-	public void setMethodsForSubclassesSupport(
-			boolean methodsForSubclassesSupport) {
-		this.methodsForSubclassesSupport = methodsForSubclassesSupport;
-	}
-
-	public boolean hasMethodsForSubclassesSupport() {
-		return methodsForSubclassesSupport;
-	}
-
 }

@@ -158,33 +158,23 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 					continue;
 				}
 				EdgeClass ecl = (EdgeClass) ec;
-				code.addNoIndent(createNextEdgeInGraphMethod(ecl, false));
-				if (config.hasMethodsForSubclassesSupport()) {
-					if (!ecl.isAbstract()) {
-						code.addNoIndent(createNextEdgeInGraphMethod(ecl, true));
-					}
-				}
+				code.addNoIndent(createNextEdgeInGraphMethod(ecl));
 			}
 		}
 		return code;
 	}
 
-	private CodeBlock createNextEdgeInGraphMethod(EdgeClass ec,
-			boolean withTypeFlag) {
+	private CodeBlock createNextEdgeInGraphMethod(EdgeClass ec) {
 		CodeSnippet code = new CodeSnippet(true);
 		code.setVariable("ecQualifiedName",
 				schemaRootPackageName + "." + ec.getQualifiedName());
 		code.setVariable("ecCamelName", camelCase(ec.getUniqueName()));
-		code.setVariable("formalParams", (withTypeFlag ? "boolean noSubClasses"
-				: ""));
-		code.setVariable("actualParams", (withTypeFlag ? ", noSubClasses" : ""));
+		code.setVariable("formalParams", "");
+		code.setVariable("actualParams", "");
 
 		if (currentCycle.isAbstract()) {
 			code.add("/**",
 					" * @return the next #ecQualifiedName# edge in the global edge sequence");
-			if (withTypeFlag) {
-				code.add(" * @param noSubClasses if set to <code>true</code>, no subclasses of #ecQualifiedName# are accepted");
-			}
 			code.add(" */",
 					"public #ecQualifiedName# getNext#ecCamelName#InGraph(#formalParams#);");
 		}
@@ -211,46 +201,31 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 				}
 				addImports("#jgPackage#.EdgeDirection");
 				EdgeClass ecl = (EdgeClass) ec;
-				code.addNoIndent(createNextEdgeAtVertexMethod(ecl, false, false));
-				code.addNoIndent(createNextEdgeAtVertexMethod(ecl, true, false));
-				if (config.hasMethodsForSubclassesSupport()) {
-					if (!ecl.isAbstract()) {
-						code.addNoIndent(createNextEdgeAtVertexMethod(ecl,
-								false, true));
-						code.addNoIndent(createNextEdgeAtVertexMethod(ecl,
-								true, true));
-					}
-				}
+				code.addNoIndent(createNextEdgeAtVertexMethod(ecl, false));
+				code.addNoIndent(createNextEdgeAtVertexMethod(ecl, true));
 			}
 		}
 		return code;
 	}
 
 	private CodeBlock createNextEdgeAtVertexMethod(EdgeClass ec,
-			boolean withOrientation, boolean withTypeFlag) {
+			boolean withOrientation) {
 
 		CodeSnippet code = new CodeSnippet(true);
 		code.setVariable("ecQualifiedName",
 				schemaRootPackageName + "." + ec.getQualifiedName());
 		code.setVariable("ecCamelName", camelCase(ec.getUniqueName()));
 		code.setVariable("formalParams",
-				(withOrientation ? "EdgeDirection orientation" : "")
-						+ (withOrientation && withTypeFlag ? ", " : "")
-						+ (withTypeFlag ? "boolean noSubClasses" : ""));
-		code.setVariable("actualParams",
-				(withOrientation || withTypeFlag ? ", " : "")
-						+ (withOrientation ? "orientation" : "")
-						+ (withOrientation && withTypeFlag ? ", " : "")
-						+ (withTypeFlag ? "noSubClasses" : ""));
+				(withOrientation ? "EdgeDirection orientation" : ""));
+
+		code.setVariable("actualParams", (withOrientation ? ", orientation"
+				: ""));
 		if (currentCycle.isAbstract()) {
 			code.add("/**",
 					" * @return the next edge of class #ecQualifiedName# at the \"this\" vertex");
 
 			if (withOrientation) {
 				code.add(" * @param orientation the orientation of the edge");
-			}
-			if (withTypeFlag) {
-				code.add(" * @param noSubClasses if set to <code>true</code>, no subclasses of #ecQualifiedName# are accepted");
 			}
 			code.add(" */",
 					"public #ecQualifiedName# getNext#ecCamelName#(#formalParams#);");

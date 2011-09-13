@@ -140,30 +140,10 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex 
 	public Vertex getNextVertex(Class<? extends Vertex> vertexClass) {
 		assert vertexClass != null;
 		assert isValid();
-		return getNextVertex(vertexClass, false);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.Vertex#getNextVertexOfClass(java.lang.Class,
-	 * boolean)
-	 */
-	@Override
-	public Vertex getNextVertex(Class<? extends Vertex> m1VertexClass,
-			boolean noSubclasses) {
-		assert m1VertexClass != null;
-		assert isValid();
 		VertexBaseImpl v = (VertexBaseImpl) getNextVertex();
 		while (v != null) {
-			if (noSubclasses) {
-				if (m1VertexClass == v.getM1Class()) {
-					return v;
-				}
-			} else {
-				if (m1VertexClass.isInstance(v)) {
-					return v;
-				}
+			if (vertexClass.isInstance(v)) {
+				return v;
 			}
 			v = (VertexBaseImpl) v.getNextVertex();
 		}
@@ -181,21 +161,7 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex 
 	public Vertex getNextVertex(VertexClass vertexClass) {
 		assert vertexClass != null;
 		assert isValid();
-		return getNextVertex(vertexClass.getM1Class(), false);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uni_koblenz.jgralab.Vertex#getNextVertexOfClass(de.uni_koblenz.jgralab
-	 * .schema.VertexClass, boolean)
-	 */
-	@Override
-	public Vertex getNextVertex(VertexClass vertexClass, boolean noSubclasses) {
-		assert vertexClass != null;
-		assert isValid();
-		return getNextVertex(vertexClass.getM1Class(), noSubclasses);
+		return getNextVertex(vertexClass.getM1Class());
 	}
 
 	/*
@@ -359,8 +325,7 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex 
 	public Edge getFirstIncidence(EdgeClass anEdgeClass) {
 		assert anEdgeClass != null;
 		assert isValid();
-		return getFirstIncidence(anEdgeClass.getM1Class(), EdgeDirection.INOUT,
-				false);
+		return getFirstIncidence(anEdgeClass.getM1Class(), EdgeDirection.INOUT);
 	}
 
 	/*
@@ -372,7 +337,7 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex 
 	public Edge getFirstIncidence(Class<? extends Edge> anEdgeClass) {
 		assert anEdgeClass != null;
 		assert isValid();
-		return getFirstIncidence(anEdgeClass, EdgeDirection.INOUT, false);
+		return getFirstIncidence(anEdgeClass, EdgeDirection.INOUT);
 	}
 
 	/*
@@ -387,7 +352,7 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex 
 			EdgeDirection orientation) {
 		assert anEdgeClass != null;
 		assert isValid();
-		return getFirstIncidence(anEdgeClass.getM1Class(), orientation, false);
+		return getFirstIncidence(anEdgeClass.getM1Class(), orientation);
 	}
 
 	/*
@@ -401,75 +366,10 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex 
 			EdgeDirection orientation) {
 		assert anEdgeClass != null;
 		assert isValid();
-		return getFirstIncidence(anEdgeClass, orientation, false);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uni_koblenz.jgralab.Vertex#getFirstEdgeOfClass(de.uni_koblenz.jgralab
-	 * .schema.EdgeClass, boolean)
-	 */
-	@Override
-	public Edge getFirstIncidence(EdgeClass anEdgeClass, boolean noSubclasses) {
-		assert anEdgeClass != null;
-		assert isValid();
-		return getFirstIncidence(anEdgeClass.getM1Class(), EdgeDirection.INOUT,
-				noSubclasses);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.Vertex#getFirstEdgeOfClass(java.lang.Class,
-	 * boolean)
-	 */
-	@Override
-	public Edge getFirstIncidence(Class<? extends Edge> anEdgeClass,
-			boolean noSubclasses) {
-		assert anEdgeClass != null;
-		assert isValid();
-		return getFirstIncidence(anEdgeClass, EdgeDirection.INOUT, noSubclasses);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uni_koblenz.jgralab.Vertex#getFirstEdgeOfClass(de.uni_koblenz.jgralab
-	 * .schema.EdgeClass, de.uni_koblenz.jgralab.EdgeDirection, boolean)
-	 */
-	@Override
-	public Edge getFirstIncidence(EdgeClass anEdgeClass,
-			EdgeDirection orientation, boolean noSubclasses) {
-		assert anEdgeClass != null;
-		assert isValid();
-		return getFirstIncidence(anEdgeClass.getM1Class(), orientation,
-				noSubclasses);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.Vertex#getFirstEdgeOfClass(java.lang.Class,
-	 * de.uni_koblenz.jgralab.EdgeDirection, boolean)
-	 */
-	@Override
-	public Edge getFirstIncidence(Class<? extends Edge> anEdgeClass,
-			EdgeDirection orientation, boolean noSubclasses) {
-		assert anEdgeClass != null;
-		assert isValid();
 		Edge currentEdge = getFirstIncidence(orientation);
 		while (currentEdge != null) {
-			if (noSubclasses) {
-				if (anEdgeClass == currentEdge.getM1Class()) {
-					return currentEdge;
-				}
-			} else {
-				if (anEdgeClass.isInstance(currentEdge.getNormalEdge())) {
-					return currentEdge;
-				}
+			if (anEdgeClass.isInstance(currentEdge.getNormalEdge())) {
+				return currentEdge;
 			}
 			currentEdge = currentEdge.getNextIncidence(orientation);
 		}
@@ -507,7 +407,7 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex 
 		if (moved == getFirstIncidenceInternal()) {
 			setFirstIncidence(moved.getNextIncidenceInternal());
 			moved.getNextIncidenceInternal().setPrevIncidenceInternal(null);
-			
+
 		} else if (moved == getLastIncidenceInternal()) {
 			setLastIncidence(moved.getPrevIncidenceInternal());
 			moved.getPrevIncidenceInternal().setNextIncidenceInternal(null);
@@ -527,7 +427,7 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex 
 			moved.setNextIncidenceInternal(target.getNextIncidenceInternal());
 		}
 		moved.setPrevIncidenceInternal(target);
-		
+
 		target.setNextIncidenceInternal(moved);
 		incidenceListModified();
 	}
@@ -565,11 +465,11 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex 
 		// insert moved incidence in lambdaSeq immediately before target
 		if (target == getFirstIncidenceInternal()) {
 			setFirstIncidence(moved);
-			moved.setPrevIncidenceInternal(null);	
+			moved.setPrevIncidenceInternal(null);
 		} else {
 			IncidenceImpl previousIncidence = target.getPrevIncidenceInternal();
 			previousIncidence.setNextIncidenceInternal(moved);
-			moved.setPrevIncidenceInternal(previousIncidence);			
+			moved.setPrevIncidenceInternal(previousIncidence);
 		}
 		moved.setNextIncidenceInternal(target);
 		target.setPrevIncidenceInternal(moved);
@@ -613,7 +513,7 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex 
 	public int getDegree(EdgeClass ec) {
 		assert ec != null;
 		assert isValid();
-		return getDegree(ec, false);
+		return getDegree(ec.getM1Class(), EdgeDirection.INOUT);
 	}
 
 	/*
@@ -625,43 +525,7 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex 
 	public int getDegree(Class<? extends Edge> ec) {
 		assert ec != null;
 		assert isValid();
-		return getDegree(ec, false);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see jgralab.Vertex#getDegree(jgralab.EdgeClass, boolean)
-	 */
-	@Override
-	public int getDegree(EdgeClass ec, boolean noSubClasses) {
-		assert ec != null;
-		assert isValid();
-		int degree = 0;
-		Edge e = getFirstIncidence(ec, noSubClasses);
-		while (e != null) {
-			++degree;
-			e = e.getNextIncidence(ec, noSubClasses);
-		}
-		return degree;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see jgralab.Vertex#getDegree(Class, boolean)
-	 */
-	@Override
-	public int getDegree(Class<? extends Edge> ec, boolean noSubClasses) {
-		assert ec != null;
-		assert isValid();
-		int degree = 0;
-		Edge e = getFirstIncidence(ec, noSubClasses);
-		while (e != null) {
-			++degree;
-			e = e.getNextIncidence(ec, noSubClasses);
-		}
-		return degree;
+		return getDegree(ec, EdgeDirection.INOUT);
 	}
 
 	/*
@@ -673,7 +537,7 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex 
 	public int getDegree(EdgeClass ec, EdgeDirection orientation) {
 		assert ec != null;
 		assert isValid();
-		return getDegree(ec, orientation, false);
+		return getDegree(ec.getM1Class(), orientation);
 	}
 
 	/*
@@ -685,44 +549,11 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex 
 	public int getDegree(Class<? extends Edge> ec, EdgeDirection orientation) {
 		assert ec != null;
 		assert isValid();
-		return getDegree(ec, orientation, false);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see jgralab.Vertex#getDegree(jgralab.EdgeClass, jgralab.EdgeDirection,
-	 * boolean)
-	 */
-	@Override
-	public int getDegree(EdgeClass ec, EdgeDirection orientation,
-			boolean noSubClasses) {
-		assert ec != null;
-		assert isValid();
 		int degree = 0;
-		Edge e = getFirstIncidence(ec, orientation, noSubClasses);
+		Edge e = getFirstIncidence(ec, orientation);
 		while (e != null) {
 			++degree;
-			e = e.getNextIncidence(ec, orientation, noSubClasses);
-		}
-		return degree;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see jgralab.Vertex#getDegree(Class, jgralab.EdgeDirection, boolean)
-	 */
-	@Override
-	public int getDegree(Class<? extends Edge> ec, EdgeDirection orientation,
-			boolean noSubClasses) {
-		assert ec != null;
-		assert isValid();
-		int degree = 0;
-		Edge e = getFirstIncidence(ec, orientation, noSubClasses);
-		while (e != null) {
-			++degree;
-			e = e.getNextIncidence(ec, orientation, noSubClasses);
+			e = e.getNextIncidence(ec, orientation);
 		}
 		return degree;
 	}

@@ -168,11 +168,6 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 			}
 			EdgeClass ecl = (EdgeClass) ec;
 			code.addNoIndent(createNextEdgeInGraphMethod(ecl, false));
-			if (config.hasMethodsForSubclassesSupport()) {
-				if (!ecl.isAbstract()) {
-					code.addNoIndent(createNextEdgeInGraphMethod(ecl, true));
-				}
-			}
 		}
 		return code;
 	}

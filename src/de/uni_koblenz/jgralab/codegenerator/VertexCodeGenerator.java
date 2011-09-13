@@ -140,15 +140,8 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 			}
 			addImports("#jgPackage#.EdgeDirection");
 			if (config.hasTypeSpecificMethodsSupport()) {
-				code.addNoIndent(createFirstEdgeMethod(ec, false, false));
-				code.addNoIndent(createFirstEdgeMethod(ec, true, false));
-
-				if (config.hasMethodsForSubclassesSupport()) {
-					if (!ec.isAbstract()) {
-						code.addNoIndent(createFirstEdgeMethod(ec, false, true));
-						code.addNoIndent(createFirstEdgeMethod(ec, true, true));
-					}
-				}
+				code.addNoIndent(createFirstEdgeMethod(ec, false));
+				code.addNoIndent(createFirstEdgeMethod(ec, true));
 			}
 		}
 		return code;
@@ -162,32 +155,22 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 	 *            if set to true, the method bodies will also be created
 	 * @param withOrientation
 	 *            toggles if the EdgeDirection-parameter will be created
-	 * @param withTypeFlag
-	 *            toggles if the "no subclasses"-parameter will be created
 	 * @return the CodeBlock that contains the method
 	 */
 	private CodeBlock createFirstEdgeMethod(EdgeClass ec,
-			boolean withOrientation, boolean withTypeFlag) {
+			boolean withOrientation) {
 		CodeSnippet code = new CodeSnippet(true);
 		code.setVariable("ecQualifiedName", absoluteName(ec));
 		code.setVariable("ecCamelName", camelCase(ec.getUniqueName()));
 		code.setVariable("formalParams",
-				(withOrientation ? "EdgeDirection orientation" : "")
-						+ (withOrientation && withTypeFlag ? ", " : "")
-						+ (withTypeFlag ? "boolean noSubClasses" : ""));
-		code.setVariable("actualParams",
-				(withOrientation || withTypeFlag ? ", " : "")
-						+ (withOrientation ? "orientation" : "")
-						+ (withOrientation && withTypeFlag ? ", " : "")
-						+ (withTypeFlag ? "noSubClasses" : ""));
+				(withOrientation ? "EdgeDirection orientation" : ""));
+		code.setVariable("actualParams", (withOrientation ? ", orientation"
+				: ""));
 		if (currentCycle.isAbstract()) {
 			code.add("/**",
 					" * @return the first edge of class #ecCamelName# at this vertex");
 			if (withOrientation) {
 				code.add(" * @param orientation the orientation of the edge");
-			}
-			if (withTypeFlag) {
-				code.add(" * @param noSubClasses if set to <code>true</code>, no subclasses of #ecName# are accepted");
 			}
 			code.add(" */",
 					"public #ecQualifiedName# getFirst#ecCamelName#Incidence(#formalParams#);");
@@ -222,12 +205,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 					continue;
 				}
 				VertexClass vc = (VertexClass) ec;
-				code.addNoIndent(createNextVertexMethod(vc, false));
-				if (config.hasMethodsForSubclassesSupport()) {
-					if (!vc.isAbstract()) {
-						code.addNoIndent(createNextVertexMethod(vc, true));
-					}
-				}
+				code.addNoIndent(createNextVertexMethod(vc));
 			}
 		}
 		return code;
@@ -239,25 +217,18 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 	 * 
 	 * @param createClass
 	 *            if set to true, the method bodies will also be created
-	 * @param withTypeFlag
-	 *            toggles if the "no subclasses"-parameter will be created
 	 * @return the CodeBlock that contains the method
 	 */
-	private CodeBlock createNextVertexMethod(VertexClass vc,
-			boolean withTypeFlag) {
+	private CodeBlock createNextVertexMethod(VertexClass vc) {
 		CodeSnippet code = new CodeSnippet(true);
 		code.setVariable("vcQualifiedName", absoluteName(vc));
 		code.setVariable("vcCamelName", camelCase(vc.getUniqueName()));
-		code.setVariable("formalParams", (withTypeFlag ? "boolean noSubClasses"
-				: ""));
-		code.setVariable("actualParams", (withTypeFlag ? ", noSubClasses" : ""));
+		code.setVariable("formalParams", "");
+		code.setVariable("actualParams", "");
 
 		if (currentCycle.isAbstract()) {
 			code.add("/**",
 					" * @return the next #vcQualifiedName# vertex in the global vertex sequence");
-			if (withTypeFlag) {
-				code.add(" * @param noSubClasses if set to <code>true</code>, no subclasses of #vcName# are accepted");
-			}
 			code.add(" */",
 					"public #vcQualifiedName# getNext#vcCamelName#(#formalParams#);");
 		}
@@ -333,40 +304,6 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 				s.add("public Iterable<#edgeClassQualifiedName#> get#edgeClassUniqueName#Incidences() {");
 				s.add("\treturn new IncidenceIterable<#edgeClassQualifiedName#>(this, #edgeClassQualifiedName#.class);");
 				s.add("}");
-			}
-			s.add("");
-			// getFooIncidences(boolean nosubclasses)
-			if (config.hasMethodsForSubclassesSupport()) {
-				if (currentCycle.isAbstract()) {
-					s.add("/**");
-					s.add(" * Returns an Iterable for all incidence edges of this vertex that are of type #edgeClassSimpleName#.");
-					s.add(" * @param noSubClasses toggles wether subclasses of #edgeClassName# should be excluded");
-					s.add(" */");
-					s.add("public Iterable<#edgeClassQualifiedName#> get#edgeClassUniqueName#Incidences(boolean noSubClasses);");
-				}
-				if (currentCycle.isStdOrDbImplOrTransImpl()) {
-					s.add("@Override");
-					s.add("public Iterable<#edgeClassQualifiedName#> get#edgeClassUniqueName#Incidences(boolean noSubClasses) {");
-					s.add("\treturn new IncidenceIterable<#edgeClassQualifiedName#>(this, #edgeClassQualifiedName#.class, noSubClasses);");
-					s.add("}\n");
-				}
-			}
-			// getFooIncidences(EdgeDirection direction, boolean nosubclasses)
-			if (config.hasMethodsForSubclassesSupport()) {
-				if (currentCycle.isAbstract()) {
-					s.add("/**");
-					s.add(" * Returns an Iterable for all incidence edges of this vertex that are of type #edgeClassSimpleName#.");
-					s.add(" * @param direction EdgeDirection.IN or EdgeDirection.OUT, only edges of this direction will be included in the Iterable");
-					s.add(" * @param noSubClasses toggles wether subclasses of #edgeClassName# should be excluded");
-					s.add(" */");
-					s.add("public Iterable<#edgeClassQualifiedName#> get#edgeClassUniqueName#Incidences(EdgeDirection direction, boolean noSubClasses);");
-				}
-				if (currentCycle.isStdOrDbImplOrTransImpl()) {
-					s.add("@Override");
-					s.add("public Iterable<#edgeClassQualifiedName#> get#edgeClassUniqueName#Incidences(EdgeDirection direction, boolean noSubClasses) {");
-					s.add("\treturn  new IncidenceIterable<#edgeClassQualifiedName#>(this, #edgeClassQualifiedName#.class, direction, noSubClasses);");
-					s.add("}");
-				}
 			}
 			s.add("");
 			// getFooIncidences(EdgeDirection direction)

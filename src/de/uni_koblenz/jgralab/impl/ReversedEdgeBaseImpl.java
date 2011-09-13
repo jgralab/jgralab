@@ -190,32 +190,6 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uni_koblenz.jgralab.Edge#getNextEdgeOfClassInGraph(java.lang.Class,
-	 * boolean)
-	 */
-	@Override
-	public Edge getNextEdge(Class<? extends Edge> anEdgeClass,
-			boolean noSubclasses) {
-		return normalEdge.getNextEdge(anEdgeClass, noSubclasses);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uni_koblenz.jgralab.Edge#getNextEdgeOfClassInGraph(de.uni_koblenz.
-	 * jgralab.schema.EdgeClass, boolean)
-	 */
-	@Override
-	public Edge getNextEdge(EdgeClass anEdgeClass,
-			boolean noSubclasses) {
-		return normalEdge.getNextEdge(anEdgeClass, noSubclasses);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see de.uni_koblenz.jgralab.Edge#getNormalEdge()
 	 */
 	@Override

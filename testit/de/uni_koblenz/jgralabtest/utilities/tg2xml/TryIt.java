@@ -70,8 +70,7 @@ public class TryIt {
 			// Graph graph = createRandomGraph(false);
 			Schema schema = GraphIO.loadSchemaFromFile("GrumlSchema.gruml.tg");
 			System.out.println("Compiling schema");
-			schema
-					.compile(CodeGeneratorConfiguration.FULL_WITHOUT_SUBCLASS_FLAGS);
+			schema.compile(CodeGeneratorConfiguration.FULL);
 			System.out.println("done");
 			Graph graph = GraphIO.loadGraphFromFileWithStandardSupport(
 					"GrumlSchema.gruml.tg", new ConsoleProgressFunction());
@@ -110,7 +109,7 @@ public class TryIt {
 	// C2 v10 = graph.createC2();
 	// D2 v11 = graph.createD2();
 	// D2 v12 = graph.createD2();
-	//		
+	//
 	// for (int i = 0; i < 1000; i++) {
 	// int howToCreate = rand.nextInt(2);
 	// int whichEdge = rand.nextInt(useAddTarget ? 5 : 6);
