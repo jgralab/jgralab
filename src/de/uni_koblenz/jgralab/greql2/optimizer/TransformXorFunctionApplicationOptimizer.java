@@ -45,7 +45,6 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
-import de.uni_koblenz.jgralab.greql2.funlib.Xor;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
@@ -103,7 +102,8 @@ public class TransformXorFunctionApplicationOptimizer extends OptimizerBase {
 		for (FunctionApplication xor : xors) {
 			somethingWasTransformed = true;
 			// Figure out the two arguments of the Xor
-			IsArgumentOf isArgOf = xor.getFirstIsArgumentOfIncidence(EdgeDirection.IN);
+			IsArgumentOf isArgOf = xor
+					.getFirstIsArgumentOfIncidence(EdgeDirection.IN);
 			Expression arg1 = (Expression) isArgOf.getAlpha();
 			isArgOf = isArgOf.getNextIsArgumentOf(EdgeDirection.IN);
 			Expression arg2 = (Expression) isArgOf.getAlpha();
