@@ -44,6 +44,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.QuerySourceException;
 import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
+import de.uni_koblenz.jgralab.greql2.funlib.Function;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
@@ -97,6 +98,10 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 			functionName = id.get_name();
 		}
 		return functionName;
+	}
+
+	public Function getFunction() {
+		return FunLib.instance().getFunction(getFunctionName());
 	}
 
 	/*
