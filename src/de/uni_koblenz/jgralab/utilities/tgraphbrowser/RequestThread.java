@@ -107,8 +107,8 @@ public class RequestThread extends Thread {
 			String message) throws IOException {
 		try {
 			message = message + "<hr>" + TGraphBrowserServer.VERSION;
-			sendHeader(out, code, "text/html", message.length(), System
-					.currentTimeMillis());
+			sendHeader(out, code, "text/html", message.length(),
+					System.currentTimeMillis());
 			out.write(message.getBytes());
 			out.flush();
 		} finally {
@@ -125,8 +125,8 @@ public class RequestThread extends Thread {
 					inputStream));
 			// BufferedReader in = new BufferedReader(new InputStreamReader(
 			// inputStream));
-			BufferedOutputStream out = new BufferedOutputStream(_socket
-					.getOutputStream());
+			BufferedOutputStream out = new BufferedOutputStream(
+					_socket.getOutputStream());
 			String firstLine = readLine(in);
 			String request = URLDecoder.decode(firstLine != null ? firstLine
 					: "", "UTF-8");
@@ -192,11 +192,8 @@ public class RequestThread extends Thread {
 			throws IOException {
 		// split received URL
 
-		// path.split(?) doesn't work because ? is a reserved
-		// char in RegExp
-		path = path.replace("?", "#");
 		// split path into path and method parts
-		String[] parts = path.split("#");
+		String[] parts = path.split(Pattern.quote("?"));
 		// split method parts into name and args
 		String methodname = parts.length > 0 ? parts[0] : null;
 		String[] args = null;
@@ -217,11 +214,14 @@ public class RequestThread extends Thread {
 						"The tg.-file is too big!");
 			} else {
 				try {
-					sendFile(out, "TGraphBrowser_GraphLoaded.html", "= "
-							+ erg
-							+ ";\n\t\t timestamp = "
-							+ StateRepository.getSession(Integer.parseInt(erg
-									.toString())).lastAccess);
+					sendFile(
+							out,
+							"TGraphBrowser_GraphLoaded.html",
+							"= "
+									+ erg
+									+ ";\n\t\t timestamp = "
+									+ StateRepository.getSession(Integer
+											.parseInt(erg.toString())).lastAccess);
 				} catch (NumberFormatException e) {
 					// Extract the error message
 					String ergText = erg.toString();
@@ -367,8 +367,8 @@ public class RequestThread extends Thread {
 				args.add(bodyparts[i]);
 			}
 			// Invoke called method.
-			StringBuilder erg = callMethod(out, methodname, args
-					.toArray(new String[0]));
+			StringBuilder erg = callMethod(out, methodname,
+					args.toArray(new String[0]));
 			if (erg != null) {
 				sendMessage(out, erg);
 			}
@@ -428,9 +428,11 @@ public class RequestThread extends Thread {
 			// send the answer page
 			int sessionId = StateRepository.createNewSession(receivedFile
 					.getAbsolutePath());
-			sendFile(out, "TGraphBrowser_GraphLoaded.html", "= " + sessionId
-					+ ";\n\t\ttimestamp = "
-					+ StateRepository.getSession(sessionId).lastAccess);
+			sendFile(
+					out,
+					"TGraphBrowser_GraphLoaded.html",
+					"= " + sessionId + ";\n\t\ttimestamp = "
+							+ StateRepository.getSession(sessionId).lastAccess);
 		}
 	}
 
