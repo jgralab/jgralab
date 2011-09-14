@@ -3,7 +3,6 @@ package de.uni_koblenz.jgralab.greql2.funlib.graph;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.topological_order.KahnKnuthAlgorithm;
-import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class IsAcyclic extends Function {
@@ -15,15 +14,7 @@ public class IsAcyclic extends Function {
 	}
 
 	public Boolean evaluate(Graph graph) {
-		return evaluate(graph, null);
-	}
-
-	public Boolean evaluate(SubGraphMarker subgraph) {
-		return evaluate(subgraph.getGraph(), subgraph);
-	}
-
-	public Boolean evaluate(Graph graph, SubGraphMarker subgraph) {
-		KahnKnuthAlgorithm a = new KahnKnuthAlgorithm(graph, subgraph, null);
+		KahnKnuthAlgorithm a = new KahnKnuthAlgorithm(graph, null, null);
 		try {
 			a.execute();
 		} catch (AlgorithmTerminatedException e) {
