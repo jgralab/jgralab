@@ -38,11 +38,13 @@ package de.uni_koblenz.jgralab.greql2.evaluator;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.TreeSet;
 import java.util.Map.Entry;
+import java.util.TreeSet;
+
+import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
+import de.uni_koblenz.jgralab.Vertex;
 
 /**
  * This class contains the computed index for a graph
@@ -56,9 +58,9 @@ public class GraphIndex {
 
 		public long modificationTime = 0;
 
-		public JValueSet vertexSet = null;
+		public PSet<Vertex> vertexSet = null;
 
-		public VertexIndexEntry(JValueSet v) {
+		public VertexIndexEntry(PSet<Vertex> v) {
 			vertexSet = v;
 			modificationTime = System.currentTimeMillis();
 		}
@@ -130,7 +132,7 @@ public class GraphIndex {
 	 * @param query
 	 *            the query which constructs this set, e.g. "V{Identifier}"
 	 */
-	public void addVertexSet(String query, JValueSet vertexSet) {
+	public void addVertexSet(String query, PSet<Vertex> vertexSet) {
 		vertexIndex.put(query, new VertexIndexEntry(vertexSet));
 		indexSize += vertexSet.size();
 		reduceIndexSize(graphSize);
@@ -140,7 +142,7 @@ public class GraphIndex {
 	 * returns the indexed vertex set for the given query part or
 	 * <code>null</code> if no indexed vertex set exists
 	 */
-	public JValueSet getVertexSet(String query) {
+	public PSet<Vertex> getVertexSet(String query) {
 		VertexIndexEntry entry = vertexIndex.get(query);
 		if (entry != null) {
 			entry.modified();
