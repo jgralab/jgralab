@@ -45,6 +45,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.Callable;
@@ -1567,12 +1568,18 @@ public class StateRepository {
 													workspace.toString()
 															.length() + 1))
 									.replaceAll("/")).append("\";\n");
-					code.append(
-							"a.href = \"javascript:document.location = 'loadGraphFromServer?path='+'")
-							.append(Pattern
-									.compile(Matcher.quoteReplacement("\\"))
-									.matcher(f.toString()).replaceAll("/"))
-							.append("';\";\n");
+					try {
+						System.out.println(URLEncoder.encode(
+								URLEncoder.encode(f.toString(), "UTF-8"),
+								"UTF-8"));
+						code.append(
+								"a.href = \"javascript:document.location = 'loadGraphFromServer?path='+'")
+								.append(URLEncoder.encode(URLEncoder.encode(
+										f.toString(), "UTF-8"), "UTF-8"))
+								.append("';\";\n");
+					} catch (UnsupportedEncodingException e) {
+						e.printStackTrace();
+					}
 					code.append("li.appendChild(a);\n");
 					code.append("li.appendChild(document.createTextNode(String.fromCharCode(160)));\n");
 					code.append("var deleteA = document.createElement(\"a\");\n");
