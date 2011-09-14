@@ -348,4 +348,9 @@ public class FunLib {
 		System.out.println("Hi, this is " + FunLib.class);
 		instance();
 	}
+
+	public Function getFunction(String functionName) {
+		FunctionInfo fi = functions.get(functionName);
+		return fi != null ? fi.function : null;
+	}
 }
