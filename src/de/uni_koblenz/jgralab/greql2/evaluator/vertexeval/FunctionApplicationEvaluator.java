@@ -193,8 +193,7 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 		}
 
 		try {
-			result = FunLib.instance().apply(getFunctionName(), graph,
-					subgraph, parameters);
+			result = FunLib.instance().apply(getFunctionName(), parameters);
 		} catch (EvaluateException ex) {
 			throw new QuerySourceException(ex.getMessage(), vertex,
 					createPossibleSourcePositions(), ex);

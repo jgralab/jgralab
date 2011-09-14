@@ -43,6 +43,8 @@ public class FunLibTest {
 		Object[] a = { 17, 4 };
 		fl.apply(os, "add", a);
 
+		fl.apply(os, "fourParams", 1, 2, a);
+
 		long t0 = System.nanoTime();
 		for (int i = 0; i < 10000000; ++i) {
 			fl.apply("add", a);
