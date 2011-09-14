@@ -138,7 +138,7 @@ public class FunLib {
 		}
 	}
 
-	private boolean contains(String name) {
+	public boolean contains(String name) {
 		return functions.containsKey(name);
 	}
 
