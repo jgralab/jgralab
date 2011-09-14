@@ -49,10 +49,11 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
@@ -75,10 +76,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.Greql2Exception;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
-import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
+import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
 import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.Optimizer;
 import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
@@ -129,20 +127,22 @@ public class GreqlEvaluator {
 
 		GreqlEvaluator eval = new GreqlEvaluator(query, datagraph, null);
 		eval.startEvaluation();
-		JValue result = eval.getEvaluationResult();
+		Object result = eval.getEvaluationResult();
 		System.out.println("Evaluation Result:");
 		System.out.println("==================");
-		if (result.isCollection()) {
-			for (JValue jv : result.toCollection()) {
-				System.out.println(jv);
-			}
-		} else if (result.isMap()) {
-			for (Entry<JValue, JValue> e : result.toJValueMap().entrySet()) {
-				System.out.println(e.getKey() + " --> " + e.getValue());
-			}
-		} else {
-			System.out.println(result);
-		}
+
+		// TODO [removejvalue] check whether this is still needed
+		// if (result.isCollection()) {
+		// for (JValue jv : result.toCollection()) {
+		// System.out.println(jv);
+		// }
+		// } else if (result.isMap()) {
+		// for (Entry<JValue, JValue> e : result.toJValueMap().entrySet()) {
+		// System.out.println(e.getKey() + " --> " + e.getValue());
+		// }
+		// } else {
+		System.out.println(result);
+		// }
 	}
 
 	/**
@@ -273,7 +273,7 @@ public class GreqlEvaluator {
 	 * @return a JValueSet with the result of that queryPart or null if the
 	 *         query part is not yet indexed
 	 */
-	public static synchronized JValueSet getVertexIndex(Graph graph,
+	public static synchronized PSet<Vertex> getVertexIndex(Graph graph,
 			String queryPart) {
 		SoftReference<GraphIndex> ref = graphIndizes.get(graph.getId());
 		if (ref == null) {
@@ -296,7 +296,7 @@ public class GreqlEvaluator {
 	 * index of the given graph
 	 */
 	public static synchronized void addVertexIndex(Graph graph,
-			String queryPart, JValueSet vertexSet) {
+			String queryPart, PSet<Vertex> vertexSet) {
 		SoftReference<GraphIndex> ref = graphIndizes.get(graph.getId());
 		GraphIndex index = null;
 
@@ -524,7 +524,7 @@ public class GreqlEvaluator {
 	/**
 	 * This attribute holds the result of the evaluation
 	 */
-	protected JValue result = null;
+	protected Object result = null;
 
 	/**
 	 * This attribute holds the CostModel which estimates the evaluation costs
@@ -581,7 +581,7 @@ public class GreqlEvaluator {
 	 * Holds the variables that are defined via using, they are called bound or
 	 * free variables
 	 */
-	protected Map<String, JValue> variableMap = null;
+	protected Map<String, Object> variableMap = null;
 
 	/**
 	 * Holds the greql subqueries that can be called like other greql functions.
@@ -617,24 +617,21 @@ public class GreqlEvaluator {
 	/**
 	 * returns the changes variableMap
 	 */
-	public Map<String, JValue> getVariables() {
+	public Map<String, Object> getVariables() {
 		return variableMap;
 	}
 
-	public JValue getVariable(String name) {
-		if ((variableMap != null) && variableMap.containsKey(name)) {
-			return variableMap.get(name);
-		}
-		return new JValueImpl();
+	public Object getVariable(String name) {
+		return variableMap == null ? null : variableMap.get(name);
 	}
 
-	public void setVariables(Map<String, JValue> varMap) {
+	public void setVariables(Map<String, Object> varMap) {
 		variableMap = varMap;
 	}
 
-	public void setVariable(String varName, JValue value) {
+	public void setVariable(String varName, Object value) {
 		if (variableMap == null) {
-			variableMap = new HashMap<String, JValue>();
+			variableMap = new HashMap<String, Object>();
 		}
 		variableMap.put(varName, value);
 	}
@@ -673,7 +670,7 @@ public class GreqlEvaluator {
 			queryGraph = oldQueryGraph;
 			queryString = oldQueryString;
 		}
-		if (Greql2FunctionLibrary.instance().isGreqlFunction(name)) {
+		if (FunLib.instance().contains(name)) {
 			throw new Greql2Exception("The subquery '" + name
 					+ "' would shadow a GReQL function!");
 		}
@@ -698,7 +695,7 @@ public class GreqlEvaluator {
 	/**
 	 * returns the result of the evaluation
 	 */
-	public JValue getEvaluationResult() {
+	public Object getEvaluationResult() {
 		return result;
 	}
 
@@ -753,12 +750,12 @@ public class GreqlEvaluator {
 	 *            instance display a progress bar etc.
 	 */
 	public GreqlEvaluator(String query, Graph datagraph,
-			Map<String, JValue> variables, ProgressFunction progressFunction) {
+			Map<String, Object> variables, ProgressFunction progressFunction) {
 		this(datagraph, variables, progressFunction);
 		setQuery(query);
 	}
 
-	private GreqlEvaluator(Graph datagraph, Map<String, JValue> variables,
+	private GreqlEvaluator(Graph datagraph, Map<String, Object> variables,
 			ProgressFunction progressFunction) {
 		if (datagraph == null) {
 			this.datagraph = createMinimalGraph();
@@ -818,7 +815,7 @@ public class GreqlEvaluator {
 	 *            a Map<String, JValue> of bound variables
 	 */
 	public GreqlEvaluator(String query, Graph datagraph,
-			Map<String, JValue> variables) {
+			Map<String, Object> variables) {
 		this(query, datagraph, variables, null);
 	}
 
@@ -837,7 +834,7 @@ public class GreqlEvaluator {
 	 *            instance display a progress bar etc.
 	 */
 	public GreqlEvaluator(File queryFile, Graph datagraph,
-			Map<String, JValue> variables, ProgressFunction progressFunction)
+			Map<String, Object> variables, ProgressFunction progressFunction)
 			throws FileNotFoundException, IOException {
 		this(datagraph, variables, progressFunction);
 		// Read query from file (afuhr)
@@ -856,7 +853,7 @@ public class GreqlEvaluator {
 	 *            a Map<String, JValue> of bound variables
 	 */
 	public GreqlEvaluator(File queryFile, Graph datagraph,
-			Map<String, JValue> variables) throws FileNotFoundException,
+			Map<String, Object> variables) throws FileNotFoundException,
 			IOException {
 		this(queryFile, datagraph, variables, null);
 	}
@@ -1147,7 +1144,7 @@ public class GreqlEvaluator {
 
 		if (queryGraph.getVCount() <= 1) {
 			// Graph contains only root vertex
-			result = new JValueImpl();
+			result = null;
 			return true;
 		}
 
