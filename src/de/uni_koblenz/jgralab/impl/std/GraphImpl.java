@@ -317,7 +317,7 @@ public abstract class GraphImpl extends
 	protected void freeVertexIndex(int index) {
 		freeVertexList.freeIndex(index);
 	}
-	
+
 	@Override
 	protected void vertexAfterDeleted(Vertex vertexToBeDeleted) {
 
@@ -330,17 +330,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public final boolean hasStandardSupport() {
-		return true;
-	}
-
-	@Override
 	public final boolean hasTransactionSupport() {
-		return false;
-	}
-
-	@Override
-	public final boolean hasDatabaseSupport() {
 		return false;
 	}
 

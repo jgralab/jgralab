@@ -1957,8 +1957,7 @@ public class StateRepository {
 					currentGraph.progress = 0;
 					currentGraph.graph = GraphIO.loadSchemaAndGraphFromFile(
 							currentGraph.graphPath,
-							new CodeGeneratorConfiguration()
-									.withoutStandardSupport(),
+							CodeGeneratorConfiguration.MINIMAL,
 							new MyProgressFunction(currentGraph));
 					assert currentGraph.graph != null : "The graph wasn't loaded correctly.";
 					currentGraph = null;

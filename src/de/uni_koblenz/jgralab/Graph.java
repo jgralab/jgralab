@@ -510,26 +510,11 @@ public interface Graph extends AttributedElement {
 			throws InvalidSavepointException;
 
 	/**
-	 * Tells whether this graph instance has standard support.
-	 * 
-	 * @return true if this graph instance has standard support
-	 */
-
-	public boolean hasStandardSupport();
-
-	/**
 	 * Tells whether this graph instance supports transactions.
 	 * 
 	 * @return true if this graph instance supports transactions.
 	 */
 	public boolean hasTransactionSupport();
-
-	/**
-	 * Tells whether this graph instance has database support.
-	 * 
-	 * @return true if this graph instance has database support.
-	 */
-	public boolean hasDatabaseSupport();
 
 	/**
 	 * Sorts the vertex sequence according to the given comparator in ascending
