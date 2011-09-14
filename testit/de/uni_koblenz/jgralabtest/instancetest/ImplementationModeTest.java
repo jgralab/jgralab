@@ -115,14 +115,12 @@ public class ImplementationModeTest extends InstanceTest {
 		switch (implementationType) {
 		case STANDARD:
 			g2 = MinimalSchema.instance().loadMinimalGraph(filename);
-			assertTrue(g2.hasStandardSupport());
 			assertFalse(g2.hasTransactionSupport());
 			break;
 		case TRANSACTION:
 			g2 = MinimalSchema.instance()
 					.loadMinimalGraphWithTransactionSupport(filename);
 			createReadOnlyTransaction(g2);
-			assertFalse(g2.hasStandardSupport());
 			assertTrue(g2.hasTransactionSupport());
 			commit(g2);
 			break;

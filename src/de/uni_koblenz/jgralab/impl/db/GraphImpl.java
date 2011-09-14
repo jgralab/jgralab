@@ -1262,16 +1262,6 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 		return false;
 	}
 
-	@Override
-	public final boolean hasDatabaseSupport() {
-		return true;
-	}
-
-	@Override
-	public final boolean hasStandardSupport() {
-		return false;
-	}
-
 	public void clearCache() {
 		graphCache.clear();
 	}

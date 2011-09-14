@@ -1477,18 +1477,8 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public final boolean hasStandardSupport() {
-		return false;
-	}
-
-	@Override
 	public final boolean hasTransactionSupport() {
 		return true;
-	}
-
-	@Override
-	public final boolean hasDatabaseSupport() {
-		return false;
 	}
 
 	private boolean isWriting() {
