@@ -51,7 +51,7 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.SerializableGreql2Impl;
 import de.uni_koblenz.jgralab.greql2.exception.ParsingException;
-import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
+import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
 import de.uni_koblenz.jgralab.greql2.schema.*;
 
 public class GreqlParser extends ParserHelper {
@@ -162,7 +162,7 @@ public class GreqlParser extends ParserHelper {
 		query = source;
 		parsingStack = new Stack<Integer>();
 		predicateStack = new Stack<Boolean>();
-		funlib = Greql2FunctionLibrary.instance();
+		funlib = FunLib.instance();
 		schema = Greql2Schema.instance();
 		graph = schema.createGreql2();
 		tokens = GreqlLexer.scan(source);
@@ -177,7 +177,7 @@ public class GreqlParser extends ParserHelper {
 
 	protected final boolean isFunctionName(String ident) {
 		return ((subQueryNames != null) && subQueryNames.contains(ident))
-				|| funlib.isGreqlFunction(ident);
+				|| funlib.contains(ident);
 	}
 
 	public void parse() {
