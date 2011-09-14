@@ -54,7 +54,6 @@ import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.QuerySourceException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Aggregation;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
@@ -144,7 +143,7 @@ public abstract class VertexEvaluator {
 	/**
 	 * The evaluation result
 	 */
-	protected JValue result = null;
+	protected Object result = null;
 
 	/**
 	 * The subgraph which was uses for the last evaluation and should be used
@@ -207,7 +206,7 @@ public abstract class VertexEvaluator {
 	 *            evaluated on the whole datagraph
 	 * @return the evaluation result
 	 */
-	public JValue getResult(SubGraphMarker newSubgraph)
+	public Object getResult(SubGraphMarker newSubgraph)
 			throws EvaluateException {
 		if ((result != null) && (this.subgraph == newSubgraph)) {
 			return result;
@@ -248,7 +247,7 @@ public abstract class VertexEvaluator {
 	 * this method does the evaluation. It must be implemented by concrete
 	 * evaluators
 	 */
-	public abstract JValue evaluate() throws EvaluateException;
+	public abstract Object evaluate() throws EvaluateException;
 
 	/**
 	 * clears the evaluation result
