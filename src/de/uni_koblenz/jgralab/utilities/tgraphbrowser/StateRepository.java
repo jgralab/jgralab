@@ -1569,9 +1569,6 @@ public class StateRepository {
 															.length() + 1))
 									.replaceAll("/")).append("\";\n");
 					try {
-						System.out.println(URLEncoder.encode(
-								URLEncoder.encode(f.toString(), "UTF-8"),
-								"UTF-8"));
 						code.append(
 								"a.href = \"javascript:document.location = 'loadGraphFromServer?path='+'")
 								.append(URLEncoder.encode(URLEncoder.encode(
