@@ -133,8 +133,8 @@ public class IntermediateVertexTransition extends Transition {
 
 		if (intermediateVertexEvaluator != null) {
 			Object tempRes = intermediateVertexEvaluator.getResult();
-
 			if (tempRes instanceof PCollection) {
+				@SuppressWarnings("unchecked")
 				PCollection<Vertex> intermediateVertices = (PCollection<Vertex>) tempRes;
 				Iterator<Vertex> iter = intermediateVertices.iterator();
 				while (iter.hasNext()) {

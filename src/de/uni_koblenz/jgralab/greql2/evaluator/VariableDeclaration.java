@@ -155,7 +155,6 @@ public class VariableDeclaration {
 		variableEval.setValue(null);
 		Object tempAttribute = definitionSetEvaluator.getResult();
 		if (tempAttribute instanceof PVector) {
-
 			PVector<?> col = (PVector<?>) tempAttribute;
 			definitionSet = ArrayPSet.empty();
 			definitionSet = definitionSet.plusAll(col);
@@ -165,7 +164,9 @@ public class VariableDeclaration {
 			}
 
 		} else if (tempAttribute instanceof PSet) {
-			definitionSet = (PSet<Object>) tempAttribute;
+			@SuppressWarnings("unchecked")
+			PSet<Object> s = (PSet<Object>) tempAttribute;
+			definitionSet = s;
 		} else {
 			definitionSet = ArrayPSet.empty();
 			definitionSet = definitionSet.plus(tempAttribute);

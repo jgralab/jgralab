@@ -83,22 +83,22 @@ public class Tuple implements PCollection<Object> {
 	}
 
 	@Override
-	public PCollection<Object> minus(Object arg0) {
+	public Tuple minus(Object arg0) {
 		return new Tuple(entries.minus(arg0));
 	}
 
 	@Override
-	public PCollection<Object> minusAll(Collection<?> arg0) {
+	public Tuple minusAll(Collection<?> arg0) {
 		return new Tuple(entries.minusAll(arg0));
 	}
 
 	@Override
-	public PCollection<Object> plus(Object arg0) {
+	public Tuple plus(Object arg0) {
 		return new Tuple(entries.plus(arg0));
 	}
 
 	@Override
-	public PCollection<Object> plusAll(Collection<? extends Object> arg0) {
+	public Tuple plusAll(Collection<? extends Object> arg0) {
 		return new Tuple(entries.plusAll(arg0));
 	}
 

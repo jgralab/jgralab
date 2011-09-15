@@ -183,7 +183,7 @@ public class TableComprehensionEvaluator extends VertexEvaluator {
 			HashMap<Object, Object> currentRow = currentEntry.getValue();
 			colIter = completeColumnHeaderTreeSet.iterator();
 			Tuple rowTuple = Tuple.empty();
-			rowTuple = (Tuple) rowTuple.plus(currentRowHeader);
+			rowTuple = rowTuple.plus(currentRowHeader);
 			while (colIter.hasNext()) {
 				Object cellEntry = currentRow.get(colIter.next());
 				rowTuple.add(cellEntry);

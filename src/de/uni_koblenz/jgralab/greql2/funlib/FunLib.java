@@ -32,6 +32,8 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.types.Path;
 import de.uni_koblenz.jgralab.greql2.types.PathSystem;
 import de.uni_koblenz.jgralab.greql2.types.Slice;
+import de.uni_koblenz.jgralab.greql2.types.Table;
+import de.uni_koblenz.jgralab.greql2.types.Tuple;
 import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 import de.uni_koblenz.jgralab.greql2.types.Undefined;
 
@@ -40,8 +42,9 @@ public class FunLib {
 			Boolean.class, Double.class, String.class, Vertex.class,
 			Edge.class, Graph.class, AttributedElement.class,
 			GraphElement.class, Path.class, PathSystem.class, Slice.class,
-			TypeCollection.class, Enum.class, Record.class, PVector.class,
-			PSet.class, POrderedSet.class, PMap.class, Undefined.class };
+			TypeCollection.class, Enum.class, Record.class, Table.class,
+			Tuple.class, PVector.class, PSet.class, POrderedSet.class,
+			PMap.class, Undefined.class };
 
 	private static FunLib instance;
 	private Logger logger;
