@@ -39,7 +39,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.pcollections.PCollection;
+import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
@@ -105,10 +105,11 @@ public class DeclarationEvaluator extends VertexEvaluator {
 			SimpleDeclaration simpleDecl = (SimpleDeclaration) inc.getAlpha();
 			SimpleDeclarationEvaluator simpleDeclEval = (SimpleDeclarationEvaluator) vertexEvalMarker
 					.getMark(simpleDecl);
-			Object simpleResult = simpleDeclEval.getResult();
-			PCollection<Object> resultCollection = (PCollection<Object>) simpleResult;
-			for (Object v : resultCollection) {
-				varDeclList.add((VariableDeclaration) v);
+			@SuppressWarnings("unchecked")
+			PVector<VariableDeclaration> resultCollection = (PVector<VariableDeclaration>) simpleDeclEval
+					.getResult();
+			for (VariableDeclaration v : resultCollection) {
+				varDeclList.add(v);
 			}
 		}
 		VariableDeclarationLayer declarationLayer = new VariableDeclarationLayer(
