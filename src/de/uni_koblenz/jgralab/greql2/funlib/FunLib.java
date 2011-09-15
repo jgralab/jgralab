@@ -29,7 +29,6 @@ import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Record;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.types.Path;
 import de.uni_koblenz.jgralab.greql2.types.PathSystem;
 import de.uni_koblenz.jgralab.greql2.types.Slice;
@@ -42,8 +41,7 @@ public class FunLib {
 			Edge.class, Graph.class, AttributedElement.class,
 			GraphElement.class, Path.class, PathSystem.class, Slice.class,
 			TypeCollection.class, Enum.class, Record.class, PVector.class,
-			PSet.class, POrderedSet.class, PMap.class, SubGraphMarker.class,
-			Undefined.class };
+			PSet.class, POrderedSet.class, PMap.class, Undefined.class };
 
 	private static FunLib instance;
 	private Logger logger;
@@ -172,8 +170,7 @@ public class FunLib {
 		if (arg instanceof String) {
 			sb.append(": ").append('"')
 					.append(arg.toString().replace("\"", "\\\"")).append('"');
-		} else if (!(arg instanceof Graph) && !(arg instanceof SubGraphMarker)
-				&& !(arg instanceof Undefined)) {
+		} else if (!(arg instanceof Graph) && !(arg instanceof Undefined)) {
 			sb.append(": ").append(arg);
 		}
 		return sb.toString();

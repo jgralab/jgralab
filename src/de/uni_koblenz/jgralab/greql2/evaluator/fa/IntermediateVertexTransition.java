@@ -40,7 +40,6 @@ import java.util.Iterator;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.Greql2Serializer;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
@@ -128,18 +127,26 @@ public class IntermediateVertexTransition extends Transition {
 	 * greql2.evaluator.SubgraphTempAttribute)
 	 */
 	@Override
-	public boolean accepts(Vertex v, Edge e, SubGraphMarker subgraph)
-			throws EvaluateException {
+	public boolean accepts(Vertex v, Edge e) throws EvaluateException {
 		// checks if a intermediateVertexExpression exists and if the end-vertex
 		// of e is part of the result of this expression
 
 		if (intermediateVertexEvaluator != null) {
-			Object tempRes = intermediateVertexEvaluator.getResult(subgraph);		
-			if (tempRes instanceof Collection<?>) {
-				Collection<Vertex> intermediateVertices = (Collection<Vertex>)tempRes;
-				Iterator<Vertex> iter = intermediateVertices.iterator();
-				while (iter.hasNext()) {
-					if (iter.next().equals(v)) {
+
+			JValue tempRes = intermediateVertexEvaluator.getResult(null);
+			try {
+				if (tempRes.isCollection()) {
+					JValueCollection intermediateVertices = tempRes
+							.toCollection();
+					Iterator<JValue> iter = intermediateVertices.iterator();
+					while (iter.hasNext()) {
+						if (iter.next().toVertex().equals(v)) {
+							return true;
+						}
+					}
+				} else {
+					Vertex intermediateVertex = tempRes.toVertex();
+					if (v == intermediateVertex) {
 						return true;
 					}
 				}

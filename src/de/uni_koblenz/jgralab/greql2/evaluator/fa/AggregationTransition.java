@@ -40,7 +40,6 @@ import java.util.Set;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
-import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ThisEdgeEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
@@ -240,8 +239,7 @@ public class AggregationTransition extends Transition {
 	 * greql2.evaluator.SubgraphTempAttribute)
 	 */
 	@Override
-	public boolean accepts(Vertex v, Edge e, SubGraphMarker subgraph)
-			throws EvaluateException {
+	public boolean accepts(Vertex v, Edge e) throws EvaluateException {
 		if (e == null) {
 			return false;
 		}
@@ -307,11 +305,15 @@ public class AggregationTransition extends Transition {
 
 		// checks if a boolean expression exists and if it evaluates to true
 		if (predicateEvaluator != null) {
-			thisEdgeEvaluator.setValue(e);
-			Object res = predicateEvaluator.getResult(subgraph);
-			if (res instanceof Boolean) {
-				if (((Boolean)res).equals(Boolean.TRUE)) {
-					return true;
+			thisEdgeEvaluator.setValue(new JValueImpl(e));
+			JValue res = predicateEvaluator.getResult(###TODO### subgraph);
+			if (res.isBoolean()) {
+				try {
+					if (res.toBoolean().equals(Boolean.TRUE)) {
+						return true;
+					}
+				} catch (JValueInvalidTypeException ex) {
+					ex.printStackTrace();
 				}
 			}
 			return false;
