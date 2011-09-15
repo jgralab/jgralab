@@ -108,7 +108,7 @@ public class TGTree extends JFrame {
 
 		ToolTipManager.sharedInstance().registerComponent(tree);
 
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
 		setSize(800, 800);
 		pack();
@@ -143,6 +143,7 @@ public class TGTree extends JFrame {
 				CodeGeneratorConfiguration.MINIMAL,
 				new ConsoleProgressFunction("Loading"));
 		TGTree tgtree = new TGTree(g);
+		tgtree.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		tgtree.setVisible(true);
 	}
 
