@@ -90,16 +90,16 @@ public class ExponentiatedPathDescriptionEvaluator extends
 				.getMark(p);
 		VertexEvaluator exponentEvaluator = vertexEvalMarker.getMark(vertex
 				.getFirstIsExponentOfIncidence(EdgeDirection.IN).getAlpha());
-		Object exponentValue = exponentEvaluator.getResult(subgraph);
+		Object exponentValue = exponentEvaluator.getResult();
 		int exponent = 0;
 		if (exponentValue instanceof Integer) {
-			exponent = (Integer)exponentValue;
+			exponent = (Integer) exponentValue;
 		} else {
 			throw new EvaluateException(
 					"Exponent of ExponentiatedPathDescription is not convertable to integer value");
 		}
-		return NFA.createExponentiatedPathDescriptionNFA(
-				pathEval.getNFA(), exponent);
+		return NFA.createExponentiatedPathDescriptionNFA(pathEval.getNFA(),
+				exponent);
 	}
 
 	@Override

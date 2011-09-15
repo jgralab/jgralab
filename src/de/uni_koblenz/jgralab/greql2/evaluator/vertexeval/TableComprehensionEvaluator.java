@@ -89,8 +89,7 @@ public class TableComprehensionEvaluator extends VertexEvaluator {
 				EdgeDirection.IN).getAlpha();
 		DeclarationEvaluator declEval = (DeclarationEvaluator) vertexEvalMarker
 				.getMark(d);
-		declarationLayer = (VariableDeclarationLayer) declEval.getResult(
-				subgraph);
+		declarationLayer = (VariableDeclarationLayer) declEval.getResult();
 
 		Expression columnHeader = (Expression) vertex
 				.getFirstIsColumnHeaderExprOfIncidence(EdgeDirection.IN)
@@ -139,11 +138,11 @@ public class TableComprehensionEvaluator extends VertexEvaluator {
 		TreeSet<Object> rowHeaderSet = new TreeSet<Object>();
 
 		declarationLayer.reset();
-		while (declarationLayer.iterate(subgraph)) {
-			Object columnHeaderEntry = columnHeaderEval.getResult(subgraph);
+		while (declarationLayer.iterate()) {
+			Object columnHeaderEntry = columnHeaderEval.getResult();
 			completeColumnHeaderTuple.add(columnHeaderEntry);
-			Object rowHeaderEntry = rowHeaderEval.getResult(subgraph);
-			Object localResult = resultDefEval.getResult(subgraph);
+			Object rowHeaderEntry = rowHeaderEval.getResult();
+			Object localResult = resultDefEval.getResult();
 			HashMap<Object, Object> row = tableMap.get(rowHeaderEntry);
 			if (row == null) {
 				row = new HashMap<Object, Object>();
@@ -166,7 +165,7 @@ public class TableComprehensionEvaluator extends VertexEvaluator {
 		if (tHeader != null) {
 			VertexEvaluator theval = vertexEvalMarker.getMark(tHeader
 					.getAlpha());
-			headerTuple = headerTuple.plus((String) theval.getResult(subgraph));
+			headerTuple = headerTuple.plus((String) theval.getResult());
 		} else {
 			headerTuple.plus(""); // dummy entry in the upper
 			// left

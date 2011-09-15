@@ -66,8 +66,8 @@ public class VertexSubgraphExpressionEvaluator extends
 		Vertex currentVertex = dataGraph.getFirstVertex();
 		TypeCollection typeCollection = getTypeCollection();
 		while (currentVertex != null) {
-			if ((subgraph == null || subgraph.isMarked(currentVertex))
-					&& typeCollection.acceptsElement(currentVertex)) {
+			if (typeCollection.acceptsType(currentVertex
+					.getAttributedElementClass())) {
 				subgraphAttr.mark(currentVertex);
 			}
 			currentVertex = currentVertex.getNextVertex();
@@ -75,8 +75,7 @@ public class VertexSubgraphExpressionEvaluator extends
 		// add all edges
 		Edge currentEdge = dataGraph.getFirstEdge();
 		while (currentEdge != null) {
-			if ((subgraph == null || subgraph.isMarked(currentEdge))
-					&& subgraphAttr.isMarked(currentEdge.getAlpha())
+			if (subgraphAttr.isMarked(currentEdge.getAlpha())
 					&& subgraphAttr.isMarked(currentEdge.getOmega())) {
 				subgraphAttr.mark(currentEdge);
 			}

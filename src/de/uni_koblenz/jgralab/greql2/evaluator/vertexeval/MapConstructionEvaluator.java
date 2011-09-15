@@ -72,7 +72,7 @@ public class MapConstructionEvaluator extends VertexEvaluator {
 				.getIsKeyExprOfConstructionIncidences(EdgeDirection.IN)) {
 			Vertex exp = e.getAlpha();
 			VertexEvaluator expEval = vertexEvalMarker.getMark(exp);
-			keys = keys.plus(expEval.getResult(subgraph));
+			keys.add(expEval.getResult());
 		}
 
 		PVector<Object> values = ArrayPVector.empty();
@@ -80,7 +80,7 @@ public class MapConstructionEvaluator extends VertexEvaluator {
 				.getIsValueExprOfConstructionIncidences(EdgeDirection.IN)) {
 			Vertex exp = e.getAlpha();
 			VertexEvaluator expEval = vertexEvalMarker.getMark(exp);
-			values = values.plus(expEval.getResult(subgraph));
+			values.add(expEval.getResult());
 		}
 
 		if (keys.size() != values.size()) {

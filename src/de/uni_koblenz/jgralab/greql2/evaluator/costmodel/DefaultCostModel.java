@@ -300,10 +300,9 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 		if (startExpEval instanceof IntLiteralEvaluator) {
 			if (targetExpEval instanceof IntLiteralEvaluator) {
 				try {
-					range = ((Number) targetExpEval.getResult(null))
-							.longValue()
-							- ((Number) startExpEval.getResult(null))
-									.longValue() + 1;
+					range = ((Number) targetExpEval.getResult()).longValue()
+							- ((Number) startExpEval.getResult()).longValue()
+							+ 1;
 				} catch (Exception ex) {
 					// if an exception occurs, the default value is used, so no
 					// exceptionhandling is needed
@@ -682,7 +681,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 				p.getFirstIsExponentOfIncidence(EdgeDirection.IN).getAlpha());
 		if (expEval instanceof IntLiteralEvaluator) {
 			try {
-				exponent = ((Number) expEval.getResult(null)).longValue();
+				exponent = ((Number) expEval.getResult()).longValue();
 			} catch (Exception ex) {
 			}
 		}
@@ -871,10 +870,9 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 		if (startExpEval instanceof IntLiteralEvaluator) {
 			if (targetExpEval instanceof IntLiteralEvaluator) {
 				try {
-					range = ((Number) targetExpEval.getResult(null))
-							.longValue()
-							- ((Number) startExpEval.getResult(null))
-									.longValue() + 1;
+					range = ((Number) targetExpEval.getResult()).longValue()
+							- ((Number) startExpEval.getResult()).longValue()
+							+ 1;
 				} catch (Exception ex) {
 					// if an exception occurs, the default value is used, so no
 					// exceptionhandling is needed

@@ -44,7 +44,6 @@ import java.util.Set;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
@@ -134,8 +133,7 @@ public class VariableEvaluator extends VertexEvaluator {
 	}
 
 	@Override
-	public Object getResult(SubGraphMarker subgraphMarker)
-			throws EvaluateException {
+	public Object getResult() throws EvaluateException {
 		return variableValue;
 	}
 

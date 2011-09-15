@@ -103,7 +103,7 @@ public class SimpleDeclarationEvaluator extends VertexEvaluator {
 				.getFirstIsDeclaredVarOfIncidence(EdgeDirection.IN);
 		while (varInc != null) {
 			VariableDeclaration varDecl = new VariableDeclaration(
-					(Variable) varInc.getAlpha(), exprEval, subgraph, vertex,
+					(Variable) varInc.getAlpha(), exprEval, vertex,
 					greqlEvaluator);
 			varDeclList = varDeclList.plus(varDecl);
 			varInc = varInc.getNextIsDeclaredVarOf(EdgeDirection.IN);

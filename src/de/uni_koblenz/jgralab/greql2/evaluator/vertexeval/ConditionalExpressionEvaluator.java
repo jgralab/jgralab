@@ -88,10 +88,10 @@ public class ConditionalExpressionEvaluator extends VertexEvaluator {
 				.getFirstIsConditionOfIncidence(EdgeDirection.IN).getAlpha();
 		VertexEvaluator conditionEvaluator = vertexEvalMarker
 				.getMark(condition);
-		Object conditionResult = conditionEvaluator.getResult(subgraph);
+		Object conditionResult = conditionEvaluator.getResult();
 		Expression expressionToEvaluate = null;
 
-		Boolean value = (Boolean)conditionResult;
+		Boolean value = (Boolean) conditionResult;
 		if (value.booleanValue()) {
 			expressionToEvaluate = (Expression) vertex
 					.getFirstIsTrueExprOfIncidence(EdgeDirection.IN).getAlpha();
@@ -104,7 +104,7 @@ public class ConditionalExpressionEvaluator extends VertexEvaluator {
 		if (expressionToEvaluate != null) {
 			VertexEvaluator exprEvaluator = vertexEvalMarker
 					.getMark(expressionToEvaluate);
-			result = exprEvaluator.getResult(subgraph);
+			result = exprEvaluator.getResult();
 		} else {
 			result = null;
 		}

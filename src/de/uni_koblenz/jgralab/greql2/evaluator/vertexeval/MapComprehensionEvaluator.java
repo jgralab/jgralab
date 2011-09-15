@@ -37,9 +37,9 @@
  */
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
+import org.pcollections.ArrayPMap;
 import org.pcollections.PCollection;
 import org.pcollections.PMap;
-import org.pcollections.ArrayPMap;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
@@ -88,7 +88,7 @@ public class MapComprehensionEvaluator extends ComprehensionEvaluator {
 	public Object evaluate() throws EvaluateException {
 		VariableDeclarationLayer declLayer = getVariableDeclationLayer();
 
-		PMap<Object,Object> resultMap = ArrayPMap.empty();
+		PMap<Object, Object> resultMap = ArrayPMap.empty();
 
 		Vertex key = vertex.getFirstIsKeyExprOfComprehensionIncidence(
 				EdgeDirection.IN).getAlpha();
@@ -97,9 +97,9 @@ public class MapComprehensionEvaluator extends ComprehensionEvaluator {
 				EdgeDirection.IN).getAlpha();
 		VertexEvaluator valEval = vertexEvalMarker.getMark(val);
 		declLayer.reset();
-		while (declLayer.iterate(subgraph)) {
-			Object jkey = keyEval.getResult(subgraph);
-			Object jval = valEval.getResult(subgraph);
+		while (declLayer.iterate()) {
+			Object jkey = keyEval.getResult();
+			Object jval = valEval.getResult();
 			resultMap = resultMap.plus(jkey, jval);
 		}
 		return resultMap;

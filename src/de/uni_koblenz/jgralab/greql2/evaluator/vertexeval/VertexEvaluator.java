@@ -48,7 +48,6 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
-import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
@@ -146,12 +145,6 @@ public abstract class VertexEvaluator {
 	protected Object result = null;
 
 	/**
-	 * The subgraph which was uses for the last evaluation and should be used
-	 * for the next evaluation
-	 */
-	protected SubGraphMarker subgraph = null;
-
-	/**
 	 * The set of variables this vertex depends on
 	 */
 	protected Set<Variable> neededVariables = null;
@@ -201,21 +194,16 @@ public abstract class VertexEvaluator {
 	/**
 	 * Gets the result of the evaluation of this vertex on the given subgraph
 	 * 
-	 * @param newSubgraph
-	 *            the subgraph to evaluate the vertex on or null if it should be
-	 *            evaluated on the whole datagraph
 	 * @return the evaluation result
 	 */
-	public Object getResult(SubGraphMarker newSubgraph)
-			throws EvaluateException {
-		if ((result != null) && (this.subgraph == newSubgraph)) {
+	public Object getResult() throws EvaluateException {
+		if (result != null) {
 			return result;
 		}
 
 		// currentIndentation++;
 		// printIndentation();
 		// GreqlEvaluator.println("Evaluating : " + this);
-		this.subgraph = newSubgraph;
 		try {
 			result = evaluate();
 			// System.out.println("VertexEvaluator.getResult() " + result
@@ -271,7 +259,6 @@ public abstract class VertexEvaluator {
 		estimatedCardinality = Long.MIN_VALUE;
 		estimatedSelectivity = Double.NaN;
 		costsGraphSize = null;
-		subgraph = null;
 	}
 
 	public void resetSubtreeToInitialState() {

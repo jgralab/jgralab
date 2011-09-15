@@ -70,7 +70,8 @@ public abstract class AbstractGraphElementCollectionEvaluator extends
 				if (inc.getAlpha() instanceof TypeId) {
 					TypeIdEvaluator typeEval = (TypeIdEvaluator) vertexEvalMarker
 							.getMark(inc.getAlpha());
-					typeCollection.addTypes((TypeCollection)typeEval.getResult(subgraph));
+					typeCollection.addTypes((TypeCollection) typeEval
+							.getResult());
 				}
 				inc = inc.getNextIsTypeRestrOf(EdgeDirection.IN);
 			}
