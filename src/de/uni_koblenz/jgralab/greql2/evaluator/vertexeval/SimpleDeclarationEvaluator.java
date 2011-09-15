@@ -37,15 +37,15 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import java.util.HashSet;
 
+import org.pcollections.ArrayPVector;
+import org.pcollections.PVector;
+
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclaration;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.IsDeclaredVarOf;
@@ -88,7 +88,7 @@ public class SimpleDeclarationEvaluator extends VertexEvaluator {
 	 * returns a JValueList of VariableDeclaration objects
 	 */
 	@Override
-	public JValue evaluate() throws EvaluateException {
+	public PVector<VariableDeclaration> evaluate() throws EvaluateException {
 		IsTypeExprOf inc = vertex
 				.getFirstIsTypeExprOfIncidence(EdgeDirection.IN);
 		Expression typeExpression = (Expression) inc.getAlpha();
@@ -98,14 +98,14 @@ public class SimpleDeclarationEvaluator extends VertexEvaluator {
 			typeExpression = (Expression) inc.getAlpha();
 			exprEval = vertexEvalMarker.getMark(typeExpression);
 		}
-		JValueList varDeclList = new JValueList();
+		PVector<VariableDeclaration> varDeclList = ArrayPVector.empty();
 		IsDeclaredVarOf varInc = vertex
 				.getFirstIsDeclaredVarOfIncidence(EdgeDirection.IN);
 		while (varInc != null) {
 			VariableDeclaration varDecl = new VariableDeclaration(
 					(Variable) varInc.getAlpha(), exprEval, subgraph, vertex,
 					greqlEvaluator);
-			varDeclList.add(new JValueImpl(varDecl));
+			varDeclList = varDeclList.plus(varDecl);
 			varInc = varInc.getNextIsDeclaredVarOf(EdgeDirection.IN);
 		}
 		return varDeclList;

@@ -40,7 +40,6 @@ import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.RecordElement;
@@ -92,7 +91,7 @@ public class RecordElementEvaluator extends VertexEvaluator {
 	}
 
 	@Override
-	public JValue evaluate() throws EvaluateException {
+	public Object evaluate() throws EvaluateException {
 		if (expEval == null) {
 			Expression recordElementExp = (Expression) vertex
 					.getFirstIsRecordExprOfIncidence(EdgeDirection.IN)

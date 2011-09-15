@@ -34,15 +34,17 @@
  */
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
+import org.pcollections.ArrayPMap;
+import org.pcollections.ArrayPVector;
+import org.pcollections.PMap;
+import org.pcollections.PVector;
+
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueMap;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.IsKeyExprOfConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.IsValueExprOfConstruction;
@@ -63,22 +65,22 @@ public class MapConstructionEvaluator extends VertexEvaluator {
 	}
 
 	@Override
-	public JValue evaluate() throws EvaluateException {
-		JValueMap map = new JValueMap();
-		JValueList keys = new JValueList();
+	public Object evaluate() throws EvaluateException {
+		PMap<Object, Object> map = ArrayPMap.empty();
+		PVector<Object> keys = ArrayPVector.empty();
 		for (IsKeyExprOfConstruction e : mapConstruction
 				.getIsKeyExprOfConstructionIncidences(EdgeDirection.IN)) {
 			Vertex exp = e.getAlpha();
 			VertexEvaluator expEval = vertexEvalMarker.getMark(exp);
-			keys.add(expEval.getResult(subgraph));
+			keys = keys.plus(expEval.getResult(subgraph));
 		}
 
-		JValueList values = new JValueList();
+		PVector<Object> values = ArrayPVector.empty();
 		for (IsValueExprOfConstruction e : mapConstruction
 				.getIsValueExprOfConstructionIncidences(EdgeDirection.IN)) {
 			Vertex exp = e.getAlpha();
 			VertexEvaluator expEval = vertexEvalMarker.getMark(exp);
-			values.add(expEval.getResult(subgraph));
+			values = values.plus(expEval.getResult(subgraph));
 		}
 
 		if (keys.size() != values.size()) {
@@ -87,7 +89,7 @@ public class MapConstructionEvaluator extends VertexEvaluator {
 		}
 
 		for (int i = 0; i < keys.size(); i++) {
-			map.put(keys.get(i), values.get(i));
+			map = map.plus(keys.get(i), values.get(i));
 		}
 
 		return map;

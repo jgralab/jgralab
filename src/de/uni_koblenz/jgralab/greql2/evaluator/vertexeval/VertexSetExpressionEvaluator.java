@@ -35,6 +35,9 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
+import org.pcollections.ArrayPSet;
+import org.pcollections.PSet;
+
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
@@ -46,6 +49,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 import de.uni_koblenz.jgralab.greql2.schema.VertexSetExpression;
+import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 
 /**
  * construct a subset of the datagraph vertices. For instance, the expression
@@ -72,10 +76,10 @@ public class VertexSetExpressionEvaluator extends ElementSetExpressionEvaluator 
 	}
 
 	@Override
-	public JValue evaluate() throws EvaluateException {
+	public Object evaluate() throws EvaluateException {
 		Graph datagraph = greqlEvaluator.getDatagraph();
-		JValueTypeCollection typeCollection = getTypeCollection();
-		JValueSet resultSet = null;
+		TypeCollection typeCollection = getTypeCollection();
+		PSet<Vertex> resultSet = null;
 		String indexKey = null;
 		if (GreqlEvaluator.VERTEX_INDEXING) {
 			indexKey = typeCollection.typeString() + subgraph;
@@ -83,14 +87,13 @@ public class VertexSetExpressionEvaluator extends ElementSetExpressionEvaluator 
 		}
 		if (resultSet == null) {
 			long startTime = System.currentTimeMillis();
-			resultSet = new JValueSet();
+			resultSet = ArrayPSet.empty();
 			Vertex currentVertex = datagraph.getFirstVertex();
 			if (subgraph == null) {
 				while (currentVertex != null) {
 					if (typeCollection.acceptsType(currentVertex
 							.getAttributedElementClass())) {
-						JValueImpl j = new JValueImpl(currentVertex);
-						resultSet.add(j);
+						resultSet = resultSet.plus(currentVertex);
 					}
 					currentVertex = currentVertex.getNextVertex();
 				}
@@ -99,7 +102,7 @@ public class VertexSetExpressionEvaluator extends ElementSetExpressionEvaluator 
 					if (subgraph.isMarked(currentVertex)
 							&& typeCollection.acceptsType(currentVertex
 									.getAttributedElementClass())) {
-						resultSet.add(new JValueImpl(currentVertex));
+						resultSet = resultSet.plus(currentVertex);
 					}
 					currentVertex = currentVertex.getNextVertex();
 				}

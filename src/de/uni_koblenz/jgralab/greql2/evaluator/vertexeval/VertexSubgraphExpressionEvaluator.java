@@ -43,10 +43,8 @@ import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 import de.uni_koblenz.jgralab.greql2.schema.VertexSubgraphExpression;
+import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 
 /**
  * Evaluates the given vertex subgraph expression. All Vertices and Edges that
@@ -62,11 +60,11 @@ public class VertexSubgraphExpressionEvaluator extends
 	}
 
 	@Override
-	public JValue evaluate() throws EvaluateException {
+	public Object evaluate() throws EvaluateException {
 		Graph dataGraph = greqlEvaluator.getDatagraph();
 		SubGraphMarker subgraphAttr = new SubGraphMarker(dataGraph);
 		Vertex currentVertex = dataGraph.getFirstVertex();
-		JValueTypeCollection typeCollection = getTypeCollection();
+		TypeCollection typeCollection = getTypeCollection();
 		while (currentVertex != null) {
 			if ((subgraph == null || subgraph.isMarked(currentVertex))
 					&& typeCollection.acceptsElement(currentVertex)) {
@@ -84,7 +82,7 @@ public class VertexSubgraphExpressionEvaluator extends
 			}
 			currentEdge = currentEdge.getNextEdge();
 		}
-		return new JValueImpl(subgraphAttr);
+		return subgraphAttr;
 	}
 
 	@Override

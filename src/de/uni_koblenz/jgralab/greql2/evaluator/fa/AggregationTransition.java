@@ -305,15 +305,11 @@ public class AggregationTransition extends Transition {
 
 		// checks if a boolean expression exists and if it evaluates to true
 		if (predicateEvaluator != null) {
-			thisEdgeEvaluator.setValue(new JValueImpl(e));
-			JValue res = predicateEvaluator.getResult(###TODO### subgraph);
-			if (res.isBoolean()) {
-				try {
-					if (res.toBoolean().equals(Boolean.TRUE)) {
-						return true;
-					}
-				} catch (JValueInvalidTypeException ex) {
-					ex.printStackTrace();
+			thisEdgeEvaluator.setValue(e);
+			Object res = predicateEvaluator.getResult(###TODO### subgraph);
+			if (res instanceof Boolean) {
+				if (((Boolean)res).equals(Boolean.TRUE)) {
+					return true;
 				}
 			}
 			return false;
