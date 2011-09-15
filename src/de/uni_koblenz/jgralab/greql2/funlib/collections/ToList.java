@@ -18,7 +18,7 @@ public class ToList extends Function {
 				Category.COLLECTIONS_AND_MAPS);
 	}
 
-	public PVector<Object> evaluate(Tuple t) {
+	public PVector<?> evaluate(Tuple t) {
 		return null;
 	}
 
