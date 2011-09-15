@@ -34,12 +34,12 @@
  */
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
+import java.util.Collection;
+
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclarationLayer;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 import de.uni_koblenz.jgralab.greql2.schema.Comprehension;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
@@ -56,7 +56,7 @@ public abstract class ComprehensionEvaluator extends VertexEvaluator {
 		super(eval);
 	}
 
-	protected abstract JValueCollection getResultDatastructure();
+	protected abstract Collection<Object> getResultDatastructure();
 
 	protected final VertexEvaluator getResultDefinitionEvaluator() {
 		if (resultDefinitionEvaluator == null) {
@@ -76,19 +76,19 @@ public abstract class ComprehensionEvaluator extends VertexEvaluator {
 			DeclarationEvaluator declEval = (DeclarationEvaluator) vertexEvalMarker
 					.getMark(d);
 			varDeclLayer = (VariableDeclarationLayer) declEval.getResult(
-					subgraph).toObject();
+					subgraph);
 		}
 		return varDeclLayer;
 	}
 
 	@Override
-	public JValue evaluate() throws EvaluateException {
+	public Object evaluate() throws EvaluateException {
 		VariableDeclarationLayer declLayer = getVariableDeclationLayer();
 		VertexEvaluator resultDefEval = getResultDefinitionEvaluator();
-		JValueCollection resultCollection = getResultDatastructure();
+		Collection<Object> resultCollection = getResultDatastructure();
 		declLayer.reset();
 		while (declLayer.iterate(subgraph)) {
-			JValue localResult = resultDefEval.getResult(subgraph);
+			Object localResult = resultDefEval.getResult(subgraph);
 			resultCollection.add(localResult);
 		}
 		return resultCollection;

@@ -47,6 +47,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 import de.uni_koblenz.jgralab.greql2.schema.EdgePathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.IsTypeRestrOf;
+import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 
 /**
  * Creates a NFA wich accepts a single edge out of the --edge-> - clause
@@ -63,13 +64,13 @@ public class EdgePathDescriptionEvaluator extends
 	}
 
 	@Override
-	public JValue evaluate() throws EvaluateException {
+	public Object evaluate() throws EvaluateException {
 		Edge evalEdge = vertex.getFirstIsEdgeExprOfIncidence();
 		VertexEvaluator edgeEval = null;
 		if (evalEdge != null) {
 			edgeEval = vertexEvalMarker.getMark(evalEdge.getAlpha());
 		}
-		JValueTypeCollection typeCollection = new JValueTypeCollection();
+		TypeCollection typeCollection = new TypeCollection();
 		IsTypeRestrOf inc = vertex
 				.getFirstIsTypeRestrOfIncidence(EdgeDirection.IN);
 		EdgeRestrictionEvaluator edgeRestEval = null;
@@ -83,7 +84,7 @@ public class EdgePathDescriptionEvaluator extends
 		createdNFA = NFA.createEdgePathDescriptionNFA(getEdgeDirection(vertex),
 				typeCollection, getEdgeRoles(edgeRestEval), edgeEval,
 				predicateEvaluator, vertexEvalMarker);
-		return new JValueImpl(createdNFA);
+		return createdNFA;
 	}
 
 	@Override
