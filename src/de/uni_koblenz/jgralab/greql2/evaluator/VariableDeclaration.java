@@ -39,6 +39,11 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.pcollections.ArrayPSet;
+import org.pcollections.PCollection;
+import org.pcollections.PSet;
+import org.pcollections.PVector;
+
 import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VariableEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
@@ -59,7 +64,7 @@ public class VariableDeclaration {
 	/**
 	 * Holds the set of possible values the variable may have
 	 */
-	private Collection definitionSet;
+	private PSet<Object> definitionSet;
 
 	private SubGraphMarker subgraph;
 
@@ -156,23 +161,21 @@ public class VariableDeclaration {
 		iterationNumber = 0;
 		variableEval.setValue(null);
 		Object tempAttribute = definitionSetEvaluator.getResult(subgraph);
-		if (tempAttribute instanceof Collection) {
-			//TODO [removejvalue] fragen ob jetzt nur set Ÿbergeben und es dann keine evaluate exception mehr gibt
-			try {
-				Collection col = (Collection) tempAttribute;
-				definitionSet = (Set)col;
+		if (tempAttribute instanceof PVector) {
+			
+				PVector<Object> col = (PVector<Object>) tempAttribute;
+				definitionSet = ArrayPSet.empty();
+				definitionSet = definitionSet.plusAll(col);
 				if (col.size() > definitionSet.size()) {
 					throw new EvaluateException(
 							"A collection that doesn't fulfill the set property is used as variable range definition");
 				}
-			} catch (JValueInvalidTypeException exception) {
-				throw new EvaluateException(
-						"Error evaluating a SimpleDeclaration : "
-								+ exception.toString());
-			}
-		} else {
-			definitionSet = new JValueSet();
-			definitionSet.add(tempAttribute);
+			
+		}else if(tempAttribute instanceof PSet){
+			definitionSet = (PSet<Object>) tempAttribute;
+		}else {
+			definitionSet = ArrayPSet.empty();
+			definitionSet = definitionSet.plus(tempAttribute);
 		}
 		iter = definitionSet.iterator();
 	}

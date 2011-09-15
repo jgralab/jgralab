@@ -34,7 +34,7 @@
  */
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
-import java.util.Collection;
+import org.pcollections.PCollection;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
@@ -56,7 +56,7 @@ public abstract class ComprehensionEvaluator extends VertexEvaluator {
 		super(eval);
 	}
 
-	protected abstract Collection<Object> getResultDatastructure();
+	protected abstract PCollection<Object> getResultDatastructure();
 
 	protected final VertexEvaluator getResultDefinitionEvaluator() {
 		if (resultDefinitionEvaluator == null) {
@@ -82,14 +82,14 @@ public abstract class ComprehensionEvaluator extends VertexEvaluator {
 	}
 
 	@Override
-	public Object evaluate() throws EvaluateException {
+	public PCollection<Object> evaluate() throws EvaluateException {
 		VariableDeclarationLayer declLayer = getVariableDeclationLayer();
 		VertexEvaluator resultDefEval = getResultDefinitionEvaluator();
-		Collection<Object> resultCollection = getResultDatastructure();
+		PCollection<Object> resultCollection = getResultDatastructure();
 		declLayer.reset();
 		while (declLayer.iterate(subgraph)) {
 			Object localResult = resultDefEval.getResult(subgraph);
-			resultCollection.add(localResult);
+			resultCollection = resultCollection.plus(localResult);
 		}
 		return resultCollection;
 	}

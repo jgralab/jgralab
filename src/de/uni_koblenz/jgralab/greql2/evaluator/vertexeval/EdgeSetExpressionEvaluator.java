@@ -41,12 +41,11 @@ import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 import de.uni_koblenz.jgralab.greql2.schema.EdgeSetExpression;
+import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import org.pcollections.ArrayPSet;
+import org.pcollections.PSet;
 
 /**
  * Calculates a subset of the datagraph edges
@@ -70,18 +69,18 @@ public class EdgeSetExpressionEvaluator extends ElementSetExpressionEvaluator {
 	}
 
 	@Override
-	public JValue evaluate() throws EvaluateException {
+	public PSet<Edge> evaluate() throws EvaluateException {
 		Graph datagraph = greqlEvaluator.getDatagraph();
 		// create the resulting set
-		JValueSet resultSet = new JValueSet();
+		PSet<Edge> resultSet = ArrayPSet.empty();
 		Edge currentEdge = datagraph.getFirstEdge();
-		JValueTypeCollection typeCollection = getTypeCollection();
+		TypeCollection typeCollection = getTypeCollection();
 		while (currentEdge != null) {
 			if ((subgraph == null) || (subgraph.isMarked(currentEdge))) {
 				AttributedElementClass edgeClass = currentEdge
 						.getAttributedElementClass();
 				if (typeCollection.acceptsType(edgeClass)) {
-					resultSet.add(new JValueImpl(currentEdge));
+					resultSet = resultSet.plus(currentEdge);
 				}
 			}
 			currentEdge = currentEdge.getNextEdge();

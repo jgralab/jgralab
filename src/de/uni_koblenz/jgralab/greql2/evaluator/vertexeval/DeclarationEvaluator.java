@@ -36,13 +36,13 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import org.pcollections.PCollection;
+
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclaration;
@@ -91,7 +91,7 @@ public class DeclarationEvaluator extends VertexEvaluator {
 	}
 
 	@Override
-	public Object evaluate() throws EvaluateException {
+	public VariableDeclarationLayer evaluate() throws EvaluateException {
 		SubGraphMarker newSubgraph = null;
 		Edge edge = vertex.getFirstIsSubgraphOfIncidence();
 		if (edge != null) {
@@ -126,7 +126,7 @@ public class DeclarationEvaluator extends VertexEvaluator {
 			SimpleDeclarationEvaluator simpleDeclEval = (SimpleDeclarationEvaluator) vertexEvalMarker
 					.getMark(simpleDecl);
 			Object simpleResult = simpleDeclEval.getResult(newSubgraph);
-			Collection<Object> resultCollection = (Collection<Object>)simpleResult;
+			PCollection<Object> resultCollection = (PCollection<Object>)simpleResult;
 			for (Object v : resultCollection) {
 				varDeclList.add((VariableDeclaration) v);
 			}

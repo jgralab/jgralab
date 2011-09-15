@@ -45,7 +45,6 @@ import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.UndefinedVariableException;
 import de.uni_koblenz.jgralab.greql2.exception.UnknownTypeException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
@@ -87,10 +86,10 @@ public class Greql2ExpressionEvaluator extends VertexEvaluator {
 	 * The varibles that are defined via the <code>using</code> clause. They are
 	 * called bound or also free variables
 	 */
-	private Map<String, JValue> boundVariables;
+	private Map<String, Object> boundVariables;
 	boolean boundVariablesChanged = true;
 
-	protected void setBoundVariables(Map<String, JValue> boundVariables) {
+	protected void setBoundVariables(Map<String, Object> boundVariables) {
 		this.boundVariables = boundVariables;
 		result = null;
 		boundVariablesChanged = true;
@@ -101,7 +100,7 @@ public class Greql2ExpressionEvaluator extends VertexEvaluator {
 				.getFirstIsBoundVarOfIncidence(EdgeDirection.IN);
 		while (inc != null) {
 			Variable currentBoundVariable = (Variable) inc.getAlpha();
-			JValue variableValue = boundVariables.get(currentBoundVariable
+			Object variableValue = boundVariables.get(currentBoundVariable
 					.get_name());
 			if (variableValue == null) {
 				throw new UndefinedVariableException(currentBoundVariable,
@@ -132,7 +131,7 @@ public class Greql2ExpressionEvaluator extends VertexEvaluator {
 	 * sets the values of all bound variables and evaluates the queryexpression
 	 */
 	@Override
-	public JValue evaluate() throws EvaluateException {
+	public Object evaluate() throws EvaluateException {
 		if (boundVariablesChanged) {
 			initializeBoundVariables();
 			boundVariablesChanged = false;
@@ -173,7 +172,7 @@ public class Greql2ExpressionEvaluator extends VertexEvaluator {
 		Expression boundExpression = (Expression) vertex
 				.getFirstIsQueryExprOfIncidence(EdgeDirection.IN).getAlpha();
 		VertexEvaluator eval = vertexEvalMarker.getMark(boundExpression);
-		JValue result = eval.getResult(subgraph);
+		Object result = eval.getResult(subgraph);
 		// if the query contains a "store as " - clause, there is a
 		// "isIdOfInc"-Incidence connected with the Greql2Expression
 		IsIdOf storeInc = vertex.getFirstIsIdOfIncidence(EdgeDirection.IN);
