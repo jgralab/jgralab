@@ -8,11 +8,16 @@ import org.pcollections.PCollection;
 import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
+import de.uni_koblenz.jgralab.greql2.types.Tuple;
 
 public class Sort extends Function {
 
 	public Sort() {
 		super("Sorts a collection of values.", Category.COLLECTIONS_AND_MAPS);
+	}
+
+	public PVector<?> evaluate(Tuple t) {
+		return null;
 	}
 
 	@SuppressWarnings("unchecked")

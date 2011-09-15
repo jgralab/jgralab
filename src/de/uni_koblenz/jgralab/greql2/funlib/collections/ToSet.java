@@ -7,12 +7,17 @@ import org.pcollections.PCollection;
 import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
+import de.uni_koblenz.jgralab.greql2.types.Tuple;
 
 public class ToSet extends Function {
 
 	public ToSet() {
 		super("Converts a collection into a Set (removes duplicates).",
 				Category.COLLECTIONS_AND_MAPS);
+	}
+
+	public PSet<?> evaluate(Tuple t) {
+		return null;
 	}
 
 	public <T> PSet<T> evaluate(PCollection<T> l) {
