@@ -40,11 +40,8 @@ import java.util.Set;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
-import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 
 /**
  * This transition accepts only one edge. Because this edge may be a variable or
@@ -195,15 +192,14 @@ public class EdgeTransition extends SimpleTransition {
 	 * greql2.evaluator.SubgraphTempAttribute)
 	 */
 	@Override
-	public boolean accepts(Vertex v, Edge e, SubGraphMarker subgraph)
-			throws EvaluateException {
+	public boolean accepts(Vertex v, Edge e) throws EvaluateException {
 		if (!super.accepts(v, e, subgraph)) {
 			return false;
 		}
 		// checks if only one edge is allowed an if e is this allowed edge
 		if (allowedEdgeEvaluator != null) {
 			try {
-				Edge allowedEdge = allowedEdgeEvaluator.getResult(subgraph)
+				Edge allowedEdge = allowedEdgeEvaluator.getResult(null)
 						.toEdge().getNormalEdge();
 				if (e.getNormalEdge() != allowedEdge) {
 					return false;
