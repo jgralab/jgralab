@@ -19,7 +19,7 @@ public class ToList extends Function {
 	}
 
 	public PVector<Object> evaluate(Tuple t) {
-		return t.toPVector();
+		return null;
 	}
 
 	public <T> PVector<T> evaluate(PCollection<T> l) {
