@@ -35,12 +35,14 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
+import org.pcollections.ArrayPVector;
+import org.pcollections.PCollection;
+
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
+
 import de.uni_koblenz.jgralab.greql2.schema.ListConstruction;
 
 /**
@@ -57,8 +59,8 @@ public class ListConstructionEvaluator extends ValueConstructionEvaluator {
 	}
 
 	@Override
-	public JValue evaluate() throws EvaluateException {
-		return createValue(new JValueList());
+	public PCollection<Object> evaluate() throws EvaluateException {
+		return createValue(ArrayPVector.empty());
 	}
 
 	@Override
