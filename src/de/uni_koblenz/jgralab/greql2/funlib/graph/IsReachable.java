@@ -41,7 +41,6 @@ import java.util.Queue;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
-import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.DFA;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.State;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.Transition;
@@ -60,10 +59,6 @@ public class IsReachable extends Function {
 	}
 
 	public Boolean evaluate(Vertex u, Vertex v, DFA dfa) {
-		return evaluate(null, u, v, dfa);
-	}
-
-	public Boolean evaluate(SubGraphMarker subgraph, Vertex u, Vertex v, DFA dfa) {
 		if (u.getGraph() != v.getGraph()) {
 			throw new IllegalArgumentException(
 					"The vertices are in different graphs, but must be in the same graph.");
@@ -90,7 +85,7 @@ public class IsReachable extends Function {
 					boolean isMarked = markers[currentTransition.endState.number]
 							.isMarked(nextVertex);
 					boolean transitionIsPossible = currentTransition.accepts(
-							currentEntry.vertex, inc, subgraph);
+							currentEntry.vertex, inc);
 					if (!isMarked && transitionIsPossible) {
 						PathSearchQueueEntry nextEntry = new PathSearchQueueEntry(
 								nextVertex, currentTransition.endState);

@@ -42,7 +42,6 @@ import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.DFA;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.State;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.Transition;
@@ -58,15 +57,6 @@ public class ReachableVertices extends Function {
 	}
 
 	public PSet<Vertex> evaluate(Vertex v, DFA dfa) {
-		return search(v, dfa, null);
-	}
-
-	public PSet<Vertex> evaluate(SubGraphMarker subgraph, Vertex v, DFA dfa) {
-		return search(v, dfa, subgraph);
-	}
-
-	public static final PSet<Vertex> search(Vertex startVertex, DFA dfa,
-			SubGraphMarker subgraph) {
 		PSet<Vertex> resultSet = ArrayPSet.empty();
 
 		BitSet[] markedElements = new BitSet[dfa.stateList.size()];
@@ -74,8 +64,8 @@ public class ReachableVertices extends Function {
 			markedElements[s.number] = new BitSet();
 		}
 		VertexStateQueue queue = new VertexStateQueue();
-		markedElements[dfa.initialState.number].set(startVertex.getId());
-		queue.put(startVertex, dfa.initialState);
+		markedElements[dfa.initialState.number].set(v.getId());
+		queue.put(v, dfa.initialState);
 		while (queue.hasNext()) {
 			Vertex vertex = queue.currentVertex;
 			State state = queue.currentState;
@@ -92,8 +82,7 @@ public class ReachableVertices extends Function {
 								vertex, inc);
 						if (!markedElements[currentTransition.endState.number]
 								.get(nextVertex.getId())) {
-							if (currentTransition
-									.accepts(vertex, inc, subgraph)) {
+							if (currentTransition.accepts(vertex, inc)) {
 								markedElements[currentTransition.endState.number]
 										.set(nextVertex.getId());
 								queue.put(nextVertex,
