@@ -35,7 +35,6 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator.fa;
 
-import java.util.Collection;
 import java.util.Iterator;
 
 import de.uni_koblenz.jgralab.Edge;
@@ -132,8 +131,7 @@ public class IntermediateVertexTransition extends Transition {
 		// of e is part of the result of this expression
 
 		if (intermediateVertexEvaluator != null) {
-
-			JValue tempRes = intermediateVertexEvaluator.getResult(null);
+			JValue tempRes = intermediateVertexEvaluator.getResult(####TODO#### subgraph);
 			try {
 				if (tempRes.isCollection()) {
 					JValueCollection intermediateVertices = tempRes
@@ -150,11 +148,9 @@ public class IntermediateVertexTransition extends Transition {
 						return true;
 					}
 				}
-			} else {
-				Vertex intermediateVertex = (Vertex)tempRes;
-				if (v == intermediateVertex) {
-					return true;
-				}
+			} catch (JValueInvalidTypeException exception) {
+				throw new EvaluateException("Error in Transition.accept : "
+						+ exception.toString());
 			}
 		}
 		return false;

@@ -7,6 +7,8 @@ import org.pcollections.POrderedSet;
 import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
+import de.uni_koblenz.jgralab.greql2.types.Table;
+import de.uni_koblenz.jgralab.greql2.types.Tuple;
 
 public class Get extends Function {
 
@@ -23,6 +25,14 @@ public class Get extends Function {
 
 	public <T> T evaluate(POrderedSet<T> l, Integer i) {
 		return i < 0 || i >= l.size() ? null : l.get(i);
+	}
+
+	public <T> T evaluate(Table<T> l, Integer i) {
+		return i < 0 || i >= l.size() ? null : l.get(i);
+	}
+
+	public Object evaluate(Tuple t, Integer i) {
+		return i < 0 || i >= t.size() ? null : t.get(i);
 	}
 
 	public <K, V> V evaluate(PMap<K, V> m, K key) {
