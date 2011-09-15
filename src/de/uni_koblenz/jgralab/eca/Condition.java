@@ -1,13 +1,9 @@
 package de.uni_koblenz.jgralab.eca;
 
 import de.uni_koblenz.jgralab.AttributedElement;
-import de.uni_koblenz.jgralab.Edge;
-import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.eca.events.Event;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
+import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
 
 public class Condition {
 
@@ -48,29 +44,21 @@ public class Condition {
 				.getGreqlEvaluator();
 		if (this.conditionExpression.contains("context")) {
 			greqlEvaluator.setQuery("using context: " + conditionExpression);
-			JValue jva;
-			if (element instanceof Vertex) {
-				jva = new JValueImpl((Vertex) element);
-			} else if (element instanceof Edge) {
-				jva = new JValueImpl((Edge) element);
-			} else {
-				jva = new JValueImpl((Graph) element);
-			}
-			greqlEvaluator.setVariable("context", jva);
-
+			greqlEvaluator.setVariable("context", element);
 		} else {
 			greqlEvaluator.setQuery(this.conditionExpression);
 		}
 		greqlEvaluator.startEvaluation();
-		JValue result = greqlEvaluator.getEvaluationResult();
-		if (result.isBoolean()) {
-			return result.toBoolean();
+		Object result = greqlEvaluator.getEvaluationResult();
+		if (result instanceof Boolean) {
+			return (Boolean) result;
 		} else {
 			System.err
 					.println("Invalid Condition: " + this.conditionExpression);
 			throw new ECAException("Invalid Condition: \""
-					+ this.conditionExpression + "\" evaluates to JValueType "
-					+ result.getType() + " but the result has to be a boolean.");
+					+ this.conditionExpression + "\" evaluates to type "
+					+ FunLib.instance().getGreqlTypeName(result)
+					+ " but the result has to be a Boolean.");
 		}
 	}
 
