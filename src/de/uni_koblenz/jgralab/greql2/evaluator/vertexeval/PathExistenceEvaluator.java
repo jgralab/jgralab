@@ -84,41 +84,36 @@ public class PathExistenceEvaluator extends PathSearchEvaluator {
 		Expression startExpression = (Expression) vertex
 				.getFirstIsStartExprOfIncidence(EdgeDirection.IN).getAlpha();
 		VertexEvaluator startEval = vertexEvalMarker.getMark(startExpression);
-		Object res = startEval.getResult(subgraph);
+		Object res = startEval.getResult();
 		/**
 		 * check if the result is invalid, this may occur because the
 		 * restrictedExpression may return a null-value
 		 */
-		if (res==null) {
+		if (res == null) {
 			return null;
 		}
-		Vertex startVertex = (Vertex)res;
-		
+		Vertex startVertex = (Vertex) res;
+
 		Expression targetExpression = (Expression) vertex
 				.getFirstIsTargetExprOfIncidence(EdgeDirection.IN).getAlpha();
 		VertexEvaluator targetEval = vertexEvalMarker.getMark(targetExpression);
 		Vertex targetVertex = null;
-		res = targetEval.getResult(subgraph);
+		res = targetEval.getResult();
 		if (res == null) {
 			return null;
 		}
-		targetVertex = (Vertex)res;
-		
+		targetVertex = (Vertex) res;
+
 		if (searchAutomaton == null) {
 			searchAutomaton = pathDescEval.getNFA().getDFA();
 			// searchAutomaton.printAscii();
-		}
-		if (function == null) {
-			function = FunLib.instance().getFunction(
-					"isReachable");
 		}
 		Object[] arguments = new Object[3];
 		arguments[0] = startVertex;
 		arguments[1] = targetVertex;
 		arguments[2] = searchAutomaton;
 
-		Object tempResult = function.evaluate(graph, subgraph, arguments);
-		return tempResult;
+		return FunLib.instance().apply("isReachable", arguments);
 	}
 
 	@Override

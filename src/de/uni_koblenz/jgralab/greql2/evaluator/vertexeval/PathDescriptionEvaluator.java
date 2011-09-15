@@ -36,7 +36,6 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
@@ -77,7 +76,7 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 	 */
 	public NFA getNFA() throws EvaluateException {
 		if (createdNFA == null) {
-			getResult(null);
+			getResult();
 		}
 		return createdNFA;
 	}
@@ -90,7 +89,7 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 	 * @return the result as jvalue
 	 */
 	@Override
-	public Object getResult(SubGraphMarker subgraph) throws EvaluateException {
+	public Object getResult() throws EvaluateException {
 		if (createdNFA == null) {
 			result = evaluate();
 			createdNFA = (NFA) result;
@@ -119,7 +118,7 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 					.getAlpha());
 			if (vertexEval instanceof TypeIdEvaluator) {
 				TypeIdEvaluator typeEval = (TypeIdEvaluator) vertexEval;
-				typeCollection.addTypes((TypeCollection) typeEval.getResult(null));
+				typeCollection.addTypes((TypeCollection) typeEval.getResult());
 			} else {
 				goalRestEval = vertexEval;
 			}
@@ -152,7 +151,7 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 					.getAlpha());
 			if (vertexEval instanceof TypeIdEvaluator) {
 				TypeIdEvaluator typeEval = (TypeIdEvaluator) vertexEval;
-				typeCollection.addTypes((TypeCollection) typeEval.getResult(null));
+				typeCollection.addTypes((TypeCollection) typeEval.getResult());
 			} else {
 				startRestEval = vertexEval;
 			}

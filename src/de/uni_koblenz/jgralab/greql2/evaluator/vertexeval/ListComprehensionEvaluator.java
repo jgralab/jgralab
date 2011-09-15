@@ -46,8 +46,8 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
-import de.uni_koblenz.jgralab.greql2.schema.ListComprehension;
 import de.uni_koblenz.jgralab.greql2.schema.IsTableHeaderOf;
+import de.uni_koblenz.jgralab.greql2.schema.ListComprehension;
 import de.uni_koblenz.jgralab.greql2.types.Table;
 
 /**
@@ -108,7 +108,8 @@ public class ListComprehensionEvaluator extends ComprehensionEvaluator {
 		if (createHeader) {
 			PVector<String> headerTuple = ArrayPVector.empty();
 			for (VertexEvaluator headerEvaluator : headerEvaluators) {
-				headerTuple = headerTuple.plus((String) headerEvaluator.getResult(subgraph));
+				headerTuple = headerTuple.plus((String) headerEvaluator
+						.getResult());
 			}
 			Table<Object> table = Table.empty();
 			return table.withTitles(headerTuple);

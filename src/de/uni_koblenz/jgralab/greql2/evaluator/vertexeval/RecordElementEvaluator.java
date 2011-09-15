@@ -98,7 +98,7 @@ public class RecordElementEvaluator extends VertexEvaluator {
 					.getAlpha();
 			expEval = vertexEvalMarker.getMark(recordElementExp);
 		}
-		return expEval.getResult(subgraph);
+		return expEval.getResult();
 	}
 
 	@Override

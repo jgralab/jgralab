@@ -37,7 +37,6 @@ package de.uni_koblenz.jgralab.greql2.evaluator;
 
 import java.util.List;
 
-import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongResultTypeException;
@@ -101,7 +100,7 @@ public class VariableDeclarationLayer {
 	 * 
 	 * @return true if another possible combination was found, false otherwise
 	 */
-	public boolean iterate(SubGraphMarker subgraph) throws EvaluateException {
+	public boolean iterate() throws EvaluateException {
 		StringBuilder sb = null;
 		if (GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS) {
 			sb = new StringBuilder();
@@ -111,7 +110,7 @@ public class VariableDeclarationLayer {
 		}
 		boolean constraintsFullfilled = false;
 		if (firstIteration) {
-			if (!getFirstCombination(subgraph)) {
+			if (!getFirstCombination()) {
 				if (GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS) {
 					sb.append("## 1st. iteration: returning false (");
 					sb.append(declaration);
@@ -120,11 +119,11 @@ public class VariableDeclarationLayer {
 				}
 				return false; // no more combinations exists
 			}
-			constraintsFullfilled = fullfillsConstraints(subgraph);
+			constraintsFullfilled = fullfillsConstraints();
 			firstIteration = false;
 		}
 		while (!constraintsFullfilled) {
-			if (!getNextCombination(subgraph, false)) {
+			if (!getNextCombination(false)) {
 				if (GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS) {
 					sb.append("## nth iteration: returning false (");
 					sb.append(declaration);
@@ -133,7 +132,7 @@ public class VariableDeclarationLayer {
 				}
 				return false; // no more combinations exists
 			}
-			constraintsFullfilled = fullfillsConstraints(subgraph);
+			constraintsFullfilled = fullfillsConstraints();
 		}
 
 		if (GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS) {
@@ -158,26 +157,23 @@ public class VariableDeclarationLayer {
 	/**
 	 * Gets the first possible Variable Combination
 	 * 
-	 * @param subgraph
 	 * @return true if a first combination exists, false otherwise
 	 * @throws EvaluateException
 	 */
-	private boolean getFirstCombination(SubGraphMarker subgraph)
-			throws EvaluateException {
+	private boolean getFirstCombination() throws EvaluateException {
 		variableDeclarations.get(0).reset();
-		return getNextCombination(subgraph, true);
+		return getNextCombination(true);
 	}
 
 	/**
 	 * Gets the next possible variable combination
 	 * 
-	 * @param subgraph
 	 * @return true if a next combination exists, false otherwise
 	 * @throws EvaluateException
 	 */
 
-	private boolean getNextCombination(SubGraphMarker subgraph,
-			boolean firstCombination) throws EvaluateException {
+	private boolean getNextCombination(boolean firstCombination)
+			throws EvaluateException {
 
 		int pointer = firstCombination ? 0 : variableDeclarations.size() - 1;
 
@@ -209,21 +205,19 @@ public class VariableDeclarationLayer {
 	/**
 	 * Checks if the current variable combination fulfills the constraints.
 	 * 
-	 * @param subgraph
 	 * @return true if the combination fulfills the constraint, false otherwise
 	 * @throws EvaluateException
 	 */
-	private boolean fullfillsConstraints(SubGraphMarker subgraph)
-			throws EvaluateException {
+	private boolean fullfillsConstraints() throws EvaluateException {
 		if ((constraintList == null) || (constraintList.isEmpty())) {
 			return true;
 		}
 		for (int i = 0; i < constraintList.size(); i++) {
 			VertexEvaluator currentEval = constraintList.get(i);
-			Object tempResult = currentEval.getResult(subgraph);
-		
+			Object tempResult = currentEval.getResult();
+
 			if (tempResult instanceof Boolean) {
-				if ((Boolean)tempResult != Boolean.TRUE) {
+				if ((Boolean) tempResult != Boolean.TRUE) {
 					return false;
 				}
 			} else {
@@ -231,7 +225,7 @@ public class VariableDeclarationLayer {
 						"Boolean", tempResult.getClass().getSimpleName(),
 						currentEval.createPossibleSourcePositions());
 			}
-			
+
 		}
 		return true;
 	}

@@ -173,7 +173,7 @@ public abstract class Transition {
 
 	/**
 	 * returns true if this transition accepts the given combination of Vertex
-	 * and Edge and if both are part of the given subgraph
+	 * and Edge
 	 */
 	public abstract boolean accepts(Vertex v, Edge e) throws EvaluateException;
 

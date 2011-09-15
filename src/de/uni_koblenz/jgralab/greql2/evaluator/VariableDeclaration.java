@@ -35,16 +35,12 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator;
 
-import java.util.Collection;
 import java.util.Iterator;
-import java.util.Set;
 
 import org.pcollections.ArrayPSet;
-import org.pcollections.PCollection;
 import org.pcollections.PSet;
 import org.pcollections.PVector;
 
-import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VariableEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
@@ -65,8 +61,6 @@ public class VariableDeclaration {
 	 * Holds the set of possible values the variable may have
 	 */
 	private PSet<Object> definitionSet;
-
-	private SubGraphMarker subgraph;
 
 	/**
 	 * Holds the variable-vertex of this declaration.
@@ -103,12 +97,11 @@ public class VariableDeclaration {
 	 *            the GreqlEvaluator which is used to evaluate the query
 	 */
 	public VariableDeclaration(Variable var,
-			VertexEvaluator definitionSetEvaluator, SubGraphMarker subgraph2,
-			SimpleDeclaration decl, GreqlEvaluator eval) {
+			VertexEvaluator definitionSetEvaluator, SimpleDeclaration decl,
+			GreqlEvaluator eval) {
 		variableEval = (VariableEvaluator) definitionSetEvaluator
 				.getVertexEvalMarker().getMark(var);
 		this.definitionSetEvaluator = definitionSetEvaluator;
-		this.subgraph = subgraph2;
 	}
 
 	/**
@@ -160,20 +153,20 @@ public class VariableDeclaration {
 	protected void reset() {
 		iterationNumber = 0;
 		variableEval.setValue(null);
-		Object tempAttribute = definitionSetEvaluator.getResult(subgraph);
+		Object tempAttribute = definitionSetEvaluator.getResult();
 		if (tempAttribute instanceof PVector) {
-			
-				PVector<Object> col = (PVector<Object>) tempAttribute;
-				definitionSet = ArrayPSet.empty();
-				definitionSet = definitionSet.plusAll(col);
-				if (col.size() > definitionSet.size()) {
-					throw new EvaluateException(
-							"A collection that doesn't fulfill the set property is used as variable range definition");
-				}
-			
-		}else if(tempAttribute instanceof PSet){
+
+			PVector<?> col = (PVector<?>) tempAttribute;
+			definitionSet = ArrayPSet.empty();
+			definitionSet = definitionSet.plusAll(col);
+			if (col.size() > definitionSet.size()) {
+				throw new EvaluateException(
+						"A collection that doesn't fulfill the set property is used as variable range definition");
+			}
+
+		} else if (tempAttribute instanceof PSet) {
 			definitionSet = (PSet<Object>) tempAttribute;
-		}else {
+		} else {
 			definitionSet = ArrayPSet.empty();
 			definitionSet = definitionSet.plus(tempAttribute);
 		}

@@ -101,24 +101,22 @@ public class ListRangeConstructionEvaluator extends VertexEvaluator {
 		if (firstElementEvaluator == null) {
 			getEvals();
 		}
-		Object firstElement = firstElementEvaluator.getResult(subgraph);
-		Object lastElement = lastElementEvaluator.getResult(subgraph);
+		Object firstElement = firstElementEvaluator.getResult();
+		Object lastElement = lastElementEvaluator.getResult();
 		if (firstElement instanceof Integer && lastElement instanceof Integer) {
-			if ((Integer)firstElement < (Integer)lastElement) {
-				for (int i = (Integer)firstElement; i < (Integer)lastElement
-						+ 1; i++) {
+			if ((Integer) firstElement < (Integer) lastElement) {
+				for (int i = (Integer) firstElement; i < (Integer) lastElement + 1; i++) {
 					// +1 needed because the top element should also belong
 					// to the list
 					resultList = resultList.plus(i);
 				}
 			} else {
-				for (int i = (Integer)lastElement; i < (Integer)firstElement
-						 + 1; i++) {
+				for (int i = (Integer) lastElement; i < (Integer) firstElement + 1; i++) {
 					resultList = resultList.plus(i);
 				}
 			}
 		}
-		
+
 		return resultList;
 	}
 

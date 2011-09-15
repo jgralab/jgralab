@@ -35,6 +35,8 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
+import org.pcollections.PSet;
+
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
@@ -93,15 +95,14 @@ public class BackwardVertexSetEvaluator extends PathSearchEvaluator {
 	}
 
 	@Override
-	public Object evaluate() throws EvaluateException {
+	public PSet<Vertex> evaluate() throws EvaluateException {
 		if (!initialized) {
 			initialize();
 		}
 		Vertex targetVertex = null;
-		targetVertex = (Vertex)targetEval.getResult(subgraph);
-		
-		return ReachableVertices
-				.search(targetVertex, searchAutomaton, subgraph);
+		targetVertex = (Vertex) targetEval.getResult();
+
+		return ReachableVertices.search(targetVertex, searchAutomaton);
 	}
 
 	@Override

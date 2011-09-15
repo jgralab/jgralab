@@ -172,14 +172,14 @@ public class Greql2ExpressionEvaluator extends VertexEvaluator {
 		Expression boundExpression = (Expression) vertex
 				.getFirstIsQueryExprOfIncidence(EdgeDirection.IN).getAlpha();
 		VertexEvaluator eval = vertexEvalMarker.getMark(boundExpression);
-		Object result = eval.getResult(subgraph);
+		Object result = eval.getResult();
 		// if the query contains a "store as " - clause, there is a
 		// "isIdOfInc"-Incidence connected with the Greql2Expression
 		IsIdOf storeInc = vertex.getFirstIsIdOfIncidence(EdgeDirection.IN);
 		if (storeInc != null) {
 			VertexEvaluator storeEval = vertexEvalMarker.getMark(storeInc
 					.getAlpha());
-			String varName = storeEval.getResult(null).toString();
+			String varName = storeEval.getResult().toString();
 			boundVariables.put(varName, result);
 		}
 		return result;

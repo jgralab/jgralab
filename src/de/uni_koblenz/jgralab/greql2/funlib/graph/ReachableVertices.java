@@ -57,6 +57,10 @@ public class ReachableVertices extends Function {
 	}
 
 	public PSet<Vertex> evaluate(Vertex v, DFA dfa) {
+		return search(v, dfa);
+	}
+
+	public static PSet<Vertex> search(Vertex v, DFA dfa) {
 		PSet<Vertex> resultSet = ArrayPSet.empty();
 
 		BitSet[] markedElements = new BitSet[dfa.stateList.size()];

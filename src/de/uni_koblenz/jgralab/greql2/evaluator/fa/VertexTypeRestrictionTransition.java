@@ -133,18 +133,10 @@ public class VertexTypeRestrictionTransition extends Transition {
 	 * 
 	 * @param v
 	 *            the current vertex
-	 * @param subgraph
-	 *            the SubgraphTempAttribute which should be accepted
 	 * @return true if the transition can fire with e, false otherwise
 	 */
 	@Override
 	public boolean accepts(Vertex v, Edge e) throws EvaluateException {
-		// it is not neccessary to check if the vertex belongs to a special
-		// subgraph, because if it does not, this method will not be called and
-		// there is no edge connected to this vertex wich belongs to the
-		// subgraph
-		// checks if a startVertexTypeRestriction is set and if v has the right
-		// type
 		AttributedElementClass vertexClass = v.getAttributedElementClass();
 		if (!typeCollection.acceptsType(vertexClass)) {
 			return false;

@@ -129,16 +129,15 @@ public class BoolExpressionTransition extends Transition {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see greql2.evaluator.fa.Transition#accepts(jgralab.Vertex, jgralab.Edge,
-	 * greql2.evaluator.SubgraphTempAttribute)
+	 * @see greql2.evaluator.fa.Transition#accepts(jgralab.Vertex, jgralab.Edge)
 	 */
 	@Override
 	public boolean accepts(Vertex v, Edge e) throws EvaluateException {
 		if (thisVertexEvaluator != null) {
 			thisVertexEvaluator.setValue(v);
 		}
-		Object res = boolExpressionEvaluator.getResult(####TODO#### subgraph);
-		if (res instanceof Boolean && ((Boolean)res).equals(Boolean.TRUE)) {
+		Object res = boolExpressionEvaluator.getResult();
+		if (res instanceof Boolean && ((Boolean) res).equals(Boolean.TRUE)) {
 			return true;
 		}
 		return false;
