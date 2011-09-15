@@ -35,6 +35,9 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
+import org.pcollections.ArrayPSet;
+import org.pcollections.PSet;
+
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
@@ -44,8 +47,6 @@ import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.schema.EdgeSetExpression;
 import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
-import org.pcollections.ArrayPSet;
-import org.pcollections.PSet;
 
 /**
  * Calculates a subset of the datagraph edges
@@ -76,12 +77,10 @@ public class EdgeSetExpressionEvaluator extends ElementSetExpressionEvaluator {
 		Edge currentEdge = datagraph.getFirstEdge();
 		TypeCollection typeCollection = getTypeCollection();
 		while (currentEdge != null) {
-			if ((subgraph == null) || (subgraph.isMarked(currentEdge))) {
-				AttributedElementClass edgeClass = currentEdge
-						.getAttributedElementClass();
-				if (typeCollection.acceptsType(edgeClass)) {
-					resultSet = resultSet.plus(currentEdge);
-				}
+			AttributedElementClass edgeClass = currentEdge
+					.getAttributedElementClass();
+			if (typeCollection.acceptsType(edgeClass)) {
+				resultSet = resultSet.plus(currentEdge);
 			}
 			currentEdge = currentEdge.getNextEdge();
 		}

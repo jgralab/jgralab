@@ -65,8 +65,8 @@ public class EdgeSubgraphExpressionEvaluator extends
 		Edge currentEdge = dataGraph.getFirstEdge();
 		TypeCollection typeCollection = getTypeCollection();
 		while (currentEdge != null) {
-			if ((subgraph == null || subgraph.isMarked(currentEdge))
-					&& typeCollection.acceptsElement(currentEdge)) {
+			if (typeCollection.acceptsType(currentEdge
+					.getAttributedElementClass())) {
 				subgraphAttr.mark(currentEdge);
 			}
 			currentEdge = currentEdge.getNextEdge();

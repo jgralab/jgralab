@@ -45,8 +45,8 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
-import de.uni_koblenz.jgralab.greql2.schema.ListComprehension;
 import de.uni_koblenz.jgralab.greql2.schema.IsTableHeaderOf;
+import de.uni_koblenz.jgralab.greql2.schema.ListComprehension;
 
 /**
  * Evaluates a ListComprehensionvertex in the GReQL-2 Syntaxgraph
@@ -106,7 +106,7 @@ public class ListComprehensionEvaluator extends ComprehensionEvaluator {
 		if (createHeader) {
 			JValueTuple headerTuple = new JValueTuple();
 			for (VertexEvaluator headerEvaluator : headerEvaluators) {
-				headerTuple.add(headerEvaluator.getResult(subgraph));
+				headerTuple.add(headerEvaluator.getResult());
 			}
 			return new JValueTable(headerTuple, false);
 		}

@@ -40,9 +40,6 @@ import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueMap;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.IsKeyExprOfConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.IsValueExprOfConstruction;
@@ -70,7 +67,7 @@ public class MapConstructionEvaluator extends VertexEvaluator {
 				.getIsKeyExprOfConstructionIncidences(EdgeDirection.IN)) {
 			Vertex exp = e.getAlpha();
 			VertexEvaluator expEval = vertexEvalMarker.getMark(exp);
-			keys.add(expEval.getResult(subgraph));
+			keys.add(expEval.getResult());
 		}
 
 		JValueList values = new JValueList();
@@ -78,7 +75,7 @@ public class MapConstructionEvaluator extends VertexEvaluator {
 				.getIsValueExprOfConstructionIncidences(EdgeDirection.IN)) {
 			Vertex exp = e.getAlpha();
 			VertexEvaluator expEval = vertexEvalMarker.getMark(exp);
-			values.add(expEval.getResult(subgraph));
+			values.add(expEval.getResult());
 		}
 
 		if (keys.size() != values.size()) {

@@ -160,8 +160,7 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 				typeId = (TypeId) typeEdge.getAlpha();
 				TypeIdEvaluator typeEval = (TypeIdEvaluator) vertexEvalMarker
 						.getMark(typeId);
-				typeCollection.addTypes((TypeCollection) typeEval
-						.getResult(subgraph));
+				typeCollection.addTypes((TypeCollection) typeEval.getResult());
 				typeEdge = typeEdge.getNextIsTypeExprOf(EdgeDirection.IN);
 			}
 		}
@@ -189,7 +188,7 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 		}
 
 		for (int i = 0; i < paramEvalCount; i++) {
-			parameters[i] = parameterEvaluators.get(i).getResult(subgraph);
+			parameters[i] = parameterEvaluators.get(i).getResult();
 		}
 
 		try {

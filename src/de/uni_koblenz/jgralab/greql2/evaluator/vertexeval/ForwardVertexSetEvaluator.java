@@ -96,8 +96,8 @@ public class ForwardVertexSetEvaluator extends PathSearchEvaluator {
 			initialize();
 		}
 		Vertex startVertex = null;
-		startVertex = (Vertex) startEval.getResult(subgraph);
-		return ReachableVertices.search(startVertex, searchAutomaton, subgraph);
+		startVertex = (Vertex) startEval.getResult();
+		return ReachableVertices.search(startVertex, searchAutomaton);
 	}
 
 	@Override
