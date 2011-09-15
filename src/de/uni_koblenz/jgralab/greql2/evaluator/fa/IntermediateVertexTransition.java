@@ -35,8 +35,6 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator.fa;
 
-import java.util.Iterator;
-
 import org.pcollections.PCollection;
 
 import de.uni_koblenz.jgralab.Edge;
@@ -136,19 +134,11 @@ public class IntermediateVertexTransition extends Transition {
 			if (tempRes instanceof PCollection) {
 				@SuppressWarnings("unchecked")
 				PCollection<Vertex> intermediateVertices = (PCollection<Vertex>) tempRes;
-				Iterator<Vertex> iter = intermediateVertices.iterator();
-				while (iter.hasNext()) {
-					if (iter.next().equals(v)) {
-						return true;
-					}
-				}
+				return intermediateVertices.contains(v);
 			} else {
 				Vertex intermediateVertex = (Vertex) tempRes;
-				if (v == intermediateVertex) {
-					return true;
-				}
+				return v == intermediateVertex;
 			}
-
 		}
 		return false;
 	}

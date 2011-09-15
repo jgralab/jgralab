@@ -53,8 +53,6 @@ import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.Greql2Exception;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Constraint;
@@ -194,15 +192,16 @@ public class GraphValidator {
 			eval.setQuery(query);
 			try {
 				eval.startEvaluation();
-				if (!eval.getEvaluationResult().toBoolean()) {
+				if (!(Boolean) eval.getEvaluationResult()) {
 					if (constraint.getOffendingElementsQuery() != null) {
 						query = constraint.getOffendingElementsQuery();
 						eval.setQuery(query);
 						eval.startEvaluation();
-						JValueSet resultSet = eval.getEvaluationResult()
-								.toJValueSet();
+						@SuppressWarnings("unchecked")
+						Set<AttributedElement> resultSet = (Set<AttributedElement>) eval
+								.getEvaluationResult();
 						brokenConstraints.add(new GReQLConstraintViolation(aec,
-								constraint, jvalueSet2Set(resultSet)));
+								constraint, resultSet));
 					} else {
 						brokenConstraints.add(new GReQLConstraintViolation(aec,
 								constraint, null));
@@ -214,15 +213,6 @@ public class GraphValidator {
 			}
 		}
 		return brokenConstraints;
-	}
-
-	private Set<AttributedElement> jvalueSet2Set(JValueSet resultSet) {
-		Set<AttributedElement> set = new HashSet<AttributedElement>(resultSet
-				.size());
-		for (JValue jv : resultSet) {
-			set.add(jv.toAttributedElement());
-		}
-		return set;
 	}
 
 	/**
@@ -245,10 +235,8 @@ public class GraphValidator {
 		try {
 			bw = new BufferedWriter(new FileWriter(new File(fileName)));
 			// The header
-			bw
-					.append("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\"\n"
-							+ "\"http://www.w3.org/TR/html4/strict.dtd\">\n"
-							+ "<html>");
+			bw.append("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\"\n"
+					+ "\"http://www.w3.org/TR/html4/strict.dtd\">\n" + "<html>");
 			bw.append("<head>");
 
 			bw.append("<style type=\"text/css\">");
@@ -320,9 +308,7 @@ public class GraphValidator {
 					bw.append(ci.getClass().getSimpleName());
 					bw.append("</td>");
 					bw.append("<td class=\"" + cssClass + "\">");
-					bw
-							.append(ci.getAttributedElementClass()
-									.getQualifiedName());
+					bw.append(ci.getAttributedElementClass().getQualifiedName());
 					bw.append("</td>");
 					bw.append("<td class=\"" + cssClass + "\">");
 					bw.append(ci.getMessage());
