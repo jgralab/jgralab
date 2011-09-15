@@ -41,9 +41,7 @@ import java.util.List;
 
 import org.pcollections.PCollection;
 
-import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclaration;
 import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclarationLayer;
@@ -55,7 +53,6 @@ import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.IsConstraintOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsSimpleDeclOf;
 import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
-import de.uni_koblenz.jgralab.greql2.schema.SubgraphExpression;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
 
 /**
@@ -92,23 +89,6 @@ public class DeclarationEvaluator extends VertexEvaluator {
 
 	@Override
 	public VariableDeclarationLayer evaluate() throws EvaluateException {
-		SubGraphMarker newSubgraph = null;
-		Edge edge = vertex.getFirstIsSubgraphOfIncidence();
-		if (edge != null) {
-			SubgraphExpression subgraphExp = (SubgraphExpression) edge
-					.getAlpha();
-			if (subgraphExp != null) {
-				VertexEvaluator subgraphEval = vertexEvalMarker
-						.getMark(subgraphExp);
-				Object tempAttribute = subgraphEval.getResult(subgraph);
-				if (tempAttribute instanceof SubGraphMarker) {
-					newSubgraph = (SubGraphMarker) tempAttribute;
-				}
-			}
-		}
-		if (newSubgraph == null) {
-			newSubgraph = subgraph;
-		}
 		ArrayList<VertexEvaluator> constraintList = new ArrayList<VertexEvaluator>();
 		for (IsConstraintOf consInc : vertex
 				.getIsConstraintOfIncidences(EdgeDirection.IN)) {

@@ -329,15 +329,9 @@ public class SimpleTransition extends Transition {
 			if (thisEdgeEvaluator != null) {
 				thisEdgeEvaluator.setValue(e);
 			}
-			JValue res = predicateEvaluator.getResult();
-			if (res.isBoolean()) {
-				try {
-					if (res.toBoolean().equals(Boolean.TRUE)) {
-						return true;
-					}
-				} catch (JValueInvalidTypeException ex) {
-					ex.printStackTrace();
-				}
+			Object res = predicateEvaluator.getResult();
+			if (res instanceof Boolean) {
+				return (Boolean) res;
 			}
 			return false;
 		}
