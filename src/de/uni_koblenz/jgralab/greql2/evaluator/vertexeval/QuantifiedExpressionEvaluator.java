@@ -41,10 +41,6 @@ import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclarationLayer;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
@@ -98,7 +94,7 @@ public class QuantifiedExpressionEvaluator extends VertexEvaluator {
 		DeclarationEvaluator declEval = (DeclarationEvaluator) vertexEvalMarker
 				.getMark(d);
 		declarationLayer = (VariableDeclarationLayer) declEval.getResult(
-				subgraph).toObject();
+				subgraph);
 		Quantifier quantifier = (Quantifier) vertex
 				.getFirstIsQuantifierOfIncidence(EdgeDirection.IN).getAlpha();
 		quantificationType = quantifier.get_type();
@@ -112,7 +108,7 @@ public class QuantifiedExpressionEvaluator extends VertexEvaluator {
 	 * evaluates the QuantifiedEx
 	 */
 	@Override
-	public JValue evaluate() throws EvaluateException {
+	public Boolean evaluate() throws EvaluateException {
 		if (!initialized) {
 			initialize();
 		}
@@ -122,60 +118,43 @@ public class QuantifiedExpressionEvaluator extends VertexEvaluator {
 		switch (quantificationType) {
 		case EXISTS:
 			while (declarationLayer.iterate(subgraph)) {
-				JValue tempResult = predicateEvaluator.getResult(subgraph);
-				if (tempResult.isBoolean()) {
-					try {
-						if (tempResult.toBoolean() == JValueBoolean
-								.getTrueValue()) {
-							return new JValueImpl(JValueBoolean.getTrueValue());
-						}
-					} catch (JValueInvalidTypeException exception) {
-						throw new EvaluateException(
-								"Error evaluating Exists clause", exception);
+				Object tempResult = predicateEvaluator.getResult(subgraph);
+				if (tempResult instanceof Boolean) {
+					if (((Boolean)tempResult) == Boolean.TRUE) {
+						return Boolean.TRUE;
 					}
 				}
 			}
-			return new JValueImpl(JValueBoolean.getFalseValue());
+			return Boolean.FALSE;
 		case EXISTSONE:
 			while (declarationLayer.iterate(subgraph)) {
-				JValue tempResult = predicateEvaluator.getResult(subgraph);
-				if (tempResult.isBoolean()) {
-					try {
-						if (tempResult.toBoolean().equals(
-								JValueBoolean.getTrueValue())) {
-							if (foundTrue == true) {
-								return new JValueImpl(
-										JValueBoolean.getFalseValue());
-							} else {
-								foundTrue = true;
-							}
+				Object tempResult = predicateEvaluator.getResult(subgraph);
+				if (tempResult instanceof Boolean) {
+					if (((Boolean)tempResult).equals(
+							Boolean.TRUE)) {
+						if (foundTrue == true) {
+							return Boolean.FALSE;
+						} else {
+							foundTrue = true;
 						}
-					} catch (JValueInvalidTypeException exception) {
-						throw new EvaluateException(
-								"Error evaluating Exists! clause", exception);
 					}
 				}
 			}
 			if (foundTrue) {
-				return new JValueImpl(JValueBoolean.getTrueValue());
+				return Boolean.TRUE;
 			}
-			return new JValueImpl(JValueBoolean.getFalseValue());
+			return Boolean.FALSE;
 		case FORALL:
 			while (declarationLayer.iterate(subgraph)) {
-				JValue tempResult = predicateEvaluator.getResult(subgraph);
-				if (tempResult.isBoolean()) {
-					try {
-						if (tempResult.toBoolean().equals(
-								JValueBoolean.getFalseValue())) {
-							return new JValueImpl(JValueBoolean.getFalseValue());
-						}
-					} catch (JValueInvalidTypeException exception) {
-						throw new EvaluateException(
-								"Error evaluating Forall clause", exception);
+				Object tempResult = predicateEvaluator.getResult(subgraph);
+				if (tempResult instanceof Boolean) {
+					if (((Boolean)tempResult).equals(
+							Boolean.FALSE)) {
+						return Boolean.FALSE;
 					}
 				}
 			}
-			return new JValueImpl(Boolean.TRUE);
+			return Boolean.TRUE;
 		default:
 			throw new EvaluateException(
 					"Found QuantifiedExpression that is neither exists, exists!, nor forall");

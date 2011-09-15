@@ -69,7 +69,7 @@ public class DoubleLiteralEvaluator extends VertexEvaluator {
 	}
 
 	@Override
-	public Object evaluate() throws EvaluateException {
+	public Double evaluate() throws EvaluateException {
 		return vertex.get_doubleValue();
 	}
 

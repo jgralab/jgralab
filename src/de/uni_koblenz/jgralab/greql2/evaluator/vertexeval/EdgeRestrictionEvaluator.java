@@ -150,7 +150,7 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator {
 			// System.out.println("Found a BooleanPredicateOfEdge");
 			predicateEvaluator = vertexEvalMarker.getMark(predInc.getAlpha());
 		}
-		return new JValueImpl();
+		return null;
 	}
 
 	@Override

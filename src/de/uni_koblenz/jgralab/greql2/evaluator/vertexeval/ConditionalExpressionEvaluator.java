@@ -106,7 +106,7 @@ public class ConditionalExpressionEvaluator extends VertexEvaluator {
 					.getMark(expressionToEvaluate);
 			result = exprEvaluator.getResult(subgraph);
 		} else {
-			result = new JValueImpl();
+			result = null;
 		}
 		return result;
 	}
