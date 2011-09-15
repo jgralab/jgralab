@@ -42,6 +42,7 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
+import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 
 /**
  * This transition accepts only one edge. Because this edge may be a variable or
@@ -177,7 +178,7 @@ public class EdgeTransition extends SimpleTransition {
 	 *            be accepted
 	 */
 	public EdgeTransition(State start, State end, AllowedEdgeDirection dir,
-			JValueTypeCollection typeCollection, Set<String> roles,
+			TypeCollection typeCollection, Set<String> roles,
 			VertexEvaluator edgeEval, VertexEvaluator predicateEval,
 			GraphMarker<VertexEvaluator> graphMarker) {
 		super(start, end, dir, typeCollection, roles, predicateEval,
@@ -198,17 +199,13 @@ public class EdgeTransition extends SimpleTransition {
 		}
 		// checks if only one edge is allowed an if e is this allowed edge
 		if (allowedEdgeEvaluator != null) {
-			try {
-				Edge allowedEdge = allowedEdgeEvaluator.getResult(####TODO#### subgraph)
-						.toEdge().getNormalEdge();
-				if (e.getNormalEdge() != allowedEdge) {
-					return false;
-				}
-			} catch (JValueInvalidTypeException ex) {
-				throw new EvaluateException(
-						"EdgeExpression in EdgePathDescription doesn't evaluate to edge",
-						ex);
+			
+			Edge allowedEdge = ((Edge)allowedEdgeEvaluator.getResult(####TODO#### subgraph)
+					).getNormalEdge();
+			if (e.getNormalEdge() != allowedEdge) {
+				return false;
 			}
+			
 		}
 		return true;
 	}

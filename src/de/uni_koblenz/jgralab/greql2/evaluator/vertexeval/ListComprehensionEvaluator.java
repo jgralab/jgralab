@@ -40,6 +40,7 @@ import java.util.List;
 
 import org.pcollections.ArrayPVector;
 import org.pcollections.PCollection;
+import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
@@ -47,6 +48,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.schema.ListComprehension;
 import de.uni_koblenz.jgralab.greql2.schema.IsTableHeaderOf;
+import de.uni_koblenz.jgralab.greql2.types.Table;
 
 /**
  * Evaluates a ListComprehensionvertex in the GReQL-2 Syntaxgraph
@@ -104,11 +106,12 @@ public class ListComprehensionEvaluator extends ComprehensionEvaluator {
 			}
 		}
 		if (createHeader) {
-			JValueTuple headerTuple = new JValueTuple();
+			PVector<String> headerTuple = ArrayPVector.empty();
 			for (VertexEvaluator headerEvaluator : headerEvaluators) {
-				headerTuple.add(headerEvaluator.getResult(subgraph));
+				headerTuple = headerTuple.plus((String) headerEvaluator.getResult(subgraph));
 			}
-			return new JValueTable(headerTuple, false);
+			Table<Object> table = Table.empty();
+			return table.withTitles(headerTuple);
 		}
 		return ArrayPVector.empty();
 	}
