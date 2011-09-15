@@ -1,7 +1,6 @@
 package de.uni_koblenz.jgralab.greql2.funlib.collections;
 
-import org.pcollections.PSet;
-import org.pcollections.PVector;
+import org.pcollections.PCollection;
 
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
@@ -16,11 +15,7 @@ public class Contains extends Function {
 				2, 1, 0.2, Category.COLLECTIONS_AND_MAPS);
 	}
 
-	public <T> Boolean evaluate(PVector<T> s, T el) {
-		return s.contains(el);
-	}
-
-	public <T> Boolean evaluate(PSet<T> s, T el) {
+	public <T> Boolean evaluate(PCollection<T> s, T el) {
 		return s.contains(el);
 	}
 

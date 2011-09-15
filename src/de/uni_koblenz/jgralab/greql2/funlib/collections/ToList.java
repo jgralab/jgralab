@@ -8,6 +8,8 @@ import org.pcollections.PCollection;
 import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
+import de.uni_koblenz.jgralab.greql2.types.Table;
+import de.uni_koblenz.jgralab.greql2.types.Tuple;
 
 public class ToList extends Function {
 
@@ -16,12 +18,19 @@ public class ToList extends Function {
 				Category.COLLECTIONS_AND_MAPS);
 	}
 
+	public PVector<Object> evaluate(Tuple t) {
+		return t.toPVector();
+	}
+
 	public <T> PVector<T> evaluate(PCollection<T> l) {
 		if (l instanceof ArrayPVector) {
 			return (PVector<T>) l;
 		}
 		if (l instanceof ArrayPSet) {
 			return ((ArrayPSet<T>) l).toPVector();
+		}
+		if (l instanceof Table) {
+			return ((Table<T>) l).toPVector();
 		}
 		PVector<T> result = ArrayPVector.empty();
 		return result.plusAll(l);
