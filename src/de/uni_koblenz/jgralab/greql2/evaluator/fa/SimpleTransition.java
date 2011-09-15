@@ -44,11 +44,8 @@ import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ThisEdgeEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 import de.uni_koblenz.jgralab.greql2.schema.ThisEdge;
+import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 
@@ -68,7 +65,7 @@ public class SimpleTransition extends Transition {
 	/**
 	 * The collection of types that are accepted by this transition
 	 */
-	protected JValueTypeCollection typeCollection;
+	protected TypeCollection typeCollection;
 
 	/**
 	 * an edge may have valid roles. This set holds the valid roles at the other
@@ -169,7 +166,7 @@ public class SimpleTransition extends Transition {
 	protected SimpleTransition(SimpleTransition t, boolean addToStates) {
 		super(t, addToStates);
 		validDirection = t.validDirection;
-		typeCollection = new JValueTypeCollection(t.typeCollection);
+		typeCollection = new TypeCollection(t.typeCollection);
 		predicateEvaluator = t.predicateEvaluator;
 		thisEdgeEvaluator = t.thisEdgeEvaluator;
 		validToEdgeRoles = t.validToEdgeRoles;
@@ -200,7 +197,7 @@ public class SimpleTransition extends Transition {
 	public SimpleTransition(State start, State end, AllowedEdgeDirection dir) {
 		super(start, end);
 		validDirection = dir;
-		this.typeCollection = new JValueTypeCollection();
+		this.typeCollection = new TypeCollection();
 	}
 
 	/**
@@ -223,7 +220,7 @@ public class SimpleTransition extends Transition {
 	 *            accepted
 	 */
 	public SimpleTransition(State start, State end, AllowedEdgeDirection dir,
-			JValueTypeCollection typeCollection, Set<String> roles,
+			TypeCollection typeCollection, Set<String> roles,
 			VertexEvaluator predicateEvaluator,
 			GraphMarker<VertexEvaluator> graphMarker) {
 		super(start, end);
@@ -342,16 +339,12 @@ public class SimpleTransition extends Transition {
 		// checks if a boolean expression exists and if it evaluates to true
 		if (predicateEvaluator != null) {
 			if (thisEdgeEvaluator != null) {
-				thisEdgeEvaluator.setValue(new JValueImpl(e));
+				thisEdgeEvaluator.setValue(e);
 			}
-			JValue res = predicateEvaluator.getResult(subgraph);
-			if (res.isBoolean()) {
-				try {
-					if (res.toBoolean().equals(Boolean.TRUE)) {
-						return true;
-					}
-				} catch (JValueInvalidTypeException ex) {
-					ex.printStackTrace();
+			Object res = predicateEvaluator.getResult(subgraph);
+			if (res instanceof Boolean) {
+				if (((Boolean)res).equals(Boolean.TRUE)) {
+					return true;
 				}
 			}
 			return false;

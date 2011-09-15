@@ -39,7 +39,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
+import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
 /**
@@ -55,7 +55,7 @@ public class VertexTypeRestrictionTransition extends Transition {
 	 * The type collection that toggles which types are accepted and which are
 	 * not
 	 */
-	private JValueTypeCollection typeCollection;
+	private TypeCollection typeCollection;
 
 	/**
 	 * returns true if this transition and the given transition t accept the
@@ -85,7 +85,7 @@ public class VertexTypeRestrictionTransition extends Transition {
 	 *            The typeIds which restricts the possible start vertices
 	 */
 	public VertexTypeRestrictionTransition(State start, State end,
-			JValueTypeCollection typeCollection) {
+			TypeCollection typeCollection) {
 		super(start, end);
 		this.typeCollection = typeCollection;
 	}
@@ -96,7 +96,7 @@ public class VertexTypeRestrictionTransition extends Transition {
 	protected VertexTypeRestrictionTransition(
 			VertexTypeRestrictionTransition t, boolean addToStates) {
 		super(t, addToStates);
-		typeCollection = new JValueTypeCollection(t.typeCollection);
+		typeCollection = new TypeCollection(t.typeCollection);
 	}
 
 	/**
