@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>de.uni_koblenz.ist</groupId>
+  <artifactId>jgralab</artifactId>
+  <version>5.0.0-SNAPSHOT</version>
+  <name>JGraLab</name>
+  <description>
+    A high-performance TGraph library.
+    See http://jgralab.uni-koblenz.de
+  </description>
+  <repositories>
+    <repository>
+      <id>clojars</id>
+      <url>http://clojars.org/repo/</url>
+    </repository>
+  </repositories>
+</project>
