@@ -43,8 +43,6 @@ import de.uni_koblenz.jgralab.greql2.Greql2Serializer;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ThisVertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.schema.ThisVertex;
 
 /**
@@ -139,10 +137,10 @@ public class BoolExpressionTransition extends Transition {
 	public boolean accepts(Vertex v, Edge e, SubGraphMarker subgraph)
 			throws EvaluateException {
 		if (thisVertexEvaluator != null) {
-			thisVertexEvaluator.setValue(new JValueImpl(v));
+			thisVertexEvaluator.setValue(v);
 		}
-		JValue res = boolExpressionEvaluator.getResult(subgraph);
-		if (res.isBoolean() && res.toBoolean().equals(Boolean.TRUE)) {
+		Object res = boolExpressionEvaluator.getResult(subgraph);
+		if (res instanceof Boolean && ((Boolean)res).equals(Boolean.TRUE)) {
 			return true;
 		}
 		return false;

@@ -40,9 +40,7 @@ import java.util.List;
 import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongResultTypeException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 
 /**
@@ -222,22 +220,18 @@ public class VariableDeclarationLayer {
 		}
 		for (int i = 0; i < constraintList.size(); i++) {
 			VertexEvaluator currentEval = constraintList.get(i);
-			JValue tempResult = currentEval.getResult(subgraph);
-			try {
-				if (tempResult.isBoolean()) {
-					if (tempResult.toBoolean() != Boolean.TRUE) {
-						return false;
-					}
-				} else {
-					throw new WrongResultTypeException(currentEval.getVertex(),
-							"Boolean", tempResult.getClass().getSimpleName(),
-							currentEval.createPossibleSourcePositions());
+			Object tempResult = currentEval.getResult(subgraph);
+		
+			if (tempResult instanceof Boolean) {
+				if ((Boolean)tempResult != Boolean.TRUE) {
+					return false;
 				}
-			} catch (JValueInvalidTypeException ex) {
+			} else {
 				throw new WrongResultTypeException(currentEval.getVertex(),
 						"Boolean", tempResult.getClass().getSimpleName(),
 						currentEval.createPossibleSourcePositions());
 			}
+			
 		}
 		return true;
 	}

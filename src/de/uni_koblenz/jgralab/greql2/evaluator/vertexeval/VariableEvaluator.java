@@ -49,8 +49,6 @@ import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Definition;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Aggregation;
@@ -87,7 +85,7 @@ public class VariableEvaluator extends VertexEvaluator {
 	/**
 	 * This is the value that has been set from outside
 	 */
-	private JValue variableValue = new JValueImpl();
+	private Object variableValue;
 
 	/**
 	 * This is the estimated cardinality of the definitionset of this variable
@@ -100,7 +98,7 @@ public class VariableEvaluator extends VertexEvaluator {
 	 * 
 	 * @param variableValue2
 	 */
-	public void setValue(JValue variableValue2) {
+	public void setValue(Object variableValue2) {
 		if (dependingExpressions == null) {
 			dependingExpressions = calculateDependingExpressions();
 		}
@@ -115,7 +113,7 @@ public class VariableEvaluator extends VertexEvaluator {
 	/**
 	 * returns the variableValue
 	 */
-	public JValue getValue() {
+	public Object getValue() {
 		return variableValue;
 	}
 
@@ -131,12 +129,12 @@ public class VariableEvaluator extends VertexEvaluator {
 	}
 
 	@Override
-	public JValue evaluate() throws EvaluateException {
+	public Object evaluate() throws EvaluateException {
 		return variableValue;
 	}
 
 	@Override
-	public JValue getResult(SubGraphMarker subgraphMarker)
+	public Object getResult(SubGraphMarker subgraphMarker)
 			throws EvaluateException {
 		return variableValue;
 	}

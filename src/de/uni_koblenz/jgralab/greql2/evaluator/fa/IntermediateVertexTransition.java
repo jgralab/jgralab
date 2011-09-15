@@ -35,6 +35,7 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator.fa;
 
+import java.util.Collection;
 import java.util.Iterator;
 
 import de.uni_koblenz.jgralab.Edge;
@@ -43,9 +44,6 @@ import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.Greql2Serializer;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 
 public class IntermediateVertexTransition extends Transition {
 
@@ -136,26 +134,20 @@ public class IntermediateVertexTransition extends Transition {
 		// of e is part of the result of this expression
 
 		if (intermediateVertexEvaluator != null) {
-			JValue tempRes = intermediateVertexEvaluator.getResult(subgraph);
-			try {
-				if (tempRes.isCollection()) {
-					JValueCollection intermediateVertices = tempRes
-							.toCollection();
-					Iterator<JValue> iter = intermediateVertices.iterator();
-					while (iter.hasNext()) {
-						if (iter.next().toVertex().equals(v)) {
-							return true;
-						}
-					}
-				} else {
-					Vertex intermediateVertex = tempRes.toVertex();
-					if (v == intermediateVertex) {
+			Object tempRes = intermediateVertexEvaluator.getResult(subgraph);		
+			if (tempRes instanceof Collection<?>) {
+				Collection<Vertex> intermediateVertices = (Collection<Vertex>)tempRes;
+				Iterator<Vertex> iter = intermediateVertices.iterator();
+				while (iter.hasNext()) {
+					if (iter.next().equals(v)) {
 						return true;
 					}
 				}
-			} catch (JValueInvalidTypeException exception) {
-				throw new EvaluateException("Error in Transition.accept : "
-						+ exception.toString());
+			} else {
+				Vertex intermediateVertex = (Vertex)tempRes;
+				if (v == intermediateVertex) {
+					return true;
+				}
 			}
 		}
 		return false;

@@ -45,7 +45,7 @@ import java.util.Set;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
+import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 
 /**
  * this class models a nondeterministic finite automaton. It created during
@@ -308,7 +308,7 @@ public class NFA extends FiniteAutomaton {
 	 */
 	public static NFA createEdgePathDescriptionNFA(
 			Transition.AllowedEdgeDirection dir,
-			JValueTypeCollection typeCollection, Set<String> roles,
+			TypeCollection typeCollection, Set<String> roles,
 			VertexEvaluator edgeEval, VertexEvaluator predicateEvaluator,
 			GraphMarker<VertexEvaluator> marker) {
 		NFA nfa = new NFA();
@@ -329,7 +329,7 @@ public class NFA extends FiniteAutomaton {
 	 */
 	public static NFA createSimplePathDescriptionNFA(
 			Transition.AllowedEdgeDirection dir,
-			JValueTypeCollection typeCollection, Set<String> roles,
+			TypeCollection typeCollection, Set<String> roles,
 			VertexEvaluator predicateEvaluator,
 			GraphMarker<VertexEvaluator> marker) {
 		NFA nfa = new NFA();
@@ -349,7 +349,7 @@ public class NFA extends FiniteAutomaton {
 	 * EdgeRestrictions (RoleId, TypeId) are modeled in the Transition.
 	 */
 	public static NFA createAggregationPathDescriptionNFA(
-			boolean aggregateFrom, JValueTypeCollection typeCollection,
+			boolean aggregateFrom, TypeCollection typeCollection,
 			Set<String> roles, VertexEvaluator predicateEvaluator,
 			GraphMarker<VertexEvaluator> marker) {
 		NFA nfa = new NFA();
@@ -391,7 +391,7 @@ public class NFA extends FiniteAutomaton {
 	 *            The allowed types of the goal vertex
 	 */
 	public static void addGoalTypeRestriction(NFA nfa,
-			JValueTypeCollection typeCollection) throws EvaluateException {
+			TypeCollection typeCollection) throws EvaluateException {
 		State newEndState;
 		if (nfa.finalStates.size() == 1) {
 			newEndState = nfa.finalStates.get(0);
@@ -476,7 +476,7 @@ public class NFA extends FiniteAutomaton {
 	 *            The allowed types of the start vertex
 	 */
 	public static void addStartTypeRestriction(NFA nfa,
-			JValueTypeCollection typeCollection) throws EvaluateException {
+			TypeCollection typeCollection) throws EvaluateException {
 		State newInitialState = new State();
 		nfa.stateList.add(newInitialState);
 		VertexTypeRestrictionTransition trans = new VertexTypeRestrictionTransition(

@@ -35,16 +35,14 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator;
 
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.Set;
 
 import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VariableEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
 
@@ -61,7 +59,7 @@ public class VariableDeclaration {
 	/**
 	 * Holds the set of possible values the variable may have
 	 */
-	private JValueCollection definitionSet;
+	private Collection definitionSet;
 
 	private SubGraphMarker subgraph;
 
@@ -82,7 +80,7 @@ public class VariableDeclaration {
 	/**
 	 * Used for simple Iteration over the possible values
 	 */
-	private Iterator<JValue> iter = null;
+	private Iterator<Object> iter = null;
 
 	/**
 	 * Creates a new VariableDeclaration for the given Variable and the given
@@ -147,7 +145,7 @@ public class VariableDeclaration {
 	 * returns the current value of the represented variable. used only for
 	 * debugging
 	 */
-	public JValue getVariableValue() {
+	public Object getVariableValue() {
 		return variableEval.getValue();
 	}
 
@@ -157,11 +155,12 @@ public class VariableDeclaration {
 	protected void reset() {
 		iterationNumber = 0;
 		variableEval.setValue(null);
-		JValue tempAttribute = definitionSetEvaluator.getResult(subgraph);
-		if (tempAttribute.isCollection()) {
+		Object tempAttribute = definitionSetEvaluator.getResult(subgraph);
+		if (tempAttribute instanceof Collection) {
+			//TODO [removejvalue] fragen ob jetzt nur set Ÿbergeben und es dann keine evaluate exception mehr gibt
 			try {
-				JValueCollection col = tempAttribute.toCollection();
-				definitionSet = col.toJValueSet();
+				Collection col = (Collection) tempAttribute;
+				definitionSet = (Set)col;
 				if (col.size() > definitionSet.size()) {
 					throw new EvaluateException(
 							"A collection that doesn't fulfill the set property is used as variable range definition");
