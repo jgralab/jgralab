@@ -38,14 +38,13 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.pcollections.ArrayPVector;
+import org.pcollections.PCollection;
+
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueTable;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueTuple;
 import de.uni_koblenz.jgralab.greql2.schema.ListComprehension;
 import de.uni_koblenz.jgralab.greql2.schema.IsTableHeaderOf;
 
@@ -89,7 +88,7 @@ public class ListComprehensionEvaluator extends ComprehensionEvaluator {
 	private List<VertexEvaluator> headerEvaluators = null;
 
 	@Override
-	protected JValueCollection getResultDatastructure() {
+	protected PCollection<Object> getResultDatastructure() {
 		if (createHeader == null) {
 			if (vertex.getFirstIsTableHeaderOfIncidence(EdgeDirection.IN) != null) {
 				headerEvaluators = new ArrayList<VertexEvaluator>();
@@ -111,7 +110,7 @@ public class ListComprehensionEvaluator extends ComprehensionEvaluator {
 			}
 			return new JValueTable(headerTuple, false);
 		}
-		return new JValueList();
+		return ArrayPVector.empty();
 	}
 
 	@Override

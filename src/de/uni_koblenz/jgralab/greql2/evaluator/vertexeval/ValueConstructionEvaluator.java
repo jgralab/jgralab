@@ -37,11 +37,11 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import java.util.ArrayList;
 
+import org.pcollections.PCollection;
+
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.IsPartOf;
@@ -73,7 +73,7 @@ abstract public class ValueConstructionEvaluator extends VertexEvaluator {
 		this.vertex = vertex;
 	}
 
-	public final JValueImpl createValue(JValueCollection collection)
+	public final PCollection<Object> createValue(PCollection<Object> collection)
 			throws EvaluateException {
 		if (partEvaluators == null) {
 			int partCount = 0;
@@ -93,7 +93,7 @@ abstract public class ValueConstructionEvaluator extends VertexEvaluator {
 			}
 		}
 		for (int i = 0; i < partEvaluators.size(); i++) {
-			collection.add(partEvaluators.get(i).getResult(subgraph));
+			collection = collection.plus(partEvaluators.get(i).getResult(subgraph));
 		}
 		return collection;
 	}

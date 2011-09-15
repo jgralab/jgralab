@@ -37,6 +37,10 @@
  */
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
+import org.pcollections.PCollection;
+import org.pcollections.PMap;
+import org.pcollections.ArrayPMap;
+
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
@@ -44,9 +48,6 @@ import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclarationLayer;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueMap;
 import de.uni_koblenz.jgralab.greql2.schema.Comprehension;
 import de.uni_koblenz.jgralab.greql2.schema.MapComprehension;
 
@@ -84,10 +85,10 @@ public class MapComprehensionEvaluator extends ComprehensionEvaluator {
 	 * ()
 	 */
 	@Override
-	public JValue evaluate() throws EvaluateException {
+	public Object evaluate() throws EvaluateException {
 		VariableDeclarationLayer declLayer = getVariableDeclationLayer();
 
-		JValueMap resultMap = new JValueMap();
+		PMap<Object,Object> resultMap = ArrayPMap.empty();
 
 		Vertex key = vertex.getFirstIsKeyExprOfComprehensionIncidence(
 				EdgeDirection.IN).getAlpha();
@@ -97,9 +98,9 @@ public class MapComprehensionEvaluator extends ComprehensionEvaluator {
 		VertexEvaluator valEval = vertexEvalMarker.getMark(val);
 		declLayer.reset();
 		while (declLayer.iterate(subgraph)) {
-			JValue jkey = keyEval.getResult(subgraph);
-			JValue jval = valEval.getResult(subgraph);
-			resultMap.put(jkey, jval);
+			Object jkey = keyEval.getResult(subgraph);
+			Object jval = valEval.getResult(subgraph);
+			resultMap = resultMap.plus(jkey, jval);
 		}
 		return resultMap;
 	}
@@ -123,7 +124,7 @@ public class MapComprehensionEvaluator extends ComprehensionEvaluator {
 	}
 
 	@Override
-	protected JValueCollection getResultDatastructure() {
+	protected PCollection<Object> getResultDatastructure() {
 		return null;
 	}
 

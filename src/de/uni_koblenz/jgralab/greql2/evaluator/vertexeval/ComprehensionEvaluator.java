@@ -82,7 +82,7 @@ public abstract class ComprehensionEvaluator extends VertexEvaluator {
 	}
 
 	@Override
-	public PCollection<Object> evaluate() throws EvaluateException {
+	public Object evaluate() throws EvaluateException {
 		VariableDeclarationLayer declLayer = getVariableDeclationLayer();
 		VertexEvaluator resultDefEval = getResultDefinitionEvaluator();
 		PCollection<Object> resultCollection = getResultDatastructure();
