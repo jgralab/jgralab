@@ -90,18 +90,18 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 			addImports("de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator");
 
 			code.add(new CodeSnippet(
-					"\n\tprotected GreqlEvaluator greqlEvaluator = null;\n",
-					"@SuppressWarnings(\"unchecked\") ",
-					"@Override ",
-					"public synchronized <T extends Vertex> Set<T> reachableVertices(Vertex startVertex, String pathDescription, Class<T> vertexType) { ",
-					"\tif (greqlEvaluator == null) { ",
-					"\t\tgreqlEvaluator = new GreqlEvaluator((String) null, this, null); ",
-					"\t} ",
-					"\tgreqlEvaluator.setVariable(\"v\", startVertex); ",
-					"\tgreqlEvaluator.setQuery(\"using v: v \" + pathDescription); ",
-					"\tgreqlEvaluator.startEvaluation(); ",
-					"\treturn (Set<T>)greqlEvaluator.getEvaluationResult(); ",
-					"}"));
+					"\n\tprotected GreqlEvaluator greqlEvaluator;\n",
+					"@Override",
+					"public synchronized <T extends Vertex> Set<T> reachableVertices(Vertex startVertex, String pathDescription, Class<T> vertexType) {",
+					"\tif (greqlEvaluator == null) {",
+					"\t\tgreqlEvaluator = new GreqlEvaluator((String) null, this, null);",
+					"\t}",
+					"\tgreqlEvaluator.setVariable(\"v\", startVertex);",
+					"\tgreqlEvaluator.setQuery(\"using v: v \" + pathDescription);",
+					"\tgreqlEvaluator.startEvaluation();",
+					"\t@SuppressWarnings(\"unchecked\") ",
+					"\tSet<T> result = (Set<T>)greqlEvaluator.getEvaluationResult();",
+					"\treturn result;", "}"));
 		}
 		code.add(createGraphElementClassMethods());
 		code.add(createEdgeIteratorMethods());
