@@ -934,7 +934,7 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex 
 	 * java.lang.Class)
 	 */
 	@Override
-	public <T extends Vertex> List<T> reachableVertices(String pathDescription,
+	public <T extends Vertex> Set<T> reachableVertices(String pathDescription,
 			Class<T> vertexType) {
 		return graph.reachableVertices(this, pathDescription, vertexType);
 	}

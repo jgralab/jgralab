@@ -36,7 +36,7 @@
 package de.uni_koblenz.jgralab;
 
 import java.util.Comparator;
-import java.util.List;
+import java.util.Set;
 
 import de.uni_koblenz.jgralab.eca.ECARuleManagerInterface;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -392,7 +392,7 @@ public interface Graph extends AttributedElement {
 	 *         from <code>startVertex</code> using the given
 	 *         <code>pathDescription</code>
 	 */
-	public <T extends Vertex> List<T> reachableVertices(Vertex startVertex,
+	public <T extends Vertex> Set<T> reachableVertices(Vertex startVertex,
 			String pathDescription, Class<T> vertexType);
 
 	/**
