@@ -37,9 +37,7 @@ package de.uni_koblenz.jgralab.greql2.evaluator.fa;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
 /**
@@ -139,8 +137,7 @@ public class VertexTypeRestrictionTransition extends Transition {
 	 * @return true if the transition can fire with e, false otherwise
 	 */
 	@Override
-	public boolean accepts(Vertex v, Edge e, SubGraphMarker subgraph)
-			throws EvaluateException {
+	public boolean accepts(Vertex v, Edge e) throws EvaluateException {
 		// it is not neccessary to check if the vertex belongs to a special
 		// subgraph, because if it does not, this method will not be called and
 		// there is no edge connected to this vertex wich belongs to the

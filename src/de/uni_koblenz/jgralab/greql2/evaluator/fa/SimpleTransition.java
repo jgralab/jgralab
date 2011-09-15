@@ -40,14 +40,9 @@ import java.util.Set;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
-import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ThisEdgeEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 import de.uni_koblenz.jgralab.greql2.schema.ThisEdge;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -273,8 +268,7 @@ public class SimpleTransition extends Transition {
 	 * greql2.evaluator.SubgraphTempAttribute)
 	 */
 	@Override
-	public boolean accepts(Vertex v, Edge e, SubGraphMarker subgraph)
-			throws EvaluateException {
+	public boolean accepts(Vertex v, Edge e) throws EvaluateException {
 		if (e == null) {
 			return false;
 		}
@@ -284,15 +278,6 @@ public class SimpleTransition extends Transition {
 			}
 		} else if (validDirection == AllowedEdgeDirection.IN) {
 			if (e.isNormal()) {
-				return false;
-			}
-		}
-
-		// checks if the subgraphattribute is set and if the edge belongs to
-		// this subgraph (if the edge belongs to it, also the endvertex must
-		// belong to it)
-		if (subgraph != null) {
-			if (!subgraph.isMarked(e)) {
 				return false;
 			}
 		}
@@ -344,7 +329,7 @@ public class SimpleTransition extends Transition {
 			if (thisEdgeEvaluator != null) {
 				thisEdgeEvaluator.setValue(new JValueImpl(e));
 			}
-			JValue res = predicateEvaluator.getResult(subgraph);
+			JValue res = predicateEvaluator.getResult(####TODO#### subgraph);
 			if (res.isBoolean()) {
 				try {
 					if (res.toBoolean().equals(Boolean.TRUE)) {
