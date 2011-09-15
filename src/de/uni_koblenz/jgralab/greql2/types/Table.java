@@ -24,7 +24,7 @@ public class Table<T> implements PCollection<T> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <E> Table<E> empty() {
+	public static <E> Table<E> empty() {
 		return (Table<E>) empty;
 	}
 

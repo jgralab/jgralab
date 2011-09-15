@@ -135,10 +135,10 @@ public class BoolExpressionTransition extends Transition {
 	@Override
 	public boolean accepts(Vertex v, Edge e) throws EvaluateException {
 		if (thisVertexEvaluator != null) {
-			thisVertexEvaluator.setValue(new JValueImpl(v));
+			thisVertexEvaluator.setValue(v);
 		}
-		JValue res = boolExpressionEvaluator.getResult(####TODO#### subgraph);
-		if (res.isBoolean() && res.toBoolean().equals(Boolean.TRUE)) {
+		Object res = boolExpressionEvaluator.getResult(####TODO#### subgraph);
+		if (res instanceof Boolean && ((Boolean)res).equals(Boolean.TRUE)) {
 			return true;
 		}
 		return false;
