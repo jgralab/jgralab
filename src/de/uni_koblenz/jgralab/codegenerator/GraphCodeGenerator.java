@@ -85,40 +85,23 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 			rootBlock.setVariable("baseClassName", "GraphImpl");
 
 			// for Vertex.reachableVertices()
-			addImports("java.util.List");
+			addImports("java.util.Set");
 			addImports("de.uni_koblenz.jgralab.Vertex");
-			// addImports("de.uni_koblenz.jgralab.greql2.jvalue.JValue");
-			// addImports("de.uni_koblenz.jgralab.greql2.jvalue.JValueSet");
-			// addImports("de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl");
 			addImports("de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator");
 
-			// code.add(new CodeSnippet(
-			// "\n\tprotected GreqlEvaluator greqlEvaluator = null;\n",
-			// "@SuppressWarnings(\"unchecked\") ",
-			// "@Override ",
-			// "public synchronized <T extends Vertex> List<T> reachableVertices(Vertex startVertex, String pathDescription, Class<T> vertexType) { ",
-			// "\tif (greqlEvaluator == null) { ",
-			// "\t\tgreqlEvaluator = new GreqlEvaluator((String) null, this, null); ",
-			// "\t} ",
-			// "\tgreqlEvaluator.setVariable(\"v\", new JValueImpl(startVertex)); ",
-			// "\tgreqlEvaluator.setQuery(\"using v: v \" + pathDescription); ",
-			// "\tgreqlEvaluator.startEvaluation(); ",
-			// "\tJValueSet rs = greqlEvaluator.getEvaluationResult().toJValueSet(); ",
-			// "\tjava.util.List<T> lst = new java.util.LinkedList<T>(); ",
-			// "\tfor (JValue jv : rs) { ",
-			// "\t\tVertex v = jv.toVertex();",
-			// "\t\tif (vertexType.isInstance(v)) {",
-			// "\t\t\tlst.add((T) v);", "\t\t}", "\t}", "\treturn lst; ",
-			// "}"));
-			// for Vertex.reachableVertices()
-
-			// TODO [removejvalue] replace by correct function...
 			code.add(new CodeSnippet(
 					"\n\tprotected GreqlEvaluator greqlEvaluator = null;\n",
 					"@SuppressWarnings(\"unchecked\") ",
 					"@Override ",
-					"public synchronized <T extends Vertex> List<T> reachableVertices(Vertex startVertex, String pathDescription, Class<T> vertexType) { ",
-					"\treturn null;" + "}"));
+					"public synchronized <T extends Vertex> Set<T> reachableVertices(Vertex startVertex, String pathDescription, Class<T> vertexType) { ",
+					"\tif (greqlEvaluator == null) { ",
+					"\t\tgreqlEvaluator = new GreqlEvaluator((String) null, this, null); ",
+					"\t} ",
+					"\tgreqlEvaluator.setVariable(\"v\", startVertex); ",
+					"\tgreqlEvaluator.setQuery(\"using v: v \" + pathDescription); ",
+					"\tgreqlEvaluator.startEvaluation(); ",
+					"\treturn (Set<T>)greqlEvaluator.getEvaluationResult(); ",
+					"}"));
 		}
 		code.add(createGraphElementClassMethods());
 		code.add(createEdgeIteratorMethods());

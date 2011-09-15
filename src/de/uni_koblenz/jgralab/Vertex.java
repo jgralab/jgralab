@@ -272,7 +272,7 @@ public interface Vertex extends GraphElement {
 	 *            as implicit GoalRestriction)
 	 * @return a List of the reachable vertices
 	 */
-	public <T extends Vertex> List<T> reachableVertices(String pathDescription,
+	public <T extends Vertex> Set<T> reachableVertices(String pathDescription,
 			Class<T> vertexType);
 
 	/**
