@@ -122,8 +122,7 @@ public class IntermediateVertexTransition extends Transition {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see greql2.evaluator.fa.Transition#accepts(jgralab.Vertex, jgralab.Edge,
-	 * greql2.evaluator.SubgraphTempAttribute)
+	 * @see greql2.evaluator.fa.Transition#accepts(jgralab.Vertex, jgralab.Edge)
 	 */
 	@Override
 	public boolean accepts(Vertex v, Edge e) throws EvaluateException {
@@ -131,7 +130,7 @@ public class IntermediateVertexTransition extends Transition {
 		// of e is part of the result of this expression
 
 		if (intermediateVertexEvaluator != null) {
-			JValue tempRes = intermediateVertexEvaluator.getResult(####TODO#### subgraph);
+			JValue tempRes = intermediateVertexEvaluator.getResult();
 			try {
 				if (tempRes.isCollection()) {
 					JValueCollection intermediateVertices = tempRes

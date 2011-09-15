@@ -128,11 +128,7 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator {
 			while (typeInc != null) {
 				TypeIdEvaluator typeEval = (TypeIdEvaluator) vertexEvalMarker
 						.getMark(typeInc.getAlpha());
-				
-				// GreqlEvaluator.println("Adding types: " +
-				// typeEval.getResult(subgraph).toJValueTypeCollection());
-				typeCollection.addTypes((TypeCollection)typeEval.getResult(subgraph));
-			
+				typeCollection.addTypes((TypeCollection) typeEval.getResult());
 				typeInc = typeInc.getNextIsTypeIdOf(EdgeDirection.IN);
 			}
 		}

@@ -125,8 +125,8 @@ public class DeclarationEvaluator extends VertexEvaluator {
 			SimpleDeclaration simpleDecl = (SimpleDeclaration) inc.getAlpha();
 			SimpleDeclarationEvaluator simpleDeclEval = (SimpleDeclarationEvaluator) vertexEvalMarker
 					.getMark(simpleDecl);
-			Object simpleResult = simpleDeclEval.getResult(newSubgraph);
-			PCollection<Object> resultCollection = (PCollection<Object>)simpleResult;
+			Object simpleResult = simpleDeclEval.getResult();
+			PCollection<Object> resultCollection = (PCollection<Object>) simpleResult;
 			for (Object v : resultCollection) {
 				varDeclList.add((VariableDeclaration) v);
 			}

@@ -93,7 +93,7 @@ abstract public class ValueConstructionEvaluator extends VertexEvaluator {
 			}
 		}
 		for (int i = 0; i < partEvaluators.size(); i++) {
-			collection = collection.plus(partEvaluators.get(i).getResult(subgraph));
+			collection = collection.plus(partEvaluators.get(i).getResult());
 		}
 		return collection;
 	}

@@ -93,8 +93,7 @@ public class QuantifiedExpressionEvaluator extends VertexEvaluator {
 				.getAlpha();
 		DeclarationEvaluator declEval = (DeclarationEvaluator) vertexEvalMarker
 				.getMark(d);
-		declarationLayer = (VariableDeclarationLayer) declEval.getResult(
-				subgraph);
+		declarationLayer = (VariableDeclarationLayer) declEval.getResult();
 		Quantifier quantifier = (Quantifier) vertex
 				.getFirstIsQuantifierOfIncidence(EdgeDirection.IN).getAlpha();
 		quantificationType = quantifier.get_type();
@@ -117,21 +116,20 @@ public class QuantifiedExpressionEvaluator extends VertexEvaluator {
 		declarationLayer.reset();
 		switch (quantificationType) {
 		case EXISTS:
-			while (declarationLayer.iterate(subgraph)) {
-				Object tempResult = predicateEvaluator.getResult(subgraph);
+			while (declarationLayer.iterate()) {
+				Object tempResult = predicateEvaluator.getResult();
 				if (tempResult instanceof Boolean) {
-					if (((Boolean)tempResult) == Boolean.TRUE) {
+					if (((Boolean) tempResult) == Boolean.TRUE) {
 						return Boolean.TRUE;
 					}
 				}
 			}
 			return Boolean.FALSE;
 		case EXISTSONE:
-			while (declarationLayer.iterate(subgraph)) {
-				Object tempResult = predicateEvaluator.getResult(subgraph);
+			while (declarationLayer.iterate()) {
+				Object tempResult = predicateEvaluator.getResult();
 				if (tempResult instanceof Boolean) {
-					if (((Boolean)tempResult).equals(
-							Boolean.TRUE)) {
+					if (((Boolean) tempResult).equals(Boolean.TRUE)) {
 						if (foundTrue == true) {
 							return Boolean.FALSE;
 						} else {
@@ -145,11 +143,10 @@ public class QuantifiedExpressionEvaluator extends VertexEvaluator {
 			}
 			return Boolean.FALSE;
 		case FORALL:
-			while (declarationLayer.iterate(subgraph)) {
-				Object tempResult = predicateEvaluator.getResult(subgraph);
+			while (declarationLayer.iterate()) {
+				Object tempResult = predicateEvaluator.getResult();
 				if (tempResult instanceof Boolean) {
-					if (((Boolean)tempResult).equals(
-							Boolean.FALSE)) {
+					if (((Boolean) tempResult).equals(Boolean.FALSE)) {
 						return Boolean.FALSE;
 					}
 				}

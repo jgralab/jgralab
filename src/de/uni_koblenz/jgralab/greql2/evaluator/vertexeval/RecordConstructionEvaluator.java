@@ -40,8 +40,6 @@ import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueRecord;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.IsRecordElementOf;
 import de.uni_koblenz.jgralab.greql2.schema.RecordConstruction;
@@ -88,8 +86,7 @@ public class RecordConstructionEvaluator extends VertexEvaluator {
 			RecordElement currentElement = (RecordElement) inc.getAlpha();
 			RecordElementEvaluator vertexEval = (RecordElementEvaluator) vertexEvalMarker
 					.getMark(currentElement);
-			resultRecord
-					.add(vertexEval.getId(), vertexEval.getResult(subgraph));
+			resultRecord.add(vertexEval.getId(), vertexEval.getResult());
 			inc = inc.getNextIsRecordElementOf(EdgeDirection.IN);
 		}
 		return resultRecord;

@@ -41,10 +41,6 @@ import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
-import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
@@ -87,7 +83,7 @@ public class PathExistenceEvaluator extends PathSearchEvaluator {
 		Expression startExpression = (Expression) vertex
 				.getFirstIsStartExprOfIncidence(EdgeDirection.IN).getAlpha();
 		VertexEvaluator startEval = vertexEvalMarker.getMark(startExpression);
-		JValue res = startEval.getResult(subgraph);
+		JValue res = startEval.getResult();
 		/**
 		 * check if the result is invalid, this may occur because the
 		 * restrictedExpression may return a null-value
@@ -110,7 +106,7 @@ public class PathExistenceEvaluator extends PathSearchEvaluator {
 				.getFirstIsTargetExprOfIncidence(EdgeDirection.IN).getAlpha();
 		VertexEvaluator targetEval = vertexEvalMarker.getMark(targetExpression);
 		Vertex targetVertex = null;
-		res = targetEval.getResult(subgraph);
+		res = targetEval.getResult();
 		if (!res.isValid()) {
 			return new JValueImpl();
 		}
@@ -137,7 +133,7 @@ public class PathExistenceEvaluator extends PathSearchEvaluator {
 		arguments[1] = new JValueImpl(targetVertex);
 		arguments[2] = new JValueImpl(searchAutomaton);
 
-		JValue tempResult = function.evaluate(graph, subgraph, arguments);
+		JValue tempResult = function.evaluate(arguments);
 		return tempResult;
 	}
 

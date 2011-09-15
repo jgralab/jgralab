@@ -36,13 +36,9 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 import de.uni_koblenz.jgralab.greql2.schema.IsGoalRestrOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsStartRestrOf;
 import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
@@ -79,7 +75,7 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 	 */
 	public NFA getNFA() throws EvaluateException {
 		if (createdNFA == null) {
-			getResult(null);
+			getResult();
 		}
 		return createdNFA;
 	}
@@ -92,7 +88,7 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 	 * @return the result as jvalue
 	 */
 	@Override
-	public JValue getResult(SubGraphMarker subgraph) throws EvaluateException {
+	public JValue getResult() throws EvaluateException {
 		if (createdNFA == null) {
 			result = evaluate();
 			try {

@@ -1161,7 +1161,7 @@ public class GreqlEvaluator {
 
 		long plainEvaluationStartTime = System.currentTimeMillis();
 
-		result = greql2ExpEval.getResult(subgraphMarker);
+		result = greql2ExpEval.getResult();
 
 		// last, remove all added tempAttributes, currently, this are only
 		// subgraphAttributes

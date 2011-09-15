@@ -75,8 +75,7 @@ public abstract class ComprehensionEvaluator extends VertexEvaluator {
 					.getFirstIsCompDeclOfIncidence(EdgeDirection.IN).getAlpha();
 			DeclarationEvaluator declEval = (DeclarationEvaluator) vertexEvalMarker
 					.getMark(d);
-			varDeclLayer = (VariableDeclarationLayer) declEval.getResult(
-					subgraph);
+			varDeclLayer = (VariableDeclarationLayer) declEval.getResult();
 		}
 		return varDeclLayer;
 	}
@@ -87,8 +86,8 @@ public abstract class ComprehensionEvaluator extends VertexEvaluator {
 		VertexEvaluator resultDefEval = getResultDefinitionEvaluator();
 		PCollection<Object> resultCollection = getResultDatastructure();
 		declLayer.reset();
-		while (declLayer.iterate(subgraph)) {
-			Object localResult = resultDefEval.getResult(subgraph);
+		while (declLayer.iterate()) {
+			Object localResult = resultDefEval.getResult();
 			resultCollection = resultCollection.plus(localResult);
 		}
 		return resultCollection;

@@ -265,8 +265,7 @@ public class SimpleTransition extends Transition {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see greql2.evaluator.fa.Transition#accepts(jgralab.Vertex, jgralab.Edge,
-	 * greql2.evaluator.SubgraphTempAttribute)
+	 * @see greql2.evaluator.fa.Transition#accepts(jgralab.Vertex, jgralab.Edge)
 	 */
 	@Override
 	public boolean accepts(Vertex v, Edge e) throws EvaluateException {
@@ -330,7 +329,7 @@ public class SimpleTransition extends Transition {
 			if (thisEdgeEvaluator != null) {
 				thisEdgeEvaluator.setValue(e);
 			}
-			JValue res = predicateEvaluator.getResult(####TODO#### subgraph);
+			JValue res = predicateEvaluator.getResult();
 			if (res.isBoolean()) {
 				try {
 					if (res.toBoolean().equals(Boolean.TRUE)) {
