@@ -6,8 +6,9 @@ import de.uni_koblenz.jgralab.algolib.algorithms.search.DepthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.IterativeDepthFirstSearch;
 import de.uni_koblenz.jgralab.algolib.algorithms.topological_order.TopologicalOrderWithDFS;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
+import de.uni_koblenz.jgralab.greql2.funlib.NeedsGraphArgument;
 
-public class IsAcyclic extends Function {
+public class IsAcyclic extends Function implements NeedsGraphArgument {
 	public IsAcyclic() {
 		super("Returns true iff the graph $g$ is acyclic.", 100, 1, 0.1,
 				Category.GRAPH);

@@ -285,7 +285,7 @@ public class FunLib {
 		}
 	}
 
-	private void register(Class<? extends Function> cls) {
+	public void register(Class<? extends Function> cls) {
 		int mods = cls.getModifiers();
 		if (Modifier.isAbstract(mods) || Modifier.isInterface(mods)
 				|| !Modifier.isPublic(mods)) {
