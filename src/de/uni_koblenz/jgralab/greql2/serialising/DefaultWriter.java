@@ -192,7 +192,6 @@ public class DefaultWriter {
 		cantWrite(a);
 	}
 
-	
 	public void writeState(State s) {
 		cantWrite(s);
 	}

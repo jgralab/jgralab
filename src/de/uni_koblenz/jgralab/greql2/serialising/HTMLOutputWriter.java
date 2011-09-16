@@ -28,7 +28,7 @@ public class HTMLOutputWriter extends DefaultWriter {
 	private String filePath;
 
 	/**
-	 * The graph all elements in the jvalue to visit belong to
+	 * The graph all elements in the value to visit belong to
 	 */
 	private Graph dataGraph = null;
 
@@ -157,7 +157,7 @@ public class HTMLOutputWriter extends DefaultWriter {
 		}
 		storeln("</th></tr>");
 		
-		//TODO find out how to access data of table
+		//TODO find out how to access data of table in a better way
 		for (int i = 0; i < table.toPVector().size();i++) {
 			PCollection<?> row = (PCollection<?>) table.get(i);
 			store("<tr>");
