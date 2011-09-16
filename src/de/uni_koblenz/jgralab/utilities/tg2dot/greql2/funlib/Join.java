@@ -42,7 +42,7 @@ public class Join extends Function {
 
 	public Join() {
 		super(
-				"Returns a string of joined element of a given collection and a delimiter.",
+				"Returns a string of joined element of a given delimiter and a collection.",
 				2, 1, 1.0, Category.STRINGS);
 	}
 
