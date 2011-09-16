@@ -696,6 +696,7 @@ public class GreqlEvaluator {
 	 * returns the result of the evaluation
 	 */
 	public Object getEvaluationResult() {
+		// System.out.println("\t--> " + result);
 		return result;
 	}
 
@@ -1081,6 +1082,8 @@ public class GreqlEvaluator {
 		if (started) {
 			return result != null;
 		}
+
+		// System.out.println("Query: " + queryString);
 
 		started = true;
 		parseTime = 0;
