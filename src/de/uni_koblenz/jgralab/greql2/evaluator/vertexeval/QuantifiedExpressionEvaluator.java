@@ -119,7 +119,7 @@ public class QuantifiedExpressionEvaluator extends VertexEvaluator {
 			while (declarationLayer.iterate()) {
 				Object tempResult = predicateEvaluator.getResult();
 				if (tempResult instanceof Boolean) {
-					if (((Boolean) tempResult) == Boolean.TRUE) {
+					if ((Boolean) tempResult) {
 						return Boolean.TRUE;
 					}
 				}
@@ -129,7 +129,7 @@ public class QuantifiedExpressionEvaluator extends VertexEvaluator {
 			while (declarationLayer.iterate()) {
 				Object tempResult = predicateEvaluator.getResult();
 				if (tempResult instanceof Boolean) {
-					if (((Boolean) tempResult).equals(Boolean.TRUE)) {
+					if ((Boolean) tempResult) {
 						if (foundTrue == true) {
 							return Boolean.FALSE;
 						} else {
@@ -146,7 +146,7 @@ public class QuantifiedExpressionEvaluator extends VertexEvaluator {
 			while (declarationLayer.iterate()) {
 				Object tempResult = predicateEvaluator.getResult();
 				if (tempResult instanceof Boolean) {
-					if (((Boolean) tempResult).equals(Boolean.FALSE)) {
+					if (!(Boolean) tempResult) {
 						return Boolean.FALSE;
 					}
 				}

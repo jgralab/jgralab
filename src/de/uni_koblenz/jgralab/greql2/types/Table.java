@@ -84,17 +84,23 @@ public class Table<T> implements PCollection<T> {
 		return entries.containsAll(c);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
+	@Deprecated
 	public boolean add(T arg0) {
 		throw new UnsupportedOperationException();
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
+	@Deprecated
 	public boolean addAll(Collection<? extends T> arg0) {
 		throw new UnsupportedOperationException();
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
+	@Deprecated
 	public void clear() {
 		throw new UnsupportedOperationException();
 	}
@@ -114,17 +120,23 @@ public class Table<T> implements PCollection<T> {
 		return new Table<T>(titles, entries.plusAll(arg0));
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
+	@Deprecated
 	public boolean remove(Object arg0) {
 		throw new UnsupportedOperationException();
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
+	@Deprecated
 	public boolean removeAll(Collection<?> arg0) {
 		throw new UnsupportedOperationException();
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
+	@Deprecated
 	public boolean retainAll(Collection<?> arg0) {
 		throw new UnsupportedOperationException();
 	}

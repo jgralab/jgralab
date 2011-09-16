@@ -67,17 +67,23 @@ public class Tuple implements PCollection<Object> {
 		return entries.containsAll(c);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
+	@Deprecated
 	public boolean add(Object arg0) {
 		throw new UnsupportedOperationException();
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
+	@Deprecated
 	public boolean addAll(Collection<? extends Object> arg0) {
 		throw new UnsupportedOperationException();
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
+	@Deprecated
 	public void clear() {
 		throw new UnsupportedOperationException();
 	}
@@ -102,17 +108,23 @@ public class Tuple implements PCollection<Object> {
 		return new Tuple(entries.plusAll(arg0));
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
+	@Deprecated
 	public boolean remove(Object arg0) {
 		throw new UnsupportedOperationException();
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
+	@Deprecated
 	public boolean removeAll(Collection<?> arg0) {
 		throw new UnsupportedOperationException();
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
+	@Deprecated
 	public boolean retainAll(Collection<?> arg0) {
 		throw new UnsupportedOperationException();
 	}

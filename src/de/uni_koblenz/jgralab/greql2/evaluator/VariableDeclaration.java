@@ -46,6 +46,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
+import de.uni_koblenz.jgralab.greql2.types.Undefined;
 
 /**
  * This class models the declaration of one variable. It allowes the iteration
@@ -101,6 +102,7 @@ public class VariableDeclaration {
 			GreqlEvaluator eval) {
 		variableEval = (VariableEvaluator) definitionSetEvaluator
 				.getVertexEvalMarker().getMark(var);
+		definitionSet = ArrayPSet.empty();
 		this.definitionSetEvaluator = definitionSetEvaluator;
 	}
 
@@ -152,7 +154,7 @@ public class VariableDeclaration {
 	 */
 	protected void reset() {
 		iterationNumber = 0;
-		variableEval.setValue(null);
+		variableEval.setValue(Undefined.UNDEFINED);
 		Object tempAttribute = definitionSetEvaluator.getResult();
 		if (tempAttribute instanceof PVector) {
 			PVector<?> col = (PVector<?>) tempAttribute;

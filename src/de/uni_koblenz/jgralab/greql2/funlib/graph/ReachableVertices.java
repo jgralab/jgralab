@@ -76,22 +76,19 @@ public class ReachableVertices extends Function {
 			if (state.isFinal) {
 				resultSet = resultSet.plus(vertex);
 			}
-			for (Edge inc : vertex.incidences()) {
-				while (inc != null) {
-					int size = state.outTransitions.size();
-					for (int i = 0; i < size; i++) {
-						Transition currentTransition = state.outTransitions
-								.get(i);
-						Vertex nextVertex = currentTransition.getNextVertex(
-								vertex, inc);
-						if (!markedElements[currentTransition.endState.number]
-								.get(nextVertex.getId())) {
-							if (currentTransition.accepts(vertex, inc)) {
-								markedElements[currentTransition.endState.number]
-										.set(nextVertex.getId());
-								queue.put(nextVertex,
-										currentTransition.endState);
-							}
+			for (Edge inc = vertex.getFirstIncidence(); inc != null; inc = inc
+					.getNextIncidence()) {
+				int size = state.outTransitions.size();
+				for (int i = 0; i < size; i++) {
+					Transition currentTransition = state.outTransitions.get(i);
+					Vertex nextVertex = currentTransition.getNextVertex(vertex,
+							inc);
+					if (!markedElements[currentTransition.endState.number]
+							.get(nextVertex.getId())) {
+						if (currentTransition.accepts(vertex, inc)) {
+							markedElements[currentTransition.endState.number]
+									.set(nextVertex.getId());
+							queue.put(nextVertex, currentTransition.endState);
 						}
 					}
 				}

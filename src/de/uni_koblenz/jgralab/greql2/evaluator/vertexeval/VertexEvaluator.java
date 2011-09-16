@@ -90,12 +90,6 @@ public abstract class VertexEvaluator {
 	protected Graph graph = null;
 
 	/**
-	 * used only for debugging, the indentation of the debug-messages on stdout
-	 * for this vertexeval
-	 */
-	protected static int currentIndentation = 0;
-
-	/**
 	 * The GreqlEvaluator this VertexEvaluator belongs to
 	 */
 	protected GreqlEvaluator greqlEvaluator = null;
@@ -201,9 +195,7 @@ public abstract class VertexEvaluator {
 			return result;
 		}
 
-		// currentIndentation++;
-		// printIndentation();
-		// GreqlEvaluator.println("Evaluating : " + this);
+		// System.out.println("Evaluating : " + this);
 		try {
 			result = evaluate();
 			// System.out.println("VertexEvaluator.getResult() " + result
@@ -213,10 +205,8 @@ public abstract class VertexEvaluator {
 			throw ex;
 		}
 
-		// printIndentation();
-		// GreqlEvaluator.println("Evaluating : " + this + " finished");
-		// currentIndentation--;
-		// GreqlEvaluator.println("Result is: " + result);
+		// System.out.println("Evaluating : " + this + " finished");
+		// System.out.println("Result is: " + result);
 
 		greqlEvaluator.progress(ownEvaluationCosts);
 

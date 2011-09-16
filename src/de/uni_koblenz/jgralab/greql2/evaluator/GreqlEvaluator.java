@@ -977,10 +977,6 @@ public class GreqlEvaluator {
 		if (queryGraph == null) {
 			return;
 		}
-		if (vertexEvalGraphMarker != null) {
-			queryGraph
-					.removeGraphStructureChangedListener(vertexEvalGraphMarker);
-		}
 		vertexEvalGraphMarker = new GraphMarker<VertexEvaluator>(queryGraph);
 		Vertex currentVertex = queryGraph.getFirstVertex();
 		while (currentVertex != null) {
