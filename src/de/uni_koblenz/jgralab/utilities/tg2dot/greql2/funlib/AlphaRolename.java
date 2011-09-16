@@ -35,80 +35,25 @@
 
 package de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib;
 
-import java.util.ArrayList;
-
-import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
-import de.uni_koblenz.jgralab.greql2.funlib.Greql2Function;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
-import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.greql2.funlib.Function;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 
-public class AlphaRolename extends Greql2Function {
-	{
-		JValueType[][] x = { { JValueType.ATTRELEMCLASS, JValueType.STRING },
-				{ JValueType.EDGE, JValueType.STRING } };
-		signatures = x;
-
-		description = "Returns the alpha rolename of the given edge or null otherwise.";
-
-		Category[] c = { Category.SCHEMA_ACCESS };
-		categories = c;
+public class AlphaRolename extends Function {
+	public AlphaRolename() {
+		super(
+				"Returns the omega rolename of the given edge or null otherwise.",
+				Category.SCHEMA_ACCESS);
 	}
 
-	@Override
-	public JValue evaluate(Graph graph, SubGraphMarker subgraph,
-			JValue[] arguments) throws EvaluateException {
-		String rolename = null;
-		switch (checkArguments(arguments)) {
-		case 0:
-			AttributedElementClass clazz = arguments[0]
-					.toAttributedElementClass();
-			if (clazz instanceof EdgeClass) {
-				rolename = getAlphaRolename((EdgeClass) clazz);
-			}
-			break;
-		case 1:
-			rolename = getAlphaRolename((EdgeClass) arguments[0].toEdge()
-					.getAttributedElementClass());
-			break;
-		default:
-			throw new WrongFunctionParameterException(this, arguments);
-		}
-
-		return new JValueImpl(rolename);
+	public String evaluate(Edge e) {
+		return evaluate((EdgeClass) e.getAttributedElementClass());
 	}
 
-	/**
-	 * Returns the alpha role name of the given EdgeClass.
-	 * 
-	 * @param edgeClass
-	 *            EdgeClass of which the alpha role name is requested.
-	 * @return The alpha role name.
-	 */
-	private String getAlphaRolename(EdgeClass edgeClass) {
-		String rolename = edgeClass.getFrom().getRolename();
+	public String evaluate(EdgeClass ec) {
+		String rolename = ec.getFrom().getRolename();
 		rolename = rolename == null ? "" : rolename;
 		return rolename;
-	}
-
-	@Override
-	public long getEstimatedCosts(ArrayList<Long> inElements) {
-		return 2;
-	}
-
-	@Override
-	public double getSelectivity() {
-		return 1;
-	}
-
-	@Override
-	public long getEstimatedCardinality(int inElements) {
-		return 1;
 	}
 
 }

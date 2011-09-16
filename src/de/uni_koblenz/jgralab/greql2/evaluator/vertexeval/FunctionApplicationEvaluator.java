@@ -45,6 +45,7 @@ import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.QuerySourceException;
 import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
+import de.uni_koblenz.jgralab.greql2.funlib.NeedsGraphArgument;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
@@ -176,19 +177,29 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 			typeArgument = createTypeArgument();
 			parameterEvaluators = createVertexEvaluatorList();
 			int parameterCount = parameterEvaluators.size();
+			if (FunLib.instance().getFunction(getFunctionName()) instanceof NeedsGraphArgument) {
+				parameterCount++;
+			}
 			if (typeArgument != null) {
 				parameterCount++;
 			}
 			parameters = new Object[parameterCount];
-			if (typeArgument != null) {
-				parameters[parameterCount - 1] = typeArgument;
-			}
 			paramEvalCount = parameterEvaluators.size();
 			listCreated = true;
 		}
 
+		int p = 0;
+
+		if (FunLib.instance().getFunction(getFunctionName()) instanceof NeedsGraphArgument) {
+			parameters[p++] = graph;
+		}
+
 		for (int i = 0; i < paramEvalCount; i++) {
-			parameters[i] = parameterEvaluators.get(i).getResult();
+			parameters[p++] = parameterEvaluators.get(i).getResult();
+		}
+
+		if (typeArgument != null) {
+			parameters[p] = typeArgument;
 		}
 
 		try {

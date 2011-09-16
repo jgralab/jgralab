@@ -11,8 +11,9 @@ import de.uni_koblenz.jgralab.algolib.algorithms.search.IterativeDepthFirstSearc
 import de.uni_koblenz.jgralab.algolib.algorithms.topological_order.TopologicalOrderWithDFS;
 import de.uni_koblenz.jgralab.algolib.functions.Permutation;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
+import de.uni_koblenz.jgralab.greql2.funlib.NeedsGraphArgument;
 
-public class TopologicalSort extends Function {
+public class TopologicalSort extends Function implements NeedsGraphArgument {
 	public TopologicalSort() {
 		super(
 				"Returns a list of vertices in topological order if the graph $g$is acyclic."

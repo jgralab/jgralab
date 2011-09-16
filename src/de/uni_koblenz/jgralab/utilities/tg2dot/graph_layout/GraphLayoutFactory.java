@@ -56,9 +56,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import de.uni_koblenz.jgralab.AttributedElement;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
+import org.pcollections.PSet;
+
+import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.utilities.tg2dot.graph_layout.definition.Definition;
@@ -232,33 +232,31 @@ public class GraphLayoutFactory {
 
 	private void evaluateElementDefinitions() {
 		for (ElementDefinition definition : currentGraphLayout.elementDefinitions) {
-			JValue result = evaluator.evaluate(definition.getGreqlString());
-			if (result.isCollection()) {
-				evaluateJValueSet(result, definition);
-			} else if (result.isVertex() || result.isEdge()) {
-				addAttributedElementToElementDefinition(definition, result);
+			Object result = evaluator.evaluate(definition.getGreqlString());
+			if (result instanceof PSet) {
+				@SuppressWarnings("unchecked")
+				PSet<GraphElement> set = (PSet<GraphElement>) result;
+				evaluateJValueSet(set, definition);
+			} else if (result instanceof GraphElement) {
+				addGraphElementToElementDefinition(definition,
+						(GraphElement) result);
 			}
 		}
 	}
 
-	private void evaluateJValueSet(JValue result, ElementDefinition definition) {
-		JValueSet set = result.toJValueSet();
-
-		for (JValue element : set) {
-			addAttributedElementToElementDefinition(definition, element);
+	private void evaluateJValueSet(PSet<GraphElement> result,
+			ElementDefinition definition) {
+		for (GraphElement element : result) {
+			addGraphElementToElementDefinition(definition, element);
 		}
 	}
 
-	private void addAttributedElementToElementDefinition(
-			ElementDefinition definition, JValue result) {
-
-		AttributedElement attributedElement = result.isEdge() ? result.toEdge()
-				: result.toVertex();
-
-		if (attributedElement != null) {
-			definition.add(attributedElement);
+	private void addGraphElementToElementDefinition(
+			ElementDefinition definition, GraphElement el) {
+		if (el != null) {
+			definition.add(el);
 			currentGraphLayout.attributedElementsDefinedByElementDefinitions
-					.add(attributedElement);
+					.add(el);
 		}
 	}
 }
