@@ -151,7 +151,6 @@ public class GraphValidatorTest {
 	}
 
 	private static void printBrokenConstraints(Set<ConstraintViolation> set) {
-		return;
 		// System.out.println(">>>------------------------------");
 		// if (set.isEmpty()) {
 		// System.out.println("No broken constraints. :-)");
