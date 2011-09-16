@@ -179,7 +179,8 @@ public class GReQLConsole {
 	 * given as second parameter
 	 */
 	private void resultToHTML(Object result, String outputFile) {
-		new JValueHTMLOutputVisitor(result, outputFile, graph);
+		// TODO [removejvalue] replace by correct ouput
+		// new JValueHTMLOutputVisitor(result, outputFile, graph);
 	}
 
 	/**

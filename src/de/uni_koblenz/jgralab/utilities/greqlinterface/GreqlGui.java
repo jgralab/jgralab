@@ -263,9 +263,11 @@ public class GreqlGui extends JFrame {
 							try {
 								File resultFile = File.createTempFile(
 										"greqlQueryResult", ".html");
-								new JValueHTMLOutputVisitor(result, resultFile
-										.getCanonicalPath(), graph, false,
-										false);
+								// TODO [removejvalue] replace by correct ouput
+								// new JValueHTMLOutputVisitor(result,
+								// resultFile
+								// .getCanonicalPath(), graph, false,
+								// false);
 								resultPane.setPage(new URL("file", "localhost",
 										resultFile.getCanonicalPath()));
 								tabPane.setSelectedComponent(resultScrollPane);

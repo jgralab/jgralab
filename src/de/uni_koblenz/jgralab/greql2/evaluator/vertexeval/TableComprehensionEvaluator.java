@@ -186,9 +186,9 @@ public class TableComprehensionEvaluator extends VertexEvaluator {
 			rowTuple = rowTuple.plus(currentRowHeader);
 			while (colIter.hasNext()) {
 				Object cellEntry = currentRow.get(colIter.next());
-				rowTuple.add(cellEntry);
+				rowTuple = rowTuple.plus(cellEntry);
 			}
-			resultTable.add(rowTuple);
+			resultTable = resultTable.plus(rowTuple);
 		}
 		return resultTable;
 	}

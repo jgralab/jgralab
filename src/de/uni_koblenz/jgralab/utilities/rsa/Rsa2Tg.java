@@ -1131,6 +1131,7 @@ public class Rsa2Tg extends XmlProcessor {
 				throw new XMLStreamException(e);
 			}
 		}
+		System.out.println("end of input document.");
 	}
 
 	/**
@@ -1428,6 +1429,7 @@ public class Rsa2Tg extends XmlProcessor {
 		boolean fileCreated = false;
 
 		if (filenameDot != null) {
+			System.out.println("Creating DOT file...");
 			try {
 				writeDotFile(filenameDot);
 				printTypeAndFilename("GraphvViz DOT file", filenameDot);
@@ -1439,6 +1441,7 @@ public class Rsa2Tg extends XmlProcessor {
 		}
 
 		if (filenameSchemaGraph != null) {
+			System.out.println("Writing schema graph...");
 			writeSchemaGraph(filenameSchemaGraph);
 			printTypeAndFilename("schemagraph", filenameSchemaGraph);
 			fileCreated = true;
@@ -1446,6 +1449,8 @@ public class Rsa2Tg extends XmlProcessor {
 
 		// The Graph is always validated, but not always written to a hard
 		// drive.
+		System.out.println("Validating schema graph...");
+		// TODO [removejvalue] uncomment when GReQL was fixed
 		validateGraph(filenameValidation);
 		if (filenameValidation != null) {
 			printTypeAndFilename("validation report", filenameValidation);
@@ -1453,6 +1458,7 @@ public class Rsa2Tg extends XmlProcessor {
 		}
 
 		if (filenameSchema != null) {
+			System.out.println("Writing schema file...");
 			writeSchema(filenameSchema);
 			printTypeAndFilename("schema", filenameSchema);
 			fileCreated = true;
@@ -2311,6 +2317,7 @@ public class Rsa2Tg extends XmlProcessor {
 		// remove all empty packages except the default package
 		System.out.println("Removing empty packages...");
 		Package p = sg.getFirstPackage();
+		int removed = 0;
 		while (p != null) {
 			Package n = p.getNextPackage();
 			int commentCount = p.getDegree(Annotates.class);
@@ -2331,6 +2338,7 @@ public class Rsa2Tg extends XmlProcessor {
 					}
 				}
 				p.delete();
+				++removed;
 				// start over to capture packages that become empty after
 				// deletion of p
 				p = sg.getFirstPackage();
@@ -2338,6 +2346,8 @@ public class Rsa2Tg extends XmlProcessor {
 				p = n;
 			}
 		}
+		System.out.println("\tRemoved " + removed + " package"
+				+ (removed == 1 ? "" : "s"));
 	}
 
 	/**

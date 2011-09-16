@@ -3,7 +3,6 @@
  */
 package de.uni_koblenz.jgralab.gretl;
 
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.gretl.Context.TransformationPhase;
 
 /**
@@ -12,14 +11,14 @@ import de.uni_koblenz.jgralab.gretl.Context.TransformationPhase;
  */
 public class SysOut extends CountingTransformation {
 	private String greqlExpression;
-	protected JValue result;
+	protected Object result;
 
 	public SysOut(Context c, String greqlExpression) {
 		super(c);
 		this.greqlExpression = greqlExpression;
 	}
 
-	public SysOut(Context c, JValue result) {
+	public SysOut(Context c, Object result) {
 		super(c);
 		this.result = result;
 	}

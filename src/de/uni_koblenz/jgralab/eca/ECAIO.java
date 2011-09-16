@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uni_koblenz.jgralab.AttributedElement;
-import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.eca.events.ChangeAttributeEventDescription;
 import de.uni_koblenz.jgralab.eca.events.ChangeEdgeEventDescription;
 import de.uni_koblenz.jgralab.eca.events.ChangeEdgeEventDescription.EdgeEnd;
@@ -21,8 +20,6 @@ import de.uni_koblenz.jgralab.eca.events.DeleteEdgeEventDescription;
 import de.uni_koblenz.jgralab.eca.events.DeleteVertexEventDescription;
 import de.uni_koblenz.jgralab.eca.events.EventDescription;
 import de.uni_koblenz.jgralab.eca.events.EventDescription.EventTime;
-import de.uni_koblenz.jgralab.gretl.Transformation;
-import de.uni_koblenz.jgralab.gretl.eca.GretlTransformAction;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 
@@ -31,31 +28,27 @@ public class ECAIO {
 	/*
 	 * EBNF:
 	 * 
-	 *    Rule := [<Context>:] "after"|"before" <Event> ["with" <Condition>] "do" <Action>
-	 *    
-	 *    Context := (string with GReQL expression that evaluates to a set of graph elements)
-	 *    
-	 *    Event := createdVertex(<Type>)
-	 *           | createdEdge(<Type>)
-	 *           | updatedAttributeValue(<Type>,<Attribute>)
-	 *           | updatedStartVertex(<Type>)
-	 *           | updatedEndVertex(<Type>)
-	 *           | updatedStartOrEndVertex(<Type>)
-	 *           | deletedVertex(<Type>)
-	 *           | deletedEdge(<Type>)
-	 *    
-	 *    Condition := (string with boolean GReQL expression)
-	 *   
-	 *    Action := "print" <String> 
-	 *            | (name of user defined action) 
-	 *            | (name of GReTL Transformation class)
-	 *   
-	 *    Type := (string with qualified name of monitoring GraphElement)
-	 *   
-	 *    Attribute := (string, representing name of Attribute)
-	 *
-	 *   */
-	
+	 * Rule := [<Context>:] "after"|"before" <Event> ["with" <Condition>] "do"
+	 * <Action>
+	 * 
+	 * Context := (string with GReQL expression that evaluates to a set of graph
+	 * elements)
+	 * 
+	 * Event := createdVertex(<Type>) | createdEdge(<Type>) |
+	 * updatedAttributeValue(<Type>,<Attribute>) | updatedStartVertex(<Type>) |
+	 * updatedEndVertex(<Type>) | updatedStartOrEndVertex(<Type>) |
+	 * deletedVertex(<Type>) | deletedEdge(<Type>)
+	 * 
+	 * Condition := (string with boolean GReQL expression)
+	 * 
+	 * Action := "print" <String> | (name of user defined action) | (name of
+	 * GReTL Transformation class)
+	 * 
+	 * Type := (string with qualified name of monitoring GraphElement)
+	 * 
+	 * Attribute := (string, representing name of Attribute)
+	 */
+
 	// #########################################################################
 	// ++++++++ public static Methods - behavior to the outside ++++++++++++++++
 	// #########################################################################
@@ -276,8 +269,8 @@ public class ECAIO {
 	private String getEventElementTypeString(EventDescription ev) {
 		String nameOfGraphElementClass = "";
 		if (ev.getContext().equals(EventDescription.Context.TYPE)) {
-			nameOfGraphElementClass += ev.getType().getName().replace(
-					schema.getPackagePrefix() + ".", "");
+			nameOfGraphElementClass += ev.getType().getName()
+					.replace(schema.getPackagePrefix() + ".", "");
 		}
 		return nameOfGraphElementClass;
 	}
@@ -305,16 +298,16 @@ public class ECAIO {
 			actionstring += ((PrintAction) act).getMessage();
 			actionstring += "\"";
 			actionstring += "\n";
-		} else if (act instanceof GretlTransformAction) {
-			GretlTransformAction gta = ((GretlTransformAction) act);
-			actionstring += gta.getTransformationClass().getName();
+			// TODO [removejvalue] uncomment when GReTL was fixed
+			// } else if (act instanceof GretlTransformAction) {
+			// GretlTransformAction gta = ((GretlTransformAction) act);
+			// actionstring += gta.getTransformationClass().getName();
 		} else {
 			actionstring += act.getClass().getName();
 		}
 
 		writeToStream(actionstring);
 	}
-
 
 	/**
 	 * Write a given text to output stream
@@ -343,10 +336,10 @@ public class ECAIO {
 	private void load() throws ECAIOException {
 		la = 0;
 		// parse ECARules until end of stream
-			while (la != -1) {
-				parseRule();
-				skipWs();
-			}
+		while (la != -1) {
+			parseRule();
+			skipWs();
+		}
 	}
 
 	// ######################################################################
@@ -420,18 +413,18 @@ public class ECAIO {
 			}
 			// -- ChangeEdgeEventDescription
 			else if (eventdestype.equals("updatedStartVertex")) {
-				return finishChangeEdgeEventDescription(context, et,
-						type, EdgeEnd.ALPHA);
+				return finishChangeEdgeEventDescription(context, et, type,
+						EdgeEnd.ALPHA);
 			}
 			// -- ChangeEdgeEventDescription
 			else if (eventdestype.equals("updatedEndVertex")) {
-				return finishChangeEdgeEventDescription(context, et,
-						type, EdgeEnd.OMEGA);
+				return finishChangeEdgeEventDescription(context, et, type,
+						EdgeEnd.OMEGA);
 			}
 			// -- ChangeEdgeDescription
 			else if (eventdestype.equals("updatedStartOrEndVertex")) {
-				return finishChangeEdgeEventDescription(context, et,
-						type, EdgeEnd.BOTH);
+				return finishChangeEdgeEventDescription(context, et, type,
+						EdgeEnd.BOTH);
 			}
 			// -- DeleteVertexEventDescription
 			else if (eventdestype.equals("deletedVertex")) {
@@ -492,7 +485,8 @@ public class ECAIO {
 	 * @throws ECAIOException
 	 */
 	private EventDescription finishDeleteEdgeEventDescription(String context,
-			EventTime eventTime, String qualNameOfGraphElementToMonitor) throws ECAIOException {
+			EventTime eventTime, String qualNameOfGraphElementToMonitor)
+			throws ECAIOException {
 		if (context != null && qualNameOfGraphElementToMonitor == null) {
 			return new DeleteEdgeEventDescription(eventTime, context);
 		} else if (context == null && qualNameOfGraphElementToMonitor != null) {
@@ -520,7 +514,8 @@ public class ECAIO {
 	 * @throws ECAIOException
 	 */
 	private EventDescription finishDeleteVertexEventDescription(String context,
-			EventTime eventTime, String qualNameOfGraphElementToMonitor) throws ECAIOException {
+			EventTime eventTime, String qualNameOfGraphElementToMonitor)
+			throws ECAIOException {
 		if (context != null && qualNameOfGraphElementToMonitor == null) {
 			return new DeleteVertexEventDescription(eventTime, context);
 		} else if (context == null && qualNameOfGraphElementToMonitor != null) {
@@ -529,7 +524,8 @@ public class ECAIO {
 		} else {
 			throw new ECAIOException(
 					"It's necessary to give a context OR a type. Its an XOR. Found: context: \""
-							+ context + "\" and type: \"" + qualNameOfGraphElementToMonitor + "\"");
+							+ context + "\" and type: \""
+							+ qualNameOfGraphElementToMonitor + "\"");
 		}
 	}
 
@@ -549,20 +545,21 @@ public class ECAIO {
 	 * @throws ECAIOException
 	 */
 	private EventDescription finishChangeEdgeEventDescription(String context,
-			EventTime eventTime, String qualNameOfGraphElementToMonitor, EdgeEnd edgeEnd)
-			throws ECAIOException {
+			EventTime eventTime, String qualNameOfGraphElementToMonitor,
+			EdgeEnd edgeEnd) throws ECAIOException {
 		if (context != null && qualNameOfGraphElementToMonitor == null) {
 			return new ChangeEdgeEventDescription(eventTime, context);
 		} else if (context == null && qualNameOfGraphElementToMonitor != null) {
 			return new ChangeEdgeEventDescription(eventTime,
-					getAttributedElement(qualNameOfGraphElementToMonitor), edgeEnd);
+					getAttributedElement(qualNameOfGraphElementToMonitor),
+					edgeEnd);
 		} else {
 			throw new ECAIOException(
 					"It's necessary to give a context OR a type. Its an XOR. Found: context: \""
-							+ context + "\" and type: \"" + qualNameOfGraphElementToMonitor + "\"");
+							+ context + "\" and type: \""
+							+ qualNameOfGraphElementToMonitor + "\"");
 		}
 	}
-
 
 	/**
 	 * Create a ChangeAttributeEventDescription with the given parameters
@@ -578,7 +575,8 @@ public class ECAIO {
 	 * @throws ECAIOException
 	 */
 	private EventDescription finishChangeAttributeEventDescription(
-			String context, EventTime eventTime, String qualNameOfGraphElementToMonitor) throws ECAIOException {
+			String context, EventTime eventTime,
+			String qualNameOfGraphElementToMonitor) throws ECAIOException {
 		String name = nextToken();
 		match(")");
 
@@ -590,7 +588,8 @@ public class ECAIO {
 		} else {
 			throw new ECAIOException(
 					"It's necessary to give a context OR a type. Its an XOR. Found: context: \""
-							+ context + "\" and type: \"" + qualNameOfGraphElementToMonitor + "\"");
+							+ context + "\" and type: \""
+							+ qualNameOfGraphElementToMonitor + "\"");
 		}
 	}
 
@@ -608,7 +607,8 @@ public class ECAIO {
 	 * @throws ECAIOException
 	 */
 	private EventDescription finishCreateEdgeEventDescription(String context,
-			EventTime eventTime, String qualNameOfGraphElementToMonitor) throws ECAIOException {
+			EventTime eventTime, String qualNameOfGraphElementToMonitor)
+			throws ECAIOException {
 		if (context != null && qualNameOfGraphElementToMonitor == null) {
 			return new CreateEdgeEventDescription(eventTime, context);
 		} else if (context == null && qualNameOfGraphElementToMonitor != null) {
@@ -617,7 +617,8 @@ public class ECAIO {
 		} else {
 			throw new ECAIOException(
 					"It's necessary to give a context OR a type. Its an XOR. Found: context: \""
-							+ context + "\" and type: \"" + qualNameOfGraphElementToMonitor + "\"");
+							+ context + "\" and type: \""
+							+ qualNameOfGraphElementToMonitor + "\"");
 		}
 	}
 
@@ -649,7 +650,6 @@ public class ECAIO {
 							+ qualNameOfGraphElementToMonitor + "\"");
 		}
 	}
-
 
 	/**
 	 * Gets the given AttributedElement
@@ -704,12 +704,14 @@ public class ECAIO {
 		} else {
 			try {
 				Class<?> actionclass = Class.forName(currentToken);
-				if (actionclass.getSuperclass().equals(Transformation.class)) {
-					return new GretlTransformAction(
-							(Class<? extends Transformation<Graph>>) actionclass);
-				} else {
-					return (Action) actionclass.newInstance();
-				}
+				// TODO [removejvalue] uncomment when GReTL was fixed
+				// if (actionclass.getSuperclass().equals(Transformation.class))
+				// {
+				// return new GretlTransformAction(
+				// (Class<? extends Transformation<Graph>>) actionclass);
+				// } else {
+				return (Action) actionclass.newInstance();
+				// }
 
 			} catch (ClassNotFoundException e) {
 				throw new ECAIOException("Specified Action " + currentToken
@@ -796,7 +798,7 @@ public class ECAIO {
 	private final void skipWs() throws ECAIOException {
 		while (isWs(la) || la == 0) {
 			try {
-			la = inStream.read();
+				la = inStream.read();
 			} catch (IOException e) {
 				throw new ECAIOException("Error while reading from stream.");
 			}
@@ -908,8 +910,6 @@ public class ECAIO {
 
 		la = inStream.read();
 	}
-
-
 
 	private static void close(Closeable stream) throws ECAIOException {
 		try {
