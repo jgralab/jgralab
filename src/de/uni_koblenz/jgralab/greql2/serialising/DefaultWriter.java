@@ -101,31 +101,20 @@ public class DefaultWriter {
 		//Iterator<Object> iter = r.iterator();
 		boolean first = true;
 		pre();
-//		while (iter.hasNext()) {
-//			if (first) {
-//				first = false;
-//			} else {
-//				inter();
-//			}
-//			iter.next().accept(this);
-//		}
+		for (String compName : r.getComponentNames()) {
+			if (first) {
+				first = false;
+			} else {
+				inter();
+			}
+			this.write(compName);
+			this.write(r.getComponent(compName));
+		}
 		post();
 	}
 	
 	public void writePath(Path p) {
-		//TODO ask if such a method would become added
-		//Iterator<Object> eiter = p.traceAsJValue().iterator();
-		boolean first = true;
-		pre();
-//		while (eiter.hasNext()) {
-//			if (first) {
-//				first = false;
-//			} else {
-//				inter();
-//			}
-//			eiter.next().accept(this);
-//		}
-		post();
+		cantWrite(p);
 	}
 	
 	public void writePathSystem(PathSystem p) {
