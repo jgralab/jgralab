@@ -5,11 +5,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import org.pcollections.PCollection;
+import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.exception.SerialisingException;
+import de.uni_koblenz.jgralab.greql2.types.Path;
 import de.uni_koblenz.jgralab.greql2.types.Record;
 import de.uni_koblenz.jgralab.greql2.types.Table;
 import de.uni_koblenz.jgralab.greql2.types.Tuple;
@@ -130,16 +132,15 @@ public class HTMLOutputWriter extends DefaultWriter {
 	public void writeRecord(Record r) {
 		storeln("<table><tr><td>");
 		boolean first = true;
-		//TODO find out how get on record components without knowing names
-//		for (Map.Entry<String, Object> entry : r.entrySet()) {
-//			if (first) {
-//				first = false;
-//			} else {
-//				storeln("</td><td>");
-//			}
-//			storeln(entry.getKey() + ": ");
-//			entry.getValue().accept(this);
-//		}
+		for (String compName : r.getComponentNames()) {
+			if (first) {
+				first = false;
+			} else {
+				storeln("</td><td>");
+			}
+			storeln(compName + ": ");
+			this.write(r.getComponent(compName));
+		}
 		storeln("</td></tr></table>");
 	}
 
@@ -171,6 +172,25 @@ public class HTMLOutputWriter extends DefaultWriter {
 		storeln("</table>");
 	}
 
+	@Override
+	public void writePath(Path p) {
+		boolean first = true;
+		pre();
+		PVector<Edge> edges = p.getEdgeTrace();
+		PVector<Vertex> vertices = p.getVertexTrace();
+		for (int i = 0; i < vertices.size(); i++) {
+			if (first) {
+				first = false;
+			} else {
+				inter();
+			}
+			this.write(vertices.get(i));
+			inter();
+			this.write(edges.get(i));
+		}
+		post();
+	}
+	
 	@Override
 	public void writeVertex(Vertex vertex) {
 		if (createElementLinks) {
