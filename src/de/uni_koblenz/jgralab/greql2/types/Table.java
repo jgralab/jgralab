@@ -116,7 +116,7 @@ public class Table<T> implements PCollection<T> {
 	}
 
 	@Override
-	public PCollection<T> plusAll(Collection<? extends T> arg0) {
+	public Table<T> plusAll(Collection<? extends T> arg0) {
 		return new Table<T>(titles, entries.plusAll(arg0));
 	}
 
