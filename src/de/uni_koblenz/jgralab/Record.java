@@ -35,10 +35,13 @@
 package de.uni_koblenz.jgralab;
 
 import java.io.IOException;
+import java.util.List;
 
 public interface Record {
 
 	public Object getComponent(String name);
+
+	public List<String> getComponentNames();
 
 	public void writeComponentValues(GraphIO io) throws IOException,
 			GraphIOException;

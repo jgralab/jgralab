@@ -1,8 +1,10 @@
 package de.uni_koblenz.jgralab.greql2.types;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.pcollections.ArrayPMap;
+import org.pcollections.ArrayPSet;
 import org.pcollections.PMap;
 
 import de.uni_koblenz.jgralab.GraphIO;
@@ -38,5 +40,10 @@ public class Record implements de.uni_koblenz.jgralab.Record {
 	public void writeComponentValues(GraphIO io) throws IOException,
 			GraphIOException {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public List<String> getComponentNames() {
+		return ((ArrayPSet<String>) entries.keySet()).toPVector();
 	}
 }
