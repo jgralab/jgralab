@@ -41,11 +41,9 @@ import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
 
 public class DuplicateVariableException extends QuerySourceException {
-
-	static final long serialVersionUID = -1234561;
+	private static final long serialVersionUID = 5730584909369802057L;
 
 	/**
-	 * 
 	 * @param variable
 	 * @param sourcePositions
 	 */

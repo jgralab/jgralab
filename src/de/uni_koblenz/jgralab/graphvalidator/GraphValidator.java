@@ -52,7 +52,7 @@ import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.exception.Greql2Exception;
+import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Constraint;
@@ -192,14 +192,14 @@ public class GraphValidator {
 			eval.setQuery(query);
 			try {
 				eval.startEvaluation();
-				if (!(Boolean) eval.getEvaluationResult()) {
+				if (!(Boolean) eval.getResult()) {
 					if (constraint.getOffendingElementsQuery() != null) {
 						query = constraint.getOffendingElementsQuery();
 						eval.setQuery(query);
 						eval.startEvaluation();
 						@SuppressWarnings("unchecked")
 						Set<AttributedElement> resultSet = (Set<AttributedElement>) eval
-								.getEvaluationResult();
+								.getResult();
 						brokenConstraints.add(new GReQLConstraintViolation(aec,
 								constraint, resultSet));
 					} else {
@@ -207,7 +207,7 @@ public class GraphValidator {
 								constraint, null));
 					}
 				}
-			} catch (Greql2Exception e) {
+			} catch (GreqlException e) {
 				brokenConstraints.add(new BrokenGReQLConstraintViolation(aec,
 						constraint, query));
 			}

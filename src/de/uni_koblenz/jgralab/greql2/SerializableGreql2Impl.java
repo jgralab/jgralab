@@ -64,7 +64,7 @@ public class SerializableGreql2Impl extends Greql2Impl implements
 		super(id, vMax, eMax);
 	}
 
-	private Greql2Serializer serializer = new Greql2Serializer();
+	private GreqlSerializer serializer = new GreqlSerializer();
 
 	@Override
 	public String serialize() {

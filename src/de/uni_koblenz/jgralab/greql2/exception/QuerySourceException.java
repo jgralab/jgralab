@@ -49,9 +49,8 @@ import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
  * @author ist@uni-koblenz.de
  * 
  */
-public class QuerySourceException extends EvaluateException {
-
-	static final long serialVersionUID = -1234561;
+public class QuerySourceException extends GreqlException {
+	private static final long serialVersionUID = 8525494291742693931L;
 
 	/**
 	 * the position in the query where exception occured
@@ -64,11 +63,6 @@ public class QuerySourceException extends EvaluateException {
 	private Greql2Vertex element;
 
 	/**
-	 * the error message
-	 */
-	private String errorMessage;
-
-	/**
 	 * 
 	 * @param element
 	 *            the element that caused the error
@@ -76,10 +70,9 @@ public class QuerySourceException extends EvaluateException {
 	 *            a list of sourceposition where the error possible occurs
 	 */
 	public QuerySourceException(String errorMessage, Greql2Vertex element,
-			List<SourcePosition> sourcePositions, Exception cause) {
+			List<SourcePosition> sourcePositions, Throwable cause) {
 		super(errorMessage, cause);
 		this.element = element;
-		this.errorMessage = errorMessage;
 		if (sourcePositions != null) {
 			positions = sourcePositions;
 		} else {
@@ -97,7 +90,6 @@ public class QuerySourceException extends EvaluateException {
 	public QuerySourceException(String errorMessage, Greql2Vertex element,
 			SourcePosition sourcePosition, Exception cause) {
 		super(errorMessage, cause);
-		this.errorMessage = errorMessage;
 		this.element = element;
 		positions = new ArrayList<SourcePosition>();
 		positions.add(sourcePosition);
@@ -134,16 +126,16 @@ public class QuerySourceException extends EvaluateException {
 	public String getMessage() {
 		StringBuilder sb = new StringBuilder();
 		if (positions.size() > 0) {
-			sb.append(errorMessage);
+			sb.append(super.getMessage());
 			sb.append(": query part '");
-//			sb.append((element != null) ? ((SerializableGreql2) element
-//			sb.append("' at position (");
+			// sb.append((element != null) ? ((SerializableGreql2) element
+			// sb.append("' at position (");
 			sb.append(positions.get(0).get_offset());
 			sb.append(", ");
 			sb.append(positions.get(0).get_length());
 			sb.append(")");
 		} else {
-			sb.append(errorMessage);
+			sb.append(super.getMessage());
 			sb.append(": query part '");
 			sb.append((element != null) ? ((SerializableGreql2) element
 					.getGraph()).serialize(element) : "<unknown element>");
@@ -152,7 +144,7 @@ public class QuerySourceException extends EvaluateException {
 
 		if (element != null) {
 			sb.append("\nComplete (optimized) Query: ");
-	//		sb.append(((SerializableGreql2) element.getGraph()).serialize());
+			// sb.append(((SerializableGreql2) element.getGraph()).serialize());
 		}
 
 		return sb.toString();

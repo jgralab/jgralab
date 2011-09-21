@@ -41,7 +41,6 @@ import java.util.List;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.UnknownTypeException;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.TypeId;
@@ -79,8 +78,7 @@ public class TypeIdEvaluator extends VertexEvaluator {
 	 *            the schema of the datagraph
 	 * @return the generated list of types
 	 */
-	protected List<AttributedElementClass> createTypeList(Schema schema)
-			throws EvaluateException {
+	protected List<AttributedElementClass> createTypeList(Schema schema) {
 
 		ArrayList<AttributedElementClass> returnTypes = new ArrayList<AttributedElementClass>();
 		AttributedElementClass elemClass = schema
@@ -102,7 +100,7 @@ public class TypeIdEvaluator extends VertexEvaluator {
 	}
 
 	@Override
-	public Object evaluate() throws EvaluateException {
+	public Object evaluate() {
 		List<AttributedElementClass> typeList = createTypeList(greqlEvaluator
 				.getDatagraph().getSchema());
 		return new TypeCollection(typeList, vertex.is_excluded());

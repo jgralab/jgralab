@@ -45,7 +45,7 @@ import de.uni_koblenz.jgralab.greql2.optimizer.Optimizer;
  * @author ist@uni-koblenz.de
  * 
  */
-public class OptimizerException extends Greql2Exception {
+public class OptimizerException extends GreqlException {
 
 	private static final long serialVersionUID = 8869420302056125072L;
 

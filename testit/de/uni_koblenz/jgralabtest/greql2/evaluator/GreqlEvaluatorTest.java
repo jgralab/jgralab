@@ -109,7 +109,7 @@ public class GreqlEvaluatorTest extends GenericTest {
 		eval.startEvaluation();
 		// TODO test seriously
 		@SuppressWarnings("unused")
-		JValue result = eval.getEvaluationResult();
+		JValue result = eval.getResult();
 		// for (JValue v : result.toCollection()) {
 		// System.out.println(v);
 		// }
@@ -146,7 +146,7 @@ public class GreqlEvaluatorTest extends GenericTest {
 
 		// TODO test seriously
 		@SuppressWarnings("unused")
-		JValue result = eval.getEvaluationResult();
+		JValue result = eval.getResult();
 		// for (JValue v : result.toCollection()) {
 		// System.out.println(v);
 		// }
@@ -1472,7 +1472,7 @@ public class GreqlEvaluatorTest extends GenericTest {
 		eval.startEvaluation();
 		eval.startEvaluation();
 		eval.startEvaluation();
-		eval.getEvaluationResult();
+		eval.getResult();
 		eval.startEvaluation();
 		eval.startEvaluation();
 		eval.startEvaluation();
@@ -1605,7 +1605,7 @@ public class GreqlEvaluatorTest extends GenericTest {
 		GreqlEvaluator e1 = new GreqlEvaluator(query1, null, null);
 		e1.setOptimize(false);
 		e1.startEvaluation();
-		JValue r1 = e1.getEvaluationResult();
+		JValue r1 = e1.getResult();
 		String query2 = "from x : list(1..5)                   "
 				+ "      with isPrime(x)                       "
 				+ "      reportSet x, from y : from a : list(21..25) with isPrime(a+x) reportSet a end,"
@@ -1615,7 +1615,7 @@ public class GreqlEvaluatorTest extends GenericTest {
 		GreqlEvaluator e2 = new GreqlEvaluator(query2, null, null);
 		e2.setOptimize(false);
 		e2.startEvaluation();
-		JValue r2 = e2.getEvaluationResult();
+		JValue r2 = e2.getResult();
 
 		assertEquals(r1, r2);
 	}
@@ -1717,7 +1717,7 @@ public class GreqlEvaluatorTest extends GenericTest {
 		for (int i = 0; i < 6; i++) {
 			eval.setQuery((i % 2 == 0) ? query1 : query2);
 			eval.startEvaluation();
-			eval.getEvaluationResult();
+			eval.getResult();
 			// eval.printEvaluationTimes();
 			if (i < 2) {
 				// The first two times, both parsing and optimizing have to be
@@ -1736,7 +1736,7 @@ public class GreqlEvaluatorTest extends GenericTest {
 		for (int i = 0; i < 6; i++) {
 			eval.setQuery((i % 2 == 0) ? query1 : query2);
 			eval.startEvaluation();
-			eval.getEvaluationResult();
+			eval.getResult();
 			// eval.printEvaluationTimes();
 			assertTrue(parseTime.getLong(eval) > 0);
 			assertEquals(0, optimizationTime.getLong(eval));

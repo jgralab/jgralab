@@ -51,7 +51,6 @@ import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.QuerySourceException;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Aggregation;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
@@ -190,7 +189,7 @@ public abstract class VertexEvaluator {
 	 * 
 	 * @return the evaluation result
 	 */
-	public Object getResult() throws EvaluateException {
+	public Object getResult() {
 		if (result != null) {
 			return result;
 		}
@@ -225,7 +224,7 @@ public abstract class VertexEvaluator {
 	 * this method does the evaluation. It must be implemented by concrete
 	 * evaluators
 	 */
-	public abstract Object evaluate() throws EvaluateException;
+	public abstract Object evaluate();
 
 	/**
 	 * clears the evaluation result
@@ -504,7 +503,7 @@ public abstract class VertexEvaluator {
 	 * creates a vertex evaluator for the given vertex
 	 */
 	public static VertexEvaluator createVertexEvaluator(Vertex vertex,
-			GreqlEvaluator eval) throws EvaluateException {
+			GreqlEvaluator eval) {
 		Class<?> vertexClass = vertex.getClass();
 		String fullClassName = vertexClass.getName();
 		// remove the "Impl" ...
@@ -530,15 +529,15 @@ public abstract class VertexEvaluator {
 					.newInstance(vertex, eval);
 			return vertexEval;
 		} catch (ClassNotFoundException ex) {
-			throw new EvaluateException(className, ex);
+			throw new RuntimeException(className, ex);
 		} catch (NoSuchMethodException ex) {
-			throw new EvaluateException(className, ex);
+			throw new RuntimeException(className, ex);
 		} catch (IllegalAccessException ex) {
-			throw new EvaluateException(className, ex);
+			throw new RuntimeException(className, ex);
 		} catch (InstantiationException ex) {
-			throw new EvaluateException(className, ex);
+			throw new RuntimeException(className, ex);
 		} catch (InvocationTargetException ex) {
-			throw new EvaluateException(className, ex);
+			throw new RuntimeException(className, ex);
 		}
 	}
 

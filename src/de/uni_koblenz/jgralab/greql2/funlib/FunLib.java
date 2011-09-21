@@ -29,6 +29,7 @@ import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Record;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql2.types.Path;
 import de.uni_koblenz.jgralab.greql2.types.PathSystem;
 import de.uni_koblenz.jgralab.greql2.types.Slice;
@@ -107,10 +108,10 @@ public class FunLib {
 			try {
 				function = cls.newInstance();
 			} catch (InstantiationException e) {
-				throw new RuntimeException("Could not instantiate '"
+				throw new GreqlException("Could not instantiate '"
 						+ cls.getName() + "'", e);
 			} catch (IllegalAccessException e) {
-				throw new RuntimeException(
+				throw new GreqlException(
 						"Could not instantiate '"
 								+ cls.getName()
 								+ "' (class must be public and needs public default constructor)",
@@ -202,8 +203,7 @@ public class FunLib {
 		assert name != null && name.length() >= 1;
 		FunctionInfo fi = functions.get(name);
 		if (fi == null) {
-			throw new RuntimeException("Call to unknown function '" + name
-					+ "'");
+			throw new GreqlException("Call to unknown function '" + name + "'");
 		}
 		assert args != null;
 		if (!(fi.function instanceof AcceptsUndefinedArguments)) {
@@ -220,21 +220,24 @@ public class FunLib {
 							.invoke(fi.function, args);
 					return result == null ? Undefined.UNDEFINED : result;
 				} catch (IllegalArgumentException e) {
-					throw new RuntimeException(e.getMessage(), e.getCause());
+					throw new GreqlException(e.getMessage(), e.getCause());
 				} catch (IllegalAccessException e) {
-					throw new RuntimeException(e.getMessage(), e.getCause());
+					throw new GreqlException(e.getMessage(), e.getCause());
 				} catch (InvocationTargetException e) {
-					throw new RuntimeException(e.getMessage(), e.getCause());
+					throw new GreqlException(e.getMessage(), e.getCause());
 				}
 			}
 		}
 		StringBuilder sb = new StringBuilder();
 		sb.append("Function '").append(name)
 				.append("' not defined for argument types");
+		String delim = " (";
 		for (Object arg : args) {
-			sb.append(" ").append(getGreqlTypeName(arg));
+			sb.append(delim).append(getGreqlTypeName(arg));
+			delim = ", ";
 		}
-		throw new RuntimeException(sb.toString());
+		sb.append(")");
+		throw new GreqlException(sb.toString());
 	}
 
 	private void registerAllFunctions() {
@@ -293,7 +296,7 @@ public class FunLib {
 		}
 		String name = getFunctionName(cls);
 		if (contains(name)) {
-			throw new RuntimeException("Duplicate function name '" + name + "'");
+			throw new GreqlException("Duplicate function name '" + name + "'");
 		}
 		if (logger != null) {
 			logger.fine("Registering " + cls.getName() + " as '" + name + "'");

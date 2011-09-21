@@ -39,11 +39,10 @@ package de.uni_koblenz.jgralab.greql2;
 
 import java.util.Iterator;
 
-import de.uni_koblenz.jgralab.greql2.exception.Greql2Exception;
+import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql2.schema.AggregationPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.AlternativePathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.BackwardVertexSet;
-import de.uni_koblenz.jgralab.greql2.schema.ListComprehension;
 import de.uni_koblenz.jgralab.greql2.schema.BoolLiteral;
 import de.uni_koblenz.jgralab.greql2.schema.Comprehension;
 import de.uni_koblenz.jgralab.greql2.schema.ConditionalExpression;
@@ -71,6 +70,7 @@ import de.uni_koblenz.jgralab.greql2.schema.IntermediateVertexPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.IteratedPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.IterationType;
 import de.uni_koblenz.jgralab.greql2.schema.LetExpression;
+import de.uni_koblenz.jgralab.greql2.schema.ListComprehension;
 import de.uni_koblenz.jgralab.greql2.schema.ListConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.ListRangeConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.Literal;
@@ -110,12 +110,12 @@ import de.uni_koblenz.jgralab.greql2.schema.WhereExpression;
  * @author Tassilo Horn &lt;horn@uni-koblenz.de&gt;
  * 
  */
-public class Greql2Serializer {
+public class GreqlSerializer {
 
 	private StringBuffer sb = null;
 
 	public static String serialize(Greql2 greqlGraph) {
-		Greql2Serializer s = new Greql2Serializer();
+		GreqlSerializer s = new GreqlSerializer();
 		return s.serializeGreql2Vertex(greqlGraph.getFirstGreql2Expression());
 	}
 
@@ -150,7 +150,7 @@ public class Greql2Serializer {
 		} else if (v instanceof Expression) {
 			serializeExpression((Expression) v, false);
 		} else {
-			throw new Greql2Exception("Unknown Greql2Vertex " + v + ".");
+			throw new GreqlException("Unknown Greql2Vertex " + v + ".");
 		}
 		if (addSpace) {
 			sb.append(' ');
@@ -189,9 +189,8 @@ public class Greql2Serializer {
 			sb.append("forall");
 			break;
 		default:
-			throw new RuntimeException(
-					"No case statemant to handle QuantificationType: "
-							+ v.get_type());
+			throw new RuntimeException("FIXME: Unhandled QuantificationType: "
+					+ v.get_type());
 		}
 	}
 
@@ -303,7 +302,7 @@ public class Greql2Serializer {
 		} else if (exp instanceof ValueConstruction) {
 			serializeValueConstruction((ValueConstruction) exp);
 		} else {
-			throw new Greql2Exception("Unknown Expression " + exp
+			throw new GreqlException("Unknown Expression " + exp
 					+ ". Serialization so far: " + sb.toString());
 		}
 		if (addSpace) {
@@ -323,7 +322,7 @@ public class Greql2Serializer {
 		} else if (exp instanceof TupleConstruction) {
 			serializeTupleConstruction((TupleConstruction) exp, false);
 		} else {
-			throw new Greql2Exception("Unknown ValueConstruction " + exp + ".");
+			throw new GreqlException("Unknown ValueConstruction " + exp + ".");
 		}
 	}
 
@@ -416,7 +415,7 @@ public class Greql2Serializer {
 		} else if (exp instanceof VertexSubgraphExpression) {
 			sb.append("v");
 		} else {
-			throw new Greql2Exception("Unknown SubgraphExpression " + exp + ".");
+			throw new GreqlException("Unknown SubgraphExpression " + exp + ".");
 		}
 
 		sb.append("Subgraph{");
@@ -440,7 +439,7 @@ public class Greql2Serializer {
 		} else if (exp instanceof PathExistence) {
 			serializePathExistence((PathExistence) exp);
 		} else {
-			throw new Greql2Exception("Unknown PathExpression " + exp + ".");
+			throw new GreqlException("Unknown PathExpression " + exp + ".");
 		}
 	}
 
@@ -487,7 +486,7 @@ public class Greql2Serializer {
 		} else if (exp instanceof PrimaryPathDescription) {
 			serializePrimaryPathDescription((PrimaryPathDescription) exp);
 		} else {
-			throw new Greql2Exception("Unknown PathDescription " + exp + ".");
+			throw new GreqlException("Unknown PathDescription " + exp + ".");
 		}
 
 		if (exp.get_goalRestr() != null) {
@@ -508,7 +507,7 @@ public class Greql2Serializer {
 		} else if (exp instanceof AggregationPathDescription) {
 			serializeAggregationPathDescription((AggregationPathDescription) exp);
 		} else {
-			throw new Greql2Exception("Unknown PrimaryPathDescription " + exp
+			throw new GreqlException("Unknown PrimaryPathDescription " + exp
 					+ ".");
 		}
 
@@ -623,7 +622,7 @@ public class Greql2Serializer {
 		} else if (exp instanceof EdgeSetExpression) {
 			sb.append("E");
 		} else {
-			throw new Greql2Exception("Unknown ElementSetExpression " + exp
+			throw new GreqlException("Unknown ElementSetExpression " + exp
 					+ ".");
 		}
 
@@ -649,7 +648,7 @@ public class Greql2Serializer {
 		} else if (exp instanceof WhereExpression) {
 			serializeWhereExpression((WhereExpression) exp);
 		} else {
-			throw new Greql2Exception("Unknown DefinitionExpression " + exp
+			throw new GreqlException("Unknown DefinitionExpression " + exp
 					+ ".");
 		}
 	}
@@ -702,7 +701,7 @@ public class Greql2Serializer {
 			sb.append("end");
 			return;
 		} else {
-			throw new Greql2Exception("Unknown Comprehension " + exp + ".");
+			throw new GreqlException("Unknown Comprehension " + exp + ".");
 		}
 
 		Expression result = exp.get_compResultDef();
@@ -745,7 +744,7 @@ public class Greql2Serializer {
 		} else if (exp instanceof ThisVertex) {
 			sb.append("thisVertex");
 		} else {
-			throw new Greql2Exception("Unknown Literal " + exp + ".");
+			throw new GreqlException("Unknown Literal " + exp + ".");
 		}
 	}
 

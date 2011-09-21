@@ -40,7 +40,6 @@ import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclarationLayer;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
@@ -107,7 +106,7 @@ public class QuantifiedExpressionEvaluator extends VertexEvaluator {
 	 * evaluates the QuantifiedEx
 	 */
 	@Override
-	public Boolean evaluate() throws EvaluateException {
+	public Boolean evaluate() {
 		if (!initialized) {
 			initialize();
 		}
@@ -153,8 +152,8 @@ public class QuantifiedExpressionEvaluator extends VertexEvaluator {
 			}
 			return Boolean.TRUE;
 		default:
-			throw new EvaluateException(
-					"Found QuantifiedExpression that is neither exists, exists!, nor forall");
+			throw new RuntimeException("FIXME: Unhandled quantification type "
+					+ quantificationType);
 		}
 	}
 
