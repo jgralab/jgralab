@@ -73,8 +73,8 @@ public class GreqlSerializationTest {
 		e1.startEvaluation();
 		e2.startEvaluation();
 
-		JValue r1 = e1.getEvaluationResult();
-		JValue r2 = e2.getEvaluationResult();
+		JValue r1 = e1.getResult();
+		JValue r2 = e2.getResult();
 
 		assertEquals(r1, r2);
 	}

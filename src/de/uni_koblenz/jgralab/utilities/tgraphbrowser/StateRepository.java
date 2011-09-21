@@ -67,7 +67,7 @@ import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
+import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
@@ -181,7 +181,7 @@ public class StateRepository {
 				if (elementsAreDisplayed) {
 					code.append("cancelGReQL();");
 				}
-			} catch (EvaluateException e) {
+			} catch (GreqlException e) {
 				code.append("var h3error = document.getElementById(\"h3GReQLError\");\n");
 				String errorMessage = e.getCause() != null ? e.getMessage()
 						+ "\n" + e.getCause().getMessage() : e.getMessage();
@@ -212,7 +212,7 @@ public class StateRepository {
 			HashMap<String, Object> boundVars) {
 		GreqlEvaluator eval = new GreqlEvaluator(query, graph, boundVars);
 		eval.startEvaluation();
-		return eval.getEvaluationResult();
+		return eval.getResult();
 	}
 
 	/**

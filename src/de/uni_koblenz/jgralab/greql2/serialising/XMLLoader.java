@@ -9,17 +9,16 @@ import javax.xml.stream.XMLStreamException;
 
 import org.pcollections.ArrayPMap;
 import org.pcollections.ArrayPSet;
+import org.pcollections.ArrayPVector;
 import org.pcollections.PCollection;
 import org.pcollections.PMap;
 import org.pcollections.PVector;
-import org.pcollections.ArrayPVector;
 
 import de.uni_koblenz.ist.utilities.xml.XmlProcessor;
-import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql2.exception.JValueLoadException;
+import de.uni_koblenz.jgralab.greql2.exception.SerialisingException;
 import de.uni_koblenz.jgralab.greql2.types.Record;
 import de.uni_koblenz.jgralab.greql2.types.Table;
 import de.uni_koblenz.jgralab.greql2.types.Tuple;
@@ -27,13 +26,13 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 
 public class XMLLoader extends XmlProcessor implements XMLConstants {
-	
+
 	private Graph defaultGraph;
 
 	/**
 	 * Synthetic class to ease XML parsing
 	 */
-	private static class RecordComponent  {
+	private static class RecordComponent {
 		String componentName;
 		Object jvalue;
 
@@ -45,7 +44,7 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 	/**
 	 * Synthetic class to ease XML parsing
 	 */
-	private static class MapEntry  {
+	private static class MapEntry {
 		Object key = null;
 		Object value = null;
 	}
@@ -71,7 +70,7 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 			XMLStreamException {
 		process(fileName);
 		if (stack.size() != 1) {
-			throw new JValueLoadException(
+			throw new SerialisingException(
 					"Something went wrong.  stack.size() = " + stack.size()
 							+ " != 1.  This must not happen!", null);
 		}
@@ -102,7 +101,7 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 		// that (the parent has to be some kind of collection or map)
 		Object parentElement = stack.peek();
 
-		// TODO
+		// TODO [removejvalue]
 		// // Each and every element may be have a browsing info, so check that
 		// // first.
 		// if (endedElement instanceof JValueBrowsingInfo) {
@@ -119,7 +118,8 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 		if (parentElement instanceof PMap) {
 			// Parent is a Map, so the current element has to be a mapEntry
 			MapEntry jme = (MapEntry) endedElement;
-			parentElement = ((PMap<Object,Object>)parentElement).plus(jme.key, jme.value);
+			parentElement = ((PMap<Object, Object>) parentElement).plus(
+					jme.key, jme.value);
 		} else if (parentElement instanceof MapEntry) {
 			// Parent is a map entry, so the current elem is a key or a value of
 			// the entry.
@@ -129,7 +129,7 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 			} else if (jme.value == null) {
 				jme.value = endedElement;
 			} else {
-				throw new JValueLoadException(
+				throw new SerialisingException(
 						"Encountered MapEntry with more than 2 elements!", null);
 			}
 		} else if (parentElement instanceof RecordComponent) {
@@ -139,19 +139,19 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 		} else if (parentElement instanceof PCollection) {
 			// ok, parent is a collection, so we can simply add with the
 			// exception of records and tables
-			PCollection<Object> coll = (PCollection<Object>)parentElement;
+			PCollection<Object> coll = (PCollection<Object>) parentElement;
 			if (coll instanceof Record) {
-				Record rec = (Record)coll;
+				Record rec = (Record) coll;
 				RecordComponent comp = (RecordComponent) endedElement;
 				rec = rec.plus(comp.componentName, comp.jvalue);
 			} else if (coll instanceof Table) {
-				Table<?> tab = (Table<?>)coll;
+				Table<?> tab = (Table<?>) coll;
 				if (tab.getTitles() == null) {
 					tab = tab.withTitles((PVector<String>) endedElement);
 				} else if (tab.toPVector() == null) {
-					tab = tab.plusAll((PCollection)endedElement);
+					tab = tab.plusAll((PCollection) endedElement);
 				} else {
-					throw new JValueLoadException(
+					throw new SerialisingException(
 							"Table containing more children than header and data!",
 							null);
 				}
@@ -159,7 +159,7 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 				coll = coll.plus(endedElement);
 			}
 		} else {
-			throw new JValueLoadException("The element '" + endedElement
+			throw new SerialisingException("The element '" + endedElement
 					+ "' couldn't be added to its parent.", null);
 		}
 	}
@@ -177,7 +177,7 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 			if (gid != null) {
 				defaultGraph = id2GraphMap.get(gid);
 				if (defaultGraph == null) {
-					throw new JValueLoadException("There's no graph with id '"
+					throw new SerialisingException("There's no graph with id '"
 							+ gid + "'.", null);
 				}
 			}
@@ -187,19 +187,19 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 			String schemaName = getAttribute(ATTR_SCHEMA);
 			Schema schema = schemaName2Schema.get(schemaName);
 			if (schema == null) {
-				throw new JValueLoadException("Couldn't retrieve Schema '"
+				throw new SerialisingException("Couldn't retrieve Schema '"
 						+ schemaName + "'", null);
 			}
 			AttributedElementClass aec = schema
 					.getAttributedElementClass(qName);
 			if (aec == null) {
-				throw new JValueLoadException(
+				throw new SerialisingException(
 						"Couldn't retrieve attributed element '" + qName
 								+ "' from schema '" + schemaName + "'.", null);
 			}
 			val = aec;
 			// ---------------------------------------------------------------
-		}else if (elem.equals(BOOLEAN)) {
+		} else if (elem.equals(BOOLEAN)) {
 			val = Boolean.valueOf(getAttribute(ATTR_VALUE));
 			// ---------------------------------------------------------------
 		} else if (elem.equals(DOUBLE)) {
@@ -212,13 +212,13 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 			if (gid != null) {
 				g = id2GraphMap.get(gid);
 				if (g == null) {
-					throw new JValueLoadException("There's no graph with id '"
+					throw new SerialisingException("There's no graph with id '"
 							+ gid + "'.", null);
 				}
 			}
 			Edge e = g.getEdge(id);
 			if (e == null) {
-				throw new JValueLoadException("There's no edge with id '" + id
+				throw new SerialisingException("There's no edge with id '" + id
 						+ "' in graph '" + g.getId() + "'.", null);
 			}
 			val = e;
@@ -232,7 +232,7 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 			String gid = getAttribute(ATTR_GRAPH_ID);
 			Graph g = id2GraphMap.get(gid);
 			if (g == null) {
-				throw new JValueLoadException("There's no graph with id '"
+				throw new SerialisingException("There's no graph with id '"
 						+ gid + "'.", null);
 			}
 			val = g;
@@ -269,8 +269,8 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 			// header is empty by default, but we rely that it's not set when
 			// assigning children to parent jvalues is endElement().
 			tab = tab.withTitles(null);
-			//TODO find other method to check null on data
-			//tab = tab.
+			// TODO find other method to check null on data
+			// tab = tab.
 			val = tab;
 			// ---------------------------------------------------------------
 		} else if (elem.equals(TUPLE)) {
@@ -283,25 +283,25 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 			if (gid != null) {
 				g = id2GraphMap.get(gid);
 				if (g == null) {
-					throw new JValueLoadException("There's no graph with id '"
+					throw new SerialisingException("There's no graph with id '"
 							+ gid + "'.", null);
 				}
 			}
 			Vertex v = g.getVertex(id);
 			if (v == null) {
-				throw new JValueLoadException("There's no vertex with id '"
+				throw new SerialisingException("There's no vertex with id '"
 						+ id + "' in graph '" + g.getId() + "'.", null);
 			}
 			val = v;
 			// ---------------------------------------------------------------
 		} else {
-			throw new JValueLoadException("Unrecognized XML element '" + elem
+			throw new SerialisingException("Unrecognized XML element '" + elem
 					+ "'.", null);
 		}
 
 		// -------------------------------------------------------------------
 		if (val == null) {
-			throw new JValueLoadException(
+			throw new SerialisingException(
 					"Couldn't read the value of element '" + elem + "'.", null);
 		}
 
@@ -317,7 +317,7 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 			val = Enum.valueOf(e, litName);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
-			throw new JValueLoadException("The Enum class '" + enumTypeName
+			throw new SerialisingException("The Enum class '" + enumTypeName
 					+ "' could not be loaded.", e);
 		}
 		return val;

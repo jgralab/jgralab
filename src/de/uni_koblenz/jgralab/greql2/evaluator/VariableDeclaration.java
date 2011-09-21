@@ -43,7 +43,7 @@ import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VariableEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
+import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
 import de.uni_koblenz.jgralab.greql2.types.Undefined;
@@ -161,7 +161,7 @@ public class VariableDeclaration {
 			definitionSet = ArrayPSet.empty();
 			definitionSet = definitionSet.plusAll(col);
 			if (col.size() > definitionSet.size()) {
-				throw new EvaluateException(
+				throw new GreqlException(
 						"A collection that doesn't fulfill the set property is used as variable range definition");
 			}
 

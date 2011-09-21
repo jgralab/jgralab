@@ -314,7 +314,7 @@ public class GreqlEvaluatorFacade {
 			throw parse;
 		}
 
-		Object result = evaluator.getEvaluationResult();
+		Object result = evaluator.getResult();
 
 		GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS = false;
 		GreqlEvaluator.DEBUG_OPTIMIZATION = false;

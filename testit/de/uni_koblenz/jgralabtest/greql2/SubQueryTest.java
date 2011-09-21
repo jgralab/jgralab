@@ -40,7 +40,7 @@ import junit.framework.Assert;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.exception.Greql2Exception;
+import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 
 public class SubQueryTest extends GenericTest {
@@ -55,7 +55,7 @@ public class SubQueryTest extends GenericTest {
 		eval.setSubQuery("three", "3");
 		eval.setQuery("one() + two() + three()");
 		eval.startEvaluation();
-		JValue r = eval.getEvaluationResult();
+		JValue r = eval.getResult();
 		Assert.assertEquals(6, r.toInteger().intValue());
 	}
 
@@ -66,44 +66,44 @@ public class SubQueryTest extends GenericTest {
 		eval.setSubQuery("three", "one() + two() - two() + one() + one()");
 		eval.setQuery("one() + two() + three()");
 		eval.startEvaluation();
-		JValue r = eval.getEvaluationResult();
+		JValue r = eval.getResult();
 		Assert.assertEquals(6, r.toInteger().intValue());
 	}
 
-	@Test(expected = Greql2Exception.class)
+	@Test(expected = GreqlException.class)
 	public void testRecursiveSubQueryError() {
 		// recursive defs are not allowed
 		eval.setSubQuery("x", "using val: (val > 0 ? x(val - 1) : 0)");
 	}
 
-	@Test(expected = Greql2Exception.class)
+	@Test(expected = GreqlException.class)
 	public void testShadowingSubQueryError() {
 		// A subquery def must error if it shadows a function from the funlib
 		eval.setSubQuery("and", "true");
 	}
 
-	@Test(expected = Greql2Exception.class)
+	@Test(expected = GreqlException.class)
 	public void testSubQueryArgCountMismatchError1() {
 		eval.setSubQuery("add3", "using a, b, c: a + b + c");
 		eval.setQuery("add3()");
 		eval.startEvaluation();
 	}
 
-	@Test(expected = Greql2Exception.class)
+	@Test(expected = GreqlException.class)
 	public void testSubQueryArgCountMismatchError2() {
 		eval.setSubQuery("add3", "using a, b, c: a + b + c");
 		eval.setQuery("add3(1)");
 		eval.startEvaluation();
 	}
 
-	@Test(expected = Greql2Exception.class)
+	@Test(expected = GreqlException.class)
 	public void testSubQueryArgCountMismatchError3() {
 		eval.setSubQuery("add3", "using a, b, c: a + b + c");
 		eval.setQuery("add3(1, 2)");
 		eval.startEvaluation();
 	}
 
-	@Test(expected = Greql2Exception.class)
+	@Test(expected = GreqlException.class)
 	public void testSubQueryArgCountMismatchError4() {
 		eval.setSubQuery("add3", "using a, b, c: a + b + c");
 		eval.setQuery("add3(1, 2, 3, 4)");
@@ -118,7 +118,7 @@ public class SubQueryTest extends GenericTest {
 		eval.setSubQuery("three", "one() + two() - two() + one() + one()");
 		eval.setQuery("add3(one(), two(), three())");
 		eval.startEvaluation();
-		JValue r = eval.getEvaluationResult();
+		JValue r = eval.getResult();
 		Assert.assertEquals(6, r.toInteger().intValue());
 	}
 }

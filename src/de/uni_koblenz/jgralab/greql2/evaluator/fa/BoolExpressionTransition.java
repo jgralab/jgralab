@@ -38,10 +38,9 @@ package de.uni_koblenz.jgralab.greql2.evaluator.fa;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
-import de.uni_koblenz.jgralab.greql2.Greql2Serializer;
+import de.uni_koblenz.jgralab.greql2.GreqlSerializer;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ThisVertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.schema.ThisVertex;
 
 /**
@@ -132,7 +131,7 @@ public class BoolExpressionTransition extends Transition {
 	 * @see greql2.evaluator.fa.Transition#accepts(jgralab.Vertex, jgralab.Edge)
 	 */
 	@Override
-	public boolean accepts(Vertex v, Edge e) throws EvaluateException {
+	public boolean accepts(Vertex v, Edge e) {
 		if (thisVertexEvaluator != null) {
 			thisVertexEvaluator.setValue(v);
 		}
@@ -151,7 +150,7 @@ public class BoolExpressionTransition extends Transition {
 	@Override
 	public String prettyPrint() {
 		return "IntermediateVertex "
-				+ new Greql2Serializer()
+				+ new GreqlSerializer()
 						.serializeGreql2Vertex(boolExpressionEvaluator
 								.getVertex());
 	}

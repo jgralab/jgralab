@@ -259,7 +259,7 @@ public class GreqlGui extends JFrame {
 					SwingUtilities.invokeLater(new Runnable() {
 						@Override
 						public void run() {
-							Object result = eval.getEvaluationResult();
+							Object result = eval.getResult();
 							try {
 								File resultFile = File.createTempFile(
 										"greqlQueryResult", ".html");

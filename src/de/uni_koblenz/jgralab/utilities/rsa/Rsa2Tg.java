@@ -2296,7 +2296,7 @@ public class Rsa2Tg extends XmlProcessor {
 					"isAcyclic(vSubgraph{structure.EdgeClass})", sg, null);
 		}
 		edgeClassAcyclicEvaluator.startEvaluation();
-		return (Boolean) edgeClassAcyclicEvaluator.getEvaluationResult();
+		return (Boolean) edgeClassAcyclicEvaluator.getResult();
 	}
 
 	/**
@@ -2310,7 +2310,7 @@ public class Rsa2Tg extends XmlProcessor {
 					"isAcyclic(vSubgraph{structure.VertexClass})", sg, null);
 		}
 		vertexClassAcyclicEvaluator.startEvaluation();
-		return (Boolean) vertexClassAcyclicEvaluator.getEvaluationResult();
+		return (Boolean) vertexClassAcyclicEvaluator.getResult();
 	}
 
 	/**

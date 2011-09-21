@@ -42,7 +42,6 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.schema.EdgeRestriction;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.IsBooleanPredicateOfEdgeRestriction;
@@ -86,7 +85,7 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator {
 	/**
 	 * Returns the typeCollection
 	 */
-	public TypeCollection getTypeCollection() throws EvaluateException {
+	public TypeCollection getTypeCollection() {
 		if (typeCollection == null) {
 			evaluate();
 		}
@@ -120,7 +119,7 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator {
 	 * evaluates the EdgeRestriction, creates the typeList and the validEdgeRole
 	 */
 	@Override
-	public Object evaluate() throws EvaluateException {
+	public Object evaluate() {
 		if (typeCollection == null) {
 			typeCollection = new TypeCollection();
 			IsTypeIdOf typeInc = vertex

@@ -38,7 +38,6 @@ package de.uni_koblenz.jgralab.greql2.evaluator;
 import java.util.List;
 
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongResultTypeException;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 
@@ -100,7 +99,7 @@ public class VariableDeclarationLayer {
 	 * 
 	 * @return true if another possible combination was found, false otherwise
 	 */
-	public boolean iterate() throws EvaluateException {
+	public boolean iterate() {
 		StringBuilder sb = null;
 		if (GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS) {
 			sb = new StringBuilder();
@@ -158,9 +157,8 @@ public class VariableDeclarationLayer {
 	 * Gets the first possible Variable Combination
 	 * 
 	 * @return true if a first combination exists, false otherwise
-	 * @throws EvaluateException
 	 */
-	private boolean getFirstCombination() throws EvaluateException {
+	private boolean getFirstCombination() {
 		variableDeclarations.get(0).reset();
 		return getNextCombination(true);
 	}
@@ -169,11 +167,9 @@ public class VariableDeclarationLayer {
 	 * Gets the next possible variable combination
 	 * 
 	 * @return true if a next combination exists, false otherwise
-	 * @throws EvaluateException
 	 */
 
-	private boolean getNextCombination(boolean firstCombination)
-			throws EvaluateException {
+	private boolean getNextCombination(boolean firstCombination) {
 
 		int pointer = firstCombination ? 0 : variableDeclarations.size() - 1;
 
@@ -206,9 +202,8 @@ public class VariableDeclarationLayer {
 	 * Checks if the current variable combination fulfills the constraints.
 	 * 
 	 * @return true if the combination fulfills the constraint, false otherwise
-	 * @throws EvaluateException
 	 */
-	private boolean fullfillsConstraints() throws EvaluateException {
+	private boolean fullfillsConstraints() {
 		if ((constraintList == null) || (constraintList.isEmpty())) {
 			return true;
 		}

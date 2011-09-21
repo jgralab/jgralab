@@ -119,7 +119,7 @@ public abstract class EventDescription {
 					.getGreqlEvaluator();
 			eval.setQuery(this.contextExpression);
 			eval.startEvaluation();
-			Object resultingContext = eval.getEvaluationResult();
+			Object resultingContext = eval.getResult();
 			if (resultingContext instanceof PCollection) {
 				PCollection<?> col = (PCollection<?>) resultingContext;
 				for (Object val : col) {

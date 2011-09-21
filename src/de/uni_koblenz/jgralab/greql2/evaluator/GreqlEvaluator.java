@@ -54,6 +54,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.pcollections.PSet;
+import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
@@ -73,8 +74,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.DefaultCostModel;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.Greql2Exception;
+import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
 import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
@@ -127,7 +127,7 @@ public class GreqlEvaluator {
 
 		GreqlEvaluator eval = new GreqlEvaluator(query, datagraph, null);
 		eval.startEvaluation();
-		Object result = eval.getEvaluationResult();
+		Object result = eval.getResult();
 		System.out.println("Evaluation Result:");
 		System.out.println("==================");
 
@@ -638,11 +638,10 @@ public class GreqlEvaluator {
 
 	public void setSubQuery(String name, String greqlQuery) {
 		if (name == null) {
-			throw new EvaluateException(
-					"The name of a subquery must not be null!");
+			throw new GreqlException("The name of a subquery must not be null!");
 		}
 		if (!name.matches("^\\w+$")) {
-			throw new EvaluateException("Invalid subquery name '" + name
+			throw new GreqlException("Invalid subquery name '" + name
 					+ "'. Only word chars are allowed.");
 		}
 
@@ -652,13 +651,9 @@ public class GreqlEvaluator {
 		subQueryNames.addAll(definedSubQueries);
 		subQueryNames.add(name);
 		GreqlParser parser = new GreqlParser(greqlQuery, subQueryNames);
-		try {
-			parser.parse();
-		} catch (Exception e) {
-			// e.printStackTrace();
-			throw new EvaluateException("Error parsing subquery \""
-					+ greqlQuery + "\".", e);
-		}
+
+		parser.parse();
+
 		Greql2 subQueryGraph = parser.getGraph();
 		subQueryGraph.getFirstGreql2Expression().set_queryText(name);
 		if (isOptimize()) {
@@ -671,13 +666,13 @@ public class GreqlEvaluator {
 			queryString = oldQueryString;
 		}
 		if (FunLib.instance().contains(name)) {
-			throw new Greql2Exception("The subquery '" + name
+			throw new GreqlException("The subquery '" + name
 					+ "' would shadow a GReQL function!");
 		}
 		for (FunctionApplication fa : subQueryGraph
 				.getFunctionApplicationVertices()) {
 			if (name.equals(fa.get_functionId().get_name())) {
-				throw new Greql2Exception("The subquery '" + name
+				throw new GreqlException("The subquery '" + name
 						+ "' is recursive.  That's not allowed!");
 			}
 		}
@@ -695,9 +690,23 @@ public class GreqlEvaluator {
 	/**
 	 * returns the result of the evaluation
 	 */
-	public Object getEvaluationResult() {
-		// System.out.println("\t--> " + result);
+	public Object getResult() {
 		return result;
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> T getSingleResult(Class<T> cls) {
+		return (T) result;
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> PVector<T> getResultList(Class<T> cls) {
+		return (PVector<T>) result;
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> PSet<T> getResultSet(Class<T> cls) {
+		return (PSet<T>) result;
 	}
 
 	/**
@@ -869,16 +878,10 @@ public class GreqlEvaluator {
 	/**
 	 * Parses the given query-string and creates the query-graph out of it
 	 */
-	protected boolean parseQuery(String query) throws EvaluateException {
+	protected boolean parseQuery(String query) {
 		long parseStartTime = System.currentTimeMillis();
 		GreqlParser parser = new GreqlParser(query, subQueryMap.keySet());
-		try {
-			parser.parse();
-		} catch (Exception e) {
-			// e.printStackTrace();
-			throw new EvaluateException("Error parsing query \"" + queryString
-					+ "\".", e);
-		}
+		parser.parse();
 		queryGraph = parser.getGraph();
 		weaveInSubQueries();
 		parseTime = System.currentTimeMillis() - parseStartTime;
@@ -930,7 +933,7 @@ public class GreqlEvaluator {
 		}
 
 		if (args.size() != boundVars.size()) {
-			throw new Greql2Exception("Subquery call to '" + name + "' has "
+			throw new GreqlException("Subquery call to '" + name + "' has "
 					+ args.size()
 					+ " arguments, but the subquery definition has "
 					+ boundVars.size() + " formal parameters!");
@@ -974,7 +977,7 @@ public class GreqlEvaluator {
 	/**
 	 * Creates the VertexEvaluator-Object at the vertices in the syntaxgraph
 	 */
-	public void createVertexEvaluators() throws EvaluateException {
+	public void createVertexEvaluators() {
 		if (queryGraph == null) {
 			return;
 		}
@@ -1013,8 +1016,7 @@ public class GreqlEvaluator {
 	 * syntaxgraph, adds the VertexEvaluator object to the vertices of that
 	 * graph and stores this as attribute queryGraph.
 	 */
-	protected void createOptimizedSyntaxGraph() throws EvaluateException,
-			OptimizerException {
+	protected void createOptimizedSyntaxGraph() throws OptimizerException {
 		long optimizerStartTime = System.currentTimeMillis();
 		if (optimizer == null) {
 			optimizer = new DefaultOptimizer();
@@ -1074,11 +1076,8 @@ public class GreqlEvaluator {
 	 * variables
 	 * 
 	 * @return true on success, false otherwise
-	 * @throws EvaluateException
-	 *             if something gets wrong during evaluation
 	 */
-	public boolean startEvaluation() throws EvaluateException,
-			OptimizerException {
+	public boolean startEvaluation() throws OptimizerException {
 		if (started) {
 			return result != null;
 		}
@@ -1137,8 +1136,8 @@ public class GreqlEvaluator {
 		}
 
 		if (queryGraph == null) {
-			throw new RuntimeException(
-					"Empty query graph supplied, no evaluation possible");
+			throw new GreqlException(
+					"Query graph is null. Evaluation impossible.");
 		}
 
 		if (queryGraph.getVCount() <= 1) {

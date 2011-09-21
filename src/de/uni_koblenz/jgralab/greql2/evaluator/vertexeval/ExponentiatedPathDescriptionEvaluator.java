@@ -40,7 +40,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
+import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql2.schema.ExponentiatedPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
@@ -83,7 +83,7 @@ public class ExponentiatedPathDescriptionEvaluator extends
 	}
 
 	@Override
-	public NFA evaluate() throws EvaluateException {
+	public NFA evaluate() {
 		PathDescription p = (PathDescription) vertex
 				.getFirstIsExponentiatedPathOfIncidence().getAlpha();
 		PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) vertexEvalMarker
@@ -95,7 +95,7 @@ public class ExponentiatedPathDescriptionEvaluator extends
 		if (exponentValue instanceof Integer) {
 			exponent = (Integer) exponentValue;
 		} else {
-			throw new EvaluateException(
+			throw new GreqlException(
 					"Exponent of ExponentiatedPathDescription is not convertable to integer value");
 		}
 		return NFA.createExponentiatedPathDescriptionNFA(pathEval.getNFA(),

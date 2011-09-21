@@ -38,7 +38,6 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.schema.BoolLiteral;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 
@@ -72,12 +71,8 @@ public class BoolLiteralEvaluator extends VertexEvaluator {
 	}
 
 	@Override
-	public Boolean evaluate() throws EvaluateException {
-		if (vertex.is_boolValue()) {
-			return true;
-		} else {
-			return false;
-		}
+	public Boolean evaluate() {
+		return vertex.is_boolValue();
 	}
 
 	@Override

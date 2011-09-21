@@ -403,7 +403,7 @@ public class GenericTest {
 			printDebuggingSyntaxGraph(optimizer);
 		}
 
-		JValue result = eval.getEvaluationResult();
+		JValue result = eval.getResult();
 		// eval.printEvaluationTimes();
 		return result;
 	}
@@ -417,7 +417,7 @@ public class GenericTest {
 		setOptimizer(optimizer);
 
 		eval.startEvaluation();
-		JValue result = eval.getEvaluationResult();
+		JValue result = eval.getResult();
 		return result;
 	}
 

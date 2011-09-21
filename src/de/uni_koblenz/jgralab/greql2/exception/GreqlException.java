@@ -32,22 +32,24 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
+/**
+ * 
+ */
 package de.uni_koblenz.jgralab.greql2.exception;
 
 /**
- * This function is thrown if a class should be registered as a GReQL function
- * but there is already a GReQL function with the same name available in the
- * function library.
- * 
  * @author ist@uni-koblenz.de
  * 
+ *         Base class for all GReQL2 related exceptions.
  */
-public class DuplicateGreqlFunctionException extends RuntimeException {
+public class GreqlException extends RuntimeException {
+	private static final long serialVersionUID = -2914800888476896758L;
 
-	private static final long serialVersionUID = -5682985318690802997L;
-
-	public DuplicateGreqlFunctionException(String message) {
+	public GreqlException(String message) {
 		super(message);
 	}
 
+	public GreqlException(String message, Throwable cause) {
+		super(message, cause);
+	}
 }

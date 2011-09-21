@@ -1132,7 +1132,7 @@ public class SchemaGraph2XMI {
 							+ baseRolename + (counter == 1 ? "" : counter)
 							+ "\"", schemaGraph, boundVars);
 			eval.startEvaluation();
-			result = eval.getEvaluationResult();
+			result = eval.getResult();
 		} while (result instanceof Boolean ? (Boolean) result : false);
 
 		return baseRolename + (counter == 1 ? "" : counter);

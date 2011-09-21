@@ -91,7 +91,7 @@
 
 	<!-- set project specific properties -->
 
-	<property name="greql2.schemafile" value="${src.dir}/de/uni_koblenz/jgralab/greql2/greql2Schema.tg" />
+	<property name="greql2.schemafile" value="${src.dir}/de/uni_koblenz/jgralab/greql2/GreqlSchema.tg" />
 	<property name="gruml.schemafile" value="${src.dir}/de/uni_koblenz/jgralab/schema/GrumlSchema.tg" />
 	<property name="gretl.templategraphschemafile" value="${src.dir}/de/uni_koblenz/jgralab/gretl/templateGraphSchema.tg" />
 

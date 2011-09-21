@@ -41,8 +41,6 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.QuerySourceException;
 import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 import de.uni_koblenz.jgralab.greql2.funlib.NeedsGraphArgument;
@@ -150,7 +148,7 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 	/**
 	 * creates the type-argument
 	 */
-	private TypeCollection createTypeArgument() throws EvaluateException {
+	private TypeCollection createTypeArgument() {
 		TypeId typeId;
 		IsTypeExprOf typeEdge = vertex
 				.getFirstIsTypeExprOfIncidence(EdgeDirection.IN);
@@ -172,7 +170,7 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 	 * evaluates the function, calls the right function of the function libary
 	 */
 	@Override
-	public Object evaluate() throws EvaluateException {
+	public Object evaluate() {
 		if (!listCreated) {
 			typeArgument = createTypeArgument();
 			parameterEvaluators = createVertexEvaluatorList();
@@ -202,13 +200,7 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 			parameters[p] = typeArgument;
 		}
 
-		try {
-			result = FunLib.instance().apply(getFunctionName(), parameters);
-		} catch (EvaluateException ex) {
-			throw new QuerySourceException(ex.getMessage(), vertex,
-					createPossibleSourcePositions(), ex);
-		}
-		return result;
+		return FunLib.instance().apply(getFunctionName(), parameters);
 	}
 
 	@Override
