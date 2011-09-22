@@ -28,8 +28,7 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
 public class DefaultWriter {
 
-	
-	public void writePSet(PSet<?> s) {
+	public void writePSet(PSet<?> s) throws Exception {
 		Iterator<?> iter = s.iterator();
 		boolean first = true;
 		pre();
@@ -43,13 +42,13 @@ public class DefaultWriter {
 		}
 		post();
 	}
-	
-	public void writeTable(Table<?> t) {
+
+	public void writeTable(Table<?> t) throws Exception {
 		this.writePVector(t.getTitles());
 		this.writePVector(t.toPVector());
 	}
-	
-	public void writePVector(PVector<?> b) {
+
+	public void writePVector(PVector<?> b) throws Exception {
 		Iterator<?> iter = b.iterator();
 		boolean first = true;
 		pre();
@@ -63,8 +62,8 @@ public class DefaultWriter {
 		}
 		post();
 	}
-	
-	public void writePMap(PMap<?,?> b) {
+
+	public void writePMap(PMap<?, ?> b) throws Exception {
 		boolean first = true;
 		pre();
 		for (Entry<?, ?> e : b.entrySet()) {
@@ -75,13 +74,13 @@ public class DefaultWriter {
 			}
 			Tuple t = Tuple.empty();
 			t = t.plus(e.getKey());
-			t= t.plus(e.getValue());
+			t = t.plus(e.getValue());
 			this.writeTuple(t);
 		}
 		post();
 	}
-	
-	public void writeTuple(Tuple t) {
+
+	public void writeTuple(Tuple t) throws Exception {
 		Iterator<?> iter = t.iterator();
 		boolean first = true;
 		pre();
@@ -95,10 +94,8 @@ public class DefaultWriter {
 		}
 		post();
 	}
-	
-	public void writeRecord(Record r) {
-		//TODO - find a way to access the record
-		//Iterator<Object> iter = r.iterator();
+
+	public void writeRecord(Record r) throws Exception {
 		boolean first = true;
 		pre();
 		for (String compName : r.getComponentNames()) {
@@ -112,168 +109,163 @@ public class DefaultWriter {
 		}
 		post();
 	}
-	
-	public void writePath(Path p) {
+
+	public void writePath(Path p) throws Exception {
 		cantWrite(p);
 	}
-	
-	public void writePathSystem(PathSystem p) {
+
+	public void writePathSystem(PathSystem p) throws Exception {
 		cantWrite(p);
 	}
-	
-	public void writeSlice(Slice s) {
+
+	public void writeSlice(Slice s) throws Exception {
 		cantWrite(s);
 	}
-	
-	public void writeVertex(Vertex v) {
+
+	public void writeVertex(Vertex v) throws Exception {
 		cantWrite(v);
 	}
-	
-	public void writeEdge(Edge e) {
+
+	public void writeEdge(Edge e) throws Exception {
 		cantWrite(e);
 	}
-	
-	public void writeInteger(Integer n) {
-		cantWrite(n);
-	}
-	
-	public void writeLong(Long n) {
+
+	public void writeInteger(Integer n) throws Exception {
 		cantWrite(n);
 	}
 
-	public void writeDouble(Double n) {
+	public void writeLong(Long n) throws Exception {
 		cantWrite(n);
 	}
-	
-	public void writeString(String s) {
+
+	public void writeDouble(Double n) throws Exception {
+		cantWrite(n);
+	}
+
+	public void writeString(String s) throws Exception {
 		cantWrite(s);
 	}
-	
-	public void writeEnum(Enum<?> e) {
+
+	public void writeEnum(Enum<?> e) throws Exception {
 		cantWrite(e);
 	}
-	
-	public void writeGraph(Graph g) {
+
+	public void writeGraph(Graph g) throws Exception {
 		cantWrite(g);
 	}
 
-	public void writeSubGraphMarker(SubGraphMarker s) {
+	public void writeSubGraphMarker(SubGraphMarker s) throws Exception {
 		cantWrite(s);
 	}
-	
-	public void writeDFA(DFA d) {
+
+	public void writeDFA(DFA d) throws Exception {
 		cantWrite(d);
 	}
 
-	public void writeNFA(NFA n) {
+	public void writeNFA(NFA n) throws Exception {
 		cantWrite(n);
 	}
-	
-	public void writeBoolean(Boolean b) {
+
+	public void writeBoolean(Boolean b) throws Exception {
 		cantWrite(b);
 	}
 
-	public void writeAttributedElementClass(AttributedElementClass a) {
-		cantWrite(a);
-	}
-	
-	public void writeTypeCollection(TypeCollection a) {
+	public void writeAttributedElementClass(AttributedElementClass a)
+			throws Exception {
 		cantWrite(a);
 	}
 
-	public void writeState(State s) {
+	public void writeTypeCollection(TypeCollection a) throws Exception {
+		cantWrite(a);
+	}
+
+	public void writeState(State s) throws Exception {
 		cantWrite(s);
 	}
-	
-	public void writeTransition(Transition t) {
+
+	public void writeTransition(Transition t) throws Exception {
 		cantWrite(t);
 	}
-	
-	public void writeDeclaration(Declaration d) {
+
+	public void writeDeclaration(Declaration d) throws Exception {
 		cantWrite(d);
 	}
 
-	public void writeDefaultObject(Object o){
+	public void writeDefaultObject(Object o) throws Exception {
 		cantWrite(o);
 	}
-	
-	public void write(Object o) {		
-		if(o instanceof PSet){
-			this.writePSet((PSet<?>)o);
-		}else if(o instanceof Table){
-			this.writeTable((Table<?>)o);
-		}else if(o instanceof PVector){
-			this.writePVector((PVector<?>)o);
-		}else if(o instanceof PMap){
-			this.writePMap((PMap<?,?>)o);
-		}else if(o instanceof Tuple){
-			this.writeTuple((Tuple)o);
-		}else if(o instanceof Record){
-			this.writeRecord((Record)o);
-		}else if(o instanceof Path){
-			this.writePath((Path)o);
-		}else if(o instanceof PathSystem){
-			this.writePathSystem((PathSystem)o);
-		}else if(o instanceof Slice){
-			this.writeSlice((Slice)o);
-		}else if(o instanceof Vertex){
-			this.writeVertex((Vertex)o);
-		}else if(o instanceof Edge){
-			this.writeEdge((Edge)o);
-		}else if(o instanceof Integer){
-			this.writeInteger((Integer)o);
-		}else if(o instanceof Long){
-			this.writeLong((Long)o);
-		}else if(o instanceof Double){
-			this.writeDouble((Double)o);
-		}else if(o instanceof String){
-			this.writeString((String)o);
-		}else if(o instanceof Enum){
-			this.writeEnum((Enum<?>)o);
-		}else if(o instanceof Graph){
-			this.writeGraph((Graph)o);
-		}else if(o instanceof SubGraphMarker){
-			this.writeSubGraphMarker((SubGraphMarker)o);
-		}else if(o instanceof DFA){
-			this.writeDFA((DFA)o);
-		}else if(o instanceof NFA){
-			this.writeNFA((NFA)o);
-		} else if(o instanceof TypeCollection){
-			this.writeTypeCollection((TypeCollection)o);
-		}else if(o instanceof Boolean){
-			this.writeBoolean((Boolean)o);
-		}else if(o instanceof AttributedElementClass){
-			this.writeAttributedElementClass((AttributedElementClass)o);
-		}else if(o instanceof Transition){
-			this.writeTransition((Transition)o);
-		}else if(o instanceof Declaration){
-			this.writeDeclaration((Declaration)o);
-		}else{
+
+	public void write(Object o) throws Exception {
+		if (o instanceof PSet) {
+			this.writePSet((PSet<?>) o);
+		} else if (o instanceof Table) {
+			this.writeTable((Table<?>) o);
+		} else if (o instanceof PVector) {
+			this.writePVector((PVector<?>) o);
+		} else if (o instanceof PMap) {
+			this.writePMap((PMap<?, ?>) o);
+		} else if (o instanceof Tuple) {
+			this.writeTuple((Tuple) o);
+		} else if (o instanceof Record) {
+			this.writeRecord((Record) o);
+		} else if (o instanceof Path) {
+			this.writePath((Path) o);
+		} else if (o instanceof PathSystem) {
+			this.writePathSystem((PathSystem) o);
+		} else if (o instanceof Slice) {
+			this.writeSlice((Slice) o);
+		} else if (o instanceof Vertex) {
+			this.writeVertex((Vertex) o);
+		} else if (o instanceof Edge) {
+			this.writeEdge((Edge) o);
+		} else if (o instanceof Integer) {
+			this.writeInteger((Integer) o);
+		} else if (o instanceof Long) {
+			this.writeLong((Long) o);
+		} else if (o instanceof Double) {
+			this.writeDouble((Double) o);
+		} else if (o instanceof String) {
+			this.writeString((String) o);
+		} else if (o instanceof Enum) {
+			this.writeEnum((Enum<?>) o);
+		} else if (o instanceof Graph) {
+			this.writeGraph((Graph) o);
+		} else if (o instanceof SubGraphMarker) {
+			this.writeSubGraphMarker((SubGraphMarker) o);
+		} else if (o instanceof DFA) {
+			this.writeDFA((DFA) o);
+		} else if (o instanceof NFA) {
+			this.writeNFA((NFA) o);
+		} else if (o instanceof TypeCollection) {
+			this.writeTypeCollection((TypeCollection) o);
+		} else if (o instanceof Boolean) {
+			this.writeBoolean((Boolean) o);
+		} else if (o instanceof AttributedElementClass) {
+			this.writeAttributedElementClass((AttributedElementClass) o);
+		} else if (o instanceof Transition) {
+			this.writeTransition((Transition) o);
+		} else if (o instanceof Declaration) {
+			this.writeDeclaration((Declaration) o);
+		} else {
 			this.writeDefaultObject(o);
 		}
 	}
 
-	
-	public void post() {
+	public void post() throws Exception {
 	}
 
-	
-	public void pre() {
+	public void pre() throws Exception {
 	}
 
-	
-	public void inter() {
+	public void inter() throws Exception {
 	}
 
-	
-	public void head() {
+	public void head() throws Exception {
 	}
 
-	
-	public void foot() {
+	public void foot() throws Exception {
 	}
 
-	
 	public void cantWrite(Object v) {
 		throw new SerialisingException(getClass().getSimpleName()
 				+ " can not handle " + v.getClass(), v);

@@ -71,6 +71,7 @@ import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.WorkInProgress;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.serialising.HTMLOutputWriter;
 
 @WorkInProgress(description = "insufficcient result presentation, simplistic hacked GUI, no load/save functionality, ...", responsibleDevelopers = "horn")
 public class GreqlGui extends JFrame {
@@ -263,15 +264,14 @@ public class GreqlGui extends JFrame {
 							try {
 								File resultFile = File.createTempFile(
 										"greqlQueryResult", ".html");
-								// TODO [removejvalue] replace by correct ouput
-								// new JValueHTMLOutputVisitor(result,
-								// resultFile
-								// .getCanonicalPath(), graph, false,
-								// false);
+								new HTMLOutputWriter(result, resultFile, graph);
 								resultPane.setPage(new URL("file", "localhost",
 										resultFile.getCanonicalPath()));
 								tabPane.setSelectedComponent(resultScrollPane);
 							} catch (IOException e) {
+								JOptionPane.showMessageDialog(GreqlGui.this,
+										"Exception during HTML output of result: "
+												+ e.toString());
 							}
 						}
 					});
@@ -337,7 +337,7 @@ public class GreqlGui extends JFrame {
 		tabPane.addTab("Result", resultScrollPane);
 
 		fileChooser = new JFileChooser();
-		fileChooser.setAcceptAllFileFilterUsed(false);
+		fileChooser.setAcceptAllFileFilterUsed(true);
 		fileChooser.setFileFilter(TGFilenameFilter.instance());
 
 		fileSelectionButton = new JButton(new AbstractAction("Select Graph") {
