@@ -41,7 +41,6 @@ import org.junit.Test;
 
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.Greql2Exception;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 
 public class SubQueryTest extends GenericTest {
 
@@ -55,8 +54,8 @@ public class SubQueryTest extends GenericTest {
 		eval.setSubQuery("three", "3");
 		eval.setQuery("one() + two() + three()");
 		eval.startEvaluation();
-		JValue r = eval.getEvaluationResult();
-		Assert.assertEquals(6, r.toInteger().intValue());
+		Object r = eval.getEvaluationResult();
+		Assert.assertEquals(6, ((Integer)r).intValue());
 	}
 
 	@Test
@@ -66,8 +65,8 @@ public class SubQueryTest extends GenericTest {
 		eval.setSubQuery("three", "one() + two() - two() + one() + one()");
 		eval.setQuery("one() + two() + three()");
 		eval.startEvaluation();
-		JValue r = eval.getEvaluationResult();
-		Assert.assertEquals(6, r.toInteger().intValue());
+		Object r = eval.getEvaluationResult();
+		Assert.assertEquals(6, ((Integer)r).intValue());
 	}
 
 	@Test(expected = Greql2Exception.class)
@@ -118,7 +117,7 @@ public class SubQueryTest extends GenericTest {
 		eval.setSubQuery("three", "one() + two() - two() + one() + one()");
 		eval.setQuery("add3(one(), two(), three())");
 		eval.startEvaluation();
-		JValue r = eval.getEvaluationResult();
-		Assert.assertEquals(6, r.toInteger().intValue());
+		Object r = eval.getEvaluationResult();
+		Assert.assertEquals(6, ((Integer)r).intValue());
 	}
 }

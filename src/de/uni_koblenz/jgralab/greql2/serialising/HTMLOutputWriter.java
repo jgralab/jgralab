@@ -158,9 +158,8 @@ public class HTMLOutputWriter extends DefaultWriter {
 		}
 		storeln("</th></tr>");
 		
-		//TODO find out how to access data of table in a better way
-		for (int i = 0; i < table.toPVector().size();i++) {
-			PCollection<?> row = (PCollection<?>) table.get(i);
+		PVector<Tuple> data = (PVector<Tuple>) table.toPVector();
+		for (Tuple row : data) {
 			store("<tr>");
 			for (Object cell : row) {
 				store("<td>");
@@ -262,6 +261,7 @@ public class HTMLOutputWriter extends DefaultWriter {
 		}
 	}
 
+	@Override
 	public void writeDefaultObject(Object o){
 		String b = o.toString();
 		storeln(b.toString());	}

@@ -26,9 +26,14 @@ import de.uni_koblenz.jgralab.greql2.types.Tuple;
 import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
-public class DefaultWriter {
+public abstract class DefaultWriter {
 
-	
+	/**
+	 * Writes a PSet by writing all its elements
+	 * 
+	 * @param s
+	 *            the PSet to write
+	 */
 	public void writePSet(PSet<?> s) {
 		Iterator<?> iter = s.iterator();
 		boolean first = true;
@@ -43,12 +48,13 @@ public class DefaultWriter {
 		}
 		post();
 	}
-	
-	public void writeTable(Table<?> t) {
-		this.writePVector(t.getTitles());
-		this.writePVector(t.toPVector());
-	}
-	
+
+	/**
+	 * Writes a PVector by writing all its elements
+	 * 
+	 * @param b
+	 *            the PVector to write
+	 */
 	public void writePVector(PVector<?> b) {
 		Iterator<?> iter = b.iterator();
 		boolean first = true;
@@ -63,8 +69,14 @@ public class DefaultWriter {
 		}
 		post();
 	}
-	
-	public void writePMap(PMap<?,?> b) {
+
+	/**
+	 * Writes a PMap by writing all of its Tuples
+	 * 
+	 * @param b
+	 *            the PMap to write
+	 */
+	public void writePMap(PMap<?, ?> b) {
 		boolean first = true;
 		pre();
 		for (Entry<?, ?> e : b.entrySet()) {
@@ -75,12 +87,29 @@ public class DefaultWriter {
 			}
 			Tuple t = Tuple.empty();
 			t = t.plus(e.getKey());
-			t= t.plus(e.getValue());
+			t = t.plus(e.getValue());
 			this.writeTuple(t);
 		}
 		post();
 	}
-	
+
+	/**
+	 * Writes a Table by first write the titles and then write the data
+	 * 
+	 * @param t
+	 *            the Table to write
+	 */
+	public void writeTable(Table<?> t) {
+		this.writePVector(t.getTitles());
+		this.writePVector(t.toPVector());
+	}
+
+	/**
+	 * Writes a Tuple by writing all of its components
+	 * 
+	 * @param t
+	 *            the Tuple to write
+	 */
 	public void writeTuple(Tuple t) {
 		Iterator<?> iter = t.iterator();
 		boolean first = true;
@@ -95,10 +124,15 @@ public class DefaultWriter {
 		}
 		post();
 	}
-	
+
+	/**
+	 * Writes a Record by writing the Components, first the name, second the
+	 * value
+	 * 
+	 * @param r
+	 *            the Record to write
+	 */
 	public void writeRecord(Record r) {
-		//TODO - find a way to access the record
-		//Iterator<Object> iter = r.iterator();
 		boolean first = true;
 		pre();
 		for (String compName : r.getComponentNames()) {
@@ -112,168 +146,297 @@ public class DefaultWriter {
 		}
 		post();
 	}
-	
+
+	/**
+	 * DefaultWriter has no support for writing a Path
+	 * 
+	 * @param p
+	 *            the Path to write
+	 */
 	public void writePath(Path p) {
 		cantWrite(p);
 	}
-	
+
+	/**
+	 * DefaultWriter has no support for writing a PathSystem
+	 * 
+	 * @param p
+	 *            the PathSystem to write
+	 */
 	public void writePathSystem(PathSystem p) {
 		cantWrite(p);
 	}
-	
+
+	/**
+	 * DefaultWriter has no support for writing a Slice
+	 * 
+	 * @param s
+	 *            the Slice to write
+	 */
 	public void writeSlice(Slice s) {
 		cantWrite(s);
 	}
-	
+
+	/**
+	 * DefaultWriter has no support for writing a Vertex
+	 * 
+	 * @param v
+	 *            the Vertex to write
+	 */
 	public void writeVertex(Vertex v) {
 		cantWrite(v);
 	}
-	
+
+	/**
+	 * DefaultWriter has no support for writing an Edge
+	 * 
+	 * @param e
+	 *            the Edge to write
+	 */
 	public void writeEdge(Edge e) {
 		cantWrite(e);
 	}
-	
+
+	/**
+	 * DefaultWriter has no support for writing an Integer
+	 * 
+	 * @param n
+	 *            the Integer to write
+	 */
 	public void writeInteger(Integer n) {
 		cantWrite(n);
 	}
-	
+
+	/**
+	 * DefaultWriter has no support for writing a Long
+	 * 
+	 * @param n
+	 *            the Long to write
+	 */
 	public void writeLong(Long n) {
 		cantWrite(n);
 	}
 
+	/**
+	 * DefaultWriter has no support for writing a Double
+	 * 
+	 * @param n
+	 *            the Double to write
+	 */
 	public void writeDouble(Double n) {
 		cantWrite(n);
 	}
-	
+
+	/**
+	 * DefaultWriter has no support for writing a String
+	 * 
+	 * @param s
+	 *            the String to write
+	 */
 	public void writeString(String s) {
 		cantWrite(s);
 	}
-	
+
+	/**
+	 * DefaultWriter has no support for writing an Enum
+	 * 
+	 * @param e
+	 *            the Enum to write
+	 */
 	public void writeEnum(Enum<?> e) {
 		cantWrite(e);
 	}
-	
+
+	/**
+	 * DefaultWriter has no support for writing a Graph
+	 * 
+	 * @param g
+	 *            the Graph to write
+	 */
 	public void writeGraph(Graph g) {
 		cantWrite(g);
 	}
 
+	/**
+	 * DefaultWriter has no support for writing a SubGraphMarker
+	 * 
+	 * @param s
+	 *            the SubGraphMarker to write
+	 */
 	public void writeSubGraphMarker(SubGraphMarker s) {
 		cantWrite(s);
 	}
-	
+
+	/**
+	 * DefaultWriter has no support for writing a DFA
+	 * 
+	 * @param d
+	 *            the DFA to write
+	 */
 	public void writeDFA(DFA d) {
 		cantWrite(d);
 	}
 
+	/**
+	 * DefaultWriter has no support for writing a NFA
+	 * 
+	 * @param n
+	 *            the NFA to write
+	 */
 	public void writeNFA(NFA n) {
 		cantWrite(n);
 	}
-	
+
+	/**
+	 * DefaultWriter has no support for writing a Boolean
+	 * 
+	 * @param b
+	 *            the Boolean to write
+	 */
 	public void writeBoolean(Boolean b) {
 		cantWrite(b);
 	}
 
+	/**
+	 * DefaultWriter has no support for writing an AttributedElementClass
+	 * 
+	 * @param a
+	 *            the AttributedElementClass to write
+	 */
 	public void writeAttributedElementClass(AttributedElementClass a) {
 		cantWrite(a);
 	}
-	
+
+	/**
+	 * DefaultWriter has no support for writing a TypeCollection
+	 * 
+	 * @param a
+	 *            the TypeCollection to write
+	 */
 	public void writeTypeCollection(TypeCollection a) {
 		cantWrite(a);
 	}
 
+	/**
+	 * DefaultWriter has no support for writing a State
+	 * 
+	 * @param s
+	 *            the State to write
+	 */
 	public void writeState(State s) {
 		cantWrite(s);
 	}
-	
+
+	/**
+	 * DefaultWriter has no support for writing a Transition
+	 * 
+	 * @param t
+	 *            the Transition to write
+	 */
 	public void writeTransition(Transition t) {
 		cantWrite(t);
 	}
-	
+
+	/**
+	 * DefaultWriter has no support for writing a Declaration
+	 * 
+	 * @param d
+	 *            the Declaration to write
+	 */
 	public void writeDeclaration(Declaration d) {
 		cantWrite(d);
 	}
 
-	public void writeDefaultObject(Object o){
+	/**
+	 * DefaultWriter has no support for writing an unknown Object
+	 * 
+	 * @param o
+	 *            the Object to write
+	 */
+	public void writeDefaultObject(Object o) {
 		cantWrite(o);
 	}
-	
-	public void write(Object o) {		
-		if(o instanceof PSet){
-			this.writePSet((PSet<?>)o);
-		}else if(o instanceof Table){
-			this.writeTable((Table<?>)o);
-		}else if(o instanceof PVector){
-			this.writePVector((PVector<?>)o);
-		}else if(o instanceof PMap){
-			this.writePMap((PMap<?,?>)o);
-		}else if(o instanceof Tuple){
-			this.writeTuple((Tuple)o);
-		}else if(o instanceof Record){
-			this.writeRecord((Record)o);
-		}else if(o instanceof Path){
-			this.writePath((Path)o);
-		}else if(o instanceof PathSystem){
-			this.writePathSystem((PathSystem)o);
-		}else if(o instanceof Slice){
-			this.writeSlice((Slice)o);
-		}else if(o instanceof Vertex){
-			this.writeVertex((Vertex)o);
-		}else if(o instanceof Edge){
-			this.writeEdge((Edge)o);
-		}else if(o instanceof Integer){
-			this.writeInteger((Integer)o);
-		}else if(o instanceof Long){
-			this.writeLong((Long)o);
-		}else if(o instanceof Double){
-			this.writeDouble((Double)o);
-		}else if(o instanceof String){
-			this.writeString((String)o);
-		}else if(o instanceof Enum){
-			this.writeEnum((Enum<?>)o);
-		}else if(o instanceof Graph){
-			this.writeGraph((Graph)o);
-		}else if(o instanceof SubGraphMarker){
-			this.writeSubGraphMarker((SubGraphMarker)o);
-		}else if(o instanceof DFA){
-			this.writeDFA((DFA)o);
-		}else if(o instanceof NFA){
-			this.writeNFA((NFA)o);
-		} else if(o instanceof TypeCollection){
-			this.writeTypeCollection((TypeCollection)o);
-		}else if(o instanceof Boolean){
-			this.writeBoolean((Boolean)o);
-		}else if(o instanceof AttributedElementClass){
-			this.writeAttributedElementClass((AttributedElementClass)o);
-		}else if(o instanceof Transition){
-			this.writeTransition((Transition)o);
-		}else if(o instanceof Declaration){
-			this.writeDeclaration((Declaration)o);
-		}else{
+
+	/**
+	 * Decides which of the possible Greql types the given object is and calls
+	 * the specific method
+	 * 
+	 * @param o
+	 *            the Object to write
+	 */
+	public void write(Object o) {
+		if (o instanceof PSet) {
+			this.writePSet((PSet<?>) o);
+		} else if (o instanceof Table) {
+			this.writeTable((Table<?>) o);
+		} else if (o instanceof PVector) {
+			this.writePVector((PVector<?>) o);
+		} else if (o instanceof PMap) {
+			this.writePMap((PMap<?, ?>) o);
+		} else if (o instanceof Tuple) {
+			this.writeTuple((Tuple) o);
+		} else if (o instanceof Record) {
+			this.writeRecord((Record) o);
+		} else if (o instanceof Path) {
+			this.writePath((Path) o);
+		} else if (o instanceof PathSystem) {
+			this.writePathSystem((PathSystem) o);
+		} else if (o instanceof Slice) {
+			this.writeSlice((Slice) o);
+		} else if (o instanceof Vertex) {
+			this.writeVertex((Vertex) o);
+		} else if (o instanceof Edge) {
+			this.writeEdge((Edge) o);
+		} else if (o instanceof Integer) {
+			this.writeInteger((Integer) o);
+		} else if (o instanceof Long) {
+			this.writeLong((Long) o);
+		} else if (o instanceof Double) {
+			this.writeDouble((Double) o);
+		} else if (o instanceof String) {
+			this.writeString((String) o);
+		} else if (o instanceof Enum) {
+			this.writeEnum((Enum<?>) o);
+		} else if (o instanceof Graph) {
+			this.writeGraph((Graph) o);
+		} else if (o instanceof SubGraphMarker) {
+			this.writeSubGraphMarker((SubGraphMarker) o);
+		} else if (o instanceof DFA) {
+			this.writeDFA((DFA) o);
+		} else if (o instanceof NFA) {
+			this.writeNFA((NFA) o);
+		} else if (o instanceof TypeCollection) {
+			this.writeTypeCollection((TypeCollection) o);
+		} else if (o instanceof Boolean) {
+			this.writeBoolean((Boolean) o);
+		} else if (o instanceof AttributedElementClass) {
+			this.writeAttributedElementClass((AttributedElementClass) o);
+		} else if (o instanceof Transition) {
+			this.writeTransition((Transition) o);
+		} else if (o instanceof Declaration) {
+			this.writeDeclaration((Declaration) o);
+		} else {
 			this.writeDefaultObject(o);
 		}
 	}
 
 	
-	public void post() {
-	}
 
-	
 	public void pre() {
 	}
 
-	
 	public void inter() {
 	}
-
 	
+	public void post() {
+	}
+
 	public void head() {
 	}
 
-	
 	public void foot() {
 	}
 
-	
 	public void cantWrite(Object v) {
 		throw new SerialisingException(getClass().getSimpleName()
 				+ " can not handle " + v.getClass(), v);

@@ -335,7 +335,7 @@ public class GreqlParser extends ParserHelper {
 		} else {
 			tokenText = lookAhead(0).name();
 		}
-		ParsingException ex = new ParsingException(msg, tokenText, offset,
+		ParsingException ex = new ParsingException(msg + "!! "+lookAhead(0)+" !!", tokenText, offset,
 				length, query);
 		predicateFulfilled = false;
 		if (getCurrentOffset() > farestOffset) {
