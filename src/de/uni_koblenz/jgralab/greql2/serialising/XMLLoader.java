@@ -34,7 +34,7 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 	 */
 	private static class RecordComponent {
 		String componentName;
-		Object jvalue;
+		Object value;
 
 		RecordComponent(String compName) {
 			componentName = compName;
@@ -118,8 +118,9 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 		if (parentElement instanceof PMap) {
 			// Parent is a Map, so the current element has to be a mapEntry
 			MapEntry jme = (MapEntry) endedElement;
-			parentElement = ((PMap<Object, Object>) parentElement).plus(
-					jme.key, jme.value);
+			@SuppressWarnings("unchecked")
+			PMap<Object, Object> map = (PMap<Object, Object>) parentElement;
+			parentElement = map.plus(jme.key, jme.value);
 		} else if (parentElement instanceof MapEntry) {
 			// Parent is a map entry, so the current elem is a key or a value of
 			// the entry.
@@ -135,28 +136,33 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 		} else if (parentElement instanceof RecordComponent) {
 			// Parent is a record component, so this has to be its value.
 			RecordComponent rc = (RecordComponent) parentElement;
-			rc.jvalue = endedElement;
+			rc.value = endedElement;
 		} else if (parentElement instanceof PCollection) {
 			// ok, parent is a collection, so we can simply add with the
 			// exception of records and tables
+			@SuppressWarnings("unchecked")
 			PCollection<Object> coll = (PCollection<Object>) parentElement;
 			if (coll instanceof Record) {
 				Record rec = (Record) coll;
 				RecordComponent comp = (RecordComponent) endedElement;
-				rec = rec.plus(comp.componentName, comp.jvalue);
+				parentElement = rec.plus(comp.componentName, comp.value);
 			} else if (coll instanceof Table) {
-				Table<?> tab = (Table<?>) coll;
+				Table<Object> tab = (Table<Object>) coll;
 				if (tab.getTitles() == null) {
-					tab = tab.withTitles((PVector<String>) endedElement);
+					@SuppressWarnings("unchecked")
+					PVector<String> titles = (PVector<String>) endedElement;
+					parentElement = tab.withTitles(titles);
 				} else if (tab.toPVector() == null) {
-					tab = tab.plusAll((PCollection) endedElement);
+					@SuppressWarnings("unchecked")
+					PVector<Object> entries = (PVector<Object>) endedElement;
+					parentElement = tab.plusAll(entries);
 				} else {
 					throw new SerialisingException(
 							"Table containing more children than header and data!",
 							null);
 				}
 			} else {
-				coll = coll.plus(endedElement);
+				parentElement = coll.plus(endedElement);
 			}
 		} else {
 			throw new SerialisingException("The element '" + endedElement

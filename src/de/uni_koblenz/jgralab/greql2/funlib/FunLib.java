@@ -280,6 +280,9 @@ public class FunLib {
 	}
 
 	private void register(String className) throws ClassNotFoundException {
+		if (logger != null) {
+			logger.finest("Loading class " + className);
+		}
 		Class<?> cls = Class.forName(className);
 		if (Function.class.isAssignableFrom(cls)) {
 			@SuppressWarnings("unchecked")
@@ -314,11 +317,10 @@ public class FunLib {
 				JarEntry je = e.nextElement();
 				String entryName = je.getName();
 				if (entryName.startsWith(packageDirectory)
-						&& entryName.endsWith(".class")
-						&& Character.isUpperCase(entryName
-								.charAt(packageDirectory.length() + 1))) {
-					register(entryName.substring(packageDirectory.length() + 1,
-							entryName.length() - 6));
+						&& entryName.endsWith(".class")) {
+					String className = entryName.substring(0,
+							entryName.length() - 6).replace("/", ".");
+					register(className);
 				}
 			}
 		}
