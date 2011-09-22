@@ -102,20 +102,6 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 		// that (the parent has to be some kind of collection or map)
 		Object parentElement = stack.peek();
 
-		// TODO
-		// // Each and every element may be have a browsing info, so check that
-		// // first.
-		// if (endedElement instanceof JValueBrowsingInfo) {
-		// // We ended a browsing info, so add its info to the parent.
-		// parentElement
-		// .setBrowsingInfo(((JValueBrowsingInfo) endedElement).browsingInfo);
-		// } else if (parentElement instanceof JValueBrowsingInfo) {
-		// // We ended an element inside a browsingInfo, so this has to be an
-		// // attributed element.
-		// ((JValueBrowsingInfo) parentElement).browsingInfo = endedElement
-		// .toAttributedElement();
-		// } else
-
 		if (parentElement instanceof PMap) {
 			// Parent is a Map, so the current element has to be a mapEntry
 			MapEntry jme = (MapEntry) endedElement;

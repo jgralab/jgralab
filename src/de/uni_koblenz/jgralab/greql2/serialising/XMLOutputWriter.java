@@ -19,6 +19,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.exception.SerialisingException;
+import de.uni_koblenz.jgralab.greql2.types.Path;
 import de.uni_koblenz.jgralab.greql2.types.Record;
 import de.uni_koblenz.jgralab.greql2.types.Table;
 import de.uni_koblenz.jgralab.greql2.types.Tuple;
@@ -386,6 +387,18 @@ public class XMLOutputWriter extends DefaultWriter implements XMLConstants {
 			super.writeTable(t);
 			writer.writeEndElement();
 		} catch (XMLStreamException ex) {
+			ex.printStackTrace();
+		}
+	}
+	
+	@Override
+	public void writePath(Path p){
+		try{
+			writer.writeStartElement(PATH);
+			this.write(p.getVertexTrace());
+			this.write(p.getEdgeTrace());
+			writer.writeEndElement();
+		}catch(XMLStreamException ex){
 			ex.printStackTrace();
 		}
 	}
