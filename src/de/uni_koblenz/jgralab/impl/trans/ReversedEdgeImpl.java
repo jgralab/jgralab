@@ -39,7 +39,7 @@ import java.util.Map;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphException;
-import de.uni_koblenz.jgralab.VertexInternal;
+import de.uni_koblenz.jgralab.VertexBase;
 import de.uni_koblenz.jgralab.impl.EdgeBaseImpl;
 import de.uni_koblenz.jgralab.impl.IncidenceImpl;
 import de.uni_koblenz.jgralab.impl.VertexBaseImpl;
@@ -149,7 +149,7 @@ public abstract class ReversedEdgeImpl extends
 			// relevant in writing-phase
 			if (transaction.getState() == TransactionState.WRITING) {
 				if (transaction.changedIncidences != null) {
-					VertexInternal currentIncidentVertex = this.incidentVertex
+					VertexBase currentIncidentVertex = this.incidentVertex
 							.getTemporaryValue(transaction);
 					Map<IncidenceImpl, Map<ListPosition, Boolean>> incidenceList = transaction.changedIncidences
 							.get(currentIncidentVertex);
@@ -187,7 +187,7 @@ public abstract class ReversedEdgeImpl extends
 			// only relevant in writing-phase
 			if (transaction.getState() == TransactionState.WRITING) {
 				if (transaction.changedIncidences != null) {
-					VertexInternal currentIncidentVertex = this.incidentVertex
+					VertexBase currentIncidentVertex = this.incidentVertex
 							.getTemporaryValue(transaction);
 					Map<IncidenceImpl, Map<ListPosition, Boolean>> incidenceList = transaction.changedIncidences
 							.get(currentIncidentVertex);

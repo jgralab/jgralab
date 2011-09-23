@@ -1,6 +1,5 @@
 package de.uni_koblenz.jgralab;
 
-
-public interface EdgeInternal {
+public interface IncidenceBase {
 
 }

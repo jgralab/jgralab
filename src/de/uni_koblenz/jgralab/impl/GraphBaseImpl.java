@@ -52,8 +52,8 @@ import de.uni_koblenz.jgralab.GraphFactory;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.GraphStructureChangedListener;
 import de.uni_koblenz.jgralab.GraphStructureChangedListenerWithAutoRemove;
-import de.uni_koblenz.jgralab.GraphInternal;
-import de.uni_koblenz.jgralab.VertexInternal;
+import de.uni_koblenz.jgralab.GraphBase;
+import de.uni_koblenz.jgralab.VertexBase;
 import de.uni_koblenz.jgralab.RandomIdGenerator;
 import de.uni_koblenz.jgralab.TraversalContext;
 import de.uni_koblenz.jgralab.Vertex;
@@ -72,7 +72,7 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
  * 
  * @author ist@uni-koblenz.de
  */
-public abstract class GraphBaseImpl implements Graph, GraphInternal {
+public abstract class GraphBaseImpl implements Graph, GraphBase {
 
 	// ------------- GRAPH VARIABLES -------------
 
@@ -558,7 +558,7 @@ public abstract class GraphBaseImpl implements Graph, GraphInternal {
 	 */
 	@Override
 	public boolean containsVertex(Vertex v) {
-		VertexInternal[] vertex = getVertex();
+		VertexBase[] vertex = getVertex();
 		return (v != null) && (v.getGraph() == this)
 				&& containsVertexId(((VertexBaseImpl) v).id)
 				&& (vertex[((VertexBaseImpl) v).id] == v)

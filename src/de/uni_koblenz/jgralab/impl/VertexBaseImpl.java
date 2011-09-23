@@ -48,7 +48,7 @@ import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.VertexInternal;
+import de.uni_koblenz.jgralab.VertexBase;
 import de.uni_koblenz.jgralab.PathElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
@@ -61,7 +61,7 @@ import de.uni_koblenz.jgralab.schema.impl.DirectedM1EdgeClass;
  * 
  * @author ist@uni-koblenz.de
  */
-public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex, VertexInternal {
+public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex, VertexBase {
 	abstract protected void setIncidenceListVersion(long incidenceListVersion);
 
 	/**
