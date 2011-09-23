@@ -38,6 +38,7 @@ package de.uni_koblenz.jgralab.impl;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.IncidenceInternal;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 
@@ -47,7 +48,7 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
  * 
  * @author ist@uni-koblenz.de
  */
-public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
+public abstract class IncidenceImpl extends GraphElementImpl implements Edge, IncidenceInternal {
 	protected IncidenceImpl(Graph graph) {
 		super(graph);
 	}

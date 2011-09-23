@@ -52,6 +52,8 @@ import de.uni_koblenz.jgralab.GraphFactory;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.GraphStructureChangedListener;
 import de.uni_koblenz.jgralab.GraphStructureChangedListenerWithAutoRemove;
+import de.uni_koblenz.jgralab.GraphInternal;
+import de.uni_koblenz.jgralab.VertexInternal;
 import de.uni_koblenz.jgralab.RandomIdGenerator;
 import de.uni_koblenz.jgralab.TraversalContext;
 import de.uni_koblenz.jgralab.Vertex;
@@ -70,7 +72,7 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
  * 
  * @author ist@uni-koblenz.de
  */
-public abstract class GraphBaseImpl implements Graph {
+public abstract class GraphBaseImpl implements Graph, GraphInternal {
 
 	// ------------- GRAPH VARIABLES -------------
 
@@ -555,7 +557,7 @@ public abstract class GraphBaseImpl implements Graph {
 	 */
 	@Override
 	public boolean containsVertex(Vertex v) {
-		VertexBaseImpl[] vertex = getVertex();
+		VertexInternal[] vertex = getVertex();
 		return (v != null)
 				&& (v.getGraph() == this)
 				&& containsVertexId(((VertexBaseImpl) v).id)
@@ -987,21 +989,15 @@ public abstract class GraphBaseImpl implements Graph {
 	@Override
 	abstract public long getVertexListVersion();
 
-	/**
-	 * Changes this graph's version. graphModified() is called whenever the
-	 * graph is changed, all changes like adding, creating and reordering of
-	 * edges and vertices or changes of attributes of the graph, an edge or a
-	 * vertex are treated as a change.
+	/* (non-Javadoc)
+	 * @see de.uni_koblenz.jgralab.impl.InternalGraph#graphModified()
 	 */
 	public void graphModified() {
 		setGraphVersion(getGraphVersion() + 1);
 	}
 
-	/**
-	 * Triggers ECA-rules before an Attribute is changed
-	 * 
-	 * @param name
-	 *            of the changing Attribute
+	/* (non-Javadoc)
+	 * @see de.uni_koblenz.jgralab.impl.InternalGraph#ecaAttributeChanging(java.lang.String, java.lang.Object, java.lang.Object)
 	 */
 	public void ecaAttributeChanging(String name, Object oldValue,
 			Object newValue) {
@@ -1011,11 +1007,8 @@ public abstract class GraphBaseImpl implements Graph {
 		}
 	}
 
-	/**
-	 * Triggers ECA-rule after an Attribute is changed
-	 * 
-	 * @param name
-	 *            of the changed Attribute
+	/* (non-Javadoc)
+	 * @see de.uni_koblenz.jgralab.impl.InternalGraph#ecaAttributeChanged(java.lang.String, java.lang.Object, java.lang.Object)
 	 */
 	public void ecaAttributeChanged(String name, Object oldValue,
 			Object newValue) {
@@ -1234,13 +1227,8 @@ public abstract class GraphBaseImpl implements Graph {
 	public void loadingCompleted() {
 	}
 
-	/**
-	 * Constructs incidence lists for all vertices after loading this graph.
-	 * 
-	 * @param firstIncidence
-	 *            array of edge ids of the first incidence
-	 * @param nextIncidence
-	 *            array of edge ids of subsequent edges
+	/* (non-Javadoc)
+	 * @see de.uni_koblenz.jgralab.impl.InternalGraph#internalLoadingCompleted(int[], int[])
 	 */
 	public void internalLoadingCompleted(int[] firstIncidence,
 			int[] nextIncidence) {
@@ -1473,12 +1461,8 @@ public abstract class GraphBaseImpl implements Graph {
 		vertexListModified();
 	}
 
-	/**
-	 * Sets the version counter of this graph. Should only be called immediately
-	 * after loading.
-	 * 
-	 * @param graphVersion
-	 *            new version value
+	/* (non-Javadoc)
+	 * @see de.uni_koblenz.jgralab.impl.InternalGraph#setGraphVersion(long)
 	 */
 	public void setGraphVersion(long graphVersion) {
 		this.graphVersion = graphVersion;
@@ -1494,10 +1478,8 @@ public abstract class GraphBaseImpl implements Graph {
 		this.id = id;
 	}
 
-	/**
-	 * Sets the loading flag.
-	 * 
-	 * @param isLoading
+	/* (non-Javadoc)
+	 * @see de.uni_koblenz.jgralab.impl.InternalGraph#setLoading(boolean)
 	 */
 	public void setLoading(boolean isLoading) {
 		loading = isLoading;
