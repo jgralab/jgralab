@@ -37,15 +37,16 @@ package de.uni_koblenz.jgralab.graphmarker;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphBase;
 import de.uni_koblenz.jgralab.GraphStructureChangedAdapterWithAutoRemove;
 import de.uni_koblenz.jgralab.Vertex;
 
 public abstract class AbstractGraphMarker<T extends AttributedElement> extends
 		GraphStructureChangedAdapterWithAutoRemove {
-	protected final Graph graph;
+	protected final GraphBase graph;
 
 	protected AbstractGraphMarker(Graph graph) {
-		this.graph = graph;
+		this.graph = (GraphBase) graph;
 		// register the graph marker at the graph
 		graph.addGraphStructureChangedListener(this);
 	}

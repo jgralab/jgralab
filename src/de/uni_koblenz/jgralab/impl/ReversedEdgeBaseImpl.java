@@ -37,8 +37,10 @@ package de.uni_koblenz.jgralab.impl;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.EdgeBase;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.VertexBase;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 
@@ -48,7 +50,7 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
  * @author ist@uni-koblenz.de
  */
 public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
-		Edge {
+		EdgeBase {
 
 	protected final EdgeBaseImpl normalEdge;
 
@@ -84,7 +86,7 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 		Edge e = (Edge) a;
 		assert e.isValid();
 		assert getGraph() == e.getGraph();
-		if (e == this.getNormalEdge()) {
+		if (e == getNormalEdge()) {
 			return 1;
 		} else {
 			return Math.abs(getId()) - Math.abs(e.getId());
@@ -329,7 +331,7 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 	 * @see de.uni_koblenz.jgralab.Edge#setAlpha(de.uni_koblenz.jgralab.Vertex)
 	 */
 	@Override
-	public void setAlpha(Vertex alpha) {
+	public void setAlpha(VertexBase alpha) {
 		normalEdge.setAlpha(alpha);
 	}
 
@@ -339,7 +341,7 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 	 * @see de.uni_koblenz.jgralab.Edge#setOmega(de.uni_koblenz.jgralab.Vertex)
 	 */
 	@Override
-	public void setOmega(Vertex omega) {
+	public void setOmega(VertexBase omega) {
 		normalEdge.setOmega(omega);
 	}
 
@@ -349,7 +351,7 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 	 * @see de.uni_koblenz.jgralab.Edge#setThat(de.uni_koblenz.jgralab.Vertex)
 	 */
 	@Override
-	public void setThat(Vertex v) {
+	public void setThat(VertexBase v) {
 		normalEdge.setAlpha(v);
 	}
 
@@ -359,7 +361,7 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 	 * @see de.uni_koblenz.jgralab.Edge#setThis(de.uni_koblenz.jgralab.Vertex)
 	 */
 	@Override
-	public void setThis(Vertex v) {
+	public void setThis(VertexBase v) {
 		normalEdge.setOmega(v);
 	}
 

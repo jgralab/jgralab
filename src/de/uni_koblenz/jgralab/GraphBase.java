@@ -1,6 +1,6 @@
 package de.uni_koblenz.jgralab;
 
-public interface GraphBase {
+public interface GraphBase extends Graph {
 
 	/**
 	 * Changes this graph's version. graphModified() is called whenever the
@@ -54,5 +54,117 @@ public interface GraphBase {
 	 * @param isLoading
 	 */
 	public abstract void setLoading(boolean isLoading);
+
+	/**
+	 * Checks whether this graph is currently being loaded.
+	 * 
+	 * @return true if the graph is currently being loaded
+	 */
+	public boolean isLoading();
+
+	/**
+	 * Callback method: Called immediately after loading of this graph is
+	 * completed. Overwrite this method to perform user defined operations after
+	 * loading a graph.
+	 */
+	public void loadingCompleted();
+
+	/**
+	 * Checks if the vertex sequence of this has changed with respect to the
+	 * given <code>previousVersion</code>. Changes in the vertex sequence are
+	 * creation and deletion as well as reordering of vertices, but not changes
+	 * of attribute values.
+	 * 
+	 * @return <code>true</code> if the vertex list version of this graph is
+	 *         different from <code>previousVersion</code>.
+	 */
+	public boolean isVertexListModified(long previousVersion);
+
+	/**
+	 * Returns the version counter of the vertex sequence of this graph.
+	 * 
+	 * @return the vertex sequence version
+	 * @see #isVertexListModified(long)
+	 */
+	public long getVertexListVersion();
+
+	/**
+	 * Checks if the edge sequence of this has changed with respect to the given
+	 * <code>previousVersion</code>. Changes in the edge sequence are creation
+	 * and deletion as well as reordering of edges, but not changes of attribute
+	 * values.
+	 * 
+	 * @return <code>true</code> if the edge list version of this graph is
+	 *         different from <code>previousVersion</code>.
+	 */
+	public boolean isEdgeListModified(long edgeListVersion);
+
+	/**
+	 * Returns the version counter of the edge sequence of this graph.
+	 * 
+	 * @return the edge sequence version
+	 * @see #isEdgeListModified(long)
+	 */
+	public long getEdgeListVersion();
+
+	/**
+	 * The maximum number of vertices that can be stored in the graph before the
+	 * internal array structures are expanded.
+	 * 
+	 * @return the maximum number of vertices
+	 */
+	public int getMaxVCount();
+
+	/**
+	 * Computes the new maximum number of vertices when expansion is needed.
+	 * 
+	 * @return the new maximum number of vertices
+	 */
+	public int getExpandedVertexCount();
+
+	/**
+	 * Computes the new maximum number of edges when expansion is needed.
+	 * 
+	 * @return the new maximum number of edges
+	 */
+	public int getExpandedEdgeCount();
+
+	/**
+	 * The maximum number of edges that can be stored in the graph before the
+	 * internal array structures are expanded.
+	 * 
+	 * @return the maximum number of edges
+	 */
+	public int getMaxECount();
+
+	/**
+	 * Sets the <code>id</code> of this Graph.
+	 * 
+	 * Precondition: id != null && id.equals(id.trim()) && !id.equals("")
+	 * 
+	 * @param id
+	 *            the new id
+	 */
+	public void setId(String id);
+
+	/**
+	 * Optimizes edge and vertex ids such that after defragmentation
+	 * getMaxECount() == getECount() and getMaxVCount() == getVCount(). That
+	 * means that gaps in the vertex and edge IDs are deleted (defragmented) and
+	 * that the internal arrays are shortened such that they hold exactly the
+	 * required number of vertices/edges.
+	 * 
+	 * <b>Attention:</b> defragment() possibly changes vertex and edge IDs! *
+	 * <b>Attention:</b> Not supported within when using transactions!
+	 */
+	public void defragment();
+
+	/**
+	 * Delegates to {@link Graph#getCurrentTransaction()
+	 * getCurrentTransaction()}.
+	 * 
+	 * @return if there have been conflicts
+	 */
+	public boolean isInConflict();
 
 }

@@ -61,7 +61,9 @@ import de.uni_koblenz.jgralab.schema.impl.DirectedM1EdgeClass;
  * 
  * @author ist@uni-koblenz.de
  */
-public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex, VertexBase {
+public abstract class VertexBaseImpl extends GraphElementImpl implements
+		Vertex, VertexBase {
+
 	abstract protected void setIncidenceListVersion(long incidenceListVersion);
 
 	/**
@@ -493,10 +495,12 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex,
 	@Override
 	public boolean isIncidenceListModified(long vertexStructureVersion) {
 		assert isValid();
-		return (this.getIncidenceListVersion() != vertexStructureVersion);
+		return (getIncidenceListVersion() != vertexStructureVersion);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see de.uni_koblenz.jgralab.impl.InternalVertex#incidenceListModified()
 	 */
 	public void incidenceListModified() {

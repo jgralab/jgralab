@@ -41,6 +41,7 @@ import de.uni_koblenz.jgralab.EdgeBase;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.VertexBase;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 
@@ -49,7 +50,8 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
  * 
  * @author ist@uni-koblenz.de
  */
-public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge, EdgeBase {
+public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
+		EdgeBase {
 
 	protected final ReversedEdgeBaseImpl reversedEdge;
 
@@ -77,7 +79,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge, EdgeBa
 		assert e.isValid();
 		assert getGraph() == e.getGraph();
 
-		if (e == this.getReversedEdge()) {
+		if (e == getReversedEdge()) {
 			return -1;
 		} else {
 			return Math.abs(getId()) - Math.abs(e.getId());
@@ -203,8 +205,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge, EdgeBa
 	@Override
 	public String getThatRole() {
 		assert isValid();
-		return ((EdgeClass) this.getAttributedElementClass()).getTo()
-				.getRolename();
+		return ((EdgeClass) getAttributedElementClass()).getTo().getRolename();
 	}
 
 	/*
@@ -226,7 +227,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge, EdgeBa
 	@Override
 	public String getThisRole() {
 		assert isValid();
-		return ((EdgeClass) this.getAttributedElementClass()).getFrom()
+		return ((EdgeClass) getAttributedElementClass()).getFrom()
 				.getRolename();
 	}
 
@@ -329,7 +330,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge, EdgeBa
 	 * @see de.uni_koblenz.jgralab.Edge#setAlpha(de.uni_koblenz.jgralab.Vertex)
 	 */
 	@Override
-	public void setAlpha(Vertex alpha) {
+	public void setAlpha(VertexBase alpha) {
 		assert isValid();
 		assert alpha != null;
 		assert alpha.isValid();
@@ -337,9 +338,9 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge, EdgeBa
 
 		VertexBaseImpl oldAlpha = getIncidentVertex();
 
-		if (!this.graph.isLoading()) {
-			this.graph.getECARuleManager().fireBeforeChangeAlphaOfEdgeEvents(
-					this, oldAlpha, alpha);
+		if (!graph.isLoading()) {
+			graph.getECARuleManager().fireBeforeChangeAlphaOfEdgeEvents(this,
+					oldAlpha, alpha);
 		}
 
 		if (alpha == oldAlpha) {
@@ -360,9 +361,9 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge, EdgeBa
 		newAlpha.incidenceListModified();
 		setIncidentVertex(newAlpha);
 
-		if (!this.graph.isLoading()) {
-			this.graph.getECARuleManager().fireAfterChangeAlphaOfEdgeEvents(
-					this, oldAlpha, alpha);
+		if (!graph.isLoading()) {
+			graph.getECARuleManager().fireAfterChangeAlphaOfEdgeEvents(this,
+					oldAlpha, alpha);
 		}
 	}
 
@@ -372,7 +373,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge, EdgeBa
 	 * @see de.uni_koblenz.jgralab.Edge#setOmega(de.uni_koblenz.jgralab.Vertex)
 	 */
 	@Override
-	public void setOmega(Vertex omega) {
+	public void setOmega(VertexBase omega) {
 		assert isValid();
 		assert omega != null;
 		assert omega.isValid();
@@ -380,9 +381,9 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge, EdgeBa
 
 		VertexBaseImpl oldOmgea = reversedEdge.getIncidentVertex();
 
-		if (!this.graph.isLoading()) {
-			this.graph.getECARuleManager().fireBeforeChangeOmegaOfEdgeEvents(
-					this, oldOmgea, omega);
+		if (!graph.isLoading()) {
+			graph.getECARuleManager().fireBeforeChangeOmegaOfEdgeEvents(this,
+					oldOmgea, omega);
 		}
 
 		if (omega == oldOmgea) {
@@ -406,9 +407,9 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge, EdgeBa
 		// appenIncidenceToLambdaSeq called it before.
 		reversedEdge.setIncidentVertex(newOmega);
 
-		if (!this.graph.isLoading()) {
-			this.graph.getECARuleManager().fireAfterChangeOmegaOfEdgeEvents(
-					this, oldOmgea, omega);
+		if (!graph.isLoading()) {
+			graph.getECARuleManager().fireAfterChangeOmegaOfEdgeEvents(this,
+					oldOmgea, omega);
 		}
 	}
 
@@ -418,7 +419,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge, EdgeBa
 	 * @see de.uni_koblenz.jgralab.Edge#setThat(de.uni_koblenz.jgralab.Vertex)
 	 */
 	@Override
-	public void setThat(Vertex v) {
+	public void setThat(VertexBase v) {
 		assert isValid();
 		assert v != null;
 		assert v.isValid();
@@ -433,7 +434,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge, EdgeBa
 	 * @see de.uni_koblenz.jgralab.Edge#setThis(de.uni_koblenz.jgralab.Vertex)
 	 */
 	@Override
-	public void setThis(Vertex v) {
+	public void setThis(VertexBase v) {
 		assert isValid();
 		assert v != null;
 		assert v.isValid();

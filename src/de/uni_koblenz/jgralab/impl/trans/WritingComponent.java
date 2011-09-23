@@ -35,12 +35,13 @@
 package de.uni_koblenz.jgralab.impl.trans;
 
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.VertexBase;
 import de.uni_koblenz.jgralab.impl.IncidenceImpl;
 import de.uni_koblenz.jgralab.trans.ListPosition;
 import de.uni_koblenz.jgralab.trans.TransactionState;
@@ -94,8 +95,8 @@ public class WritingComponent {
 		// if at least one edge is to be added or deleted...
 		if (((transaction.addedEdges != null && transaction.addedEdges.size() > 0) || (transaction.deletedEdges != null && transaction.deletedEdges
 				.size() > 0))
-		// looking for graph.edge is sufficient, because edge and
-		// revEdge are one unit..
+				// looking for graph.edge is sufficient, because edge and
+				// revEdge are one unit..
 				&& graph.edge.isLatestPersistentValueReferenced()) {
 			// important to synchronize here!!!
 			graph.edgeSync.readLock().lock();
@@ -353,7 +354,7 @@ public class WritingComponent {
 				}
 				case ALPHA: {
 					// temporary alpha of edge for current transaction
-					Vertex tempAlpha = edge.incidentVertex
+					VertexBase tempAlpha = edge.incidentVertex
 							.getTemporaryValue(transaction);
 					edge.setAlpha(tempAlpha);
 					if (!pass) {
@@ -362,7 +363,7 @@ public class WritingComponent {
 				}
 				case OMEGA: {
 					// temporary omega of edge for current transaction
-					Vertex tempOmega = ((ReversedEdgeImpl) edge
+					VertexBase tempOmega = ((ReversedEdgeImpl) edge
 							.getReversedEdge()).incidentVertex
 							.getTemporaryValue(transaction);
 					edge.setOmega(tempOmega);
@@ -456,7 +457,7 @@ public class WritingComponent {
 	 * 
 	 * @throws Exception
 	 */
-	@SuppressWarnings({ "unchecked" })
+	@SuppressWarnings( { "unchecked" })
 	private void changeAttributes() throws Exception {
 		if (transaction.changedAttributes != null) {
 			Set<Entry<AttributedElement, Set<VersionedDataObject<?>>>> elements = transaction.changedAttributes
@@ -469,8 +470,8 @@ public class WritingComponent {
 					// the temporary value of attribute for current transaction
 					Object tempValue = attribute.getTemporaryValue(transaction);
 					((VersionedDataObjectImpl<Object>) attribute)
-							.setValidValue(tempValue,
-									graph.getCurrentTransaction(), true);
+							.setValidValue(tempValue, graph
+									.getCurrentTransaction(), true);
 					graph.setGraphVersion(graph.getGraphVersion() + 1);
 				}
 			}

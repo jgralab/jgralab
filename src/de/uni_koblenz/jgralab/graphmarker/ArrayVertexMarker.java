@@ -40,6 +40,7 @@ import java.util.NoSuchElementException;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphBase;
 import de.uni_koblenz.jgralab.Vertex;
 
 /**
@@ -52,7 +53,7 @@ import de.uni_koblenz.jgralab.Vertex;
 public class ArrayVertexMarker<O> extends ArrayGraphMarker<Vertex, O> {
 
 	public ArrayVertexMarker(Graph graph) {
-		super(graph, graph.getMaxVCount() + 1);
+		super(graph, ((GraphBase) graph).getMaxVCount() + 1);
 	}
 
 	@Override

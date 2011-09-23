@@ -47,8 +47,10 @@ import org.pcollections.PSet;
 import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.EdgeBase;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.VertexBase;
 import de.uni_koblenz.jgralab.greql2.SerializableGreql2Impl;
 import de.uni_koblenz.jgralab.greql2.exception.ParsingException;
 import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
@@ -57,11 +59,8 @@ import de.uni_koblenz.jgralab.greql2.schema.*;
 public class GreqlParser extends ParserHelper {
 
 	static {
-		Greql2Schema
-				.instance()
-				.getGraphFactory()
-				.setGraphImplementationClass(Greql2.class,
-						SerializableGreql2Impl.class);
+		Greql2Schema.instance().getGraphFactory().setGraphImplementationClass(
+				Greql2.class, SerializableGreql2Impl.class);
 	}
 
 	private Map<RuleEnum, int[]> testedRules = new HashMap<RuleEnum, int[]>();
@@ -1646,8 +1645,8 @@ public class GreqlParser extends ParserHelper {
 				List<VertexPosition<Expression>> expressions = parseExpressionList(TokenTypes.COMMA);
 				match(TokenTypes.RPAREN);
 				if (!inPredicateMode()) {
-					return createPartsOfValueConstruction(expressions,
-							graph.createSetConstruction());
+					return createPartsOfValueConstruction(expressions, graph
+							.createSetConstruction());
 				} else {
 					return null;
 				}
@@ -1660,8 +1659,8 @@ public class GreqlParser extends ParserHelper {
 				expressions = parseExpressionList(TokenTypes.COMMA);
 				match(TokenTypes.RPAREN);
 				if (!inPredicateMode()) {
-					return createPartsOfValueConstruction(expressions,
-							graph.createTupleConstruction());
+					return createPartsOfValueConstruction(expressions, graph
+							.createTupleConstruction());
 				} else {
 					return null;
 				}
@@ -1760,8 +1759,8 @@ public class GreqlParser extends ParserHelper {
 							1);
 				}
 				allExpressions.add(0, v);
-				result = createPartsOfValueConstruction(allExpressions,
-						graph.createListConstruction());
+				result = createPartsOfValueConstruction(allExpressions, graph
+						.createListConstruction());
 			}
 		}
 		match(TokenTypes.RPAREN);
@@ -1872,7 +1871,8 @@ public class GreqlParser extends ParserHelper {
 		int offset = getCurrentOffset();
 		SimpleDeclaration decl = parseSimpleDeclaration();
 		int length = getLength(offset);
-		declList.add(new VertexPosition<SimpleDeclaration>(decl, length, offset));
+		declList
+				.add(new VertexPosition<SimpleDeclaration>(decl, length, offset));
 		if (lookAhead(0) == TokenTypes.COMMA) {
 			predicateStart();
 			try {
@@ -2138,8 +2138,10 @@ public class GreqlParser extends ParserHelper {
 			}
 		} while (tryMatch(TokenTypes.COMMA));
 		if (!inPredicateMode() && (tupConstr.getDegree(EdgeDirection.IN) == 1)) {
-			Vertex v = tupConstr.getFirstIncidence(EdgeDirection.IN).getAlpha();
-			Edge e2 = tupConstr.getFirstIncidence(EdgeDirection.OUT);
+			VertexBase v = (VertexBase) tupConstr.getFirstIncidence(
+					EdgeDirection.IN).getAlpha();
+			EdgeBase e2 = (EdgeBase) tupConstr
+					.getFirstIncidence(EdgeDirection.OUT);
 			e2.setAlpha(v);
 			tupConstr.delete();
 		}
@@ -2201,8 +2203,8 @@ public class GreqlParser extends ParserHelper {
 						.createIsValueExprOfComprehension(
 								reportList.get(1).node,
 								(MapComprehension) comprehension);
-				keyEdge.set_sourcePositions(createSourcePositionList(
-						reportList.get(0).length, reportList.get(0).offset));
+				keyEdge.set_sourcePositions(createSourcePositionList(reportList
+						.get(0).length, reportList.get(0).offset));
 				valueEdge.set_sourcePositions(createSourcePositionList(
 						reportList.get(1).length, reportList.get(1).offset));
 			}
@@ -2223,14 +2225,16 @@ public class GreqlParser extends ParserHelper {
 						reportList.get(1).length, reportList.get(1).offset));
 				e = graph.createIsCompResultDefOf(reportList.get(2).node,
 						comprehension);
-				e.set_sourcePositions(createSourcePositionList(
-						reportList.get(2).length, reportList.get(2).offset));
+				e.set_sourcePositions(createSourcePositionList(reportList
+						.get(2).length, reportList.get(2).offset));
 				if (reportList.size() == 4) {
 					IsTableHeaderOf tHeaderE = graph.createIsTableHeaderOf(
 							reportList.get(3).node,
 							(ComprehensionWithTableHeader) comprehension);
-					tHeaderE.set_sourcePositions(createSourcePositionList(
-							reportList.get(3).length, reportList.get(3).offset));
+					tHeaderE
+							.set_sourcePositions(createSourcePositionList(
+									reportList.get(3).length,
+									reportList.get(3).offset));
 				}
 			}
 		} else {

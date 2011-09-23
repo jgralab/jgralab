@@ -41,8 +41,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.EdgeBase;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.VertexBase;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
@@ -99,16 +101,16 @@ public abstract class OptimizerBase implements Optimizer {
 		assert from.isValid() && to.isValid() : "Relinking invalid vertices!";
 
 		// System.out.println("    relink: " + from + " --> " + to);
-		Edge e = from.getFirstIncidence(EdgeDirection.IN);
+		EdgeBase e = (EdgeBase) from.getFirstIncidence(EdgeDirection.IN);
 		while (e != null) {
-			Edge newE = e.getNextIncidence(EdgeDirection.IN);
-			e.setOmega(to);
+			EdgeBase newE = (EdgeBase) e.getNextIncidence(EdgeDirection.IN);
+			e.setOmega((VertexBase) to);
 			e = newE;
 		}
-		e = from.getFirstIncidence(EdgeDirection.OUT);
+		e = (EdgeBase) from.getFirstIncidence(EdgeDirection.OUT);
 		while (e != null) {
-			Edge newE = e.getNextIncidence(EdgeDirection.OUT);
-			e.setAlpha(to);
+			EdgeBase newE = (EdgeBase) e.getNextIncidence(EdgeDirection.OUT);
+			e.setAlpha((VertexBase) to);
 			e = newE;
 		}
 	}
@@ -289,7 +291,7 @@ public abstract class OptimizerBase implements Optimizer {
 				inc = inc.getNextIsDeclaredVarOf(EdgeDirection.IN);
 			}
 			for (IsDeclaredVarOf relinkEdge : relinkIncs) {
-				relinkEdge.setOmega(newSD);
+				((EdgeBase) relinkEdge).setOmega((VertexBase) newSD);
 			}
 		}
 		return newSD;

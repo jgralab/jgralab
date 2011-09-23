@@ -39,8 +39,10 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 
+import de.uni_koblenz.jgralab.EdgeBase;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
+import de.uni_koblenz.jgralab.VertexBase;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
@@ -155,8 +157,8 @@ public class MergeSimpleDeclarationsOptimizer extends OptimizerBase {
 		for (Entry<String, ArrayList<SimpleDeclaration>> e : mergableSDMap
 				.entrySet()) {
 			SimpleDeclaration survivor = e.getValue().get(0);
-			Declaration decl = (Declaration) survivor.getFirstIsSimpleDeclOfIncidence()
-					.getOmega();
+			Declaration decl = (Declaration) survivor
+					.getFirstIsSimpleDeclOfIncidence().getOmega();
 			IsSimpleDeclOf isSDOfSurvivor = survivor
 					.getFirstIsSimpleDeclOfIncidence(EdgeDirection.OUT);
 			IsTypeExprOfDeclaration isTEODSurvivor = survivor
@@ -173,7 +175,8 @@ public class MergeSimpleDeclarationsOptimizer extends OptimizerBase {
 							+ survivor + ".");
 
 					while (s.getFirstIsDeclaredVarOfIncidence() != null) {
-						s.getFirstIsDeclaredVarOfIncidence().setOmega(survivor);
+						((EdgeBase) s.getFirstIsDeclaredVarOfIncidence())
+								.setOmega((VertexBase) survivor);
 					}
 
 					// merge the sourcePositions

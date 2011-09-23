@@ -41,6 +41,7 @@ import java.util.NoSuchElementException;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphBase;
 
 /**
  * This class provides an Iterable to iterate over edges in a graph. One may use
@@ -62,7 +63,7 @@ public class EdgeIterable<E extends Edge> implements Iterable<E> {
 
 		protected E current = null;
 
-		protected Graph graph = null;
+		protected GraphBase graph = null;
 
 		protected Class<? extends Edge> ec;
 
@@ -75,7 +76,7 @@ public class EdgeIterable<E extends Edge> implements Iterable<E> {
 		protected long edgeListVersion;
 
 		@SuppressWarnings("unchecked")
-		EdgeIterator(Graph g, Class<? extends Edge> ec) {
+		EdgeIterator(GraphBase g, Class<? extends Edge> ec) {
 			graph = g;
 			this.ec = ec;
 			edgeListVersion = g.getEdgeListVersion();
@@ -117,7 +118,7 @@ public class EdgeIterable<E extends Edge> implements Iterable<E> {
 
 	public EdgeIterable(Graph g, Class<? extends Edge> ec) {
 		assert g != null;
-		iter = new EdgeIterator(g, ec);
+		iter = new EdgeIterator((GraphBase) g, ec);
 	}
 
 	public Iterator<E> iterator() {
