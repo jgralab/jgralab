@@ -245,8 +245,13 @@ public class GreqlGui extends JFrame {
 							statusLabel.setText("Couldn't evaluate query :-(");
 							String msg = ex.getMessage();
 							if (msg == null) {
-								msg = "An exception occured!";
+								if (ex.getCause() != null) {
+									msg = ex.getCause().toString();
+								} else {
+									msg = ex.toString();
+								}
 							}
+							ex.printStackTrace();
 							JOptionPane.showMessageDialog(GreqlGui.this, msg,
 									ex.getClass().getSimpleName(),
 									JOptionPane.ERROR_MESSAGE);
@@ -264,9 +269,12 @@ public class GreqlGui extends JFrame {
 							try {
 								File resultFile = File.createTempFile(
 										"greqlQueryResult", ".html");
+								resultFile.deleteOnExit();
 								new HTMLOutputWriter(result, resultFile, graph);
 								resultPane.setPage(new URL("file", "localhost",
 										resultFile.getCanonicalPath()));
+								System.out.println(resultFile
+										.getCanonicalPath());
 								tabPane.setSelectedComponent(resultScrollPane);
 							} catch (IOException e) {
 								JOptionPane.showMessageDialog(GreqlGui.this,
