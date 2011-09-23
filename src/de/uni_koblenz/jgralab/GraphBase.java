@@ -1,6 +1,6 @@
 package de.uni_koblenz.jgralab;
 
-public interface GraphInternal {
+public interface GraphBase {
 
 	/**
 	 * Changes this graph's version. graphModified() is called whenever the
