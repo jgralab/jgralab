@@ -38,10 +38,10 @@ package de.uni_koblenz.jgralab.greql2.evaluator.fa;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
-import de.uni_koblenz.jgralab.greql2.GreqlSerializer;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ThisVertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.schema.ThisVertex;
+import de.uni_koblenz.jgralab.greql2.serialising.GreqlSerializer;
 
 /**
  * This transition may fire, if the VertexEvaluator it holds as attribute
@@ -150,9 +150,8 @@ public class BoolExpressionTransition extends Transition {
 	@Override
 	public String prettyPrint() {
 		return "IntermediateVertex "
-				+ new GreqlSerializer()
-						.serializeGreql2Vertex(boolExpressionEvaluator
-								.getVertex());
+				+ GreqlSerializer.serializeVertex(boolExpressionEvaluator
+						.getVertex());
 	}
 
 	@Override

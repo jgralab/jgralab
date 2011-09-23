@@ -38,9 +38,9 @@ package de.uni_koblenz.jgralab.greql2.exception;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uni_koblenz.jgralab.greql2.SerializableGreql2;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
+import de.uni_koblenz.jgralab.greql2.serialising.GreqlSerializer;
 
 /**
  * This is the base class for all exceptions that refeer to the querysource with
@@ -137,8 +137,8 @@ public class QuerySourceException extends GreqlException {
 		} else {
 			sb.append(super.getMessage());
 			sb.append(": query part '");
-			sb.append((element != null) ? ((SerializableGreql2) element
-					.getGraph()).serialize(element) : "<unknown element>");
+			sb.append(element != null ? GreqlSerializer
+					.serializeVertex(element) : "<unknown element>");
 			sb.append("' at unknown position in query");
 		}
 

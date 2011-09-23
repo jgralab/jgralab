@@ -39,8 +39,8 @@ import org.pcollections.PCollection;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql2.GreqlSerializer;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
+import de.uni_koblenz.jgralab.greql2.serialising.GreqlSerializer;
 
 public class IntermediateVertexTransition extends Transition {
 
@@ -154,9 +154,8 @@ public class IntermediateVertexTransition extends Transition {
 	@Override
 	public String prettyPrint() {
 		return "IntermediateVertex "
-				+ new GreqlSerializer()
-						.serializeGreql2Vertex(intermediateVertexEvaluator
-								.getVertex());
+				+ GreqlSerializer.serializeVertex(intermediateVertexEvaluator
+						.getVertex());
 	}
 
 	@Override

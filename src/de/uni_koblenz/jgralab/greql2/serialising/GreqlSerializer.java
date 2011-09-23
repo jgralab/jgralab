@@ -35,7 +35,7 @@
 /**
  * 
  */
-package de.uni_koblenz.jgralab.greql2;
+package de.uni_koblenz.jgralab.greql2.serialising;
 
 import java.util.Iterator;
 
@@ -114,12 +114,17 @@ public class GreqlSerializer {
 
 	private StringBuffer sb = null;
 
-	public static String serialize(Greql2 greqlGraph) {
+	public static String serializeGraph(Greql2 greqlGraph) {
 		GreqlSerializer s = new GreqlSerializer();
-		return s.serializeGreql2Vertex(greqlGraph.getFirstGreql2Expression());
+		return s.serializeGreqlVertex(greqlGraph.getFirstGreql2Expression());
 	}
 
-	public String serializeGreql2Vertex(Greql2Vertex v) {
+	public static String serializeVertex(Greql2Vertex v) {
+		GreqlSerializer s = new GreqlSerializer();
+		return s.serializeGreqlVertex(v);
+	}
+
+	public String serializeGreqlVertex(Greql2Vertex v) {
 		sb = new StringBuffer();
 		serializeGreql2Vertex(v, false);
 		return sb.toString();

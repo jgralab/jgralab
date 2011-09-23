@@ -69,7 +69,6 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
-import de.uni_koblenz.jgralab.greql2.SerializableGreql2;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.DefaultCostModel;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
@@ -88,6 +87,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
 import de.uni_koblenz.jgralab.greql2.schema.IsBoundVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsFunctionIdOf;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
+import de.uni_koblenz.jgralab.greql2.serialising.GreqlSerializer;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
@@ -1110,12 +1110,7 @@ public class GreqlEvaluator {
 						.println("################### Optimized Query #####################");
 				System.out
 						.println("#########################################################");
-				if (queryGraph instanceof SerializableGreql2) {
-					System.out.println(((SerializableGreql2) queryGraph)
-							.serialize());
-				} else {
-					System.out.println("Couldn't serialize Greql2 graph...");
-				}
+				System.out.println(GreqlSerializer.serializeGraph(queryGraph));
 				String name = "__optimized-greql-query.";
 				try {
 					GraphIO.saveGraphToFile(name + "tg", queryGraph,
