@@ -48,6 +48,7 @@ import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.VertexInternal;
 import de.uni_koblenz.jgralab.PathElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
@@ -60,7 +61,7 @@ import de.uni_koblenz.jgralab.schema.impl.DirectedM1EdgeClass;
  * 
  * @author ist@uni-koblenz.de
  */
-public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex {
+public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex, VertexInternal {
 	abstract protected void setIncidenceListVersion(long incidenceListVersion);
 
 	/**
@@ -495,9 +496,8 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex 
 		return (this.getIncidenceListVersion() != vertexStructureVersion);
 	}
 
-	/**
-	 * Must be called by all methods which manipulate the incidence list of this
-	 * Vertex.
+	/* (non-Javadoc)
+	 * @see de.uni_koblenz.jgralab.impl.InternalVertex#incidenceListModified()
 	 */
 	public void incidenceListModified() {
 		assert isValid();

@@ -44,6 +44,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.VertexInternal;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.IncidenceImpl;
 import de.uni_koblenz.jgralab.impl.VertexBaseImpl;
@@ -286,7 +287,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 			// relevant in writing-phase
 			if (transaction.getState() == TransactionState.WRITING) {
 				if (transaction.changedIncidences != null) {
-					VertexBaseImpl temporaryIncidentVertex = incidentVertex
+					VertexInternal temporaryIncidentVertex = incidentVertex
 							.getTemporaryValue(transaction);
 					Map<IncidenceImpl, Map<ListPosition, Boolean>> incidenceList = transaction.changedIncidences
 							.get(temporaryIncidentVertex);
@@ -324,7 +325,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 			// not - only relevant in writing-phase
 			if (transaction.getState() == TransactionState.WRITING) {
 				if (transaction.changedIncidences != null) {
-					VertexBaseImpl temporaryIncidentVertex = incidentVertex
+					VertexInternal temporaryIncidentVertex = incidentVertex
 							.getTemporaryValue(transaction);
 					Map<IncidenceImpl, Map<ListPosition, Boolean>> incidenceList = transaction.changedIncidences
 							.get(temporaryIncidentVertex);
@@ -359,7 +360,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 					+ " is not valid within the current transaction.");
 		}
 		// important to temporary store old alpha!!!
-		VertexBaseImpl oldAlpha = getIncidentVertex();
+		VertexInternal oldAlpha = getIncidentVertex();
 		// synchronize <code>transaction</code> to make sure that
 		// <code>transaction</code> cannot be set active in another
 		// <code>Thread</code> while <code>transaction</code> is executing this
@@ -408,7 +409,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 					+ " is not valid within the current transaction.");
 		}
 		// important to temporary store old omega!!!
-		VertexBaseImpl oldOmega = ((ReversedEdgeImpl) reversedEdge)
+		VertexInternal oldOmega = ((ReversedEdgeImpl) reversedEdge)
 				.getIncidentVertex();
 		// synchronize <code>transaction</code> to make sure that
 		// <code>transaction</code> cannot be set active in another
