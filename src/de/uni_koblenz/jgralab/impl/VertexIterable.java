@@ -40,6 +40,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphBase;
 import de.uni_koblenz.jgralab.Vertex;
 
 /**
@@ -76,7 +77,7 @@ public class VertexIterable<V extends Vertex> implements Iterable<V> {
 		/**
 		 * the graph this iterator works on
 		 */
-		protected Graph graph = null;
+		protected GraphBase graph = null;
 
 		protected Class<? extends Vertex> vc;
 
@@ -95,7 +96,7 @@ public class VertexIterable<V extends Vertex> implements Iterable<V> {
 		 *            the graph to work on
 		 */
 		@SuppressWarnings("unchecked")
-		VertexIterator(Graph g, Class<? extends Vertex> vc) {
+		VertexIterator(GraphBase g, Class<? extends Vertex> vc) {
 			graph = g;
 			this.vc = vc;
 			vertexListVersion = g.getVertexListVersion();
@@ -150,7 +151,7 @@ public class VertexIterable<V extends Vertex> implements Iterable<V> {
 
 	public VertexIterable(Graph g, Class<? extends Vertex> vc) {
 		assert g != null;
-		iter = new VertexIterator(g, vc);
+		iter = new VertexIterator((GraphBase) g, vc);
 	}
 
 	public Iterator<V> iterator() {

@@ -274,38 +274,6 @@ public interface Edge extends GraphElement {
 	public void delete();
 
 	/**
-	 * sets the alpha vertex to v
-	 * 
-	 * @param v
-	 *            a vertex
-	 */
-	void setAlpha(Vertex v);
-
-	/**
-	 * sets the omega vertex to v
-	 * 
-	 * @param v
-	 *            a vertex
-	 */
-	void setOmega(Vertex v);
-
-	/**
-	 * sets the this vertex to v
-	 * 
-	 * @param v
-	 *            a vertex
-	 */
-	void setThis(Vertex v);
-
-	/**
-	 * sets the that vertex to v
-	 * 
-	 * @param v
-	 *            a vertex
-	 */
-	void setThat(Vertex v);
-
-	/**
 	 * puts this edge immediately before the given edge <code>e</code> in the
 	 * incidence list of the <code>this-vertex</code> of this edge. This does
 	 * neither affect the global edge sequence eSeq nor the alpha or omega

@@ -49,21 +49,23 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.EdgeBase;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
-import de.uni_koblenz.jgralab.GraphIO.TGFilenameFilter;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.VertexBase;
+import de.uni_koblenz.jgralab.GraphIO.TGFilenameFilter;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
@@ -650,8 +652,8 @@ public class GreqlEvaluator {
 		}
 
 		Set<String> definedSubQueries = subQueryMap.keySet();
-		HashSet<String> subQueryNames = new HashSet<String>(
-				definedSubQueries.size() + 1);
+		HashSet<String> subQueryNames = new HashSet<String>(definedSubQueries
+				.size() + 1);
 		subQueryNames.addAll(definedSubQueries);
 		subQueryNames.add(name);
 		GreqlParser parser = new GreqlParser(greqlQuery, subQueryNames);
@@ -948,19 +950,19 @@ public class GreqlEvaluator {
 					e = e.getNextIncidence();
 					continue;
 				}
-				e.setThis(arg);
+				((EdgeBase) e).setThis((VertexBase) arg);
 				e = bv.getFirstIncidence();
 			}
 		}
 
-		Edge e = fa.getFirstIncidence(EdgeDirection.OUT);
+		EdgeBase e = (EdgeBase) fa.getFirstIncidence(EdgeDirection.OUT);
 		while (e != null) {
 			if (e.getM1Class() == IsFunctionIdOf.class) {
-				e = e.getNextIncidence(EdgeDirection.OUT);
+				e = (EdgeBase) e.getNextIncidence(EdgeDirection.OUT);
 				continue;
 			}
-			e.setThis(exp);
-			e = fa.getFirstIncidence(EdgeDirection.OUT);
+			e.setThis((VertexBase) exp);
+			e = (EdgeBase) fa.getFirstIncidence(EdgeDirection.OUT);
 		}
 
 		fa.delete();

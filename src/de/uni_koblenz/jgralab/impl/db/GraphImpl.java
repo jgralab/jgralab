@@ -37,8 +37,10 @@ package de.uni_koblenz.jgralab.impl.db;
 import java.util.List;
 
 import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.EdgeBase;
 import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.VertexBase;
 import de.uni_koblenz.jgralab.impl.EdgeBaseImpl;
 import de.uni_koblenz.jgralab.impl.FreeIndexList;
 import de.uni_koblenz.jgralab.impl.GraphBaseImpl;
@@ -253,7 +255,8 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	@Override
 	protected void addEdge(Edge newEdge, Vertex alpha, Vertex omega) {
 		assertPreConditionOfAddEdge(newEdge, alpha, omega);
-		testEdgeSuitingVertices(newEdge, alpha, omega);
+		testEdgeSuitingVertices((EdgeBase) newEdge, (VertexBase) alpha,
+				(VertexBase) omega);
 		proceedWithAdditionOf(newEdge, alpha, omega);
 	}
 
@@ -282,7 +285,8 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 				&& edge.getGraph() == this;
 	}
 
-	private void testEdgeSuitingVertices(Edge edge, Vertex alpha, Vertex omega) {
+	private void testEdgeSuitingVertices(EdgeBase edge, VertexBase alpha,
+			VertexBase omega) {
 		if (!alpha.isValidAlpha(edge)) {
 			throw new GraphException("Edges of class "
 					+ edge.getAttributedElementClass().getQualifiedName()
@@ -346,7 +350,9 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 			VertexImpl omega) {
 		alpha.appendIncidenceToLambdaSeq(edge);
 		alpha.incidenceListModifiedAtClient();
-		omega.appendIncidenceToLambdaSeq((IncidenceImpl) edge.getReversedEdge());
+		omega
+				.appendIncidenceToLambdaSeq((IncidenceImpl) edge
+						.getReversedEdge());
 		omega.incidenceListModifiedAtClient();
 	}
 

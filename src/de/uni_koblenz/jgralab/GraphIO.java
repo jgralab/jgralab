@@ -629,7 +629,7 @@ public class GraphIO {
 		try {
 			GraphIO io = new GraphIO();
 			io.TGOut = out;
-			io.saveGraph(graph, pf, null);
+			io.saveGraph((GraphBase) graph, pf, null);
 			out.flush();
 		} catch (IOException e) {
 			throw new GraphIOException("exception while saving graph", e);
@@ -657,14 +657,14 @@ public class GraphIO {
 		try {
 			GraphIO io = new GraphIO();
 			io.TGOut = out;
-			io.saveGraph(subGraph.getGraph(), pf, subGraph);
+			io.saveGraph((GraphBase) subGraph.getGraph(), pf, subGraph);
 			out.flush();
 		} catch (IOException e) {
 			throw new GraphIOException("exception while saving graph", e);
 		}
 	}
 
-	private void saveGraph(Graph graph, ProgressFunction pf,
+	private void saveGraph(GraphBase graph, ProgressFunction pf,
 			BooleanGraphMarker subGraph) throws IOException, GraphIOException {
 		// TraversalContext tc = graph.setTraversalContext(null);
 		try {

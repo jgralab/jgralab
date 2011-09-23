@@ -99,11 +99,11 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -120,11 +120,13 @@ import de.uni_koblenz.ist.utilities.option_handler.OptionHandler;
 import de.uni_koblenz.ist.utilities.xml.XmlProcessor;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.EdgeBase;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.VertexBase;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.graphvalidator.ConstraintViolation;
@@ -1243,9 +1245,9 @@ public class Rsa2Tg extends XmlProcessor {
 		}
 		if (faultyDomains.size() > 0) {
 			StringBuilder sb = new StringBuilder();
-			sb.append("The following enumeration domain")
-					.append(faultyDomains.size() == 1 ? " has" : "s have")
-					.append(" no literals");
+			sb.append("The following enumeration domain").append(
+					faultyDomains.size() == 1 ? " has" : "s have").append(
+					" no literals");
 			String delim = ": ";
 			for (String name : faultyDomains) {
 				sb.append(delim).append(name);
@@ -1521,7 +1523,8 @@ public class Rsa2Tg extends XmlProcessor {
 	private Vertex handlePackage() throws XMLStreamException {
 
 		Package pkg = sg.createPackage();
-		pkg.set_qualifiedName(getQualifiedName(getAttribute(UML_ATTRIBUTE_NAME)));
+		pkg
+				.set_qualifiedName(getQualifiedName(getAttribute(UML_ATTRIBUTE_NAME)));
 		sg.createContainsSubPackage(packageStack.peek(), pkg);
 		packageStack.push(pkg);
 		return pkg;
@@ -1559,7 +1562,8 @@ public class Rsa2Tg extends XmlProcessor {
 		currentClass = vc;
 		String abs = getAttribute(UML_ATTRIBUTE_IS_ABSRACT);
 		vc.set_abstract((abs != null) && abs.equals(UML_TRUE));
-		vc.set_qualifiedName(getQualifiedName(getAttribute(UML_ATTRIBUTE_NAME)));
+		vc
+				.set_qualifiedName(getQualifiedName(getAttribute(UML_ATTRIBUTE_NAME)));
 		sg.createContainsGraphElementClass(packageStack.peek(), vc);
 
 		// System.out.println("currentClass = " + currentClass + " "
@@ -1684,7 +1688,8 @@ public class Rsa2Tg extends XmlProcessor {
 	private Vertex handleEnumeration() throws XMLStreamException {
 		EnumDomain ed = sg.createEnumDomain();
 		Package p = packageStack.peek();
-		ed.set_qualifiedName(getQualifiedName(getAttribute(UML_ATTRIBUTE_NAME)));
+		ed
+				.set_qualifiedName(getQualifiedName(getAttribute(UML_ATTRIBUTE_NAME)));
 		sg.createContainsDomain(p, ed);
 		PVector<String> empty = ArrayPVector.empty();
 		ed.set_enumConstants(empty);
@@ -1881,8 +1886,8 @@ public class Rsa2Tg extends XmlProcessor {
 			assert getDirection(from) == IncidenceDirection.OUT;
 
 			IncidenceClass inc = (IncidenceClass) cf.getThat();
-			cf.setThat(gt.getThat());
-			gt.setThat(inc);
+			((EdgeBase) cf).setThat((VertexBase) gt.getThat());
+			((EdgeBase) gt).setThat((VertexBase) inc);
 		}
 
 	}
@@ -2104,7 +2109,7 @@ public class Rsa2Tg extends XmlProcessor {
 				assert (d instanceof StringDomain)
 						&& d.get_qualifiedName().equals(domainId)
 						&& preliminaryVertices.contains(d);
-				comp.setOmega(dom);
+				((EdgeBase) comp).setOmega((VertexBase) dom);
 				d.delete();
 				preliminaryVertices.remove(d);
 				recordComponentType.removeMark(comp);
@@ -2613,13 +2618,13 @@ public class Rsa2Tg extends XmlProcessor {
 					.get(currentClassId);
 			assert graphClass != null;
 			graphClass.set_qualifiedName(aec.get_qualifiedName());
-			Edge e = aec.getFirstIncidence();
+			EdgeBase e = (EdgeBase) aec.getFirstIncidence();
 			while (e != null) {
-				Edge n = e.getNextIncidence();
+				EdgeBase n = (EdgeBase) e.getNextIncidence();
 				if (e instanceof ContainsGraphElementClass) {
 					e.delete();
 				} else {
-					e.setThis(graphClass);
+					e.setThis((VertexBase) graphClass);
 				}
 				e = n;
 			}
@@ -2761,7 +2766,8 @@ public class Rsa2Tg extends XmlProcessor {
 			assert (d instanceof StringDomain)
 					&& (d.get_qualifiedName() == null)
 					&& preliminaryVertices.contains(d);
-			currentRecordDomainComponent.setOmega(dom);
+			((EdgeBase) currentRecordDomainComponent)
+					.setOmega((VertexBase) dom);
 			d.delete();
 			preliminaryVertices.remove(d);
 			recordComponentType.removeMark(currentRecordDomainComponent);
@@ -2967,8 +2973,8 @@ public class Rsa2Tg extends XmlProcessor {
 			sg.createEndsAt(inc, vc);
 		} else {
 			EdgeClass ec = (EdgeClass) (inc.getFirstComesFromIncidence() != null ? inc
-					.getFirstComesFromIncidence() : inc
-					.getFirstGoesToIncidence()).getThat();
+					.getFirstComesFromIncidence()
+					: inc.getFirstGoesToIncidence()).getThat();
 			String id = null;
 			for (Entry<String, Vertex> idEntry : idMap.entrySet()) {
 				if (idEntry.getValue() == ec) {
@@ -2999,7 +3005,11 @@ public class Rsa2Tg extends XmlProcessor {
 										+ ae.getAttributedElementClass()
 												.getQualifiedName());
 					}
-					inc.getFirstEndsAtIncidence().setOmega((VertexClass) ae);
+					EdgeBase firstEndsAtIncidence = (EdgeBase) inc
+							.getFirstEndsAtIncidence();
+					// this cast remains for detecting ClassCastExceptions
+					VertexClass vertexClass = (VertexClass) ae;
+					firstEndsAtIncidence.setOmega((VertexBase) vertexClass);
 
 					Set<String> gens = generalizations.getMark(vc);
 					if (gens != null) {
@@ -3040,10 +3050,10 @@ public class Rsa2Tg extends XmlProcessor {
 	 *            New {@link Vertex}, to which all edge should be attached.
 	 */
 	private void reconnectEdges(Vertex oldVertex, Vertex newVertex) {
-		Edge curr = oldVertex.getFirstIncidence();
+		EdgeBase curr = (EdgeBase) oldVertex.getFirstIncidence();
 		while (curr != null) {
-			Edge next = curr.getNextIncidence();
-			curr.setThis(newVertex);
+			EdgeBase next = (EdgeBase) curr.getNextIncidence();
+			curr.setThis((VertexBase) newVertex);
 			curr = next;
 		}
 	}
@@ -3338,7 +3348,7 @@ public class Rsa2Tg extends XmlProcessor {
 	}
 
 	public void setKeepEmptyPackages(boolean removeEmptyPackages) {
-		this.keepEmptyPackages = removeEmptyPackages;
+		keepEmptyPackages = removeEmptyPackages;
 	}
 
 }

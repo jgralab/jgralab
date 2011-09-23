@@ -6,13 +6,15 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.EdgeBase;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.VertexBase;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueMap;
@@ -215,16 +217,16 @@ public class MatchReplace extends InPlaceTransformation {
 			if ((ce.get_typeName() == null) && (arch != null) && arch.isEdge()) {
 				// Existing, preserved edge. However, maybe we might need to
 				// update alpha and/or omega.
-				Edge e = arch.toEdge().getNormalEdge();
+				EdgeBase e = (EdgeBase) arch.toEdge().getNormalEdge();
 				preservables.add(e);
 				allModifiedElements.add(e);
 				// setAlpha/Omega are no-ops, if nothing is to be set. So that's
 				// acually cheaper than checking first.
-				e.setAlpha(startVertex);
-				e.setOmega(endVertex);
+				e.setAlpha((VertexBase) startVertex);
+				e.setOmega((VertexBase) endVertex);
 
-				setAttributeValues(e, arch, ce.get_attributes(),
-						ce.is_copyAttributeValues());
+				setAttributeValues(e, arch, ce.get_attributes(), ce
+						.is_copyAttributeValues());
 			} else {
 				Edge newEdge = createEdge(ce, startVertex, endVertex);
 				if (addGlobalMappings && (arch != null)) {
@@ -236,8 +238,8 @@ public class MatchReplace extends InPlaceTransformation {
 						allModifiedElements.add(replacedEdge);
 					}
 				}
-				setAttributeValues(newEdge, arch, ce.get_attributes(),
-						ce.is_copyAttributeValues());
+				setAttributeValues(newEdge, arch, ce.get_attributes(), ce
+						.is_copyAttributeValues());
 			}
 		}
 
@@ -256,8 +258,8 @@ public class MatchReplace extends InPlaceTransformation {
 				createVertices2Vertices.put(cv, v);
 				preservables.add(v);
 				allModifiedElements.add(v);
-				setAttributeValues(v, arch, cv.get_attributes(),
-						cv.is_copyAttributeValues());
+				setAttributeValues(v, arch, cv.get_attributes(), cv
+						.is_copyAttributeValues());
 			} else {
 				// A new Vertex has to be created
 				Vertex newVertex = createVertex(cv);
@@ -274,8 +276,8 @@ public class MatchReplace extends InPlaceTransformation {
 						relinkIncidences(replacedVertex, newVertex);
 					}
 				}
-				setAttributeValues(newVertex, arch, cv.get_attributes(),
-						cv.is_copyAttributeValues());
+				setAttributeValues(newVertex, arch, cv.get_attributes(), cv
+						.is_copyAttributeValues());
 			}
 		}
 	}
@@ -297,9 +299,9 @@ public class MatchReplace extends InPlaceTransformation {
 				ec = ec(e.get_typeName());
 			}
 		} else {
-			ec = getSingleEdgeClassBetween(
-					(VertexClass) startVertex.getAttributedElementClass(),
-					(VertexClass) endVertex.getAttributedElementClass());
+			ec = getSingleEdgeClassBetween((VertexClass) startVertex
+					.getAttributedElementClass(), (VertexClass) endVertex
+					.getAttributedElementClass());
 		}
 		return context.getTargetGraph().createEdge(ec.getM1Class(),
 				startVertex, endVertex);

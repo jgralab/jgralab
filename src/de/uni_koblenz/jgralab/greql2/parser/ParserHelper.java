@@ -47,13 +47,14 @@ import org.pcollections.ArrayPVector;
 import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.EdgeBase;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.VertexBase;
 import de.uni_koblenz.jgralab.greql2.exception.DuplicateVariableException;
 import de.uni_koblenz.jgralab.greql2.exception.ParsingException;
 import de.uni_koblenz.jgralab.greql2.exception.UndefinedVariableException;
 import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
-import de.uni_koblenz.jgralab.greql2.schema.ListComprehension;
 import de.uni_koblenz.jgralab.greql2.schema.Comprehension;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Definition;
@@ -87,6 +88,7 @@ import de.uni_koblenz.jgralab.greql2.schema.IsSubgraphOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsTableHeaderOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsValueExprOfComprehension;
 import de.uni_koblenz.jgralab.greql2.schema.IsVarOf;
+import de.uni_koblenz.jgralab.greql2.schema.ListComprehension;
 import de.uni_koblenz.jgralab.greql2.schema.MapComprehension;
 import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.QuantifiedExpression;
@@ -232,20 +234,22 @@ public abstract class ParserHelper {
 				Variable variable = (Variable) isVarOf.getAlpha();
 				isVarOf.delete();
 				isExprOf.delete();
-				Edge e = variable.getFirstIncidence(EdgeDirection.OUT);
+				EdgeBase e = (EdgeBase) variable
+						.getFirstIncidence(EdgeDirection.OUT);
 				while (e != null) {
-					e.setAlpha(expr);
-					e = variable.getFirstIncidence(EdgeDirection.OUT);
+					e.setAlpha((VertexBase) expr);
+					e = (EdgeBase) variable
+							.getFirstIncidence(EdgeDirection.OUT);
 				}
 				variable.delete();
 			}
 			Expression boundExpr = (Expression) exp
 					.getFirstIsBoundExprOfIncidence(EdgeDirection.IN)
 					.getAlpha();
-			Edge e = exp.getFirstIncidence(EdgeDirection.OUT);
+			EdgeBase e = (EdgeBase) exp.getFirstIncidence(EdgeDirection.OUT);
 			while (e != null) {
-				e.setAlpha(boundExpr);
-				e = exp.getFirstIncidence(EdgeDirection.OUT);
+				e.setAlpha((VertexBase) boundExpr);
+				e = (EdgeBase) exp.getFirstIncidence(EdgeDirection.OUT);
 			}
 			exp.delete();
 		}
@@ -295,8 +299,9 @@ public abstract class ParserHelper {
 					.get_name());
 			if (var != null) {
 				if (var != v) {
-					Edge inc = v.getFirstIncidence(EdgeDirection.OUT);
-					inc.setAlpha(var);
+					EdgeBase inc = (EdgeBase) v
+							.getFirstIncidence(EdgeDirection.OUT);
+					inc.setAlpha((VertexBase) var);
 					if (v.getDegree() <= 0) {
 						v.delete();
 					}
@@ -304,8 +309,8 @@ public abstract class ParserHelper {
 			} else {
 				Greql2Aggregation e = (Greql2Aggregation) v
 						.getFirstIncidence(EdgeDirection.OUT);
-				throw new UndefinedVariableException((Variable) v,
-						e.get_sourcePositions());
+				throw new UndefinedVariableException((Variable) v, e
+						.get_sourcePositions());
 			}
 		} else {
 			ArrayList<Edge> incidenceList = new ArrayList<Edge>();
@@ -331,9 +336,8 @@ public abstract class ParserHelper {
 		afterParsingvariableSymbolTable.blockBegin();
 		for (IsBoundVarOf isBoundVarOf : root
 				.getIsBoundVarOfIncidences(EdgeDirection.IN)) {
-			afterParsingvariableSymbolTable.insert(
-					((Variable) isBoundVarOf.getAlpha()).get_name(),
-					isBoundVarOf.getAlpha());
+			afterParsingvariableSymbolTable.insert(((Variable) isBoundVarOf
+					.getAlpha()).get_name(), isBoundVarOf.getAlpha());
 		}
 		IsQueryExprOf isQueryExprOf = root
 				.getFirstIsQueryExprOfIncidence(EdgeDirection.IN);
@@ -546,7 +550,7 @@ public abstract class ParserHelper {
 		public void postOp(String op) {
 			lengthOperator = getLength(offsetOperator);
 			offsetArg2 = getCurrentOffset();
-			this.operatorName = op;
+			operatorName = op;
 		}
 
 		public FunctionApplication postArg2(Expression arg2) {
@@ -677,8 +681,8 @@ public abstract class ParserHelper {
 				firstThisVertex = thisVertex;
 			} else {
 				while (thisVertex.getFirstIncidence() != null) {
-					Edge e = thisVertex.getFirstIncidence();
-					e.setThis(firstThisVertex);
+					EdgeBase e = (EdgeBase) thisVertex.getFirstIncidence();
+					e.setThis((VertexBase) firstThisVertex);
 				}
 				literalsToDelete.add(thisVertex);
 			}
@@ -689,8 +693,8 @@ public abstract class ParserHelper {
 				firstThisEdge = thisEdge;
 			} else {
 				while (thisEdge.getFirstIncidence() != null) {
-					Edge e = thisEdge.getFirstIncidence();
-					e.setThis(firstThisEdge);
+					EdgeBase e = (EdgeBase) thisEdge.getFirstIncidence();
+					e.setThis((VertexBase) firstThisEdge);
 				}
 				literalsToDelete.add(thisEdge);
 			}
