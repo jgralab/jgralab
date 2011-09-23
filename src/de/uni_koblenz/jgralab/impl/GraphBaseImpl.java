@@ -279,18 +279,18 @@ public abstract class GraphBaseImpl implements Graph, GraphInternal {
 		setECount(0);
 	}
 
-	protected TraversalContext traversalContext;
+	// protected TraversalContext traversalContext;
 
-	@Override
-	public TraversalContext setTraversalContext(TraversalContext tc) {
-		TraversalContext result = traversalContext;
-		traversalContext = tc;
-		return result;
-	}
-
-	public TraversalContext getTraversalContext() {
-		return traversalContext;
-	}
+	// @Override
+	// public TraversalContext setTraversalContext(TraversalContext tc) {
+	// TraversalContext result = traversalContext;
+	// traversalContext = tc;
+	// return result;
+	// }
+	//
+	// public TraversalContext getTraversalContext() {
+	// return traversalContext;
+	// }
 
 	/**
 	 * Adds an edge to this graph. If the edges id is 0, a valid id is set,
@@ -529,8 +529,9 @@ public abstract class GraphBaseImpl implements Graph, GraphInternal {
 				&& containsEdgeId(((EdgeBaseImpl) e.getNormalEdge()).id)
 				&& (getEdge(((EdgeBaseImpl) e.getNormalEdge()).id) == e
 						.getNormalEdge())
-				&& (traversalContext == null || traversalContext
-						.containsEdge(e));
+		// && (traversalContext == null || traversalContext
+		// .containsEdge(e))
+		;
 	}
 
 	/**
@@ -558,12 +559,12 @@ public abstract class GraphBaseImpl implements Graph, GraphInternal {
 	@Override
 	public boolean containsVertex(Vertex v) {
 		VertexInternal[] vertex = getVertex();
-		return (v != null)
-				&& (v.getGraph() == this)
+		return (v != null) && (v.getGraph() == this)
 				&& containsVertexId(((VertexBaseImpl) v).id)
 				&& (vertex[((VertexBaseImpl) v).id] == v)
-				&& (traversalContext == null || traversalContext
-						.containsVertex(v));
+		// && (traversalContext == null || traversalContext
+		// .containsVertex(v))
+		;
 	}
 
 	/**
@@ -989,15 +990,21 @@ public abstract class GraphBaseImpl implements Graph, GraphInternal {
 	@Override
 	abstract public long getVertexListVersion();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see de.uni_koblenz.jgralab.impl.InternalGraph#graphModified()
 	 */
 	public void graphModified() {
 		setGraphVersion(getGraphVersion() + 1);
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uni_koblenz.jgralab.impl.InternalGraph#ecaAttributeChanging(java.lang.String, java.lang.Object, java.lang.Object)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.impl.InternalGraph#ecaAttributeChanging(java.lang
+	 * .String, java.lang.Object, java.lang.Object)
 	 */
 	public void ecaAttributeChanging(String name, Object oldValue,
 			Object newValue) {
@@ -1007,8 +1014,12 @@ public abstract class GraphBaseImpl implements Graph, GraphInternal {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uni_koblenz.jgralab.impl.InternalGraph#ecaAttributeChanged(java.lang.String, java.lang.Object, java.lang.Object)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.impl.InternalGraph#ecaAttributeChanged(java.lang
+	 * .String, java.lang.Object, java.lang.Object)
 	 */
 	public void ecaAttributeChanged(String name, Object oldValue,
 			Object newValue) {
@@ -1227,8 +1238,12 @@ public abstract class GraphBaseImpl implements Graph, GraphInternal {
 	public void loadingCompleted() {
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uni_koblenz.jgralab.impl.InternalGraph#internalLoadingCompleted(int[], int[])
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.impl.InternalGraph#internalLoadingCompleted(int[],
+	 * int[])
 	 */
 	public void internalLoadingCompleted(int[] firstIncidence,
 			int[] nextIncidence) {
@@ -1461,7 +1476,9 @@ public abstract class GraphBaseImpl implements Graph, GraphInternal {
 		vertexListModified();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see de.uni_koblenz.jgralab.impl.InternalGraph#setGraphVersion(long)
 	 */
 	public void setGraphVersion(long graphVersion) {
@@ -1478,7 +1495,9 @@ public abstract class GraphBaseImpl implements Graph, GraphInternal {
 		this.id = id;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see de.uni_koblenz.jgralab.impl.InternalGraph#setLoading(boolean)
 	 */
 	public void setLoading(boolean isLoading) {
@@ -1544,7 +1563,7 @@ public abstract class GraphBaseImpl implements Graph, GraphInternal {
 	 */
 	@Override
 	public void defragment() {
-		TraversalContext tc = setTraversalContext(null);
+		// TraversalContext tc = setTraversalContext(null);
 		try {
 			// defragment vertex array
 			if (getVCount() < vMax) {
@@ -1610,7 +1629,7 @@ public abstract class GraphBaseImpl implements Graph, GraphInternal {
 				System.gc();
 			}
 		} finally {
-			setTraversalContext(tc);
+			// setTraversalContext(tc);
 		}
 	}
 
@@ -2033,18 +2052,21 @@ public abstract class GraphBaseImpl implements Graph, GraphInternal {
 	@Override
 	public int getGraphStructureChangedListenerCount() {
 		return graphStructureChangedListenersWithAutoRemoval == null ? graphStructureChangedListeners
-				.size() : graphStructureChangedListenersWithAutoRemoval.size()
-				+ graphStructureChangedListeners.size();
+				.size()
+				: graphStructureChangedListenersWithAutoRemoval.size()
+						+ graphStructureChangedListeners.size();
 	}
 
 	private Iterator<WeakReference<GraphStructureChangedListener>> getListenerListIteratorForAutoRemove() {
 		return graphStructureChangedListenersWithAutoRemoval != null ? graphStructureChangedListenersWithAutoRemoval
-				.iterator() : null;
+				.iterator()
+				: null;
 	}
 
 	private Iterator<GraphStructureChangedListener> getListenerListIterator() {
 		return graphStructureChangedListeners != null ? graphStructureChangedListeners
-				.iterator() : null;
+				.iterator()
+				: null;
 	}
 
 	/**
