@@ -372,7 +372,9 @@ public abstract class GraphBaseImpl implements Graph {
 
 	protected void internalEdgeAdded(EdgeBaseImpl e) {
 		notifyEdgeAdded(e);
-		getECARuleManager().fireAfterCreateEdgeEvents(e);
+		if(this.getECARuleManagerIfThere() != null){
+			getECARuleManagerIfThere().fireAfterCreateEdgeEvents(e);
+		}
 	}
 
 	/*
@@ -423,7 +425,9 @@ public abstract class GraphBaseImpl implements Graph {
 
 	protected void internalVertexAdded(VertexBaseImpl v) {
 		notifyVertexAdded(v);
-		getECARuleManager().fireAfterCreateVertexEvents(v);
+		if(this.getECARuleManagerIfThere() != null){
+			getECARuleManager().fireAfterCreateVertexEvents(v);
+		}
 	}
 
 	/**
@@ -1034,8 +1038,10 @@ public abstract class GraphBaseImpl implements Graph {
 	private void internalDeleteEdge(Edge edge) {
 		assert (edge != null) && edge.isValid() && containsEdge(edge);
 
-		getECARuleManager().fireBeforeDeleteEdgeEvents(edge);
-
+		if(this.getECARuleManagerIfThere() != null){
+			getECARuleManagerIfThere().fireBeforeDeleteEdgeEvents(edge);
+		}
+		
 		EdgeBaseImpl e = (EdgeBaseImpl) edge.getNormalEdge();
 		internalEdgeDeleted(e);
 
@@ -1050,7 +1056,9 @@ public abstract class GraphBaseImpl implements Graph {
 		removeEdgeFromESeq(e);
 		edgeListModified();
 
-		getECARuleManager().fireAfterDeleteEdgeEvents(e.getM1Class());
+		if(this.getECARuleManagerIfThere() != null){
+			getECARuleManagerIfThere().fireAfterDeleteEdgeEvents(e.getM1Class());
+		}
 		edgeAfterDeleted(e, alpha, omega);
 	}
 
@@ -1068,7 +1076,10 @@ public abstract class GraphBaseImpl implements Graph {
 		while (!getDeleteVertexList().isEmpty()) {
 			VertexBaseImpl v = getDeleteVertexList().remove(0);
 			assert (v != null) && v.isValid() && containsVertex(v);
-			getECARuleManager().fireBeforeDeleteVertexEvents(v);
+			
+			if(this.getECARuleManagerIfThere() != null){
+				getECARuleManagerIfThere().fireBeforeDeleteVertexEvents(v);
+			}
 			internalVertexDeleted(v);
 			// delete all incident edges including incidence objects
 			Edge e = v.getFirstIncidence();
@@ -1088,7 +1099,10 @@ public abstract class GraphBaseImpl implements Graph {
 			}
 			removeVertexFromVSeq(v);
 			vertexListModified();
-			getECARuleManager().fireAfterDeleteVertexEvents(v.getM1Class());
+			
+			if(this.getECARuleManagerIfThere() != null){
+				getECARuleManagerIfThere().fireAfterDeleteVertexEvents(v.getM1Class());
+			}
 			vertexAfterDeleted(v);
 		}
 	}
@@ -1960,22 +1974,27 @@ public abstract class GraphBaseImpl implements Graph {
 
 	// ECA Rules
 	private ECARuleManagerInterface ecaRuleManager;
-	{
-		Constructor<?> ruleManagerConstructor;
-		try {
-			ruleManagerConstructor = Class.forName(
-					"de.uni_koblenz.jgralab.eca.ECARuleManager")
-					.getConstructor(Graph.class);
-			ecaRuleManager = (ECARuleManagerInterface) ruleManagerConstructor
-					.newInstance(this);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		assert ecaRuleManager != null;
-	}
 
 	@Override
 	public ECARuleManagerInterface getECARuleManager() {
+		if(ecaRuleManager == null){
+			Constructor<?> ruleManagerConstructor;
+			try {
+				ruleManagerConstructor = Class.forName(
+						"de.uni_koblenz.jgralab.eca.ECARuleManager")
+						.getConstructor(Graph.class);
+				ecaRuleManager = (ECARuleManagerInterface) ruleManagerConstructor
+						.newInstance(this);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			assert ecaRuleManager != null;
+		}
+		return ecaRuleManager;
+	}
+	
+	@Override
+	public ECARuleManagerInterface getECARuleManagerIfThere(){
 		return ecaRuleManager;
 	}
 

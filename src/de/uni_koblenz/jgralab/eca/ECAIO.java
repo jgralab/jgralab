@@ -431,7 +431,7 @@ public class ECAIO {
 			// -- ChangeEdgeDescription
 			else if (eventdestype.equals("updatedStartOrEndVertex")) {
 				return finishChangeEdgeEventDescription(context, et,
-						type, EdgeEnd.BOTH);
+						type, EdgeEnd.ANY);
 			}
 			// -- DeleteVertexEventDescription
 			else if (eventdestype.equals("deletedVertex")) {
