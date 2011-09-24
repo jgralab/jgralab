@@ -464,14 +464,18 @@ public abstract class NamedElementImpl implements NamedElement {
 
 	@Override
 	public final int hashCode() {
-		int x = 1723;
-		x = x * qualifiedName.hashCode() + x;
-		x = x * getSchema().hashCode() + x;
-		return x;
+		return qualifiedName.hashCode() + getSchema().hashCode();
 	}
 
 	@Override
-	public abstract boolean equals(Object o);
+	public final boolean equals(Object o) {
+		if (o == null || !(o instanceof NamedElement)) {
+			return false;
+		}
+		NamedElement other = (NamedElement) o;
+		return getSchema().equals(other.getSchema())
+				&& qualifiedName.equals(other.getQualifiedName());
+	}
 
 	@Override
 	public final boolean isInDefaultPackage() {
