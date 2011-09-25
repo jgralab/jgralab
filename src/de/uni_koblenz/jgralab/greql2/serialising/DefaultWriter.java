@@ -24,6 +24,7 @@ import de.uni_koblenz.jgralab.greql2.types.Slice;
 import de.uni_koblenz.jgralab.greql2.types.Table;
 import de.uni_koblenz.jgralab.greql2.types.Tuple;
 import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
+import de.uni_koblenz.jgralab.greql2.types.Undefined;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
 public abstract class DefaultWriter {
@@ -185,6 +186,13 @@ public abstract class DefaultWriter {
 	 */
 	public void writeVertex(Vertex v) throws Exception {
 		cantWrite(v);
+	}
+
+	/**
+	 * DefaultWriter has no support for writing an undefined value
+	 */
+	public void writeUndefined() throws Exception {
+		cantWrite(Undefined.UNDEFINED);
 	}
 
 	/**
@@ -416,6 +424,8 @@ public abstract class DefaultWriter {
 			this.writeTransition((Transition) o);
 		} else if (o instanceof Declaration) {
 			this.writeDeclaration((Declaration) o);
+		} else if (o instanceof Undefined) {
+			this.writeUndefined();
 		} else {
 			this.writeDefaultObject(o);
 		}

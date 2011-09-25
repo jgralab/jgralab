@@ -1,7 +1,5 @@
 package de.uni_koblenz.jgralab.greql2.funlib.schema;
 
-import java.util.ArrayList;
-
 import org.pcollections.ArrayPMap;
 import org.pcollections.ArrayPVector;
 import org.pcollections.PMap;
@@ -17,7 +15,7 @@ public class Attributes extends Function {
 	public Attributes() {
 		super(
 				"Determines the attribute names and domains of the specified element or schema class.",
-				Category.SCHEMA_ACCESS);
+				2, 1, 1.0, Category.SCHEMA_ACCESS);
 	}
 
 	public PVector<PMap<String, String>> evaluate(AttributedElementClass cls) {
@@ -33,15 +31,5 @@ public class Attributes extends Function {
 
 	public PVector<PMap<String, String>> evaluate(AttributedElement el) {
 		return evaluate(el.getAttributedElementClass());
-	}
-
-	@Override
-	public long getEstimatedCosts(ArrayList<Long> inElements) {
-		return inElements.get(0) + inElements.get(1);
-	}
-
-	@Override
-	public long getEstimatedCardinality(int inElements) {
-		return inElements;
 	}
 }

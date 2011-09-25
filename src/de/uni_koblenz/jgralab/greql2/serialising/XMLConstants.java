@@ -29,7 +29,8 @@ public interface XMLConstants {
 	public static final String MAP_ENTRY = "entry";
 	public static final String TABLE = "table";
 	public static final String PATH = "path";
-	
+	public static final String UNDEFINED = "undefined";
+
 	public static final String ATTR_ID = "id";
 	public static final String ATTR_SCHEMA = "schema";
 	public static final String ATTR_NAME = "name";

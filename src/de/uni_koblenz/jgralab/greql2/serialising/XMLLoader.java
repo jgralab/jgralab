@@ -22,6 +22,7 @@ import de.uni_koblenz.jgralab.greql2.exception.SerialisingException;
 import de.uni_koblenz.jgralab.greql2.types.Record;
 import de.uni_koblenz.jgralab.greql2.types.Table;
 import de.uni_koblenz.jgralab.greql2.types.Tuple;
+import de.uni_koblenz.jgralab.greql2.types.Undefined;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 
@@ -164,7 +165,9 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 	@Override
 	protected void startElement(String elem) throws XMLStreamException {
 		Object val = null;
-		if (elem.equals(OBJECT)) {
+		if (elem.equals(UNDEFINED)) {
+			val = Undefined.UNDEFINED;
+		} else if (elem.equals(OBJECT)) {
 			String gid = getAttribute(ATTR_GRAPH_ID);
 			if (gid != null) {
 				defaultGraph = id2GraphMap.get(gid);
