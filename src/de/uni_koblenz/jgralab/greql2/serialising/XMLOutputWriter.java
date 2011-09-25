@@ -339,4 +339,9 @@ public class XMLOutputWriter extends DefaultWriter implements XMLConstants {
 		this.write(p.getEdgeTrace());
 		writer.writeEndElement();
 	}
+
+	@Override
+	public void writeUndefined() throws Exception {
+		writer.writeEmptyElement(UNDEFINED);
+	}
 }

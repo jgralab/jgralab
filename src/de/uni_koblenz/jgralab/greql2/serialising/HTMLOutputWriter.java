@@ -4,8 +4,12 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Map.Entry;
 
+import org.pcollections.ArrayPMap;
 import org.pcollections.PCollection;
+import org.pcollections.PMap;
+import org.pcollections.PSet;
 import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.Edge;
@@ -106,7 +110,8 @@ public class HTMLOutputWriter extends DefaultWriter {
 
 	@Override
 	public void writeTuple(Tuple t) throws IOException {
-		out.println("<tr><td>");
+		out.print("<!-- Tuple --> ");
+		out.println("<table><tr><td>");
 		boolean first = true;
 		for (Object val : t) {
 			if (first) {
@@ -116,11 +121,12 @@ public class HTMLOutputWriter extends DefaultWriter {
 			}
 			write(val);
 		}
-		out.println("</td></tr>");
+		out.println("</td></tr></table>");
 	}
 
 	@Override
 	public void writeRecord(Record r) throws IOException {
+		out.print("<!-- Record --> ");
 		out.println("<table><tr><td>");
 		boolean first = true;
 		for (String compName : r.getComponentNames()) {
@@ -137,6 +143,7 @@ public class HTMLOutputWriter extends DefaultWriter {
 
 	@Override
 	public void writeTable(Table<?> table) throws IOException {
+		out.print("<!-- Table --> ");
 		out.print("<table style=\"align:left;\"><tr><th>");
 		boolean first = true;
 		for (Object val : table.getTitles()) {
@@ -149,8 +156,22 @@ public class HTMLOutputWriter extends DefaultWriter {
 		}
 		out.println("</th></tr>");
 		for (int i = 0; i < table.size(); i++) {
-			Tuple o = (Tuple) table.get(i);
-			write(o);
+			Object o = table.get(i);
+			out.println("<tr><td>");
+			if (o instanceof Tuple) {
+				first = true;
+				for (Object val : (Tuple) o) {
+					if (first) {
+						first = false;
+					} else {
+						out.println("</td><td>");
+					}
+					write(val);
+				}
+			} else {
+				write(o);
+			}
+			out.println("</td></tr>");
 		}
 		out.println("</table>");
 	}
@@ -258,6 +279,43 @@ public class HTMLOutputWriter extends DefaultWriter {
 	}
 
 	@Override
+	public void writePVector(PVector<?> b) throws Exception {
+		out.print("<!-- PVector --> ");
+		super.writePVector(b);
+	}
+
+	@Override
+	public void writePSet(PSet<?> s) throws Exception {
+		out.print("<!-- PSet --> ");
+		super.writePSet(s);
+	}
+
+	@Override
+	public void writePMap(PMap<?, ?> b) throws Exception {
+		out.print("<!-- PMap --> ");
+		out.print("<table>");
+		if (b instanceof ArrayPMap) {
+			ArrayPMap<?, ?> m = (ArrayPMap<?, ?>) b;
+			for (Entry<?, ?> e : m) {
+				out.print("<tr><td>");
+				write(e.getKey());
+				out.print("</td><td>");
+				write(e.getValue());
+				out.print("</td></tr>");
+			}
+		} else {
+			for (Entry<?, ?> e : b.entrySet()) {
+				out.print("<tr><td>");
+				write(e.getKey());
+				out.print("</td><td>");
+				write(e.getValue());
+				out.print("</td></tr>");
+			}
+		}
+		out.print("</table>");
+	}
+
+	@Override
 	public void head() throws IOException {
 		out.println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">");
 		out.println("<html>");
@@ -268,18 +326,27 @@ public class HTMLOutputWriter extends DefaultWriter {
 				+ "td { border: thin gray solid; border-collapse: collapse; border-spacing: 2px }\n"
 				+ "th { border: thin gray solid; border-collapse: collapse; border-spacing: 2px }\n"
 				+ "</style>\n");
-		out.println("</head><body><table>");
+		out.println("</head><body>");
+
+		out.print("<table>");
 		if (dataGraph != null) {
-			out.println("<tr><td>Graph id: </td><td>" + dataGraph.getId()
+			out.print("<tr><td>Graph id: </td><td>" + dataGraph.getId()
 					+ "</td></tr>");
 		}
-		out.println("<tr><td>Result size: </td><td>");
+		out.print("<tr><td>Result size: </td><td>");
 		if (rootValue instanceof PCollection) {
 			out.println(Integer.toString(((PCollection<?>) rootValue).size()));
 		} else {
 			out.println("1");
 		}
-		out.println("</td></tr></table>\n<br/><br/>\n");
+		out.println("</td></tr></table>");
+		out.println("<hr/>");
+
+	}
+
+	@Override
+	public void writeUndefined() throws Exception {
+		out.print("&not;");
 	}
 
 	@Override

@@ -63,6 +63,7 @@ import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.Document;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
@@ -267,10 +268,16 @@ public class GreqlGui extends JFrame {
 						public void run() {
 							Object result = eval.getResult();
 							try {
-								File resultFile = File.createTempFile(
-										"greqlQueryResult", ".html");
-								resultFile.deleteOnExit();
+								File resultFile = new File(
+										"greqlQueryResult.html");
+								// File resultFile = File.createTempFile(
+								// "greqlQueryResult", ".html");
+								// resultFile.deleteOnExit();
 								new HTMLOutputWriter(result, resultFile, graph);
+								Document doc = resultPane.getDocument();
+								doc.putProperty(
+										Document.StreamDescriptionProperty,
+										null);
 								resultPane.setPage(new URL("file", "localhost",
 										resultFile.getCanonicalPath()));
 								System.out.println(resultFile

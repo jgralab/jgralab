@@ -1,5 +1,7 @@
 package de.uni_koblenz.jgralab.greql2.funlib.graph;
 
+import java.util.Set;
+
 import org.pcollections.ArrayPMap;
 import org.pcollections.PMap;
 
@@ -7,6 +9,7 @@ import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
+import de.uni_koblenz.jgralab.greql2.types.Undefined;
 import de.uni_koblenz.jgralab.schema.Attribute;
 
 public class Describe extends Function {
@@ -25,11 +28,17 @@ public class Describe extends Function {
 		} else {
 			result = result.plus("id", ((GraphElement) el).getId());
 		}
-		PMap<String, Object> attrs = ArrayPMap.empty();
-		for (Attribute a : el.getAttributedElementClass().getAttributeList()) {
-			attrs = attrs.plus(a.getName(), el.getAttribute(a.getName()));
+		Set<Attribute> al = el.getAttributedElementClass().getAttributeList();
+		if (al.size() > 0) {
+			PMap<String, Object> attrs = ArrayPMap.empty();
+			for (Attribute a : el.getAttributedElementClass()
+					.getAttributeList()) {
+				Object val = el.getAttribute(a.getName());
+				attrs = attrs.plus(a.getName(),
+						val == null ? Undefined.UNDEFINED : val);
+			}
+			result = result.plus("attributes", attrs);
 		}
-		result = result.plus("attributes", attrs);
 		return result;
 	}
 }
