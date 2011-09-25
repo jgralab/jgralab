@@ -54,11 +54,11 @@ import org.pcollections.PVector;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.greql2.SerializableGreql2;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.Optimizer;
 import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
+import de.uni_koblenz.jgralab.greql2.serialising.GreqlSerializer;
 import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalGraph;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalSchema;
@@ -93,9 +93,8 @@ public class GenericTest {
 		JGraLab.setLogLevel(Level.OFF);
 	}
 
-	private int queryInteger(String query) throws
-			Exception {
-		return ((Integer)evalTestQuery(query)).intValue();
+	private int queryInteger(String query) throws Exception {
+		return ((Integer) evalTestQuery(query)).intValue();
 	}
 
 	private static void queryUncontainedCrossroadCount(GenericTest test)
@@ -104,7 +103,7 @@ public class GenericTest {
 		Object result = test.evalTestQuery(queryString);
 
 		uncontainedCrossroadCount = crossroadCount
-				- ((Double)result).intValue();
+				- ((Double) result).intValue();
 	}
 
 	protected void assertQueryIsNull(String query) throws Exception {
@@ -115,7 +114,7 @@ public class GenericTest {
 	protected void assertQueryEquals(String query, boolean expectedValue)
 			throws Exception {
 		Object result = evalTestQuery(query);
-		assertEquals(expectedValue, ((Boolean)result).booleanValue());
+		assertEquals(expectedValue, ((Boolean) result).booleanValue());
 	}
 
 	protected void assertQueryIsTrue(String query) throws Exception {
@@ -129,19 +128,19 @@ public class GenericTest {
 	protected void assertQueryEquals(String query, int expectedValue)
 			throws Exception {
 		Object result = evalTestQuery(query);
-		assertEquals(expectedValue, ((Integer)result).intValue());
+		assertEquals(expectedValue, ((Integer) result).intValue());
 	}
 
 	protected void assertQueryEquals(String query, long expectedValue)
 			throws Exception {
 		Object result = evalTestQuery(query);
-		assertEquals(expectedValue, ((Long)result).longValue());
+		assertEquals(expectedValue, ((Long) result).longValue());
 	}
 
 	protected void assertQueryEquals(String query, double expectedValue)
 			throws Exception {
 		Object result = evalTestQuery(query);
-		assertEquals(expectedValue, ((Double)result).doubleValue(), DELTA);
+		assertEquals(expectedValue, ((Double) result).doubleValue(), DELTA);
 	}
 
 	protected void assertQueryEquals(String query, String expectedValue)
@@ -163,9 +162,10 @@ public class GenericTest {
 			assertEquals(expectedResult, result);
 
 		} catch (AssertionError ex) {
-			if (result instanceof PCollection && expectedResult instanceof PCollection) {
-				PCollection<?> col = (PCollection<?>)result;
-				PCollection<?> col2 = (PCollection<?>)expectedResult;
+			if (result instanceof PCollection
+					&& expectedResult instanceof PCollection) {
+				PCollection<?> col = (PCollection<?>) result;
+				PCollection<?> col2 = (PCollection<?>) expectedResult;
 				col = col.minusAll(col2);
 				System.out.println("O L D +++++");
 				System.out.println(col);
@@ -180,14 +180,14 @@ public class GenericTest {
 	protected void assertQueryEquals(String query, Enum<?> expectedValue)
 			throws Exception {
 		Object result = evalTestQuery(query);
-		assertEquals(expectedValue, ((Enum<?>)result));
+		assertEquals(expectedValue, (result));
 	}
 
 	protected void assertQueryEquals(String query, List<?> expectedValue)
 			throws Exception {
 		Object result = evalTestQuery(query);
 
-		List<?> list = toList((PCollection<?>)result);
+		List<?> list = toList((PCollection<?>) result);
 		assertEquals(expectedValue, list);
 	}
 
@@ -197,7 +197,7 @@ public class GenericTest {
 		assertEquals(expectedValue, result);
 	}
 
-	@SuppressWarnings( { "rawtypes", "unchecked" })
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private List<?> toList(PCollection<?> collection) {
 		ArrayList list = new ArrayList();
 		for (Object value : collection) {
@@ -394,7 +394,7 @@ public class GenericTest {
 			printDebuggingSyntaxGraph(optimizer);
 		}
 
-		Object result = eval.getEvaluationResult();
+		Object result = eval.getResult();
 		// eval.printEvaluationTimes();
 		return result;
 	}
@@ -408,7 +408,7 @@ public class GenericTest {
 		setOptimizer(optimizer);
 
 		eval.startEvaluation();
-		Object result = eval.getEvaluationResult();
+		Object result = eval.getResult();
 		return result;
 	}
 
@@ -434,8 +434,8 @@ public class GenericTest {
 			System.out.println("Unoptimized Query:");
 			dotFileName += "unoptimized-query.dot";
 		}
-		System.out.println(((SerializableGreql2) eval.getSyntaxGraph())
-				.serialize());
+		System.out
+				.println(GreqlSerializer.serializeGraph(eval.getSyntaxGraph()));
 		try {
 			Tg2Dot.convertGraph(eval.getSyntaxGraph(), dotFileName, true);
 		} catch (IOException e) {
@@ -461,7 +461,7 @@ public class GenericTest {
 		System.out.println("Result is: " + result);
 		if (result instanceof PCollection) {
 			System.out.println("Collection size is: "
-					+ ((PCollection<?>)result).size());
+					+ ((PCollection<?>) result).size());
 		}
 	}
 

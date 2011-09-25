@@ -37,7 +37,6 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.IsTypeRestrOf;
 import de.uni_koblenz.jgralab.greql2.schema.TypeId;
@@ -61,7 +60,7 @@ public abstract class AbstractGraphElementCollectionEvaluator extends
 
 	private TypeCollection typeCollection = null;
 
-	protected TypeCollection getTypeCollection() throws EvaluateException {
+	protected TypeCollection getTypeCollection() {
 		if (typeCollection == null) {
 			typeCollection = new TypeCollection();
 			IsTypeRestrOf inc = ((Expression) getVertex())

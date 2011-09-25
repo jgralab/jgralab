@@ -49,21 +49,11 @@ import org.pcollections.PVector;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql2.SerializableGreql2Impl;
 import de.uni_koblenz.jgralab.greql2.exception.ParsingException;
 import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
 import de.uni_koblenz.jgralab.greql2.schema.*;
 
 public class GreqlParser extends ParserHelper {
-
-	static {
-		Greql2Schema
-				.instance()
-				.getGraphFactory()
-				.setGraphImplementationClass(Greql2.class,
-						SerializableGreql2Impl.class);
-	}
-
 	private Map<RuleEnum, int[]> testedRules = new HashMap<RuleEnum, int[]>();
 
 	private List<Token> tokens = null;

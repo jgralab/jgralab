@@ -34,7 +34,7 @@ public abstract class DefaultWriter {
 	 * @param s
 	 *            the PSet to write
 	 */
-	public void writePSet(PSet<?> s) {
+	public void writePSet(PSet<?> s) throws Exception {
 		Iterator<?> iter = s.iterator();
 		boolean first = true;
 		pre();
@@ -55,7 +55,7 @@ public abstract class DefaultWriter {
 	 * @param b
 	 *            the PVector to write
 	 */
-	public void writePVector(PVector<?> b) {
+	public void writePVector(PVector<?> b) throws Exception {
 		Iterator<?> iter = b.iterator();
 		boolean first = true;
 		pre();
@@ -76,7 +76,7 @@ public abstract class DefaultWriter {
 	 * @param b
 	 *            the PMap to write
 	 */
-	public void writePMap(PMap<?, ?> b) {
+	public void writePMap(PMap<?, ?> b) throws Exception {
 		boolean first = true;
 		pre();
 		for (Entry<?, ?> e : b.entrySet()) {
@@ -99,7 +99,7 @@ public abstract class DefaultWriter {
 	 * @param t
 	 *            the Table to write
 	 */
-	public void writeTable(Table<?> t) {
+	public void writeTable(Table<?> t) throws Exception {
 		this.writePVector(t.getTitles());
 		this.writePVector(t.toPVector());
 	}
@@ -110,7 +110,7 @@ public abstract class DefaultWriter {
 	 * @param t
 	 *            the Tuple to write
 	 */
-	public void writeTuple(Tuple t) {
+	public void writeTuple(Tuple t) throws Exception {
 		Iterator<?> iter = t.iterator();
 		boolean first = true;
 		pre();
@@ -132,7 +132,7 @@ public abstract class DefaultWriter {
 	 * @param r
 	 *            the Record to write
 	 */
-	public void writeRecord(Record r) {
+	public void writeRecord(Record r) throws Exception {
 		boolean first = true;
 		pre();
 		for (String compName : r.getComponentNames()) {
@@ -153,7 +153,7 @@ public abstract class DefaultWriter {
 	 * @param p
 	 *            the Path to write
 	 */
-	public void writePath(Path p) {
+	public void writePath(Path p) throws Exception {
 		cantWrite(p);
 	}
 
@@ -163,7 +163,7 @@ public abstract class DefaultWriter {
 	 * @param p
 	 *            the PathSystem to write
 	 */
-	public void writePathSystem(PathSystem p) {
+	public void writePathSystem(PathSystem p) throws Exception {
 		cantWrite(p);
 	}
 
@@ -173,7 +173,7 @@ public abstract class DefaultWriter {
 	 * @param s
 	 *            the Slice to write
 	 */
-	public void writeSlice(Slice s) {
+	public void writeSlice(Slice s) throws Exception {
 		cantWrite(s);
 	}
 
@@ -183,7 +183,7 @@ public abstract class DefaultWriter {
 	 * @param v
 	 *            the Vertex to write
 	 */
-	public void writeVertex(Vertex v) {
+	public void writeVertex(Vertex v) throws Exception {
 		cantWrite(v);
 	}
 
@@ -193,7 +193,7 @@ public abstract class DefaultWriter {
 	 * @param e
 	 *            the Edge to write
 	 */
-	public void writeEdge(Edge e) {
+	public void writeEdge(Edge e) throws Exception {
 		cantWrite(e);
 	}
 
@@ -203,7 +203,7 @@ public abstract class DefaultWriter {
 	 * @param n
 	 *            the Integer to write
 	 */
-	public void writeInteger(Integer n) {
+	public void writeInteger(Integer n) throws Exception {
 		cantWrite(n);
 	}
 
@@ -213,7 +213,7 @@ public abstract class DefaultWriter {
 	 * @param n
 	 *            the Long to write
 	 */
-	public void writeLong(Long n) {
+	public void writeLong(Long n) throws Exception {
 		cantWrite(n);
 	}
 
@@ -223,7 +223,7 @@ public abstract class DefaultWriter {
 	 * @param n
 	 *            the Double to write
 	 */
-	public void writeDouble(Double n) {
+	public void writeDouble(Double n) throws Exception {
 		cantWrite(n);
 	}
 
@@ -233,7 +233,7 @@ public abstract class DefaultWriter {
 	 * @param s
 	 *            the String to write
 	 */
-	public void writeString(String s) {
+	public void writeString(String s) throws Exception {
 		cantWrite(s);
 	}
 
@@ -243,7 +243,7 @@ public abstract class DefaultWriter {
 	 * @param e
 	 *            the Enum to write
 	 */
-	public void writeEnum(Enum<?> e) {
+	public void writeEnum(Enum<?> e) throws Exception {
 		cantWrite(e);
 	}
 
@@ -253,7 +253,7 @@ public abstract class DefaultWriter {
 	 * @param g
 	 *            the Graph to write
 	 */
-	public void writeGraph(Graph g) {
+	public void writeGraph(Graph g) throws Exception {
 		cantWrite(g);
 	}
 
@@ -263,7 +263,7 @@ public abstract class DefaultWriter {
 	 * @param s
 	 *            the SubGraphMarker to write
 	 */
-	public void writeSubGraphMarker(SubGraphMarker s) {
+	public void writeSubGraphMarker(SubGraphMarker s) throws Exception {
 		cantWrite(s);
 	}
 
@@ -273,7 +273,7 @@ public abstract class DefaultWriter {
 	 * @param d
 	 *            the DFA to write
 	 */
-	public void writeDFA(DFA d) {
+	public void writeDFA(DFA d) throws Exception {
 		cantWrite(d);
 	}
 
@@ -283,7 +283,7 @@ public abstract class DefaultWriter {
 	 * @param n
 	 *            the NFA to write
 	 */
-	public void writeNFA(NFA n) {
+	public void writeNFA(NFA n) throws Exception {
 		cantWrite(n);
 	}
 
@@ -293,7 +293,7 @@ public abstract class DefaultWriter {
 	 * @param b
 	 *            the Boolean to write
 	 */
-	public void writeBoolean(Boolean b) {
+	public void writeBoolean(Boolean b) throws Exception {
 		cantWrite(b);
 	}
 
@@ -303,7 +303,8 @@ public abstract class DefaultWriter {
 	 * @param a
 	 *            the AttributedElementClass to write
 	 */
-	public void writeAttributedElementClass(AttributedElementClass a) {
+	public void writeAttributedElementClass(AttributedElementClass a)
+			throws Exception {
 		cantWrite(a);
 	}
 
@@ -313,7 +314,7 @@ public abstract class DefaultWriter {
 	 * @param a
 	 *            the TypeCollection to write
 	 */
-	public void writeTypeCollection(TypeCollection a) {
+	public void writeTypeCollection(TypeCollection a) throws Exception {
 		cantWrite(a);
 	}
 
@@ -323,7 +324,7 @@ public abstract class DefaultWriter {
 	 * @param s
 	 *            the State to write
 	 */
-	public void writeState(State s) {
+	public void writeState(State s) throws Exception {
 		cantWrite(s);
 	}
 
@@ -333,7 +334,7 @@ public abstract class DefaultWriter {
 	 * @param t
 	 *            the Transition to write
 	 */
-	public void writeTransition(Transition t) {
+	public void writeTransition(Transition t) throws Exception {
 		cantWrite(t);
 	}
 
@@ -343,7 +344,7 @@ public abstract class DefaultWriter {
 	 * @param d
 	 *            the Declaration to write
 	 */
-	public void writeDeclaration(Declaration d) {
+	public void writeDeclaration(Declaration d) throws Exception {
 		cantWrite(d);
 	}
 
@@ -353,7 +354,7 @@ public abstract class DefaultWriter {
 	 * @param o
 	 *            the Object to write
 	 */
-	public void writeDefaultObject(Object o) {
+	public void writeDefaultObject(Object o) throws Exception {
 		cantWrite(o);
 	}
 
@@ -364,7 +365,7 @@ public abstract class DefaultWriter {
 	 * @param o
 	 *            the Object to write
 	 */
-	public void write(Object o) {
+	public void write(Object o) throws Exception {
 		if (o instanceof PSet) {
 			this.writePSet((PSet<?>) o);
 		} else if (o instanceof Table) {
@@ -420,21 +421,19 @@ public abstract class DefaultWriter {
 		}
 	}
 
-	
-
-	public void pre() {
+	public void post() throws Exception {
 	}
 
-	public void inter() {
-	}
-	
-	public void post() {
+	public void pre() throws Exception {
 	}
 
-	public void head() {
+	public void inter() throws Exception {
 	}
 
-	public void foot() {
+	public void head() throws Exception {
+	}
+
+	public void foot() throws Exception {
 	}
 
 	public void cantWrite(Object v) {

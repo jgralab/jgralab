@@ -49,7 +49,7 @@ public class Condition {
 			greqlEvaluator.setQuery(this.conditionExpression);
 		}
 		greqlEvaluator.startEvaluation();
-		Object result = greqlEvaluator.getEvaluationResult();
+		Object result = greqlEvaluator.getResult();
 		if (result instanceof Boolean) {
 			return (Boolean) result;
 		} else {
