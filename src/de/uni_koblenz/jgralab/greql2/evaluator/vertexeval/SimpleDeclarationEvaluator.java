@@ -45,7 +45,6 @@ import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclaration;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.IsDeclaredVarOf;
@@ -88,7 +87,7 @@ public class SimpleDeclarationEvaluator extends VertexEvaluator {
 	 * returns a JValueList of VariableDeclaration objects
 	 */
 	@Override
-	public PVector<VariableDeclaration> evaluate() throws EvaluateException {
+	public PVector<VariableDeclaration> evaluate() {
 		IsTypeExprOf inc = vertex
 				.getFirstIsTypeExprOfIncidence(EdgeDirection.IN);
 		Expression typeExpression = (Expression) inc.getAlpha();

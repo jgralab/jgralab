@@ -41,7 +41,6 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 
 /**
@@ -190,9 +189,8 @@ public class EdgeTransition extends SimpleTransition {
 	 * (non-Javadoc)
 	 * 
 	 * @see greql2.evaluator.fa.Transition#accepts(jgralab.Vertex, jgralab.Edge)
-	 */
-	@Override
-	public boolean accepts(Vertex v, Edge e) throws EvaluateException {
+	 */@Override
+	public boolean accepts(Vertex v, Edge e) {
 		if (!super.accepts(v, e)) {
 			return false;
 		}

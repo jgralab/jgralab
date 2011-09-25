@@ -41,7 +41,6 @@ import org.pcollections.PCollection;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.IsPartOf;
@@ -73,8 +72,7 @@ abstract public class ValueConstructionEvaluator extends VertexEvaluator {
 		this.vertex = vertex;
 	}
 
-	public final PCollection<Object> createValue(PCollection<Object> collection)
-			throws EvaluateException {
+	public final PCollection<Object> createValue(PCollection<Object> collection) {
 		if (partEvaluators == null) {
 			int partCount = 0;
 			IsPartOf inc = vertex.getFirstIsPartOfIncidence(EdgeDirection.IN);

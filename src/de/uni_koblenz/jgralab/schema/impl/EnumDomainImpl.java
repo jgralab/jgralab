@@ -146,20 +146,6 @@ public final class EnumDomainImpl extends DomainImpl implements EnumDomain {
 	}
 
 	@Override
-	public boolean equals(Object o) {
-		if (o instanceof EnumDomain) {
-			EnumDomain other = (EnumDomain) o;
-			if (!getSchema().getQualifiedName().equals(
-					other.getSchema().getQualifiedName())) {
-				return false;
-			}
-			return getQualifiedName().equals(other.getQualifiedName())
-					&& getConsts().equals(other.getConsts());
-		}
-		return false;
-	}
-
-	@Override
 	public CodeBlock getTransactionReadMethod(String schemaPrefix,
 			String variableName, String graphIoVariableName) {
 		return new CodeSnippet(

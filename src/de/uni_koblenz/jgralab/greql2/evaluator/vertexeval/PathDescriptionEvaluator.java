@@ -38,7 +38,6 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.schema.IsGoalRestrOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsStartRestrOf;
 import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
@@ -74,7 +73,7 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 	/**
 	 * returns the nfa
 	 */
-	public NFA getNFA() throws EvaluateException {
+	public NFA getNFA() {
 		if (createdNFA == null) {
 			getResult();
 		}
@@ -89,7 +88,7 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 	 * @return the result as jvalue
 	 */
 	@Override
-	public Object getResult() throws EvaluateException {
+	public Object getResult() {
 		if (createdNFA == null) {
 			result = evaluate();
 			createdNFA = (NFA) result;
@@ -104,7 +103,7 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 	 * belong to this path descritpion and adds the transitions that accepts
 	 * them to the nfa
 	 */
-	protected void addGoalRestrictions() throws EvaluateException {
+	protected void addGoalRestrictions() {
 		PathDescription pathDesc = (PathDescription) getVertex();
 		VertexEvaluator goalRestEval = null;
 		IsGoalRestrOf inc = pathDesc
@@ -137,7 +136,7 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 	 * 
 	 * @return the generated list of types
 	 */
-	protected void addStartRestrictions() throws EvaluateException {
+	protected void addStartRestrictions() {
 		PathDescription pathDesc = (PathDescription) getVertex();
 		VertexEvaluator startRestEval = null;
 		IsStartRestrOf inc = pathDesc

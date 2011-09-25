@@ -223,7 +223,7 @@ public class GreqlServer extends Thread {
 		try {
 			long startTime = System.currentTimeMillis();
 			eval.startEvaluation();
-			result = eval.getEvaluationResult();
+			result = eval.getResult();
 			long evalTime = System.currentTimeMillis() - startTime;
 			println("<result not printed>", PrintTarget.SERVER, false);
 			out.println();

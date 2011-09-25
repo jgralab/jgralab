@@ -37,7 +37,6 @@ package de.uni_koblenz.jgralab.greql2.evaluator.fa;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
@@ -136,7 +135,7 @@ public class VertexTypeRestrictionTransition extends Transition {
 	 * @return true if the transition can fire with e, false otherwise
 	 */
 	@Override
-	public boolean accepts(Vertex v, Edge e) throws EvaluateException {
+	public boolean accepts(Vertex v, Edge e) {
 		AttributedElementClass vertexClass = v.getAttributedElementClass();
 		if (!typeCollection.acceptsType(vertexClass)) {
 			return false;

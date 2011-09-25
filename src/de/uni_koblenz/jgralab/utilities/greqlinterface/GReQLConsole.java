@@ -57,8 +57,7 @@ import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.WorkInProgress;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
+import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.schema.Schema;
 
@@ -156,15 +155,15 @@ public class GReQLConsole {
 				// eval.setOptimize(false);
 				eval.startEvaluation();
 
-				result = eval.getEvaluationResult();
+				result = eval.getResult();
 				if (verbose && result instanceof Collection) {
 					System.out.println("Result size is: "
 							+ ((Collection<?>) result).size());
 				}
 			}
-		} catch (EvaluateException e) {
+		} catch (GreqlException e) {
 			e.printStackTrace();
-		} catch (OptimizerException e) {
+		} catch (RuntimeException e) {
 			e.printStackTrace();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();

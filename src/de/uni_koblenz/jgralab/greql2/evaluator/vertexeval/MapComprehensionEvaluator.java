@@ -47,7 +47,6 @@ import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclarationLayer;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.schema.Comprehension;
 import de.uni_koblenz.jgralab.greql2.schema.MapComprehension;
 
@@ -85,7 +84,7 @@ public class MapComprehensionEvaluator extends ComprehensionEvaluator {
 	 * ()
 	 */
 	@Override
-	public Object evaluate() throws EvaluateException {
+	public Object evaluate() {
 		VariableDeclarationLayer declLayer = getVariableDeclationLayer();
 
 		PMap<Object, Object> resultMap = ArrayPMap.empty();

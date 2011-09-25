@@ -47,7 +47,6 @@ import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclaration;
 import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclarationLayer;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.IsConstraintOf;
@@ -88,7 +87,7 @@ public class DeclarationEvaluator extends VertexEvaluator {
 	}
 
 	@Override
-	public VariableDeclarationLayer evaluate() throws EvaluateException {
+	public VariableDeclarationLayer evaluate() {
 		ArrayList<VertexEvaluator> constraintList = new ArrayList<VertexEvaluator>();
 		for (IsConstraintOf consInc : vertex
 				.getIsConstraintOfIncidences(EdgeDirection.IN)) {

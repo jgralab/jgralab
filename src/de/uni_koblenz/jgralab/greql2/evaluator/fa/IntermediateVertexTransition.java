@@ -39,9 +39,8 @@ import org.pcollections.PCollection;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql2.Greql2Serializer;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
+import de.uni_koblenz.jgralab.greql2.serialising.GreqlSerializer;
 
 public class IntermediateVertexTransition extends Transition {
 
@@ -125,7 +124,7 @@ public class IntermediateVertexTransition extends Transition {
 	 * @see greql2.evaluator.fa.Transition#accepts(jgralab.Vertex, jgralab.Edge)
 	 */
 	@Override
-	public boolean accepts(Vertex v, Edge e) throws EvaluateException {
+	public boolean accepts(Vertex v, Edge e) {
 		// checks if a intermediateVertexExpression exists and if the end-vertex
 		// of e is part of the result of this expression
 
@@ -155,9 +154,8 @@ public class IntermediateVertexTransition extends Transition {
 	@Override
 	public String prettyPrint() {
 		return "IntermediateVertex "
-				+ new Greql2Serializer()
-						.serializeGreql2Vertex(intermediateVertexEvaluator
-								.getVertex());
+				+ GreqlSerializer.serializeVertex(intermediateVertexEvaluator
+						.getVertex());
 	}
 
 	@Override

@@ -44,7 +44,6 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
@@ -70,13 +69,7 @@ public abstract class OptimizerBase implements Optimizer {
 	}
 
 	protected void recreateVertexEvaluators(GreqlEvaluator eval) {
-		try {
-			eval.createVertexEvaluators();
-		} catch (EvaluateException e) {
-			e.printStackTrace();
-			throw new OptimizerException(
-					"Exception while re-creating VertexEvaluators.", e);
-		}
+		eval.createVertexEvaluators();
 	}
 
 	/**

@@ -41,7 +41,6 @@ import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.schema.EdgePathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.IsTypeRestrOf;
 import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
@@ -61,7 +60,7 @@ public class EdgePathDescriptionEvaluator extends
 	}
 
 	@Override
-	public NFA evaluate() throws EvaluateException {
+	public NFA evaluate() {
 		Edge evalEdge = vertex.getFirstIsEdgeExprOfIncidence();
 		VertexEvaluator edgeEval = null;
 		if (evalEdge != null) {

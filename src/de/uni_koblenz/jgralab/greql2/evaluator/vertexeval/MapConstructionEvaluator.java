@@ -44,7 +44,7 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
+import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.IsKeyExprOfConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.IsValueExprOfConstruction;
@@ -65,7 +65,7 @@ public class MapConstructionEvaluator extends VertexEvaluator {
 	}
 
 	@Override
-	public Object evaluate() throws EvaluateException {
+	public Object evaluate() {
 		PMap<Object, Object> map = ArrayPMap.empty();
 		PVector<Object> keys = ArrayPVector.empty();
 		for (IsKeyExprOfConstruction e : mapConstruction
@@ -84,8 +84,8 @@ public class MapConstructionEvaluator extends VertexEvaluator {
 		}
 
 		if (keys.size() != values.size()) {
-			throw new EvaluateException(
-					"The map construction has a different key than value number!");
+			throw new GreqlException("Map construction has " + keys.size()
+					+ " key(s) and " + values.size() + " value(s).");
 		}
 
 		for (int i = 0; i < keys.size(); i++) {

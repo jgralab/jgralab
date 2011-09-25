@@ -34,7 +34,7 @@
  */
 package de.uni_koblenz.jgralab.greql2.exception;
 
-public class ParsingException extends Greql2Exception {
+public class ParsingException extends GreqlException {
 
 	private static final long serialVersionUID = 894099164202915776L;
 
