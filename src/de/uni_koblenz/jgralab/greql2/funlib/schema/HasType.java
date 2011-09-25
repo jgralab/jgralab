@@ -11,7 +11,8 @@ public class HasType extends Function {
 				Category.SCHEMA_ACCESS);
 	}
 
-	public AttributedElementClass evaluate(AttributedElement el) {
-		return el.getAttributedElementClass();
+	public boolean evaluate(AttributedElement el, AttributedElementClass aec) {
+		AttributedElementClass c = el.getAttributedElementClass();
+		return c.equals(aec) || c.isSubClassOf(aec);
 	}
 }
