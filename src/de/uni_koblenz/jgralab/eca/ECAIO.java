@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uni_koblenz.jgralab.AttributedElement;
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.eca.events.ChangeAttributeEventDescription;
 import de.uni_koblenz.jgralab.eca.events.ChangeEdgeEventDescription;
 import de.uni_koblenz.jgralab.eca.events.ChangeEdgeEventDescription.EdgeEnd;
@@ -20,6 +21,8 @@ import de.uni_koblenz.jgralab.eca.events.DeleteEdgeEventDescription;
 import de.uni_koblenz.jgralab.eca.events.DeleteVertexEventDescription;
 import de.uni_koblenz.jgralab.eca.events.EventDescription;
 import de.uni_koblenz.jgralab.eca.events.EventDescription.EventTime;
+import de.uni_koblenz.jgralab.gretl.Transformation;
+import de.uni_koblenz.jgralab.gretl.eca.GretlTransformAction;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 
@@ -298,10 +301,9 @@ public class ECAIO {
 			actionstring += ((PrintAction) act).getMessage();
 			actionstring += "\"";
 			actionstring += "\n";
-			// TODO [removejvalue] uncomment when GReTL was fixed
-			// } else if (act instanceof GretlTransformAction) {
-			// GretlTransformAction gta = ((GretlTransformAction) act);
-			// actionstring += gta.getTransformationClass().getName();
+		} else if (act instanceof GretlTransformAction) {
+			GretlTransformAction gta = ((GretlTransformAction) act);
+			actionstring += gta.getTransformationClass().getName();
 		} else {
 			actionstring += act.getClass().getName();
 		}
@@ -704,14 +706,12 @@ public class ECAIO {
 		} else {
 			try {
 				Class<?> actionclass = Class.forName(currentToken);
-				// TODO [removejvalue] uncomment when GReTL was fixed
-				// if (actionclass.getSuperclass().equals(Transformation.class))
-				// {
-				// return new GretlTransformAction(
-				// (Class<? extends Transformation<Graph>>) actionclass);
-				// } else {
-				return (Action) actionclass.newInstance();
-				// }
+				if (actionclass.getSuperclass().equals(Transformation.class)) {
+					return new GretlTransformAction(
+							(Class<? extends Transformation<Graph>>) actionclass);
+				} else {
+					return (Action) actionclass.newInstance();
+				}
 
 			} catch (ClassNotFoundException e) {
 				throw new ECAIOException("Specified Action " + currentToken

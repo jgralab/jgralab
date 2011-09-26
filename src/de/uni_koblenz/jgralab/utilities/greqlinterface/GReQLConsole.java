@@ -58,6 +58,7 @@ import de.uni_koblenz.jgralab.WorkInProgress;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
+import de.uni_koblenz.jgralab.greql2.serialising.HTMLOutputWriter;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.schema.Schema;
 
@@ -176,10 +177,12 @@ public class GReQLConsole {
 	/**
 	 * Prints the JValue given as first parameter to the file with the name
 	 * given as second parameter
+	 * 
+	 * @throws IOException
 	 */
-	private void resultToHTML(Object result, String outputFile) {
-		// TODO [removejvalue] replace by correct ouput
-		// new JValueHTMLOutputVisitor(result, outputFile, graph);
+	private void resultToHTML(Object result, String outputFile)
+			throws IOException {
+		new HTMLOutputWriter(result, new File(outputFile), graph);
 	}
 
 	/**
@@ -201,7 +204,12 @@ public class GReQLConsole {
 		Object result = console.performQuery(new File(queryFile));
 
 		if (comLine.hasOption("o")) {
-			console.resultToHTML(result, comLine.getOptionValue("o"));
+			try {
+				console.resultToHTML(result, comLine.getOptionValue("o"));
+			} catch (IOException e) {
+				System.err.println("Exception while creating HTML output:");
+				e.printStackTrace();
+			}
 		} else {
 			System.out.println("Result: " + result);
 		}
