@@ -4,7 +4,6 @@ import org.pcollections.PMap;
 import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
-import de.uni_koblenz.jgralab.greql2.types.Undefined;
 
 public class KeySet extends Function {
 
