@@ -247,10 +247,6 @@ public interface Vertex extends GraphElement {
 	 */
 	public void putAfter(Vertex v);
 
-	/**
-	 * removes this vertex from vSeq and erases its attributes
-	 */
-	public void delete();
 
 	/**
 	 * Using this method, one can simply iterate over all incident edges of this
