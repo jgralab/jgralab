@@ -45,6 +45,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.impl.EdgeBase;
 import de.uni_koblenz.jgralab.impl.IncidenceImpl;
 import de.uni_koblenz.jgralab.impl.VertexBase;
 import de.uni_koblenz.jgralab.impl.VertexBaseImpl;
@@ -92,16 +93,6 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 		((GraphImpl) graph).addEdge(this, alpha, omega);
 	}
 
-	@Override
-	public Edge getNextIncidence() {
-		return getNextIncidenceInternal();
-	}
-
-	@Override
-	public Edge getPrevIncidence() {
-		return getPrevIncidenceInternal();
-	}
-
 	// --- getter ---//
 	@Override
 	public int getId() {
@@ -122,7 +113,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 	}
 
 	@Override
-	public Edge getNextEdge() {
+	public EdgeBase getNextBaseEdge() {
 		if (nextEdge == null) {
 			return null;
 		}
@@ -132,7 +123,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 	}
 
 	@Override
-	public Edge getPrevEdge() {
+	public EdgeBase getPrevBaseEdge() {
 		if (prevEdge == null) {
 			return null;
 		}
@@ -152,7 +143,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 	}
 
 	@Override
-	protected IncidenceImpl getNextIncidenceInternal() {
+	public IncidenceImpl getNextBaseIncidence() {
 		if (nextIncidence == null) {
 			return null;
 		}
@@ -162,7 +153,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 	}
 
 	@Override
-	protected IncidenceImpl getPrevIncidenceInternal() {
+	public IncidenceImpl getPrevBaseIncidence() {
 		if (prevIncidence == null) {
 			return null;
 		}

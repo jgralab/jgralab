@@ -37,6 +37,7 @@ package de.uni_koblenz.jgralab.impl.db;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.impl.EdgeBase;
 import de.uni_koblenz.jgralab.impl.EdgeBaseImpl;
 import de.uni_koblenz.jgralab.impl.IncidenceImpl;
 import de.uni_koblenz.jgralab.impl.VertexBaseImpl;
@@ -270,23 +271,23 @@ public abstract class EdgeImpl extends EdgeBaseImpl implements
 	}
 
 	@Override
-	public Edge getPrevEdge() {
+	public EdgeBase getPrevBaseEdge() {
 		return getGraphImpl().getPrevEdge(this);
 	}
 
 	@Override
-	public Edge getNextEdge() {
+	public EdgeBase getNextBaseEdge() {
 		return getGraphImpl().getNextEdge(this);
 	}
 
 	@Override
-	protected IncidenceImpl getPrevIncidenceInternal() {
+	public IncidenceImpl getPrevBaseIncidence() {
 		VertexImpl vertex = (VertexImpl) getIncidentVertex();
 		return (IncidenceImpl) vertex.getPrevIncidence(this);
 	}
 
 	@Override
-	protected IncidenceImpl getNextIncidenceInternal() {
+	public IncidenceImpl getNextBaseIncidence() {
 		VertexImpl vertex = (VertexImpl) getIncidentVertex();
 		return (IncidenceImpl) vertex.getNextIncidence(this);
 	}

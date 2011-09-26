@@ -37,6 +37,7 @@ package de.uni_koblenz.jgralab.impl.std;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.IncidenceImpl;
+import de.uni_koblenz.jgralab.impl.VertexBase;
 
 /**
  * The implementation of a <code>Vertex</code> accessing attributes without
@@ -60,9 +61,15 @@ public abstract class VertexImpl extends
 	private long incidenceListVersion = 0;
 
 	@Override
-	public Vertex getNextVertex() {
+	public VertexBase getNextBaseVertex() {
 		assert isValid();
 		return nextVertex;
+	}
+
+	@Override
+	public VertexBase getPrevBaseVertex() {
+		assert isValid();
+		return prevVertex;
 	}
 
 	@Override
@@ -83,12 +90,6 @@ public abstract class VertexImpl extends
 	@Override
 	protected void setPrevVertex(Vertex prevVertex) {
 		this.prevVertex = (VertexImpl) prevVertex;
-	}
-
-	@Override
-	public Vertex getPrevVertex() {
-		assert isValid();
-		return prevVertex;
 	}
 
 	@Override

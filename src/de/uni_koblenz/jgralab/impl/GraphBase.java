@@ -169,4 +169,32 @@ public interface GraphBase extends Graph {
 	 */
 	public boolean isInConflict();
 
+	/**
+	 * Returns the first Vertex in the vertex sequence of this Graph.
+	 * 
+	 * @return the first Vertex, or null if this graph contains no vertices.
+	 */
+	public VertexBase getFirstBaseVertex();
+
+	/**
+	 * Returns the last Vertex in the vertex sequence of this Graph.
+	 * 
+	 * @return the last Vertex, or null if this graph contains no vertices.
+	 */
+	public VertexBase getLastBaseVertex();
+
+	/**
+	 * Returns the first Edge in the edge sequence of this Graph.
+	 * 
+	 * @return the first Edge, or null if this graph contains no edges.
+	 */
+	public EdgeBase getFirstBaseEdge();
+
+	/**
+	 * Returns the last Edge in the edge sequence of this Graph.
+	 * 
+	 * @return the last Edge, or null if this graph contains no edges.
+	 */
+	public EdgeBase getLastBaseEdge();
+
 }

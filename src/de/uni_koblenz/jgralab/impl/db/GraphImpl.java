@@ -469,22 +469,22 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	}
 
 	@Override
-	public Vertex getFirstVertex() {
+	public VertexBase getFirstBaseVertex() {
 		return vSeq.getFirst();
 	}
 
 	@Override
-	public Edge getFirstEdge() {
+	public EdgeBase getFirstBaseEdge() {
 		return eSeq.getFirst();
 	}
 
 	@Override
-	public Vertex getLastVertex() {
+	public VertexBase getLastBaseVertex() {
 		return vSeq.getLast();
 	}
 
 	@Override
-	public Edge getLastEdge() {
+	public EdgeBase getLastBaseEdge() {
 		return eSeq.getLast();
 	}
 
@@ -1028,7 +1028,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	 * @return Predecessor in VSeq of edge or null if given one is first vertex
 	 *         in VSeq.
 	 */
-	protected Vertex getPrevVertex(DatabasePersistableVertex vertex) {
+	protected VertexBase getPrevVertex(DatabasePersistableVertex vertex) {
 		assert vertex.isValid();
 		assert this == vertex.getGraph();
 		return vSeq.getPrev(vertex);
@@ -1042,7 +1042,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	 * @return Successor in VSeq of edge or null if given one is last vertex in
 	 *         VSeq.
 	 */
-	protected Vertex getNextVertex(DatabasePersistableVertex vertex) {
+	protected VertexBase getNextVertex(DatabasePersistableVertex vertex) {
 		assert vertex.isValid();
 		assert this == vertex.getGraph();
 		return vSeq.getNext(vertex);
@@ -1056,7 +1056,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	 * @return Predecessor in ESeq of edge or null if given one is first edge in
 	 *         ESeq.
 	 */
-	protected Edge getPrevEdge(DatabasePersistableEdge edge) {
+	protected EdgeBase getPrevEdge(DatabasePersistableEdge edge) {
 		assert edge.isValid();
 		assert this == edge.getGraph();
 		return eSeq.getPrev(edge);
@@ -1070,7 +1070,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	 * @return Successor in ESeq of edge or null if given one is last edge in
 	 *         ESeq.
 	 */
-	protected Edge getNextEdge(DatabasePersistableEdge edge) {
+	protected EdgeBase getNextEdge(DatabasePersistableEdge edge) {
 		assert edge.isValid();
 		assert this == edge.getGraph();
 		return eSeq.getNext(edge);

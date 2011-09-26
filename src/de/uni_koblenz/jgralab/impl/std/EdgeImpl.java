@@ -37,6 +37,7 @@ package de.uni_koblenz.jgralab.impl.std;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.impl.EdgeBase;
 import de.uni_koblenz.jgralab.impl.IncidenceImpl;
 import de.uni_koblenz.jgralab.impl.VertexBaseImpl;
 
@@ -59,15 +60,15 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl 
 	private IncidenceImpl prevIncidence;
 
 	@Override
-	public Edge getNextEdge() {
+	public EdgeBase getNextBaseEdge() {
 		assert isValid();
-		return this.nextEdge;
+		return nextEdge;
 	}
 
 	@Override
-	public Edge getPrevEdge() {
+	public EdgeBase getPrevBaseEdge() {
 		assert isValid();
-		return this.prevEdge;
+		return prevEdge;
 	}
 
 	@Override
@@ -76,12 +77,12 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl 
 	}
 
 	@Override
-	protected IncidenceImpl getNextIncidenceInternal() {
+	public IncidenceImpl getNextBaseIncidence() {
 		return nextIncidence;
 	}
 
 	@Override
-	protected IncidenceImpl getPrevIncidenceInternal() {
+	public IncidenceImpl getPrevBaseIncidence() {
 		return prevIncidence;
 	}
 
@@ -97,7 +98,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl 
 
 	@Override
 	protected void setIncidentVertex(VertexBaseImpl v) {
-		this.incidentVertex = v;
+		incidentVertex = v;
 	}
 
 	@Override

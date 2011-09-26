@@ -223,7 +223,6 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 					internalSetDefaultValue(attr);
 				}
 			} catch (GraphIOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -806,16 +805,22 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#getFirstEdgeInGraph()
 	 */
+	// TODO implement with TC
 	@Override
-	abstract public Edge getFirstEdge();
+	public Edge getFirstEdge() {
+		return getFirstBaseEdge();
+	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#getLastEdgeInGraph()
 	 */
+	// TODO implement with TC
 	@Override
-	abstract public Edge getLastEdge();
+	public Edge getLastEdge() {
+		return getLastBaseEdge();
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -854,16 +859,22 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#getFirstVertex()
 	 */
+	// TODO implement with TC
 	@Override
-	abstract public Vertex getFirstVertex();
+	public Vertex getFirstVertex() {
+		return getFirstBaseVertex();
+	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#getLastVertex()
 	 */
+	// TODO implement with TC
 	@Override
-	abstract public Vertex getLastVertex();
+	public Vertex getLastVertex() {
+		return getLastBaseVertex();
+	}
 
 	/*
 	 * (non-Javadoc)

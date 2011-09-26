@@ -103,7 +103,7 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 				if (!i.isNormal()) {
 					++d;
 				}
-				i = i.getNextIncidenceInternal();
+				i = (IncidenceImpl) i.getNextBaseIncidence();
 			}
 			return d;
 		case OUT:
@@ -111,13 +111,13 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 				if (i.isNormal()) {
 					++d;
 				}
-				i = i.getNextIncidenceInternal();
+				i = (IncidenceImpl) i.getNextBaseIncidence();
 			}
 			return d;
 		case INOUT:
 			while (i != null) {
 				++d;
-				i = i.getNextIncidenceInternal();
+				i = (IncidenceImpl) i.getNextBaseIncidence();
 			}
 			return d;
 		default:
@@ -130,8 +130,11 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 	 * 
 	 * @see de.uni_koblenz.jgralab.Vertex#getNextVertex()
 	 */
+	// TODO implement with TC
 	@Override
-	abstract public Vertex getNextVertex();
+	public Vertex getNextVertex() {
+		return getNextBaseVertex();
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -242,15 +245,27 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 		graph.putVertexAfter((VertexBaseImpl) v, this);
 	}
 
+	// TODO implement with TC
+	@Override
+	public Edge getFirstIncidence() {
+		return getFirstBaseIncidence();
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see de.uni_koblenz.jgralab.Vertex#getFirstEdge()
 	 */
 	@Override
-	public Edge getFirstIncidence() {
+	public EdgeBase getFirstBaseIncidence() {
 		assert isValid();
 		return getFirstIncidenceInternal();
+	}
+
+	// TODO implement with TC
+	@Override
+	public Edge getLastIncidence() {
+		return getLastBaseIncidence();
 	}
 
 	/*
@@ -259,7 +274,7 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 	 * @see de.uni_koblenz.jgralab.Vertex#getLastEdge()
 	 */
 	@Override
-	public Edge getLastIncidence() {
+	public EdgeBase getLastBaseIncidence() {
 		assert isValid();
 		return getLastIncidenceInternal();
 	}
@@ -281,12 +296,12 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 		switch (orientation) {
 		case IN:
 			while ((i != null) && i.isNormal()) {
-				i = i.getNextIncidenceInternal();
+				i = i.getNextIncidence();
 			}
 			return i;
 		case OUT:
 			while ((i != null) && !i.isNormal()) {
-				i = i.getNextIncidenceInternal();
+				i = i.getNextIncidence();
 			}
 			return i;
 		case INOUT:
@@ -311,7 +326,7 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 					return i;
 				}
 			}
-			i = i.getNextIncidenceInternal();
+			i = i.getNextIncidence();
 		}
 		return null;
 	}
@@ -397,7 +412,7 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 		assert target.getThis() == moved.getThis();
 		assert target != moved;
 
-		if ((target == moved) || (target.getNextIncidenceInternal() == moved)) {
+		if ((target == moved) || (target.getNextBaseIncidence() == moved)) {
 			return;
 		}
 
@@ -407,17 +422,21 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 
 		// remove moved incidence from lambdaSeq
 		if (moved == getFirstIncidenceInternal()) {
-			setFirstIncidence(moved.getNextIncidenceInternal());
-			moved.getNextIncidenceInternal().setPrevIncidenceInternal(null);
+			setFirstIncidence((IncidenceImpl) moved.getNextBaseIncidence());
+			((IncidenceImpl) moved.getNextBaseIncidence())
+					.setPrevIncidenceInternal(null);
 
 		} else if (moved == getLastIncidenceInternal()) {
-			setLastIncidence(moved.getPrevIncidenceInternal());
-			moved.getPrevIncidenceInternal().setNextIncidenceInternal(null);
+			setLastIncidence((IncidenceImpl) moved.getPrevBaseIncidence());
+			((IncidenceImpl) moved.getPrevBaseIncidence())
+					.setNextIncidenceInternal(null);
 		} else {
-			moved.getPrevIncidenceInternal().setNextIncidenceInternal(
-					moved.getNextIncidenceInternal());
-			moved.getNextIncidenceInternal().setPrevIncidenceInternal(
-					moved.getPrevIncidenceInternal());
+			((IncidenceImpl) moved.getPrevBaseIncidence())
+					.setNextIncidenceInternal((IncidenceImpl) moved
+							.getNextBaseIncidence());
+			((IncidenceImpl) moved.getNextBaseIncidence())
+					.setPrevIncidenceInternal((IncidenceImpl) moved
+							.getPrevBaseIncidence());
 		}
 
 		// insert moved incidence in lambdaSeq immediately after target
@@ -425,8 +444,10 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 			setLastIncidence(moved);
 			moved.setNextIncidenceInternal(null);
 		} else {
-			target.getNextIncidenceInternal().setPrevIncidenceInternal(moved);
-			moved.setNextIncidenceInternal(target.getNextIncidenceInternal());
+			((IncidenceImpl) target.getNextBaseIncidence())
+					.setPrevIncidenceInternal(moved);
+			moved.setNextIncidenceInternal((IncidenceImpl) target
+					.getNextBaseIncidence());
 		}
 		moved.setPrevIncidenceInternal(target);
 
@@ -442,7 +463,7 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 		assert target.getThis() == moved.getThis();
 		assert target != moved;
 
-		if ((target == moved) || (target.getPrevIncidenceInternal() == moved)) {
+		if ((target == moved) || (target.getPrevBaseIncidence() == moved)) {
 			return;
 		}
 
@@ -452,16 +473,20 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 
 		// remove moved incidence from lambdaSeq
 		if (moved == getFirstIncidenceInternal()) {
-			setFirstIncidence(moved.getNextIncidenceInternal());
-			moved.getNextIncidenceInternal().setPrevIncidenceInternal(null);
+			setFirstIncidence((IncidenceImpl) moved.getNextBaseIncidence());
+			((IncidenceImpl) moved.getNextBaseIncidence())
+					.setPrevIncidenceInternal(null);
 		} else if (moved == getLastIncidenceInternal()) {
-			setLastIncidence(moved.getPrevIncidenceInternal());
-			moved.getPrevIncidenceInternal().setNextIncidenceInternal(null);
+			setLastIncidence((IncidenceImpl) moved.getPrevBaseIncidence());
+			((IncidenceImpl) moved.getPrevBaseIncidence())
+					.setNextIncidenceInternal(null);
 		} else {
-			moved.getPrevIncidenceInternal().setNextIncidenceInternal(
-					moved.getNextIncidenceInternal());
-			moved.getNextIncidenceInternal().setPrevIncidenceInternal(
-					moved.getPrevIncidenceInternal());
+			((IncidenceImpl) moved.getPrevBaseIncidence())
+					.setNextIncidenceInternal((IncidenceImpl) moved
+							.getNextBaseIncidence());
+			((IncidenceImpl) moved.getNextBaseIncidence())
+					.setPrevIncidenceInternal((IncidenceImpl) moved
+							.getPrevBaseIncidence());
 		}
 
 		// insert moved incidence in lambdaSeq immediately before target
@@ -469,7 +494,8 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 			setFirstIncidence(moved);
 			moved.setPrevIncidenceInternal(null);
 		} else {
-			IncidenceImpl previousIncidence = target.getPrevIncidenceInternal();
+			IncidenceImpl previousIncidence = (IncidenceImpl) target
+					.getPrevBaseIncidence();
 			previousIncidence.setNextIncidenceInternal(moved);
 			moved.setPrevIncidenceInternal(previousIncidence);
 		}
@@ -668,7 +694,11 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 
 	abstract protected void setPrevVertex(Vertex prevVertex);
 
-	abstract public Vertex getPrevVertex();
+	// TODO implement with TC
+	@Override
+	public Vertex getPrevVertex() {
+		return getPrevBaseVertex();
+	}
 
 	protected void appendIncidenceToLambdaSeq(IncidenceImpl i) {
 		assert i != null;
@@ -689,7 +719,7 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 		assert i.getIncidentVertex() == this;
 		if (i == getFirstIncidenceInternal()) {
 			// delete at head of incidence list
-			setFirstIncidence(i.getNextIncidenceInternal());
+			setFirstIncidence((IncidenceImpl) i.getNextBaseIncidence());
 			if (getFirstIncidenceInternal() != null) {
 				getFirstIncidenceInternal().setPrevIncidenceInternal(null);
 			}
@@ -699,16 +729,18 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 			}
 		} else if (i == getLastIncidenceInternal()) {
 			// delete at tail of incidence list
-			setLastIncidence(i.getPrevIncidenceInternal());
+			setLastIncidence((IncidenceImpl) i.getPrevBaseIncidence());
 			if (getLastIncidenceInternal() != null) {
 				getLastIncidenceInternal().setNextIncidenceInternal(null);
 			}
 		} else {
 			// delete somewhere in the middle
-			i.getPrevIncidenceInternal().setNextIncidenceInternal(
-					i.getNextIncidenceInternal());
-			i.getNextIncidenceInternal().setPrevIncidenceInternal(
-					i.getPrevIncidenceInternal());
+			((IncidenceImpl) i.getPrevBaseIncidence())
+					.setNextIncidenceInternal((IncidenceImpl) i
+							.getNextBaseIncidence());
+			((IncidenceImpl) i.getNextBaseIncidence())
+					.setPrevIncidenceInternal((IncidenceImpl) i
+							.getPrevBaseIncidence());
 		}
 		// delete incidence
 		i.setIncidentVertex(null);
@@ -756,7 +788,7 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 					return out;
 				}
 				out = first;
-				first = out.getNextIncidenceInternal();
+				first = (IncidenceImpl) out.getNextBaseIncidence();
 				first.setPrevIncidenceInternal(null);
 				return out;
 			}

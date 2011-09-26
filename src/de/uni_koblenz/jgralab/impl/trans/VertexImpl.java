@@ -48,6 +48,7 @@ import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.IncidenceImpl;
+import de.uni_koblenz.jgralab.impl.VertexBase;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.trans.ListPosition;
@@ -129,7 +130,7 @@ public abstract class VertexImpl extends
 	}
 
 	@Override
-	public Vertex getNextVertex() {
+	public VertexBase getNextBaseVertex() {
 		if (nextVertex == null) {
 			return null;
 		}
@@ -139,7 +140,7 @@ public abstract class VertexImpl extends
 	}
 
 	@Override
-	public Vertex getPrevVertex() {
+	public VertexBase getPrevBaseVertex() {
 		if (prevVertex == null) {
 			return null;
 		}

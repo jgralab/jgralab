@@ -106,8 +106,17 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 		return getIncidentVertex();
 	}
 
+	// TODO implement with TC
 	@Override
-	public abstract Edge getNextEdge();
+	public Edge getNextEdge() {
+		return getNextBaseEdge();
+	}
+
+	// TODO implement with TC
+	@Override
+	public Edge getPrevEdge() {
+		return getPrevBaseEdge();
+	}
 
 	/**
 	 * @param nextEdge

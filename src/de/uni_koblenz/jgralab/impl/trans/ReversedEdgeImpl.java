@@ -36,7 +36,6 @@ package de.uni_koblenz.jgralab.impl.trans;
 
 import java.util.Map;
 
-import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.impl.EdgeBaseImpl;
@@ -75,16 +74,6 @@ public abstract class ReversedEdgeImpl extends
 		super(normalEdge, graph);
 	}
 
-	@Override
-	public Edge getNextIncidence() {
-		return getNextIncidenceInternal();
-	}
-
-	@Override
-	public Edge getPrevIncidence() {
-		return getPrevIncidenceInternal();
-	}
-
 	// --- getter ---//
 
 	@Override
@@ -98,7 +87,7 @@ public abstract class ReversedEdgeImpl extends
 	}
 
 	@Override
-	protected IncidenceImpl getNextIncidenceInternal() {
+	public IncidenceImpl getNextBaseIncidence() {
 		if (nextIncidence == null) {
 			return null;
 		}
@@ -108,7 +97,7 @@ public abstract class ReversedEdgeImpl extends
 	}
 
 	@Override
-	protected IncidenceImpl getPrevIncidenceInternal() {
+	public IncidenceImpl getPrevBaseIncidence() {
 		if (prevIncidence == null) {
 			return null;
 		}
@@ -149,7 +138,7 @@ public abstract class ReversedEdgeImpl extends
 			// relevant in writing-phase
 			if (transaction.getState() == TransactionState.WRITING) {
 				if (transaction.changedIncidences != null) {
-					VertexBase currentIncidentVertex = this.incidentVertex
+					VertexBase currentIncidentVertex = incidentVertex
 							.getTemporaryValue(transaction);
 					Map<IncidenceImpl, Map<ListPosition, Boolean>> incidenceList = transaction.changedIncidences
 							.get(currentIncidentVertex);
@@ -187,7 +176,7 @@ public abstract class ReversedEdgeImpl extends
 			// only relevant in writing-phase
 			if (transaction.getState() == TransactionState.WRITING) {
 				if (transaction.changedIncidences != null) {
-					VertexBase currentIncidentVertex = this.incidentVertex
+					VertexBase currentIncidentVertex = incidentVertex
 							.getTemporaryValue(transaction);
 					Map<IncidenceImpl, Map<ListPosition, Boolean>> incidenceList = transaction.changedIncidences
 							.get(currentIncidentVertex);
@@ -211,12 +200,12 @@ public abstract class ReversedEdgeImpl extends
 
 	@Override
 	public VersionedReferenceImpl<IncidenceImpl> getVersionedNextIncidence() {
-		return this.nextIncidence;
+		return nextIncidence;
 	}
 
 	@Override
 	public VersionedReferenceImpl<IncidenceImpl> getVersionedPrevIncidence() {
-		return this.prevIncidence;
+		return prevIncidence;
 	}
 
 	@Override

@@ -35,12 +35,13 @@
 package de.uni_koblenz.jgralab.impl.db;
 
 import java.util.Comparator;
+
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
-
 import de.uni_koblenz.jgralab.impl.IncidenceImpl;
+import de.uni_koblenz.jgralab.impl.VertexBase;
 import de.uni_koblenz.jgralab.impl.VertexBaseImpl;
 
 /**
@@ -177,12 +178,12 @@ public abstract class VertexImpl extends VertexBaseImpl implements
 	}
 
 	@Override
-	public Vertex getPrevVertex() {
+	public VertexBase getPrevBaseVertex() {
 		return graph.getPrevVertex(this);
 	}
 
 	@Override
-	public Vertex getNextVertex() {
+	public VertexBase getNextBaseVertex() {
 		return graph.getNextVertex(this);
 	}
 
@@ -205,8 +206,7 @@ public abstract class VertexImpl extends VertexBaseImpl implements
 	 */
 	protected void attributeChanged(String attributeName) {
 		if (isPersistent() && isInitialized()) {
-			graph
-					.updateVertexAttributeValueInDatabase(this, attributeName);
+			graph.updateVertexAttributeValueInDatabase(this, attributeName);
 			graph.internalGraphModified();
 		}
 	}
