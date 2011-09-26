@@ -12,8 +12,6 @@ import java.util.logging.Logger;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.greql2.exception.Greql2Exception;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.gretl.Context.TransformationPhase;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
@@ -260,7 +258,7 @@ public abstract class Transformation<T> {
 		return context.targetSchema.getDoubleDomain();
 	}
 
-	protected final void setGReQLVariable(String name, JValue val) {
+	protected final void setGReQLVariable(String name, Object val) {
 		if (context.getPhase() != TransformationPhase.GRAPH) {
 			return;
 		}
@@ -297,7 +295,7 @@ public abstract class Transformation<T> {
 		VertexClass vc = context.targetSchema.getGraphClass().getVertexClass(
 				qualifiedName);
 		if (vc == null) {
-			throw new Greql2Exception("There's no target VertexClass '"
+			throw new GReTLException("There's no target VertexClass '"
 					+ qualifiedName + "'.");
 		}
 		return vc;
