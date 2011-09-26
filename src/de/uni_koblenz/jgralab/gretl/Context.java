@@ -713,7 +713,7 @@ public class Context {
 		return type.toString().toLowerCase() + "_" + qName;
 	}
 
-	public final Object evaluateGReQLQuery(String greqlExpression) {
+	public final <T> T evaluateGReQLQuery(String greqlExpression) {
 		if (phase == TransformationPhase.SCHEMA) {
 			return null;
 		}
@@ -738,7 +738,8 @@ public class Context {
 		return evalGReQLQuery(greqlExpression, sourceGraphs.get(name));
 	}
 
-	private final Object evalGReQLQuery(String semanticExpression, Graph graph) {
+	@SuppressWarnings("unchecked")
+	private final <T> T evalGReQLQuery(String semanticExpression, Graph graph) {
 		if (phase == TransformationPhase.SCHEMA) {
 			return null;
 		}
@@ -768,10 +769,9 @@ public class Context {
 		// eval.setOptimize(false);
 
 		eval.startEvaluation();
-		Object result = eval.getResult();
 
 		// log.fine("GReQL result: " + result);
-		return result;
+		return (T) eval.getResult();
 	}
 
 	/**

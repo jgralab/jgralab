@@ -1,14 +1,13 @@
 package de.uni_koblenz.jgralab.gretl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import de.uni_koblenz.jgralab.AttributedElement;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueMap;
 import de.uni_koblenz.jgralab.gretl.Context.TransformationPhase;
 import de.uni_koblenz.jgralab.schema.Attribute;
 
@@ -16,7 +15,7 @@ public class SetMultipleAttributes extends
 		Transformation<List<Map<AttributedElement, Object>>> {
 
 	private Attribute[] attributes = null;
-	private JValueMap archetype2valueMap = null;
+	private Map<Object, List<Object>> archetype2valuesMap = null;
 	private String semanticExpression = null;
 
 	public SetMultipleAttributes(Context c, String semanticExpression,
@@ -26,11 +25,11 @@ public class SetMultipleAttributes extends
 		this.semanticExpression = semanticExpression;
 	}
 
-	public SetMultipleAttributes(Context c, JValueMap arch2ValueMap,
-			Attribute... attrs) {
+	public SetMultipleAttributes(Context c,
+			Map<Object, List<Object>> arch2ValuesMap, Attribute... attrs) {
 		super(c);
 		attributes = attrs;
-		archetype2valueMap = arch2ValueMap;
+		archetype2valuesMap = arch2ValuesMap;
 	}
 
 	public static SetMultipleAttributes parseAndCreate(ExecuteTransformation et) {
@@ -46,12 +45,12 @@ public class SetMultipleAttributes extends
 			return null;
 		}
 
-		if (archetype2valueMap == null) {
-			archetype2valueMap = context.evaluateGReQLQuery(semanticExpression)
-					.toJValueMap();
+		if (archetype2valuesMap == null) {
+			archetype2valuesMap = context
+					.evaluateGReQLQuery(semanticExpression);
 		}
 		List<Map<AttributedElement, Object>> retLst = new LinkedList<Map<AttributedElement, Object>>();
-		ArrayList<JValueMap> lst = splice(archetype2valueMap);
+		List<Map<Object, Object>> lst = splice(archetype2valuesMap);
 		for (int i = 0; i < attributes.length; i++) {
 			retLst.add(new SetAttributes(context, attributes[i], lst.get(i))
 					.execute());
@@ -59,18 +58,17 @@ public class SetMultipleAttributes extends
 		return retLst;
 	}
 
-	private ArrayList<JValueMap> splice(JValueMap archetype2valueMap2) {
-		ArrayList<JValueMap> funs = new ArrayList<JValueMap>();
-		for (@SuppressWarnings("unused")
-		Attribute attribute : attributes) {
-			funs.add(new JValueMap(archetype2valueMap2.size()));
+	private List<Map<Object, Object>> splice(
+			Map<Object, List<Object>> arch2listOfAttrVals) {
+		ArrayList<Map<Object, Object>> out = new ArrayList<Map<Object, Object>>();
+		for (int i = 0; i < attributes.length; i++) {
+			out.add(new HashMap<Object, Object>());
 		}
-		for (Entry<JValue, JValue> e : archetype2valueMap2.entrySet()) {
+		for (Entry<Object, List<Object>> e : arch2listOfAttrVals.entrySet()) {
 			for (int i = 0; i < attributes.length; i++) {
-				funs.get(i)
-						.put(e.getKey(), e.getValue().toJValueTuple().get(i));
+				out.get(i).put(e.getKey(), e.getValue().get(i));
 			}
 		}
-		return funs;
+		return out;
 	}
 }
