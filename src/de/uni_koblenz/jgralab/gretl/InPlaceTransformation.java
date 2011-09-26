@@ -6,7 +6,6 @@ import java.util.List;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeBase;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.VertexBase;
 
 /**
  * @author Tassilo Horn &lt;horn@uni-koblenz.de&gt;
@@ -41,7 +40,7 @@ public abstract class InPlaceTransformation extends CountingTransformation {
 			incs.add((EdgeBase) inc);
 		}
 		for (EdgeBase inc : incs) {
-			inc.setThis((VertexBase) newVertex);
+			inc.setThis(newVertex);
 		}
 	}
 }

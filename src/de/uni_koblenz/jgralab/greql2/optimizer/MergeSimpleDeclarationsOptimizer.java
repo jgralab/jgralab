@@ -42,7 +42,6 @@ import java.util.logging.Logger;
 import de.uni_koblenz.jgralab.EdgeBase;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.VertexBase;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
@@ -176,7 +175,7 @@ public class MergeSimpleDeclarationsOptimizer extends OptimizerBase {
 
 					while (s.getFirstIsDeclaredVarOfIncidence() != null) {
 						((EdgeBase) s.getFirstIsDeclaredVarOfIncidence())
-								.setOmega((VertexBase) survivor);
+								.setOmega(survivor);
 					}
 
 					// merge the sourcePositions

@@ -7,7 +7,7 @@ public interface EdgeBase extends Edge {
 	 * @param v
 	 *            a vertex
 	 */
-	void setAlpha(VertexBase v);
+	void setAlpha(Vertex v);
 
 	/**
 	 * sets the omega vertex to v
@@ -15,7 +15,7 @@ public interface EdgeBase extends Edge {
 	 * @param v
 	 *            a vertex
 	 */
-	void setOmega(VertexBase v);
+	void setOmega(Vertex v);
 
 	/**
 	 * sets the this vertex to v
@@ -23,7 +23,7 @@ public interface EdgeBase extends Edge {
 	 * @param v
 	 *            a vertex
 	 */
-	void setThis(VertexBase v);
+	void setThis(Vertex v);
 
 	/**
 	 * sets the that vertex to v
@@ -31,5 +31,5 @@ public interface EdgeBase extends Edge {
 	 * @param v
 	 *            a vertex
 	 */
-	void setThat(VertexBase v);
+	void setThat(Vertex v);
 }

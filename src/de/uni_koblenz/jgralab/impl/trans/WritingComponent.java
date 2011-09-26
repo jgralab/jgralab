@@ -41,7 +41,6 @@ import java.util.Map.Entry;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.VertexBase;
 import de.uni_koblenz.jgralab.impl.IncidenceImpl;
 import de.uni_koblenz.jgralab.trans.ListPosition;
 import de.uni_koblenz.jgralab.trans.TransactionState;
@@ -354,7 +353,7 @@ public class WritingComponent {
 				}
 				case ALPHA: {
 					// temporary alpha of edge for current transaction
-					VertexBase tempAlpha = edge.incidentVertex
+					Vertex tempAlpha = edge.incidentVertex
 							.getTemporaryValue(transaction);
 					edge.setAlpha(tempAlpha);
 					if (!pass) {
@@ -363,7 +362,7 @@ public class WritingComponent {
 				}
 				case OMEGA: {
 					// temporary omega of edge for current transaction
-					VertexBase tempOmega = ((ReversedEdgeImpl) edge
+					Vertex tempOmega = ((ReversedEdgeImpl) edge
 							.getReversedEdge()).incidentVertex
 							.getTemporaryValue(transaction);
 					edge.setOmega(tempOmega);
