@@ -13,24 +13,18 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.pcollections.Empty;
+import org.pcollections.PQueue;
+import org.w3c.dom.Attr;
+
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.M1ClassManager;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
-import de.uni_koblenz.jgralab.greql2.SerializableGreql2;
-import de.uni_koblenz.jgralab.greql2.SerializableGreql2Impl;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.Greql2Exception;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueMap;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueRecord;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueTuple;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueXMLLoader;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueXMLOutputVisitor;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Schema;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
@@ -46,13 +40,6 @@ import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
  * @author Tassilo Horn &lt;horn@uni-koblenz.de&gt;
  */
 public class Context {
-	static {
-		Greql2Schema
-				.instance()
-				.getGraphFactory()
-				.setGraphImplementationClass(Greql2.class,
-						SerializableGreql2Impl.class);
-	}
 
 	private static Logger logger = JGraLab.getLogger(Context.class.getPackage()
 			.getName());
@@ -117,43 +104,19 @@ public class Context {
 	/**
 	 * Maps from {@link AttributedElementClass} to a map, mapping old elements
 	 * to their images. (zeta-reverse)
-	 * 
-	 * Map<AttributedElementClass, Map<JValue archMap, JValue imgMap>>
 	 */
-	private JValueMap imgMap = new JValueMap();
+	private Map<AttributedElementClass, Map<Object, AttributedElement>> imgMap = new HashMap<AttributedElementClass, Map<Object, AttributedElement>>();
 
 	/**
 	 * Maps from {@link AttributedElementClass} to a map, mapping new elements
 	 * to the elements they were created for (their archetypes). (zeta)
-	 * 
-	 * Map<AttributedElementClass, Map<JValue imgMap, JValue archMap>>
 	 */
-	private JValueMap archMap = new JValueMap();
+	private Map<AttributedElementClass, Map<AttributedElement, Object>> archMap = new HashMap<AttributedElementClass, Map<AttributedElement, Object>>();
 
-	/**
-	 * Maps {@link AttributedElementClass} objects to their {@link JValue}
-	 * encapsulation.
-	 */
-	private final Map<AttributedElementClass, JValue> attrElemClassMap = new HashMap<AttributedElementClass, JValue>();
-
-	/**
-	 * @param aec
-	 * @return the given {@link AttributedElementClass} encapsulated in a
-	 *         {@link JValue}
-	 */
-	private final JValue getAttrElemClassJValue(AttributedElementClass aec) {
-		JValue jaec = attrElemClassMap.get(aec);
-		if (jaec == null) {
-			jaec = new JValueImpl(aec);
-			attrElemClassMap.put(aec, jaec);
-		}
-		return jaec;
-	}
-
-	private final Map<String, JValue> greqlExtraVars = new HashMap<String, JValue>();
+	private final Map<String, Object> greqlExtraVars = new HashMap<String, Object>();
 	private final Set<String> greqlImports = new HashSet<String>();
 
-	final void setGReQLVariable(String name, JValue val) {
+	final void setGReQLVariable(String name, Object val) {
 		greqlExtraVars.put(name, val);
 	}
 
@@ -250,13 +213,14 @@ public class Context {
 	 *            mappings
 	 * @return a map from target graph elements (images) to their archetypes
 	 */
-	public final JValueMap getArch(AttributedElementClass aec) {
-		JValue result = archMap.get(getAttrElemClassJValue(aec));
+	public final Map<AttributedElement, Object> getArch(
+			AttributedElementClass aec) {
+		Map<AttributedElement, Object> result = archMap.get(aec);
 		if (result == null) {
-			result = new JValueMap();
-			archMap.put(getAttrElemClassJValue(aec), result);
+			result = new HashMap<AttributedElement, Object>();
+			archMap.put(aec, result);
 		}
-		return result.toJValueMap();
+		return result;
 	}
 
 	/**
@@ -266,13 +230,14 @@ public class Context {
 	 * @return a map from archetypes to target graph elements, which are their
 	 *         images
 	 */
-	public final JValueMap getImg(AttributedElementClass aec) {
-		JValue result = imgMap.get(getAttrElemClassJValue(aec));
+	public final Map<Object, AttributedElement> getImg(
+			AttributedElementClass aec) {
+		Map<Object, AttributedElement> result = imgMap.get(aec);
 		if (result == null) {
-			result = new JValueMap();
-			imgMap.put(getAttrElemClassJValue(aec), result);
+			result = new HashMap<Object, AttributedElement>();
+			imgMap.put(aec, result);
 		}
-		return result.toJValueMap();
+		return result;
 	}
 
 	/**
@@ -303,31 +268,30 @@ public class Context {
 
 	public final void printImgMappings() {
 		System.out.println("Image Mappings:");
-		for (Entry<JValue, JValue> e : imgMap.entrySet()) {
-			AttributedElementClass aec = e.getKey().toAttributedElementClass();
-			JValueMap img = e.getValue().toJValueMap();
+		for (Entry<AttributedElementClass, Map<Object, AttributedElement>> e : imgMap
+				.entrySet()) {
+			AttributedElementClass aec = e.getKey();
+			Map<Object, AttributedElement> img = e.getValue();
 			if (aec.isInternal()) {
 				continue;
 			}
 			System.out.println("Mappings for: " + aec.getQualifiedName());
-			for (Entry<JValue, JValue> entry : img.entrySet()) {
-				System.out.println("    " + entry.getKey() + "("
-						+ entry.getKey().getType() + ")" + " ==> "
-						+ entry.getValue() + "(" + entry.getValue().getType()
-						+ ")");
+			for (Entry<Object, AttributedElement> entry : img.entrySet()) {
+				System.out.println("    " + entry.getKey() + " ==> "
+						+ entry.getValue());
 			}
 		}
 	}
 
 	final void addMapping(AttributedElementClass attrElemClass,
-			JValue archetype, JValue image) {
+			Object archetype, AttributedElement image) {
 		addMappingToClass(attrElemClass, archetype, image);
 		addMappingsToSuperClasses(attrElemClass, archetype, image);
 	}
 
 	private final void addMappingsToSuperClasses(
-			final AttributedElementClass subClass, final JValue archetype,
-			final JValue image) {
+			final AttributedElementClass subClass, final Object archetype,
+			final AttributedElement image) {
 		for (AttributedElementClass superClass : subClass.getAllSuperClasses()) {
 			if (superClass.isInternal()) {
 				continue;
@@ -337,15 +301,14 @@ public class Context {
 	}
 
 	private final void addMappingToClass(AttributedElementClass attrElemClass,
-			JValue archetype, JValue image) {
+			Object archetype, AttributedElement image) {
 		addArchMapping(attrElemClass, image, archetype);
 		addImgMapping(attrElemClass, archetype, image);
 	}
 
 	private void addArchMapping(AttributedElementClass attrElemClass,
-			JValue image, JValue archetype) {
-		JValueMap map = archMap.get(getAttrElemClassJValue(attrElemClass))
-				.toJValueMap();
+			AttributedElement image, Object archetype) {
+		Map<AttributedElement, Object> map = archMap.get(attrElemClass);
 		if (map.containsKey(image)) {
 			throw new GReTLBijectionViolationException(this, "'"
 					+ image
@@ -363,9 +326,8 @@ public class Context {
 	}
 
 	private void addImgMapping(AttributedElementClass attrElemClass,
-			JValue archetype, JValue image) {
-		JValueMap map = imgMap.get(getAttrElemClassJValue(attrElemClass))
-				.toJValueMap();
+			Object archetype, AttributedElement image) {
+		Map<Object, AttributedElement> map = imgMap.get(attrElemClass);
 		if (map.containsKey(archetype)) {
 			throw new GReTLBijectionViolationException(this, "'"
 					+ archetype
@@ -385,30 +347,31 @@ public class Context {
 	private Random uniqueSeed = new Random();
 
 	/**
-	 * @return a JValue that is guaranteed to be unique
+	 * @return a String that is guaranteed to be unique (used for implicit
+	 *         archetypes)
 	 */
-	public JValue getUniqueJValue() {
+	public String getUniqueString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("<--[");
 		sb.append(uniqueSeed.nextInt());
 		sb.append("]--[");
 		sb.append(System.currentTimeMillis());
 		sb.append("]-->");
-		return new JValueImpl(sb.toString());
+		return sb.toString();
 	}
 
 	public final void validateMappings() {
 		if (imgMap.size() != archMap.size()) {
-			JValueMap m = imgMap;
-			JValueMap o = archMap;
+			Map<AttributedElementClass, Map<Object, AttributedElement>> m = imgMap;
+			Map<AttributedElementClass, Map<AttributedElement, Object>> o = archMap;
 			if (archMap.size() > imgMap.size()) {
 				m = archMap;
 				o = imgMap;
 			}
-			for (JValue jaec : m.keySet()) {
-				if (!o.containsKey(jaec)) {
-					System.err.println(toGReTLVarNotation(jaec
-							.toAttributedElementClass().getQualifiedName(),
+			for (AttributedElementClass aec : m.keySet()) {
+				if (!o.containsKey(aec)) {
+					System.err.println(toGReTLVarNotation(aec
+							.getQualifiedName(),
 							(o == archMap) ? GReTLVariableType.ARCH
 									: GReTLVariableType.IMG)
 							+ " is missing");
@@ -420,16 +383,15 @@ public class Context {
 							+ ") and archMap (" + archMap.size()
 							+ ") don't match!");
 		}
-		for (JValue jaec : archMap.keySet()) {
-			AttributedElementClass aec = jaec.toAttributedElementClass();
-			if (!imgMap.containsKey(jaec)) {
+		for (AttributedElementClass aec : archMap.keySet()) {
+			if (!imgMap.containsKey(aec)) {
 				throw new GReTLBijectionViolationException(this,
 						"The imgMap and archMap mappings aren't valid! "
 								+ "imgMap contains no mappings for '"
 								+ aec.getQualifiedName() + "'!");
 			}
-			JValueMap arch = archMap.get(jaec).toJValueMap();
-			JValueMap img = imgMap.get(jaec).toJValueMap();
+			Map<Object, Object> arch = archMap.get(aec);
+			Map<Object, Object> img = imgMap.get(aec);
 
 			if (arch.size() != img.size()) {
 				throw new GReTLBijectionViolationException(this,
@@ -443,7 +405,7 @@ public class Context {
 								+ "' don't match!");
 			}
 
-			for (Entry<JValue, JValue> entry : arch.entrySet()) {
+			for (Entry<Object, Object> entry : arch.entrySet()) {
 				if (!img.containsKey(entry.getValue())) {
 					throw new GReTLBijectionViolationException(this,
 							"The imgMap and archMap mappings aren't valid! "
@@ -675,27 +637,20 @@ public class Context {
 
 		for (Entry<String, Graph> e : sourceGraphs.entrySet()) {
 			String sourceGraphName = e.getKey();
-			JValue jsourceGraphName = new JValueImpl(sourceGraphName);
 			Graph sourceGraph = e.getValue();
-			JValue jsourceGraph = new JValueImpl(sourceGraph);
-			JValue jtargetGraph = new JValueImpl(targetGraph);
 
 			if (sourceGraphName.equals(DEFAULT_SOURCE_GRAPH_ALIAS)) {
 				// The default source graph is the archetype of the new target
 				// graph.
-				addMapping(targetGraph.getGraphClass(), jsourceGraph,
-						jtargetGraph);
+				addMapping(targetGraph.getGraphClass(), sourceGraph,
+						targetGraph);
 			} else {
 				// Secondary source graphs are related to the target graph as
 				// tuples with the mapping: (sourceGraphName, sourceGraph) -->
-				// (sourceGraphName, targetGraph).
-				JValueTuple sourceTup = new JValueTuple(2);
-				sourceTup.add(jsourceGraphName);
-				sourceTup.add(jsourceGraph);
-				JValueTuple targetTup = new JValueTuple(2);
-				targetTup.add(jsourceGraphName);
-				targetTup.add(jtargetGraph);
-				addMapping(targetGraph.getGraphClass(), sourceTup, targetTup);
+				// targetGraph.
+				PQueue<Object> sourceTup = Empty.queue();
+				sourceTup = sourceTup.plus(sourceGraphName).plus(sourceGraph);
+				addMapping(targetGraph.getGraphClass(), sourceTup, targetGraph);
 			}
 		}
 	}
@@ -751,7 +706,7 @@ public class Context {
 		return type.toString().toLowerCase() + "_" + qName;
 	}
 
-	public final JValue evaluateGReQLQuery(String greqlExpression) {
+	public final Object evaluateGReQLQuery(String greqlExpression) {
 		if (phase == TransformationPhase.SCHEMA) {
 			return null;
 		}
@@ -776,7 +731,7 @@ public class Context {
 		return evalGReQLQuery(greqlExpression, sourceGraphs.get(name));
 	}
 
-	private final JValue evalGReQLQuery(String semanticExpression, Graph graph) {
+	private final Object evalGReQLQuery(String semanticExpression, Graph graph) {
 		if (phase == TransformationPhase.SCHEMA) {
 			return null;
 		}
@@ -786,7 +741,7 @@ public class Context {
 			return null;
 		}
 
-		Map<String, JValue> greqlMapping = getGreqlVariablesNeededByQuery(semanticExpression);
+		Map<String, Object> greqlMapping = getGreqlVariablesNeededByQuery(semanticExpression);
 		StringBuilder sb = new StringBuilder();
 
 		if (sourceGraphs.values().contains(graph)) {
@@ -804,21 +759,9 @@ public class Context {
 		eval.setVariables(greqlMapping);
 
 		// eval.setOptimize(false);
-		JValue result = null;
-		try {
-			eval.startEvaluation();
-			result = eval.getEvaluationResult();
-		} catch (EvaluateException e) {
-			if (eval.getSyntaxGraph() != null) {
-				logger.severe("Evaluated query was:\n"
-						+ ((SerializableGreql2) eval.getSyntaxGraph())
-								.serialize());
-			} else {
-				logger.severe("No syntax graph...");
-			}
-			throw new GReTLException(this, "GReQL evaluation failed.  Query: "
-					+ query, e);
-		}
+
+		eval.startEvaluation();
+		Object result = eval.getResult();
 
 		// log.fine("GReQL result: " + result);
 		return result;
@@ -833,9 +776,9 @@ public class Context {
 		}
 	}
 
-	private final Map<String, JValue> getGreqlVariablesNeededByQuery(
+	private final Map<String, Object> getGreqlVariablesNeededByQuery(
 			String query) {
-		HashMap<String, JValue> result = new HashMap<String, JValue>();
+		HashMap<String, Object> result = new HashMap<String, Object>();
 
 		for (String extraVar : greqlExtraVars.keySet()) {
 			if (query.contains(extraVar)) {
@@ -843,18 +786,18 @@ public class Context {
 			}
 		}
 
-		for (Entry<JValue, JValue> e : archMap.entrySet()) {
-			String varName = toGReTLVarNotation(e.getKey()
-					.toAttributedElementClass().getQualifiedName(),
+		for (Entry<AttributedElementClass, Map<Object, Object>> e : archMap
+				.entrySet()) {
+			String varName = toGReTLVarNotation(e.getKey().getQualifiedName(),
 					GReTLVariableType.ARCH);
 			if (query.contains(varName)) {
 				result.put(varName, e.getValue());
 			}
 		}
 
-		for (Entry<JValue, JValue> e : imgMap.entrySet()) {
-			String varName = toGReTLVarNotation(e.getKey()
-					.toAttributedElementClass().getQualifiedName(),
+		for (Entry<AttributedElementClass, Map<Object, Object>> e : imgMap
+				.entrySet()) {
+			String varName = toGReTLVarNotation(e.getKey().getQualifiedName(),
 					GReTLVariableType.IMG);
 			if (query.contains(varName)) {
 				result.put(varName, e.getValue());
@@ -864,7 +807,7 @@ public class Context {
 		return result;
 	}
 
-	private final String getGreqlUsingString(Map<String, JValue> greqlMapping) {
+	private final String getGreqlUsingString(Map<String, Object> greqlMapping) {
 		if (greqlMapping.size() == 0) {
 			return "";
 		}
