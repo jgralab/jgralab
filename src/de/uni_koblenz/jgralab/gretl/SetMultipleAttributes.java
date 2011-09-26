@@ -6,7 +6,7 @@ import java.util.Map.Entry;
 
 import org.pcollections.Empty;
 import org.pcollections.PMap;
-import org.pcollections.PQueue;
+import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.greql2.types.Tuple;
@@ -14,7 +14,7 @@ import de.uni_koblenz.jgralab.gretl.Context.TransformationPhase;
 import de.uni_koblenz.jgralab.schema.Attribute;
 
 public class SetMultipleAttributes extends
-		Transformation<PQueue<PMap<AttributedElement, Object>>> {
+		Transformation<PVector<PMap<AttributedElement, Object>>> {
 
 	private Attribute[] attributes = null;
 	private PMap<Object, Tuple> archetype2valuesMap = null;
@@ -42,7 +42,7 @@ public class SetMultipleAttributes extends
 	}
 
 	@Override
-	protected PQueue<PMap<AttributedElement, Object>> transform() {
+	protected PVector<PMap<AttributedElement, Object>> transform() {
 		if (context.phase != TransformationPhase.GRAPH) {
 			return null;
 		}
@@ -51,7 +51,7 @@ public class SetMultipleAttributes extends
 			archetype2valuesMap = context
 					.evaluateGReQLQuery(semanticExpression);
 		}
-		PQueue<PMap<AttributedElement, Object>> retLst = Empty.queue();
+		PVector<PMap<AttributedElement, Object>> retLst = Empty.vector();
 		List<PMap<Object, Object>> lst = splice(archetype2valuesMap);
 		for (int i = 0; i < attributes.length; i++) {
 			retLst = retLst.plus(new SetAttributes(context, attributes[i], lst

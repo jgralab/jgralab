@@ -166,10 +166,8 @@ public class MatchReplace extends InPlaceTransformation {
 			Map<Object, Object> m = (Map<Object, Object>) matchedElem;
 			calculateMatchedElements(m.keySet());
 			calculateMatchedElements(m.values());
-		} else {
-			throw new GReTLException(context, "Don't know how to handle "
-					+ matchedElem);
 		}
+		// Anything else can be ignored.
 	}
 
 	private void deleteNonPreservables() {

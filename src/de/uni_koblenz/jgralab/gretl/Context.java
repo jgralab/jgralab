@@ -15,7 +15,6 @@ import java.util.regex.Pattern;
 
 import org.pcollections.Empty;
 import org.pcollections.PMap;
-import org.pcollections.PQueue;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
@@ -25,6 +24,7 @@ import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.M1ClassManager;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.types.Tuple;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
 import de.uni_koblenz.jgralab.schema.GraphClass;
@@ -103,13 +103,13 @@ public class Context {
 	 * Maps from {@link AttributedElementClass} to a map, mapping old elements
 	 * to their images. (zeta-reverse)
 	 */
-	private Map<AttributedElementClass, Map<Object, AttributedElement>> imgMap = new HashMap<AttributedElementClass, Map<Object, AttributedElement>>();
+	private Map<AttributedElementClass, PMap<Object, AttributedElement>> imgMap = new HashMap<AttributedElementClass, PMap<Object, AttributedElement>>();
 
 	/**
 	 * Maps from {@link AttributedElementClass} to a map, mapping new elements
 	 * to the elements they were created for (their archetypes). (zeta)
 	 */
-	private Map<AttributedElementClass, Map<AttributedElement, Object>> archMap = new HashMap<AttributedElementClass, Map<AttributedElement, Object>>();
+	private Map<AttributedElementClass, PMap<AttributedElement, Object>> archMap = new HashMap<AttributedElementClass, PMap<AttributedElement, Object>>();
 
 	private final Map<String, Object> greqlExtraVars = new HashMap<String, Object>();
 	private final Set<String> greqlImports = new HashSet<String>();
@@ -211,11 +211,11 @@ public class Context {
 	 *            mappings
 	 * @return a map from target graph elements (images) to their archetypes
 	 */
-	public final Map<AttributedElement, Object> getArch(
+	public final PMap<AttributedElement, Object> getArch(
 			AttributedElementClass aec) {
-		Map<AttributedElement, Object> result = archMap.get(aec);
+		PMap<AttributedElement, Object> result = archMap.get(aec);
 		if (result == null) {
-			result = new HashMap<AttributedElement, Object>();
+			result = Empty.map();
 			archMap.put(aec, result);
 		}
 		return result;
@@ -228,11 +228,11 @@ public class Context {
 	 * @return a map from archetypes to target graph elements, which are their
 	 *         images
 	 */
-	public final Map<Object, AttributedElement> getImg(
+	public final PMap<Object, AttributedElement> getImg(
 			AttributedElementClass aec) {
-		Map<Object, AttributedElement> result = imgMap.get(aec);
+		PMap<Object, AttributedElement> result = imgMap.get(aec);
 		if (result == null) {
-			result = new HashMap<Object, AttributedElement>();
+			result = Empty.map();
 			imgMap.put(aec, result);
 		}
 		return result;
@@ -266,10 +266,10 @@ public class Context {
 
 	public final void printImgMappings() {
 		System.out.println("Image Mappings:");
-		for (Entry<AttributedElementClass, Map<Object, AttributedElement>> e : imgMap
+		for (Entry<AttributedElementClass, PMap<Object, AttributedElement>> e : imgMap
 				.entrySet()) {
 			AttributedElementClass aec = e.getKey();
-			Map<Object, AttributedElement> img = e.getValue();
+			PMap<Object, AttributedElement> img = e.getValue();
 			if (aec.isInternal()) {
 				continue;
 			}
@@ -306,7 +306,7 @@ public class Context {
 
 	private void addArchMapping(AttributedElementClass attrElemClass,
 			AttributedElement image, Object archetype) {
-		Map<AttributedElement, Object> map = archMap.get(attrElemClass);
+		PMap<AttributedElement, Object> map = archMap.get(attrElemClass);
 		if (map.containsKey(image)) {
 			throw new GReTLBijectionViolationException(this, "'"
 					+ image
@@ -320,12 +320,12 @@ public class Context {
 		}
 
 		// everything is fine
-		map.put(image, archetype);
+		map = map.plus(image, archetype);
 	}
 
 	private void addImgMapping(AttributedElementClass attrElemClass,
 			Object archetype, AttributedElement image) {
-		Map<Object, AttributedElement> map = imgMap.get(attrElemClass);
+		PMap<Object, AttributedElement> map = imgMap.get(attrElemClass);
 		if (map.containsKey(archetype)) {
 			throw new GReTLBijectionViolationException(this, "'"
 					+ archetype
@@ -339,7 +339,7 @@ public class Context {
 		}
 
 		// everything is fine
-		map.put(archetype, image);
+		map = map.plus(archetype, image);
 	}
 
 	private Random uniqueSeed = new Random();
@@ -655,7 +655,7 @@ public class Context {
 				// Secondary source graphs are related to the target graph as
 				// tuples with the mapping: (sourceGraphName, sourceGraph) -->
 				// targetGraph.
-				PQueue<Object> sourceTup = Empty.queue();
+				Tuple sourceTup = Tuple.empty();
 				sourceTup = sourceTup.plus(sourceGraphName).plus(sourceGraph);
 				addMapping(targetGraph.getGraphClass(), sourceTup, targetGraph);
 			}
@@ -749,7 +749,7 @@ public class Context {
 			return null;
 		}
 
-		Map<String, Object> greqlMapping = getGreqlVariablesNeededByQuery(semanticExpression);
+		PMap<String, Object> greqlMapping = getGreqlVariablesNeededByQuery(semanticExpression);
 		StringBuilder sb = new StringBuilder();
 
 		if (sourceGraphs.values().contains(graph)) {
@@ -783,31 +783,31 @@ public class Context {
 		}
 	}
 
-	private final Map<String, Object> getGreqlVariablesNeededByQuery(
+	private final PMap<String, Object> getGreqlVariablesNeededByQuery(
 			String query) {
-		HashMap<String, Object> result = new HashMap<String, Object>();
+		PMap<String, Object> result = Empty.map();
 
 		for (String extraVar : greqlExtraVars.keySet()) {
 			if (query.contains(extraVar)) {
-				result.put(extraVar, greqlExtraVars.get(extraVar));
+				result = result.plus(extraVar, greqlExtraVars.get(extraVar));
 			}
 		}
 
-		for (Entry<AttributedElementClass, Map<AttributedElement, Object>> e : archMap
+		for (Entry<AttributedElementClass, PMap<AttributedElement, Object>> e : archMap
 				.entrySet()) {
 			String varName = toGReTLVarNotation(e.getKey().getQualifiedName(),
 					GReTLVariableType.ARCH);
 			if (query.contains(varName)) {
-				result.put(varName, e.getValue());
+				result = result.plus(varName, e.getValue());
 			}
 		}
 
-		for (Entry<AttributedElementClass, Map<Object, AttributedElement>> e : imgMap
+		for (Entry<AttributedElementClass, PMap<Object, AttributedElement>> e : imgMap
 				.entrySet()) {
 			String varName = toGReTLVarNotation(e.getKey().getQualifiedName(),
 					GReTLVariableType.IMG);
 			if (query.contains(varName)) {
-				result.put(varName, e.getValue());
+				result = result.plus(varName, e.getValue());
 			}
 		}
 
