@@ -40,7 +40,6 @@ import java.util.HashMap;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphBase;
 import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphFactory;
 import de.uni_koblenz.jgralab.Vertex;

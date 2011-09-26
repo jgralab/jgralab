@@ -69,6 +69,7 @@ import java.util.zip.GZIPOutputStream;
 
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
+import de.uni_koblenz.jgralab.impl.GraphBase;
 import de.uni_koblenz.jgralab.impl.GraphBaseImpl;
 import de.uni_koblenz.jgralab.impl.db.GraphDatabase;
 import de.uni_koblenz.jgralab.impl.db.GraphDatabaseException;

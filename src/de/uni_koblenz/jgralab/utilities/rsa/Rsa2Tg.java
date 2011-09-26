@@ -120,7 +120,6 @@ import de.uni_koblenz.ist.utilities.option_handler.OptionHandler;
 import de.uni_koblenz.ist.utilities.xml.XmlProcessor;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
-import de.uni_koblenz.jgralab.EdgeBase;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
@@ -164,6 +163,7 @@ import de.uni_koblenz.jgralab.grumlschema.structure.Schema;
 import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesEdgeClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.Subsets;
 import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
+import de.uni_koblenz.jgralab.impl.EdgeBase;
 import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
 
 /**

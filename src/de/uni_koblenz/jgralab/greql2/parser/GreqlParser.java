@@ -47,13 +47,13 @@ import org.pcollections.PSet;
 import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.Edge;
-import de.uni_koblenz.jgralab.EdgeBase;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.SerializableGreql2Impl;
 import de.uni_koblenz.jgralab.greql2.exception.ParsingException;
 import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
 import de.uni_koblenz.jgralab.greql2.schema.*;
+import de.uni_koblenz.jgralab.impl.EdgeBase;
 
 public class GreqlParser extends ParserHelper {
 

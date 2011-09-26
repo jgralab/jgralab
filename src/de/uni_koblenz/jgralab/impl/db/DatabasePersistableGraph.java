@@ -34,7 +34,7 @@
  */
 package de.uni_koblenz.jgralab.impl.db;
 
-import de.uni_koblenz.jgralab.GraphBase;
+import de.uni_koblenz.jgralab.impl.GraphBase;
 
 /**
  * Defines interface of a graph which can be persistent in a graph database.

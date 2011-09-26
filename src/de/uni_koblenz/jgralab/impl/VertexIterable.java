@@ -40,7 +40,6 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphBase;
 import de.uni_koblenz.jgralab.Vertex;
 
 /**

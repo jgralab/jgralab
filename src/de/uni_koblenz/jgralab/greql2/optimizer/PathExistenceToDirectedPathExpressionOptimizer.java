@@ -45,7 +45,6 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.Edge;
-import de.uni_koblenz.jgralab.EdgeBase;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
@@ -68,6 +67,7 @@ import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
 import de.uni_koblenz.jgralab.greql2.schema.TypeId;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
 import de.uni_koblenz.jgralab.greql2.schema.VertexSetExpression;
+import de.uni_koblenz.jgralab.impl.EdgeBase;
 
 /**
  * @author Tassilo Horn &lt;horn@uni-koblenz.de&gt;
