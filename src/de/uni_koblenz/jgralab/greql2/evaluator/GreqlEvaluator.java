@@ -53,6 +53,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.pcollections.PMap;
 import org.pcollections.PSet;
 import org.pcollections.PVector;
 
@@ -397,7 +398,7 @@ public class GreqlEvaluator {
 			throws GraphIOException {
 		if (!(optimizedSyntaxGraphsDirectory.exists()
 				&& optimizedSyntaxGraphsDirectory.canRead() && optimizedSyntaxGraphsDirectory
-				.canExecute())) {
+					.canExecute())) {
 			throw new GraphIOException(
 					optimizedSyntaxGraphsDirectory.getPath()
 							+ " is not accessible.  Does it really exist and are the permissions ok?");
@@ -702,6 +703,11 @@ public class GreqlEvaluator {
 	@SuppressWarnings("unchecked")
 	public <T> PVector<T> getResultList(Class<T> cls) {
 		return (PVector<T>) result;
+	}
+
+	@SuppressWarnings("unchecked")
+	public <K, V> PMap<K, V> getResultMap(Class<K> kcls, Class<V> vcls) {
+		return (PMap<K, V>) result;
 	}
 
 	@SuppressWarnings("unchecked")
