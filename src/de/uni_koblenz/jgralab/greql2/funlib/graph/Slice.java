@@ -44,11 +44,11 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
-import org.pcollections.ArrayPSet;
 import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.DFA;
@@ -100,7 +100,7 @@ public class Slice extends Function {
 	private Graph graph;
 
 	public de.uni_koblenz.jgralab.greql2.types.Slice evaluate(Vertex v, DFA dfa) {
-		PSet<Vertex> roots = ArrayPSet.empty();
+		PSet<Vertex> roots = JGraLab.set();
 		return evaluate(roots.plus(v), dfa);
 	}
 

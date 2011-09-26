@@ -41,13 +41,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
-import org.pcollections.ArrayPSet;
 import org.pcollections.ArrayPVector;
 import org.pcollections.PSet;
 import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.exception.ParsingException;
 import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
@@ -200,7 +200,7 @@ public class GreqlParser extends ParserHelper {
 
 	protected final PVector<SourcePosition> createSourcePositionList(
 			int startOffset) {
-		PVector<SourcePosition> list = ArrayPVector.empty();
+		PVector<SourcePosition> list = JGraLab.vector();
 		return list.plus(new SourcePosition(getCurrentOffset() - startOffset,
 				startOffset));
 	}
@@ -325,8 +325,8 @@ public class GreqlParser extends ParserHelper {
 		} else {
 			tokenText = lookAhead(0).name();
 		}
-		ParsingException ex = new ParsingException(msg + "!! "+lookAhead(0)+" !!", tokenText, offset,
-				length, query);
+		ParsingException ex = new ParsingException(msg + "!! " + lookAhead(0)
+				+ " !!", tokenText, offset, length, query);
 		predicateFulfilled = false;
 		if (getCurrentOffset() > farestOffset) {
 			farestException = ex;
@@ -533,7 +533,7 @@ public class GreqlParser extends ParserHelper {
 	}
 
 	private final PSet<String> parseImports() {
-		PSet<String> importedTypes = ArrayPSet.empty();
+		PSet<String> importedTypes = JGraLab.set();
 		while (lookAhead(0) == TokenTypes.IMPORT) {
 			match(TokenTypes.IMPORT);
 			StringBuilder importedType = new StringBuilder();

@@ -6664,7 +6664,7 @@ public class VertexTest extends InstanceTest {
 	public void getAttributeTest0() throws CommitFailedException {
 		createTransaction(g);
 		DoubleSubNode v = g.createDoubleSubNode();
-		PMap<Integer, String> map = ArrayPMap.empty();
+		PMap<Integer, String> map = JGraLab.map();
 		v.set_nodeMap(map);
 		v.set_name("test");
 		v.set_number(4);
@@ -6720,7 +6720,7 @@ public class VertexTest extends InstanceTest {
 	public void setAttributeTest0() throws CommitFailedException {
 		createTransaction(g);
 		DoubleSubNode v = g.createDoubleSubNode();
-		PMap<Integer, String> map = ArrayPMap.empty();
+		PMap<Integer, String> map = JGraLab.map();
 		v.setAttribute("nodeMap", map);
 		v.setAttribute("name", "test");
 		v.setAttribute("number", 4);
@@ -6909,7 +6909,7 @@ public class VertexTest extends InstanceTest {
 	public void setGetNodeMapTest0() throws CommitFailedException {
 		createTransaction(g);
 		DoubleSubNode v0 = g.createDoubleSubNode();
-		PMap<Integer, String> map = ArrayPMap.empty();
+		PMap<Integer, String> map = JGraLab.map();
 		v0.set_nodeMap(map);
 		commit(g);
 		createReadOnlyTransaction(g);

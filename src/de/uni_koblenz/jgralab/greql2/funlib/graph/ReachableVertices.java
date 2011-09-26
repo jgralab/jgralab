@@ -37,10 +37,10 @@ package de.uni_koblenz.jgralab.greql2.funlib.graph;
 
 import java.util.HashSet;
 
-import org.pcollections.ArrayPSet;
 import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.DFA;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.State;
@@ -61,7 +61,7 @@ public class ReachableVertices extends Function {
 	}
 
 	public static PSet<Vertex> search(Vertex v, DFA dfa) {
-		PSet<Vertex> resultSet = ArrayPSet.empty();
+		PSet<Vertex> resultSet = JGraLab.set();
 
 		@SuppressWarnings("unchecked")
 		HashSet<Vertex>[] markedElements = new HashSet[dfa.stateList.size()];

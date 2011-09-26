@@ -1,10 +1,10 @@
 package de.uni_koblenz.jgralab.greql2.funlib.graph;
 
-import org.pcollections.ArrayPVector;
 import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
@@ -21,7 +21,7 @@ public class EdgesTo extends Function {
 	}
 
 	public PVector<Edge> evaluate(Vertex v, TypeCollection tc) {
-		PVector<Edge> result = ArrayPVector.empty();
+		PVector<Edge> result = JGraLab.vector();
 		for (Edge e : v.incidences(EdgeDirection.IN)) {
 			if (tc == null || tc.acceptsType(e.getAttributedElementClass())) {
 				result = result.plus(e);

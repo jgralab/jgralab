@@ -49,6 +49,13 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
+import org.pcollections.ArrayPMap;
+import org.pcollections.ArrayPSet;
+import org.pcollections.ArrayPVector;
+import org.pcollections.PMap;
+import org.pcollections.PSet;
+import org.pcollections.PVector;
+
 /**
  * This class gives information, which software was used creating JGraLab.
  * 
@@ -254,5 +261,17 @@ public class JGraLab {
 		}
 		output.append('\n');
 		return output.toString();
+	}
+
+	public static final <T> PVector<T> vector() {
+		return ArrayPVector.empty();
+	}
+
+	public static final <T> PSet<T> set() {
+		return ArrayPSet.empty();
+	}
+
+	public static final <K, V> PMap<K, V> map() {
+		return ArrayPMap.empty();
 	}
 }
