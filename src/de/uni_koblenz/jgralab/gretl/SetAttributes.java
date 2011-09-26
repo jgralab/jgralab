@@ -1,12 +1,18 @@
 package de.uni_koblenz.jgralab.gretl;
 
+import java.lang.reflect.Constructor;
+import java.util.Map;
+
 import org.pcollections.Empty;
 import org.pcollections.PMap;
 
 import de.uni_koblenz.jgralab.AttributedElement;
+import de.uni_koblenz.jgralab.greql2.types.Record;
 import de.uni_koblenz.jgralab.gretl.Context.GReTLVariableType;
 import de.uni_koblenz.jgralab.gretl.Context.TransformationPhase;
 import de.uni_koblenz.jgralab.schema.Attribute;
+import de.uni_koblenz.jgralab.schema.Domain;
+import de.uni_koblenz.jgralab.schema.RecordDomain;
 
 public class SetAttributes extends
 		Transformation<PMap<AttributedElement, Object>> {
@@ -76,8 +82,23 @@ public class SetAttributes extends
 
 	private Object convertToAttributeValue(Object val) {
 		// TODO: Implement proper conversion from GReQL result to domain
-		// (records, enums,...)
-		return val;
+		// (records, Collections of records/enums,...)
+		Object result = val;
+		Domain dom = attribute.getDomain();
+		if (dom instanceof RecordDomain) {
+			Record greqlRec = (Record) val;
+			RecordDomain rd = (RecordDomain) dom;
+			Class<?> rClass = rd.getM1Class();
+			try {
+				Constructor<?> recConstr = rClass.getConstructor(Map.class);
+				result = recConstr.newInstance(greqlRec.toPMap());
+			} catch (Exception e) {
+				throw new GReTLException(context, "Conversion of " + val
+						+ " from " + val.getClass() + " to " + rd + " failed.",
+						e);
+			}
+		}
+		return result;
 	}
 
 }
