@@ -1,5 +1,6 @@
 package de.uni_koblenz.jgralab.gretl;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -7,12 +8,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.pcollections.Empty;
+import org.pcollections.PMap;
+import org.pcollections.PSet;
+
 import de.uni_koblenz.jgralab.GraphElement;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueMap;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueTuple;
+import de.uni_koblenz.jgralab.greql2.types.Tuple;
 import de.uni_koblenz.jgralab.gretl.Context.GReTLVariableType;
 import de.uni_koblenz.jgralab.gretl.Context.TransformationPhase;
 import de.uni_koblenz.jgralab.gretl.parser.TokenTypes;
@@ -34,11 +35,11 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 public class CreateSubgraph extends Transformation<Void> {
 
 	private TemplateGraph templateGraph = null;
-	private JValue match;
+	private Object match;
 	private String matchText;
 	private Set<GraphElement> createdElements = new HashSet<GraphElement>();
 
-	public CreateSubgraph(Context c, String subgraphCreationText, JValue match) {
+	public CreateSubgraph(Context c, String subgraphCreationText, Object match) {
 		super(c);
 		templateGraph = TemplateGraphParser.parse(subgraphCreationText);
 		this.match = match;
@@ -73,6 +74,7 @@ public class CreateSubgraph extends Transformation<Void> {
 		return sb.toString();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected Void transform() {
 		if (context.getPhase() == TransformationPhase.SCHEMA) {
@@ -96,12 +98,12 @@ public class CreateSubgraph extends Transformation<Void> {
 			match = context.evaluateGReQLQuery(matchText);
 		}
 
-		JValueList matchCollection = null;
-		if (match.isCollection()) {
-			matchCollection = match.toCollection().toJValueList();
+		PSet<Object> matchCollection = null;
+		if (match instanceof Collection) {
+			matchCollection = (PSet<Object>) match;
 		} else {
-			matchCollection = new JValueList(1);
-			matchCollection.add(match);
+			matchCollection = Empty.set();
+			matchCollection = matchCollection.plus(match);
 		}
 
 		applyVertexCreations(matchCollection);
@@ -116,7 +118,7 @@ public class CreateSubgraph extends Transformation<Void> {
 	 * 
 	 * @param matchCollection
 	 */
-	private void applyVertexCreations(JValueList matchCollection) {
+	private void applyVertexCreations(PSet<Object> matchCollection) {
 		for (CreateVertex v : templateGraph.getCreateVertexVertices()) {
 			String qName = getVertexClassName(v, context);
 			VertexClass vc = vc(qName);
@@ -125,10 +127,10 @@ public class CreateSubgraph extends Transformation<Void> {
 				throw new GReTLException(context, "There's no vertex class '"
 						+ qName + "' in the target schema.");
 			}
-			JValueSet archSet = new JValueSet();
-			for (JValue jv : matchCollection) {
+			PSet<Object> archSet = Empty.set();
+			for (Object jv : matchCollection) {
 				context.setGReQLVariable("$", jv);
-				JValue arch = context.evaluateGReQLQuery(v.get_archetype());
+				Object arch = context.evaluateGReQLQuery(v.get_archetype());
 				if (context.getImg(vc).containsKey(arch)) {
 					log.finer("There's already an image for '"
 							+ arch
@@ -137,7 +139,7 @@ public class CreateSubgraph extends Transformation<Void> {
 									GReTLVariableType.IMG)
 							+ ", so we use that instead.");
 				} else {
-					archSet.add(arch);
+					archSet = archSet.plus(arch);
 				}
 			}
 			log.finer("Instantiating " + archSet.size() + " '"
@@ -190,12 +192,12 @@ public class CreateSubgraph extends Transformation<Void> {
 		return v.get_typeName();
 	}
 
-	private void applyEdgeCreations(JValueList matchCollection) {
+	private void applyEdgeCreations(PSet<Object> matchCollection) {
 		for (CreateEdge e : templateGraph.getCreateEdgeEdges()) {
 			String qName = e.get_typeName();
 			EdgeClass ec = null;
 			if (e.is_typeNameIsQuery()) {
-				// The type is given as greql query
+				// The type name is given as greql query
 				ec(context.evaluateGReQLQuery(qName).toString());
 			} else {
 				ec = ec(qName);
@@ -206,18 +208,21 @@ public class CreateSubgraph extends Transformation<Void> {
 						+ qName + "' in the target schema.");
 			}
 
-			JValueSet archTripleSet = new JValueSet();
-			for (JValue jv : matchCollection) {
+			PSet<Tuple> archTripleSet = Empty.set();
+			for (Object jv : matchCollection) {
 				context.setGReQLVariable("$", jv);
-				JValueTuple triple = new JValueTuple();
-				JValue arch = context.evaluateGReQLQuery(getArch(e
+				Tuple triple = Tuple.empty();
+				Object arch = context.evaluateGReQLQuery(getArch(e
 						.get_archetype()));
-				triple.add(arch);
-				triple.add(context.evaluateGReQLQuery(((CreateVertex) e
-						.getAlpha()).get_archetype()));
-				triple.add(context.evaluateGReQLQuery(((CreateVertex) e
-						.getOmega()).get_archetype()));
-				archTripleSet.add(triple);
+				triple = triple.plus(arch);
+
+				triple = triple.plus(context
+						.evaluateGReQLQuery(((CreateVertex) e.getAlpha())
+								.get_archetype()));
+				triple = triple.plus(context
+						.evaluateGReQLQuery(((CreateVertex) e.getOmega())
+								.get_archetype()));
+				archTripleSet = archTripleSet.plus(triple);
 			}
 			log.finer("Instantiating " + archTripleSet.size() + " '"
 					+ ec.getQualifiedName() + "' edges.");
@@ -233,7 +238,7 @@ public class CreateSubgraph extends Transformation<Void> {
 		return archStr;
 	}
 
-	private void applyAttributeSetting(JValueList matchCollection) {
+	private void applyAttributeSetting(PSet<Object> matchCollection) {
 		List<Iterable<? extends GraphElement>> iterables = new LinkedList<Iterable<? extends GraphElement>>();
 		iterables.add(templateGraph.getCreateVertexVertices());
 		iterables.add(templateGraph.getCreateEdgeEdges());
@@ -280,10 +285,11 @@ public class CreateSubgraph extends Transformation<Void> {
 										+ "' in the target schema.");
 					}
 
-					JValueMap archMap = new JValueMap();
-					for (JValue jv : matchCollection) {
+					PMap<Object, Object> archMap = Empty.map();
+					for (Object jv : matchCollection) {
 						context.setGReQLVariable("$", jv);
-						archMap.put(context.evaluateGReQLQuery(archetype),
+						archMap = archMap.plus(
+								context.evaluateGReQLQuery(archetype),
 								context.evaluateGReQLQuery(e.getValue()));
 					}
 					new SetAttributes(context, attr, archMap).execute();
