@@ -1,6 +1,7 @@
 package de.uni_koblenz.jgralab.greql2.serialising;
 
 import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.Map.Entry;
@@ -28,9 +29,8 @@ public class XMLOutputWriter extends DefaultWriter implements XMLConstants {
 	private IndentingXMLStreamWriter writer = null;
 	private Graph graph;
 
-	public XMLOutputWriter(Object val, String fileName)
-			throws XMLStreamException {
-		this(val, fileName, null);
+	public XMLOutputWriter(Object val, File file) throws XMLStreamException {
+		this(val, file, null);
 	}
 
 	@Override
@@ -44,14 +44,16 @@ public class XMLOutputWriter extends DefaultWriter implements XMLConstants {
 		}
 	}
 
-	public XMLOutputWriter(Object val, String fileName, Graph g)
+	public XMLOutputWriter(Object val, File file, Graph g)
 			throws XMLStreamException {
 		graph = g;
 		try {
-			writer = new IndentingXMLStreamWriter(XMLOutputFactory
-					.newInstance().createXMLStreamWriter(
-							new BufferedOutputStream(new FileOutputStream(
-									fileName)), "UTF-8"), "\t");
+			writer = new IndentingXMLStreamWriter(
+					XMLOutputFactory.newInstance()
+							.createXMLStreamWriter(
+									new BufferedOutputStream(
+											new FileOutputStream(file)),
+									"UTF-8"), "\t");
 			head();
 			write(val);
 			foot();
