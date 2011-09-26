@@ -88,11 +88,6 @@ import de.uni_koblenz.jgralabtest.schemas.gretl.pddsl.Configuration;
 import de.uni_koblenz.jgralabtest.schemas.gretl.pddsl.PddslGraph;
 import de.uni_koblenz.jgralabtest.schemas.gretl.pddsl.PddslSchema;
 import de.uni_koblenz.jgralabtest.schemas.gretl.pddsl.Slot;
-import de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simplerdbms.SimpleRDBMSSchema;
-import de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simpleuml.Association;
-import de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simpleuml.PrimitiveDataType;
-import de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simpleuml.SimpleUMLGraph;
-import de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simpleuml.SimpleUMLSchema;
 import de.uni_koblenz.jgralabtest.schemas.gretl.services.BasicService;
 import de.uni_koblenz.jgralabtest.schemas.gretl.services.ComposedService;
 import de.uni_koblenz.jgralabtest.schemas.gretl.services.Database;
@@ -128,7 +123,6 @@ public class GretlTest {
 	private static Graph sourcePDDSLGraph = null;
 	private static Graph sourceServiceGraph = null;
 	private static Graph sourceCopyGraph = null;
-	private static SimpleUMLGraph sourceSimpleUMLGraph = null;
 	private static String tmpDir;
 
 	private String targetFileName;
@@ -155,7 +149,6 @@ public class GretlTest {
 		initBedslAndPddslGraphs();
 		initServiceGraph();
 		initCopyGraph();
-		initSimpleUMLGraph();
 
 		GraphIO.saveGraphToFile(tmpDir + "sourceFamilyGraph.tg",
 				sourceFamilyGraph, null);
@@ -168,7 +161,6 @@ public class GretlTest {
 		dotty(sourcePDDSLGraph, tmpDir + "sourcePDDSLGraph.pdf");
 		dotty(sourceServiceGraph, tmpDir + "sourceServiceGraph.pdf");
 		dotty(sourceCopyGraph, tmpDir + "sourceCopyGraph.pdf");
-		dotty(sourceSimpleUMLGraph, tmpDir + "sourceSimpleUMLGraph.pdf");
 	}
 
 	@Before
@@ -176,113 +168,6 @@ public class GretlTest {
 		// We use that Graph in in-place transforms, so recreate it between
 		// tests
 		initFamilyGraph();
-	}
-
-	private static void initSimpleUMLGraph() {
-		SimpleUMLGraph g = SimpleUMLSchema.instance().createSimpleUMLGraph();
-
-		// data types...
-		PrimitiveDataType string = g.createPrimitiveDataType();
-		string.set_name("string");
-
-		PrimitiveDataType doub = g.createPrimitiveDataType();
-		doub.set_name("double");
-
-		de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simpleuml.Class clsGeoLoc = g
-				.createClass();
-		clsGeoLoc.set_name("GeoLoc");
-
-		de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simpleuml.Attribute attrGeoLocLat = g
-				.createAttribute();
-		attrGeoLocLat.set_name("lat");
-		g.createHasType(attrGeoLocLat, doub);
-		g.createHasAttribute(clsGeoLoc, attrGeoLocLat);
-
-		de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simpleuml.Attribute attrGeoLocLon = g
-				.createAttribute();
-		attrGeoLocLon.set_name("lon");
-		g.createHasType(attrGeoLocLon, doub);
-		g.createHasAttribute(clsGeoLoc, attrGeoLocLon);
-
-		de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simpleuml.Class clsAddress = g
-				.createClass();
-		clsAddress.set_name("Address");
-
-		de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simpleuml.Attribute attrAddressStreet = g
-				.createAttribute();
-		attrAddressStreet.set_name("street");
-		g.createHasType(attrAddressStreet, string);
-		g.createHasAttribute(clsAddress, attrAddressStreet);
-
-		de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simpleuml.Attribute attrAddressTown = g
-				.createAttribute();
-		attrAddressTown.set_name("town");
-		g.createHasType(attrAddressTown, string);
-		g.createHasAttribute(clsAddress, attrAddressTown);
-
-		de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simpleuml.Attribute attrAddressLoc = g
-				.createAttribute();
-		attrAddressLoc.set_name("loc");
-		g.createHasType(attrAddressLoc, clsGeoLoc);
-		g.createHasAttribute(clsAddress, attrAddressLoc);
-
-		// entity classes
-		de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simpleuml.Class clsAddressBook = g
-				.createClass();
-		clsAddressBook.set_name("AddressBook");
-		clsAddressBook.set_kind("persistent");
-
-		de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simpleuml.Attribute attrAddressBookName = g
-				.createAttribute();
-		attrAddressBookName.set_name("abName");
-		attrAddressBookName.set_kind("primary");
-		g.createHasType(attrAddressBookName, string);
-		g.createHasAttribute(clsAddressBook, attrAddressBookName);
-
-		de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simpleuml.Class clsPerson = g
-				.createClass();
-		clsPerson.set_name("Person");
-		clsPerson.set_kind("persistent");
-
-		de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simpleuml.Attribute attrPersonAddress = g
-				.createAttribute();
-		attrPersonAddress.set_name("address");
-		g.createHasType(attrPersonAddress, clsAddress);
-		g.createHasAttribute(clsPerson, attrPersonAddress);
-
-		de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simpleuml.Attribute attrPersonName = g
-				.createAttribute();
-		attrPersonName.set_name("pName");
-		attrPersonName.set_kind("primary");
-		g.createHasType(attrPersonName, string);
-		g.createHasAttribute(clsPerson, attrPersonName);
-
-		Association assocAddressBookContainsPerson = g.createAssociation();
-		assocAddressBookContainsPerson.set_name("AddressBookContainsPerson");
-		assocAddressBookContainsPerson.addAdjacence("source", clsAddressBook);
-		assocAddressBookContainsPerson.addAdjacence("target", clsPerson);
-
-		// packages
-		de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simpleuml.Package pkgEntities = g
-				.createPackage();
-		pkgEntities.set_name("entities");
-		g.createContains(pkgEntities, clsAddressBook);
-		g.createContains(pkgEntities, clsPerson);
-		g.createContains(pkgEntities, assocAddressBookContainsPerson);
-
-		de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simpleuml.Package pkgData = g
-				.createPackage();
-		pkgData.set_name("data");
-		g.createContains(pkgData, clsAddress);
-		g.createContains(pkgData, clsGeoLoc);
-
-		de.uni_koblenz.jgralabtest.schemas.gretl.qvt.simpleuml.Package pkgDefault = g
-				.createPackage();
-		pkgDefault.set_name("");
-		g.createContains(pkgDefault, pkgData);
-		g.createContains(pkgDefault, pkgEntities);
-
-		sourceSimpleUMLGraph = g;
 	}
 
 	private static void initVarroUMLGraph() {
@@ -1203,19 +1088,6 @@ public class GretlTest {
 		assertEquals(0, sc.compareSchemas());
 		assertEquals(sourceCopyGraph.getECount(), targetGraph.getECount());
 		assertEquals(sourceCopyGraph.getVCount(), targetGraph.getVCount());
-	}
-
-	@Test
-	public void simpleUML2SimpleRDBMS() throws Exception {
-		targetFileName = "simpleUML2SimpleRDBMS";
-
-		System.out.println(">>> " + targetFileName);
-
-		context = new Context(SimpleRDBMSSchema.instance());
-		context.setSourceGraph(sourceSimpleUMLGraph);
-		new SimpleUML2SimpleRDBMS(context).execute();
-
-		// TODO: Check the target graph!
 	}
 
 }
