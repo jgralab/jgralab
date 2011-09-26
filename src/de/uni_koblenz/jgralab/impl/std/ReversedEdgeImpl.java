@@ -57,18 +57,18 @@ public abstract class ReversedEdgeImpl extends
 	}
 
 	@Override
-	protected IncidenceImpl getNextIncidenceInternal() {
+	public IncidenceImpl getNextBaseIncidence() {
 		return nextIncidence;
 	}
 
 	@Override
-	protected IncidenceImpl getPrevIncidenceInternal() {
+	public IncidenceImpl getPrevBaseIncidence() {
 		return prevIncidence;
 	}
 
 	@Override
 	protected void setIncidentVertex(VertexBaseImpl v) {
-		this.incidentVertex = v;
+		incidentVertex = v;
 	}
 
 	@Override

@@ -38,9 +38,11 @@ import java.util.List;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.impl.EdgeBase;
 import de.uni_koblenz.jgralab.impl.EdgeBaseImpl;
 import de.uni_koblenz.jgralab.impl.FreeIndexList;
 import de.uni_koblenz.jgralab.impl.ReversedEdgeBaseImpl;
+import de.uni_koblenz.jgralab.impl.VertexBase;
 import de.uni_koblenz.jgralab.impl.VertexBaseImpl;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.trans.Savepoint;
@@ -110,22 +112,22 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public Vertex getFirstVertex() {
+	public VertexBase getFirstBaseVertex() {
 		return firstVertex;
 	}
 
 	@Override
-	public Vertex getLastVertex() {
+	public VertexBase getLastBaseVertex() {
 		return lastVertex;
 	}
 
 	@Override
-	public Edge getFirstEdge() {
+	public EdgeBase getFirstBaseEdge() {
 		return firstEdge;
 	}
 
 	@Override
-	public Edge getLastEdge() {
+	public EdgeBase getLastBaseEdge() {
 		return lastEdge;
 	}
 

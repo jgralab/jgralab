@@ -154,6 +154,11 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 		return normalEdge.getNextEdge();
 	}
 
+	@Override
+	public EdgeBase getNextBaseEdge() {
+		return normalEdge.getNextBaseEdge();
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -162,6 +167,11 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 	@Override
 	public Edge getPrevEdge() {
 		return normalEdge.getPrevEdge();
+	}
+
+	@Override
+	public EdgeBase getPrevBaseEdge() {
+		return normalEdge.getPrevBaseEdge();
 	}
 
 	/*

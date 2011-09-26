@@ -45,7 +45,6 @@ import java.util.Map.Entry;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphException;
-import de.uni_koblenz.jgralab.IncidenceBase;
 import de.uni_koblenz.jgralab.impl.IncidenceImpl;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralab.trans.InvalidSavepointException;
@@ -659,7 +658,7 @@ public class TransactionImpl implements Transaction {
 			if (changedIncidences != null) {
 				for (Map<IncidenceImpl, Map<ListPosition, Boolean>> map : changedIncidences
 						.values()) {
-					for (IncidenceBase incidence : map.keySet()) {
+					for (IncidenceImpl incidence : map.keySet()) {
 						if (incidence instanceof EdgeImpl) {
 							edges.add((EdgeImpl) incidence);
 						}

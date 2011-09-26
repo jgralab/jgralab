@@ -35,4 +35,25 @@ public interface EdgeBase extends Edge {
 	 *            a vertex
 	 */
 	void setThat(Vertex v);
+
+	/**
+	 * @return next edge in eSeq
+	 */
+	public EdgeBase getNextBaseEdge();
+
+	/**
+	 * @return previous edge in eSeq
+	 */
+	public EdgeBase getPrevBaseEdge();
+
+	/**
+	 * @return the next incidence object in iSeq of current vertex
+	 */
+	public EdgeBase getNextBaseIncidence();
+
+	/**
+	 * @return the previous incidence object in iSeq of current vertex
+	 */
+	public EdgeBase getPrevBaseIncidence();
+
 }

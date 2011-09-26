@@ -34,4 +34,24 @@ public interface VertexBase extends Vertex {
 
 	public DirectedM1EdgeClass getEdgeForRolename(String rolename);
 
+	/**
+	 * @return the next vertex in vSeq
+	 */
+	public VertexBase getNextBaseVertex();
+
+	/**
+	 * @return the previous vertex in vSeq
+	 */
+	public VertexBase getPrevBaseVertex();
+
+	/**
+	 * @return first incident edge of this vertex
+	 */
+	public EdgeBase getFirstBaseIncidence();
+
+	/**
+	 * @return last incident edge of this vertex
+	 */
+	public EdgeBase getLastBaseIncidence();
+
 }
