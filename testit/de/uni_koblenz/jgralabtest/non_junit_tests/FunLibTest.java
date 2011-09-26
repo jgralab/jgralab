@@ -60,7 +60,7 @@ public class FunLibTest {
 		// fl.apply(os, "isAcyclic", sub);
 		fl.apply(os, "concat", "Args: ", fl.apply(os, "concat", "17+", 4));
 
-		PVector<String> v1 = ArrayPVector.empty();
+		PVector<String> v1 = JGraLab.vector();
 		PVector<String> v2 = v1.plus("d").plus("e").plus("f");
 		v1 = v1.plus("a").plus("b").plus("c");
 		fl.apply(os, "concat", "v1: ", v1);
@@ -78,7 +78,7 @@ public class FunLibTest {
 		fl.apply(os, "concat", v1, null);
 		fl.apply(os, "equals", 5, fl.apply("mul", 10, 0.5));
 
-		PVector<Double> v3 = ArrayPVector.empty();
+		PVector<Double> v3 = JGraLab.vector();
 		v3 = v3.plus(2.0).plus(10.0).plus(2.0).plus(5.0).plus(-1.0);
 		fl.apply(os, "count", v3);
 		fl.apply(os, "min", v3);
@@ -89,7 +89,7 @@ public class FunLibTest {
 		fl.apply(os, "sort", v3);
 		fl.apply(os, "sort", fl.apply("concat", v2, v1));
 
-		PSet<Integer> v4 = ArrayPSet.empty();
+		PSet<Integer> v4 = JGraLab.set();
 		v4 = v4.plus(2).plus(10).plus(2).plus(5).plus(-1);
 		fl.apply(os, "count", v4);
 		fl.apply(os, "sort", v4);

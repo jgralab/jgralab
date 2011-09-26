@@ -56,7 +56,7 @@ public class TryRecordLoading {
 		RecordTestGraph graph = RecordTestSchema.instance()
 				.createRecordTestGraph();
 		Node node = graph.createNode();
-		PMap<Integer, String> map = ArrayPMap.empty();
+		PMap<Integer, String> map = JGraLab.map();
 		node.set_nodeMap(map);
 		node.set_testRecord(new BooleanType(true, false));
 		graph.createLink(node, node);

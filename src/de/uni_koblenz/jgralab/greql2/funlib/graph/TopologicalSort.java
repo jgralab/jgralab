@@ -1,9 +1,9 @@
 package de.uni_koblenz.jgralab.greql2.funlib.graph;
 
-import org.pcollections.ArrayPVector;
 import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.algolib.algorithms.AlgorithmTerminatedException;
 import de.uni_koblenz.jgralab.algolib.algorithms.search.DepthFirstSearch;
@@ -32,7 +32,7 @@ public class TopologicalSort extends Function implements NeedsGraphArgument {
 		if (!a.isAcyclic()) {
 			return null;
 		}
-		PVector<Vertex> result = ArrayPVector.empty();
+		PVector<Vertex> result = JGraLab.vector();
 		Permutation<Vertex> t = a.getTopologicalOrder();
 		for (Vertex v : t.getRangeElements()) {
 			result = result.plus(v);

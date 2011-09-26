@@ -42,13 +42,13 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.HashMap;
 
-import org.pcollections.ArrayPSet;
 import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.types.Slice;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
@@ -98,7 +98,7 @@ public class TwoDVisualizer {
 					.append(((Edge) currentElement).getId()).append("\";\n");
 		}
 		// calculate environment
-		PSet<GraphElement> elementsToDisplay = ArrayPSet.empty();
+		PSet<GraphElement> elementsToDisplay = JGraLab.set();
 		if (currentElement instanceof Vertex) {
 			Slice slice = computeElements((Vertex) currentElement, pathLength,
 					state.getGraph());

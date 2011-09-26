@@ -168,10 +168,10 @@ public class RecordCodeGenerator extends CodeGenerator {
 
 	private CodeBlock createToPMapMethod() {
 		CodeList code = new CodeList();
-		addImports("org.pcollections.PMap", "org.pcollections.ArrayPMap");
 		code.addNoIndent(new CodeSnippet(
-				"public PMap<String, Object> toPMap() {"));
-		code.add(new CodeSnippet("PMap<String, Object> m = ArrayPMap.empty();"));
+				"public org.pcollections.PMap<String, Object> toPMap() {"));
+		code.add(new CodeSnippet(
+				"org.pcollections.PMap<String, Object> m = de.uni_koblenz.jgralab.JGraLab.map();"));
 		for (RecordComponent rc : recordDomain.getComponents()) {
 			CodeBlock assign = new CodeSnippet(
 					"m = m.plus(\"#name#\", _#name#);");

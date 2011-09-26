@@ -1695,7 +1695,7 @@ public class Rsa2Tg extends XmlProcessor {
 		Package p = packageStack.peek();
 		ed.set_qualifiedName(getQualifiedName(getAttribute(UML_ATTRIBUTE_NAME)));
 		sg.createContainsDomain(p, ed);
-		PVector<String> empty = ArrayPVector.empty();
+		PVector<String> empty = JGraLab.vector();
 		ed.set_enumConstants(empty);
 		Domain dom = domainMap.get(ed.get_qualifiedName());
 		if (dom != null) {

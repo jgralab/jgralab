@@ -3,9 +3,10 @@ package de.uni_koblenz.jgralab.greql2.types;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.pcollections.ArrayPVector;
 import org.pcollections.PCollection;
 import org.pcollections.PVector;
+
+import de.uni_koblenz.jgralab.JGraLab;
 
 public class Table<T> implements PCollection<T> {
 	private PVector<String> titles;
@@ -14,8 +15,8 @@ public class Table<T> implements PCollection<T> {
 	private static Table<?> empty = new Table<Object>();
 
 	private Table() {
-		titles = ArrayPVector.empty();
-		entries = ArrayPVector.empty();
+		titles = JGraLab.vector();
+		entries = JGraLab.vector();
 	}
 
 	private Table(PVector<String> t, PVector<T> e) {

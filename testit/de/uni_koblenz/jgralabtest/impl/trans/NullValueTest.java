@@ -84,14 +84,14 @@ public class NullValueTest {
 		node1.set_testString(null);
 		node1.set_testRecord(null);
 		node2 = graph.createNode();
-		PMap<Integer, String> map = ArrayPMap.empty();
+		PMap<Integer, String> map = JGraLab.map();
 		map = map.plus(1, "Hugo").plus(100, "Volker").plus(30, "Andi");
 		node2.set_nodeMap(map);
 		node2.set_testEnum(Hugo.A);
-		PVector<String> list = ArrayPVector.empty();
+		PVector<String> list = JGraLab.vector();
 		list = list.plus("Hugo").plus("Lalala").plus("Mahdi");
 		node2.set_testList(list);
-		PSet<Integer> set = ArrayPSet.empty();
+		PSet<Integer> set = JGraLab.set();
 		set = set.plus(1).plus(3).plus(8);
 		node2.set_testSet(set);
 		node2.set_testString("Hugo");
@@ -119,15 +119,15 @@ public class NullValueTest {
 	@Test
 	public void testNonNullAttributes() throws CommitFailedException {
 		graph.newTransaction();
-		PMap<Integer, String> map = ArrayPMap.empty();
+		PMap<Integer, String> map = JGraLab.map();
 		map = map.plus(1, "Hugo").plus(100, "Volker").plus(30, "Andi");
 		assertEquals(map, node2.get_nodeMap());
 
-		PVector<String> list1 = ArrayPVector.empty();
+		PVector<String> list1 = JGraLab.vector();
 		list1 = list1.plus("Hugo").plus("Lalala").plus("Mahdi");
 		assertEquals(list1, node2.get_testList());
 
-		PSet<Integer> set1 = ArrayPSet.empty();
+		PSet<Integer> set1 = JGraLab.set();
 		set1 = set1.plus(1).plus(3).plus(8);
 		assertEquals(set1, node2.get_testSet());
 

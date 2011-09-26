@@ -42,13 +42,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
 
-import org.pcollections.ArrayPSet;
 import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
 
@@ -277,7 +277,7 @@ public class PathSystem {
 	public PSet<Vertex> children(PathSystemKey key) {
 		assertFinished();
 
-		PSet<Vertex> returnSet = ArrayPSet.empty();
+		PSet<Vertex> returnSet = JGraLab.set();
 		for (Map.Entry<PathSystemKey, PathSystemEntry> mapEntry : keyToEntryMap
 				.entrySet()) {
 			PathSystemEntry thisEntry = mapEntry.getValue();
@@ -309,7 +309,7 @@ public class PathSystem {
 		if (entry == null) {
 			return null;
 		}
-		PSet<Vertex> returnSet = ArrayPSet.empty();
+		PSet<Vertex> returnSet = JGraLab.set();
 		for (Map.Entry<PathSystemKey, PathSystemEntry> mapEntry : keyToEntryMap
 				.entrySet()) {
 			PathSystemEntry value = mapEntry.getValue();
@@ -482,7 +482,7 @@ public class PathSystem {
 		if (vertex == null) {
 			return null;
 		}
-		PSet<Edge> resultSet = ArrayPSet.empty();
+		PSet<Edge> resultSet = JGraLab.set();
 		for (Map.Entry<PathSystemKey, PathSystemEntry> entry : keyToEntryMap
 				.entrySet()) {
 
@@ -563,7 +563,7 @@ public class PathSystem {
 		if (vertex == null) {
 			return null;
 		}
-		PSet<Edge> resultSet = ArrayPSet.empty();
+		PSet<Edge> resultSet = JGraLab.set();
 
 		for (Map.Entry<PathSystemKey, PathSystemEntry> entry : keyToEntryMap
 				.entrySet()) {
@@ -586,7 +586,7 @@ public class PathSystem {
 	public PSet<Vertex> getLeaves() {
 		assertFinished();
 
-		PSet<Vertex> leaves = ArrayPSet.empty();
+		PSet<Vertex> leaves = JGraLab.set();
 		// create the set of leaves out of the key set
 		for (PathSystemKey key : leafKeys) {
 			leaves = leaves.plus(key.getVertex());
@@ -659,7 +659,7 @@ public class PathSystem {
 	 */
 	public PSet<Path> extractPaths() {
 		assertFinished();
-		PSet<Path> pathSet = ArrayPSet.empty();
+		PSet<Path> pathSet = JGraLab.set();
 		for (PathSystemKey leaf : leafKeys) {
 			pathSet = pathSet.plus(extractPath(leaf));
 		}
@@ -673,7 +673,7 @@ public class PathSystem {
 	 */
 	public PSet<Path> extractPaths(int len) {
 		assertFinished();
-		PSet<Path> pathSet = ArrayPSet.empty();
+		PSet<Path> pathSet = JGraLab.set();
 		for (PathSystemKey leaf : leafKeys) {
 			Path path = extractPath(leaf);
 			if (path.getLength() == len) {
@@ -925,7 +925,7 @@ public class PathSystem {
 
 	public PSet<Vertex> getVertices() {
 		assertFinished();
-		PSet<Vertex> returnSet = ArrayPSet.empty();
+		PSet<Vertex> returnSet = JGraLab.set();
 		for (PathSystemKey key : keyToEntryMap.keySet()) {
 			returnSet = returnSet.plus(key.getVertex());
 		}
@@ -934,7 +934,7 @@ public class PathSystem {
 
 	public PSet<Edge> getEdges() {
 		assertFinished();
-		PSet<Edge> resultSet = ArrayPSet.empty();
+		PSet<Edge> resultSet = JGraLab.set();
 		for (Map.Entry<PathSystemKey, PathSystemEntry> mapEntry : keyToEntryMap
 				.entrySet()) {
 			PathSystemEntry thisEntry = mapEntry.getValue();

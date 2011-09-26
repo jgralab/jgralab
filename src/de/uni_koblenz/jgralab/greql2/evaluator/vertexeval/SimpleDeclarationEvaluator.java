@@ -37,10 +37,10 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import java.util.HashSet;
 
-import org.pcollections.ArrayPVector;
 import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclaration;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
@@ -97,7 +97,7 @@ public class SimpleDeclarationEvaluator extends VertexEvaluator {
 			typeExpression = (Expression) inc.getAlpha();
 			exprEval = vertexEvalMarker.getMark(typeExpression);
 		}
-		PVector<VariableDeclaration> varDeclList = ArrayPVector.empty();
+		PVector<VariableDeclaration> varDeclList = JGraLab.vector();
 		IsDeclaredVarOf varInc = vertex
 				.getFirstIsDeclaredVarOfIncidence(EdgeDirection.IN);
 		while (varInc != null) {
