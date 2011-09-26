@@ -35,7 +35,7 @@
 
 package de.uni_koblenz.jgralab.greql2.funlib.graph;
 
-import java.util.BitSet;
+import java.util.HashSet;
 
 import org.pcollections.ArrayPSet;
 import org.pcollections.PSet;
@@ -63,12 +63,15 @@ public class ReachableVertices extends Function {
 	public static PSet<Vertex> search(Vertex v, DFA dfa) {
 		PSet<Vertex> resultSet = ArrayPSet.empty();
 
-		BitSet[] markedElements = new BitSet[dfa.stateList.size()];
+		@SuppressWarnings("unchecked")
+		HashSet<Vertex>[] markedElements = new HashSet[dfa.stateList.size()];
+		// BitSet[] markedElements = new BitSet[dfa.stateList.size()];
 		for (State s : dfa.stateList) {
-			markedElements[s.number] = new BitSet();
+			// markedElements[s.number] = new BitSet();
+			markedElements[s.number] = new HashSet<Vertex>(100);
 		}
 		VertexStateQueue queue = new VertexStateQueue();
-		markedElements[dfa.initialState.number].set(v.getId());
+		markedElements[dfa.initialState.number].add(v);
 		queue.put(v, dfa.initialState);
 		while (queue.hasNext()) {
 			Vertex vertex = queue.currentVertex;
@@ -84,10 +87,10 @@ public class ReachableVertices extends Function {
 					Vertex nextVertex = currentTransition.getNextVertex(vertex,
 							inc);
 					if (!markedElements[currentTransition.endState.number]
-							.get(nextVertex.getId())) {
+							.contains(nextVertex)) {
 						if (currentTransition.accepts(vertex, inc)) {
 							markedElements[currentTransition.endState.number]
-									.set(nextVertex.getId());
+									.add(nextVertex);
 							queue.put(nextVertex, currentTransition.endState);
 						}
 					}

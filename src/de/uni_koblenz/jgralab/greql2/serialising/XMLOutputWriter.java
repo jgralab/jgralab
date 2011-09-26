@@ -51,7 +51,7 @@ public class XMLOutputWriter extends DefaultWriter implements XMLConstants {
 			writer = new IndentingXMLStreamWriter(XMLOutputFactory
 					.newInstance().createXMLStreamWriter(
 							new BufferedOutputStream(new FileOutputStream(
-									fileName))), "UTF-8");
+									fileName)), "UTF-8"), "\t");
 			head();
 			write(val);
 			foot();
@@ -195,7 +195,9 @@ public class XMLOutputWriter extends DefaultWriter implements XMLConstants {
 	@Override
 	public void writePVector(PVector<?> l) throws XMLStreamException {
 		writer.writeStartElement(LIST);
-		writePVector(l);
+		for (Object o : l) {
+			write(o);
+		}
 		writer.writeEndElement();
 	}
 
