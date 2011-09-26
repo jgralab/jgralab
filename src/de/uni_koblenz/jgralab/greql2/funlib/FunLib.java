@@ -17,44 +17,19 @@ import java.util.jar.JarFile;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.pcollections.PMap;
-import org.pcollections.POrderedSet;
-import org.pcollections.PSet;
-import org.pcollections.PVector;
-
-import de.uni_koblenz.jgralab.AttributedElement;
-import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.Record;
-import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
-import de.uni_koblenz.jgralab.greql2.types.Path;
-import de.uni_koblenz.jgralab.greql2.types.PathSystem;
-import de.uni_koblenz.jgralab.greql2.types.Slice;
-import de.uni_koblenz.jgralab.greql2.types.Table;
-import de.uni_koblenz.jgralab.greql2.types.Tuple;
-import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
+import de.uni_koblenz.jgralab.greql2.types.Types;
 import de.uni_koblenz.jgralab.greql2.types.Undefined;
 
 public class FunLib {
-	private static final Class<?>[] GREQL_TYPES = { Integer.class, Long.class,
-			Boolean.class, Double.class, String.class, Vertex.class,
-			Edge.class, Graph.class, AttributedElement.class,
-			GraphElement.class, Path.class, PathSystem.class, Slice.class,
-			TypeCollection.class, Enum.class, Record.class, Table.class,
-			Tuple.class, PVector.class, PSet.class, POrderedSet.class,
-			PMap.class, Undefined.class };
-
 	private static FunLib instance;
 	private Logger logger;
 
 	public Logger getLogger() {
 		return logger;
 	}
-
-	private Map<Class<?>, String> typeNames;
 
 	public static FunLib instance() {
 		if (instance == null) {
@@ -71,14 +46,6 @@ public class FunLib {
 	private FunLib() {
 		functions = new HashMap<String, FunctionInfo>();
 		logger = JGraLab.getLogger(FunLib.class.getPackage().getName());
-		typeNames = new HashMap<Class<?>, String>();
-		for (Class<?> cls : GREQL_TYPES) {
-			typeNames.put(cls, cls.getSimpleName());
-		}
-		typeNames.put(PVector.class, "List");
-		typeNames.put(PSet.class, "Set");
-		typeNames.put(POrderedSet.class, "Set");
-		typeNames.put(PMap.class, "Map");
 		registerAllFunctions();
 	}
 
@@ -153,24 +120,12 @@ public class FunLib {
 		return getFunctionName(cls.getSimpleName());
 	}
 
-	public String getGreqlTypeName(Object arg) {
-		if (arg == null) {
-			arg = Undefined.UNDEFINED;
-		}
-		for (Class<?> cls : GREQL_TYPES) {
-			if (cls.isInstance(arg)) {
-				return typeNames.get(cls);
-			}
-		}
-		return arg.getClass().getSimpleName() + "[unknown to GReQL]";
-	}
-
 	public String getArgumentAsString(Object arg) {
 		if (arg == null) {
 			arg = Undefined.UNDEFINED;
 		}
 		StringBuilder sb = new StringBuilder();
-		sb.append(getGreqlTypeName(arg));
+		sb.append(Types.getGreqlTypeName(arg));
 		if (arg instanceof String) {
 			sb.append(": ").append('"')
 					.append(arg.toString().replace("\"", "\\\"")).append('"');
@@ -233,7 +188,7 @@ public class FunLib {
 				.append("' not defined for argument types");
 		String delim = " (";
 		for (Object arg : args) {
-			sb.append(delim).append(getGreqlTypeName(arg));
+			sb.append(delim).append(Types.getGreqlTypeName(arg));
 			delim = ", ";
 		}
 		sb.append(")");
