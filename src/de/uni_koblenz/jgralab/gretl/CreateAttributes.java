@@ -1,15 +1,15 @@
 package de.uni_koblenz.jgralab.gretl;
 
-import java.util.List;
-import java.util.Map;
+import org.pcollections.PMap;
 
+import de.uni_koblenz.jgralab.greql2.types.Tuple;
 import de.uni_koblenz.jgralab.gretl.CreateAttribute.AttributeSpec;
 import de.uni_koblenz.jgralab.schema.Attribute;
 
 public class CreateAttributes extends Transformation<Attribute[]> {
 	private AttributeSpec[] attrSpecs;
 	private String semanticExpression;
-	private Map<Object, List<Object>> archetype2ValueListMap;
+	private PMap<Object, Tuple> archetype2ValueListMap;
 
 	protected CreateAttributes(final Context c,
 			final AttributeSpec... attrSpecs) {
@@ -18,7 +18,7 @@ public class CreateAttributes extends Transformation<Attribute[]> {
 	}
 
 	public CreateAttributes(final Context c,
-			final Map<Object, List<Object>> archetype2ValListMap,
+			final PMap<Object, Tuple> archetype2ValListMap,
 			final AttributeSpec... attrSpecs) {
 		this(c, attrSpecs);
 		this.archetype2ValueListMap = archetype2ValListMap;
