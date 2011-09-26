@@ -215,7 +215,7 @@ public class Context {
 			AttributedElementClass aec) {
 		PMap<AttributedElement, Object> result = archMap.get(aec);
 		if (result == null) {
-			result = Empty.map();
+			result = Empty.orderedMap();
 			archMap.put(aec, result);
 		}
 		return result;
@@ -232,7 +232,7 @@ public class Context {
 			AttributedElementClass aec) {
 		PMap<Object, AttributedElement> result = imgMap.get(aec);
 		if (result == null) {
-			result = Empty.map();
+			result = Empty.orderedMap();
 			imgMap.put(aec, result);
 		}
 		return result;
@@ -320,7 +320,9 @@ public class Context {
 		}
 
 		// everything is fine
+		archMap.remove(map);
 		map = map.plus(image, archetype);
+		archMap.put(attrElemClass, map);
 	}
 
 	private void addImgMapping(AttributedElementClass attrElemClass,
@@ -339,7 +341,9 @@ public class Context {
 		}
 
 		// everything is fine
+		imgMap.remove(map);
 		map = map.plus(archetype, image);
+		imgMap.put(attrElemClass, map);
 	}
 
 	private Random uniqueSeed = new Random();
@@ -673,7 +677,7 @@ public class Context {
 
 				Method valueOf = myEnum.getMethod("valueOf",
 						new Class<?>[] { String.class });
-				PMap<String, Object> map = Empty.map();
+				PMap<String, Object> map = Empty.orderedMap();
 				for (String c : d.getConsts()) {
 					Object constant = valueOf.invoke(null, new Object[] { c });
 					map = map.plus(c, constant);
@@ -785,7 +789,7 @@ public class Context {
 
 	private final PMap<String, Object> getGreqlVariablesNeededByQuery(
 			String query) {
-		PMap<String, Object> result = Empty.map();
+		PMap<String, Object> result = Empty.orderedMap();
 
 		for (String extraVar : greqlExtraVars.keySet()) {
 			if (query.contains(extraVar)) {

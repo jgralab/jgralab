@@ -66,7 +66,7 @@ public class SetMultipleAttributes extends
 				attributes.length);
 
 		for (int i = 0; i < attributes.length; i++) {
-			out.add(Empty.map());
+			out.add(Empty.orderedMap());
 		}
 
 		for (Entry<Object, Tuple> e : arch2listOfAttrVals.entrySet()) {

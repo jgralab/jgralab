@@ -285,7 +285,7 @@ public class CreateSubgraph extends Transformation<Void> {
 										+ "' in the target schema.");
 					}
 
-					PMap<Object, Object> archMap = Empty.map();
+					PMap<Object, Object> archMap = Empty.orderedMap();
 					for (Object jv : matchCollection) {
 						context.setGReQLVariable("$", jv);
 						archMap = archMap.plus(

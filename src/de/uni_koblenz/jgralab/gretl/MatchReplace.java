@@ -229,7 +229,7 @@ public class MatchReplace extends InPlaceTransformation {
 			} else {
 				Edge newEdge = createEdge(ce, startVertex, endVertex);
 				if (addGlobalMappings && (arch != null)) {
-					PMap<Object, AttributedElement> m = Empty.map();
+					PMap<Object, AttributedElement> m = Empty.orderedMap();
 					m = m.plus(arch, newEdge);
 					new AddMappings(context, m).execute();
 					if (arch instanceof Edge) {
@@ -264,7 +264,7 @@ public class MatchReplace extends InPlaceTransformation {
 				createVertices2Vertices.put(cv, newVertex);
 				if (arch != null) {
 					if (addGlobalMappings) {
-						PMap<Object, AttributedElement> m = Empty.map();
+						PMap<Object, AttributedElement> m = Empty.orderedMap();
 						m = m.plus(arch, newVertex);
 						new AddMappings(context, m).execute();
 					}
