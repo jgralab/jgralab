@@ -34,12 +34,11 @@
  */
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
-import org.pcollections.ArrayPMap;
-import org.pcollections.ArrayPVector;
 import org.pcollections.PMap;
 import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
@@ -66,8 +65,8 @@ public class MapConstructionEvaluator extends VertexEvaluator {
 
 	@Override
 	public Object evaluate() {
-		PMap<Object, Object> map = ArrayPMap.empty();
-		PVector<Object> keys = ArrayPVector.empty();
+		PMap<Object, Object> map = JGraLab.map();
+		PVector<Object> keys = JGraLab.vector();
 		for (IsKeyExprOfConstruction e : mapConstruction
 				.getIsKeyExprOfConstructionIncidences(EdgeDirection.IN)) {
 			Vertex exp = e.getAlpha();
@@ -75,7 +74,7 @@ public class MapConstructionEvaluator extends VertexEvaluator {
 			keys = keys.plus(expEval.getResult());
 		}
 
-		PVector<Object> values = ArrayPVector.empty();
+		PVector<Object> values = JGraLab.vector();
 		for (IsValueExprOfConstruction e : mapConstruction
 				.getIsValueExprOfConstructionIncidences(EdgeDirection.IN)) {
 			Vertex exp = e.getAlpha();

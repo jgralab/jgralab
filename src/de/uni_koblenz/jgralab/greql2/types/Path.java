@@ -2,12 +2,12 @@ package de.uni_koblenz.jgralab.greql2.types;
 
 import java.util.HashSet;
 
-import org.pcollections.ArrayPVector;
 import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphElement;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 
 public class Path {
@@ -24,14 +24,14 @@ public class Path {
 			throw new IllegalArgumentException(
 					"The vertex must be != null and valid");
 		}
-		ArrayPVector<Vertex> vs = ArrayPVector.empty();
-		ArrayPVector<Edge> es = ArrayPVector.empty();
+		PVector<Vertex> vs = JGraLab.vector();
+		PVector<Edge> es = JGraLab.vector();
 		return new Path(vs.plus(v), es);
 	}
 
 	public Path reverse() {
-		PVector<Vertex> vs = ArrayPVector.empty();
-		PVector<Edge> es = ArrayPVector.empty();
+		PVector<Vertex> vs = JGraLab.vector();
+		PVector<Edge> es = JGraLab.vector();
 		for (int i = vs.size() - 1; i >= 0; --i) {
 			vs = vs.plus(vertices.get(i));
 		}

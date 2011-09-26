@@ -46,12 +46,12 @@ import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.Set;
 
-import org.pcollections.ArrayPSet;
 import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
 
@@ -125,7 +125,7 @@ public class Slice {
 		datagraph = graph;
 		keyToEntryMap = new HashMap<PathSystemKey, List<PathSystemEntry>>();
 		vertexToFirstKeyMap = new HashMap<Vertex, PathSystemKey>();
-		sliCritVertices = ArrayPSet.empty();
+		sliCritVertices = JGraLab.set();
 
 	}
 
@@ -243,7 +243,7 @@ public class Slice {
 	 */
 	public PSet<Vertex> parents(PathSystemKey key) {
 		clearPathSystem();
-		PSet<Vertex> resultSet = ArrayPSet.empty();
+		PSet<Vertex> resultSet = JGraLab.set();
 
 		for (PathSystemEntry entry : keyToEntryMap.get(key)) {
 			resultSet = resultSet.plus(entry.getParentVertex());
@@ -257,7 +257,7 @@ public class Slice {
 	 */
 	public PSet<Edge> getEdges() {
 		clearPathSystem();
-		PSet<Edge> resultSet = ArrayPSet.empty();
+		PSet<Edge> resultSet = JGraLab.set();
 		for (Map.Entry<PathSystemKey, List<PathSystemEntry>> mapEntry : keyToEntryMap
 				.entrySet()) {
 			for (PathSystemEntry thisEntry : mapEntry.getValue()) {
@@ -295,7 +295,7 @@ public class Slice {
 	 */
 	public PSet<Vertex> getVertices() {
 		clearPathSystem();
-		PSet<Vertex> resultSet = ArrayPSet.empty();
+		PSet<Vertex> resultSet = JGraLab.set();
 		for (PathSystemKey mapKey : keyToEntryMap.keySet()) {
 			resultSet = resultSet.plus(mapKey.getVertex());
 		}
@@ -310,7 +310,7 @@ public class Slice {
 	 */
 	public PSet<Vertex> getLeaves() {
 		clearPathSystem();
-		PSet<Vertex> leaves = ArrayPSet.empty();
+		PSet<Vertex> leaves = JGraLab.set();
 		if (leafKeys == null) {
 			createLeafKeys();
 		}

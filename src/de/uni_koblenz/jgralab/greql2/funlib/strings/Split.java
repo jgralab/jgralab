@@ -3,9 +3,9 @@ package de.uni_koblenz.jgralab.greql2.funlib.strings;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.pcollections.ArrayPVector;
 import org.pcollections.PVector;
 
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class Split extends Function {
@@ -22,7 +22,7 @@ public class Split extends Function {
 			ReMatch.patternCache.put(regex, pat);
 		}
 		String[] parts = pat.split(s);
-		PVector<String> result = ArrayPVector.empty();
+		PVector<String> result = JGraLab.vector();
 		for (String part : parts) {
 			result = result.plus(part);
 		}

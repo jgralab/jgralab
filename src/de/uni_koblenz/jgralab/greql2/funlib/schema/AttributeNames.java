@@ -1,9 +1,9 @@
 package de.uni_koblenz.jgralab.greql2.funlib.schema;
 
-import org.pcollections.ArrayPSet;
 import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.AttributedElement;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
@@ -17,7 +17,7 @@ public class AttributeNames extends Function {
 	}
 
 	public PSet<String> evaluate(AttributedElementClass cls) {
-		PSet<String> result = ArrayPSet.empty();
+		PSet<String> result = JGraLab.set();
 		for (Attribute a : cls.getAttributeList()) {
 			result = result.plus(a.getName());
 		}

@@ -799,15 +799,15 @@ public class TransactionImplTest {
 
 		c1Impl.set_testEnum(TestEnum.Test1);
 
-		PVector<TestRecord> tl = ArrayPVector.empty();
+		PVector<TestRecord> tl = JGraLab.vector();
 		c1Impl.set_testList(tl);
 
-		PVector<String> list = ArrayPVector.empty();
+		PVector<String> list = JGraLab.vector();
 
-		PMap<String, String> map = ArrayPMap.empty();
+		PMap<String, String> map = JGraLab.map();
 		c1Impl.set_testMap(map);
 
-		PSet<String> set = ArrayPSet.empty();
+		PSet<String> set = JGraLab.set();
 		c1Impl.set_testSet(set);
 
 		c1Impl.set_testRecord(new TestRecord("test", list, set, 2, 2D, 2L,

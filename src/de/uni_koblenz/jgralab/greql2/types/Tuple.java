@@ -3,9 +3,10 @@ package de.uni_koblenz.jgralab.greql2.types;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.pcollections.ArrayPVector;
 import org.pcollections.PCollection;
 import org.pcollections.PVector;
+
+import de.uni_koblenz.jgralab.JGraLab;
 
 public class Tuple implements PCollection<Object> {
 	private PVector<Object> entries;
@@ -13,7 +14,7 @@ public class Tuple implements PCollection<Object> {
 	private static Tuple empty = new Tuple();
 
 	private Tuple() {
-		entries = ArrayPVector.empty();
+		entries = JGraLab.vector();
 	}
 
 	private Tuple(PVector<Object> e) {

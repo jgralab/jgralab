@@ -697,7 +697,7 @@ public class GXL2Tg {
 		}
 		PVector<String> constants = enumDomain.get_enumConstants();
 		if (constants == null) {
-			constants = ArrayPVector.empty();
+			constants = JGraLab.vector();
 			enumDomain.set_enumConstants(constants);
 		}
 		constants = constants.plus(enumConstant);

@@ -4,10 +4,10 @@ import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 
 import org.pcollections.ArrayPMap;
-import org.pcollections.ArrayPSet;
 import org.pcollections.PMap;
 import org.pcollections.PSet;
 
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class EntrySet extends Function {
@@ -18,9 +18,9 @@ public class EntrySet extends Function {
 	}
 
 	public <K, V> PSet<PMap<String, Object>> evaluate(PMap<K, V> map) {
-		PSet<PMap<String, Object>> result = ArrayPSet.empty();
+		PSet<PMap<String, Object>> result = JGraLab.set();
 		for (SimpleImmutableEntry<K, V> e : (ArrayPMap<K, V>) map) {
-			PMap<String, Object> entry = ArrayPMap.empty();
+			PMap<String, Object> entry = JGraLab.map();
 			entry = entry.plus("key", e.getKey()).plus("value", e.getValue());
 			result = result.plus(entry);
 		}

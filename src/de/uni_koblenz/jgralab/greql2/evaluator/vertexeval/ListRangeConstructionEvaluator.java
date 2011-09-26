@@ -35,10 +35,10 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
-import org.pcollections.ArrayPVector;
 import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
@@ -96,7 +96,7 @@ public class ListRangeConstructionEvaluator extends VertexEvaluator {
 
 	@Override
 	public PVector<Integer> evaluate() {
-		PVector<Integer> resultList = ArrayPVector.empty();
+		PVector<Integer> resultList = JGraLab.vector();
 		if (firstElementEvaluator == null) {
 			getEvals();
 		}

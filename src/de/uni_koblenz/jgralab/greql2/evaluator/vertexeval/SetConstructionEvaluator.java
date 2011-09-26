@@ -35,8 +35,7 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
-import org.pcollections.ArrayPSet;
-
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
@@ -56,7 +55,7 @@ public class SetConstructionEvaluator extends ValueConstructionEvaluator {
 
 	@Override
 	public Object evaluate() {
-		return createValue(ArrayPSet.empty());
+		return createValue(JGraLab.set());
 	}
 
 	@Override

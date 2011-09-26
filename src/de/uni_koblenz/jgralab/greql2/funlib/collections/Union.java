@@ -7,6 +7,7 @@ import org.pcollections.ArrayPSet;
 import org.pcollections.PMap;
 import org.pcollections.PSet;
 
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class Union extends Function {
@@ -23,13 +24,13 @@ public class Union extends Function {
 			if (a instanceof ArrayPSet) {
 				return a;
 			} else {
-				return ArrayPSet.empty();
+				return JGraLab.set();
 			}
 		} else {
 			if (a instanceof ArrayPSet) {
 				return ((ArrayPSet<T>) a).plusAll(b);
 			} else {
-				PSet<T> result = ArrayPSet.empty();
+				PSet<T> result = JGraLab.set();
 				return result.plusAll(a).plusAll(b);
 			}
 		}
@@ -40,13 +41,13 @@ public class Union extends Function {
 			if (a instanceof ArrayPMap) {
 				return a;
 			} else {
-				return ArrayPMap.empty();
+				return JGraLab.map();
 			}
 		} else {
 			if (a instanceof ArrayPMap) {
 				return ((ArrayPMap<K, V>) a).plusAll(b);
 			} else {
-				PMap<K, V> result = ArrayPMap.empty();
+				PMap<K, V> result = JGraLab.map();
 				return result.plusAll(a).plusAll(b);
 			}
 

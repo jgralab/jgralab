@@ -37,10 +37,10 @@ package de.uni_koblenz.jgralab.greql2.evaluator;
 
 import java.util.Iterator;
 
-import org.pcollections.ArrayPSet;
 import org.pcollections.PSet;
 import org.pcollections.PVector;
 
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VariableEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
@@ -102,7 +102,7 @@ public class VariableDeclaration {
 			GreqlEvaluator eval) {
 		variableEval = (VariableEvaluator) definitionSetEvaluator
 				.getVertexEvalMarker().getMark(var);
-		definitionSet = ArrayPSet.empty();
+		definitionSet = JGraLab.set();
 		this.definitionSetEvaluator = definitionSetEvaluator;
 	}
 
@@ -158,8 +158,7 @@ public class VariableDeclaration {
 		Object tempAttribute = definitionSetEvaluator.getResult();
 		if (tempAttribute instanceof PVector) {
 			PVector<?> col = (PVector<?>) tempAttribute;
-			definitionSet = ArrayPSet.empty();
-			definitionSet = definitionSet.plusAll(col);
+			definitionSet = JGraLab.set().plusAll(col);
 			if (col.size() > definitionSet.size()) {
 				throw new GreqlException(
 						"A collection that doesn't fulfill the set property is used as variable range definition");
@@ -170,8 +169,7 @@ public class VariableDeclaration {
 			PSet<Object> s = (PSet<Object>) tempAttribute;
 			definitionSet = s;
 		} else {
-			definitionSet = ArrayPSet.empty();
-			definitionSet = definitionSet.plus(tempAttribute);
+			definitionSet = JGraLab.set().plus(tempAttribute);
 		}
 		iter = definitionSet.iterator();
 	}

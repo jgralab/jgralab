@@ -7,6 +7,7 @@ import org.pcollections.ArrayPVector;
 import org.pcollections.PCollection;
 import org.pcollections.PVector;
 
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 import de.uni_koblenz.jgralab.greql2.types.Tuple;
 
@@ -27,13 +28,13 @@ public class Sort extends Function {
 			if (l instanceof ArrayPVector) {
 				return (PVector<T>) l;
 			} else {
-				return ArrayPVector.empty();
+				return JGraLab.vector();
 			}
 		} else {
 			Object[] sorted = new Object[l.size()];
 			l.toArray(sorted);
 			Arrays.sort(sorted);
-			PVector<T> result = ArrayPVector.empty();
+			PVector<T> result = JGraLab.vector();
 			for (Object x : sorted) {
 				result = result.plus((T) x);
 			}

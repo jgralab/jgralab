@@ -35,9 +35,9 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
-import org.pcollections.ArrayPSet;
 import org.pcollections.PCollection;
 
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
@@ -80,7 +80,7 @@ public class SetComprehensionEvaluator extends ComprehensionEvaluator {
 
 	@Override
 	protected PCollection<Object> getResultDatastructure() {
-		return ArrayPSet.empty();
+		return JGraLab.set();
 	}
 
 	@Override

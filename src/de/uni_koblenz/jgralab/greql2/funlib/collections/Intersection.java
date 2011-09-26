@@ -2,9 +2,9 @@ package de.uni_koblenz.jgralab.greql2.funlib.collections;
 
 import java.util.ArrayList;
 
-import org.pcollections.ArrayPSet;
 import org.pcollections.PSet;
 
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class Intersection extends Function {
@@ -15,10 +15,10 @@ public class Intersection extends Function {
 	}
 
 	public <T> PSet<T> evaluate(PSet<T> a, PSet<T> b) {
+		PSet<T> result = JGraLab.set();
 		if (a.isEmpty() || b.isEmpty()) {
-			return ArrayPSet.empty();
+			return result;
 		}
-		PSet<T> result = ArrayPSet.empty();
 		if (b.size() < a.size()) {
 			for (T x : a) {
 				if (b.contains(x)) {
