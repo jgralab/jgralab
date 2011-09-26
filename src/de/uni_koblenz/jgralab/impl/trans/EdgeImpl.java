@@ -133,7 +133,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 	}
 
 	@Override
-	protected VertexBaseImpl getIncidentVertex() {
+	public VertexBase getIncidentVertex() {
 		if (incidentVertex == null) {
 			return null;
 		}
@@ -183,7 +183,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 	}
 
 	@Override
-	protected void setNextEdgeInGraph(Edge nextEdge) {
+	public void setNextEdgeInGraph(Edge nextEdge) {
 		// graph loading -> new initialization...
 		if (graph.isLoading()) {
 			this.nextEdge = new VersionedReferenceImpl<EdgeImpl>(this,
@@ -215,7 +215,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 	}
 
 	@Override
-	protected void setPrevEdgeInGraph(Edge prevEdge) {
+	public void setPrevEdgeInGraph(Edge prevEdge) {
 		// graph loading -> new initialization...
 		if (graph.isLoading()) {
 			this.prevEdge = new VersionedReferenceImpl<EdgeImpl>(this,
@@ -247,26 +247,28 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 	}
 
 	@Override
-	protected void setIncidentVertex(VertexBaseImpl v) {
+	public void setIncidentVertex(Vertex v) {
 		// graph loading -> new initialization...
 		if (graph.isLoading()) {
-			incidentVertex = new VersionedReferenceImpl<VertexBaseImpl>(this, v);
+			incidentVertex = new VersionedReferenceImpl<VertexBaseImpl>(this,
+					(VertexBaseImpl) v);
 		} else {
 			// initialization here
 			if (incidentVertex == null) {
 				incidentVertex = new VersionedReferenceImpl<VertexBaseImpl>(
 						this);
 			}
-			incidentVertex.setValidValue(v, graph.getCurrentTransaction());
+			incidentVertex.setValidValue((VertexBaseImpl) v, graph
+					.getCurrentTransaction());
 		}
 	}
 
 	@Override
-	protected void setNextIncidenceInternal(IncidenceImpl nextIncidence) {
+	public void setNextIncidenceInternal(EdgeBase nextIncidence) {
 		// graph loading -> new initialization...
 		if (graph.isLoading()) {
 			this.nextIncidence = new VersionedReferenceImpl<IncidenceImpl>(
-					this, nextIncidence);
+					this, (IncidenceImpl) nextIncidence);
 		} else {
 			TransactionImpl transaction = (TransactionImpl) graph
 					.getCurrentTransaction();
@@ -294,17 +296,17 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 				this.nextIncidence = new VersionedReferenceImpl<IncidenceImpl>(
 						this);
 			}
-			this.nextIncidence.setValidValue(nextIncidence, transaction,
-					explicitChange);
+			this.nextIncidence.setValidValue((IncidenceImpl) nextIncidence,
+					transaction, explicitChange);
 		}
 	}
 
 	@Override
-	protected void setPrevIncidenceInternal(IncidenceImpl prevIncidence) {
+	public void setPrevIncidenceInternal(EdgeBase prevIncidence) {
 		// graph loading -> new initialization...
 		if (graph.isLoading()) {
 			this.prevIncidence = new VersionedReferenceImpl<IncidenceImpl>(
-					this, prevIncidence);
+					this, (IncidenceImpl) prevIncidence);
 		} else {
 			TransactionImpl transaction = (TransactionImpl) graph
 					.getCurrentTransaction();
@@ -332,8 +334,8 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 				this.prevIncidence = new VersionedReferenceImpl<IncidenceImpl>(
 						this);
 			}
-			this.prevIncidence.setValidValue(prevIncidence, transaction,
-					explicitChange);
+			this.prevIncidence.setValidValue((IncidenceImpl) prevIncidence,
+					transaction, explicitChange);
 		}
 	}
 

@@ -118,16 +118,6 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 		return getPrevBaseEdge();
 	}
 
-	/**
-	 * @param nextEdge
-	 */
-	abstract protected void setNextEdgeInGraph(Edge nextEdge);
-
-	/**
-	 * @param prevEdge
-	 */
-	abstract protected void setPrevEdgeInGraph(Edge prevEdge);
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -344,7 +334,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 		assert alphaBase.isValid();
 		assert getGraph() == alphaBase.getGraph();
 
-		VertexBaseImpl oldAlpha = getIncidentVertex();
+		VertexBase oldAlpha = getIncidentVertex();
 
 		if (!graph.isLoading()) {
 			graph.getECARuleManager().fireBeforeChangeAlphaOfEdgeEvents(this,
@@ -388,7 +378,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 		assert omegaBase.isValid();
 		assert getGraph() == omegaBase.getGraph();
 
-		VertexBaseImpl oldOmgea = reversedEdge.getIncidentVertex();
+		VertexBase oldOmgea = reversedEdge.getIncidentVertex();
 
 		if (!graph.isLoading()) {
 			graph.getECARuleManager().fireBeforeChangeOmegaOfEdgeEvents(this,

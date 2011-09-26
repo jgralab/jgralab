@@ -36,7 +36,7 @@ package de.uni_koblenz.jgralab.impl.std;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.impl.IncidenceImpl;
+import de.uni_koblenz.jgralab.impl.EdgeBase;
 import de.uni_koblenz.jgralab.impl.VertexBase;
 
 /**
@@ -47,10 +47,10 @@ import de.uni_koblenz.jgralab.impl.VertexBase;
  */
 public abstract class VertexImpl extends
 		de.uni_koblenz.jgralab.impl.VertexBaseImpl {
-	private VertexImpl nextVertex;
-	private VertexImpl prevVertex;
-	private IncidenceImpl firstIncidence;
-	private IncidenceImpl lastIncidence;
+	private VertexBase nextVertex;
+	private VertexBase prevVertex;
+	private EdgeBase firstIncidence;
+	private EdgeBase lastIncidence;
 
 	/**
 	 * holds the version of the vertex structure, for every modification of the
@@ -73,37 +73,37 @@ public abstract class VertexImpl extends
 	}
 
 	@Override
-	protected IncidenceImpl getFirstIncidenceInternal() {
+	public EdgeBase getFirstBaseIncidence() {
 		return firstIncidence;
 	}
 
 	@Override
-	protected IncidenceImpl getLastIncidenceInternal() {
+	public EdgeBase getLastBaseIncidence() {
 		return lastIncidence;
 	}
 
 	@Override
-	protected void setNextVertex(Vertex nextVertex) {
+	public void setNextVertex(Vertex nextVertex) {
 		this.nextVertex = (VertexImpl) nextVertex;
 	}
 
 	@Override
-	protected void setPrevVertex(Vertex prevVertex) {
+	public void setPrevVertex(Vertex prevVertex) {
 		this.prevVertex = (VertexImpl) prevVertex;
 	}
 
 	@Override
-	protected void setFirstIncidence(IncidenceImpl firstIncidence) {
+	public void setFirstIncidence(EdgeBase firstIncidence) {
 		this.firstIncidence = firstIncidence;
 	}
 
 	@Override
-	protected void setLastIncidence(IncidenceImpl lastIncidence) {
+	public void setLastIncidence(EdgeBase lastIncidence) {
 		this.lastIncidence = lastIncidence;
 	}
 
 	@Override
-	protected void setIncidenceListVersion(long incidenceListVersion) {
+	public void setIncidenceListVersion(long incidenceListVersion) {
 		this.incidenceListVersion = incidenceListVersion;
 	}
 

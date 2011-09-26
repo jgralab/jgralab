@@ -47,6 +47,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.impl.EdgeBase;
 import de.uni_koblenz.jgralab.impl.IncidenceImpl;
 import de.uni_koblenz.jgralab.impl.VertexBase;
 import de.uni_koblenz.jgralab.schema.Attribute;
@@ -110,7 +111,7 @@ public abstract class VertexImpl extends
 	}
 
 	@Override
-	protected IncidenceImpl getFirstIncidenceInternal() {
+	public EdgeBase getFirstBaseIncidence() {
 		if (firstIncidence == null) {
 			return null;
 		}
@@ -120,7 +121,7 @@ public abstract class VertexImpl extends
 	}
 
 	@Override
-	protected IncidenceImpl getLastIncidenceInternal() {
+	public IncidenceImpl getLastBaseIncidence() {
 		if (lastIncidence == null) {
 			return null;
 		}
@@ -170,41 +171,41 @@ public abstract class VertexImpl extends
 	}
 
 	@Override
-	protected void setFirstIncidence(IncidenceImpl firstIncidence) {
+	public void setFirstIncidence(EdgeBase firstIncidence) {
 		// graph loading -> new initialization...
 		if (graph.isLoading()) {
 			this.firstIncidence = new VersionedReferenceImpl<IncidenceImpl>(
-					this, firstIncidence);
+					this, (IncidenceImpl) firstIncidence);
 		} else {
 			// initialize here
 			if (this.firstIncidence == null) {
 				this.firstIncidence = new VersionedReferenceImpl<IncidenceImpl>(
 						this);
 			}
-			this.firstIncidence.setValidValue(firstIncidence, graph
-					.getCurrentTransaction());
+			this.firstIncidence.setValidValue((IncidenceImpl) firstIncidence,
+					graph.getCurrentTransaction());
 		}
 	}
 
 	@Override
-	protected void setLastIncidence(IncidenceImpl lastIncidence) {
+	public void setLastIncidence(EdgeBase lastIncidence) {
 		// graph loading -> new initialization...
 		if (graph.isLoading()) {
 			this.lastIncidence = new VersionedReferenceImpl<IncidenceImpl>(
-					this, lastIncidence);
+					this, (IncidenceImpl) lastIncidence);
 		} else {
 			// initialize here
 			if (this.lastIncidence == null) {
 				this.lastIncidence = new VersionedReferenceImpl<IncidenceImpl>(
 						this);
 			}
-			this.lastIncidence.setValidValue(lastIncidence, graph
-					.getCurrentTransaction());
+			this.lastIncidence.setValidValue((IncidenceImpl) lastIncidence,
+					graph.getCurrentTransaction());
 		}
 	}
 
 	@Override
-	protected void setNextVertex(Vertex nextVertex) {
+	public void setNextVertex(Vertex nextVertex) {
 		// graph loading -> new initialization...
 		if (graph.isLoading()) {
 			this.nextVertex = new VersionedReferenceImpl<VertexImpl>(this,
@@ -235,7 +236,7 @@ public abstract class VertexImpl extends
 	}
 
 	@Override
-	protected void setPrevVertex(Vertex prevVertex) {
+	public void setPrevVertex(Vertex prevVertex) {
 		// graph loading -> new initialization...
 		if (graph.isLoading()) {
 			this.prevVertex = new VersionedReferenceImpl<VertexImpl>(this,
@@ -266,7 +267,7 @@ public abstract class VertexImpl extends
 	}
 
 	@Override
-	protected void setIncidenceListVersion(long incidenceListVersion) {
+	public void setIncidenceListVersion(long incidenceListVersion) {
 		// initialize here
 		if (this.incidenceListVersion == null) {
 			this.incidenceListVersion = new VersionedReferenceImpl<Long>(this);
@@ -289,8 +290,8 @@ public abstract class VertexImpl extends
 	}
 
 	@Override
-	protected void putIncidenceBefore(IncidenceImpl targetIncidence,
-			IncidenceImpl movedIncidence) {
+	public void putIncidenceBefore(EdgeBase targetIncidence,
+			EdgeBase movedIncidence) {
 		TransactionImpl transaction = (TransactionImpl) graph
 				.getCurrentTransaction();
 		if (transaction == null) {
@@ -338,14 +339,16 @@ public abstract class VertexImpl extends
 						.get(movedIncidence);
 				if (positionsMap == null) {
 					positionsMap = new HashMap<ListPosition, Boolean>(1, 0.2f);
-					changedIncidences.put(movedIncidence, positionsMap);
+					changedIncidences.put((IncidenceImpl) movedIncidence,
+							positionsMap);
 				}
 				positionsMap.put(ListPosition.NEXT, true);
 				// targetIncidence
 				positionsMap = changedIncidences.get(targetIncidence);
 				if (positionsMap == null) {
 					positionsMap = new HashMap<ListPosition, Boolean>(1, 0.2f);
-					changedIncidences.put(targetIncidence, positionsMap);
+					changedIncidences.put((IncidenceImpl) targetIncidence,
+							positionsMap);
 				}
 				positionsMap.put(ListPosition.PREV, false);
 			}
@@ -353,8 +356,8 @@ public abstract class VertexImpl extends
 	}
 
 	@Override
-	protected void putIncidenceAfter(IncidenceImpl targetIncidence,
-			IncidenceImpl movedIncidence) {
+	public void putIncidenceAfter(EdgeBase targetIncidence,
+			EdgeBase movedIncidence) {
 		TransactionImpl transaction = (TransactionImpl) graph
 				.getCurrentTransaction();
 		if (transaction == null) {
@@ -402,14 +405,16 @@ public abstract class VertexImpl extends
 						.get(movedIncidence);
 				if (positionsMap == null) {
 					positionsMap = new HashMap<ListPosition, Boolean>(1, 0.2f);
-					changedIncidences.put(movedIncidence, positionsMap);
+					changedIncidences.put((IncidenceImpl) movedIncidence,
+							positionsMap);
 				}
 				positionsMap.put(ListPosition.PREV, true);
 				// targetIncidence
 				positionsMap = changedIncidences.get(targetIncidence);
 				if (positionsMap == null) {
 					positionsMap = new HashMap<ListPosition, Boolean>(1, 0.2f);
-					changedIncidences.put(targetIncidence, positionsMap);
+					changedIncidences.put((IncidenceImpl) targetIncidence,
+							positionsMap);
 				}
 				positionsMap.put(ListPosition.NEXT, false);
 			}

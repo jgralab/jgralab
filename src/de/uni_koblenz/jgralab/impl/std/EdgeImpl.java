@@ -38,8 +38,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.EdgeBase;
-import de.uni_koblenz.jgralab.impl.IncidenceImpl;
-import de.uni_koblenz.jgralab.impl.VertexBaseImpl;
+import de.uni_koblenz.jgralab.impl.VertexBase;
 
 /**
  * The implementation of an <code>Edge</code> accessing attributes without
@@ -49,15 +48,15 @@ import de.uni_koblenz.jgralab.impl.VertexBaseImpl;
  */
 public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl {
 	// global edge sequence
-	private EdgeImpl nextEdge;
-	private EdgeImpl prevEdge;
+	private EdgeBase nextEdge;
+	private EdgeBase prevEdge;
 
 	// the this-vertex
-	private VertexBaseImpl incidentVertex;
+	private VertexBase incidentVertex;
 
 	// incidence list
-	private IncidenceImpl nextIncidence;
-	private IncidenceImpl prevIncidence;
+	private EdgeBase nextIncidence;
+	private EdgeBase prevIncidence;
 
 	@Override
 	public EdgeBase getNextBaseEdge() {
@@ -72,42 +71,42 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl 
 	}
 
 	@Override
-	protected VertexBaseImpl getIncidentVertex() {
+	public VertexBase getIncidentVertex() {
 		return incidentVertex;
 	}
 
 	@Override
-	public IncidenceImpl getNextBaseIncidence() {
+	public EdgeBase getNextBaseIncidence() {
 		return nextIncidence;
 	}
 
 	@Override
-	public IncidenceImpl getPrevBaseIncidence() {
+	public EdgeBase getPrevBaseIncidence() {
 		return prevIncidence;
 	}
 
 	@Override
-	protected void setNextEdgeInGraph(Edge nextEdge) {
-		this.nextEdge = (EdgeImpl) nextEdge;
+	public void setNextEdgeInGraph(Edge nextEdge) {
+		this.nextEdge = (EdgeBase) nextEdge;
 	}
 
 	@Override
-	protected void setPrevEdgeInGraph(Edge prevEdge) {
-		this.prevEdge = (EdgeImpl) prevEdge;
+	public void setPrevEdgeInGraph(Edge prevEdge) {
+		this.prevEdge = (EdgeBase) prevEdge;
 	}
 
 	@Override
-	protected void setIncidentVertex(VertexBaseImpl v) {
-		incidentVertex = v;
+	public void setIncidentVertex(Vertex v) {
+		incidentVertex = (VertexBase) v;
 	}
 
 	@Override
-	protected void setNextIncidenceInternal(IncidenceImpl nextIncidence) {
+	public void setNextIncidenceInternal(EdgeBase nextIncidence) {
 		this.nextIncidence = nextIncidence;
 	}
 
 	@Override
-	protected void setPrevIncidenceInternal(IncidenceImpl prevIncidence) {
+	public void setPrevIncidenceInternal(EdgeBase prevIncidence) {
 		this.prevIncidence = prevIncidence;
 	}
 
