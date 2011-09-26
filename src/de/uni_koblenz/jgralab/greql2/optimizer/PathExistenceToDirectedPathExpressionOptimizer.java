@@ -49,7 +49,6 @@ import de.uni_koblenz.jgralab.EdgeBase;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.VertexBase;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql2.funlib.Intersection;
@@ -135,7 +134,7 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 			lit.set_boolValue(true);
 			while (pe.getFirstIncidence(EdgeDirection.OUT) != null) {
 				EdgeBase e = (EdgeBase) pe.getFirstIncidence(EdgeDirection.OUT);
-				e.setAlpha((VertexBase) lit);
+				e.setAlpha(lit);
 				assert e.getAlpha() == lit;
 			}
 			pe.delete();

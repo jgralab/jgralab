@@ -42,7 +42,6 @@ import java.util.Set;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
-import de.uni_koblenz.jgralab.schema.impl.DirectedM1EdgeClass;
 
 /**
  * represents a vertex, m1 classes inherit from this class

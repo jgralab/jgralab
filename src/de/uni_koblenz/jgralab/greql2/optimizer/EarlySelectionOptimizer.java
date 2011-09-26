@@ -54,7 +54,6 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.VertexBase;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
@@ -329,7 +328,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 		syntaxgraph.createIsCompDeclOf(newInnerDecl, newInnerCompr);
 		syntaxgraph.createIsCompResultDefOf(newOuterRecord, newInnerCompr);
 		((EdgeBase) origSD.getFirstIsSimpleDeclOfIncidence(EdgeDirection.OUT))
-				.setOmega((VertexBase) newInnerDecl);
+				.setOmega(newInnerDecl);
 
 		Expression newCombinedConstraint = createConjunction(
 				new ArrayList<Expression>(predicates), new HashSet<Variable>());
@@ -357,7 +356,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 			// funApp
 			for (EdgeBase edge : e.getValue()) {
 				if (edge.isValid()) {
-					edge.setAlpha((VertexBase) funApp);
+					edge.setAlpha(funApp);
 					assert edge.getAlpha() == funApp;
 				}
 			}
@@ -392,7 +391,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 
 		// Connect the edges
 		((EdgeBase) origSD.getFirstIsTypeExprOfIncidence(EdgeDirection.IN))
-				.setOmega((VertexBase) newInnerSD);
+				.setOmega(newInnerSD);
 		syntaxgraph.createIsTypeExprOfDeclaration(newSetComp, origSD);
 		syntaxgraph.createIsCompDeclOf(newDecl, newSetComp);
 		syntaxgraph.createIsSimpleDeclOf(newInnerSD, newDecl);
@@ -453,7 +452,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 				funAppEdges.add((EdgeBase) funAppEdge);
 			}
 			for (EdgeBase fae : funAppEdges) {
-				fae.setAlpha((VertexBase) otherArg);
+				fae.setAlpha(otherArg);
 			}
 			OptimizerUtility.deleteOrphanedVerticesBelow(funApp,
 					new HashSet<Vertex>());

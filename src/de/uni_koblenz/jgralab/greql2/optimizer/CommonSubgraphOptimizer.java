@@ -44,7 +44,6 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeBase;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.VertexBase;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
@@ -271,7 +270,7 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 			EdgeBase firstIncidence = (EdgeBase) higherVertex
 					.getFirstIncidence(EdgeDirection.OUT);
 			while (firstIncidence != null) {
-				firstIncidence.setAlpha((VertexBase) lowerVertex);
+				firstIncidence.setAlpha(lowerVertex);
 			}
 			higherVertex.delete();
 		}

@@ -40,7 +40,6 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeBase;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.VertexBase;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 
@@ -331,7 +330,7 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 	 * @see de.uni_koblenz.jgralab.Edge#setAlpha(de.uni_koblenz.jgralab.Vertex)
 	 */
 	@Override
-	public void setAlpha(VertexBase alpha) {
+	public void setAlpha(Vertex alpha) {
 		normalEdge.setAlpha(alpha);
 	}
 
@@ -341,7 +340,7 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 	 * @see de.uni_koblenz.jgralab.Edge#setOmega(de.uni_koblenz.jgralab.Vertex)
 	 */
 	@Override
-	public void setOmega(VertexBase omega) {
+	public void setOmega(Vertex omega) {
 		normalEdge.setOmega(omega);
 	}
 
@@ -351,7 +350,7 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 	 * @see de.uni_koblenz.jgralab.Edge#setThat(de.uni_koblenz.jgralab.Vertex)
 	 */
 	@Override
-	public void setThat(VertexBase v) {
+	public void setThat(Vertex v) {
 		normalEdge.setAlpha(v);
 	}
 
@@ -361,7 +360,7 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 	 * @see de.uni_koblenz.jgralab.Edge#setThis(de.uni_koblenz.jgralab.Vertex)
 	 */
 	@Override
-	public void setThis(VertexBase v) {
+	public void setThis(Vertex v) {
 		normalEdge.setOmega(v);
 	}
 

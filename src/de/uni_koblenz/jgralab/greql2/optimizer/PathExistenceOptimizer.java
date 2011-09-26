@@ -46,7 +46,6 @@ import java.util.logging.Logger;
 import de.uni_koblenz.jgralab.EdgeBase;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.VertexBase;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql2.funlib.Contains;
@@ -270,7 +269,7 @@ public class PathExistenceOptimizer extends OptimizerBase {
 		syntaxgraph.createIsArgumentOf(vertexSet, contains);
 		syntaxgraph.createIsArgumentOf(otherExp, contains);
 		for (EdgeBase edge : edgesToRelink) {
-			edge.setAlpha((VertexBase) contains);
+			edge.setAlpha(contains);
 		}
 		pe.delete();
 	}

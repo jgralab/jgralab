@@ -330,40 +330,41 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 	 * @see de.uni_koblenz.jgralab.Edge#setAlpha(de.uni_koblenz.jgralab.Vertex)
 	 */
 	@Override
-	public void setAlpha(VertexBase alpha) {
+	public void setAlpha(Vertex alpha) {
+		VertexBase alphaBase = (VertexBase) alpha;
 		assert isValid();
-		assert alpha != null;
-		assert alpha.isValid();
-		assert getGraph() == alpha.getGraph();
+		assert alphaBase != null;
+		assert alphaBase.isValid();
+		assert getGraph() == alphaBase.getGraph();
 
 		VertexBaseImpl oldAlpha = getIncidentVertex();
 
 		if (!graph.isLoading()) {
 			graph.getECARuleManager().fireBeforeChangeAlphaOfEdgeEvents(this,
-					oldAlpha, alpha);
+					oldAlpha, alphaBase);
 		}
 
-		if (alpha == oldAlpha) {
+		if (alphaBase == oldAlpha) {
 			return; // nothing to change
 		}
-		if (!alpha.isValidAlpha(this)) {
+		if (!alphaBase.isValidAlpha(this)) {
 			throw new GraphException("Edges of class "
 					+ getAttributedElementClass().getUniqueName()
 					+ " may not start at vertices of class "
-					+ alpha.getAttributedElementClass().getUniqueName());
+					+ alphaBase.getAttributedElementClass().getUniqueName());
 		}
 
 		oldAlpha.removeIncidenceFromLambdaSeq(this);
 		oldAlpha.incidenceListModified();
 
-		VertexBaseImpl newAlpha = (VertexBaseImpl) alpha;
+		VertexBaseImpl newAlpha = (VertexBaseImpl) alphaBase;
 		newAlpha.appendIncidenceToLambdaSeq(this);
 		newAlpha.incidenceListModified();
 		setIncidentVertex(newAlpha);
 
 		if (!graph.isLoading()) {
 			graph.getECARuleManager().fireAfterChangeAlphaOfEdgeEvents(this,
-					oldAlpha, alpha);
+					oldAlpha, alphaBase);
 		}
 	}
 
@@ -373,34 +374,35 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 	 * @see de.uni_koblenz.jgralab.Edge#setOmega(de.uni_koblenz.jgralab.Vertex)
 	 */
 	@Override
-	public void setOmega(VertexBase omega) {
+	public void setOmega(Vertex omega) {
+		VertexBase omegaBase = (VertexBase) omega;
 		assert isValid();
-		assert omega != null;
-		assert omega.isValid();
-		assert getGraph() == omega.getGraph();
+		assert omegaBase != null;
+		assert omegaBase.isValid();
+		assert getGraph() == omegaBase.getGraph();
 
 		VertexBaseImpl oldOmgea = reversedEdge.getIncidentVertex();
 
 		if (!graph.isLoading()) {
 			graph.getECARuleManager().fireBeforeChangeOmegaOfEdgeEvents(this,
-					oldOmgea, omega);
+					oldOmgea, omegaBase);
 		}
 
-		if (omega == oldOmgea) {
+		if (omegaBase == oldOmgea) {
 			return; // nothing to change
 		}
 
-		if (!omega.isValidOmega(this)) {
+		if (!omegaBase.isValidOmega(this)) {
 			throw new GraphException("Edges of class "
 					+ getAttributedElementClass().getUniqueName()
 					+ " may not end at at vertices of class "
-					+ omega.getAttributedElementClass().getUniqueName());
+					+ omegaBase.getAttributedElementClass().getUniqueName());
 		}
 
 		oldOmgea.removeIncidenceFromLambdaSeq(reversedEdge);
 		oldOmgea.incidenceListModified();
 
-		VertexBaseImpl newOmega = (VertexBaseImpl) omega;
+		VertexBaseImpl newOmega = (VertexBaseImpl) omegaBase;
 		newOmega.appendIncidenceToLambdaSeq(reversedEdge);
 		newOmega.incidenceListModified();
 		// TODO Check if this is really needed as
@@ -409,7 +411,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 
 		if (!graph.isLoading()) {
 			graph.getECARuleManager().fireAfterChangeOmegaOfEdgeEvents(this,
-					oldOmgea, omega);
+					oldOmgea, omegaBase);
 		}
 	}
 
@@ -419,7 +421,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 	 * @see de.uni_koblenz.jgralab.Edge#setThat(de.uni_koblenz.jgralab.Vertex)
 	 */
 	@Override
-	public void setThat(VertexBase v) {
+	public void setThat(Vertex v) {
 		assert isValid();
 		assert v != null;
 		assert v.isValid();
@@ -434,7 +436,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 	 * @see de.uni_koblenz.jgralab.Edge#setThis(de.uni_koblenz.jgralab.Vertex)
 	 */
 	@Override
-	public void setThis(VertexBase v) {
+	public void setThis(Vertex v) {
 		assert isValid();
 		assert v != null;
 		assert v.isValid();

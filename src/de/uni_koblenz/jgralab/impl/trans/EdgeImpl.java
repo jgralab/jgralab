@@ -347,7 +347,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 	}
 
 	@Override
-	public void setAlpha(VertexBase alpha) {
+	public void setAlpha(Vertex alpha) {
 		TransactionImpl transaction = (TransactionImpl) graph
 				.getCurrentTransaction();
 		if (transaction == null) {
@@ -396,7 +396,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 	}
 
 	@Override
-	public void setOmega(VertexBase omega) {
+	public void setOmega(Vertex omega) {
 		TransactionImpl transaction = (TransactionImpl) graph
 				.getCurrentTransaction();
 		if (transaction == null) {

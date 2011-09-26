@@ -950,7 +950,7 @@ public class GreqlEvaluator {
 					e = e.getNextIncidence();
 					continue;
 				}
-				((EdgeBase) e).setThis((VertexBase) arg);
+				((EdgeBase) e).setThis(arg);
 				e = bv.getFirstIncidence();
 			}
 		}

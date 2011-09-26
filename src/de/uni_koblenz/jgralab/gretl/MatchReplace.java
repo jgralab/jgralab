@@ -14,7 +14,6 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeBase;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.VertexBase;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueMap;
@@ -222,8 +221,8 @@ public class MatchReplace extends InPlaceTransformation {
 				allModifiedElements.add(e);
 				// setAlpha/Omega are no-ops, if nothing is to be set. So that's
 				// acually cheaper than checking first.
-				e.setAlpha((VertexBase) startVertex);
-				e.setOmega((VertexBase) endVertex);
+				e.setAlpha(startVertex);
+				e.setOmega(endVertex);
 
 				setAttributeValues(e, arch, ce.get_attributes(), ce
 						.is_copyAttributeValues());

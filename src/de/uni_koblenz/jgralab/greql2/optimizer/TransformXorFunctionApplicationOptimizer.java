@@ -40,11 +40,9 @@ package de.uni_koblenz.jgralab.greql2.optimizer;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
-import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeBase;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.VertexBase;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql2.funlib.Xor;
@@ -159,7 +157,7 @@ public class TransformXorFunctionApplicationOptimizer extends OptimizerBase {
 				e = (EdgeBase) e.getNextIncidence(EdgeDirection.OUT);
 			}
 			for (EdgeBase edge : edgesToBeRelinked) {
-				edge.setAlpha((VertexBase) or);
+				edge.setAlpha(or);
 			}
 
 			logger.finer(optimizerHeaderString() + "Transformed " + xor

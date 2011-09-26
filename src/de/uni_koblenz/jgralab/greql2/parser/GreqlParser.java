@@ -50,7 +50,6 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeBase;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.VertexBase;
 import de.uni_koblenz.jgralab.greql2.SerializableGreql2Impl;
 import de.uni_koblenz.jgralab.greql2.exception.ParsingException;
 import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
@@ -2138,8 +2137,7 @@ public class GreqlParser extends ParserHelper {
 			}
 		} while (tryMatch(TokenTypes.COMMA));
 		if (!inPredicateMode() && (tupConstr.getDegree(EdgeDirection.IN) == 1)) {
-			VertexBase v = (VertexBase) tupConstr.getFirstIncidence(
-					EdgeDirection.IN).getAlpha();
+			Vertex v = tupConstr.getFirstIncidence(EdgeDirection.IN).getAlpha();
 			EdgeBase e2 = (EdgeBase) tupConstr
 					.getFirstIncidence(EdgeDirection.OUT);
 			e2.setAlpha(v);

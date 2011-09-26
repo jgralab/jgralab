@@ -237,7 +237,7 @@ public abstract class ParserHelper {
 				EdgeBase e = (EdgeBase) variable
 						.getFirstIncidence(EdgeDirection.OUT);
 				while (e != null) {
-					e.setAlpha((VertexBase) expr);
+					e.setAlpha(expr);
 					e = (EdgeBase) variable
 							.getFirstIncidence(EdgeDirection.OUT);
 				}
@@ -301,7 +301,7 @@ public abstract class ParserHelper {
 				if (var != v) {
 					EdgeBase inc = (EdgeBase) v
 							.getFirstIncidence(EdgeDirection.OUT);
-					inc.setAlpha((VertexBase) var);
+					inc.setAlpha(var);
 					if (v.getDegree() <= 0) {
 						v.delete();
 					}
@@ -682,7 +682,7 @@ public abstract class ParserHelper {
 			} else {
 				while (thisVertex.getFirstIncidence() != null) {
 					EdgeBase e = (EdgeBase) thisVertex.getFirstIncidence();
-					e.setThis((VertexBase) firstThisVertex);
+					e.setThis(firstThisVertex);
 				}
 				literalsToDelete.add(thisVertex);
 			}

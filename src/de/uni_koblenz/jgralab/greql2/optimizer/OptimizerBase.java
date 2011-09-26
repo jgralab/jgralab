@@ -44,7 +44,6 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeBase;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.VertexBase;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
@@ -104,13 +103,13 @@ public abstract class OptimizerBase implements Optimizer {
 		EdgeBase e = (EdgeBase) from.getFirstIncidence(EdgeDirection.IN);
 		while (e != null) {
 			EdgeBase newE = (EdgeBase) e.getNextIncidence(EdgeDirection.IN);
-			e.setOmega((VertexBase) to);
+			e.setOmega(to);
 			e = newE;
 		}
 		e = (EdgeBase) from.getFirstIncidence(EdgeDirection.OUT);
 		while (e != null) {
 			EdgeBase newE = (EdgeBase) e.getNextIncidence(EdgeDirection.OUT);
-			e.setAlpha((VertexBase) to);
+			e.setAlpha(to);
 			e = newE;
 		}
 	}
@@ -291,7 +290,7 @@ public abstract class OptimizerBase implements Optimizer {
 				inc = inc.getNextIsDeclaredVarOf(EdgeDirection.IN);
 			}
 			for (IsDeclaredVarOf relinkEdge : relinkIncs) {
-				((EdgeBase) relinkEdge).setOmega((VertexBase) newSD);
+				((EdgeBase) relinkEdge).setOmega(newSD);
 			}
 		}
 		return newSD;
