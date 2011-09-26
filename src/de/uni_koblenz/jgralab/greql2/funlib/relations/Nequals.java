@@ -9,6 +9,14 @@ public class Nequals extends Function {
 				0.5, Category.RELATIONS);
 	}
 
+	public Boolean evaluate(String s, Enum<?> e) {
+		return !s.equals(e.toString());
+	}
+
+	public Boolean evaluate(Enum<?> e, String s) {
+		return !s.equals(e.toString());
+	}
+
 	public Boolean evaluate(Number a, Number b) {
 		if (a instanceof Double || b instanceof Double) {
 			return a.doubleValue() != b.doubleValue();
