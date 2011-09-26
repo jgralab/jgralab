@@ -30,6 +30,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -40,14 +41,13 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
 
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Schema;
 import de.uni_koblenz.jgralab.gretl.AddSuperClass;
 import de.uni_koblenz.jgralab.gretl.Context;
 import de.uni_koblenz.jgralab.gretl.CopyTransformation;
@@ -56,6 +56,7 @@ import de.uni_koblenz.jgralab.gretl.CreateVertexClass;
 import de.uni_koblenz.jgralab.gretl.ExecuteTransformation;
 import de.uni_koblenz.jgralab.gretl.MatchReplace;
 import de.uni_koblenz.jgralab.gretl.Transformation;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.utilities.schemacompare.SchemaCompare;
@@ -690,8 +691,10 @@ public class GretlTest {
 		arch.setAccessible(true);
 		img.setAccessible(true);
 
-		JValueMap oldArch = (JValueMap) arch.get(context);
-		JValueMap oldImg = (JValueMap) img.get(context);
+		Map<AttributedElementClass, Map<AttributedElement, Object>> oldArch = (Map<AttributedElementClass, Map<AttributedElement, Object>>) arch
+				.get(context);
+		Map<AttributedElementClass, Map<Object, AttributedElement>> oldImg = (Map<AttributedElementClass, Map<Object, AttributedElement>>) img
+				.get(context);
 
 		context.restoreTrace(traceFile);
 
