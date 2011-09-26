@@ -268,12 +268,6 @@ public interface Edge extends GraphElement {
 	public void putAfterEdge(Edge e);
 
 	/**
-	 * removes this edge from eSeq and erases its attributes @ if used on an
-	 * incidence
-	 */
-	public void delete();
-
-	/**
 	 * sets the alpha vertex to v
 	 * 
 	 * @param v
