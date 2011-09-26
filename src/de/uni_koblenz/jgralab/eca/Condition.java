@@ -3,7 +3,7 @@ package de.uni_koblenz.jgralab.eca;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.eca.events.Event;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
+import de.uni_koblenz.jgralab.greql2.types.Types;
 
 public class Condition {
 
@@ -57,7 +57,7 @@ public class Condition {
 					.println("Invalid Condition: " + this.conditionExpression);
 			throw new ECAException("Invalid Condition: \""
 					+ this.conditionExpression + "\" evaluates to type "
-					+ FunLib.instance().getGreqlTypeName(result)
+					+ Types.getGreqlTypeName(result)
 					+ " but the result has to be a Boolean.");
 		}
 	}
