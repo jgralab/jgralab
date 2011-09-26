@@ -45,9 +45,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.greql2.SerializableGreql2Impl;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueMap;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Schema;
 import de.uni_koblenz.jgralab.gretl.AddSuperClass;
@@ -116,12 +114,6 @@ public class GretlTest {
 		Logger logger = JGraLab.getLogger(Transformation.class.getPackage()
 				.getName());
 		logger.setLevel(Level.INFO);
-
-		Greql2Schema
-				.instance()
-				.getGraphFactory()
-				.setGraphImplementationClass(Greql2.class,
-						SerializableGreql2Impl.class);
 	}
 
 	public static void main(String[] args) {
