@@ -20,6 +20,6 @@ public class Equals extends Function {
 	}
 
 	public Boolean evaluate(Object a, Object b) {
-		return !a.equals(b);
+		return a.equals(b);
 	}
 }
