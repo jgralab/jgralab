@@ -49,10 +49,12 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.pcollections.PCollection;
 import org.pcollections.PMap;
 import org.pcollections.POrderedSet;
 import org.pcollections.PSet;
@@ -133,18 +135,18 @@ public class GreqlEvaluator {
 		System.out.println("Evaluation Result:");
 		System.out.println("==================");
 
-		// TODO [removejvalue] check whether this is still needed
-		// if (result.isCollection()) {
-		// for (JValue jv : result.toCollection()) {
-		// System.out.println(jv);
-		// }
-		// } else if (result.isMap()) {
-		// for (Entry<JValue, JValue> e : result.toJValueMap().entrySet()) {
-		// System.out.println(e.getKey() + " --> " + e.getValue());
-		// }
-		// } else {
-		System.out.println(result);
-		// }
+		if (result instanceof PCollection) {
+			PCollection<?> coll = (PCollection<?>) result;
+			for (Object jv : coll) {
+				System.out.println(jv);
+			}
+		} else if (result instanceof Map) {
+			for (Entry<?, ?> e : ((Map<?, ?>) result).entrySet()) {
+				System.out.println(e.getKey() + " --> " + e.getValue());
+			}
+		} else {
+			System.out.println(result);
+		}
 	}
 
 	/**
