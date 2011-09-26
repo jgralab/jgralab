@@ -1,6 +1,8 @@
 package de.uni_koblenz.jgralab.gretl;
 
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
+import org.pcollections.PSet;
+
+import de.uni_koblenz.jgralab.greql2.types.Tuple;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.IncidenceClass;
@@ -11,7 +13,7 @@ public class CreateEdgeClass extends Transformation<EdgeClass> {
 	protected String qualifiedName;
 	private IncidenceClassSpec from;
 	private IncidenceClassSpec to;
-	private JValueSet archetypes;
+	private PSet<Tuple> archetypes;
 	private String semanticExpression;
 
 	protected CreateEdgeClass(final Context c, final String qualifiedName,
@@ -24,7 +26,7 @@ public class CreateEdgeClass extends Transformation<EdgeClass> {
 
 	public CreateEdgeClass(final Context c, final String qualifiedName,
 			final IncidenceClassSpec from, final IncidenceClassSpec to,
-			final JValueSet archetypes) {
+			final PSet<Tuple> archetypes) {
 		this(c, qualifiedName, from, to);
 		this.archetypes = archetypes;
 	}

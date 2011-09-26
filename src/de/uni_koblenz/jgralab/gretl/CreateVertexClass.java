@@ -1,12 +1,13 @@
 package de.uni_koblenz.jgralab.gretl;
 
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
+import org.pcollections.PSet;
+
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
 public class CreateVertexClass extends Transformation<VertexClass> {
 
 	protected String qualifiedName = null;
-	private JValueSet archetypes = null;
+	private PSet<Object> archetypes = null;
 	private String semanticExpression = null;
 
 	protected CreateVertexClass(final Context c, final String qualifiedName) {
@@ -15,7 +16,7 @@ public class CreateVertexClass extends Transformation<VertexClass> {
 	}
 
 	public CreateVertexClass(final Context c, final String qualifiedName,
-			final JValueSet archetypes) {
+			final PSet<Object> archetypes) {
 		this(c, qualifiedName);
 		this.archetypes = archetypes;
 	}

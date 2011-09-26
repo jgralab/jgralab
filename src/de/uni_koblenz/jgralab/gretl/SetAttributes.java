@@ -1,7 +1,7 @@
 package de.uni_koblenz.jgralab.gretl;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.pcollections.Empty;
+import org.pcollections.PMap;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.gretl.Context.GReTLVariableType;
@@ -9,14 +9,14 @@ import de.uni_koblenz.jgralab.gretl.Context.TransformationPhase;
 import de.uni_koblenz.jgralab.schema.Attribute;
 
 public class SetAttributes extends
-		Transformation<Map<AttributedElement, Object>> {
+		Transformation<PMap<AttributedElement, Object>> {
 
 	private Attribute attribute = null;
-	private Map<Object, Object> archetype2valueMap = null;
+	private PMap<Object, Object> archetype2valueMap = null;
 	private String semanticExpression = null;
 
 	public SetAttributes(final Context c, final Attribute attr,
-			final Map<Object, Object> archetypeValueMap) {
+			final PMap<Object, Object> archetypeValueMap) {
 		super(c);
 		attribute = attr;
 		archetype2valueMap = archetypeValueMap;
@@ -37,7 +37,7 @@ public class SetAttributes extends
 	}
 
 	@Override
-	protected Map<AttributedElement, Object> transform() {
+	protected PMap<AttributedElement, Object> transform() {
 		if (context.phase != TransformationPhase.GRAPH) {
 			return null;
 		}
@@ -46,8 +46,7 @@ public class SetAttributes extends
 			archetype2valueMap = context.evaluateGReQLQuery(semanticExpression);
 		}
 
-		HashMap<AttributedElement, Object> resultMap = new HashMap<AttributedElement, Object>(
-				archetype2valueMap.size());
+		PMap<AttributedElement, Object> resultMap = Empty.map();
 		for (Object archetype : archetype2valueMap.keySet()) {
 			// System.out.println("sourceElement = " + sourceElement);
 			// context.printMappings();
@@ -65,7 +64,7 @@ public class SetAttributes extends
 						+ "' can be created!");
 			}
 			Object val = archetype2valueMap.get(archetype);
-			resultMap.put(image, val);
+			resultMap = resultMap.plus(image, val);
 			if (val != null) {
 				Object o = convertToAttributeValue(val);
 				image.setAttribute(attribute.getName(), o);
