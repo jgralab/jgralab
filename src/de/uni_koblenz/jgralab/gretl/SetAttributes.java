@@ -46,7 +46,7 @@ public class SetAttributes extends
 			archetype2valueMap = context.evaluateGReQLQuery(semanticExpression);
 		}
 
-		PMap<AttributedElement, Object> resultMap = Empty.map();
+		PMap<AttributedElement, Object> resultMap = Empty.orderedMap();
 		for (Object archetype : archetype2valueMap.keySet()) {
 			// System.out.println("sourceElement = " + sourceElement);
 			// context.printMappings();
