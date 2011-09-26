@@ -37,6 +37,8 @@ package de.uni_koblenz.jgralab;
 import java.io.IOException;
 import java.util.List;
 
+import org.pcollections.PMap;
+
 public interface Record {
 
 	public Object getComponent(String name);
@@ -46,4 +48,5 @@ public interface Record {
 	public void writeComponentValues(GraphIO io) throws IOException,
 			GraphIOException;
 
+	public PMap<String, ?> toPMap();
 }

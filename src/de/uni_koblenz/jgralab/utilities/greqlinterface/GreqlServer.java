@@ -57,10 +57,10 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
 import de.uni_koblenz.jgralab.greql2.types.Path;
 import de.uni_koblenz.jgralab.greql2.types.PathSystem;
 import de.uni_koblenz.jgralab.greql2.types.Slice;
+import de.uni_koblenz.jgralab.greql2.types.Types;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
 
@@ -250,7 +250,7 @@ public class GreqlServer extends Thread {
 				}
 			} else {
 				println("Result is a single element of type "
-						+ FunLib.instance().getGreqlTypeName(result) + ".\n",
+						+ Types.getGreqlTypeName(result) + ".\n",
 						PrintTarget.CLIENT, true);
 				println(result.toString(), PrintTarget.CLIENT, false);
 			}

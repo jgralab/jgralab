@@ -46,4 +46,9 @@ public class Record implements de.uni_koblenz.jgralab.Record {
 	public List<String> getComponentNames() {
 		return ((ArrayPSet<String>) entries.keySet()).toPVector();
 	}
+
+	@Override
+	public PMap<String, Object> toPMap() {
+		return entries;
+	}
 }
