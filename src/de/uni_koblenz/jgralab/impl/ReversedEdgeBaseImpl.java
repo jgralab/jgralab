@@ -425,4 +425,14 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 		return normalEdge.getAlphaSemantics();
 	}
 
+	@Override
+	public void setNextEdgeInGraph(Edge nextEdge) {
+		normalEdge.setNextEdgeInGraph(nextEdge);
+	}
+
+	@Override
+	public void setPrevEdgeInGraph(Edge prevEdge) {
+		normalEdge.setPrevEdgeInGraph(prevEdge);
+	}
+
 }

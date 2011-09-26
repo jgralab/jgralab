@@ -44,6 +44,10 @@ public interface VertexBase extends Vertex {
 	 */
 	public VertexBase getPrevBaseVertex();
 
+	public void setNextVertex(Vertex nextVertex);
+
+	public void setPrevVertex(Vertex prevVertex);
+
 	/**
 	 * @return first incident edge of this vertex
 	 */
@@ -53,5 +57,19 @@ public interface VertexBase extends Vertex {
 	 * @return last incident edge of this vertex
 	 */
 	public EdgeBase getLastBaseIncidence();
+
+	public void setFirstIncidence(EdgeBase firstIncidence);
+
+	public void setLastIncidence(EdgeBase lastIncidence);
+
+	public void appendIncidenceToLambdaSeq(EdgeBase i);
+
+	public void removeIncidenceFromLambdaSeq(EdgeBase i);
+
+	public void putIncidenceBefore(EdgeBase target, EdgeBase moved);
+
+	public void putIncidenceAfter(EdgeBase target, EdgeBase moved);
+
+	public void setIncidenceListVersion(long incidenceListVersion);
 
 }

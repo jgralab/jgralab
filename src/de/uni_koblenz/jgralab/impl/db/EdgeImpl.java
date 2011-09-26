@@ -40,6 +40,7 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.EdgeBase;
 import de.uni_koblenz.jgralab.impl.EdgeBaseImpl;
 import de.uni_koblenz.jgralab.impl.IncidenceImpl;
+import de.uni_koblenz.jgralab.impl.VertexBase;
 import de.uni_koblenz.jgralab.impl.VertexBaseImpl;
 
 /**
@@ -293,24 +294,24 @@ public abstract class EdgeImpl extends EdgeBaseImpl implements
 	}
 
 	@Override
-	protected void setPrevEdgeInGraph(Edge prevEdge) {
+	public void setPrevEdgeInGraph(Edge prevEdge) {
 		prevEdge.putBeforeEdge(this);
 	}
 
 	@Override
-	protected void setNextEdgeInGraph(Edge nextEdge) {
+	public void setNextEdgeInGraph(Edge nextEdge) {
 		nextEdge.putAfterEdge(this);
 	}
 
 	@Override
-	protected void setIncidentVertex(VertexBaseImpl v) {
+	public void setIncidentVertex(Vertex v) {
 		// does not add this edge to incidence list of vertex as it is taken
 		// care of elsewhere
 		setIncidentVId(v.getId());
 	}
 
 	@Override
-	protected void setNextIncidenceInternal(IncidenceImpl nextIncidence) {
+	public void setNextIncidenceInternal(EdgeBase nextIncidence) {
 		nextIncidence.putIncidenceAfter(this);
 	}
 
@@ -377,7 +378,7 @@ public abstract class EdgeImpl extends EdgeBaseImpl implements
 	}
 
 	@Override
-	protected void setPrevIncidenceInternal(IncidenceImpl prevIncidence) {
+	public void setPrevIncidenceInternal(EdgeBase prevIncidence) {
 		prevIncidence.putIncidenceBefore(this);
 	}
 
@@ -409,7 +410,7 @@ public abstract class EdgeImpl extends EdgeBaseImpl implements
 	}
 
 	@Override
-	protected VertexBaseImpl getIncidentVertex() {
+	public VertexBase getIncidentVertex() {
 		if (alphaVId > 0) {
 			return (VertexBaseImpl) graph.getVertex(alphaVId);
 		} else {

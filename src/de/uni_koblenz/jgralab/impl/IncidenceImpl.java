@@ -53,14 +53,6 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge,
 		super(graph);
 	}
 
-	protected abstract void setIncidentVertex(VertexBaseImpl v);
-
-	protected abstract VertexBaseImpl getIncidentVertex();
-
-	protected abstract void setNextIncidenceInternal(IncidenceImpl nextIncidence);
-
-	protected abstract void setPrevIncidenceInternal(IncidenceImpl prevIncidence);
-
 	// TODO implement with TC
 	@Override
 	public IncidenceImpl getNextIncidence() {

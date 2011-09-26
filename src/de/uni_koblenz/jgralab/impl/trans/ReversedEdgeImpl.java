@@ -38,6 +38,8 @@ import java.util.Map;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphException;
+import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.impl.EdgeBase;
 import de.uni_koblenz.jgralab.impl.EdgeBaseImpl;
 import de.uni_koblenz.jgralab.impl.IncidenceImpl;
 import de.uni_koblenz.jgralab.impl.VertexBase;
@@ -77,7 +79,7 @@ public abstract class ReversedEdgeImpl extends
 	// --- getter ---//
 
 	@Override
-	protected VertexBaseImpl getIncidentVertex() {
+	public VertexBase getIncidentVertex() {
 		if (incidentVertex == null) {
 			return null;
 		}
@@ -108,25 +110,26 @@ public abstract class ReversedEdgeImpl extends
 
 	// --- setter --- //
 	@Override
-	protected void setIncidentVertex(VertexBaseImpl v) {
+	public void setIncidentVertex(Vertex v) {
 		if (graph.isLoading()) {
 			incidentVertex = new VersionedReferenceImpl<VertexBaseImpl>(
-					normalEdge, v);
+					normalEdge, (VertexBaseImpl) v);
 		} else {
 			// initialize here
 			if (incidentVertex == null) {
 				incidentVertex = new VersionedReferenceImpl<VertexBaseImpl>(
 						normalEdge);
 			}
-			incidentVertex.setValidValue(v, graph.getCurrentTransaction());
+			incidentVertex.setValidValue((VertexBaseImpl) v, graph
+					.getCurrentTransaction());
 		}
 	}
 
 	@Override
-	protected void setNextIncidenceInternal(IncidenceImpl nextIncidence) {
+	public void setNextIncidenceInternal(EdgeBase nextIncidence) {
 		if (graph.isLoading()) {
 			this.nextIncidence = new VersionedReferenceImpl<IncidenceImpl>(
-					normalEdge, nextIncidence);
+					normalEdge, (EdgeBaseImpl) nextIncidence);
 		} else {
 			TransactionImpl transaction = (TransactionImpl) graph
 					.getCurrentTransaction();
@@ -155,16 +158,16 @@ public abstract class ReversedEdgeImpl extends
 				this.nextIncidence = new VersionedReferenceImpl<IncidenceImpl>(
 						normalEdge);
 			}
-			this.nextIncidence.setValidValue(nextIncidence, transaction,
-					explicitChange);
+			this.nextIncidence.setValidValue((EdgeBaseImpl) nextIncidence,
+					transaction, explicitChange);
 		}
 	}
 
 	@Override
-	protected void setPrevIncidenceInternal(IncidenceImpl prevIncidence) {
+	public void setPrevIncidenceInternal(EdgeBase prevIncidence) {
 		if (graph.isLoading()) {
 			this.prevIncidence = new VersionedReferenceImpl<IncidenceImpl>(
-					normalEdge, prevIncidence);
+					normalEdge, (IncidenceImpl) prevIncidence);
 		} else {
 			TransactionImpl transaction = (TransactionImpl) graph
 					.getCurrentTransaction();
@@ -193,8 +196,8 @@ public abstract class ReversedEdgeImpl extends
 				this.prevIncidence = new VersionedReferenceImpl<IncidenceImpl>(
 						normalEdge);
 			}
-			this.prevIncidence.setValidValue(prevIncidence, transaction,
-					explicitChange);
+			this.prevIncidence.setValidValue((IncidenceImpl) prevIncidence,
+					transaction, explicitChange);
 		}
 	}
 

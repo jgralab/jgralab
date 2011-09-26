@@ -35,6 +35,8 @@
 package de.uni_koblenz.jgralab.impl.db;
 
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.impl.EdgeBase;
 import de.uni_koblenz.jgralab.impl.IncidenceImpl;
 import de.uni_koblenz.jgralab.impl.ReversedEdgeBaseImpl;
 import de.uni_koblenz.jgralab.impl.VertexBaseImpl;
@@ -76,7 +78,7 @@ public abstract class ReversedEdgeImpl extends ReversedEdgeBaseImpl implements
 	}
 
 	@Override
-	protected VertexBaseImpl getIncidentVertex() {
+	public VertexBaseImpl getIncidentVertex() {
 		if (omegaVId > 0) {
 			return (VertexBaseImpl) graph.getVertex(omegaVId);
 		} else {
@@ -101,17 +103,17 @@ public abstract class ReversedEdgeImpl extends ReversedEdgeBaseImpl implements
 	}
 
 	@Override
-	protected void setIncidentVertex(VertexBaseImpl v) {
+	public void setIncidentVertex(Vertex v) {
 		setIncidentVId(v.getId());
 	}
 
 	@Override
-	protected void setNextIncidenceInternal(IncidenceImpl nextIncidence) {
+	public void setNextIncidenceInternal(EdgeBase nextIncidence) {
 		nextIncidence.putIncidenceAfter(this);
 	}
 
 	@Override
-	protected void setPrevIncidenceInternal(IncidenceImpl prevIncidence) {
+	public void setPrevIncidenceInternal(EdgeBase prevIncidence) {
 		prevIncidence.putIncidenceBefore(this);
 	}
 

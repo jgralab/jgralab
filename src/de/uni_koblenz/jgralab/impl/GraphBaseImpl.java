@@ -1051,11 +1051,11 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 		EdgeBaseImpl e = (EdgeBaseImpl) edge.getNormalEdge();
 		internalEdgeDeleted(e);
 
-		VertexBaseImpl alpha = e.getIncidentVertex();
+		VertexBase alpha = e.getIncidentVertex();
 		alpha.removeIncidenceFromLambdaSeq(e);
 		alpha.incidenceListModified();
 
-		VertexBaseImpl omega = e.reversedEdge.getIncidentVertex();
+		VertexBase omega = e.reversedEdge.getIncidentVertex();
 		omega.removeIncidenceFromLambdaSeq(e.reversedEdge);
 		omega.incidenceListModified();
 
