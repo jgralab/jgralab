@@ -14,8 +14,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.pcollections.Empty;
+import org.pcollections.PMap;
 import org.pcollections.PQueue;
-import org.w3c.dom.Attr;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
@@ -25,8 +25,6 @@ import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.M1ClassManager;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Schema;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
 import de.uni_koblenz.jgralab.schema.GraphClass;
@@ -362,13 +360,17 @@ public class Context {
 
 	public final void validateMappings() {
 		if (imgMap.size() != archMap.size()) {
-			Map<AttributedElementClass, Map<Object, AttributedElement>> m = imgMap;
-			Map<AttributedElementClass, Map<AttributedElement, Object>> o = archMap;
+			@SuppressWarnings("rawtypes")
+			Map m = imgMap;
+			@SuppressWarnings("rawtypes")
+			Map o = archMap;
 			if (archMap.size() > imgMap.size()) {
 				m = archMap;
 				o = imgMap;
 			}
-			for (AttributedElementClass aec : m.keySet()) {
+			@SuppressWarnings("unchecked")
+			Set<AttributedElementClass> keySet = m.keySet();
+			for (AttributedElementClass aec : keySet) {
 				if (!o.containsKey(aec)) {
 					System.err.println(toGReTLVarNotation(aec
 							.getQualifiedName(),
@@ -390,8 +392,10 @@ public class Context {
 								+ "imgMap contains no mappings for '"
 								+ aec.getQualifiedName() + "'!");
 			}
-			Map<Object, Object> arch = archMap.get(aec);
-			Map<Object, Object> img = imgMap.get(aec);
+			@SuppressWarnings("rawtypes")
+			Map arch = archMap.get(aec);
+			@SuppressWarnings("rawtypes")
+			Map img = imgMap.get(aec);
 
 			if (arch.size() != img.size()) {
 				throw new GReTLBijectionViolationException(this,
@@ -405,7 +409,10 @@ public class Context {
 								+ "' don't match!");
 			}
 
-			for (Entry<Object, Object> entry : arch.entrySet()) {
+			@SuppressWarnings({ "unchecked", "rawtypes" })
+			Set<Map.Entry> entries = arch.entrySet();
+			for (@SuppressWarnings("rawtypes")
+			Entry entry : entries) {
 				if (!img.containsKey(entry.getValue())) {
 					throw new GReTLBijectionViolationException(this,
 							"The imgMap and archMap mappings aren't valid! "
@@ -666,10 +673,10 @@ public class Context {
 
 				Method valueOf = myEnum.getMethod("valueOf",
 						new Class<?>[] { String.class });
-				JValueMap map = new JValueMap(d.getConsts().size());
+				PMap<String, Object> map = Empty.map();
 				for (String c : d.getConsts()) {
 					Object constant = valueOf.invoke(null, new Object[] { c });
-					map.put(new JValueImpl(c), new JValueImpl(constant));
+					map = map.plus(c, constant);
 				}
 				setGReQLVariable(
 						toGReTLVarNotation(d.getQualifiedName(),
@@ -706,7 +713,7 @@ public class Context {
 		return type.toString().toLowerCase() + "_" + qName;
 	}
 
-	public final Object evaluateGReQLQuery(String greqlExpression) {
+	public final <T> T evaluateGReQLQuery(String greqlExpression) {
 		if (phase == TransformationPhase.SCHEMA) {
 			return null;
 		}
@@ -731,7 +738,8 @@ public class Context {
 		return evalGReQLQuery(greqlExpression, sourceGraphs.get(name));
 	}
 
-	private final Object evalGReQLQuery(String semanticExpression, Graph graph) {
+	@SuppressWarnings("unchecked")
+	private final <T> T evalGReQLQuery(String semanticExpression, Graph graph) {
 		if (phase == TransformationPhase.SCHEMA) {
 			return null;
 		}
@@ -761,10 +769,9 @@ public class Context {
 		// eval.setOptimize(false);
 
 		eval.startEvaluation();
-		Object result = eval.getResult();
 
 		// log.fine("GReQL result: " + result);
-		return result;
+		return (T) eval.getResult();
 	}
 
 	/**
@@ -786,7 +793,7 @@ public class Context {
 			}
 		}
 
-		for (Entry<AttributedElementClass, Map<Object, Object>> e : archMap
+		for (Entry<AttributedElementClass, Map<AttributedElement, Object>> e : archMap
 				.entrySet()) {
 			String varName = toGReTLVarNotation(e.getKey().getQualifiedName(),
 					GReTLVariableType.ARCH);
@@ -795,7 +802,7 @@ public class Context {
 			}
 		}
 
-		for (Entry<AttributedElementClass, Map<Object, Object>> e : imgMap
+		for (Entry<AttributedElementClass, Map<Object, AttributedElement>> e : imgMap
 				.entrySet()) {
 			String varName = toGReTLVarNotation(e.getKey().getQualifiedName(),
 					GReTLVariableType.IMG);
@@ -827,36 +834,11 @@ public class Context {
 	}
 
 	public final void storeTrace(String fileName) {
-		try {
-			JValueRecord traceRec = new JValueRecord();
-			traceRec.add("archMap", archMap);
-			traceRec.add("imgMap", imgMap);
-			new JValueXMLOutputVisitor(traceRec, fileName);
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new Greql2Exception("Exception while storing trace file '"
-					+ fileName + "'.", e);
-		}
+		// TODO: Implement me!!!
 	}
 
 	public final void restoreTrace(String fileName) {
-		Graph[] graphs = new Graph[getSourceGraphs().values().size() + 1];
-		int i = 0;
-		for (Graph g : getSourceGraphs().values()) {
-			graphs[i] = g;
-			i++;
-		}
-		graphs[i] = targetGraph;
-		JValueXMLLoader l = new JValueXMLLoader(graphs);
-
-		try {
-			JValueRecord rec = l.load(fileName).toJValueRecord();
-			archMap = rec.get("archMap").toJValueMap();
-			imgMap = rec.get("imgMap").toJValueMap();
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new GReTLException("Couldn't load GReTLTrace", e);
-		}
+		// TODO: Implement me!!!
 	}
 
 }

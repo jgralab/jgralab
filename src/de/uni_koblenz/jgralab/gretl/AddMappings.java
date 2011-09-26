@@ -56,12 +56,11 @@ public class AddMappings extends Transformation<Void> {
 		}
 
 		if (archetypes == null) {
-			archetypes = context.evaluateGReQLQuery(semanticExpression)
-					.toJValueMap();
+			archetypes = context.evaluateGReQLQuery(semanticExpression);
 		}
 
 		for (Entry<Object, AttributedElement> e : archetypes.entrySet()) {
-			AttributedElementClass aec = e.getValue().toAttributedElement()
+			AttributedElementClass aec = e.getValue()
 					.getAttributedElementClass();
 			context.addMapping(aec, e.getKey(), e.getValue());
 		}
