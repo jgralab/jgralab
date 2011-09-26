@@ -55,7 +55,6 @@ import java.util.concurrent.FutureTask;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.pcollections.ArrayPSet;
 import org.pcollections.PCollection;
 import org.pcollections.PSet;
 
@@ -63,6 +62,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.GraphIO;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
@@ -143,7 +143,7 @@ public class StateRepository {
 			try {
 				Object result = evaluateGReQL(query, state.getGraph(), null);
 				boolean elementsAreDisplayed = false;
-				PSet<GraphElement> elements = ArrayPSet.empty();
+				PSet<GraphElement> elements = JGraLab.set();
 				if (result instanceof PCollection) {
 					boolean containsOnlyVerticesOrEdges = true;
 					for (Object v : (PCollection<?>) elements) {
@@ -228,7 +228,7 @@ public class StateRepository {
 				numberPerPage.toString(), pathLength.toString(), content);
 		if (state != null) {
 			// find all elements
-			PSet<GraphElement> elements = ArrayPSet.empty();
+			PSet<GraphElement> elements = JGraLab.set();
 			StringBuilder notExistingElements = new StringBuilder();
 			for (String s : content.split(",")) {
 				if (s.startsWith("v")) {

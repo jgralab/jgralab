@@ -8,7 +8,6 @@ import java.util.Stack;
 import javax.xml.stream.XMLStreamException;
 
 import org.pcollections.ArrayPMap;
-import org.pcollections.ArrayPSet;
 import org.pcollections.ArrayPVector;
 import org.pcollections.PCollection;
 import org.pcollections.PMap;
@@ -17,6 +16,7 @@ import org.pcollections.PVector;
 import de.uni_koblenz.ist.utilities.xml.XmlProcessor;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.exception.SerialisingException;
 import de.uni_koblenz.jgralab.greql2.types.Record;
@@ -236,13 +236,13 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 			val = Integer.valueOf(getAttribute(ATTR_VALUE));
 			// ---------------------------------------------------------------
 		} else if (elem.equals(LIST)) {
-			val = ArrayPVector.empty();
+			val = JGraLab.vector();
 			// ---------------------------------------------------------------
 		} else if (elem.equals(LONG)) {
 			val = Long.valueOf(getAttribute(ATTR_VALUE));
 			// ---------------------------------------------------------------
 		} else if (elem.equals(MAP)) {
-			val = ArrayPMap.empty();
+			val = JGraLab.map();
 			// ---------------------------------------------------------------
 		} else if (elem.equals(MAP_ENTRY)) {
 			val = new MapEntry();
@@ -254,7 +254,7 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 			val = new RecordComponent(getAttribute(ATTR_NAME));
 			// ---------------------------------------------------------------
 		} else if (elem.equals(SET)) {
-			val = ArrayPSet.empty();
+			val = JGraLab.set();
 			// ---------------------------------------------------------------
 		} else if (elem.equals(STRING)) {
 			val = getAttribute(ATTR_VALUE);

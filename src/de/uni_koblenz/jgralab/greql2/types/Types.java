@@ -15,6 +15,7 @@ import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Record;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
@@ -44,6 +45,10 @@ public class Types {
 		typeNames.put(PMap.class, "Map");
 	}
 
+	private Types() {
+		// nobody ever needs an instance...
+	}
+
 	public final boolean isGreqlType(Class<?> cls) {
 		return types.contains(cls);
 	}
@@ -68,8 +73,7 @@ public class Types {
 		} else if (o instanceof Tuple) {
 			return ((Tuple) o).toPVector();
 		} else if (o instanceof Collection) {
-			PVector<Object> r = ArrayPVector.empty();
-			return r.plusAll((Collection<?>) o);
+			return JGraLab.vector().plusAll((Collection<?>) o);
 		}
 		throw new GreqlException("Can't convert object of type "
 				+ o.getClass().getName() + " to org.pcollections.PVector<?>");

@@ -35,11 +35,11 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
-import org.pcollections.ArrayPSet;
 import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
@@ -72,7 +72,7 @@ public class EdgeSetExpressionEvaluator extends ElementSetExpressionEvaluator {
 	public PSet<Edge> evaluate() {
 		Graph datagraph = greqlEvaluator.getDatagraph();
 		// create the resulting set
-		PSet<Edge> resultSet = ArrayPSet.empty();
+		PSet<Edge> resultSet = JGraLab.set();
 		Edge currentEdge = datagraph.getFirstEdge();
 		TypeCollection typeCollection = getTypeCollection();
 		while (currentEdge != null) {

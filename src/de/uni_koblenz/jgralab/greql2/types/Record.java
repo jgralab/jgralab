@@ -3,18 +3,18 @@ package de.uni_koblenz.jgralab.greql2.types;
 import java.io.IOException;
 import java.util.List;
 
-import org.pcollections.ArrayPMap;
 import org.pcollections.ArrayPSet;
 import org.pcollections.PMap;
 
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.JGraLab;
 
 public class Record implements de.uni_koblenz.jgralab.Record {
 	private PMap<String, Object> entries;
 
 	private Record() {
-		entries = ArrayPMap.empty();
+		entries = JGraLab.map();
 	}
 
 	private Record(PMap<String, Object> m) {

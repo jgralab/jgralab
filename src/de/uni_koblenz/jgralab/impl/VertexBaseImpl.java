@@ -42,7 +42,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Queue;
 
-import org.pcollections.ArrayPSet;
 import org.pcollections.POrderedSet;
 import org.pcollections.PSet;
 
@@ -50,6 +49,7 @@ import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.PathElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
@@ -944,7 +944,7 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex 
 	@SuppressWarnings("unchecked")
 	public <T extends Vertex> POrderedSet<T> reachableVertices(
 			Class<T> returnType, PathElement... pathElements) {
-		PSet<T> result = ArrayPSet.empty();
+		PSet<T> result = JGraLab.set();
 		Queue<Vertex> q = new LinkedList<Vertex>();
 		q.add(this);
 

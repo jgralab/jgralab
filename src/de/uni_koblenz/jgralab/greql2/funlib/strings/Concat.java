@@ -4,6 +4,7 @@ import org.pcollections.ArrayPVector;
 import org.pcollections.PCollection;
 import org.pcollections.PVector;
 
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class Concat extends Function {
@@ -25,7 +26,7 @@ public class Concat extends Function {
 		if (a instanceof ArrayPVector) {
 			return (PVector<T>) a.plusAll(b);
 		} else {
-			PVector<T> result = ArrayPVector.empty();
+			PVector<T> result = JGraLab.vector();
 			return result.plusAll(a).plusAll(b);
 		}
 	}

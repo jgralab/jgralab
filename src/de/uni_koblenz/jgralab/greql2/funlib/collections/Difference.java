@@ -7,6 +7,7 @@ import org.pcollections.ArrayPSet;
 import org.pcollections.PMap;
 import org.pcollections.PSet;
 
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class Difference extends Function {
@@ -21,14 +22,14 @@ public class Difference extends Function {
 			if (a instanceof ArrayPSet) {
 				return a;
 			} else {
-				PSet<T> result = ArrayPSet.empty();
+				PSet<T> result = JGraLab.set();
 				return result.plusAll(a);
 			}
 		} else {
 			if (a instanceof ArrayPSet) {
 				return a.minusAll(b);
 			} else {
-				PSet<T> result = ArrayPSet.empty();
+				PSet<T> result = JGraLab.set();
 				return result.plusAll(a).minusAll(b);
 			}
 		}
@@ -39,14 +40,14 @@ public class Difference extends Function {
 			if (a instanceof ArrayPMap) {
 				return a;
 			} else {
-				PMap<K, V> result = ArrayPMap.empty();
+				PMap<K, V> result = JGraLab.map();
 				return result.plusAll(a);
 			}
 		} else {
 			if (a instanceof ArrayPMap) {
 				return a.minusAll(b.keySet());
 			} else {
-				PMap<K, V> result = ArrayPMap.empty();
+				PMap<K, V> result = JGraLab.map();
 				return result.plusAll(a).minusAll(b.keySet());
 			}
 

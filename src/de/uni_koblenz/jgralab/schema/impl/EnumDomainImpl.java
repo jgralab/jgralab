@@ -37,9 +37,9 @@ package de.uni_koblenz.jgralab.schema.impl;
 
 import java.util.List;
 
-import org.pcollections.ArrayPVector;
 import org.pcollections.PVector;
 
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.codegenerator.CodeBlock;
 import de.uni_koblenz.jgralab.codegenerator.CodeGenerator;
 import de.uni_koblenz.jgralab.codegenerator.CodeSnippet;
@@ -52,7 +52,7 @@ public final class EnumDomainImpl extends DomainImpl implements EnumDomain {
 	/**
 	 * holds a list of the components of the enumeration
 	 */
-	private PVector<String> constants = ArrayPVector.empty();
+	private PVector<String> constants = JGraLab.vector();
 
 	/**
 	 * @param qn

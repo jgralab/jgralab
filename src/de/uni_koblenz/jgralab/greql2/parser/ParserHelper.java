@@ -43,11 +43,11 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
-import org.pcollections.ArrayPVector;
 import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.exception.DuplicateVariableException;
 import de.uni_koblenz.jgralab.greql2.exception.ParsingException;
@@ -596,7 +596,7 @@ public abstract class ParserHelper {
 
 	protected final PVector<SourcePosition> createSourcePositionList(
 			int length, int offset) {
-		PVector<SourcePosition> list = ArrayPVector.empty();
+		PVector<SourcePosition> list = JGraLab.vector();
 		return list.plus(new SourcePosition(length, offset));
 	}
 

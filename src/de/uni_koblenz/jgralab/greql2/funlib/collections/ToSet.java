@@ -6,6 +6,7 @@ import org.pcollections.ArrayPSet;
 import org.pcollections.PCollection;
 import org.pcollections.PSet;
 
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 import de.uni_koblenz.jgralab.greql2.types.Tuple;
 
@@ -24,7 +25,7 @@ public class ToSet extends Function {
 		if (l instanceof ArrayPSet) {
 			return (PSet<T>) l;
 		}
-		PSet<T> result = ArrayPSet.empty();
+		PSet<T> result = JGraLab.set();
 		return result.plusAll(l);
 	}
 
