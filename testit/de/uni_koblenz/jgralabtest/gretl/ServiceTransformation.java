@@ -101,15 +101,15 @@ public class ServiceTransformation extends Transformation<Graph> {
 				"    union(from v : V reportMap v -> v.name end, "
 						+ "from o : keySet(img_Owner) reportMap o -> o end, true)")
 				.execute();
-		
+
 		return context.getTargetGraph();
 	}
 
 	@After
 	protected void checkCallsEdges() {
-		if (!(context
-				.evaluateGReQLQuery("forall e : E{Calls} @ contains(keySet(img_Calls), e)")
-				.toBoolean())) {
+		boolean result = context
+				.evaluateGReQLQuery("forall e : E{Calls} @ contains(keySet(img_Calls), e)");
+		if (!result) {
 			throw new GReTLException(context, "Error!");
 		} else {
 			System.out

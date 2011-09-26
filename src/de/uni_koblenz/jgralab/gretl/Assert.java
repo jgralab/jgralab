@@ -31,7 +31,14 @@ public class Assert extends CountingTransformation {
 			return 0;
 		}
 
-		result = context.evaluateGReQLQuery(greqlExpression);
+		Object r = context.evaluateGReQLQuery(greqlExpression);
+		if (r instanceof Boolean) {
+			Boolean res = (Boolean) r;
+			result = res.booleanValue();
+		} else {
+			throw new GReTLException(context, "Assertion '" + greqlExpression
+					+ "' didn't evaluate to a boolean but to: " + r);
+		}
 
 		if (!result) {
 			throw new GReTLException(context, "Assertion failed: "
