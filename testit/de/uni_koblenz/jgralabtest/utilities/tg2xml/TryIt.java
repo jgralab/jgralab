@@ -68,15 +68,15 @@ public class TryIt {
 
 		try {
 			// Graph graph = createRandomGraph(false);
-			Schema schema = GraphIO.loadSchemaFromFile("GrumlSchema.gruml.tg");
+			String file = "../smgschema/soamig.schemagraph.tg";
+			Schema schema = GraphIO.loadSchemaFromFile(file);
 			System.out.println("Compiling schema");
 			schema.compile(CodeGeneratorConfiguration.FULL);
 			System.out.println("done");
-			Graph graph = GraphIO.loadGraphFromFileWithStandardSupport(
-					"GrumlSchema.gruml.tg", new ConsoleProgressFunction());
+			Graph graph = GraphIO.loadGraphFromFileWithStandardSupport(file,
+					new ConsoleProgressFunction());
 			Tg2xml converter = new Tg2xml(new BufferedOutputStream(
-					new FileOutputStream(outName)), graph, "gruml",
-					"./gruml.xsd");
+					new FileOutputStream(outName)), graph, "gruml", "gruml.xsd");
 
 			converter.visitAll();
 			System.out.println("Fini.");

@@ -76,6 +76,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 			code.add(createGenericGetter());
 			code.add(createToStringMethod());
 			code.add(createWriteComponentsMethod());
+			code.add(createToPMapMethod());
 			code.add(createEqualsMethod());
 			code.add(createHashCodeMethod());
 		}
@@ -161,6 +162,23 @@ public class RecordCodeGenerator extends CodeGenerator {
 					rc.getDomain().getJavaClassName(schemaRootPackageName));
 			code.add(assign);
 		}
+		code.addNoIndent(new CodeSnippet("}"));
+		return code;
+	}
+
+	private CodeBlock createToPMapMethod() {
+		CodeList code = new CodeList();
+		addImports("org.pcollections.PMap", "org.pcollections.ArrayPMap");
+		code.addNoIndent(new CodeSnippet(
+				"public PMap<String, Object> toPMap() {"));
+		code.add(new CodeSnippet("PMap<String, Object> m = ArrayPMap.empty();"));
+		for (RecordComponent rc : recordDomain.getComponents()) {
+			CodeBlock assign = new CodeSnippet(
+					"m = m.plus(\"#name#\", _#name#);");
+			assign.setVariable("name", rc.getName());
+			code.add(assign);
+		}
+		code.add(new CodeSnippet("return m;"));
 		code.addNoIndent(new CodeSnippet("}"));
 		return code;
 	}

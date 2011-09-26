@@ -68,7 +68,7 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
-import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
+import de.uni_koblenz.jgralab.greql2.types.Types;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
@@ -175,7 +175,7 @@ public class StateRepository {
 				} else {
 					code.append("var h3error = document.getElementById(\"h3GReQLError\");\n");
 					code.append("h3error.innerHTML = \"The result is of type ")
-							.append(FunLib.instance().getGreqlTypeName(result))
+							.append(Types.getGreqlTypeName(result))
 							.append(".<br />Only Vertex, Edge or a Collection of vertices or edges are supported.\";\n");
 				}
 				if (elementsAreDisplayed) {
