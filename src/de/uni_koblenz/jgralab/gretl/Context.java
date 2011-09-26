@@ -655,13 +655,6 @@ public class Context {
 				// graph.
 				addMapping(targetGraph.getGraphClass(), sourceGraph,
 						targetGraph);
-			} else {
-				// Secondary source graphs are related to the target graph as
-				// tuples with the mapping: (sourceGraphName, sourceGraph) -->
-				// targetGraph.
-				Tuple sourceTup = Tuple.empty();
-				sourceTup = sourceTup.plus(sourceGraphName).plus(sourceGraph);
-				addMapping(targetGraph.getGraphClass(), sourceTup, targetGraph);
 			}
 		}
 	}
