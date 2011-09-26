@@ -1,4 +1,6 @@
-package de.uni_koblenz.jgralab;
+package de.uni_koblenz.jgralab.impl;
+
+import de.uni_koblenz.jgralab.Graph;
 
 public interface GraphBase extends Graph {
 

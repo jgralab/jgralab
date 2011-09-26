@@ -1,4 +1,7 @@
-package de.uni_koblenz.jgralab;
+package de.uni_koblenz.jgralab.impl;
+
+import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.Vertex;
 
 public interface EdgeBase extends Edge {
 	/**

@@ -4,8 +4,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.uni_koblenz.jgralab.Edge;
-import de.uni_koblenz.jgralab.EdgeBase;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.impl.EdgeBase;
 
 /**
  * @author Tassilo Horn &lt;horn@uni-koblenz.de&gt;
