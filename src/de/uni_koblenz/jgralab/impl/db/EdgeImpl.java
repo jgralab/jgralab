@@ -330,7 +330,7 @@ public abstract class EdgeImpl extends EdgeBaseImpl implements
 		assert getThis() == e.getThis();
 		VertexImpl v = (VertexImpl) getThis();
 		assert v.isValid();
-		if (this != e && this.getNextIncidence() != e) {
+		if (this != e && getNextBaseIncidence() != e) {
 			v.putIncidenceBefore((IncidenceImpl) e, this);
 			v.incidenceListModified();
 		}
@@ -344,7 +344,7 @@ public abstract class EdgeImpl extends EdgeBaseImpl implements
 		VertexImpl v = (VertexImpl) getThis();
 		assert v.isValid();
 		// if (this.isNotTheSameEdgeAs(e)){
-		if (this != e && this != e.getNextIncidence()) {
+		if (this != e && this != ((EdgeBase) e).getNextBaseIncidence()) {
 			// System.out.println("putEdgeAfter calls v.putIncidenceAfter");
 			v.putIncidenceAfter((IncidenceImpl) e, this);
 			v.incidenceListModified();
@@ -357,7 +357,7 @@ public abstract class EdgeImpl extends EdgeBaseImpl implements
 		assert isPartOfSameGraphAs(e);
 		assert isNotTheSameEdgeAs(e);
 		assert e != reversedEdge;
-		if (this != e && this != e.getNextEdge()) {
+		if (this != e && this != ((EdgeBase) e).getNextBaseEdge()) {
 			getGraphImpl().putEdgeAfterInGraph(
 					(EdgeBaseImpl) e.getNormalEdge(), this);
 			getGraphImpl().edgeListModified();
@@ -370,7 +370,7 @@ public abstract class EdgeImpl extends EdgeBaseImpl implements
 		assert isPartOfSameGraphAs(e);
 		assert this != e;
 		assert e != reversedEdge;
-		if (this != e && this.getNextEdge() != e) {
+		if (this != e && getNextBaseEdge() != e) {
 			getGraphImpl().putEdgeBeforeInGraph(
 					(EdgeBaseImpl) e.getNormalEdge(), this);
 			getGraphImpl().edgeListModified();
