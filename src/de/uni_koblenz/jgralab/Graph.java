@@ -571,6 +571,8 @@ public interface Graph extends AttributedElement {
 	public int getGraphStructureChangedListenerCount();
 
 	public ECARuleManagerInterface getECARuleManager();
+	
+	public ECARuleManagerInterface getECARuleManagerIfThere();
 
 	public TraversalContext setTraversalContext(TraversalContext tc);
 

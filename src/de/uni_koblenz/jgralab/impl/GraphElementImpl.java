@@ -101,8 +101,8 @@ public abstract class GraphElementImpl implements GraphElement {
 	 */
 	public void ecaAttributeChanging(String name, Object oldValue,
 			Object newValue) {
-		if (!this.graph.isLoading()) {
-			this.graph.getECARuleManager().fireBeforeChangeAttributeEvents(
+		if (!this.graph.isLoading() && this.graph.getECARuleManagerIfThere() != null) {
+			this.graph.getECARuleManagerIfThere().fireBeforeChangeAttributeEvents(
 					this, name, oldValue, newValue);
 		}
 	}
@@ -115,8 +115,8 @@ public abstract class GraphElementImpl implements GraphElement {
 	 */
 	public void ecaAttributeChanged(String name, Object oldValue,
 			Object newValue) {
-		if (!this.graph.isLoading()) {
-			this.graph.getECARuleManager().fireAfterChangeAttributeEvents(this,
+		if (!this.graph.isLoading() && this.graph.getECARuleManagerIfThere()!=null) {
+			this.graph.getECARuleManagerIfThere().fireAfterChangeAttributeEvents(this,
 					name, oldValue, newValue);
 		}
 	}

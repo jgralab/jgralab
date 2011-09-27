@@ -317,4 +317,14 @@
 			<test name="${manual.test.suite}" todir="${testresults.dir}" />
 		</junit>
 	</target>
+
+	<!-- Push a new jgralab jar to clojars.org -->
+	<target name="clojars-push">
+	  <exec executable="scp">
+	    <arg value="pom.xml" />
+	    <arg value="build/jar/jgralab.jar" />
+	    <arg value="clojars@clojars.org:" />
+	  </exec>
+	</target>
+
 </project>
