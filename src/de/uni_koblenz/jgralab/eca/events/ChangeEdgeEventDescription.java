@@ -9,7 +9,7 @@ import de.uni_koblenz.jgralab.eca.ECARule;
 public class ChangeEdgeEventDescription extends EventDescription {
 
 	public enum EdgeEnd {
-		ALPHA, OMEGA, BOTH
+		ALPHA, OMEGA, ANY
 	}
 
 	/**
