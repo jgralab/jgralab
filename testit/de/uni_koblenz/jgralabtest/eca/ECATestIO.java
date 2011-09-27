@@ -213,7 +213,7 @@ public class ECATestIO {
 		System.out.println("Save rule with own action.");
 
 		EventDescription aft_ev = new ChangeEdgeEventDescription(
-				EventDescription.EventTime.AFTER, Loans.class, EdgeEnd.BOTH);
+				EventDescription.EventTime.AFTER, Loans.class, EdgeEnd.ANY);
 		Condition aft_cond = new Condition(
 				"startVertex(context).name = 'Stephanie Plum'");
 		Action aft_act = new RevertEdgeChangingAction();

@@ -117,8 +117,7 @@ public class WeakComponentsWithBFS extends StructureOrientedAlgorithm implements
 	@Override
 	public void resetParameters() {
 		super.resetParameters();
-		this.navigable = null;
-		this.traversalDirection = EdgeDirection.INOUT;
+		traversalDirection = EdgeDirection.INOUT;
 		weakComponentsVisitor = new SearchVisitorAdapter() {
 
 			private Vertex currentRepresentativeVertex;
@@ -151,9 +150,14 @@ public class WeakComponentsWithBFS extends StructureOrientedAlgorithm implements
 		bfs.undirected();
 		bfs.addVisitor(weakComponentsVisitor);
 		startRunning();
-		bfs.execute();
-		bfs.removeVisitor(weakComponentsVisitor);
-		done();
+		try {
+			bfs.execute();
+		} catch (AlgorithmTerminatedException e) {
+			bfs.terminate();
+		} finally {
+			bfs.removeVisitor(weakComponentsVisitor);
+			done();
+		}
 		return this;
 	}
 
