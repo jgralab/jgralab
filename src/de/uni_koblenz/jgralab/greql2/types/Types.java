@@ -49,20 +49,28 @@ public class Types {
 		// nobody ever needs an instance...
 	}
 
-	public final boolean isGreqlType(Class<?> cls) {
-		return types.contains(cls);
-	}
-
-	public static final String getGreqlTypeName(Object arg) {
-		if (arg == null) {
-			arg = Undefined.UNDEFINED;
+	public static final boolean isValidGreqlValue(Object value) {
+		if (value == null) {
+			return true;
 		}
 		for (Class<?> cls : GREQL_TYPES) {
-			if (cls.isInstance(arg)) {
+			if (cls.isInstance(value)) {
+				return true;
+			}
+		}
+return false;
+	}
+
+	public static final String getGreqlTypeName(Object value) {
+		if (value == null) {
+			value = Undefined.UNDEFINED;
+		}
+		for (Class<?> cls : GREQL_TYPES) {
+			if (cls.isInstance(value)) {
 				return typeNames.get(cls);
 			}
 		}
-		return arg.getClass().getSimpleName() + "[unknown to GReQL]";
+		return value.getClass().getSimpleName() + "[unknown to GReQL]";
 	}
 
 	public static final PVector<?> toPVector(Object o) {
