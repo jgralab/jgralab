@@ -102,13 +102,23 @@ public class TGTree extends JFrame {
 		tree.setCellRenderer(new GraphElementCellRenderer());
 		tree.addMouseListener(new TreeViewMouseAdapter());
 		tree.addKeyListener(new TreeViewKeyAdapter());
+	
+		// < Bad Code - only for Demo
+		int j = 1;
+		for(int i = 0; i < tree.getRowCount(); i++){
+			tree.expandRow(j);
+			j = j +2;
+		}
+		// Bad Code >
+
+		
 		scrollPane = new JScrollPane();
 		scrollPane.getViewport().add(tree);
 		cp.add(scrollPane);
 
 		ToolTipManager.sharedInstance().registerComponent(tree);
 
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
 		setSize(800, 800);
 		pack();
@@ -123,7 +133,16 @@ public class TGTree extends JFrame {
 		} else {
 			throw new RuntimeException(ge + " is neither Vertex nor Edge.");
 		}
+		
 		tree.setModel(new TGraphTreeModel(tn));
+		
+		// < Bad Code - only for Demo
+		int j = 1;
+		for(int i = 0; i < tree.getRowCount(); i++){
+			tree.expandRow(j);
+			j = j +2;
+		}
+		// Bad Code >
 	}
 
 	public void copySelectionToClipboard(GraphElementTreeNode getn) {
@@ -143,6 +162,7 @@ public class TGTree extends JFrame {
 				CodeGeneratorConfiguration.MINIMAL,
 				new ConsoleProgressFunction("Loading"));
 		TGTree tgtree = new TGTree(g);
+		tgtree.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		tgtree.setVisible(true);
 	}
 
