@@ -459,7 +459,7 @@ public interface Graph extends AttributedElement {
 
 	public ECARuleManagerInterface getECARuleManager();
 
-	// public TraversalContext setTraversalContext(TraversalContext tc);
-	//
-	// public TraversalContext getTraversalContext();
+	public TraversalContext setTraversalContext(TraversalContext tc);
+
+	public TraversalContext getTraversalContext();
 }

@@ -38,6 +38,7 @@ import java.util.List;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.GraphException;
+import de.uni_koblenz.jgralab.TraversalContext;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.EdgeBase;
 import de.uni_koblenz.jgralab.impl.EdgeBaseImpl;
@@ -91,6 +92,8 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	 * Database containing this graph.
 	 */
 	private GraphDatabase containingDatabase;
+
+	private TraversalContext tc;
 
 	/**
 	 * Creates a new <code>GraphImpl</code> persistent in database.
@@ -1376,5 +1379,17 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 			int[] nextIncidence) {
 		throw new UnsupportedOperationException(
 				"Operation is not supported by this graph.");
+	}
+
+	@Override
+	public TraversalContext getTraversalContext() {
+		return tc;
+	}
+
+	@Override
+	public TraversalContext setTraversalContext(TraversalContext tc) {
+		TraversalContext oldTc = tc;
+		this.tc = tc;
+		return oldTc;
 	}
 }
