@@ -49,6 +49,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.PathElement;
+import de.uni_koblenz.jgralab.TraversalContext;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -128,10 +129,16 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 	 * 
 	 * @see de.uni_koblenz.jgralab.Vertex#getNextVertex()
 	 */
-	// TODO implement with TC
 	@Override
 	public Vertex getNextVertex() {
-		return getNextBaseVertex();
+		VertexBase nextVertex = getNextBaseVertex();
+		TraversalContext tc = graph.getTraversalContext();
+		if (!(tc == null || nextVertex == null || tc.containsVertex(nextVertex))) {
+			while (!(nextVertex == null || tc.containsVertex(nextVertex))) {
+				nextVertex = nextVertex.getNextBaseVertex();
+			}
+		}
+		return nextVertex;
 	}
 
 	/*
@@ -243,16 +250,26 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 		graph.putVertexAfter((VertexBaseImpl) v, this);
 	}
 
-	// TODO implement with TC
 	@Override
 	public Edge getFirstIncidence() {
-		return getFirstBaseIncidence();
+		Edge firstIncidence = getFirstBaseIncidence();
+		TraversalContext tc = graph.getTraversalContext();
+		if (!(tc == null || firstIncidence == null || tc
+				.containsEdge(firstIncidence))) {
+			firstIncidence = firstIncidence.getNextIncidence();
+		}
+		return firstIncidence;
 	}
 
-	// TODO implement with TC
 	@Override
 	public Edge getLastIncidence() {
-		return getLastBaseIncidence();
+		Edge lastIncidence = getLastBaseIncidence();
+		TraversalContext tc = graph.getTraversalContext();
+		if (!(tc == null || lastIncidence == null || tc
+				.containsEdge(lastIncidence))) {
+			lastIncidence = lastIncidence.getPrevIncidence();
+		}
+		return lastIncidence;
 	}
 
 	/*
@@ -653,10 +670,16 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 		return new IncidenceIterable<Edge>(this, eclass);
 	}
 
-	// TODO implement with TC
 	@Override
 	public Vertex getPrevVertex() {
-		return getPrevBaseVertex();
+		VertexBase prevVertex = getPrevBaseVertex();
+		TraversalContext tc = graph.getTraversalContext();
+		if (!(tc == null || prevVertex == null || tc.containsVertex(prevVertex))) {
+			while (!(prevVertex == null || tc.containsVertex(prevVertex))) {
+				prevVertex = prevVertex.getPrevBaseVertex();
+			}
+		}
+		return prevVertex;
 	}
 
 	public void appendIncidenceToLambdaSeq(EdgeBase i) {

@@ -38,6 +38,7 @@ package de.uni_koblenz.jgralab.impl;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.TraversalContext;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 
@@ -53,16 +54,30 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge,
 		super(graph);
 	}
 
-	// TODO implement with TC
 	@Override
-	public IncidenceImpl getNextIncidence() {
-		return (IncidenceImpl) getNextBaseIncidence();
+	public EdgeBase getNextIncidence() {
+		EdgeBase nextIncidence = getNextBaseIncidence();
+		TraversalContext tc = graph.getTraversalContext();
+		if (!(tc == null || nextIncidence == null || tc
+				.containsEdge(nextIncidence))) {
+			while (!(nextIncidence == null || tc.containsEdge(nextIncidence))) {
+				nextIncidence = nextIncidence.getNextBaseIncidence();
+			}
+		}
+		return nextIncidence;
 	}
 
-	// TODO implement with TC
 	@Override
-	public IncidenceImpl getPrevIncidence() {
-		return (IncidenceImpl) getPrevBaseIncidence();
+	public EdgeBase getPrevIncidence() {
+		EdgeBase prevIncidence = getPrevBaseIncidence();
+		TraversalContext tc = graph.getTraversalContext();
+		if (!(tc == null || prevIncidence == null || tc
+				.containsEdge(prevIncidence))) {
+			while (!(prevIncidence == null || tc.containsEdge(prevIncidence))) {
+				prevIncidence = prevIncidence.getPrevBaseIncidence();
+			}
+		}
+		return prevIncidence;
 	}
 
 	/*
@@ -75,7 +90,7 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge,
 	@Override
 	public Edge getNextIncidence(EdgeDirection orientation) {
 		assert isValid();
-		IncidenceImpl i = getNextIncidence();
+		Edge i = getNextIncidence();
 		switch (orientation) {
 		case IN:
 			while ((i != null) && i.isNormal()) {
@@ -104,7 +119,7 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge,
 	public Edge getNextIncidence(boolean thisIncidence,
 			AggregationKind... kinds) {
 		assert isValid();
-		IncidenceImpl i = getNextIncidence();
+		Edge i = getNextIncidence();
 		if (kinds.length == 0) {
 			return i;
 		}

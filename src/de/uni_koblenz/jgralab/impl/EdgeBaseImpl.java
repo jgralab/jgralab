@@ -39,6 +39,7 @@ import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphException;
+import de.uni_koblenz.jgralab.TraversalContext;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -106,16 +107,28 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 		return getIncidentVertex();
 	}
 
-	// TODO implement with TC
 	@Override
 	public Edge getNextEdge() {
-		return getNextBaseEdge();
+		EdgeBase nextEdge = getNextBaseEdge();
+		TraversalContext tc = graph.getTraversalContext();
+		if (!(tc == null || nextEdge == null || tc.containsEdge(nextEdge))) {
+			while (!(nextEdge == null || tc.containsEdge(nextEdge))) {
+				nextEdge = nextEdge.getNextBaseEdge();
+			}
+		}
+		return nextEdge;
 	}
 
-	// TODO implement with TC
 	@Override
 	public Edge getPrevEdge() {
-		return getPrevBaseEdge();
+		EdgeBase prevEdge = getPrevBaseEdge();
+		TraversalContext tc = graph.getTraversalContext();
+		if (!(tc == null || prevEdge == null || tc.containsEdge(prevEdge))) {
+			while (!(prevEdge == null || tc.containsEdge(prevEdge))) {
+				prevEdge = prevEdge.getPrevBaseEdge();
+			}
+		}
+		return prevEdge;
 	}
 
 	/*
