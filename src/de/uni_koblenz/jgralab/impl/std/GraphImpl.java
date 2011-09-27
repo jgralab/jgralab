@@ -37,6 +37,7 @@ package de.uni_koblenz.jgralab.impl.std;
 import java.util.List;
 
 import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.TraversalContext;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.EdgeBase;
 import de.uni_koblenz.jgralab.impl.EdgeBaseImpl;
@@ -61,10 +62,11 @@ public abstract class GraphImpl extends
 	private EdgeBaseImpl[] edge;
 	private ReversedEdgeBaseImpl[] revEdge;
 	private int eCount;
-	private VertexBaseImpl firstVertex;
-	private VertexBaseImpl lastVertex;
-	private EdgeBaseImpl firstEdge;
-	private EdgeBaseImpl lastEdge;
+	private VertexBase firstVertex;
+	private VertexBase lastVertex;
+	private EdgeBase firstEdge;
+	private EdgeBase lastEdge;
+	private TraversalContext tc;
 
 	/**
 	 * Holds the version of the vertex sequence. For every modification (e.g.
@@ -344,5 +346,17 @@ public abstract class GraphImpl extends
 	@Override
 	protected void addEdge(Edge newEdge, Vertex alpha, Vertex omega) {
 		super.addEdge(newEdge, alpha, omega);
+	}
+
+	@Override
+	public TraversalContext getTraversalContext() {
+		return tc;
+	}
+
+	@Override
+	public TraversalContext setTraversalContext(TraversalContext tc) {
+		TraversalContext oldTc = tc;
+		this.tc = tc;
+		return oldTc;
 	}
 }

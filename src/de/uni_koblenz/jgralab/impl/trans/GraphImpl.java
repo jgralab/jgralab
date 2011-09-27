@@ -49,6 +49,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.GraphStructureChangedListener;
+import de.uni_koblenz.jgralab.TraversalContext;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.EdgeBase;
 import de.uni_koblenz.jgralab.impl.FreeIndexList;
@@ -108,6 +109,8 @@ public abstract class GraphImpl extends
 	// a COMMIT or an ABORT...these indexes should be freed later.
 	protected List<Integer> edgeIndexesToBeFreed;
 	protected List<Integer> vertexIndexesToBeFreed;
+
+	private VersionedReferenceImpl<TraversalContext> tc;
 
 	/**
 	 * 
@@ -1567,5 +1570,24 @@ public abstract class GraphImpl extends
 	protected void internalSetDefaultValue(Attribute attr)
 			throws GraphIOException {
 		attr.setDefaultTransactionValue(this);
+	}
+
+	@Override
+	public TraversalContext getTraversalContext() {
+		if (tc == null) {
+			return null;
+		}
+		return tc.getValidValue(getCurrentTransaction());
+	}
+
+	@Override
+	public TraversalContext setTraversalContext(TraversalContext tc) {
+		TraversalContext oldTc = getTraversalContext();
+		if (tc == null) {
+			this.tc = new VersionedReferenceImpl<TraversalContext>(this, tc);
+		} else {
+			this.tc.setValidValue(tc, getCurrentTransaction());
+		}
+		return oldTc;
 	}
 }
