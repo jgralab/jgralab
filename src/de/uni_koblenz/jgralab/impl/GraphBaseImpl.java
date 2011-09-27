@@ -53,6 +53,7 @@ import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.GraphStructureChangedListener;
 import de.uni_koblenz.jgralab.GraphStructureChangedListenerWithAutoRemove;
 import de.uni_koblenz.jgralab.RandomIdGenerator;
+import de.uni_koblenz.jgralab.TraversalContext;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.eca.ECARuleManagerInterface;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
@@ -805,10 +806,14 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#getFirstEdgeInGraph()
 	 */
-	// TODO implement with TC
 	@Override
 	public Edge getFirstEdge() {
-		return getFirstBaseEdge();
+		Edge firstEdge = getFirstBaseEdge();
+		TraversalContext tc = getTraversalContext();
+		if (!(tc == null || firstEdge == null || tc.containsEdge(firstEdge))) {
+			firstEdge = firstEdge.getNextEdge();
+		}
+		return firstEdge;
 	}
 
 	/*
@@ -816,10 +821,14 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#getLastEdgeInGraph()
 	 */
-	// TODO implement with TC
 	@Override
 	public Edge getLastEdge() {
-		return getLastBaseEdge();
+		Edge lastEdge = getLastBaseEdge();
+		TraversalContext tc = getTraversalContext();
+		if (!(tc == null || lastEdge == null || tc.containsEdge(lastEdge))) {
+			lastEdge = lastEdge.getPrevEdge();
+		}
+		return lastEdge;
 	}
 
 	/*
@@ -859,10 +868,15 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#getFirstVertex()
 	 */
-	// TODO implement with TC
 	@Override
 	public Vertex getFirstVertex() {
-		return getFirstBaseVertex();
+		Vertex firstVertex = getFirstBaseVertex();
+		TraversalContext tc = getTraversalContext();
+		if (!(tc == null || firstVertex == null || tc
+				.containsVertex(firstVertex))) {
+			firstVertex = firstVertex.getNextVertex();
+		}
+		return firstVertex;
 	}
 
 	/*
@@ -870,10 +884,14 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#getLastVertex()
 	 */
-	// TODO implement with TC
 	@Override
 	public Vertex getLastVertex() {
-		return getLastBaseVertex();
+		Vertex lastVertex = getLastBaseVertex();
+		TraversalContext tc = getTraversalContext();
+		if (!(tc == null || lastVertex == null || tc.containsVertex(lastVertex))) {
+			lastVertex = lastVertex.getPrevVertex();
+		}
+		return lastVertex;
 	}
 
 	/*
