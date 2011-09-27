@@ -58,7 +58,7 @@ public class Types {
 				return true;
 			}
 		}
-return false;
+		return false;
 	}
 
 	public static final String getGreqlTypeName(Object value) {
