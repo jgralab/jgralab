@@ -76,7 +76,6 @@ import de.uni_koblenz.jgralab.greql2.schema.ListRangeConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.Literal;
 import de.uni_koblenz.jgralab.greql2.schema.MapComprehension;
 import de.uni_koblenz.jgralab.greql2.schema.MapConstruction;
-import de.uni_koblenz.jgralab.greql2.schema.NullLiteral;
 import de.uni_koblenz.jgralab.greql2.schema.OptionalPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.PathExistence;
@@ -100,6 +99,7 @@ import de.uni_koblenz.jgralab.greql2.schema.ThisVertex;
 import de.uni_koblenz.jgralab.greql2.schema.TransposedPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.TupleConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.TypeId;
+import de.uni_koblenz.jgralab.greql2.schema.UndefinedLiteral;
 import de.uni_koblenz.jgralab.greql2.schema.ValueConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
 import de.uni_koblenz.jgralab.greql2.schema.VertexSetExpression;
@@ -736,8 +736,8 @@ public class GreqlSerializer {
 			sb.append(((BoolLiteral) exp).is_boolValue());
 		} else if (exp instanceof IntLiteral) {
 			sb.append(((IntLiteral) exp).get_intValue());
-		} else if (exp instanceof NullLiteral) {
-			sb.append("null");
+		} else if (exp instanceof UndefinedLiteral) {
+			sb.append("undefined");
 		} else if (exp instanceof DoubleLiteral) {
 			sb.append(((DoubleLiteral) exp).get_doubleValue());
 		} else if (exp instanceof StringLiteral) {

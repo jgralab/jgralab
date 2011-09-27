@@ -2541,6 +2541,17 @@ public class GreqlParser extends ParserHelper {
 	private final Expression parseLiteral() {
 		if (lookAhead(0) != null) {
 			switch (lookAhead(0)) {
+			case UNDEFINED: {
+				UndefinedLiteral ul = null;
+				if (!inPredicateMode()) {
+					ul = graph.getFirstUndefinedLiteral();
+					if (ul == null) {
+						ul = graph.createUndefinedLiteral();
+					}
+				}
+				match();
+				return ul;
+			}
 			case DOUBLELITERAL:
 			case HEXLITERAL:
 			case INTLITERAL:

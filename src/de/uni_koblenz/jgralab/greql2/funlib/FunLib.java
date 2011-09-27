@@ -136,6 +136,9 @@ public class FunLib {
 	}
 
 	public Object apply(PrintStream os, String name, Object... args) {
+		assert name != null && name.length() >= 1;
+		assert args != null;
+		assert validArgumentTypes(args);
 		StringBuilder sb = new StringBuilder();
 		sb.append(name);
 		if (args.length == 0) {
@@ -156,11 +159,12 @@ public class FunLib {
 
 	public Object apply(String name, Object... args) {
 		assert name != null && name.length() >= 1;
+		assert args != null;
+		assert validArgumentTypes(args);
 		FunctionInfo fi = functions.get(name);
 		if (fi == null) {
 			throw new GreqlException("Call to unknown function '" + name + "'");
 		}
-		assert args != null;
 		if (!(fi.function instanceof AcceptsUndefinedArguments)) {
 			for (Object arg : args) {
 				if (arg == null || arg == Undefined.UNDEFINED) {
@@ -173,6 +177,7 @@ public class FunLib {
 				try {
 					Object result = sig.evaluateMethod
 							.invoke(fi.function, args);
+					assert Types.isValidGreqlValue(result);
 					return result == null ? Undefined.UNDEFINED : result;
 				} catch (IllegalArgumentException e) {
 					throw new GreqlException(e.getMessage(), e.getCause());
@@ -193,6 +198,16 @@ public class FunLib {
 		}
 		sb.append(")");
 		throw new GreqlException(sb.toString());
+	}
+
+	private boolean validArgumentTypes(Object[] args) {
+		for (Object arg : args) {
+			if (!Types.isValidGreqlValue(arg)) {
+				throw new GreqlException("Type unknown to GReQL: "
+						+ arg.getClass().getName() + ", value: " + arg);
+			}
+		}
+		return true;
 	}
 
 	private void registerAllFunctions() {
