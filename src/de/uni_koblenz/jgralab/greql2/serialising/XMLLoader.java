@@ -7,8 +7,6 @@ import java.util.Stack;
 
 import javax.xml.stream.XMLStreamException;
 
-import org.pcollections.ArrayPMap;
-import org.pcollections.ArrayPVector;
 import org.pcollections.PCollection;
 import org.pcollections.PMap;
 import org.pcollections.PVector;
@@ -116,14 +114,13 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 				jme.key = endedElement;
 			} else if (jme.value == null) {
 				jme.value = endedElement;
-			} else {
-				throw new SerialisingException(
-						"Encountered MapEntry with more than 2 elements!", null);
 			}
+			return;
 		} else if (parentElement instanceof RecordComponent) {
 			// Parent is a record component, so this has to be its value.
 			RecordComponent rc = (RecordComponent) parentElement;
 			rc.value = endedElement;
+			return;
 		} else if (parentElement instanceof PCollection) {
 			// ok, parent is a collection, so we can simply add with the
 			// exception of records and tables
@@ -135,22 +132,20 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 				parentElement = rec.plus(comp.componentName, comp.value);
 			} else if (coll instanceof Table) {
 				Table<Object> tab = (Table<Object>) coll;
-				if (tab.getTitles() == null) {
+				if (tab.getTitles().isEmpty()) {
 					@SuppressWarnings("unchecked")
 					PVector<String> titles = (PVector<String>) endedElement;
 					parentElement = tab.withTitles(titles);
-				} else if (tab.toPVector() == null) {
+				} else {
 					@SuppressWarnings("unchecked")
 					PVector<Object> entries = (PVector<Object>) endedElement;
 					parentElement = tab.plusAll(entries);
-				} else {
-					throw new SerialisingException(
-							"Table containing more children than header and data!",
-							null);
 				}
 			} else {
 				parentElement = coll.plus(endedElement);
 			}
+			stack.pop();
+			stack.push(parentElement);
 		} else {
 			throw new SerialisingException("The element '" + endedElement
 					+ "' couldn't be added to its parent.", null);
@@ -167,7 +162,7 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 		Object val = null;
 		if (elem.equals(UNDEFINED)) {
 			val = Undefined.UNDEFINED;
-		} else if (elem.equals(OBJECT)) {
+		} else if (elem.equals(GRAPH)) {
 			String gid = getAttribute(ATTR_GRAPH_ID);
 			if (gid != null) {
 				defaultGraph = id2GraphMap.get(gid);
