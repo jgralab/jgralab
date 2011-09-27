@@ -188,9 +188,9 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 		if (this == v) {
 			return false;
 		}
-		Vertex prev = ((VertexBaseImpl) v).getPrevVertex();
+		Vertex prev = ((VertexBaseImpl) v).getPrevBaseVertex();
 		while ((prev != null) && (prev != this)) {
-			prev = ((VertexBaseImpl) prev).getPrevVertex();
+			prev = ((VertexBaseImpl) prev).getPrevBaseVertex();
 		}
 		return prev != null;
 	}
@@ -228,9 +228,10 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 		if (this == v) {
 			return false;
 		}
-		VertexBaseImpl next = (VertexBaseImpl) v.getNextVertex();
+		VertexBaseImpl next = (VertexBaseImpl) ((VertexBase) v)
+				.getNextBaseVertex();
 		while ((next != null) && (next != this)) {
-			next = (VertexBaseImpl) next.getNextVertex();
+			next = (VertexBaseImpl) next.getNextBaseVertex();
 		}
 		return next != null;
 	}

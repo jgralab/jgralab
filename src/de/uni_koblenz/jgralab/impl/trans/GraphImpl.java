@@ -1008,38 +1008,39 @@ public abstract class GraphImpl extends
 	@Override
 	protected void edgeAfterDeleted(Edge edgeToBeDeleted, Vertex oldAlpha,
 			Vertex oldOmega) {
+		EdgeBase deletedEdge = (EdgeBase) edgeToBeDeleted;
 		TransactionImpl transaction = (TransactionImpl) getCurrentTransaction();
 		assert ((transaction != null) && !transaction.isReadOnly()
 				&& transaction.isValid() && (transaction.getState() != TransactionState.NOTRUNNING));
 		if (transaction.getState() == TransactionState.RUNNING) {
 			if ((transaction.addedEdges != null)
-					&& transaction.addedEdges.contains(edgeToBeDeleted)) {
-				transaction.addedEdges.remove(edgeToBeDeleted);
+					&& transaction.addedEdges.contains(deletedEdge)) {
+				transaction.addedEdges.remove(deletedEdge);
 			} else {
 				if (transaction.deletedEdges == null) {
 					transaction.deletedEdges = new ArrayList<EdgeImpl>(1);
 				}
 				transaction.deletedEdges
-						.add((de.uni_koblenz.jgralab.impl.trans.EdgeImpl) (edgeToBeDeleted
+						.add((de.uni_koblenz.jgralab.impl.trans.EdgeImpl) (deletedEdge
 								.getNormalEdge()));
 			}
 			// delete references to edgeToBeDeleted in other change sets
 			if (transaction.changedAttributes != null) {
-				transaction.changedAttributes.remove(edgeToBeDeleted);
+				transaction.changedAttributes.remove(deletedEdge);
 			}
 			if (transaction.changedEdges != null) {
-				transaction.changedEdges.remove(edgeToBeDeleted);
+				transaction.changedEdges.remove(deletedEdge);
 			}
 			if (transaction.changedEseqEdges != null) {
-				transaction.changedEseqEdges.remove(edgeToBeDeleted);
-				Edge prevEdge = edgeToBeDeleted.getPrevIncidence();
+				transaction.changedEseqEdges.remove(deletedEdge);
+				Edge prevEdge = deletedEdge.getPrevBaseIncidence();
 				if (transaction.changedEseqEdges.containsKey(prevEdge)) {
 					if (transaction.changedEseqEdges.get(prevEdge).containsKey(
 							ListPosition.NEXT)) {
 						transaction.changedEseqEdges.remove(prevEdge);
 					}
 				}
-				Edge nextEdge = edgeToBeDeleted.getNextIncidence();
+				Edge nextEdge = deletedEdge.getNextBaseIncidence();
 				// check if current (temporary) nextEdge has been changed
 				// explicitly
 				if (transaction.changedEseqEdges.containsKey(nextEdge)) {
@@ -1054,12 +1055,12 @@ public abstract class GraphImpl extends
 				Map<IncidenceImpl, Map<ListPosition, Boolean>> changedAlphaIncidences = transaction.changedIncidences
 						.get(oldAlpha);
 				if (changedAlphaIncidences != null) {
-					changedAlphaIncidences.remove(edgeToBeDeleted);
+					changedAlphaIncidences.remove(deletedEdge);
 				}
 				Map<IncidenceImpl, Map<ListPosition, Boolean>> changedOmegaIncidences = transaction.changedIncidences
 						.get(oldOmega);
 				if (changedOmegaIncidences != null) {
-					changedOmegaIncidences.remove(edgeToBeDeleted);
+					changedOmegaIncidences.remove(deletedEdge);
 				}
 			}
 		}
@@ -1098,13 +1099,14 @@ public abstract class GraphImpl extends
 
 	@Override
 	protected void vertexAfterDeleted(Vertex vertexToBeDeleted) {
+		VertexBase deletedVertex = (VertexBase) vertexToBeDeleted;
 		TransactionImpl transaction = (TransactionImpl) getCurrentTransaction();
 		assert ((transaction != null) && !transaction.isReadOnly()
 				&& transaction.isValid() && (transaction.getState() != TransactionState.NOTRUNNING));
 		if (transaction.getState() == TransactionState.RUNNING) {
 			if ((transaction.addedVertices != null)
-					&& transaction.addedVertices.contains(vertexToBeDeleted)) {
-				transaction.addedVertices.remove(vertexToBeDeleted);
+					&& transaction.addedVertices.contains(deletedVertex)) {
+				transaction.addedVertices.remove(deletedVertex);
 			} else {
 				if (transaction.deletedVertices == null) {
 					// transaction.deletedVertices = new HashSet<VertexImpl>(1,
@@ -1112,22 +1114,22 @@ public abstract class GraphImpl extends
 					transaction.deletedVertices = new ArrayList<VertexImpl>(1);
 				}
 				transaction.deletedVertices
-						.add((de.uni_koblenz.jgralab.impl.trans.VertexImpl) (vertexToBeDeleted));
+						.add((de.uni_koblenz.jgralab.impl.trans.VertexImpl) (deletedVertex));
 			}
 			if (transaction.changedAttributes != null) {
 				// delete references to vertexToBeDeleted in other change sets
-				transaction.changedAttributes.remove(vertexToBeDeleted);
+				transaction.changedAttributes.remove(deletedVertex);
 			}
 			if (transaction.changedVseqVertices != null) {
-				transaction.changedVseqVertices.remove(vertexToBeDeleted);
-				Vertex prevVertex = vertexToBeDeleted.getPrevVertex();
+				transaction.changedVseqVertices.remove(deletedVertex);
+				Vertex prevVertex = deletedVertex.getPrevBaseVertex();
 				if (transaction.changedVseqVertices.containsKey(prevVertex)) {
 					if (transaction.changedVseqVertices.get(prevVertex)
 							.containsKey(ListPosition.NEXT)) {
 						transaction.changedVseqVertices.remove(prevVertex);
 					}
 				}
-				Vertex nextVertex = vertexToBeDeleted.getNextVertex();
+				Vertex nextVertex = deletedVertex.getNextBaseVertex();
 				// check if current (temporary) nextVertex has been changed
 				// explicitly
 				if (transaction.changedVseqVertices.containsKey(nextVertex)) {
@@ -1138,7 +1140,7 @@ public abstract class GraphImpl extends
 				}
 			}
 			if (transaction.changedIncidences != null) {
-				transaction.changedIncidences.remove(vertexToBeDeleted);
+				transaction.changedIncidences.remove(deletedVertex);
 			}
 		}
 		if (transaction.getState() == TransactionState.WRITING) {
@@ -1147,7 +1149,7 @@ public abstract class GraphImpl extends
 						1);
 			}
 			transaction.deletedVerticesWhileWriting
-					.add((de.uni_koblenz.jgralab.impl.trans.VertexImpl) vertexToBeDeleted);
+					.add((de.uni_koblenz.jgralab.impl.trans.VertexImpl) deletedVertex);
 		}
 
 	}

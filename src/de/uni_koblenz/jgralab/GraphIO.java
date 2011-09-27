@@ -667,7 +667,7 @@ public class GraphIO {
 
 	private void saveGraph(GraphBase graph, ProgressFunction pf,
 			BooleanGraphMarker subGraph) throws IOException, GraphIOException {
-		// TraversalContext tc = graph.setTraversalContext(null);
+		TraversalContext tc = graph.setTraversalContext(null);
 		try {
 			// Write the jgralab version and license in a comment
 			saveHeader();
@@ -810,7 +810,7 @@ public class GraphIO {
 				pf.finished();
 			}
 		} finally {
-			// graph.setTraversalContext(tc);
+			graph.setTraversalContext(tc);
 		}
 	}
 

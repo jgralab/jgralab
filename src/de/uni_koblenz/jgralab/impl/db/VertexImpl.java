@@ -457,7 +457,7 @@ public abstract class VertexImpl extends VertexBaseImpl implements
 		assertPrecondition(target, moved);
 		DatabasePersistableEdge targetEdge = (DatabasePersistableEdge) target;
 		DatabasePersistableEdge movedEdge = (DatabasePersistableEdge) moved;
-		if (target != moved && moved.getNextIncidence() != target) {
+		if (target != moved && moved.getNextBaseIncidence() != target) {
 			incidenceList.putBefore(targetEdge, movedEdge);
 			incidenceListModified();
 		}
@@ -468,7 +468,7 @@ public abstract class VertexImpl extends VertexBaseImpl implements
 		assertPrecondition(target, moved);
 		DatabasePersistableEdge targetEdge = (DatabasePersistableEdge) target;
 		DatabasePersistableEdge movedEdge = (DatabasePersistableEdge) moved;
-		if (target != moved && target.getNextIncidence() != moved) {
+		if (target != moved && target.getNextBaseIncidence() != moved) {
 			incidenceList.putAfter(targetEdge, movedEdge);
 			incidenceListModified();
 		}

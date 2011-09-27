@@ -257,9 +257,9 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 		if (e == this) {
 			return false;
 		}
-		Edge p = getPrevEdge();
+		EdgeBase p = getPrevBaseEdge();
 		while ((p != null) && (p != e)) {
-			p = p.getPrevEdge();
+			p = p.getPrevBaseEdge();
 		}
 		return p != null;
 	}
@@ -281,9 +281,9 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 		if (e == this) {
 			return false;
 		}
-		Edge n = getNextEdge();
+		EdgeBase n = getNextBaseEdge();
 		while ((n != null) && (n != e)) {
-			n = n.getNextEdge();
+			n = n.getNextBaseEdge();
 		}
 		return n != null;
 	}
