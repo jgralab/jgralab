@@ -1,7 +1,7 @@
 package de.uni_koblenz.jgralab.gretl;
 
 import org.pcollections.PMap;
-import org.pcollections.PVector;
+import org.pcollections.PSequence;
 
 import de.uni_koblenz.jgralab.gretl.CreateAttribute.AttributeSpec;
 import de.uni_koblenz.jgralab.schema.Attribute;
@@ -9,7 +9,7 @@ import de.uni_koblenz.jgralab.schema.Attribute;
 public class CreateAttributes extends Transformation<Attribute[]> {
 	private AttributeSpec[] attrSpecs;
 	private String semanticExpression;
-	private PMap<Object, PVector<Object>> archetype2ValueListMap;
+	private PMap<Object, PSequence<Object>> archetype2ValueListMap;
 
 	protected CreateAttributes(final Context c,
 			final AttributeSpec... attrSpecs) {
@@ -18,7 +18,7 @@ public class CreateAttributes extends Transformation<Attribute[]> {
 	}
 
 	public CreateAttributes(final Context c,
-			final PMap<Object, PVector<Object>> archetype2ValListMap,
+			final PMap<Object, PSequence<Object>> archetype2ValListMap,
 			final AttributeSpec... attrSpecs) {
 		this(c, attrSpecs);
 		this.archetype2ValueListMap = archetype2ValListMap;

@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 
 import org.pcollections.Empty;
 import org.pcollections.PMap;
+import org.pcollections.PSequence;
 import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.AttributedElement;
@@ -16,7 +17,7 @@ public class SetMultipleAttributes extends
 		Transformation<PVector<PMap<AttributedElement, Object>>> {
 
 	private Attribute[] attributes = null;
-	private PMap<Object, PVector<Object>> archetype2valuesMap = null;
+	private PMap<Object, PSequence<Object>> archetype2valuesMap = null;
 	private String semanticExpression = null;
 
 	public SetMultipleAttributes(Context c, String semanticExpression,
@@ -27,7 +28,7 @@ public class SetMultipleAttributes extends
 	}
 
 	public SetMultipleAttributes(Context c,
-			PMap<Object, PVector<Object>> arch2ValuesMap, Attribute... attrs) {
+			PMap<Object, PSequence<Object>> arch2ValuesMap, Attribute... attrs) {
 		super(c);
 		attributes = attrs;
 		archetype2valuesMap = arch2ValuesMap;
@@ -60,7 +61,7 @@ public class SetMultipleAttributes extends
 	}
 
 	private List<PMap<Object, Object>> splice(
-			PMap<Object, PVector<Object>> arch2listOfAttrVals) {
+			PMap<Object, PSequence<Object>> arch2listOfAttrVals) {
 		List<PMap<Object, Object>> out = new ArrayList<PMap<Object, Object>>(
 				attributes.length);
 
@@ -68,7 +69,8 @@ public class SetMultipleAttributes extends
 			out.add(Empty.orderedMap());
 		}
 
-		for (Entry<Object, PVector<Object>> e : arch2listOfAttrVals.entrySet()) {
+		for (Entry<Object, PSequence<Object>> e : arch2listOfAttrVals
+				.entrySet()) {
 			for (int i = 0; i < attributes.length; i++) {
 				PMap<Object, Object> nm = out.get(i).plus(e.getKey(),
 						e.getValue().get(i));

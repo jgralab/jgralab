@@ -2,13 +2,14 @@ package de.uni_koblenz.jgralab.greql2.types;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.ListIterator;
 
-import org.pcollections.PCollection;
+import org.pcollections.PSequence;
 import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.JGraLab;
 
-public class Tuple implements PCollection<Object> {
+public class Tuple implements PSequence<Object> {
 	private PVector<Object> entries;
 
 	private static Tuple empty = new Tuple();
@@ -29,6 +30,7 @@ public class Tuple implements PCollection<Object> {
 		return entries;
 	}
 
+	@Override
 	public Object get(int index) {
 		return entries.get(index);
 	}
@@ -142,5 +144,78 @@ public class Tuple implements PCollection<Object> {
 	@Override
 	public int hashCode() {
 		return entries.hashCode();
+	}
+
+	@Override
+	public int indexOf(Object o) {
+		return entries.indexOf(o);
+	}
+
+	@Override
+	public int lastIndexOf(Object o) {
+		return entries.lastIndexOf(o);
+	}
+
+	@Override
+	public ListIterator<Object> listIterator() {
+		return entries.listIterator();
+	}
+
+	@Override
+	public ListIterator<Object> listIterator(int index) {
+		return entries.listIterator(index);
+	}
+
+	@Override
+	public PSequence<Object> with(int i, Object e) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public PSequence<Object> plus(int i, Object e) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public PSequence<Object> plusAll(int i, Collection<? extends Object> list) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public PSequence<Object> minus(int i) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public PSequence<Object> subList(int start, int end) {
+		throw new UnsupportedOperationException();
+	}
+
+	@SuppressWarnings("deprecation")
+	@Deprecated
+	@Override
+	public boolean addAll(int index, Collection<? extends Object> c) {
+		throw new UnsupportedOperationException();
+	}
+
+	@SuppressWarnings("deprecation")
+	@Deprecated
+	@Override
+	public Object set(int index, Object element) {
+		throw new UnsupportedOperationException();
+	}
+
+	@SuppressWarnings("deprecation")
+	@Deprecated
+	@Override
+	public void add(int index, Object element) {
+		throw new UnsupportedOperationException();
+	}
+
+	@SuppressWarnings("deprecation")
+	@Deprecated
+	@Override
+	public Object remove(int index) {
+		throw new UnsupportedOperationException();
 	}
 }
