@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import java.util.prefs.Preferences;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -180,9 +181,20 @@ public class GreqlGui extends JFrame {
 					@Override
 					public void run() {
 						if (graph == null) {
-							JOptionPane.showMessageDialog(null,
-									ex.getMessage(), ex.getClass()
-											.getSimpleName(),
+
+							String msg = "Can't load ";
+							try {
+								msg += file.getCanonicalPath() + "\n"
+										+ ex.getMessage();
+							} catch (IOException e) {
+								msg += "graph\n";
+							}
+							Throwable cause = ex.getCause();
+							if (cause != null) {
+								msg += "\ncaused by " + cause;
+							}
+							JOptionPane.showMessageDialog(GreqlGui.this, msg,
+									ex.getClass().getSimpleName(),
 									JOptionPane.ERROR_MESSAGE);
 							statusLabel.setText("Couldn't load graph :-(");
 						} else {
@@ -360,12 +372,30 @@ public class GreqlGui extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				Preferences prefs = Preferences
+						.userNodeForPackage(GreqlGui.class);
+				String lastDirectoryName = prefs.get("LAST_DIRECTORY",
+						System.getProperty("user.dir"));
+				File lastDir = new File(lastDirectoryName);
+				if (lastDir.isDirectory() && lastDir.canRead()) {
+					fileChooser.setCurrentDirectory(lastDir);
+				} else {
+					lastDir = new File(System.getProperty("user.dir"));
+					if (lastDir.isDirectory() && lastDir.canRead()) {
+						fileChooser.setCurrentDirectory(lastDir);
+					}
+				}
 				int returnVal = fileChooser.showOpenDialog(fileSelectionButton);
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					fileSelectionButton.setEnabled(false);
 					evalQueryButton.setEnabled(false);
 					statusLabel.setText("Compling schema...");
 					new GraphLoader(brm, fileChooser.getSelectedFile()).start();
+					try {
+						prefs.put("LAST_DIRECTORY", fileChooser
+								.getCurrentDirectory().getCanonicalPath());
+					} catch (IOException e1) {
+					}
 				}
 			}
 		});
