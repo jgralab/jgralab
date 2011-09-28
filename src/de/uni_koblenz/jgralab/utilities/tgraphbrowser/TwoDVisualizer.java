@@ -530,9 +530,9 @@ public class TwoDVisualizer {
 			 * aggregation/composition diamond is at the opposite side of the
 			 * direction arrow.
 			 */
-			if (e.getOmegaSemantics() == AggregationKind.SHARED) {
+			if (e.getOmegaAggregationKind() == AggregationKind.SHARED) {
 				out.print("arrowtail=\"odiamond\" ");
-			} else if (e.getOmegaSemantics() == AggregationKind.COMPOSITE) {
+			} else if (e.getOmegaAggregationKind() == AggregationKind.COMPOSITE) {
 				out.print("arrowtail=\"diamond\" ");
 			}
 			/*
@@ -540,10 +540,10 @@ public class TwoDVisualizer {
 			 * diamond is at the same side as the direction arrow. Here, we
 			 * print only the diamond.
 			 */
-			else if (e.getAlphaSemantics() == AggregationKind.SHARED) {
+			else if (e.getAlphaAggregationKind() == AggregationKind.SHARED) {
 				out.print("arrowhead=\"odiamondnormal\" ");
 				out.print("arrowtail=\"none\" ");
-			} else if (e.getAlphaSemantics() == AggregationKind.COMPOSITE) {
+			} else if (e.getAlphaAggregationKind() == AggregationKind.COMPOSITE) {
 				out.print("arrowhead=\"diamondnormal\" ");
 				out.print("arrowtail=\"none\" ");
 			}

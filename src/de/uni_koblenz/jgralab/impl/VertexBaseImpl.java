@@ -311,8 +311,8 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 		}
 		while (i != null) {
 			for (AggregationKind element : kinds) {
-				if ((thisIncidence ? i.getThisSemantics() : i
-						.getThatSemantics()) == element) {
+				if ((thisIncidence ? i.getThisAggregationKind() : i
+						.getThatAggregationKind()) == element) {
 					return i;
 				}
 			}

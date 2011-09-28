@@ -1104,7 +1104,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 			Edge e = v.getFirstIncidence();
 			while (e != null) {
 				assert e.isValid() && containsEdge(e);
-				if (e.getThatSemantics() == AggregationKind.COMPOSITE) {
+				if (e.getThatAggregationKind() == AggregationKind.COMPOSITE) {
 					// check for cascading delete of vertices in incident
 					// composition edges
 					VertexBaseImpl other = (VertexBaseImpl) e.getThat();

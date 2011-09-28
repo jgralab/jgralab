@@ -186,6 +186,38 @@ public interface Edge extends GraphElement {
 	public Vertex getThat();
 
 	/**
+	 * sets the alpha vertex to v
+	 * 
+	 * @param v
+	 *            a vertex
+	 */
+	void setAlpha(Vertex v);
+
+	/**
+	 * sets the omega vertex to v
+	 * 
+	 * @param v
+	 *            a vertex
+	 */
+	void setOmega(Vertex v);
+
+	/**
+	 * sets the this vertex to v
+	 * 
+	 * @param v
+	 *            a vertex
+	 */
+	void setThis(Vertex v);
+
+	/**
+	 * sets the that vertex to v
+	 * 
+	 * @param v
+	 *            a vertex
+	 */
+	void setThat(Vertex v);
+
+	/**
 	 * @return the rolename of the edge at the this-vertex
 	 */
 	public String getThisRole();
@@ -311,30 +343,30 @@ public interface Edge extends GraphElement {
 	 * @return the semantics of this edge, e.g. AggregationKind.NONE, SHARED or
 	 *         COMPOSITE
 	 */
-	public AggregationKind getSemantics();
+	public AggregationKind getAggregationKind();
 
 	/**
 	 * @return the semantics of the alpha end of this edge, e.g.
 	 *         AggregationKind.NONE, SHARED or COMPOSITE
 	 */
-	public AggregationKind getAlphaSemantics();
+	public AggregationKind getAlphaAggregationKind();
 
 	/**
 	 * @return the semantics of the omega end of this edge, e.g.
 	 *         AggregationKind.NONE, SHARED or COMPOSITE
 	 */
-	public AggregationKind getOmegaSemantics();
+	public AggregationKind getOmegaAggregationKind();
 
 	/**
 	 * @return the semantics of the this end of this edge, e.g.
 	 *         AggregationKind.NONE, SHARED or COMPOSITE
 	 */
-	public AggregationKind getThisSemantics();
+	public AggregationKind getThisAggregationKind();
 
 	/**
 	 * @return the semantics of the that end of this edge, e.g.
 	 *         AggregationKind.NONE, SHARED or COMPOSITE
 	 */
-	public AggregationKind getThatSemantics();
+	public AggregationKind getThatAggregationKind();
 
 }

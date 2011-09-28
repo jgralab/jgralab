@@ -401,28 +401,28 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 	}
 
 	@Override
-	public AggregationKind getSemantics() {
-		return normalEdge.getSemantics();
+	public AggregationKind getAggregationKind() {
+		return normalEdge.getAggregationKind();
 	}
 
 	@Override
-	public AggregationKind getAlphaSemantics() {
-		return normalEdge.getAlphaSemantics();
+	public AggregationKind getAlphaAggregationKind() {
+		return normalEdge.getAlphaAggregationKind();
 	}
 
 	@Override
-	public AggregationKind getOmegaSemantics() {
-		return normalEdge.getOmegaSemantics();
+	public AggregationKind getOmegaAggregationKind() {
+		return normalEdge.getOmegaAggregationKind();
 	}
 
 	@Override
-	public AggregationKind getThisSemantics() {
-		return normalEdge.getOmegaSemantics();
+	public AggregationKind getThisAggregationKind() {
+		return normalEdge.getOmegaAggregationKind();
 	}
 
 	@Override
-	public AggregationKind getThatSemantics() {
-		return normalEdge.getAlphaSemantics();
+	public AggregationKind getThatAggregationKind() {
+		return normalEdge.getAlphaAggregationKind();
 	}
 
 	@Override
