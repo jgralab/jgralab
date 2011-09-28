@@ -44,6 +44,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.DFA;
+import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.State;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.Transition;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
@@ -55,6 +56,28 @@ public class PathSystem extends Function {
 		super(
 				"Returns a pathsystem with root vertex, which is structured according to path description.",
 				1000, 1, 1.0, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES);
+	}
+
+	public de.uni_koblenz.jgralab.greql2.types.PathSystem evaluate(
+			Vertex startVertex, NFA nfa) {
+		return evaluate(startVertex, nfa.getDFA());
+	}
+
+	public de.uni_koblenz.jgralab.greql2.types.PathSystem evaluate(
+			Vertex startVertex, DFA dfa) {
+
+		@SuppressWarnings("unchecked")
+		GraphMarker<PathSystemMarkerEntry>[] marker = new GraphMarker[dfa.stateList
+				.size()];
+		for (int i = 0; i < dfa.stateList.size(); i++) {
+			marker[i] = new GraphMarker<PathSystemMarkerEntry>(
+					startVertex.getGraph());
+		}
+		Set<PathSystemMarkerEntry> leaves = markVerticesOfPathSystem(marker,
+				startVertex, dfa);
+		de.uni_koblenz.jgralab.greql2.types.PathSystem resultPathSystem = createPathSystemFromMarkings(
+				marker, startVertex, leaves);
+		return resultPathSystem;
 	}
 
 	/**
@@ -148,23 +171,6 @@ public class PathSystem extends Function {
 		}
 
 		return finalEntries;
-	}
-
-	public de.uni_koblenz.jgralab.greql2.types.PathSystem evaluate(
-			Vertex startVertex, DFA dfa) {
-
-		@SuppressWarnings("unchecked")
-		GraphMarker<PathSystemMarkerEntry>[] marker = new GraphMarker[dfa.stateList
-				.size()];
-		for (int i = 0; i < dfa.stateList.size(); i++) {
-			marker[i] = new GraphMarker<PathSystemMarkerEntry>(
-					startVertex.getGraph());
-		}
-		Set<PathSystemMarkerEntry> leaves = markVerticesOfPathSystem(marker,
-				startVertex, dfa);
-		de.uni_koblenz.jgralab.greql2.types.PathSystem resultPathSystem = createPathSystemFromMarkings(
-				marker, startVertex, leaves);
-		return resultPathSystem;
 	}
 
 	/**
