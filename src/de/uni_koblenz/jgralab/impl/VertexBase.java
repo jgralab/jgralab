@@ -7,6 +7,12 @@ import de.uni_koblenz.jgralab.schema.impl.DirectedM1EdgeClass;
 public interface VertexBase extends Vertex {
 
 	/**
+	 * @return the internal vertex structure version
+	 * @see #isIncidenceListModified(long)
+	 */
+	public long getIncidenceListVersion();
+
+	/**
 	 * Must be called by all methods which manipulate the incidence list of this
 	 * Vertex.
 	 */

@@ -52,12 +52,6 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 public interface Vertex extends GraphElement {
 
 	/**
-	 * @return the internal vertex structure version
-	 * @see #isIncidenceListModified(long)
-	 */
-	public long getIncidenceListVersion();
-
-	/**
 	 * @return the number of connected incidences to the vertex
 	 */
 	public int getDegree();
