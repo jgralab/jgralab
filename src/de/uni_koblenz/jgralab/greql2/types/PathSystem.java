@@ -728,7 +728,7 @@ public class PathSystem {
 	 * @return the distance or -1 if the given vertex is not part of this path
 	 *         system.
 	 */
-	public int distance(PathSystemKey key) {
+	private int distance(PathSystemKey key) {
 		assertFinished();
 
 		if (key == null) {
