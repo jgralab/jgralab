@@ -2,11 +2,10 @@ package de.uni_koblenz.jgralabtest.non_junit_tests;
 
 import java.io.PrintStream;
 
-import org.pcollections.ArrayPSet;
-import org.pcollections.ArrayPVector;
 import org.pcollections.PSet;
 import org.pcollections.PVector;
 
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
 
 public class FunLibTest {

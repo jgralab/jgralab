@@ -32,46 +32,20 @@
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
  */
-package de.uni_koblenz.jgralabtest.impl.trans;
 
-import org.pcollections.PMap;
+package de.uni_koblenz.jgralab.greql2.funlib.graph;
 
-import de.uni_koblenz.jgralab.GraphIO;
-import de.uni_koblenz.jgralab.GraphIOException;
-import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
-import de.uni_koblenz.jgralabtest.schemas.record.BooleanType;
-import de.uni_koblenz.jgralabtest.schemas.record.Node;
-import de.uni_koblenz.jgralabtest.schemas.record.RecordTestGraph;
-import de.uni_koblenz.jgralabtest.schemas.record.RecordTestSchema;
+import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
-public class TryRecordLoading {
+public class Distance extends Function {
+	public Distance() {
+		super(
+				"Returns the distance from the root to the given vertex in the given pathsystem.",
+				5, 1, 1.0, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES);
+	}
 
-	/**
-	 * @param args
-	 * @throws GraphIOException
-	 */
-	public static void main(String[] args) throws GraphIOException {
-		// create graph without transaction support
-		RecordTestGraph graph = RecordTestSchema.instance()
-				.createRecordTestGraph();
-		Node node = graph.createNode();
-		PMap<Integer, String> map = JGraLab.map();
-		node.set_nodeMap(map);
-		node.set_testRecord(new BooleanType(true, false));
-		graph.createLink(node, node);
-
-		// save graph to file
-		String filename = "./testit/testgraphs/record.tg";
-
-		GraphIO.saveGraphToFile(filename, graph, new ConsoleProgressFunction());
-
-		// load graph with transaction support
-
-		RecordTestSchema.instance().loadRecordTestGraphWithTransactionSupport(
-				filename, new ConsoleProgressFunction());
-
-		System.out.println("Success!");
-
+	public Integer evaluate(PathSystem ps, Vertex v) {
+		return ps.distance(v);
 	}
 }
