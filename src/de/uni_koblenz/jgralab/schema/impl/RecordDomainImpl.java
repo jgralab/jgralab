@@ -299,4 +299,9 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 	public String getInitialValue() {
 		return "null";
 	}
+
+	@Override
+	public Boolean hasComponent(String name) {
+		return components.containsKey(name);
+	}
 }

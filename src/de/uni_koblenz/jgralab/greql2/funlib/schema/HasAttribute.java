@@ -9,7 +9,7 @@ public class HasAttribute extends Function {
 	public HasAttribute() {
 		super(
 				"Determines whether the attribute $name$ is defined for an element $el$ or class $aec$.",
-				Category.GRAPH);
+				Category.SCHEMA_ACCESS);
 	}
 
 	public Boolean evaluate(AttributedElementClass aec, String name) {

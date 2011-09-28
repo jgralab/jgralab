@@ -19,6 +19,8 @@ import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Record;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.Domain;
 
 public class Types {
 	private static final Class<?>[] GREQL_TYPES = { Integer.class, Long.class,
@@ -27,7 +29,8 @@ public class Types {
 			GraphElement.class, Path.class, PathSystem.class, Slice.class,
 			TypeCollection.class, Enum.class, Record.class, Table.class,
 			Tuple.class, PVector.class, PSet.class, POrderedSet.class,
-			PMap.class, Undefined.class };
+			PMap.class, AttributedElementClass.class, Domain.class,
+			Undefined.class };
 
 	private static final HashMap<Class<?>, String> typeNames;
 	private static final HashSet<Class<?>> types;
