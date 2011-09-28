@@ -125,8 +125,8 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge,
 		}
 		while (i != null) {
 			for (AggregationKind element : kinds) {
-				if ((thisIncidence ? i.getThisSemantics() : i
-						.getThatSemantics()) == element) {
+				if ((thisIncidence ? i.getThisAggregationKind() : i
+						.getThatAggregationKind()) == element) {
 					return i;
 				}
 			}

@@ -561,10 +561,10 @@ class Graph2OWLInstances {
 						.getRolename());
 
 		// create properties for aggregate if e is an Aggregation or Composition
-		if (e.getOmegaSemantics() != AggregationKind.NONE) {
+		if (e.getOmegaAggregationKind() != AggregationKind.NONE) {
 			writeIndividualObjectPropEmptyElement("aggregate", "#" + fromElemId);
 		}
-		if (e.getAlphaSemantics() != AggregationKind.NONE) {
+		if (e.getAlphaAggregationKind() != AggregationKind.NONE) {
 			writeIndividualObjectPropEmptyElement("aggregate", "#" + toElemId);
 		}
 

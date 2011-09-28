@@ -478,15 +478,15 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 	}
 
 	@Override
-	public AggregationKind getThisSemantics() {
+	public AggregationKind getThisAggregationKind() {
 		assert isValid();
-		return getAlphaSemantics();
+		return getAlphaAggregationKind();
 	}
 
 	@Override
-	public AggregationKind getThatSemantics() {
+	public AggregationKind getThatAggregationKind() {
 		assert isValid();
-		return getOmegaSemantics();
+		return getOmegaAggregationKind();
 	}
 
 	/**
