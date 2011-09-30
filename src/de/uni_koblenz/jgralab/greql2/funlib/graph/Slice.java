@@ -52,6 +52,7 @@ import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.DFA;
+import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.State;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.Transition;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
@@ -99,9 +100,18 @@ public class Slice extends Function {
 
 	private Graph graph;
 
+	public de.uni_koblenz.jgralab.greql2.types.Slice evaluate(Vertex v, NFA nfa) {
+		return evaluate(v, nfa.getDFA());
+	}
+
 	public de.uni_koblenz.jgralab.greql2.types.Slice evaluate(Vertex v, DFA dfa) {
 		PSet<Vertex> roots = JGraLab.set();
 		return evaluate(roots.plus(v), dfa);
+	}
+
+	public de.uni_koblenz.jgralab.greql2.types.Slice evaluate(
+			PSet<Vertex> roots, NFA nfa) {
+		return evaluate(roots, nfa.getDFA());
 	}
 
 	public de.uni_koblenz.jgralab.greql2.types.Slice evaluate(

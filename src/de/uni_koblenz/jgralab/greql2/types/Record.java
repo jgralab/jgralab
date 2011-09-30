@@ -9,6 +9,7 @@ import org.pcollections.PMap;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.JGraLab;
+import de.uni_koblenz.jgralab.NoSuchAttributeException;
 
 public class Record implements de.uni_koblenz.jgralab.Record {
 	private PMap<String, Object> entries;
@@ -33,7 +34,11 @@ public class Record implements de.uni_koblenz.jgralab.Record {
 
 	@Override
 	public Object getComponent(String name) {
-		return entries.get(name);
+		if (entries.containsKey(name)) {
+			return entries.get(name);
+		}
+		throw new NoSuchAttributeException(
+				"Record doesn't contain a component '" + name + "'");
 	}
 
 	@Override
