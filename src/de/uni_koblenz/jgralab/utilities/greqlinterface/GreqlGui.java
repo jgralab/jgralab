@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.prefs.Preferences;
 
 import javax.swing.AbstractAction;
@@ -73,6 +74,7 @@ import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.WorkInProgress;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.exception.SerialisingException;
 import de.uni_koblenz.jgralab.greql2.serialising.HTMLOutputWriter;
 
 @WorkInProgress(description = "insufficcient result presentation, simplistic hacked GUI, no load/save functionality, ...", responsibleDevelopers = "horn")
@@ -236,8 +238,8 @@ public class GreqlGui extends JFrame {
 
 		@Override
 		public void run() {
-			final GreqlEvaluator eval = new GreqlEvaluator(query, graph, null,
-					this);
+			final GreqlEvaluator eval = new GreqlEvaluator(query, graph,
+					new HashMap<String, Object>(), this);
 			eval.setOptimize(optimizeCheckBox.isSelected());
 			GreqlEvaluator.DEBUG_OPTIMIZATION = debugOptimizationCheckBox
 					.isSelected();
@@ -285,7 +287,22 @@ public class GreqlGui extends JFrame {
 								// File resultFile = File.createTempFile(
 								// "greqlQueryResult", ".html");
 								// resultFile.deleteOnExit();
-								new HTMLOutputWriter(result, resultFile, graph);
+								try {
+									new HTMLOutputWriter(result, resultFile,
+											graph);
+									Document doc = resultPane.getDocument();
+									doc.putProperty(
+											Document.StreamDescriptionProperty,
+											null);
+									resultPane.setPage(new URL("file",
+											"localhost", resultFile
+													.getCanonicalPath()));
+								} catch (SerialisingException e) {
+									JOptionPane.showMessageDialog(
+											GreqlGui.this,
+											"Exception during HTML output of result: "
+													+ e.toString());
+								}
 								Document doc = resultPane.getDocument();
 								doc.putProperty(
 										Document.StreamDescriptionProperty,
