@@ -863,8 +863,6 @@ public class PathSystem {
 	 */
 	@Override
 	public String toString() {
-		assertFinished();
-
 		StringBuilder returnString = new StringBuilder("PathSystem:\n");
 		PSet<Path> pathSet = extractPaths();
 		for (Path path : pathSet) {
