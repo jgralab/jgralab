@@ -146,4 +146,19 @@ public class Path {
 	public boolean containsEdge(Edge e) {
 		return edges.contains(e);
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Path: ");
+		if (vertices.isEmpty()) {
+			sb.append("empty");
+		} else {
+			sb.append(vertices.get(0));
+			for (Edge e : edges) {
+				sb.append(" ").append(e).append(" ").append(e.getThat());
+			}
+		}
+		return sb.toString();
+	}
 }

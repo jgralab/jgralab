@@ -15,8 +15,11 @@ import org.pcollections.PVector;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.greql2.exception.SerialisingException;
 import de.uni_koblenz.jgralab.greql2.types.Path;
+import de.uni_koblenz.jgralab.greql2.types.PathSystem;
 import de.uni_koblenz.jgralab.greql2.types.Record;
+import de.uni_koblenz.jgralab.greql2.types.Slice;
 import de.uni_koblenz.jgralab.greql2.types.Table;
 import de.uni_koblenz.jgralab.greql2.types.Tuple;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
@@ -43,9 +46,21 @@ public class HTMLOutputWriter extends DefaultWriter {
 			super.write(o);
 		} catch (IOException e) {
 			throw e;
+		} catch (SerialisingException e) {
+			throw e;
 		} catch (Exception e) {
 			throw new RuntimeException("Unexpected Exception", e);
 		}
+	}
+
+	@Override
+	public void writeSlice(Slice s) throws Exception {
+		writeDefaultObject(s);
+	}
+
+	@Override
+	public void writePathSystem(PathSystem p) throws Exception {
+		writeDefaultObject(p);
 	}
 
 	private String htmlQuote(String string) {
@@ -268,8 +283,9 @@ public class HTMLOutputWriter extends DefaultWriter {
 
 	@Override
 	public void writeDefaultObject(Object o) throws IOException {
-		String b = o.toString();
-		out.println(b.toString());
+		out.println("<pre>");
+		out.println(htmlQuote(o.toString()));
+		out.println("</pre>");
 	}
 
 	@Override
