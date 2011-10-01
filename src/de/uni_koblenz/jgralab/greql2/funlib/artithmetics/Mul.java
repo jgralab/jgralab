@@ -5,7 +5,7 @@ import de.uni_koblenz.jgralab.greql2.funlib.Function;
 public class Mul extends Function {
 	public Mul() {
 		super("Calculates the product $a\\cdot b$. Alternative usage: a * b.",
-				Category.ARITHMETICS);
+				4, 1, 1.0, Category.ARITHMETICS);
 	}
 
 	public Number evaluate(Number a, Number b) {

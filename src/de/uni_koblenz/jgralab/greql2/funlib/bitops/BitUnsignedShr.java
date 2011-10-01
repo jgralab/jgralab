@@ -4,7 +4,7 @@ import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class BitUnsignedShr extends Function {
 	public BitUnsignedShr() {
-		super("Shifts $a$ by $n$ bits to the right (unsigned).",
+		super("Shifts $a$ by $n$ bits to the right (unsigned).", 4, 1, 1.0,
 				Category.ARITHMETICS);
 	}
 

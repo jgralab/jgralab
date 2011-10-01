@@ -4,7 +4,8 @@ import de.uni_koblenz.jgralab.greql2.funlib.AcceptsUndefinedArguments;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 import de.uni_koblenz.jgralab.greql2.types.Undefined;
 
-public class isUndefined extends Function implements AcceptsUndefinedArguments {
+@AcceptsUndefinedArguments
+public class isUndefined extends Function {
 
 	public isUndefined() {
 		super("Returns true if $val$ is undefined.", Category.DEBUGGING);

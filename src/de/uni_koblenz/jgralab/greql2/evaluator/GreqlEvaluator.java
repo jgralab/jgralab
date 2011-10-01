@@ -669,7 +669,7 @@ public class GreqlEvaluator {
 			queryGraph = oldQueryGraph;
 			queryString = oldQueryString;
 		}
-		if (FunLib.instance().contains(name)) {
+		if (FunLib.contains(name)) {
 			throw new GreqlException("The subquery '" + name
 					+ "' would shadow a GReQL function!");
 		}

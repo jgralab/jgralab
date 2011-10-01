@@ -5,7 +5,8 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 import de.uni_koblenz.jgralab.greql2.funlib.NeedsGraphArgument;
 
-public class GetEdge extends Function implements NeedsGraphArgument {
+@NeedsGraphArgument
+public class GetEdge extends Function {
 
 	public GetEdge() {
 		super("Returns the $graph$'s edge with the specified $id$.",

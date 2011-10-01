@@ -10,7 +10,7 @@ public class ReMatch extends Function {
 		super(
 				"Returns true iff the given string matches the given regular expression. \n"
 						+ "Alternative usage: myString =\\textasciitilde{} myRegexp.",
-				10, 1, 0.1, Category.STRINGS);
+				50, 1, 0.1, Category.STRINGS);
 	}
 
 	// cache is also used by Split function

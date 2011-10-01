@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.Graph;
@@ -24,36 +23,26 @@ import de.uni_koblenz.jgralab.greql2.types.Types;
 import de.uni_koblenz.jgralab.greql2.types.Undefined;
 
 public class FunLib {
-	private static FunLib instance;
-	private Logger logger;
-
-	public Logger getLogger() {
-		return logger;
-	}
-
-	public static FunLib instance() {
-		if (instance == null) {
-			instance = new FunLib();
-		}
-		return instance;
-	}
-
-	private Map<String, FunctionInfo> functions;
-
 	private static final String packageDirectory = FunLib.class.getPackage()
 			.getName().replace(".", "/");
 
-	private FunLib() {
+	static {
 		functions = new HashMap<String, FunctionInfo>();
 		logger = JGraLab.getLogger(FunLib.class.getPackage().getName());
 		registerAllFunctions();
 	}
 
+	private FunLib() {
+	}
+
+	private static Map<String, FunctionInfo> functions;
+	private static Logger logger;
+
 	private static class Signature {
 		Class<?>[] parameterTypes;
 		Method evaluateMethod;
 
-		boolean matches(Object[] params) {
+		final boolean matches(Object[] params) {
 			if (params.length != parameterTypes.length) {
 				return false;
 			}
@@ -66,11 +55,15 @@ public class FunLib {
 		}
 	}
 
-	private class FunctionInfo {
+	public static class FunctionInfo {
+		String name;
 		Function function;
 		Signature[] signatures;
+		boolean needsGraphArgument;
+		boolean acceptsUndefinedValues;
 
-		FunctionInfo(Class<? extends Function> cls) {
+		FunctionInfo(String name, Class<? extends Function> cls) {
+			this.name = name;
 			ArrayList<Signature> functionSignatures = new ArrayList<Signature>();
 			try {
 				function = cls.newInstance();
@@ -84,6 +77,10 @@ public class FunLib {
 								+ "' (class must be public and needs public default constructor)",
 						e);
 			}
+			needsGraphArgument = cls
+					.isAnnotationPresent(NeedsGraphArgument.class);
+			acceptsUndefinedValues = cls
+					.isAnnotationPresent(AcceptsUndefinedArguments.class);
 			registerSignatures(functionSignatures, cls);
 			signatures = new Signature[functionSignatures.size()];
 			functionSignatures.toArray(this.signatures);
@@ -105,22 +102,34 @@ public class FunLib {
 				}
 			}
 		}
+
+		public final Function getFunction() {
+			return function;
+		}
+
+		public final boolean needsGraphArgument() {
+			return needsGraphArgument;
+		}
+
+		public final boolean acceptsUndefinedValues() {
+			return acceptsUndefinedValues;
+		}
 	}
 
-	public boolean contains(String name) {
+	public static final boolean contains(String name) {
 		return functions.containsKey(name);
 	}
 
-	private String getFunctionName(String className) {
+	private static final String getFunctionName(String className) {
 		return Character.toLowerCase(className.charAt(0))
 				+ className.substring(1);
 	}
 
-	private String getFunctionName(Class<? extends Function> cls) {
+	private static final String getFunctionName(Class<? extends Function> cls) {
 		return getFunctionName(cls.getSimpleName());
 	}
 
-	public String getArgumentAsString(Object arg) {
+	public static final String getArgumentAsString(Object arg) {
 		if (arg == null) {
 			arg = Undefined.UNDEFINED;
 		}
@@ -135,7 +144,8 @@ public class FunLib {
 		return sb.toString();
 	}
 
-	public Object apply(PrintStream os, String name, Object... args) {
+	public static final Object apply(PrintStream os, String name,
+			Object... args) {
 		assert name != null && name.length() >= 1;
 		assert args != null;
 		assert validArgumentTypes(args);
@@ -157,15 +167,9 @@ public class FunLib {
 		return result;
 	}
 
-	public Object apply(String name, Object... args) {
-		assert name != null && name.length() >= 1;
-		assert args != null;
-		assert validArgumentTypes(args);
-		FunctionInfo fi = functions.get(name);
-		if (fi == null) {
-			throw new GreqlException("Call to unknown function '" + name + "'");
-		}
-		if (!(fi.function instanceof AcceptsUndefinedArguments)) {
+	public static final Object apply(FunctionInfo fi, Object... args) {
+		assert fi != null;
+		if (!fi.acceptsUndefinedValues) {
 			for (Object arg : args) {
 				if (arg == null || arg == Undefined.UNDEFINED) {
 					return Undefined.UNDEFINED;
@@ -189,7 +193,7 @@ public class FunLib {
 			}
 		}
 		StringBuilder sb = new StringBuilder();
-		sb.append("Function '").append(name)
+		sb.append("Function '").append(fi.name)
 				.append("' not defined for argument types");
 		String delim = " (";
 		for (Object arg : args) {
@@ -200,7 +204,18 @@ public class FunLib {
 		throw new GreqlException(sb.toString());
 	}
 
-	private boolean validArgumentTypes(Object[] args) {
+	public static final Object apply(String name, Object... args) {
+		assert name != null && name.length() >= 1;
+		assert args != null;
+		assert validArgumentTypes(args);
+		FunctionInfo fi = getFunctionInfo(name);
+		if (fi == null) {
+			throw new GreqlException("Call to unknown function '" + name + "'");
+		}
+		return apply(fi, args);
+	}
+
+	private static final boolean validArgumentTypes(Object[] args) {
 		for (Object arg : args) {
 			if (!Types.isValidGreqlValue(arg)) {
 				throw new GreqlException("Type unknown to GReQL: "
@@ -210,7 +225,7 @@ public class FunLib {
 		return true;
 	}
 
-	private void registerAllFunctions() {
+	private static void registerAllFunctions() {
 		try {
 			Enumeration<URL> resources = FunLib.class.getClassLoader()
 					.getResources(packageDirectory);
@@ -249,7 +264,8 @@ public class FunLib {
 		}
 	}
 
-	private void register(String className) throws ClassNotFoundException {
+	private static void register(String className)
+			throws ClassNotFoundException {
 		if (logger != null) {
 			logger.finest("Loading class " + className);
 		}
@@ -261,7 +277,7 @@ public class FunLib {
 		}
 	}
 
-	public void register(Class<? extends Function> cls) {
+	public static final void register(Class<? extends Function> cls) {
 		int mods = cls.getModifiers();
 		if (Modifier.isAbstract(mods) || Modifier.isInterface(mods)
 				|| !Modifier.isPublic(mods)) {
@@ -274,11 +290,11 @@ public class FunLib {
 		if (logger != null) {
 			logger.fine("Registering " + cls.getName() + " as '" + name + "'");
 		}
-		functions.put(name, new FunctionInfo(cls));
+		functions.put(name, new FunctionInfo(name, cls));
 	}
 
-	private void registerFunctionsInJar(String packagePath) throws IOException,
-			ClassNotFoundException {
+	private static void registerFunctionsInJar(String packagePath)
+			throws IOException, ClassNotFoundException {
 		if (packagePath.lastIndexOf(".jar!/") > 0) {
 			packagePath = packagePath
 					.substring(0, packagePath.lastIndexOf("!"));
@@ -296,7 +312,7 @@ public class FunLib {
 		}
 	}
 
-	public void registerFunctionsInDirectory(String packageName,
+	private static void registerFunctionsInDirectory(String packageName,
 			String directoryName) throws ClassNotFoundException {
 		File dir = new File(directoryName);
 		File[] files = dir.listFiles();
@@ -314,18 +330,15 @@ public class FunLib {
 		}
 	}
 
-	private void registerFunctionsInResourceBundle(URL res) {
+	private static void registerFunctionsInResourceBundle(URL res) {
 		throw new UnsupportedOperationException("Not yet implemented.");
 	}
 
-	public static void main(String[] args) {
-		JGraLab.setLogLevel(Level.FINEST);
-		System.out.println("Hi, this is " + FunLib.class);
-		instance();
+	public static final FunctionInfo getFunctionInfo(String functionName) {
+		return functions.get(functionName);
 	}
 
-	public Function getFunction(String functionName) {
-		FunctionInfo fi = functions.get(functionName);
-		return fi != null ? fi.function : null;
+	public static final Logger getLogger() {
+		return logger;
 	}
 }

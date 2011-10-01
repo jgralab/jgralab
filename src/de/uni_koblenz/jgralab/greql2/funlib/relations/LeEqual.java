@@ -5,7 +5,7 @@ import de.uni_koblenz.jgralab.greql2.funlib.Function;
 public class LeEqual extends Function {
 
 	public LeEqual() {
-		super("Determines if $a \\leq $b$. Alternative: a <= b", 1, 1, 0.5,
+		super("Determines if $a \\leq $b$. Alternative: a <= b", 2, 1, 0.5,
 				Category.RELATIONS);
 	}
 

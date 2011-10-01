@@ -9,7 +9,7 @@ public class GetValue extends Function {
 	public GetValue() {
 		super(
 				"Returns the value of the attribute/component $name$ of element $el$/record $rec$.",
-				Category.GRAPH);
+				2, 1, 1.0, Category.GRAPH);
 	}
 
 	public Object evaluate(AttributedElement el, String name) {

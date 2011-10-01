@@ -401,13 +401,12 @@ public class Slice {
 	 */
 	public void printEntryMap() {
 		clearPathSystem();
-		FunLib.instance().getLogger().info("<Key, Entry> set of slice is:");
+		FunLib.getLogger().info("<Key, Entry> set of slice is:");
 		for (Map.Entry<PathSystemKey, List<PathSystemEntry>> mapEntry : keyToEntryMap
 				.entrySet()) {
 			for (PathSystemEntry entry : mapEntry.getValue()) {
-				FunLib.instance()
-						.getLogger()
-						.info(mapEntry.getKey().toString() + " maps to "
+				FunLib.getLogger().info(
+						mapEntry.getKey().toString() + " maps to "
 								+ entry.toString());
 			}
 		}
@@ -420,14 +419,12 @@ public class Slice {
 		clearPathSystem();
 		Iterator<Map.Entry<Vertex, PathSystemKey>> iter = vertexToFirstKeyMap
 				.entrySet().iterator();
-		FunLib.instance().getLogger()
-				.info("<Vertex, FirstKey> set of slice is:");
+		FunLib.getLogger().info("<Vertex, FirstKey> set of slice is:");
 		while (iter.hasNext()) {
 			Map.Entry<Vertex, PathSystemKey> mapEntry = iter.next();
 			PathSystemKey thisKey = mapEntry.getValue();
 			Vertex vertex = mapEntry.getKey();
-			FunLib.instance().getLogger()
-					.info(vertex + " maps to " + thisKey.toString());
+			FunLib.getLogger().info(vertex + " maps to " + thisKey.toString());
 		}
 	}
 

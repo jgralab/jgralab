@@ -9,7 +9,8 @@ import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 import de.uni_koblenz.jgralab.greql2.funlib.NeedsGraphArgument;
 
-public class IsAcyclic extends Function implements NeedsGraphArgument {
+@NeedsGraphArgument
+public class IsAcyclic extends Function {
 	public IsAcyclic() {
 		super("Returns true iff the graph $g$ is acyclic.", 100, 1, 0.1,
 				Category.GRAPH);

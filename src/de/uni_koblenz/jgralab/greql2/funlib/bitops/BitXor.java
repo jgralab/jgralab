@@ -4,7 +4,7 @@ import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class BitXor extends Function {
 	public BitXor() {
-		super("Calculates the bitwise exlusive or $a xor b$.",
+		super("Calculates the bitwise exlusive or $a xor b$.", 4, 1, 1.0,
 				Category.ARITHMETICS);
 	}
 

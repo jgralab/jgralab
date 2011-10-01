@@ -151,7 +151,6 @@ public class GreqlParser extends ParserHelper {
 		query = source;
 		parsingStack = new Stack<Integer>();
 		predicateStack = new Stack<Boolean>();
-		funlib = FunLib.instance();
 		schema = Greql2Schema.instance();
 		graph = schema.createGreql2();
 		tokens = GreqlLexer.scan(source);
@@ -166,7 +165,7 @@ public class GreqlParser extends ParserHelper {
 
 	protected final boolean isFunctionName(String ident) {
 		return ((subQueryNames != null) && subQueryNames.contains(ident))
-				|| funlib.contains(ident);
+				|| FunLib.contains(ident);
 	}
 
 	public void parse() {

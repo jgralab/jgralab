@@ -6,7 +6,7 @@ public class Mod extends Function {
 	public Mod() {
 		super(
 				"Calculates the remainder of the division $a/b$. Alternative usage: a % b.",
-				Category.ARITHMETICS);
+				4, 1, 1.0, Category.ARITHMETICS);
 	}
 
 	public Number evaluate(Number a, Number b) {

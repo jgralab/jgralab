@@ -101,16 +101,16 @@ public class GreqlEvaluatorFacade {
 	 * Registers all known GReQL functions and disables the JGraLab log.
 	 */
 	static {
-		FunLib.instance().register(ToDotString.class);
-		FunLib.instance().register(ShortenString.class);
-		FunLib.instance().register(AlphaRolename.class);
-		FunLib.instance().register(AlphaIncidenceNumber.class);
-		FunLib.instance().register(OmegaRolename.class);
-		FunLib.instance().register(OmegaIncidenceNumber.class);
-		FunLib.instance().register(AbbreviateString.class);
-		FunLib.instance().register(Join.class);
-		FunLib.instance().register(FormatString.class);
-		FunLib.instance().register(AttributeType.class);
+		FunLib.register(ToDotString.class);
+		FunLib.register(ShortenString.class);
+		FunLib.register(AlphaRolename.class);
+		FunLib.register(AlphaIncidenceNumber.class);
+		FunLib.register(OmegaRolename.class);
+		FunLib.register(OmegaIncidenceNumber.class);
+		FunLib.register(AbbreviateString.class);
+		FunLib.register(Join.class);
+		FunLib.register(FormatString.class);
+		FunLib.register(AttributeType.class);
 	}
 
 	/**
