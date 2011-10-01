@@ -4,7 +4,8 @@ import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class Abs extends Function {
 	public Abs() {
-		super("Calculates the absolute value $|a|$.", Category.ARITHMETICS);
+		super("Calculates the absolute value $|a|$.", 4, 1, 1.0,
+				Category.ARITHMETICS);
 	}
 
 	public Number evaluate(Number a) {

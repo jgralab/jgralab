@@ -5,8 +5,8 @@ import de.uni_koblenz.jgralab.greql2.funlib.Function;
 public class Equals extends Function {
 
 	public Equals() {
-		super("Determines if $a$ and $b$ are different. Alternative: a = b", 1,
-				1, 0.5, Category.RELATIONS);
+		super("Determines if $a$ and $b$ are different. Alternative: a = b", 2,
+				1, 0.05, Category.RELATIONS);
 	}
 
 	public Boolean evaluate(String s, Enum<?> e) {

@@ -5,7 +5,8 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 import de.uni_koblenz.jgralab.greql2.funlib.NeedsGraphArgument;
 
-public class GetVertex extends Function implements NeedsGraphArgument {
+@NeedsGraphArgument
+public class GetVertex extends Function {
 
 	public GetVertex() {
 		super("Returns the $graph$'s vertex with the specified $id$.",

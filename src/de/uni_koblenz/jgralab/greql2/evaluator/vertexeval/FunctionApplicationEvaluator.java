@@ -41,9 +41,10 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
+import de.uni_koblenz.jgralab.greql2.funlib.FunLib.FunctionInfo;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
-import de.uni_koblenz.jgralab.greql2.funlib.NeedsGraphArgument;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
@@ -86,6 +87,8 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 	 */
 	private String functionName = null;
 
+	private FunctionInfo fi = null;
+
 	/**
 	 * Returns the name of the Greql2Function
 	 */
@@ -99,8 +102,19 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 		return functionName;
 	}
 
+	public FunctionInfo getFunctionInfo() {
+		if (fi == null) {
+			fi = FunLib.getFunctionInfo(getFunctionName());
+			if (fi == null) {
+				throw new GreqlException("Call to unknown function '"
+						+ getFunctionName() + "'");
+			}
+		}
+		return fi;
+	}
+
 	public Function getFunction() {
-		return FunLib.instance().getFunction(getFunctionName());
+		return getFunctionInfo().getFunction();
 	}
 
 	/*
@@ -171,11 +185,12 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 	 */
 	@Override
 	public Object evaluate() {
+		FunctionInfo fi = getFunctionInfo();
 		if (!listCreated) {
 			typeArgument = createTypeArgument();
 			parameterEvaluators = createVertexEvaluatorList();
 			int parameterCount = parameterEvaluators.size();
-			if (FunLib.instance().getFunction(getFunctionName()) instanceof NeedsGraphArgument) {
+			if (fi.needsGraphArgument()) {
 				parameterCount++;
 			}
 			if (typeArgument != null) {
@@ -188,7 +203,7 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 
 		int p = 0;
 
-		if (FunLib.instance().getFunction(getFunctionName()) instanceof NeedsGraphArgument) {
+		if (fi.needsGraphArgument()) {
 			parameters[p++] = graph;
 		}
 
@@ -200,7 +215,7 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 			parameters[p] = typeArgument;
 		}
 
-		return FunLib.instance().apply(getFunctionName(), parameters);
+		return FunLib.apply(fi, parameters);
 	}
 
 	@Override

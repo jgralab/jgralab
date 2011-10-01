@@ -4,7 +4,8 @@ import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class BitOr extends Function {
 	public BitOr() {
-		super("Calculates the bitwise or $a \\vee b$.", Category.ARITHMETICS);
+		super("Calculates the bitwise or $a \\vee b$.", 4, 1, 1.0,
+				Category.ARITHMETICS);
 	}
 
 	public Integer evaluate(Integer a, Integer b) {

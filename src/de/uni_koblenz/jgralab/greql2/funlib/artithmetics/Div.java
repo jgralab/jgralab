@@ -4,8 +4,8 @@ import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class Div extends Function {
 	public Div() {
-		super("Calculates the quotient $a/b$. Alternative usage: a / b.",
-				Category.ARITHMETICS);
+		super("Calculates the quotient $a/b$. Alternative usage: a / b.", 4, 1,
+				1.0, Category.ARITHMETICS);
 	}
 
 	public Number evaluate(Number a, Number b) {

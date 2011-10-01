@@ -16,7 +16,7 @@ public class Get extends Function {
 		super(
 				"Returns the value associated with KEY in MAP, or the element of INDEX in COLLECTION.\n"
 						+ "Shorthand notation: myMap[KEY] or myCollection[INDEX]",
-				Category.COLLECTIONS_AND_MAPS);
+				2, 1, 1.0, Category.COLLECTIONS_AND_MAPS);
 	}
 
 	public <T> T evaluate(PVector<T> l, Integer i) {

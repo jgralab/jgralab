@@ -6,7 +6,7 @@ public class Nequals extends Function {
 
 	public Nequals() {
 		super("Determines if $a$ and $b$ are equal. Alternative: a <> b", 1, 1,
-				0.5, Category.RELATIONS);
+				0.95, Category.RELATIONS);
 	}
 
 	public Boolean evaluate(String s, Enum<?> e) {

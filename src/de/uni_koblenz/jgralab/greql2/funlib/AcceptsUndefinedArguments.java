@@ -1,5 +1,9 @@
 package de.uni_koblenz.jgralab.greql2.funlib;
 
-public interface AcceptsUndefinedArguments {
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
+@Retention(RetentionPolicy.RUNTIME)
+public @interface AcceptsUndefinedArguments {
 
 }

@@ -6,7 +6,7 @@ public class Xor extends Function {
 	public Xor() {
 		super(
 				"Logical operation $(a \\wedge \\neg b) \\vee (\\neg a\\wedge b)$.\n"
-						+ "Alternative usage: a or b.", 1, 1, 0.5,
+						+ "Alternative usage: a or b.", 2, 1, 1.0 / 3,
 				Category.LOGICS);
 	}
 

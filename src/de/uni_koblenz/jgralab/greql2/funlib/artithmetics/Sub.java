@@ -4,8 +4,8 @@ import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class Sub extends Function {
 	public Sub() {
-		super("Calculates the negateion $-a$. Alternative usage: - a.",
-				Category.ARITHMETICS);
+		super("Calculates the negateion $-a$. Alternative usage: - a.", 4, 1,
+				1.0, Category.ARITHMETICS);
 	}
 
 	public Number evaluate(Number a, Number b) {

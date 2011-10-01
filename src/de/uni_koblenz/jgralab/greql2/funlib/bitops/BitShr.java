@@ -4,7 +4,8 @@ import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class BitShr extends Function {
 	public BitShr() {
-		super("Shifts $a$ by $n$ bits to the right.", Category.ARITHMETICS);
+		super("Shifts $a$ by $n$ bits to the right.", 4, 1, 1.0,
+				Category.ARITHMETICS);
 	}
 
 	public Integer evaluate(Integer a, Integer n) {

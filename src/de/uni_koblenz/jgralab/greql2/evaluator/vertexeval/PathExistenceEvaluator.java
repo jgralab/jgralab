@@ -41,6 +41,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
+import de.uni_koblenz.jgralab.greql2.funlib.FunLib.FunctionInfo;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
@@ -60,6 +61,7 @@ public class PathExistenceEvaluator extends PathSearchEvaluator {
 	 * evaluates
 	 */
 	private PathExistence vertex;
+	private FunctionInfo fi;
 
 	/**
 	 * returns the vertex this VertexEvaluator evaluates
@@ -111,8 +113,10 @@ public class PathExistenceEvaluator extends PathSearchEvaluator {
 		arguments[0] = startVertex;
 		arguments[1] = targetVertex;
 		arguments[2] = searchAutomaton;
-
-		return FunLib.instance().apply("isReachable", arguments);
+		if (fi == null) {
+			fi = FunLib.getFunctionInfo("isReachable");
+		}
+		return FunLib.apply(fi, arguments);
 	}
 
 	@Override

@@ -4,7 +4,7 @@ import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 public class Add extends Function {
 	public Add() {
-		super("Calculates the sum $a+b$. Alternative usage: a + b.",
+		super("Calculates the sum $a+b$. Alternative usage: a + b.", 4, 1, 1.0,
 				Category.ARITHMETICS);
 	}
 

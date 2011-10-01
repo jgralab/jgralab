@@ -854,7 +854,7 @@ public class PathSystem {
 		assertFinished();
 		PSet<Path> pathSet = extractPaths();
 		for (Path path : pathSet) {
-			FunLib.instance().getLogger().info(path.toString());
+			FunLib.getLogger().info(path.toString());
 		}
 	}
 
@@ -877,16 +877,13 @@ public class PathSystem {
 	 */
 	public void printEntryMap() {
 		assertFinished();
-		FunLib.instance().getLogger()
-				.info("<Key, Entry> Set of PathSystem is:");
+		FunLib.getLogger().info("<Key, Entry> Set of PathSystem is:");
 		for (Map.Entry<PathSystemKey, PathSystemEntry> entry : keyToEntryMap
 				.entrySet()) {
 			PathSystemEntry thisEntry = entry.getValue();
 			PathSystemKey thisKey = entry.getKey();
-			FunLib.instance()
-					.getLogger()
-					.info(thisKey.toString() + " maps to "
-							+ thisEntry.toString());
+			FunLib.getLogger().info(
+					thisKey.toString() + " maps to " + thisEntry.toString());
 		}
 	}
 
@@ -896,14 +893,12 @@ public class PathSystem {
 	public void printKeyMap() {
 		assertFinished();
 
-		FunLib.instance().getLogger()
-				.info("<Vertex, FirstKey> Set of PathSystem is:");
+		FunLib.getLogger().info("<Vertex, FirstKey> Set of PathSystem is:");
 		for (Map.Entry<Vertex, PathSystemKey> entry : vertexToFirstKeyMap
 				.entrySet()) {
 			PathSystemKey thisKey = entry.getValue();
 			Vertex vertex = entry.getKey();
-			FunLib.instance().getLogger()
-					.info(vertex + " maps to " + thisKey.toString());
+			FunLib.getLogger().info(vertex + " maps to " + thisKey.toString());
 		}
 	}
 
