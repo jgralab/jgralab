@@ -17,6 +17,9 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.serialising.HTMLOutputWriter;
 import de.uni_koblenz.jgralab.greql2.serialising.XMLOutputWriter;
+import de.uni_koblenz.jgralab.greql2.types.Path;
+import de.uni_koblenz.jgralab.greql2.types.Undefined;
+import de.uni_koblenz.jgralabtest.schemas.greqltestschema.localities.CountyTags;
 
 public class StoreValuesTest {
 
@@ -97,6 +100,55 @@ public class StoreValuesTest {
 	}
 	
 	/**
+	 * Record
+	 */
+	@Test
+	public void testOutputOfRecord(){
+		String qu = "rec(a:5,b:\"Yes\")";
+		evaluateQueryAndSaveResult(qu, "outputRecord");
+	}
+	
+	@Test
+	public void testOutputUndefined(){
+		Undefined n = Undefined.UNDEFINED;
+		generateHTMLandXMLoutput(n, "outputUndefined");
+	}
+	
+	/**
+	 * Graph
+	 */
+	@Test
+	public void testOutputOfGraph(){
+		generateHTMLandXMLoutput(graph, "outputGraph");	
+	}
+	
+	/**
+	 * Vertex
+	 */
+	@Test
+	public void testOutputOfVertex(){
+		String qu = "from v : V with id(v)  = 1 report v end";
+		evaluateQueryAndSaveResult(qu, "outputVertex");
+	}
+	
+	/**
+	 * Edge
+	 */
+	@Test
+	public void testOutputOfEdge(){
+		String qu = "from e : E with id(e)  = 1 report e end";
+		evaluateQueryAndSaveResult(qu, "outputEdge");
+	}
+	
+	/**
+	 * Enum
+	 */
+	@Test
+	public void testOutputOfEnum(){
+		generateHTMLandXMLoutput(CountyTags.AREA, "outputEnum");
+	}
+	
+	/**
 	 * PVector of Vertices
 	 */
 	@Test
@@ -158,6 +210,45 @@ public class StoreValuesTest {
 		PVector<Vertex> result = eval.getResultList(Vertex.class);
 
 		generateHTMLandXMLoutput(result.get(0), "outputTupleOfVertices", graph, true);	
+	}
+	
+	/**
+	 * Path
+	 */
+	@Test
+	public void testOutputOfPath(){
+		Path p = Path.start(graph.getVertex(1));
+		p = p.append(graph.getEdge(135));
+		p = p.append(graph.getEdge(136));
+		generateHTMLandXMLoutput(p, "outputPath");
+	}
+	
+	/**
+	 * Slice
+	 */
+	@Test
+	public void testOutputOfSlice(){
+		String qu = "from w: V{localities.Town} report slice(w, <--) end";
+		eval.setQuery(qu);
+		eval.startEvaluation();
+		Object result = eval.getResult();
+
+		try {
+			@SuppressWarnings("unused")
+			HTMLOutputWriter htmlout = new HTMLOutputWriter(result, new File(
+					testdir + "outputSlice" + ".html"), graph, true);
+		} catch (IOException e) {
+			e.printStackTrace();
+			assert false;
+		}
+	}
+	
+	/**
+	 * AttributedElementClass
+	 */
+	@Test
+	public void testOutputOfAttributedElementClas(){
+		generateHTMLandXMLoutput(graph.getFirstVertex().getAttributedElementClass(), "outputAttributedElementClass");
 	}
 	
 	
