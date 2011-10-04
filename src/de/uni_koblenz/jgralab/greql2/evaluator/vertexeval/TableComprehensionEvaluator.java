@@ -170,9 +170,10 @@ public class TableComprehensionEvaluator extends VertexEvaluator {
 			// left
 			// corner
 		}
-		while (colIter.hasNext()) {
-			headerTuple = headerTuple.plus((String) colIter.next());
+		while (colIter.hasNext()) {	
+			headerTuple = headerTuple.plus( colIter.next().toString());
 		}
+		resultTable = resultTable.withTitles(headerTuple);
 		Iterator<Entry<Object, HashMap<Object, Object>>> rowIter = tableMap
 				.entrySet().iterator();
 		while (rowIter.hasNext()) {
