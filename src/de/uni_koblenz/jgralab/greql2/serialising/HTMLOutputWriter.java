@@ -197,15 +197,15 @@ public class HTMLOutputWriter extends DefaultWriter {
 		pre();
 		PVector<Edge> edges = p.getEdgeTrace();
 		PVector<Vertex> vertices = p.getVertexTrace();
-		for (int i = 0; i < vertices.size(); i++) {
+		for (int i = 0; i < vertices.size()-1; i++) {
 			if (first) {
 				first = false;
-			} else {
-				inter();
-			}
-			write(vertices.get(i));
+				write(vertices.get(i));
+			} 
 			inter();
 			write(edges.get(i));
+			inter();
+			write(vertices.get(i+1));
 		}
 		post();
 	}
