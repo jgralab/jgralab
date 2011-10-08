@@ -434,7 +434,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	protected void appendEdgeToESeq(EdgeBaseImpl e) {
 		getEdge()[e.id] = e;
 		getRevEdge()[e.id] = e.reversedEdge;
-		setECount(getECount() + 1);
+		setECount(getBaseECount() + 1);
 		if (getFirstBaseEdge() == null) {
 			setFirstEdgeInGraph(e);
 		}
@@ -455,7 +455,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	 */
 	protected void appendVertexToVSeq(VertexBaseImpl v) {
 		getVertex()[v.id] = v;
-		setVCount(getVCount() + 1);
+		setVCount(getBaseVCount() + 1);
 		if (getFirstBaseVertex() == null) {
 			setFirstVertex(v);
 		}
@@ -776,7 +776,10 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	 * @see de.uni_koblenz.jgralab.Graph#getECount()
 	 */
 	@Override
-	abstract public int getECount();
+	public int getECount() {
+		TraversalContext tc = getTraversalContext();
+		return tc == null ? getBaseECount() : tc.getECount();
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -991,7 +994,10 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	 * @see de.uni_koblenz.jgralab.Graph#getVCount()
 	 */
 	@Override
-	abstract public int getVCount();
+	public int getVCount() {
+		TraversalContext tc = getTraversalContext();
+		return tc == null ? getBaseVCount() : tc.getVCount();
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -1165,7 +1171,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 		v.setPrevVertex(null);
 		v.setNextVertex(null);
 		v.setId(0);
-		setVCount(getVCount() - 1);
+		setVCount(getBaseVCount() - 1);
 	}
 
 	/**
@@ -1185,7 +1191,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 		e.setPrevEdgeInGraph(null);
 		e.setNextEdgeInGraph(null);
 		e.setId(0);
-		setECount(getECount() - 1);
+		setECount(getBaseECount() - 1);
 	}
 
 	protected void removeEdgeFromESeqWithoutDeletingIt(EdgeBaseImpl e) {
@@ -1598,8 +1604,8 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 		TraversalContext tc = setTraversalContext(null);
 		try {
 			// defragment vertex array
-			if (getVCount() < vMax) {
-				if (getVCount() > 0) {
+			if (getBaseVCount() < vMax) {
+				if (getBaseVCount() > 0) {
 					int vId = vMax;
 					while (getFreeVertexList().isFragmented()) {
 						while ((vId >= 1) && (getVertex()[vId] == null)) {
@@ -1616,7 +1622,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 						--vId;
 					}
 				}
-				int newVMax = getVCount() == 0 ? 1 : getVCount();
+				int newVMax = getBaseVCount() == 0 ? 1 : getBaseVCount();
 				if (newVMax != vMax) {
 					vMax = newVMax;
 					VertexBaseImpl[] newVertex = new VertexBaseImpl[vMax + 1];
@@ -1628,8 +1634,8 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 				System.gc();
 			}
 			// defragment edge array
-			if (getECount() < eMax) {
-				if (getECount() > 0) {
+			if (getBaseECount() < eMax) {
+				if (getBaseECount() > 0) {
 					int eId = eMax;
 					while (getFreeEdgeList().isFragmented()) {
 						while ((eId >= 1) && (getEdge()[eId] == null)) {
@@ -1649,7 +1655,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 						--eId;
 					}
 				}
-				int newEMax = getECount() == 0 ? 1 : getECount();
+				int newEMax = getBaseECount() == 0 ? 1 : getBaseECount();
 				if (newEMax != eMax) {
 					eMax = newEMax;
 					EdgeBaseImpl[] newEdge = new EdgeBaseImpl[eMax + 1];
