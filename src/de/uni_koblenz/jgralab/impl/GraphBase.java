@@ -117,6 +117,8 @@ public interface GraphBase extends Graph {
 	 */
 	public int getMaxVCount();
 
+	public int getBaseVCount();
+
 	/**
 	 * Computes the new maximum number of vertices when expansion is needed.
 	 * 
@@ -138,6 +140,8 @@ public interface GraphBase extends Graph {
 	 * @return the maximum number of edges
 	 */
 	public int getMaxECount();
+
+	public int getBaseECount();
 
 	/**
 	 * Sets the <code>id</code> of this Graph.

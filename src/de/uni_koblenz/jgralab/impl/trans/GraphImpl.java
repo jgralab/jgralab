@@ -159,7 +159,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public int getECount() {
+	public int getBaseECount() {
 		if (eCount == null) {
 			return 0;
 		}
@@ -274,7 +274,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public int getVCount() {
+	public int getBaseVCount() {
 		if (vCount == null) {
 			return 0;
 		}

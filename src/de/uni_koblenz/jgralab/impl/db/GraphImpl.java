@@ -448,12 +448,12 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	}
 
 	@Override
-	public int getVCount() {
+	public int getBaseVCount() {
 		return vSeq.size();
 	}
 
 	@Override
-	public int getECount() {
+	public int getBaseECount() {
 		return eSeq.size();
 	}
 
