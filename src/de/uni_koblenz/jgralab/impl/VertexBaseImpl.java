@@ -904,20 +904,24 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 	public List<Vertex> removeAdjacences(String role) {
 		assert (role != null) && (role.length() > 0);
 		assert isValid();
-
-		DirectedM1EdgeClass entry = getEdgeForRolename(role);
-		Class<? extends Edge> ec = entry.getM1Class();
-		List<Vertex> adjacences = new ArrayList<Vertex>();
-		List<Edge> deleteList = new ArrayList<Edge>();
-		EdgeDirection dir = entry.getDirection();
-		for (Edge e : incidences(ec, dir)) {
-			deleteList.add(e);
-			adjacences.add(e.getThat());
+		TraversalContext oldTC = getGraph().setTraversalContext(null);
+		try {
+			DirectedM1EdgeClass entry = getEdgeForRolename(role);
+			Class<? extends Edge> ec = entry.getM1Class();
+			List<Vertex> adjacences = new ArrayList<Vertex>();
+			List<Edge> deleteList = new ArrayList<Edge>();
+			EdgeDirection dir = entry.getDirection();
+			for (Edge e : incidences(ec, dir)) {
+				deleteList.add(e);
+				adjacences.add(e.getThat());
+			}
+			for (Edge e : deleteList) {
+				e.delete();
+			}
+			return adjacences;
+		} finally {
+			getGraph().setTraversalContext(oldTC);
 		}
-		for (Edge e : deleteList) {
-			e.delete();
-		}
-		return adjacences;
 	}
 
 	public void removeAdjacence(String role, Vertex other) {
@@ -925,18 +929,22 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 		assert isValid();
 		assert other.isValid();
 		assert getGraph() == other.getGraph();
-
-		DirectedM1EdgeClass entry = getEdgeForRolename(role);
-		Class<? extends Edge> ec = entry.getM1Class();
-		List<Edge> deleteList = new ArrayList<Edge>();
-		EdgeDirection dir = entry.getDirection();
-		for (Edge e : incidences(ec, dir)) {
-			if (e.getThat() == other) {
-				deleteList.add(e);
+		TraversalContext oldTC = getGraph().setTraversalContext(null);
+		try {
+			DirectedM1EdgeClass entry = getEdgeForRolename(role);
+			Class<? extends Edge> ec = entry.getM1Class();
+			List<Edge> deleteList = new ArrayList<Edge>();
+			EdgeDirection dir = entry.getDirection();
+			for (Edge e : incidences(ec, dir)) {
+				if (e.getThat() == other) {
+					deleteList.add(e);
+				}
 			}
-		}
-		for (Edge e : deleteList) {
-			e.delete();
+			for (Edge e : deleteList) {
+				e.delete();
+			}
+		} finally {
+			getGraph().setTraversalContext(oldTC);
 		}
 	}
 
