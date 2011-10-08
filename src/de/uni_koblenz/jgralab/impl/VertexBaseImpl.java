@@ -95,14 +95,14 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 	@Override
 	public int getDegree(EdgeDirection orientation) {
 		int d = 0;
-		EdgeBase i = getFirstBaseIncidence();
+		Edge i = getFirstIncidence();
 		switch (orientation) {
 		case IN:
 			while (i != null) {
 				if (!i.isNormal()) {
 					++d;
 				}
-				i = i.getNextBaseIncidence();
+				i = i.getNextIncidence();
 			}
 			return d;
 		case OUT:
@@ -110,13 +110,13 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 				if (i.isNormal()) {
 					++d;
 				}
-				i = i.getNextBaseIncidence();
+				i = i.getNextIncidence();
 			}
 			return d;
 		case INOUT:
 			while (i != null) {
 				++d;
-				i = i.getNextBaseIncidence();
+				i = i.getNextIncidence();
 			}
 			return d;
 		default:
