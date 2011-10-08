@@ -269,7 +269,7 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 			// Now set the alphas of the outgoing edges
 			EdgeBase firstIncidence = (EdgeBase) higherVertex
 					.getFirstIncidence(EdgeDirection.OUT);
-			while (firstIncidence != null) {
+			if (firstIncidence != null) {
 				firstIncidence.setAlpha(lowerVertex);
 			}
 			higherVertex.delete();
