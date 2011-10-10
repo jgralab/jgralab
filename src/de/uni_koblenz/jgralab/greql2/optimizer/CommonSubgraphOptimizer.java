@@ -50,7 +50,6 @@ import de.uni_koblenz.jgralab.greql2.schema.Greql2Aggregation;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
-import de.uni_koblenz.jgralab.impl.EdgeBase;
 import de.uni_koblenz.jgralab.schema.Attribute;
 
 /**
@@ -267,10 +266,9 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 			// Merge the sourcePositions of the incoming edges
 			mergeSourcePositionsBelow(lowerVertex, higherVertex);
 			// Now set the alphas of the outgoing edges
-			EdgeBase firstIncidence = (EdgeBase) higherVertex
-					.getFirstIncidence(EdgeDirection.OUT);
-			if (firstIncidence != null) {
-				firstIncidence.setAlpha(lowerVertex);
+			while (higherVertex.getFirstIncidence(EdgeDirection.OUT) != null) {
+				higherVertex.getFirstIncidence(EdgeDirection.OUT).setAlpha(
+						lowerVertex);
 			}
 			higherVertex.delete();
 		}
