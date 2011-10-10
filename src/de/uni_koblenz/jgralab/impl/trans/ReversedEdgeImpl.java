@@ -129,7 +129,7 @@ public abstract class ReversedEdgeImpl extends
 	public void setNextIncidenceInternal(EdgeBase nextIncidence) {
 		if (graph.isLoading()) {
 			this.nextIncidence = new VersionedReferenceImpl<IncidenceImpl>(
-					normalEdge, (EdgeBaseImpl) nextIncidence);
+					normalEdge, (IncidenceImpl) nextIncidence);
 		} else {
 			TransactionImpl transaction = (TransactionImpl) graph
 					.getCurrentTransaction();
@@ -158,7 +158,7 @@ public abstract class ReversedEdgeImpl extends
 				this.nextIncidence = new VersionedReferenceImpl<IncidenceImpl>(
 						normalEdge);
 			}
-			this.nextIncidence.setValidValue((EdgeBaseImpl) nextIncidence,
+			this.nextIncidence.setValidValue((IncidenceImpl) nextIncidence,
 					transaction, explicitChange);
 		}
 	}
