@@ -93,7 +93,8 @@ public class VertexBaseTest extends InstanceTest {
 			dbHandler.connectToDatabase();
 			dbHandler.loadVertexTestSchemaIntoGraphDatabase();
 		}
-		g = (GraphBase) createNewGraph();
+		vtg = createNewGraph();
+		g = (GraphBase) vtg;
 		rand = new Random(System.currentTimeMillis());
 	}
 
