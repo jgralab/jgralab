@@ -424,7 +424,10 @@ public abstract class DefaultWriter {
 			this.writeTransition((Transition) o);
 		} else if (o instanceof Declaration) {
 			this.writeDeclaration((Declaration) o);
-		} else if (o instanceof Undefined) {
+		} else if (o instanceof State){
+			this.writeState((State)o);
+		}
+		else if (o instanceof Undefined) {
 			this.writeUndefined();
 		} else {
 			this.writeDefaultObject(o);
