@@ -330,7 +330,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	}
 
 	public void appendVertexToVSeq(VertexBase v) {
-		getVertex()[((VertexBaseImpl)v).id] = v;
+		getVertex()[((VertexBaseImpl) v).id] = v;
 		setVCount(getBaseVCount() + 1);
 		if (getFirstBaseVertex() == null) {
 			setFirstVertex(v);
@@ -397,14 +397,30 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	 */
 	@Override
 	public boolean containsEdge(Edge e) {
-		return (e != null)
-				&& (e.getGraph() == this)
-				&& containsEdgeId(((EdgeBaseImpl) e.getNormalEdge()).id)
-				&& (getEdge(((EdgeBaseImpl) e.getNormalEdge()).id) == e
-						.getNormalEdge())
+		if (e == null) {
+			return false;
+		}
+		if (e.getGraph() != this) {
+			return false;
+		}
+		if (!containsEdgeId(((EdgeBaseImpl) e.getNormalEdge()).id)) {
+			return false;
+		}
+		if (!(getEdge(((EdgeBaseImpl) e.getNormalEdge()).id) == e
+				.getNormalEdge())) {
+			return false;
+		}
+		return true;
+		// return (e != null)
+		// && (e.getGraph() == this)
+		// && containsEdgeId(((EdgeBaseImpl) e.getNormalEdge()).id)
+		// && (getEdge(((EdgeBaseImpl) e.getNormalEdge()).id) == e
+		// .getNormalEdge())
+
 		// && (traversalContext == null || traversalContext
 		// .containsEdge(e))
-		;
+		// ;
+
 	}
 
 	/**
@@ -419,8 +435,23 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 		if (eId < 0) {
 			eId = -eId;
 		}
-		return (eId > 0) && (eId <= eMax) && (getEdge()[eId] != null)
-				&& (getRevEdge()[eId] != null);
+		if (!(eId > 0)) {
+			return false;
+		}
+		if (!(eId <= eMax)) {
+			return false;
+		}
+		EdgeBase[] edge = getEdge();
+		if (!(edge[eId] != null)) {
+			return false;
+		}
+		EdgeBase[] revEdge = getRevEdge();
+		if (!(revEdge[eId] != null)) {
+			return false;
+		}
+		return true;
+		// return (eId > 0) && (eId <= eMax) && (getEdge()[eId] != null)
+		// && (getRevEdge()[eId] != null);
 	}
 
 	/*
@@ -919,7 +950,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 		alpha.removeIncidenceFromLambdaSeq(e);
 		alpha.incidenceListModified();
 
-		VertexBase omega = ((EdgeBase) e.getReversedEdge()).getIncidentVertex();
+		VertexBase omega = ((EdgeBaseImpl) e).reversedEdge.getIncidentVertex();
 		omega.removeIncidenceFromLambdaSeq(((EdgeBaseImpl) e).reversedEdge);
 		omega.incidenceListModified();
 
