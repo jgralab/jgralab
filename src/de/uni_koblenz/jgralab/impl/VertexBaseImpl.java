@@ -150,12 +150,12 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 	public Vertex getNextVertex(Class<? extends Vertex> vertexClass) {
 		assert vertexClass != null;
 		assert isValid();
-		VertexBaseImpl v = (VertexBaseImpl) getNextVertex();
+		VertexBase v = (VertexBase) getNextVertex();
 		while (v != null) {
 			if (vertexClass.isInstance(v)) {
 				return v;
 			}
-			v = (VertexBaseImpl) v.getNextVertex();
+			v = (VertexBase) v.getNextVertex();
 		}
 		return null;
 	}
@@ -188,9 +188,9 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 		if (this == v) {
 			return false;
 		}
-		Vertex prev = ((VertexBaseImpl) v).getPrevBaseVertex();
+		Vertex prev = ((VertexBase) v).getPrevBaseVertex();
 		while ((prev != null) && (prev != this)) {
-			prev = ((VertexBaseImpl) prev).getPrevBaseVertex();
+			prev = ((VertexBase) prev).getPrevBaseVertex();
 		}
 		return prev != null;
 	}
@@ -212,7 +212,7 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 		assert v != this;
 		assert getGraph() == v.getGraph();
 		assert isValid() && v.isValid();
-		graph.putVertexBefore((VertexBaseImpl) v, this);
+		graph.putVertexBefore((VertexBase) v, this);
 	}
 
 	/*
@@ -228,10 +228,9 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 		if (this == v) {
 			return false;
 		}
-		VertexBaseImpl next = (VertexBaseImpl) ((VertexBase) v)
-				.getNextBaseVertex();
+		VertexBase next = (VertexBase) ((VertexBase) v).getNextBaseVertex();
 		while ((next != null) && (next != this)) {
-			next = (VertexBaseImpl) next.getNextBaseVertex();
+			next = (VertexBase) next.getNextBaseVertex();
 		}
 		return next != null;
 	}
@@ -248,7 +247,7 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 		assert v != this;
 		assert getGraph() == v.getGraph();
 		assert isValid() && v.isValid();
-		graph.putVertexAfter((VertexBaseImpl) v, this);
+		graph.putVertexAfter((VertexBase) v, this);
 	}
 
 	@Override

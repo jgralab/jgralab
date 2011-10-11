@@ -336,7 +336,7 @@ public abstract class VertexImpl extends VertexBaseImpl implements
 	 *            of vertex.
 	 */
 	@Override
-	protected void setId(int id) {
+	public void setId(int id) {
 		assert id > 0;
 		if (this.id != id) {
 			updateId(id);

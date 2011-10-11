@@ -153,7 +153,7 @@ public abstract class VertexImpl extends
 	// --- setter ---//
 
 	@Override
-	protected void setId(int id) {
+	public void setId(int id) {
 		// initialize id
 		if (graph.isLoading()) {
 			this.id = id;
@@ -519,8 +519,7 @@ public abstract class VertexImpl extends
 	}
 
 	@Override
-	protected void internalSetDefaultValue(Attribute attr)
-			throws GraphIOException {
+	public void internalSetDefaultValue(Attribute attr) throws GraphIOException {
 		attr.setDefaultTransactionValue(this);
 	}
 

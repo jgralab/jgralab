@@ -313,7 +313,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 		assert e != this;
 		assert e != reversedEdge;
 
-		graph.putEdgeAfterInGraph((EdgeBaseImpl) e.getNormalEdge(), this);
+		graph.putEdgeAfterInGraph((EdgeBase) e.getNormalEdge(), this);
 	}
 
 	/*
@@ -331,7 +331,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 		assert e != this;
 		assert e != reversedEdge;
 
-		graph.putEdgeBeforeInGraph((EdgeBaseImpl) e.getNormalEdge(), this);
+		graph.putEdgeBeforeInGraph((EdgeBase) e.getNormalEdge(), this);
 	}
 
 	/*
@@ -367,7 +367,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 		oldAlpha.removeIncidenceFromLambdaSeq(this);
 		oldAlpha.incidenceListModified();
 
-		VertexBaseImpl newAlpha = (VertexBaseImpl) alphaBase;
+		VertexBase newAlpha = (VertexBase) alphaBase;
 		newAlpha.appendIncidenceToLambdaSeq(this);
 		newAlpha.incidenceListModified();
 		setIncidentVertex(newAlpha);
@@ -412,7 +412,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 		oldOmgea.removeIncidenceFromLambdaSeq(reversedEdge);
 		oldOmgea.incidenceListModified();
 
-		VertexBaseImpl newOmega = (VertexBaseImpl) omegaBase;
+		VertexBase newOmega = (VertexBase) omegaBase;
 		newOmega.appendIncidenceToLambdaSeq(reversedEdge);
 		newOmega.incidenceListModified();
 		// TODO Check if this is really needed as

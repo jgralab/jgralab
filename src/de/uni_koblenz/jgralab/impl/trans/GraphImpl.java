@@ -171,7 +171,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	protected EdgeImpl[] getEdge() {
+	public EdgeImpl[] getEdge() {
 		// accessing edge-Array while expanding it should not be allowed
 		edgeSync.readLock().lock();
 		EdgeImpl[] value = null;
@@ -195,7 +195,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	protected ReversedEdgeImpl[] getRevEdge() {
+	public ReversedEdgeImpl[] getRevEdge() {
 		// accessing revEdge-Array while expanding it should not be allowed
 		edgeSync.readLock().lock();
 		ReversedEdgeImpl[] value = null;
@@ -218,7 +218,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	protected VertexImpl[] getVertex() {
+	public VertexImpl[] getVertex() {
 		// accessing vertex-Array while expanding it should not be allowed
 		vertexSync.readLock().lock();
 		VertexImpl[] value = null;
@@ -286,14 +286,14 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	protected FreeIndexList getFreeVertexList() {
+	public FreeIndexList getFreeVertexList() {
 		synchronized (freeVertexList) {
 			return freeVertexList;
 		}
 	}
 
 	@Override
-	protected FreeIndexList getFreeEdgeList() {
+	public FreeIndexList getFreeEdgeList() {
 		synchronized (freeEdgeList) {
 			return freeEdgeList;
 		}
@@ -328,12 +328,12 @@ public abstract class GraphImpl extends
 	 * @return the delete vertex list of the current transaction
 	 */
 	@Override
-	protected List<de.uni_koblenz.jgralab.impl.VertexBaseImpl> getDeleteVertexList() {
+	public List<VertexBase> getDeleteVertexList() {
 		TransactionImpl transaction = (TransactionImpl) getCurrentTransaction();
 		assert ((transaction != null) && ((transaction.getState() == TransactionState.RUNNING) || (transaction
 				.getState() == TransactionState.WRITING)));
 		if (transaction.deleteVertexList == null) {
-			transaction.deleteVertexList = new LinkedList<de.uni_koblenz.jgralab.impl.VertexBaseImpl>();
+			transaction.deleteVertexList = new LinkedList<VertexBase>();
 		}
 		return transaction.deleteVertexList;
 	}
@@ -366,7 +366,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	protected void setECount(int count) {
+	public void setECount(int count) {
 		if ((eCount == null) || isLoading()) {
 			eCount = new VersionedReferenceImpl<Integer>(this, count);
 		} else {
@@ -375,7 +375,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	protected void setEdge(de.uni_koblenz.jgralab.impl.EdgeBaseImpl[] edge) {
+	public void setEdge(EdgeBase[] edge) {
 		edgeSync.readLock().lock();
 		try {
 			this.edge.setValidValue((EdgeImpl[]) edge, getCurrentTransaction());
@@ -385,8 +385,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	protected void setFirstEdgeInGraph(
-			de.uni_koblenz.jgralab.impl.EdgeBaseImpl firstEdge) {
+	public void setFirstEdgeInGraph(EdgeBase firstEdge) {
 		if ((this.firstEdge == null) || isLoading()) {
 			this.firstEdge = new VersionedReferenceImpl<EdgeImpl>(this,
 					(EdgeImpl) firstEdge);
@@ -397,8 +396,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	protected void setFirstVertex(
-			de.uni_koblenz.jgralab.impl.VertexBaseImpl firstVertex) {
+	public void setFirstVertex(VertexBase firstVertex) {
 		if ((this.firstVertex == null) || isLoading()) {
 			this.firstVertex = new VersionedReferenceImpl<VertexImpl>(this,
 					(VertexImpl) firstVertex);
@@ -409,8 +407,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	protected void setLastEdgeInGraph(
-			de.uni_koblenz.jgralab.impl.EdgeBaseImpl lastEdge) {
+	public void setLastEdgeInGraph(EdgeBase lastEdge) {
 		if ((this.lastEdge == null) || isLoading()) {
 			this.lastEdge = new VersionedReferenceImpl<EdgeImpl>(this,
 					(EdgeImpl) lastEdge);
@@ -421,8 +418,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	protected void setLastVertex(
-			de.uni_koblenz.jgralab.impl.VertexBaseImpl lastVertex) {
+	public void setLastVertex(VertexBase lastVertex) {
 		if ((this.lastVertex == null) || isLoading()) {
 			this.lastVertex = new VersionedReferenceImpl<VertexImpl>(this,
 					(VertexImpl) lastVertex);
@@ -433,8 +429,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	protected void setRevEdge(
-			de.uni_koblenz.jgralab.impl.ReversedEdgeBaseImpl[] revEdge) {
+	public void setRevEdge(EdgeBase[] revEdge) {
 		edgeSync.readLock().lock();
 		try {
 			this.revEdge.setValidValue((ReversedEdgeImpl[]) revEdge,
@@ -445,7 +440,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	protected void setVCount(int count) {
+	public void setVCount(int count) {
 		if ((vCount == null) || isLoading()) {
 			vCount = new VersionedReferenceImpl<Integer>(this, count);
 		} else {
@@ -454,7 +449,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	protected void setVertex(de.uni_koblenz.jgralab.impl.VertexBaseImpl[] vertex) {
+	public void setVertex(VertexBase[] vertex) {
 		vertexSync.readLock().lock();
 		try {
 			this.vertex.setValidValue((VertexImpl[]) vertex,
@@ -488,8 +483,7 @@ public abstract class GraphImpl extends
 	 * nothing needed here
 	 */
 	@Override
-	protected void setDeleteVertexList(
-			List<de.uni_koblenz.jgralab.impl.VertexBaseImpl> deleteVertexList) {
+	public void setDeleteVertexList(List<VertexBase> deleteVertexList) {
 		// do nothing here
 	}
 
@@ -594,7 +588,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	protected int allocateVertexIndex(int currentId) {
+	public int allocateVertexIndex(int currentId) {
 		vertexSync.writeLock().lock();
 		int vId = 0;
 		try {
@@ -619,7 +613,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	protected int allocateEdgeIndex(int currentId) {
+	public int allocateEdgeIndex(int currentId) {
 		edgeSync.writeLock().lock();
 		int eId = 0;
 		try {
@@ -642,7 +636,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	protected void freeEdgeIndex(int index) {
+	public void freeEdgeIndex(int index) {
 		Transaction transaction = getCurrentTransaction();
 		assert ((transaction != null) && !transaction.isReadOnly() && (freeEdgeList != null));
 		if ((transaction.getState() == TransactionState.COMMITTING)
@@ -702,7 +696,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	protected void freeVertexIndex(int index) {
+	public void freeVertexIndex(int index) {
 		Transaction transaction = getCurrentTransaction();
 		assert ((transaction != null) && !transaction.isReadOnly() && (freeVertexList != null));
 		if ((transaction.getState() == TransactionState.COMMITTING)
@@ -762,7 +756,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	protected boolean canAddGraphElement(int graphElementId) {
+	public boolean canAddGraphElement(int graphElementId) {
 		Transaction transaction = getCurrentTransaction();
 		assert (transaction != null);
 		return ((transaction.getState() == TransactionState.WRITING) || (transaction
@@ -770,7 +764,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	protected synchronized void expandVertexArray(int newSize) {
+	public synchronized void expandVertexArray(int newSize) {
 		if (vertexSync == null) {
 			vertexSync = new ReentrantReadWriteLock(true);
 		}
@@ -815,7 +809,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	protected synchronized void expandEdgeArray(int newSize) {
+	public synchronized void expandEdgeArray(int newSize) {
 		if (edgeSync == null) {
 			edgeSync = new ReentrantReadWriteLock(true);
 		}
@@ -865,7 +859,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	protected void addEdge(Edge newEdge, Vertex alpha, Vertex omega) {
+	public void addEdge(Edge newEdge, Vertex alpha, Vertex omega) {
 		if (isLoading()) {
 			super.addEdge(newEdge, alpha, omega);
 		} else {
@@ -922,7 +916,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	protected void addVertex(Vertex newVertex) {
+	public void addVertex(Vertex newVertex) {
 		if (isLoading()) {
 			super.addVertex(newVertex);
 		} else {
@@ -962,14 +956,14 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	protected Edge internalCreateEdge(Class<? extends Edge> cls, Vertex alpha,
+	public Edge internalCreateEdge(Class<? extends Edge> cls, Vertex alpha,
 			Vertex omega) {
 		return graphFactory.createEdgeWithTransactionSupport(cls, 0, this,
 				alpha, omega);
 	}
 
 	@Override
-	protected Vertex internalCreateVertex(Class<? extends Vertex> cls) {
+	public Vertex internalCreateVertex(Class<? extends Vertex> cls) {
 		return graphFactory.createVertexWithTransactionSupport(cls, 0, this);
 	}
 
@@ -1006,7 +1000,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	protected void edgeAfterDeleted(Edge edgeToBeDeleted, Vertex oldAlpha,
+	public void edgeAfterDeleted(Edge edgeToBeDeleted, Vertex oldAlpha,
 			Vertex oldOmega) {
 		EdgeBase deletedEdge = (EdgeBase) edgeToBeDeleted;
 		TransactionImpl transaction = (TransactionImpl) getCurrentTransaction();
@@ -1098,7 +1092,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	protected void vertexAfterDeleted(Vertex vertexToBeDeleted) {
+	public void vertexAfterDeleted(Vertex vertexToBeDeleted) {
 		VertexBase deletedVertex = (VertexBase) vertexToBeDeleted;
 		TransactionImpl transaction = (TransactionImpl) getCurrentTransaction();
 		assert ((transaction != null) && !transaction.isReadOnly()
@@ -1155,9 +1149,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public void putEdgeBeforeInGraph(
-			de.uni_koblenz.jgralab.impl.EdgeBaseImpl targetEdge,
-			de.uni_koblenz.jgralab.impl.EdgeBaseImpl movedEdge) {
+	public void putEdgeBeforeInGraph(EdgeBase targetEdge, EdgeBase movedEdge) {
 		TransactionImpl transaction = (TransactionImpl) getCurrentTransaction();
 		if (transaction == null) {
 			throw new GraphException("Current transaction is null.");
@@ -1217,9 +1209,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public void putEdgeAfterInGraph(
-			de.uni_koblenz.jgralab.impl.EdgeBaseImpl targetEdge,
-			de.uni_koblenz.jgralab.impl.EdgeBaseImpl movedEdge) {
+	public void putEdgeAfterInGraph(EdgeBase targetEdge, EdgeBase movedEdge) {
 		TransactionImpl transaction = (TransactionImpl) getCurrentTransaction();
 		if (transaction == null) {
 			throw new GraphException("Current transaction is null.");
@@ -1279,9 +1269,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	protected void putVertexAfter(
-			de.uni_koblenz.jgralab.impl.VertexBaseImpl targetVertex,
-			de.uni_koblenz.jgralab.impl.VertexBaseImpl movedVertex) {
+	public void putVertexAfter(VertexBase targetVertex, VertexBase movedVertex) {
 		TransactionImpl transaction = (TransactionImpl) getCurrentTransaction();
 		if (transaction == null) {
 			throw new GraphException("Current transaction is null.");
@@ -1342,9 +1330,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	protected void putVertexBefore(
-			de.uni_koblenz.jgralab.impl.VertexBaseImpl targetVertex,
-			de.uni_koblenz.jgralab.impl.VertexBaseImpl movedVertex) {
+	public void putVertexBefore(VertexBase targetVertex, VertexBase movedVertex) {
 		TransactionImpl transaction = (TransactionImpl) getCurrentTransaction();
 		if (transaction == null) {
 			throw new GraphException("Current transaction is null.");
@@ -1449,7 +1435,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	protected void appendEdgeToESeq(de.uni_koblenz.jgralab.impl.EdgeBaseImpl e) {
+	public void appendEdgeToESeq(EdgeBase e) {
 		edgeSync.readLock().lock();
 		try {
 			super.appendEdgeToESeq(e);
@@ -1459,8 +1445,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	protected void appendVertexToVSeq(
-			de.uni_koblenz.jgralab.impl.VertexBaseImpl v) {
+	public void appendVertexToVSeq(VertexBase v) {
 		vertexSync.readLock().lock();
 		try {
 			super.appendVertexToVSeq(v);
@@ -1501,31 +1486,28 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	protected void internalVertexDeleted(
-			de.uni_koblenz.jgralab.impl.VertexBaseImpl v) {
+	public void internalVertexDeleted(VertexBase v) {
 		if (isWriting()) {
 			super.internalVertexDeleted(v);
 		}
 	}
 
 	@Override
-	protected void internalVertexAdded(
-			de.uni_koblenz.jgralab.impl.VertexBaseImpl v) {
+	public void internalVertexAdded(VertexBase v) {
 		if (isWriting()) {
 			super.internalVertexAdded(v);
 		}
 	}
 
 	@Override
-	protected void internalEdgeDeleted(
-			de.uni_koblenz.jgralab.impl.EdgeBaseImpl e) {
+	public void internalEdgeDeleted(EdgeBase e) {
 		if (isWriting()) {
 			super.internalEdgeDeleted(e);
 		}
 	}
 
 	@Override
-	protected void internalEdgeAdded(de.uni_koblenz.jgralab.impl.EdgeBaseImpl e) {
+	public void internalEdgeAdded(EdgeBase e) {
 		if (isWriting()) {
 			super.internalEdgeAdded(e);
 		}
@@ -1569,8 +1551,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	protected void internalSetDefaultValue(Attribute attr)
-			throws GraphIOException {
+	public void internalSetDefaultValue(Attribute attr) throws GraphIOException {
 		attr.setDefaultTransactionValue(this);
 	}
 

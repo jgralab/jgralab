@@ -3,7 +3,7 @@ package de.uni_koblenz.jgralab.impl;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 
-public interface EdgeBase extends Edge {
+public interface EdgeBase extends Edge, GraphElementBase {
 
 	/**
 	 * @return next edge in eSeq

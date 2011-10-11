@@ -165,7 +165,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 	// --- setter ---//
 
 	@Override
-	protected void setId(int id) {
+	public void setId(int id) {
 		// initialize id
 		if (graph.isLoading()) {
 			this.id = id;
@@ -510,8 +510,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 	}
 
 	@Override
-	protected void internalSetDefaultValue(Attribute attr)
-			throws GraphIOException {
+	public void internalSetDefaultValue(Attribute attr) throws GraphIOException {
 		attr.setDefaultTransactionValue(this);
 	}
 
