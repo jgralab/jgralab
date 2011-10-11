@@ -399,8 +399,8 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	public boolean containsEdge(Edge e) {
 		return (e != null)
 				&& (e.getGraph() == this)
-				&& containsEdgeId(((EdgeBase) e.getNormalEdge()).getId())
-				&& (getEdge(((EdgeBase) e.getNormalEdge()).getId()) == e
+				&& containsEdgeId(((EdgeBaseImpl) e.getNormalEdge()).id)
+				&& (getEdge(((EdgeBaseImpl) e.getNormalEdge()).id) == e
 						.getNormalEdge())
 		// && (traversalContext == null || traversalContext
 		// .containsEdge(e))
@@ -433,8 +433,8 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	public boolean containsVertex(Vertex v) {
 		VertexBase[] vertex = getVertex();
 		return (v != null) && (v.getGraph() == this)
-				&& containsVertexId(((VertexBase) v).getId())
-				&& (vertex[((VertexBaseImpl) v).getId()] == v)
+				&& containsVertexId(((VertexBaseImpl) v).id)
+				&& (vertex[((VertexBaseImpl) v).id] == v)
 		// && (traversalContext == null || traversalContext
 		// .containsVertex(v))
 		;
