@@ -1,6 +1,13 @@
 package de.uni_koblenz.jgralab.impl;
 
+import java.util.List;
+
+import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphException;
+import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.schema.Attribute;
 
 public interface GraphBase extends Graph {
 
@@ -201,4 +208,376 @@ public interface GraphBase extends Graph {
 	 */
 	public EdgeBase getLastBaseEdge();
 
+	public Edge internalCreateEdge(Class<? extends Edge> cls, Vertex alpha,
+			Vertex omega);
+
+	public Vertex internalCreateVertex(Class<? extends Vertex> cls);
+
+	public void internalEdgeAdded(EdgeBase e);
+
+	public void internalVertexAdded(VertexBase v);
+
+	public void internalEdgeDeleted(EdgeBase e);
+
+	/**
+	 * 
+	 * @param attr
+	 * @throws GraphIOException
+	 */
+	public void internalSetDefaultValue(Attribute attr) throws GraphIOException;
+
+	/**
+	 * Adds a vertex to this graph. If the vertex' id is 0, a valid id is set,
+	 * otherwise the vertex' current id is used if possible. Should only be used
+	 * by m1-Graphs derived from Graph. To create a new Vertex as user, use the
+	 * appropriate methods from the derived Graphs like
+	 * <code>createStreet(...)</code>
+	 * 
+	 * @param newVertex
+	 *            the Vertex to add
+	 * 
+	 * @throws GraphException
+	 *             if a vertex with the same id already exists
+	 */
+	public void addVertex(Vertex newVertex);
+
+	/**
+	 * Adds an edge to this graph. If the edges id is 0, a valid id is set,
+	 * otherwise the edges current id is used if possible. Should only be used
+	 * by m1-Graphs derived from Graph. To create a new Edge as user, use the
+	 * appropriate methods from the derived Graphs like
+	 * <code>createStreet(...)</code>
+	 * 
+	 * @param newEdge
+	 *            Edge to add
+	 * @param alpha
+	 *            Vertex new edge should start at.
+	 * @param omega
+	 *            Vertex new edge should end at.
+	 * @throws GraphException
+	 *             vertices do not suit the edge, an edge with same id already
+	 *             exists in graph, id of edge greater than possible count of
+	 *             edges in graph
+	 */
+	public void addEdge(Edge newEdge, Vertex alpha, Vertex omega);
+
+	/**
+	 * Use to free an <code>Edge</code>-index
+	 * 
+	 * @param index
+	 */
+	public void freeEdgeIndex(int index);
+
+	/**
+	 * Use to free a <code>Vertex</code>-index.
+	 * 
+	 * @param index
+	 */
+	public void freeVertexIndex(int index);
+
+	/**
+	 * Use to allocate a <code>Vertex</code>-index.
+	 * 
+	 * @param currentId
+	 *            needed for transaction support
+	 */
+	public int allocateVertexIndex(int currentId);
+
+	/**
+	 * Use to allocate a <code>Edge</code>-index.
+	 * 
+	 * @param currentId
+	 *            needed for transaction support
+	 */
+	public int allocateEdgeIndex(int currentId);
+
+	/**
+	 * 
+	 * @param freeVertexList
+	 */
+	public void setFreeVertexList(FreeIndexList freeVertexList);
+
+	/**
+	 * 
+	 * @param freeEdgeList
+	 */
+	public void setFreeEdgeList(FreeIndexList freeEdgeList);
+
+	/**
+	 * Callback function for triggered actions just after the edge
+	 * <code>e</code> was deleted from this Graph. Override this method to
+	 * implement user-defined behaviour upon deletion of edges. Note that any
+	 * changes to this graph are forbidden.
+	 * 
+	 * Needed for transaction support.
+	 * 
+	 * @param e
+	 *            the deleted Edge
+	 * @param oldAlpha
+	 *            the alpha-vertex before deletion
+	 * @param oldOmega
+	 *            the omega-vertex before deletion
+	 */
+	public void edgeAfterDeleted(Edge e, Vertex oldAlpha, Vertex oldOmega);
+
+	/**
+	 * Changes the graph structure version, should be called whenever the
+	 * structure of the graph is changed, for instance by creation and deletion
+	 * or reordering of vertices and edges
+	 */
+	public void edgeListModified();
+
+	/**
+	 * Changes the vertex sequence version of this graph. Should be called
+	 * whenever the vertex list of this graph is changed, for instance by
+	 * creation and deletion or reordering of vertices.
+	 */
+	public void vertexListModified();
+
+	/**
+	 * Changes the size of the edge array of this graph to newSize.
+	 * 
+	 * @param newSize
+	 *            the new size of the edge array
+	 */
+	public void expandEdgeArray(int newSize);
+
+	/**
+	 * Changes the size of the vertex array of this graph to newSize.
+	 * 
+	 * @param newSize
+	 *            the new size of the vertex array
+	 */
+	public void expandVertexArray(int newSize);
+
+	public void internalVertexDeleted(VertexBase v);
+
+	/**
+	 * Removes the vertex v from the global vertex sequence of this graph.
+	 * 
+	 * @param v
+	 *            a vertex
+	 */
+	public void removeVertexFromVSeq(VertexBase v);
+
+	/**
+	 * number of vertices in the graph
+	 */
+	public void setVCount(int count);
+
+	/**
+	 * indexed with vertex-id, holds the actual vertex-object itself
+	 */
+	public VertexBase[] getVertex();
+
+	public void setVertex(VertexBase[] vertex);
+
+	public FreeIndexList getFreeVertexList();
+
+	/**
+	 * holds the id of the first vertex in Vseq
+	 */
+	public void setFirstVertex(VertexBase firstVertex);
+
+	/**
+	 * holds the id of the last vertex in Vseq
+	 */
+	public void setLastVertex(VertexBase lastVertex);
+
+	/**
+	 * Sets version of VSeq if it is different than previous version.
+	 * 
+	 * @param vertexListVersion
+	 *            Version of VSeq.
+	 */
+	public void setVertexListVersion(long vertexListVersion);
+
+	/**
+	 * List of vertices to be deleted by a cascading delete caused by deletion
+	 * of a composition "parent".
+	 */
+	public List<VertexBase> getDeleteVertexList();
+
+	public void setDeleteVertexList(List<VertexBase> deleteVertexList);
+
+	/**
+	 * number of edges in the graph
+	 */
+	public void setECount(int count);
+
+	/**
+	 * indexed with edge-id, holds the actual edge-object itself
+	 */
+	public EdgeBase[] getEdge();
+
+	public void setEdge(EdgeBase[] edge);
+
+	public EdgeBase[] getRevEdge();
+
+	public void setRevEdge(EdgeBase[] revEdge);
+
+	public FreeIndexList getFreeEdgeList();
+
+	/**
+	 * holds the id of the first edge in Eseq
+	 */
+	public void setFirstEdgeInGraph(EdgeBase firstEdge);
+
+	/**
+	 * holds the id of the last edge in Eseq
+	 */
+	public void setLastEdgeInGraph(EdgeBase lastEdge);
+
+	/**
+	 * Sets version of ESeq.
+	 * 
+	 * @param edgeListVersion
+	 *            Version to set.
+	 */
+	public void setEdgeListVersion(long edgeListVersion);
+
+	/**
+	 * Notifies all registered <code>GraphStructureChangedListener</code> that
+	 * the given edge <code>e</code> has been created. All invalid
+	 * <code>WeakReference</code>s are deleted automatically from the internal
+	 * listener list.
+	 * 
+	 * @param e
+	 *            the edge that has been created.
+	 */
+	public void notifyEdgeAdded(Edge e);
+
+	/**
+	 * Notifies all registered <code>GraphStructureChangedListener</code> that
+	 * the given edge <code>e</code> is about to be deleted. All invalid
+	 * <code>WeakReference</code>s are deleted automatically from the internal
+	 * listener list.
+	 * 
+	 * @param e
+	 *            the edge that is about to be deleted.
+	 */
+	public void notifyEdgeDeleted(Edge e);
+
+	/**
+	 * Notifies all registered <code>GraphStructureChangedListener</code> that
+	 * the given vertex <code>v</code> has been created. All invalid
+	 * <code>WeakReference</code>s are deleted automatically from the internal
+	 * listener list.
+	 * 
+	 * @param v
+	 *            the vertex that has been created.
+	 */
+	public void notifyVertexAdded(Vertex v);
+
+	/**
+	 * Notifies all registered <code>GraphStructureChangedListener</code> that
+	 * the given vertex <code>v</code> is about to be deleted. All invalid
+	 * <code>WeakReference</code>s are deleted automatically from the internal
+	 * listener list.
+	 * 
+	 * @param v
+	 *            the vertex that is about to be deleted.
+	 */
+	public void notifyVertexDeleted(Vertex v);
+
+	/**
+	 * Notifies all registered <code>GraphStructureChangedListener</code> that
+	 * the maximum vertex count has been increased to the given
+	 * <code>newValue</code>. All invalid <code>WeakReference</code>s are
+	 * deleted automatically from the internal listener list.
+	 * 
+	 * @param newValue
+	 *            the new maximum vertex count.
+	 */
+	public void notifyMaxVertexCountIncreased(int newValue);
+
+	/**
+	 * Notifies all registered <code>GraphStructureChangedListener</code> that
+	 * the maximum edge count has been increased to the given
+	 * <code>newValue</code>. All invalid <code>WeakReference</code>s are
+	 * deleted automatically from the internal listener list.
+	 * 
+	 * @param newValue
+	 *            the new maximum edge count.
+	 */
+	public void notifyMaxEdgeCountIncreased(int newValue);
+
+	/**
+	 * Modifies eSeq such that the movedEdge is immediately after the
+	 * targetEdge.
+	 * 
+	 * @param targetEdge
+	 *            an edge
+	 * @param movedEdge
+	 *            the edge to be moved
+	 */
+	public void putEdgeAfterInGraph(EdgeBase targetEdge, EdgeBase movedEdge);
+
+	/**
+	 * Modifies eSeq such that the movedEdge is immediately before the
+	 * targetEdge.
+	 * 
+	 * @param targetEdge
+	 *            an edge
+	 * @param movedEdge
+	 *            the edge to be moved
+	 */
+	public void putEdgeBeforeInGraph(EdgeBase targetEdge, EdgeBase movedEdge);
+
+	/**
+	 * Modifies vSeq such that the movedVertex is immediately after the
+	 * targetVertex.
+	 * 
+	 * @param targetVertex
+	 *            a vertex
+	 * @param movedVertex
+	 *            the vertex to be moved
+	 */
+	public void putVertexAfter(VertexBase targetVertex, VertexBase movedVertex);
+
+	/**
+	 * Modifies vSeq such that the movedVertex is immediately before the
+	 * targetVertex.
+	 * 
+	 * @param targetVertex
+	 *            a vertex
+	 * @param movedVertex
+	 *            the vertex to be moved
+	 */
+	public void putVertexBefore(VertexBase targetVertex, VertexBase movedVertex);
+
+	/**
+	 * Removes the edge e from the global edge sequence of this graph.
+	 * 
+	 * @param e
+	 *            an edge
+	 */
+	public void removeEdgeFromESeq(EdgeBase e);
+
+	/**
+	 * Callback function for triggered actions just after the vertex
+	 * <code>v</code> was deleted from this Graph. Override this method to
+	 * implement user-defined behaviour upon deletion of vertices. Note that any
+	 * changes to this graph are forbidden.
+	 * 
+	 * @param v
+	 *            the deleted vertex
+	 */
+	public void vertexAfterDeleted(Vertex v);
+
+	/**
+	 * Appends the edge e to the global edge sequence of this graph.
+	 * 
+	 * @param e
+	 *            an edge
+	 */
+	public void appendEdgeToESeq(EdgeBase e);
+
+	/**
+	 * Appends the vertex v to the global vertex sequence of this graph.
+	 * 
+	 * @param v
+	 *            a vertex
+	 */
+	public void appendVertexToVSeq(VertexBase v);
 }

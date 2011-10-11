@@ -4,7 +4,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.impl.DirectedM1EdgeClass;
 
-public interface VertexBase extends Vertex {
+public interface VertexBase extends Vertex, GraphElementBase {
 
 	/**
 	 * @return the internal vertex structure version

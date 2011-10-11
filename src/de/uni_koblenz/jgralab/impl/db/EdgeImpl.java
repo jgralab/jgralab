@@ -389,7 +389,7 @@ public abstract class EdgeImpl extends EdgeBaseImpl implements
 	 *            Id of edge.
 	 */
 	@Override
-	protected void setId(int id) {
+	public void setId(int id) {
 		assert id >= 0;
 		if (super.getId() != id) {
 			updateId(id);

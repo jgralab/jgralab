@@ -122,7 +122,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl 
 	}
 
 	@Override
-	protected void setId(int id) {
+	public void setId(int id) {
 		assert id >= 0;
 		this.id = id;
 	}
