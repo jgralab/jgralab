@@ -217,7 +217,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 		assert (alpha.getGraph() == omega.getGraph())
 				&& (alpha.getGraph() == this) && (newEdge.getGraph() == this) : "The graph of alpha, omega, newEdge and this graph don't match!";
 
-		EdgeBase e = (EdgeBase) newEdge;
+		EdgeBaseImpl e = (EdgeBaseImpl) newEdge;
 		VertexBase a = (VertexBase) alpha;
 		if (!a.isValidAlpha(e)) {
 			throw new GraphException("Edges of class "
@@ -257,7 +257,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 			assert eId != 0;
 			e.setId(eId);
 			a.appendIncidenceToLambdaSeq(e);
-			o.appendIncidenceToLambdaSeq((EdgeBase) e.getReversedEdge());
+			o.appendIncidenceToLambdaSeq((EdgeBase) e.reversedEdge);
 		}
 		appendEdgeToESeq(e);
 		if (!isLoading()) {
@@ -315,7 +315,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 
 	public void appendEdgeToESeq(EdgeBase e) {
 		getEdge()[e.getId()] = e;
-		getRevEdge()[e.getId()] = (EdgeBase) e.getReversedEdge();
+		getRevEdge()[e.getId()] = ((EdgeBaseImpl) e).reversedEdge;
 		setECount(getBaseECount() + 1);
 		if (getFirstBaseEdge() == null) {
 			setFirstEdgeInGraph(e);
@@ -330,7 +330,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	}
 
 	public void appendVertexToVSeq(VertexBase v) {
-		getVertex()[v.getId()] = v;
+		getVertex()[((VertexBaseImpl)v).id] = v;
 		setVCount(getBaseVCount() + 1);
 		if (getFirstBaseVertex() == null) {
 			setFirstVertex(v);
@@ -920,7 +920,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 		alpha.incidenceListModified();
 
 		VertexBase omega = ((EdgeBase) e.getReversedEdge()).getIncidentVertex();
-		omega.removeIncidenceFromLambdaSeq((EdgeBase) e.getReversedEdge());
+		omega.removeIncidenceFromLambdaSeq(((EdgeBaseImpl) e).reversedEdge);
 		omega.incidenceListModified();
 
 		removeEdgeFromESeq(e);
