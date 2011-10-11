@@ -15,6 +15,8 @@ import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.fa.State;
+import de.uni_koblenz.jgralab.greql2.exception.SerialisingException;
 import de.uni_koblenz.jgralab.greql2.serialising.HTMLOutputWriter;
 import de.uni_koblenz.jgralab.greql2.serialising.XMLOutputWriter;
 import de.uni_koblenz.jgralab.greql2.types.Path;
@@ -108,6 +110,9 @@ public class StoreValuesTest {
 		evaluateQueryAndSaveResult(qu, "outputRecord");
 	}
 	
+	/**
+	 * Undefined
+	 */
 	@Test
 	public void testOutputUndefined(){
 		Undefined n = Undefined.UNDEFINED;
@@ -244,6 +249,27 @@ public class StoreValuesTest {
 	}
 	
 	/**
+	 * Slice
+	 */
+
+	@Test(expected = SerialisingException.class)
+	public void testOutputOfSliceException(){
+		String qu = "from w: V{localities.Town} report slice(w, <--) end";
+		eval.setQuery(qu);
+		eval.startEvaluation();
+		Object result = eval.getResult();
+
+		try {
+			@SuppressWarnings("unused")
+			XMLOutputWriter htmlout = new XMLOutputWriter(result, new File(
+					testdir + "outputSlice" + ".xml"), graph);
+		} catch (XMLStreamException e) {
+			e.printStackTrace();
+		}
+	
+	}
+	
+	/**
 	 * AttributedElementClass
 	 */
 	@Test
@@ -251,7 +277,71 @@ public class StoreValuesTest {
 		generateHTMLandXMLoutput(graph.getFirstVertex().getAttributedElementClass(), "outputAttributedElementClass");
 	}
 	
+	/**
+	 * PMap from String to Integers
+	 */
+	@Test
+	public void testOutputOfMapFromStringToInteger(){
+		String qu = "from v : V{localities.Locality} with v.inhabitants > 100 reportMap v.name -> v.inhabitants end";
+		evaluateQueryAndSaveResult(qu, "outputMapFromStringToInteger");
+	}
 	
+	/**
+	 * PMap from Vertex to PVector of Vertices
+	 */
+	@Test 
+	public void testOutputOfMapFromVertexToListOfVertices(){
+		String qu = "from j : V{junctions.Junction}  reportMap j -> (j <--{connections.Connection}) end";
+		evaluateQueryAndSaveResult(qu, "outputMapFromVertexToListOfVertices");
+	}
+	
+	/**
+	 * PVector of PSet of Vertices
+	 */
+	@Test
+	public void testOutputOfListOfSetsOfVertices(){
+		String qu ="from v : V{junctions.Junction} with count(v-->{connections.AirRoute}) > 0 reportList v-->{connections.AirRoute} end";
+		evaluateQueryAndSaveResult(qu, "outputListOfSetsOfVertices");
+	}
+	
+	/**
+	 * PMap from Vertex to (PMap from Enumeration to Double)
+	 */
+	@Test
+	public void testOutputOfMapFromVertexToMapFromEnumToDouble(){
+		String qu = "from v : V{localities.County} reportMap v -> v.tags end";
+		evaluateQueryAndSaveResult(qu, "outputMapFromVertexToMapFromEnumToDouble");
+	}
+	
+	/**
+	 * State
+	 */
+	@Test(expected = SerialisingException.class)
+	public void testOutputOfState(){
+		State state = new State();
+		try {
+			@SuppressWarnings("unused")
+			HTMLOutputWriter htmlout = new HTMLOutputWriter(state, new File(
+					testdir + "outputException" + ".html"), graph, true);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * State
+	 */
+	@Test(expected = SerialisingException.class)
+	public void testOutputOfState2(){
+		State state = new State();
+		try {
+			@SuppressWarnings("unused")
+			XMLOutputWriter htmlout = new XMLOutputWriter(state, new File(
+					testdir + "outputException" + ".html"), graph);
+		} catch (XMLStreamException e) {
+			e.printStackTrace();
+		}
+	}
 	//----------------------------------------------------------------------
 	
 	

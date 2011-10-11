@@ -18,6 +18,7 @@ import de.uni_koblenz.ist.utilities.xml.IndentingXMLStreamWriter;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.greql2.exception.SerialisingException;
 import de.uni_koblenz.jgralab.greql2.types.Path;
 import de.uni_koblenz.jgralab.greql2.types.Record;
 import de.uni_koblenz.jgralab.greql2.types.Table;
@@ -38,6 +39,8 @@ public class XMLOutputWriter extends DefaultWriter implements XMLConstants {
 		try {
 			super.write(o);
 		} catch (XMLStreamException e) {
+			throw e;
+		}catch (SerialisingException e){
 			throw e;
 		} catch (Exception e) {
 			throw new RuntimeException("Unexpected Exception", e);
