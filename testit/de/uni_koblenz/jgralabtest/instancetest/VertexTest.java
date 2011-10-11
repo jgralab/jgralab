@@ -4419,7 +4419,9 @@ public class VertexTest extends InstanceTest {
 		DoubleSubNode v2 = g.createDoubleSubNode();
 		DoubleSubNode v3 = g.createDoubleSubNode();
 		SubLink e1 = g.createSubLink(v1, v2);
-		g.createSubLink(v2, v3);
+		SubLink e2 = g.createSubLink(v2, v3);
+
+		e2.isValid();
 
 		v3.delete();
 		commit(g);
