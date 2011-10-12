@@ -41,7 +41,6 @@ import java.util.Map.Entry;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.impl.EdgeBase;
 import de.uni_koblenz.jgralab.impl.IncidenceImpl;
 import de.uni_koblenz.jgralab.trans.ListPosition;
 import de.uni_koblenz.jgralab.trans.TransactionState;
@@ -103,7 +102,8 @@ public class WritingComponent {
 			// create new persistent value for edge and revEdge...
 			EdgeImpl[] lastEdge = graph.edge.getLatestPersistentValue();
 			graph.edge.setValidValue(lastEdge.clone(), transaction);
-			EdgeBase[] lastRevEdge = graph.revEdge.getLatestPersistentValue();
+			ReversedEdgeImpl[] lastRevEdge = graph.revEdge
+					.getLatestPersistentValue();
 			graph.revEdge.setValidValue(lastRevEdge.clone(), transaction);
 			graph.edgeSync.readLock().unlock();
 		}

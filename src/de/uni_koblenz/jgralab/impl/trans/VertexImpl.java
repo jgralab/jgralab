@@ -523,9 +523,9 @@ public abstract class VertexImpl extends
 		attr.setDefaultTransactionValue(this);
 	}
 
-	@Override
-	public String toString() {
-		return "v " + getId() + ": "
-				+ getAttributedElementClass().getQualifiedName();
-	}
+	// @Override
+	// public String toString() {
+	// return "v " + getId() + ": "
+	// + getAttributedElementClass().getQualifiedName();
+	// }
 }

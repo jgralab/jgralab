@@ -211,9 +211,9 @@ public abstract class ReversedEdgeImpl extends
 		return prevIncidence;
 	}
 
-	@Override
-	public String toString() {
-		return "-e" + normalEdge.getId() + ": "
-				+ getAttributedElementClass().getQualifiedName();
-	}
+	// @Override
+	// public String toString() {
+	// return "-e" + normalEdge.getId() + ": "
+	// + getAttributedElementClass().getQualifiedName();
+	// }
 }

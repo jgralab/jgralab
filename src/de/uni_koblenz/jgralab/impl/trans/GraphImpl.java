@@ -84,7 +84,7 @@ public abstract class GraphImpl extends
 	// represents Eset
 	protected VersionedArrayImpl<EdgeImpl[]> edge;
 	// TODO maybe think about removing revEdge completely (for saving memory)?!
-	protected VersionedArrayImpl<EdgeBase[]> revEdge;
+	protected VersionedArrayImpl<ReversedEdgeImpl[]> revEdge;
 	private VersionedReferenceImpl<Integer> eCount;
 
 	// represents Vset
@@ -195,10 +195,10 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public EdgeBase[] getRevEdge() {
+	public ReversedEdgeImpl[] getRevEdge() {
 		// accessing revEdge-Array while expanding it should not be allowed
 		edgeSync.readLock().lock();
-		EdgeBase[] value = null;
+		ReversedEdgeImpl[] value = null;
 		if (isLoading()) {
 			value = revEdge.getLatestPersistentValue();
 		} else {
@@ -832,8 +832,8 @@ public abstract class GraphImpl extends
 					edge = new VersionedArrayImpl<EdgeImpl[]>(this,
 							new EdgeImpl[newSize + 1]);
 					assert (revEdge == null);
-					revEdge = new VersionedArrayImpl<EdgeBase[]>(this,
-							new EdgeBase[newSize + 1]);
+					revEdge = new VersionedArrayImpl<ReversedEdgeImpl[]>(this,
+							new ReversedEdgeImpl[newSize + 1]);
 				} else {
 					// lock Array edge
 					synchronized (edge) {
