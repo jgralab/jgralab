@@ -89,7 +89,7 @@ public abstract class ReversedEdgeImpl extends
 	}
 
 	@Override
-	public IncidenceImpl getNextBaseIncidence() {
+	public IncidenceImpl getNextIncidenceInISeq() {
 		if (nextIncidence == null) {
 			return null;
 		}
@@ -99,7 +99,7 @@ public abstract class ReversedEdgeImpl extends
 	}
 
 	@Override
-	public IncidenceImpl getPrevBaseIncidence() {
+	public IncidenceImpl getPrevIncidenceInISeq() {
 		if (prevIncidence == null) {
 			return null;
 		}

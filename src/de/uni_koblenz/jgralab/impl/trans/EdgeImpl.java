@@ -112,7 +112,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 	}
 
 	@Override
-	public InternalEdge getNextBaseEdge() {
+	public InternalEdge getNextEdgeInESeq() {
 		if (nextEdge == null) {
 			return null;
 		}
@@ -122,7 +122,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 	}
 
 	@Override
-	public InternalEdge getPrevBaseEdge() {
+	public InternalEdge getPrevEdgeInESeq() {
 		if (prevEdge == null) {
 			return null;
 		}
@@ -142,7 +142,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 	}
 
 	@Override
-	public IncidenceImpl getNextBaseIncidence() {
+	public IncidenceImpl getNextIncidenceInISeq() {
 		if (nextIncidence == null) {
 			return null;
 		}
@@ -152,7 +152,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 	}
 
 	@Override
-	public IncidenceImpl getPrevBaseIncidence() {
+	public IncidenceImpl getPrevIncidenceInISeq() {
 		if (prevIncidence == null) {
 			return null;
 		}

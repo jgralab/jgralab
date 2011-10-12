@@ -350,10 +350,10 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 
 	private void addEdgeToIncidenceLists(EdgeImpl edge, VertexImpl alpha,
 			VertexImpl omega) {
-		alpha.appendIncidenceToLambdaSeq(edge);
+		alpha.appendIncidenceToISeq(edge);
 		alpha.incidenceListModifiedAtClient();
 		omega
-				.appendIncidenceToLambdaSeq((IncidenceImpl) edge
+				.appendIncidenceToISeq((IncidenceImpl) edge
 						.getReversedEdge());
 		omega.incidenceListModifiedAtClient();
 	}
@@ -447,12 +447,12 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	}
 
 	@Override
-	public int getBaseVCount() {
+	public int getVCountInVSeq() {
 		return vSeq.size();
 	}
 
 	@Override
-	public int getBaseECount() {
+	public int getECountInESeq() {
 		return eSeq.size();
 	}
 
@@ -471,22 +471,22 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	}
 
 	@Override
-	public InternalVertex getFirstBaseVertex() {
+	public InternalVertex getFirstVertexInVSeq() {
 		return vSeq.getFirst();
 	}
 
 	@Override
-	public InternalEdge getFirstBaseEdge() {
+	public InternalEdge getFirstEdgeInESeq() {
 		return eSeq.getFirst();
 	}
 
 	@Override
-	public InternalVertex getLastBaseVertex() {
+	public InternalVertex getLastVertexInVSeq() {
 		return vSeq.getLast();
 	}
 
 	@Override
-	public InternalEdge getLastBaseEdge() {
+	public InternalEdge getLastEdgeInESeq() {
 		return eSeq.getLast();
 	}
 

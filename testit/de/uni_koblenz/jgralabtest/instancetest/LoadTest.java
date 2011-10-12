@@ -415,8 +415,8 @@ public class LoadTest extends InstanceTest {
 	private void checkEqualVertexList(Graph g1, Graph g2) {
 		InternalGraph gb1 = (InternalGraph) g1;
 		InternalGraph gb2 = (InternalGraph) g2;
-		InternalVertex v1 = gb1.getFirstBaseVertex();
-		InternalVertex v2 = gb2.getFirstBaseVertex();
+		InternalVertex v1 = gb1.getFirstVertexInVSeq();
+		InternalVertex v2 = gb2.getFirstVertexInVSeq();
 		while (v1 != null) {
 			if (v2 == null) {
 				fail();
@@ -424,8 +424,8 @@ public class LoadTest extends InstanceTest {
 			assertEquals(v1.getId(), v2.getId());
 			assertEquals(v1.getAttributedElementClass().getQualifiedName(), v2
 					.getAttributedElementClass().getQualifiedName());
-			v1 = v1.getNextBaseVertex();
-			v2 = v2.getNextBaseVertex();
+			v1 = v1.getNextVertexInVSeq();
+			v2 = v2.getNextVertexInVSeq();
 		}
 		if (v2 != null) {
 			fail();

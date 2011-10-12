@@ -128,7 +128,7 @@ public interface InternalGraph extends Graph {
 	 */
 	public int getMaxVCount();
 
-	public int getBaseVCount();
+	public int getVCountInVSeq();
 
 	/**
 	 * Computes the new maximum number of vertices when expansion is needed.
@@ -152,7 +152,7 @@ public interface InternalGraph extends Graph {
 	 */
 	public int getMaxECount();
 
-	public int getBaseECount();
+	public int getECountInESeq();
 
 	/**
 	 * Sets the <code>id</code> of this Graph.
@@ -189,28 +189,28 @@ public interface InternalGraph extends Graph {
 	 * 
 	 * @return the first Vertex, or null if this graph contains no vertices.
 	 */
-	public InternalVertex getFirstBaseVertex();
+	public InternalVertex getFirstVertexInVSeq();
 
 	/**
 	 * Returns the last Vertex in the vertex sequence of this Graph.
 	 * 
 	 * @return the last Vertex, or null if this graph contains no vertices.
 	 */
-	public InternalVertex getLastBaseVertex();
+	public InternalVertex getLastVertexInVSeq();
 
 	/**
 	 * Returns the first Edge in the edge sequence of this Graph.
 	 * 
 	 * @return the first Edge, or null if this graph contains no edges.
 	 */
-	public InternalEdge getFirstBaseEdge();
+	public InternalEdge getFirstEdgeInESeq();
 
 	/**
 	 * Returns the last Edge in the edge sequence of this Graph.
 	 * 
 	 * @return the last Edge, or null if this graph contains no edges.
 	 */
-	public InternalEdge getLastBaseEdge();
+	public InternalEdge getLastEdgeInESeq();
 
 	public Edge internalCreateEdge(Class<? extends Edge> cls, Vertex alpha,
 			Vertex omega);

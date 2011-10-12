@@ -91,7 +91,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public int getBaseVCount() {
+	public int getVCountInVSeq() {
 		return vCount;
 	}
 
@@ -106,27 +106,27 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public int getBaseECount() {
+	public int getECountInESeq() {
 		return eCount;
 	}
 
 	@Override
-	public InternalVertex getFirstBaseVertex() {
+	public InternalVertex getFirstVertexInVSeq() {
 		return firstVertex;
 	}
 
 	@Override
-	public InternalVertex getLastBaseVertex() {
+	public InternalVertex getLastVertexInVSeq() {
 		return lastVertex;
 	}
 
 	@Override
-	public InternalEdge getFirstBaseEdge() {
+	public InternalEdge getFirstEdgeInESeq() {
 		return firstEdge;
 	}
 
 	@Override
-	public InternalEdge getLastBaseEdge() {
+	public InternalEdge getLastEdgeInESeq() {
 		return lastEdge;
 	}
 

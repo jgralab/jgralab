@@ -155,8 +155,8 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 	}
 
 	@Override
-	public InternalEdge getNextBaseEdge() {
-		return normalEdge.getNextBaseEdge();
+	public InternalEdge getNextEdgeInESeq() {
+		return normalEdge.getNextEdgeInESeq();
 	}
 
 	/*
@@ -170,8 +170,8 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 	}
 
 	@Override
-	public InternalEdge getPrevBaseEdge() {
-		return normalEdge.getPrevBaseEdge();
+	public InternalEdge getPrevEdgeInESeq() {
+		return normalEdge.getPrevEdgeInESeq();
 	}
 
 	/*

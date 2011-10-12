@@ -109,11 +109,11 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 
 	@Override
 	public Edge getNextEdge() {
-		InternalEdge nextEdge = getNextBaseEdge();
+		InternalEdge nextEdge = getNextEdgeInESeq();
 		TraversalContext tc = graph.getTraversalContext();
 		if (!(tc == null || nextEdge == null || tc.containsEdge(nextEdge))) {
 			while (!(nextEdge == null || tc.containsEdge(nextEdge))) {
-				nextEdge = nextEdge.getNextBaseEdge();
+				nextEdge = nextEdge.getNextEdgeInESeq();
 			}
 		}
 		return nextEdge;
@@ -121,11 +121,11 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 
 	@Override
 	public Edge getPrevEdge() {
-		InternalEdge prevEdge = getPrevBaseEdge();
+		InternalEdge prevEdge = getPrevEdgeInESeq();
 		TraversalContext tc = graph.getTraversalContext();
 		if (!(tc == null || prevEdge == null || tc.containsEdge(prevEdge))) {
 			while (!(prevEdge == null || tc.containsEdge(prevEdge))) {
-				prevEdge = prevEdge.getPrevBaseEdge();
+				prevEdge = prevEdge.getPrevEdgeInESeq();
 			}
 		}
 		return prevEdge;
@@ -257,9 +257,9 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 		if (e == this) {
 			return false;
 		}
-		InternalEdge p = getPrevBaseEdge();
+		InternalEdge p = getPrevEdgeInESeq();
 		while ((p != null) && (p != e)) {
-			p = p.getPrevBaseEdge();
+			p = p.getPrevEdgeInESeq();
 		}
 		return p != null;
 	}
@@ -281,9 +281,9 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 		if (e == this) {
 			return false;
 		}
-		InternalEdge n = getNextBaseEdge();
+		InternalEdge n = getNextEdgeInESeq();
 		while ((n != null) && (n != e)) {
-			n = n.getNextBaseEdge();
+			n = n.getNextEdgeInESeq();
 		}
 		return n != null;
 	}
@@ -364,11 +364,11 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 					+ alphaBase.getAttributedElementClass().getUniqueName());
 		}
 
-		oldAlpha.removeIncidenceFromLambdaSeq(this);
+		oldAlpha.removeIncidenceFromISeq(this);
 		oldAlpha.incidenceListModified();
 
 		InternalVertex newAlpha = alphaBase;
-		newAlpha.appendIncidenceToLambdaSeq(this);
+		newAlpha.appendIncidenceToISeq(this);
 		newAlpha.incidenceListModified();
 		setIncidentVertex(newAlpha);
 
@@ -409,11 +409,11 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 					+ omegaBase.getAttributedElementClass().getUniqueName());
 		}
 
-		oldOmgea.removeIncidenceFromLambdaSeq(reversedEdge);
+		oldOmgea.removeIncidenceFromISeq(reversedEdge);
 		oldOmgea.incidenceListModified();
 
 		InternalVertex newOmega = omegaBase;
-		newOmega.appendIncidenceToLambdaSeq(reversedEdge);
+		newOmega.appendIncidenceToISeq(reversedEdge);
 		newOmega.incidenceListModified();
 		// TODO Check if this is really needed as
 		// appenIncidenceToLambdaSeq called it before.

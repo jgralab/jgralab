@@ -8,12 +8,12 @@ public interface InternalEdge extends Edge, InternalGraphElement {
 	/**
 	 * @return next edge in eSeq
 	 */
-	public InternalEdge getNextBaseEdge();
+	public InternalEdge getNextEdgeInESeq();
 
 	/**
 	 * @return previous edge in eSeq
 	 */
-	public InternalEdge getPrevBaseEdge();
+	public InternalEdge getPrevEdgeInESeq();
 
 	/**
 	 * @param nextEdge
@@ -28,12 +28,12 @@ public interface InternalEdge extends Edge, InternalGraphElement {
 	/**
 	 * @return the next incidence object in iSeq of current vertex
 	 */
-	public InternalEdge getNextBaseIncidence();
+	public InternalEdge getNextIncidenceInISeq();
 
 	/**
 	 * @return the previous incidence object in iSeq of current vertex
 	 */
-	public InternalEdge getPrevBaseIncidence();
+	public InternalEdge getPrevIncidenceInISeq();
 
 	public void setIncidentVertex(Vertex v);
 

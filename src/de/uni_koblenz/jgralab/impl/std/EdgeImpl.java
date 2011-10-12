@@ -59,13 +59,13 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl 
 	private InternalEdge prevIncidence;
 
 	@Override
-	public InternalEdge getNextBaseEdge() {
+	public InternalEdge getNextEdgeInESeq() {
 		assert isValid();
 		return nextEdge;
 	}
 
 	@Override
-	public InternalEdge getPrevBaseEdge() {
+	public InternalEdge getPrevEdgeInESeq() {
 		assert isValid();
 		return prevEdge;
 	}
@@ -76,12 +76,12 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl 
 	}
 
 	@Override
-	public InternalEdge getNextBaseIncidence() {
+	public InternalEdge getNextIncidenceInISeq() {
 		return nextIncidence;
 	}
 
 	@Override
-	public InternalEdge getPrevBaseIncidence() {
+	public InternalEdge getPrevIncidenceInISeq() {
 		return prevIncidence;
 	}
 

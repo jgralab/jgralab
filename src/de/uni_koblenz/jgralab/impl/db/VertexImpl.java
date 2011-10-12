@@ -178,22 +178,22 @@ public abstract class VertexImpl extends VertexBaseImpl implements
 	}
 
 	@Override
-	public InternalVertex getPrevBaseVertex() {
+	public InternalVertex getPrevVertexInVSeq() {
 		return graph.getPrevVertex(this);
 	}
 
 	@Override
-	public InternalVertex getNextBaseVertex() {
+	public InternalVertex getNextVertexInVSeq() {
 		return graph.getNextVertex(this);
 	}
 
 	@Override
-	public InternalEdge getFirstBaseIncidence() {
+	public InternalEdge getFirstIncidenceInISeq() {
 		return incidenceList.getFirst();
 	}
 
 	@Override
-	public InternalEdge getLastBaseIncidence() {
+	public InternalEdge getLastIncidenceInISeq() {
 		return incidenceList.getLast();
 	}
 
@@ -306,7 +306,7 @@ public abstract class VertexImpl extends VertexBaseImpl implements
 		DatabasePersistableEdge edge = (DatabasePersistableEdge) lastIncidence;
 		assert edge.isPersistent();
 		assert graph.eSeqContainsEdge(edge);
-		appendIncidenceToLambdaSeq(lastIncidence);
+		appendIncidenceToISeq(lastIncidence);
 	}
 
 	/**
@@ -316,7 +316,7 @@ public abstract class VertexImpl extends VertexBaseImpl implements
 	 *            Incidence to append to incidence list of vertex.
 	 */
 	@Override
-	public void appendIncidenceToLambdaSeq(InternalEdge incidence) {
+	public void appendIncidenceToISeq(InternalEdge incidence) {
 		assert incidence != null;
 		// TOOD only cast to DatabasePersitableIncidence and call
 		// setIncidentVId()
@@ -417,7 +417,7 @@ public abstract class VertexImpl extends VertexBaseImpl implements
 	}
 
 	@Override
-	public void removeIncidenceFromLambdaSeq(InternalEdge i) {
+	public void removeIncidenceFromISeq(InternalEdge i) {
 		assert i != null;
 		assert this == i.getThis();
 		incidenceList.remove((DatabasePersistableEdge) i);
@@ -456,7 +456,7 @@ public abstract class VertexImpl extends VertexBaseImpl implements
 		assertPrecondition(target, moved);
 		DatabasePersistableEdge targetEdge = (DatabasePersistableEdge) target;
 		DatabasePersistableEdge movedEdge = (DatabasePersistableEdge) moved;
-		if (target != moved && moved.getNextBaseIncidence() != target) {
+		if (target != moved && moved.getNextIncidenceInISeq() != target) {
 			incidenceList.putBefore(targetEdge, movedEdge);
 			incidenceListModified();
 		}
@@ -467,7 +467,7 @@ public abstract class VertexImpl extends VertexBaseImpl implements
 		assertPrecondition(target, moved);
 		DatabasePersistableEdge targetEdge = (DatabasePersistableEdge) target;
 		DatabasePersistableEdge movedEdge = (DatabasePersistableEdge) moved;
-		if (target != moved && target.getNextBaseIncidence() != moved) {
+		if (target != moved && target.getNextIncidenceInISeq() != moved) {
 			incidenceList.putAfter(targetEdge, movedEdge);
 			incidenceListModified();
 		}
