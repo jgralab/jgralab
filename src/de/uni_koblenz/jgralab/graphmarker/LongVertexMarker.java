@@ -41,12 +41,12 @@ import java.util.NoSuchElementException;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.impl.GraphBase;
+import de.uni_koblenz.jgralab.impl.InternalGraph;
 
 public class LongVertexMarker extends LongGraphMarker<Vertex> {
 
 	public LongVertexMarker(Graph graph) {
-		super(graph, ((GraphBase) graph).getMaxVCount() + 1);
+		super(graph, ((InternalGraph) graph).getMaxVCount() + 1);
 	}
 
 	@Override

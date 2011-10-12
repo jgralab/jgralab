@@ -55,7 +55,7 @@ import de.uni_koblenz.jgralab.GraphStructureChangedListener;
 import de.uni_koblenz.jgralab.GraphStructureChangedListenerWithAutoRemove;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.impl.GraphBase;
+import de.uni_koblenz.jgralab.impl.InternalGraph;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralabtest.schemas.minimal.Link;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalGraph;
@@ -123,7 +123,7 @@ public class GraphStructureChangedListenerTest extends InstanceTest {
 			trigger();
 			assertTrue(
 					"The vertex count of the graph does not match the new vertex count",
-					newValue == ((GraphBase) g).getMaxVCount());
+					newValue == ((InternalGraph) g).getMaxVCount());
 		}
 
 		@Override
@@ -131,7 +131,7 @@ public class GraphStructureChangedListenerTest extends InstanceTest {
 			trigger();
 			assertTrue(
 					"The edge count of the graph does not match the new vertex count",
-					newValue == ((GraphBase) g).getMaxECount());
+					newValue == ((InternalGraph) g).getMaxECount());
 		}
 
 	}

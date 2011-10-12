@@ -57,7 +57,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.greql2.schema.PathExistence;
 import de.uni_koblenz.jgralab.greql2.schema.PathExpression;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
-import de.uni_koblenz.jgralab.impl.EdgeBase;
+import de.uni_koblenz.jgralab.impl.InternalEdge;
 
 /**
  * This {@link Optimizer} transforms {@link PathExistence} vertices to
@@ -245,11 +245,11 @@ public class PathExistenceOptimizer extends OptimizerBase {
 
 		anOptimizationWasDone = true;
 
-		EdgeBase inc = (EdgeBase) pe.getFirstIncidence(EdgeDirection.OUT);
-		Set<EdgeBase> edgesToRelink = new HashSet<EdgeBase>();
+		InternalEdge inc = (InternalEdge) pe.getFirstIncidence(EdgeDirection.OUT);
+		Set<InternalEdge> edgesToRelink = new HashSet<InternalEdge>();
 		while (inc != null) {
 			edgesToRelink.add(inc);
-			inc = (EdgeBase) inc.getNextIncidence(EdgeDirection.OUT);
+			inc = (InternalEdge) inc.getNextIncidence(EdgeDirection.OUT);
 		}
 		FunctionApplication contains = syntaxgraph.createFunctionApplication();
 		FunctionId containsId = OptimizerUtility.findOrCreateFunctionId(
@@ -268,7 +268,7 @@ public class PathExistenceOptimizer extends OptimizerBase {
 
 		syntaxgraph.createIsArgumentOf(vertexSet, contains);
 		syntaxgraph.createIsArgumentOf(otherExp, contains);
-		for (EdgeBase edge : edgesToRelink) {
+		for (InternalEdge edge : edgesToRelink) {
 			edge.setAlpha(contains);
 		}
 		pe.delete();

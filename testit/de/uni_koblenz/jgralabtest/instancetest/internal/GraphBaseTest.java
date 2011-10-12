@@ -55,7 +55,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.RandomIdGenerator;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.impl.GraphBase;
+import de.uni_koblenz.jgralab.impl.InternalGraph;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralabtest.instancetest.InstanceTest;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalGraph;
@@ -82,8 +82,8 @@ public class GraphBaseTest extends InstanceTest {
 		return getParameters();
 	}
 
-	private GraphBase g1;
-	private GraphBase g2;
+	private InternalGraph g1;
+	private InternalGraph g2;
 	private Vertex v1, v2, v3, v5, v7, v8, v9, v11;
 
 	@Before
@@ -92,8 +92,8 @@ public class GraphBaseTest extends InstanceTest {
 			dbHandler.connectToDatabase();
 			dbHandler.loadVertexTestSchemaIntoGraphDatabase();
 		}
-		g1 = (GraphBase) createNewGraph();
-		g2 = (GraphBase) createNewGraph();
+		g1 = (InternalGraph) createNewGraph();
+		g2 = (InternalGraph) createNewGraph();
 		createTransaction(g1);
 		// System.out.println("Graph2 is instance of class " + g2.getClass());
 		v1 = g1.createVertex(SubNode.class);
@@ -264,7 +264,7 @@ public class GraphBaseTest extends InstanceTest {
 				g.getVertex(i).delete();
 			}
 			// defragment the graph
-			((GraphBase) g).defragment();
+			((InternalGraph) g).defragment();
 			// check if the maximum id is 15
 			assertEquals(15, g.getVCount());
 			for (int i = 1; i <= 15; i++) {
@@ -299,7 +299,7 @@ public class GraphBaseTest extends InstanceTest {
 			}
 
 			// defragment the graph
-			((GraphBase) g).defragment();
+			((InternalGraph) g).defragment();
 			// check if the maximum id is 15
 			assertEquals(15, g.getECount());
 			for (int i = 1; i <= 15; i++) {
@@ -781,7 +781,7 @@ public class GraphBaseTest extends InstanceTest {
 		MinimalGraph g3 = createMinimalGraph();
 
 		createReadOnlyTransaction(g3);
-		assertEquals(1000, ((GraphBase) g3).getMaxECount());
+		assertEquals(1000, ((InternalGraph) g3).getMaxECount());
 		commit(g3);
 
 	}
@@ -796,7 +796,7 @@ public class GraphBaseTest extends InstanceTest {
 		MinimalGraph g3 = createMinimalGraph();
 
 		createReadOnlyTransaction(g3);
-		assertEquals(1000, ((GraphBase) g3).getMaxVCount());
+		assertEquals(1000, ((InternalGraph) g3).getMaxVCount());
 		commit(g3);
 
 	}

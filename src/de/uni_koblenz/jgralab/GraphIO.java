@@ -69,7 +69,7 @@ import java.util.zip.GZIPOutputStream;
 
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
-import de.uni_koblenz.jgralab.impl.GraphBase;
+import de.uni_koblenz.jgralab.impl.InternalGraph;
 import de.uni_koblenz.jgralab.impl.GraphBaseImpl;
 import de.uni_koblenz.jgralab.impl.db.GraphDatabase;
 import de.uni_koblenz.jgralab.impl.db.GraphDatabaseException;
@@ -630,7 +630,7 @@ public class GraphIO {
 		try {
 			GraphIO io = new GraphIO();
 			io.TGOut = out;
-			io.saveGraph((GraphBase) graph, pf, null);
+			io.saveGraph((InternalGraph) graph, pf, null);
 			out.flush();
 		} catch (IOException e) {
 			throw new GraphIOException("exception while saving graph", e);
@@ -658,14 +658,14 @@ public class GraphIO {
 		try {
 			GraphIO io = new GraphIO();
 			io.TGOut = out;
-			io.saveGraph((GraphBase) subGraph.getGraph(), pf, subGraph);
+			io.saveGraph((InternalGraph) subGraph.getGraph(), pf, subGraph);
 			out.flush();
 		} catch (IOException e) {
 			throw new GraphIOException("exception while saving graph", e);
 		}
 	}
 
-	private void saveGraph(GraphBase graph, ProgressFunction pf,
+	private void saveGraph(InternalGraph graph, ProgressFunction pf,
 			BooleanGraphMarker subGraph) throws IOException, GraphIOException {
 		TraversalContext tc = graph.setTraversalContext(null);
 		try {

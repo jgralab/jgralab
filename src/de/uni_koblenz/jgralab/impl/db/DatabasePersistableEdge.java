@@ -34,7 +34,7 @@
  */
 package de.uni_koblenz.jgralab.impl.db;
 
-import de.uni_koblenz.jgralab.impl.EdgeBase;
+import de.uni_koblenz.jgralab.impl.InternalEdge;
 
 /**
  * An edge which can be persisted to database.
@@ -42,7 +42,7 @@ import de.uni_koblenz.jgralab.impl.EdgeBase;
  * @author ultbreit@uni-koblenz.de
  */
 public interface DatabasePersistableEdge extends
-		DatabasePersistableGraphElement, DatabasePersistableIncidence, EdgeBase {
+		DatabasePersistableGraphElement, DatabasePersistableIncidence, InternalEdge {
 
 	/**
 	 * Gets number mapping edge's sequence in ESeq of graph.

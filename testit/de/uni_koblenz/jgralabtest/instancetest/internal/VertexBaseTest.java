@@ -55,8 +55,8 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.RandomIdGenerator;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.impl.GraphBase;
-import de.uni_koblenz.jgralab.impl.VertexBase;
+import de.uni_koblenz.jgralab.impl.InternalGraph;
+import de.uni_koblenz.jgralab.impl.InternalVertex;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralabtest.instancetest.InstanceTest;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.AbstractSuperNode;
@@ -81,7 +81,7 @@ public class VertexBaseTest extends InstanceTest {
 	}
 
 	private VertexTestGraph vtg;
-	private GraphBase g;
+	private InternalGraph g;
 	private Random rand;
 
 	/**
@@ -94,7 +94,7 @@ public class VertexBaseTest extends InstanceTest {
 			dbHandler.loadVertexTestSchemaIntoGraphDatabase();
 		}
 		vtg = createNewGraph();
-		g = (GraphBase) vtg;
+		g = (InternalGraph) vtg;
 		rand = new Random(System.currentTimeMillis());
 	}
 
@@ -169,10 +169,10 @@ public class VertexBaseTest extends InstanceTest {
 	@Test
 	public void getIncidenceListVersionTest0() throws CommitFailedException {
 		createTransaction(g);
-		VertexBase[] nodes = new VertexBase[3];
-		nodes[0] = (VertexBase) vtg.createSubNode();
-		nodes[1] = (VertexBase) vtg.createDoubleSubNode();
-		nodes[2] = (VertexBase) vtg.createSuperNode();
+		InternalVertex[] nodes = new InternalVertex[3];
+		nodes[0] = (InternalVertex) vtg.createSubNode();
+		nodes[1] = (InternalVertex) vtg.createDoubleSubNode();
+		nodes[2] = (InternalVertex) vtg.createSuperNode();
 		commit(g);
 		long[] expectedVersions = new long[] { 0, 0, 0 };
 		for (int i = 0; i < ITERATIONS; i++) {
@@ -223,9 +223,9 @@ public class VertexBaseTest extends InstanceTest {
 	@Test
 	public void isIncidenceListModifiedTest0() throws CommitFailedException {
 		createTransaction(g);
-		VertexBase asn = (VertexBase) vtg.createSubNode();
-		VertexBase sn = (VertexBase) vtg.createSuperNode();
-		VertexBase dsn = (VertexBase) vtg.createDoubleSubNode();
+		InternalVertex asn = (InternalVertex) vtg.createSubNode();
+		InternalVertex sn = (InternalVertex) vtg.createSuperNode();
+		InternalVertex dsn = (InternalVertex) vtg.createDoubleSubNode();
 		commit(g);
 		createReadOnlyTransaction(g);
 		long asnIncidenceListVersion = asn.getIncidenceListVersion();
@@ -250,13 +250,13 @@ public class VertexBaseTest extends InstanceTest {
 	@Test
 	public void isIncidenceListModifiedTest1() throws CommitFailedException {
 		createTransaction(g);
-		VertexBase[] nodes = new VertexBase[3];
+		InternalVertex[] nodes = new InternalVertex[3];
 		long[] versions = new long[3];
-		nodes[0] = (VertexBase) vtg.createSubNode();
+		nodes[0] = (InternalVertex) vtg.createSubNode();
 		versions[0] = nodes[0].getIncidenceListVersion();
-		nodes[1] = (VertexBase) vtg.createDoubleSubNode();
+		nodes[1] = (InternalVertex) vtg.createDoubleSubNode();
 		versions[1] = nodes[1].getIncidenceListVersion();
-		nodes[2] = (VertexBase) vtg.createSuperNode();
+		nodes[2] = (InternalVertex) vtg.createSuperNode();
 		versions[2] = nodes[2].getIncidenceListVersion();
 		commit(g);
 		for (int i = 0; i < ITERATIONS; i++) {
@@ -326,9 +326,9 @@ public class VertexBaseTest extends InstanceTest {
 	@Test
 	public void isValidAlphaTest0() throws CommitFailedException {
 		createTransaction(g);
-		VertexBase v0 = (VertexBase) vtg.createSubNode();
-		VertexBase v1 = (VertexBase) vtg.createSuperNode();
-		VertexBase v2 = (VertexBase) vtg.createDoubleSubNode();
+		InternalVertex v0 = (InternalVertex) vtg.createSubNode();
+		InternalVertex v1 = (InternalVertex) vtg.createSuperNode();
+		InternalVertex v2 = (InternalVertex) vtg.createDoubleSubNode();
 		Edge e0 = vtg.createLink((AbstractSuperNode) v2, (SuperNode) v2);
 		Edge e1 = vtg.createSubLink((DoubleSubNode) v2, (SuperNode) v2);
 		commit(g);

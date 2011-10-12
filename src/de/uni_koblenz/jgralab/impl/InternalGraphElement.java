@@ -4,7 +4,7 @@ import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.schema.Attribute;
 
-public interface GraphElementBase extends GraphElement {
+public interface InternalGraphElement extends GraphElement {
 
 	/**
 	 * sets the id field of this graph element

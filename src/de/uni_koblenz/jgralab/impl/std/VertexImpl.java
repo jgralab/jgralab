@@ -36,8 +36,8 @@ package de.uni_koblenz.jgralab.impl.std;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.impl.EdgeBase;
-import de.uni_koblenz.jgralab.impl.VertexBase;
+import de.uni_koblenz.jgralab.impl.InternalEdge;
+import de.uni_koblenz.jgralab.impl.InternalVertex;
 
 /**
  * The implementation of a <code>Vertex</code> accessing attributes without
@@ -47,10 +47,10 @@ import de.uni_koblenz.jgralab.impl.VertexBase;
  */
 public abstract class VertexImpl extends
 		de.uni_koblenz.jgralab.impl.VertexBaseImpl {
-	private VertexBase nextVertex;
-	private VertexBase prevVertex;
-	private EdgeBase firstIncidence;
-	private EdgeBase lastIncidence;
+	private InternalVertex nextVertex;
+	private InternalVertex prevVertex;
+	private InternalEdge firstIncidence;
+	private InternalEdge lastIncidence;
 
 	/**
 	 * holds the version of the vertex structure, for every modification of the
@@ -61,24 +61,24 @@ public abstract class VertexImpl extends
 	private long incidenceListVersion = 0;
 
 	@Override
-	public VertexBase getNextBaseVertex() {
+	public InternalVertex getNextBaseVertex() {
 		assert isValid();
 		return nextVertex;
 	}
 
 	@Override
-	public VertexBase getPrevBaseVertex() {
+	public InternalVertex getPrevBaseVertex() {
 		assert isValid();
 		return prevVertex;
 	}
 
 	@Override
-	public EdgeBase getFirstBaseIncidence() {
+	public InternalEdge getFirstBaseIncidence() {
 		return firstIncidence;
 	}
 
 	@Override
-	public EdgeBase getLastBaseIncidence() {
+	public InternalEdge getLastBaseIncidence() {
 		return lastIncidence;
 	}
 
@@ -93,12 +93,12 @@ public abstract class VertexImpl extends
 	}
 
 	@Override
-	public void setFirstIncidence(EdgeBase firstIncidence) {
+	public void setFirstIncidence(InternalEdge firstIncidence) {
 		this.firstIncidence = firstIncidence;
 	}
 
 	@Override
-	public void setLastIncidence(EdgeBase lastIncidence) {
+	public void setLastIncidence(InternalEdge lastIncidence) {
 		this.lastIncidence = lastIncidence;
 	}
 

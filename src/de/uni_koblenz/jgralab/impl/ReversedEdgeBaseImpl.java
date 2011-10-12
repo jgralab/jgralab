@@ -48,7 +48,7 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
  * @author ist@uni-koblenz.de
  */
 public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
-		EdgeBase {
+		InternalEdge {
 
 	protected final EdgeBaseImpl normalEdge;
 
@@ -155,7 +155,7 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 	}
 
 	@Override
-	public EdgeBase getNextBaseEdge() {
+	public InternalEdge getNextBaseEdge() {
 		return normalEdge.getNextBaseEdge();
 	}
 
@@ -170,7 +170,7 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 	}
 
 	@Override
-	public EdgeBase getPrevBaseEdge() {
+	public InternalEdge getPrevBaseEdge() {
 		return normalEdge.getPrevBaseEdge();
 	}
 

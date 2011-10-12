@@ -5,7 +5,7 @@ import java.util.List;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.impl.EdgeBase;
+import de.uni_koblenz.jgralab.impl.InternalEdge;
 
 /**
  * @author Tassilo Horn &lt;horn@uni-koblenz.de&gt;
@@ -35,11 +35,11 @@ public abstract class InPlaceTransformation extends CountingTransformation {
 		if (oldVertex == newVertex) {
 			return;
 		}
-		List<EdgeBase> incs = new LinkedList<EdgeBase>();
+		List<InternalEdge> incs = new LinkedList<InternalEdge>();
 		for (Edge inc : oldVertex.incidences()) {
-			incs.add((EdgeBase) inc);
+			incs.add((InternalEdge) inc);
 		}
-		for (EdgeBase inc : incs) {
+		for (InternalEdge inc : incs) {
 			inc.setThis(newVertex);
 		}
 	}

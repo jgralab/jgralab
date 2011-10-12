@@ -50,7 +50,7 @@ import de.uni_koblenz.jgralab.greql2.schema.IsSimpleDeclOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsTargetExprOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsTypeExprOfDeclaration;
 import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
-import de.uni_koblenz.jgralab.impl.EdgeBase;
+import de.uni_koblenz.jgralab.impl.InternalEdge;
 
 /**
  * This {@link MergeSimpleDeclarationsOptimizer} finds and merges all
@@ -174,7 +174,7 @@ public class MergeSimpleDeclarationsOptimizer extends OptimizerBase {
 							+ survivor + ".");
 
 					while (s.getFirstIsDeclaredVarOfIncidence() != null) {
-						((EdgeBase) s.getFirstIsDeclaredVarOfIncidence())
+						((InternalEdge) s.getFirstIsDeclaredVarOfIncidence())
 								.setOmega(survivor);
 					}
 

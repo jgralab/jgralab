@@ -99,13 +99,13 @@ public class IncidenceIterable<E extends Edge> implements Iterable<E> {
 	public IncidenceIterable(Vertex v, Class<? extends Edge> ec,
 			EdgeDirection orientation) {
 		assert v != null && v.isValid();
-		iter = new IncidenceIterator((VertexBase) v, ec, orientation);
+		iter = new IncidenceIterator((InternalVertex) v, ec, orientation);
 	}
 
 	class IncidenceIterator implements Iterator<E> {
 		protected E current = null;
 
-		protected VertexBase vertex = null;
+		protected InternalVertex vertex = null;
 
 		protected Class<? extends Edge> ec;
 
@@ -120,7 +120,7 @@ public class IncidenceIterable<E extends Edge> implements Iterable<E> {
 		protected long incidenceListVersion;
 
 		@SuppressWarnings("unchecked")
-		public IncidenceIterator(VertexBase vertex, Class<? extends Edge> ec,
+		public IncidenceIterator(InternalVertex vertex, Class<? extends Edge> ec,
 				EdgeDirection dir) {
 			this.vertex = vertex;
 			this.ec = ec;

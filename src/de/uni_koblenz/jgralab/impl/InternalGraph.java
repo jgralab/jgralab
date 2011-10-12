@@ -9,7 +9,7 @@ import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.Attribute;
 
-public interface GraphBase extends Graph {
+public interface InternalGraph extends Graph {
 
 	/**
 	 * Changes this graph's version. graphModified() is called whenever the
@@ -189,39 +189,39 @@ public interface GraphBase extends Graph {
 	 * 
 	 * @return the first Vertex, or null if this graph contains no vertices.
 	 */
-	public VertexBase getFirstBaseVertex();
+	public InternalVertex getFirstBaseVertex();
 
 	/**
 	 * Returns the last Vertex in the vertex sequence of this Graph.
 	 * 
 	 * @return the last Vertex, or null if this graph contains no vertices.
 	 */
-	public VertexBase getLastBaseVertex();
+	public InternalVertex getLastBaseVertex();
 
 	/**
 	 * Returns the first Edge in the edge sequence of this Graph.
 	 * 
 	 * @return the first Edge, or null if this graph contains no edges.
 	 */
-	public EdgeBase getFirstBaseEdge();
+	public InternalEdge getFirstBaseEdge();
 
 	/**
 	 * Returns the last Edge in the edge sequence of this Graph.
 	 * 
 	 * @return the last Edge, or null if this graph contains no edges.
 	 */
-	public EdgeBase getLastBaseEdge();
+	public InternalEdge getLastBaseEdge();
 
 	public Edge internalCreateEdge(Class<? extends Edge> cls, Vertex alpha,
 			Vertex omega);
 
 	public Vertex internalCreateVertex(Class<? extends Vertex> cls);
 
-	public void internalEdgeAdded(EdgeBase e);
+	public void internalEdgeAdded(InternalEdge e);
 
-	public void internalVertexAdded(VertexBase v);
+	public void internalVertexAdded(InternalVertex v);
 
-	public void internalEdgeDeleted(EdgeBase e);
+	public void internalEdgeDeleted(InternalEdge e);
 
 	/**
 	 * 
@@ -354,7 +354,7 @@ public interface GraphBase extends Graph {
 	 */
 	public void expandVertexArray(int newSize);
 
-	public void internalVertexDeleted(VertexBase v);
+	public void internalVertexDeleted(InternalVertex v);
 
 	/**
 	 * Removes the vertex v from the global vertex sequence of this graph.
@@ -362,7 +362,7 @@ public interface GraphBase extends Graph {
 	 * @param v
 	 *            a vertex
 	 */
-	public void removeVertexFromVSeq(VertexBase v);
+	public void removeVertexFromVSeq(InternalVertex v);
 
 	/**
 	 * number of vertices in the graph
@@ -372,21 +372,21 @@ public interface GraphBase extends Graph {
 	/**
 	 * indexed with vertex-id, holds the actual vertex-object itself
 	 */
-	public VertexBase[] getVertex();
+	public InternalVertex[] getVertex();
 
-	public void setVertex(VertexBase[] vertex);
+	public void setVertex(InternalVertex[] vertex);
 
 	public FreeIndexList getFreeVertexList();
 
 	/**
 	 * holds the id of the first vertex in Vseq
 	 */
-	public void setFirstVertex(VertexBase firstVertex);
+	public void setFirstVertex(InternalVertex firstVertex);
 
 	/**
 	 * holds the id of the last vertex in Vseq
 	 */
-	public void setLastVertex(VertexBase lastVertex);
+	public void setLastVertex(InternalVertex lastVertex);
 
 	/**
 	 * Sets version of VSeq if it is different than previous version.
@@ -400,9 +400,9 @@ public interface GraphBase extends Graph {
 	 * List of vertices to be deleted by a cascading delete caused by deletion
 	 * of a composition "parent".
 	 */
-	public List<VertexBase> getDeleteVertexList();
+	public List<InternalVertex> getDeleteVertexList();
 
-	public void setDeleteVertexList(List<VertexBase> deleteVertexList);
+	public void setDeleteVertexList(List<InternalVertex> deleteVertexList);
 
 	/**
 	 * number of edges in the graph
@@ -412,25 +412,25 @@ public interface GraphBase extends Graph {
 	/**
 	 * indexed with edge-id, holds the actual edge-object itself
 	 */
-	public EdgeBase[] getEdge();
+	public InternalEdge[] getEdge();
 
-	public void setEdge(EdgeBase[] edge);
+	public void setEdge(InternalEdge[] edge);
 
-	public EdgeBase[] getRevEdge();
+	public InternalEdge[] getRevEdge();
 
-	public void setRevEdge(EdgeBase[] revEdge);
+	public void setRevEdge(InternalEdge[] revEdge);
 
 	public FreeIndexList getFreeEdgeList();
 
 	/**
 	 * holds the id of the first edge in Eseq
 	 */
-	public void setFirstEdgeInGraph(EdgeBase firstEdge);
+	public void setFirstEdgeInGraph(InternalEdge firstEdge);
 
 	/**
 	 * holds the id of the last edge in Eseq
 	 */
-	public void setLastEdgeInGraph(EdgeBase lastEdge);
+	public void setLastEdgeInGraph(InternalEdge lastEdge);
 
 	/**
 	 * Sets version of ESeq.
@@ -515,7 +515,8 @@ public interface GraphBase extends Graph {
 	 * @param movedEdge
 	 *            the edge to be moved
 	 */
-	public void putEdgeAfterInGraph(EdgeBase targetEdge, EdgeBase movedEdge);
+	public void putEdgeAfterInGraph(InternalEdge targetEdge,
+			InternalEdge movedEdge);
 
 	/**
 	 * Modifies eSeq such that the movedEdge is immediately before the
@@ -526,7 +527,8 @@ public interface GraphBase extends Graph {
 	 * @param movedEdge
 	 *            the edge to be moved
 	 */
-	public void putEdgeBeforeInGraph(EdgeBase targetEdge, EdgeBase movedEdge);
+	public void putEdgeBeforeInGraph(InternalEdge targetEdge,
+			InternalEdge movedEdge);
 
 	/**
 	 * Modifies vSeq such that the movedVertex is immediately after the
@@ -537,7 +539,8 @@ public interface GraphBase extends Graph {
 	 * @param movedVertex
 	 *            the vertex to be moved
 	 */
-	public void putVertexAfter(VertexBase targetVertex, VertexBase movedVertex);
+	public void putVertexAfter(InternalVertex targetVertex,
+			InternalVertex movedVertex);
 
 	/**
 	 * Modifies vSeq such that the movedVertex is immediately before the
@@ -548,7 +551,8 @@ public interface GraphBase extends Graph {
 	 * @param movedVertex
 	 *            the vertex to be moved
 	 */
-	public void putVertexBefore(VertexBase targetVertex, VertexBase movedVertex);
+	public void putVertexBefore(InternalVertex targetVertex,
+			InternalVertex movedVertex);
 
 	/**
 	 * Removes the edge e from the global edge sequence of this graph.
@@ -556,7 +560,7 @@ public interface GraphBase extends Graph {
 	 * @param e
 	 *            an edge
 	 */
-	public void removeEdgeFromESeq(EdgeBase e);
+	public void removeEdgeFromESeq(InternalEdge e);
 
 	/**
 	 * Callback function for triggered actions just after the vertex
@@ -575,7 +579,7 @@ public interface GraphBase extends Graph {
 	 * @param e
 	 *            an edge
 	 */
-	public void appendEdgeToESeq(EdgeBase e);
+	public void appendEdgeToESeq(InternalEdge e);
 
 	/**
 	 * Appends the vertex v to the global vertex sequence of this graph.
@@ -583,5 +587,5 @@ public interface GraphBase extends Graph {
 	 * @param v
 	 *            a vertex
 	 */
-	public void appendVertexToVSeq(VertexBase v);
+	public void appendVertexToVSeq(InternalVertex v);
 }

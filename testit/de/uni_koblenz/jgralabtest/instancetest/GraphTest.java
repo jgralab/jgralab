@@ -55,7 +55,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.RandomIdGenerator;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.impl.GraphBase;
+import de.uni_koblenz.jgralab.impl.InternalGraph;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
@@ -3688,7 +3688,7 @@ public class GraphTest extends InstanceTest {
 	 */
 	@Test
 	public void testGetVertexBorderCase() throws CommitFailedException {
-		GraphBase g = (GraphBase) createMinimalGraph();
+		InternalGraph g = (InternalGraph) createMinimalGraph();
 		createReadOnlyTransaction(g);
 		assertNull(g.getVertex(1));
 		assertNull(g.getVertex(g.getMaxVCount()));
@@ -3705,7 +3705,7 @@ public class GraphTest extends InstanceTest {
 	 */
 	@Test
 	public void testGetEdgeBorderCase() throws CommitFailedException {
-		GraphBase g = (GraphBase) createMinimalGraph();
+		InternalGraph g = (InternalGraph) createMinimalGraph();
 		createReadOnlyTransaction(g);
 		assertNull(g.getEdge(1));
 		assertNull(g.getEdge(g.getMaxECount()));

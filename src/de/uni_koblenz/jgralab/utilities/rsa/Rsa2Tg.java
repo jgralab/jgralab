@@ -163,7 +163,7 @@ import de.uni_koblenz.jgralab.grumlschema.structure.Schema;
 import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesEdgeClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.Subsets;
 import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
-import de.uni_koblenz.jgralab.impl.EdgeBase;
+import de.uni_koblenz.jgralab.impl.InternalEdge;
 import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
 
 /**
@@ -1885,8 +1885,8 @@ public class Rsa2Tg extends XmlProcessor {
 			assert getDirection(from) == IncidenceDirection.OUT;
 
 			IncidenceClass inc = (IncidenceClass) cf.getThat();
-			((EdgeBase) cf).setThat(gt.getThat());
-			((EdgeBase) gt).setThat(inc);
+			((InternalEdge) cf).setThat(gt.getThat());
+			((InternalEdge) gt).setThat(inc);
 		}
 
 	}
@@ -2108,7 +2108,7 @@ public class Rsa2Tg extends XmlProcessor {
 				assert (d instanceof StringDomain)
 						&& d.get_qualifiedName().equals(domainId)
 						&& preliminaryVertices.contains(d);
-				((EdgeBase) comp).setOmega(dom);
+				((InternalEdge) comp).setOmega(dom);
 				d.delete();
 				preliminaryVertices.remove(d);
 				recordComponentType.removeMark(comp);
@@ -2617,9 +2617,9 @@ public class Rsa2Tg extends XmlProcessor {
 					.get(currentClassId);
 			assert graphClass != null;
 			graphClass.set_qualifiedName(aec.get_qualifiedName());
-			EdgeBase e = (EdgeBase) aec.getFirstIncidence();
+			InternalEdge e = (InternalEdge) aec.getFirstIncidence();
 			while (e != null) {
-				EdgeBase n = (EdgeBase) e.getNextIncidence();
+				InternalEdge n = (InternalEdge) e.getNextIncidence();
 				if (e instanceof ContainsGraphElementClass) {
 					e.delete();
 				} else {
@@ -2765,7 +2765,7 @@ public class Rsa2Tg extends XmlProcessor {
 			assert (d instanceof StringDomain)
 					&& (d.get_qualifiedName() == null)
 					&& preliminaryVertices.contains(d);
-			((EdgeBase) currentRecordDomainComponent).setOmega(dom);
+			((InternalEdge) currentRecordDomainComponent).setOmega(dom);
 			d.delete();
 			preliminaryVertices.remove(d);
 			recordComponentType.removeMark(currentRecordDomainComponent);
@@ -3003,7 +3003,7 @@ public class Rsa2Tg extends XmlProcessor {
 										+ ae.getAttributedElementClass()
 												.getQualifiedName());
 					}
-					EdgeBase firstEndsAtIncidence = (EdgeBase) inc
+					InternalEdge firstEndsAtIncidence = (InternalEdge) inc
 							.getFirstEndsAtIncidence();
 					// this cast remains for detecting ClassCastExceptions
 					VertexClass vertexClass = (VertexClass) ae;
@@ -3048,9 +3048,9 @@ public class Rsa2Tg extends XmlProcessor {
 	 *            New {@link Vertex}, to which all edge should be attached.
 	 */
 	private void reconnectEdges(Vertex oldVertex, Vertex newVertex) {
-		EdgeBase curr = (EdgeBase) oldVertex.getFirstIncidence();
+		InternalEdge curr = (InternalEdge) oldVertex.getFirstIncidence();
 		while (curr != null) {
-			EdgeBase next = (EdgeBase) curr.getNextIncidence();
+			InternalEdge next = (InternalEdge) curr.getNextIncidence();
 			curr.setThis(newVertex);
 			curr = next;
 		}

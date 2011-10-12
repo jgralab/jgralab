@@ -45,9 +45,9 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.impl.EdgeBase;
+import de.uni_koblenz.jgralab.impl.InternalEdge;
 import de.uni_koblenz.jgralab.impl.IncidenceImpl;
-import de.uni_koblenz.jgralab.impl.VertexBase;
+import de.uni_koblenz.jgralab.impl.InternalVertex;
 import de.uni_koblenz.jgralab.impl.VertexBaseImpl;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.trans.ListPosition;
@@ -112,7 +112,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 	}
 
 	@Override
-	public EdgeBase getNextBaseEdge() {
+	public InternalEdge getNextBaseEdge() {
 		if (nextEdge == null) {
 			return null;
 		}
@@ -122,7 +122,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 	}
 
 	@Override
-	public EdgeBase getPrevBaseEdge() {
+	public InternalEdge getPrevBaseEdge() {
 		if (prevEdge == null) {
 			return null;
 		}
@@ -132,7 +132,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 	}
 
 	@Override
-	public VertexBase getIncidentVertex() {
+	public InternalVertex getIncidentVertex() {
 		if (incidentVertex == null) {
 			return null;
 		}
@@ -263,7 +263,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 	}
 
 	@Override
-	public void setNextIncidenceInternal(EdgeBase nextIncidence) {
+	public void setNextIncidenceInternal(InternalEdge nextIncidence) {
 		// graph loading -> new initialization...
 		if (graph.isLoading()) {
 			this.nextIncidence = new VersionedReferenceImpl<IncidenceImpl>(
@@ -279,7 +279,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 			// relevant in writing-phase
 			if (transaction.getState() == TransactionState.WRITING) {
 				if (transaction.changedIncidences != null) {
-					VertexBase temporaryIncidentVertex = incidentVertex
+					InternalVertex temporaryIncidentVertex = incidentVertex
 							.getTemporaryValue(transaction);
 					Map<IncidenceImpl, Map<ListPosition, Boolean>> incidenceList = transaction.changedIncidences
 							.get(temporaryIncidentVertex);
@@ -301,7 +301,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 	}
 
 	@Override
-	public void setPrevIncidenceInternal(EdgeBase prevIncidence) {
+	public void setPrevIncidenceInternal(InternalEdge prevIncidence) {
 		// graph loading -> new initialization...
 		if (graph.isLoading()) {
 			this.prevIncidence = new VersionedReferenceImpl<IncidenceImpl>(
@@ -317,7 +317,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 			// not - only relevant in writing-phase
 			if (transaction.getState() == TransactionState.WRITING) {
 				if (transaction.changedIncidences != null) {
-					VertexBase temporaryIncidentVertex = incidentVertex
+					InternalVertex temporaryIncidentVertex = incidentVertex
 							.getTemporaryValue(transaction);
 					Map<IncidenceImpl, Map<ListPosition, Boolean>> incidenceList = transaction.changedIncidences
 							.get(temporaryIncidentVertex);
@@ -352,7 +352,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 					+ " is not valid within the current transaction.");
 		}
 		// important to temporary store old alpha!!!
-		VertexBase oldAlpha = getIncidentVertex();
+		InternalVertex oldAlpha = getIncidentVertex();
 		// synchronize <code>transaction</code> to make sure that
 		// <code>transaction</code> cannot be set active in another
 		// <code>Thread</code> while <code>transaction</code> is executing this
@@ -401,7 +401,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 					+ " is not valid within the current transaction.");
 		}
 		// important to temporary store old omega!!!
-		VertexBase oldOmega = ((ReversedEdgeImpl) reversedEdge)
+		InternalVertex oldOmega = ((ReversedEdgeImpl) reversedEdge)
 				.getIncidentVertex();
 		// synchronize <code>transaction</code> to make sure that
 		// <code>transaction</code> cannot be set active in another

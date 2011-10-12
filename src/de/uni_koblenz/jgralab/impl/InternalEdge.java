@@ -3,17 +3,17 @@ package de.uni_koblenz.jgralab.impl;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 
-public interface EdgeBase extends Edge, GraphElementBase {
+public interface InternalEdge extends Edge, InternalGraphElement {
 
 	/**
 	 * @return next edge in eSeq
 	 */
-	public EdgeBase getNextBaseEdge();
+	public InternalEdge getNextBaseEdge();
 
 	/**
 	 * @return previous edge in eSeq
 	 */
-	public EdgeBase getPrevBaseEdge();
+	public InternalEdge getPrevBaseEdge();
 
 	/**
 	 * @param nextEdge
@@ -28,19 +28,19 @@ public interface EdgeBase extends Edge, GraphElementBase {
 	/**
 	 * @return the next incidence object in iSeq of current vertex
 	 */
-	public EdgeBase getNextBaseIncidence();
+	public InternalEdge getNextBaseIncidence();
 
 	/**
 	 * @return the previous incidence object in iSeq of current vertex
 	 */
-	public EdgeBase getPrevBaseIncidence();
+	public InternalEdge getPrevBaseIncidence();
 
 	public void setIncidentVertex(Vertex v);
 
-	public VertexBase getIncidentVertex();
+	public InternalVertex getIncidentVertex();
 
-	public void setNextIncidenceInternal(EdgeBase nextIncidence);
+	public void setNextIncidenceInternal(InternalEdge nextIncidence);
 
-	public void setPrevIncidenceInternal(EdgeBase prevIncidence);
+	public void setPrevIncidenceInternal(InternalEdge prevIncidence);
 
 }

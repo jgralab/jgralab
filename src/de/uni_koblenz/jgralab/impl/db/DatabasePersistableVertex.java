@@ -34,7 +34,7 @@
  */
 package de.uni_koblenz.jgralab.impl.db;
 
-import de.uni_koblenz.jgralab.impl.VertexBase;
+import de.uni_koblenz.jgralab.impl.InternalVertex;
 
 /**
  * A vertex which can be persisted to database.
@@ -42,7 +42,7 @@ import de.uni_koblenz.jgralab.impl.VertexBase;
  * @author ultbreit@uni-koblenz.de
  */
 public interface DatabasePersistableVertex extends
-		DatabasePersistableGraphElement, VertexBase {
+		DatabasePersistableGraphElement, InternalVertex {
 
 	/**
 	 * Gets number mapping vertex's sequence in VSeq of graph.

@@ -43,7 +43,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.IncidenceImpl;
-import de.uni_koblenz.jgralab.impl.VertexBase;
+import de.uni_koblenz.jgralab.impl.InternalVertex;
 import de.uni_koblenz.jgralab.trans.ListPosition;
 import de.uni_koblenz.jgralab.trans.TransactionState;
 import de.uni_koblenz.jgralab.trans.VersionedDataObject;
@@ -108,7 +108,7 @@ public class ValidationComponent {
 			// for each added edge...
 			for (EdgeImpl edge : transaction.addedEdges) {
 				assert (edge.isNormal());
-				VertexBase alpha = edge.incidentVertex
+				InternalVertex alpha = edge.incidentVertex
 						.getTemporaryValue(transaction);
 				assert (alpha.isValidAlpha(edge));
 				// check if alpha-vertex still exists (only relevant if
@@ -122,7 +122,7 @@ public class ValidationComponent {
 							+ edge + " doesn't exist anymore.";
 					return true;
 				}
-				VertexBase omega = ((ReversedEdgeImpl) edge.getReversedEdge()).incidentVertex
+				InternalVertex omega = ((ReversedEdgeImpl) edge.getReversedEdge()).incidentVertex
 						.getTemporaryValue(transaction);
 				// check if omega-vertex still exists (only relevant if
 				// omega-vertex hasn't been added within current transaction)
