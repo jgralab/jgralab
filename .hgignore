@@ -19,3 +19,5 @@ syntax: regexp
 
 syntax: regexp
 ^testit/testgraphs/testgraph\.tg$
+syntax: regexp
+^jgralabtest$

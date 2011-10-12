@@ -59,7 +59,9 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Schema;
 import de.uni_koblenz.jgralab.impl.FreeIndexList;
+import de.uni_koblenz.jgralab.impl.GraphBase;
 import de.uni_koblenz.jgralab.impl.GraphBaseImpl;
+import de.uni_koblenz.jgralab.impl.VertexBase;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
@@ -411,8 +413,10 @@ public class LoadTest extends InstanceTest {
 	}
 
 	private void checkEqualVertexList(Graph g1, Graph g2) {
-		Vertex v1 = g1.getFirstVertex();
-		Vertex v2 = g2.getFirstVertex();
+		GraphBase gb1 = (GraphBase) g1;
+		GraphBase gb2 = (GraphBase) g2;
+		VertexBase v1 = gb1.getFirstBaseVertex();
+		VertexBase v2 = gb2.getFirstBaseVertex();
 		while (v1 != null) {
 			if (v2 == null) {
 				fail();
@@ -420,8 +424,8 @@ public class LoadTest extends InstanceTest {
 			assertEquals(v1.getId(), v2.getId());
 			assertEquals(v1.getAttributedElementClass().getQualifiedName(), v2
 					.getAttributedElementClass().getQualifiedName());
-			v1 = v1.getNextVertex();
-			v2 = v2.getNextVertex();
+			v1 = v1.getNextBaseVertex();
+			v2 = v2.getNextBaseVertex();
 		}
 		if (v2 != null) {
 			fail();

@@ -41,6 +41,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 import de.uni_koblenz.jgralabtest.graphmarker.RunGraphMarkerTests;
+import de.uni_koblenz.jgralabtest.instancetest.internal.RunInternalTests;
 
 /**
  * This test suite runs all instance tests provided by JGraLab. By default the
@@ -66,7 +67,7 @@ import de.uni_koblenz.jgralabtest.graphmarker.RunGraphMarkerTests;
 		IncidenceListTest.class, LoadTest.class, VertexListTest.class,
 		VertexTest.class, EdgeTest.class, RoleNameTest.class, GraphTest.class,
 		GraphStructureChangedListenerTest.class, DefaultValueTest.class,
-		RunGraphMarkerTests.class })
+		RunGraphMarkerTests.class, RunInternalTests.class })
 public class RunInstanceTests {
 
 	@BeforeClass

@@ -41,11 +41,12 @@ import java.util.NoSuchElementException;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.impl.GraphBase;
 
 public class ArrayEdgeMarker<O> extends ArrayGraphMarker<Edge, O> {
 
 	public ArrayEdgeMarker(Graph graph) {
-		super(graph, graph.getMaxECount() + 1);
+		super(graph, ((GraphBase) graph).getMaxECount() + 1);
 	}
 
 	@Override

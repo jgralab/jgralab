@@ -55,6 +55,7 @@ import de.uni_koblenz.jgralab.greql2.schema.IsDeclaredVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsSimpleDeclOf;
 import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
+import de.uni_koblenz.jgralab.impl.EdgeBase;
 
 /**
  * Base class for all {@link Optimizer}s which defines some useful methods that
@@ -99,15 +100,15 @@ public abstract class OptimizerBase implements Optimizer {
 		assert from.isValid() && to.isValid() : "Relinking invalid vertices!";
 
 		// System.out.println("    relink: " + from + " --> " + to);
-		Edge e = from.getFirstIncidence(EdgeDirection.IN);
+		EdgeBase e = (EdgeBase) from.getFirstIncidence(EdgeDirection.IN);
 		while (e != null) {
-			Edge newE = e.getNextIncidence(EdgeDirection.IN);
+			EdgeBase newE = (EdgeBase) e.getNextIncidence(EdgeDirection.IN);
 			e.setOmega(to);
 			e = newE;
 		}
-		e = from.getFirstIncidence(EdgeDirection.OUT);
+		e = (EdgeBase) from.getFirstIncidence(EdgeDirection.OUT);
 		while (e != null) {
-			Edge newE = e.getNextIncidence(EdgeDirection.OUT);
+			EdgeBase newE = (EdgeBase) e.getNextIncidence(EdgeDirection.OUT);
 			e.setAlpha(to);
 			e = newE;
 		}
@@ -289,7 +290,7 @@ public abstract class OptimizerBase implements Optimizer {
 				inc = inc.getNextIsDeclaredVarOf(EdgeDirection.IN);
 			}
 			for (IsDeclaredVarOf relinkEdge : relinkIncs) {
-				relinkEdge.setOmega(newSD);
+				((EdgeBase) relinkEdge).setOmega(newSD);
 			}
 		}
 		return newSD;

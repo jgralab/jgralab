@@ -36,7 +36,6 @@
 package de.uni_koblenz.jgralab.impl;
 
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.GraphClass;
@@ -48,7 +47,7 @@ import de.uni_koblenz.jgralab.schema.Schema;
  * @author ist@uni-koblenz.de
  * 
  */
-public abstract class GraphElementImpl implements GraphElement {
+public abstract class GraphElementImpl implements GraphElementBase {
 	protected int id;
 
 	protected GraphElementImpl(Graph graph) {
@@ -83,16 +82,10 @@ public abstract class GraphElementImpl implements GraphElement {
 		return graph.getSchema();
 	}
 
-	/**
-	 * Changes the graph version of the graph this element belongs to. Should be
-	 * called whenever the graph is changed, all changes like adding, creating
-	 * and reordering of edges and vertices or changes of attributes of the
-	 * graph, an edge or a vertex are treated as a change.
-	 */
 	public void graphModified() {
 		graph.graphModified();
 	}
-	
+
 	/**
 	 * Triggers ECA-rules before an Attribute is changed
 	 * 
@@ -101,12 +94,12 @@ public abstract class GraphElementImpl implements GraphElement {
 	 */
 	public void ecaAttributeChanging(String name, Object oldValue,
 			Object newValue) {
-		if (!this.graph.isLoading() && this.graph.getECARuleManagerIfThere() != null) {
-			this.graph.getECARuleManagerIfThere().fireBeforeChangeAttributeEvents(
-					this, name, oldValue, newValue);
+		if (!graph.isLoading() && graph.getECARuleManagerIfThere() != null) {
+			graph.getECARuleManager().fireBeforeChangeAttributeEvents(this,
+					name, oldValue, newValue);
 		}
 	}
-	
+
 	/**
 	 * Triggers ECA-rule after an Attribute is changed
 	 * 
@@ -115,8 +108,8 @@ public abstract class GraphElementImpl implements GraphElement {
 	 */
 	public void ecaAttributeChanged(String name, Object oldValue,
 			Object newValue) {
-		if (!this.graph.isLoading() && this.graph.getECARuleManagerIfThere()!=null) {
-			this.graph.getECARuleManagerIfThere().fireAfterChangeAttributeEvents(this,
+		if (!graph.isLoading() && graph.getECARuleManagerIfThere()!=null) {
+			graph.getECARuleManager().fireAfterChangeAttributeEvents(this,
 					name, oldValue, newValue);
 		}
 	}
@@ -130,14 +123,6 @@ public abstract class GraphElementImpl implements GraphElement {
 	public int getId() {
 		return id;
 	}
-
-	/**
-	 * sets the id field of this graph element
-	 * 
-	 * @param id
-	 *            an id
-	 */
-	protected abstract void setId(int id);
 
 	@Override
 	public void initializeAttributesWithDefaultValues() {
@@ -154,13 +139,7 @@ public abstract class GraphElementImpl implements GraphElement {
 		}
 	}
 
-	/**
-	 * 
-	 * @param attr
-	 * @throws GraphIOException
-	 */
-	protected void internalSetDefaultValue(Attribute attr)
-			throws GraphIOException {
+	public void internalSetDefaultValue(Attribute attr) throws GraphIOException {
 		attr.setDefaultValue(this);
 	}
 }

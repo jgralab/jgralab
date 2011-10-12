@@ -82,25 +82,25 @@ class GraphElementCellRenderer extends DefaultTreeCellRenderer {
 			String iconName = null;
 			Edge e = (Edge) ((EdgeTreeNode) getn).get();
 			if (e.isNormal()) {
-				if (e.getThatSemantics() == AggregationKind.SHARED) {
+				if (e.getThatAggregationKind() == AggregationKind.SHARED) {
 					iconName = "l_aggr_r";
-				} else if (e.getThatSemantics() == AggregationKind.COMPOSITE) {
+				} else if (e.getThatAggregationKind() == AggregationKind.COMPOSITE) {
 					iconName = "l_comp_r";
-				} else if (e.getThisSemantics() == AggregationKind.SHARED) {
+				} else if (e.getThisAggregationKind() == AggregationKind.SHARED) {
 					iconName = "r_aggr_r";
-				} else if (e.getThisSemantics() == AggregationKind.COMPOSITE) {
+				} else if (e.getThisAggregationKind() == AggregationKind.COMPOSITE) {
 					iconName = "r_comp_r";
 				} else {
 					iconName = "edge_r";
 				}
 			} else {
-				if (e.getThatSemantics() == AggregationKind.SHARED) {
+				if (e.getThatAggregationKind() == AggregationKind.SHARED) {
 					iconName = "l_aggr_l";
-				} else if (e.getThatSemantics() == AggregationKind.COMPOSITE) {
+				} else if (e.getThatAggregationKind() == AggregationKind.COMPOSITE) {
 					iconName = "l_comp_l";
-				} else if (e.getThisSemantics() == AggregationKind.SHARED) {
+				} else if (e.getThisAggregationKind() == AggregationKind.SHARED) {
 					iconName = "r_aggr_l";
-				} else if (e.getThisSemantics() == AggregationKind.COMPOSITE) {
+				} else if (e.getThisAggregationKind() == AggregationKind.COMPOSITE) {
 					iconName = "r_comp_l";
 				} else {
 					iconName = "edge_l";

@@ -58,17 +58,18 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.Map.Entry;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
+import de.uni_koblenz.jgralab.impl.GraphBase;
 import de.uni_koblenz.jgralab.impl.GraphBaseImpl;
 import de.uni_koblenz.jgralab.impl.db.GraphDatabase;
 import de.uni_koblenz.jgralab.impl.db.GraphDatabaseException;
@@ -85,9 +86,9 @@ import de.uni_koblenz.jgralab.schema.MapDomain;
 import de.uni_koblenz.jgralab.schema.NamedElement;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
-import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
+import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 import de.uni_koblenz.jgralab.schema.impl.BasicDomainImpl;
 import de.uni_koblenz.jgralab.schema.impl.ConstraintImpl;
@@ -421,8 +422,8 @@ public class GraphIO {
 				// from (min,max) rolename
 				write(" from");
 				space();
-				writeIdentifier(ec.getFrom().getVertexClass()
-						.getQualifiedName(pkg));
+				writeIdentifier(ec.getFrom().getVertexClass().getQualifiedName(
+						pkg));
 				write(" (");
 				write(ec.getFrom().getMin() + ",");
 				if (ec.getFrom().getMax() == Integer.MAX_VALUE) {
@@ -460,8 +461,8 @@ public class GraphIO {
 				// to (min,max) rolename
 				write(" to");
 				space();
-				writeIdentifier(ec.getTo().getVertexClass()
-						.getQualifiedName(pkg));
+				writeIdentifier(ec.getTo().getVertexClass().getQualifiedName(
+						pkg));
 				write(" (");
 				write(ec.getTo().getMin() + ",");
 				if (ec.getTo().getMax() == Integer.MAX_VALUE) {
@@ -629,7 +630,7 @@ public class GraphIO {
 		try {
 			GraphIO io = new GraphIO();
 			io.TGOut = out;
-			io.saveGraph(graph, pf, null);
+			io.saveGraph((GraphBase) graph, pf, null);
 			out.flush();
 		} catch (IOException e) {
 			throw new GraphIOException("exception while saving graph", e);
@@ -657,14 +658,14 @@ public class GraphIO {
 		try {
 			GraphIO io = new GraphIO();
 			io.TGOut = out;
-			io.saveGraph(subGraph.getGraph(), pf, subGraph);
+			io.saveGraph((GraphBase) subGraph.getGraph(), pf, subGraph);
 			out.flush();
 		} catch (IOException e) {
 			throw new GraphIOException("exception while saving graph", e);
 		}
 	}
 
-	private void saveGraph(Graph graph, ProgressFunction pf,
+	private void saveGraph(GraphBase graph, ProgressFunction pf,
 			BooleanGraphMarker subGraph) throws IOException, GraphIOException {
 		TraversalContext tc = graph.setTraversalContext(null);
 		try {
@@ -985,8 +986,8 @@ public class GraphIO {
 			throws GraphIOException {
 		Schema schema = loadSchemaFromDatabase(graphDatabase, packagePrefix,
 				schemaName);
-		schema.commit("test",
-				new CodeGeneratorConfiguration().withDatabaseSupport());
+		schema.commit("test", new CodeGeneratorConfiguration()
+				.withDatabaseSupport());
 		return schema;
 	}
 
@@ -1031,7 +1032,8 @@ public class GraphIO {
 			return loadGraphFromFileWithStandardSupport(filename, null, pf);
 		} catch (GraphIOException ex) {
 			if (ex.getCause() instanceof ClassNotFoundException) {
-				logger.fine("Compiled schema classes were not found, so load and compile the schema first.");
+				logger
+						.fine("Compiled schema classes were not found, so load and compile the schema first.");
 				Schema s = loadSchemaFromFile(filename);
 				s.compile(config);
 				return loadGraphFromFileWithStandardSupport(filename, s, pf);
@@ -1904,11 +1906,11 @@ public class GraphIO {
 
 	private EdgeClass createEdgeClass(GraphElementClassData ecd, GraphClass gc)
 			throws GraphIOException, SchemaException {
-		EdgeClass ec = gc.createEdgeClass(ecd.getQualifiedName(),
-				gc.getVertexClass(ecd.fromVertexClassName),
+		EdgeClass ec = gc.createEdgeClass(ecd.getQualifiedName(), gc
+				.getVertexClass(ecd.fromVertexClassName),
 				ecd.fromMultiplicity[0], ecd.fromMultiplicity[1],
-				ecd.fromRoleName, ecd.fromAggregation,
-				gc.getVertexClass(ecd.toVertexClassName),
+				ecd.fromRoleName, ecd.fromAggregation, gc
+						.getVertexClass(ecd.toVertexClassName),
 				ecd.toMultiplicity[0], ecd.toMultiplicity[1], ecd.toRoleName,
 				ecd.toAggregation);
 

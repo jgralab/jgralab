@@ -48,7 +48,7 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
  * @author ist@uni-koblenz.de
  */
 public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
-		Edge {
+		EdgeBase {
 
 	protected final EdgeBaseImpl normalEdge;
 
@@ -84,7 +84,7 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 		Edge e = (Edge) a;
 		assert e.isValid();
 		assert getGraph() == e.getGraph();
-		if (e == this.getNormalEdge()) {
+		if (e == getNormalEdge()) {
 			return 1;
 		} else {
 			return Math.abs(getId()) - Math.abs(e.getId());
@@ -154,6 +154,11 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 		return normalEdge.getNextEdge();
 	}
 
+	@Override
+	public EdgeBase getNextBaseEdge() {
+		return normalEdge.getNextBaseEdge();
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -162,6 +167,11 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 	@Override
 	public Edge getPrevEdge() {
 		return normalEdge.getPrevEdge();
+	}
+
+	@Override
+	public EdgeBase getPrevBaseEdge() {
+		return normalEdge.getPrevBaseEdge();
 	}
 
 	/*
@@ -371,7 +381,7 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 	@Override
 	public String toString() {
 		assert isValid();
-		return "-e" + normalEdge.getId() + ": "
+		return "-e" + normalEdge.id + ": "
 				+ getAttributedElementClass().getQualifiedName();
 	}
 
@@ -391,28 +401,38 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 	}
 
 	@Override
-	public AggregationKind getSemantics() {
-		return normalEdge.getSemantics();
+	public AggregationKind getAggregationKind() {
+		return normalEdge.getAggregationKind();
 	}
 
 	@Override
-	public AggregationKind getAlphaSemantics() {
-		return normalEdge.getAlphaSemantics();
+	public AggregationKind getAlphaAggregationKind() {
+		return normalEdge.getAlphaAggregationKind();
 	}
 
 	@Override
-	public AggregationKind getOmegaSemantics() {
-		return normalEdge.getOmegaSemantics();
+	public AggregationKind getOmegaAggregationKind() {
+		return normalEdge.getOmegaAggregationKind();
 	}
 
 	@Override
-	public AggregationKind getThisSemantics() {
-		return normalEdge.getOmegaSemantics();
+	public AggregationKind getThisAggregationKind() {
+		return normalEdge.getOmegaAggregationKind();
 	}
 
 	@Override
-	public AggregationKind getThatSemantics() {
-		return normalEdge.getAlphaSemantics();
+	public AggregationKind getThatAggregationKind() {
+		return normalEdge.getAlphaAggregationKind();
+	}
+
+	@Override
+	public void setNextEdgeInGraph(Edge nextEdge) {
+		normalEdge.setNextEdgeInGraph(nextEdge);
+	}
+
+	@Override
+	public void setPrevEdgeInGraph(Edge prevEdge) {
+		normalEdge.setPrevEdgeInGraph(prevEdge);
 	}
 
 }

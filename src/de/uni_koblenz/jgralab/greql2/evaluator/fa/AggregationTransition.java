@@ -250,11 +250,11 @@ public class AggregationTransition extends Transition {
 		}
 
 		if (aggregateFrom) {
-			if (e.getThatSemantics() == AggregationKind.NONE) {
+			if (e.getThatAggregationKind() == AggregationKind.NONE) {
 				return false;
 			}
 		} else {
-			if (e.getThisSemantics() == AggregationKind.NONE) {
+			if (e.getThisAggregationKind() == AggregationKind.NONE) {
 				return false;
 			}
 		}

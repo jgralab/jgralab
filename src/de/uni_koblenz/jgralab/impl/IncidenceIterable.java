@@ -99,13 +99,13 @@ public class IncidenceIterable<E extends Edge> implements Iterable<E> {
 	public IncidenceIterable(Vertex v, Class<? extends Edge> ec,
 			EdgeDirection orientation) {
 		assert v != null && v.isValid();
-		iter = new IncidenceIterator(v, ec, orientation);
+		iter = new IncidenceIterator((VertexBase) v, ec, orientation);
 	}
 
 	class IncidenceIterator implements Iterator<E> {
 		protected E current = null;
 
-		protected Vertex vertex = null;
+		protected VertexBase vertex = null;
 
 		protected Class<? extends Edge> ec;
 
@@ -120,14 +120,14 @@ public class IncidenceIterable<E extends Edge> implements Iterable<E> {
 		protected long incidenceListVersion;
 
 		@SuppressWarnings("unchecked")
-		public IncidenceIterator(Vertex vertex, Class<? extends Edge> ec,
+		public IncidenceIterator(VertexBase vertex, Class<? extends Edge> ec,
 				EdgeDirection dir) {
 			this.vertex = vertex;
 			this.ec = ec;
 			this.dir = dir;
 			incidenceListVersion = vertex.getIncidenceListVersion();
-			current = (E) ((ec == null) ? vertex.getFirstIncidence(dir) : vertex
-					.getFirstIncidence(ec, dir));
+			current = (E) ((ec == null) ? vertex.getFirstIncidence(dir)
+					: vertex.getFirstIncidence(ec, dir));
 		}
 
 		@SuppressWarnings("unchecked")
@@ -140,8 +140,8 @@ public class IncidenceIterable<E extends Edge> implements Iterable<E> {
 				throw new NoSuchElementException();
 			}
 			E result = current;
-			current = (E) ((ec == null) ? current.getNextIncidence(dir) : current
-					.getNextIncidence(ec, dir));
+			current = (E) ((ec == null) ? current.getNextIncidence(dir)
+					: current.getNextIncidence(ec, dir));
 			return result;
 		}
 
