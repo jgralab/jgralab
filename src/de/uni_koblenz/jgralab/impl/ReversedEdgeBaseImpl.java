@@ -392,7 +392,7 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 	 */
 	@Override
 	public boolean isValid() {
-		return graph.containsEdge(this);
+		return graph.eSeqContainsEdge(this);
 	}
 
 	@Override

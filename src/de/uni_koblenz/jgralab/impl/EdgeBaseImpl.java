@@ -349,7 +349,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 
 		VertexBase oldAlpha = getIncidentVertex();
 
-		if (!graph.isLoading() && this.graph.getECARuleManagerIfThere() !=null) {
+		if (!graph.isLoading() && graph.getECARuleManagerIfThere() != null) {
 			graph.getECARuleManager().fireBeforeChangeAlphaOfEdgeEvents(this,
 					oldAlpha, alphaBase);
 		}
@@ -367,7 +367,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 		oldAlpha.removeIncidenceFromLambdaSeq(this);
 		oldAlpha.incidenceListModified();
 
-		VertexBase newAlpha = (VertexBase) alphaBase;
+		VertexBase newAlpha = alphaBase;
 		newAlpha.appendIncidenceToLambdaSeq(this);
 		newAlpha.incidenceListModified();
 		setIncidentVertex(newAlpha);
@@ -393,7 +393,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 
 		VertexBase oldOmgea = reversedEdge.getIncidentVertex();
 
-		if (!graph.isLoading() && this.graph.getECARuleManagerIfThere() != null) {
+		if (!graph.isLoading() && graph.getECARuleManagerIfThere() != null) {
 			graph.getECARuleManager().fireBeforeChangeOmegaOfEdgeEvents(this,
 					oldOmgea, omegaBase);
 		}
@@ -412,7 +412,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 		oldOmgea.removeIncidenceFromLambdaSeq(reversedEdge);
 		oldOmgea.incidenceListModified();
 
-		VertexBase newOmega = (VertexBase) omegaBase;
+		VertexBase newOmega = omegaBase;
 		newOmega.appendIncidenceToLambdaSeq(reversedEdge);
 		newOmega.incidenceListModified();
 		// TODO Check if this is really needed as
@@ -474,7 +474,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 	 */
 	@Override
 	public boolean isValid() {
-		return graph.containsEdge(this);
+		return graph.eSeqContainsEdge(this);
 	}
 
 	@Override

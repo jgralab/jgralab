@@ -97,6 +97,8 @@ public interface GraphBase extends Graph {
 	 */
 	public long getVertexListVersion();
 
+	public boolean vSeqContainsVertex(Vertex v);
+
 	/**
 	 * Checks if the edge sequence of this has changed with respect to the given
 	 * <code>previousVersion</code>. Changes in the edge sequence are creation
@@ -115,6 +117,8 @@ public interface GraphBase extends Graph {
 	 * @see #isEdgeListModified(long)
 	 */
 	public long getEdgeListVersion();
+
+	public boolean eSeqContainsEdge(Edge e);
 
 	/**
 	 * The maximum number of vertices that can be stored in the graph before the

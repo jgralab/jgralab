@@ -197,7 +197,7 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 
 	@Override
 	public boolean isValid() {
-		return graph.containsVertex(this);
+		return graph.vSeqContainsVertex(this);
 	}
 
 	/*
@@ -228,9 +228,9 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 		if (this == v) {
 			return false;
 		}
-		VertexBase next = (VertexBase) ((VertexBase) v).getNextBaseVertex();
+		VertexBase next = ((VertexBase) v).getNextBaseVertex();
 		while ((next != null) && (next != this)) {
-			next = (VertexBase) next.getNextBaseVertex();
+			next = next.getNextBaseVertex();
 		}
 		return next != null;
 	}
