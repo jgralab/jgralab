@@ -35,12 +35,14 @@
 package de.uni_koblenz.jgralab.impl.db;
 
 import java.util.Comparator;
+
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
-
+import de.uni_koblenz.jgralab.impl.EdgeBase;
 import de.uni_koblenz.jgralab.impl.IncidenceImpl;
+import de.uni_koblenz.jgralab.impl.VertexBase;
 import de.uni_koblenz.jgralab.impl.VertexBaseImpl;
 
 /**
@@ -177,22 +179,22 @@ public abstract class VertexImpl extends VertexBaseImpl implements
 	}
 
 	@Override
-	public Vertex getPrevVertex() {
+	public VertexBase getPrevBaseVertex() {
 		return graph.getPrevVertex(this);
 	}
 
 	@Override
-	public Vertex getNextVertex() {
+	public VertexBase getNextBaseVertex() {
 		return graph.getNextVertex(this);
 	}
 
 	@Override
-	protected IncidenceImpl getFirstIncidenceInternal() {
+	public EdgeBase getFirstBaseIncidence() {
 		return (IncidenceImpl) incidenceList.getFirst();
 	}
 
 	@Override
-	protected IncidenceImpl getLastIncidenceInternal() {
+	public EdgeBase getLastBaseIncidence() {
 		return (IncidenceImpl) incidenceList.getLast();
 	}
 
@@ -205,14 +207,13 @@ public abstract class VertexImpl extends VertexBaseImpl implements
 	 */
 	protected void attributeChanged(String attributeName) {
 		if (isPersistent() && isInitialized()) {
-			graph
-					.updateVertexAttributeValueInDatabase(this, attributeName);
+			graph.updateVertexAttributeValueInDatabase(this, attributeName);
 			graph.internalGraphModified();
 		}
 	}
 
 	@Override
-	protected void setPrevVertex(Vertex prevVertex) {
+	public void setPrevVertex(Vertex prevVertex) {
 		prevVertex.putBefore(this);
 	}
 
@@ -284,7 +285,7 @@ public abstract class VertexImpl extends VertexBaseImpl implements
 	 *            to set as first incidence in incidence list of vertex.
 	 */
 	@Override
-	protected void setFirstIncidence(IncidenceImpl firstIncidence) {
+	public void setFirstIncidence(EdgeBase firstIncidence) {
 		assert firstIncidence != null;
 		assert isInitialized() && isPersistent();
 		DatabasePersistableEdge edge = (DatabasePersistableEdge) firstIncidence;
@@ -300,7 +301,7 @@ public abstract class VertexImpl extends VertexBaseImpl implements
 	 *            to set as last incidence in incidence list of vertex.
 	 */
 	@Override
-	protected void setLastIncidence(IncidenceImpl lastIncidence) {
+	public void setLastIncidence(EdgeBase lastIncidence) {
 		assert lastIncidence != null;
 		assert isInitialized() && isPersistent();
 		DatabasePersistableEdge edge = (DatabasePersistableEdge) lastIncidence;
@@ -316,7 +317,7 @@ public abstract class VertexImpl extends VertexBaseImpl implements
 	 *            Incidence to append to incidence list of vertex.
 	 */
 	@Override
-	protected void appendIncidenceToLambdaSeq(IncidenceImpl incidence) {
+	public void appendIncidenceToLambdaSeq(EdgeBase incidence) {
 		assert incidence != null;
 		// TOOD only cast to DatabasePersitableIncidence and call
 		// setIncidentVId()
@@ -335,7 +336,7 @@ public abstract class VertexImpl extends VertexBaseImpl implements
 	 *            of vertex.
 	 */
 	@Override
-	protected void setId(int id) {
+	public void setId(int id) {
 		assert id > 0;
 		if (this.id != id) {
 			updateId(id);
@@ -417,7 +418,7 @@ public abstract class VertexImpl extends VertexBaseImpl implements
 	}
 
 	@Override
-	protected void removeIncidenceFromLambdaSeq(IncidenceImpl i) {
+	public void removeIncidenceFromLambdaSeq(EdgeBase i) {
 		assert i != null;
 		assert this == i.getThis();
 		incidenceList.remove((DatabasePersistableEdge) i);
@@ -438,7 +439,7 @@ public abstract class VertexImpl extends VertexBaseImpl implements
 				"This graph does not support sorting of incidences.");
 	}
 
-	private void assertPrecondition(IncidenceImpl target, IncidenceImpl moved) {
+	private void assertPrecondition(EdgeBase target, EdgeBase moved) {
 		assert (target != null) && (moved != null); // both incidences are
 		// really given
 		assert target.isValid() && moved.isValid(); // both incidence are valid
@@ -452,22 +453,22 @@ public abstract class VertexImpl extends VertexBaseImpl implements
 	}
 
 	@Override
-	protected void putIncidenceBefore(IncidenceImpl target, IncidenceImpl moved) {
+	public void putIncidenceBefore(EdgeBase target, EdgeBase moved) {
 		assertPrecondition(target, moved);
 		DatabasePersistableEdge targetEdge = (DatabasePersistableEdge) target;
 		DatabasePersistableEdge movedEdge = (DatabasePersistableEdge) moved;
-		if (target != moved && moved.getNextIncidence() != target) {
+		if (target != moved && moved.getNextBaseIncidence() != target) {
 			incidenceList.putBefore(targetEdge, movedEdge);
 			incidenceListModified();
 		}
 	}
 
 	@Override
-	protected void putIncidenceAfter(IncidenceImpl target, IncidenceImpl moved) {
+	public void putIncidenceAfter(EdgeBase target, EdgeBase moved) {
 		assertPrecondition(target, moved);
 		DatabasePersistableEdge targetEdge = (DatabasePersistableEdge) target;
 		DatabasePersistableEdge movedEdge = (DatabasePersistableEdge) moved;
-		if (target != moved && target.getNextIncidence() != moved) {
+		if (target != moved && target.getNextBaseIncidence() != moved) {
 			incidenceList.putAfter(targetEdge, movedEdge);
 			incidenceListModified();
 		}

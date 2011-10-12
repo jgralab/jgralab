@@ -37,11 +37,11 @@ package de.uni_koblenz.jgralab.impl.std;
 import java.util.List;
 
 import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.TraversalContext;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.impl.EdgeBaseImpl;
+import de.uni_koblenz.jgralab.impl.EdgeBase;
 import de.uni_koblenz.jgralab.impl.FreeIndexList;
-import de.uni_koblenz.jgralab.impl.ReversedEdgeBaseImpl;
-import de.uni_koblenz.jgralab.impl.VertexBaseImpl;
+import de.uni_koblenz.jgralab.impl.VertexBase;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.trans.Savepoint;
 import de.uni_koblenz.jgralab.trans.Transaction;
@@ -54,15 +54,16 @@ import de.uni_koblenz.jgralab.trans.Transaction;
  */
 public abstract class GraphImpl extends
 		de.uni_koblenz.jgralab.impl.GraphBaseImpl {
-	private VertexBaseImpl[] vertex;
+	private VertexBase[] vertex;
 	private int vCount;
-	private EdgeBaseImpl[] edge;
-	private ReversedEdgeBaseImpl[] revEdge;
+	private EdgeBase[] edge;
+	private EdgeBase[] revEdge;
 	private int eCount;
-	private VertexBaseImpl firstVertex;
-	private VertexBaseImpl lastVertex;
-	private EdgeBaseImpl firstEdge;
-	private EdgeBaseImpl lastEdge;
+	private VertexBase firstVertex;
+	private VertexBase lastVertex;
+	private EdgeBase firstEdge;
+	private EdgeBase lastEdge;
+	private TraversalContext tc;
 
 	/**
 	 * Holds the version of the vertex sequence. For every modification (e.g.
@@ -82,120 +83,120 @@ public abstract class GraphImpl extends
 	 * List of vertices to be deleted by a cascading delete caused by deletion
 	 * of a composition "parent".
 	 */
-	private List<VertexBaseImpl> deleteVertexList;
+	private List<VertexBase> deleteVertexList;
 
 	@Override
-	protected VertexBaseImpl[] getVertex() {
+	public VertexBase[] getVertex() {
 		return vertex;
 	}
 
 	@Override
-	public int getVCount() {
+	public int getBaseVCount() {
 		return vCount;
 	}
 
 	@Override
-	protected EdgeBaseImpl[] getEdge() {
+	public EdgeBase[] getEdge() {
 		return edge;
 	}
 
 	@Override
-	protected ReversedEdgeBaseImpl[] getRevEdge() {
+	public EdgeBase[] getRevEdge() {
 		return revEdge;
 	}
 
 	@Override
-	public int getECount() {
+	public int getBaseECount() {
 		return eCount;
 	}
 
 	@Override
-	public Vertex getFirstVertex() {
+	public VertexBase getFirstBaseVertex() {
 		return firstVertex;
 	}
 
 	@Override
-	public Vertex getLastVertex() {
+	public VertexBase getLastBaseVertex() {
 		return lastVertex;
 	}
 
 	@Override
-	public Edge getFirstEdge() {
+	public EdgeBase getFirstBaseEdge() {
 		return firstEdge;
 	}
 
 	@Override
-	public Edge getLastEdge() {
+	public EdgeBase getLastBaseEdge() {
 		return lastEdge;
 	}
 
 	@Override
-	protected FreeIndexList getFreeVertexList() {
+	public FreeIndexList getFreeVertexList() {
 		return freeVertexList;
 	}
 
 	@Override
-	protected FreeIndexList getFreeEdgeList() {
+	public FreeIndexList getFreeEdgeList() {
 		return freeEdgeList;
 	}
 
 	@Override
-	protected void setVertex(VertexBaseImpl[] vertex) {
+	public void setVertex(VertexBase[] vertex) {
 		this.vertex = vertex;
 	}
 
 	@Override
-	protected void setVCount(int count) {
+	public void setVCount(int count) {
 		vCount = count;
 	}
 
 	@Override
-	protected void setEdge(EdgeBaseImpl[] edge) {
+	public void setEdge(EdgeBase[] edge) {
 		this.edge = edge;
 	}
 
 	@Override
-	protected void setRevEdge(ReversedEdgeBaseImpl[] revEdge) {
+	public void setRevEdge(EdgeBase[] revEdge) {
 		this.revEdge = revEdge;
 	}
 
 	@Override
-	protected void setECount(int count) {
+	public void setECount(int count) {
 		eCount = count;
 	}
 
 	@Override
-	protected void setFirstVertex(VertexBaseImpl firstVertex) {
+	public void setFirstVertex(VertexBase firstVertex) {
 		this.firstVertex = firstVertex;
 	}
 
 	@Override
-	protected void setLastVertex(VertexBaseImpl lastVertex) {
+	public void setLastVertex(VertexBase lastVertex) {
 		this.lastVertex = lastVertex;
 	}
 
 	@Override
-	protected void setFirstEdgeInGraph(EdgeBaseImpl firstEdge) {
+	public void setFirstEdgeInGraph(EdgeBase firstEdge) {
 		this.firstEdge = firstEdge;
 	}
 
 	@Override
-	protected void setLastEdgeInGraph(EdgeBaseImpl lastEdge) {
+	public void setLastEdgeInGraph(EdgeBase lastEdge) {
 		this.lastEdge = lastEdge;
 	}
 
 	@Override
-	protected List<VertexBaseImpl> getDeleteVertexList() {
+	public List<VertexBase> getDeleteVertexList() {
 		return deleteVertexList;
 	}
 
 	@Override
-	protected void setDeleteVertexList(List<VertexBaseImpl> deleteVertexList) {
+	public void setDeleteVertexList(List<VertexBase> deleteVertexList) {
 		this.deleteVertexList = deleteVertexList;
 	}
 
 	@Override
-	protected void setVertexListVersion(long vertexListVersion) {
+	public void setVertexListVersion(long vertexListVersion) {
 		this.vertexListVersion = vertexListVersion;
 	}
 
@@ -205,7 +206,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	protected void setEdgeListVersion(long edgeListVersion) {
+	public void setEdgeListVersion(long edgeListVersion) {
 		this.edgeListVersion = edgeListVersion;
 	}
 
@@ -284,7 +285,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	protected int allocateVertexIndex(int currentId) {
+	public int allocateVertexIndex(int currentId) {
 		int vId = freeVertexList.allocateIndex();
 		if (vId == 0) {
 			expandVertexArray(getExpandedVertexCount());
@@ -294,7 +295,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	protected int allocateEdgeIndex(int currentId) {
+	public int allocateEdgeIndex(int currentId) {
 		int eId = freeEdgeList.allocateIndex();
 		if (eId == 0) {
 			expandEdgeArray(getExpandedEdgeCount());
@@ -309,22 +310,22 @@ public abstract class GraphImpl extends
 	 */
 
 	@Override
-	protected void freeEdgeIndex(int index) {
+	public void freeEdgeIndex(int index) {
 		freeEdgeList.freeIndex(index);
 	}
 
 	@Override
-	protected void freeVertexIndex(int index) {
+	public void freeVertexIndex(int index) {
 		freeVertexList.freeIndex(index);
 	}
 
 	@Override
-	protected void vertexAfterDeleted(Vertex vertexToBeDeleted) {
+	public void vertexAfterDeleted(Vertex vertexToBeDeleted) {
 
 	}
 
 	@Override
-	protected void edgeAfterDeleted(Edge edgeToBeDeleted, Vertex oldAlpha,
+	public void edgeAfterDeleted(Edge edgeToBeDeleted, Vertex oldAlpha,
 			Vertex oldOmega) {
 
 	}
@@ -335,12 +336,24 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	protected void addVertex(Vertex newVertex) {
+	public void addVertex(Vertex newVertex) {
 		super.addVertex(newVertex);
 	}
 
 	@Override
-	protected void addEdge(Edge newEdge, Vertex alpha, Vertex omega) {
+	public void addEdge(Edge newEdge, Vertex alpha, Vertex omega) {
 		super.addEdge(newEdge, alpha, omega);
+	}
+
+	@Override
+	public TraversalContext getTraversalContext() {
+		return tc;
+	}
+
+	@Override
+	public TraversalContext setTraversalContext(TraversalContext tc) {
+		TraversalContext oldTc = tc;
+		this.tc = tc;
+		return oldTc;
 	}
 }

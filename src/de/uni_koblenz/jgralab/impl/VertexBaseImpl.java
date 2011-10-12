@@ -49,6 +49,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.PathElement;
+import de.uni_koblenz.jgralab.TraversalContext;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -60,8 +61,8 @@ import de.uni_koblenz.jgralab.schema.impl.DirectedM1EdgeClass;
  * 
  * @author ist@uni-koblenz.de
  */
-public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex {
-	abstract protected void setIncidenceListVersion(long incidenceListVersion);
+public abstract class VertexBaseImpl extends GraphElementImpl implements
+		Vertex, VertexBase {
 
 	/**
 	 * @param id
@@ -94,14 +95,14 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex 
 	@Override
 	public int getDegree(EdgeDirection orientation) {
 		int d = 0;
-		IncidenceImpl i = getFirstIncidenceInternal();
+		Edge i = getFirstIncidence();
 		switch (orientation) {
 		case IN:
 			while (i != null) {
 				if (!i.isNormal()) {
 					++d;
 				}
-				i = i.getNextIncidenceInternal();
+				i = i.getNextIncidence();
 			}
 			return d;
 		case OUT:
@@ -109,13 +110,13 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex 
 				if (i.isNormal()) {
 					++d;
 				}
-				i = i.getNextIncidenceInternal();
+				i = i.getNextIncidence();
 			}
 			return d;
 		case INOUT:
 			while (i != null) {
 				++d;
-				i = i.getNextIncidenceInternal();
+				i = i.getNextIncidence();
 			}
 			return d;
 		default:
@@ -129,7 +130,16 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex 
 	 * @see de.uni_koblenz.jgralab.Vertex#getNextVertex()
 	 */
 	@Override
-	abstract public Vertex getNextVertex();
+	public Vertex getNextVertex() {
+		VertexBase nextVertex = getNextBaseVertex();
+		TraversalContext tc = graph.getTraversalContext();
+		if (!(tc == null || nextVertex == null || tc.containsVertex(nextVertex))) {
+			while (!(nextVertex == null || tc.containsVertex(nextVertex))) {
+				nextVertex = nextVertex.getNextBaseVertex();
+			}
+		}
+		return nextVertex;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -140,12 +150,12 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex 
 	public Vertex getNextVertex(Class<? extends Vertex> vertexClass) {
 		assert vertexClass != null;
 		assert isValid();
-		VertexBaseImpl v = (VertexBaseImpl) getNextVertex();
+		VertexBase v = (VertexBase) getNextVertex();
 		while (v != null) {
 			if (vertexClass.isInstance(v)) {
 				return v;
 			}
-			v = (VertexBaseImpl) v.getNextVertex();
+			v = (VertexBase) v.getNextVertex();
 		}
 		return null;
 	}
@@ -178,9 +188,9 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex 
 		if (this == v) {
 			return false;
 		}
-		Vertex prev = ((VertexBaseImpl) v).getPrevVertex();
+		Vertex prev = ((VertexBase) v).getPrevBaseVertex();
 		while ((prev != null) && (prev != this)) {
-			prev = ((VertexBaseImpl) prev).getPrevVertex();
+			prev = ((VertexBase) prev).getPrevBaseVertex();
 		}
 		return prev != null;
 	}
@@ -202,7 +212,7 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex 
 		assert v != this;
 		assert getGraph() == v.getGraph();
 		assert isValid() && v.isValid();
-		graph.putVertexBefore((VertexBaseImpl) v, this);
+		graph.putVertexBefore((VertexBase) v, this);
 	}
 
 	/*
@@ -218,9 +228,9 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex 
 		if (this == v) {
 			return false;
 		}
-		VertexBaseImpl next = (VertexBaseImpl) v.getNextVertex();
+		VertexBase next = (VertexBase) ((VertexBase) v).getNextBaseVertex();
 		while ((next != null) && (next != this)) {
-			next = (VertexBaseImpl) next.getNextVertex();
+			next = (VertexBase) next.getNextBaseVertex();
 		}
 		return next != null;
 	}
@@ -237,34 +247,30 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex 
 		assert v != this;
 		assert getGraph() == v.getGraph();
 		assert isValid() && v.isValid();
-		graph.putVertexAfter((VertexBaseImpl) v, this);
+		graph.putVertexAfter((VertexBase) v, this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.Vertex#getFirstEdge()
-	 */
 	@Override
 	public Edge getFirstIncidence() {
-		assert isValid();
-		return getFirstIncidenceInternal();
+		Edge firstIncidence = getFirstBaseIncidence();
+		TraversalContext tc = graph.getTraversalContext();
+		if (!(tc == null || firstIncidence == null || tc
+				.containsEdge(firstIncidence))) {
+			firstIncidence = firstIncidence.getNextIncidence();
+		}
+		return firstIncidence;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.Vertex#getLastEdge()
-	 */
 	@Override
 	public Edge getLastIncidence() {
-		assert isValid();
-		return getLastIncidenceInternal();
+		Edge lastIncidence = getLastBaseIncidence();
+		TraversalContext tc = graph.getTraversalContext();
+		if (!(tc == null || lastIncidence == null || tc
+				.containsEdge(lastIncidence))) {
+			lastIncidence = lastIncidence.getPrevIncidence();
+		}
+		return lastIncidence;
 	}
-
-	abstract protected IncidenceImpl getFirstIncidenceInternal();
-
-	abstract protected IncidenceImpl getLastIncidenceInternal();
 
 	/*
 	 * (non-Javadoc)
@@ -275,16 +281,16 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex 
 	@Override
 	public Edge getFirstIncidence(EdgeDirection orientation) {
 		assert isValid();
-		IncidenceImpl i = getFirstIncidenceInternal();
+		Edge i = getFirstIncidence();
 		switch (orientation) {
 		case IN:
 			while ((i != null) && i.isNormal()) {
-				i = i.getNextIncidenceInternal();
+				i = i.getNextIncidence();
 			}
 			return i;
 		case OUT:
 			while ((i != null) && !i.isNormal()) {
-				i = i.getNextIncidenceInternal();
+				i = i.getNextIncidence();
 			}
 			return i;
 		case INOUT:
@@ -298,18 +304,18 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex 
 	public Edge getFirstIncidence(boolean thisIncidence,
 			AggregationKind... kinds) {
 		assert isValid();
-		IncidenceImpl i = getFirstIncidenceInternal();
+		Edge i = getFirstIncidence();
 		if (kinds.length == 0) {
 			return i;
 		}
 		while (i != null) {
 			for (AggregationKind element : kinds) {
-				if ((thisIncidence ? i.getThisSemantics() : i
-						.getThatSemantics()) == element) {
+				if ((thisIncidence ? i.getThisAggregationKind() : i
+						.getThatAggregationKind()) == element) {
 					return i;
 				}
 			}
-			i = i.getNextIncidenceInternal();
+			i = i.getNextIncidence();
 		}
 		return null;
 	}
@@ -387,7 +393,8 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex 
 		graph.deleteVertex(this);
 	}
 
-	protected void putIncidenceAfter(IncidenceImpl target, IncidenceImpl moved) {
+	@Override
+	public void putIncidenceAfter(EdgeBase target, EdgeBase moved) {
 		assert (target != null) && (moved != null);
 		assert target.isValid() && moved.isValid();
 		assert target.getGraph() == moved.getGraph();
@@ -395,36 +402,36 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex 
 		assert target.getThis() == moved.getThis();
 		assert target != moved;
 
-		if ((target == moved) || (target.getNextIncidenceInternal() == moved)) {
+		if ((target == moved) || (target.getNextBaseIncidence() == moved)) {
 			return;
 		}
 
 		// there are at least 2 incidences in the incidence list
 		// such that firstIncidence != lastIncidence
-		assert getFirstIncidenceInternal() != getLastIncidenceInternal();
+		assert getFirstBaseIncidence() != getLastBaseIncidence();
 
 		// remove moved incidence from lambdaSeq
-		if (moved == getFirstIncidenceInternal()) {
-			setFirstIncidence(moved.getNextIncidenceInternal());
-			moved.getNextIncidenceInternal().setPrevIncidenceInternal(null);
+		if (moved == getFirstBaseIncidence()) {
+			setFirstIncidence(moved.getNextBaseIncidence());
+			(moved.getNextBaseIncidence()).setPrevIncidenceInternal(null);
 
-		} else if (moved == getLastIncidenceInternal()) {
-			setLastIncidence(moved.getPrevIncidenceInternal());
-			moved.getPrevIncidenceInternal().setNextIncidenceInternal(null);
+		} else if (moved == getLastBaseIncidence()) {
+			setLastIncidence(moved.getPrevBaseIncidence());
+			(moved.getPrevBaseIncidence()).setNextIncidenceInternal(null);
 		} else {
-			moved.getPrevIncidenceInternal().setNextIncidenceInternal(
-					moved.getNextIncidenceInternal());
-			moved.getNextIncidenceInternal().setPrevIncidenceInternal(
-					moved.getPrevIncidenceInternal());
+			(moved.getPrevBaseIncidence()).setNextIncidenceInternal(moved
+					.getNextBaseIncidence());
+			(moved.getNextBaseIncidence()).setPrevIncidenceInternal(moved
+					.getPrevBaseIncidence());
 		}
 
 		// insert moved incidence in lambdaSeq immediately after target
-		if (target == getLastIncidenceInternal()) {
+		if (target == getLastBaseIncidence()) {
 			setLastIncidence(moved);
 			moved.setNextIncidenceInternal(null);
 		} else {
-			target.getNextIncidenceInternal().setPrevIncidenceInternal(moved);
-			moved.setNextIncidenceInternal(target.getNextIncidenceInternal());
+			(target.getNextBaseIncidence()).setPrevIncidenceInternal(moved);
+			moved.setNextIncidenceInternal(target.getNextBaseIncidence());
 		}
 		moved.setPrevIncidenceInternal(target);
 
@@ -432,7 +439,8 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex 
 		incidenceListModified();
 	}
 
-	protected void putIncidenceBefore(IncidenceImpl target, IncidenceImpl moved) {
+	@Override
+	public void putIncidenceBefore(EdgeBase target, EdgeBase moved) {
 		assert (target != null) && (moved != null);
 		assert target.isValid() && moved.isValid();
 		assert target.getGraph() == moved.getGraph();
@@ -440,34 +448,34 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex 
 		assert target.getThis() == moved.getThis();
 		assert target != moved;
 
-		if ((target == moved) || (target.getPrevIncidenceInternal() == moved)) {
+		if ((target == moved) || (target.getPrevBaseIncidence() == moved)) {
 			return;
 		}
 
 		// there are at least 2 incidences in the incidence list
 		// such that firstIncidence != lastIncidence
-		assert getFirstIncidenceInternal() != getLastIncidenceInternal();
+		assert getFirstBaseIncidence() != getLastBaseIncidence();
 
 		// remove moved incidence from lambdaSeq
-		if (moved == getFirstIncidenceInternal()) {
-			setFirstIncidence(moved.getNextIncidenceInternal());
-			moved.getNextIncidenceInternal().setPrevIncidenceInternal(null);
-		} else if (moved == getLastIncidenceInternal()) {
-			setLastIncidence(moved.getPrevIncidenceInternal());
-			moved.getPrevIncidenceInternal().setNextIncidenceInternal(null);
+		if (moved == getFirstBaseIncidence()) {
+			setFirstIncidence(moved.getNextBaseIncidence());
+			(moved.getNextBaseIncidence()).setPrevIncidenceInternal(null);
+		} else if (moved == getLastBaseIncidence()) {
+			setLastIncidence(moved.getPrevBaseIncidence());
+			(moved.getPrevBaseIncidence()).setNextIncidenceInternal(null);
 		} else {
-			moved.getPrevIncidenceInternal().setNextIncidenceInternal(
-					moved.getNextIncidenceInternal());
-			moved.getNextIncidenceInternal().setPrevIncidenceInternal(
-					moved.getPrevIncidenceInternal());
+			(moved.getPrevBaseIncidence()).setNextIncidenceInternal(moved
+					.getNextBaseIncidence());
+			(moved.getNextBaseIncidence()).setPrevIncidenceInternal(moved
+					.getPrevBaseIncidence());
 		}
 
 		// insert moved incidence in lambdaSeq immediately before target
-		if (target == getFirstIncidenceInternal()) {
+		if (target == getFirstBaseIncidence()) {
 			setFirstIncidence(moved);
 			moved.setPrevIncidenceInternal(null);
 		} else {
-			IncidenceImpl previousIncidence = target.getPrevIncidenceInternal();
+			EdgeBase previousIncidence = target.getPrevBaseIncidence();
 			previousIncidence.setNextIncidenceInternal(moved);
 			moved.setPrevIncidenceInternal(previousIncidence);
 		}
@@ -492,12 +500,13 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex 
 	@Override
 	public boolean isIncidenceListModified(long vertexStructureVersion) {
 		assert isValid();
-		return (this.getIncidenceListVersion() != vertexStructureVersion);
+		return (getIncidenceListVersion() != vertexStructureVersion);
 	}
 
-	/**
-	 * Must be called by all methods which manipulate the incidence list of this
-	 * Vertex.
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.impl.InternalVertex#incidenceListModified()
 	 */
 	public void incidenceListModified() {
 		assert isValid();
@@ -661,51 +670,58 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex 
 		return new IncidenceIterable<Edge>(this, eclass);
 	}
 
-	abstract protected void setNextVertex(Vertex nextVertex);
+	@Override
+	public Vertex getPrevVertex() {
+		VertexBase prevVertex = getPrevBaseVertex();
+		TraversalContext tc = graph.getTraversalContext();
+		if (!(tc == null || prevVertex == null || tc.containsVertex(prevVertex))) {
+			while (!(prevVertex == null || tc.containsVertex(prevVertex))) {
+				prevVertex = prevVertex.getPrevBaseVertex();
+			}
+		}
+		return prevVertex;
+	}
 
-	abstract protected void setPrevVertex(Vertex prevVertex);
-
-	abstract public Vertex getPrevVertex();
-
-	protected void appendIncidenceToLambdaSeq(IncidenceImpl i) {
+	public void appendIncidenceToLambdaSeq(EdgeBase i) {
 		assert i != null;
 		assert i.getIncidentVertex() != this;
 		i.setIncidentVertex(this);
-		if (getFirstIncidenceInternal() == null) {
+		if (getFirstBaseIncidence() == null) {
 			setFirstIncidence(i);
 		}
-		if (getLastIncidenceInternal() != null) {
-			getLastIncidenceInternal().setNextIncidenceInternal(i);
-			i.setPrevIncidenceInternal(getLastIncidenceInternal());
+		if (getLastBaseIncidence() != null) {
+			getLastBaseIncidence().setNextIncidenceInternal(i);
+			i.setPrevIncidenceInternal(getLastBaseIncidence());
 		}
 		setLastIncidence(i);
 	}
 
-	protected void removeIncidenceFromLambdaSeq(IncidenceImpl i) {
+	@Override
+	public void removeIncidenceFromLambdaSeq(EdgeBase i) {
 		assert i != null;
 		assert i.getIncidentVertex() == this;
-		if (i == getFirstIncidenceInternal()) {
+		if (i == getFirstBaseIncidence()) {
 			// delete at head of incidence list
-			setFirstIncidence(i.getNextIncidenceInternal());
-			if (getFirstIncidenceInternal() != null) {
-				getFirstIncidenceInternal().setPrevIncidenceInternal(null);
+			setFirstIncidence(i.getNextBaseIncidence());
+			if (getFirstBaseIncidence() != null) {
+				getFirstBaseIncidence().setPrevIncidenceInternal(null);
 			}
-			if (i == getLastIncidenceInternal()) {
+			if (i == getLastBaseIncidence()) {
 				// this incidence was the only one...
 				setLastIncidence(null);
 			}
-		} else if (i == getLastIncidenceInternal()) {
+		} else if (i == getLastBaseIncidence()) {
 			// delete at tail of incidence list
-			setLastIncidence(i.getPrevIncidenceInternal());
-			if (getLastIncidenceInternal() != null) {
-				getLastIncidenceInternal().setNextIncidenceInternal(null);
+			setLastIncidence(i.getPrevBaseIncidence());
+			if (getLastBaseIncidence() != null) {
+				getLastBaseIncidence().setNextIncidenceInternal(null);
 			}
 		} else {
 			// delete somewhere in the middle
-			i.getPrevIncidenceInternal().setNextIncidenceInternal(
-					i.getNextIncidenceInternal());
-			i.getNextIncidenceInternal().setPrevIncidenceInternal(
-					i.getPrevIncidenceInternal());
+			(i.getPrevBaseIncidence()).setNextIncidenceInternal(i
+					.getNextBaseIncidence());
+			(i.getNextBaseIncidence()).setPrevIncidenceInternal(i
+					.getPrevBaseIncidence());
 		}
 		// delete incidence
 		i.setIncidentVertex(null);
@@ -713,22 +729,18 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex 
 		i.setPrevIncidenceInternal(null);
 	}
 
-	abstract protected void setFirstIncidence(IncidenceImpl firstIncidence);
-
-	abstract protected void setLastIncidence(IncidenceImpl lastIncidence);
-
 	public void sortIncidences(Comparator<Edge> comp) {
 		assert isValid();
 
-		if (getFirstIncidenceInternal() == null) {
+		if (getFirstBaseIncidence() == null) {
 			// no sorting required for empty incidence lists
 			return;
 		}
 		class IncidenceList {
-			IncidenceImpl first;
-			IncidenceImpl last;
+			EdgeBase first;
+			EdgeBase last;
 
-			public void add(IncidenceImpl e) {
+			public void add(EdgeBase e) {
 				if (first == null) {
 					first = e;
 					assert (last == null);
@@ -741,11 +753,11 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex 
 				e.setNextIncidenceInternal(null);
 			}
 
-			public IncidenceImpl remove() {
+			public EdgeBase remove() {
 				if (first == null) {
 					throw new NoSuchElementException();
 				}
-				IncidenceImpl out;
+				EdgeBase out;
 				if (first == last) {
 					out = first;
 					first = null;
@@ -753,7 +765,7 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex 
 					return out;
 				}
 				out = first;
-				first = out.getNextIncidenceInternal();
+				first = out.getNextBaseIncidence();
 				first.setPrevIncidenceInternal(null);
 				return out;
 			}
@@ -770,14 +782,14 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex 
 		IncidenceList out = a;
 
 		// split
-		IncidenceImpl last;
+		EdgeBase last;
 		IncidenceList l = new IncidenceList();
-		l.first = getFirstIncidenceInternal();
-		l.last = getLastIncidenceInternal();
+		l.first = getFirstBaseIncidence();
+		l.last = getLastBaseIncidence();
 
 		out.add(last = l.remove());
 		while (!l.isEmpty()) {
-			IncidenceImpl current = l.remove();
+			EdgeBase current = l.remove();
 			if (comp.compare(current, last) < 0) {
 				out = (out == a) ? b : a;
 			}
@@ -829,7 +841,7 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex 
 
 			// copy rest of A
 			while (!a.isEmpty()) {
-				IncidenceImpl current = a.remove();
+				EdgeBase current = a.remove();
 				if (comp.compare(current, last) < 0) {
 					out = (out == c) ? d : c;
 				}
@@ -839,7 +851,7 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex 
 
 			// copy rest of B
 			while (!b.isEmpty()) {
-				IncidenceImpl current = b.remove();
+				EdgeBase current = b.remove();
 				if (comp.compare(current, last) < 0) {
 					out = (out == c) ? d : c;
 				}
@@ -891,20 +903,24 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex 
 	public List<Vertex> removeAdjacences(String role) {
 		assert (role != null) && (role.length() > 0);
 		assert isValid();
-
-		DirectedM1EdgeClass entry = getEdgeForRolename(role);
-		Class<? extends Edge> ec = entry.getM1Class();
-		List<Vertex> adjacences = new ArrayList<Vertex>();
-		List<Edge> deleteList = new ArrayList<Edge>();
-		EdgeDirection dir = entry.getDirection();
-		for (Edge e : incidences(ec, dir)) {
-			deleteList.add(e);
-			adjacences.add(e.getThat());
+		TraversalContext oldTC = getGraph().setTraversalContext(null);
+		try {
+			DirectedM1EdgeClass entry = getEdgeForRolename(role);
+			Class<? extends Edge> ec = entry.getM1Class();
+			List<Vertex> adjacences = new ArrayList<Vertex>();
+			List<Edge> deleteList = new ArrayList<Edge>();
+			EdgeDirection dir = entry.getDirection();
+			for (Edge e : incidences(ec, dir)) {
+				deleteList.add(e);
+				adjacences.add(e.getThat());
+			}
+			for (Edge e : deleteList) {
+				e.delete();
+			}
+			return adjacences;
+		} finally {
+			getGraph().setTraversalContext(oldTC);
 		}
-		for (Edge e : deleteList) {
-			e.delete();
-		}
-		return adjacences;
 	}
 
 	public void removeAdjacence(String role, Vertex other) {
@@ -912,18 +928,22 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements Vertex 
 		assert isValid();
 		assert other.isValid();
 		assert getGraph() == other.getGraph();
-
-		DirectedM1EdgeClass entry = getEdgeForRolename(role);
-		Class<? extends Edge> ec = entry.getM1Class();
-		List<Edge> deleteList = new ArrayList<Edge>();
-		EdgeDirection dir = entry.getDirection();
-		for (Edge e : incidences(ec, dir)) {
-			if (e.getThat() == other) {
-				deleteList.add(e);
+		TraversalContext oldTC = getGraph().setTraversalContext(null);
+		try {
+			DirectedM1EdgeClass entry = getEdgeForRolename(role);
+			Class<? extends Edge> ec = entry.getM1Class();
+			List<Edge> deleteList = new ArrayList<Edge>();
+			EdgeDirection dir = entry.getDirection();
+			for (Edge e : incidences(ec, dir)) {
+				if (e.getThat() == other) {
+					deleteList.add(e);
+				}
 			}
-		}
-		for (Edge e : deleteList) {
-			e.delete();
+			for (Edge e : deleteList) {
+				e.delete();
+			}
+		} finally {
+			getGraph().setTraversalContext(oldTC);
 		}
 	}
 

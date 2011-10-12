@@ -73,20 +73,6 @@ public interface Graph extends AttributedElement {
 			Vertex omega);
 
 	/**
-	 * Checks whether this graph is currently being loaded.
-	 * 
-	 * @return true if the graph is currently being loaded
-	 */
-	public boolean isLoading();
-
-	/**
-	 * Callback method: Called immediately after loading of this graph is
-	 * completed. Overwrite this method to perform user defined operations after
-	 * loading a graph.
-	 */
-	public void loadingCompleted();
-
-	/**
 	 * Checks whether this graph has changed with respect to the given
 	 * <code>previousVersion</code>. Every change in the graph, e.g. adding,
 	 * creating and reordering of edges and vertices or changes of attributes of
@@ -106,44 +92,6 @@ public interface Graph extends AttributedElement {
 	 * @see #isGraphModified(long)
 	 */
 	public long getGraphVersion();
-
-	/**
-	 * Checks if the vertex sequence of this has changed with respect to the
-	 * given <code>previousVersion</code>. Changes in the vertex sequence are
-	 * creation and deletion as well as reordering of vertices, but not changes
-	 * of attribute values.
-	 * 
-	 * @return <code>true</code> if the vertex list version of this graph is
-	 *         different from <code>previousVersion</code>.
-	 */
-	public boolean isVertexListModified(long previousVersion);
-
-	/**
-	 * Returns the version counter of the vertex sequence of this graph.
-	 * 
-	 * @return the vertex sequence version
-	 * @see #isVertexListModified(long)
-	 */
-	public long getVertexListVersion();
-
-	/**
-	 * Checks if the edge sequence of this has changed with respect to the given
-	 * <code>previousVersion</code>. Changes in the edge sequence are creation
-	 * and deletion as well as reordering of edges, but not changes of attribute
-	 * values.
-	 * 
-	 * @return <code>true</code> if the edge list version of this graph is
-	 *         different from <code>previousVersion</code>.
-	 */
-	public boolean isEdgeListModified(long edgeListVersion);
-
-	/**
-	 * Returns the version counter of the edge sequence of this graph.
-	 * 
-	 * @return the edge sequence version
-	 * @see #isEdgeListModified(long)
-	 */
-	public long getEdgeListVersion();
 
 	/**
 	 * @return true if this graph contains the given vertex <code>v</code>.
@@ -284,36 +232,6 @@ public interface Graph extends AttributedElement {
 	public Edge getEdge(int id);
 
 	/**
-	 * The maximum number of vertices that can be stored in the graph before the
-	 * internal array structures are expanded.
-	 * 
-	 * @return the maximum number of vertices
-	 */
-	public int getMaxVCount();
-
-	/**
-	 * Computes the new maximum number of vertices when expansion is needed.
-	 * 
-	 * @return the new maximum number of vertices
-	 */
-	public int getExpandedVertexCount();
-
-	/**
-	 * Computes the new maximum number of edges when expansion is needed.
-	 * 
-	 * @return the new maximum number of edges
-	 */
-	public int getExpandedEdgeCount();
-
-	/**
-	 * The maximum number of edges that can be stored in the graph before the
-	 * internal array structures are expanded.
-	 * 
-	 * @return the maximum number of edges
-	 */
-	public int getMaxECount();
-
-	/**
 	 * Returns the number of vertices in this Graph.
 	 * 
 	 * @return the number of vertices
@@ -335,16 +253,6 @@ public interface Graph extends AttributedElement {
 	 * @return the id of this graph
 	 */
 	public String getId();
-
-	/**
-	 * Sets the <code>id</code> of this Graph.
-	 * 
-	 * Precondition: id != null && id.equals(id.trim()) && !id.equals("")
-	 * 
-	 * @param id
-	 *            the new id
-	 */
-	public void setId(String id);
 
 	/**
 	 * Returns an Iterable which iterates over all edges of this Graph in the
@@ -429,18 +337,6 @@ public interface Graph extends AttributedElement {
 	 */
 	public Iterable<Vertex> vertices(Class<? extends Vertex> vertexClass);
 
-	/**
-	 * Optimizes edge and vertex ids such that after defragmentation
-	 * getMaxECount() == getECount() and getMaxVCount() == getVCount(). That
-	 * means that gaps in the vertex and edge IDs are deleted (defragmented) and
-	 * that the internal arrays are shortened such that they hold exactly the
-	 * required number of vertices/edges.
-	 * 
-	 * <b>Attention:</b> defragment() possibly changes vertex and edge IDs! *
-	 * <b>Attention:</b> Not supported within when using transactions!
-	 */
-	public void defragment();
-
 	// ---- transaction support ----
 	/**
 	 * @return a read-write-<code>Transaction</code>
@@ -480,14 +376,6 @@ public interface Graph extends AttributedElement {
 	 * getCurrentTransaction()}.
 	 */
 	public void abort();
-
-	/**
-	 * Delegates to {@link Graph#getCurrentTransaction()
-	 * getCurrentTransaction()}.
-	 * 
-	 * @return if there have been conflicts
-	 */
-	public boolean isInConflict();
 
 	/**
 	 * Delegates to {@link Graph#getCurrentTransaction()

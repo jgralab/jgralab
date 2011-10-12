@@ -42,7 +42,6 @@ import java.util.Set;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
-import de.uni_koblenz.jgralab.schema.impl.DirectedM1EdgeClass;
 
 /**
  * represents a vertex, m1 classes inherit from this class
@@ -51,18 +50,6 @@ import de.uni_koblenz.jgralab.schema.impl.DirectedM1EdgeClass;
  * 
  */
 public interface Vertex extends GraphElement {
-
-	/**
-	 * Checks if the list of incident edges has changed with respect to the
-	 * given <code>incidenceListVersion</code>.
-	 */
-	public boolean isIncidenceListModified(long incidenceListVersion);
-
-	/**
-	 * @return the internal vertex structure version
-	 * @see #isIncidenceListModified(long)
-	 */
-	public long getIncidenceListVersion();
 
 	/**
 	 * @return the number of connected incidences to the vertex
@@ -352,20 +339,6 @@ public interface Vertex extends GraphElement {
 	public Iterable<Edge> incidences(Class<? extends Edge> eclass);
 
 	/**
-	 * tests if the Edge <code>edge</code> may start at this vertex
-	 * 
-	 * @return <code>true</code> iff <code>edge</code> may start at this vertex
-	 */
-	public boolean isValidAlpha(Edge edge);
-
-	/**
-	 * tests if the Edge <code>edge</code> may end at this vertex
-	 * 
-	 * @return <code>true</code> iff <code>edge</code> may end at this vertex
-	 */
-	public boolean isValidOmega(Edge edge);
-
-	/**
 	 * Sorts the incidence sequence according to the given comparator in
 	 * ascending order.
 	 * 
@@ -373,8 +346,6 @@ public interface Vertex extends GraphElement {
 	 *            the comparator that defines the desired incidence order.
 	 */
 	public void sortIncidences(Comparator<Edge> comp);
-
-	public DirectedM1EdgeClass getEdgeForRolename(String rolename);
 
 	public List<? extends Vertex> adjacences(String role);
 

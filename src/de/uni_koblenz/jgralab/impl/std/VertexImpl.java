@@ -36,7 +36,8 @@ package de.uni_koblenz.jgralab.impl.std;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.impl.IncidenceImpl;
+import de.uni_koblenz.jgralab.impl.EdgeBase;
+import de.uni_koblenz.jgralab.impl.VertexBase;
 
 /**
  * The implementation of a <code>Vertex</code> accessing attributes without
@@ -46,10 +47,10 @@ import de.uni_koblenz.jgralab.impl.IncidenceImpl;
  */
 public abstract class VertexImpl extends
 		de.uni_koblenz.jgralab.impl.VertexBaseImpl {
-	private VertexImpl nextVertex;
-	private VertexImpl prevVertex;
-	private IncidenceImpl firstIncidence;
-	private IncidenceImpl lastIncidence;
+	private VertexBase nextVertex;
+	private VertexBase prevVertex;
+	private EdgeBase firstIncidence;
+	private EdgeBase lastIncidence;
 
 	/**
 	 * holds the version of the vertex structure, for every modification of the
@@ -60,49 +61,49 @@ public abstract class VertexImpl extends
 	private long incidenceListVersion = 0;
 
 	@Override
-	public Vertex getNextVertex() {
+	public VertexBase getNextBaseVertex() {
 		assert isValid();
 		return nextVertex;
 	}
 
 	@Override
-	protected IncidenceImpl getFirstIncidenceInternal() {
-		return firstIncidence;
-	}
-
-	@Override
-	protected IncidenceImpl getLastIncidenceInternal() {
-		return lastIncidence;
-	}
-
-	@Override
-	protected void setNextVertex(Vertex nextVertex) {
-		this.nextVertex = (VertexImpl) nextVertex;
-	}
-
-	@Override
-	protected void setPrevVertex(Vertex prevVertex) {
-		this.prevVertex = (VertexImpl) prevVertex;
-	}
-
-	@Override
-	public Vertex getPrevVertex() {
+	public VertexBase getPrevBaseVertex() {
 		assert isValid();
 		return prevVertex;
 	}
 
 	@Override
-	protected void setFirstIncidence(IncidenceImpl firstIncidence) {
+	public EdgeBase getFirstBaseIncidence() {
+		return firstIncidence;
+	}
+
+	@Override
+	public EdgeBase getLastBaseIncidence() {
+		return lastIncidence;
+	}
+
+	@Override
+	public void setNextVertex(Vertex nextVertex) {
+		this.nextVertex = (VertexImpl) nextVertex;
+	}
+
+	@Override
+	public void setPrevVertex(Vertex prevVertex) {
+		this.prevVertex = (VertexImpl) prevVertex;
+	}
+
+	@Override
+	public void setFirstIncidence(EdgeBase firstIncidence) {
 		this.firstIncidence = firstIncidence;
 	}
 
 	@Override
-	protected void setLastIncidence(IncidenceImpl lastIncidence) {
+	public void setLastIncidence(EdgeBase lastIncidence) {
 		this.lastIncidence = lastIncidence;
 	}
 
 	@Override
-	protected void setIncidenceListVersion(long incidenceListVersion) {
+	public void setIncidenceListVersion(long incidenceListVersion) {
 		this.incidenceListVersion = incidenceListVersion;
 	}
 
@@ -123,7 +124,7 @@ public abstract class VertexImpl extends
 	}
 
 	@Override
-	protected void setId(int id) {
+	public void setId(int id) {
 		assert id >= 0;
 		this.id = id;
 	}
