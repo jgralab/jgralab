@@ -41,7 +41,6 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.EdgeBase;
-import de.uni_koblenz.jgralab.impl.IncidenceImpl;
 import de.uni_koblenz.jgralab.impl.VertexBase;
 import de.uni_koblenz.jgralab.impl.VertexBaseImpl;
 
@@ -190,12 +189,12 @@ public abstract class VertexImpl extends VertexBaseImpl implements
 
 	@Override
 	public EdgeBase getFirstBaseIncidence() {
-		return (IncidenceImpl) incidenceList.getFirst();
+		return incidenceList.getFirst();
 	}
 
 	@Override
 	public EdgeBase getLastBaseIncidence() {
-		return (IncidenceImpl) incidenceList.getLast();
+		return incidenceList.getLast();
 	}
 
 	/**
@@ -290,7 +289,7 @@ public abstract class VertexImpl extends VertexBaseImpl implements
 		assert isInitialized() && isPersistent();
 		DatabasePersistableEdge edge = (DatabasePersistableEdge) firstIncidence;
 		assert edge.isPersistent();
-		assert graph.containsEdge(edge);
+		assert graph.eSeqContainsEdge(edge);
 		incidenceList.prepend(edge);
 	}
 
@@ -306,7 +305,7 @@ public abstract class VertexImpl extends VertexBaseImpl implements
 		assert isInitialized() && isPersistent();
 		DatabasePersistableEdge edge = (DatabasePersistableEdge) lastIncidence;
 		assert edge.isPersistent();
-		assert graph.containsEdge(edge);
+		assert graph.eSeqContainsEdge(edge);
 		appendIncidenceToLambdaSeq(lastIncidence);
 	}
 
@@ -427,7 +426,7 @@ public abstract class VertexImpl extends VertexBaseImpl implements
 	@Override
 	public boolean isValid() {
 		if (graph != null) {
-			return graph.containsVertex(this);
+			return graph.vSeqContainsVertex(this);
 		} else {
 			return false;
 		}

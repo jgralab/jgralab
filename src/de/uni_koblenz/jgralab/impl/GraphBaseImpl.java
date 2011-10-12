@@ -208,8 +208,8 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 
 	public void addEdge(Edge newEdge, Vertex alpha, Vertex omega) {
 		assert newEdge != null;
-		assert (alpha != null) && alpha.isValid() && containsVertex(alpha) : "Alpha vertex is invalid";
-		assert (omega != null) && omega.isValid() && containsVertex(omega) : "Omega vertex is invalid";
+		assert (alpha != null) && alpha.isValid() && vSeqContainsVertex(alpha) : "Alpha vertex is invalid";
+		assert (omega != null) && omega.isValid() && vSeqContainsVertex(omega) : "Omega vertex is invalid";
 		assert newEdge.isNormal() : "Can't add reversed edge";
 		assert (alpha.getSchema() == omega.getSchema())
 				&& (alpha.getSchema() == schema)
@@ -401,13 +401,16 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	 */
 	@Override
 	public boolean containsEdge(Edge e) {
+		return getTraversalContext() == null ? eSeqContainsEdge(e)
+				: eSeqContainsEdge(e) && getTraversalContext().containsEdge(e);
+	}
+
+	public boolean eSeqContainsEdge(Edge e) {
 		return (e != null)
 				&& (e.getGraph() == this)
 				&& containsEdgeId(((EdgeBaseImpl) e.getNormalEdge()).id)
 				&& (getEdge(((EdgeBaseImpl) e.getNormalEdge()).id) == e
-						.getNormalEdge())
-				&& (getTraversalContext() == null || getTraversalContext()
-						.containsEdge(e));
+						.getNormalEdge());
 	}
 
 	/**
@@ -434,13 +437,15 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	 */
 	@Override
 	public boolean containsVertex(Vertex v) {
-		VertexBase[] vertex = getVertex();
-		return (v != null)
-				&& (v.getGraph() == this)
+		return getTraversalContext() == null ? vSeqContainsVertex(v)
+				: vSeqContainsVertex(v)
+						&& getTraversalContext().containsVertex(v);
+	}
+
+	public boolean vSeqContainsVertex(Vertex v) {
+		return (v != null) && (v.getGraph() == this)
 				&& containsVertexId(((VertexBaseImpl) v).id)
-				&& (vertex[((VertexBaseImpl) v).id] == v)
-				&& (getTraversalContext() == null || getTraversalContext()
-						.containsVertex(v));
+				&& (getVertex()[((VertexBaseImpl) v).id] == v);
 	}
 
 	/**
@@ -509,7 +514,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	 */
 	@Override
 	public void deleteEdge(Edge e) {
-		assert (e != null) && e.isValid() && containsEdge(e);
+		assert (e != null) && e.isValid() && eSeqContainsEdge(e);
 		internalDeleteEdge(e);
 		edgeListModified();
 	}
@@ -522,7 +527,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	 */
 	@Override
 	public void deleteVertex(Vertex v) {
-		assert (v != null) && v.isValid() && containsVertex(v);
+		assert (v != null) && v.isValid() && vSeqContainsVertex(v);
 
 		getDeleteVertexList().add((VertexBase) v);
 		internalDeleteVertex();
@@ -909,7 +914,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	 *            an edge
 	 */
 	private void internalDeleteEdge(Edge edge) {
-		assert (edge != null) && edge.isValid() && containsEdge(edge);
+		assert (edge != null) && edge.isValid() && eSeqContainsEdge(edge);
 
 		getECARuleManager().fireBeforeDeleteEdgeEvents(edge);
 
@@ -952,7 +957,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	private void internalDeleteVertex() {
 		while (!getDeleteVertexList().isEmpty()) {
 			VertexBase v = getDeleteVertexList().remove(0);
-			assert (v != null) && v.isValid() && containsVertex(v);
+			assert (v != null) && v.isValid() && vSeqContainsVertex(v);
 
 			if (getECARuleManagerIfThere() != null) {
 				getECARuleManagerIfThere().fireBeforeDeleteVertexEvents(v);
@@ -961,12 +966,12 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 			// delete all incident edges including incidence objects
 			Edge e = v.getFirstIncidence();
 			while (e != null) {
-				assert e.isValid() && containsEdge(e);
+				assert e.isValid() && eSeqContainsEdge(e);
 				if (e.getThatAggregationKind() == AggregationKind.COMPOSITE) {
 					// check for cascading delete of vertices in incident
 					// composition edges
 					VertexBase other = (VertexBase) e.getThat();
-					if ((other != v) && containsVertex(other)
+					if ((other != v) && vSeqContainsVertex(other)
 							&& !getDeleteVertexList().contains(other)) {
 						getDeleteVertexList().add(other);
 					}
@@ -1136,9 +1141,9 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 
 	public void putEdgeAfterInGraph(EdgeBase targetEdge, EdgeBase movedEdge) {
 		assert (targetEdge != null) && targetEdge.isValid()
-				&& containsEdge(targetEdge);
+				&& eSeqContainsEdge(targetEdge);
 		assert (movedEdge != null) && movedEdge.isValid()
-				&& containsEdge(movedEdge);
+				&& eSeqContainsEdge(movedEdge);
 		assert targetEdge != movedEdge;
 
 		if ((targetEdge == movedEdge)
@@ -1179,9 +1184,9 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 
 	public void putVertexAfter(VertexBase targetVertex, VertexBase movedVertex) {
 		assert (targetVertex != null) && targetVertex.isValid()
-				&& containsVertex(targetVertex);
+				&& vSeqContainsVertex(targetVertex);
 		assert (movedVertex != null) && movedVertex.isValid()
-				&& containsVertex(movedVertex);
+				&& vSeqContainsVertex(movedVertex);
 		assert targetVertex != movedVertex;
 
 		Vertex nextVertex = targetVertex.getNextBaseVertex();
@@ -1236,9 +1241,9 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	 */
 	public void putEdgeBeforeInGraph(EdgeBase targetEdge, EdgeBase movedEdge) {
 		assert (targetEdge != null) && targetEdge.isValid()
-				&& containsEdge(targetEdge);
+				&& eSeqContainsEdge(targetEdge);
 		assert (movedEdge != null) && movedEdge.isValid()
-				&& containsEdge(movedEdge);
+				&& eSeqContainsEdge(movedEdge);
 		assert targetEdge != movedEdge;
 
 		if ((targetEdge == movedEdge)
@@ -1269,9 +1274,9 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 
 	public void putVertexBefore(VertexBase targetVertex, VertexBase movedVertex) {
 		assert (targetVertex != null) && targetVertex.isValid()
-				&& containsVertex(targetVertex);
+				&& vSeqContainsVertex(targetVertex);
 		assert (movedVertex != null) && movedVertex.isValid()
-				&& containsVertex(movedVertex);
+				&& vSeqContainsVertex(movedVertex);
 		assert targetVertex != movedVertex;
 
 		Vertex prevVertex = targetVertex.getPrevBaseVertex();
@@ -1858,7 +1863,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	}
 
 	public void notifyVertexDeleted(Vertex v) {
-		assert (v != null) && v.isValid() && containsVertex(v);
+		assert (v != null) && v.isValid() && vSeqContainsVertex(v);
 		if (graphStructureChangedListenersWithAutoRemoval != null) {
 			Iterator<WeakReference<GraphStructureChangedListener>> iterator = getListenerListIteratorForAutoRemove();
 			while (iterator.hasNext()) {
@@ -1879,7 +1884,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	}
 
 	public void notifyVertexAdded(Vertex v) {
-		assert (v != null) && v.isValid() && containsVertex(v);
+		assert (v != null) && v.isValid() && vSeqContainsVertex(v);
 		if (graphStructureChangedListenersWithAutoRemoval != null) {
 			Iterator<WeakReference<GraphStructureChangedListener>> iterator = getListenerListIteratorForAutoRemove();
 			while (iterator.hasNext()) {
@@ -1900,7 +1905,8 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	}
 
 	public void notifyEdgeDeleted(Edge e) {
-		assert (e != null) && e.isValid() && e.isNormal() && containsEdge(e);
+		assert (e != null) && e.isValid() && e.isNormal()
+				&& eSeqContainsEdge(e);
 		if (graphStructureChangedListenersWithAutoRemoval != null) {
 			Iterator<WeakReference<GraphStructureChangedListener>> iterator = getListenerListIteratorForAutoRemove();
 			while (iterator.hasNext()) {
@@ -1921,7 +1927,8 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	}
 
 	public void notifyEdgeAdded(Edge e) {
-		assert (e != null) && e.isValid() && e.isNormal() && containsEdge(e);
+		assert (e != null) && e.isValid() && e.isNormal()
+				&& eSeqContainsEdge(e);
 		if (graphStructureChangedListenersWithAutoRemoval != null) {
 			Iterator<WeakReference<GraphStructureChangedListener>> iterator = getListenerListIteratorForAutoRemove();
 			while (iterator.hasNext()) {

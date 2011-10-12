@@ -436,7 +436,7 @@ public abstract class EdgeImpl extends EdgeBaseImpl implements
 	@Override
 	public boolean isValid() {
 		if (graph != null) {
-			return graph.containsEdge(this);
+			return graph.eSeqContainsEdge(this);
 		} else {
 			return false;
 		}

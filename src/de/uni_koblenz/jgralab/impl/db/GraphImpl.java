@@ -272,7 +272,8 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	}
 
 	private boolean isVertexValid(Vertex vertex) {
-		return (vertex != null) && vertex.isValid() && containsVertex(vertex);
+		return (vertex != null) && vertex.isValid()
+				&& vSeqContainsVertex(vertex);
 	}
 
 	private boolean isSameSchemaAsGraph(Edge edge, Vertex alpha, Vertex omega) {
@@ -765,9 +766,9 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 
 	private void assertEdges(EdgeBase movedEdge, EdgeBase targetEdge) {
 		assert (targetEdge != null) && targetEdge.isValid()
-				&& containsEdge(targetEdge);
+				&& eSeqContainsEdge(targetEdge);
 		assert (movedEdge != null) && movedEdge.isValid()
-				&& containsEdge(movedEdge);
+				&& eSeqContainsEdge(movedEdge);
 		assert !((DatabasePersistableEdge) targetEdge).equals(movedEdge);
 	}
 
