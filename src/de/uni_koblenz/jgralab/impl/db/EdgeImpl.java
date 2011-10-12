@@ -37,10 +37,10 @@ package de.uni_koblenz.jgralab.impl.db;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.impl.EdgeBase;
+import de.uni_koblenz.jgralab.impl.InternalEdge;
 import de.uni_koblenz.jgralab.impl.EdgeBaseImpl;
 import de.uni_koblenz.jgralab.impl.IncidenceImpl;
-import de.uni_koblenz.jgralab.impl.VertexBase;
+import de.uni_koblenz.jgralab.impl.InternalVertex;
 import de.uni_koblenz.jgralab.impl.VertexBaseImpl;
 
 /**
@@ -272,12 +272,12 @@ public abstract class EdgeImpl extends EdgeBaseImpl implements
 	}
 
 	@Override
-	public EdgeBase getPrevBaseEdge() {
+	public InternalEdge getPrevBaseEdge() {
 		return getGraphImpl().getPrevEdge(this);
 	}
 
 	@Override
-	public EdgeBase getNextBaseEdge() {
+	public InternalEdge getNextBaseEdge() {
 		return getGraphImpl().getNextEdge(this);
 	}
 
@@ -311,7 +311,7 @@ public abstract class EdgeImpl extends EdgeBaseImpl implements
 	}
 
 	@Override
-	public void setNextIncidenceInternal(EdgeBase nextIncidence) {
+	public void setNextIncidenceInternal(InternalEdge nextIncidence) {
 		nextIncidence.putIncidenceAfter(this);
 	}
 
@@ -344,7 +344,7 @@ public abstract class EdgeImpl extends EdgeBaseImpl implements
 		VertexImpl v = (VertexImpl) getThis();
 		assert v.isValid();
 		// if (this.isNotTheSameEdgeAs(e)){
-		if (this != e && this != ((EdgeBase) e).getNextBaseIncidence()) {
+		if (this != e && this != ((InternalEdge) e).getNextBaseIncidence()) {
 			// System.out.println("putEdgeAfter calls v.putIncidenceAfter");
 			v.putIncidenceAfter((IncidenceImpl) e, this);
 			v.incidenceListModified();
@@ -357,7 +357,7 @@ public abstract class EdgeImpl extends EdgeBaseImpl implements
 		assert isPartOfSameGraphAs(e);
 		assert isNotTheSameEdgeAs(e);
 		assert e != reversedEdge;
-		if (this != e && this != ((EdgeBase) e).getNextBaseEdge()) {
+		if (this != e && this != ((InternalEdge) e).getNextBaseEdge()) {
 			getGraphImpl().putEdgeAfterInGraph(
 					(EdgeBaseImpl) e.getNormalEdge(), this);
 			getGraphImpl().edgeListModified();
@@ -378,7 +378,7 @@ public abstract class EdgeImpl extends EdgeBaseImpl implements
 	}
 
 	@Override
-	public void setPrevIncidenceInternal(EdgeBase prevIncidence) {
+	public void setPrevIncidenceInternal(InternalEdge prevIncidence) {
 		prevIncidence.putIncidenceBefore(this);
 	}
 
@@ -410,7 +410,7 @@ public abstract class EdgeImpl extends EdgeBaseImpl implements
 	}
 
 	@Override
-	public VertexBase getIncidentVertex() {
+	public InternalVertex getIncidentVertex() {
 		if (alphaVId > 0) {
 			return (VertexBaseImpl) graph.getVertex(alphaVId);
 		} else {

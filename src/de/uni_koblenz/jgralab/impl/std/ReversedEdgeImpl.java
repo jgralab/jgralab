@@ -36,9 +36,9 @@ package de.uni_koblenz.jgralab.impl.std;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.impl.EdgeBase;
+import de.uni_koblenz.jgralab.impl.InternalEdge;
 import de.uni_koblenz.jgralab.impl.EdgeBaseImpl;
-import de.uni_koblenz.jgralab.impl.VertexBase;
+import de.uni_koblenz.jgralab.impl.InternalVertex;
 
 /**
  * The implementation of an ReversedEdge accessing attributes without
@@ -48,37 +48,37 @@ import de.uni_koblenz.jgralab.impl.VertexBase;
  */
 public abstract class ReversedEdgeImpl extends
 		de.uni_koblenz.jgralab.impl.ReversedEdgeBaseImpl {
-	private VertexBase incidentVertex;
-	private EdgeBase nextIncidence;
-	private EdgeBase prevIncidence;
+	private InternalVertex incidentVertex;
+	private InternalEdge nextIncidence;
+	private InternalEdge prevIncidence;
 
 	@Override
-	public VertexBase getIncidentVertex() {
+	public InternalVertex getIncidentVertex() {
 		return incidentVertex;
 	}
 
 	@Override
-	public EdgeBase getNextBaseIncidence() {
+	public InternalEdge getNextBaseIncidence() {
 		return nextIncidence;
 	}
 
 	@Override
-	public EdgeBase getPrevBaseIncidence() {
+	public InternalEdge getPrevBaseIncidence() {
 		return prevIncidence;
 	}
 
 	@Override
 	public void setIncidentVertex(Vertex v) {
-		incidentVertex = (VertexBase) v;
+		incidentVertex = (InternalVertex) v;
 	}
 
 	@Override
-	public void setNextIncidenceInternal(EdgeBase nextIncidence) {
+	public void setNextIncidenceInternal(InternalEdge nextIncidence) {
 		this.nextIncidence = nextIncidence;
 	}
 
 	@Override
-	public void setPrevIncidenceInternal(EdgeBase prevIncidence) {
+	public void setPrevIncidenceInternal(InternalEdge prevIncidence) {
 		this.prevIncidence = prevIncidence;
 	}
 

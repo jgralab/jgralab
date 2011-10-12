@@ -50,7 +50,7 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
  * @author ist@uni-koblenz.de
  */
 public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
-		EdgeBase {
+		InternalEdge {
 
 	protected final ReversedEdgeBaseImpl reversedEdge;
 
@@ -109,7 +109,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 
 	@Override
 	public Edge getNextEdge() {
-		EdgeBase nextEdge = getNextBaseEdge();
+		InternalEdge nextEdge = getNextBaseEdge();
 		TraversalContext tc = graph.getTraversalContext();
 		if (!(tc == null || nextEdge == null || tc.containsEdge(nextEdge))) {
 			while (!(nextEdge == null || tc.containsEdge(nextEdge))) {
@@ -121,7 +121,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 
 	@Override
 	public Edge getPrevEdge() {
-		EdgeBase prevEdge = getPrevBaseEdge();
+		InternalEdge prevEdge = getPrevBaseEdge();
 		TraversalContext tc = graph.getTraversalContext();
 		if (!(tc == null || prevEdge == null || tc.containsEdge(prevEdge))) {
 			while (!(prevEdge == null || tc.containsEdge(prevEdge))) {
@@ -257,7 +257,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 		if (e == this) {
 			return false;
 		}
-		EdgeBase p = getPrevBaseEdge();
+		InternalEdge p = getPrevBaseEdge();
 		while ((p != null) && (p != e)) {
 			p = p.getPrevBaseEdge();
 		}
@@ -281,7 +281,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 		if (e == this) {
 			return false;
 		}
-		EdgeBase n = getNextBaseEdge();
+		InternalEdge n = getNextBaseEdge();
 		while ((n != null) && (n != e)) {
 			n = n.getNextBaseEdge();
 		}
@@ -313,7 +313,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 		assert e != this;
 		assert e != reversedEdge;
 
-		graph.putEdgeAfterInGraph((EdgeBase) e.getNormalEdge(), this);
+		graph.putEdgeAfterInGraph((InternalEdge) e.getNormalEdge(), this);
 	}
 
 	/*
@@ -331,7 +331,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 		assert e != this;
 		assert e != reversedEdge;
 
-		graph.putEdgeBeforeInGraph((EdgeBase) e.getNormalEdge(), this);
+		graph.putEdgeBeforeInGraph((InternalEdge) e.getNormalEdge(), this);
 	}
 
 	/*
@@ -341,13 +341,13 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 	 */
 	@Override
 	public void setAlpha(Vertex alpha) {
-		VertexBase alphaBase = (VertexBase) alpha;
+		InternalVertex alphaBase = (InternalVertex) alpha;
 		assert isValid();
 		assert alphaBase != null;
 		assert alphaBase.isValid();
 		assert getGraph() == alphaBase.getGraph();
 
-		VertexBase oldAlpha = getIncidentVertex();
+		InternalVertex oldAlpha = getIncidentVertex();
 
 		if (!graph.isLoading() && graph.getECARuleManagerIfThere() != null) {
 			graph.getECARuleManager().fireBeforeChangeAlphaOfEdgeEvents(this,
@@ -367,7 +367,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 		oldAlpha.removeIncidenceFromLambdaSeq(this);
 		oldAlpha.incidenceListModified();
 
-		VertexBase newAlpha = alphaBase;
+		InternalVertex newAlpha = alphaBase;
 		newAlpha.appendIncidenceToLambdaSeq(this);
 		newAlpha.incidenceListModified();
 		setIncidentVertex(newAlpha);
@@ -385,13 +385,13 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 	 */
 	@Override
 	public void setOmega(Vertex omega) {
-		VertexBase omegaBase = (VertexBase) omega;
+		InternalVertex omegaBase = (InternalVertex) omega;
 		assert isValid();
 		assert omegaBase != null;
 		assert omegaBase.isValid();
 		assert getGraph() == omegaBase.getGraph();
 
-		VertexBase oldOmgea = reversedEdge.getIncidentVertex();
+		InternalVertex oldOmgea = reversedEdge.getIncidentVertex();
 
 		if (!graph.isLoading() && graph.getECARuleManagerIfThere() != null) {
 			graph.getECARuleManager().fireBeforeChangeOmegaOfEdgeEvents(this,
@@ -412,7 +412,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 		oldOmgea.removeIncidenceFromLambdaSeq(reversedEdge);
 		oldOmgea.incidenceListModified();
 
-		VertexBase newOmega = omegaBase;
+		InternalVertex newOmega = omegaBase;
 		newOmega.appendIncidenceToLambdaSeq(reversedEdge);
 		newOmega.incidenceListModified();
 		// TODO Check if this is really needed as

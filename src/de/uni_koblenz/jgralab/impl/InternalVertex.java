@@ -4,7 +4,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.impl.DirectedM1EdgeClass;
 
-public interface VertexBase extends Vertex, GraphElementBase {
+public interface InternalVertex extends Vertex, InternalGraphElement {
 
 	/**
 	 * @return the internal vertex structure version
@@ -43,12 +43,12 @@ public interface VertexBase extends Vertex, GraphElementBase {
 	/**
 	 * @return the next vertex in vSeq
 	 */
-	public VertexBase getNextBaseVertex();
+	public InternalVertex getNextBaseVertex();
 
 	/**
 	 * @return the previous vertex in vSeq
 	 */
-	public VertexBase getPrevBaseVertex();
+	public InternalVertex getPrevBaseVertex();
 
 	public void setNextVertex(Vertex nextVertex);
 
@@ -57,24 +57,24 @@ public interface VertexBase extends Vertex, GraphElementBase {
 	/**
 	 * @return first incident edge of this vertex
 	 */
-	public EdgeBase getFirstBaseIncidence();
+	public InternalEdge getFirstBaseIncidence();
 
 	/**
 	 * @return last incident edge of this vertex
 	 */
-	public EdgeBase getLastBaseIncidence();
+	public InternalEdge getLastBaseIncidence();
 
-	public void setFirstIncidence(EdgeBase firstIncidence);
+	public void setFirstIncidence(InternalEdge firstIncidence);
 
-	public void setLastIncidence(EdgeBase lastIncidence);
+	public void setLastIncidence(InternalEdge lastIncidence);
 
-	public void appendIncidenceToLambdaSeq(EdgeBase i);
+	public void appendIncidenceToLambdaSeq(InternalEdge i);
 
-	public void removeIncidenceFromLambdaSeq(EdgeBase i);
+	public void removeIncidenceFromLambdaSeq(InternalEdge i);
 
-	public void putIncidenceBefore(EdgeBase target, EdgeBase moved);
+	public void putIncidenceBefore(InternalEdge target, InternalEdge moved);
 
-	public void putIncidenceAfter(EdgeBase target, EdgeBase moved);
+	public void putIncidenceAfter(InternalEdge target, InternalEdge moved);
 
 	public void setIncidenceListVersion(long incidenceListVersion);
 

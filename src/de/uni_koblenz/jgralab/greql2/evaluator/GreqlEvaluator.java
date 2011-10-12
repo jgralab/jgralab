@@ -91,8 +91,8 @@ import de.uni_koblenz.jgralab.greql2.schema.IsBoundVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsFunctionIdOf;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
-import de.uni_koblenz.jgralab.impl.EdgeBase;
-import de.uni_koblenz.jgralab.impl.VertexBase;
+import de.uni_koblenz.jgralab.impl.InternalEdge;
+import de.uni_koblenz.jgralab.impl.InternalVertex;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
@@ -950,19 +950,19 @@ public class GreqlEvaluator {
 					e = e.getNextIncidence();
 					continue;
 				}
-				((EdgeBase) e).setThis(arg);
+				((InternalEdge) e).setThis(arg);
 				e = bv.getFirstIncidence();
 			}
 		}
 
-		EdgeBase e = (EdgeBase) fa.getFirstIncidence(EdgeDirection.OUT);
+		InternalEdge e = (InternalEdge) fa.getFirstIncidence(EdgeDirection.OUT);
 		while (e != null) {
 			if (e.getM1Class() == IsFunctionIdOf.class) {
-				e = (EdgeBase) e.getNextIncidence(EdgeDirection.OUT);
+				e = (InternalEdge) e.getNextIncidence(EdgeDirection.OUT);
 				continue;
 			}
-			e.setThis((VertexBase) exp);
-			e = (EdgeBase) fa.getFirstIncidence(EdgeDirection.OUT);
+			e.setThis((InternalVertex) exp);
+			e = (InternalEdge) fa.getFirstIncidence(EdgeDirection.OUT);
 		}
 
 		fa.delete();

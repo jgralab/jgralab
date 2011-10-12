@@ -62,7 +62,7 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
-import de.uni_koblenz.jgralab.impl.VertexBase;
+import de.uni_koblenz.jgralab.impl.InternalVertex;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralabtest.schemas.minimal.Link;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalGraph;
@@ -505,12 +505,12 @@ public class IncidenceListTest extends InstanceTest {
 			markInOrder(links, marker);
 
 			createTransaction(g);
-			long version = ((VertexBase) nodes[0]).getIncidenceListVersion();
+			long version = ((InternalVertex) nodes[0]).getIncidenceListVersion();
 			nodes[0].sortIncidences(comp);
 			commit(g);
 
 			createReadOnlyTransaction(g);
-			assertEquals(version, ((VertexBase) nodes[0])
+			assertEquals(version, ((InternalVertex) nodes[0])
 					.getIncidenceListVersion());
 			checkInOrder(nodes, links);
 			commit(g);
@@ -529,12 +529,12 @@ public class IncidenceListTest extends InstanceTest {
 			// reset state and check if it is correct
 			markInOrder(links, marker);
 			createTransaction(g);
-			version = ((VertexBase) nodes[0]).getIncidenceListVersion();
+			version = ((InternalVertex) nodes[0]).getIncidenceListVersion();
 			nodes[0].sortIncidences(comp);
 			commit(g);
 
 			createReadOnlyTransaction(g);
-			assertTrue(version < ((VertexBase) nodes[0])
+			assertTrue(version < ((InternalVertex) nodes[0])
 					.getIncidenceListVersion());
 			checkInOrder(nodes, links);
 			commit(g);

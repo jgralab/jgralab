@@ -108,7 +108,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 	public Edge createEdge(Class<? extends Edge> edgeClass, int id, Graph g,
 			Vertex alpha, Vertex omega) {
 		try {
-			if (!((GraphBase) g).isLoading()&& g.getECARuleManagerIfThere()!=null) {
+			if (!((InternalGraph) g).isLoading()&& g.getECARuleManagerIfThere()!=null) {
 				g.getECARuleManagerIfThere().fireBeforeCreateEdgeEvents(edgeClass);
 			}
 			Edge e = edgeMap.get(edgeClass).newInstance(id, g, alpha, omega);
@@ -150,7 +150,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 	public Vertex createVertex(Class<? extends Vertex> vertexClass, int id,
 			Graph g) {
 		try {
-			if (!((GraphBase) g).isLoading()&& g.getECARuleManagerIfThere()!=null) {
+			if (!((InternalGraph) g).isLoading()&& g.getECARuleManagerIfThere()!=null) {
 				g.getECARuleManagerIfThere().fireBeforeCreateVertexEvents(vertexClass);
 			}
 			Vertex v = vertexMap.get(vertexClass).newInstance(id, g);

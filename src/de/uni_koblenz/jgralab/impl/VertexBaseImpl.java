@@ -62,7 +62,7 @@ import de.uni_koblenz.jgralab.schema.impl.DirectedM1EdgeClass;
  * @author ist@uni-koblenz.de
  */
 public abstract class VertexBaseImpl extends GraphElementImpl implements
-		Vertex, VertexBase {
+		Vertex, InternalVertex {
 
 	/**
 	 * @param id
@@ -131,7 +131,7 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 	 */
 	@Override
 	public Vertex getNextVertex() {
-		VertexBase nextVertex = getNextBaseVertex();
+		InternalVertex nextVertex = getNextBaseVertex();
 		TraversalContext tc = graph.getTraversalContext();
 		if (!(tc == null || nextVertex == null || tc.containsVertex(nextVertex))) {
 			while (!(nextVertex == null || tc.containsVertex(nextVertex))) {
@@ -150,12 +150,12 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 	public Vertex getNextVertex(Class<? extends Vertex> vertexClass) {
 		assert vertexClass != null;
 		assert isValid();
-		VertexBase v = (VertexBase) getNextVertex();
+		InternalVertex v = (InternalVertex) getNextVertex();
 		while (v != null) {
 			if (vertexClass.isInstance(v)) {
 				return v;
 			}
-			v = (VertexBase) v.getNextVertex();
+			v = (InternalVertex) v.getNextVertex();
 		}
 		return null;
 	}
@@ -188,9 +188,9 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 		if (this == v) {
 			return false;
 		}
-		Vertex prev = ((VertexBase) v).getPrevBaseVertex();
+		Vertex prev = ((InternalVertex) v).getPrevBaseVertex();
 		while ((prev != null) && (prev != this)) {
-			prev = ((VertexBase) prev).getPrevBaseVertex();
+			prev = ((InternalVertex) prev).getPrevBaseVertex();
 		}
 		return prev != null;
 	}
@@ -212,7 +212,7 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 		assert v != this;
 		assert getGraph() == v.getGraph();
 		assert isValid() && v.isValid();
-		graph.putVertexBefore((VertexBase) v, this);
+		graph.putVertexBefore((InternalVertex) v, this);
 	}
 
 	/*
@@ -228,7 +228,7 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 		if (this == v) {
 			return false;
 		}
-		VertexBase next = ((VertexBase) v).getNextBaseVertex();
+		InternalVertex next = ((InternalVertex) v).getNextBaseVertex();
 		while ((next != null) && (next != this)) {
 			next = next.getNextBaseVertex();
 		}
@@ -247,7 +247,7 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 		assert v != this;
 		assert getGraph() == v.getGraph();
 		assert isValid() && v.isValid();
-		graph.putVertexAfter((VertexBase) v, this);
+		graph.putVertexAfter((InternalVertex) v, this);
 	}
 
 	@Override
@@ -394,7 +394,7 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 	}
 
 	@Override
-	public void putIncidenceAfter(EdgeBase target, EdgeBase moved) {
+	public void putIncidenceAfter(InternalEdge target, InternalEdge moved) {
 		assert (target != null) && (moved != null);
 		assert target.isValid() && moved.isValid();
 		assert target.getGraph() == moved.getGraph();
@@ -440,7 +440,7 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 	}
 
 	@Override
-	public void putIncidenceBefore(EdgeBase target, EdgeBase moved) {
+	public void putIncidenceBefore(InternalEdge target, InternalEdge moved) {
 		assert (target != null) && (moved != null);
 		assert target.isValid() && moved.isValid();
 		assert target.getGraph() == moved.getGraph();
@@ -475,7 +475,7 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 			setFirstIncidence(moved);
 			moved.setPrevIncidenceInternal(null);
 		} else {
-			EdgeBase previousIncidence = target.getPrevBaseIncidence();
+			InternalEdge previousIncidence = target.getPrevBaseIncidence();
 			previousIncidence.setNextIncidenceInternal(moved);
 			moved.setPrevIncidenceInternal(previousIncidence);
 		}
@@ -672,7 +672,7 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 
 	@Override
 	public Vertex getPrevVertex() {
-		VertexBase prevVertex = getPrevBaseVertex();
+		InternalVertex prevVertex = getPrevBaseVertex();
 		TraversalContext tc = graph.getTraversalContext();
 		if (!(tc == null || prevVertex == null || tc.containsVertex(prevVertex))) {
 			while (!(prevVertex == null || tc.containsVertex(prevVertex))) {
@@ -682,7 +682,7 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 		return prevVertex;
 	}
 
-	public void appendIncidenceToLambdaSeq(EdgeBase i) {
+	public void appendIncidenceToLambdaSeq(InternalEdge i) {
 		assert i != null;
 		assert i.getIncidentVertex() != this;
 		i.setIncidentVertex(this);
@@ -697,7 +697,7 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 	}
 
 	@Override
-	public void removeIncidenceFromLambdaSeq(EdgeBase i) {
+	public void removeIncidenceFromLambdaSeq(InternalEdge i) {
 		assert i != null;
 		assert i.getIncidentVertex() == this;
 		if (i == getFirstBaseIncidence()) {
@@ -737,10 +737,10 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 			return;
 		}
 		class IncidenceList {
-			EdgeBase first;
-			EdgeBase last;
+			InternalEdge first;
+			InternalEdge last;
 
-			public void add(EdgeBase e) {
+			public void add(InternalEdge e) {
 				if (first == null) {
 					first = e;
 					assert (last == null);
@@ -753,11 +753,11 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 				e.setNextIncidenceInternal(null);
 			}
 
-			public EdgeBase remove() {
+			public InternalEdge remove() {
 				if (first == null) {
 					throw new NoSuchElementException();
 				}
-				EdgeBase out;
+				InternalEdge out;
 				if (first == last) {
 					out = first;
 					first = null;
@@ -782,14 +782,14 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 		IncidenceList out = a;
 
 		// split
-		EdgeBase last;
+		InternalEdge last;
 		IncidenceList l = new IncidenceList();
 		l.first = getFirstBaseIncidence();
 		l.last = getLastBaseIncidence();
 
 		out.add(last = l.remove());
 		while (!l.isEmpty()) {
-			EdgeBase current = l.remove();
+			InternalEdge current = l.remove();
 			if (comp.compare(current, last) < 0) {
 				out = (out == a) ? b : a;
 			}
@@ -841,7 +841,7 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 
 			// copy rest of A
 			while (!a.isEmpty()) {
-				EdgeBase current = a.remove();
+				InternalEdge current = a.remove();
 				if (comp.compare(current, last) < 0) {
 					out = (out == c) ? d : c;
 				}
@@ -851,7 +851,7 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 
 			// copy rest of B
 			while (!b.isEmpty()) {
-				EdgeBase current = b.remove();
+				InternalEdge current = b.remove();
 				if (comp.compare(current, last) < 0) {
 					out = (out == c) ? d : c;
 				}

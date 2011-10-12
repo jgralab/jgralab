@@ -23,7 +23,7 @@ import de.uni_koblenz.jgralab.gretl.template.CreateEdge;
 import de.uni_koblenz.jgralab.gretl.template.CreateVertex;
 import de.uni_koblenz.jgralab.gretl.template.TemplateGraph;
 import de.uni_koblenz.jgralab.gretl.templategraphparser.TemplateGraphParser;
-import de.uni_koblenz.jgralab.impl.EdgeBase;
+import de.uni_koblenz.jgralab.impl.InternalEdge;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -216,7 +216,7 @@ public class MatchReplace extends InPlaceTransformation {
 			if ((ce.get_typeName() == null) && (arch != null) && arch.isEdge()) {
 				// Existing, preserved edge. However, maybe we might need to
 				// update alpha and/or omega.
-				EdgeBase e = (EdgeBase) arch.toEdge().getNormalEdge();
+				InternalEdge e = (InternalEdge) arch.toEdge().getNormalEdge();
 				preservables.add(e);
 				allModifiedElements.add(e);
 				// setAlpha/Omega are no-ops, if nothing is to be set. So that's

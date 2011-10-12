@@ -39,9 +39,9 @@ import java.util.List;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.TraversalContext;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.impl.EdgeBase;
+import de.uni_koblenz.jgralab.impl.InternalEdge;
 import de.uni_koblenz.jgralab.impl.FreeIndexList;
-import de.uni_koblenz.jgralab.impl.VertexBase;
+import de.uni_koblenz.jgralab.impl.InternalVertex;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.trans.Savepoint;
 import de.uni_koblenz.jgralab.trans.Transaction;
@@ -54,15 +54,15 @@ import de.uni_koblenz.jgralab.trans.Transaction;
  */
 public abstract class GraphImpl extends
 		de.uni_koblenz.jgralab.impl.GraphBaseImpl {
-	private VertexBase[] vertex;
+	private InternalVertex[] vertex;
 	private int vCount;
-	private EdgeBase[] edge;
-	private EdgeBase[] revEdge;
+	private InternalEdge[] edge;
+	private InternalEdge[] revEdge;
 	private int eCount;
-	private VertexBase firstVertex;
-	private VertexBase lastVertex;
-	private EdgeBase firstEdge;
-	private EdgeBase lastEdge;
+	private InternalVertex firstVertex;
+	private InternalVertex lastVertex;
+	private InternalEdge firstEdge;
+	private InternalEdge lastEdge;
 	private TraversalContext tc;
 
 	/**
@@ -83,10 +83,10 @@ public abstract class GraphImpl extends
 	 * List of vertices to be deleted by a cascading delete caused by deletion
 	 * of a composition "parent".
 	 */
-	private List<VertexBase> deleteVertexList;
+	private List<InternalVertex> deleteVertexList;
 
 	@Override
-	public VertexBase[] getVertex() {
+	public InternalVertex[] getVertex() {
 		return vertex;
 	}
 
@@ -96,12 +96,12 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public EdgeBase[] getEdge() {
+	public InternalEdge[] getEdge() {
 		return edge;
 	}
 
 	@Override
-	public EdgeBase[] getRevEdge() {
+	public InternalEdge[] getRevEdge() {
 		return revEdge;
 	}
 
@@ -111,22 +111,22 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public VertexBase getFirstBaseVertex() {
+	public InternalVertex getFirstBaseVertex() {
 		return firstVertex;
 	}
 
 	@Override
-	public VertexBase getLastBaseVertex() {
+	public InternalVertex getLastBaseVertex() {
 		return lastVertex;
 	}
 
 	@Override
-	public EdgeBase getFirstBaseEdge() {
+	public InternalEdge getFirstBaseEdge() {
 		return firstEdge;
 	}
 
 	@Override
-	public EdgeBase getLastBaseEdge() {
+	public InternalEdge getLastBaseEdge() {
 		return lastEdge;
 	}
 
@@ -141,7 +141,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public void setVertex(VertexBase[] vertex) {
+	public void setVertex(InternalVertex[] vertex) {
 		this.vertex = vertex;
 	}
 
@@ -151,12 +151,12 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public void setEdge(EdgeBase[] edge) {
+	public void setEdge(InternalEdge[] edge) {
 		this.edge = edge;
 	}
 
 	@Override
-	public void setRevEdge(EdgeBase[] revEdge) {
+	public void setRevEdge(InternalEdge[] revEdge) {
 		this.revEdge = revEdge;
 	}
 
@@ -166,32 +166,32 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public void setFirstVertex(VertexBase firstVertex) {
+	public void setFirstVertex(InternalVertex firstVertex) {
 		this.firstVertex = firstVertex;
 	}
 
 	@Override
-	public void setLastVertex(VertexBase lastVertex) {
+	public void setLastVertex(InternalVertex lastVertex) {
 		this.lastVertex = lastVertex;
 	}
 
 	@Override
-	public void setFirstEdgeInGraph(EdgeBase firstEdge) {
+	public void setFirstEdgeInGraph(InternalEdge firstEdge) {
 		this.firstEdge = firstEdge;
 	}
 
 	@Override
-	public void setLastEdgeInGraph(EdgeBase lastEdge) {
+	public void setLastEdgeInGraph(InternalEdge lastEdge) {
 		this.lastEdge = lastEdge;
 	}
 
 	@Override
-	public List<VertexBase> getDeleteVertexList() {
+	public List<InternalVertex> getDeleteVertexList() {
 		return deleteVertexList;
 	}
 
 	@Override
-	public void setDeleteVertexList(List<VertexBase> deleteVertexList) {
+	public void setDeleteVertexList(List<InternalVertex> deleteVertexList) {
 		this.deleteVertexList = deleteVertexList;
 	}
 

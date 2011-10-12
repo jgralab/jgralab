@@ -51,10 +51,10 @@ import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.GraphStructureChangedListener;
 import de.uni_koblenz.jgralab.TraversalContext;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.impl.EdgeBase;
+import de.uni_koblenz.jgralab.impl.InternalEdge;
 import de.uni_koblenz.jgralab.impl.FreeIndexList;
 import de.uni_koblenz.jgralab.impl.IncidenceImpl;
-import de.uni_koblenz.jgralab.impl.VertexBase;
+import de.uni_koblenz.jgralab.impl.InternalVertex;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
@@ -242,7 +242,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public EdgeBase getFirstBaseEdge() {
+	public InternalEdge getFirstBaseEdge() {
 		if (firstEdge == null) {
 			return null;
 		}
@@ -250,7 +250,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public VertexBase getFirstBaseVertex() {
+	public InternalVertex getFirstBaseVertex() {
 		if (firstVertex == null) {
 			return null;
 		}
@@ -258,7 +258,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public EdgeBase getLastBaseEdge() {
+	public InternalEdge getLastBaseEdge() {
 		if (lastEdge == null) {
 			return null;
 		}
@@ -266,7 +266,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public VertexBase getLastBaseVertex() {
+	public InternalVertex getLastBaseVertex() {
 		if (lastVertex == null) {
 			return null;
 		}
@@ -328,12 +328,12 @@ public abstract class GraphImpl extends
 	 * @return the delete vertex list of the current transaction
 	 */
 	@Override
-	public List<VertexBase> getDeleteVertexList() {
+	public List<InternalVertex> getDeleteVertexList() {
 		TransactionImpl transaction = (TransactionImpl) getCurrentTransaction();
 		assert ((transaction != null) && ((transaction.getState() == TransactionState.RUNNING) || (transaction
 				.getState() == TransactionState.WRITING)));
 		if (transaction.deleteVertexList == null) {
-			transaction.deleteVertexList = new LinkedList<VertexBase>();
+			transaction.deleteVertexList = new LinkedList<InternalVertex>();
 		}
 		return transaction.deleteVertexList;
 	}
@@ -375,7 +375,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public void setEdge(EdgeBase[] edge) {
+	public void setEdge(InternalEdge[] edge) {
 		edgeSync.readLock().lock();
 		try {
 			this.edge.setValidValue((EdgeImpl[]) edge, getCurrentTransaction());
@@ -385,7 +385,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public void setFirstEdgeInGraph(EdgeBase firstEdge) {
+	public void setFirstEdgeInGraph(InternalEdge firstEdge) {
 		if ((this.firstEdge == null) || isLoading()) {
 			this.firstEdge = new VersionedReferenceImpl<EdgeImpl>(this,
 					(EdgeImpl) firstEdge);
@@ -396,7 +396,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public void setFirstVertex(VertexBase firstVertex) {
+	public void setFirstVertex(InternalVertex firstVertex) {
 		if ((this.firstVertex == null) || isLoading()) {
 			this.firstVertex = new VersionedReferenceImpl<VertexImpl>(this,
 					(VertexImpl) firstVertex);
@@ -407,7 +407,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public void setLastEdgeInGraph(EdgeBase lastEdge) {
+	public void setLastEdgeInGraph(InternalEdge lastEdge) {
 		if ((this.lastEdge == null) || isLoading()) {
 			this.lastEdge = new VersionedReferenceImpl<EdgeImpl>(this,
 					(EdgeImpl) lastEdge);
@@ -418,7 +418,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public void setLastVertex(VertexBase lastVertex) {
+	public void setLastVertex(InternalVertex lastVertex) {
 		if ((this.lastVertex == null) || isLoading()) {
 			this.lastVertex = new VersionedReferenceImpl<VertexImpl>(this,
 					(VertexImpl) lastVertex);
@@ -429,7 +429,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public void setRevEdge(EdgeBase[] revEdge) {
+	public void setRevEdge(InternalEdge[] revEdge) {
 		edgeSync.readLock().lock();
 		try {
 			this.revEdge.setValidValue((ReversedEdgeImpl[]) revEdge,
@@ -449,7 +449,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public void setVertex(VertexBase[] vertex) {
+	public void setVertex(InternalVertex[] vertex) {
 		vertexSync.readLock().lock();
 		try {
 			this.vertex.setValidValue((VertexImpl[]) vertex,
@@ -483,7 +483,7 @@ public abstract class GraphImpl extends
 	 * nothing needed here
 	 */
 	@Override
-	public void setDeleteVertexList(List<VertexBase> deleteVertexList) {
+	public void setDeleteVertexList(List<InternalVertex> deleteVertexList) {
 		// do nothing here
 	}
 
@@ -1002,7 +1002,7 @@ public abstract class GraphImpl extends
 	@Override
 	public void edgeAfterDeleted(Edge edgeToBeDeleted, Vertex oldAlpha,
 			Vertex oldOmega) {
-		EdgeBase deletedEdge = (EdgeBase) edgeToBeDeleted;
+		InternalEdge deletedEdge = (InternalEdge) edgeToBeDeleted;
 		TransactionImpl transaction = (TransactionImpl) getCurrentTransaction();
 		assert ((transaction != null) && !transaction.isReadOnly()
 				&& transaction.isValid() && (transaction.getState() != TransactionState.NOTRUNNING));
@@ -1093,7 +1093,7 @@ public abstract class GraphImpl extends
 
 	@Override
 	public void vertexAfterDeleted(Vertex vertexToBeDeleted) {
-		VertexBase deletedVertex = (VertexBase) vertexToBeDeleted;
+		InternalVertex deletedVertex = (InternalVertex) vertexToBeDeleted;
 		TransactionImpl transaction = (TransactionImpl) getCurrentTransaction();
 		assert ((transaction != null) && !transaction.isReadOnly()
 				&& transaction.isValid() && (transaction.getState() != TransactionState.NOTRUNNING));
@@ -1149,7 +1149,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public void putEdgeBeforeInGraph(EdgeBase targetEdge, EdgeBase movedEdge) {
+	public void putEdgeBeforeInGraph(InternalEdge targetEdge, InternalEdge movedEdge) {
 		TransactionImpl transaction = (TransactionImpl) getCurrentTransaction();
 		if (transaction == null) {
 			throw new GraphException("Current transaction is null.");
@@ -1209,7 +1209,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public void putEdgeAfterInGraph(EdgeBase targetEdge, EdgeBase movedEdge) {
+	public void putEdgeAfterInGraph(InternalEdge targetEdge, InternalEdge movedEdge) {
 		TransactionImpl transaction = (TransactionImpl) getCurrentTransaction();
 		if (transaction == null) {
 			throw new GraphException("Current transaction is null.");
@@ -1269,7 +1269,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public void putVertexAfter(VertexBase targetVertex, VertexBase movedVertex) {
+	public void putVertexAfter(InternalVertex targetVertex, InternalVertex movedVertex) {
 		TransactionImpl transaction = (TransactionImpl) getCurrentTransaction();
 		if (transaction == null) {
 			throw new GraphException("Current transaction is null.");
@@ -1330,7 +1330,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public void putVertexBefore(VertexBase targetVertex, VertexBase movedVertex) {
+	public void putVertexBefore(InternalVertex targetVertex, InternalVertex movedVertex) {
 		TransactionImpl transaction = (TransactionImpl) getCurrentTransaction();
 		if (transaction == null) {
 			throw new GraphException("Current transaction is null.");
@@ -1435,7 +1435,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public void appendEdgeToESeq(EdgeBase e) {
+	public void appendEdgeToESeq(InternalEdge e) {
 		edgeSync.readLock().lock();
 		try {
 			super.appendEdgeToESeq(e);
@@ -1445,7 +1445,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public void appendVertexToVSeq(VertexBase v) {
+	public void appendVertexToVSeq(InternalVertex v) {
 		vertexSync.readLock().lock();
 		try {
 			super.appendVertexToVSeq(v);
@@ -1486,28 +1486,28 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public void internalVertexDeleted(VertexBase v) {
+	public void internalVertexDeleted(InternalVertex v) {
 		if (isWriting()) {
 			super.internalVertexDeleted(v);
 		}
 	}
 
 	@Override
-	public void internalVertexAdded(VertexBase v) {
+	public void internalVertexAdded(InternalVertex v) {
 		if (isWriting()) {
 			super.internalVertexAdded(v);
 		}
 	}
 
 	@Override
-	public void internalEdgeDeleted(EdgeBase e) {
+	public void internalEdgeDeleted(InternalEdge e) {
 		if (isWriting()) {
 			super.internalEdgeDeleted(e);
 		}
 	}
 
 	@Override
-	public void internalEdgeAdded(EdgeBase e) {
+	public void internalEdgeAdded(InternalEdge e) {
 		if (isWriting()) {
 			super.internalEdgeAdded(e);
 		}

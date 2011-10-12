@@ -47,9 +47,9 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.impl.EdgeBase;
+import de.uni_koblenz.jgralab.impl.InternalEdge;
 import de.uni_koblenz.jgralab.impl.IncidenceImpl;
-import de.uni_koblenz.jgralab.impl.VertexBase;
+import de.uni_koblenz.jgralab.impl.InternalVertex;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.trans.ListPosition;
@@ -111,7 +111,7 @@ public abstract class VertexImpl extends
 	}
 
 	@Override
-	public EdgeBase getFirstBaseIncidence() {
+	public InternalEdge getFirstBaseIncidence() {
 		if (firstIncidence == null) {
 			return null;
 		}
@@ -131,7 +131,7 @@ public abstract class VertexImpl extends
 	}
 
 	@Override
-	public VertexBase getNextBaseVertex() {
+	public InternalVertex getNextBaseVertex() {
 		if (nextVertex == null) {
 			return null;
 		}
@@ -141,7 +141,7 @@ public abstract class VertexImpl extends
 	}
 
 	@Override
-	public VertexBase getPrevBaseVertex() {
+	public InternalVertex getPrevBaseVertex() {
 		if (prevVertex == null) {
 			return null;
 		}
@@ -171,7 +171,7 @@ public abstract class VertexImpl extends
 	}
 
 	@Override
-	public void setFirstIncidence(EdgeBase firstIncidence) {
+	public void setFirstIncidence(InternalEdge firstIncidence) {
 		// graph loading -> new initialization...
 		if (graph.isLoading()) {
 			this.firstIncidence = new VersionedReferenceImpl<IncidenceImpl>(
@@ -188,7 +188,7 @@ public abstract class VertexImpl extends
 	}
 
 	@Override
-	public void setLastIncidence(EdgeBase lastIncidence) {
+	public void setLastIncidence(InternalEdge lastIncidence) {
 		// graph loading -> new initialization...
 		if (graph.isLoading()) {
 			this.lastIncidence = new VersionedReferenceImpl<IncidenceImpl>(
@@ -290,8 +290,8 @@ public abstract class VertexImpl extends
 	}
 
 	@Override
-	public void putIncidenceBefore(EdgeBase targetIncidence,
-			EdgeBase movedIncidence) {
+	public void putIncidenceBefore(InternalEdge targetIncidence,
+			InternalEdge movedIncidence) {
 		TransactionImpl transaction = (TransactionImpl) graph
 				.getCurrentTransaction();
 		if (transaction == null) {
@@ -356,8 +356,8 @@ public abstract class VertexImpl extends
 	}
 
 	@Override
-	public void putIncidenceAfter(EdgeBase targetIncidence,
-			EdgeBase movedIncidence) {
+	public void putIncidenceAfter(InternalEdge targetIncidence,
+			InternalEdge movedIncidence) {
 		TransactionImpl transaction = (TransactionImpl) graph
 				.getCurrentTransaction();
 		if (transaction == null) {

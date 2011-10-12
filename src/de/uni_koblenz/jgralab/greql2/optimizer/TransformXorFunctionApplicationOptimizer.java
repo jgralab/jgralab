@@ -50,7 +50,7 @@ import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.greql2.schema.IsArgumentOf;
-import de.uni_koblenz.jgralab.impl.EdgeBase;
+import de.uni_koblenz.jgralab.impl.InternalEdge;
 
 /**
  * Replaces all {@link Xor} {@link FunctionApplication}s in the {@link Greql2}
@@ -150,13 +150,13 @@ public class TransformXorFunctionApplicationOptimizer extends OptimizerBase {
 			syntaxgraph.createIsArgumentOf(arg2, rightAnd);
 
 			// relink all edges that started in the Xor vertex
-			ArrayList<EdgeBase> edgesToBeRelinked = new ArrayList<EdgeBase>();
-			EdgeBase e = (EdgeBase) xor.getFirstIncidence(EdgeDirection.OUT);
+			ArrayList<InternalEdge> edgesToBeRelinked = new ArrayList<InternalEdge>();
+			InternalEdge e = (InternalEdge) xor.getFirstIncidence(EdgeDirection.OUT);
 			while (e != null) {
 				edgesToBeRelinked.add(e);
-				e = (EdgeBase) e.getNextIncidence(EdgeDirection.OUT);
+				e = (InternalEdge) e.getNextIncidence(EdgeDirection.OUT);
 			}
-			for (EdgeBase edge : edgesToBeRelinked) {
+			for (InternalEdge edge : edgesToBeRelinked) {
 				edge.setAlpha(or);
 			}
 

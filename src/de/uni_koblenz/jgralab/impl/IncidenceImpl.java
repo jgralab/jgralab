@@ -49,14 +49,14 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
  * @author ist@uni-koblenz.de
  */
 public abstract class IncidenceImpl extends GraphElementImpl implements Edge,
-		EdgeBase {
+		InternalEdge {
 	protected IncidenceImpl(Graph graph) {
 		super(graph);
 	}
 
 	@Override
-	public EdgeBase getNextIncidence() {
-		EdgeBase nextIncidence = getNextBaseIncidence();
+	public InternalEdge getNextIncidence() {
+		InternalEdge nextIncidence = getNextBaseIncidence();
 		TraversalContext tc = graph.getTraversalContext();
 		if (!(tc == null || nextIncidence == null || tc
 				.containsEdge(nextIncidence))) {
@@ -68,8 +68,8 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge,
 	}
 
 	@Override
-	public EdgeBase getPrevIncidence() {
-		EdgeBase prevIncidence = getPrevBaseIncidence();
+	public InternalEdge getPrevIncidence() {
+		InternalEdge prevIncidence = getPrevBaseIncidence();
 		TraversalContext tc = graph.getTraversalContext();
 		if (!(tc == null || prevIncidence == null || tc
 				.containsEdge(prevIncidence))) {

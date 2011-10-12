@@ -67,7 +67,7 @@ import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
 import de.uni_koblenz.jgralab.greql2.schema.TypeId;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
 import de.uni_koblenz.jgralab.greql2.schema.VertexSetExpression;
-import de.uni_koblenz.jgralab.impl.EdgeBase;
+import de.uni_koblenz.jgralab.impl.InternalEdge;
 
 /**
  * @author Tassilo Horn &lt;horn@uni-koblenz.de&gt;
@@ -133,7 +133,7 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 			BoolLiteral lit = syntaxgraph.createBoolLiteral();
 			lit.set_boolValue(true);
 			while (pe.getFirstIncidence(EdgeDirection.OUT) != null) {
-				EdgeBase e = (EdgeBase) pe.getFirstIncidence(EdgeDirection.OUT);
+				InternalEdge e = (InternalEdge) pe.getFirstIncidence(EdgeDirection.OUT);
 				e.setAlpha(lit);
 				assert e.getAlpha() == lit;
 			}

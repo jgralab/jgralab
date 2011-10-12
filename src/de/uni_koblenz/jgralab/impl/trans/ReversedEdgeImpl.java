@@ -39,10 +39,10 @@ import java.util.Map;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.impl.EdgeBase;
+import de.uni_koblenz.jgralab.impl.InternalEdge;
 import de.uni_koblenz.jgralab.impl.EdgeBaseImpl;
 import de.uni_koblenz.jgralab.impl.IncidenceImpl;
-import de.uni_koblenz.jgralab.impl.VertexBase;
+import de.uni_koblenz.jgralab.impl.InternalVertex;
 import de.uni_koblenz.jgralab.impl.VertexBaseImpl;
 import de.uni_koblenz.jgralab.trans.ListPosition;
 import de.uni_koblenz.jgralab.trans.TransactionState;
@@ -79,7 +79,7 @@ public abstract class ReversedEdgeImpl extends
 	// --- getter ---//
 
 	@Override
-	public VertexBase getIncidentVertex() {
+	public InternalVertex getIncidentVertex() {
 		if (incidentVertex == null) {
 			return null;
 		}
@@ -126,7 +126,7 @@ public abstract class ReversedEdgeImpl extends
 	}
 
 	@Override
-	public void setNextIncidenceInternal(EdgeBase nextIncidence) {
+	public void setNextIncidenceInternal(InternalEdge nextIncidence) {
 		if (graph.isLoading()) {
 			this.nextIncidence = new VersionedReferenceImpl<IncidenceImpl>(
 					normalEdge, (IncidenceImpl) nextIncidence);
@@ -141,7 +141,7 @@ public abstract class ReversedEdgeImpl extends
 			// relevant in writing-phase
 			if (transaction.getState() == TransactionState.WRITING) {
 				if (transaction.changedIncidences != null) {
-					VertexBase currentIncidentVertex = incidentVertex
+					InternalVertex currentIncidentVertex = incidentVertex
 							.getTemporaryValue(transaction);
 					Map<IncidenceImpl, Map<ListPosition, Boolean>> incidenceList = transaction.changedIncidences
 							.get(currentIncidentVertex);
@@ -164,7 +164,7 @@ public abstract class ReversedEdgeImpl extends
 	}
 
 	@Override
-	public void setPrevIncidenceInternal(EdgeBase prevIncidence) {
+	public void setPrevIncidenceInternal(InternalEdge prevIncidence) {
 		if (graph.isLoading()) {
 			this.prevIncidence = new VersionedReferenceImpl<IncidenceImpl>(
 					normalEdge, (IncidenceImpl) prevIncidence);
@@ -179,7 +179,7 @@ public abstract class ReversedEdgeImpl extends
 			// only relevant in writing-phase
 			if (transaction.getState() == TransactionState.WRITING) {
 				if (transaction.changedIncidences != null) {
-					VertexBase currentIncidentVertex = incidentVertex
+					InternalVertex currentIncidentVertex = incidentVertex
 							.getTemporaryValue(transaction);
 					Map<IncidenceImpl, Map<ListPosition, Boolean>> incidenceList = transaction.changedIncidences
 							.get(currentIncidentVertex);

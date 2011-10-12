@@ -47,7 +47,7 @@ import de.uni_koblenz.jgralab.schema.Schema;
  * @author ist@uni-koblenz.de
  * 
  */
-public abstract class GraphElementImpl implements GraphElementBase {
+public abstract class GraphElementImpl implements InternalGraphElement {
 	protected int id;
 
 	protected GraphElementImpl(Graph graph) {

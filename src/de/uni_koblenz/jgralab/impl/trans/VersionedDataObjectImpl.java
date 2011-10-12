@@ -49,7 +49,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.impl.GraphBase;
+import de.uni_koblenz.jgralab.impl.InternalGraph;
 import de.uni_koblenz.jgralab.trans.Transaction;
 import de.uni_koblenz.jgralab.trans.TransactionManager;
 import de.uni_koblenz.jgralab.trans.TransactionState;
@@ -79,14 +79,14 @@ public abstract class VersionedDataObjectImpl<E> implements
 	 * @return the <code>Graph</code> to which this versioned data-object
 	 *         belongs to
 	 */
-	public GraphBase getGraph() {
+	public InternalGraph getGraph() {
 		if (attributedElement == null) {
 			return null;
 		}
 		if (attributedElement instanceof Graph) {
-			return (GraphBase) attributedElement;
+			return (InternalGraph) attributedElement;
 		}
-		return (GraphBase) ((GraphElement) attributedElement).getGraph();
+		return (InternalGraph) ((GraphElement) attributedElement).getGraph();
 	}
 
 	/**

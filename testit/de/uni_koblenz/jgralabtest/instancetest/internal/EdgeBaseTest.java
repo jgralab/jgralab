@@ -54,7 +54,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.impl.VertexBase;
+import de.uni_koblenz.jgralab.impl.InternalVertex;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralabtest.instancetest.InstanceTest;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.AbstractSuperNode;
@@ -232,17 +232,17 @@ public class EdgeBaseTest extends InstanceTest {
 		v2 = g.createDoubleSubNode();
 		v3 = g.createDoubleSubNode();
 		e1 = g.createLink(v1, v2);
-		v1vers = ((VertexBase) v1).getIncidenceListVersion();
-		v2vers = ((VertexBase) v2).getIncidenceListVersion();
-		v3vers = ((VertexBase) v3).getIncidenceListVersion();
+		v1vers = ((InternalVertex) v1).getIncidenceListVersion();
+		v2vers = ((InternalVertex) v2).getIncidenceListVersion();
+		v3vers = ((InternalVertex) v3).getIncidenceListVersion();
 		e1.setAlpha(v3);
 		commit(g);
 
 		createReadOnlyTransaction(g);
 		assertEquals(v3, e1.getAlpha());
-		assertTrue(((VertexBase) v1).isIncidenceListModified(v1vers));
-		assertFalse(((VertexBase) v2).isIncidenceListModified(v2vers));
-		assertTrue(((VertexBase) v3).isIncidenceListModified(v3vers));
+		assertTrue(((InternalVertex) v1).isIncidenceListModified(v1vers));
+		assertFalse(((InternalVertex) v2).isIncidenceListModified(v2vers));
+		assertTrue(((InternalVertex) v3).isIncidenceListModified(v3vers));
 		Edge reversedEdge = e1.getReversedEdge();
 		commit(g);
 
@@ -268,15 +268,15 @@ public class EdgeBaseTest extends InstanceTest {
 		v1 = g.createDoubleSubNode();
 		v2 = g.createDoubleSubNode();
 		e1 = g.createLink(v1, v2);
-		v1vers = ((VertexBase) v1).getIncidenceListVersion();
-		v2vers = ((VertexBase) v2).getIncidenceListVersion();
+		v1vers = ((InternalVertex) v1).getIncidenceListVersion();
+		v2vers = ((InternalVertex) v2).getIncidenceListVersion();
 		e1.setAlpha(v1);
 		commit(g);
 
 		createReadOnlyTransaction(g);
 		assertEquals(v1, e1.getAlpha());
-		assertFalse(((VertexBase) v1).isIncidenceListModified(v1vers));
-		assertFalse(((VertexBase) v2).isIncidenceListModified(v2vers));
+		assertFalse(((InternalVertex) v1).isIncidenceListModified(v1vers));
+		assertFalse(((InternalVertex) v2).isIncidenceListModified(v2vers));
 		Edge reversedEdge = e1.getReversedEdge();
 		commit(g);
 
@@ -305,8 +305,8 @@ public class EdgeBaseTest extends InstanceTest {
 		commit(g);
 
 		createReadOnlyTransaction(g);
-		v1vers = ((VertexBase) v1).getIncidenceListVersion();
-		v2vers = ((VertexBase) v2).getIncidenceListVersion();
+		v1vers = ((InternalVertex) v1).getIncidenceListVersion();
+		v2vers = ((InternalVertex) v2).getIncidenceListVersion();
 		commit(g);
 
 		createTransaction(g);
@@ -315,8 +315,8 @@ public class EdgeBaseTest extends InstanceTest {
 
 		createReadOnlyTransaction(g);
 		assertEquals(v2, e1.getAlpha());
-		assertTrue(((VertexBase) v1).isIncidenceListModified(v1vers));
-		assertTrue(((VertexBase) v2).isIncidenceListModified(v2vers));
+		assertTrue(((InternalVertex) v1).isIncidenceListModified(v1vers));
+		assertTrue(((InternalVertex) v2).isIncidenceListModified(v2vers));
 		Edge reversedEdge = e1.getReversedEdge();
 		commit(g);
 
@@ -352,9 +352,9 @@ public class EdgeBaseTest extends InstanceTest {
 		commit(g);
 
 		createReadOnlyTransaction(g);
-		v1vers = ((VertexBase) v1).getIncidenceListVersion();
-		v2vers = ((VertexBase) v2).getIncidenceListVersion();
-		v3vers = ((VertexBase) v3).getIncidenceListVersion();
+		v1vers = ((InternalVertex) v1).getIncidenceListVersion();
+		v2vers = ((InternalVertex) v2).getIncidenceListVersion();
+		v3vers = ((InternalVertex) v3).getIncidenceListVersion();
 		commit(g);
 
 		createTransaction(g);
@@ -363,9 +363,9 @@ public class EdgeBaseTest extends InstanceTest {
 
 		createReadOnlyTransaction(g);
 		assertEquals(v3, e2.getAlpha());
-		assertTrue(((VertexBase) v1).isIncidenceListModified(v1vers));
-		assertFalse(((VertexBase) v2).isIncidenceListModified(v2vers));
-		assertTrue(((VertexBase) v3).isIncidenceListModified(v3vers));
+		assertTrue(((InternalVertex) v1).isIncidenceListModified(v1vers));
+		assertFalse(((InternalVertex) v2).isIncidenceListModified(v2vers));
+		assertTrue(((InternalVertex) v3).isIncidenceListModified(v3vers));
 		Edge reversedEdge = e1.getReversedEdge();
 		Edge reversedEdge2 = e2.getReversedEdge();
 		Edge reversedEdge3 = e3.getReversedEdge();
@@ -471,17 +471,17 @@ public class EdgeBaseTest extends InstanceTest {
 		v2 = g.createDoubleSubNode();
 		v3 = g.createDoubleSubNode();
 		e1 = g.createLink(v1, v2).getReversedEdge();
-		v1vers = ((VertexBase) v1).getIncidenceListVersion();
-		v2vers = ((VertexBase) v2).getIncidenceListVersion();
-		v3vers = ((VertexBase) v3).getIncidenceListVersion();
+		v1vers = ((InternalVertex) v1).getIncidenceListVersion();
+		v2vers = ((InternalVertex) v2).getIncidenceListVersion();
+		v3vers = ((InternalVertex) v3).getIncidenceListVersion();
 		e1.setAlpha(v3);
 		commit(g);
 
 		createReadOnlyTransaction(g);
 		assertEquals(v3, e1.getAlpha());
-		assertTrue(((VertexBase) v1).isIncidenceListModified(v1vers));
-		assertFalse(((VertexBase) v2).isIncidenceListModified(v2vers));
-		assertTrue(((VertexBase) v3).isIncidenceListModified(v3vers));
+		assertTrue(((InternalVertex) v1).isIncidenceListModified(v1vers));
+		assertFalse(((InternalVertex) v2).isIncidenceListModified(v2vers));
+		assertTrue(((InternalVertex) v3).isIncidenceListModified(v3vers));
 		Edge reversedEdge = e1.getReversedEdge();
 		commit(g);
 
@@ -512,17 +512,17 @@ public class EdgeBaseTest extends InstanceTest {
 		v2 = g.createDoubleSubNode();
 		v3 = g.createDoubleSubNode();
 		e1 = g.createLink(v1, v2);
-		v1vers = ((VertexBase) v1).getIncidenceListVersion();
-		v2vers = ((VertexBase) v2).getIncidenceListVersion();
-		v3vers = ((VertexBase) v3).getIncidenceListVersion();
+		v1vers = ((InternalVertex) v1).getIncidenceListVersion();
+		v2vers = ((InternalVertex) v2).getIncidenceListVersion();
+		v3vers = ((InternalVertex) v3).getIncidenceListVersion();
 		e1.setOmega(v3);
 		commit(g);
 
 		createReadOnlyTransaction(g);
 		assertEquals(v3, e1.getOmega());
-		assertFalse(((VertexBase) v1).isIncidenceListModified(v1vers));
-		assertTrue(((VertexBase) v2).isIncidenceListModified(v2vers));
-		assertTrue(((VertexBase) v3).isIncidenceListModified(v3vers));
+		assertFalse(((InternalVertex) v1).isIncidenceListModified(v1vers));
+		assertTrue(((InternalVertex) v2).isIncidenceListModified(v2vers));
+		assertTrue(((InternalVertex) v3).isIncidenceListModified(v3vers));
 		Edge reversedEdge = e1.getReversedEdge();
 		commit(g);
 
@@ -548,15 +548,15 @@ public class EdgeBaseTest extends InstanceTest {
 		v1 = g.createDoubleSubNode();
 		v2 = g.createDoubleSubNode();
 		e1 = g.createLink(v1, v2);
-		v1vers = ((VertexBase) v1).getIncidenceListVersion();
-		v2vers = ((VertexBase) v2).getIncidenceListVersion();
+		v1vers = ((InternalVertex) v1).getIncidenceListVersion();
+		v2vers = ((InternalVertex) v2).getIncidenceListVersion();
 		e1.setOmega(v2);
 		commit(g);
 
 		createReadOnlyTransaction(g);
 		assertEquals(v2, e1.getOmega());
-		assertFalse(((VertexBase) v1).isIncidenceListModified(v1vers));
-		assertFalse(((VertexBase) v2).isIncidenceListModified(v2vers));
+		assertFalse(((InternalVertex) v1).isIncidenceListModified(v1vers));
+		assertFalse(((InternalVertex) v2).isIncidenceListModified(v2vers));
 		Edge reversedEdge = e1.getReversedEdge();
 		commit(g);
 
@@ -581,15 +581,15 @@ public class EdgeBaseTest extends InstanceTest {
 		v1 = g.createDoubleSubNode();
 		v2 = g.createDoubleSubNode();
 		e1 = g.createLink(v1, v2);
-		v1vers = ((VertexBase) v1).getIncidenceListVersion();
-		v2vers = ((VertexBase) v2).getIncidenceListVersion();
+		v1vers = ((InternalVertex) v1).getIncidenceListVersion();
+		v2vers = ((InternalVertex) v2).getIncidenceListVersion();
 		e1.setOmega(v1);
 		commit(g);
 
 		createReadOnlyTransaction(g);
 		assertEquals(v1, e1.getOmega());
-		assertTrue(((VertexBase) v1).isIncidenceListModified(v1vers));
-		assertTrue(((VertexBase) v2).isIncidenceListModified(v2vers));
+		assertTrue(((InternalVertex) v1).isIncidenceListModified(v1vers));
+		assertTrue(((InternalVertex) v2).isIncidenceListModified(v2vers));
 		Edge reversedEdge = e1.getReversedEdge();
 		commit(g);
 
@@ -625,9 +625,9 @@ public class EdgeBaseTest extends InstanceTest {
 		e3 = g.createLink(v2, v3);
 		commit(g);
 		createReadOnlyTransaction(g);
-		v1vers = ((VertexBase) v1).getIncidenceListVersion();
-		v2vers = ((VertexBase) v2).getIncidenceListVersion();
-		v3vers = ((VertexBase) v3).getIncidenceListVersion();
+		v1vers = ((InternalVertex) v1).getIncidenceListVersion();
+		v2vers = ((InternalVertex) v2).getIncidenceListVersion();
+		v3vers = ((InternalVertex) v3).getIncidenceListVersion();
 		commit(g);
 
 		createTransaction(g);
@@ -636,9 +636,9 @@ public class EdgeBaseTest extends InstanceTest {
 
 		createReadOnlyTransaction(g);
 		assertEquals(v3, e2.getOmega());
-		assertFalse(((VertexBase) v1).isIncidenceListModified(v1vers));
-		assertTrue(((VertexBase) v2).isIncidenceListModified(v2vers));
-		assertTrue(((VertexBase) v3).isIncidenceListModified(v3vers));
+		assertFalse(((InternalVertex) v1).isIncidenceListModified(v1vers));
+		assertTrue(((InternalVertex) v2).isIncidenceListModified(v2vers));
+		assertTrue(((InternalVertex) v3).isIncidenceListModified(v3vers));
 		Edge reversedEdge = e1.getReversedEdge();
 		Edge reversedEdge2 = e2.getReversedEdge();
 		Edge reversedEdge3 = e3.getReversedEdge();
@@ -742,17 +742,17 @@ public class EdgeBaseTest extends InstanceTest {
 		v2 = g.createDoubleSubNode();
 		v3 = g.createDoubleSubNode();
 		e1 = g.createLink(v1, v2).getReversedEdge();
-		v1vers = ((VertexBase) v1).getIncidenceListVersion();
-		v2vers = ((VertexBase) v2).getIncidenceListVersion();
-		v3vers = ((VertexBase) v3).getIncidenceListVersion();
+		v1vers = ((InternalVertex) v1).getIncidenceListVersion();
+		v2vers = ((InternalVertex) v2).getIncidenceListVersion();
+		v3vers = ((InternalVertex) v3).getIncidenceListVersion();
 		e1.setOmega(v3);
 		commit(g);
 
 		createReadOnlyTransaction(g);
 		assertEquals(v3, e1.getOmega());
-		assertFalse(((VertexBase) v1).isIncidenceListModified(v1vers));
-		assertTrue(((VertexBase) v2).isIncidenceListModified(v2vers));
-		assertTrue(((VertexBase) v3).isIncidenceListModified(v3vers));
+		assertFalse(((InternalVertex) v1).isIncidenceListModified(v1vers));
+		assertTrue(((InternalVertex) v2).isIncidenceListModified(v2vers));
+		assertTrue(((InternalVertex) v3).isIncidenceListModified(v3vers));
 		Edge reversedEdge = e1.getReversedEdge();
 		commit(g);
 
@@ -791,9 +791,9 @@ public class EdgeBaseTest extends InstanceTest {
 		commit(g);
 
 		createReadOnlyTransaction(g);
-		v1vers = ((VertexBase) v1).getIncidenceListVersion();
-		v2vers = ((VertexBase) v2).getIncidenceListVersion();
-		v3vers = ((VertexBase) v3).getIncidenceListVersion();
+		v1vers = ((InternalVertex) v1).getIncidenceListVersion();
+		v2vers = ((InternalVertex) v2).getIncidenceListVersion();
+		v3vers = ((InternalVertex) v3).getIncidenceListVersion();
 		Edge reversedEdge2 = e2.getReversedEdge();
 		commit(g);
 
@@ -803,9 +803,9 @@ public class EdgeBaseTest extends InstanceTest {
 
 		createReadOnlyTransaction(g);
 		assertEquals(v3, e2.getAlpha());
-		assertTrue(((VertexBase) v1).isIncidenceListModified(v1vers));
-		assertFalse(((VertexBase) v2).isIncidenceListModified(v2vers));
-		assertTrue(((VertexBase) v3).isIncidenceListModified(v3vers));
+		assertTrue(((InternalVertex) v1).isIncidenceListModified(v1vers));
+		assertFalse(((InternalVertex) v2).isIncidenceListModified(v2vers));
+		assertTrue(((InternalVertex) v3).isIncidenceListModified(v3vers));
 		Edge reversedEdge = e1.getReversedEdge();
 		Edge reversedEdge3 = e3.getReversedEdge();
 		commit(g);
@@ -816,9 +816,9 @@ public class EdgeBaseTest extends InstanceTest {
 
 		createReadOnlyTransaction(g);
 		// test ReversedEdge
-		v1vers = ((VertexBase) v1).getIncidenceListVersion();
-		v2vers = ((VertexBase) v2).getIncidenceListVersion();
-		v3vers = ((VertexBase) v3).getIncidenceListVersion();
+		v1vers = ((InternalVertex) v1).getIncidenceListVersion();
+		v2vers = ((InternalVertex) v2).getIncidenceListVersion();
+		v3vers = ((InternalVertex) v3).getIncidenceListVersion();
 		commit(g);
 
 		createTransaction(g);
@@ -827,9 +827,9 @@ public class EdgeBaseTest extends InstanceTest {
 
 		createReadOnlyTransaction(g);
 		assertEquals(v3, e2.getOmega());
-		assertFalse(((VertexBase) v1).isIncidenceListModified(v1vers));
-		assertTrue(((VertexBase) v2).isIncidenceListModified(v2vers));
-		assertTrue(((VertexBase) v3).isIncidenceListModified(v3vers));
+		assertFalse(((InternalVertex) v1).isIncidenceListModified(v1vers));
+		assertTrue(((InternalVertex) v2).isIncidenceListModified(v2vers));
+		assertTrue(((InternalVertex) v3).isIncidenceListModified(v3vers));
 		commit(g);
 
 		testIncidenceList(v1, reversedEdge);
@@ -867,9 +867,9 @@ public class EdgeBaseTest extends InstanceTest {
 		commit(g);
 
 		createReadOnlyTransaction(g);
-		v1vers = ((VertexBase) v1).getIncidenceListVersion();
-		v2vers = ((VertexBase) v2).getIncidenceListVersion();
-		v3vers = ((VertexBase) v3).getIncidenceListVersion();
+		v1vers = ((InternalVertex) v1).getIncidenceListVersion();
+		v2vers = ((InternalVertex) v2).getIncidenceListVersion();
+		v3vers = ((InternalVertex) v3).getIncidenceListVersion();
 		commit(g);
 
 		createTransaction(g);
@@ -878,9 +878,9 @@ public class EdgeBaseTest extends InstanceTest {
 
 		createReadOnlyTransaction(g);
 		assertEquals(v3, e2.getThis());
-		assertTrue(((VertexBase) v1).isIncidenceListModified(v1vers));
-		assertFalse(((VertexBase) v2).isIncidenceListModified(v2vers));
-		assertTrue(((VertexBase) v3).isIncidenceListModified(v3vers));
+		assertTrue(((InternalVertex) v1).isIncidenceListModified(v1vers));
+		assertFalse(((InternalVertex) v2).isIncidenceListModified(v2vers));
+		assertTrue(((InternalVertex) v3).isIncidenceListModified(v3vers));
 		Edge reversedEdge = e1.getReversedEdge();
 		Edge reversedEdge2 = e2.getReversedEdge();
 		Edge reversedEdge3 = e3.getReversedEdge();
@@ -892,9 +892,9 @@ public class EdgeBaseTest extends InstanceTest {
 
 		createReadOnlyTransaction(g);
 		// test ReversedEdge
-		v1vers = ((VertexBase) v1).getIncidenceListVersion();
-		v2vers = ((VertexBase) v2).getIncidenceListVersion();
-		v3vers = ((VertexBase) v3).getIncidenceListVersion();
+		v1vers = ((InternalVertex) v1).getIncidenceListVersion();
+		v2vers = ((InternalVertex) v2).getIncidenceListVersion();
+		v3vers = ((InternalVertex) v3).getIncidenceListVersion();
 		commit(g);
 
 		createTransaction(g);
@@ -903,9 +903,9 @@ public class EdgeBaseTest extends InstanceTest {
 
 		createReadOnlyTransaction(g);
 		assertEquals(v3, e2.getOmega());
-		assertFalse(((VertexBase) v1).isIncidenceListModified(v1vers));
-		assertTrue(((VertexBase) v2).isIncidenceListModified(v2vers));
-		assertTrue(((VertexBase) v3).isIncidenceListModified(v3vers));
+		assertFalse(((InternalVertex) v1).isIncidenceListModified(v1vers));
+		assertTrue(((InternalVertex) v2).isIncidenceListModified(v2vers));
+		assertTrue(((InternalVertex) v3).isIncidenceListModified(v3vers));
 		commit(g);
 
 		testIncidenceList(v1, reversedEdge);

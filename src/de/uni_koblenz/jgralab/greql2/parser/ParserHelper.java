@@ -98,8 +98,8 @@ import de.uni_koblenz.jgralab.greql2.schema.ThisLiteral;
 import de.uni_koblenz.jgralab.greql2.schema.ThisVertex;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
 import de.uni_koblenz.jgralab.greql2.schema.WhereExpression;
-import de.uni_koblenz.jgralab.impl.EdgeBase;
-import de.uni_koblenz.jgralab.impl.VertexBase;
+import de.uni_koblenz.jgralab.impl.InternalEdge;
+import de.uni_koblenz.jgralab.impl.InternalVertex;
 
 public abstract class ParserHelper {
 
@@ -234,11 +234,11 @@ public abstract class ParserHelper {
 				Variable variable = (Variable) isVarOf.getAlpha();
 				isVarOf.delete();
 				isExprOf.delete();
-				EdgeBase e = (EdgeBase) variable
+				InternalEdge e = (InternalEdge) variable
 						.getFirstIncidence(EdgeDirection.OUT);
 				while (e != null) {
 					e.setAlpha(expr);
-					e = (EdgeBase) variable
+					e = (InternalEdge) variable
 							.getFirstIncidence(EdgeDirection.OUT);
 				}
 				variable.delete();
@@ -246,10 +246,10 @@ public abstract class ParserHelper {
 			Expression boundExpr = (Expression) exp
 					.getFirstIsBoundExprOfIncidence(EdgeDirection.IN)
 					.getAlpha();
-			EdgeBase e = (EdgeBase) exp.getFirstIncidence(EdgeDirection.OUT);
+			InternalEdge e = (InternalEdge) exp.getFirstIncidence(EdgeDirection.OUT);
 			while (e != null) {
-				e.setAlpha((VertexBase) boundExpr);
-				e = (EdgeBase) exp.getFirstIncidence(EdgeDirection.OUT);
+				e.setAlpha((InternalVertex) boundExpr);
+				e = (InternalEdge) exp.getFirstIncidence(EdgeDirection.OUT);
 			}
 			exp.delete();
 		}
@@ -299,7 +299,7 @@ public abstract class ParserHelper {
 					.get_name());
 			if (var != null) {
 				if (var != v) {
-					EdgeBase inc = (EdgeBase) v
+					InternalEdge inc = (InternalEdge) v
 							.getFirstIncidence(EdgeDirection.OUT);
 					inc.setAlpha(var);
 					if (v.getDegree() <= 0) {
@@ -681,7 +681,7 @@ public abstract class ParserHelper {
 				firstThisVertex = thisVertex;
 			} else {
 				while (thisVertex.getFirstIncidence() != null) {
-					EdgeBase e = (EdgeBase) thisVertex.getFirstIncidence();
+					InternalEdge e = (InternalEdge) thisVertex.getFirstIncidence();
 					e.setThis(firstThisVertex);
 				}
 				literalsToDelete.add(thisVertex);
@@ -693,8 +693,8 @@ public abstract class ParserHelper {
 				firstThisEdge = thisEdge;
 			} else {
 				while (thisEdge.getFirstIncidence() != null) {
-					EdgeBase e = (EdgeBase) thisEdge.getFirstIncidence();
-					e.setThis((VertexBase) firstThisEdge);
+					InternalEdge e = (InternalEdge) thisEdge.getFirstIncidence();
+					e.setThis((InternalVertex) firstThisEdge);
 				}
 				literalsToDelete.add(thisEdge);
 			}
