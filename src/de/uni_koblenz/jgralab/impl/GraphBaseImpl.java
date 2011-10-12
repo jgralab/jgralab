@@ -270,7 +270,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 
 	public void internalEdgeAdded(EdgeBase e) {
 		notifyEdgeAdded(e);
-		if(this.getECARuleManagerIfThere() != null){
+		if (getECARuleManagerIfThere() != null) {
 			getECARuleManagerIfThere().fireAfterCreateEdgeEvents(e);
 		}
 	}
@@ -312,7 +312,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 
 	public void internalVertexAdded(VertexBase v) {
 		notifyVertexAdded(v);
-		if(this.getECARuleManagerIfThere() != null){
+		if (getECARuleManagerIfThere() != null) {
 			getECARuleManager().fireAfterCreateVertexEvents(v);
 		}
 	}
@@ -406,7 +406,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 				&& containsEdgeId(((EdgeBaseImpl) e.getNormalEdge()).id)
 				&& (getEdge(((EdgeBaseImpl) e.getNormalEdge()).id) == e
 						.getNormalEdge())
-				&& (traversalContext == null || traversalContext
+				&& (getTraversalContext() == null || getTraversalContext()
 						.containsEdge(e));
 	}
 
@@ -435,10 +435,11 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	@Override
 	public boolean containsVertex(Vertex v) {
 		VertexBase[] vertex = getVertex();
-		return (v != null) && (v.getGraph() == this)
+		return (v != null)
+				&& (v.getGraph() == this)
 				&& containsVertexId(((VertexBaseImpl) v).id)
 				&& (vertex[((VertexBaseImpl) v).id] == v)
-				&& (traversalContext == null || traversalContext
+				&& (getTraversalContext() == null || getTraversalContext()
 						.containsVertex(v));
 	}
 
@@ -913,11 +914,11 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 		getECARuleManager().fireBeforeDeleteEdgeEvents(edge);
 
 		EdgeBase e = (EdgeBase) edge.getNormalEdge();
-		if(this.getECARuleManagerIfThere() != null){
+		if (getECARuleManagerIfThere() != null) {
 			getECARuleManagerIfThere().fireBeforeDeleteEdgeEvents(edge);
 		}
-		
-		EdgeBase e = (EdgeBase) edge.getNormalEdge();
+
+		e = (EdgeBase) edge.getNormalEdge();
 		internalEdgeDeleted(e);
 
 		VertexBase alpha = e.getIncidentVertex();
@@ -931,8 +932,9 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 		removeEdgeFromESeq(e);
 		edgeListModified();
 
-		if(this.getECARuleManagerIfThere() != null){
-			getECARuleManagerIfThere().fireAfterDeleteEdgeEvents(e.getM1Class());
+		if (getECARuleManagerIfThere() != null) {
+			getECARuleManagerIfThere()
+					.fireAfterDeleteEdgeEvents(e.getM1Class());
 		}
 		edgeAfterDeleted(e, alpha, omega);
 	}
@@ -951,8 +953,8 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 		while (!getDeleteVertexList().isEmpty()) {
 			VertexBase v = getDeleteVertexList().remove(0);
 			assert (v != null) && v.isValid() && containsVertex(v);
-			
-			if(this.getECARuleManagerIfThere() != null){
+
+			if (getECARuleManagerIfThere() != null) {
 				getECARuleManagerIfThere().fireBeforeDeleteVertexEvents(v);
 			}
 			internalVertexDeleted(v);
@@ -974,9 +976,10 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 			}
 			removeVertexFromVSeq(v);
 			vertexListModified();
-			
-			if(this.getECARuleManagerIfThere() != null){
-				getECARuleManagerIfThere().fireAfterDeleteVertexEvents(v.getM1Class());
+
+			if (getECARuleManagerIfThere() != null) {
+				getECARuleManagerIfThere().fireAfterDeleteVertexEvents(
+						v.getM1Class());
 			}
 			vertexAfterDeleted(v);
 		}
@@ -1007,10 +1010,8 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 			}
 		} else {
 			// delete somewhere in the middle
-			(v.getPrevBaseVertex()).setNextVertex(v
-					.getNextBaseVertex());
-			(v.getNextBaseVertex()).setPrevVertex(v
-					.getPrevBaseVertex());
+			(v.getPrevBaseVertex()).setNextVertex(v.getNextBaseVertex());
+			(v.getNextBaseVertex()).setPrevVertex(v.getPrevBaseVertex());
 		}
 		// freeIndex(getFreeVertexList(), v.getId());
 		freeVertexIndex(v.getId());
@@ -1054,10 +1055,8 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 			}
 		} else {
 			// delete somewhere in the middle
-			(e.getPrevBaseEdge()).setNextEdgeInGraph(e
-					.getNextBaseEdge());
-			(e.getNextBaseEdge()).setPrevEdgeInGraph(e
-					.getPrevBaseEdge());
+			(e.getPrevBaseEdge()).setNextEdgeInGraph(e.getNextBaseEdge());
+			(e.getNextBaseEdge()).setPrevEdgeInGraph(e.getPrevBaseEdge());
 
 		}
 	}
@@ -1157,10 +1156,10 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 			setLastEdgeInGraph(movedEdge.getPrevBaseEdge());
 			(movedEdge.getPrevBaseEdge()).setNextEdgeInGraph(null);
 		} else {
-			(movedEdge.getPrevBaseEdge())
-					.setNextEdgeInGraph(movedEdge.getNextBaseEdge());
-			(movedEdge.getNextBaseEdge())
-					.setPrevEdgeInGraph(movedEdge.getPrevBaseEdge());
+			(movedEdge.getPrevBaseEdge()).setNextEdgeInGraph(movedEdge
+					.getNextBaseEdge());
+			(movedEdge.getNextBaseEdge()).setPrevEdgeInGraph(movedEdge
+					.getPrevBaseEdge());
 
 		}
 
@@ -1169,8 +1168,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 			setLastEdgeInGraph(movedEdge);
 			movedEdge.setNextEdgeInGraph(null);
 		} else {
-			(targetEdge.getNextBaseEdge())
-					.setPrevEdgeInGraph(movedEdge);
+			(targetEdge.getNextBaseEdge()).setPrevEdgeInGraph(movedEdge);
 			movedEdge.setNextEdgeInGraph(targetEdge.getNextBaseEdge());
 		}
 		movedEdge.setPrevEdgeInGraph(targetEdge);
@@ -1195,8 +1193,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 
 		// remove moved vertex from vSeq
 		if (movedVertex == getFirstBaseVertex()) {
-			VertexBase newFirstVertex = movedVertex
-					.getNextBaseVertex();
+			VertexBase newFirstVertex = movedVertex.getNextBaseVertex();
 			setFirstVertex(newFirstVertex);
 			newFirstVertex.setPrevVertex(null);
 			// ((VertexImpl)
@@ -1206,10 +1203,10 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 			setLastVertex(movedVertex.getPrevBaseVertex());
 			(movedVertex.getPrevBaseVertex()).setNextVertex(null);
 		} else {
-			(movedVertex.getPrevBaseVertex())
-					.setNextVertex(movedVertex.getNextBaseVertex());
-			(movedVertex.getNextBaseVertex())
-					.setPrevVertex(movedVertex.getPrevBaseVertex());
+			(movedVertex.getPrevBaseVertex()).setNextVertex(movedVertex
+					.getNextBaseVertex());
+			(movedVertex.getNextBaseVertex()).setPrevVertex(movedVertex
+					.getPrevBaseVertex());
 
 		}
 
@@ -1218,8 +1215,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 			setLastVertex(movedVertex);
 			movedVertex.setNextVertex(null);
 		} else {
-			(targetVertex.getNextBaseVertex())
-					.setPrevVertex(movedVertex);
+			(targetVertex.getNextBaseVertex()).setPrevVertex(movedVertex);
 
 			movedVertex.setNextVertex(targetVertex.getNextBaseVertex());
 		}
@@ -1294,10 +1290,10 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 			setLastVertex(movedVertex.getPrevBaseVertex());
 			(movedVertex.getPrevBaseVertex()).setNextVertex(null);
 		} else {
-			(movedVertex.getPrevBaseVertex())
-					.setNextVertex(movedVertex.getNextBaseVertex());
-			(movedVertex.getNextBaseVertex())
-					.setPrevVertex(movedVertex.getPrevBaseVertex());
+			(movedVertex.getPrevBaseVertex()).setNextVertex(movedVertex
+					.getNextBaseVertex());
+			(movedVertex.getNextBaseVertex()).setPrevVertex(movedVertex
+					.getPrevBaseVertex());
 
 		}
 
@@ -1306,8 +1302,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 			setFirstVertex(movedVertex);
 			movedVertex.setPrevVertex(null);
 		} else {
-			VertexBase previousVertex = targetVertex
-					.getPrevBaseVertex();
+			VertexBase previousVertex = targetVertex.getPrevBaseVertex();
 			previousVertex.setNextVertex(movedVertex);
 			movedVertex.setPrevVertex(previousVertex);
 		}
@@ -1752,7 +1747,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 
 	@Override
 	public ECARuleManagerInterface getECARuleManager() {
-		if(ecaRuleManager == null){
+		if (ecaRuleManager == null) {
 			Constructor<?> ruleManagerConstructor;
 			try {
 				ruleManagerConstructor = Class.forName(
@@ -1767,9 +1762,9 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 		}
 		return ecaRuleManager;
 	}
-	
+
 	@Override
-	public ECARuleManagerInterface getECARuleManagerIfThere(){
+	public ECARuleManagerInterface getECARuleManagerIfThere() {
 		return ecaRuleManager;
 	}
 
