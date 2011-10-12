@@ -89,7 +89,6 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 	 */
 	protected EdgeImpl(int anId, Graph graph, Vertex alpha, Vertex omega) {
 		super(anId, graph);
-		createReversedEdge();
 		((GraphImpl) graph).addEdge(this, alpha, omega);
 	}
 
@@ -514,9 +513,9 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 		attr.setDefaultTransactionValue(this);
 	}
 
-	@Override
-	public String toString() {
-		return "e " + getId() + ": "
-				+ getAttributedElementClass().getQualifiedName();
-	}
+	// @Override
+	// public String toString() {
+	// return "e " + getId() + ": "
+	// + getAttributedElementClass().getQualifiedName();
+	// }
 }

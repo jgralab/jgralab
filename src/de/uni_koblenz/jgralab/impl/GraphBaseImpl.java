@@ -257,7 +257,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 			assert eId != 0;
 			e.setId(eId);
 			a.appendIncidenceToLambdaSeq(e);
-			o.appendIncidenceToLambdaSeq((EdgeBase) e.reversedEdge);
+			o.appendIncidenceToLambdaSeq(e.reversedEdge);
 		}
 		appendEdgeToESeq(e);
 		if (!isLoading()) {
@@ -314,14 +314,14 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	}
 
 	public void appendEdgeToESeq(EdgeBase e) {
-		getEdge()[e.getId()] = e;
-		getRevEdge()[e.getId()] = ((EdgeBaseImpl) e).reversedEdge;
+		getEdge()[((EdgeBaseImpl) e).id] = e;
+		getRevEdge()[((EdgeBaseImpl) e).id] = ((EdgeBaseImpl) e).reversedEdge;
 		setECount(getBaseECount() + 1);
 		if (getFirstBaseEdge() == null) {
 			setFirstEdgeInGraph(e);
 		}
 		if (getLastBaseEdge() != null) {
-			((EdgeBase) getLastBaseEdge()).setNextEdgeInGraph(e);
+			(getLastBaseEdge()).setNextEdgeInGraph(e);
 
 			e.setPrevEdgeInGraph(getLastBaseEdge());
 
@@ -336,7 +336,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 			setFirstVertex(v);
 		}
 		if (getLastBaseVertex() != null) {
-			((VertexBase) getLastBaseVertex()).setNextVertex(v);
+			(getLastBaseVertex()).setNextVertex(v);
 			v.setPrevVertex(getLastBaseVertex());
 		}
 		setLastVertex(v);
@@ -1009,9 +1009,9 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 		assert v != null;
 		if (v == getFirstBaseVertex()) {
 			// delete at head of vertex list
-			setFirstVertex((VertexBase) v.getNextBaseVertex());
+			setFirstVertex(v.getNextBaseVertex());
 			if (getFirstBaseVertex() != null) {
-				((VertexBase) getFirstBaseVertex()).setPrevVertex(null);
+				(getFirstBaseVertex()).setPrevVertex(null);
 			}
 			if (v == getLastBaseVertex()) {
 				// this vertex was the only one...
@@ -1019,15 +1019,15 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 			}
 		} else if (v == getLastBaseVertex()) {
 			// delete at tail of vertex list
-			setLastVertex((VertexBase) v.getPrevBaseVertex());
+			setLastVertex(v.getPrevBaseVertex());
 			if (getLastBaseVertex() != null) {
-				((VertexBase) getLastBaseVertex()).setNextVertex(null);
+				(getLastBaseVertex()).setNextVertex(null);
 			}
 		} else {
 			// delete somewhere in the middle
-			((VertexBase) v.getPrevBaseVertex()).setNextVertex(v
+			(v.getPrevBaseVertex()).setNextVertex(v
 					.getNextBaseVertex());
-			((VertexBase) v.getNextBaseVertex()).setPrevVertex(v
+			(v.getNextBaseVertex()).setPrevVertex(v
 					.getPrevBaseVertex());
 		}
 		// freeIndex(getFreeVertexList(), v.getId());
@@ -1056,9 +1056,9 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	private void removeEdgeFromESeqWithoutDeletingIt(EdgeBase e) {
 		if (e == getFirstBaseEdge()) {
 			// delete at head of edge list
-			setFirstEdgeInGraph((EdgeBase) e.getNextBaseEdge());
+			setFirstEdgeInGraph(e.getNextBaseEdge());
 			if (getFirstBaseEdge() != null) {
-				((EdgeBase) getFirstBaseEdge()).setPrevEdgeInGraph(null);
+				(getFirstBaseEdge()).setPrevEdgeInGraph(null);
 			}
 			if (e == getLastBaseEdge()) {
 				// this edge was the only one...
@@ -1066,15 +1066,15 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 			}
 		} else if (e == getLastBaseEdge()) {
 			// delete at tail of edge list
-			setLastEdgeInGraph((EdgeBase) e.getPrevBaseEdge());
+			setLastEdgeInGraph(e.getPrevBaseEdge());
 			if (getLastBaseEdge() != null) {
-				((EdgeBase) getLastBaseEdge()).setNextEdgeInGraph(null);
+				(getLastBaseEdge()).setNextEdgeInGraph(null);
 			}
 		} else {
 			// delete somewhere in the middle
-			((EdgeBase) e.getPrevBaseEdge()).setNextEdgeInGraph(e
+			(e.getPrevBaseEdge()).setNextEdgeInGraph(e
 					.getNextBaseEdge());
-			((EdgeBase) e.getNextBaseEdge()).setPrevEdgeInGraph(e
+			(e.getNextBaseEdge()).setPrevEdgeInGraph(e
 					.getPrevBaseEdge());
 
 		}
@@ -1169,15 +1169,15 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 
 		// remove moved edge from eSeq
 		if (movedEdge == getFirstBaseEdge()) {
-			setFirstEdgeInGraph((EdgeBase) movedEdge.getNextBaseEdge());
-			((EdgeBase) movedEdge.getNextBaseEdge()).setPrevEdgeInGraph(null);
+			setFirstEdgeInGraph(movedEdge.getNextBaseEdge());
+			(movedEdge.getNextBaseEdge()).setPrevEdgeInGraph(null);
 		} else if (movedEdge == getLastBaseEdge()) {
-			setLastEdgeInGraph((EdgeBase) movedEdge.getPrevBaseEdge());
-			((EdgeBase) movedEdge.getPrevBaseEdge()).setNextEdgeInGraph(null);
+			setLastEdgeInGraph(movedEdge.getPrevBaseEdge());
+			(movedEdge.getPrevBaseEdge()).setNextEdgeInGraph(null);
 		} else {
-			((EdgeBase) movedEdge.getPrevBaseEdge())
+			(movedEdge.getPrevBaseEdge())
 					.setNextEdgeInGraph(movedEdge.getNextBaseEdge());
-			((EdgeBase) movedEdge.getNextBaseEdge())
+			(movedEdge.getNextBaseEdge())
 					.setPrevEdgeInGraph(movedEdge.getPrevBaseEdge());
 
 		}
@@ -1187,7 +1187,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 			setLastEdgeInGraph(movedEdge);
 			movedEdge.setNextEdgeInGraph(null);
 		} else {
-			((EdgeBase) targetEdge.getNextBaseEdge())
+			(targetEdge.getNextBaseEdge())
 					.setPrevEdgeInGraph(movedEdge);
 			movedEdge.setNextEdgeInGraph(targetEdge.getNextBaseEdge());
 		}
@@ -1213,7 +1213,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 
 		// remove moved vertex from vSeq
 		if (movedVertex == getFirstBaseVertex()) {
-			VertexBase newFirstVertex = (VertexBase) movedVertex
+			VertexBase newFirstVertex = movedVertex
 					.getNextBaseVertex();
 			setFirstVertex(newFirstVertex);
 			newFirstVertex.setPrevVertex(null);
@@ -1221,12 +1221,12 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 			// movedVertex.getNextVertex()).setPrevVertex(null);
 
 		} else if (movedVertex == getLastBaseVertex()) {
-			setLastVertex((VertexBase) movedVertex.getPrevBaseVertex());
-			((VertexBase) movedVertex.getPrevBaseVertex()).setNextVertex(null);
+			setLastVertex(movedVertex.getPrevBaseVertex());
+			(movedVertex.getPrevBaseVertex()).setNextVertex(null);
 		} else {
-			((VertexBase) movedVertex.getPrevBaseVertex())
+			(movedVertex.getPrevBaseVertex())
 					.setNextVertex(movedVertex.getNextBaseVertex());
-			((VertexBase) movedVertex.getNextBaseVertex())
+			(movedVertex.getNextBaseVertex())
 					.setPrevVertex(movedVertex.getPrevBaseVertex());
 
 		}
@@ -1236,7 +1236,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 			setLastVertex(movedVertex);
 			movedVertex.setNextVertex(null);
 		} else {
-			((VertexBase) targetVertex.getNextBaseVertex())
+			(targetVertex.getNextBaseVertex())
 					.setPrevVertex(movedVertex);
 
 			movedVertex.setNextVertex(targetVertex.getNextBaseVertex());
@@ -1278,7 +1278,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 			movedEdge.setPrevEdgeInGraph(null);
 
 		} else {
-			EdgeBase previousEdge = ((EdgeBase) targetEdge.getPrevBaseEdge());
+			EdgeBase previousEdge = (targetEdge.getPrevBaseEdge());
 			previousEdge.setNextEdgeInGraph(movedEdge);
 			movedEdge.setPrevEdgeInGraph(previousEdge);
 
@@ -1305,16 +1305,16 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 
 		// remove moved vertex from vSeq
 		if (movedVertex == getFirstBaseVertex()) {
-			setFirstVertex((VertexBase) movedVertex.getNextBaseVertex());
-			((VertexBase) movedVertex.getNextBaseVertex()).setPrevVertex(null);
+			setFirstVertex(movedVertex.getNextBaseVertex());
+			(movedVertex.getNextBaseVertex()).setPrevVertex(null);
 
 		} else if (movedVertex == getLastBaseVertex()) {
-			setLastVertex((VertexBase) movedVertex.getPrevBaseVertex());
-			((VertexBase) movedVertex.getPrevBaseVertex()).setNextVertex(null);
+			setLastVertex(movedVertex.getPrevBaseVertex());
+			(movedVertex.getPrevBaseVertex()).setNextVertex(null);
 		} else {
-			((VertexBase) movedVertex.getPrevBaseVertex())
+			(movedVertex.getPrevBaseVertex())
 					.setNextVertex(movedVertex.getNextBaseVertex());
-			((VertexBase) movedVertex.getNextBaseVertex())
+			(movedVertex.getNextBaseVertex())
 					.setPrevVertex(movedVertex.getPrevBaseVertex());
 
 		}
@@ -1324,7 +1324,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 			setFirstVertex(movedVertex);
 			movedVertex.setPrevVertex(null);
 		} else {
-			VertexBase previousVertex = (VertexBase) targetVertex
+			VertexBase previousVertex = targetVertex
 					.getPrevBaseVertex();
 			previousVertex.setNextVertex(movedVertex);
 			movedVertex.setPrevVertex(previousVertex);
@@ -1526,7 +1526,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 					return out;
 				}
 				out = first;
-				first = (VertexBase) out.getNextBaseVertex();
+				first = out.getNextBaseVertex();
 				first.setPrevVertex(null);
 				return out;
 			}
@@ -1545,8 +1545,8 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 		// split
 		VertexBase last;
 		VertexList l = new VertexList();
-		l.first = (VertexBase) getFirstBaseVertex();
-		l.last = (VertexBase) getLastBaseVertex();
+		l.first = getFirstBaseVertex();
+		l.last = getLastBaseVertex();
 
 		out.add(last = l.remove());
 		while (!l.isEmpty()) {
@@ -1664,7 +1664,7 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 					return out;
 				}
 				out = first;
-				first = (EdgeBase) out.getNextBaseEdge();
+				first = out.getNextBaseEdge();
 				first.setPrevEdgeInGraph(null);
 
 				return out;
@@ -1684,8 +1684,8 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 		// split
 		EdgeBase last;
 		EdgeList l = new EdgeList();
-		l.first = (EdgeBase) getFirstBaseEdge();
-		l.last = (EdgeBase) getLastBaseEdge();
+		l.first = getFirstBaseEdge();
+		l.last = getLastBaseEdge();
 
 		out.add(last = l.remove());
 		while (!l.isEmpty()) {
