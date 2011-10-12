@@ -43,12 +43,12 @@ public interface InternalVertex extends Vertex, InternalGraphElement {
 	/**
 	 * @return the next vertex in vSeq
 	 */
-	public InternalVertex getNextBaseVertex();
+	public InternalVertex getNextVertexInVSeq();
 
 	/**
 	 * @return the previous vertex in vSeq
 	 */
-	public InternalVertex getPrevBaseVertex();
+	public InternalVertex getPrevVertexInVSeq();
 
 	public void setNextVertex(Vertex nextVertex);
 
@@ -57,20 +57,20 @@ public interface InternalVertex extends Vertex, InternalGraphElement {
 	/**
 	 * @return first incident edge of this vertex
 	 */
-	public InternalEdge getFirstBaseIncidence();
+	public InternalEdge getFirstIncidenceInISeq();
 
 	/**
 	 * @return last incident edge of this vertex
 	 */
-	public InternalEdge getLastBaseIncidence();
+	public InternalEdge getLastIncidenceInISeq();
 
 	public void setFirstIncidence(InternalEdge firstIncidence);
 
 	public void setLastIncidence(InternalEdge lastIncidence);
 
-	public void appendIncidenceToLambdaSeq(InternalEdge i);
+	public void appendIncidenceToISeq(InternalEdge i);
 
-	public void removeIncidenceFromLambdaSeq(InternalEdge i);
+	public void removeIncidenceFromISeq(InternalEdge i);
 
 	public void putIncidenceBefore(InternalEdge target, InternalEdge moved);
 

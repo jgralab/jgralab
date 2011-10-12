@@ -56,12 +56,12 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge,
 
 	@Override
 	public InternalEdge getNextIncidence() {
-		InternalEdge nextIncidence = getNextBaseIncidence();
+		InternalEdge nextIncidence = getNextIncidenceInISeq();
 		TraversalContext tc = graph.getTraversalContext();
 		if (!(tc == null || nextIncidence == null || tc
 				.containsEdge(nextIncidence))) {
 			while (!(nextIncidence == null || tc.containsEdge(nextIncidence))) {
-				nextIncidence = nextIncidence.getNextBaseIncidence();
+				nextIncidence = nextIncidence.getNextIncidenceInISeq();
 			}
 		}
 		return nextIncidence;
@@ -69,12 +69,12 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge,
 
 	@Override
 	public InternalEdge getPrevIncidence() {
-		InternalEdge prevIncidence = getPrevBaseIncidence();
+		InternalEdge prevIncidence = getPrevIncidenceInISeq();
 		TraversalContext tc = graph.getTraversalContext();
 		if (!(tc == null || prevIncidence == null || tc
 				.containsEdge(prevIncidence))) {
 			while (!(prevIncidence == null || tc.containsEdge(prevIncidence))) {
-				prevIncidence = prevIncidence.getPrevBaseIncidence();
+				prevIncidence = prevIncidence.getPrevIncidenceInISeq();
 			}
 		}
 		return prevIncidence;
@@ -271,9 +271,9 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge,
 		if (e == this) {
 			return false;
 		}
-		IncidenceImpl i = (IncidenceImpl) getNextBaseIncidence();
+		IncidenceImpl i = (IncidenceImpl) getNextIncidenceInISeq();
 		while ((i != null) && (i != e)) {
-			i = (IncidenceImpl) i.getNextBaseIncidence();
+			i = (IncidenceImpl) i.getNextIncidenceInISeq();
 		}
 		return i != null;
 	}
@@ -294,9 +294,9 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge,
 		if (e == this) {
 			return false;
 		}
-		IncidenceImpl i = (IncidenceImpl) getPrevBaseIncidence();
+		IncidenceImpl i = (IncidenceImpl) getPrevIncidenceInISeq();
 		while ((i != null) && (i != e)) {
-			i = (IncidenceImpl) i.getPrevBaseIncidence();
+			i = (IncidenceImpl) i.getPrevIncidenceInISeq();
 		}
 		return i != null;
 	}

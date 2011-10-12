@@ -61,24 +61,24 @@ public abstract class VertexImpl extends
 	private long incidenceListVersion = 0;
 
 	@Override
-	public InternalVertex getNextBaseVertex() {
+	public InternalVertex getNextVertexInVSeq() {
 		assert isValid();
 		return nextVertex;
 	}
 
 	@Override
-	public InternalVertex getPrevBaseVertex() {
+	public InternalVertex getPrevVertexInVSeq() {
 		assert isValid();
 		return prevVertex;
 	}
 
 	@Override
-	public InternalEdge getFirstBaseIncidence() {
+	public InternalEdge getFirstIncidenceInISeq() {
 		return firstIncidence;
 	}
 
 	@Override
-	public InternalEdge getLastBaseIncidence() {
+	public InternalEdge getLastIncidenceInISeq() {
 		return lastIncidence;
 	}
 

@@ -159,7 +159,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public int getBaseECount() {
+	public int getECountInESeq() {
 		if (eCount == null) {
 			return 0;
 		}
@@ -242,7 +242,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public InternalEdge getFirstBaseEdge() {
+	public InternalEdge getFirstEdgeInESeq() {
 		if (firstEdge == null) {
 			return null;
 		}
@@ -250,7 +250,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public InternalVertex getFirstBaseVertex() {
+	public InternalVertex getFirstVertexInVSeq() {
 		if (firstVertex == null) {
 			return null;
 		}
@@ -258,7 +258,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public InternalEdge getLastBaseEdge() {
+	public InternalEdge getLastEdgeInESeq() {
 		if (lastEdge == null) {
 			return null;
 		}
@@ -266,7 +266,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public InternalVertex getLastBaseVertex() {
+	public InternalVertex getLastVertexInVSeq() {
 		if (lastVertex == null) {
 			return null;
 		}
@@ -274,7 +274,7 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public int getBaseVCount() {
+	public int getVCountInVSeq() {
 		if (vCount == null) {
 			return 0;
 		}
@@ -1027,14 +1027,14 @@ public abstract class GraphImpl extends
 			}
 			if (transaction.changedEseqEdges != null) {
 				transaction.changedEseqEdges.remove(deletedEdge);
-				Edge prevEdge = deletedEdge.getPrevBaseIncidence();
+				Edge prevEdge = deletedEdge.getPrevIncidenceInISeq();
 				if (transaction.changedEseqEdges.containsKey(prevEdge)) {
 					if (transaction.changedEseqEdges.get(prevEdge).containsKey(
 							ListPosition.NEXT)) {
 						transaction.changedEseqEdges.remove(prevEdge);
 					}
 				}
-				Edge nextEdge = deletedEdge.getNextBaseIncidence();
+				Edge nextEdge = deletedEdge.getNextIncidenceInISeq();
 				// check if current (temporary) nextEdge has been changed
 				// explicitly
 				if (transaction.changedEseqEdges.containsKey(nextEdge)) {
@@ -1116,14 +1116,14 @@ public abstract class GraphImpl extends
 			}
 			if (transaction.changedVseqVertices != null) {
 				transaction.changedVseqVertices.remove(deletedVertex);
-				Vertex prevVertex = deletedVertex.getPrevBaseVertex();
+				Vertex prevVertex = deletedVertex.getPrevVertexInVSeq();
 				if (transaction.changedVseqVertices.containsKey(prevVertex)) {
 					if (transaction.changedVseqVertices.get(prevVertex)
 							.containsKey(ListPosition.NEXT)) {
 						transaction.changedVseqVertices.remove(prevVertex);
 					}
 				}
-				Vertex nextVertex = deletedVertex.getNextBaseVertex();
+				Vertex nextVertex = deletedVertex.getNextVertexInVSeq();
 				// check if current (temporary) nextVertex has been changed
 				// explicitly
 				if (transaction.changedVseqVertices.containsKey(nextVertex)) {

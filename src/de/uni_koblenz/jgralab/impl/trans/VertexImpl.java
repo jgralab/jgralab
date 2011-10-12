@@ -111,7 +111,7 @@ public abstract class VertexImpl extends
 	}
 
 	@Override
-	public InternalEdge getFirstBaseIncidence() {
+	public InternalEdge getFirstIncidenceInISeq() {
 		if (firstIncidence == null) {
 			return null;
 		}
@@ -121,7 +121,7 @@ public abstract class VertexImpl extends
 	}
 
 	@Override
-	public IncidenceImpl getLastBaseIncidence() {
+	public IncidenceImpl getLastIncidenceInISeq() {
 		if (lastIncidence == null) {
 			return null;
 		}
@@ -131,7 +131,7 @@ public abstract class VertexImpl extends
 	}
 
 	@Override
-	public InternalVertex getNextBaseVertex() {
+	public InternalVertex getNextVertexInVSeq() {
 		if (nextVertex == null) {
 			return null;
 		}
@@ -141,7 +141,7 @@ public abstract class VertexImpl extends
 	}
 
 	@Override
-	public InternalVertex getPrevBaseVertex() {
+	public InternalVertex getPrevVertexInVSeq() {
 		if (prevVertex == null) {
 			return null;
 		}

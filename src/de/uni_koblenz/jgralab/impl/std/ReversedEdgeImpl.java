@@ -58,12 +58,12 @@ public abstract class ReversedEdgeImpl extends
 	}
 
 	@Override
-	public InternalEdge getNextBaseIncidence() {
+	public InternalEdge getNextIncidenceInISeq() {
 		return nextIncidence;
 	}
 
 	@Override
-	public InternalEdge getPrevBaseIncidence() {
+	public InternalEdge getPrevIncidenceInISeq() {
 		return prevIncidence;
 	}
 

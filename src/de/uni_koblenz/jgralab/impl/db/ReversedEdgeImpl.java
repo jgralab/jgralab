@@ -91,13 +91,13 @@ public abstract class ReversedEdgeImpl extends ReversedEdgeBaseImpl implements
 	}
 
 	@Override
-	public IncidenceImpl getPrevBaseIncidence() {
+	public IncidenceImpl getPrevIncidenceInISeq() {
 		VertexImpl vertex = (VertexImpl) getIncidentVertex();
 		return (IncidenceImpl) vertex.getPrevIncidence(this);
 	}
 
 	@Override
-	public IncidenceImpl getNextBaseIncidence() {
+	public IncidenceImpl getNextIncidenceInISeq() {
 		VertexImpl vertex = (VertexImpl) getIncidentVertex();
 		return (IncidenceImpl) vertex.getNextIncidence(this);
 	}
