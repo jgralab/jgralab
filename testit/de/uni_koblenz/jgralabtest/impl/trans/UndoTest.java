@@ -41,13 +41,11 @@ import static org.junit.Assert.assertTrue;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.pcollections.ArrayPMap;
-import org.pcollections.ArrayPSet;
-import org.pcollections.ArrayPVector;
 import org.pcollections.PMap;
 import org.pcollections.PSet;
 import org.pcollections.PVector;
 
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralab.trans.InvalidSavepointException;
 import de.uni_koblenz.jgralab.trans.Savepoint;
@@ -89,14 +87,14 @@ public class UndoTest {
 		assertNull(graph.getFirstNode());
 
 		node2 = graph.createNode();
-		PMap<Integer, String> map = ArrayPMap.empty();
+		PMap<Integer, String> map = JGraLab.map();
 		map = map.plus(1, "Hugo").plus(100, "Volker");
 		node2.set_nodeMap(map);
 		node2.set_testEnum(Hugo.A);
-		PVector<String> list = ArrayPVector.empty();
+		PVector<String> list = JGraLab.vector();
 		list = list.plus("Hugo").plus("Lalala");
 		node2.set_testList(list);
-		PSet<Integer> set = ArrayPSet.empty();
+		PSet<Integer> set = JGraLab.set();
 		set = set.plus(1).plus(3).plus(8);
 		node2.set_testSet(set);
 		node2.set_testString("Hugo");

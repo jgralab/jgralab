@@ -3,12 +3,11 @@ package de.uni_koblenz.jgralab.eca.events;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.pcollections.PCollection;
+
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.eca.ECARule;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
-
 
 public abstract class EventDescription {
 
@@ -16,15 +15,14 @@ public abstract class EventDescription {
 	 * Rules that can possibly become triggered by this EventDescription
 	 */
 	protected List<ECARule> activeRules;
-	
+
 	/**
 	 * EventTime: BEFORE or AFTER
 	 */
 	private EventTime time;
-	
-	public enum EventTime{
-		BEFORE,
-		AFTER
+
+	public enum EventTime {
+		BEFORE, AFTER
 	}
 
 	/**
@@ -32,10 +30,9 @@ public abstract class EventDescription {
 	 * or all elements, queried by a contextExpression
 	 */
 	private Context context;
-	
+
 	public enum Context {
-		TYPE,
-		EXPRESSION
+		TYPE, EXPRESSION
 	}
 
 	/**
@@ -49,7 +46,6 @@ public abstract class EventDescription {
 	 * to TYPE, null otherwise
 	 */
 	private Class<? extends AttributedElement> type;
-	
 
 	// +++++++ Constructors ++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -61,7 +57,8 @@ public abstract class EventDescription {
 	 * @param type
 	 *            the Class of elements, this Event monitors
 	 */
-	public EventDescription(EventTime time, Class<? extends AttributedElement> type) {
+	public EventDescription(EventTime time,
+			Class<? extends AttributedElement> type) {
 		this.time = time;
 		this.activeRules = new ArrayList<ECARule>();
 		this.type = type;
@@ -82,7 +79,7 @@ public abstract class EventDescription {
 		this.contextExpression = contExpr;
 		this.context = Context.EXPRESSION;
 	}
-	
+
 	// +++++ Methods ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 	/**
@@ -111,33 +108,30 @@ public abstract class EventDescription {
 	 * @return whether the Event matches this EventDescription
 	 */
 	protected boolean checkContext(AttributedElement element) {
-		if(this.context.equals(Context.TYPE)){
-			if(element.getM1Class().equals(this.type)){
+		if (this.context.equals(Context.TYPE)) {
+			if (element.getM1Class().equals(this.type)) {
 				return true;
-			}
-			else{
+			} else {
 				return false;
 			}
-		}else{
+		} else {
 			GreqlEvaluator eval = this.activeRules.get(0).getECARuleManager()
 					.getGreqlEvaluator();
 			eval.setQuery(this.contextExpression);
 			eval.startEvaluation();
-			JValue resultingContext = eval.getEvaluationResult();
-			if(resultingContext.isCollection()){
-				JValueCollection col = resultingContext.toCollection();
-				for(JValue val : col){
-					if(val.isAttributedElement() && 
-							val.toAttributedElement().equals(element)){
-							return true;			
+			Object resultingContext = eval.getResult();
+			if (resultingContext instanceof PCollection) {
+				PCollection<?> col = (PCollection<?>) resultingContext;
+				for (Object val : col) {
+					if (val instanceof AttributedElement && val.equals(element)) {
+						return true;
 					}
 				}
-			}		
+			}
 		}
 		return false;
 	}
-	
-	
+
 	// +++++ Getter and Setter ++++++++++++++++++++++++++++++++++++++++++
 
 	/**
@@ -146,14 +140,13 @@ public abstract class EventDescription {
 	public EventTime getTime() {
 		return time;
 	}
-	
+
 	/**
 	 * @return list with all currently active ECARules of this Event
 	 */
 	public List<ECARule> getActiveECARules() {
 		return this.activeRules;
 	}
-
 
 	/**
 	 * @return the contextExpression
@@ -165,7 +158,7 @@ public abstract class EventDescription {
 	/**
 	 * @return the type of the monitored elements
 	 */
-	public Class <? extends AttributedElement> getType() {
+	public Class<? extends AttributedElement> getType() {
 		return type;
 	}
 

@@ -40,9 +40,6 @@ import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.TransposedPathDescription;
@@ -85,14 +82,13 @@ public class TransposedPathDescriptionEvaluator extends
 	}
 
 	@Override
-	public JValue evaluate() throws EvaluateException {
+	public NFA evaluate() {
 		PathDescription p = (PathDescription) vertex
 				.getFirstIsTransposedPathOfIncidence(EdgeDirection.IN)
 				.getAlpha();
 		PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) vertexEvalMarker
 				.getMark(p);
-		return new JValueImpl(NFA.createTransposedPathDescriptionNFA(pathEval
-				.getNFA()));
+		return NFA.createTransposedPathDescriptionNFA(pathEval.getNFA());
 	}
 
 	@Override

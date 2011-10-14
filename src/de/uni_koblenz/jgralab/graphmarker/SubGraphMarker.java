@@ -99,6 +99,14 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement> implements
 				.isMarked((Vertex) graphElement);
 	}
 
+	public boolean isMarked(Vertex v) {
+		return vertexGraphMarker.isMarked(v);
+	}
+
+	public boolean isMarked(Edge e) {
+		return edgeGraphMarker.isMarked(e);
+	}
+
 	@Override
 	public int size() {
 		return edgeGraphMarker.size() + vertexGraphMarker.size();
@@ -325,11 +333,11 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement> implements
 
 	@Override
 	public boolean containsVertex(Vertex v) {
-		return isMarked(v);
+		return vertexGraphMarker.isMarked(v);
 	}
 
 	@Override
 	public boolean containsEdge(Edge e) {
-		return isMarked(e);
+		return edgeGraphMarker.isMarked(e);
 	}
 }

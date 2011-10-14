@@ -41,14 +41,10 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
-import de.uni_koblenz.jgralab.greql2.exception.QuerySourceException;
-import de.uni_koblenz.jgralab.greql2.exception.UndefinedFunctionException;
-import de.uni_koblenz.jgralab.greql2.funlib.Greql2Function;
-import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
+import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
+import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
+import de.uni_koblenz.jgralab.greql2.funlib.FunLib.FunctionInfo;
+import de.uni_koblenz.jgralab.greql2.funlib.Function;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
@@ -56,6 +52,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.IsArgumentOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsTypeExprOf;
 import de.uni_koblenz.jgralab.greql2.schema.TypeId;
+import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 
 /**
  * Evaluates a FunctionApplication vertex in the GReQL-2 Syntaxgraph
@@ -77,9 +74,9 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 
 	protected ArrayList<VertexEvaluator> parameterEvaluators = null;
 
-	protected JValueTypeCollection typeArgument = null;
+	protected TypeCollection typeArgument = null;
 
-	protected JValue[] parameters = null;
+	protected Object[] parameters = null;
 
 	protected int paramEvalCount = 0;
 
@@ -90,11 +87,34 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 	 */
 	private String functionName = null;
 
+	private FunctionInfo fi = null;
+
 	/**
 	 * Returns the name of the Greql2Function
 	 */
 	public String getFunctionName() {
+		if (functionName == null) {
+			FunctionId id = (FunctionId) vertex
+					.getFirstIsFunctionIdOfIncidence(EdgeDirection.IN)
+					.getAlpha();
+			functionName = id.get_name();
+		}
 		return functionName;
+	}
+
+	public FunctionInfo getFunctionInfo() {
+		if (fi == null) {
+			fi = FunLib.getFunctionInfo(getFunctionName());
+			if (fi == null) {
+				throw new GreqlException("Call to unknown function '"
+						+ getFunctionName() + "'");
+			}
+		}
+		return fi;
+	}
+
+	public Function getFunction() {
+		return getFunctionInfo().getFunction();
 	}
 
 	/*
@@ -105,36 +125,7 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 	 */
 	@Override
 	public String getLoggingName() {
-		if (functionName == null) {
-			FunctionId id = (FunctionId) vertex
-					.getFirstIsFunctionIdOfIncidence(EdgeDirection.IN)
-					.getAlpha();
-			functionName = id.get_name();
-		}
-		return functionName;
-	}
-
-	/**
-	 * Reference to the function of the GReQL function library
-	 */
-	private Greql2Function greql2Function = null;
-
-	public final Greql2Function getGreql2Function() {
-		if (greql2Function == null) {
-			if (functionName == null) {
-				FunctionId id = (FunctionId) vertex
-						.getFirstIsFunctionIdOfIncidence(EdgeDirection.IN)
-						.getAlpha();
-				functionName = id.get_name();
-			}
-			greql2Function = Greql2FunctionLibrary.instance().getGreqlFunction(
-					functionName);
-			if (greql2Function == null) {
-				throw new UndefinedFunctionException(vertex, functionName,
-						createPossibleSourcePositions());
-			}
-		}
-		return greql2Function;
+		return getFunctionName();
 	}
 
 	/**
@@ -171,24 +162,18 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 	/**
 	 * creates the type-argument
 	 */
-	private JValueTypeCollection createTypeArgument() throws EvaluateException {
+	private TypeCollection createTypeArgument() {
 		TypeId typeId;
 		IsTypeExprOf typeEdge = vertex
 				.getFirstIsTypeExprOfIncidence(EdgeDirection.IN);
-		JValueTypeCollection typeCollection = null;
+		TypeCollection typeCollection = null;
 		if (typeEdge != null) {
-			typeCollection = new JValueTypeCollection();
+			typeCollection = new TypeCollection();
 			while (typeEdge != null) {
 				typeId = (TypeId) typeEdge.getAlpha();
 				TypeIdEvaluator typeEval = (TypeIdEvaluator) vertexEvalMarker
 						.getMark(typeId);
-				try {
-					typeCollection.addTypes(typeEval.getResult(subgraph)
-							.toJValueTypeCollection());
-				} catch (JValueInvalidTypeException ex) {
-					throw new EvaluateException(
-							"Result of TypeId-vertex was not JValueTypeCollection ");
-				}
+				typeCollection.addTypes((TypeCollection) typeEval.getResult());
 				typeEdge = typeEdge.getNextIsTypeExprOf(EdgeDirection.IN);
 			}
 		}
@@ -199,34 +184,38 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 	 * evaluates the function, calls the right function of the function libary
 	 */
 	@Override
-	public JValue evaluate() throws EvaluateException {
+	public Object evaluate() {
+		FunctionInfo fi = getFunctionInfo();
 		if (!listCreated) {
 			typeArgument = createTypeArgument();
 			parameterEvaluators = createVertexEvaluatorList();
 			int parameterCount = parameterEvaluators.size();
+			if (fi.needsGraphArgument()) {
+				parameterCount++;
+			}
 			if (typeArgument != null) {
 				parameterCount++;
 			}
-			parameters = new JValue[parameterCount];
-			if (typeArgument != null) {
-				parameters[parameterCount - 1] = typeArgument;
-			}
+			parameters = new Object[parameterCount];
 			paramEvalCount = parameterEvaluators.size();
-			getGreql2Function();
 			listCreated = true;
 		}
 
-		for (int i = 0; i < paramEvalCount; i++) {
-			parameters[i] = parameterEvaluators.get(i).getResult(subgraph);
+		int p = 0;
+
+		if (fi.needsGraphArgument()) {
+			parameters[p++] = graph;
 		}
 
-		try {
-			result = greql2Function.evaluate(graph, subgraph, parameters);
-		} catch (EvaluateException ex) {
-			throw new QuerySourceException(ex.getMessage(), vertex,
-					createPossibleSourcePositions(), ex);
+		for (int i = 0; i < paramEvalCount; i++) {
+			parameters[p++] = parameterEvaluators.get(i).getResult();
 		}
-		return result;
+
+		if (typeArgument != null) {
+			parameters[p] = typeArgument;
+		}
+
+		return FunLib.apply(fi, parameters);
 	}
 
 	@Override

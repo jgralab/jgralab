@@ -3,8 +3,6 @@
  */
 package de.uni_koblenz.jgralab.gretl;
 
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-
 /**
  * @author Tassilo Horn &lt;horn@uni-koblenz.de&gt;
  * 
@@ -14,7 +12,7 @@ public class SysErr extends SysOut {
 		super(c, greqlExpression);
 	}
 
-	public SysErr(Context c, JValue result) {
+	public SysErr(Context c, Object result) {
 		super(c, result);
 	}
 

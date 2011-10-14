@@ -39,9 +39,6 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.schema.ConditionalExpression;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
@@ -85,15 +82,15 @@ public class ConditionalExpressionEvaluator extends VertexEvaluator {
 	 * evaluates the conditional expression
 	 */
 	@Override
-	public JValue evaluate() throws EvaluateException {
+	public Object evaluate() {
 		Expression condition = (Expression) vertex
 				.getFirstIsConditionOfIncidence(EdgeDirection.IN).getAlpha();
 		VertexEvaluator conditionEvaluator = vertexEvalMarker
 				.getMark(condition);
-		JValue conditionResult = conditionEvaluator.getResult(subgraph);
+		Object conditionResult = conditionEvaluator.getResult();
 		Expression expressionToEvaluate = null;
 
-		Boolean value = conditionResult.toBoolean();
+		Boolean value = (Boolean) conditionResult;
 		if (value.booleanValue()) {
 			expressionToEvaluate = (Expression) vertex
 					.getFirstIsTrueExprOfIncidence(EdgeDirection.IN).getAlpha();
@@ -106,9 +103,9 @@ public class ConditionalExpressionEvaluator extends VertexEvaluator {
 		if (expressionToEvaluate != null) {
 			VertexEvaluator exprEvaluator = vertexEvalMarker
 					.getMark(expressionToEvaluate);
-			result = exprEvaluator.getResult(subgraph);
+			result = exprEvaluator.getResult();
 		} else {
-			result = new JValueImpl();
+			result = null;
 		}
 		return result;
 	}

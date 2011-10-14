@@ -113,7 +113,6 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
-import org.pcollections.ArrayPVector;
 import org.pcollections.PVector;
 
 import de.uni_koblenz.ist.utilities.option_handler.OptionHandler;
@@ -1139,9 +1138,12 @@ public class Rsa2Tg extends XmlProcessor {
 	 */
 	private void removeIgnoredPackages() {
 		System.out.println("Removing ignored packages...");
+		int n = 0;
 		for (Package pkg : ignoredPackages) {
-			removePackage(pkg);
+			n += removePackage(pkg);
 		}
+		System.out.println("\tRemoved " + n + " package" + (n == 1 ? "" : "s")
+				+ ".");
 	}
 
 	/**
@@ -1151,19 +1153,19 @@ public class Rsa2Tg extends XmlProcessor {
 	 * @param pkg
 	 *            a Package
 	 */
-	private void removePackage(Package pkg) {
+	private int removePackage(Package pkg) {
 		if (!pkg.isValid()) {
 			// possibly alread deleted
-			return;
+			return 0;
 		}
-		System.out.println("\tremoving " + pkg.get_qualifiedName());
+		int n = 0;
 		// recursively descend into subpackages
 		List<Package> subPackages = new ArrayList<Package>();
 		for (Package sub : pkg.get_subpackage()) {
 			subPackages.add(sub);
 		}
 		for (Package sub : subPackages) {
-			removePackage(sub);
+			n += removePackage(sub);
 		}
 
 		// remove all GraphElementClasses
@@ -1209,8 +1211,11 @@ public class Rsa2Tg extends XmlProcessor {
 		// remove the package itself if it's totally empty (degree is 1 since
 		// the ContainsSubpackage edge to the parent package still exists)
 		if (pkg.getDegree() == 1) {
+			++n;
+			System.out.println("\t- removing " + pkg.get_qualifiedName());
 			pkg.delete();
 		}
+		return n;
 	}
 
 	/**
@@ -1267,9 +1272,9 @@ public class Rsa2Tg extends XmlProcessor {
 			}
 			if (annotatedElement == null) {
 				System.out
-						.println("Warning: Couldn't find annotated element for XMI id "
+						.println("\t- Couldn't find annotated element for XMI id "
 								+ id
-								+ " ==> attaching to GraphClass (Comment starts with '"
+								+ "\n\t  => attaching to GraphClass (Comment starts with '"
 								+ comments.get(id).get(0) + "'");
 				annotatedElement = graphClass;
 			}
@@ -1429,8 +1434,8 @@ public class Rsa2Tg extends XmlProcessor {
 
 		if (filenameDot != null) {
 			try {
-				writeDotFile(filenameDot);
 				printTypeAndFilename("GraphvViz DOT file", filenameDot);
+				writeDotFile(filenameDot);
 				fileCreated = true;
 			} catch (IOException e) {
 				System.out.println("Could not create DOT file.");
@@ -1439,22 +1444,22 @@ public class Rsa2Tg extends XmlProcessor {
 		}
 
 		if (filenameSchemaGraph != null) {
-			writeSchemaGraph(filenameSchemaGraph);
 			printTypeAndFilename("schemagraph", filenameSchemaGraph);
+			writeSchemaGraph(filenameSchemaGraph);
 			fileCreated = true;
 		}
 
 		// The Graph is always validated, but not always written to a hard
 		// drive.
+		System.out.println("Validating schema graph...");
 		validateGraph(filenameValidation);
 		if (filenameValidation != null) {
-			printTypeAndFilename("validation report", filenameValidation);
 			fileCreated = true;
 		}
 
 		if (filenameSchema != null) {
-			writeSchema(filenameSchema);
 			printTypeAndFilename("schema", filenameSchema);
+			writeSchema(filenameSchema);
 			fileCreated = true;
 		}
 
@@ -1476,6 +1481,9 @@ public class Rsa2Tg extends XmlProcessor {
 	 *            Relative path to a folder.
 	 */
 	private void validateGraph(String filePath) {
+		if (filePath != null) {
+			printTypeAndFilename("validation report", filePath);
+		}
 
 		try {
 			GraphValidator validator = new GraphValidator(sg);
@@ -1686,7 +1694,7 @@ public class Rsa2Tg extends XmlProcessor {
 		Package p = packageStack.peek();
 		ed.set_qualifiedName(getQualifiedName(getAttribute(UML_ATTRIBUTE_NAME)));
 		sg.createContainsDomain(p, ed);
-		PVector<String> empty = ArrayPVector.empty();
+		PVector<String> empty = JGraLab.vector();
 		ed.set_enumConstants(empty);
 		Domain dom = domainMap.get(ed.get_qualifiedName());
 		if (dom != null) {
@@ -2287,7 +2295,7 @@ public class Rsa2Tg extends XmlProcessor {
 					"isAcyclic(vSubgraph{structure.EdgeClass})", sg, null);
 		}
 		edgeClassAcyclicEvaluator.startEvaluation();
-		return edgeClassAcyclicEvaluator.getEvaluationResult().toBoolean();
+		return (Boolean) edgeClassAcyclicEvaluator.getResult();
 	}
 
 	/**
@@ -2301,7 +2309,7 @@ public class Rsa2Tg extends XmlProcessor {
 					"isAcyclic(vSubgraph{structure.VertexClass})", sg, null);
 		}
 		vertexClassAcyclicEvaluator.startEvaluation();
-		return vertexClassAcyclicEvaluator.getEvaluationResult().toBoolean();
+		return (Boolean) vertexClassAcyclicEvaluator.getResult();
 	}
 
 	/**
@@ -2311,6 +2319,7 @@ public class Rsa2Tg extends XmlProcessor {
 		// remove all empty packages except the default package
 		System.out.println("Removing empty packages...");
 		Package p = sg.getFirstPackage();
+		int removed = 0;
 		while (p != null) {
 			Package n = p.getNextPackage();
 			int commentCount = p.getDegree(Annotates.class);
@@ -2331,6 +2340,7 @@ public class Rsa2Tg extends XmlProcessor {
 					}
 				}
 				p.delete();
+				++removed;
 				// start over to capture packages that become empty after
 				// deletion of p
 				p = sg.getFirstPackage();
@@ -2338,6 +2348,8 @@ public class Rsa2Tg extends XmlProcessor {
 				p = n;
 			}
 		}
+		System.out.println("\tRemoved " + removed + " package"
+				+ (removed == 1 ? "" : "s") + ".");
 	}
 
 	/**

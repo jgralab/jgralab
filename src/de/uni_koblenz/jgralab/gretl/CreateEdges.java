@@ -1,20 +1,18 @@
 package de.uni_koblenz.jgralab.gretl;
 
-import java.util.LinkedList;
-import java.util.List;
+import org.pcollections.Empty;
+import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.Edge;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueTuple;
+import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.greql2.types.Tuple;
 import de.uni_koblenz.jgralab.gretl.Context.TransformationPhase;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
-public class CreateEdges extends Transformation<List<? extends Edge>> {
+public class CreateEdges extends Transformation<PSet<? extends Edge>> {
 
-	private JValueSet archetypes = null;
+	private PSet<Tuple> archetypes = null;
 	private String semanticExpression = null;
 	private EdgeClass edgeClass = null;
 
@@ -26,7 +24,7 @@ public class CreateEdges extends Transformation<List<? extends Edge>> {
 	}
 
 	public CreateEdges(final Context c, final EdgeClass edgeClass,
-			final JValueSet archetypes) {
+			final PSet<Tuple> archetypes) {
 		super(c);
 		this.archetypes = archetypes;
 		this.edgeClass = edgeClass;
@@ -40,24 +38,23 @@ public class CreateEdges extends Transformation<List<? extends Edge>> {
 	}
 
 	@Override
-	protected List<? extends Edge> transform() {
+	protected PSet<? extends Edge> transform() {
 		if (context.phase != TransformationPhase.GRAPH) {
 			return null;
 		}
 
 		if (archetypes == null) {
-			archetypes = context.evaluateGReQLQuery(semanticExpression)
-					.toJValueSet();
+			archetypes = context.evaluateGReQLQuery(semanticExpression);
 		}
 
-		List<Edge> result = new LinkedList<Edge>();
-		for (JValue trip : archetypes) {
-			JValueTuple triple = trip.toJValueTuple();
-			JValue edgeArch = triple.get(0);
+		PSet<Edge> result = Empty.set();
+		for (Tuple trip : archetypes) {
+			Object arch = trip.get(0);
 
-			JValue startVertexArch = triple.get(1);
+			Object startVertexArch = trip.get(1);
 			VertexClass fromVC = edgeClass.getFrom().getVertexClass();
-			JValue startVertex = context.getImg(fromVC).get(startVertexArch);
+			Vertex startVertex = (Vertex) context.getImg(fromVC).get(
+					startVertexArch);
 			if (startVertex == null) {
 				context.printImgMappings();
 				throw new GReTLException(context, "No startVertex for a new '"
@@ -69,10 +66,9 @@ public class CreateEdges extends Transformation<List<? extends Edge>> {
 								Context.GReTLVariableType.IMG) + ".");
 			}
 
-			JValue endVertexArch = triple.get(2);
-
+			Object endVertexArch = trip.get(2);
 			VertexClass toVC = edgeClass.getTo().getVertexClass();
-			JValue endVertex = context.getImg(toVC).get(endVertexArch);
+			Vertex endVertex = (Vertex) context.getImg(toVC).get(endVertexArch);
 			if (endVertex == null) {
 				context.printImgMappings();
 				throw new GReTLException(context, "No endVertex for a new '"
@@ -84,12 +80,10 @@ public class CreateEdges extends Transformation<List<? extends Edge>> {
 								Context.GReTLVariableType.IMG) + ".");
 			}
 
-			Edge newEdge = context.targetGraph.createEdge(
-					edgeClass.getM1Class(), startVertex.toVertex(),
-					endVertex.toVertex());
-			result.add(newEdge);
-			JValue image = new JValueImpl(newEdge);
-			context.addMapping(edgeClass, edgeArch, image);
+			Edge img = context.targetGraph.createEdge(edgeClass.getM1Class(),
+					startVertex, endVertex);
+			result = result.plus(img);
+			context.addMapping(edgeClass, arch, img);
 		}
 
 		return result;

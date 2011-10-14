@@ -35,17 +35,16 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
+import org.pcollections.PSet;
+
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 import de.uni_koblenz.jgralab.greql2.schema.VertexSetExpression;
+import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 
 /**
  * construct a subset of the datagraph vertices. For instance, the expression
@@ -72,37 +71,25 @@ public class VertexSetExpressionEvaluator extends ElementSetExpressionEvaluator 
 	}
 
 	@Override
-	public JValue evaluate() throws EvaluateException {
+	public Object evaluate() {
 		Graph datagraph = greqlEvaluator.getDatagraph();
-		JValueTypeCollection typeCollection = getTypeCollection();
-		JValueSet resultSet = null;
+		TypeCollection typeCollection = getTypeCollection();
+		PSet<Vertex> resultSet = null;
 		String indexKey = null;
 		if (GreqlEvaluator.VERTEX_INDEXING) {
-			indexKey = typeCollection.typeString() + subgraph;
+			indexKey = typeCollection.toString();
 			resultSet = GreqlEvaluator.getVertexIndex(datagraph, indexKey);
 		}
 		if (resultSet == null) {
 			long startTime = System.currentTimeMillis();
-			resultSet = new JValueSet();
+			resultSet = JGraLab.set();
 			Vertex currentVertex = datagraph.getFirstVertex();
-			if (subgraph == null) {
-				while (currentVertex != null) {
-					if (typeCollection.acceptsType(currentVertex
-							.getAttributedElementClass())) {
-						JValueImpl j = new JValueImpl(currentVertex);
-						resultSet.add(j);
-					}
-					currentVertex = currentVertex.getNextVertex();
+			while (currentVertex != null) {
+				if (typeCollection.acceptsType(currentVertex
+						.getAttributedElementClass())) {
+					resultSet = resultSet.plus(currentVertex);
 				}
-			} else {
-				while (currentVertex != null) {
-					if (subgraph.isMarked(currentVertex)
-							&& typeCollection.acceptsType(currentVertex
-									.getAttributedElementClass())) {
-						resultSet.add(new JValueImpl(currentVertex));
-					}
-					currentVertex = currentVertex.getNextVertex();
-				}
+				currentVertex = currentVertex.getNextVertex();
 			}
 			if (GreqlEvaluator.VERTEX_INDEXING) {
 				if (System.currentTimeMillis() - startTime > greqlEvaluator

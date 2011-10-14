@@ -34,11 +34,11 @@
  */
 package de.uni_koblenz.jgralabtest.impl.trans;
 
-import org.pcollections.ArrayPMap;
 import org.pcollections.PMap;
 
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralabtest.schemas.record.BooleanType;
 import de.uni_koblenz.jgralabtest.schemas.record.Node;
@@ -56,7 +56,7 @@ public class TryRecordLoading {
 		RecordTestGraph graph = RecordTestSchema.instance()
 				.createRecordTestGraph();
 		Node node = graph.createNode();
-		PMap<Integer, String> map = ArrayPMap.empty();
+		PMap<Integer, String> map = JGraLab.map();
 		node.set_nodeMap(map);
 		node.set_testRecord(new BooleanType(true, false));
 		graph.createLink(node, node);

@@ -2,8 +2,9 @@ package de.uni_koblenz.jgralab.gretl;
 
 import java.util.Map.Entry;
 
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueMap;
+import org.pcollections.PMap;
+
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.gretl.Context.TransformationPhase;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
@@ -30,14 +31,14 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 public class AddMappings extends Transformation<Void> {
 
 	private String semanticExpression;
-	private JValueMap archetypes;
+	private PMap<Object, AttributedElement> archetypes;
 
 	public AddMappings(Context c, String semanticExpression) {
 		super(c);
 		this.semanticExpression = semanticExpression;
 	}
 
-	public AddMappings(Context c, JValueMap archetypeMap) {
+	public AddMappings(Context c, PMap<Object, AttributedElement> archetypeMap) {
 		super(c);
 		this.archetypes = archetypeMap;
 	}
@@ -55,12 +56,11 @@ public class AddMappings extends Transformation<Void> {
 		}
 
 		if (archetypes == null) {
-			archetypes = context.evaluateGReQLQuery(semanticExpression)
-					.toJValueMap();
+			archetypes = context.evaluateGReQLQuery(semanticExpression);
 		}
 
-		for (Entry<JValue, JValue> e : archetypes.entrySet()) {
-			AttributedElementClass aec = e.getValue().toAttributedElement()
+		for (Entry<Object, AttributedElement> e : archetypes.entrySet()) {
+			AttributedElementClass aec = e.getValue()
 					.getAttributedElementClass();
 			context.addMapping(aec, e.getKey(), e.getValue());
 		}

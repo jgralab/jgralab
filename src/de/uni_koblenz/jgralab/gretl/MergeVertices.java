@@ -2,16 +2,16 @@ package de.uni_koblenz.jgralab.gretl;
 
 import java.util.Map.Entry;
 
+import org.pcollections.PMap;
+import org.pcollections.PSet;
+
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueMap;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.gretl.Context.TransformationPhase;
 
 public class MergeVertices extends InPlaceTransformation {
 
 	private final String semanticExpression;
-	private JValueMap matches;
+	private PMap<Vertex, PSet<Vertex>> matches;
 
 	/**
 	 * The semantic expression has to result in a map of the form (keep ->
@@ -27,7 +27,7 @@ public class MergeVertices extends InPlaceTransformation {
 		this.semanticExpression = semExp;
 	}
 
-	public MergeVertices(Context context, JValueMap matches) {
+	public MergeVertices(Context context, PMap<Vertex, PSet<Vertex>> matches) {
 		this(context, (String) null);
 		this.matches = matches;
 	}
@@ -45,29 +45,27 @@ public class MergeVertices extends InPlaceTransformation {
 		}
 
 		if (matches == null) {
-			matches = context.evaluateGReQLQuery(semanticExpression)
-					.toJValueMap();
+			matches = context.evaluateGReQLQuery(semanticExpression);
 		}
 		int count = 0;
-		for (Entry<JValue, JValue> e : matches.entrySet()) {
-			Vertex keep = e.getKey().toVertex();
+		for (Entry<Vertex, PSet<Vertex>> e : matches.entrySet()) {
+			Vertex keep = e.getKey();
 			if (!keep.isValid()) {
 				// This is ok, because excluding this situation is damn hard in
 				// GReQL.
 				continue;
 			}
-			JValueSet deletes = e.getValue().toJValueSet();
+			PSet<Vertex> deletes = e.getValue();
 			if (deletes.size() > 0) {
 				count++;
 			}
-			for (JValue del : deletes) {
-				Vertex delete = del.toVertex();
-				if (delete == keep) {
+			for (Vertex del : deletes) {
+				if (del == keep) {
 					throw new GReTLException(context, keep
 							+ " should be both kept and deleted!");
 				}
-				relinkIncidences(delete, keep);
-				delete.delete();
+				relinkIncidences(del, keep);
+				del.delete();
 			}
 		}
 

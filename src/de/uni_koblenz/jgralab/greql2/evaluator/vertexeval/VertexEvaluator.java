@@ -48,13 +48,10 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
-import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.QuerySourceException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Aggregation;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
@@ -90,12 +87,6 @@ public abstract class VertexEvaluator {
 	 * A reference to the datagraph
 	 */
 	protected Graph graph = null;
-
-	/**
-	 * used only for debugging, the indentation of the debug-messages on stdout
-	 * for this vertexeval
-	 */
-	protected static int currentIndentation = 0;
 
 	/**
 	 * The GreqlEvaluator this VertexEvaluator belongs to
@@ -144,13 +135,7 @@ public abstract class VertexEvaluator {
 	/**
 	 * The evaluation result
 	 */
-	protected JValue result = null;
-
-	/**
-	 * The subgraph which was uses for the last evaluation and should be used
-	 * for the next evaluation
-	 */
-	protected SubGraphMarker subgraph = null;
+	protected Object result = null;
 
 	/**
 	 * The set of variables this vertex depends on
@@ -202,21 +187,14 @@ public abstract class VertexEvaluator {
 	/**
 	 * Gets the result of the evaluation of this vertex on the given subgraph
 	 * 
-	 * @param newSubgraph
-	 *            the subgraph to evaluate the vertex on or null if it should be
-	 *            evaluated on the whole datagraph
 	 * @return the evaluation result
 	 */
-	public JValue getResult(SubGraphMarker newSubgraph)
-			throws EvaluateException {
-		if ((result != null) && (this.subgraph == newSubgraph)) {
+	public Object getResult() {
+		if (result != null) {
 			return result;
 		}
 
-		// currentIndentation++;
-		// printIndentation();
-		// GreqlEvaluator.println("Evaluating : " + this);
-		this.subgraph = newSubgraph;
+		// System.out.println("Evaluating : " + this);
 		try {
 			result = evaluate();
 			// System.out.println("VertexEvaluator.getResult() " + result
@@ -226,10 +204,8 @@ public abstract class VertexEvaluator {
 			throw ex;
 		}
 
-		// printIndentation();
-		// GreqlEvaluator.println("Evaluating : " + this + " finished");
-		// currentIndentation--;
-		// GreqlEvaluator.println("Result is: " + result);
+		// System.out.println("Evaluating : " + this + " finished");
+		// System.out.println("Result is: " + result);
 
 		greqlEvaluator.progress(ownEvaluationCosts);
 
@@ -248,7 +224,7 @@ public abstract class VertexEvaluator {
 	 * this method does the evaluation. It must be implemented by concrete
 	 * evaluators
 	 */
-	public abstract JValue evaluate() throws EvaluateException;
+	public abstract Object evaluate();
 
 	/**
 	 * clears the evaluation result
@@ -272,7 +248,6 @@ public abstract class VertexEvaluator {
 		estimatedCardinality = Long.MIN_VALUE;
 		estimatedSelectivity = Double.NaN;
 		costsGraphSize = null;
-		subgraph = null;
 	}
 
 	public void resetSubtreeToInitialState() {
@@ -528,7 +503,7 @@ public abstract class VertexEvaluator {
 	 * creates a vertex evaluator for the given vertex
 	 */
 	public static VertexEvaluator createVertexEvaluator(Vertex vertex,
-			GreqlEvaluator eval) throws EvaluateException {
+			GreqlEvaluator eval) {
 		Class<?> vertexClass = vertex.getClass();
 		String fullClassName = vertexClass.getName();
 		// remove the "Impl" ...
@@ -554,15 +529,15 @@ public abstract class VertexEvaluator {
 					.newInstance(vertex, eval);
 			return vertexEval;
 		} catch (ClassNotFoundException ex) {
-			throw new EvaluateException(className, ex);
+			throw new RuntimeException(className, ex);
 		} catch (NoSuchMethodException ex) {
-			throw new EvaluateException(className, ex);
+			throw new RuntimeException(className, ex);
 		} catch (IllegalAccessException ex) {
-			throw new EvaluateException(className, ex);
+			throw new RuntimeException(className, ex);
 		} catch (InstantiationException ex) {
-			throw new EvaluateException(className, ex);
+			throw new RuntimeException(className, ex);
 		} catch (InvocationTargetException ex) {
-			throw new EvaluateException(className, ex);
+			throw new RuntimeException(className, ex);
 		}
 	}
 

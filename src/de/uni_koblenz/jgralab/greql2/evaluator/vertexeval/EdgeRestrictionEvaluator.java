@@ -42,17 +42,13 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 import de.uni_koblenz.jgralab.greql2.schema.EdgeRestriction;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.IsBooleanPredicateOfEdgeRestriction;
 import de.uni_koblenz.jgralab.greql2.schema.IsRoleIdOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsTypeIdOf;
 import de.uni_koblenz.jgralab.greql2.schema.RoleId;
+import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 
 /**
  * Evaluates an edge restriction, edges can be restricted with TypeIds and Roles
@@ -84,12 +80,12 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator {
 	/**
 	 * The JValueTypeCollection which holds all the allowed and forbidden types
 	 */
-	private JValueTypeCollection typeCollection = null;
+	private TypeCollection typeCollection = null;
 
 	/**
 	 * Returns the typeCollection
 	 */
-	public JValueTypeCollection getTypeCollection() throws EvaluateException {
+	public TypeCollection getTypeCollection() {
 		if (typeCollection == null) {
 			evaluate();
 		}
@@ -123,24 +119,15 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator {
 	 * evaluates the EdgeRestriction, creates the typeList and the validEdgeRole
 	 */
 	@Override
-	public JValue evaluate() throws EvaluateException {
+	public Object evaluate() {
 		if (typeCollection == null) {
-			typeCollection = new JValueTypeCollection();
+			typeCollection = new TypeCollection();
 			IsTypeIdOf typeInc = vertex
 					.getFirstIsTypeIdOfIncidence(EdgeDirection.IN);
 			while (typeInc != null) {
 				TypeIdEvaluator typeEval = (TypeIdEvaluator) vertexEvalMarker
 						.getMark(typeInc.getAlpha());
-				try {
-					// GreqlEvaluator.println("Adding types: " +
-					// typeEval.getResult(subgraph).toJValueTypeCollection());
-					typeCollection.addTypes(typeEval.getResult(subgraph)
-							.toJValueTypeCollection());
-				} catch (JValueInvalidTypeException ex) {
-					throw new EvaluateException(
-							"Result of TypeId was not a JValueTypeCollection",
-							ex);
-				}
+				typeCollection.addTypes((TypeCollection) typeEval.getResult());
 				typeInc = typeInc.getNextIsTypeIdOf(EdgeDirection.IN);
 			}
 		}
@@ -158,7 +145,7 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator {
 			// System.out.println("Found a BooleanPredicateOfEdge");
 			predicateEvaluator = vertexEvalMarker.getMark(predInc.getAlpha());
 		}
-		return new JValueImpl();
+		return null;
 	}
 
 	@Override

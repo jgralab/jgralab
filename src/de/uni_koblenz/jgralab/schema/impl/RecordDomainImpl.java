@@ -226,22 +226,6 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 		return output.toString();
 	}
 
-	@Override
-	public boolean equals(Object o) {
-		if (o instanceof RecordDomain) {
-			RecordDomain other = (RecordDomain) o;
-			if (!getSchema().getQualifiedName().equals(
-					other.getSchema().getQualifiedName())) {
-				return false;
-			}
-			if (!qualifiedName.equals(other.getQualifiedName())) {
-				return false;
-			}
-			return getComponents().equals(other.getComponents());
-		}
-		return false;
-	}
-
 	private void internalGetReadMethod(CodeSnippet code, String schemaPrefix,
 			String variableName, String graphIoVariableName) {
 		code.add("#init#");
@@ -314,5 +298,10 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 	@Override
 	public String getInitialValue() {
 		return "null";
+	}
+
+	@Override
+	public Boolean hasComponent(String name) {
+		return components.containsKey(name);
 	}
 }

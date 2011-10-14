@@ -40,9 +40,6 @@ import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.IntermediateVertexPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.IsSubPathOf;
@@ -85,7 +82,7 @@ public class IntermediateVertexPathDescriptionEvaluator extends
 	}
 
 	@Override
-	public JValue evaluate() throws EvaluateException {
+	public NFA evaluate() {
 		IsSubPathOf inc = vertex.getFirstIsSubPathOfIncidence(EdgeDirection.IN);
 		PathDescriptionEvaluator firstEval = (PathDescriptionEvaluator) vertexEvalMarker
 				.getMark(inc.getAlpha());
@@ -97,8 +94,8 @@ public class IntermediateVertexPathDescriptionEvaluator extends
 		VertexEvaluator vertexEval = vertexEvalMarker.getMark(vertex
 				.getFirstIsIntermediateVertexOfIncidence(EdgeDirection.IN)
 				.getAlpha());
-		return new JValueImpl(NFA.createIntermediateVertexPathDescriptionNFA(
-				firstNFA, vertexEval, secondNFA));
+		return NFA.createIntermediateVertexPathDescriptionNFA(firstNFA,
+				vertexEval, secondNFA);
 	}
 
 	@Override
