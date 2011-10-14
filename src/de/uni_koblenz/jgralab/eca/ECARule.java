@@ -106,7 +106,6 @@ public class ECARule {
 	 */
 	private void setCondition(Condition condition) {
 		this.condition = condition;
-		condition.setRule(this);
 	}
 
 	/**

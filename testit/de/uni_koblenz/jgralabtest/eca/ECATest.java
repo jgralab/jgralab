@@ -13,6 +13,7 @@ import de.uni_koblenz.jgralab.eca.Action;
 import de.uni_koblenz.jgralab.eca.Condition;
 import de.uni_koblenz.jgralab.eca.ECARule;
 import de.uni_koblenz.jgralab.eca.ECARuleManager;
+import de.uni_koblenz.jgralab.eca.GreqlCondition;
 import de.uni_koblenz.jgralab.eca.PrintAction;
 import de.uni_koblenz.jgralab.eca.events.ChangeAttributeEventDescription;
 import de.uni_koblenz.jgralab.eca.events.ChangeEdgeEventDescription;
@@ -239,7 +240,7 @@ public class ECATest {
 		System.out.println("Test Condition:");
 		EventDescription aft_ev = new CreateVertexEventDescription(
 				EventDescription.EventTime.AFTER, NewMedia.class);
-		Condition aft_cond = new Condition("count( V{NewMedia} ) = 2");
+		Condition aft_cond = new GreqlCondition("count( V{NewMedia} ) = 2");
 		Action aft_act = new PrintAction(
 				"ECA Test Message: New Medium after Condition Test created. "
 						+ "This message should appear only once.");
@@ -331,7 +332,7 @@ public class ECATest {
 				.println("Test to create Users until an count of 20 is reached:");
 		EventDescription bef_ev = new CreateVertexEventDescription(
 				EventDescription.EventTime.AFTER, User.class);
-		Condition aft_cond = new Condition("count (V{User}) < 20");
+		Condition aft_cond = new GreqlCondition("count (V{User}) < 20");
 		Action bef_act = new CreateAVertexOfSameTypeAction();
 		ECARule bef_rule = new ECARule(bef_ev, aft_cond, bef_act);
 		ECARuleManager ecaRuleManager = (ECARuleManager) simlibgraph
@@ -391,7 +392,7 @@ public class ECATest {
 				.println("Test Action that reverts the change of an Edge if the condition is true:");
 		EventDescription aft_ev = new ChangeEdgeEventDescription(
 				EventDescription.EventTime.AFTER, Loans.class, EdgeEnd.ANY);
-		Condition aft_cond = new Condition(
+		Condition aft_cond = new GreqlCondition(
 				"startVertex(context).name = 'Martin King'");
 		Action aft_act = new RevertEdgeChangingAction();
 		ECARule aft_rule = new ECARule(aft_ev, aft_cond, aft_act);

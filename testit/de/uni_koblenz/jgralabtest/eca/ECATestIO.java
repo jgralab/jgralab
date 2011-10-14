@@ -17,6 +17,7 @@ import de.uni_koblenz.jgralab.eca.ECAIO;
 import de.uni_koblenz.jgralab.eca.ECAIOException;
 import de.uni_koblenz.jgralab.eca.ECARule;
 import de.uni_koblenz.jgralab.eca.ECARuleManager;
+import de.uni_koblenz.jgralab.eca.GreqlCondition;
 import de.uni_koblenz.jgralab.eca.PrintAction;
 import de.uni_koblenz.jgralab.eca.events.ChangeAttributeEventDescription;
 import de.uni_koblenz.jgralab.eca.events.ChangeEdgeEventDescription;
@@ -68,7 +69,7 @@ public class ECATestIO {
 
 		EventDescription aft_ev = new CreateVertexEventDescription(
 				EventDescription.EventTime.AFTER, NewMedia.class);
-		Condition aft_cond = new Condition("count( V{NewMedia} ) = 2");
+		Condition aft_cond = new GreqlCondition("count( V{NewMedia} ) = 2");
 		Action aft_act = new PrintAction(
 				"ECA Test Message: New Medium after Condition Test created. "
 						+ "This message should appear only once.");
@@ -214,7 +215,7 @@ public class ECATestIO {
 
 		EventDescription aft_ev = new ChangeEdgeEventDescription(
 				EventDescription.EventTime.AFTER, Loans.class, EdgeEnd.ANY);
-		Condition aft_cond = new Condition(
+		Condition aft_cond = new GreqlCondition(
 				"startVertex(context).name = 'Stephanie Plum'");
 		Action aft_act = new RevertEdgeChangingAction();
 		ECARule aft_rule = new ECARule(aft_ev, aft_cond, aft_act);
