@@ -1,29 +1,29 @@
 /*
  * JGraLab - The Java Graph Laboratory
- * 
+ *
  * Copyright (C) 2006-2011 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- * 
+ *
  * For bug reports, documentation and further information, visit
- * 
+ *
  *                         http://jgralab.uni-koblenz.de
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
+ *
  * Additional permission under GNU GPL version 3 section 7
- * 
+ *
  * If you modify this Program, or any covered work, by linking or combining
  * it with Eclipse (or a modified version of that program or an Eclipse
  * plugin), containing parts covered by the terms of the Eclipse Public
@@ -73,7 +73,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#getBrowsingInfo()
 	 */
 	@Override
@@ -83,7 +83,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.jvalue.JValue#setBrowsingInfo(de.uni_koblenz
 	 * .jgralab.AttributedElement)
@@ -96,7 +96,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.jvalue.JValue#accept(de.uni_koblenz.jgralab
 	 * .greql2.jvalue.JValueVisitor)
@@ -198,7 +198,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#getType()
 	 */
 	@Override
@@ -214,7 +214,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#isValid()
 	 */
 	@Override
@@ -233,19 +233,22 @@ public class JValueImpl implements JValue {
 			JValueImpl anotherValue = (JValueImpl) anObject;
 			if (this.value == null) {
 				return anotherValue.value == null;
-			} else {
-				if ((anotherValue.type == this.type)
-						|| (anotherValue.type == JValueType.OBJECT)
-						|| (this.type == JValueType.OBJECT)) {
-					return value.equals(anotherValue.value);
-				} else if (
-				// In GReQL enum values can only specified as string for
-				// comparison
-				((this.type == JValueType.ENUMVALUE) && (anotherValue.type == JValueType.STRING))
-						|| ((this.type == JValueType.STRING) && (anotherValue.type == JValueType.ENUMVALUE))) {
-					return value.toString().equals(
-							anotherValue.value.toString());
-				}
+			} else if ((anotherValue.type == JValueType.EDGE)
+					&& (type == JValueType.EDGE)) {
+				Edge t = (Edge) value;
+				Edge o = (Edge) anotherValue.value;
+				return t.getNormalEdge().equals(o.getNormalEdge());
+			} else if ((anotherValue.type == this.type)
+					|| (anotherValue.type == JValueType.OBJECT)
+					|| (this.type == JValueType.OBJECT)) {
+				return value.equals(anotherValue.value);
+			} else if (
+			// In GReQL enum values can only specified as string for
+			// comparison
+			((this.type == JValueType.ENUMVALUE) && (anotherValue.type == JValueType.STRING))
+					|| ((this.type == JValueType.STRING) && (anotherValue.type == JValueType.ENUMVALUE))) {
+				return value.toString().equals(anotherValue.value.toString());
+
 			}
 		}
 		return false;
@@ -253,15 +256,15 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#hashCode()
 	 */
 	@Override
 	public int hashCode() {
 		if (storedHashCode == 0) {
 			storedHashCode = 7;
-			storedHashCode = 31 * storedHashCode + JValueImpl.class.hashCode();
-			storedHashCode = 31 * storedHashCode
+			storedHashCode = (31 * storedHashCode) + JValueImpl.class.hashCode();
+			storedHashCode = (31 * storedHashCode)
 					+ (value == null ? 0 : value.hashCode());
 		}
 		return storedHashCode;
@@ -269,7 +272,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#isPath()
 	 */
 	@Override
@@ -279,7 +282,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#toPath()
 	 */
 	@Override
@@ -289,7 +292,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#isPathSystem()
 	 */
 	@Override
@@ -299,7 +302,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#toPathSystem()
 	 */
 	@Override
@@ -309,7 +312,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#toSlice()
 	 */
 	@Override
@@ -342,7 +345,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.jvalue.JValue#isAttributedElementClass()
 	 */
@@ -353,7 +356,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.jvalue.JValue#toAttributedElementClass()
 	 */
@@ -368,7 +371,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#isJValueTypeCollection()
 	 */
 	@Override
@@ -378,7 +381,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#toJValueTypeCollection()
 	 */
 	@Override
@@ -392,7 +395,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#isAttributedElement()
 	 */
 	@Override
@@ -402,7 +405,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#toAttributedElement()
 	 */
 	@Override
@@ -436,7 +439,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#isBoolean()
 	 */
 	@Override
@@ -446,7 +449,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#toBoolean()
 	 */
 	@Override
@@ -459,7 +462,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#isInteger()
 	 */
 	@Override
@@ -469,7 +472,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#isNumber()
 	 */
 	@Override
@@ -479,7 +482,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#toInteger()
 	 */
 	@Override
@@ -529,7 +532,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#isLong()
 	 */
 	@Override
@@ -539,7 +542,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#toLong()
 	 */
 	@Override
@@ -577,7 +580,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#isDouble()
 	 */
 	@Override
@@ -587,7 +590,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#toDouble()
 	 */
 	@Override
@@ -627,7 +630,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#isString()
 	 */
 	@Override
@@ -637,7 +640,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#toString()
 	 */
 	@Override
@@ -672,7 +675,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#isEnum()
 	 */
 	@Override
@@ -682,7 +685,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#toEnum()
 	 */
 	@Override
@@ -695,7 +698,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#isVertex()
 	 */
 	@Override
@@ -705,7 +708,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#toVertex()
 	 */
 	@Override
@@ -738,7 +741,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#isEdge()
 	 */
 	@Override
@@ -748,7 +751,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#toEdge()
 	 */
 	@Override
@@ -801,7 +804,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#isGraph()
 	 */
 	@Override
@@ -811,7 +814,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#toGraph()
 	 */
 	@Override
@@ -836,7 +839,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#isNFA()
 	 */
 	@Override
@@ -846,7 +849,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#toNFA()
 	 */
 	@Override
@@ -879,7 +882,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#isObject()
 	 */
 	@Override
@@ -889,7 +892,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#toObject()
 	 */
 	@Override
@@ -902,7 +905,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#isCollection()
 	 */
 	@Override
@@ -912,7 +915,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#isMap()
 	 */
 	@Override
@@ -922,7 +925,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#toCollection()
 	 */
 	@Override
@@ -932,7 +935,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#toJValueSet()
 	 */
 	@Override
@@ -942,7 +945,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#toJValueTable()
 	 */
 	@Override
@@ -952,7 +955,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#toJValueList()
 	 */
 	@Override
@@ -962,7 +965,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#toJValueMap()
 	 */
 	@Override
@@ -972,7 +975,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#toJValueTuple()
 	 */
 	@Override
@@ -982,7 +985,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#toJValueRecord()
 	 */
 	@Override
@@ -1006,7 +1009,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.jvalue.JValue#isSubgraphTempAttribute()
 	 */
@@ -1017,7 +1020,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.jvalue.JValue#toSubgraphTempAttribute()
 	 */
@@ -1031,7 +1034,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.jvalue.JValue#canConvert(de.uni_koblenz
 	 * .jgralab.greql2.jvalue.JValueType)
@@ -1043,7 +1046,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.jvalue.JValue#conversionCosts(de.uni_koblenz
 	 * .jgralab.greql2.jvalue.JValueType)
@@ -1138,7 +1141,7 @@ public class JValueImpl implements JValue {
 	 * encapsulates the given object in a jvalue. Doesn't create an
 	 * object-jvalue per default but tries to determine the class of the object.
 	 * Use it with care, because it's slow....
-	 * 
+	 *
 	 * @param o
 	 *            the object to encapsulte
 	 * @return the encapsulated object
@@ -1215,7 +1218,7 @@ public class JValueImpl implements JValue {
 	 * encapsulates the given object in a jvalue. Doesn't create a object-jvalue
 	 * per default but tries to determine the class of the object. Use it with
 	 * care, because it's slow....
-	 * 
+	 *
 	 * @param o
 	 *            the object to encapsulte
 	 * @param browsingInfo
@@ -1230,7 +1233,7 @@ public class JValueImpl implements JValue {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.jvalue.JValue#toNumber()
 	 */
 	@Override
