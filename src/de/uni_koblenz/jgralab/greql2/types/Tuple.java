@@ -56,6 +56,23 @@ public class Tuple implements PSequence<Object> {
 	}
 
 	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		boolean first = true;
+		sb.append("(");
+		for (Object o : entries) {
+			if (first) {
+				first = false;
+			} else {
+				sb.append(", ");
+			}
+			sb.append(o);
+		}
+		sb.append(")");
+		return sb.toString();
+	}
+
+	@Override
 	public Object[] toArray() {
 		return entries.toArray();
 	}
@@ -134,7 +151,7 @@ public class Tuple implements PSequence<Object> {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null || !(obj instanceof Tuple)) {
+		if ((obj == null) || !(obj instanceof Tuple)) {
 			return false;
 		}
 		Tuple o = (Tuple) obj;
