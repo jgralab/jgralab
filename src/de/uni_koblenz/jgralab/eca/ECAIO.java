@@ -289,7 +289,11 @@ public class ECAIO {
 	 * @throws ECAIOException
 	 */
 	private void saveConditionToStream(Condition cond) throws ECAIOException {
-		writeToStream("with \"" + cond.getConditionExpression() + "\" ");
+		if(cond instanceof GreqlCondition){
+			writeToStream("with \"" + ((GreqlCondition)cond).getConditionExpression() + "\" ");
+		}else {
+			writeToStream("with class"+cond.getClass().getName());
+		}
 	}
 
 	/**
@@ -678,8 +682,28 @@ public class ECAIO {
 			return null;
 		} else if (isMatching(currentToken, "with")) {
 			String condexpr = nextToken();
-			match("do");
-			return new Condition(condexpr);
+			if(condexpr.equals("class")){
+				condexpr = nextToken();
+				Condition cond;
+				try {
+					Class<?> conditionclass = Class.forName(currentToken);
+					cond =  (Condition) conditionclass.newInstance();
+				} catch (ClassNotFoundException e) {
+					throw new ECAIOException("Specified Condition " + currentToken
+							+ " not found.");
+				} catch (InstantiationException e) {
+					throw new ECAIOException("Error while instanciating Condition "
+							+ currentToken);
+				} catch (IllegalAccessException e) {
+					throw new ECAIOException("Error while instanciating Condition "
+							+ currentToken);
+				}
+				match("do");
+				return cond;
+			}else{
+				match("do");
+				return new GreqlCondition(condexpr);
+			}
 		} else {
 			throw new ECAIOException(
 					"Parsing Error. Expected \"do\" or \"with\". Found: \""
