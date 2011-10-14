@@ -290,9 +290,9 @@ public class ECAIO {
 	 */
 	private void saveConditionToStream(Condition cond) throws ECAIOException {
 		if(cond instanceof GreqlCondition){
-			writeToStream("with \"" + ((GreqlCondition)cond).getConditionExpression() + "\" ");
+			writeToStream(" with \"" + ((GreqlCondition)cond).getConditionExpression() + "\" ");
 		}else {
-			writeToStream("with class"+cond.getClass().getName());
+			writeToStream(" with class "+cond.getClass().getName()+" ");
 		}
 	}
 
@@ -686,7 +686,8 @@ public class ECAIO {
 				condexpr = nextToken();
 				Condition cond;
 				try {
-					Class<?> conditionclass = Class.forName(currentToken);
+					System.out.println("classname: "+condexpr);
+					Class<?> conditionclass = Class.forName(condexpr);
 					cond =  (Condition) conditionclass.newInstance();
 				} catch (ClassNotFoundException e) {
 					throw new ECAIOException("Specified Condition " + currentToken

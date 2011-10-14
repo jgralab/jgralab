@@ -27,6 +27,7 @@ import de.uni_koblenz.jgralabtest.eca.useractions.CreateAVertexOfSameTypeAction;
 import de.uni_koblenz.jgralabtest.eca.useractions.PrintNewAndOldAttributeValueAction;
 import de.uni_koblenz.jgralabtest.eca.useractions.RevertEdgeChangingAction;
 import de.uni_koblenz.jgralabtest.eca.useractions.RevertEdgeChangingOnHighesLevelAction;
+import de.uni_koblenz.jgralabtest.eca.userconditions.IsGreaterThan2012;
 import de.uni_koblenz.jgralabtest.schemas.eca.simplelibrary.Book;
 import de.uni_koblenz.jgralabtest.schemas.eca.simplelibrary.Date;
 import de.uni_koblenz.jgralabtest.schemas.eca.simplelibrary.Library;
@@ -429,7 +430,47 @@ public class ECATest {
 
 		System.out.println();
 	}
+	
+	@Test
+	public void testUserCondition1(){
+		System.out.println("Test Condition if the new set year of Magazin is greater than 2012.");
+		EventDescription aft_ev = new ChangeAttributeEventDescription(
+				EventDescription.EventTime.AFTER, Magazin.class, "year");
+		Condition cond = new IsGreaterThan2012();
+		Action act = new PrintAction("new year is greater than 2012");
+		ECARule aft_rule = new ECARule(aft_ev, cond,act);
+		ECARuleManager ecaRuleManager = (ECARuleManager) simlibgraph
+				.getECARuleManager();
+		ecaRuleManager.addECARule(aft_rule);
+		
+		simlibgraph.getFirstMagazin().set_year(2014);
+		
+		ecaRuleManager.deleteECARule(aft_rule);
 
+		System.out.println();
+	}
+
+	@Test
+	public void testUserCondition2(){
+		System.out.println("Test Condition if the new set year of Magazin is greater than 2012.");
+		EventDescription aft_ev = new ChangeAttributeEventDescription(
+				EventDescription.EventTime.AFTER, Magazin.class, "year");
+		Condition cond = new IsGreaterThan2012();
+		Action act = new PrintAction("new year is greater than 2012");
+		ECARule aft_rule = new ECARule(aft_ev, cond,act);
+		ECARuleManager ecaRuleManager = (ECARuleManager) simlibgraph
+				.getECARuleManager();
+		ecaRuleManager.addECARule(aft_rule);
+		
+		simlibgraph.getFirstMagazin().set_year(2001);
+		
+		ecaRuleManager.deleteECARule(aft_rule);
+
+		System.out.println();
+	}
+
+	
+	
 	static void initGraph() {
 		SimpleLibraryGraph graph = SimpleLibrarySchema.instance()
 				.createSimpleLibraryGraph();

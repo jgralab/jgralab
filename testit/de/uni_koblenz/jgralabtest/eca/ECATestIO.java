@@ -26,6 +26,7 @@ import de.uni_koblenz.jgralab.eca.events.CreateVertexEventDescription;
 import de.uni_koblenz.jgralab.eca.events.DeleteVertexEventDescription;
 import de.uni_koblenz.jgralab.eca.events.EventDescription;
 import de.uni_koblenz.jgralabtest.eca.useractions.RevertEdgeChangingAction;
+import de.uni_koblenz.jgralabtest.eca.userconditions.IsGreaterThan2012;
 import de.uni_koblenz.jgralabtest.schemas.eca.simplelibrary.Book;
 import de.uni_koblenz.jgralabtest.schemas.eca.simplelibrary.Date;
 import de.uni_koblenz.jgralabtest.schemas.eca.simplelibrary.Library;
@@ -258,6 +259,50 @@ public class ECATestIO {
 		System.out.println();
 	}
 
+	@Test
+	public void saveRuleWithOwnCondition(){
+		System.out.println("Save rule with own Condition.");
+		EventDescription aft_ev = new ChangeAttributeEventDescription(
+				EventDescription.EventTime.AFTER, Magazin.class, "year");
+		Condition cond = new IsGreaterThan2012();
+		Action act = new PrintAction("new year is greater than 2012");
+		ECARule aft_rule = new ECARule(aft_ev, cond,act);
+		
+		ArrayList<ECARule> rules = new ArrayList<ECARule>();
+		rules.add(aft_rule);
+		try {
+			ECAIO.saveECArules(simlibgraph.getSchema(), FOLDER_FOR_RULE_FILES
+					+ "testSaveRules5.eca", rules);
+		} catch (ECAIOException e) {
+			e.printStackTrace();
+			assert false;
+		}
+
+		System.out.println();
+	}
+	@Test
+	public void loadRuleWithOwnCondition() {
+		System.out.println("Load rule with own condition.");
+
+		List<ECARule> rules = null;
+		try {
+			rules = ECAIO.loadECArules(simlibgraph.getSchema(),
+					FOLDER_FOR_RULE_FILES + "testSaveRules5.eca");
+		} catch (ECAIOException e) {
+			e.printStackTrace();
+			assert false;
+		}
+		ECARuleManager ecaRuleManager = (ECARuleManager) simlibgraph
+				.getECARuleManager();
+		ecaRuleManager.addECARule(rules.get(0));
+
+		simlibgraph.getFirstMagazin().set_year(2013);
+
+		ecaRuleManager.deleteECARule(rules.get(0));
+
+		System.out.println();
+	}
+	
 	/**
 	 * Create the Graph for testing
 	 */
