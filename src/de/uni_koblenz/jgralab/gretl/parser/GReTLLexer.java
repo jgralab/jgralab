@@ -102,12 +102,13 @@ public class GReTLLexer {
 			nextPossibleToken.append(transformText.charAt(position++));
 		}
 		String tokenText = nextPossibleToken.toString();
+		// System.out.println(tokenText);
 		return new Token(TokenTypes.IDENT, tokenText, start, position);
 	}
 
 	/**
 	 * Skip
-	 * 
+	 *
 	 * @param separator
 	 * @return
 	 */
@@ -150,7 +151,7 @@ public class GReTLLexer {
 				position++;
 			}
 			// skip single line comments
-			if ((position < transformText.length() - 2)
+			if ((position < (transformText.length() - 2))
 					&& (transformText.substring(position, position + 2)
 							.equals("//"))) {
 				position++;
@@ -164,11 +165,11 @@ public class GReTLLexer {
 				}
 			}
 			// skip multiline comments
-			if ((position < transformText.length() - 4)
+			if ((position < (transformText.length() - 4))
 					&& (transformText.substring(position, position + 2)
 							.equals("/*"))) {
 				position++;
-				while ((position < transformText.length() - 1)
+				while ((position < (transformText.length() - 1))
 						&& (transformText.substring(position, position + 2)
 								.equals("*/"))) {
 					position++;
@@ -181,9 +182,9 @@ public class GReTLLexer {
 			}
 		} while (((position < transformText.length()) && (Character
 				.isWhitespace(transformText.charAt(position))))
-				|| ((position < transformText.length() - 2) && (transformText
+				|| ((position < (transformText.length() - 2)) && (transformText
 						.substring(position, position + 2).equals("//")))
-				|| ((position < transformText.length() - 4) && (transformText
+				|| ((position < (transformText.length() - 4)) && (transformText
 						.substring(position, position + 2).equals("/*"))));
 	}
 

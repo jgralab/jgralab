@@ -58,6 +58,7 @@ public class ExecuteTransformation extends Transformation<Graph> {
 
 	static {
 		registerTransformation(AddMappings.class);
+		registerTransformation(AddSourceGraph.class);
 		registerTransformation(AddSubClass.class);
 		registerTransformation(AddSubClasses.class);
 		registerTransformation(AddSuperClass.class);
@@ -385,7 +386,7 @@ public class ExecuteTransformation extends Transformation<Graph> {
 
 	/**
 	 * concrete syntax for string arrays: (val1, val2, ...)
-	 * 
+	 *
 	 * @return an array of identifiers
 	 */
 	public String[] matchIdentifierArray() {
