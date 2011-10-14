@@ -1,6 +1,6 @@
 ;;; greql-mode.el --- Major mode for editing GReQL2 and GReTL files with emacs
 
-;; Copyright (C) 2007, 2008, 2009, 2010 by Tassilo Horn
+;; Copyright (C) 2007, 2008, 2009, 2010, 2011 by Tassilo Horn
 
 ;; Author: Tassilo Horn <horn@uni-koblenz.de>
 
@@ -22,9 +22,6 @@
 
 ;; Major mode for editing GReQL2 files with Emacs and executing queries.  Also
 ;; some stuff for editing GReTL transformations.
-
-;;; Version:
-;; $Revision$
 
 ;;* Code
 
@@ -898,7 +895,8 @@ for editing GReTL transformations."
   (let ((regex
 	 (rx (or (or "<==" ":=" ";")
 		 (and bow
-		      (or "AddSubClass" "AddSubClasses"
+		      (or "AddSourceGraph"
+			  "AddSubClass" "AddSubClasses"
 			  "AddSuperClass" "AddSuperClasses"
 			  "Assert" "ExecuteTransformation"
 			  "CopyDomain"
