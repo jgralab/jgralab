@@ -41,14 +41,13 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.pcollections.ArrayPVector;
 import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
-import de.uni_koblenz.jgralab.greql2.funlib.And;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
@@ -163,7 +162,7 @@ public class OptimizerUtility {
 			Greql2Aggregation to) {
 		PVector<SourcePosition> toSourcePositions = to.get_sourcePositions();
 		if (toSourcePositions == null) {
-			toSourcePositions = ArrayPVector.empty();
+			toSourcePositions = JGraLab.vector();
 		}
 		for (SourcePosition sp : from.get_sourcePositions()) {
 			if (!toSourcePositions.contains(sp)) {
@@ -210,7 +209,7 @@ public class OptimizerUtility {
 	public static void createMissingSourcePositions(Greql2 graph) {
 		for (Greql2Aggregation aggr : graph.getGreql2AggregationEdges()) {
 			if (aggr.get_sourcePositions() == null) {
-				PVector<SourcePosition> l = ArrayPVector.empty();
+				PVector<SourcePosition> l = JGraLab.vector();
 				aggr.set_sourcePositions(l);
 			}
 		}

@@ -40,8 +40,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-
 /**
  * This class models a deterministic finite automaton. The automaton is not
  * really deterministic, because there may exist more than one transition at a
@@ -70,7 +68,7 @@ public class DFA extends FiniteAutomaton {
 	 * creates a new DFA from the given NFA. Removes all epsilon transitions and
 	 * uses Myhill-Construction to create the DFA out of the NFA.
 	 */
-	public DFA(NFA nfa) throws EvaluateException {
+	public DFA(NFA nfa) {
 		// count++;
 		finalStates = new ArrayList<State>();
 		transitionList = new ArrayList<Transition>();

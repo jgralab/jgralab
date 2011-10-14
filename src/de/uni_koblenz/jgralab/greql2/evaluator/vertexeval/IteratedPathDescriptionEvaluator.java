@@ -40,9 +40,6 @@ import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.IteratedPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.IterationType;
@@ -85,14 +82,14 @@ public class IteratedPathDescriptionEvaluator extends PathDescriptionEvaluator {
 	}
 
 	@Override
-	public JValue evaluate() throws EvaluateException {
+	public NFA evaluate() {
 		PathDescription p = (PathDescription) vertex
 				.getFirstIsIteratedPathOfIncidence(EdgeDirection.IN).getAlpha();
 		PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) vertexEvalMarker
 				.getMark(p);
 		NFA createdNFA = NFA.createIteratedPathDescriptionNFA(
 				pathEval.getNFA(), vertex.get_times() == IterationType.STAR);
-		return new JValueImpl(createdNFA);
+		return createdNFA;
 	}
 
 	@Override

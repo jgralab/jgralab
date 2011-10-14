@@ -37,12 +37,10 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.IsTypeRestrOf;
 import de.uni_koblenz.jgralab.greql2.schema.TypeId;
+import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 
 /**
  * This class is the base class for all VertexEvaluators, that construct an
@@ -60,25 +58,19 @@ public abstract class AbstractGraphElementCollectionEvaluator extends
 		super(eval);
 	}
 
-	private JValueTypeCollection typeCollection = null;
+	private TypeCollection typeCollection = null;
 
-	protected JValueTypeCollection getTypeCollection() throws EvaluateException {
+	protected TypeCollection getTypeCollection() {
 		if (typeCollection == null) {
-			typeCollection = new JValueTypeCollection();
+			typeCollection = new TypeCollection();
 			IsTypeRestrOf inc = ((Expression) getVertex())
 					.getFirstIsTypeRestrOfIncidence(EdgeDirection.IN);
 			while (inc != null) {
 				if (inc.getAlpha() instanceof TypeId) {
 					TypeIdEvaluator typeEval = (TypeIdEvaluator) vertexEvalMarker
 							.getMark(inc.getAlpha());
-					try {
-						typeCollection.addTypes(typeEval.getResult(subgraph)
-								.toJValueTypeCollection());
-					} catch (JValueInvalidTypeException ex) {
-						throw new EvaluateException(
-								"Result of TypeId was not a JValueTypeCollection",
-								ex);
-					}
+					typeCollection.addTypes((TypeCollection) typeEval
+							.getResult());
 				}
 				inc = inc.getNextIsTypeRestrOf(EdgeDirection.IN);
 			}

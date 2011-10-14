@@ -254,17 +254,6 @@ public final class PackageImpl extends NamedElementImpl implements Package {
 	}
 
 	@Override
-	public boolean equals(Object o) {
-		if (o instanceof Package) {
-			Package other = (Package) o;
-			return qualifiedName.equals(other.getQualifiedName())
-					&& getSchema().getQualifiedName().equals(
-							other.getSchema().getQualifiedName());
-		}
-		return false;
-	}
-
-	@Override
 	public String getUniqueName() {
 		return qualifiedName;
 	}

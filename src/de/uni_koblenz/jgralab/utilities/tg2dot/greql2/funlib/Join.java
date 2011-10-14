@@ -34,65 +34,25 @@
  */
 package de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib;
 
-import java.util.ArrayList;
+import org.pcollections.PCollection;
 
-import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.funlib.Greql2Function;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
+import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
-public class Join extends Greql2Function {
+public class Join extends Function {
 
-	{
-		JValueType[][] x = { { JValueType.STRING, JValueType.STRING,
-				JValueType.COLLECTION } };
-		signatures = x;
-
-		description = "Returns a string of joined element of a given collection and a delimiter.";
-
-		Category[] c = { Category.STRINGS };
-		categories = c;
+	public Join() {
+		super(
+				"Returns a string of joined element of a given delimiter and a collection.",
+				2, 1, 1.0, Category.STRINGS);
 	}
 
-	@Override
-	public JValue evaluate(Graph graph, SubGraphMarker subgraph,
-			JValue[] arguments) throws EvaluateException {
-
-		switch (checkArguments(arguments)) {
-		case 0:
-			StringBuilder builder = new StringBuilder(100);
-			String delimiter = arguments[0].toString();
-
-			JValueCollection collection = arguments[1].toCollection();
-
-			for (JValue value : collection) {
-				builder.append(value.toString());
-				builder.append(delimiter);
-			}
-
-			return new JValueImpl(builder.toString());
-		default:
-			throw new RuntimeException();
+	public String evaluate(String delim, PCollection<?> col) {
+		StringBuilder sb = new StringBuilder();
+		String d = "";
+		for (Object o : col) {
+			sb.append(d).append(o.toString());
+			d = delim;
 		}
+		return sb.toString();
 	}
-
-	@Override
-	public long getEstimatedCardinality(int inElements) {
-		return 1;
-	}
-
-	@Override
-	public long getEstimatedCosts(ArrayList<Long> inElements) {
-		return 1;
-	}
-
-	@Override
-	public double getSelectivity() {
-		return 1;
-	}
-
 }

@@ -70,9 +70,12 @@ CreateAttributes Address.street : String, Address.town : String
 // Geschwister
 CreateEdgeClass HasSibling from Person to Person
 <== from m1, m2: V{Member}
-    with m1 <> m2 and m1 <--{HasSon, HasDaughter} -->{HasSon, HasDaughter} m2
+    with id(m1) < id(m2) and m1 <--{HasSon, HasDaughter} -->{HasSon, HasDaughter} m2
+    reportSet set(m1, m2), m1, m2 end;
+    
+	// "horn" mathematics... replaced by id check above which only results in correct tuples ;)
     // We do not want to consider any order, so wrap it in sets.
-    reportSet set(set(m1, m2), m1, m2) end;
+    //reportSet set(set(m1, m2), m1, m2) end;
 
 AddSuperClass HasSibling HasRelative;
 

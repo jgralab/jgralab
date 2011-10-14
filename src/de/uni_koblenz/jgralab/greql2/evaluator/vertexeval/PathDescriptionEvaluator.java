@@ -36,16 +36,12 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 import de.uni_koblenz.jgralab.greql2.schema.IsGoalRestrOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsStartRestrOf;
 import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
+import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 
 /**
  * This is the base class for all path descriptions. It provides methods to add
@@ -77,9 +73,9 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 	/**
 	 * returns the nfa
 	 */
-	public NFA getNFA() throws EvaluateException {
+	public NFA getNFA() {
 		if (createdNFA == null) {
-			getResult(null);
+			getResult();
 		}
 		return createdNFA;
 	}
@@ -92,16 +88,12 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 	 * @return the result as jvalue
 	 */
 	@Override
-	public JValue getResult(SubGraphMarker subgraph) throws EvaluateException {
+	public Object getResult() {
 		if (createdNFA == null) {
 			result = evaluate();
-			try {
-				createdNFA = (NFA) result.toAutomaton();
-				addGoalRestrictions();
-				addStartRestrictions();
-			} catch (JValueInvalidTypeException ex) {
-				throw new EvaluateException("Error creating a Path NFA", ex);
-			}
+			createdNFA = (NFA) result;
+			addGoalRestrictions();
+			addStartRestrictions();
 		}
 		return result;
 	}
@@ -111,7 +103,7 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 	 * belong to this path descritpion and adds the transitions that accepts
 	 * them to the nfa
 	 */
-	protected void addGoalRestrictions() throws EvaluateException {
+	protected void addGoalRestrictions() {
 		PathDescription pathDesc = (PathDescription) getVertex();
 		VertexEvaluator goalRestEval = null;
 		IsGoalRestrOf inc = pathDesc
@@ -119,19 +111,13 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 		if (inc == null) {
 			return;
 		}
-		JValueTypeCollection typeCollection = new JValueTypeCollection();
+		TypeCollection typeCollection = new TypeCollection();
 		while (inc != null) {
 			VertexEvaluator vertexEval = vertexEvalMarker.getMark(inc
 					.getAlpha());
 			if (vertexEval instanceof TypeIdEvaluator) {
 				TypeIdEvaluator typeEval = (TypeIdEvaluator) vertexEval;
-				try {
-					typeCollection.addTypes(typeEval.getResult(null)
-							.toJValueTypeCollection());
-				} catch (JValueInvalidTypeException ex) {
-					throw new EvaluateException(
-							"Result of TypeId is not JValueTypeCollection", ex);
-				}
+				typeCollection.addTypes((TypeCollection) typeEval.getResult());
 			} else {
 				goalRestEval = vertexEval;
 			}
@@ -150,7 +136,7 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 	 * 
 	 * @return the generated list of types
 	 */
-	protected void addStartRestrictions() throws EvaluateException {
+	protected void addStartRestrictions() {
 		PathDescription pathDesc = (PathDescription) getVertex();
 		VertexEvaluator startRestEval = null;
 		IsStartRestrOf inc = pathDesc
@@ -158,19 +144,13 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 		if (inc == null) {
 			return;
 		}
-		JValueTypeCollection typeCollection = new JValueTypeCollection();
+		TypeCollection typeCollection = new TypeCollection();
 		while (inc != null) {
 			VertexEvaluator vertexEval = vertexEvalMarker.getMark(inc
 					.getAlpha());
 			if (vertexEval instanceof TypeIdEvaluator) {
 				TypeIdEvaluator typeEval = (TypeIdEvaluator) vertexEval;
-				try {
-					typeCollection.addTypes(typeEval.getResult(null)
-							.toJValueTypeCollection());
-				} catch (JValueInvalidTypeException ex) {
-					throw new EvaluateException(
-							"Result of TypeId is not JValueTypeCollection", ex);
-				}
+				typeCollection.addTypes((TypeCollection) typeEval.getResult());
 			} else {
 				startRestEval = vertexEval;
 			}

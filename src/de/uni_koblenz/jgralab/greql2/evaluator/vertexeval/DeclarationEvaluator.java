@@ -39,25 +39,19 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import de.uni_koblenz.jgralab.Edge;
+import org.pcollections.PVector;
+
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclaration;
 import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclarationLayer;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.IsConstraintOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsSimpleDeclOf;
 import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
-import de.uni_koblenz.jgralab.greql2.schema.SubgraphExpression;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
 
 /**
@@ -93,30 +87,7 @@ public class DeclarationEvaluator extends VertexEvaluator {
 	}
 
 	@Override
-	public JValue evaluate() throws EvaluateException {
-		SubGraphMarker newSubgraph = null;
-		Edge edge = vertex.getFirstIsSubgraphOfIncidence();
-		if (edge != null) {
-			SubgraphExpression subgraphExp = (SubgraphExpression) edge
-					.getAlpha();
-			if (subgraphExp != null) {
-				VertexEvaluator subgraphEval = vertexEvalMarker
-						.getMark(subgraphExp);
-				JValue tempAttribute = subgraphEval.getResult(subgraph);
-				if (tempAttribute.isGraphMarker()) {
-					try {
-						newSubgraph = tempAttribute.toGraphMarker();
-					} catch (JValueInvalidTypeException exception) {
-						throw new EvaluateException(
-								"Error evaluating a Declaration : "
-										+ exception.toString());
-					}
-				}
-			}
-		}
-		if (newSubgraph == null) {
-			newSubgraph = subgraph;
-		}
+	public VariableDeclarationLayer evaluate() {
 		ArrayList<VertexEvaluator> constraintList = new ArrayList<VertexEvaluator>();
 		for (IsConstraintOf consInc : vertex
 				.getIsConstraintOfIncidences(EdgeDirection.IN)) {
@@ -133,15 +104,16 @@ public class DeclarationEvaluator extends VertexEvaluator {
 			SimpleDeclaration simpleDecl = (SimpleDeclaration) inc.getAlpha();
 			SimpleDeclarationEvaluator simpleDeclEval = (SimpleDeclarationEvaluator) vertexEvalMarker
 					.getMark(simpleDecl);
-			JValue simpleResult = simpleDeclEval.getResult(newSubgraph);
-			JValueCollection resultCollection = simpleResult.toCollection();
-			for (JValue v : resultCollection) {
-				varDeclList.add((VariableDeclaration) v.toObject());
+			@SuppressWarnings("unchecked")
+			PVector<VariableDeclaration> resultCollection = (PVector<VariableDeclaration>) simpleDeclEval
+					.getResult();
+			for (VariableDeclaration v : resultCollection) {
+				varDeclList.add(v);
 			}
 		}
 		VariableDeclarationLayer declarationLayer = new VariableDeclarationLayer(
 				vertex, varDeclList, constraintList);
-		return new JValueImpl(declarationLayer);
+		return declarationLayer;
 	}
 
 	@Override

@@ -72,7 +72,6 @@ import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.utilities.tg2dot.dot.DotWriter;
@@ -611,14 +610,9 @@ public class Tg2Dot extends Tg2Whatever {
 		Map<String, String> evaluatedList = new HashMap<String, String>();
 
 		for (String attributeName : spec.getAttributeNames()) {
-			try {
-				String query = spec.getAttributeValue(attributeName);
-				String result = evaluator.evaluateToString(query);
-				evaluatedList.put(attributeName, result);
-			} catch (EvaluateException ex) {
-				throw new RuntimeException("Error: The query of attribute "
-						+ attributeName + " has produced an error!", ex);
-			}
+			String query = spec.getAttributeValue(attributeName);
+			String result = evaluator.evaluateToString(query);
+			evaluatedList.put(attributeName, result);
 		}
 		return evaluatedList;
 	}

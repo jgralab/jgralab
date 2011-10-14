@@ -43,9 +43,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
+import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -103,27 +101,16 @@ public class GreqlEvaluatorFacade {
 	 * Registers all known GReQL functions and disables the JGraLab log.
 	 */
 	static {
-		Greql2FunctionLibrary.instance().registerUserDefinedFunction(
-				ToDotString.class);
-		Greql2FunctionLibrary.instance()
-				.registerUserDefinedFunction(Join.class);
-		Greql2FunctionLibrary.instance().registerUserDefinedFunction(
-				AlphaRolename.class);
-		Greql2FunctionLibrary.instance().registerUserDefinedFunction(
-				AlphaIncidenceNumber.class);
-		Greql2FunctionLibrary.instance().registerUserDefinedFunction(
-				OmegaRolename.class);
-		Greql2FunctionLibrary.instance().registerUserDefinedFunction(
-				OmegaIncidenceNumber.class);
-		Greql2FunctionLibrary.instance().registerUserDefinedFunction(
-				FormatString.class);
-
-		Greql2FunctionLibrary.instance().registerUserDefinedFunction(
-				AbbreviateString.class);
-		Greql2FunctionLibrary.instance().registerUserDefinedFunction(
-				AttributeType.class);
-		Greql2FunctionLibrary.instance().registerUserDefinedFunction(
-				ShortenString.class);
+		FunLib.register(ToDotString.class);
+		FunLib.register(ShortenString.class);
+		FunLib.register(AlphaRolename.class);
+		FunLib.register(AlphaIncidenceNumber.class);
+		FunLib.register(OmegaRolename.class);
+		FunLib.register(OmegaIncidenceNumber.class);
+		FunLib.register(AbbreviateString.class);
+		FunLib.register(Join.class);
+		FunLib.register(FormatString.class);
+		FunLib.register(AttributeType.class);
 	}
 
 	/**
@@ -152,7 +139,7 @@ public class GreqlEvaluatorFacade {
 	public GreqlEvaluatorFacade(Graph graph) {
 		evaluator = new GreqlEvaluator((String) null, graph, null);
 		knownVariableHashCode = 0;
-		evaluator.setVariables(new HashMap<String, JValue>());
+		evaluator.setVariables(new HashMap<String, Object>());
 	}
 
 	/**
@@ -316,7 +303,7 @@ public class GreqlEvaluatorFacade {
 	 *            A GReQL-query as String.
 	 * @return A JValue.
 	 */
-	public JValue evaluate(String query) {
+	public Object evaluate(String query) {
 		query = getUsingString() + query;
 		evaluator.setQuery(query);
 
@@ -327,7 +314,7 @@ public class GreqlEvaluatorFacade {
 			throw parse;
 		}
 
-		JValue result = evaluator.getEvaluationResult();
+		Object result = evaluator.getResult();
 
 		GreqlEvaluator.DEBUG_DECLARATION_ITERATIONS = false;
 		GreqlEvaluator.DEBUG_OPTIMIZATION = false;
@@ -347,20 +334,6 @@ public class GreqlEvaluatorFacade {
 	}
 
 	/**
-	 * Sets the given value as variable of the {@link #evaluator}. <br>
-	 * <b>Note:</b> It will use the {@link JValueImpl#fromObject(Object)}.
-	 * 
-	 * @param name
-	 *            Name of the variable.
-	 * @param value
-	 *            A Generic as value.
-	 */
-	public <T> void setVariable(String name, T value) {
-		setVariable(name, JValueImpl.fromObject(value));
-
-	}
-
-	/**
 	 * Sets the given value as variable of the {@link #evaluator}.
 	 * 
 	 * @param name
@@ -368,7 +341,7 @@ public class GreqlEvaluatorFacade {
 	 * @param value
 	 *            {@link JValue} as value.
 	 */
-	private void setVariable(String name, JValue value) {
+	public void setVariable(String name, Object value) {
 		evaluator.setVariable(name, value);
 	}
 
@@ -381,7 +354,7 @@ public class GreqlEvaluatorFacade {
 	public void setVariablesWithGreqlValues(Map<String, String> variables) {
 
 		for (Entry<String, String> variableEntry : variables.entrySet()) {
-			JValue result = evaluate(variableEntry.getValue());
+			Object result = evaluate(variableEntry.getValue());
 			evaluator.setVariable(variableEntry.getKey(), result);
 		}
 	}

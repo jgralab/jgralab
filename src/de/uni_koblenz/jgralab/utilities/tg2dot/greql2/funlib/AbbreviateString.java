@@ -34,64 +34,17 @@
  */
 package de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib;
 
-import java.util.ArrayList;
+import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
-import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.funlib.Greql2Function;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
-
-public class AbbreviateString extends Greql2Function {
-
-	{
-		JValueType[][] x = { { JValueType.ATTRELEM, JValueType.STRING },
-				{ JValueType.STRING, JValueType.STRING } };
-		signatures = x;
-
-		description = "Returns an abbreviated String.";
-
-		Category[] c = { Category.STRINGS };
-		categories = c;
+public class AbbreviateString extends Function {
+	public AbbreviateString() {
+		super("Returns an abbreviated String.", Category.STRINGS);
 	}
 
-	@Override
-	public JValue evaluate(Graph graph, SubGraphMarker subgraph,
-			JValue[] arguments) throws EvaluateException {
-
-		switch (checkArguments(arguments)) {
-		case 0:
-		case 1:
-
-			String string = arguments[0].toString();
-
-			if (string != null && string.length() != 0) {
-				char firstCharacter = string.charAt(0);
-				string = firstCharacter + string.replaceAll("[a-z]+", "");
-			}
-
-			return new JValueImpl(string);
-
-		default:
-			throw new RuntimeException();
+	public String evaluate(String string) {
+		if (string != null && string.length() != 0) {
+			string = string.charAt(0) + string.replaceAll("[a-z]+", "");
 		}
+		return string;
 	}
-
-	@Override
-	public long getEstimatedCardinality(int inElements) {
-		return 1;
-	}
-
-	@Override
-	public long getEstimatedCosts(ArrayList<Long> inElements) {
-		return 1;
-	}
-
-	@Override
-	public double getSelectivity() {
-		return 1;
-	}
-
 }

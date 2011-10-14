@@ -113,6 +113,13 @@ public interface RecordDomain extends CompositeDomain {
 	public void addComponent(String name, Domain domain);
 
 	/**
+	 * @param name
+	 *            a component name
+	 * @return true if this RecordDomain has a coponent <code>name</code>
+	 */
+	public Boolean hasComponent(String name);
+
+	/**
 	 * Returns the standard-implementation-class (folder impl.std)
 	 * 
 	 * @return java representation of this attribute
@@ -121,4 +128,5 @@ public interface RecordDomain extends CompositeDomain {
 			String schemaRootPackagePrefix);
 
 	public Class<? extends Object> getM1Class();
+
 }

@@ -40,12 +40,9 @@ import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 import de.uni_koblenz.jgralab.greql2.schema.IsEdgeRestrOf;
 import de.uni_koblenz.jgralab.greql2.schema.SimplePathDescription;
+import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 
 /**
  * Evaluates a SimplePathDescription, that is something link v -->{isExprOf} w.
@@ -63,8 +60,8 @@ public class SimplePathDescriptionEvaluator extends
 	}
 
 	@Override
-	public JValue evaluate() throws EvaluateException {
-		JValueTypeCollection typeCollection = new JValueTypeCollection();
+	public NFA evaluate() {
+		TypeCollection typeCollection = new TypeCollection();
 		EdgeRestrictionEvaluator edgeRestEval = null;
 		VertexEvaluator predicateEvaluator = null;
 		for (IsEdgeRestrOf inc : vertex
@@ -78,7 +75,7 @@ public class SimplePathDescriptionEvaluator extends
 				getEdgeDirection(vertex), typeCollection,
 				getEdgeRoles(edgeRestEval), predicateEvaluator,
 				vertexEvalMarker);
-		return new JValueImpl(createdNFA);
+		return createdNFA;
 	}
 
 	@Override

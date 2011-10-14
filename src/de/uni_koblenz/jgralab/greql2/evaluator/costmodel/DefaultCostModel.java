@@ -80,10 +80,9 @@ import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VariableEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexSetExpressionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexSubgraphExpressionEvaluator;
-import de.uni_koblenz.jgralab.greql2.funlib.Greql2Function;
+import de.uni_koblenz.jgralab.greql2.funlib.Function;
 import de.uni_koblenz.jgralab.greql2.schema.AlternativePathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.BackwardVertexSet;
-import de.uni_koblenz.jgralab.greql2.schema.ListComprehension;
 import de.uni_koblenz.jgralab.greql2.schema.ConditionalExpression;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.EdgePathDescription;
@@ -113,6 +112,7 @@ import de.uni_koblenz.jgralab.greql2.schema.IsTrueExprOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsTypeRestrOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsValueExprOfConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.IteratedPathDescription;
+import de.uni_koblenz.jgralab.greql2.schema.ListComprehension;
 import de.uni_koblenz.jgralab.greql2.schema.ListConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.ListRangeConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.MapComprehension;
@@ -264,7 +264,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 			inc = inc.getNextIsArgumentOf(EdgeDirection.IN);
 		}
 
-		Greql2Function func = e.getGreql2Function();
+		Function func = e.getFunction();
 		if (func != null) {
 			return func.getEstimatedCardinality(elements);
 		} else {
@@ -300,8 +300,9 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 		if (startExpEval instanceof IntLiteralEvaluator) {
 			if (targetExpEval instanceof IntLiteralEvaluator) {
 				try {
-					range = targetExpEval.getResult(null).toInteger()
-							- startExpEval.getResult(null).toInteger() + 1;
+					range = ((Number) targetExpEval.getResult()).longValue()
+							- ((Number) startExpEval.getResult()).longValue()
+							+ 1;
 				} catch (Exception ex) {
 					// if an exception occurs, the default value is used, so no
 					// exceptionhandling is needed
@@ -477,8 +478,8 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 	 * de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
-	public VertexCosts calculateCostsListComprehension(ComprehensionEvaluator e,
-			GraphSize graphSize) {
+	public VertexCosts calculateCostsListComprehension(
+			ComprehensionEvaluator e, GraphSize graphSize) {
 		ListComprehension listComp = (ListComprehension) e.getVertex();
 		Declaration decl = (Declaration) listComp
 				.getFirstIsCompDeclOfIncidence().getAlpha();
@@ -680,7 +681,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 				p.getFirstIsExponentOfIncidence(EdgeDirection.IN).getAlpha());
 		if (expEval instanceof IntLiteralEvaluator) {
 			try {
-				exponent = expEval.getResult(null).toLong();
+				exponent = ((Number) expEval.getResult()).longValue();
 			} catch (Exception ex) {
 			}
 		}
@@ -745,7 +746,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 			inc = inc.getNextIsArgumentOf(EdgeDirection.IN);
 		}
 
-		Greql2Function func = e.getGreql2Function();
+		Function func = e.getFunction();
 		long ownCosts = func.getEstimatedCosts(elements);
 		long iteratedCosts = ownCosts * e.getVariableCombinations(graphSize);
 		long subtreeCosts = iteratedCosts + argCosts;
@@ -869,8 +870,9 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 		if (startExpEval instanceof IntLiteralEvaluator) {
 			if (targetExpEval instanceof IntLiteralEvaluator) {
 				try {
-					range = targetExpEval.getResult(null).toInteger()
-							- startExpEval.getResult(null).toInteger() + 1;
+					range = ((Number) targetExpEval.getResult()).longValue()
+							- ((Number) startExpEval.getResult()).longValue()
+							+ 1;
 				} catch (Exception ex) {
 					// if an exception occurs, the default value is used, so no
 					// exceptionhandling is needed
@@ -1350,7 +1352,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 	@Override
 	public double calculateSelectivityFunctionApplication(
 			FunctionApplicationEvaluator e, GraphSize graphSize) {
-		Greql2Function func = e.getGreql2Function();
+		Function func = e.getFunction();
 		if (func != null) {
 			return func.getSelectivity();
 		} else {

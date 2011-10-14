@@ -1,22 +1,23 @@
 package de.uni_koblenz.jgralab.gretl;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 
+import org.pcollections.Empty;
+import org.pcollections.PMap;
+import org.pcollections.PSequence;
+import org.pcollections.PVector;
+
 import de.uni_koblenz.jgralab.AttributedElement;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueMap;
 import de.uni_koblenz.jgralab.gretl.Context.TransformationPhase;
 import de.uni_koblenz.jgralab.schema.Attribute;
 
 public class SetMultipleAttributes extends
-		Transformation<List<Map<AttributedElement, Object>>> {
+		Transformation<PVector<PMap<AttributedElement, Object>>> {
 
 	private Attribute[] attributes = null;
-	private JValueMap archetype2valueMap = null;
+	private PMap<Object, PSequence<Object>> archetype2valuesMap = null;
 	private String semanticExpression = null;
 
 	public SetMultipleAttributes(Context c, String semanticExpression,
@@ -26,11 +27,11 @@ public class SetMultipleAttributes extends
 		this.semanticExpression = semanticExpression;
 	}
 
-	public SetMultipleAttributes(Context c, JValueMap arch2ValueMap,
-			Attribute... attrs) {
+	public SetMultipleAttributes(Context c,
+			PMap<Object, PSequence<Object>> arch2ValuesMap, Attribute... attrs) {
 		super(c);
 		attributes = attrs;
-		archetype2valueMap = arch2ValueMap;
+		archetype2valuesMap = arch2ValuesMap;
 	}
 
 	public static SetMultipleAttributes parseAndCreate(ExecuteTransformation et) {
@@ -41,36 +42,41 @@ public class SetMultipleAttributes extends
 	}
 
 	@Override
-	protected List<Map<AttributedElement, Object>> transform() {
+	protected PVector<PMap<AttributedElement, Object>> transform() {
 		if (context.phase != TransformationPhase.GRAPH) {
 			return null;
 		}
 
-		if (archetype2valueMap == null) {
-			archetype2valueMap = context.evaluateGReQLQuery(semanticExpression)
-					.toJValueMap();
+		if (archetype2valuesMap == null) {
+			archetype2valuesMap = context
+					.evaluateGReQLQuery(semanticExpression);
 		}
-		List<Map<AttributedElement, Object>> retLst = new LinkedList<Map<AttributedElement, Object>>();
-		ArrayList<JValueMap> lst = splice(archetype2valueMap);
+		PVector<PMap<AttributedElement, Object>> retLst = Empty.vector();
+		List<PMap<Object, Object>> lst = splice(archetype2valuesMap);
 		for (int i = 0; i < attributes.length; i++) {
-			retLst.add(new SetAttributes(context, attributes[i], lst.get(i))
-					.execute());
+			retLst = retLst.plus(new SetAttributes(context, attributes[i], lst
+					.get(i)).execute());
 		}
 		return retLst;
 	}
 
-	private ArrayList<JValueMap> splice(JValueMap archetype2valueMap2) {
-		ArrayList<JValueMap> funs = new ArrayList<JValueMap>();
-		for (@SuppressWarnings("unused")
-		Attribute attribute : attributes) {
-			funs.add(new JValueMap(archetype2valueMap2.size()));
+	private List<PMap<Object, Object>> splice(
+			PMap<Object, PSequence<Object>> arch2listOfAttrVals) {
+		List<PMap<Object, Object>> out = new ArrayList<PMap<Object, Object>>(
+				attributes.length);
+
+		for (int i = 0; i < attributes.length; i++) {
+			out.add(Empty.orderedMap());
 		}
-		for (Entry<JValue, JValue> e : archetype2valueMap2.entrySet()) {
+
+		for (Entry<Object, PSequence<Object>> e : arch2listOfAttrVals
+				.entrySet()) {
 			for (int i = 0; i < attributes.length; i++) {
-				funs.get(i)
-						.put(e.getKey(), e.getValue().toJValueTuple().get(i));
+				PMap<Object, Object> nm = out.get(i).plus(e.getKey(),
+						e.getValue().get(i));
+				out.set(i, nm);
 			}
 		}
-		return funs;
+		return out;
 	}
 }

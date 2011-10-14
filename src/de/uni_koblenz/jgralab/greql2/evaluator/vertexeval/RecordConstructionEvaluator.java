@@ -39,13 +39,11 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueRecord;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.IsRecordElementOf;
 import de.uni_koblenz.jgralab.greql2.schema.RecordConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.RecordElement;
+import de.uni_koblenz.jgralab.greql2.types.Record;
 
 /**
  * Evaluates a record construction, this is for instance rec( name:"element")
@@ -80,16 +78,16 @@ public class RecordConstructionEvaluator extends VertexEvaluator {
 	}
 
 	@Override
-	public JValue evaluate() throws EvaluateException {
-		JValueRecord resultRecord = new JValueRecord();
+	public Record evaluate() {
+		Record resultRecord = Record.empty();
 		IsRecordElementOf inc = vertex
 				.getFirstIsRecordElementOfIncidence(EdgeDirection.IN);
 		while (inc != null) {
 			RecordElement currentElement = (RecordElement) inc.getAlpha();
 			RecordElementEvaluator vertexEval = (RecordElementEvaluator) vertexEvalMarker
 					.getMark(currentElement);
-			resultRecord
-					.add(vertexEval.getId(), vertexEval.getResult(subgraph));
+			resultRecord = resultRecord.plus(vertexEval.getId(),
+					vertexEval.getResult());
 			inc = inc.getNextIsRecordElementOf(EdgeDirection.IN);
 		}
 		return resultRecord;

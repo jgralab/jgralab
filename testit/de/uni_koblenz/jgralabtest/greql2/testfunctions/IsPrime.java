@@ -40,12 +40,8 @@ import java.util.ArrayList;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
-import de.uni_koblenz.jgralab.greql2.funlib.Greql2Function;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
+import de.uni_koblenz.jgralab.greql2.funlib.Function;
+
 
 /**
  * Checks if the given number is a prime number.
@@ -74,22 +70,16 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  * @author ist@uni-koblenz.de
  */
-public class IsPrime extends Greql2Function {
-	{
-		JValueType[][] x = { { JValueType.LONG, JValueType.BOOL },
-				{ JValueType.LONG, JValueType.INT, JValueType.BOOL } };
-		signatures = x;
-
-		description = "Return true, if the given number is a prime number.\n"
-				+ "This function performs the Miller-Rabin pseudo primality\n"
-				+ "test. The optional second parameter $k$ is an integer that\n"
-				+ "specifies influences the probability of being a prime.\n"
-				+ "The chances of being prime is $1- (\\frac{1}{4})^k$.  The default\n"
-				+ "value of $k$ is 10.";
-
-		Category[] c = { Category.ARITHMETICS };
-		categories = c;
-	}
+public class IsPrime extends Function {
+	
+		public IsPrime(){
+			super("Return true, if the given number is a prime number.\n"
+					+ "This function performs the Miller-Rabin pseudo primality\n"
+					+ "test. The optional second parameter $k$ is an integer that\n"
+					+ "specifies influences the probability of being a prime.\n"
+					+ "The chances of being prime is $1- (\\frac{1}{4})^k$.  The default\n"
+					+ "value of $k$ is 10.", Category.ARITHMETICS);
+		}
 
 	/**
 	 * The costs for an isPrime function application.
@@ -173,30 +163,27 @@ public class IsPrime extends Greql2Function {
 		return true;
 	}
 
-	@Override
-	public JValue evaluate(Graph graph, SubGraphMarker subgraph,
-			JValue[] arguments) throws EvaluateException {
-		int noOfTestRuns = 10;
-		switch (checkArguments(arguments)) {
-		case 0:
-			break;
-		case 1:
-			noOfTestRuns = arguments[1].toInteger();
-			if (noOfTestRuns <= 0) {
-				throw new EvaluateException(
-						"isPrime's second argument must be positive!");
-			}
-			break;
-		default:
-			throw new WrongFunctionParameterException(this, arguments);
+	
+	public Boolean evaluate(Graph graph, SubGraphMarker subgraph,
+			Long number) throws EvaluateException{
+		
+		
+		if(number<2){
+			return false;
 		}
-		long number = arguments[0].toLong();
-
-		if (number < 2) {
-			return new JValueImpl(JValueBoolean.getFalseValue());
+		return isPrime(number,10);
+	}
+	
+	public Boolean evaluate(Graph graph, SubGraphMarker subgraph,
+			Long number, Integer noOfTestRuns) throws EvaluateException {
+		if (noOfTestRuns <= 0) {
+			throw new EvaluateException(
+					"isPrime's second argument must be positive!");
 		}
-
-		return new JValueImpl(isPrime(number, noOfTestRuns));
+		if(number < 2 ) {
+				return false;
+		}
+		return isPrime(number,noOfTestRuns);
 	}
 
 	@Override
