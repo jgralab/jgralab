@@ -2,7 +2,6 @@ package de.uni_koblenz.jgralab.gretl;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
-import de.uni_koblenz.jgralab.gretl.Context.TransformationPhase;
 import de.uni_koblenz.jgralab.gretl.parser.TokenTypes;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 
@@ -10,29 +9,37 @@ public class AddSourceGraph extends Transformation<Graph> {
 	private String alias = null;
 	private String graphFile = null;
 
-	public AddSourceGraph(String alias, String graphFileName) {
+	public AddSourceGraph(Context c, String alias, String graphFileName) {
+		super(c);
 		this.alias = alias;
 		graphFile = graphFileName;
 	}
 
-	public AddSourceGraph(String graphFileName) {
-		this(null, graphFileName);
+	public AddSourceGraph(Context c, String graphFileName) {
+		this(c, null, graphFileName);
 	}
 
 	public static AddSourceGraph parseAndCreate(ExecuteTransformation et) {
 		String alias = null;
 		if (et.tryMatchGraphAlias()) {
 			alias = et.matchGraphAlias();
+			// System.out.println("Matched alias " + alias);
 		}
 		String graphFile = et.match(TokenTypes.STRING).value;
-		return new AddSourceGraph(alias, graphFile);
+		// System.out.println("Matched file " + graphFile);
+		return new AddSourceGraph(et.context, alias, graphFile);
 	}
 
 	@Override
 	protected Graph transform() {
-		if (context.phase == TransformationPhase.SCHEMA) {
-			return null;
+		if (alias != null) {
+			if (context.getSourceGraph(alias) != null) {
+				return context.getSourceGraph(alias);
+			}
+		} else if (context.getSourceGraph() != null) {
+			return context.getSourceGraph();
 		}
+
 		Graph g;
 		try {
 			g = GraphIO.loadGraphFromFileWithStandardSupport(graphFile,
