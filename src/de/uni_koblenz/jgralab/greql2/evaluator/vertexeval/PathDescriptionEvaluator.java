@@ -1,29 +1,29 @@
 /*
  * JGraLab - The Java Graph Laboratory
- * 
+ *
  * Copyright (C) 2006-2011 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- * 
+ *
  * For bug reports, documentation and further information, visit
- * 
+ *
  *                         http://jgralab.uni-koblenz.de
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
+ *
  * Additional permission under GNU GPL version 3 section 7
- * 
+ *
  * If you modify this Program, or any covered work, by linking or combining
  * it with Eclipse (or a modified version of that program or an Eclipse
  * plugin), containing parts covered by the terms of the Eclipse Public
@@ -50,9 +50,9 @@ import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
  * because the method PathDescriptionEvaluator.getResult(...) automaticly adds
  * start- and goalrestrictions to the pathdescription, if a start or
  * goalrestriction exists.
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 
@@ -63,7 +63,7 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 
 	/**
 	 * Creates a new PathDescriptionEvaluator
-	 * 
+	 *
 	 * @param eval
 	 */
 	public PathDescriptionEvaluator(GreqlEvaluator eval) {
@@ -84,7 +84,7 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 	 * Returns the created NFA, encapsulated in a JValue The NFA for the path
 	 * description doesn't depend on the subgraph, so the getResult-Methode is
 	 * overwritten
-	 * 
+	 *
 	 * @return the result as jvalue
 	 */
 	@Override
@@ -121,7 +121,7 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 			} else {
 				goalRestEval = vertexEval;
 			}
-			inc = inc.getNextIsGoalRestrOf(EdgeDirection.IN);
+			inc = inc.getNextIsGoalRestrOfIncidence(EdgeDirection.IN);
 		}
 		NFA.addGoalTypeRestriction(getNFA(), typeCollection);
 		if (goalRestEval != null) {
@@ -133,7 +133,7 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 	/**
 	 * creates the lists of start and goal type restrictions from all
 	 * TypeId-Vertices that belong to this path descritpion
-	 * 
+	 *
 	 * @return the generated list of types
 	 */
 	protected void addStartRestrictions() {
@@ -154,7 +154,7 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 			} else {
 				startRestEval = vertexEval;
 			}
-			inc = inc.getNextIsStartRestrOf(EdgeDirection.IN);
+			inc = inc.getNextIsStartRestrOfIncidence(EdgeDirection.IN);
 		}
 		NFA.addStartTypeRestriction(getNFA(), typeCollection);
 		if (startRestEval != null) {

@@ -1,29 +1,29 @@
 /*
  * JGraLab - The Java Graph Laboratory
- * 
+ *
  * Copyright (C) 2006-2011 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- * 
+ *
  * For bug reports, documentation and further information, visit
- * 
+ *
  *                         http://jgralab.uni-koblenz.de
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
+ *
  * Additional permission under GNU GPL version 3 section 7
- * 
+ *
  * If you modify this Program, or any covered work, by linking or combining
  * it with Eclipse (or a modified version of that program or an Eclipse
  * plugin), containing parts covered by the terms of the Eclipse Public
@@ -169,9 +169,9 @@ import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
  * Software Architect (tm) into a TG schema file. The converter is based on a
  * SAX parser. As intermediate format, a grUML schema graph is created from the
  * XMI elements.
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class Rsa2Tg extends XmlProcessor {
 
@@ -402,7 +402,7 @@ public class Rsa2Tg extends XmlProcessor {
 	 * Processes an XMI-file to a TG-file as schema or a schema in a grUML
 	 * graph. For all command line options see
 	 * {@link Rsa2Tg#processCommandLineOptions(String[])}.
-	 * 
+	 *
 	 * @param args
 	 *            {@link String} array of command line options.
 	 * @throws IOException
@@ -465,7 +465,7 @@ public class Rsa2Tg extends XmlProcessor {
 	 * Processes all command line parameters and returns a {@link CommandLine}
 	 * object, which holds all values included in the given {@link String}
 	 * array.
-	 * 
+	 *
 	 * @param args
 	 *            {@link CommandLine} parameters.
 	 * @return {@link CommandLine} object, which holds all necessary values.
@@ -570,7 +570,7 @@ public class Rsa2Tg extends XmlProcessor {
 	/**
 	 * Creates a file path similar to the of <code>inputFile</code>, but with
 	 * the file extension '.rsa.tg'.
-	 * 
+	 *
 	 * @param file
 	 *            Is a File object, which is path used to created the new Path.
 	 * @return New generated Path with the extension '.rsa.tg'.
@@ -636,7 +636,7 @@ public class Rsa2Tg extends XmlProcessor {
 	/**
 	 * Processes a XML element and decides how to handle it in order to get a
 	 * {@link Schema} element.
-	 * 
+	 *
 	 * @throws XMLStreamException
 	 */
 	@Override
@@ -930,13 +930,13 @@ public class Rsa2Tg extends XmlProcessor {
 
 	/**
 	 * Processes a XML end element tags in order to set internal states.
-	 * 
+	 *
 	 * @param name
 	 *            Name of the XML element, which will be closed.
 	 * @param content
 	 *            StringBuilder object, which holds the contents of the current
 	 *            end element.
-	 * 
+	 *
 	 * @throws XMLStreamException
 	 */
 	@Override
@@ -1060,7 +1060,7 @@ public class Rsa2Tg extends XmlProcessor {
 	/**
 	 * Finalizes the created {@link SchemaGraph} by creating missing links
 	 * between several objects.
-	 * 
+	 *
 	 * @throws XMLStreamException
 	 * @throws GraphIOException
 	 */
@@ -1149,7 +1149,7 @@ public class Rsa2Tg extends XmlProcessor {
 	/**
 	 * Removes the GraphElementClasses in the Package <code>pkg</code> from the
 	 * schema graph, including subpackages.
-	 * 
+	 *
 	 * @param pkg
 	 *            a Package
 	 */
@@ -1221,7 +1221,7 @@ public class Rsa2Tg extends XmlProcessor {
 	/**
 	 * Removes all Attribute vertices of AttributedElementClass <code>aec</code>
 	 * from the schema graph
-	 * 
+	 *
 	 * @param aec
 	 */
 	private void removeAttributes(AttributedElementClass aec) {
@@ -1234,7 +1234,7 @@ public class Rsa2Tg extends XmlProcessor {
 
 	/**
 	 * Checks whether all Enumeration domains contain at least one literal.
-	 * 
+	 *
 	 * @throws ProcessingException
 	 *             if any enumeration is empty
 	 */
@@ -1312,7 +1312,7 @@ public class Rsa2Tg extends XmlProcessor {
 					(IncidenceClass) subClass.getFirstGoesToIncidence()
 							.getThat(), (IncidenceClass) superClass
 							.getFirstGoesToIncidence().getThat());
-			spec = spec.getNextSpecializesEdgeClassInGraph();
+			spec = spec.getNextSpecializesEdgeClass();
 		}
 
 		// Generalisation hierarchy is complete, now process redefinitions.
@@ -1424,7 +1424,7 @@ public class Rsa2Tg extends XmlProcessor {
 
 	/**
 	 * Writes a DOT file and a TG file out.
-	 * 
+	 *
 	 * @throws XMLStreamException
 	 * @throws GraphIOException
 	 */
@@ -1474,7 +1474,7 @@ public class Rsa2Tg extends XmlProcessor {
 
 	/**
 	 * Performs a graph validation and writes a report in a file.
-	 * 
+	 *
 	 * @param schemaName
 	 *            Name of the Schema.
 	 * @param relativePathPrefix
@@ -1507,7 +1507,7 @@ public class Rsa2Tg extends XmlProcessor {
 
 	/**
 	 * Creates a message for an unexpected element and includes its type.
-	 * 
+	 *
 	 * @param name
 	 *            Name of the unexpected element.
 	 * @param type
@@ -1523,7 +1523,7 @@ public class Rsa2Tg extends XmlProcessor {
 	/**
 	 * Handles a 'uml:Package' element by creating a corresponding grUML Package
 	 * element.
-	 * 
+	 *
 	 * @return Created Package object as Vertex.
 	 */
 	private Vertex handlePackage() throws XMLStreamException {
@@ -1538,7 +1538,7 @@ public class Rsa2Tg extends XmlProcessor {
 	/**
 	 * Handles a 'uml:Class' element by creating a corresponding grUML
 	 * {@link VertexClass} element.
-	 * 
+	 *
 	 * @param xmiId
 	 *            XMI ID in RSA XMI file.
 	 * @return Created VertexClass as {@link Vertex}.
@@ -1578,7 +1578,7 @@ public class Rsa2Tg extends XmlProcessor {
 	/**
 	 * Handles a 'uml:Association' or a 'uml:AssociationClass' element by
 	 * creating a corresponding {@link EdgeClass} element.
-	 * 
+	 *
 	 * @param xmiId
 	 *            XMI ID in XMI file.
 	 * @return Created EdgeClass as {@link Vertex}.
@@ -1685,7 +1685,7 @@ public class Rsa2Tg extends XmlProcessor {
 	/**
 	 * Handles a 'uml:Enumeration' element by creating a corresponding
 	 * {@link EnumDomain} element.
-	 * 
+	 *
 	 * @return Created EnumDomain as {@link Vertex}.
 	 * @throws XMLStreamException
 	 */
@@ -1714,7 +1714,7 @@ public class Rsa2Tg extends XmlProcessor {
 	/**
 	 * Handles a 'uml:PrimitiveType' element by creating a corresponding
 	 * {@link Domain} element.
-	 * 
+	 *
 	 * @return Created Domain as Vertex.
 	 */
 	private Vertex handlePrimitiveType(String xmiId) throws XMLStreamException {
@@ -1740,7 +1740,7 @@ public class Rsa2Tg extends XmlProcessor {
 	/**
 	 * Handles a 'uml:Realization' by putting it into a map of realizations. By
 	 * this, missing generalizations can be traced.
-	 * 
+	 *
 	 * @throws XMLStreamException
 	 */
 	private void handleRealization() throws XMLStreamException {
@@ -1759,7 +1759,7 @@ public class Rsa2Tg extends XmlProcessor {
 	 * Creates a String for a {@link AttributedElementClass} by writing the
 	 * AttributedElementClass name first and than a list of attributes with
 	 * their values of the AttributedElementClass.
-	 * 
+	 *
 	 * @param attributedElement
 	 *            {@link AttributedElement}, of which a {@link String}
 	 *            representation should be created.
@@ -1789,9 +1789,9 @@ public class Rsa2Tg extends XmlProcessor {
 	/**
 	 * Handles a 'uml:EnumerationLiteral' by creating a corresponding
 	 * enumeration literal and adding it to its {@link EnumDomain}.
-	 * 
+	 *
 	 * @param xmiId
-	 * 
+	 *
 	 * @throws XMLStreamException
 	 */
 	private void handleEnumerationLiteral() throws XMLStreamException {
@@ -1831,7 +1831,7 @@ public class Rsa2Tg extends XmlProcessor {
 
 	/**
 	 * Writes the current processed {@link Schema} as a Schema to a TG file.
-	 * 
+	 *
 	 * @param schemaName
 	 *            Name of the Schema.
 	 */
@@ -1898,7 +1898,7 @@ public class Rsa2Tg extends XmlProcessor {
 	/**
 	 * Attaches all Constraint objects to their corresponding
 	 * {@link AttributedElementClass}.
-	 * 
+	 *
 	 * @throws XMLStreamException
 	 */
 	private void attachConstraints() throws XMLStreamException {
@@ -2069,8 +2069,8 @@ public class Rsa2Tg extends XmlProcessor {
 			Domain n = d.getNextDomain();
 			// unused if in-degree of all but Annotates edges is <=1 (one
 			// incoming edge is the ContainsDomain edge from a Package)
-			if (d.getDegree(EdgeDirection.IN)
-					- d.getDegree(Annotates.class, EdgeDirection.IN) <= 1) {
+			if ((d.getDegree(EdgeDirection.IN)
+					- d.getDegree(Annotates.class, EdgeDirection.IN)) <= 1) {
 				// System.out.println("...remove unused domain '"
 				// + d.getQualifiedName() + "'");
 
@@ -2175,7 +2175,7 @@ public class Rsa2Tg extends XmlProcessor {
 	/**
 	 * Writes the {@link SchemaGraph} as Dotty-Graph to a DOT file with the name
 	 * of 'dotName'.
-	 * 
+	 *
 	 * @param dotName
 	 *            File name of the DOT output file.
 	 * @throws IOException
@@ -2191,7 +2191,7 @@ public class Rsa2Tg extends XmlProcessor {
 	/**
 	 * Writes the {@link SchemaGraph} as a Graph to a TG file with the specified
 	 * file name <code>schemaGraphName</code>.
-	 * 
+	 *
 	 * @param schemaGraphName
 	 *            File name of the TG output file.
 	 * @throws GraphIOException
@@ -2286,7 +2286,7 @@ public class Rsa2Tg extends XmlProcessor {
 
 	/**
 	 * Checks whether the edge class generalization hierarchy is acyclic.
-	 * 
+	 *
 	 * @return true iff the edge class generalization hierarchy is acyclic.
 	 */
 	private boolean edgeClassHierarchyIsAcyclic() {
@@ -2300,7 +2300,7 @@ public class Rsa2Tg extends XmlProcessor {
 
 	/**
 	 * Checks whether the vertex class generalization hierarchy is acyclic.
-	 * 
+	 *
 	 * @return true iff the vertex class generalization hierarchy is acyclic.
 	 */
 	private boolean vertexClassHierarchyIsAcyclic() {
@@ -2323,7 +2323,7 @@ public class Rsa2Tg extends XmlProcessor {
 		while (p != null) {
 			Package n = p.getNextPackage();
 			int commentCount = p.getDegree(Annotates.class);
-			if ((p.getDegree() - commentCount == 1)
+			if (((p.getDegree() - commentCount) == 1)
 					&& (p.get_qualifiedName().length() > 0)) {
 				System.out
 						.println("\t- empty package '"
@@ -2355,7 +2355,7 @@ public class Rsa2Tg extends XmlProcessor {
 	/**
 	 * Handles a {@link Constraint} by adding it to a preliminary {@link Map} of
 	 * Constraints and their ids.
-	 * 
+	 *
 	 * @param text
 	 *            Constraint as {@link String}.
 	 * @param line
@@ -2395,7 +2395,7 @@ public class Rsa2Tg extends XmlProcessor {
 	/**
 	 * Adds redefinesConstraint {@link String} objects to a specific
 	 * {@link Edge}.
-	 * 
+	 *
 	 * @param constrainedEnd
 	 *            Edge, to which all redefinesConstraint String objects will be
 	 *            added.
@@ -2446,7 +2446,7 @@ public class Rsa2Tg extends XmlProcessor {
 
 	/**
 	 * Adds a Greql constraint to a {@link AttributedElementClass} object.
-	 * 
+	 *
 	 * @param constrainedClass
 	 *            {@link AttributedElementClass}, which should be constraint.
 	 * @param text
@@ -2523,7 +2523,7 @@ public class Rsa2Tg extends XmlProcessor {
 	/**
 	 * Sets the upper bound of the multiplicity of an {@link Edge} as the 'max'
 	 * value of the current 'from' or 'to' Edge.
-	 * 
+	 *
 	 * @throws XMLStreamException
 	 */
 	private void handleUpperValue() throws XMLStreamException {
@@ -2544,7 +2544,7 @@ public class Rsa2Tg extends XmlProcessor {
 	/**
 	 * Retrieves the value of the 'value' attribute of the current XML element
 	 * and returns it.
-	 * 
+	 *
 	 * @throws XMLStreamException
 	 * @return Retrieved integer value.
 	 */
@@ -2557,7 +2557,7 @@ public class Rsa2Tg extends XmlProcessor {
 	/**
 	 * Sets the lower bound of the multiplicity of an {@link Edge} as the 'min'
 	 * value of the current 'from' or 'to' Edge.
-	 * 
+	 *
 	 * @throws XMLStreamException
 	 */
 	private void handleLowerValue() throws XMLStreamException {
@@ -2578,16 +2578,16 @@ public class Rsa2Tg extends XmlProcessor {
 	/**
 	 * Handles the stereotypes '<<graphclass>>', '<<record>>' and '<<abstract>>'
 	 * by taking the appropriate action for every stereotype.
-	 * 
+	 *
 	 * '<<graphclass>>': The GraphClass will get the qualified name and all edge
 	 * of the stereotyped class. The stereotyped class will be deleted.
-	 * 
+	 *
 	 * '<<record>>': A RecordDomain will be created and the qualified name and
 	 * all attributes will be transfered to it. The stereotyped class will be
 	 * deleted.
-	 * 
+	 *
 	 * '<<abstract>>': The stereotype will be set to abstract.
-	 * 
+	 *
 	 * @throws XMLStreamException
 	 */
 	private void handleStereotype() throws XMLStreamException {
@@ -2716,7 +2716,7 @@ public class Rsa2Tg extends XmlProcessor {
 
 	/**
 	 * Handles a 'generalization' XML element by marking the current class.
-	 * 
+	 *
 	 * @param parser
 	 *            {@link XMLStreamReader}, which points to the current XML
 	 *            element.
@@ -2734,7 +2734,7 @@ public class Rsa2Tg extends XmlProcessor {
 	/**
 	 * Handles a nested 'uml:PrimitivType' XML element by creating a
 	 * corresponding {@link Domain}.
-	 * 
+	 *
 	 * @param xmiId
 	 *            XMI id of corresponding attribute
 	 * @throws XMLStreamException
@@ -2789,7 +2789,7 @@ public class Rsa2Tg extends XmlProcessor {
 	 * Handles a 'ownedAttribute' XML element of type 'uml:Property' by creating
 	 * a {@link Attribute} and linking it with its
 	 * {@link AttributedElementClass}.
-	 * 
+	 *
 	 * @param parser
 	 *            {@link XMLStreamReader}, which points to the current XML
 	 *            element.
@@ -2879,7 +2879,7 @@ public class Rsa2Tg extends XmlProcessor {
 	/**
 	 * Handles a 'ownedEnd' XML element of type 'uml:Property' by creating an
 	 * appropriate {@link From} edge.
-	 * 
+	 *
 	 * @param xmiId
 	 * @throws XMLStreamException
 	 */
@@ -3045,7 +3045,7 @@ public class Rsa2Tg extends XmlProcessor {
 	/**
 	 * Reconnects all edges of an <code>oldVertex</code> to
 	 * <code>newVertex</code>.
-	 * 
+	 *
 	 * @param oldVertex
 	 *            Old {@link Vertex}, of which all edge should be reattached.
 	 * @param newVertex
@@ -3063,11 +3063,11 @@ public class Rsa2Tg extends XmlProcessor {
 	/**
 	 * Creates a Domain vertex corresponding to the specified
 	 * <code>typeName</code>.
-	 * 
+	 *
 	 * This vertex can also be a preliminary vertex which has to be replaced by
 	 * the correct Domain later. In this case, there is no "ContainsDomain"
 	 * edge, and the type is "StringDomain".
-	 * 
+	 *
 	 * @param typeName
 	 *            Describes the Domain, which should be created.
 	 * @return Created Domain.
@@ -3111,7 +3111,7 @@ public class Rsa2Tg extends XmlProcessor {
 				}
 			}
 
-			if ((p <= 0) || (p >= c.length - 1)) {
+			if ((p <= 0) || (p >= (c.length - 1))) {
 				throw new ProcessingException(getFileName(),
 						"Error in primitive type name: '" + typeName + "'");
 			}
@@ -3168,7 +3168,7 @@ public class Rsa2Tg extends XmlProcessor {
 	 * separated by a dot. If the top package is the default package, the name
 	 * <code>simpleName</code> is already the qualified name. If the package
 	 * stack is empty
-	 * 
+	 *
 	 * @param simpleName
 	 *            a simple name of a class or package
 	 * @return the qualified name for the simple name
@@ -3189,7 +3189,7 @@ public class Rsa2Tg extends XmlProcessor {
 
 	/**
 	 * <code>true</code> indicates, that the roles from edges should be used.
-	 * 
+	 *
 	 * @param useFromRole
 	 *            Value for the <code>useFromRole</code> flag.
 	 */
@@ -3200,7 +3200,7 @@ public class Rsa2Tg extends XmlProcessor {
 	/**
 	 * Will return <code>true</code>, if the roles from the from edge should be
 	 * used.
-	 * 
+	 *
 	 * @return Value of the <code>useFromRole</code> flag.
 	 */
 	public boolean isUseFromRole() {
@@ -3210,7 +3210,7 @@ public class Rsa2Tg extends XmlProcessor {
 	/**
 	 * <code>true</code> forces the removal of all unlinked {@link Domain}
 	 * objects.
-	 * 
+	 *
 	 * @param removeUnusedDomains
 	 *            Value of the <code>removeUnusedDomain</code> flag.
 	 */
@@ -3221,7 +3221,7 @@ public class Rsa2Tg extends XmlProcessor {
 	/**
 	 * Will return <code>true</code>, if unlinked {@link Domain} objects should
 	 * be removed in the last processing step.
-	 * 
+	 *
 	 * @return Value of the <code>removeUnusedDoimain</code> flag.
 	 */
 	public boolean isRemoveUnusedDomains() {
@@ -3231,7 +3231,7 @@ public class Rsa2Tg extends XmlProcessor {
 	/**
 	 * <code>true</code> indicates, that the navigability of edges should be
 	 * used.
-	 * 
+	 *
 	 * @param useNavigability
 	 *            Value for the <code>useNavigability</code> flag.
 	 */
@@ -3242,7 +3242,7 @@ public class Rsa2Tg extends XmlProcessor {
 	/**
 	 * Will return <code>true</code>, if the navigability of edges should be
 	 * used.
-	 * 
+	 *
 	 * @return Value of the <code>useNavigability</code> flag.
 	 */
 	public boolean isUseNavigability() {
@@ -3252,7 +3252,7 @@ public class Rsa2Tg extends XmlProcessor {
 	/**
 	 * Returns the {@link SchemaGraph}, which has been created after executing
 	 * {@link Rsa2Tg#process(String)}.
-	 * 
+	 *
 	 * @return Created SchemaGraph.
 	 */
 	public SchemaGraph getSchemaGraph() {
@@ -3261,7 +3261,7 @@ public class Rsa2Tg extends XmlProcessor {
 
 	/**
 	 * Determines whether or not all output will be suppressed.
-	 * 
+	 *
 	 * @param suppressOutput
 	 *            Value for the <code>suppressOutput</code> flag.
 	 */
@@ -3271,7 +3271,7 @@ public class Rsa2Tg extends XmlProcessor {
 
 	/**
 	 * Returns the file name of the TG Schema file.
-	 * 
+	 *
 	 * @return File name as {@link String}.
 	 */
 	public String getFilenameSchema() {
@@ -3280,7 +3280,7 @@ public class Rsa2Tg extends XmlProcessor {
 
 	/**
 	 * Sets the file name of the TG Schema file.
-	 * 
+	 *
 	 * @param filenameSchema
 	 *            File name as {@link String}.
 	 */
@@ -3290,7 +3290,7 @@ public class Rsa2Tg extends XmlProcessor {
 
 	/**
 	 * Returns the file name of the TG grUML SchemaGraph file.
-	 * 
+	 *
 	 * @return File name as {@link String}.
 	 */
 	public String getFilenameSchemaGraph() {
@@ -3299,7 +3299,7 @@ public class Rsa2Tg extends XmlProcessor {
 
 	/**
 	 * Sets the file name of the TG grUML SchemaGraph file.
-	 * 
+	 *
 	 * @param filenameSchemaGraph
 	 *            file name as {@link String}.
 	 */
@@ -3309,7 +3309,7 @@ public class Rsa2Tg extends XmlProcessor {
 
 	/**
 	 * Returns the file name of the DOT file.
-	 * 
+	 *
 	 * @return File name as {@link String}.
 	 */
 	public String getFilenameDot() {
@@ -3318,7 +3318,7 @@ public class Rsa2Tg extends XmlProcessor {
 
 	/**
 	 * Sets the file name of the DOT file.
-	 * 
+	 *
 	 * @param filenameDot
 	 *            File name as {@link String}.
 	 */
@@ -3328,7 +3328,7 @@ public class Rsa2Tg extends XmlProcessor {
 
 	/**
 	 * Returns the file name of the HTML validation file.
-	 * 
+	 *
 	 * @return File name as {@link String}.
 	 */
 	public String getFilenameValidation() {
@@ -3337,7 +3337,7 @@ public class Rsa2Tg extends XmlProcessor {
 
 	/**
 	 * Sets the file name of the HTML validation file.
-	 * 
+	 *
 	 * @param filenameValidation
 	 *            File name as {@link String}.
 	 */

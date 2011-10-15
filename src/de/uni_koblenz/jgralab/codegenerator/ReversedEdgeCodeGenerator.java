@@ -1,29 +1,29 @@
 /*
  * JGraLab - The Java Graph Laboratory
- * 
+ *
  * Copyright (C) 2006-2011 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- * 
+ *
  * For bug reports, documentation and further information, visit
- * 
+ *
  *                         http://jgralab.uni-koblenz.de
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
+ *
  * Additional permission under GNU GPL version 3 section 7
- * 
+ *
  * If you modify this Program, or any covered work, by linking or combining
  * it with Eclipse (or a modified version of that program or an Eclipse
  * plugin), containing parts covered by the terms of the Eclipse Public
@@ -45,9 +45,9 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
 
 /**
  * TODO add comment
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 
@@ -81,8 +81,8 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 			}
 
 			if (config.hasTypeSpecificMethodsSupport()) {
-				code.add(createNextEdgeInGraphMethods());
-				code.add(createNextEdgeAtVertexMethods());
+				code.add(createNextEdgeMethods());
+				code.add(createNextIncidenceMethods());
 			}
 			// code.add(createValidRolesMethod());
 		}
@@ -155,7 +155,7 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 		return null;
 	}
 
-	private CodeBlock createNextEdgeInGraphMethods() {
+	private CodeBlock createNextEdgeMethods() {
 		CodeList code = new CodeList();
 
 		TreeSet<AttributedElementClass> superClasses = new TreeSet<AttributedElementClass>();
@@ -167,17 +167,17 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 				continue;
 			}
 			EdgeClass ecl = (EdgeClass) ec;
-			code.addNoIndent(createNextEdgeInGraphMethod(ecl, false));
+			code.addNoIndent(createNextEdgeMethod(ecl, false));
 		}
 		return code;
 	}
 
-	private CodeBlock createNextEdgeInGraphMethod(EdgeClass ec,
+	private CodeBlock createNextEdgeMethod(EdgeClass ec,
 			boolean withTypeFlag) {
 		CodeSnippet code = new CodeSnippet(
 				true,
-				"public #ecName# getNext#ecCamelName#InGraph(#formalParams#) {",
-				"\treturn ((#ecName#)normalEdge).getNext#ecCamelName#InGraph(#actualParams#);",
+				"public #ecName# getNext#ecCamelName#(#formalParams#) {",
+				"\treturn ((#ecName#)normalEdge).getNext#ecCamelName#(#actualParams#);",
 				"}");
 
 		code.setVariable("ecName",
@@ -189,7 +189,7 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 		return code;
 	}
 
-	private CodeBlock createNextEdgeAtVertexMethods() {
+	private CodeBlock createNextIncidenceMethods() {
 		CodeList code = new CodeList();
 
 		TreeSet<AttributedElementClass> superClasses = new TreeSet<AttributedElementClass>();
@@ -202,22 +202,22 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 			}
 			addImports("#jgPackage#.EdgeDirection");
 			EdgeClass ecl = (EdgeClass) ec;
-			code.addNoIndent(createNextEdgeAtVertexMethod(ecl, false, false));
-			code.addNoIndent(createNextEdgeAtVertexMethod(ecl, true, false));
+			code.addNoIndent(createNextIncidenceMethod(ecl, false, false));
+			code.addNoIndent(createNextIncidenceMethod(ecl, true, false));
 			if (!ecl.isAbstract()) {
-				code.addNoIndent(createNextEdgeAtVertexMethod(ecl, false, true));
-				code.addNoIndent(createNextEdgeAtVertexMethod(ecl, true, true));
+				code.addNoIndent(createNextIncidenceMethod(ecl, false, true));
+				code.addNoIndent(createNextIncidenceMethod(ecl, true, true));
 			}
 		}
 		return code;
 	}
 
-	private CodeBlock createNextEdgeAtVertexMethod(EdgeClass ec,
+	private CodeBlock createNextIncidenceMethod(EdgeClass ec,
 			boolean withOrientation, boolean withTypeFlag) {
 
 		CodeSnippet code = new CodeSnippet(
 				true,
-				"public #ecName# getNext#ecCamelName#(#formalParams#) {",
+				"public #ecName# getNext#ecCamelName#Incidence(#formalParams#) {",
 				"\treturn (#ecName#)getNextIncidence(#ecName#.class#actualParams#);",
 				"}");
 		code.setVariable("ecName",

@@ -91,7 +91,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 		if (config.hasTypeSpecificMethodsSupport()
 				&& !currentCycle.isClassOnly()) {
 			code.add(createNextVertexMethods());
-			code.add(createFirstEdgeMethods());
+			code.add(createFirstIncidenceMethods());
 			code.add(rolenameGenerator.createRolenameMethods(currentCycle
 					.isStdOrDbImplOrTransImpl()));
 			code.add(createIncidenceIteratorMethods());
@@ -110,7 +110,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 	 *            if set to true, the method bodies will also be created
 	 * @return the CodeBlock that contains the methods
 	 */
-	private CodeBlock createFirstEdgeMethods() {
+	private CodeBlock createFirstIncidenceMethods() {
 		CodeList code = new CodeList();
 		VertexClass vc = (VertexClass) aec;
 		Set<EdgeClass> edgeClassSet = new HashSet<EdgeClass>();
@@ -140,8 +140,8 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 			}
 			addImports("#jgPackage#.EdgeDirection");
 			if (config.hasTypeSpecificMethodsSupport()) {
-				code.addNoIndent(createFirstEdgeMethod(ec, false));
-				code.addNoIndent(createFirstEdgeMethod(ec, true));
+				code.addNoIndent(createFirstIncidenceMethod(ec, false));
+				code.addNoIndent(createFirstIncidenceMethod(ec, true));
 			}
 		}
 		return code;
@@ -157,7 +157,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 	 *            toggles if the EdgeDirection-parameter will be created
 	 * @return the CodeBlock that contains the method
 	 */
-	private CodeBlock createFirstEdgeMethod(EdgeClass ec,
+	private CodeBlock createFirstIncidenceMethod(EdgeClass ec,
 			boolean withOrientation) {
 		CodeSnippet code = new CodeSnippet(true);
 		code.setVariable("ecQualifiedName", absoluteName(ec));

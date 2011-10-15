@@ -1,29 +1,29 @@
 /*
  * JGraLab - The Java Graph Laboratory
- * 
+ *
  * Copyright (C) 2006-2011 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- * 
+ *
  * For bug reports, documentation and further information, visit
- * 
+ *
  *                         http://jgralab.uni-koblenz.de
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
+ *
  * Additional permission under GNU GPL version 3 section 7
- * 
+ *
  * If you modify this Program, or any covered work, by linking or combining
  * it with Eclipse (or a modified version of that program or an Eclipse
  * plugin), containing parts covered by the terms of the Eclipse Public
@@ -60,9 +60,9 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
 /**
  * This is the base class for all VertexEvaluators which evaluate the vertices
  * in the GReQL Syntaxgraph
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public abstract class VertexEvaluator {
 	/**
@@ -186,7 +186,7 @@ public abstract class VertexEvaluator {
 
 	/**
 	 * Gets the result of the evaluation of this vertex on the given subgraph
-	 * 
+	 *
 	 * @return the evaluation result
 	 */
 	public Object getResult() {
@@ -264,7 +264,7 @@ public abstract class VertexEvaluator {
 	/**
 	 * This method must be overwritten by every subclass. It should call the
 	 * right method of the GreqlEvaluators costmodel.
-	 * 
+	 *
 	 * @return a 3-Tupel (ownCosts, iteratedCosts, subtreeCosts) of costs the
 	 *         evaluation of the subtree with this vertex as root causes
 	 */
@@ -276,7 +276,7 @@ public abstract class VertexEvaluator {
 	 * cost differ from the initialEvaluationCosts, because only for the first
 	 * evaluation, the result really gets evaluated, for all other evaluations,
 	 * the evaluated result only gets copied, these costs are 1
-	 * 
+	 *
 	 * @return the costs of this evaluation of the subtree the vertex this
 	 *         evaluator evaluates is root of
 	 */
@@ -292,7 +292,7 @@ public abstract class VertexEvaluator {
 	 * Calculates the costs the first evaluation of the subtree causes. These
 	 * cost differ from the second "evaluation", because for the second one, the
 	 * already evaluated result only gets copied, these costs are 1
-	 * 
+	 *
 	 * @return the costs of the first evaluation of the subgraph the vertex this
 	 *         evaluator evaluates is root of
 	 */
@@ -314,7 +314,7 @@ public abstract class VertexEvaluator {
 	/**
 	 * Get the costs for evaluating the associated vertex one time. No subtree
 	 * or iteration costs are taken into account.
-	 * 
+	 *
 	 * @param graphSize
 	 *            a {@link GraphSize} object indicating the size of the data-
 	 *            {@link Graph}
@@ -352,7 +352,7 @@ public abstract class VertexEvaluator {
 
 	/**
 	 * Calculates the set of variables this vertex depends on
-	 * 
+	 *
 	 * @return the set of variables this vertex depends on
 	 */
 	public Set<Variable> getNeededVariables() {
@@ -366,7 +366,7 @@ public abstract class VertexEvaluator {
 	 * Calculates the set of variables this vertex (or even a vertex in a
 	 * subgraph) defines and that is valid in the whole subtree with this vertex
 	 * as head.
-	 * 
+	 *
 	 * @return the set of variables this vertex defines and that are valid
 	 */
 	public Set<Variable> getDefinedVariables() {
@@ -440,7 +440,7 @@ public abstract class VertexEvaluator {
 		while (inc != null) {
 			List<SourcePosition> sourcePositions = inc.get_sourcePositions();
 			possibleSourcePositions.addAll(sourcePositions);
-			inc = inc.getNextGreql2Aggregation(EdgeDirection.OUT);
+			inc = inc.getNextGreql2AggregationIncidence(EdgeDirection.OUT);
 		}
 		return possibleSourcePositions;
 	}
@@ -467,7 +467,7 @@ public abstract class VertexEvaluator {
 		while (inc != null) {
 			List<SourcePosition> sourcePositions = inc.get_sourcePositions();
 			possibleSourcePositions.addAll(sourcePositions);
-			inc = inc.getNextGreql2Aggregation(EdgeDirection.OUT);
+			inc = inc.getNextGreql2AggregationIncidence(EdgeDirection.OUT);
 		}
 		if (possibleSourcePositions.size() == 0) {
 			return; // maybe the vertex is the root vertex, than it has no
@@ -482,9 +482,9 @@ public abstract class VertexEvaluator {
 				SourcePosition availablePosition = availableIter.next();
 				if ((availablePosition.get_offset() <= currentPosition
 						.get_offset())
-						&& (availablePosition.get_offset()
-								+ availablePosition.get_length() >= currentPosition
-								.get_offset() + currentPosition.get_length())) {
+						&& ((availablePosition.get_offset()
+								+ availablePosition.get_length()) >= (currentPosition
+								.get_offset() + currentPosition.get_length()))) {
 					accepted = true;
 					break;
 				}

@@ -1,29 +1,29 @@
 /*
  * JGraLab - The Java Graph Laboratory
- * 
+ *
  * Copyright (C) 2006-2011 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- * 
+ *
  * For bug reports, documentation and further information, visit
- * 
+ *
  *                         http://jgralab.uni-koblenz.de
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
+ *
  * Additional permission under GNU GPL version 3 section 7
- * 
+ *
  * If you modify this Program, or any covered work, by linking or combining
  * it with Eclipse (or a modified version of that program or an Eclipse
  * plugin), containing parts covered by the terms of the Eclipse Public
@@ -49,9 +49,9 @@ import de.uni_koblenz.jgralab.greql2.schema.IsAlternativePathOf;
 /**
  * Evaluates an alternative path description. Creates a NFA that accepts the
  * alternative path description.
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class AlternativePathDescriptionEvaluator extends
 		PathDescriptionEvaluator {
@@ -71,7 +71,7 @@ public class AlternativePathDescriptionEvaluator extends
 
 	/**
 	 * Creates a new IteratedPathDescriptionEvaluator for the given vertex
-	 * 
+	 *
 	 * @param eval
 	 *            the GreqlEvaluator instance this VertexEvaluator belong to
 	 * @param vertex
@@ -98,7 +98,7 @@ public class AlternativePathDescriptionEvaluator extends
 			PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) vertexEvalMarker
 					.getMark(inc.getAlpha());
 			nfaList.add(pathEval.getNFA());
-			inc = inc.getNextIsAlternativePathOf(EdgeDirection.IN);
+			inc = inc.getNextIsAlternativePathOfIncidence(EdgeDirection.IN);
 		}
 		return NFA.createAlternativePathDescriptionNFA(nfaList);
 	}
