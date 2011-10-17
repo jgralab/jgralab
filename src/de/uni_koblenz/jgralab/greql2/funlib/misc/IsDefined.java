@@ -11,7 +11,7 @@ public class IsDefined extends Function {
 		super("Returns true if $val$ is defined.", Category.DEBUGGING);
 	}
 
-	public Object evaluate(Object val) {
+	public Boolean evaluate(Object val) {
 		return !(val instanceof Undefined);
 	}
 }

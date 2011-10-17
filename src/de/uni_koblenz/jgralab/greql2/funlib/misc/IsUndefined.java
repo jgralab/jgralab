@@ -5,13 +5,13 @@ import de.uni_koblenz.jgralab.greql2.funlib.Function;
 import de.uni_koblenz.jgralab.greql2.types.Undefined;
 
 @AcceptsUndefinedArguments
-public class isUndefined extends Function {
+public class IsUndefined extends Function {
 
-	public isUndefined() {
+	public IsUndefined() {
 		super("Returns true if $val$ is undefined.", Category.DEBUGGING);
 	}
 
-	public Object evaluate(Object val) {
+	public Boolean evaluate(Object val) {
 		return (val instanceof Undefined);
 	}
 }
