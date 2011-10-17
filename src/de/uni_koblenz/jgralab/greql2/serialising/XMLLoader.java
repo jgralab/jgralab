@@ -124,14 +124,13 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 		} else if (parentElement instanceof PCollection) {
 			// ok, parent is a collection, so we can simply add with the
 			// exception of records and tables
-			@SuppressWarnings("unchecked")
-			PCollection<Object> coll = (PCollection<Object>) parentElement;
-			if (coll instanceof Record) {
-				Record rec = (Record) coll;
+			if (parentElement instanceof Record) {
+				Record rec = (Record) parentElement;
 				RecordComponent comp = (RecordComponent) endedElement;
 				parentElement = rec.plus(comp.componentName, comp.value);
-			} else if (coll instanceof Table) {
-				Table<Object> tab = (Table<Object>) coll;
+			} else if (parentElement instanceof Table) {
+				@SuppressWarnings("unchecked")
+				Table<Object> tab = (Table<Object>) parentElement;
 				if (tab.getTitles().isEmpty()) {
 					@SuppressWarnings("unchecked")
 					PVector<String> titles = (PVector<String>) endedElement;
@@ -142,6 +141,8 @@ public class XMLLoader extends XmlProcessor implements XMLConstants {
 					parentElement = tab.plusAll(entries);
 				}
 			} else {
+				@SuppressWarnings("unchecked")
+				PCollection<Object> coll = (PCollection<Object>) parentElement;
 				parentElement = coll.plus(endedElement);
 			}
 			stack.pop();
