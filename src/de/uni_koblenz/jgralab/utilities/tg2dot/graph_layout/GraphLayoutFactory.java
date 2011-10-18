@@ -1,29 +1,29 @@
 /*
  * JGraLab - The Java Graph Laboratory
- * 
+ *
  * Copyright (C) 2006-2011 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- * 
+ *
  * For bug reports, documentation and further information, visit
- * 
+ *
  *                         http://jgralab.uni-koblenz.de
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
+ *
  * Additional permission under GNU GPL version 3 section 7
- * 
+ *
  * If you modify this Program, or any covered work, by linking or combining
  * it with Eclipse (or a modified version of that program or an Eclipse
  * plugin), containing parts covered by the terms of the Eclipse Public
@@ -127,7 +127,7 @@ public class GraphLayoutFactory {
 	}
 
 	private void validate() {
-		if (schema == null || evaluator == null) {
+		if ((schema == null) || (evaluator == null)) {
 			throw new RuntimeException(
 					"The Schema, GreqlEvaluator or both are not set.");
 		}
@@ -151,11 +151,10 @@ public class GraphLayoutFactory {
 				+ " ++ ')'  : '') ++ ' | ' ++ typeName(" + ELEMENT
 				+ ") ++ '}|' ++ " + "join(\"\\l\", from attr:attributeNames("
 				+ ELEMENT + ") " + "reportSet (attr ++ ' = ' ++ ("
-				+ SHORTEN_STRINGS + " ? shortenString(toDotString(getValue("
-				+ ELEMENT + ", attr)), 17) : toDotString(getValue(" + ELEMENT
-				+ ", attr)) ++ (" + PRINT_DOMAIN_NAMES
+				+ SHORTEN_STRINGS + " ? shortenString(toDotString(attrVal), 17) : toDotString(attrVal) ++ (" + PRINT_DOMAIN_NAMES
 				+ " ? ': ' ++ attributeType(" + ELEMENT
-				+ ", attr) : ''))) end) ++ '}'");
+				+ ", attr) : ''))) end where attrVal := isDefined(getValue("
+				+ ELEMENT + ", attr)) ? getValue(" + ELEMENT + ", attr) : 'null') ++ '}'");
 		definition.setAttribute("shape", "'record'");
 		definition.setAttribute("color", "'#999999'");
 		definition.setAttribute("fontsize", "14");
@@ -175,11 +174,10 @@ public class GraphLayoutFactory {
 				+ "attr:attributeNames(" + ELEMENT + ") " + "reportSet (("
 				+ ABBREVIATE_EDGE_ATTRIBUTE_NAMES
 				+ " ? abbreviateString(attr) : attr) " + "++ ' = ' ++ ("
-				+ SHORTEN_STRINGS + " ? shortenString(toDotString(getValue("
-				+ ELEMENT + ", attr)), 17) : toDotString(getValue(" + ELEMENT
-				+ ", attr)) ++ (" + PRINT_DOMAIN_NAMES
+				+ SHORTEN_STRINGS + " ? shortenString(toDotString(attrVal), 17) : toDotString(attrVal) ++ (" + PRINT_DOMAIN_NAMES
 				+ " ? ': ' ++ attributeType(" + ELEMENT
-				+ ", attr) : ''))) end) : '')");
+				+ ", attr) : ''))) end where attrVal := isDefined(getValue("
+				+ ELEMENT + ", attr)) ? getValue("+ ELEMENT + ", attr) : 'null') : '')");
 		definition.setAttribute("arrowhead", "((" + SHARED_THIS
 				+ ")? 'odiamond' :" + "(" + COMPOSITE_THIS
 				+ ")? 'diamond': '') ++ 'normal'");
