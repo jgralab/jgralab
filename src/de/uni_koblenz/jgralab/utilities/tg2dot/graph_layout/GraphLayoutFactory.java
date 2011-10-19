@@ -159,6 +159,7 @@ public class GraphLayoutFactory {
 		definition.setAttribute("color", "'#999999'");
 		definition.setAttribute("fontsize", "14");
 		definition.setAttribute("fontname", "'Helvetica'");
+		definition.setAttribute("margin", "'0.02,0.005'");
 	}
 
 	private void setDefaultEdgeLayout() {
