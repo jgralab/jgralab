@@ -26,7 +26,8 @@ public class GreqlConstructions extends GenericTest {
 				+ "end";
 		Object result = evalTestQuery("PathSystemConstruction", queryString,
 				TestVersion.ROUTE_MAP_GRAPH);
-		PCollection<PathSystem> list = ((PCollection<PathSystem>)result);
+		@SuppressWarnings("unchecked")
+		PCollection<PathSystem> list = ((PCollection<PathSystem>) result);
 		assertEquals(1, list.size());
 		for (PathSystem v : list) {
 			PathSystem sys = v;
@@ -42,7 +43,7 @@ public class GreqlConstructions extends GenericTest {
 				loadTestGraph());
 		// TODO test seriously
 		@SuppressWarnings("unused")
-		Path path = (Path)result;
+		Path path = (Path) result;
 		// System.out.println("Path has length " + path.toPath().pathLength());
 		// System.out.println(path);
 	}

@@ -46,9 +46,9 @@ import de.uni_koblenz.jgralab.schema.RecordDomain;
 
 /**
  * TODO add comment
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class AttributedElementCodeGenerator extends CodeGenerator {
 
@@ -103,7 +103,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	 * Returns the absolute name of the given AttributdelementClass. The name is
 	 * composed of the package-prefix of the schema the class belongs to and the
 	 * qualified name of the class
-	 *
+	 * 
 	 * @param aec
 	 * @return
 	 */
@@ -235,29 +235,28 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	protected CodeBlock createGenericGetter(Set<Attribute> attrSet) {
 		CodeList code = new CodeList();
 		addImports("#jgPackage#.NoSuchAttributeException");
+		CodeSnippet snip = new CodeSnippet(true);
+		code.addNoIndent(snip);
 		if (!attrSet.isEmpty()) {
-			code.addNoIndent(new CodeSnippet(true,
-					"@SuppressWarnings(\"unchecked\")"));
+			snip.add("@SuppressWarnings(\"unchecked\")");
 		}
-		code.addNoIndent(new CodeSnippet(true,
-				"public <T> T getAttribute(String attributeName) {"));
+		snip.add("public <T> T getAttribute(String attributeName) {");
 		for (Attribute attr : attrSet) {
 			CodeSnippet s = new CodeSnippet();
-			if (attr.getDomain().isComposite()) {
+			if (attr.getDomain().isPrimitive()) {
 				s.setVariable(
 						"attributeClassName",
-						attr.getDomain()
-								.getJavaAttributeImplementationTypeName(
-										schemaRootPackageName));
+						" ("
+								+ attr.getDomain().getJavaClassName(
+										schemaRootPackageName) + ")");
 			} else {
-				s.setVariable("attributeClassName", attr.getDomain()
-						.getJavaClassName(schemaRootPackageName));
+				s.setVariable("attributeClassName", "");
 			}
 			s.setVariable("name", attr.getName());
 			s.setVariable("isOrGet", attr.getDomain().isBoolean() ? "is"
 					: "get");
 			s.setVariable("cName", attr.getName());
-			s.add("if (attributeName.equals(\"#name#\")) return (T) (#attributeClassName#) #isOrGet#_#cName#();");
+			s.add("if (attributeName.equals(\"#name#\")) return (T)#attributeClassName# #isOrGet#_#cName#();");
 			code.add(s);
 		}
 		code.add(new CodeSnippet(
@@ -509,7 +508,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	}
 
 	/**
-	 *
+	 * 
 	 * @param attrSet
 	 * @return
 	 */
@@ -611,7 +610,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	/**
 	 * Generates method attributes() which returns a set of all versioned
 	 * attributes for an <code>AttributedElement</code>.
-	 *
+	 * 
 	 * @param attributeList
 	 * @return
 	 */

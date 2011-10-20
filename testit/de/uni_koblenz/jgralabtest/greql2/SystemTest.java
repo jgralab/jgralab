@@ -37,10 +37,10 @@ package de.uni_koblenz.jgralabtest.greql2;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import org.pcollections.PCollection;
-import org.pcollections.PVector;
 
 import org.junit.Test;
+import org.pcollections.PCollection;
+import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
@@ -75,7 +75,7 @@ public class SystemTest extends GenericTest {
 		String queryString = "from x:V{FunctionApplication}, y:V{Expression} with x <--{IsArgumentOf} y report tup( tup(\"Function: \", x ), tup(\"Argument: \", y )) end";
 		Object result = evalTestQuery("FunctionArgumentsEvaluation",
 				queryString);
-		assertEquals(11, ((PCollection<?>)result).size());
+		assertEquals(11, ((PCollection<?>) result).size());
 	}
 
 	@Test
@@ -83,7 +83,7 @@ public class SystemTest extends GenericTest {
 		String queryString = "from x:V{FunctionApplication}, y:V{FunctionApplication} with x <--{IsArgumentOf} y report tup( tup(\"Function: \", x ), tup(\"Argument: \", y )) end";
 		Object result = evalTestQuery("FunctionAsFunctionArgumentEvaluation",
 				queryString);
-		assertEquals(5, ((PCollection<?>)result).size());
+		assertEquals(5, ((PCollection<?>) result).size());
 	}
 
 	@Test
@@ -92,7 +92,7 @@ public class SystemTest extends GenericTest {
 		String queryString = "from x:V{FunctionApplication}, y:V{FunctionApplication} with x <--{IsArgumentOf} <--{IsArgumentOf} y report tup( tup(\"Function: \", x ), tup(\"Argument: \", y )) end";
 		Object result = evalTestQuery(
 				"FunctionAsFunctionAsFunctionArgumentEvaluation", queryString);
-		assertEquals(4, ((PCollection<?>)result).size());
+		assertEquals(4, ((PCollection<?>) result).size());
 	}
 
 	@Test
@@ -101,7 +101,7 @@ public class SystemTest extends GenericTest {
 		String queryString = "from x:V{FunctionApplication}, y:V{ListComprehension} with x -->{IsArgumentOf}+ -->{IsCompResultDefOf} y report tup(tup(\"Function: \", x ), tup(\"ListComprehension: \", y )) end";
 		Object result = evalTestQuery("FunctionAsArgumentInListComprehension",
 				queryString);
-		assertEquals(5, ((PCollection<?>)result).size());
+		assertEquals(5, ((PCollection<?>) result).size());
 	}
 
 	@Test
@@ -112,13 +112,13 @@ public class SystemTest extends GenericTest {
 		String queryString = "from x:V{junctions.Crossroad}, y:V{junctions.Crossroad} "
 				+ "with x -->{connections.Street} <--{connections.Footpath} y report id(x) as '"
 				+ X1 + "', id(y) as '" + X2 + "' end";
-		Table<?> result = ((Table<?>)evalTestQuery(queryString));
+		Table<?> result = ((Table<?>) evalTestQuery(queryString));
 		checkHeader(result, X1, X2);
 
 		assertEquals(12, result.size());
 	}
 
-	private void checkHeader(Table table, String... headerStrings) {
+	private void checkHeader(Table<?> table, String... headerStrings) {
 		PVector<?> header = table.getTitles();
 		assertTrue(header.size() == headerStrings.length);
 		for (String headerString : headerStrings) {
@@ -137,15 +137,16 @@ public class SystemTest extends GenericTest {
 				+ VERTEX + "', id(c) as '" + IDENTIFIER + "', "
 				+ "outDegree{connections.Way}(c) as '" + USAGE_COUNT + "', "
 				+ "edgesFrom(c) as '" + USAGES + "' end";
-		Table<?> result = (Table<?>)evalTestQuery(queryString);
+		Table<?> result = (Table<?>) evalTestQuery(queryString);
+		@SuppressWarnings("unchecked")
 		PVector<Tuple> data = (PVector<Tuple>) result.toPVector();
 
 		checkHeader(result, VERTEX, IDENTIFIER, USAGE_COUNT, USAGES);
 
 		for (Tuple tuple : data) {
 			Vertex vertex = (Vertex) tuple.get(0);
-			int identifier = ((Integer)tuple.get(1)).intValue();
-			int usage_count = ((Integer)tuple.get(2)).intValue();
+			int identifier = ((Integer) tuple.get(1)).intValue();
+			int usage_count = ((Integer) tuple.get(2)).intValue();
 			PCollection<?> usages = (PCollection<?>) tuple.get(3);
 
 			assertEquals(vertex.getId(), identifier);
