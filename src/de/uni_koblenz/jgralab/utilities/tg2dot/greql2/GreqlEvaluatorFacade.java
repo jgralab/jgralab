@@ -1,29 +1,29 @@
 /*
  * JGraLab - The Java Graph Laboratory
- * 
+ *
  * Copyright (C) 2006-2011 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- * 
+ *
  * For bug reports, documentation and further information, visit
- * 
+ *
  *                         http://jgralab.uni-koblenz.de
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
+ *
  * Additional permission under GNU GPL version 3 section 7
- * 
+ *
  * If you modify this Program, or any covered work, by linking or combining
  * it with Eclipse (or a modified version of that program or an Eclipse
  * plugin), containing parts covered by the terms of the Eclipse Public
@@ -64,7 +64,7 @@ import de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib.ToDotString;
  * The {@link GreqlEvaluatorFacade} is just a facade for a
  * {@link GreqlEvaluator} and provides automatic generation of an
  * using-preamble, variable setting and simple GReQL-query evaluation.
- * 
+ *
  * @author ist@uni-koblenz.de
  */
 public class GreqlEvaluatorFacade {
@@ -132,7 +132,7 @@ public class GreqlEvaluatorFacade {
 	/**
 	 * Constructs a GreqlEvaluatorFacade for a given {@link Graph} and creates
 	 * its own {@link GreqlEvaluator}.
-	 * 
+	 *
 	 * @param graph
 	 *            Graph for which this GreqlEvaluatorFacade is used for.
 	 */
@@ -145,7 +145,7 @@ public class GreqlEvaluatorFacade {
 	/**
 	 * Set for a provided {@link AttributedElementClass} the statically known
 	 * variables in the {@link GreqlEvaluator}.
-	 * 
+	 *
 	 * @param typeClass
 	 *            A AttributedElementClass.
 	 */
@@ -166,7 +166,7 @@ public class GreqlEvaluatorFacade {
 	/**
 	 * Set for a provided {@link VertexClass} the statically known variables in
 	 * the {@link GreqlEvaluator}.
-	 * 
+	 *
 	 * @param vertexClass
 	 *            A VertexClass.
 	 */
@@ -177,7 +177,7 @@ public class GreqlEvaluatorFacade {
 	/**
 	 * Set for a provided {@link EdgeClass} the statically known variables in
 	 * the {@link GreqlEvaluatorFacade#evaluator}.
-	 * 
+	 *
 	 * @param vertexClass
 	 *            A VertexClass.
 	 */
@@ -195,7 +195,7 @@ public class GreqlEvaluatorFacade {
 	/**
 	 * Sets the type specific attributes of the {@link AttributedElement} as
 	 * variable in the {@link GreqlEvaluatorFacade#evaluator}.
-	 * 
+	 *
 	 * @param attributedElement
 	 *            The provided {@link AttributedElement}.
 	 * @param graphSequenceIndex
@@ -222,7 +222,7 @@ public class GreqlEvaluatorFacade {
 	/**
 	 * Sets the commonly known attributes for a {@link AttributedElement} as
 	 * variables in the {@link #evaluator}.
-	 * 
+	 *
 	 * @param attributedElement
 	 *            A {@link AttributedElement}.
 	 * @param graphSequenceIndex
@@ -240,7 +240,7 @@ public class GreqlEvaluatorFacade {
 	/**
 	 * Sets the commonly known attributes for a {@link Vertex} as variables in
 	 * the {@link #evaluator}.
-	 * 
+	 *
 	 * @param vertex
 	 *            A {@link Vertex}.
 	 */
@@ -250,7 +250,7 @@ public class GreqlEvaluatorFacade {
 	/**
 	 * Sets the commonly known attributes for a {@link Edge} as variables in the
 	 * {@link #evaluator}.
-	 * 
+	 *
 	 * @param vertex
 	 *            A {@link Edge}.
 	 */
@@ -260,7 +260,7 @@ public class GreqlEvaluatorFacade {
 	/**
 	 * Retrieves the stored using-preamble as String or generates a new one if
 	 * necessary.
-	 * 
+	 *
 	 * @return Using String.
 	 */
 	public String getUsingString() {
@@ -298,7 +298,7 @@ public class GreqlEvaluatorFacade {
 
 	/**
 	 * Evaluates a given GReQL-query to a JValue and returns it.
-	 * 
+	 *
 	 * @param query
 	 *            A GReQL-query as String.
 	 * @return A JValue.
@@ -324,10 +324,10 @@ public class GreqlEvaluatorFacade {
 
 	/**
 	 * Evaluates a given GReQL-query to a JValue and returns it.
-	 * 
+	 *
 	 * @param query
 	 *            A GReQL-query as String.
-	 * @return The String from a JValue.
+	 * @return The String from a query result.
 	 */
 	public String evaluateToString(String query) {
 		return evaluate(query).toString();
@@ -335,11 +335,11 @@ public class GreqlEvaluatorFacade {
 
 	/**
 	 * Sets the given value as variable of the {@link #evaluator}.
-	 * 
+	 *
 	 * @param name
 	 *            Name of the variable.
 	 * @param value
-	 *            {@link JValue} as value.
+	 *            Object as value.
 	 */
 	public void setVariable(String name, Object value) {
 		evaluator.setVariable(name, value);
@@ -347,7 +347,7 @@ public class GreqlEvaluatorFacade {
 
 	/**
 	 * Sets the given value as variable of the {@link #evaluator}.
-	 * 
+	 *
 	 * @param variables
 	 *            Map with variable names and GReQL-queries as values.
 	 */
