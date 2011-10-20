@@ -42,16 +42,15 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.HashMap;
 
+import org.pcollections.PSet;
+
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueSlice;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
+import de.uni_koblenz.jgralab.greql2.types.Slice;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
@@ -87,34 +86,37 @@ public class TwoDVisualizer {
 	 * @param pathLength
 	 */
 	public void visualizeElements(StringBuilder code, State state,
-			Integer sessionId, String workspace, JValue currentElement,
+			Integer sessionId, String workspace, Object currentElement,
 			Boolean showAttributes, Integer pathLength,
 			RequestThread currentThread) {
 		// set currentVertex or currentEdge to the current element
-		if (currentElement.isVertex()) {
+		if (currentElement instanceof Vertex) {
 			code.append("current").append("Vertex = \"")
-					.append(currentElement.toVertex().getId()).append("\";\n");
-		} else if (currentElement.isEdge()) {
+					.append(((Vertex) currentElement).getId()).append("\";\n");
+		} else if (currentElement instanceof Edge) {
 			code.append("current").append("Edge = \"")
-					.append(currentElement.toEdge().getId()).append("\";\n");
+					.append(((Edge) currentElement).getId()).append("\";\n");
 		}
 		// calculate environment
-		JValueSet elementsToDisplay = new JValueSet();
-		if (currentElement.isVertex()) {
-			JValue slice = computeElements(currentElement, pathLength,
+		PSet<GraphElement> elementsToDisplay = JGraLab.set();
+		if (currentElement instanceof Vertex) {
+			Slice slice = computeElements((Vertex) currentElement, pathLength,
 					state.getGraph());
-			calculateElementsInSet(code, state, elementsToDisplay, slice);
-		} else if (currentElement.isEdge()) {
-			Edge current = currentElement.toEdge();
-			JValue slice = computeElements(new JValueImpl(current.getAlpha()),
-					pathLength, state.getGraph());
-			calculateElementsInSet(code, state, elementsToDisplay, slice);
-			slice = computeElements(new JValueImpl(current.getOmega()),
-					pathLength, state.getGraph());
-			calculateElementsInSet(code, state, elementsToDisplay, slice);
+			elementsToDisplay = calculateElementsInSet(code, state,
+					elementsToDisplay, slice);
+		} else if (currentElement instanceof Edge) {
+			Edge current = (Edge) currentElement;
+			Slice slice = computeElements(current.getAlpha(), pathLength,
+					state.getGraph());
+			elementsToDisplay = calculateElementsInSet(code, state,
+					elementsToDisplay, slice);
+			slice = computeElements(current.getOmega(), pathLength,
+					state.getGraph());
+			elementsToDisplay = calculateElementsInSet(code, state,
+					elementsToDisplay, slice);
 		} else {
-			calculateElementsInSet(code, state, elementsToDisplay,
-					currentElement.toJValueSet());
+			elementsToDisplay = calculateElementsInSet(code, state,
+					elementsToDisplay, currentElement);
 		}
 		// create temp-folder
 		File tempFolder = new File(System.getProperty("java.io.tmpdir")
@@ -252,44 +254,43 @@ public class TwoDVisualizer {
 	 * @param elementsToDisplay
 	 * @param elements
 	 */
-	private void calculateElementsInSet(StringBuilder code, State state,
-			JValueSet elementsToDisplay, JValue elements) {
+	private PSet<GraphElement> calculateElementsInSet(StringBuilder code,
+			State state, PSet<GraphElement> elementsToDisplay, Object elements) {
 		int totalElements = 0;
 		int selectedElements = 0;
-		if (elements.canConvert(JValueType.SLICE)) {
-			JValueSlice slice = elements.toSlice();
-			for (JValue v : slice.nodes()) {
+		if (elements instanceof Slice) {
+			Slice slice = (Slice) elements;
+			for (Vertex v : slice.getVertices()) {
 				totalElements++;
-				if (v.isVertex()
-						&& state.selectedVertexClasses.get(v.toVertex()
-								.getAttributedElementClass())) {
-					elementsToDisplay.add(v);
+				if (state.selectedVertexClasses.get(v
+						.getAttributedElementClass())) {
+					elementsToDisplay = elementsToDisplay.plus(v);
 					selectedElements++;
 				}
 			}
-			for (JValue v : slice.edges()) {
+			for (Edge e : slice.getEdges()) {
 				totalElements++;
-				if (v.isEdge()
-						&& state.selectedEdgeClasses.get(v.toEdge()
-								.getAttributedElementClass())) {
-					elementsToDisplay.add(new JValueImpl(v.toEdge()
-							.getNormalEdge()));
+				if (state.selectedEdgeClasses
+						.get(e.getAttributedElementClass())) {
+					elementsToDisplay = elementsToDisplay.plus(e
+							.getNormalEdge());
 					selectedElements++;
 				}
 			}
 		} else {
-			for (JValue v : elements.toJValueSet()) {
+			@SuppressWarnings("unchecked")
+			PSet<GraphElement> s = (PSet<GraphElement>) elements;
+			for (GraphElement v : s) {
 				totalElements++;
-				if (v.isVertex()
-						&& state.selectedVertexClasses.get(v.toVertex()
+				if (v instanceof Vertex
+						&& state.selectedVertexClasses.get(v
 								.getAttributedElementClass())) {
-					elementsToDisplay.add(v);
+					elementsToDisplay = elementsToDisplay.plus(v);
 					selectedElements++;
-				} else if (v.isEdge()
-						&& state.selectedEdgeClasses.get(v.toEdge()
-								.getAttributedElementClass())) {
-					elementsToDisplay.add(new JValueImpl(v.toEdge()
-							.getNormalEdge()));
+				} else if (state.selectedEdgeClasses.get(v
+						.getAttributedElementClass())) {
+					elementsToDisplay = elementsToDisplay.plus(((Edge) v)
+							.getNormalEdge());
 					selectedElements++;
 				}
 			}
@@ -301,6 +302,7 @@ public class TwoDVisualizer {
 				"document.getElementById(\"h3HowManyElements\").innerHTML = \"")
 				.append(selectedElements).append(" of ").append(totalElements)
 				.append(" elements selected.\";\n");
+		return elementsToDisplay;
 	}
 
 	/**
@@ -315,9 +317,9 @@ public class TwoDVisualizer {
 	 * @param graph
 	 * @return
 	 */
-	private JValue computeElements(JValue currentElement, Integer pathLength,
+	private Slice computeElements(Vertex currentElement, Integer pathLength,
 			Graph graph) {
-		HashMap<String, JValue> boundVars = new HashMap<String, JValue>();
+		HashMap<String, Object> boundVars = new HashMap<String, Object>();
 		boundVars.put("current", currentElement);
 		StringBuilder query = new StringBuilder("using current: ");
 		query.append("slice(current,<->^1");
@@ -325,8 +327,8 @@ public class TwoDVisualizer {
 			query.append("|<->^" + i);
 		}
 		query.append(")");
-		return StateRepository
-				.evaluateGReQL(query.toString(), graph, boundVars);
+		return (Slice) StateRepository.evaluateGReQL(query.toString(), graph,
+				boundVars);
 	}
 
 	/**
@@ -387,12 +389,12 @@ public class TwoDVisualizer {
 		/**
 		 * The elements to be displayed.
 		 */
-		private final JValueSet elements;
+		private final PSet<GraphElement> elements;
 
 		/**
 		 * The current Element.
 		 */
-		private final GraphElement current;
+		private final Object current;
 
 		/**
 		 * If true, the attributes are shown.
@@ -423,8 +425,8 @@ public class TwoDVisualizer {
 		 * @param showAttributes
 		 * @param selectedEdgeClasses2
 		 */
-		public MyTg2Dot(JValueSet elements, String outputFileName,
-				Boolean showAttributes, JValue currentElement,
+		public MyTg2Dot(PSet<GraphElement> elements, String outputFileName,
+				Boolean showAttributes, Object currentElement,
 				HashMap<EdgeClass, Boolean> selectedEdgeClasses2,
 				HashMap<VertexClass, Boolean> selectedVertexClasses2) {
 			selectedEdgeClasses = selectedEdgeClasses2;
@@ -433,13 +435,7 @@ public class TwoDVisualizer {
 			outputName = outputFileName;
 			this.showAttributes = showAttributes;
 			setPrintIncidenceNumbers(true);
-			if (currentElement.isVertex()) {
-				current = currentElement.toVertex();
-			} else if (currentElement.isEdge()) {
-				current = currentElement.toEdge();
-			} else {
-				current = null;
-			}
+			current = currentElement;
 		}
 
 		/**
@@ -461,11 +457,11 @@ public class TwoDVisualizer {
 				out = new PrintStream(new BufferedOutputStream(
 						new FileOutputStream(outputName)));
 				graphStart(out);
-				for (JValue v : elements) {
-					if (v.isVertex()) {
-						printVertex(out, v.toVertex());
-					} else if (v.isEdge()) {
-						printEdge(out, v.toEdge());
+				for (GraphElement el : elements) {
+					if (el instanceof Vertex) {
+						printVertex(out, (Vertex) el);
+					} else {
+						printEdge(out, (Edge) el);
 					}
 				}
 				graphEnd(out);
@@ -661,7 +657,7 @@ public class TwoDVisualizer {
 			out.println("];");
 			// check if this vertex has edges which will not be shown
 			for (Edge e : v.incidences()) {
-				if (!elements.contains(new JValueImpl(e.getNormalEdge()))
+				if (!elements.contains(e.getNormalEdge())
 						&& selectedEdgeClasses.get(e.getNormalEdge()
 								.getAttributedElementClass())) {
 					// mark this vertex that it has further edges

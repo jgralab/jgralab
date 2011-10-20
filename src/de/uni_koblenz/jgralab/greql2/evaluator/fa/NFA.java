@@ -44,8 +44,7 @@ import java.util.Set;
 
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
+import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 
 /**
  * this class models a nondeterministic finite automaton. It created during
@@ -129,21 +128,20 @@ public class NFA extends FiniteAutomaton {
 	 * @return a NFA which accepts iteratedNFA* oder iteratedNFA+
 	 */
 	public static NFA createIteratedPathDescriptionNFA(NFA iteratedNFA,
-			boolean optional) throws EvaluateException {
+			boolean optional) {
 		State newFinalState;
-		//if (iteratedNFA.finalStates.size() > 1) {
-			// there are at least two final states, there should be only one, so
-			// create a new one and epsilon-transitions
-			newFinalState = new State();
-			iteratedNFA.constructFinalStatesEpsilonTransitions(newFinalState,
-					true);
-			iteratedNFA.stateList.add(newFinalState);
-			// this is the only final state
-			iteratedNFA.finalStates.add(newFinalState);
-	//	}
-		//else {
-	//		newFinalState = iteratedNFA.finalStates.get(0);
-	//	}
+		// if (iteratedNFA.finalStates.size() > 1) {
+		// there are at least two final states, there should be only one, so
+		// create a new one and epsilon-transitions
+		newFinalState = new State();
+		iteratedNFA.constructFinalStatesEpsilonTransitions(newFinalState, true);
+		iteratedNFA.stateList.add(newFinalState);
+		// this is the only final state
+		iteratedNFA.finalStates.add(newFinalState);
+		// }
+		// else {
+		// newFinalState = iteratedNFA.finalStates.get(0);
+		// }
 		Transition t = new EpsilonTransition(newFinalState,
 				iteratedNFA.initialState);
 		iteratedNFA.transitionList.add(t);
@@ -165,8 +163,7 @@ public class NFA extends FiniteAutomaton {
 	 * @return a NFA which accepts the concatenation of the given sequential
 	 *         path description
 	 */
-	public static NFA createSequentialPathDescriptionNFA(List<NFA> nfaList)
-			throws EvaluateException {
+	public static NFA createSequentialPathDescriptionNFA(List<NFA> nfaList) {
 		NFA resultNFA = nfaList.get(0);
 		for (int i = 1; i < nfaList.size(); i++) {
 			NFA nextNFA = nfaList.get(i);
@@ -183,8 +180,7 @@ public class NFA extends FiniteAutomaton {
 	/**
 	 * Construct a NFA which accepts the given AlternativePaths
 	 */
-	public static NFA createAlternativePathDescriptionNFA(List<NFA> nfaList)
-			throws EvaluateException {
+	public static NFA createAlternativePathDescriptionNFA(List<NFA> nfaList) {
 		NFA resultNFA = new NFA();
 		State finalState = new State();
 		State initialState = new State();
@@ -209,8 +205,7 @@ public class NFA extends FiniteAutomaton {
 	/**
 	 * Constructs a NFA which accepts the given OptionalPathDescription
 	 */
-	public static NFA createOptionalPathDescriptionNFA(NFA optionalNFA)
-			throws EvaluateException {
+	public static NFA createOptionalPathDescriptionNFA(NFA optionalNFA) {
 		Transition t = new EpsilonTransition(optionalNFA.initialState,
 				optionalNFA.finalStates.get(0));
 		optionalNFA.transitionList.add(t);
@@ -255,8 +250,7 @@ public class NFA extends FiniteAutomaton {
 	/**
 	 * Constructs a NFA which accepts the given TransposedPathDescription
 	 */
-	public static NFA createTransposedPathDescriptionNFA(NFA transposedNFA)
-			throws EvaluateException {
+	public static NFA createTransposedPathDescriptionNFA(NFA transposedNFA) {
 		return revertNFA(transposedNFA);
 	}
 
@@ -264,7 +258,7 @@ public class NFA extends FiniteAutomaton {
 	 * Constructs a NFA which accepts the given ExponentiatedPathDescription
 	 */
 	public static NFA createExponentiatedPathDescriptionNFA(
-			NFA exponentiatedNFA, int exponent) throws EvaluateException {
+			NFA exponentiatedNFA, int exponent) {
 		NFA nfaToCopy = new NFA(exponentiatedNFA);
 
 		for (int i = 1; i < exponent; i++) {
@@ -285,8 +279,7 @@ public class NFA extends FiniteAutomaton {
 	 * IntermediateVertexPathDescription
 	 */
 	public static NFA createIntermediateVertexPathDescriptionNFA(NFA firstNFA,
-			VertexEvaluator intermediateVertices, NFA secondNFA)
-			throws EvaluateException {
+			VertexEvaluator intermediateVertices, NFA secondNFA) {
 
 		State newFinalState = new State();
 		firstNFA.stateList.add(newFinalState);
@@ -307,9 +300,9 @@ public class NFA extends FiniteAutomaton {
 	 * EdgeRestrictions (RoleId, TypeId) are modeled in the Transition.
 	 */
 	public static NFA createEdgePathDescriptionNFA(
-			Transition.AllowedEdgeDirection dir,
-			JValueTypeCollection typeCollection, Set<String> roles,
-			VertexEvaluator edgeEval, VertexEvaluator predicateEvaluator,
+			Transition.AllowedEdgeDirection dir, TypeCollection typeCollection,
+			Set<String> roles, VertexEvaluator edgeEval,
+			VertexEvaluator predicateEvaluator,
 			GraphMarker<VertexEvaluator> marker) {
 		NFA nfa = new NFA();
 		nfa.transitionList.clear();
@@ -328,9 +321,8 @@ public class NFA extends FiniteAutomaton {
 	 * EdgeRestrictions (RoleId, TypeId) are modeled in the Transition.
 	 */
 	public static NFA createSimplePathDescriptionNFA(
-			Transition.AllowedEdgeDirection dir,
-			JValueTypeCollection typeCollection, Set<String> roles,
-			VertexEvaluator predicateEvaluator,
+			Transition.AllowedEdgeDirection dir, TypeCollection typeCollection,
+			Set<String> roles, VertexEvaluator predicateEvaluator,
 			GraphMarker<VertexEvaluator> marker) {
 		NFA nfa = new NFA();
 		nfa.transitionList.clear();
@@ -349,7 +341,7 @@ public class NFA extends FiniteAutomaton {
 	 * EdgeRestrictions (RoleId, TypeId) are modeled in the Transition.
 	 */
 	public static NFA createAggregationPathDescriptionNFA(
-			boolean aggregateFrom, JValueTypeCollection typeCollection,
+			boolean aggregateFrom, TypeCollection typeCollection,
 			Set<String> roles, VertexEvaluator predicateEvaluator,
 			GraphMarker<VertexEvaluator> marker) {
 		NFA nfa = new NFA();
@@ -391,7 +383,7 @@ public class NFA extends FiniteAutomaton {
 	 *            The allowed types of the goal vertex
 	 */
 	public static void addGoalTypeRestriction(NFA nfa,
-			JValueTypeCollection typeCollection) throws EvaluateException {
+			TypeCollection typeCollection) {
 		State newEndState;
 		if (nfa.finalStates.size() == 1) {
 			newEndState = nfa.finalStates.get(0);
@@ -423,8 +415,7 @@ public class NFA extends FiniteAutomaton {
 	 *            the VertexEvaluator, which restricts this nfa
 	 */
 	public static void addGoalBooleanRestriction(NFA nfa,
-			VertexEvaluator boolEval, GraphMarker<VertexEvaluator> marker)
-			throws EvaluateException {
+			VertexEvaluator boolEval, GraphMarker<VertexEvaluator> marker) {
 		State newEndState;
 		if (nfa.finalStates.size() == 1) {
 			newEndState = nfa.finalStates.get(0);
@@ -456,8 +447,7 @@ public class NFA extends FiniteAutomaton {
 	 *            the VertexEvaluator, which restricts this nfa
 	 */
 	public static void addStartBooleanRestriction(NFA nfa,
-			VertexEvaluator boolEval, GraphMarker<VertexEvaluator> marker)
-			throws EvaluateException {
+			VertexEvaluator boolEval, GraphMarker<VertexEvaluator> marker) {
 		State newInitialState = new State();
 		nfa.stateList.add(newInitialState);
 		BoolExpressionTransition trans = new BoolExpressionTransition(
@@ -476,7 +466,7 @@ public class NFA extends FiniteAutomaton {
 	 *            The allowed types of the start vertex
 	 */
 	public static void addStartTypeRestriction(NFA nfa,
-			JValueTypeCollection typeCollection) throws EvaluateException {
+			TypeCollection typeCollection) {
 		State newInitialState = new State();
 		nfa.stateList.add(newInitialState);
 		VertexTypeRestrictionTransition trans = new VertexTypeRestrictionTransition(

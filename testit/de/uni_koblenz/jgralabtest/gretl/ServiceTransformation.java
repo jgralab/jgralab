@@ -95,21 +95,20 @@ public class ServiceTransformation extends Transformation<Graph> {
 
 		// Each element gets the name that its archetype has, and the new Owners
 		// get what was the owner attribute was before.
-		new CreateAttribute(
-				context,
-				new AttributeSpec(namedElement, "name", getStringDomain()),
+		new CreateAttribute(context, new AttributeSpec(namedElement, "name",
+				getStringDomain()),
 				"    union(from v : V reportMap v -> v.name end, "
-						+ "from o : keySet(img_Owner) reportMap o -> o end, true)")
+						+ "from o : keySet(img_Owner) reportMap o -> o end)")
 				.execute();
-		
+
 		return context.getTargetGraph();
 	}
 
 	@After
 	protected void checkCallsEdges() {
-		if (!(context
-				.evaluateGReQLQuery("forall e : E{Calls} @ contains(keySet(img_Calls), e)")
-				.toBoolean())) {
+		boolean result = context
+				.evaluateGReQLQuery("forall e : E{Calls} @ contains(keySet(img_Calls), e)");
+		if (!result) {
 			throw new GReTLException(context, "Error!");
 		} else {
 			System.out

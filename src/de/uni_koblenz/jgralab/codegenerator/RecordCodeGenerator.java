@@ -76,6 +76,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 			code.add(createGenericGetter());
 			code.add(createToStringMethod());
 			code.add(createWriteComponentsMethod());
+			code.add(createToPMapMethod());
 			code.add(createEqualsMethod());
 			code.add(createHashCodeMethod());
 		}
@@ -165,6 +166,23 @@ public class RecordCodeGenerator extends CodeGenerator {
 		return code;
 	}
 
+	private CodeBlock createToPMapMethod() {
+		CodeList code = new CodeList();
+		code.addNoIndent(new CodeSnippet(
+				"public org.pcollections.PMap<String, Object> toPMap() {"));
+		code.add(new CodeSnippet(
+				"org.pcollections.PMap<String, Object> m = de.uni_koblenz.jgralab.JGraLab.map();"));
+		for (RecordComponent rc : recordDomain.getComponents()) {
+			CodeBlock assign = new CodeSnippet(
+					"m = m.plus(\"#name#\", _#name#);");
+			assign.setVariable("name", rc.getName());
+			code.add(assign);
+		}
+		code.add(new CodeSnippet("return m;"));
+		code.addNoIndent(new CodeSnippet("}"));
+		return code;
+	}
+
 	private CodeBlock createHashCodeMethod() {
 		CodeList code = new CodeList();
 		code.addNoIndent(new CodeSnippet(true, "@Override",
@@ -176,9 +194,9 @@ public class RecordCodeGenerator extends CodeGenerator {
 			assign.setVariable("cls",
 					rc.getDomain().getJavaClassName(schemaRootPackageName));
 			if (rc.getDomain().isPrimitive()) {
-				assign.add("h ^= ((#cls#) _#name#).hashCode();");
+				assign.add("h += ((#cls#) _#name#).hashCode();");
 			} else {
-				assign.add("h ^= _#name#.hashCode();");
+				assign.add("h += _#name#.hashCode();");
 			}
 		}
 		code.addNoIndent(new CodeSnippet("\treturn h;", "}"));
@@ -213,9 +231,23 @@ public class RecordCodeGenerator extends CodeGenerator {
 	@Override
 	protected CodeBlock createHeader() {
 		CodeSnippet code = new CodeSnippet(true);
-		if (currentCycle.isClassOnly()) {
-			code.add("public class #simpleClassName# implements de.uni_koblenz.jgralab.Record {");
+		if (!currentCycle.isClassOnly()) {
+			return code;
 		}
+		addImports("java.util.Collections", "java.util.List",
+				"java.util.ArrayList");
+		code.add("public class #simpleClassName# implements de.uni_koblenz.jgralab.Record {");
+		code.add(
+				"\tprivate static List<String> componentNames = new ArrayList<String>("
+						+ recordDomain.getComponents().size() + ");", "",
+				"\tstatic {");
+		for (RecordComponent rc : recordDomain.getComponents()) {
+			code.add("\t\tcomponentNames.add(\"" + rc.getName() + "\");");
+		}
+		code.add(
+				"\t\tcomponentNames = Collections.unmodifiableList(componentNames);",
+				"\t}", "", "\tpublic List<String> getComponentNames() {",
+				"\t\treturn componentNames;", "\t}");
 		return code;
 	}
 

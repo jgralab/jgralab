@@ -41,10 +41,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.DFA;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
-import de.uni_koblenz.jgralab.greql2.funlib.ReachableVertices;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.funlib.graph.ReachableVertices;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.ForwardVertexSet;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
@@ -93,19 +90,13 @@ public class ForwardVertexSetEvaluator extends PathSearchEvaluator {
 	}
 
 	@Override
-	public JValue evaluate() throws EvaluateException {
+	public Object evaluate() {
 		if (!initialized) {
 			initialize();
 		}
 		Vertex startVertex = null;
-		try {
-			startVertex = startEval.getResult(subgraph).toVertex();
-		} catch (JValueInvalidTypeException exception) {
-			throw new EvaluateException(
-					"Error evaluation ForwardVertexSet, StartExpression doesn't evaluate to a vertex",
-					exception);
-		}
-		return ReachableVertices.search(startVertex, searchAutomaton, subgraph);
+		startVertex = (Vertex) startEval.getResult();
+		return ReachableVertices.search(startVertex, searchAutomaton);
 	}
 
 	@Override

@@ -34,12 +34,11 @@
  */
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
+import org.pcollections.PCollection;
+
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclarationLayer;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 import de.uni_koblenz.jgralab.greql2.schema.Comprehension;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
@@ -56,7 +55,7 @@ public abstract class ComprehensionEvaluator extends VertexEvaluator {
 		super(eval);
 	}
 
-	protected abstract JValueCollection getResultDatastructure();
+	protected abstract PCollection<Object> getResultDatastructure();
 
 	protected final VertexEvaluator getResultDefinitionEvaluator() {
 		if (resultDefinitionEvaluator == null) {
@@ -75,21 +74,20 @@ public abstract class ComprehensionEvaluator extends VertexEvaluator {
 					.getFirstIsCompDeclOfIncidence(EdgeDirection.IN).getAlpha();
 			DeclarationEvaluator declEval = (DeclarationEvaluator) vertexEvalMarker
 					.getMark(d);
-			varDeclLayer = (VariableDeclarationLayer) declEval.getResult(
-					subgraph).toObject();
+			varDeclLayer = (VariableDeclarationLayer) declEval.getResult();
 		}
 		return varDeclLayer;
 	}
 
 	@Override
-	public JValue evaluate() throws EvaluateException {
+	public Object evaluate() {
 		VariableDeclarationLayer declLayer = getVariableDeclationLayer();
 		VertexEvaluator resultDefEval = getResultDefinitionEvaluator();
-		JValueCollection resultCollection = getResultDatastructure();
+		PCollection<Object> resultCollection = getResultDatastructure();
 		declLayer.reset();
-		while (declLayer.iterate(subgraph)) {
-			JValue localResult = resultDefEval.getResult(subgraph);
-			resultCollection.add(localResult);
+		while (declLayer.iterate()) {
+			Object localResult = resultDefEval.getResult();
+			resultCollection = resultCollection.plus(localResult);
 		}
 		return resultCollection;
 	}

@@ -48,9 +48,6 @@ import java.util.Set;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.pcollections.ArrayPMap;
-import org.pcollections.ArrayPSet;
-import org.pcollections.ArrayPVector;
 import org.pcollections.PMap;
 import org.pcollections.PSet;
 import org.pcollections.PVector;
@@ -58,6 +55,7 @@ import org.pcollections.PVector;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.GraphException;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralab.trans.ListPosition;
@@ -799,15 +797,15 @@ public class TransactionImplTest {
 
 		c1Impl.set_testEnum(TestEnum.Test1);
 
-		PVector<TestRecord> tl = ArrayPVector.empty();
+		PVector<TestRecord> tl = JGraLab.vector();
 		c1Impl.set_testList(tl);
 
-		PVector<String> list = ArrayPVector.empty();
+		PVector<String> list = JGraLab.vector();
 
-		PMap<String, String> map = ArrayPMap.empty();
+		PMap<String, String> map = JGraLab.map();
 		c1Impl.set_testMap(map);
 
-		PSet<String> set = ArrayPSet.empty();
+		PSet<String> set = JGraLab.set();
 		c1Impl.set_testSet(set);
 
 		c1Impl.set_testRecord(new TestRecord("test", list, set, 2, 2D, 2L,

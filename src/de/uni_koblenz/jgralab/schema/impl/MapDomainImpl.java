@@ -155,23 +155,6 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 				+ valueDomain.toString() + ">";
 	}
 
-	@Override
-	public boolean equals(Object o) {
-		if (o instanceof MapDomain) {
-			MapDomain other = (MapDomain) o;
-			if (!getSchema().getQualifiedName().equals(
-					other.getSchema().getQualifiedName())) {
-				return false;
-			}
-			if ((keyDomain == null) || (valueDomain == null)) {
-				return false;
-			}
-			return keyDomain.equals(other.getKeyDomain())
-					&& valueDomain.equals(other.getValueDomain());
-		}
-		return false;
-	}
-
 	private void internalGetReadMethod(CodeList code,
 			String schemaRootPackagePrefix, String variableName,
 			String graphIoVariableName) {

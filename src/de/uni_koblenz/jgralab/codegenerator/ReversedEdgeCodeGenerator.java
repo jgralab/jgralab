@@ -1,29 +1,29 @@
 /*
  * JGraLab - The Java Graph Laboratory
- * 
+ *
  * Copyright (C) 2006-2011 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- * 
+ *
  * For bug reports, documentation and further information, visit
- * 
+ *
  *                         http://jgralab.uni-koblenz.de
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
+ *
  * Additional permission under GNU GPL version 3 section 7
- * 
+ *
  * If you modify this Program, or any covered work, by linking or combining
  * it with Eclipse (or a modified version of that program or an Eclipse
  * plugin), containing parts covered by the terms of the Eclipse Public
@@ -42,6 +42,7 @@ import java.util.TreeSet;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * TODO add comment
@@ -81,10 +82,10 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 			}
 
 			if (config.hasTypeSpecificMethodsSupport()) {
-				code.add(createNextEdgeInGraphMethods());
-				code.add(createNextEdgeAtVertexMethods());
+				code.add(createNextEdgeMethods());
+				code.add(createNextIncidenceMethods());
 			}
-			// code.add(createValidRolesMethod());
+			code.add(createGetAlphaOmegaOverrides());
 		}
 		return code;
 	}
@@ -104,6 +105,26 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 
 		return new CodeSnippet(true, "#className#Impl(EdgeImpl e, Graph g) {",
 				"\tsuper(e, g);", "}");
+	}
+
+	private CodeBlock createGetAlphaOmegaOverrides() {
+		CodeSnippet b = new CodeSnippet();
+		EdgeClass ec = (EdgeClass) aec;
+		VertexClass from = ec.getFrom().getVertexClass();
+		VertexClass to = ec.getTo().getVertexClass();
+		b.setVariable("fromVertexClass", from.getSimpleName());
+		b.setVariable("toVertexClass", to.getSimpleName());
+		addImports(schemaRootPackageName + "." + from.getQualifiedName());
+		addImports(schemaRootPackageName + "." + to.getQualifiedName());
+		if (!currentCycle.isAbstract()) {
+			b.add("public #fromVertexClass# getAlpha() {");
+			b.add("\treturn (#fromVertexClass#) super.getAlpha();");
+			b.add("}");
+			b.add("public #toVertexClass# getOmega() {");
+			b.add("\treturn (#toVertexClass#) super.getOmega();");
+			b.add("}");
+		}
+		return b;
 	}
 
 	@Override
@@ -155,7 +176,7 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 		return null;
 	}
 
-	private CodeBlock createNextEdgeInGraphMethods() {
+	private CodeBlock createNextEdgeMethods() {
 		CodeList code = new CodeList();
 
 		TreeSet<AttributedElementClass> superClasses = new TreeSet<AttributedElementClass>();
@@ -167,29 +188,27 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 				continue;
 			}
 			EdgeClass ecl = (EdgeClass) ec;
-			code.addNoIndent(createNextEdgeInGraphMethod(ecl, false));
+			code.addNoIndent(createNextEdgeMethod(ecl));
 		}
 		return code;
 	}
 
-	private CodeBlock createNextEdgeInGraphMethod(EdgeClass ec,
-			boolean withTypeFlag) {
+	private CodeBlock createNextEdgeMethod(EdgeClass ec) {
 		CodeSnippet code = new CodeSnippet(
 				true,
-				"public #ecName# getNext#ecCamelName#InGraph(#formalParams#) {",
-				"\treturn ((#ecName#)normalEdge).getNext#ecCamelName#InGraph(#actualParams#);",
+				"public #ecName# getNext#ecCamelName#(#formalParams#) {",
+				"\treturn ((#ecName#)normalEdge).getNext#ecCamelName#(#actualParams#);",
 				"}");
 
 		code.setVariable("ecName",
 				schemaRootPackageName + "." + ec.getQualifiedName());
 		code.setVariable("ecCamelName", camelCase(ec.getUniqueName()));
-		code.setVariable("formalParams", (withTypeFlag ? "boolean noSubClasses"
-				: ""));
-		code.setVariable("actualParams", (withTypeFlag ? "noSubClasses" : ""));
+		code.setVariable("formalParams", "");
+		code.setVariable("actualParams", "");
 		return code;
 	}
 
-	private CodeBlock createNextEdgeAtVertexMethods() {
+	private CodeBlock createNextIncidenceMethods() {
 		CodeList code = new CodeList();
 
 		TreeSet<AttributedElementClass> superClasses = new TreeSet<AttributedElementClass>();
@@ -202,36 +221,27 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 			}
 			addImports("#jgPackage#.EdgeDirection");
 			EdgeClass ecl = (EdgeClass) ec;
-			code.addNoIndent(createNextEdgeAtVertexMethod(ecl, false, false));
-			code.addNoIndent(createNextEdgeAtVertexMethod(ecl, true, false));
-			if (!ecl.isAbstract()) {
-				code.addNoIndent(createNextEdgeAtVertexMethod(ecl, false, true));
-				code.addNoIndent(createNextEdgeAtVertexMethod(ecl, true, true));
-			}
+			code.addNoIndent(createNextIncidenceMethod(ecl, false));
+			code.addNoIndent(createNextIncidenceMethod(ecl, true));
 		}
 		return code;
 	}
 
-	private CodeBlock createNextEdgeAtVertexMethod(EdgeClass ec,
-			boolean withOrientation, boolean withTypeFlag) {
+	private CodeBlock createNextIncidenceMethod(EdgeClass ec,
+			boolean withOrientation) {
 
 		CodeSnippet code = new CodeSnippet(
 				true,
-				"public #ecName# getNext#ecCamelName#(#formalParams#) {",
+				"public #ecName# getNext#ecCamelName#Incidence(#formalParams#) {",
 				"\treturn (#ecName#)getNextIncidence(#ecName#.class#actualParams#);",
 				"}");
 		code.setVariable("ecName",
 				schemaRootPackageName + "." + ec.getQualifiedName());
 		code.setVariable("ecCamelName", camelCase(ec.getUniqueName()));
 		code.setVariable("formalParams",
-				(withOrientation ? "EdgeDirection orientation" : "")
-						+ (withOrientation && withTypeFlag ? ", " : "")
-						+ (withTypeFlag ? "boolean noSubClasses" : ""));
-		code.setVariable("actualParams",
-				(withOrientation || withTypeFlag ? ", " : "")
-						+ (withOrientation ? "orientation" : "")
-						+ (withOrientation && withTypeFlag ? ", " : "")
-						+ (withTypeFlag ? "noSubClasses" : ""));
+				(withOrientation ? "EdgeDirection orientation" : ""));
+		code.setVariable("actualParams", (withOrientation ? ", orientation"
+				: ""));
 		return code;
 	}
 

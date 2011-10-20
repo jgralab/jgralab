@@ -34,63 +34,19 @@
  */
 package de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib;
 
-import java.util.ArrayList;
+import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
-import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.funlib.Greql2Function;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
-
-public class ShortenString extends Greql2Function {
-
-	{
-		JValueType[][] x = { { JValueType.STRING, JValueType.INT,
-				JValueType.STRING } };
-		signatures = x;
-
-		description = "Returns a String shortened to the maximum allowed length.";
-
-		Category[] c = { Category.STRINGS };
-		categories = c;
+public class ShortenString extends Function {
+	public ShortenString() {
+		super("Returns a String shortened to the maximum allowed length.",
+				Category.STRINGS);
 	}
 
-	@Override
-	public JValue evaluate(Graph graph, SubGraphMarker subgraph,
-			JValue[] arguments) throws EvaluateException {
-
-		switch (checkArguments(arguments)) {
-		case 0:
-			String string = arguments[0].toString();
-			Integer maxLength = arguments[1].toInteger();
-
-			boolean isString = string.startsWith("\"") && string.endsWith("\"");
-			boolean isToLong = string.length() > maxLength;
-
-			string = isToLong ? string.substring(0, maxLength) + "..." : string;
-			string += isString ? "\"" : "";
-
-			return new JValueImpl(string);
-		default:
-			throw new RuntimeException();
-		}
+	public String evaluate(String string, Integer maxLength) {
+		boolean isString = string.startsWith("\"") && string.endsWith("\"");
+		boolean isTooLong = string.length() > maxLength;
+		string = isTooLong ? string.substring(0, maxLength) + "..." : string;
+		string += isString ? "\"" : "";
+		return string;
 	}
-
-	@Override
-	public long getEstimatedCardinality(int inElements) {
-		return 1;
-	}
-
-	@Override
-	public long getEstimatedCosts(ArrayList<Long> inElements) {
-		return 1;
-	}
-
-	@Override
-	public double getSelectivity() {
-		return 1;
-	}
-
 }

@@ -52,14 +52,14 @@ public class UnknownTypeException extends QuerySourceException {
 
 	public UnknownTypeException(String typeName,
 			List<SourcePosition> sourcePositions, Exception cause) {
-		super("The Datagraph schema doesn't contain a type '" + typeName + "'",
-				null, sourcePositions, cause);
+		super("Schema doesn't contain a type '" + typeName + "'", null,
+				sourcePositions, cause);
 	}
 
 	public UnknownTypeException(String typeName,
 			List<SourcePosition> sourcePositions) {
-		super("The Datagraph schema doesn't contain a type '" + typeName + "'",
-				null, sourcePositions);
+		super("Schema doesn't contain a type '" + typeName + "'", null,
+				sourcePositions);
 	}
 
 }

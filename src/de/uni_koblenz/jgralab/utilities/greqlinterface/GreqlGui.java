@@ -43,6 +43,8 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.prefs.Preferences;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -63,6 +65,7 @@ import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.Document;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
@@ -71,8 +74,8 @@ import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.WorkInProgress;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueHTMLOutputVisitor;
+import de.uni_koblenz.jgralab.greql2.exception.SerialisingException;
+import de.uni_koblenz.jgralab.greql2.serialising.HTMLOutputWriter;
 
 @WorkInProgress(description = "insufficcient result presentation, simplistic hacked GUI, no load/save functionality, ...", responsibleDevelopers = "horn")
 public class GreqlGui extends JFrame {
@@ -180,9 +183,20 @@ public class GreqlGui extends JFrame {
 					@Override
 					public void run() {
 						if (graph == null) {
-							JOptionPane.showMessageDialog(null,
-									ex.getMessage(), ex.getClass()
-											.getSimpleName(),
+
+							String msg = "Can't load ";
+							try {
+								msg += file.getCanonicalPath() + "\n"
+										+ ex.getMessage();
+							} catch (IOException e) {
+								msg += "graph\n";
+							}
+							Throwable cause = ex.getCause();
+							if (cause != null) {
+								msg += "\ncaused by " + cause;
+							}
+							JOptionPane.showMessageDialog(GreqlGui.this, msg,
+									ex.getClass().getSimpleName(),
 									JOptionPane.ERROR_MESSAGE);
 							statusLabel.setText("Couldn't load graph :-(");
 						} else {
@@ -224,8 +238,8 @@ public class GreqlGui extends JFrame {
 
 		@Override
 		public void run() {
-			final GreqlEvaluator eval = new GreqlEvaluator(query, graph, null,
-					this);
+			final GreqlEvaluator eval = new GreqlEvaluator(query, graph,
+					new HashMap<String, Object>(), this);
 			eval.setOptimize(optimizeCheckBox.isSelected());
 			GreqlEvaluator.DEBUG_OPTIMIZATION = debugOptimizationCheckBox
 					.isSelected();
@@ -246,8 +260,13 @@ public class GreqlGui extends JFrame {
 							statusLabel.setText("Couldn't evaluate query :-(");
 							String msg = ex.getMessage();
 							if (msg == null) {
-								msg = "An exception occured!";
+								if (ex.getCause() != null) {
+									msg = ex.getCause().toString();
+								} else {
+									msg = ex.toString();
+								}
 							}
+							ex.printStackTrace();
 							JOptionPane.showMessageDialog(GreqlGui.this, msg,
 									ex.getClass().getSimpleName(),
 									JOptionPane.ERROR_MESSAGE);
@@ -261,17 +280,42 @@ public class GreqlGui extends JFrame {
 					SwingUtilities.invokeLater(new Runnable() {
 						@Override
 						public void run() {
-							JValue result = eval.getEvaluationResult();
+							Object result = eval.getResult();
 							try {
-								File resultFile = File.createTempFile(
-										"greqlQueryResult", ".html");
-								new JValueHTMLOutputVisitor(result, resultFile
-										.getCanonicalPath(), graph, false,
-										false);
+								File resultFile = new File(
+										"greqlQueryResult.html");
+								// File resultFile = File.createTempFile(
+								// "greqlQueryResult", ".html");
+								// resultFile.deleteOnExit();
+								try {
+									new HTMLOutputWriter(result, resultFile,
+											graph);
+									Document doc = resultPane.getDocument();
+									doc.putProperty(
+											Document.StreamDescriptionProperty,
+											null);
+									resultPane.setPage(new URL("file",
+											"localhost", resultFile
+													.getCanonicalPath()));
+								} catch (SerialisingException e) {
+									JOptionPane.showMessageDialog(
+											GreqlGui.this,
+											"Exception during HTML output of result: "
+													+ e.toString());
+								}
+								Document doc = resultPane.getDocument();
+								doc.putProperty(
+										Document.StreamDescriptionProperty,
+										null);
 								resultPane.setPage(new URL("file", "localhost",
 										resultFile.getCanonicalPath()));
+								System.out.println(resultFile
+										.getCanonicalPath());
 								tabPane.setSelectedComponent(resultScrollPane);
 							} catch (IOException e) {
+								JOptionPane.showMessageDialog(GreqlGui.this,
+										"Exception during HTML output of result: "
+												+ e.toString());
 							}
 						}
 					});
@@ -337,7 +381,7 @@ public class GreqlGui extends JFrame {
 		tabPane.addTab("Result", resultScrollPane);
 
 		fileChooser = new JFileChooser();
-		fileChooser.setAcceptAllFileFilterUsed(false);
+		fileChooser.setAcceptAllFileFilterUsed(true);
 		fileChooser.setFileFilter(TGFilenameFilter.instance());
 
 		fileSelectionButton = new JButton(new AbstractAction("Select Graph") {
@@ -345,12 +389,30 @@ public class GreqlGui extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				Preferences prefs = Preferences
+						.userNodeForPackage(GreqlGui.class);
+				String lastDirectoryName = prefs.get("LAST_DIRECTORY",
+						System.getProperty("user.dir"));
+				File lastDir = new File(lastDirectoryName);
+				if (lastDir.isDirectory() && lastDir.canRead()) {
+					fileChooser.setCurrentDirectory(lastDir);
+				} else {
+					lastDir = new File(System.getProperty("user.dir"));
+					if (lastDir.isDirectory() && lastDir.canRead()) {
+						fileChooser.setCurrentDirectory(lastDir);
+					}
+				}
 				int returnVal = fileChooser.showOpenDialog(fileSelectionButton);
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					fileSelectionButton.setEnabled(false);
 					evalQueryButton.setEnabled(false);
 					statusLabel.setText("Compling schema...");
 					new GraphLoader(brm, fileChooser.getSelectedFile()).start();
+					try {
+						prefs.put("LAST_DIRECTORY", fileChooser
+								.getCurrentDirectory().getCanonicalPath());
+					} catch (IOException e1) {
+					}
 				}
 			}
 		});

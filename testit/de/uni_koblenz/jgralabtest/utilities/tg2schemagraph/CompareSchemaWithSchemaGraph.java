@@ -1,29 +1,29 @@
 /*
  * JGraLab - The Java Graph Laboratory
- * 
+ *
  * Copyright (C) 2006-2011 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- * 
+ *
  * For bug reports, documentation and further information, visit
- * 
+ *
  *                         http://jgralab.uni-koblenz.de
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
+ *
  * Additional permission under GNU GPL version 3 section 7
- * 
+ *
  * If you modify this Program, or any covered work, by linking or combining
  * it with Eclipse (or a modified version of that program or an Eclipse
  * plugin), containing parts covered by the terms of the Eclipse Public
@@ -45,9 +45,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.Map.Entry;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
@@ -95,8 +95,8 @@ import de.uni_koblenz.jgralab.schema.BooleanDomain;
 import de.uni_koblenz.jgralab.schema.DoubleDomain;
 import de.uni_koblenz.jgralab.schema.IntegerDomain;
 import de.uni_koblenz.jgralab.schema.LongDomain;
-import de.uni_koblenz.jgralab.schema.StringDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
+import de.uni_koblenz.jgralab.schema.StringDomain;
 
 /**
  * Compares a given Schema and SchemaGraph with each other.
@@ -171,8 +171,8 @@ public class CompareSchemaWithSchemaGraph {
 		assertFalse("There is no SchemaGraph defined!", gSchema == null);
 
 		// Compares there names and package prefixes
-		assertEquals("Both Schema objects have a different name.", schema
-				.getName(), gSchema.get_name());
+		assertEquals("Both Schema objects have a different name.",
+				schema.getName(), gSchema.get_name());
 		assertEquals("Both Schema objects have a different package prefix.",
 				schema.getPackagePrefix(), gSchema.get_packagePrefix());
 	}
@@ -211,7 +211,7 @@ public class CompareSchemaWithSchemaGraph {
 				vertex instanceof GraphClass);
 		assertFalse(
 				"There is more than one GraphClass defined in the SchemaGraph.",
-				definesGraphClass.getNextDefinesGraphClass(OUTGOING) != null);
+				definesGraphClass.getNextDefinesGraphClassIncidence(OUTGOING) != null);
 
 		GraphClass gGraphClass = (GraphClass) vertex;
 		return gGraphClass;
@@ -247,7 +247,8 @@ public class CompareSchemaWithSchemaGraph {
 		vertex = containsDefaultPackage.getThat();
 		assertFalse(
 				"There is more than one DefaultPackage defined.",
-				containsDefaultPackage.getNextContainsDefaultPackage(OUTGOING) != null);
+				containsDefaultPackage
+						.getNextContainsDefaultPackageIncidence(OUTGOING) != null);
 		assertTrue(
 				"ContainsDefaultPackage si not referencing to an instance of Package.",
 				vertex instanceof Package);
@@ -296,8 +297,8 @@ public class CompareSchemaWithSchemaGraph {
 			de.uni_koblenz.jgralab.schema.NamedElement element,
 			NamedElement gElement) {
 		// Comparison of the QualifiedName
-		assertEquals("Both Package objects have a different name.", element
-				.getQualifiedName(), gElement.get_qualifiedName());
+		assertEquals("Both Package objects have a different name.",
+				element.getQualifiedName(), gElement.get_qualifiedName());
 	}
 
 	private void compareComments(
@@ -322,7 +323,7 @@ public class CompareSchemaWithSchemaGraph {
 
 			gComments.add(comment.get_text());
 
-			annotates = annotates.getNextAnnotates();
+			annotates = annotates.getNextAnnotatesIncidence();
 		}
 		return gComments;
 	}
@@ -382,7 +383,7 @@ public class CompareSchemaWithSchemaGraph {
 	private Domain retrieveDomain(ContainsDomain containsDomain) {
 		assertTrue("ContainsDomain is not an instance of type Domain.",
 				containsDomain.getOmega() instanceof Domain);
-		Domain gDomain = (Domain) containsDomain.getOmega();
+		Domain gDomain = containsDomain.getOmega();
 		return gDomain;
 	}
 
@@ -491,7 +492,7 @@ public class CompareSchemaWithSchemaGraph {
 
 			assertTrue("Omega should be an instance of \"Package\".",
 					containsSubPackage.getOmega() instanceof Package);
-			Package gSubPackage = (Package) containsSubPackage.getOmega();
+			Package gSubPackage = containsSubPackage.getOmega();
 			de.uni_koblenz.jgralab.schema.Package subpackage = schema
 					.getPackage(gSubPackage.get_qualifiedName());
 
@@ -525,27 +526,27 @@ public class CompareSchemaWithSchemaGraph {
 		compareNamedElement(domain, gDomain);
 
 		// Differentiated comparison of different Domain types
-		if (domain instanceof de.uni_koblenz.jgralab.schema.MapDomain
-				&& gDomain instanceof MapDomain) {
+		if ((domain instanceof de.uni_koblenz.jgralab.schema.MapDomain)
+				&& (gDomain instanceof MapDomain)) {
 
 			compareDomain((de.uni_koblenz.jgralab.schema.MapDomain) domain,
 					(MapDomain) gDomain);
 
-		} else if (domain instanceof de.uni_koblenz.jgralab.schema.RecordDomain
-				&& gDomain instanceof RecordDomain) {
+		} else if ((domain instanceof de.uni_koblenz.jgralab.schema.RecordDomain)
+				&& (gDomain instanceof RecordDomain)) {
 
 			compareDomain((de.uni_koblenz.jgralab.schema.RecordDomain) domain,
 					(RecordDomain) gDomain);
 
-		} else if (domain instanceof de.uni_koblenz.jgralab.schema.CollectionDomain
-				&& gDomain instanceof CollectionDomain) {
+		} else if ((domain instanceof de.uni_koblenz.jgralab.schema.CollectionDomain)
+				&& (gDomain instanceof CollectionDomain)) {
 
 			compareDomain(
 					(de.uni_koblenz.jgralab.schema.CollectionDomain) domain,
 					(CollectionDomain) gDomain);
 
-		} else if (domain instanceof de.uni_koblenz.jgralab.schema.EnumDomain
-				&& gDomain instanceof EnumDomain) {
+		} else if ((domain instanceof de.uni_koblenz.jgralab.schema.EnumDomain)
+				&& (gDomain instanceof EnumDomain)) {
 
 			compareDomain((de.uni_koblenz.jgralab.schema.EnumDomain) domain,
 					(EnumDomain) gDomain);
@@ -578,8 +579,7 @@ public class CompareSchemaWithSchemaGraph {
 			assertTrue("Omega should be an instance of Domain.",
 					hasRecordDomainComponent.getOmega() instanceof Domain);
 			// Gets the Domain
-			Domain domainComponent = (Domain) hasRecordDomainComponent
-					.getOmega();
+			Domain domainComponent = hasRecordDomainComponent.getOmega();
 
 			// Get and removes the Domain and compares.
 			// The comparison of the Component name is missed out, because
@@ -593,8 +593,8 @@ public class CompareSchemaWithSchemaGraph {
 					currentDomain == null);
 
 			assertEquals("Both DomainComponents don't have an equal name.",
-					currentDomain.getQualifiedName(), domainComponent
-							.get_qualifiedName());
+					currentDomain.getQualifiedName(),
+					domainComponent.get_qualifiedName());
 		}
 
 		// The map should be empty or there are some components left over
@@ -614,20 +614,21 @@ public class CompareSchemaWithSchemaGraph {
 			de.uni_koblenz.jgralab.schema.MapDomain domain, MapDomain gDomain) {
 
 		// KEY DOMAIN
-		HasKeyDomain hasKeyDomain = gDomain.getFirstHasKeyDomainIncidence(OUTGOING);
+		HasKeyDomain hasKeyDomain = gDomain
+				.getFirstHasKeyDomainIncidence(OUTGOING);
 		assertTrue("There is no key Domain defined.", hasKeyDomain != null);
 		Vertex vertex = hasKeyDomain.getThat();
 		assertTrue("That should be an instance of Domain.",
 				vertex instanceof Domain);
-		assertFalse("There is more than one key Domain.", hasKeyDomain
-				.getNextHasKeyDomain(OUTGOING) != null);
+		assertFalse("There is more than one key Domain.",
+				hasKeyDomain.getNextHasKeyDomainIncidence(OUTGOING) != null);
 		Domain gKeyDomain = (Domain) vertex;
 
 		// Compares the QualifiedName of the key domain
 		assertEquals(
 				"Both key Domain objects should have the same QualifiedName.",
-				domain.getKeyDomain().getQualifiedName(), gKeyDomain
-						.get_qualifiedName());
+				domain.getKeyDomain().getQualifiedName(),
+				gKeyDomain.get_qualifiedName());
 
 		// VALUE DOMAIN
 		HasValueDomain hasValueDomain = gDomain
@@ -636,15 +637,15 @@ public class CompareSchemaWithSchemaGraph {
 		vertex = hasValueDomain.getThat();
 		assertTrue("That should be an instance of Domain.",
 				vertex instanceof Domain);
-		assertFalse("There is more than one value Domain.", hasValueDomain
-				.getNextHasValueDomain(OUTGOING) != null);
+		assertFalse("There is more than one value Domain.",
+				hasValueDomain.getNextHasValueDomainIncidence(OUTGOING) != null);
 		Domain gValueDomain = (Domain) vertex;
 
 		// Compares the QualifiedName
 		assertEquals(
 				"Both value Domain objects should have an equal QualifiedName.",
-				domain.getValueDomain().getQualifiedName(), gValueDomain
-						.get_qualifiedName());
+				domain.getValueDomain().getQualifiedName(),
+				gValueDomain.get_qualifiedName());
 	}
 
 	/**
@@ -661,20 +662,21 @@ public class CompareSchemaWithSchemaGraph {
 			CollectionDomain gDomain) {
 
 		// BASE DOMAIN
-		HasBaseDomain hasBaseDomain = gDomain.getFirstHasBaseDomainIncidence(OUTGOING);
+		HasBaseDomain hasBaseDomain = gDomain
+				.getFirstHasBaseDomainIncidence(OUTGOING);
 		assertTrue("There should be a base Domain.", hasBaseDomain != null);
 		Vertex vertex = hasBaseDomain.getThat();
 		assertTrue("That should be an instance of Domain.",
 				vertex instanceof Domain);
-		assertFalse("There is more than one base Domain.", hasBaseDomain
-				.getNextHasBaseDomain(OUTGOING) != null);
+		assertFalse("There is more than one base Domain.",
+				hasBaseDomain.getNextHasBaseDomainIncidence(OUTGOING) != null);
 		Domain gBaseDomain = (Domain) vertex;
 
 		// Compares the QualifiedName
 		assertEquals(
 				"Both base Domain objects should have an equal QualifiedName.",
-				domain.getBaseDomain().getQualifiedName(), gBaseDomain
-						.get_qualifiedName());
+				domain.getBaseDomain().getQualifiedName(),
+				gBaseDomain.get_qualifiedName());
 	}
 
 	/**
@@ -691,13 +693,13 @@ public class CompareSchemaWithSchemaGraph {
 		List<String> enumConstants = domain.getConsts();
 		List<String> gEnumConstants = gDomain.get_enumConstants();
 
-		assertTrue("The size of enum constants are not equal.", enumConstants
-				.size() == gEnumConstants.size());
+		assertTrue("The size of enum constants are not equal.",
+				enumConstants.size() == gEnumConstants.size());
 
-		assertTrue("Not all Constants are included.", gEnumConstants
-				.containsAll(enumConstants));
-		assertTrue("Not all Constants are included.", enumConstants
-				.containsAll(gEnumConstants));
+		assertTrue("Not all Constants are included.",
+				gEnumConstants.containsAll(enumConstants));
+		assertTrue("Not all Constants are included.",
+				enumConstants.containsAll(gEnumConstants));
 	}
 
 	/**
@@ -732,8 +734,8 @@ public class CompareSchemaWithSchemaGraph {
 			de.uni_koblenz.jgralab.schema.GraphElementClass element,
 			GraphElementClass gElement) {
 		// Comparing the attribute \"isAbstract\"
-		assertEquals("Attribute \"isAbstract\" is different.", element
-				.isAbstract(), gElement.is_abstract());
+		assertEquals("Attribute \"isAbstract\" is different.",
+				element.isAbstract(), gElement.is_abstract());
 	}
 
 	/**
@@ -760,8 +762,7 @@ public class CompareSchemaWithSchemaGraph {
 		// Loop over all SpecializesVertexClass edges
 		for (SpecializesVertexClass specializesVertexClass : gVertexClass
 				.getSpecializesVertexClassIncidences(OUTGOING)) {
-			AttributedElementClass element = (AttributedElementClass) specializesVertexClass
-					.getOmega();
+			AttributedElementClass element = specializesVertexClass.getOmega();
 			// It gets, removes and compare the QualifiedNames
 			assertEquals(
 					"SuperClasses of these AttributeElementClass objects are different.",
@@ -800,8 +801,7 @@ public class CompareSchemaWithSchemaGraph {
 		// Loop over all SpecializesEdgeClass edges
 		for (SpecializesEdgeClass specializesEdgeClass : gEdgeClass
 				.getSpecializesEdgeClassIncidences(OUTGOING)) {
-			AttributedElementClass gElement = (AttributedElementClass) specializesEdgeClass
-					.getOmega();
+			AttributedElementClass gElement = specializesEdgeClass.getOmega();
 
 			// Gets, removes and compares the QualifiedNames
 			de.uni_koblenz.jgralab.schema.AttributedElementClass element = superClasses
@@ -819,13 +819,13 @@ public class CompareSchemaWithSchemaGraph {
 
 		// "To" and "From" edges are compared
 		ComesFrom comesFrom = gEdgeClass.getFirstComesFromIncidence();
-		compareIncidenceClass(edgeClass.getFrom(), (IncidenceClass) comesFrom
-				.getThat(), IncidenceDirection.OUT);
+		compareIncidenceClass(edgeClass.getFrom(),
+				(IncidenceClass) comesFrom.getThat(), IncidenceDirection.OUT);
 		// TODO TEST ob es weitere Kanten gibt, die es nicht geben sollte!
 
 		GoesTo goesTo = gEdgeClass.getFirstGoesToIncidence();
-		compareIncidenceClass(edgeClass.getTo(), (IncidenceClass) goesTo
-				.getThat(), IncidenceDirection.IN);
+		compareIncidenceClass(edgeClass.getTo(),
+				(IncidenceClass) goesTo.getThat(), IncidenceDirection.IN);
 		// TODO TEST ob es weitere Kanten gibt, die es nicht geben sollte!
 	}
 
@@ -873,9 +873,10 @@ public class CompareSchemaWithSchemaGraph {
 	private void compareDirection(
 			de.uni_koblenz.jgralab.schema.IncidenceClass incidence,
 			IncidenceDirection gDirection) {
-		assertEquals("The directions are not equal: "
-				+ incidence.getDirection() + " != " + gDirection, incidence
-				.getDirection().toString(), gDirection.toString());
+		assertEquals(
+				"The directions are not equal: " + incidence.getDirection()
+						+ " != " + gDirection, incidence.getDirection()
+						.toString(), gDirection.toString());
 	}
 
 	private void checkExistingsOfSchemaElement(Object object) {
@@ -896,7 +897,7 @@ public class CompareSchemaWithSchemaGraph {
 				edgeToVertexClass.getThat() instanceof VertexClass);
 
 		VertexClass gVertexClass = (VertexClass) edgeToVertexClass.getThat();
-		assertTrue(edgeToVertexClass.getNextEndsAt(OUTGOING) == null);
+		assertTrue(edgeToVertexClass.getNextEndsAtIncidence(OUTGOING) == null);
 		de.uni_koblenz.jgralab.schema.VertexClass vertexClass = incidence
 				.getVertexClass();
 
@@ -908,8 +909,9 @@ public class CompareSchemaWithSchemaGraph {
 		assertEquals(
 				"The qualifed names of both \"VertexClasses\" do not match: "
 						+ vertexClass.getQualifiedName() + " != "
-						+ gVertexClass.get_qualifiedName(), vertexClass
-						.getQualifiedName(), gVertexClass.get_qualifiedName());
+						+ gVertexClass.get_qualifiedName(),
+				vertexClass.getQualifiedName(),
+				gVertexClass.get_qualifiedName());
 	}
 
 	private void compareRoleNames(
@@ -972,12 +974,14 @@ public class CompareSchemaWithSchemaGraph {
 				+ gSubsettedIncidenceClasses + ".";
 
 		assertTrue("Not all subsets-links are included on the Schema side: "
-				+ contents, subsettedIncidenceClasses
-				.containsAll(gSubsettedIncidenceClasses));
+				+ contents,
+				subsettedIncidenceClasses
+						.containsAll(gSubsettedIncidenceClasses));
 
 		assertTrue(
 				"Not all subsets-links are included on the Schema graph side: "
-						+ contents, gSubsettedIncidenceClasses
+						+ contents,
+				gSubsettedIncidenceClasses
 						.containsAll(subsettedIncidenceClasses));
 
 	}
@@ -1014,9 +1018,11 @@ public class CompareSchemaWithSchemaGraph {
 			Set<String> gSubsettedIncidenceClasses, Subsets subsets) {
 		IncidenceClass subsettedIncidenceClass = (IncidenceClass) subsets
 				.getThat();
-		Edge edgeToEdgeClass = subsettedIncidenceClass.getFirstGoesToIncidence();
+		Edge edgeToEdgeClass = subsettedIncidenceClass
+				.getFirstGoesToIncidence();
 		if (edgeToEdgeClass == null) {
-			edgeToEdgeClass = subsettedIncidenceClass.getFirstComesFromIncidence();
+			edgeToEdgeClass = subsettedIncidenceClass
+					.getFirstComesFromIncidence();
 		}
 		assertFalse(
 				"There is no edge defined to connected this IncidenceClass to its EdgeClass.",
@@ -1064,13 +1070,14 @@ public class CompareSchemaWithSchemaGraph {
 					attributes.containsKey(gAttribute.get_name()));
 
 			// Get the Domain
-			HasDomain hasDomain = gAttribute.getFirstHasDomainIncidence(OUTGOING);
+			HasDomain hasDomain = gAttribute
+					.getFirstHasDomainIncidence(OUTGOING);
 			assertTrue("There is no Domain defined.", hasDomain != null);
 			Vertex vertex = hasDomain.getThat();
 			assertTrue("Omega should be an instance of Domain.",
 					vertex instanceof Domain);
-			assertFalse("There is more than one Domain defined.", hasDomain
-					.getNextHasDomain(OUTGOING) != null);
+			assertFalse("There is more than one Domain defined.",
+					hasDomain.getNextHasDomainIncidence(OUTGOING) != null);
 
 			// Compares both Domain object with their QualifiedName
 			compareDomain(attributes.remove(gAttribute.get_name()).getDomain(),
@@ -1109,7 +1116,7 @@ public class CompareSchemaWithSchemaGraph {
 			// Gets the Constraint
 			assertTrue("Omega should be an instance of \"Constraint\".",
 					hasConstraint.getOmega() instanceof Constraint);
-			Constraint gConstraint = (Constraint) hasConstraint.getOmega();
+			Constraint gConstraint = hasConstraint.getOmega();
 
 			boolean foundMatch = false;
 			boolean equal = false;
@@ -1124,15 +1131,15 @@ public class CompareSchemaWithSchemaGraph {
 								gConstraint.get_predicateQuery());
 				// If all String objects are present
 				foundMatch |= equal
-						&& constraint.getOffendingElementsQuery() != null
-						&& gConstraint.get_offendingElementsQuery() != null
+						&& (constraint.getOffendingElementsQuery() != null)
+						&& (gConstraint.get_offendingElementsQuery() != null)
 						&& constraint.getOffendingElementsQuery().equals(
 								gConstraint.get_offendingElementsQuery());
 				// If all String objects except for "OffendingElementQuery" are
 				// present
 				foundMatch |= equal
-						&& constraint.getOffendingElementsQuery() == null
-						&& gConstraint.get_offendingElementsQuery() == null;
+						&& (constraint.getOffendingElementsQuery() == null)
+						&& (gConstraint.get_offendingElementsQuery() == null);
 			}
 			// One match should be found!
 			assertTrue("No Match have been found for all Constraints.",

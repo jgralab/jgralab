@@ -35,74 +35,23 @@
 
 package de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib;
 
-import java.util.ArrayList;
-
 import de.uni_koblenz.jgralab.Edge;
-import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
-import de.uni_koblenz.jgralab.greql2.funlib.Greql2Function;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
+import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
-public class OmegaIncidenceNumber extends Greql2Function {
-	{
-		JValueType[][] x = { { JValueType.EDGE, JValueType.STRING } };
-		signatures = x;
-
-		description = "Returns the omega incidence number of the given edge.";
-
-		Category[] c = { Category.GRAPH };
-		categories = c;
+public class OmegaIncidenceNumber extends Function {
+	public OmegaIncidenceNumber() {
+		super("Returns the omega incidence number of the given edge.", 2, 1,
+				1.0, Category.GRAPH);
 	}
 
-	@Override
-	public JValue evaluate(Graph graph, SubGraphMarker subgraph,
-			JValue[] arguments) throws EvaluateException {
-
-		switch (checkArguments(arguments)) {
-		case 0:
-			Edge edge = arguments[0].toEdge();
-			return new JValueImpl(getOmegaIncidenceNumber(edge));
-		default:
-			throw new WrongFunctionParameterException(this, arguments);
-		}
-	}
-
-	/**
-	 * Returns the omega incidence number for the given Edge.
-	 * 
-	 * @param edge
-	 *            Edge of which the incidence number should be found out.
-	 * @return Incidence number.
-	 */
-	private int getOmegaIncidenceNumber(Edge edge) {
+	public Integer evaluate(Edge edge) {
 		int num = 0;
-		edge = edge.getReversedEdge();
 		for (Edge incidence : edge.getOmega().incidences()) {
 			if (incidence == edge) {
 				return num;
 			}
 			num++;
 		}
-		return -1;
+		return null;
 	}
-
-	@Override
-	public long getEstimatedCosts(ArrayList<Long> inElements) {
-		return 2;
-	}
-
-	@Override
-	public double getSelectivity() {
-		return 1;
-	}
-
-	@Override
-	public long getEstimatedCardinality(int inElements) {
-		return 1;
-	}
-
 }

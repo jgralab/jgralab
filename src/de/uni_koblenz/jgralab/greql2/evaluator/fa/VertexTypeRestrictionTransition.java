@@ -37,9 +37,7 @@ package de.uni_koblenz.jgralab.greql2.evaluator.fa;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
+import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
 /**
@@ -55,7 +53,7 @@ public class VertexTypeRestrictionTransition extends Transition {
 	 * The type collection that toggles which types are accepted and which are
 	 * not
 	 */
-	private JValueTypeCollection typeCollection;
+	private TypeCollection typeCollection;
 
 	/**
 	 * returns true if this transition and the given transition t accept the
@@ -85,7 +83,7 @@ public class VertexTypeRestrictionTransition extends Transition {
 	 *            The typeIds which restricts the possible start vertices
 	 */
 	public VertexTypeRestrictionTransition(State start, State end,
-			JValueTypeCollection typeCollection) {
+			TypeCollection typeCollection) {
 		super(start, end);
 		this.typeCollection = typeCollection;
 	}
@@ -96,7 +94,7 @@ public class VertexTypeRestrictionTransition extends Transition {
 	protected VertexTypeRestrictionTransition(
 			VertexTypeRestrictionTransition t, boolean addToStates) {
 		super(t, addToStates);
-		typeCollection = new JValueTypeCollection(t.typeCollection);
+		typeCollection = new TypeCollection(t.typeCollection);
 	}
 
 	/**
@@ -134,19 +132,10 @@ public class VertexTypeRestrictionTransition extends Transition {
 	 * 
 	 * @param v
 	 *            the current vertex
-	 * @param subgraph
-	 *            the SubgraphTempAttribute which should be accepted
 	 * @return true if the transition can fire with e, false otherwise
 	 */
 	@Override
-	public boolean accepts(Vertex v, Edge e, SubGraphMarker subgraph)
-			throws EvaluateException {
-		// it is not neccessary to check if the vertex belongs to a special
-		// subgraph, because if it does not, this method will not be called and
-		// there is no edge connected to this vertex wich belongs to the
-		// subgraph
-		// checks if a startVertexTypeRestriction is set and if v has the right
-		// type
+	public boolean accepts(Vertex v, Edge e) {
 		AttributedElementClass vertexClass = v.getAttributedElementClass();
 		if (!typeCollection.acceptsType(vertexClass)) {
 			return false;

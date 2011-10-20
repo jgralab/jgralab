@@ -6,10 +6,10 @@ public interface Condition {
 
 	/**
 	 * Evaluates the condition
-	 * 
+	 *
 	 * @param event
 	 *            an Event containing the element to check the condition for
 	 * @return if the condition is evaluated to true
 	 */
-	public boolean evaluate(Event event) ;
+	public boolean evaluate(Event event);
 }

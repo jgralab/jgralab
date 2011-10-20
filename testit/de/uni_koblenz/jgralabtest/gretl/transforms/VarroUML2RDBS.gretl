@@ -89,4 +89,4 @@ AddSubClass NamedElement FKey;
 CreateAttribute NamedElement.name : String
   <== from ne : keySet(img_NamedElement)
       reportMap ne ->
-        hasJValueType(ne, "VERTEX") ? ne.name : ne[1] ++ '_' ++ ne[0].name end;
+        valueType(ne) = "Vertex" ? ne.name : ne[1] ++ '_' ++ ne[0].name end;

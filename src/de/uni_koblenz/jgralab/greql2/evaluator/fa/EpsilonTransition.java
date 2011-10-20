@@ -35,12 +35,8 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator.fa;
 
-import java.util.logging.Logger;
-
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 
 /**
  * A epsilon transition which may fire without any restrictions. Epsilon
@@ -51,9 +47,6 @@ import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
  * 
  */
 public class EpsilonTransition extends Transition {
-
-	private static Logger logger = Logger.getLogger(EpsilonTransition.class
-			.getName());
 
 	/**
 	 * creates a new epsilon-transition from start to end
@@ -100,14 +93,8 @@ public class EpsilonTransition extends Transition {
 	 * be eliminated before the pathsearch strarts
 	 */
 	@Override
-	public boolean accepts(Vertex v, Edge e, SubGraphMarker subgraph)
-			throws EvaluateException {
-		logger.info("Id of this epsilon transition is: " + this);
-		// GreqlEvaluator.println("In Number of this transition is : " +
-		// this.endState.inTransitions.indexOf(this));
-		// GreqlEvaluator.println("Out Number of this transition is : " +
-		// this.startState.inTransitions.indexOf(this));
-		throw new EvaluateException(
+	public boolean accepts(Vertex v, Edge e) {
+		throw new UnsupportedOperationException(
 				"EpsilonTransition.accepts(...) has been called. That should not happen, there should be no epsilon-transitions in the DFA used for path search. Check the DFA-Constructor");
 	}
 
