@@ -1,29 +1,29 @@
 /*
  * JGraLab - The Java Graph Laboratory
- * 
+ *
  * Copyright (C) 2006-2011 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- * 
+ *
  * For bug reports, documentation and further information, visit
- * 
+ *
  *                         http://jgralab.uni-koblenz.de
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
+ *
  * Additional permission under GNU GPL version 3 section 7
- * 
+ *
  * If you modify this Program, or any covered work, by linking or combining
  * it with Eclipse (or a modified version of that program or an Eclipse
  * plugin), containing parts covered by the terms of the Eclipse Public
@@ -46,9 +46,9 @@ import de.uni_koblenz.jgralab.schema.RecordDomain;
 
 /**
  * TODO add comment
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class AttributedElementCodeGenerator extends CodeGenerator {
 
@@ -103,7 +103,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	 * Returns the absolute name of the given AttributdelementClass. The name is
 	 * composed of the package-prefix of the schema the class belongs to and the
 	 * qualified name of the class
-	 * 
+	 *
 	 * @param aec
 	 * @return
 	 */
@@ -141,14 +141,10 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 
 		code.setVariable("classOrInterface", currentCycle
 				.isStdOrDbImplOrTransImpl() ? " class" : " interface");
-		code.setVariable(
-				"abstract",
-				currentCycle.isStdOrDbImplOrTransImpl()
-						&& aec.isAbstract() ? " abstract" : "");
-		code.setVariable(
-				"impl",
-				currentCycle.isStdOrDbImplOrTransImpl()
-						&& !aec.isAbstract() ? "Impl" : "");
+		code.setVariable("abstract", currentCycle.isStdOrDbImplOrTransImpl()
+				&& aec.isAbstract() ? " abstract" : "");
+		code.setVariable("impl", currentCycle.isStdOrDbImplOrTransImpl()
+				&& !aec.isAbstract() ? "Impl" : "");
 		code.add("public#abstract##classOrInterface# #simpleClassName##impl##extends##implements# {");
 		code.setVariable(
 				"extends",
@@ -239,15 +235,29 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	protected CodeBlock createGenericGetter(Set<Attribute> attrSet) {
 		CodeList code = new CodeList();
 		addImports("#jgPackage#.NoSuchAttributeException");
+		if (!attrSet.isEmpty()) {
+			code.addNoIndent(new CodeSnippet(true,
+					"@SuppressWarnings(\"unchecked\")"));
+		}
 		code.addNoIndent(new CodeSnippet(true,
-				"public Object getAttribute(String attributeName) {"));
+				"public <T> T getAttribute(String attributeName) {"));
 		for (Attribute attr : attrSet) {
 			CodeSnippet s = new CodeSnippet();
+			if (attr.getDomain().isComposite()) {
+				s.setVariable(
+						"attributeClassName",
+						attr.getDomain()
+								.getJavaAttributeImplementationTypeName(
+										schemaRootPackageName));
+			} else {
+				s.setVariable("attributeClassName", attr.getDomain()
+						.getJavaClassName(schemaRootPackageName));
+			}
 			s.setVariable("name", attr.getName());
 			s.setVariable("isOrGet", attr.getDomain().isBoolean() ? "is"
 					: "get");
 			s.setVariable("cName", attr.getName());
-			s.add("if (attributeName.equals(\"#name#\")) return #isOrGet#_#cName#();");
+			s.add("if (attributeName.equals(\"#name#\")) return (T) (#attributeClassName#) #isOrGet#_#cName#();");
 			code.add(s);
 		}
 		code.add(new CodeSnippet(
@@ -272,7 +282,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		if (suppressWarningsNeeded) {
 			snip.add("@SuppressWarnings(\"unchecked\")");
 		}
-		snip.add("public void setAttribute(String attributeName, Object data) {");
+		snip.add("public <T> void setAttribute(String attributeName, T data) {");
 		code.addNoIndent(snip);
 		for (Attribute attr : attrSet) {
 			CodeSnippet s = new CodeSnippet();
@@ -391,12 +401,12 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 			code.add("public void set_#name#(#type# _#name#);");
 			break;
 		case STDIMPL:
-			code.add("public void set_#name#(#type# _#name#) {",
+			code.add(
+					"public void set_#name#(#type# _#name#) {",
 					"\tecaAttributeChanging(\"#name#\", this._#name#, _#name#);",
 					"\tObject oldValue = this._#name#;",
 					"\tthis._#name# = _#name#;", "\tgraphModified();",
-					"ecaAttributeChanged(\"#name#\", oldValue, _#name#);",
-					"}");
+					"ecaAttributeChanged(\"#name#\", oldValue, _#name#);", "}");
 			break;
 		case DBIMPL:
 			code.add("public void set_#name#(#type# _#name#) {");
@@ -499,7 +509,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param attrSet
 	 * @return
 	 */
@@ -601,7 +611,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	/**
 	 * Generates method attributes() which returns a set of all versioned
 	 * attributes for an <code>AttributedElement</code>.
-	 * 
+	 *
 	 * @param attributeList
 	 * @return
 	 */
