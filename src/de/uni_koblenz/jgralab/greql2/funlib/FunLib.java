@@ -57,6 +57,7 @@ public class FunLib {
 
 	public static class FunctionInfo {
 		String name;
+		Class<? extends Function> functionClass;
 		Function function;
 		Signature[] signatures;
 		boolean needsGraphArgument;
@@ -64,6 +65,7 @@ public class FunLib {
 
 		FunctionInfo(String name, Class<? extends Function> cls) {
 			this.name = name;
+			functionClass = cls;
 			ArrayList<Signature> functionSignatures = new ArrayList<Signature>();
 			try {
 				function = cls.newInstance();
@@ -284,7 +286,12 @@ public class FunLib {
 			return;
 		}
 		String name = getFunctionName(cls);
-		if (contains(name)) {
+		FunctionInfo fn = functions.get(name);
+		if (fn != null) {
+			if (fn.functionClass == cls) {
+				// ok, same class is already registered
+				return;
+			}
 			throw new GreqlException("Duplicate function name '" + name + "'");
 		}
 		if (logger != null) {

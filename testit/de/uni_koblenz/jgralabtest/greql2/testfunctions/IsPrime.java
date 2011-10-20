@@ -35,13 +35,7 @@
 
 package de.uni_koblenz.jgralabtest.greql2.testfunctions;
 
-import java.util.ArrayList;
-
-import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
-
 
 /**
  * Checks if the given number is a prime number.
@@ -71,33 +65,17 @@ import de.uni_koblenz.jgralab.greql2.funlib.Function;
  * @author ist@uni-koblenz.de
  */
 public class IsPrime extends Function {
-	
-		public IsPrime(){
-			super("Return true, if the given number is a prime number.\n"
-					+ "This function performs the Miller-Rabin pseudo primality\n"
-					+ "test. The optional second parameter $k$ is an integer that\n"
-					+ "specifies influences the probability of being a prime.\n"
-					+ "The chances of being prime is $1- (\\frac{1}{4})^k$.  The default\n"
-					+ "value of $k$ is 10.", Category.ARITHMETICS);
-		}
 
-	/**
-	 * The costs for an isPrime function application.
-	 * 
-	 * Since those depend heavily on the parameter(s) of isPrime, but those
-	 * aren't available before evaluation, it's hard to set it to a "good"
-	 * value...
-	 */
-	private static final int ESTIMATED_COSTS_PER_RUN = 5;
-
-	/**
-	 * The selectivity for isPrime. The number of prime numbers < x can be
-	 * estimated with x / ln(x). So the selectivity is (x / ln(x))/x = 1/ln(x).
-	 * 
-	 * Since we assume that isPrime is most often called with smaller values, we
-	 * use 500 for x.
-	 */
-	private static final double SELECTIVITY = 1.0 / Math.log(5000);
+	public IsPrime() {
+		super(
+				"Return true, if the given number is a prime number.\n"
+						+ "This function performs the Miller-Rabin pseudo primality\n"
+						+ "test. The optional second parameter $k$ is an integer that\n"
+						+ "specifies influences the probability of being a prime.\n"
+						+ "The chances of being prime is $1- (\\frac{1}{4})^k$.  The default\n"
+						+ "value of $k$ is 10.", 50, 1, 1.0 / Math.log(5000),
+				Category.ARITHMETICS);
+	}
 
 	/**
 	 * @param a
@@ -163,46 +141,21 @@ public class IsPrime extends Function {
 		return true;
 	}
 
-	
-	public Boolean evaluate(Graph graph, SubGraphMarker subgraph,
-			Long number) throws EvaluateException{
-		
-		
-		if(number<2){
+	public Boolean evaluate(Long number) {
+		if (number < 2) {
 			return false;
 		}
-		return isPrime(number,10);
+		return isPrime(number, 10);
 	}
-	
-	public Boolean evaluate(Graph graph, SubGraphMarker subgraph,
-			Long number, Integer noOfTestRuns) throws EvaluateException {
+
+	public Boolean evaluate(Long number, Integer noOfTestRuns) {
 		if (noOfTestRuns <= 0) {
-			throw new EvaluateException(
+			throw new IllegalArgumentException(
 					"isPrime's second argument must be positive!");
 		}
-		if(number < 2 ) {
-				return false;
+		if (number < 2) {
+			return false;
 		}
-		return isPrime(number,noOfTestRuns);
-	}
-
-	@Override
-	public long getEstimatedCardinality(int inElements) {
-		return 1;
-	}
-
-	@Override
-	public long getEstimatedCosts(ArrayList<Long> inElements) {
-		return 10 * ESTIMATED_COSTS_PER_RUN;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#getSelectivity()
-	 */
-	@Override
-	public double getSelectivity() {
-		return SELECTIVITY;
+		return isPrime(number, noOfTestRuns);
 	}
 }

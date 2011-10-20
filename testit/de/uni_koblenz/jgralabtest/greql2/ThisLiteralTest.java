@@ -37,9 +37,10 @@ package de.uni_koblenz.jgralabtest.greql2;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.List;
+
 import org.junit.Test;
 
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
 
 public class ThisLiteralTest extends GenericTest {
@@ -49,11 +50,11 @@ public class ThisLiteralTest extends GenericTest {
 		String queryString = "from c: V{localities.County}, a:V{junctions.Airport} "
 				+ "with c --> & {@thisVertex = a} --> & {@thisVertex <> a} a report a "
 				+ "end";
-		JValue result = evalTestQuery("ThisVertex1", queryString,
+		Object result = evalTestQuery("ThisVertex1", queryString,
 				TestVersion.ROUTE_MAP_GRAPH);
-		JValue resultOpt = evalTestQuery("ThisVertex1 (wo)", queryString,
+		Object resultOpt = evalTestQuery("ThisVertex1 (wo)", queryString,
 				new DefaultOptimizer(), TestVersion.ROUTE_MAP_GRAPH);
-		assertEquals(0, result.toCollection().size());
+		assertEquals(0, ((List<?>) result).size());
 		assertEquals(result, resultOpt);
 	}
 
@@ -62,11 +63,11 @@ public class ThisLiteralTest extends GenericTest {
 		String queryString = "from c: V{localities.County}, a1,a2:V{junctions.Airport} "
 				+ "with c {@thisVertex = c} & --> & {@thisVertex = a1} <-- a2 report a1 "
 				+ "end";
-		JValue result = evalTestQuery("ThisVertex2", queryString,
+		Object result = evalTestQuery("ThisVertex2", queryString,
 				TestVersion.ROUTE_MAP_GRAPH);
-		JValue resultOpt = evalTestQuery("ThisVertex2 (wo)", queryString,
+		Object resultOpt = evalTestQuery("ThisVertex2 (wo)", queryString,
 				new DefaultOptimizer(), TestVersion.ROUTE_MAP_GRAPH);
-		assertEquals(3, result.toCollection().size());
+		assertEquals(3, ((List<?>) result).size());
 		assertEquals(result, resultOpt);
 	}
 
@@ -75,21 +76,21 @@ public class ThisLiteralTest extends GenericTest {
 		String queryString = "from c: V{localities.County}, a1,a2:V{junctions.Airport} "
 				+ "with c {@thisVertex = c} & --> & {@thisVertex <> a1} <-- a2 report a1 "
 				+ "end";
-		JValue result = evalTestQuery("ThisVertex3", queryString,
+		Object result = evalTestQuery("ThisVertex3", queryString,
 				TestVersion.ROUTE_MAP_GRAPH);
-		JValue resultOpt = evalTestQuery("ThisVertex3 (wo)", queryString,
+		Object resultOpt = evalTestQuery("ThisVertex3 (wo)", queryString,
 				new DefaultOptimizer(), TestVersion.ROUTE_MAP_GRAPH);
-		assertEquals(airportCount * 2 - 1, result.toCollection().size());
+		assertEquals(airportCount * 2 - 1, ((List<?>) result).size());
 		assertEquals(result, resultOpt);
 	}
 
 	@Test
 	public void testThisEdge1() throws Exception {
 		String queryString = "from c1,c2:V{junctions.Crossroad}  with c1 -->{@isLoop(thisEdge)} c2 report c1,c2 end";
-		JValue result = evalTestQuery(queryString);
-		JValue resultOpt = evalTestQuery("ThisEdge1 (wo)", queryString,
+		Object result = evalTestQuery(queryString);
+		Object resultOpt = evalTestQuery("ThisEdge1 (wo)", queryString,
 				new DefaultOptimizer(), TestVersion.ROUTE_MAP_GRAPH);
-		assertEquals(1, result.toCollection().size());
+		assertEquals(1, ((List<?>) result).size());
 		assertEquals(result, resultOpt);
 	}
 
