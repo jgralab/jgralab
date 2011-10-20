@@ -46,9 +46,9 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * TODO add comment
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 
@@ -188,13 +188,12 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 				continue;
 			}
 			EdgeClass ecl = (EdgeClass) ec;
-			code.addNoIndent(createNextEdgeMethod(ecl, false));
+			code.addNoIndent(createNextEdgeMethod(ecl));
 		}
 		return code;
 	}
 
-	private CodeBlock createNextEdgeMethod(EdgeClass ec,
-			boolean withTypeFlag) {
+	private CodeBlock createNextEdgeMethod(EdgeClass ec) {
 		CodeSnippet code = new CodeSnippet(
 				true,
 				"public #ecName# getNext#ecCamelName#(#formalParams#) {",
@@ -204,9 +203,8 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 		code.setVariable("ecName",
 				schemaRootPackageName + "." + ec.getQualifiedName());
 		code.setVariable("ecCamelName", camelCase(ec.getUniqueName()));
-		code.setVariable("formalParams", (withTypeFlag ? "boolean noSubClasses"
-				: ""));
-		code.setVariable("actualParams", (withTypeFlag ? "noSubClasses" : ""));
+		code.setVariable("formalParams", "");
+		code.setVariable("actualParams", "");
 		return code;
 	}
 
@@ -223,18 +221,14 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 			}
 			addImports("#jgPackage#.EdgeDirection");
 			EdgeClass ecl = (EdgeClass) ec;
-			code.addNoIndent(createNextIncidenceMethod(ecl, false, false));
-			code.addNoIndent(createNextIncidenceMethod(ecl, true, false));
-			if (!ecl.isAbstract()) {
-				code.addNoIndent(createNextIncidenceMethod(ecl, false, true));
-				code.addNoIndent(createNextIncidenceMethod(ecl, true, true));
-			}
+			code.addNoIndent(createNextIncidenceMethod(ecl, false));
+			code.addNoIndent(createNextIncidenceMethod(ecl, true));
 		}
 		return code;
 	}
 
 	private CodeBlock createNextIncidenceMethod(EdgeClass ec,
-			boolean withOrientation, boolean withTypeFlag) {
+			boolean withOrientation) {
 
 		CodeSnippet code = new CodeSnippet(
 				true,
@@ -245,14 +239,9 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 				schemaRootPackageName + "." + ec.getQualifiedName());
 		code.setVariable("ecCamelName", camelCase(ec.getUniqueName()));
 		code.setVariable("formalParams",
-				(withOrientation ? "EdgeDirection orientation" : "")
-						+ (withOrientation && withTypeFlag ? ", " : "")
-						+ (withTypeFlag ? "boolean noSubClasses" : ""));
-		code.setVariable("actualParams",
-				(withOrientation || withTypeFlag ? ", " : "")
-						+ (withOrientation ? "orientation" : "")
-						+ (withOrientation && withTypeFlag ? ", " : "")
-						+ (withTypeFlag ? "noSubClasses" : ""));
+				(withOrientation ? "EdgeDirection orientation" : ""));
+		code.setVariable("actualParams", (withOrientation ? ", orientation"
+				: ""));
 		return code;
 	}
 
