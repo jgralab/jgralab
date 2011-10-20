@@ -1,29 +1,29 @@
 /*
  * JGraLab - The Java Graph Laboratory
- * 
+ *
  * Copyright (C) 2006-2011 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- * 
+ *
  * For bug reports, documentation and further information, visit
- * 
+ *
  *                         http://jgralab.uni-koblenz.de
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
+ *
  * Additional permission under GNU GPL version 3 section 7
- * 
+ *
  * If you modify this Program, or any covered work, by linking or combining
  * it with Eclipse (or a modified version of that program or an Eclipse
  * plugin), containing parts covered by the terms of the Eclipse Public
@@ -85,20 +85,20 @@ import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
 
 /**
  * Converts a GrumlSchema SchemaGraph into a Schema.
- * 
+ *
  * This class is supposed to be used multiple times, but can only be used once
  * at the same time.
- * 
+ *
  * All variables are written like their classes from the package
  * "de.uni_koblenz.jgralab.schema" normal with the exception of the variable for
  * packages. "package" is a keyword. In this case the variable is written with a
  * prefix "x". All variables from the package
  * "de.uni_koblenz.jgralab.grumlschema.structure" are written with an prefix
  * "g".
- * 
+ *
  * All types from "de.uni_koblenz.jgralab.schema" are fully qualified with their
  * package name.;
- * 
+ *
  * @author ist@uni-koblenz.de, Eckhard Großmann
  */
 public class SchemaGraph2Schema {
@@ -169,9 +169,9 @@ public class SchemaGraph2Schema {
 
 	/**
 	 * Deletes every references and frees memory by this.
-	 * 
+	 *
 	 * Note:
-	 * 
+	 *
 	 * A Garbage Collection is performed with processing the finalization queue!
 	 */
 	private void tearDown() {
@@ -191,9 +191,9 @@ public class SchemaGraph2Schema {
 
 	/**
 	 * Converts a Schema of a given SchemaGraph into a Schema.
-	 * 
+	 *
 	 * Note: A Garbage Collection is performed.
-	 * 
+	 *
 	 * @param schemaGraph
 	 *            SchemaGraph, of which a corresponding Schema should be
 	 *            constructed.
@@ -249,7 +249,7 @@ public class SchemaGraph2Schema {
 	/**
 	 * Creates the subsetted and redefined values of all EdgeClasses who have no
 	 * superclass in the schemaGraph.
-	 * 
+	 *
 	 */
 	private void createSubsetsAndRedefinesOfAllEdgeClasses() {
 		for (EdgeClass ec : gSuperEdgeClasses) {
@@ -260,7 +260,7 @@ public class SchemaGraph2Schema {
 	/**
 	 * Creates the subsetted and redefined values of one EdgeClasses and its
 	 * direct and indirect subclasses.
-	 * 
+	 *
 	 * @param gEdgeClass
 	 */
 	private void createSubsetsAndRedefinesOfOneEdgeClass(EdgeClass gEdgeClass) {
@@ -328,7 +328,7 @@ public class SchemaGraph2Schema {
 
 	/**
 	 * Converts the Schema of a SchemaGraph to a Schema.
-	 * 
+	 *
 	 * @param schemaGraph
 	 *            SchemaGraph, of which the Schema should be converted to a
 	 *            Schema.
@@ -364,7 +364,7 @@ public class SchemaGraph2Schema {
 		assert (definesGraphClass != null) : "FIXME! No \"DefinesGraphClass\" edge defined.";
 		assert (definesGraphClass.getThat() instanceof GraphClass) : "FIXME! That is not an instance of \"GraphClass\"";
 		GraphClass gGraphClass = (GraphClass) definesGraphClass.getThat();
-		assert (definesGraphClass.getNextDefinesGraphClass(OUTGOING) == null) : "FIXME! There is more than one GraphClass defined.";
+		assert (definesGraphClass.getNextDefinesGraphClassIncidence(OUTGOING) == null) : "FIXME! There is more than one GraphClass defined.";
 
 		// Creates a new GraphClass of the Schema
 		this.graphClass = schema.createGraphClass(gGraphClass
@@ -400,7 +400,7 @@ public class SchemaGraph2Schema {
 		assert (containsDefaultPackage != null) : "No \"ContainsDefaultPackage\" edge defined.";
 		assert (containsDefaultPackage.getThat() instanceof Package) : "FIXME! That should be an instance of \"Package\".";
 		Package defaultPackage = (Package) containsDefaultPackage.getThat();
-		assert (containsDefaultPackage.getNextContainsDefaultPackage(OUTGOING) == null) : "FIXME! There should be only one \"ContainsDefaultPackage\".";
+		assert (containsDefaultPackage.getNextContainsDefaultPackageIncidence(OUTGOING) == null) : "FIXME! There should be only one \"ContainsDefaultPackage\".";
 
 		// Starts the recursive collecting process with the DefaultPackage
 		getAllGraphElementClassesAndDomains(defaultPackage);
@@ -414,7 +414,7 @@ public class SchemaGraph2Schema {
 	 * the member variables <code>gGraphElementClasses</code> and
 	 * <code>gDomains</code>. This method is called recursively by itself with
 	 * the subpackages of the current Package object.
-	 * 
+	 *
 	 * @param gPackage
 	 *            Package, of which all GraphElementClass and Domain objects are
 	 *            retrieved.
@@ -446,7 +446,7 @@ public class SchemaGraph2Schema {
 	/**
 	 * Retrieves all GraphElementClass objects and stores them into the member
 	 * variable <code>gGraphElementClasses</code>.
-	 * 
+	 *
 	 * @param gPackage
 	 *            Package, of which all GraphElementClass objects are retrieved.
 	 */
@@ -483,7 +483,7 @@ public class SchemaGraph2Schema {
 	/**
 	 * Retrieves all Domain objects and stores them into the member variable
 	 * <code>gDomains</code>.
-	 * 
+	 *
 	 * @param gPackage
 	 *            Package, of which all Domain objects are retrieved.
 	 */
@@ -517,7 +517,7 @@ public class SchemaGraph2Schema {
 	/**
 	 * Converts a given Domain object of the SchemaGraph into corresponding
 	 * Domain objects of the Schema.
-	 * 
+	 *
 	 * @param gDomain
 	 *            Domain, which is converted into a Domain of the Schema.
 	 * @return Created Domain.
@@ -567,7 +567,7 @@ public class SchemaGraph2Schema {
 
 	/**
 	 * Creates an String array of all comments.
-	 * 
+	 *
 	 * @param gNamedElement
 	 * @return String array of all comments
 	 */
@@ -588,7 +588,7 @@ public class SchemaGraph2Schema {
 	/**
 	 * Converts a given EnumDomain object of the SchemaGraph into corresponding
 	 * EnumDomain objects of the Schema.
-	 * 
+	 *
 	 * @param gDomain
 	 *            EnumDomain, which is converted into a Domain of the Schema.
 	 * @return Created EnumDomain.
@@ -603,7 +603,7 @@ public class SchemaGraph2Schema {
 	/**
 	 * Converts a given RecordDomain object of the SchemaGraph into
 	 * corresponding RecordDomain objects of the Schema.
-	 * 
+	 *
 	 * @param gDomain
 	 *            RecordDomain, which is converted into a Domain of the Schema.
 	 * @return Created RecordDomain.
@@ -632,7 +632,7 @@ public class SchemaGraph2Schema {
 	/**
 	 * Converts a given CollectionDomain object of the SchemaGraph into
 	 * corresponding CollectionDomain objects of the Schema.
-	 * 
+	 *
 	 * @param gDomain
 	 *            CollectionDomain, which is converted into a Domain of the
 	 *            Schema.
@@ -649,7 +649,7 @@ public class SchemaGraph2Schema {
 		assert (hasBaseDomain != null) : "FIXME! No \"HasBaseDomain\" has been defined.";
 		assert (hasBaseDomain.getThat() instanceof Domain) : "FIXME! That should be an instance of Domain.";
 		Domain base = (Domain) hasBaseDomain.getThat();
-		assert (hasBaseDomain.getNextHasBaseDomain(OUTGOING) == null) : "FIXME! There is more than one \"HasBaseDomain\" defined.";
+		assert (hasBaseDomain.getNextHasBaseDomainIncidence(OUTGOING) == null) : "FIXME! There is more than one \"HasBaseDomain\" defined.";
 
 		// Creates a CollectionDomain
 		return (gDomain instanceof SetDomain) ? schema
@@ -660,7 +660,7 @@ public class SchemaGraph2Schema {
 	/**
 	 * Converts a given MapDomain object of the SchemaGraph into corresponding
 	 * MapDomain objects of the Schema.
-	 * 
+	 *
 	 * @param gDomain
 	 *            MapDomain, which is converted into a Domain of the Schema.
 	 * @return Created MapDomain.
@@ -675,7 +675,7 @@ public class SchemaGraph2Schema {
 		assert (hasKeyDomain != null) : "No \"HasKeyDomain\" has been defined.";
 		assert (hasKeyDomain.getThat() instanceof Domain) : "That should be an instance of Domain.";
 		key = (Domain) hasKeyDomain.getThat();
-		assert (hasKeyDomain.getNextHasKeyDomain(OUTGOING) == null) : "There is more than one \"HasKeyDomain\" defined.";
+		assert (hasKeyDomain.getNextHasKeyDomainIncidence(OUTGOING) == null) : "There is more than one \"HasKeyDomain\" defined.";
 
 		// Gets the ValueDomain
 		HasValueDomain hasValueDomain = gDomain
@@ -683,7 +683,7 @@ public class SchemaGraph2Schema {
 		assert (hasValueDomain != null) : "No \"HasValueDomain\" has been defined.";
 		assert (hasValueDomain.getThat() instanceof Domain) : "That should be an instance of Domain.";
 		value = (Domain) hasValueDomain.getThat();
-		assert (hasValueDomain.getNextHasValueDomain(OUTGOING) == null) : "There is more than one \"HasValueDomain\" defined.";
+		assert (hasValueDomain.getNextHasValueDomainIncidence(OUTGOING) == null) : "There is more than one \"HasValueDomain\" defined.";
 
 		// Creates a MapDomain
 		return schema.createMapDomain(queryDomain(key), queryDomain(value));
@@ -744,8 +744,8 @@ public class SchemaGraph2Schema {
 					(IncidenceClass) from.getThat());
 
 			// Only one To and one From edge should be defined.
-			assert ((to.getNextGoesTo(OUTGOING) == null) && (from
-					.getNextComesFrom(OUTGOING) == null)) : "There is more than one To or From edge defined.";
+			assert ((to.getNextGoesToIncidence(OUTGOING) == null) && (from
+					.getNextComesFromIncidence(OUTGOING) == null)) : "There is more than one To or From edge defined.";
 		}
 
 		assert (element != null) : "FIXME! No GraphElementClass has been created.";
@@ -825,7 +825,7 @@ public class SchemaGraph2Schema {
 	/**
 	 * Converts all Constraint objects of a given GraphClassElement and adds
 	 * them to a GraphClassElement of the Schema.
-	 * 
+	 *
 	 * @param element
 	 *            GraphElementClass, to which all converted Constraint objects
 	 *            are added.
@@ -854,7 +854,7 @@ public class SchemaGraph2Schema {
 	/**
 	 * Converts all Attribute objects of a given GraphClassElement and adds them
 	 * to a GraphClassElement of the Schema.
-	 * 
+	 *
 	 * @param element
 	 *            GraphElementClass, to which all converted Attribute objects
 	 *            are added.
@@ -884,7 +884,7 @@ public class SchemaGraph2Schema {
 			element.addAttribute(attribute.get_name(),
 					queryDomain((Domain) hasDomain.getThat()),
 					attribute.get_defaultValue());
-			assert (hasDomain.getNextHasDomain(OUTGOING) == null);
+			assert (hasDomain.getNextHasDomainIncidence(OUTGOING) == null);
 		}
 	}
 
@@ -926,7 +926,7 @@ public class SchemaGraph2Schema {
 
 	/**
 	 * Links all EdgeClass objects with their superclass.
-	 * 
+	 *
 	 * @param edgeClass
 	 *            EdgeClass of the Schema, which should be linked with their
 	 *            superclass.
@@ -967,7 +967,7 @@ public class SchemaGraph2Schema {
 
 	/**
 	 * Links all VertexClass objects with their superclass.
-	 * 
+	 *
 	 * @param edgeClass
 	 *            VertexClass of the Schema, which should be linked with their
 	 *            superclass.
@@ -1009,7 +1009,7 @@ public class SchemaGraph2Schema {
 	/**
 	 * Queries the corresponding GraphElementClass in the Schema of a
 	 * GraphElementClass in the SchemaGraph.
-	 * 
+	 *
 	 * @param gElement
 	 *            GraphElementClass, of which the corresponding
 	 *            GraphElementClass should be queried.
@@ -1031,7 +1031,7 @@ public class SchemaGraph2Schema {
 	/**
 	 * Queries the corresponding Domain in the Schema of a Domain in the
 	 * SchemaGraph.
-	 * 
+	 *
 	 * @param gElement
 	 *            Domain, of which the corresponding Domain should be queried.
 	 * @return Domain, which responds to the QualifiedName of the given Domain.

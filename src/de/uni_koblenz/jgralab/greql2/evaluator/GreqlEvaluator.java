@@ -54,6 +54,12 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.pcollections.PCollection;
+import org.pcollections.PMap;
+import org.pcollections.POrderedSet;
+import org.pcollections.PSet;
+import org.pcollections.PVector;
+
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
@@ -67,18 +73,13 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
-import de.uni_koblenz.jgralab.greql2.SerializableGreql2;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.DefaultCostModel;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.Greql2Exception;
+import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
-import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
+import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
 import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.Optimizer;
 import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
@@ -90,6 +91,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
 import de.uni_koblenz.jgralab.greql2.schema.IsBoundVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsFunctionIdOf;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
+import de.uni_koblenz.jgralab.greql2.serialising.GreqlSerializer;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
@@ -129,15 +131,17 @@ public class GreqlEvaluator {
 
 		GreqlEvaluator eval = new GreqlEvaluator(query, datagraph, null);
 		eval.startEvaluation();
-		JValue result = eval.getEvaluationResult();
+		Object result = eval.getResult();
 		System.out.println("Evaluation Result:");
 		System.out.println("==================");
-		if (result.isCollection()) {
-			for (JValue jv : result.toCollection()) {
+
+		if (result instanceof PCollection) {
+			PCollection<?> coll = (PCollection<?>) result;
+			for (Object jv : coll) {
 				System.out.println(jv);
 			}
-		} else if (result.isMap()) {
-			for (Entry<JValue, JValue> e : result.toJValueMap().entrySet()) {
+		} else if (result instanceof Map) {
+			for (Entry<?, ?> e : ((Map<?, ?>) result).entrySet()) {
 				System.out.println(e.getKey() + " --> " + e.getValue());
 			}
 		} else {
@@ -273,7 +277,7 @@ public class GreqlEvaluator {
 	 * @return a JValueSet with the result of that queryPart or null if the
 	 *         query part is not yet indexed
 	 */
-	public static synchronized JValueSet getVertexIndex(Graph graph,
+	public static synchronized PSet<Vertex> getVertexIndex(Graph graph,
 			String queryPart) {
 		SoftReference<GraphIndex> ref = graphIndizes.get(graph.getId());
 		if (ref == null) {
@@ -296,7 +300,7 @@ public class GreqlEvaluator {
 	 * index of the given graph
 	 */
 	public static synchronized void addVertexIndex(Graph graph,
-			String queryPart, JValueSet vertexSet) {
+			String queryPart, PSet<Vertex> vertexSet) {
 		SoftReference<GraphIndex> ref = graphIndizes.get(graph.getId());
 		GraphIndex index = null;
 
@@ -524,7 +528,7 @@ public class GreqlEvaluator {
 	/**
 	 * This attribute holds the result of the evaluation
 	 */
-	protected JValue result = null;
+	protected Object result = null;
 
 	/**
 	 * This attribute holds the CostModel which estimates the evaluation costs
@@ -581,7 +585,7 @@ public class GreqlEvaluator {
 	 * Holds the variables that are defined via using, they are called bound or
 	 * free variables
 	 */
-	protected Map<String, JValue> variableMap = null;
+	protected Map<String, Object> variableMap = null;
 
 	/**
 	 * Holds the greql subqueries that can be called like other greql functions.
@@ -617,35 +621,31 @@ public class GreqlEvaluator {
 	/**
 	 * returns the changes variableMap
 	 */
-	public Map<String, JValue> getVariables() {
+	public Map<String, Object> getVariables() {
 		return variableMap;
 	}
 
-	public JValue getVariable(String name) {
-		if ((variableMap != null) && variableMap.containsKey(name)) {
-			return variableMap.get(name);
-		}
-		return new JValueImpl();
+	public Object getVariable(String name) {
+		return variableMap == null ? null : variableMap.get(name);
 	}
 
-	public void setVariables(Map<String, JValue> varMap) {
+	public void setVariables(Map<String, Object> varMap) {
 		variableMap = varMap;
 	}
 
-	public void setVariable(String varName, JValue value) {
+	public void setVariable(String varName, Object value) {
 		if (variableMap == null) {
-			variableMap = new HashMap<String, JValue>();
+			variableMap = new HashMap<String, Object>();
 		}
 		variableMap.put(varName, value);
 	}
 
 	public void setSubQuery(String name, String greqlQuery) {
 		if (name == null) {
-			throw new EvaluateException(
-					"The name of a subquery must not be null!");
+			throw new GreqlException("The name of a subquery must not be null!");
 		}
 		if (!name.matches("^\\w+$")) {
-			throw new EvaluateException("Invalid subquery name '" + name
+			throw new GreqlException("Invalid subquery name '" + name
 					+ "'. Only word chars are allowed.");
 		}
 
@@ -655,13 +655,9 @@ public class GreqlEvaluator {
 		subQueryNames.addAll(definedSubQueries);
 		subQueryNames.add(name);
 		GreqlParser parser = new GreqlParser(greqlQuery, subQueryNames);
-		try {
-			parser.parse();
-		} catch (Exception e) {
-			// e.printStackTrace();
-			throw new EvaluateException("Error parsing subquery \""
-					+ greqlQuery + "\".", e);
-		}
+
+		parser.parse();
+
 		Greql2 subQueryGraph = parser.getGraph();
 		subQueryGraph.getFirstGreql2Expression().set_queryText(name);
 		if (isOptimize()) {
@@ -673,14 +669,14 @@ public class GreqlEvaluator {
 			queryGraph = oldQueryGraph;
 			queryString = oldQueryString;
 		}
-		if (Greql2FunctionLibrary.instance().isGreqlFunction(name)) {
-			throw new Greql2Exception("The subquery '" + name
+		if (FunLib.contains(name)) {
+			throw new GreqlException("The subquery '" + name
 					+ "' would shadow a GReQL function!");
 		}
 		for (FunctionApplication fa : subQueryGraph
 				.getFunctionApplicationVertices()) {
 			if (name.equals(fa.get_functionId().get_name())) {
-				throw new Greql2Exception("The subquery '" + name
+				throw new GreqlException("The subquery '" + name
 						+ "' is recursive.  That's not allowed!");
 			}
 		}
@@ -698,8 +694,28 @@ public class GreqlEvaluator {
 	/**
 	 * returns the result of the evaluation
 	 */
-	public JValue getEvaluationResult() {
+	public Object getResult() {
 		return result;
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> T getSingleResult(Class<T> cls) {
+		return (T) result;
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> PVector<T> getResultList(Class<T> cls) {
+		return (PVector<T>) result;
+	}
+
+	@SuppressWarnings("unchecked")
+	public <K, V> PMap<K, V> getResultMap(Class<K> kcls, Class<V> vcls) {
+		return (PMap<K, V>) result;
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> POrderedSet<T> getResultSet(Class<T> cls) {
+		return (POrderedSet<T>) result;
 	}
 
 	/**
@@ -753,12 +769,12 @@ public class GreqlEvaluator {
 	 *            instance display a progress bar etc.
 	 */
 	public GreqlEvaluator(String query, Graph datagraph,
-			Map<String, JValue> variables, ProgressFunction progressFunction) {
+			Map<String, Object> variables, ProgressFunction progressFunction) {
 		this(datagraph, variables, progressFunction);
 		setQuery(query);
 	}
 
-	private GreqlEvaluator(Graph datagraph, Map<String, JValue> variables,
+	private GreqlEvaluator(Graph datagraph, Map<String, Object> variables,
 			ProgressFunction progressFunction) {
 		if (datagraph == null) {
 			this.datagraph = createMinimalGraph();
@@ -818,7 +834,7 @@ public class GreqlEvaluator {
 	 *            a Map<String, JValue> of bound variables
 	 */
 	public GreqlEvaluator(String query, Graph datagraph,
-			Map<String, JValue> variables) {
+			Map<String, Object> variables) {
 		this(query, datagraph, variables, null);
 	}
 
@@ -837,7 +853,7 @@ public class GreqlEvaluator {
 	 *            instance display a progress bar etc.
 	 */
 	public GreqlEvaluator(File queryFile, Graph datagraph,
-			Map<String, JValue> variables, ProgressFunction progressFunction)
+			Map<String, Object> variables, ProgressFunction progressFunction)
 			throws FileNotFoundException, IOException {
 		this(datagraph, variables, progressFunction);
 		// Read query from file (afuhr)
@@ -856,7 +872,7 @@ public class GreqlEvaluator {
 	 *            a Map<String, JValue> of bound variables
 	 */
 	public GreqlEvaluator(File queryFile, Graph datagraph,
-			Map<String, JValue> variables) throws FileNotFoundException,
+			Map<String, Object> variables) throws FileNotFoundException,
 			IOException {
 		this(queryFile, datagraph, variables, null);
 	}
@@ -871,16 +887,10 @@ public class GreqlEvaluator {
 	/**
 	 * Parses the given query-string and creates the query-graph out of it
 	 */
-	protected boolean parseQuery(String query) throws EvaluateException {
+	protected boolean parseQuery(String query) {
 		long parseStartTime = System.currentTimeMillis();
 		GreqlParser parser = new GreqlParser(query, subQueryMap.keySet());
-		try {
-			parser.parse();
-		} catch (Exception e) {
-			// e.printStackTrace();
-			throw new EvaluateException("Error parsing query \"" + queryString
-					+ "\".", e);
-		}
+		parser.parse();
 		queryGraph = parser.getGraph();
 		weaveInSubQueries();
 		parseTime = System.currentTimeMillis() - parseStartTime;
@@ -932,7 +942,7 @@ public class GreqlEvaluator {
 		}
 
 		if (args.size() != boundVars.size()) {
-			throw new Greql2Exception("Subquery call to '" + name + "' has "
+			throw new GreqlException("Subquery call to '" + name + "' has "
 					+ args.size()
 					+ " arguments, but the subquery definition has "
 					+ boundVars.size() + " formal parameters!");
@@ -976,13 +986,9 @@ public class GreqlEvaluator {
 	/**
 	 * Creates the VertexEvaluator-Object at the vertices in the syntaxgraph
 	 */
-	public void createVertexEvaluators() throws EvaluateException {
+	public void createVertexEvaluators() {
 		if (queryGraph == null) {
 			return;
-		}
-		if (vertexEvalGraphMarker != null) {
-			queryGraph
-					.removeGraphStructureChangedListener(vertexEvalGraphMarker);
 		}
 		vertexEvalGraphMarker = new GraphMarker<VertexEvaluator>(queryGraph);
 		Vertex currentVertex = queryGraph.getFirstVertex();
@@ -1019,8 +1025,7 @@ public class GreqlEvaluator {
 	 * syntaxgraph, adds the VertexEvaluator object to the vertices of that
 	 * graph and stores this as attribute queryGraph.
 	 */
-	protected void createOptimizedSyntaxGraph() throws EvaluateException,
-			OptimizerException {
+	protected void createOptimizedSyntaxGraph() throws OptimizerException {
 		long optimizerStartTime = System.currentTimeMillis();
 		if (optimizer == null) {
 			optimizer = new DefaultOptimizer();
@@ -1080,14 +1085,13 @@ public class GreqlEvaluator {
 	 * variables
 	 * 
 	 * @return true on success, false otherwise
-	 * @throws EvaluateException
-	 *             if something gets wrong during evaluation
 	 */
-	public boolean startEvaluation() throws EvaluateException,
-			OptimizerException {
+	public boolean startEvaluation() throws OptimizerException {
 		if (started) {
 			return result != null;
 		}
+
+		// System.out.println("Query: " + queryString);
 
 		started = true;
 		parseTime = 0;
@@ -1115,12 +1119,7 @@ public class GreqlEvaluator {
 						.println("################### Optimized Query #####################");
 				System.out
 						.println("#########################################################");
-				if (queryGraph instanceof SerializableGreql2) {
-					System.out.println(((SerializableGreql2) queryGraph)
-							.serialize());
-				} else {
-					System.out.println("Couldn't serialize Greql2 graph...");
-				}
+				System.out.println(GreqlSerializer.serializeGraph(queryGraph));
 				String name = "__optimized-greql-query.";
 				try {
 					GraphIO.saveGraphToFile(name + "tg", queryGraph,
@@ -1141,13 +1140,13 @@ public class GreqlEvaluator {
 		}
 
 		if (queryGraph == null) {
-			throw new RuntimeException(
-					"Empty query graph supplied, no evaluation possible");
+			throw new GreqlException(
+					"Query graph is null. Evaluation impossible.");
 		}
 
 		if (queryGraph.getVCount() <= 1) {
 			// Graph contains only root vertex
-			result = new JValueImpl();
+			result = null;
 			return true;
 		}
 
@@ -1164,7 +1163,7 @@ public class GreqlEvaluator {
 
 		long plainEvaluationStartTime = System.currentTimeMillis();
 
-		result = greql2ExpEval.getResult(subgraphMarker);
+		result = greql2ExpEval.getResult();
 
 		// last, remove all added tempAttributes, currently, this are only
 		// subgraphAttributes

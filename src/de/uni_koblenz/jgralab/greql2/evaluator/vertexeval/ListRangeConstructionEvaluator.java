@@ -35,15 +35,13 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
+import org.pcollections.PVector;
+
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.ListRangeConstruction;
@@ -97,32 +95,25 @@ public class ListRangeConstructionEvaluator extends VertexEvaluator {
 	}
 
 	@Override
-	public JValue evaluate() throws EvaluateException {
-		JValueList resultList = new JValueList();
+	public PVector<Integer> evaluate() {
+		PVector<Integer> resultList = JGraLab.vector();
 		if (firstElementEvaluator == null) {
 			getEvals();
 		}
-		JValue firstElement = firstElementEvaluator.getResult(subgraph);
-		JValue lastElement = lastElementEvaluator.getResult(subgraph);
-		try {
-			if (firstElement.isInteger() && lastElement.isInteger()) {
-				if (firstElement.toInteger() < lastElement.toInteger()) {
-					for (int i = firstElement.toInteger(); i < lastElement
-							.toInteger() + 1; i++) {
-						// +1 needed because the top element should also belong
-						// to the list
-						resultList.add(new JValueImpl(i));
-					}
-				} else {
-					for (int i = lastElement.toInteger(); i < firstElement
-							.toInteger() + 1; i++) {
-						resultList.add(new JValueImpl(i));
-					}
+		Object firstElement = firstElementEvaluator.getResult();
+		Object lastElement = lastElementEvaluator.getResult();
+		if (firstElement instanceof Integer && lastElement instanceof Integer) {
+			if ((Integer) firstElement < (Integer) lastElement) {
+				for (int i = (Integer) firstElement; i < (Integer) lastElement + 1; i++) {
+					// +1 needed because the top element should also belong
+					// to the list
+					resultList = resultList.plus(i);
+				}
+			} else {
+				for (int i = (Integer) lastElement; i < (Integer) firstElement + 1; i++) {
+					resultList = resultList.plus(i);
 				}
 			}
-		} catch (JValueInvalidTypeException exception) {
-			throw new EvaluateException("Error in ListConstruction : "
-					+ exception.toString());
 		}
 
 		return resultList;

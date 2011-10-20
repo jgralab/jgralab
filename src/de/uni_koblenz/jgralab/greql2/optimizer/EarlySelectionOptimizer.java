@@ -1,29 +1,29 @@
 /*
  * JGraLab - The Java Graph Laboratory
- * 
+ *
  * Copyright (C) 2006-2011 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- * 
+ *
  * For bug reports, documentation and further information, visit
- * 
+ *
  *                         http://jgralab.uni-koblenz.de
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
+ *
  * Additional permission under GNU GPL version 3 section 7
- * 
+ *
  * If you modify this Program, or any covered work, by linking or combining
  * it with Eclipse (or a modified version of that program or an Eclipse
  * plugin), containing parts covered by the terms of the Eclipse Public
@@ -78,9 +78,9 @@ import de.uni_koblenz.jgralab.schema.Attribute;
 /**
  * This {@link Optimizer} implements the transformation "Selection as early as
  * possible".
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class EarlySelectionOptimizer extends OptimizerBase {
 
@@ -91,7 +91,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#isEquivalent(de.uni_koblenz
 	 * .jgralab.greql2.optimizer.Optimizer)
@@ -106,7 +106,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz
 	 * .jgralab.greql2.evaluator.GreqlEvaluator,
@@ -144,7 +144,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 
 	/**
 	 * Do an optimization run.
-	 * 
+	 *
 	 * @throws OptimizerException
 	 */
 	private boolean runOptimization() throws OptimizerException {
@@ -164,7 +164,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 						movableExpressions.put(e.getKey(), e.getValue());
 					}
 				}
-				isConst = isConst.getNextIsConstraintOf(EdgeDirection.IN);
+				isConst = isConst.getNextIsConstraintOfIncidence(EdgeDirection.IN);
 			}
 		}
 
@@ -460,7 +460,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 	 * Collects all edges running out of the given Variable, which represent
 	 * accesses. Basically, those are all outgoing edges except IsDeclaredVarOf,
 	 * IsBoundVarOf and IsVarOf edges.
-	 * 
+	 *
 	 * @param var
 	 *            a Variable
 	 * @return all edges running out of the given Variable representing variable
@@ -505,7 +505,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 	 * with exceptions for {@link FunctionId}s (never copied) and
 	 * {@link Variable}s (only those in <code>varsToBeCopied</code> will be
 	 * copied ONCE).
-	 * 
+	 *
 	 * @param predicates
 	 *            a {@link List} of {@link Expression}s
 	 * @param varsToBeCopied
@@ -526,12 +526,12 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 	/**
 	 * Find all {@link Expression}s below <code>exp</code> that can be moved and
 	 * return them.
-	 * 
+	 *
 	 * An {@link Expression} is considered movable if it needs only
 	 * {@link Variable}s that are locally declared in one
 	 * {@link SimpleDeclaration} and this {@link SimpleDeclaration} is not the
 	 * only one in the parent {@link Declaration}.
-	 * 
+	 *
 	 * @param exp
 	 *            the {@link Expression} below which to look for movable
 	 *            {@link Expression}s
@@ -556,7 +556,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 								.put(entry.getKey(), entry.getValue());
 					}
 				}
-				isArg = isArg.getNextIsArgumentOf(EdgeDirection.IN);
+				isArg = isArg.getNextIsArgumentOfIncidence(EdgeDirection.IN);
 			}
 			return movableExpressions;
 		}
@@ -587,7 +587,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 	 * {@link Variable}s the {@link Expression} <code>exp</code> needs. If
 	 * <code>exp</code> doesn't need any variables or such an
 	 * {@link SimpleDeclaration} doesn't exist, return <code>null</code>.
-	 * 
+	 *
 	 * @param exp
 	 *            an {@link Expression}
 	 * @return the {@link SimpleDeclaration} that declares all local
@@ -675,7 +675,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 	/**
 	 * Collect all {@link SimpleDeclaration}s of <code>decl</code> in a
 	 * {@link List}.
-	 * 
+	 *
 	 * @param decl
 	 *            a {@link Declaration}
 	 * @return a {@link List} of all {@link SimpleDeclaration}s that are part of
@@ -693,7 +693,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 	/**
 	 * Collect the {@link Variable}s that have no outgoing
 	 * {@link IsDeclaredVarOf} edges and are located below <code>v</code>.
-	 * 
+	 *
 	 * @param vertex
 	 *            the root {@link Vertex} below which to look for undeclared
 	 *            {@link Variable}s
@@ -722,7 +722,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 	 * ONCE. After that the one and only copy is used instead of creating a new
 	 * copy. That's what <code>copiedVarMap</code> is for. So normally you'd
 	 * provide an empty {@link HashMap}.
-	 * 
+	 *
 	 * @param origVertex
 	 *            the root {@link Vertex} of the subgraph to be copied
 	 * @param graph
@@ -782,7 +782,7 @@ public class EarlySelectionOptimizer extends OptimizerBase {
 	/**
 	 * Copy the attribute values of <code>from</code> to <code>to</code>. The
 	 * types of the given {@link AttributedElement}s have to be equal.
-	 * 
+	 *
 	 * @param from
 	 *            an {@link AttributedElement}
 	 * @param to

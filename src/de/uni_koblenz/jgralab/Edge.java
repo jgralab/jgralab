@@ -127,53 +127,6 @@ public interface Edge extends GraphElement {
 			EdgeDirection orientation);
 
 	/**
-	 * @param anEdgeClass
-	 *            the edge class to search for
-	 * @param noSubclasses
-	 *            if true, no subclasses are returned
-	 * @return the next incidence in iSeq where the corresponding edge is of
-	 *         explicit class anEdgeClass
-	 */
-	public Edge getNextIncidence(EdgeClass anEdgeClass, boolean noSubclasses);
-
-	/**
-	 * @param anEdgeClass
-	 *            the edge class to search for
-	 * @param noSubclasses
-	 *            if true, no subclasses are returned
-	 * @return the next incidence in iSeq where the corresponding edge is of
-	 *         explicit class anEdgeClass
-	 */
-	public Edge getNextIncidence(Class<? extends Edge> anEdgeClass,
-			boolean noSubclasses);
-
-	/**
-	 * @param anEdgeClass
-	 *            the edge class to search for
-	 * @param orientation
-	 *            the orientation the next incidence should have
-	 * @param noSubclasses
-	 *            if true, no subclasses are returned
-	 * @return the next incidence in iSeq where the corresponding edge is of
-	 *         explicit class anEdgeClass
-	 */
-	public Edge getNextIncidence(EdgeClass anEdgeClass,
-			EdgeDirection orientation, boolean noSubclasses);
-
-	/**
-	 * @param anEdgeClass
-	 *            the edge class to search for
-	 * @param orientation
-	 *            the orientation the next incidence should have
-	 * @param noSubclasses
-	 *            if true, no subclasses are returned
-	 * @return the next incidence in iSeq where the corresponding edge is of
-	 *         explicit class anEdgeClass
-	 */
-	public Edge getNextIncidence(Class<? extends Edge> anEdgeClass,
-			EdgeDirection orientation, boolean noSubclasses);
-
-	/**
 	 * @return the "this" vertex object, that is the object this directed edge
 	 *         starts at
 	 */
@@ -266,12 +219,6 @@ public interface Edge extends GraphElement {
 	 * @param e
 	 */
 	public void putAfterEdge(Edge e);
-
-	/**
-	 * removes this edge from eSeq and erases its attributes @ if used on an
-	 * incidence
-	 */
-	public void delete();
 
 	/**
 	 * sets the alpha vertex to v

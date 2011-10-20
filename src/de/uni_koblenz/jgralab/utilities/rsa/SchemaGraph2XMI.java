@@ -57,8 +57,6 @@ import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
 import de.uni_koblenz.jgralab.grumlschema.SchemaGraph;
 import de.uni_koblenz.jgralab.grumlschema.domains.BooleanDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.CollectionDomain;
@@ -1122,10 +1120,10 @@ public class SchemaGraph2XMI {
 		}
 
 		// find a unique rolename
-		HashMap<String, JValue> boundVars = new HashMap<String, JValue>();
-		boundVars.put("start", new JValueImpl(connectedVertexClass));
+		HashMap<String, Object> boundVars = new HashMap<String, Object>();
+		boundVars.put("start", connectedVertexClass);
 		int counter = 0;
-		JValue result;
+		Object result;
 		do {
 			counter++;
 			GreqlEvaluator eval = new GreqlEvaluator(
@@ -1134,8 +1132,8 @@ public class SchemaGraph2XMI {
 							+ baseRolename + (counter == 1 ? "" : counter)
 							+ "\"", schemaGraph, boundVars);
 			eval.startEvaluation();
-			result = eval.getEvaluationResult();
-		} while (result.isBoolean() ? result.toBoolean() : false);
+			result = eval.getResult();
+		} while (result instanceof Boolean ? (Boolean) result : false);
 
 		return baseRolename + (counter == 1 ? "" : counter);
 	}

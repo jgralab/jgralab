@@ -40,6 +40,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,10 +57,8 @@ import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.WorkInProgress;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueHTMLOutputVisitor;
+import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
+import de.uni_koblenz.jgralab.greql2.serialising.HTMLOutputWriter;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.schema.Schema;
 
@@ -142,10 +141,10 @@ public class GReQLConsole {
 	 *            the GReQL representation of the query to perform
 	 * @return the calculated query result
 	 */
-	private JValue performQuery(File queryFile) {
-		JValue result = null;
+	private Object performQuery(File queryFile) {
+		Object result = null;
 		try {
-			Map<String, JValue> boundVariables = new HashMap<String, JValue>();
+			Map<String, Object> boundVariables = new HashMap<String, Object>();
 			for (String query : loadQueries(queryFile)) {
 				if (verbose) {
 					System.out.println("Evaluating query: ");
@@ -157,15 +156,15 @@ public class GReQLConsole {
 				// eval.setOptimize(false);
 				eval.startEvaluation();
 
-				result = eval.getEvaluationResult();
-				if (verbose && result.isCollection()) {
+				result = eval.getResult();
+				if (verbose && result instanceof Collection) {
 					System.out.println("Result size is: "
-							+ result.toCollection().size());
+							+ ((Collection<?>) result).size());
 				}
 			}
-		} catch (EvaluateException e) {
+		} catch (GreqlException e) {
 			e.printStackTrace();
-		} catch (OptimizerException e) {
+		} catch (RuntimeException e) {
 			e.printStackTrace();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -178,9 +177,12 @@ public class GReQLConsole {
 	/**
 	 * Prints the JValue given as first parameter to the file with the name
 	 * given as second parameter
+	 * 
+	 * @throws IOException
 	 */
-	private void resultToHTML(JValue result, String outputFile) {
-		new JValueHTMLOutputVisitor(result, outputFile, graph);
+	private void resultToHTML(Object result, String outputFile)
+			throws IOException {
+		new HTMLOutputWriter(result, new File(outputFile), graph);
 	}
 
 	/**
@@ -199,10 +201,15 @@ public class GReQLConsole {
 		JGraLab.setLogLevel(Level.SEVERE);
 		GReQLConsole console = new GReQLConsole(graphFile, loadSchema,
 				comLine.hasOption('v'));
-		JValue result = console.performQuery(new File(queryFile));
+		Object result = console.performQuery(new File(queryFile));
 
 		if (comLine.hasOption("o")) {
-			console.resultToHTML(result, comLine.getOptionValue("o"));
+			try {
+				console.resultToHTML(result, comLine.getOptionValue("o"));
+			} catch (IOException e) {
+				System.err.println("Exception while creating HTML output:");
+				e.printStackTrace();
+			}
 		} else {
 			System.out.println("Result: " + result);
 		}

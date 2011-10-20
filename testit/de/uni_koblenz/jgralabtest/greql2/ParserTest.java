@@ -53,7 +53,7 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.greql2.exception.ParsingException;
 import de.uni_koblenz.jgralab.greql2.exception.UndefinedVariableException;
-import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
+import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
 import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
 import de.uni_koblenz.jgralab.greql2.schema.AggregationPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.AlternativePathDescription;
@@ -140,8 +140,7 @@ import de.uni_koblenz.jgralabtest.greql2.testfunctions.IsPrime;
 
 public class ParserTest {
 	static {
-		Greql2FunctionLibrary.instance().registerUserDefinedFunction(
-				IsPrime.class);
+		FunLib.instance().register(IsPrime.class);
 	}
 
 	private Greql2 parseQuery(String query) throws ParsingException {

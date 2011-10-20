@@ -35,63 +35,22 @@
 
 package de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib;
 
-import java.util.ArrayList;
+import org.pcollections.PCollection;
 
-import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
-import de.uni_koblenz.jgralab.greql2.funlib.Greql2Function;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
+import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
-public class FormatString extends Greql2Function {
-	{
-		JValueType[][] x = { { JValueType.STRING, JValueType.STRING,
-				JValueType.COLLECTION } };
-		signatures = x;
-
-		description = "Formats a given Java format String with all provided strings.";
-
-		Category[] c = { Category.STRINGS };
-		categories = c;
+public class FormatString extends Function {
+	public FormatString() {
+		super("Formats a given Java format String with all provided strings.",
+				2, 1, 1.0, Category.STRINGS);
 	}
 
-	@Override
-	public JValue evaluate(Graph graph, SubGraphMarker subgraph,
-			JValue[] arguments) throws EvaluateException {
-
-		switch (checkArguments(arguments)) {
-		case 0:
-			String format = arguments[0].toString();
-			JValueCollection collection = arguments[1].toJValueList();
-			Object[] strings = new Object[collection.size()];
-			int i = 0;
-			for (JValue value : collection) {
-				strings[i++] = value.toObject();
-			}
-
-			String result = String.format(format, strings);
-			return new JValueImpl(result);
-		default:
-			throw new WrongFunctionParameterException(this, arguments);
+	public String evaluate(String format, PCollection<?> col) {
+		Object[] args = new Object[col.size()];
+		int i = 0;
+		for (Object o : col) {
+			args[i++] = o.toString();
 		}
-	}
-
-	@Override
-	public long getEstimatedCosts(ArrayList<Long> inElements) {
-		return 2;
-	}
-
-	@Override
-	public double getSelectivity() {
-		return 1;
-	}
-
-	@Override
-	public long getEstimatedCardinality(int inElements) {
-		return 1;
+		return String.format(format, args);
 	}
 }

@@ -5,11 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.pcollections.ArrayPMap;
 import org.pcollections.PMap;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.gretl.template.CreateEdge;
 import de.uni_koblenz.jgralab.gretl.template.CreateVertex;
 import de.uni_koblenz.jgralab.gretl.template.TemplateGraph;
@@ -158,7 +158,7 @@ public class TemplateGraphParser {
 	}
 
 	private PMap<String, String> matchAttributes() {
-		PMap<String, String> attrs = ArrayPMap.empty();
+		PMap<String, String> attrs = JGraLab.map();
 		do {
 			if (tryMatch(TokenType.TRIPLE_DOT)) {
 				return attrs;

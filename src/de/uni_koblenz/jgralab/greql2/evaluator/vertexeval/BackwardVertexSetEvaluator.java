@@ -35,6 +35,8 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
+import org.pcollections.PSet;
+
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
@@ -42,10 +44,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.DFA;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
-import de.uni_koblenz.jgralab.greql2.funlib.ReachableVertices;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.funlib.graph.ReachableVertices;
 import de.uni_koblenz.jgralab.greql2.schema.BackwardVertexSet;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
@@ -95,20 +94,14 @@ public class BackwardVertexSetEvaluator extends PathSearchEvaluator {
 	}
 
 	@Override
-	public JValue evaluate() throws EvaluateException {
+	public PSet<Vertex> evaluate() {
 		if (!initialized) {
 			initialize();
 		}
 		Vertex targetVertex = null;
-		try {
-			targetVertex = targetEval.getResult(subgraph).toVertex();
-		} catch (JValueInvalidTypeException exception) {
-			throw new EvaluateException(
-					"Error evaluation BackwardVertexSet, TargetExpression doesn't evaluate to a vertex",
-					exception);
-		}
-		return ReachableVertices
-				.search(targetVertex, searchAutomaton, subgraph);
+		targetVertex = (Vertex) targetEval.getResult();
+
+		return ReachableVertices.search(targetVertex, searchAutomaton);
 	}
 
 	@Override

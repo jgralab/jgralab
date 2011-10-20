@@ -40,11 +40,8 @@ import java.util.Set;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
-import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
+import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 
 /**
  * This transition accepts only one edge. Because this edge may be a variable or
@@ -180,7 +177,7 @@ public class EdgeTransition extends SimpleTransition {
 	 *            be accepted
 	 */
 	public EdgeTransition(State start, State end, AllowedEdgeDirection dir,
-			JValueTypeCollection typeCollection, Set<String> roles,
+			TypeCollection typeCollection, Set<String> roles,
 			VertexEvaluator edgeEval, VertexEvaluator predicateEval,
 			GraphMarker<VertexEvaluator> graphMarker) {
 		super(start, end, dir, typeCollection, roles, predicateEval,
@@ -191,28 +188,21 @@ public class EdgeTransition extends SimpleTransition {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see greql2.evaluator.fa.Transition#accepts(jgralab.Vertex, jgralab.Edge,
-	 * greql2.evaluator.SubgraphTempAttribute)
-	 */
-	@Override
-	public boolean accepts(Vertex v, Edge e, SubGraphMarker subgraph)
-			throws EvaluateException {
-		if (!super.accepts(v, e, subgraph)) {
+	 * @see greql2.evaluator.fa.Transition#accepts(jgralab.Vertex, jgralab.Edge)
+	 */@Override
+	public boolean accepts(Vertex v, Edge e) {
+		if (!super.accepts(v, e)) {
 			return false;
 		}
 		// checks if only one edge is allowed an if e is this allowed edge
 		if (allowedEdgeEvaluator != null) {
-			try {
-				Edge allowedEdge = allowedEdgeEvaluator.getResult(subgraph)
-						.toEdge().getNormalEdge();
-				if (e.getNormalEdge() != allowedEdge) {
-					return false;
-				}
-			} catch (JValueInvalidTypeException ex) {
-				throw new EvaluateException(
-						"EdgeExpression in EdgePathDescription doesn't evaluate to edge",
-						ex);
+
+			Edge allowedEdge = ((Edge) allowedEdgeEvaluator.getResult())
+					.getNormalEdge();
+			if (e.getNormalEdge() != allowedEdge) {
+				return false;
 			}
+
 		}
 		return true;
 	}

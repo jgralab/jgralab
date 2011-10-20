@@ -918,9 +918,10 @@ public class SchemaImpl implements Schema {
 
 	@Override
 	public boolean equals(Object other) {
-		return (this == other)
-				|| ((other instanceof Schema) && this.qualifiedName
-						.equals(((Schema) other).getQualifiedName()));
+		if (other == null || !(other instanceof Schema)) {
+			return false;
+		}
+		return qualifiedName.equals(((Schema) other).getQualifiedName());
 	}
 
 	@Override

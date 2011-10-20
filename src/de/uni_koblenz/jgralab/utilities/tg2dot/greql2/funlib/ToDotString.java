@@ -34,64 +34,29 @@
  */
 package de.uni_koblenz.jgralab.utilities.tg2dot.greql2.funlib;
 
-import java.util.ArrayList;
+import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
-import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.funlib.Greql2Function;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
+public class ToDotString extends Function {
 
-public class ToDotString extends Greql2Function {
-
-	{
-		JValueType[][] x = { { JValueType.STRING, JValueType.STRING } };
-		signatures = x;
-
-		description = "Returns a converted DOT string representation of the given string.";
-
-		Category[] c = { Category.STRINGS };
-		categories = c;
+	public ToDotString() {
+		super(
+				"Returns a converted DOT string representation of the given string.",
+				2, 1, 1.0, Category.STRINGS);
 	}
 
-	@Override
-	public JValue evaluate(Graph graph, SubGraphMarker subgraph,
-			JValue[] arguments) throws EvaluateException {
-
-		switch (checkArguments(arguments)) {
-		case 0:
-			String string = arguments[0].toString();
-			if (arguments[0].isString()) {
-				string = "\"" + string + "\"";
-			}
-			string = string.replace("\\", "\\\\");
-			string = string.replace("|", "\\|");
-			string = string.replace("{", "\\{");
-			string = string.replace("}", "\\}");
-			string = string.replace("\n", "\\n");
-			string = string.replace("\"", "\\\"");
-			string = string.replace("<", "\\<");
-			string = string.replace(">", "\\>");
-			return new JValueImpl(string);
-		default:
-			throw new RuntimeException();
+	public String evaluate(Object arg) {
+		String string = arg.toString();
+		if (arg instanceof String) {
+			string = "\"" + string + "\"";
 		}
-	}
-
-	@Override
-	public long getEstimatedCardinality(int inElements) {
-		return 1;
-	}
-
-	@Override
-	public long getEstimatedCosts(ArrayList<Long> inElements) {
-		return 2;
-	}
-
-	@Override
-	public double getSelectivity() {
-		return 1;
+		string = string.replace("\\", "\\\\");
+		string = string.replace("|", "\\|");
+		string = string.replace("{", "\\{");
+		string = string.replace("}", "\\}");
+		string = string.replace("\n", "\\n");
+		string = string.replace("\"", "\\\"");
+		string = string.replace("<", "\\<");
+		string = string.replace(">", "\\>");
+		return string;
 	}
 }
