@@ -102,7 +102,7 @@ import de.uni_koblenz.jgralabtest.schemas.gretl.varro.uml.Attribute;
 
 /**
  * @author Tassilo Horn <horn@uni-koblenz.de>
- * 
+ *
  */
 public class GretlTest {
 	static {
