@@ -66,29 +66,15 @@ public class Tg2SchemaGraph {
 	public static void main(String[] args) {
 		CommandLine comLine = processCommandLineOptions(args);
 		assert comLine != null;
-		Tg2SchemaGraph graph = new Tg2SchemaGraph();
+		Tg2SchemaGraph tg2sg = new Tg2SchemaGraph();
 		try {
-			GraphIO.saveGraphToFile(comLine.getOptionValue("o"), graph
-					.process(comLine.getOptionValue("s")), null);
+			SchemaGraph sg = tg2sg.process(comLine.getOptionValue("s"));
+			sg.save(comLine.getOptionValue("o"));
 		} catch (GraphIOException e) {
 			e.printStackTrace();
 			System.out
 					.println("\nAn error occured while trying to save the graph.");
 		}
-		// if (args.length != 2) {
-		// System.err
-		// .println("There should be two arguments passed over.\n"
-		// + "usage: Tg2SchemaGraph <TG-Location> <TG-Graph-Location>");
-		// }
-		//
-		// Tg2SchemaGraph graph = new Tg2SchemaGraph();
-		// try {
-		// GraphIO.saveGraphToFile(args[1], graph.process(args[0]), null);
-		// } catch (GraphIOException e) {
-		// e.printStackTrace();
-		// System.out
-		// .println("\nAn error occured while trying to save the graph.");
-		// }
 	}
 
 	private static CommandLine processCommandLineOptions(String[] args) {

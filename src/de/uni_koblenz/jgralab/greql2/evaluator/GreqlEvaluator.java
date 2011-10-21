@@ -1059,9 +1059,8 @@ public class GreqlEvaluator {
 					.println("#########################################################");
 			String name = "__greql-query.";
 			try {
-				GraphIO.saveGraphToFile(name + "tg", queryGraph,
-						new ConsoleProgressFunction(
-								"Saving broken GReQL graph:"));
+				queryGraph.save(name + "tg", new ConsoleProgressFunction(
+						"Saving broken GReQL graph:"));
 				printGraphAsDot(queryGraph, true, name + "dot");
 			} catch (GraphIOException e) {
 				e.printStackTrace();
@@ -1122,8 +1121,8 @@ public class GreqlEvaluator {
 				System.out.println(GreqlSerializer.serializeGraph(queryGraph));
 				String name = "__optimized-greql-query.";
 				try {
-					GraphIO.saveGraphToFile(name + "tg", queryGraph,
-							new ConsoleProgressFunction("Saving"));
+					queryGraph.save(name + "tg", new ConsoleProgressFunction(
+							"Saving"));
 					printGraphAsDot(queryGraph, true, name + "dot");
 				} catch (GraphIOException e) {
 					e.printStackTrace();

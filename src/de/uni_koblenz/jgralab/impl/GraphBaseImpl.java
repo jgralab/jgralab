@@ -35,6 +35,7 @@
 
 package de.uni_koblenz.jgralab.impl;
 
+import java.io.DataOutputStream;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -50,9 +51,11 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphFactory;
+import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.GraphStructureChangedListener;
 import de.uni_koblenz.jgralab.GraphStructureChangedListenerWithAutoRemove;
+import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.RandomIdGenerator;
 import de.uni_koblenz.jgralab.TraversalContext;
 import de.uni_koblenz.jgralab.Vertex;
@@ -373,7 +376,7 @@ public abstract class GraphBaseImpl implements Graph {
 
 	protected void internalEdgeAdded(EdgeBaseImpl e) {
 		notifyEdgeAdded(e);
-		if(this.getECARuleManagerIfThere() != null){
+		if (this.getECARuleManagerIfThere() != null) {
 			getECARuleManagerIfThere().fireAfterCreateEdgeEvents(e);
 		}
 	}
@@ -426,7 +429,7 @@ public abstract class GraphBaseImpl implements Graph {
 
 	protected void internalVertexAdded(VertexBaseImpl v) {
 		notifyVertexAdded(v);
-		if(this.getECARuleManagerIfThere() != null){
+		if (this.getECARuleManagerIfThere() != null) {
 			getECARuleManager().fireAfterCreateVertexEvents(v);
 		}
 	}
@@ -1039,10 +1042,10 @@ public abstract class GraphBaseImpl implements Graph {
 	private void internalDeleteEdge(Edge edge) {
 		assert (edge != null) && edge.isValid() && containsEdge(edge);
 
-		if(this.getECARuleManagerIfThere() != null){
+		if (this.getECARuleManagerIfThere() != null) {
 			getECARuleManagerIfThere().fireBeforeDeleteEdgeEvents(edge);
 		}
-		
+
 		EdgeBaseImpl e = (EdgeBaseImpl) edge.getNormalEdge();
 		internalEdgeDeleted(e);
 
@@ -1057,8 +1060,9 @@ public abstract class GraphBaseImpl implements Graph {
 		removeEdgeFromESeq(e);
 		edgeListModified();
 
-		if(this.getECARuleManagerIfThere() != null){
-			getECARuleManagerIfThere().fireAfterDeleteEdgeEvents(e.getM1Class());
+		if (this.getECARuleManagerIfThere() != null) {
+			getECARuleManagerIfThere()
+					.fireAfterDeleteEdgeEvents(e.getM1Class());
 		}
 		edgeAfterDeleted(e, alpha, omega);
 	}
@@ -1077,8 +1081,8 @@ public abstract class GraphBaseImpl implements Graph {
 		while (!getDeleteVertexList().isEmpty()) {
 			VertexBaseImpl v = getDeleteVertexList().remove(0);
 			assert (v != null) && v.isValid() && containsVertex(v);
-			
-			if(this.getECARuleManagerIfThere() != null){
+
+			if (this.getECARuleManagerIfThere() != null) {
 				getECARuleManagerIfThere().fireBeforeDeleteVertexEvents(v);
 			}
 			internalVertexDeleted(v);
@@ -1100,9 +1104,10 @@ public abstract class GraphBaseImpl implements Graph {
 			}
 			removeVertexFromVSeq(v);
 			vertexListModified();
-			
-			if(this.getECARuleManagerIfThere() != null){
-				getECARuleManagerIfThere().fireAfterDeleteVertexEvents(v.getM1Class());
+
+			if (this.getECARuleManagerIfThere() != null) {
+				getECARuleManagerIfThere().fireAfterDeleteVertexEvents(
+						v.getM1Class());
 			}
 			vertexAfterDeleted(v);
 		}
@@ -1978,7 +1983,7 @@ public abstract class GraphBaseImpl implements Graph {
 
 	@Override
 	public ECARuleManagerInterface getECARuleManager() {
-		if(ecaRuleManager == null){
+		if (ecaRuleManager == null) {
 			Constructor<?> ruleManagerConstructor;
 			try {
 				ruleManagerConstructor = Class.forName(
@@ -1993,9 +1998,9 @@ public abstract class GraphBaseImpl implements Graph {
 		}
 		return ecaRuleManager;
 	}
-	
+
 	@Override
-	public ECARuleManagerInterface getECARuleManagerIfThere(){
+	public ECARuleManagerInterface getECARuleManagerIfThere() {
 		return ecaRuleManager;
 	}
 
@@ -2249,5 +2254,27 @@ public abstract class GraphBaseImpl implements Graph {
 
 	protected boolean canAddGraphElement(int graphElementId) {
 		return graphElementId == 0;
+	}
+
+	@Override
+	public void save(String filename) throws GraphIOException {
+		save(filename, null);
+	}
+
+	@Override
+	public void save(String filename, ProgressFunction pf)
+			throws GraphIOException {
+		GraphIO.saveGraphToFile(this, filename, pf);
+	}
+
+	@Override
+	public void save(DataOutputStream out) throws GraphIOException {
+		save(out, null);
+	}
+
+	@Override
+	public void save(DataOutputStream out, ProgressFunction pf)
+			throws GraphIOException {
+		GraphIO.saveGraphToStream(this, out, pf);
 	}
 }

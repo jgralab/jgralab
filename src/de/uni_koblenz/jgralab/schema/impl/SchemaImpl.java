@@ -1328,10 +1328,10 @@ public class SchemaImpl implements Schema {
 	public String toTGString() {
 		String schemaDefinition = null;
 		ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
-		DataOutputStream dout = new DataOutputStream(byteOut);
+		DataOutputStream out = new DataOutputStream(byteOut);
 		try {
-			GraphIO.saveSchemaToStream(dout, this);
-			dout.close();
+			GraphIO.saveSchemaToStream(this, out);
+			out.close();
 			byteOut.close();
 			schemaDefinition = new String(byteOut.toByteArray());
 		} catch (GraphIOException e) {

@@ -35,7 +35,6 @@
 
 package de.uni_koblenz.jgralabtest;
 
-import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralabtest.schemas.citymap.Bridge;
 import de.uni_koblenz.jgralabtest.schemas.citymap.CarPark;
@@ -105,7 +104,7 @@ public class TestGraphGenerator {
 		e11.set_name("e11");
 
 		System.out.println("Storing graph to file 'citymapgraph.tg'");
-		GraphIO.saveGraphToFile("citymapgraph.tg", g1, null);
+		g1.save("citymapgraph.tg");
 	}
 
 }

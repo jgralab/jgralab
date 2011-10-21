@@ -140,7 +140,7 @@ public class NullValueTest {
 	public void writeTest() throws CommitFailedException, GraphIOException {
 		graph.newReadOnlyTransaction();
 		try {
-			GraphIO.saveGraphToFile(filename, graph,
+			GraphIO.saveGraphToFile(graph, filename,
 					new ConsoleProgressFunction());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -153,7 +153,7 @@ public class NullValueTest {
 	public void readTest() throws CommitFailedException, GraphIOException {
 		graph = RecordTestSchema.instance().createRecordTestGraph();
 		createTestGraph(false);
-		GraphIO.saveGraphToFile(filename, graph, new ConsoleProgressFunction());
+		GraphIO.saveGraphToFile(graph, filename, new ConsoleProgressFunction());
 		try {
 			graph = (RecordTestGraph) GraphIO
 					.loadGraphFromFileWithTransactionSupport(filename,

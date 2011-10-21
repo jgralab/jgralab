@@ -223,9 +223,9 @@ public class GXL2Tg {
 
 		// write tg
 		if (graph != null) {
-			GraphIO.saveGraphToFile(graphOutputName, graph, null);
+			GraphIO.saveGraphToFile(graph, graphOutputName, null);
 		} else {
-			GraphIO.saveSchemaToFile(graphOutputName, schema);
+			GraphIO.saveSchemaToFile(schema, graphOutputName);
 		}
 	}
 

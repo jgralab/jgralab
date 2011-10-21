@@ -35,6 +35,7 @@
 
 package de.uni_koblenz.jgralab;
 
+import java.io.DataOutputStream;
 import java.util.Comparator;
 
 import org.pcollections.POrderedSet;
@@ -571,10 +572,20 @@ public interface Graph extends AttributedElement {
 	public int getGraphStructureChangedListenerCount();
 
 	public ECARuleManagerInterface getECARuleManager();
-	
+
 	public ECARuleManagerInterface getECARuleManagerIfThere();
 
 	public TraversalContext setTraversalContext(TraversalContext tc);
 
 	public TraversalContext getTraversalContext();
+
+	public void save(String filename) throws GraphIOException;
+
+	public void save(String filename, ProgressFunction pf)
+			throws GraphIOException;
+
+	public void save(DataOutputStream out) throws GraphIOException;
+
+	public void save(DataOutputStream out, ProgressFunction pf)
+			throws GraphIOException;
 }

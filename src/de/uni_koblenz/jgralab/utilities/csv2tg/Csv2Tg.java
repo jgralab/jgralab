@@ -192,7 +192,7 @@ public class Csv2Tg implements FilenameFilter {
 
 			System.out.println("Finished Processing.");
 			System.out.print("Saving Graph ...");
-			GraphIO.saveGraphToFile(outputFile, graph, null);
+			GraphIO.saveGraphToFile(graph, outputFile, null);
 			System.out.print("done.");
 		} catch (NoSuchAttributeException e) {
 			e.printStackTrace();
