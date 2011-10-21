@@ -48,7 +48,7 @@ import org.junit.Test;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.GraphIO;
+import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.greql2.exception.ParsingException;
@@ -152,8 +152,8 @@ public class ParserTest {
 		Greql2 graph = GreqlParser.parse(query);
 		if (file != null) {
 			try {
-				GraphIO.saveGraphToFile(file, graph, null);
-			} catch (Exception ex) {
+				graph.save(file);
+			} catch (GraphIOException ex) {
 				throw new RuntimeException(
 						"Error saving graph to file " + file, ex);
 			}

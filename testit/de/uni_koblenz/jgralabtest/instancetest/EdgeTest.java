@@ -4536,7 +4536,7 @@ public class EdgeTest extends InstanceTest {
 		createReadOnlyTransaction(g);
 		// test of writeAttributeValues
 		// TODO check if save command has to be wrapped inside a transaction...
-		GraphIO.saveGraphToFile("test.tg", g, null);
+		g.save("test.tg");
 		commit(g);
 
 		LineNumberReader reader = new LineNumberReader(
@@ -4614,7 +4614,7 @@ public class EdgeTest extends InstanceTest {
 
 		createReadOnlyTransaction(g);
 		// test of writeAttributeValues
-		GraphIO.saveGraphToFile("test.tg", g, null);
+		g.save("test.tg");
 		commit(g);
 
 		LineNumberReader reader = new LineNumberReader(

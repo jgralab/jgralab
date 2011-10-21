@@ -39,7 +39,6 @@ import static org.junit.Assert.fail;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.GraphIO;
-import de.uni_koblenz.jgralab.grumlschema.GrumlSchema;
 import de.uni_koblenz.jgralab.grumlschema.SchemaGraph;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.utilities.tg2schemagraph.Schema2SchemaGraph;
@@ -62,7 +61,7 @@ public class TG2SchemaGraphTest {
 			String sgFile = tgFile.substring(tgFile.lastIndexOf("/") + 1);
 			sgFile = "testit/testdata/"
 					+ sgFile.substring(0, sgFile.length() - 3) + ".schema.tg";
-			GrumlSchema.instance().saveSchemaGraph(sgFile, schemaGraph);
+			schemaGraph.save(sgFile);
 			System.out.println("\tdone");
 
 			// Compares the Schema with the created SchemaGraph

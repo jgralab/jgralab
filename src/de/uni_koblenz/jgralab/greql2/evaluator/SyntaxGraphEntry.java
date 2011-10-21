@@ -257,7 +257,7 @@ public class SyntaxGraphEntry {
 		String fileName = directory.getPath() + File.separator
 				+ queryText.hashCode() + "-" + costModelClassSimple + "-"
 				+ optimizerClassSimple + ".tg";
-		GraphIO.saveGraphToFile(fileName, syntaxGraph, null);
+		syntaxGraph.save(fileName);
 		logger.info("Saved SyntaxGraphEntry to \"" + fileName + "\".");
 	}
 

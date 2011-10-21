@@ -204,7 +204,7 @@ public class GReTLRunner {
 
 	private void saveTargetGraph(Graph outGraph, String outFileName,
 			CommandLine cli) throws GraphIOException, IOException {
-		GraphIO.saveGraphToFile(outFileName, outGraph,
+		GraphIO.saveGraphToFile(outGraph, outFileName,
 				new ConsoleProgressFunction("Saving"));
 		if (cli.hasOption('z')) {
 			if (outGraph.getVCount() + outGraph.getECount() > MAX_VISUALIZATION_SIZE) {

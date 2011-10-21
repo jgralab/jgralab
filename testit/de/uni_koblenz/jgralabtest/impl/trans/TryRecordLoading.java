@@ -64,7 +64,7 @@ public class TryRecordLoading {
 		// save graph to file
 		String filename = "./testit/testgraphs/record.tg";
 
-		GraphIO.saveGraphToFile(filename, graph, new ConsoleProgressFunction());
+		GraphIO.saveGraphToFile(graph, filename, new ConsoleProgressFunction());
 
 		// load graph with transaction support
 

@@ -102,7 +102,7 @@ import de.uni_koblenz.jgralabtest.schemas.gretl.varro.uml.Attribute;
 
 /**
  * @author Tassilo Horn <horn@uni-koblenz.de>
- *
+ * 
  */
 public class GretlTest {
 	static {
@@ -150,8 +150,8 @@ public class GretlTest {
 		initServiceGraph();
 		initCopyGraph();
 
-		GraphIO.saveGraphToFile(tmpDir + "sourceFamilyGraph.tg",
-				sourceFamilyGraph, null);
+		GraphIO.saveGraphToFile(sourceFamilyGraph, tmpDir
+				+ "sourceFamilyGraph.tg", null);
 
 		dotty(sourceAddressBookGraph, tmpDir + "sourceAddressBookGraph.pdf");
 		dotty(sourceFamilyGraph, tmpDir + "sourceFamilyGraph.pdf",
@@ -554,8 +554,8 @@ public class GretlTest {
 		String graphFile = tmpDir + targetFileName;
 
 		try {
-			GraphIO.saveGraphToFile(graphFile + ".tg",
-					context.getTargetGraph(), null);
+			GraphIO.saveGraphToFile(context.getTargetGraph(),
+					graphFile + ".tg", null);
 		} catch (GraphIOException e) {
 			e.printStackTrace();
 		}

@@ -149,7 +149,7 @@ public class TGMerge {
 		TGMerge tgmerge = new TGMerge(graphs);
 		Graph merged = tgmerge.merge();
 
-		GraphIO.saveGraphToFile(outputFilename, merged,
+		GraphIO.saveGraphToFile(merged, outputFilename,
 				new ConsoleProgressFunction("Saving"));
 	}
 

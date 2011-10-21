@@ -391,7 +391,7 @@ public class Xml2tg {
 
 	public void saveGraph() throws GraphIOException {
 		System.out.println("Saving graph to " + tgOutput);
-		GraphIO.saveGraphToFile(tgOutput, graph, new ConsoleProgressFunction(
+		GraphIO.saveGraphToFile(graph, tgOutput, new ConsoleProgressFunction(
 				"Saving"));
 	}
 

@@ -69,8 +69,8 @@ public class JniServer {
 	private static int keyGenerator;
 
 	/**
-	 * the {@code Map} holding the graphs created or loaded via the {@code
-	 * JGraLabFacade}
+	 * the {@code Map} holding the graphs created or loaded via the
+	 * {@code JGraLabFacade}
 	 */
 	private Map<Integer, Graph> graphs;
 
@@ -138,7 +138,7 @@ public class JniServer {
 
 	public void saveGraph(int graphId, String fileName) {
 		try {
-			GraphIO.saveGraphToFile(fileName, graphs.get(graphId), null);
+			GraphIO.saveGraphToFile(graphs.get(graphId), fileName, null);
 		} catch (Exception e) {
 			throw new GraphException("Exception while saving graph.", e);
 		}
@@ -159,8 +159,8 @@ public class JniServer {
 
 	public int createVertex(int graphId, String vertexClassName) {
 		Graph graph = graphs.get(graphId);
-		Class<? extends Vertex> m1Class = graph.getGraphClass().getVertexClass(
-				vertexClassName).getM1Class();
+		Class<? extends Vertex> m1Class = graph.getGraphClass()
+				.getVertexClass(vertexClassName).getM1Class();
 		return graph.createVertex(m1Class).getId();
 	}
 
@@ -264,8 +264,8 @@ public class JniServer {
 	public int createEdge(int graphId, String edgeClassName, int alphaId,
 			int omegaId) {
 		Graph graph = graphs.get(graphId);
-		Class<? extends Edge> m1Class = graph.getGraphClass().getEdgeClass(
-				edgeClassName).getM1Class();
+		Class<? extends Edge> m1Class = graph.getGraphClass()
+				.getEdgeClass(edgeClassName).getM1Class();
 		return graph.createEdge(m1Class, graph.getVertex(alphaId),
 				graph.getVertex(omegaId)).getId();
 	}
@@ -391,9 +391,8 @@ public class JniServer {
 
 	public int getFirstVertex(int graphId, String vertexClassName) {
 		Graph g = graphs.get(graphId);
-		Vertex v = (vertexClassName != null) ? g
-				.getFirstVertex((VertexClass) g.getSchema()
-						.getAttributedElementClass(vertexClassName)) : g
+		Vertex v = (vertexClassName != null) ? g.getFirstVertex((VertexClass) g
+				.getSchema().getAttributedElementClass(vertexClassName)) : g
 				.getFirstVertex();
 		return (v == null) ? 0 : v.getId();
 	}
@@ -410,20 +409,17 @@ public class JniServer {
 
 	public int getFirstEdgeInGraph(int graphId, String edgeClassName) {
 		Graph g = graphs.get(graphId);
-		Edge e = (edgeClassName != null) ? g
-				.getFirstEdge((EdgeClass) g.getSchema()
-						.getAttributedElementClass(edgeClassName)) : g
+		Edge e = (edgeClassName != null) ? g.getFirstEdge((EdgeClass) g
+				.getSchema().getAttributedElementClass(edgeClassName)) : g
 				.getFirstEdge();
 		return (e == null) ? 0 : e.getId();
 	}
 
 	public int getNextEdgeInGraph(int graphId, int edgeId, String edgeClassName) {
 		Graph g = graphs.get(graphId);
-		Edge e = (edgeClassName != null) ? g.getEdge(edgeId)
-				.getNextEdge(
-						((EdgeClass) g.getSchema().getAttributedElementClass(
-								edgeClassName))) : g.getEdge(edgeId)
-				.getNextEdge();
+		Edge e = (edgeClassName != null) ? g.getEdge(edgeId).getNextEdge(
+				((EdgeClass) g.getSchema().getAttributedElementClass(
+						edgeClassName))) : g.getEdge(edgeId).getNextEdge();
 		return (e == null) ? 0 : e.getId();
 	}
 
@@ -439,11 +435,9 @@ public class JniServer {
 
 	public int getNextEdge(int graphId, int edgeId, String edgeClassName) {
 		Graph g = graphs.get(graphId);
-		Edge e = (edgeClassName != null) ? g.getEdge(edgeId)
-				.getNextIncidence(
-						((EdgeClass) g.getSchema().getAttributedElementClass(
-								edgeClassName))) : g.getEdge(edgeId)
-				.getNextIncidence();
+		Edge e = (edgeClassName != null) ? g.getEdge(edgeId).getNextIncidence(
+				((EdgeClass) g.getSchema().getAttributedElementClass(
+						edgeClassName))) : g.getEdge(edgeId).getNextIncidence();
 		return (e == null) ? 0 : e.getId();
 	}
 
@@ -528,8 +522,7 @@ public class JniServer {
 						+ " is no EnumDomain.");
 			}
 			Class<?> attrType = Class.forName(domain.getSchema()
-					.getPackagePrefix()
-					+ "." + domain.getQualifiedName());
+					.getPackagePrefix() + "." + domain.getQualifiedName());
 			Object enumValue = attrType.getMethod("valueOf",
 					new Class[] { String.class }).invoke(null, value);
 			if (enumValue == null) {

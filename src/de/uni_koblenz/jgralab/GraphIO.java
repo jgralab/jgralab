@@ -272,20 +272,20 @@ public class GraphIO {
 	 * <code>.gz</code>, output will be GZIP compressed, otherwise uncompressed
 	 * plain text.
 	 * 
-	 * @param filename
-	 *            the name of the file
 	 * @param schema
 	 *            a schema
+	 * @param filename
+	 *            the name of the file
 	 * @throws GraphIOException
 	 *             if an IOException occurs
 	 */
-	public static void saveSchemaToFile(String filename, Schema schema)
+	public static void saveSchemaToFile(Schema schema, String filename)
 			throws GraphIOException {
 		DataOutputStream out = null;
 		try {
 			out = new DataOutputStream(new BufferedOutputStream(
 					new FileOutputStream(new File(filename))));
-			saveSchemaToStream(out, schema);
+			saveSchemaToStream(schema, out);
 		} catch (IOException ex) {
 			throw new GraphIOException("Exception while saving schema to "
 					+ filename, ex);
@@ -298,14 +298,14 @@ public class GraphIO {
 	 * Saves the specified <code>schema</code> to the stream <code>out</code>.
 	 * The stream is <em>not</em> closed.
 	 * 
-	 * @param out
-	 *            a DataOutputStream
 	 * @param schema
 	 *            a schema
+	 * @param out
+	 *            a DataOutputStream
 	 * @throws GraphIOException
 	 *             if an IOException occurs
 	 */
-	public static void saveSchemaToStream(DataOutputStream out, Schema schema)
+	public static void saveSchemaToStream(Schema schema, DataOutputStream out)
 			throws GraphIOException {
 		GraphIO io = new GraphIO();
 		io.TGOut = out;
@@ -545,16 +545,16 @@ public class GraphIO {
 	 * plain text. A {@link ProgressFunction} <code>pf</code> can be used to
 	 * monitor progress.
 	 * 
-	 * @param filename
-	 *            the name of the TG file to be written
 	 * @param graph
 	 *            a graph
+	 * @param filename
+	 *            the name of the TG file to be written
 	 * @param pf
 	 *            a {@link ProgressFunction}, may be <code>null</code>
 	 * @throws GraphIOException
 	 *             if an IOException occurs
 	 */
-	public static void saveGraphToFile(String filename, Graph graph,
+	public static void saveGraphToFile(Graph graph, String filename,
 			ProgressFunction pf) throws GraphIOException {
 		DataOutputStream out = null;
 		try {
@@ -565,7 +565,7 @@ public class GraphIO {
 				out = new DataOutputStream(new BufferedOutputStream(
 						new FileOutputStream(filename), BUFFER_SIZE));
 			}
-			saveGraphToStream(out, graph, pf);
+			saveGraphToStream(graph, out, pf);
 		} catch (IOException ex) {
 			throw new GraphIOException("Exception while saving graph to "
 					+ filename, ex);
@@ -580,18 +580,17 @@ public class GraphIO {
 	 * used to monitor progress. The stream is <em>not</em> closed. This method
 	 * does <i>not</i> check if the subgraph marker is complete.
 	 * 
-	 * @param filename
-	 *            a filename
 	 * @param subGraph
 	 *            a BooleanGraphMarker denoting the subgraph to be saved
+	 * @param filename
+	 *            a filename
 	 * @param pf
 	 *            a {@link ProgressFunction}, may be <code>null</code>
 	 * @throws GraphIOException
 	 *             if an IOException occurs
 	 */
-	public static void saveGraphToFile(String filename,
-			BooleanGraphMarker subGraph, ProgressFunction pf)
-			throws GraphIOException {
+	public static void saveGraphToFile(BooleanGraphMarker subGraph,
+			String filename, ProgressFunction pf) throws GraphIOException {
 		DataOutputStream out = null;
 		try {
 			if (filename.toLowerCase().endsWith(".gz")) {
@@ -601,7 +600,7 @@ public class GraphIO {
 				out = new DataOutputStream(new BufferedOutputStream(
 						new FileOutputStream(filename), BUFFER_SIZE));
 			}
-			saveGraphToStream(out, subGraph, pf);
+			saveGraphToStream(subGraph, out, pf);
 		} catch (IOException e) {
 			throw new GraphIOException("Exception while saving graph to "
 					+ filename, e);
@@ -615,16 +614,16 @@ public class GraphIO {
 	 * {@link ProgressFunction} <code>pf</code> can be used to monitor progress.
 	 * The stream is <em>not</em> closed.
 	 * 
-	 * @param out
-	 *            a DataOutputStream
 	 * @param graph
 	 *            a graph
+	 * @param out
+	 *            a DataOutputStream
 	 * @param pf
 	 *            a {@link ProgressFunction}, may be <code>null</code>
 	 * @throws GraphIOException
 	 *             if an IOException occurs
 	 */
-	public static void saveGraphToStream(DataOutputStream out, Graph graph,
+	public static void saveGraphToStream(Graph graph, DataOutputStream out,
 			ProgressFunction pf) throws GraphIOException {
 		try {
 			GraphIO io = new GraphIO();
@@ -651,9 +650,8 @@ public class GraphIO {
 	 * @throws GraphIOException
 	 *             if an IOException occurs
 	 */
-	public static void saveGraphToStream(DataOutputStream out,
-			BooleanGraphMarker subGraph, ProgressFunction pf)
-			throws GraphIOException {
+	public static void saveGraphToStream(BooleanGraphMarker subGraph,
+			DataOutputStream out, ProgressFunction pf) throws GraphIOException {
 		try {
 			GraphIO io = new GraphIO();
 			io.TGOut = out;
