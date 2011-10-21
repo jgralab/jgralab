@@ -133,18 +133,30 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 		VertexClass to = ec.getTo().getVertexClass();
 		b.setVariable("fromVertexClass", from.getSimpleName());
 		b.setVariable("toVertexClass", to.getSimpleName());
-		addImports(schemaRootPackageName + "." + from.getQualifiedName());
-		addImports(schemaRootPackageName + "." + to.getQualifiedName());
+		if (!from.isInternal()) {
+			addImports(schemaRootPackageName + "." + from.getQualifiedName());
+		}
+		if (!to.isInternal()) {
+			addImports(schemaRootPackageName + "." + to.getQualifiedName());
+		}
 		if (currentCycle.isAbstract()) {
-			b.add("public #fromVertexClass# getAlpha();");
-			b.add("public #toVertexClass# getOmega();");
+			if (!from.isInternal()) {
+				b.add("public #fromVertexClass# getAlpha();");
+			}
+			if (!to.isInternal()) {
+				b.add("public #toVertexClass# getOmega();");
+			}
 		} else {
-			b.add("public #fromVertexClass# getAlpha() {");
-			b.add("\treturn (#fromVertexClass#) super.getAlpha();");
-			b.add("}");
-			b.add("public #toVertexClass# getOmega() {");
-			b.add("\treturn (#toVertexClass#) super.getOmega();");
-			b.add("}");
+			if (!from.isInternal()) {
+				b.add("public #fromVertexClass# getAlpha() {");
+				b.add("\treturn (#fromVertexClass#) super.getAlpha();");
+				b.add("}");
+			}
+			if (!to.isInternal()) {
+				b.add("public #toVertexClass# getOmega() {");
+				b.add("\treturn (#toVertexClass#) super.getOmega();");
+				b.add("}");
+			}
 		}
 		return b;
 	}
