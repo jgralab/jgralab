@@ -1,29 +1,29 @@
 /*
  * JGraLab - The Java Graph Laboratory
- * 
+ *
  * Copyright (C) 2006-2011 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- * 
+ *
  * For bug reports, documentation and further information, visit
- * 
+ *
  *                         http://jgralab.uni-koblenz.de
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
+ *
  * Additional permission under GNU GPL version 3 section 7
- * 
+ *
  * If you modify this Program, or any covered work, by linking or combining
  * it with Eclipse (or a modified version of that program or an Eclipse
  * plugin), containing parts covered by the terms of the Eclipse Public
@@ -92,9 +92,9 @@ import de.uni_koblenz.jgralab.utilities.tg2whatever.Tg2Whatever;
 /**
  * Tg2Dot2 takes a graph layout and a JGraLab graph and transforms the graph
  * into a DOT-graph of GraphViz.
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class Tg2Dot extends Tg2Whatever {
 
@@ -483,7 +483,7 @@ public class Tg2Dot extends Tg2Whatever {
 
 	/**
 	 * Creates a {@link DotWriter}.
-	 * 
+	 *
 	 * @param out
 	 *            Provides stream, the DotWriter will use.
 	 */
@@ -512,7 +512,7 @@ public class Tg2Dot extends Tg2Whatever {
 	/**
 	 * Returns the responsible {@link TypeDefinition} or
 	 * {@link ElementDefinition} for the specified {@link AttributedElement}.
-	 * 
+	 *
 	 * @param attributedElement
 	 *            Given {@link AttributedElement}.
 	 * @return Responsible {@link Definition}.
@@ -531,7 +531,7 @@ public class Tg2Dot extends Tg2Whatever {
 	/**
 	 * Constructs an {@link ElementDefinition} for the given
 	 * {@link AttributedElement}.
-	 * 
+	 *
 	 * @param element
 	 *            Given AttributedElement.
 	 * @return {@link ElementDefinition} for the provided
@@ -558,7 +558,7 @@ public class Tg2Dot extends Tg2Whatever {
 	/**
 	 * Evaluates all attributes of a given {@link Vertex} and prints via the
 	 * {@link DotWriter}.
-	 * 
+	 *
 	 * @param vertex
 	 *            Provides Vertex.
 	 * @param definition
@@ -581,7 +581,7 @@ public class Tg2Dot extends Tg2Whatever {
 	/**
 	 * Returns unified vertex names. A vertex name has the prefix 'v' followed
 	 * by the {@link Vertex} id.
-	 * 
+	 *
 	 * @param vertex
 	 *            Given {@link Vertex}
 	 * @return Unified vertex name.
@@ -597,7 +597,7 @@ public class Tg2Dot extends Tg2Whatever {
 	 * method
 	 * {@link GreqlEvaluatorFacade#setVariablesOfGreqlEvaluator(AttributedElement, int)}
 	 * .
-	 * 
+	 *
 	 * @param spec
 	 *            Given {@link Definition} with the style attributes and their
 	 *            queries.
@@ -628,7 +628,7 @@ public class Tg2Dot extends Tg2Whatever {
 	/**
 	 * Evaluates all attributes of a given {@link Edge} and prints via the
 	 * {@link DotWriter}.
-	 * 
+	 *
 	 * @param edge
 	 *            Provides Edge.
 	 * @param definition
@@ -666,7 +666,7 @@ public class Tg2Dot extends Tg2Whatever {
 	/**
 	 * Checks whether or not the given {@link Edge} belongs to a
 	 * {@link EdgeClass}, which should be reversed.
-	 * 
+	 *
 	 * @param e
 	 *            Given Edge, which should be checked.
 	 * @return Return true, if the given Edge should be reversed.
@@ -680,7 +680,7 @@ public class Tg2Dot extends Tg2Whatever {
 	/**
 	 * Reverses all reversible style attributes in the provided evaluted style
 	 * attribute list.
-	 * 
+	 *
 	 * @param evaluatedList
 	 *            Given evaluated style attribute list as {@link Map}.
 	 */
@@ -694,7 +694,7 @@ public class Tg2Dot extends Tg2Whatever {
 
 	/**
 	 * Swaps two key-value pairs in a map.
-	 * 
+	 *
 	 * @param head
 	 *            Key of the first key-value pair.
 	 * @param tail
@@ -808,7 +808,7 @@ public class Tg2Dot extends Tg2Whatever {
 	 * nodes, like: State <--{ComesFrom} Transition -->{GoesTo}. Here, reversing
 	 * the direction of either ComesFrom or GoesTo results in much nicer
 	 * layouts.
-	 * 
+	 *
 	 * @param reversedEdgeTypes
 	 *            the set of edge types whose instances should be printed
 	 *            reversed
@@ -829,7 +829,7 @@ public class Tg2Dot extends Tg2Whatever {
 	/**
 	 * Converts the existing set of classes into a set of
 	 * {@link AttributedElementClass}es.
-	 * 
+	 *
 	 * @param reversedEdgeTypes
 	 *            Set of classes of Edges, which should be reversed.
 	 */
@@ -851,7 +851,7 @@ public class Tg2Dot extends Tg2Whatever {
 
 	/**
 	 * Checks for missed classes
-	 * 
+	 *
 	 * @param reversedEdgeTypes
 	 */
 	private void checkForMissedClasses(
@@ -877,7 +877,7 @@ public class Tg2Dot extends Tg2Whatever {
 	/**
 	 * Return a flag indicating that incidence numbers should be included in the
 	 * graph layout process.
-	 * 
+	 *
 	 * @return True, if incidence numbers should be be printed.
 	 */
 	public boolean printsIncidenceNumbers() {
@@ -916,14 +916,6 @@ public class Tg2Dot extends Tg2Whatever {
 	public void setAbbreviateEdgeAttributeNames(
 			boolean abbreviateEdgeAttributeNames) {
 		this.abbreviateEdgeAttributeNames = abbreviateEdgeAttributeNames;
-	}
-
-	public boolean isPrintIncidenceIndices() {
-		return printIncidenceIndices;
-	}
-
-	public void setPrintIncidenceIndices(boolean printIncidenceIndices) {
-		this.printIncidenceIndices = printIncidenceIndices;
 	}
 
 	public boolean isPrintElementSequenceIndices() {
