@@ -56,6 +56,7 @@ import de.uni_koblenz.jgralab.RandomIdGenerator;
 import de.uni_koblenz.jgralab.TraversalContext;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.eca.ECARuleManagerInterface;
+import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -642,7 +643,24 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	@Override
 	public int getECount() {
 		TraversalContext tc = getTraversalContext();
-		return tc == null ? getECountInESeq() : tc.getECount();
+
+		if (tc == null) {
+			return getECountInESeq();
+		}
+
+		// if TC is present, count edges
+
+		if (tc instanceof SubGraphMarker) {
+			return ((SubGraphMarker) tc).getECount();
+		}
+
+		int count = 0;
+		Edge e = getFirstEdge();
+		while (e != null) {
+			count++;
+			e = e.getNextEdge();
+		}
+		return count;
 	}
 
 	/*
@@ -852,7 +870,23 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	@Override
 	public int getVCount() {
 		TraversalContext tc = getTraversalContext();
-		return tc == null ? getVCountInVSeq() : tc.getVCount();
+		if (tc == null) {
+			return getVCountInVSeq();
+		}
+
+		// if TC is present, count vertices
+
+		if (tc instanceof SubGraphMarker) {
+			return ((SubGraphMarker) tc).getVCount();
+		}
+
+		int count = 0;
+		Vertex v = getFirstVertex();
+		while (v != null) {
+			count++;
+			v = v.getNextVertex();
+		}
+		return count;
 	}
 
 	/*
@@ -930,7 +964,8 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 		alpha.removeIncidenceFromISeq(e);
 		alpha.incidenceListModified();
 
-		InternalVertex omega = ((EdgeBaseImpl) e).reversedEdge.getIncidentVertex();
+		InternalVertex omega = ((EdgeBaseImpl) e).reversedEdge
+				.getIncidentVertex();
 		omega.removeIncidenceFromISeq(((EdgeBaseImpl) e).reversedEdge);
 		omega.incidenceListModified();
 
@@ -1139,7 +1174,8 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 		}
 	}
 
-	public void putEdgeAfterInGraph(InternalEdge targetEdge, InternalEdge movedEdge) {
+	public void putEdgeAfterInGraph(InternalEdge targetEdge,
+			InternalEdge movedEdge) {
 		assert (targetEdge != null) && targetEdge.isValid()
 				&& eSeqContainsEdge(targetEdge);
 		assert (movedEdge != null) && movedEdge.isValid()
@@ -1182,7 +1218,8 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 		edgeListModified();
 	}
 
-	public void putVertexAfter(InternalVertex targetVertex, InternalVertex movedVertex) {
+	public void putVertexAfter(InternalVertex targetVertex,
+			InternalVertex movedVertex) {
 		assert (targetVertex != null) && targetVertex.isValid()
 				&& vSeqContainsVertex(targetVertex);
 		assert (movedVertex != null) && movedVertex.isValid()
@@ -1239,7 +1276,8 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * @param movedEdge
 	 *            the edge to be moved
 	 */
-	public void putEdgeBeforeInGraph(InternalEdge targetEdge, InternalEdge movedEdge) {
+	public void putEdgeBeforeInGraph(InternalEdge targetEdge,
+			InternalEdge movedEdge) {
 		assert (targetEdge != null) && targetEdge.isValid()
 				&& eSeqContainsEdge(targetEdge);
 		assert (movedEdge != null) && movedEdge.isValid()
@@ -1272,7 +1310,8 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 		edgeListModified();
 	}
 
-	public void putVertexBefore(InternalVertex targetVertex, InternalVertex movedVertex) {
+	public void putVertexBefore(InternalVertex targetVertex,
+			InternalVertex movedVertex) {
 		assert (targetVertex != null) && targetVertex.isValid()
 				&& vSeqContainsVertex(targetVertex);
 		assert (movedVertex != null) && movedVertex.isValid()
