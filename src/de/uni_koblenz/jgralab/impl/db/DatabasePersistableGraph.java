@@ -34,14 +34,15 @@
  */
 package de.uni_koblenz.jgralab.impl.db;
 
-import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.impl.InternalGraph;
 
 /**
  * Defines interface of a graph which can be persistent in a graph database.
  * 
  * @author ultbreit@uni-koblenz.de
  */
-public interface DatabasePersistableGraph extends DatabasePersistable, Graph {
+public interface DatabasePersistableGraph extends DatabasePersistable,
+		InternalGraph {
 
 	/**
 	 * Sets primary key of graph in database. When retrieving a graph from

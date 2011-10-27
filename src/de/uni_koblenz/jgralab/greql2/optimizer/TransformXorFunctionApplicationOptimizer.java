@@ -40,7 +40,6 @@ package de.uni_koblenz.jgralab.greql2.optimizer;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
-import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
@@ -51,6 +50,7 @@ import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.greql2.schema.IsArgumentOf;
+import de.uni_koblenz.jgralab.impl.InternalEdge;
 
 /**
  * Replaces all {@link Xor} {@link FunctionApplication}s in the {@link Greql2}
@@ -103,7 +103,8 @@ public class TransformXorFunctionApplicationOptimizer extends OptimizerBase {
 		for (FunctionApplication xor : xors) {
 			somethingWasTransformed = true;
 			// Figure out the two arguments of the Xor
-			IsArgumentOf isArgOf = xor.getFirstIsArgumentOfIncidence(EdgeDirection.IN);
+			IsArgumentOf isArgOf = xor
+					.getFirstIsArgumentOfIncidence(EdgeDirection.IN);
 			Expression arg1 = (Expression) isArgOf.getAlpha();
 			isArgOf = isArgOf.getNextIsArgumentOf(EdgeDirection.IN);
 			Expression arg2 = (Expression) isArgOf.getAlpha();
@@ -149,13 +150,13 @@ public class TransformXorFunctionApplicationOptimizer extends OptimizerBase {
 			syntaxgraph.createIsArgumentOf(arg2, rightAnd);
 
 			// relink all edges that started in the Xor vertex
-			ArrayList<Edge> edgesToBeRelinked = new ArrayList<Edge>();
-			Edge e = xor.getFirstIncidence(EdgeDirection.OUT);
+			ArrayList<InternalEdge> edgesToBeRelinked = new ArrayList<InternalEdge>();
+			InternalEdge e = (InternalEdge) xor.getFirstIncidence(EdgeDirection.OUT);
 			while (e != null) {
 				edgesToBeRelinked.add(e);
-				e = e.getNextIncidence(EdgeDirection.OUT);
+				e = (InternalEdge) e.getNextIncidence(EdgeDirection.OUT);
 			}
-			for (Edge edge : edgesToBeRelinked) {
+			for (InternalEdge edge : edgesToBeRelinked) {
 				edge.setAlpha(or);
 			}
 

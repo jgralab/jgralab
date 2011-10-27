@@ -36,11 +36,13 @@ package de.uni_koblenz.jgralab.impl.trans;
 
 import java.util.Map;
 
-import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphException;
+import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.impl.InternalEdge;
 import de.uni_koblenz.jgralab.impl.EdgeBaseImpl;
 import de.uni_koblenz.jgralab.impl.IncidenceImpl;
+import de.uni_koblenz.jgralab.impl.InternalVertex;
 import de.uni_koblenz.jgralab.impl.VertexBaseImpl;
 import de.uni_koblenz.jgralab.trans.ListPosition;
 import de.uni_koblenz.jgralab.trans.TransactionState;
@@ -74,20 +76,10 @@ public abstract class ReversedEdgeImpl extends
 		super(normalEdge, graph);
 	}
 
-	@Override
-	public Edge getNextIncidence() {
-		return getNextIncidenceInternal();
-	}
-
-	@Override
-	public Edge getPrevIncidence() {
-		return getPrevIncidenceInternal();
-	}
-
 	// --- getter ---//
 
 	@Override
-	protected VertexBaseImpl getIncidentVertex() {
+	public InternalVertex getIncidentVertex() {
 		if (incidentVertex == null) {
 			return null;
 		}
@@ -97,7 +89,7 @@ public abstract class ReversedEdgeImpl extends
 	}
 
 	@Override
-	protected IncidenceImpl getNextIncidenceInternal() {
+	public IncidenceImpl getNextIncidenceInISeq() {
 		if (nextIncidence == null) {
 			return null;
 		}
@@ -107,7 +99,7 @@ public abstract class ReversedEdgeImpl extends
 	}
 
 	@Override
-	protected IncidenceImpl getPrevIncidenceInternal() {
+	public IncidenceImpl getPrevIncidenceInISeq() {
 		if (prevIncidence == null) {
 			return null;
 		}
@@ -118,25 +110,26 @@ public abstract class ReversedEdgeImpl extends
 
 	// --- setter --- //
 	@Override
-	protected void setIncidentVertex(VertexBaseImpl v) {
+	public void setIncidentVertex(Vertex v) {
 		if (graph.isLoading()) {
 			incidentVertex = new VersionedReferenceImpl<VertexBaseImpl>(
-					normalEdge, v);
+					normalEdge, (VertexBaseImpl) v);
 		} else {
 			// initialize here
 			if (incidentVertex == null) {
 				incidentVertex = new VersionedReferenceImpl<VertexBaseImpl>(
 						normalEdge);
 			}
-			incidentVertex.setValidValue(v, graph.getCurrentTransaction());
+			incidentVertex.setValidValue((VertexBaseImpl) v, graph
+					.getCurrentTransaction());
 		}
 	}
 
 	@Override
-	protected void setNextIncidenceInternal(IncidenceImpl nextIncidence) {
+	public void setNextIncidenceInternal(InternalEdge nextIncidence) {
 		if (graph.isLoading()) {
 			this.nextIncidence = new VersionedReferenceImpl<IncidenceImpl>(
-					normalEdge, nextIncidence);
+					normalEdge, (IncidenceImpl) nextIncidence);
 		} else {
 			TransactionImpl transaction = (TransactionImpl) graph
 					.getCurrentTransaction();
@@ -148,7 +141,7 @@ public abstract class ReversedEdgeImpl extends
 			// relevant in writing-phase
 			if (transaction.getState() == TransactionState.WRITING) {
 				if (transaction.changedIncidences != null) {
-					VertexBaseImpl currentIncidentVertex = this.incidentVertex
+					InternalVertex currentIncidentVertex = incidentVertex
 							.getTemporaryValue(transaction);
 					Map<IncidenceImpl, Map<ListPosition, Boolean>> incidenceList = transaction.changedIncidences
 							.get(currentIncidentVertex);
@@ -165,16 +158,16 @@ public abstract class ReversedEdgeImpl extends
 				this.nextIncidence = new VersionedReferenceImpl<IncidenceImpl>(
 						normalEdge);
 			}
-			this.nextIncidence.setValidValue(nextIncidence, transaction,
-					explicitChange);
+			this.nextIncidence.setValidValue((IncidenceImpl) nextIncidence,
+					transaction, explicitChange);
 		}
 	}
 
 	@Override
-	protected void setPrevIncidenceInternal(IncidenceImpl prevIncidence) {
+	public void setPrevIncidenceInternal(InternalEdge prevIncidence) {
 		if (graph.isLoading()) {
 			this.prevIncidence = new VersionedReferenceImpl<IncidenceImpl>(
-					normalEdge, prevIncidence);
+					normalEdge, (IncidenceImpl) prevIncidence);
 		} else {
 			TransactionImpl transaction = (TransactionImpl) graph
 					.getCurrentTransaction();
@@ -186,7 +179,7 @@ public abstract class ReversedEdgeImpl extends
 			// only relevant in writing-phase
 			if (transaction.getState() == TransactionState.WRITING) {
 				if (transaction.changedIncidences != null) {
-					VertexBaseImpl currentIncidentVertex = this.incidentVertex
+					InternalVertex currentIncidentVertex = incidentVertex
 							.getTemporaryValue(transaction);
 					Map<IncidenceImpl, Map<ListPosition, Boolean>> incidenceList = transaction.changedIncidences
 							.get(currentIncidentVertex);
@@ -203,24 +196,24 @@ public abstract class ReversedEdgeImpl extends
 				this.prevIncidence = new VersionedReferenceImpl<IncidenceImpl>(
 						normalEdge);
 			}
-			this.prevIncidence.setValidValue(prevIncidence, transaction,
-					explicitChange);
+			this.prevIncidence.setValidValue((IncidenceImpl) prevIncidence,
+					transaction, explicitChange);
 		}
 	}
 
 	@Override
 	public VersionedReferenceImpl<IncidenceImpl> getVersionedNextIncidence() {
-		return this.nextIncidence;
+		return nextIncidence;
 	}
 
 	@Override
 	public VersionedReferenceImpl<IncidenceImpl> getVersionedPrevIncidence() {
-		return this.prevIncidence;
+		return prevIncidence;
 	}
 
-	@Override
-	public String toString() {
-		return "-e" + normalEdge.getId() + ": "
-				+ getAttributedElementClass().getQualifiedName();
-	}
+	// @Override
+	// public String toString() {
+	// return "-e" + normalEdge.getId() + ": "
+	// + getAttributedElementClass().getQualifiedName();
+	// }
 }

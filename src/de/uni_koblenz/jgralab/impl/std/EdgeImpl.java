@@ -37,8 +37,8 @@ package de.uni_koblenz.jgralab.impl.std;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.impl.IncidenceImpl;
-import de.uni_koblenz.jgralab.impl.VertexBaseImpl;
+import de.uni_koblenz.jgralab.impl.InternalEdge;
+import de.uni_koblenz.jgralab.impl.InternalVertex;
 
 /**
  * The implementation of an <code>Edge</code> accessing attributes without
@@ -48,65 +48,65 @@ import de.uni_koblenz.jgralab.impl.VertexBaseImpl;
  */
 public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl {
 	// global edge sequence
-	private EdgeImpl nextEdge;
-	private EdgeImpl prevEdge;
+	private InternalEdge nextEdge;
+	private InternalEdge prevEdge;
 
 	// the this-vertex
-	private VertexBaseImpl incidentVertex;
+	private InternalVertex incidentVertex;
 
 	// incidence list
-	private IncidenceImpl nextIncidence;
-	private IncidenceImpl prevIncidence;
+	private InternalEdge nextIncidence;
+	private InternalEdge prevIncidence;
 
 	@Override
-	public Edge getNextEdge() {
+	public InternalEdge getNextEdgeInESeq() {
 		assert isValid();
-		return this.nextEdge;
+		return nextEdge;
 	}
 
 	@Override
-	public Edge getPrevEdge() {
+	public InternalEdge getPrevEdgeInESeq() {
 		assert isValid();
-		return this.prevEdge;
+		return prevEdge;
 	}
 
 	@Override
-	protected VertexBaseImpl getIncidentVertex() {
+	public InternalVertex getIncidentVertex() {
 		return incidentVertex;
 	}
 
 	@Override
-	protected IncidenceImpl getNextIncidenceInternal() {
+	public InternalEdge getNextIncidenceInISeq() {
 		return nextIncidence;
 	}
 
 	@Override
-	protected IncidenceImpl getPrevIncidenceInternal() {
+	public InternalEdge getPrevIncidenceInISeq() {
 		return prevIncidence;
 	}
 
 	@Override
-	protected void setNextEdgeInGraph(Edge nextEdge) {
-		this.nextEdge = (EdgeImpl) nextEdge;
+	public void setNextEdgeInGraph(Edge nextEdge) {
+		this.nextEdge = (InternalEdge) nextEdge;
 	}
 
 	@Override
-	protected void setPrevEdgeInGraph(Edge prevEdge) {
-		this.prevEdge = (EdgeImpl) prevEdge;
+	public void setPrevEdgeInGraph(Edge prevEdge) {
+		this.prevEdge = (InternalEdge) prevEdge;
 	}
 
 	@Override
-	protected void setIncidentVertex(VertexBaseImpl v) {
-		this.incidentVertex = v;
+	public void setIncidentVertex(Vertex v) {
+		incidentVertex = (InternalVertex) v;
 	}
 
 	@Override
-	protected void setNextIncidenceInternal(IncidenceImpl nextIncidence) {
+	public void setNextIncidenceInternal(InternalEdge nextIncidence) {
 		this.nextIncidence = nextIncidence;
 	}
 
 	@Override
-	protected void setPrevIncidenceInternal(IncidenceImpl prevIncidence) {
+	public void setPrevIncidenceInternal(InternalEdge prevIncidence) {
 		this.prevIncidence = prevIncidence;
 	}
 
@@ -122,7 +122,7 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl 
 	}
 
 	@Override
-	protected void setId(int id) {
+	public void setId(int id) {
 		assert id >= 0;
 		this.id = id;
 	}

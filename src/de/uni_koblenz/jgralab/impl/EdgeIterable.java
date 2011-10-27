@@ -62,7 +62,7 @@ public class EdgeIterable<E extends Edge> implements Iterable<E> {
 
 		protected E current = null;
 
-		protected Graph graph = null;
+		protected InternalGraph graph = null;
 
 		protected Class<? extends Edge> ec;
 
@@ -75,7 +75,7 @@ public class EdgeIterable<E extends Edge> implements Iterable<E> {
 		protected long edgeListVersion;
 
 		@SuppressWarnings("unchecked")
-		EdgeIterator(Graph g, Class<? extends Edge> ec) {
+		EdgeIterator(InternalGraph g, Class<? extends Edge> ec) {
 			graph = g;
 			this.ec = ec;
 			edgeListVersion = g.getEdgeListVersion();
@@ -117,7 +117,7 @@ public class EdgeIterable<E extends Edge> implements Iterable<E> {
 
 	public EdgeIterable(Graph g, Class<? extends Edge> ec) {
 		assert g != null;
-		iter = new EdgeIterator(g, ec);
+		iter = new EdgeIterator((InternalGraph) g, ec);
 	}
 
 	public Iterator<E> iterator() {

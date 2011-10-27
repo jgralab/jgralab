@@ -39,6 +39,7 @@ import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphException;
+import de.uni_koblenz.jgralab.TraversalContext;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.AggregationKind;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -48,7 +49,8 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
  * 
  * @author ist@uni-koblenz.de
  */
-public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
+public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
+		InternalEdge {
 
 	protected final ReversedEdgeBaseImpl reversedEdge;
 
@@ -76,7 +78,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 		assert e.isValid();
 		assert getGraph() == e.getGraph();
 
-		if (e == this.getReversedEdge()) {
+		if (e == getReversedEdge()) {
 			return -1;
 		} else {
 			return Math.abs(getId()) - Math.abs(e.getId());
@@ -106,17 +108,28 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 	}
 
 	@Override
-	public abstract Edge getNextEdge();
+	public Edge getNextEdge() {
+		InternalEdge nextEdge = getNextEdgeInESeq();
+		TraversalContext tc = graph.getTraversalContext();
+		if (!(tc == null || nextEdge == null || tc.containsEdge(nextEdge))) {
+			while (!(nextEdge == null || tc.containsEdge(nextEdge))) {
+				nextEdge = nextEdge.getNextEdgeInESeq();
+			}
+		}
+		return nextEdge;
+	}
 
-	/**
-	 * @param nextEdge
-	 */
-	abstract protected void setNextEdgeInGraph(Edge nextEdge);
-
-	/**
-	 * @param prevEdge
-	 */
-	abstract protected void setPrevEdgeInGraph(Edge prevEdge);
+	@Override
+	public Edge getPrevEdge() {
+		InternalEdge prevEdge = getPrevEdgeInESeq();
+		TraversalContext tc = graph.getTraversalContext();
+		if (!(tc == null || prevEdge == null || tc.containsEdge(prevEdge))) {
+			while (!(prevEdge == null || tc.containsEdge(prevEdge))) {
+				prevEdge = prevEdge.getPrevEdgeInESeq();
+			}
+		}
+		return prevEdge;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -202,8 +215,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 	@Override
 	public String getThatRole() {
 		assert isValid();
-		return ((EdgeClass) this.getAttributedElementClass()).getTo()
-				.getRolename();
+		return ((EdgeClass) getAttributedElementClass()).getTo().getRolename();
 	}
 
 	/*
@@ -225,7 +237,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 	@Override
 	public String getThisRole() {
 		assert isValid();
-		return ((EdgeClass) this.getAttributedElementClass()).getFrom()
+		return ((EdgeClass) getAttributedElementClass()).getFrom()
 				.getRolename();
 	}
 
@@ -245,9 +257,9 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 		if (e == this) {
 			return false;
 		}
-		Edge p = getPrevEdge();
+		InternalEdge p = getPrevEdgeInESeq();
 		while ((p != null) && (p != e)) {
-			p = p.getPrevEdge();
+			p = p.getPrevEdgeInESeq();
 		}
 		return p != null;
 	}
@@ -269,9 +281,9 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 		if (e == this) {
 			return false;
 		}
-		Edge n = getNextEdge();
+		InternalEdge n = getNextEdgeInESeq();
 		while ((n != null) && (n != e)) {
-			n = n.getNextEdge();
+			n = n.getNextEdgeInESeq();
 		}
 		return n != null;
 	}
@@ -301,7 +313,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 		assert e != this;
 		assert e != reversedEdge;
 
-		graph.putEdgeAfterInGraph((EdgeBaseImpl) e.getNormalEdge(), this);
+		graph.putEdgeAfterInGraph((InternalEdge) e.getNormalEdge(), this);
 	}
 
 	/*
@@ -319,7 +331,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 		assert e != this;
 		assert e != reversedEdge;
 
-		graph.putEdgeBeforeInGraph((EdgeBaseImpl) e.getNormalEdge(), this);
+		graph.putEdgeBeforeInGraph((InternalEdge) e.getNormalEdge(), this);
 	}
 
 	/*
@@ -329,39 +341,40 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 	 */
 	@Override
 	public void setAlpha(Vertex alpha) {
+		InternalVertex alphaBase = (InternalVertex) alpha;
 		assert isValid();
-		assert alpha != null;
-		assert alpha.isValid();
-		assert getGraph() == alpha.getGraph();
+		assert alphaBase != null;
+		assert alphaBase.isValid();
+		assert getGraph() == alphaBase.getGraph();
 
-		VertexBaseImpl oldAlpha = getIncidentVertex();
+		InternalVertex oldAlpha = getIncidentVertex();
 
-		if (!this.graph.isLoading() && this.graph.getECARuleManagerIfThere() !=null) {
-			this.graph.getECARuleManagerIfThere().fireBeforeChangeAlphaOfEdgeEvents(
-					this, oldAlpha, alpha);
+		if (!graph.isLoading() && graph.getECARuleManagerIfThere() != null) {
+			graph.getECARuleManager().fireBeforeChangeAlphaOfEdgeEvents(this,
+					oldAlpha, alphaBase);
 		}
 
-		if (alpha == oldAlpha) {
+		if (alphaBase == oldAlpha) {
 			return; // nothing to change
 		}
-		if (!alpha.isValidAlpha(this)) {
+		if (!alphaBase.isValidAlpha(this)) {
 			throw new GraphException("Edges of class "
 					+ getAttributedElementClass().getUniqueName()
 					+ " may not start at vertices of class "
-					+ alpha.getAttributedElementClass().getUniqueName());
+					+ alphaBase.getAttributedElementClass().getUniqueName());
 		}
 
-		oldAlpha.removeIncidenceFromLambdaSeq(this);
+		oldAlpha.removeIncidenceFromISeq(this);
 		oldAlpha.incidenceListModified();
 
-		VertexBaseImpl newAlpha = (VertexBaseImpl) alpha;
-		newAlpha.appendIncidenceToLambdaSeq(this);
+		InternalVertex newAlpha = alphaBase;
+		newAlpha.appendIncidenceToISeq(this);
 		newAlpha.incidenceListModified();
 		setIncidentVertex(newAlpha);
 
-		if (!this.graph.isLoading()) {
-			this.graph.getECARuleManager().fireAfterChangeAlphaOfEdgeEvents(
-					this, oldAlpha, alpha);
+		if (!graph.isLoading()) {
+			graph.getECARuleManager().fireAfterChangeAlphaOfEdgeEvents(this,
+					oldAlpha, alphaBase);
 		}
 	}
 
@@ -372,42 +385,43 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 	 */
 	@Override
 	public void setOmega(Vertex omega) {
+		InternalVertex omegaBase = (InternalVertex) omega;
 		assert isValid();
-		assert omega != null;
-		assert omega.isValid();
-		assert getGraph() == omega.getGraph();
+		assert omegaBase != null;
+		assert omegaBase.isValid();
+		assert getGraph() == omegaBase.getGraph();
 
-		VertexBaseImpl oldOmgea = reversedEdge.getIncidentVertex();
+		InternalVertex oldOmgea = reversedEdge.getIncidentVertex();
 
-		if (!this.graph.isLoading() && this.graph.getECARuleManagerIfThere() != null) {
-			this.graph.getECARuleManagerIfThere().fireBeforeChangeOmegaOfEdgeEvents(
-					this, oldOmgea, omega);
+		if (!graph.isLoading() && graph.getECARuleManagerIfThere() != null) {
+			graph.getECARuleManager().fireBeforeChangeOmegaOfEdgeEvents(this,
+					oldOmgea, omegaBase);
 		}
 
-		if (omega == oldOmgea) {
+		if (omegaBase == oldOmgea) {
 			return; // nothing to change
 		}
 
-		if (!omega.isValidOmega(this)) {
+		if (!omegaBase.isValidOmega(this)) {
 			throw new GraphException("Edges of class "
 					+ getAttributedElementClass().getUniqueName()
 					+ " may not end at at vertices of class "
-					+ omega.getAttributedElementClass().getUniqueName());
+					+ omegaBase.getAttributedElementClass().getUniqueName());
 		}
 
-		oldOmgea.removeIncidenceFromLambdaSeq(reversedEdge);
+		oldOmgea.removeIncidenceFromISeq(reversedEdge);
 		oldOmgea.incidenceListModified();
 
-		VertexBaseImpl newOmega = (VertexBaseImpl) omega;
-		newOmega.appendIncidenceToLambdaSeq(reversedEdge);
+		InternalVertex newOmega = omegaBase;
+		newOmega.appendIncidenceToISeq(reversedEdge);
 		newOmega.incidenceListModified();
 		// TODO Check if this is really needed as
 		// appenIncidenceToLambdaSeq called it before.
 		reversedEdge.setIncidentVertex(newOmega);
 
-		if (!this.graph.isLoading()) {
-			this.graph.getECARuleManager().fireAfterChangeOmegaOfEdgeEvents(
-					this, oldOmgea, omega);
+		if (!graph.isLoading()) {
+			graph.getECARuleManager().fireAfterChangeOmegaOfEdgeEvents(this,
+					oldOmgea, omegaBase);
 		}
 	}
 
@@ -460,19 +474,19 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge {
 	 */
 	@Override
 	public boolean isValid() {
-		return graph.containsEdge(this);
+		return graph.eSeqContainsEdge(this);
 	}
 
 	@Override
-	public AggregationKind getThisSemantics() {
+	public AggregationKind getThisAggregationKind() {
 		assert isValid();
-		return getAlphaSemantics();
+		return getAlphaAggregationKind();
 	}
 
 	@Override
-	public AggregationKind getThatSemantics() {
+	public AggregationKind getThatAggregationKind() {
 		assert isValid();
-		return getOmegaSemantics();
+		return getOmegaAggregationKind();
 	}
 
 	/**
