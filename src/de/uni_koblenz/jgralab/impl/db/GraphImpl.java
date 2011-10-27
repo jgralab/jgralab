@@ -38,13 +38,14 @@ import java.util.List;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.GraphException;
+import de.uni_koblenz.jgralab.TraversalContext;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.impl.EdgeBaseImpl;
+import de.uni_koblenz.jgralab.impl.InternalEdge;
 import de.uni_koblenz.jgralab.impl.FreeIndexList;
 import de.uni_koblenz.jgralab.impl.GraphBaseImpl;
 import de.uni_koblenz.jgralab.impl.IncidenceImpl;
 import de.uni_koblenz.jgralab.impl.ReversedEdgeBaseImpl;
-import de.uni_koblenz.jgralab.impl.VertexBaseImpl;
+import de.uni_koblenz.jgralab.impl.InternalVertex;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralab.trans.InvalidSavepointException;
@@ -89,6 +90,8 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	 * Database containing this graph.
 	 */
 	private GraphDatabase containingDatabase;
+
+	private TraversalContext tc;
 
 	/**
 	 * Creates a new <code>GraphImpl</code> persistent in database.
@@ -199,7 +202,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	}
 
 	@Override
-	protected void addVertex(Vertex newVertex) {
+	public void addVertex(Vertex newVertex) {
 		if (newVertex.getId() == 0) {
 			addFreshlyCreatedVertex(newVertex);
 		} else {
@@ -225,7 +228,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 		graphCache.addVertex((DatabasePersistableVertex) vertex);
 		internalGraphModified();
 
-		internalVertexAdded((VertexBaseImpl) vertex);
+		internalVertexAdded((InternalVertex) vertex);
 	}
 
 	private void allocateValidIdTo(Vertex vertex) {
@@ -235,7 +238,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	}
 
 	@Override
-	protected void appendVertexToVSeq(VertexBaseImpl v) {
+	public void appendVertexToVSeq(InternalVertex v) {
 		vSeq.append((DatabasePersistableVertex) v);
 		vertexListModified();
 	}
@@ -251,9 +254,10 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	 * storage. Not meant to add an edge from another graph.
 	 */
 	@Override
-	protected void addEdge(Edge newEdge, Vertex alpha, Vertex omega) {
+	public void addEdge(Edge newEdge, Vertex alpha, Vertex omega) {
 		assertPreConditionOfAddEdge(newEdge, alpha, omega);
-		testEdgeSuitingVertices(newEdge, alpha, omega);
+		testEdgeSuitingVertices((InternalEdge) newEdge, (InternalVertex) alpha,
+				(InternalVertex) omega);
 		proceedWithAdditionOf(newEdge, alpha, omega);
 	}
 
@@ -268,7 +272,8 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	}
 
 	private boolean isVertexValid(Vertex vertex) {
-		return (vertex != null) && vertex.isValid() && containsVertex(vertex);
+		return (vertex != null) && vertex.isValid()
+				&& vSeqContainsVertex(vertex);
 	}
 
 	private boolean isSameSchemaAsGraph(Edge edge, Vertex alpha, Vertex omega) {
@@ -282,7 +287,8 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 				&& edge.getGraph() == this;
 	}
 
-	private void testEdgeSuitingVertices(Edge edge, Vertex alpha, Vertex omega) {
+	private void testEdgeSuitingVertices(InternalEdge edge, InternalVertex alpha,
+			InternalVertex omega) {
 		if (!alpha.isValidAlpha(edge)) {
 			throw new GraphException("Edges of class "
 					+ edge.getAttributedElementClass().getQualifiedName()
@@ -344,14 +350,16 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 
 	private void addEdgeToIncidenceLists(EdgeImpl edge, VertexImpl alpha,
 			VertexImpl omega) {
-		alpha.appendIncidenceToLambdaSeq(edge);
+		alpha.appendIncidenceToISeq(edge);
 		alpha.incidenceListModifiedAtClient();
-		omega.appendIncidenceToLambdaSeq((IncidenceImpl) edge.getReversedEdge());
+		omega
+				.appendIncidenceToISeq((IncidenceImpl) edge
+						.getReversedEdge());
 		omega.incidenceListModifiedAtClient();
 	}
 
 	@Override
-	protected void appendEdgeToESeq(EdgeBaseImpl edge) {
+	public void appendEdgeToESeq(InternalEdge edge) {
 		eSeq.append((DatabasePersistableEdge) edge);
 		eSeq.modified();
 	}
@@ -366,7 +374,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	}
 
 	@Override
-	protected Edge internalCreateEdge(Class<? extends Edge> cls, Vertex alpha,
+	public Edge internalCreateEdge(Class<? extends Edge> cls, Vertex alpha,
 			Vertex omega) {
 		Edge edge = graphFactory.createEdgeWithDatabaseSupport(cls, 0, this,
 				alpha, omega);
@@ -376,7 +384,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	}
 
 	@Override
-	protected Vertex internalCreateVertex(Class<? extends Vertex> cls) {
+	public Vertex internalCreateVertex(Class<? extends Vertex> cls) {
 		Vertex vertex = graphFactory.createVertexWithDatabaseSupport(cls, 0,
 				this);
 		vertex.initializeAttributesWithDefaultValues();
@@ -429,7 +437,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	}
 
 	@Override
-	protected void setVertexListVersion(long vertexListVersion) {
+	public void setVertexListVersion(long vertexListVersion) {
 		vSeq.setVersion(vertexListVersion);
 	}
 
@@ -439,12 +447,12 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	}
 
 	@Override
-	public int getVCount() {
+	public int getVCountInVSeq() {
 		return vSeq.size();
 	}
 
 	@Override
-	public int getECount() {
+	public int getECountInESeq() {
 		return eSeq.size();
 	}
 
@@ -456,29 +464,29 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	}
 
 	@Override
-	protected void setECount(int count) {
+	public void setECount(int count) {
 		if (count > super.eMax) {
 			expandEdgeArray(count);
 		}
 	}
 
 	@Override
-	public Vertex getFirstVertex() {
+	public InternalVertex getFirstVertexInVSeq() {
 		return vSeq.getFirst();
 	}
 
 	@Override
-	public Edge getFirstEdge() {
+	public InternalEdge getFirstEdgeInESeq() {
 		return eSeq.getFirst();
 	}
 
 	@Override
-	public Vertex getLastVertex() {
+	public InternalVertex getLastVertexInVSeq() {
 		return vSeq.getLast();
 	}
 
 	@Override
-	public Edge getLastEdge() {
+	public InternalEdge getLastEdgeInESeq() {
 		return eSeq.getLast();
 	}
 
@@ -496,7 +504,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	}
 
 	@Override
-	protected void setFirstVertex(VertexBaseImpl vertex) {
+	public void setFirstVertex(InternalVertex vertex) {
 		if (vertex != null) { // because of super constructor
 			DatabasePersistableVertex persistentVertex = (DatabasePersistableVertex) vertex;
 			vSeq.prepend(persistentVertex);
@@ -504,7 +512,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	}
 
 	@Override
-	protected void setFirstEdgeInGraph(EdgeBaseImpl edge) {
+	public void setFirstEdgeInGraph(InternalEdge edge) {
 		// assert edge != null;
 		if (edge != null) { // because of super constructor
 			DatabasePersistableEdge persistentEdge = (DatabasePersistableEdge) edge;
@@ -513,7 +521,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	}
 
 	@Override
-	protected void setLastVertex(VertexBaseImpl vertex) {
+	public void setLastVertex(InternalVertex vertex) {
 		if (vertex != null) { // because of super constructor
 			DatabasePersistableVertex persistentVertex = (DatabasePersistableVertex) vertex;
 			vSeq.append(persistentVertex);
@@ -521,7 +529,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	}
 
 	@Override
-	protected void setLastEdgeInGraph(EdgeBaseImpl edge) {
+	public void setLastEdgeInGraph(InternalEdge edge) {
 		if (edge != null) { // because of super constructor
 			DatabasePersistableEdge persistentEdge = (DatabasePersistableEdge) edge;
 			eSeq.append(persistentEdge);
@@ -645,7 +653,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	}
 
 	@Override
-	protected void removeVertexFromVSeq(VertexBaseImpl v) {
+	public void removeVertexFromVSeq(InternalVertex v) {
 		assert v != null;
 		vSeq.remove((DatabasePersistableVertex) v);
 		freeVertexIndex(v.getId());
@@ -671,7 +679,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	 *            database and set to deleted.
 	 */
 	@Override
-	protected void vertexAfterDeleted(Vertex vertexToBeDeleted) {
+	public void vertexAfterDeleted(Vertex vertexToBeDeleted) {
 		assert vertexToBeDeleted != null;
 		DatabasePersistableVertex vertex = (DatabasePersistableVertex) vertexToBeDeleted;
 		graphCache.removeVertex(this, vertex.getId());
@@ -692,7 +700,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	}
 
 	@Override
-	protected void removeEdgeFromESeq(EdgeBaseImpl e) {
+	public void removeEdgeFromESeq(InternalEdge e) {
 		assert e != null;
 		eSeq.remove((DatabasePersistableEdge) e);
 		freeEdgeIndex(e.getId());
@@ -704,7 +712,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	}
 
 	@Override
-	protected void edgeAfterDeleted(Edge e, Vertex oldAlpha, Vertex oldOmega) {
+	public void edgeAfterDeleted(Edge e, Vertex oldAlpha, Vertex oldOmega) {
 		assert e != null;
 		DatabasePersistableEdge edge = (DatabasePersistableEdge) e;
 		if (edge.isPersistent()) {
@@ -725,7 +733,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	}
 
 	@Override
-	protected void vertexListModified() {
+	public void vertexListModified() {
 		if (!isLoading()) {
 			vSeq.modified();
 			graphModified();
@@ -733,7 +741,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	}
 
 	@Override
-	protected void edgeListModified() {
+	public void edgeListModified() {
 		if (!isLoading()) {
 			eSeq.modified();
 			graphModified();
@@ -741,8 +749,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	}
 
 	@Override
-	protected void putVertexAfter(VertexBaseImpl targetVertex,
-			VertexBaseImpl movedVertex) {
+	public void putVertexAfter(InternalVertex targetVertex, InternalVertex movedVertex) {
 		DatabasePersistableVertex targetVertexImpl = (DatabasePersistableVertex) targetVertex;
 		DatabasePersistableVertex movedVertexImpl = (DatabasePersistableVertex) movedVertex;
 		vSeq.putAfter(targetVertexImpl, movedVertexImpl);
@@ -750,33 +757,30 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	}
 
 	@Override
-	protected void putEdgeAfterInGraph(EdgeBaseImpl targetEdge,
-			EdgeBaseImpl movedEdge) {
+	public void putEdgeAfterInGraph(InternalEdge targetEdge, InternalEdge movedEdge) {
 		assertEdges(movedEdge, targetEdge);
 		DatabasePersistableEdge dbTargetEdge = (DatabasePersistableEdge) targetEdge;
 		DatabasePersistableEdge dbMovedEdge = (DatabasePersistableEdge) movedEdge;
 		eSeq.putAfter(dbTargetEdge, dbMovedEdge);
 	}
 
-	private void assertEdges(EdgeBaseImpl movedEdge, EdgeBaseImpl targetEdge) {
+	private void assertEdges(InternalEdge movedEdge, InternalEdge targetEdge) {
 		assert (targetEdge != null) && targetEdge.isValid()
-				&& containsEdge(targetEdge);
+				&& eSeqContainsEdge(targetEdge);
 		assert (movedEdge != null) && movedEdge.isValid()
-				&& containsEdge(movedEdge);
+				&& eSeqContainsEdge(movedEdge);
 		assert !((DatabasePersistableEdge) targetEdge).equals(movedEdge);
 	}
 
 	@Override
-	protected void putVertexBefore(VertexBaseImpl targetVertex,
-			VertexBaseImpl movedVertex) {
+	public void putVertexBefore(InternalVertex targetVertex, InternalVertex movedVertex) {
 		DatabasePersistableVertex targetVertexImpl = (DatabasePersistableVertex) targetVertex;
 		DatabasePersistableVertex movedVertexImpl = (DatabasePersistableVertex) movedVertex;
 		vSeq.putBefore(targetVertexImpl, movedVertexImpl);
 	}
 
 	@Override
-	protected void putEdgeBeforeInGraph(EdgeBaseImpl targetEdge,
-			EdgeBaseImpl movedEdge) {
+	public void putEdgeBeforeInGraph(InternalEdge targetEdge, InternalEdge movedEdge) {
 		assertEdges(movedEdge, targetEdge);
 		DatabasePersistableEdge dbTargetEdge = (DatabasePersistableEdge) targetEdge;
 		DatabasePersistableEdge dbMovedEdge = (DatabasePersistableEdge) movedEdge;
@@ -796,7 +800,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	}
 
 	@Override
-	protected void expandVertexArray(int newSize) {
+	public void expandVertexArray(int newSize) {
 		if (newSize > vMax) {
 			expandFreeVertexList(newSize);
 		} else {
@@ -816,7 +820,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	}
 
 	@Override
-	protected void expandEdgeArray(int newSize) {
+	public void expandEdgeArray(int newSize) {
 		if (newSize > eMax) {
 			expandFreeEdgeList(newSize);
 		} else {
@@ -1022,7 +1026,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	 * @return Predecessor in VSeq of edge or null if given one is first vertex
 	 *         in VSeq.
 	 */
-	protected Vertex getPrevVertex(DatabasePersistableVertex vertex) {
+	protected InternalVertex getPrevVertex(DatabasePersistableVertex vertex) {
 		assert vertex.isValid();
 		assert this == vertex.getGraph();
 		return vSeq.getPrev(vertex);
@@ -1036,7 +1040,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	 * @return Successor in VSeq of edge or null if given one is last vertex in
 	 *         VSeq.
 	 */
-	protected Vertex getNextVertex(DatabasePersistableVertex vertex) {
+	protected InternalVertex getNextVertex(DatabasePersistableVertex vertex) {
 		assert vertex.isValid();
 		assert this == vertex.getGraph();
 		return vSeq.getNext(vertex);
@@ -1050,7 +1054,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	 * @return Predecessor in ESeq of edge or null if given one is first edge in
 	 *         ESeq.
 	 */
-	protected Edge getPrevEdge(DatabasePersistableEdge edge) {
+	protected InternalEdge getPrevEdge(DatabasePersistableEdge edge) {
 		assert edge.isValid();
 		assert this == edge.getGraph();
 		return eSeq.getPrev(edge);
@@ -1064,7 +1068,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	 * @return Successor in ESeq of edge or null if given one is last edge in
 	 *         ESeq.
 	 */
-	protected Edge getNextEdge(DatabasePersistableEdge edge) {
+	protected InternalEdge getNextEdge(DatabasePersistableEdge edge) {
 		assert edge.isValid();
 		assert this == edge.getGraph();
 		return eSeq.getNext(edge);
@@ -1205,30 +1209,30 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	 * List of vertices to be deleted by a cascading delete caused by deletion
 	 * of a composition "parent".
 	 */
-	private List<VertexBaseImpl> deleteVertexList;
+	private List<InternalVertex> deleteVertexList;
 
 	@Override
-	protected FreeIndexList getFreeEdgeList() {
+	public FreeIndexList getFreeEdgeList() {
 		return super.freeEdgeList;
 	}
 
 	@Override
-	protected FreeIndexList getFreeVertexList() {
+	public FreeIndexList getFreeVertexList() {
 		return super.freeVertexList;
 	}
 
 	@Override
-	protected void freeEdgeIndex(int index) {
+	public void freeEdgeIndex(int index) {
 		super.freeEdgeList.freeIndex(index);
 	}
 
 	@Override
-	protected void freeVertexIndex(int index) {
+	public void freeVertexIndex(int index) {
 		super.freeVertexList.freeIndex(index);
 	}
 
 	@Override
-	protected int allocateEdgeIndex(int currentId) {
+	public int allocateEdgeIndex(int currentId) {
 		int eId = freeEdgeList.allocateIndex();
 		if (eId == 0) {
 			expandEdgeArray(getExpandedEdgeCount());
@@ -1238,7 +1242,7 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	}
 
 	@Override
-	protected int allocateVertexIndex(int currentId) {
+	public int allocateVertexIndex(int currentId) {
 		int vId = freeVertexList.allocateIndex();
 		if (vId == 0) {
 			expandVertexArray(getExpandedVertexCount());
@@ -1248,12 +1252,12 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	}
 
 	@Override
-	protected List<VertexBaseImpl> getDeleteVertexList() {
+	public List<InternalVertex> getDeleteVertexList() {
 		return deleteVertexList;
 	}
 
 	@Override
-	protected void setDeleteVertexList(List<VertexBaseImpl> deleteVertexList) {
+	public void setDeleteVertexList(List<InternalVertex> deleteVertexList) {
 		this.deleteVertexList = deleteVertexList;
 	}
 
@@ -1312,37 +1316,37 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	}
 
 	@Override
-	protected VertexBaseImpl[] getVertex() {
+	public InternalVertex[] getVertex() {
 		throw new UnsupportedOperationException(
 				"Operation not supported by this graph.");
 	}
 
 	@Override
-	protected EdgeBaseImpl[] getEdge() {
+	public InternalEdge[] getEdge() {
 		throw new UnsupportedOperationException(
 				"Operation not supported by this graph.");
 	}
 
 	@Override
-	protected ReversedEdgeBaseImpl[] getRevEdge() {
+	public ReversedEdgeBaseImpl[] getRevEdge() {
 		throw new UnsupportedOperationException(
 				"Operation not supported by this graph.");
 	}
 
 	@Override
-	protected void setVertex(VertexBaseImpl[] vertex) {
+	public void setVertex(InternalVertex[] vertex) {
 		throw new UnsupportedOperationException(
 				"Operation not supported by this graph.");
 	}
 
 	@Override
-	protected void setEdge(EdgeBaseImpl[] edge) {
+	public void setEdge(InternalEdge[] edge) {
 		throw new UnsupportedOperationException(
 				"Operation not supported by this graph.");
 	}
 
 	@Override
-	protected void setRevEdge(ReversedEdgeBaseImpl[] revEdge) {
+	public void setRevEdge(InternalEdge[] revEdge) {
 		throw new UnsupportedOperationException(
 				"Operation not supported by this graph.");
 	}
@@ -1370,5 +1374,17 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 			int[] nextIncidence) {
 		throw new UnsupportedOperationException(
 				"Operation is not supported by this graph.");
+	}
+
+	@Override
+	public TraversalContext getTraversalContext() {
+		return tc;
+	}
+
+	@Override
+	public TraversalContext setTraversalContext(TraversalContext tc) {
+		TraversalContext oldTc = tc;
+		this.tc = tc;
+		return oldTc;
 	}
 }

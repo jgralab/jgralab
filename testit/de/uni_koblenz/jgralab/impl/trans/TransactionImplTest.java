@@ -59,6 +59,7 @@ import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.impl.InternalEdge;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralab.trans.ListPosition;
 import de.uni_koblenz.jgralab.trans.VersionedDataObject;
@@ -694,7 +695,7 @@ public class TransactionImplTest {
 	public void testSetAlpha() {
 		testAddEdge();
 		c2 = motorwayMap.createCity();
-		ex1.setAlpha(c2);
+		((InternalEdge) ex1).setAlpha(c2);
 		Map<Edge, VertexPosition> changedEdgesMap = new HashMap<Edge, VertexPosition>();
 		changedEdgesMap.put(ex1, VertexPosition.ALPHA);
 		assertEquals(readWriteTransaction1.changedEdges, changedEdgesMap);
@@ -713,7 +714,7 @@ public class TransactionImplTest {
 			motorwayMap.commit();
 			readOnlyTransaction = (TransactionImpl) motorwayMap
 					.newReadOnlyTransaction();
-			ex1.setAlpha(c2);
+			((InternalEdge) ex1).setAlpha(c2);
 			fail();
 		} catch (GraphException ge) {
 			System.out.println("\n- testSetAlphaReadOnly -");
@@ -734,7 +735,7 @@ public class TransactionImplTest {
 	public void testSetOmega() {
 		testAddEdge();
 		mw2 = motorwayMap.createMotorway();
-		ex1.setOmega(mw2);
+		((InternalEdge) ex1).setOmega(mw2);
 		Map<Edge, VertexPosition> changedEdgesMap = new HashMap<Edge, VertexPosition>();
 		changedEdgesMap.put(ex1, VertexPosition.OMEGA);
 		assertEquals(readWriteTransaction1.changedEdges, changedEdgesMap);
@@ -753,7 +754,7 @@ public class TransactionImplTest {
 			motorwayMap.commit();
 			readOnlyTransaction = (TransactionImpl) motorwayMap
 					.newReadOnlyTransaction();
-			ex1.setOmega(mw2);
+			((InternalEdge) ex1).setOmega(mw2);
 			fail();
 		} catch (GraphException ge) {
 			System.out.println("\n- testSetOmegaReadOnly -");
@@ -775,9 +776,9 @@ public class TransactionImplTest {
 	public void testSetAlphaOmega() {
 		testAddEdge();
 		c2 = motorwayMap.createCity();
-		ex1.setAlpha(c2);
+		((InternalEdge) ex1).setAlpha(c2);
 		mw2 = motorwayMap.createMotorway();
-		ex1.setOmega(mw2);
+		((InternalEdge) ex1).setOmega(mw2);
 		Map<Edge, VertexPosition> changedEdgesMap = new HashMap<Edge, VertexPosition>();
 		changedEdgesMap.put(ex1, VertexPosition.ALPHAOMEGA);
 		assertEquals(readWriteTransaction1.changedEdges, changedEdgesMap);

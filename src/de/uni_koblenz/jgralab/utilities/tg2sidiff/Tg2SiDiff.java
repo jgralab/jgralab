@@ -167,8 +167,8 @@ public class Tg2SiDiff extends Tg2Whatever {
 		EdgeClass cls = (EdgeClass) e.getAttributedElementClass();
 		Vertex alpha = (isReversedEdges() ? e.getOmega() : e.getAlpha());
 		Vertex omega = (isReversedEdges() ? e.getAlpha() : e.getOmega());
-		boolean aggregateTo = (e.getAlphaSemantics() != AggregationKind.NONE);
-		boolean aggregateFrom = (e.getOmegaSemantics() != AggregationKind.NONE);
+		boolean aggregateTo = (e.getAlphaAggregationKind() != AggregationKind.NONE);
+		boolean aggregateFrom = (e.getOmegaAggregationKind() != AggregationKind.NONE);
 
 		if (PRINT_EDGES_AS_NODES) {
 			out.print("<Node type=\"" + cls.getQualifiedName() + "\" id=\"edge"

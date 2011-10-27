@@ -88,7 +88,7 @@ public class TransactionImpl implements Transaction {
 	protected Map<AttributedElement, Set<VersionedDataObject<?>>> changedAttributes;
 
 	protected List<VertexImpl> deletedVerticesWhileWriting;
-	protected List<de.uni_koblenz.jgralab.impl.VertexBaseImpl> deleteVertexList;
+	protected List<de.uni_koblenz.jgralab.impl.InternalVertex> deleteVertexList;
 
 	protected SavepointImpl latestDefinedSavepoint;
 	protected SavepointImpl latestRestoredSavepoint;

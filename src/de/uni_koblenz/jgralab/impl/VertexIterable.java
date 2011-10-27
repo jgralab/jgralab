@@ -76,7 +76,7 @@ public class VertexIterable<V extends Vertex> implements Iterable<V> {
 		/**
 		 * the graph this iterator works on
 		 */
-		protected Graph graph = null;
+		protected InternalGraph graph = null;
 
 		protected Class<? extends Vertex> vc;
 
@@ -95,7 +95,7 @@ public class VertexIterable<V extends Vertex> implements Iterable<V> {
 		 *            the graph to work on
 		 */
 		@SuppressWarnings("unchecked")
-		VertexIterator(Graph g, Class<? extends Vertex> vc) {
+		VertexIterator(InternalGraph g, Class<? extends Vertex> vc) {
 			graph = g;
 			this.vc = vc;
 			vertexListVersion = g.getVertexListVersion();
@@ -150,7 +150,7 @@ public class VertexIterable<V extends Vertex> implements Iterable<V> {
 
 	public VertexIterable(Graph g, Class<? extends Vertex> vc) {
 		assert g != null;
-		iter = new VertexIterator(g, vc);
+		iter = new VertexIterator((InternalGraph) g, vc);
 	}
 
 	public Iterator<V> iterator() {

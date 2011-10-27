@@ -41,6 +41,7 @@ import java.util.NoSuchElementException;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.impl.InternalGraph;
 
 /**
  * This class is the generic vertex graph marker. It is used for temporary
@@ -52,7 +53,7 @@ import de.uni_koblenz.jgralab.Vertex;
 public class ArrayVertexMarker<O> extends ArrayGraphMarker<Vertex, O> {
 
 	public ArrayVertexMarker(Graph graph) {
-		super(graph, graph.getMaxVCount() + 1);
+		super(graph, ((InternalGraph) graph).getMaxVCount() + 1);
 	}
 
 	@Override

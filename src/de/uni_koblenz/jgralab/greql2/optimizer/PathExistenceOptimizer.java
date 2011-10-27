@@ -43,7 +43,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 
-import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
@@ -58,6 +57,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.greql2.schema.PathExistence;
 import de.uni_koblenz.jgralab.greql2.schema.PathExpression;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
+import de.uni_koblenz.jgralab.impl.InternalEdge;
 
 /**
  * This {@link Optimizer} transforms {@link PathExistence} vertices to
@@ -169,8 +169,9 @@ public class PathExistenceOptimizer extends OptimizerBase {
 			Variable t = (Variable) targetExp;
 			if ((s.getFirstIsBoundVarOfIncidence() != null)
 					&& (t.getFirstIsBoundVarOfIncidence() != null)) {
-				logger.finer(optimizerHeaderString()
-						+ "PathExistence has form var1 --> var2 where both vars are externally bound, skipping...");
+				logger
+						.finer(optimizerHeaderString()
+								+ "PathExistence has form var1 --> var2 where both vars are externally bound, skipping...");
 			}
 		}
 
@@ -198,13 +199,13 @@ public class PathExistenceOptimizer extends OptimizerBase {
 		}
 
 		if (startExpVars.isEmpty()
-				|| (!targetExpVars.isEmpty() && isDeclaredBefore(
-						startExpVars.last(), targetExpVars.last()))) {
+				|| (!targetExpVars.isEmpty() && isDeclaredBefore(startExpVars
+						.last(), targetExpVars.last()))) {
 			replacePathExistenceWithContainsFunApp(pe, startExp, targetExp,
 					true);
 		} else if (targetExpVars.isEmpty()
-				|| (!startExpVars.isEmpty() && isDeclaredBefore(
-						targetExpVars.last(), startExpVars.last()))) {
+				|| (!startExpVars.isEmpty() && isDeclaredBefore(targetExpVars
+						.last(), startExpVars.last()))) {
 			replacePathExistenceWithContainsFunApp(pe, targetExp, startExp,
 					false);
 		}
@@ -244,11 +245,11 @@ public class PathExistenceOptimizer extends OptimizerBase {
 
 		anOptimizationWasDone = true;
 
-		Edge inc = pe.getFirstIncidence(EdgeDirection.OUT);
-		Set<Edge> edgesToRelink = new HashSet<Edge>();
+		InternalEdge inc = (InternalEdge) pe.getFirstIncidence(EdgeDirection.OUT);
+		Set<InternalEdge> edgesToRelink = new HashSet<InternalEdge>();
 		while (inc != null) {
 			edgesToRelink.add(inc);
-			inc = inc.getNextIncidence(EdgeDirection.OUT);
+			inc = (InternalEdge) inc.getNextIncidence(EdgeDirection.OUT);
 		}
 		FunctionApplication contains = syntaxgraph.createFunctionApplication();
 		FunctionId containsId = OptimizerUtility.findOrCreateFunctionId(
@@ -262,13 +263,12 @@ public class PathExistenceOptimizer extends OptimizerBase {
 			vertexSet = syntaxgraph.createBackwardVertexSet();
 			syntaxgraph.createIsTargetExprOf(startOrTargetExp, vertexSet);
 		}
-		syntaxgraph.createIsPathOf(
-				(Expression) pe.getFirstIsPathOfIncidence(EdgeDirection.IN)
-						.getAlpha(), vertexSet);
+		syntaxgraph.createIsPathOf((Expression) pe.getFirstIsPathOfIncidence(
+				EdgeDirection.IN).getAlpha(), vertexSet);
 
 		syntaxgraph.createIsArgumentOf(vertexSet, contains);
 		syntaxgraph.createIsArgumentOf(otherExp, contains);
-		for (Edge edge : edgesToRelink) {
+		for (InternalEdge edge : edgesToRelink) {
 			edge.setAlpha(contains);
 		}
 		pe.delete();
