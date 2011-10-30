@@ -51,9 +51,9 @@ import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.GraphStructureChangedListener;
 import de.uni_koblenz.jgralab.TraversalContext;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.impl.InternalEdge;
 import de.uni_koblenz.jgralab.impl.FreeIndexList;
 import de.uni_koblenz.jgralab.impl.IncidenceImpl;
+import de.uni_koblenz.jgralab.impl.InternalEdge;
 import de.uni_koblenz.jgralab.impl.InternalVertex;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -110,7 +110,7 @@ public abstract class GraphImpl extends
 	protected List<Integer> edgeIndexesToBeFreed;
 	protected List<Integer> vertexIndexesToBeFreed;
 
-	private VersionedReferenceImpl<TraversalContext> tc;
+	private Map<Transaction, TraversalContext> tc;
 
 	/**
 	 * 
@@ -1149,7 +1149,8 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public void putEdgeBeforeInGraph(InternalEdge targetEdge, InternalEdge movedEdge) {
+	public void putEdgeBeforeInGraph(InternalEdge targetEdge,
+			InternalEdge movedEdge) {
 		TransactionImpl transaction = (TransactionImpl) getCurrentTransaction();
 		if (transaction == null) {
 			throw new GraphException("Current transaction is null.");
@@ -1209,7 +1210,8 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public void putEdgeAfterInGraph(InternalEdge targetEdge, InternalEdge movedEdge) {
+	public void putEdgeAfterInGraph(InternalEdge targetEdge,
+			InternalEdge movedEdge) {
 		TransactionImpl transaction = (TransactionImpl) getCurrentTransaction();
 		if (transaction == null) {
 			throw new GraphException("Current transaction is null.");
@@ -1269,7 +1271,8 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public void putVertexAfter(InternalVertex targetVertex, InternalVertex movedVertex) {
+	public void putVertexAfter(InternalVertex targetVertex,
+			InternalVertex movedVertex) {
 		TransactionImpl transaction = (TransactionImpl) getCurrentTransaction();
 		if (transaction == null) {
 			throw new GraphException("Current transaction is null.");
@@ -1330,7 +1333,8 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public void putVertexBefore(InternalVertex targetVertex, InternalVertex movedVertex) {
+	public void putVertexBefore(InternalVertex targetVertex,
+			InternalVertex movedVertex) {
 		TransactionImpl transaction = (TransactionImpl) getCurrentTransaction();
 		if (transaction == null) {
 			throw new GraphException("Current transaction is null.");
@@ -1556,21 +1560,20 @@ public abstract class GraphImpl extends
 	}
 
 	@Override
-	public TraversalContext getTraversalContext() {
+	public synchronized TraversalContext getTraversalContext() {
 		if (tc == null) {
 			return null;
 		}
-		return tc.getValidValue(getCurrentTransaction());
+		return tc.get(getCurrentTransaction());
 	}
 
 	@Override
-	public TraversalContext setTraversalContext(TraversalContext tc) {
+	public synchronized TraversalContext setTraversalContext(TraversalContext tc) {
 		TraversalContext oldTc = getTraversalContext();
-		if (tc == null) {
-			this.tc = new VersionedReferenceImpl<TraversalContext>(this, tc);
-		} else {
-			this.tc.setValidValue(tc, getCurrentTransaction());
+		if (this.tc == null) {
+			this.tc = new HashMap<Transaction, TraversalContext>();
 		}
+		this.tc.put(getCurrentTransaction(), tc);
 		return oldTc;
 	}
 }
