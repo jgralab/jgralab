@@ -4,7 +4,6 @@ import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 
 public interface ECARuleManagerInterface {
 
@@ -146,7 +145,5 @@ public interface ECARuleManagerInterface {
 	public abstract void setMaxNestedTriggerCalls(int maxNestedTriggerCalls);
 
 	public abstract int getNestedTriggerCalls();
-	
-	public abstract GreqlEvaluator getGreqlEvaluator();
 
 }

@@ -15,7 +15,6 @@ public class GreqlCondition implements Condition {
 	 */
 	private String conditionExpression;
 
-
 	// +++++++++++++++++++++++++++++++++++++++++++++++++
 
 	/**
@@ -40,9 +39,9 @@ public class GreqlCondition implements Condition {
 	@Override
 	public boolean evaluate(Event event) {
 		AttributedElement element = event.getElement();
-		GreqlEvaluator greqlEvaluator = event.getGraph().getECARuleManager()
-				.getGreqlEvaluator();
-		if (this.conditionExpression.contains("context")) {
+		GreqlEvaluator greqlEvaluator = ((ECARuleManager) event.getGraph()
+				.getECARuleManager()).getGreqlEvaluator();
+		if (conditionExpression.contains("context")) {
 			greqlEvaluator.setQuery("using context: " + conditionExpression);
 			JValue jva;
 			if (element instanceof Vertex) {
@@ -55,7 +54,7 @@ public class GreqlCondition implements Condition {
 			greqlEvaluator.setVariable("context", jva);
 
 		} else {
-			greqlEvaluator.setQuery(this.conditionExpression);
+			greqlEvaluator.setQuery(conditionExpression);
 		}
 		greqlEvaluator.startEvaluation();
 		JValue result = greqlEvaluator.getEvaluationResult();
@@ -63,16 +62,15 @@ public class GreqlCondition implements Condition {
 			return result.toBoolean();
 		} else {
 			System.err
-					.println("Invalid Condition: " + this.conditionExpression);
+					.println("Invalid Condition: " + conditionExpression);
 			throw new ECAException("Invalid Condition: \""
-					+ this.conditionExpression + "\" evaluates to JValueType "
+					+ conditionExpression + "\" evaluates to JValueType "
 					+ result.getType() + " but the result has to be a boolean.");
 		}
 	}
 
 	// +++++++++++++++++++++++++++++++++++++++++++++++++
 
-	
 	/**
 	 * @return the conditionExpression
 	 */
@@ -82,7 +80,7 @@ public class GreqlCondition implements Condition {
 
 	@Override
 	public String toString() {
-		return "Condition: " + this.conditionExpression;
+		return "Condition: " + conditionExpression;
 	}
 
 }
