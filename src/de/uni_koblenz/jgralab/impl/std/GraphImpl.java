@@ -352,7 +352,7 @@ public abstract class GraphImpl extends
 
 	@Override
 	public TraversalContext setTraversalContext(TraversalContext tc) {
-		TraversalContext oldTc = tc;
+		TraversalContext oldTc = this.tc;
 		this.tc = tc;
 		return oldTc;
 	}
