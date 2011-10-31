@@ -327,11 +327,6 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement> implements
 	}
 
 	@Override
-	public boolean containsGraphElement(GraphElement e) {
-		return isMarked(e);
-	}
-
-	@Override
 	public boolean containsVertex(Vertex v) {
 		return vertexGraphMarker.isMarked(v);
 	}
