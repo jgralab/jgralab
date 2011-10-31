@@ -37,6 +37,7 @@ package de.uni_koblenz.jgralab.trans;
 import java.util.List;
 
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.TraversalContext;
 
 /**
  * This interface represents a transaction within JGraLab.
@@ -234,4 +235,20 @@ public interface Transaction {
 	 * @return if the <code>Transaction</code> is still valid
 	 */
 	public boolean isValid();
+
+	/**
+	 * Sets the new traversal context for this graph in this transaction.
+	 * 
+	 * @param tc
+	 *            the new traversal context
+	 * @return the old traversal context
+	 */
+	public TraversalContext setTraversalContext(TraversalContext tc);
+
+	/**
+	 * Returns the current traversal context of this graph in this transaction.
+	 * 
+	 * @return the current traversal context of this graph in tihs transaction.
+	 */
+	public TraversalContext getTraversalContext();
 }
