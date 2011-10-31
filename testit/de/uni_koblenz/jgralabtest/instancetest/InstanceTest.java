@@ -187,8 +187,7 @@ public abstract class InstanceTest {
 			try {
 				dbHandler.graphDatabase.commitTransaction();
 			} catch (GraphDatabaseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new RuntimeException(e);
 			}
 			break;
 		}
