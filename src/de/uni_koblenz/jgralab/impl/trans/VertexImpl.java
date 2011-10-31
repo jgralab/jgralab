@@ -180,8 +180,8 @@ public abstract class VertexImpl extends
 				this.firstIncidence = new VersionedReferenceImpl<IncidenceImpl>(
 						this);
 			}
-			this.firstIncidence.setValidValue(firstIncidence, graph
-					.getCurrentTransaction());
+			this.firstIncidence.setValidValue(firstIncidence,
+					graph.getCurrentTransaction());
 		}
 	}
 
@@ -197,8 +197,8 @@ public abstract class VertexImpl extends
 				this.lastIncidence = new VersionedReferenceImpl<IncidenceImpl>(
 						this);
 			}
-			this.lastIncidence.setValidValue(lastIncidence, graph
-					.getCurrentTransaction());
+			this.lastIncidence.setValidValue(lastIncidence,
+					graph.getCurrentTransaction());
 		}
 	}
 
@@ -270,8 +270,8 @@ public abstract class VertexImpl extends
 		if (this.incidenceListVersion == null) {
 			this.incidenceListVersion = new VersionedReferenceImpl<Long>(this);
 		}
-		this.incidenceListVersion.setValidValue(incidenceListVersion, graph
-				.getCurrentTransaction());
+		this.incidenceListVersion.setValidValue(incidenceListVersion,
+				graph.getCurrentTransaction());
 	}
 
 	@Override
@@ -476,15 +476,15 @@ public abstract class VertexImpl extends
 
 	@Override
 	public Iterable<Edge> incidences(EdgeClass eclass, EdgeDirection dir) {
-		return new AttributedElementIterable<Edge>(super
-				.incidences(eclass, dir), graph);
+		return new AttributedElementIterable<Edge>(
+				super.incidences(eclass, dir), graph);
 	}
 
 	@Override
 	public Iterable<Edge> incidences(Class<? extends Edge> eclass,
 			EdgeDirection dir) {
-		return new AttributedElementIterable<Edge>(super
-				.incidences(eclass, dir), graph);
+		return new AttributedElementIterable<Edge>(
+				super.incidences(eclass, dir), graph);
 	}
 
 	@Override
@@ -516,11 +516,5 @@ public abstract class VertexImpl extends
 	protected void internalSetDefaultValue(Attribute attr)
 			throws GraphIOException {
 		attr.setDefaultTransactionValue(this);
-	}
-
-	@Override
-	public String toString() {
-		return "v " + getId() + ": "
-				+ getAttributedElementClass().getQualifiedName();
 	}
 }
