@@ -44,9 +44,9 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * TODO add comment
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 
@@ -117,9 +117,9 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 			code.add(createNextIncidenceMethods());
 		}
 		if (currentCycle.isStdOrDbImplOrTransImpl()) {
-			code.add(createGetSemanticsMethod());
-			code.add(createGetAlphaSemanticsMethod());
-			code.add(createGetOmegaSemanticsMethod());
+			code.add(createGetAggregationKindMethod());
+			code.add(createGetAlphaAggregationKindMethod());
+			code.add(createGetOmegaAggregationKindMethod());
 			code.add(createReversedEdgeMethod());
 		}
 		code.add(createGetAlphaOmegaOverrides());
@@ -162,7 +162,7 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 	}
 
 	/**
-	 *
+	 * 
 	 * @return
 	 */
 	private CodeBlock createReversedEdgeMethod() {
@@ -275,7 +275,7 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 		return code;
 	}
 
-	private CodeBlock createGetSemanticsMethod() {
+	private CodeBlock createGetAggregationKindMethod() {
 		CodeSnippet code = new CodeSnippet(true);
 		EdgeClass ec = (EdgeClass) aec;
 		String val = "NONE";
@@ -289,33 +289,33 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 		}
 		code.setVariable("semantics", val);
 		code.add(
-				"public de.uni_koblenz.jgralab.schema.AggregationKind getSemantics() {",
+				"public de.uni_koblenz.jgralab.schema.AggregationKind getAggregationKind() {",
 				"\treturn de.uni_koblenz.jgralab.schema.AggregationKind.#semantics#;",
 				"}");
 		return code;
 	}
 
-	private CodeBlock createGetAlphaSemanticsMethod() {
+	private CodeBlock createGetAlphaAggregationKindMethod() {
 		CodeSnippet code = new CodeSnippet(true);
 		EdgeClass ec = (EdgeClass) aec;
 		code.setVariable("semantics", ec.getFrom().getAggregationKind()
 				.toString());
 		code.add(
 				"@Override",
-				"public de.uni_koblenz.jgralab.schema.AggregationKind getAlphaSemantics() {",
+				"public de.uni_koblenz.jgralab.schema.AggregationKind getAlphaAggregationKind() {",
 				"\treturn de.uni_koblenz.jgralab.schema.AggregationKind.#semantics#;",
 				"}");
 		return code;
 	}
 
-	private CodeBlock createGetOmegaSemanticsMethod() {
+	private CodeBlock createGetOmegaAggregationKindMethod() {
 		CodeSnippet code = new CodeSnippet(true);
 		EdgeClass ec = (EdgeClass) aec;
 		code.setVariable("semantics", ec.getTo().getAggregationKind()
 				.toString());
 		code.add(
 				"@Override",
-				"public de.uni_koblenz.jgralab.schema.AggregationKind getOmegaSemantics() {",
+				"public de.uni_koblenz.jgralab.schema.AggregationKind getOmegaAggregationKind() {",
 				"\treturn de.uni_koblenz.jgralab.schema.AggregationKind.#semantics#;",
 				"}");
 		return code;
