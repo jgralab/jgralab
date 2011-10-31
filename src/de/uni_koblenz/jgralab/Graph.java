@@ -37,7 +37,8 @@ package de.uni_koblenz.jgralab;
 
 import java.io.DataOutputStream;
 import java.util.Comparator;
-import java.util.List;
+
+import org.pcollections.POrderedSet;
 
 import de.uni_koblenz.jgralab.eca.ECARuleManagerInterface;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -459,7 +460,7 @@ public interface Graph extends AttributedElement {
 	public int getGraphStructureChangedListenerCount();
 
 	public ECARuleManagerInterface getECARuleManager();
-	
+
 	public ECARuleManagerInterface getECARuleManagerIfThere();
 
 	public TraversalContext setTraversalContext(TraversalContext tc);

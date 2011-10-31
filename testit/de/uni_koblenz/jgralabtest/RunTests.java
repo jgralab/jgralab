@@ -39,7 +39,6 @@ import org.junit.runners.Suite;
 
 import de.uni_koblenz.jgralabtest.codegenerator.RunCodeGeneratorTests;
 import de.uni_koblenz.jgralabtest.graphvalidator.RunGraphValidatorTests;
-import de.uni_koblenz.jgralabtest.greql2.RunGreql2Tests;
 import de.uni_koblenz.jgralabtest.gretl.RunGretlTests;
 import de.uni_koblenz.jgralabtest.instancetest.RunInstanceTests;
 import de.uni_koblenz.jgralabtest.schema.RunSchemaTests;
@@ -50,8 +49,9 @@ import de.uni_koblenz.jgralabtest.utilities.RunUtilitiesTests;
  * 
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ RunInstanceTests.class, RunSchemaTests.class,
-		RunGraphValidatorTests.class, RunGreql2Tests.class,
+@Suite.SuiteClasses({ RunInstanceTests.class,
+		RunSchemaTests.class,
+		RunGraphValidatorTests.class, // RunGreql2Tests.class,
 		RunCodeGeneratorTests.class, RunUtilitiesTests.class,
 		RunGretlTests.class })
 public class RunTests {
