@@ -194,10 +194,10 @@ public class TraversalContextTest extends InstanceTest {
 
 	@After
 	public void tearDown() throws Exception {
+		commit(graph);
 		if (implementationType == ImplementationType.DATABASE) {
 			cleanAndCloseGraphDatabase();
 		}
-		commit(graph);
 	}
 
 	/*

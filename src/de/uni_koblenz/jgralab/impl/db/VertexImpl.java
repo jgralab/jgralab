@@ -496,14 +496,18 @@ public abstract class VertexImpl extends VertexBaseImpl implements
 	}
 
 	@Override
-	public int getDegree(EdgeDirection direction) {
-		if (direction == EdgeDirection.OUT) {
-			return incidenceList.countOutgoing();
-		} else if (direction == EdgeDirection.IN) {
-			return incidenceList.countIncoming();
-		} else {
-			return incidenceList.size();
+	public int getDegree(EdgeDirection orientation) {
+		if (graph.getTraversalContext() == null) {
+			switch (orientation) {
+			case OUT:
+				return incidenceList.countOutgoing();
+			case IN:
+				return incidenceList.countIncoming();
+			case INOUT:
+				return incidenceList.size();
+			}
 		}
+		return super.getDegree(orientation);
 	}
 
 	/**

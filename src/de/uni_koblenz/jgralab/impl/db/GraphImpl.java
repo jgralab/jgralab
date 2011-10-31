@@ -790,13 +790,13 @@ public abstract class GraphImpl extends GraphBaseImpl implements
 	}
 
 	@Override
-	public boolean containsVertex(Vertex v) {
+	public boolean vSeqContainsVertex(Vertex v) {
 		return v != null && v.getGraph() == this
 				&& vSeq.contains((DatabasePersistableVertex) v);
 	}
 
 	@Override
-	public boolean containsEdge(Edge e) {
+	public boolean eSeqContainsEdge(Edge e) {
 		return (e != null) && e.getGraph() == this
 				&& eSeq.contains((DatabasePersistableEdge) e);
 	}
