@@ -35,17 +35,7 @@
 
 package de.uni_koblenz.jgralabtest.greql2.testfunctions;
 
-import java.util.ArrayList;
-
-import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
-import de.uni_koblenz.jgralab.greql2.funlib.Greql2Function;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
+import de.uni_koblenz.jgralab.greql2.funlib.Function;
 
 /**
  * Checks if the given number is a prime number.
@@ -74,40 +64,18 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  * @author ist@uni-koblenz.de
  */
-public class IsPrime extends Greql2Function {
-	{
-		JValueType[][] x = { { JValueType.LONG, JValueType.BOOL },
-				{ JValueType.LONG, JValueType.INT, JValueType.BOOL } };
-		signatures = x;
+public class IsPrime extends Function {
 
-		description = "Return true, if the given number is a prime number.\n"
-				+ "This function performs the Miller-Rabin pseudo primality\n"
-				+ "test. The optional second parameter $k$ is an integer that\n"
-				+ "specifies influences the probability of being a prime.\n"
-				+ "The chances of being prime is $1- (\\frac{1}{4})^k$.  The default\n"
-				+ "value of $k$ is 10.";
-
-		Category[] c = { Category.ARITHMETICS };
-		categories = c;
+	public IsPrime() {
+		super(
+				"Return true, if the given number is a prime number.\n"
+						+ "This function performs the Miller-Rabin pseudo primality\n"
+						+ "test. The optional second parameter $k$ is an integer that\n"
+						+ "specifies influences the probability of being a prime.\n"
+						+ "The chances of being prime is $1- (\\frac{1}{4})^k$.  The default\n"
+						+ "value of $k$ is 10.", 50, 1, 1.0 / Math.log(5000),
+				Category.ARITHMETICS);
 	}
-
-	/**
-	 * The costs for an isPrime function application.
-	 * 
-	 * Since those depend heavily on the parameter(s) of isPrime, but those
-	 * aren't available before evaluation, it's hard to set it to a "good"
-	 * value...
-	 */
-	private static final int ESTIMATED_COSTS_PER_RUN = 5;
-
-	/**
-	 * The selectivity for isPrime. The number of prime numbers < x can be
-	 * estimated with x / ln(x). So the selectivity is (x / ln(x))/x = 1/ln(x).
-	 * 
-	 * Since we assume that isPrime is most often called with smaller values, we
-	 * use 500 for x.
-	 */
-	private static final double SELECTIVITY = 1.0 / Math.log(5000);
 
 	/**
 	 * @param a
@@ -173,49 +141,21 @@ public class IsPrime extends Greql2Function {
 		return true;
 	}
 
-	@Override
-	public JValue evaluate(Graph graph, SubGraphMarker subgraph,
-			JValue[] arguments) throws EvaluateException {
-		int noOfTestRuns = 10;
-		switch (checkArguments(arguments)) {
-		case 0:
-			break;
-		case 1:
-			noOfTestRuns = arguments[1].toInteger();
-			if (noOfTestRuns <= 0) {
-				throw new EvaluateException(
-						"isPrime's second argument must be positive!");
-			}
-			break;
-		default:
-			throw new WrongFunctionParameterException(this, arguments);
-		}
-		long number = arguments[0].toLong();
-
+	public Boolean evaluate(Long number) {
 		if (number < 2) {
-			return new JValueImpl(JValueBoolean.getFalseValue());
+			return false;
 		}
-
-		return new JValueImpl(isPrime(number, noOfTestRuns));
+		return isPrime(number, 10);
 	}
 
-	@Override
-	public long getEstimatedCardinality(int inElements) {
-		return 1;
-	}
-
-	@Override
-	public long getEstimatedCosts(ArrayList<Long> inElements) {
-		return 10 * ESTIMATED_COSTS_PER_RUN;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#getSelectivity()
-	 */
-	@Override
-	public double getSelectivity() {
-		return SELECTIVITY;
+	public Boolean evaluate(Long number, Integer noOfTestRuns) {
+		if (noOfTestRuns <= 0) {
+			throw new IllegalArgumentException(
+					"isPrime's second argument must be positive!");
+		}
+		if (number < 2) {
+			return false;
+		}
+		return isPrime(number, noOfTestRuns);
 	}
 }

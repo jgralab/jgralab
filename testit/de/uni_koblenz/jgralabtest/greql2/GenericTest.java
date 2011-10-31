@@ -48,20 +48,17 @@ import java.util.logging.Level;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.pcollections.PCollection;
+import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.greql2.SerializableGreql2;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueImpl;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
 import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.Optimizer;
 import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
+import de.uni_koblenz.jgralab.greql2.serialising.GreqlSerializer;
 import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalGraph;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalSchema;
@@ -92,33 +89,32 @@ public class GenericTest {
 		plazaCount = test.queryInteger("count(V{junctions.Plaza})");
 		localityCount = test.queryInteger("count(V{localities.Locality})");
 		queryUncontainedCrossroadCount(test);
-		eval.setVariable("nll", new JValueImpl());
+		eval.setVariable("nll", null);
 		JGraLab.setLogLevel(Level.OFF);
 	}
 
-	private int queryInteger(String query) throws JValueInvalidTypeException,
-			Exception {
-		return evalTestQuery(query).toInteger().intValue();
+	private int queryInteger(String query) throws Exception {
+		return ((Integer) evalTestQuery(query)).intValue();
 	}
 
 	private static void queryUncontainedCrossroadCount(GenericTest test)
 			throws Exception {
 		String queryString = "sum(from r:V{junctions.Crossroad} report depth(pathSystem(r, <--{localities.ContainsCrossroad})) end)";
-		JValue result = test.evalTestQuery(queryString);
+		Object result = test.evalTestQuery(queryString);
 
 		uncontainedCrossroadCount = crossroadCount
-				- result.toDouble().intValue();
+				- ((Double) result).intValue();
 	}
 
 	protected void assertQueryIsNull(String query) throws Exception {
-		JValue result = evalTestQuery(query);
-		assertNull(result.toObject());
+		Object result = evalTestQuery(query);
+		assertNull(result);
 	}
 
 	protected void assertQueryEquals(String query, boolean expectedValue)
 			throws Exception {
-		JValue result = evalTestQuery(query);
-		assertEquals(expectedValue, result.toBoolean().booleanValue());
+		Object result = evalTestQuery(query);
+		assertEquals(expectedValue, ((Boolean) result).booleanValue());
 	}
 
 	protected void assertQueryIsTrue(String query) throws Exception {
@@ -131,49 +127,50 @@ public class GenericTest {
 
 	protected void assertQueryEquals(String query, int expectedValue)
 			throws Exception {
-		JValue result = evalTestQuery(query);
-		assertEquals(expectedValue, result.toInteger().intValue());
+		Object result = evalTestQuery(query);
+		assertEquals(expectedValue, ((Integer) result).intValue());
 	}
 
 	protected void assertQueryEquals(String query, long expectedValue)
 			throws Exception {
-		JValue result = evalTestQuery(query);
-		assertEquals(expectedValue, result.toLong().longValue());
+		Object result = evalTestQuery(query);
+		assertEquals(expectedValue, ((Long) result).longValue());
 	}
 
 	protected void assertQueryEquals(String query, double expectedValue)
 			throws Exception {
-		JValue result = evalTestQuery(query);
-		assertEquals(expectedValue, result.toDouble().doubleValue(), DELTA);
+		Object result = evalTestQuery(query);
+		assertEquals(expectedValue, ((Double) result).doubleValue(), DELTA);
 	}
 
 	protected void assertQueryEquals(String query, String expectedValue)
 			throws Exception {
-		JValue result = evalTestQuery(query);
+		Object result = evalTestQuery(query);
 		assertEquals(expectedValue, result.toString());
 	}
 
 	protected void assertQueryEqualsQuery(String query,
 			String expectedResultAsQuery) throws Exception {
-		JValue result = evalTestQuery(query);
-		JValue expectedResult = evalTestQuery(expectedResultAsQuery);
+		Object result = evalTestQuery(query);
+		Object expectedResult = evalTestQuery(expectedResultAsQuery);
 		try {
 			if (!result.equals(expectedResult)) {
 				System.out.println(result);
 				System.out.println(expectedResult);
-				System.out.println(result instanceof JValueList);
+				System.out.println(result instanceof PVector);
 			}
 			assertEquals(expectedResult, result);
 
 		} catch (AssertionError ex) {
-			if (result.isCollection() && expectedResult.isCollection()) {
-				JValueCollection col = result.toCollection();
-				JValueCollection col2 = expectedResult.toCollection();
-				col.removeAll(col2);
+			if (result instanceof PCollection
+					&& expectedResult instanceof PCollection) {
+				PCollection<?> col = (PCollection<?>) result;
+				PCollection<?> col2 = (PCollection<?>) expectedResult;
+				col = col.minusAll(col2);
 				System.out.println("O L D +++++");
-				System.out.println(col.toObject());
+				System.out.println(col);
 				System.out.println("N E W +++++");
-				System.out.println(col2.toObject());
+				System.out.println(col2);
 				System.out.println("E N D +++++");
 			}
 			throw ex;
@@ -182,35 +179,29 @@ public class GenericTest {
 
 	protected void assertQueryEquals(String query, Enum<?> expectedValue)
 			throws Exception {
-		JValue result = evalTestQuery(query);
-		assertEquals(expectedValue, result.toEnum());
-	}
-
-	protected void assertQueryEquals(String query, JValue expectedValue)
-			throws Exception {
-		JValue result = evalTestQuery(query);
-		assertEquals(expectedValue, result);
+		Object result = evalTestQuery(query);
+		assertEquals(expectedValue, (result));
 	}
 
 	protected void assertQueryEquals(String query, List<?> expectedValue)
 			throws Exception {
-		JValue result = evalTestQuery(query);
+		Object result = evalTestQuery(query);
 
-		List<?> list = toList(result.toCollection());
+		List<?> list = toList((PCollection<?>) result);
 		assertEquals(expectedValue, list);
 	}
 
 	protected void assertQueryEquals(String query, Object expectedValue)
 			throws Exception {
-		Object result = evalTestQuery(query).toObject();
+		Object result = evalTestQuery(query);
 		assertEquals(expectedValue, result);
 	}
 
-	@SuppressWarnings( { "rawtypes", "unchecked" })
-	private List<?> toList(JValueCollection collection) {
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private List<?> toList(PCollection<?> collection) {
 		ArrayList list = new ArrayList();
-		for (JValue value : collection) {
-			list.add(value.toObject());
+		for (Object value : collection) {
+			list.add(value);
 		}
 		return list;
 	}
@@ -218,7 +209,7 @@ public class GenericTest {
 	protected void expectException(String query,
 			Class<? extends Exception> exception) {
 		try {
-			JValue value = evalTestQuery(query);
+			Object value = evalTestQuery(query);
 			fail("This test should fail. Instead the query could be evaluated to: "
 					+ value);
 		} catch (Exception ex) {
@@ -253,15 +244,15 @@ public class GenericTest {
 
 	@Before
 	public void setUp() throws Exception {
-		eval.setVariable("nix", new JValueImpl(133));
-		eval.setVariable("FOO", new JValueImpl("Currywurst"));
+		eval.setVariable("nix", 133);
+		eval.setVariable("FOO", "Currywurst");
 	}
 
-	protected void setBoundVariable(String varName, JValue val) {
+	protected void setBoundVariable(String varName, Object val) {
 		eval.setVariable(varName, val);
 	}
 
-	protected JValue getBoundVariable(String varName) {
+	protected Object getBoundVariable(String varName) {
 		return eval.getVariable(varName);
 	}
 
@@ -343,17 +334,17 @@ public class GenericTest {
 		return g;
 	}
 
-	protected JValue evalTestQuery(String functionName, String query,
+	protected Object evalTestQuery(String functionName, String query,
 			Graph datagraph) throws Exception {
 		return evalTestQuery(functionName, query, null, datagraph);
 	}
 
-	protected JValue evalTestQuery(String functionName, String query)
+	protected Object evalTestQuery(String functionName, String query)
 			throws Exception {
 		return evalTestQuery(functionName, query, TestVersion.GREQL_GRAPH);
 	}
 
-	protected JValue evalTestQuery(String query) throws Exception {
+	protected Object evalTestQuery(String query) throws Exception {
 		return evalTestQueryNoMessage(query, defaultVersion);
 	}
 
@@ -365,31 +356,31 @@ public class GenericTest {
 		this.defaultVersion = defaultVersion;
 	}
 
-	protected JValue evalTestQuery(String functionName, String query,
+	protected Object evalTestQuery(String functionName, String query,
 			Optimizer optimizer) throws Exception {
 
 		return evalTestQuery(functionName, query, optimizer,
 				TestVersion.GREQL_GRAPH);
 	}
 
-	protected JValue evalTestQuery(String functionName, String query,
+	protected Object evalTestQuery(String functionName, String query,
 			TestVersion version) throws Exception {
 		return evalTestQuery(functionName, query, null, getTestGraph(version));
 	}
 
-	protected JValue evalTestQueryNoMessage(String query, TestVersion version)
+	protected Object evalTestQueryNoMessage(String query, TestVersion version)
 			throws Exception {
 		return evalQuery(query, null, getTestGraph(version));
 	}
 
-	protected JValue evalTestQuery(String functionName, String query,
+	protected Object evalTestQuery(String functionName, String query,
 			Optimizer optimizer, TestVersion version) throws Exception {
 
 		return evalTestQuery(functionName, query, optimizer,
 				getTestGraph(version));
 	}
 
-	protected JValue evalTestQuery(String functionName, String query,
+	protected Object evalTestQuery(String functionName, String query,
 			Optimizer optimizer, Graph datagraph) throws Exception {
 		eval.setQuery(query);
 		eval.setDatagraph(datagraph);
@@ -403,12 +394,12 @@ public class GenericTest {
 			printDebuggingSyntaxGraph(optimizer);
 		}
 
-		JValue result = eval.getEvaluationResult();
+		Object result = eval.getResult();
 		// eval.printEvaluationTimes();
 		return result;
 	}
 
-	protected JValue evalQuery(String query, Optimizer optimizer,
+	protected Object evalQuery(String query, Optimizer optimizer,
 			Graph datagraph) throws Exception {
 		eval.setQuery(query);
 		eval.setDatagraph(datagraph);
@@ -417,7 +408,7 @@ public class GenericTest {
 		setOptimizer(optimizer);
 
 		eval.startEvaluation();
-		JValue result = eval.getEvaluationResult();
+		Object result = eval.getResult();
 		return result;
 	}
 
@@ -443,8 +434,8 @@ public class GenericTest {
 			System.out.println("Unoptimized Query:");
 			dotFileName += "unoptimized-query.dot";
 		}
-		System.out.println(((SerializableGreql2) eval.getSyntaxGraph())
-				.serialize());
+		System.out
+				.println(GreqlSerializer.serializeGraph(eval.getSyntaxGraph()));
 		try {
 			Tg2Dot.convertGraph(eval.getSyntaxGraph(), dotFileName, true);
 		} catch (IOException e) {
@@ -453,11 +444,11 @@ public class GenericTest {
 		}
 	}
 
-	protected JValue getNthValue(JValueCollection col, int n) {
-		Iterator<JValue> iter = col.iterator();
+	protected Object getNthValue(PCollection<?> col, int n) {
+		Iterator<?> iter = col.iterator();
 		int i = 0;
 		while (iter.hasNext()) {
-			JValue value = iter.next();
+			Object value = iter.next();
 			if (i == n) {
 				return value;
 			}
@@ -466,11 +457,11 @@ public class GenericTest {
 		return null;
 	}
 
-	protected void printResult(JValue result) throws Exception {
+	protected void printResult(Object result) throws Exception {
 		System.out.println("Result is: " + result);
-		if (result.isCollection()) {
+		if (result instanceof PCollection) {
 			System.out.println("Collection size is: "
-					+ result.toCollection().size());
+					+ ((PCollection<?>) result).size());
 		}
 	}
 

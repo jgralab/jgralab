@@ -91,7 +91,7 @@
 
 	<!-- set project specific properties -->
 
-	<property name="greql2.schemafile" value="${src.dir}/de/uni_koblenz/jgralab/greql2/greql2Schema.tg" />
+	<property name="greql2.schemafile" value="${src.dir}/de/uni_koblenz/jgralab/greql2/GreqlSchema.tg" />
 	<property name="gruml.schemafile" value="${src.dir}/de/uni_koblenz/jgralab/schema/GrumlSchema.tg" />
 	<property name="gretl.templategraphschemafile" value="${src.dir}/de/uni_koblenz/jgralab/gretl/templateGraphSchema.tg" />
 
@@ -108,8 +108,8 @@
 
 	<property name="greql2.src" value="${src.dir}/de/uni_koblenz/jgralab/greql2" />
 
-	<property name="gretl_and_eca.src" value="${src.dir}/de/uni_koblenz/jgralab/" />
-	<property name="gretl_and_eca.includes" value="gretl/** eca/**" />
+	<property name="gretl_eca.src" value="${src.dir}/de/uni_koblenz/jgralab/" />
+	<property name="gretl_eca.includes" value="gretl/** eca/**" />
 
 	<property name="algolib.src" value="${src.dir}/de/uni_koblenz/jgralab/algolib" />
 
@@ -135,6 +135,7 @@
 
 	<target name="clean">
 		<delete dir="${classes.dir}" />
+		<delete file="${jar.dir}/jgralab.jar" />
 		<delete dir="${tmp.dir}" />
 		<delete dir="${testclasses.dir}" />
 		<delete dir="${src.dir}/de/uni_koblenz/jgralab/greql2/schema" />
@@ -170,7 +171,7 @@
 	</target>
 
 	<!-- compiles greql2 sources -->
-	<target name="greql2" depends="tgtools">
+	<target name="greql2" depends="tgtools,algolib">
 		<tgschema2java schemaFile="${greql2.schemafile}" sourcePath="${src.dir}" implementationMode="standard" />
 		<javac fork="true" srcdir="${greql2.src}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" target="${javac.targetVM}" includeantruntime="false">
 			<compilerarg line="-Xlint:unchecked" />
@@ -245,12 +246,15 @@
 		</tgschema2java>
 	</target>
 
-	<!-- GReTL -->
-	<target name="gretl_and_eca" depends="tgtools">
-		<tgschema2java schemaFile="${gretl.templategraphschemafile}" sourcePath="${src.dir}" implementationMode="standard" />
-		<javac fork="true" srcdir="${gretl_and_eca.src}" includes="${gretl_and_eca.includes}" destdir="${classes.dir}" memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}" classpathref="classpath" debug="${debug}" target="${javac.targetVM}" includeantruntime="false">
-			<compilerarg line="-Xlint:unchecked" />
-		</javac>
+	<!-- GReTL and ECA -->
+	<target name="gretl_and_eca" depends="greql2" >
+	  <tgschema2java schemaFile="${gretl.templategraphschemafile}" sourcePath="${src.dir}" implementationMode="standard" />
+	  <javac fork="true" srcdir="${gretl_eca.src}" includes="${gretl_eca.includes}" destdir="${classes.dir}"
+		 memoryinitialsize="${minmemsize}" memorymaximumsize="${maxmemsize}"
+		 classpathref="classpath" debug="${debug}" target="${javac.targetVM}"
+		 includeantruntime="false">
+	    <compilerarg line="-Xlint:unchecked" />
+	  </javac>
 	</target>
 
 	<!-- unjar -->

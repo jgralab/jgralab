@@ -1,29 +1,29 @@
 /*
  * JGraLab - The Java Graph Laboratory
- * 
+ *
  * Copyright (C) 2006-2011 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- * 
+ *
  * For bug reports, documentation and further information, visit
- * 
+ *
  *                         http://jgralab.uni-koblenz.de
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
+ *
  * Additional permission under GNU GPL version 3 section 7
- * 
+ *
  * If you modify this Program, or any covered work, by linking or combining
  * it with Eclipse (or a modified version of that program or an Eclipse
  * plugin), containing parts covered by the terms of the Eclipse Public
@@ -99,11 +99,11 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
-import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -113,7 +113,6 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
-import org.pcollections.ArrayPVector;
 import org.pcollections.PVector;
 
 import de.uni_koblenz.ist.utilities.option_handler.OptionHandler;
@@ -121,7 +120,6 @@ import de.uni_koblenz.ist.utilities.xml.XmlProcessor;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
@@ -163,7 +161,6 @@ import de.uni_koblenz.jgralab.grumlschema.structure.Schema;
 import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesEdgeClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.Subsets;
 import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
-import de.uni_koblenz.jgralab.impl.InternalEdge;
 import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
 
 /**
@@ -1140,9 +1137,12 @@ public class Rsa2Tg extends XmlProcessor {
 	 */
 	private void removeIgnoredPackages() {
 		System.out.println("Removing ignored packages...");
+		int n = 0;
 		for (Package pkg : ignoredPackages) {
-			removePackage(pkg);
+			n += removePackage(pkg);
 		}
+		System.out.println("\tRemoved " + n + " package" + (n == 1 ? "" : "s")
+				+ ".");
 	}
 
 	/**
@@ -1152,19 +1152,19 @@ public class Rsa2Tg extends XmlProcessor {
 	 * @param pkg
 	 *            a Package
 	 */
-	private void removePackage(Package pkg) {
+	private int removePackage(Package pkg) {
 		if (!pkg.isValid()) {
 			// possibly alread deleted
-			return;
+			return 0;
 		}
-		System.out.println("\tremoving " + pkg.get_qualifiedName());
+		int n = 0;
 		// recursively descend into subpackages
 		List<Package> subPackages = new ArrayList<Package>();
 		for (Package sub : pkg.get_subpackage()) {
 			subPackages.add(sub);
 		}
 		for (Package sub : subPackages) {
-			removePackage(sub);
+			n += removePackage(sub);
 		}
 
 		// remove all GraphElementClasses
@@ -1210,8 +1210,11 @@ public class Rsa2Tg extends XmlProcessor {
 		// remove the package itself if it's totally empty (degree is 1 since
 		// the ContainsSubpackage edge to the parent package still exists)
 		if (pkg.getDegree() == 1) {
+			++n;
+			System.out.println("\t- removing " + pkg.get_qualifiedName());
 			pkg.delete();
 		}
+		return n;
 	}
 
 	/**
@@ -1244,9 +1247,9 @@ public class Rsa2Tg extends XmlProcessor {
 		}
 		if (faultyDomains.size() > 0) {
 			StringBuilder sb = new StringBuilder();
-			sb.append("The following enumeration domain").append(
-					faultyDomains.size() == 1 ? " has" : "s have").append(
-					" no literals");
+			sb.append("The following enumeration domain")
+					.append(faultyDomains.size() == 1 ? " has" : "s have")
+					.append(" no literals");
 			String delim = ": ";
 			for (String name : faultyDomains) {
 				sb.append(delim).append(name);
@@ -1268,9 +1271,9 @@ public class Rsa2Tg extends XmlProcessor {
 			}
 			if (annotatedElement == null) {
 				System.out
-						.println("Warning: Couldn't find annotated element for XMI id "
+						.println("\t- Couldn't find annotated element for XMI id "
 								+ id
-								+ " ==> attaching to GraphClass (Comment starts with '"
+								+ "\n\t  => attaching to GraphClass (Comment starts with '"
 								+ comments.get(id).get(0) + "'");
 				annotatedElement = graphClass;
 			}
@@ -1292,8 +1295,8 @@ public class Rsa2Tg extends XmlProcessor {
 		// between their incidence classes
 		SpecializesEdgeClass spec = sg.getFirstSpecializesEdgeClass();
 		while (spec != null) {
-			EdgeClass subClass = (EdgeClass) spec.getAlpha();
-			EdgeClass superClass = (EdgeClass) spec.getOmega();
+			EdgeClass subClass = spec.getAlpha();
+			EdgeClass superClass = spec.getOmega();
 
 			assert subClass.getFirstComesFromIncidence() != null;
 			assert superClass.getFirstComesFromIncidence() != null;
@@ -1308,7 +1311,7 @@ public class Rsa2Tg extends XmlProcessor {
 					(IncidenceClass) subClass.getFirstGoesToIncidence()
 							.getThat(), (IncidenceClass) superClass
 							.getFirstGoesToIncidence().getThat());
-			spec = spec.getNextSpecializesEdgeClassInGraph();
+			spec = spec.getNextSpecializesEdgeClass();
 		}
 
 		// Generalisation hierarchy is complete, now process redefinitions.
@@ -1338,7 +1341,7 @@ public class Rsa2Tg extends XmlProcessor {
 					}
 					for (Subsets si : curr
 							.getSubsetsIncidences(EdgeDirection.OUT)) {
-						IncidenceClass i = (IncidenceClass) si.getOmega();
+						IncidenceClass i = si.getOmega();
 						if (!m.isMarked(i)) {
 							m.mark(i);
 							q.offer(i);
@@ -1353,7 +1356,7 @@ public class Rsa2Tg extends XmlProcessor {
 					// delete direct subsets edge from inc to sup
 					for (Subsets si : inc
 							.getSubsetsIncidences(EdgeDirection.OUT)) {
-						IncidenceClass i = (IncidenceClass) si.getOmega();
+						IncidenceClass i = si.getOmega();
 						if (i == sup) {
 							assert !(si instanceof Redefines);
 							si.delete();
@@ -1430,8 +1433,8 @@ public class Rsa2Tg extends XmlProcessor {
 
 		if (filenameDot != null) {
 			try {
-				writeDotFile(filenameDot);
 				printTypeAndFilename("GraphvViz DOT file", filenameDot);
+				writeDotFile(filenameDot);
 				fileCreated = true;
 			} catch (IOException e) {
 				System.out.println("Could not create DOT file.");
@@ -1440,22 +1443,22 @@ public class Rsa2Tg extends XmlProcessor {
 		}
 
 		if (filenameSchemaGraph != null) {
-			writeSchemaGraph(filenameSchemaGraph);
 			printTypeAndFilename("schemagraph", filenameSchemaGraph);
+			writeSchemaGraph(filenameSchemaGraph);
 			fileCreated = true;
 		}
 
 		// The Graph is always validated, but not always written to a hard
 		// drive.
+		System.out.println("Validating schema graph...");
 		validateGraph(filenameValidation);
 		if (filenameValidation != null) {
-			printTypeAndFilename("validation report", filenameValidation);
 			fileCreated = true;
 		}
 
 		if (filenameSchema != null) {
-			writeSchema(filenameSchema);
 			printTypeAndFilename("schema", filenameSchema);
+			writeSchema(filenameSchema);
 			fileCreated = true;
 		}
 
@@ -1477,6 +1480,9 @@ public class Rsa2Tg extends XmlProcessor {
 	 *            Relative path to a folder.
 	 */
 	private void validateGraph(String filePath) {
+		if (filePath != null) {
+			printTypeAndFilename("validation report", filePath);
+		}
 
 		try {
 			GraphValidator validator = new GraphValidator(sg);
@@ -1522,8 +1528,7 @@ public class Rsa2Tg extends XmlProcessor {
 	private Vertex handlePackage() throws XMLStreamException {
 
 		Package pkg = sg.createPackage();
-		pkg
-				.set_qualifiedName(getQualifiedName(getAttribute(UML_ATTRIBUTE_NAME)));
+		pkg.set_qualifiedName(getQualifiedName(getAttribute(UML_ATTRIBUTE_NAME)));
 		sg.createContainsSubPackage(packageStack.peek(), pkg);
 		packageStack.push(pkg);
 		return pkg;
@@ -1561,8 +1566,7 @@ public class Rsa2Tg extends XmlProcessor {
 		currentClass = vc;
 		String abs = getAttribute(UML_ATTRIBUTE_IS_ABSRACT);
 		vc.set_abstract((abs != null) && abs.equals(UML_TRUE));
-		vc
-				.set_qualifiedName(getQualifiedName(getAttribute(UML_ATTRIBUTE_NAME)));
+		vc.set_qualifiedName(getQualifiedName(getAttribute(UML_ATTRIBUTE_NAME)));
 		sg.createContainsGraphElementClass(packageStack.peek(), vc);
 
 		// System.out.println("currentClass = " + currentClass + " "
@@ -1687,10 +1691,9 @@ public class Rsa2Tg extends XmlProcessor {
 	private Vertex handleEnumeration() throws XMLStreamException {
 		EnumDomain ed = sg.createEnumDomain();
 		Package p = packageStack.peek();
-		ed
-				.set_qualifiedName(getQualifiedName(getAttribute(UML_ATTRIBUTE_NAME)));
+		ed.set_qualifiedName(getQualifiedName(getAttribute(UML_ATTRIBUTE_NAME)));
 		sg.createContainsDomain(p, ed);
-		PVector<String> empty = ArrayPVector.empty();
+		PVector<String> empty = JGraLab.vector();
 		ed.set_enumConstants(empty);
 		Domain dom = domainMap.get(ed.get_qualifiedName());
 		if (dom != null) {
@@ -1885,8 +1888,8 @@ public class Rsa2Tg extends XmlProcessor {
 			assert getDirection(from) == IncidenceDirection.OUT;
 
 			IncidenceClass inc = (IncidenceClass) cf.getThat();
-			((InternalEdge) cf).setThat(gt.getThat());
-			((InternalEdge) gt).setThat(inc);
+			cf.setThat(gt.getThat());
+			gt.setThat(inc);
 		}
 
 	}
@@ -2065,8 +2068,8 @@ public class Rsa2Tg extends XmlProcessor {
 			Domain n = d.getNextDomain();
 			// unused if in-degree of all but Annotates edges is <=1 (one
 			// incoming edge is the ContainsDomain edge from a Package)
-			if (d.getDegree(EdgeDirection.IN)
-					- d.getDegree(Annotates.class, EdgeDirection.IN) <= 1) {
+			if ((d.getDegree(EdgeDirection.IN) - d.getDegree(Annotates.class,
+					EdgeDirection.IN)) <= 1) {
 				// System.out.println("...remove unused domain '"
 				// + d.getQualifiedName() + "'");
 
@@ -2101,14 +2104,14 @@ public class Rsa2Tg extends XmlProcessor {
 
 			Domain dom = (Domain) idMap.get(domainId);
 			if (dom != null) {
-				Domain d = (Domain) comp.getOmega();
+				Domain d = comp.getOmega();
 
 				// preliminary domain vertex exists and has type StringDomain,
 				// but the name of the StringDomain is the "real" domain name
 				assert (d instanceof StringDomain)
 						&& d.get_qualifiedName().equals(domainId)
 						&& preliminaryVertices.contains(d);
-				((InternalEdge) comp).setOmega(dom);
+				comp.setOmega(dom);
 				d.delete();
 				preliminaryVertices.remove(d);
 				recordComponentType.removeMark(comp);
@@ -2194,7 +2197,7 @@ public class Rsa2Tg extends XmlProcessor {
 	 */
 	private void writeSchemaGraph(String schemaGraphName)
 			throws GraphIOException {
-		GraphIO.saveGraphToFile(schemaGraphName, sg, null);
+		sg.save(schemaGraphName);
 	}
 
 	/**
@@ -2291,7 +2294,7 @@ public class Rsa2Tg extends XmlProcessor {
 					"isAcyclic(vSubgraph{structure.EdgeClass})", sg, null);
 		}
 		edgeClassAcyclicEvaluator.startEvaluation();
-		return edgeClassAcyclicEvaluator.getEvaluationResult().toBoolean();
+		return (Boolean) edgeClassAcyclicEvaluator.getResult();
 	}
 
 	/**
@@ -2305,7 +2308,7 @@ public class Rsa2Tg extends XmlProcessor {
 					"isAcyclic(vSubgraph{structure.VertexClass})", sg, null);
 		}
 		vertexClassAcyclicEvaluator.startEvaluation();
-		return vertexClassAcyclicEvaluator.getEvaluationResult().toBoolean();
+		return (Boolean) vertexClassAcyclicEvaluator.getResult();
 	}
 
 	/**
@@ -2315,10 +2318,11 @@ public class Rsa2Tg extends XmlProcessor {
 		// remove all empty packages except the default package
 		System.out.println("Removing empty packages...");
 		Package p = sg.getFirstPackage();
+		int removed = 0;
 		while (p != null) {
 			Package n = p.getNextPackage();
 			int commentCount = p.getDegree(Annotates.class);
-			if ((p.getDegree() - commentCount == 1)
+			if (((p.getDegree() - commentCount) == 1)
 					&& (p.get_qualifiedName().length() > 0)) {
 				System.out
 						.println("\t- empty package '"
@@ -2335,6 +2339,7 @@ public class Rsa2Tg extends XmlProcessor {
 					}
 				}
 				p.delete();
+				++removed;
 				// start over to capture packages that become empty after
 				// deletion of p
 				p = sg.getFirstPackage();
@@ -2342,6 +2347,8 @@ public class Rsa2Tg extends XmlProcessor {
 				p = n;
 			}
 		}
+		System.out.println("\tRemoved " + removed + " package"
+				+ (removed == 1 ? "" : "s") + ".");
 	}
 
 	/**
@@ -2617,9 +2624,9 @@ public class Rsa2Tg extends XmlProcessor {
 					.get(currentClassId);
 			assert graphClass != null;
 			graphClass.set_qualifiedName(aec.get_qualifiedName());
-			InternalEdge e = (InternalEdge) aec.getFirstIncidence();
+			Edge e = aec.getFirstIncidence();
 			while (e != null) {
-				InternalEdge n = (InternalEdge) e.getNextIncidence();
+				Edge n = e.getNextIncidence();
 				if (e instanceof ContainsGraphElementClass) {
 					e.delete();
 				} else {
@@ -2761,11 +2768,11 @@ public class Rsa2Tg extends XmlProcessor {
 		if (currentRecordDomain != null) {
 			// type of record domain component
 			assert currentRecordDomainComponent != null;
-			Domain d = (Domain) currentRecordDomainComponent.getOmega();
+			Domain d = currentRecordDomainComponent.getOmega();
 			assert (d instanceof StringDomain)
 					&& (d.get_qualifiedName() == null)
 					&& preliminaryVertices.contains(d);
-			((InternalEdge) currentRecordDomainComponent).setOmega(dom);
+			currentRecordDomainComponent.setOmega(dom);
 			d.delete();
 			preliminaryVertices.remove(d);
 			recordComponentType.removeMark(currentRecordDomainComponent);
@@ -2971,8 +2978,8 @@ public class Rsa2Tg extends XmlProcessor {
 			sg.createEndsAt(inc, vc);
 		} else {
 			EdgeClass ec = (EdgeClass) (inc.getFirstComesFromIncidence() != null ? inc
-					.getFirstComesFromIncidence()
-					: inc.getFirstGoesToIncidence()).getThat();
+					.getFirstComesFromIncidence() : inc
+					.getFirstGoesToIncidence()).getThat();
 			String id = null;
 			for (Entry<String, Vertex> idEntry : idMap.entrySet()) {
 				if (idEntry.getValue() == ec) {
@@ -3003,11 +3010,7 @@ public class Rsa2Tg extends XmlProcessor {
 										+ ae.getAttributedElementClass()
 												.getQualifiedName());
 					}
-					InternalEdge firstEndsAtIncidence = (InternalEdge) inc
-							.getFirstEndsAtIncidence();
-					// this cast remains for detecting ClassCastExceptions
-					VertexClass vertexClass = (VertexClass) ae;
-					firstEndsAtIncidence.setOmega(vertexClass);
+					inc.getFirstEndsAtIncidence().setOmega((VertexClass) ae);
 
 					Set<String> gens = generalizations.getMark(vc);
 					if (gens != null) {
@@ -3048,9 +3051,9 @@ public class Rsa2Tg extends XmlProcessor {
 	 *            New {@link Vertex}, to which all edge should be attached.
 	 */
 	private void reconnectEdges(Vertex oldVertex, Vertex newVertex) {
-		InternalEdge curr = (InternalEdge) oldVertex.getFirstIncidence();
+		Edge curr = oldVertex.getFirstIncidence();
 		while (curr != null) {
-			InternalEdge next = (InternalEdge) curr.getNextIncidence();
+			Edge next = curr.getNextIncidence();
 			curr.setThis(newVertex);
 			curr = next;
 		}
@@ -3107,7 +3110,7 @@ public class Rsa2Tg extends XmlProcessor {
 				}
 			}
 
-			if ((p <= 0) || (p >= c.length - 1)) {
+			if ((p <= 0) || (p >= (c.length - 1))) {
 				throw new ProcessingException(getFileName(),
 						"Error in primitive type name: '" + typeName + "'");
 			}
@@ -3346,7 +3349,7 @@ public class Rsa2Tg extends XmlProcessor {
 	}
 
 	public void setKeepEmptyPackages(boolean removeEmptyPackages) {
-		keepEmptyPackages = removeEmptyPackages;
+		this.keepEmptyPackages = removeEmptyPackages;
 	}
 
 }

@@ -210,10 +210,4 @@ public abstract class ReversedEdgeImpl extends
 	public VersionedReferenceImpl<IncidenceImpl> getVersionedPrevIncidence() {
 		return prevIncidence;
 	}
-
-	// @Override
-	// public String toString() {
-	// return "-e" + normalEdge.getId() + ": "
-	// + getAttributedElementClass().getQualifiedName();
-	// }
 }

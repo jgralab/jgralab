@@ -3,7 +3,8 @@ package de.uni_koblenz.jgralab.gretl;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
+import org.pcollections.PSet;
+
 import de.uni_koblenz.jgralab.gretl.Context.TransformationPhase;
 import de.uni_koblenz.jgralab.gretl.parser.TokenTypes;
 import de.uni_koblenz.jgralab.schema.VertexClass;
@@ -40,10 +41,9 @@ public class CreateVertexClassDisjoint extends Transformation<VertexClass> {
 			return newVC;
 		}
 		for (String semExp : semanticExpressions) {
-			JValueSet archetypes = context.evaluateGReQLQuery(semExp)
-					.toCollection().toJValueSet();
+			PSet<Object> archetypes = context.evaluateGReQLQuery(semExp);
 			// Remove already existing archetypes
-			archetypes.removeAll(context.getImg(newVC).keySet());
+			archetypes = archetypes.minusAll(context.getImg(newVC).keySet());
 			new CreateVertices(context, newVC, archetypes).execute();
 		}
 		return newVC;

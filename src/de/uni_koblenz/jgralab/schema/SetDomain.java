@@ -45,6 +45,6 @@ public interface SetDomain extends CollectionDomain {
 
 	public static final String SETDOMAIN_NAME = "Set";
 	public final static String SETDOMAIN_TYPE = "org.pcollections.PSet";
-	public final static String EMPTY_SET = "org.pcollections.ArrayPSet.empty()";
+	public final static String EMPTY_SET = "de.uni_koblenz.jgralab.JGraLab.set()";
 
 }

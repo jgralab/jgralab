@@ -38,13 +38,15 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
-import java.util.Map.Entry;
+import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphException;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.impl.IncidenceImpl;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralab.trans.InvalidSavepointException;
@@ -61,6 +63,8 @@ import de.uni_koblenz.jgralab.trans.VertexPosition;
  * @author Jose Monte(monte@uni-koblenz.de)
  */
 public class TransactionImpl implements Transaction {
+	private static Logger logger = JGraLab
+			.getLogger("de.uni_koblenz.jgralab.impl.trans");
 	protected long temporaryVersionCounter;
 	protected long persistentVersionAtBot;
 	protected long persistentVersionAtCommit;
@@ -163,6 +167,9 @@ public class TransactionImpl implements Transaction {
 
 	@Override
 	public void abort() {
+		if (logger != null) {
+			logger.fine("tx id=" + id);
+		}
 		if (thread != Thread.currentThread()) {
 			throw new GraphException(
 					"Transaction is not active in current thread.");
@@ -209,6 +216,9 @@ public class TransactionImpl implements Transaction {
 
 	@Override
 	public void bot() {
+		if (logger != null) {
+			logger.fine("tx id=" + id);
+		}
 		if (thread != Thread.currentThread()) {
 			throw new GraphException(
 					"Transaction is not active in current thread.");
@@ -223,6 +233,9 @@ public class TransactionImpl implements Transaction {
 
 	@Override
 	public void commit() throws CommitFailedException {
+		if (logger != null) {
+			logger.fine("tx id=" + id);
+		}
 		if (thread != Thread.currentThread()) {
 			throw new GraphException(
 					"Transaction is not active in current thread.");
@@ -322,6 +335,9 @@ public class TransactionImpl implements Transaction {
 	 * "Garbage collection" for persistent values.
 	 */
 	protected void removeNonReferencedPersistentValues() {
+		if (logger != null) {
+			logger.finest("tx id=" + id);
+		}
 		// garbage collection - delete all persistent versions no longer
 		// needed and all temporary versions for transaction
 		long maxVersionNumber = 0;
@@ -383,7 +399,9 @@ public class TransactionImpl implements Transaction {
 	 * Removes all temporary values created within this transaction.
 	 */
 	private void removeAllTemporaryValues() {
-		// remove all temporary values created...
+		if (logger != null) {
+			logger.finest("tx id=" + id);
+		} // remove all temporary values created...
 		if (temporaryValueMap != null) {
 			// synchronized (temporaryValueMap) {
 			temporaryValueMap.clear();
@@ -398,6 +416,9 @@ public class TransactionImpl implements Transaction {
 
 	@Override
 	public Savepoint defineSavepoint() {
+		if (logger != null) {
+			logger.fine("tx id=" + id);
+		}
 		if (thread != Thread.currentThread()) {
 			throw new GraphException(
 					"Transaction is not active in current thread.");
@@ -426,6 +447,9 @@ public class TransactionImpl implements Transaction {
 							.moveTemporaryVersion(this);
 				}
 			}
+		}
+		if (logger != null) {
+			logger.fine("--> created sp id=" + savepoint.getID());
 		}
 		return savepoint;
 		// }
@@ -480,6 +504,9 @@ public class TransactionImpl implements Transaction {
 	@Override
 	public void restoreSavepoint(Savepoint savepoint)
 			throws InvalidSavepointException {
+		if (logger != null) {
+			logger.fine("tx id=" + id + ", sp id=" + savepoint.getID());
+		}
 		if (thread != Thread.currentThread()) {
 			throw new GraphException(
 					"Transaction is not active in current thread.");
@@ -508,12 +535,19 @@ public class TransactionImpl implements Transaction {
 	 * and executing the first write-operation.
 	 */
 	protected void removeInvalidSavepoints() {
+		if (logger != null) {
+			logger.finest("tx id=" + id);
+		}
 		assert latestDefinedSavepoint != null
 				&& latestRestoredSavepoint != null;
 		// remove all invalid save-points which have been defined after the
 		// latest restored save-point
 		for (int i = savepointList.indexOf(latestRestoredSavepoint) + 1; i < savepointList
 				.size(); i++) {
+			if (logger != null) {
+				logger.finest("--> remove sp id="
+						+ savepointList.get(i).getID());
+			}
 			savepointList.remove(i);
 		}
 		// remove all invalid temporary values...
@@ -573,6 +607,9 @@ public class TransactionImpl implements Transaction {
 
 	@Override
 	public void removeSavepoint(Savepoint savepoint) {
+		if (logger != null) {
+			logger.fine("tx id=" + id + ", sp id=" + savepoint.getID());
+		}
 		if (thread != Thread.currentThread()) {
 			throw new GraphException(
 					"Transaction is not active in current thread.");

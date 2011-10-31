@@ -50,7 +50,7 @@ import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
-import de.uni_koblenz.jgralab.greql2.funlib.Intersection;
+import de.uni_koblenz.jgralab.greql2.funlib.collections.Intersection;
 import de.uni_koblenz.jgralab.greql2.schema.BoolLiteral;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.EdgePathDescription;
@@ -67,7 +67,6 @@ import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
 import de.uni_koblenz.jgralab.greql2.schema.TypeId;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
 import de.uni_koblenz.jgralab.greql2.schema.VertexSetExpression;
-import de.uni_koblenz.jgralab.impl.InternalEdge;
 
 /**
  * @author Tassilo Horn &lt;horn@uni-koblenz.de&gt;
@@ -133,7 +132,7 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 			BoolLiteral lit = syntaxgraph.createBoolLiteral();
 			lit.set_boolValue(true);
 			while (pe.getFirstIncidence(EdgeDirection.OUT) != null) {
-				InternalEdge e = (InternalEdge) pe.getFirstIncidence(EdgeDirection.OUT);
+				Edge e = pe.getFirstIncidence(EdgeDirection.OUT);
 				e.setAlpha(lit);
 				assert e.getAlpha() == lit;
 			}
@@ -180,15 +179,13 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 		// cause we don't handle these dependencies right now...
 		Expression pathDesc = pe.get_path();
 		if (!(pathDesc instanceof PathDescription)) {
-			logger
-					.finer(optimizerHeaderString()
-							+ "PathExistence contains an Expression as PathDescription, skipping...");
+			logger.finer(optimizerHeaderString()
+					+ "PathExistence contains an Expression as PathDescription, skipping...");
 			return false;
 		}
 		if (!isOptimizablePathDescription((PathDescription) pathDesc)) {
-			logger
-					.finer(optimizerHeaderString()
-							+ "PathExistence contains an EdgePathDescription, skipping...");
+			logger.finer(optimizerHeaderString()
+					+ "PathExistence contains an EdgePathDescription, skipping...");
 			return false;
 		}
 
@@ -288,10 +285,9 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 		// top-level conjunction.
 		if (!isConstraintAndTopLevelConjunction(pe, (Declaration) sd
 				.getFirstIsSimpleDeclOfIncidence().getOmega())) {
-			logger
-					.finer(optimizerHeaderString()
-							+ pe
-							+ " cannot be optimized, cause it's not in an constraint conjunction...");
+			logger.finer(optimizerHeaderString()
+					+ pe
+					+ " cannot be optimized, cause it's not in an constraint conjunction...");
 			return false;
 		}
 
@@ -299,16 +295,14 @@ public class PathExistenceToDirectedPathExpressionOptimizer extends
 		Set<Variable> varsUsedInPath = OptimizerUtility
 				.collectInternallyDeclaredVariablesBelow(path);
 		if (varsUsedInPath.contains(sdsVar)) {
-			logger
-					.finer(optimizerHeaderString()
-							+ "PathExistence path contains declared var, so skipping...");
+			logger.finer(optimizerHeaderString()
+					+ "PathExistence path contains declared var, so skipping...");
 			return false;
 		}
 		for (Variable usedVar : varsUsedInPath) {
 			if (isDeclaredBefore(sdsVar, usedVar)) {
-				logger
-						.finer(optimizerHeaderString()
-								+ "PathExistence path contains a previously declared var, so skipping...");
+				logger.finer(optimizerHeaderString()
+						+ "PathExistence path contains a previously declared var, so skipping...");
 				return false;
 			}
 		}

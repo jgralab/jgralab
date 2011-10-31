@@ -63,4 +63,9 @@ public interface GraphElement extends AttributedElement {
 	 * getGraph().containsEdge(this).
 	 */
 	public boolean isValid();
+
+	/**
+	 * removes this graph element
+	 */
+	public void delete();
 }

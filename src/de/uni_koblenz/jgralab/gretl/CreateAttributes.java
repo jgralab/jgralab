@@ -1,13 +1,15 @@
 package de.uni_koblenz.jgralab.gretl;
 
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueMap;
+import org.pcollections.PMap;
+import org.pcollections.PSequence;
+
 import de.uni_koblenz.jgralab.gretl.CreateAttribute.AttributeSpec;
 import de.uni_koblenz.jgralab.schema.Attribute;
 
 public class CreateAttributes extends Transformation<Attribute[]> {
 	private AttributeSpec[] attrSpecs;
 	private String semanticExpression;
-	private JValueMap archetypes2ValuesMap;
+	private PMap<Object, PSequence<Object>> archetype2ValueListMap;
 
 	protected CreateAttributes(final Context c,
 			final AttributeSpec... attrSpecs) {
@@ -15,10 +17,11 @@ public class CreateAttributes extends Transformation<Attribute[]> {
 		this.attrSpecs = attrSpecs;
 	}
 
-	public CreateAttributes(final Context c, final JValueMap archetypes2ValMap,
+	public CreateAttributes(final Context c,
+			final PMap<Object, PSequence<Object>> archetype2ValListMap,
 			final AttributeSpec... attrSpecs) {
 		this(c, attrSpecs);
-		this.archetypes2ValuesMap = archetypes2ValMap;
+		this.archetype2ValueListMap = archetype2ValListMap;
 	}
 
 	public CreateAttributes(final Context c, final String semanticExpression,
@@ -41,7 +44,7 @@ public class CreateAttributes extends Transformation<Attribute[]> {
 			int i = 0;
 			Attribute[] retVal = new Attribute[attrSpecs.length];
 			for (AttributeSpec as : attrSpecs) {
-				retVal[i++] = new CreateAttribute(context, as, (JValueMap) null)
+				retVal[i++] = new CreateAttribute(context, as, (String) null)
 						.execute();
 			}
 			return retVal;
@@ -51,9 +54,9 @@ public class CreateAttributes extends Transformation<Attribute[]> {
 			for (AttributeSpec as : attrSpecs) {
 				retVal[i++] = as.aec.getAttribute(as.name);
 			}
-			if (archetypes2ValuesMap != null) {
-				new SetMultipleAttributes(context, archetypes2ValuesMap, retVal)
-						.execute();
+			if (archetype2ValueListMap != null) {
+				new SetMultipleAttributes(context, archetype2ValueListMap,
+						retVal).execute();
 			} else {
 				new SetMultipleAttributes(context, semanticExpression, retVal)
 						.execute();

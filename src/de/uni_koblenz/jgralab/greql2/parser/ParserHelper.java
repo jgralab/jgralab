@@ -1,29 +1,29 @@
 /*
  * JGraLab - The Java Graph Laboratory
- * 
+ *
  * Copyright (C) 2006-2011 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
- * 
+ *
  * For bug reports, documentation and further information, visit
- * 
+ *
  *                         http://jgralab.uni-koblenz.de
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 3 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
+ *
  * Additional permission under GNU GPL version 3 section 7
- * 
+ *
  * If you modify this Program, or any covered work, by linking or combining
  * it with Eclipse (or a modified version of that program or an Eclipse
  * plugin), containing parts covered by the terms of the Eclipse Public
@@ -43,16 +43,16 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
-import org.pcollections.ArrayPVector;
 import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.exception.DuplicateVariableException;
 import de.uni_koblenz.jgralab.greql2.exception.ParsingException;
 import de.uni_koblenz.jgralab.greql2.exception.UndefinedVariableException;
-import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
+import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
 import de.uni_koblenz.jgralab.greql2.schema.Comprehension;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Definition;
@@ -98,8 +98,6 @@ import de.uni_koblenz.jgralab.greql2.schema.ThisLiteral;
 import de.uni_koblenz.jgralab.greql2.schema.ThisVertex;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
 import de.uni_koblenz.jgralab.greql2.schema.WhereExpression;
-import de.uni_koblenz.jgralab.impl.InternalEdge;
-import de.uni_koblenz.jgralab.impl.InternalVertex;
 
 public abstract class ParserHelper {
 
@@ -117,7 +115,7 @@ public abstract class ParserHelper {
 
 	protected boolean graphCleaned = false;
 
-	protected Greql2FunctionLibrary funlib = null;
+	protected FunLib funlib = null;
 
 	protected Token lookAhead = null;
 
@@ -153,7 +151,7 @@ public abstract class ParserHelper {
 
 	/**
 	 * Returns the abstract syntax graph for the input
-	 * 
+	 *
 	 * @return the abstract syntax graph representing a GReQL 2 query
 	 */
 	public Greql2 getGraph() {
@@ -234,22 +232,20 @@ public abstract class ParserHelper {
 				Variable variable = (Variable) isVarOf.getAlpha();
 				isVarOf.delete();
 				isExprOf.delete();
-				InternalEdge e = (InternalEdge) variable
-						.getFirstIncidence(EdgeDirection.OUT);
+				Edge e = variable.getFirstIncidence(EdgeDirection.OUT);
 				while (e != null) {
 					e.setAlpha(expr);
-					e = (InternalEdge) variable
-							.getFirstIncidence(EdgeDirection.OUT);
+					e = variable.getFirstIncidence(EdgeDirection.OUT);
 				}
 				variable.delete();
 			}
 			Expression boundExpr = (Expression) exp
 					.getFirstIsBoundExprOfIncidence(EdgeDirection.IN)
 					.getAlpha();
-			InternalEdge e = (InternalEdge) exp.getFirstIncidence(EdgeDirection.OUT);
+			Edge e = exp.getFirstIncidence(EdgeDirection.OUT);
 			while (e != null) {
-				e.setAlpha((InternalVertex) boundExpr);
-				e = (InternalEdge) exp.getFirstIncidence(EdgeDirection.OUT);
+				e.setAlpha(boundExpr);
+				e = exp.getFirstIncidence(EdgeDirection.OUT);
 			}
 			exp.delete();
 		}
@@ -270,7 +266,7 @@ public abstract class ParserHelper {
 	/**
 	 * merges variable-vertices in the subgraph with the root-vertex
 	 * <code>v</code>
-	 * 
+	 *
 	 * @param v
 	 *            root of the subgraph
 	 * @param separateScope
@@ -299,8 +295,7 @@ public abstract class ParserHelper {
 					.get_name());
 			if (var != null) {
 				if (var != v) {
-					InternalEdge inc = (InternalEdge) v
-							.getFirstIncidence(EdgeDirection.OUT);
+					Edge inc = v.getFirstIncidence(EdgeDirection.OUT);
 					inc.setAlpha(var);
 					if (v.getDegree() <= 0) {
 						v.delete();
@@ -309,8 +304,8 @@ public abstract class ParserHelper {
 			} else {
 				Greql2Aggregation e = (Greql2Aggregation) v
 						.getFirstIncidence(EdgeDirection.OUT);
-				throw new UndefinedVariableException((Variable) v, e
-						.get_sourcePositions());
+				throw new UndefinedVariableException((Variable) v,
+						e.get_sourcePositions());
 			}
 		} else {
 			ArrayList<Edge> incidenceList = new ArrayList<Edge>();
@@ -327,7 +322,7 @@ public abstract class ParserHelper {
 	 * Inserts variable-vertices that are declared in the <code>using</code>
 	 * -clause into the variables symbol table and merges variables within the
 	 * query-expression.
-	 * 
+	 *
 	 * @param root
 	 *            root of the graph, represents a <code>Greql2Expression</code>
 	 */
@@ -336,8 +331,9 @@ public abstract class ParserHelper {
 		afterParsingvariableSymbolTable.blockBegin();
 		for (IsBoundVarOf isBoundVarOf : root
 				.getIsBoundVarOfIncidences(EdgeDirection.IN)) {
-			afterParsingvariableSymbolTable.insert(((Variable) isBoundVarOf
-					.getAlpha()).get_name(), isBoundVarOf.getAlpha());
+			afterParsingvariableSymbolTable.insert(
+					((Variable) isBoundVarOf.getAlpha()).get_name(),
+					isBoundVarOf.getAlpha());
 		}
 		IsQueryExprOf isQueryExprOf = root
 				.getFirstIsQueryExprOfIncidence(EdgeDirection.IN);
@@ -349,7 +345,7 @@ public abstract class ParserHelper {
 	 * Inserts variables that are defined in the definitions of let- or
 	 * where-expressions and merges variables used in these definitions and in
 	 * the bound expression
-	 * 
+	 *
 	 * @param v
 	 *            contains a let- or where-expression.
 	 */
@@ -387,7 +383,7 @@ public abstract class ParserHelper {
 	 * a quantified expression into the symbol-table and merges variables that
 	 * are used in these declaration (in typeexpressions, constraints, or
 	 * subgraphs)
-	 * 
+	 *
 	 * @param v
 	 *            contains a declaration
 	 */
@@ -429,7 +425,7 @@ public abstract class ParserHelper {
 	 * Inserts variable-vertices that are declared in the quantified expression
 	 * represented by <code>v</code> into the variables symbol table and merges
 	 * variables within the bound expression.
-	 * 
+	 *
 	 * @param v
 	 *            contains a quantified expression
 	 */
@@ -453,7 +449,7 @@ public abstract class ParserHelper {
 	/**
 	 * Inserts declared variable-vertices into the variables symbol table and
 	 * merges variables within the comprehension result and tableheaders
-	 * 
+	 *
 	 * @param v
 	 *            contains a set- or a list-comprehension
 	 */
@@ -476,7 +472,7 @@ public abstract class ParserHelper {
 				while (isTableHeaderOf != null) {
 					mergeVariables(isTableHeaderOf.getAlpha(), true);
 					isTableHeaderOf = isTableHeaderOf
-							.getNextIsTableHeaderOf(EdgeDirection.IN);
+							.getNextIsTableHeaderOfIncidence(EdgeDirection.IN);
 				}
 			}
 			if (v instanceof TableComprehension) {
@@ -550,7 +546,7 @@ public abstract class ParserHelper {
 		public void postOp(String op) {
 			lengthOperator = getLength(offsetOperator);
 			offsetArg2 = getCurrentOffset();
-			operatorName = op;
+			this.operatorName = op;
 		}
 
 		public FunctionApplication postArg2(Expression arg2) {
@@ -600,7 +596,7 @@ public abstract class ParserHelper {
 
 	protected final PVector<SourcePosition> createSourcePositionList(
 			int length, int offset) {
-		PVector<SourcePosition> list = ArrayPVector.empty();
+		PVector<SourcePosition> list = JGraLab.vector();
 		return list.plus(new SourcePosition(length, offset));
 	}
 
@@ -681,7 +677,7 @@ public abstract class ParserHelper {
 				firstThisVertex = thisVertex;
 			} else {
 				while (thisVertex.getFirstIncidence() != null) {
-					InternalEdge e = (InternalEdge) thisVertex.getFirstIncidence();
+					Edge e = thisVertex.getFirstIncidence();
 					e.setThis(firstThisVertex);
 				}
 				literalsToDelete.add(thisVertex);
@@ -693,8 +689,8 @@ public abstract class ParserHelper {
 				firstThisEdge = thisEdge;
 			} else {
 				while (thisEdge.getFirstIncidence() != null) {
-					InternalEdge e = (InternalEdge) thisEdge.getFirstIncidence();
-					e.setThis((InternalVertex) firstThisEdge);
+					Edge e = thisEdge.getFirstIncidence();
+					e.setThis(firstThisEdge);
 				}
 				literalsToDelete.add(thisEdge);
 			}

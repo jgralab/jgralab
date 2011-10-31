@@ -37,12 +37,13 @@ package de.uni_koblenz.jgralab.impl;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Queue;
-import java.util.Set;
+
+import org.pcollections.POrderedSet;
+import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
@@ -953,15 +954,15 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 	 * java.lang.Class)
 	 */
 	@Override
-	public <T extends Vertex> List<T> reachableVertices(String pathDescription,
-			Class<T> vertexType) {
+	public <T extends Vertex> POrderedSet<T> reachableVertices(
+			String pathDescription, Class<T> vertexType) {
 		return graph.reachableVertices(this, pathDescription, vertexType);
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T extends Vertex> Set<T> reachableVertices(Class<T> returnType,
-			PathElement... pathElements) {
-		Set<T> result = new LinkedHashSet<T>();
+	public <T extends Vertex> POrderedSet<T> reachableVertices(
+			Class<T> returnType, PathElement... pathElements) {
+		PSet<T> result = JGraLab.set();
 		Queue<Vertex> q = new LinkedList<Vertex>();
 		q.add(this);
 
@@ -977,7 +978,7 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 						if (i == pathElements.length - 1) {
 							Vertex r = e.getThat();
 							if (returnType.isInstance(r)) {
-								result.add((T) r);
+								result = result.plus((T) r);
 							}
 						} else {
 							q.add(e.getThat());
@@ -987,7 +988,7 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 				vx = q.poll();
 			}
 		}
-		return result;
+		return (POrderedSet<T>) result;
 	}
 
 }

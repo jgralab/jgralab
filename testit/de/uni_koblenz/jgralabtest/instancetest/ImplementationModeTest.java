@@ -99,7 +99,7 @@ public class ImplementationModeTest extends InstanceTest {
 		}
 		commit(g);
 		createTransaction(g);
-		MinimalSchema.instance().saveMinimalGraph(filename, g);
+		g.save(filename);
 		commit(g);
 	}
 

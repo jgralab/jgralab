@@ -62,21 +62,11 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 		this.normalEdge = normalEdge;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.AttributedElement#getM1Class()
-	 */
 	@Override
 	public Class<? extends AttributedElement> getM1Class() {
 		return normalEdge.getM1Class();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
 	@Override
 	public int compareTo(AttributedElement a) {
 		assert isValid();
@@ -91,64 +81,31 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#delete()
-	 */
 	@Override
 	public void delete() {
 		normalEdge.delete();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#getAlpha()
-	 */
 	@Override
 	public Vertex getAlpha() {
 		return normalEdge.getIncidentVertex();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uni_koblenz.jgralab.AttributedElement#getAttribute(java.lang.String)
-	 */
 	@Override
-	public Object getAttribute(String name) {
+	public <T> T getAttribute(String name) {
 		return normalEdge.getAttribute(name);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uni_koblenz.jgralab.AttributedElement#setAttribute(java.lang.String,
-	 * java.lang.Object)
-	 */
 	@Override
-	public void setAttribute(String name, Object data) {
+	public <T> void setAttribute(String name, T data) {
 		normalEdge.setAttribute(name, data);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#getId()
-	 */
 	@Override
 	public int getId() {
 		return -normalEdge.getId();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#getNextEdgeInGraph()
-	 */
 	@Override
 	public Edge getNextEdge() {
 		return normalEdge.getNextEdge();
@@ -159,11 +116,6 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 		return normalEdge.getNextEdgeInESeq();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#getPrevEdgeInGraph()
-	 */
 	@Override
 	public Edge getPrevEdge() {
 		return normalEdge.getPrevEdge();
@@ -174,222 +126,110 @@ public abstract class ReversedEdgeBaseImpl extends IncidenceImpl implements
 		return normalEdge.getPrevEdgeInESeq();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uni_koblenz.jgralab.Edge#getNextEdgeOfClassInGraph(de.uni_koblenz.
-	 * jgralab.schema.EdgeClass)
-	 */
 	@Override
 	public Edge getNextEdge(EdgeClass anEdgeClass) {
 		return normalEdge.getNextEdge(anEdgeClass);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uni_koblenz.jgralab.Edge#getNextEdgeOfClassInGraph(java.lang.Class)
-	 */
 	@Override
 	public Edge getNextEdge(Class<? extends Edge> anEdgeClass) {
 		return normalEdge.getNextEdge(anEdgeClass);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#getNormalEdge()
-	 */
 	@Override
 	public Edge getNormalEdge() {
 		return normalEdge;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#getOmega()
-	 */
 	@Override
 	public Vertex getOmega() {
 		assert isValid();
 		return getIncidentVertex();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#getReversedEdge()
-	 */
 	@Override
 	public Edge getReversedEdge() {
 		return normalEdge;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#getThat()
-	 */
 	@Override
 	public Vertex getThat() {
 		return getAlpha();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#getThatRole()
-	 */
 	@Override
 	public String getThatRole() {
 		return normalEdge.getThisRole();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#getThis()
-	 */
 	@Override
 	public Vertex getThis() {
 		return getOmega();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#getThisRole()
-	 */
 	@Override
 	public String getThisRole() {
 		return normalEdge.getThatRole();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.GraphElement#graphModified()
-	 */
 	@Override
 	public void graphModified() {
 		assert isValid();
 		graph.graphModified();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uni_koblenz.jgralab.Edge#isAfterInGraph(de.uni_koblenz.jgralab.Edge)
-	 */
 	@Override
 	public boolean isAfterEdge(Edge e) {
 		return normalEdge.isAfterEdge(e);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uni_koblenz.jgralab.Edge#isBeforeInGraph(de.uni_koblenz.jgralab.Edge)
-	 */
 	@Override
 	public boolean isBeforeEdge(Edge e) {
 		return normalEdge.isBeforeEdge(e);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#isNormal()
-	 */
 	@Override
 	public boolean isNormal() {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uni_koblenz.jgralab.Edge#putAfterInGraph(de.uni_koblenz.jgralab.Edge)
-	 */
 	@Override
 	public void putAfterEdge(Edge e) {
 		normalEdge.putAfterEdge(e);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uni_koblenz.jgralab.Edge#putBeforeInGraph(de.uni_koblenz.jgralab.Edge)
-	 */
 	@Override
 	public void putBeforeEdge(Edge e) {
 		normalEdge.putBeforeEdge(e);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#setAlpha(de.uni_koblenz.jgralab.Vertex)
-	 */
 	@Override
 	public void setAlpha(Vertex alpha) {
 		normalEdge.setAlpha(alpha);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#setOmega(de.uni_koblenz.jgralab.Vertex)
-	 */
 	@Override
 	public void setOmega(Vertex omega) {
 		normalEdge.setOmega(omega);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#setThat(de.uni_koblenz.jgralab.Vertex)
-	 */
 	@Override
 	public void setThat(Vertex v) {
 		normalEdge.setAlpha(v);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#setThis(de.uni_koblenz.jgralab.Vertex)
-	 */
 	@Override
 	public void setThis(Vertex v) {
 		normalEdge.setOmega(v);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		assert isValid();
-		return "-e" + normalEdge.id + ": "
+		return "-e" + normalEdge.getId() + ": "
 				+ getAttributedElementClass().getQualifiedName();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#isValid()
-	 */
 	@Override
 	public boolean isValid() {
 		return graph.eSeqContainsEdge(this);

@@ -42,12 +42,14 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.GraphException;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.InternalGraph;
 import de.uni_koblenz.jgralab.trans.Transaction;
@@ -65,6 +67,10 @@ import de.uni_koblenz.jgralab.trans.VersionedDataObject;
  */
 public abstract class VersionedDataObjectImpl<E> implements
 		VersionedDataObject<E> {
+
+	private static Logger logger = JGraLab
+			.getLogger("de.uni_koblenz.jgralab.impl.trans");
+
 	protected AttributedElement attributedElement;
 
 	/**
@@ -170,7 +176,10 @@ public abstract class VersionedDataObjectImpl<E> implements
 
 	@Override
 	public void createNewTemporaryValue(Transaction transaction) {
-		// assure that current transaction is valid for creating a new temporary
+		if (logger != null) {
+			logger.finer("tx id=" + transaction.getID() + ", do=" + this);
+		} // assure that current transaction is valid for creating a new
+			// temporary
 		// value...
 		if (transaction == null) {
 			throw new GraphException("Current transaction is null.");
@@ -245,6 +254,9 @@ public abstract class VersionedDataObjectImpl<E> implements
 	 * @return
 	 */
 	protected void moveTemporaryVersion(TransactionImpl trans) {
+		if (logger != null) {
+			logger.finer("tx id=" + trans.getID() + ", do=" + this);
+		}
 		if (trans.temporaryVersionMap == null) {
 			trans.temporaryVersionMap = new HashMap<VersionedDataObject<?>, SortedMap<Long, Object>>(
 					1, TransactionManagerImpl.LOAD_FACTOR);
@@ -463,8 +475,8 @@ public abstract class VersionedDataObjectImpl<E> implements
 
 	@Override
 	public void removeAllTemporaryValues(Transaction transaction) {
-		if (transaction == null) {
-			throw new GraphException("Current transaction is null.");
+		if (logger != null) {
+			logger.finer("tx id=" + transaction.getID() + ", do=" + this);
 		}
 		if (!transaction.isReadOnly()) {
 			TransactionImpl trans = (TransactionImpl) transaction;
@@ -487,6 +499,10 @@ public abstract class VersionedDataObjectImpl<E> implements
 
 	@Override
 	public void removePersistentValues(long maxVersionNumber) {
+		if (logger != null) {
+			logger.finer("maxVersionNumber=" + maxVersionNumber + ", do="
+					+ this);
+		}
 		TransactionManager transactionManager = TransactionManagerImpl
 				.getInstance((GraphImpl) getGraph());
 		TransactionImpl oldestTransaction = (TransactionImpl) transactionManager
@@ -548,6 +564,9 @@ public abstract class VersionedDataObjectImpl<E> implements
 
 	@Override
 	public synchronized void removePersistentValues(long minRange, long maxRange) {
+		if (logger != null) {
+			logger.finer("minRange=" + minRange + ", maxRange=" + maxRange);
+		}
 		if (minRange > maxRange) {
 			throw new GraphException("minRange should always be <= maxRange.");
 		}
@@ -599,6 +618,9 @@ public abstract class VersionedDataObjectImpl<E> implements
 	 * there is only 1 persistent value left.
 	 */
 	private synchronized void movePersistentValue() {
+		if (logger != null) {
+			logger.finer("");
+		}
 		synchronized (persistentVersionMap) {
 			if (persistentVersionMap.size() == 1) {
 				E value = persistentVersionMap.get(persistentVersionMap
@@ -622,8 +644,9 @@ public abstract class VersionedDataObjectImpl<E> implements
 
 	@Override
 	public void removeTemporaryValues(long minVersion, Transaction transaction) {
-		if (transaction == null) {
-			throw new GraphException("Current transaction is null.");
+		if (logger != null) {
+			logger.finer("tx id=" + transaction.getID() + ", minVersion="
+					+ minVersion);
 		}
 		synchronized (transaction) {
 			if (!transaction.isReadOnly() && hasTemporaryValue(transaction)) {
@@ -648,6 +671,10 @@ public abstract class VersionedDataObjectImpl<E> implements
 
 	@Override
 	public void setNewPersistentValue(E dataObject, boolean explicitChange) {
+		if (logger != null) {
+			logger.finer("do=" + dataObject + ", explicitChange="
+					+ explicitChange);
+		}
 		TransactionImpl transaction = (TransactionImpl) getGraph()
 				.getCurrentTransaction();
 		if (transaction == null) {
@@ -686,6 +713,9 @@ public abstract class VersionedDataObjectImpl<E> implements
 	 * @param explicitChange
 	 */
 	private synchronized void handlePersistentChange(boolean explicitChange) {
+		if (logger != null) {
+			logger.finer("explicitChange=" + explicitChange);
+		}
 		// implicit change
 		if (!explicitChange) {
 			if (isImplicitChangeMarkNeeded()) {
@@ -713,6 +743,9 @@ public abstract class VersionedDataObjectImpl<E> implements
 
 	@Override
 	public void setPersistentValue(E dataObject) {
+		if (logger != null) {
+			logger.finer("do=" + dataObject);
+		}
 		if (!getGraph().isLoading()) {
 			Transaction transaction = getGraph().getCurrentTransaction();
 			if (transaction == null) {
@@ -734,6 +767,9 @@ public abstract class VersionedDataObjectImpl<E> implements
 
 	@Override
 	public void setTemporaryValue(E dataObject, Transaction transaction) {
+		if (logger != null) {
+			logger.finer("tx id=" + transaction.getID() + ", do=" + dataObject);
+		}
 		if (transaction == null) {
 			throw new GraphException("Current transaction is null.");
 		}
@@ -819,6 +855,15 @@ public abstract class VersionedDataObjectImpl<E> implements
 	 * @param transaction
 	 */
 	public void setValidValue(E dataObject, Transaction transaction) {
+		if (logger != null) {
+			if (transaction == null) {
+				logger.finer("tx id=null, do=" + dataObject);
+			} else {
+				logger.finer("tx id=" + transaction.getID() + ", do="
+						+ dataObject);
+
+			}
+		}
 		internalSetValidValue(dataObject, transaction, true);
 	}
 
@@ -835,6 +880,10 @@ public abstract class VersionedDataObjectImpl<E> implements
 	 */
 	protected void setValidValue(E dataObject, Transaction transaction,
 			boolean explicitChange) {
+		if (logger != null) {
+			logger.finer("tx id=" + transaction.getID() + ", do=" + dataObject
+					+ ", explicitChange=" + explicitChange);
+		}
 		internalSetValidValue(dataObject, transaction, explicitChange);
 	}
 
@@ -905,18 +954,22 @@ public abstract class VersionedDataObjectImpl<E> implements
 	 */
 	private void changedPersistently() {
 		// not needed, if graph is loading...
-		if (!getGraph().isLoading()) {
-			TransactionImpl transaction = (TransactionImpl) getGraph()
-					.getCurrentTransaction();
-			if (transaction == null) {
-				throw new GraphException("Current transaction is null.");
-			}
-			if (transaction.changedDuringCommit == null) {
-				transaction.changedDuringCommit = new HashSet<VersionedDataObjectImpl<?>>(
-						1, TransactionManagerImpl.LOAD_FACTOR);
-			}
-			transaction.changedDuringCommit.add(this);
+		if (getGraph().isLoading()) {
+			return;
 		}
+		if (logger != null) {
+			logger.finer(this.toString());
+		}
+		TransactionImpl transaction = (TransactionImpl) getGraph()
+				.getCurrentTransaction();
+		if (transaction == null) {
+			throw new GraphException("Current transaction is null.");
+		}
+		if (transaction.changedDuringCommit == null) {
+			transaction.changedDuringCommit = new HashSet<VersionedDataObjectImpl<?>>(
+					1, TransactionManagerImpl.LOAD_FACTOR);
+		}
+		transaction.changedDuringCommit.add(this);
 	}
 
 	/**
@@ -932,6 +985,9 @@ public abstract class VersionedDataObjectImpl<E> implements
 		}
 		if (transaction.isReadOnly()) {
 			return;
+		}
+		if (logger != null) {
+			logger.finer("tx id=" + transaction.getID());
 		}
 		SavepointImpl latestDefinedSavepoint = transaction.latestDefinedSavepoint;
 		if (latestDefinedSavepoint != null) {
@@ -1098,9 +1154,9 @@ public abstract class VersionedDataObjectImpl<E> implements
 	@Override
 	public String toString() {
 		if (name != null) {
-			return name;
+			return name + " of " + attributedElement;
 		}
-		return Integer.valueOf(hashCode()).toString();
+		return "hash " + hashCode() + " of " + attributedElement;
 	}
 
 	/**

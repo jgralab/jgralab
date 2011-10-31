@@ -477,8 +477,8 @@ public class DefaultValueTest extends InstanceTest {
 
 		schema.commit(new CodeGeneratorConfiguration()
 				.withoutTypeSpecificMethodSupport());
-		GraphIO.saveSchemaToFile(
-				"./testit/testschemas/DefaultValueTestSchema.tg", schema);
+		GraphIO.saveSchemaToFile(schema,
+				"./testit/testschemas/DefaultValueTestSchema.tg");
 		GraphIO.loadSchemaFromFile("./testit/testschemas/DefaultValueTestSchema.tg");
 	}
 }

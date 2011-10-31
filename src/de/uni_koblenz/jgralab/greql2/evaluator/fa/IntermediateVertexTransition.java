@@ -35,17 +35,12 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator.fa;
 
-import java.util.Iterator;
+import org.pcollections.PCollection;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.graphmarker.SubGraphMarker;
-import de.uni_koblenz.jgralab.greql2.Greql2Serializer;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
+import de.uni_koblenz.jgralab.greql2.serialising.GreqlSerializer;
 
 public class IntermediateVertexTransition extends Transition {
 
@@ -126,36 +121,22 @@ public class IntermediateVertexTransition extends Transition {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see greql2.evaluator.fa.Transition#accepts(jgralab.Vertex, jgralab.Edge,
-	 * greql2.evaluator.SubgraphTempAttribute)
+	 * @see greql2.evaluator.fa.Transition#accepts(jgralab.Vertex, jgralab.Edge)
 	 */
 	@Override
-	public boolean accepts(Vertex v, Edge e, SubGraphMarker subgraph)
-			throws EvaluateException {
+	public boolean accepts(Vertex v, Edge e) {
 		// checks if a intermediateVertexExpression exists and if the end-vertex
 		// of e is part of the result of this expression
 
 		if (intermediateVertexEvaluator != null) {
-			JValue tempRes = intermediateVertexEvaluator.getResult(subgraph);
-			try {
-				if (tempRes.isCollection()) {
-					JValueCollection intermediateVertices = tempRes
-							.toCollection();
-					Iterator<JValue> iter = intermediateVertices.iterator();
-					while (iter.hasNext()) {
-						if (iter.next().toVertex().equals(v)) {
-							return true;
-						}
-					}
-				} else {
-					Vertex intermediateVertex = tempRes.toVertex();
-					if (v == intermediateVertex) {
-						return true;
-					}
-				}
-			} catch (JValueInvalidTypeException exception) {
-				throw new EvaluateException("Error in Transition.accept : "
-						+ exception.toString());
+			Object tempRes = intermediateVertexEvaluator.getResult();
+			if (tempRes instanceof PCollection) {
+				@SuppressWarnings("unchecked")
+				PCollection<Vertex> intermediateVertices = (PCollection<Vertex>) tempRes;
+				return intermediateVertices.contains(v);
+			} else {
+				Vertex intermediateVertex = (Vertex) tempRes;
+				return v == intermediateVertex;
 			}
 		}
 		return false;
@@ -173,9 +154,8 @@ public class IntermediateVertexTransition extends Transition {
 	@Override
 	public String prettyPrint() {
 		return "IntermediateVertex "
-				+ new Greql2Serializer()
-						.serializeGreql2Vertex(intermediateVertexEvaluator
-								.getVertex());
+				+ GreqlSerializer.serializeVertex(intermediateVertexEvaluator
+						.getVertex());
 	}
 
 	@Override
