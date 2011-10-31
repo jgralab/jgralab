@@ -18,7 +18,6 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import de.uni_koblenz.jgralab.Edge;
-import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.TraversalContext;
 import de.uni_koblenz.jgralab.Vertex;
@@ -53,7 +52,7 @@ public class TraversalContextTest extends InstanceTest {
 
 	private MinimalGraph graph;
 	private InternalGraph iGraph;
-	private TraversalContext alwaysTrue, alwaysFalse, subgraph1, subgraph2;
+	private TraversalContext fullGraph, emptyGraph, subgraph1, subgraph2;
 
 	@Before
 	public void setUp() throws Exception {
@@ -149,16 +148,11 @@ public class TraversalContextTest extends InstanceTest {
 
 	private void createDefaultTCs() {
 		// TCs
-		alwaysTrue = new TraversalContext() {
+		fullGraph = new TraversalContext() {
 
 			@Override
 			public boolean containsVertex(Vertex v) {
 				return iGraph.vSeqContainsVertex(v);
-			}
-
-			@Override
-			public boolean containsGraphElement(GraphElement e) {
-				return e.getGraph() == iGraph;
 			}
 
 			@Override
@@ -167,15 +161,10 @@ public class TraversalContextTest extends InstanceTest {
 			}
 		};
 
-		alwaysFalse = new TraversalContext() {
+		emptyGraph = new TraversalContext() {
 
 			@Override
 			public boolean containsVertex(Vertex v) {
-				return false;
-			}
-
-			@Override
-			public boolean containsGraphElement(GraphElement e) {
 				return false;
 			}
 
@@ -208,14 +197,14 @@ public class TraversalContextTest extends InstanceTest {
 	@Test
 	public void testSetAndGetTraversalContext() throws Exception {
 		TraversalContext oldTC;
-		oldTC = graph.setTraversalContext(alwaysTrue);
+		oldTC = graph.setTraversalContext(fullGraph);
 		assertTrue(oldTC == null);
-		assertTrue(graph.getTraversalContext() == alwaysTrue);
-		oldTC = graph.setTraversalContext(alwaysFalse);
-		assertTrue(oldTC == alwaysTrue);
-		assertTrue(graph.getTraversalContext() == alwaysFalse);
+		assertTrue(graph.getTraversalContext() == fullGraph);
+		oldTC = graph.setTraversalContext(emptyGraph);
+		assertTrue(oldTC == fullGraph);
+		assertTrue(graph.getTraversalContext() == emptyGraph);
 		oldTC = graph.setTraversalContext(subgraph1);
-		assertTrue(oldTC == alwaysFalse);
+		assertTrue(oldTC == emptyGraph);
 		assertTrue(graph.getTraversalContext() == subgraph1);
 		oldTC = graph.setTraversalContext(subgraph2);
 		assertTrue(oldTC == subgraph1);
@@ -234,11 +223,11 @@ public class TraversalContextTest extends InstanceTest {
 		// with not TC (or TC with always true), the first vertex is the first
 		// vertex in Vseq
 		assertEquals(v[1], graph.getFirstVertex());
-		graph.setTraversalContext(alwaysTrue);
+		graph.setTraversalContext(fullGraph);
 		assertEquals(v[1], graph.getFirstVertex());
 
 		// with TC returning always false, there is no first vertex (null)
-		graph.setTraversalContext(alwaysFalse);
+		graph.setTraversalContext(emptyGraph);
 		assertNull(graph.getFirstVertex());
 
 		// with subgraph where the first vertex is missing, the second vertex is
@@ -255,11 +244,11 @@ public class TraversalContextTest extends InstanceTest {
 		// with no TC (or TC with always true), the last vertex is the last
 		// vertex in Vseq
 		assertEquals(v[9], graph.getLastVertex());
-		graph.setTraversalContext(alwaysTrue);
+		graph.setTraversalContext(fullGraph);
 		assertEquals(v[9], graph.getLastVertex());
 
 		// with TC returning always false, there is no last vertex (null)
-		graph.setTraversalContext(alwaysFalse);
+		graph.setTraversalContext(emptyGraph);
 		assertNull(graph.getLastVertex());
 
 		// with TC where the last few vertices are missing, the last
@@ -276,11 +265,11 @@ public class TraversalContextTest extends InstanceTest {
 		// with no TC (or TC with always true), the vertex count is the length
 		// of Vseq
 		assertEquals(9, graph.getVCount());
-		graph.setTraversalContext(alwaysTrue);
+		graph.setTraversalContext(fullGraph);
 		assertEquals(9, graph.getVCount());
 
 		// with TC returning always false, the vertex count is 0
-		graph.setTraversalContext(alwaysFalse);
+		graph.setTraversalContext(emptyGraph);
 		assertEquals(0, graph.getVCount());
 
 		// with 4 vertices missing, the vertex count is 5
@@ -322,7 +311,7 @@ public class TraversalContextTest extends InstanceTest {
 		assertNull(v[9].getNextVertex());
 		assertEquals(v[8], v[9].getPrevVertex());
 
-		graph.setTraversalContext(alwaysTrue);
+		graph.setTraversalContext(fullGraph);
 		assertEquals(v[2], v[1].getNextVertex());
 		assertNull(v[1].getPrevVertex());
 
@@ -402,11 +391,11 @@ public class TraversalContextTest extends InstanceTest {
 			listAllTrue.add(v[i]);
 		}
 		testVerticesWithTC(listAllTrue, null);
-		testVerticesWithTC(listAllTrue, alwaysTrue);
+		testVerticesWithTC(listAllTrue, fullGraph);
 
 		// empty list
 		List<Vertex> listAllFalse = new LinkedList<Vertex>();
-		testVerticesWithTC(listAllFalse, alwaysFalse);
+		testVerticesWithTC(listAllFalse, emptyGraph);
 
 		// subgraph1
 		List<Vertex> list1 = new LinkedList<Vertex>();
@@ -449,11 +438,11 @@ public class TraversalContextTest extends InstanceTest {
 		// with not TC (or TC with always true), the first edge is the first
 		// vertex in Eseq
 		assertEquals(e[1], graph.getFirstEdge());
-		graph.setTraversalContext(alwaysTrue);
+		graph.setTraversalContext(fullGraph);
 		assertEquals(e[1], graph.getFirstEdge());
 
 		// with TC returning always false, there is no first edge (null)
-		graph.setTraversalContext(alwaysFalse);
+		graph.setTraversalContext(emptyGraph);
 		assertNull(graph.getFirstEdge());
 
 		// with TC where the first few edges are missing, the first edge
@@ -470,11 +459,11 @@ public class TraversalContextTest extends InstanceTest {
 		// with no TC (or TC with always true), the last edge is the last edge
 		// in Eseq
 		assertEquals(e[20], graph.getLastEdge());
-		graph.setTraversalContext(alwaysTrue);
+		graph.setTraversalContext(fullGraph);
 		assertEquals(e[20], graph.getLastEdge());
 
 		// with TC returning always false, there is no last edge
-		graph.setTraversalContext(alwaysFalse);
+		graph.setTraversalContext(emptyGraph);
 		assertNull(graph.getLastEdge());
 
 		// with TC where the last few edges are missing, the last edge is
@@ -491,11 +480,11 @@ public class TraversalContextTest extends InstanceTest {
 		// with no TC (or TC with always true), the edge count is the length
 		// of Eseq
 		assertEquals(20, graph.getECount());
-		graph.setTraversalContext(alwaysTrue);
+		graph.setTraversalContext(fullGraph);
 		assertEquals(20, graph.getECount());
 
 		// with TC returning always false, the edge count is 0
-		graph.setTraversalContext(alwaysFalse);
+		graph.setTraversalContext(emptyGraph);
 		assertEquals(0, graph.getECount());
 
 		// subgraph1
@@ -570,7 +559,7 @@ public class TraversalContextTest extends InstanceTest {
 		assertNull(e[20].getNextEdge());
 		assertEquals(e[19], e[20].getPrevEdge());
 
-		graph.setTraversalContext(alwaysTrue);
+		graph.setTraversalContext(fullGraph);
 
 		assertEquals(e[2], e[1].getNextEdge());
 		assertNull(e[1].getPrevEdge());
@@ -694,10 +683,10 @@ public class TraversalContextTest extends InstanceTest {
 			listAllTrue.add(e[i]);
 		}
 		testEdgesWithTC(listAllTrue, null);
-		testEdgesWithTC(listAllTrue, alwaysTrue);
+		testEdgesWithTC(listAllTrue, fullGraph);
 
 		List<Edge> listAllFalse = new LinkedList<Edge>();
-		testEdgesWithTC(listAllFalse, alwaysFalse);
+		testEdgesWithTC(listAllFalse, emptyGraph);
 
 		List<Edge> list1 = new LinkedList<Edge>();
 		list1.add(e[1]);
@@ -749,7 +738,7 @@ public class TraversalContextTest extends InstanceTest {
 		assertEquals(3, v[8].getDegree());
 		assertEquals(3, v[9].getDegree());
 
-		graph.setTraversalContext(alwaysTrue);
+		graph.setTraversalContext(fullGraph);
 		assertEquals(5, v[1].getDegree());
 		assertEquals(5, v[2].getDegree());
 		assertEquals(5, v[3].getDegree());
@@ -809,7 +798,7 @@ public class TraversalContextTest extends InstanceTest {
 		assertEquals(re[12], v[9].getFirstIncidence());
 		assertEquals(e[20], v[9].getLastIncidence());
 
-		graph.setTraversalContext(alwaysTrue);
+		graph.setTraversalContext(fullGraph);
 
 		assertEquals(e[1], v[1].getFirstIncidence());
 		assertEquals(re[15], v[1].getLastIncidence());
@@ -929,7 +918,7 @@ public class TraversalContextTest extends InstanceTest {
 		assertNull(e[14].getNextIncidence());
 		assertEquals(e[13], e[14].getPrevIncidence());
 
-		graph.setTraversalContext(alwaysTrue);
+		graph.setTraversalContext(fullGraph);
 		// v2
 		assertEquals(e[4], re[1].getNextIncidence());
 		assertNull(re[1].getPrevIncidence());
@@ -996,7 +985,7 @@ public class TraversalContextTest extends InstanceTest {
 		incidenceList.add(re[14]);
 		incidenceList.add(re[19]);
 		testIncidencesWithTC(v[2], incidenceList, null);
-		testIncidencesWithTC(v[2], incidenceList, alwaysTrue);
+		testIncidencesWithTC(v[2], incidenceList, fullGraph);
 
 		// v6
 		incidenceList.clear();
@@ -1004,7 +993,7 @@ public class TraversalContextTest extends InstanceTest {
 		incidenceList.add(e[13]);
 		incidenceList.add(e[14]);
 		testIncidencesWithTC(v[6], incidenceList, null);
-		testIncidencesWithTC(v[6], incidenceList, alwaysTrue);
+		testIncidencesWithTC(v[6], incidenceList, fullGraph);
 
 		// subgraph1
 		// v2
